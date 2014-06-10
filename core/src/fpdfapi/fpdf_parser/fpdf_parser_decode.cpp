@@ -468,7 +468,16 @@ CFX_ByteString PDF_EncodeText(FX_LPCWSTR pString, int len, CFX_CharMap* pCharMap
             return result;
         }
     }
-    FX_LPBYTE dest_buf2 = (FX_LPBYTE)result.GetBuffer(len * 2 + 2);
+   
+    if(len > INT_MAX/2-1) 
+    {
+        result.ReleaseBuffer(0);
+        return result;
+    }
+
+    int encLen = len * 2 + 2;
+
+    FX_LPBYTE dest_buf2 = (FX_LPBYTE)result.GetBuffer(encLen);
     dest_buf2[0] = 0xfe;
     dest_buf2[1] = 0xff;
     dest_buf2 += 2;
@@ -476,7 +485,7 @@ CFX_ByteString PDF_EncodeText(FX_LPCWSTR pString, int len, CFX_CharMap* pCharMap
         *dest_buf2++ = pString[i] >> 8;
         *dest_buf2++ = (FX_BYTE)pString[i];
     }
-    result.ReleaseBuffer(len * 2 + 2);
+    result.ReleaseBuffer(encLen);
     return result;
 }
 CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, FX_BOOL bHex)
