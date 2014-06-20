@@ -642,6 +642,7 @@ FX_BOOL CPDF_ICCBasedCS::GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLO
         return TRUE;
     }
     FX_FLOAT rgb[3];
+    pIccModule->SetComponents(m_nComponents);
     pIccModule->Translate(m_pProfile->m_pTransform, pBuf, rgb);
     R = rgb[0];
     G = rgb[1];

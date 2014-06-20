@@ -281,6 +281,7 @@ public:
     virtual void			Translate(FX_LPVOID pTransform, FX_FLOAT* pSrcValues, FX_FLOAT* pDestValues) = 0;
 
     virtual void			TranslateScanline(FX_LPVOID pTransform, FX_LPBYTE pDest, FX_LPCBYTE pSrc, int pixels) = 0;
+    virtual void                        SetComponents(FX_DWORD nComponents) = 0;
 };
 void AdobeCMYK_to_sRGB(FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B);
 void AdobeCMYK_to_sRGB1(FX_BYTE c, FX_BYTE m, FX_BYTE y, FX_BYTE k, FX_BYTE& R, FX_BYTE& G, FX_BYTE& B);

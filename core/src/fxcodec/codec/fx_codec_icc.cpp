@@ -147,7 +147,7 @@ void IccLib_DestroyTransform(void* pTransform)
     cmsDeleteTransform(((CLcmsCmm*)pTransform)->m_hTransform);
     delete (CLcmsCmm*)pTransform;
 }
-void IccLib_Translate(void* pTransform, FX_FLOAT* pSrcValues, FX_FLOAT* pDestValues)
+void IccLib_Translate(void* pTransform, FX_DWORD nSrcComponents, FX_FLOAT* pSrcValues, FX_FLOAT* pDestValues)
 {
     if (pTransform == NULL) {
         return;
@@ -155,16 +155,16 @@ void IccLib_Translate(void* pTransform, FX_FLOAT* pSrcValues, FX_FLOAT* pDestVal
     CLcmsCmm* p = (CLcmsCmm*)pTransform;
     FX_BYTE output[4];
     if (p->m_bLab) {
-        CFX_FixedBufGrow<double, 16> inputs(p->m_nSrcComponents);
+        CFX_FixedBufGrow<double, 16> inputs(nSrcComponents);
         double* input = inputs;
-        for (int i = 0; i < p->m_nSrcComponents; i ++) {
+        for (FX_DWORD i = 0; i < nSrcComponents; i ++) {
             input[i] = pSrcValues[i];
         }
         cmsDoTransform(p->m_hTransform, input, output, 1);
     } else {
-        CFX_FixedBufGrow<FX_BYTE, 16> inputs(p->m_nSrcComponents);
+        CFX_FixedBufGrow<FX_BYTE, 16> inputs(nSrcComponents);
         FX_BYTE* input = inputs;
-        for (int i = 0; i < p->m_nSrcComponents; i ++) {
+        for (FX_DWORD i = 0; i < nSrcComponents; i ++) {
             if (pSrcValues[i] > 1.0f) {
                 input[i] = 255;
             } else if (pSrcValues[i] < 0) {
@@ -534,7 +534,7 @@ void CCodec_IccModule::DestroyTransform(void* pTransform)
 }
 void CCodec_IccModule::Translate(void* pTransform, FX_FLOAT* pSrcValues, FX_FLOAT* pDestValues)
 {
-    IccLib_Translate(pTransform, pSrcValues, pDestValues);
+    IccLib_Translate(pTransform, m_nComponents, pSrcValues, pDestValues);
 }
 void CCodec_IccModule::TranslateScanline(void* pTransform, FX_LPBYTE pDest, FX_LPCBYTE pSrc, int pixels)
 {

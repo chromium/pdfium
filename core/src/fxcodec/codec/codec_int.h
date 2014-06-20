@@ -172,10 +172,12 @@ public:
     virtual void			DestroyTransform(FX_LPVOID pTransform);
     virtual void			Translate(FX_LPVOID pTransform, FX_FLOAT* pSrcValues, FX_FLOAT* pDestValues);
     virtual void			TranslateScanline(FX_LPVOID pTransform, FX_LPBYTE pDest, FX_LPCBYTE pSrc, int pixels);
+    virtual void                        SetComponents(FX_DWORD nComponents) {m_nComponents = nComponents;}
     virtual ~CCodec_IccModule();
 protected:
     CFX_MapByteStringToPtr		m_MapTranform;
     CFX_MapByteStringToPtr		m_MapProfile;
+    FX_DWORD                            m_nComponents;
     typedef enum {
         Icc_CLASS_INPUT = 0,
         Icc_CLASS_OUTPUT,
