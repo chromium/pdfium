@@ -1464,6 +1464,9 @@ void CPDF_TrueTypeFont::LoadGlyphMap()
             && m_pCharNames == NULL) || (m_Flags & PDFFONT_NONSYMBOLIC)) {
         if (!FXFT_Has_Glyph_Names(m_Font.m_Face) && (!m_Font.m_Face->num_charmaps || !m_Font.m_Face->charmaps)) {
             int nStartChar = m_pFontDict->GetInteger(FX_BSTRC("FirstChar"));
+            if(nStartChar < 0 || nStartChar > 255)
+                return;
+
             int charcode = 0;
             for (; charcode < nStartChar; charcode ++) {
                 m_GlyphIndex[charcode] = 0;
