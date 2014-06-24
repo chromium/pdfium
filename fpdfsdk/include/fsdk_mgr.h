@@ -564,7 +564,7 @@ private:
 			return;
 		}
 		
-		FX_UINT m = (nStartPos + nStopPos) / 2;
+		FX_UINT m = nStartPos + (nStopPos - nStartPos) / 2;
 		FX_UINT i = nStartPos;
 		
 		TYPE Value = this->GetAt(m);
