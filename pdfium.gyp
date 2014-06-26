@@ -55,6 +55,7 @@
       'target_name': 'pdfium',
       'type': 'static_library',
       'dependencies': [
+        'safemath',
         'fdrm',
         'fpdfdoc',
         'fpdfapi',
@@ -141,6 +142,19 @@
           }],
         ],
       },
+    },
+    {
+      'target_name': 'safemath',
+      'type': 'none',
+      'sources': [
+        'third_party/logging.h',
+        'third_party/macros.h',
+        'third_party/template_util.h',
+        'third_party/numerics/safe_conversions.h',
+        'third_party/numerics/safe_conversions_impl.h',
+        'third_party/numerics/safe_math.h',
+        'third_party/numerics/safe_math_impl.h',
+      ],
     },
     {
       'target_name': 'fdrm',

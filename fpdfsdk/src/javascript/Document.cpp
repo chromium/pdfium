@@ -18,6 +18,8 @@
 #include "../../include/javascript/Icon.h"
 #include "../../include/javascript/Field.h"
 
+#include "../../../third_party/numerics/safe_math.h"
+
 static v8::Isolate* GetIsolate(IFXJS_Context* cc)
 {
 	CJS_Context* pContext = (CJS_Context *)cc;
@@ -1425,16 +1427,17 @@ FX_BOOL Document::documentFileName(OBJ_PROP_PARAMS)
 
 CFX_WideString Document::ReversalStr(CFX_WideString cbFrom)
 {
-	wchar_t* pFrom = NULL;
-	int iLenth = cbFrom.GetLength();
-	wchar_t* pResult = (wchar_t*)malloc((iLenth+1) * sizeof(wchar_t));
-	memset(pResult, 0, (iLenth+1));
-	pFrom = (wchar_t*)cbFrom.GetBuffer(iLenth);
+	size_t iLength = cbFrom.GetLength();
+	base::CheckedNumeric<size_t> iSize = sizeof(wchar_t);
+	iSize *= (iLength + 1);
+	wchar_t* pResult = (wchar_t*)malloc(iSize.ValueOrDie());
+	wchar_t* pFrom = (wchar_t*)cbFrom.GetBuffer(iLength);
 
-	for (int i = 0; i < iLenth; i++)
+	for (size_t i = 0; i < iLength; i++)
 	{
-		pResult[i] = *(pFrom + iLenth - i - 1);
+		pResult[i] = *(pFrom + iLength - i - 1);
 	}
+	pResult[iLength] = L'\0';
 
 	cbFrom.ReleaseBuffer();
 	CFX_WideString cbRet = CFX_WideString(pResult);
@@ -1445,18 +1448,22 @@ CFX_WideString Document::ReversalStr(CFX_WideString cbFrom)
 
 CFX_WideString Document::CutString(CFX_WideString cbFrom)
 {
-	wchar_t* pFrom = NULL;
-	int iLenth = cbFrom.GetLength();
-	wchar_t* pResult = (wchar_t*)malloc((iLenth+1) * sizeof(wchar_t));
-	memset(pResult, 0, (iLenth+1));
-	pFrom = (wchar_t*)cbFrom.GetBuffer(iLenth);
+	size_t iLength = cbFrom.GetLength();
+	base::CheckedNumeric<size_t> iSize = sizeof(wchar_t);
+	iSize *= (iLength + 1);
+	wchar_t* pResult = (wchar_t*)malloc(iSize.ValueOrDie());
+	wchar_t* pFrom = (wchar_t*)cbFrom.GetBuffer(iLength);
 
-	for (int i = 0; i < iLenth; i++)
+	for (int i = 0; i < iLength; i++)
 	{
 		if (pFrom[i] == L'\\' || pFrom[i] == L'/')
+		{
+			pResult[i] = L'\0';
 			break;
+		}
 		pResult[i] = pFrom[i];
 	}
+	pResult[iLength] = L'\0';
 
 	cbFrom.ReleaseBuffer();
 	CFX_WideString cbRet = CFX_WideString(pResult);

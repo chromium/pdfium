@@ -91,6 +91,7 @@ static_library("pdfium") {
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 
   deps = [
+    ":safemath",
     ":fdrm",
     ":formfiller",
     ":fpdfapi",
@@ -116,6 +117,18 @@ static_library("pdfium") {
 
 # Targets below this are only visible within this file.
 visibility = ":*"
+
+component("safemath") {
+  sources = [
+    "third_party/logging.h",
+    "third_party/macros.h",
+    "third_party/template_util.h",
+    "third_party/numerics/safe_conversions.h",
+    "third_party/numerics/safe_conversions_impl.h",
+    "third_party/numerics/safe_math.h",
+    "third_party/numerics/safe_math_impl.h",
+  ],
+}
 
 static_library("fdrm") {
   sources = [
