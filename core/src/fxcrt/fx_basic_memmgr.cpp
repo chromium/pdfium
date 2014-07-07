@@ -6,6 +6,7 @@
 
 #include "../../include/fxcrt/fx_basic.h"
 #include "mem_int.h"
+
 void FXMEM_DestroyFoxitMgr(FXMEM_FoxitMgr* pFoxitMgr)
 {
     if (pFoxitMgr == NULL) {
@@ -25,20 +26,36 @@ void FXMEM_DestroyFoxitMgr(FXMEM_FoxitMgr* pFoxitMgr)
 #ifdef __cplusplus
 extern "C" {
 #endif
-static void* _DefAllocDebug(IFX_Allocator* pAllocator, size_t size, FX_LPCSTR filename, int line)
+static void* _DefAllocDebug(IFX_Allocator* pAllocator, size_t num, size_t size, FX_LPCSTR filename, int line)
 {
+    if (size == 0 || num > SIZE_MAX/size)
+        return NULL;
+
+    size = size * num; 
     return ((FX_DefAllocator*)pAllocator)->m_pFoxitMgr->AllocDebug(size, 0, filename, line);
 }
-static void* _DefAlloc(IFX_Allocator* pAllocator, size_t size)
+static void* _DefAlloc(IFX_Allocator* pAllocator, size_t num, size_t size)
 {
+    if (size == 0 || num > SIZE_MAX/size)
+        return NULL;
+
+    size = size * num;
     return ((FX_DefAllocator*)pAllocator)->m_pFoxitMgr->Alloc(size, 0);
 }
-static void* _DefReallocDebug(IFX_Allocator* pAllocator, void* p, size_t size, FX_LPCSTR filename, int line)
+static void* _DefReallocDebug(IFX_Allocator* pAllocator, void* p, size_t new_num, size_t size, FX_LPCSTR filename, int line)
 {
+    if (size == 0 || new_num > SIZE_MAX/size)
+        return NULL;
+
+    size = size * new_num;
     return ((FX_DefAllocator*)pAllocator)->m_pFoxitMgr->ReallocDebug(p, size, 0, filename, line);
 }
-static void* _DefRealloc(IFX_Allocator* pAllocator, void* p, size_t size)
+static void* _DefRealloc(IFX_Allocator* pAllocator, void* p, size_t new_num, size_t size)
 {
+    if (size == 0 || new_num > SIZE_MAX/size)
+        return NULL;
+
+    size = size * new_num;
     return ((FX_DefAllocator*)pAllocator)->m_pFoxitMgr->Realloc(p, size, 0);
 }
 static void _DefFree(IFX_Allocator* pAllocator, void* p)
@@ -193,7 +210,7 @@ void CFX_Object::operator delete[](void* p, FX_LPCSTR file, int line)
 }
 void* CFX_AllocObject::operator new(size_t size, IFX_Allocator* pAllocator, FX_LPCSTR filename, int line)
 {
-    void* p = pAllocator ? pAllocator->m_AllocDebug(pAllocator, size, filename, line) :
+    void* p = pAllocator ? pAllocator->m_AllocDebug(pAllocator, size, 1, filename, line) :
               g_pDefFoxitMgr->AllocDebug(size, 0, filename, line);
     ((CFX_AllocObject*)p)->m_pAllocator = pAllocator;
     return p;
@@ -208,7 +225,7 @@ void CFX_AllocObject::operator delete (void* p, IFX_Allocator* pAllocator, FX_LP
 }
 void* CFX_AllocObject::operator new(size_t size, IFX_Allocator* pAllocator)
 {
-    void* p = pAllocator ? pAllocator->m_Alloc(pAllocator, size) : g_pDefFoxitMgr->Alloc(size, 0);
+    void* p = pAllocator ? pAllocator->m_Alloc(pAllocator, size, 1) : g_pDefFoxitMgr->Alloc(size, 0);
     ((CFX_AllocObject*)p)->m_pAllocator = pAllocator;
     return p;
 }
@@ -229,21 +246,37 @@ void CFX_AllocObject::operator delete(void* p, IFX_Allocator* pAllocator)
     }
 }
 extern "C" {
-    static void* _GOPAllocDebug(IFX_Allocator* pAllocator, size_t size, FX_LPCSTR file, int line)
+    static void* _GOPAllocDebug(IFX_Allocator* pAllocator, size_t num, size_t size, FX_LPCSTR file, int line)
     {
+        if (size == 0 || num > SIZE_MAX/size)
+            return NULL;
+
+        size = size * num;
         return ((CFX_GrowOnlyPool*)pAllocator)->Alloc(size);
     }
-    static void* _GOPAlloc(IFX_Allocator* pAllocator, size_t size)
+    static void* _GOPAlloc(IFX_Allocator* pAllocator, size_t num, size_t size)
     {
+        if (size == 0 || num > SIZE_MAX/size)
+            return NULL;
+
+        size = size * num;
         return ((CFX_GrowOnlyPool*)pAllocator)->Alloc(size);
     }
-    static void* _GOPReallocDebug(IFX_Allocator* pAllocator, void* p, size_t new_size, FX_LPCSTR file, int line)
+    static void* _GOPReallocDebug(IFX_Allocator* pAllocator, void* p, size_t new_num, size_t size, FX_LPCSTR file, int line)
     {
-        return ((CFX_GrowOnlyPool*)pAllocator)->Realloc(p, new_size);
+        if (size == 0 || new_num > SIZE_MAX/size)
+            return NULL;
+
+        size = size * new_num;
+        return ((CFX_GrowOnlyPool*)pAllocator)->Realloc(p, size);
     }
-    static void* _GOPRealloc(IFX_Allocator* pAllocator, void* p, size_t new_size)
+    static void* _GOPRealloc(IFX_Allocator* pAllocator, void* p, size_t new_num, size_t size)
     {
-        return ((CFX_GrowOnlyPool*)pAllocator)->Realloc(p, new_size);
+        if (size == 0 || new_num > SIZE_MAX/size)
+            return NULL;
+
+        size = size * new_num;
+        return ((CFX_GrowOnlyPool*)pAllocator)->Realloc(p, size);
     }
     static void _GOPFree(IFX_Allocator* pAllocator, void* p)
     {
@@ -297,7 +330,11 @@ void* CFX_GrowOnlyPool::Alloc(size_t size)
         pTrunk = pTrunk->m_pNext;
     }
     size_t alloc_size = size > m_TrunkSize ? size : m_TrunkSize;
-    pTrunk = (_FX_GrowOnlyTrunk*)m_pAllocator->m_Alloc(m_pAllocator, sizeof(_FX_GrowOnlyTrunk) + alloc_size);
+    
+    if (alloc_size > SIZE_MAX - sizeof(_FX_GrowOnlyTrunk) )
+        return NULL;
+
+    pTrunk = (_FX_GrowOnlyTrunk*)m_pAllocator->m_Alloc(m_pAllocator, sizeof(_FX_GrowOnlyTrunk) + alloc_size, 1);
     pTrunk->m_Size = alloc_size;
     pTrunk->m_Allocated = size;
     pTrunk->m_pNext = (_FX_GrowOnlyTrunk*)m_pFirstTrunk;

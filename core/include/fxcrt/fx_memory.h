@@ -117,13 +117,13 @@ extern "C" {
 #endif
 typedef struct _IFX_Allocator {
 
-    void*	(*m_AllocDebug)(struct _IFX_Allocator* pAllocator, size_t size, FX_LPCSTR file, int line);
+    void*	(*m_AllocDebug)(struct _IFX_Allocator* pAllocator, size_t num, size_t size, FX_LPCSTR file, int line);
 
-    void*	(*m_Alloc)(struct _IFX_Allocator* pAllocator, size_t size);
+    void*	(*m_Alloc)(struct _IFX_Allocator* pAllocator, size_t num, size_t size);
 
-    void*	(*m_ReallocDebug)(struct _IFX_Allocator* pAllocator, void* p, size_t size, FX_LPCSTR file, int line);
+    void*	(*m_ReallocDebug)(struct _IFX_Allocator* pAllocator, void* p, size_t num, size_t size, FX_LPCSTR file, int line);
 
-    void*	(*m_Realloc)(struct _IFX_Allocator* pAllocator, void* p, size_t size);
+    void*	(*m_Realloc)(struct _IFX_Allocator* pAllocator, void* p, size_t num, size_t size);
 
     void	(*m_Free)(struct _IFX_Allocator* pAllocator, void* p);
 } IFX_Allocator;
@@ -134,17 +134,17 @@ IFX_Allocator* FXMEM_GetDefAllocator();
 #ifdef _DEBUG
 
 #define FX_Allocator_Alloc(fxAllocator, type, size) \
-    ((fxAllocator) ? (type*)(fxAllocator)->m_AllocDebug((fxAllocator), (size) * sizeof(type), __FILE__, __LINE__) : (FX_Alloc(type, size)))
+    ((fxAllocator) ? (type*)(fxAllocator)->m_AllocDebug((fxAllocator), (size), sizeof(type), __FILE__, __LINE__) : (FX_Alloc(type, size)))
 
 #define FX_Allocator_Realloc(fxAllocator, type, ptr, new_size) \
-    ((fxAllocator) ? (type*)(fxAllocator)->m_ReallocDebug((fxAllocator), (ptr), (new_size) * sizeof(type), __FILE__, __LINE__) : (FX_Realloc(type, ptr, new_size)))
+    ((fxAllocator) ? (type*)(fxAllocator)->m_ReallocDebug((fxAllocator), (ptr), (new_size) , sizeof(type), __FILE__, __LINE__) : (FX_Realloc(type, ptr, new_size)))
 #else
 
 #define FX_Allocator_Alloc(fxAllocator, type, size) \
-    ((fxAllocator) ? (type*)(fxAllocator)->m_Alloc((fxAllocator), (size) * sizeof(type)) : (FX_Alloc(type, size)))
+    ((fxAllocator) ? (type*)(fxAllocator)->m_Alloc((fxAllocator), (size), sizeof(type)) : (FX_Alloc(type, size)))
 
 #define FX_Allocator_Realloc(fxAllocator, type, ptr, new_size) \
-    ((fxAllocator) ? (type*)(fxAllocator)->m_Realloc((fxAllocator), (ptr), (new_size) * sizeof(type)) : (FX_Realloc(type, ptr, new_size)))
+    ((fxAllocator) ? (type*)(fxAllocator)->m_Realloc((fxAllocator), (ptr), (new_size), sizeof(type)) : (FX_Realloc(type, ptr, new_size)))
 #endif
 #define FX_Allocator_Free(fxAllocator, ptr) \
     ((fxAllocator) ? (fxAllocator)->m_Free((fxAllocator), (ptr)) : (FX_Free(ptr)))

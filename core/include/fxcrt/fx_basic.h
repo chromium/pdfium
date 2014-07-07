@@ -6,6 +6,10 @@
 
 #ifndef _FX_BASIC_H_
 #define _FX_BASIC_H_
+#ifndef _STDINT_H_ 
+#define _STDINT_H_
+#include <stdint.h>
+#endif
 #ifndef _FX_SYSTEM_H_
 #include "fx_system.h"
 #endif
@@ -18,6 +22,7 @@
 #ifndef _FX_STREAM_H_
 #include "fx_stream.h"
 #endif
+ 
 class CFX_BinaryBuf : public CFX_Object
 {
 public:
@@ -776,6 +781,9 @@ public:
         if (data_size > FixedSize) {
             m_pData = FX_Allocator_Alloc(m_pAllocator, DataType, data_size);
         } else {
+            if (FixedSize > SIZE_MAX/sizeof(DataType))
+                return;
+
             FXSYS_memset32(m_Data, 0, sizeof(DataType)*FixedSize);
         }
     }
@@ -788,6 +796,10 @@ public:
         if (data_size > FixedSize) {
             m_pData = FX_Allocator_Alloc(m_pAllocator, DataType, data_size);
         } else {
+
+            if (FixedSize > SIZE_MAX/sizeof(DataType))
+                return;
+
             FXSYS_memset32(m_Data, 0, sizeof(DataType)*FixedSize);
         }
     }
