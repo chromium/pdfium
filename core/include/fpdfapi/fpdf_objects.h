@@ -49,6 +49,11 @@ public:
         return m_ObjNum;
     }
 
+    FX_DWORD                            GetGenNum() const
+    {
+        return m_GenNum;
+    }
+
     FX_BOOL					IsIdentical(CPDF_Object* pObj) const;
 
     CPDF_Object*			Clone(FX_BOOL bDirect = FALSE) const;
@@ -90,9 +95,11 @@ protected:
     CPDF_Object()
     {
         m_ObjNum = 0;
+        m_GenNum = 0;
     }
 
     FX_DWORD 				m_ObjNum;
+    FX_DWORD				m_GenNum;
 
     void					Destroy();
 

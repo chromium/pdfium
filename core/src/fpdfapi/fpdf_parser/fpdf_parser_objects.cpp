@@ -1328,9 +1328,15 @@ void CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum, CPDF_Object* pO
     if (objnum == 0 || pObj == NULL) {
         return;
     }
-    FX_LPVOID value;
+    FX_LPVOID value = NULL;
     if (m_IndirectObjs.Lookup((FX_LPVOID)(FX_UINTPTR)objnum, value)) {
-        ((CPDF_Object*)value)->Destroy();
+        if (value)
+        {
+            if (pObj->GetGenNum() <= ((CPDF_Object*)value)->GetGenNum())
+                return;
+            else 
+                ((CPDF_Object*)value)->Destroy();
+         }         
     }
     pObj->m_ObjNum = objnum;
     m_IndirectObjs.SetAt((FX_LPVOID)(FX_UINTPTR)objnum, pObj);
