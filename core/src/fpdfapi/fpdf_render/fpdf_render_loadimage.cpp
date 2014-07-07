@@ -911,7 +911,7 @@ void CPDF_DIBSource::LoadPalette()
         }
     }
 }
-FX_DWORD CPDF_DIBSource::GetValidBpp() const
+FX_DWORD CPDF_DIBSource::GetValidBpc() const
 {
     FX_DWORD bpc = m_bpc;
     CPDF_Object * pFilter = m_pDict->GetElementValue(FX_BSTRC("Filter"));
@@ -965,7 +965,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(FX_LPBYTE dest_scan, FX_LPCBYTE src_
             } else {
                 int src_bit_pos = 0;
                 int dest_byte_pos = 0;
-                FX_DWORD bpc = GetValidBpp();
+                FX_DWORD bpc = GetValidBpc();
                 for (int column = 0; column < m_Width; column ++) {
                     int R = _GetBits8(src_scan, src_bit_pos, bpc);
                     src_bit_pos += bpc;
@@ -1021,7 +1021,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(FX_LPBYTE dest_scan, FX_LPCBYTE src_
     } else {
         int src_bit_pos = 0;
         int dest_byte_pos = 0;
-        FX_DWORD bpc = GetValidBpp();
+        FX_DWORD bpc = GetValidBpc();
         for (int column = 0; column < m_Width; column ++) {
             for (FX_DWORD color = 0; color < m_nComponents; color ++) {
                 int data = _GetBits8(src_scan, src_bit_pos, bpc);
@@ -1184,8 +1184,9 @@ FX_BOOL CPDF_DIBSource::SkipToScanline(int line, IFX_Pause* pPause) const
 void CPDF_DIBSource::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_bpp,
                                         int dest_width, FX_BOOL bFlipX, int clip_left, int clip_width) const
 {
+    FX_DWORD bpc = GetValidBpc();
     FX_DWORD src_width = m_Width;
-    FX_DWORD src_pitch = (src_width * m_bpc * m_nComponents + 7) / 8;
+    FX_DWORD src_pitch = (src_width * bpc * m_nComponents + 7) / 8;
     FX_LPCBYTE pSrcLine = NULL;
     if (m_pCachedBitmap) {
         pSrcLine = m_pCachedBitmap->GetScanline(line);
@@ -1196,14 +1197,14 @@ void CPDF_DIBSource::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_
             pSrcLine = m_pStreamAcc->GetData() + line * src_pitch;
         }
     }
-    int orig_Bpp = m_bpc * m_nComponents / 8;
+    int orig_Bpp = bpc * m_nComponents / 8;
     int dest_Bpp = dest_bpp / 8;
     if (pSrcLine == NULL) {
         FXSYS_memset32(dest_scan, 0xff, dest_Bpp * clip_width);
         return;
     }
     CFX_FixedBufGrow<FX_BYTE, 128> temp(orig_Bpp);
-    if (m_bpc * m_nComponents == 1) {
+    if (bpc * m_nComponents == 1) {
         FX_DWORD set_argb = (FX_DWORD) - 1, reset_argb = 0;
         if (m_bImageMask) {
             if (m_bDefaultDecode) {
@@ -1271,15 +1272,15 @@ void CPDF_DIBSource::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_
             }
         }
         return;
-    } else if (m_bpc * m_nComponents <= 8) {
-        if (m_bpc < 8) {
+    } else if (bpc * m_nComponents <= 8) {
+        if (bpc < 8) {
             int src_bit_pos = 0;
             for (FX_DWORD col = 0; col < src_width; col ++) {
                 int color_index = 0;
                 for (FX_DWORD color = 0; color < m_nComponents; color ++) {
-                    int data = _GetBits8(pSrcLine, src_bit_pos, m_bpc);
-                    color_index |= data << (color * m_bpc);
-                    src_bit_pos += m_bpc;
+                    int data = _GetBits8(pSrcLine, src_bit_pos, bpc);
+                    color_index |= data << (color * bpc);
+                    src_bit_pos += bpc;
                 }
                 m_pLineBuf[col] = color_index;
             }
@@ -1328,14 +1329,14 @@ void CPDF_DIBSource::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_
     } else {
         int last_src_x = -1;
         FX_ARGB last_argb;
-        FX_FLOAT orig_Not8Bpp = (FX_FLOAT)m_bpc * (FX_FLOAT)m_nComponents / 8.0f;
-        FX_FLOAT unit_To8Bpc = 255.0f / ((1 << m_bpc) - 1);
+        FX_FLOAT orig_Not8Bpp = (FX_FLOAT)bpc * (FX_FLOAT)m_nComponents / 8.0f;
+        FX_FLOAT unit_To8Bpc = 255.0f / ((1 << bpc) - 1);
         for (int i = 0; i < clip_width; i ++) {
             int dest_x = clip_left + i;
             FX_DWORD src_x = (bFlipX ? (dest_width - dest_x - 1) : dest_x) * (FX_INT64)src_width / dest_width;
             src_x %= src_width;
             FX_LPCBYTE pSrcPixel = NULL;
-            if (m_bpc % 8 == 0) {
+            if (bpc % 8 == 0) {
                 pSrcPixel = pSrcLine + src_x * orig_Bpp;
             } else {
                 pSrcPixel = pSrcLine + (int)(src_x * orig_Not8Bpp);
@@ -1354,15 +1355,15 @@ void CPDF_DIBSource::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_
                         }
                         m_pColorSpace->TranslateImageLine(color, temp, 1, 0, 0, m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK && m_Family == PDFCS_DEVICECMYK);
                     } else {
-                        if (m_bpc < 8) {
+                        if (bpc < 8) {
                             int src_bit_pos = 0;
                             if (src_x % 2) {
                                 src_bit_pos = 4;
                             }
-                            int value = (1 << m_bpc)  - 1;
+                            int value = (1 << bpc)  - 1;
                             for (FX_DWORD i = 0; i < m_nComponents; i ++) {
-                                temp[i] = (FX_BYTE)(_GetBits8(pSrcPixel, src_bit_pos, m_bpc) * unit_To8Bpc);
-                                src_bit_pos += m_bpc;
+                                temp[i] = (FX_BYTE)(_GetBits8(pSrcPixel, src_bit_pos, bpc) * unit_To8Bpc);
+                                src_bit_pos += bpc;
                             }
                             m_pColorSpace->TranslateImageLine(color, temp, 1, 0, 0, m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK && m_Family == PDFCS_DEVICECMYK);
                         } else {
@@ -1375,7 +1376,7 @@ void CPDF_DIBSource::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_
                 }
                 if (m_bColorKey) {
                     int alpha = 0xff;
-                    if (m_nComponents == 3 && m_bpc == 8) {
+                    if (m_nComponents == 3 && bpc == 8) {
                         alpha = (pSrcPixel[0] < m_pCompData[0].m_ColorKeyMin ||
                                  pSrcPixel[0] > m_pCompData[0].m_ColorKeyMax ||
                                  pSrcPixel[1] < m_pCompData[1].m_ColorKeyMin ||
