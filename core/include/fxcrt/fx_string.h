@@ -340,7 +340,7 @@ public:
 protected:
 
     struct CFX_StringData*	m_pData;
-    void					AllocCopy(CFX_ByteString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex, FX_STRSIZE nExtraLen) const;
+    void					AllocCopy(CFX_ByteString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex) const;
     void					AssignCopy(FX_STRSIZE nSrcLen, FX_LPCSTR lpszSrcData);
     void					ConcatCopy(FX_STRSIZE nSrc1Len, FX_LPCSTR lpszSrc1Data, FX_STRSIZE nSrc2Len, FX_LPCSTR lpszSrc2Data);
     void					ConcatInPlace(FX_STRSIZE nSrcLen, FX_LPCSTR lpszSrcData);
@@ -756,7 +756,7 @@ protected:
     void					ConcatInPlace(FX_STRSIZE nSrcLen, FX_LPCWSTR lpszSrcData);
     void					ConcatCopy(FX_STRSIZE nSrc1Len, FX_LPCWSTR lpszSrc1Data, FX_STRSIZE nSrc2Len, FX_LPCWSTR lpszSrc2Data);
     void					AssignCopy(FX_STRSIZE nSrcLen, FX_LPCWSTR lpszSrcData);
-    void					AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex, FX_STRSIZE nExtraLen) const;
+    void					AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex) const;
 };
 inline CFX_WideStringC::CFX_WideStringC(const CFX_WideString& src)
 {

@@ -5,15 +5,26 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fxcrt/fx_basic.h"
+#include "../../../third_party/numerics/safe_math.h"
+
 static CFX_StringDataW* FX_AllocStringW(int nLen)
 {
-    if (nLen == 0) {
+    if (nLen == 0 || nLen < 0) {
         return NULL;
     }
-    CFX_StringDataW* pData = (CFX_StringDataW*)FX_Alloc(FX_BYTE, sizeof(long) * 3 + (nLen + 1) * sizeof(FX_WCHAR));
+
+    base::CheckedNumeric<int> iSize = static_cast<int>(sizeof(FX_WCHAR));
+    iSize *= nLen + 1;
+    iSize += sizeof(long) * 3;
+    CFX_StringDataW* pData = (CFX_StringDataW*)FX_Alloc(FX_BYTE, iSize.ValueOrDie());
     if (!pData) {
         return NULL;
     }
+
+    // TODO(palmer): |nLen| should really be declared as |size_t|, but for
+    // now I just want to fix the overflow without changing any interfaces.
+    // Declaring |nLen| as |size_t| will also simplify the above code
+    // somewhat.
     pData->m_nAllocLength = nLen;
     pData->m_nDataLength = nLen;
     pData->m_nRefs = 1;
@@ -421,17 +432,19 @@ CFX_WideString CFX_WideString::FromUTF16LE(const unsigned short* wstr, FX_STRSIZ
     result.ReleaseBuffer(wlen);
     return result;
 }
-void CFX_WideString::AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex,
-                               FX_STRSIZE nExtraLen) const
+void CFX_WideString::AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex) const
 {
-    FX_STRSIZE nNewLen = nCopyLen + nExtraLen;
-    if (nNewLen == 0) {
+    // |FX_STRSIZE| is currently typedef'd as in |int|. TODO(palmer): It
+    // should be a |size_t|, or at least unsigned.
+    if (nCopyLen == 0 || nCopyLen < 0) {
         return;
     }
+    base::CheckedNumeric<FX_STRSIZE> iSize = static_cast<FX_STRSIZE>(sizeof(FX_WCHAR));
+    iSize *= nCopyLen;
     ASSERT(dest.m_pData == NULL);
-    dest.m_pData = FX_AllocStringW(nNewLen);
+    dest.m_pData = FX_AllocStringW(nCopyLen);
     if (dest.m_pData) {
-        FXSYS_memcpy32(dest.m_pData->m_String, m_pData->m_String + nCopyIndex, nCopyLen * sizeof(FX_WCHAR));
+        FXSYS_memcpy32(dest.m_pData->m_String, m_pData->m_String + nCopyIndex, iSize.ValueOrDie());
     }
 }
 CFX_WideString CFX_WideString::Left(FX_STRSIZE nCount) const
@@ -446,7 +459,7 @@ CFX_WideString CFX_WideString::Left(FX_STRSIZE nCount) const
         return *this;
     }
     CFX_WideString dest;
-    AllocCopy(dest, nCount, 0, 0);
+    AllocCopy(dest, nCount, 0);
     return dest;
 }
 CFX_WideString CFX_WideString::Mid(FX_STRSIZE nFirst) const
@@ -474,7 +487,7 @@ CFX_WideString CFX_WideString::Mid(FX_STRSIZE nFirst, FX_STRSIZE nCount) const
         return *this;
     }
     CFX_WideString dest;
-    AllocCopy(dest, nCount, nFirst, 0);
+    AllocCopy(dest, nCount, nFirst);
     return dest;
 }
 CFX_WideString CFX_WideString::Right(FX_STRSIZE nCount) const
@@ -489,7 +502,7 @@ CFX_WideString CFX_WideString::Right(FX_STRSIZE nCount) const
         return *this;
     }
     CFX_WideString dest;
-    AllocCopy(dest, nCount, m_pData->m_nDataLength - nCount, 0);
+    AllocCopy(dest, nCount, m_pData->m_nDataLength - nCount);
     return dest;
 }
 int CFX_WideString::CompareNoCase(FX_LPCWSTR lpsz) const
