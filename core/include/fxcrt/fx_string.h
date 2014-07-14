@@ -634,9 +634,11 @@ public:
 
     static CFX_WideString	FromLocal(const char* str, FX_STRSIZE len = -1);
 
-    static CFX_WideString	FromUTF8(const char* str, FX_STRSIZE len = -1);
+    static CFX_WideString	FromUTF8(const char* str, FX_STRSIZE len);
 
-    static CFX_WideString	FromUTF16LE(const unsigned short* str, FX_STRSIZE len = -1);
+    static CFX_WideString	FromUTF16LE(const unsigned short* str, FX_STRSIZE len);
+
+    static FX_STRSIZE       WStringLength(const unsigned short* str);
 
     operator FX_LPCWSTR() const
     {

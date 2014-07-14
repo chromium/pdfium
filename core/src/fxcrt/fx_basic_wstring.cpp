@@ -398,15 +398,10 @@ CFX_WideString CFX_WideString::FromLocal(const char* str, FX_STRSIZE len)
 }
 CFX_WideString CFX_WideString::FromUTF8(const char* str, FX_STRSIZE len)
 {
-    if (!str) {
+    if (!str || 0 == len) {
         return CFX_WideString();
     }
-    if (len < 0) {
-        len = 0;
-        while (str[len]) {
-            len ++;
-        }
-    }
+
     CFX_UTF8Decoder decoder;
     for (FX_STRSIZE i = 0; i < len; i ++) {
         decoder.Input(str[i]);
@@ -415,15 +410,10 @@ CFX_WideString CFX_WideString::FromUTF8(const char* str, FX_STRSIZE len)
 }
 CFX_WideString CFX_WideString::FromUTF16LE(const unsigned short* wstr, FX_STRSIZE wlen)
 {
-    if (!wstr || !wlen) {
+    if (!wstr || 0 == wlen) {
         return CFX_WideString();
     }
-    if (wlen < 0) {
-        wlen = 0;
-        while (wstr[wlen]) {
-            wlen ++;
-        }
-    }
+
     CFX_WideString result;
     FX_WCHAR* buf = result.GetBuffer(wlen);
     for (int i = 0; i < wlen; i ++) {
@@ -432,6 +422,16 @@ CFX_WideString CFX_WideString::FromUTF16LE(const unsigned short* wstr, FX_STRSIZ
     result.ReleaseBuffer(wlen);
     return result;
 }
+FX_STRSIZE CFX_WideString::WStringLength(const unsigned short* str)
+{
+    FX_STRSIZE len = 0;
+    if (str)
+        while (str[len]) len++;
+    return len;
+}
+
+
+
 void CFX_WideString::AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex) const
 {
     // |FX_STRSIZE| is currently typedef'd as in |int|. TODO(palmer): It

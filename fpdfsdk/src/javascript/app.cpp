@@ -886,15 +886,15 @@ FX_BOOL app::browseForDoc(OBJ_METHOD_PARAMS)
 	{
 		JSObject pObj = (JSObject )params[0];
 
- 		v8::Handle<v8::Value> pValue = JS_GetObjectElement(isolate,pObj,L"bSave");
- 			bSave = (bool)CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue));
- 		
+		v8::Handle<v8::Value> pValue = JS_GetObjectElement(isolate,pObj,L"bSave");
+			bSave = (bool)CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue));
+		
 		pValue = JS_GetObjectElement(isolate, pObj,L"cFilenameInit");
 		{
 			CJS_Value t = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue));
- 			cFilenameInit = t.operator CFX_ByteString();
+			cFilenameInit = t.operator CFX_ByteString();
 		}
- 		
+		
 		pValue = JS_GetObjectElement(isolate,pObj,L"cFSInit");
 		{
 			CJS_Value t = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue));
@@ -1097,25 +1097,23 @@ FX_BOOL app::response(OBJ_METHOD_PARAMS)
 	}
 
 	CJS_Context* pContext = (CJS_Context *)cc;
- 	ASSERT(pContext != NULL);
+	ASSERT(pContext != NULL);
 
 	CPDFDoc_Environment* pApp = pContext->GetReaderApp();
- 	ASSERT(pApp != NULL);
+	ASSERT(pApp != NULL);
 	int nLength = 2048;
 	char* pBuff = new char[nLength];
 	nLength = pApp->JS_appResponse(swQuestion, swTitle, swDefault, swLabel, bPassWord, pBuff, nLength);
 	if(nLength<=0)
 	{
+		delete[] pBuff;
 		vRet.SetNull();
 		return FALSE;
 	}
 	else
 	{
-		nLength = nLength>2046?2046:nLength;
-    pBuff[nLength] = 0;
-    pBuff[nLength+1] = 0;
-		swResponse = CFX_WideString::FromUTF16LE((unsigned short*)pBuff, nLength);
-		vRet = swResponse;
+		nLength = nLength > sizeof(pBuff) ? sizeof(pBuff) : nLength;
+        vRet = swResponse = CFX_WideString::FromUTF16LE((unsigned short*)pBuff, nLength / 2);
 	}
 	delete[] pBuff;
 

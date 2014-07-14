@@ -11,7 +11,7 @@
 #include <tchar.h>
 #endif
 
-        // jabdelmalek: commented out to build on Linux.  Not used.
+	// jabdelmalek: commented out to build on Linux.  Not used.
 	// extern HANDLE g_hModule;
 
 DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page)
@@ -162,7 +162,8 @@ DLLEXPORT FPDF_SCHHANDLE STDCALL FPDFText_FindStart(FPDF_TEXTPAGE text_page,FPDF
 	try
 	{
 		textpageFind=IPDF_TextPageFind::CreatePageFind((IPDF_TextPage*)text_page);
-		textpageFind->FindFirst(CFX_WideString::FromUTF16LE(findwhat),flags,start_index);
+		FX_STRSIZE len = CFX_WideString::WStringLength(findwhat);
+		textpageFind->FindFirst(CFX_WideString::FromUTF16LE(findwhat, len),flags,start_index);
 	}
 	catch (...)
 	{

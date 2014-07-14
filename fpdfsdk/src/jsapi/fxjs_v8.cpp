@@ -734,7 +734,7 @@ CFX_WideString	JS_ToString(v8::Handle<v8::Value> pValue)
 {
 	if(pValue.IsEmpty()) return L"";
 	v8::String::Utf8Value s(pValue->ToString());
-	return CFX_WideString::FromUTF8(*s);
+	return CFX_WideString::FromUTF8(*s, s.length());
 }
 
 v8::Handle<v8::Array> JS_ToArray(v8::Handle<v8::Value> pValue)

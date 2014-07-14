@@ -36,7 +36,8 @@ DLLEXPORT FPDF_BOOKMARK STDCALL FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_W
 	CPDF_Document* pDoc = (CPDF_Document*)document;
 	CPDF_BookmarkTree tree(pDoc);
 
-	CFX_WideString wstr = CFX_WideString::FromUTF16LE(title);
+	FX_STRSIZE len = CFX_WideString::WStringLength(title);
+	CFX_WideString wstr = CFX_WideString::FromUTF16LE(title, len);
 	return FindBookmark(tree, NULL, wstr);
 }
 

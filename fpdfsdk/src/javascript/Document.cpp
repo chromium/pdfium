@@ -196,7 +196,7 @@ FX_BOOL Document::numFields(OBJ_PROP_PARAMS)
 
 	ASSERT(m_pDocument != NULL);
 
-   	CPDFSDK_InterForm *pInterForm = m_pDocument->GetInterForm();
+	CPDFSDK_InterForm *pInterForm = m_pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);
 
 	CPDF_InterForm *pPDFForm = pInterForm->GetInterForm();
@@ -284,7 +284,7 @@ FX_BOOL Document::pageNum(OBJ_PROP_PARAMS)
 		}
 	}
 
- 	return TRUE;
+	return TRUE;
 }
 
 FX_BOOL Document::ParserParams(JSObject* pObj,CJS_AnnotObj& annotobj)
@@ -294,7 +294,7 @@ FX_BOOL Document::ParserParams(JSObject* pObj,CJS_AnnotObj& annotobj)
 
 FX_BOOL Document::addAnnot(OBJ_METHOD_PARAMS)
 {
- 	return TRUE;
+	return TRUE;
 }
 
 FX_BOOL Document::addField(OBJ_METHOD_PARAMS)
@@ -336,7 +336,7 @@ FX_BOOL Document::exportAsFDF(OBJ_METHOD_PARAMS)
 	if (!bWhole)
 		arrayFileds.Attach(params[2]);
 	//FX_BOOL bFlags = params.size() > 3 ? (FX_BOOL)params[3] : FALSE;
-    CFX_WideString swFilePath = params.size() > 4 ? (FX_LPCWSTR)params[4].operator CFX_WideString() : (FX_LPCWSTR)L"";
+	CFX_WideString swFilePath = params.size() > 4 ? (FX_LPCWSTR)params[4].operator CFX_WideString() : (FX_LPCWSTR)L"";
 
 	if (swFilePath.IsEmpty())
 	{
@@ -349,10 +349,10 @@ FX_BOOL Document::exportAsFDF(OBJ_METHOD_PARAMS)
 	{
 		swFilePath = app::PDFPathToSysPath(swFilePath);
 	}
-    
+	
 	m_pDocument->SetFocusAnnot(NULL);
    
-    CPDFSDK_InterForm* pInterForm= (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
+	CPDFSDK_InterForm* pInterForm= (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);
 
 	CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
@@ -386,7 +386,7 @@ FX_BOOL Document::exportAsFDF(OBJ_METHOD_PARAMS)
 
 	for (int i=0,sz=aFields.GetSize(); i<sz; i++)
 	{
-	    CPDF_FormField* pField = (CPDF_FormField*)aFields[i];
+		CPDF_FormField* pField = (CPDF_FormField*)aFields[i];
 		
 		if (!bAllFields)
 			if (pField->GetValue() == L"")
@@ -396,10 +396,10 @@ FX_BOOL Document::exportAsFDF(OBJ_METHOD_PARAMS)
 			if (pField->GetFieldFlags() & 0x2000)
 				continue;
 
-        fields.Add((void*)pField);
+		fields.Add((void*)pField);
 	}    
 
-    return pInterForm->ExportFieldsToFDFFile(swFilePath, fields, TRUE);
+	return pInterForm->ExportFieldsToFDFFile(swFilePath, fields, TRUE);
 }
 
 //exports form fields an XFDF file to the local hard drive
@@ -430,7 +430,7 @@ FX_BOOL Document::getField(OBJ_METHOD_PARAMS)
 
 	CFX_WideString wideName = params[0].operator CFX_WideString();
 
-    CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
+	CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);
 
 	CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
@@ -505,7 +505,7 @@ FX_BOOL Document::importAnFDF(OBJ_METHOD_PARAMS)
 	
 	if (params.size() > 0)
 		swPath = params[0];
-    
+	
 	if (swPath.IsEmpty())
 	{
 		CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
@@ -526,7 +526,7 @@ FX_BOOL Document::importAnFDF(OBJ_METHOD_PARAMS)
 	if (!pInterForm->ImportFormFromFDFFile(swPath, TRUE))
 		return FALSE;
 
- 	m_pDocument->SetChangeMark();
+	m_pDocument->SetChangeMark();
 // 	CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
 // 	ASSERT(pEnv != NULL);
 // 	IUndo* pUndo = IUndo::GetUndo(pEnv);
@@ -605,9 +605,9 @@ FX_BOOL Document::mailForm(OBJ_METHOD_PARAMS)
 	ASSERT(pRuntime != NULL);
 
 	pRuntime->BeginBlock();
-    pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI, (FX_LPCWSTR)cTo, (FX_LPCWSTR)cSubject, (FX_LPCWSTR)cCc, (FX_LPCWSTR)cBcc, (FX_LPCWSTR)cMsg);
+	pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI, (FX_LPCWSTR)cTo, (FX_LPCWSTR)cSubject, (FX_LPCWSTR)cCc, (FX_LPCWSTR)cBcc, (FX_LPCWSTR)cMsg);
 	pRuntime->EndBlock();
- 	return TRUE;
+	return TRUE;
 }
 
 FX_BOOL Document::print(OBJ_METHOD_PARAMS)
@@ -660,11 +660,11 @@ FX_BOOL Document::print(OBJ_METHOD_PARAMS)
 		if(nlength >= 2)
 			 nStart = (int)params[1];
 		if(nlength >= 3)
-		    nEnd = (int)params[2];
+			nEnd = (int)params[2];
 		if(nlength >= 4)
 			bSilent = params[3];
 		if(nlength >= 5)
-		    bShrinkToFit = params[4];
+			bShrinkToFit = params[4];
 		if(nlength >= 6)
 			bPrintAsImage = params[5];
 		if(nlength >= 7)
@@ -673,13 +673,13 @@ FX_BOOL Document::print(OBJ_METHOD_PARAMS)
 			bAnnotations = params[7];
 	}
 
- 	ASSERT(m_pDocument != NULL);
+	ASSERT(m_pDocument != NULL);
  
- 	if (CPDFDoc_Environment* pEnv = m_pDocument->GetEnv())
- 	{
+	if (CPDFDoc_Environment* pEnv = m_pDocument->GetEnv())
+	{
 		pEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit, bPrintAsImage, bReverse, bAnnotations);
- 		return TRUE;
- 	}
+		return TRUE;
+	}
 	return FALSE;
 }
 
@@ -786,15 +786,15 @@ FX_BOOL Document::resetForm(OBJ_METHOD_PARAMS)
 
 		if (aFields.GetSize() > 0)
 		{
- 			pPDFForm->ResetForm(aFields, TRUE, TRUE);
- 			m_pDocument->SetChangeMark();
+			pPDFForm->ResetForm(aFields, TRUE, TRUE);
+			m_pDocument->SetChangeMark();
 
 		}
 	}
 	else
 	{
- 		pPDFForm->ResetForm(TRUE);
- 		m_pDocument->SetChangeMark();
+		pPDFForm->ResetForm(TRUE);
+		m_pDocument->SetChangeMark();
 
 	}
 
@@ -1070,7 +1070,7 @@ FX_BOOL Document::info(OBJ_PROP_PARAMS)
 		{
 			CFX_ByteString bsKey;
 			CPDF_Object* pValueObj = pDictionary->GetNextElement(pos, bsKey);
-			CFX_WideString wsKey  = CFX_WideString::FromUTF8(bsKey);
+			CFX_WideString wsKey  = CFX_WideString::FromUTF8(bsKey, bsKey.GetLength());
 			if((pValueObj->GetType()==PDFOBJ_STRING) || (pValueObj->GetType()==PDFOBJ_NAME) )
 					JS_PutObjectString(isolate,pObj, wsKey, pValueObj->GetUnicodeText());
 			if(pValueObj->GetType()==PDFOBJ_NUMBER)
@@ -1356,12 +1356,12 @@ FX_BOOL Document::filesize(OBJ_PROP_PARAMS)
 
 FX_BOOL Document::mouseX(OBJ_PROP_PARAMS)
 {
- 	return TRUE;	
+	return TRUE;	
 }
 
 FX_BOOL Document::mouseY(OBJ_PROP_PARAMS)
 {
- 	return TRUE;
+	return TRUE;
 }
 
 FX_BOOL Document::baseURL(OBJ_PROP_PARAMS)
@@ -1493,7 +1493,7 @@ FX_BOOL Document::layout(OBJ_PROP_PARAMS)
 
 FX_BOOL Document::addLink(OBJ_METHOD_PARAMS)
 {
- 	return TRUE;
+	return TRUE;
 }
 
 FX_BOOL Document::closeDoc(OBJ_METHOD_PARAMS)
@@ -1509,13 +1509,13 @@ FX_BOOL Document::closeDoc(OBJ_METHOD_PARAMS)
 
 FX_BOOL Document::getPageBox(OBJ_METHOD_PARAMS)
 {
- 	return TRUE;
+	return TRUE;
 }
 
 
 FX_BOOL Document::getAnnot(OBJ_METHOD_PARAMS)
 {
- 	return TRUE;
+	return TRUE;
 }
 
 FX_BOOL Document::getAnnots(OBJ_METHOD_PARAMS)
