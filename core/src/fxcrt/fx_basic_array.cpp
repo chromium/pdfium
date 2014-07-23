@@ -5,6 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fxcrt/fx_basic.h"
+#include "../../../third_party/numerics/safe_math.h"
+
 CFX_BasicArray::CFX_BasicArray(int unit_size, IFX_Allocator* pAllocator)
     : m_pAllocator(pAllocator)
     , m_pData(NULL)
@@ -24,25 +26,23 @@ CFX_BasicArray::~CFX_BasicArray()
 }
 FX_BOOL CFX_BasicArray::SetSize(int nNewSize, int nGrowBy)
 {
-    if (nNewSize < 0 || nNewSize > (1 << 28) / m_nUnitSize) {
-        if (m_pData != NULL) {
-            FX_Allocator_Free(m_pAllocator, m_pData);
-            m_pData = NULL;
-		}
+    if (nNewSize <= 0) {
+        FX_Free(m_pData);
+        m_pData = NULL;
         m_nSize = m_nMaxSize = 0;
-        return FALSE;
+        return 0 == nNewSize;
     }
-    if (nGrowBy >= 0) {
-        m_nGrowBy = nGrowBy;
-    }
-    if (nNewSize == 0) {
-        if (m_pData != NULL) {
-            FX_Allocator_Free(m_pAllocator, m_pData);
-            m_pData = NULL;
+
+    m_nGrowBy = nGrowBy >= 0 ? nGrowBy : m_nGrowBy;
+
+    if (m_pData == NULL) {
+        base::CheckedNumeric<int> totalSize = nNewSize;
+        totalSize *= m_nUnitSize;
+        if (!totalSize.IsValid()) {
+            m_nSize = m_nMaxSize = 0;
+            return FALSE;
         }
-        m_nSize = m_nMaxSize = 0;
-    } else if (m_pData == NULL) {
-        m_pData = FX_Allocator_Alloc(m_pAllocator, FX_BYTE, nNewSize * m_nUnitSize);
+        m_pData = FX_Alloc(FX_BYTE, totalSize.ValueOrDie());
         if (!m_pData) {
             m_nSize = m_nMaxSize = 0;
             return FALSE;
@@ -66,7 +66,13 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize, int nGrowBy)
         } else {
             nNewMax = nNewSize;
         }
-        FX_LPBYTE pNewData = FX_Allocator_Realloc(m_pAllocator, FX_BYTE, m_pData, nNewMax * m_nUnitSize);
+
+        base::CheckedNumeric<int> totalSize = nNewMax;
+        totalSize *= m_nUnitSize;
+        if (!totalSize.IsValid() || nNewMax < m_nSize) {
+            return FALSE;
+        }
+        FX_LPBYTE pNewData = FX_Realloc(FX_BYTE, m_pData, totalSize.ValueOrDie());
         if (pNewData == NULL) {
             return FALSE;
         }
@@ -80,9 +86,12 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize, int nGrowBy)
 FX_BOOL CFX_BasicArray::Append(const CFX_BasicArray& src)
 {
     int nOldSize = m_nSize;
-    if (!SetSize(m_nSize + src.m_nSize, -1)) {
+    base::CheckedNumeric<int> newSize = m_nSize;
+    newSize += src.m_nSize;
+    if (m_nUnitSize != src.m_nUnitSize || !newSize.IsValid() || !SetSize(newSize.ValueOrDie(), -1)) {
         return FALSE;
     }
+
     FXSYS_memcpy32(m_pData + nOldSize * m_nUnitSize, src.m_pData, src.m_nSize * m_nUnitSize);
     return TRUE;
 }
