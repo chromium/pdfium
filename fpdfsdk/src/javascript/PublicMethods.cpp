@@ -923,10 +923,10 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 	int nSec = JS_GetSecFromTime(dDate);
 
 	int i = 0;
-	FX_WCHAR c;
 	while (i < format.GetLength())
 	{
-		c = format.GetAt(i);
+	        FX_WCHAR c = format.GetAt(i);
+                int remaining = format.GetLength() - i - 1;
 		sPart = L"";
 		switch (c)
 		{
@@ -938,7 +938,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 			case 'M':
 			case 's':
 			case 't':
-				if (format.GetAt(i+1) != c)
+				if (remaining == 0 || format.GetAt(i+1) != c)
 				{
 					switch (c)
 					{
@@ -963,13 +963,13 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 						case 's':
 							sPart.Format((FX_LPCWSTR)L"%d",nSec);
 							break;
-						case 't':				
+						case 't':
 							sPart += nHour>12?'p':'a';
 							break;
-					}					
+					}
 					i++;
 				}
-				else if (format.GetAt(i+1) == c && format.GetAt(i+2) != c)
+				else if (remaining == 1 || format.GetAt(i+2) != c)
 				{
 					switch (c)
 					{
@@ -994,14 +994,14 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 						case 's':
 							sPart.Format((FX_LPCWSTR)L"%02d",nSec);
 							break;
-						case 't':							
+						case 't':
 							sPart = nHour>12? (FX_LPCWSTR)L"pm": (FX_LPCWSTR)L"am";
 							break;
-					}			
+					}
 					i+=2;
 				}
-				else if (format.GetAt(i+1) == c && format.GetAt(i+2) == c && format.GetAt(i+3) != c)
-				{		
+				else if (remaining == 2 || format.GetAt(i+3) != c)
+				{
 					switch (c)
 					{
 						case 'm':
@@ -1015,16 +1015,16 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 							sPart += c;
 							sPart += c;
 							break;
-					}					
+					}
 				}
-				else if (format.GetAt(i+1) == c && format.GetAt(i+2) == c && format.GetAt(i+3) == c && format.GetAt(i+4) != c)
+				else if (remaining == 3 || format.GetAt(i+4) != c)
 				{
 					switch (c)
 					{
 						case 'y':
 							sPart.Format((FX_LPCWSTR)L"%04d",nYear);
 							i += 4;
-							break;	
+							break;
 						case 'm':
 							i+=4;
 							if (nMonth > 0&&nMonth <= 12)
@@ -1037,20 +1037,20 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 							sPart += c;
 							sPart += c;
 							break;
-					}					
+					}
 				}
 				else
 				{
 					i++;
 					sPart += c;
 				}
-				break;			
+				break;
 			default:
 				i++;
 				sPart += c;
 				break;
 		}
-		
+
 		sRet += sPart;
 	}
 
