@@ -464,7 +464,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 #endif
 	}
 	else
-	pContext->m_pDevice = FX_NEW CFX_WindowsDevice(dc);
+	    pContext->m_pDevice = FX_NEW CFX_WindowsDevice(dc);
 	if (flags & FPDF_NO_CATCH)
 		Func_RenderPage(pContext, page, start_x, start_y, size_x, size_y, rotate, flags,TRUE,NULL);
 	else {
@@ -485,7 +485,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 				pDst->Create(pBitmap->GetWidth(), pBitmap->GetHeight(),FXDIB_Rgb32);
 				FXSYS_memcpy(pDst->GetBuffer(), pBitmap->GetBuffer(), pBitmap->GetPitch()*pBitmap->GetHeight());
 //				WinDC.SetDIBits(pDst,0,0);
-				WinDC.StretchDIBits(pDst,0,0,size_x*2,size_y*2);
+				WinDC.StretchDIBits(pDst,0,0,size_x,size_y);
 				delete pDst;
  			}
  			else
