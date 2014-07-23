@@ -12,7 +12,6 @@ CFX_BasicArray::CFX_BasicArray(int unit_size, IFX_Allocator* pAllocator)
     , m_pData(NULL)
     , m_nSize(0)
     , m_nMaxSize(0)
-    , m_nGrowBy(0)
 {
     if (unit_size < 0 || unit_size > (1 << 28)) {
         m_nUnitSize = 4;
@@ -24,7 +23,7 @@ CFX_BasicArray::~CFX_BasicArray()
 {
     FX_Allocator_Free(m_pAllocator, m_pData);
 }
-FX_BOOL CFX_BasicArray::SetSize(int nNewSize, int nGrowBy)
+FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
 {
     if (nNewSize <= 0) {
         FX_Free(m_pData);
@@ -32,8 +31,6 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize, int nGrowBy)
         m_nSize = m_nMaxSize = 0;
         return 0 == nNewSize;
     }
-
-    m_nGrowBy = nGrowBy >= 0 ? nGrowBy : m_nGrowBy;
 
     if (m_pData == NULL) {
         base::CheckedNumeric<int> totalSize = nNewSize;
@@ -55,18 +52,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize, int nGrowBy)
         }
         m_nSize = nNewSize;
     } else {
-        int nGrowBy = m_nGrowBy;
-        if (nGrowBy == 0) {
-            nGrowBy = m_nSize / 8;
-            nGrowBy = (nGrowBy < 4) ? 4 : ((nGrowBy > 1024) ? 1024 : nGrowBy);
-        }
-        int nNewMax;
-        if (nNewSize < m_nMaxSize + nGrowBy) {
-            nNewMax = m_nMaxSize + nGrowBy;
-        } else {
-            nNewMax = nNewSize;
-        }
-
+        int nNewMax = nNewSize < m_nMaxSize ? m_nMaxSize : nNewSize;
         base::CheckedNumeric<int> totalSize = nNewMax;
         totalSize *= m_nUnitSize;
         if (!totalSize.IsValid() || nNewMax < m_nSize) {
@@ -88,7 +74,7 @@ FX_BOOL CFX_BasicArray::Append(const CFX_BasicArray& src)
     int nOldSize = m_nSize;
     base::CheckedNumeric<int> newSize = m_nSize;
     newSize += src.m_nSize;
-    if (m_nUnitSize != src.m_nUnitSize || !newSize.IsValid() || !SetSize(newSize.ValueOrDie(), -1)) {
+    if (m_nUnitSize != src.m_nUnitSize || !newSize.IsValid() || !SetSize(newSize.ValueOrDie())) {
         return FALSE;
     }
 
@@ -97,7 +83,7 @@ FX_BOOL CFX_BasicArray::Append(const CFX_BasicArray& src)
 }
 FX_BOOL CFX_BasicArray::Copy(const CFX_BasicArray& src)
 {
-    if (!SetSize(src.m_nSize, -1)) {
+    if (!SetSize(src.m_nSize)) {
         return FALSE;
     }
     FXSYS_memcpy32(m_pData, src.m_pData, src.m_nSize * m_nUnitSize);
@@ -109,12 +95,12 @@ FX_LPBYTE CFX_BasicArray::InsertSpaceAt(int nIndex, int nCount)
         return NULL;
     }
     if (nIndex >= m_nSize) {
-        if (!SetSize(nIndex + nCount, -1)) {
+        if (!SetSize(nIndex + nCount)) {
             return NULL;
         }
     } else {
         int nOldSize = m_nSize;
-        if (!SetSize(m_nSize + nCount, -1)) {
+        if (!SetSize(m_nSize + nCount)) {
             return NULL;
         }
         FXSYS_memmove32(m_pData + (nIndex + nCount)*m_nUnitSize, m_pData + nIndex * m_nUnitSize,
