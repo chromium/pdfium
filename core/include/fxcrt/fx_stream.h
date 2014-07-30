@@ -30,6 +30,7 @@ FX_DEFINEHANDLE(FX_HFILE)
 #endif
 #define FX_FILESIZE			off_t
 #endif
+typedef base::CheckedNumeric<FX_FILESIZE>    FX_SAFE_FILESIZE;
 #define FX_GETBYTEOFFSET32(a)	0
 #define FX_GETBYTEOFFSET40(a)	0
 #define FX_GETBYTEOFFSET48(a)	0

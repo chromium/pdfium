@@ -6,6 +6,7 @@
 
 #ifndef _FXCRT_EXTENSION_IMP_
 #define _FXCRT_EXTENSION_IMP_
+
 class IFXCRT_FileAccess
 {
 public:
@@ -69,9 +70,17 @@ public:
     }
     virtual FX_BOOL				SetRange(FX_FILESIZE offset, FX_FILESIZE size)
     {
-        if (offset < 0 || offset + size > m_pFile->GetSize()) {
+        if (offset < 0 || size < 0) {
             return FALSE;
         }
+     
+        FX_SAFE_FILESIZE pos = size;
+        pos += offset;
+
+        if (!pos.IsValid() || pos.ValueOrDie() >= m_pFile->GetSize()) {
+            return FALSE;
+        }
+
         m_nOffset = offset, m_nSize = size;
         m_bUseRange = TRUE;
         m_pFile->SetPosition(m_nOffset);
@@ -83,13 +92,18 @@ public:
     }
     virtual FX_BOOL				ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
     {
+        if (m_bUseRange && offset < 0) {
+            return FALSE;
+        }
+        FX_SAFE_FILESIZE pos = offset;
+
         if (m_bUseRange) {
-            if (offset + size > (size_t)GetSize()) {
+            pos += m_nOffset;
+            if (!pos.IsValid() || pos.ValueOrDie() >= (size_t)GetSize()) {
                 return FALSE;
             }
-            offset += m_nOffset;
         }
-        return (FX_BOOL)m_pFile->ReadPos(buffer, size, offset);
+        return (FX_BOOL)m_pFile->ReadPos(buffer, size, pos.ValueOrDie());
     }
     virtual size_t				ReadBlock(void* buffer, size_t size)
     {
@@ -194,7 +208,12 @@ public:
     }
     virtual FX_BOOL				SetRange(FX_FILESIZE offset, FX_FILESIZE size)
     {
-        if (offset < 0 || (size_t)(offset + size) > m_nCurSize) {
+        if (offset < 0 || size < 0) {
+            return FALSE;
+        }
+        FX_SAFE_FILESIZE range = size;
+        range += offset;
+        if (!range.IsValid() || range.ValueOrDie() >= m_nCurSize) {
             return FALSE;
         }
         m_nOffset = (size_t)offset, m_nSize = (size_t)size;
@@ -211,10 +230,17 @@ public:
         if (!buffer || !size) {
             return FALSE;
         }
+
+        FX_SAFE_FILESIZE safeOffset = offset;
         if (m_bUseRange) {
             offset += (FX_FILESIZE)m_nOffset;
         }
-        if ((size_t)offset + size > m_nCurSize) {
+
+        offset = safeOffset.ValueOrDie();
+
+        FX_SAFE_SIZET newPos = size;
+        newPos += offset;
+        if (!newPos.IsValid() || newPos.ValueOrDefault(0) == 0 || newPos.ValueOrDie() >= m_nCurSize) {
             return FALSE;
         }
         m_nCurPos = (size_t)offset + size;
@@ -263,7 +289,12 @@ public:
             offset += (FX_FILESIZE)m_nOffset;
         }
         if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
-            m_nCurPos = (size_t)offset + size;
+            FX_SAFE_SIZET newPos = size; 
+            newPos += offset;
+            if (!newPos.IsValid())
+                return FALSE;
+
+            m_nCurPos = newPos.ValueOrDie();
             if (m_nCurPos > m_nTotalSize) {
                 IFX_Allocator* pAllocator = m_Blocks.m_pAllocator;
                 m_nTotalSize = (m_nCurPos + m_nGrowSize - 1) / m_nGrowSize * m_nGrowSize;
@@ -284,7 +315,14 @@ public:
             }
             return TRUE;
         }
-        if (!ExpandBlocks((size_t)offset + size)) {
+
+        FX_SAFE_SIZET newPos = size;
+        newPos += offset;
+        if (!newPos.IsValid()) {
+            return FALSE;
+        }
+
+        if (!ExpandBlocks(newPos.ValueOrDie())) {
             return FALSE;
         }
         m_nCurPos = (size_t)offset + size;

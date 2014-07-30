@@ -9,7 +9,7 @@
 #include "../include/fsdk_rendercontext.h"
 #include "../include/fpdf_progressive.h"
 #include "../include/fpdf_ext.h"
-
+#include "../../third_party/numerics/safe_conversions_impl.h"
 
 CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
 {
@@ -35,18 +35,27 @@ FX_BOOL CPDF_CustomAccess::GetByte(FX_DWORD pos, FX_BYTE& ch)
 
 FX_BOOL CPDF_CustomAccess::GetBlock(FX_DWORD pos, FX_LPBYTE pBuf, FX_DWORD size)
 {
-	if (pos + size > m_FileAccess.m_FileLen) return FALSE;
+        FX_SAFE_DWORD newPos = size;
+        newPos += pos;
+	if (!newPos.IsValid() || newPos.ValueOrDie() >= m_FileAccess.m_FileLen) {
+            return FALSE;
+        }
+
 	return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, pos, pBuf, size);
 }
 
 FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
 {
-	//	m_FileAccess = *pFileAccess;
-	//	m_BufferOffset = (FX_DWORD)-1;
-	if (offset + size > m_FileAccess.m_FileLen) return FALSE;
-	return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,(FX_LPBYTE) buffer, size);
+        if (offset < 0) {
+            return FALSE;
+        }
+        FX_SAFE_FILESIZE newPos = base::checked_cast<FX_FILESIZE, size_t>(size);
+        newPos += offset;
+	if (!newPos.IsValid() || newPos.ValueOrDie() >= m_FileAccess.m_FileLen) {
+            return FALSE;
+        }
 
-	//	return FALSE;
+	return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,(FX_LPBYTE) buffer, size);
 }
 
 //0 bit: FPDF_POLICY_MACHINETIME_ACCESS
@@ -298,8 +307,15 @@ public:
 	virtual FX_FILESIZE		GetSize() {return m_size;}
 	virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) 
 	{
-		if(offset+size > (FX_DWORD)m_size) return FALSE;
+                if (offset < 0) {
+                    return FALSE;
+                }
+
+                FX_SAFE_FILESIZE newPos = base::checked_cast<FX_FILESIZE, size_t>(size);
+                newPos += offset;
+                if (!newPos.IsValid() || newPos.ValueOrDie() >= (FX_DWORD)m_size) return FALSE;
 		FXSYS_memcpy(buffer, m_pBuf+offset, size);
+
 		return TRUE;
 	}
 private:

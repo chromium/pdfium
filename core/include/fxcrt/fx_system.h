@@ -275,5 +275,18 @@ int			FXSYS_round(FX_FLOAT f);
 #define		FXSYS_sqrt2(a, b) (FX_FLOAT)FXSYS_sqrt((a)*(a) + (b)*(b))
 #ifdef __cplusplus
 };
+
+#include "../../../third_party/numerics/safe_math.h"
+typedef base::CheckedNumeric<FX_DWORD> 		FX_SAFE_DWORD;
+typedef base::CheckedNumeric<FX_INT32> 		FX_SAFE_INT;
+typedef base::CheckedNumeric<size_t>            FX_SAFE_SIZET;
+#if defined(__clang__) || _MSC_VER >= 1700
+#define FX_FINAL final
+#elif defined(__GNUC__) && __cplusplus >= 201103 && \
+      (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) >= 40700
+#define FX_FINAL final
+#else
+#define FX_FINAL
+#endif
 #endif
 #endif
