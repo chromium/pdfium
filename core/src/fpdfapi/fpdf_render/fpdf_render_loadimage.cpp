@@ -1203,6 +1203,15 @@ void CPDF_DIBSource::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_
         FXSYS_memset32(dest_scan, 0xff, dest_Bpp * clip_width);
         return;
     }
+
+    FX_SAFE_INT32 max_src_x = clip_left;
+    max_src_x += clip_width - 1;
+    max_src_x *= src_width;
+    max_src_x /= dest_width;
+    if (!max_src_x.IsValid()) {
+        return;
+    }
+
     CFX_FixedBufGrow<FX_BYTE, 128> temp(orig_Bpp);
     if (bpc * m_nComponents == 1) {
         FX_DWORD set_argb = (FX_DWORD) - 1, reset_argb = 0;
