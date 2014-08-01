@@ -7,6 +7,11 @@
 #include "../../../include/fxge/fx_ge.h"
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
 #include <windows.h>
+#include <algorithm>
+namespace Gdiplus {
+  using std::min;
+  using std::max;
+}  // namespace Gdiplus
 #include <gdiplus.h>
 #include "../../../include/fxge/fx_ge_win32.h"
 #include "win32_int.h"
