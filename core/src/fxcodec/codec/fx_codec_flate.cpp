@@ -398,6 +398,7 @@ static void PNG_Predictor(FX_LPBYTE& data_buf, FX_DWORD& data_size,
     FX_LPBYTE pDestData = dest_buf;
     for (int row = 0; row < row_count; row ++) {
         FX_BYTE tag = pSrcData[0];
+        byte_cnt++;
         if (tag == 0) {
             int move_size = row_size;
             if ((row + 1) * (move_size + 1) > (int)data_size) {
@@ -406,7 +407,7 @@ static void PNG_Predictor(FX_LPBYTE& data_buf, FX_DWORD& data_size,
             FXSYS_memmove32(pDestData, pSrcData + 1, move_size);
             pSrcData += move_size + 1;
             pDestData += move_size;
-            byte_cnt += move_size + 1;
+            byte_cnt += move_size;
             continue;
         }
         for (int byte = 0; byte < row_size && byte_cnt < (int)data_size; byte ++) {
@@ -464,7 +465,6 @@ static void PNG_Predictor(FX_LPBYTE& data_buf, FX_DWORD& data_size,
         }
         pSrcData += row_size + 1;
         pDestData += row_size;
-        byte_cnt++;
     }
     FX_Free(data_buf);
     data_buf = dest_buf;
