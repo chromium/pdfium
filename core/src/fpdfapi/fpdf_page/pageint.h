@@ -415,29 +415,32 @@ class CPDF_DocPageData : public CFX_Object
 public:
     CPDF_DocPageData(CPDF_Document *pPDFDoc);
     ~CPDF_DocPageData();
-    void					Clear(FX_BOOL bRelease = FALSE);
-    CPDF_Font*				GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnly);
-    CPDF_Font*				GetStandardFont(FX_BSTR fontName, CPDF_FontEncoding* pEncoding);
-    void					ReleaseFont(CPDF_Dictionary* pFontDict);
-    CPDF_ColorSpace*		GetColorSpace(CPDF_Object* pCSObj, CPDF_Dictionary* pResources);
-    CPDF_ColorSpace*		GetCopiedColorSpace(CPDF_Object* pCSObj);
-    void					ReleaseColorSpace(CPDF_Object* pColorSpace);
-    CPDF_Pattern*			GetPattern(CPDF_Object* pPatternObj, FX_BOOL bShading, const CFX_AffineMatrix* matrix);
-    void					ReleasePattern(CPDF_Object* pPatternObj);
-    CPDF_Image*				GetImage(CPDF_Object* pImageStream);
-    void					ReleaseImage(CPDF_Object* pImageStream);
-    CPDF_IccProfile*		GetIccProfile(CPDF_Stream* pIccProfileStream, FX_INT32 nComponents);
-    void					ReleaseIccProfile(CPDF_Stream* pIccProfileStream, CPDF_IccProfile* pIccProfile);
-    CPDF_StreamAcc*			GetFontFileStreamAcc(CPDF_Stream* pFontStream);
-    void					ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOOL bForce = FALSE);
-    CPDF_Document*			m_pPDFDoc;
-    CPDF_FontMap			m_FontMap;
-    CPDF_ColorSpaceMap		m_ColorSpaceMap;
-    CPDF_PatternMap			m_PatternMap;
-    CPDF_ImageMap			m_ImageMap;
-    CPDF_IccProfileMap		m_IccProfileMap;
-    CFX_MapByteStringToPtr	m_HashProfileMap;
-    CPDF_FontFileMap		m_FontFileMap;
+    void                        Clear(FX_BOOL bRelease = FALSE);
+    CPDF_Font*                  GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnly);
+    CPDF_Font*                  GetStandardFont(FX_BSTR fontName, CPDF_FontEncoding* pEncoding);
+    void                        ReleaseFont(CPDF_Dictionary* pFontDict);
+    CPDF_ColorSpace*            GetColorSpace(CPDF_Object* pCSObj, CPDF_Dictionary* pResources);
+    CPDF_ColorSpace*            GetCopiedColorSpace(CPDF_Object* pCSObj);
+    void                        ReleaseColorSpace(CPDF_Object* pColorSpace);
+    CPDF_Pattern*               GetPattern(CPDF_Object* pPatternObj, FX_BOOL bShading, const CFX_AffineMatrix* matrix);
+    void                        ReleasePattern(CPDF_Object* pPatternObj);
+    CPDF_Image*                 GetImage(CPDF_Object* pImageStream);
+    void                        ReleaseImage(CPDF_Object* pImageStream);
+    CPDF_IccProfile*            GetIccProfile(CPDF_Stream* pIccProfileStream, FX_INT32 nComponents);
+    void                        ReleaseIccProfile(CPDF_Stream* pIccProfileStream, CPDF_IccProfile* pIccProfile);
+    CPDF_StreamAcc*             GetFontFileStreamAcc(CPDF_Stream* pFontStream);
+    void                        ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOOL bForce = FALSE);
+    FX_BOOL                     IsForceClear() const {return m_bForceClear;}
+
+    CPDF_Document*              m_pPDFDoc;
+    CPDF_FontMap                m_FontMap;
+    CPDF_ColorSpaceMap          m_ColorSpaceMap;
+    CPDF_PatternMap             m_PatternMap;
+    CPDF_ImageMap               m_ImageMap;
+    CPDF_IccProfileMap          m_IccProfileMap;
+    CFX_MapByteStringToPtr      m_HashProfileMap;
+    CPDF_FontFileMap            m_FontFileMap;
+    FX_BOOL                     m_bForceClear;
 };
 class CPDF_Function : public CFX_Object
 {

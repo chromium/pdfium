@@ -220,6 +220,8 @@ public:
 
     CPDF_Font*			m_pFont;
 
+    CPDF_Document*		m_pDocument;
+
     FX_FLOAT			m_FontSize;
 
     FX_FLOAT			m_CharSpace;
