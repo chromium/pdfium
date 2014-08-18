@@ -754,10 +754,6 @@ CPDF_IndexedCS::~CPDF_IndexedCS()
     if (m_pCompMinMax) {
         FX_Free(m_pCompMinMax);
     }
-    CPDF_ColorSpace* pCS = m_pBaseCS;
-    if (pCS && m_pDocument) {
-        m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
-    }
 }
 FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
 {
@@ -837,10 +833,6 @@ CPDF_PatternCS::CPDF_PatternCS()
 }
 CPDF_PatternCS::~CPDF_PatternCS()
 {
-    CPDF_ColorSpace* pCS = m_pBaseCS;
-    if (pCS && m_pDocument) {
-        m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
-    }
 }
 FX_BOOL CPDF_PatternCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
 {
