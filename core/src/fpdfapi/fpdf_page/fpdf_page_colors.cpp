@@ -843,6 +843,9 @@ FX_BOOL CPDF_PatternCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
     CPDF_DocPageData* pDocPageData = pDoc->GetPageData();
     m_pBaseCS = pDocPageData->GetColorSpace(pBaseCS, NULL);
     if (m_pBaseCS) {
+        if (m_pBaseCS->GetFamily() == PDFCS_PATTERN) {
+            return FALSE;
+        }
         m_nComponents = m_pBaseCS->CountComponents() + 1;
         if (m_pBaseCS->CountComponents() > MAX_PATTERN_COLORCOMPS) {
             return FALSE;
@@ -855,9 +858,11 @@ FX_BOOL CPDF_PatternCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
 FX_BOOL CPDF_PatternCS::GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const
 {
     if (m_pBaseCS) {
+        ASSERT(m_pBaseCS->GetFamily() != PDFCS_PATTERN);
         PatternValue* pvalue = (PatternValue*)pBuf;
-        m_pBaseCS->GetRGB(pvalue->m_Comps, R, G, B);
-        return TRUE;
+        if (m_pBaseCS->GetRGB(pvalue->m_Comps, R, G, B)) {
+            return TRUE;
+        }
     }
     R = G = B = 0.75f;
     return FALSE;
