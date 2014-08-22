@@ -515,7 +515,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchDIBits(const CFX_DIBitmap* pBitmap1, int de
         int dest_width, int dest_height, FX_DWORD flags, void* pIccTransform)
 {
     CFX_DIBitmap* pBitmap = (CFX_DIBitmap*)pBitmap1;
-    if (pBitmap == NULL) {
+    if (pBitmap == NULL || dest_width == 0  || dest_height == 0) {
         return FALSE;
     }
     if ((pBitmap->IsCmykImage() || pIccTransform) &&
@@ -549,7 +549,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1, int d
         int alpha_flag, void* pIccTransform)
 {
     CFX_DIBitmap* pBitmap = (CFX_DIBitmap*)pBitmap1;
-    if (pBitmap == NULL) {
+    if (pBitmap == NULL || dest_width == 0  || dest_height == 0) {
         return FALSE;
     }
     _Color2Argb(bitmap_color, bitmap_color, alpha_flag | (1 << 24), pIccTransform);
