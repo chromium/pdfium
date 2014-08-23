@@ -2729,7 +2729,7 @@ CPDF_DataAvail::CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRea
     m_dwPrevXRefOffset = 0;
     m_dwLastXRefOffset = 0;
     m_bDocAvail = FALSE;
-    m_bMainXRefLoad = FALSE;
+    m_bMainXRefLoadTried = FALSE;
     m_bDocAvail = FALSE;
     m_bLinearized = FALSE;
     m_bPagesLoad = FALSE;
@@ -4107,23 +4107,30 @@ FX_BOOL CPDF_DataAvail::CheckLinearizedData(IFX_DownloadHints* pHints)
     if (m_bLinearedDataOK) {
         return TRUE;
     }
-    if (!m_pFileAvail->IsDataAvail(m_dwLastXRefOffset, (FX_DWORD)(m_dwFileLen - m_dwLastXRefOffset))) {
-        pHints->AddSegment(m_dwLastXRefOffset, (FX_DWORD)(m_dwFileLen - m_dwLastXRefOffset));
-        return FALSE;
-    }
-    FX_DWORD dwRet = 0;
-    if (!m_bMainXRefLoad) {
-        dwRet = ((CPDF_Parser *)m_pDocument->GetParser())->LoadLinearizedMainXRefTable();
-        if (dwRet == PDFPARSE_ERROR_SUCCESS) {
-            if (!PreparePageItem()) {
-                return FALSE;
-            }
-            m_bMainXRefLoadedOK = TRUE;
+
+    if (!m_bMainXRefLoadTried) {
+        FX_SAFE_DWORD data_size = m_dwFileLen;
+        data_size -= m_dwLastXRefOffset;
+        if (!data_size.IsValid()) {
+            return FALSE;
         }
-        m_bMainXRefLoad = TRUE;
+        if (!m_pFileAvail->IsDataAvail(m_dwLastXRefOffset, data_size.ValueOrDie())) {
+            pHints->AddSegment(m_dwLastXRefOffset, data_size.ValueOrDie());
+            return FALSE;
+        }
+        FX_DWORD dwRet = ((CPDF_Parser *)m_pDocument->GetParser())->LoadLinearizedMainXRefTable();
+        m_bMainXRefLoadTried = TRUE;
+        if (dwRet != PDFPARSE_ERROR_SUCCESS) {
+            return FALSE;
+        }
+        if (!PreparePageItem()) {
+            return FALSE;
+        }
+        m_bMainXRefLoadedOK = TRUE;
+        m_bLinearedDataOK   = TRUE;
     }
-    m_bLinearedDataOK = TRUE;
-    return TRUE;
+
+    return m_bLinearedDataOK;
 }
 FX_BOOL CPDF_DataAvail::CheckPageAnnots(FX_INT32 iPage, IFX_DownloadHints* pHints)
 {
@@ -4351,7 +4358,7 @@ FX_INT32 CPDF_DataAvail::IsFormAvail(IFX_DownloadHints *pHints)
         if (!pAcroForm) {
             return PDFFORM_NOTEXIST;
         }
-        if (!m_bMainXRefLoad && !CheckLinearizedData(pHints)) {
+        if (!CheckLinearizedData(pHints)) {
             return PDFFORM_NOTAVAIL;
         }
         if (!m_objs_array.GetSize()) {
