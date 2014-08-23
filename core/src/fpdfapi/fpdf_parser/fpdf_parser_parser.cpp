@@ -3989,7 +3989,7 @@ FX_BOOL CPDF_DataAvail::CheckUnkownPageNode(FX_DWORD dwPageNo, CPDF_PageNode *pP
 FX_BOOL CPDF_DataAvail::CheckPageNode(CPDF_PageNode &pageNodes, FX_INT32 iPage, FX_INT32 &iCount, IFX_DownloadHints* pHints)
 {
     FX_INT32 iSize = pageNodes.m_childNode.GetSize();
-    if (!iSize) {
+    if (iSize <= 0 || iPage >= iSize) {
         m_docStatus = PDF_DATAAVAIL_ERROR;
         return FALSE;
     }

@@ -304,8 +304,14 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
   FORM_DoDocumentJSAction(form);
   FORM_DoDocumentOpenAction(form);
 
+  size_t rendered_pages = 0;
+  size_t bad_pages = 0;
   for (int i = 0; i < page_count; ++i) {
     FPDF_PAGE page = FPDF_LoadPage(doc, i);
+    if (!page) {
+        bad_pages ++;
+        continue;
+    }
     FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
     FORM_OnAfterLoadPage(page, form);
     FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_OPEN);
@@ -316,6 +322,8 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
     FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
 
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
+    rendered_pages ++;
+
     FPDF_FFLDraw(form, bitmap, page, 0, 0, width, height, 0, 0);
     int stride = FPDFBitmap_GetStride(bitmap);
     const char* buffer =
@@ -351,7 +359,8 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
   FPDF_CloseDocument(doc);
   FPDFAvail_Destroy(pdf_avail);
 
-  printf("Loaded, parsed and rendered %d pages.\n", page_count);
+  printf("Loaded, parsed and rendered %d pages.\n", rendered_pages);
+  printf("Skipped %d bad pages.\n", bad_pages);
 }
 
 int main(int argc, const char* argv[]) {
