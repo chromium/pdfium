@@ -51,6 +51,7 @@ CPDF_Parser::CPDF_Parser()
     m_dwFirstPageNo = 0;
     m_dwXrefStartObjNum = 0;
     m_bOwnFileRead = TRUE;
+    m_FileVersion = 0;
     m_bForceUseSecurityHandler = FALSE;
 }
 CPDF_Parser::~CPDF_Parser()
@@ -158,10 +159,21 @@ FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess, FX_BOOL bReParse, FX
     }
     m_Syntax.InitParser(pFileAccess, offset);
     FX_BYTE ch;
-    m_Syntax.GetCharAt(5, ch);
-    m_FileVersion = (ch - '0') * 10;
-    m_Syntax.GetCharAt(7, ch);
-    m_FileVersion += ch - '0';
+    if (!m_Syntax.GetCharAt(5, ch)) {
+        return PDFPARSE_ERROR_FORMAT;
+    }
+    if (ch >= '0' && ch <= '9') {
+        m_FileVersion = (ch - '0') * 10;
+    }
+    if (!m_Syntax.GetCharAt(7, ch)) {
+        return PDFPARSE_ERROR_FORMAT;
+    }
+    if (ch >= '0' && ch <= '9') {
+        m_FileVersion += ch - '0';
+    }
+    if (m_Syntax.m_FileLen <  m_Syntax.m_HeaderOffset + 9) {
+        return PDFPARSE_ERROR_FORMAT;
+    }
     m_Syntax.RestorePos(m_Syntax.m_FileLen - m_Syntax.m_HeaderOffset - 9);
     if (!bReParse) {
         m_pDocument = FX_NEW CPDF_Document(this);
