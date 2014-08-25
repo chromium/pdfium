@@ -564,6 +564,10 @@ int CPDF_DIBSource::CreateDecoder()
     if (decoder.IsEmpty()) {
         return 1;
     }
+    FX_DWORD bpc = GetValidBpc();
+    if (bpc == 0) {
+        return 0;
+    }
     FX_LPCBYTE src_data = m_pStreamAcc->GetData();
     FX_DWORD src_size = m_pStreamAcc->GetSize();
     const CPDF_Dictionary* pParams = m_pStreamAcc->GetImageParam();
@@ -574,17 +578,17 @@ int CPDF_DIBSource::CreateDecoder()
                      m_nComponents, pParams ? pParams->GetInteger(FX_BSTR("ColorTransform"), 1) : 1);
         if (NULL == m_pDecoder) {
             FX_BOOL bTransform = FALSE;
-            int comps, bpc;
+            int comps, tmp_bpc;
             ICodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
-            if (pJpegModule->LoadInfo(src_data, src_size, m_Width, m_Height, comps, bpc, bTransform)) {
+            if (pJpegModule->LoadInfo(src_data, src_size, m_Width, m_Height, comps, tmp_bpc, bTransform)) {
                 m_nComponents = comps;
-                m_bpc = bpc;
+                m_bpc = bpc = tmp_bpc;
                 m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(src_data, src_size, m_Width, m_Height,
                              m_nComponents, bTransform);
             }
         }
     } else if (decoder == FX_BSTRC("FlateDecode")) {
-        m_pDecoder = FPDFAPI_CreateFlateDecoder(src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc, pParams);
+        m_pDecoder = FPDFAPI_CreateFlateDecoder(src_data, src_size, m_Width, m_Height, m_nComponents, bpc, pParams);
     } else if (decoder == FX_BSTRC("JPXDecode")) {
         LoadJpxBitmap();
         return m_pCachedBitmap != NULL ? 1 : 0;
@@ -598,12 +602,26 @@ int CPDF_DIBSource::CreateDecoder()
         m_Status = 1;
         return 2;
     } else if (decoder == FX_BSTRC("RunLengthDecode")) {
-        m_pDecoder = CPDF_ModuleMgr::Get()->GetCodecModule()->GetBasicModule()->CreateRunLengthDecoder(src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc);
+        m_pDecoder = CPDF_ModuleMgr::Get()->GetCodecModule()->GetBasicModule()->CreateRunLengthDecoder(src_data, src_size, m_Width, m_Height, m_nComponents, bpc);
     }
     if (m_pDecoder) {
-        int requested_pitch = (m_Width * m_nComponents * m_bpc + 7) / 8;
-        int provided_pitch = (m_pDecoder->GetWidth() * m_pDecoder->CountComps() * m_pDecoder->GetBPC() + 7) / 8;
-        if (provided_pitch < requested_pitch) {
+        FX_SAFE_DWORD requested_pitch = bpc;
+        requested_pitch *= m_nComponents;
+        requested_pitch *= m_Width;
+        requested_pitch += 7;
+        requested_pitch /= 8;
+        if (!requested_pitch.IsValid()) {
+            return 0;
+        }
+        FX_SAFE_DWORD provided_pitch = m_pDecoder->GetBPC();
+        provided_pitch *= m_pDecoder->CountComps();
+        provided_pitch *= m_pDecoder->GetWidth();
+        provided_pitch += 7;
+        provided_pitch /= 8;
+        if (!provided_pitch.IsValid()) {
+            return 0;
+        }
+        if (provided_pitch.ValueOrDie() < requested_pitch.ValueOrDie()) {
             return 0;
         }
         return 1;
