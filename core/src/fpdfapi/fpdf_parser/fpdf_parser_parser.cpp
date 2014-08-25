@@ -1509,6 +1509,7 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess, FX_DWORD offset
         CPDF_Object *pLen = m_pLinearized->GetDict()->GetElement(FX_BSTRC("L"));
         if (!pLen) {
             m_pLinearized->Release();
+            m_pLinearized = NULL;
             return FALSE;
         }
         if (pLen->GetInteger() != (int)pFileAccess->GetSize()) {
