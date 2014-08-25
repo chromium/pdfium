@@ -134,7 +134,7 @@ public:
 
     CPDF_StreamAcc*			LoadFontFile(CPDF_Stream* pStream);
 
-    CPDF_IccProfile*		LoadIccProfile(CPDF_Stream* pStream, int nComponents);
+    CPDF_IccProfile*		LoadIccProfile(CPDF_Stream* pStream);
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 

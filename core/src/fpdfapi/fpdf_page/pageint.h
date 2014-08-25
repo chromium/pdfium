@@ -426,7 +426,7 @@ public:
     void                        ReleasePattern(CPDF_Object* pPatternObj);
     CPDF_Image*                 GetImage(CPDF_Object* pImageStream);
     void                        ReleaseImage(CPDF_Object* pImageStream);
-    CPDF_IccProfile*            GetIccProfile(CPDF_Stream* pIccProfileStream, FX_INT32 nComponents);
+    CPDF_IccProfile*            GetIccProfile(CPDF_Stream* pIccProfileStream);
     void                        ReleaseIccProfile(CPDF_Stream* pIccProfileStream, CPDF_IccProfile* pIccProfile);
     CPDF_StreamAcc*             GetFontFileStreamAcc(CPDF_Stream* pFontStream);
     void                        ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOOL bForce = FALSE);
@@ -468,9 +468,11 @@ protected:
 class CPDF_IccProfile : public CFX_Object
 {
 public:
-    CPDF_IccProfile(FX_LPCBYTE pData, FX_DWORD dwSize, int nComponents);
+    CPDF_IccProfile(FX_LPCBYTE pData, FX_DWORD dwSize);
     ~CPDF_IccProfile();
+    FX_INT32 GetComponents() const { return m_nSrcComponents; }
     FX_BOOL					m_bsRGB;
+    FX_INT32                m_nSrcComponents;
     FX_LPVOID				m_pTransform;
 };
 class CPDF_DeviceCS : public CPDF_ColorSpace
