@@ -267,11 +267,11 @@ public:
                                      ) = 0;
 
 
-    virtual FX_LPVOID	CreateTransform_sRGB(FX_LPCBYTE pProfileData, unsigned int dwProfileSize, int nComponents, int intent = 0,
+    virtual FX_LPVOID	CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, FX_INT32* nComponents, FX_INT32 intent = 0,
             FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT) = 0;
 
-    virtual FX_LPVOID	CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, unsigned int dwSrcProfileSize, int nSrcComponents,
-            FX_LPCBYTE pDstProfileData, unsigned int dwDstProfileSize, int intent = 0,
+    virtual FX_LPVOID	CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, FX_INT32* nSrcComponents,
+            FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, FX_INT32 intent = 0,
             FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT,
             FX_DWORD dwDstFormat = Icc_FORMAT_DEFAULT
                                           ) = 0;
