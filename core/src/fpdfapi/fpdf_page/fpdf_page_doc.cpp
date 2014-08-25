@@ -107,9 +107,9 @@ CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj, FX_BOOL bShad
 {
     return GetValidatePageData()->GetPattern(pPatternObj, bShading, matrix);
 }
-CPDF_IccProfile* CPDF_Document::LoadIccProfile(CPDF_Stream* pStream, int nComponents)
+CPDF_IccProfile* CPDF_Document::LoadIccProfile(CPDF_Stream* pStream)
 {
-    return GetValidatePageData()->GetIccProfile(pStream, nComponents);
+    return GetValidatePageData()->GetIccProfile(pStream);
 }
 CPDF_Image* CPDF_Document::LoadImageF(CPDF_Object* pObj)
 {
@@ -543,7 +543,7 @@ void CPDF_DocPageData::ReleaseImage(CPDF_Object* pImageStream)
     }
     PDF_DocPageData_Release<FX_DWORD, CPDF_Image*>(m_ImageMap, pImageStream->GetObjNum(), NULL);
 }
-CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream, FX_INT32 nComponents)
+CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream)
 {
     if (!pIccProfileStream) {
         return NULL;
@@ -563,7 +563,7 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream,
         ipData->m_nCount++;
         return ipData->m_Obj;
     }
-    CPDF_IccProfile* pProfile = FX_NEW CPDF_IccProfile(stream.GetData(), stream.GetSize(), nComponents);
+    CPDF_IccProfile* pProfile = FX_NEW CPDF_IccProfile(stream.GetData(), stream.GetSize());
     if (!pProfile) {
         return NULL;
     }
