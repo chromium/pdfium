@@ -581,7 +581,10 @@ CJPX_Decoder::~CJPX_Decoder()
 }
 FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size)
 {
-    opj_dparameters_t parameters;
+    static const unsigned char szJP2Header[] = { 0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a };
+    if (!src_data || src_size < sizeof(szJP2Header)) {
+        return FALSE;
+    }
     image = NULL;
     m_SrcData = src_data;
     m_SrcSize = src_size;
@@ -593,10 +596,11 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size)
     if (l_stream == NULL) {
         return FALSE;
     }
+    opj_dparameters_t parameters;
     opj_set_default_decoder_parameters(&parameters);
     parameters.decod_format = 0;
     parameters.cod_format = 3;
-    if(FXSYS_memcmp32(m_SrcData, "\x00\x00\x00\x0c\x6a\x50\x20\x20\x0d\x0a\x87\x0a", 12) == 0) {
+    if(FXSYS_memcmp32(m_SrcData, szJP2Header, sizeof(szJP2Header)) == 0) {
         l_codec = opj_create_decompress(OPJ_CODEC_JP2);
         parameters.decod_format = 1;
     } else {
