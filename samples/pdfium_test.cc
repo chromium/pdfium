@@ -359,8 +359,8 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
   FPDF_CloseDocument(doc);
   FPDFAvail_Destroy(pdf_avail);
 
-  printf("Loaded, parsed and rendered %d pages.\n", rendered_pages);
-  printf("Skipped %d bad pages.\n", bad_pages);
+  printf("Loaded, parsed and rendered %zu pages.\n", rendered_pages);
+  printf("Skipped %zu bad pages.\n", bad_pages);
 }
 
 int main(int argc, const char* argv[]) {
