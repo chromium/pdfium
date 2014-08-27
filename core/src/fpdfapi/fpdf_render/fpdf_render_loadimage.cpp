@@ -1397,7 +1397,7 @@ void CPDF_DIBSource::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_
                 if (m_pColorSpace) {
                     FX_BYTE color[4];
                     if (!m_bDefaultDecode) {
-                        for (int i = 0; i < orig_Bpp; i ++) {
+                        for (int i = 0; i < m_nComponents; i ++) {
                             int color_value = (int)((m_pCompData[i].m_DecodeMin + m_pCompData[i].m_DecodeStep * (FX_FLOAT)pSrcPixel[i]) * 255.0f + 0.5f);
                             temp[i] = color_value > 255 ? 255 : (color_value < 0 ? 0 : color_value);
                         }
