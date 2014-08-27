@@ -524,17 +524,19 @@ static void TIFF_PredictorEncode(FX_LPBYTE& data_buf, FX_DWORD& data_size,
 static void TIFF_PredictLine(FX_LPBYTE dest_buf, int row_size, int BitsPerComponent, int Colors, int Columns)
 {
     if (BitsPerComponent == 1) {
-        int row_bits = BitsPerComponent * Colors * Columns;
+        int row_bits = FX_MIN(BitsPerComponent * Colors * Columns, row_size * 8);
+        int index_pre = 0;
+        int col_pre = 0;
         for(int i = 1; i < row_bits; i ++) {
             int col = i % 8;
             int index = i / 8;
-            int index_pre = (col == 0) ? (index - 1) : index;
-            int col_pre = (col == 0) ? 8 : col;
-            if( ((dest_buf[index] >> (7 - col)) & 1) ^ ((dest_buf[index_pre] >> (8 - col_pre)) & 1) ) {
+            if( ((dest_buf[index] >> (7 - col)) & 1) ^ ((dest_buf[index_pre] >> (7 - col_pre)) & 1) ) {
                 dest_buf[index] |= 1 << (7 - col);
             } else {
                 dest_buf[index] &= ~(1 << (7 - col));
             }
+            index_pre = index;
+            col_pre = col;
         }
         return;
     }
