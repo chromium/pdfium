@@ -253,19 +253,20 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
 }
 int	CPDF_DIBSource::ContinueToLoadMask()
 {
+    FX_DWORD bpc = GetValidBpc();
     if (m_bImageMask) {
         m_bpp = 1;
-        m_bpc = 1;
+        bpc = 1;
         m_nComponents = 1;
         m_AlphaFlag = 1;
-    } else if (m_bpc * m_nComponents == 1) {
+    } else if (bpc * m_nComponents == 1) {
         m_bpp = 1;
-    } else if (m_bpc * m_nComponents <= 8) {
+    } else if (bpc * m_nComponents <= 8) {
         m_bpp = 8;
     } else {
         m_bpp = 24;
     }
-    if (!m_bpc || !m_nComponents) {
+    if (!bpc || !m_nComponents) {
         return 0;
     }
     FX_SAFE_DWORD pitch = m_Width;
@@ -854,13 +855,17 @@ int CPDF_DIBSource::StartLoadMaskDIB()
 }
 void CPDF_DIBSource::LoadPalette()
 {
-    if (m_bpc * m_nComponents > 8) {
+    FX_DWORD bpc = GetValidBpc();
+    if (bpc == 0) {
+        return;
+    }
+    if (bpc * m_nComponents > 8) {
         return;
     }
     if (m_pColorSpace == NULL) {
         return;
     }
-    if (m_bpc * m_nComponents == 1) {
+    if (bpc * m_nComponents == 1) {
         if (m_bDefaultDecode && (m_Family == PDFCS_DEVICEGRAY || m_Family == PDFCS_DEVICERGB)) {
             return;
         }
@@ -884,16 +889,16 @@ void CPDF_DIBSource::LoadPalette()
         }
         return;
     }
-    if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY) && m_bpc == 8 && m_bDefaultDecode) {
+    if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY) && bpc == 8 && m_bDefaultDecode) {
     } else {
-        int palette_count = 1 << (m_bpc * m_nComponents);
+        int palette_count = 1 << (bpc * m_nComponents);
         CFX_FixedBufGrow<FX_FLOAT, 16> color_values(m_nComponents);
         FX_FLOAT* color_value = color_values;
         for (int i = 0; i < palette_count; i ++) {
             int color_data = i;
             for (FX_DWORD j = 0; j < m_nComponents; j ++) {
-                int encoded_component = color_data % (1 << m_bpc);
-                color_data /= 1 << m_bpc;
+                int encoded_component = color_data % (1 << bpc);
+                color_data /= 1 << bpc;
                 color_value[j] = m_pCompData[j].m_DecodeMin + m_pCompData[j].m_DecodeStep * encoded_component;
             }
             FX_FLOAT R = 0, G = 0, B = 0;
@@ -937,7 +942,7 @@ FX_DWORD CPDF_DIBSource::GetValidBpc() const
             }
         }
     }
-    if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8 && bpc != 12 && bpc != 16) {
+    if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8 && bpc != 16) {
         bpc = 0;
     }
 
