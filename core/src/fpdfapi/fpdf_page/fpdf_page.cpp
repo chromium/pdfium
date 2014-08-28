@@ -606,10 +606,6 @@ CPDF_ShadingObject::CPDF_ShadingObject()
 }
 CPDF_ShadingObject::~CPDF_ShadingObject()
 {
-    CPDF_ShadingPattern* pShading = m_pShading;
-    if (pShading && pShading->m_pDocument) {
-        pShading->m_pDocument->GetPageData()->ReleasePattern(pShading->m_pShadingObj);
-    }
 }
 void CPDF_ShadingObject::CopyData(const CPDF_PageObject* pSrc)
 {
