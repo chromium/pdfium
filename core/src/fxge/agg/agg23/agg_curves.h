@@ -63,14 +63,12 @@ class curve4_div : public CFX_Object
 {
 public:
     curve4_div() :
-        m_cusp_limit(0),
         m_count(0)
     {}
     curve4_div(FX_FLOAT x1, FX_FLOAT y1,
                FX_FLOAT x2, FX_FLOAT y2,
                FX_FLOAT x3, FX_FLOAT y3,
                FX_FLOAT x4, FX_FLOAT y4) :
-        m_cusp_limit(0),
         m_count(0)
     {
         init(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -134,7 +132,6 @@ private:
                           unsigned level);
     FX_FLOAT    m_distance_tolerance_square;
     FX_FLOAT    m_distance_tolerance_manhattan;
-    FX_FLOAT    m_cusp_limit;
     unsigned              m_count;
     pod_deque<point_type> m_points;
 };

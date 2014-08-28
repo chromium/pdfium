@@ -1317,8 +1317,6 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap, int dest_left, int dest_t
         }
         return;
     }
-    int src_pitch = pSrcBitmap->GetPitch();
-    FX_ARGB* src_pal = pSrcBitmap->GetPalette();
     FX_LPBYTE dest_buf = buffer + dest_top * pitch + dest_left * Bpp;
     if (dest_format == FXDIB_Rgb) {
         if (src_format == FXDIB_Rgb32) {
