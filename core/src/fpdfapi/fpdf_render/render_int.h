@@ -419,13 +419,13 @@ protected:
     void				LoadPalette();
     FX_BOOL				CreateDecoder();
     void				TranslateScanline24bpp(FX_LPBYTE dest_scan, FX_LPCBYTE src_scan) const;
-    FX_DWORD            GetValidBpc() const;
+    void                ValidateBpc();
     CPDF_Document*		m_pDocument;
     const CPDF_Stream*	m_pStream;
     CPDF_StreamAcc*		m_pStreamAcc;
     const CPDF_Dictionary*	m_pDict;
     CPDF_ColorSpace*	m_pColorSpace;
-    FX_DWORD			m_Family, m_bpc, m_nComponents, m_GroupFamily;
+    FX_DWORD			m_Family, m_bpc, m_bpc_orig, m_nComponents, m_GroupFamily;
     FX_BOOL				m_bLoadMask;
     FX_BOOL				m_bDefaultDecode, m_bImageMask, m_bColorKey;
     DIB_COMP_DATA*		m_pCompData;
