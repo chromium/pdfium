@@ -20,69 +20,59 @@ static void fx_info_callback(const char *msg, void *client_data)
 {
     (void)client_data;
 }
-typedef struct {
-    const unsigned char* src_data;
-    int					 src_size;
-    int					 offset;
-} decodeData;
-static OPJ_SIZE_T opj_read_from_memory (void * p_buffer, OPJ_SIZE_T p_nb_bytes,  decodeData* srcData)
+struct DecodeData {
+    unsigned char* src_data;
+    OPJ_SIZE_T     src_size;
+    OPJ_SIZE_T     offset;
+};
+static OPJ_SIZE_T opj_read_from_memory (void * p_buffer, OPJ_SIZE_T p_nb_bytes,  void* p_user_data)
 {
-    if(srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
+    DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
+    if (srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
         return -1;
     }
-    OPJ_SIZE_T readlength = p_nb_bytes;
-    OPJ_SIZE_T bufferLength = (OPJ_SIZE_T)(srcData->src_size - srcData->offset);
-    if(bufferLength <= 0) {
-        return 0;
-    }
-    if(bufferLength <= p_nb_bytes) {
-        readlength = bufferLength;
-    }
-    memcpy(p_buffer, &(srcData->src_data[srcData->offset]), readlength);
-    srcData->offset += (int)readlength;
+    OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
+    OPJ_SIZE_T readlength = p_nb_bytes < bufferLength ? p_nb_bytes : bufferLength;
+    memcpy(p_buffer, &srcData->src_data[srcData->offset], readlength);
+    srcData->offset += readlength;
     return readlength;
 }
-static OPJ_SIZE_T opj_write_from_memory (void * p_buffer, OPJ_SIZE_T p_nb_bytes, decodeData* srcData)
+static OPJ_SIZE_T opj_write_from_memory (void * p_buffer, OPJ_SIZE_T p_nb_bytes, void* p_user_data)
 {
-    if(srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
+    DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
+    if (srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
         return -1;
     }
-    OPJ_SIZE_T writeLength = p_nb_bytes;
-    OPJ_SIZE_T bufferLength = (OPJ_SIZE_T)(srcData->src_size - srcData->offset);
-    if(bufferLength <= p_nb_bytes) {
-        writeLength = bufferLength;
-    }
-    memcpy((void*&)(srcData->src_data[srcData->offset]), p_buffer, writeLength);
-    srcData->offset += (int)writeLength;
+    OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
+    OPJ_SIZE_T writeLength = p_nb_bytes < bufferLength ? p_nb_bytes : bufferLength;
+    memcpy(&srcData->src_data[srcData->offset], p_buffer, writeLength);
+    srcData->offset += writeLength;
     return writeLength;
 }
-static OPJ_OFF_T opj_skip_from_memory (OPJ_OFF_T p_nb_bytes, decodeData* srcData)
+static OPJ_OFF_T opj_skip_from_memory (OPJ_OFF_T p_nb_bytes, void* p_user_data)
 {
-    if(srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
+    DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
+    if (srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
         return -1;
     }
-    OPJ_OFF_T postion = srcData->offset + p_nb_bytes;
-    if(postion < 0 ) {
-        postion = 0;
-    } else if (postion > srcData->src_size) {
-    }
-    srcData->offset = (int)postion;
-    return p_nb_bytes;
+    OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
+    OPJ_SIZE_T skipLength = p_nb_bytes < bufferLength ? p_nb_bytes : bufferLength;
+    srcData->offset += skipLength;
+    return skipLength;
 }
-static OPJ_BOOL opj_seek_from_memory (OPJ_OFF_T p_nb_bytes, decodeData * srcData)
+static OPJ_BOOL opj_seek_from_memory (OPJ_OFF_T p_nb_bytes, void* p_user_data)
 {
-    if(srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
-        return -1;
+    DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
+    if (srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
+        return OPJ_FALSE;
     }
-    srcData->offset = (int)p_nb_bytes;
-    if(srcData->offset < 0) {
-        srcData->offset = 0;
-    } else if(srcData->offset > srcData->src_size) {
-        srcData->offset = srcData->src_size;
+    if (p_nb_bytes >= srcData->src_size) {
+        return OPJ_FALSE;
     }
+    srcData->offset = p_nb_bytes;
     return OPJ_TRUE;
 }
-opj_stream_t* fx_opj_stream_create_memory_stream (decodeData* data,	OPJ_SIZE_T p_size, 	OPJ_BOOL p_is_read_stream)
+opj_stream_t* fx_opj_stream_create_memory_stream (DecodeData* data,	OPJ_SIZE_T p_size, 	OPJ_BOOL p_is_read_stream)
 {
     opj_stream_t* l_stream = 00;
     if (!data || ! data->src_data || data->src_size <= 0 ) {
@@ -94,10 +84,10 @@ opj_stream_t* fx_opj_stream_create_memory_stream (decodeData* data,	OPJ_SIZE_T p
     }
     opj_stream_set_user_data_v3(l_stream, data, NULL);
     opj_stream_set_user_data_length(l_stream, data->src_size);
-    opj_stream_set_read_function(l_stream, (opj_stream_read_fn) opj_read_from_memory);
-    opj_stream_set_write_function(l_stream, (opj_stream_write_fn) opj_write_from_memory);
-    opj_stream_set_skip_function(l_stream, (opj_stream_skip_fn) opj_skip_from_memory);
-    opj_stream_set_seek_function(l_stream, (opj_stream_seek_fn) opj_seek_from_memory);
+    opj_stream_set_read_function(l_stream, opj_read_from_memory);
+    opj_stream_set_write_function(l_stream, opj_write_from_memory);
+    opj_stream_set_skip_function(l_stream, opj_skip_from_memory);
+    opj_stream_set_seek_function(l_stream, opj_seek_from_memory);
     return l_stream;
 }
 static void sycc_to_rgb(int offset, int upb, int y, int cb, int cr,
@@ -588,10 +578,10 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size)
     image = NULL;
     m_SrcData = src_data;
     m_SrcSize = src_size;
-    decodeData srcData;
+    DecodeData srcData;
     srcData.offset  = 0;
     srcData.src_size = src_size;
-    srcData.src_data = src_data;
+    srcData.src_data = const_cast<unsigned char*>(src_data);
     l_stream = fx_opj_stream_create_memory_stream(&srcData, OPJ_J2K_STREAM_CHUNK_SIZE, 1);
     if (l_stream == NULL) {
         return FALSE;
