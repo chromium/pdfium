@@ -165,6 +165,9 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     }
     m_pDocument = pDoc;
     m_pDict = pStream->GetDict();
+    if (m_pDict == NULL) {
+        return FALSE;
+    }
     m_pStream = pStream;
     m_Width = m_pDict->GetInteger(FX_BSTRC("Width"));
     m_Height = m_pDict->GetInteger(FX_BSTRC("Height"));
@@ -176,11 +179,9 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     if (!LoadColorInfo(m_pStream->GetObjNum() != 0 ? NULL : pFormResources, pPageResources)) {
         return FALSE;
     }
-
     if (m_bpc == 0 || m_nComponents == 0) {
         return FALSE;
     }
-
     FX_SAFE_DWORD src_pitch = m_bpc;
     src_pitch *= m_nComponents;
     src_pitch *= m_Width;
@@ -190,7 +191,6 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     if (!src_pitch.IsValid()) {
         return FALSE;
     }
-
     m_pStreamAcc = FX_NEW CPDF_StreamAcc;
     m_pStreamAcc->LoadAllData(pStream, FALSE, src_pitch.ValueOrDie(), TRUE);
     if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
@@ -215,7 +215,6 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     } else {
         m_bpp = 24;
     }
-
     FX_SAFE_DWORD pitch = m_Width;
     pitch *= m_bpp;
     pitch += 31;
@@ -223,7 +222,6 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     if (!pitch.IsValid()) {
         return FALSE;
     }
-  
     m_pLineBuf = FX_Alloc(FX_BYTE, pitch.ValueOrDie());
     if (m_pColorSpace && bStdCS) {
         m_pColorSpace->EnableStdConversion(TRUE);
@@ -239,7 +237,6 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
         if (!pitch.IsValid()) {
             return FALSE;
         }
-
         m_pMaskedLine = FX_Alloc(FX_BYTE, pitch.ValueOrDie());
     }
     m_Pitch = pitch.ValueOrDie();
@@ -317,11 +314,9 @@ int	CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc, const CPDF_Stream* p
     if (!LoadColorInfo(m_pStream->GetObjNum() != 0 ? NULL : pFormResources, pPageResources)) {
         return 0;
     }
-
     if (m_bpc == 0 || m_nComponents == 0) {
         return 0;
     }
-
     FX_SAFE_DWORD src_pitch = m_bpc;
     src_pitch *= m_nComponents;
     src_pitch *= m_Width;
@@ -331,16 +326,12 @@ int	CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc, const CPDF_Stream* p
     if (!src_pitch.IsValid()) {
         return 0;
     }
-
     m_pStreamAcc = FX_NEW CPDF_StreamAcc;
     m_pStreamAcc->LoadAllData(pStream, FALSE, src_pitch.ValueOrDie(), TRUE);
     if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
         return 0;
     }
     const CFX_ByteString& decoder = m_pStreamAcc->GetImageDecoder();
-    if (!decoder.IsEmpty() && decoder == FX_BSTRC("CCITTFaxDecode")) {
-        m_bpc = 1;
-    }
     int ret = CreateDecoder();
     if (ret != 1) {
         if (!ret) {
@@ -451,7 +442,6 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
 FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources)
 {
     m_bpc_orig = m_pDict->GetInteger(FX_BSTRC("BitsPerComponent"));
-    ValidateBpc();
     if (m_pDict->GetInteger("ImageMask")) {
         m_bImageMask = TRUE;
     }
@@ -505,6 +495,7 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dict
             m_nComponents = 4;
         }
     }
+    ValidateDictParam();
     m_pCompData = FX_Alloc(DIB_COMP_DATA, m_nComponents);
     if (m_bpc == 0) {
         return TRUE;
@@ -915,15 +906,16 @@ void CPDF_DIBSource::LoadPalette()
         }
     }
 }
-void CPDF_DIBSource::ValidateBpc()
+void CPDF_DIBSource::ValidateDictParam()
 {
     m_bpc = m_bpc_orig;
-	CPDF_Object * pFilter = m_pDict ? m_pDict->GetElementValue(FX_BSTRC("Filter")) : NULL;
+	CPDF_Object * pFilter = m_pDict->GetElementValue(FX_BSTRC("Filter"));
     if (pFilter) {
         if (pFilter->GetType() == PDFOBJ_NAME) {
             CFX_ByteString filter = pFilter->GetString();
             if (filter == FX_BSTRC("CCITTFaxDecode") || filter == FX_BSTRC("JBIG2Decode")) {
                 m_bpc = 1;
+                m_nComponents = 1;
             }
             if (filter == FX_BSTRC("RunLengthDecode") || filter == FX_BSTRC("DCTDecode")) {
                 m_bpc = 8;
@@ -933,6 +925,7 @@ void CPDF_DIBSource::ValidateBpc()
             if (pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("CCITTFacDecode") ||
                     pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("JBIG2Decode")) {
                 m_bpc = 1;
+                m_nComponents = 1;
             }
             if (pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("RunLengthDecode") ||
                     pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("DCTDecode")) {

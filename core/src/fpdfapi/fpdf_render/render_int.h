@@ -419,7 +419,7 @@ protected:
     void				LoadPalette();
     FX_BOOL				CreateDecoder();
     void				TranslateScanline24bpp(FX_LPBYTE dest_scan, FX_LPCBYTE src_scan) const;
-    void                ValidateBpc();
+    void                ValidateDictParam();
     CPDF_Document*		m_pDocument;
     const CPDF_Stream*	m_pStream;
     CPDF_StreamAcc*		m_pStreamAcc;
