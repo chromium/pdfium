@@ -496,55 +496,63 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dict
         }
     }
     ValidateDictParam();
-    m_pCompData = FX_Alloc(DIB_COMP_DATA, m_nComponents);
-    if (m_bpc == 0) {
-        return TRUE;
+    m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
+    if (m_pCompData == NULL) {
+        return FALSE;
+    }
+    return TRUE;
+}
+DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode, FX_BOOL& bColorKey)
+{
+    DIB_COMP_DATA* pCompData = FX_Alloc(DIB_COMP_DATA, m_nComponents);
+    if (pCompData == NULL) {
+        return NULL;
     }
     int max_data = (1 << m_bpc) - 1;
     CPDF_Array* pDecode = m_pDict->GetArray(FX_BSTRC("Decode"));
     if (pDecode) {
         for (FX_DWORD i = 0; i < m_nComponents; i ++) {
-            m_pCompData[i].m_DecodeMin = pDecode->GetNumber(i * 2);
+            pCompData[i].m_DecodeMin = pDecode->GetNumber(i * 2);
             FX_FLOAT max = pDecode->GetNumber(i * 2 + 1);
-            m_pCompData[i].m_DecodeStep = (max - m_pCompData[i].m_DecodeMin) / max_data;
+            pCompData[i].m_DecodeStep = (max - pCompData[i].m_DecodeMin) / max_data;
             FX_FLOAT def_value, def_min, def_max;
             m_pColorSpace->GetDefaultValue(i, def_value, def_min, def_max);
             if (m_Family == PDFCS_INDEXED) {
                 def_max = (FX_FLOAT)max_data;
             }
-            if (def_min != m_pCompData[i].m_DecodeMin || def_max != max) {
-                m_bDefaultDecode = FALSE;
+            if (def_min != pCompData[i].m_DecodeMin || def_max != max) {
+                bDefaultDecode = FALSE;
             }
         }
     } else {
         for (FX_DWORD i = 0; i < m_nComponents; i ++) {
             FX_FLOAT def_value;
-            m_pColorSpace->GetDefaultValue(i, def_value, m_pCompData[i].m_DecodeMin, m_pCompData[i].m_DecodeStep);
+            m_pColorSpace->GetDefaultValue(i, def_value, pCompData[i].m_DecodeMin, pCompData[i].m_DecodeStep);
             if (m_Family == PDFCS_INDEXED) {
-                m_pCompData[i].m_DecodeStep = (FX_FLOAT)max_data;
+                pCompData[i].m_DecodeStep = (FX_FLOAT)max_data;
             }
-            m_pCompData[i].m_DecodeStep = (m_pCompData[i].m_DecodeStep - m_pCompData[i].m_DecodeMin) / max_data;
+            pCompData[i].m_DecodeStep = (pCompData[i].m_DecodeStep - pCompData[i].m_DecodeMin) / max_data;
         }
     }
     if (!m_pDict->KeyExist(FX_BSTRC("SMask"))) {
         CPDF_Object* pMask = m_pDict->GetElementValue(FX_BSTRC("Mask"));
         if (pMask == NULL) {
-            return TRUE;
+            return pCompData;
         }
         if (pMask->GetType() == PDFOBJ_ARRAY) {
             CPDF_Array* pArray = (CPDF_Array*)pMask;
-            if (pArray->GetCount() >= m_nComponents * 2)
-                for (FX_DWORD i = 0; i < m_nComponents * 2; i ++) {
-                    if (i % 2) {
-                        m_pCompData[i / 2].m_ColorKeyMax = pArray->GetInteger(i);
-                    } else {
-                        m_pCompData[i / 2].m_ColorKeyMin = pArray->GetInteger(i);
-                    }
+            if (pArray->GetCount() >= m_nComponents * 2) {
+                for (FX_DWORD i = 0; i < m_nComponents; i++) {
+                    int min_num = pArray->GetInteger(i * 2);
+                    int max_num = pArray->GetInteger(i * 2 + 1);
+                    pCompData[i].m_ColorKeyMin = FX_MAX(min_num, 0);
+                    pCompData[i].m_ColorKeyMax = FX_MIN(max_num, max_data);
                 }
-            m_bColorKey = TRUE;
+            }
+            bColorKey = TRUE;
         }
     }
-    return TRUE;
+    return pCompData;
 }
 ICodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
         const CPDF_Dictionary* pParams);
@@ -572,7 +580,14 @@ int CPDF_DIBSource::CreateDecoder()
             int comps, bpc;
             ICodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
             if (pJpegModule->LoadInfo(src_data, src_size, m_Width, m_Height, comps, bpc, bTransform)) {
-                m_nComponents = comps;
+                if (m_nComponents != comps) {
+                    FX_Free(m_pCompData);
+                    m_nComponents = comps;
+                    m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
+                    if (m_pCompData == NULL) {
+                        return 0;
+                    }
+                }
                 m_bpc = bpc;
                 m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(src_data, src_size, m_Width, m_Height,
                              m_nComponents, bTransform);
@@ -1159,8 +1174,7 @@ FX_LPCBYTE CPDF_DIBSource::GetScanline(int line) const
             FX_LPBYTE alpha_channel = m_pMaskedLine + 3;
             for (int col = 0; col < m_Width; col ++) {
                 FX_LPCBYTE pPixel = pSrcLine + col * 3;
-                alpha_channel[col * 4] = (pPixel[0] < m_pCompData[0].m_ColorKeyMin ||
-                                          pPixel[0] > m_pCompData[0].m_ColorKeyMax ||
+                alpha_channel[col * 4] = (pPixel[0] < m_pCompData[0].m_ColorKeyMin || pPixel[0] > m_pCompData[0].m_ColorKeyMax ||
                                           pPixel[1] < m_pCompData[1].m_ColorKeyMin || pPixel[1] > m_pCompData[1].m_ColorKeyMax ||
                                           pPixel[2] < m_pCompData[2].m_ColorKeyMin || pPixel[2] > m_pCompData[2].m_ColorKeyMax) ? 0xff : 0;
             }
