@@ -808,6 +808,7 @@ static_library("javascript") {
   ]
   deps = [
     "//v8",
+    "//v8:v8_libplatform",
   ]
   forward_dependent_configs_from = [ "//v8" ]
 }
