@@ -116,7 +116,7 @@ static_library("pdfium") {
 }
 
 # Targets below this are only visible within this file.
-visibility = ":*"
+visibility = [ ":*" ]
 
 component("safemath") {
   sources = [
