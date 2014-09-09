@@ -165,7 +165,7 @@ class CPDF_ColorStateData : public CFX_Object
 {
 public:
 
-    CPDF_ColorStateData() {}
+    CPDF_ColorStateData() : m_FillColor(0), m_StrokeColor(0) {}
 
     CPDF_ColorStateData(const CPDF_ColorStateData& src);
 
