@@ -146,7 +146,7 @@ static void _DrawRadialShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2
                 }
             }
         }
-        FX_FLOAT R, G, B;
+        FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
         pCS->GetRGB(pResults, R, G, B);
         rgb_array[i] = FXARGB_TODIB(FXARGB_MAKE(alpha, FXSYS_round(R * 255), FXSYS_round(G * 255), FXSYS_round(B * 255)));
     }
@@ -275,7 +275,7 @@ static void _DrawFuncShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2Bi
                     }
                 }
             }
-            FX_FLOAT R, G, B;
+            FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
             pCS->GetRGB(pResults, R, G, B);
             dib_buf[column] = FXARGB_TODIB(FXARGB_MAKE(alpha, (FX_INT32)(R * 255), (FX_INT32)(G * 255), (FX_INT32)(B * 255)));
         }
