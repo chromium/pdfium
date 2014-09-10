@@ -1289,8 +1289,10 @@ void CPDF_Color::ReleaseBuffer()
         PatternValue* pvalue = (PatternValue*)m_pBuffer;
         CPDF_Pattern* pPattern = pvalue->m_pPattern;
         if (pPattern && pPattern->m_pDocument) {
-            pPattern->SaveColor(NULL);
-            pPattern->m_pDocument->GetPageData()->ReleasePattern(pPattern->m_pPatternObj);
+            CPDF_DocPageData *pPageData = pPattern->m_pDocument->GetPageData();
+            if (pPageData && !pPageData->IsForceClear()) {
+                pPageData->ReleasePattern(pPattern->m_pPatternObj);
+            }
         }
     }
     FX_Free(m_pBuffer);
@@ -1345,9 +1347,10 @@ void CPDF_Color::SetValue(CPDF_Pattern* pPattern, FX_FLOAT* comps, int ncomps)
     CPDF_DocPageData* pDocPageData = NULL;
     PatternValue* pvalue = (PatternValue*)m_pBuffer;
     if (pvalue->m_pPattern && pvalue->m_pPattern->m_pDocument) {
-        pDocPageData = pvalue->m_pPattern->m_pDocument->GetPageData();
-        pvalue->m_pPattern->SaveColor(NULL);
-        pDocPageData->ReleasePattern(pvalue->m_pPattern->m_pPatternObj);
+        CPDF_DocPageData *pDocPageData = pvalue->m_pPattern->m_pDocument->GetPageData();
+        if (pDocPageData && !pDocPageData->IsForceClear()) {
+            pDocPageData->ReleasePattern(pvalue->m_pPattern->m_pPatternObj);
+        }
     }
     pvalue->m_nComps = ncomps;
     pvalue->m_pPattern = pPattern;

@@ -154,17 +154,6 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
     FX_DWORD	nCount;
 
     m_bForceClear = bForceRelease;
-    pos = m_PatternMap.GetStartPosition();
-    while (pos) {
-        CPDF_Object* ptObj;
-        CPDF_CountedObject<CPDF_Pattern*>* ptData;
-        m_PatternMap.GetNextAssoc(pos, ptObj, ptData);
-        nCount = ptData->m_nCount;
-        if (bForceRelease || nCount < 2) {
-            delete ptData->m_Obj;
-            ptData->m_Obj = NULL;
-        }
-    }
     pos = m_FontMap.GetStartPosition();
     while (pos) {
         CPDF_Dictionary* fontDict;
@@ -231,6 +220,17 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
             delete ftData->m_Obj;
             delete ftData;
             m_FontFileMap.RemoveKey(ftKey);
+        }
+    }
+    pos = m_PatternMap.GetStartPosition();
+    while (pos) {
+        CPDF_Object* ptObj;
+        CPDF_CountedObject<CPDF_Pattern*>* ptData;
+        m_PatternMap.GetNextAssoc(pos, ptObj, ptData);
+        nCount = ptData->m_nCount;
+        if (bForceRelease || nCount < 2) {
+            delete ptData->m_Obj;
+            ptData->m_Obj = NULL;
         }
     }
 }

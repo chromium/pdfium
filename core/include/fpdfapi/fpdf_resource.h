@@ -680,10 +680,8 @@ class CPDF_Color : public CFX_Object
 {
 public:
 
-    CPDF_Color()
+    CPDF_Color() :m_pCS(NULL), m_pBuffer(NULL)
     {
-        m_pBuffer = NULL;
-        m_pCS = NULL;
     }
 
     CPDF_Color(int family);
@@ -720,10 +718,10 @@ public:
 
     CPDF_ColorSpace*		m_pCS;
 
-    FX_FLOAT*			m_pBuffer;
 protected:
     void	ReleaseBuffer();
     void	ReleaseColorSpace();
+    FX_FLOAT*			    m_pBuffer;
 };
 #define PATTERN_TILING		1
 #define PATTERN_SHADING		2
