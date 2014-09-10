@@ -9,7 +9,9 @@
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../../third_party/numerics/safe_math.h"
 #include "../fpdf_page/pageint.h"
-#include <limits.h>
+#include <utility>
+#include <vector>
+
 #define _PARSER_OBJECT_LEVLE_		64
 extern const FX_LPCSTR _PDF_CharType;
 FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict)
@@ -1013,62 +1015,71 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL 
     } else {
         m_Trailers.Add((CPDF_Dictionary*)pStream->GetDict()->Clone());
     }
-    CFX_DWordArray IndexArray, WidthArray;
     FX_DWORD nSegs = 0;
+    std::vector <std::pair <FX_INT32, FX_INT32>> arrIndex;
     CPDF_Array* pArray = pStream->GetDict()->GetArray(FX_BSTRC("Index"));
-    if (pArray == NULL) {
-        IndexArray.Add(0);
-        IndexArray.Add(size);
-        nSegs = 1;
-    } else {
-        for (FX_DWORD i = 0; i < pArray->GetCount(); i ++) {
-            IndexArray.Add(pArray->GetInteger(i));
+    if (pArray) {
+        FX_DWORD nPairSize = pArray->GetCount() / 2;
+        CPDF_Object* pStartNumObj = NULL;
+        CPDF_Object* pCountObj = NULL;
+        for (FX_DWORD i = 0; i < nPairSize; i++) {
+            pStartNumObj = pArray->GetElement(i * 2);
+            pCountObj = pArray->GetElement(i * 2 + 1);
+            if (pStartNumObj && pStartNumObj->GetType() == PDFOBJ_NUMBER
+                && pCountObj && pCountObj->GetType() == PDFOBJ_NUMBER) {
+                arrIndex.push_back(std::make_pair(pStartNumObj->GetInteger(), pCountObj->GetInteger()));
+            }
         }
-        nSegs = pArray->GetCount() / 2;
+        nSegs = arrIndex.size();
+        if (nSegs == 0) {
+            arrIndex.push_back(std::make_pair(0, size));
+            nSegs = 1;
+        }
     }
     pArray = pStream->GetDict()->GetArray(FX_BSTRC("W"));
     if (pArray == NULL) {
         pStream->Release();
         return FALSE;
     }
-    FX_DWORD totalwidth = 0;
-    FX_DWORD i;
-    for (i = 0; i < pArray->GetCount(); i ++) {
+    CFX_DWordArray WidthArray;
+    FX_SAFE_DWORD dwAccWidth = 0;
+    for (FX_DWORD i = 0; i < pArray->GetCount(); i ++) {
         WidthArray.Add(pArray->GetInteger(i));
-        if (totalwidth + WidthArray[i] < totalwidth) {
-            pStream->Release();
-            return FALSE;
-        }
-        totalwidth += WidthArray[i];
+        dwAccWidth += WidthArray[i];
     }
-    if (totalwidth == 0 || WidthArray.GetSize() < 3) {
+    if (!dwAccWidth.IsValid() || WidthArray.GetSize() < 3) {
         pStream->Release();
         return FALSE;
     }
+    FX_DWORD totalWidth = dwAccWidth.ValueOrDie();
     CPDF_StreamAcc acc;
     acc.LoadAllData(pStream);
     FX_LPCBYTE pData = acc.GetData();
     FX_DWORD dwTotalSize = acc.GetSize();
     FX_DWORD segindex = 0;
-    for (i = 0; i < nSegs; i ++) {
-        FX_INT32 startnum = IndexArray[i * 2];
+    for (FX_DWORD i = 0; i < nSegs; i ++) {
+        FX_INT32 startnum = arrIndex[i].first;
         if (startnum < 0) {
             continue;
         }
-        m_dwXrefStartObjNum = startnum;
-        FX_DWORD count = IndexArray[i * 2 + 1];
-        if (segindex + count < segindex || segindex + count == 0 ||
-                (FX_DWORD)totalwidth >= UINT_MAX / (segindex + count) || (segindex + count) * (FX_DWORD)totalwidth > dwTotalSize) {
+        m_dwXrefStartObjNum = base::checked_cast<FX_DWORD, FX_INT32> (startnum);
+        FX_DWORD count = base::checked_cast<FX_DWORD, FX_INT32> (arrIndex[i].second);
+        FX_SAFE_DWORD dwCaculatedSize = segindex;
+        dwCaculatedSize += count;
+        dwCaculatedSize *= totalWidth;
+        if (!dwCaculatedSize.IsValid() || dwCaculatedSize.ValueOrDie() > dwTotalSize) { 
             continue;
         }
-        FX_LPCBYTE segstart = pData + segindex * (FX_DWORD)totalwidth;
-        if ((FX_DWORD)startnum + count < (FX_DWORD)startnum ||
-                (FX_DWORD)startnum + count > (FX_DWORD)m_V5Type.GetSize()) {
+        FX_LPCBYTE segstart = pData + segindex * totalWidth;
+        FX_SAFE_DWORD dwMaxObjNum = startnum;
+        dwMaxObjNum += count;
+        FX_DWORD dwV5Size = base::checked_cast<FX_DWORD, FX_INT32> (m_V5Type.GetSize());
+        if (!dwMaxObjNum.IsValid() || dwMaxObjNum.ValueOrDie() > dwV5Size) {
             continue;
         }
         for (FX_DWORD j = 0; j < count; j ++) {
             FX_INT32 type = 1;
-            FX_LPCBYTE entrystart = segstart + j * totalwidth;
+            FX_LPCBYTE entrystart = segstart + j * totalWidth;
             if (WidthArray[0]) {
                 type = _GetVarInt(entrystart, WidthArray[0]);
             }
