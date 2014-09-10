@@ -680,7 +680,7 @@ class CPDF_Color : public CFX_Object
 {
 public:
 
-    CPDF_Color() :m_pCS(NULL), m_pBuffer(NULL), m_pDocument(NULL)
+    CPDF_Color() :m_pCS(NULL), m_pBuffer(NULL)
     {
     }
 
@@ -722,7 +722,6 @@ protected:
     void	ReleaseBuffer();
     void	ReleaseColorSpace();
     FX_FLOAT*			    m_pBuffer;
-    CPDF_Document*          m_pDocument;
 };
 #define PATTERN_TILING		1
 #define PATTERN_SHADING		2
