@@ -184,7 +184,12 @@ CTextBaseLine* CTextPage::InsertTextBox(CTextBaseLine* pBaseLine, FX_FLOAT basey
     while (offset < len) {
         FX_DWORD ch = pFont->GetNextChar(pStr, offset);
         CFX_WideString unicode_str = pFont->UnicodeFromCharCode(ch);
-        text += unicode_str;
+        if (unicode_str.IsEmpty()) {
+            text += (FX_WCHAR)ch;
+        }
+        else {
+            text += unicode_str;
+        }
     }
     pBaseLine->InsertTextBox(leftx, rightx, topy, bottomy, spacew, fontsize_v, text);
     return pBaseLine;
