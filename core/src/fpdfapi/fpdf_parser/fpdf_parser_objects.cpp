@@ -626,7 +626,9 @@ CFX_WideString CPDF_Dictionary::GetUnicodeText(FX_BSTR key, CFX_CharMap* pCharMa
     if (p) {
         if(p->GetType() == PDFOBJ_REFERENCE) {
             p = ((CPDF_Reference*)p)->GetDirect();
-            return p->GetUnicodeText(pCharMap);
+            if (p) {
+                return p->GetUnicodeText(pCharMap);
+            }
         } else {
             return p->GetUnicodeText(pCharMap);
         }
