@@ -109,57 +109,10 @@
       }
       face->num_locations = table_len >> shift;
     }
-	/* Sunliang.Liu 20101013, We ignore the 242 new added code which cause some font load failed. 
-	   TESTDOC: Bug #4502 - PM2-beheerdershandleiding.pdf*/
-    /*if ( face->num_locations != (FT_ULong)face->root.num_glyphs + 1 )
-    {
-      FT_TRACE2(( "glyph count mismatch!  loca: %d, maxp: %d\n",
-                  face->num_locations - 1, face->root.num_glyphs ));
-
-      // we only handle the case where `maxp' gives a larger value 
-      if ( face->num_locations <= (FT_ULong)face->root.num_glyphs )
-      {
-        FT_Long   new_loca_len =
-                    ( (FT_Long)( face->root.num_glyphs ) + 1 ) << shift;
-
-        TT_Table  entry = face->dir_tables;
-        TT_Table  limit = entry + face->num_tables;
-
-        FT_Long   pos  = FT_Stream_Pos( stream );
-        FT_Long   dist = 0x7FFFFFFFL;
-
-
-        // compute the distance to next table in font file 
-        for ( ; entry < limit; entry++ )
-        {
-          FT_Long  diff = entry->Offset - pos;
-
-
-          if ( diff > 0 && diff < dist )
-            dist = diff;
-        }
-
-        if ( entry == limit )
-        {
-          // `loca' is the last table
-          dist = stream->size - pos;
-        }
-
-        if ( new_loca_len <= dist )
-        {
-          face->num_locations = face->root.num_glyphs + 1;
-          table_len           = new_loca_len;
-
-          FT_TRACE2(( "adjusting num_locations to %d\n",
-                      face->num_locations ));
-        }
-      }
-    }*/
-
     /*
      * Extract the frame.  We don't need to decompress it since
      * we are able to parse it directly.
-     */
+    */
     if ( FT_FRAME_EXTRACT( table_len, face->glyph_locations ) )
       goto Exit;
 
@@ -175,41 +128,37 @@
                         FT_UInt   gindex,
                         FT_UInt  *asize )
   {
-    FT_ULong  pos1, pos2;
-    FT_Byte*  p;
-    FT_Byte*  p_limit;
+    FT_ULong  pos1 = 0, pos2 = 0;
+    FT_Byte*  p = NULL;
 
-
-    pos1 = pos2 = 0;
-
-
-    if (gindex < face->num_locations)/* gindex < face->num_locations */ /* XYQ 2008-11-03 Some ill TT has wrong glyf table size. It seems Adobe ignore the limit. TESTDOC: Bug #6248 - F-2008-18.pdf */
+    if (!face || gindex >= face->num_locations)
     {
-      if ( face->header.Index_To_Loc_Format != 0 )
-      {
-        p       = face->glyph_locations + gindex * 4;
-        p_limit = face->glyph_locations + face->num_locations * 4;
+      if (asize)
+        *asize = 0;
 
-        pos1 = FT_NEXT_ULONG( p );
-        pos2 = pos1;
+      return 0;
+    }
 
-        if (1)/* p + 4 <= p_limit ) */
-          pos2 = FT_NEXT_ULONG( p );
-      }
-      else
-      {
-        p       = face->glyph_locations + gindex * 2;
-        p_limit = face->glyph_locations + face->num_locations * 2;
+    if ( face->header.Index_To_Loc_Format != 0 )
+    {
+      p    = face->glyph_locations + gindex * 4;
+      pos1 = FT_NEXT_ULONG(p);
+      pos2 = pos1;
+      //p has been moved to next location in the previous FT_NEXT_ULONG.
+      if ( gindex < face->num_locations - 1 )
+        pos2 = FT_NEXT_ULONG(p);
+    }
+    else
+    {
+      p    = face->glyph_locations + gindex * 2;
+      pos1 = FT_NEXT_USHORT(p);
+      pos2 = pos1;
+      //p has been moved to next location in the previous FT_NEXT_USHORT.
+      if ( gindex < face->num_locations - 1 )
+        pos2 = FT_NEXT_USHORT( p );
 
-        pos1 = FT_NEXT_USHORT( p );
-        pos2 = pos1;
-
-        if (1) /* p + 2 <= p_limit ) */
-          pos2 = FT_NEXT_USHORT( p );
-
-        pos1 <<= 1;
-        pos2 <<= 1;
-      }
+      pos1 <<= 1;
+      pos2 <<= 1;
     }
 
     /* Check broken location data */
