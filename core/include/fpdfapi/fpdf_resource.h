@@ -730,7 +730,7 @@ class CPDF_Pattern : public CFX_Object
 public:
    
     virtual ~CPDF_Pattern();
-    void SaveColor(CPDF_Color* pColor) {m_pColor = pColor;}
+    void    SetForceClear(FX_BOOL bForceClear) { m_bForceClear = bForceClear; }
 
     CPDF_Object*                m_pPatternObj;
 
@@ -743,8 +743,8 @@ public:
     CPDF_Color*                 m_pColor;
 
 protected:
-    
     CPDF_Pattern(const CFX_AffineMatrix* pParentMatrix);
+    FX_BOOL     m_bForceClear;
 };
 
 class CPDF_TilingPattern : public CPDF_Pattern

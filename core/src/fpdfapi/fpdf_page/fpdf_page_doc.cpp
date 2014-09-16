@@ -229,6 +229,7 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         m_PatternMap.GetNextAssoc(pos, ptObj, ptData);
         nCount = ptData->m_nCount;
         if (bForceRelease || nCount < 2) {
+            ptData->m_Obj->SetForceClear(bForceRelease);
             delete ptData->m_Obj;
             ptData->m_Obj = NULL;
         }
