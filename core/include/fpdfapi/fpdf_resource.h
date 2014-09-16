@@ -730,6 +730,7 @@ class CPDF_Pattern : public CFX_Object
 public:
    
     virtual ~CPDF_Pattern();
+    void    SetForceClear(FX_BOOL bForceClear) { m_bForceClear = bForceClear; }
 
     CPDF_Object*                m_pPatternObj;
 
@@ -741,8 +742,8 @@ public:
     CPDF_Document*              m_pDocument;
 
 protected:
-    
     CPDF_Pattern(const CFX_AffineMatrix* pParentMatrix);
+    FX_BOOL     m_bForceClear;
 };
 
 class CPDF_TilingPattern : public CPDF_Pattern
