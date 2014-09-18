@@ -85,9 +85,6 @@ static_library("pdfium") {
 
   libs = []
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 
   deps = [
@@ -138,9 +135,6 @@ static_library("fdrm") {
     "core/src/fdrm/crypto/fx_crypt_sha.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
 
@@ -170,9 +164,6 @@ static_library("fpdfdoc") {
     "core/src/fpdfdoc/tagged_int.h",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
 
@@ -297,9 +288,6 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_render/render_int.h",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
 
@@ -315,9 +303,6 @@ static_library("fpdftext") {
     "core/src/fpdftext/unicodenormalizationdata.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
 
@@ -484,9 +469,6 @@ static_library("fxcodec") {
     "core/src/fxcodec/libjpeg/transupp.h",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
 
   if (is_posix) {
     # core/src/fxcodec/fx_libopenjpeg/src/fx_mct.c does an pointer-to-int
@@ -538,9 +520,6 @@ static_library("fxcrt") {
     "core/src/fxcrt/xml_int.h",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
 
@@ -646,9 +625,6 @@ static_library("fxge") {
   ]
 
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 
   if (pdf_use_skia) {
@@ -699,9 +675,6 @@ static_library("fxedit") {
     "fpdfsdk/src/fxedit/fxet_pageobjs.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
 
@@ -745,9 +718,6 @@ static_library("pdfwindow") {
     "fpdfsdk/src/pdfwindow/PWL_Wnd.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
 
@@ -798,9 +768,6 @@ static_library("javascript") {
   ]
 
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
   include_dirs = [
     "//v8",
@@ -820,9 +787,6 @@ static_library("jsapi") {
   ]
 
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
   include_dirs = [
     "//v8",
@@ -861,8 +825,5 @@ static_library("formfiller") {
     "fpdfsdk/src/formfiller/FFL_Utils.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  if (is_posix) {
-    configs -= [ "//build/config/gcc:no_exceptions" ]
-  }
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
