@@ -1015,26 +1015,21 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL 
     } else {
         m_Trailers.Add((CPDF_Dictionary*)pStream->GetDict()->Clone());
     }
-    FX_DWORD nSegs = 0;
-    std::vector <std::pair <FX_INT32, FX_INT32>> arrIndex;
+    std::vector<std::pair<FX_INT32, FX_INT32> > arrIndex;
     CPDF_Array* pArray = pStream->GetDict()->GetArray(FX_BSTRC("Index"));
     if (pArray) {
         FX_DWORD nPairSize = pArray->GetCount() / 2;
-        CPDF_Object* pStartNumObj = NULL;
-        CPDF_Object* pCountObj = NULL;
         for (FX_DWORD i = 0; i < nPairSize; i++) {
-            pStartNumObj = pArray->GetElement(i * 2);
-            pCountObj = pArray->GetElement(i * 2 + 1);
+            CPDF_Object* pStartNumObj = pArray->GetElement(i * 2);
+            CPDF_Object* pCountObj = pArray->GetElement(i * 2 + 1);
             if (pStartNumObj && pStartNumObj->GetType() == PDFOBJ_NUMBER
                 && pCountObj && pCountObj->GetType() == PDFOBJ_NUMBER) {
                 arrIndex.push_back(std::make_pair(pStartNumObj->GetInteger(), pCountObj->GetInteger()));
             }
         }
-        nSegs = arrIndex.size();
-        if (nSegs == 0) {
-            arrIndex.push_back(std::make_pair(0, size));
-            nSegs = 1;
-        }
+    }
+    if (arrIndex.size() == 0) {
+        arrIndex.push_back(std::make_pair(0, size));
     }
     pArray = pStream->GetDict()->GetArray(FX_BSTRC("W"));
     if (pArray == NULL) {
@@ -1057,7 +1052,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL 
     FX_LPCBYTE pData = acc.GetData();
     FX_DWORD dwTotalSize = acc.GetSize();
     FX_DWORD segindex = 0;
-    for (FX_DWORD i = 0; i < nSegs; i ++) {
+    for (FX_DWORD i = 0; i < arrIndex.size(); i ++) {
         FX_INT32 startnum = arrIndex[i].first;
         if (startnum < 0) {
             continue;
