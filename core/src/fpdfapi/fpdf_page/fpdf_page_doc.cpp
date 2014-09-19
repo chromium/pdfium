@@ -151,30 +151,22 @@ CPDF_DocPageData::~CPDF_DocPageData()
 void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
 {
     FX_POSITION pos;
-    FX_DWORD	nCount;
 
     m_bForceClear = bForceRelease;
+
+    // Release objects saved in the resource maps like font map and color space map.
+    // The compound objects shall be released before simple ones.
     pos = m_FontMap.GetStartPosition();
     while (pos) {
         CPDF_Dictionary* fontDict;
         CPDF_CountedObject<CPDF_Font*>* fontData;
         m_FontMap.GetNextAssoc(pos, fontDict, fontData);
-        nCount = fontData->m_nCount;
-        if (bForceRelease || nCount < 2) {
+        if (!fontData->m_Obj) {
+            continue;
+        }
+        if (bForceRelease || fontData->m_nCount < 2) {
             delete fontData->m_Obj;
             fontData->m_Obj = NULL;
-        }
-    }
-    pos = m_ImageMap.GetStartPosition();
-    while (pos) {
-        FX_DWORD objNum;
-        CPDF_CountedObject<CPDF_Image*>* imageData;
-        m_ImageMap.GetNextAssoc(pos, objNum, imageData);
-        nCount = imageData->m_nCount;
-        if (bForceRelease || nCount < 2) {
-            delete imageData->m_Obj;
-            delete imageData;
-            m_ImageMap.RemoveKey(objNum);
         }
     }
     pos = m_ColorSpaceMap.GetStartPosition();
@@ -182,8 +174,11 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         CPDF_Object* csKey;
         CPDF_CountedObject<CPDF_ColorSpace*>* csData;
         m_ColorSpaceMap.GetNextAssoc(pos, csKey, csData);
-        nCount = csData->m_nCount;
-        if (bForceRelease || nCount < 2) {
+        if (!csData->m_Obj) {
+            continue;
+        }
+        if (bForceRelease || csData->m_nCount < 2) {
+            // csData->m_Obj is deleted in the function of ReleaseCS().
             csData->m_Obj->ReleaseCS();
             csData->m_Obj = NULL;
         }
@@ -193,8 +188,10 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         CPDF_Stream* ipKey;
         CPDF_CountedObject<CPDF_IccProfile*>* ipData;
         m_IccProfileMap.GetNextAssoc(pos, ipKey, ipData);
-        nCount = ipData->m_nCount;
-        if (bForceRelease || nCount < 2) {
+        if (!ipData->m_Obj) {
+            continue;
+        }
+        if (bForceRelease || ipData->m_nCount < 2) {
             FX_POSITION pos2 = m_HashProfileMap.GetStartPosition();
             while (pos2) {
                 CFX_ByteString bsKey;
@@ -206,6 +203,7 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
                 }
             }
             delete ipData->m_Obj;
+            ipData->m_Obj = NULL;
             delete ipData;
             m_IccProfileMap.RemoveKey(ipKey);
         }
@@ -215,9 +213,12 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         CPDF_Stream* ftKey;
         CPDF_CountedObject<CPDF_StreamAcc*>* ftData;
         m_FontFileMap.GetNextAssoc(pos, ftKey, ftData);
-        nCount = ftData->m_nCount;
-        if (bForceRelease || nCount < 2) {
+        if (!ftData->m_Obj) {
+            continue;
+        }
+        if (bForceRelease || ftData->m_nCount < 2) {
             delete ftData->m_Obj;
+            ftData->m_Obj = NULL;
             delete ftData;
             m_FontFileMap.RemoveKey(ftKey);
         }
@@ -227,11 +228,28 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         CPDF_Object* ptObj;
         CPDF_CountedObject<CPDF_Pattern*>* ptData;
         m_PatternMap.GetNextAssoc(pos, ptObj, ptData);
-        nCount = ptData->m_nCount;
-        if (bForceRelease || nCount < 2) {
+        if (!ptData->m_Obj) {
+            continue;
+        }
+        if (bForceRelease || ptData->m_nCount < 2) {
             ptData->m_Obj->SetForceClear(bForceRelease);
             delete ptData->m_Obj;
             ptData->m_Obj = NULL;
+        }
+    }
+    pos = m_ImageMap.GetStartPosition();
+    while (pos) {
+        FX_DWORD objNum;
+        CPDF_CountedObject<CPDF_Image*>* imageData;
+        m_ImageMap.GetNextAssoc(pos, objNum, imageData);
+        if (!imageData->m_Obj) {
+            continue;
+        }
+        if (bForceRelease || imageData->m_nCount < 2) {
+            delete imageData->m_Obj;
+            imageData->m_Obj = NULL;
+            delete imageData;
+            m_ImageMap.RemoveKey(objNum);
         }
     }
 }
