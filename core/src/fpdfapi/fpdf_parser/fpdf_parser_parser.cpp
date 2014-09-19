@@ -1312,8 +1312,8 @@ void CPDF_Parser::GetIndirectBinary(FX_DWORD objnum, FX_LPBYTE& pBuffer, FX_DWOR
             m_Syntax.RestorePos(SavedPos);
             return;
         }
-        FX_DWORD real_objnum = FXSYS_atoi(word);
-        if (real_objnum && real_objnum != objnum) {
+        FX_DWORD parser_objnum = FXSYS_atoi(word);
+        if (parser_objnum && parser_objnum != objnum) {
             m_Syntax.RestorePos(SavedPos);
             return;
         }
@@ -1377,8 +1377,8 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList, 
     }
     FX_FILESIZE objOffset = m_Syntax.SavePos();
     objOffset -= word.GetLength();
-    FX_DWORD real_objnum = FXSYS_atoi(word);
-    if (objnum && real_objnum != objnum) {
+    FX_DWORD parser_objnum = FXSYS_atoi(word);
+    if (objnum && parser_objnum != objnum) {
         m_Syntax.RestorePos(SavedPos);
         return NULL;
     }
@@ -1387,21 +1387,23 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList, 
         m_Syntax.RestorePos(SavedPos);
         return NULL;
     }
-    FX_DWORD gennum = FXSYS_atoi(word);
+    FX_DWORD parser_gennum = FXSYS_atoi(word);
     if (m_Syntax.GetKeyword() != FX_BSTRC("obj")) {
         m_Syntax.RestorePos(SavedPos);
         return NULL;
     }
-    CPDF_Object* pObj = m_Syntax.GetObject(pObjList, objnum, gennum, 0, pContext);
+    CPDF_Object* pObj = m_Syntax.GetObject(pObjList, objnum, parser_gennum, 0, pContext);
     FX_FILESIZE endOffset = m_Syntax.SavePos();
     CFX_ByteString bsWord = m_Syntax.GetKeyword();
     if (bsWord == FX_BSTRC("endobj")) {
         endOffset = m_Syntax.SavePos();
     }
     m_Syntax.RestorePos(SavedPos);
-    if (pObj && !objnum) {
-        pObj->m_ObjNum = real_objnum;
-        pObj->m_GenNum = gennum;
+    if (pObj) {
+        if (!objnum) {
+            pObj->m_ObjNum = parser_objnum;
+        }
+        pObj->m_GenNum = parser_gennum;
     }
     return pObj;
 }
@@ -1416,8 +1418,8 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAtByStrict(CPDF_IndirectObjects* pO
         m_Syntax.RestorePos(SavedPos);
         return NULL;
     }
-    FX_DWORD real_objnum = FXSYS_atoi(word);
-    if (objnum && real_objnum != objnum) {
+    FX_DWORD parser_objnum = FXSYS_atoi(word);
+    if (objnum && parser_objnum != objnum) {
         m_Syntax.RestorePos(SavedPos);
         return NULL;
     }
@@ -3466,8 +3468,8 @@ CPDF_Object	* CPDF_DataAvail::ParseIndirectObjectAt(FX_FILESIZE pos, FX_DWORD ob
     if (!bIsNumber) {
         return NULL;
     }
-    FX_DWORD real_objnum = FXSYS_atoi(word);
-    if (objnum && real_objnum != objnum) {
+    FX_DWORD parser_objnum = FXSYS_atoi(word);
+    if (objnum && parser_objnum != objnum) {
         return NULL;
     }
     word = m_syntaxParser.GetNextWord(bIsNumber);

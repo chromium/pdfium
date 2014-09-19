@@ -4,6 +4,7 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <limits>
 #include "../../include/fxcrt/fx_ext.h"
 template <class T, class STR_T>
 T FXSYS_StrToInt(STR_T str)
@@ -19,6 +20,9 @@ T FXSYS_StrToInt(STR_T str)
     T num = 0;
     while (*str) {
         if ((*str) < '0' || (*str) > '9') {
+            break;
+        }
+        if (num > (std::numeric_limits<T>::max() - 9) / 10) {
             break;
         }
         num = num * 10 + (*str) - '0';
