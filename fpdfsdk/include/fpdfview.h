@@ -260,6 +260,16 @@ DLLEXPORT unsigned long	STDCALL FPDF_GetLastError();
 //
 DLLEXPORT unsigned long	STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document);
 
+// Function: FPDF_GetSecurityHandlerRevision
+//			Get the revision for security handler.
+// Parameters:
+//			document	-	Handle to document. Returned by FPDF_LoadDocument function.
+// Return value:
+//			The security handler revision number. Please refer to PDF Reference for
+//			detailed description. If the document is not protected, -1 will be returned.
+//
+DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document);
+
 // Function: FPDF_GetPageCount
 //			Get total number of pages in a document.
 // Parameters: 

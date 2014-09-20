@@ -340,6 +340,17 @@ DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document)
 	return pDict->GetInteger("P");
 }
 
+DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document)
+{
+    if (document == NULL) return -1;
+    CPDF_Document*pDoc = (CPDF_Document*)document;
+    CPDF_Parser* pParser = (CPDF_Parser*)pDoc->GetParser();
+    CPDF_Dictionary* pDict = pParser->GetEncryptDict();
+    if (pDict == NULL) return -1;
+
+    return pDict->GetInteger("R");
+}
+
 DLLEXPORT int STDCALL FPDF_GetPageCount(FPDF_DOCUMENT document)
 {
 	if (document == NULL) return 0;
