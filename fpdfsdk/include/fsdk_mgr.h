@@ -460,15 +460,12 @@ private:
 	CPDF_OCContext *		m_pOccontent;
 	FX_BOOL					m_bChangeMask;
 };
-
 class CPDFSDK_PageView FX_FINAL
 {
 public:
 	CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,CPDF_Page* page);
 	~CPDFSDK_PageView();
-public:
 	void PageView_OnDraw(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,CPDF_RenderOptions* pOptions) ;
-public:
 	CPDF_Annot*						GetPDFAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
 	CPDFSDK_Annot*					GetFXAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
 	CPDF_Annot*						GetPDFWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
@@ -489,7 +486,6 @@ public:
 	CPDF_Page*						GetPDFPage(){return m_page;}
 	CPDF_Document*					GetPDFDocument();
 	CPDFSDK_Document*				GetSDKDocument() {return m_pSDKDoc;}	
-public:
 	FX_BOOL					OnLButtonDown(const CPDF_Point & point, FX_UINT nFlag);
 	FX_BOOL					OnLButtonUp(const CPDF_Point & point, FX_UINT nFlag);
 	FX_BOOL					OnChar(int nChar, FX_UINT nFlag);
@@ -499,39 +495,34 @@ public:
 	FX_BOOL					OnMouseMove(const CPDF_Point & point, int nFlag);
 	FX_BOOL					OnMouseWheel(double deltaX, double deltaY,const CPDF_Point& point, int nFlag);
 	FX_BOOL					IsValidAnnot(FX_LPVOID p);
-public:
 	void					GetCurrentMatrix(CPDF_Matrix& matrix) {matrix = m_curMatrix;}
 	void					UpdateRects(CFX_RectArray& rects);
 	void							UpdateView(CPDFSDK_Annot* pAnnot);
 	CFX_PtrArray*					GetAnnotList(){ return &m_fxAnnotArray; }
 
-public:
 	int						GetPageIndex();
 	void							LoadFXAnnots();
-private:
-	CPDF_Matrix m_curMatrix;
 
+        void SetValid(FX_BOOL bValid) {m_bValid = bValid;}
+        FX_BOOL IsValid() {return m_bValid;}
+        void SetLock(FX_BOOL bLocked) {m_bLocked= bLocked;}
+        FX_BOOL IsLocked() {return m_bLocked;}
+        void TakeOverPage() {m_bTakeOverPage = TRUE;}
 private:
 	void PageView_OnHighlightFormFields(CFX_RenderDevice* pDevice, CPDFSDK_Widget* pWidget);
-
-private:
+        CPDF_Matrix m_curMatrix;
 	CPDF_Page* m_page;
 	CPDF_AnnotList* m_pAnnotList;
-
 	//CPDFSDK_Annot* m_pFocusAnnot;
 	CFX_PtrArray  m_fxAnnotArray;
-
 	CPDFSDK_Document* m_pSDKDoc;
-private:
 	CPDFSDK_Widget* m_CaptureWidget;
 	FX_BOOL m_bEnterWidget;
 	FX_BOOL m_bExitWidget;
 	FX_BOOL m_bOnWidget;
-public:
-	void SetValid(FX_BOOL bValid) {m_bValid = bValid;}
-	FX_BOOL IsValid() {return m_bValid;}
-private:
 	FX_BOOL m_bValid;
+        FX_BOOL m_bLocked;
+        FX_BOOL m_bTakeOverPage;
 };
 
 

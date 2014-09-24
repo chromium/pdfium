@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../include/fsdk_define.h"
+#include "../include/fsdk_mgr.h"
 #include "../include/fpdfview.h"
 #include "../include/fsdk_rendercontext.h"
 #include "../include/fpdf_progressive.h"
@@ -591,6 +592,11 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap, FPDF_PAGE page,
 DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page)
 {
 	if (!page) return;
+        CPDFSDK_PageView* pPageView = (CPDFSDK_PageView*)(((CPDF_Page*)page))->GetPrivateData((FX_LPVOID)page);
+        if (pPageView && pPageView->IsLocked()) {
+            pPageView->TakeOverPage();
+            return;
+        }
 	delete (CPDF_Page*)page;
 
 }
