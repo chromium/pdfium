@@ -773,11 +773,13 @@ static_library("javascript") {
     "//v8",
     "//v8/include",
   ]
-  deps = [
+
+  public_deps = [
     "//v8",
+  ]
+  deps = [
     "//v8:v8_libplatform",
   ]
-  forward_dependent_configs_from = [ "//v8" ]
 }
 
 static_library("jsapi") {
@@ -792,10 +794,10 @@ static_library("jsapi") {
     "//v8",
     "//v8/include",
   ]
-  deps = [
+
+  public_deps = [
     "//v8",
   ]
-  forward_dependent_configs_from = [ "//v8" ]
 }
 
 static_library("formfiller") {
