@@ -1226,12 +1226,14 @@ void CFX_Font::AdjustMMParams(int glyph_index, int dest_width, int weight)
     FXFT_Free(m_Face, pMasters);
     FXFT_Set_MM_Design_Coordinates(m_Face, 2, coords);
 }
-extern const char g_AngleSkew[30] = {
+static const size_t ANGLESKEW_ARRAY_SIZE = 30;
+static const char g_AngleSkew[ANGLESKEW_ARRAY_SIZE] = {
     0, 2, 3, 5, 7, 9, 11, 12, 14, 16,
     18, 19, 21, 23, 25, 27, 29, 31, 32, 34,
     36, 38, 40, 42, 45, 47, 49, 51, 53, 55,
 };
-static const FX_BYTE g_WeightPow[100] = {
+static const size_t WEIGHTPOW_ARRAY_SIZE = 100;
+static const FX_BYTE g_WeightPow[WEIGHTPOW_ARRAY_SIZE] = {
     0, 3, 6, 7, 8, 9, 11, 12, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 35, 36, 36,
     37, 37, 37, 38, 38, 38, 39, 39, 39, 40, 40, 40, 41, 41, 41, 42, 42, 42,
@@ -1239,7 +1241,7 @@ static const FX_BYTE g_WeightPow[100] = {
     47, 47, 48, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 50, 51, 51,
     51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53,
 };
-extern const FX_BYTE g_WeightPow_11[100] = {
+static const FX_BYTE g_WeightPow_11[WEIGHTPOW_ARRAY_SIZE] = {
     0, 4, 7, 8, 9, 10, 12, 13, 15, 17, 18, 19, 20, 21, 22,
     23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 39, 39, 40, 40,
     41, 41, 41, 42, 42, 42, 43, 43, 43, 44, 44, 44, 45, 45, 45, 46, 46, 46,
@@ -1247,7 +1249,7 @@ extern const FX_BYTE g_WeightPow_11[100] = {
     52, 52, 53, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 55, 56, 56,
     56, 56, 56, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58,
 };
-extern const FX_BYTE g_WeightPow_SHIFTJIS[100] = {
+static const FX_BYTE g_WeightPow_SHIFTJIS[WEIGHTPOW_ARRAY_SIZE] = {
     0, 0, 1, 2, 3, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 21, 22, 24, 26, 28,
     30, 32, 33, 35, 37, 39, 41, 43, 45, 48, 48, 48, 48, 49, 49, 49, 50, 50, 50, 50,
     51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 55, 55,
@@ -1323,7 +1325,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_inde
             skew = pSubstFont->m_ItalicAngle;
         }
         if (skew) {
-            skew = skew <= -30 ? -58 : -g_AngleSkew[-skew];
+            skew = skew <= -ANGLESKEW_ARRAY_SIZE ? -58 : -g_AngleSkew[-skew];
             if (pFont->IsVertical()) {
                 ft_matrix.yx += ft_matrix.yy * skew / 100;
             } else {
@@ -1350,7 +1352,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_inde
     }
     if (pSubstFont && !(pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) && weight > 400) {
         int index = (weight - 400) / 10;
-        if (index >= 100) {
+        if (index >= WEIGHTPOW_ARRAY_SIZE) {
             FXFT_Set_Face_Internal_Flag(m_Face, transflag);
             return NULL;
         }
@@ -1635,7 +1637,7 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width)
     if (m_pSubstFont) {
         if (m_pSubstFont->m_ItalicAngle) {
             int skew = m_pSubstFont->m_ItalicAngle;
-            skew = skew <= -30 ? -58 : -g_AngleSkew[-skew];
+            skew = skew <= -ANGLESKEW_ARRAY_SIZE ? -58 : -g_AngleSkew[-skew];
             if (m_bVertical) {
                 ft_matrix.yx += ft_matrix.yy * skew / 100;
             } else {
@@ -1655,11 +1657,14 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width)
         return NULL;
     }
     if (m_pSubstFont && !(m_pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) && m_pSubstFont->m_Weight > 400) {
+        int index = (m_pSubstFont->m_Weight - 400) / 10;
+        if (index >= WEIGHTPOW_ARRAY_SIZE)
+            index = WEIGHTPOW_ARRAY_SIZE - 1;
         int level = 0;
         if (m_pSubstFont->m_Charset == FXFONT_SHIFTJIS_CHARSET) {
-            level = g_WeightPow_SHIFTJIS[(m_pSubstFont->m_Weight - 400) / 10] * 2 * 65536 / 36655;
+            level = g_WeightPow_SHIFTJIS[index] * 2 * 65536 / 36655;
         } else {
-            level = g_WeightPow[(m_pSubstFont->m_Weight - 400) / 10] * 2;
+            level = g_WeightPow[index] * 2;
         }
         FXFT_Outline_Embolden(FXFT_Get_Glyph_Outline(m_Face), level);
     }
