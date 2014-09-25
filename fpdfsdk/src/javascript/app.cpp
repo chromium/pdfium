@@ -1045,49 +1045,39 @@ FX_BOOL app::response(OBJ_METHOD_PARAMS)
 	{
 		JSObject pObj = (JSObject )params[0];
 		v8::Handle<v8::Value> pValue = JS_GetObjectElement(isolate,pObj,L"cQuestion");
-			swQuestion = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
+		swQuestion = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
 
 		pValue = JS_GetObjectElement(isolate,pObj,L"cTitle");
-			swTitle = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
+		swTitle = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
 
 		pValue = JS_GetObjectElement(isolate,pObj,L"cDefault");
-			swDefault = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
+		swDefault = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
 
 		pValue = JS_GetObjectElement(isolate,pObj,L"cLabel");
-			swLabel = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
+		swLabel = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
 
 		pValue = JS_GetObjectElement(isolate,pObj,L"bPassword");
-			bPassWord = (bool)CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue));
+		bPassWord = (bool)CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue));
 	}
 	else
 	{
 		switch(iLength)
 		{
+		case 5:
+			swLabel = params[4];
+			// FALLTHROUGH
+		case 4:
+			bPassWord = params[3];
+			// FALLTHROUGH
+		case 3:
+			swDefault = params[2];
+			// FALLTHROUGH
+		case 2:
+			swTitle = params[1];
+			// FALLTHROUGH
 		case 1:
 			swQuestion = params[0];
-			break;
-		case 2:
-			swQuestion = params[0];
-			swTitle = params[1];
-			break;
-		case 3:
-			swQuestion = params[0];
-			swTitle = params[1];
-			swDefault = params[2];
-			break;
-		case 4:
-			swQuestion = params[0];
-			swTitle = params[1];
-			swDefault = params[2];
-			bPassWord = params[3];
-			break;
-		case 5:
-			swQuestion = params[0];
-			swTitle = params[1];
-			swDefault = params[2];
-			bPassWord = params[3];
-			swLabel = params[4];
-			break;
+			// FALLTHROUGH
 		default:
 			break;
 		}
@@ -1115,7 +1105,7 @@ FX_BOOL app::response(OBJ_METHOD_PARAMS)
 	if (nLengthBytes > MAX_INPUT_BYTES)
 		nLengthBytes = MAX_INPUT_BYTES;
 
-	vRet = CFX_WideString::FromUTF16LE((unsigned short*)pBuff, nLengthBytes);
+	vRet = CFX_WideString::FromUTF16LE((unsigned short*)pBuff, nLengthBytes / sizeof(unsigned short));
 	delete[] pBuff;
 	return TRUE;
 }
