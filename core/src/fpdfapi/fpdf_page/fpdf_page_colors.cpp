@@ -1354,9 +1354,6 @@ void CPDF_Color::SetValue(CPDF_Pattern* pPattern, FX_FLOAT* comps, int ncomps)
     }
     pvalue->m_nComps = ncomps;
     pvalue->m_pPattern = pPattern;
-    if (pPattern) {
-        pPattern->SaveColor(this);
-    }
     if (ncomps) {
         FXSYS_memcpy32(pvalue->m_Comps, comps, ncomps * sizeof(FX_FLOAT));
     }
