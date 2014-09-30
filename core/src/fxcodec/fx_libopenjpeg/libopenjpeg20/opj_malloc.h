@@ -50,7 +50,6 @@ Allocate an uninitialized memory block
 @param size Bytes to allocate
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
-
 #ifdef ALLOC_PERF_OPT
 void * OPJ_CALLCONV opj_malloc(size_t size);
 #else
@@ -161,6 +160,7 @@ void * OPJ_CALLCONV opj_realloc(void * m, size_t s);
 #else
 #define opj_realloc(m, s) realloc(m, s)
 #endif
+#endif
 
 /**
 Deallocates or frees a memory block.
@@ -175,10 +175,11 @@ void OPJ_CALLCONV opj_free(void * m);
 #ifdef __GNUC__
 #pragma GCC poison malloc calloc realloc free
 #endif
-#endif
+
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
 /*@}*/
 
 #endif /* __OPJ_MALLOC_H */
+
