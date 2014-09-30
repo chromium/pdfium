@@ -1,39 +1,21 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
-
 /* create opj_config_private.h for CMake */
-/* #undef OPJ_HAVE_INTTYPES_H */
-
-#ifndef _WIN32
-#ifndef OPJ_HAVE_INTTYPES_H
-#define OPJ_HAVE_INTTYPES_H
-#endif
-#endif
+#define OPJ_HAVE_INTTYPES_H 	1
 
 #define OPJ_PACKAGE_VERSION "2.1.0"
 
 /* Not used by openjp2*/
 /*#define HAVE_MEMORY_H 1*/
 /*#define HAVE_STDLIB_H 1*/
-/* #undef HAVE_STRINGS_H */
+/*#define HAVE_STRINGS_H 1*/
 /*#define HAVE_STRING_H 1*/
 /*#define HAVE_SYS_STAT_H 1*/
 /*#define HAVE_SYS_TYPES_H 1 */
-/* #undef HAVE_UNISTD_H */
+/*#define HAVE_UNISTD_H 1*/
 
 /* #undef _LARGEFILE_SOURCE */
 /* #undef _LARGE_FILES */
 /* #undef _FILE_OFFSET_BITS */
-/* #undef OPJ_HAVE_FSEEKO */
-
-#ifndef _WIN32
-#ifndef OPJ_HAVE_FSEEKO
-#define OPJ_HAVE_FSEEKO
-#endif
-#endif
+#define OPJ_HAVE_FSEEKO ON
 
 /* Byte order.  */
 /* All compilers that support Mac OS X define either __BIG_ENDIAN__ or

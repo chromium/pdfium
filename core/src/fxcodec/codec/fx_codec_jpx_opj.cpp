@@ -82,7 +82,7 @@ opj_stream_t* fx_opj_stream_create_memory_stream (DecodeData* data,	OPJ_SIZE_T p
     if (! l_stream) {
         return NULL;
     }
-    opj_stream_set_user_data_v3(l_stream, data, NULL);
+    opj_stream_set_user_data(l_stream, data, NULL);
     opj_stream_set_user_data_length(l_stream, data->src_size);
     opj_stream_set_read_function(l_stream, opj_read_from_memory);
     opj_stream_set_write_function(l_stream, opj_write_from_memory);
@@ -609,11 +609,13 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size)
         image = NULL;
         return FALSE;
     }
+/*
     if(this->m_useColorSpace) {
         image->useColorSpace = 1;
     } else {
         image->useColorSpace = 0;
     }
+*/
     if (!parameters.nb_tile_to_decode) {
         if (!opj_set_decode_area(l_codec, image, parameters.DA_x0,
                                     parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)) {
@@ -643,7 +645,8 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size)
     if(image->color_space == OPJ_CLRSPC_SYCC) {
         color_sycc_to_rgb(image);
     }
-    if(image->icc_profile_buf && !image->useColorSpace) {
+    //if(image->icc_profile_buf && !image->useColorSpace) {
+    if(image->icc_profile_buf) {
         FX_Free(image->icc_profile_buf);
         image->icc_profile_buf = NULL;
         image->icc_profile_len = 0;

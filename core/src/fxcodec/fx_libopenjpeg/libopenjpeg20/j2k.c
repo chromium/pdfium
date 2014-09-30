@@ -42,11 +42,6 @@
 
 #include "opj_includes.h"
 
-#define CINEMA_24_CS 1302083	/*Codestream length for 24fps*/
-#define CINEMA_48_CS 651041		/*Codestream length for 48fps*/
-#define COMP_24_CS 1041666		/*Maximum size per color component for 2K & 4K @ 24fps*/
-#define COMP_48_CS 520833		/*Maximum size per color component for 2K @ 48fps*/
-
 /** @defgroup J2K J2K - JPEG-2000 codestream reader/writer */
 /*@{*/
 
@@ -1172,7 +1167,7 @@ static int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres);
 
 static void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image, opj_event_mgr_t *p_manager);
 
-static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_mode, opj_event_mgr_t *p_manager);
+static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_UINT16 rsiz, opj_event_mgr_t *p_manager);
 
 /*@}*/
 
@@ -1504,7 +1499,6 @@ OPJ_BOOL opj_j2k_check_poc_val( const opj_poc_t *p_pocs,
                 opj_event_msg(p_manager , EVT_ERROR, "Not enough memory for checking the poc values.\n");
                 return OPJ_FALSE;
         }
-        memset(packet_array,0,step_l * p_num_layers* sizeof(OPJ_UINT32));
 
         if (p_nb_pocs == 0) {
         opj_free(packet_array);
@@ -1945,7 +1939,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
 
         opj_read_bytes(p_header_data,&l_tmp ,2);                                                /* Rsiz (capabilities) */
         p_header_data+=2;
-        l_cp->rsiz = (OPJ_RSIZ_CAPABILITIES) l_tmp;
+        l_cp->rsiz = (OPJ_UINT16) l_tmp;
         opj_read_bytes(p_header_data, (OPJ_UINT32*) &l_image->x1, 4);   /* Xsiz */
         p_header_data+=4;
         opj_read_bytes(p_header_data, (OPJ_UINT32*) &l_image->y1, 4);   /* Ysiz */
@@ -2043,7 +2037,6 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 return OPJ_FALSE;
         }
 
-        memset(l_image->comps,0,l_image->numcomps * sizeof(opj_image_comp_t));
         l_img_comp = l_image->comps;
 
         /* Read the component information */
@@ -2172,7 +2165,6 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(l_cp->tcps,0,l_nb_tiles*sizeof(opj_tcp_t));
 
 #ifdef USE_JPWL
         if (l_cp->correct) {
@@ -2193,27 +2185,24 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->tccps ,0,l_image->numcomps*sizeof(opj_tccp_t));
 
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records =
-                        (opj_mct_data_t*)opj_malloc(OPJ_J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
+                        (opj_mct_data_t*)opj_calloc(OPJ_J2K_MCT_DEFAULT_NB_RECORDS ,sizeof(opj_mct_data_t));
 
         if (! p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records) {
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records,0,OPJ_J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_nb_max_mct_records = OPJ_J2K_MCT_DEFAULT_NB_RECORDS;
 
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records =
                         (opj_simple_mcc_decorrelation_data_t*)
-                        opj_malloc(OPJ_J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
+                        opj_calloc(OPJ_J2K_MCC_DEFAULT_NB_RECORDS, sizeof(opj_simple_mcc_decorrelation_data_t));
 
         if (! p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records) {
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records,0,OPJ_J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_nb_max_mcc_records = OPJ_J2K_MCC_DEFAULT_NB_RECORDS;
 
         /* set up default dc level shift */
@@ -2225,12 +2214,11 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
 
         l_current_tile_param = l_cp->tcps;
         for     (i = 0; i < l_nb_tiles; ++i) {
-                l_current_tile_param->tccps = (opj_tccp_t*) opj_malloc(l_image->numcomps * sizeof(opj_tccp_t));
+                l_current_tile_param->tccps = (opj_tccp_t*) opj_calloc(l_image->numcomps, sizeof(opj_tccp_t));
                 if (l_current_tile_param->tccps == 00) {
                         opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                         return OPJ_FALSE;
                 }
-                memset(l_current_tile_param->tccps,0,l_image->numcomps * sizeof(opj_tccp_t));
 
                 ++l_current_tile_param;
         }
@@ -3102,7 +3090,7 @@ OPJ_UINT32 opj_j2k_get_specific_header_sizes(opj_j2k_t *p_j2k)
         l_nb_comps = p_j2k->m_private_image->numcomps - 1;
         l_nb_bytes += opj_j2k_get_max_toc_size(p_j2k);
 
-        if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == 0) {
+        if (!(OPJ_IS_CINEMA(p_j2k->m_cp.rsiz))) {
                 l_coc_bytes = opj_j2k_get_max_coc_size(p_j2k);
                 l_nb_bytes += l_nb_comps * l_coc_bytes;
 
@@ -3581,13 +3569,12 @@ OPJ_BOOL j2k_read_ppm_v3 (
                 l_cp->ppm_len = l_N_ppm;
                 l_cp->ppm_data_read = 0;
 
-                l_cp->ppm_data = (OPJ_BYTE *) opj_malloc(l_cp->ppm_len);
+                l_cp->ppm_data = (OPJ_BYTE *) opj_calloc(1,l_cp->ppm_len);
                 l_cp->ppm_buffer = l_cp->ppm_data;
                 if (l_cp->ppm_data == 00) {
                         opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read ppm marker\n");
                         return OPJ_FALSE;
                 }
-                memset(l_cp->ppm_data,0,l_cp->ppm_len);
 
                 l_cp->ppm_data_current = l_cp->ppm_data;
 
@@ -3654,7 +3641,6 @@ OPJ_BOOL j2k_read_ppm_v3 (
 
                 if (p_header_size)
                 {
-						if (p_header_size < 4) return OPJ_FALSE;
                         opj_read_bytes(p_header_data,&l_N_ppm,4);               /* N_ppm^i */
                         p_header_data+=4;
                         p_header_size-=4;
@@ -4074,10 +4060,8 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                                 if (l_current_part >= l_tcp->m_nb_tile_parts){
                                         opj_event_msg(p_manager, EVT_ERROR, "In SOT marker, TPSot (%d) is not valid regards to the current "
                                                         "number of tile-part (%d), giving up\n", l_current_part, l_tcp->m_nb_tile_parts );
-                                      //  p_j2k->m_specific_param.m_decoder.m_last_tile_part = 1;
-                                     //   return OPJ_FALSE;
-										
-										l_num_parts++; 
+                                        p_j2k->m_specific_param.m_decoder.m_last_tile_part = 1;
+                                        return OPJ_FALSE;
                                 }
                         }
                         if( l_current_part >= l_num_parts ) {
@@ -4093,7 +4077,7 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                 /* If know the number of tile part header we will check if we didn't read the last*/
                 if (l_tcp->m_nb_tile_parts) {
                         if (l_tcp->m_nb_tile_parts == (l_current_part+1)) {
-                                p_j2k->m_specific_param.m_decoder.m_can_decode = 0; /* Process the last tile-part header*/
+                                p_j2k->m_specific_param.m_decoder.m_can_decode = 1; /* Process the last tile-part header*/
                         }
                 }
 
@@ -4136,6 +4120,10 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                                 if (!p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index) {
                                         p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index =
                                                 (opj_tp_index_t*)opj_calloc(l_num_parts, sizeof(opj_tp_index_t));
+                                        if (!p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index) {
+                                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read SOT marker. Tile index allocation failed\n");
+                                                return OPJ_FALSE;
+																				}
                                 }
                                 else {
                                         opj_tp_index_t *new_tp_index = (opj_tp_index_t *) opj_realloc(
@@ -4143,7 +4131,7 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                                         if (! new_tp_index) {
                                                 opj_free(p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index);
                                                 p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index = NULL;
-                                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
+                                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read SOT marker. Tile index allocation failed\n");
                                                 return OPJ_FALSE;
                                         }
                                         p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index = new_tp_index;
@@ -4157,6 +4145,11 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                                                 p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index =
                                                         (opj_tp_index_t*)opj_calloc( p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps,
                                                                         sizeof(opj_tp_index_t));
+																								if (!p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index) {
+                                                        p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps = 0;
+                                                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read SOT marker. Tile index allocation failed\n");
+                                                        return OPJ_FALSE;
+																				        }
                                         }
 
                                         if ( l_current_part >= p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps ){
@@ -4169,7 +4162,7 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                                                         opj_free(p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index);
                                                         p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index = NULL;
                                                         p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps = 0;
-                                                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
+                                                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read SOT marker. Tile index allocation failed\n");
                                                         return OPJ_FALSE;
                                                 }
                                                 p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index = new_tp_index;
@@ -4331,11 +4324,7 @@ OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
                 *l_current_data = (OPJ_BYTE*) opj_malloc(p_j2k->m_specific_param.m_decoder.m_sot_length);
             }
             else {
-				OPJ_BYTE *l_new_current_data = NULL;
-				//BUGID: 0056005 and 0056022.
-				//test file: 366683_fuzz-asan_heap-oob_6bae99_3155_5245.pdf and fuzz-12.pdf.
-				if ((OPJ_UINT32)-1 - p_j2k->m_specific_param.m_decoder.m_sot_length >= *l_tile_len)
-					l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data, *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length);
+                OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data, *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length);
                 if (! l_new_current_data) {
                         opj_free(*l_current_data);
                         /*nothing more is done as l_current_data will be set to null, and just
@@ -4729,7 +4718,7 @@ OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                 return OPJ_FALSE;
         }
 
-        if (l_cp->m_specific_param.m_enc.m_cinema) {
+        if (OPJ_IS_CINEMA(l_cp->rsiz)) {
                 p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer =
                                 (OPJ_BYTE *) opj_malloc(5*p_j2k->m_specific_param.m_encoder.m_total_tile_parts);
                 if (! p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer) {
@@ -5865,12 +5854,11 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
 
 opj_j2k_t* opj_j2k_create_compress(void)
 {
-        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_malloc(sizeof(opj_j2k_t));
+        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_calloc(1,sizeof(opj_j2k_t));
         if (!l_j2k) {
                 return NULL;
         }
 
-        memset(l_j2k,0,sizeof(opj_j2k_t));
 
         l_j2k->m_is_decoder = 0;
         l_j2k->m_cp.m_is_decoder = 0;
@@ -5921,23 +5909,7 @@ int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres){
 void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image, opj_event_mgr_t *p_manager)
 {
     /* Configure cinema parameters */
-    OPJ_FLOAT32 max_rate = 0;
-    OPJ_FLOAT32 temp_rate = 0;
     int i;
-
-    /* profile (Rsiz) */
-    switch (parameters->cp_cinema){
-    case OPJ_CINEMA2K_24:
-    case OPJ_CINEMA2K_48:
-        parameters->cp_rsiz = OPJ_CINEMA2K;
-        break;
-    case OPJ_CINEMA4K_24:
-        parameters->cp_rsiz = OPJ_CINEMA4K;
-        break;
-    case OPJ_OFF:
-        assert(0);
-        break;
-    }
 
     /* No tiling */
     parameters->tile_size_on = OPJ_FALSE;
@@ -5976,15 +5948,16 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
         opj_event_msg(p_manager, EVT_WARNING,
                 "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
                 "1 single quality layer"
-                "-> Number of layers forced to 1 (rather than %d)\n",
-                parameters->tcp_numlayers);
+                "-> Number of layers forced to 1 (rather than %d)\n"
+                "-> Rate of the last layer (%3.1f) will be used",
+                parameters->tcp_numlayers, parameters->tcp_rates[parameters->tcp_numlayers-1]);
+        parameters->tcp_rates[0] = parameters->tcp_rates[parameters->tcp_numlayers-1];
         parameters->tcp_numlayers = 1;
     }
 
     /* Resolution levels */
-    switch (parameters->cp_cinema){
-    case OPJ_CINEMA2K_24:
-    case OPJ_CINEMA2K_48:
+    switch (parameters->rsiz){
+    case OPJ_PROFILE_CINEMA_2K:
         if(parameters->numresolution > 6){
             opj_event_msg(p_manager, EVT_WARNING,
                     "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
@@ -5994,7 +5967,7 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
             parameters->numresolution = 6;
         }
         break;
-    case OPJ_CINEMA4K_24:
+    case OPJ_PROFILE_CINEMA_4K:
         if(parameters->numresolution < 2){
             opj_event_msg(p_manager, EVT_WARNING,
                     "JPEG 2000 Profile-4 (4k dc profile) requires:\n"
@@ -6027,7 +6000,7 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
     parameters->prog_order = OPJ_CPRL;
 
     /* Progression order changes for 4K, disallowed for 2K */
-    if (parameters->cp_cinema == OPJ_CINEMA4K_24) {
+    if (parameters->rsiz == OPJ_PROFILE_CINEMA_4K) {
         parameters->numpocs = (OPJ_UINT32)opj_j2k_initialise_4K_poc(parameters->POC,parameters->numresolution);
     } else {
         parameters->numpocs = 0;
@@ -6035,62 +6008,42 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
 
     /* Limited bit-rate */
     parameters->cp_disto_alloc = 1;
-    switch (parameters->cp_cinema){
-    case OPJ_CINEMA2K_24:
-    case OPJ_CINEMA4K_24:
-        max_rate = (OPJ_FLOAT32) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
-                (OPJ_FLOAT32)(CINEMA_24_CS * 8 * image->comps[0].dx * image->comps[0].dy);
-        if (parameters->tcp_rates[0] == 0){
-            parameters->tcp_rates[0] = max_rate;
-        }else{
-            temp_rate =(OPJ_FLOAT32)(image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
-                    (parameters->tcp_rates[0] * 8 * (OPJ_FLOAT32)image->comps[0].dx * (OPJ_FLOAT32)image->comps[0].dy);
-            if (temp_rate > CINEMA_24_CS ){
-                opj_event_msg(p_manager, EVT_WARNING,
-                        "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
-                        "Maximum 1302083 compressed bytes @ 24fps\n"
-                        "-> Specified rate (%3.1f) exceeds this limit. Rate will be forced to %3.1f.\n",
-                        parameters->tcp_rates[0], max_rate);
-                parameters->tcp_rates[0]= max_rate;
-            }else{
-                opj_event_msg(p_manager, EVT_WARNING,
-                        "JPEG 2000 Profile-3 and 4 (2k/4k dc profile):\n"
-                        "INFO : Specified rate (%3.1f) is below the 2k/4k limit @ 24fps.\n",
-                        parameters->tcp_rates[0]);
-            }
-        }
-        parameters->max_comp_size = COMP_24_CS;
-        break;
-    case OPJ_CINEMA2K_48:
-        max_rate = ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
-                (float)(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
-        if (parameters->tcp_rates[0] == 0){
-            parameters->tcp_rates[0] = max_rate;
-        }else{
-            temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
-                    (parameters->tcp_rates[0] * 8 * (float)image->comps[0].dx * (float)image->comps[0].dy);
-            if (temp_rate > CINEMA_48_CS ){
-                opj_event_msg(p_manager, EVT_WARNING,
-                        "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
-                        "Maximum 651041 compressed bytes @ 48fps\n"
-                        "-> Specified rate (%3.1f) exceeds this limit. Rate will be forced to %3.1f.\n",
-                        parameters->tcp_rates[0], max_rate);
-                parameters->tcp_rates[0]= max_rate;
-            }else{
-                opj_event_msg(p_manager, EVT_WARNING,
-                        "JPEG 2000 Profile-3 (2k dc profile):\n"
-                        "INFO : Specified rate (%3.1f) is below the 2k limit @ 48 fps.\n",
-                        parameters->tcp_rates[0]);
-            }
-        }
-        parameters->max_comp_size = COMP_48_CS;
-        break;
-    default:
-        break;
+    if (parameters->max_cs_size <= 0) {
+        /* No rate has been introduced, 24 fps is assumed */
+        parameters->max_cs_size = OPJ_CINEMA_24_CS;
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+                      "Maximum 1302083 compressed bytes @ 24fps\n"
+                      "As no rate has been given, this limit will be used.\n");
+    } else if (parameters->max_cs_size > OPJ_CINEMA_24_CS) {
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+                      "Maximum 1302083 compressed bytes @ 24fps\n"
+                      "-> Specified rate exceeds this limit. Rate will be forced to 1302083 bytes.\n");
+        parameters->max_cs_size = OPJ_CINEMA_24_CS;
     }
+
+    if (parameters->max_comp_size <= 0) {
+        /* No rate has been introduced, 24 fps is assumed */
+        parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+                      "Maximum 1041666 compressed bytes @ 24fps\n"
+                      "As no rate has been given, this limit will be used.\n");
+    } else if (parameters->max_comp_size > OPJ_CINEMA_24_COMP) {
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+                      "Maximum 1041666 compressed bytes @ 24fps\n"
+                      "-> Specified rate exceeds this limit. Rate will be forced to 1041666 bytes.\n");
+        parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+    }
+
+    parameters->tcp_rates[0] = (OPJ_FLOAT32) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
+            (OPJ_FLOAT32)(((OPJ_UINT32)parameters->max_cs_size) * 8 * image->comps[0].dx * image->comps[0].dy);
+
 }
 
-OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_mode, opj_event_mgr_t *p_manager)
+OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_UINT16 rsiz, opj_event_mgr_t *p_manager)
 {
     OPJ_UINT32 i;
 
@@ -6122,9 +6075,8 @@ OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_
     }
 
     /* Image size */
-    switch (cinema_mode){
-    case OPJ_CINEMA2K_24:
-    case OPJ_CINEMA2K_48:
+    switch (rsiz){
+    case OPJ_PROFILE_CINEMA_2K:
         if (((image->comps[0].w > 2048) | (image->comps[0].h > 1080))){
             opj_event_msg(p_manager, EVT_WARNING,
                     "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
@@ -6135,7 +6087,7 @@ OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_
             return OPJ_FALSE;
         }
         break;
-    case OPJ_CINEMA4K_24:
+    case OPJ_PROFILE_CINEMA_4K:
         if (((image->comps[0].w > 4096) | (image->comps[0].h > 2160))){
             opj_event_msg(p_manager, EVT_WARNING,
                     "JPEG 2000 Profile-4 (4k dc profile) requires:\n"
@@ -6153,7 +6105,7 @@ OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_
     return OPJ_TRUE;
 }
 
-void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
+OPJ_BOOL opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                                                     opj_cparameters_t *parameters,
                                                     opj_image_t *image,
                                                     opj_event_mgr_t * p_manager)
@@ -6162,7 +6114,7 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
         opj_cp_t *cp = 00;
 
         if(!p_j2k || !parameters || ! image) {
-                return;
+                return OPJ_FALSE;
         }
 
         /* keep a link to cp so that we can destroy it later in j2k_destroy_compress */
@@ -6172,20 +6124,130 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
         cp->tw = 1;
         cp->th = 1;
 
+        /* FIXME ADE: to be removed once deprecated cp_cinema and cp_rsiz have been removed */
+        if (parameters->rsiz == OPJ_PROFILE_NONE) { /* consider deprecated fields only if RSIZ has not been set */
+            OPJ_BOOL deprecated_used = OPJ_FALSE;
+            switch (parameters->cp_cinema){
+            case OPJ_CINEMA2K_24:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
+                parameters->max_cs_size = OPJ_CINEMA_24_CS;
+                parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+                deprecated_used = OPJ_TRUE;
+                break;
+            case OPJ_CINEMA2K_48:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
+                parameters->max_cs_size = OPJ_CINEMA_48_CS;
+                parameters->max_comp_size = OPJ_CINEMA_48_COMP;
+                deprecated_used = OPJ_TRUE;
+                break;
+            case OPJ_CINEMA4K_24:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_4K;
+                parameters->max_cs_size = OPJ_CINEMA_24_CS;
+                parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+                deprecated_used = OPJ_TRUE;
+                break;
+            case OPJ_OFF:
+            default:
+                break;
+            }
+            switch (parameters->cp_rsiz){
+            case OPJ_CINEMA2K:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
+                deprecated_used = OPJ_TRUE;
+                break;
+            case OPJ_CINEMA4K:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_4K;
+                deprecated_used = OPJ_TRUE;
+                break;
+            case OPJ_MCT:
+                parameters->rsiz = OPJ_PROFILE_PART2 | OPJ_EXTENSION_MCT;
+                deprecated_used = OPJ_TRUE;
+            case OPJ_STD_RSIZ:
+            default:
+                break;
+            }
+            if (deprecated_used) {
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "Deprecated fields cp_cinema or cp_rsiz are used\n"
+                        "Please consider using only the rsiz field\n"
+                        "See openjpeg.h documentation for more details\n");
+            }
+        }
+
+        /* see if max_codestream_size does limit input rate */
+        if (parameters->max_cs_size <= 0) {
+            if (parameters->tcp_rates[parameters->tcp_numlayers-1] > 0) {
+                OPJ_FLOAT32 temp_size;
+                temp_size =(OPJ_FLOAT32)(image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
+                        (parameters->tcp_rates[parameters->tcp_numlayers-1] * 8 * (OPJ_FLOAT32)image->comps[0].dx * (OPJ_FLOAT32)image->comps[0].dy);
+                parameters->max_cs_size = (int) floor(temp_size);
+            } else {
+                parameters->max_cs_size = 0;
+            }
+        } else {
+            OPJ_FLOAT32 temp_rate;
+            OPJ_BOOL cap = OPJ_FALSE;
+            temp_rate = (OPJ_FLOAT32) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
+                    (OPJ_FLOAT32)(((OPJ_UINT32)parameters->max_cs_size) * 8 * image->comps[0].dx * image->comps[0].dy);
+            for (i = 0; i < (OPJ_UINT32) parameters->tcp_numlayers; i++) {
+                if (parameters->tcp_rates[i] < temp_rate) {
+                    parameters->tcp_rates[i] = temp_rate;
+                    cap = OPJ_TRUE;
+                }
+            }
+            if (cap) {
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "The desired maximum codestream size has limited\n"
+                        "at least one of the desired quality layers\n");
+            }
+        }
+
+        /* Manage profiles and applications and set RSIZ */
         /* set cinema parameters if required */
-        if (parameters->cp_cinema){
-            opj_j2k_set_cinema_parameters(parameters,image,p_manager);
-            if (!opj_j2k_is_cinema_compliant(image,parameters->cp_cinema,p_manager)) {
-                parameters->cp_rsiz = OPJ_STD_RSIZ;
+        if (OPJ_IS_CINEMA(parameters->rsiz)){
+            if ((parameters->rsiz == OPJ_PROFILE_CINEMA_S2K)
+                    || (parameters->rsiz == OPJ_PROFILE_CINEMA_S4K)){
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "JPEG 2000 Scalable Digital Cinema profiles not yet supported\n");
+                parameters->rsiz = OPJ_PROFILE_NONE;
+            } else {
+                opj_j2k_set_cinema_parameters(parameters,image,p_manager);
+                if (!opj_j2k_is_cinema_compliant(image,parameters->rsiz,p_manager)) {
+                    parameters->rsiz = OPJ_PROFILE_NONE;
+                }
+            }
+        } else if (OPJ_IS_STORAGE(parameters->rsiz)) {
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Long Term Storage profile not yet supported\n");
+            parameters->rsiz = OPJ_PROFILE_NONE;
+        } else if (OPJ_IS_BROADCAST(parameters->rsiz)) {
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Broadcast profiles not yet supported\n");
+            parameters->rsiz = OPJ_PROFILE_NONE;
+        } else if (OPJ_IS_IMF(parameters->rsiz)) {
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 IMF profiles not yet supported\n");
+            parameters->rsiz = OPJ_PROFILE_NONE;
+        } else if (OPJ_IS_PART2(parameters->rsiz)) {
+            if (parameters->rsiz == ((OPJ_PROFILE_PART2) | (OPJ_EXTENSION_NONE))) {
+                opj_event_msg(p_manager, EVT_WARNING,
+                              "JPEG 2000 Part-2 profile defined\n"
+                              "but no Part-2 extension enabled.\n"
+                              "Profile set to NONE.\n");
+                parameters->rsiz = OPJ_PROFILE_NONE;
+            } else if (parameters->rsiz != ((OPJ_PROFILE_PART2) | (OPJ_EXTENSION_MCT))) {
+                opj_event_msg(p_manager, EVT_WARNING,
+                              "Unsupported Part-2 extension enabled\n"
+                              "Profile set to NONE.\n");
+                parameters->rsiz = OPJ_PROFILE_NONE;
             }
         }
 
         /*
         copy user encoding parameters
         */
-        cp->m_specific_param.m_enc.m_cinema = parameters->cp_cinema;
         cp->m_specific_param.m_enc.m_max_comp_size = (OPJ_UINT32)parameters->max_comp_size;
-        cp->rsiz   = parameters->cp_rsiz;
+        cp->rsiz = parameters->rsiz;
         cp->m_specific_param.m_enc.m_disto_alloc = (OPJ_UINT32)parameters->cp_disto_alloc & 1u;
         cp->m_specific_param.m_enc.m_fixed_alloc = (OPJ_UINT32)parameters->cp_fixed_alloc & 1u;
         cp->m_specific_param.m_enc.m_fixed_quality = (OPJ_UINT32)parameters->cp_fixed_quality & 1u;
@@ -6194,6 +6256,10 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
         if (parameters->cp_fixed_alloc && parameters->cp_matrice) {
                 size_t array_size = (size_t)parameters->tcp_numlayers * (size_t)parameters->numresolution * 3 * sizeof(OPJ_INT32);
                 cp->m_specific_param.m_enc.m_matrice = (OPJ_INT32 *) opj_malloc(array_size);
+								if (!cp->m_specific_param.m_enc.m_matrice) {
+								        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate copy of user encoding parameters matrix \n");
+								        return OPJ_FALSE;
+								}
                 memcpy(cp->m_specific_param.m_enc.m_matrice, parameters->cp_matrice, array_size);
         }
 
@@ -6207,11 +6273,36 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
 
         /* comment string */
         if(parameters->cp_comment) {
-                cp->comment = (char*)opj_malloc(strlen(parameters->cp_comment) + 1);
-                if(cp->comment) {
-                        strcpy(cp->comment, parameters->cp_comment);
-                }
-        }
+                cp->comment = (char*)opj_malloc(strlen(parameters->cp_comment) + 1U);
+								if(!cp->comment) {
+								        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate copy of comment string\n");
+								        return OPJ_FALSE;
+								}
+                strcpy(cp->comment, parameters->cp_comment);
+        } else {
+                /* Create default comment for codestream */
+                const char comment[] = "Created by OpenJPEG version ";
+                const size_t clen = strlen(comment);
+                const char *version = opj_version();
+
+                /* UniPG>> */
+#ifdef USE_JPWL
+                cp->comment = (char*)opj_malloc(clen+strlen(version)+11);
+								if(!cp->comment) {
+								        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate comment string\n");
+								        return OPJ_FALSE;
+								}
+                sprintf(cp->comment,"%s%s with JPWL", comment, version);
+#else
+                cp->comment = (char*)opj_malloc(clen+strlen(version)+1);
+								if(!cp->comment) {
+								        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate comment string\n");
+								        return OPJ_FALSE;
+								}
+                sprintf(cp->comment,"%s%s", comment, version);
+#endif
+                /* <<UniPG */
+				}
 
         /*
         calculate other encoding parameters
@@ -6289,6 +6380,10 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
         /* initialize the mutiple tiles */
         /* ---------------------------- */
         cp->tcps = (opj_tcp_t*) opj_calloc(cp->tw * cp->th, sizeof(opj_tcp_t));
+        if (!cp->tcps) {
+                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate tile coding parameters\n");
+                return OPJ_FALSE;
+        }
         if (parameters->numpocs) {
                 /* initialisation of POC */
                 opj_j2k_check_poc_val(parameters->POC,parameters->numpocs, (OPJ_UINT32)parameters->numresolution, image->numcomps, (OPJ_UINT32)parameters->tcp_numlayers, p_manager);
@@ -6300,7 +6395,7 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                 tcp->numlayers = (OPJ_UINT32)parameters->tcp_numlayers;
 
                 for (j = 0; j < tcp->numlayers; j++) {
-                        if(cp->m_specific_param.m_enc.m_cinema){
+                        if(OPJ_IS_CINEMA(cp->rsiz)){
                                 if (cp->m_specific_param.m_enc.m_fixed_quality) {
                                         tcp->distoratio[j] = parameters->tcp_distoratio[j];
                                 }
@@ -6346,24 +6441,54 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                 }
 
                 tcp->tccps = (opj_tccp_t*) opj_calloc(image->numcomps, sizeof(opj_tccp_t));
-
+                if (!tcp->tccps) {
+                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate tile component coding parameters\n");
+                        return OPJ_FALSE;
+                }
                 if (parameters->mct_data) {
                       
                     OPJ_UINT32 lMctSize = image->numcomps * image->numcomps * (OPJ_UINT32)sizeof(OPJ_FLOAT32);
                     OPJ_FLOAT32 * lTmpBuf = (OPJ_FLOAT32*)opj_malloc(lMctSize);
                     OPJ_INT32 * l_dc_shift = (OPJ_INT32 *) ((OPJ_BYTE *) parameters->mct_data + lMctSize);
 
+										if (!lTmpBuf) {
+                            opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate temp buffer\n");
+                            return OPJ_FALSE;
+                    }
+
                     tcp->mct = 2;
                     tcp->m_mct_coding_matrix = (OPJ_FLOAT32*)opj_malloc(lMctSize);
+										if (! tcp->m_mct_coding_matrix) {
+                            opj_free(lTmpBuf);
+														lTmpBuf = NULL;
+                            opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate encoder MCT coding matrix \n");
+                            return OPJ_FALSE;
+                    }
                     memcpy(tcp->m_mct_coding_matrix,parameters->mct_data,lMctSize);
                     memcpy(lTmpBuf,parameters->mct_data,lMctSize);
 
                     tcp->m_mct_decoding_matrix = (OPJ_FLOAT32*)opj_malloc(lMctSize);
-                    assert(opj_matrix_inversion_f(lTmpBuf,(tcp->m_mct_decoding_matrix),image->numcomps));
+										if (! tcp->m_mct_decoding_matrix) {
+														opj_free(lTmpBuf);
+														lTmpBuf = NULL;
+                            opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate encoder MCT decoding matrix \n");
+                            return OPJ_FALSE;
+                    }
+                    if(opj_matrix_inversion_f(lTmpBuf,(tcp->m_mct_decoding_matrix),image->numcomps) == OPJ_FALSE) {
+                            opj_free(lTmpBuf);
+														lTmpBuf = NULL;
+                            opj_event_msg(p_manager, EVT_ERROR, "Failed to inverse encoder MCT decoding matrix \n");
+                            return OPJ_FALSE;
+										}
 
                     tcp->mct_norms = (OPJ_FLOAT64*)
                                     opj_malloc(image->numcomps * sizeof(OPJ_FLOAT64));
-
+										if (! tcp->mct_norms) {
+                            opj_free(lTmpBuf);
+														lTmpBuf = NULL;
+                            opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to allocate encoder MCT norms \n");
+                            return OPJ_FALSE;
+                    }
                     opj_calculate_norms(tcp->mct_norms,image->numcomps,tcp->m_mct_decoding_matrix);
                     opj_free(lTmpBuf);
 
@@ -6372,9 +6497,22 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                             tccp->m_dc_level_shift = l_dc_shift[i];
                     }
 
-                    opj_j2k_setup_mct_encoding(tcp,image);                        
+                    if (opj_j2k_setup_mct_encoding(tcp,image) == OPJ_FALSE) {
+                        /* free will be handled by opj_j2k_destroy */
+												opj_event_msg(p_manager, EVT_ERROR, "Failed to setup j2k mct encoding\n");
+                        return OPJ_FALSE;
+                    }
                 }
                 else {
+                    if(tcp->mct==1 && image->numcomps == 3) { // RGB->YCC MCT is enabled
+                        if ((image->comps[0].dx != image->comps[1].dx) ||
+                                (image->comps[0].dx != image->comps[2].dx) ||
+                                (image->comps[0].dy != image->comps[1].dy) ||
+                                (image->comps[0].dy != image->comps[2].dy)) {
+                            opj_event_msg(p_manager, EVT_WARNING, "Cannot perform MCT on components with different sizes. Disabling MCT.\n");
+                            tcp->mct = 0;
+                        }
+                    }
                         for (i = 0; i < image->numcomps; i++) {
                                 opj_tccp_t *tccp = &tcp->tccps[i];
                                 opj_image_comp_t * l_comp = &(image->comps[i]);
@@ -6461,6 +6599,7 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                 opj_free(parameters->mct_data);
                 parameters->mct_data = 00;
         }
+        return OPJ_TRUE;
 }
 
 static OPJ_BOOL opj_j2k_add_mhmarker(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len)
@@ -7554,8 +7693,6 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
 
                         if (! p_j2k->m_specific_param.m_decoder.m_can_decode){
                                 /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
-							while(1)  //liang
-							{
                                 if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
                                         opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
                                         return OPJ_FALSE;
@@ -7563,8 +7700,6 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
 
                                 /* Read 2 bytes from buffer as the new marker ID */
                                 opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
-								if((l_current_marker & 0xff00) == 0xff00) break;
-							}
                         }
                 }
                 else {
@@ -7615,7 +7750,7 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
         }
 
         opj_event_msg(p_manager, EVT_INFO, "Header of tile %d / %d has been read.\n",
-                        p_j2k->m_current_tile_number, (p_j2k->m_cp.th * p_j2k->m_cp.tw) - 1);
+                        p_j2k->m_current_tile_number+1, (p_j2k->m_cp.th * p_j2k->m_cp.tw));
 
         *p_tile_index = p_j2k->m_current_tile_number;
         *p_go_on = OPJ_TRUE;
@@ -7700,13 +7835,13 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
                         p_j2k->m_specific_param.m_decoder.m_state =  0x0100;/*FIXME J2K_DEC_STATE_EOC;*/
                 }
                 else if (l_current_marker != J2K_MS_SOT)
-                {
-                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short, expected SOT\n");
-                        
+                {       
                         if(opj_stream_get_number_byte_left(p_stream) == 0) {
                             p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
+                            opj_event_msg(p_manager, EVT_WARNING, "Stream does not end with EOC\n");
                             return OPJ_TRUE;
                         }
+                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short, expected SOT\n");
                         return OPJ_FALSE;
                 }
         }
@@ -8134,23 +8269,21 @@ OPJ_BOOL opj_j2k_set_decode_area(       opj_j2k_t *p_j2k,
 
 opj_j2k_t* opj_j2k_create_decompress(void)
 {
-        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_malloc(sizeof(opj_j2k_t));
+        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_calloc(1,sizeof(opj_j2k_t));
         if (!l_j2k) {
                 return 00;
         }
-        memset(l_j2k,0,sizeof(opj_j2k_t));
 
         l_j2k->m_is_decoder = 1;
         l_j2k->m_cp.m_is_decoder = 1;
 
-        l_j2k->m_specific_param.m_decoder.m_default_tcp = (opj_tcp_t*) opj_malloc(sizeof(opj_tcp_t));
+        l_j2k->m_specific_param.m_decoder.m_default_tcp = (opj_tcp_t*) opj_calloc(1,sizeof(opj_tcp_t));
         if (!l_j2k->m_specific_param.m_decoder.m_default_tcp) {
                 opj_j2k_destroy(l_j2k);
                 return 00;
         }
-        memset(l_j2k->m_specific_param.m_decoder.m_default_tcp,0,sizeof(opj_tcp_t));
 
-        l_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE *) opj_malloc(OPJ_J2K_DEFAULT_HEADER_SIZE);
+        l_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE *) opj_calloc(1,OPJ_J2K_DEFAULT_HEADER_SIZE);
         if (! l_j2k->m_specific_param.m_decoder.m_header_data) {
                 opj_j2k_destroy(l_j2k);
                 return 00;
@@ -8164,15 +8297,10 @@ opj_j2k_t* opj_j2k_create_decompress(void)
 
         /* codestream index creation */
         l_j2k->cstr_index = opj_j2k_create_cstr_index();
-
-                        /*(opj_codestream_index_t*) opj_malloc(sizeof(opj_codestream_index_t));
         if (!l_j2k->cstr_index){
                 opj_j2k_destroy(l_j2k);
-                return NULL;
+                return 00;
         }
-
-        l_j2k->cstr_index->marker = (opj_marker_info_t*) opj_malloc(100 * sizeof(opj_marker_info_t));
-*/
 
         /* validation list creation */
         l_j2k->m_validation_list = opj_procedure_list_create();
@@ -9588,6 +9716,10 @@ OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
         assert(p_manager != 00);
 
         p_j2k->m_private_image = opj_image_create0();
+        if (! p_j2k->m_private_image) {
+                opj_event_msg(p_manager, EVT_ERROR, "Failed to allocate image header." );
+                return OPJ_FALSE;
+        }
         opj_copy_image_header(p_image, p_j2k->m_private_image);
 
         /* TODO_MSD: Find a better way */
@@ -9809,7 +9941,7 @@ void opj_j2k_setup_end_compress (opj_j2k_t *p_j2k)
         /* DEVELOPER CORNER, insert your custom procedures */
         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_eoc );
 
-        if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
+        if (OPJ_IS_CINEMA(p_j2k->m_cp.rsiz)) {
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_updated_tlm);
         }
 
@@ -9841,14 +9973,14 @@ void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_cod );
         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_qcd );
 
-        if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
+        if (OPJ_IS_CINEMA(p_j2k->m_cp.rsiz)) {
                 /* No need for COC or QCC, QCD and COD are used
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_all_coc );
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_all_qcc );
                 */
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_tlm );
 
-                if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == OPJ_CINEMA4K_24) {
+                if (p_j2k->m_cp.rsiz == OPJ_PROFILE_CINEMA_4K) {
                         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_poc );
                 }
         }
@@ -9860,7 +9992,7 @@ void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
         }
 
         /* DEVELOPER CORNER, insert your custom procedures */
-        if (p_j2k->m_cp.rsiz & OPJ_MCT) {
+        if (p_j2k->m_cp.rsiz & OPJ_EXTENSION_MCT) {
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_mct_data_group );
         }
         /* End of Developer Corner */
@@ -9909,7 +10041,7 @@ OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
         p_data += l_current_nb_bytes_written;
         p_total_data_size -= l_current_nb_bytes_written;
 
-        if (l_cp->m_specific_param.m_enc.m_cinema == 0) {
+        if (!OPJ_IS_CINEMA(l_cp->rsiz)) {
 #if 0
                 for (compno = 1; compno < p_j2k->m_private_image->numcomps; compno++) {
                         l_current_nb_bytes_written = 0;
@@ -9946,7 +10078,7 @@ OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
         /* Writing Psot in SOT marker */
         opj_write_bytes(l_begin_data + 6,l_nb_bytes_written,4);                                 /* PSOT */
 
-        if (l_cp->m_specific_param.m_enc.m_cinema){
+        if (OPJ_IS_CINEMA(l_cp->rsiz)){
                 opj_j2k_update_tlm(p_j2k,l_nb_bytes_written);
         }
 
@@ -10010,7 +10142,7 @@ OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
                 /* Writing Psot in SOT marker */
                 opj_write_bytes(l_begin_data + 6,l_part_tile_size,4);                                   /* PSOT */
 
-                if (l_cp->m_specific_param.m_enc.m_cinema) {
+                if (OPJ_IS_CINEMA(l_cp->rsiz)) {
                         opj_j2k_update_tlm(p_j2k,l_part_tile_size);
                 }
 
@@ -10051,7 +10183,7 @@ OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
                         /* Writing Psot in SOT marker */
                         opj_write_bytes(l_begin_data + 6,l_part_tile_size,4);                                   /* PSOT */
 
-                        if (l_cp->m_specific_param.m_enc.m_cinema) {
+                        if (OPJ_IS_CINEMA(l_cp->rsiz)) {
                                 opj_j2k_update_tlm(p_j2k,l_part_tile_size);
                         }
 
