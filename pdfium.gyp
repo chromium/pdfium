@@ -8,6 +8,7 @@
       '_FXFT_VERSION_=2501',
       '_FPDFSDK_LIB',
       '_NO_GDIPLUS_',  # workaround text rendering issues on Windows
+      'OPJ_STATIC',
     ],
     'conditions': [
       ['pdf_use_skia==1', {
