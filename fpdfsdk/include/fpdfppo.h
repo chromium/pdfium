@@ -9,6 +9,10 @@
 
 #include "fpdfview.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // Function: FPDF_ImportPages
 //			Import some pages to a PDF document.
 // Parameters:	
@@ -30,5 +34,10 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,FPDF_DOCUMEN
 // Return value:
 //			TRUE for success, FALSE for failure.
 DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc, FPDF_DOCUMENT src_doc);
+
+#ifdef __cplusplus
+};
 #endif
+
+#endif //_FPDFPPO_H_
 
