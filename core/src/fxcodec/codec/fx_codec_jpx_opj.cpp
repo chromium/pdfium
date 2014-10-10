@@ -167,19 +167,12 @@ static void sycc422_to_rgb(opj_image_t *img)
     d1 = g = FX_Alloc(int, (size_t)max);
     d2 = b = FX_Alloc(int, (size_t)max);
     for(i = 0; i < maxh; ++i) {
-        for(j = 0; j < maxw; j += 2) {
+        for (j = 0; j < maxw; ++j, ++y, ++r, ++g, ++b) {
             sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-            ++y;
-            ++r;
-            ++g;
-            ++b;
-            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-            ++y;
-            ++r;
-            ++g;
-            ++b;
-            ++cb;
-            ++cr;
+            if (j % 2){
+                ++cb;
+                ++cr;
+            }
         }
     }
     FX_Free(img->comps[0].data);
