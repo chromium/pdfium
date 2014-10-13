@@ -480,6 +480,8 @@ protected:
 #define CIDSET_JAPAN1		3
 #define CIDSET_KOREA1		4
 #define CIDSET_UNICODE		5
+#define NUMBER_OF_CIDSETS   6
+
 class CPDF_CIDFont : public CPDF_Font
 {
 public:

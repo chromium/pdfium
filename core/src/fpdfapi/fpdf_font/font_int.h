@@ -39,11 +39,11 @@ public:
     struct {
         const struct FXCMAP_CMap*	m_pMapList;
         int				m_Count;
-    } m_EmbeddedCharsets[5];
+    } m_EmbeddedCharsets[NUMBER_OF_CIDSETS];
     struct {
         const FX_WORD*	m_pMap;
         int				m_Count;
-    } m_EmbeddedToUnicodes[5];
+    } m_EmbeddedToUnicodes[NUMBER_OF_CIDSETS];
     FX_LPBYTE			m_pContrastRamps;
 };
 struct _CMap_CodeRange {

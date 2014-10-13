@@ -76,18 +76,15 @@ CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name, FX_B
     pCMap->LoadPredefined(this, pname, bPromptCJK);
     return pCMap;
 }
-const FX_LPCSTR g_CharsetNames[] = {NULL, "GB1", "CNS1", "Japan1", "Korea1", "UCS", NULL};
-const int g_CharsetCPs[] = {0, 936, 950, 932, 949, 1200, 0};
+static const FX_LPCSTR g_CharsetNames[NUMBER_OF_CIDSETS] = {NULL, "GB1", "CNS1", "Japan1", "Korea1", "UCS" };
+static const int g_CharsetCPs[NUMBER_OF_CIDSETS] = {0, 936, 950, 932, 949, 1200 };
 int _CharsetFromOrdering(const CFX_ByteString& Ordering)
 {
-    int charset = 1;
-    while (g_CharsetNames[charset] && Ordering != CFX_ByteStringC(g_CharsetNames[charset])) {
-        charset ++;
-    }
-    if (g_CharsetNames[charset] == NULL) {
-        return CIDSET_UNKNOWN;
-    }
-    return charset;
+	for (int charset = 1; charset < NUMBER_OF_CIDSETS; charset++) {
+		if (Ordering == CFX_ByteStringC(g_CharsetNames[charset]))
+			return charset;
+	}
+	return CIDSET_UNKNOWN;
 }
 void CPDF_CMapManager::ReloadAll()
 {
