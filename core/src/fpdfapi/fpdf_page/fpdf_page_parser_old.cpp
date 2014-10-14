@@ -31,6 +31,16 @@ FX_BOOL _PDF_HasInvalidOpChar(FX_LPCSTR op)
     }
     return FALSE;
 }
+class CPDF_StreamParserAutoClearer {
+  public:
+    CPDF_StreamParserAutoClearer(CPDF_StreamParser** scoped_variable, CPDF_StreamParser* new_parser)
+            : scoped_variable_(scoped_variable) {
+        *scoped_variable_ = new_parser;
+    }
+    ~CPDF_StreamParserAutoClearer() { *scoped_variable_ = NULL; }
+  private:
+    CPDF_StreamParser** scoped_variable_;
+};
 FX_DWORD CPDF_StreamContentParser::Parse(FX_LPCBYTE pData, FX_DWORD dwSize, FX_DWORD max_cost)
 {
     if (m_Level > _FPDF_MAX_FORM_LEVEL_) {
@@ -38,7 +48,7 @@ FX_DWORD CPDF_StreamContentParser::Parse(FX_LPCBYTE pData, FX_DWORD dwSize, FX_D
     }
     FX_DWORD InitObjCount = m_pObjectList->CountObjects();
     CPDF_StreamParser syntax(pData, dwSize);
-    m_pSyntax = &syntax;
+    CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
     m_CompatCount = 0;
     while (1) {
         FX_DWORD cost = m_pObjectList->CountObjects() - InitObjCount;
