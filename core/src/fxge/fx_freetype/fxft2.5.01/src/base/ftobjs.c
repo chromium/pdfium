@@ -3615,8 +3615,8 @@
     if ( buffer && buffer_max > 0 )
       ((FT_Byte*)buffer)[0] = 0;
 
-    if ( face                                     &&
-         (FT_Long)glyph_index <= face->num_glyphs &&
+    if ( face                                    &&
+         (FT_Long)glyph_index < face->num_glyphs &&
          FT_HAS_GLYPH_NAMES( face )               )
     {
       FT_Service_GlyphDict  service;
