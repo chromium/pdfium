@@ -364,18 +364,7 @@ public:
     FX_FLOAT				m_TextX, m_TextY, m_TextLineX, m_TextLineY;
     FX_FLOAT				m_TextLeading, m_TextRise, m_TextHorzScale;
 };
-template <class ObjClass> class CPDF_CountedObject : public CFX_Object
-{
-public:
-    ObjClass	m_Obj;
-    FX_DWORD	m_nCount;
-};
-typedef CFX_MapPtrTemplate<CPDF_Dictionary*, CPDF_CountedObject<CPDF_Font*>*>		CPDF_FontMap;
-typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedObject<CPDF_ColorSpace*>*>		CPDF_ColorSpaceMap;
-typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedObject<CPDF_Pattern*>*>		CPDF_PatternMap;
-typedef CFX_MapPtrTemplate<FX_DWORD, CPDF_CountedObject<CPDF_Image*>*>				CPDF_ImageMap;
-typedef CFX_MapPtrTemplate<CPDF_Stream*, CPDF_CountedObject<CPDF_IccProfile*>*>		CPDF_IccProfileMap;
-typedef CFX_MapPtrTemplate<CPDF_Stream*, CPDF_CountedObject<CPDF_StreamAcc*>*>		CPDF_FontFileMap;
+
 template <class KeyType, class ValueType>
 KeyType PDF_DocPageData_FindValue(const CFX_MapPtrTemplate<KeyType, CPDF_CountedObject<ValueType>*> &map, ValueType findValue, CPDF_CountedObject<ValueType>*& findData)
 {
@@ -431,6 +420,8 @@ public:
     CPDF_StreamAcc*             GetFontFileStreamAcc(CPDF_Stream* pFontStream);
     void                        ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOOL bForce = FALSE);
     FX_BOOL                     IsForceClear() const {return m_bForceClear;}
+    CPDF_CountedColorSpace*     FindColorSpacePtr(CPDF_Object* pCSObj) const;
+    CPDF_CountedPattern*        FindPatternPtr(CPDF_Object* pPatternObj) const;
 
     CPDF_Document*              m_pPDFDoc;
     CPDF_FontMap                m_FontMap;
@@ -497,6 +488,7 @@ public:
         return m_pBaseCS;
     }
     CPDF_ColorSpace*	m_pBaseCS;
+    CPDF_CountedColorSpace*	m_pCountedBaseCS;
 };
 #define	MAX_PAGE_OBJECTS_UNIFY_NAMING				4096
 class CPDF_ResourceNaming : public CFX_Object
