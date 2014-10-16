@@ -147,8 +147,10 @@
       '-Wall',
       '-W',
       '-Wno-unused-parameter',
-      '-pthread', '-fno-exceptions',
+      '-pthread',
+      '-fno-exceptions',
       '-fvisibility=hidden',
+      '-std=gnu++0x',
     ],
     'cflags_cc': [
       '-Wnon-virtual-dtor',
@@ -199,6 +201,7 @@
     },
     'xcode_settings': {
       'ALWAYS_SEARCH_USER_PATHS': 'NO',
+      'CLANG_CXX_LANGUAGE_STANDARD': 'gnu++11',
       'GCC_CW_ASM_SYNTAX': 'NO',                # No -fasm-blocks
       'GCC_DYNAMIC_NO_PIC': 'NO',               # No -mdynamic-no-pic
                                                 # (Equivalent to -fPIC)
