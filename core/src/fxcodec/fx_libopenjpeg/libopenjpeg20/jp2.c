@@ -764,6 +764,12 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 	if (color->jp2_cdef) {
 		opj_jp2_cdef_info_t *info = color->jp2_cdef->info;
 		OPJ_UINT16 n = color->jp2_cdef->n;
+		OPJ_UINT32 nr_channels = image->numcomps; /* FIXME image->numcomps == jp2->numcomps before color is applied ??? */
+
+		/* cdef applies to cmap channels if any */
+		if (color->jp2_pclr && color->jp2_pclr->cmap) {
+			nr_channels = (OPJ_UINT32)color->jp2_pclr->nr_channels;
+		}
 
 		for (i = 0; i < n; i++) {
 			if (info[i].cn >= image->numcomps) {
@@ -774,6 +780,22 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].asoc - 1, image->numcomps);
 				return OPJ_FALSE;
 			}
+		}
+
+		/* issue 397 */
+		/* ISO 15444-1 states that if cdef is present, it shall contain a complete list of channel definitions. */
+		while (nr_channels > 0)
+		{
+			for(i = 0; i < n; ++i) {
+				if ((OPJ_UINT32)info[i].cn == (nr_channels - 1U)) {
+					break;
+				}
+			}
+			if (i == n) {
+				opj_event_msg(p_manager, EVT_ERROR, "Incomplete channel definitions.\n");
+				return OPJ_FALSE;
+			}
+			--nr_channels;
 		}
 	}
 
@@ -1017,7 +1039,7 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 
 			if (bytes_to_read > sizeof(OPJ_UINT32))
 				bytes_to_read = sizeof(OPJ_UINT32);
-			if ((ptrdiff_t)p_pclr_header_size < p_pclr_header_data - orig_header_data + (ptrdiff_t)bytes_to_read)
+			if ((ptrdiff_t)p_pclr_header_size < (ptrdiff_t)(p_pclr_header_data - orig_header_data) + (ptrdiff_t)bytes_to_read)
 				return OPJ_FALSE;
 
 			opj_read_bytes(p_pclr_header_data, &l_value , bytes_to_read);	/* Cji */
@@ -1280,7 +1302,7 @@ OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 	}
 	else if (jp2->meth > 2)
     {
-        /*	ISO/IEC 15444-1:2004 (E), Table I.9  Legal METH values:
+        /*	ISO/IEC 15444-1:2004 (E), Table I.9 Legal METH values:
         conforming JP2 reader shall ignore the entire Colour Specification box.*/
         opj_event_msg(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d), " 
             "so we will ignore the entire Colour Specification box. \n", jp2->meth);
@@ -1843,7 +1865,7 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 			return OPJ_FALSE;
 		}
 		/* testcase 1851.pdf.SIGSEGV.ce9.948 */
-		else if	(box.length < l_nb_bytes_read) {
+        else if (box.length < l_nb_bytes_read) {
 			opj_event_msg(p_manager, EVT_ERROR, "invalid box size %d (%x)\n", box.length, box.type);
 			opj_free(l_current_data);
 			return OPJ_FALSE;
@@ -1853,6 +1875,12 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 		l_current_data_size = box.length - l_nb_bytes_read;
 
 		if (l_current_handler != 00) {
+			if ((OPJ_OFF_T)l_current_data_size > opj_stream_get_number_byte_left(stream)) {
+				/* do not even try to malloc if we can't read */
+				opj_event_msg(p_manager, EVT_ERROR, "Invalid box size %d for box '%c%c%c%c'. Need %d bytes, %d bytes remaining \n", box.length, (OPJ_BYTE)(box.type>>24), (OPJ_BYTE)(box.type>>16), (OPJ_BYTE)(box.type>>8), (OPJ_BYTE)(box.type>>0), l_current_data_size, (OPJ_UINT32)opj_stream_get_number_byte_left(stream));
+				opj_free(l_current_data);
+				return OPJ_FALSE;
+			}
 			if (l_current_data_size > l_last_data_size) {
 				OPJ_BYTE* new_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_current_data_size);
 				if (!new_current_data) {
@@ -2164,6 +2192,7 @@ static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
 	OPJ_UINT32 l_box_size=0, l_current_data_size = 0;
 	opj_jp2_box_t box;
 	const opj_jp2_header_handler_t * l_current_handler;
+	OPJ_BOOL l_has_ihdr = 0;
 
 	/* preconditions */
 	assert(p_header_data != 00);
@@ -2204,8 +2233,17 @@ static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
 			jp2->jp2_img_state |= JP2_IMG_STATE_UNKNOWN;
 		}
 
+		if (box.type == JP2_IHDR) {
+			l_has_ihdr = 1;
+		}
+
 		p_header_data += l_current_data_size;
 		p_header_size -= box.length;
+	}
+
+	if (l_has_ihdr == 0) {
+		opj_event_msg(p_manager, EVT_ERROR, "Stream error while reading JP2 Header box: no 'ihdr' box.\n");
+		return OPJ_FALSE;
 	}
 
 	jp2->jp2_state |= JP2_STATE_HEADER;
@@ -2276,7 +2314,10 @@ OPJ_BOOL opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 		opj_event_msg(p_manager, EVT_ERROR, "Cannot handle box of undefined sizes\n");
 		return OPJ_FALSE;
 	}
-
+	if (box->length < *p_number_bytes_read) {
+		opj_event_msg(p_manager, EVT_ERROR, "Box length is inconsistent.\n");
+		return OPJ_FALSE;
+	}
 	return OPJ_TRUE;
 }
 

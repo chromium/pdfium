@@ -2415,9 +2415,19 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
 
         opj_read_bytes(p_header_data,&l_tcp->csty,1);           /* Scod */
         ++p_header_data;
+        /* Make sure we know how to decode this */
+        if ((l_tcp->csty & ~(OPJ_UINT32)(J2K_CP_CSTY_PRT | J2K_CP_CSTY_SOP | J2K_CP_CSTY_EPH)) != 0U) {
+                opj_event_msg(p_manager, EVT_ERROR, "Unknown Scod value in COD marker\n");
+                return OPJ_FALSE;
+        }
         opj_read_bytes(p_header_data,&l_tmp,1);                         /* SGcod (A) */
         ++p_header_data;
         l_tcp->prg = (OPJ_PROG_ORDER) l_tmp;
+        /* Make sure progression order is valid */
+        if (l_tcp->prg > OPJ_CPRL ) {
+                opj_event_msg(p_manager, EVT_ERROR, "Unknown progression order in COD marker\n");
+                l_tcp->prg = OPJ_PROG_UNKNOWN;
+        }
         opj_read_bytes(p_header_data,&l_tcp->numlayers,2);      /* SGcod (B) */
         p_header_data+=2;
 
@@ -3544,6 +3554,14 @@ OPJ_BOOL j2k_read_ppm_v3 (
 
         /* First PPM marker */
         if (l_Z_ppm == 0) {
+                if (l_cp->ppm_data != NULL) {
+                        opj_event_msg(p_manager, EVT_ERROR, "Zppm O already processed. Found twice.\n");
+                        opj_free(l_cp->ppm_data);
+                        l_cp->ppm_data = NULL;
+                        l_cp->ppm_buffer = NULL;
+                        l_cp->ppm = 0; /* do not use PPM */
+                        return OPJ_FALSE;
+                }
                 /* We need now at least the Nppm^0 element */
                 if (p_header_size < 4) {
                         opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
@@ -3641,6 +3659,15 @@ OPJ_BOOL j2k_read_ppm_v3 (
 
                 if (p_header_size)
                 {
+                        if (p_header_size < 4) {
+                                opj_free(l_cp->ppm_data);
+                                l_cp->ppm_data = NULL;
+                                l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
+                                l_cp->ppm_len = 0;
+                                l_cp->ppm = 0;
+                                opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
+                                return OPJ_FALSE;
+                        }
                         opj_read_bytes(p_header_data,&l_N_ppm,4);               /* N_ppm^i */
                         p_header_data+=4;
                         p_header_size-=4;
@@ -4317,6 +4344,12 @@ OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
 
         /* Patch to support new PHR data */
         if (p_j2k->m_specific_param.m_decoder.m_sot_length) {
+            /* If we are here, we'll try to read the data after allocation */
+            /* Check enough bytes left in stream before allocation */
+            if ((OPJ_OFF_T)p_j2k->m_specific_param.m_decoder.m_sot_length > opj_stream_get_number_byte_left(p_stream)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Tile part length size inconsistent with stream length\n");
+                return OPJ_FALSE;
+            }
             if (! *l_current_data) {
                 /* LH: oddly enough, in this path, l_tile_len!=0.
                  * TODO: If this was consistant, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
@@ -6117,6 +6150,11 @@ OPJ_BOOL opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                 return OPJ_FALSE;
         }
 
+        if ((parameters->numresolution <= 0) || (parameters->numresolution > OPJ_J2K_MAXRLVLS)) {
+            opj_event_msg(p_manager, EVT_ERROR, "Invalid number of resolutions : %d not in range [1,%d]\n", parameters->numresolution, OPJ_J2K_MAXRLVLS);
+            return OPJ_FALSE;
+        }
+
         /* keep a link to cp so that we can destroy it later in j2k_destroy_compress */
         cp = &(p_j2k->m_cp);
 
@@ -6504,7 +6542,7 @@ OPJ_BOOL opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                     }
                 }
                 else {
-                    if(tcp->mct==1 && image->numcomps == 3) { // RGB->YCC MCT is enabled
+                    if(tcp->mct==1 && image->numcomps == 3) { /* RGB->YCC MCT is enabled */
                         if ((image->comps[0].dx != image->comps[1].dx) ||
                                 (image->comps[0].dx != image->comps[2].dx) ||
                                 (image->comps[0].dy != image->comps[1].dy) ||
@@ -6991,6 +7029,15 @@ OPJ_BOOL opj_j2k_encoding_validation (  opj_j2k_t * p_j2k,
         l_is_valid &= (p_j2k->m_procedure_list != 00);
         /* make sure a validation list is present */
         l_is_valid &= (p_j2k->m_validation_list != 00);
+
+	      /* ISO 15444-1:2004 states between 1 & 33 (0 -> 32) */
+	      /* 33 (32) would always fail the 2 checks below (if a cast to 64bits was done) */
+	      /* 32 (31) would always fail the 2 checks below (if a cast to 64bits was done) */
+        /* FIXME Shall we change OPJ_J2K_MAXRLVLS to 31 ? */
+        if ((p_j2k->m_cp.tcps->tccps->numresolutions <= 0) || (p_j2k->m_cp.tcps->tccps->numresolutions > 31)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
+                return OPJ_FALSE;
+        }
 
         if ((p_j2k->m_cp.tdx) < (OPJ_UINT32) (1 << p_j2k->m_cp.tcps->tccps->numresolutions)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
@@ -7590,6 +7637,12 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                         /* Read 2 bytes from the buffer as the marker size */
                         opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_marker_size,2);
 
+                        /* Check marker size (does not include marker ID but includes marker size) */
+                        if (l_marker_size < 2) {
+                                opj_event_msg(p_manager, EVT_ERROR, "Inconsistent marker size\n");
+                                return OPJ_FALSE;
+                        }
+
                         /* cf. https://code.google.com/p/openjpeg/issues/detail?id=226 */
                         if (l_current_marker == 0x8080 && opj_stream_get_number_byte_left(p_stream) == 0) {
                                 p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
@@ -7614,7 +7667,14 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
 
                         /* Check if the marker size is compatible with the header data size */
                         if (l_marker_size > p_j2k->m_specific_param.m_decoder.m_header_data_size) {
-                                OPJ_BYTE *new_header_data = (OPJ_BYTE *) opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data, l_marker_size);
+                                OPJ_BYTE *new_header_data = NULL;
+                                /* If we are here, this means we consider this marker as known & we will read it */
+                                /* Check enough bytes left in stream before allocation */
+                                if ((OPJ_OFF_T)l_marker_size >  opj_stream_get_number_byte_left(p_stream)) {
+                                        opj_event_msg(p_manager, EVT_ERROR, "Marker size inconsistent with stream length\n");
+                                        return OPJ_FALSE;
+                                }
+                                new_header_data = (OPJ_BYTE *) opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data, l_marker_size);
                                 if (! new_header_data) {
                                         opj_free(p_j2k->m_specific_param.m_decoder.m_header_data);
                                         p_j2k->m_specific_param.m_decoder.m_header_data = NULL;
