@@ -105,7 +105,7 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
         ((FX_LPBYTE)(p))[1] = (FX_BYTE)((cmyk) >> 16), \
                               ((FX_LPBYTE)(p))[2] = (FX_BYTE)((cmyk) >> 8), \
                                       ((FX_LPBYTE)(p))[3] = (FX_BYTE)(cmyk))
-#define FXARGB_GETDIB(p) (((FX_LPBYTE)(p))[0]) | (((FX_LPBYTE)(p))[1] << 8) | (((FX_LPBYTE)(p))[2] << 16) | (((FX_LPBYTE)(p))[3] << 24)
+#define FXARGB_GETDIB(p) ((((FX_LPBYTE)(p))[0]) | (((FX_LPBYTE)(p))[1] << 8) | (((FX_LPBYTE)(p))[2] << 16) | (((FX_LPBYTE)(p))[3] << 24))
 #define FXARGB_SETDIB(p, argb) ((FX_LPBYTE)(p))[0] = (FX_BYTE)(argb), \
         ((FX_LPBYTE)(p))[1] = (FX_BYTE)((argb) >> 8), \
                               ((FX_LPBYTE)(p))[2] = (FX_BYTE)((argb) >> 16), \
