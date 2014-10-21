@@ -166,13 +166,19 @@ static void sycc422_to_rgb(opj_image_t *img)
     d0 = r = FX_Alloc(int, (size_t)max);
     d1 = g = FX_Alloc(int, (size_t)max);
     d2 = b = FX_Alloc(int, (size_t)max);
-    for(i = 0; i < maxh; ++i) {
-        for (j = 0; j < maxw; ++j, ++y, ++r, ++g, ++b) {
+    for(i = 0; i < maxh; ++i)
+    {
+        for (j = 0; (OPJ_UINT32)j < (maxw & ~(OPJ_UINT32)1); j += 2)
+        {
             sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-            if (j % 2){
-                ++cb;
-                ++cr;
-            }
+            ++y; ++r; ++g; ++b;
+            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            ++y; ++r; ++g; ++b; ++cb; ++cr;
+        }
+        if (j < maxw)
+        {
+            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            ++y; ++r; ++g; ++b; ++cb; ++cr;
         }
     }
     FX_Free(img->comps[0].data);
@@ -212,40 +218,47 @@ static void sycc420_to_rgb(opj_image_t *img)
     d0 = r = FX_Alloc(int, (size_t)max);
     d1 = g = FX_Alloc(int, (size_t)max);
     d2 = b = FX_Alloc(int, (size_t)max);
-    for(i = 0; i < maxh; i += 2) {
+    for (i = 0; (OPJ_UINT32)i < (maxh & ~(OPJ_UINT32)1); i += 2)
+    {
         ny = y + maxw;
         nr = r + maxw;
         ng = g + maxw;
         nb = b + maxw;
-        for(j = 0; j < maxw;  j += 2) {
+        for (j = 0; (OPJ_UINT32)j < (maxw & ~(OPJ_UINT32)1); j += 2)
+        {
             sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-            ++y;
-            ++r;
-            ++g;
-            ++b;
+            ++y; ++r; ++g; ++b;
             sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
-            ++y;
-            ++r;
-            ++g;
-            ++b;
+            ++y; ++r; ++g; ++b;
             sycc_to_rgb(offset, upb, *ny, *cb, *cr, nr, ng, nb);
-            ++ny;
-            ++nr;
-            ++ng;
-            ++nb;
+            ++ny; ++nr; ++ng; ++nb;
             sycc_to_rgb(offset, upb, *ny, *cb, *cr, nr, ng, nb);
-            ++ny;
-            ++nr;
-            ++ng;
-            ++nb;
-            ++cb;
-            ++cr;
+            ++ny; ++nr; ++ng; ++nb; ++cb; ++cr;
         }
-        y += maxw;
-        r += maxw;
-        g += maxw;
-        b += maxw;
+        if (j < maxw)
+        {
+            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            ++y; ++r; ++g; ++b;
+            sycc_to_rgb(offset, upb, *ny, *cb, *cr, nr, ng, nb);
+            ++ny; ++nr; ++ng; ++nb; ++cb; ++cr;
+        }
+        y += maxw; r += maxw; g += maxw; b += maxw;
     }
+    if (i < maxh)
+    {
+        for (j = 0; (OPJ_UINT32)j < (maxw & ~(OPJ_UINT32)1); j += 2)
+        {
+            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            ++y; ++r; ++g; ++b;
+            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+            ++y; ++r; ++g; ++b; ++cb; ++cr;
+        }
+        if (j < maxw)
+        {
+            sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
+        }
+    }
+
     FX_Free(img->comps[0].data);
     img->comps[0].data = d0;
     FX_Free(img->comps[1].data);
