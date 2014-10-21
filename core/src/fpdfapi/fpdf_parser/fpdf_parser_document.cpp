@@ -95,12 +95,12 @@ void CPDF_Document::LoadPages()
 extern void FPDF_TTFaceMapper_ReleaseDoc(CPDF_Document*);
 CPDF_Document::~CPDF_Document()
 {
-    if (m_pDocRender) {
-        CPDF_ModuleMgr::Get()->GetRenderModule()->DestroyDocData(m_pDocRender);
-    }
     if (m_pDocPage) {
         CPDF_ModuleMgr::Get()->GetPageModule()->ReleaseDoc(this);
         CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
+    }
+    if (m_pDocRender) {
+        CPDF_ModuleMgr::Get()->GetRenderModule()->DestroyDocData(m_pDocRender);
     }
 }
 #define		FX_MAX_PAGE_LEVEL			1024
