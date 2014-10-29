@@ -969,7 +969,6 @@ FPDF_FILEHANDLER* PDFiumEngine::Form_OpenFile(FPDF_FORMFILLINFO* pThis, int file
 void PDFiumEngine::Form_GotoURL(FPDF_FORMFILLINFO* pThis, FPDF_DOCUMENT document, FPDF_WIDESTRING wsURL) {
 	std::string url_str =
 		base::UTF16ToUTF8(reinterpret_cast<const base::char16*>(wsURL));
-	int pageCount = FPDF_GetPageCount(document);
 }
 
 int PDFiumEngine::Form_GetLanguage(FPDF_FORMFILLINFO* pThis, void* language, int length) {
