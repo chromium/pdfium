@@ -334,6 +334,14 @@ CPDFSDK_Document::CPDFSDK_Document(CPDFXFA_Document* pDoc,CPDFDoc_Environment* p
 
 CPDFSDK_Document::~CPDFSDK_Document()
 {
+	FX_POSITION pos = m_pageMap.GetStartPosition();
+	while(pos)
+	{
+		CPDFXFA_Page* pPage = NULL;
+		CPDFSDK_PageView* pPageView = NULL;
+		m_pageMap.GetNextAssoc(pos, pPage, pPageView);
+		delete pPageView;
+	}
 	m_pageMap.RemoveAll();
 	if(m_pInterForm)
 	{
@@ -455,7 +463,7 @@ CPDF_OCContext*	CPDFSDK_Document::GetOCContext()
 void CPDFSDK_Document::ReMovePageView(CPDFXFA_Page* pPDFXFAPage)
 {
 	CPDFSDK_PageView* pPageView = (CPDFSDK_PageView*)m_pageMap.GetValueAt(pPDFXFAPage);
-	if(pPageView)
+	if(pPageView && !pPageView->IsLocked())
 	{
 		delete pPageView;
 		m_pageMap.RemoveKey(pPDFXFAPage);
@@ -630,6 +638,7 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,CPDFXFA_Page* page)
 	m_bOnWidget = FALSE;
 	m_CaptureWidget = NULL;
 	m_bValid = FALSE;
+	m_bLocked = FALSE;
 	m_pAnnotList = NULL;
 }
 
@@ -1114,6 +1123,8 @@ void CPDFSDK_PageView::LoadFXAnnots()
 	CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
 	ASSERT(pAnnotHandlerMgr != NULL);
 
+	SetLock(TRUE);
+	m_page->AddRef();
 	if (m_pSDKDoc->GetDocument()->GetDocType() == DOCTYPE_DYNIMIC_XFA)
 	{
 		IXFA_PageView* pageView = NULL;
@@ -1123,7 +1134,11 @@ void CPDFSDK_PageView::LoadFXAnnots()
 		XFA_HWIDGET pXFAAnnot = NULL;
 		IXFA_WidgetIterator* pWidgetHander = pageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form, XFA_WIDGETFILTER_Visible|XFA_WIDGETFILTER_Viewable|XFA_WIDGETFILTER_AllType);
 		if (!pWidgetHander)
+		{
+			m_page->Release();
+			SetLock(FALSE);
 			return;
+		}
 
 		pXFAAnnot = pWidgetHander->MoveToNext();
 		while (pXFAAnnot) {
@@ -1170,6 +1185,8 @@ void CPDFSDK_PageView::LoadFXAnnots()
 		}
 
 	}
+	m_page->Release();
+	SetLock(FALSE);
 }
 
 void	CPDFSDK_PageView::UpdateRects(CFX_RectArray& rects)

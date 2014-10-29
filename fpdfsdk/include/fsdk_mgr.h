@@ -861,7 +861,6 @@ public:
     FX_BOOL IsValid() {return m_bValid;}
     void SetLock(FX_BOOL bLocked) {m_bLocked= bLocked;}
     FX_BOOL IsLocked() {return m_bLocked;}
-    void TakeOverPage() {m_bTakeOverPage = TRUE;}
 private:
 	void PageView_OnHighlightFormFields(CFX_RenderDevice* pDevice, CPDFSDK_Widget* pWidget);
 	CPDF_Matrix m_curMatrix;
@@ -876,7 +875,6 @@ private:
 	FX_BOOL m_bOnWidget;
 	FX_BOOL m_bValid;
     FX_BOOL m_bLocked;
-    FX_BOOL m_bTakeOverPage;
 };
 
 
