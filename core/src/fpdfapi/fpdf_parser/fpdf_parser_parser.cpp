@@ -2192,9 +2192,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
             if (pObj == NULL) {
                 continue;
             }
-            if (key.GetLength() == 1) {
-                pDict->SetAt(CFX_ByteStringC(((FX_LPCSTR)key) + 1, key.GetLength() - 1), pObj);
-            } else {
+            if (key.GetLength() >= 1) {
                 if (nKeys < 32) {
                     pDict->SetAt(CFX_ByteStringC(((FX_LPCSTR)key) + 1, key.GetLength() - 1), pObj);
                 } else {
