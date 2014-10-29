@@ -44,10 +44,11 @@ IFXJS_Runtime*					CJS_RuntimeFactory::NewJSRuntime(CPDFDoc_Environment* pApp)
 	if (!m_bInit)
 	{
 		JS_Initial();
+/*
                 m_platform = v8::platform::CreateDefaultPlatform();
                 v8::V8::InitializePlatform(m_platform);
                 v8::V8::Initialize();
-		
+*/
 		m_bInit = TRUE;
 	}
 	return new CJS_Runtime(pApp);
