@@ -26,6 +26,44 @@ public:
     virtual FX_BOOL		Truncate(FX_FILESIZE szFile) = 0;
 };
 IFXCRT_FileAccess*	FXCRT_FileAccess_Create();
+class CFX_CRTFileAccess : public IFX_FileAccess, public CFX_Object
+{
+public:
+	CFX_CRTFileAccess() : m_RefCount(0) {}
+
+	virtual void				Release() 
+	{
+		if (--m_RefCount == 0)
+			delete this;
+	}
+
+	IFX_FileAccess*				Retain()
+	{
+		m_RefCount++;
+		return (IFX_FileAccess*)this;
+	}
+
+	virtual FX_BOOL				Init(FX_WSTR wsPath) 
+	{
+		m_path = wsPath;
+		m_RefCount = 1;
+		return TRUE;
+	}
+
+	virtual void				GetPath(CFX_WideString& wsPath)
+	{
+		wsPath = m_path;
+	}
+
+	virtual IFX_FileStream*		CreateFileStream(FX_DWORD dwModes)
+	{
+		return FX_CreateFileStream(m_path, dwModes);
+	}
+
+protected:
+	CFX_WideString		m_path;
+	FX_DWORD			m_RefCount;
+};
 class CFX_CRTFileStream FX_FINAL : public IFX_FileStream, public CFX_Object
 {
 public:

@@ -1,0 +1,267 @@
+// Copyright 2014 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
+#include "barcode.h"
+#include "include/BC_PDF417Codeword.h"
+#include "include/BC_PDF417BarcodeMetadata.h"
+#include "include/BC_PDF417BoundingBox.h"
+#include "include/BC_PDF417DetectionResultColumn.h"
+#include "include/BC_PDF417Common.h"
+#include "include/BC_PDF417DetectionResultRowIndicatorColumn.h"
+#include "include/BC_PDF417DetectionResult.h"
+FX_INT32 CBC_DetectionResult::ADJUST_ROW_NUMBER_SKIP = 2;
+CBC_DetectionResult::CBC_DetectionResult(CBC_BarcodeMetadata* barcodeMetadata, CBC_BoundingBox* boundingBox)
+{
+    m_barcodeMetadata = barcodeMetadata;
+    m_barcodeColumnCount = barcodeMetadata->getColumnCount();
+    m_boundingBox = boundingBox;
+    m_detectionResultColumns.SetSize(m_barcodeColumnCount + 2);
+    for (FX_INT32 i = 0; i < m_barcodeColumnCount + 2; i++) {
+        m_detectionResultColumns[i] = NULL;
+    }
+}
+CBC_DetectionResult::~CBC_DetectionResult()
+{
+    delete m_boundingBox;
+    delete m_barcodeMetadata;
+    m_detectionResultColumns.RemoveAll();
+}
+CFX_PtrArray& CBC_DetectionResult::getDetectionResultColumns()
+{
+    adjustIndicatorColumnRowNumbers((CBC_DetectionResultColumn*)m_detectionResultColumns.GetAt(0));
+    adjustIndicatorColumnRowNumbers((CBC_DetectionResultColumn*)m_detectionResultColumns.GetAt(m_barcodeColumnCount + 1));
+    FX_INT32 unadjustedCodewordCount = CBC_PDF417Common::MAX_CODEWORDS_IN_BARCODE;
+    FX_INT32 previousUnadjustedCount;
+    do {
+        previousUnadjustedCount = unadjustedCodewordCount;
+        unadjustedCodewordCount = adjustRowNumbers();
+    } while (unadjustedCodewordCount > 0 && unadjustedCodewordCount < previousUnadjustedCount);
+    return m_detectionResultColumns;
+}
+void CBC_DetectionResult::setBoundingBox(CBC_BoundingBox* boundingBox)
+{
+    m_boundingBox = boundingBox;
+}
+CBC_BoundingBox* CBC_DetectionResult::getBoundingBox()
+{
+    return m_boundingBox;
+}
+void CBC_DetectionResult::setDetectionResultColumn(FX_INT32 barcodeColumn, CBC_DetectionResultColumn* detectionResultColumn)
+{
+    m_detectionResultColumns[barcodeColumn] = detectionResultColumn;
+}
+CBC_DetectionResultColumn* CBC_DetectionResult::getDetectionResultColumn(FX_INT32 barcodeColumn)
+{
+    return (CBC_DetectionResultColumn*)m_detectionResultColumns[barcodeColumn];
+}
+CFX_ByteString CBC_DetectionResult::toString()
+{
+    CBC_DetectionResultColumn* rowIndicatorColumn = (CBC_DetectionResultColumn*)m_detectionResultColumns[0];
+    if (rowIndicatorColumn == NULL) {
+        rowIndicatorColumn = (CBC_DetectionResultColumn*)m_detectionResultColumns[m_barcodeColumnCount + 1];
+    }
+    CFX_ByteString result;
+    for (FX_INT32 codewordsRow = 0; codewordsRow < rowIndicatorColumn->getCodewords()->GetSize(); codewordsRow++) {
+        result += (FX_CHAR) codewordsRow;
+        for (FX_INT32 barcodeColumn = 0; barcodeColumn < m_barcodeColumnCount + 2; barcodeColumn++) {
+            if (m_detectionResultColumns[barcodeColumn] == NULL) {
+                result += "    |   ";
+                continue;
+            }
+            CBC_Codeword* codeword = (CBC_Codeword*)((CBC_DetectionResultColumn*)m_detectionResultColumns[barcodeColumn])->getCodewords()->GetAt(codewordsRow);
+            if (codeword == NULL) {
+                result += "    |   ";
+                continue;
+            }
+            result += codeword->getRowNumber();
+            result += codeword->getValue();
+        }
+    }
+    return result;
+}
+void CBC_DetectionResult::adjustIndicatorColumnRowNumbers(CBC_DetectionResultColumn* detectionResultColumn)
+{
+    if (detectionResultColumn != NULL) {
+        ((CBC_DetectionResultRowIndicatorColumn*)detectionResultColumn)->adjustCompleteIndicatorColumnRowNumbers(*m_barcodeMetadata);
+    }
+}
+FX_INT32 CBC_DetectionResult::adjustRowNumbers()
+{
+    FX_INT32 unadjustedCount = adjustRowNumbersByRow();
+    if (unadjustedCount == 0) {
+        return 0;
+    }
+    for (FX_INT32 barcodeColumn = 1; barcodeColumn < m_barcodeColumnCount + 1; barcodeColumn++) {
+        CFX_PtrArray* codewords = ((CBC_DetectionResultColumn*)m_detectionResultColumns[barcodeColumn])->getCodewords();
+        for (FX_INT32 codewordsRow = 0; codewordsRow < codewords->GetSize(); codewordsRow++) {
+            if (codewords->GetAt(codewordsRow) == NULL) {
+                continue;
+            }
+            if (!((CBC_Codeword*)codewords->GetAt(codewordsRow))->hasValidRowNumber()) {
+                adjustRowNumbers(barcodeColumn, codewordsRow, codewords);
+            }
+        }
+    }
+    return unadjustedCount;
+}
+FX_INT32 CBC_DetectionResult::adjustRowNumbersByRow()
+{
+    adjustRowNumbersFromBothRI();
+    FX_INT32 unadjustedCount = adjustRowNumbersFromLRI();
+    return unadjustedCount + adjustRowNumbersFromRRI();
+}
+FX_INT32 CBC_DetectionResult::adjustRowNumbersFromBothRI()
+{
+    if (m_detectionResultColumns[0] == NULL || m_detectionResultColumns[m_barcodeColumnCount + 1] == NULL) {
+        return 0;
+    }
+    CFX_PtrArray* LRIcodewords = ((CBC_DetectionResultColumn*)m_detectionResultColumns[0])->getCodewords();
+    CFX_PtrArray* RRIcodewords = ((CBC_DetectionResultColumn*)m_detectionResultColumns[m_barcodeColumnCount + 1])->getCodewords();
+    for (FX_INT32 codewordsRow = 0; codewordsRow < LRIcodewords->GetSize(); codewordsRow++) {
+        if (LRIcodewords->GetAt(codewordsRow) != NULL &&
+                RRIcodewords->GetAt(codewordsRow) != NULL &&
+                ((CBC_Codeword*)LRIcodewords->GetAt(codewordsRow))->getRowNumber() == ((CBC_Codeword*)RRIcodewords->GetAt(codewordsRow))->getRowNumber()) {
+            for (FX_INT32 barcodeColumn = 1; barcodeColumn <= m_barcodeColumnCount; barcodeColumn++) {
+                CBC_Codeword* codeword = (CBC_Codeword*)((CBC_DetectionResultColumn*)m_detectionResultColumns[barcodeColumn])->getCodewords()->GetAt(codewordsRow);
+                if (codeword == NULL) {
+                    continue;
+                }
+                codeword->setRowNumber(((CBC_Codeword*)LRIcodewords->GetAt(codewordsRow))->getRowNumber());
+                if (!codeword->hasValidRowNumber()) {
+                    ((CBC_DetectionResultColumn*)m_detectionResultColumns[barcodeColumn])->getCodewords()->SetAt(codewordsRow, NULL);
+                }
+            }
+        }
+    }
+    return 0;
+}
+FX_INT32 CBC_DetectionResult::adjustRowNumbersFromRRI()
+{
+    if (m_detectionResultColumns[m_barcodeColumnCount + 1] == NULL) {
+        return 0;
+    }
+    FX_INT32 unadjustedCount = 0;
+    CFX_PtrArray* codewords = ((CBC_DetectionResultColumn*) m_detectionResultColumns.GetAt(m_barcodeColumnCount + 1))->getCodewords();
+    for (FX_INT32 codewordsRow = 0; codewordsRow < codewords->GetSize(); codewordsRow++) {
+        if (codewords->GetAt(codewordsRow) == NULL) {
+            continue;
+        }
+        FX_INT32 rowIndicatorRowNumber = ((CBC_Codeword*)codewords->GetAt(codewordsRow))->getRowNumber();
+        FX_INT32 invalidRowCounts = 0;
+        for (FX_INT32 barcodeColumn = m_barcodeColumnCount + 1; barcodeColumn > 0 && invalidRowCounts < ADJUST_ROW_NUMBER_SKIP; barcodeColumn--) {
+            CBC_Codeword* codeword = (CBC_Codeword*)((CBC_DetectionResultColumn*)m_detectionResultColumns.GetAt(barcodeColumn))->getCodewords()->GetAt(codewordsRow);
+            if (codeword != NULL) {
+                invalidRowCounts = adjustRowNumberIfValid(rowIndicatorRowNumber, invalidRowCounts, codeword);
+                if (!codeword->hasValidRowNumber()) {
+                    unadjustedCount++;
+                }
+            }
+        }
+    }
+    return unadjustedCount;
+}
+FX_INT32 CBC_DetectionResult::adjustRowNumbersFromLRI()
+{
+    if (m_detectionResultColumns[0] == NULL) {
+        return 0;
+    }
+    FX_INT32 unadjustedCount = 0;
+    CFX_PtrArray* codewords = ((CBC_DetectionResultColumn*)m_detectionResultColumns.GetAt(0))->getCodewords();
+    for (FX_INT32 codewordsRow = 0; codewordsRow < codewords->GetSize(); codewordsRow++) {
+        if (codewords->GetAt(codewordsRow) == NULL) {
+            continue;
+        }
+        FX_INT32 rowIndicatorRowNumber = ((CBC_Codeword*)codewords->GetAt(codewordsRow))->getRowNumber();
+        FX_INT32 invalidRowCounts = 0;
+        for (FX_INT32 barcodeColumn = 1; barcodeColumn < m_barcodeColumnCount + 1 && invalidRowCounts < ADJUST_ROW_NUMBER_SKIP; barcodeColumn++) {
+            CBC_Codeword* codeword = (CBC_Codeword*)((CBC_DetectionResultColumn*)m_detectionResultColumns[barcodeColumn])->getCodewords()->GetAt(codewordsRow);
+            if (codeword != NULL) {
+                invalidRowCounts = adjustRowNumberIfValid(rowIndicatorRowNumber, invalidRowCounts, codeword);
+                if (!codeword->hasValidRowNumber()) {
+                    unadjustedCount++;
+                }
+            }
+        }
+    }
+    return unadjustedCount;
+}
+FX_INT32 CBC_DetectionResult::adjustRowNumberIfValid(FX_INT32 rowIndicatorRowNumber, FX_INT32 invalidRowCounts, CBC_Codeword* codeword)
+{
+    if (codeword == NULL) {
+        return invalidRowCounts;
+    }
+    if (!codeword->hasValidRowNumber()) {
+        if (codeword->isValidRowNumber(rowIndicatorRowNumber)) {
+            codeword->setRowNumber(rowIndicatorRowNumber);
+            invalidRowCounts = 0;
+        } else {
+            ++invalidRowCounts;
+        }
+    }
+    return invalidRowCounts;
+}
+void CBC_DetectionResult::adjustRowNumbers(FX_INT32 barcodeColumn, FX_INT32 codewordsRow, CFX_PtrArray* codewords)
+{
+    CBC_Codeword* codeword = (CBC_Codeword*)codewords->GetAt(codewordsRow);
+    CFX_PtrArray* previousColumnCodewords = ((CBC_DetectionResultColumn*)m_detectionResultColumns.GetAt(barcodeColumn - 1))->getCodewords();
+    CFX_PtrArray* nextColumnCodewords = previousColumnCodewords;
+    if (m_detectionResultColumns[barcodeColumn + 1] != NULL) {
+        nextColumnCodewords = ((CBC_DetectionResultColumn*)m_detectionResultColumns[barcodeColumn + 1])->getCodewords();
+    }
+    CFX_PtrArray otherCodewords;
+    otherCodewords.SetSize(14);
+    otherCodewords[2] = previousColumnCodewords->GetAt(codewordsRow);
+    otherCodewords[3] = nextColumnCodewords->GetAt(codewordsRow);
+    if (codewordsRow > 0) {
+        otherCodewords[0] = codewords->GetAt(codewordsRow - 1);
+        otherCodewords[4] = previousColumnCodewords->GetAt(codewordsRow - 1);
+        otherCodewords[5] = nextColumnCodewords->GetAt(codewordsRow - 1);
+    }
+    if (codewordsRow > 1) {
+        otherCodewords[8] = codewords->GetAt(codewordsRow - 2);
+        otherCodewords[10] = previousColumnCodewords->GetAt(codewordsRow - 2);
+        otherCodewords[11] = nextColumnCodewords->GetAt(codewordsRow - 2);
+    }
+    if (codewordsRow < codewords->GetSize() - 1) {
+        otherCodewords[1] = codewords->GetAt(codewordsRow + 1);
+        otherCodewords[6] = previousColumnCodewords->GetAt(codewordsRow + 1);
+        otherCodewords[7] = nextColumnCodewords->GetAt(codewordsRow + 1);
+    }
+    if (codewordsRow < codewords->GetSize() - 2) {
+        otherCodewords[9] = codewords->GetAt(codewordsRow + 2);
+        otherCodewords[12] = previousColumnCodewords->GetAt(codewordsRow + 2);
+        otherCodewords[13] = nextColumnCodewords->GetAt(codewordsRow + 2);
+    }
+    for (FX_INT32 i = 0; i < otherCodewords.GetSize(); i++) {
+        CBC_Codeword* otherCodeword = (CBC_Codeword*)otherCodewords.GetAt(i);
+        if (adjustRowNumber(codeword, otherCodeword)) {
+            return;
+        }
+    }
+}
+FX_BOOL CBC_DetectionResult::adjustRowNumber(CBC_Codeword* codeword, CBC_Codeword* otherCodeword)
+{
+    if (otherCodeword == NULL) {
+        return FALSE;
+    }
+    if (otherCodeword->hasValidRowNumber() && otherCodeword->getBucket() == codeword->getBucket()) {
+        codeword->setRowNumber(otherCodeword->getRowNumber());
+        return TRUE;
+    }
+    return FALSE;
+}
+FX_INT32 CBC_DetectionResult::getBarcodeColumnCount()
+{
+    return m_barcodeColumnCount;
+}
+FX_INT32 CBC_DetectionResult::getBarcodeRowCount()
+{
+    return m_barcodeMetadata->getRowCount();
+}
+FX_INT32 CBC_DetectionResult::getBarcodeECLevel()
+{
+    return m_barcodeMetadata->getErrorCorrectionLevel();
+}

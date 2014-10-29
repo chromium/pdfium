@@ -13,6 +13,7 @@
 #include "../../include/javascript/global.h"
 #include "../../include/javascript/JS_EventHandler.h"
 #include "../../include/javascript/JS_Context.h"
+#include "../../include/fpdfxfa/fpdfxfa_app.h"
 
 /* ---------------------------- global ---------------------------- */
 
@@ -54,7 +55,7 @@ global_alternate::~global_alternate(void)
 //	CommitGlobalPersisitentVariables();
 	DestroyGlobalPersisitentVariables();
 
-	CJS_RuntimeFactory* pFactory = m_pApp->m_pJSRuntimeFactory;
+	CJS_RuntimeFactory* pFactory = FPDFXFA_GetApp()->GetRuntimeFactory();
 	ASSERT(pFactory);
 
 	pFactory->ReleaseGlobalData();
@@ -64,7 +65,7 @@ void global_alternate::Initial(CPDFDoc_Environment* pApp)
 {
 	m_pApp = pApp;
 
-	CJS_RuntimeFactory* pFactory = pApp->m_pJSRuntimeFactory;
+	CJS_RuntimeFactory* pFactory = FPDFXFA_GetApp()->GetRuntimeFactory();
 	ASSERT(pFactory);
 	m_pGlobalData = pFactory->NewGlobalData(pApp);
 	UpdateGlobalPersistentVariables();

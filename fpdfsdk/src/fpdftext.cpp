@@ -6,6 +6,8 @@
 
 #include "../include/fsdk_define.h"
 #include "../include/fpdftext.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "../include/fpdfxfa/fpdfxfa_page.h"
 
 #ifdef _WIN32
 #include <tchar.h>
@@ -18,9 +20,13 @@ DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page)
 {
 	if (!page) return NULL;
 	IPDF_TextPage* textpage=NULL;
-	CPDF_ViewerPreferences viewRef(((CPDF_Page*)page)->m_pDocument);
-	textpage=IPDF_TextPage::CreateTextPage((CPDF_Page*)page,viewRef.IsDirectionR2L());
+	CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
+	if (!pPage->GetPDFPage()) return NULL;
+	CPDFXFA_Document* pDoc = pPage->GetDocument();
+	CPDF_ViewerPreferences viewRef(pDoc->GetPDFDoc());
+	textpage=IPDF_TextPage::CreateTextPage((CPDF_Page*)pPage->GetPDFPage(),viewRef.IsDirectionR2L());
 	textpage->ParseTextPage();
+
 	return textpage;
 }
 DLLEXPORT void STDCALL FPDFText_ClosePage(FPDF_TEXTPAGE text_page)

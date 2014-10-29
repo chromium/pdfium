@@ -64,6 +64,8 @@ typedef struct _IFSDK_PAUSE
 //			pause		-	The IFSDK_PAUSE interface.A callback mechanism allowing the page rendering process
 // Return value:
 //			Rendering Status. See flags for progressive process status for the details.
+// Notes:
+//			The method cannot not support to render page which the document consists of dynamic XFA fields.
 //
 DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap, FPDF_PAGE page, int start_x, int start_y, int size_x,
 												   int size_y, int rotate, int flags,IFSDK_PAUSE * pause);
@@ -76,6 +78,9 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap, FPDF_PAGE 
 //							to be paused before it's finished. This can be NULL if you don't want to pause.
 // Return value:
 //			The rendering status. See flags for progressive process status for the details.
+// Notes:
+//			The method cannot not support to render page which the document consists of dynamic XFA fields.
+//
 DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,IFSDK_PAUSE * pause);
 
 // Function: FPDF_RenderPage_Close
@@ -85,6 +90,9 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,IFSDK_PAUSE * paus
 //			page		-	Handle to the page. Returned by FPDF_LoadPage function.
 // Return value:
 //			NULL
+// Notes:
+//			The method cannot not support to render page which the document consists of dynamic XFA fields.
+//
 DLLEXPORT void STDCALL FPDF_RenderPage_Close(FPDF_PAGE page);
 
 #ifdef __cplusplus

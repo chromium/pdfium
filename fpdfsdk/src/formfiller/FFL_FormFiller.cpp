@@ -292,7 +292,7 @@ FX_BOOL	CFFL_FormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag)
 {
 	CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
 
-	CPDF_Page * pPage = pWidget->GetPDFPage();
+	CPDFXFA_Page * pPage = pWidget->GetPDFXFAPage();
  	CPDFSDK_Document * pDoc = m_pApp->GetCurrentDoc();
 	CPDFSDK_PageView* pPageView = pDoc->GetPageView(pPage);
  	ASSERT(pPageView != NULL);
@@ -567,7 +567,7 @@ CPDF_Rect CFFL_FormFiller::GetPDFWindowRect() const
 CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView()
 {
 
-	CPDF_Page* pPage = m_pAnnot->GetPDFPage();
+	CPDFXFA_Page* pPage = m_pAnnot->GetPDFXFAPage();
 	CPDFSDK_Document* pSDKDoc = m_pApp->GetCurrentDoc();
 	if(pSDKDoc)
 	{
@@ -713,6 +713,11 @@ void CFFL_FormFiller::GetKeyStrokeData(CPDFSDK_PageView* pPageView, FFL_KeyStrok
 {
 }
 
+FX_BOOL CFFL_FormFiller::IsFieldFull(CPDFSDK_PageView* pPageView)
+{
+	return FALSE;
+}
+
 void CFFL_FormFiller::SetChangeMark()
 {
 	m_pApp->FFI_OnChange();
@@ -803,7 +808,7 @@ void CFFL_FormFiller::DoPaste(CPDFSDK_Document* pDocument)
 
 void CFFL_FormFiller::InvalidateRect(double left, double top, double right, double bottom)
 {
-	CPDF_Page * pPage = m_pWidget->GetPDFPage();
+	CPDFXFA_Page * pPage = m_pWidget->GetPDFXFAPage();
 	m_pApp->FFI_Invalidate(pPage, left, top, right, bottom);
 }
 

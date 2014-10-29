@@ -290,6 +290,7 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
   (void) FPDFAvail_IsFormAvail(pdf_avail, &hints);
 
   FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnviroument(doc, &form_callbacks);
+  FPDF_LoadXFA(doc);
   FPDF_SetFormFieldHighlightColor(form, 0, 0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form, 100);
 

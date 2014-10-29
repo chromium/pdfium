@@ -1,0 +1,21 @@
+// Copyright 2014 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
+#ifndef _BC_SYMBOLSHAPEHINT_H_
+#define _BC_SYMBOLSHAPEHINT_H_
+class CBC_SymbolShapeHint;
+class CBC_SymbolShapeHint : public CFX_Object
+{
+public:
+    CBC_SymbolShapeHint();
+    virtual ~CBC_SymbolShapeHint();
+    enum SymbolShapeHint {
+        FORCE_NONE,
+        FORCE_SQUARE,
+        FORCE_RECTANGLE,
+    };
+};
+#endif

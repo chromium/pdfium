@@ -76,6 +76,8 @@ public:
 	virtual void				OnSetWindowRect(void* pPrivateData, const CPDF_Rect & rcWindow);
 	virtual void				OnKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_INT32 nKeyCode, CFX_WideString & strChange, 
 									const CFX_WideString& strChangeEx, FX_BOOL bKeyDown, FX_BOOL & bRC, FX_BOOL & bExit);
+	virtual void				OnPopupPreOpen(void* pPrivateData, FX_BOOL& bExit, FX_DWORD nFlag);
+	virtual void				OnPopupPostOpen(void* pPrivateData, FX_BOOL& bExit, FX_DWORD nFlag);
 
 public:
 	virtual void				BeforeUndo(CPDFSDK_Document* pDocument);
@@ -116,6 +118,10 @@ public:
 	static int					GetCommitKey();
 	static FX_BOOL				GetKeyDown();
 
+	void						OnClick(CPDFSDK_Widget* pWidget, CPDFSDK_PageView* pPageView, FX_BOOL& bReset, FX_BOOL& bExit, FX_UINT nFlag);
+	void						OnFull(CPDFSDK_Widget* pWidget, CPDFSDK_PageView* pPageView, FX_BOOL& bReset, FX_BOOL& bExit, FX_UINT nFlag);
+	void						OnPreOpen(CPDFSDK_Widget* pWidget, CPDFSDK_PageView* pPageView, FX_BOOL& bReset, FX_BOOL& bExit, FX_UINT nFlag);
+	void						OnPostOpen(CPDFSDK_Widget* pWidget, CPDFSDK_PageView* pPageView, FX_BOOL& bReset, FX_BOOL& bExit, FX_UINT nFlag);
 
 public:
 // 	static MSG					g_Msg;

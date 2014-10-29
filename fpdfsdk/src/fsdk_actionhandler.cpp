@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../include/fsdk_define.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fsdk_mgr.h"
 #include "../include/fsdk_actionhandler.h"
 #include "../include/javascript/IJavaScript.h"
@@ -566,7 +567,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument, /*CReader
 //	ASSERT(pDocView != NULL);
 	ASSERT(action != NULL);
 
-	CPDF_Document* pPDFDocument = pDocument->GetDocument();
+	CPDF_Document* pPDFDocument = pDocument->GetDocument()->GetPDFDoc();
 	ASSERT(pPDFDocument != NULL);
 	CPDFDoc_Environment* pApp = pDocument->GetEnv();
 	ASSERT(pApp != NULL);
@@ -610,7 +611,7 @@ void CPDFSDK_ActionHandler::DoAction_URI(CPDFSDK_Document* pDocument, const CPDF
  	CPDFDoc_Environment* pApp = pDocument->GetEnv();
  	ASSERT(pApp != NULL);
  
- 	CFX_ByteString sURI = action.GetURI(pDocument->GetDocument());
+ 	CFX_ByteString sURI = action.GetURI(pDocument->GetDocument()->GetPDFDoc());
  	pApp->FFI_DoURIAction(FX_LPCSTR(sURI));
 }
 

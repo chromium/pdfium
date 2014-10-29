@@ -1,0 +1,21 @@
+function Process(request)
+{
+
+//var c = new MyJSObject();
+
+//this.log(c.property1);
+
+var c = app.activeDocs;
+
+
+if(options["param1"] != "x")
+{
+	this.output["hello"] = 1;
+	log(request.host);
+}
+else
+{
+	this.output["hello"] = 2;
+	log(request.host);
+}
+}

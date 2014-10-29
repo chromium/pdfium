@@ -88,6 +88,20 @@ enum FX_CHARTYPE {
     FX_CHARTYPE_ArabicForm			= (11 << FX_CHARTYPEBITS),
     FX_CHARTYPE_Arabic				= (12 << FX_CHARTYPEBITS),
 };
+typedef struct _FX_CHARPROPERTIES {
+    union FX_CHARPROPERTIES_UNION{
+        struct FX_CHARPROPERTIES_BIT{
+            FX_DWORD	dwBreakType		: 6;
+            FX_DWORD	dwBidiClass		: 5;
+            FX_DWORD	dwCharType		: 4;
+            FX_DWORD	dwRotation		: 1;
+            FX_DWORD	dwCJKSpecial	: 1;
+            FX_DWORD	dwVertIndex		: 6;
+            FX_DWORD	dwBidiIndex		: 9;
+        };
+        FX_DWORD	dwCharProps;
+    };
+} FX_CHARPROPERTIES;
 FX_DWORD FX_GetUnicodeProperties(FX_WCHAR wch);
 FX_BOOL	FX_IsCtrlCode(FX_WCHAR ch);
 FX_BOOL	FX_IsRotationCode(FX_WCHAR ch);
@@ -95,4 +109,89 @@ FX_BOOL FX_IsCombinationChar(FX_WCHAR wch);
 FX_BOOL	FX_IsBidiChar(FX_WCHAR wch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_DWORD dwProps, FX_BOOL bRTL, FX_BOOL bVertical);
+class CFX_Char : public CFX_Object
+{
+public:
+    CFX_Char() : m_wCharCode(0)
+        , m_nBreakType(0)
+        , m_nRotation(0)
+        , m_dwCharProps(0)
+        , m_dwCharStyles(0)
+        , m_iCharWidth(0)
+        , m_iHorizontalScale(100)
+        , m_iVertialScale(100)
+    {
+    }
+    CFX_Char(FX_WORD wCharCode, FX_DWORD dwCharProps)
+        : m_wCharCode(wCharCode)
+        , m_nBreakType(0)
+        , m_nRotation(0)
+        , m_dwCharProps(dwCharProps)
+        , m_dwCharStyles(0)
+        , m_iCharWidth(0)
+        , m_iHorizontalScale(100)
+        , m_iVertialScale(100)
+    {
+    }
+    FX_DWORD	GetCharType() const
+    {
+        return m_dwCharProps & FX_CHARTYPEBITSMASK;
+    }
+    FX_WORD		m_wCharCode;
+    FX_BYTE		m_nBreakType;
+    FX_INT8		m_nRotation;
+    FX_DWORD	m_dwCharProps;
+    FX_DWORD	m_dwCharStyles;
+    FX_INT32	m_iCharWidth;
+    FX_INT32	m_iHorizontalScale;
+    FX_INT32	m_iVertialScale;
+};
+typedef CFX_ArrayTemplate<CFX_Char>	CFX_CharArray;
+class CFX_TxtChar : public CFX_Char
+{
+public:
+    CFX_TxtChar() : CFX_Char()
+        , m_dwStatus(0)
+        , m_iBidiClass(0)
+        , m_iBidiLevel(0)
+        , m_iBidiPos(0)
+        , m_iBidiOrder(0)
+        , m_pUserData(NULL)
+    {
+    }
+    FX_DWORD			m_dwStatus;
+    FX_INT16			m_iBidiClass;
+    FX_INT16			m_iBidiLevel;
+    FX_INT16			m_iBidiPos;
+    FX_INT16			m_iBidiOrder;
+    FX_LPVOID			m_pUserData;
+};
+typedef CFX_ArrayTemplate<CFX_TxtChar>	CFX_TxtCharArray;
+class CFX_RTFChar : public CFX_Char
+{
+public:
+    CFX_RTFChar() : CFX_Char()
+        , m_dwStatus(0)
+        , m_iFontSize(0)
+        , m_iFontHeight(0)
+        , m_iBidiClass(0)
+        , m_iBidiLevel(0)
+        , m_iBidiPos(0)
+        , m_dwLayoutStyles(0)
+        , m_dwIdentity(0)
+        , m_pUserData(NULL)
+    {
+    }
+    FX_DWORD			m_dwStatus;
+    FX_INT32			m_iFontSize;
+    FX_INT32			m_iFontHeight;
+    FX_INT16			m_iBidiClass;
+    FX_INT16			m_iBidiLevel;
+    FX_INT16			m_iBidiPos;
+    FX_INT16			m_iBidiOrder;
+    FX_DWORD			m_dwLayoutStyles;
+    FX_DWORD			m_dwIdentity;
+    IFX_Unknown			*m_pUserData;
+};
+typedef CFX_ArrayTemplate<CFX_RTFChar>	CFX_RTFCharArray;
 #endif

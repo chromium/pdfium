@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../include/fsdk_define.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fsdk_mgr.h"
 #include "../include/fsdk_baseannot.h"
 
@@ -500,40 +501,30 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddSeconds(int seconds)
 //---------------------------------------------------------------------------
 //								CPDFSDK_Annot	
 //---------------------------------------------------------------------------
-CPDFSDK_Annot::CPDFSDK_Annot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView) :
-m_pAnnot(pAnnot),
+CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView) :
 m_pPageView(pPageView),
 m_bSelected(FALSE),
 m_nTabOrder(-1)
 {
 }
 
-CPDFSDK_Annot::~CPDFSDK_Annot()
+
+//CPDFSDK_BAAnnot
+CPDFSDK_BAAnnot::CPDFSDK_BAAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView) :
+	CPDFSDK_Annot(pPageView),
+		m_pAnnot(pAnnot)
+{
+
+}
+
+CPDFSDK_BAAnnot::~CPDFSDK_BAAnnot()
 {
 	m_pAnnot = NULL;
-	m_pPageView = NULL;
 }
 
-CPDF_Annot*	CPDFSDK_Annot::GetPDFAnnot()
+CPDF_Annot*	CPDFSDK_BAAnnot::GetPDFAnnot()
 {
 	return m_pAnnot;
-}
-
-FX_DWORD CPDFSDK_Annot::GetFlags()
-{
-	ASSERT(m_pAnnot != NULL);
-	
-	return m_pAnnot->GetFlags();
-}
-
-void CPDFSDK_Annot::SetPage(CPDFSDK_PageView* pPageView)
-{
-	m_pPageView = pPageView;
-}
-
-CPDFSDK_PageView* CPDFSDK_Annot::GetPageView()
-{
-	return m_pPageView;
 }
 
 FX_BOOL CPDFSDK_Annot::IsSelected()
@@ -557,14 +548,14 @@ void CPDFSDK_Annot::SetTabOrder(int iTabOrder)
 	m_nTabOrder = iTabOrder;
 }
 
-CPDF_Dictionary* CPDFSDK_Annot::GetAnnotDict() const
+CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const
 {
 	ASSERT(m_pAnnot != NULL);
 	
 	return m_pAnnot->m_pAnnotDict;
 }
 
-void CPDFSDK_Annot::SetRect(const CPDF_Rect& rect)
+void CPDFSDK_BAAnnot::SetRect(const CPDF_Rect& rect)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -574,7 +565,7 @@ void CPDFSDK_Annot::SetRect(const CPDF_Rect& rect)
 	m_pAnnot->m_pAnnotDict->SetAtRect("Rect", rect);
 }
 
-CPDF_Rect CPDFSDK_Annot::GetRect() const
+CPDF_Rect CPDFSDK_BAAnnot::GetRect() const
 {
 	ASSERT(m_pAnnot != NULL);
 	
@@ -584,19 +575,24 @@ CPDF_Rect CPDFSDK_Annot::GetRect() const
 	return rect;
 }
 
-CFX_ByteString CPDFSDK_Annot::GetType() const
+CFX_ByteString CPDFSDK_BAAnnot::GetType() const
 {
 	ASSERT(m_pAnnot != NULL);
 	
 	return m_pAnnot->GetSubType();
 }
 
-CFX_ByteString CPDFSDK_Annot::GetSubType() const
+CFX_ByteString CPDFSDK_BAAnnot::GetSubType() const
 {
 	return "";
 }
 
-void CPDFSDK_Annot::DrawAppearance(CFX_RenderDevice* pDevice, const CPDF_Matrix* pUser2Device,
+void CPDFSDK_BAAnnot::ResetAppearance()
+{
+	ASSERT(FALSE);
+}
+
+void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice, const CPDF_Matrix* pUser2Device,
 								   CPDF_Annot::AppearanceMode mode, const CPDF_RenderOptions* pOptions)	
 {
 	ASSERT(m_pPageView != NULL);
@@ -605,7 +601,7 @@ void CPDFSDK_Annot::DrawAppearance(CFX_RenderDevice* pDevice, const CPDF_Matrix*
 	m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, pUser2Device, mode, pOptions);
 }
 
-FX_BOOL	CPDFSDK_Annot::IsAppearanceValid()
+FX_BOOL	CPDFSDK_BAAnnot::IsAppearanceValid()
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -613,7 +609,7 @@ FX_BOOL	CPDFSDK_Annot::IsAppearanceValid()
 	return m_pAnnot->m_pAnnotDict->GetDict("AP") != NULL;
 }
 
-FX_BOOL	CPDFSDK_Annot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode)
+FX_BOOL	CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -637,20 +633,20 @@ FX_BOOL	CPDFSDK_Annot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode)
 	return TRUE;
 }
 
-void CPDFSDK_Annot::DrawBorder(CFX_RenderDevice* pDevice, const CPDF_Matrix* pUser2Device,
+void CPDFSDK_BAAnnot::DrawBorder(CFX_RenderDevice* pDevice, const CPDF_Matrix* pUser2Device,
 						   const CPDF_RenderOptions* pOptions)
 {
 	ASSERT(m_pAnnot != NULL);
 	m_pAnnot->DrawBorder(pDevice, pUser2Device, pOptions); 
 }
 
-void CPDFSDK_Annot::ClearCachedAP()
+void CPDFSDK_BAAnnot::ClearCachedAP()
 {
 	ASSERT(m_pAnnot != NULL);
 	m_pAnnot->ClearCachedAP();
 }    
 
-void CPDFSDK_Annot::SetContents(const CFX_WideString& sContents)
+void CPDFSDK_BAAnnot::SetContents(const CFX_WideString& sContents)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -661,7 +657,7 @@ void CPDFSDK_Annot::SetContents(const CFX_WideString& sContents)
 		m_pAnnot->m_pAnnotDict->SetAtString("Contents", PDF_EncodeText(sContents));
 }
 
-CFX_WideString CPDFSDK_Annot::GetContents() const
+CFX_WideString CPDFSDK_BAAnnot::GetContents() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -669,7 +665,7 @@ CFX_WideString CPDFSDK_Annot::GetContents() const
 	return m_pAnnot->m_pAnnotDict->GetUnicodeText("Contents");
 }
 
-void CPDFSDK_Annot::SetAnnotName(const CFX_WideString& sName)
+void CPDFSDK_BAAnnot::SetAnnotName(const CFX_WideString& sName)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -680,7 +676,7 @@ void CPDFSDK_Annot::SetAnnotName(const CFX_WideString& sName)
 		m_pAnnot->m_pAnnotDict->SetAtString("NM", PDF_EncodeText(sName));
 }
 
-CFX_WideString CPDFSDK_Annot::GetAnnotName() const
+CFX_WideString CPDFSDK_BAAnnot::GetAnnotName() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -688,7 +684,7 @@ CFX_WideString CPDFSDK_Annot::GetAnnotName() const
 	return m_pAnnot->m_pAnnotDict->GetUnicodeText("NM");
 }
 
-void CPDFSDK_Annot::SetModifiedDate(const FX_SYSTEMTIME& st)
+void CPDFSDK_BAAnnot::SetModifiedDate(const FX_SYSTEMTIME& st)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -702,7 +698,7 @@ void CPDFSDK_Annot::SetModifiedDate(const FX_SYSTEMTIME& st)
 		m_pAnnot->m_pAnnotDict->SetAtString("M", str);
 }
 
-FX_SYSTEMTIME CPDFSDK_Annot::GetModifiedDate() const
+FX_SYSTEMTIME CPDFSDK_BAAnnot::GetModifiedDate() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -716,7 +712,7 @@ FX_SYSTEMTIME CPDFSDK_Annot::GetModifiedDate() const
 	return systime;
 }
 
-void CPDFSDK_Annot::SetFlags(int nFlags)
+void CPDFSDK_BAAnnot::SetFlags(int nFlags)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -724,7 +720,7 @@ void CPDFSDK_Annot::SetFlags(int nFlags)
 	m_pAnnot->m_pAnnotDict->SetAtInteger("F", nFlags);
 }
 
-int CPDFSDK_Annot::GetFlags() const
+int CPDFSDK_BAAnnot::GetFlags() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -732,7 +728,7 @@ int CPDFSDK_Annot::GetFlags() const
 	return m_pAnnot->m_pAnnotDict->GetInteger("F");
 }
 
-void CPDFSDK_Annot::SetAppState(const CFX_ByteString& str)
+void CPDFSDK_BAAnnot::SetAppState(const CFX_ByteString& str)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -743,7 +739,7 @@ void CPDFSDK_Annot::SetAppState(const CFX_ByteString& str)
 		m_pAnnot->m_pAnnotDict->SetAtString("AS", str);
 }
 
-CFX_ByteString CPDFSDK_Annot::GetAppState() const
+CFX_ByteString CPDFSDK_BAAnnot::GetAppState() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -751,7 +747,7 @@ CFX_ByteString CPDFSDK_Annot::GetAppState() const
 	return m_pAnnot->m_pAnnotDict->GetString("AS");
 }
 
-void CPDFSDK_Annot::SetStructParent(int key)
+void CPDFSDK_BAAnnot::SetStructParent(int key)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -759,7 +755,7 @@ void CPDFSDK_Annot::SetStructParent(int key)
 	m_pAnnot->m_pAnnotDict->SetAtInteger("StructParent", key);
 }
 
-int	CPDFSDK_Annot::GetStructParent() const
+int	CPDFSDK_BAAnnot::GetStructParent() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -768,7 +764,7 @@ int	CPDFSDK_Annot::GetStructParent() const
 }
 
 //border
-void CPDFSDK_Annot::SetBorderWidth(int nWidth)
+void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -793,7 +789,7 @@ void CPDFSDK_Annot::SetBorderWidth(int nWidth)
 	}
 }
 
-int	CPDFSDK_Annot::GetBorderWidth() const
+int	CPDFSDK_BAAnnot::GetBorderWidth() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -816,7 +812,7 @@ int	CPDFSDK_Annot::GetBorderWidth() const
 	return 1;
 }
 
-void CPDFSDK_Annot::SetBorderStyle(int nStyle)
+void CPDFSDK_BAAnnot::SetBorderStyle(int nStyle)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -848,7 +844,7 @@ void CPDFSDK_Annot::SetBorderStyle(int nStyle)
 	}
 }
 
-int	CPDFSDK_Annot::GetBorderStyle() const
+int	CPDFSDK_BAAnnot::GetBorderStyle() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -878,7 +874,7 @@ int	CPDFSDK_Annot::GetBorderStyle() const
 	return BBS_SOLID;
 }
 
-void CPDFSDK_Annot::SetBorderDash(const CFX_IntArray& array)
+void CPDFSDK_BAAnnot::SetBorderDash(const CFX_IntArray& array)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -899,7 +895,7 @@ void CPDFSDK_Annot::SetBorderDash(const CFX_IntArray& array)
 	pBSDict->SetAt("D", pArray);
 }
 
-void CPDFSDK_Annot::GetBorderDash(CFX_IntArray& array) const
+void CPDFSDK_BAAnnot::GetBorderDash(CFX_IntArray& array) const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -929,7 +925,7 @@ void CPDFSDK_Annot::GetBorderDash(CFX_IntArray& array) const
 	}
 }
 
-void CPDFSDK_Annot::SetColor(FX_COLORREF color)
+void CPDFSDK_BAAnnot::SetColor(FX_COLORREF color)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -941,7 +937,7 @@ void CPDFSDK_Annot::SetColor(FX_COLORREF color)
 	m_pAnnot->m_pAnnotDict->SetAt("C", pArray);
 }
 
-void CPDFSDK_Annot::RemoveColor()
+void CPDFSDK_BAAnnot::RemoveColor()
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -949,7 +945,7 @@ void CPDFSDK_Annot::RemoveColor()
 	m_pAnnot->m_pAnnotDict->RemoveAt("C") ; 
 }
 
-FX_BOOL CPDFSDK_Annot::GetColor(FX_COLORREF& color) const
+FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -996,7 +992,7 @@ FX_BOOL CPDFSDK_Annot::GetColor(FX_COLORREF& color) const
 }
 
 
-void CPDFSDK_Annot::WriteAppearance(const CFX_ByteString& sAPType, const CPDF_Rect& rcBBox, 
+void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType, const CPDF_Rect& rcBBox, 
 								const CPDF_Matrix& matrix, const CFX_ByteString& sContents,
 								const CFX_ByteString& sAPState)
 {
@@ -1078,17 +1074,17 @@ FX_FLOAT CPDFSDK_Annot::GetMinHeight() const
 	return BA_ANNOT_MINHEIGHT;
 }
 
-FX_BOOL CPDFSDK_Annot::CreateFormFiller()
+FX_BOOL CPDFSDK_BAAnnot::CreateFormFiller()
 {
 	return TRUE;
 }
-FX_BOOL	CPDFSDK_Annot::IsVisible() const
+FX_BOOL	CPDFSDK_BAAnnot::IsVisible() const
 {
 	int nFlags = GetFlags();
 	return !((nFlags & ANNOTFLAG_INVISIBLE) || (nFlags & ANNOTFLAG_HIDDEN) || (nFlags & ANNOTFLAG_NOVIEW));
 }
 
-CPDF_Action CPDFSDK_Annot::GetAction() const
+CPDF_Action CPDFSDK_BAAnnot::GetAction() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -1096,7 +1092,7 @@ CPDF_Action CPDFSDK_Annot::GetAction() const
 	return m_pAnnot->m_pAnnotDict->GetDict("A");
 }
 
-void CPDFSDK_Annot::SetAction(const CPDF_Action& action)
+void CPDFSDK_BAAnnot::SetAction(const CPDF_Action& action)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -1114,7 +1110,7 @@ void CPDFSDK_Annot::SetAction(const CPDF_Action& action)
 	}
 }
 
-void CPDFSDK_Annot::RemoveAction()
+void CPDFSDK_BAAnnot::RemoveAction()
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -1122,7 +1118,7 @@ void CPDFSDK_Annot::RemoveAction()
 	m_pAnnot->m_pAnnotDict->RemoveAt("A");
 }
 
-CPDF_AAction CPDFSDK_Annot::GetAAction() const
+CPDF_AAction CPDFSDK_BAAnnot::GetAAction() const
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -1130,7 +1126,7 @@ CPDF_AAction CPDFSDK_Annot::GetAAction() const
 	return m_pAnnot->m_pAnnotDict->GetDict("AA");
 }
 
-void CPDFSDK_Annot::SetAAction(const CPDF_AAction& aa)
+void CPDFSDK_BAAnnot::SetAAction(const CPDF_AAction& aa)
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -1140,7 +1136,7 @@ void CPDFSDK_Annot::SetAAction(const CPDF_AAction& aa)
 		m_pAnnot->m_pAnnotDict->SetAt("AA", (CPDF_AAction&)aa);
 }
 
-void CPDFSDK_Annot::RemoveAAction()
+void CPDFSDK_BAAnnot::RemoveAAction()
 {
 	ASSERT(m_pAnnot != NULL);
 	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
@@ -1148,7 +1144,7 @@ void CPDFSDK_Annot::RemoveAAction()
 	m_pAnnot->m_pAnnotDict->RemoveAt("AA");
 }
 
-CPDF_Action	CPDFSDK_Annot::GetAAction(CPDF_AAction::AActionType eAAT)
+CPDF_Action	CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT)
 {
 	CPDF_AAction AAction = GetAAction();
 	
@@ -1164,7 +1160,12 @@ CPDF_Action	CPDFSDK_Annot::GetAAction(CPDF_AAction::AActionType eAAT)
 	return NULL;
 }
 
-void  CPDFSDK_Annot::Annot_OnDraw(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, CPDF_RenderOptions* pOptions)
+FX_BOOL CPDFSDK_BAAnnot::IsXFAField()
+{
+	return FALSE;
+}
+
+void  CPDFSDK_BAAnnot::Annot_OnDraw(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, CPDF_RenderOptions* pOptions)
 {
 	
 	m_pAnnot->GetAPForm(m_pPageView->GetPDFPage(), CPDF_Annot::Normal);
@@ -1177,6 +1178,13 @@ CPDF_Page* CPDFSDK_Annot::GetPDFPage()
 {
 	if(m_pPageView)
 		return m_pPageView->GetPDFPage();
+	return NULL;
+}
+
+CPDFXFA_Page* CPDFSDK_Annot::GetPDFXFAPage()
+{
+	if (m_pPageView)
+		return m_pPageView->GetPDFXFAPage();
 	return NULL;
 }
 

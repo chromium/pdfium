@@ -68,6 +68,7 @@ CJS_Timer* TimerObj::GetTimer() const
 #define JS_STR_PLATFORM					L"WIN"
 #define JS_STR_LANGUANGE				L"ENU"
 #define JS_STR_VIEWERVERSION			8
+#define JS_STR_VIEWERVERSION_XFA		11
 #define JS_NUM_FORMSVERSION				7
 
 #define JS_FILEPATH_MAXLEN				2000
@@ -152,8 +153,8 @@ FX_BOOL app::activeDocs(OBJ_PROP_PARAMS)
 		CJS_Array aDocs(pRuntime->GetIsolate());
 //		int iNumDocs = pApp->CountDocuments();
 		
-//		for(int iIndex = 0; iIndex<iNumDocs; iIndex++)
-//		{
+// 		for(int iIndex = 0; iIndex<iNumDocs; iIndex++)
+// 		{
 			CPDFSDK_Document* pDoc = pApp->GetCurrentDoc();
 			if (pDoc)
 			{
@@ -209,10 +210,10 @@ FX_BOOL app::calculate(OBJ_PROP_PARAMS)
 		ASSERT(pRuntime != NULL);
 
 		CJS_Array aDocs(pRuntime->GetIsolate());
-//		int iNumDocs = pApp->CountDocuments();
+// 		int iNumDocs = pApp->CountDocuments();
 //		
-//		for (int iIndex = 0;iIndex < iNumDocs; iIndex++)
-//		{
+// 		for (int iIndex = 0;iIndex < iNumDocs; iIndex++)
+// 		{
 			if (CPDFSDK_Document* pDoc = pApp->GetCurrentDoc())
 			{
 				CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDoc->GetInterForm();
@@ -278,7 +279,19 @@ FX_BOOL app::viewerVersion(OBJ_PROP_PARAMS)
 {
 	if (vp.IsGetting())
 	{
-		vp << JS_STR_VIEWERVERSION;
+		CJS_Context* pContext = (CJS_Context *)cc;
+		ASSERT(pContext != NULL);
+		
+		CPDFDoc_Environment* pApp = pContext->GetReaderApp();
+		ASSERT(pApp != NULL);
+		
+		CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
+
+		CPDFXFA_Document* pDoc = pCurDoc->GetDocument();
+		if (pDoc->GetDocType() == 1 || pDoc->GetDocType() == 2)
+			vp << JS_STR_VIEWERVERSION_XFA;
+		else
+			vp << JS_STR_VIEWERVERSION;
 		return TRUE;
 	}
 	

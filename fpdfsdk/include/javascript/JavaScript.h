@@ -28,6 +28,7 @@
 #include "../fxedit/fx_edit.h"
 #include "../pdfwindow/IPDFWindow.h"
 #include "../fsdk_mgr.h"
+#include "../fpdfxfa/fpdfxfa_app.h"
 
 
 #include <string>

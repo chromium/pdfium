@@ -6,6 +6,7 @@
 
 #ifndef _FX_CODEC_PROVIDER_H_
 #define _FX_CODEC_PROVIDER_H_
+class CFX_DIBAttribute;
 class IFX_JpegProvider
 {
 public:
@@ -39,8 +40,7 @@ public:
 
     virtual void		Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size) = 0;
 
-    virtual int			ReadHeader(void* pContext, int* width, int* height, int* nComps) = 0;
-
+    virtual int			ReadHeader(void* pContext, int* width, int* height, int* nComps, CFX_DIBAttribute* pAttribute = NULL) = 0;
 
     virtual int			StartScanline(void* pContext, int down_scale) = 0;
 

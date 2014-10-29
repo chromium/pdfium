@@ -162,6 +162,15 @@ public:
 };
 IFX_FileStream*		FX_CreateFileStream(FX_LPCSTR filename, FX_DWORD dwModes);
 IFX_FileStream*		FX_CreateFileStream(FX_LPCWSTR filename, FX_DWORD dwModes);
+class IFX_FileAccess
+{
+public:
+	virtual void				Release() = 0;	
+	virtual IFX_FileAccess*		Retain() = 0;
+	virtual void				GetPath(CFX_WideString& wsPath) = 0;
+	virtual IFX_FileStream*		CreateFileStream(FX_DWORD dwModes) = 0;
+};
+IFX_FileAccess* FX_CreateDefaultFileAccess(FX_WSTR wsPath);
 class IFX_MemoryStream : public IFX_FileStream
 {
 public:

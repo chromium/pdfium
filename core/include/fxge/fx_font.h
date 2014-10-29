@@ -29,6 +29,7 @@ class CFontFileFaceInfo;
 #define FXFONT_ITALIC			0x40
 #define FXFONT_BOLD				0x40000
 #define FXFONT_USEEXTERNATTR	0x80000
+#define FXFONT_EXACTMATCH		0x80000000
 #define FXFONT_CIDFONT			0x100000
 #define FXFONT_ANSI_CHARSET		0
 #define FXFONT_DEFAULT_CHARSET	1
@@ -61,7 +62,10 @@ public:
 
     FX_BOOL					LoadEmbedded(FX_LPCBYTE data, FX_DWORD size);
 
-    FX_BOOL					LoadFile(IFX_FileRead* pFile);
+	FX_BOOL					LoadFile(IFX_FileRead* pFile, int nFaceIndex = 0, int* pFaceCount = NULL);
+
+    FX_BOOL                 LoadClone(const CFX_Font* pFont);
+
 
     FXFT_Face				GetFace() const
     {
@@ -141,6 +145,7 @@ protected:
 
     FX_BOOL					m_bEmbedded;
     FX_BOOL					m_bVertical;
+    FX_BOOL                 m_bLogic;
     void*					m_pOwnedStream;
 };
 #define ENCODING_INTERNAL		0
@@ -157,6 +162,32 @@ public:
     virtual FX_DWORD		CharCodeFromUnicode(FX_WCHAR Unicode) const = 0;
 };
 IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont);
+#define FXFM_ENC_TAG(a, b, c, d) (((FX_DWORD)(a) << 24) | ((FX_DWORD)(b) << 16) | ((FX_DWORD)(c) << 8) | (FX_DWORD)(d))
+#define FXFM_ENCODING_NONE				FXFM_ENC_TAG(0, 0, 0, 0)
+#define FXFM_ENCODING_MS_SYMBOL			FXFM_ENC_TAG('s', 'y', 'm', 'b')
+#define FXFM_ENCODING_UNICODE			FXFM_ENC_TAG('u', 'n', 'i', 'c')
+#define FXFM_ENCODING_MS_SJIS			FXFM_ENC_TAG('s', 'j', 'i', 's')
+#define FXFM_ENCODING_MS_GB2312			FXFM_ENC_TAG('g', 'b', ' ', ' ')
+#define FXFM_ENCODING_MS_BIG5			FXFM_ENC_TAG('b', 'i', 'g', '5')
+#define FXFM_ENCODING_MS_WANSUNG		FXFM_ENC_TAG('w', 'a', 'n', 's')
+#define FXFM_ENCODING_MS_JOHAB			FXFM_ENC_TAG('j', 'o', 'h', 'a')
+#define FXFM_ENCODING_ADOBE_STANDARD	FXFM_ENC_TAG('A', 'D', 'O', 'B')
+#define FXFM_ENCODING_ADOBE_EXPERT		FXFM_ENC_TAG('A', 'D', 'B', 'E')
+#define FXFM_ENCODING_ADOBE_CUSTOM		FXFM_ENC_TAG('A', 'D', 'B', 'C')
+#define FXFM_ENCODING_ADOBE_LATIN_1		FXFM_ENC_TAG('l', 'a', 't', '1')
+#define FXFM_ENCODING_OLD_LATIN_2		FXFM_ENC_TAG('l', 'a', 't', '2')
+#define FXFM_ENCODING_APPLE_ROMAN		FXFM_ENC_TAG('a', 'r', 'm', 'n')
+class IFX_FontEncodingEx : public IFX_FontEncoding
+{
+public:
+
+    virtual FX_DWORD		GlyphIndexFromName(FX_LPCSTR pStrName) = 0;
+
+    virtual CFX_ByteString	NameFromGlyphIndex(FX_DWORD dwGlyphIndex) = 0;
+
+    virtual FX_DWORD		CharCodeFromGlyphIndex(FX_DWORD dwGlyphIndex) = 0;
+};
+IFX_FontEncodingEx*	FX_CreateFontEncodingEx(CFX_Font* pFont, FX_DWORD nEncodingID = FXFM_ENCODING_NONE);
 #define FXFONT_SUBST_MM				0x01
 #define FXFONT_SUBST_GLYPHPATH		0x04
 #define FXFONT_SUBST_CLEARTYPE		0x08
@@ -277,6 +308,7 @@ public:
     }
     virtual FXFT_Face	FindSubstFont(const CFX_ByteString& face_name, FX_BOOL bTrueType, FX_DWORD flags,
                                       int weight, int italic_angle, int CharsetCP, CFX_SubstFont* pSubstFont);
+    FXFT_Face	FindSubstFontByUnicode(FX_DWORD dwUnicode, FX_DWORD flags, int weight, int italic_angle);
 private:
     CFX_ByteString		GetPSNameFromTT(void* hFont);
     CFX_ByteString		MatchInstalledFonts(const CFX_ByteString& norm_name);
@@ -298,6 +330,10 @@ public:
     virtual void		Release() = 0;
     virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper) = 0;
     virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR face, FX_BOOL& bExact) = 0;
+    virtual void*		MapFontByUnicode(FX_DWORD dwUnicode, int weight, FX_BOOL bItalic, int pitch_family)
+    {
+        return NULL;
+    }
     virtual void*		GetFont(FX_LPCSTR face) = 0;
     virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, FX_LPBYTE buffer, FX_DWORD size) = 0;
     virtual FX_BOOL		GetFaceName(void* hFont, CFX_ByteString& name) = 0;
@@ -321,6 +357,7 @@ public:
     virtual void		Release();
     virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper);
     virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR face, FX_BOOL& bExact);
+    virtual void*		MapFontByUnicode(FX_DWORD dwUnicode, int weight, FX_BOOL bItalic, int pitch_family);
     virtual void*		GetFont(FX_LPCSTR face);
     virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, FX_LPBYTE buffer, FX_DWORD size);
     virtual void		DeleteFont(void* hFont);

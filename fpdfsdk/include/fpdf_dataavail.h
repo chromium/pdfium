@@ -64,6 +64,8 @@ typedef void* FPDF_AVAIL;
 *			A handle to the document availability provider. NULL for error.
 * Comments:
 *			Application must call FPDFAvail_Destroy when done with the availability provider.
+* Notes:
+*			The method can not support to load a document which consists of dynamic XFA fields now.
 */
 DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail, FPDF_FILEACCESS* file);
 

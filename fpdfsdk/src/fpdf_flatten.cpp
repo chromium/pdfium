@@ -6,6 +6,8 @@
 
 #include "../include/fsdk_define.h"
 #include "../include/fpdf_flatten.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "../include/fpdfxfa/fpdfxfa_page.h"
 
 typedef CFX_ArrayTemplate<CPDF_Dictionary*> CPDF_ObjectArray;
 typedef CFX_ArrayTemplate<CPDF_Rect> CPDF_RectArray;
@@ -332,7 +334,10 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 		return FLATTEN_FAIL;
 	}
 
-	CPDF_Page * pPage = (CPDF_Page*)( page );
+	CPDF_Page * pPage = ((CPDFXFA_Page*)( page ))->GetPDFPage();
+	if (!pPage)
+		return FLATTEN_FAIL;
+
 	CPDF_Document * pDocument = pPage->m_pDocument;
 	CPDF_Dictionary * pPageDict = pPage->m_pFormDict;
 	

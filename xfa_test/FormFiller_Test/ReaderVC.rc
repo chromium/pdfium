@@ -1,0 +1,741 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\ReaderVC.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.chs\\afxres.rc""          // Standard components\r\n"
+    "#include ""l.chs\\afxprint.rc""        // printing/print preview resources\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\ReaderVC.ico"
+IDR_READERTYPE          ICON    DISCARDABLE     "res\\ReaderVCDoc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+IDB_BITMAP1             BITMAP  DISCARDABLE     "res\\tool_counterclockwise.bmp"
+IDB_BITMAP2             BITMAP  DISCARDABLE     "res\\Rd_SelText_Icon.bmp"
+IDB_BITMAP3             BITMAP  DISCARDABLE     "res\\Rd_SelText_Icon_Dis.bmp"
+IDB_BITMAP4             BITMAP  DISCARDABLE     "res\\tool_actual_size.bmp"
+IDB_BITMAP5             BITMAP  DISCARDABLE     "res\\tool_bookmark1.bmp"
+IDB_BITMAP6             BITMAP  DISCARDABLE     "res\\tool_clockwise.bmp"
+IDB_BITMAP7             BITMAP  DISCARDABLE     "res\\tool_hot_bookmark1.bmp"
+IDB_BITMAP8             BITMAP  DISCARDABLE     "res\\tool_first.bmp"
+IDB_BITMAP9             BITMAP  DISCARDABLE     "res\\tool_fit_page.bmp"
+IDB_BITMAP10            BITMAP  DISCARDABLE     "res\\tool_fit_width.bmp"
+IDB_BITMAP11            BITMAP  DISCARDABLE     "res\\tool_hand1.bmp"
+IDB_BITMAP12            BITMAP  DISCARDABLE     "res\\tool_hot_about2.bmp"
+IDB_BITMAP13            BITMAP  DISCARDABLE     "res\\tool_hot_actual_size.bmp"
+IDB_BITMAP14            BITMAP  DISCARDABLE     "res\\tool_hot_zoomin.bmp"
+IDB_BITMAP15            BITMAP  DISCARDABLE     "res\\tool_hot_clockwise.bmp"
+IDB_BITMAP16            BITMAP  DISCARDABLE     "res\\tool_hot_counterclockwise.bmp"
+IDB_BITMAP17            BITMAP  DISCARDABLE     "res\\tool_hot_first.bmp"
+IDB_BITMAP18            BITMAP  DISCARDABLE     "res\\tool_hot_fit_page.bmp"
+IDB_BITMAP19            BITMAP  DISCARDABLE     "res\\tool_hot_fit_width.bmp"
+IDB_BITMAP20            BITMAP  DISCARDABLE     "res\\tool_hot_hand1.bmp"
+IDB_BITMAP21            BITMAP  DISCARDABLE     "res\\tool_hot_last.bmp"
+IDB_BITMAP22            BITMAP  DISCARDABLE     "res\\tool_hot_next.bmp"
+IDB_BITMAP23            BITMAP  DISCARDABLE     "res\\tool_hot_open1.bmp"
+IDB_BITMAP24            BITMAP  DISCARDABLE     "res\\tool_hot_prev.bmp"
+IDB_BITMAP26            BITMAP  DISCARDABLE     "res\\tool_hot_zoomout.bmp"
+IDB_BITMAP27            BITMAP  DISCARDABLE     "res\\tool_last.bmp"
+IDB_BITMAP28            BITMAP  DISCARDABLE     "res\\tool_next.bmp"
+IDB_BITMAP29            BITMAP  DISCARDABLE     "res\\tool_prev.bmp"
+IDB_BITMAP30            BITMAP  DISCARDABLE     "res\\tool_print.bmp"
+IDB_BITMAP31            BITMAP  DISCARDABLE     "res\\tool_search.bmp"
+IDB_BITMAP32            BITMAP  DISCARDABLE     "res\\tool_snap_shot.bmp"
+IDB_BITMAP33            BITMAP  DISCARDABLE     "res\\tool_zoomin.bmp"
+IDB_BITMAP34            BITMAP  DISCARDABLE     "res\\tool_zoomout.bmp"
+IDB_BITMAP25            BITMAP  DISCARDABLE     "res\\tool_hot_snap_shot.bmp"
+IDB_BITMAP35            BITMAP  DISCARDABLE     "res\\tool_hot_print.bmp"
+IDB_BITMAP36            BITMAP  DISCARDABLE     "res\\tool_hot_search.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  24, 24
+BEGIN
+    BUTTON      ID_FILE_OPEN
+    SEPARATOR
+    BUTTON      ID_FILE_PRINT
+    SEPARATOR
+    BUTTON      ID_DOC_FIRSTPAGE
+    BUTTON      ID_DOC_PREPAGE
+    BUTTON      ID_DOC_NEXTPAGE
+    BUTTON      ID_DOC_LASTPAGE
+    SEPARATOR
+    BUTTON      ID_VIEW_COUNTERCLOCKWISE
+    BUTTON      ID_VIEW_CLOCKWISE
+    SEPARATOR
+    BUTTON      ID_VIEW_ZOOMIN
+    BUTTON      ID_VIEW_ZOOMOUT
+    SEPARATOR
+    BUTTON      ID_VIEW_ACTUALSIZE
+    BUTTON      ID_VIEW_FITPAGE
+    BUTTON      ID_VIEW_FITWIDTH
+    SEPARATOR
+    BUTTON      ID_EDIT_FIND
+    SEPARATOR
+    BUTTON      ID_VIEW_BOOKMARK
+    SEPARATOR
+    BUTTON      ID_TOOL_SNAPSHOT
+    BUTTON      ID_TOOL_SELECT
+    BUTTON      ID_TOOL_HAND
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "+",            ID_VIEW_ZOOMIN,         VIRTKEY, CONTROL, NOINVERT
+    "-",            ID_VIEW_ZOOMOUT,        VIRTKEY, CONTROL, NOINVERT
+    "1",            ID_VIEW_ACTUALSIZE,     VIRTKEY, CONTROL, NOINVERT
+    "2",            ID_VIEW_FITPAGE,        VIRTKEY, CONTROL, NOINVERT
+    "3",            ID_VIEW_FITWIDTH,       VIRTKEY, CONTROL, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_EDIT_FIND,           VIRTKEY, CONTROL, NOINVERT
+    "M",            ID_VIEW_ZOOMTO,         VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_DOC_GOTOPAGE,        VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About ReaderVC"
+FONT 9, "宋体"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Foxit SDK Demo 1.0 version",IDC_STATIC,40,10,126,8,
+                    SS_NOPREFIX
+    LTEXT           "All rights Reserved",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_DLG_GOTOPAGE DIALOG DISCARDABLE  0, 0, 133, 29
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Goto Page"
+FONT 10, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,91,7,35,14
+    LTEXT           "Goto",IDC_STATIC,8,9,16,9
+    EDITTEXT        IDC_EDIT1,25,7,64,14,ES_AUTOHSCROLL
+END
+
+IDD_DLG_ZOOMTO DIALOG DISCARDABLE  0, 0, 141, 45
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Zoom To"
+FONT 10, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,38,24,29,14
+    LTEXT           "Zoom to",IDC_STATIC,7,9,30,8
+    DEFPUSHBUTTON   "Cancel",IDCANCEL,75,24,29,14
+    COMBOBOX        IDC_COMBO1,37,7,78,132,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_DLG_FIND DIALOG DISCARDABLE  0, 0, 222, 70
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Find Text"
+FONT 10, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&Find Next",IDOK,174,7,41,13
+    PUSHBUTTON      "&Cancel",IDCANCEL,175,24,40,13
+    LTEXT           "&Find What",IDC_STATIC,7,10,38,10
+    EDITTEXT        IDC_EDIT1,46,7,124,16,ES_AUTOHSCROLL
+    CONTROL         "Match &Case",IDC_CHECK_MATCHCASE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,30,90,11
+    CONTROL         "Match &Whole word only",IDC_CHECK_MATCHWHOLE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,48,97,10
+    GROUPBOX        "Direction",IDC_STATIC,104,28,68,32
+    CONTROL         "Down",IDC_RADIO_Down,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,109,42,29,10
+    CONTROL         "Up",IDC_RADIO_UP,"Button",BS_AUTORADIOBUTTON,146,42,19,
+                    10
+END
+
+IDD_DLG_CONVERT DIALOG DISCARDABLE  0, 0, 128, 74
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Convert mode"
+FONT 10, "System"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,17,55,42,12
+    PUSHBUTTON      "Cancel",IDCANCEL,69,55,42,12
+    GROUPBOX        "Flags for ConvertText",IDC_STATIC,16,7,95,46
+    CONTROL         "Stream order",IDC_RADIO_Stream,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,30,20,69,8
+    CONTROL         "Appearance order",IDC_RADIO_Appearance,"Button",
+                    BS_AUTORADIOBUTTON,30,31,69,8
+END
+
+IDD_EXPORT_PAGE DIALOG DISCARDABLE  0, 0, 230, 229
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Export Page"
+FONT 10, "System"
+BEGIN
+    LTEXT           "Width",IDC_STATIC,22,16,20,8
+    LTEXT           "Height",IDC_STATIC,21,37,22,8
+    LTEXT           "Rotate",IDC_STATIC,21,61,22,8
+    LTEXT           "Bitmap Width",IDC_STATIC,102,14,45,8
+    LTEXT           "Bitmap Height",IDC_STATIC,99,35,47,8
+    PUSHBUTTON      "Rander Page ",IDC_Rander_Page,102,58,50,14
+    PUSHBUTTON      "Save As...",IDC_Save,158,58,50,14
+    EDITTEXT        IDC_EDIT_PAGE_WIDTH,45,14,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_PAGE_HEIGHT,45,35,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_ROTATE,45,59,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_WIDTH,149,13,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_HEIGHT,148,33,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_STATIC_BITMAP,"Static",SS_BLACKFRAME,18,87,196,
+                    127
+END
+
+IDD_DLG_RESPONSE DIALOG DISCARDABLE  0, 0, 241, 66
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "System"
+BEGIN
+    DEFPUSHBUTTON   "OK",ID_JS_OK,116,45,50,14
+    PUSHBUTTON      "Cancel",ID_JS_CANCEL,184,45,50,14
+    LTEXT           "",IDC_JS_QUESTION,7,7,227,12
+    LTEXT           "",IDC_JS_ANSWER,7,26,27,12
+END
+
+IDD_TEST_JS DIALOG DISCARDABLE  0, 0, 187, 96
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 10, "System"
+BEGIN
+    EDITTEXT        IDC_EDIT1,7,18,173,33,ES_MULTILINE | ES_AUTOHSCROLL
+    PUSHBUTTON      "Run JS",IDC_BUTTON1,130,68,50,14
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "ReaderVC Microsoft 基础类应用程序\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "ReaderVC\0"
+            VALUE "LegalCopyright", "版权所有 (C) 2007\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "ReaderVC.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "ReaderVC 应用程序\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_DLG_GOTOPAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 126
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 22
+    END
+
+    IDD_DLG_ZOOMTO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 134
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 38
+    END
+
+    IDD_DLG_FIND, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 215
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 63
+    END
+
+    IDD_DLG_CONVERT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 121
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 67
+    END
+
+    IDD_EXPORT_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 223
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 222
+    END
+
+    IDD_DLG_RESPONSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 234
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 59
+    END
+
+    IDD_TEST_JS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 89
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_CURSOR1             CURSOR  DISCARDABLE     "res\\SmallHandCursor.cur"
+IDC_CURSOR2             CURSOR  DISCARDABLE     "res\\BigHandCursor.cur"
+IDC_CURSOR3             CURSOR  DISCARDABLE     "res\\bound.cur"
+IDC_CURSOR4             CURSOR  DISCARDABLE     "res\\point.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "ReaderVC"
+    IDR_READERTYPE          "\nReader\nReader\n\n\nReaderVC.Document\nReader Document"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "ReaderVC"
+    AFX_IDS_IDLEMESSAGE     "就绪"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_EXT        "扩展名"
+    ID_INDICATOR_CAPS       "大写"
+    ID_INDICATOR_NUM        "数字"
+    ID_INDICATOR_SCRL       "滚动"
+    ID_INDICATOR_OVR        "改写"
+    ID_INDICATOR_REC        "记录"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_NEW             "建立新文档\n新建"
+    ID_FILE_OPEN            "打开一个现有文档\n打开"
+    ID_FILE_CLOSE           "关闭活动文档\n关闭"
+    ID_FILE_SAVE            "保存活动文档\n保存"
+    ID_FILE_SAVE_AS         "将活动文档以一个新文件名保存\n另存为"
+    ID_FILE_PAGE_SETUP      "改变打印选项\n页面设置"
+    ID_FILE_PRINT_SETUP     "改变打印机及打印选项\n打印设置"
+    ID_FILE_PRINT           "打印活动文档\n打印"
+    ID_FILE_PRINT_PREVIEW   "显示整页\n打印预览"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "显示程序信息，版本号和版权\n关于"
+    ID_APP_EXIT             "退出应用程序；提示保存文档\n退出"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "打开该文档"
+    ID_FILE_MRU_FILE2       "打开该文档"
+    ID_FILE_MRU_FILE3       "打开该文档"
+    ID_FILE_MRU_FILE4       "打开该文档"
+    ID_FILE_MRU_FILE5       "打开该文档"
+    ID_FILE_MRU_FILE6       "打开该文档"
+    ID_FILE_MRU_FILE7       "打开该文档"
+    ID_FILE_MRU_FILE8       "打开该文档"
+    ID_FILE_MRU_FILE9       "打开该文档"
+    ID_FILE_MRU_FILE10      "打开该文档"
+    ID_FILE_MRU_FILE11      "打开该文档"
+    ID_FILE_MRU_FILE12      "打开该文档"
+    ID_FILE_MRU_FILE13      "打开该文档"
+    ID_FILE_MRU_FILE14      "打开该文档"
+    ID_FILE_MRU_FILE15      "打开该文档"
+    ID_FILE_MRU_FILE16      "打开该文档"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "切换到下一个窗格\n下一窗格"
+    ID_PREV_PANE            "切换回前一个窗格\n前一窗格"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_NEW           "为活动文档打开另一个窗口\n新建窗口"
+    ID_WINDOW_ARRANGE       "将图标排列在窗口底部\n排列图标"
+    ID_WINDOW_CASCADE       "排列窗口成相互重叠\n层叠窗口"
+    ID_WINDOW_TILE_HORZ     "排列窗口成互不重叠\n平铺窗口"
+    ID_WINDOW_TILE_VERT     "排列窗口成互不重叠\n平铺窗口"
+    ID_WINDOW_SPLIT         "将活动的窗口分隔成窗格\n分隔"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "删除被选对象\n删除"
+    ID_EDIT_CLEAR_ALL       "全部删除\n全部删除"
+    ID_EDIT_COPY            "复制被选对象并将其置于剪贴板上\n复制"
+    ID_EDIT_CUT             "剪切被选对象并将其置于剪贴板上\n剪切"
+    ID_EDIT_FIND            "查找指定的正文\n查找"
+    ID_EDIT_PASTE           "插入剪贴板内容\n粘贴"
+    ID_EDIT_REPEAT          "重复上一步操作\n重复"
+    ID_EDIT_REPLACE         "用不同的正文替换指定的正文\n替换"
+    ID_EDIT_SELECT_ALL      "选择整个文档\n选择全部"
+    ID_EDIT_UNDO            "撤消最后一步操作\n撤消"
+    ID_EDIT_REDO            "重新执行先前已撤消的操作\n重新执行"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the ToolBar\nShow or hide the ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide\nShow or hide"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "改变窗口大小"
+    AFX_IDS_SCMOVE          "改变窗口位置"
+    AFX_IDS_SCMINIMIZE      "将窗口缩小成图标"
+    AFX_IDS_SCMAXIMIZE      "把窗口放大到最大尺寸"
+    AFX_IDS_SCNEXTWINDOW    "切换到下一个文档窗口"
+    AFX_IDS_SCPREVWINDOW    "切换到先前的文档窗口"
+    AFX_IDS_SCCLOSE         "关闭活动的窗口并提示保存所有文档"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "把窗口恢复到正常大小"
+    AFX_IDS_SCTASKLIST      "激活任务表"
+    AFX_IDS_MDICHILD        "激活该窗口"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "关闭打印预览模式\n取消预阅"
+END
+
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_READERTYPE MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "&Save As...",                 ID_FILE_SAVE
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
+        MENUITEM "P&rinter Setup...",           ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Recently File",               ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit...\tCtrl+Q",            ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Copy Select Text",           ID_EDIT_COPY
+        MENUITEM "&Find Text...\tCtrl+F",       ID_EDIT_FIND
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Zoom &In\t\tNum+",            ID_VIEW_ZOOMIN
+        MENUITEM "Zoom &Out\t\tNum-",           ID_VIEW_ZOOMOUT
+        MENUITEM "Zoom &To...\tCtrl+M",         ID_VIEW_ZOOMTO
+        MENUITEM SEPARATOR
+        MENUITEM "&Actual Size\tCtrl+1",        ID_VIEW_ACTUALSIZE
+        MENUITEM "Fit &Page\tCtrl+2",           ID_VIEW_FITPAGE
+        MENUITEM "Fit &Width\tCtrl+3",          ID_VIEW_FITWIDTH
+        MENUITEM SEPARATOR
+        POPUP "&Rotate View"
+        BEGIN
+            MENUITEM "&Clockwise\tShift+Ctrl+Plus", ID_VIEW_CLOCKWISE, HELP
+            MENUITEM "Counterclock&wise\tShift+Ctrl+Minus", 
+                                                    ID_VIEW_COUNTERCLOCKWISE
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&ToolBar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&StatusBar",                  ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Document"
+    BEGIN
+        MENUITEM "&First Page    \t\tHome",     ID_DOC_FIRSTPAGE
+        MENUITEM "P&revious Page\tLeft  Arrow", ID_DOC_PREPAGE
+        MENUITEM "&Next Page\tRight Arrow",     ID_DOC_NEXTPAGE
+        MENUITEM "&Last Page\tEnd",             ID_DOC_LASTPAGE
+        MENUITEM SEPARATOR
+        MENUITEM "&Goto Page...\tShift+Ctrl+N", ID_DOC_GOTOPAGE
+        MENUITEM "",                            TEST_PRINT_METALFILE
+    END
+    POPUP "&Tool"
+    BEGIN
+        MENUITEM "&Hand Tool",                  ID_TOOL_HAND
+        MENUITEM "Se&lect Text",                ID_TOOL_SELECT
+        MENUITEM "&Snapshot",                   ID_TOOL_SNAPSHOT
+        MENUITEM "Pdf2txt",                     ID_TOOL_PDF2TXT
+        MENUITEM "Extract links",               ID_TOOL_EXTRACTLINKS
+        MENUITEM "Test JavaScript",             IDM_Test_JS
+    END
+    POPUP "&Bitmap"
+    BEGIN
+        MENUITEM "&Export PDF to bitmap",       ID_EXPORT_PDF_TO_BITMAP
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "About ReaderVC(&A)...",       ID_APP_ABOUT
+    END
+END
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "&Save As...",                 ID_FILE_SAVE
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
+        MENUITEM "P&rinter Setup...",           ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Recently File",               ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit...\tCtrl+Q",            ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Copy Select Text",           ID_EDIT_COPY
+        MENUITEM "&Find Text...\tCtrl+F",       ID_EDIT_FIND
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Zoom &In\t\tNum+",            ID_VIEW_ZOOMIN
+        MENUITEM "Zoom &Out\t\tNum-",           ID_VIEW_ZOOMOUT
+        MENUITEM "Zoom &To...\tCtrl+M",         ID_VIEW_ZOOMTO
+        MENUITEM SEPARATOR
+        MENUITEM "&Actual Size\tCtrl+1",        ID_VIEW_ACTUALSIZE
+        MENUITEM "Fit &Page\tCtrl+2",           ID_VIEW_FITPAGE
+        MENUITEM "Fit &Width\tCtrl+3",          ID_VIEW_FITWIDTH
+        MENUITEM SEPARATOR
+        POPUP "&Rotate View"
+        BEGIN
+            MENUITEM "&Clockwise\tShift+Ctrl+Plus", ID_VIEW_CLOCKWISE, HELP
+            MENUITEM "Counterclock&wise\tShift+Ctrl+Minus", 
+                                                    ID_VIEW_COUNTERCLOCKWISE
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&ToolBar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&StatusBar",                  ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Document"
+    BEGIN
+        MENUITEM "&First Page    \t\tHome",     ID_DOC_FIRSTPAGE
+        MENUITEM "P&revious Page\tLeft  Arrow", ID_DOC_PREPAGE
+        MENUITEM "&Next Page\tRight Arrow",     ID_DOC_NEXTPAGE
+        MENUITEM "&Last Page\tEnd",             ID_DOC_LASTPAGE
+        MENUITEM SEPARATOR
+        MENUITEM "&Goto Page...\tShift+Ctrl+N", ID_DOC_GOTOPAGE
+        MENUITEM "Print MetalFile",             TEST_PRINT_METALFILE
+    END
+    POPUP "&Tool"
+    BEGIN
+        MENUITEM "&Hand Tool",                  ID_TOOL_HAND
+        MENUITEM "Se&lect Text",                ID_TOOL_SELECT
+        MENUITEM "&Snapshot",                   ID_TOOL_SNAPSHOT
+        MENUITEM "Pdf2txt",                     ID_TOOL_PDF2TXT
+        MENUITEM "Extract links",               ID_TOOL_EXTRACTLINKS
+    END
+    POPUP "&Bitmap"
+    BEGIN
+        MENUITEM "&Export PDF to bitmap",       ID_EXPORT_PDF_TO_BITMAP
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "About ReaderVC(&A)...",       ID_APP_ABOUT
+    END
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE 4, 2
+#pragma code_page(936)
+#endif //_WIN32
+#include "res\ReaderVC.rc2"  // non-Microsoft Visual C++ edited resources
+#include "l.chs\afxres.rc"          // Standard components
+#include "l.chs\afxprint.rc"        // printing/print preview resources
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

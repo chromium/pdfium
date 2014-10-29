@@ -44,6 +44,8 @@ typedef struct _IPDF_JsPlatform
 	*							1-Warning;
 	*							2-Question;
 	*							3-Status.
+	*							4-Asterisk
+
 	* Return Value:
 	*			The return value could be the folowing type:
 	*							1-OK;
@@ -216,7 +218,7 @@ typedef struct _IPDF_JsPlatform
 	* Comments:
 	*		The filePath shoule be always input in local encoding.
 	*/
-	int  (*Field_browse)(struct _IPDF_JsPlatform* pThis,void* filePath, int length);
+	int  (*Field_browse)(struct _IPDF_JsPlatform* pThis, void* filePath, int length);
 
 	/**
 	*	pointer to FPDF_FORMFILLINFO interface.
@@ -256,6 +258,38 @@ typedef struct _FPDF_SYSTEMTIME
     unsigned short wMilliseconds;	/* milliseconds after the second - [0,999] */
 }FPDF_SYSTEMTIME;
 
+//XFA
+/**
+ * @name Pageview  event flags
+ */
+/*@{*/
+/** @brief After a new pageview is added. */
+#define  FXFA_PAGEVIEWEVENT_POSTADDED		1
+/** @brief After a pageview is removed. */
+#define  FXFA_PAGEVIEWEVENT_POSTREMOVED 	3
+/*@}*/
+
+// menu
+/**
+ * @name Macro Definitions for Right Context Menu Features Of XFA Fields
+ */
+/*@{*/
+#define	 FXFA_MEMU_COPY			1
+#define  FXFA_MEMU_CUT			2
+#define  FXFA_MEMU_SELECTALL	4
+#define  FXFA_MEMU_UNDO			8
+#define  FXFA_MEMU_REDO			16
+#define  FXFA_MEMU_PASTE		32
+/*@}*/
+
+// file type
+/**
+ * @name Macro Definitions for File Type.
+ */
+/*@{*/
+#define FXFA_SAVEAS_XML		1
+#define FXFA_SAVEAS_XDP		2
+/*@}*/
 
 typedef struct  _FPDF_FORMFILLINFO
 {
@@ -526,8 +560,235 @@ typedef struct  _FPDF_FORMFILLINFO
 	**/
 	void	(*FFI_DoGoToAction)(struct _FPDF_FORMFILLINFO* pThis, int nPageIndex, int zoomMode, float* fPosArray, int sizeofArray);
 	/**
-	*	pointer to IPDF_JSPLATFORM interface
+	* Method: FFI_DisplayCaret
+	*			This method will show the caret at specified position.
+	* Interface Version:
+	*			1
+	* Implementation Required:
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		page			-	Handle to page. Returned by FPDF_LoadPage function.
+	*		left			-	Left position of the client area in PDF page coordinate. 
+	*		top				-	Top position of the client area in PDF page coordinate.
+	*		right			-	Right position of the client area in PDF page coordinate.
+	*		bottom			-	Bottom position of the client area in PDF page coordinate.
+	* Return value:
+	* 		None.
 	**/
+	void	(*FFI_DisplayCaret)(struct _FPDF_FORMFILLINFO* pThis, FPDF_PAGE page, FPDF_BOOL bVisible, double left, double top, double right, double bottom);
+	/** 
+	* Method: FFI_GetCurrentPageIndex
+	*			This method will get the current page index.
+	* Interface Version:
+	*			1
+	* Implementation Required:
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		document		-	Handle to document. Returned by FPDF_LoadDocument function.
+	* Return value:
+	* 		The index of current page.
+	**/
+	int		(*FFI_GetCurrentPageIndex)(struct _FPDF_FORMFILLINFO* pThis, FPDF_DOCUMENT document);
+	/** 
+	* Method: FFI_SetCurrentPage
+	*			This method will set the current page.
+	* Interface Version:
+	*			1
+	* Implementation Required:
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		document		-	Handle to document. Returned by FPDF_LoadDocument function.
+	*		iCurPage		-	The index of the PDF page.
+	* Return value:
+	* 		None.
+	**/
+	void	(*FFI_SetCurrentPage)(struct _FPDF_FORMFILLINFO* pThis, FPDF_DOCUMENT document, int iCurPage);
+	/** 
+	* Method: FFI_GotoURL
+	*			This method will link to the specified URL.
+	* Interface Version:
+	*			1
+	* Implementation Required:
+	*			no
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		document		-	Handle to document. Returned by FPDF_LoadDocument function.
+	*		wsURL			-	The string value of the URL, in UTF-16LE format.
+	* Return value:
+	* 		None.
+	**/
+	void	(*FFI_GotoURL)(struct _FPDF_FORMFILLINFO* pThis, FPDF_DOCUMENT document, FPDF_WIDESTRING wsURL);
+	/** 
+	* Method: FFI_GetPageViewRect
+	*			This method will get the current page view rectangle.
+	* Interface Version:
+	*			1
+	* Implementation Required:
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		page			-	Handle to page. Returned by FPDF_LoadPage function.
+	*		left			-	The pointer to receive left position of the page view area in PDF page coordinate. 
+	*		top				-	The pointer to receive top position of the page view area in PDF page coordinate.
+	*		right			-	The pointer to receive right position of the client area in PDF page coordinate.
+	*		bottom			-	The pointer to receive bottom position of the client area in PDF page coordinate.
+	* Return value:
+	* 		None.
+	**/
+	void	(*FFI_GetPageViewRect)(struct _FPDF_FORMFILLINFO* pThis, FPDF_PAGE page, double* left, double* top, double* right, double* bottom);
+	/** 
+	* Method: FFI_PopupMenu
+	*			This method will track the right context menu for XFA fields.
+	* Interface Version:
+	*			1
+	* Implementation Required:
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		page			-	Handle to page. Returned by FPDF_LoadPage function.
+	*		hWidget			-	Handle to XFA fields.
+	*		menuFlag		-	The menu flags. Please refer to macro definition of FXFA_MEMU_XXX and this can be one or a combination of these macros.
+	*		x				-	X position of the client area in PDF page coordinate.
+	*		y				-	Y position of the client area in PDF page coordinate.
+	* Return value:
+	* 		TRUE indicates success; otherwise false.
+	**/
+	FPDF_BOOL (*FFI_PopupMenu)(struct _FPDF_FORMFILLINFO* pThis, FPDF_PAGE page, FPDF_WIDGET hWidget, int menuFlag, float x, float y);
+	/** 
+	* Method: FFI_OpenFile
+	*			This method will open the specified file with the specified mode.
+	* Interface Version
+	*			1
+	* Implementation Required:
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		fileFlag		-	The file flag.Please refer to macro definition of FXFA_SAVEAS_XXX and this can be one of these macros.
+	*		wsURL			-	The string value of the file URL, in UTF-16LE format.
+	*		mode			-	The mode for open file.
+	* Return value:
+	* 		The handle to FPDF_FILEHANDLER.
+	**/
+	FPDF_FILEHANDLER* (*FFI_OpenFile)(struct _FPDF_FORMFILLINFO* pThis, int fileFlag, FPDF_WIDESTRING wsURL, const char* mode);
+	/** 
+	* Method: FFI_EmailTo
+	*			This method will email the specified file stream to the specified contacter.
+	* Interface Version:
+	*			1
+	* Implementation Required:
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		pFileHandler	-	Handle to the FPDF_FILEHANDLER.
+	*		pTo				-	A semicolon-delimited list of recipients for the message,in UTF-16LE format.
+	*		pSubject		-   The subject of the message,in UTF-16LE format. 
+	*		pCC				-	A semicolon-delimited list of CC recipients for the message,in UTF-16LE format.
+	*		pBcc			-	A semicolon-delimited list of BCC recipients for the message,in UTF-16LE format. 
+	*		pMsg			-	Pointer to the data buffer to be sent.Can be NULL,in UTF-16LE format.
+	* Return value:
+	* 		None.
+	**/
+	void	(*FFI_EmailTo)(struct _FPDF_FORMFILLINFO* pThis, FPDF_FILEHANDLER* fileHandler, FPDF_WIDESTRING pTo, FPDF_WIDESTRING pSubject, FPDF_WIDESTRING pCC, FPDF_WIDESTRING pBcc, FPDF_WIDESTRING pMsg);
+	/** 
+	* Method: FFI_UploadTo
+	*			This method will get upload the specified file stream to the specified URL.
+	* Interface Version:
+	*			1
+	* Implementation Required: 
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		pFileHandler	-	Handle to the FPDF_FILEHANDLER.
+	*		fileFlag		-	The file flag.Please refer to macro definition of FXFA_SAVEAS_XXX and this can be one of these macros.
+	*		uploadTo		-	Pointer to the URL path, in UTF-16LE format.
+	* Return value:
+	* 		None.
+	**/
+	void	(*FFI_UploadTo)(struct _FPDF_FORMFILLINFO* pThis, FPDF_FILEHANDLER* fileHandler, int fileFlag, FPDF_WIDESTRING uploadTo);
+	
+	/** 
+	* Method: FFI_GetPlatform
+	*			This method will get the current platform.
+	* Interface Version:
+	*			1
+	* Implementation Required: 
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		platform		-	Pointer to the data buffer to receive the platform.Can be NULL,in UTF-16LE format.
+	*		length			-   The length of the buffer, number of bytes. Can be 0.
+	* Return value:
+	* 		The length of the buffer, number of bytes.
+	**/
+	int		(*FFI_GetPlatform)(struct _FPDF_FORMFILLINFO* pThis, void* platform, int length);
+	/** 
+	* Method: FFI_GetLanguage
+	*			This method will get the current language.
+	* Interface Version:
+	*			1
+	* Implementation Required: 
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		language		-	Pointer to the data buffer to receive the current language.Can be NULL.
+	*		length			-   The length of the buffer, number of bytes. Can be 0.
+	* Return value:
+	* 		The length of the buffer, number of bytes.
+	**/
+	int		(*FFI_GetLanguage)(struct _FPDF_FORMFILLINFO* pThis, void* language, int length);
+	/** 
+	* Method: FFI_DownloadFromURL
+	*			This method will download the specified file from the URL.
+	* Interface Version:
+	*			1
+	* Implementation Required: 
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		URL				-	The string value of the file URL, in UTF-16LE format.
+	* Return value:
+	* 		The handle to FPDF_FILEHANDLER.
+	**/
+	FPDF_LPFILEHANDLER	(*FFI_DownloadFromURL)(struct _FPDF_FORMFILLINFO* pThis, FPDF_WIDESTRING URL);
+	/** 
+	* Method: FFI_PostRequestURL
+	*			This method will post the request to the server URL.
+	* Interface Version:
+	*			1
+	* Implementation Required: 
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		wsURL			-	The string value of the server URL, in UTF-16LE format.
+	*		wsData			-	The post data,in UTF-16LE format.
+	*		wsContentType	-	The content type of the request data,in UTF-16LE format.
+	*		wsEncode		-	The encode type,in UTF-16LE format.
+	*		wsHeader		-	The request header,in UTF-16LE format.
+	*		response		-	Pointer to the FPDF_BSTR to receive the response data from server,,in UTF-16LE format.
+	* Return value:
+	* 		TRUE indicates success, otherwise FALSE.
+	**/
+	FPDF_BOOL	(*FFI_PostRequestURL)(struct _FPDF_FORMFILLINFO* pThis, FPDF_WIDESTRING wsURL, FPDF_WIDESTRING wsData, FPDF_WIDESTRING wsContentType, FPDF_WIDESTRING wsEncode, FPDF_WIDESTRING wsHeader, FPDF_BSTR* respone);
+	/** 
+	* Method: FFI_PutRequestURL
+	*			This method will put the request to the server URL.
+	* Interface Version:
+	*			1
+	* Implementation Required: 
+	*			yes
+	* Parameters:
+	*		pThis			-	Pointer to the interface structure itself.
+	*		wsURL			-	The string value of the server URL, in UTF-16LE format.
+	*		wsData			-	The put data, in UTF-16LE format.
+	*		wsEncode		-	The encode type, in UTR-16LE format.
+	* Return value:
+	* 		TRUE indicates success, otherwise FALSE.
+	**/
+	FPDF_BOOL	(*FFI_PutRequestURL)(struct _FPDF_FORMFILLINFO* pThis, FPDF_WIDESTRING wsURL, FPDF_WIDESTRING wsData, FPDF_WIDESTRING wsEncode);
+		
 	IPDF_JSPLATFORM*	m_pJsPlatform;
 
 } FPDF_FORMFILLINFO;
@@ -688,6 +949,9 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle,FPDF_PAGE
  **/
 DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,FPDF_PAGE page, int modifier, double page_x, double page_y);
 
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle, FPDF_PAGE page, int modifier, double page_x, double page_y);
+DLLEXPORT FPDF_BOOL STDCALL FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle, FPDF_PAGE page, int modifier, double page_x, double page_y);
+
 /**
  * Function: FORM_OnKeyDown
  *			You can call this member function when a nonsystem key is pressed. 
@@ -746,7 +1010,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle);
 #define FPDF_FORMFIELD_COMBOBOX		4		// combo box type.
 #define FPDF_FORMFIELD_LISTBOX		5		// list box type.
 #define FPDF_FORMFIELD_TEXTFIELD	6		// text field type.
-
+#define FPDF_FORMFIELD_XFA			7		// text field type.
 /**
  * Function: FPDPage_HasFormFieldAtPoint
  *			Check the form filed position by point.
@@ -827,7 +1091,149 @@ DLLEXPORT void STDCALL FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle);
 DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,FPDF_BITMAP bitmap, FPDF_PAGE page, int start_x, int start_y, 
 						int size_x, int size_y, int rotate, int flags);
 
+/**
+ * Function: FPDF_LoadXFA
+ *			If the document consists of XFA fields, there should call this method to load XFA fields.
+ * Parameters:
+ *			document		-	Handle to document. Returned by FPDF_LoadDocument function.
+ * Return Value:
+ *			TRUE indicates success,otherwise FALSE.
+ **/
+DLLEXPORT FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document);
 
+/**
+ * Function: FPDF_Widget_Undo
+ *			This method will implement the undo feature for the specified xfa field.
+ * Parameters:
+ *			document		-	Handle to document. Returned by FPDF_LoadDocument function.
+ *			hWidget			-	Handle to the xfa field.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT void STDCALL FPDF_Widget_Undo(FPDF_DOCUMENT document, FPDF_WIDGET hWidget);
+/**
+ * Function: FPDF_Widget_Redo
+ *			This method will implement the redo feature for the specified xfa field.
+ * Parameters:
+ *			document		-	Handle to document. Returned by FPDF_LoadDocument function.
+ *			hWidget			-	Handle to the xfa field.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT void STDCALL FPDF_Widget_Redo(FPDF_DOCUMENT document, FPDF_WIDGET hWidget);
+/**
+ * Function: FPDF_Widget_SelectAll
+ *			This method will implement the select all feature for the specified xfa field.
+ * Parameters:
+ *			document		-	Handle to document. Returned by FPDF_LoadDocument function.
+ *			hWidget			-	Handle to the xfa field.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT void STDCALL FPDF_Widget_SelectAll(FPDF_DOCUMENT document, FPDF_WIDGET hWidget);
+/**
+ * Function: FPDF_Widget_Copy
+ *			This method will implement the copy feature for the specified xfa field.
+ * Parameters:
+ *			document		-	Handle to document. Returned by FPDF_LoadDocument function.
+ *			hWidget			-	Handle to the xfa field.
+ *			wsText			-	Pointer to data buffer to receive the copied data, in UTF-16LE format.
+ *			size			-	The data buffer size.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document, FPDF_WIDGET hWidget, FPDF_WIDESTRING wsText, FPDF_DWORD* size);
+/**
+ * Function: FPDF_Widget_Cut
+ *			This method will implement the cut feature for the specified xfa field.
+ * Parameters:
+ *			document		-	Handle to document. Returned by FPDF_LoadDocument function.
+ *			hWidget			-	Handle to the xfa field.
+ *			wsText			-	Pointer to data buffer to receive the cut data,in UTF-16LE format.
+ *			size			-	The data buffer size,not the byte number.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT void STDCALL FPDF_Widget_Cut(FPDF_DOCUMENT document, FPDF_WIDGET hWidget, FPDF_WIDESTRING wsText, FPDF_DWORD* size);
+/**
+ * Function: FPDF_Widget_Paste
+ *			This method will implement the paste feature for the specified xfa field.
+ * Parameters:
+ *			document		-	Handle to document. Returned by FPDF_LoadDocument function.
+ *			hWidget			-	Handle to the xfa field.
+ *			wsText			-	The paste text buffer, in UTF-16LE format.
+ *			size			-	The data buffer size,not the byte number.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT void STDCALL FPDF_Widget_Paste(FPDF_DOCUMENT document, FPDF_WIDGET hWidget, FPDF_WIDESTRING wsText, FPDF_DWORD size);
+/**
+ * Function: FPDF_Widget_ReplaceSpellCheckWord
+ *			This method will implement the spell check feature for the specified xfa field.
+ * Parameters:
+ *			document		-	Handle to document. Returned by FPDF_LoadDocument function.
+ *			hWidget			-	Handle to the xfa field.
+ *			x				-	The x value of the specified point.
+ *			y				-	The y value of the specified point.
+ *			bsText			-	The text buffer needed to be speck check, in UTF-16LE format.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT void STDCALL FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document, FPDF_WIDGET hWidget, float x, float y, FPDF_BYTESTRING bsText);
+/**
+ * Function: FPDF_Widget_GetSpellCheckWords
+ *			This method will implement the spell check feature for the specified xfa field.
+ * Parameters:
+ *			document		-	Handle to document. Returned by FPDF_LoadDocument function.
+ *			hWidget			-	Handle to the xfa field.
+ *			x				-	The x value of the specified point.
+ *			y				-	The y value of the specified point.
+ *			stringHandle	-	Pointer to FPDF_STRINGHANDLE to receive the speck check text buffer, in UTF-16LE format.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT void STDCALL FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document, FPDF_WIDGET hWidget, float x, float y, FPDF_STRINGHANDLE* stringHandle);
+/**
+ * Function: FPDF_StringHandleCounts
+ *			This method will get the count of the text buffer.
+ * Parameters:
+ *			stringHandle	-	Pointer to FPDF_STRINGHANDLE.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT int STDCALL FPDF_StringHandleCounts(FPDF_STRINGHANDLE stringHandle);
+/**
+ * Function: FPDF_StringHandleGetStringByIndex
+ *			This method will get the specified index of the text buffer.
+ * Parameters:
+ *			stringHandle	-	Pointer to FPDF_STRINGHANDLE.
+ *			index			-	The specified index of text buffer.
+ *			bsText			-	Pointer to data buffer to receive the text buffer, in UTF-16LE format.
+ *			size			-	The byte size of data buffer.
+ * Return Value:
+ *			TRUE indicates success, otherwise FALSE.
+ **/
+DLLEXPORT FPDF_BOOL STDCALL FPDF_StringHandleGetStringByIndex(FPDF_STRINGHANDLE stringHandle, int index, FPDF_BYTESTRING bsText, FPDF_DWORD* size);
+/**
+ * Function: FPDF_StringHandleRelease
+ *			This method will release the FPDF_STRINGHANDLE.
+ * Parameters:
+ *			stringHandle	-	Pointer to FPDF_STRINGHANDLE.
+ * Return Value:
+ *			None.
+ **/
+DLLEXPORT void STDCALL FPDF_StringHandleRelease(FPDF_STRINGHANDLE stringHandle);
+/**
+ * Function: FPDF_StringHandleAddString
+ *			This method will add the specified text buffer.
+ * Parameters:
+ *			stringHandle	-	Pointer to FPDF_STRINGHANDLE.
+ *			bsText			-	Pointer to data buffer of the text buffer, in UTF-16LE format.
+ *			size			-	The byte size of data buffer.
+ * Return Value:
+ *			TRUE indicates success, otherwise FALSE.
+ **/
+DLLEXPORT FPDF_BOOL STDCALL FPDF_StringHandleAddString(FPDF_STRINGHANDLE stringHandle, FPDF_BYTESTRING bsText, FPDF_DWORD size);
 
 #ifdef __cplusplus
 };

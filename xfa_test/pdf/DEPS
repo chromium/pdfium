@@ -1,0 +1,9 @@
+include_rules = [
+  "!chrome/browser/chrome_page_zoom_constants.h",
+  "!chrome/common/content_restriction.h",
+  "!content/public/common/page_zoom.h",
+  "+net",
+  "+ppapi",
+  "+third_party/pdfium/fpdfsdk/include",
+  "+ui/events/keycodes/keyboard_codes.h",
+]

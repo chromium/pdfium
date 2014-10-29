@@ -348,6 +348,19 @@ void CFFL_ComboBox::OnKeyStroke(FX_BOOL bKeyDown, FX_UINT nFlag)
 	}
 }
 
+FX_BOOL	CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView)
+{
+	if (CPWL_ComboBox* pComboBox = (CPWL_ComboBox*)GetPDFWindow(pPageView, FALSE))
+	{
+		if (CPWL_Edit* pEdit = (CPWL_Edit*)*pComboBox)
+		{
+			return pEdit->IsTextFull();
+		}
+	}
+
+	return FALSE;
+}
+
 void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd)
 {
 	ASSERT(m_pApp != NULL);

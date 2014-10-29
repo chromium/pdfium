@@ -21,6 +21,9 @@ public:
 										int nSelStart, int nSelEnd,
 										FX_BOOL bKeyDown, FX_BOOL & bRC, FX_BOOL & bExit, FX_DWORD nFlag) = 0;
 	virtual void					OnAfterKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_BOOL & bExit, FX_DWORD nFlag) = 0;
+
+	virtual void					OnPopupPreOpen(void* pPrivateData, FX_BOOL& bExit, FX_DWORD nFlag) = 0;
+	virtual void					OnPopupPostOpen(void* pPrivateData, FX_BOOL& bExit, FX_DWORD nFlag) = 0;
 };
 
 class PWL_CLASS CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify

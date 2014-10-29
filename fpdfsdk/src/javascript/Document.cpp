@@ -605,7 +605,7 @@ FX_BOOL Document::mailForm(OBJ_METHOD_PARAMS)
 	ASSERT(pRuntime != NULL);
 
 	pRuntime->BeginBlock();
-	pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI, (FX_LPCWSTR)cTo, (FX_LPCWSTR)cSubject, (FX_LPCWSTR)cCc, (FX_LPCWSTR)cBcc, (FX_LPCWSTR)cMsg);
+    pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI, (FX_LPCWSTR)cTo, (FX_LPCWSTR)cSubject, (FX_LPCWSTR)cCc, (FX_LPCWSTR)cBcc, (FX_LPCWSTR)cMsg);
 	pRuntime->EndBlock();
 	return TRUE;
 }
@@ -723,7 +723,7 @@ FX_BOOL Document::removeField(OBJ_METHOD_PARAMS)
 			CFX_RectArray aRefresh;
 			aRefresh.Add(rcAnnot);
 
-			CPDF_Page* pPage = pWidget->GetPDFPage();
+			CPDFXFA_Page* pPage = pWidget->GetPDFXFAPage();
 			ASSERT(pPage != NULL);
 			
 			CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage);
@@ -1009,7 +1009,7 @@ FX_BOOL Document::author(OBJ_PROP_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetInfo();
+	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
 	if (!pDictionary)return FALSE;
 
 	if (vp.IsGetting())
@@ -1033,7 +1033,7 @@ FX_BOOL Document::info(OBJ_PROP_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetInfo();
+	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
 	if (!pDictionary)return FALSE;
 
 	CFX_WideString cwAuthor			= pDictionary->GetUnicodeText("Author");
@@ -1092,7 +1092,7 @@ FX_BOOL Document::creationDate(OBJ_PROP_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetInfo();
+	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
 	if (!pDictionary)return FALSE;
 
 	if (vp.IsGetting())
@@ -1117,7 +1117,7 @@ FX_BOOL Document::creator(OBJ_PROP_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetInfo();
+	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
 	if (!pDictionary)return FALSE;
 
 	if (vp.IsGetting())
@@ -1183,7 +1183,7 @@ FX_BOOL Document::keywords(OBJ_PROP_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetInfo();
+	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
 	if (!pDictionary)return FALSE;
 
 	if (vp.IsGetting())
@@ -1207,7 +1207,7 @@ FX_BOOL Document::modDate(OBJ_PROP_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetInfo();
+	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
 	if (!pDictionary)return FALSE;
 
 	if (vp.IsGetting())
@@ -1231,7 +1231,7 @@ FX_BOOL Document::producer(OBJ_PROP_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetInfo();
+	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
 	if (!pDictionary)return FALSE;
 
 	if (vp.IsGetting())
@@ -1255,7 +1255,7 @@ FX_BOOL Document::subject(OBJ_PROP_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetInfo();
+	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
 	if (!pDictionary)return FALSE;
 
 	if (vp.IsGetting())
@@ -1282,7 +1282,7 @@ FX_BOOL Document::title(OBJ_PROP_PARAMS)
 	if (m_pDocument == NULL || m_pDocument->GetDocument() == NULL)
 		return FALSE;
 
-	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetInfo();
+	CPDF_Dictionary* pDictionary = m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
 	if (!pDictionary)return FALSE;
 
 	if (vp.IsGetting())
@@ -1874,7 +1874,7 @@ FX_BOOL Document::getPageNthWord(OBJ_METHOD_PARAMS)
 	int nWordNo = params.GetSize() > 1 ? (int)params[1] : 0;
 	bool bStrip = params.GetSize() > 2 ? (bool)params[2] : true;
 
-	CPDF_Document* pDocument = m_pDocument->GetDocument();
+	CPDF_Document* pDocument = m_pDocument->GetDocument()->GetPDFDoc();
 	if (!pDocument) return FALSE;
 
 	if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
@@ -1945,7 +1945,7 @@ FX_BOOL Document::getPageNumWords(OBJ_METHOD_PARAMS)
 
 	int nPageNo = params.GetSize() > 0 ? (int)params[0] : 0;
 
-	CPDF_Document* pDocument = m_pDocument->GetDocument();
+	CPDF_Document* pDocument = m_pDocument->GetDocument()->GetPDFDoc();
 	ASSERT(pDocument != NULL);
 
 	if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())

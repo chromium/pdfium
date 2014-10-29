@@ -93,11 +93,8 @@ typedef CFX_WideString	JS_ErrorString;
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
+	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
+	if (pRuntime == NULL) return;\
 	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
 	CJS_PropValue value(isolate);\
 	value.StartGetting();\
@@ -129,11 +126,8 @@ typedef CFX_WideString	JS_ErrorString;
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
+	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
+	if (pRuntime == NULL) return;\
 	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
 	CJS_PropValue propValue(CJS_Value(isolate,value,VT_unknown));\
 	propValue.StartSetting();\
@@ -170,11 +164,8 @@ JS_STATIC_PROP_SET(prop_name, class_name)
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
+	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
+	if (pRuntime == NULL) return;\
 	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
 	CJS_Parameters parameters;\
 	for (unsigned int i = 0; i<(unsigned int)info.Length(); i++)\
@@ -359,11 +350,8 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
+	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
+	if (pRuntime == NULL) return;\
 	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
 	v8::String::Utf8Value utf8_value(property);\
 	CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());\
@@ -397,11 +385,8 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
+	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
+	if (pRuntime == NULL) return;\
 	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
 	v8::String::Utf8Value utf8_value(property);\
 	CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());\
@@ -434,11 +419,8 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
+	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
+	if (pRuntime == NULL) return;\
 	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
 	v8::String::Utf8Value utf8_value(property);\
 	CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());\
@@ -525,11 +507,8 @@ void js_class_name::GetMethods(JSMethodSpec*& pMethods, int& nSize)\
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
+	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
+	if (pRuntime == NULL) return;\
 	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
 	CJS_Parameters parameters;\
 	for (unsigned int i = 0; i<(unsigned int)info.Length(); i++)\
@@ -568,11 +547,8 @@ static void fun_name##_static(JS_METHOD_ARGS)\
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
+	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
+	if (pRuntime == NULL) return;\
 	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
 	CJS_Parameters parameters;\
 	for (unsigned int i = 0; i<(unsigned int)info.Length(); i++)\

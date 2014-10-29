@@ -34,6 +34,7 @@ extern "C" {
 //			None.
 // Return value:
 //			A handle to a document. If failed, NULL is returned.
+//
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument();
 
 //////////////////////////////////////////////////////////////////////
@@ -53,6 +54,9 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument();
 //			The handle to the page.
 // Comments:
 //			Loaded page can be deleted by FPDFPage_Delete.
+// Notes:
+//			The method can not support to create a new page for the document consists of dynamic XFA fields.
+//
 DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document, int page_index, double width, double height);
 
 // Function: FPDFPage_Delete
@@ -62,6 +66,9 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document, int page_index,
 //			page_index	-	The index of a page.
 // Return value:
 //			None.
+// Notes:
+//			The method can not support to delete page for the document consists of dynamic XFA fields.
+//
 DLLEXPORT void STDCALL FPDFPage_Delete(FPDF_DOCUMENT document, int page_index);
 
 // Function: FPDFPage_GetRotation
@@ -72,6 +79,9 @@ DLLEXPORT void STDCALL FPDFPage_Delete(FPDF_DOCUMENT document, int page_index);
 //			The PDF page rotation.
 // Comment:
 //			The PDF page rotation is rotated clockwise.
+// Notes:
+//			The method can not support to get the page rotate for the document consists of dynamic XFA fields.
+//
 DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page);
 
 // Function: FPDFPage_SetRotation
@@ -83,6 +93,8 @@ DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page);
 //			None.
 // Comment:
 //			The PDF page rotation is rotated clockwise.
+// Notes:
+//			The method can not support to set this feature for the document consists of dynamic XFA fields.
 // 
 DLLEXPORT void STDCALL FPDFPage_SetRotation(FPDF_PAGE page, int rotate);
 
@@ -94,6 +106,9 @@ DLLEXPORT void STDCALL FPDFPage_SetRotation(FPDF_PAGE page, int rotate);
 //							FPDFPageObj_NewPathObj.
 // Return value:
 //			None.
+// Notes:
+//			The method can not support this feature for the document consists of dynamic XFA fields.
+//
 DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_obj);
 
 // Function: FPDFPage_CountObject
@@ -102,6 +117,9 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT pag
 //			page		-	Handle to a page. Returned by FPDFPage_New or FPDF_LoadPage.
 // Return value:
 //			The number of the page object.
+// Notes:
+//			The method can not support this feature for the document consists of dynamic XFA fields.
+//
 DLLEXPORT int STDCALL FPDFPage_CountObject(FPDF_PAGE page);
 
 // Function: FPDFPage_GetObject
@@ -111,6 +129,9 @@ DLLEXPORT int STDCALL FPDFPage_CountObject(FPDF_PAGE page);
 //			index		-	The index of a page object.
 // Return value:
 //			The handle of the page object. Null for failed.
+// Notes:
+//			The method can not support this feature for the document consists of dynamic XFA fields.
+//
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPage_GetObject(FPDF_PAGE page, int index);
 
 // Function: FPDFPage_HasTransparency
@@ -120,6 +141,9 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPage_GetObject(FPDF_PAGE page, int index);
 // Return value:
 //			TRUE means that the PDF page does contains transparency.
 //			Otherwise, returns FALSE.
+// Notes:
+//			The method can not support this feature for the document consists of dynamic XFA fields.
+//
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page);
 
 // Function: FPDFPage_GenerateContent
@@ -131,6 +155,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page);
 // Comment:
 //			Before you save the page to a file, or reload the page, you must call the FPDFPage_GenerateContent function.
 //			Or the changed information will be lost.
+// Notes:
+//			The method can not support this feature for the document consists of dynamic XFA fields.
+//
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page);
 
 //////////////////////////////////////////////////////////////////////
@@ -175,6 +202,8 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
 //			f			-	The coefficient "f" of the matrix.
 // Return value:
 //			None.
+// Notes:
+//			The method can not support this feature for the document consists of dynamic XFA fields.
 DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
 											 double a, double b, double c, double d, double e, double f);
 
@@ -212,6 +241,8 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document)
 //  Note: 
 //			The image object might already has an associated image, which is shared and cached by the loaded pages, In this case, we need to clear the cache of image for all the loaded pages.
 //			Pass pages and count to this API to clear the image cache. 
+//			The method can not support this feature for the document consists of dynamic XFA fields.
+//
 DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages, int nCount,FPDF_PAGEOBJECT image_object, FPDF_FILEACCESS* fileAccess);
 
 
@@ -239,6 +270,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
 //			bitmap			-	The handle of the bitmap which you want to set it to the image object.
 // Return value:
 //			TRUE if successful, FALSE otherwise. 
+// Notes;
+//			The method can not support this feature for the document consists of dynamic XFA fields.
+//
 DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,int nCount,FPDF_PAGEOBJECT image_object, FPDF_BITMAP bitmap);
 
 #ifdef __cplusplus

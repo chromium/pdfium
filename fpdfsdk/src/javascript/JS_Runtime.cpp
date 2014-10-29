@@ -26,6 +26,12 @@
 #include "../../include/javascript/JS_GlobalData.h"
 #include "../../include/javascript/global.h"
 #include "../../include/javascript/console.h"
+#include "../../include/fpdfxfa/fpdfxfa_app.h"
+#ifndef FOXIT_CHROME_BUILD
+#include "../../../fxjse/value.h"
+#else
+#include "../../../xfa/src/fxjse/src/value.h"
+#endif
 
 #include <libplatform/libplatform.h>
 
@@ -101,16 +107,26 @@ void CJS_RuntimeFactory::ReleaseGlobalData()
 }
 
 /* ------------------------------ CJS_Runtime ------------------------------ */
-
-CJS_Runtime::CJS_Runtime(CPDFDoc_Environment * pApp) : 
+extern v8::Persistent<v8::ObjectTemplate>& _getGlobalObjectTemplate(IJS_Runtime* pJSRuntime);
+CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp) :
 	m_pApp(pApp),
 	m_pDocument(NULL),
 	m_bBlocking(FALSE),
 	m_pFieldEventPath(NULL),
 	m_bRegistered(FALSE)
 {
-	m_isolate = v8::Isolate::New();
+	m_isolate = FPDFXFA_GetApp()->GetJSERuntime()?(v8::Isolate*)FPDFXFA_GetApp()->GetJSERuntime():v8::Isolate::New();
 	//m_isolate->Enter();
+	v8::Isolate* isolate = m_isolate;
+	v8::Isolate::Scope isolate_scope(isolate);
+	v8::Locker locker(isolate);
+	v8::HandleScope handle_scope(isolate);
+	if (FPDFXFA_GetApp()->InitRuntime(FALSE)) {
+		CJS_Context * pContext = (CJS_Context*)NewContext();
+		JS_InitialRuntime(*this, this, pContext, m_context);
+		ReleaseContext(pContext);
+		return;
+	}
 
 	InitJSObjects();
 
@@ -121,12 +137,13 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment * pApp) :
 
 CJS_Runtime::~CJS_Runtime()
 {
-	for (int i=0, sz=m_ContextArray.GetSize(); i<sz; i++)
+	int size = m_ContextArray.GetSize();
+	for (int i=0;i < size; i++)
 		delete m_ContextArray.GetAt(i);
 
 	m_ContextArray.RemoveAll();
 
-	JS_ReleaseRuntime(*this, m_context);
+	//JS_ReleaseRuntime(*this, m_context);
 
 	RemoveEventsInLoop(m_pFieldEventPath);
 
@@ -136,12 +153,14 @@ CJS_Runtime::~CJS_Runtime()
 	m_context.Reset();
 
 	//m_isolate->Exit();
-	m_isolate->Dispose();
+	//m_isolate->Dispose();
+	m_isolate = NULL;
 }
 
 FX_BOOL CJS_Runtime::InitJSObjects()
 {
 	v8::Isolate::Scope isolate_scope(GetIsolate());
+	v8::Locker locker(GetIsolate());
 	v8::HandleScope handle_scope(GetIsolate());
 	v8::Handle<v8::Context> context = v8::Context::New(GetIsolate());
 	v8::Context::Scope context_scope(context);
@@ -215,6 +234,7 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc)
 	if (m_pDocument != pReaderDoc)
 	{
 		v8::Isolate::Scope isolate_scope(m_isolate);
+		v8::Locker locker(m_isolate);
 		v8::HandleScope handle_scope(m_isolate);
 		v8::Local<v8::Context> context =v8::Local<v8::Context>::New(m_isolate, m_context);
 		v8::Context::Scope context_scope(context);
@@ -475,4 +495,46 @@ void	CJS_Runtime::Exit()
 void	CJS_Runtime::Enter()
 {
 	if(m_isolate) m_isolate->Enter();
+}
+FX_BOOL	CJS_Runtime::GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue)
+{
+	FX_LPCSTR name = utf8Name.GetCStr();
+
+	v8::Locker lock(GetIsolate());
+    v8::Isolate::Scope isolate_scope(GetIsolate());
+    v8::HandleScope handle_scope(GetIsolate());
+    v8::Local<v8::Context> context =
+        v8::Local<v8::Context>::New(GetIsolate(), m_context);
+    v8::Context::Scope context_scope(context);
+
+
+	//v8::Local<v8::Context> tmpCotext = v8::Local<v8::Context>::New(GetIsolate(), m_context);
+	v8::Local<v8::Value> propvalue = context->Global()->Get(v8::String::NewFromUtf8(GetIsolate(), name, v8::String::kNormalString, utf8Name.GetLength()));
+	 
+	if (propvalue.IsEmpty()) {
+		FXJSE_Value_SetUndefined(hValue);
+		return FALSE;
+	}
+	((CFXJSE_Value*)hValue)->ForceSetValue(propvalue);
+
+	return TRUE;
+}
+FX_BOOL	CJS_Runtime::SetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue)
+{
+	if (utf8Name.IsEmpty() || hValue == NULL)
+		return FALSE;
+	FX_LPCSTR name = utf8Name.GetCStr();
+	v8::Isolate* pIsolate = GetIsolate();
+	v8::Locker lock(pIsolate);
+    v8::Isolate::Scope isolate_scope(pIsolate);
+    v8::HandleScope handle_scope(pIsolate);
+    v8::Local<v8::Context> context =
+        v8::Local<v8::Context>::New(pIsolate, m_context);
+    v8::Context::Scope context_scope(context);
+
+	//v8::Local<v8::Context> tmpCotext = v8::Local<v8::Context>::New(GetIsolate(), m_context);
+	v8::Local<v8::Value> propvalue = v8::Local<v8::Value>::New(GetIsolate(),((CFXJSE_Value*)hValue)->DirectGetValue());
+	context->Global()->Set(v8::String::NewFromUtf8(pIsolate, name, v8::String::kNormalString, utf8Name.GetLength()), propvalue);
+	 
+	return TRUE;
 }

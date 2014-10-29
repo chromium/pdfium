@@ -6,6 +6,8 @@
 
 #include "../include/fsdk_define.h"
 #include "../include/fpdfdoc.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "../include/fpdfxfa/fpdfxfa_page.h"
 
 static int this_module = 0;
 
@@ -33,7 +35,7 @@ DLLEXPORT FPDF_BOOKMARK STDCALL FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_W
 	if (document == NULL) return NULL;
 	if (title == NULL || title[0] == 0) return NULL;
 
-	CPDF_Document* pDoc = (CPDF_Document*)document;
+	CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 	CPDF_BookmarkTree tree(pDoc);
 
 	FX_STRSIZE len = CFX_WideString::WStringLength(title);
@@ -47,7 +49,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFBookmark_GetDest(FPDF_DOCUMENT document, FPDF_BO
 	if (bookmark == NULL) return NULL;
 
 	CPDF_Bookmark Bookmark = (CPDF_Dictionary*)bookmark;
-	CPDF_Document* pDoc = (CPDF_Document*)document;
+	CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 	CPDF_Dest dest = Bookmark.GetDest(pDoc);
 	if (dest != NULL) return dest;
 
@@ -90,7 +92,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFAction_GetDest(FPDF_DOCUMENT document, FPDF_ACTI
 {
 	if (document == NULL) return NULL;
 	if (action == NULL) return NULL;
-	CPDF_Document* pDoc = (CPDF_Document*)document;
+	CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 	CPDF_Action Action = (CPDF_Dictionary*)action;
 
 	return Action.GetDest(pDoc);
@@ -101,7 +103,7 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document, FP
 {
 	if (document == NULL) return 0;
 	if (action == NULL) return 0;
-	CPDF_Document* pDoc = (CPDF_Document*)document;
+	CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 	CPDF_Action Action = (CPDF_Dictionary*)action;
 
 	CFX_ByteString path = Action.GetURI(pDoc);
@@ -115,7 +117,7 @@ DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FP
 {
 	if (document == NULL) return 0;
 	if (dest == NULL) return 0;
-	CPDF_Document* pDoc = (CPDF_Document*)document;
+	CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 	CPDF_Dest Dest = (CPDF_Array*)dest;
 
 	return Dest.GetPageIndex(pDoc);
@@ -129,7 +131,8 @@ static void ReleaseLinkList(FX_LPVOID data)
 DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page, double x, double y)
 {
 	if (page == NULL) return NULL;
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage) return NULL;
 
 	// Link list is stored with the document
 	CPDF_Document* pDoc = pPage->m_pDocument;
@@ -145,7 +148,7 @@ DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page, double x, do
 DLLEXPORT FPDF_DEST STDCALL FPDFLink_GetDest(FPDF_DOCUMENT document, FPDF_LINK link)
 {
 	if (document == NULL) return NULL;
-	CPDF_Document* pDoc = (CPDF_Document*)document;
+	CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 	if (link == NULL) return NULL;
 	CPDF_Link Link = (CPDF_Dictionary*)link;
 
@@ -170,7 +173,8 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page, int* startPos, FP
 {
 	if(!page || !startPos || !linkAnnot)
 		return FALSE;
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage) return FALSE;
 	if(!pPage->m_pFormDict) return FALSE;
 	CPDF_Array* pAnnots = pPage->m_pFormDict->GetArray("Annots");
 	if(!pAnnots) return FALSE;
@@ -240,7 +244,7 @@ DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT doc, FPDF_BYTESTR
 {
 	if (doc == NULL || tag == NULL) return 0;
 
-	CPDF_Document* pDoc = (CPDF_Document*)doc;
+	CPDF_Document* pDoc = ((CPDFXFA_Document*)doc)->GetPDFDoc();
 	// Get info dictionary
 	CPDF_Dictionary* pInfo = pDoc->GetInfo();
 	if (pInfo == NULL) return 0;

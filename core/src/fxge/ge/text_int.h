@@ -101,5 +101,24 @@ public:
     int					m_PitchFamily;
     CFX_ByteString		m_FontTables;
 };
-
+class CFX_FontEncodingEX : public IFX_FontEncodingEx
+{
+public:
+    CFX_FontEncodingEX();
+    FX_BOOL			Init(CFX_Font* pFont, FX_DWORD EncodingID);
+    virtual FX_DWORD		GlyphIndexFromName(FX_LPCSTR pStrName);
+    virtual CFX_ByteString	NameFromGlyphIndex(FX_DWORD dwGlyphIndex);
+    virtual FX_DWORD		CharCodeFromGlyphIndex(FX_DWORD dwGlyphIndex);
+    virtual FX_DWORD		GlyphFromCharCode(FX_DWORD charcode);
+    virtual CFX_WideString	UnicodeFromCharCode(FX_DWORD charcode) const;
+    virtual FX_DWORD		CharCodeFromUnicode(FX_WCHAR Unicode) const;
+    virtual FX_BOOL			IsUnicodeCompatible() const;
+    virtual FX_DWORD		GlyphFromCharCodeEx(FX_DWORD charcode, int encoding = ENCODING_UNICODE)
+    {
+        return GlyphFromCharCode(charcode);
+    }
+private:
+    CFX_Font* m_pFont;
+    FX_DWORD m_nEncodingID;
+};
 #endif  // _TEXT_INT_H_

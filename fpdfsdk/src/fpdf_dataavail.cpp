@@ -6,6 +6,9 @@
 
 #include "../include/fsdk_define.h"
 #include "../include/fpdf_dataavail.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "../include/fpdfformfill.h"
+#include "../include/fpdfxfa/fpdfxfa_app.h"
 
 extern void ProcessParseError(FX_DWORD err_code);
 class CFPDF_FileAvailWrap : public IFX_FileAvail
@@ -133,13 +136,19 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDFAvail_GetDocument(FPDF_AVAIL avail,	FPDF_BYT
 	}
 	((CFPDF_DataAvail*)avail)->m_pDataAvail->SetDocument(pParser->GetDocument());
 	CheckUnSupportError(pParser->GetDocument(), FPDF_ERR_SUCCESS);
-	return pParser->GetDocument();
+	CPDF_Document* pPDFDoc = pParser->GetDocument();
+
+	CPDFXFA_App* pApp = FPDFXFA_GetApp();
+	CPDFXFA_Document* pDocument = FX_NEW CPDFXFA_Document(pPDFDoc, pApp);
+	//pDocument->LoadXFADoc();
+
+	return pDocument;
 }
 
 DLLEXPORT int STDCALL FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc)
 {
 	if (doc == NULL) return 0;
-	CPDF_Document* pDoc = (CPDF_Document*)doc;
+	CPDF_Document* pDoc = ((CPDFXFA_Document*)doc)->GetPDFDoc();
 	return ((CPDF_Parser*)pDoc->GetParser())->GetFirstPageNo();
 }
 

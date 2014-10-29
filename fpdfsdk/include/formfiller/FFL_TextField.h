@@ -60,6 +60,8 @@ public:
 	
 	virtual CPWL_Wnd*			ResetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bRestoreValue);
 	
+	virtual FX_BOOL				IsFieldFull(CPDFSDK_PageView* pPageView);
+	
 public:
 	virtual void				OnSetFocus(CPWL_Wnd* pWnd);
 	virtual void				OnKillFocus(CPWL_Wnd* pWnd);

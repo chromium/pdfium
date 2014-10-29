@@ -8,6 +8,8 @@
 #include "../include/fsdk_define.h"
 #include "../include/fpdfview.h"
 #include "../include/fsdk_rendercontext.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "../include/fpdfxfa/fpdfxfa_page.h"
 
 extern void (*Func_RenderPage)( CRenderContext*, FPDF_PAGE page, int start_x, int start_y, int size_x, int size_y,
 						int rotate, int flags,FX_BOOL bNeedToRestore, IFSDK_PAUSE_Adapter * pause );
@@ -28,7 +30,9 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start( FPDF_BITMAP bitmap, FPDF_PAGE
 	if (pause->version !=1)
 		return FPDF_RENDER_FAILED;
 
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage)
+		return FPDF_RENDER_FAILED;
 	
 //	FXMT_CSLOCK_OBJ(&pPage->m_PageLock);
 	
@@ -71,7 +75,9 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,IFSDK_PAUSE * paus
 	if (pause->version !=1)
 		return FPDF_RENDER_FAILED;
 
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage)
+		return FPDF_RENDER_FAILED;
 
 //	FXMT_CSLOCK_OBJ(&pPage->m_PageLock);
 
@@ -92,7 +98,8 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,IFSDK_PAUSE * paus
 DLLEXPORT void STDCALL FPDF_RenderPage_Close(FPDF_PAGE page)
 {
 	if (page == NULL) return;
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage) return;
 
 //	FXMT_CSLOCK_OBJ(&pPage->m_PageLock);
 

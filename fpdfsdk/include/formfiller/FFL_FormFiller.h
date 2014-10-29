@@ -120,6 +120,7 @@ public:
 	virtual void				SaveData(CPDFSDK_PageView* pPageView);
 
 	virtual void				GetKeyStrokeData(CPDFSDK_PageView* pPageView, FFL_KeyStrokeData& data);
+	virtual FX_BOOL				IsFieldFull(CPDFSDK_PageView* pPageView);
 
 public:
 	CPWL_Wnd*					GetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bNew);

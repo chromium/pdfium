@@ -1,0 +1,169 @@
+// Copyright 2014 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
+#include "barcode.h"
+#include "include/BC_CommonBitMatrix.h"
+#include "include/BC_QRCoderVersion.h"
+#include "include/BC_QRCoderFormatInformation.h"
+#include "include/BC_QRDataMask.h"
+#include "include/BC_QRBitMatrixParser.h"
+CBC_QRBitMatrixParser::CBC_QRBitMatrixParser()
+{
+}
+void CBC_QRBitMatrixParser::Init(CBC_CommonBitMatrix *bitMatrix, FX_INT32 &e)
+{
+    m_dimension = bitMatrix->GetDimension(e);
+    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    m_tempBitMatrix = bitMatrix;
+    if(m_dimension < 21 || (m_dimension & 0x03) != 1) {
+        e = BCExceptionRead;
+        BC_EXCEPTION_CHECK_ReturnVoid(e);
+    }
+    m_bitMatrix = m_tempBitMatrix;
+    m_parsedFormatInfo = NULL;
+    m_version = NULL;
+}
+CBC_QRBitMatrixParser::~CBC_QRBitMatrixParser()
+{
+    if(m_parsedFormatInfo != NULL) {
+        delete m_parsedFormatInfo;
+        m_parsedFormatInfo = NULL;
+    }
+    m_version = NULL;
+}
+CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(FX_INT32 &e)
+{
+    if(m_parsedFormatInfo != NULL) {
+        return m_parsedFormatInfo;
+    }
+    FX_INT32 formatInfoBits = 0;
+    FX_INT32 j;
+    for( j = 0; j < 6; j++) {
+        formatInfoBits = CopyBit(8, j, formatInfoBits);
+    }
+    formatInfoBits = CopyBit(8, 7, formatInfoBits);
+    formatInfoBits = CopyBit(8, 8, formatInfoBits);
+    formatInfoBits = CopyBit(7, 8, formatInfoBits);
+    for(FX_INT32 i = 5; i >= 0; i--) {
+        formatInfoBits = CopyBit(i, 8, formatInfoBits);
+    }
+    m_parsedFormatInfo = CBC_QRCoderFormatInformation::DecodeFormatInformation(formatInfoBits);
+    if(m_parsedFormatInfo != NULL) {
+        return m_parsedFormatInfo;
+    }
+    FX_INT32 dimension = m_bitMatrix->GetDimension(e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    formatInfoBits = 0;
+    FX_INT32 iMin = dimension - 8;
+    for(j = dimension - 1; j >= iMin; j--) {
+        formatInfoBits = CopyBit(j, 8, formatInfoBits);
+    }
+    for(FX_INT32 k = dimension - 7; k < dimension; k++) {
+        formatInfoBits = CopyBit(8, k , formatInfoBits);
+    }
+    m_parsedFormatInfo = CBC_QRCoderFormatInformation::DecodeFormatInformation(formatInfoBits);
+    if(m_parsedFormatInfo != NULL) {
+        return m_parsedFormatInfo;
+    }
+    e = BCExceptionRead;
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    return NULL;
+}
+CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(FX_INT32 &e)
+{
+    if(m_version != NULL) {
+        return m_version;
+    }
+    FX_INT32 dimension = m_bitMatrix->GetDimension(e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    FX_INT32 provisionVersion = (dimension - 17) >> 2;
+    if(provisionVersion <= 6) {
+        CBC_QRCoderVersion* qrv = CBC_QRCoderVersion::GetVersionForNumber(provisionVersion, e);
+        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+        return qrv;
+    }
+    FX_INT32 versionBits = 0;
+    for (FX_INT32 i = 5; i >= 0; i--) {
+        FX_INT32 jMin = dimension - 11;
+        for (FX_INT32 j = dimension - 9; j >= jMin; j--) {
+            versionBits = CopyBit(i, j, versionBits);
+        }
+    }
+    m_version = CBC_QRCoderVersion::DecodeVersionInformation(versionBits, e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    if (m_version != NULL && m_version->GetDimensionForVersion() == dimension) {
+        return m_version;
+    }
+    versionBits = 0;
+    for (FX_INT32 j = 5; j >= 0; j--) {
+        FX_INT32 iMin = dimension - 11;
+        for (FX_INT32 i = dimension - 9; i >= iMin; i--) {
+            versionBits = CopyBit(i, j, versionBits);
+        }
+    }
+    m_version = CBC_QRCoderVersion::DecodeVersionInformation(versionBits, e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    if (m_version != NULL && m_version->GetDimensionForVersion() == dimension) {
+        return m_version;
+    }
+    e = BCExceptionRead;
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    return NULL;
+}
+FX_INT32 CBC_QRBitMatrixParser::CopyBit(FX_INT32 i, FX_INT32 j, FX_INT32 versionBits)
+{
+    return m_bitMatrix->Get(j, i) ? (versionBits << 1) | 0x1 : versionBits << 1;
+}
+CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(FX_INT32 &e)
+{
+    CBC_QRCoderFormatInformation *formatInfo   = ReadFormatInformation(e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL)
+    CBC_QRCoderVersion			  *version		= ReadVersion(e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    CBC_QRDataMask		  *dataMask		= CBC_QRDataMask::ForReference((FX_INT32)(formatInfo->GetDataMask()), e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    FX_INT32				  dimension		= m_bitMatrix->GetDimension(e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    dataMask->UnmaskBitMatirx(m_bitMatrix, dimension);
+    CBC_CommonBitMatrix* cbm = version->BuildFunctionPattern(e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    CBC_AutoPtr<CBC_CommonBitMatrix > functionPattern(cbm);
+    FX_BOOL			  readingUp		= TRUE;
+    CFX_ByteArray * temp = FX_NEW CFX_ByteArray;
+    temp->SetSize(version->GetTotalCodeWords());
+    CBC_AutoPtr<CFX_ByteArray> result(temp);
+    FX_INT32				   resultOffset = 0;
+    FX_INT32				   currentByte	= 0;
+    FX_INT32				   bitsRead		= 0;
+    for(FX_INT32 j = dimension - 1; j > 0; j -= 2) {
+        if(j == 6) {
+            j--;
+        }
+        for(FX_INT32 count = 0; count < dimension; count++) {
+            FX_INT32 i = readingUp ? dimension - 1 - count : count;
+            for(FX_INT32 col = 0; col < 2; col++) {
+                if(!functionPattern->Get(j - col, i)) {
+                    bitsRead++;
+                    currentByte <<= 1;
+                    if(m_bitMatrix->Get(j - col, i)) {
+                        currentByte |= 1;
+                    }
+                    if(bitsRead == 8) {
+                        (*result)[resultOffset++] = (FX_BYTE) currentByte;
+                        bitsRead = 0;
+                        currentByte = 0;
+                    }
+                }
+            }
+        }
+        readingUp ^= TRUE;
+    }
+    if(resultOffset != version->GetTotalCodeWords()) {
+        e = BCExceptionRead;
+        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+    }
+    return result.release();
+}

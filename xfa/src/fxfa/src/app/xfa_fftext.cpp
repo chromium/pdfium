@@ -1,0 +1,188 @@
+// Copyright 2014 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
+#include "../../../foxitlib.h"
+#include "../common/xfa_common.h"
+#include "xfa_ffwidget.h"
+#include "xfa_ffdraw.h"
+#include "xfa_fftext.h"
+#include "xfa_textlayout.h"
+#include "xfa_ffpageview.h"
+#include "xfa_ffdoc.h"
+#include "xfa_ffapp.h"
+CXFA_FFText::CXFA_FFText(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFDraw(pPageView, pDataAcc)
+{
+}
+CXFA_FFText::~CXFA_FFText()
+{
+}
+void CXFA_FFText::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+{
+    if (!IsMatchVisibleStatus(dwStatus)) {
+        return;
+    }
+    {
+        CFX_Matrix mtRotate;
+        GetRotateMatrix(mtRotate);
+        if (pMatrix) {
+            mtRotate.Concat(*pMatrix);
+        }
+        CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
+        CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
+        if (pTextLayout) {
+            CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
+            CFX_RectF rtText;
+            GetRectWithoutRotate(rtText);
+            if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
+                CXFA_LayoutItem* pItem = this->GetLayoutItem();
+                if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
+                    XFA_RectWidthoutMargin(rtText, mgWidget);
+                } else {
+                    FX_FLOAT fLeftInset, fRightInset, fTopInset = 0, fBottomInset = 0;
+                    mgWidget.GetLeftInset(fLeftInset);
+                    mgWidget.GetRightInset(fRightInset);
+                    if (pItem->GetPrev() == NULL) {
+                        mgWidget.GetTopInset(fTopInset);
+                    } else if (pItem->GetNext() == NULL) {
+                        mgWidget.GetBottomInset(fBottomInset);
+                    }
+                    rtText.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
+                }
+            }
+            CFX_Matrix mt;
+            mt.Set(1, 0, 0, 1, rtText.left, rtText.top);
+            CFX_RectF rtClip = rtText;
+            mtRotate.TransformRect(rtClip);
+            mt.Concat(mtRotate);
+            pTextLayout->DrawString(pRenderDevice, mt, rtClip, this->GetLayoutItem()->GetIndex());
+        }
+    }
+}
+FX_BOOL CXFA_FFText::IsLoaded()
+{
+    CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
+    return pTextLayout != NULL && !pTextLayout->m_bHasBlock;
+}
+FX_BOOL CXFA_FFText::LayoutWidget()
+{
+    CXFA_FFDraw::LayoutWidget();
+    CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
+    if (!pTextLayout) {
+        return FALSE;
+    }
+    if (!pTextLayout->m_bHasBlock) {
+        return TRUE;
+    }
+    pTextLayout->m_Blocks.RemoveAll();
+    CXFA_LayoutItem* pItem = this->GetLayoutItem();
+    if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
+        return TRUE;
+    }
+    pItem = pItem->GetFirst();
+    while (pItem) {
+        CFX_RectF rtText;
+        pItem->GetRect(rtText);
+        if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
+            if (pItem->GetPrev() == NULL) {
+                FX_FLOAT fTopInset;
+                mgWidget.GetTopInset(fTopInset);
+                rtText.height -= fTopInset;
+            } else if (pItem->GetNext() == NULL) {
+                FX_FLOAT fBottomInset;
+                mgWidget.GetBottomInset(fBottomInset);
+                rtText.height -= fBottomInset;
+            }
+        }
+        pTextLayout->ItemBlocks(rtText, pItem->GetIndex());
+        pItem = pItem->GetNext();
+    }
+    pTextLayout->m_bHasBlock = FALSE;
+    return TRUE;
+}
+FX_BOOL CXFA_FFText::OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
+{
+    CFX_RectF rtBox;
+    GetRectWithoutRotate(rtBox);
+    if (!rtBox.Contains(fx, fy)) {
+        return FALSE;
+    }
+    FX_LPCWSTR wsURLContent = GetLinkURLAtPoint(fx, fy);
+    if (NULL == wsURLContent) {
+        return FALSE;
+    }
+    SetButtonDown(TRUE);
+    return TRUE;
+}
+FX_BOOL	CXFA_FFText::OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
+{
+    CFX_RectF rtBox;
+    GetRectWithoutRotate(rtBox);
+    if (!rtBox.Contains(fx, fy)) {
+        return FALSE;
+    }
+    FX_LPCWSTR wsURLContent = GetLinkURLAtPoint(fx, fy);
+    if (NULL == wsURLContent) {
+        return FALSE;
+    }
+    return TRUE;
+}
+FX_BOOL CXFA_FFText::OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
+{
+    if (!IsButtonDown()) {
+        return FALSE;
+    }
+    SetButtonDown(FALSE);
+    FX_LPCWSTR wsURLContent = GetLinkURLAtPoint(fx, fy);
+    if (NULL == wsURLContent) {
+        return FALSE;
+    }
+    CXFA_FFDoc* pDoc = GetDoc();
+    pDoc->GetDocProvider()->GotoURL((XFA_HDOC)pDoc, FX_WSTRC(wsURLContent), FALSE);
+    return TRUE;
+}
+FX_DWORD CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy)
+{
+    CFX_RectF rtBox;
+    GetRectWithoutRotate(rtBox);
+    if (!rtBox.Contains(fx, fy)) {
+        return FWL_WGTHITTEST_Unknown;
+    }
+    FX_LPCWSTR wsURLContent = GetLinkURLAtPoint(fx, fy);
+    if (NULL == wsURLContent) {
+        return FWL_WGTHITTEST_Unknown;
+    }
+    return FWL_WGTHITTEST_Transparent;
+}
+FX_LPCWSTR CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy)
+{
+    CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
+    if ( NULL == pTextLayout) {
+        return NULL;
+    }
+    FX_FLOAT x(fx), y(fy);
+    FWLToClient(x, y);
+    const CXFA_PieceLineArray* pPieceLines = pTextLayout->GetPieceLines();
+    FX_INT32 iCount = pPieceLines->GetSize();
+    for (FX_INT32 i = 0; i < iCount; i++) {
+        CXFA_PieceLine *pPieceLine = pPieceLines->GetAt(i);
+        FX_INT32 iPieces = pPieceLine->m_textPieces.GetSize();
+        for (FX_INT32 j = 0; j < iPieces; j++) {
+            XFA_LPTEXTPIECE pPiece = pPieceLine->m_textPieces.GetAt(j);
+            if (pPiece->pLinkData && pPiece->rtPiece.Contains(x, y)) {
+                return pPiece->pLinkData->GetLinkURL();
+            }
+        }
+    }
+    return NULL;
+}
+void CXFA_FFText::FWLToClient(FX_FLOAT &fx, FX_FLOAT &fy)
+{
+    CFX_RectF rtWidget;
+    GetRectWithoutRotate(rtWidget);
+    fx -= rtWidget.left;
+    fy -= rtWidget.top;
+}

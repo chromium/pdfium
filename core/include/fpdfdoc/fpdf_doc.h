@@ -1230,8 +1230,9 @@ public:
 
     FX_BOOL					ClearSelectedOptions(FX_BOOL bNotify = FALSE);
 
+    FX_BOOL					ClearOptions(FX_BOOL bNotify = FALSE);
 
-
+    int						InsertOption(CFX_WideString csOptLabel, int index = -1, FX_BOOL bNotify = FALSE);
 
     FX_FLOAT				GetFontSize()
     {

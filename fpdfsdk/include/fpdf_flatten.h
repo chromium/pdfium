@@ -29,9 +29,12 @@ extern "C" {
 	//Return value:
 	//			The result flag of the function, See flags above ( FLATTEN_FAIL, FLATTEN_SUCCESS, FLATTEN_NOTINGTODO ).
 	//
-	// Comments: Current version all fails return zero. If necessary we will assign different value
+	//Comments: Current version all fails return zero. If necessary we will assign different value
 	//			to indicate different fail reason.
 	// 
+	//Notes: 
+	//			The method can not support to flatten the page which the document consists of dynamic XFA fields.
+	//
 	DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag);
 		
 		

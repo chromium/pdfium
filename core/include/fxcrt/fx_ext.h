@@ -76,6 +76,24 @@ void		FX_Random_GenerateCrypto(FX_LPDWORD pBuffer, FX_INT32 iCount);
 #ifdef __cplusplus
 }
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct FX_GUID {
+    FX_DWORD	data1;
+    FX_WORD		data2;
+    FX_WORD		data3;
+    FX_BYTE		data4[8];
+} FX_GUID, * FX_LPGUID;
+typedef FX_GUID const * FX_LPCGUID;
+
+void	FX_GUID_CreateV4(FX_LPGUID pGUID);
+
+void	FX_GUID_ToString(FX_LPCGUID pGUID, CFX_ByteString &bsStr, FX_BOOL bSeparator = TRUE);
+#ifdef __cplusplus
+}
+#endif
 template<class baseType>
 class CFX_SSortTemplate
 {

@@ -797,6 +797,77 @@ int CPDF_FormField::FindOptionValue(FX_LPCWSTR csOptValue, int iStartIndex)
     }
     return -1;
 }
+int CPDF_FormField::InsertOption(CFX_WideString csOptLabel, int index, FX_BOOL bNotify)
+{
+    if (csOptLabel.IsEmpty()) return -1;
+
+    if (bNotify && m_pForm->m_pFormNotify != NULL)
+    {
+        int iRet = 0;
+        if (GetType() == ListBox) iRet = m_pForm->m_pFormNotify->BeforeSelectionChange(this, csOptLabel);
+        if (GetType() == ComboBox) iRet = m_pForm->m_pFormNotify->BeforeValueChange(this, csOptLabel);
+        if (iRet < 0) return -1;
+    }
+
+    CFX_ByteString csStr = PDF_EncodeText(csOptLabel, csOptLabel.GetLength());
+    CPDF_Array* pOpt = NULL;
+    CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "Opt");
+    if (pValue == NULL || pValue->GetType() != PDFOBJ_ARRAY)
+    {
+        pOpt = CPDF_Array::Create();
+        if (pOpt == NULL) return -1;
+        m_pDict->SetAt("Opt", pOpt);
+    }
+    else
+        pOpt = (CPDF_Array*)pValue;
+    int iCount = (int)pOpt->GetCount();
+    if (index < 0 || index >= iCount)
+    {
+        pOpt->AddString(csStr);
+        index = iCount;
+    }
+    else {
+        CPDF_String* pString = CPDF_String::Create(csStr);
+        if (pString == NULL) return -1;
+        pOpt->InsertAt(index, pString);
+    }
+
+    if (bNotify && m_pForm->m_pFormNotify != NULL)
+    {
+        if (GetType() == ListBox) m_pForm->m_pFormNotify->AfterSelectionChange(this);
+        if (GetType() == ComboBox) m_pForm->m_pFormNotify->AfterValueChange(this);
+    }
+    m_pForm->m_bUpdated = TRUE;
+    return index;
+}
+FX_BOOL CPDF_FormField::ClearOptions(FX_BOOL bNotify)
+{
+    if (bNotify && m_pForm->m_pFormNotify != NULL)
+    {
+        int iRet = 0;
+        CFX_WideString csValue;
+        int iIndex = GetSelectedIndex(0);
+        if (iIndex >= 0) csValue = GetOptionLabel(iIndex);
+        if (GetType() == ListBox) iRet = m_pForm->m_pFormNotify->BeforeSelectionChange(this, csValue);
+        if (GetType() == ComboBox) iRet = m_pForm->m_pFormNotify->BeforeValueChange(this, csValue);
+        if (iRet < 0) return FALSE;
+    }
+
+    m_pDict->RemoveAt("Opt");
+    m_pDict->RemoveAt("V");
+    m_pDict->RemoveAt("DV");
+    m_pDict->RemoveAt("I");
+    m_pDict->RemoveAt("TI");
+
+    if (bNotify && m_pForm->m_pFormNotify != NULL)
+    {
+        if (GetType() == ListBox) m_pForm->m_pFormNotify->AfterSelectionChange(this);
+        if (GetType() == ComboBox) m_pForm->m_pFormNotify->AfterValueChange(this);
+    }
+
+    m_pForm->m_bUpdated = TRUE;
+    return TRUE;
+}
 FX_BOOL CPDF_FormField::CheckControl(int iControlIndex, FX_BOOL bChecked, FX_BOOL bNotify)
 {
     ASSERT(GetType() == CheckBox || GetType() == RadioButton);

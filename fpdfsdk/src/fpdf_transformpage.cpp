@@ -6,12 +6,15 @@
 
 #include "../include/fsdk_define.h"
 #include "../include/fpdf_transformpage.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "../include/fpdfxfa/fpdfxfa_page.h"
 
 DLLEXPORT void STDCALL FPDFPage_SetMediaBox(FPDF_PAGE page, float left, float bottom, float right, float top)
 {
 	if(!page)
 		return;
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage) return;
 	CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
 	CPDF_Array* pMediaBoxArray = FX_NEW CPDF_Array;
 	pMediaBoxArray->Add(FX_NEW CPDF_Number(left));
@@ -27,7 +30,8 @@ DLLEXPORT void STDCALL FPDFPage_SetCropBox(FPDF_PAGE page, float left, float bot
 {
 	if(!page)
 		return;
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage) return;
 	CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
 	CPDF_Array* pCropBoxArray = FX_NEW CPDF_Array;
 	pCropBoxArray->Add(FX_NEW CPDF_Number(left));
@@ -44,7 +48,8 @@ DLLEXPORT FX_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page, float* left, floa
 {
 	if(!page)
 		return FALSE;
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage) return FALSE;
 	CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
 	CPDF_Array* pArray = pPageDict->GetArray("MediaBox");
 	if(pArray)
@@ -62,7 +67,8 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetCropBox(FPDF_PAGE page, float* left, flo
 {
 	if(!page)
 		return FALSE;
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage) return FALSE;
 	CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
 	CPDF_Array* pArray = pPageDict->GetArray("CropBox");
 	if(pArray)
@@ -81,6 +87,10 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page, FS_MATRIX
 	if(!page)
 		return FALSE;
 
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage)
+		return FALSE;
+
 	CFX_ByteTextBuf textBuf;
 	textBuf<<"q ";
 	CFX_FloatRect rect(clipRect->left, clipRect->bottom, clipRect->right, clipRect->top);
@@ -94,7 +104,6 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page, FS_MATRIX
 	textBuf<<bsMatix;
 	
 
-	CPDF_Page* pPage = (CPDF_Page*)page;
 	CPDF_Dictionary* pPageDic = pPage->m_pFormDict;
 	CPDF_Object* pContentObj = pPageDic ? pPageDic->GetElement("Contents") : NULL;
 	if(!pContentObj)
@@ -258,7 +267,8 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,FPDF_CLIPPATH clip
 {
 	if(!page)
 		return;
-	CPDF_Page* pPage = (CPDF_Page*)page;
+	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage) return;
 	CPDF_Dictionary* pPageDic = pPage->m_pFormDict;
 	CPDF_Object* pContentObj = pPageDic ? pPageDic->GetElement("Contents") : NULL;
 	if(!pContentObj)

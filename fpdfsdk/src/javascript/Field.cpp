@@ -3820,7 +3820,7 @@ FX_BOOL Field::setFocus(OBJ_METHOD_PARAMS)
 	{
 		CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
 		ASSERT(pEnv);
-		CPDF_Page* pPage = (CPDF_Page*)pEnv->FFI_GetCurrentPage(m_pDocument->GetDocument());
+		CPDFXFA_Page* pPage = (CPDFXFA_Page*)pEnv->FFI_GetCurrentPage(m_pDocument->GetDocument());
 		if(!pPage)
 			return FALSE;
 		if (CPDFSDK_PageView* pCurPageView = m_pDocument->GetPageView(pPage))

@@ -26,7 +26,7 @@ public:
 	operator					CJS_Object* (){return m_pJSObject;};
 
 	CPDFSDK_PageView *			JSGetPageView(IFXJS_Context* cc);
-	int							MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, FX_LPCWSTR swMsg, FX_LPCWSTR swTitle = NULL, FX_UINT nType = 0, FX_UINT nIcon = 0);
+	int							MsgBox(CPDFDoc_Environment * pApp, CPDFSDK_PageView* pPageView, FX_LPCWSTR swMsg, FX_LPCWSTR swTitle = NULL, FX_UINT nType = 0, FX_UINT nIcon = 0);
 	void						Alert(CJS_Context* pContext, FX_LPCWSTR swMsg);
 	FX_BOOL						IsSafeMode(IFXJS_Context* cc);
 
@@ -56,7 +56,7 @@ public:
 	CJS_EmbedObj *				GetEmbedObject(){return m_pEmbedObj;};
 
 	static CPDFSDK_PageView *	JSGetPageView(IFXJS_Context* cc);
-	static int					MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, FX_LPCWSTR swMsg, FX_LPCWSTR swTitle = NULL, FX_UINT nType = 0,FX_UINT nIcon = 0);
+	static int					MsgBox(CPDFDoc_Environment * pApp, CPDFSDK_PageView* pPageView, FX_LPCWSTR swMsg, FX_LPCWSTR swTitle = NULL, FX_UINT nType = 0,FX_UINT nIcon = 0);
 	static void					Alert(CJS_Context* pContext, FX_LPCWSTR swMsg);
 
 	v8::Isolate*					GetIsolate() {return m_pIsolate;}
@@ -164,7 +164,7 @@ class CJS_Runtime;
 class CJS_Timer
 {
 public:
-	CJS_Timer(CJS_EmbedObj * pObj,CPDFDoc_Environment* pApp):
+	CJS_Timer(CJS_EmbedObj * pObj, CPDFDoc_Environment* pApp):
 		m_nTimerID(0), 
 		m_pEmbedObj(pObj), 
 		m_bProcessing(FALSE),
@@ -197,6 +197,11 @@ public:
 	{
 		if (m_nTimerID)
 		{
+			if (m_pApp == NULL) {
+				m_sTimeMap.RemoveAt(m_nTimerID);
+				m_nTimerID = 0;
+				return;
+			}
 			IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
 			pHandler->KillTimer(m_nTimerID);
 			m_sTimeMap.RemoveAt(m_nTimerID);
@@ -277,8 +282,8 @@ private:
 	FX_BOOL							m_bProcessing;
 
 	//data
-	FX_DWORD							m_dwStartTime;
-	FX_DWORD							m_dwTimeOut;
+	FX_DWORD						m_dwStartTime;
+	FX_DWORD						m_dwTimeOut;
 	FX_DWORD						m_dwElapse;
 	CJS_Runtime*					m_pRuntime;
 	CFX_WideString					m_swJScript;

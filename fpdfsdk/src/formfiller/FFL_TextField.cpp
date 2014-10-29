@@ -176,7 +176,7 @@ FX_BOOL	CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFl
  			ASSERT(pPageView != NULL);
  			m_bValid = !m_bValid;
 			CPDF_Rect rcAnnot = pAnnot->GetRect();
-			m_pApp->FFI_Invalidate(pAnnot->GetPDFPage(), rcAnnot.left, rcAnnot.top, rcAnnot.right, rcAnnot.bottom);
+			m_pApp->FFI_Invalidate(pAnnot->GetPDFXFAPage(), rcAnnot.left, rcAnnot.top, rcAnnot.right, rcAnnot.bottom);
  
  			if (m_bValid)
  			{
@@ -346,6 +346,16 @@ CPWL_Wnd* CFFL_TextField::ResetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bR
 	m_pWidget->UpdateField();
 	
 	return pRet;
+}
+
+FX_BOOL	CFFL_TextField::IsFieldFull(CPDFSDK_PageView* pPageView)
+{
+	if (CPWL_Edit* pWnd = (CPWL_Edit*)GetPDFWindow(pPageView, FALSE))
+	{
+		return pWnd->IsTextFull();	
+	}
+
+	return FALSE;
 }
 
 void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd)

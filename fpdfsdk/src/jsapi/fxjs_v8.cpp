@@ -76,11 +76,11 @@ int JS_DefineObj(IJS_Runtime* pJSRuntime, const wchar_t* sObjName, FXJSOBJTYPE e
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) 
 	{
 		pArray = FX_NEW CFX_PtrArray();
-		isolate->SetData(0, pArray);
+		isolate->SetData(1, pArray);
 	}
 	CJS_ObjDefintion* pObjDef = FX_NEW CJS_ObjDefintion(isolate, sObjName, eObjType, pConstructor, pDestructor, bApplyNew);
 	pArray->Add(pObjDef);
@@ -96,7 +96,7 @@ int JS_DefineObjMethod(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t* s
 	CFX_WideString ws = CFX_WideString((FX_LPCWSTR)sMethodName);
 	CFX_ByteString bsMethodName = ws.UTF8Encode();
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return 0;
 
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
@@ -116,7 +116,7 @@ int JS_DefineObjProperty(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t*
 	CFX_WideString ws = CFX_WideString((FX_LPCWSTR)sPropName);
 	CFX_ByteString bsPropertyName = ws.UTF8Encode();
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return 0;
 
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
@@ -133,7 +133,7 @@ int	JS_DefineObjAllProperties(IJS_Runtime* pJSRuntime, int nObjDefnID, v8::Named
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return 0;
 
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
@@ -150,7 +150,7 @@ int JS_DefineObjConst(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t* sC
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return 0;
 
 	CFX_WideString ws = CFX_WideString((FX_LPCWSTR)sConstName);
@@ -170,7 +170,7 @@ static v8::Persistent<v8::ObjectTemplate>& _getGlobalObjectTemplate(IJS_Runtime*
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	ASSERT(pArray != NULL);
 	for(int i=0; i<pArray->GetSize(); i++)
 	{
@@ -234,16 +234,18 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,IFXJS_Runtime* pFXRuntime, IFXJS_
 {
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
+	v8::Locker locker(isolate);
 	v8::HandleScope handle_scope(isolate);
 
 	v8::Persistent<v8::ObjectTemplate>& globalObjTemp = _getGlobalObjectTemplate(pJSRuntime);
 	v8::Handle<v8::Context> v8Context = v8::Context::New(isolate, NULL, v8::Local<v8::ObjectTemplate>::New(isolate, globalObjTemp));
 	v8::Context::Scope context_scope(v8Context);
 
-	v8::Handle<v8::External> ptr = v8::External::New(isolate, pFXRuntime);
-	v8Context->SetEmbedderData(1, ptr);
+	//v8::Handle<External> ptr = External::New(isolate, pFXRuntime);
+	//v8Context->SetEmbedderData(1, ptr);
+	isolate->SetData(2, pFXRuntime);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return;
 
 	for(int i=0; i<pArray->GetSize(); i++)
@@ -257,7 +259,8 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,IFXJS_Runtime* pFXRuntime, IFXJS_
 		if(pObjDef->objType == JS_DYNAMIC)
 		{
 			//Document is set as global object, need to construct it first.
-			if(ws.Equal(L"Document"))
+			CFX_WideString wsString(L"Document");
+			if(ws.Equal(wsString))
 			{
 
 				CJS_PrivateData* pPrivateData = FX_NEW CJS_PrivateData;
@@ -284,11 +287,10 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime, v8::Persistent<v8::Context>& v8P
 {
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
+	v8::Locker locker(isolate);
 	v8::HandleScope handle_scope(isolate);
-	v8::Local<v8::Context> context = v8::Local<v8::Context>::New(isolate, v8PersistentContext);
-	v8::Context::Scope context_scope(context);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return ;
 
 	for(int i=0; i<pArray->GetSize(); i++)
@@ -304,14 +306,15 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime, v8::Persistent<v8::Context>& v8P
 		delete pObjDef;
 	}
 	delete pArray;
-	isolate->SetData(0,NULL);
+	isolate->SetData(1,NULL);
+	isolate->SetData(2,NULL);
 }
 
 void JS_Initial() 
 {
-#ifndef FOXIT_CHROME_BUILD
-	v8::V8::InitializeICU();
-#endif
+//#ifndef FOXIT_CHROME_BUILD
+//	v8::V8::InitializeICU();
+//#endif
 }
 void JS_Release()
 {
@@ -368,7 +371,7 @@ v8::Handle<v8::Object> JS_NewFxDynamicObj(IJS_Runtime* pJSRuntime, IFXJS_Context
 		return objTempl->NewInstance();
 	}
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return v8::Handle<v8::Object>();
 
 
@@ -396,7 +399,7 @@ v8::Handle<v8::Object> JS_GetStaticObj(IJS_Runtime* pJSRuntime, int nObjDefnID)
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return v8::Handle<v8::Object>();
 
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return v8::Handle<v8::Object>();
@@ -415,7 +418,7 @@ v8::Handle<v8::Object>	JS_GetThisObj(IJS_Runtime * pJSRuntime)
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return v8::Handle<v8::Object>();
 
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();
@@ -445,7 +448,7 @@ int JS_GetObjDefnID(IJS_Runtime * pJSRuntime, const wchar_t* pObjName)
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
 	if(!pArray) return -1;
 
 	for(int i=0; i<pArray->GetSize(); i++)
@@ -464,12 +467,12 @@ void JS_Error(v8::Value * pError,const wchar_t * main,const wchar_t * sub)
 
 unsigned JS_CalcHash(const wchar_t* main, unsigned nLen)
 {
-	return (unsigned)FX_HashCode_String_GetW(main, nLen);
+	return (unsigned)FX_HashCode_String_GetW((FX_LPCWSTR)main, nLen);
 }
 
 unsigned JS_CalcHash(const wchar_t* main)
 {
-	return (unsigned)FX_HashCode_String_GetW(main, FXSYS_wcslen(main));
+	return (unsigned)FX_HashCode_String_GetW((FX_LPCWSTR)main, FXSYS_wcslen(main));
 }
 const wchar_t*	JS_GetTypeof(v8::Handle<v8::Value> pObj)
 {

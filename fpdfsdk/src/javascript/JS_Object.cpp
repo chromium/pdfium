@@ -16,7 +16,7 @@ int FXJS_MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, FX_LPCWS
 {
 	int nRet = 0;
 
-	if(pApp)
+	if (pApp)
 	{
 		CPDFSDK_Document* pDoc = pApp->GetCurrentDoc();
 		if(pDoc)
@@ -65,7 +65,7 @@ void CJS_EmbedObj::Alert(CJS_Context* pContext, FX_LPCWSTR swMsg)
 	CJS_Object::Alert(pContext, swMsg);
 }
 
-CJS_Timer* CJS_EmbedObj::BeginTimer(CPDFDoc_Environment * pApp,FX_UINT nElapse)
+CJS_Timer* CJS_EmbedObj::BeginTimer(CPDFDoc_Environment* pApp, FX_UINT nElapse)
 {
 	CJS_Timer* pTimer = new CJS_Timer(this,pApp);
 	pTimer->SetJSTimer(nElapse);

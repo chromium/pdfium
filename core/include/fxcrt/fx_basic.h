@@ -1578,6 +1578,13 @@ typedef enum {
 } FX_ProgressiveStatus;
 #define ProgressiveStatus	FX_ProgressiveStatus
 #define FX_NAMESPACE_DECLARE(namespace, type)       namespace::type
+class IFX_Unknown
+{
+public:
+    virtual FX_DWORD	Release() = 0;
+    virtual FX_DWORD	AddRef() = 0;
+};
+#define FX_IsOdd(a)	((a) & 1)
 
 class CFX_Vector_3by1 : public CFX_Object
 {

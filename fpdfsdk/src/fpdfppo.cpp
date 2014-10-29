@@ -6,6 +6,7 @@
 
 #include "../include/fpdfppo.h"
 #include "../include/fsdk_define.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
 
 class CPDF_PageOrganizer
 {
@@ -428,8 +429,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,FPDF_DOCUMEN
 	if(dest_doc == NULL || src_doc == NULL )
 		return FALSE;
 	CFX_WordArray pageArray;
-	CPDF_Document* pSrcDoc = (CPDF_Document*)src_doc;
-	int nCount = pSrcDoc->GetPageCount();
+	CPDFXFA_Document* pSrcDoc = (CPDFXFA_Document*)src_doc;
+	CPDF_Document* pSrcPDFDoc = pSrcDoc->GetPDFDoc();
+	int nCount = pSrcPDFDoc->GetPageCount();
 	if(pagerange)
 	{
 		if(ParserPageRangeString(pagerange,&pageArray,nCount) == FALSE)
@@ -443,12 +445,13 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,FPDF_DOCUMEN
 		}
 	}
 	
-	CPDF_Document* pDestDoc = (CPDF_Document*)dest_doc;
+	CPDFXFA_Document* pDestDoc = (CPDFXFA_Document*)dest_doc;
+	CPDF_Document* pDestPDFDoc = pDestDoc->GetPDFDoc();
 	CPDF_PageOrganizer pageOrg;
 
-	pageOrg.PDFDocInit(pDestDoc,pSrcDoc);
+	pageOrg.PDFDocInit(pDestPDFDoc,pSrcPDFDoc);
 
-	if(pageOrg.ExportPage(pSrcDoc,&pageArray,pDestDoc,index))
+	if(pageOrg.ExportPage(pSrcPDFDoc,&pageArray,pDestPDFDoc,index))
 		return TRUE;
 	return FALSE;
 }
@@ -457,13 +460,15 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc, F
 {
 	if(src_doc == NULL || dest_doc == NULL)
 		return false;
-	CPDF_Document* pSrcDoc = (CPDF_Document*)src_doc;
-	CPDF_Dictionary* pSrcDict = pSrcDoc->GetRoot();
-	pSrcDict = pSrcDict->GetDict(FX_BSTRC("ViewerPreferences"));;
+	CPDFXFA_Document* pSrcDoc = (CPDFXFA_Document*)src_doc;
+	CPDF_Document* pSrcPDFDoc = pSrcDoc->GetPDFDoc();
+	CPDF_Dictionary* pSrcDict = pSrcPDFDoc->GetRoot();
+	pSrcDict = pSrcDict->GetDict(FX_BSTRC("ViewerPreferences"));
 	if(!pSrcDict)
 		return FALSE;
-	CPDF_Document* pDstDoc = (CPDF_Document*)dest_doc;
-	CPDF_Dictionary* pDstDict = pDstDoc->GetRoot();
+	CPDFXFA_Document* pDstDoc = (CPDFXFA_Document*)dest_doc;
+	CPDF_Document* pDstPDFDoc = pDstDoc->GetPDFDoc();
+	CPDF_Dictionary* pDstDict = pDstPDFDoc->GetRoot();
 	if(!pDstDict)
 		return FALSE;
 	pDstDict->SetAt(FX_BSTRC("ViewerPreferences"), pSrcDict->Clone(TRUE));

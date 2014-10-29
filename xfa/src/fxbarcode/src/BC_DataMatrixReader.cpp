@@ -1,0 +1,51 @@
+// Copyright 2014 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
+#include "barcode.h"
+#include "include/BC_DataMatrixDecoder.h"
+#include "include/BC_BinaryBitmap.h"
+#include "include/BC_DataMatrixDetector.h"
+#include "include/BC_QRDetectorResult.h"
+#include "include/BC_CommonDecoderResult.h"
+#include "include/BC_Reader.h"
+#include "include/BC_DataMatrixReader.h"
+CBC_DataMatrixReader::CBC_DataMatrixReader()
+{
+    m_decoder = NULL;
+}
+void CBC_DataMatrixReader::Init()
+{
+    m_decoder = FX_NEW CBC_DataMatrixDecoder;
+    m_decoder->Init();
+}
+CBC_DataMatrixReader::~CBC_DataMatrixReader()
+{
+    if(m_decoder != NULL) {
+        delete m_decoder;
+    }
+    m_decoder = NULL;
+}
+CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e)
+{
+    CBC_CommonBitMatrix *cdr = image->GetBlackMatrix(e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, "");
+    CBC_DataMatrixDetector detector(cdr);
+    detector.Init(e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, "");
+    CBC_QRDetectorResult* ddr = detector.Detect(e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, "");
+    CBC_AutoPtr<CBC_QRDetectorResult> detectorResult(ddr);
+    CBC_CommonDecoderResult* ResultTemp = m_decoder->Decode(detectorResult->GetBits(), e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, "");
+    CBC_AutoPtr<CBC_CommonDecoderResult> decodeResult(ResultTemp);
+    return decodeResult->GetText();
+}
+CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap *image, FX_INT32 &e)
+{
+    CFX_ByteString bs = Decode(image, 0, e);
+    BC_EXCEPTION_CHECK_ReturnValue(e, "");
+    return bs;
+}

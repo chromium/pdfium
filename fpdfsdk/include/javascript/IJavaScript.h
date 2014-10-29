@@ -88,6 +88,8 @@ public:
 	virtual void				Exit() = 0;
 	virtual void				Enter() = 0;
 	virtual FX_BOOL				IsEntered() = 0;
+	virtual	FX_BOOL				GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue) = 0;
+	virtual	FX_BOOL				SetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue) = 0;
 };
 
 class CPDFDoc_Environment;

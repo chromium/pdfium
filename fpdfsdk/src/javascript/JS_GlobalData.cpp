@@ -117,7 +117,7 @@ static const FX_BYTE JS_RC4KEY[] = {0x19,0xa8,0xe8,0x01,0xf6,0xa8,0xb6,0x4d,0x82
 							0x55,0x8b,0x6e,0x6b,0x19,0xa0,0xf8,0x77,0xd5,0xa3
 							};
 
-CJS_GlobalData::CJS_GlobalData(CPDFDoc_Environment* pApp)
+CJS_GlobalData::CJS_GlobalData(CPDFDoc_Environment* pApp) : m_pApp(pApp)
 {
 // 	IBaseAnnot* pBaseAnnot = IBaseAnnot::GetBaseAnnot(m_pApp);
 // 	ASSERT(pBaseAnnot != NULL);

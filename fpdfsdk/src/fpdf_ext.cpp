@@ -6,6 +6,7 @@
 
 #include "../include/fsdk_define.h"
 #include "../include/fpdf_ext.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
 
 #define  FPDFSDK_UNSUPPORT_CALL 100
 
@@ -220,7 +221,7 @@ void CheckUnSupportError(CPDF_Document * pDoc, FX_DWORD err_code)
 DLLEXPORT int FPDFDoc_GetPageMode(FPDF_DOCUMENT document)
 {
 	if (!document) return PAGEMODE_UNKNOWN;
-	CPDF_Dictionary *pRoot = ((CPDF_Document*)document)->GetRoot();
+	CPDF_Dictionary *pRoot = (((CPDFXFA_Document*)document)->GetPDFDoc())->GetRoot();
 	if (!pRoot)
 		return PAGEMODE_UNKNOWN;
 	CPDF_Object* pName = pRoot->GetElement("PageMode");

@@ -45,6 +45,7 @@ private:
  	FX_BOOL									ExecuteActionTree(CPDF_AAction::AActionType eAAT, CPDF_Action & action, FX_BOOL& bExit);
  	FX_BOOL									ExecuteAction(CPDF_AAction::AActionType eAAT,CPDF_Action & action,FX_BOOL& bExit);
 
+	CFFL_FormFiller *						m_pFormFiller;
 	FX_BOOL									m_bDoActioning;
 	FX_INT32								m_nNotifyFlag;
 };

@@ -142,12 +142,66 @@ public:
     virtual void*		Start();
     virtual void		Finish(void* pContext);
     virtual void		Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size);
-    virtual int			ReadHeader(void* pContext, int* width, int* height, int* nComps);
+    virtual int			ReadHeader(void* pContext, int* width, int* height, int* nComps, CFX_DIBAttribute* pAttribute = NULL);
     virtual FX_BOOL		StartScanline(void* pContext, int down_scale);
     virtual FX_BOOL		ReadScanline(void* pContext, FX_LPBYTE dest_buf);
     virtual FX_DWORD	GetAvailInput(void* pContext, FX_LPBYTE* avail_buf_ptr);
 protected:
     IFX_JpegProvider* m_pExtProvider;
+};
+#define PNG_ERROR_SIZE 256
+class CCodec_PngModule : public ICodec_PngModule
+{
+public:
+    CCodec_PngModule()
+    {
+        FXSYS_memset8(m_szLastError, '\0', PNG_ERROR_SIZE);
+    }
+
+    virtual void*		Start(void* pModule);
+    virtual void		Finish(void* pContext);
+    virtual FX_BOOL		Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_DIBAttribute* pAttribute);
+protected:
+    FX_CHAR				m_szLastError[PNG_ERROR_SIZE];
+};
+class CCodec_GifModule : public ICodec_GifModule
+{
+public:
+    CCodec_GifModule()
+    {
+        FXSYS_memset8(m_szLastError, '\0', 256);
+    }
+    virtual void*		Start(void* pModule);
+    virtual void		Finish(void* pContext);
+    virtual FX_DWORD	GetAvailInput(void* pContext, FX_LPBYTE* avail_buf_ptr);
+    virtual void		Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size);
+
+    virtual FX_INT32	ReadHeader(void* pContext, int* width, int* height,
+                                   int* pal_num, void** pal_pp, int* bg_index, CFX_DIBAttribute* pAttribute);
+
+    virtual FX_INT32	LoadFrameInfo(void* pContext, int* frame_num);
+
+    virtual FX_INT32	LoadFrame(void* pContext, int frame_num, CFX_DIBAttribute* pAttribute);
+
+protected:
+    FX_CHAR				m_szLastError[256];
+};
+class CCodec_BmpModule : public ICodec_BmpModule
+{
+public:
+    CCodec_BmpModule()
+    {
+        FXSYS_memset8(m_szLastError, '\0', 256);
+    }
+    virtual void*		Start(void* pModule);
+    virtual void		Finish(void* pContext);
+    virtual FX_DWORD	GetAvailInput(void* pContext, FX_LPBYTE* avail_buf_ptr);
+    virtual void		Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size);
+    virtual FX_INT32	ReadHeader(void* pContext, FX_INT32* width, FX_INT32* height, FX_BOOL* tb_flag, FX_INT32* components, FX_INT32* pal_num, FX_DWORD** pal_pp, CFX_DIBAttribute* pAttribute);
+    virtual FX_INT32	LoadImage(void* pContext);
+
+protected:
+    FX_CHAR				m_szLastError[256];
 };
 class CCodec_IccModule : public ICodec_IccModule
 {
@@ -195,6 +249,15 @@ public:
                              FX_DWORD& codestream_nComps, FX_DWORD& output_nComps);
     FX_BOOL		Decode(void* ctx, FX_LPBYTE dest_data, int pitch, FX_BOOL bTranslateColor, FX_LPBYTE offsets);
     void		DestroyDecoder(void* ctx);
+};
+class CCodec_TiffModule : public ICodec_TiffModule
+{
+public:
+    virtual FX_LPVOID 	CreateDecoder(IFX_FileRead* file_ptr);
+    virtual void		GetFrames(FX_LPVOID ctx, FX_INT32& frames);
+    virtual FX_BOOL		LoadFrameInfo(FX_LPVOID ctx, FX_INT32 frame, FX_DWORD& width, FX_DWORD& height, FX_DWORD& comps, FX_DWORD& bpc, CFX_DIBAttribute* pAttribute = NULL);
+    virtual FX_BOOL		Decode(FX_LPVOID ctx, class CFX_DIBitmap* pDIBitmap);
+    virtual void		DestroyDecoder(FX_LPVOID ctx);
 };
 #include "../jbig2/JBig2_Context.h"
 class CPDF_Jbig2Interface : public CFX_Object, public CJBig2_Module
@@ -269,4 +332,28 @@ public:
     void				DestroyJbig2Context(void* pJbig2Context);
     CPDF_Jbig2Interface	m_Module;
 private:
+};
+class CFX_DIBAttributeExif : public IFX_DIBAttributeExif
+{
+public:
+    CFX_DIBAttributeExif();
+    ~CFX_DIBAttributeExif();
+    virtual FX_BOOL		GetInfo(FX_WORD tag, FX_LPVOID val);
+
+    FX_BOOL ParseExif(CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE>* pHead, FX_LPBYTE data, FX_DWORD len, CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE>* pVal);
+
+    typedef FX_WORD (*_Read2Bytes)(FX_LPBYTE data);
+    typedef FX_DWORD (*_Read4Bytes)(FX_LPBYTE data);
+    FX_LPBYTE ParseExifIFH(FX_LPBYTE data, FX_DWORD len, _Read2Bytes* pReadWord, _Read4Bytes* pReadDword);
+    FX_BOOL ParseExifIFD(CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE>* pMap, FX_LPBYTE data, FX_DWORD len);
+
+    FX_LPBYTE			m_pExifData;
+
+    FX_DWORD			m_dwExifDataLen;
+
+    void				clear();
+    _Read2Bytes m_readWord;
+    _Read4Bytes m_readDword;
+    CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE> m_TagHead;
+    CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE> m_TagVal;
 };

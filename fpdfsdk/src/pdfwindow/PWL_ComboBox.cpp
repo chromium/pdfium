@@ -502,6 +502,10 @@ void CPWL_ComboBox::SetPopup(FX_BOOL bPopup)
 	{
 		if (m_pFillerNotify)
 		{
+			FX_BOOL bExit = FALSE;
+			m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), bExit, 0);
+			if (bExit) return;
+
 			FX_INT32 nWhere = 0;
 			FX_FLOAT fPopupRet = 0.0f;
 			FX_FLOAT fPopupMin = 0.0f;
@@ -529,6 +533,10 @@ void CPWL_ComboBox::SetPopup(FX_BOOL bPopup)
 				
 				m_nPopupWhere = nWhere;
 				Move(rcWindow, TRUE, TRUE);
+
+				bExit = FALSE;
+				m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), bExit, 0);
+				if (bExit) return;
 			}
 		}
 	}
@@ -552,6 +560,15 @@ FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
 		if (m_pList->GetCurSel() > 0)
 		{
 			FX_BOOL bExit = FALSE;
+
+			if (m_pFillerNotify)
+			{
+				m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), bExit, nFlag);
+				if (bExit) return FALSE;
+				bExit = FALSE;
+				m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), bExit, nFlag);
+				if (bExit) return FALSE;
+			}
 			if (m_pList->OnKeyDownWithExit(nChar,bExit,nFlag))
 			{
 				if (bExit) return FALSE;
@@ -563,6 +580,15 @@ FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
 		if (m_pList->GetCurSel() < m_pList->GetCount() - 1)
 		{
 			FX_BOOL bExit = FALSE;
+
+			if (m_pFillerNotify)
+			{
+				m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), bExit, nFlag);
+				if (bExit) return FALSE;
+				bExit = FALSE;
+				m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), bExit, nFlag);
+				if (bExit) return FALSE;
+			}
 			if (m_pList->OnKeyDownWithExit(nChar,bExit,nFlag))
 			{
 				if (bExit) return FALSE;
@@ -592,6 +618,16 @@ FX_BOOL CPWL_ComboBox::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 	}
 	else
 	{
+		if (m_pFillerNotify)
+		{
+			bExit = FALSE;
+			m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), bExit, nFlag);
+			if (bExit) return FALSE;
+
+			bExit = FALSE;
+			m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), bExit, nFlag);
+			if (bExit) return FALSE;
+		}
 		if (m_pList->OnCharWithExit(nChar,bExit,nFlag))
 		{
 			return bExit;

@@ -1156,6 +1156,9 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
         pSubstFont->m_SubstFlags |= FXFONT_SUBST_EXACT;
     }
     if (hFont == NULL) {
+        if (flags & FXFONT_EXACTMATCH) {
+            return NULL;
+        }
         if (bCJK) {
             if (italic_angle != 0) {
                 bItalic = TRUE;
@@ -1280,6 +1283,68 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
             italic_angle = 0;
         }
         pSubstFont->m_ItalicAngle = italic_angle;
+    }
+    m_pFontInfo->DeleteFont(hFont);
+    return face;
+}
+FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(FX_DWORD dwUnicode, FX_DWORD flags, int weight, int italic_angle)
+{
+    if (m_pFontInfo == NULL) {
+        return NULL;
+    }
+    FX_BOOL bItalic = (flags & FXFONT_ITALIC) != 0;
+    int PitchFamily = 0;
+    if (flags & FXFONT_SERIF) {
+        PitchFamily |= FXFONT_FF_ROMAN;
+    }
+    if (flags & FXFONT_SCRIPT) {
+        PitchFamily |= FXFONT_FF_SCRIPT;
+    }
+    if (flags & FXFONT_FIXED_PITCH) {
+        PitchFamily |= FXFONT_FF_FIXEDPITCH;
+    }
+    void* hFont = m_pFontInfo->MapFontByUnicode(dwUnicode, weight, bItalic, PitchFamily);
+    if (hFont == NULL) {
+        return NULL;
+    }
+    FX_DWORD ttc_size = m_pFontInfo->GetFontData(hFont, 0x74746366, NULL, 0);
+    FX_DWORD font_size = m_pFontInfo->GetFontData(hFont, 0, NULL, 0);
+    if(font_size == 0 && ttc_size == 0) {
+        m_pFontInfo->DeleteFont(hFont);
+        return NULL;
+    }
+    FXFT_Face face = NULL;
+    if (ttc_size) {
+        FX_BYTE temp[1024];
+        m_pFontInfo->GetFontData(hFont, 0x74746366, temp, 1024);
+        FX_DWORD checksum = 0;
+        for (int i = 0; i < 256; i ++) {
+            checksum += ((FX_DWORD*)temp)[i];
+        }
+        FX_LPBYTE pFontData;
+        face = m_pFontMgr->GetCachedTTCFace(ttc_size, checksum, ttc_size - font_size, pFontData);
+        if (face == NULL) {
+            pFontData = FX_Alloc(FX_BYTE, ttc_size);
+            if (pFontData) {
+                m_pFontInfo->GetFontData(hFont, 0x74746366, pFontData, ttc_size);
+                face = m_pFontMgr->AddCachedTTCFace(ttc_size, checksum, pFontData, ttc_size,
+                                                    ttc_size - font_size);
+            }
+        }
+    } else {
+        CFX_ByteString SubstName;
+        m_pFontInfo->GetFaceName(hFont, SubstName);
+        FX_LPBYTE pFontData;
+        face = m_pFontMgr->GetCachedFace(SubstName, weight, bItalic, pFontData);
+        if (face == NULL) {
+            pFontData = FX_Alloc(FX_BYTE, font_size);
+            if (!pFontData) {
+                m_pFontInfo->DeleteFont(hFont);
+                return NULL;
+            }
+            m_pFontInfo->GetFontData(hFont, 0, pFontData, font_size);
+            face = m_pFontMgr->AddCachedFace(SubstName, weight, bItalic, pFontData, font_size, m_pFontInfo->GetFaceIndex(hFont));
+        }
     }
     m_pFontInfo->DeleteFont(hFont);
     return face;
@@ -1480,6 +1545,10 @@ void CFX_FolderFontInfo::ReportFace(CFX_ByteString& path, FXSYS_FILE* pFile, FX_
     m_FontList.SetAt(facename, pInfo);
 }
 void* CFX_FolderFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR family, FX_BOOL& bExact)
+{
+    return NULL;
+}
+void* CFX_FolderFontInfo::MapFontByUnicode(FX_DWORD dwUnicode, int weight, FX_BOOL bItalic, int pitch_family)
 {
     return NULL;
 }

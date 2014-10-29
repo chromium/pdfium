@@ -73,6 +73,68 @@ extern "C" {
 #define	JPEG_MARKER_AUTHORTIME	(JPEG_APP0 + 3)
 #define	JPEG_MARKER_MAXSIZE	0xFFFF
 #define	JPEG_OVERHEAD_LEN	14
+static FX_BOOL _JpegIsIccMarker(jpeg_saved_marker_ptr marker)
+{
+    if (marker->marker == JPEG_MARKER_ICC &&
+            marker->data_length >= JPEG_OVERHEAD_LEN &&
+            (FXSYS_memcmp32(marker->data, "\x49\x43\x43\x5f\x50\x52\x4f\x46\x49\x4c\x45\x00", 12) == 0)) {
+        return TRUE;
+    }
+    return FALSE;
+}
+static	FX_BOOL _JpegLoadIccProfile(j_decompress_ptr cinfo, FX_LPBYTE* icc_buf_ptr, FX_DWORD* icc_length)
+{
+    if(icc_buf_ptr == NULL || icc_length == NULL) {
+        return FALSE;
+    }
+    *icc_buf_ptr = NULL;
+    *icc_length = 0;
+    FX_LPBYTE icc_data_ptr = NULL;
+    FX_DWORD icc_data_len = 0;
+    FX_BYTE count_icc_marker = 0;
+    FX_BYTE num_icc_marker = 0;
+    jpeg_saved_marker_ptr marker_list[256] = {NULL};
+    for (jpeg_saved_marker_ptr cur_marker = cinfo->marker_list;
+            cur_marker != NULL;
+            cur_marker = cur_marker->next) {
+        if(_JpegIsIccMarker(cur_marker)) {
+            if(count_icc_marker == 0) {
+                num_icc_marker = cur_marker->data[13];
+            } else if(num_icc_marker != cur_marker->data[13]) {
+                return FALSE;
+            }
+            int sn = cur_marker->data[12] - 1;
+            if(sn < 0 || sn >= num_icc_marker) {
+                return FALSE;
+            }
+            if(marker_list[sn] == NULL) {
+                marker_list[sn] = cur_marker;
+            } else {
+                return FALSE;
+            }
+            count_icc_marker ++;
+            icc_data_len +=	(cur_marker->data_length - JPEG_OVERHEAD_LEN);
+        }
+    }
+    if(count_icc_marker != num_icc_marker) {
+        return FALSE;
+    }
+    if(num_icc_marker == 0) {
+        return TRUE;
+    }
+    icc_data_ptr = FX_Alloc(FX_BYTE, icc_data_len);
+    if(icc_buf_ptr == NULL)	{
+        return FALSE;
+    }
+    *icc_buf_ptr = icc_data_ptr;
+    *icc_length = icc_data_len;
+    for (int idx = 0; idx < num_icc_marker; idx++) {
+        icc_data_len = marker_list[idx]->data_length - JPEG_OVERHEAD_LEN;
+        FXSYS_memcpy32(icc_data_ptr, marker_list[idx]->data + JPEG_OVERHEAD_LEN, icc_data_len);
+        icc_data_ptr += icc_data_len;
+    }
+    return TRUE;
+}
 static	FX_BOOL _JpegEmbedIccProfile(j_compress_ptr cinfo, FX_LPCBYTE icc_buf_ptr, FX_DWORD icc_length)
 {
     if(icc_buf_ptr == NULL || icc_length == 0) {
@@ -206,6 +268,17 @@ static void _JpegEncode(const CFX_DIBSource* pSource, FX_LPBYTE& dest_buf, FX_ST
         FX_Free(line_buf);
     }
     dest_size = dest_buf_length - (FX_STRSIZE)dest.free_in_buffer;
+}
+static void _JpegLoadAttribute(struct jpeg_decompress_struct* pInfo, CFX_DIBAttribute* pAttribute)
+{
+    if (pInfo == NULL || pAttribute == NULL) {
+        return;
+    }
+    if (pAttribute) {
+        pAttribute->m_nXDPI = pInfo->X_density;
+        pAttribute->m_nYDPI = pInfo->Y_density;
+        pAttribute->m_wDPIUnit = pInfo->density_unit;
+    }
 }
 static FX_BOOL _JpegLoadInfo(FX_LPCBYTE src_buf, FX_DWORD src_size, int& width, int& height,
                              int& num_components, int& bits_per_components, FX_BOOL& color_transform,
@@ -613,10 +686,10 @@ void CCodec_JpegModule::Input(void* pContext, const unsigned char* src_buf, FX_D
     p->m_SrcMgr.next_input_byte = src_buf;
     p->m_SrcMgr.bytes_in_buffer = src_size;
 }
-int CCodec_JpegModule::ReadHeader(void* pContext, int* width, int* height, int* nComps)
+int CCodec_JpegModule::ReadHeader(void* pContext, int* width, int* height, int* nComps, CFX_DIBAttribute* pAttribute)
 {
     if (m_pExtProvider) {
-        return m_pExtProvider->ReadHeader(pContext, width, height, nComps);
+        return m_pExtProvider->ReadHeader(pContext, width, height, nComps, pAttribute);
     }
     FXJPEG_Context* p = (FXJPEG_Context*)pContext;
     if (setjmp(p->m_JumpMark) == -1) {
@@ -632,6 +705,7 @@ int CCodec_JpegModule::ReadHeader(void* pContext, int* width, int* height, int* 
     *width = p->m_Info.image_width;
     *height = p->m_Info.image_height;
     *nComps = p->m_Info.num_components;
+    _JpegLoadAttribute(&p->m_Info, pAttribute);
     return 0;
 }
 FX_BOOL CCodec_JpegModule::StartScanline(void* pContext, int down_scale)

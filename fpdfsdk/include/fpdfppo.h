@@ -23,6 +23,9 @@ extern "C" {
 //			index		-	The page index wanted to insert from.	
 // Return value:
 //			TRUE for succeed, FALSE for Failed.	
+// Notes:
+//			The method not support this feature for the document consists of dynamic XFA fields.
+//
 DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,FPDF_DOCUMENT src_doc, FPDF_BYTESTRING pagerange, int index);
 
 

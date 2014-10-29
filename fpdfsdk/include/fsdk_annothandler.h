@@ -7,6 +7,7 @@
 #ifndef _FSDK_ANNOTHANDLER_H_
 #define _FSDK_ANNOTHANDLER_H_
 
+#define FSDK_XFAWIDGET_TYPENAME "XFAWidget"
 
 class CPDFDoc_Environment;
 class CFFL_IFormFiller;
@@ -25,6 +26,8 @@ public:
 	
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) = 0;
+
+	virtual CPDFSDK_Annot*		NewAnnot(XFA_HWIDGET hWidget, CPDFSDK_PageView* pPage) = 0;
 
 	virtual void				ReleaseAnnot(CPDFSDK_Annot* pAnnot) = 0;
 
@@ -78,6 +81,7 @@ public:
 
 	virtual FX_BOOL				OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) = 0;
 	virtual FX_BOOL				OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) = 0;
+	virtual FX_BOOL				OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot, CPDFSDK_Annot* pNewAnnot) = 0;
 
 };
 
@@ -96,6 +100,8 @@ public:
 	virtual FX_BOOL				CanAnswer(CPDFSDK_Annot* pAnnot);
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage);
+
+	virtual CPDFSDK_Annot*		NewAnnot(XFA_HWIDGET hWidget, CPDFSDK_PageView* pPage);
 
 	virtual void				ReleaseAnnot(CPDFSDK_Annot* pAnnot)  ;
 
@@ -148,6 +154,7 @@ public:
 
 	virtual FX_BOOL				OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag);
 	virtual FX_BOOL				OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag);
+	virtual FX_BOOL				OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot, CPDFSDK_Annot* pNewAnnot){ return TRUE; }
 
 	void						SetFormFiller(CFFL_IFormFiller* pFiller){m_pFormFiller = pFiller;}
 	CFFL_IFormFiller*			GetFormFiller() {return m_pFormFiller;}
@@ -155,6 +162,86 @@ private:
 
 	CPDFDoc_Environment*		m_pApp;
 	CFFL_IFormFiller*			m_pFormFiller;
+};
+
+class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler
+{
+public:
+	CPDFSDK_XFAAnnotHandler(CPDFDoc_Environment* pApp);
+	~CPDFSDK_XFAAnnotHandler(){}
+
+public:
+	virtual CFX_ByteString		GetType() { return FSDK_XFAWIDGET_TYPENAME; }
+
+	virtual CFX_ByteString		GetName() { return "XFAWidgetHandler"; }
+
+	virtual FX_BOOL				CanAnswer(CPDFSDK_Annot* pAnnot);
+
+
+	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) { return NULL; }
+
+	virtual CPDFSDK_Annot*		NewAnnot(XFA_HWIDGET pAnnot, CPDFSDK_PageView* pPage);
+
+	virtual void				ReleaseAnnot(CPDFSDK_Annot* pAnnot);
+
+	virtual void				DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
+
+
+	virtual CPDF_Rect				GetViewBBox(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot);
+
+	virtual FX_BOOL				HitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point);
+
+
+	virtual void				OnDraw(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, 
+		CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
+		FX_DWORD dwFlags);
+
+	virtual void				OnDrawSleep(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, 
+		CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
+		const CPDF_Rect& rcWindow, FX_DWORD dwFlags) {}
+
+
+
+
+	virtual void				OnCreate(CPDFSDK_Annot* pAnnot) {}
+
+	virtual void				OnLoad(CPDFSDK_Annot* pAnnot) {}
+
+	virtual void				OnDelete(CPDFSDK_Annot* pAnnot) {}
+
+	virtual void				OnRelease(CPDFSDK_Annot* pAnnot) {}
+
+
+	virtual void				OnMouseEnter(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlag);
+	virtual void				OnMouseExit(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlag);
+
+
+	virtual FX_BOOL				OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point);
+	virtual FX_BOOL				OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) ;
+	virtual FX_BOOL				OnLButtonDblClk(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) ;
+	virtual FX_BOOL				OnMouseMove(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point);
+	virtual FX_BOOL				OnMouseWheel(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, short zDelta, const CPDF_Point& point) ;
+	virtual FX_BOOL				OnRButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point);
+	virtual FX_BOOL				OnRButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) ;
+	virtual FX_BOOL				OnRButtonDblClk(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) ;
+	//by wjm.
+	virtual FX_BOOL				OnChar(CPDFSDK_Annot* pAnnot, FX_DWORD nChar, FX_DWORD nFlags);
+	virtual FX_BOOL				OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
+	virtual FX_BOOL				OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
+
+	virtual	void				OnDeSelected(CPDFSDK_Annot* pAnnot) {}
+	virtual	void				OnSelected(CPDFSDK_Annot* pAnnot) {}
+
+	virtual FX_BOOL				OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag);
+	virtual FX_BOOL				OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) ;
+	virtual FX_BOOL				OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot, CPDFSDK_Annot* pNewAnnot);
+
+private:
+	IXFA_WidgetHandler*			GetXFAWidgetHandler(CPDFSDK_Annot* pAnnot);
+	FX_DWORD					GetFWLFlags(FX_DWORD dwFlag);
+
+private:
+	CPDFDoc_Environment*		m_pApp;
 };
 
 #define CBA_AnnotHandlerArray CFX_ArrayTemplate<IPDFSDK_AnnotHandler*>
@@ -170,6 +257,7 @@ public:
 	void						UnRegisterAnnotHandler(IPDFSDK_AnnotHandler* pAnnotHandler);
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot * pAnnot, CPDFSDK_PageView *pPageView);
+	virtual CPDFSDK_Annot*		NewAnnot(XFA_HWIDGET pAnnot, CPDFSDK_PageView* pPageView);
 	virtual void				ReleaseAnnot(CPDFSDK_Annot * pAnnot);
 	
 	virtual void				Annot_OnCreate(CPDFSDK_Annot* pAnnot);
@@ -198,6 +286,7 @@ public:
 
 	virtual FX_BOOL				Annot_OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag);
 	virtual FX_BOOL				Annot_OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag);
+	virtual	FX_BOOL				Annot_OnChangeFocus(CPDFSDK_Annot* pSetAnnot,CPDFSDK_Annot* pKillAnnot);
 
 	virtual CPDF_Rect			Annot_OnGetViewBBox(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot);
 	virtual FX_BOOL				Annot_OnHitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point);

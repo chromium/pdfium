@@ -116,6 +116,8 @@ DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FP
 // Comments:
 //			The point coordinates are specified in page coordinate system. You can convert coordinates 
 //			from screen system to page system using FPDF_DeviceToPage functions.
+// Notes:
+//			The method can not support this feature for the document consists of dynamic XFA fields.
 //
 DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page, double x, double y);
 
@@ -148,6 +150,8 @@ DLLEXPORT FPDF_ACTION STDCALL FPDFLink_GetAction(FPDF_LINK link);
 //			linkAnnot[out]		-	Receive the link handle.
 // Return value:
 //			TRUE if succceed, else False;
+// Notes:
+//			The method can not support this feature for the document consists of dynamic XFA fields.
 //
 DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page, int* startPos, FPDF_LINK* linkAnnot);
 

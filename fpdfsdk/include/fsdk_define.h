@@ -59,7 +59,14 @@
 		#include "../../core/include/fpdfdoc/fpdf_vt.h" 
 
 		#include "../../core/include/fxcrt/fx_xml.h" 
-	//	#include "../../core/include/fdrm/fx_crypt.h"
+		#include "../../xfa/include/fxbarcode/BC_BarCode.h"
+		#include "../../xfa/include/fxjse/fxjse.h"
+		#include "../../xfa/include/fxgraphics/fx_graphics.h"
+		#include "../../xfa/include/fxfa/fxfa.h"
+
+		#include "../../xfa/include/fwl/core/fwl_error.h"
+		#include "../../xfa/include/fwl/core/fwl_timer.h"
+		#include "../../xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
 		#ifdef _LICENSED_BUILD_
 			#include "../../cryptopp/Cryptlib.h"
 		#endif
@@ -107,14 +114,41 @@ public:
 	CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
 	~CPDF_CustomAccess() {}
 
+	virtual CFX_ByteString GetFullPath() { return ""; }
 	virtual FX_FILESIZE	GetSize() FX_OVERRIDE { return m_FileAccess.m_FileLen; }
 
+	virtual FX_BOOL		GetByte(FX_DWORD pos, FX_BYTE& ch);
+	virtual FX_BOOL		GetBlock(FX_DWORD pos, FX_LPBYTE pBuf, FX_DWORD size);
 	virtual void		Release() FX_OVERRIDE { delete this; }
 
 	virtual FX_BOOL		ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) FX_OVERRIDE;
 
-private:
 	FPDF_FILEACCESS		m_FileAccess;
+	FX_BYTE				m_Buffer[512];
+	FX_DWORD			m_BufferOffset;
+};
+
+class CFPDF_FileStream : public IFX_FileStream, public CFX_Object
+{
+public:
+	CFPDF_FileStream(FPDF_FILEHANDLER* pFS);
+	virtual ~CFPDF_FileStream() {}
+
+	virtual IFX_FileStream*		Retain();
+	virtual void				Release();
+
+	virtual FX_FILESIZE			GetSize();
+	virtual FX_BOOL				IsEOF();
+	virtual FX_FILESIZE			GetPosition() {return m_nCurPos;}
+	virtual void				SetPosition(FX_FILESIZE pos) {m_nCurPos = pos; }
+	virtual FX_BOOL				ReadBlock(void* buffer, FX_FILESIZE offset, size_t size);
+	virtual size_t				ReadBlock(void* buffer, size_t size);
+	virtual	FX_BOOL				WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size);
+	virtual FX_BOOL				Flush();
+
+protected:
+	FPDF_FILEHANDLER*	m_pFS;
+	FX_FILESIZE		m_nCurPos;
 };
 
 void		FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
