@@ -1451,7 +1451,7 @@
     p      = table + 8;             /* skip language and start index */
     count  = TT_NEXT_USHORT( p );
 
-    if ( table + length > valid->limit || length < 10 + count/* * 2 */) // Zhangxuefeng 2013.12.23. remove count multiply 2.
+    if ( table + length > valid->limit || length < 10 + count * 2 )
       FT_INVALID_TOO_SHORT;
 
     /* check glyph indices */
