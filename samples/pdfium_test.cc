@@ -356,8 +356,8 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
   }
 
   FORM_DoDocumentAAction(form, FPDFDOC_AACTION_WC);
-  FPDFDOC_ExitFormFillEnviroument(form);
   FPDF_CloseDocument(doc);
+  FPDFDOC_ExitFormFillEnviroument(form);
   FPDFAvail_Destroy(pdf_avail);
 
   printf("Loaded, parsed and rendered %zu pages.\n", rendered_pages);
