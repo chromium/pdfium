@@ -9,6 +9,8 @@
 
 class CJS_Array;
 class CJS_Date;
+class CJS_Document;
+class CJS_Object;
 
 class CJS_Value
 {
@@ -17,14 +19,15 @@ public:
 	CJS_Value(v8::Isolate* isolate, v8::Handle<v8::Value> pValue,FXJSVALUETYPE t);
 	CJS_Value(v8::Isolate* isolate, const int &iValue);
 	CJS_Value(v8::Isolate* isolate, const double &dValue);
-	CJS_Value(v8::Isolate* isolate, const float &fValue);	
+	CJS_Value(v8::Isolate* isolate, const float &fValue);
 	CJS_Value(v8::Isolate* isolate, const bool &bValue);
 	CJS_Value(v8::Isolate* isolate, JSFXObject);
-	CJS_Value(v8::Isolate* isolate, CJS_Object *);
+	CJS_Value(v8::Isolate* isolate, CJS_Object*);
+   	CJS_Value(v8::Isolate* isolate, CJS_Document*);
 	CJS_Value(v8::Isolate* isolate, FX_LPCSTR pStr);
 	CJS_Value(v8::Isolate* isolate, FX_LPCWSTR pWstr);
 	CJS_Value(v8::Isolate* isolate, CJS_Array& array);
-	
+
 	~CJS_Value();
 
 	void SetNull();
@@ -37,28 +40,25 @@ public:
 	operator bool() const;
 	operator double() const;
 	operator float() const;
-	operator CJS_Object *() const;
-	//operator JSFXObject *() const;
+	operator CJS_Object*() const;
 	operator v8::Handle<v8::Object>() const;
 	operator v8::Handle<v8::Array>() const;
 	operator CFX_WideString() const;
-	//operator FX_WCHAR *() const;
 	operator CFX_ByteString() const;
 	v8::Handle<v8::Value> ToJSValue();
 
 	void operator = (int iValue);
-	void operator = (bool bValue);	
-	void operator = (double);	
-	void operator = (float);	
-	void operator = (CJS_Object *);	
+	void operator = (bool bValue);
+	void operator = (double);
+	void operator = (float);
+	void operator = (CJS_Object*);
 	void operator = (v8::Handle<v8::Object>);
-//	void operator = (JSObject *);
 	void operator = (CJS_Array &);
 	void operator = (CJS_Date &);
-	void operator = (FX_LPCWSTR pWstr);	
-	void operator = (FX_LPCSTR pStr);	
+	void operator = (FX_LPCWSTR pWstr);
+	void operator = (FX_LPCSTR pStr);
 	void operator = (CJS_Value value);
-	
+
 	FX_BOOL IsArrayObject() const;
 	FX_BOOL	IsDateObject() const;
 	FXJSVALUETYPE GetType() const;
@@ -67,7 +67,7 @@ public:
 	FX_BOOL ConvertToDate(CJS_Date &) const;
 
 	v8::Isolate* GetIsolate() {return m_isolate;}
-protected:	
+protected:
 	v8::Handle<v8::Value> m_pValue;
 	FXJSVALUETYPE m_eType;
 	v8::Isolate* m_isolate;

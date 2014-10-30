@@ -8,6 +8,7 @@
 #include "../../include/javascript/JS_Define.h"
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Value.h"
+#include "../../include/javascript/Document.h"
 
 /* ---------------------------- CJS_Value ---------------------------- */
 
@@ -44,9 +45,16 @@ CJS_Value::CJS_Value(v8::Isolate* isolate, JSFXObject  pJsObj):m_isolate(isolate
 	operator =(pJsObj);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Object * pJsObj):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Object* pJsObj):m_isolate(isolate) 
 {
 	operator =(pJsObj);
+}
+
+CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Document* pJsDoc):m_isolate(isolate) 
+{
+	m_eType = VT_object;
+	if (pJsDoc)
+		m_pValue = (JSFXObject)*pJsDoc;
 }
 
 CJS_Value::CJS_Value(v8::Isolate* isolate, FX_LPCWSTR pWstr):m_isolate(isolate) 
