@@ -39,6 +39,7 @@ protected:
     virtual FX_BOOL	CommitData();
     virtual FX_BOOL	UpdateFWLData();
     virtual FX_BOOL IsDataChanged();
+    void			ValidateNumberField(const CFX_WideString& wsText);
     IFWL_WidgetDelegate*	m_pOldDelegate;
 public:
     void	OnTextChanged(IFWL_Widget *pWidget, const CFX_WideString &wsChanged, const CFX_WideString &wsPrevText);

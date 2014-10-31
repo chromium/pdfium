@@ -179,7 +179,26 @@ FX_BOOL	CXFA_FFTextEdit::CommitData()
         m_pDataAcc->UpdateUIDisplay(this);
         return TRUE;
     }
+    ValidateNumberField(wsText);
     return FALSE;
+}
+void CXFA_FFTextEdit::ValidateNumberField(const CFX_WideString& wsText)
+{
+    CXFA_WidgetAcc* pAcc = this->GetDataAcc();
+    if (pAcc && pAcc->GetUIType() == XFA_ELEMENT_NumericEdit) {
+        IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
+        if (pAppProvider) {
+            CFX_WideString wsTitle;
+            pAppProvider->LoadString(XFA_IDS_AppName, wsTitle);
+            CFX_WideString wsMessage;
+            CFX_WideString wsError;
+            pAppProvider->LoadString(XFA_IDS_ValidateNumberError, wsError);
+            CFX_WideString wsSomField;
+            pAcc->GetNode()->GetSOMExpression(wsSomField);
+            wsMessage.Format(wsError, (FX_LPCWSTR)wsText, (FX_LPCWSTR)wsSomField);
+            pAppProvider->MsgBox(wsMessage, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
+        }
+    }
 }
 FX_BOOL CXFA_FFTextEdit::IsDataChanged()
 {

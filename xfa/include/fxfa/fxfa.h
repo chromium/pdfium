@@ -144,6 +144,7 @@ typedef struct _XFA_HWIDGET {
 #define XFA_IDS_ValidateNullError				96
 #define XFA_IDS_ValidateWarning					97
 #define XFA_IDS_ValidateError					98
+#define XFA_IDS_ValidateNumberError				99
 class IXFA_AppProvider
 {
 public:

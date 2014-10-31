@@ -2505,6 +2505,9 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate, const CFX_WideSt
             cc += 2;
         }
     }
+    if (cc < len) {
+        return FALSE;
+    }
     CFX_Unitime ut;
     ut.Set(year, month, day);
     datetime = datetime + ut;

@@ -3206,10 +3206,13 @@ FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue, XFA_VALUEPICTUR
         SyncValue(wsValue, TRUE);
         return TRUE;
     }
+    this->m_bPreNull = this->m_bIsNull;
+    this->m_bIsNull = FALSE;
     CFX_WideString wsNewText(wsValue);
     CFX_WideString wsPicture;
     GetPictureContent(wsPicture, eValueType);
-    FX_BOOL bNormalizeNum = TRUE;
+    FX_BOOL bValidate = TRUE;
+    FX_BOOL bSyncData = FALSE;
     CXFA_Node* pNode = GetUIChild();
     if (!pNode) {
         return TRUE;
@@ -3219,31 +3222,35 @@ FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue, XFA_VALUEPICTUR
         CXFA_LocaleMgr* pLocalMgr = m_pNode->GetDocument()->GetLocalMgr();
         IFX_Locale* pLocale = GetLocal();
         CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
-        if (!widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture)) {
-            return FALSE;
+        bValidate = widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture);
+        if (bValidate) {
+            widgetValue = CXFA_LocaleValue(widgetValue.GetType(), wsNewText, wsPicture, pLocale, pLocalMgr);
+            wsNewText = widgetValue.GetValue();
+            if (uiType == XFA_ELEMENT_NumericEdit) {
+                FX_INT32 iLeadDigits = 0;
+                FX_INT32 iFracDigits = 0;
+                GetLeadDigits(iLeadDigits);
+                GetFracDigits(iFracDigits);
+                wsNewText = XFA_NumericLimit(wsNewText, iLeadDigits, iFracDigits);
+            }
+            bSyncData = TRUE;
         }
-        widgetValue = CXFA_LocaleValue(widgetValue.GetType(), wsNewText, wsPicture, pLocale, pLocalMgr);
-        wsNewText = widgetValue.GetValue();
+    } else {
         if (uiType == XFA_ELEMENT_NumericEdit) {
-            FX_INT32 iLeadDigits = 0;
-            FX_INT32 iFracDigits = 0;
-            GetLeadDigits(iLeadDigits);
-            GetFracDigits(iFracDigits);
-            wsNewText = XFA_NumericLimit(wsNewText, iLeadDigits, iFracDigits);
-            bNormalizeNum = FALSE;
+            if (wsNewText != FX_WSTRC(L"0")) {
+                FX_INT32 iLeadDigits = 0;
+                FX_INT32 iFracDigits = 0;
+                GetLeadDigits(iLeadDigits);
+                GetFracDigits(iFracDigits);
+                wsNewText = XFA_NumericLimit(wsNewText, iLeadDigits, iFracDigits);
+            }
+            bSyncData = TRUE;
         }
     }
-    if (uiType == XFA_ELEMENT_NumericEdit && bNormalizeNum) {
-        if (wsNewText != FX_WSTRC(L"0")) {
-            FX_INT32 iLeadDigits = 0;
-            FX_INT32 iFracDigits = 0;
-            GetLeadDigits(iLeadDigits);
-            GetFracDigits(iFracDigits);
-            wsNewText = XFA_NumericLimit(wsNewText, iLeadDigits, iFracDigits);
-        }
+    if (uiType != XFA_ELEMENT_NumericEdit || bSyncData) {
+        SyncValue(wsNewText, TRUE);
     }
-    SyncValue(wsNewText, TRUE);
-    return TRUE;
+    return bValidate;
 }
 FX_BOOL CXFA_WidgetData::GetPictureContent(CFX_WideString &wsPicture, XFA_VALUEPICTURE ePicture)
 {
