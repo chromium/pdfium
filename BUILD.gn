@@ -11,6 +11,7 @@ config("pdfium_config") {
     "_FXFT_VERSION_=2501",
     "_FPDFSDK_LIB",
     "_NO_GDIPLUS_",  # workaround text rendering issues on Windows
+    "OPJ_STATIC",
   ]
 
   if (pdf_use_skia) {
@@ -657,7 +658,6 @@ static_library("fxge") {
     ]
     configs -= [
       "//build/config/win:lean_and_mean",
-      "//build/config/win:nominmax",
     ]
   }
 }
