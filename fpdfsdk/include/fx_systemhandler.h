@@ -13,6 +13,15 @@ typedef void					(*TimerCallback)(FX_INT32 idEvent);
 
 typedef struct _FX_SYSTEMTIME 
 {
+    _FX_SYSTEMTIME()
+      : wYear(0),
+        wMonth(0),
+        wDayOfWeek(0),
+        wDay(0),
+        wHour(0),
+        wMinute(0),
+        wSecond(0),
+        wMilliseconds(0) {}
     FX_WORD wYear;
     FX_WORD wMonth;
     FX_WORD wDayOfWeek;
