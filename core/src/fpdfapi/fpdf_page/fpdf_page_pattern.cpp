@@ -266,7 +266,7 @@ CFX_FloatRect _GetShadingBBox(CPDF_Stream* pStream, int type, const CFX_AffineMa
     int full_point_count = type == 7 ? 16 : (type == 6 ? 12 : 1);
     int full_color_count = (type == 6 || type == 7) ? 4 : 1;
     while (!stream.m_BitStream.IsEOF()) {
-        FX_DWORD flag;
+        FX_DWORD flag = 0;
         if (type != 5) {
             flag = stream.GetFlag();
         }
