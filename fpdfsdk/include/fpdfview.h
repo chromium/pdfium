@@ -12,6 +12,9 @@
 #include <windows.h>
 #endif
 
+//  TODO: remove the #define when XFA is officially in pdfium
+#define PDF_USE_XFA
+
 // Data types
 typedef void*	FPDF_MODULEMGR;
 

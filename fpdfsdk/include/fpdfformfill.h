@@ -294,7 +294,7 @@ typedef struct _FPDF_SYSTEMTIME
 typedef struct  _FPDF_FORMFILLINFO
 {
 	/**
-	 * Version number of the interface. Currently must be 1.
+	 * Version number of the interface. Currently must be 2 (with XFA module).
 	 **/
 	int	version;
 
@@ -559,7 +559,13 @@ typedef struct  _FPDF_FORMFILLINFO
 	*		See the Destinations description of <<PDF Reference, version 1.7>> in 8.2.1 for more details.  
 	**/
 	void	(*FFI_DoGoToAction)(struct _FPDF_FORMFILLINFO* pThis, int nPageIndex, int zoomMode, float* fPosArray, int sizeofArray);
-	/**
+
+  /**
+  *   pointer to IPDF_JSPLATFORM interface
+  **/
+  IPDF_JSPLATFORM*	m_pJsPlatform;
+
+  /**
 	* Method: FFI_DisplayCaret
 	*			This method will show the caret at specified position.
 	* Interface Version:
@@ -788,8 +794,6 @@ typedef struct  _FPDF_FORMFILLINFO
 	* 		TRUE indicates success, otherwise FALSE.
 	**/
 	FPDF_BOOL	(*FFI_PutRequestURL)(struct _FPDF_FORMFILLINFO* pThis, FPDF_WIDESTRING wsURL, FPDF_WIDESTRING wsData, FPDF_WIDESTRING wsEncode);
-		
-	IPDF_JSPLATFORM*	m_pJsPlatform;
 
 } FPDF_FORMFILLINFO;
 
