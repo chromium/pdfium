@@ -86,7 +86,7 @@ DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle, FPDF_
 
 DLLEXPORT FPDF_FORMHANDLE STDCALL FPDFDOC_InitFormFillEnviroument(FPDF_DOCUMENT document, FPDF_FORMFILLINFO* formInfo)
 {
-	if(!document || !formInfo || formInfo->version!=1)
+	if(!document || !formInfo || formInfo->version!=2)
 		return NULL;
 	CPDFXFA_Document * pDocument = (CPDFXFA_Document*) document;
  	CPDFDoc_Environment * pEnv = NULL;
