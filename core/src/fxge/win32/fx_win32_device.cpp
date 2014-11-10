@@ -570,8 +570,32 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1, int d
     }
     bmi.bmiColors[0] = 0xffffff;
     bmi.bmiColors[1] = 0;
+
+    HBRUSH hPattern = CreateSolidBrush(bitmap_color & 0xffffff);
+    HBRUSH hOld = (HBRUSH)SelectObject(m_hDC, hPattern);
+
+    
+    // In PDF, when image mask is 1, use device bitmap; when mask is 0, use brush bitmap.
+    // A complete list of the boolen operations is as follows:
+
+    /* P(bitmap_color)    S(ImageMask)    D(DeviceBitmap)    Result
+     *        0                 0                0              0
+     *        0                 0                1              0
+     *        0                 1                0              0
+     *        0                 1                1              1
+     *        1                 0                0              1
+     *        1                 0                1              1
+     *        1                 1                0              0
+     *        1                 1                1              1
+     */
+    // The boolen codes is B8. Based on http://msdn.microsoft.com/en-us/library/aa932106.aspx, the ROP3 code is 0xB8074A
+
     ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height,
-                    0, 0, width, height, pBitmap->GetBuffer(), (BITMAPINFO*)&bmi, DIB_RGB_COLORS, SRCAND);
+                    0, 0, width, height, pBitmap->GetBuffer(), (BITMAPINFO*)&bmi, DIB_RGB_COLORS, 0xB8074A);
+
+    SelectObject(m_hDC, hOld);
+    DeleteObject(hPattern);
+
     return TRUE;
 }
 BOOL CGdiDeviceDriver::GetClipBox(FX_RECT* pRect)
