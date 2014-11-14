@@ -1,0 +1,18 @@
+# Copyright 2014 PDFium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+group("samples") {
+  deps = [
+    ":pdfium_test",
+  ]
+}
+
+executable("pdfium_test") {
+  sources = [
+    "pdfium_test.cc",
+  ]
+  deps = [
+    "//third_party/pdfium",
+  ]
+}
