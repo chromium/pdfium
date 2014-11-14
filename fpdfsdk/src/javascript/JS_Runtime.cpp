@@ -349,7 +349,7 @@ void CJS_Runtime::GetObjectNames(CFX_WideStringArray& array)
 	array.Add(CJS_Zoomtype::m_pClassName);
 
 	array.Add(CJS_App::m_pClassName);
-	array.Add((FX_LPCWSTR)"this"); 
+	array.Add(L"this");
 	array.Add(CJS_Event::m_pClassName);	
 
 	array.Add(CJS_Global::m_pClassName);	
