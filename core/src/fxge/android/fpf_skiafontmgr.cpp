@@ -77,7 +77,7 @@ FX_DWORD FPF_SkiaGetSubstFont(FX_DWORD dwHash)
             return pItem->dwSubSt;
         }
     }
-    return NULL;
+    return 0;
 }
 static const FPF_SKIAFONTMAP g_SkiaSansFontMap[] = {
     {0x58c5083,		0xd5b8d10f},
