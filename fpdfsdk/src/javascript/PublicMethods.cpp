@@ -93,12 +93,12 @@ static const stru_TbConvert fcTable[] = {
 
 static FX_LPCWSTR months[] =
 {
-	(FX_LPCWSTR)L"Jan", (FX_LPCWSTR)L"Feb", (FX_LPCWSTR)L"Mar", (FX_LPCWSTR)L"Apr", (FX_LPCWSTR)L"May", (FX_LPCWSTR)L"Jun", (FX_LPCWSTR)L"Jul", (FX_LPCWSTR)L"Aug", (FX_LPCWSTR)L"Sep", (FX_LPCWSTR)L"Oct", (FX_LPCWSTR)L"Nov", (FX_LPCWSTR)L"Dec"
+	L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec"
 };
 
 static FX_LPCWSTR fullmonths[] = 
 { 
-	(FX_LPCWSTR)L"January", (FX_LPCWSTR)L"February", (FX_LPCWSTR)L"March", (FX_LPCWSTR)L"April", (FX_LPCWSTR)L"May", (FX_LPCWSTR)L"June", (FX_LPCWSTR)L"July", (FX_LPCWSTR)L"August", (FX_LPCWSTR)L"September", (FX_LPCWSTR)L"October", (FX_LPCWSTR)L"November", (FX_LPCWSTR)L"December" 
+	L"January", L"February", L"March", L"April", L"May", L"June", L"July", L"August", L"September", L"October", L"November", L"December" 
 };
 
 FX_BOOL CJS_PublicMethods::IsNumber(FX_LPCWSTR string)
@@ -193,19 +193,19 @@ FX_BOOL CJS_PublicMethods::isReservedMaskChar(wchar_t ch)
 
 double CJS_PublicMethods::AF_Simple(FX_LPCWSTR sFuction, double dValue1, double dValue2)
 {
-	if (FXSYS_wcsicmp(sFuction,(FX_LPCWSTR)L"AVG") == 0 || FXSYS_wcsicmp(sFuction,(FX_LPCWSTR)L"SUM") == 0)
+	if (FXSYS_wcsicmp(sFuction,L"AVG") == 0 || FXSYS_wcsicmp(sFuction,L"SUM") == 0)
 	{
 		return dValue1 + dValue2;
 	}
-	else if (FXSYS_wcsicmp(sFuction, (FX_LPCWSTR)L"PRD") == 0)
+	else if (FXSYS_wcsicmp(sFuction, L"PRD") == 0)
 	{
 		return dValue1 * dValue2;
 	}
-	else if (FXSYS_wcsicmp(sFuction,(FX_LPCWSTR)L"MIN") == 0)
+	else if (FXSYS_wcsicmp(sFuction,L"MIN") == 0)
 	{
 		return FX_MIN(dValue1, dValue2);
 	}
-	else if (FXSYS_wcsicmp(sFuction,(FX_LPCWSTR)L"MAX") == 0)
+	else if (FXSYS_wcsicmp(sFuction,L"MAX") == 0)
 	{
 		return FX_MAX(dValue1, dValue2);
 	}
@@ -590,7 +590,7 @@ double CJS_PublicMethods::ParseNormalDate(const CFX_WideString & value, FX_BOOL&
 	}
 
 	CFX_WideString swTemp;
-	swTemp.Format((FX_LPCWSTR)L"%d/%d/%d %d:%d:%d",nMonth,nDay,nYear,nHour,nMin,nSec);
+	swTemp.Format(L"%d/%d/%d %d:%d:%d",nMonth,nDay,nYear,nHour,nMin,nSec);
 	return JS_DateParse(swTemp);
 }
 
@@ -936,22 +936,22 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 							sPart += c;
 							break;
 						case 'm':
-							sPart.Format((FX_LPCWSTR)L"%d",nMonth);
+							sPart.Format(L"%d",nMonth);
 							break;
 						case 'd':
-							sPart.Format((FX_LPCWSTR)L"%d",nDay);
+							sPart.Format(L"%d",nDay);
 							break;
 						case 'H':
-							sPart.Format((FX_LPCWSTR)L"%d",nHour);
+							sPart.Format(L"%d",nHour);
 							break;
 						case 'h':
-							sPart.Format((FX_LPCWSTR)L"%d",nHour>12?nHour - 12:nHour);
+							sPart.Format(L"%d",nHour>12?nHour - 12:nHour);
 							break;
 						case 'M':
-							sPart.Format((FX_LPCWSTR)L"%d",nMin);
+							sPart.Format(L"%d",nMin);
 							break;
 						case 's':
-							sPart.Format((FX_LPCWSTR)L"%d",nSec);
+							sPart.Format(L"%d",nSec);
 							break;
 						case 't':
 							sPart += nHour>12?'p':'a';
@@ -964,28 +964,28 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 					switch (c)
 					{
 						case 'y':
-							sPart.Format((FX_LPCWSTR)L"%02d",nYear - (nYear / 100) * 100);
+							sPart.Format(L"%02d",nYear - (nYear / 100) * 100);
 							break;
 						case 'm':
-							sPart.Format((FX_LPCWSTR)L"%02d",nMonth);
+							sPart.Format(L"%02d",nMonth);
 							break;
 						case 'd':
-							sPart.Format((FX_LPCWSTR)L"%02d",nDay);
+							sPart.Format(L"%02d",nDay);
 							break;
 						case 'H':
-							sPart.Format((FX_LPCWSTR)L"%02d",nHour);
+							sPart.Format(L"%02d",nHour);
 							break;
 						case 'h':
-							sPart.Format((FX_LPCWSTR)L"%02d",nHour>12?nHour - 12:nHour);
+							sPart.Format(L"%02d",nHour>12?nHour - 12:nHour);
 							break;
 						case 'M':
-							sPart.Format((FX_LPCWSTR)L"%02d",nMin);
+							sPart.Format(L"%02d",nMin);
 							break;
 						case 's':
-							sPart.Format((FX_LPCWSTR)L"%02d",nSec);
+							sPart.Format(L"%02d",nSec);
 							break;
 						case 't':
-							sPart = nHour>12? (FX_LPCWSTR)L"pm": (FX_LPCWSTR)L"am";
+							sPart = nHour>12? L"pm": L"am";
 							break;
 					}
 					i+=2;
@@ -1012,7 +1012,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 					switch (c)
 					{
 						case 'y':
-							sPart.Format((FX_LPCWSTR)L"%04d",nYear);
+							sPart.Format(L"%04d",nYear);
 							i += 4;
 							break;
 						case 'm':
@@ -1286,7 +1286,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(OBJ_METHOD_PARAMS)
 			return TRUE;
 		
 		CFX_WideString swTemp = wstrValue;
-		swTemp.Replace((FX_LPCWSTR)L",", (FX_LPCWSTR)L".");
+		swTemp.Replace(L",", L".");
 		if (!IsNumber(swTemp)) //!(IsNumber(wstrChange) && 
 		{
 			pEvent->Rc() = FALSE;
@@ -1675,9 +1675,9 @@ FX_BOOL CJS_PublicMethods::AFDate_Format(OBJ_METHOD_PARAMS)
 	}
 
 	int iIndex = params[0];
-	FX_LPCWSTR cFormats[] =  {(FX_LPCWSTR)L"m/d", (FX_LPCWSTR)L"m/d/yy", (FX_LPCWSTR)L"mm/dd/yy", (FX_LPCWSTR)L"mm/yy", (FX_LPCWSTR)L"d-mmm", (FX_LPCWSTR)L"d-mmm-yy", (FX_LPCWSTR)L"dd-mmm-yy",
-		(FX_LPCWSTR)L"yy-mm-dd", (FX_LPCWSTR)L"mmm-yy", (FX_LPCWSTR)L"mmmm-yy", (FX_LPCWSTR)L"mmm d, yyyy", (FX_LPCWSTR)L"mmmm d, yyyy",
-		(FX_LPCWSTR)L"m/d/yy h:MM tt", (FX_LPCWSTR)L"m/d/yy HH:MM" };
+	FX_LPCWSTR cFormats[] =  {L"m/d", L"m/d/yy", L"mm/dd/yy", L"mm/yy", L"d-mmm", L"d-mmm-yy", L"dd-mmm-yy",
+		L"yy-mm-dd", L"mmm-yy", L"mmmm-yy", L"mmm d, yyyy", L"mmmm d, yyyy",
+		L"m/d/yy h:MM tt", L"m/d/yy HH:MM" };
 
 	ASSERT(iIndex < sizeof(cFormats)/sizeof(FX_LPCWSTR));
 
@@ -1706,9 +1706,9 @@ FX_BOOL CJS_PublicMethods::AFDate_Keystroke(OBJ_METHOD_PARAMS)
 	}
 
 	int iIndex = params[0];
-	FX_LPCWSTR cFormats[] =  {(FX_LPCWSTR)L"m/d", (FX_LPCWSTR)L"m/d/yy", (FX_LPCWSTR)L"mm/dd/yy", (FX_LPCWSTR)L"mm/yy", (FX_LPCWSTR)L"d-mmm", (FX_LPCWSTR)L"d-mmm-yy", (FX_LPCWSTR)L"dd-mmm-yy",
-		(FX_LPCWSTR)L"yy-mm-dd", (FX_LPCWSTR)L"mmm-yy", (FX_LPCWSTR)L"mmmm-yy", (FX_LPCWSTR)L"mmm d, yyyy", (FX_LPCWSTR)L"mmmm d, yyyy",
-		(FX_LPCWSTR)L"m/d/yy h:MM tt", (FX_LPCWSTR)L"m/d/yy HH:MM" };
+	FX_LPCWSTR cFormats[] =  {L"m/d", L"m/d/yy", L"mm/dd/yy", L"mm/yy", L"d-mmm", L"d-mmm-yy", L"dd-mmm-yy",
+		L"yy-mm-dd", L"mmm-yy", L"mmmm-yy", L"mmm d, yyyy", L"mmmm d, yyyy",
+		L"m/d/yy h:MM tt", L"m/d/yy HH:MM" };
 
 	ASSERT(iIndex<sizeof(cFormats)/sizeof(FX_LPCWSTR));
 
@@ -1736,7 +1736,7 @@ FX_BOOL CJS_PublicMethods::AFTime_Format(OBJ_METHOD_PARAMS)
 	}
 
 	int iIndex = params[0];
-	FX_LPCWSTR cFormats[] = {(FX_LPCWSTR)L"HH:MM", (FX_LPCWSTR)L"h:MM tt", (FX_LPCWSTR)L"HH:MM:ss", (FX_LPCWSTR)L"h:MM:ss tt"};
+	FX_LPCWSTR cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss", L"h:MM:ss tt"};
 
 	ASSERT(iIndex<sizeof(cFormats)/sizeof(FX_LPCWSTR));
 
@@ -1762,7 +1762,7 @@ FX_BOOL CJS_PublicMethods::AFTime_Keystroke(OBJ_METHOD_PARAMS)
 	}
 
 	int iIndex = params[0];
-	FX_LPCWSTR cFormats[] = {(FX_LPCWSTR)L"HH:MM", (FX_LPCWSTR)L"h:MM tt", (FX_LPCWSTR)L"HH:MM:ss", (FX_LPCWSTR)L"h:MM:ss tt"};
+	FX_LPCWSTR cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss", L"h:MM:ss tt"};
 
 	ASSERT(iIndex<sizeof(cFormats)/sizeof(FX_LPCWSTR));
 

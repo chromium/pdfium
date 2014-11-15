@@ -63,32 +63,32 @@ struct stru_TbConvert
 };
 
 const stru_TbConvert fcTable[] = {
-	{ (FX_LPCWSTR)L"mmmm", (FX_LPCWSTR)L"%B" },
-	{ (FX_LPCWSTR)L"mmm", (FX_LPCWSTR)L"%b" },
-	{ (FX_LPCWSTR)L"mm",  (FX_LPCWSTR)L"%m" },
+	{ L"mmmm", L"%B" },
+	{ L"mmm", L"%b" },
+	{ L"mm",  L"%m" },
 	//"m"
-	{ (FX_LPCWSTR)L"dddd", (FX_LPCWSTR)L"%A" },
-	{ (FX_LPCWSTR)L"ddd", (FX_LPCWSTR)L"%a" },
-	{ (FX_LPCWSTR)L"dd",  (FX_LPCWSTR)L"%d" },
+	{ L"dddd", L"%A" },
+	{ L"ddd", L"%a" },
+	{ L"dd",  L"%d" },
 	//"d",   "%w",
-	{ (FX_LPCWSTR)L"yyyy", (FX_LPCWSTR)L"%Y" },
-	{ (FX_LPCWSTR)L"yy",  (FX_LPCWSTR)L"%y" },
-	{ (FX_LPCWSTR)L"HH",  (FX_LPCWSTR)L"%H" },
+	{ L"yyyy", L"%Y" },
+	{ L"yy",  L"%y" },
+	{ L"HH",  L"%H" },
 	//"H"
-	{ (FX_LPCWSTR)L"hh",  (FX_LPCWSTR)L"%I" },
+	{ L"hh",  L"%I" },
 	//"h"
-	{ (FX_LPCWSTR)L"MM",  (FX_LPCWSTR)L"%M" },
+	{ L"MM",  L"%M" },
 	//"M"
-	{ (FX_LPCWSTR)L"ss",  (FX_LPCWSTR)L"%S" },
+	{ L"ss",  L"%S" },
 	//"s
-	{ (FX_LPCWSTR)L"TT",  (FX_LPCWSTR)L"%p" },
+	{ L"TT",  L"%p" },
 	//"t"
 #if defined(_WIN32)
-	{ (FX_LPCWSTR)L"tt",  (FX_LPCWSTR)L"%p" },
-	{ (FX_LPCWSTR)L"h",  (FX_LPCWSTR)L"%#I" },
+	{ L"tt",  L"%p" },
+	{ L"h",  L"%#I" },
 #else
-	{ (FX_LPCWSTR)L"tt",  (FX_LPCWSTR)L"%P" },
-	{ (FX_LPCWSTR)L"h",  (FX_LPCWSTR)L"%l" },
+	{ L"tt",  L"%P" },
+	{ L"h",  L"%l" },
 #endif
 };
 
@@ -191,7 +191,7 @@ FX_BOOL util::printf(OBJ_METHOD_PARAMS)
 				strSegment.Format((FX_LPCWSTR)c_strFormat.c_str(),(FX_LPCWSTR)params[iIndex].operator CFX_WideString());
 				break;
 			default:
-				strSegment.Format((FX_LPCWSTR)L"%S", (FX_LPCWSTR)c_strFormat.c_str());
+				strSegment.Format(L"%S", (FX_LPCWSTR)c_strFormat.c_str());
 				break;
 		}
 		c_strResult += (wchar_t*)strSegment.GetBuffer(strSegment.GetLength()+1);
@@ -236,7 +236,7 @@ FX_BOOL util::printd(OBJ_METHOD_PARAMS)
 		switch (nFormat)
 		{
 		case 0:
-			swResult.Format((FX_LPCWSTR)L"D:%04d%02d%02d%02d%02d%02d", 
+			swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", 
 				jsDate.GetYear(),
 				jsDate.GetMonth() + 1,
 				jsDate.GetDay(),
@@ -245,7 +245,7 @@ FX_BOOL util::printd(OBJ_METHOD_PARAMS)
 				jsDate.GetSeconds());
 			break;
 		case 1:
-			swResult.Format((FX_LPCWSTR)L"%04d.%02d.%02d %02d:%02d:%02d", 
+			swResult.Format(L"%04d.%02d.%02d %02d:%02d:%02d", 
 				jsDate.GetYear(),
 				jsDate.GetMonth() + 1,
 				jsDate.GetDay(),
@@ -254,7 +254,7 @@ FX_BOOL util::printd(OBJ_METHOD_PARAMS)
 				jsDate.GetSeconds());
 			break;
 		case 2:
-			swResult.Format((FX_LPCWSTR)L"%04d/%02d/%02d %02d:%02d:%02d", 
+			swResult.Format(L"%04d/%02d/%02d %02d:%02d:%02d", 
 				jsDate.GetYear(),
 				jsDate.GetMonth() + 1,
 				jsDate.GetDay(),
@@ -322,12 +322,12 @@ FX_BOOL util::printd(OBJ_METHOD_PARAMS)
 		};
 
 		stru_TbConvertAd cTableAd[] ={
-			{ (FX_LPCWSTR)L"m", iMonth+1 },
-			{ (FX_LPCWSTR)L"d", iDay },
-			{ (FX_LPCWSTR)L"H", iHour },
-			{ (FX_LPCWSTR)L"h", iHour>12?iHour-12:iHour },
-			{ (FX_LPCWSTR)L"M", iMin },
-			{ (FX_LPCWSTR)L"s", iSec },
+			{ L"m", iMonth+1 },
+			{ L"d", iDay },
+			{ L"H", iHour },
+			{ L"h", iHour>12?iHour-12:iHour },
+			{ L"M", iMin },
+			{ L"s", iSec },
 		};
 
 		//cFormat = strFormat.GetBuffer(strFormat.GetLength()+1);
@@ -336,7 +336,7 @@ FX_BOOL util::printd(OBJ_METHOD_PARAMS)
 			wchar_t tszValue[10];
 			//_itot(cTableAd[iIndex].iValue,tszValue,10);
 			CFX_WideString sValue;
-			sValue.Format((FX_LPCWSTR)L"%d",cTableAd[iIndex].iValue);
+			sValue.Format(L"%d",cTableAd[iIndex].iValue);
 			memcpy(tszValue, (wchar_t *)sValue.GetBuffer(sValue.GetLength()+1),
                                (sValue.GetLength()+1)*sizeof(wchar_t));
 
@@ -360,7 +360,7 @@ FX_BOOL util::printd(OBJ_METHOD_PARAMS)
 		}
 
 		CFX_WideString strFormat;
-//		strFormat.Format((FX_LPCWSTR)L"%d,%d,%d,%d,%d,%d",iYear, iMonth, iDay, iHour, iMin, iSec);
+//		strFormat.Format(L"%d,%d,%d,%d,%d,%d",iYear, iMonth, iDay, iHour, iMin, iSec);
 //		CString strFormat = cppTm.Format(cFormat.c_str());
 		wchar_t buf[64] = {0};
 		strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
@@ -418,12 +418,12 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 	};
 
 	stru_TbConvertAd cTableAd[] ={
-		{ (FX_LPCWSTR)L"m", iMonth+1 },
-		{ (FX_LPCWSTR)L"d", iDay },
-		{ (FX_LPCWSTR)L"H", iHour },
-		{ (FX_LPCWSTR)L"h", iHour>12?iHour-12:iHour },
-		{ (FX_LPCWSTR)L"M", iMin },
-		{ (FX_LPCWSTR)L"s", iSec },
+		{ L"m", iMonth+1 },
+		{ L"d", iDay },
+		{ L"H", iHour },
+		{ L"h", iHour>12?iHour-12:iHour },
+		{ L"M", iMin },
+		{ L"s", iSec },
 	};
 
 	//cFormat = strFormat.GetBuffer(strFormat.GetLength()+1);
@@ -432,7 +432,7 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 		wchar_t tszValue[10];
 		//_itot(cTableAd[iIndex].iValue,tszValue,10);
 		CFX_WideString sValue;
-		sValue.Format((FX_LPCWSTR)L"%d",cTableAd[iIndex].iValue);
+		sValue.Format(L"%d",cTableAd[iIndex].iValue);
 		memcpy(tszValue, (wchar_t *)sValue.GetBuffer(sValue.GetLength()+1),sValue.GetLength()*sizeof(wchar_t));
 
 
@@ -456,7 +456,7 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 	}
 
 		CFX_WideString strFormat;
-//		strFormat.Format((FX_LPCWSTR)L"%d,%d,%d,%d,%d,%d",iYear, iMonth, iDay, iHour, iMin, iSec);
+//		strFormat.Format(L"%d,%d,%d,%d,%d,%d",iYear, iMonth, iDay, iHour, iMin, iSec);
 //		CString strFormat = cppTm.Format(cFormat.c_str());
 		wchar_t buf[64] = {0};
 		strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
@@ -643,7 +643,7 @@ FX_BOOL util::byteToChar(OBJ_METHOD_PARAMS)
 	int nByte = (int)params[0];
 	unsigned char cByte = (unsigned char)nByte;
 	CFX_WideString csValue;
-	csValue.Format((FX_LPCWSTR)L"%c", cByte);
+	csValue.Format(L"%c", cByte);
 	vRet = csValue; 
 	return TRUE;
 }

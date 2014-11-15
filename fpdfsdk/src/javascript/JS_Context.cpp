@@ -83,7 +83,7 @@ FX_BOOL CJS_Context::DoJob(int nMode, const CFX_WideString& script, CFX_WideStri
 	if (nRet < 0)
 	{
 		CFX_WideString sLine;
-		sLine.Format((FX_LPCWSTR)L"[ Line: %05d { %s } ] : %s",error.linnum-1,error.srcline,error.message);
+		sLine.Format(L"[ Line: %05d { %s } ] : %s",error.linnum-1,error.srcline,error.message);
 
 //			TRACE(L"/* -------------- JS Error -------------- */\n");
 //			TRACE(sLine);

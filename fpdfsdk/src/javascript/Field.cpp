@@ -188,7 +188,7 @@ FX_BOOL Field::AttachField(Document* pDocument, const CFX_WideString& csFieldNam
 	ASSERT(pInterForm != NULL);
 
 	CFX_WideString swFieldNameTemp = csFieldName;
-	swFieldNameTemp.Replace((FX_LPCWSTR)L"..", (FX_LPCWSTR)L".");
+	swFieldNameTemp.Replace(L"..", L".");
 
 	if (pInterForm->CountFields(swFieldNameTemp) <= 0)
 	{
@@ -415,16 +415,16 @@ FX_BOOL Field::alignment(OBJ_PROP_PARAMS)
 		switch (pFormControl->GetControlAlignment())
 		{
 			case 1:
-				vp << (FX_LPCWSTR)L"center";
+				vp << L"center";
 				break;
 			case 0:
-				vp << (FX_LPCWSTR)L"left";
+				vp << L"left";
 				break;
 			case 2:
-				vp << (FX_LPCWSTR)L"right";
+				vp << L"right";
 				break;
 			default:
-				vp << (FX_LPCWSTR)L"";
+				vp << L"";
 		}
 	}
 
@@ -474,22 +474,22 @@ FX_BOOL Field::borderStyle(OBJ_PROP_PARAMS)
 		switch (nBorderstyle)
 		{
 			case BBS_SOLID:
-				vp << (FX_LPCWSTR)L"solid";
+				vp << L"solid";
 				break;
 			case BBS_DASH:
-				vp << (FX_LPCWSTR)L"dashed";
+				vp << L"dashed";
 				break;
 			case BBS_BEVELED:
-				vp << (FX_LPCWSTR)L"beveled";
+				vp << L"beveled";
 				break;
 			case BBS_INSET:
-				vp << (FX_LPCWSTR)L"inset";
+				vp << L"inset";
 				break;
 			case BBS_UNDERLINE:
-				vp << (FX_LPCWSTR)L"underline";
+				vp << L"underline";
 				break;
 			default:
-				vp << (FX_LPCWSTR)L"";
+				vp << L"";
 				break;
 		}
 	}
@@ -1872,19 +1872,19 @@ FX_BOOL Field::highlight(OBJ_PROP_PARAMS)
 		switch (eHM)
 		{
 		case CPDF_FormControl::None:
-			vp  <<  (FX_LPCWSTR)L"none";
+			vp  <<  L"none";
 			break;
 		case CPDF_FormControl::Push:
-			vp  <<  (FX_LPCWSTR)L"push";
+			vp  <<  L"push";
 			break;
 		case CPDF_FormControl::Invert:
-			vp  <<  (FX_LPCWSTR)L"invert";
+			vp  <<  L"invert";
 			break;
 		case CPDF_FormControl::Outline:
-			vp  <<  (FX_LPCWSTR)L"outline";
+			vp  <<  L"outline";
 			break;
 		case CPDF_FormControl::Toggle:
-			 vp  <<  (FX_LPCWSTR)L"toggle";
+			 vp  <<  L"toggle";
 			 break;
 		}
 	}
@@ -3000,31 +3000,31 @@ FX_BOOL Field::type(OBJ_PROP_PARAMS)
 	switch (pFormField->GetFieldType())
 	{
 		case FIELDTYPE_UNKNOWN:
-			vp << (FX_LPCWSTR)L"unknown";
+			vp << L"unknown";
 			break;
 		case FIELDTYPE_PUSHBUTTON:
-			vp << (FX_LPCWSTR)L"button";
+			vp << L"button";
 			break;
 		case FIELDTYPE_CHECKBOX:
-			vp << (FX_LPCWSTR)L"checkbox";
+			vp << L"checkbox";
 			break;
 		case FIELDTYPE_RADIOBUTTON:
-			vp << (FX_LPCWSTR)L"radiobutton";
+			vp << L"radiobutton";
 			break;
 		case FIELDTYPE_COMBOBOX:
-			vp << (FX_LPCWSTR)L"combobox";
+			vp << L"combobox";
 			break;
 		case FIELDTYPE_LISTBOX:
-			vp << (FX_LPCWSTR)L"listbox";
+			vp << L"listbox";
 			break;
 		case FIELDTYPE_TEXTFIELD:
-			vp << (FX_LPCWSTR)L"text";
+			vp << L"text";
 			break;
 		case FIELDTYPE_SIGNATURE:
-			vp << (FX_LPCWSTR)L"signature";
+			vp << L"signature";
 			break;
 		default :
-			vp << (FX_LPCWSTR)L"unknown";
+			vp << L"unknown";
 			break;
 	}
 
@@ -3206,7 +3206,7 @@ FX_BOOL Field::value(OBJ_PROP_PARAMS)
 						continue;
 				}
 				if (!bFind)
-					vp << (FX_LPCWSTR)L"Off";					
+					vp << L"Off";					
 			}
 			break;
 		default:
@@ -3312,9 +3312,9 @@ FX_BOOL Field::valueAsString(OBJ_PROP_PARAMS)
 		if(!pFormField->CountControls()) return FALSE;
 
 		if (pFormField->GetControl(0)->IsChecked())
-			vp << (FX_LPCWSTR)L"Yes";
+			vp << L"Yes";
 		else
-			vp << (FX_LPCWSTR)L"Off";
+			vp << L"Off";
 	}
 	else if (pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON && !(pFormField->GetFieldFlags() & FIELDFLAG_RADIOSINUNISON))
 	{
@@ -3326,12 +3326,12 @@ FX_BOOL Field::valueAsString(OBJ_PROP_PARAMS)
 				break;
 			}
 			else
-				vp << (FX_LPCWSTR)L"Off";
+				vp << L"Off";
 		}
 	}
 	else if (pFormField->GetFieldType() == FIELDTYPE_LISTBOX && (pFormField->CountSelectedItems() > 1))
 	{
-		vp << (FX_LPCWSTR)L"";
+		vp << L"";
 	}
 	else
 		vp << (FX_LPCWSTR)pFormField->GetValue();
