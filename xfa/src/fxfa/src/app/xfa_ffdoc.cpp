@@ -233,15 +233,11 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc)
     if (pAcroForm == NULL) {
         return FALSE;
     }
-    CPDF_Object* pElementXFA = pAcroForm->GetElement(FX_BSTRC("XFA"));
+    CPDF_Object* pElementXFA = pAcroForm->GetElementValue(FX_BSTRC("XFA"));
     if (pElementXFA == NULL) {
         return FALSE;
     }
     FX_INT32 iObjType = pElementXFA->GetType();
-    if (iObjType == PDFOBJ_REFERENCE) {
-        pElementXFA = pElementXFA->GetDirect();
-        iObjType = pElementXFA->GetType();
-    }
     CFX_ArrayTemplate<CPDF_Stream*> xfaStreams;
     if (iObjType == PDFOBJ_ARRAY) {
         CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
