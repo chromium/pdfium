@@ -865,7 +865,7 @@ void CPWL_NoteItem::SetDateTime(FX_SYSTEMTIME time)
 	m_dtNote = time;
 	
 	CFX_WideString swTime;
-	swTime.Format((FX_LPCWSTR)L"%04d-%02d-%02d %02d:%02d:%02d", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+	swTime.Format(L"%04d-%02d-%02d %02d:%02d:%02d", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
 	if (m_pDateTime)
 	{
 		m_pDateTime->SetText(swTime);

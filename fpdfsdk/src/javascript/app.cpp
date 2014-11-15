@@ -512,7 +512,7 @@ FX_BOOL app::setInterval(OBJ_METHOD_PARAMS)
 	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 	ASSERT(pRuntime != NULL);
 
-	CFX_WideString script = params.size() > 0 ?  (FX_LPCWSTR)(params[0].operator CFX_WideString()) : (FX_LPCWSTR)L"";
+	CFX_WideString script = params.size() > 0 ?  (FX_LPCWSTR)(params[0].operator CFX_WideString()) : L"";
 	if (script.IsEmpty()) 
 	{
 		sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSAFNUMBER_KEYSTROKE);
@@ -561,7 +561,7 @@ FX_BOOL app::setTimeOut(OBJ_METHOD_PARAMS)
 	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 	ASSERT(pRuntime != NULL);
 	
-	CFX_WideString script = params.size() > 0 ?  (FX_LPCWSTR)(params[0].operator CFX_WideString()) : (FX_LPCWSTR)L"";
+	CFX_WideString script = params.size() > 0 ?  (FX_LPCWSTR)(params[0].operator CFX_WideString()) : L"";
 	if (script.IsEmpty()) 
 	{
 		sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSAFNUMBER_KEYSTROKE);
@@ -989,7 +989,7 @@ CFX_WideString app::PDFPathToSysPath(const CFX_WideString& sOldPath)
 		wchar_t c_Drive = strOPath.GetAt(1);
 		if ((c_Drive >= L'a' && c_Drive <= L'z' )||( c_Drive >= L'A' && c_Drive <= L'Z'))
 		{
-			strOPath.Replace((FX_LPCWSTR)L"/",(FX_LPCWSTR)L"\\");
+			strOPath.Replace(L"/",L"\\");
 			//strOPath.SetAt(0,'');
 			strOPath.Insert(2,':');
 			strOPath.Delete(0);

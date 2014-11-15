@@ -472,7 +472,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent, FX_BOOL bStartTag
                         content << decoder.GetResult();
                         CFX_WideString dataStr = content.GetWideString();
                         if (!bCDATA && !m_bSaveSpaceChars) {
-                            dataStr.TrimRight((FX_LPCWSTR)L" \t\r\n");
+                            dataStr.TrimRight(L" \t\r\n");
                         }
                         InsertContentSegment(bCDATA, dataStr, pElement);
                         content.Clear();
@@ -516,7 +516,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent, FX_BOOL bStartTag
     content << decoder.GetResult();
     CFX_WideString dataStr = content.GetWideString();
     if (!m_bSaveSpaceChars) {
-        dataStr.TrimRight((FX_LPCWSTR)L" \t\r\n");
+        dataStr.TrimRight(L" \t\r\n");
     }
     InsertContentSegment(bCDATA, dataStr, pElement);
     content.Clear();

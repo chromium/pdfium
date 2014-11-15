@@ -336,7 +336,7 @@ FX_BOOL Document::exportAsFDF(OBJ_METHOD_PARAMS)
 	if (!bWhole)
 		arrayFileds.Attach(params[2]);
 	//FX_BOOL bFlags = params.size() > 3 ? (FX_BOOL)params[3] : FALSE;
-	CFX_WideString swFilePath = params.size() > 4 ? (FX_LPCWSTR)params[4].operator CFX_WideString() : (FX_LPCWSTR)L"";
+	CFX_WideString swFilePath = params.size() > 4 ? (FX_LPCWSTR)params[4].operator CFX_WideString() : L"";
 
 	if (swFilePath.IsEmpty())
 	{
@@ -584,11 +584,11 @@ FX_BOOL Document::mailForm(OBJ_METHOD_PARAMS)
 	int iLength = params.size();
 
 	FX_BOOL bUI = iLength > 0 ? (FX_BOOL)params[0] : TRUE;
-	CFX_WideString cTo = iLength > 1 ? (FX_LPCWSTR)params[1].operator CFX_WideString() : (FX_LPCWSTR)L"";
-	CFX_WideString cCc = iLength > 2 ? (FX_LPCWSTR)params[2].operator CFX_WideString() : (FX_LPCWSTR)L"";
-	CFX_WideString cBcc = iLength > 3 ? (FX_LPCWSTR)params[3].operator CFX_WideString() : (FX_LPCWSTR)L"";
-	CFX_WideString cSubject = iLength > 4 ? (FX_LPCWSTR)params[4].operator CFX_WideString() : (FX_LPCWSTR)L"";
-	CFX_WideString cMsg = iLength > 5 ? (FX_LPCWSTR)params[5].operator CFX_WideString() : (FX_LPCWSTR)L"";
+	CFX_WideString cTo = iLength > 1 ? (FX_LPCWSTR)params[1].operator CFX_WideString() : L"";
+	CFX_WideString cCc = iLength > 2 ? (FX_LPCWSTR)params[2].operator CFX_WideString() : L"";
+	CFX_WideString cBcc = iLength > 3 ? (FX_LPCWSTR)params[3].operator CFX_WideString() : L"";
+	CFX_WideString cSubject = iLength > 4 ? (FX_LPCWSTR)params[4].operator CFX_WideString() : L"";
+	CFX_WideString cMsg = iLength > 5 ? (FX_LPCWSTR)params[5].operator CFX_WideString() : L"";
 
 	CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);

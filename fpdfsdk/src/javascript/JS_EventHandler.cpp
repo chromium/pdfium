@@ -465,65 +465,65 @@ FX_LPCWSTR CJS_EventHandler::Name()
 {
 	switch (m_eEventType)
 	{
-	case JET_APP_INIT:			return (FX_LPCWSTR)L"Init";
-	case JET_BATCH_EXEC:		return (FX_LPCWSTR)L"Exec";
-	case JET_BOOKMARK_MOUSEUP:	return (FX_LPCWSTR)L"Mouse Up";
-	case JET_CONSOLE_EXEC:		return (FX_LPCWSTR)L"Exec";
-	case JET_DOC_DIDPRINT:		return (FX_LPCWSTR)L"DidPrint";
-	case JET_DOC_DIDSAVE:		return (FX_LPCWSTR)L"DidSave";
-	case JET_DOC_OPEN:			return (FX_LPCWSTR)L"Open";
-	case JET_DOC_WILLCLOSE:		return (FX_LPCWSTR)L"WillClose";
-	case JET_DOC_WILLPRINT:		return (FX_LPCWSTR)L"WillPrint";
-	case JET_DOC_WILLSAVE:		return (FX_LPCWSTR)L"WillSave";
-	case JET_EXTERNAL_EXEC:		return (FX_LPCWSTR)L"Exec";
+	case JET_APP_INIT:			return L"Init";
+	case JET_BATCH_EXEC:		return L"Exec";
+	case JET_BOOKMARK_MOUSEUP:	return L"Mouse Up";
+	case JET_CONSOLE_EXEC:		return L"Exec";
+	case JET_DOC_DIDPRINT:		return L"DidPrint";
+	case JET_DOC_DIDSAVE:		return L"DidSave";
+	case JET_DOC_OPEN:			return L"Open";
+	case JET_DOC_WILLCLOSE:		return L"WillClose";
+	case JET_DOC_WILLPRINT:		return L"WillPrint";
+	case JET_DOC_WILLSAVE:		return L"WillSave";
+	case JET_EXTERNAL_EXEC:		return L"Exec";
 	case JET_FIELD_FOCUS:		
-	case JET_SCREEN_FOCUS:		return (FX_LPCWSTR)L"Focus";
+	case JET_SCREEN_FOCUS:		return L"Focus";
 	case JET_FIELD_BLUR:		
-	case JET_SCREEN_BLUR:		return (FX_LPCWSTR)L"Blur";
+	case JET_SCREEN_BLUR:		return L"Blur";
 	case JET_FIELD_MOUSEDOWN:
-	case JET_SCREEN_MOUSEDOWN:	return (FX_LPCWSTR)L"Mouse Down";
+	case JET_SCREEN_MOUSEDOWN:	return L"Mouse Down";
 	case JET_FIELD_MOUSEUP:		
-	case JET_SCREEN_MOUSEUP:	return (FX_LPCWSTR)L"Mouse Up";
+	case JET_SCREEN_MOUSEUP:	return L"Mouse Up";
 	case JET_FIELD_MOUSEENTER:
-	case JET_SCREEN_MOUSEENTER:	return (FX_LPCWSTR)L"Mouse Enter";
+	case JET_SCREEN_MOUSEENTER:	return L"Mouse Enter";
 	case JET_FIELD_MOUSEEXIT:
-	case JET_SCREEN_MOUSEEXIT:	return (FX_LPCWSTR)L"Mouse Exit";
-	case JET_FIELD_CALCULATE:	return (FX_LPCWSTR)L"Calculate";
-	case JET_FIELD_FORMAT:		return (FX_LPCWSTR)L"Format";
-	case JET_FIELD_KEYSTROKE:	return (FX_LPCWSTR)L"Keystroke";
-	case JET_FIELD_VALIDATE:	return (FX_LPCWSTR)L"Validate";
-	case JET_LINK_MOUSEUP:		return (FX_LPCWSTR)L"Mouse Up";
-	case JET_MENU_EXEC:			return (FX_LPCWSTR)L"Exec";
+	case JET_SCREEN_MOUSEEXIT:	return L"Mouse Exit";
+	case JET_FIELD_CALCULATE:	return L"Calculate";
+	case JET_FIELD_FORMAT:		return L"Format";
+	case JET_FIELD_KEYSTROKE:	return L"Keystroke";
+	case JET_FIELD_VALIDATE:	return L"Validate";
+	case JET_LINK_MOUSEUP:		return L"Mouse Up";
+	case JET_MENU_EXEC:			return L"Exec";
 	case JET_PAGE_OPEN:		
-	case JET_SCREEN_OPEN:		return (FX_LPCWSTR)L"Open";
+	case JET_SCREEN_OPEN:		return L"Open";
 	case JET_PAGE_CLOSE:
-	case JET_SCREEN_CLOSE:		return (FX_LPCWSTR)L"Close";
+	case JET_SCREEN_CLOSE:		return L"Close";
 	case JET_SCREEN_INVIEW:	
-	case JET_PAGE_INVIEW:		return (FX_LPCWSTR)L"InView";
+	case JET_PAGE_INVIEW:		return L"InView";
 	case JET_PAGE_OUTVIEW:
-	case JET_SCREEN_OUTVIEW:	return (FX_LPCWSTR)L"OutView";
+	case JET_SCREEN_OUTVIEW:	return L"OutView";
 	default:
-		return (FX_LPCWSTR)L"";
+		return L"";
 	}
 
-	return (FX_LPCWSTR)L"";
+	return L"";
 }
 
 FX_LPCWSTR CJS_EventHandler::Type()
 {
 	switch (m_eEventType)
 	{
-	case JET_APP_INIT:			return (FX_LPCWSTR)L"App";
-	case JET_BATCH_EXEC:		return (FX_LPCWSTR)L"Batch";
-	case JET_BOOKMARK_MOUSEUP:	return (FX_LPCWSTR)L"BookMark";	
-	case JET_CONSOLE_EXEC:		return (FX_LPCWSTR)L"Console";
+	case JET_APP_INIT:			return L"App";
+	case JET_BATCH_EXEC:		return L"Batch";
+	case JET_BOOKMARK_MOUSEUP:	return L"BookMark";	
+	case JET_CONSOLE_EXEC:		return L"Console";
 	case JET_DOC_DIDPRINT:
 	case JET_DOC_DIDSAVE:
 	case JET_DOC_OPEN:
 	case JET_DOC_WILLCLOSE:
 	case JET_DOC_WILLPRINT:
-	case JET_DOC_WILLSAVE:		return (FX_LPCWSTR)L"Doc";
-	case JET_EXTERNAL_EXEC:		return (FX_LPCWSTR)L"External";
+	case JET_DOC_WILLSAVE:		return L"Doc";
+	case JET_EXTERNAL_EXEC:		return L"External";
 	case JET_FIELD_BLUR:
 	case JET_FIELD_FOCUS:
 	case JET_FIELD_MOUSEDOWN:
@@ -533,7 +533,7 @@ FX_LPCWSTR CJS_EventHandler::Type()
 	case JET_FIELD_CALCULATE:
 	case JET_FIELD_FORMAT:
 	case JET_FIELD_KEYSTROKE:
-	case JET_FIELD_VALIDATE:	return (FX_LPCWSTR)L"Field";
+	case JET_FIELD_VALIDATE:	return L"Field";
 	case JET_SCREEN_FOCUS:
 	case JET_SCREEN_BLUR:
 	case JET_SCREEN_OPEN:
@@ -543,18 +543,18 @@ FX_LPCWSTR CJS_EventHandler::Type()
 	case JET_SCREEN_MOUSEENTER:
 	case JET_SCREEN_MOUSEEXIT:
 	case JET_SCREEN_INVIEW:
-	case JET_SCREEN_OUTVIEW:	return (FX_LPCWSTR)L"Screen";
-	case JET_LINK_MOUSEUP:		return (FX_LPCWSTR)L"Link";	
-	case JET_MENU_EXEC:			return (FX_LPCWSTR)L"Menu";
+	case JET_SCREEN_OUTVIEW:	return L"Screen";
+	case JET_LINK_MOUSEUP:		return L"Link";	
+	case JET_MENU_EXEC:			return L"Menu";
 	case JET_PAGE_OPEN:
 	case JET_PAGE_CLOSE:
 	case JET_PAGE_INVIEW:
-	case JET_PAGE_OUTVIEW:return (FX_LPCWSTR)L"Page";
+	case JET_PAGE_OUTVIEW:return L"Page";
 	default:
-		return (FX_LPCWSTR)L"";
+		return L"";
 	}
 
-	return (FX_LPCWSTR)L"";
+	return L"";
 }
 
 FX_BOOL& CJS_EventHandler::Rc()

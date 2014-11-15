@@ -488,7 +488,7 @@ static CFX_WideString _GetLabelNumPortion(int num, const CFX_ByteString& bsStyle
         return wsNumPortion;
     }
     if (bsStyle == "D") {
-        wsNumPortion.Format((FX_LPCWSTR)L"%d", num);
+        wsNumPortion.Format(L"%d", num);
     } else if (bsStyle == "R") {
         wsNumPortion = _MakeRoman(num);
         wsNumPortion.MakeUpper();
@@ -537,7 +537,7 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const
             return wsLabel;
         }
     }
-    wsLabel.Format((FX_LPCWSTR)L"%d", nPage + 1);
+    wsLabel.Format(L"%d", nPage + 1);
     return wsLabel;
 }
 FX_INT32 CPDF_PageLabel::GetPageByLabel(FX_BSTR bsLabel) const

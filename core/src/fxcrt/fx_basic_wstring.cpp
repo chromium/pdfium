@@ -829,7 +829,7 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
                 ;
         }
         if (nWidth < 0 || nWidth > 128 * 1024) {
-            lpszFormat = (FX_LPCWSTR)L"Bad width";
+            lpszFormat = L"Bad width";
             nMaxLen = 10;
             break;
         }
@@ -846,7 +846,7 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
             }
         }
         if (nPrecision < 0 || nPrecision > 128 * 1024) {
-            lpszFormat = (FX_LPCWSTR)L"Bad precision";
+            lpszFormat = L"Bad precision";
             nMaxLen = 14;
             break;
         }

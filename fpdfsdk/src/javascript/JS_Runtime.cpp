@@ -330,7 +330,7 @@ v8::Handle<v8::Context>	CJS_Runtime::NewJSContext()
 CFX_WideString ChangeObjName(const CFX_WideString& str)
 {
 	CFX_WideString sRet = str;
-	sRet.Replace((FX_LPCWSTR)L"_", (FX_LPCWSTR)L".");
+	sRet.Replace(L"_", L".");
 	return sRet;
 }
 
