@@ -41,7 +41,7 @@ DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle, FPDF_
 	return nType;
 }
 
-DLLEXPORT FPDF_FORMHANDLE STDCALL FPDFDOC_InitFormFillEnviroument(FPDF_DOCUMENT document, FPDF_FORMFILLINFO* formInfo)
+DLLEXPORT FPDF_FORMHANDLE STDCALL FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document, FPDF_FORMFILLINFO* formInfo)
 {
 	if(!document || !formInfo || formInfo->version!=1)
 		return NULL;
@@ -61,7 +61,7 @@ DLLEXPORT FPDF_FORMHANDLE STDCALL FPDFDOC_InitFormFillEnviroument(FPDF_DOCUMENT 
 	return pEnv;
 }
 
-DLLEXPORT void STDCALL FPDFDOC_ExitFormFillEnviroument(FPDF_FORMHANDLE hHandle)
+DLLEXPORT void STDCALL FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle)
 {
 	if(!hHandle)
 		return; 

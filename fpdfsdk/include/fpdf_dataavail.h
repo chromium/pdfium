@@ -191,7 +191,7 @@ DLLEXPORT int STDCALL FPDFAvail_IsPageAvail(FPDF_AVAIL avail, int page_index, FX
 *			This function call be called only after FPDFAvail_GetDocument if called. 
 *			The application should call this function whenever new data arrived, and process all the
 *			generated download hints if any, until the function returns non-zero value. Then the 
-*			application can perform page loading. Recommend to call FPDFDOC_InitFormFillEnviroument
+*			application can perform page loading. Recommend to call FPDFDOC_InitFormFillEnvironment
 *			after the function returns non-zero value.
 */
 DLLEXPORT int STDCALL FPDFAvail_IsFormAvail(FPDF_AVAIL avail, FX_DOWNLOADHINTS* hints);

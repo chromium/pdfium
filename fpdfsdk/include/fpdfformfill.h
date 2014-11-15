@@ -535,7 +535,7 @@ typedef struct  _FPDF_FORMFILLINFO
 
 
 /**
- * Function: FPDFDOC_InitFormFillEnviroument
+ * Function: FPDFDOC_InitFormFillEnvironment
  *			Init form fill environment. 
  * Comments:
  *			This function should be called before any form fill operation.
@@ -545,24 +545,24 @@ typedef struct  _FPDF_FORMFILLINFO
  * Return Value:
  *			Return handler to the form fill module. NULL means fails. 
  **/
-DLLEXPORT FPDF_FORMHANDLE STDCALL FPDFDOC_InitFormFillEnviroument(FPDF_DOCUMENT document, FPDF_FORMFILLINFO* formInfo);
+DLLEXPORT FPDF_FORMHANDLE STDCALL FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document, FPDF_FORMFILLINFO* formInfo);
 
 /**
- * Function: FPDFDOC_ExitFormFillEnviroument
+ * Function: FPDFDOC_ExitFormFillEnvironment
  *			Exit form fill environment. 
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  * Return Value:
  *			NULL.
  **/
-DLLEXPORT void STDCALL FPDFDOC_ExitFormFillEnviroument(FPDF_FORMHANDLE hHandle);
+DLLEXPORT void STDCALL FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle);
 
 /**
  * Function: FORM_OnAfterLoadPage
  *			This method is required for implementing all the form related functions. Should be invoked after user 
- *			successfully loaded a PDF page, and method FPDFDOC_InitFormFillEnviroument had been invoked.
+ *			successfully loaded a PDF page, and method FPDFDOC_InitFormFillEnvironment had been invoked.
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  * Return Value:
  *			NONE.
  **/
@@ -574,7 +574,7 @@ DLLEXPORT void STDCALL FORM_OnAfterLoadPage(FPDF_PAGE page, FPDF_FORMHANDLE hHan
  *			close the PDF page.
  * Parameters:
  *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  * Return Value:
  *			NONE.
  **/
@@ -585,7 +585,7 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page, FPDF_FORMHANDLE hH
 *			This method is required for performing Document-level JavaScript action. It should be invoked after the PDF document
 *			had been loaded.
 * Parameters:
-*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
 * Return Value:
 *			NONE
 * Comments:
@@ -599,7 +599,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle);
 * Function: FORM_DoDocumentOpenAction
 *			This method is required for performing open-action when the document is opened.
 * Parameters:
-*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
 * Return Value:
 *			NONE
 * Comments:
@@ -618,7 +618,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle);
 * Function: FORM_DoDocumentAAction
 *			This method is required for performing the document's additional-action.
 * Parameters:
-*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
 *			aaType	    -   The type of the additional-actions which defined above.
 * Return Value:
 *			NONE
@@ -637,7 +637,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle, int aaTyp
 *			This method is required for performing the page object's additional-action when opened or closed.
 * Parameters:
 *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
-*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
 *			aaType	    -   The type of the page object's additional-actions which defined above.
 * Return Value:
 *			NONE
@@ -650,7 +650,7 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page, FPDF_FORMHANDLE hHandl
  * Function: FORM_OnMouseMove
  *			You can call this member function when the mouse cursor moves. 
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
  *			modifier		-	Indicates whether various virtual keys are down. 
  *			page_x		-	Specifies the x-coordinate of the cursor in PDF user space. 
@@ -664,7 +664,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,FPDF_PAGE p
  * Function: FORM_OnLButtonDown
  *			You can call this member function when the user presses the left mouse button.
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
  *			modifier		-	Indicates whether various virtual keys are down. 
  *			page_x		-	Specifies the x-coordinate of the cursor in PDF user space. 
@@ -678,7 +678,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle,FPDF_PAGE
  * Function: FORM_OnLButtonUp
  *			You can call this member function when the user releases the left mouse button.
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
  *			modifier	-	Indicates whether various virtual keys are down. 
  *			page_x		-	Specifies the x-coordinate of the cursor in device. 
@@ -692,7 +692,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,FPDF_PAGE p
  * Function: FORM_OnKeyDown
  *			You can call this member function when a nonsystem key is pressed. 
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
  *			nKeyCode	-	Indicates whether various virtual keys are down. 
  *			modifier	-	Contains the scan code, key-transition code, previous key state, and context code.
@@ -705,7 +705,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,FPDF_PAGE pag
  * Function: FORM_OnKeyUp
  *			You can call this member function when a nonsystem key is released. 
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
  *			nKeyCode	-	The virtual-key code of the given key.
  *			modifier	-	Contains the scan code, key-transition code, previous key state, and context code.
@@ -718,7 +718,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnKeyUp(FPDF_FORMHANDLE hHandle,FPDF_PAGE page,
  * Function: FORM_OnChar
  *			You can call this member function when a keystroke translates to a nonsystem character.
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
  *			nChar		-	The character code value of the key.  
  *			modifier	-	Contains the scan code, key-transition code, previous key state, and context code.
@@ -732,7 +732,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnChar(FPDF_FORMHANDLE hHandle,FPDF_PAGE page, 
  *			You can call this member function to force to kill the focus of the form field which got focus.
  *			It would kill the focus on the form field, save the value of form field if it's changed by user.
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  * Return Value:
  *			TRUE indicates success; otherwise false.
  **/
@@ -751,7 +751,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle);
  * Function: FPDPage_HasFormFieldAtPoint
  *			Check the form filed position by point.
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
  *			page_x		-	X position in PDF "user space".
  *			page_y		-	Y position in PDF "user space".
@@ -764,7 +764,7 @@ DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,FPDF_P
  * Function: FPDF_SetFormFieldHighlightColor
  *			Set the highlight color of specified or all the form fields in the document.
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  *			doc			-	Handle to the document. Returned by FPDF_LoadDocument function.
  *			fieldType	-	A 32-bit integer indicating the type of a form field(defined above).
  *			color		-	The highlight color of the form field.Constructed by 0xxxrrggbb.
@@ -781,7 +781,7 @@ DLLEXPORT void STDCALL FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle, 
  * Function: FPDF_SetFormFieldHighlightAlpha
  *			Set the transparency of the form field highlight color in the document.
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  *			doc			-	Handle to the document. Returned by FPDF_LoadDocument function.
  *			alpha		-	The transparency of the form field highlight color. between 0-255.
  * Return Value:
@@ -794,7 +794,7 @@ DLLEXPORT void STDCALL FPDF_SetFormFieldHighlightAlpha(FPDF_FORMHANDLE hHandle, 
  * Function: FPDF_RemoveFormFieldHighlight
  *			Remove the form field highlight color in the document.
  * Parameters:
- *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+ *			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
  * Return Value:
  *			NONE.
  * Comments:
@@ -806,7 +806,7 @@ DLLEXPORT void STDCALL FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle);
 * Function: FPDF_FFLDraw
 *			Render FormFeilds on a page to a device independent bitmap. 			
 * Parameters:
-*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnviroument.
+*			hHandle		-	Handle to the form fill module. Returned by FPDFDOC_InitFormFillEnvironment.
 *			bitmap		-	Handle to the device independent bitmap (as the output buffer).
 *							Bitmap handle can be created by FPDFBitmap_Create function.
 *			page		-	Handle to the page. Returned by FPDF_LoadPage function.
