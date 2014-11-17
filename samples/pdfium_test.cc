@@ -289,7 +289,7 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
   (void) FPDF_GetDocPermissions(doc);
   (void) FPDFAvail_IsFormAvail(pdf_avail, &hints);
 
-  FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnviroument(doc, &form_callbacks);
+  FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
   FPDF_SetFormFieldHighlightColor(form, 0, 0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form, 100);
 
@@ -355,7 +355,7 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
   }
 
   FORM_DoDocumentAAction(form, FPDFDOC_AACTION_WC);
-  FPDFDOC_ExitFormFillEnviroument(form);
+  FPDFDOC_ExitFormFillEnvironment(form);
   FPDF_CloseDocument(doc);
   FPDFAvail_Destroy(pdf_avail);
 
