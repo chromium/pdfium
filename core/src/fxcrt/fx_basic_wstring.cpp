@@ -586,7 +586,7 @@ FX_STRSIZE CFX_WideString::Find(FX_LPCWSTR lpszSub, FX_STRSIZE nStart) const
     if (nLength < 1 || nStart > nLength) {
         return -1;
     }
-    FX_LPCWSTR lpsz = (FX_LPCWSTR)FXSYS_wcsstr(m_pData->m_String + nStart, lpszSub);
+    FX_LPCWSTR lpsz = FXSYS_wcsstr(m_pData->m_String + nStart, lpszSub);
     return (lpsz == NULL) ? -1 : (int)(lpsz - m_pData->m_String);
 }
 FX_STRSIZE CFX_WideString::Find(FX_WCHAR ch, FX_STRSIZE nStart) const
@@ -598,7 +598,7 @@ FX_STRSIZE CFX_WideString::Find(FX_WCHAR ch, FX_STRSIZE nStart) const
     if (nStart >= nLength) {
         return -1;
     }
-    FX_LPCWSTR lpsz = (FX_LPCWSTR)FXSYS_wcschr(m_pData->m_String + nStart, ch);
+    FX_LPCWSTR lpsz = FXSYS_wcschr(m_pData->m_String + nStart, ch);
     return (lpsz == NULL) ? -1 : (int)(lpsz - m_pData->m_String);
 }
 void CFX_WideString::TrimRight(FX_LPCWSTR lpszTargetList)

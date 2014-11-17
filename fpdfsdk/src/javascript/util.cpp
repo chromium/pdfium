@@ -182,23 +182,23 @@ FX_BOOL util::printf(OBJ_METHOD_PARAMS)
 		switch (ParstDataType(&c_strFormat))
 		{
 			case UTIL_INT:
-				strSegment.Format((FX_LPCWSTR)c_strFormat.c_str(),(int)params[iIndex]);
+				strSegment.Format(c_strFormat.c_str(),(int)params[iIndex]);
 				break;
 			case UTIL_DOUBLE:
-				strSegment.Format((FX_LPCWSTR)c_strFormat.c_str(),(double)params[iIndex]);
+				strSegment.Format(c_strFormat.c_str(),(double)params[iIndex]);
 				break;
 			case UTIL_STRING:
-				strSegment.Format((FX_LPCWSTR)c_strFormat.c_str(),(FX_LPCWSTR)params[iIndex].operator CFX_WideString());
+				strSegment.Format(c_strFormat.c_str(),(FX_LPCWSTR)params[iIndex].operator CFX_WideString());
 				break;
 			default:
-				strSegment.Format(L"%S", (FX_LPCWSTR)c_strFormat.c_str());
+				strSegment.Format(L"%S", c_strFormat.c_str());
 				break;
 		}
-		c_strResult += (wchar_t*)strSegment.GetBuffer(strSegment.GetLength()+1);
+		c_strResult += strSegment.GetBuffer(strSegment.GetLength()+1);
 	}
 
 	c_strResult.erase(c_strResult.begin());
-	vRet = (FX_LPCWSTR)c_strResult.c_str();
+	vRet = c_strResult.c_str();
 	return TRUE;
 }
 
@@ -271,7 +271,7 @@ FX_BOOL util::printd(OBJ_METHOD_PARAMS)
 	}
 	else if (p1.GetType() == VT_string)
 	{
-		std::basic_string<wchar_t> cFormat = (wchar_t*)(FX_LPCWSTR)p1.operator CFX_WideString();		
+		std::basic_string<wchar_t> cFormat = (FX_LPCWSTR)p1.operator CFX_WideString();		
 
 		bool bXFAPicture = false;
 		if (iSize > 2)
@@ -365,7 +365,7 @@ FX_BOOL util::printd(OBJ_METHOD_PARAMS)
 		wchar_t buf[64] = {0};
 		strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
 		cFormat = buf;
-		vRet = (FX_LPCWSTR)cFormat.c_str();
+		vRet = cFormat.c_str();
 		//rtRet = strFormat.GetBuffer(strFormat.GetLength()+1);
 		return TRUE;
 	}

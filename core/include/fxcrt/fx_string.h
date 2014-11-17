@@ -597,7 +597,7 @@ private:
     }
 };
 typedef const CFX_WideStringC&	FX_WSTR;
-#define FX_WSTRC(wstr) CFX_WideStringC((FX_LPCWSTR)wstr, sizeof(wstr) / sizeof(FX_WCHAR) - 1)
+#define FX_WSTRC(wstr) CFX_WideStringC(wstr, sizeof(wstr) / sizeof(FX_WCHAR) - 1)
 struct CFX_StringDataW {
 
     long		m_nRefs;

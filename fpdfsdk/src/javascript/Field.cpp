@@ -149,7 +149,7 @@ void Field::ParseFieldName(const std::wstring &strFieldNameParsed,std::wstring &
 		return;
 	}
 	std::wstring suffixal = strFieldNameParsed.substr(iStart+1);
-	iControlNo = FXSYS_wtoi((FX_LPCWSTR)suffixal.c_str());
+	iControlNo = FXSYS_wtoi(suffixal.c_str());
 	if (iControlNo == 0)
 	{
 		int iStart;
@@ -194,7 +194,7 @@ FX_BOOL Field::AttachField(Document* pDocument, const CFX_WideString& csFieldNam
 	{
 		std::wstring strFieldName;
 		int iControlNo = -1;
-		ParseFieldName((wchar_t*)(FX_LPCWSTR)swFieldNameTemp, strFieldName, iControlNo);
+		ParseFieldName((FX_LPCWSTR)swFieldNameTemp, strFieldName, iControlNo);
 		if (iControlNo == -1) return FALSE;
 		
 		m_FieldName = strFieldName.c_str();
