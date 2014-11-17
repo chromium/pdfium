@@ -626,7 +626,7 @@ if (JS_DefineGlobalConst(pRuntime,JS_WIDESTRING(const_name),JS_NewString(pRuntim
 int size = sizeof(ArrayContent) / sizeof(FX_LPCWSTR);\
 \
 CJS_Array array(pRuntime);\
-for (int i=0; i<size; i++) array.SetElement(i,CJS_Value(pRuntime,(FX_LPCWSTR)ArrayContent[i]));\
+for (int i=0; i<size; i++) array.SetElement(i,CJS_Value(pRuntime,ArrayContent[i]));\
 \
 CJS_PropValue prop(pRuntime);\
 prop << array;\

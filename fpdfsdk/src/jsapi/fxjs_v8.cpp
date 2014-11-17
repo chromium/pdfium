@@ -93,7 +93,7 @@ int JS_DefineObjMethod(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t* s
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_WideString ws = CFX_WideString((FX_LPCWSTR)sMethodName);
+	CFX_WideString ws = CFX_WideString(sMethodName);
 	CFX_ByteString bsMethodName = ws.UTF8Encode();
 
 	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
@@ -113,7 +113,7 @@ int JS_DefineObjProperty(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t*
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_WideString ws = CFX_WideString((FX_LPCWSTR)sPropName);
+	CFX_WideString ws = CFX_WideString(sPropName);
 	CFX_ByteString bsPropertyName = ws.UTF8Encode();
 
 	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
@@ -153,7 +153,7 @@ int JS_DefineObjConst(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t* sC
 	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
 	if(!pArray) return 0;
 
-	CFX_WideString ws = CFX_WideString((FX_LPCWSTR)sConstName);
+	CFX_WideString ws = CFX_WideString(sConstName);
 	CFX_ByteString bsConstName = ws.UTF8Encode();
 
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
@@ -188,7 +188,7 @@ int JS_DefineGlobalMethod(IJS_Runtime* pJSRuntime, const wchar_t* sMethodName, v
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_WideString ws = CFX_WideString((FX_LPCWSTR)sMethodName);
+	CFX_WideString ws = CFX_WideString(sMethodName);
 	CFX_ByteString bsMethodName = ws.UTF8Encode();
 
 	v8::Local<v8::FunctionTemplate> funTempl = v8::FunctionTemplate::New(isolate, pMethodCall);
@@ -212,7 +212,7 @@ int JS_DefineGlobalConst(IJS_Runtime* pJSRuntime, const wchar_t* sConstName, v8:
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_WideString ws = CFX_WideString((FX_LPCWSTR)sConstName);
+	CFX_WideString ws = CFX_WideString(sConstName);
 	CFX_ByteString bsConst= ws.UTF8Encode();
 
 	v8::Local<v8::ObjectTemplate> objTemp;

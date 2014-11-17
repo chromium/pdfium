@@ -341,7 +341,7 @@ void global_alternate::ObjectToArray(v8::Handle<v8::Object> pObj, CJS_GlobalVari
 		CFX_WideString ws = JS_ToString(JS_GetArrayElemnet(pKeyList, i));
 		CFX_ByteString sKey = ws.UTF8Encode();
 
-		v8::Handle<v8::Value> v = JS_GetObjectElement(isolate, pObj, (const wchar_t*)(FX_LPCWSTR)ws);
+		v8::Handle<v8::Value> v = JS_GetObjectElement(isolate, pObj, (FX_LPCWSTR)ws);
 		FXJSVALUETYPE vt = GET_VALUE_TYPE(v);
 		switch (vt)
 		{
