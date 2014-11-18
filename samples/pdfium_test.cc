@@ -253,7 +253,7 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
 
   FPDF_FORMFILLINFO form_callbacks;
   memset(&form_callbacks, '\0', sizeof(form_callbacks));
-  form_callbacks.version = 1;
+  form_callbacks.version = 2;
   form_callbacks.m_pJsPlatform = &platform_callbacks;
 
   TestLoader loader(pBuf, len);
