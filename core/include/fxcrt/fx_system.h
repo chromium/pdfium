@@ -293,4 +293,35 @@ typedef base::CheckedNumeric<size_t>   FX_SAFE_SIZE_T;
 #define FX_OVERRIDE
 #endif
 #endif
+
+// To print a size_t value in a portable way:
+//   size_t size;
+//   printf("xyz: %" PRIuS, size);
+// The "u" in the macro corresponds to %u, and S is for "size".
+
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
+#if (defined(_INTTYPES_H) || defined(_INTTYPES_H_)) && !defined(PRId64)
+#error "inttypes.h has already been included before this header file, but "
+#error "without __STDC_FORMAT_MACROS defined."
+#endif
+
+#if !defined(__STDC_FORMAT_MACROS)
+#define __STDC_FORMAT_MACROS
+#endif
+
+#include <inttypes.h>
+
+#if !defined(PRIuS)
+#define PRIuS "zu"
+#endif
+
+#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+
+#if !defined(PRIuS)
+#define PRIuS "Iu"
+#endif
+
+#endif
+
 #endif

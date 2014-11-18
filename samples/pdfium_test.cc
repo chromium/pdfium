@@ -16,6 +16,7 @@
 #include "../fpdfsdk/include/fpdfformfill.h"
 #include "../fpdfsdk/include/fpdftext.h"
 #include "../fpdfsdk/include/fpdfview.h"
+#include "../core/include/fxcrt/fx_system.h"
 #include "v8/include/v8.h"
 
 #ifdef _WIN32
@@ -359,8 +360,8 @@ void RenderPdf(const char* name, const char* pBuf, size_t len,
   FPDF_CloseDocument(doc);
   FPDFAvail_Destroy(pdf_avail);
 
-  printf("Loaded, parsed and rendered %zu pages.\n", rendered_pages);
-  printf("Skipped %zu bad pages.\n", bad_pages);
+  printf("Loaded, parsed and rendered %" PRIuS " pages.\n", rendered_pages);
+  printf("Skipped %" PRIuS " bad pages.\n", bad_pages);
 }
 
 int main(int argc, const char* argv[]) {
