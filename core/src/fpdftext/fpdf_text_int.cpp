@@ -1499,7 +1499,7 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj)
         CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
         CFX_ByteString tagStr = (CFX_ByteString)item.GetName();
         pDict = (CPDF_Dictionary*)item.GetParam();
-        CPDF_String* temp = (CPDF_String*)pDict->GetElement(FX_BSTRC("ActualText"));
+        CPDF_String* temp = (CPDF_String*)(pDict ? pDict->GetElement(FX_BSTRC("ActualText")) : NULL);
         if (temp) {
             actText = temp->GetUnicodeText();
         }
