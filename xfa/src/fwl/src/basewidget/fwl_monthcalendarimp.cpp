@@ -544,7 +544,7 @@ CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize)
         FX_FLOAT fDayMaxH = 0.0f;
         for (int day = 10; day <= 31; day++) {
             CFX_WideString wsDay;
-            wsDay.Format((FX_LPCWSTR)L"%d", day);
+            wsDay.Format(L"%d", day);
             CFX_SizeF sz = CalcTextSize(wsDay, m_pProperties->m_pThemeProvider);
             fDayMaxW = (fDayMaxW >= sz.x) ? fDayMaxW : sz.x;
             fDayMaxH = (fDayMaxH >= sz.y) ? fDayMaxH : sz.y;

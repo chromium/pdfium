@@ -453,31 +453,31 @@ FX_BOOL CXFA_Measurement::ToString(CFX_WideString &wsMeasure) const
 {
     switch (GetUnit()) {
         case XFA_UNIT_Mm:
-            wsMeasure.Format((FX_LPCWSTR)L"%.8gmm", GetValue());
+            wsMeasure.Format(L"%.8gmm", GetValue());
             return TRUE;
         case XFA_UNIT_Pt:
-            wsMeasure.Format((FX_LPCWSTR)L"%.8gpt", GetValue());
+            wsMeasure.Format(L"%.8gpt", GetValue());
             return TRUE;
         case XFA_UNIT_In:
-            wsMeasure.Format((FX_LPCWSTR)L"%.8gin", GetValue());
+            wsMeasure.Format(L"%.8gin", GetValue());
             return TRUE;
         case XFA_UNIT_Cm:
-            wsMeasure.Format((FX_LPCWSTR)L"%.8gcm", GetValue());
+            wsMeasure.Format(L"%.8gcm", GetValue());
             return TRUE;
         case XFA_UNIT_Mp:
-            wsMeasure.Format((FX_LPCWSTR)L"%.8gmp", GetValue());
+            wsMeasure.Format(L"%.8gmp", GetValue());
             return TRUE;
         case XFA_UNIT_Pc:
-            wsMeasure.Format((FX_LPCWSTR)L"%.8gpc", GetValue());
+            wsMeasure.Format(L"%.8gpc", GetValue());
             return TRUE;
         case XFA_UNIT_Em:
-            wsMeasure.Format((FX_LPCWSTR)L"%.8gem", GetValue());
+            wsMeasure.Format(L"%.8gem", GetValue());
             return TRUE;
         case XFA_UNIT_Percent:
-            wsMeasure.Format((FX_LPCWSTR)L"%.8g%%", GetValue());
+            wsMeasure.Format(L"%.8g%%", GetValue());
             return TRUE;
         default:
-            wsMeasure.Format((FX_LPCWSTR)L"%.8g", GetValue());
+            wsMeasure.Format(L"%.8g", GetValue());
             return FALSE;
     }
 }

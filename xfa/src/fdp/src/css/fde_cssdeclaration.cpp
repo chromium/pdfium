@@ -97,7 +97,7 @@ FX_BOOL CFDE_CSSDeclaration::AddProperty(FDE_LPCCSSPROPERTYARGS pArgs, FX_LPCWST
     FXSYS_assert(iValueLen > 0);
     FX_BOOL bImportant = FALSE;
     if (iValueLen >= 10 && pszValue[iValueLen - 10] == '!'
-            && FX_wcsnicmp((FX_LPCWSTR)L"important", pszValue + iValueLen - 9, 9) == 0) {
+            && FX_wcsnicmp(L"important", pszValue + iValueLen - 9, 9) == 0) {
         if ((iValueLen -= 10) == 0) {
             return FALSE;
         }

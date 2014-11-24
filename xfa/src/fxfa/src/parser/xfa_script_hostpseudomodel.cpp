@@ -243,7 +243,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_GotoURL(CFXJSE_Arguments* p
     }
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"gotoURL"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"gotoURL");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -265,7 +265,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(CFXJSE_Arguments* 
     }
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"openList"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"openList");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -317,7 +317,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Response(CFXJSE_Arguments* 
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 4) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"response"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"response");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -389,7 +389,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ResetData(CFXJSE_Arguments*
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 0 || iLength > 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"resetData"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"resetData");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -439,7 +439,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Beep(CFXJSE_Arguments* pArg
     }
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 0 || iLength > 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"beep"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"beep");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -459,7 +459,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(CFXJSE_Arguments* 
     }
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"setFocus"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"setFocus");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -518,7 +518,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_MessageBox(CFXJSE_Arguments
     }
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 4) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"messageBox"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"messageBox");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -601,7 +601,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Print(CFXJSE_Arguments* pAr
     }
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 8) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"print"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"print");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -667,7 +667,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ImportData(CFXJSE_Arguments
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 0 || iLength > 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"importData"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"importData");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -686,7 +686,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ExportData(CFXJSE_Arguments
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 0 || iLength > 2) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"exportData"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"exportData");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();

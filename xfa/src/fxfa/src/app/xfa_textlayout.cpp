@@ -118,7 +118,7 @@ void CXFA_TextParser::InitCSSData(IXFA_TextProvider *pTextProvider)
 }
 IFDE_CSSStyleSheet*	CXFA_TextParser::LoadDefaultSheetStyle()
 {
-    static const FX_LPCWSTR s_pStyle = (FX_LPCWSTR)L"html,body,ol,p,ul{display:block}"
+    static const FX_LPCWSTR s_pStyle = L"html,body,ol,p,ul{display:block}"
                                        L"li{display:list-item}"
                                        L"ol,ul{padding-left:33px}ol{list-style-type:decimal}ol,ul{margin-top:0;margin-bottom:0}ul,ol{margin:1.12em 0}"
                                        L"a{color:#0000ff;text-decoration:underline}b{font-weight:bolder}i{font-style:italic}"
@@ -1627,12 +1627,12 @@ void CXFA_TextLayout::DoTabstops(IFDE_CSSComputedStyle *pStyle, CXFA_PieceLine *
         if (m_pTabstopContext->m_bTabstops) {
             XFA_TABSTOPS *pTabstops = m_pTabstopContext->m_tabstops.GetDataPtr(iTabstopsIndex);
             FX_DWORD dwAlgin = pTabstops->dwAlign;
-            if (dwAlgin == FX_HashCode_String_GetW((FX_LPCWSTR)L"center", 6)) {
+            if (dwAlgin == FX_HashCode_String_GetW(L"center", 6)) {
                 fLeft = pPiece->rtPiece.width / 2.0f;
-            } else if (dwAlgin == FX_HashCode_String_GetW((FX_LPCWSTR)L"right", 5)
-                       || dwAlgin == FX_HashCode_String_GetW((FX_LPCWSTR)L"before", 6)) {
+            } else if (dwAlgin == FX_HashCode_String_GetW(L"right", 5)
+                       || dwAlgin == FX_HashCode_String_GetW(L"before", 6)) {
                 fLeft = pPiece->rtPiece.width;
-            } else if (dwAlgin == FX_HashCode_String_GetW((FX_LPCWSTR)L"decimal", 7)) {
+            } else if (dwAlgin == FX_HashCode_String_GetW(L"decimal", 7)) {
                 FX_INT32 iChars = pPiece->iChars;
                 for (FX_INT32 i = 0; i < iChars; i++) {
                     if (pPiece->pszText[i] == L'.') {

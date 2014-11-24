@@ -602,7 +602,7 @@ void CXFA_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"resolveNode"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"resolveNode");
         return;
     }
     CFX_WideString wsExpression;
@@ -643,7 +643,7 @@ void CXFA_Node::Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"resolveNodes"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"resolveNodes");
         return;
     }
     CFX_WideString wsExpression;
@@ -776,7 +776,7 @@ void CXFA_Node::Script_NodeClass_ApplyXSL(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"applyXSL"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"applyXSL");
         return;
     }
     CFX_WideString wsExpression;
@@ -787,7 +787,7 @@ void CXFA_Node::Script_NodeClass_AssignNode(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 3) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"assignNode"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"assignNode");
         return;
     }
     CFX_WideString wsExpression;
@@ -809,7 +809,7 @@ void CXFA_Node::Script_NodeClass_Clone(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"clone"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"clone");
         return;
     }
     FX_BOOL bClone = TRUE;
@@ -821,7 +821,7 @@ void CXFA_Node::Script_NodeClass_GetAttribute(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"getAttribute"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"getAttribute");
         return;
     }
     CFX_WideString wsExpression;
@@ -838,7 +838,7 @@ void CXFA_Node::Script_NodeClass_GetElement(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 2) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"getElement"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"getElement");
         return;
     }
     CFX_WideString wsExpression;
@@ -858,7 +858,7 @@ void CXFA_Node::Script_NodeClass_IsPropertySpecified(CFXJSE_Arguments* pArgument
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 3) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"isPropertySpecified"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"isPropertySpecified");
         return;
     }
     CFX_WideString wsExpression;
@@ -893,7 +893,7 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 3) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"loadXML"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"loadXML");
         return;
     }
     CFX_WideString wsExpression;
@@ -1018,7 +1018,7 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 0 || iLength > 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"saveXML"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"saveXML");
         return;
     }
     FX_BOOL bPrettyMode = FALSE;
@@ -1092,7 +1092,7 @@ void CXFA_Node::Script_NodeClass_SetAttribute(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 2) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"setAttribute"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"setAttribute");
         return;
     }
     CFX_WideString wsAttribute;
@@ -1107,7 +1107,7 @@ void CXFA_Node::Script_NodeClass_SetElement(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1 && iLength != 2) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"setElement"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"setElement");
         return;
     }
     CXFA_Node* pNode = NULL;
@@ -1190,7 +1190,7 @@ void CXFA_Node::Script_ModelClass_IsCompatibleNS(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"isCompatibleNS"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"isCompatibleNS");
         return;
     }
     CFX_WideString wsNameSpace;
@@ -1460,7 +1460,7 @@ void CXFA_Node::Script_WsdlConnection_Execute(CFXJSE_Arguments* pArguments)
     if ((argc == 0) || (argc == 1)) {
         FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), FALSE);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execute"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execute");
     }
 }
 void CXFA_Node::Script_Delta_Restore(CFXJSE_Arguments* pArguments)
@@ -1468,7 +1468,7 @@ void CXFA_Node::Script_Delta_Restore(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"restore"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"restore");
     }
 }
 void CXFA_Node::Script_Delta_CurrentValue(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute)
@@ -1651,31 +1651,31 @@ public:
     FX_UINT32 m_validFlags;
 };
 static const XFA_ExecEventParaInfo gs_eventParaInfos[] = {
-    {0x02a6c55a, (FX_LPCWSTR)L"postSubmit",	XFA_EVENT_PostSubmit,	0},
-    {0x0ab466bb, (FX_LPCWSTR)L"preSubmit",	XFA_EVENT_PreSubmit,	0},
-    {0x109d7ce7, (FX_LPCWSTR)L"mouseEnter",	XFA_EVENT_MouseEnter,	5},
-    {0x17fad373, (FX_LPCWSTR)L"postPrint",	XFA_EVENT_PostPrint,	0},
-    {0x1bfc72d9, (FX_LPCWSTR)L"preOpen",	XFA_EVENT_PreOpen,		7},
-    {0x2196a452, (FX_LPCWSTR)L"initialize",	XFA_EVENT_Initialize,	1},
-    {0x27410f03, (FX_LPCWSTR)L"mouseExit",	XFA_EVENT_MouseExit,	5},
-    {0x33c43dec, (FX_LPCWSTR)L"docClose",	XFA_EVENT_DocClose,		0},
-    {0x361fa1b6, (FX_LPCWSTR)L"preSave",	XFA_EVENT_PreSave,		0},
-    {0x36f1c6d8, (FX_LPCWSTR)L"preSign",	XFA_EVENT_PreSign,		6},
-    {0x4731d6ba, (FX_LPCWSTR)L"exit",		XFA_EVENT_Exit,			2},
-    {0x56bf456b, (FX_LPCWSTR)L"docReady",	XFA_EVENT_DocReady,		0},
-    {0x7233018a, (FX_LPCWSTR)L"validate",	XFA_EVENT_Validate,		1},
-    {0x8808385e, (FX_LPCWSTR)L"indexChange", XFA_EVENT_IndexChange,	3},
-    {0x891f4606, (FX_LPCWSTR)L"change",		XFA_EVENT_Change,		4},
-    {0x9528a7b4, (FX_LPCWSTR)L"prePrint",	XFA_EVENT_PrePrint,		0},
-    {0x9f693b21, (FX_LPCWSTR)L"mouseDown",	XFA_EVENT_MouseDown,	5},
-    {0xcdce56b3, (FX_LPCWSTR)L"full",		XFA_EVENT_Full,			4},
-    {0xd576d08e, (FX_LPCWSTR)L"mouseUp",	XFA_EVENT_MouseUp,		5},
-    {0xd95657a6, (FX_LPCWSTR)L"click",		XFA_EVENT_Click,		4},
-    {0xdbfbe02e, (FX_LPCWSTR)L"calculate",	XFA_EVENT_Calculate,	1},
-    {0xe25fa7b8, (FX_LPCWSTR)L"postOpen",	XFA_EVENT_PostOpen,		7},
-    {0xe28dce7e, (FX_LPCWSTR)L"enter",		XFA_EVENT_Enter,		2},
-    {0xfc82d695, (FX_LPCWSTR)L"postSave",	XFA_EVENT_PostSave,		0},
-    {0xfd54fbb7, (FX_LPCWSTR)L"postSign",	XFA_EVENT_PostSign,		6},
+    {0x02a6c55a, L"postSubmit",	XFA_EVENT_PostSubmit,	0},
+    {0x0ab466bb, L"preSubmit",	XFA_EVENT_PreSubmit,	0},
+    {0x109d7ce7, L"mouseEnter",	XFA_EVENT_MouseEnter,	5},
+    {0x17fad373, L"postPrint",	XFA_EVENT_PostPrint,	0},
+    {0x1bfc72d9, L"preOpen",	XFA_EVENT_PreOpen,		7},
+    {0x2196a452, L"initialize",	XFA_EVENT_Initialize,	1},
+    {0x27410f03, L"mouseExit",	XFA_EVENT_MouseExit,	5},
+    {0x33c43dec, L"docClose",	XFA_EVENT_DocClose,		0},
+    {0x361fa1b6, L"preSave",	XFA_EVENT_PreSave,		0},
+    {0x36f1c6d8, L"preSign",	XFA_EVENT_PreSign,		6},
+    {0x4731d6ba, L"exit",		XFA_EVENT_Exit,			2},
+    {0x56bf456b, L"docReady",	XFA_EVENT_DocReady,		0},
+    {0x7233018a, L"validate",	XFA_EVENT_Validate,		1},
+    {0x8808385e, L"indexChange", XFA_EVENT_IndexChange,	3},
+    {0x891f4606, L"change",		XFA_EVENT_Change,		4},
+    {0x9528a7b4, L"prePrint",	XFA_EVENT_PrePrint,		0},
+    {0x9f693b21, L"mouseDown",	XFA_EVENT_MouseDown,	5},
+    {0xcdce56b3, L"full",		XFA_EVENT_Full,			4},
+    {0xd576d08e, L"mouseUp",	XFA_EVENT_MouseUp,		5},
+    {0xd95657a6, L"click",		XFA_EVENT_Click,		4},
+    {0xdbfbe02e, L"calculate",	XFA_EVENT_Calculate,	1},
+    {0xe25fa7b8, L"postOpen",	XFA_EVENT_PostOpen,		7},
+    {0xe28dce7e, L"enter",		XFA_EVENT_Enter,		2},
+    {0xfc82d695, L"postSave",	XFA_EVENT_PostSave,		0},
+    {0xfd54fbb7, L"postSign",	XFA_EVENT_PostSign,		6},
 };
 const XFA_ExecEventParaInfo* GetEventParaInfoByName(FX_WSTR wsEventName)
 {
@@ -1754,7 +1754,7 @@ void CXFA_Node::Script_Som_BorderColor(FXJSE_HVALUE hValue, FX_BOOL bSetting, XF
         FX_ARGB	color = edge.GetColor();
         FX_INT32 a, r, g, b;
         ArgbDecode(color, a, r, g, b);
-        strColor.Format((FX_LPCWSTR)L"%d,%d,%d", r, g, b);
+        strColor.Format(L"%d,%d,%d", r, g, b);
         FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(strColor));
     }
 }
@@ -1808,7 +1808,7 @@ void CXFA_Node::Script_Som_FillColor(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_
         FX_ARGB color = borderfill.GetColor();
         FX_INT32 a, r, g, b;
         ArgbDecode(color, a, r, g, b);
-        wsColor.Format((FX_LPCWSTR)L"%d,%d,%d", r, g, b);
+        wsColor.Format(L"%d,%d,%d", r, g, b);
         FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsColor));
     }
 }
@@ -1953,7 +1953,7 @@ void CXFA_Node::Script_Som_FontColor(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_
         FX_ARGB color = font.GetColor();
         FX_INT32 a, r, g, b;
         ArgbDecode(color, a, r, g, b);
-        wsColor.Format((FX_LPCWSTR)L"%d,%d,%d", r, g, b);
+        wsColor.Format(L"%d,%d,%d", r, g, b);
         FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsColor));
     }
 }
@@ -2047,7 +2047,7 @@ void CXFA_Node::Script_Field_ExecEvent(CFXJSE_Arguments* pArguments)
             FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), ((iRet == XFA_EVENTERROR_Error) ? FALSE : TRUE));
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execEvent"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execEvent");
     }
 }
 void CXFA_Node::Script_Field_ExecInitialize(CFXJSE_Arguments* pArguments)
@@ -2060,14 +2060,14 @@ void CXFA_Node::Script_Field_ExecInitialize(CFXJSE_Arguments* pArguments)
         }
         pNotify->ExecEventByDeepFirst(this, XFA_EVENT_Initialize, FALSE, FALSE);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execInitialize"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execInitialize");
     }
 }
 void CXFA_Node::Script_Field_DeleteItem(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"deleteItem"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"deleteItem");
         return;
     }
     CXFA_WidgetData* pWidgetData = GetWidgetData();
@@ -2085,7 +2085,7 @@ void CXFA_Node::Script_Field_GetSaveItem(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"getSaveItem"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"getSaveItem");
         return;
     }
     FX_INT32 iIndex = pArguments->GetInt32(0);
@@ -2110,7 +2110,7 @@ void CXFA_Node::Script_Field_BoundItem(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"boundItem"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"boundItem");
         return;
     }
     CXFA_WidgetData* pWidgetData = GetWidgetData();
@@ -2130,7 +2130,7 @@ void CXFA_Node::Script_Field_GetItemState(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"getItemState"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"getItemState");
         return;
     }
     CXFA_WidgetData* pWidgetData = GetWidgetData();
@@ -2154,7 +2154,7 @@ void CXFA_Node::Script_Field_ExecCalculate(CFXJSE_Arguments* pArguments)
         }
         pNotify->ExecEventByDeepFirst(this, XFA_EVENT_Calculate, FALSE, FALSE);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execCalculate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execCalculate");
     }
 }
 void CXFA_Node::Script_Field_SetItems(CFXJSE_Arguments* pArguments)
@@ -2164,7 +2164,7 @@ void CXFA_Node::Script_Field_GetDisplayItem(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"getDisplayItem"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"getDisplayItem");
         return;
     }
     FX_INT32 iIndex = pArguments->GetInt32(0);
@@ -2189,7 +2189,7 @@ void CXFA_Node::Script_Field_SetItemState(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 2) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"setItemState"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"setItemState");
         return;
     }
     CXFA_WidgetData* pWidgetData = GetWidgetData();
@@ -2210,7 +2210,7 @@ void CXFA_Node::Script_Field_AddItem(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 2) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"addItem"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"addItem");
         return;
     }
     CXFA_WidgetData* pWidgetData = GetWidgetData();
@@ -2241,7 +2241,7 @@ void CXFA_Node::Script_Field_ExecValidate(CFXJSE_Arguments* pArguments)
             FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), ((iRet == XFA_EVENTERROR_Error) ? FALSE : TRUE));
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execValidate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execValidate");
     }
 }
 void CXFA_Node::Script_ExclGroup_ErrorText(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute)
@@ -2281,7 +2281,7 @@ void CXFA_Node::Script_ExclGroup_ExecEvent(CFXJSE_Arguments* pArguments)
         CFX_ByteString eventString = pArguments->GetUTF8String(0);
         execSingleEventByName(CFX_WideString::FromUTF8(eventString, eventString.GetLength()), XFA_ELEMENT_ExclGroup);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execEvent"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execEvent");
     }
 }
 void CXFA_Node::Script_ExclGroup_SelectedMember(CFXJSE_Arguments* pArguments)
@@ -2307,7 +2307,7 @@ void CXFA_Node::Script_ExclGroup_SelectedMember(CFXJSE_Arguments* pArguments)
             }
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"selectedMember"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"selectedMember");
     }
 }
 void CXFA_Node::Script_ExclGroup_ExecInitialize(CFXJSE_Arguments* pArguments)
@@ -2320,7 +2320,7 @@ void CXFA_Node::Script_ExclGroup_ExecInitialize(CFXJSE_Arguments* pArguments)
         }
         pNotify->ExecEventByDeepFirst(this, XFA_EVENT_Initialize);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execInitialize"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execInitialize");
     }
 }
 void CXFA_Node::Script_ExclGroup_ExecCalculate(CFXJSE_Arguments* pArguments)
@@ -2333,7 +2333,7 @@ void CXFA_Node::Script_ExclGroup_ExecCalculate(CFXJSE_Arguments* pArguments)
         }
         pNotify->ExecEventByDeepFirst(this, XFA_EVENT_Calculate);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execCalculate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execCalculate");
     }
 }
 void CXFA_Node::Script_ExclGroup_ExecValidate(CFXJSE_Arguments* pArguments)
@@ -2348,7 +2348,7 @@ void CXFA_Node::Script_ExclGroup_ExecValidate(CFXJSE_Arguments* pArguments)
             FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), ((iRet == XFA_EVENTERROR_Error) ? FALSE : TRUE));
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execValidate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execValidate");
     }
 }
 static CXFA_Node* XFA_ScriptInstanceManager_GetItem(CXFA_Node *pInstMgrNode, FX_INT32 iIndex)
@@ -2455,7 +2455,7 @@ void CXFA_Node::Script_Subform_ExecEvent(CFXJSE_Arguments* pArguments)
         CFX_ByteString eventString = pArguments->GetUTF8String(0);
         execSingleEventByName(CFX_WideString::FromUTF8(eventString, eventString.GetLength()), XFA_ELEMENT_Subform);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execEvent"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execEvent");
     }
 }
 void CXFA_Node::Script_Subform_ExecInitialize(CFXJSE_Arguments* pArguments)
@@ -2468,7 +2468,7 @@ void CXFA_Node::Script_Subform_ExecInitialize(CFXJSE_Arguments* pArguments)
         }
         pNotify->ExecEventByDeepFirst(this, XFA_EVENT_Initialize);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execInitialize"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execInitialize");
     }
 }
 void CXFA_Node::Script_Subform_ExecCalculate(CFXJSE_Arguments* pArguments)
@@ -2481,7 +2481,7 @@ void CXFA_Node::Script_Subform_ExecCalculate(CFXJSE_Arguments* pArguments)
         }
         pNotify->ExecEventByDeepFirst(this, XFA_EVENT_Calculate);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execCalculate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execCalculate");
     }
 }
 void CXFA_Node::Script_Subform_ExecValidate(CFXJSE_Arguments* pArguments)
@@ -2496,7 +2496,7 @@ void CXFA_Node::Script_Subform_ExecValidate(CFXJSE_Arguments* pArguments)
             FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), ((iRet == XFA_EVENTERROR_Error) ? FALSE : TRUE));
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execValidate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execValidate");
     }
 }
 void CXFA_Node::Script_Subform_GetInvalidObjects(CFXJSE_Arguments* pArguments)
@@ -2504,7 +2504,7 @@ void CXFA_Node::Script_Subform_GetInvalidObjects(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"getInvalidObjects"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"getInvalidObjects");
     }
 }
 FX_INT32 CXFA_Node::Subform_and_SubformSet_InstanceIndex()
@@ -2525,7 +2525,7 @@ void CXFA_Node::Script_Template_FormNodes(CFXJSE_Arguments* pArguments)
     if (argc == 1) {
         FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), TRUE);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"formNodes"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"formNodes");
     }
 }
 void CXFA_Node::Script_Template_Remerge(CFXJSE_Arguments* pArguments)
@@ -2534,7 +2534,7 @@ void CXFA_Node::Script_Template_Remerge(CFXJSE_Arguments* pArguments)
     if (argc == 0) {
         m_pDocument->DoDataRemerge(TRUE);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"remerge"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"remerge");
     }
 }
 void CXFA_Node::Script_Template_ExecInitialize(CFXJSE_Arguments* pArguments)
@@ -2548,7 +2548,7 @@ void CXFA_Node::Script_Template_ExecInitialize(CFXJSE_Arguments* pArguments)
             FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), TRUE);
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execInitialize"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execInitialize");
     }
 }
 void CXFA_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments)
@@ -2581,14 +2581,14 @@ void CXFA_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments)
                     }
                     FXJSE_Value_Set(pArguments->GetReturnValue(), m_pDocument->GetScriptContext()->GetJSValueFromMap(pNewNode));
                 } else {
-                    ThrowScriptErrorMessage(XFA_IDS_NOT_HAVE_PROPERTY, (FX_LPCWSTR)strTagName, (FX_LPCWSTR)(L"name"));
+                    ThrowScriptErrorMessage(XFA_IDS_NOT_HAVE_PROPERTY, (FX_LPCWSTR)strTagName, L"name");
                 }
             } else {
                 FXJSE_Value_Set(pArguments->GetReturnValue(), m_pDocument->GetScriptContext()->GetJSValueFromMap(pNewNode));
             }
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"createNode"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"createNode");
     }
 }
 void CXFA_Node::Script_Template_Recalculate(CFXJSE_Arguments* pArguments)
@@ -2598,7 +2598,7 @@ void CXFA_Node::Script_Template_Recalculate(CFXJSE_Arguments* pArguments)
         FX_BOOL	bScriptFlags = pArguments->GetInt32(0) == 0 ? FALSE : TRUE;
         FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), TRUE);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"recalculate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"recalculate");
     }
 }
 void CXFA_Node::Script_Template_ExecCalculate(CFXJSE_Arguments* pArguments)
@@ -2612,7 +2612,7 @@ void CXFA_Node::Script_Template_ExecCalculate(CFXJSE_Arguments* pArguments)
             FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), TRUE);
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execCalculate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execCalculate");
     }
 }
 void CXFA_Node::Script_Template_ExecValidate(CFXJSE_Arguments* pArguments)
@@ -2626,7 +2626,7 @@ void CXFA_Node::Script_Template_ExecValidate(CFXJSE_Arguments* pArguments)
             FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), TRUE);
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execValidate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execValidate");
     }
 }
 void CXFA_Node::Script_Manifest_Evaluate(CFXJSE_Arguments* pArguments)
@@ -2640,7 +2640,7 @@ void CXFA_Node::Script_Manifest_Evaluate(CFXJSE_Arguments* pArguments)
             FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), TRUE);
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"evaluate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"evaluate");
     }
 }
 void CXFA_Node::Script_InstanceManager_Max(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute)
@@ -2957,7 +2957,7 @@ void CXFA_Node::Script_InstanceManager_RemoveInstance(CFXJSE_Arguments* pArgumen
     CXFA_Occur nodeOccur = GetOccurNode();
     FX_INT32  iMin = nodeOccur.GetMin();
     if (iCount - 1 < iMin) {
-        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, (FX_LPCWSTR)(L"min"));
+        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, L"min");
         return;
     }
     CXFA_Node *pRemoveInstance = XFA_ScriptInstanceManager_GetItem(this, iIndex);
@@ -2991,7 +2991,7 @@ void CXFA_Node::Script_InstanceManager_AddInstance(CFXJSE_Arguments* pArguments)
 {
     FX_INT32 argc  = pArguments->GetLength();
     if ((argc != 0) && (argc != 1)) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"addInstance"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"addInstance");
         return;
     }
     FX_BOOL fFlags = TRUE;
@@ -3002,7 +3002,7 @@ void CXFA_Node::Script_InstanceManager_AddInstance(CFXJSE_Arguments* pArguments)
     CXFA_Occur nodeOccur = GetOccurNode();
     FX_INT32 iMax = nodeOccur.GetMax();
     if (iMax >= 0 && iCount >= iMax) {
-        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, (FX_LPCWSTR)(L"max"));
+        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, L"max");
         return;
     }
     CXFA_Node* pNewInstance = XFA_ScriptInstanceManager_CreateInstance(this, fFlags);
@@ -3023,7 +3023,7 @@ void CXFA_Node::Script_InstanceManager_InsertInstance(CFXJSE_Arguments* pArgumen
 {
     FX_INT32 argc = pArguments->GetLength();
     if ((argc != 1) && (argc != 2)) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"insertInstance"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"insertInstance");
         return;
     }
     FX_INT32 iIndex = pArguments->GetInt32(0);
@@ -3039,7 +3039,7 @@ void CXFA_Node::Script_InstanceManager_InsertInstance(CFXJSE_Arguments* pArgumen
     }
     FX_INT32 iMax = nodeOccur.GetMax();
     if (iMax >= 0 && iCount >= iMax) {
-        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, (FX_LPCWSTR)(L"max"));
+        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, L"max");
         return;
     }
     CXFA_Node* pNewInstance = XFA_ScriptInstanceManager_CreateInstance(this, bBind);
@@ -3062,11 +3062,11 @@ FX_INT32 CXFA_Node::InstanceManager_SetInstances(FX_INT32 iDesired)
     FX_INT32 iMax = nodeOccur.GetMax();
     FX_INT32 iMin = nodeOccur.GetMin();
     if (iDesired < iMin) {
-        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, (FX_LPCWSTR)(L"min"));
+        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, L"min");
         return 1;
     }
     if ((iMax >= 0) && (iDesired > iMax)) {
-        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, (FX_LPCWSTR)(L"max"));
+        ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, L"max");
         return 2;
     }
     FX_INT32 iCount = XFA_ScriptInstanceManager_GetCount(this);
@@ -3159,7 +3159,7 @@ void CXFA_Node::Script_Desc_Metadata(CFXJSE_Arguments* pArguments)
     if ((argc == 0) || (argc == 1)) {
         FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), FX_BSTRC(""));
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"metadata"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"metadata");
     }
 }
 void CXFA_Node::Script_Form_FormNodes(CFXJSE_Arguments* pArguments)
@@ -3177,7 +3177,7 @@ void CXFA_Node::Script_Form_FormNodes(CFXJSE_Arguments* pArguments)
             ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"formNodes"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"formNodes");
     }
 }
 void CXFA_Node::Script_Form_Remerge(CFXJSE_Arguments* pArguments)
@@ -3186,7 +3186,7 @@ void CXFA_Node::Script_Form_Remerge(CFXJSE_Arguments* pArguments)
     if (argc == 0) {
         m_pDocument->DoDataRemerge(TRUE);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"remerge"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"remerge");
     }
 }
 void CXFA_Node::Script_Form_ExecInitialize(CFXJSE_Arguments* pArguments)
@@ -3199,7 +3199,7 @@ void CXFA_Node::Script_Form_ExecInitialize(CFXJSE_Arguments* pArguments)
         }
         pNotify->ExecEventByDeepFirst(this, XFA_EVENT_Initialize);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execInitialize"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execInitialize");
     }
 }
 void CXFA_Node::Script_Form_Recalculate(CFXJSE_Arguments* pArguments)
@@ -3222,7 +3222,7 @@ void CXFA_Node::Script_Form_Recalculate(CFXJSE_Arguments* pArguments)
         } else {
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"recalculate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"recalculate");
     }
 }
 void CXFA_Node::Script_Form_ExecCalculate(CFXJSE_Arguments* pArguments)
@@ -3235,7 +3235,7 @@ void CXFA_Node::Script_Form_ExecCalculate(CFXJSE_Arguments* pArguments)
         }
         pNotify->ExecEventByDeepFirst(this, XFA_EVENT_Calculate);
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execCalculate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execCalculate");
     }
 }
 void CXFA_Node::Script_Form_ExecValidate(CFXJSE_Arguments* pArguments)
@@ -3250,7 +3250,7 @@ void CXFA_Node::Script_Form_ExecValidate(CFXJSE_Arguments* pArguments)
             FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), ((iRet == XFA_EVENTERROR_Error) ? FALSE : TRUE));
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"execValidate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"execValidate");
     }
 }
 void CXFA_Node::Script_Form_Checksum(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute)
@@ -3277,7 +3277,7 @@ void CXFA_Node::Script_Packet_GetAttribute(CFXJSE_Arguments* pArguments)
         }
         FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), FX_UTF8Encode(wsAttributeValue, wsAttributeValue.GetLength()));
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"getAttribute"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"getAttribute");
     }
 }
 void CXFA_Node::Script_Packet_SetAttribute(CFXJSE_Arguments* pArguments)
@@ -3292,7 +3292,7 @@ void CXFA_Node::Script_Packet_SetAttribute(CFXJSE_Arguments* pArguments)
         }
         FXJSE_Value_SetNull(pArguments->GetReturnValue());
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"setAttribute"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"setAttribute");
     }
 }
 void CXFA_Node::Script_Packet_RemoveAttribute(CFXJSE_Arguments* pArguments)
@@ -3310,7 +3310,7 @@ void CXFA_Node::Script_Packet_RemoveAttribute(CFXJSE_Arguments* pArguments)
         }
         FXJSE_Value_SetNull(pArguments->GetReturnValue());
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"removeAttribute"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"removeAttribute");
     }
 }
 void CXFA_Node::Script_Packet_Content(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute)
@@ -3338,7 +3338,7 @@ void CXFA_Node::Script_Source_Next(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"next"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"next");
     }
 }
 void CXFA_Node::Script_Source_CancelBatch(CFXJSE_Arguments* pArguments)
@@ -3346,7 +3346,7 @@ void CXFA_Node::Script_Source_CancelBatch(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"cancelBatch"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"cancelBatch");
     }
 }
 void CXFA_Node::Script_Source_First(CFXJSE_Arguments* pArguments)
@@ -3354,7 +3354,7 @@ void CXFA_Node::Script_Source_First(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"first"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"first");
     }
 }
 void CXFA_Node::Script_Source_UpdateBatch(CFXJSE_Arguments* pArguments)
@@ -3362,7 +3362,7 @@ void CXFA_Node::Script_Source_UpdateBatch(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"updateBatch"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"updateBatch");
     }
 }
 void CXFA_Node::Script_Source_Previous(CFXJSE_Arguments* pArguments)
@@ -3370,7 +3370,7 @@ void CXFA_Node::Script_Source_Previous(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"previous"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"previous");
     }
 }
 void CXFA_Node::Script_Source_IsBOF(CFXJSE_Arguments* pArguments)
@@ -3378,7 +3378,7 @@ void CXFA_Node::Script_Source_IsBOF(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"isBOF"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"isBOF");
     }
 }
 void CXFA_Node::Script_Source_IsEOF(CFXJSE_Arguments* pArguments)
@@ -3386,7 +3386,7 @@ void CXFA_Node::Script_Source_IsEOF(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"isEOF"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"isEOF");
     }
 }
 void CXFA_Node::Script_Source_Cancel(CFXJSE_Arguments* pArguments)
@@ -3394,7 +3394,7 @@ void CXFA_Node::Script_Source_Cancel(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"cancel"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"cancel");
     }
 }
 void CXFA_Node::Script_Source_Update(CFXJSE_Arguments* pArguments)
@@ -3402,7 +3402,7 @@ void CXFA_Node::Script_Source_Update(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"update"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"update");
     }
 }
 void CXFA_Node::Script_Source_Open(CFXJSE_Arguments* pArguments)
@@ -3410,7 +3410,7 @@ void CXFA_Node::Script_Source_Open(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"open"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"open");
     }
 }
 void CXFA_Node::Script_Source_Delete(CFXJSE_Arguments* pArguments)
@@ -3418,7 +3418,7 @@ void CXFA_Node::Script_Source_Delete(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"delete"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"delete");
     }
 }
 void CXFA_Node::Script_Source_AddNew(CFXJSE_Arguments* pArguments)
@@ -3426,7 +3426,7 @@ void CXFA_Node::Script_Source_AddNew(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"addNew"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"addNew");
     }
 }
 void CXFA_Node::Script_Source_Requery(CFXJSE_Arguments* pArguments)
@@ -3434,7 +3434,7 @@ void CXFA_Node::Script_Source_Requery(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"requery"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"requery");
     }
 }
 void CXFA_Node::Script_Source_Resync(CFXJSE_Arguments* pArguments)
@@ -3442,7 +3442,7 @@ void CXFA_Node::Script_Source_Resync(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"resync"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"resync");
     }
 }
 void CXFA_Node::Script_Source_Close(CFXJSE_Arguments* pArguments)
@@ -3450,7 +3450,7 @@ void CXFA_Node::Script_Source_Close(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"close"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"close");
     }
 }
 void CXFA_Node::Script_Source_Last(CFXJSE_Arguments* pArguments)
@@ -3458,7 +3458,7 @@ void CXFA_Node::Script_Source_Last(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"last"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"last");
     }
 }
 void CXFA_Node::Script_Source_HasDataChanged(CFXJSE_Arguments* pArguments)
@@ -3466,7 +3466,7 @@ void CXFA_Node::Script_Source_HasDataChanged(CFXJSE_Arguments* pArguments)
     FX_INT32 argc = pArguments->GetLength();
     if (argc == 0) {
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"hasDataChanged"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"hasDataChanged");
     }
 }
 void CXFA_Node::Script_Source_Db(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute)
@@ -3600,7 +3600,7 @@ FX_BOOL CXFA_Node::GetAttribute(XFA_ATTRIBUTE eAttr, CFX_WideString &wsValue, FX
                 if (!TryInteger(pAttr->eName, iValue, bUseDefault)) {
                     return FALSE;
                 }
-                wsValue.Format((FX_LPCWSTR)L"%d", iValue);
+                wsValue.Format(L"%d", iValue);
                 return TRUE;
             }
             break;
@@ -4969,7 +4969,7 @@ void	CXFA_NodeList::Script_ListClass_Append(CFXJSE_Arguments* pArguments)
             ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"append"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"append");
     }
 }
 void	CXFA_NodeList::Script_ListClass_Insert(CFXJSE_Arguments* pArguments)
@@ -4984,7 +4984,7 @@ void	CXFA_NodeList::Script_ListClass_Insert(CFXJSE_Arguments* pArguments)
             ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"insert"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"insert");
     }
 }
 void	CXFA_NodeList::Script_ListClass_Remove(CFXJSE_Arguments* pArguments)
@@ -4998,7 +4998,7 @@ void	CXFA_NodeList::Script_ListClass_Remove(CFXJSE_Arguments* pArguments)
             ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"remove"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"remove");
     }
 }
 void	CXFA_NodeList::Script_ListClass_Item(CFXJSE_Arguments* pArguments)
@@ -5012,7 +5012,7 @@ void	CXFA_NodeList::Script_ListClass_Item(CFXJSE_Arguments* pArguments)
             ThrowScriptErrorMessage(XFA_IDS_INDEX_OUT_OF_BOUNDS);
         }
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"item"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"item");
     }
 }
 void	CXFA_NodeList::Script_TreelistClass_NamedItem(CFXJSE_Arguments* pArguments)
@@ -5026,7 +5026,7 @@ void	CXFA_NodeList::Script_TreelistClass_NamedItem(CFXJSE_Arguments* pArguments)
         }
         FXJSE_Value_Set(pArguments->GetReturnValue(), m_pDocument->GetScriptContext()->GetJSValueFromMap(pNode));
     } else {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"namedItem"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"namedItem");
     }
 }
 void	CXFA_NodeList::Script_ListClass_Length(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute)

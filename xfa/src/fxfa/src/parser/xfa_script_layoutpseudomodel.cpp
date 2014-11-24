@@ -48,16 +48,16 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(CFXJSE_Arguments* 
         FX_LPCWSTR methodName = NULL;
         switch (layoutModel) {
             case XFA_LAYOUTMODEL_H:
-                methodName = (FX_LPCWSTR)(L"h");
+                methodName = L"h";
                 break;
             case XFA_LAYOUTMODEL_W:
-                methodName = (FX_LPCWSTR)(L"w");
+                methodName = L"w";
                 break;
             case XFA_LAYOUTMODEL_X:
-                methodName = (FX_LPCWSTR)(L"x");
+                methodName = L"x";
                 break;
             case XFA_LAYOUTMODEL_Y:
-                methodName = (FX_LPCWSTR)(L"y");
+                methodName = L"y";
                 break;
         }
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, methodName);
@@ -173,7 +173,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageSpan(CFXJSE_Argumen
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"pageSpan"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"pageSpan");
         return;
     }
     CXFA_Node* pNode = NULL;
@@ -329,7 +329,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageContent(CFXJSE_Argu
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 3) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"pageContent"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"pageContent");
         return;
     }
     FX_INT32 iIndex = 0;
@@ -409,7 +409,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageInBatch(CFXJSE_A
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"absPageInBatch"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"absPageInBatch");
         return;
     }
     CXFA_Node* pNode = NULL;
@@ -442,7 +442,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetInBatch(CFXJSE_Arg
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 1) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"sheetInBatch"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sheetInBatch");
         return;
     }
     CXFA_Node* pNode = NULL;
@@ -492,9 +492,9 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageImp(CFXJSE_Argument
     if (iLength != 1) {
         FX_LPCWSTR methodName;
         if (bAbsPage) {
-            methodName = (FX_LPCWSTR)(L"absPage");
+            methodName = L"absPage";
         } else {
-            methodName = (FX_LPCWSTR)(L"page");
+            methodName = L"page";
         }
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, methodName);
         return;

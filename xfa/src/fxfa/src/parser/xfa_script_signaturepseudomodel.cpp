@@ -29,7 +29,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(CFXJSE_Arg
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 4) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"verify"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"verify");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -51,7 +51,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(CFXJSE_Argum
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 3 || iLength > 7) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"sign"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sign");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -83,7 +83,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(CFXJSE_
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength != 0) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"enumerate"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"enumerate");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
@@ -98,7 +98,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Clear(CFXJSE_Argu
 {
     FX_INT32 iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 2) {
-        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"clear"));
+        ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"clear");
         return;
     }
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();

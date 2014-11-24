@@ -101,7 +101,7 @@ void CXFA_Fill::SetColor(FX_ARGB color)
     CFX_WideString wsColor;
     int a, r, g, b;
     ArgbDecode(color, a, r, g, b);
-    wsColor.Format((FX_LPCWSTR)L"%d,%d,%d", r, g, b);
+    wsColor.Format(L"%d,%d,%d", r, g, b);
     pNode->SetCData(XFA_ATTRIBUTE_Value, wsColor);
 }
 FX_ARGB	CXFA_Fill::GetColor(FX_BOOL bText)
@@ -198,7 +198,7 @@ FX_BOOL CXFA_Fill::SetPattern(FX_INT32 iPattern, FX_ARGB foreColor)
     CFX_WideString wsColor;
     int a, r, g, b;
     ArgbDecode(foreColor, a, r, g, b);
-    wsColor.Format((FX_LPCWSTR)L"%d,%d,%d", r, g, b);
+    wsColor.Format(L"%d,%d,%d", r, g, b);
     pColor->SetCData(XFA_ATTRIBUTE_Value, wsColor);
     return pNode->SetEnum(XFA_ATTRIBUTE_Type, (XFA_ATTRIBUTEENUM)iPattern);
 }
@@ -209,7 +209,7 @@ FX_BOOL CXFA_Fill::SetStipple(FX_INT32 iStipple, FX_ARGB stippleColor)
     CFX_WideString wsColor;
     int a, r, g, b;
     ArgbDecode(stippleColor, a, r, g, b);
-    wsColor.Format((FX_LPCWSTR)L"%d,%d,%d", r, g, b);
+    wsColor.Format(L"%d,%d,%d", r, g, b);
     pColor->SetCData(XFA_ATTRIBUTE_Value, wsColor);
     return pNode->SetEnum(XFA_ATTRIBUTE_Rate, (XFA_ATTRIBUTEENUM)iStipple);
 }
@@ -220,7 +220,7 @@ FX_BOOL CXFA_Fill::SetLinear(FX_INT32 iLinear, FX_ARGB endColor)
     CFX_WideString wsColor;
     int a, r, g, b;
     ArgbDecode(endColor, a, r, g, b);
-    wsColor.Format((FX_LPCWSTR)L"%d,%d,%d", r, g, b);
+    wsColor.Format(L"%d,%d,%d", r, g, b);
     pColor->SetCData(XFA_ATTRIBUTE_Value, wsColor);
     return pNode->SetEnum(XFA_ATTRIBUTE_Type, (XFA_ATTRIBUTEENUM)iLinear);
 }
@@ -231,7 +231,7 @@ FX_BOOL CXFA_Fill::SetRadial(FX_INT32 iRadial, FX_ARGB endColor)
     CFX_WideString wsColor;
     int a, r, g, b;
     ArgbDecode(endColor, a, r, g, b);
-    wsColor.Format((FX_LPCWSTR)L"%d,%d,%d", r, g, b);
+    wsColor.Format(L"%d,%d,%d", r, g, b);
     pColor->SetCData(XFA_ATTRIBUTE_Value, wsColor);
     return pNode->SetEnum(XFA_ATTRIBUTE_Type, (XFA_ATTRIBUTEENUM)iRadial);
 }
@@ -393,13 +393,13 @@ FX_BOOL CXFA_Font::SetBaselineShift(FX_FLOAT fBaselineShift)
 FX_BOOL CXFA_Font::SetHorizontalScale(FX_FLOAT fHorizontalScale)
 {
     CFX_WideString wsValue;
-    wsValue.Format((FX_LPCWSTR)L"%d", (FX_INT32)fHorizontalScale);
+    wsValue.Format(L"%d", (FX_INT32)fHorizontalScale);
     return m_pNode->SetCData(XFA_ATTRIBUTE_FontHorizontalScale, wsValue);
 }
 FX_BOOL CXFA_Font::SetVerticalScale(FX_FLOAT fVerticalScale)
 {
     CFX_WideString wsValue;
-    wsValue.Format((FX_LPCWSTR)L"%d", (FX_INT32)fVerticalScale);
+    wsValue.Format(L"%d", (FX_INT32)fVerticalScale);
     return m_pNode->SetCData(XFA_ATTRIBUTE_FontVerticalScale, wsValue);
 }
 FX_BOOL CXFA_Font::SetLetterSpacing(FX_FLOAT fLetterSpacing, XFA_UNIT eUnit)
@@ -1667,7 +1667,7 @@ void CXFA_Stroke::SetColor(FX_ARGB argb)
     CFX_WideString wsColor;
     int a, r, g, b;
     ArgbDecode(argb, a, r, g, b);
-    wsColor.Format((FX_LPCWSTR)L"%d,%d,%d", r, g, b);
+    wsColor.Format(L"%d,%d,%d", r, g, b);
     pNode->SetCData(XFA_ATTRIBUTE_Value, wsColor);
 }
 FX_INT32 CXFA_Stroke::GetJoinType() const
@@ -2852,10 +2852,10 @@ FX_BOOL CXFA_WidgetData::GetBarcodeAttribute_CharEncoding(FX_INT32& val)
     CXFA_Node* pUIChild = GetUIChild();
     CFX_WideString wsCharEncoding;
     if(pUIChild->TryCData(XFA_ATTRIBUTE_CharEncoding, wsCharEncoding)) {
-        if (wsCharEncoding.CompareNoCase((FX_LPCWSTR)(L"UTF-16"))) {
+        if (wsCharEncoding.CompareNoCase(L"UTF-16")) {
             val = CHAR_ENCODING_UNICODE;
             return TRUE;
-        } else if (wsCharEncoding.CompareNoCase((FX_LPCWSTR)(L"UTF-8"))) {
+        } else if (wsCharEncoding.CompareNoCase(L"UTF-8")) {
             val = CHAR_ENCODING_UTF8;
             return TRUE;
         }
@@ -3635,8 +3635,8 @@ void CXFA_WidgetData::NormalizeNumStr(const CFX_WideString& wsValue, CFX_WideStr
     FX_INT32 dot_index = wsOutput.Find('.');
     FX_INT32 iFracDigits = 0;
     if (!wsOutput.IsEmpty() && dot_index >= 0 && (!GetFracDigits(iFracDigits) || iFracDigits != -1)) {
-        wsOutput.TrimRight((FX_LPCWSTR)L"0");
-        wsOutput.TrimRight((FX_LPCWSTR)L".");
+        wsOutput.TrimRight(L"0");
+        wsOutput.TrimRight(L".");
     }
     if (wsOutput.IsEmpty() || wsOutput[0] == '.') {
         wsOutput.Insert(0, '0');

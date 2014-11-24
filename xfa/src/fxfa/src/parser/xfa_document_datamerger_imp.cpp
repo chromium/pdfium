@@ -261,12 +261,12 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode, CXFA_Node* pDa
                         FXSYS_assert(pXMLDataElement);
                         CFX_WideString wsContentType;
                         CFX_WideString wsHref;
-                        pXMLDataElement->GetString((FX_LPCWSTR)L"xfa:contentType", wsContentType);
+                        pXMLDataElement->GetString(L"xfa:contentType", wsContentType);
                         if (!wsContentType.IsEmpty()) {
                             pDataNode->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
                             image.SetContentType(wsContentType);
                         }
-                        pXMLDataElement->GetString((FX_LPCWSTR)L"href", wsHref);
+                        pXMLDataElement->GetString(L"href", wsHref);
                         if (!wsHref.IsEmpty()) {
                             image.SetHref(wsHref);
                         }

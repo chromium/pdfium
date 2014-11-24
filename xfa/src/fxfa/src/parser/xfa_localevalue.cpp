@@ -392,7 +392,7 @@ FX_BOOL CXFA_LocaleValue::SetText(const CFX_WideString& wsText, const CFX_WideSt
 FX_BOOL CXFA_LocaleValue::SetNum(FX_FLOAT fNum)
 {
     m_dwType = XFA_VT_FLOAT;
-    m_wsValue.Format((FX_LPCWSTR)L"%.8g", (FX_DOUBLE)fNum);
+    m_wsValue.Format(L"%.8g", (FX_DOUBLE)fNum);
     return TRUE;
 }
 FX_BOOL CXFA_LocaleValue::SetNum(const CFX_WideString& wsNum, const CFX_WideString& wsFormat,
@@ -404,7 +404,7 @@ FX_BOOL CXFA_LocaleValue::SetNum(const CFX_WideString& wsNum, const CFX_WideStri
 FX_BOOL CXFA_LocaleValue::SetDate(const CFX_Unitime& d)
 {
     m_dwType = XFA_VT_DATE;
-    m_wsValue.Format((FX_LPCWSTR)L"%04d-%02d-%02d", d.GetYear(), d.GetMonth(), d.GetDay());
+    m_wsValue.Format(L"%04d-%02d-%02d", d.GetYear(), d.GetMonth(), d.GetDay());
     return TRUE;
 }
 FX_BOOL CXFA_LocaleValue::SetDate(const CFX_WideString& wsDate, const CFX_WideString& wsFormat, IFX_Locale* pLocale)
@@ -415,10 +415,10 @@ FX_BOOL CXFA_LocaleValue::SetDate(const CFX_WideString& wsDate, const CFX_WideSt
 FX_BOOL CXFA_LocaleValue::SetTime(const CFX_Unitime& t)
 {
     m_dwType = XFA_VT_TIME;
-    m_wsValue.Format((FX_LPCWSTR)L"%02d:%02d:%02d", t.GetHour(), t.GetMinute(), t.GetSecond());
+    m_wsValue.Format(L"%02d:%02d:%02d", t.GetHour(), t.GetMinute(), t.GetSecond());
     if (t.GetMillisecond() > 0) {
         CFX_WideString wsTemp;
-        wsTemp.Format((FX_LPCWSTR)L"%:03d", t.GetMillisecond());
+        wsTemp.Format(L"%:03d", t.GetMillisecond());
         m_wsValue += wsTemp;
     }
     return TRUE;
@@ -431,11 +431,11 @@ FX_BOOL CXFA_LocaleValue::SetTime(const CFX_WideString& wsTime, const CFX_WideSt
 FX_BOOL CXFA_LocaleValue::SetDateTime(const CFX_Unitime& dt)
 {
     m_dwType = XFA_VT_DATETIME;
-    m_wsValue.Format((FX_LPCWSTR)L"%04d-%02d-%02dT%02d:%02d:%02d", dt.GetYear(), dt.GetMonth(), dt.GetDay(),
+    m_wsValue.Format(L"%04d-%02d-%02dT%02d:%02d:%02d", dt.GetYear(), dt.GetMonth(), dt.GetDay(),
                      dt.GetHour(), dt.GetMinute(), dt.GetSecond());
     if (dt.GetMillisecond() > 0) {
         CFX_WideString wsTemp;
-        wsTemp.Format((FX_LPCWSTR)L"%:03d", dt.GetMillisecond());
+        wsTemp.Format(L"%:03d", dt.GetMillisecond());
         m_wsValue += wsTemp;
     }
     return TRUE;

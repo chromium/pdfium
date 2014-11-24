@@ -473,7 +473,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(IFDE_XMLNode* pXMLDo
                 IFDE_XMLElement* pXMLDocumentElement = (IFDE_XMLElement*)pXMLDocumentNode;
                 pXMLDocumentElement->GetNamespaceURI(wsNamespaceURI);
                 if (wsNamespaceURI.IsEmpty()) {
-                    pXMLDocumentElement->GetString((FX_LPCWSTR)(L"xmlns:xfa"), wsNamespaceURI);
+                    pXMLDocumentElement->GetString(L"xmlns:xfa", wsNamespaceURI);
                 }
                 pNode->GetDocument()->RecognizeXFAVersionNumber(wsNamespaceURI);
             }
@@ -485,7 +485,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(IFDE_XMLNode* pXMLDo
         if(XFA_FDEExtension_MatchNodeName(pXMLDocumentNode, XFA_GetPacketByIndex(XFA_PACKET_Form)->pName, XFA_GetPacketByIndex(XFA_PACKET_Form)->pURI, XFA_GetPacketByIndex(XFA_PACKET_Form)->eFlags)) {
             IFDE_XMLElement* pXMLDocumentElement = (IFDE_XMLElement*)pXMLDocumentNode;
             CFX_WideString wsChecksum;
-            pXMLDocumentElement->GetString((FX_LPCWSTR)L"checksum", wsChecksum);
+            pXMLDocumentElement->GetString(L"checksum", wsChecksum);
 #ifdef _XFA_VERIFY_Checksum_
             if (wsChecksum.GetLength() != 28 || m_pXMLParser->m_dwCheckStatus != 0x03) {
                 return NULL;
@@ -557,7 +557,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Data(IFDE_XMLNode* pXMLDocumentNo
     }
     IFDE_XMLNode* pDataXMLNode = NULL;
     if (XFA_FDEExtension_MatchNodeName(pXMLDocumentNode, FX_WSTRC(L"data"), XFA_GetPacketByIndex(XFA_PACKET_Datasets)->pURI, XFA_GetPacketByIndex(XFA_PACKET_Datasets)->eFlags)) {
-        ((IFDE_XMLElement*)pXMLDocumentNode)->RemoveAttribute((FX_LPCWSTR)(L"xmlns:xfa"));
+        ((IFDE_XMLElement*)pXMLDocumentNode)->RemoveAttribute(L"xmlns:xfa");
         pDataXMLNode = pXMLDocumentNode;
     } else {
         IFDE_XMLElement* pDataElement = IFDE_XMLElement::Create(FX_WSTRC(L"xfa:data"));
@@ -567,7 +567,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Data(IFDE_XMLNode* pXMLDocumentNo
         }
         FXSYS_assert(pXMLDocumentNode->GetType() == FDE_XMLNODE_Element);
         if (pXMLDocumentNode->GetType() == FDE_XMLNODE_Element) {
-            ((IFDE_XMLElement*)pXMLDocumentNode)->RemoveAttribute((FX_LPCWSTR)(L"xmlns:xfa"));
+            ((IFDE_XMLElement*)pXMLDocumentNode)->RemoveAttribute(L"xmlns:xfa");
         }
         pDataElement->InsertChildNode(pXMLDocumentNode);
         pDataXMLNode = pDataElement;

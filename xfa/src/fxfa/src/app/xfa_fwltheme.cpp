@@ -58,9 +58,9 @@ CXFA_FWLTheme::~CXFA_FWLTheme()
     delete m_pBarcodeTP;
 }
 static FX_LPCWSTR g_FWLTheme_CalFonts[] = {
-    (FX_LPCWSTR)L"Arial",
-    (FX_LPCWSTR)L"Courier New",
-    (FX_LPCWSTR)L"DejaVu Sans",
+    L"Arial",
+    L"Courier New",
+    L"DejaVu Sans",
 };
 FWL_ERR CXFA_FWLTheme::Initialize()
 {

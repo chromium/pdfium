@@ -252,12 +252,12 @@ void CXFA_NodeHelper::XFA_GetNameExpression(CXFA_Node* refNode, CFX_WideString &
         if (refNode->IsUnnamed() || (bIsProperty && refNode->GetClassID() != XFA_ELEMENT_PageSet)) {
             refNode->GetClassName(wsTagName);
             ws = wsTagName;
-            wsName.Format((FX_LPCWSTR)L"#%s[%d]", (FX_LPCWSTR)ws, XFA_GetIndex(refNode, eLogicType, bIsProperty, TRUE));
+            wsName.Format(L"#%s[%d]", (FX_LPCWSTR)ws, XFA_GetIndex(refNode, eLogicType, bIsProperty, TRUE));
             return;
         }
         ws = refNode->GetCData(XFA_ATTRIBUTE_Name);
-        ws.Replace((FX_LPCWSTR)L".", (FX_LPCWSTR)L"\\.");
-        wsName.Format((FX_LPCWSTR)L"%s[%d]", (FX_LPCWSTR)ws, XFA_GetIndex(refNode, eLogicType, bIsProperty, FALSE));
+        ws.Replace(L".", L"\\.");
+        wsName.Format(L"%s[%d]", (FX_LPCWSTR)ws, XFA_GetIndex(refNode, eLogicType, bIsProperty, FALSE));
     }
 }
 FX_BOOL	CXFA_NodeHelper::XFA_NodeIsTransparent(CXFA_Node* refNode)

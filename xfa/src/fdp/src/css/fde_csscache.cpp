@@ -127,8 +127,8 @@ _FDE_CSSTAGCACHE::_FDE_CSSTAGCACHE(_FDE_CSSTAGCACHE *parent, IFDE_CSSTagProvider
     while (pos != NULL) {
         pTag->GetNextAttribute(pos, wsName, wsValue);
         FX_DWORD dwNameHash = FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength(), TRUE);
-        static const FX_DWORD s_dwIDHash = FX_HashCode_String_GetW((FX_LPCWSTR)L"id", 2, TRUE);
-        static const FX_DWORD s_dwClassHash = FX_HashCode_String_GetW((FX_LPCWSTR)L"class", 5, TRUE);
+        static const FX_DWORD s_dwIDHash = FX_HashCode_String_GetW(L"id", 2, TRUE);
+        static const FX_DWORD s_dwClassHash = FX_HashCode_String_GetW(L"class", 5, TRUE);
         if (dwNameHash == s_dwClassHash) {
             FX_DWORD dwHash = FX_HashCode_String_GetW(wsValue.GetPtr(), wsValue.GetLength());
             dwClassHashs.Add(dwHash);

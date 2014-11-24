@@ -124,7 +124,7 @@ FX_INT32 CXFA_FFDoc::DoLoad(IFX_Pause *pPause )
             }
         } else {
             CFX_WideString wsHref;
-            ((IFDE_XMLElement*)pPDFXML)->GetString((FX_LPCWSTR)L"href", wsHref);
+            ((IFDE_XMLElement*)pPDFXML)->GetString(L"href", wsHref);
             if (!wsHref.IsEmpty()) {
                 pXFAReader = GetDocProvider()->OpenLinkedFile((XFA_HDOC)this, wsHref);
             }

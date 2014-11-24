@@ -1306,9 +1306,9 @@ FX_BOOL CPDFXFA_Document::_MailToInfo(CFX_WideString& csURL, CFX_WideString& csT
 		else
 			srcURL = srcURL.Right(csURL.GetLength()-(pos+1));
 	}
-	csToAddress.Replace((FX_LPCWSTR)L",", (FX_LPCWSTR)L";");
-	csCCAddress.Replace((FX_LPCWSTR)L",", (FX_LPCWSTR)L";");
-	csBCCAddress.Replace((FX_LPCWSTR)L",", (FX_LPCWSTR)L";");
+	csToAddress.Replace(L",", L";");
+	csCCAddress.Replace(L",", L";");
+	csBCCAddress.Replace(L",", L";");
 	return TRUE;
 }
 

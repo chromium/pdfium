@@ -336,7 +336,7 @@ CFX_WideString CXFA_FFNotify::GetCurrentDateTime()
     CFX_Unitime dataTime;
     dataTime.Now();
     CFX_WideString wsDateTime;
-    wsDateTime.Format((FX_LPCWSTR)L"%d%02d%02dT%02d%02d%02d", dataTime.GetYear(), dataTime.GetMonth(), dataTime.GetDay(), dataTime.GetHour(), dataTime.GetMinute(), dataTime.GetSecond());
+    wsDateTime.Format(L"%d%02d%02dT%02d%02d%02d", dataTime.GetYear(), dataTime.GetMonth(), dataTime.GetDay(), dataTime.GetHour(), dataTime.GetMinute(), dataTime.GetSecond());
     return wsDateTime;
 }
 void CXFA_FFNotify::ResetData(CXFA_WidgetData* pWidgetData)

@@ -17,512 +17,512 @@ struct XFA_FMHtmlHashedReserveCode {
     FX_UINT32		m_uCode;
 };
 static XFA_FMHtmlHashedReserveCode reservesForDecode [] = {
-    {0x00018b62,	(FX_LPCWSTR)L"Mu",	924},
-    {0x00019083,	(FX_LPCWSTR)L"Nu",	925},
-    {0x00019ab9,	(FX_LPCWSTR)L"Pi",	928},
-    {0x0001c3c1,	(FX_LPCWSTR)L"Xi",	926},
-    {0x000210ac,	(FX_LPCWSTR)L"ge",	8805},
-    {0x000210bb,	(FX_LPCWSTR)L"gt",	62},
-    {0x00022a51,	(FX_LPCWSTR)L"le",	8804},
-    {0x00022a60,	(FX_LPCWSTR)L"lt",	60},
-    {0x00022f82,	(FX_LPCWSTR)L"mu",	956},
-    {0x00023493,	(FX_LPCWSTR)L"ne",	8800},
-    {0x00023497,	(FX_LPCWSTR)L"ni",	8715},
-    {0x000234a3,	(FX_LPCWSTR)L"nu",	957},
-    {0x000239c1,	(FX_LPCWSTR)L"or",	8744},
-    {0x00023ed9,	(FX_LPCWSTR)L"pi",	960},
-    {0x000267e1,	(FX_LPCWSTR)L"xi",	958},
-    {0x00c41789,	(FX_LPCWSTR)L"lceil",	8968},
-    {0x00eef34f,	(FX_LPCWSTR)L"thetasym",	977},
-    {0x012d7ead,	(FX_LPCWSTR)L"lcirc",	206},
-    {0x01637b56,	(FX_LPCWSTR)L"agrave",	224},
-    {0x020856da,	(FX_LPCWSTR)L"crarr",	8629},
-    {0x022188c3,	(FX_LPCWSTR)L"gamma",	947},
-    {0x033586d3,	(FX_LPCWSTR)L"nbsp",	160},
-    {0x04f4c358,	(FX_LPCWSTR)L"nsub",	8836},
-    {0x0581466a,	(FX_LPCWSTR)L"dagger",	8224},
-    {0x06b1f790,	(FX_LPCWSTR)L"oelig",	339},
-    {0x06e490d4,	(FX_LPCWSTR)L"Chi",	935},
-    {0x0718c6a1,	(FX_LPCWSTR)L"ETH",	208},
-    {0x07196ada,	(FX_LPCWSTR)L"Eta",	919},
-    {0x07f667ca,	(FX_LPCWSTR)L"Ugrave",	217},
-    {0x083a8a21,	(FX_LPCWSTR)L"Phi",	934},
-    {0x083ac28c,	(FX_LPCWSTR)L"Psi",	936},
-    {0x086f26a9,	(FX_LPCWSTR)L"Rho",	929},
-    {0x089b5b51,	(FX_LPCWSTR)L"aring",	229},
-    {0x08a39f4a,	(FX_LPCWSTR)L"Tau",	932},
-    {0x08b6188b,	(FX_LPCWSTR)L"THORN",	222},
-    {0x09ce792a,	(FX_LPCWSTR)L"icirc",	238},
-    {0x09f9d61e,	(FX_LPCWSTR)L"amp",	38},
-    {0x09f9db33,	(FX_LPCWSTR)L"and",	8743},
-    {0x09f9db36,	(FX_LPCWSTR)L"ang",	8736},
-    {0x0a2e3514,	(FX_LPCWSTR)L"cap",	8745},
-    {0x0a2e58f4,	(FX_LPCWSTR)L"chi",	967},
-    {0x0a2e9ba8,	(FX_LPCWSTR)L"cup",	8746},
-    {0x0a4897d0,	(FX_LPCWSTR)L"deg",	176},
-    {0x0a6332fa,	(FX_LPCWSTR)L"eta",	951},
-    {0x0a633301,	(FX_LPCWSTR)L"eth",	240},
-    {0x0acc4d4b,	(FX_LPCWSTR)L"int",	8747},
-    {0x0b1b3d35,	(FX_LPCWSTR)L"loz",	9674},
-    {0x0b1b4c8b,	(FX_LPCWSTR)L"lrm",	8206},
-    {0x0b4fd9b1,	(FX_LPCWSTR)L"not",	172},
-    {0x0b845241,	(FX_LPCWSTR)L"phi",	966},
-    {0x0b84576f,	(FX_LPCWSTR)L"piv",	982},
-    {0x0b848aac,	(FX_LPCWSTR)L"psi",	968},
-    {0x0bb8df5e,	(FX_LPCWSTR)L"reg",	174},
-    {0x0bb8eec9,	(FX_LPCWSTR)L"rho",	961},
-    {0x0bb9034b,	(FX_LPCWSTR)L"rlm",	8207},
-    {0x0bd33d14,	(FX_LPCWSTR)L"shy",	173},
-    {0x0bd34229,	(FX_LPCWSTR)L"sim",	8764},
-    {0x0bd37faa,	(FX_LPCWSTR)L"sub",	8834},
-    {0x0bd37fb5,	(FX_LPCWSTR)L"sum",	8721},
-    {0x0bd37fb8,	(FX_LPCWSTR)L"sup",	8835},
-    {0x0bed676a,	(FX_LPCWSTR)L"tau",	964},
-    {0x0c07f32e,	(FX_LPCWSTR)L"uml",	168},
-    {0x0c71032c,	(FX_LPCWSTR)L"yen",	165},
-    {0x0c7f2889,	(FX_LPCWSTR)L"szlig",	223},
-    {0x0c8badbb,	(FX_LPCWSTR)L"zwj",	8205},
-    {0x10ba4dba,	(FX_LPCWSTR)L"Egrave",	200},
-    {0x10f1ea24,	(FX_LPCWSTR)L"para",	182},
-    {0x10f1ea37,	(FX_LPCWSTR)L"part",	8706},
-    {0x115b2337,	(FX_LPCWSTR)L"perp",	8869},
-    {0x12b10d15,	(FX_LPCWSTR)L"prod",	8719},
-    {0x12b10d21,	(FX_LPCWSTR)L"prop",	8733},
-    {0x12dfa9f4,	(FX_LPCWSTR)L"rfloor",	8971},
-    {0x12eb4736,	(FX_LPCWSTR)L"Agrave",	192},
-    {0x12fff2b7,	(FX_LPCWSTR)L"pund",	163},
-    {0x13fda9f2,	(FX_LPCWSTR)L"tilde",	732},
-    {0x1417fd62,	(FX_LPCWSTR)L"times",	215},
-    {0x154fc726,	(FX_LPCWSTR)L"ecirc",	234},
-    {0x165aa451,	(FX_LPCWSTR)L"sigma",	963},
-    {0x1709124a,	(FX_LPCWSTR)L"Dagger",	8225},
-    {0x192f78d5,	(FX_LPCWSTR)L"iexcl",	161},
-    {0x1b7ed8d7,	(FX_LPCWSTR)L"rArr",	8658},
-    {0x1ec88c68,	(FX_LPCWSTR)L"rang",	9002},
-    {0x1ec8a0f7,	(FX_LPCWSTR)L"rarr",	8594},
-    {0x1eda07f3,	(FX_LPCWSTR)L"atilde",	227},
-    {0x1f3182c4,	(FX_LPCWSTR)L"real",	8476},
-    {0x1fc34f8b,	(FX_LPCWSTR)L"yacute",	253},
-    {0x20d11522,	(FX_LPCWSTR)L"acirc",	226},
-    {0x21933a9b,	(FX_LPCWSTR)L"rsaquo",	8250},
-    {0x21f44907,	(FX_LPCWSTR)L"uacute",	250},
-    {0x220cca72,	(FX_LPCWSTR)L"acute",	180},
-    {0x242cded1,	(FX_LPCWSTR)L"alefsym",	8501},
-    {0x2655c66a,	(FX_LPCWSTR)L"delta",	948},
-    {0x269e4b4d,	(FX_LPCWSTR)L"exist",	8707},
-    {0x273379fa,	(FX_LPCWSTR)L"micro",	181},
-    {0x27a37440,	(FX_LPCWSTR)L"forall",	8704},
-    {0x2854e62c,	(FX_LPCWSTR)L"minus",	8722},
-    {0x28636f81,	(FX_LPCWSTR)L"cedil",	184},
-    {0x2887357b,	(FX_LPCWSTR)L"iacute",	237},
-    {0x2994d5ff,	(FX_LPCWSTR)L"frac12",	189},
-    {0x2994d601,	(FX_LPCWSTR)L"frac14",	188},
-    {0x2994e043,	(FX_LPCWSTR)L"frac34",	190},
-    {0x2a1feb41,	(FX_LPCWSTR)L"lambda",	955},
-    {0x2ab215f3,	(FX_LPCWSTR)L"apos",	39},
-    {0x2ab82ef7,	(FX_LPCWSTR)L"eacute",	233},
-    {0x2b3592ef,	(FX_LPCWSTR)L"auml",	228},
-    {0x2ce92873,	(FX_LPCWSTR)L"aacute",	225},
-    {0x2daff48a,	(FX_LPCWSTR)L"oslash",	248},
-    {0x2ef68882,	(FX_LPCWSTR)L"aelig",	230},
-    {0x3061d3d3,	(FX_LPCWSTR)L"Atilde",	195},
-    {0x314b1b6b,	(FX_LPCWSTR)L"Yacute",	221},
-    {0x337c14e7,	(FX_LPCWSTR)L"Uacute",	218},
-    {0x37676aca,	(FX_LPCWSTR)L"cent",	162},
-    {0x37d0b841,	(FX_LPCWSTR)L"circ",	710},
-    {0x386e7947,	(FX_LPCWSTR)L"cong",	8773},
-    {0x386e839b,	(FX_LPCWSTR)L"copy",	169},
-    {0x3a0e225a,	(FX_LPCWSTR)L"Epsilon",	917},
-    {0x3ba7b721,	(FX_LPCWSTR)L"Lambda",	923},
-    {0x3bd9abe6,	(FX_LPCWSTR)L"Alpha",	913},
-    {0x3c3ffad7,	(FX_LPCWSTR)L"Eacute",	201},
-    {0x3cfaf69f,	(FX_LPCWSTR)L"brvbar",	166},
-    {0x3d54a489,	(FX_LPCWSTR)L"omega",	969},
-    {0x3e70f453,	(FX_LPCWSTR)L"Aacute",	193},
-    {0x3f37c06a,	(FX_LPCWSTR)L"Oslash",	216},
-    {0x40e1b34e,	(FX_LPCWSTR)L"diams",	9830},
-    {0x416596df,	(FX_LPCWSTR)L"plusmn",	177},
-    {0x4354ff16,	(FX_LPCWSTR)L"Ucirc",	219},
-    {0x454fce6a,	(FX_LPCWSTR)L"Upsilon",	933},
-    {0x4610ad35,	(FX_LPCWSTR)L"emsp",	8195},
-    {0x462afb76,	(FX_LPCWSTR)L"ensp",	8194},
-    {0x46e30073,	(FX_LPCWSTR)L"euml",	235},
-    {0x46e31a1b,	(FX_LPCWSTR)L"euro",	8364},
-    {0x46f2eada,	(FX_LPCWSTR)L"lowast",	8727},
-    {0x4dca26cf,	(FX_LPCWSTR)L"Auml",	196},
-    {0x4e2d6083,	(FX_LPCWSTR)L"image",	8465},
-    {0x4f964ee8,	(FX_LPCWSTR)L"notin",	8713},
-    {0x50917a7a,	(FX_LPCWSTR)L"epsilon",	949},
-    {0x52f9a4cd,	(FX_LPCWSTR)L"Kappa",	922},
-    {0x5496f410,	(FX_LPCWSTR)L"Ocirc",	212},
-    {0x568cbf34,	(FX_LPCWSTR)L"zeta",	950},
-    {0x57badd20,	(FX_LPCWSTR)L"ntilde",	241},
-    {0x58662109,	(FX_LPCWSTR)L"zwnj",	8204},
-    {0x5b39870f,	(FX_LPCWSTR)L"empty",	8709},
-    {0x5bd3268a,	(FX_LPCWSTR)L"upsilon",	965},
-    {0x5e2bf8a3,	(FX_LPCWSTR)L"Gamma",	915},
-    {0x5f73c13a,	(FX_LPCWSTR)L"rsquo",	8217},
-    {0x61f2bc4d,	(FX_LPCWSTR)L"iota",	953},
-    {0x625bbcf3,	(FX_LPCWSTR)L"isin",	8712},
-    {0x62906df7,	(FX_LPCWSTR)L"iuml",	239},
-    {0x64a5cb31,	(FX_LPCWSTR)L"Aring",	197},
-    {0x66f25c4a,	(FX_LPCWSTR)L"sbquo",	8218},
-    {0x6851ab60,	(FX_LPCWSTR)L"spades",	9824},
-    {0x6942a900,	(FX_LPCWSTR)L"Ntilde",	209},
-    {0x69779453,	(FX_LPCWSTR)L"Euml",	203},
-    {0x6cda6e23,	(FX_LPCWSTR)L"current",	164},
-    {0x70b5b634,	(FX_LPCWSTR)L"lsquo",	8216},
-    {0x715a3706,	(FX_LPCWSTR)L"Ecirc",	202},
-    {0x71e8bf8d,	(FX_LPCWSTR)L"tdquo",	8221},
-    {0x72651431,	(FX_LPCWSTR)L"Sigma",	931},
-    {0x7569813b,	(FX_LPCWSTR)L"iquest",	191},
-    {0x776a436a,	(FX_LPCWSTR)L"equiv",	8801},
-    {0x79215314,	(FX_LPCWSTR)L"Zeta",	918},
-    {0x79b81224,	(FX_LPCWSTR)L"ograve",	242},
-    {0x7c2f8b23,	(FX_LPCWSTR)L"macr",	175},
-    {0x7cdb8502,	(FX_LPCWSTR)L"Acirc",	194},
-    {0x8185c62e,	(FX_LPCWSTR)L"ndash",	8211},
-    {0x8260364a,	(FX_LPCWSTR)L"Delta",	916},
-    {0x846619ad,	(FX_LPCWSTR)L"mdash",	8212},
-    {0x8550fb50,	(FX_LPCWSTR)L"OElig",	338},
-    {0x88eb5b85,	(FX_LPCWSTR)L"ldquo",	8220},
-    {0x8b3fde04,	(FX_LPCWSTR)L"Ograve",	210},
-    {0x8bc5794b,	(FX_LPCWSTR)L"ordf",	170},
-    {0x8bc57952,	(FX_LPCWSTR)L"ordm",	186},
-    {0x8c14923d,	(FX_LPCWSTR)L"ouml",	246},
-    {0x8c5a7cd6,	(FX_LPCWSTR)L"theta",	952},
-    {0x8d61812b,	(FX_LPCWSTR)L"thorn",	254},
-    {0x912b95aa,	(FX_LPCWSTR)L"asymp",	8776},
-    {0x947faf81,	(FX_LPCWSTR)L"middot",	183},
-    {0x9629202e,	(FX_LPCWSTR)L"lfloor",	8970},
-    {0x972e9ec1,	(FX_LPCWSTR)L"otilde",	245},
-    {0x9748f231,	(FX_LPCWSTR)L"otimes",	8855},
-    {0x995f1469,	(FX_LPCWSTR)L"Omega",	937},
-    {0x99eb5349,	(FX_LPCWSTR)L"quot",	34},
-    {0x9aeb639e,	(FX_LPCWSTR)L"hellip",	8230},
-    {0xa0ae2f86,	(FX_LPCWSTR)L"Scaron",	352},
-    {0xa4dcb0d5,	(FX_LPCWSTR)L"lsaquo",	8249},
-    {0xa53dbf41,	(FX_LPCWSTR)L"oacute",	243},
-    {0xa5ae9e7b,	(FX_LPCWSTR)L"bdquo",	8222},
-    {0xa602d7ba,	(FX_LPCWSTR)L"sdot",	8901},
-    {0xa61ce86f,	(FX_LPCWSTR)L"sect",	167},
-    {0xa6e4c3d7,	(FX_LPCWSTR)L"sigmaf",	962},
-    {0xa7c1c74f,	(FX_LPCWSTR)L"sube",	8838},
-    {0xa7c20ee9,	(FX_LPCWSTR)L"sup1",	185},
-    {0xa7c20eea,	(FX_LPCWSTR)L"sup2",	178},
-    {0xa7c20eeb,	(FX_LPCWSTR)L"sup3",	179},
-    {0xa7c20f1d,	(FX_LPCWSTR)L"supe",	8839},
-    {0xa8b66aa1,	(FX_LPCWSTR)L"Otilde",	213},
-    {0xad958c42,	(FX_LPCWSTR)L"AElig",	198},
-    {0xaea9261d,	(FX_LPCWSTR)L"Ouml",	214},
-    {0xb040eafa,	(FX_LPCWSTR)L"uArr",	8657},
-    {0xb07c2e1c,	(FX_LPCWSTR)L"beta",	946},
-    {0xb220e92f,	(FX_LPCWSTR)L"bull",	8226},
-    {0xb22750c4,	(FX_LPCWSTR)L"ccedil",	231},
-    {0xb38ab31a,	(FX_LPCWSTR)L"uarr",	8593},
-    {0xb598b683,	(FX_LPCWSTR)L"uuml",	252},
-    {0xb6c58b21,	(FX_LPCWSTR)L"Oacute",	211},
-    {0xb6d2a617,	(FX_LPCWSTR)L"oline",	8254},
-    {0xba9fd989,	(FX_LPCWSTR)L"dArr",	8659},
-    {0xbb5ccd41,	(FX_LPCWSTR)L"lgrave",	204},
-    {0xbd39b44c,	(FX_LPCWSTR)L"weierp",	8472},
-    {0xbde9a1a9,	(FX_LPCWSTR)L"darr",	8595},
-    {0xc027e329,	(FX_LPCWSTR)L"permil",	8240},
-    {0xc2451389,	(FX_LPCWSTR)L"upsih",	978},
-    {0xc3af1ca4,	(FX_LPCWSTR)L"Ccedil",	199},
-    {0xcd164249,	(FX_LPCWSTR)L"fnof",	402},
-    {0xcf6c8467,	(FX_LPCWSTR)L"hearts",	9829},
-    {0xd1228390,	(FX_LPCWSTR)L"trade",	8482},
-    {0xd1462407,	(FX_LPCWSTR)L"yuml",	255},
-    {0xd2cf2253,	(FX_LPCWSTR)L"oplus",	8853},
-    {0xd310c1fc,	(FX_LPCWSTR)L"Beta",	914},
-    {0xd59c4d74,	(FX_LPCWSTR)L"infin",	8734},
-    {0xd64d470d,	(FX_LPCWSTR)L"hArr",	8660},
-    {0xd67d9c75,	(FX_LPCWSTR)L"divide",	247},
-    {0xd698dd37,	(FX_LPCWSTR)L"Omicron",	927},
-    {0xd82d4a63,	(FX_LPCWSTR)L"Uuml",	220},
-    {0xd9970f2d,	(FX_LPCWSTR)L"harr",	8596},
-    {0xda91fd99,	(FX_LPCWSTR)L"clubs",	9827},
-    {0xdbe5bdcc,	(FX_LPCWSTR)L"there4",	8756},
-    {0xdd7671bd,	(FX_LPCWSTR)L"prime",	8242},
-    {0xdfcf3c06,	(FX_LPCWSTR)L"alpha",	945},
-    {0xe0213063,	(FX_LPCWSTR)L"saron",	353},
-    {0xe1911d83,	(FX_LPCWSTR)L"radic",	8730},
-    {0xe2e75468,	(FX_LPCWSTR)L"raquo",	187},
-    {0xe6e27a5e,	(FX_LPCWSTR)L"lacute",	205},
-    {0xe74a8f36,	(FX_LPCWSTR)L"ucirc",	251},
-    {0xe864ecb6,	(FX_LPCWSTR)L"Theta",	920},
-    {0xecddde5e,	(FX_LPCWSTR)L"nabla",	8711},
-    {0xed1c3557,	(FX_LPCWSTR)L"omicron",	959},
-    {0xef82228f,	(FX_LPCWSTR)L"rceil",	8969},
-    {0xf1fab491,	(FX_LPCWSTR)L"lArr",	8656},
-    {0xf3dab7e7,	(FX_LPCWSTR)L"Yuml",	376},
-    {0xf4294962,	(FX_LPCWSTR)L"laquo",	171},
-    {0xf5446822,	(FX_LPCWSTR)L"lang",	9001},
-    {0xf5447cb1,	(FX_LPCWSTR)L"larr",	8592},
-    {0xf66e9bea,	(FX_LPCWSTR)L"ugrave",	249},
-    {0xf6b4ce70,	(FX_LPCWSTR)L"lota",	921},
-    {0xf6ef34ed,	(FX_LPCWSTR)L"kappa",	954},
-    {0xf72a3a56,	(FX_LPCWSTR)L"thinsp",	8201},
-    {0xf752801a,	(FX_LPCWSTR)L"luml",	207},
-    {0xf88c8430,	(FX_LPCWSTR)L"ocirc",	244},
-    {0xf9676178,	(FX_LPCWSTR)L"frasl",	8260},
-    {0xfd01885e,	(FX_LPCWSTR)L"igrave",	236},
-    {0xff3281da,	(FX_LPCWSTR)L"egrave",	232},
+    {0x00018b62,    L"Mu",      924},
+    {0x00019083,    L"Nu",      925},
+    {0x00019ab9,    L"Pi",      928},
+    {0x0001c3c1,    L"Xi",      926},
+    {0x000210ac,    L"ge",      8805},
+    {0x000210bb,    L"gt",      62},
+    {0x00022a51,    L"le",      8804},
+    {0x00022a60,    L"lt",      60},
+    {0x00022f82,    L"mu",      956},
+    {0x00023493,    L"ne",      8800},
+    {0x00023497,    L"ni",      8715},
+    {0x000234a3,    L"nu",      957},
+    {0x000239c1,    L"or",      8744},
+    {0x00023ed9,    L"pi",      960},
+    {0x000267e1,    L"xi",      958},
+    {0x00c41789,    L"lceil",   8968},
+    {0x00eef34f,    L"thetasym",977},
+    {0x012d7ead,    L"lcirc",   206},
+    {0x01637b56,    L"agrave",  224},
+    {0x020856da,    L"crarr",   8629},
+    {0x022188c3,    L"gamma",   947},
+    {0x033586d3,    L"nbsp",    160},
+    {0x04f4c358,    L"nsub",    8836},
+    {0x0581466a,    L"dagger",  8224},
+    {0x06b1f790,    L"oelig",   339},
+    {0x06e490d4,    L"Chi",     935},
+    {0x0718c6a1,    L"ETH",     208},
+    {0x07196ada,    L"Eta",     919},
+    {0x07f667ca,    L"Ugrave",  217},
+    {0x083a8a21,    L"Phi",     934},
+    {0x083ac28c,    L"Psi",     936},
+    {0x086f26a9,    L"Rho",     929},
+    {0x089b5b51,    L"aring",   229},
+    {0x08a39f4a,    L"Tau",     932},
+    {0x08b6188b,    L"THORN",   222},
+    {0x09ce792a,    L"icirc",   238},
+    {0x09f9d61e,    L"amp",     38},
+    {0x09f9db33,    L"and",     8743},
+    {0x09f9db36,    L"ang",     8736},
+    {0x0a2e3514,    L"cap",     8745},
+    {0x0a2e58f4,    L"chi",     967},
+    {0x0a2e9ba8,    L"cup",     8746},
+    {0x0a4897d0,    L"deg",     176},
+    {0x0a6332fa,    L"eta",     951},
+    {0x0a633301,    L"eth",     240},
+    {0x0acc4d4b,    L"int",     8747},
+    {0x0b1b3d35,    L"loz",     9674},
+    {0x0b1b4c8b,    L"lrm",     8206},
+    {0x0b4fd9b1,    L"not",     172},
+    {0x0b845241,    L"phi",     966},
+    {0x0b84576f,    L"piv",     982},
+    {0x0b848aac,    L"psi",     968},
+    {0x0bb8df5e,    L"reg",     174},
+    {0x0bb8eec9,    L"rho",     961},
+    {0x0bb9034b,    L"rlm",     8207},
+    {0x0bd33d14,    L"shy",     173},
+    {0x0bd34229,    L"sim",     8764},
+    {0x0bd37faa,    L"sub",     8834},
+    {0x0bd37fb5,    L"sum",     8721},
+    {0x0bd37fb8,    L"sup",     8835},
+    {0x0bed676a,    L"tau",     964},
+    {0x0c07f32e,    L"uml",     168},
+    {0x0c71032c,    L"yen",     165},
+    {0x0c7f2889,    L"szlig",   223},
+    {0x0c8badbb,    L"zwj",     8205},
+    {0x10ba4dba,    L"Egrave",  200},
+    {0x10f1ea24,    L"para",    182},
+    {0x10f1ea37,    L"part",    8706},
+    {0x115b2337,    L"perp",    8869},
+    {0x12b10d15,    L"prod",    8719},
+    {0x12b10d21,    L"prop",    8733},
+    {0x12dfa9f4,    L"rfloor",  8971},
+    {0x12eb4736,    L"Agrave",  192},
+    {0x12fff2b7,    L"pund",    163},
+    {0x13fda9f2,    L"tilde",   732},
+    {0x1417fd62,    L"times",   215},
+    {0x154fc726,    L"ecirc",   234},
+    {0x165aa451,    L"sigma",   963},
+    {0x1709124a,    L"Dagger",  8225},
+    {0x192f78d5,    L"iexcl",   161},
+    {0x1b7ed8d7,    L"rArr",    8658},
+    {0x1ec88c68,    L"rang",    9002},
+    {0x1ec8a0f7,    L"rarr",    8594},
+    {0x1eda07f3,    L"atilde",  227},
+    {0x1f3182c4,    L"real",    8476},
+    {0x1fc34f8b,    L"yacute",  253},
+    {0x20d11522,    L"acirc",   226},
+    {0x21933a9b,    L"rsaquo",  8250},
+    {0x21f44907,    L"uacute",  250},
+    {0x220cca72,    L"acute",   180},
+    {0x242cded1,    L"alefsym", 8501},
+    {0x2655c66a,    L"delta",   948},
+    {0x269e4b4d,    L"exist",   8707},
+    {0x273379fa,    L"micro",   181},
+    {0x27a37440,    L"forall",  8704},
+    {0x2854e62c,    L"minus",   8722},
+    {0x28636f81,    L"cedil",   184},
+    {0x2887357b,    L"iacute",  237},
+    {0x2994d5ff,    L"frac12",  189},
+    {0x2994d601,    L"frac14",  188},
+    {0x2994e043,    L"frac34",  190},
+    {0x2a1feb41,    L"lambda",  955},
+    {0x2ab215f3,    L"apos",    39},
+    {0x2ab82ef7,    L"eacute",  233},
+    {0x2b3592ef,    L"auml",    228},
+    {0x2ce92873,    L"aacute",  225},
+    {0x2daff48a,    L"oslash",  248},
+    {0x2ef68882,    L"aelig",   230},
+    {0x3061d3d3,    L"Atilde",  195},
+    {0x314b1b6b,    L"Yacute",  221},
+    {0x337c14e7,    L"Uacute",  218},
+    {0x37676aca,    L"cent",    162},
+    {0x37d0b841,    L"circ",    710},
+    {0x386e7947,    L"cong",    8773},
+    {0x386e839b,    L"copy",    169},
+    {0x3a0e225a,    L"Epsilon", 917},
+    {0x3ba7b721,    L"Lambda",  923},
+    {0x3bd9abe6,    L"Alpha",   913},
+    {0x3c3ffad7,    L"Eacute",  201},
+    {0x3cfaf69f,    L"brvbar",  166},
+    {0x3d54a489,    L"omega",   969},
+    {0x3e70f453,    L"Aacute",  193},
+    {0x3f37c06a,    L"Oslash",  216},
+    {0x40e1b34e,    L"diams",   9830},
+    {0x416596df,    L"plusmn",  177},
+    {0x4354ff16,    L"Ucirc",   219},
+    {0x454fce6a,    L"Upsilon", 933},
+    {0x4610ad35,    L"emsp",    8195},
+    {0x462afb76,    L"ensp",    8194},
+    {0x46e30073,    L"euml",    235},
+    {0x46e31a1b,    L"euro",    8364},
+    {0x46f2eada,    L"lowast",  8727},
+    {0x4dca26cf,    L"Auml",    196},
+    {0x4e2d6083,    L"image",   8465},
+    {0x4f964ee8,    L"notin",   8713},
+    {0x50917a7a,    L"epsilon", 949},
+    {0x52f9a4cd,    L"Kappa",   922},
+    {0x5496f410,    L"Ocirc",   212},
+    {0x568cbf34,    L"zeta",    950},
+    {0x57badd20,    L"ntilde",  241},
+    {0x58662109,    L"zwnj",    8204},
+    {0x5b39870f,    L"empty",   8709},
+    {0x5bd3268a,    L"upsilon", 965},
+    {0x5e2bf8a3,    L"Gamma",   915},
+    {0x5f73c13a,    L"rsquo",   8217},
+    {0x61f2bc4d,    L"iota",    953},
+    {0x625bbcf3,    L"isin",    8712},
+    {0x62906df7,    L"iuml",    239},
+    {0x64a5cb31,    L"Aring",   197},
+    {0x66f25c4a,    L"sbquo",   8218},
+    {0x6851ab60,    L"spades",  9824},
+    {0x6942a900,    L"Ntilde",  209},
+    {0x69779453,    L"Euml",    203},
+    {0x6cda6e23,    L"current", 164},
+    {0x70b5b634,    L"lsquo",   8216},
+    {0x715a3706,    L"Ecirc",   202},
+    {0x71e8bf8d,    L"tdquo",   8221},
+    {0x72651431,    L"Sigma",   931},
+    {0x7569813b,    L"iquest",  191},
+    {0x776a436a,    L"equiv",   8801},
+    {0x79215314,    L"Zeta",    918},
+    {0x79b81224,    L"ograve",  242},
+    {0x7c2f8b23,    L"macr",    175},
+    {0x7cdb8502,    L"Acirc",   194},
+    {0x8185c62e,    L"ndash",   8211},
+    {0x8260364a,    L"Delta",   916},
+    {0x846619ad,    L"mdash",   8212},
+    {0x8550fb50,    L"OElig",   338},
+    {0x88eb5b85,    L"ldquo",   8220},
+    {0x8b3fde04,    L"Ograve",  210},
+    {0x8bc5794b,    L"ordf",    170},
+    {0x8bc57952,    L"ordm",    186},
+    {0x8c14923d,    L"ouml",    246},
+    {0x8c5a7cd6,    L"theta",   952},
+    {0x8d61812b,    L"thorn",   254},
+    {0x912b95aa,    L"asymp",   8776},
+    {0x947faf81,    L"middot",  183},
+    {0x9629202e,    L"lfloor",  8970},
+    {0x972e9ec1,    L"otilde",  245},
+    {0x9748f231,    L"otimes",  8855},
+    {0x995f1469,    L"Omega",   937},
+    {0x99eb5349,    L"quot",    34},
+    {0x9aeb639e,    L"hellip",  8230},
+    {0xa0ae2f86,    L"Scaron",  352},
+    {0xa4dcb0d5,    L"lsaquo",  8249},
+    {0xa53dbf41,    L"oacute",  243},
+    {0xa5ae9e7b,    L"bdquo",   8222},
+    {0xa602d7ba,    L"sdot",    8901},
+    {0xa61ce86f,    L"sect",    167},
+    {0xa6e4c3d7,    L"sigmaf",  962},
+    {0xa7c1c74f,    L"sube",    8838},
+    {0xa7c20ee9,    L"sup1",    185},
+    {0xa7c20eea,    L"sup2",    178},
+    {0xa7c20eeb,    L"sup3",    179},
+    {0xa7c20f1d,    L"supe",    8839},
+    {0xa8b66aa1,    L"Otilde",  213},
+    {0xad958c42,    L"AElig",   198},
+    {0xaea9261d,    L"Ouml",    214},
+    {0xb040eafa,    L"uArr",    8657},
+    {0xb07c2e1c,    L"beta",    946},
+    {0xb220e92f,    L"bull",    8226},
+    {0xb22750c4,    L"ccedil",  231},
+    {0xb38ab31a,    L"uarr",    8593},
+    {0xb598b683,    L"uuml",    252},
+    {0xb6c58b21,    L"Oacute",  211},
+    {0xb6d2a617,    L"oline",   8254},
+    {0xba9fd989,    L"dArr",    8659},
+    {0xbb5ccd41,    L"lgrave",  204},
+    {0xbd39b44c,    L"weierp",  8472},
+    {0xbde9a1a9,    L"darr",    8595},
+    {0xc027e329,    L"permil",  8240},
+    {0xc2451389,    L"upsih",   978},
+    {0xc3af1ca4,    L"Ccedil",  199},
+    {0xcd164249,    L"fnof",    402},
+    {0xcf6c8467,    L"hearts",  9829},
+    {0xd1228390,    L"trade",   8482},
+    {0xd1462407,    L"yuml",    255},
+    {0xd2cf2253,    L"oplus",   8853},
+    {0xd310c1fc,    L"Beta",    914},
+    {0xd59c4d74,    L"infin",   8734},
+    {0xd64d470d,    L"hArr",    8660},
+    {0xd67d9c75,    L"divide",  247},
+    {0xd698dd37,    L"Omicron", 927},
+    {0xd82d4a63,    L"Uuml",    220},
+    {0xd9970f2d,    L"harr",    8596},
+    {0xda91fd99,    L"clubs",   9827},
+    {0xdbe5bdcc,    L"there4",  8756},
+    {0xdd7671bd,    L"prime",   8242},
+    {0xdfcf3c06,    L"alpha",   945},
+    {0xe0213063,    L"saron",   353},
+    {0xe1911d83,    L"radic",   8730},
+    {0xe2e75468,    L"raquo",   187},
+    {0xe6e27a5e,    L"lacute",  205},
+    {0xe74a8f36,    L"ucirc",   251},
+    {0xe864ecb6,    L"Theta",   920},
+    {0xecddde5e,    L"nabla",   8711},
+    {0xed1c3557,    L"omicron", 959},
+    {0xef82228f,    L"rceil",   8969},
+    {0xf1fab491,    L"lArr",    8656},
+    {0xf3dab7e7,    L"Yuml",    376},
+    {0xf4294962,    L"laquo",   171},
+    {0xf5446822,    L"lang",    9001},
+    {0xf5447cb1,    L"larr",    8592},
+    {0xf66e9bea,    L"ugrave",  249},
+    {0xf6b4ce70,    L"lota",    921},
+    {0xf6ef34ed,    L"kappa",   954},
+    {0xf72a3a56,    L"thinsp",  8201},
+    {0xf752801a,    L"luml",    207},
+    {0xf88c8430,    L"ocirc",   244},
+    {0xf9676178,    L"frasl",   8260},
+    {0xfd01885e,    L"igrave",  236},
+    {0xff3281da,    L"egrave",  232},
 };
 static XFA_FMHtmlReserveCode reservesForEncode [] = {
-    {34,	(FX_LPCWSTR)(L"quot")},
-    {38,	(FX_LPCWSTR)(L"amp")},
-    {39,	(FX_LPCWSTR)(L"apos")},
-    {60,	(FX_LPCWSTR)(L"lt")},
-    {62,	(FX_LPCWSTR)(L"gt")},
-    {160,	(FX_LPCWSTR)(L"nbsp")},
-    {161,	(FX_LPCWSTR)(L"iexcl")},
-    {162,	(FX_LPCWSTR)(L"cent")},
-    {163,	(FX_LPCWSTR)(L"pund")},
-    {164,	(FX_LPCWSTR)(L"current")},
-    {165,	(FX_LPCWSTR)(L"yen")},
-    {166,	(FX_LPCWSTR)(L"brvbar")},
-    {167,	(FX_LPCWSTR)(L"sect")},
-    {168,	(FX_LPCWSTR)(L"uml")},
-    {169,	(FX_LPCWSTR)(L"copy")},
-    {170,	(FX_LPCWSTR)(L"ordf")},
-    {171,	(FX_LPCWSTR)(L"laquo")},
-    {172,	(FX_LPCWSTR)(L"not")},
-    {173,	(FX_LPCWSTR)(L"shy")},
-    {174,	(FX_LPCWSTR)(L"reg")},
-    {175,	(FX_LPCWSTR)(L"macr")},
-    {176,	(FX_LPCWSTR)(L"deg")},
-    {177,	(FX_LPCWSTR)(L"plusmn")},
-    {178,	(FX_LPCWSTR)(L"sup2")},
-    {179,	(FX_LPCWSTR)(L"sup3")},
-    {180,	(FX_LPCWSTR)(L"acute")},
-    {181,	(FX_LPCWSTR)(L"micro")},
-    {182,	(FX_LPCWSTR)(L"para")},
-    {183,	(FX_LPCWSTR)(L"middot")},
-    {184,	(FX_LPCWSTR)(L"cedil")},
-    {185,	(FX_LPCWSTR)(L"sup1")},
-    {186,	(FX_LPCWSTR)(L"ordm")},
-    {187,	(FX_LPCWSTR)(L"raquo")},
-    {188,	(FX_LPCWSTR)(L"frac14")},
-    {189,	(FX_LPCWSTR)(L"frac12")},
-    {190,	(FX_LPCWSTR)(L"frac34")},
-    {191,	(FX_LPCWSTR)(L"iquest")},
-    {192,	(FX_LPCWSTR)(L"Agrave")},
-    {193,	(FX_LPCWSTR)(L"Aacute")},
-    {194,	(FX_LPCWSTR)(L"Acirc")},
-    {195,	(FX_LPCWSTR)(L"Atilde")},
-    {196,	(FX_LPCWSTR)(L"Auml")},
-    {197,	(FX_LPCWSTR)(L"Aring")},
-    {198,	(FX_LPCWSTR)(L"AElig")},
-    {199,	(FX_LPCWSTR)(L"Ccedil")},
-    {200,	(FX_LPCWSTR)(L"Egrave")},
-    {201,	(FX_LPCWSTR)(L"Eacute")},
-    {202,	(FX_LPCWSTR)(L"Ecirc")},
-    {203,	(FX_LPCWSTR)(L"Euml")},
-    {204,	(FX_LPCWSTR)(L"lgrave")},
-    {205,	(FX_LPCWSTR)(L"lacute")},
-    {206,	(FX_LPCWSTR)(L"lcirc")},
-    {207,	(FX_LPCWSTR)(L"luml")},
-    {208,	(FX_LPCWSTR)(L"ETH")},
-    {209,	(FX_LPCWSTR)(L"Ntilde")},
-    {210,	(FX_LPCWSTR)(L"Ograve")},
-    {211,	(FX_LPCWSTR)(L"Oacute")},
-    {212,	(FX_LPCWSTR)(L"Ocirc")},
-    {213,	(FX_LPCWSTR)(L"Otilde")},
-    {214,	(FX_LPCWSTR)(L"Ouml")},
-    {215,	(FX_LPCWSTR)(L"times")},
-    {216,	(FX_LPCWSTR)(L"Oslash")},
-    {217,	(FX_LPCWSTR)(L"Ugrave")},
-    {218,	(FX_LPCWSTR)(L"Uacute")},
-    {219,	(FX_LPCWSTR)(L"Ucirc")},
-    {220,	(FX_LPCWSTR)(L"Uuml")},
-    {221,	(FX_LPCWSTR)(L"Yacute")},
-    {222,	(FX_LPCWSTR)(L"THORN")},
-    {223,	(FX_LPCWSTR)(L"szlig")},
-    {224,	(FX_LPCWSTR)(L"agrave")},
-    {225,	(FX_LPCWSTR)(L"aacute")},
-    {226,	(FX_LPCWSTR)(L"acirc")},
-    {227,	(FX_LPCWSTR)(L"atilde")},
-    {228,	(FX_LPCWSTR)(L"auml")},
-    {229,	(FX_LPCWSTR)(L"aring")},
-    {230,	(FX_LPCWSTR)(L"aelig")		},
-    {231,	(FX_LPCWSTR)(L"ccedil")		},
-    {232,	(FX_LPCWSTR)(L"egrave")		},
-    {233,	(FX_LPCWSTR)(L"eacute")		},
-    {234,	(FX_LPCWSTR)(L"ecirc")		},
-    {235,	(FX_LPCWSTR)(L"euml")		},
-    {236,	(FX_LPCWSTR)(L"igrave")		},
-    {237,	(FX_LPCWSTR)(L"iacute")		},
-    {238,	(FX_LPCWSTR)(L"icirc")		},
-    {239,	(FX_LPCWSTR)(L"iuml")		},
-    {240,	(FX_LPCWSTR)(L"eth")		},
-    {241,	(FX_LPCWSTR)(L"ntilde")		},
-    {242,	(FX_LPCWSTR)(L"ograve")		},
-    {243,	(FX_LPCWSTR)(L"oacute")		},
-    {244,	(FX_LPCWSTR)(L"ocirc")		},
-    {245,	(FX_LPCWSTR)(L"otilde")		},
-    {246,	(FX_LPCWSTR)(L"ouml")		},
-    {247,	(FX_LPCWSTR)(L"divide")		},
-    {248,	(FX_LPCWSTR)(L"oslash")		},
-    {249,	(FX_LPCWSTR)(L"ugrave")		},
-    {250,	(FX_LPCWSTR)(L"uacute")		},
-    {251,	(FX_LPCWSTR)(L"ucirc")		},
-    {252,	(FX_LPCWSTR)(L"uuml")		},
-    {253,	(FX_LPCWSTR)(L"yacute")		},
-    {254,	(FX_LPCWSTR)(L"thorn")		},
-    {255,	(FX_LPCWSTR)(L"yuml")		},
-    {338,	(FX_LPCWSTR)(L"OElig")		},
-    {339,	(FX_LPCWSTR)(L"oelig")		},
-    {352,	(FX_LPCWSTR)(L"Scaron")		},
-    {353,	(FX_LPCWSTR)(L"saron")		},
-    {376,	(FX_LPCWSTR)(L"Yuml")		},
-    {402,	(FX_LPCWSTR)(L"fnof")		},
-    {710,	(FX_LPCWSTR)(L"circ")		},
-    {732,	(FX_LPCWSTR)(L"tilde")		},
-    {913,	(FX_LPCWSTR)(L"Alpha")		},
-    {914,	(FX_LPCWSTR)(L"Beta")		},
-    {915,	(FX_LPCWSTR)(L"Gamma")		},
-    {916,	(FX_LPCWSTR)(L"Delta")		},
-    {917,	(FX_LPCWSTR)(L"Epsilon")	},
-    {918,	(FX_LPCWSTR)(L"Zeta")		},
-    {919,	(FX_LPCWSTR)(L"Eta")		},
-    {920,	(FX_LPCWSTR)(L"Theta")		},
-    {921,	(FX_LPCWSTR)(L"lota")		},
-    {922,	(FX_LPCWSTR)(L"Kappa")		},
-    {923,	(FX_LPCWSTR)(L"Lambda")		},
-    {924,	(FX_LPCWSTR)(L"Mu")			},
-    {925,	(FX_LPCWSTR)(L"Nu")			},
-    {926,	(FX_LPCWSTR)(L"Xi")			},
-    {927,	(FX_LPCWSTR)(L"Omicron")	},
-    {928,	(FX_LPCWSTR)(L"Pi")			},
-    {929,	(FX_LPCWSTR)(L"Rho")		},
-    {931,	(FX_LPCWSTR)(L"Sigma")		},
-    {932,	(FX_LPCWSTR)(L"Tau")		},
-    {933,	(FX_LPCWSTR)(L"Upsilon")	},
-    {934,	(FX_LPCWSTR)(L"Phi")		},
-    {935,	(FX_LPCWSTR)(L"Chi")		},
-    {936,	(FX_LPCWSTR)(L"Psi")		},
-    {937,	(FX_LPCWSTR)(L"Omega")		},
-    {945,	(FX_LPCWSTR)(L"alpha")		},
-    {946,	(FX_LPCWSTR)(L"beta")		},
-    {947,	(FX_LPCWSTR)(L"gamma")		},
-    {948,	(FX_LPCWSTR)(L"delta")		},
-    {949,	(FX_LPCWSTR)(L"epsilon")	},
-    {950,	(FX_LPCWSTR)(L"zeta")		},
-    {951,	(FX_LPCWSTR)(L"eta")		},
-    {952,	(FX_LPCWSTR)(L"theta")		},
-    {953,	(FX_LPCWSTR)(L"iota")		},
-    {954,	(FX_LPCWSTR)(L"kappa")		},
-    {955,	(FX_LPCWSTR)(L"lambda")		},
-    {956,	(FX_LPCWSTR)(L"mu")			},
-    {957,	(FX_LPCWSTR)(L"nu")			},
-    {958,	(FX_LPCWSTR)(L"xi")			},
-    {959,	(FX_LPCWSTR)(L"omicron")	},
-    {960,	(FX_LPCWSTR)(L"pi")			},
-    {961,	(FX_LPCWSTR)(L"rho")		},
-    {962,	(FX_LPCWSTR)(L"sigmaf")		},
-    {963,	(FX_LPCWSTR)(L"sigma")		},
-    {964,	(FX_LPCWSTR)(L"tau")		},
-    {965,	(FX_LPCWSTR)(L"upsilon")	},
-    {966,	(FX_LPCWSTR)(L"phi")		},
-    {967,	(FX_LPCWSTR)(L"chi")		},
-    {968,	(FX_LPCWSTR)(L"psi")		},
-    {969,	(FX_LPCWSTR)(L"omega")		},
-    {977,	(FX_LPCWSTR)(L"thetasym")	},
-    {978,	(FX_LPCWSTR)(L"upsih")		},
-    {982,	(FX_LPCWSTR)(L"piv")		},
-    {8194,	(FX_LPCWSTR)(L"ensp")		},
-    {8195,	(FX_LPCWSTR)(L"emsp")		},
-    {8201,	(FX_LPCWSTR)(L"thinsp")		},
-    {8204,	(FX_LPCWSTR)(L"zwnj")		},
-    {8205,	(FX_LPCWSTR)(L"zwj")		},
-    {8206,	(FX_LPCWSTR)(L"lrm")		},
-    {8207,	(FX_LPCWSTR)(L"rlm")		},
-    {8211,	(FX_LPCWSTR)(L"ndash")		},
-    {8212,	(FX_LPCWSTR)(L"mdash")		},
-    {8216,	(FX_LPCWSTR)(L"lsquo")		},
-    {8217,	(FX_LPCWSTR)(L"rsquo")		},
-    {8218,	(FX_LPCWSTR)(L"sbquo")		},
-    {8220,	(FX_LPCWSTR)(L"ldquo")		},
-    {8221,	(FX_LPCWSTR)(L"tdquo")		},
-    {8222,	(FX_LPCWSTR)(L"bdquo")		},
-    {8224,	(FX_LPCWSTR)(L"dagger")		},
-    {8225,	(FX_LPCWSTR)(L"Dagger")		},
-    {8226,	(FX_LPCWSTR)(L"bull")		},
-    {8230,	(FX_LPCWSTR)(L"hellip")		},
-    {8240,	(FX_LPCWSTR)(L"permil")		},
-    {8242,	(FX_LPCWSTR)(L"prime")		},
-    {8249,	(FX_LPCWSTR)(L"lsaquo")		},
-    {8250,	(FX_LPCWSTR)(L"rsaquo")		},
-    {8254,	(FX_LPCWSTR)(L"oline")		},
-    {8260,	(FX_LPCWSTR)(L"frasl")		},
-    {8364,	(FX_LPCWSTR)(L"euro")		},
-    {8465,	(FX_LPCWSTR)(L"image")		},
-    {8472,	(FX_LPCWSTR)(L"weierp")		},
-    {8476,	(FX_LPCWSTR)(L"real")		},
-    {8482,	(FX_LPCWSTR)(L"trade")		},
-    {8501,	(FX_LPCWSTR)(L"alefsym")	},
-    {8592,	(FX_LPCWSTR)(L"larr")		},
-    {8593,	(FX_LPCWSTR)(L"uarr")		},
-    {8594,	(FX_LPCWSTR)(L"rarr")		},
-    {8595,	(FX_LPCWSTR)(L"darr")		},
-    {8596,	(FX_LPCWSTR)(L"harr")		},
-    {8629,	(FX_LPCWSTR)(L"crarr")		},
-    {8656,	(FX_LPCWSTR)(L"lArr")		},
-    {8657,	(FX_LPCWSTR)(L"uArr")		},
-    {8658,	(FX_LPCWSTR)(L"rArr")		},
-    {8659,	(FX_LPCWSTR)(L"dArr")		},
-    {8660,	(FX_LPCWSTR)(L"hArr")		},
-    {8704,	(FX_LPCWSTR)(L"forall")		},
-    {8706,	(FX_LPCWSTR)(L"part")		},
-    {8707,	(FX_LPCWSTR)(L"exist")		},
-    {8709,	(FX_LPCWSTR)(L"empty")		},
-    {8711,	(FX_LPCWSTR)(L"nabla")		},
-    {8712,	(FX_LPCWSTR)(L"isin")		},
-    {8713,	(FX_LPCWSTR)(L"notin")		},
-    {8715,	(FX_LPCWSTR)(L"ni")		},
-    {8719,	(FX_LPCWSTR)(L"prod")	},
-    {8721,	(FX_LPCWSTR)(L"sum")	},
-    {8722,	(FX_LPCWSTR)(L"minus")	},
-    {8727,	(FX_LPCWSTR)(L"lowast")	},
-    {8730,	(FX_LPCWSTR)(L"radic")	},
-    {8733,	(FX_LPCWSTR)(L"prop")	},
-    {8734,	(FX_LPCWSTR)(L"infin")	},
-    {8736,	(FX_LPCWSTR)(L"ang")	},
-    {8743,	(FX_LPCWSTR)(L"and")	},
-    {8744,	(FX_LPCWSTR)(L"or")		},
-    {8745,	(FX_LPCWSTR)(L"cap")	},
-    {8746,	(FX_LPCWSTR)(L"cup")	},
-    {8747,	(FX_LPCWSTR)(L"int")	},
-    {8756,	(FX_LPCWSTR)(L"there4")	},
-    {8764,	(FX_LPCWSTR)(L"sim")	},
-    {8773,	(FX_LPCWSTR)(L"cong")	},
-    {8776,	(FX_LPCWSTR)(L"asymp")	},
-    {8800,	(FX_LPCWSTR)(L"ne")		},
-    {8801,	(FX_LPCWSTR)(L"equiv")	},
-    {8804,	(FX_LPCWSTR)(L"le")		},
-    {8805,	(FX_LPCWSTR)(L"ge")		},
-    {8834,	(FX_LPCWSTR)(L"sub")	},
-    {8835,	(FX_LPCWSTR)(L"sup")	},
-    {8836,	(FX_LPCWSTR)(L"nsub")	},
-    {8838,	(FX_LPCWSTR)(L"sube")	},
-    {8839,	(FX_LPCWSTR)(L"supe")	},
-    {8853,	(FX_LPCWSTR)(L"oplus")	},
-    {8855,	(FX_LPCWSTR)(L"otimes")	},
-    {8869,	(FX_LPCWSTR)(L"perp")	},
-    {8901,	(FX_LPCWSTR)(L"sdot")	},
-    {8968,	(FX_LPCWSTR)(L"lceil")	},
-    {8969,	(FX_LPCWSTR)(L"rceil")	},
-    {8970,	(FX_LPCWSTR)(L"lfloor")	},
-    {8971,	(FX_LPCWSTR)(L"rfloor")	},
-    {9001,	(FX_LPCWSTR)(L"lang")	},
-    {9002,	(FX_LPCWSTR)(L"rang")	},
-    {9674,	(FX_LPCWSTR)(L"loz")	},
-    {9824,	(FX_LPCWSTR)(L"spades")	},
-    {9827,	(FX_LPCWSTR)(L"clubs")	},
-    {9829,	(FX_LPCWSTR)(L"hearts")	},
-    {9830,	(FX_LPCWSTR)(L"diams")	},
+    {34,	L"quot"},
+    {38,	L"amp"},
+    {39,	L"apos"},
+    {60,	L"lt"},
+    {62,	L"gt"},
+    {160,	L"nbsp"},
+    {161,	L"iexcl"},
+    {162,	L"cent"},
+    {163,	L"pund"},
+    {164,	L"current"},
+    {165,	L"yen"},
+    {166,	L"brvbar"},
+    {167,	L"sect"},
+    {168,	L"uml"},
+    {169,	L"copy"},
+    {170,	L"ordf"},
+    {171,	L"laquo"},
+    {172,	L"not"},
+    {173,	L"shy"},
+    {174,	L"reg"},
+    {175,	L"macr"},
+    {176,	L"deg"},
+    {177,	L"plusmn"},
+    {178,	L"sup2"},
+    {179,	L"sup3"},
+    {180,	L"acute"},
+    {181,	L"micro"},
+    {182,	L"para"},
+    {183,	L"middot"},
+    {184,	L"cedil"},
+    {185,	L"sup1"},
+    {186,	L"ordm"},
+    {187,	L"raquo"},
+    {188,	L"frac14"},
+    {189,	L"frac12"},
+    {190,	L"frac34"},
+    {191,	L"iquest"},
+    {192,	L"Agrave"},
+    {193,	L"Aacute"},
+    {194,	L"Acirc"},
+    {195,	L"Atilde"},
+    {196,	L"Auml"},
+    {197,	L"Aring"},
+    {198,	L"AElig"},
+    {199,	L"Ccedil"},
+    {200,	L"Egrave"},
+    {201,	L"Eacute"},
+    {202,	L"Ecirc"},
+    {203,	L"Euml"},
+    {204,	L"lgrave"},
+    {205,	L"lacute"},
+    {206,	L"lcirc"},
+    {207,	L"luml"},
+    {208,	L"ETH"},
+    {209,	L"Ntilde"},
+    {210,	L"Ograve"},
+    {211,	L"Oacute"},
+    {212,	L"Ocirc"},
+    {213,	L"Otilde"},
+    {214,	L"Ouml"},
+    {215,	L"times"},
+    {216,	L"Oslash"},
+    {217,	L"Ugrave"},
+    {218,	L"Uacute"},
+    {219,	L"Ucirc"},
+    {220,	L"Uuml"},
+    {221,	L"Yacute"},
+    {222,	L"THORN"},
+    {223,	L"szlig"},
+    {224,	L"agrave"},
+    {225,	L"aacute"},
+    {226,	L"acirc"},
+    {227,	L"atilde"},
+    {228,	L"auml"},
+    {229,	L"aring"},
+    {230,	L"aelig"},
+    {231,	L"ccedil"},
+    {232,	L"egrave"},
+    {233,	L"eacute"},
+    {234,	L"ecirc"},
+    {235,	L"euml"},
+    {236,	L"igrave"},
+    {237,	L"iacute"},
+    {238,	L"icirc"},
+    {239,	L"iuml"},
+    {240,	L"eth"},
+    {241,	L"ntilde"},
+    {242,	L"ograve"},
+    {243,	L"oacute"},
+    {244,	L"ocirc"},
+    {245,	L"otilde"},
+    {246,	L"ouml"},
+    {247,	L"divide"},
+    {248,	L"oslash"},
+    {249,	L"ugrave"},
+    {250,	L"uacute"},
+    {251,	L"ucirc"},
+    {252,	L"uuml"},
+    {253,	L"yacute"},
+    {254,	L"thorn"},
+    {255,	L"yuml"},
+    {338,	L"OElig"},
+    {339,	L"oelig"},
+    {352,	L"Scaron"},
+    {353,	L"saron"},
+    {376,	L"Yuml"},
+    {402,	L"fnof"},
+    {710,	L"circ"},
+    {732,	L"tilde"},
+    {913,	L"Alpha"},
+    {914,	L"Beta"},
+    {915,	L"Gamma"},
+    {916,	L"Delta"},
+    {917,	L"Epsilon"},
+    {918,	L"Zeta"},
+    {919,	L"Eta"},
+    {920,	L"Theta"},
+    {921,	L"lota"},
+    {922,	L"Kappa"},
+    {923,	L"Lambda"},
+    {924,	L"Mu"},
+    {925,	L"Nu"},
+    {926,	L"Xi"},
+    {927,	L"Omicron"},
+    {928,	L"Pi"},
+    {929,	L"Rho"},
+    {931,	L"Sigma"},
+    {932,	L"Tau"},
+    {933,	L"Upsilon"},
+    {934,	L"Phi"},
+    {935,	L"Chi"},
+    {936,	L"Psi"},
+    {937,	L"Omega"},
+    {945,	L"alpha"},
+    {946,	L"beta"},
+    {947,	L"gamma"},
+    {948,	L"delta"},
+    {949,	L"epsilon"},
+    {950,	L"zeta"},
+    {951,	L"eta"},
+    {952,	L"theta"},
+    {953,	L"iota"},
+    {954,	L"kappa"},
+    {955,	L"lambda"},
+    {956,	L"mu"},
+    {957,	L"nu"},
+    {958,	L"xi"},
+    {959,	L"omicron"},
+    {960,	L"pi"},
+    {961,	L"rho"},
+    {962,	L"sigmaf"},
+    {963,	L"sigma"},
+    {964,	L"tau"},
+    {965,	L"upsilon"},
+    {966,	L"phi"},
+    {967,	L"chi"},
+    {968,	L"psi"},
+    {969,	L"omega"},
+    {977,	L"thetasym"},
+    {978,	L"upsih"},
+    {982,	L"piv"},
+    {8194,	L"ensp"},
+    {8195,	L"emsp"},
+    {8201,	L"thinsp"},
+    {8204,	L"zwnj"},
+    {8205,	L"zwj"},
+    {8206,	L"lrm"},
+    {8207,	L"rlm"},
+    {8211,	L"ndash"},
+    {8212,	L"mdash"},
+    {8216,	L"lsquo"},
+    {8217,	L"rsquo"},
+    {8218,	L"sbquo"},
+    {8220,	L"ldquo"},
+    {8221,	L"tdquo"},
+    {8222,	L"bdquo"},
+    {8224,	L"dagger"},
+    {8225,	L"Dagger"},
+    {8226,	L"bull"},
+    {8230,	L"hellip"},
+    {8240,	L"permil"},
+    {8242,	L"prime"},
+    {8249,	L"lsaquo"},
+    {8250,	L"rsaquo"},
+    {8254,	L"oline"},
+    {8260,	L"frasl"},
+    {8364,	L"euro"},
+    {8465,	L"image"},
+    {8472,	L"weierp"},
+    {8476,	L"real"},
+    {8482,	L"trade"},
+    {8501,	L"alefsym"},
+    {8592,	L"larr"},
+    {8593,	L"uarr"},
+    {8594,	L"rarr"},
+    {8595,	L"darr"},
+    {8596,	L"harr"},
+    {8629,	L"crarr"},
+    {8656,	L"lArr"},
+    {8657,	L"uArr"},
+    {8658,	L"rArr"},
+    {8659,	L"dArr"},
+    {8660,	L"hArr"},
+    {8704,	L"forall"},
+    {8706,	L"part"},
+    {8707,	L"exist"},
+    {8709,	L"empty"},
+    {8711,	L"nabla"},
+    {8712,	L"isin"},
+    {8713,	L"notin"},
+    {8715,	L"ni"},
+    {8719,	L"prod"},
+    {8721,	L"sum"},
+    {8722,	L"minus"},
+    {8727,	L"lowast"},
+    {8730,	L"radic"},
+    {8733,	L"prop"},
+    {8734,	L"infin"},
+    {8736,	L"ang"},
+    {8743,	L"and"},
+    {8744,	L"or"},
+    {8745,	L"cap"},
+    {8746,	L"cup"},
+    {8747,	L"int"},
+    {8756,	L"there4"},
+    {8764,	L"sim"},
+    {8773,	L"cong"},
+    {8776,	L"asymp"},
+    {8800,	L"ne"},
+    {8801,	L"equiv"},
+    {8804,	L"le"},
+    {8805,	L"ge"},
+    {8834,	L"sub"},
+    {8835,	L"sup"},
+    {8836,	L"nsub"},
+    {8838,	L"sube"},
+    {8839,	L"supe"},
+    {8853,	L"oplus"},
+    {8855,	L"otimes"},
+    {8869,	L"perp"},
+    {8901,	L"sdot"},
+    {8968,	L"lceil"},
+    {8969,	L"rceil"},
+    {8970,	L"lfloor"},
+    {8971,	L"rfloor"},
+    {9001,	L"lang"},
+    {9002,	L"rang"},
+    {9674,	L"loz"},
+    {9824,	L"spades"},
+    {9827,	L"clubs"},
+    {9829,	L"hearts"},
+    {9830,	L"diams"},
 };
 void CXFA_FM2JSContext::Abs(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
 {
@@ -540,7 +540,7 @@ void CXFA_FM2JSContext::Abs(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         FXJSE_Value_Release(argOne);
     } else {
         CXFA_FM2JSContext* pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Abs"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Abs");
     }
 }
 void CXFA_FM2JSContext::Avg(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -621,7 +621,7 @@ void CXFA_FM2JSContext::Ceil(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         }
         FXJSE_Value_Release(argValue);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Ceil"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ceil");
     }
 }
 void CXFA_FM2JSContext::Count(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -698,7 +698,7 @@ void CXFA_FM2JSContext::Floor(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         }
         FXJSE_Value_Release(argValue);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Floor"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Floor");
     }
 }
 void CXFA_FM2JSContext::Max(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -978,7 +978,7 @@ void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         FXJSE_Value_Release(argOne);
         FXJSE_Value_Release(argTwo);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Mod"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Mod");
     }
 }
 void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1080,7 +1080,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         FXJSE_Value_Release(argOne);
         FXJSE_Value_Release(argTwo);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Round"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Round");
     }
 }
 void CXFA_FM2JSContext::Sum(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1174,7 +1174,7 @@ void CXFA_FM2JSContext::Date(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         FXJSE_Value_SetInteger(args.GetReturnValue(), dDays);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Date"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date");
     }
 }
 void CXFA_FM2JSContext::Date2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1229,7 +1229,7 @@ void CXFA_FM2JSContext::Date2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Date2Num"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date2Num");
     }
 }
 void CXFA_FM2JSContext::DateFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1277,7 +1277,7 @@ void CXFA_FM2JSContext::DateFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Date2Num"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date2Num");
     }
 }
 void CXFA_FM2JSContext::IsoDate2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1295,7 +1295,7 @@ void CXFA_FM2JSContext::IsoDate2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFX
         FXJSE_Value_Release(argOne);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"IsoDate2Num"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"IsoDate2Num");
     }
 }
 void CXFA_FM2JSContext::IsoTime2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1346,7 +1346,7 @@ void CXFA_FM2JSContext::IsoTime2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFX
         }
         FXJSE_Value_Release(argOne);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"IsoTime2Num"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"IsoTime2Num");
     }
 }
 void CXFA_FM2JSContext::LocalDateFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1394,7 +1394,7 @@ void CXFA_FM2JSContext::LocalDateFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CF
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"LocalDateFmt"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"LocalDateFmt");
     }
 }
 void CXFA_FM2JSContext::LocalTimeFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1442,7 +1442,7 @@ void CXFA_FM2JSContext::LocalTimeFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CF
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"LocalTimeFmt"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"LocalTimeFmt");
     }
 }
 void CXFA_FM2JSContext::Num2Date(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1590,7 +1590,7 @@ void CXFA_FM2JSContext::Num2Date(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Num2Date"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2Date");
     }
 }
 void CXFA_FM2JSContext::Num2GMTime(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1647,7 +1647,7 @@ void CXFA_FM2JSContext::Num2GMTime(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJ
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Num2GMTime"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2GMTime");
     }
 }
 void CXFA_FM2JSContext::Num2Time(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1704,7 +1704,7 @@ void CXFA_FM2JSContext::Num2Time(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Num2Time"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2Time");
     }
 }
 void CXFA_FM2JSContext::Time(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1719,7 +1719,7 @@ void CXFA_FM2JSContext::Time(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         FXJSE_Value_SetInteger(args.GetReturnValue(), ((iGMHour * 3600 + iGMMin * 60 + iGMSec) * 1000));
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Time"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Time");
     }
 }
 void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1815,7 +1815,7 @@ void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Time2Num"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Time2Num");
     }
 }
 void CXFA_FM2JSContext::TimeFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -1863,7 +1863,7 @@ void CXFA_FM2JSContext::TimeFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"TimeFmt"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"TimeFmt");
     }
 }
 FX_BOOL CXFA_FM2JSContext::IsIsoDateFormat(FX_LPCSTR pData, FX_INT32 iLength, FX_INT32 &iStyle, FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay)
@@ -2658,7 +2658,7 @@ void CXFA_FM2JSContext::Apr(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         FXJSE_Value_Release(argTwo);
         FXJSE_Value_Release(argThree);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Apr"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Apr");
     }
 }
 void CXFA_FM2JSContext::CTerm(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -2690,7 +2690,7 @@ void CXFA_FM2JSContext::CTerm(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         FXJSE_Value_Release(argTwo);
         FXJSE_Value_Release(argThree);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"CTerm"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"CTerm");
     }
 }
 void CXFA_FM2JSContext::FV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -2732,7 +2732,7 @@ void CXFA_FM2JSContext::FV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argum
         FXJSE_Value_Release(argTwo);
         FXJSE_Value_Release(argThree);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"FV"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"FV");
     }
 }
 void CXFA_FM2JSContext::IPmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -2796,7 +2796,7 @@ void CXFA_FM2JSContext::IPmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         FXJSE_Value_Release(argFour);
         FXJSE_Value_Release(argFive);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"IPmt"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"IPmt");
     }
 }
 void CXFA_FM2JSContext::NPV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -2844,7 +2844,7 @@ void CXFA_FM2JSContext::NPV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         }
         FX_Free(argValues);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"NPV"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"NPV");
     }
 }
 void CXFA_FM2JSContext::Pmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -2882,7 +2882,7 @@ void CXFA_FM2JSContext::Pmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         FXJSE_Value_Release(argTwo);
         FXJSE_Value_Release(argThree);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Pmt"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Pmt");
     }
 }
 void CXFA_FM2JSContext::PPmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -2947,7 +2947,7 @@ void CXFA_FM2JSContext::PPmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         FXJSE_Value_Release(argFour);
         FXJSE_Value_Release(argFive);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"PPmt"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"PPmt");
     }
 }
 void CXFA_FM2JSContext::PV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -2984,7 +2984,7 @@ void CXFA_FM2JSContext::PV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argum
         FXJSE_Value_Release(argTwo);
         FXJSE_Value_Release(argThree);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"PV"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"PV");
     }
 }
 void CXFA_FM2JSContext::Rate(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3016,7 +3016,7 @@ void CXFA_FM2JSContext::Rate(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         FXJSE_Value_Release(argTwo);
         FXJSE_Value_Release(argThree);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Rate"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Rate");
     }
 }
 void CXFA_FM2JSContext::Term(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3048,7 +3048,7 @@ void CXFA_FM2JSContext::Term(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         FXJSE_Value_Release(argTwo);
         FXJSE_Value_Release(argThree);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Term"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Term");
     }
 }
 void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3124,7 +3124,7 @@ void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Choose"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Choose");
     }
 }
 void CXFA_FM2JSContext::Exists(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3135,7 +3135,7 @@ void CXFA_FM2JSContext::Exists(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         FXJSE_Value_Release(argOne);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Exists"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Exists");
     }
 }
 void CXFA_FM2JSContext::HasValue(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3155,7 +3155,7 @@ void CXFA_FM2JSContext::HasValue(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         FXJSE_Value_Release(argOne);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"HasValue"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"HasValue");
     }
 }
 void CXFA_FM2JSContext::Oneof(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3182,7 +3182,7 @@ void CXFA_FM2JSContext::Oneof(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         parametersValue = 0;
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Oneof"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Oneof");
     }
 }
 void CXFA_FM2JSContext::Within(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3215,7 +3215,7 @@ void CXFA_FM2JSContext::Within(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         FXJSE_Value_Release(argOne);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Within"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Within");
     }
 }
 void CXFA_FM2JSContext::If(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3232,7 +3232,7 @@ void CXFA_FM2JSContext::If(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argum
         FXJSE_Value_Release(argCondition);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"If"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"If");
     }
 }
 void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3260,7 +3260,7 @@ void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         }
         FXJSE_Value_Release(scriptValue);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Eval"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Eval");
     }
 }
 void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3329,7 +3329,7 @@ void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         }
         FXJSE_Value_Release(argOne);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Ref"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ref");
     }
 }
 void CXFA_FM2JSContext::UnitType(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3430,7 +3430,7 @@ void CXFA_FM2JSContext::UnitType(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         FXJSE_Value_Release(unitspanValue);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"UnitType"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitType");
     }
 }
 void CXFA_FM2JSContext::UnitValue(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3578,7 +3578,7 @@ void CXFA_FM2JSContext::UnitValue(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJS
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"UnitValue"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitValue");
     }
 }
 void CXFA_FM2JSContext::At(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3605,7 +3605,7 @@ void CXFA_FM2JSContext::At(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argum
         FXJSE_Value_Release(argOne);
         FXJSE_Value_Release(argTwo);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"At"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"At");
     }
 }
 void CXFA_FM2JSContext::Concat(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3636,7 +3636,7 @@ void CXFA_FM2JSContext::Concat(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
             FXJSE_Value_SetUTF8String(args.GetReturnValue(), resultString);
         }
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Concat"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Concat");
     }
 }
 void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -3679,7 +3679,7 @@ void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         FXJSE_Value_Release(argOne);
         FXJSE_Value_Release(argTwo);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Decode"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Decode");
     }
 }
 void CXFA_FM2JSContext::DecodeURL (FX_BSTR szURLString,  CFX_ByteTextBuf &szResultString)
@@ -3943,7 +3943,7 @@ void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         FXJSE_Value_Release(argOne);
         FXJSE_Value_Release(argTwo);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Encode"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Encode");
     }
 }
 void CXFA_FM2JSContext::EncodeURL (FX_BSTR szURLString,  CFX_ByteTextBuf &szResultBuf)
@@ -4054,7 +4054,7 @@ void CXFA_FM2JSContext::EncodeHTML(FX_BSTR szHTMLString, CFX_ByteTextBuf &szResu
 {
     CFX_ByteString str = szHTMLString.GetCStr();
     CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str, str.GetLength());
-    FX_LPCWSTR strCode = (FX_LPCWSTR)L"0123456789abcdef";
+    FX_LPCWSTR strCode = L"0123456789abcdef";
     FX_WCHAR strEncode[9];
     strEncode[0] = '&';
     strEncode[1] = '#';
@@ -4387,7 +4387,7 @@ void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         FXJSE_Value_Release(argOne);
         FXJSE_Value_Release(argTwo);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Format"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Format");
     }
 }
 void CXFA_FM2JSContext::Left(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4415,7 +4415,7 @@ void CXFA_FM2JSContext::Left(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         FXJSE_Value_Release(argOne);
         FXJSE_Value_Release(argTwo);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Left"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Left");
     }
 }
 void CXFA_FM2JSContext::Len(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4433,7 +4433,7 @@ void CXFA_FM2JSContext::Len(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         }
         FXJSE_Value_Release(argOne);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Len"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Len");
     }
 }
 void CXFA_FM2JSContext::Lower(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4477,7 +4477,7 @@ void CXFA_FM2JSContext::Lower(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         FXJSE_Value_Release(argOne);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Lower"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Lower");
     }
 }
 void CXFA_FM2JSContext::Ltrim(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4496,7 +4496,7 @@ void CXFA_FM2JSContext::Ltrim(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         }
         FXJSE_Value_Release(argOne);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Ltrim"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ltrim");
     }
 }
 void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4624,7 +4624,7 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         FXJSE_Value_Release(argOne);
         FXJSE_Value_Release(argTwo);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Parse"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Parse");
     }
 }
 void CXFA_FM2JSContext::Replace(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4689,7 +4689,7 @@ void CXFA_FM2JSContext::Replace(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Replace"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Replace");
     }
 }
 void CXFA_FM2JSContext::Right(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4717,7 +4717,7 @@ void CXFA_FM2JSContext::Right(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         FXJSE_Value_Release(argOne);
         FXJSE_Value_Release(argTwo);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Right"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Right");
     }
 }
 void CXFA_FM2JSContext::Rtrim(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4736,7 +4736,7 @@ void CXFA_FM2JSContext::Rtrim(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         }
         FXJSE_Value_Release(argOne);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Rtrim"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Rtrim");
     }
 }
 void CXFA_FM2JSContext::Space(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4762,7 +4762,7 @@ void CXFA_FM2JSContext::Space(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         }
         FXJSE_Value_Release(argOne);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Space"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Space");
     }
 }
 void CXFA_FM2JSContext::Str(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4885,7 +4885,7 @@ void CXFA_FM2JSContext::Str(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Str"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Str");
     }
 }
 void CXFA_FM2JSContext::Stuff(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4946,7 +4946,7 @@ void CXFA_FM2JSContext::Stuff(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Stuff"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Stuff");
     }
 }
 void CXFA_FM2JSContext::Substr(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -4987,7 +4987,7 @@ void CXFA_FM2JSContext::Substr(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         FXJSE_Value_Release(endValue);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Substr"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Substr");
     }
 }
 void CXFA_FM2JSContext::Uuid(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -5010,7 +5010,7 @@ void CXFA_FM2JSContext::Uuid(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Uuid"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Uuid");
     }
 }
 void CXFA_FM2JSContext::Upper(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -5054,7 +5054,7 @@ void CXFA_FM2JSContext::Upper(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         FXJSE_Value_Release(argOne);
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Upper"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Upper");
     }
 }
 void CXFA_FM2JSContext::WordNum(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -5111,7 +5111,7 @@ void CXFA_FM2JSContext::WordNum(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_
         }
     } else {
         CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"WordNum"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"WordNum");
     }
 }
 void CXFA_FM2JSContext::TrillionUS(FX_BSTR szData, CFX_ByteTextBuf &strBuf)
@@ -5334,7 +5334,7 @@ void CXFA_FM2JSContext::Get(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         }
         FXJSE_Value_Release(argOne);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Get"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Get");
     }
 }
 void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -5397,7 +5397,7 @@ void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
             pContext->ThrowScriptErrorMessage(XFA_IDS_SERVER_DENY);
         }
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Post"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Post");
     }
 }
 void CXFA_FM2JSContext::Put(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -5440,7 +5440,7 @@ void CXFA_FM2JSContext::Put(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
             pContext->ThrowScriptErrorMessage(XFA_IDS_SERVER_DENY);
         }
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Put"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Put");
     }
 }
 void CXFA_FM2JSContext::assign_value_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
@@ -6132,7 +6132,7 @@ void CXFA_FM2JSContext::eval_translation (FXJSE_HOBJECT hThis,	FX_BSTR szFuncNam
         }
         FXJSE_Value_Release(argOne);
     } else {
-        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, (FX_LPCWSTR)(L"Eval"));
+        pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Eval");
     }
 }
 void CXFA_FM2JSContext::is_fm_object(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)

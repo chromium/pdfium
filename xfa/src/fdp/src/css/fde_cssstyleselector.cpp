@@ -429,8 +429,8 @@ void CFDE_CSSStyleSelector::ComputeStyle(IFDE_CSSTagProvider *pTag, const IFDE_C
         do {
             pTag->GetNextAttribute(pos, wsAttri, wsValue);
             dwAttriHash = FX_HashCode_String_GetW(wsAttri.GetPtr(), wsAttri.GetLength(), TRUE);
-            static const FX_DWORD s_dwStyleHash = FX_HashCode_String_GetW((FX_LPCWSTR)L"style", 5, TRUE);
-            static const FX_DWORD s_dwAlignHash = FX_HashCode_String_GetW((FX_LPCWSTR)L"align", 5, TRUE);
+            static const FX_DWORD s_dwStyleHash = FX_HashCode_String_GetW(L"style", 5, TRUE);
+            static const FX_DWORD s_dwAlignHash = FX_HashCode_String_GetW(L"align", 5, TRUE);
             if (dwAttriHash == s_dwStyleHash) {
                 if (pDecl == NULL) {
                     pDecl = FDE_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;

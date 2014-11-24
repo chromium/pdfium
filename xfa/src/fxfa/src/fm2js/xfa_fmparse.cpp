@@ -1040,7 +1040,7 @@ CXFA_FMExpression * CXFA_FMParse::ParseForExpression()
         iDirection = -1;
     } else {
         CFX_WideString ws_TempString = m_pToken->m_wstring;
-        Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN, (FX_LPCWSTR)(L"upto or downto"), (FX_LPCWSTR)ws_TempString);
+        Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN, L"upto or downto", (FX_LPCWSTR)ws_TempString);
     }
     NextToken();
     pAccessor = ParseSimpleExpression();

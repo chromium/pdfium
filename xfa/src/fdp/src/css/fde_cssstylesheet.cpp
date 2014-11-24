@@ -10,7 +10,7 @@
 #include "fde_cssstylesheet.h"
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet()
 {
-    static const FX_LPCWSTR s_pStyle = (FX_LPCWSTR)L"html,address,blockquote,body,dd,div,dl,dt,fieldset,form,frame,frameset,h1,h2,h3,h4,h5,h6,noframes,ol,p,ul,center,dir,hr,menu,pre{display:block}"
+    static const FX_LPCWSTR s_pStyle = L"html,address,blockquote,body,dd,div,dl,dt,fieldset,form,frame,frameset,h1,h2,h3,h4,h5,h6,noframes,ol,p,ul,center,dir,hr,menu,pre{display:block}"
                                        L"li{display:list-item}head{display:none}table{display:table}tr{display:table-row}thead{display:table-header-group}tbody{display:table-row-group}tfoot{display:table-footer-group}"
                                        L"col{display:table-column}colgroup{display:table-column-group}td,th{display:table-cell}caption{display:table-caption}th{font-weight:bolder;text-align:center}caption{text-align:center}"
                                        L"body{margin:0}h1{font-size:2em;margin:.67em 0}h2{font-size:1.5em;margin:.75em 0}h3{font-size:1.17em;margin:.83em 0}h4,p,blockquote,ul,fieldset,form,ol,dl,dir,menu{margin:1.12em 0}"
@@ -409,7 +409,7 @@ IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator *pStaticStore, F
         FX_WCHAR wch = *psz;
         if (wch == '.' || wch == '#') {
             if (psz == pStart || psz[-1] == ' ') {
-                CFDE_CSSSelector *p = FDE_NewWith(pStaticStore) CFDE_CSSSelector(FDE_CSSSELECTORTYPE_Element, (FX_LPCWSTR)L"*", 1, TRUE);
+                CFDE_CSSSelector *p = FDE_NewWith(pStaticStore) CFDE_CSSSelector(FDE_CSSSELECTORTYPE_Element, L"*", 1, TRUE);
                 if (p == NULL) {
                     return NULL;
                 }
