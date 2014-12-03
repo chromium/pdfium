@@ -90,6 +90,7 @@ static_library("pdfium") {
 
   deps = [
     ":safemath",
+    ":bigint",
     ":fdrm",
     ":formfiller",
     ":fpdfapi",
@@ -125,6 +126,21 @@ component("safemath") {
     "third_party/numerics/safe_conversions_impl.h",
     "third_party/numerics/safe_math.h",
     "third_party/numerics/safe_math_impl.h",
+  ]
+}
+
+static_library("bigint") {
+  sources = [
+    "third_party/bigint/BigInteger.hh",
+    "third_party/bigint/BigIntegerLibrary.hh",
+    "third_party/bigint/BigIntegerUtils.hh",
+    "third_party/bigint/BigUnsigned.hh",
+    "third_party/bigint/NumberlikeArray.hh",
+    "third_party/bigint/BigUnsignedInABase.hh",
+    "third_party/bigint/BigInteger.cc",
+    "third_party/bigint/BigIntegerUtils.cc",
+    "third_party/bigint/BigUnsigned.cc",
+    "third_party/bigint/BigUnsignedInABase.cc",
   ]
 }
 

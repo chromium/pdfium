@@ -1,3 +1,9 @@
+// Copyright 2014 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code by Matt McCutchen, see the LICENSE file.
+
 #ifndef BIGUNSIGNEDINABASE_H
 #define BIGUNSIGNEDINABASE_H
 
@@ -100,8 +106,8 @@ public:
 	Base getBase() const { return base; }
 
 	// Expose these from NumberlikeArray directly.
-	NumberlikeArray<Digit>::getCapacity;
-	NumberlikeArray<Digit>::getLength;
+	using NumberlikeArray<Digit>::getCapacity;
+	using NumberlikeArray<Digit>::getLength;
 
 	/* Returns the requested digit, or 0 if it is beyond the length (as if
 	 * the number had 0s infinitely to the left). */

@@ -1,3 +1,9 @@
+// Copyright 2014 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code by Matt McCutchen, see the LICENSE file.
+
 #include "BigIntegerUtils.hh"
 #include "BigUnsignedInABase.hh"
 
@@ -36,7 +42,11 @@ std::ostream &operator <<(std::ostream &os, const BigUnsigned &x) {
 		if (osFlags & os.showbase)
 			os << '0';
 	} else
+#ifdef FOXIT_CHROME_BUILD
+        abort();
+#else
 		throw "std::ostream << BigUnsigned: Could not determine the desired base from output-stream flags";
+#endif
 	std::string s = std::string(BigUnsignedInABase(x, base));
 	os << s;
 	return os;

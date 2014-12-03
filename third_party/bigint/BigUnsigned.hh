@@ -1,3 +1,9 @@
+// Copyright 2014 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code by Matt McCutchen, see the LICENSE file.
+
 #ifndef BIGUNSIGNED_H
 #define BIGUNSIGNED_H
 
@@ -84,8 +90,8 @@ public:
 	// BIT/BLOCK ACCESSORS
 
 	// Expose these from NumberlikeArray directly.
-	NumberlikeArray<Blk>::getCapacity;
-	NumberlikeArray<Blk>::getLength;
+	using NumberlikeArray<Blk>::getCapacity;
+	using NumberlikeArray<Blk>::getLength;
 
 	/* Returns the requested block, or 0 if it is beyond the length (as if
 	 * the number had 0s infinitely to the left). */
@@ -260,14 +266,24 @@ inline BigUnsigned BigUnsigned::operator *(const BigUnsigned &x) const {
 	return ans;
 }
 inline BigUnsigned BigUnsigned::operator /(const BigUnsigned &x) const {
-	if (x.isZero()) throw "BigUnsigned::operator /: division by zero";
+	if (x.isZero())
+#ifdef FOXIT_CHROME_BUILD
+        abort();
+#else
+        throw "BigUnsigned::operator /: division by zero";
+#endif
 	BigUnsigned q, r;
 	r = *this;
 	r.divideWithRemainder(x, q);
 	return q;
 }
 inline BigUnsigned BigUnsigned::operator %(const BigUnsigned &x) const {
-	if (x.isZero()) throw "BigUnsigned::operator %: division by zero";
+	if (x.isZero())
+#ifdef FOXIT_CHROME_BUILD
+        abort();
+#else
+        throw "BigUnsigned::operator %: division by zero";
+#endif
 	BigUnsigned q, r;
 	r = *this;
 	r.divideWithRemainder(x, q);
@@ -309,7 +325,12 @@ inline void BigUnsigned::operator *=(const BigUnsigned &x) {
 	multiply(*this, x);
 }
 inline void BigUnsigned::operator /=(const BigUnsigned &x) {
-	if (x.isZero()) throw "BigUnsigned::operator /=: division by zero";
+	if (x.isZero())
+#ifdef FOXIT_CHROME_BUILD
+        abort();
+#else
+        throw "BigUnsigned::operator /=: division by zero";
+#endif
 	/* The following technique is slightly faster than copying *this first
 	 * when x is large. */
 	BigUnsigned q;
@@ -318,7 +339,12 @@ inline void BigUnsigned::operator /=(const BigUnsigned &x) {
 	*this = q;
 }
 inline void BigUnsigned::operator %=(const BigUnsigned &x) {
-	if (x.isZero()) throw "BigUnsigned::operator %=: division by zero";
+	if (x.isZero())
+#ifdef FOXIT_CHROME_BUILD
+        abort();
+#else
+        throw "BigUnsigned::operator %=: division by zero";
+#endif
 	BigUnsigned q;
 	// Mods *this by x.  Don't care about quotient left in q.
 	divideWithRemainder(x, q);
@@ -372,8 +398,12 @@ void BigUnsigned::initFromPrimitive(X x) {
 template <class X>
 void BigUnsigned::initFromSignedPrimitive(X x) {
 	if (x < 0)
+#ifdef FOXIT_CHROME_BUILD
+        abort();
+#else
 		throw "BigUnsigned constructor: "
 			"Cannot construct a BigUnsigned from a negative number";
+#endif
 	else
 		initFromPrimitive(x);
 }
@@ -397,8 +427,12 @@ X BigUnsigned::convertToPrimitive() const {
 			return x;
 		// Otherwise fall through.
 	}
+#ifdef FOXIT_CHROME_BUILD
+    abort();
+#else
 	throw "BigUnsigned::to<Primitive>: "
 		"Value is too big to fit in the requested type";
+#endif
 }
 
 /* Wrap the above in an x >= 0 test to make sure we got a nonnegative result,
@@ -411,8 +445,12 @@ X BigUnsigned::convertToSignedPrimitive() const {
 	if (x >= 0)
 		return x;
 	else
+#ifdef FOXIT_CHROME_BUILD
+        abort();
+#else
 		throw "BigUnsigned::to(Primitive): "
 			"Value is too big to fit in the requested type";
+#endif
 }
 
 #endif
