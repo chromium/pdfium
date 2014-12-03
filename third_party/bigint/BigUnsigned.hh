@@ -26,7 +26,7 @@ public:
 	typedef unsigned long Blk;
 
 	typedef NumberlikeArray<Blk>::Index Index;
-	NumberlikeArray<Blk>::N;
+	using NumberlikeArray<Blk>::N;
 
 protected:
 	// Creates a BigUnsigned with a capacity; for internal use.
