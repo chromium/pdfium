@@ -355,7 +355,7 @@ FX_FLOAT CPDF_TextState::GetShearAngle() const
 CPDF_GeneralStateData::CPDF_GeneralStateData()
 {
     FXSYS_memset32(this, 0, sizeof(CPDF_GeneralStateData));
-    FXSYS_strcpy((FX_LPSTR)m_BlendMode, (FX_LPCSTR)"Normal");
+    FXSYS_strcpy((FX_LPSTR)m_BlendMode, "Normal");
     m_StrokeAlpha = 1.0f;
     m_FillAlpha = 1.0f;
     m_Flatness = 1.0f;

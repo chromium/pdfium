@@ -728,8 +728,8 @@ IXFA_ScriptContext* XFA_ScriptContext_Create(CXFA_Document* pDocument)
     return FX_NEW CXFA_ScriptContext(pDocument);
 }
 static const XFA_JSBUILTININFO gs_JSBUILTINData[] = {
-    {0x8108b9a9, (FX_LPCSTR)"Number"},
-    {0xe07e3fbe, (FX_LPCSTR)"Date"},
+    {0x8108b9a9, "Number"},
+    {0xe07e3fbe, "Date"},
 };
 const FX_INT32 g_iJSBuiltinCount = sizeof(XFA_JSBUILTININFO) / sizeof(XFA_JSBUILTININFO);
 XFA_LPCJSBUILTININFO XFA_GetJSBuiltinByHash(FX_UINT32 uHashCode)

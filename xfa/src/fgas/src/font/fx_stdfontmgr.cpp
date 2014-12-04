@@ -467,16 +467,16 @@ FX_LPEnumAllFonts FX_GetDefFontEnumerator()
 #else
 FX_LPCSTR g_FontFolders[] = {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
-    (FX_LPCSTR)"/usr/share/fonts",
-    (FX_LPCSTR)"/usr/share/X11/fonts/Type1",
-    (FX_LPCSTR)"/usr/share/X11/fonts/TTF",
-    (FX_LPCSTR)"/usr/local/share/fonts",
+    "/usr/share/fonts",
+    "/usr/share/X11/fonts/Type1",
+    "/usr/share/X11/fonts/TTF",
+    "/usr/local/share/fonts",
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-    (FX_LPCSTR)"~/Library/Fonts",
-    (FX_LPCSTR)"/Library/Fonts",
-    (FX_LPCSTR)"/System/Library/Fonts",
+    "~/Library/Fonts",
+    "/Library/Fonts",
+    "/System/Library/Fonts",
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
-    (FX_LPCSTR)"/system/fonts",
+    "/system/fonts",
 #endif
 };
 CFX_FontSourceEnum_File::CFX_FontSourceEnum_File()
