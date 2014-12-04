@@ -11,6 +11,7 @@ class CFX_BaseArray;
 template<class baseType> class CFX_BaseArrayTemplate;
 template<class baseType> class CFX_ObjectBaseArrayTemplate;
 class CFX_BaseMassArray;
+class CFX_BaseMassArrayImp;
 template<class baseType> class CFX_MassArrayTemplate;
 template<class baseType> class CFX_ObjectMassArrayTemplate;
 class CFX_BaseDiscreteArray;
@@ -233,7 +234,7 @@ protected:
     FX_INT32	Copy(const CFX_BaseMassArray &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1);
     FX_INT32	RemoveLast(FX_INT32 iCount = -1);
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE);
-    FX_LPVOID	m_pData;
+    CFX_BaseMassArrayImp* m_pData;
 };
 template<class baseType>
 class CFX_MassArrayTemplate : public CFX_BaseMassArray
@@ -431,7 +432,7 @@ protected:
     FX_INT32	GetSize() const;
     FX_LPBYTE	GetAt(FX_INT32 index) const;
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE);
-    FX_LPVOID	m_pData;
+    CFX_BaseMassArrayImp* m_pData;
 };
 template<class baseType>
 class CFX_StackTemplate : public CFX_BaseStack
