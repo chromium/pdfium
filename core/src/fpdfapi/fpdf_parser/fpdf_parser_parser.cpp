@@ -28,10 +28,6 @@ FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict)
     }
     return FALSE;
 }
-static FX_INT32 _CompareDWord(const void* p1, const void* p2)
-{
-    return (*(FX_DWORD*)p1) - (*(FX_DWORD*)p2);
-}
 static int _CompareFileSize(const void* p1, const void* p2)
 {
     FX_FILESIZE ret = (*(FX_FILESIZE*)p1) - (*(FX_FILESIZE*)p2);
