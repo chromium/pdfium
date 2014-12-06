@@ -1125,7 +1125,6 @@ CXFA_Node *	CXFA_Document::GetNotBindNode(CXFA_ObjArray& arrayNodes)
 }
 void CXFA_Document::DoDataMerge()
 {
-    CXFA_Node* pTemplateRoot = m_pRootNode->GetFirstChildByClass(XFA_ELEMENT_Template);
     CXFA_Node* pDatasetsRoot = (CXFA_Node*)GetXFANode(XFA_HASHCODE_Datasets);
     if(!pDatasetsRoot) {
         IFDE_XMLElement* pDatasetsXMLNode = IFDE_XMLElement::Create(FX_WSTRC(L"xfa:datasets"));
@@ -1174,6 +1173,10 @@ void CXFA_Document::DoDataMerge()
     }
     CXFA_Node* pDataTopLevel = pDataRoot->GetFirstChildByClass(XFA_ELEMENT_DataGroup);
     FX_DWORD dwNameHash = pDataTopLevel ? pDataTopLevel->GetNameHash() : 0;
+    CXFA_Node* pTemplateRoot = m_pRootNode->GetFirstChildByClass(XFA_ELEMENT_Template);
+    if (!pTemplateRoot) {
+        return;
+    }
     CXFA_Node* pTemplateChosen = dwNameHash != 0 ? pTemplateRoot->GetFirstChildByName(dwNameHash) : NULL;
     if(!pTemplateChosen || pTemplateChosen->GetClassID() != XFA_ELEMENT_Subform) {
         pTemplateChosen = pTemplateRoot->GetFirstChildByClass(XFA_ELEMENT_Subform);
