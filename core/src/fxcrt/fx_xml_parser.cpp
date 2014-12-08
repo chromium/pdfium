@@ -670,18 +670,13 @@ FX_BOOL CXML_Element::GetAttrValue(FX_BSTR name, CFX_WideString& attribute) cons
 {
     CFX_ByteStringC bsSpace, bsName;
     FX_XML_SplitQualifiedName(name, bsSpace, bsName);
-    const CFX_WideString* pValue = m_AttrMap.Lookup(bsSpace, bsName);
-    if (pValue) {
-        attribute = CFX_WideString((FX_LPCWSTR)pValue, pValue->GetLength());
-        return TRUE;
-    }
-    return FALSE;
+    return GetAttrValue(bsSpace, bsName, attribute);
 }
 FX_BOOL CXML_Element::GetAttrValue(FX_BSTR space, FX_BSTR name, CFX_WideString& attribute) const
 {
     const CFX_WideString* pValue = m_AttrMap.Lookup(space, name);
     if (pValue) {
-        attribute = CFX_WideString((FX_LPCWSTR)pValue, pValue->GetLength());
+        attribute = *pValue;
         return TRUE;
     }
     return FALSE;

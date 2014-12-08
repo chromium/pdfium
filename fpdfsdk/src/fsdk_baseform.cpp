@@ -1074,9 +1074,9 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(FX_LPCWSTR sValue)
 			FX_INT32 nCurSel = pField->GetSelectedIndex(0);
 
 			if (nCurSel < 0)
-				pEdit->SetText((FX_LPCWSTR)pField->GetValue());
+				pEdit->SetText(pField->GetValue().c_str());
 			else
-				pEdit->SetText((FX_LPCWSTR)pField->GetOptionLabel(nCurSel));
+				pEdit->SetText(pField->GetOptionLabel(nCurSel).c_str());
 		}
 
 		CPDF_Rect rcContent = pEdit->GetContentRect();
@@ -1161,7 +1161,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox()
 				}
 			}
 
-			pEdit->SetText((FX_LPCWSTR)pField->GetOptionLabel(i));
+			pEdit->SetText(pField->GetOptionLabel(i).c_str());
 
 			CPDF_Rect rcContent = pEdit->GetContentRect();
 			FX_FLOAT fItemHeight = rcContent.Height();
@@ -1280,7 +1280,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(FX_LPCWSTR sValue)
 		if (sValue)
 			pEdit->SetText(sValue);
 		else
-			pEdit->SetText((FX_LPCWSTR)pField->GetValue());
+			pEdit->SetText(pField->GetValue().c_str());
 
 		CPDF_Rect rcContent = pEdit->GetContentRect();
 
@@ -2282,7 +2282,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitFields(const CFX_WideString& csDestination, con
 			return FALSE;
 	}
 
-	pEnv->JS_docSubmitForm(pBuffer, nBufSize, (FX_LPCWSTR)csDestination);
+	pEnv->JS_docSubmitForm(pBuffer, nBufSize, csDestination.c_str());
 	
 	return TRUE;
 }
@@ -2433,7 +2433,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination, FX_BOO
 			return FALSE;
 	}
 
-	pEnv->JS_docSubmitForm(pBuffer, nBufSize, (FX_LPCWSTR)sDestination);
+	pEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination.c_str());
 	
 	if (bUrlEncoded && pBuffer)
 	{

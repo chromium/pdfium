@@ -146,7 +146,7 @@ FX_FLOAT FXSYS_strtof(FX_LPCSTR pcsStr, FX_INT32 iLength, FX_INT32 *pUsedLen)
         iLength = (FX_INT32)FXSYS_strlen(pcsStr);
     }
     CFX_WideString ws = CFX_WideString::FromLocal(pcsStr, iLength);
-    return FXSYS_wcstof((FX_LPCWSTR)ws, iLength, pUsedLen);
+    return FXSYS_wcstof(ws.c_str(), iLength, pUsedLen);
 }
 FX_FLOAT FXSYS_wcstof(FX_LPCWSTR pwsStr, FX_INT32 iLength, FX_INT32 *pUsedLen)
 {

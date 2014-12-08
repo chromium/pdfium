@@ -1554,7 +1554,7 @@ FX_BOOL CJS_PublicMethods::AFDate_FormatEx(OBJ_METHOD_PARAMS)
 	if (JS_PortIsNan(dDate))
 	{
 		CFX_WideString swMsg;
-		swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSPARSEDATE), (FX_LPCWSTR)sFormat);
+		swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSPARSEDATE), sFormat.c_str());
 		Alert(pContext, swMsg);
 		return FALSE;
 	}
@@ -1652,7 +1652,7 @@ FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(OBJ_METHOD_PARAMS)
 		if (bWrongFormat || JS_PortIsNan(dRet))
 		{
 			CFX_WideString swMsg;
-			swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSPARSEDATE), (FX_LPCWSTR)sFormat);
+			swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSPARSEDATE), sFormat.c_str());
 			Alert(pContext, swMsg);
 			pEvent->Rc() = FALSE;
 			return TRUE;
@@ -2059,7 +2059,7 @@ FX_BOOL CJS_PublicMethods::AFParseDateEx(OBJ_METHOD_PARAMS)
 	if (JS_PortIsNan(dDate))
 	{
 		CFX_WideString swMsg;
-		swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSPARSEDATE), (FX_LPCWSTR)sFormat);
+		swMsg.Format(JSGetStringFromID(pContext, IDS_STRING_JSPARSEDATE), sFormat.c_str());
 		Alert((CJS_Context *)cc, swMsg);
 		return FALSE;
 	}
@@ -2304,7 +2304,7 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(OBJ_METHOD_PARAMS)
 		{
 			if (sPart.GetLength() > 0)
 			{
-				nums.SetElement(nIndex,CJS_Value(isolate,(FX_LPCWSTR)sPart));
+				nums.SetElement(nIndex,CJS_Value(isolate,sPart.c_str()));
 				sPart = L"";
 				nIndex ++;
 			}
@@ -2313,7 +2313,7 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(OBJ_METHOD_PARAMS)
 
 	if (sPart.GetLength() > 0)
 	{
-		nums.SetElement(nIndex,CJS_Value(isolate,(FX_LPCWSTR)sPart));	
+		nums.SetElement(nIndex,CJS_Value(isolate,sPart.c_str()));	
 	}
 
 	if (nums.GetLength() > 0)

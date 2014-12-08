@@ -971,7 +971,7 @@ CFX_ByteString CFX_ByteString::FromUnicode(FX_LPCWSTR str, FX_STRSIZE len)
 }
 CFX_ByteString CFX_ByteString::FromUnicode(const CFX_WideString& str)
 {
-    return FromUnicode((FX_LPCWSTR)str, str.GetLength());
+    return FromUnicode(str.c_str(), str.GetLength());
 }
 void CFX_ByteString::ConvertFrom(const CFX_WideString& str, CFX_CharMap* pCharMap)
 {

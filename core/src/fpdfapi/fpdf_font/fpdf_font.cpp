@@ -228,7 +228,7 @@ CFX_ByteString CPDF_Font::EncodeString(const CFX_WideString& str) const
     CFX_ByteString result;
     int src_len = str.GetLength();
     FX_LPSTR dest_buf = result.GetBuffer(src_len * 2);
-    FX_LPCWSTR src_buf = str;
+    FX_LPCWSTR src_buf = str.c_str();
     int dest_pos = 0;
     for (int src_pos = 0; src_pos < src_len; src_pos ++) {
         FX_DWORD charcode = CharCodeFromUnicode(src_buf[src_pos]);

@@ -813,7 +813,7 @@ FX_BOOL app::mailMsg(OBJ_METHOD_PARAMS)
 	ASSERT(pApp != NULL);
 
 	pRuntime->BeginBlock();
-	pApp->JS_docmailForm(NULL, 0, bUI, (FX_LPCWSTR)cTo, (FX_LPCWSTR)cSubject, (FX_LPCWSTR)cCc, (FX_LPCWSTR)cBcc, (FX_LPCWSTR)cMsg);
+	pApp->JS_docmailForm(NULL, 0, bUI, cTo.c_str(), cSubject.c_str(), cCc.c_str(), cBcc.c_str(), cMsg.c_str());
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	pRuntime->EndBlock();
 

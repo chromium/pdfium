@@ -605,7 +605,7 @@ FX_BOOL Document::mailForm(OBJ_METHOD_PARAMS)
 	ASSERT(pRuntime != NULL);
 
 	pRuntime->BeginBlock();
-	pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI, (FX_LPCWSTR)cTo, (FX_LPCWSTR)cSubject, (FX_LPCWSTR)cCc, (FX_LPCWSTR)cBcc, (FX_LPCWSTR)cMsg);
+	pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI, cTo.c_str(), cSubject.c_str(), cCc.c_str(), cBcc.c_str(), cMsg.c_str());
 	pRuntime->EndBlock();
 	return TRUE;
 }
@@ -999,7 +999,7 @@ FX_BOOL Document::mailDoc(OBJ_METHOD_PARAMS)
 
 	pRuntime->BeginBlock();
 	CPDFDoc_Environment* pEnv = pRuntime->GetReaderApp();
-	pEnv->JS_docmailForm(NULL, 0, bUI, (FX_LPCWSTR)cTo, (FX_LPCWSTR)cSubject, (FX_LPCWSTR)cCc, (FX_LPCWSTR)cBcc, (FX_LPCWSTR)cMsg);
+	pEnv->JS_docmailForm(NULL, 0, bUI, cTo.c_str(), cSubject.c_str(), cCc.c_str(), cBcc.c_str(), cMsg.c_str());
 	pRuntime->EndBlock();
 
 	return TRUE;

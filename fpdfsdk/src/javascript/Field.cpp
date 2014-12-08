@@ -194,7 +194,7 @@ FX_BOOL Field::AttachField(Document* pDocument, const CFX_WideString& csFieldNam
 	{
 		std::wstring strFieldName;
 		int iControlNo = -1;
-		ParseFieldName((FX_LPCWSTR)swFieldNameTemp, strFieldName, iControlNo);
+		ParseFieldName(swFieldNameTemp.c_str(), strFieldName, iControlNo);
 		if (iControlNo == -1) return FALSE;
 		
 		m_FieldName = strFieldName.c_str();
@@ -1573,7 +1573,7 @@ FX_BOOL Field::exportValues(OBJ_PROP_PARAMS)
 				CPDF_FormControl* pFormControl = pFormField->GetControl(i);
 				ASSERT(pFormControl != NULL);
 
-				ExportValusArray.SetElement(i, CJS_Value(m_isolate,(FX_LPCWSTR)pFormControl->GetExportValue()));
+				ExportValusArray.SetElement(i, CJS_Value(m_isolate,pFormControl->GetExportValue().c_str()));
 			}
 		}
 		else
@@ -1582,7 +1582,7 @@ FX_BOOL Field::exportValues(OBJ_PROP_PARAMS)
 			CPDF_FormControl* pFormControl = pFormField->GetControl(m_nFormControlIndex);
 			if (!pFormControl) return FALSE;
 
-			ExportValusArray.SetElement(0, CJS_Value(m_isolate,(FX_LPCWSTR)pFormControl->GetExportValue()));
+			ExportValusArray.SetElement(0, CJS_Value(m_isolate,pFormControl->GetExportValue().c_str()));
 		}
 
 		vp << ExportValusArray;
@@ -3322,7 +3322,7 @@ FX_BOOL Field::valueAsString(OBJ_PROP_PARAMS)
 		{
 			if (pFormField->GetControl(i)->IsChecked())
 			{
-				vp << (FX_LPCWSTR)pFormField->GetControl(i)->GetExportValue();
+				vp << pFormField->GetControl(i)->GetExportValue().c_str();
 				break;
 			}
 			else
@@ -3334,7 +3334,7 @@ FX_BOOL Field::valueAsString(OBJ_PROP_PARAMS)
 		vp << L"";
 	}
 	else
-		vp << (FX_LPCWSTR)pFormField->GetValue();
+		vp << pFormField->GetValue().c_str();
 
 	return TRUE;
 }
