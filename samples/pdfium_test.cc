@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 #include <list>
 #include <string>
@@ -135,8 +136,21 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
 }
 #endif
 
-int Form_Alert(IPDF_JSPLATFORM*, FPDF_WIDESTRING, FPDF_WIDESTRING, int, int) {
-  printf("Form_Alert called.\n");
+int Form_Alert(IPDF_JSPLATFORM*, FPDF_WIDESTRING msg, FPDF_WIDESTRING,
+               int, int) {
+  // Deal with differences between UTF16LE and wchar_t on this platform.
+  size_t characters = 0;
+  while (msg[characters]) {
+    ++characters;
+  }
+  wchar_t* platform_string =
+      (wchar_t*)malloc((characters + 1) * sizeof(wchar_t));
+  for (size_t i = 0; i < characters + 1; ++i) {
+    unsigned char* ptr = (unsigned char*)&msg[i];
+    platform_string[i] = ptr[0] + 256 * ptr[1];
+  }
+  printf("Alert: %ls\n", platform_string);
+  free(platform_string);
   return 0;
 }
 
