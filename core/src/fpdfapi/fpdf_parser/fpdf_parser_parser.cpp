@@ -3829,6 +3829,9 @@ FX_BOOL CPDF_DataAvail::CheckTrailer(IFX_DownloadHints* pHints)
         CFX_SmartPointer<IFX_FileStream> file(FX_CreateMemoryStream(pBuf, (size_t)iSize, FALSE));
         m_syntaxParser.InitParser((IFX_FileStream*)file, 0);
         CPDF_Object *pTrailer = m_syntaxParser.GetObject(NULL, 0, 0, 0);
+        if (pTrailer->GetType() != PDFOBJ_DICTIONARY) {
+            return FALSE;
+        }
         if (!pTrailer) {
             m_Pos += m_syntaxParser.SavePos();
             pHints->AddSegment(m_Pos, iTrailerSize);
