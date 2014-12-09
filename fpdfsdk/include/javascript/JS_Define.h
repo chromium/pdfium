@@ -623,7 +623,7 @@ if (JS_DefineGlobalConst(pRuntime,JS_WIDESTRING(const_name),JS_NewString(pRuntim
 /* ======================================== GLOBAL ARRAYS ============================================ */
 
 #define DEFINE_GLOBAL_ARRAY(pRuntime)\
-int size = sizeof(ArrayContent) / sizeof(FX_LPCWSTR);\
+int size = FX_ArraySize(ArrayContent);\
 \
 CJS_Array array(pRuntime);\
 for (int i=0; i<size; i++) array.SetElement(i,CJS_Value(pRuntime,ArrayContent[i]));\

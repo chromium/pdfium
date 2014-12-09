@@ -1679,11 +1679,11 @@ FX_BOOL CJS_PublicMethods::AFDate_Format(OBJ_METHOD_PARAMS)
 		L"yy-mm-dd", L"mmm-yy", L"mmmm-yy", L"mmm d, yyyy", L"mmmm d, yyyy",
 		L"m/d/yy h:MM tt", L"m/d/yy HH:MM" };
 
-	ASSERT(iIndex < sizeof(cFormats)/sizeof(FX_LPCWSTR));
+	ASSERT(iIndex < FX_ArraySize(cFormats));
 
 	if (iIndex < 0)
 		iIndex = 0;
-	if (iIndex >= sizeof(cFormats)/sizeof(FX_LPCWSTR))
+	if (iIndex >= FX_ArraySize(cFormats))
 		iIndex = 0;
 	CJS_Parameters newParams;
 	CJS_Value val(isolate,cFormats[iIndex]);
@@ -1710,11 +1710,11 @@ FX_BOOL CJS_PublicMethods::AFDate_Keystroke(OBJ_METHOD_PARAMS)
 		L"yy-mm-dd", L"mmm-yy", L"mmmm-yy", L"mmm d, yyyy", L"mmmm d, yyyy",
 		L"m/d/yy h:MM tt", L"m/d/yy HH:MM" };
 
-	ASSERT(iIndex<sizeof(cFormats)/sizeof(FX_LPCWSTR));
+	ASSERT(iIndex<FX_ArraySize(cFormats));
 
 	if (iIndex < 0)
 		iIndex = 0;
-	if (iIndex >= sizeof(cFormats)/sizeof(FX_LPCWSTR))
+	if (iIndex >= FX_ArraySize(cFormats))
 		iIndex = 0;
 	CJS_Parameters newParams;
 	CJS_Value val(isolate,cFormats[iIndex]);
@@ -1738,11 +1738,11 @@ FX_BOOL CJS_PublicMethods::AFTime_Format(OBJ_METHOD_PARAMS)
 	int iIndex = params[0];
 	FX_LPCWSTR cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss", L"h:MM:ss tt"};
 
-	ASSERT(iIndex<sizeof(cFormats)/sizeof(FX_LPCWSTR));
+	ASSERT(iIndex<FX_ArraySize(cFormats));
 
 	if (iIndex < 0)
 		iIndex = 0;
-	if (iIndex >= sizeof(cFormats)/sizeof(FX_LPCWSTR))
+	if (iIndex >= FX_ArraySize(cFormats))
 		iIndex = 0;
 	CJS_Parameters newParams;
 	CJS_Value val(isolate,cFormats[iIndex]);
@@ -1764,11 +1764,11 @@ FX_BOOL CJS_PublicMethods::AFTime_Keystroke(OBJ_METHOD_PARAMS)
 	int iIndex = params[0];
 	FX_LPCWSTR cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss", L"h:MM:ss tt"};
 
-	ASSERT(iIndex<sizeof(cFormats)/sizeof(FX_LPCWSTR));
+	ASSERT(iIndex<FX_ArraySize(cFormats));
 
 	if (iIndex < 0)
 		iIndex = 0;
-	if (iIndex >= sizeof(cFormats)/sizeof(FX_LPCWSTR))
+	if (iIndex >= FX_ArraySize(cFormats))
 		iIndex = 0;
 	CJS_Parameters newParams;
 	CJS_Value val(isolate,cFormats[iIndex]);
