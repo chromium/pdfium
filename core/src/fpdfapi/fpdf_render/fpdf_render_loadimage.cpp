@@ -504,6 +504,9 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dict
 }
 DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode, FX_BOOL& bColorKey)
 {
+    if (m_pColorSpace == NULL) {
+        return NULL;
+    }
     DIB_COMP_DATA* pCompData = FX_Alloc(DIB_COMP_DATA, m_nComponents);
     if (pCompData == NULL) {
         return NULL;
