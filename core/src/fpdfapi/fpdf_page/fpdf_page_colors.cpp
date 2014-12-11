@@ -456,6 +456,7 @@ FX_BOOL CPDF_LabCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
 }
 void CPDF_LabCS::GetDefaultValue(int iComponent, FX_FLOAT& value, FX_FLOAT& min, FX_FLOAT& max) const
 {
+    assert(iComponent < 3);
     value = 0;
     if (iComponent == 0) {
         min = 0;
