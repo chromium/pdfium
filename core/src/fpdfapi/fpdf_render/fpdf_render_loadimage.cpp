@@ -583,6 +583,10 @@ int CPDF_DIBSource::CreateDecoder()
                 if (m_nComponents != comps) {
                     FX_Free(m_pCompData);
                     m_nComponents = comps;
+                    if (m_Family == PDFCS_LAB && m_nComponents != 3) {
+                        m_pCompData = NULL;
+                        return 0;
+                    }
                     m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
                     if (m_pCompData == NULL) {
                         return 0;
