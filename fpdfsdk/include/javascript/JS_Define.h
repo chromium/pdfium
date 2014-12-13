@@ -648,14 +648,14 @@ if (JS_DefineGlobalConst(pRuntime, (const wchar_t*)ArrayName, prop.ToJSValue()) 
 #define CLASSNAME_DATE			L"Date"
 #define CLASSNAME_STRING		L"v8::String"
 
-const unsigned int JSCONST_nStringHash = JS_CalcHash(VALUE_NAME_STRING,wcslen(VALUE_NAME_STRING));
-const unsigned int JSCONST_nNumberHash = JS_CalcHash(VALUE_NAME_NUMBER,wcslen(VALUE_NAME_NUMBER));
-const unsigned int JSCONST_nBoolHash = JS_CalcHash(VALUE_NAME_BOOLEAN,wcslen(VALUE_NAME_BOOLEAN));
-const unsigned int JSCONST_nDateHash = JS_CalcHash(VALUE_NAME_DATE,wcslen(VALUE_NAME_DATE));
-const unsigned int JSCONST_nObjectHash = JS_CalcHash(VALUE_NAME_OBJECT,wcslen(VALUE_NAME_OBJECT));
-const unsigned int JSCONST_nFXobjHash = JS_CalcHash(VALUE_NAME_FXOBJ,wcslen(VALUE_NAME_FXOBJ));
-const unsigned int JSCONST_nNullHash = JS_CalcHash(VALUE_NAME_NULL,wcslen(VALUE_NAME_NULL));
-const unsigned int JSCONST_nUndefHash = JS_CalcHash(VALUE_NAME_UNDEFINED,wcslen(VALUE_NAME_UNDEFINED));
+extern const unsigned int JSCONST_nStringHash;
+extern const unsigned int JSCONST_nNumberHash;
+extern const unsigned int JSCONST_nBoolHash;
+extern const unsigned int JSCONST_nDateHash;
+extern const unsigned int JSCONST_nObjectHash;
+extern const unsigned int JSCONST_nFXobjHash;
+extern const unsigned int JSCONST_nNullHash;
+extern const unsigned int JSCONST_nUndefHash;
 
 static FXJSVALUETYPE GET_VALUE_TYPE(v8::Handle<v8::Value> p)
 {
