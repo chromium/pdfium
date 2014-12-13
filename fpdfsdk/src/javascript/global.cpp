@@ -17,6 +17,15 @@
 
 /* ---------------------------- global ---------------------------- */
 
+extern const unsigned int JSCONST_nStringHash = JS_CalcHash(VALUE_NAME_STRING,wcslen(VALUE_NAME_STRING));
+extern const unsigned int JSCONST_nNumberHash = JS_CalcHash(VALUE_NAME_NUMBER,wcslen(VALUE_NAME_NUMBER));
+extern const unsigned int JSCONST_nBoolHash = JS_CalcHash(VALUE_NAME_BOOLEAN,wcslen(VALUE_NAME_BOOLEAN));
+extern const unsigned int JSCONST_nDateHash = JS_CalcHash(VALUE_NAME_DATE,wcslen(VALUE_NAME_DATE));
+extern const unsigned int JSCONST_nObjectHash = JS_CalcHash(VALUE_NAME_OBJECT,wcslen(VALUE_NAME_OBJECT));
+extern const unsigned int JSCONST_nFXobjHash = JS_CalcHash(VALUE_NAME_FXOBJ,wcslen(VALUE_NAME_FXOBJ));
+extern const unsigned int JSCONST_nNullHash = JS_CalcHash(VALUE_NAME_NULL,wcslen(VALUE_NAME_NULL));
+extern const unsigned int JSCONST_nUndefHash = JS_CalcHash(VALUE_NAME_UNDEFINED,wcslen(VALUE_NAME_UNDEFINED));
+
 BEGIN_JS_STATIC_CONST(CJS_Global)
 END_JS_STATIC_CONST()
 
