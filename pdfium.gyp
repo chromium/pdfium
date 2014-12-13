@@ -644,6 +644,7 @@
         'core/src/fxge/ge/fx_ge_device.cpp',
         'core/src/fxge/ge/fx_ge_font.cpp',
         'core/src/fxge/ge/fx_ge_fontmap.cpp',
+        'core/src/fxge/ge/fx_ge_linux.cpp',
         'core/src/fxge/ge/fx_ge_path.cpp',
         'core/src/fxge/ge/fx_ge_ps.cpp',
         'core/src/fxge/ge/fx_ge_text.cpp',

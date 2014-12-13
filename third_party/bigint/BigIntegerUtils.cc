@@ -42,11 +42,8 @@ std::ostream &operator <<(std::ostream &os, const BigUnsigned &x) {
 		if (osFlags & os.showbase)
 			os << '0';
 	} else
-#ifdef FOXIT_CHROME_BUILD
         abort();
-#else
-		throw "std::ostream << BigUnsigned: Could not determine the desired base from output-stream flags";
-#endif
+
 	std::string s = std::string(BigUnsignedInABase(x, base));
 	os << s;
 	return os;

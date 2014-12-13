@@ -195,12 +195,7 @@ void BigUnsigned::subtract(const BigUnsigned &a, const BigUnsigned &b) {
 		return;
 	} else if (a.len < b.len)
 		// If a is shorter than b, the result is negative.
-#ifdef FOXIT_CHROME_BUILD
         abort();
-#else
-		throw "BigUnsigned::subtract: "
-			"Negative result in unsigned calculation";
-#endif
 	// Some variables...
 	bool borrowIn, borrowOut;
 	Blk temp;
@@ -233,11 +228,7 @@ void BigUnsigned::subtract(const BigUnsigned &a, const BigUnsigned &b) {
 	 * predictable state. */
 	if (borrowIn) {
 		len = 0;
-#ifdef FOXIT_CHROME_BUILD
         abort();
-#else
-		throw "BigUnsigned::subtract: Negative result in unsigned calculation";
-#endif
 	} else
 		// Copy over the rest of the blocks
 		for (; i < a.len; i++)
@@ -400,11 +391,7 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	 * It would be silly to try to write quotient and remainder to the
 	 * same variable.  Rule that out right away. */
 	if (this == &q)
-#ifdef FOXIT_CHROME_BUILD
         abort();
-#else
-		throw "BigUnsigned::divideWithRemainder: Cannot write quotient and remainder into the same variable";
-#endif
 	/* Now *this and q are separate, so the only concern is that b might be
 	 * aliased to one of them.  If so, use a temporary copy of b. */
 	if (this == &b || &q == &b) {
@@ -614,12 +601,7 @@ void BigUnsigned::bitShiftLeft(const BigUnsigned &a, int b) {
 	DTRT_ALIASED(this == &a, bitShiftLeft(a, b));
 	if (b < 0) {
 		if (b << 1 == 0)
-#ifdef FOXIT_CHROME_BUILD
             abort();
-#else
-			throw "BigUnsigned::bitShiftLeft: "
-				"Pathological shift amount not implemented";
-#endif
 		else {
 			bitShiftRight(a, -b);
 			return;
@@ -644,12 +626,7 @@ void BigUnsigned::bitShiftRight(const BigUnsigned &a, int b) {
 	DTRT_ALIASED(this == &a, bitShiftRight(a, b));
 	if (b < 0) {
 		if (b << 1 == 0)
-#ifdef FOXIT_CHROME_BUILD
             abort();
-#else
-			throw "BigUnsigned::bitShiftRight: "
-				"Pathological shift amount not implemented";
-#endif
 		else {
 			bitShiftLeft(a, -b);
 			return;
@@ -705,11 +682,7 @@ void BigUnsigned::operator ++(int) {
 // Prefix decrement
 void BigUnsigned::operator --() {
 	if (len == 0)
-#ifdef FOXIT_CHROME_BUILD
         abort();
-#else
-		throw "BigUnsigned::operator --(): Cannot decrement an unsigned zero";
-#endif
 	Index i;
 	bool borrow = true;
 	for (i = 0; borrow; i++) {
