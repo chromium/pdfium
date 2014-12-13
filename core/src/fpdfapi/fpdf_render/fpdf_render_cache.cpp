@@ -248,7 +248,6 @@ FX_BOOL CPDF_ImageCache::GetCachedBitmap(CFX_DIBSource*& pBitmap, CFX_DIBSource*
         return FALSE;
     }
     m_MatteColor = MatteColor;
-#if !defined(_FPDFAPI_MINI_)
     if (pSrc->GetPitch() * pSrc->GetHeight() < FPDF_HUGE_IMAGE_SIZE) {
         m_pCachedBitmap = pSrc->Clone();
         delete pSrc;
@@ -259,23 +258,7 @@ FX_BOOL CPDF_ImageCache::GetCachedBitmap(CFX_DIBSource*& pBitmap, CFX_DIBSource*
         m_pCachedMask = pMaskSrc->Clone();
         delete pMaskSrc;
     }
-#else
-    if (pSrc->GetFormat() == FXDIB_8bppRgb && pSrc->GetPalette() &&
-            pSrc->GetHeight() * pSrc->GetWidth() * 3 < 1024) {
-#if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
-        m_pCachedBitmap = pSrc->CloneConvert(FXDIB_Rgb32);
-#else
-        m_pCachedBitmap = pSrc->CloneConvert(FXDIB_Rgb);
-#endif
-        delete pSrc;
-    } else if (pSrc->GetPitch() * pSrc->GetHeight() < 102400) {
-        m_pCachedBitmap = pSrc->Clone();
-        delete pSrc;
-    } else {
-        m_pCachedBitmap = pSrc;
-    }
-    m_pCachedMask = pMaskSrc;
-#endif
+
     pBitmap = m_pCachedBitmap;
     pMask = m_pCachedMask;
     CalcSize();
@@ -326,7 +309,6 @@ int CPDF_ImageCache::ContinueGetCachedBitmap()
     CPDF_RenderContext*pContext = m_pRenderStatus->GetContext();
     CPDF_PageRenderCache* pPageRenderCache = pContext->m_pPageCache;
     m_dwTimeCount = pPageRenderCache->GetTimeCount();
-#if !defined(_FPDFAPI_MINI_)
     if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() < FPDF_HUGE_IMAGE_SIZE) {
         m_pCachedBitmap = m_pCurBitmap->Clone();
         delete m_pCurBitmap;
@@ -339,22 +321,6 @@ int CPDF_ImageCache::ContinueGetCachedBitmap()
         delete m_pCurMask;
         m_pCurMask = NULL;
     }
-#else
-    if (m_pCurBitmap->GetFormat() == FXDIB_8bppRgb && m_pCurBitmap->GetPalette() &&
-            m_pCurBitmap->GetHeight() * m_pCurBitmap->GetWidth() * 3 < 1024) {
-        m_pCachedBitmap = m_pCurBitmap->CloneConvert(FXDIB_Rgb32);
-        m_pCachedBitmap = m_pCurBitmap->CloneConvert(FXDIB_Rgb);
-        delete m_pCurBitmap;
-        m_pCurBitmap = NULL;
-    } else if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() < 102400) {
-        m_pCachedBitmap = m_pCurBitmap->Clone();
-        delete m_pCurBitmap;
-        m_pCurBitmap = NULL;
-    } else {
-        m_pCachedBitmap = m_pCurBitmap;
-    }
-    m_pCachedMask = m_pCurMask;
-#endif
     m_pCurBitmap = m_pCachedBitmap;
     m_pCurMask = m_pCachedMask;
     CalcSize();

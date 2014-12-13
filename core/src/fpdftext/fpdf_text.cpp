@@ -9,7 +9,6 @@
 #include "../../include/fpdftext/fpdf_text.h"
 #include "txtproc.h"
 #include "text_int.h"
-#if !defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_)
 extern FX_LPCSTR FCS_GetAltStr(FX_WCHAR);
 CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode, int destcp, FX_LPCSTR defchar)
 {
@@ -776,7 +775,6 @@ void PDF_GetPageText(CFX_ByteStringArray& lines, CPDF_Document* pDoc, CPDF_Dicti
         lines.Add(str);
     }
 }
-#endif
 extern void _PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_PageObjects* pPage, FX_BOOL bUseLF,
                                        CFX_PtrArray* pObjArray);
 void PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_Document* pDoc, CPDF_Dictionary* pPage, FX_DWORD flags)

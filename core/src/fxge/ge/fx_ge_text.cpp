@@ -1070,7 +1070,7 @@ CFX_FaceCache::~CFX_FaceCache()
     }
     m_PathMap.RemoveAll();
 }
-#if ((_FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_)|| defined(_FPDFAPI_MINI_))
+#if _FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_
 void CFX_FaceCache::InitPlatform()
 {
 }
@@ -1105,7 +1105,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont, FX_DWORD 
         return NULL;
     }
     _CFX_UniqueKeyGen keygen;
-#if ((_FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_)|| defined(_FPDFAPI_MINI_))
+#if _FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_
     if (pFont->GetSubstFont())
         keygen.Generate(9, (int)(pMatrix->a * 10000), (int)(pMatrix->b * 10000),
                         (int)(pMatrix->c * 10000), (int)(pMatrix->d * 10000), dest_width, anti_alias,
@@ -1133,7 +1133,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont, FX_DWORD 
     }
 #endif
     CFX_ByteStringC FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
-#if ((_FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_)|| defined(_FPDFAPI_MINI_))
+#if _FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_
     return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index, bFontStyle, dest_width, anti_alias);
 #else
     if (text_flags & FXTEXT_NO_NATIVETEXT) {
@@ -1186,11 +1186,7 @@ CFX_SizeGlyphCache::~CFX_SizeGlyphCache()
     }
     m_GlyphMap.RemoveAll();
 }
-#if defined(_FPDFAPI_MINI_)
-#define CONTRAST_RAMP_STEP	16
-#else
 #define CONTRAST_RAMP_STEP	1
-#endif
 void CFX_Font::AdjustMMParams(int glyph_index, int dest_width, int weight)
 {
     FXFT_MM_Var pMasters = NULL;

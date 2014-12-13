@@ -160,11 +160,7 @@ FX_BOOL CPDF_TextPage::ParseTextPage()
             if(charinfo.m_Flag == FPDFTEXT_CHAR_GENERATED) {
                 bNormal = TRUE;
             }
-#ifdef FOXIT_CHROME_BUILD
             else if(charinfo.m_Unicode == 0 || IsControlChar(&charinfo))
-#else
-            else if(charinfo.m_Unicode == 0)
-#endif
                 bNormal = FALSE;
             else {
                 bNormal = TRUE;
@@ -1118,11 +1114,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(CFX_WideString& str, int i)
 {
     PAGECHAR_INFO Info = *(PAGECHAR_INFO*)m_TempCharList.GetAt(i);
     FX_WCHAR wChar = str.GetAt(i);
-#ifdef FOXIT_CHROME_BUILD
     if(!IsControlChar(&Info)) {
-#else
-    if(wChar != 0xfffe) {
-#endif
         Info.m_Index = m_TextBuf.GetLength();
         if (wChar >= 0xFB00 && wChar <= 0xFB06) {
             FX_LPWSTR pDst = NULL;
@@ -1157,11 +1149,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(CFX_WideString& str, int i)
 void CPDF_TextPage::AddCharInfoByRLDirection(CFX_WideString& str, int i)
 {
     PAGECHAR_INFO Info = *(PAGECHAR_INFO*)m_TempCharList.GetAt(i);
-#ifdef FOXIT_CHROME_BUILD
     if(!IsControlChar(&Info)) {
-#else
-    if(str.GetAt(i) != 0xfffe) {
-#endif
         Info.m_Index = m_TextBuf.GetLength();
         FX_WCHAR wChar = FX_GetMirrorChar(str.GetAt(i), TRUE, FALSE);
         FX_LPWSTR pDst = NULL;
@@ -1638,14 +1626,9 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
             }
             PAGECHAR_INFO* cha = (PAGECHAR_INFO*)m_TempCharList.GetAt(m_TempCharList.GetSize() - 1);
             m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
-#ifdef FOXIT_CHROME_BUILD
             cha->m_Unicode = 0x2;
             cha->m_Flag = FPDFTEXT_CHAR_HYPHEN;
             m_TempTextBuf.AppendChar(0xfffe);
-#else
-            cha->m_Unicode = 0;
-            m_TempTextBuf.AppendChar(0xfffe);
-#endif
         }
     } else {
         m_CurlineRect = CFX_FloatRect(Obj.m_pTextObj->m_Left, Obj.m_pTextObj->m_Bottom, Obj.m_pTextObj->m_Right, Obj.m_pTextObj->m_Top);

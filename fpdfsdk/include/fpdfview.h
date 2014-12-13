@@ -126,13 +126,13 @@ extern "C" {
 // Function: FPDF_InitLibrary
 //			Initialize the FPDFSDK library 
 // Parameters:
-//			hInstance	-	For WIN32 system only: the instance of the executable or DLL module.
+//			None
 // Return value:
 //			None.
 // Comments:
 //			You have to call this function before you can call any PDF processing functions.
 
-DLLEXPORT void STDCALL FPDF_InitLibrary(void* hInstance);
+DLLEXPORT void STDCALL FPDF_InitLibrary();
 
 
 // Function: FPDF_DestroyLibary

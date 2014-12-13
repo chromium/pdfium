@@ -391,12 +391,10 @@ FX_BOOL CWin32FontInfo::GetFontCharset(void* hFont, int& charset)
     charset = tm.tmCharSet;
     return TRUE;
 }
-#ifndef _FPDFAPI_MINI_
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault()
 {
     return FX_NEW CWin32FontInfo;
 }
-#endif
 void CFX_GEModule::InitPlatform()
 {
     CWin32Platform* pPlatformData = FX_NEW CWin32Platform;
@@ -979,11 +977,9 @@ FX_BOOL CGdiDisplayDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top, v
             ret = FALSE;
         }
     }
-#ifndef _FPDFAPI_MINI_
     if (pBitmap->HasAlpha() && ret) {
         pBitmap->LoadChannel(FXDIB_Alpha, 0xff);
     }
-#endif
     DeleteObject(hbmp);
     DeleteObject(hDCMemory);
     return ret;
@@ -1175,11 +1171,9 @@ IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC, FX_BOOL bCmykOu
     } else {
         device_class = FXDC_DISPLAY;
     }
-#ifndef _FPDFAPI_MINI_
     if (device_class == FXDC_PRINTER) {
         return FX_NEW CGdiPrinterDriver(hDC);
     }
-#endif
     return FX_NEW CGdiDisplayDriver(hDC);
 }
 CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width, int height, FXDIB_Format format)

@@ -14,7 +14,7 @@
 #include "../dib/dib_int.h"
 #include "../agg/include/fx_agg_driver.h"
 #include "../../../include/fxge/fx_freetype.h"
-#if (_FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_ && (!defined(_FPDFAPI_MINI_)))
+#if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
 void CFX_AggDeviceDriver::InitPlatform()
 {
     CQuartz2D & quartz2d = ((CApplePlatform *) CFX_GEModule::Get()->GetPlatformData())->_quartz2d;

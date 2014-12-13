@@ -4,7 +4,6 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-// #include "x:/pdf/fpdfapi5/include/fpdfapi.h"
 #include "../include/fsdk_define.h"
 #include "../include/fpdfedit.h"
 
@@ -44,11 +43,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument()
 	{
 		if(FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
 			pInfoDict->SetAt("CreationDate", new CPDF_String(DateStr));
-#ifdef FOXIT_CHROME_BUILD
-		pInfoDict->SetAt("Creator",FX_NEW CPDF_String(L"Google"));
-#else
-		pInfoDict->SetAt("Creator",FX_NEW CPDF_String(L"Foxit PDF SDK DLL 2.0 - Foxit Software"));
-#endif
+		pInfoDict->SetAt("Creator",FX_NEW CPDF_String(L"PDFium"));
 	}
 
 	return pDoc;

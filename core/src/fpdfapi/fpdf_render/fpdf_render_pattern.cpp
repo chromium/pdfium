@@ -881,11 +881,6 @@ FX_BOOL CPDF_RenderStatus::ProcessShading(CPDF_ShadingObject* pShadingObj, const
     matrix.Concat(*pObj2Device);
     DrawShading(pShadingObj->m_pShading, &matrix, rect, pShadingObj->m_GeneralState.GetAlpha(FALSE),
                 m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
-#ifdef _FPDFAPI_MINI_
-    if (m_DitherBits) {
-        DitherObjectArea(pShadingObj, pObj2Device);
-    }
-#endif
     return TRUE;
 }
 static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc, CPDF_PageRenderCache* pCache,
@@ -1117,9 +1112,4 @@ void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj, const CFX_
             bPattern = TRUE;
         }
     }
-#ifdef _FPDFAPI_MINI_
-    if (bPattern && m_DitherBits) {
-        DitherObjectArea(pPathObj, pObj2Device);
-    }
-#endif
 }

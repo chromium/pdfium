@@ -214,7 +214,7 @@ CFX_AggDeviceDriver::~CFX_AggDeviceDriver()
         }
     DestroyPlatform();
 }
-#if ((_FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_)|| defined(_FPDFAPI_MINI_))
+#if _FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_
 void CFX_AggDeviceDriver::InitPlatform()
 {
 }

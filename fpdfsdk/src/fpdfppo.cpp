@@ -49,12 +49,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document *pDestPDFDoc, CPDF_Document
 		return FALSE;
 	
 	CFX_ByteString producerstr;
-	
-#ifdef FOXIT_CHROME_BUILD
-	producerstr.Format("Google");
-#else
-	 producerstr.Format("Foxit PDF SDK %s - Foxit Corporation", "2.0");
-#endif
+	producerstr.Format("PDFium");
 	DInfoDict->SetAt("Producer", new CPDF_String(producerstr));
 
 	//Set type////////////////////////////////////////////////////////////////

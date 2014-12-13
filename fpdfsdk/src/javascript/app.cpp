@@ -480,23 +480,7 @@ FX_BOOL app::popUpMenuEx(OBJ_METHOD_PARAMS)
 
 FX_BOOL app::fs(OBJ_PROP_PARAMS)
 {
-#ifdef FOXIT_CHROME_BUILD
 	return FALSE;
-#else
-	CJS_Context* pContext = (CJS_Context*)cc;
-	ASSERT(pContext != NULL);
-	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-	ASSERT(pRuntime != NULL);
-
-	if (vp.IsGetting())
-	{
-		return TRUE;
-	}
-	else
-	{
-		return TRUE;
-	}
-#endif
 }
 
 FX_BOOL app::setInterval(OBJ_METHOD_PARAMS)
@@ -1030,11 +1014,7 @@ FX_BOOL app::response(OBJ_METHOD_PARAMS)
 {
 	CFX_WideString swQuestion = L"";
 	CFX_WideString swLabel = L"";
-#ifndef FOXIT_CHROME_BUILD
-	CFX_WideString swTitle = L"Foxit";
-#else
 	CFX_WideString swTitle = L"PDF";
-#endif
 	CFX_WideString swDefault = L"";
 	bool bPassWord = false;
 

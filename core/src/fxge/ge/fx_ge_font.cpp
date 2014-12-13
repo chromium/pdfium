@@ -32,18 +32,14 @@ CFX_Font::~CFX_Font()
         delete m_pSubstFont;
         m_pSubstFont = NULL;
     }
-#ifdef FOXIT_CHROME_BUILD
     if (m_pFontDataAllocation) {
         FX_Free(m_pFontDataAllocation);
         m_pFontDataAllocation = NULL;
     }
-#endif
     if (m_Face) {
-#ifdef FOXIT_CHROME_BUILD
         if (FXFT_Get_Face_External_Stream(m_Face)) {
             FXFT_Clear_Face_External_Stream(m_Face);
         }
-#endif
         if(m_bEmbedded) {
             DeleteFace();
         } else {
@@ -58,7 +54,7 @@ CFX_Font::~CFX_Font()
         FX_Free(m_pGsubData);
         m_pGsubData = NULL;
     }
-#if (_FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_ && (!defined(_FPDFAPI_MINI_)))
+#if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
     ReleasePlatformResource();
 #endif
 }
@@ -183,7 +179,6 @@ static FXFT_Face FT_LoadFont(FX_LPBYTE pData, int size)
 }
 FX_BOOL CFX_Font::LoadEmbedded(FX_LPCBYTE data, FX_DWORD size)
 {
-#ifdef FOXIT_CHROME_BUILD
     m_pFontDataAllocation = FX_Alloc(FX_BYTE, size);
     if (!m_pFontDataAllocation) {
         return FALSE;
@@ -191,10 +186,6 @@ FX_BOOL CFX_Font::LoadEmbedded(FX_LPCBYTE data, FX_DWORD size)
     FXSYS_memcpy32(m_pFontDataAllocation, data, size);
     m_Face = FT_LoadFont((FX_LPBYTE)m_pFontDataAllocation, size);
     m_pFontData = (FX_LPBYTE)m_pFontDataAllocation;
-#else
-    m_Face = FT_LoadFont((FX_LPBYTE)data, size);
-    m_pFontData = (FX_LPBYTE)data;
-#endif
     m_bEmbedded = TRUE;
     m_dwSize = size;
     return m_Face != NULL;

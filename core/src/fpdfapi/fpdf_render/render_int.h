@@ -435,11 +435,7 @@ protected:
     CFX_DIBitmap*		m_pCachedBitmap;
     ICodec_ScanlineDecoder*	m_pDecoder;
 };
-#ifdef _FPDFAPI_MINI_
-#define FPDF_HUGE_IMAGE_SIZE	3000000
-#else
 #define FPDF_HUGE_IMAGE_SIZE	60000000
-#endif
 class CPDF_DIBTransferFunc : public CFX_FilteredDIB
 {
 public:

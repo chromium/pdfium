@@ -168,7 +168,6 @@ int FXFT_unicode_from_adobe_name( const char*  glyph_name )
 }
 #endif
 
-#if !defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_)
 static int xyq_search_node(char* glyph_name, int name_offset, int table_offset, FT_UInt32 unicode)
 {
 	int i, count;
@@ -221,7 +220,6 @@ void FXFT_adobe_name_from_unicode(char* glyph_name, FT_UInt32 unicode)
 	// failed, clear the buffer
 	glyph_name[0] = 0;
 }
-#endif
 
   /* ft_qsort callback to sort the unicode map */
   FT_CALLBACK_DEF( int )

@@ -1763,9 +1763,6 @@ FX_BOOL Document::removeIcon(OBJ_METHOD_PARAMS)
 	if(!m_pIconTree)
 		return FALSE;
 	CFX_WideString swIconName = params[0].operator CFX_WideString();
-#ifndef FOXIT_CHROME_BUILD
-	m_pIconTree->DeleteIconElement(swIconName);
-#endif
 	return TRUE;
 }
 
@@ -2155,11 +2152,7 @@ FX_BOOL Document::deletePages(OBJ_METHOD_PARAMS)
 
 	
 
-#ifndef FOXIT_CHROME_BUILD
-	return m_pDocument->DeletePages(nStart, nEnd - nStart + 1);
-#else
 	return TRUE;
-#endif
 }
 
 FX_BOOL Document::extractPages(OBJ_METHOD_PARAMS)

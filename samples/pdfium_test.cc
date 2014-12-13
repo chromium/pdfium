@@ -378,7 +378,7 @@ int main(int argc, const char* argv[]) {
     return 1;
   }
 
-  FPDF_InitLibrary(NULL);
+  FPDF_InitLibrary();
 
   UNSUPPORT_INFO unsuppored_info;
   memset(&unsuppored_info, '\0', sizeof(unsuppored_info));

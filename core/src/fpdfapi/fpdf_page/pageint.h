@@ -11,7 +11,6 @@
 #define PARSE_STEP_LIMIT		100
 #define STREAM_PARSE_BUFSIZE	20480
 class CPDF_QuickFontCache;
-#ifndef _FPDFAPI_MINI_
 class CPDF_StreamParser : public CFX_Object
 {
 public:
@@ -59,7 +58,6 @@ protected:
     FX_DWORD			m_WordSize;
     CPDF_Object*		m_pLastObj;
 };
-#endif
 typedef enum {
     PDFOP_CloseFillStrokePath = 0, PDFOP_FillStrokePath,
     PDFOP_CloseEOFillStrokePath, PDFOP_EOFillStrokePath,
@@ -117,11 +115,7 @@ typedef struct {
         } m_Name;
     };
 } _ContentParam;
-#if defined(_FPDFAPI_MINI_)
-#define _FPDF_MAX_FORM_LEVEL_		17
-#else
 #define _FPDF_MAX_FORM_LEVEL_		30
-#endif
 #define _FPDF_MAX_TYPE3_FORM_LEVEL_	4
 #define _FPDF_MAX_OBJECT_STACK_SIZE_ 512
 class CPDF_StreamContentParser : public CFX_Object
@@ -163,43 +157,11 @@ public:
     FX_BOOL				OnOperator(FX_LPCSTR op);
     void				BigCaseCaller(int index);
     FX_BOOL				m_bAbort;
-#ifndef _FPDFAPI_MINI_
     CPDF_StreamParser*	m_pSyntax;
     FX_DWORD			GetParsePos()
     {
         return m_pSyntax->GetPos();
     }
-#else
-    int					m_WordState;
-    void				InputData(FX_LPCBYTE src_buf, FX_DWORD src_size);
-    void				Finish();
-    void				StartArray();
-    void				EndArray();
-    void				StartDict();
-    void				EndDict();
-    void				EndName();
-    void				EndNumber();
-    void				EndKeyword();
-    void				EndHexString();
-    void				EndString();
-    void				EndImageDict();
-    void				EndInlineImage();
-    FX_LPBYTE			m_pWordBuf;
-    FX_DWORD			m_WordSize;
-    CFX_BinaryBuf		m_StringBuf;
-    int					m_StringLevel, m_StringState, m_EscCode;
-    void				AddContainer(CPDF_Object* pObject);
-    FX_BOOL				SetToCurObj(CPDF_Object* pObject);
-    FX_LPBYTE			m_pDictName;
-    FX_BOOL				m_bDictName;
-    CPDF_Object**		m_pObjectStack;
-    FX_BOOL*			m_pObjectState;
-    FX_DWORD			m_ObjectSize;
-    int					m_InlineImageState;
-    FX_BYTE				m_InlineWhiteChar;
-    CFX_BinaryBuf		m_ImageSrcBuf;
-    FX_LPBYTE			m_pStreamBuf;
-#endif
     CPDF_AllStates*		m_pCurStates;
     CPDF_ContentMark	m_CurContentMark;
     CFX_PtrArray		m_ClipTextList;
@@ -210,10 +172,8 @@ public:
     void				ConvertUserSpace(FX_FLOAT& x, FX_FLOAT& y);
     void				ConvertTextSpace(FX_FLOAT& x, FX_FLOAT& y);
     void				OnChangeTextMatrix();
-#ifndef _FPDFAPI_MINI_
     FX_DWORD			Parse(FX_LPCBYTE pData, FX_DWORD dwSize, FX_DWORD max_cost);
     void				ParsePathObject();
-#endif
     int					m_CompatCount;
     FX_PATHPOINT*		m_pPathPoints;
     int					m_PathPointCount;
