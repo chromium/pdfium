@@ -120,7 +120,6 @@
    session.
 */
 
-#if (!defined(_FPDFAPI_MINI_) || defined(_TIFF_DECODER_)) && !defined(_USE_ADDIN_) && !defined _FX_NO_ANSIC_ && !defined(_FX_EMB_NOUSE_DECODER_)
 
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
@@ -2502,5 +2501,4 @@ OJPEGLibjpegJpegSourceMgrTermSource(jpeg_decompress_struct* cinfo)
  * fill-column: 78
  * End:
  */
-#endif//#if (!defined(_FPDFAPI_MINI_) || defined(_TIFF_DECODER_)) && !defined(_USE_ADDIN_) && !defined _FX_NO_ANSIC_ && !defined(_FX_EMB_NOUSE_DECODER_)
 

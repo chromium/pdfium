@@ -29,7 +29,6 @@
  *
  * Core Directory Tag Support.
  */
-#if (!defined(_FPDFAPI_MINI_) || defined(_TIFF_DECODER_)) && !defined(_USE_ADDIN_) && !defined _FX_NO_ANSIC_ && !defined(_FX_EMB_NOUSE_DECODER_)
 #include "tiffiop.h"
 #include <stdlib.h>
 
@@ -974,5 +973,4 @@ TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], uint32 n)
  * fill-column: 78
  * End:
  */
-#endif
 

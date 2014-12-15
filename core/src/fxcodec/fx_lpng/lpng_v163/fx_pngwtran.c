@@ -10,7 +10,6 @@
  * For conditions of distribution and use, see the disclaimer
  * and license in png.h
  */
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 #include "pngpriv.h"
 
 #ifdef PNG_WRITE_SUPPORTED
@@ -635,4 +634,3 @@ png_do_write_intrapixel(png_row_infop row_info, png_bytep row)
 }
 #endif /* PNG_MNG_FEATURES_SUPPORTED */
 #endif /* PNG_WRITE_SUPPORTED */
-#endif//_FPDFAPI_MINI_

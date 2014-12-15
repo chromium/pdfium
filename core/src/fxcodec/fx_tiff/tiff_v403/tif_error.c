@@ -27,7 +27,6 @@
 /*
  * TIFF Library.
  */
-#if (!defined(_FPDFAPI_MINI_) || defined(_TIFF_DECODER_)) && !defined(_USE_ADDIN_) && !defined _FX_NO_ANSIC_ && !defined(_FX_EMB_NOUSE_DECODER_)
 #include "tiffiop.h"
 
 /*TIFFErrorHandlerExt _TIFFerrorHandlerExt = NULL;*/
@@ -81,5 +80,4 @@ TIFFErrorExt(thandle_t fd, const char* module, const char* fmt, ...)
  * fill-column: 78
  * End:
  */
-#endif
 

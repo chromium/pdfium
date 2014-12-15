@@ -1,4 +1,3 @@
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 /* png.c - location for general purpose libpng functions
  *
  * Last changed in libpng 1.6.2 [April 25, 2013]
@@ -4296,4 +4295,3 @@ png_image_error(png_imagep image, png_const_charp error_message)
 
 #endif /* SIMPLIFIED READ/WRITE */
 #endif /* defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED) */
-#endif

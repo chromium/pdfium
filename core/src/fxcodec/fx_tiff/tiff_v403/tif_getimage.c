@@ -29,7 +29,6 @@
  *
  * Read and return a packed RGBA image.
  */
-#if (!defined(_FPDFAPI_MINI_) || defined(_TIFF_DECODER_)) && !defined(_USE_ADDIN_) && !defined _FX_NO_ANSIC_ && !defined(_FX_EMB_NOUSE_DECODER_)
 #include "tiffiop.h"
 #include <stdio.h>
 
@@ -2987,5 +2986,4 @@ TIFFReadRGBATile(TIFF* tif, uint32 col, uint32 row, uint32 * raster)
  * fill-column: 78
  * End:
  */
-#endif
 

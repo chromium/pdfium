@@ -35,7 +35,6 @@
  *
  * Color space conversion routines.
  */
-#if (!defined(_FPDFAPI_MINI_) || defined(_TIFF_DECODER_)) && !defined(_USE_ADDIN_) && !defined _FX_NO_ANSIC_ && !defined(_FX_EMB_NOUSE_DECODER_)
 #include "tiffiop.h"
 #include <math.h>
 
@@ -285,5 +284,4 @@ TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr, float *luma, float *refBlackWhite)
  * fill-column: 78
  * End:
  */
-#endif
 

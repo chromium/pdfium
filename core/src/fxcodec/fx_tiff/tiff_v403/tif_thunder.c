@@ -23,7 +23,6 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#if (!defined(_FPDFAPI_MINI_) || defined(_TIFF_DECODER_)) && !defined(_USE_ADDIN_) && !defined _FX_NO_ANSIC_ && !defined(_FX_EMB_NOUSE_DECODER_)
 #include "tiffiop.h"
 #include <assert.h>
 #ifdef THUNDER_SUPPORT
@@ -206,5 +205,4 @@ TIFFInitThunderScan(TIFF* tif, int scheme)
  * End:
  */
 
-#endif
 

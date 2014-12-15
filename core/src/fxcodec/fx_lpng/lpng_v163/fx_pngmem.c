@@ -1,4 +1,3 @@
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 /* pngmem.c - stub functions for memory allocation
  *
  * Last changed in libpng 1.6.0 [February 14, 2013]
@@ -288,4 +287,3 @@ png_get_mem_ptr(png_const_structrp png_ptr)
 }
 #endif /* PNG_USER_MEM_SUPPORTED */
 #endif /* PNG_READ_SUPPORTED || PNG_WRITE_SUPPORTED */
-#endif

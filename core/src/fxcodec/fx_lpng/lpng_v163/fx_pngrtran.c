@@ -1,4 +1,3 @@
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 /* pngrtran.c - transforms the data in a row for PNG readers
  *
  * Last changed in libpng 1.6.2 [April 25, 2013]
@@ -5101,4 +5100,3 @@ png_do_read_intrapixel(png_row_infop row_info, png_bytep row)
 }
 #endif /* PNG_MNG_FEATURES_SUPPORTED */
 #endif /* PNG_READ_SUPPORTED */
-#endif

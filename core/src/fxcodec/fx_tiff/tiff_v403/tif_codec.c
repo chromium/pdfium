@@ -29,7 +29,6 @@
  *
  * Builtin Compression Scheme Configuration Support.
  */
-#if (!defined(_FPDFAPI_MINI_) || defined(_TIFF_DECODER_)) && !defined(_USE_ADDIN_) && !defined _FX_NO_ANSIC_ && !defined(_FX_EMB_NOUSE_DECODER_)
 #include "tiffiop.h"
 
 static int NotConfigured(TIFF*, int);
@@ -164,5 +163,4 @@ TIFFIsCODECConfigured(uint16 scheme)
  * fill-column: 78
  * End:
  */
-#endif
 

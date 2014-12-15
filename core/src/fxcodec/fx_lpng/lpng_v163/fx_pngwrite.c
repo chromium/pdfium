@@ -10,7 +10,6 @@
  * For conditions of distribution and use, see the disclaimer
  * and license in png.h
  */
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 #include "pngpriv.h"
 #if defined(PNG_SIMPLIFIED_WRITE_SUPPORTED) && defined(PNG_STDIO_SUPPORTED)
 #  include <errno.h>
@@ -2328,4 +2327,3 @@ png_image_write_to_file(png_imagep image, const char *file_name,
 #endif /* PNG_STDIO_SUPPORTED */
 #endif /* SIMPLIFIED_WRITE */
 #endif /* PNG_WRITE_SUPPORTED */
-#endif//_FPDFAPI_MINI_

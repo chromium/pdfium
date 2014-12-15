@@ -10,11 +10,9 @@
 extern "C" {
 #include "../fx_tiff/include/fx_tiffiop.h"
 }
-#if !defined(_FPDFAPI_MINI_)
 void* IccLib_CreateTransform_sRGB(const unsigned char* pProfileData, unsigned int dwProfileSize, int nComponents, int intent, FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT);
 void IccLib_TranslateImage(void* pTransform, unsigned char* pDest, const unsigned char* pSrc, int pixels);
 void IccLib_DestroyTransform(void* pTransform);
-#endif
 class CCodec_TiffContext : public CFX_Object
 {
 public:
@@ -57,12 +55,10 @@ CCodec_TiffContext::CCodec_TiffContext()
 }
 CCodec_TiffContext::~CCodec_TiffContext()
 {
-#if !defined(_FPDFAPI_MINI_)
     if(icc_ctx) {
         IccLib_DestroyTransform(icc_ctx);
         icc_ctx = NULL;
     }
-#endif
     if(tif_ctx)	{
         TIFFClose(tif_ctx);
     }
@@ -192,18 +188,14 @@ int TIFFCmyk2Rgb(thandle_t context, uint8 c, uint8 m, uint8 y, uint8 k, uint8* r
         return 0;
     }
     CCodec_TiffContext* p = (CCodec_TiffContext*)context;
-#if !defined(_FPDFAPI_MINI_)
     if(p->icc_ctx) {
         unsigned char cmyk[4], bgr[3];
         cmyk[0] = c, cmyk[1] = m, cmyk[2] = y, cmyk[3] = k;
         IccLib_TranslateImage(p->icc_ctx, bgr, cmyk, 1);
         *r = bgr[2], *g = bgr[1], *b = bgr[0];
     } else {
-#endif
         AdobeCMYK_to_sRGB1(c, m, y, k, *r, *g, *b);
-#if !defined(_FPDFAPI_MINI_)
     }
-#endif
     return 1;
 }
 FX_BOOL CCodec_TiffContext::InitDecoder(IFX_FileRead* file_ptr)

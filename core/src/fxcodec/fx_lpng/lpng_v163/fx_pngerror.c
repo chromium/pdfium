@@ -1,4 +1,3 @@
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 /* pngerror.c - stub functions for i/o and memory allocation
  *
  * Last changed in libpng 1.6.1 [March 28, 2013]
@@ -930,4 +929,3 @@ png_safe_execute(png_imagep image_in, int (*function)(png_voidp), png_voidp arg)
 }
 #endif /* SIMPLIFIED READ/WRITE */
 #endif /* PNG_READ_SUPPORTED || PNG_WRITE_SUPPORTED */
-#endif

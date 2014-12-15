@@ -1,4 +1,3 @@
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 /* pngset.c - storage of image information into info struct
  *
  * Last changed in libpng 1.6.3 [July 18, 2013]
@@ -1595,4 +1594,3 @@ png_set_check_for_invalid_index(png_structrp png_ptr, int allowed)
 }
 #endif
 #endif /* PNG_READ_SUPPORTED || PNG_WRITE_SUPPORTED */
-#endif

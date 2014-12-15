@@ -1,4 +1,3 @@
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 /* pngrutil.c - utilities to read a PNG file
  *
  * Last changed in libpng 1.6.3 [July 18, 2013]
@@ -4470,4 +4469,3 @@ defined(PNG_USER_TRANSFORM_PTR_SUPPORTED)
    png_ptr->flags |= PNG_FLAG_ROW_INIT;
 }
 #endif /* PNG_READ_SUPPORTED */
-#endif

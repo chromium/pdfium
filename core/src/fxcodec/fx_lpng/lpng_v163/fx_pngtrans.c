@@ -1,4 +1,3 @@
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 /* pngtrans.c - transforms the data in a row (used by both readers and writers)
  *
  * Last changed in libpng 1.6.2 [April 25, 2013]
@@ -839,4 +838,3 @@ png_get_current_pass_number(png_const_structrp png_ptr)
 #endif /* PNG_READ_USER_TRANSFORM_SUPPORTED ||
           PNG_WRITE_USER_TRANSFORM_SUPPORTED */
 #endif /* PNG_READ_SUPPORTED || PNG_WRITE_SUPPORTED */
-#endif

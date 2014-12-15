@@ -1,4 +1,3 @@
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 /* pngrio.c - functions for data input
  *
  * Last changed in libpng 1.6.0 [February 14, 2013]
@@ -116,4 +115,3 @@ png_set_read_fn(png_structrp png_ptr, png_voidp io_ptr,
 #endif
 }
 #endif /* PNG_READ_SUPPORTED */
-#endif

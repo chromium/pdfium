@@ -1,4 +1,3 @@
-#if (!defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_) || defined(_PNG_DECODER_)) && !defined(_USE_ADDIN_) && !defined(_FX_EMB_NOUSE_DECODER_)
 /* pngread.c - read a PNG file
  *
  * Last changed in libpng 1.6.1 [March 28, 2013]
@@ -3998,4 +3997,3 @@ png_image_finish_read(png_imagep image, png_const_colorp background,
 
 #endif /* PNG_SIMPLIFIED_READ_SUPPORTED */
 #endif /* PNG_READ_SUPPORTED */
-#endif
