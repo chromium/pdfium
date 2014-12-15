@@ -19,40 +19,21 @@ extern FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id)
 extern FX_LPCSTR GetAdobeCharName(int iBaseEncoding, const CFX_ByteString* pCharNames, int charcode);
 CPDF_CMapManager::CPDF_CMapManager()
 {
-#ifndef _FPDFAPI_MINI_
     m_bPrompted = FALSE;
     m_pPackage = NULL;
-#endif
     FXSYS_memset32(m_CID2UnicodeMaps, 0, sizeof m_CID2UnicodeMaps);
 }
 CPDF_CMapManager::~CPDF_CMapManager()
 {
     DropAll(FALSE);
-#ifndef _FPDFAPI_MINI_
     if (m_pPackage) {
         FXFC_ClosePackage(m_pPackage);
     }
-#endif
 }
-#ifndef _FPDFAPI_MINI_
 FX_LPVOID CPDF_CMapManager::GetPackage(FX_BOOL bPrompt)
 {
-#ifndef FOXIT_CHROME_BUILD
-    if (m_pPackage == NULL) {
-        CFX_ByteString filename = CPDF_ModuleMgr::Get()->GetModuleFilePath(ADDIN_NAME_CJK, "FPDFCJK.BIN");
-        m_pPackage = FXFC_LoadPackage(filename);
-        if (bPrompt && m_pPackage == NULL && !m_bPrompted) {
-            m_bPrompted = TRUE;
-            if (!CPDF_ModuleMgr::Get()->DownloadModule(ADDIN_NAME_CJK)) {
-                return NULL;
-            }
-            m_pPackage = FXFC_LoadPackage(filename);
-        }
-    }
-#endif
     return m_pPackage;
 }
-#endif
 CPDF_CMap* CPDF_CMapManager::GetPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPromptCJK)
 {
     CPDF_CMap* pCMap;
@@ -418,7 +399,6 @@ FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr, FX_LPCSTR pName, FX_BO
         m_bLoaded = TRUE;
         return TRUE;
     }
-#ifndef _FPDFAPI_MINI_
     FX_LPVOID pPackage = pMgr->GetPackage(bPromptCJK);
     FX_LPBYTE pBuffer;
     FX_DWORD size;
@@ -462,7 +442,6 @@ FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr, FX_LPCSTR pName, FX_BO
     }
     FX_Free(pBuffer);
     m_bLoaded = TRUE;
-#endif
     return TRUE;
 }
 extern "C" {
@@ -739,32 +718,22 @@ int CPDF_CMap::AppendChar(FX_LPSTR str, FX_DWORD charcode) const
 CPDF_CID2UnicodeMap::CPDF_CID2UnicodeMap()
 {
     m_EmbeddedCount = 0;
-#ifndef _FPDFAPI_MINI_
     m_pExternalMap = NULL;
-#endif
 }
 CPDF_CID2UnicodeMap::~CPDF_CID2UnicodeMap()
 {
-#ifndef _FPDFAPI_MINI_
     if (m_pExternalMap) {
         delete m_pExternalMap;
     }
-#endif
 }
 FX_BOOL CPDF_CID2UnicodeMap::Initialize()
 {
-#ifndef _FPDFAPI_MINI_
     m_pExternalMap = FX_NEW CPDF_FXMP;
-#endif
     return TRUE;
 }
 FX_BOOL CPDF_CID2UnicodeMap::IsLoaded()
 {
-#ifdef _FPDFAPI_MINI_
-    return m_EmbeddedCount != 0;
-#else
     return m_EmbeddedCount != 0 || (m_pExternalMap != NULL && m_pExternalMap->IsLoaded());
-#endif
 }
 FX_WCHAR CPDF_CID2UnicodeMap::UnicodeFromCID(FX_WORD CID)
 {
@@ -774,15 +743,11 @@ FX_WCHAR CPDF_CID2UnicodeMap::UnicodeFromCID(FX_WORD CID)
     if (CID < m_EmbeddedCount) {
         return m_pEmbeddedMap[CID];
     }
-#ifdef _FPDFAPI_MINI_
-    return 0;
-#else
     FX_LPCBYTE record = m_pExternalMap->GetRecord(CID);
     if (record == NULL) {
         return 0;
     }
     return *(FX_WORD*)record;
-#endif
 }
 void FPDFAPI_LoadCID2UnicodeMap(int charset, const FX_WORD*& pMap, FX_DWORD& count);
 void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr, int charset, FX_BOOL bPromptCJK)
@@ -792,13 +757,11 @@ void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr, int charset, FX_BOOL bPro
     if (m_EmbeddedCount) {
         return;
     }
-#ifndef _FPDFAPI_MINI_
     FX_LPVOID pPackage = pMgr->GetPackage(bPromptCJK);
     if (pPackage == NULL) {
         return;
     }
     m_pExternalMap->LoadFile(pPackage, FX_BSTRC("CIDInfo_") + g_CharsetNames[charset]);
-#endif
 }
 #include "ttgsubtable.h"
 CPDF_CIDFont::CPDF_CIDFont()
@@ -1356,7 +1319,7 @@ int CPDF_CIDFont::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL *pVertGlyph)
             if (unicode == '\\') {
                 unicode = '/';
             }
-#if !defined(_FPDFAPI_MINI_) && _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
             else if (unicode == 0xa5) {
                 unicode = 0x5c;
             }

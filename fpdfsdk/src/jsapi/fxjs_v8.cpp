@@ -312,9 +312,6 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime, v8::Persistent<v8::Context>& v8P
 
 void JS_Initial() 
 {
-//#ifndef FOXIT_CHROME_BUILD
-//	v8::V8::InitializeICU();
-//#endif
 }
 void JS_Release()
 {

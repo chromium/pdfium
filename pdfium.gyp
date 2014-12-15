@@ -4,7 +4,6 @@
   },
   'target_defaults': {
     'defines' : [
-      'FOXIT_CHROME_BUILD',
       '_FXFT_VERSION_=2501',
       '_FPDFSDK_LIB',
       '_NO_GDIPLUS_',  # workaround text rendering issues on Windows
@@ -56,7 +55,6 @@
         'fpdfsdk/include/fpdfdoc.h',
         'fpdfsdk/include/fpdfedit.h',
         'fpdfsdk/include/fpdfformfill.h',
-        'fpdfsdk/include/fpdfoom.h',
         'fpdfsdk/include/fpdftext.h',
         'fpdfsdk/include/fpdfview.h',
         'fpdfsdk/include/fpdf_dataavail.h',
@@ -74,7 +72,6 @@
         'fpdfsdk/src/fpdfeditimg.cpp',
         'fpdfsdk/src/fpdfeditpage.cpp',
         'fpdfsdk/src/fpdfformfill.cpp',
-        'fpdfsdk/src/fpdfoom.cpp',
         'fpdfsdk/src/fpdfppo.cpp',
         'fpdfsdk/src/fpdfsave.cpp',
         'fpdfsdk/src/fpdftext.cpp',
@@ -294,7 +291,6 @@
         'core/src/fpdfapi/fpdf_page/fpdf_page_graph_state.cpp',
         'core/src/fpdfapi/fpdf_page/fpdf_page_image.cpp',
         'core/src/fpdfapi/fpdf_page/fpdf_page_parser.cpp',
-        'core/src/fpdfapi/fpdf_page/fpdf_page_parser_new.cpp',
         'core/src/fpdfapi/fpdf_page/fpdf_page_parser_old.cpp',
         'core/src/fpdfapi/fpdf_page/fpdf_page_path.cpp',
         'core/src/fpdfapi/fpdf_page/fpdf_page_pattern.cpp',

@@ -1373,13 +1373,12 @@ CFontFileFaceInfo::~CFontFileFaceInfo()
     m_Face = NULL;
 }
 extern FX_BOOL _LoadFile(FXFT_Library library, FXFT_Face* Face, IFX_FileRead* pFile, FXFT_Stream* stream);
-#if defined(_FPDFAPI_MINI_) || _FX_OS_ == _FX_ANDROID_
+#if _FX_OS_ == _FX_ANDROID_
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault()
 {
     return NULL;
 }
 #endif
-#if !defined(_FPDFAPI_MINI_)
 CFX_FolderFontInfo::CFX_FolderFontInfo()
 {
 }
@@ -1616,4 +1615,3 @@ FX_BOOL CFX_FolderFontInfo::GetFontCharset(void* hFont, int& charset)
 {
     return FALSE;
 }
-#endif

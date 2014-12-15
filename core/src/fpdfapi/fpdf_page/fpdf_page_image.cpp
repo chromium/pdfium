@@ -77,15 +77,6 @@ CPDF_Image::~CPDF_Image()
 {
     if (m_bInline) {
         if (m_pStream) {
-#ifndef FOXIT_CHROME_BUILD
-            CPDF_Dictionary* pDict = m_pStream->GetDict();
-            if (pDict) {
-                CPDF_Object* pCSObj = pDict->GetElementValue(FX_BSTRC("ColorSpace"));
-                if (pCSObj && m_pDocument) {
-                    m_pDocument->RemoveColorSpaceFromPageData(pCSObj);
-                }
-            }
-#endif
             m_pStream->Release();
         }
         if (m_pInlineDict) {
@@ -107,9 +98,7 @@ FX_BOOL CPDF_Image::LoadImageF(CPDF_Stream* pStream, FX_BOOL bInline)
     }
     m_pOC = pDict->GetDict(FX_BSTRC("OC"));
     m_bIsMask = !pDict->KeyExist(FX_BSTRC("ColorSpace")) || pDict->GetInteger(FX_BSTRC("ImageMask"));
-#ifndef _FPDFAPI_MINI_
     m_bInterpolate = pDict->GetInteger(FX_BSTRC("Interpolate"));
-#endif
     m_Height = pDict->GetInteger(FX_BSTRC("Height"));
     m_Width = pDict->GetInteger(FX_BSTRC("Width"));
     return TRUE;

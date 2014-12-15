@@ -431,7 +431,6 @@ FX_BOOL CFX_DIBitmap::TransferBitmap(int dest_left, int dest_top, int width, int
     }
     return TRUE;
 }
-#ifndef _FPDFAPI_MINI_
 FX_BOOL CFX_DIBitmap::TransferMask(int dest_left, int dest_top, int width, int height,
                                    const CFX_DIBSource* pMask, FX_DWORD color, int src_left, int src_top, int alpha_flag, void* pIccTransform)
 {
@@ -526,7 +525,6 @@ FX_BOOL CFX_DIBitmap::TransferMask(int dest_left, int dest_top, int width, int h
     }
     return TRUE;
 }
-#endif
 void CFX_DIBSource::CopyPalette(const FX_DWORD* pSrc, FX_DWORD size)
 {
     if (pSrc == NULL || GetBPP() > 8) {
@@ -1053,7 +1051,6 @@ FX_BOOL CFX_DIBitmap::MultiplyAlpha(int alpha)
     }
     return TRUE;
 }
-#if !defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_)
 FX_DWORD CFX_DIBitmap::GetPixel(int x, int y) const
 {
     if (m_pBuffer == NULL) {
@@ -1090,7 +1087,6 @@ FX_DWORD CFX_DIBitmap::GetPixel(int x, int y) const
     }
     return 0;
 }
-#endif
 void CFX_DIBitmap::SetPixel(int x, int y, FX_DWORD color)
 {
     if (m_pBuffer == NULL) {
@@ -1176,9 +1172,7 @@ void CFX_DIBitmap::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_bp
             if (bFlipX) {
                 src_x = m_Width - src_x - 1;
             }
-#ifdef FOXIT_CHROME_BUILD
             src_x %= m_Width;
-#endif
             dest_scan[i] = (scanline[src_x / 8] & (1 << (7 - src_x % 8))) ? 255 : 0;
         }
     } else if (src_Bpp == 1) {
@@ -1188,9 +1182,7 @@ void CFX_DIBitmap::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_bp
             if (bFlipX) {
                 src_x = m_Width - src_x - 1;
             }
-#ifdef FOXIT_CHROME_BUILD
             src_x %= m_Width;
-#endif
             int dest_pos = i;
             if (m_pPalette) {
                 if (!IsCmykImage()) {
@@ -1215,9 +1207,7 @@ void CFX_DIBitmap::DownSampleScanline(int line, FX_LPBYTE dest_scan, int dest_bp
         for (int i = 0; i < clip_width; i ++) {
             FX_DWORD dest_x = clip_left + i;
             FX_DWORD src_x = bFlipX ? (m_Width - dest_x * m_Width / dest_width - 1) * src_Bpp : (dest_x * m_Width / dest_width) * src_Bpp;
-#ifdef FOXIT_CHROME_BUILD
             src_x %= m_Width * src_Bpp;
-#endif
             int dest_pos = i * src_Bpp;
             for (int b = 0; b < src_Bpp; b ++) {
                 dest_scan[dest_pos + b] = scanline[src_x + b];

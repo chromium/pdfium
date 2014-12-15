@@ -1681,11 +1681,7 @@ CPDF_SyntaxParser::CPDF_SyntaxParser()
     m_pFileBuf = NULL;
     m_MetadataObjnum = 0;
     m_dwWordPos = 0;
-#if defined(_FPDFAPI_MINI_)
-    m_bFileStream = TRUE;
-#else
     m_bFileStream = FALSE;
-#endif
 }
 CPDF_SyntaxParser::~CPDF_SyntaxParser()
 {
@@ -2473,10 +2469,6 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict, PARSE_CONTEXT
         m_Pos = StreamStartPos;
     }
     CPDF_Stream* pStream;
-#if defined(_FPDFAPI_MINI_) && !defined(_FXCORE_FEATURE_ALL_)
-    pStream = FX_NEW CPDF_Stream(m_pFileAccess, pCryptoHandler, m_HeaderOffset + m_Pos, len, pDict, gennum);
-    m_Pos += len;
-#else
     FX_LPBYTE pData = FX_Alloc(FX_BYTE, len);
     if (!pData) {
         return NULL;
@@ -2494,7 +2486,6 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict, PARSE_CONTEXT
         dest_buf.DetachBuffer();
     }
     pStream = FX_NEW CPDF_Stream(pData, len, pDict);
-#endif
     if (pContext) {
         pContext->m_DataEnd = pContext->m_DataStart + len;
     }

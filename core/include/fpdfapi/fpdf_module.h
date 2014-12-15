@@ -48,11 +48,6 @@ public:
 
     void		InitRenderModule();
 
-
-    void		SetModulePath(FX_LPCSTR module_name, FX_LPCSTR path);
-
-    CFX_ByteString GetModuleFilePath(FX_LPCSTR module_name, FX_LPCSTR name);
-
     void		SetDownloadCallback(FX_BOOL (*callback)(FX_LPCSTR module_name));
 
     FX_BOOL		DownloadModule(FX_LPCSTR module_name);
@@ -117,10 +112,6 @@ protected:
 
 
     FX_BOOL (*m_pDownloadCallback)(FX_LPCSTR module_name);
-
-    CFX_ByteString			m_DefaultModulePath;
-
-    CFX_CMapByteStringToPtr	m_ModulePathList;
 
     CFX_MapByteStringToPtr	m_SecurityHandlerMap;
 

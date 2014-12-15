@@ -8,7 +8,6 @@
 #include "../../../include/fpdfapi/fpdf_resource.h"
 #include "../../../include/fxcodec/fx_codec.h"
 #include "font_int.h"
-#ifndef _FPDFAPI_MINI_
 typedef struct {
     FXSYS_FILE*	m_pFile;
     int		m_nFiles;
@@ -93,4 +92,3 @@ FX_LPBYTE CPDF_FXMP::GetRecord(FX_DWORD index)
     }
     return m_pTable + (index - m_pHeader->dwStartIndex) * m_pHeader->dwRecordSize;
 }
-#endif

@@ -27,11 +27,7 @@
 #include "../../include/javascript/global.h"
 #include "../../include/javascript/console.h"
 #include "../../include/fpdfxfa/fpdfxfa_app.h"
-#ifndef FOXIT_CHROME_BUILD
-#include "../../../fxjse/value.h"
-#else
 #include "../../../xfa/src/fxjse/src/value.h"
-#endif
 
 #include <libplatform/libplatform.h>
 

@@ -256,16 +256,6 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj, const CFX
         DrawTextPathWithPattern(textobj, pObj2Device, pFont, font_size, &text_matrix, bFill, bStroke);
         return TRUE;
     }
-#if defined(_FPDFAPI_MINI_)
-    if (bFill) {
-        bStroke = FALSE;
-    }
-    if (bStroke) {
-        if (font_size * text_matrix.GetXUnit() * pObj2Device->GetXUnit() < 6) {
-            bStroke = FALSE;
-        }
-    }
-#endif
     if (bClip || bStroke) {
         const CFX_AffineMatrix* pDeviceMatrix = pObj2Device;
         CFX_AffineMatrix device_matrix;
@@ -284,12 +274,10 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj, const CFX
             flag |= FX_FILL_STROKE;
             flag |= FX_STROKE_TEXT_MODE;
         }
-#if !defined(_FPDFAPI_MINI_) || defined(_FXCORE_FEATURE_ALL_)
         const CPDF_GeneralStateData* pGeneralData = ((CPDF_PageObject*)textobj)->m_GeneralState;
         if (pGeneralData && pGeneralData->m_StrokeAdjust) {
             flag |= FX_STROKE_ADJUST;
         }
-#endif
         if (m_Options.m_Flags & RENDER_NOTEXTSMOOTH) {
             flag |= FXFILL_NOPATHSMOOTH;
         }

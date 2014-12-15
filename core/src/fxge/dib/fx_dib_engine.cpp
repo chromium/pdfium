@@ -311,11 +311,7 @@ FX_BOOL CStretchEngine::StartStretchHorz()
     if (m_DestWidth == 0 || m_pDestScanline == NULL || m_SrcClip.Height() > (int)((1U << 29) / m_InterPitch) || m_SrcClip.Height() == 0) {
         return FALSE;
     }
-#ifndef _FPDFAPI_MINI_
     m_pInterBuf = FX_AllocNL(unsigned char, m_SrcClip.Height() * m_InterPitch);
-#else
-    m_pInterBuf = FX_Alloc(unsigned char, m_SrcClip.Height() * m_InterPitch);
-#endif
     if (m_pInterBuf == NULL) {
         return FALSE;
     }
@@ -766,11 +762,7 @@ FX_BOOL CFX_ImageStretcher::Continue(IFX_Pause* pPause)
         return ContinueStretch(pPause);
     }
 }
-#ifndef _FPDFAPI_MINI_
 #define MAX_PROGRESSIVE_STRETCH_PIXELS	1000000
-#else
-#define MAX_PROGRESSIVE_STRETCH_PIXELS	100000
-#endif
 FX_BOOL CFX_ImageStretcher::StartStretch()
 {
     m_pStretchEngine = FX_NEW CStretchEngine(m_pDest, m_DestFormat, m_DestWidth, m_DestHeight, m_ClipRect, m_pSource, m_Flags);
@@ -793,9 +785,6 @@ FX_BOOL CFX_ImageStretcher::ContinueStretch(IFX_Pause* pPause)
 }
 FX_BOOL CFX_ImageStretcher::StartQuickStretch()
 {
-#ifdef _FPDFAPI_MINI_
-    m_pSource->SetDownSampleSize(m_DestWidth, m_DestHeight);
-#endif
     m_bFlipX = FALSE;
     m_bFlipY = FALSE;
     if (m_DestWidth < 0) {

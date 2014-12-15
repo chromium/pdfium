@@ -78,40 +78,6 @@ static CFX_ByteString _GetPath(const CFX_ByteString& folder, FX_LPCSTR name)
     }
 #endif
 }
-void CPDF_ModuleMgr::SetModulePath(FX_LPCSTR module_name, FX_LPCSTR path)
-{
-    if (module_name == NULL || module_name[0] == 0) {
-        m_DefaultModulePath = path;
-    } else {
-        m_ModulePathList.SetAt(module_name, FX_NEW CFX_ByteString(path, -1));
-    }
-}
-CFX_ByteString CPDF_ModuleMgr::GetModuleFilePath(FX_LPCSTR module_name, FX_LPCSTR name)
-{
-    CFX_ByteString* pPath = NULL;
-    if (m_ModulePathList.Lookup(module_name, (FX_LPVOID&)pPath)) {
-        return _GetPath(*pPath, name);
-    }
-    if (!m_DefaultModulePath.IsEmpty()) {
-        return _GetPath(m_DefaultModulePath, name);
-    }
-#if _FXM_PLATFORM_  == _FXM_PLATFORM_WINDOWS_
-    FX_WCHAR app_path[260];
-    ::GetModuleFileNameW(NULL, (LPWSTR)app_path, 260);
-    FX_INTPTR len = FXSYS_wcslen(app_path);
-    for (FX_INTPTR i = len; i >= 0; i --)
-        if (app_path[i] == '\\') {
-            app_path[i] = 0;
-            break;
-        }
-    CFX_ByteString path = CFX_ByteString::FromUnicode(app_path);
-    path += '\\';
-    path += name;
-    return path;
-#else
-    return name;
-#endif
-}
 void CPDF_ModuleMgr::NotifyModuleAvailable(FX_LPCSTR module_name)
 {
     if (FXSYS_strcmp(module_name, ADDIN_NAME_CJK) == 0) {

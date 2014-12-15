@@ -211,40 +211,8 @@ public:
 CFontMapper* g_pFontMapper = NULL;
 #endif		// #if _FX_OS_ == _FX_LINUX_EMBEDDED_
 
-DLLEXPORT void STDCALL FPDF_InitLibrary(FX_LPVOID hInstance)
+DLLEXPORT void STDCALL FPDF_InitLibrary()
 {
-#ifdef API5
-	CPDF_ModuleMgr::Create();
-	g_pModuleMgr = CPDF_ModuleMgr::Get();
-	 #if _FX_OS_ == _FX_WIN32_MOBILE_ || _FX_OS_ == _FX_LINUX_EMBEDDED_
-	 	g_pModuleMgr->InitEmbedded();
-	 #ifdef _GB1_CMAPS_
-	 	g_pModuleMgr->LoadEmbeddedGB1CMaps();
-	 #endif
-	 #ifdef _GB1_CMAPS_4_
-	 	g_pModuleMgr->LoadEmbeddedGB1CMaps_4();
-	 #endif
-	 #ifdef _CNS1_CMAPS_
-	 	g_pModuleMgr->LoadEmbeddedCNS1CMaps();
-	 #endif
-	 #ifdef _JAPAN1_CMAPS_
-	 	g_pModuleMgr->LoadEmbeddedJapan1CMaps();
-	 #endif
-	 #ifdef _JAPAN1_CMAPS_6_
-	 	g_pModuleMgr->LoadEmbeddedJapan1CMaps_6();
-	 #endif
-	 #ifdef _KOREA1_CMAPS_
-	 	g_pModuleMgr->LoadEmbeddedKorea1CMaps();
-	 #endif
-	 #ifdef _JPX_DECODER_
-	 	g_pModuleMgr->InitJpxModule();
-	 	g_pModuleMgr->InitJbig2Module();
-	 //	g_pModuleMgr->InitIccModule();
-	 #endif
-	 #else
-	 	g_pModuleMgr->InitDesktop();
-	 #endif
-#else
 	g_pCodecModule = CCodec_ModuleMgr::Create();
 	
 	CFX_GEModule::Create();
@@ -254,42 +222,9 @@ DLLEXPORT void STDCALL FPDF_InitLibrary(FX_LPVOID hInstance)
 	CPDF_ModuleMgr::Get()->SetCodecModule(g_pCodecModule);
 	CPDF_ModuleMgr::Get()->InitPageModule();
 	CPDF_ModuleMgr::Get()->InitRenderModule();
-#ifdef FOXIT_CHROME_BUILD
-	CPDF_ModuleMgr * pModuleMgr = CPDF_ModuleMgr::Get();
-	if ( pModuleMgr )
-	{
-		pModuleMgr->LoadEmbeddedGB1CMaps();
-		pModuleMgr->LoadEmbeddedJapan1CMaps();
-		pModuleMgr->LoadEmbeddedCNS1CMaps();
-		pModuleMgr->LoadEmbeddedKorea1CMaps();
-	}
-#endif 
-#endif
 
 	CPDFXFA_App* pAppProvider = FPDFXFA_GetApp();
 	pAppProvider->Initialize();
-
-#ifdef _WIN32
-	// Get module path
-	TCHAR app_path[MAX_PATH];
-	::GetModuleFileName((HINSTANCE)hInstance, app_path, MAX_PATH);
-	size_t len = _tcslen(app_path);
-	for (size_t i = len; i >= 0; i --)
-		if (app_path[i] == '\\') {
-			app_path[i] = 0;
-			break;
-		}
-		
-#ifdef _UNICODE
-		#ifndef _FXSDK_OPENSOURCE_
-		CPDF_ModuleMgr::Get()->SetModulePath(NULL, CFX_ByteString::FromUnicode(app_path));
-		#endif
-#else
-#ifndef _FXSDK_OPENSOURCE_
-		CPDF_ModuleMgr::Get()->SetModulePath(NULL, app_path);
-#endif
-#endif
-#endif
 }
 
 
@@ -306,11 +241,6 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary()
 	CPDF_ModuleMgr::Destroy();
 	CFX_GEModule::Destroy();
 	g_pCodecModule->Destroy();
-#endif
-#ifndef _FXSDK_OPENSOURCE_
-	FXMEM_CollectAll(FXMEM_GetDefaultMgr());
-#else
-
 #endif
 }
 
@@ -864,7 +794,6 @@ DLLEXPORT void STDCALL FPDFBitmap_Destroy(FPDF_BITMAP bitmap)
 void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_x, int start_y, int size_x, int size_y,
 						int rotate, int flags,FX_BOOL bNeedToRestore, IFSDK_PAUSE_Adapter * pause )
 {
-//#ifdef _LICENSED_BUILD_
 	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
 	if (pPage == NULL) return;
 

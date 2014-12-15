@@ -18,10 +18,8 @@ private:
     CPDF_CMap*				LoadPredefinedCMap(const CFX_ByteString& name,  FX_BOOL bPrompt);
     CPDF_CID2UnicodeMap*	LoadCID2UnicodeMap(int charset, FX_BOOL bPrompt);
     void					DropAll(FX_BOOL bReload);
-#ifndef _FPDFAPI_MINI_
     FX_BOOL					m_bPrompted;
     FX_LPVOID				m_pPackage;
-#endif
     CFX_MapByteStringToPtr	m_CMaps;
     CPDF_CID2UnicodeMap*	m_CID2UnicodeMaps[6];
 };
@@ -178,9 +176,7 @@ protected:
     int			m_Charset;
     const FX_WORD*	m_pEmbeddedMap;
     FX_DWORD	m_EmbeddedCount;
-#ifndef _FPDFAPI_MINI_
     CPDF_FXMP*	m_pExternalMap;
-#endif
 };
 class CPDF_ToUnicodeMap : public CFX_Object
 {

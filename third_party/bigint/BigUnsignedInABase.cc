@@ -10,20 +10,12 @@ BigUnsignedInABase::BigUnsignedInABase(const Digit *d, Index l, Base base)
 	: NumberlikeArray<Digit>(d, l), base(base) {
 	// Check the base
 	if (base < 2)
-#ifdef FOXIT_CHROME_BUILD
         abort();
-#else
-		throw "BigUnsignedInABase::BigUnsignedInABase(const Digit *, Index, Base): The base must be at least 2";
-#endif
 
 	// Validate the digits.
 	for (Index i = 0; i < l; i++)
 		if (blk[i] >= base)
-#ifdef FOXIT_CHROME_BUILD
             abort();
-#else
-			throw "BigUnsignedInABase::BigUnsignedInABase(const Digit *, Index, Base): A digit is too large for the specified base";
-#endif
 
 	// Eliminate any leading zeros we may have been passed.
 	zapLeadingZeros();
@@ -46,11 +38,7 @@ namespace {
 BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 	// Check the base
 	if (base < 2)
-#ifdef FOXIT_CHROME_BUILD
         abort();
-#else
-		throw "BigUnsignedInABase(BigUnsigned, Base): The base must be at least 2";
-#endif
 	this->base = base;
 
 	// Get an upper bound on how much space we need
@@ -91,11 +79,7 @@ BigUnsignedInABase::operator BigUnsigned() const {
 BigUnsignedInABase::BigUnsignedInABase(const std::string &s, Base base) {
 	// Check the base.
 	if (base > 36)
-#ifdef FOXIT_CHROME_BUILD
         abort();
-#else
-		throw "BigUnsignedInABase(std::string, Base): The default string conversion routines use the symbol set 0-9, A-Z and therefore support only up to base 36.  You tried a conversion with a base over 36; write your own string conversion routine.";
-#endif
 	// Save the base.
 	// This pattern is seldom seen in C++, but the analogous ``this.'' is common in Java.
 	this->base = base;
@@ -116,29 +100,17 @@ BigUnsignedInABase::BigUnsignedInABase(const std::string &s, Base base) {
 		else if (theSymbol >= 'a' && theSymbol <= 'z')
 			blk[digitNum] = theSymbol - 'a' + 10;
 		else
-#ifdef FOXIT_CHROME_BUILD
             abort();
-#else
-			throw "BigUnsignedInABase(std::string, Base): Bad symbol in input.  Only 0-9, A-Z, a-z are accepted.";
-#endif
 
 		if (blk[digitNum] >= base)
-#ifdef FOXIT_CHROME_BUILD
             abort();
-#else
-			throw "BigUnsignedInABase::BigUnsignedInABase(const Digit *, Index, Base): A digit is too large for the specified base";
-#endif
 	}
 	zapLeadingZeros();
 }
 
 BigUnsignedInABase::operator std::string() const {
 	if (base > 36)
-#ifdef FOXIT_CHROME_BUILD
         abort();
-#else
-		throw "BigUnsignedInABase ==> std::string: The default string conversion routines use the symbol set 0-9, A-Z and therefore support only up to base 36.  You tried a conversion with a base over 36; write your own string conversion routine.";
-#endif
 	if (len == 0)
 		return std::string("0");
 	// Some compilers don't have push_back, so use a char * buffer instead.
