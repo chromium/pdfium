@@ -109,6 +109,17 @@ static OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
 static void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color);
 
 /**
+ * Writes the Channel Definition box.
+ *
+ * @param jp2					jpeg2000 file codec.
+ * @param p_nb_bytes_written	pointer to store the nb of bytes written by the function.
+ *
+ * @return	the data being copied.
+ */
+static OPJ_BYTE * opj_jp2_write_cdef(   opj_jp2_t *jp2,
+																		 OPJ_UINT32 * p_nb_bytes_written );
+
+/**
  * Writes the Colour Specification box.
  *
  * @param jp2					jpeg2000 file codec.
@@ -680,6 +691,55 @@ OPJ_BOOL opj_jp2_read_bpcc( opj_jp2_t *jp2,
 
 	return OPJ_TRUE;
 }
+static OPJ_BYTE * opj_jp2_write_cdef(opj_jp2_t *jp2, OPJ_UINT32 * p_nb_bytes_written)
+{
+	/* room for 8 bytes for box, 2 for n */
+	OPJ_UINT32 l_cdef_size = 10;
+	OPJ_BYTE * l_cdef_data,* l_current_cdef_ptr;
+	OPJ_UINT32 l_value;
+	OPJ_UINT16 i;
+
+	/* preconditions */
+	assert(jp2 != 00);
+	assert(p_nb_bytes_written != 00);
+	assert(jp2->color.jp2_cdef != 00);
+	assert(jp2->color.jp2_cdef->info != 00);
+	assert(jp2->color.jp2_cdef->n > 0U);
+
+	l_cdef_size += 6 * jp2->color.jp2_cdef->n;
+
+	l_cdef_data = (OPJ_BYTE *) opj_malloc(l_cdef_size);
+	if (l_cdef_data == 00) {
+		return 00;
+	}
+
+	l_current_cdef_ptr = l_cdef_data;
+
+	opj_write_bytes(l_current_cdef_ptr,l_cdef_size,4);			/* write box size */
+	l_current_cdef_ptr += 4;
+
+	opj_write_bytes(l_current_cdef_ptr,JP2_CDEF,4);					/* BPCC */
+	l_current_cdef_ptr += 4;
+
+	l_value = jp2->color.jp2_cdef->n;
+	opj_write_bytes(l_current_cdef_ptr,l_value,2);					/* N */
+	l_current_cdef_ptr += 2;
+
+	for (i = 0U; i < jp2->color.jp2_cdef->n; ++i) {
+		l_value = jp2->color.jp2_cdef->info[i].cn;
+		opj_write_bytes(l_current_cdef_ptr,l_value,2);					/* Cni */
+		l_current_cdef_ptr += 2;
+		l_value = jp2->color.jp2_cdef->info[i].typ;
+		opj_write_bytes(l_current_cdef_ptr,l_value,2);					/* Typi */
+		l_current_cdef_ptr += 2;
+		l_value = jp2->color.jp2_cdef->info[i].asoc;
+		opj_write_bytes(l_current_cdef_ptr,l_value,2);					/* Asoci */
+		l_current_cdef_ptr += 2;
+	}
+	*p_nb_bytes_written = l_cdef_size;
+
+	return l_cdef_data;
+}
 
 OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_t *jp2,
 							    OPJ_UINT32 * p_nb_bytes_written
@@ -688,7 +748,7 @@ OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_t *jp2,
 	/* room for 8 bytes for box 3 for common data and variable upon profile*/
 	OPJ_UINT32 l_colr_size = 11;
 	OPJ_BYTE * l_colr_data,* l_current_colr_ptr;
-	
+
 	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_nb_bytes_written != 00);
@@ -772,12 +832,12 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 		}
 
 		for (i = 0; i < n; i++) {
-			if (info[i].cn >= image->numcomps) {
-				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].cn, image->numcomps);
+			if (info[i].cn >= nr_channels) {
+				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].cn, nr_channels);
 				return OPJ_FALSE;
 			}
-			if (info[i].asoc > 0 && (OPJ_UINT32)(info[i].asoc - 1) >= image->numcomps) {
-				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].asoc - 1, image->numcomps);
+			if (info[i].asoc > 0 && (OPJ_UINT32)(info[i].asoc - 1) >= nr_channels) {
+				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].asoc - 1, nr_channels);
 				return OPJ_FALSE;
 			}
 		}
@@ -982,12 +1042,20 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 	opj_read_bytes(p_pclr_header_data, &l_value , 2);	/* NE */
 	p_pclr_header_data += 2;
 	nr_entries = (OPJ_UINT16) l_value;
+	if ((nr_entries == 0U) || (nr_entries > 1024U)) {
+		opj_event_msg(p_manager, EVT_ERROR, "Invalid PCLR box. Reports %d entries\n", (int)nr_entries);
+		return OPJ_FALSE;
+	}
 
 	opj_read_bytes(p_pclr_header_data, &l_value , 1);	/* NPC */
 	++p_pclr_header_data;
 	nr_channels = (OPJ_UINT16) l_value;
+	if (nr_channels == 0U) {
+		opj_event_msg(p_manager, EVT_ERROR, "Invalid PCLR box. Reports 0 palette columns\n");
+		return OPJ_FALSE;
+	}
 
-	if (p_pclr_header_size < 3 + (OPJ_UINT32)nr_channels || nr_channels == 0 || nr_entries >= (OPJ_UINT32)-1 / nr_channels)
+	if (p_pclr_header_size < 3 + (OPJ_UINT32)nr_channels)
 		return OPJ_FALSE;
 
 	entries = (OPJ_UINT32*) opj_malloc((size_t)nr_channels * nr_entries * sizeof(OPJ_UINT32));
@@ -1120,35 +1188,51 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 	info = color->jp2_cdef->info;
 	n = color->jp2_cdef->n;
 
-  for(i = 0; i < n; ++i)
-    {
-    /* WATCH: acn = asoc - 1 ! */
-    asoc = info[i].asoc;
-    if(asoc == 0 || asoc == 65535)
-      {
-      if (i < image->numcomps)
-        image->comps[i].alpha = info[i].typ;
-      continue;
-      }
+	for(i = 0; i < n; ++i)
+	{
+		/* WATCH: acn = asoc - 1 ! */
+		asoc = info[i].asoc;
+		cn = info[i].cn;
 
-    cn = info[i].cn; 
-    acn = (OPJ_UINT16)(asoc - 1);
-    if( cn >= image->numcomps || acn >= image->numcomps )
-      {
-      fprintf(stderr, "cn=%d, acn=%d, numcomps=%d\n", cn, acn, image->numcomps);
-      continue;
-      }
+		if( cn >= image->numcomps)
+		{
+			fprintf(stderr, "cn=%d, numcomps=%d\n", cn, image->numcomps);
+			continue;
+		}
+		if(asoc == 0 || asoc == 65535)
+		{
+			image->comps[cn].alpha = info[i].typ;
+			continue;
+		}
 
-		if(cn != acn)
+		acn = (OPJ_UINT16)(asoc - 1);
+		if( acn >= image->numcomps )
+		{
+			fprintf(stderr, "acn=%d, numcomps=%d\n", acn, image->numcomps);
+			continue;
+		}
+
+		/* Swap only if color channel */
+		if((cn != acn) && (info[i].typ == 0))
 		{
 			opj_image_comp_t saved;
+			OPJ_UINT16 j;
 
 			memcpy(&saved, &image->comps[cn], sizeof(opj_image_comp_t));
 			memcpy(&image->comps[cn], &image->comps[acn], sizeof(opj_image_comp_t));
 			memcpy(&image->comps[acn], &saved, sizeof(opj_image_comp_t));
 
-			info[i].asoc = (OPJ_UINT16)(cn + 1);
-			info[acn].asoc = (OPJ_UINT16)(info[acn].cn + 1);
+			/* Swap channels in following channel definitions, don't bother with j <= i that are already processed */
+			for (j = i + 1; j < n ; ++j)
+			{
+				if (info[j].cn == cn) {
+					info[j].cn = acn;
+				}
+				else if (info[j].cn == acn) {
+					info[j].cn = cn;
+				}
+				/* asoc is related to color index. Do not update. */
+			}
 		}
 
 		image->comps[cn].alpha = info[i].typ;
@@ -1341,17 +1425,17 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
 	    else
 		    p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
-	    /* Apply the color space if needed */
-	    if(jp2->color.jp2_cdef) {
-		    opj_jp2_apply_cdef(p_image, &(jp2->color));
-	    }
-
 	    if(jp2->color.jp2_pclr) {
 		    /* Part 1, I.5.3.4: Either both or none : */
 		    if( !jp2->color.jp2_pclr->cmap)
 			    opj_jp2_free_pclr(&(jp2->color));
 		    else
 			    opj_jp2_apply_pclr(p_image, &(jp2->color));
+	    }
+
+	    /* Apply the color space if needed */
+	    if(jp2->color.jp2_cdef) {
+		    opj_jp2_apply_cdef(p_image, &(jp2->color));
 	    }
 
 	    if(jp2->color.icc_profile_buf) {
@@ -1369,7 +1453,7 @@ OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
                             opj_event_mgr_t * p_manager
                             )
 {
-	opj_jp2_img_header_writer_handler_t l_writers [3];
+	opj_jp2_img_header_writer_handler_t l_writers [4];
 	opj_jp2_img_header_writer_handler_t * l_current_writer;
 
 	OPJ_INT32 i, l_nb_pass;
@@ -1399,6 +1483,11 @@ OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
 		l_writers[1].handler = opj_jp2_write_colr;
 	}
 	
+	if (jp2->color.jp2_cdef != NULL) {
+		l_writers[l_nb_pass].handler = opj_jp2_write_cdef;
+		l_nb_pass++;
+	}
+
 	/* write box header */
 	/* write JP2H type */
 	opj_write_bytes(l_jp2h_data+4,JP2_JP2H,4);
@@ -1598,9 +1687,13 @@ OPJ_BOOL opj_jp2_setup_encoder(	opj_jp2_t *jp2,
                             opj_image_t *image,
                             opj_event_mgr_t * p_manager)
 {
-    OPJ_UINT32 i;
+	OPJ_UINT32 i;
 	OPJ_UINT32 depth_0;
   OPJ_UINT32 sign;
+	OPJ_UINT32 alpha_count;
+	OPJ_UINT32 color_channels = 0U;
+	OPJ_UINT32 alpha_channel = 0U;
+
 
 	if(!jp2 || !parameters || !image)
 		return OPJ_FALSE;
@@ -1681,6 +1774,74 @@ OPJ_BOOL opj_jp2_setup_encoder(	opj_jp2_t *jp2,
             jp2->enumcs = 18;	/* YUV */
     }
 
+	/* Channel Definition box */
+	/* FIXME not provided by parameters */
+	/* We try to do what we can... */
+	alpha_count = 0U;
+	for (i = 0; i < image->numcomps; i++) {
+		if (image->comps[i].alpha != 0) {
+			alpha_count++;
+			alpha_channel = i;
+		}
+	}
+	if (alpha_count == 1U) { /* no way to deal with more than 1 alpha channel */
+		switch (jp2->enumcs) {
+			case 16:
+			case 18:
+				color_channels = 3;
+				break;
+			case 17:
+				color_channels = 1;
+				break;
+			default:
+				alpha_count = 0U;
+				break;
+		}
+		if (alpha_count == 0U) {
+			opj_event_msg(p_manager, EVT_WARNING, "Alpha channel specified but unknown enumcs. No cdef box will be created.\n");
+		} else if (image->numcomps < (color_channels+1)) {
+			opj_event_msg(p_manager, EVT_WARNING, "Alpha channel specified but not enough image components for an automatic cdef box creation.\n");
+			alpha_count = 0U;
+		} else if ((OPJ_UINT32)alpha_channel < color_channels) {
+			opj_event_msg(p_manager, EVT_WARNING, "Alpha channel position conflicts with color channel. No cdef box will be created.\n");
+			alpha_count = 0U;
+		}
+	} else if (alpha_count > 1) {
+		opj_event_msg(p_manager, EVT_WARNING, "Multiple alpha channels specified. No cdef box will be created.\n");
+	}
+	if (alpha_count == 1U) { /* if here, we know what we can do */
+		jp2->color.jp2_cdef = (opj_jp2_cdef_t*)opj_malloc(sizeof(opj_jp2_cdef_t));
+		if(!jp2->color.jp2_cdef) {
+			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to setup the JP2 encoder\n");
+			return OPJ_FALSE;
+		}
+		/* no memset needed, all values will be overwritten except if jp2->color.jp2_cdef->info allocation fails, */
+		/* in which case jp2->color.jp2_cdef->info will be NULL => valid for destruction */
+		jp2->color.jp2_cdef->info = (opj_jp2_cdef_info_t*) opj_malloc(image->numcomps * sizeof(opj_jp2_cdef_info_t));
+		if (!jp2->color.jp2_cdef->info) {
+			/* memory will be freed by opj_jp2_destroy */
+			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to setup the JP2 encoder\n");
+			return OPJ_FALSE;
+		}
+		jp2->color.jp2_cdef->n = (OPJ_UINT16) image->numcomps; /* cast is valid : image->numcomps [1,16384] */
+		for (i = 0U; i < color_channels; i++) {
+			jp2->color.jp2_cdef->info[i].cn = (OPJ_UINT16)i; /* cast is valid : image->numcomps [1,16384] */
+			jp2->color.jp2_cdef->info[i].typ = 0U;
+			jp2->color.jp2_cdef->info[i].asoc = (OPJ_UINT16)(i+1U); /* No overflow + cast is valid : image->numcomps [1,16384] */
+		}
+		for (; i < image->numcomps; i++) {
+			if (image->comps[i].alpha != 0) { /* we'll be here exactly once */
+				jp2->color.jp2_cdef->info[i].cn = (OPJ_UINT16)i; /* cast is valid : image->numcomps [1,16384] */
+				jp2->color.jp2_cdef->info[i].typ = 1U; /* Opacity channel */
+				jp2->color.jp2_cdef->info[i].asoc = 0U; /* Apply alpha channel to the whole image */
+			} else {
+				/* Unknown channel */
+				jp2->color.jp2_cdef->info[i].cn = (OPJ_UINT16)i; /* cast is valid : image->numcomps [1,16384] */
+				jp2->color.jp2_cdef->info[i].typ = 65535U;
+				jp2->color.jp2_cdef->info[i].asoc = 65535U;
+			}
+		}
+	}
 
 	jp2->precedence = 0;	/* PRECEDENCE */
 	jp2->approx = 0;		/* APPROX */
@@ -2551,17 +2712,17 @@ OPJ_BOOL opj_jp2_get_tile(	opj_jp2_t *p_jp2,
 	else
 		p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
-	/* Apply the color space if needed */
-	if(p_jp2->color.jp2_cdef) {
-		opj_jp2_apply_cdef(p_image, &(p_jp2->color));
-	}
-
 	if(p_jp2->color.jp2_pclr) {
 		/* Part 1, I.5.3.4: Either both or none : */
 		if( !p_jp2->color.jp2_pclr->cmap)
 			opj_jp2_free_pclr(&(p_jp2->color));
 		else
 			opj_jp2_apply_pclr(p_image, &(p_jp2->color));
+	}
+
+	/* Apply the color space if needed */
+	if(p_jp2->color.jp2_cdef) {
+		opj_jp2_apply_cdef(p_image, &(p_jp2->color));
 	}
 
 	if(p_jp2->color.icc_profile_buf) {
