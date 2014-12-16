@@ -946,8 +946,9 @@ void CPDF_DIBSource::ValidateDictParam()
                 m_bpc = 1;
                 m_nComponents = 1;
             }
-            if (pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("RunLengthDecode") ||
-                    pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("DCTDecode")) {
+            if (pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("DCTDecode")) {
+                // Previously, pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("RunLengthDecode") was checked in the "if" statement as well,
+                // but too many documents don't conform to it.
                 m_bpc = 8;
             }
         }
