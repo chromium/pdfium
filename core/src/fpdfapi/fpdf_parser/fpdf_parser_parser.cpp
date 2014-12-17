@@ -1003,7 +1003,15 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL 
         return FALSE;
     }
     if (m_pDocument) {
-        m_pDocument->InsertIndirectObject(pStream->m_ObjNum, pStream);
+        CPDF_Dictionary * pDict = m_pDocument->GetRoot();
+        if (!pDict || pDict->GetObjNum() != pStream->m_ObjNum) {
+            m_pDocument->InsertIndirectObject(pStream->m_ObjNum, pStream);
+        } else {
+            if (pStream->GetType() == PDFOBJ_STREAM) {
+                pStream->Release();
+            }
+            return FALSE;
+        }
     }
     if (pStream->GetType() != PDFOBJ_STREAM) {
         return FALSE;
