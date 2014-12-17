@@ -3694,6 +3694,15 @@ OPJ_BOOL j2k_read_ppm_v3 (
                         OPJ_BYTE *new_ppm_data;
                         /* Increase the size of ppm_data to add the new Ippm series*/
                         assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
+                        /* Overflow check */
+                        if ((l_cp->ppm_len + l_N_ppm) < l_N_ppm) {
+                                opj_free(l_cp->ppm_data);
+                                l_cp->ppm_data = NULL;
+                                l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
+                                l_cp->ppm_len = 0;
+                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (complete) Ippm series\n");
+                                return OPJ_FALSE;
+                        }
                         new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
                         if (! new_ppm_data) {
                                 opj_free(l_cp->ppm_data);
@@ -3717,6 +3726,16 @@ OPJ_BOOL j2k_read_ppm_v3 (
         if (l_remaining_data) {
                 OPJ_BYTE *new_ppm_data;
                 assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
+
+                /* Overflow check */
+                if ((l_cp->ppm_len + l_N_ppm) < l_N_ppm) {
+                        opj_free(l_cp->ppm_data);
+                        l_cp->ppm_data = NULL;
+                        l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
+                        l_cp->ppm_len = 0;
+                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (complete) Ippm series\n");
+                        return OPJ_FALSE;
+                }
                 new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
                 if (! new_ppm_data) {
                         opj_free(l_cp->ppm_data);
@@ -8608,6 +8627,11 @@ OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
                 for     (i = 0; i < l_tccp->numresolutions; ++i) {
                         opj_read_bytes(l_current_ptr,&l_tmp ,1);                /* SPcoc (I_i) */
                         ++l_current_ptr;
+                        /* Precinct exponent 0 is only allowed for lowest resolution level (Table A.21) */
+                        if ((i != 0) && (((l_tmp & 0xf) == 0) || ((l_tmp >> 4) == 0))) {
+                                opj_event_msg(p_manager, EVT_ERROR, "Invalid precinct size\n");
+                                return OPJ_FALSE;
+                        }
                         l_tccp->prcw[i] = l_tmp & 0xf;
                         l_tccp->prch[i] = l_tmp >> 4;
                 }
