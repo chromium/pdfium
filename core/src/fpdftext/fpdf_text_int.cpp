@@ -1192,16 +1192,16 @@ void CPDF_TextPage::CloseTempLine()
     CFX_WideString str = m_TempTextBuf.GetWideString();
     CFX_WordArray order;
     FX_BOOL bR2L = FALSE;
-    FX_INT32 start = 0, count = 0, i = 0;
+    FX_INT32 start = 0, count = 0;
     int nR2L = 0, nL2R = 0;
     FX_BOOL bPrevSpace = FALSE;
-    for (i = 0; i < str.GetLength(); i++) {
+    for (int i = 0; i < str.GetLength(); i++) {
         if(str.GetAt(i) == 32) {
             if(bPrevSpace) {
                 m_TempTextBuf.Delete(i, 1);
                 m_TempCharList.Delete(i);
                 str.Delete(i);
-                count1 --;
+                count1--;
                 i--;
                 continue;
             }
@@ -1241,36 +1241,36 @@ void CPDF_TextPage::CloseTempLine()
     }
     if(this->m_parserflag == FPDFTEXT_RLTB || bR2L) {
         int count = order.GetSize();
-        for(int j = count - 1; j > 0; j -= 3) {
-            int ret = order.GetAt(j);
-            int start = order.GetAt(j - 2);
-            int count1 = order.GetAt(j - 1);
+        for(int i = count - 1; i > 0; i -= 3) {
+            int ret = order.GetAt(i);
+            int start = order.GetAt(i - 2);
+            int count1 = order.GetAt(i - 1);
             if(ret == 2 || ret == 0) {
-                for(int i = start + count1 - 1; i >= start; i--) {
-                    AddCharInfoByRLDirection(str, i);
+                for(int j = start + count1 - 1; j >= start; j--) {
+                    AddCharInfoByRLDirection(str, j);
                 }
             } else {
-                i = j;
+                int j = i;
                 FX_BOOL bSymbol = FALSE;
-                while(i > 0 && order.GetAt(i) != 2) {
-                    bSymbol = !order.GetAt(i);
-                    i -= 3;
+                while(j > 0 && order.GetAt(j) != 2) {
+                    bSymbol = !order.GetAt(j);
+                    j -= 3;
                 }
                 int end = start + count1 ;
                 int n = 0;
                 if(bSymbol) {
-                    n = i + 6;
+                    n = j + 6;
                 } else {
-                    n = i + 3;
+                    n = j + 3;
                 }
-                if(n >= j) {
+                if(n >= i) {
                     for(int m = start; m < end; m++) {
                         AddCharInfoByLRDirection(str, m);
                     }
                 } else {
-                    i = j;
-                    j = n;
-                    for(; n <= i; n += 3) {
+                    j = i;
+                    i = n;
+                    for(; n <= j; n += 3) {
                         int start = order.GetAt(n - 2);
                         int count1 = order.GetAt(n - 1);
                         int end = start + count1 ;
@@ -1284,36 +1284,36 @@ void CPDF_TextPage::CloseTempLine()
     } else {
         int count = order.GetSize();
         FX_BOOL bL2R = FALSE;
-        for(int j = 0; j < count; j += 3) {
-            int ret = order.GetAt(j + 2);
-            int start = order.GetAt(j);
-            int count1 = order.GetAt(j + 1);
-            if(ret == 2 || (j == 0 && ret == 0 && !bL2R)) {
-                int i = j + 3;
-                while(bR2L && i < count) {
-                    if(order.GetAt(i + 2) == 1) {
+        for(int i = 0; i < count; i += 3) {
+            int ret = order.GetAt(i + 2);
+            int start = order.GetAt(i);
+            int count1 = order.GetAt(i + 1);
+            if(ret == 2 || (i == 0 && ret == 0 && !bL2R)) {
+                int j = i + 3;
+                while(bR2L && j < count) {
+                    if(order.GetAt(j + 2) == 1) {
                         break;
                     } else {
-                        i += 3;
+                        j += 3;
                     }
                 }
-                if(i == 3) {
-                    j = -3;
+                if(j == 3) {
+                    i = -3;
                     bL2R = TRUE;
                     continue;
                 }
                 int end = m_TempCharList.GetSize() - 1;
-                if(i < count) {
-                    end = order.GetAt(i) - 1;
+                if(j < count) {
+                    end = order.GetAt(j) - 1;
                 }
-                j = i - 3;
+                i = j - 3;
                 for(int n = end; n >= start; n--) {
                     AddCharInfoByRLDirection(str, n);
                 }
             } else {
                 int end = start + count1 ;
-                for(int i = start; i < end; i++) {
-                    AddCharInfoByLRDirection(str, i);
+                for(int n = start; n < end; n++) {
+                    AddCharInfoByLRDirection(str, n);
                 }
             }
         }
@@ -1457,8 +1457,8 @@ FX_INT32 CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj)
         return FPDFTEXT_MC_PASS;
     }
     bExist = FALSE;
-    for (FX_STRSIZE j = 0; j < nItems; j++) {
-        FX_WCHAR wChar = actText.GetAt(j);
+    for (FX_STRSIZE i = 0; i < nItems; i++) {
+        FX_WCHAR wChar = actText.GetAt(i);
         if ((wChar > 0x80 && wChar < 0xFFFD) || (wChar <= 0x80 && isprint(wChar))) {
             bExist = TRUE;
             break;
