@@ -14,7 +14,7 @@ class CJBig2_SymbolDict : public CJBig2_Object
 public:
 
     CJBig2_SymbolDict();
-
+    CJBig2_SymbolDict *DeepCopy();
     ~CJBig2_SymbolDict();
 public:
     FX_DWORD SDNUMEXSYMS;
