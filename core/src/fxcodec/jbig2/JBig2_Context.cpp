@@ -4,7 +4,21 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <map>
+#include <list>
 #include "JBig2_Context.h"
+
+// Implement a very small least recently used (LRU) cache. It is very
+// common for a JBIG2 dictionary to span multiple pages in a PDF file,
+// and we do not want to decode the same dictionary over and over
+// again. We key off of the memory location of the dictionary. The
+// list keeps track of the freshness of entries, with freshest ones
+// at the front. Even a tiny cache size like 2 makes a dramatic
+// difference for typical JBIG2 documents.
+const int kSymbolDictCacheMaxSize = 2;
+typedef std::pair<FX_BYTE*, CJBig2_SymbolDict*> CJBig2_CachePair;
+static std::list<CJBig2_CachePair> SymbolDictCache;
+
 void OutputBitmap(CJBig2_Image* pImage)
 {
     if(!pImage) {
@@ -614,6 +628,8 @@ FX_INT32 CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pP
     JBig2ArithCtx *gbContext = NULL, *grContext = NULL;
     CJBig2_ArithDecoder *pArithDecoder;
     JBIG2_ALLOC(pSymbolDictDecoder, CJBig2_SDDProc());
+    FX_BYTE *key = pSegment->m_pData;
+    FX_BOOL cache_hit = false;
     if(m_pStream->readShortInteger(&wFlags) != 0) {
         m_pModule->JBig2_Error("symbol dictionary segment : data header too short.");
         nRet = JBIG2_ERROR_TOO_SHORT;
@@ -791,23 +807,43 @@ FX_INT32 CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pP
         }
     }
     pSegment->m_nResultType = JBIG2_SYMBOL_DICT_POINTER;
-    if(pSymbolDictDecoder->SDHUFF == 0) {
-        JBIG2_ALLOC(pArithDecoder, CJBig2_ArithDecoder(m_pStream));
-        pSegment->m_Result.sd = pSymbolDictDecoder->decode_Arith(pArithDecoder, gbContext, grContext);
-        delete pArithDecoder;
-        if(pSegment->m_Result.sd == NULL) {
-            nRet = JBIG2_ERROR_FETAL;
-            goto failed;
+    for(std::list<CJBig2_CachePair>::iterator it =
+            SymbolDictCache.begin(); it != SymbolDictCache.end(); ++it) {
+        if (it->first == key) {
+            pSegment->m_Result.sd = it->second->DeepCopy();
+            SymbolDictCache.push_front(*it);
+            SymbolDictCache.erase(it);
+            cache_hit = true;
+            break;
         }
-        m_pStream->alignByte();
-        m_pStream->offset(2);
-    } else {
-        pSegment->m_Result.sd = pSymbolDictDecoder->decode_Huffman(m_pStream, gbContext, grContext, pPause);
-        if(pSegment->m_Result.sd == NULL) {
-            nRet = JBIG2_ERROR_FETAL;
-            goto failed;
+    }
+    if (!cache_hit) {
+        if(pSymbolDictDecoder->SDHUFF == 0) {
+            JBIG2_ALLOC(pArithDecoder, CJBig2_ArithDecoder(m_pStream));
+            pSegment->m_Result.sd = pSymbolDictDecoder->decode_Arith(pArithDecoder, gbContext, grContext);
+            delete pArithDecoder;
+            if(pSegment->m_Result.sd == NULL) {
+                nRet = JBIG2_ERROR_FETAL;
+                goto failed;
+            }
+            m_pStream->alignByte();
+            m_pStream->offset(2);
+        } else {
+            pSegment->m_Result.sd = pSymbolDictDecoder->decode_Huffman(m_pStream, gbContext, grContext, pPause);
+            if(pSegment->m_Result.sd == NULL) {
+                nRet = JBIG2_ERROR_FETAL;
+                goto failed;
+            }
+            m_pStream->alignByte();
         }
-        m_pStream->alignByte();
+        CJBig2_SymbolDict *value = pSegment->m_Result.sd->DeepCopy();
+        if (value) {
+            while (SymbolDictCache.size() >= kSymbolDictCacheMaxSize) {
+                delete SymbolDictCache.back().second;
+                SymbolDictCache.pop_back();
+            }
+            SymbolDictCache.push_front(CJBig2_CachePair(key, value));
+        }
     }
     if(wFlags & 0x0200) {
         pSegment->m_Result.sd->m_bContextRetained = TRUE;
