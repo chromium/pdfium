@@ -204,18 +204,6 @@ void CheckUnSupportError(CPDF_Document * pDoc, FX_DWORD err_code)
 	CXML_Element * pElement = metaData.GetRoot();
 	if(pElement)
 		CheckSharedForm(pElement, "workflowType");
-
-	
-	// XFA Forms
-	CPDF_InterForm * pInterForm = FX_NEW CPDF_InterForm(pDoc,FALSE);
-	if (pInterForm)
-	{
-		if(pInterForm->HasXFAForm())
-		{
-			FPDF_UnSupportError(FPDF_UNSP_DOC_XFAFORM);
-		}
-		delete pInterForm;
-	}
 }
 
 DLLEXPORT int FPDFDoc_GetPageMode(FPDF_DOCUMENT document)
