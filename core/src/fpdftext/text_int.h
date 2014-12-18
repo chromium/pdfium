@@ -71,8 +71,8 @@ public:
     virtual int						GetIndexAtPos(CPDF_Point point, FX_FLOAT xTorelance, FX_FLOAT yTorelance) const;
     virtual int						GetIndexAtPos(FX_FLOAT x, FX_FLOAT y, FX_FLOAT xTorelance,
             FX_FLOAT yTorelance) const;
-    virtual CFX_WideString			GetTextByRect(CFX_FloatRect rect) const;
-    virtual void					GetRectsArrayByRect(CFX_FloatRect rect, CFX_RectArray& resRectArray) const;
+    virtual CFX_WideString			GetTextByRect(const CFX_FloatRect& rect) const;
+    virtual void					GetRectsArrayByRect(const CFX_FloatRect& rect, CFX_RectArray& resRectArray) const;
     virtual	int						GetOrderByDirection(int order, int direction) const;
     virtual	CFX_WideString			GetPageText(int start = 0, int nCount = -1) const;
 
@@ -80,7 +80,7 @@ public:
     virtual	void					GetRect(int rectIndex, FX_FLOAT& left, FX_FLOAT& top
                                             , FX_FLOAT& right, FX_FLOAT &bottom) const;
     virtual FX_BOOL					GetBaselineRotate(int rectIndex, int& Rotate);
-    virtual FX_BOOL					GetBaselineRotate(CFX_FloatRect rect, int& Rotate);
+    virtual FX_BOOL					GetBaselineRotate(const CFX_FloatRect& rect, int& Rotate);
     virtual	int						CountBoundedSegments(FX_FLOAT left, FX_FLOAT top,
             FX_FLOAT right, FX_FLOAT bottom, FX_BOOL bContains = FALSE);
     virtual	void					GetBoundedSegment(int index, int& start, int& count) const;
@@ -90,17 +90,17 @@ public:
     {
         return &m_charList;
     }
-    static	FX_BOOL					IsRectIntersect(CFX_FloatRect rect1, CFX_FloatRect rect2);
+    static	FX_BOOL					IsRectIntersect(const CFX_FloatRect& rect1, const CFX_FloatRect& rect2);
     static	FX_BOOL					IsLetter(FX_WCHAR unicode);
 private:
     FX_BOOL							IsHyphen(FX_WCHAR curChar);
     FX_BOOL							IsControlChar(PAGECHAR_INFO* pCharInfo);
     FX_BOOL							GetBaselineRotate(int start, int end, int& Rotate);
     void							ProcessObject();
-    void							ProcessFormObject(CPDF_FormObject*	pFormObj, CFX_AffineMatrix formMatrix);
+    void							ProcessFormObject(CPDF_FormObject*	pFormObj, const CFX_AffineMatrix& formMatrix);
     void							ProcessTextObject(PDFTEXT_Obj pObj);
-    void							ProcessTextObject(CPDF_TextObject*	pTextObj, CFX_AffineMatrix formMatrix, FX_POSITION ObjPos);
-    int								ProcessInsertObject(const CPDF_TextObject* pObj, CFX_AffineMatrix formMatrix);
+    void							ProcessTextObject(CPDF_TextObject*	pTextObj, const CFX_AffineMatrix& formMatrix, FX_POSITION ObjPos);
+    int								ProcessInsertObject(const CPDF_TextObject* pObj, const CFX_AffineMatrix& formMatrix);
     FX_BOOL							GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info);
     FX_BOOL							IsSameAsPreTextObject(CPDF_TextObject* pTextObj, FX_POSITION ObjPos);
     FX_BOOL							IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
@@ -141,7 +141,7 @@ public:
     CPDF_TextPageFind(const IPDF_TextPage* pTextPage);
     virtual							~CPDF_TextPageFind() {};
 public:
-    virtual	FX_BOOL					FindFirst(CFX_WideString findwhat, int flags, int startPos = 0);
+    virtual	FX_BOOL					FindFirst(const CFX_WideString& findwhat, int flags, int startPos = 0);
     virtual	FX_BOOL					FindNext();
     virtual	FX_BOOL					FindPrev();
 
@@ -149,12 +149,12 @@ public:
     virtual int						GetCurOrder() const;
     virtual int						GetMatchedCount()const;
 protected:
-    void							ExtractFindWhat(CFX_WideString findwhat);
-    FX_BOOL							IsMatchWholeWord(CFX_WideString csPageText, int startPos, int endPos);
+    void							ExtractFindWhat(const CFX_WideString& findwhat);
+    FX_BOOL							IsMatchWholeWord(const CFX_WideString& csPageText, int startPos, int endPos);
     FX_BOOL							ExtractSubString(CFX_WideString& rString, FX_LPCWSTR lpszFullString,
             int iSubString, FX_WCHAR chSep);
-    CFX_WideString					MakeReverse(const CFX_WideString str);
-    int								ReverseFind(CFX_WideString csPageText, CFX_WideString csWord, int nStartPos, int& WordLength);
+    CFX_WideString					MakeReverse(const CFX_WideString& str);
+    int								ReverseFind(const CFX_WideString& csPageText, const CFX_WideString& csWord, int nStartPos, int& WordLength);
     int								GetCharIndex(int index) const;
 private:
     CFX_WordArray					m_CharIndex;
@@ -202,7 +202,7 @@ protected:
     void							DeleteLinkList();
     FX_BOOL							CheckWebLink(CFX_WideString& strBeCheck);
     FX_BOOL							CheckMailLink(CFX_WideString& str);
-    FX_BOOL							AppendToLinkList(int start, int count, CFX_WideString strUrl);
+    FX_BOOL							AppendToLinkList(int start, int count, const CFX_WideString& strUrl);
 private:
     LINK_InfoArray					m_LinkList;
     const CPDF_TextPage*			m_pTextPage;

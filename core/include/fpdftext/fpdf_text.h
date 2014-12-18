@@ -105,9 +105,9 @@ public:
 
     virtual	int				GetOrderByDirection(int index, int direction) const = 0;
 
-    virtual CFX_WideString	GetTextByRect(CFX_FloatRect rect) const = 0;
+    virtual CFX_WideString	GetTextByRect(const CFX_FloatRect& rect) const = 0;
 
-    virtual void			GetRectsArrayByRect(CFX_FloatRect rect, CFX_RectArray& resRectArray) const = 0;
+    virtual void			GetRectsArrayByRect(const CFX_FloatRect& rect, CFX_RectArray& resRectArray) const = 0;
 
 
     virtual int				CountRects(int start, int nCount) = 0;
@@ -116,7 +116,7 @@ public:
 
     virtual FX_BOOL			GetBaselineRotate(int rectIndex, int& Rotate) = 0;
 
-    virtual FX_BOOL			GetBaselineRotate(CFX_FloatRect rect, int& Rotate) = 0;
+    virtual FX_BOOL			GetBaselineRotate(const CFX_FloatRect& rect, int& Rotate) = 0;
 
     virtual	int				CountBoundedSegments(FX_FLOAT left, FX_FLOAT top, FX_FLOAT right, FX_FLOAT bottom, FX_BOOL bContains = FALSE) = 0;
 
@@ -139,7 +139,7 @@ public:
     static	IPDF_TextPageFind*	CreatePageFind(const IPDF_TextPage* pTextPage);
 public:
 
-    virtual	FX_BOOL				FindFirst(CFX_WideString findwhat, int flags, int startPos = 0) = 0;
+    virtual	FX_BOOL				FindFirst(const CFX_WideString& findwhat, int flags, int startPos = 0) = 0;
 
     virtual	FX_BOOL				FindNext() = 0;
 
