@@ -455,7 +455,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
         break;
 
       case OUTPUT_EMF:
-        WriteEmf(page.c_str(), name, i);
+        WriteEmf(page, name.c_str(), i);
         break;
 #endif
       case OUTPUT_PPM:
