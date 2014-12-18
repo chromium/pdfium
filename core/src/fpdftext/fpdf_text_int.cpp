@@ -10,7 +10,11 @@
 #include "../../include/fpdfapi/fpdf_page.h"
 #include "../../include/fpdfapi/fpdf_module.h"
 #include <ctype.h>
+#include <algorithm>
 #include "text_int.h"
+
+namespace {
+
 FX_BOOL _IsIgnoreSpaceCharacter(FX_WCHAR curChar)
 {
     if(curChar < 255 ) {
@@ -29,6 +33,48 @@ FX_BOOL _IsIgnoreSpaceCharacter(FX_WCHAR curChar)
     }
     return TRUE;
 }
+
+FX_FLOAT _NormalizeThreshold(FX_FLOAT threshold)
+{
+    if (threshold < 300) {
+        return threshold / 2.0;
+    } else if (threshold < 500) {
+        return threshold / 4.0;
+    } else if (threshold < 700) {
+        return threshold / 5.0;
+    }
+    return threshold / 6.0;
+}
+
+FX_FLOAT _CalculateBaseSpace(const CPDF_TextObject* pTextObj,
+                             const CFX_AffineMatrix& matrix)
+{
+    FX_FLOAT baseSpace = 0.0;
+    const int nItems = pTextObj->CountItems();
+    if (pTextObj->m_TextState.GetObject()->m_CharSpace && nItems >= 3) {
+        FX_BOOL bAllChar = TRUE;
+        FX_FLOAT spacing = matrix.TransformDistance(
+            pTextObj->m_TextState.GetObject()->m_CharSpace);
+        baseSpace = spacing;
+        for (int i = 0; i < nItems; i++) {
+            CPDF_TextObjectItem item;
+            pTextObj->GetItemInfo(i, &item);
+            if (item.m_CharCode == (FX_DWORD) - 1) {
+                FX_FLOAT fontsize_h = pTextObj->m_TextState.GetFontSizeH();
+                FX_FLOAT kerning = -fontsize_h * item.m_OriginX / 1000;
+                baseSpace = std::min(baseSpace, kerning + spacing);
+                bAllChar = FALSE;
+            }
+        }
+        if (baseSpace < 0.0 || (nItems == 3 && !bAllChar)) {
+            baseSpace = 0.0;
+        }
+    }
+    return baseSpace;
+}
+
+}  // namespace
+
 CPDFText_ParseOptions::CPDFText_ParseOptions()
     : m_bGetCharCodeOnly(FALSE), m_bNormalizeObjs(TRUE), m_bOutputHyphen(FALSE)
 {
@@ -1642,29 +1688,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
     m_pPreTextObj = pTextObj;
     m_perMatrix.Copy(formMatrix);
     int nItems = pTextObj->CountItems();
-    FX_FLOAT spacing = 0;
-    FX_FLOAT baseSpace = 0.0;
-    FX_BOOL bAllChar = TRUE;
-    if (pTextObj->m_TextState.GetObject()->m_CharSpace && nItems >= 3) {
-        spacing = matrix.TransformDistance(pTextObj->m_TextState.GetObject()->m_CharSpace);
-        baseSpace = spacing;
-        for (int i = 0; i < nItems; i++) {
-            CPDF_TextObjectItem item;
-            pTextObj->GetItemInfo(i, &item);
-            if (item.m_CharCode == (FX_DWORD) - 1) {
-                FX_FLOAT fontsize_h = pTextObj->m_TextState.GetFontSizeH();
-                FX_FLOAT kerning = -fontsize_h * item.m_OriginX / 1000;
-                if(kerning + spacing < baseSpace) {
-                    baseSpace = kerning + spacing;
-                }
-                bAllChar = FALSE;
-            }
-        }
-        spacing = 0;
-        if(baseSpace < 0.0 || (nItems == 3 && !bAllChar)) {
-            baseSpace = 0.0;
-        }
-    }
+    FX_FLOAT baseSpace = _CalculateBaseSpace(pTextObj, matrix);
 
     FX_BOOL bIsBidiAndMirrosInverse = FALSE;
     IFX_BidiChar* BidiChar = IFX_BidiChar::Create();
@@ -1712,6 +1736,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
     FX_INT32 iBufStartAppend = m_TempTextBuf.GetLength();
     FX_INT32 iCharListStartAppend = m_TempCharList.GetSize();
 
+    FX_FLOAT spacing = 0;
     for (int i = 0; i < nItems; i++) {
         CPDF_TextObjectItem item;
         PAGECHAR_INFO charinfo;
@@ -1754,15 +1779,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
                 threshold = fontsize_h;
                 int this_width = FXSYS_abs(GetCharWidth(item.m_CharCode, pFont));
                 threshold = this_width > last_width ? (FX_FLOAT)this_width : (FX_FLOAT)last_width;
-                int nDivide = 6;
-                if (threshold < 300) {
-                    nDivide = 2;
-                } else if (threshold < 500) {
-                    nDivide = 4;
-                } else if (threshold < 700) {
-                    nDivide = 5;
-                }
-                threshold = threshold / nDivide;
+                threshold = _NormalizeThreshold(threshold);
                 threshold = fontsize_h * threshold / 1000;
             }
             if (threshold && (spacing && spacing >= threshold) ) {
@@ -1825,11 +1842,12 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
             continue;
         } else {
             int nTotal = wstrItem.GetLength();
-            int n = 0;
             FX_BOOL bDel = FALSE;
-            while (n < m_TempCharList.GetSize() && n < 7) {
-                n++;
-                PAGECHAR_INFO* charinfo1 = (PAGECHAR_INFO*)m_TempCharList.GetAt(m_TempCharList.GetSize() - n);
+            const int count = std::min(m_TempCharList.GetSize(), 7);
+            for (int n = m_TempCharList.GetSize();
+                 n > m_TempCharList.GetSize() - count;
+                 n--) {
+                PAGECHAR_INFO* charinfo1 = (PAGECHAR_INFO*)m_TempCharList.GetAt(n - 1);
                 if(charinfo1->m_CharCode == charinfo.m_CharCode &&
                         charinfo1->m_pTextObj->GetFont() == charinfo.m_pTextObj->GetFont()  &&
                         FXSYS_fabs(charinfo1->m_OriginX - charinfo.m_OriginX) < TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize()  &&
@@ -1862,24 +1880,16 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
         FX_INT32 i, j;
         i = iCharListStartAppend;
         j = m_TempCharList.GetSize() - 1;
-        PAGECHAR_INFO tempCharInfo;
-        FX_INT32 tempIndex = 0;
         for (; i < j; i++, j--) {
-            tempCharInfo = m_TempCharList[i];
-            m_TempCharList[i] = m_TempCharList[j];
-            m_TempCharList[j] = tempCharInfo;
-            tempIndex = m_TempCharList[i].m_Index;
-            m_TempCharList[i].m_Index = m_TempCharList[j].m_Index;
-            m_TempCharList[j].m_Index = tempIndex;
+            std::swap(m_TempCharList[i], m_TempCharList[j]);
+            std::swap(m_TempCharList[i].m_Index, m_TempCharList[j].m_Index);
         }
         FX_WCHAR * pTempBuffer = m_TempTextBuf.GetBuffer();
         i = iBufStartAppend;
         j = m_TempTextBuf.GetLength() - 1;
         FX_WCHAR wTemp;
         for (; i < j; i++, j--) {
-            wTemp = pTempBuffer[i];
-            pTempBuffer[i] = pTempBuffer[j];
-            pTempBuffer[j] = wTemp;
+            std::swap(pTempBuffer[i], pTempBuffer[j]);
         }
     }
 }
