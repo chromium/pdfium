@@ -12,6 +12,10 @@
       'include_dirs': [
         '<(DEPTH)/v8',
         '<(DEPTH)/v8/include',
+        'third_party/freetype/include',
+      ],
+      'defines' : [
+        'FT2_BUILD_LIBRARY',
       ],
       "sources":[
         "xfa/include/foxitxfa.h",
