@@ -1844,14 +1844,15 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
             int nTotal = wstrItem.GetLength();
             FX_BOOL bDel = FALSE;
             const int count = std::min(m_TempCharList.GetSize(), 7);
+            FX_FLOAT threshold = charinfo.m_Matrix.TransformXDistance((FX_FLOAT)TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize());
             for (int n = m_TempCharList.GetSize();
                  n > m_TempCharList.GetSize() - count;
                  n--) {
                 PAGECHAR_INFO* charinfo1 = (PAGECHAR_INFO*)m_TempCharList.GetAt(n - 1);
                 if(charinfo1->m_CharCode == charinfo.m_CharCode &&
                         charinfo1->m_pTextObj->GetFont() == charinfo.m_pTextObj->GetFont()  &&
-                        FXSYS_fabs(charinfo1->m_OriginX - charinfo.m_OriginX) < TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize()  &&
-                        FXSYS_fabs(charinfo1->m_OriginY - charinfo.m_OriginY) < TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize() ) {
+                        FXSYS_fabs(charinfo1->m_OriginX - charinfo.m_OriginX) < threshold  &&
+                        FXSYS_fabs(charinfo1->m_OriginY - charinfo.m_OriginY) < threshold) {
                     bDel = TRUE;
                     break;
                 }
