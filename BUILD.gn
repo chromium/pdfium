@@ -6,8 +6,11 @@ pdf_use_skia = false
 
 config("pdfium_config") {
   cflags = []
+  include_dirs = [
+    "third_party/freetype/include"
+  ]
   defines = [
-    "_FXFT_VERSION_=2501",
+    "FT2_BUILD_LIBRARY",
     "_FPDFSDK_LIB",
     "_NO_GDIPLUS_",  # workaround text rendering issues on Windows
   ]
@@ -85,8 +88,9 @@ static_library("pdfium") {
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 
   deps = [
-    ":safemath",
-    ":bigint",
+    "third_party:bigint",
+    "third_party:freetype",
+    "third_party:safemath",
     ":fdrm",
     ":formfiller",
     ":fpdfapi",
@@ -114,33 +118,6 @@ static_library("pdfium") {
 
 # Targets below this are only visible within this file.
 visibility = [ ":*" ]
-
-component("safemath") {
-  sources = [
-    "third_party/logging.h",
-    "third_party/macros.h",
-    "third_party/template_util.h",
-    "third_party/numerics/safe_conversions.h",
-    "third_party/numerics/safe_conversions_impl.h",
-    "third_party/numerics/safe_math.h",
-    "third_party/numerics/safe_math_impl.h",
-  ]
-}
-
-static_library("bigint") {
-  sources = [
-    "third_party/bigint/BigInteger.hh",
-    "third_party/bigint/BigIntegerLibrary.hh",
-    "third_party/bigint/BigIntegerUtils.hh",
-    "third_party/bigint/BigUnsigned.hh",
-    "third_party/bigint/NumberlikeArray.hh",
-    "third_party/bigint/BigUnsignedInABase.hh",
-    "third_party/bigint/BigInteger.cc",
-    "third_party/bigint/BigIntegerUtils.cc",
-    "third_party/bigint/BigUnsigned.cc",
-    "third_party/bigint/BigUnsignedInABase.cc",
-  ]
-}
 
 static_library("fdrm") {
   sources = [
@@ -660,34 +637,7 @@ static_library("fxge") {
     "core/src/fxge/fontdata/chromefontdata/FoxitSerifItalic.c",
     "core/src/fxge/fontdata/chromefontdata/FoxitSerifMM.c",
     "core/src/fxge/fontdata/chromefontdata/FoxitSymbol.c",
-    "core/src/fxge/fx_freetype/include/fxft_cffobjs.h",
-    "core/src/fxge/fx_freetype/include/fxft_cfftypes.h",
-    "core/src/fxge/fx_freetype/include/fxft_freetype.h",
-    "core/src/fxge/fx_freetype/include/fxft_ft2build.h",
-    "core/src/fxge/fx_freetype/include/fxft_ftmm.h",
-    "core/src/fxge/fx_freetype/include/fxft_ftobjs.h",
-    "core/src/fxge/fx_freetype/include/fxft_ftotval.h",
-    "core/src/fxge/fx_freetype/include/fxft_ftoutln.h",
-    "core/src/fxge/fx_freetype/include/fxft_ftstream.h",
-    "core/src/fxge/fx_freetype/include/fxft_tttables.h",
-    "core/src/fxge/fx_freetype/include/fxft_tttypes.h",
-    "core/src/fxge/fx_freetype/src/fxft_cff.c",
-    "core/src/fxge/fx_freetype/src/fxft_ftbase.c",
-    "core/src/fxge/fx_freetype/src/fxft_ftbitmap.c",
-    "core/src/fxge/fx_freetype/src/fxft_ftglyph.c",
-    "core/src/fxge/fx_freetype/src/fxft_ftinit.c",
-    "core/src/fxge/fx_freetype/src/fxft_ftlcdfil.c",
-    "core/src/fxge/fx_freetype/src/fxft_ftmm.c",
-    "core/src/fxge/fx_freetype/src/fxft_ftsystem.c",
-    "core/src/fxge/fx_freetype/src/fxft_psaux.c",
-    "core/src/fxge/fx_freetype/src/fxft_pshinter.c",
-    "core/src/fxge/fx_freetype/src/fxft_psmodule.c",
-    "core/src/fxge/fx_freetype/src/fxft_raster.c",
-    "core/src/fxge/fx_freetype/src/fxft_sfnt.c",
-    "core/src/fxge/fx_freetype/src/fxft_smooth.c",
-    "core/src/fxge/fx_freetype/src/fxft_truetype.c",
-    "core/src/fxge/fx_freetype/src/fxft_type1.c",
-    "core/src/fxge/fx_freetype/src/fxft_type1cid.c",
+    "core/src/fxge/freetype/fx_freetype.c",
     "core/src/fxge/ge/fx_ge.cpp",
     "core/src/fxge/ge/fx_ge_device.cpp",
     "core/src/fxge/ge/fx_ge_font.cpp",

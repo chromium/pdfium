@@ -610,6 +610,7 @@ FX_DWORD PDF_PredefinedCharCodeFromUnicode(int encoding, FX_WCHAR unicode)
 extern "C" {
 #endif
 extern int FXFT_unicode_from_adobe_name(const char* name);
+extern void FXFT_adobe_name_from_unicode(char* glyph_name, FX_WCHAR unicode);
 #ifdef __cplusplus
 }
 #endif
