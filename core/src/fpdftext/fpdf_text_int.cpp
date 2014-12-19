@@ -1887,7 +1887,6 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
         FX_WCHAR * pTempBuffer = m_TempTextBuf.GetBuffer();
         i = iBufStartAppend;
         j = m_TempTextBuf.GetLength() - 1;
-        FX_WCHAR wTemp;
         for (; i < j; i++, j--) {
             std::swap(pTempBuffer[i], pTempBuffer[j]);
         }

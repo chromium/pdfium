@@ -268,7 +268,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
     return false;
   }
   options->exe_path = args[0];
-  int cur_idx = 1;
+  size_t cur_idx = 1;
   for (; cur_idx < args.size(); ++cur_idx) {
     const std::string& cur_arg = args[cur_idx];
     if (cur_arg == "--ppm") {
@@ -310,7 +310,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
     fprintf(stderr, "No input files.\n");
     return false;
   }
-  for (int i = cur_idx; i < args.size(); i++) {
+  for (size_t i = cur_idx; i < args.size(); i++) {
     files->push_back(args[i]);
   }
   return true;
