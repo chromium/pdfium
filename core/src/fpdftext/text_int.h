@@ -115,6 +115,11 @@ private:
     void		AddCharInfoByRLDirection(CFX_WideString& str, int i);
     FX_INT32	GetTextObjectWritingMode(const CPDF_TextObject* pTextObj);
     FX_INT32	FindTextlineFlowDirection();
+    void SwapTempTextBuf(FX_INT32 iCharListStartAppend,
+                         FX_INT32 iBufStartAppend);
+    FX_BOOL IsRightToLeft(const CPDF_TextObject* pTextObj,
+                          const CPDF_Font* pFont,
+                          int nItems) const;
 protected:
     CPDFText_ParseOptions			m_ParseOptions;
     CFX_WordArray					m_CharIndex;
