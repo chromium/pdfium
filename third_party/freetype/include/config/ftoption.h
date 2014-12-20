@@ -92,7 +92,7 @@ FT_BEGIN_HEADER
   /* This is done to allow FreeType clients to run unmodified, forcing     */
   /* them to display normal gray-level anti-aliased glyphs.                */
   /*                                                                       */
-/* #define FT_CONFIG_OPTION_SUBPIXEL_RENDERING */
+ #define FT_CONFIG_OPTION_SUBPIXEL_RENDERING
 
 
   /*************************************************************************/
@@ -336,7 +336,7 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /*   Note that the `FOND' resource isn't checked.                        */
   /*                                                                       */
-#define FT_CONFIG_OPTION_MAC_FONTS
+#undef FT_CONFIG_OPTION_MAC_FONTS
 
 
   /*************************************************************************/
@@ -514,7 +514,7 @@ FT_BEGIN_HEADER
   /* embedded bitmaps in all formats using the SFNT module (namely         */
   /* TrueType & OpenType).                                                 */
   /*                                                                       */
-#define TT_CONFIG_OPTION_EMBEDDED_BITMAPS
+#undef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 
 
   /*************************************************************************/
@@ -696,7 +696,7 @@ FT_BEGIN_HEADER
   /* and avar tables).  This has many similarities to Type 1 Multiple      */
   /* Masters support.                                                      */
   /*                                                                       */
-#define TT_CONFIG_OPTION_GX_VAR_SUPPORT
+#undef TT_CONFIG_OPTION_GX_VAR_SUPPORT
 
 
   /*************************************************************************/
@@ -704,7 +704,7 @@ FT_BEGIN_HEADER
   /* Define TT_CONFIG_OPTION_BDF if you want to include support for        */
   /* an embedded `BDF ' table within SFNT-based bitmap formats.            */
   /*                                                                       */
-#define TT_CONFIG_OPTION_BDF
+#undef TT_CONFIG_OPTION_BDF
 
 
   /*************************************************************************/
@@ -740,7 +740,7 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* The Chinese font MingTiEG-Medium (CNS 11643 character set) needs 256. */
   /*                                                                       */
-#define T1_MAX_CHARSTRINGS_OPERANDS  256
+#define T1_MAX_CHARSTRINGS_OPERANDS  512
 
 
   /*************************************************************************/
