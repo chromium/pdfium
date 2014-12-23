@@ -282,7 +282,7 @@ void CXML_Parser::GetAttrValue(CFX_WideString &value)
         return;
     }
     CFX_UTF8Decoder decoder;
-    FX_BYTE mark = 0, ch;
+    FX_BYTE mark = 0, ch = 0;
     do {
         while (m_dwIndex < m_dwBufferSize) {
             ch = m_pBuffer[m_dwIndex];

@@ -2084,7 +2084,7 @@ FX_INT32 CPDF_Creator::Continue(IFX_Pause *pPause)
     if (m_iStage < 0) {
         return m_iStage;
     }
-    FX_INT32 iRet;
+    FX_INT32 iRet = 0;
     while (m_iStage < 100) {
         if (m_iStage < 20) {
             iRet = WriteDoc_Stage1(pPause);
