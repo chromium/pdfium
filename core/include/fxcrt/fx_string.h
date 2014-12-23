@@ -640,9 +640,16 @@ public:
 
     static FX_STRSIZE       WStringLength(const unsigned short* str);
 
+    // Explicit conversion to raw string
+    FX_LPCWSTR c_str() const
+    {
+        return m_pData ? m_pData->m_String : L"";
+    }
+
+    // Implicit conversion to C-style wide string -- deprecated
     operator FX_LPCWSTR() const
     {
-        return m_pData ? m_pData->m_String : (FX_WCHAR*)L"";
+        return m_pData ? m_pData->m_String : L"";
     }
 
     void					Empty();
@@ -762,12 +769,12 @@ protected:
 };
 inline CFX_WideStringC::CFX_WideStringC(const CFX_WideString& src)
 {
-    m_Ptr = (FX_LPCWSTR)src;
+    m_Ptr = src.c_str();
     m_Length = src.GetLength();
 }
 inline CFX_WideStringC& CFX_WideStringC::operator = (const CFX_WideString& src)
 {
-    m_Ptr = (FX_LPCWSTR)src;
+    m_Ptr = src.c_str();
     m_Length = src.GetLength();
     return *this;
 }
@@ -841,6 +848,6 @@ inline CFX_ByteString	FX_UTF8Encode(FX_WSTR wsStr)
 }
 inline CFX_ByteString	FX_UTF8Encode(const CFX_WideString &wsStr)
 {
-    return FX_UTF8Encode((FX_LPCWSTR)wsStr, wsStr.GetLength());
+    return FX_UTF8Encode(wsStr.c_str(), wsStr.GetLength());
 }
 #endif

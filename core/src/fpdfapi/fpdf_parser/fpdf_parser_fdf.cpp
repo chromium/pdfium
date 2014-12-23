@@ -175,9 +175,9 @@ void FPDF_FileSpec_SetWin32Path(CPDF_Object* pFileSpec, const CFX_WideString& fi
         if (filepath[2] != '\\') {
             result += '/';
         }
-        result += ChangeSlash((FX_LPCWSTR)filepath + 2);
+        result += ChangeSlash(filepath.c_str() + 2);
     } else if (filepath.GetLength() > 1 && filepath[0] == '\\' && filepath[1] == '\\') {
-        result = ChangeSlash((FX_LPCWSTR)filepath + 1);
+        result = ChangeSlash(filepath.c_str() + 1);
     } else {
         result = ChangeSlash(filepath);
     }
@@ -217,7 +217,7 @@ CFX_WideString	FPDF_FileSpec_GetWin32Path(const CPDF_Object* pFileSpec)
         CFX_WideString result;
         result += wsFileName[1];
         result += ':';
-        result += ChangeSlash(((FX_LPCWSTR)wsFileName) + 2);
+        result += ChangeSlash(wsFileName.c_str() + 2);
         return result;
     } else {
         CFX_WideString result;

@@ -192,7 +192,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator << (FX_WSTR str)
 }
 CFX_WideTextBuf& CFX_WideTextBuf::operator << (const CFX_WideString &str)
 {
-    AppendBlock((FX_LPCWSTR)str, str.GetLength() * sizeof(FX_WCHAR));
+    AppendBlock(str.c_str(), str.GetLength() * sizeof(FX_WCHAR));
     return *this;
 }
 CFX_WideTextBuf& CFX_WideTextBuf::operator << (int i)

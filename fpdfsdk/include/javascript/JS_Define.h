@@ -332,8 +332,8 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 	ASSERT(pObj != NULL);\
 	FX_BOOL bRet = FALSE;\
 	MEMLEAKCHECK_1();\
-	bRet = pObj->QueryProperty((FX_LPCWSTR)propname);\
-	MEMLEAKCHECK_2(class_name, (FX_LPCWSTR)prop_name);\
+	bRet = pObj->QueryProperty(propname.c_str());\
+	MEMLEAKCHECK_2(class_name, prop_name.c_str());\
 	if (bRet)\
 	{\
 		info.GetReturnValue().Set(0x004);\
@@ -364,7 +364,7 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 	JS_ErrorString sError;\
 	FX_BOOL bRet = FALSE;\
 	MEMLEAKCHECK_1();\
-	bRet = pObj->DoProperty(cc, (FX_LPCWSTR)propname, value, sError);\
+	bRet = pObj->DoProperty(cc, propname.c_str(), value, sError);\
 	MEMLEAKCHECK_2(class_name, L"GetProperty");\
 	if (bRet)\
 	{\
@@ -399,7 +399,7 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 	JS_ErrorString sError;\
 	FX_BOOL bRet = FALSE;\
 	MEMLEAKCHECK_1();\
-	bRet = pObj->DoProperty(cc, (FX_LPCWSTR)propname, PropValue, sError);\
+	bRet = pObj->DoProperty(cc, propname.c_str(), PropValue, sError);\
 	MEMLEAKCHECK_2(class_name,L"PutProperty");\
 	if (bRet)\
 	{\
@@ -431,7 +431,7 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 	JS_ErrorString sError;\
 	FX_BOOL bRet = FALSE;\
 	MEMLEAKCHECK_1();\
-	bRet = pObj->DelProperty(cc, (FX_LPCWSTR)propname, sError);\
+	bRet = pObj->DelProperty(cc, propname.c_str(), sError);\
 	MEMLEAKCHECK_2(class_name,L"DelProperty");\
 	if (bRet)\
 	{\
