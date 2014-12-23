@@ -2532,7 +2532,7 @@ FX_BOOL CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos, FX_FILESIZE limit, 
     FX_BYTE type = _PDF_CharType[tag[0]];
     FX_BOOL bCheckLeft = type != 'D' && type != 'W';
     type = _PDF_CharType[tag[taglen - 1]];
-    FX_BOOL bCheckRight = type != 'D' || type != 'W';
+    FX_BOOL bCheckRight = type != 'D' && type != 'W';
     FX_BYTE ch;
     if (bCheckRight && startpos + (FX_INT32)taglen <= limit && GetCharAt(startpos + (FX_INT32)taglen, ch)) {
         FX_BYTE type = _PDF_CharType[ch];
