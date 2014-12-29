@@ -37,7 +37,6 @@ private:
     static FX_INT32 PAL;
     static FX_CHAR PUNCT_CHARS[29];
     static FX_CHAR MIXED_CHARS[30];
-    static FX_INT32 EXP900[16];
     static FX_INT32 NUMBER_OF_SEQUENCE_CODEWORDS;
     static FX_INT32 decodeMacroBlock(CFX_Int32Array &codewords, FX_INT32 codeIndex, CBC_PDF417ResultMetadata* resultMetadata, FX_INT32 &e);
     static FX_INT32 textCompaction(CFX_Int32Array &codewords, FX_INT32 codeIndex, CFX_ByteString &result);

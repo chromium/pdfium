@@ -17,4 +17,5 @@
 #include "./fwl/fwl.h"
 #include "./fxjse/fxjse.h"
 #include "./fxfa/fxfa.h"
+#include "../../third_party/bigint/BigIntegerLibrary.hh"
 #endif
