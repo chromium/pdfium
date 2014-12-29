@@ -806,8 +806,9 @@
       'target_name': 'pdfium_unittests',
       'type': 'executable',
       'dependencies': [
-        '../../base/base.gyp:base_prefs',
+        '../../base/base.gyp:base',
         '../../base/base.gyp:run_all_unittests',
+        '../../base/base.gyp:test_support_base',
         '../../testing/gtest.gyp:gtest',
         'pdfium',
       ],
