@@ -802,22 +802,5 @@
         'fpdfsdk/src/formfiller/FFL_Utils.cpp',
       ],
     },
-    {
-      'target_name': 'pdfium_unittests',
-      'type': 'executable',
-      'dependencies': [
-        '../../base/base.gyp:base',
-        '../../base/base.gyp:run_all_unittests',
-        '../../base/base.gyp:test_support_base',
-        '../../testing/gtest.gyp:gtest',
-        'pdfium',
-      ],
-      'include_dirs': [
-        '<(DEPTH)'
-      ],
-      'sources': [
-        'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
-      ],
-    }
   ],
 }
