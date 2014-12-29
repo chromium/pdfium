@@ -10,6 +10,7 @@
 #include "include/BC_PDF417ResultMetadata.h"
 #include "include/BC_CommonDecoderResult.h"
 #include "include/BC_PDF417DecodedBitStreamParser.h"
+#include "../../../../third_party/bigint/BigIntegerLibrary.hh"
 #define    TEXT_COMPACTION_MODE_LATCH            900
 #define    BYTE_COMPACTION_MODE_LATCH            901
 #define    NUMERIC_COMPACTION_MODE_LATCH         902
