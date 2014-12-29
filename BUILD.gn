@@ -791,3 +791,16 @@ static_library("formfiller") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
+
+executable("pdfium_unittests") {
+  testonly = true
+  sources = [
+    "core/src/fxcrt/fx_basic_bstring_unittest.cpp",
+  ]
+  deps = [
+    ":pdfium",
+    "//base",
+    "//base/test:run_all_unittests",
+    "//testing/gtest",
+  ]
+}
