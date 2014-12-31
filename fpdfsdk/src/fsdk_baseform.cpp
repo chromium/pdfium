@@ -2685,7 +2685,7 @@ CPDF_Stream* CPDFSDK_InterForm::LoadImageFromFile(const CFX_WideString& sFile)
 			pRetStream = new CPDF_Stream(NULL, 0, NULL);
 			CFX_ByteString csStream;
 			csStream.Format("q\n%d 0 0 %d 0 0 cm\n/Img Do\nQ", nWidth, nHeight);
-			pRetStream->InitStream((FX_BYTE*)(FX_LPCSTR)csStream, csStream.GetLength(), pStreamDict);
+			pRetStream->InitStream((FX_BYTE*)csStream.c_str(), csStream.GetLength(), pStreamDict);
 			pDocument->AddIndirectObject(pRetStream);
 		}
 

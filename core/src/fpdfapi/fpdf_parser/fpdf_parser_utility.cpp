@@ -284,14 +284,14 @@ CFX_ByteString PDF_NameDecode(FX_BSTR bstr)
 }
 CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig)
 {
-    if (FXSYS_memchr((FX_LPCSTR)orig, '#', orig.GetLength()) == NULL) {
+    if (FXSYS_memchr(orig.c_str(), '#', orig.GetLength()) == NULL) {
         return orig;
     }
     return PDF_NameDecode(CFX_ByteStringC(orig));
 }
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig)
 {
-    FX_LPBYTE src_buf = (FX_LPBYTE)(FX_LPCSTR)orig;
+    FX_LPBYTE src_buf = (FX_LPBYTE)orig.c_str();
     int src_len = orig.GetLength();
     int dest_len = 0;
     int i;

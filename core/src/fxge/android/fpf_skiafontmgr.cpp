@@ -208,7 +208,7 @@ static FX_DWORD	FPF_SKIAGetFamilyHash(FX_BSTR bsFamily, FX_DWORD dwStyle, FX_BYT
         bsFont += "Serif";
     }
     bsFont += uCharset;
-    return FPF_GetHashCode_StringA((FX_LPCSTR)bsFont, bsFont.GetLength(), TRUE);
+    return FPF_GetHashCode_StringA(bsFont.c_str(), bsFont.GetLength(), TRUE);
 }
 static FX_BOOL FPF_SkiaIsCJK(FX_BYTE uCharset)
 {

@@ -253,7 +253,7 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,IFXJS_Runtime* pFXRuntime, IFXJS_
 		CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(i);
 		CFX_WideString ws = CFX_WideString(pObjDef->objName);
 		CFX_ByteString bs = ws.UTF8Encode();
-		v8::Handle<v8::String> objName = v8::String::NewFromUtf8(isolate,(FX_LPCSTR)bs, v8::String::kNormalString, bs.GetLength());
+		v8::Handle<v8::String> objName = v8::String::NewFromUtf8(isolate, bs.c_str(), v8::String::kNormalString, bs.GetLength());
 
 
 		if(pObjDef->objType == JS_DYNAMIC)
@@ -327,7 +327,7 @@ int JS_Parse(IJS_Runtime* pJSRuntime, IFXJS_Context* pJSContext, const wchar_t* 
 	CFX_ByteString bsScript = wsScript.UTF8Encode();
 
 
-	v8::Handle<v8::Script> compiled_script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,(FX_LPCSTR)bsScript,v8::String::kNormalString, bsScript.GetLength()));
+	v8::Handle<v8::Script> compiled_script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, bsScript.c_str(), v8::String::kNormalString, bsScript.GetLength()));
 	if (compiled_script.IsEmpty()) {
 		v8::String::Utf8Value error(try_catch.Exception());
 		return -1;
@@ -344,7 +344,7 @@ int JS_Execute(IJS_Runtime* pJSRuntime, IFXJS_Context* pJSContext, const wchar_t
 	CFX_WideString wsScript(script);
 	CFX_ByteString bsScript = wsScript.UTF8Encode();
 
-	v8::Handle<v8::Script> compiled_script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,(FX_LPCSTR)bsScript,v8::String::kNormalString, bsScript.GetLength()));
+    v8::Handle<v8::Script> compiled_script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, bsScript.c_str(), v8::String::kNormalString, bsScript.GetLength()));
 	if (compiled_script.IsEmpty()) {
 		v8::String::Utf8Value error(try_catch.Exception());
 		return -1;
@@ -556,7 +556,7 @@ v8::Handle<v8::String> WSToJSString(IJS_Runtime* pJSRuntime, const wchar_t* Prop
 	CFX_WideString ws = CFX_WideString(PropertyName,Len);
 	CFX_ByteString bs = ws.UTF8Encode();
 	if(!pJSRuntime) pJSRuntime = v8::Isolate::GetCurrent();
-	return v8::String::NewFromUtf8(pJSRuntime, (FX_LPCSTR)bs);
+	return v8::String::NewFromUtf8(pJSRuntime, bs.c_str());
 }
 
 v8::Handle<v8::Value> JS_GetObjectElement(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj,const wchar_t* PropertyName)

@@ -46,7 +46,7 @@ FX_BOOL CFXCRT_FileAccess_CRT::Open(FX_BSTR fileName, FX_DWORD dwMode)
     }
     CFX_ByteString strMode;
     FXCRT_GetFileModeString(dwMode, strMode);
-    m_hFile = FXSYS_fopen(fileName.GetCStr(), (FX_LPCSTR)strMode);
+    m_hFile = FXSYS_fopen(fileName.GetCStr(), strMode.c_str());
     return m_hFile != NULL;
 }
 FX_BOOL CFXCRT_FileAccess_CRT::Open(FX_WSTR fileName, FX_DWORD dwMode)

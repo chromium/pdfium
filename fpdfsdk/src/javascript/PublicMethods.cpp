@@ -443,7 +443,7 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(v8::Isolate* isolate, CJS_Valu
 		const char * pTemp = strchr(p, ch);
 		if (pTemp == NULL)
 		{
-			StrArray.SetElement(nIndex, CJS_Value(isolate,(FX_LPCSTR)StrTrim(p)));
+			StrArray.SetElement(nIndex, CJS_Value(isolate, StrTrim(p).c_str()));
 			break;
 		}
 		else
@@ -452,7 +452,7 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(v8::Isolate* isolate, CJS_Valu
 			strncpy(pSub, p, pTemp - p);
 			*(pSub + (pTemp - p)) = '\0';
 
-			StrArray.SetElement(nIndex, CJS_Value(isolate,(FX_LPCSTR)StrTrim(pSub)));
+			StrArray.SetElement(nIndex, CJS_Value(isolate, StrTrim(pSub).c_str()));
 			delete []pSub;
 			
 			nIndex ++;
@@ -1807,7 +1807,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(OBJ_METHOD_PARAMS)
 	if(!pEvent->m_pValue)
 		return FALSE;
 	CFX_WideString& Value = pEvent->Value();	
-	std::string strSrc = (FX_LPCSTR)CFX_ByteString::FromUnicode(Value);
+	std::string strSrc = CFX_ByteString::FromUnicode(Value).c_str();
 	
 	switch (iIndex) 
 	{
@@ -1962,7 +1962,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(OBJ_METHOD_PARAMS)
 		return FALSE;
 	//CJS_Value val = pEvent->Value();
 	CFX_WideString& val = pEvent->Value();
-	std::string strSrc = (FX_LPCSTR)CFX_ByteString::FromUnicode(val);
+	std::string strSrc = CFX_ByteString::FromUnicode(val).c_str();
 	std::wstring wstrChange(pEvent->Change());
 	
 	switch (iIndex) 

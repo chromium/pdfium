@@ -400,7 +400,7 @@ void CJS_PropValue::StartGetting()
 void CJS_PropValue::operator <<(CFX_ByteString string)
 {
 	ASSERT(!m_bIsSetting);
-	CJS_Value::operator =((FX_LPCSTR)string);
+	CJS_Value::operator = (string.c_str());
 }
 
 void CJS_PropValue::operator >>(CFX_ByteString &string) const

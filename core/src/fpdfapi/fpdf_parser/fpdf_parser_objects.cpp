@@ -328,7 +328,7 @@ void CPDF_Object::SetUnicodeText(FX_LPCWSTR pUnicodes, int len)
         ((CPDF_String*)this)->m_String = PDF_EncodeText(pUnicodes, len);
     } else if (m_Type == PDFOBJ_STREAM) {
         CFX_ByteString result = PDF_EncodeText(pUnicodes, len);
-        ((CPDF_Stream*)this)->SetData((FX_LPBYTE)(FX_LPCSTR)result, result.GetLength(), FALSE, FALSE);
+        ((CPDF_Stream*)this)->SetData((FX_LPBYTE)result.c_str(), result.GetLength(), FALSE, FALSE);
     }
 }
 CPDF_Number::CPDF_Number(int value)

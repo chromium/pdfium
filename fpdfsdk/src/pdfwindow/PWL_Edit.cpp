@@ -44,7 +44,7 @@ void CPWL_Edit::SetText(FX_LPCWSTR csText)
 	{		
 		CFX_ByteString sValue = CFX_ByteString::FromUnicode(swText);
 		
-		if (CXML_Element * pXML = CXML_Element::Parse((FX_LPCSTR)sValue,sValue.GetLength()))
+		if (CXML_Element * pXML = CXML_Element::Parse(sValue.c_str(), sValue.GetLength()))
 		{
 			FX_INT32 nCount = pXML->CountChildren();
 			FX_BOOL bFirst = TRUE;
