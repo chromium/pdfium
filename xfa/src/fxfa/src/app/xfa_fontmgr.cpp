@@ -297,7 +297,7 @@ static const XFA_FONTINFO g_XFAFontsMap[] = {
     {0x2def26bf,	L"BernardMT-Condensed",	L"KacstQurn,Droid Sans Japanese,DejaVu Serif",	0,	1252},
     {0x2fd8930b,	L"KozukaMinchoPr6NR",	L"DejaVu Serif",	0,	1252},
     {0x3115525a,	L"FangSong_GB2312",	L"WenQuanYi Zen Hei Mono,WenQuanYi Zen Hei,WenQuanYi Zen Hei Sharp,WenQuanYi Micro Hei",	0,	1252},
-    {0x31327817,	L"MyriadPro",	L"Droid Sans Japanese,FreeSerif",	0,	1252},
+    {0x31327817,	L"MyriadPro",	L"Ubuntu Condensed,Droid Sans Japanese, FreeSerif",	0,	1252},
     {0x32244975,    L"Helvetica", L"Ubuntu,DejaVu Sans Condensed,Liberation Sans,Liberation Sans Narrow,Nimbus Sans L",	 0,   1252},
     {0x32ac995c,	L"Terminal",	L"DejaVu Serif",	0,	1252},
     {0x338d648a,	L"NiagaraEngraved-Reg",	L"Droid Sans Japanese,DejaVu Serif",	0,	1252},
