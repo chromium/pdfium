@@ -107,7 +107,7 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document, FP
 	CFX_ByteString path = Action.GetURI(pDoc);
 	unsigned long len = path.GetLength() + 1;
 	if (buffer != NULL && buflen >= len)
-		FXSYS_memcpy(buffer, (FX_LPCSTR)path, len);
+		FXSYS_memcpy(buffer, path.c_str(), len);
 	return len;
 }
 
@@ -251,7 +251,7 @@ DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT doc, FPDF_BYTESTR
 	CFX_ByteString bstr = text.UTF16LE_Encode();
 	unsigned long len = bstr.GetLength();
 	if (buffer != NULL && buflen >= len+2) {
-		FXSYS_memcpy(buffer, (FX_LPCSTR)bstr, len);
+		FXSYS_memcpy(buffer, bstr.c_str(), len);
 		// use double zero as trailer
 		((FX_BYTE*)buffer)[len] = ((FX_BYTE*)buffer)[len+1] = 0;
 	}

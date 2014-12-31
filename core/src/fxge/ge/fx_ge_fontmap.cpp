@@ -287,7 +287,7 @@ extern "C" {
 }
 int _PDF_GetStandardFontName(CFX_ByteString& name)
 {
-    _AltFontName* found = (_AltFontName*)FXSYS_bsearch((FX_LPCSTR)name, g_AltFontNames,
+    _AltFontName* found = (_AltFontName*)FXSYS_bsearch(name.c_str(), g_AltFontNames,
                           sizeof g_AltFontNames / sizeof (_AltFontName), sizeof (_AltFontName), compareString);
     if (found == NULL) {
         return -1;
@@ -838,7 +838,7 @@ static CFX_ByteString _GetFontFamily(CFX_ByteString fontName, int nStyle)
         }
         return fontName;
     }
-    _AltFontFamily* found = (_AltFontFamily*)FXSYS_bsearch((FX_LPCSTR)fontName, g_AltFontFamilies,
+    _AltFontFamily* found = (_AltFontFamily*)FXSYS_bsearch(fontName.c_str(), g_AltFontFamilies,
                             sizeof g_AltFontFamilies / sizeof (_AltFontFamily), sizeof (_AltFontFamily), compareFontFamilyString);
     if (found == NULL) {
         return fontName;

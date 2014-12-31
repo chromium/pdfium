@@ -1062,7 +1062,7 @@ void CPDFSDK_Annot::WriteAppearance(const CFX_ByteString& sAPType, const CPDF_Re
 		pStreamDict->SetAtRect("BBox", rcBBox);		
 	}
 	
-	pStream->SetData((FX_BYTE*)(FX_LPCSTR)sContents, sContents.GetLength(), FALSE, FALSE);
+	pStream->SetData((FX_BYTE*)sContents.c_str(), sContents.GetLength(), FALSE, FALSE);
 }
 
 #define BA_ANNOT_MINWIDTH			1

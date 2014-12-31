@@ -438,7 +438,7 @@ CFX_WideString PDF_DecodeText(FX_LPCBYTE src_data, FX_DWORD src_len, CFX_CharMap
 }
 CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr, CFX_CharMap* pCharMap)
 {
-    return PDF_DecodeText((FX_LPCBYTE)(FX_LPCSTR)bstr, bstr.GetLength(), pCharMap);
+    return PDF_DecodeText((FX_LPCBYTE)bstr.c_str(), bstr.GetLength(), pCharMap);
 }
 CFX_ByteString PDF_EncodeText(FX_LPCWSTR pString, int len, CFX_CharMap* pCharMap)
 {

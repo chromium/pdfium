@@ -223,7 +223,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont, FX_BOOL bVert, FX_B
     if (face.GetLength() >= LF_FACESIZE) {
         return NULL;
     }
-    FXSYS_strcpy(lfa.lfFaceName, (FX_LPCSTR)face);
+    FXSYS_strcpy(lfa.lfFaceName, face.c_str());
     return AddWindowsFont(&lfa, bVert, bTranslateName);
 }
 extern CFX_ByteString _FPDF_GetNameFromTT(FX_LPCBYTE name_table, FX_DWORD name);

@@ -214,7 +214,7 @@ FX_BOOL _GetSubFontName(CFX_ByteString& name)
 {
     int size = sizeof g_JpFontNameMap;
     void* pFontnameMap = (void*)g_JpFontNameMap;
-    _FontNameMap* found = (_FontNameMap*)FXSYS_bsearch((FX_LPCSTR)name, pFontnameMap,
+    _FontNameMap* found = (_FontNameMap*)FXSYS_bsearch(name.c_str(), pFontnameMap,
                           size / sizeof (_FontNameMap), sizeof (_FontNameMap), compareString);
     if (found == NULL) {
         return FALSE;
@@ -483,13 +483,13 @@ FX_BOOL CGdiDeviceDriver::GDI_SetDIBits(const CFX_DIBitmap* pBitmap1, const FX_R
         int pitch = pBitmap->GetPitch();
         LPBYTE pBuffer = pBitmap->GetBuffer();
         CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
-        ((BITMAPINFOHEADER*)(FX_LPCSTR)info)->biHeight *= -1;
+        ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
         FX_RECT dst_rect(0, 0, width, height);
         dst_rect.Intersect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
         int dst_width = dst_rect.Width();
         int dst_height = dst_rect.Height();
         ::StretchDIBits(m_hDC, left, top, dst_width, dst_height,
-                        0, 0, dst_width, dst_height, pBuffer, (BITMAPINFO*)(FX_LPCSTR)info, DIB_RGB_COLORS, SRCCOPY);
+            0, 0, dst_width, dst_height, pBuffer, (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS, SRCCOPY);
         delete pBitmap;
     } else {
         CFX_DIBitmap* pBitmap = (CFX_DIBitmap*)pBitmap1;
@@ -502,7 +502,7 @@ FX_BOOL CGdiDeviceDriver::GDI_SetDIBits(const CFX_DIBitmap* pBitmap1, const FX_R
         LPBYTE pBuffer = pBitmap->GetBuffer();
         CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
         ::SetDIBitsToDevice(m_hDC, left, top, width, height, pSrcRect->left, pBitmap->GetHeight() - pSrcRect->bottom,
-                            0, pBitmap->GetHeight(), pBuffer, (BITMAPINFO*)(FX_LPCSTR)info, DIB_RGB_COLORS);
+            0, pBitmap->GetHeight(), pBuffer, (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
         if (pBitmap != pBitmap1) {
             delete pBitmap;
         }
@@ -536,7 +536,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchDIBits(const CFX_DIBitmap* pBitmap1, int de
     CFX_ByteString toStrechBitmapInfo = CFX_WindowsDIB::GetBitmapInfo(pToStrechBitmap);
     ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height,
                     0, 0, pToStrechBitmap->GetWidth(), pToStrechBitmap->GetHeight(), pToStrechBitmap->GetBuffer(),
-                    (BITMAPINFO*)(FX_LPCSTR)toStrechBitmapInfo, DIB_RGB_COLORS, SRCCOPY);
+                    (BITMAPINFO*)toStrechBitmapInfo.c_str(), DIB_RGB_COLORS, SRCCOPY);
     if (del) {
         delete pToStrechBitmap;
     }

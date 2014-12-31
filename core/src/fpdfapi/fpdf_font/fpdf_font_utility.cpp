@@ -16,7 +16,7 @@ typedef struct {
 } FXFC_PACKAGE;
 FX_LPVOID FXFC_LoadPackage(FX_LPCSTR name)
 {
-    FXSYS_FILE* file = FXSYS_fopen(name, (FX_LPCSTR)"rb");
+    FXSYS_FILE* file = FXSYS_fopen(name, "rb");
     if (file == NULL) {
         return NULL;
     }

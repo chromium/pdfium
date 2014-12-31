@@ -446,7 +446,7 @@ CPDF_Font* CPDF_InterForm::AddSystemFont(const CPDF_Document* pDocument, CFX_Byt
     if (iCharSet == 1) {
         iCharSet = GetNativeCharSet();
     }
-    HFONT hFont = ::CreateFontA(0, 0, 0, 0, 0, 0, 0, 0, iCharSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, (FX_LPCSTR)csFontName);
+    HFONT hFont = ::CreateFontA(0, 0, 0, 0, 0, 0, 0, 0, iCharSet, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, csFontName.c_str());
     if (hFont != NULL) {
         LOGFONTA lf;
         memset(&lf, 0, sizeof(LOGFONTA));

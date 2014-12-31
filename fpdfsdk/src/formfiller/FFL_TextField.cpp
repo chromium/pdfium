@@ -364,7 +364,7 @@ void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd)
 		CFX_WideString wsText = pEdit->GetText();
 		int nCharacters = wsText.GetLength();
 		CFX_ByteString bsUTFText = wsText.UTF16LE_Encode();
-		unsigned short* pBuffer = (unsigned short*)(FX_LPCSTR)bsUTFText;
+		unsigned short* pBuffer = (unsigned short*)bsUTFText.c_str();
 		m_pApp->FFI_OnSetFieldInputFocus(m_pWidget->GetFormField(), pBuffer, nCharacters, TRUE);
  
  		pEdit->SetEditNotify(this);

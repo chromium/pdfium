@@ -1107,7 +1107,7 @@ FX_INT32 CPDF_Creator::WriteDirectObj(FX_DWORD objnum, const CPDF_Object* pObj, 
                     break;
                 }
                 CPDF_Encryptor encryptor;
-                encryptor.Initialize(m_pCryptoHandler, objnum, (FX_LPBYTE)(FX_LPCSTR)str, str.GetLength());
+                encryptor.Initialize(m_pCryptoHandler, objnum, (FX_LPBYTE)str.c_str(), str.GetLength());
                 CFX_ByteString content = PDF_EncodeString(CFX_ByteString((FX_LPCSTR)encryptor.m_pData, encryptor.m_dwSize), bHex);
                 if ((len = m_File.AppendString(content)) < 0) {
                     return -1;
@@ -1665,12 +1665,12 @@ FX_INT32 CPDF_Creator::WriteDoc_Stage3(IFX_Pause *pPause)
             } else {
                 str.Format("%d %d\r\n", i, j - i);
             }
-            if (m_File.AppendBlock((FX_LPCSTR)str, str.GetLength()) < 0) {
+            if (m_File.AppendBlock(str.c_str(), str.GetLength()) < 0) {
                 return -1;
             }
             while (i < j) {
                 str.Format("%010d 00000 n\r\n", m_ObjectOffset[i ++]);
-                if (m_File.AppendBlock((FX_LPCSTR)str, str.GetLength()) < 0) {
+                if (m_File.AppendBlock(str.c_str(), str.GetLength()) < 0) {
                     return -1;
                 }
             }
@@ -1707,13 +1707,13 @@ FX_INT32 CPDF_Creator::WriteDoc_Stage3(IFX_Pause *pPause)
             } else {
                 str.Format("%d %d\r\n", objnum, j - i);
             }
-            if (m_File.AppendBlock((FX_LPCSTR)str, str.GetLength()) < 0) {
+            if (m_File.AppendBlock(str.c_str(), str.GetLength()) < 0) {
                 return -1;
             }
             while (i < j) {
                 objnum = m_NewObjNumArray.ElementAt(i++);
                 str.Format("%010d 00000 n\r\n", m_ObjectOffset[objnum]);
-                if (m_File.AppendBlock((FX_LPCSTR)str, str.GetLength()) < 0) {
+                if (m_File.AppendBlock(str.c_str(), str.GetLength()) < 0) {
                     return -1;
                 }
             }

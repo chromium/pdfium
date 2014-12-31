@@ -471,8 +471,8 @@ FX_BOOL util::printx(OBJ_METHOD_PARAMS)
 		return FALSE;
 	CFX_WideString sFormat = params[0].operator CFX_WideString();
 	CFX_WideString sSource = params[1].operator CFX_WideString();
-	std::string cFormat = (FX_LPCSTR)CFX_ByteString::FromUnicode(sFormat);
-	std::string cSource = (FX_LPCSTR)CFX_ByteString::FromUnicode(sSource);
+	std::string cFormat = CFX_ByteString::FromUnicode(sFormat).c_str();
+	std::string cSource = CFX_ByteString::FromUnicode(sSource).c_str();
 	std::string cDest;
 	printx(cFormat,cSource,cDest);
 	vRet = cDest.c_str();

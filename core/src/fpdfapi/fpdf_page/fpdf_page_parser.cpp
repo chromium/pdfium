@@ -126,7 +126,7 @@ void CPDF_StreamContentParser::AddNameParam(FX_LPCSTR name, int len)
             m_ParamBuf1[index].m_Name.m_Len = len;
         } else {
             CFX_ByteString str = PDF_NameDecode(CFX_ByteStringC(name, len));
-            FXSYS_memcpy32(m_ParamBuf1[index].m_Name.m_Buffer, (FX_LPCSTR)str, str.GetLength());
+            FXSYS_memcpy32(m_ParamBuf1[index].m_Name.m_Buffer, str.c_str(), str.GetLength());
             m_ParamBuf1[index].m_Name.m_Len = str.GetLength();
         }
     }

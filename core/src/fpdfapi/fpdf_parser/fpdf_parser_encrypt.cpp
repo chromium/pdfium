@@ -25,12 +25,12 @@ void CalcEncryptKey(CPDF_Dictionary* pEncrypt, FX_LPCBYTE password, FX_DWORD pas
     CRYPT_MD5Start(md5);
     CRYPT_MD5Update(md5, passcode, 32);
     CFX_ByteString okey = pEncrypt->GetString(FX_BSTRC("O"));
-    CRYPT_MD5Update(md5, (FX_LPBYTE)(FX_LPCSTR)okey, okey.GetLength());
+    CRYPT_MD5Update(md5, (FX_LPBYTE)okey.c_str(), okey.GetLength());
     FX_DWORD perm = pEncrypt->GetInteger(FX_BSTRC("P"));
     CRYPT_MD5Update(md5, (FX_LPBYTE)&perm, 4);
     if (pIdArray) {
         CFX_ByteString id = pIdArray->GetString(0);
-        CRYPT_MD5Update(md5, (FX_LPBYTE)(FX_LPCSTR)id, id.GetLength());
+        CRYPT_MD5Update(md5, (FX_LPBYTE)id.c_str(), id.GetLength());
     }
     if (!bIgnoreMeta && revision >= 3 && !pEncrypt->GetInteger(FX_BSTRC("EncryptMetadata"), 1)) {
         FX_DWORD tag = (FX_DWORD) - 1;
@@ -406,7 +406,7 @@ FX_BOOL CPDF_StandardSecurityHandler::CheckUserPassword(FX_LPCBYTE password, FX_
         }
         FXSYS_memset32(test, 0, sizeof(test));
         FXSYS_memset32(tmpkey, 0, sizeof(tmpkey));
-        FXSYS_memcpy32(test, (FX_LPCSTR)ukey, copy_len);
+        FXSYS_memcpy32(test, ukey.c_str(), copy_len);
         for (int i = 19; i >= 0; i --) {
             for (int j = 0; j < key_len; j ++) {
                 tmpkey[j] = key[j] ^ i;
@@ -419,12 +419,12 @@ FX_BOOL CPDF_StandardSecurityHandler::CheckUserPassword(FX_LPCBYTE password, FX_
         CPDF_Array* pIdArray = m_pParser->GetIDArray();
         if (pIdArray) {
             CFX_ByteString id = pIdArray->GetString(0);
-            CRYPT_MD5Update(md5, (FX_LPBYTE)(FX_LPCSTR)id, id.GetLength());
+            CRYPT_MD5Update(md5, (FX_LPBYTE)id.c_str(), id.GetLength());
         }
         CRYPT_MD5Finish(md5, ukeybuf);
         return FXSYS_memcmp32(test, ukeybuf, 16) == 0;
     }
-    if (FXSYS_memcmp32((FX_LPVOID)(FX_LPCSTR)ukey, ukeybuf, 16) == 0) {
+    if (FXSYS_memcmp32((FX_LPVOID)ukey.c_str(), ukeybuf, 16) == 0) {
         return TRUE;
     }
     return FALSE;
@@ -461,7 +461,7 @@ CFX_ByteString CPDF_StandardSecurityHandler::GetUserPassword(FX_LPCBYTE owner_pa
     }
     FX_BYTE okeybuf[64];
     FXSYS_memset32(okeybuf, 0, sizeof(okeybuf));
-    FXSYS_memcpy32(okeybuf, (FX_LPCSTR)okey, okeylen);
+    FXSYS_memcpy32(okeybuf, okey.c_str(), okeylen);
     if (m_Revision == 2) {
         CRYPT_ArcFourCryptBlock(okeybuf, okeylen, enckey, key_len);
     } else {
@@ -566,7 +566,7 @@ void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_
         CRYPT_MD5Update(md5, defpasscode, 32);
         if (pIdArray) {
             CFX_ByteString id = pIdArray->GetString(0);
-            CRYPT_MD5Update(md5, (FX_LPBYTE)(FX_LPCSTR)id, id.GetLength());
+            CRYPT_MD5Update(md5, (FX_LPBYTE)id.c_str(), id.GetLength());
         }
         FX_BYTE digest[32];
         CRYPT_MD5Finish(md5, digest);

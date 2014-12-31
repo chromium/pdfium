@@ -220,7 +220,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 			pPage->SetAtReference("Contents", pDocument, pDocument->AddIndirectObject(pNewContents));
 			
 			CFX_ByteString sStream;
-			sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", (FX_LPCSTR)key);
+			sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
 			pNewContents->SetData((FX_LPCBYTE)sStream, sStream.GetLength(), FALSE, FALSE);
 		}
 		return;
@@ -267,7 +267,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 		pContentsArray->AddReference(pDocument, dwObjNum);
 		
 		CFX_ByteString sStream;
-		sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", (FX_LPCSTR)key);
+		sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
 		pNewContents->SetData((FX_LPCBYTE)sStream, sStream.GetLength(), FALSE, FALSE);
 	}
 }
@@ -547,7 +547,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 		}
 
 		CFX_AffineMatrix m = GetMatrix(rcAnnot, rcStream, matrix);
-		sTemp.Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d, m.e, m.f, (FX_LPCSTR)sFormName);
+		sTemp.Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d, m.e, m.f, sFormName.c_str());
 		sStream += sTemp;
 
 		pNewXObject->SetData((FX_LPCBYTE)sStream, sStream.GetLength(), FALSE, FALSE);
