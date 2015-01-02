@@ -21,8 +21,11 @@
 #define VALUE_NAME_NULL			L"null"
 #define VALUE_NAME_UNDEFINED	L"undefined"
 
-static FX_DWORD g_nan[2] = {0,0x7FF80000 };
-double g_NaN = (*(double *)g_nan);
+const static FX_DWORD g_nan[2] = {0,0x7FF80000 };
+static double GetNan()
+{
+  return *(double*)g_nan;
+}
 
 
 class CJS_PrivateData: public CFX_Object
@@ -995,7 +998,7 @@ double JS_DateParse(const wchar_t* string)
 double JS_MakeDay(int nYear, int nMonth, int nDate)
 {
 	if (!_isfinite(nYear) || !_isfinite(nMonth) ||!_isfinite(nDate))
-		return g_NaN;
+		return GetNan();
 	double y = _toInteger(nYear);
 	double m = _toInteger(nMonth);
 	double dt = _toInteger(nDate);
@@ -1005,14 +1008,14 @@ double JS_MakeDay(int nYear, int nMonth, int nDate)
 	double t = _TimeFromYearMonth((int)ym,(int)mn);
 
 	if (_YearFromTime(t) != ym || _MonthFromTime(t) != mn ||_DateFromTime(t) != 1)
-		return g_NaN;
+		return GetNan();
 	return _Day(t)+dt-1;
 }
 
 double JS_MakeTime(int nHour, int nMin, int nSec, int nMs)
 {
 	if (!_isfinite(nHour) ||!_isfinite(nMin) ||!_isfinite(nSec) ||!_isfinite(nMs))
-		return g_NaN;
+		return GetNan();
 
 	double h = _toInteger(nHour);
 	double m = _toInteger(nMin);
@@ -1025,7 +1028,7 @@ double JS_MakeTime(int nHour, int nMin, int nSec, int nMs)
 double JS_MakeDate(double day, double time)
 {
 	if (!_isfinite(day) ||!_isfinite(time))
-		return g_NaN;
+		return GetNan();
 
 	return day * 86400000 + time;
 }
