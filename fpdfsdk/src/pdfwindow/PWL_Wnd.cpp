@@ -11,7 +11,12 @@
 
 /* -------------------------- CPWL_Timer -------------------------- */
 
-static CFX_MapPtrTemplate<FX_INT32, CPWL_Timer*>	g_TimeMap;
+static CFX_MapPtrTemplate<FX_INT32, CPWL_Timer*>& GetPWLTimeMap()
+{
+  // Leak the object at shutdown.
+  static auto timeMap = new CFX_MapPtrTemplate<FX_INT32, CPWL_Timer*>;
+  return *timeMap;
+}
 
 CPWL_Timer::CPWL_Timer(CPWL_TimerHandler* pAttached, IFX_SystemHandler* pSystemHandler) : 
 	m_nTimerID(0),
@@ -31,7 +36,7 @@ FX_INT32 CPWL_Timer::SetPWLTimer(FX_INT32 nElapse)
 {	
 	if (m_nTimerID != 0) KillPWLTimer();
 	m_nTimerID = m_pSystemHandler->SetTimer(nElapse, TimerProc);
-	g_TimeMap.SetAt(m_nTimerID, this);
+	GetPWLTimeMap().SetAt(m_nTimerID, this);
 	return m_nTimerID;
 }
 
@@ -40,7 +45,7 @@ void CPWL_Timer::KillPWLTimer()
 	if (m_nTimerID != 0)
 	{
 		m_pSystemHandler->KillTimer(m_nTimerID);
-		g_TimeMap.RemoveKey(m_nTimerID);
+		GetPWLTimeMap().RemoveKey(m_nTimerID);
 		m_nTimerID = 0;
 	}
 }
@@ -48,7 +53,7 @@ void CPWL_Timer::KillPWLTimer()
 void CPWL_Timer::TimerProc(FX_INT32 idEvent)
 {
 	CPWL_Timer* pTimer = NULL;
-	if (g_TimeMap.Lookup(idEvent, pTimer))
+	if (GetPWLTimeMap().Lookup(idEvent, pTimer))
 	{
 		if (pTimer)
 		{			
