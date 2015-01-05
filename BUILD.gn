@@ -1540,16 +1540,3 @@ static_library("xfa") {
     "//v8:v8_libplatform",
   ]
 }
-
-executable("pdfium_unittests") {
-  testonly = true
-  sources = [
-    "core/src/fxcrt/fx_basic_bstring_unittest.cpp",
-  ]
-  deps = [
-    ":pdfium",
-    "//base",
-    "//base/test:run_all_unittests",
-    "//testing/gtest",
-  ]
-}
