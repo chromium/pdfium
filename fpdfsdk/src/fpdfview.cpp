@@ -383,9 +383,10 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
  			if (WinDC.GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER)
  			{
 				CFX_DIBitmap* pDst = FX_NEW CFX_DIBitmap;
-				pDst->Create(pBitmap->GetWidth(), pBitmap->GetHeight(),FXDIB_Rgb32);
-				FXSYS_memcpy(pDst->GetBuffer(), pBitmap->GetBuffer(), pBitmap->GetPitch()*pBitmap->GetHeight());
-//				WinDC.SetDIBits(pDst,0,0);
+				int pitch = pBitmap->GetPitch();
+				pDst->Create(size_x, size_y, FXDIB_Rgb32);
+				FXSYS_memset(pDst->GetBuffer(), -1, pitch*size_y);
+				pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0, FXDIB_BLEND_NORMAL, NULL, FALSE, NULL);
 				WinDC.StretchDIBits(pDst,0,0,size_x,size_y);
 				delete pDst;
  			}
