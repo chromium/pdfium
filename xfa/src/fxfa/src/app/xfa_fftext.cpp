@@ -141,7 +141,7 @@ FX_BOOL CXFA_FFText::OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
         return FALSE;
     }
     CXFA_FFDoc* pDoc = GetDoc();
-    pDoc->GetDocProvider()->GotoURL((XFA_HDOC)pDoc, FX_WSTRC(wsURLContent), FALSE);
+    pDoc->GetDocProvider()->GotoURL((XFA_HDOC)pDoc, CFX_WideStringC(wsURLContent), FALSE);
     return TRUE;
 }
 FX_DWORD CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy)
