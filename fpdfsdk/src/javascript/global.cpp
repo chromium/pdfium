@@ -17,14 +17,72 @@
 
 /* ---------------------------- global ---------------------------- */
 
-extern const unsigned int JSCONST_nStringHash = JS_CalcHash(VALUE_NAME_STRING,wcslen(VALUE_NAME_STRING));
-extern const unsigned int JSCONST_nNumberHash = JS_CalcHash(VALUE_NAME_NUMBER,wcslen(VALUE_NAME_NUMBER));
-extern const unsigned int JSCONST_nBoolHash = JS_CalcHash(VALUE_NAME_BOOLEAN,wcslen(VALUE_NAME_BOOLEAN));
-extern const unsigned int JSCONST_nDateHash = JS_CalcHash(VALUE_NAME_DATE,wcslen(VALUE_NAME_DATE));
-extern const unsigned int JSCONST_nObjectHash = JS_CalcHash(VALUE_NAME_OBJECT,wcslen(VALUE_NAME_OBJECT));
-extern const unsigned int JSCONST_nFXobjHash = JS_CalcHash(VALUE_NAME_FXOBJ,wcslen(VALUE_NAME_FXOBJ));
-extern const unsigned int JSCONST_nNullHash = JS_CalcHash(VALUE_NAME_NULL,wcslen(VALUE_NAME_NULL));
-extern const unsigned int JSCONST_nUndefHash = JS_CalcHash(VALUE_NAME_UNDEFINED,wcslen(VALUE_NAME_UNDEFINED));
+// Helper class for compile-time calculation of hash values in order to
+// avoid having global object initializers.
+template <unsigned ACC, wchar_t... Ns>
+struct CHash;
+
+// Only needed to hash single-character strings.
+template <wchar_t N>
+struct CHash<N> {
+  static const unsigned value = N;
+};
+
+template <unsigned ACC, wchar_t N>
+struct CHash<ACC, N> {
+  static const unsigned value = (ACC * 1313LLU + N) & 0xFFFFFFFF;
+};
+
+template <unsigned ACC, wchar_t N, wchar_t... Ns>
+struct CHash<ACC, N, Ns...> {
+  static const unsigned value = CHash<CHash<ACC, N>::value, Ns...>::value;
+};
+
+extern const unsigned int JSCONST_nStringHash =
+  CHash<'s','t','r','i','n','g'>::value;
+extern const unsigned int JSCONST_nNumberHash =
+  CHash<'n','u','m','b','e','r'>::value;
+extern const unsigned int JSCONST_nBoolHash =
+  CHash<'b','o','o','l','e','a','n'>::value;
+extern const unsigned int JSCONST_nDateHash =
+  CHash<'d','a','t','e'>::value;
+extern const unsigned int JSCONST_nObjectHash =
+  CHash<'o','b','j','e','c','t'>::value;
+extern const unsigned int JSCONST_nFXobjHash =
+  CHash<'f','x','o','b','j'>::value;
+extern const unsigned int JSCONST_nNullHash =
+  CHash<'n','u','l','l'>::value;
+extern const unsigned int JSCONST_nUndefHash =
+  CHash<'u','n','d','e','f','i','n','e','d'>::value;
+
+#ifdef _DEBUG
+class HashVerify
+{
+public:
+  HashVerify();
+} g_hashVerify;
+
+HashVerify::HashVerify()
+{
+  ASSERT(JSCONST_nStringHash ==
+    JS_CalcHash(VALUE_NAME_STRING,wcslen(VALUE_NAME_STRING)));
+  ASSERT(JSCONST_nNumberHash ==
+    JS_CalcHash(VALUE_NAME_NUMBER,wcslen(VALUE_NAME_NUMBER)));
+  ASSERT(JSCONST_nBoolHash ==
+    JS_CalcHash(VALUE_NAME_BOOLEAN,wcslen(VALUE_NAME_BOOLEAN)));
+  ASSERT(JSCONST_nDateHash ==
+    JS_CalcHash(VALUE_NAME_DATE,wcslen(VALUE_NAME_DATE)));
+  ASSERT(JSCONST_nObjectHash ==
+    JS_CalcHash(VALUE_NAME_OBJECT,wcslen(VALUE_NAME_OBJECT)));
+  ASSERT(JSCONST_nFXobjHash ==
+    JS_CalcHash(VALUE_NAME_FXOBJ,wcslen(VALUE_NAME_FXOBJ)));
+  ASSERT(JSCONST_nNullHash ==
+    JS_CalcHash(VALUE_NAME_NULL,wcslen(VALUE_NAME_NULL)));
+  ASSERT(JSCONST_nUndefHash ==
+    JS_CalcHash(VALUE_NAME_UNDEFINED,wcslen(VALUE_NAME_UNDEFINED)));
+}
+#endif
+
 
 BEGIN_JS_STATIC_CONST(CJS_Global)
 END_JS_STATIC_CONST()
