@@ -5,6 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits.h>
+#include <list>
+#include "../jbig2/JBig2_Context.h"
 class CCodec_BasicModule : public ICodec_BasicModule
 {
 public:
@@ -259,7 +261,6 @@ public:
     virtual FX_BOOL		Decode(FX_LPVOID ctx, class CFX_DIBitmap* pDIBitmap);
     virtual void		DestroyDecoder(FX_LPVOID ctx);
 };
-#include "../jbig2/JBig2_Context.h"
 class CPDF_Jbig2Interface : public CFX_Object, public CJBig2_Module
 {
 public:
@@ -331,6 +332,7 @@ public:
     FXCODEC_STATUS		ContinueDecode(void* pJbig2Context, IFX_Pause* pPause);
     void				DestroyJbig2Context(void* pJbig2Context);
     CPDF_Jbig2Interface	m_Module;
+    std::list<CJBig2_CachePair> m_SymbolDictCache;
 private:
 };
 class CFX_DIBAttributeExif : public IFX_DIBAttributeExif

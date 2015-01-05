@@ -30,7 +30,7 @@ FX_BOOL CCodec_Jbig2Module::Decode(FX_DWORD width, FX_DWORD height, FX_LPCBYTE s
 {
     FXSYS_memset32(dest_buf, 0, height * dest_pitch);
     CJBig2_Context* pContext = CJBig2_Context::CreateContext(&m_Module,
-                               (FX_LPBYTE)global_data, global_size, (FX_LPBYTE)src_buf, src_size, JBIG2_EMBED_STREAM);
+                               (FX_LPBYTE)global_data, global_size, (FX_LPBYTE)src_buf, src_size, JBIG2_EMBED_STREAM, &m_SymbolDictCache);
     if (pContext == NULL) {
         return FALSE;
     }
@@ -60,7 +60,7 @@ FX_BOOL CCodec_Jbig2Module::Decode(IFX_FileRead* file_ptr,
     if(!file_ptr->ReadBlock(src_buf, 0, src_size)) {
         goto failed;
     }
-    pContext = CJBig2_Context::CreateContext(&m_Module, NULL, 0, src_buf, src_size, JBIG2_FILE_STREAM);
+    pContext = CJBig2_Context::CreateContext(&m_Module, NULL, 0, src_buf, src_size, JBIG2_FILE_STREAM, &m_SymbolDictCache);
     if(pContext == NULL) {
         goto failed;
     }
@@ -102,7 +102,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context, FX_DWORD wid
     m_pJbig2Context->m_bFileReader = FALSE;
     FXSYS_memset32(dest_buf, 0, height * dest_pitch);
     m_pJbig2Context->m_pContext = CJBig2_Context::CreateContext(&m_Module,
-                                  (FX_LPBYTE)global_data, global_size, (FX_LPBYTE)src_buf, src_size, JBIG2_EMBED_STREAM, pPause);
+                                  (FX_LPBYTE)global_data, global_size, (FX_LPBYTE)src_buf, src_size, JBIG2_EMBED_STREAM, &m_SymbolDictCache, pPause);
     if(!m_pJbig2Context->m_pContext) {
         return FXCODEC_STATUS_ERROR;
     }
@@ -140,7 +140,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context, IFX_FileRead
     if(!file_ptr->ReadBlock((void*)m_pJbig2Context->m_src_buf, 0, m_pJbig2Context->m_src_size)) {
         goto failed;
     }
-    m_pJbig2Context->m_pContext = CJBig2_Context::CreateContext(&m_Module, NULL, 0, m_pJbig2Context->m_src_buf, m_pJbig2Context->m_src_size, JBIG2_FILE_STREAM, pPause);
+    m_pJbig2Context->m_pContext = CJBig2_Context::CreateContext(&m_Module, NULL, 0, m_pJbig2Context->m_src_buf, m_pJbig2Context->m_src_size, JBIG2_FILE_STREAM, &m_SymbolDictCache, pPause);
     if(m_pJbig2Context->m_pContext == NULL) {
         goto failed;
     }
