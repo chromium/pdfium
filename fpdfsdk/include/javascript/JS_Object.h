@@ -198,7 +198,7 @@ public:
 		if (m_nTimerID)
 		{
 			if (m_pApp == NULL) {
-				m_sTimeMap.RemoveAt(m_nTimerID);
+				GetTimeMap().RemoveAt(m_nTimerID);
 				m_nTimerID = 0;
 				return;
 			}
