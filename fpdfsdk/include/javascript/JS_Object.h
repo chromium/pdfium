@@ -157,7 +157,7 @@ public:
 	CTimerMapArray		m_Array;
 };
 
-static JS_TIMER_MAPARRAY	m_sTimeMap;
+JS_TIMER_MAPARRAY& GetTimeMap();
 
 class CJS_Runtime;
 
@@ -188,7 +188,7 @@ public:
 		if (m_nTimerID)KillJSTimer();
 		IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
 		m_nTimerID = pHandler->SetTimer(nElapse,TimerProc);
-		m_sTimeMap.SetAt(m_nTimerID,this);
+		GetTimeMap().SetAt(m_nTimerID,this);
 		m_dwElapse = nElapse;
 		return m_nTimerID;
 	};
@@ -199,7 +199,7 @@ public:
 		{
 			IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
 			pHandler->KillTimer(m_nTimerID);
-			m_sTimeMap.RemoveAt(m_nTimerID);
+			GetTimeMap().RemoveAt(m_nTimerID);
 			m_nTimerID = 0;
 		}
 	};
@@ -256,7 +256,7 @@ public:
 
 	static void TimerProc(int idEvent)
 	{
-		if (CJS_Timer * pTimer = m_sTimeMap.GetAt(idEvent))
+		if (CJS_Timer * pTimer = GetTimeMap().GetAt(idEvent))
 		{
 			if (!pTimer->m_bProcessing)
 			{
