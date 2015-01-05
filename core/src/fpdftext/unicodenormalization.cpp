@@ -5,11 +5,11 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fpdftext/fpdf_text.h"
-extern const FX_WCHAR g_UnicodeData_Normalization[65536];
-extern const FX_WCHAR g_UnicodeData_Normalization_Map1[5376];
-extern const FX_WCHAR g_UnicodeData_Normalization_Map2[1724];
-extern const FX_WCHAR g_UnicodeData_Normalization_Map3[1164];
-extern const FX_WCHAR g_UnicodeData_Normalization_Map4[488];
+extern const FX_WCHAR g_UnicodeData_Normalization[];
+extern const FX_WCHAR g_UnicodeData_Normalization_Map1[];
+extern const FX_WCHAR g_UnicodeData_Normalization_Map2[];
+extern const FX_WCHAR g_UnicodeData_Normalization_Map3[];
+extern const FX_WCHAR g_UnicodeData_Normalization_Map4[];
 FX_LPCWSTR g_UnicodeData_Normalization_Maps[5] = {
     NULL,
     g_UnicodeData_Normalization_Map1,
