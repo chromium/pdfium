@@ -13,6 +13,8 @@
 #include "JBig2_GeneralDecoder.h"
 #include "../../../include/fxcodec/fx_codec_def.h"
 #include "../../../include/fxcrt/fx_basic.h"
+#include <utility>
+typedef std::pair<FX_BYTE*, CJBig2_SymbolDict*> CJBig2_CachePair;
 typedef enum {
     JBIG2_OUT_OF_PAGE = 0,
     JBIG2_IN_PAGE,
@@ -36,7 +38,7 @@ class CJBig2_Context : public CJBig2_Object
 public:
 
     static CJBig2_Context *CreateContext(CJBig2_Module *pModule, FX_BYTE *pGlobalData, FX_DWORD dwGlobalLength,
-                                         FX_BYTE *pData, FX_DWORD dwLength, FX_INT32 nStreamType, IFX_Pause* pPause = NULL);
+                                         FX_BYTE *pData, FX_DWORD dwLength, FX_INT32 nStreamType, std::list<CJBig2_CachePair>* pSymbolDictCache, IFX_Pause* pPause = NULL);
 
     static void DestroyContext(CJBig2_Context *pContext);
 
@@ -55,7 +57,7 @@ public:
 private:
 
     CJBig2_Context(FX_BYTE *pGlobalData, FX_DWORD dwGlobalLength,
-                   FX_BYTE *pData, FX_DWORD dwLength, FX_INT32 nStreamType, IFX_Pause* pPause);
+                   FX_BYTE *pData, FX_DWORD dwLength, FX_INT32 nStreamType, std::list<CJBig2_CachePair>* pSymbolDictCache, IFX_Pause* pPause);
 
     ~CJBig2_Context();
 
@@ -131,5 +133,6 @@ private:
     CJBig2_Segment *m_pSegment;
     FX_DWORD m_dwOffset;
     JBig2RegionInfo m_ri;
+    std::list<CJBig2_CachePair>* m_pSymbolDictCache;
 };
 #endif
