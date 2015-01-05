@@ -12,6 +12,13 @@
 // #include "../../include/javascript/JS_ResMgr.h"
 #include "../../include/javascript/JS_Context.h"
 
+JS_TIMER_MAPARRAY& GetTimeMap()
+{
+  // Leak the timer array at shutdown.
+  static auto* timeMap = new JS_TIMER_MAPARRAY;
+  return *timeMap;
+}
+
 int FXJS_MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, FX_LPCWSTR swMsg, FX_LPCWSTR swTitle, FX_UINT nType, FX_UINT nIcon)
 {
 	int nRet = 0;
