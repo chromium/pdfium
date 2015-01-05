@@ -3861,12 +3861,12 @@ void CXFA_FM2JSContext::DecodeXML (FX_BSTR szXMLString,  CFX_ByteTextBuf &szResu
             ++i;
             continue;
         }
-        FX_WCHAR *strName[] = {
-            (FX_WCHAR *)L"quot",
-            (FX_WCHAR *)L"amp",
-            (FX_WCHAR *)L"apos",
-            (FX_WCHAR *)L"lt",
-            (FX_WCHAR *)L"gt"
+        FX_LPCWSTR const strName[] = {
+            L"quot",
+            L"amp",
+            L"apos",
+            L"lt",
+            L"gt"
         };
         FX_INT32 iIndex = 0;
         while (iIndex < 5) {
@@ -3958,7 +3958,7 @@ void CXFA_FM2JSContext::EncodeURL (FX_BSTR szURLString,  CFX_ByteTextBuf &szResu
     FX_WCHAR strUnsafe[] = { ' ', '<', '>', '"', '#', '%', '{', '}', '|', '\\', '^', '~', '[', ']', '`' };
     FX_WCHAR strReserved[] = {';', '/', '?', ':', '@', '=', '&'};
     FX_WCHAR strSpecial[] = {'$', '-', '+', '!', '*', '\'', '(', ')', ','};
-    FX_WCHAR* strCode = (FX_WCHAR *)L"0123456789abcdef";
+    FX_WCHAR* strCode = L"0123456789abcdef";
     for (FX_INT32 u = 0; u < iLength; ++u) {
         ch = wsURLString.GetAt(u);
         FX_INT32 i = 0;
@@ -4121,14 +4121,14 @@ void CXFA_FM2JSContext::EncodeXML (FX_BSTR szXMLString,  CFX_ByteTextBuf &szResu
     strEncode[6] = 0;
     strEncode[7] = ';';
     strEncode[8] = 0;
-    FX_WCHAR *strName[] = {
-        (FX_WCHAR *)L"quot",
-        (FX_WCHAR *)L"amp",
-        (FX_WCHAR *)L"apos",
-        (FX_WCHAR *)L"lt",
-        (FX_WCHAR *)L"gt"
+    FX_LPCWSTR const strName[] = {
+        L"quot",
+        L"amp",
+        L"apos",
+        L"lt",
+        L"gt"
     };
-    FX_WCHAR* strCode = (FX_WCHAR *)L"0123456789abcdef";
+    FX_WCHAR* strCode = L"0123456789abcdef";
     FX_WCHAR ch = 0;
     FX_INT32 iLength = wsXMLString.GetLength();
     FX_INT32 iIndex = 0;
@@ -4139,27 +4139,27 @@ void CXFA_FM2JSContext::EncodeXML (FX_BSTR szXMLString,  CFX_ByteTextBuf &szResu
         switch (ch) {
             case '"':
                 wsResultBuf.AppendChar('&');
-                wsResultBuf << FX_WSTRC(strName[QUOT]);
+                wsResultBuf << CFX_WideStringC(strName[QUOT]);
                 wsResultBuf.AppendChar(';');
                 break;
             case '&':
                 wsResultBuf.AppendChar('&');
-                wsResultBuf << FX_WSTRC(strName[AMP]);
+                wsResultBuf << CFX_WideStringC(strName[AMP]);
                 wsResultBuf.AppendChar(';');
                 break;
             case  '\'':
                 wsResultBuf.AppendChar('&');
-                wsResultBuf << FX_WSTRC(strName[APOS]);
+                wsResultBuf << CFX_WideStringC(strName[APOS]);
                 wsResultBuf.AppendChar(';');
                 break;
             case  '<':
                 wsResultBuf.AppendChar('&');
-                wsResultBuf << FX_WSTRC(strName[LT]);
+                wsResultBuf << CFX_WideStringC(strName[LT]);
                 wsResultBuf.AppendChar(';');
                 break;
             case '>':
                 wsResultBuf.AppendChar('&');
-                wsResultBuf << FX_WSTRC(strName[GT]);
+                wsResultBuf << CFX_WideStringC(strName[GT]);
                 wsResultBuf.AppendChar(';');
                 break;
             default: {
