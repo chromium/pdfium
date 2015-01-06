@@ -165,6 +165,7 @@
       'IntermediateDirectory': '$(OutDir)\\obj\\$(ProjectName)',
       'CharacterSet': '1',
     },
+    'msvs_disabled_warnings': [4800, 4996],
     'msvs_settings': {
       'VCCLCompilerTool': {
         'MinimalRebuild': 'false',
@@ -172,7 +173,6 @@
         'EnableFunctionLevelLinking': 'true',
         'RuntimeTypeInfo': 'false',
         'WarningLevel': '3',
-        'WarnAsError': 'false',
         'DebugInformationFormat': '3',
         'Detect64BitPortabilityProblems': 'false',
         'conditions': [
@@ -183,6 +183,13 @@
             'ExceptionHandling': '1',  # /EHsc
           }, {
             'ExceptionHandling': '0',
+          }],
+          ['target_arch=="x64"', {
+            # 64-bit warnings need to be resolved.
+            # https://code.google.com/p/pdfium/issues/detail?id=101
+            'WarnAsError': 'false',
+          }, {
+            'WarnAsError': 'true',
           }],
         ],
       },
