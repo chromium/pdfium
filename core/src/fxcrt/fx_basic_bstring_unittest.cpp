@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #include "testing/gtest/include/gtest/gtest.h"
-
+#include "testing/fx_string_testhelpers.h"
 #include "../../include/fxcrt/fx_basic.h"
 
 TEST(fxcrt, ByteStringCNull) {
