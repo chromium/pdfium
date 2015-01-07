@@ -18,6 +18,7 @@ class CFX_WideStringL;
 class CFX_ByteStringC : public CFX_Object
 {
 public:
+    typedef FX_CHAR value_type;
 
     CFX_ByteStringC()
     {
@@ -160,6 +161,7 @@ struct CFX_StringData {
 class CFX_ByteString : public CFX_Object
 {
 public:
+    typedef FX_CHAR value_type;
 
     CFX_ByteString()
     {
@@ -473,6 +475,7 @@ typedef CFX_StringBufTemplate<256> CFX_StringBuf256;
 class CFX_WideStringC : public CFX_Object
 {
 public:
+    typedef FX_WCHAR value_type;
 
     CFX_WideStringC()
     {
@@ -618,6 +621,7 @@ struct CFX_StringDataW {
 class CFX_WideString : public CFX_Object
 {
 public:
+    typedef FX_WCHAR value_type;
 
     CFX_WideString()
     {
