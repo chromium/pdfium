@@ -883,5 +883,20 @@
         'fpdfsdk/src/formfiller/FFL_Utils.cpp',
       ],
     },
+    {
+      'target_name': 'pdfium_unittests',
+      'type': 'executable',
+      'dependencies': [
+        '<(DEPTH)/testing/gtest.gyp:gtest_main',
+        '<(DEPTH)/testing/gtest.gyp:gtest',
+        'pdfium',
+      ],
+      'include_dirs': [
+        '<(DEPTH)'
+      ],
+      'sources': [
+        'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
+      ],
+    },
   ],
 }

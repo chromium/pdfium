@@ -2,10 +2,13 @@
 /build/Release
 /build/gyp
 /out
+/testing/gtest
 /v8
 /xcodebuild
 Makefile
 .DS_Store
+.gclient
+.gclient_entries
 *.filters
 *.mk
 *.opensdf
