@@ -15,6 +15,9 @@ class CFX_BinaryBuf;
 typedef int FX_STRSIZE;
 class CFX_ByteStringL;
 class CFX_WideStringL;
+
+// An immutable string with caller-provided storage which must outlive the
+// string itself.
 class CFX_ByteStringC : public CFX_Object
 {
 public:
@@ -38,6 +41,13 @@ public:
         m_Length = ptr ? (FX_STRSIZE)FXSYS_strlen(ptr) : 0;
     }
 
+    // |ch| must be an lvalue that outlives the the CFX_ByteStringC. However,
+    // the use of char rvalues are not caught at compile time.  They are
+    // implicitly promoted to CFX_ByteString (see below) and then the
+    // CFX_ByteStringC is constructed from the CFX_ByteString via the alternate
+    // constructor below. The CFX_ByteString then typically goes out of scope
+    // and |m_Ptr| may be left pointing to invalid memory. Beware.
+    // TODO(tsepez): Mark single-argument string constructors as explicit.
     CFX_ByteStringC(FX_CHAR& ch)
     {
         m_Ptr = (FX_LPCBYTE)&ch;
@@ -65,7 +75,7 @@ public:
     CFX_ByteStringC& operator = (FX_LPCSTR src)
     {
         m_Ptr = (FX_LPCBYTE)src;
-        m_Length = (FX_STRSIZE)FXSYS_strlen(src);
+        m_Length = m_Ptr ? (FX_STRSIZE)FXSYS_strlen(src) : 0;
         return *this;
     }
 
