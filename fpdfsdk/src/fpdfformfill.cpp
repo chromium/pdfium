@@ -71,7 +71,8 @@ DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle, FPDF_
 			rcWidget.bottom -= 1.0f;
 			rcWidget.top += 1.0f;
 
-			if (rcWidget.Contains(page_x, page_y)) {
+			if (rcWidget.Contains(static_cast<FX_FLOAT>(page_x),
+				static_cast<FX_FLOAT>(page_y))) {
 				pWidgetIterator->Release();
 				return FPDF_FORMFIELD_XFA;
 			}

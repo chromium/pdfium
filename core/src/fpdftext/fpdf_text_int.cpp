@@ -37,13 +37,13 @@ FX_BOOL _IsIgnoreSpaceCharacter(FX_WCHAR curChar)
 FX_FLOAT _NormalizeThreshold(FX_FLOAT threshold)
 {
     if (threshold < 300) {
-        return threshold / 2.0;
+        return threshold / 2.0f;
     } else if (threshold < 500) {
-        return threshold / 4.0;
+        return threshold / 4.0f;
     } else if (threshold < 700) {
-        return threshold / 5.0;
+        return threshold / 5.0f;
     }
-    return threshold / 6.0;
+    return threshold / 6.0f;
 }
 
 FX_FLOAT _CalculateBaseSpace(const CPDF_TextObject* pTextObj,

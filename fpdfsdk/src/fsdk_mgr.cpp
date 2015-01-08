@@ -678,7 +678,10 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice, CPDF_Matrix* p
 		gs.Create(pDevice);
 		if (pClip) {
 			CFX_RectF rectClip;
-			rectClip.Set(pClip->left, pClip->top, pClip->Width(), pClip->Height());
+			rectClip.Set(static_cast<FX_FLOAT>(pClip->left),
+				static_cast<FX_FLOAT>(pClip->top),
+				static_cast<FX_FLOAT>(pClip->Width()),
+				static_cast<FX_FLOAT>(pClip->Height()));
 			gs.SetClipRect(rectClip);
 		}	
 		IXFA_RenderContext* pRenderContext = XFA_RenderContext_Create();

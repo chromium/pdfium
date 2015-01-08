@@ -309,6 +309,13 @@
       'include_dirs': [
       ],
       'ldflags': [ '-L<(PRODUCT_DIR)',],
+      'msvs_settings': {
+        'VCCLCompilerTool': {
+          # Unresolved warnings in fx_codec_jpx_opj.cpp
+          # https://code.google.com/p/pdfium/issues/detail?id=100
+          'WarnAsError': 'false',
+        },
+      },
       'sources': [
         'core/include/fxcodec/fx_codec.h',
         'core/include/fxcodec/fx_codec_def.h',

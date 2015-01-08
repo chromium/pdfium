@@ -476,10 +476,10 @@ public:
 			double bottom;
 			m_pInfo->FFI_GetPageViewRect(m_pInfo, page, &left, &top, &right, &bottom);
 
-			dstRect.left = left;
-			dstRect.top = top < bottom? bottom:top;
-			dstRect.bottom = top < bottom? top:bottom;
-			dstRect.right = right;
+			dstRect.left = static_cast<float>(left);
+			dstRect.top = static_cast<float>(top < bottom ? bottom : top);
+			dstRect.bottom = static_cast<float>(top < bottom ? top : bottom);
+			dstRect.right = static_cast<float>(right);
 		}
 	}
 
