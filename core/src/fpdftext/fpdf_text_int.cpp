@@ -1844,13 +1844,14 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
             int nTotal = wstrItem.GetLength();
             int n = 0;
             FX_BOOL bDel = FALSE;
+            FX_FLOAT threshold = charinfo.m_Matrix.TransformXDistance((FX_FLOAT)TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize());
             while (n < m_TempCharList.GetSize() && n < 7) {
                 n++;
                 PAGECHAR_INFO* charinfo1 = (PAGECHAR_INFO*)m_TempCharList.GetAt(m_TempCharList.GetSize() - n);
                 if(charinfo1->m_CharCode == charinfo.m_CharCode &&
                         charinfo1->m_pTextObj->GetFont() == charinfo.m_pTextObj->GetFont()  &&
-                        FXSYS_fabs(charinfo1->m_OriginX - charinfo.m_OriginX) < TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize()  &&
-                        FXSYS_fabs(charinfo1->m_OriginY - charinfo.m_OriginY) < TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize() ) {
+                        FXSYS_fabs(charinfo1->m_OriginX - charinfo.m_OriginX) < threshold  &&
+                        FXSYS_fabs(charinfo1->m_OriginY - charinfo.m_OriginY) < threshold) {
                     bDel = TRUE;
                     break;
                 }
