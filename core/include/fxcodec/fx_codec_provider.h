@@ -10,7 +10,6 @@ class CFX_DIBAttribute;
 class IFX_JpegProvider
 {
 public:
-
     virtual void		Release() = 0;
 
     virtual void*		CreateDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height, int nComps, FX_BOOL ColorTransform) = 0;
@@ -49,5 +48,8 @@ public:
 
 
     virtual FX_DWORD	GetAvailInput(void* pContext, FX_LPBYTE* avail_buf_ptr = NULL) = 0;
+
+protected:
+    ~IFX_JpegProvider() { }
 };
 #endif

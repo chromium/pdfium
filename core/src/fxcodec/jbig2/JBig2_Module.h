@@ -10,6 +10,7 @@
 class CJBig2_Module
 {
 public:
+    virtual ~CJBig2_Module() { }
 
     virtual void *JBig2_Malloc(FX_DWORD dwSize) = 0;
 

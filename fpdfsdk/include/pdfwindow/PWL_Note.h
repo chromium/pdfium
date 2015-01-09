@@ -27,6 +27,7 @@ class IPopup_Note;
 class IPWL_NoteNotify
 {
 public:
+	virtual ~IPWL_NoteNotify() { }
 	virtual void						OnNoteMove(const FX_RECT& rtWin) = 0;
 	virtual void						OnNoteShow(FX_BOOL bShow) = 0;
 	virtual void						OnNoteActivate(FX_BOOL bActive) = 0;
@@ -45,12 +46,14 @@ public:
 class IPWL_NoteHandler
 {
 public:
+	virtual ~IPWL_NoteHandler() { }
 	virtual void						OnNoteColorChanged(const CPWL_Color& color) = 0;
 };
 
 class IPWL_NoteItem
 {
 public:
+	virtual ~IPWL_NoteItem() { }
 	virtual void						SetPrivateData(void* pData) = 0;
 	virtual void						SetBkColor(const CPWL_Color& color) = 0;
 	virtual void						SetSubjectName(const CFX_WideString& sName) = 0;

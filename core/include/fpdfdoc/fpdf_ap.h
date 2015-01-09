@@ -13,9 +13,8 @@
 class IPVT_FontMap
 {
 public:
-
+    virtual ~IPVT_FontMap() { }
     virtual CPDF_Font*						GetPDFFont(FX_INT32 nFontIndex) = 0;
-
     virtual CFX_ByteString					GetPDFFontAlias(FX_INT32 nFontIndex) = 0;
 };
 struct CPVT_Dash {

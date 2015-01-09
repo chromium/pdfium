@@ -6,7 +6,9 @@
 
 #ifndef _FPDF_TAGGED_INT_H_
 #define _FPDF_TAGGED_INT_H_
-class CPDF_StructTreeImpl;
+
+#include "../../include/fpdfdoc/fpdf_tagged.h"
+
 class CPDF_StructElementImpl;
 class CPDF_StructTreeImpl : public CPDF_StructTree
 {
@@ -36,7 +38,6 @@ class CPDF_StructElementImpl FX_FINAL : public CPDF_StructElement
 {
 public:
     CPDF_StructElementImpl(CPDF_StructTreeImpl* pTree, CPDF_StructElementImpl* pParent, CPDF_Dictionary* pDict);
-    ~CPDF_StructElementImpl();
     CPDF_StructTree*		GetTree() const
     {
         return m_pTree;
@@ -79,13 +80,15 @@ public:
     CPDF_StructElementImpl*	Retain();
     void					Release();
 protected:
+    ~CPDF_StructElementImpl();
+
     CPDF_StructTreeImpl*	m_pTree;
     CFX_ByteString			m_Type;
     CPDF_StructElementImpl*	m_pParent;
     CPDF_Dictionary*		m_pDict;
     CFX_ArrayTemplate<CPDF_StructKid>	m_Kids;
-
     int			m_RefCount;
+
     friend class CPDF_StructTreeImpl;
 };
 #endif

@@ -16,6 +16,7 @@ class CPWL_Label;
 class IPWL_IconList_Notify
 {
 public:
+        virtual ~IPWL_IconList_Notify() { }
 	virtual void						OnNoteListSelChanged(FX_INT32 nItemIndex) = 0;
 };
 

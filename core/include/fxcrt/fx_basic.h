@@ -240,7 +240,7 @@ class IFX_BufferArchive
 {
 public:
     IFX_BufferArchive(FX_STRSIZE size);
-
+    virtual ~IFX_BufferArchive() { }
 
     virtual void			Clear();
 
@@ -271,7 +271,7 @@ class CFX_FileBufferArchive : public IFX_BufferArchive, public CFX_Object
 {
 public:
     CFX_FileBufferArchive(FX_STRSIZE size = 32768);
-    ~CFX_FileBufferArchive();
+    ~CFX_FileBufferArchive() override;
     virtual void			Clear();
 
     FX_BOOL					AttachFile(IFX_StreamWrite *pFile, FX_BOOL bTakeover = FALSE);
@@ -1377,7 +1377,7 @@ protected:
 class IFX_Pause
 {
 public:
-
+    virtual ~IFX_Pause() { }
     virtual FX_BOOL	NeedToPauseNow() = 0;
 };
 class CFX_DataFilter : public CFX_Object

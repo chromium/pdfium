@@ -275,6 +275,7 @@ struct CPVT_Section {
 class IPDF_VariableText_Provider
 {
 public:
+    virtual ~IPDF_VariableText_Provider() { }
 
     virtual FX_INT32						GetCharWidth(FX_INT32 nFontIndex, FX_WORD word, FX_INT32 nWordStyle) = 0;
 
@@ -291,6 +292,7 @@ public:
 class IPDF_VariableText_Iterator
 {
 public:
+    virtual ~IPDF_VariableText_Iterator() { }
 
     virtual FX_BOOL							NextWord() = 0;
 
@@ -323,11 +325,9 @@ public:
 class IPDF_VariableText
 {
 public:
-
     static IPDF_VariableText*			NewVariableText();
 
     static void							DelVariableText(IPDF_VariableText* pVT);
-public:
 
     virtual IPDF_VariableText_Provider*		SetProvider(IPDF_VariableText_Provider * pProvider) = 0;
 
@@ -440,5 +440,8 @@ public:
     virtual FX_INT32						WordPlaceToWordIndex(const CPVT_WordPlace & place) const = 0;
 
     virtual CPVT_WordPlace					WordIndexToWordPlace(FX_INT32 index) const = 0;
+
+protected:
+    ~IPDF_VariableText() { }
 };
 #endif

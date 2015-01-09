@@ -14,6 +14,7 @@ class IPWL_SpellCheck;
 class IPWL_Filler_Notify
 {
 public:
+        virtual ~IPWL_Filler_Notify() { }
 	virtual void					QueryWherePopup(void* pPrivateData, FX_FLOAT fPopupMin,FX_FLOAT fPopupMax, 
 										FX_INT32 & nRet, FX_FLOAT & fPopupRet) = 0; //nRet: (0:bottom 1:top)
 	virtual void					OnBeforeKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_INT32 nKeyCode,

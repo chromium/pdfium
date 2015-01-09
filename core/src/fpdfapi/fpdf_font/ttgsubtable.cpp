@@ -446,7 +446,7 @@ IFX_GSUBTable* FXGE_CreateGSUBTable(CFX_Font* pFont)
         if (pGsubTable->m_GsubImp.LoadGSUBTable((FT_Bytes)pFont->m_pGsubData)) {
             return pGsubTable;
         }
-        delete pGsubTable;
+        pGsubTable->Release();
     }
     return NULL;
 }

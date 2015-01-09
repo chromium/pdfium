@@ -402,16 +402,15 @@ protected:
 class IFX_ScanlineComposer
 {
 public:
+    virtual ~IFX_ScanlineComposer() { }
 
     virtual	void		ComposeScanline(int line, FX_LPCBYTE scanline, FX_LPCBYTE scan_extra_alpha = NULL) = 0;
-
 
     virtual FX_BOOL		SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette) = 0;
 };
 class CFX_ScanlineCompositor : public CFX_Object
 {
 public:
-
     CFX_ScanlineCompositor();
 
     ~CFX_ScanlineCompositor();
