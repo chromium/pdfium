@@ -217,26 +217,28 @@ typedef int (*AI_COMPARE) (CPDFSDK_Annot* p1, CPDFSDK_Annot* p2);
 
 class CPDFSDK_AnnotIterator
 {
-protected:
-	CPDFSDK_Annot*	NextAnnot (const CPDFSDK_Annot* pCurrent) ;
-	CPDFSDK_Annot*	PrevAnnot (const CPDFSDK_Annot* pCurrent) ;	
-	CPDFSDK_Annot*	NextAnnot(int& index ) ;
-	CPDFSDK_Annot*	PrevAnnot(int& index ) ;
 public:
     CPDFSDK_AnnotIterator(CPDFSDK_PageView * pPageView, FX_BOOL bReverse,
-		FX_BOOL bIgnoreTopmost=FALSE,FX_BOOL bCircle=FALSE,CFX_PtrArray* pList=NULL);	
+		FX_BOOL bIgnoreTopmost=FALSE,FX_BOOL bCircle=FALSE,CFX_PtrArray* pList=NULL);
+    virtual ~CPDFSDK_AnnotIterator() { }
+
 	virtual CPDFSDK_Annot*	Next (const CPDFSDK_Annot* pCurrent) ;
 	virtual CPDFSDK_Annot*	Prev (const CPDFSDK_Annot* pCurrent) ;	
 	virtual CPDFSDK_Annot*	Next(int& index ) ;
 	virtual CPDFSDK_Annot*	Prev(int& index ) ;
 	virtual int             Count(){return m_pIteratorAnnotList.GetSize();}
-	
+
 	virtual FX_BOOL         InitIteratorAnnotList(CPDFSDK_PageView * pPageView,CFX_PtrArray* pList=NULL);
-	
+
 	void					InsertSort(CFX_PtrArray &arrayList, AI_COMPARE pCompare);
+
 protected:
-	//	CFX_PtrList			 m_pIteratorAnnotList; 
-	CFX_PtrArray	     m_pIteratorAnnotList;	
+	CPDFSDK_Annot*	NextAnnot (const CPDFSDK_Annot* pCurrent) ;
+	CPDFSDK_Annot*	PrevAnnot (const CPDFSDK_Annot* pCurrent) ;
+	CPDFSDK_Annot*	NextAnnot(int& index ) ;
+	CPDFSDK_Annot*	PrevAnnot(int& index ) ;
+
+	CFX_PtrArray	     m_pIteratorAnnotList;
 	FX_BOOL			     m_bReverse;
 	FX_BOOL              m_bIgnoreTopmost;
 	FX_BOOL              m_bCircle;

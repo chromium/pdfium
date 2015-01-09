@@ -138,7 +138,7 @@ protected:
 class IPDF_BackgroundDraw
 {
 public:
-
+    virtual ~IPDF_BackgroundDraw() { }
     virtual	void	OnDrawBackground(
         CFX_RenderDevice* pBitmapDevice,
         const CFX_AffineMatrix* pOriginal2Bitmap

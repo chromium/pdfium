@@ -637,9 +637,11 @@ public:
 class IFX_PSOutput
 {
 public:
-
-    virtual void	OutputPS(FX_LPCSTR string, int len) = 0;
     virtual void  Release() = 0;
+    virtual void	OutputPS(FX_LPCSTR string, int len) = 0;
+
+protected:
+    ~IFX_PSOutput() { }
 };
 class CPSFont;
 class CFX_PSRenderer : public CFX_Object

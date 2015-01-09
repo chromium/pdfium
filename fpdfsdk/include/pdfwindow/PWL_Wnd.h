@@ -168,6 +168,7 @@ inline FX_BOOL operator != (const CPWL_Color &c1, const CPWL_Color &c2)
 class IPWL_SpellCheck
 {
 public:
+        virtual ~IPWL_SpellCheck() { }
 	virtual FX_BOOL							CheckWord(FX_LPCSTR sWord) = 0;
 	virtual void							SuggestWords(FX_LPCSTR sWord, CFX_ByteStringArray & sSuggest) = 0;	
 };
@@ -175,6 +176,8 @@ public:
 class IPWL_Provider
 {
 public:
+        virtual ~IPWL_Provider() { }
+
 	//get a matrix which map user space to CWnd client space
 	virtual CPDF_Matrix						GetWindowMatrix(void* pAttachedData) = 0;
 
@@ -193,6 +196,7 @@ public:
 class IPWL_FocusHandler
 {
 public:
+        virtual ~IPWL_FocusHandler() { }
 	virtual void							OnSetFocus(CPWL_Wnd* pWnd) = 0;
 	virtual void							OnKillFocus(CPWL_Wnd* pWnd) = 0;
 };

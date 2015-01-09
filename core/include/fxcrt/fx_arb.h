@@ -16,5 +16,8 @@ public:
     virtual FX_BOOL			EndChar() = 0;
     virtual FX_INT32		GetBidiInfo(FX_INT32 &iStart, FX_INT32 &iCount) = 0;
     virtual void			Reset() = 0;
+
+protected:
+    ~IFX_BidiChar() { }
 };
 #endif

@@ -30,6 +30,7 @@ class CPWL_Edit;
 class IPWL_Edit_Notify
 {
 public:
+        virtual ~IPWL_Edit_Notify() { }
 	//when the position of caret is changed in edit
 	virtual void					OnCaretMove(FX_INT32 x1, FX_INT32 y1, FX_INT32 x2, FX_INT32 y2) {}
 	virtual void					OnContentChange(const CPDF_Rect& rcContent){}

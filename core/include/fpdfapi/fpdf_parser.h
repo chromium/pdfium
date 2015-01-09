@@ -49,7 +49,7 @@ class CFX_PrivateData;
 class IPDF_EnumPageHandler
 {
 public:
-
+    virtual ~IPDF_EnumPageHandler() { }
     virtual FX_BOOL EnumPage(CPDF_Dictionary* pPageDict) = 0;
 };
 class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjects
@@ -247,8 +247,7 @@ class CPDF_SyntaxParser : public CFX_Object
 public:
 
     CPDF_SyntaxParser();
-
-    ~CPDF_SyntaxParser();
+    virtual ~CPDF_SyntaxParser();
 
     void				InitParser(IFX_FileRead* pFileAccess, FX_DWORD HeaderOffset);
 
@@ -366,7 +365,7 @@ struct PARSE_CONTEXT {
 class IPDF_DocParser : public CFX_Object
 {
 public:
-
+    virtual ~IPDF_DocParser() { }
     virtual FX_DWORD	GetRootObjNum() = 0;
 
     virtual FX_DWORD	GetInfoObjNum() = 0;
@@ -402,8 +401,7 @@ class CPDF_Parser FX_FINAL : public IPDF_DocParser
 public:
 
     CPDF_Parser();
-
-    ~CPDF_Parser();
+    ~CPDF_Parser() override;
 
     FX_DWORD			StartParse(FX_LPCSTR filename, FX_BOOL bReParse = FALSE);
 
@@ -853,13 +851,13 @@ protected:
 class IFX_FileAvail
 {
 public:
-
+    virtual ~IFX_FileAvail() { }
     virtual FX_BOOL			IsDataAvail( FX_FILESIZE offset, FX_DWORD size) = 0;
 };
 class IFX_DownloadHints
 {
 public:
-
+    virtual ~IFX_DownloadHints() { }
     virtual void			AddSegment(FX_FILESIZE offset, FX_DWORD size) = 0;
 };
 #define PDF_IS_LINEARIZED			1
@@ -871,12 +869,11 @@ public:
 class IPDF_DataAvail
 {
 public:
+    virtual ~IPDF_DataAvail() { }
 
     virtual FX_BOOL			IsDocAvail(IFX_DownloadHints* pHints) = 0;
 
-
     virtual void			SetDocument(CPDF_Document* pDoc) = 0;
-
 
     virtual FX_BOOL			IsPageAvail(int iPage, IFX_DownloadHints* pHints) = 0;
 

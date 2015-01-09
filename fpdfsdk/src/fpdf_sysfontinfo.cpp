@@ -75,6 +75,9 @@ public:
 		if (m_pInfo->DeleteFont)
 			m_pInfo->DeleteFont(m_pInfo, hFont);
 	}
+
+private:
+        ~CSysFontInfo_Ext() { }
 };
 
 DLLEXPORT void STDCALL FPDF_AddInstalledFont(void* mapper, const char* name, int charset)

@@ -243,6 +243,7 @@ public:
 class IFX_FontEnumerator
 {
 public:
+    virtual ~IFX_FontEnumerator() { }
 
     virtual void		HitFont() = 0;
 
@@ -251,6 +252,7 @@ public:
 class IFX_AdditionalFontEnum
 {
 public:
+    virtual ~IFX_AdditionalFontEnum() { }
     virtual int  CountFiles() = 0;
     virtual IFX_FileStream* GetFontFile(int index) = 0;
 };
@@ -296,6 +298,7 @@ class IFX_SystemFontInfo : public CFX_Object
 public:
     static IFX_SystemFontInfo*	CreateDefault();
     virtual void		Release() = 0;
+
     virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper) = 0;
     virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR face, FX_BOOL& bExact) = 0;
     virtual void*		GetFont(FX_LPCSTR face) = 0;
@@ -311,6 +314,8 @@ public:
     {
         return NULL;
     }
+protected:
+    ~IFX_SystemFontInfo() { }
 };
 class CFX_FolderFontInfo : public IFX_SystemFontInfo
 {
@@ -423,6 +428,9 @@ class IFX_GSUBTable
 public:
     virtual void	Release() = 0;
     virtual FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) = 0;
+
+protected:
+     ~IFX_GSUBTable() { }
 };
 IFX_GSUBTable* FXGE_CreateGSUBTable(CFX_Font* pFont);
 #endif

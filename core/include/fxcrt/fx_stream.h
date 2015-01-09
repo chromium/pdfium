@@ -65,7 +65,7 @@ FX_BOOL		FX_File_Move(FX_WSTR fileNameSrc, FX_WSTR fileNameDst);
 class IFX_StreamWrite
 {
 public:
-
+    virtual ~IFX_StreamWrite() { }
     virtual void		Release() = 0;
 
     virtual	FX_BOOL		WriteBlock(const void* pData, size_t size) = 0;
@@ -91,6 +91,7 @@ IFX_FileWrite* FX_CreateFileWrite(FX_LPCWSTR filename);
 class IFX_StreamRead
 {
 public:
+    virtual ~IFX_StreamRead() { }
 
     virtual void			Release() = 0;
 
@@ -103,7 +104,6 @@ public:
 class IFX_FileRead : IFX_StreamRead
 {
 public:
-
     virtual void			Release() = 0;
 
     virtual FX_FILESIZE		GetSize() = 0;

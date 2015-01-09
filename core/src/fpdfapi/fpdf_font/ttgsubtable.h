@@ -414,6 +414,11 @@ public:
         delete this;
     }
     virtual FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) FX_OVERRIDE;
+
     CFX_CTTGSUBTable m_GsubImp;
+
+private:
+    ~CFX_GSUBTable() { }
 };
 #endif
+

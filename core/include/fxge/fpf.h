@@ -12,6 +12,7 @@ class IFPF_Font;
 class IFPF_DeviceModule
 {
 public:
+    virtual ~IFPF_DeviceModule() { }
     virtual void				Destroy() = 0;
     virtual IFPF_FontMgr*		GetFontMgr() = 0;
 };
@@ -41,10 +42,14 @@ public:
     virtual FX_INT32		GetHeight() const = 0;
     virtual FX_INT32		GetItalicAngle() const = 0;
     virtual FX_DWORD		GetFontData(FX_DWORD dwTable, FX_LPBYTE pBuffer, FX_DWORD dwSize) = 0;
+
+protected:
+    ~IFPF_Font() { }
 };
 class IFPF_FontMgr
 {
 public:
+    virtual ~IFPF_FontMgr() { }
     virtual void			LoadSystemFonts() = 0;
     virtual void			LoadPrivateFont(IFX_FileRead* pFontFile) = 0;
     virtual void			LoadPrivateFont(FX_BSTR bsFileName) = 0;

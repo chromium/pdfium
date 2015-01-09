@@ -68,6 +68,7 @@ struct CPDF_StructKid {
 class CPDF_StructElement : public CFX_Object
 {
 public:
+    virtual ~CPDF_StructElement() { }
 
     virtual CPDF_StructTree*	GetTree() const = 0;
 

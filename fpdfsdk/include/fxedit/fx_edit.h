@@ -44,6 +44,7 @@ class IFX_SystemHandler;
 class IFX_Edit_FontMap
 {
 public:
+        virtual ~IFX_Edit_FontMap() { }
 	//map a fontindex to pdf font.
 	virtual CPDF_Font *						GetPDFFont(FX_INT32 nFontIndex) = 0;
 	//get the alias of a pdf font.
@@ -58,8 +59,8 @@ public:
 
 class IFX_Edit_Notify
 {
-	//this class is implemented by user
 public:
+        virtual ~IFX_Edit_Notify() { }
 	//set the horizontal scrollbar information.
 	virtual void							IOnSetScrollInfoX(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax, 
 												FX_FLOAT fContentMin, FX_FLOAT fContentMax, 
@@ -84,8 +85,9 @@ public:
 
 class IFX_Edit_OprNotify
 {
-	//this class is implemented by user
 public:
+        virtual ~IFX_Edit_OprNotify() { }
+
 	//OprType: 0
 	virtual void							OnInsertWord(const CPVT_WordPlace& place, const CPVT_WordPlace& oldplace) = 0;
 	//OprType: 1
@@ -143,10 +145,13 @@ public:
 class IFX_Edit_UndoItem
 {
 public:
+	virtual void							Release() = 0;
 	virtual void							Undo() = 0;
 	virtual void							Redo() = 0;
 	virtual CFX_WideString					GetUndoTitle() = 0;
-	virtual void							Release() = 0;
+
+protected:
+        ~IFX_Edit_UndoItem() { }
 };
 
 class FXET_CLASS IFX_Edit
@@ -155,8 +160,7 @@ public:
 	static IFX_Edit*						NewEdit();
 	static	void							DelEdit(IFX_Edit* pEdit);
 
-public:
-	//set a IFX_Edit_FontMap pointer implemented by user.
+        //set a IFX_Edit_FontMap pointer implemented by user.
 	virtual void							SetFontMap(IFX_Edit_FontMap* pFontMap) = 0;
 	//if user don't like to use FontMap, implement VTProvider and set it directly.
 	virtual void							SetVTProvider(IPDF_VariableText_Provider* pProvider) = 0;
@@ -371,7 +375,6 @@ public:
 
 	virtual void							AddUndoItem(IFX_Edit_UndoItem* pUndoItem) = 0;
 
-public:
 	static CFX_ByteString					GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset, 
 													const CPVT_WordRange* pRange = NULL, 
 													FX_BOOL bContinuous = TRUE, FX_WORD SubWord = 0);
@@ -388,12 +391,15 @@ public:
 													const CPDF_Point& ptOffset, const CPVT_WordRange* pRange, CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
 	static void								GenerateUnderlineObjects(CPDF_PageObjects* pPageObjects, IFX_Edit* pEdit,
 													const CPDF_Point& ptOffset, const CPVT_WordRange* pRange, FX_COLORREF color);
+
+protected:
+    ~IFX_Edit() { }
 };
 
 class IFX_List_Notify
 {
-	//this class is implemented by user
 public:
+        virtual ~IFX_List_Notify() { }
 	//set the horizontal scrollbar information.
 	virtual void							IOnSetScrollInfoX(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax, 
 												FX_FLOAT fContentMin, FX_FLOAT fContentMax, 
@@ -416,7 +422,6 @@ public:
 	static IFX_List*						NewList();
 	static void								DelList(IFX_List* pList);
 
-public:
 	virtual void							SetFontMap(IFX_Edit_FontMap * pFontMap) = 0;
 	virtual void							SetNotify(IFX_List_Notify * pNotify) = 0;
 
@@ -465,7 +470,10 @@ public:
 	virtual void							OnVK_END(FX_BOOL bShift,FX_BOOL bCtrl) = 0;
 	virtual void							OnVK(FX_INT32 nItemIndex,FX_BOOL bShift,FX_BOOL bCtrl) = 0;
 	virtual FX_BOOL							OnChar(FX_WORD nChar,FX_BOOL bShift,FX_BOOL bCtrl) = 0;
+
+protected:
+        ~IFX_List() { }
 };
 
-#endif 
+#endif
 

@@ -11,13 +11,13 @@ namespace v8 {
 class Platform;
 }
 
-class IFXJS_Context  
+class IFXJS_Context
 {
 public:
+        virtual ~IFXJS_Context() { }
 	virtual FX_BOOL				Compile(const CFX_WideString& script, CFX_WideString& info) = 0;
 	virtual FX_BOOL				RunScript(const CFX_WideString& script, CFX_WideString& info) = 0;
 
-public:
 	virtual void				OnApp_Init() = 0;
 
 	virtual void				OnDoc_Open(CPDFSDK_Document* pDoc, const CFX_WideString& strTargetName) = 0;
@@ -31,7 +31,7 @@ public:
 	virtual void				OnPage_Close(CPDFSDK_Document* pTarget) = 0;
 	virtual void				OnPage_InView(CPDFSDK_Document* pTarget) = 0;
 	virtual void				OnPage_OutView(CPDFSDK_Document* pTarget) = 0;
-	
+
 	virtual void				OnField_MouseDown(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField* pTarget) = 0;
 	virtual void				OnField_MouseEnter(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField* pTarget) = 0;
 	virtual void				OnField_MouseExit(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField* pTarget) = 0;
@@ -88,6 +88,9 @@ public:
 	virtual void				Exit() = 0;
 	virtual void				Enter() = 0;
 	virtual FX_BOOL				IsEntered() = 0;
+
+protected:
+         ~IFXJS_Runtime() { }
 };
 
 class CPDFDoc_Environment;
