@@ -11,6 +11,11 @@ group("third_party") {
 }
 
 static_library("bigint") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+      "//third_party/pdfium:pdfium_config",
+      "//build/config/compiler:no_chromium_code",
+  ]
   sources = [
     "bigint/BigInteger.hh",
     "bigint/BigIntegerLibrary.hh",
@@ -26,11 +31,10 @@ static_library("bigint") {
 }
 
 static_library("freetype") {
-  defines = [
-    "FT2_BUILD_LIBRARY",
-  ]
-  include_dirs = [
-    "freetype/include",
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+      "//third_party/pdfium:pdfium_config",
+      "//build/config/compiler:no_chromium_code",
   ]
   sources = [
     "freetype/include/freetype.h",
@@ -65,6 +69,11 @@ static_library("freetype") {
 }
 
 component("safemath") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+      "//third_party/pdfium:pdfium_config",
+      "//build/config/compiler:no_chromium_code",
+  ]
   sources = [
     "logging.h",
     "macros.h",
