@@ -217,9 +217,11 @@ CPDF_StructElementImpl::CPDF_StructElementImpl(CPDF_StructTreeImpl* pTree, CPDF_
     m_pTree = pTree;
     m_pDict = pDict;
     m_Type = pDict->GetString(FX_BSTRC("S"));
-    CFX_ByteString mapped = pTree->m_pRoleMap->GetString(m_Type);
-    if (!mapped.IsEmpty()) {
-        m_Type = mapped;
+    if (pTree->m_pRoleMap) {
+        CFX_ByteString mapped = pTree->m_pRoleMap->GetString(m_Type);
+        if (!mapped.IsEmpty()) {
+            m_Type = mapped;
+        }
     }
     m_pParent = pParent;
     LoadKids(pDict);
