@@ -3958,7 +3958,7 @@ void CXFA_FM2JSContext::EncodeURL (FX_BSTR szURLString,  CFX_ByteTextBuf &szResu
     FX_WCHAR strUnsafe[] = { ' ', '<', '>', '"', '#', '%', '{', '}', '|', '\\', '^', '~', '[', ']', '`' };
     FX_WCHAR strReserved[] = {';', '/', '?', ':', '@', '=', '&'};
     FX_WCHAR strSpecial[] = {'$', '-', '+', '!', '*', '\'', '(', ')', ','};
-    FX_WCHAR* strCode = L"0123456789abcdef";
+    const FX_LPCWSTR strCode = L"0123456789abcdef";
     for (FX_INT32 u = 0; u < iLength; ++u) {
         ch = wsURLString.GetAt(u);
         FX_INT32 i = 0;
@@ -4128,7 +4128,7 @@ void CXFA_FM2JSContext::EncodeXML (FX_BSTR szXMLString,  CFX_ByteTextBuf &szResu
         L"lt",
         L"gt"
     };
-    FX_WCHAR* strCode = L"0123456789abcdef";
+    const FX_LPCWSTR strCode = L"0123456789abcdef";
     FX_WCHAR ch = 0;
     FX_INT32 iLength = wsXMLString.GetLength();
     FX_INT32 iIndex = 0;
