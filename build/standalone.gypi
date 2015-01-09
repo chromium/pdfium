@@ -150,9 +150,9 @@
       '-pthread',
       '-fno-exceptions',
       '-fvisibility=hidden',
-      '-std=gnu++0x',
     ],
     'cflags_cc': [
+      '-std=gnu++0x',
       '-Wnon-virtual-dtor',
       '-fno-rtti',
     ],
