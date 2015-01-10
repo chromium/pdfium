@@ -905,7 +905,7 @@
         'testing/fx_string_testhelpers.h',
         'testing/fx_string_testhelpers.cpp',
         'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
-        'xfa/src/fxbarcode/src/BC_PDF417HighLevelEncoder_unittest.cpp',
+        'xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
       ],
     },
   ],
