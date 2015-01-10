@@ -6,13 +6,12 @@
 
 #ifndef _BC_PDF417HIGHLEVELENCODER_H_
 #define _BC_PDF417HIGHLEVELENCODER_H_
-class CBC_Compaction;
-class CBC_PDF417HighLevelEncoder;
+
+#include "BC_PDF417Compaction.h"
+
 class CBC_PDF417HighLevelEncoder : public CFX_Object
 {
 public:
-    CBC_PDF417HighLevelEncoder();
-    virtual ~CBC_PDF417HighLevelEncoder();
     static CFX_WideString encodeHighLevel(CFX_WideString msg, Compaction compaction, FX_INT32 &e);
     static void Inverse();
     static void Initialize();
@@ -31,7 +30,6 @@ private:
     static FX_BYTE TEXT_PUNCTUATION_RAW[];
     static FX_INT32 MIXED[128];
     static FX_INT32 PUNCTUATION[128];
-    static CFX_ByteArray* getBytesForMessage(CFX_WideString msg);
     static FX_INT32 encodeText(CFX_WideString msg, FX_INT32 startpos, FX_INT32 count, CFX_WideString &sb, FX_INT32 initialSubmode);
     static void encodeBinary(CFX_ByteArray* bytes, FX_INT32 startpos, FX_INT32 count, FX_INT32 startmode, CFX_WideString &sb);
     static void encodeNumeric(CFX_WideString msg, FX_INT32 startpos, FX_INT32 count, CFX_WideString &sb);
@@ -44,5 +42,13 @@ private:
     static FX_INT32 determineConsecutiveDigitCount(CFX_WideString msg, FX_INT32 startpos);
     static FX_INT32 determineConsecutiveTextCount(CFX_WideString msg, FX_INT32 startpos);
     static FX_INT32 determineConsecutiveBinaryCount(CFX_WideString msg, CFX_ByteArray* bytes, FX_INT32 startpos, FX_INT32 &e);
+
+    friend class PDF417HighLevelEncoder_EncodeNumeric_Test;
+    friend class PDF417HighLevelEncoder_EncodeBinary_Test;
+    friend class PDF417HighLevelEncoder_EncodeText_Test;
+    friend class PDF417HighLevelEncoder_ConsecutiveDigitCount_Test;
+    friend class PDF417HighLevelEncoder_ConsecutiveTextCount_Test;
+    friend class PDF417HighLevelEncoder_ConsecutiveBinaryCount_Test;
 };
+
 #endif

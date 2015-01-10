@@ -52,12 +52,6 @@ void CBC_PDF417HighLevelEncoder::Initialize()
 void CBC_PDF417HighLevelEncoder::Finalize()
 {
 }
-CBC_PDF417HighLevelEncoder::CBC_PDF417HighLevelEncoder()
-{
-}
-CBC_PDF417HighLevelEncoder::~CBC_PDF417HighLevelEncoder()
-{
-}
 CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(CFX_WideString wideMsg, Compaction compaction, FX_INT32 &e)
 {
     CFX_ByteString bytes;
@@ -149,16 +143,6 @@ void CBC_PDF417HighLevelEncoder::Inverse()
             PUNCTUATION[b] = i;
         }
     }
-}
-CFX_ByteArray* CBC_PDF417HighLevelEncoder::getBytesForMessage(CFX_WideString msg)
-{
-    CFX_ByteString bytestring;
-    CBC_UtilCodingConvert::UnicodeToUTF8(msg, bytestring);
-    CFX_ByteArray* bytearray = FX_NEW CFX_ByteArray;
-    for (FX_INT32 i = 0; i < bytestring.GetLength(); i++) {
-        bytearray->Add(bytestring.GetAt(i));
-    }
-    return bytearray;
 }
 FX_INT32 CBC_PDF417HighLevelEncoder::encodeText(CFX_WideString msg, FX_INT32 startpos, FX_INT32 count, CFX_WideString &sb, FX_INT32 initialSubmode)
 {

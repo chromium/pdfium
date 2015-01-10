@@ -1546,6 +1546,7 @@ test("pdfium_unittests") {
     "core/src/fxcrt/fx_basic_bstring_unittest.cpp",
     "testing/fx_string_testhelpers.cpp",
     "testing/fx_string_testhelpers.h",
+    "xfa/src/fxbarcode/src/BC_PDF417HighLevelEncoder_unittest.cpp",
   ]
   deps = [
     "//testing/gtest",
