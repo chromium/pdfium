@@ -789,14 +789,79 @@ DLLEXPORT FPDF_DUPLEXTYPE STDCALL FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT documen
     return DuplexUndefined;
 }
 
+DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document)
+{
+    if (!document) return 0;
+    CPDF_Document* pDoc = (CPDF_Document*)document;
+
+    CPDF_Dictionary* pRoot = pDoc->GetRoot();
+    if (!pRoot) return 0;
+
+    CPDF_NameTree nameTree(pDoc, FX_BSTRC("Dests"));
+    int count = nameTree.GetCount();
+    CPDF_Dictionary* pDest = pRoot->GetDict(FX_BSTRC("Dests"));
+    if (pDest)
+        count += pDest->GetCount();
+    return count;
+}
+
 DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,FPDF_BYTESTRING name)
 {
-	if (document == NULL)
+	if (!document)
 		return NULL;
-	if (name == NULL || name[0] == 0) 
+	if (!name || name[0] == 0) 
 		return NULL;
 
 	CPDF_Document* pDoc = (CPDF_Document*)document;
 	CPDF_NameTree name_tree(pDoc, FX_BSTRC("Dests"));
 	return name_tree.LookupNamedDest(pDoc, name);
+}
+
+DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, unsigned long& buflen)
+{
+    if (!buffer)
+        buflen = 0;
+    if (!document || index < 0) return NULL;
+    CPDF_Document* pDoc = (CPDF_Document*)document;
+
+    CPDF_Dictionary* pRoot = pDoc->GetRoot();
+    if (!pRoot) return NULL;
+
+    CPDF_Object* pDestObj = NULL;
+    CFX_ByteString bsName;
+    CPDF_NameTree nameTree(pDoc, FX_BSTRC("Dests"));
+    int count = nameTree.GetCount();
+    if (index >= count) {
+        CPDF_Dictionary* pDest = pRoot->GetDict(FX_BSTRC("Dests"));
+        if (!pDest) return NULL;
+        if (index >= count + pDest->GetCount()) return NULL;
+        index -= count;
+        FX_POSITION pos = pDest->GetStartPos();
+        int i = 0;
+        while (pos) {
+            pDestObj = pDest->GetNextElement(pos, bsName);
+            if (!pDestObj) continue;
+            if (i == index) break;
+            i++;
+        }
+    } else {
+        pDestObj = nameTree.LookupValue(index, bsName);
+    }
+    if (!pDestObj) return NULL;
+    if (pDestObj->GetType() == PDFOBJ_DICTIONARY)
+        pDestObj = ((CPDF_Dictionary*)pDestObj)->GetArray(FX_BSTRC("D"));
+    if (pDestObj->GetType() != PDFOBJ_ARRAY) return NULL;
+    CFX_WideString wsName = PDF_DecodeText(bsName);
+    CFX_ByteString utf16Name = wsName.UTF16LE_Encode();
+    unsigned int len = utf16Name.GetLength();
+    if (!buffer) {
+        buflen = len + 2;
+    } else if (buflen >= len + 2) {
+        memcpy(buffer, utf16Name.c_str(), len);
+        ((FX_BYTE*)buffer)[len] = 0;
+        ((FX_BYTE*)buffer)[len + 1] = 0;
+    } else {
+        len = -1;
+    }
+    return (FPDF_DEST)pDestObj;
 }

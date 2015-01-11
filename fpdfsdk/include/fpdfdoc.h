@@ -14,6 +14,45 @@
 extern "C" {
 #endif
 
+// Function: FPDFBookmark_GetFirstChild
+//			Get the first child of a bookmark item, or the first top level bookmark item.
+// Parameters:
+//			document	-	Handle to the document. Returned by FPDF_LoadDocument or FPDF_LoadMemDocument.
+//			bookmark	-	Handle to the current bookmark. Can be NULL if you want to get the first top level item.
+// Return value:
+//			Handle to the first child or top level bookmark item. NULL if no child or top level bookmark found.
+//
+DLLEXPORT FPDF_BOOKMARK STDCALL FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark);
+
+// Function: FPDFBookmark_GetNextSibling
+//			Get next bookmark item at the same level.
+// Parameters:
+//			document	-	Handle to the document. Returned by FPDF_LoadDocument or FPDF_LoadMemDocument.
+//			bookmark	-	Handle to the current bookmark. Cannot be NULL.
+// Return value:
+//			Handle to the next bookmark item at the same level. NULL if this is the last bookmark at this level.
+//
+DLLEXPORT FPDF_BOOKMARK STDCALL FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark);
+
+// Function: FPDFBookmark_GetTitle
+//			Get title of a bookmark.
+// Parameters:
+//			bookmark	-	Handle to the bookmark.
+//			buffer  	-	Buffer for the title. Can be NULL.
+//          buflen      -   The length of the buffer in bytes. Can be 0.
+// Return value:
+//			Number of bytes the title consumes, including trailing zeros.
+// Comments:
+//			Regardless of the platform, the title is always in UTF-16LE encoding. That means the buffer
+//          can be treated as an array of WORD (on Intel and compatible CPUs), each WORD representing the Unicode of
+//          a character(some special Unicode may take 2 WORDs).The string is followed by two bytes of zero
+//          indicating the end of the string.
+//
+//          The return value always indicates the number of bytes required for the buffer, even if no buffer is specified
+//          or the buffer size is less then required. In these cases, the buffer will not be modified.
+//
+DLLEXPORT unsigned long STDCALL FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark, void* buffer, unsigned long buflen);
+
 // Function: FPDFBookmark_Find
 //			Find a bookmark in the document, using the bookmark title.
 // Parameters: 
