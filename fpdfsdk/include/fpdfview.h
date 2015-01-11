@@ -720,6 +720,14 @@ DLLEXPORT FPDF_PAGERANGE STDCALL FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT 
 //
 DLLEXPORT FPDF_DUPLEXTYPE STDCALL FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document);
 
+// Function: FPDF_CountNamedDests
+//			Get the count of named destinations in the PDF document.
+// Parameters:
+//			document	-	Handle to a document
+// Return value:
+//			The count of named destinations.
+DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document);
+
 // Function: FPDF_GetNamedDestByName
 //			get a special dest handle by the index.
 // Parameters: 
@@ -729,6 +737,23 @@ DLLEXPORT FPDF_DUPLEXTYPE STDCALL FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT documen
 //			The handle of the dest.
 //
 DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,FPDF_BYTESTRING name);
+
+// Function: FPDF_GetNamedDest
+//			Get the specified named destinations of the PDF document by index.
+// Parameters:
+//			document	-	Handle to a document
+//			index		-	The index of named destination.
+//			buffer		-	The buffer to obtain destination name, used as wchar_t*.
+//			buflen		-	The length of the buffer in byte.
+// Return value:
+//			The destination handle of a named destination, NULL when retrieving the length.
+// Comments:
+//			Call this function twice to get the name of the named destination:
+//			1) First time pass in |buffer| as NULL and get buflen.
+//			2) Second time pass in allocated |buffer| and buflen to retrieve |buffer|, which should be used as wchar_t*.
+//			   If buflen is not sufficiently large, it will be returned as -1.
+//
+DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, unsigned long& buflen);
 
 // Function: FPDF_BStr_Init	
 //			Helper function to initialize a byte string.
