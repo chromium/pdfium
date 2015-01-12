@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/include/fxcrt/fx_basic.h"
-#include "BC_PDF417HighLevelEncoder.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/fx_string_testhelpers.h"
+#include "../../../../core/include/fxcrt/fx_basic.h"
+#include "../../../../testing/fx_string_testhelpers.h"
+#include "BC_PDF417HighLevelEncoder.h"
 
 TEST(PDF417HighLevelEncoder, EncodeHighLevel) {
   // TODO(tsepez): implement test cases.
