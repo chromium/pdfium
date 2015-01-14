@@ -105,7 +105,7 @@ static bool GetExternalData(const Options& options,
     return false;
   }
   result_data->data = const_cast<const char*>(data_buffer);
-  result_data->raw_size = data_length;
+  result_data->raw_size = static_cast<int>(data_length);
   return true;
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
