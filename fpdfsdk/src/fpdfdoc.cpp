@@ -137,6 +137,8 @@ DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page, double x, do
 	if (!page)
 		return NULL;
     CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+	if (!pPage)
+		return NULL;
 	// Link list is stored with the document
 	CPDF_Document* pDoc = pPage->m_pDocument;
 	CPDF_LinkList* pLinkList = (CPDF_LinkList*)pDoc->GetPrivateData(&THISMODULE);
