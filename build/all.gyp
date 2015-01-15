@@ -8,6 +8,7 @@
       'target_name': 'All',
       'type': 'none',
       'dependencies': [
+        '../pdfium.gyp:*',
         '../samples/samples.gyp:*',
       ],
     }
