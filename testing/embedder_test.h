@@ -14,6 +14,8 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "v8/include/v8.h"
 
+class TestLoader;
+
 // This class is used to load a PDF document, and then run programatic
 // API tests against it.
 class EmbedderTest : public ::testing::Test {
@@ -21,6 +23,7 @@ class EmbedderTest : public ::testing::Test {
   EmbedderTest() :
       document_(nullptr),
       avail_(nullptr),
+      loader_(nullptr),
       file_length_(0),
       file_contents_(nullptr) {
     memset(&hints_, 0, sizeof(hints_));
@@ -70,6 +73,7 @@ class EmbedderTest : public ::testing::Test {
   FX_FILEAVAIL file_avail_;
   v8::StartupData natives_;
   v8::StartupData snapshot_;
+  TestLoader* loader_;
   size_t file_length_;
   char* file_contents_;
 };

@@ -838,7 +838,7 @@
         '<(DEPTH)'
       ],
       'sources': [
-        'testing/basic_embeddertest.cpp',
+        'fpdfsdk/src/fpdfview_embeddertest.cpp',
         'testing/embedder_test.cpp',
         'testing/embedder_test.h',
         'testing/fx_string_testhelpers.cpp',

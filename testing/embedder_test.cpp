@@ -195,6 +195,9 @@ void EmbedderTest::SetUp() {
 void EmbedderTest::TearDown() {
   FPDF_CloseDocument(document_);
   FPDFAvail_Destroy(avail_);
+  if (loader_) {
+    delete loader_;
+  }
   if (file_contents_) {
     free(file_contents_);
   }
@@ -206,11 +209,10 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
     return false;
   }
 
-  TestLoader loader(file_contents_, file_length_);
-
+  loader_ = new TestLoader(file_contents_, file_length_);
   file_access_.m_FileLen = static_cast<unsigned long>(file_length_);
   file_access_.m_GetBlock = Get_Block;
-  file_access_.m_Param = &loader;
+  file_access_.m_Param = loader_;
 
   file_avail_.version = 1;
   file_avail_.IsDataAvail = Is_Data_Avail;
