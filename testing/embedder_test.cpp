@@ -195,6 +195,7 @@ void EmbedderTest::SetUp() {
 void EmbedderTest::TearDown() {
   FPDF_CloseDocument(document_);
   FPDFAvail_Destroy(avail_);
+  FPDF_DestroyLibrary();
   if (loader_) {
     delete loader_;
   }
