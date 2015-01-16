@@ -826,5 +826,24 @@
         'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
       ],
     },
+    {
+      'target_name': 'pdfium_embeddertests',
+      'type': 'executable',
+      'dependencies': [
+        '<(DEPTH)/testing/gtest.gyp:gtest_main',
+        '<(DEPTH)/testing/gtest.gyp:gtest',
+        'pdfium',
+      ],
+      'include_dirs': [
+        '<(DEPTH)'
+      ],
+      'sources': [
+        'testing/basic_embeddertest.cpp',
+        'testing/embedder_test.cpp',
+        'testing/embedder_test.h',
+        'testing/fx_string_testhelpers.cpp',
+        'testing/fx_string_testhelpers.h',
+      ],
+    },
   ],
 }
