@@ -28,7 +28,7 @@ CFWL_AppImp::CFWL_AppImp(IFWL_AdapterNative *pAdapter)
 }
 CFWL_AppImp::~CFWL_AppImp()
 {
-    delete CFWL_ToolTipContainer::getInstance();
+    CFWL_ToolTipContainer::DeleteInstance();
     if (m_bFuelAdapter) {
         FWL_ReleaseFuelAdapterNative(m_pAdapterNative);
         m_pAdapterNative = NULL;

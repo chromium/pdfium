@@ -938,6 +938,9 @@ FX_BOOL CFWL_EventTarget::IsFilterEvent(CFWL_Event *pEvent, FX_DWORD dwFilter)
     }
     return bRet;
 }
+
+CFWL_ToolTipContainer* CFWL_ToolTipContainer::s_pInstance = NULL;
+
 CFWL_ToolTipContainer::CFWL_ToolTipContainer()
     : pCurTarget(NULL)
     , m_pToolTipImp(NULL)
@@ -959,13 +962,21 @@ CFWL_ToolTipContainer::~CFWL_ToolTipContainer()
         m_ToolTipDp = NULL;
     }
 }
+// static
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::getInstance()
 {
-    static CFWL_ToolTipContainer * _toolTipContainer = NULL;
-    if (!_toolTipContainer) {
-        _toolTipContainer = FX_NEW CFWL_ToolTipContainer;
+    if (!s_pInstance) {
+        s_pInstance = FX_NEW CFWL_ToolTipContainer;
     }
-    return _toolTipContainer;
+    return s_pInstance;
+}
+// static
+void CFWL_ToolTipContainer::DeleteInstance()
+{
+    if (s_pInstance) {
+        delete s_pInstance;
+        s_pInstance = NULL;
+    }
 }
 FX_ERR CFWL_ToolTipContainer::AddToolTipTarget(IFWL_ToolTipTarget *pTarget)
 {

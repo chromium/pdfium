@@ -127,8 +127,8 @@ protected:
 class CFWL_ToolTipContainer: public CFX_Object
 {
 public:
-    virtual ~CFWL_ToolTipContainer();
     static CFWL_ToolTipContainer* getInstance();
+    static void DeleteInstance();
 
     FX_ERR		AddToolTipTarget(IFWL_ToolTipTarget *pTarget);
     FX_ERR		RemoveToolTipTarget(IFWL_ToolTipTarget *pTarget);
@@ -140,13 +140,18 @@ public:
     FX_BOOL ProcessLeave(CFWL_EvtMouse *pEvt);
 
     FX_ERR  SetToolTipInitialDelay(FX_INT32 iDelayTime);
-    FX_ERR	SetToolTipAutoPopDelay(FX_INT32 iDelayTime);
+    FX_ERR  SetToolTipAutoPopDelay(FX_INT32 iDelayTime);
+
 protected:
     CFWL_ToolTipContainer();
+    virtual ~CFWL_ToolTipContainer();
 
     IFWL_ToolTipTarget		*pCurTarget;
     CFWL_ToolTipImp			*m_pToolTipImp;
     CFWL_CoreToopTipDP		*m_ToolTipDp;
     CFX_PtrArray			m_arrWidget;
+
+private:
+    static CFWL_ToolTipContainer* s_pInstance;
 };
 #endif

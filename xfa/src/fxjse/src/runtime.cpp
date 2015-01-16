@@ -14,6 +14,9 @@ static void FXJSE_KillV8()
 }
 void FXJSE_Initialize()
 {
+    if(!CFXJSE_RuntimeData::g_RuntimeList) {
+        CFXJSE_RuntimeData::g_RuntimeList = FX_NEW CFXJSE_RuntimeList;
+    }
     static FX_BOOL bV8Initialized = FALSE;
     if (bV8Initialized) {
         return;
@@ -26,12 +29,9 @@ void FXJSE_Initialize()
         ;
     v8::V8::SetFlagsFromString(szCmdFlags, FXSYS_strlen(szCmdFlags));
     v8::V8::InitializeICU();
-	v8::Platform* platform = v8::platform::CreateDefaultPlatform();
-	v8::V8::InitializePlatform(platform);
+    v8::Platform* platform = v8::platform::CreateDefaultPlatform();
+    v8::V8::InitializePlatform(platform);
     v8::V8::Initialize();
-    if(!CFXJSE_RuntimeData::g_RuntimeList) {
-        CFXJSE_RuntimeData::g_RuntimeList = FX_NEW CFXJSE_RuntimeList;
-    }
 }
 static void FXJSE_Runtime_DisposeCallback(v8::Isolate* pIsolate)
 {
