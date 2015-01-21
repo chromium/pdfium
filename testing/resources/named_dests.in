@@ -1,0 +1,69 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Catalog
+  /Pages 1 0 R
+  /Names <<
+    /Dests 10 0 R
+  >>
+  /Dests 14 0 R
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 1 0 R
+  /Resources <<
+    /ProcSets [/PDF /Text /ImageB /ImageC /ImageI]
+  >>
+  /MediaBox [0 0 612 792]
+  /Contents 5 0 R
+>>
+endobj
+{{object 5 0}} <<
+  /Length 18
+>> stream
+1 0 0 -1 29 763 cm
+endstream
+endobj
+% Root of Dests NameTree
+{{object 10 0}} <<
+  /Kids [
+    11 0 R
+    12 0 R
+  ]
+>>
+endobj
+% Left child for Dests NameTree
+{{object 11 0}} <<
+  /Names [
+    (First) [0 /XYZ 0 0 1]
+    (Next) <</D [4 /Fit]>>
+  ]
+>>
+endobj
+% Right child for Dests NameTree
+{{object 12 0}} <<
+  /Names [
+    (WrongKey)  <</Fail [10 /FitH]>>
+    (WrongType) /NameNotAllowedHere
+  ]
+>>
+endobj
+% Old-style top-level Dests dictionary.
+{{object 14 0}} <<
+  /FirstAlternate [10 /XYZ 200 400 800]
+  /LastAlternate  <</D [14 /XYZ 0 0 -200]>>
+>>
+endobj
+{{xref}}
+trailer <<
+  /Size 6
+  /Root 2 0 R
+>>
+{{startxref}}
+%%EOF
