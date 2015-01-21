@@ -774,7 +774,7 @@ public:
 
     CFX_ByteString			UTF8Encode() const;
 
-    CFX_ByteString			UTF16LE_Encode(FX_BOOL bTerminate = TRUE) const;
+    CFX_ByteString			UTF16LE_Encode() const;
 
     void					ConvertFrom(const CFX_ByteString& str, CFX_CharMap* pCharMap = NULL);
 protected:

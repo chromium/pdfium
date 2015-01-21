@@ -323,25 +323,21 @@ CFX_ByteString CFX_WideString::UTF8Encode() const
 {
     return FX_UTF8Encode(*this);
 }
-CFX_ByteString CFX_WideString::UTF16LE_Encode(FX_BOOL bTerminate) const
+CFX_ByteString CFX_WideString::UTF16LE_Encode() const
 {
     if (m_pData == NULL) {
-        return bTerminate ? CFX_ByteString(FX_BSTRC("\0\0")) : CFX_ByteString();
+        return CFX_ByteString(FX_BSTRC("\0\0"));
     }
     int len = m_pData->m_nDataLength;
     CFX_ByteString result;
-    FX_LPSTR buffer = result.GetBuffer(len * 2 + (bTerminate ? 2 : 0));
+    FX_LPSTR buffer = result.GetBuffer(len * 2 + 2);
     for (int i = 0; i < len; i ++) {
         buffer[i * 2] = m_pData->m_String[i] & 0xff;
         buffer[i * 2 + 1] = m_pData->m_String[i] >> 8;
     }
-    if (bTerminate) {
-        buffer[len * 2] = 0;
-        buffer[len * 2 + 1] = 0;
-        result.ReleaseBuffer(len * 2 + 2);
-    } else {
-        result.ReleaseBuffer(len * 2);
-    }
+    buffer[len * 2] = 0;
+    buffer[len * 2 + 1] = 0;
+    result.ReleaseBuffer(len * 2 + 2);
     return result;
 }
 void CFX_WideString::ConvertFrom(const CFX_ByteString& str, CFX_CharMap* pCharMap)

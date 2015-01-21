@@ -1546,6 +1546,7 @@ static_library("xfa") {
 test("pdfium_unittests") {
   sources = [
     "core/src/fxcrt/fx_basic_bstring_unittest.cpp",
+    "core/src/fxcrt/fx_basic_wstring_unittest.cpp",
     "testing/fx_string_testhelpers.cpp",
     "testing/fx_string_testhelpers.h",
     "xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
