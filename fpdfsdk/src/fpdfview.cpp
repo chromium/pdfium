@@ -1017,7 +1017,7 @@ FPDF_RESULT	FPDF_BStr_Clear(FPDF_BSTR* str)
 	return 0;
 }
 
-DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, unsigned long& buflen)
+DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, long& buflen)
 {
     if (!buffer)
         buflen = 0;
@@ -1059,7 +1059,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index,
     } else if (buflen >= len) {
         memcpy(buffer, utf16Name.c_str(), len);
     } else {
-        len = -1;
+        buflen = -1;
     }
     return (FPDF_DEST)pDestObj;
 }
