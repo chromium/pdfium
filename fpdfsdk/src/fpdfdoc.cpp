@@ -53,14 +53,12 @@ DLLEXPORT unsigned long STDCALL FPDFBookmark_GetTitle(FPDF_BOOKMARK pDict, void*
         return 0;
     CPDF_Bookmark bookmark((CPDF_Dictionary*)pDict);
     CFX_WideString title = bookmark.GetTitle();
-    CFX_ByteString encodedTitle = title.UTF16LE_Encode(FALSE);
+    CFX_ByteString encodedTitle = title.UTF16LE_Encode();
     unsigned long len = encodedTitle.GetLength();
-    if (buffer && buflen >= len + 2) {
+    if (buffer && buflen >= len) {
         FXSYS_memcpy(buffer, encodedTitle.c_str(), len);
-        ((FX_BYTE*)buffer)[len] = 0;
-        ((FX_BYTE*)buffer)[len + 1] = 0;
     }
-    return len + 2;
+    return len;
 }
 
 DLLEXPORT FPDF_BOOKMARK STDCALL FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title)
@@ -292,11 +290,8 @@ DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT doc, FPDF_BYTESTR
 	// Use UTF-16LE encoding
 	CFX_ByteString encodedText = text.UTF16LE_Encode();
 	unsigned long len = encodedText.GetLength();
-	if (buffer && buflen >= len + 2) {
+	if (buffer && buflen >= len) {
 		FXSYS_memcpy(buffer, encodedText.c_str(), len);
-		// use double zero as trailer
-		((FX_BYTE*)buffer)[len] = 0;
-		((FX_BYTE*)buffer)[len + 1] = 0;
 	}
-	return len+2;
+	return len;
 }

@@ -855,11 +855,9 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index,
     CFX_ByteString utf16Name = wsName.UTF16LE_Encode();
     unsigned int len = utf16Name.GetLength();
     if (!buffer) {
-        buflen = len + 2;
-    } else if (buflen >= len + 2) {
+        buflen = len;
+    } else if (buflen >= len) {
         memcpy(buffer, utf16Name.c_str(), len);
-        ((FX_BYTE*)buffer)[len] = 0;
-        ((FX_BYTE*)buffer)[len + 1] = 0;
     } else {
         len = -1;
     }
