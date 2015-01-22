@@ -140,3 +140,40 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   EXPECT_EQ(nullptr, dest);
   EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
 }
+
+TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {
+  EXPECT_TRUE(OpenDocument("testing/resources/named_dests.pdf"));
+
+  // Null pointer returns NULL.
+  FPDF_DEST dest = FPDF_GetNamedDestByName(document(), nullptr);
+  EXPECT_EQ(nullptr, dest);
+
+  // Empty string returns NULL.
+  dest = FPDF_GetNamedDestByName(document(), "");
+  EXPECT_EQ(nullptr, dest);
+
+  // Item from Dests NameTree.
+  dest = FPDF_GetNamedDestByName(document(), "First");
+  EXPECT_NE(nullptr, dest);
+
+  long ignore_len = 0;
+  FPDF_DEST dest_by_index =
+      FPDF_GetNamedDest(document(), 0, nullptr, ignore_len);
+  EXPECT_EQ(dest_by_index, dest);
+
+  // Item from Dests dictionary.
+  dest = FPDF_GetNamedDestByName(document(), "FirstAlternate");
+  EXPECT_NE(nullptr, dest);
+
+  ignore_len = 0;
+  dest_by_index = FPDF_GetNamedDest(document(), 4, nullptr, ignore_len);
+  EXPECT_EQ(dest_by_index, dest);
+
+  // Bad value type for item from Dests NameTree array.
+  dest = FPDF_GetNamedDestByName(document(), "WrongType");
+  EXPECT_EQ(nullptr, dest);
+
+  // No such destination in either Dest NameTree or dictionary.
+  dest = FPDF_GetNamedDestByName(document(), "Bogus");
+  EXPECT_EQ(nullptr, dest);
+}
