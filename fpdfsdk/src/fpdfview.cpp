@@ -1048,8 +1048,10 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index,
         pDestObj = nameTree.LookupValue(index, bsName);
     }
     if (!pDestObj) return NULL;
-    if (pDestObj->GetType() == PDFOBJ_DICTIONARY)
+    if (pDestObj->GetType() == PDFOBJ_DICTIONARY) {
         pDestObj = ((CPDF_Dictionary*)pDestObj)->GetArray(FX_BSTRC("D"));
+        if (!pDestObj) return NULL;
+    }
     if (pDestObj->GetType() != PDFOBJ_ARRAY) return NULL;
     CFX_WideString wsName = PDF_DecodeText(bsName);
     CFX_ByteString utf16Name = wsName.UTF16LE_Encode();
@@ -1058,6 +1060,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index,
         buflen = len;
     } else if (buflen >= len) {
         memcpy(buffer, utf16Name.c_str(), len);
+        buflen = len;
     } else {
         buflen = -1;
     }
