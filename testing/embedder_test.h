@@ -65,7 +65,7 @@ class EmbedderTest : public ::testing::Test {
   // is prohibited after this call is made.
   virtual void UnloadPage(FPDF_PAGE page, FPDF_FORMHANDLE form);
 
- private:
+ protected:
   FPDF_DOCUMENT document_;
   FPDF_AVAIL avail_;
   FX_DOWNLOADHINTS hints_;
