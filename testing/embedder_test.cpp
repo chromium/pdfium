@@ -29,6 +29,8 @@
 
 namespace {
 
+const char* g_exe_path_ = nullptr;
+
 // Reads the entire contents of a file into a newly malloc'd buffer.
 static char* GetFileContents(const char* filename, size_t* retlen) {
   FILE* file = fopen(filename, "rb");
@@ -60,18 +62,13 @@ static char* GetFileContents(const char* filename, size_t* retlen) {
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
 // Returns the full path for an external V8 data file based on either
 // the currect exectuable path or an explicit override.
-static std::string GetFullPathForSnapshotFile(const Options& options,
+static std::string GetFullPathForSnapshotFile(const std::string& exe_path,
                                               const std::string& filename) {
   std::string result;
-  if (!options.bin_directory.empty()) {
-    result = options.bin_directory;
-    if (*options.bin_directory.rbegin() != PATH_SEPARATOR) {
-      result += PATH_SEPARATOR;
-    }
-  } else if (!options.exe_path.empty()) {
-    size_t last_separator = options.exe_path.rfind(PATH_SEPARATOR);
+  if (!exe_path.empty()) {
+    size_t last_separator = exe_path.rfind(PATH_SEPARATOR);
     if (last_separator != std::string::npos)  {
-      result = options.exe_path.substr(0, last_separator + 1);
+      result = exe_path.substr(0, last_separator + 1);
     }
   }
   result += filename;
@@ -80,10 +77,10 @@ static std::string GetFullPathForSnapshotFile(const Options& options,
 
 // Reads an extenal V8 data file from the |options|-indicated location,
 // returing true on success and false on error.
-static bool GetExternalData(const Options& options,
-                            const std::string& bin_filename,
+static bool GetExternalData(const std::string& exe_path,
+                            const std::string& filename,
                             v8::StartupData* result_data) {
-  std::string full_path = GetFullPathForSnapshotFile(options, bin_filename);
+  std::string full_path = GetFullPathForSnapshotFile(exe_path, filename);
   size_t data_length = 0;
   char* data_buffer = GetFileContents(full_path.c_str(), &data_length);
   if (!data_buffer) {
@@ -177,10 +174,10 @@ void EmbedderTest::SetUp() {
     v8::V8::InitializeICU();
 
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-    ASSERT_TRUE(GetExternalData(options, "natives_blob.bin", &natives_));
-    ASSERT_TRUE(GetExternalData(options, "snapshot_blob.bin", &snapshot_));
-    v8::V8::SetNativesDataBlob(&natives);
-    v8::V8::SetSnapshotDataBlob(&snapshot);
+    ASSERT_TRUE(GetExternalData(g_exe_path_, "natives_blob.bin", &natives_));
+    ASSERT_TRUE(GetExternalData(g_exe_path_, "snapshot_blob.bin", &snapshot_));
+    v8::V8::SetNativesDataBlob(&natives_);
+    v8::V8::SetSnapshotDataBlob(&snapshot_);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
     FPDF_InitLibrary();
@@ -303,4 +300,12 @@ void EmbedderTest::UnloadPage(FPDF_PAGE page, FPDF_FORMHANDLE form) {
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, form);
   FPDF_ClosePage(page);
+}
+
+// Can't use gtest-provided main since we need to stash the path to the
+// executable in order to find the external V8 binary data files.
+int main(int argc, char** argv) {
+  g_exe_path_ = argv[0];
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
