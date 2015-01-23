@@ -1560,3 +1560,21 @@ test("pdfium_unittests") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }
+
+test("pdfium_embeddertests") {
+  sources = [
+    "fpdfsdk/src/fpdfdoc_embeddertest.cpp",
+    "fpdfsdk/src/fpdfview_embeddertest.cpp",
+    "testing/embedder_test.cpp",
+    "testing/embedder_test.h",
+    "testing/fx_string_testhelpers.cpp",
+    "testing/fx_string_testhelpers.h",
+  ]
+  deps = [
+    "//testing/gtest",
+    ":pdfium"
+  ]
+  include_dirs = [ "." ]
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+}

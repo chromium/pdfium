@@ -913,7 +913,6 @@
       'target_name': 'pdfium_embeddertests',
       'type': 'executable',
       'dependencies': [
-        '<(DEPTH)/testing/gtest.gyp:gtest_main',
         '<(DEPTH)/testing/gtest.gyp:gtest',
         'pdfium',
       ],
