@@ -2716,10 +2716,208 @@ void CPDF_SyntaxParser::GetBinary(FX_BYTE* buffer, FX_DWORD size)
         }
     }
 }
-CPDF_DataAvail::CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead)
+
+class CPDF_DataAvail FX_FINAL : public CFX_Object, public IPDF_DataAvail
 {
-    m_pFileAvail = pFileAvail;
-    m_pFileRead = pFileRead;
+public:
+    CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead);
+    ~CPDF_DataAvail();
+
+    virtual FX_BOOL                     IsDocAvail(IFX_DownloadHints* pHints)  FX_OVERRIDE;
+
+    virtual void                        SetDocument(CPDF_Document* pDoc)  FX_OVERRIDE;
+
+    virtual FX_BOOL                     IsPageAvail(int iPage, IFX_DownloadHints* pHints)  FX_OVERRIDE;
+
+    virtual FX_INT32                    IsFormAvail(IFX_DownloadHints *pHints)  FX_OVERRIDE;
+
+    virtual FX_INT32                    IsLinearizedPDF()  FX_OVERRIDE;
+
+    virtual FX_BOOL                     IsLinearized()  FX_OVERRIDE
+    {
+        return m_bLinearized;
+    }
+
+    virtual void                        GetLinearizedMainXRefInfo(FX_FILESIZE *pPos, FX_DWORD *pSize)  FX_OVERRIDE;
+protected:
+    FX_DWORD                            GetObjectSize(FX_DWORD objnum, FX_FILESIZE& offset);
+    FX_BOOL                             IsObjectsAvail(CFX_PtrArray& obj_array, FX_BOOL bParsePage, IFX_DownloadHints* pHints, CFX_PtrArray &ret_array);
+    FX_BOOL                             CheckDocStatus(IFX_DownloadHints *pHints);
+    FX_BOOL                             CheckHeader(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckFirstPage(IFX_DownloadHints *pHints);
+    FX_BOOL                             CheckEnd(IFX_DownloadHints *pHints);
+    FX_BOOL                             CheckCrossRef(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckCrossRefItem(IFX_DownloadHints *pHints);
+    FX_BOOL                             CheckTrailer(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckRoot(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckInfo(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckPages(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckPage(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckResources(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckAnnots(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckAcroForm(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckAcroFormSubObject(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckTrailerAppend(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckPageStatus(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckAllCrossRefStream(IFX_DownloadHints *pHints);
+
+    FX_DWORD                            CheckCrossRefStream(IFX_DownloadHints *pHints, FX_FILESIZE &xref_offset);
+    FX_BOOL                             IsLinearizedFile(FX_LPBYTE pData, FX_DWORD dwLen);
+    void                                SetStartOffset(FX_FILESIZE dwOffset);
+    FX_BOOL                             GetNextToken(CFX_ByteString &token);
+    FX_BOOL                             GetNextChar(FX_BYTE &ch);
+    CPDF_Object	*                       ParseIndirectObjectAt(FX_FILESIZE pos, FX_DWORD objnum);
+    CPDF_Object	*                       GetObject(FX_DWORD objnum, IFX_DownloadHints* pHints, FX_BOOL *pExistInFile);
+    FX_BOOL                             GetPageKids(CPDF_Parser *pParser, CPDF_Object *pPages);
+    FX_BOOL                             PreparePageItem();
+    FX_BOOL                             LoadPages(IFX_DownloadHints* pHints);
+    FX_BOOL                             LoadAllXref(IFX_DownloadHints* pHints);
+    FX_BOOL                             LoadAllFile(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckLinearizedData(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckFileResources(IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckPageAnnots(int iPage, IFX_DownloadHints* pHints);
+
+    FX_BOOL                             CheckLinearizedFirstPage(int iPage, IFX_DownloadHints* pHints);
+    FX_BOOL                             HaveResourceAncestor(CPDF_Dictionary *pDict);
+    FX_BOOL                             CheckPage(FX_INT32 iPage, IFX_DownloadHints* pHints);
+    FX_BOOL                             LoadDocPages(IFX_DownloadHints* pHints);
+    FX_BOOL                             LoadDocPage(FX_INT32 iPage, IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckPageNode(CPDF_PageNode &pageNodes, FX_INT32 iPage, FX_INT32 &iCount, IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckUnkownPageNode(FX_DWORD dwPageNo, CPDF_PageNode *pPageNode, IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckArrayPageNode(FX_DWORD dwPageNo, CPDF_PageNode *pPageNode, IFX_DownloadHints* pHints);
+    FX_BOOL                             CheckPageCount(IFX_DownloadHints* pHints);
+    FX_BOOL                             IsFirstCheck(int iPage);
+    void                                ResetFirstCheck(int iPage);
+
+    CPDF_Parser                         m_parser;
+
+    CPDF_SyntaxParser                   m_syntaxParser;
+
+    CPDF_Object                         *m_pRoot;
+
+    FX_DWORD                            m_dwRootObjNum;
+
+    FX_DWORD                            m_dwInfoObjNum;
+
+    CPDF_Object                         *m_pLinearized;
+
+    CPDF_Object                         *m_pTrailer;
+
+    FX_BOOL                             m_bDocAvail;
+
+    FX_FILESIZE                         m_dwHeaderOffset;
+
+    FX_FILESIZE                         m_dwLastXRefOffset;
+
+    FX_FILESIZE                         m_dwXRefOffset;
+
+    FX_FILESIZE                         m_dwTrailerOffset;
+
+    FX_FILESIZE                         m_dwCurrentOffset;
+
+    PDF_DATAAVAIL_STATUS                m_docStatus;
+
+    FX_FILESIZE	                        m_dwFileLen;
+
+    CPDF_Document*                      m_pDocument;
+
+    CPDF_SortObjNumArray                m_objnum_array;
+
+    CFX_PtrArray                        m_objs_array;
+
+    FX_FILESIZE	                        m_Pos;
+
+    FX_FILESIZE                         m_bufferOffset;
+
+    FX_DWORD                            m_bufferSize;
+
+    CFX_ByteString                      m_WordBuf;
+
+    FX_BYTE                             m_WordBuffer[257];
+
+    FX_DWORD                            m_WordSize;
+
+    FX_BYTE                             m_bufferData[512];
+
+    CFX_FileSizeArray                   m_CrossOffset;
+
+    CFX_DWordArray                      m_XRefStreamList;
+
+    CFX_DWordArray                      m_PageObjList;
+
+    FX_DWORD                            m_PagesObjNum;
+
+    FX_BOOL                             m_bLinearized;
+
+    FX_DWORD                            m_dwFirstPageNo;
+
+    FX_BOOL                             m_bLinearedDataOK;
+
+    FX_BOOL                             m_bMainXRefLoadTried;
+
+    FX_BOOL                             m_bMainXRefLoadedOK;
+
+    FX_BOOL                             m_bPagesTreeLoad;
+
+    FX_BOOL                             m_bPagesLoad;
+
+    CPDF_Parser *                       m_pCurrentParser;
+
+    FX_FILESIZE                         m_dwCurrentXRefSteam;
+
+    FX_BOOL                             m_bAnnotsLoad;
+
+    FX_BOOL                             m_bHaveAcroForm;
+
+    FX_DWORD                            m_dwAcroFormObjNum;
+
+    FX_BOOL                             m_bAcroFormLoad;
+
+    CPDF_Object	*                       m_pAcroForm;
+
+    CFX_PtrArray                        m_arrayAcroforms;
+
+    CPDF_Dictionary *                   m_pPageDict;
+
+    CPDF_Object *                       m_pPageResource;
+
+    FX_BOOL                             m_bNeedDownLoadResource;
+
+    FX_BOOL                             m_bPageLoadedOK;
+
+    FX_BOOL                             m_bLinearizedFormParamLoad;
+
+    CFX_PtrArray                        m_PagesArray;
+
+    FX_DWORD                            m_dwEncryptObjNum;
+
+    FX_FILESIZE                         m_dwPrevXRefOffset;
+
+    FX_BOOL                             m_bTotalLoadPageTree;
+
+    FX_BOOL                             m_bCurPageDictLoadOK;
+
+    CPDF_PageNode                       m_pageNodes;
+
+    CFX_CMapDWordToDWord *              m_pageMapCheckState;
+
+    CFX_CMapDWordToDWord *              m_pagesLoadState;
+};
+
+IPDF_DataAvail::IPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead) :
+    m_pFileAvail(pFileAvail),
+    m_pFileRead(pFileRead) {
+}
+
+// static
+IPDF_DataAvail* IPDF_DataAvail::Create(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead)
+{
+  return FX_NEW CPDF_DataAvail(pFileAvail, pFileRead);
+}
+
+CPDF_DataAvail::CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead)
+    : IPDF_DataAvail(pFileAvail, pFileRead)
+{
     m_Pos = 0;
     m_dwFileLen = 0;
     if (m_pFileRead) {

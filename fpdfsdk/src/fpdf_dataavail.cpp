@@ -90,7 +90,7 @@ public:
 		if (m_pDataAvail) delete m_pDataAvail;
 	}
 
-	CPDF_DataAvail*			m_pDataAvail;
+	IPDF_DataAvail*			m_pDataAvail;
 	CFPDF_FileAvailWrap		m_FileAvail;
 	CFPDF_FileAccessWrap	m_FileRead;
 };
@@ -100,7 +100,7 @@ DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail, FPDF_FIL
 	CFPDF_DataAvail* pAvail = FX_NEW CFPDF_DataAvail;
 	pAvail->m_FileAvail.Set(file_avail);
 	pAvail->m_FileRead.Set(file);
-	pAvail->m_pDataAvail = FX_NEW CPDF_DataAvail(&pAvail->m_FileAvail, &pAvail->m_FileRead);
+	pAvail->m_pDataAvail = IPDF_DataAvail::Create(&pAvail->m_FileAvail, &pAvail->m_FileRead);
 	return pAvail;
 }
 
