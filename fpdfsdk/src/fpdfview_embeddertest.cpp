@@ -177,3 +177,8 @@ TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {
   dest = FPDF_GetNamedDestByName(document(), "Bogus");
   EXPECT_EQ(nullptr, dest);
 }
+
+// The following tests pass if the document opens without crashing.
+TEST_F(FPDFViewEmbeddertest, Crashers) {
+  EXPECT_TRUE(OpenDocument("testing/resources/bug_451830.pdf"));
+}

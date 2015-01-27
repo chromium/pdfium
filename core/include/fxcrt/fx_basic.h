@@ -1414,6 +1414,21 @@ protected:
 
     CFX_DataFilter*	m_pDestFilter;
 };
+
+template<typename T>
+class CFX_AutoRestorer {
+public:
+    explicit CFX_AutoRestorer(T* location) {
+      m_Location = location;
+      m_OldValue = *location;
+    }
+    ~CFX_AutoRestorer() { *m_Location = m_OldValue; }
+
+private:
+  T* m_Location;
+  T m_OldValue;
+};
+
 template <class T>
 class CFX_SmartPointer
 {
