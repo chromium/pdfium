@@ -180,5 +180,6 @@ TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {
 
 // The following tests pass if the document opens without crashing.
 TEST_F(FPDFViewEmbeddertest, Crashers) {
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_451830.pdf"));
+  // XFA branch detects this document as bad.
+  EXPECT_FALSE(OpenDocument("testing/resources/bug_451830.pdf"));
 }
