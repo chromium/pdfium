@@ -12,7 +12,6 @@
 #include <utility>
 #include <vector>
 
-#define _PARSER_OBJECT_LEVLE_		64
 extern const FX_LPCSTR _PDF_CharType;
 FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict)
 {
@@ -43,6 +42,7 @@ static int _CompareFileSize(const void* p1, const void* p2)
     }
     return 0;
 }
+
 CPDF_Parser::CPDF_Parser()
 {
     m_pDocument = NULL;
@@ -1221,7 +1221,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObject(CPDF_IndirectObjects* pObjList, FX
             FX_DWORD thisoff = syntax.GetDirectNum();
             if (thisnum == objnum) {
                 syntax.RestorePos(offset + thisoff);
-                pRet = syntax.GetObject(pObjList, 0, 0, 0, pContext);
+                pRet = syntax.GetObject(pObjList, 0, 0, pContext);
                 break;
             }
             n --;
@@ -1400,7 +1400,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList, 
         m_Syntax.RestorePos(SavedPos);
         return NULL;
     }
-    CPDF_Object* pObj = m_Syntax.GetObject(pObjList, objnum, parser_gennum, 0, pContext);
+    CPDF_Object* pObj = m_Syntax.GetObject(pObjList, objnum, parser_gennum, pContext);
     FX_FILESIZE endOffset = m_Syntax.SavePos();
     CFX_ByteString bsWord = m_Syntax.GetKeyword();
     if (bsWord == FX_BSTRC("endobj")) {
@@ -1441,7 +1441,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAtByStrict(CPDF_IndirectObjects* pO
         m_Syntax.RestorePos(SavedPos);
         return NULL;
     }
-    CPDF_Object* pObj = m_Syntax.GetObjectByStrict(pObjList, objnum, gennum, 0, pContext);
+    CPDF_Object* pObj = m_Syntax.GetObjectByStrict(pObjList, objnum, gennum, pContext);
     if (pResultPos) {
         *pResultPos = m_Syntax.m_Pos;
     }
@@ -1680,6 +1680,10 @@ FX_DWORD CPDF_Parser::LoadLinearizedMainXRefTable()
     m_Syntax.m_MetadataObjnum = dwSaveMetadataObjnum;
     return PDFPARSE_ERROR_SUCCESS;
 }
+
+// static
+int CPDF_SyntaxParser::s_CurrentRecursionDepth = 0;
+
 CPDF_SyntaxParser::CPDF_SyntaxParser()
 {
     m_pFileAccess = NULL;
@@ -2053,9 +2057,10 @@ CFX_ByteString CPDF_SyntaxParser::GetKeyword()
     GetNextWord();
     return CFX_ByteString((FX_LPCSTR)m_WordBuffer, m_WordSize);
 }
-CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWORD objnum, FX_DWORD gennum, FX_INT32 level, PARSE_CONTEXT* pContext, FX_BOOL bDecrypt)
+CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWORD objnum, FX_DWORD gennum, PARSE_CONTEXT* pContext, FX_BOOL bDecrypt)
 {
-    if (level > _PARSER_OBJECT_LEVLE_) {
+    CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
+    if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth) {
         return NULL;
     }
     FX_FILESIZE SavedPos = m_Pos;
@@ -2140,7 +2145,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
         }
         CPDF_Array* pArray = CPDF_Array::Create();
         while (1) {
-            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, level + 1);
+            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum);
             if (pObj == NULL) {
                 return pArray;
             }
@@ -2192,7 +2197,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
             if (key == FX_BSTRC("/Contents")) {
                 dwSignValuePos = m_Pos;
             }
-            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, level + 1);
+            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum);
             if (pObj == NULL) {
                 continue;
             }
@@ -2207,7 +2212,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
         if (IsSignatureDict(pDict)) {
             FX_FILESIZE dwSavePos = m_Pos;
             m_Pos = dwSignValuePos;
-            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, level + 1, NULL, FALSE);
+            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, NULL, FALSE);
             pDict->SetAt(FX_BSTRC("Contents"), pObj);
             m_Pos = dwSavePos;
         }
@@ -2242,10 +2247,10 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
     }
     return NULL;
 }
-CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(CPDF_IndirectObjects* pObjList, FX_DWORD objnum, FX_DWORD gennum,
-        FX_INT32 level, struct PARSE_CONTEXT* pContext)
+CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(CPDF_IndirectObjects* pObjList, FX_DWORD objnum, FX_DWORD gennum, struct PARSE_CONTEXT* pContext)
 {
-    if (level > _PARSER_OBJECT_LEVLE_) {
+    CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
+    if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth) {
         return NULL;
     }
     FX_FILESIZE SavedPos = m_Pos;
@@ -2322,7 +2327,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(CPDF_IndirectObjects* pObjList
         }
         CPDF_Array* pArray = CPDF_Array::Create();
         while (1) {
-            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, level + 1);
+            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum);
             if (pObj == NULL) {
                 if (m_WordBuffer[0] == ']') {
                     return pArray;
@@ -2368,7 +2373,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(CPDF_IndirectObjects* pObjList
                 continue;
             }
             key = PDF_NameDecode(key);
-            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, level + 1);
+            CPDF_Object* pObj = GetObject(pObjList, objnum, gennum);
             if (pObj == NULL) {
                 if (pDict)
                     pDict->Release();

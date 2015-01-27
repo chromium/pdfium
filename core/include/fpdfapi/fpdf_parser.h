@@ -261,10 +261,10 @@ public:
         m_Pos = pos;
     }
 
-    CPDF_Object*		GetObject(CPDF_IndirectObjects* pObjList, FX_DWORD objnum, FX_DWORD gennum, int level, struct PARSE_CONTEXT* pContext = NULL, FX_BOOL bDecrypt = TRUE);
+    CPDF_Object*		GetObject(CPDF_IndirectObjects* pObjList, FX_DWORD objnum, FX_DWORD gennum, struct PARSE_CONTEXT* pContext = NULL, FX_BOOL bDecrypt = TRUE);
 
 
-    CPDF_Object*		GetObjectByStrict(CPDF_IndirectObjects* pObjList, FX_DWORD objnum, FX_DWORD gennum, int level, struct PARSE_CONTEXT* pContext = NULL);
+    CPDF_Object*		GetObjectByStrict(CPDF_IndirectObjects* pObjList, FX_DWORD objnum, FX_DWORD gennum, struct PARSE_CONTEXT* pContext = NULL);
 
     int					GetDirectNum();
 
@@ -302,6 +302,8 @@ public:
 
     CFX_ByteString		GetNextWord(FX_BOOL& bIsNumber);
 protected:
+    static const int kParserMaxRecursionDepth = 64;
+    static int s_CurrentRecursionDepth;
 
     virtual FX_BOOL				GetNextChar(FX_BYTE& ch);
 
@@ -520,7 +522,6 @@ public:
         return m_dwFirstPageNo;
     }
 protected:
-
     CPDF_Document*		m_pDocument;
 
     CPDF_SyntaxParser	m_Syntax;
