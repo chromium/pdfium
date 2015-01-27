@@ -576,12 +576,11 @@ CPDF_Ascii85Filter::CPDF_Ascii85Filter()
     m_State = 0;
     m_CharCount = 0;
 }
-extern const FX_LPCSTR _PDF_CharType;
 void CPDF_Ascii85Filter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     for (FX_DWORD i = 0; i < src_size; i ++) {
         FX_BYTE byte = src_buf[i];
-        if (_PDF_CharType[byte] == 'W') {
+        if (PDF_CharType[byte] == 'W') {
             continue;
         }
         switch (m_State) {
@@ -640,7 +639,7 @@ void CPDF_AsciiHexFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_
 {
     for (FX_DWORD i = 0; i < src_size; i ++) {
         FX_BYTE byte = src_buf[i];
-        if (_PDF_CharType[byte] == 'W') {
+        if (PDF_CharType[byte] == 'W') {
             continue;
         }
         int digit;

@@ -307,13 +307,12 @@ FX_DWORD PDF_DecodeInlineStream(const FX_BYTE* src_buf, FX_DWORD limit,
     dest_buf = 0;
     return (FX_DWORD) - 1;
 }
-extern const FX_LPCSTR _PDF_CharType;
 CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc, CPDF_Dictionary* pDict, CPDF_Object* pCSObj, FX_BOOL bDecode)
 {
     if (m_Pos == m_Size) {
         return NULL;
     }
-    if (_PDF_CharType[m_pBuf[m_Pos]] == 'W') {
+    if (PDF_CharType[m_pBuf[m_Pos]] == 'W') {
         m_Pos ++;
     }
     CFX_ByteString Decoder;
@@ -447,14 +446,14 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement()
         return EndOfData;
     }
     int ch = m_pBuf[m_Pos++];
-    int type = _PDF_CharType[ch];
+    int type = PDF_CharType[ch];
     while (1) {
         while (type == 'W') {
             if (m_Size <= m_Pos) {
                 return EndOfData;
             }
             ch = m_pBuf[m_Pos++];
-            type = _PDF_CharType[ch];
+            type = PDF_CharType[ch];
         }
         if (ch != '%') {
             break;
@@ -468,7 +467,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement()
                 break;
             }
         }
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
     }
     if (type == 'D' && ch != '/') {
         m_Pos --;
@@ -486,7 +485,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement()
             break;
         }
         ch = m_pBuf[m_Pos++];
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
         if (type == 'D' || type == 'W') {
             m_Pos --;
             break;
@@ -523,14 +522,14 @@ void CPDF_StreamParser::SkipPathObject()
         return;
     }
     int ch = m_pBuf[m_Pos++];
-    int type = _PDF_CharType[ch];
+    int type = PDF_CharType[ch];
     while (1) {
         while (type == 'W') {
             if (m_Pos >= m_Size) {
                 return;
             }
             ch = m_pBuf[m_Pos++];
-            type = _PDF_CharType[ch];
+            type = PDF_CharType[ch];
         }
         if (type != 'N') {
             m_Pos = command_startpos;
@@ -542,14 +541,14 @@ void CPDF_StreamParser::SkipPathObject()
                     return;
                 }
                 ch = m_pBuf[m_Pos++];
-                type = _PDF_CharType[ch];
+                type = PDF_CharType[ch];
             }
             while (type == 'W') {
                 if (m_Pos >= m_Size) {
                     return;
                 }
                 ch = m_pBuf[m_Pos++];
-                type = _PDF_CharType[ch];
+                type = PDF_CharType[ch];
             }
             if (type == 'N') {
                 continue;
@@ -560,7 +559,7 @@ void CPDF_StreamParser::SkipPathObject()
                     return;
                 }
                 ch = m_pBuf[m_Pos++];
-                type = _PDF_CharType[ch];
+                type = PDF_CharType[ch];
             }
             if (m_Pos - op_startpos == 2) {
                 int op = m_pBuf[op_startpos];
@@ -672,14 +671,14 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber)
         return;
     }
     int ch = m_pBuf[m_Pos++];
-    int type = _PDF_CharType[ch];
+    int type = PDF_CharType[ch];
     while (1) {
         while (type == 'W') {
             if (m_Size <= m_Pos) {
                 return;
             }
             ch = m_pBuf[m_Pos++];
-            type = _PDF_CharType[ch];
+            type = PDF_CharType[ch];
         }
         if (ch != '%') {
             break;
@@ -693,7 +692,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber)
                 break;
             }
         }
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
     }
     if (type == 'D') {
         bIsNumber = FALSE;
@@ -704,7 +703,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber)
                     return;
                 }
                 ch = m_pBuf[m_Pos++];
-                type = _PDF_CharType[ch];
+                type = PDF_CharType[ch];
                 if (type != 'R' && type != 'N') {
                     m_Pos --;
                     return;
@@ -747,7 +746,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber)
             return;
         }
         ch = m_pBuf[m_Pos++];
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
         if (type == 'D' || type == 'W') {
             m_Pos --;
             break;

@@ -46,6 +46,14 @@ class CFX_PrivateData;
 #define FPDFPERM_ASSEMBLE		0x0400
 #define FPDFPERM_PRINT_HIGH		0x0800
 #define FPDF_PAGE_MAX_NUM		0xFFFFF
+
+// Indexed by 8-bit character code, contains either:
+//   'W' - for whitespace: NUL, TAB, CR, LF, FF, 0x80, 0xff
+//   'N' - for numeric: 0123456789+-.
+//   'D' - for delimiter: %()/<>[]{}
+//   'R' - otherwise.
+extern const char PDF_CharType[256];
+
 class IPDF_EnumPageHandler
 {
 public:
