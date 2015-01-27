@@ -12,7 +12,6 @@
 #include <utility>
 #include <vector>
 
-extern const FX_LPCSTR _PDF_CharType;
 FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict)
 {
     CPDF_Object* pType = pDict->GetElementValue(FX_BSTRC("Type"));
@@ -648,7 +647,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef()
             FX_BYTE byte = buffer[i];
             switch (status) {
                 case 0:
-                    if (_PDF_CharType[byte] == 'W') {
+                    if (PDF_CharType[byte] == 'W') {
                         status = 1;
                     }
                     if (byte <= '9' && byte >= '0') {
@@ -676,7 +675,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef()
                     }
                     break;
                 case 1:
-                    if (_PDF_CharType[byte] == 'W') {
+                    if (PDF_CharType[byte] == 'W') {
                         break;
                     } else if (byte <= '9' && byte >= '0') {
                         start_pos = pos + i;
@@ -697,7 +696,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef()
                     if (byte <= '9' && byte >= '0') {
                         objnum = objnum * 10 + byte - '0';
                         break;
-                    } else if (_PDF_CharType[byte] == 'W') {
+                    } else if (PDF_CharType[byte] == 'W') {
                         status = 3;
                     } else {
                         --i;
@@ -710,7 +709,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef()
                         start_pos1 = pos + i;
                         status = 4;
                         gennum = byte - '0';
-                    } else if (_PDF_CharType[byte] == 'W') {
+                    } else if (PDF_CharType[byte] == 'W') {
                         break;
                     } else if (byte == 't') {
                         status = 7;
@@ -724,7 +723,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef()
                     if (byte <= '9' && byte >= '0') {
                         gennum = gennum * 10 + byte - '0';
                         break;
-                    } else if (_PDF_CharType[byte] == 'W') {
+                    } else if (PDF_CharType[byte] == 'W') {
                         status = 5;
                     } else {
                         --i;
@@ -735,7 +734,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef()
                     if (byte == 'o') {
                         status = 6;
                         inside_index = 1;
-                    } else if (_PDF_CharType[byte] == 'W') {
+                    } else if (PDF_CharType[byte] == 'W') {
                         break;
                     } else if (byte <= '9' && byte >= '0') {
                         objnum = gennum;
@@ -770,7 +769,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef()
                             }
                             break;
                         case 3:
-                            if (_PDF_CharType[byte] == 'W' || _PDF_CharType[byte] == 'D') {
+                            if (PDF_CharType[byte] == 'W' || PDF_CharType[byte] == 'D') {
                                 if (objnum > 0x1000000) {
                                     status = 0;
                                     break;
@@ -844,7 +843,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef()
                     break;
                 case 7:
                     if (inside_index == 7) {
-                        if (_PDF_CharType[byte] == 'W' || _PDF_CharType[byte] == 'D') {
+                        if (PDF_CharType[byte] == 'W' || PDF_CharType[byte] == 'D') {
                             last_trailer = pos + i - 7;
                             m_Syntax.RestorePos(pos + i - m_Syntax.m_HeaderOffset);
                             CPDF_Object* pObj = m_Syntax.GetObject(m_pDocument, 0, 0, 0);
@@ -949,13 +948,13 @@ FX_BOOL CPDF_Parser::RebuildCrossRef()
                     status = 0;
                     break;
                 case 13:
-                    if (_PDF_CharType[byte] == 'D' || _PDF_CharType[byte] == 'W') {
+                    if (PDF_CharType[byte] == 'D' || PDF_CharType[byte] == 'W') {
                         --i;
                         status = 0;
                     }
                     break;
                 case 14:
-                    if (_PDF_CharType[byte] == 'W') {
+                    if (PDF_CharType[byte] == 'W') {
                         status = 0;
                     } else if (byte == '%' || byte == '(' || byte == '<' || byte == '\\') {
                         status = 0;
@@ -1649,14 +1648,14 @@ FX_DWORD CPDF_Parser::LoadLinearizedMainXRefTable()
     FX_BYTE ch = 0;
     FX_DWORD dwCount = 0;
     m_Syntax.GetNextChar(ch);
-    FX_INT32 type = _PDF_CharType[ch];
+    FX_INT32 type = PDF_CharType[ch];
     while (type == 'W') {
         ++dwCount;
         if (m_Syntax.m_FileLen >= (FX_FILESIZE)(m_Syntax.SavePos() + m_Syntax.m_HeaderOffset)) {
             break;
         }
         m_Syntax.GetNextChar(ch);
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
     }
     m_LastXRefOffset += dwCount;
     FX_POSITION pos = m_ObjectStreamMap.GetStartPosition();
@@ -1781,13 +1780,13 @@ void CPDF_SyntaxParser::GetNextWord()
     if (!GetNextChar(ch)) {
         return;
     }
-    FX_BYTE type = _PDF_CharType[ch];
+    FX_BYTE type = PDF_CharType[ch];
     while (1) {
         while (type == 'W') {
             if (!GetNextChar(ch)) {
                 return;
             }
-            type = _PDF_CharType[ch];
+            type = PDF_CharType[ch];
         }
         if (ch != '%') {
             break;
@@ -1800,7 +1799,7 @@ void CPDF_SyntaxParser::GetNextWord()
                 break;
             }
         }
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
     }
     if (type == 'D') {
         m_bIsNumber = FALSE;
@@ -1810,7 +1809,7 @@ void CPDF_SyntaxParser::GetNextWord()
                 if (!GetNextChar(ch)) {
                     return;
                 }
-                type = _PDF_CharType[ch];
+                type = PDF_CharType[ch];
                 if (type != 'R' && type != 'N') {
                     m_Pos --;
                     return;
@@ -1850,7 +1849,7 @@ void CPDF_SyntaxParser::GetNextWord()
         if (!GetNextChar(ch)) {
             return;
         }
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
         if (type == 'D' || type == 'W') {
             m_Pos --;
             break;
@@ -2018,14 +2017,14 @@ void CPDF_SyntaxParser::ToNextWord()
     if (!GetNextChar(ch)) {
         return;
     }
-    FX_BYTE type = _PDF_CharType[ch];
+    FX_BYTE type = PDF_CharType[ch];
     while (1) {
         while (type == 'W') {
             m_dwWordPos = m_Pos;
             if (!GetNextChar(ch)) {
                 return;
             }
-            type = _PDF_CharType[ch];
+            type = PDF_CharType[ch];
         }
         if (ch != '%') {
             break;
@@ -2038,7 +2037,7 @@ void CPDF_SyntaxParser::ToNextWord()
                 break;
             }
         }
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
     }
     m_Pos --;
 }
@@ -2530,19 +2529,19 @@ FX_INT32 CPDF_SyntaxParser::GetDirectNum()
 }
 FX_BOOL CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos, FX_FILESIZE limit, FX_LPCBYTE tag, FX_DWORD taglen)
 {
-    FX_BYTE type = _PDF_CharType[tag[0]];
+    FX_BYTE type = PDF_CharType[tag[0]];
     FX_BOOL bCheckLeft = type != 'D' && type != 'W';
-    type = _PDF_CharType[tag[taglen - 1]];
+    type = PDF_CharType[tag[taglen - 1]];
     FX_BOOL bCheckRight = type != 'D' && type != 'W';
     FX_BYTE ch;
     if (bCheckRight && startpos + (FX_INT32)taglen <= limit && GetCharAt(startpos + (FX_INT32)taglen, ch)) {
-        FX_BYTE type = _PDF_CharType[ch];
+        FX_BYTE type = PDF_CharType[ch];
         if (type == 'N' || type == 'R') {
             return FALSE;
         }
     }
     if (bCheckLeft && startpos > 0 && GetCharAt(startpos - 1, ch)) {
-        FX_BYTE type = _PDF_CharType[ch];
+        FX_BYTE type = PDF_CharType[ch];
         if (type == 'N' || type == 'R') {
             return FALSE;
         }
@@ -3828,13 +3827,13 @@ FX_BOOL CPDF_DataAvail::GetNextToken(CFX_ByteString &token)
     if (!GetNextChar(ch)) {
         return FALSE;
     }
-    FX_BYTE type = _PDF_CharType[ch];
+    FX_BYTE type = PDF_CharType[ch];
     while (1) {
         while (type == 'W') {
             if (!GetNextChar(ch)) {
                 return FALSE;
             }
-            type = _PDF_CharType[ch];
+            type = PDF_CharType[ch];
         }
         if (ch != '%') {
             break;
@@ -3847,7 +3846,7 @@ FX_BOOL CPDF_DataAvail::GetNextToken(CFX_ByteString &token)
                 break;
             }
         }
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
     }
     if (type == 'D') {
         m_WordBuffer[m_WordSize++] = ch;
@@ -3856,7 +3855,7 @@ FX_BOOL CPDF_DataAvail::GetNextToken(CFX_ByteString &token)
                 if (!GetNextChar(ch)) {
                     return FALSE;
                 }
-                type = _PDF_CharType[ch];
+                type = PDF_CharType[ch];
                 if (type != 'R' && type != 'N') {
                     m_Pos --;
                     CFX_ByteString ret(m_WordBuffer, m_WordSize);
@@ -3897,7 +3896,7 @@ FX_BOOL CPDF_DataAvail::GetNextToken(CFX_ByteString &token)
         if (!GetNextChar(ch)) {
             return FALSE;
         }
-        type = _PDF_CharType[ch];
+        type = PDF_CharType[ch];
         if (type == 'D' || type == 'W') {
             m_Pos --;
             break;
