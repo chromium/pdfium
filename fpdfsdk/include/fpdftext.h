@@ -16,34 +16,33 @@ extern "C" {
 
 // Function: FPDFText_LoadPage
 //			Prepare information about all characters in a page.
-// Parameters: 
-//			page	-	Handle to the page. Returned by FPDF_LoadPage function (in FPDFVIEW module).	
+// Parameters:
+//			page	-	Handle to the page. Returned by FPDF_LoadPage function (in FPDFVIEW module).
 // Return value:
 //			A handle to the text page information structure.
 //			NULL if something goes wrong.
 // Comments:
 //			Application must call FPDFText_ClosePage to release the text page information.
-//			If you don't purchase Text Module , this function will return NULL.
 // Notes:
 //			The method can not support to load out FPDF_TEXTPAGE for the document consists of dynamic fields.
-//	
+//
 DLLEXPORT FPDF_TEXTPAGE	STDCALL FPDFText_LoadPage(FPDF_PAGE page);
 
 // Function: FPDFText_ClosePage
 //			Release all resources allocated for a text page information structure.
-// Parameters: 
+// Parameters:
 //			text_page	-	Handle to a text page information structure. Returned by FPDFText_LoadPage function.
 // Return Value:
 //			None.
 //
 DLLEXPORT void STDCALL FPDFText_ClosePage(FPDF_TEXTPAGE text_page);
-	
+
 // Function: FPDFText_CountChars
 //			Get number of characters in a page.
-// Parameters: 
+// Parameters:
 //			text_page	-	Handle to a text page information structure. Returned by FPDFText_LoadPage function.
 // Return value:
-//			Number of characters in the page. Return -1 for error. 
+//			Number of characters in the page. Return -1 for error.
 //			Generated characters, like additional space characters, new line characters, are also counted.
 // Comments:
 //			Characters in a page form a "stream", inside the stream, each character has an index.
@@ -54,7 +53,7 @@ DLLEXPORT int STDCALL FPDFText_CountChars(FPDF_TEXTPAGE text_page);
 
 // Function: FPDFText_GetUnicode
 //			Get Unicode of a character in a page.
-// Parameters: 
+// Parameters:
 //			text_page	-	Handle to a text page information structure. Returned by FPDFText_LoadPage function.
 //			index		-	Zero-based index of the character.
 // Return value:
@@ -66,7 +65,7 @@ DLLEXPORT unsigned int STDCALL FPDFText_GetUnicode(FPDF_TEXTPAGE text_page, int 
 
 // Function: FPDFText_GetFontSize
 //			Get the font size of a particular character.
-// Parameters: 
+// Parameters:
 //			text_page	-	Handle to a text page information structure. Returned by FPDFText_LoadPage function.
 //			index		-	Zero-based index of the character.
 // Return value:
@@ -77,7 +76,7 @@ DLLEXPORT double STDCALL FPDFText_GetFontSize(FPDF_TEXTPAGE text_page, int index
 
 // Function: FPDFText_GetCharBox
 //			Get bounding box of a particular character.
-// Parameters: 
+// Parameters:
 //			text_page	-	Handle to a text page information structure. Returned by FPDFText_LoadPage function.
 //			index		-	Zero-based index of the character.
 //			left		-	Pointer to a double number receiving left position of the character box.
@@ -120,7 +119,7 @@ DLLEXPORT int STDCALL FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
 //			Number of characters written into the result buffer, including the trailing terminator.
 // Comments:
 //			This function ignores characters without unicode information.
-//			
+//
 DLLEXPORT int STDCALL FPDFText_GetText(FPDF_TEXTPAGE text_page, int start_index, int count, unsigned short* result);
 
 // Function: FPDFText_CountRects
@@ -165,10 +164,15 @@ DLLEXPORT void STDCALL FPDFText_GetRect(FPDF_TEXTPAGE text_page, int rect_index,
 //			buffer		-	A unicode buffer.
 //			buflen		-	Number of characters (not bytes) for the buffer, excluding an additional terminator.
 // Return Value:
-//			If buffer is NULL or buflen is zero, return number of characters (not bytes) needed,
-//			otherwise, return number of characters copied into the buffer.
+//			If buffer is NULL or buflen is zero, return number of characters (not bytes) of text present within
+//			the rectangle, excluding a terminating NUL.  Generally you should pass a buffer at least one larger
+//			than this if you want a terminating NUL, which will be provided if space is available.
+//			Otherwise, return number of characters copied into the buffer, including the terminating NUL
+//			when space for it is available.
+// Comment:
+//			If the buffer is too small, as much text as will fit is copied into it.
 //
-DLLEXPORT int STDCALL FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,double left, double top, 
+DLLEXPORT int STDCALL FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,double left, double top,
 											  double right, double bottom,unsigned short* buffer,int buflen);
 
 
@@ -238,7 +242,7 @@ DLLEXPORT void STDCALL FPDFText_FindClose(FPDF_SCHHANDLE handle);
 //			Prepare information about weblinks in a page.
 // Parameters:
 //			text_page	-	Handle to a text page information structure. Returned by FPDFText_LoadPage function.
-// Return Value:	
+// Return Value:
 //			A handle to the page's links information structure.
 //			NULL if something goes wrong.
 // Comments:
@@ -298,7 +302,7 @@ DLLEXPORT int STDCALL FPDFLink_CountRects(FPDF_PAGELINK link_page, int link_inde
 // Return Value:
 //			None.
 //
-DLLEXPORT void STDCALL FPDFLink_GetRect(FPDF_PAGELINK link_page, int link_index, int rect_index, 
+DLLEXPORT void STDCALL FPDFLink_GetRect(FPDF_PAGELINK link_page, int link_index, int rect_index,
 										double* left, double* top,double* right, double* bottom);
 
 // Function: FPDFLink_CloseWebLinks
