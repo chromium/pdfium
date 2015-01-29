@@ -9,6 +9,7 @@
 #include <wchar.h>
 
 #include <list>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -41,6 +42,7 @@ struct Options {
   Options() : output_format(OUTPUT_NONE) { }
 
   OutputFormat output_format;
+  std::string scale_factor_as_string;
   std::string exe_path;
   std::string bin_directory;
 };
@@ -317,6 +319,13 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->bin_directory = cur_arg.substr(10);
     }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
+    else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--scale=") == 0) {
+      if (!options->scale_factor_as_string.empty()) {
+        fprintf(stderr, "Duplicate --scale argument\n");
+        return false;
+      }
+      options->scale_factor_as_string = cur_arg.substr(8);
+    }
     else
       break;
   }
@@ -358,7 +367,7 @@ void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
 }
 
 void RenderPdf(const std::string& name, const char* pBuf, size_t len,
-               OutputFormat format) {
+               const Options& options) {
   printf("Rendering PDF file %s.\n", name.c_str());
 
   IPDF_JSPLATFORM platform_callbacks;
@@ -437,9 +446,15 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
     int width = static_cast<int>(FPDF_GetPageWidth(page));
     int height = static_cast<int>(FPDF_GetPageHeight(page));
+    if (!options.scale_factor_as_string.empty()) {
+      double scale = 1.0;
+      std::stringstream(options.scale_factor_as_string) >> scale;
+      width *= scale;
+      height *= scale;
+    }
+
     FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
     FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
-
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
     rendered_pages ++;
 
@@ -448,7 +463,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
     const char* buffer =
         reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
-    switch (format) {
+    switch (options.output_format) {
 #ifdef _WIN32
       case OUTPUT_BMP:
         WriteBmp(name.c_str(), i, buffer, stride, width, height);
@@ -489,6 +504,7 @@ int main(int argc, const char* argv[]) {
   if (!ParseCommandLine(args, &options, &files)) {
     printf("Usage: pdfium_test [OPTION] [FILE]...\n");
     printf("--bin-dir=<path> - override path to v8 external data\n");
+    printf("--scale=<number> - scale output size by number (e.g. 0.5)\n");
     printf("--ppm - write page images <pdf-name>.<page-number>.ppm\n");
 #ifdef _WIN32
     printf("--bmp - write page images <pdf-name>.<page-number>.bmp\n");
@@ -526,7 +542,7 @@ int main(int argc, const char* argv[]) {
     char* file_contents = GetFileContents(filename.c_str(), &file_length);
     if (!file_contents)
       continue;
-    RenderPdf(filename, file_contents, file_length, options.output_format);
+    RenderPdf(filename, file_contents, file_length, options);
     free(file_contents);
   }
 
