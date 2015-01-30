@@ -92,7 +92,7 @@ class CPDF_RenderStatus : public CFX_Object
 public:
     CPDF_RenderStatus();
     ~CPDF_RenderStatus();
-    FX_BOOL			Initialize(int level, class CPDF_RenderContext* pContext, CFX_RenderDevice* pDevice, const CFX_AffineMatrix* pDeviceMatrix,
+    FX_BOOL			Initialize(class CPDF_RenderContext* pContext, CFX_RenderDevice* pDevice, const CFX_AffineMatrix* pDeviceMatrix,
                                const CPDF_PageObject* pStopObj, const CPDF_RenderStatus* pParentStatus,
                                const CPDF_GraphicStates* pInitialStates, const CPDF_RenderOptions* pOptions,
                                int transparency, FX_BOOL bDropObjects, CPDF_Dictionary* pFormResource = NULL,
@@ -155,8 +155,11 @@ protected:
     void			DitherObjectArea(const CPDF_PageObject* pObj, const CFX_AffineMatrix* pObj2Device);
     FX_BOOL			GetObjectClippedRect(const CPDF_PageObject* pObj, const CFX_AffineMatrix* pObj2Device, FX_BOOL bLogical, FX_RECT &rect) const;
     void			GetScaledMatrix(CFX_Matrix &matrix) const;
+
 protected:
-    int						m_Level;
+    static const int kRenderMaxRecursionDepth = 64;
+    static int s_CurrentRecursionDepth;
+
     CFX_RenderDevice*		m_pDevice;
     CFX_AffineMatrix		m_DeviceMatrix;
     CPDF_ClipPath			m_LastClipPath;
