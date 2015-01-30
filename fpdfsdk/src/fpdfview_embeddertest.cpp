@@ -27,14 +27,12 @@ TEST_F(FPDFViewEmbeddertest, Document) {
 
 TEST_F(FPDFViewEmbeddertest, Page) {
   EXPECT_TRUE(OpenDocument("testing/resources/about_blank.pdf"));
-  FPDF_FORMHANDLE form_handle = SetFormFillEnvironment();
-  FPDF_PAGE page = LoadPage(0, form_handle);
+  FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   EXPECT_EQ(612.0, FPDF_GetPageWidth(page));
   EXPECT_EQ(792.0, FPDF_GetPageHeight(page));
-  UnloadPage(page, form_handle);
-  EXPECT_EQ(nullptr, LoadPage(1, form_handle));
-  ClearFormFillEnvironment(form_handle);
+  UnloadPage(page);
+  EXPECT_EQ(nullptr, LoadPage(1));
 }
 
 TEST_F(FPDFViewEmbeddertest, ViewerRef) {

@@ -30,8 +30,7 @@ class FPDFTextEmbeddertest : public EmbedderTest {
 
 TEST_F(FPDFTextEmbeddertest, Text) {
   EXPECT_TRUE(OpenDocument("testing/resources/hello_world.pdf"));
-  FPDF_FORMHANDLE form_handle = SetFormFillEnvironment();
-  FPDF_PAGE page = LoadPage(0, form_handle);
+  FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
@@ -135,13 +134,11 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   EXPECT_EQ(0xbdbd, fixed_buffer[10]);
 
   FPDFText_ClosePage(textpage);
-  ClearFormFillEnvironment(form_handle);
 }
 
 TEST_F(FPDFTextEmbeddertest, TextSearch) {
   EXPECT_TRUE(OpenDocument("testing/resources/hello_world.pdf"));
-  FPDF_FORMHANDLE form_handle = SetFormFillEnvironment();
-  FPDF_PAGE page = LoadPage(0, form_handle);
+  FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
@@ -242,14 +239,12 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
   FPDFText_FindClose(search);
 
   FPDFText_ClosePage(textpage);
-  ClearFormFillEnvironment(form_handle);
 }
 
 // Test that the page has characters despite a bad stream length.
 TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
   EXPECT_TRUE(OpenDocument("testing/resources/bug_57.pdf"));
-  FPDF_FORMHANDLE form_handle = SetFormFillEnvironment();
-  FPDF_PAGE page = LoadPage(0, form_handle);
+  FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
@@ -257,13 +252,11 @@ TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
   EXPECT_EQ(13, FPDFText_CountChars(textpage));
 
   FPDFText_ClosePage(textpage);
-  ClearFormFillEnvironment(form_handle);
 }
 
 TEST_F(FPDFTextEmbeddertest, WebLinks) {
   EXPECT_TRUE(OpenDocument("testing/resources/weblinks.pdf"));
-  FPDF_FORMHANDLE form_handle = SetFormFillEnvironment();
-  FPDF_PAGE page = LoadPage(0, form_handle);
+  FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
@@ -365,5 +358,4 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
 
   FPDFLink_CloseWebLinks(pagelink);
   FPDFText_ClosePage(textpage);
-  ClearFormFillEnvironment(form_handle);
 }

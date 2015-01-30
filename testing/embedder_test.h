@@ -22,6 +22,7 @@ class EmbedderTest : public ::testing::Test {
  public:
   EmbedderTest() :
       document_(nullptr),
+      form_handle_(nullptr),
       avail_(nullptr),
       loader_(nullptr),
       file_length_(0),
@@ -37,36 +38,32 @@ class EmbedderTest : public ::testing::Test {
   void TearDown() override;
 
   FPDF_DOCUMENT document() { return document_; }
+  FPDF_FORMHANDLE form_handle() { return form_handle_; }
 
-  // Open the document specified by |filename|, or return false on failure.
+  // Open the document specified by |filename|, and create its form fill
+  // environment, or return false on failure.
   virtual bool OpenDocument(const std::string& filename);
 
-  // Create and return a handle to the form fill module for use with the
-  // FORM_ family of functions from fpdfformfill.h, or return NULL on failure.
-  virtual FPDF_FORMHANDLE SetFormFillEnvironment();
-
-  // Release the resources obtained from SetFormFillEnvironment().
-  virtual void ClearFormFillEnvironment(FPDF_FORMHANDLE form);
-
   // Perform JavaScript actions that are to run at document open time.
-  virtual void DoOpenActions(FPDF_FORMHANDLE form);
+  virtual void DoOpenActions();
 
   // Determine the page numbers present in the document.
   virtual int GetFirstPageNum();
   virtual int GetPageCount();
 
   // Load a specific page of the open document.
-  virtual FPDF_PAGE LoadPage(int page_number, FPDF_FORMHANDLE form);
+  virtual FPDF_PAGE LoadPage(int page_number);
 
   // Convert a loaded page into a bitmap.
-  virtual FPDF_BITMAP RenderPage(FPDF_PAGE page, FPDF_FORMHANDLE form);
+  virtual FPDF_BITMAP RenderPage(FPDF_PAGE page);
 
   // Relese the resources obtained from LoadPage(). Further use of |page|
   // is prohibited after this call is made.
-  virtual void UnloadPage(FPDF_PAGE page, FPDF_FORMHANDLE form);
+  virtual void UnloadPage(FPDF_PAGE page);
 
  protected:
   FPDF_DOCUMENT document_;
+  FPDF_FORMHANDLE form_handle_;
   FPDF_AVAIL avail_;
   FX_DOWNLOADHINTS hints_;
   FPDF_FILEACCESS file_access_;
