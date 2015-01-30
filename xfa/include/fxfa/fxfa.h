@@ -148,38 +148,23 @@ typedef struct _XFA_HWIDGET {
 class IXFA_AppProvider
 {
 public:
+    virtual ~IXFA_AppProvider() { }
 
     virtual void		SetAppType(FX_WSTR wsAppType) = 0;
     virtual void		GetAppType(CFX_WideString &wsAppType) = 0;
 
-    virtual void		SetFoxitAppType(FX_WSTR wsFoxitAppType)
-    {
-        return;
-    }
-    virtual void		GetFoxitAppType(CFX_WideString &wsFoxitAppType)
-    {
-        return;
-    }
+    virtual void		SetFoxitAppType(FX_WSTR wsFoxitAppType) { }
+    virtual void		GetFoxitAppType(CFX_WideString &wsFoxitAppType) { }
 
     virtual void		GetLanguage(CFX_WideString &wsLanguage) = 0;
-
     virtual void		GetPlatform(CFX_WideString &wsPlatform) = 0;
-
     virtual void		GetVariation(CFX_WideString &wsVariation) = 0;
 
     virtual void		GetVersion(CFX_WideString &wsVersion) = 0;
-
-    virtual void		GetFoxitVersion(CFX_WideString &wsFoxitVersion)
-    {
-        return;
-    }
+    virtual void		GetFoxitVersion(CFX_WideString &wsFoxitVersion) { }
 
     virtual void		GetAppName(CFX_WideString& wsName) = 0;
-
-    virtual void		GetFoxitAppName(CFX_WideString& wsFoxitName)
-    {
-        return;
-    }
+    virtual void		GetFoxitAppName(CFX_WideString& wsFoxitName) { }
 
     virtual void		Beep(FX_DWORD dwType) = 0;
 
@@ -195,7 +180,7 @@ public:
     virtual FX_BOOL		PutRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsEncode) = 0;
     virtual void		LoadString(FX_INT32 iStringID, CFX_WideString &wsString) = 0;
     virtual	FX_BOOL		ShowFileDialog(FX_WSTR wsTitle, FX_WSTR wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen = TRUE) = 0;
-    virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;;
+    virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
 class IXFA_FontMgr
 {
@@ -203,6 +188,8 @@ public:
     virtual void		Release() = 0;
     virtual IFX_Font*	GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
     virtual IFX_Font*	GetDefaultFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
+protected:
+    ~IXFA_FontMgr() { }
 };
 IXFA_FontMgr*	XFA_GetDefaultFontMgr();
 class IXFA_App
@@ -216,10 +203,14 @@ public:
     virtual	IXFA_AppProvider*	GetAppProvider() = 0;
     virtual void				SetDefaultFontMgr(IXFA_FontMgr* pFontMgr) = 0;
     virtual IXFA_MenuHandler*	GetMenuHandler() = 0;
+protected:
+    ~IXFA_App() { }
 };
 class IXFA_MenuHandler
 {
 public:
+    virtual ~IXFA_MenuHandler() { }
+
     virtual FX_BOOL		CanCopy(XFA_HWIDGET hWidget) = 0;
     virtual FX_BOOL		CanCut(XFA_HWIDGET hWidget) = 0;
     virtual FX_BOOL		CanPaste(XFA_HWIDGET hWidget) = 0;
@@ -258,6 +249,8 @@ public:
 class IXFA_DocProvider
 {
 public:
+    virtual ~IXFA_DocProvider() { }
+
     virtual void		SetChangeMark(XFA_HDOC hDoc) = 0;
     virtual void		InvalidateRect(IXFA_PageView* pPageView, const CFX_RectF& rt, FX_DWORD dwFlags = 0) = 0;
     virtual void		DisplayCaret(XFA_HWIDGET hWidget, FX_BOOL bVisible, const CFX_RectF* pRtAnchor) = 0;
@@ -331,6 +324,8 @@ public:
 class IXFA_DocHandler
 {
 public:
+    virtual ~IXFA_DocHandler() { }
+
     virtual void				ReleaseDoc(XFA_HDOC hDoc) = 0;
     virtual IXFA_DocProvider*	GetDocProvider(XFA_HDOC hDoc) = 0;
 
@@ -452,6 +447,8 @@ enum XFA_WIDGETORDER {
 class IXFA_DocView
 {
 public:
+    virtual ~IXFA_DocView() { }
+
     virtual XFA_HDOC			GetDoc() = 0;
     virtual	FX_INT32			StartLayout(FX_INT32 iStartPage = 0) = 0;
     virtual FX_INT32			DoLayout(IFX_Pause *pPause = NULL) = 0;
@@ -482,6 +479,8 @@ public:
 class IXFA_PageView
 {
 public:
+    virtual ~IXFA_PageView() { }
+
     virtual IXFA_DocView*	GetDocView() = 0;
     virtual FX_INT32		GetPageViewIndex() = 0;
     virtual void			GetPageViewRect(CFX_RectF &rtPage) = 0;
@@ -515,6 +514,8 @@ public:
     virtual FX_INT32	StartRender(IXFA_PageView* pPageView, CFX_Graphics* pGS, const CFX_Matrix& pMatrix, const CXFA_RenderOptions& options) = 0;
     virtual FX_INT32	DoRender(IFX_Pause* pPause = NULL) = 0;
     virtual	void		StopRender() = 0;
+protected:
+    ~IXFA_RenderContext() { }
 };
 IXFA_RenderContext*	XFA_RenderContext_Create();
 enum XFA_WIDGETTYPE {
@@ -549,6 +550,7 @@ enum XFA_WIDGETTYPE {
 class IXFA_WidgetHandler
 {
 public:
+    virtual ~IXFA_WidgetHandler() { }
 
     virtual XFA_HWIDGET		CreateWidget(XFA_HWIDGET hParent, XFA_WIDGETTYPE eType, XFA_HWIDGET hBefore = NULL) = 0;
     virtual IXFA_PageView*	GetPageView(XFA_HWIDGET hWidget) = 0;
@@ -593,12 +595,13 @@ public:
     virtual XFA_HWIDGET			MoveToPrevious() = 0;
     virtual	XFA_HWIDGET			GetCurrentWidget() = 0;
     virtual	FX_BOOL				SetCurrentWidget(XFA_HWIDGET hWidget)  = 0;
+protected:
+    ~IXFA_WidgetIterator() { }
 };
 class IXFA_WidgetAccIterator
 {
 public:
     virtual void				Release() = 0;
-
     virtual void				Reset() = 0;
     virtual CXFA_WidgetAcc*		MoveToFirst() = 0;
     virtual CXFA_WidgetAcc*		MoveToLast() = 0;
@@ -607,6 +610,8 @@ public:
     virtual CXFA_WidgetAcc*		GetCurrentWidgetAcc() = 0;
     virtual FX_BOOL				SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget) = 0;
     virtual void				SkipTree() = 0;
+protected:
+    ~IXFA_WidgetAccIterator() { }
 };
 IXFA_WidgetAccIterator* XFA_WidgetAccIterator_Create(CXFA_WidgetAcc* pTravelRoot, XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder);
 class IXFA_ChecksumContext
@@ -618,6 +623,8 @@ public:
     virtual FX_BOOL				UpdateChecksum(IFX_FileRead* pSrcFile, FX_FILESIZE offset = 0, size_t size = 0) = 0;
     virtual void				FinishChecksum() = 0;
     virtual void				GetChecksum(CFX_ByteString &bsChecksum) = 0;
+protected:
+    ~IXFA_ChecksumContext() { }
 };
 IXFA_ChecksumContext*	XFA_Checksum_Create();
 #endif
