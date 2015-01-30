@@ -988,7 +988,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern, CPDF_Pag
                 matrix.Translate(orig_x - mtPattern2Device.e, orig_y - mtPattern2Device.f);
                 m_pDevice->SaveState();
                 CPDF_RenderStatus status;
-                status.Initialize(m_Level + 1, m_pContext, m_pDevice, NULL, NULL, this, pStates, &m_Options,
+                status.Initialize(m_pContext, m_pDevice, NULL, NULL, this, pStates, &m_Options,
                                   pPattern->m_pForm->m_Transparency, m_bDropObjects, pFormResource);
                 status.RenderObjectList(pPattern->m_pForm, &matrix);
                 m_pDevice->RestoreState();

@@ -423,7 +423,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, cons
             }
             if (fill_alpha == 255) {
                 CPDF_RenderStatus status;
-                status.Initialize(m_Level + 1, m_pContext, m_pDevice, NULL, NULL, this, pStates, &Options,
+                status.Initialize(m_pContext, m_pDevice, NULL, NULL, this, pStates, &Options,
                                   pType3Char->m_pForm->m_Transparency, m_bDropObjects, pFormResource, FALSE, pType3Char, fill_argb);
                 status.m_Type3FontCache.Append(m_Type3FontCache);
                 status.m_Type3FontCache.Add(pType3Font);
@@ -440,7 +440,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, cons
                 }
                 bitmap_device.GetBitmap()->Clear(0);
                 CPDF_RenderStatus status;
-                status.Initialize(m_Level + 1, m_pContext, &bitmap_device, NULL, NULL, this, pStates, &Options,
+                status.Initialize(m_pContext, &bitmap_device, NULL, NULL, this, pStates, &Options,
                                   pType3Char->m_pForm->m_Transparency, m_bDropObjects, pFormResource, FALSE, pType3Char, fill_argb);
                 status.m_Type3FontCache.Append(m_Type3FontCache);
                 status.m_Type3FontCache.Add(pType3Font);

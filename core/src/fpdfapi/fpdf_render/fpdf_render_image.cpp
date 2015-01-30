@@ -489,7 +489,7 @@ FX_BOOL	CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device)
     bitmap_device1.GetBitmap()->Clear(0xffffff);
     {
         CPDF_RenderStatus bitmap_render;
-        bitmap_render.Initialize(m_pRenderStatus->m_Level + 1, m_pRenderStatus->m_pContext, &bitmap_device1, NULL, NULL,
+        bitmap_render.Initialize(m_pRenderStatus->m_pContext, &bitmap_device1, NULL, NULL,
                                  NULL, NULL, &m_pRenderStatus->m_Options, 0, m_pRenderStatus->m_bDropObjects, NULL, TRUE);
         CFX_Matrix patternDevice = *pObj2Device;
         patternDevice.Translate((FX_FLOAT) - rect.left, (FX_FLOAT) - rect.top);
@@ -506,7 +506,7 @@ FX_BOOL	CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device)
         }
         bitmap_device2.GetBitmap()->Clear(0);
         CPDF_RenderStatus bitmap_render;
-        bitmap_render.Initialize(m_pRenderStatus->m_Level + 1, m_pRenderStatus->m_pContext, &bitmap_device2, NULL, NULL,
+        bitmap_render.Initialize(m_pRenderStatus->m_pContext, &bitmap_device2, NULL, NULL,
                                  NULL, NULL, NULL, 0, m_pRenderStatus->m_bDropObjects, NULL, TRUE);
         CPDF_ImageRenderer image_render;
         if (image_render.Start(&bitmap_render, m_pDIBSource, 0xffffffff, 255, &new_matrix, m_Flags, TRUE)) {
@@ -579,7 +579,7 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage()
     bitmap_device1.GetBitmap()->Clear(0xffffff);
     {
         CPDF_RenderStatus bitmap_render;
-        bitmap_render.Initialize(m_pRenderStatus->m_Level + 1, m_pRenderStatus->m_pContext, &bitmap_device1, NULL, NULL,
+        bitmap_render.Initialize(m_pRenderStatus->m_pContext, &bitmap_device1, NULL, NULL,
                                  NULL, NULL, NULL, 0, m_pRenderStatus->m_bDropObjects, NULL, TRUE);
         CPDF_ImageRenderer image_render;
         if (image_render.Start(&bitmap_render, m_pDIBSource, 0, 255, &new_matrix, m_Flags, TRUE)) {
@@ -593,7 +593,7 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage()
         }
         bitmap_device2.GetBitmap()->Clear(0);
         CPDF_RenderStatus bitmap_render;
-        bitmap_render.Initialize(m_pRenderStatus->m_Level + 1, m_pRenderStatus->m_pContext, &bitmap_device2, NULL, NULL,
+        bitmap_render.Initialize(m_pRenderStatus->m_pContext, &bitmap_device2, NULL, NULL,
                                  NULL, NULL, NULL, 0, m_pRenderStatus->m_bDropObjects, NULL, TRUE);
         CPDF_ImageRenderer image_render;
         if (image_render.Start(&bitmap_render, m_Loader.m_pMask, 0xffffffff, 255, &new_matrix, m_Flags, TRUE)) {
@@ -1034,7 +1034,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
     CPDF_RenderOptions options;
     options.m_ColorMode = bLuminosity ? RENDER_COLOR_NORMAL : RENDER_COLOR_ALPHA;
     CPDF_RenderStatus status;
-    status.Initialize(m_Level + 1, m_pContext, &bitmap_device, NULL, NULL, NULL, NULL,
+    status.Initialize(m_pContext, &bitmap_device, NULL, NULL, NULL, NULL,
                       &options, 0, m_bDropObjects, pFormResource, TRUE, NULL, 0, pCS ? pCS->GetFamily() : 0, bLuminosity);
     status.RenderObjectList(&form, &matrix);
     pMask = FX_NEW CFX_DIBitmap;
