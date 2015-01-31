@@ -6,13 +6,15 @@ import("//testing/test.gni")
 
 pdf_use_skia = false
 
+declare_args() {
+  # On Android there's no system FreeType. On Windows and Mac, only a few
+  # methods are used from it.
+  bundle_freetype = !is_linux
+}
+
 config("pdfium_config") {
   cflags = []
-  include_dirs = [
-    "third_party/freetype/include"
-  ]
   defines = [
-    "FT2_BUILD_LIBRARY",
     "_FPDFSDK_LIB",
     "_NO_GDIPLUS_",  # workaround text rendering issues on Windows
     "OPJ_STATIC",
@@ -39,6 +41,13 @@ config("pdfium_config") {
       "/wd4333",
       "/wd4345",
     ]
+  }
+
+  if (bundle_freetype) {
+    include_dirs = [ "third_party/freetype/include" ]
+    defines += [ "FT2_BUILD_LIBRARY" ]
+  } else {
+    include_dirs = [ "/usr/include/freetype2" ]
   }
 }
 
@@ -92,7 +101,6 @@ static_library("pdfium") {
 
   deps = [
     "third_party:bigint",
-    "third_party:freetype",
     "third_party:safemath",
     ":fdrm",
     ":formfiller",
@@ -114,6 +122,12 @@ static_library("pdfium") {
 
   if (is_mac) {
     libs += [ "AppKit.framework", "CoreFoundation.framework" ]
+  }
+
+  if (bundle_freetype) {
+    deps += [ "third_party:freetype" ]
+  } else {
+    libs += [ "freetype" ]
   }
 }
 
