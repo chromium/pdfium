@@ -16,20 +16,16 @@
       '_NO_GDIPLUS_',  # workaround text rendering issues on Windows
       'OPJ_STATIC',
     ],
+    'include_dirs': [
+      'third_party/freetype/include',
+    ],
     'conditions': [
       ['pdf_use_skia==1', {
         'defines': ['_SKIA_SUPPORT_'],
       }],
       ['bundle_freetype==1', {
-        'include_dirs': [
-          'third_party/freetype/include',
-        ],
         'defines' : [
           'FT2_BUILD_LIBRARY',
-        ],
-      }, {
-        'include_dirs' : [
-          '/usr/include/freetype2',
         ],
       }],
       ['OS=="linux"', {

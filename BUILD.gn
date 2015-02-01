@@ -14,6 +14,7 @@ declare_args() {
 
 config("pdfium_config") {
   cflags = []
+  include_dirs = [ "third_party/freetype/include" ]
   defines = [
     "_FPDFSDK_LIB",
     "_NO_GDIPLUS_",  # workaround text rendering issues on Windows
@@ -44,10 +45,7 @@ config("pdfium_config") {
   }
 
   if (bundle_freetype) {
-    include_dirs = [ "third_party/freetype/include" ]
     defines += [ "FT2_BUILD_LIBRARY" ]
-  } else {
-    include_dirs = [ "/usr/include/freetype2" ]
   }
 }
 
