@@ -23,11 +23,6 @@
       ['pdf_use_skia==1', {
         'defines': ['_SKIA_SUPPORT_'],
       }],
-      ['bundle_freetype==1', {
-        'defines' : [
-          'FT2_BUILD_LIBRARY',
-        ],
-      }],
       ['OS=="linux"', {
         'conditions': [
           ['target_arch=="x64"', {

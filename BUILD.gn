@@ -43,10 +43,6 @@ config("pdfium_config") {
       "/wd4345",
     ]
   }
-
-  if (bundle_freetype) {
-    defines += [ "FT2_BUILD_LIBRARY" ]
-  }
 }
 
 static_library("pdfium") {
