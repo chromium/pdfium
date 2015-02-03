@@ -4,12 +4,13 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../third_party/freetype/include/ft2build.h"
-#include "../../../third_party/freetype/include/freetype.h"
-#include "../../../third_party/freetype/include/ftoutln.h"
-#include "../../../third_party/freetype/include/ftmm.h"
-#include "../../../third_party/freetype/include/internal/ftobjs.h"
-#include "../../../third_party/freetype/include/tttables.h"
+#include <ft2build.h>
+#include <freetype.h>
+#include <ftglyph.h>
+#include <ftlcdfil.h>
+#include <ftmm.h>
+#include <ftoutln.h>
+#include <tttables.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -111,8 +112,6 @@ typedef FT_CharMap		FXFT_CharMap;
 #define FXFT_Get_MM_Axis_Min(axis) ((FT_Var_Axis*)axis)->minimum
 #define FXFT_Get_MM_Axis_Max(axis) ((FT_Var_Axis*)axis)->maximum
 #define FXFT_Get_MM_Axis_Def(axis) ((FT_Var_Axis*)axis)->def
-#define FXFT_Get_Face_Internal_Flag(face) ((FT_Face)face)->internal->transform_flags
-#define FXFT_Set_Face_Internal_Flag(face, flag) (((FT_Face)face)->internal->transform_flags = flag)
 #define FXFT_Alloc(library, size) ((FT_Library)library)->memory->alloc(((FT_Library)library)->memory, size)
 #define FXFT_Free(face, p) ((FT_Face)face)->memory->free(((FT_Face)face)->memory, p)
 #define FXFT_Get_Glyph_Outline(face) &((FT_Face)face)->glyph->outline

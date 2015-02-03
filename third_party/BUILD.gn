@@ -36,6 +36,7 @@ static_library("freetype") {
       "//third_party/pdfium:pdfium_config",
       "//build/config/compiler:no_chromium_code",
   ]
+  defines = [ "FT2_BUILD_LIBRARY" ]
   sources = [
     "freetype/include/freetype.h",
     "freetype/include/ft2build.h",

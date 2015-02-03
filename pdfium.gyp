@@ -1,10 +1,17 @@
 {
   'variables': {
     'pdf_use_skia%': 0,
+    'conditions': [
+      ['OS=="linux"', {
+        'bundle_freetype%': 0,
+      }, {  # On Android there's no system FreeType. On Windows and Mac, only a
+            # few methods are used from it.
+        'bundle_freetype%': 1,
+      }],    
+    ],
   },
   'target_defaults': {
     'defines' : [
-      'FT2_BUILD_LIBRARY',
       '_FPDFSDK_LIB',
       '_NO_GDIPLUS_',  # workaround text rendering issues on Windows
       'OPJ_STATIC',
@@ -38,7 +45,6 @@
       'type': 'static_library',
       'dependencies': [
         'third_party/third_party.gyp:bigint',
-        'third_party/third_party.gyp:freetype',
         'third_party/third_party.gyp:safemath',
         'fdrm',
         'fpdfdoc',
@@ -102,6 +108,17 @@
           'sources!': [
             'fpdfsdk/src/fpdfsdkdll.rc',
           ],
+        }],
+        ['bundle_freetype==1', {
+          'dependencies': [
+            'third_party/third_party.gyp:freetype',
+          ],
+        }, {
+          'link_settings': {
+            'libraries': [
+              '-lfreetype',
+            ],
+          },
         }],
       ],
       'all_dependent_settings': {
