@@ -347,7 +347,6 @@ static_library("fxcodec") {
     "core/src/fxcodec/fx_libopenjpeg/src/fx_pi.c",
     "core/src/fxcodec/fx_libopenjpeg/src/fx_raw.c",
     "core/src/fxcodec/fx_libopenjpeg/src/fx_t1.c",
-    "core/src/fxcodec/fx_libopenjpeg/src/fx_t1_generate_luts.c",
     "core/src/fxcodec/fx_libopenjpeg/src/fx_t2.c",
     "core/src/fxcodec/fx_libopenjpeg/src/fx_tcd.c",
     "core/src/fxcodec/fx_libopenjpeg/src/fx_tgt.c",
