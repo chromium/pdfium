@@ -1438,7 +1438,7 @@ public:
     {
         m_pObj->Release();
     }
-    operator T*(void)
+    T* Get(void)
     {
         return m_pObj;
     }

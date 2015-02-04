@@ -1209,7 +1209,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObject(CPDF_IndirectObjects* pObjList, FX
         FX_INT32 offset = pObjStream->GetDict()->GetInteger(FX_BSTRC("First"));
         CPDF_SyntaxParser syntax;
         CFX_SmartPointer<IFX_FileStream> file(FX_CreateMemoryStream((FX_LPBYTE)pObjStream->GetData(), (size_t)pObjStream->GetSize(), FALSE));
-        syntax.InitParser((IFX_FileStream*)file, 0);
+        syntax.InitParser(file.Get(), 0);
         CPDF_Object* pRet = NULL;
         while (n) {
             FX_DWORD thisnum = syntax.GetDirectNum();
@@ -1282,7 +1282,7 @@ void CPDF_Parser::GetIndirectBinary(FX_DWORD objnum, FX_LPBYTE& pBuffer, FX_DWOR
         FX_LPCBYTE pData = pObjStream->GetData();
         FX_DWORD totalsize = pObjStream->GetSize();
         CFX_SmartPointer<IFX_FileStream> file(FX_CreateMemoryStream((FX_LPBYTE)pData, (size_t)totalsize, FALSE));
-        syntax.InitParser((IFX_FileStream*)file, 0);
+        syntax.InitParser(file.Get(), 0);
         while (n) {
             FX_DWORD thisnum = syntax.GetDirectNum();
             FX_DWORD thisoff = syntax.GetDirectNum();
@@ -3707,13 +3707,13 @@ FX_INT32 CPDF_DataAvail::IsLinearizedPDF()
 FX_BOOL CPDF_DataAvail::IsLinearizedFile(FX_LPBYTE pData, FX_DWORD dwLen)
 {
     CFX_SmartPointer<IFX_FileStream> file(FX_CreateMemoryStream(pData, (size_t)dwLen, FALSE));
-    FX_INT32 offset = GetHeaderOffset((IFX_FileStream*)file);
+    FX_INT32 offset = GetHeaderOffset(file.Get());
     if (offset == -1) {
         m_docStatus = PDF_DATAAVAIL_ERROR;
         return FALSE;
     }
     m_dwHeaderOffset = offset;
-    m_syntaxParser.InitParser((IFX_FileStream*)file, offset);
+    m_syntaxParser.InitParser(file.Get(), offset);
     m_syntaxParser.RestorePos(m_syntaxParser.m_HeaderOffset + 9);
     FX_BOOL bNumber = FALSE;
     CFX_ByteString wordObjNum = m_syntaxParser.GetNextWord(bNumber);
@@ -3754,7 +3754,7 @@ FX_BOOL CPDF_DataAvail::CheckEnd(IFX_DownloadHints* pHints)
         FX_BYTE buffer[1024];
         m_pFileRead->ReadBlock(buffer, req_pos, dwSize);
         CFX_SmartPointer<IFX_FileStream> file(FX_CreateMemoryStream(buffer, (size_t)dwSize, FALSE));
-        m_syntaxParser.InitParser((IFX_FileStream*)file, 0);
+        m_syntaxParser.InitParser(file.Get(), 0);
         m_syntaxParser.RestorePos(dwSize - 1);
         if (m_syntaxParser.SearchWord(FX_BSTRC("startxref"), TRUE, FALSE, dwSize)) {
             FX_BOOL bNumber;
@@ -3791,7 +3791,7 @@ FX_DWORD CPDF_DataAvail::CheckCrossRefStream(IFX_DownloadHints* pHints, FX_FILES
         FX_LPBYTE pBuf = buf.GetBuffer();
         m_pFileRead->ReadBlock(pBuf, m_dwCurrentXRefSteam, iSize);
         CFX_SmartPointer<IFX_FileStream> file(FX_CreateMemoryStream(pBuf, (size_t)iSize, FALSE));
-        m_parser.m_Syntax.InitParser((IFX_FileStream*)file, 0);
+        m_parser.m_Syntax.InitParser(file.Get(), 0);
         FX_BOOL bNumber = FALSE;
         CFX_ByteString objnum = m_parser.m_Syntax.GetNextWord(bNumber);
         if (!bNumber) {
@@ -4035,7 +4035,7 @@ FX_BOOL CPDF_DataAvail::CheckTrailer(IFX_DownloadHints* pHints)
             return FALSE;
         }
         CFX_SmartPointer<IFX_FileStream> file(FX_CreateMemoryStream(pBuf, (size_t)iSize, FALSE));
-        m_syntaxParser.InitParser((IFX_FileStream*)file, 0);
+        m_syntaxParser.InitParser(file.Get(), 0);
         CPDF_Object *pTrailer = m_syntaxParser.GetObject(NULL, 0, 0, 0);
         if (!pTrailer) {
             m_Pos += m_syntaxParser.SavePos();
