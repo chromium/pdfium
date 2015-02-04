@@ -7,6 +7,8 @@
 #ifndef _FXCRT_EXTENSION_IMP_
 #define _FXCRT_EXTENSION_IMP_
 
+#include "fx_safe_types.h"
+
 class IFXCRT_FileAccess
 {
 public:

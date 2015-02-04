@@ -276,11 +276,6 @@ int			FXSYS_round(FX_FLOAT f);
 #ifdef __cplusplus
 };
 
-#include "../../../third_party/numerics/safe_math.h"
-typedef base::CheckedNumeric<FX_DWORD> FX_SAFE_DWORD;
-typedef base::CheckedNumeric<FX_INT32> FX_SAFE_INT32;
-typedef base::CheckedNumeric<size_t>   FX_SAFE_SIZE_T;
-
 #if defined(__clang__) || _MSC_VER >= 1700
 #define FX_FINAL final
 #define FX_OVERRIDE override

@@ -6,6 +6,8 @@
 
 #include "../../../include/fxcrt/fx_basic.h"
 #include "../../../include/fdrm/fx_crypt.h"
+#include "../../../src/fxcrt/fx_safe_types.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

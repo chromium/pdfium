@@ -9,9 +9,9 @@
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_render.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
+#include "../../../src/fxcrt/fx_safe_types.h"
 #include "../fpdf_page/pageint.h"
 #include "render_int.h"
-#include "../../../../third_party/numerics/safe_math.h"
 
 static unsigned int _GetBits8(FX_LPCBYTE pData, int bitpos, int nbits)
 {

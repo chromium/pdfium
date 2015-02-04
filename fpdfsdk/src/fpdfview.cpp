@@ -10,6 +10,7 @@
 #include "../include/fsdk_rendercontext.h"
 #include "../include/fpdf_progressive.h"
 #include "../include/fpdf_ext.h"
+#include "../../../core/src/fxcrt/fx_safe_types.h"
 #include "../../third_party/numerics/safe_conversions_impl.h"
 
 CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
