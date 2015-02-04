@@ -2743,7 +2743,11 @@ public:
     }
 
     virtual void                        GetLinearizedMainXRefInfo(FX_FILESIZE *pPos, FX_DWORD *pSize)  FX_OVERRIDE;
+
 protected:
+    static const int kMaxDataAvailRecursionDepth = 64;
+    static int s_CurrentDataAvailRecursionDepth;
+
     FX_DWORD                            GetObjectSize(FX_DWORD objnum, FX_FILESIZE& offset);
     FX_BOOL                             IsObjectsAvail(CFX_PtrArray& obj_array, FX_BOOL bParsePage, IFX_DownloadHints* pHints, CFX_PtrArray &ret_array);
     FX_BOOL                             CheckDocStatus(IFX_DownloadHints *pHints);
@@ -2918,6 +2922,9 @@ IPDF_DataAvail* IPDF_DataAvail::Create(IFX_FileAvail* pFileAvail, IFX_FileRead* 
 {
   return FX_NEW CPDF_DataAvail(pFileAvail, pFileRead);
 }
+
+// static
+int CPDF_DataAvail::s_CurrentDataAvailRecursionDepth = 0;
 
 CPDF_DataAvail::CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead)
     : IPDF_DataAvail(pFileAvail, pFileRead)
@@ -4395,6 +4402,10 @@ FX_BOOL CPDF_DataAvail::CheckLinearizedFirstPage(FX_INT32 iPage, IFX_DownloadHin
 }
 FX_BOOL CPDF_DataAvail::HaveResourceAncestor(CPDF_Dictionary *pDict)
 {
+    CFX_AutoRestorer<int> restorer(&s_CurrentDataAvailRecursionDepth);
+    if (++s_CurrentDataAvailRecursionDepth > kMaxDataAvailRecursionDepth) {
+        return FALSE;
+    }
     CPDF_Object *pParent = pDict->GetElement("Parent");
     if (!pParent) {
         return FALSE;
@@ -4407,9 +4418,8 @@ FX_BOOL CPDF_DataAvail::HaveResourceAncestor(CPDF_Dictionary *pDict)
     if (pRet) {
         m_pPageResource = pRet;
         return TRUE;
-    } else {
-        return HaveResourceAncestor(pParentDict);
     }
+    return HaveResourceAncestor(pParentDict);
 }
 FX_BOOL CPDF_DataAvail::IsPageAvail(FX_INT32 iPage, IFX_DownloadHints* pHints)
 {
