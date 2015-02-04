@@ -579,6 +579,7 @@
         'core/include/fxcrt/fx_ucd.h',
         'core/include/fxcrt/fx_xml.h',
         'core/src/fxcrt/extension.h',
+        'core/src/fxcrt/fx_safe_types.h',
         'core/src/fxcrt/fxcrt_platforms.cpp',
         'core/src/fxcrt/fxcrt_platforms.h',
         'core/src/fxcrt/fxcrt_posix.cpp',

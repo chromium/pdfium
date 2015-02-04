@@ -12,6 +12,7 @@
 #include "../../include/pdfwindow/PWL_Utils.h"
 #include "../../include/pdfwindow/PWL_Caret.h"
 #include "../../include/pdfwindow/PWL_FontMap.h"
+#include "../../../core/src/fxcrt/fx_safe_types.h"
 
 /* ---------------------------- CPWL_Edit ------------------------------ */
 

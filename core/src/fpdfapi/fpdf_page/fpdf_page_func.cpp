@@ -4,10 +4,14 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <limits.h>
+
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
+#include "../../../src/fxcrt/fx_safe_types.h"
+#include "../../../third_party/numerics/safe_conversions_impl.h"
 #include "pageint.h"
-#include <limits.h>
+
 class CPDF_PSEngine;
 typedef enum {PSOP_ADD, PSOP_SUB, PSOP_MUL, PSOP_DIV, PSOP_IDIV, PSOP_MOD,
               PSOP_NEG, PSOP_ABS, PSOP_CEILING, PSOP_FLOOR, PSOP_ROUND, PSOP_TRUNCATE,
