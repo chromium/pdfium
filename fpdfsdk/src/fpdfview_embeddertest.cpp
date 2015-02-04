@@ -177,12 +177,16 @@ TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {
 }
 
 // The following tests pass if the document opens without crashing.
-TEST_F(FPDFViewEmbeddertest, Crasher1) {
+TEST_F(FPDFViewEmbeddertest, Crasher_113) {
+  EXPECT_TRUE(OpenDocument("testing/resources/bug_113.pdf"));
+}
+
+TEST_F(FPDFViewEmbeddertest, Crasher_451830) {
   // XFA branch detects this document as bad.
   EXPECT_FALSE(OpenDocument("testing/resources/bug_451830.pdf"));
 }
 
-TEST_F(FPDFViewEmbeddertest, Crasher2) {
+TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
   EXPECT_TRUE(OpenDocument("testing/resources/bug_452455.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
