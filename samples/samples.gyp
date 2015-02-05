@@ -15,6 +15,24 @@
       'target_name': 'pdfium_test',
       'sources': [
         'pdfium_test.cc',
+        'image_diff_png.cc',
+      ],
+    },
+    {
+      'target_name': 'pdfium_diff',
+      'type': 'executable',
+      'variables': { 'enable_wexit_time_destructors': 1, },
+      'dependencies': [
+        '../pdfium.gyp:fxcodec',
+        '../third_party/third_party.gyp:safemath',
+      ],
+      'include_dirs': [
+        '../../',
+      ],
+      'sources': [
+        'image_diff.cc',
+        'image_diff_png.h',
+        'image_diff_png.cc',
       ],
     },
   ],

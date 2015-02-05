@@ -10,7 +10,19 @@ group("samples") {
 
 executable("pdfium_test") {
   sources = [
+    "image_diff_png.cc",
     "pdfium_test.cc",
+  ]
+  deps = [
+    "//third_party/pdfium",
+  ]
+}
+
+executable("pdfium_diff") {
+  sources = [
+    "image_diff.cc",
+    "image_diff_png.cc",
+    "image_diff_png.h",
   ]
   deps = [
     "//third_party/pdfium",

@@ -21,6 +21,7 @@
 #include "../fpdfsdk/include/fpdfview.h"
 #include "../core/include/fxcrt/fx_system.h"
 #include "v8/include/v8.h"
+#include "image_diff_png.h"
 
 #ifdef _WIN32
 #define snprintf _snprintf
@@ -32,6 +33,7 @@
 enum OutputFormat {
   OUTPUT_NONE,
   OUTPUT_PPM,
+  OUTPUT_PNG,
 #ifdef _WIN32
   OUTPUT_BMP,
   OUTPUT_EMF,
@@ -113,14 +115,21 @@ static bool GetExternalData(const Options& options,
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
+static bool CheckDimensions(int stride, int width, int height) {
+  if (stride < 0 || width < 0 || height < 0)
+    return false;
+  if (height > 0 && width > INT_MAX / height)
+    return false;
+  return true;
+}
+
 static void WritePpm(const char* pdf_name, int num, const void* buffer_void,
                      int stride, int width, int height) {
   const char* buffer = reinterpret_cast<const char*>(buffer_void);
 
-  if (stride < 0 || width < 0 || height < 0)
+  if (!CheckDimensions(stride, width, height))
     return;
-  if (height > 0 && width > INT_MAX / height)
-    return;
+
   int out_len = width * height;
   if (out_len > INT_MAX / 3)
     return;
@@ -154,13 +163,48 @@ static void WritePpm(const char* pdf_name, int num, const void* buffer_void,
   fclose(fp);
 }
 
+static void WritePng(const char* pdf_name, int num, const void* buffer_void,
+                     int stride, int width, int height) {
+  if (!CheckDimensions(stride, width, height))
+    return;
+
+  std::vector<unsigned char> png_encoding;
+  const unsigned char* buffer = static_cast<const unsigned char*>(buffer_void);
+  if (!image_diff_png::EncodeBGRAPNG(
+          buffer, width, height, stride, false, &png_encoding)) {
+    fprintf(stderr, "Failed to convert bitmap to PNG\n");
+    return;
+  }
+
+  char filename[256];
+  int chars_formatted = snprintf(
+      filename, sizeof(filename), "%s.%d.png", pdf_name, num);
+  if (chars_formatted < 0 ||
+      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
+    fprintf(stderr, "Filname %s is too long\n", filename);
+    return;
+  }
+
+  FILE* fp = fopen(filename, "wb");
+  if (!fp) {
+    fprintf(stderr, "Failed to open %s for output\n", filename);
+    return;
+  }
+
+  size_t bytes_written = fwrite(
+      &png_encoding.front(), 1, png_encoding.size(), fp);
+  if (bytes_written != png_encoding.size())
+    fprintf(stderr, "Failed to write to  %s\n", filename);
+
+  (void) fclose(fp);
+}
+
 #ifdef _WIN32
 static void WriteBmp(const char* pdf_name, int num, const void* buffer,
                      int stride, int width, int height) {
-  if (stride < 0 || width < 0 || height < 0)
+  if (!CheckDimensions(stride, width, height))
     return;
-  if (height > 0 && width > INT_MAX / height)
-    return;
+
   int out_len = stride * height;
   if (out_len > INT_MAX / 3)
     return;
@@ -199,9 +243,9 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
   snprintf(filename, sizeof(filename), "%s.%d.emf", pdf_name, num);
 
   HDC dc = CreateEnhMetaFileA(NULL, filename, NULL, NULL);
-  
-  HRGN rgn = CreateRectRgn(0, 0, width, height); 
-  SelectClipRgn(dc, rgn); 
+
+  HRGN rgn = CreateRectRgn(0, 0, width, height);
+  SelectClipRgn(dc, rgn);
   DeleteObject(rgn);
 
   SelectObject(dc, GetStockObject(NULL_PEN));
@@ -293,6 +337,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OUTPUT_PPM;
+    } else if (cur_arg == "--png") {
+      if (options->output_format != OUTPUT_NONE) {
+        fprintf(stderr, "Duplicate or conflicting --png argument\n");
+        return false;
+      }
+      options->output_format = OUTPUT_PNG;
     }
 #ifdef _WIN32
     else if (cur_arg == "--emf") {
@@ -476,6 +526,11 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
       case OUTPUT_PPM:
         WritePpm(name.c_str(), i, buffer, stride, width, height);
         break;
+
+      case OUTPUT_PNG:
+        WritePng(name.c_str(), i, buffer, stride, width, height);
+        break;
+
       default:
         break;
     }
@@ -505,6 +560,7 @@ int main(int argc, const char* argv[]) {
     printf("Usage: pdfium_test [OPTION] [FILE]...\n");
     printf("--bin-dir=<path> - override path to v8 external data\n");
     printf("--scale=<number> - scale output size by number (e.g. 0.5)\n");
+    printf("--png - write page images <pdf-name>.<page-number>.png\n");
     printf("--ppm - write page images <pdf-name>.<page-number>.ppm\n");
 #ifdef _WIN32
     printf("--bmp - write page images <pdf-name>.<page-number>.bmp\n");
