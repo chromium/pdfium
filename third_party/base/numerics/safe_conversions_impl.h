@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_SAFE_CONVERSIONS_IMPL_H_
-#define BASE_SAFE_CONVERSIONS_IMPL_H_
+#ifndef PDFIUM_THIRD_PARTY_BASE_SAFE_CONVERSIONS_IMPL_H_
+#define PDFIUM_THIRD_PARTY_BASE_SAFE_CONVERSIONS_IMPL_H_
 
 #include <limits>
 
 #include "../macros.h"
 #include "../template_util.h"
 
+namespace pdfium {
 namespace base {
 namespace internal {
 
@@ -212,6 +213,7 @@ inline RangeConstraint DstRangeRelationToSrcRange(Src value) {
 
 }  // namespace internal
 }  // namespace base
+}  // namespace pdfium
 
-#endif  // BASE_SAFE_CONVERSIONS_IMPL_H_
+#endif  // PDFIUM_THIRD_PARTY_BASE_SAFE_CONVERSIONS_IMPL_H_
 

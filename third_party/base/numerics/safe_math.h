@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_SAFE_MATH_H_
-#define BASE_SAFE_MATH_H_
+#ifndef PDFIUM_THIRD_PARTY_BASE_SAFE_MATH_H_
+#define PDFIUM_THIRD_PARTY_BASE_SAFE_MATH_H_
 
 #include "safe_math_impl.h"
 
+namespace pdfium {
 namespace base {
-
 namespace internal {
 
 // CheckedNumeric implements all the logic and operators for detecting integer
@@ -267,5 +267,6 @@ BASE_NUMERIC_ARITHMETIC_OPERATORS(Mod, %, %= )
 using internal::CheckedNumeric;
 
 }  // namespace base
+}  // namespace pdfium
 
-#endif  // BASE_SAFE_MATH_H_
+#endif  // PDFIUM_THIRD_PARTY_BASE_SAFE_MATH_H_

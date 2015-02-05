@@ -18,7 +18,7 @@
 #include "../../include/javascript/Icon.h"
 #include "../../include/javascript/Field.h"
 
-#include "../../../third_party/numerics/safe_math.h"
+#include "../../../third_party/base/numerics/safe_math.h"
 
 static v8::Isolate* GetIsolate(IFXJS_Context* cc)
 {
@@ -1428,7 +1428,7 @@ FX_BOOL Document::documentFileName(OBJ_PROP_PARAMS)
 CFX_WideString Document::ReversalStr(CFX_WideString cbFrom)
 {
 	size_t iLength = cbFrom.GetLength();
-	base::CheckedNumeric<size_t> iSize = sizeof(wchar_t);
+        pdfium::base::CheckedNumeric<size_t> iSize = sizeof(wchar_t);
 	iSize *= (iLength + 1);
 	wchar_t* pResult = (wchar_t*)malloc(iSize.ValueOrDie());
 	wchar_t* pFrom = (wchar_t*)cbFrom.GetBuffer(iLength);
@@ -1449,7 +1449,7 @@ CFX_WideString Document::ReversalStr(CFX_WideString cbFrom)
 CFX_WideString Document::CutString(CFX_WideString cbFrom)
 {
 	size_t iLength = cbFrom.GetLength();
-	base::CheckedNumeric<size_t> iSize = sizeof(wchar_t);
+	pdfium::base::CheckedNumeric<size_t> iSize = sizeof(wchar_t);
 	iSize *= (iLength + 1);
 	wchar_t* pResult = (wchar_t*)malloc(iSize.ValueOrDie());
 	wchar_t* pFrom = (wchar_t*)cbFrom.GetBuffer(iLength);

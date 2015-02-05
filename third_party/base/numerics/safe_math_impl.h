@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef SAFE_MATH_IMPL_H_
-#define SAFE_MATH_IMPL_H_
+#ifndef PDFIUM_THIRD_PARTY_SAFE_MATH_IMPL_H_
+#define PDFIUM_THIRD_PARTY_SAFE_MATH_IMPL_H_
 
 #include <stdint.h>
 
@@ -15,6 +15,7 @@
 #include "../template_util.h"
 #include "safe_conversions.h"
 
+namespace pdfium {
 namespace base {
 namespace internal {
 
@@ -498,5 +499,6 @@ struct IsIntegerArithmeticSafe {
 
 }  // namespace internal
 }  // namespace base
+}  // namespace pdfium
 
-#endif  // SAFE_MATH_IMPL_H_
+#endif  // PDFIUM_THIRD_PARTY_SAFE_MATH_IMPL_H_

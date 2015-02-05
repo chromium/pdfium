@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_TEMPLATE_UTIL_H_
-#define BASE_TEMPLATE_UTIL_H_
+#ifndef PDFIUM_THIRD_PARTY_BASE_TEMPLATE_UTIL_H_
+#define PDFIUM_THIRD_PARTY_BASE_TEMPLATE_UTIL_H_
 
 #include <cstddef>  // For size_t.
 
+namespace pdfium {
 namespace base {
 
 template<class T, T v>
@@ -29,5 +30,6 @@ template<class T>
 struct enable_if<true, T> { typedef T type; };
 
 }  // namespace base
+}  // namespace pdfium
 
-#endif  // BASE_TEMPLATE_UTIL_H_
+#endif  // PDFIUM_THIRD_PARTY_BASE_TEMPLATE_UTIL_H_

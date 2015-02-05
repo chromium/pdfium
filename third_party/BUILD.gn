@@ -6,7 +6,7 @@ group("third_party") {
   deps = [
     ":bigint",
     ":freetype",
-    ":safemath",
+    ":pdfium_base",
   ]
 }
 
@@ -69,20 +69,20 @@ static_library("freetype") {
   ]
 }
 
-component("safemath") {
+component("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
       "//third_party/pdfium:pdfium_config",
       "//build/config/compiler:no_chromium_code",
   ]
   sources = [
-    "logging.h",
-    "macros.h",
-    "template_util.h",
-    "numerics/safe_conversions.h",
-    "numerics/safe_conversions_impl.h",
-    "numerics/safe_math.h",
-    "numerics/safe_math_impl.h",
+    "base/logging.h",
+    "base/macros.h",
+    "base/template_util.h",
+    "base/numerics/safe_conversions.h",
+    "base/numerics/safe_conversions_impl.h",
+    "base/numerics/safe_math.h",
+    "base/numerics/safe_math_impl.h",
   ]
 }
 

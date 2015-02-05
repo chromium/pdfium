@@ -7,8 +7,8 @@
 // that are closely related to things that are commonly used that belong in this
 // file.)
 
-#ifndef BASE_MACROS_H_
-#define BASE_MACROS_H_
+#ifndef PDFIUM_THIRD_PARTY_BASE_MACROS_H_
+#define PDFIUM_THIRD_PARTY_BASE_MACROS_H_
 
 // The COMPILE_ASSERT macro can be used to verify that a compile time
 // expression is true. For example, you could use it to verify the
@@ -28,4 +28,4 @@
 #undef COMPILE_ASSERT
 #define COMPILE_ASSERT(expr, msg) static_assert(expr, #msg)
 
-#endif  // BASE_MACROS_H_
+#endif  // PDFIUM_THIRD_PARTY_BASE_MACROS_H_

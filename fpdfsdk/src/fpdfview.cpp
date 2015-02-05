@@ -11,7 +11,7 @@
 #include "../include/fpdf_progressive.h"
 #include "../include/fpdf_ext.h"
 #include "../../../core/src/fxcrt/fx_safe_types.h"
-#include "../../third_party/numerics/safe_conversions_impl.h"
+#include "../../third_party/base/numerics/safe_conversions_impl.h"
 
 CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
 {
@@ -24,7 +24,7 @@ FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer, FX_FILESIZE offset, size_t si
     if (offset < 0) {
         return FALSE;
     }
-    FX_SAFE_FILESIZE newPos = base::checked_cast<FX_FILESIZE, size_t>(size);
+    FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
     newPos += offset;
     if (!newPos.IsValid() || newPos.ValueOrDie() > m_FileAccess.m_FileLen) {
         return FALSE;
@@ -210,7 +210,7 @@ public:
             if (offset < 0) {
                 return FALSE;
             }
-            FX_SAFE_FILESIZE newPos = base::checked_cast<FX_FILESIZE, size_t>(size);
+            FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
             newPos += offset;
             if (!newPos.IsValid() || newPos.ValueOrDie() > (FX_DWORD)m_size) {
                 return FALSE;
