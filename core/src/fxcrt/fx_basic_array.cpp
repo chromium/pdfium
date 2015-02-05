@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fxcrt/fx_basic.h"
-#include "../../../third_party/numerics/safe_math.h"
+#include "../../../third_party/base/numerics/safe_math.h"
 
 CFX_BasicArray::CFX_BasicArray(int unit_size)
     : m_pData(NULL)
@@ -32,7 +32,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
     }
 
     if (m_pData == NULL) {
-        base::CheckedNumeric<int> totalSize = nNewSize;
+        pdfium::base::CheckedNumeric<int> totalSize = nNewSize;
         totalSize *= m_nUnitSize;
         if (!totalSize.IsValid()) {
             m_nSize = m_nMaxSize = 0;
@@ -51,7 +51,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
         m_nSize = nNewSize;
     } else {
         int nNewMax = nNewSize < m_nMaxSize ? m_nMaxSize : nNewSize;
-        base::CheckedNumeric<int> totalSize = nNewMax;
+        pdfium::base::CheckedNumeric<int> totalSize = nNewMax;
         totalSize *= m_nUnitSize;
         if (!totalSize.IsValid() || nNewMax < m_nSize) {
             return FALSE;
@@ -70,7 +70,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
 FX_BOOL CFX_BasicArray::Append(const CFX_BasicArray& src)
 {
     int nOldSize = m_nSize;
-    base::CheckedNumeric<int> newSize = m_nSize;
+    pdfium::base::CheckedNumeric<int> newSize = m_nSize;
     newSize += src.m_nSize;
     if (m_nUnitSize != src.m_nUnitSize || !newSize.IsValid() || !SetSize(newSize.ValueOrDie())) {
         return FALSE;

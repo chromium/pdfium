@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fxcrt/fx_basic.h"
-#include "../../../third_party/numerics/safe_math.h"
+#include "../../../third_party/base/numerics/safe_math.h"
 
 static CFX_StringDataW* FX_AllocStringW(int nLen)
 {
@@ -13,7 +13,7 @@ static CFX_StringDataW* FX_AllocStringW(int nLen)
         return NULL;
     }
 
-    base::CheckedNumeric<int> iSize = static_cast<int>(sizeof(FX_WCHAR));
+    pdfium::base::CheckedNumeric<int> iSize = static_cast<int>(sizeof(FX_WCHAR));
     iSize *= nLen + 1;
     iSize += sizeof(long) * 3;
     CFX_StringDataW* pData = (CFX_StringDataW*)FX_Alloc(FX_BYTE, iSize.ValueOrDie());
@@ -435,7 +435,7 @@ void CFX_WideString::AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STR
     if (nCopyLen == 0 || nCopyLen < 0) {
         return;
     }
-    base::CheckedNumeric<FX_STRSIZE> iSize = static_cast<FX_STRSIZE>(sizeof(FX_WCHAR));
+    pdfium::base::CheckedNumeric<FX_STRSIZE> iSize = static_cast<FX_STRSIZE>(sizeof(FX_WCHAR));
     iSize *= nCopyLen;
     ASSERT(dest.m_pData == NULL);
     dest.m_pData = FX_AllocStringW(nCopyLen);

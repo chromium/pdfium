@@ -95,7 +95,7 @@ static_library("pdfium") {
 
   deps = [
     "third_party:bigint",
-    "third_party:safemath",
+    "third_party:pdfium_base",
     ":fdrm",
     ":formfiller",
     ":fpdfapi",

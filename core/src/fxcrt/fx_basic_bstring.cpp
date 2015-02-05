@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fxcrt/fx_basic.h"
-#include "../../../third_party/numerics/safe_math.h"
+#include "../../../third_party/base/numerics/safe_math.h"
 
 static int _Buffer_itoa(char* buf, int i, FX_DWORD flags)
 {
@@ -52,7 +52,7 @@ static CFX_StringData* FX_AllocString(int nLen)
     if (nLen == 0 || nLen < 0) {
         return NULL;
     }
-    base::CheckedNumeric<int> nSize = nLen;
+    pdfium::base::CheckedNumeric<int> nSize = nLen;
     nSize += sizeof(long) * 3 + 1;
     CFX_StringData* pData = (CFX_StringData*)FX_Alloc(FX_BYTE, nSize.ValueOrDie());
     if (!pData) {

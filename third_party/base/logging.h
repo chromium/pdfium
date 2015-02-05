@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_LOGGING_H_
-#define BASE_LOGGING_H_
+#ifndef PDFIUM_THIRD_PARTY_BASE_LOGGING_H_
+#define PDFIUM_THIRD_PARTY_BASE_LOGGING_H_
 
 #include <stdlib.h>
 
@@ -15,4 +15,4 @@
 
 #define NOTREACHED() abort()
 
-#endif  // BASE_LOGGING_H_
+#endif  // PDFIUM_THIRD_PARTY_BASE_LOGGING_H_

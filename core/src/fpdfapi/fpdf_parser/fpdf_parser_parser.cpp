@@ -1076,8 +1076,8 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL 
         if (startnum < 0) {
             continue;
         }
-        m_dwXrefStartObjNum = base::checked_cast<FX_DWORD, FX_INT32> (startnum);
-        FX_DWORD count = base::checked_cast<FX_DWORD, FX_INT32> (arrIndex[i].second);
+        m_dwXrefStartObjNum = pdfium::base::checked_cast<FX_DWORD, FX_INT32> (startnum);
+        FX_DWORD count = pdfium::base::checked_cast<FX_DWORD, FX_INT32> (arrIndex[i].second);
         FX_SAFE_DWORD dwCaculatedSize = segindex;
         dwCaculatedSize += count;
         dwCaculatedSize *= totalWidth;
@@ -1087,7 +1087,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL 
         FX_LPCBYTE segstart = pData + segindex * totalWidth;
         FX_SAFE_DWORD dwMaxObjNum = startnum;
         dwMaxObjNum += count;
-        FX_DWORD dwV5Size = base::checked_cast<FX_DWORD, FX_INT32> (m_V5Type.GetSize());
+        FX_DWORD dwV5Size = pdfium::base::checked_cast<FX_DWORD, FX_INT32> (m_V5Type.GetSize());
         if (!dwMaxObjNum.IsValid() || dwMaxObjNum.ValueOrDie() > dwV5Size) {
             continue;
         }
@@ -2443,7 +2443,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict, PARSE_CONTEXT
 
     CPDF_CryptoHandler* pCryptoHandler = objnum == (FX_DWORD)m_MetadataObjnum ? NULL : m_pCryptoHandler;
     if (pCryptoHandler == NULL) {
-        base::CheckedNumeric<FX_FILESIZE> pos = m_Pos;
+        pdfium::base::CheckedNumeric<FX_FILESIZE> pos = m_Pos;
         pos += len;
         if (pos.IsValid() && pos.ValueOrDie() < m_FileLen) {
             m_Pos = pos.ValueOrDie();
@@ -3080,7 +3080,7 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(CFX_PtrArray& obj_array, FX_BOOL bParsePa
                     FX_DWORD dwNum = pRef->GetRefObjNum();
                     FX_FILESIZE offset;
                     FX_DWORD original_size = GetObjectSize(dwNum, offset);
-                    base::CheckedNumeric<FX_DWORD> size = original_size;
+                    pdfium::base::CheckedNumeric<FX_DWORD> size = original_size;
                     if (size.ValueOrDefault(0) == 0 || offset < 0 || offset >= m_dwFileLen) {
                         break;
                     }
@@ -3307,7 +3307,7 @@ CPDF_Object* CPDF_DataAvail::GetObject(FX_DWORD objnum, IFX_DownloadHints* pHint
         pParser       = (CPDF_Parser *)(m_pDocument->GetParser());
     }
 
-    base::CheckedNumeric<FX_DWORD> size = original_size;
+    pdfium::base::CheckedNumeric<FX_DWORD> size = original_size;
     if (size.ValueOrDefault(0) == 0 || offset < 0 || offset >= m_dwFileLen) {
         if (pExistInFile)
            *pExistInFile = FALSE;
