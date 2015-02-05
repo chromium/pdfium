@@ -271,14 +271,8 @@ public:
 	FX_BOOL							SubmitFields(const CFX_WideString& csDestination, const CFX_PtrArray& fields, 
 		FX_BOOL bIncludeOrExclude, FX_BOOL bUrlEncoded);
 	FX_BOOL							SubmitForm(const CFX_WideString& sDestination, FX_BOOL bUrlEncoded);
-	FX_BOOL							ImportFormFromFDFFile(const CFX_WideString& csFDFFileName, FX_BOOL bNotify);
-	FX_BOOL							ExportFormToFDFFile(const CFX_WideString& sFDFFileName);
 	FX_BOOL							ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf);
-	FX_BOOL							ExportFieldsToFDFFile(const CFX_WideString& sFDFFileName, const CFX_PtrArray& fields,
-		FX_BOOL bIncludeOrExclude);
 	FX_BOOL							ExportFieldsToFDFTextBuf(const CFX_PtrArray& fields,FX_BOOL bIncludeOrExclude, CFX_ByteTextBuf& textBuf);
-	FX_BOOL							ExportFormToTxtFile(const CFX_WideString& sTxtFileName);
-	FX_BOOL							ImportFormFromTxtFile(const CFX_WideString& sTxtFileName);
 	CFX_WideString					GetTemporaryFileName(const CFX_WideString& sFileExt);
 	
 	void							SynchronizeField(CPDF_FormField* pFormField, FX_BOOL bSynchronizeElse);

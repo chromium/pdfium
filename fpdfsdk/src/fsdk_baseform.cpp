@@ -3141,20 +3141,6 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(FX_LPBYTE& pBuf, FX_STRSIZE& nBuf
 	return TRUE;
 }
 
-FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFFile(const CFX_WideString& sFDFFileName, 
-												 const CFX_PtrArray& fields, FX_BOOL bIncludeOrExclude)
-{
-	if (sFDFFileName.IsEmpty()) return FALSE;
-	ASSERT(m_pDocument != NULL);
-	ASSERT(m_pInterForm != NULL);
-
- 	CFDF_Document* pFDF = m_pInterForm->ExportToFDF(m_pDocument->GetPath(),(CFX_PtrArray&)fields, bIncludeOrExclude);
- 	if (!pFDF) return FALSE;
- 	FX_BOOL bRet = pFDF->WriteFile(sFDFFileName.UTF8Encode()); // = FALSE;//
-	delete pFDF;
-
-	return bRet;
-}
 FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(const CFX_PtrArray& fields,FX_BOOL bIncludeOrExclude, CFX_ByteTextBuf& textBuf)
 {
 	ASSERT(m_pDocument != NULL);
@@ -3234,22 +3220,6 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination, FX_BOO
 	return TRUE;
 }
 
-FX_BOOL	CPDFSDK_InterForm::ExportFormToFDFFile(const CFX_WideString& sFDFFileName)
-{
-	if (sFDFFileName.IsEmpty()) return FALSE;
-
-	ASSERT(m_pInterForm != NULL);
-	ASSERT(m_pDocument != NULL);
-
-	CFDF_Document* pFDF = m_pInterForm->ExportToFDF(m_pDocument->GetPath());
-	if (!pFDF) return FALSE;
-
-	FX_BOOL bRet = pFDF->WriteFile(sFDFFileName.UTF8Encode());
-	delete pFDF;
-
-	return bRet;
-}
-
 FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf)
 {
 
@@ -3265,43 +3235,6 @@ FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf)
 	return bRet;
 }
 
-FX_BOOL CPDFSDK_InterForm::ExportFormToTxtFile(const CFX_WideString& sTxtFileName)
-{
-	ASSERT(m_pInterForm != NULL);
-
-	CFX_WideString sFieldNames;
-	CFX_WideString sFieldValues;
-
-	int nSize = m_pInterForm->CountFields();
-
-	if (nSize > 0)
-	{
-		for (int i=0; i<nSize; i++)
-		{
-			CPDF_FormField* pField = m_pInterForm->GetField(i);
-			ASSERT(pField != NULL);
-
-			if (i != 0)
-			{
-				sFieldNames += L"\t";
-				sFieldValues += L"\t";
-			}
-			sFieldNames += pField->GetFullName();
-			sFieldValues += pField->GetValue();
-		}
-
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-FX_BOOL	CPDFSDK_InterForm::ImportFormFromTxtFile(const CFX_WideString& sTxtFileName)
-{
-	ASSERT(m_pInterForm != NULL);
-
-	return TRUE;
-}
 
 FX_BOOL CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action)
 {
@@ -3331,23 +3264,6 @@ FX_BOOL CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action)
 }
 
 FX_BOOL CPDFSDK_InterForm::DoAction_ImportData(const CPDF_Action& action)
-{
-	ASSERT(action != NULL);
-
-	CFX_WideString sFilePath = action.GetFilePath();
-	if (sFilePath.IsEmpty())
-		return FALSE;
-
-	if (!ImportFormFromFDFFile(sFilePath, TRUE))
-	{
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-FX_BOOL	CPDFSDK_InterForm::ImportFormFromFDFFile(const CFX_WideString& csFDFFileName,
-												 FX_BOOL bNotify)
 {
 	return FALSE;
 }

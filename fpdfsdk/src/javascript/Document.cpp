@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -78,7 +78,7 @@ BEGIN_JS_STATIC_PROP(CJS_Document)
 	JS_STATIC_PROP_ENTRY(external)
 	JS_STATIC_PROP_ENTRY(filesize)
 	JS_STATIC_PROP_ENTRY(icons)
-	JS_STATIC_PROP_ENTRY(info)   
+	JS_STATIC_PROP_ENTRY(info)
 	JS_STATIC_PROP_ENTRY(keywords)
 	JS_STATIC_PROP_ENTRY(layout)
 	JS_STATIC_PROP_ENTRY(media)
@@ -87,7 +87,7 @@ BEGIN_JS_STATIC_PROP(CJS_Document)
 	JS_STATIC_PROP_ENTRY(mouseY)
 	JS_STATIC_PROP_ENTRY(numFields)
 	JS_STATIC_PROP_ENTRY(numPages)
-	JS_STATIC_PROP_ENTRY(pageNum)   
+	JS_STATIC_PROP_ENTRY(pageNum)
 	JS_STATIC_PROP_ENTRY(pageWindowRect)
 	JS_STATIC_PROP_ENTRY(path)
 	JS_STATIC_PROP_ENTRY(producer)
@@ -137,7 +137,7 @@ BEGIN_JS_STATIC_METHOD(CJS_Document)
 	JS_STATIC_METHOD_ENTRY(removeIcon, 0)
 	JS_STATIC_METHOD_ENTRY(saveAs, 5)
 	JS_STATIC_METHOD_ENTRY(submitForm, 23)
-	JS_STATIC_METHOD_ENTRY(mailDoc, 0)		
+	JS_STATIC_METHOD_ENTRY(mailDoc, 0)
 END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_Document, Document)
@@ -149,7 +149,7 @@ FX_BOOL	CJS_Document::InitInstance(IFXJS_Context* cc)
 
 	Document* pDoc = (Document*)GetEmbedObject();
 	ASSERT(pDoc != NULL);
-	
+
 	pDoc->AttachDoc(pContext->GetReaderDocument());
 	pDoc->SetIsolate(pContext->GetJSRuntime()->GetIsolate());
 	return TRUE;
@@ -181,7 +181,7 @@ Document::~Document()
 			delete pData;
 			pData = NULL;
 			m_DelayData.SetAt(i, NULL);
-			
+
 		}
 	}
 
@@ -253,14 +253,14 @@ FX_BOOL Document::pageNum(OBJ_PROP_PARAMS)
 	ASSERT(m_pDocument != NULL);
 
 	if (vp.IsGetting())
-	{			
+	{
 		if (CPDFSDK_PageView* pPageView = m_pDocument->GetCurrentView())
 		{
 			vp << pPageView->GetPageIndex();
 		}
 	}
 	else
-	{		
+	{
 		int iPageCount = m_pDocument->GetPageCount();
 
 		int iPageNum = 0;
@@ -289,131 +289,37 @@ FX_BOOL Document::pageNum(OBJ_PROP_PARAMS)
 
 FX_BOOL Document::ParserParams(JSObject* pObj,CJS_AnnotObj& annotobj)
 {
+	// Not supported.
 	return TRUE;
 }
 
 FX_BOOL Document::addAnnot(OBJ_METHOD_PARAMS)
 {
+	// Not supported.
 	return TRUE;
 }
 
 FX_BOOL Document::addField(OBJ_METHOD_PARAMS)
 {
-	//Doesn't support.
+	// Not supported.
 	return TRUE;
 }
-
-//exports form fields as a tab-delimited text file to a local hard disk.
-//comment: need reader support
-//note : watch the third parameter:cPath, for what case it can be safely saved?
-//int CPDFSDK_InterForm::ExportAsText(FX_BOOL bNoPassword,StringArray aFields,String cPath);
-//return value, int the index of the parameters illegal, the index is based on 1.
 
 FX_BOOL Document::exportAsText(OBJ_METHOD_PARAMS)
 {
-	if (IsSafeMode(cc)) return TRUE;
+	// Unsafe, not supported.
 	return TRUE;
 }
 
-//exports form fields as a fdf file to the local hard drive
-//comment: need reader supports
-//note:the last parameter hasn't been confirmed.because the previous one blocks the way.
-//int CPDFSDK_Document::ExportAsFDF(FX_BOOL bAllFields,BOOL bNoPassword,StringArray aFields,FX_BOOL bFlags,String cPath,FX_BOOL bAnnotations);
-
 FX_BOOL Document::exportAsFDF(OBJ_METHOD_PARAMS)
 {
-	v8::Isolate* isolate = GetIsolate(cc);
-	if (IsSafeMode(cc)) return TRUE;
-
-	ASSERT(m_pDocument != NULL);
-
-	if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) return FALSE;
-
-	FX_BOOL bAllFields = params.size() > 0 ? (FX_BOOL)params[0] : FALSE;
-	FX_BOOL bNoPassWord = params.size() > 1 ? (FX_BOOL)params[1] : TRUE;
-	FX_BOOL bWhole = params.size() > 2 ? (params[2].GetType() == VT_null) : TRUE;
-	CJS_Array arrayFileds(isolate);
-	if (!bWhole)
-		arrayFileds.Attach(params[2]);
-	//FX_BOOL bFlags = params.size() > 3 ? (FX_BOOL)params[3] : FALSE;
-	CFX_WideString swFilePath = params.size() > 4 ? (FX_LPCWSTR)params[4].operator CFX_WideString() : L"";
-
-	if (swFilePath.IsEmpty())
-	{
-		CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
-		swFilePath = pEnv->JS_fieldBrowse();
-		if(swFilePath.IsEmpty())
-			return TRUE;
-	}
-	else
-	{
-		swFilePath = app::PDFPathToSysPath(swFilePath);
-	}
-	
-	m_pDocument->SetFocusAnnot(NULL);
-   
-	CPDFSDK_InterForm* pInterForm= (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-	ASSERT(pInterForm != NULL);
-
-	CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-	ASSERT(pPDFForm != NULL);
-
-	CFX_PtrArray aFields;
-
-	if (bWhole)
-	{
-		for (int j=0,jsz=pPDFForm->CountFields(); j<jsz; j++)
-		{
-			aFields.Add(pPDFForm->GetField(j));
-		}
-	}
-	else
-	{
-		for (int i=0,isz=arrayFileds.GetLength(); i<isz; i++)
-		{
-			CJS_Value valName(isolate);
-			arrayFileds.GetElement(i,valName);
-			CFX_WideString swName = valName.operator CFX_WideString();
-
-			for (int j=0, jsz=pPDFForm->CountFields(swName); j<jsz; j++)
-			{
-				aFields.Add(pPDFForm->GetField(j, swName));
-			}
-		}
-	}
-
-	CFX_PtrArray fields;
-
-	for (int i=0,sz=aFields.GetSize(); i<sz; i++)
-	{
-		CPDF_FormField* pField = (CPDF_FormField*)aFields[i];
-		
-		if (!bAllFields)
-			if (pField->GetValue() == L"")
-				continue;
-
-		if (bNoPassWord)
-			if (pField->GetFieldFlags() & 0x2000)
-				continue;
-
-		fields.Add((void*)pField);
-	}    
-
-	return pInterForm->ExportFieldsToFDFFile(swFilePath, fields, TRUE);
+	// Unsafe, not supported.
+	return TRUE;
 }
-
-//exports form fields an XFDF file to the local hard drive
-//comment: need reder supports
-//note:the last parameter can't be test
-//int CPDFSDK_Document::ExportAsXFDF(FX_BOOL bAllFields,FX_BOOL  bNoPassWord,StringArray aFields,String cPath,FX_BOOL bAnnoatations);
 
 FX_BOOL Document::exportAsXFDF(OBJ_METHOD_PARAMS)
 {
-	if (IsSafeMode(cc)) return TRUE;
-	ASSERT(m_pDocument != NULL);
-
-	if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) return FALSE;
-
+	// Unsafe, not supported.
 	return TRUE;
 }
 
@@ -436,7 +342,7 @@ FX_BOOL Document::getField(OBJ_METHOD_PARAMS)
 	CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
 	ASSERT(pPDFForm != NULL);
 
-	if (pPDFForm->CountFields(wideName) <= 0) 
+	if (pPDFForm->CountFields(wideName) <= 0)
 	{
 		vRet.SetNull();
 		return TRUE;
@@ -452,7 +358,7 @@ FX_BOOL Document::getField(OBJ_METHOD_PARAMS)
 	CJS_Field * pJSField = (CJS_Field*)JS_GetPrivate(isolate,pFieldObj);
 	ASSERT(pJSField != NULL);
 
-	Field * pField = (Field *)pJSField->GetEmbedObject(); 
+	Field * pField = (Field *)pJSField->GetEmbedObject();
 	ASSERT(pField != NULL);
 
 	pField->AttachField(this, wideName);
@@ -461,10 +367,7 @@ FX_BOOL Document::getField(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-//Gets the name of the nth field in the document 
-//comment:
-//note: the parameter nIndex, if it is not available
-
+//Gets the name of the nth field in the document
 FX_BOOL Document::getNthFieldName(OBJ_METHOD_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
@@ -483,90 +386,24 @@ FX_BOOL Document::getNthFieldName(OBJ_METHOD_PARAMS)
 		return FALSE;
 
 	vRet = pField->GetFullName();
-	return TRUE;	
+	return TRUE;
 }
-
-//imports the specified fdf file.
-//comments: need reader suppport
-//note:once the cpath is illigl  then a file dialog box pops up in order to ask user to chooose the file
-//int CPDFSDK_Document::importAnFDF(String cPath);
 
 FX_BOOL Document::importAnFDF(OBJ_METHOD_PARAMS)
 {
-	if (IsSafeMode(cc)) return TRUE;
-	ASSERT(m_pDocument != NULL);
-
-	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) || 
-		m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-		m_pDocument->GetPermissions(FPDFPERM_FILL_FORM))) return FALSE;
-
-
-	CFX_WideString swPath;
-	
-	if (params.size() > 0)
-		swPath = params[0];
-	
-	if (swPath.IsEmpty())
-	{
-		CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
-		swPath = pEnv->JS_fieldBrowse();
-		if(swPath.IsEmpty())
-			return TRUE;
-	}
-	else
-	{
-		swPath = app::PDFPathToSysPath(swPath);
-	}
-
-	m_pDocument->SetFocusAnnot(NULL);
-
-	CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-	ASSERT(pInterForm != NULL);
-
-	if (!pInterForm->ImportFormFromFDFFile(swPath, TRUE))
-		return FALSE;
-
-	m_pDocument->SetChangeMark();
-// 	CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
-// 	ASSERT(pEnv != NULL);
-// 	IUndo* pUndo = IUndo::GetUndo(pEnv);
-// 	ASSERT(pUndo != NULL);
-// 	pUndo->Reset(m_pDocument);
-
+	// Unsafe, not supported.
 	return TRUE;
 }
-
-//imports and specified XFDF file containing XML form data
-//comment: need reader supports
-//note: same as up
-//int CPDFSDK_Document::importAnFDF(String cPath)
 
 FX_BOOL Document::importAnXFDF(OBJ_METHOD_PARAMS)
 {
-	if (IsSafeMode(cc)) return TRUE;
-	ASSERT(m_pDocument != NULL);
-
-	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) || 
-		m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-		m_pDocument->GetPermissions(FPDFPERM_FILL_FORM))) return FALSE;
-
+	// Unsafe, not supported.
 	return TRUE;
 }
 
-//imports and specified text file 
-//commnet: need reader supports
-//note: same as up,when nRow is not rational,adobe is dumb for it.
-//int CPDFSDK_Document::importTextData(String cPath,int nRow);
-
 FX_BOOL Document::importTextData(OBJ_METHOD_PARAMS)
 {
-	if (IsSafeMode(cc)) return TRUE;
-	ASSERT(m_pDocument != NULL);
-
-	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) || 
-		m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-		m_pDocument->GetPermissions(FPDFPERM_FILL_FORM))) return FALSE;
-
+	// Unsafe, not supported.
 	return TRUE;
 }
 
@@ -650,7 +487,7 @@ FX_BOOL Document::print(OBJ_METHOD_PARAMS)
 							}
 					}
 				}
-			}	
+			}
 		}
 	}
 	else
@@ -674,7 +511,7 @@ FX_BOOL Document::print(OBJ_METHOD_PARAMS)
 	}
 
 	ASSERT(m_pDocument != NULL);
- 
+
 	if (CPDFDoc_Environment* pEnv = m_pDocument->GetEnv())
 	{
 		pEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit, bPrintAsImage, bReverse, bAnnotations);
@@ -691,7 +528,7 @@ FX_BOOL Document::removeField(OBJ_METHOD_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) || 
+	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
 		m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM))) return FALSE;
 
 	if (params.size() < 1)
@@ -725,7 +562,7 @@ FX_BOOL Document::removeField(OBJ_METHOD_PARAMS)
 
 			CPDFXFA_Page* pPage = pWidget->GetPDFXFAPage();
 			ASSERT(pPage != NULL);
-			
+
 			CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage);
 			pPageView->DeleteAnnot(pWidget);
 
@@ -745,7 +582,7 @@ FX_BOOL Document::resetForm(OBJ_METHOD_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) || 
+	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
 		m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
 		m_pDocument->GetPermissions(FPDFPERM_FILL_FORM))) return FALSE;
 
@@ -776,12 +613,12 @@ FX_BOOL Document::resetForm(OBJ_METHOD_PARAMS)
 		{
 			CJS_Value valElement(isolate);
 			aName.GetElement(i,valElement);
-			CFX_WideString swVal = valElement.operator CFX_WideString();	
-			
+			CFX_WideString swVal = valElement.operator CFX_WideString();
+
 			for (int j=0,jsz=pPDFForm->CountFields(swVal); j<jsz; j++)
 			{
 				aFields.Add((void*)pPDFForm->GetField(j,swVal));
-			}		
+			}
 		}
 
 		if (aFields.GetSize() > 0)
@@ -804,14 +641,8 @@ FX_BOOL Document::resetForm(OBJ_METHOD_PARAMS)
 
 FX_BOOL Document::saveAs(OBJ_METHOD_PARAMS)
 {
-
-	if (IsSafeMode(cc)) return TRUE;
-
-	ASSERT(m_pDocument != NULL);
-
-//	m_pDocument->DoSaveAs();
-
-	return TRUE;
+  // Unsafe, not supported.
+  return TRUE;
 }
 
 
@@ -853,7 +684,7 @@ FX_BOOL Document::submitForm(OBJ_METHOD_PARAMS)
 			bEmpty = CJS_Value(isolate,pValue, GET_VALUE_TYPE(pValue));
 		pValue = JS_GetObjectElement(isolate,pObj,L"aFields");
 			aFields.Attach(CJS_Value(isolate,pValue, GET_VALUE_TYPE(pValue)));
-	}		
+	}
 
 	CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);
@@ -869,7 +700,7 @@ FX_BOOL Document::submitForm(OBJ_METHOD_PARAMS)
 		CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 		ASSERT(pRuntime != NULL);
 
-		
+
 		if (pPDFInterForm->CheckRequiredFields())
 		{
 			pRuntime->BeginBlock();
@@ -880,7 +711,7 @@ FX_BOOL Document::submitForm(OBJ_METHOD_PARAMS)
 		return TRUE;
 	}
 	else
-	{	
+	{
 		CFX_PtrArray fieldObjects;
 
 		for (int i=0,sz=aFields.GetLength(); i<sz; i++)
@@ -907,7 +738,7 @@ FX_BOOL Document::submitForm(OBJ_METHOD_PARAMS)
 		CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 		ASSERT(pRuntime != NULL);
 
-		
+
 		if (pPDFInterForm->CheckRequiredFields(&fieldObjects, TRUE))
 		{
 			pRuntime->BeginBlock();
@@ -943,7 +774,7 @@ FX_BOOL Document::ExtractFolderName(CPDFSDK_Document *pDoc,CFX_ByteString &strFo
 }
 
 FX_BOOL Document::bookmarkRoot(OBJ_PROP_PARAMS)
-{	
+{
 	return TRUE;
 }
 
@@ -957,7 +788,7 @@ FX_BOOL Document::mailDoc(OBJ_METHOD_PARAMS)
 	CFX_WideString cBcc = L"";
 	CFX_WideString cSubject = L"";
 	CFX_WideString cMsg = L"";
-	
+
 
 	bUI = params.size()>=1?static_cast<FX_BOOL>(params[0]):TRUE;
 	cTo = params.size()>=2?(const wchar_t*)params[1].operator CFX_WideString():L"";
@@ -965,7 +796,7 @@ FX_BOOL Document::mailDoc(OBJ_METHOD_PARAMS)
 	cBcc = params.size()>=4?(const wchar_t*)params[3].operator CFX_WideString():L"";
 	cSubject = params.size()>=5?(const wchar_t*)params[4].operator CFX_WideString():L"";
 	cMsg = params.size()>=6?(const wchar_t*)params[5].operator CFX_WideString():L"";
-	
+
 	v8::Isolate* isolate = GetIsolate(cc);
 
 	if(params.size()>=1 && params[0].GetType() == VT_object)
@@ -989,7 +820,7 @@ FX_BOOL Document::mailDoc(OBJ_METHOD_PARAMS)
 
 		pValue = JS_GetObjectElement(isolate,pObj, L"cMsg");
 			cMsg = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
-	
+
 	}
 
 	CJS_Context* pContext = (CJS_Context*)cc;
@@ -1064,7 +895,7 @@ FX_BOOL Document::info(OBJ_PROP_PARAMS)
 		JS_PutObjectString(isolate,pObj, L"ModDate", cwModDate);
 		JS_PutObjectString(isolate,pObj, L"Trapped", cwTrapped);
 
-// It's to be compatible to non-standard info dictionary.	
+// It's to be compatible to non-standard info dictionary.
 		FX_POSITION pos = pDictionary->GetStartPos();
 		while(pos)
 		{
@@ -1155,7 +986,7 @@ FX_BOOL Document::delay(OBJ_PROP_PARAMS)
 
 		m_bDelay = b;
 
-		if (m_bDelay) 
+		if (m_bDelay)
 		{
 			for (int i=0,sz=m_DelayData.GetSize(); i<sz; i++)
 				delete m_DelayData.GetAt(i);
@@ -1356,7 +1187,7 @@ FX_BOOL Document::filesize(OBJ_PROP_PARAMS)
 
 FX_BOOL Document::mouseX(OBJ_PROP_PARAMS)
 {
-	return TRUE;	
+	return TRUE;
 }
 
 FX_BOOL Document::mouseY(OBJ_PROP_PARAMS)
@@ -1487,7 +1318,7 @@ FX_BOOL Document::pageWindowRect(OBJ_PROP_PARAMS)
 }
 
 FX_BOOL Document::layout(OBJ_PROP_PARAMS)
-{	
+{
 	return TRUE;
 }
 
@@ -1501,8 +1332,8 @@ FX_BOOL Document::closeDoc(OBJ_METHOD_PARAMS)
 	ASSERT(m_pDocument != NULL);
 
 
-	
-	
+
+
 
 	return TRUE;
 }
@@ -1537,7 +1368,7 @@ FX_BOOL Document::getAnnots3D(OBJ_METHOD_PARAMS)
 }
 
 FX_BOOL Document::getOCGs(OBJ_METHOD_PARAMS)
-{	
+{
 	return TRUE;
 }
 
@@ -1577,7 +1408,7 @@ void IconTree::InsertIconElement(IconElement* pNewIcon)
 void IconTree::DeleteIconTree()
 {
 	if (!m_pHead || !m_pEnd)return;
-	
+
 	IconElement* pTemp = NULL;
 	while(m_pEnd != m_pHead)
 	{
@@ -1614,12 +1445,12 @@ IconElement* IconTree::operator [](int iIndex)
 void IconTree::DeleteIconElement(CFX_WideString swIconName)
 {
 	IconElement* pTemp = m_pHead;
-	int iLoopCount = m_iLength; 
+	int iLoopCount = m_iLength;
 	for (int i = 0; i < iLoopCount - 1; i++)
 	{
 		if (pTemp == m_pEnd)
 			break;
-	
+
 		if (m_pHead->IconName == swIconName)
 		{
 			m_pHead = m_pHead->NextIcon;
@@ -1662,7 +1493,7 @@ FX_BOOL Document::addIcon(OBJ_METHOD_PARAMS)
 	ASSERT(pRuntime != NULL);
 
 	CFX_WideString swIconName = params[0].operator CFX_WideString();
-	
+
 	JSFXObject pJSIcon = (JSFXObject)params[1];
 	if (JS_GetObjDefnID(pJSIcon) != JS_GetObjDefnID(*pRuntime, L"Icon")) return FALSE;
 
@@ -1702,10 +1533,10 @@ FX_BOOL Document::icons(OBJ_PROP_PARAMS)
 	for (int i = 0; i < iIconTreeLength; i++)
 	{
 		pIconElement = (*m_pIconTree)[i];
-		
+
 		JSFXObject  pObj = JS_NewFxDynamicObj(*pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"Icon"));
 		if (pObj.IsEmpty()) return FALSE;
-				
+
 		CJS_Icon * pJS_Icon = (CJS_Icon *)JS_GetPrivate(pObj);
 		if (!pJS_Icon) return FALSE;
 
@@ -1737,10 +1568,10 @@ FX_BOOL Document::getIcon(OBJ_METHOD_PARAMS)
 		if ((*m_pIconTree)[i]->IconName == swIconName)
 		{
 			Icon* pRetIcon = (*m_pIconTree)[i]->IconStream;
-				
+
 			JSFXObject  pObj = JS_NewFxDynamicObj(*pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"Icon"));
 			if (pObj.IsEmpty()) return FALSE;
-					
+
 			CJS_Icon * pJS_Icon = (CJS_Icon *)JS_GetPrivate(pObj);
 			if (!pJS_Icon) return FALSE;
 
@@ -1768,71 +1599,8 @@ FX_BOOL Document::removeIcon(OBJ_METHOD_PARAMS)
 
 FX_BOOL Document::createDataObject(OBJ_METHOD_PARAMS)
 {
-	if (IsSafeMode(cc)) return TRUE;
-	ASSERT(m_pDocument != NULL);
-
-	CFX_WideString swName = L"";
-	CFX_ByteString sbName = "";
-	CFX_WideString swValue = L"";
-	CFX_WideString swMIMEType = L"";
-	CFX_WideString swCryptFilter = L"";
-	CFX_ByteString sbFileValue = "";
-	
-	int iParamSize = params.size();
-	for (int i = 0; i < iParamSize; i++)
-	{
-		if (i == 0)
-			swName = params[0];
-		if (i == 1)
-			swValue = params[1];
-		if (i == 2)
-			swMIMEType = params[2];
-		if (i == 3)
-			swCryptFilter = params[4];
-	}
-
-	FILE* pFile = NULL;
-
-	//CFileStatus fileStatus;
-	const int BUFSIZE = 17;
-	FX_BYTE buf[BUFSIZE];
-	FX_BYTE *pBuffer = NULL;
-	char* pBuf = NULL;
-	int nFileSize = 0;
-	sbFileValue = CFX_ByteString::FromUnicode(swValue);
-	sbName = CFX_ByteString::FromUnicode(swName);
-	int iBufLength = sbFileValue.GetLength();
-	pBuf = (char*)malloc(sizeof(char) * iBufLength);
-	pBuf = sbFileValue.GetBuffer(iBufLength);
-
-	if ( NULL == (pFile = FXSYS_fopen( sbName.GetBuffer(sbName.GetLength()), "wb+" )) )
-	{
-		return FALSE;
-	}
-
-	fwrite( pBuf, sizeof(char), iBufLength, pFile );
-	fclose( pFile );
-	pFile = NULL;
-
-	pFile = FXSYS_fopen( sbName.GetBuffer(sbName.GetLength()), "rb+" );
-	fseek( pFile, 0, SEEK_END );
-	nFileSize = ftell( pFile );
-
-	pBuffer = new FX_BYTE[nFileSize];
-	fseek( pFile, 0, SEEK_SET );
-	size_t s = fread( pBuffer, sizeof(char), nFileSize, pFile );
-	if(s == 0)
-	{
-		delete[] pBuffer;
-		return FALSE;
-	}
-
-	CRYPT_MD5Generate(pBuffer, nFileSize, buf);
-	buf[BUFSIZE - 1] = 0;
-	CFX_WideString csCheckSum((FX_LPCWSTR)buf, 16);
-	delete[] pBuffer;
-
-	return TRUE;
+  // Unsafe, not implemented.
+  return TRUE;
 }
 
 FX_BOOL Document::media(OBJ_PROP_PARAMS)
@@ -1844,7 +1612,7 @@ FX_BOOL Document::calculateNow(OBJ_METHOD_PARAMS)
 {
 	ASSERT(m_pDocument != NULL);
 
-	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) || 
+	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
 		m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
 		m_pDocument->GetPermissions(FPDFPERM_FILL_FORM))) return FALSE;
 
@@ -1861,8 +1629,6 @@ FX_BOOL Document::Collab(OBJ_PROP_PARAMS)
 
 FX_BOOL Document::getPageNthWord(OBJ_METHOD_PARAMS)
 {
-	//if (IsSafeMode(cc)) return TRUE;
-
 	ASSERT(m_pDocument != NULL);
 
 	if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) return FALSE;
@@ -1925,8 +1691,6 @@ FX_BOOL Document::getPageNthWord(OBJ_METHOD_PARAMS)
 
 FX_BOOL Document::getPageNthWordQuads(OBJ_METHOD_PARAMS)
 {
-	//if (IsSafeMode(cc)) return TRUE;
-
 	ASSERT(m_pDocument != NULL);
 
 	if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) return FALSE;
@@ -2020,7 +1784,7 @@ int	Document::CountWords(CPDF_TextObject* pTextObj)
 
 		if (ISLATINWORD(unicode) && bIsLatin)
 			continue;
-		
+
 		bIsLatin = ISLATINWORD(unicode);
 		if (unicode != 0x20)
 			nWords++;
@@ -2057,10 +1821,10 @@ CFX_WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex
 		{
 		}
 		else
-		{		
+		{
 			bIsLatin = ISLATINWORD(unicode);
 			if (unicode != 0x20)
-				nWords++;	
+				nWords++;
 		}
 
 		if (nWords-1 == nWordIndex)
@@ -2093,28 +1857,17 @@ FX_BOOL Document::zoomType(OBJ_PROP_PARAMS)
 
 FX_BOOL Document::deletePages(OBJ_METHOD_PARAMS)
 {
-	
-
-	
-	
-
-
 	v8::Isolate* isolate = GetIsolate(cc);
-// 	if (pEnv->GetAppName().Compare(PHANTOM) != 0)
-// 		return TRUE;
-
-	//if (IsSafeMode(cc)) return TRUE;
-
 	ASSERT(m_pDocument != NULL);
 
-	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) || 
+	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
 		m_pDocument->GetPermissions(FPDFPERM_ASSEMBLE))) return FALSE;
 
 	int iSize = params.size();
-	
+
 	int nStart = 0;
 	int nEnd = 0;
-	
+
 	if (iSize < 1)
 	{
 	}
@@ -2150,336 +1903,33 @@ FX_BOOL Document::deletePages(OBJ_METHOD_PARAMS)
 
 	if (nEnd < nStart) nEnd = nStart;
 
-	
+
 
 	return TRUE;
 }
 
 FX_BOOL Document::extractPages(OBJ_METHOD_PARAMS)
 {
-	
-
-	
-	
-	
-
-	v8::Isolate* isolate = GetIsolate(cc);
-
-	if (IsSafeMode(cc)) return TRUE;
-
-	ASSERT(m_pDocument != NULL);
-
-	if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT)) return FALSE;
-
-	int iSize = params.size();
-	
-	int nTotal = m_pDocument->GetPageCount();
-	int nStart = 0;
-	int nEnd = nTotal - 1;
-
-	CFX_WideString swFilePath;
-	
-	if (iSize < 1)
-	{
-	}
-	else if (iSize == 1)
-	{
-		if (params[0].GetType() == VT_object)
-		{
-			JSObject  pObj = (JSObject )params[0];
-			v8::Handle<v8::Value> pValue = JS_GetObjectElement(isolate,pObj, L"nStart");
-				nStart = (int)CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue));
-
-			pValue = JS_GetObjectElement(isolate,pObj, L"nEnd");
-				nEnd = (int)CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue));
-
-			pValue = JS_GetObjectElement(isolate,pObj, L"cPath");
-				swFilePath = CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
-		}
-		else
-		{
-			nStart = (int)params[0];
-		}
-	}
-	else if (iSize == 2)
-	{
-		nStart = (int)params[0];
-		nEnd = (int)params[1];
-	}
-	else
-	{
-		nStart = (int)params[0];
-		nEnd = (int)params[1];
-		swFilePath = params[2].operator CFX_WideString();
-	}
-
-	if (nEnd < nStart)
-		nEnd = nStart;
-
-	CPDF_Document *pNewDoc = new CPDF_Document;
-	pNewDoc->CreateNewDoc();	
-
-	CFX_WordArray array;
-	for (int i=nStart; i<=nEnd; i++)
-		array.Add(i);
-
-//	m_pDocument->ExtractPages(array, pNewDoc);
-
-	if (swFilePath.IsEmpty())
-	{
-
-	}
-	else
-	{
-		swFilePath = app::PDFPathToSysPath(swFilePath);
-		CPDF_Creator PDFCreater(pNewDoc);
-		PDFCreater.Create(swFilePath);
-		delete pNewDoc;
-//		pEnv->OpenDocument(swFilePath);
-		vRet.SetNull();
-	}
-
-	return TRUE;
+  // Unsafe, not supported.
+  return TRUE;
 }
 
 FX_BOOL Document::insertPages(OBJ_METHOD_PARAMS)
 {
-
-
-	
-
-
-
-	v8::Isolate* isolate = GetIsolate(cc);
-
-	if (IsSafeMode(cc)) return TRUE;
-
-	ASSERT(m_pDocument != NULL);
-
-	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) || 
-		m_pDocument->GetPermissions(FPDFPERM_ASSEMBLE))) return FALSE;
-
-	int iSize = params.size();
-	
-	int nStart = 0;
-	int nEnd = 0;
-	int nPage = 0;
-
-	CFX_WideString swFilePath;
-	
-	if (iSize < 1)
-	{
-	}
-	else if (iSize == 1)
-	{
-		if (params[0].GetType() == VT_object)
-		{
-			JSObject  pObj = (JSObject )params[0];
-
-			v8::Handle<v8::Value> pValue = JS_GetObjectElement(isolate,pObj, L"nPage");
-				nPage = (int)CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue));
-
-			pValue = JS_GetObjectElement(isolate,pObj, L"cPath");
-				swFilePath = CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
-
-			pValue = JS_GetObjectElement(isolate,pObj, L"nStart");
-				nStart = (int)CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue));
-
-			pValue = JS_GetObjectElement(isolate,pObj, L"nEnd");
-				nEnd = (int)CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue));
-		}
-		else
-		{
-			nPage = (int)params[0];
-		}
-	}
-	else 
-	{
-		nPage = (int)params[0];
-
-		if (iSize >= 2)
-			swFilePath = params[1].operator CFX_WideString();
-
-		if (iSize >= 3)
-			nStart = (int)params[2];
-
-		if (iSize >= 4)
-			nEnd = (int)params[3];
-	}
-
-	nPage++;
-
-	if (nPage < 0)
-		nPage = 0;
-
-	if (nPage > m_pDocument->GetPageCount())
-		nPage = m_pDocument->GetPageCount();
-
-	if (swFilePath.IsEmpty()) return FALSE;
-
-	swFilePath = app::PDFPathToSysPath(swFilePath);
-
-	CPDF_Parser pdfParser;
-	pdfParser.StartParse(swFilePath, FALSE);
-	CPDF_Document* pSrcDoc = pdfParser.GetDocument();
-
-	if (!pSrcDoc) 
-	{
-		pdfParser.CloseParser();
-		return FALSE;
-	}
-
-	int nTotal = pSrcDoc->GetPageCount();
-
-	if (nStart < 0)	nStart = 0;
-	if (nStart >= nTotal) nStart = nTotal - 1;
-
-	if (nEnd < 0) nEnd = 0;
-	if (nEnd >= nTotal) nEnd = nTotal - 1;
-
-	if (nEnd < nStart) nEnd = nStart;
-
-	CFX_WordArray array;
-	for (int i=nStart; i<=nEnd; i++)
-		array.Add(i);
-
-//	m_pDocument->InsertPages(nPage, pSrcDoc, array);
-
-	pdfParser.CloseParser();
-
-	return TRUE;
+  // Unsafe, not supported.
+  return TRUE;
 }
 
 FX_BOOL Document::replacePages(OBJ_METHOD_PARAMS)
 {
-
-
-	
-
-
-
-	v8::Isolate* isolate = GetIsolate(cc);
-
-	if (IsSafeMode(cc)) return TRUE;
-
-	ASSERT(m_pDocument != NULL);
-
-	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) || 
-		m_pDocument->GetPermissions(FPDFPERM_ASSEMBLE))) return FALSE;
-
-	int iSize = params.size();
-	
-	int nStart = -1;
-	int nEnd = -1;
-	int nPage = 0;
-
-	CFX_WideString swFilePath;
-	
-	if (iSize < 1)
-	{
-	}
-	else if (iSize == 1)
-	{
-		if (params[0].GetType() == VT_object)
-		{
-			JSObject  pObj = (JSObject )params[0];
-
-			v8::Handle<v8::Value> pValue = JS_GetObjectElement(isolate,pObj, L"nPage");
-				nPage = (int)CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue));
-
-			pValue = JS_GetObjectElement(isolate,pObj, L"cPath");
-				swFilePath = CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue)).operator CFX_WideString();
-
-			pValue = JS_GetObjectElement(isolate,pObj, L"nStart");
-				nStart = (int)CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue));
-
-			pValue = JS_GetObjectElement(isolate,pObj, L"nEnd");
-				nEnd = (int)CJS_Value(m_isolate,pValue,GET_VALUE_TYPE(pValue));
-		}
-		else
-		{
-			nPage = (int)params[0];
-		}
-	}
-	else 
-	{
-		nPage = (int)params[0];
-
-		if (iSize >= 2)
-			swFilePath = params[1].operator CFX_WideString();
-
-		if (iSize >= 3)
-			nStart = (int)params[2];
-
-		if (iSize >= 4)
-			nEnd = (int)params[3];
-	}
-
-	if (nPage < 0)
-		nPage = 0;
-
-	if (nPage >= m_pDocument->GetPageCount())
-		nPage = m_pDocument->GetPageCount() - 1;
-
-	if (swFilePath.IsEmpty()) return FALSE;
-
-	swFilePath = app::PDFPathToSysPath(swFilePath);
-
-	CPDF_Parser pdfParser;
-	pdfParser.StartParse(swFilePath, FALSE);
-	CPDF_Document* pSrcDoc = pdfParser.GetDocument();
-
-	if (!pSrcDoc) 
-	{
-		pdfParser.CloseParser();
-		return FALSE;
-	}
-
-	int nTotal = pSrcDoc->GetPageCount();
-
-	if (nStart < 0)
-	{
-		if (nEnd < 0)
-		{
-			nStart = 0;
-			nEnd = nTotal - 1;
-		}
-		else
-		{
-			nStart = 0;
-		}
-	}
-	else
-	{
-		if (nEnd < 0)
-		{
-			nEnd = nStart;
-		}
-		else
-		{
-			if (nStart >= nTotal) nStart = nTotal - 1;
-			if (nEnd >= nTotal) nEnd = nTotal - 1;
-
-			if (nEnd < nStart) nEnd = nStart;
-		}
-	}
-
-	CFX_WordArray array;
-	for (int i=nStart; i<=nEnd; i++)
-		array.Add(i);
-
-//	m_pDocument->ReplacePages(nPage, pSrcDoc, array);
-
-	pdfParser.CloseParser();
-
-	return TRUE;
+  // Unsafe, not supported.
+  return TRUE;
 }
 
 FX_BOOL Document::getURL(OBJ_METHOD_PARAMS)
 {
-	if (IsSafeMode(cc)) return TRUE;
-
-	return TRUE;
+  // Unsafe, not supported.
+  return TRUE;
 }
 
 void Document::AddDelayData(CJS_DelayData* pData)
@@ -2519,7 +1969,7 @@ void Document::AddDelayAnnotData(CJS_AnnotObj *pData)
 void Document::DoAnnotDelay()
 {
 	CFX_DWordArray DelArray;
-	
+
 	for (int j=DelArray.GetSize()-1; j>=0; j--)
 	{
 		m_DelayData.RemoveAt(DelArray[j]);

@@ -26,26 +26,18 @@ CFDF_Document* CFDF_Document::CreateNewDoc()
     pDoc->m_pRootDict->SetAt(FX_BSTRC("FDF"), pFDFDict);
     return pDoc;
 }
-CFDF_Document* CFDF_Document::ParseFile(FX_LPCSTR file_path)
-{
-    return CFDF_Document::ParseFile(FX_CreateFileRead(file_path), TRUE);
-}
-CFDF_Document* CFDF_Document::ParseFile(FX_LPCWSTR file_path)
-{
-    return CFDF_Document::ParseFile(FX_CreateFileRead(file_path), TRUE);
-}
 CFDF_Document* CFDF_Document::ParseFile(IFX_FileRead *pFile, FX_BOOL bOwnFile)
 {
-    if (!pFile) {
-        return NULL;
-    }
-    CFDF_Document* pDoc = FX_NEW CFDF_Document;
-    pDoc->ParseStream(pFile, bOwnFile);
-    if (pDoc->m_pRootDict == NULL) {
-        delete pDoc;
-        return NULL;
-    }
-    return pDoc;
+  if (!pFile) {
+    return NULL;
+  }
+  CFDF_Document* pDoc = FX_NEW CFDF_Document;
+  pDoc->ParseStream(pFile, bOwnFile);
+  if (pDoc->m_pRootDict == NULL) {
+    delete pDoc;
+    return NULL;
+  }
+  return pDoc;
 }
 CFDF_Document* CFDF_Document::ParseMemory(FX_LPCBYTE pData, FX_DWORD size)
 {
@@ -120,36 +112,6 @@ CFX_WideString CFDF_Document::GetWin32Path() const
         return FPDF_FileSpec_GetWin32Path(m_pRootDict->GetDict(FX_BSTRC("FDF")));
     }
     return FPDF_FileSpec_GetWin32Path(pFileSpec);
-}
-FX_BOOL CFDF_Document::WriteFile(FX_LPCSTR file_path) const
-{
-    IFX_FileWrite *pFile = FX_CreateFileWrite(file_path);
-    if (!pFile) {
-        return FALSE;
-    }
-    FX_BOOL bRet = WriteFile(pFile);
-    pFile->Release();
-    return bRet;
-}
-FX_BOOL CFDF_Document::WriteFile(FX_LPCWSTR file_path) const
-{
-    IFX_FileWrite *pFile = FX_CreateFileWrite(file_path);
-    if (!pFile) {
-        return FALSE;
-    }
-    FX_BOOL bRet = WriteFile(pFile);
-    pFile->Release();
-    return bRet;
-}
-FX_BOOL CFDF_Document::WriteFile(IFX_FileWrite *pFile) const
-{
-    CFX_ByteTextBuf buf;
-    WriteBuf(buf);
-    FX_BOOL bRet = pFile->WriteBlock(buf.GetBuffer(), buf.GetSize());
-    if (bRet) {
-        pFile->Flush();
-    }
-    return bRet;
 }
 static CFX_WideString ChangeSlash(FX_LPCWSTR str)
 {
