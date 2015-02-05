@@ -7,8 +7,13 @@
     'type': 'executable',
     'dependencies': [
       '../pdfium.gyp:pdfium',
+      '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
     ],
-    'include_dirs': ['<(DEPTH)'],
+    'include_dirs': [
+      '<(DEPTH)',
+      '<(DEPTH)/v8',
+      '<(DEPTH)/v8/include',
+    ],
   },
   'targets': [
     {
