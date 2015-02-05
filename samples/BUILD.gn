@@ -14,5 +14,10 @@ executable("pdfium_test") {
   ]
   deps = [
     "//third_party/pdfium",
+    "//v8:v8_libplatform",
+  ]
+  include_dirs = [
+    "//v8",
+    "//v8/include",
   ]
 }
