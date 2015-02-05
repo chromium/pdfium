@@ -87,13 +87,6 @@ void CJS_EmbedObj::EndTimer(CJS_Timer* pTimer)
 	delete pTimer;
 }
 
-FX_BOOL	CJS_EmbedObj::IsSafeMode(IFXJS_Context* cc)
-{
-	ASSERT(cc != NULL);
-
-	return TRUE;
-}
-
 /* ---------------------------------  CJS_Object --------------------------------- */
 void  FreeObject(const v8::WeakCallbackData<v8::Object, CJS_Object>& data)
 {

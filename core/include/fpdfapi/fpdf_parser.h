@@ -800,24 +800,11 @@ FX_FLOAT PDF_ClipFloat(FX_FLOAT f);
 class CFDF_Document : public CPDF_IndirectObjects
 {
 public:
-
-    static CFDF_Document*	CreateNewDoc();
-
-    static CFDF_Document*	ParseFile(FX_LPCSTR file_path);
-
-    static CFDF_Document*	ParseFile(FX_LPCWSTR file_path);
-
-    static CFDF_Document*	ParseFile(IFX_FileRead *pFile, FX_BOOL bOwnFile = FALSE);
-
-    static CFDF_Document*	ParseMemory(FX_LPCBYTE pData, FX_DWORD size);
+    static CFDF_Document* CreateNewDoc();
+    static CFDF_Document* ParseFile(IFX_FileRead *pFile, FX_BOOL bOwnFile = FALSE);
+    static CFDF_Document* ParseMemory(FX_LPCBYTE pData, FX_DWORD size);
 
     ~CFDF_Document();
-
-    FX_BOOL					WriteFile(FX_LPCSTR file_path) const;
-
-    FX_BOOL					WriteFile(FX_LPCWSTR file_path) const;
-
-    FX_BOOL					WriteFile(IFX_FileWrite *pFile) const;
 
     FX_BOOL					WriteBuf(CFX_ByteTextBuf& buf) const;
 

@@ -160,9 +160,6 @@ private:
 
 public:
 	static CFX_WideString		SysPathToPDFPath(const CFX_WideString& sOldPath);
-	static CFX_WideString		PDFPathToSysPath(const CFX_WideString& sOldPath);
-	static CFX_WideString		RelativePathToSysPath(const CFX_WideString& sOldPath, const CFX_WideString& sFilePath);
-
 
 private:
 
