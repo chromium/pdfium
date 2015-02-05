@@ -24,8 +24,10 @@ class TemplateProcessor:
 
   XREF_TOKEN = '{{xref}}'
   XREF_REPLACEMENT = 'xref\n%d %d\n'
-  XREF_REPLACEMENT_N = '%010d %05d n\n'
-  XREF_REPLACEMENT_F = '0000000000 65536 f\n'
+
+  # XREF rows must be exactly 20 bytes - space required.
+  XREF_REPLACEMENT_N = '%010d %05d n \n'
+  XREF_REPLACEMENT_F = '0000000000 65535 f \n'
 
   STARTXREF_TOKEN= '{{startxref}}'
   STARTXREF_REPLACEMENT = 'startxref\n%d'
