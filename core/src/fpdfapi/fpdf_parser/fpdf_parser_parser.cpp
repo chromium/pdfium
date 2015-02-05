@@ -3394,7 +3394,12 @@ FX_BOOL CPDF_DataAvail::CheckRoot(IFX_DownloadHints* pHints)
         }
         return FALSE;
     }
-    CPDF_Reference* pRef = (CPDF_Reference*)m_pRoot->GetDict()->GetElement(FX_BSTRC("Pages"));
+    CPDF_Dictionary* pDict = m_pRoot->GetDict();
+    if (!pDict) {
+        m_docStatus = PDF_DATAAVAIL_ERROR;
+        return FALSE;
+    }
+    CPDF_Reference* pRef = (CPDF_Reference*)pDict->GetElement(FX_BSTRC("Pages"));
     if (pRef == NULL || pRef->GetType() != PDFOBJ_REFERENCE) {
         m_docStatus = PDF_DATAAVAIL_ERROR;
         return FALSE;
