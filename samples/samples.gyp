@@ -24,7 +24,7 @@
       'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
         '../pdfium.gyp:fxcodec',
-        '../third_party/third_party.gyp:safemath',
+        '../third_party/third_party.gyp:pdfium_base',
       ],
       'include_dirs': [
         '../../',

@@ -5,6 +5,8 @@
 #ifndef TOOLS_IMAGEDIFF_IMAGE_DIFF_PNG_H_
 #define TOOLS_IMAGEDIFF_IMAGE_DIFF_PNG_H_
 
+#include <stdlib.h>  // for size_t.
+
 #include <vector>
 
 namespace image_diff_png {
