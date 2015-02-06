@@ -606,6 +606,9 @@
 #define png_get_io_chunk_name FOXIT_png_get_io_chunk_name
 #define png_get_io_chunk_type FOXIT_png_get_io_chunk_type
 #define png_get_uint_31 FOXIT_png_get_uint_31
+#define png_get_uint_32 FOXIT_png_get_uint_32
+#define png_get_uint_16 FOXIT_png_get_uint_16
+#define png_get_int_32 FOXIT_png_get_int_32
 #define png_save_uint_32 FOXIT_png_save_uint_32
 #define png_save_int_32 FOXIT_png_save_int_32
 #define png_save_uint_16 FOXIT_png_save_uint_16

@@ -19,6 +19,9 @@ config("pdfium_config") {
     "_FPDFSDK_LIB",
     "_NO_GDIPLUS_",  # workaround text rendering issues on Windows
     "OPJ_STATIC",
+    "PNG_PREFIX",
+    "PNGPREFIX_H",
+    "PNG_USE_READ_MACROS",
   ]
 
   if (pdf_use_skia) {
