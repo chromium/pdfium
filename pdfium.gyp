@@ -273,7 +273,6 @@
         'core/src/fpdfapi/fpdf_font/fpdf_font.cpp',
         'core/src/fpdfapi/fpdf_font/fpdf_font_charset.cpp',
         'core/src/fpdfapi/fpdf_font/fpdf_font_cid.cpp',
-        'core/src/fpdfapi/fpdf_font/fpdf_font_utility.cpp',
         'core/src/fpdfapi/fpdf_font/ttgsubtable.cpp',
         'core/src/fpdfapi/fpdf_font/ttgsubtable.h',
         'core/src/fpdfapi/fpdf_page/fpdf_page.cpp',

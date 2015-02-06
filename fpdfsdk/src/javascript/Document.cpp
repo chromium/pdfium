@@ -1158,29 +1158,6 @@ FX_BOOL Document::filesize(OBJ_PROP_PARAMS)
 {
 	if (!vp.IsGetting())return FALSE;
 
-	ASSERT(m_pDocument != NULL);
-
-// 	CFile file(m_pDocument->GetPath(), CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone);
-// 	vp << (double)file.GetLength();
-// 	file.Close();
-
-	if ( m_pDocument->GetPath().IsEmpty() == FALSE)
-	{
-		CFX_ByteString bsStr = CFX_ByteString::FromUnicode( m_pDocument->GetPath() );
-		FILE * pFile = NULL;
-		pFile = fopen( bsStr.GetBuffer( bsStr.GetLength() ), "rb" );
-		if ( pFile )
-		{
-			fseek( pFile, 0, SEEK_END );
-			long lSize = ftell( pFile );
-			fclose( pFile );
-			pFile = NULL;
-
-			vp << (FX_INT32)(lSize);
-			return TRUE;
-		}
-	}
-
 	vp << 0;
 	return TRUE;
 }
