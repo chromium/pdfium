@@ -199,9 +199,9 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
   snprintf(filename, sizeof(filename), "%s.%d.emf", pdf_name, num);
 
   HDC dc = CreateEnhMetaFileA(NULL, filename, NULL, NULL);
-  
-  HRGN rgn = CreateRectRgn(0, 0, width, height); 
-  SelectClipRgn(dc, rgn); 
+
+  HRGN rgn = CreateRectRgn(0, 0, width, height);
+  SelectClipRgn(dc, rgn);
   DeleteObject(rgn);
 
   SelectObject(dc, GetStockObject(NULL_PEN));
@@ -216,8 +216,21 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
 }
 #endif
 
-int Form_Alert(IPDF_JSPLATFORM*, FPDF_WIDESTRING, FPDF_WIDESTRING, int, int) {
-  printf("Form_Alert called.\n");
+int Form_Alert(IPDF_JSPLATFORM*, FPDF_WIDESTRING msg, FPDF_WIDESTRING,
+               int, int) {
+  // Deal with differences between UTF16LE and wchar_t on this platform.
+  size_t characters = 0;
+  while (msg[characters]) {
+    ++characters;
+  }
+  wchar_t* platform_string =
+      (wchar_t*)malloc((characters + 1) * sizeof(wchar_t));
+  for (size_t i = 0; i < characters + 1; ++i) {
+    unsigned char* ptr = (unsigned char*)&msg[i];
+    platform_string[i] = ptr[0] + 256 * ptr[1];
+  }
+  printf("Alert: %ls\n", platform_string);
+  free(platform_string);
   return 0;
 }
 
@@ -355,7 +368,7 @@ void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
 
 void RenderPdf(const std::string& name, const char* pBuf, size_t len,
                const Options& options) {
-  printf("Rendering PDF file %s.\n", name.c_str());
+  fprintf(stderr, "Rendering PDF file %s.\n", name.c_str());
 
   IPDF_JSPLATFORM platform_callbacks;
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
@@ -391,10 +404,10 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   (void) FPDFAvail_IsDocAvail(pdf_avail, &hints);
 
   if (!FPDFAvail_IsLinearized(pdf_avail)) {
-    printf("Non-linearized path...\n");
+    fprintf(stderr, "Non-linearized path...\n");
     doc = FPDF_LoadCustomDocument(&file_access, NULL);
   } else {
-    printf("Linearized path...\n");
+    fprintf(stderr, "Linearized path...\n");
     doc = FPDFAvail_GetDocument(pdf_avail, NULL);
   }
 
@@ -477,23 +490,26 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   FPDF_CloseDocument(doc);
   FPDFAvail_Destroy(pdf_avail);
 
-  printf("Loaded, parsed and rendered %" PRIuS " pages.\n", rendered_pages);
-  printf("Skipped %" PRIuS " bad pages.\n", bad_pages);
+  fprintf(stderr, "Rendered %" PRIuS " pages.\n", rendered_pages);
+  fprintf(stderr, "Skipped %" PRIuS " bad pages.\n", bad_pages);
 }
+
+static const char usage_string[] =
+    "Usage: pdfium_test [OPTION] [FILE]...\n"
+    "  --bin-dir=<path> - override path to v8 external data\n"
+    "  --scale=<number> - scale output size by number (e.g. 0.5)\n"
+#ifdef _WIN32
+    "  --bmp - write page images <pdf-name>.<page-number>.bmp\n"
+    "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
+#endif
+    "  --ppm - write page images <pdf-name>.<page-number>.ppm\n";
 
 int main(int argc, const char* argv[]) {
   std::vector<std::string> args(argv, argv + argc);
   Options options;
   std::list<std::string> files;
   if (!ParseCommandLine(args, &options, &files)) {
-    printf("Usage: pdfium_test [OPTION] [FILE]...\n");
-    printf("--bin-dir=<path> - override path to v8 external data\n");
-    printf("--scale=<number> - scale output size by number (e.g. 0.5)\n");
-    printf("--ppm - write page images <pdf-name>.<page-number>.ppm\n");
-#ifdef _WIN32
-    printf("--bmp - write page images <pdf-name>.<page-number>.bmp\n");
-    printf("--emf - write page meta files <pdf-name>.<page-number>.emf\n");
-#endif
+    fprintf(stderr, "%s", usage_string);
     return 1;
   }
 
