@@ -936,22 +936,6 @@ void CFX_ByteString::SetAt(FX_STRSIZE nIndex, FX_CHAR ch)
     CopyBeforeWrite();
     m_pData->m_String[nIndex] = ch;
 }
-CFX_ByteString CFX_ByteString::LoadFromFile(FX_BSTR filename)
-{
-    FXSYS_FILE* file = FXSYS_fopen(CFX_ByteString(filename), "rb");
-    if (file == NULL) {
-        return CFX_ByteString();
-    }
-    FXSYS_fseek(file, 0, FXSYS_SEEK_END);
-    int len = FXSYS_ftell(file);
-    FXSYS_fseek(file, 0, FXSYS_SEEK_SET);
-    CFX_ByteString str;
-    FX_LPSTR buf = str.GetBuffer(len);
-    FXSYS_fread(buf, 1, len, file);
-    str.ReleaseBuffer(len);
-    FXSYS_fclose(file);
-    return str;
-}
 CFX_WideString CFX_ByteString::UTF8Decode() const
 {
     CFX_UTF8Decoder decoder;

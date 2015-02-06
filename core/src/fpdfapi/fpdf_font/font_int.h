@@ -19,7 +19,6 @@ private:
     CPDF_CID2UnicodeMap*	LoadCID2UnicodeMap(int charset, FX_BOOL bPrompt);
     void					DropAll(FX_BOOL bReload);
     FX_BOOL					m_bPrompted;
-    FX_LPVOID				m_pPackage;
     CFX_MapByteStringToPtr	m_CMaps;
     CPDF_CID2UnicodeMap*	m_CID2UnicodeMaps[6];
 };
@@ -139,30 +138,6 @@ typedef struct _FileHeader {
     FX_DWORD	dwDataOffset;
     FX_DWORD	dwRecordSize;
 } FXMP_FILEHEADER;
-class CPDF_FXMP : public CFX_Object
-{
-public:
-    CPDF_FXMP()
-    {
-        m_pHeader = NULL;
-        m_pTable = NULL;
-    }
-    ~CPDF_FXMP()
-    {
-        if (m_pHeader) {
-            FX_Free(m_pHeader);
-        }
-    }
-    FX_BOOL		IsLoaded()
-    {
-        return m_pTable != NULL;
-    }
-    FX_BOOL		LoadFile(FX_LPVOID pPackage, FX_LPCSTR fileid);
-    FX_LPBYTE	GetRecord(FX_DWORD index);
-private:
-    FXMP_FILEHEADER*	m_pHeader;
-    FX_LPBYTE	m_pTable;
-};
 class CPDF_CID2UnicodeMap : public CFX_Object
 {
 public:
@@ -176,7 +151,6 @@ protected:
     int			m_Charset;
     const FX_WORD*	m_pEmbeddedMap;
     FX_DWORD	m_EmbeddedCount;
-    CPDF_FXMP*	m_pExternalMap;
 };
 class CPDF_ToUnicodeMap : public CFX_Object
 {
