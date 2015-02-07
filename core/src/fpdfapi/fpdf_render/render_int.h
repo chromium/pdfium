@@ -419,9 +419,8 @@ protected:
     CPDF_DIBSource*		LoadMask(FX_DWORD& MatteColor);
     CPDF_DIBSource*		LoadMaskDIB(CPDF_Stream* pMask);
     void				LoadJpxBitmap();
-    void				LoadJbig2Bitmap();
     void				LoadPalette();
-    FX_BOOL				CreateDecoder();
+    int					CreateDecoder();
     void				TranslateScanline24bpp(FX_LPBYTE dest_scan, FX_LPCBYTE src_scan) const;
     void                ValidateDictParam();
     CPDF_Document*		m_pDocument;
@@ -429,9 +428,15 @@ protected:
     CPDF_StreamAcc*		m_pStreamAcc;
     const CPDF_Dictionary*	m_pDict;
     CPDF_ColorSpace*	m_pColorSpace;
-    FX_DWORD			m_Family, m_bpc, m_bpc_orig, m_nComponents, m_GroupFamily;
+    FX_DWORD			m_Family;
+    FX_DWORD			m_bpc;
+    FX_DWORD			m_bpc_orig;
+    FX_DWORD			m_nComponents;
+    FX_DWORD			m_GroupFamily;
     FX_BOOL				m_bLoadMask;
-    FX_BOOL				m_bDefaultDecode, m_bImageMask, m_bColorKey;
+    FX_BOOL				m_bDefaultDecode;
+    FX_BOOL				m_bImageMask;
+    FX_BOOL				m_bColorKey;
     DIB_COMP_DATA*		m_pCompData;
     FX_LPBYTE			m_pLineBuf;
     FX_LPBYTE			m_pMaskedLine;
