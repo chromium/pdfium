@@ -418,7 +418,7 @@ void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
 
 void RenderPdf(const std::string& name, const char* pBuf, size_t len,
                const Options& options) {
-  printf("Rendering PDF file %s.\n", name.c_str());
+  fprintf(stderr, "Rendering PDF file %s.\n", name.c_str());
 
   IPDF_JSPLATFORM platform_callbacks;
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
@@ -454,10 +454,10 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   (void) FPDFAvail_IsDocAvail(pdf_avail, &hints);
 
   if (!FPDFAvail_IsLinearized(pdf_avail)) {
-    printf("Non-linearized path...\n");
+    fprintf(stderr, "Non-linearized path...\n");
     doc = FPDF_LoadCustomDocument(&file_access, NULL);
   } else {
-    printf("Linearized path...\n");
+    fprintf(stderr, "Linearized path...\n");
     doc = FPDFAvail_GetDocument(pdf_avail, NULL);
   }
 
@@ -548,24 +548,27 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   FPDFDOC_ExitFormFillEnvironment(form);
   FPDFAvail_Destroy(pdf_avail);
 
-  printf("Loaded, parsed and rendered %" PRIuS " pages.\n", rendered_pages);
-  printf("Skipped %" PRIuS " bad pages.\n", bad_pages);
+  fprintf(stderr, "Rendered %" PRIuS " pages.\n", rendered_pages);
+  fprintf(stderr, "Skipped %" PRIuS " bad pages.\n", bad_pages);
 }
+
+static const char usage_string[] =
+    "Usage: pdfium_test [OPTION] [FILE]...\n"
+    "  --bin-dir=<path> - override path to v8 external data\n"
+    "  --scale=<number> - scale output size by number (e.g. 0.5)\n"
+#ifdef _WIN32
+    "  --bmp - write page images <pdf-name>.<page-number>.bmp\n"
+    "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
+#endif
+    "  --png - write page images <pdf-name>.<page-number>.png\n"
+    "  --ppm - write page images <pdf-name>.<page-number>.ppm\n";
 
 int main(int argc, const char* argv[]) {
   std::vector<std::string> args(argv, argv + argc);
   Options options;
   std::list<std::string> files;
   if (!ParseCommandLine(args, &options, &files)) {
-    printf("Usage: pdfium_test [OPTION] [FILE]...\n");
-    printf("--bin-dir=<path> - override path to v8 external data\n");
-    printf("--scale=<number> - scale output size by number (e.g. 0.5)\n");
-    printf("--png - write page images <pdf-name>.<page-number>.png\n");
-    printf("--ppm - write page images <pdf-name>.<page-number>.ppm\n");
-#ifdef _WIN32
-    printf("--bmp - write page images <pdf-name>.<page-number>.bmp\n");
-    printf("--emf - write page meta files <pdf-name>.<page-number>.emf\n");
-#endif
+    fprintf(stderr, "%s", usage_string);
     return 1;
   }
 
