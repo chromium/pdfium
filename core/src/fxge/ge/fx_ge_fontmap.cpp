@@ -748,19 +748,6 @@ FX_DWORD _GetCodePageRangeFromCharset(int charset)
     }
     return 1 << 21;
 }
-static int CP2CharSet(int cp)
-{
-    if(cp == 932) {
-        return FXFONT_SHIFTJIS_CHARSET;
-    } else if(cp == 936) {
-        return FXFONT_GB2312_CHARSET;
-    } else if(cp == 949) {
-        return FXFONT_HANGEUL_CHARSET;
-    } else if(cp == 950) {
-        return FXFONT_CHINESEBIG5_CHARSET;
-    }
-    return FXFONT_DEFAULT_CHARSET;
-}
 FXFT_Face CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont, int iBaseFont, int italic_angle, int weight, int picthfamily)
 {
     if (iBaseFont < 12) {
