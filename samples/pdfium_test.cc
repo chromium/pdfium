@@ -20,8 +20,10 @@
 #include "../fpdfsdk/include/fpdftext.h"
 #include "../fpdfsdk/include/fpdfview.h"
 #include "../core/include/fxcrt/fx_system.h"
-#include "v8/include/v8.h"
 #include "image_diff_png.h"
+#include "v8/include/v8.h"
+#include "v8/include/libplatform/libplatform.h"
+
 
 #ifdef _WIN32
 #define snprintf _snprintf
@@ -573,6 +575,9 @@ int main(int argc, const char* argv[]) {
   }
 
   v8::V8::InitializeICU();
+  v8::Platform* platform = v8::platform::CreateDefaultPlatform();
+  v8::V8::InitializePlatform(platform);
+  v8::V8::Initialize();
 
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   v8::StartupData natives;
@@ -606,6 +611,8 @@ int main(int argc, const char* argv[]) {
   }
 
   FPDF_DestroyLibrary();
+  v8::V8::ShutdownPlatform();
+  delete platform;
 
   return 0;
 }

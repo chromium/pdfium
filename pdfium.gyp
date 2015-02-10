@@ -803,13 +803,12 @@
     {
       'target_name': 'javascript',
       'type': 'static_library',
-        'include_dirs': [
-          '<(DEPTH)/v8',
-          '<(DEPTH)/v8/include',
-        ],
+      'include_dirs': [
+        '<(DEPTH)/v8',
+        '<(DEPTH)/v8/include',
+      ],
       'dependencies': [
         '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
-        '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
       ],
       'export_dependent_settings': [
         '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',

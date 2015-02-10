@@ -815,9 +815,6 @@ static_library("javascript") {
   public_deps = [
     "//v8",
   ]
-  deps = [
-    "//v8:v8_libplatform",
-  ]
 }
 
 static_library("jsapi") {

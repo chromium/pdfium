@@ -28,10 +28,6 @@ void FXJSE_Initialize()
         "--block_concurrent_recompilation "
         ;
     v8::V8::SetFlagsFromString(szCmdFlags, FXSYS_strlen(szCmdFlags));
-    v8::V8::InitializeICU();
-    v8::Platform* platform = v8::platform::CreateDefaultPlatform();
-    v8::V8::InitializePlatform(platform);
-    v8::V8::Initialize();
 }
 static void FXJSE_Runtime_DisposeCallback(v8::Isolate* pIsolate)
 {
