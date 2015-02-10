@@ -1,0 +1,71 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /OpenAction 10 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [
+    3 0 R
+  ]
+>>
+endobj
+% Page number 0.
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Resources <<
+    /Font <</F1 15 0 R>>
+  >>
+  /Contents [21 0 R]
+  /MediaBox [0 0 612 792]
+>>
+% OpenAction action
+{{object 10 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS 11 0 R
+>>
+endobj
+% JS program to exexute
+{{object 11 0}} <<
+>>
+stream
+
+function doTest(name, props) {
+  for (var i = 0; i < props.length; ++i) {
+    var expr = name + "." + props[i];
+    app.alert(expr + " is " + eval(expr));
+  }
+}
+
+try {
+  doTest("border", ["s", "b", "d", "i", "u", "nonesuch"]);
+  doTest("display", ["visible", "hidden", "noPrint", "noView", "nonesuch"]);
+  doTest("font", ["Times", "TimesB", "TimesI", "TimesBI", "Helv", "HelvB",
+                  "HelvI", "HelvBI", "Cour", "CourB", "CourI", "CourBI",
+                  "Symbol", "ZapfD", "Nonesuch"]);
+
+  doTest("highlight", ["n", "i", "p", "o", "nonesuch"]);
+  doTest("position", ["textOnly", "iconOnly", "iconTextV", "textIconV",
+                      "iconTextH", "textIconH", "overlay", "nonesuch"]);
+
+  doTest("scaleHow", ["proportional", "anamorphic", "nonesuch"]);
+  doTest("scaleWhen", ["always", "never", "tooBig", "tooSmall", "nonesuch"]);
+  doTest("style", ["ch", "cr", "di", "ci", "st", "sq", "nonesuch"]);
+  doTest("zoomtype", ["none", "fitP", "fitW", "fitH", "fitV", "pref", "refW",
+                      "nonesuch"]);
+} catch (e) {
+  app.alert("ERROR: " + e.toString());
+}
+endstream
+endobj
+{{xref}}
+trailer <<
+  /Root 1 0 R
+>>
+{{startxref}}
+%%EOF
