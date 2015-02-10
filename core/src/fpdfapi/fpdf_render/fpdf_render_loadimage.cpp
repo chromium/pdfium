@@ -157,8 +157,8 @@ CPDF_DIBSource::~CPDF_DIBSource()
         m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
     }
     if (m_pJbig2Context) {
-        ICodec_Jbig2Module* pJbig2Moudle = CPDF_ModuleMgr::Get()->GetJbig2Module();
-        pJbig2Moudle->DestroyJbig2Context(m_pJbig2Context);
+        ICodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
+        pJbig2Module->DestroyJbig2Context(m_pJbig2Context);
     }
     delete m_pGlobalStream;
 }
@@ -364,9 +364,9 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
         if (decoder == FX_BSTRC("JPXDecode")) {
             return 0;
         }
-        ICodec_Jbig2Module* pJbig2Moudle = CPDF_ModuleMgr::Get()->GetJbig2Module();
+        ICodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
         if (m_pJbig2Context == NULL) {
-            m_pJbig2Context = pJbig2Moudle->CreateJbig2Context();
+            m_pJbig2Context = pJbig2Module->CreateJbig2Context();
             if (m_pStreamAcc->GetImageParam()) {
                 CPDF_Stream* pGlobals = m_pStreamAcc->GetImageParam()->GetStream(FX_BSTRC("JBIG2Globals"));
                 if (pGlobals) {
@@ -374,7 +374,7 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
                     m_pGlobalStream->LoadAllData(pGlobals, FALSE);
                 }
             }
-            ret = pJbig2Moudle->StartDecode(m_pJbig2Context, m_Width, m_Height, m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(),
+            ret = pJbig2Module->StartDecode(m_pJbig2Context, m_Width, m_Height, m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(),
                                             m_pGlobalStream ? m_pGlobalStream->GetData() : NULL, m_pGlobalStream ? m_pGlobalStream->GetSize() : 0, m_pCachedBitmap->GetBuffer(),
                                             m_pCachedBitmap->GetPitch(), pPause);
             if (ret < 0) {
@@ -382,7 +382,7 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
                 m_pCachedBitmap = NULL;
                 delete m_pGlobalStream;
                 m_pGlobalStream = NULL;
-                pJbig2Moudle->DestroyJbig2Context(m_pJbig2Context);
+                pJbig2Module->DestroyJbig2Context(m_pJbig2Context);
                 m_pJbig2Context = NULL;
                 return 0;
             }
@@ -402,13 +402,13 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
             }
             return ret1;
         }
-        FXCODEC_STATUS ret = pJbig2Moudle->ContinueDecode(m_pJbig2Context, pPause);
+        FXCODEC_STATUS ret = pJbig2Module->ContinueDecode(m_pJbig2Context, pPause);
         if (ret < 0) {
             delete m_pCachedBitmap;
             m_pCachedBitmap = NULL;
             delete m_pGlobalStream;
             m_pGlobalStream = NULL;
-            pJbig2Moudle->DestroyJbig2Context(m_pJbig2Context);
+            pJbig2Module->DestroyJbig2Context(m_pJbig2Context);
             m_pJbig2Context = NULL;
             return 0;
         }
@@ -889,7 +889,7 @@ void CPDF_DIBSource::LoadPalette()
 void CPDF_DIBSource::ValidateDictParam()
 {
     m_bpc = m_bpc_orig;
-	CPDF_Object * pFilter = m_pDict->GetElementValue(FX_BSTRC("Filter"));
+    CPDF_Object * pFilter = m_pDict->GetElementValue(FX_BSTRC("Filter"));
     if (pFilter) {
         if (pFilter->GetType() == PDFOBJ_NAME) {
             CFX_ByteString filter = pFilter->GetString();
@@ -902,7 +902,7 @@ void CPDF_DIBSource::ValidateDictParam()
             }
         } else if (pFilter->GetType() == PDFOBJ_ARRAY) {
             CPDF_Array *pArray = (CPDF_Array *)pFilter;
-            if (pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("CCITTFacDecode") ||
+            if (pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("CCITTFaxDecode") ||
                     pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("JBIG2Decode")) {
                 m_bpc = 1;
                 m_nComponents = 1;
