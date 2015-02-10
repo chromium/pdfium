@@ -165,10 +165,10 @@ public:
         return FX_NEW CPDF_Number(bInteger, pData);
     }
 
-    CPDF_Number()
+    CPDF_Number(): m_Integer(0) 
     {
         m_Type = PDFOBJ_NUMBER;
-    }
+    } 
 
     CPDF_Number(FX_BOOL bInteger, void* pData);
 

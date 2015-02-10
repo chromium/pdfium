@@ -537,7 +537,7 @@ struct FX_RECT {
 
     int			bottom;
 
-    FX_RECT() {}
+    FX_RECT(): left(0), top(0), right(0), bottom(0) { }
 
     FX_RECT(int left1, int top1, int right1, int bottom1)
     {
