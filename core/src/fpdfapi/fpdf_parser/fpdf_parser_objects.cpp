@@ -5,6 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_parser.h"
+#include "../../../include/fxcrt/fx_string.h"
+
 void CPDF_Object::Release()
 {
     if (m_ObjNum) {
@@ -331,30 +333,23 @@ void CPDF_Object::SetUnicodeText(FX_LPCWSTR pUnicodes, int len)
         ((CPDF_Stream*)this)->SetData((FX_LPBYTE)result.c_str(), result.GetLength(), FALSE, FALSE);
     }
 }
+
 CPDF_Number::CPDF_Number(int value)
-{
-    m_Type = PDFOBJ_NUMBER;
-    m_bInteger = TRUE;
-    m_Integer = value;
+    : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(TRUE), m_Integer(value) {
 }
+
 CPDF_Number::CPDF_Number(FX_FLOAT value)
-{
-    m_Type = PDFOBJ_NUMBER;
-    m_bInteger = FALSE;
-    m_Float = value;
+    : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(FALSE), m_Float(value) {
 }
+
 CPDF_Number::CPDF_Number(FX_BOOL bInteger, void* pData)
-{
-    m_Type = PDFOBJ_NUMBER;
-    m_bInteger = bInteger;
-    m_Integer = *(int*)pData;
+    : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(bInteger), m_Integer(*(int*)pData) {
 }
-extern void FX_atonum(FX_BSTR, FX_BOOL&, void*);
-CPDF_Number::CPDF_Number(FX_BSTR str)
-{
-    m_Type = PDFOBJ_NUMBER;
+
+CPDF_Number::CPDF_Number(FX_BSTR str) : CPDF_Object(PDFOBJ_NUMBER) {
     FX_atonum(str, m_bInteger, &m_Integer);
 }
+
 void CPDF_Number::SetString(FX_BSTR str)
 {
     FX_atonum(str, m_bInteger, &m_Integer);
@@ -372,11 +367,8 @@ void CPDF_Number::SetNumber(FX_FLOAT value)
     m_bInteger = FALSE;
     m_Float = value;
 }
-CPDF_String::CPDF_String(const CFX_WideString& str)
-{
-    m_Type = PDFOBJ_STRING;
+CPDF_String::CPDF_String(const CFX_WideString& str) : CPDF_Object(PDFOBJ_STRING), m_bHex(FALSE) {
     m_String = PDF_EncodeText(str, str.GetLength());
-    m_bHex = FALSE;
 }
 CPDF_Array::~CPDF_Array()
 {
@@ -859,8 +851,7 @@ void CPDF_Dictionary::SetAtMatrix(FX_BSTR key, const CFX_AffineMatrix& matrix)
     SetAt(key, pArray);
 }
 CPDF_Stream::CPDF_Stream(FX_LPBYTE pData, FX_DWORD size, CPDF_Dictionary* pDict)
-{
-    m_Type = PDFOBJ_STREAM;
+    : CPDF_Object(PDFOBJ_STREAM) {
     m_pDict = pDict;
     m_dwSize = size;
     m_GenNum = (FX_DWORD) - 1;
