@@ -70,22 +70,32 @@ class TemplateProcessor:
     self.offset += len(line)
     return line
 
-def expand_file(input_filename):
-  (input_root, extension) = os.path.splitext(input_filename)
-  output_filename = input_root + '.pdf'
+
+def expand_file(input_path, output_path):
   processor = TemplateProcessor()
   try:
-    with open(input_filename, 'r') as infile:
-      with open(output_filename, 'w') as outfile:
+    with open(input_path, 'r') as infile:
+      with open(output_path, 'w') as outfile:
         for line in infile:
            outfile.write(processor.process_line(line))
   except IOError:
-    print >> sys.stderr, 'failed to process %s' % input_filename
+    print >> sys.stderr, 'failed to process %s' % input_path
+
 
 def main():
-  for arg in sys.argv[1:]:
-    expand_file(arg)
+  parser = optparse.OptionParser()
+  parser.add_option('--output-dir', default='')
+  options, args = parser.parse_args()
+  for testcase_path in args:
+    testcase_filename = os.path.basename(testcase_path)
+    testcase_root, _ = os.path.splitext(testcase_filename)
+    output_dir = os.path.dirname(testcase_path)
+    if options.output_dir:
+      output_dir = options.output_dir
+    output_path = os.path.join(output_dir, testcase_root + '.pdf')
+    expand_file(testcase_path, output_path)
   return 0
+
 
 if __name__ == '__main__':
   sys.exit(main())
