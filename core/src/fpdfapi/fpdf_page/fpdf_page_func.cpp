@@ -583,10 +583,10 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const
                 }
             } else {
                 FX_SAFE_INT32 bitpos2 = blocksize[i];
-                bitpos2 += 1;
-                bitpos2 *= m_nBitsPerSample; 
+                bitpos2 += pos;
                 bitpos2 *= m_nOutputs;
-                bitpos2 += bitpos.ValueOrDie();
+                bitpos2 += j;
+                bitpos2 *= m_nBitsPerSample; 
                 if (!bitpos2.IsValid()) {
                     return FALSE;
                 }
