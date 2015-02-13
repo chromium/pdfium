@@ -216,8 +216,8 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
 }
 #endif
 
-int Form_Alert(IPDF_JSPLATFORM*, FPDF_WIDESTRING msg, FPDF_WIDESTRING,
-               int, int) {
+int ExampleAppAlert(IPDF_JSPLATFORM*, FPDF_WIDESTRING msg, FPDF_WIDESTRING,
+                    int, int) {
   // Deal with differences between UTF16LE and wchar_t on this platform.
   size_t characters = 0;
   while (msg[characters]) {
@@ -234,7 +234,11 @@ int Form_Alert(IPDF_JSPLATFORM*, FPDF_WIDESTRING msg, FPDF_WIDESTRING,
   return 0;
 }
 
-void Unsupported_Handler(UNSUPPORT_INFO*, int type) {
+void ExampleDocGotoPage(IPDF_JSPLATFORM*, int pageNumber) {
+  printf("Goto Page: %d\n", pageNumber);
+}
+
+void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {
   std::string feature = "Unknown";
   switch (type) {
     case FPDF_UNSP_DOC_XFAFORM:
@@ -373,7 +377,8 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   IPDF_JSPLATFORM platform_callbacks;
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
   platform_callbacks.version = 1;
-  platform_callbacks.app_alert = Form_Alert;
+  platform_callbacks.app_alert = ExampleAppAlert;
+  platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
 
   FPDF_FORMFILLINFO form_callbacks;
   memset(&form_callbacks, '\0', sizeof(form_callbacks));
@@ -534,7 +539,7 @@ int main(int argc, const char* argv[]) {
   UNSUPPORT_INFO unsuppored_info;
   memset(&unsuppored_info, '\0', sizeof(unsuppored_info));
   unsuppored_info.version = 1;
-  unsuppored_info.FSDK_UnSupport_Handler = Unsupported_Handler;
+  unsuppored_info.FSDK_UnSupport_Handler = ExampleUnsupportedHandler;
 
   FSDK_SetUnSpObjProcessHandler(&unsuppored_info);
 
