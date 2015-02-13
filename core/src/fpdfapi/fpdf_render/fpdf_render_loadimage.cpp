@@ -119,6 +119,7 @@ CPDF_DIBSource::CPDF_DIBSource()
     m_pColorSpace = NULL;
     m_bDefaultDecode = TRUE;
     m_bImageMask = FALSE;
+    m_bDoBpcCheck = TRUE;
     m_pPalette = NULL;
     m_pCompData = NULL;
     m_bColorKey = FALSE;
@@ -197,7 +198,7 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     if (!LoadColorInfo(m_pStream->GetObjNum() != 0 ? NULL : pFormResources, pPageResources)) {
         return FALSE;
     }
-    if (m_bpc == 0 || m_nComponents == 0) {
+    if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0)) {
         return FALSE;
     }
     FX_SAFE_DWORD src_pitch =
@@ -209,10 +210,6 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     m_pStreamAcc->LoadAllData(pStream, FALSE, src_pitch.ValueOrDie(), TRUE);
     if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
         return FALSE;
-    }
-    const CFX_ByteString& decoder = m_pStreamAcc->GetImageDecoder();
-    if (!decoder.IsEmpty() && decoder == FX_BSTRC("CCITTFaxDecode")) {
-        m_bpc = 1;
     }
     if (!CreateDecoder()) {
         return FALSE;
@@ -316,7 +313,7 @@ int	CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc, const CPDF_Stream* p
     if (!LoadColorInfo(m_pStream->GetObjNum() != 0 ? NULL : pFormResources, pPageResources)) {
         return 0;
     }
-    if (m_bpc == 0 || m_nComponents == 0) {
+    if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0)) {
         return 0;
     }
     FX_SAFE_DWORD src_pitch =
@@ -446,11 +443,13 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dict
                 if (pFilter->GetType() == PDFOBJ_NAME) {
                     filter = pFilter->GetString();
                     if (filter == FX_BSTRC("JPXDecode")) {
+                        m_bDoBpcCheck = FALSE;
                         return TRUE;
                     }
                 } else if (pFilter->GetType() == PDFOBJ_ARRAY) {
                     CPDF_Array* pArray = (CPDF_Array*)pFilter;
                     if (pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("JPXDecode")) {
+                        m_bDoBpcCheck = FALSE;
                         return TRUE;
                     }
                 }
@@ -560,7 +559,7 @@ int CPDF_DIBSource::CreateDecoder()
     if (decoder.IsEmpty()) {
         return 1;
     }
-    if (m_bpc == 0) {
+    if (m_bDoBpcCheck && m_bpc == 0) {
         return 0;
     }
     FX_LPCBYTE src_data = m_pStreamAcc->GetData();
