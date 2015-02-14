@@ -41,8 +41,9 @@ def main():
   my_dir = os.path.dirname(os.path.realpath(__file__))
   testing_dir = os.path.dirname(my_dir)
   pdfium_dir = os.path.dirname(testing_dir)
-  if os.path.basename(pdfium_dir) != 'pdfium':
-    print 'Confused, can not find pdfium directory, aborting.'
+  if (os.path.basename(my_dir) != 'tools' or
+      os.path.basename(testing_dir) != 'testing'):
+    print 'Confused, can not find pdfium root directory, aborting.'
     return 1
 
   # Other scripts are found in the same directory as this one.
