@@ -7,16 +7,10 @@
 #ifndef _FPDFXFA_UTIL_H_
 #define _FPDFXFA_UTIL_H_
 
-#define DOCTYPE_PDF			 0
-#define DOCTYPE_DYNIMIC_XFA  1 //Dynimic xfa Document Type
-#define DOCTYPE_STATIC_XFA   2 //Static xfa Document Type
-
 #define JS_STR_VIEWERTYPE_STANDARD		L"Exchange"
 #define JS_STR_LANGUANGE				L"ENU"
 #define JS_STR_VIEWERVARIATION			L"Full"
 #define JS_STR_VIEWERVERSION_XFA		L"11"
-
-FX_BOOL FPDF_HasXFAField(CPDF_Document* pPDFDoc, int& docType);
 
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr, public CFX_Object
 {

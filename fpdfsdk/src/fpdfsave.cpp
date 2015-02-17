@@ -7,6 +7,7 @@
 #include "../include/fsdk_define.h"
 #include "../include/fpdfsave.h"
 #include "../include/fpdfedit.h"
+#include "../include/fpdfformfill.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"

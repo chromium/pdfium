@@ -302,13 +302,41 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BY
 	CPDFXFA_Document* pDocument = FX_NEW CPDFXFA_Document(pPDFDoc, pProvider);
 	return pDocument;
 }
+
+DLLEXPORT FX_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int& docType)
+{
+	if (!document)
+		return FALSE;
+
+	CPDF_Dictionary* pRoot = ((CPDF_Document*)document)->GetRoot();
+	if (!pRoot)
+		return FALSE;
+
+	CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
+	if (!pAcroForm)
+		return FALSE;
+
+	CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
+	if (!pXFA)
+		return FALSE;
+
+	FX_BOOL bDynamicXFA = pRoot->GetBoolean("NeedsRendering", FALSE);
+
+	if (bDynamicXFA)
+		docType = DOCTYPE_DYNIMIC_XFA;
+	else
+		docType = DOCTYPE_STATIC_XFA;
+
+	return TRUE;
+}
+
 DLLEXPORT  FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document)
 {
-	if (!document||!((CPDFXFA_Document*)document)->GetPDFDoc()) 
+	if (!document) 
 		return FALSE;
 
 	int iDocType = DOCTYPE_PDF;
-	FX_BOOL hasXFAField = FPDF_HasXFAField(((CPDFXFA_Document*)document)->GetPDFDoc(), iDocType);
+	FX_BOOL hasXFAField = FPDF_HasXFAField(document, iDocType);
 	if (!hasXFAField)
 		return FALSE;
 	return ((CPDFXFA_Document*)document)->LoadXFADoc();

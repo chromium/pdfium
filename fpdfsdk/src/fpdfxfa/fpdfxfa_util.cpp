@@ -8,34 +8,6 @@
 #include "../../include/fsdk_mgr.h"
 #include "../../include/fpdfxfa/fpdfxfa_util.h"
 
-FX_BOOL FPDF_HasXFAField(CPDF_Document* pPDFDoc, int& docType)
-{
-	if (!pPDFDoc)
-		return FALSE;
-
-	CPDF_Dictionary* pRoot = pPDFDoc->GetRoot();
-	if (!pRoot)
-		return FALSE;
-
-	CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
-	if (!pAcroForm) 
-		return FALSE;
-
-	CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
-	if (!pXFA) 
-		return FALSE;
-
-	FX_BOOL bDymasticXFA = FALSE;
-	bDymasticXFA = pRoot->GetBoolean("NeedsRendering", FALSE);
-
-	if(bDymasticXFA)
-		docType = DOCTYPE_DYNIMIC_XFA;
-	else
-		docType = DOCTYPE_STATIC_XFA;
-
-	return TRUE;
-}
-
 CFX_PtrArray CXFA_FWLAdapterTimerMgr::ms_timerArray;
 
 FWL_ERR CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer *pTimer, FX_DWORD dwElapse, FWL_HTIMER &hTimer, FX_BOOL bImmediately /* = TRUE */)

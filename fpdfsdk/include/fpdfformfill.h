@@ -11,6 +11,10 @@
 
 typedef void* FPDF_FORMHANDLE;
 
+#define DOCTYPE_PDF          0 //Normal pdf Document
+#define DOCTYPE_DYNIMIC_XFA  1 //Dynimic xfa Document Type
+#define DOCTYPE_STATIC_XFA   2 //Static xfa Document Type
+
 // Exported Functions
 #ifdef __cplusplus
 extern "C" {
@@ -1094,6 +1098,16 @@ DLLEXPORT void STDCALL FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle);
 **/
 DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,FPDF_BITMAP bitmap, FPDF_PAGE page, int start_x, int start_y, 
 						int size_x, int size_y, int rotate, int flags);
+/**
+ * Function: FPDF_HasXFAField
+ *                      This method is designed to check whether a pdf document has XFA fields.
+ * Parameters:
+ *                      document                -       Handle to document. Returned by FPDF_LoadDocument function.
+ *                      docType                 -       Document type defined as DOCTYPE_xxx.
+ * Return Value:
+ *                      TRUE indicates that the input document has XFA fields, otherwise FALSE.
+ **/
+DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int& docType);
 
 /**
  * Function: FPDF_LoadXFA
