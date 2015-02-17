@@ -8,6 +8,14 @@ group("samples") {
   ]
 }
 
+config("pdfium_samples_config") {
+  defines = [
+    "PNG_PREFIX",
+    "PNGPREFIX_H",
+    "PNG_USE_READ_MACROS",
+  ]
+}
+
 executable("pdfium_test") {
   sources = [
     "image_diff_png.cc",
@@ -21,6 +29,7 @@ executable("pdfium_test") {
     "//v8",
     "//v8/include",
   ]
+  configs += [ ":pdfium_samples_config" ]
 }
 
 executable("pdfium_diff") {
@@ -32,4 +41,5 @@ executable("pdfium_diff") {
   deps = [
     "//third_party/pdfium",
   ]
+  configs += [ ":pdfium_samples_config" ]
 }

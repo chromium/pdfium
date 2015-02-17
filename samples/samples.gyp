@@ -14,6 +14,11 @@
       '<(DEPTH)/v8',
       '<(DEPTH)/v8/include',
     ],
+    'defines' : [
+      'PNG_PREFIX',
+      'PNGPREFIX_H',
+      'PNG_USE_READ_MACROS',
+    ],
   },
   'targets': [
     {
