@@ -156,7 +156,7 @@ void color::ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color)
 }
 
 #define JS_IMPLEMENT_COLORPROP(prop, var)\
-FX_BOOL color::prop(OBJ_PROP_PARAMS)\
+FX_BOOL color::prop(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)\
 {\
 	CJS_Context* pContext = (CJS_Context*)cc;\
 	v8::Isolate* isolate = pContext->GetJSRuntime()->GetIsolate();\
@@ -188,7 +188,7 @@ JS_IMPLEMENT_COLORPROP(dkGray, m_crDKGray)
 JS_IMPLEMENT_COLORPROP(gray, m_crGray)
 JS_IMPLEMENT_COLORPROP(ltGray, m_crLTGray)
 
-FX_BOOL color::convert(OBJ_METHOD_PARAMS)
+FX_BOOL color::convert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = GetIsolate(cc);
 	int iSize = params.size();
@@ -229,7 +229,7 @@ FX_BOOL color::convert(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL color::equal(OBJ_METHOD_PARAMS)
+FX_BOOL color::equal(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = GetIsolate(cc);
 	if (params.size() < 2) return FALSE;

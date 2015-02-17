@@ -57,7 +57,7 @@ CFX_WideString Icon::GetIconName()
 	return m_swIconName;
 }
 
-FX_BOOL Icon::name(OBJ_PROP_PARAMS)
+FX_BOOL Icon::name(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if(!vp.IsGetting())return FALSE;
 

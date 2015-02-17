@@ -137,7 +137,7 @@ int util::ParstDataType(std::wstring* sFormat)
 	return -1;
 }
 
-FX_BOOL util::printf(OBJ_METHOD_PARAMS)
+FX_BOOL util::printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	int iSize = params.size();
 	if (iSize < 1)
@@ -202,7 +202,7 @@ FX_BOOL util::printf(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL util::printd(OBJ_METHOD_PARAMS)
+FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = GetIsolate(cc);
 
@@ -464,7 +464,7 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 		cPurpose = cFormat;
 }
 
-FX_BOOL util::printx(OBJ_METHOD_PARAMS)
+FX_BOOL util::printx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	int iSize = params.size();
 	if (iSize<2)
@@ -578,7 +578,7 @@ void util::printx(const std::string &cFormat,const std::string &cSource2,std::st
 	}
 }
 
-FX_BOOL util::scand(OBJ_METHOD_PARAMS)
+FX_BOOL util::scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = GetIsolate(cc);
 	int iSize = params.size();
@@ -635,7 +635,7 @@ FX_INT64 FX_atoi64(const char *nptr)
             return total;   /* return result, negated if necessary */
 }
 
-FX_BOOL util::byteToChar(OBJ_METHOD_PARAMS)
+FX_BOOL util::byteToChar(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	int iSize = params.size();
 	if (iSize == 0)

@@ -108,41 +108,41 @@ public:
 	virtual ~app();
 
 public:
-	FX_BOOL						activeDocs(OBJ_PROP_PARAMS);
-	FX_BOOL						calculate(OBJ_PROP_PARAMS);
-	FX_BOOL						formsVersion(OBJ_PROP_PARAMS);
-	FX_BOOL						fs(OBJ_PROP_PARAMS);
-	FX_BOOL						fullscreen(OBJ_PROP_PARAMS);
-	FX_BOOL						language(OBJ_PROP_PARAMS);
-	FX_BOOL						media(OBJ_PROP_PARAMS);
-	FX_BOOL						platform(OBJ_PROP_PARAMS);
-	FX_BOOL						runtimeHighlight(OBJ_PROP_PARAMS);
-	FX_BOOL						viewerType(OBJ_PROP_PARAMS);
-	FX_BOOL						viewerVariation(OBJ_PROP_PARAMS);
-	FX_BOOL						viewerVersion(OBJ_PROP_PARAMS);	
+	FX_BOOL						activeDocs(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						calculate(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						formsVersion(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						fs(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						fullscreen(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						language(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						media(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						platform(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						runtimeHighlight(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						viewerType(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						viewerVariation(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL						viewerVersion(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);	
 
 
-	FX_BOOL						alert(OBJ_METHOD_PARAMS);
-	FX_BOOL						beep(OBJ_METHOD_PARAMS);
-	FX_BOOL						browseForDoc(OBJ_METHOD_PARAMS);
-	FX_BOOL						clearInterval(OBJ_METHOD_PARAMS);
-	FX_BOOL						clearTimeOut(OBJ_METHOD_PARAMS);
-	FX_BOOL						execDialog(OBJ_METHOD_PARAMS);
-	FX_BOOL						execMenuItem(OBJ_METHOD_PARAMS);
-	FX_BOOL						findComponent(OBJ_METHOD_PARAMS);
-	FX_BOOL						goBack(OBJ_METHOD_PARAMS);
-	FX_BOOL						goForward(OBJ_METHOD_PARAMS);
-	FX_BOOL						launchURL(OBJ_METHOD_PARAMS);
-	FX_BOOL						mailMsg(OBJ_METHOD_PARAMS);
-	FX_BOOL						newFDF(OBJ_METHOD_PARAMS);
-	FX_BOOL						newDoc(OBJ_METHOD_PARAMS);
-	FX_BOOL						openDoc(OBJ_METHOD_PARAMS);
-	FX_BOOL						openFDF(OBJ_METHOD_PARAMS);
-	FX_BOOL						popUpMenuEx(OBJ_METHOD_PARAMS);
-	FX_BOOL						popUpMenu(OBJ_METHOD_PARAMS);
-	FX_BOOL						response(OBJ_METHOD_PARAMS);
-	FX_BOOL						setInterval(OBJ_METHOD_PARAMS);
-	FX_BOOL						setTimeOut(OBJ_METHOD_PARAMS);
+	FX_BOOL						alert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						beep(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						browseForDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						clearInterval(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						clearTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						execDialog(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						execMenuItem(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						findComponent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						goBack(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						goForward(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						launchURL(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						mailMsg(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						newFDF(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						newDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						openDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						openFDF(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						popUpMenuEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						popUpMenu(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						response(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						setInterval(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						setTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
 
 private:
 //	FX_DWORD					AppGetTickCount(); 

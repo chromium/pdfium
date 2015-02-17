@@ -13,21 +13,21 @@ public:
 	color(CJS_Object* pJSObject);
 	virtual ~color(void);
 
-	FX_BOOL black(OBJ_PROP_PARAMS);
-	FX_BOOL blue(OBJ_PROP_PARAMS);
-	FX_BOOL cyan(OBJ_PROP_PARAMS);	
-	FX_BOOL dkGray(OBJ_PROP_PARAMS);
-	FX_BOOL gray(OBJ_PROP_PARAMS);
-	FX_BOOL green(OBJ_PROP_PARAMS);
-	FX_BOOL ltGray(OBJ_PROP_PARAMS);
-	FX_BOOL magenta(OBJ_PROP_PARAMS);
-	FX_BOOL red(OBJ_PROP_PARAMS);	
-	FX_BOOL transparent(OBJ_PROP_PARAMS);
-	FX_BOOL white(OBJ_PROP_PARAMS);
-	FX_BOOL yellow(OBJ_PROP_PARAMS);
+	FX_BOOL black(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL blue(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL cyan(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);	
+	FX_BOOL dkGray(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL gray(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL green(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL ltGray(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL magenta(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL red(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);	
+	FX_BOOL transparent(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL white(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL yellow(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
 
-	FX_BOOL convert(OBJ_METHOD_PARAMS);
-	FX_BOOL equal(OBJ_METHOD_PARAMS);
+	FX_BOOL convert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL equal(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
 
 public:  
 	static void		ConvertPWLColorToArray(const CPWL_Color& color, CJS_Array& array);

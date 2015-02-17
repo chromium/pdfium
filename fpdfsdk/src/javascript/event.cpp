@@ -56,7 +56,7 @@ event::~event(void)
 {
 }
 
-FX_BOOL event::change(OBJ_PROP_PARAMS)
+FX_BOOL event::change(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -76,7 +76,7 @@ FX_BOOL event::change(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::changeEx(OBJ_PROP_PARAMS)
+FX_BOOL event::changeEx(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 
@@ -89,7 +89,7 @@ FX_BOOL event::changeEx(OBJ_PROP_PARAMS)
 	return TRUE;	
 }
 
-FX_BOOL event::commitKey(OBJ_PROP_PARAMS)
+FX_BOOL event::commitKey(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 
@@ -102,7 +102,7 @@ FX_BOOL event::commitKey(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::fieldFull(OBJ_PROP_PARAMS)
+FX_BOOL event::fieldFull(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {	
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -119,7 +119,7 @@ FX_BOOL event::fieldFull(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::keyDown(OBJ_PROP_PARAMS)
+FX_BOOL event::keyDown(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 
@@ -135,7 +135,7 @@ FX_BOOL event::keyDown(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::modifier(OBJ_PROP_PARAMS)
+FX_BOOL event::modifier(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 
@@ -151,7 +151,7 @@ FX_BOOL event::modifier(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::name(OBJ_PROP_PARAMS)
+FX_BOOL event::name(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 
@@ -164,7 +164,7 @@ FX_BOOL event::name(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::rc(OBJ_PROP_PARAMS)
+FX_BOOL event::rc(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -183,7 +183,7 @@ FX_BOOL event::rc(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::richChange(OBJ_PROP_PARAMS)
+FX_BOOL event::richChange(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	return TRUE;
 	if (vp.IsSetting())
@@ -196,7 +196,7 @@ FX_BOOL event::richChange(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::richChangeEx(OBJ_PROP_PARAMS)
+FX_BOOL event::richChangeEx(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	return TRUE;
 	if (vp.IsSetting())
@@ -210,7 +210,7 @@ FX_BOOL event::richChangeEx(OBJ_PROP_PARAMS)
 }
 
 
-FX_BOOL event::richValue(OBJ_PROP_PARAMS)
+FX_BOOL event::richValue(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	return TRUE;
 	if (vp.IsSetting())
@@ -223,7 +223,7 @@ FX_BOOL event::richValue(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::selEnd(OBJ_PROP_PARAMS)
+FX_BOOL event::selEnd(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -247,7 +247,7 @@ FX_BOOL event::selEnd(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::selStart(OBJ_PROP_PARAMS)
+FX_BOOL event::selStart(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {	
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -270,7 +270,7 @@ FX_BOOL event::selStart(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::shift(OBJ_PROP_PARAMS)
+FX_BOOL event::shift(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 
@@ -286,7 +286,7 @@ FX_BOOL event::shift(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::source(OBJ_PROP_PARAMS)
+FX_BOOL event::source(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;	
 
@@ -299,7 +299,7 @@ FX_BOOL event::source(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::target(OBJ_PROP_PARAMS)
+FX_BOOL event::target(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 
@@ -312,7 +312,7 @@ FX_BOOL event::target(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::targetName(OBJ_PROP_PARAMS)
+FX_BOOL event::targetName(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 
@@ -325,7 +325,7 @@ FX_BOOL event::targetName(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::type(OBJ_PROP_PARAMS)
+FX_BOOL event::type(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 
@@ -338,7 +338,7 @@ FX_BOOL event::type(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::value(OBJ_PROP_PARAMS)
+FX_BOOL event::value(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -361,7 +361,7 @@ FX_BOOL event::value(OBJ_PROP_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL event::willCommit(OBJ_PROP_PARAMS)
+FX_BOOL event::willCommit(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
 	if (!vp.IsGetting())return FALSE;
 

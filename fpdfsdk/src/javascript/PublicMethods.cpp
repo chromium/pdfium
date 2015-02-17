@@ -1050,7 +1050,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate, const CFX_WideStr
 /* -------------------------------------------------------------------------- */
 
 //function AFNumber_Format(nDec, sepStyle, negStyle, currStyle, strCurrency, bCurrencyPrepend)
-FX_BOOL CJS_PublicMethods::AFNumber_Format(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 #if _FX_OS_ != _FX_ANDROID_
 	v8::Isolate* isolate = ::GetIsolate(cc);
@@ -1259,7 +1259,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(OBJ_METHOD_PARAMS)
 }
 
 //function AFNumber_Keystroke(nDec, sepStyle, negStyle, currStyle, strCurrency, bCurrencyPrepend)
-FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context *)cc;
 	ASSERT(pContext != NULL);
@@ -1391,7 +1391,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(OBJ_METHOD_PARAMS)
 }
 
 //function AFPercent_Format(nDec, sepStyle)
-FX_BOOL CJS_PublicMethods::AFPercent_Format(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 #if _FX_OS_ != _FX_ANDROID_
 	CJS_Context* pContext = (CJS_Context *)cc;
@@ -1510,13 +1510,13 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 //AFPercent_Keystroke(nDec, sepStyle)
-FX_BOOL CJS_PublicMethods::AFPercent_Keystroke(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFPercent_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	return AFNumber_Keystroke(cc,params,vRet,sError);
 }
 
 //function AFDate_FormatEx(cFormat)
-FX_BOOL CJS_PublicMethods::AFDate_FormatEx(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context *)cc;
 	ASSERT(pContext != NULL);
@@ -1625,7 +1625,7 @@ double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue)
 }
 
 //AFDate_KeystrokeEx(cFormat)
-FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context *)cc;
 	ASSERT(pContext != NULL);
@@ -1661,7 +1661,7 @@ FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFDate_Format(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFDate_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = ::GetIsolate(cc);
 
@@ -1692,7 +1692,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Format(OBJ_METHOD_PARAMS)
 }
 
 //AFDate_KeystrokeEx(cFormat)
-FX_BOOL CJS_PublicMethods::AFDate_Keystroke(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFDate_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = ::GetIsolate(cc);
 
@@ -1723,7 +1723,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Keystroke(OBJ_METHOD_PARAMS)
 }
 
 //function AFTime_Format(ptf)
-FX_BOOL CJS_PublicMethods::AFTime_Format(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFTime_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = ::GetIsolate(cc);
 
@@ -1750,7 +1750,7 @@ FX_BOOL CJS_PublicMethods::AFTime_Format(OBJ_METHOD_PARAMS)
 	return AFDate_FormatEx(cc,newParams,vRet,sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFTime_Keystroke(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFTime_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = ::GetIsolate(cc);
 	if (params.size() != 1)
@@ -1776,18 +1776,18 @@ FX_BOOL CJS_PublicMethods::AFTime_Keystroke(OBJ_METHOD_PARAMS)
 	return AFDate_KeystrokeEx(cc,newParams,vRet,sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFTime_FormatEx(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFTime_FormatEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	return AFDate_FormatEx(cc,params,vRet,sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFTime_KeystrokeEx(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFTime_KeystrokeEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	return AFDate_KeystrokeEx(cc,params,vRet,sError);
 }
 
 //function AFSpecial_Format(psf)
-FX_BOOL CJS_PublicMethods::AFSpecial_Format(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFSpecial_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context *)cc;
 	ASSERT(pContext != NULL);
@@ -1840,7 +1840,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(OBJ_METHOD_PARAMS)
 
 
 //function AFSpecial_KeystrokeEx(mask)
-FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context *)cc;
 	ASSERT(pContext != NULL);
@@ -1940,7 +1940,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(OBJ_METHOD_PARAMS)
 
 
 //function AFSpecial_Keystroke(psf)
-FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = ::GetIsolate(cc);
 
@@ -1999,7 +1999,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(OBJ_METHOD_PARAMS)
     return AFSpecial_KeystrokeEx(cc,params2,vRet,sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFMergeChange(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFMergeChange(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context *)cc;
 	ASSERT(pContext != NULL);
@@ -2039,7 +2039,7 @@ FX_BOOL CJS_PublicMethods::AFMergeChange(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFParseDateEx(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFParseDateEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context *)cc;
 	ASSERT(pContext != NULL);
@@ -2069,7 +2069,7 @@ FX_BOOL CJS_PublicMethods::AFParseDateEx(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFSimple(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFSimple(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	if (params.size() != 3)
 	{
@@ -2084,7 +2084,7 @@ FX_BOOL CJS_PublicMethods::AFSimple(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFMakeNumber(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFMakeNumber(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	if (params.size() != 1)
 	{
@@ -2098,7 +2098,7 @@ FX_BOOL CJS_PublicMethods::AFMakeNumber(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFSimple_Calculate(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFSimple_Calculate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = ::GetIsolate(cc);
 
@@ -2222,7 +2222,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(OBJ_METHOD_PARAMS)
 /* This function validates the current event to ensure that its value is 
 ** within the specified range. */
 
-FX_BOOL CJS_PublicMethods::AFRange_Validate(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFRange_Validate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	CJS_Context* pContext = (CJS_Context *)cc;
 	ASSERT(pContext != NULL);
@@ -2272,7 +2272,7 @@ FX_BOOL CJS_PublicMethods::AFRange_Validate(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFExtractNums(OBJ_METHOD_PARAMS)
+FX_BOOL CJS_PublicMethods::AFExtractNums(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	v8::Isolate* isolate = ::GetIsolate(cc);
 	CJS_Context* pContext = (CJS_Context*)cc;

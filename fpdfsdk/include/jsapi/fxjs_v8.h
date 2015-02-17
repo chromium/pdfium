@@ -45,14 +45,12 @@ class IFXJS_Runtime;
 #ifndef JSCRIPT_ARGS
 #define JSCRIPT_ARGS
 
-#define JS_PROPGET_ARGS			v8::Local<v8::String> property,const v8::PropertyCallbackInfo<v8::Value>& info
-#define JS_PROPPUT_ARGS			v8::Local<v8::String> property,v8::Local<v8::Value> value,const v8::PropertyCallbackInfo<void>& info
-#define JS_METHOD_ARGS			const v8::FunctionCallbackInfo<v8::Value>& info
 #define JS_CONSTRUCTOR_ARGS		IFXJS_Context* cc, v8::Handle<v8::Object> obj, v8::Handle<v8::Object> global
 #define JS_DESTRUCTOR_ARGS		v8::Handle<v8::Object> obj
 
 #define JS_PROPQUERY_ARGS		v8::Local<v8::String> property,const v8::PropertyCallbackInfo<v8::Integer>& info
-#define JS_NAMED_PROPGET_ARGS	JS_PROPGET_ARGS					
+#define JS_NAMED_PROPGET_ARGS	        v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info
+
 #define JS_NAMED_PROPPUT_ARGS	v8::Local<v8::String> property,v8::Local<v8::Value> value,const v8::PropertyCallbackInfo<v8::Value>& info
 #define JS_PROPDEL_ARGS			v8::Local<v8::String> property,const v8::PropertyCallbackInfo<v8::Boolean>& info
 

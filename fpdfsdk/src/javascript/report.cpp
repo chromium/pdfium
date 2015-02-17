@@ -36,13 +36,13 @@ Report::~Report()
 
 }
 
-FX_BOOL Report::writeText(OBJ_METHOD_PARAMS)
+FX_BOOL Report::writeText(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
   // Unsafe, not supported.
   return TRUE;
 }
 
-FX_BOOL Report::save(OBJ_METHOD_PARAMS)
+FX_BOOL Report::save(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
   // Unsafe, not supported.
   return TRUE;
