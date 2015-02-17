@@ -14,6 +14,7 @@ class CPDFSDK_Document;
 class CPDFDoc_Environment;
 class IFXJS_Runtime;
 class IFXJS_Context;
+class IXFA_DocHandler;
 
 class CPDFXFA_Document : public IXFA_DocProvider, public CFX_Object
 {
@@ -22,7 +23,6 @@ public:
 	~CPDFXFA_Document();
 
 	FX_BOOL				LoadXFADoc();
-	void				CloseXFADoc();
 	CPDFXFA_App*		GetApp() {return m_pApp;}
 	CPDF_Document*		GetPDFDoc() { return m_pPDFDoc; }
 	XFA_HDOC			GetXFADoc() { return m_pXFADoc; }
@@ -128,6 +128,15 @@ public:
 	void		_ClearChangeMark();
 
 private:
+	void		CloseXFADoc(IXFA_DocHandler* pDoc) {
+					if (pDoc) {
+						pDoc->CloseDoc(m_pXFADoc);
+						pDoc->ReleaseDoc(m_pXFADoc);
+						m_pXFADoc = NULL;
+						m_pXFADocView = NULL;
+					}
+				}
+
 	CPDF_Document* m_pPDFDoc;
 	XFA_HDOC  m_pXFADoc;
 	IXFA_DocView* m_pXFADocView;

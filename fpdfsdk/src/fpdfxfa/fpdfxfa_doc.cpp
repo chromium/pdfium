@@ -13,19 +13,6 @@
 #include "../../include/fpdfxfa/fpdfxfa_page.h"
 #include "../../include/javascript/IJavaScript.h"
 
-
-
-#define IDS_XFA_StringMonth_April "April"
-#define IDS_XFA_StringMonth_May "May"
-#define IDS_XFA_StringMonth_June "June"
-#define IDS_XFA_StringMonth_July "July"
-#define IDS_XFA_StringMonth_Aug "August"
-#define IDS_XFA_StringMonth_Sept "September"
-#define IDS_XFA_StringMonth_Oct "October"
-#define IDS_XFA_StringMonth_Nov "November"
-#define IDS_XFA_StringMonth_Dec "December"
-#define IDS_XFA_String_Today    "Today"
-#define IDS_XFA_ValidateLimit   "Message limit exceeded. Remaining %d validation errors not reported."
 #define IDS_XFA_Validate_Input  "At least one required field was empty. Please fill in the required fields\r\n(highlighted) before continuing."
 
 // submit
@@ -78,9 +65,7 @@ CPDFXFA_Document::~CPDFXFA_Document()
 			IXFA_DocHandler* pDocHandler = pApp->GetDocHandler();
 			if (pDocHandler)
 			{
-				pDocHandler->CloseDoc(m_pXFADoc);
-				pDocHandler->ReleaseDoc(m_pXFADoc);
-				m_pXFADoc = NULL;
+				CloseXFADoc(pDocHandler);
 			}	
 		}
 	}
@@ -129,10 +114,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc()
 				iStatus = pDocHandler->DoLoad(m_pXFADoc, NULL);
 				if (iStatus != 100) 
 				{
-					pDocHandler->CloseDoc(m_pXFADoc);
-					pDocHandler->ReleaseDoc(m_pXFADoc);
-					m_pXFADoc = NULL;
-
+					CloseXFADoc(pDocHandler);
 					SetLastError(FPDF_ERR_XFALOAD);
 					return FALSE;
 				}
@@ -149,10 +131,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc()
 
 				if (m_pXFADocView->StartLayout() < 0) 
 				{
-					pDocHandler->CloseDoc(m_pXFADoc);
-					pDocHandler->ReleaseDoc(m_pXFADoc);
-					m_pXFADoc = NULL;
-
+					CloseXFADoc(pDocHandler);
 					SetLastError(FPDF_ERR_XFALAYOUT);
 					return FALSE;
 				}
