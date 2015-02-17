@@ -41,7 +41,7 @@ public:
 	virtual ~global_alternate();
 
 public:
-	FX_BOOL						setPersistent(OBJ_METHOD_PARAMS);
+	FX_BOOL						setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
 
 public:
 	FX_BOOL						QueryProperty(FX_LPCWSTR propname);

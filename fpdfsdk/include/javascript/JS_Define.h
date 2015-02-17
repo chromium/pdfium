@@ -46,8 +46,6 @@ typedef CFX_WideString	JS_ErrorString;
 /* ====================================== PUBLIC DEFINE SPEC ============================================== */
 #define JS_WIDESTRING(widestring) L###widestring
 
-#define OBJ_PROP_PARAMS			IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError
-#define OBJ_METHOD_PARAMS		IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError
 #define BEGIN_JS_STATIC_CONST(js_class_name) JSConstSpec js_class_name::JS_Class_Consts[] = {
 #define JS_STATIC_CONST_ENTRY_NUMBER(const_name, pValue) {JS_WIDESTRING(const_name), pValue, L"", 0},
 #define JS_STATIC_CONST_ENTRY_STRING(const_name, pValue) {JS_WIDESTRING(const_name), 0, JS_WIDESTRING(pValue), 1},
@@ -89,7 +87,8 @@ typedef CFX_WideString	JS_ErrorString;
 /* ======================================== PROP CALLBACK ============================================ */
 
 #define JS_STATIC_PROP_GET(prop_name, class_name)\
-	static void get_##prop_name##_static(JS_PROPGET_ARGS)\
+  static void get_##prop_name##_static(v8::Local<v8::String> property, \
+                                       const v8::PropertyCallbackInfo<v8::Value>& info) \
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
@@ -125,7 +124,9 @@ typedef CFX_WideString	JS_ErrorString;
 }
 
 #define JS_STATIC_PROP_SET(prop_name, class_name)\
-	static void set_##prop_name##_static(JS_PROPPUT_ARGS)\
+  static void set_##prop_name##_static(v8::Local<v8::String> property, \
+                                       v8::Local<v8::Value> value, \
+                                       const v8::PropertyCallbackInfo<void>& info) \
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
@@ -166,7 +167,7 @@ JS_STATIC_PROP_SET(prop_name, class_name)
 /* ========================================= METHOD CALLBACK =========================================== */
 
 #define JS_STATIC_METHOD(method_name, class_name)\
-	static void method_name##_static(JS_METHOD_ARGS)\
+  static void method_name##_static(const v8::FunctionCallbackInfo<v8::Value>& info) \
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
@@ -521,7 +522,7 @@ void js_class_name::GetMethods(JSMethodSpec*& pMethods, int& nSize)\
 }
 
 #define JS_SPECIAL_STATIC_METHOD(method_name, class_alternate, class_name)\
-	static void method_name##_static(JS_METHOD_ARGS)\
+	static void method_name##_static(const v8::FunctionCallbackInfo<v8::Value>& info)\
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
@@ -564,7 +565,7 @@ void js_class_name::GetMethods(JSMethodSpec*& pMethods, int& nSize)\
 
 /* ======================================== GLOBAL METHODS ============================================ */
 #define JS_STATIC_GLOBAL_FUN(fun_name) \
-static void fun_name##_static(JS_METHOD_ARGS)\
+static void fun_name##_static(const v8::FunctionCallbackInfo<v8::Value>& info)\
 {\
 	v8::Isolate* isolate = info.GetIsolate();\
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
@@ -648,58 +649,6 @@ if (JS_DefineGlobalConst(pRuntime, (const wchar_t*)ArrayName, prop.ToJSValue()) 
 #define CLASSNAME_DATE			L"Date"
 #define CLASSNAME_STRING		L"v8::String"
 
-extern const unsigned int JSCONST_nStringHash;
-extern const unsigned int JSCONST_nNumberHash;
-extern const unsigned int JSCONST_nBoolHash;
-extern const unsigned int JSCONST_nDateHash;
-extern const unsigned int JSCONST_nObjectHash;
-extern const unsigned int JSCONST_nFXobjHash;
-extern const unsigned int JSCONST_nNullHash;
-extern const unsigned int JSCONST_nUndefHash;
-
-static FXJSVALUETYPE GET_VALUE_TYPE(v8::Handle<v8::Value> p)
-{
-
-		const unsigned int nHash = JS_CalcHash(JS_GetTypeof(p));
-
-		if (nHash == JSCONST_nUndefHash)
-			return VT_undefined;
-		else if (nHash == JSCONST_nNullHash)
-			return VT_null;
-		else if (nHash == JSCONST_nStringHash)
-			return VT_string;
-		else if (nHash == JSCONST_nNumberHash)
-			return VT_number;
-		else if (nHash == JSCONST_nBoolHash)
-			return VT_boolean;
-		else if (nHash == JSCONST_nDateHash)
-			return VT_date;
-		else if (nHash == JSCONST_nObjectHash)
-			return VT_object;		
-		else if (nHash == JSCONST_nFXobjHash)
-			return VT_fxobject;
-
-		/*
-		const char * sType = p->getTypeof()->toDchars();
-		if (strcmp(sType,VALUE_NAME_STRING) == 0)
-			return VT_string;
-		else if (strcmp(sType,VALUE_NAME_NUMBER) == 0)
-			return VT_number;
-		else if (strcmp(sType,VALUE_NAME_BOOLEAN) == 0)
-			return VT_boolean;
-		else if (strcmp(sType,VALUE_NAME_DATE) == 0)
-			return VT_date;
-		else if (strcmp(sType,VALUE_NAME_OBJECT) == 0)
-			return VT_object;
-		else if (strcmp(sType,VALUE_NAME_FXOBJ) == 0)
-			return VT_object;
-		else if (strcmp(sType,VALUE_NAME_NULL) == 0)
-			return VT_null;
-		else if (strcmp(sType,VALUE_NAME_UNDEFINED) == 0)
-			return VT_undefined;
-			*/
-
-	return VT_unknown;
-}
+FXJSVALUETYPE GET_VALUE_TYPE(v8::Handle<v8::Value> p);
 
 #endif //_JS_DEFINE_H_

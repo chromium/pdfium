@@ -42,7 +42,7 @@ console::~console()
 {
 }
 
-FX_BOOL console::clear(OBJ_METHOD_PARAMS)
+FX_BOOL console::clear(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 
 
@@ -50,7 +50,7 @@ FX_BOOL console::clear(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL console::hide(OBJ_METHOD_PARAMS)
+FX_BOOL console::hide(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 
 
@@ -59,7 +59,7 @@ FX_BOOL console::hide(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL console::println(OBJ_METHOD_PARAMS)
+FX_BOOL console::println(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	if (params.size() < 1)
 	{
@@ -69,7 +69,7 @@ FX_BOOL console::println(OBJ_METHOD_PARAMS)
 	return TRUE;
 }
 
-FX_BOOL console::show(OBJ_METHOD_PARAMS)
+FX_BOOL console::show(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	return TRUE;
 }

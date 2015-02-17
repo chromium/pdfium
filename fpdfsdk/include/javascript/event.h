@@ -14,26 +14,26 @@ public:
 	virtual ~event(void);
 
 public:
-	FX_BOOL change(OBJ_PROP_PARAMS);
-	FX_BOOL changeEx(OBJ_PROP_PARAMS);
-	FX_BOOL commitKey(OBJ_PROP_PARAMS);
-	FX_BOOL fieldFull(OBJ_PROP_PARAMS);
-	FX_BOOL keyDown(OBJ_PROP_PARAMS);
-	FX_BOOL modifier(OBJ_PROP_PARAMS);
-	FX_BOOL name(OBJ_PROP_PARAMS);
-	FX_BOOL rc(OBJ_PROP_PARAMS);
-	FX_BOOL richChange(OBJ_PROP_PARAMS);
-	FX_BOOL richChangeEx(OBJ_PROP_PARAMS);
-	FX_BOOL richValue(OBJ_PROP_PARAMS);
-	FX_BOOL selEnd(OBJ_PROP_PARAMS);
-	FX_BOOL selStart(OBJ_PROP_PARAMS);
-	FX_BOOL shift(OBJ_PROP_PARAMS);
-	FX_BOOL source(OBJ_PROP_PARAMS);
-	FX_BOOL target(OBJ_PROP_PARAMS);
-	FX_BOOL targetName(OBJ_PROP_PARAMS);
-	FX_BOOL type(OBJ_PROP_PARAMS);
-	FX_BOOL value(OBJ_PROP_PARAMS);
-	FX_BOOL willCommit(OBJ_PROP_PARAMS);
+	FX_BOOL change(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL changeEx(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL commitKey(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL fieldFull(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL keyDown(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL modifier(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL name(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL rc(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL richChange(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL richChangeEx(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL richValue(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL selEnd(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL selStart(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL shift(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL source(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL target(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL targetName(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL type(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL value(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
+	FX_BOOL willCommit(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError);
 
 };
 

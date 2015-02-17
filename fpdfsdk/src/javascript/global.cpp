@@ -268,7 +268,7 @@ FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS
 	return FALSE;
 }
 
-FX_BOOL global_alternate::setPersistent(OBJ_METHOD_PARAMS)
+FX_BOOL global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
 	if (params.size() != 2)
 	{
@@ -615,3 +615,28 @@ FX_BOOL global_alternate::SetGlobalVariables(FX_LPCSTR propname, int nType,
 
 	return TRUE;
 }
+
+FXJSVALUETYPE GET_VALUE_TYPE(v8::Handle<v8::Value> p)
+{
+  const unsigned int nHash = JS_CalcHash(JS_GetTypeof(p));
+
+  if (nHash == JSCONST_nUndefHash)
+    return VT_undefined;
+  if (nHash == JSCONST_nNullHash)
+    return VT_null;
+  if (nHash == JSCONST_nStringHash)
+    return VT_string;
+  if (nHash == JSCONST_nNumberHash)
+    return VT_number;
+  if (nHash == JSCONST_nBoolHash)
+    return VT_boolean;
+  if (nHash == JSCONST_nDateHash)
+    return VT_date;
+  if (nHash == JSCONST_nObjectHash)
+    return VT_object;
+  if (nHash == JSCONST_nFXobjHash)
+    return VT_fxobject;
+
+  return VT_unknown;
+}
+
