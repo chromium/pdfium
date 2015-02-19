@@ -12,6 +12,9 @@ typedef v8::Handle<v8::Object>	JSObject;
 typedef v8::Handle<v8::Object>	JSFXObject;
 typedef unsigned		JSBool;
 
+#include "JS_Object.h"
+#include "JS_Value.h"
+
 struct JSConstSpec
 {
 	const wchar_t* pName;
@@ -58,144 +61,106 @@ typedef CFX_WideString	JS_ErrorString;
 #define BEGIN_JS_STATIC_METHOD(js_class_name) JSMethodSpec js_class_name::JS_Class_Methods[] = {
 #define JS_STATIC_METHOD_ENTRY(method_name, nargs) {JS_WIDESTRING(method_name), method_name##_static, nargs},
 #define END_JS_STATIC_METHOD() {0, 0, 0}};
-#define MEMLEAKCHECK_1() ((void)0)
-#define MEMLEAKCHECK_2(main_name, sub_name) ((void)0)
-
-
-/*
-#ifdef _DEBUG
-#define MEMLEAKCHECK_1() \
-	_CrtMemState state1;\
-	_CrtMemCheckpoint(&state1);
-
-#define MEMLEAKCHECK_2(main_name,sub_name) \
-	_CrtMemState state2;\
-	_CrtMemCheckpoint(&state2);\
-	_CrtMemState diff;\
-	_CrtMemDifference(&diff,&state1,&state2);\
-	if (diff.lSizes[_NORMAL_BLOCK] > 0)\
-	{\
-		TRACE("Detected normal block memory leaks in JS Module! [%s.%s]\n",#main_name,#sub_name);\
-		_CrtMemDumpStatistics(&diff);\
-	}
-#else
-	#define MEMLEAKCHECK_1() ((void)0)
-	#define MEMLEAKCHECK_2(main_name,sub_name) ((void)0)
-#endif
-*/
 
 /* ======================================== PROP CALLBACK ============================================ */
 
-#define JS_STATIC_PROP_GET(prop_name, class_name)\
-  static void get_##prop_name##_static(v8::Local<v8::String> property, \
-                                       const v8::PropertyCallbackInfo<v8::Value>& info) \
-{\
-	v8::Isolate* isolate = info.GetIsolate();\
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
-	if (pRuntime == NULL) return;\
-	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
-	CJS_PropValue value(isolate);\
-	value.StartGetting();\
-	CJS_Object* pJSObj = (CJS_Object*)JS_GetPrivate(isolate,info.Holder());\
-	ASSERT(pJSObj != NULL);\
-	class_name* pObj = (class_name*)pJSObj->GetEmbedObject();\
-	ASSERT(pObj != NULL);\
-	JS_ErrorString sError;\
-	FX_BOOL bRet = FALSE;\
-	MEMLEAKCHECK_1();\
-	bRet = pObj->prop_name(cc, value, sError);\
-	MEMLEAKCHECK_2(class_name, prop_name);\
-	if (bRet)\
-	{\
-		info.GetReturnValue().Set((v8::Handle<v8::Value>)value);\
-		return ;\
-	}\
-	else\
-	{\
-	CFX_ByteString cbName;\
-		cbName.Format("%s.%s", #class_name, #prop_name);\
-		JS_Error(NULL,CFX_WideString::FromLocal(cbName), sError);\
-		return ;\
-	}\
+template <class C, FX_BOOL (C::*M)(IFXJS_Context*, CJS_PropValue&, JS_ErrorString&)>
+void JSPropGetter(const char* prop_name_string,
+                  const char* class_name_string,
+                  v8::Local<v8::String> property,
+                  const v8::PropertyCallbackInfo<v8::Value>& info) {
+  v8::Isolate* isolate = info.GetIsolate();
+  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);
+  IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  CJS_PropValue value(isolate);
+  value.StartGetting();
+  CJS_Object* pJSObj = (CJS_Object*)JS_GetPrivate(isolate,info.Holder());
+  C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
+  JS_ErrorString sError;
+  if (!(pObj->*M)(pRuntimeContext, value, sError)) {
+    CFX_ByteString cbName;
+    cbName.Format("%s.%s", class_name_string, prop_name_string);
+    JS_Error(NULL, CFX_WideString::FromLocal(cbName), sError);
+    return;
+  }
+  info.GetReturnValue().Set((v8::Handle<v8::Value>)value);
 }
 
-#define JS_STATIC_PROP_SET(prop_name, class_name)\
-  static void set_##prop_name##_static(v8::Local<v8::String> property, \
-                                       v8::Local<v8::Value> value, \
-                                       const v8::PropertyCallbackInfo<void>& info) \
-{\
-	v8::Isolate* isolate = info.GetIsolate();\
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
-	if (pRuntime == NULL) return;\
-	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
-	CJS_PropValue propValue(CJS_Value(isolate,value,VT_unknown));\
-	propValue.StartSetting();\
-	CJS_Object* pJSObj = (CJS_Object*)JS_GetPrivate(isolate,info.Holder());\
-	ASSERT(pJSObj != NULL);\
-	class_name* pObj = (class_name*)pJSObj->GetEmbedObject();\
-	ASSERT(pObj != NULL);\
-	JS_ErrorString sError;\
-	FX_BOOL bRet = FALSE;\
-	MEMLEAKCHECK_1();\
-	bRet = pObj->prop_name(cc, propValue, sError);\
-	MEMLEAKCHECK_2(class_name, prop_name);\
-	if (bRet)\
-	{\
-		return ;\
-	}\
-	else\
-	{\
-		CFX_ByteString cbName;\
-		cbName.Format("%s.%s", #class_name, #prop_name);\
-		JS_Error(NULL,CFX_WideString::FromLocal(cbName), sError);\
-		return ;\
-	}\
+template <class C, FX_BOOL (C::*M)(IFXJS_Context*, CJS_PropValue&, JS_ErrorString&)>
+void JSPropSetter(const char* prop_name_string,
+                  const char* class_name_string,
+                  v8::Local<v8::String> property,
+                  v8::Local<v8::Value> value,
+                  const v8::PropertyCallbackInfo<void>& info) {
+  v8::Isolate* isolate = info.GetIsolate();
+  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);
+  IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  CJS_PropValue propValue(CJS_Value(isolate, value, VT_unknown));
+  propValue.StartSetting();
+  CJS_Object* pJSObj = (CJS_Object*)JS_GetPrivate(isolate,info.Holder());
+  C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
+  JS_ErrorString sError;
+  if (!(pObj->*M)(pRuntimeContext, propValue, sError)) {
+    CFX_ByteString cbName;
+    cbName.Format("%s.%s", class_name_string, prop_name_string);
+    JS_Error(NULL, CFX_WideString::FromLocal(cbName), sError);
+  }
 }
 
-#define JS_STATIC_PROP(prop_name, class_name)\
-JS_STATIC_PROP_GET(prop_name, class_name);\
-JS_STATIC_PROP_SET(prop_name, class_name)
+#define JS_STATIC_PROP(prop_name, class_name) \
+  static void get_##prop_name##_static( \
+      v8::Local<v8::String> property, \
+      const v8::PropertyCallbackInfo<v8::Value>& info) { \
+    JSPropGetter<class_name, &class_name::prop_name>( \
+        #prop_name, #class_name, property, info); \
+  } \
+  static void set_##prop_name##_static( \
+      v8::Local<v8::String> property, \
+      v8::Local<v8::Value> value, \
+      const v8::PropertyCallbackInfo<void>& info) { \
+    JSPropSetter<class_name, &class_name::prop_name>( \
+        #prop_name, #class_name, property, value, info); \
+  }
 
 /* ========================================= METHOD CALLBACK =========================================== */
 
-#define JS_STATIC_METHOD(method_name, class_name)\
-  static void method_name##_static(const v8::FunctionCallbackInfo<v8::Value>& info) \
-{\
-	v8::Isolate* isolate = info.GetIsolate();\
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
-	if (pRuntime == NULL) return;\
-	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
-	CJS_Parameters parameters;\
-	for (unsigned int i = 0; i<(unsigned int)info.Length(); i++)\
-    {\
-		parameters.push_back(CJS_Value(isolate, info[i], VT_unknown));\
-	}\
-	CJS_Value valueRes(isolate);\
-	CJS_Object* pJSObj = (CJS_Object *)JS_GetPrivate(isolate,info.Holder());\
-	ASSERT(pJSObj != NULL);\
-	class_name* pObj = (class_name*)pJSObj->GetEmbedObject();\
-	ASSERT(pObj != NULL);\
-	JS_ErrorString sError;\
-	FX_BOOL bRet = FALSE;\
-	MEMLEAKCHECK_1();\
-	bRet = pObj->method_name(cc, parameters, valueRes, sError);\
-	MEMLEAKCHECK_2(class_name, method_name);\
-	if (bRet)\
-	{\
-		info.GetReturnValue().Set(valueRes.ToJSValue());\
-		return ;\
-	}\
-	else\
-	{\
-		CFX_ByteString cbName;\
-		cbName.Format("%s.%s", #class_name, #method_name);\
-		JS_Error(NULL, CFX_WideString::FromLocal(cbName), sError);\
-		return ;\
-	}\
+template <class C, FX_BOOL (C::*M)(IFXJS_Context*, const CJS_Parameters&, CJS_Value&, JS_ErrorString&)>
+void JSMethod(const char* method_name_string,
+              const char* class_name_string,
+              const v8::FunctionCallbackInfo<v8::Value>& info) {
+  v8::Isolate* isolate = info.GetIsolate();
+  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);
+  IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  CJS_Parameters parameters;
+  for (unsigned int i = 0; i<(unsigned int)info.Length(); i++) {
+    parameters.push_back(CJS_Value(isolate, info[i], VT_unknown));
+  }
+  CJS_Value valueRes(isolate);
+  CJS_Object* pJSObj = (CJS_Object *)JS_GetPrivate(isolate,info.Holder());
+  C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
+  JS_ErrorString sError;
+  if (!(pObj->*M)(pRuntimeContext, parameters, valueRes, sError)) {
+    CFX_ByteString cbName;
+    cbName.Format("%s.%s", class_name_string, method_name_string);
+    JS_Error(NULL, CFX_WideString::FromLocal(cbName), sError);
+    return;
+  }
+  info.GetReturnValue().Set(valueRes.ToJSValue());
 }
+
+#define JS_STATIC_METHOD(method_name, class_name) \
+  static void method_name##_static( \
+      const v8::FunctionCallbackInfo<v8::Value>& info) {    \
+    JSMethod<class_name, &class_name::method_name>( \
+        #class_name, #method_name, info); \
+  }
+
+#define JS_SPECIAL_STATIC_METHOD(method_name, class_alternate, class_name) \
+  static void method_name##_static( \
+      const v8::FunctionCallbackInfo<v8::Value>& info) {    \
+    JSMethod<class_alternate, &class_alternate::method_name>( \
+        #class_name, #method_name, info); \
+  }
 
 /* ===================================== JS CLASS =============================================== */
 
@@ -332,9 +297,7 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 	class_alternate* pObj = (class_alternate*)pJSObj->GetEmbedObject();\
 	ASSERT(pObj != NULL);\
 	FX_BOOL bRet = FALSE;\
-	MEMLEAKCHECK_1();\
 	bRet = pObj->QueryProperty(propname.c_str());\
-	MEMLEAKCHECK_2(class_name, prop_name.c_str());\
 	if (bRet)\
 	{\
 		info.GetReturnValue().Set(0x004);\
@@ -364,9 +327,7 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 	ASSERT(pObj != NULL);\
 	JS_ErrorString sError;\
 	FX_BOOL bRet = FALSE;\
-	MEMLEAKCHECK_1();\
 	bRet = pObj->DoProperty(cc, propname.c_str(), value, sError);\
-	MEMLEAKCHECK_2(class_name, L"GetProperty");\
 	if (bRet)\
 	{\
 		info.GetReturnValue().Set((v8::Handle<v8::Value>)value);\
@@ -399,9 +360,7 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 	ASSERT(pObj != NULL);\
 	JS_ErrorString sError;\
 	FX_BOOL bRet = FALSE;\
-	MEMLEAKCHECK_1();\
 	bRet = pObj->DoProperty(cc, propname.c_str(), PropValue, sError);\
-	MEMLEAKCHECK_2(class_name,L"PutProperty");\
 	if (bRet)\
 	{\
 		return ;\
@@ -431,9 +390,7 @@ const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 	ASSERT(pObj != NULL);\
 	JS_ErrorString sError;\
 	FX_BOOL bRet = FALSE;\
-	MEMLEAKCHECK_1();\
 	bRet = pObj->DelProperty(cc, propname.c_str(), sError);\
-	MEMLEAKCHECK_2(class_name,L"DelProperty");\
 	if (bRet)\
 	{\
 		return ;\
@@ -503,69 +460,32 @@ void js_class_name::GetMethods(JSMethodSpec*& pMethods, int& nSize)\
 	nSize = sizeof(JS_Class_Methods)/sizeof(JSMethodSpec)-1;\
 }
 
-#define JS_SPECIAL_STATIC_METHOD(method_name, class_alternate, class_name)\
-	static void method_name##_static(const v8::FunctionCallbackInfo<v8::Value>& info)\
-{\
-	v8::Isolate* isolate = info.GetIsolate();\
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
-	if (pRuntime == NULL) return;\
-	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
-	CJS_Parameters parameters;\
-	for (unsigned int i = 0; i<(unsigned int)info.Length(); i++)\
-	{\
-	parameters.push_back(CJS_Value(isolate, info[i], VT_unknown));\
-	}\
-	CJS_Value valueRes(isolate);\
-	CJS_Object* pJSObj = (CJS_Object *)JS_GetPrivate(isolate, info.Holder());\
-	ASSERT(pJSObj != NULL);\
-	class_alternate* pObj = (class_alternate*)pJSObj->GetEmbedObject();\
-	ASSERT(pObj != NULL);\
-	JS_ErrorString sError;\
-	FX_BOOL bRet = FALSE;\
-	MEMLEAKCHECK_1();\
-	bRet = pObj->method_name(cc, parameters, valueRes, sError);\
-	MEMLEAKCHECK_2(class_name, method_name);\
-	if (bRet)\
-	{\
-		info.GetReturnValue().Set(valueRes.ToJSValue());\
-		return ;\
-	}\
-	else\
-	{\
-		CFX_ByteString cbName;\
-		cbName.Format("%s.%s", #class_name, #method_name);\
-		JS_Error(NULL, CFX_WideString::FromLocal(cbName), sError);\
-		return ;\
-	}\
-	JS_Error(NULL,  JS_WIDESTRING(method_name), L"Embeded object not found!");\
-    return ;\
+/* ======================================== GLOBAL METHODS ============================================ */
+
+template <FX_BOOL (*F)(IFXJS_Context*, const CJS_Parameters&, CJS_Value&, JS_ErrorString&)>
+void JSGlobalFunc(const char *func_name_string,
+                  const v8::FunctionCallbackInfo<v8::Value>& info) {
+  v8::Isolate* isolate = info.GetIsolate();
+  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);
+  IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  CJS_Parameters parameters;
+  for (unsigned int i = 0; i<(unsigned int)info.Length(); i++) {
+    parameters.push_back(CJS_Value(isolate, info[i], VT_unknown));
+  }
+  CJS_Value valueRes(isolate);
+  JS_ErrorString sError;
+  if (!(*F)(pRuntimeContext, parameters, valueRes, sError))
+  {
+    JS_Error(NULL, JS_WIDESTRING(fun_name), sError);
+    return;
+  }
+  info.GetReturnValue().Set(valueRes.ToJSValue());
 }
 
-/* ======================================== GLOBAL METHODS ============================================ */
 #define JS_STATIC_GLOBAL_FUN(fun_name) \
-static void fun_name##_static(const v8::FunctionCallbackInfo<v8::Value>& info)\
-{\
-	v8::Isolate* isolate = info.GetIsolate();\
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)isolate->GetData(2);\
-	if (pRuntime == NULL) return;\
-	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
-	CJS_Parameters parameters;\
-	for (unsigned int i = 0; i<(unsigned int)info.Length(); i++)\
-	{\
-	parameters.push_back(CJS_Value(isolate, info[i], VT_unknown));\
-	}\
-	CJS_Value valueRes(isolate);\
-	JS_ErrorString sError;\
-	if (!fun_name(cc, parameters, valueRes, sError))\
-	{\
-		JS_Error(NULL, JS_WIDESTRING(fun_name), sError);\
-		return ;\
-	}\
-	info.GetReturnValue().Set(valueRes.ToJSValue());\
-	return ;\
-}
+  static void fun_name##_static(const v8::FunctionCallbackInfo<v8::Value>& info) { \
+    JSGlobalFunc<fun_name>(#fun_name, info); \
+  }
 
 #define JS_STATIC_DECLARE_GLOBAL_FUN() \
 static JSMethodSpec	global_methods[]; \
@@ -620,10 +540,6 @@ if (JS_DefineGlobalConst(pRuntime, (const wchar_t*)ArrayName, prop.ToJSValue()) 
 #define VALUE_NAME_FXOBJ		L"fxobj"
 #define VALUE_NAME_NULL			L"null"
 #define VALUE_NAME_UNDEFINED	L"undefined"
-
-#define CLASSNAME_ARRAY			L"Array"
-#define CLASSNAME_DATE			L"Date"
-#define CLASSNAME_STRING		L"v8::String"
 
 FXJSVALUETYPE GET_VALUE_TYPE(v8::Handle<v8::Value> p);
 
