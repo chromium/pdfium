@@ -26,10 +26,10 @@ config("pdfium_config") {
   }
 
   if (is_linux) {
-    if (cpu_arch == "x64") {
+    if (current_cpu == "x64") {
       defines += [ "_FX_CPU_=_FX_X64_" ]
       cflags += [ "-fPIC" ]
-    } else if (cpu_arch == "x86") {
+    } else if (current_cpu == "x86") {
       defines += [ "_FX_CPU_=_FX_X86_" ]
     }
   }
