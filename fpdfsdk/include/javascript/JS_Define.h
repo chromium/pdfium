@@ -42,9 +42,8 @@ typedef CFX_WideString	JS_ErrorString;
 #define JS_TRUE			(unsigned)1
 #define JS_FALSE		(unsigned)0
 
-
-#define CJS_PointsArray		CFX_ArrayTemplate<float>
-#define CJS_IntArray		CFX_ArrayTemplate<int>
+typedef CFX_ArrayTemplate<float> CJS_PointsArray;
+typedef CFX_ArrayTemplate<int> CJS_IntArray;
 
 /* ====================================== PUBLIC DEFINE SPEC ============================================== */
 #define JS_WIDESTRING(widestring) L###widestring
@@ -278,6 +277,90 @@ void js_class_name::GetConsts(JSConstSpec*& pConsts, int& nSize)\
 
 /* ===================================== SPECIAL JS CLASS =============================================== */
 
+template <class Alt>
+void JSSpecialPropQuery(const char *, v8::Local<v8::String> property,const v8::PropertyCallbackInfo<v8::Integer>& info) {
+  v8::Isolate* isolate = info.GetIsolate();
+  v8::String::Utf8Value utf8_value(property);
+  CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
+  CJS_Object* pJSObj = reinterpret_cast<CJS_Object*>(JS_GetPrivate(isolate, info.Holder()));
+  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  FX_BOOL bRet = pObj->QueryProperty(propname.c_str());
+  info.GetReturnValue().Set(bRet ? 4 : 0);
+}
+
+template <class Alt>
+void JSSpecialPropGet(const char* class_name,
+                      v8::Local<v8::String> property,
+                      const v8::PropertyCallbackInfo<v8::Value>& info) {
+  v8::Isolate* isolate = info.GetIsolate();
+  v8::Local<v8::Context> context = isolate->GetCurrentContext();
+  v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);
+  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
+  IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  CJS_Object* pJSObj = reinterpret_cast<CJS_Object*>(JS_GetPrivate(isolate, info.Holder()));
+  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  v8::String::Utf8Value utf8_value(property);
+  CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
+  JS_ErrorString sError;
+  CJS_PropValue value(isolate);
+  value.StartGetting();
+  if (!pObj->DoProperty(pRuntimeContext, propname.c_str(), value, sError)) {
+    CFX_ByteString cbName;
+    cbName.Format("%s.%s", class_name, L"GetProperty");
+    JS_Error(NULL,CFX_WideString::FromLocal(cbName), sError);
+    return;
+  }
+  info.GetReturnValue().Set((v8::Handle<v8::Value>)value);
+}
+
+template <class Alt>
+void JSSpecialPropPut(const char* class_name,
+                      v8::Local<v8::String> property,
+                      v8::Local<v8::Value> value,
+                      const v8::PropertyCallbackInfo<v8::Value>& info) {
+  v8::Isolate* isolate = info.GetIsolate();
+  v8::Local<v8::Context> context = isolate->GetCurrentContext();
+  v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);
+  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
+  IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  CJS_Object* pJSObj = reinterpret_cast<CJS_Object*>(JS_GetPrivate(isolate, info.Holder()));
+  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  v8::String::Utf8Value utf8_value(property);
+  CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
+  JS_ErrorString sError;
+  CJS_PropValue PropValue(CJS_Value(isolate,value,VT_unknown));
+  PropValue.StartSetting();
+  if (!pObj->DoProperty(pRuntimeContext, propname.c_str(), PropValue, sError)) {
+    CFX_ByteString cbName;
+    cbName.Format("%s.%s", class_name, "PutProperty");
+    JS_Error(NULL,CFX_WideString::FromLocal(cbName), sError);
+  }
+}
+
+template <class Alt>
+void JSSpecialPropDel(const char* class_name,
+                      v8::Local<v8::String> property,
+                      const v8::PropertyCallbackInfo<v8::Boolean>& info) {
+  v8::Isolate* isolate = info.GetIsolate();
+  v8::Local<v8::Context> context = isolate->GetCurrentContext();
+  v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);
+  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
+  IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  CJS_Object* pJSObj = reinterpret_cast<CJS_Object*>(JS_GetPrivate(isolate, info.Holder()));
+  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  v8::String::Utf8Value utf8_value(property);
+  CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
+  JS_ErrorString sError;
+  if (!pObj->DelProperty(pRuntimeContext, propname.c_str(), sError)) {
+    CFX_ByteString cbName;
+    cbName.Format("%s.%s", class_name, "DelProperty");
+    // Probably a missing call to JS_Error().
+  }
+}
+
 #define DECLARE_SPECIAL_JS_CLASS(js_class_name) \
 	static JSBool JSConstructor(IFXJS_Context* cc, JSFXObject obj, JSFXObject global);\
 	static JSBool JSDestructor(JSFXObject obj);\
@@ -289,138 +372,25 @@ void js_class_name::GetConsts(JSConstSpec*& pConsts, int& nSize)\
 	static JSMethodSpec	JS_Class_Methods[];\
 	static int Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType);\
 	static const wchar_t* m_pClassName;\
-	static void queryprop_##js_class_name##_static(JS_PROPQUERY_ARGS);\
-	static void getprop_##js_class_name##_static(JS_NAMED_PROPGET_ARGS);\
-	static void putprop_##js_class_name##_static(JS_NAMED_PROPPUT_ARGS);\
-	static void delprop_##js_class_name##_static(JS_PROPDEL_ARGS)
+	static void queryprop_##js_class_name##_static(v8::Local<v8::String> property,const v8::PropertyCallbackInfo<v8::Integer>& info);\
+	static void getprop_##js_class_name##_static(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info);\
+	static void putprop_##js_class_name##_static(v8::Local<v8::String> property,v8::Local<v8::Value> value,const v8::PropertyCallbackInfo<v8::Value>& info);\
+	static void delprop_##js_class_name##_static(v8::Local<v8::String> property,const v8::PropertyCallbackInfo<v8::Boolean>& info)
 
 #define IMPLEMENT_SPECIAL_JS_CLASS(js_class_name, class_alternate, class_name) \
 const wchar_t * js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
-	void js_class_name::queryprop_##js_class_name##_static(JS_PROPQUERY_ARGS)\
-{\
-	v8::Isolate* isolate = info.GetIsolate();\
-	v8::String::Utf8Value utf8_value(property);\
-	CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());\
-	CJS_Object* pJSObj = (CJS_Object*)JS_GetPrivate(isolate,info.Holder());\
-	ASSERT(pJSObj != NULL);\
-	class_alternate* pObj = (class_alternate*)pJSObj->GetEmbedObject();\
-	ASSERT(pObj != NULL);\
-	FX_BOOL bRet = FALSE;\
-	bRet = pObj->QueryProperty(propname.c_str());\
-	if (bRet)\
-	{\
-		info.GetReturnValue().Set(0x004);\
-		return ;\
-	}\
-	else\
-	{\
-		info.GetReturnValue().Set(0);\
-		return ;\
-	}\
-	return ;\
+void js_class_name::queryprop_##js_class_name##_static(v8::Local<v8::String> property,const v8::PropertyCallbackInfo<v8::Integer>& info) { \
+  JSSpecialPropQuery<class_alternate>(#class_name, property, info);     \
 }\
-	void js_class_name::getprop_##js_class_name##_static(JS_NAMED_PROPGET_ARGS)\
-{\
-	v8::Isolate* isolate = info.GetIsolate();\
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
-	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
-	v8::String::Utf8Value utf8_value(property);\
-	CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());\
-	CJS_PropValue value(isolate);\
-	value.StartGetting();\
-	CJS_Object* pJSObj = (CJS_Object*)JS_GetPrivate(isolate,info.Holder());\
-	ASSERT(pJSObj != NULL);\
-	class_alternate* pObj = (class_alternate*)pJSObj->GetEmbedObject();\
-	ASSERT(pObj != NULL);\
-	JS_ErrorString sError;\
-	FX_BOOL bRet = FALSE;\
-	bRet = pObj->DoProperty(cc, propname.c_str(), value, sError);\
-	if (bRet)\
-	{\
-		info.GetReturnValue().Set((v8::Handle<v8::Value>)value);\
-		return ;\
-	}\
-	else\
-	{\
-		CFX_ByteString cbName;\
-		cbName.Format("%s.%s", #class_name, L"GetProperty");\
-		JS_Error(NULL,CFX_WideString::FromLocal(cbName), sError);\
-		return ;\
-	}\
-	JS_Error(NULL,L"GetProperty", L"Embeded object not found!");\
-	return ;\
+void js_class_name::getprop_##js_class_name##_static(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) { \
+  JSSpecialPropGet<class_alternate>(#class_name, property, info); \
+}                                                                       \
+void js_class_name::putprop_##js_class_name##_static(v8::Local<v8::String> property,v8::Local<v8::Value> value,const v8::PropertyCallbackInfo<v8::Value>& info) {\
+  JSSpecialPropPut<class_alternate>(#class_name, property, value, info); \
 }\
-	void js_class_name::putprop_##js_class_name##_static(JS_NAMED_PROPPUT_ARGS)\
-{\
-	v8::Isolate* isolate = info.GetIsolate();\
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
-	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
-	v8::String::Utf8Value utf8_value(property);\
-	CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());\
-	CJS_PropValue PropValue(CJS_Value(isolate,value,VT_unknown));\
-	PropValue.StartSetting();\
-	CJS_Object* pJSObj = (CJS_Object*)JS_GetPrivate(isolate,info.Holder());\
-	if(!pJSObj) return;\
-	class_alternate* pObj = (class_alternate*)pJSObj->GetEmbedObject();\
-	ASSERT(pObj != NULL);\
-	JS_ErrorString sError;\
-	FX_BOOL bRet = FALSE;\
-	bRet = pObj->DoProperty(cc, propname.c_str(), PropValue, sError);\
-	if (bRet)\
-	{\
-		return ;\
-	}\
-	else\
-	{\
-		CFX_ByteString cbName;\
-		cbName.Format("%s.%s", #class_name, "PutProperty");\
-		JS_Error(NULL,CFX_WideString::FromLocal(cbName), sError);\
-		return ;\
-	}\
-	JS_Error(NULL,L"PutProperty", L"Embeded object not found!");\
-	return ;\
-}\
-	void js_class_name::delprop_##js_class_name##_static(JS_PROPDEL_ARGS)\
-{\
-	v8::Isolate* isolate = info.GetIsolate();\
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();\
-	v8::Local<v8::Value> v = context->GetEmbedderData(1);\
-	ASSERT(!v.IsEmpty());\
-	if(v.IsEmpty()) return;\
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(v);\
-	IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();\
-	IFXJS_Context* cc = pRuntime->GetCurrentContext();\
-	v8::String::Utf8Value utf8_value(property);\
-	CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());\
-	CJS_Object* pJSObj = (CJS_Object*)JS_GetPrivate(isolate,info.Holder());\
-	ASSERT(pJSObj != NULL);\
-	class_alternate* pObj = (class_alternate*)pJSObj->GetEmbedObject();\
-	ASSERT(pObj != NULL);\
-	JS_ErrorString sError;\
-	FX_BOOL bRet = FALSE;\
-	bRet = pObj->DelProperty(cc, propname.c_str(), sError);\
-	if (bRet)\
-	{\
-		return ;\
-	}\
-	else\
-	{\
-		CFX_ByteString cbName;\
-		cbName.Format("%s.%s", #class_name, "DelProperty");\
-		return ;\
-	}\
-	return ;\
-}\
+void js_class_name::delprop_##js_class_name##_static(v8::Local<v8::String> property,const v8::PropertyCallbackInfo<v8::Boolean>& info) { \
+  JSSpecialPropDel<class_alternate>(#class_name, property, info); \
+} \
 JSBool js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject  obj,JSFXObject  global)\
 {\
 	CJS_Object* pObj = FX_NEW js_class_name(obj);\
