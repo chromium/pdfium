@@ -16,24 +16,27 @@ import sys
 #   c_dir - "path/to/a/b/c"
 
 def generate_and_test(input_filename, source_dir, working_dir,
-                      fixup_path, pdfium_test_path):
+                      fixup_path, pdfium_test_path, pdfium_diff_path):
   input_root, _ = os.path.splitext(input_filename)
   input_path = os.path.join(source_dir, input_root + '.in')
   pdf_path = os.path.join(working_dir, input_root + '.pdf')
-  actual_path_template = os.path.join(working_dir, input_root + '.pdf.%d.ppm')
+  actual_path_template = os.path.join(working_dir, input_root + '.pdf.%d.png')
   expected_path_template = os.path.join(source_dir,
-                                        input_root + '_expected.pdf.%d.ppm')
+                                        input_root + '_expected.pdf.%d.png')
   try:
     subprocess.check_call(
         [fixup_path, '--output-dir=' + working_dir, input_path])
-    subprocess.check_call([pdfium_test_path, '--ppm', pdf_path])
+    subprocess.check_call([pdfium_test_path, '--png', pdf_path])
     i = 0;
     while True:
       expected_path = expected_path_template % i;
       actual_path = actual_path_template % i;
       if not os.path.exists(expected_path):
+        if i == 0:
+          print "WARNING: no expected results files found for " + input_filename
         break
-      subprocess.check_call(['diff', expected_path, actual_path])
+      print "Checking " + actual_path
+      subprocess.check_call([pdfium_diff_path, expected_path, actual_path])
       i += 1
   except subprocess.CalledProcessError as e:
     print "FAILURE: " + input_filename + "; " + str(e)
@@ -75,8 +78,10 @@ def main():
 
   # Compiled binaries are found under the build path.
   pdfium_test_path = os.path.join(build_dir, 'pdfium_test')
+  pdfium_diff_path = os.path.join(build_dir, 'pdfium_diff')
   if sys.platform.startswith('win'):
     pdfium_test_path = pdfium_test_path + '.exe'
+    pdfium_diff_path = pdfium_diff_path + '.exe'
   # TODO(tsepez): Mac may require special handling here.
 
   # Place generated files under the build directory, not source directory.
@@ -91,7 +96,7 @@ def main():
       input_path = os.path.join(source_dir, input_filename)
       if os.path.isfile(input_path):
         generate_and_test(input_filename, source_dir, working_dir,
-                          fixup_path, pdfium_test_path)
+                          fixup_path, pdfium_test_path, pdfium_diff_path)
   return 0
 
 
