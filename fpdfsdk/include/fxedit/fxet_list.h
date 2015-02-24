@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef _FXET_LIST_H_
@@ -15,11 +15,11 @@ class CLST_Size
 {
 public:
 	CLST_Size() : x(0.0f), y(0.0f)
-	{		
+	{
 	}
 
 	CLST_Size(FX_FLOAT x,FX_FLOAT y)
-	{ 
+	{
 		this->x = x;
 		this->y = y;
 	}
@@ -42,25 +42,25 @@ class CLST_Rect : public CPDF_Rect
 {
 public:
 	CLST_Rect()
-	{	
+	{
 		left = top = right = bottom = 0.0f;
 	}
 
 	CLST_Rect(FX_FLOAT left,FX_FLOAT top,
 						FX_FLOAT right,FX_FLOAT bottom)
-	{ 
-		this->left = left; 
-		this->top = top; 
-		this->right = right; 
-		this->bottom = bottom; 
+	{
+		this->left = left;
+		this->top = top;
+		this->right = right;
+		this->bottom = bottom;
 	}
 
 	CLST_Rect(const CPDF_Rect & rect)
-	{ 
-		this->left = rect.left; 
-		this->top = rect.top; 
-		this->right = rect.right; 
-		this->bottom = rect.bottom; 
+	{
+		this->left = rect.left;
+		this->top = rect.top;
+		this->right = rect.right;
+		this->bottom = rect.bottom;
 	}
 
 	void Default()
@@ -111,7 +111,7 @@ public:
 		return CPDF_Point(right,bottom);
 	}
 
-	const CLST_Rect operator += (const CPDF_Point & point) 
+	const CLST_Rect operator += (const CPDF_Point & point)
 	{
 		this->left += point.x;
 		this->right += point.x;
@@ -121,7 +121,7 @@ public:
 		return *this;
 	}
 
-	const CLST_Rect operator -= (const CPDF_Point & point) 
+	const CLST_Rect operator -= (const CPDF_Point & point)
 	{
 		this->left -= point.x;
 		this->right -= point.x;
@@ -159,8 +159,8 @@ public:
 	IFX_Edit*						GetEdit() const;
 
 public:
-	void							SetRect(const CLST_Rect & rect);		
-	void							SetSelect(FX_BOOL bSelected);	
+	void							SetRect(const CLST_Rect & rect);
+	void							SetSelect(FX_BOOL bSelected);
 	void							SetCaret(FX_BOOL bCaret);
 	void							SetText(FX_LPCWSTR text);
 	void							SetFontSize(FX_FLOAT fFontSize);
@@ -169,14 +169,14 @@ public:
 	CLST_Rect						GetRect() const;
 	FX_BOOL							IsSelected() const;
 	FX_BOOL							IsCaret() const;
-	FX_FLOAT						GetItemHeight() const;	
+	FX_FLOAT						GetItemHeight() const;
 	FX_WORD							GetFirstChar() const;
 
 private:
 	IFX_Edit*						m_pEdit;
-	FX_BOOL							m_bSelected;		//是否选中
-	FX_BOOL							m_bCaret;		//是否为焦点，多选时用
-	CLST_Rect						m_rcListItem;	//内部坐标
+	FX_BOOL							m_bSelected;
+	FX_BOOL							m_bCaret;
+	CLST_Rect						m_rcListItem;
 };
 
 class CFX_ListContainer
@@ -200,13 +200,13 @@ public:
 																			CPDF_Point ptRightBottom = OuterToInner(CPDF_Point(rect.right,rect.bottom));
 																			return CLST_Rect(ptLeftTop.x,ptLeftTop.y,ptRightBottom.x,ptRightBottom.y);}
 private:
-	CPDF_Rect						m_rcPlate; 	
+	CPDF_Rect						m_rcPlate;
 	CLST_Rect						m_rcContent;		//positive forever!
 };
 
 template<class TYPE> class CLST_ArrayTemplate : public CFX_ArrayTemplate<TYPE>
 {
-public:	
+public:
 	FX_BOOL IsEmpty() { return CFX_ArrayTemplate<TYPE>::GetSize() <= 0; }
 	TYPE GetAt(FX_INT32 nIndex) const { if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize()) return CFX_ArrayTemplate<TYPE>::GetAt(nIndex); return NULL;}
 	void RemoveAt(FX_INT32 nIndex){if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize()) CFX_ArrayTemplate<TYPE>::RemoveAt(nIndex);}
@@ -230,34 +230,34 @@ public:
 	virtual FX_INT32				GetCount() const;
 	virtual FX_BOOL					IsItemSelected(FX_INT32 nIndex) const;
 	virtual FX_FLOAT				GetFirstHeight() const;
-	
+
 	virtual void					SetMultipleSel(FX_BOOL bMultiple);
-	virtual FX_BOOL					IsMultipleSel() const;	
+	virtual FX_BOOL					IsMultipleSel() const;
 	virtual FX_BOOL					IsValid(FX_INT32 nItemIndex) const;
-	virtual FX_INT32				FindNext(FX_INT32 nIndex,FX_WCHAR nChar) const;	
+	virtual FX_INT32				FindNext(FX_INT32 nIndex,FX_WCHAR nChar) const;
 
 protected:
 	virtual void					Empty();
 
 	void							AddItem(FX_LPCWSTR str);
-	virtual void					ReArrange(FX_INT32 nItemIndex);	
+	virtual void					ReArrange(FX_INT32 nItemIndex);
 
-	virtual CPDF_Rect				GetItemRect(FX_INT32 nIndex) const;	
+	virtual CPDF_Rect				GetItemRect(FX_INT32 nIndex) const;
 	CFX_WideString					GetItemText(FX_INT32 nIndex) const;
 
 	void							SetItemSelect(FX_INT32 nItemIndex, FX_BOOL bSelected);
 	void							SetItemCaret(FX_INT32 nItemIndex, FX_BOOL bCaret);
 
-	virtual FX_INT32				GetItemIndex(const CPDF_Point & point) const;		
+	virtual FX_INT32				GetItemIndex(const CPDF_Point & point) const;
 	FX_INT32						GetFirstSelected() const;
 	FX_INT32						GetLastSelected() const;
 	FX_WCHAR						Toupper(FX_WCHAR c) const;
-		
+
 private:
 	CLST_ArrayTemplate<CFX_ListItem*>	m_aListItems;
 	FX_FLOAT							m_fFontSize;
 	IFX_Edit_FontMap*					m_pFontMap;
-	FX_BOOL								m_bMultiple;	
+	FX_BOOL								m_bMultiple;
 };
 
 struct CPLST_Select_Item
@@ -325,13 +325,13 @@ public:
 	void							ScrollToListItem(FX_INT32 nItemIndex);
 	virtual CPDF_Rect				GetItemRect(FX_INT32 nIndex) const;
 	FX_INT32						GetCaret() const {return m_nCaretIndex;}
-	FX_INT32						GetSelect() const {return m_nSelItem;}	
+	FX_INT32						GetSelect() const {return m_nSelItem;}
 	FX_INT32						GetTopItem() const;
 	virtual CPDF_Rect				GetContentRect() const;
 	virtual FX_INT32				GetItemIndex(const CPDF_Point & point) const;
 
 	void							AddString(FX_LPCWSTR string);
-	void							SetTopItem(FX_INT32 nIndex);	
+	void							SetTopItem(FX_INT32 nIndex);
 	void							Select(FX_INT32 nItemIndex);
 	virtual void					SetCaret(FX_INT32 nItemIndex);
 	virtual void					Empty();
@@ -343,10 +343,10 @@ private:
 	void							SetSingleSelect(FX_INT32 nItemIndex);
 	void							InvalidateItem(FX_INT32 nItemIndex);
 	void							SelectItems();
-	FX_BOOL							IsItemVisible(FX_INT32 nItemIndex) const;		
+	FX_BOOL							IsItemVisible(FX_INT32 nItemIndex) const;
 	void							SetScrollInfo();
 	void							SetScrollPosY(FX_FLOAT fy);
-	virtual void					ReArrange(FX_INT32 nItemIndex);	
+	virtual void					ReArrange(FX_INT32 nItemIndex);
 
 private:
 	IFX_List_Notify*				m_pNotify;
@@ -360,4 +360,3 @@ private:
 };
 
 #endif
-
