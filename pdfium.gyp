@@ -836,10 +836,11 @@
         '<(DEPTH)'
       ],
       'sources': [
-        'testing/fx_string_testhelpers.h',
-        'testing/fx_string_testhelpers.cpp',
+        'core/src/fpdfapi/fpdf_parser/fpdf_parser_decode_unittest.cpp',
         'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
         'core/src/fxcrt/fx_basic_wstring_unittest.cpp',
+        'testing/fx_string_testhelpers.h',
+        'testing/fx_string_testhelpers.cpp',
       ],
     },
     {
