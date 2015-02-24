@@ -7,7 +7,7 @@
       }, {  # On Android there's no system FreeType. On Windows and Mac, only a
             # few methods are used from it.
         'bundle_freetype%': 1,
-      }],    
+      }],
     ],
   },
   'target_defaults': {
@@ -920,10 +920,11 @@
         '<(DEPTH)'
       ],
       'sources': [
-        'testing/fx_string_testhelpers.h',
-        'testing/fx_string_testhelpers.cpp',
+        'core/src/fpdfapi/fpdf_parser/fpdf_parser_decode_unittest.cpp',
         'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
         'core/src/fxcrt/fx_basic_wstring_unittest.cpp',
+        'testing/fx_string_testhelpers.h',
+        'testing/fx_string_testhelpers.cpp',
         'xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
       ],
     },
