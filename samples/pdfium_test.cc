@@ -501,14 +501,12 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
     FORM_OnAfterLoadPage(page, form);
     FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_OPEN);
 
-    int width = static_cast<int>(FPDF_GetPageWidth(page));
-    int height = static_cast<int>(FPDF_GetPageHeight(page));
+    double scale = 1.0;
     if (!options.scale_factor_as_string.empty()) {
-      double scale = 1.0;
       std::stringstream(options.scale_factor_as_string) >> scale;
-      width *= scale;
-      height *= scale;
     }
+    int width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
+    int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
 
     FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
     FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
