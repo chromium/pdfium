@@ -167,9 +167,6 @@ void JSMethod(const char* method_name_string,
 	static JSBool JSConstructor(IFXJS_Context* cc, JSFXObject obj,JSFXObject global);\
 	static JSBool JSDestructor(JSFXObject obj);\
 	static int Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType);\
-	static void GetConsts(JSConstSpec*& pConsts, int& nSize);\
-	static void GetProperties(JSPropertySpec*& pProperties, int& nSize);\
-	static void GetMethods(JSMethodSpec*& pMethods, int& nSize);\
 	static JSConstSpec JS_Class_Consts[];\
 	static JSPropertySpec JS_Class_Properties[];\
 	static JSMethodSpec	JS_Class_Methods[];\
@@ -211,21 +208,6 @@ int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 		return nObjDefnID;\
 	}\
 	return -1;\
-}\
-void js_class_name::GetConsts(JSConstSpec*& pConsts, int& nSize)\
-{\
-	pConsts = JS_Class_Consts;\
-	nSize = sizeof(JS_Class_Consts) / sizeof(JSConstSpec) - 1;\
-}\
-void js_class_name::GetProperties(JSPropertySpec*& pProperties, int& nSize)\
-{\
-	pProperties = JS_Class_Properties;\
-	nSize = sizeof(JS_Class_Properties) / sizeof(JSPropertySpec) - 1;\
-}\
-void js_class_name::GetMethods(JSMethodSpec*& pMethods, int& nSize)\
-{\
-	pMethods = JS_Class_Methods;\
-	nSize = sizeof(JS_Class_Methods) / sizeof(JSMethodSpec) - 1;\
 }
 
 #define IMPLEMENT_JS_CLASS(js_class_name, class_name) IMPLEMENT_JS_CLASS_RICH(js_class_name, class_name, class_name)
@@ -234,7 +216,6 @@ void js_class_name::GetMethods(JSMethodSpec*& pMethods, int& nSize)\
 
 #define DECLARE_JS_CLASS_CONST() \
 	static int Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType);\
-	static void GetConsts(JSConstSpec*& pConsts, int& nSize);\
 	static JSConstSpec JS_Class_Consts[];\
 	static const wchar_t* m_pClassName
 
@@ -259,11 +240,6 @@ int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 		return nObjDefnID;\
 	}\
 	return -1;\
-}\
-void js_class_name::GetConsts(JSConstSpec*& pConsts, int& nSize)\
-{\
-	pConsts = JS_Class_Consts;\
-	nSize = sizeof(JS_Class_Consts)/sizeof(JSConstSpec)-1;\
 }
 
 /* ===================================== SPECIAL JS CLASS =============================================== */
@@ -349,9 +325,6 @@ void JSSpecialPropDel(const char* class_name,
 #define DECLARE_SPECIAL_JS_CLASS(js_class_name) \
 	static JSBool JSConstructor(IFXJS_Context* cc, JSFXObject obj, JSFXObject global);\
 	static JSBool JSDestructor(JSFXObject obj);\
-	static void GetConsts(JSConstSpec*& pConsts, int& nSize);\
-	static void GetProperties(JSPropertySpec*& pProperties, int& nSize);\
-	static void GetMethods(JSMethodSpec*& pMethods, int& nSize);\
 	static JSConstSpec JS_Class_Consts[];\
 	static JSPropertySpec JS_Class_Properties[];\
 	static JSMethodSpec	JS_Class_Methods[];\
@@ -416,21 +389,6 @@ int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 	}\
 \
 	return -1;\
-}\
-void js_class_name::GetConsts(JSConstSpec*& pConsts, int& nSize)\
-{\
-	pConsts = JS_Class_Consts;\
-	nSize = sizeof(JS_Class_Consts)/sizeof(JSConstSpec)-1;\
-}\
-void js_class_name::GetProperties(JSPropertySpec*& pProperties, int& nSize)\
-{\
-	pProperties = JS_Class_Properties;\
-	nSize = sizeof(JS_Class_Properties)/sizeof(JSPropertySpec)-1;\
-}\
-void js_class_name::GetMethods(JSMethodSpec*& pMethods, int& nSize)\
-{\
-	pMethods = JS_Class_Methods;\
-	nSize = sizeof(JS_Class_Methods)/sizeof(JSMethodSpec)-1;\
 }
 
 /* ======================================== GLOBAL METHODS ============================================ */

@@ -74,16 +74,9 @@ public:
 	virtual IFXJS_Context*		GetCurrentContext() = 0;
 
 	virtual void				SetReaderDocument(CPDFSDK_Document* pReaderDoc) = 0;
-	virtual	CPDFSDK_Document*	GetReaderDocument() = 0;	
 
-	virtual void				GetObjectNames(CFX_WideStringArray& array) = 0;
-	virtual void				GetObjectConsts(const CFX_WideString& swObjName, CFX_WideStringArray& array) = 0;
-	virtual void				GetObjectProps(const CFX_WideString& swObjName, CFX_WideStringArray& array) = 0;
-	virtual void				GetObjectMethods(const CFX_WideString& swObjName, CFX_WideStringArray& array) = 0;
+	virtual	CPDFSDK_Document*	GetReaderDocument() = 0;
 
-	virtual void				Exit() = 0;
-	virtual void				Enter() = 0;
-	virtual FX_BOOL				IsEntered() = 0;
 	virtual	FX_BOOL				GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue) = 0;
 	virtual	FX_BOOL				SetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue) = 0;
 
