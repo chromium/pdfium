@@ -28,15 +28,6 @@ public:
 	virtual void							SetReaderDocument(CPDFSDK_Document *pReaderDoc);
 	virtual CPDFSDK_Document *				GetReaderDocument(){return m_pDocument;}
 
-	virtual void							GetObjectNames(CFX_WideStringArray& array);
-	virtual void							GetObjectConsts(const CFX_WideString& swObjName, CFX_WideStringArray& array);
-	virtual void							GetObjectProps(const CFX_WideString& swObjName, CFX_WideStringArray& array);
-	virtual void							GetObjectMethods(const CFX_WideString& swObjName, CFX_WideStringArray& array);
-
-	virtual void							Exit();
-	virtual void							Enter();
-	virtual FX_BOOL							IsEntered();
-
 	CPDFDoc_Environment *							GetReaderApp(){return m_pApp;}
 
 	FX_BOOL									InitJSObjects();
