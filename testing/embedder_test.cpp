@@ -14,7 +14,6 @@
 #include <utility>
 #include <vector>
 
-#include "../fpdfsdk/include/fpdf_ext.h"
 #include "../fpdfsdk/include/fpdftext.h"
 #include "../fpdfsdk/include/fpdfview.h"
 #include "../core/include/fxcrt/fx_system.h"
@@ -94,54 +93,57 @@ static bool GetExternalData(const std::string& exe_path,
 
 }  // namespace
 
-int Form_Alert(IPDF_JSPLATFORM*, FPDF_WIDESTRING, FPDF_WIDESTRING, int, int) {
-  printf("Form_Alert called.\n");
-  return 0;
-}
-
-void Unsupported_Handler(UNSUPPORT_INFO*, int type) {
-  std::string feature = "Unknown";
-  switch (type) {
-    case FPDF_UNSP_DOC_XFAFORM:
-      feature = "XFA";
-      break;
-    case FPDF_UNSP_DOC_PORTABLECOLLECTION:
-      feature = "Portfolios_Packages";
-      break;
-    case FPDF_UNSP_DOC_ATTACHMENT:
-    case FPDF_UNSP_ANNOT_ATTACHMENT:
-      feature = "Attachment";
-      break;
-    case FPDF_UNSP_DOC_SECURITY:
-      feature = "Rights_Management";
-      break;
-    case FPDF_UNSP_DOC_SHAREDREVIEW:
-      feature = "Shared_Review";
-      break;
-    case FPDF_UNSP_DOC_SHAREDFORM_ACROBAT:
-    case FPDF_UNSP_DOC_SHAREDFORM_FILESYSTEM:
-    case FPDF_UNSP_DOC_SHAREDFORM_EMAIL:
-      feature = "Shared_Form";
-      break;
-    case FPDF_UNSP_ANNOT_3DANNOT:
-      feature = "3D";
-      break;
-    case FPDF_UNSP_ANNOT_MOVIE:
-      feature = "Movie";
-      break;
-    case FPDF_UNSP_ANNOT_SOUND:
-      feature = "Sound";
-      break;
-    case FPDF_UNSP_ANNOT_SCREEN_MEDIA:
-    case FPDF_UNSP_ANNOT_SCREEN_RICHMEDIA:
-      feature = "Screen";
-      break;
-    case FPDF_UNSP_ANNOT_SIG:
-      feature = "Digital_Signature";
-      break;
+class EmbedderTestDefaultDelegate : public EmbedderTest::Delegate {
+ public:
+  int Alert(FPDF_WIDESTRING, FPDF_WIDESTRING, int, int) override {
+    printf("Form_Alert called.\n");
+    return 0;
   }
-  printf("Unsupported feature: %s.\n", feature.c_str());
-}
+
+  void UnsupportedHandler(int type) {
+    std::string feature = "Unknown";
+    switch (type) {
+      case FPDF_UNSP_DOC_XFAFORM:
+        feature = "XFA";
+        break;
+      case FPDF_UNSP_DOC_PORTABLECOLLECTION:
+        feature = "Portfolios_Packages";
+        break;
+      case FPDF_UNSP_DOC_ATTACHMENT:
+      case FPDF_UNSP_ANNOT_ATTACHMENT:
+        feature = "Attachment";
+        break;
+      case FPDF_UNSP_DOC_SECURITY:
+        feature = "Rights_Management";
+        break;
+      case FPDF_UNSP_DOC_SHAREDREVIEW:
+        feature = "Shared_Review";
+        break;
+      case FPDF_UNSP_DOC_SHAREDFORM_ACROBAT:
+      case FPDF_UNSP_DOC_SHAREDFORM_FILESYSTEM:
+      case FPDF_UNSP_DOC_SHAREDFORM_EMAIL:
+        feature = "Shared_Form";
+        break;
+      case FPDF_UNSP_ANNOT_3DANNOT:
+        feature = "3D";
+        break;
+      case FPDF_UNSP_ANNOT_MOVIE:
+        feature = "Movie";
+        break;
+      case FPDF_UNSP_ANNOT_SOUND:
+        feature = "Sound";
+        break;
+      case FPDF_UNSP_ANNOT_SCREEN_MEDIA:
+      case FPDF_UNSP_ANNOT_SCREEN_RICHMEDIA:
+        feature = "Screen";
+        break;
+      case FPDF_UNSP_ANNOT_SIG:
+        feature = "Digital_Signature";
+        break;
+    }
+    printf("Unsupported feature: %s.\n", feature.c_str());
+  }
+};
 
 class TestLoader {
  public:
@@ -170,6 +172,24 @@ bool Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
 }
 
+EmbedderTest::EmbedderTest() :
+      document_(nullptr),
+      form_handle_(nullptr),
+      avail_(nullptr),
+      loader_(nullptr),
+      file_length_(0),
+      file_contents_(nullptr) {
+  memset(&hints_, 0, sizeof(hints_));
+  memset(&file_access_, 0, sizeof(file_access_));
+  memset(&file_avail_, 0, sizeof(file_avail_));
+  default_delegate_ = new EmbedderTestDefaultDelegate();
+  delegate_ = default_delegate_;
+}
+
+EmbedderTest::~EmbedderTest() {
+  delete default_delegate_;
+}
+
 void EmbedderTest::SetUp() {
     v8::V8::InitializeICU();
 
@@ -182,11 +202,11 @@ void EmbedderTest::SetUp() {
 
     FPDF_InitLibrary();
 
-    UNSUPPORT_INFO unsuppored_info;
-    memset(&unsuppored_info, '\0', sizeof(unsuppored_info));
-    unsuppored_info.version = 1;
-    unsuppored_info.FSDK_UnSupport_Handler = Unsupported_Handler;
-    FSDK_SetUnSpObjProcessHandler(&unsuppored_info);
+    UNSUPPORT_INFO* info = static_cast<UNSUPPORT_INFO*>(this);
+    memset(info, 0, sizeof(UNSUPPORT_INFO));
+    info->version = 1;
+    info->FSDK_UnSupport_Handler = UnsupportedHandlerTrampoline;
+    FSDK_SetUnSpObjProcessHandler(info);
   }
 
 void EmbedderTest::TearDown() {
@@ -239,17 +259,17 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
   (void) FPDF_GetDocPermissions(document_);
   (void) FPDFAvail_IsFormAvail(avail_, &hints_);
 
-  IPDF_JSPLATFORM platform_callbacks;
-  memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
-  platform_callbacks.version = 1;
-  platform_callbacks.app_alert = Form_Alert;
+  IPDF_JSPLATFORM* platform = static_cast<IPDF_JSPLATFORM*>(this);
+  memset(platform, 0, sizeof(IPDF_JSPLATFORM));
+  platform->version = 1;
+  platform->app_alert = AlertTrampoline;
 
-  FPDF_FORMFILLINFO form_callbacks;
-  memset(&form_callbacks, '\0', sizeof(form_callbacks));
-  form_callbacks.version = 1;
-  form_callbacks.m_pJsPlatform = &platform_callbacks;
+  FPDF_FORMFILLINFO* formfillinfo = static_cast<FPDF_FORMFILLINFO*>(this);
+  memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));
+  formfillinfo->version = 1;
+  formfillinfo->m_pJsPlatform = platform;
 
-  form_handle_ = FPDFDOC_InitFormFillEnvironment(document_, &form_callbacks);
+  form_handle_ = FPDFDOC_InitFormFillEnvironment(document_, formfillinfo);
   FPDF_SetFormFieldHighlightColor(form_handle_, 0, 0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form_handle_, 100);
 
@@ -299,6 +319,23 @@ void EmbedderTest::UnloadPage(FPDF_PAGE page) {
   FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, form_handle_);
   FPDF_ClosePage(page);
+}
+
+// static
+void EmbedderTest::UnsupportedHandlerTrampoline(UNSUPPORT_INFO* info,
+                                                int type) {
+  EmbedderTest* test = static_cast<EmbedderTest*>(info);
+  test->delegate_->UnsupportedHandler(type);
+}
+
+// static
+int EmbedderTest::AlertTrampoline(IPDF_JSPLATFORM* platform,
+                                  FPDF_WIDESTRING message,
+                                  FPDF_WIDESTRING title,
+                                  int type,
+                                  int icon) {
+  EmbedderTest* test = static_cast<EmbedderTest*>(platform);
+  return test->delegate_->Alert(message, title, type, icon);
 }
 
 // Can't use gtest-provided main since we need to stash the path to the

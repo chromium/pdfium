@@ -9,6 +9,7 @@
 
 #include "../core/include/fxcrt/fx_system.h"
 #include "../fpdfsdk/include/fpdf_dataavail.h"
+#include "../fpdfsdk/include/fpdf_ext.h"
 #include "../fpdfsdk/include/fpdfformfill.h"
 #include "../fpdfsdk/include/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -18,24 +19,34 @@ class TestLoader;
 
 // This class is used to load a PDF document, and then run programatic
 // API tests against it.
-class EmbedderTest : public ::testing::Test {
+class EmbedderTest : public ::testing::Test,
+                     public UNSUPPORT_INFO,
+                     public IPDF_JSPLATFORM,
+                     public FPDF_FORMFILLINFO {
  public:
-  EmbedderTest() :
-      document_(nullptr),
-      form_handle_(nullptr),
-      avail_(nullptr),
-      loader_(nullptr),
-      file_length_(0),
-      file_contents_(nullptr) {
-    memset(&hints_, 0, sizeof(hints_));
-    memset(&file_access_, 0, sizeof(file_access_));
-    memset(&file_avail_, 0, sizeof(file_avail_));
-  }
+  class Delegate {
+   public:
+    virtual ~Delegate() { }
 
-  virtual ~EmbedderTest() { }
+    // Equivalent to UNSUPPORT_INFO::FSDK_UnSupport_Handler().
+    virtual void UnsupportedHandler(int type) { }
+
+    // Equivalent to IPDF_JSPLATFORM::app_alert().
+    virtual int Alert(FPDF_WIDESTRING message, FPDF_WIDESTRING title,
+                      int type, int icon) {
+      return 0;
+    }
+  };
+
+  EmbedderTest();
+  virtual ~EmbedderTest();
 
   void SetUp() override;
   void TearDown() override;
+
+  void SetDelegate(Delegate* delegate) {
+    delegate_ = delegate ? delegate : default_delegate_;
+  }
 
   FPDF_DOCUMENT document() { return document_; }
   FPDF_FORMHANDLE form_handle() { return form_handle_; }
@@ -62,6 +73,8 @@ class EmbedderTest : public ::testing::Test {
   virtual void UnloadPage(FPDF_PAGE page);
 
  protected:
+  Delegate* delegate_;
+  Delegate* default_delegate_;
   FPDF_DOCUMENT document_;
   FPDF_FORMHANDLE form_handle_;
   FPDF_AVAIL avail_;
@@ -73,6 +86,11 @@ class EmbedderTest : public ::testing::Test {
   TestLoader* loader_;
   size_t file_length_;
   char* file_contents_;
+
+ private:
+  static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);
+  static int AlertTrampoline(IPDF_JSPLATFORM* plaform, FPDF_WIDESTRING message,
+                             FPDF_WIDESTRING title, int type, int icon);
 };
 
 #endif  // TESTING_EMBEDDER_TEST_H_
