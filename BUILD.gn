@@ -705,7 +705,6 @@ static_library("javascript") {
     "fpdfsdk/include/javascript/Icon.h",
     "fpdfsdk/include/javascript/IJavaScript.h",
     "fpdfsdk/include/javascript/JavaScript.h",
-    "fpdfsdk/include/javascript/JS_Console.h",
     "fpdfsdk/include/javascript/JS_Context.h",
     "fpdfsdk/include/javascript/JS_Define.h",
     "fpdfsdk/include/javascript/JS_EventHandler.h",
@@ -735,6 +734,7 @@ static_library("javascript") {
     "fpdfsdk/src/javascript/JS_Value.cpp",
     "fpdfsdk/src/javascript/PublicMethods.cpp",
     "fpdfsdk/src/javascript/report.cpp",
+    "fpdfsdk/src/javascript/resource.cpp",
     "fpdfsdk/src/javascript/util.cpp",
   ]
 
