@@ -17,6 +17,7 @@
 #include "../fpdfsdk/include/fpdftext.h"
 #include "../fpdfsdk/include/fpdfview.h"
 #include "../core/include/fxcrt/fx_system.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "v8/include/v8.h"
 
 #ifdef _WIN32
@@ -340,5 +341,6 @@ int EmbedderTest::AlertTrampoline(IPDF_JSPLATFORM* platform,
 int main(int argc, char** argv) {
   g_exe_path_ = argv[0];
   testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleMock(&argc, argv);
   return RUN_ALL_TESTS();
 }

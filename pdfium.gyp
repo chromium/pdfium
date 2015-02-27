@@ -847,6 +847,7 @@
       'target_name': 'pdfium_embeddertests',
       'type': 'executable',
       'dependencies': [
+        '<(DEPTH)/testing/gmock.gyp:gmock',
         '<(DEPTH)/testing/gtest.gyp:gtest',
         'pdfium',
       ],
@@ -856,10 +857,12 @@
       'sources': [
         'fpdfsdk/src/fpdf_dataavail_embeddertest.cpp',
         'fpdfsdk/src/fpdfdoc_embeddertest.cpp',
+        'fpdfsdk/src/fpdfformfill_embeddertest.cpp',
         'fpdfsdk/src/fpdftext_embeddertest.cpp',
         'fpdfsdk/src/fpdfview_embeddertest.cpp',
         'testing/embedder_test.cpp',
         'testing/embedder_test.h',
+        'testing/embedder_test_mock_delegate.h',
         'testing/fx_string_testhelpers.cpp',
         'testing/fx_string_testhelpers.h',
       ],
