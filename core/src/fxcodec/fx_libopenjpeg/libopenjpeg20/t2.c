@@ -388,13 +388,13 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
                  * and no l_img_comp->resno_decoded are computed
                  */
                 OPJ_BOOL* first_pass_failed = NULL;
-
+					
                 if (l_current_pi->poc.prg == OPJ_PROG_UNKNOWN) {
                     /* TODO ADE : add an error */
                     opj_pi_destroy(l_pi, l_nb_pocs);
                     return OPJ_FALSE;
                 }
-
+					
                 first_pass_failed = (OPJ_BOOL*)opj_malloc(l_image->numcomps * sizeof(OPJ_BOOL));
                 if (!first_pass_failed)
                 {

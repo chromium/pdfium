@@ -706,7 +706,7 @@ static OPJ_BYTE * opj_jp2_write_cdef(opj_jp2_t *jp2, OPJ_UINT32 * p_nb_bytes_wri
 	assert(jp2->color.jp2_cdef->info != 00);
 	assert(jp2->color.jp2_cdef->n > 0U);
 
-	l_cdef_size += 6 * jp2->color.jp2_cdef->n;
+	l_cdef_size += 6U * jp2->color.jp2_cdef->n;
 
 	l_cdef_data = (OPJ_BYTE *) opj_malloc(l_cdef_size);
 	if (l_cdef_data == 00) {
@@ -714,7 +714,7 @@ static OPJ_BYTE * opj_jp2_write_cdef(opj_jp2_t *jp2, OPJ_UINT32 * p_nb_bytes_wri
 	}
 
 	l_current_cdef_ptr = l_cdef_data;
-
+	
 	opj_write_bytes(l_current_cdef_ptr,l_cdef_size,4);			/* write box size */
 	l_current_cdef_ptr += 4;
 
@@ -1184,16 +1184,16 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_jp2_cdef_info_t *info;
 	OPJ_UINT16 i, n, cn, asoc, acn;
-
+	
 	info = color->jp2_cdef->info;
 	n = color->jp2_cdef->n;
-
+	
 	for(i = 0; i < n; ++i)
 	{
 		/* WATCH: acn = asoc - 1 ! */
 		asoc = info[i].asoc;
 		cn = info[i].cn;
-
+		
 		if( cn >= image->numcomps)
 		{
 			fprintf(stderr, "cn=%d, numcomps=%d\n", cn, image->numcomps);
@@ -1204,26 +1204,26 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 			image->comps[cn].alpha = info[i].typ;
 			continue;
 		}
-
+		
 		acn = (OPJ_UINT16)(asoc - 1);
 		if( acn >= image->numcomps )
 		{
 			fprintf(stderr, "acn=%d, numcomps=%d\n", acn, image->numcomps);
 			continue;
 		}
-
+		
 		/* Swap only if color channel */
 		if((cn != acn) && (info[i].typ == 0))
 		{
 			opj_image_comp_t saved;
 			OPJ_UINT16 j;
-
+			
 			memcpy(&saved, &image->comps[cn], sizeof(opj_image_comp_t));
 			memcpy(&image->comps[cn], &image->comps[acn], sizeof(opj_image_comp_t));
 			memcpy(&image->comps[acn], &saved, sizeof(opj_image_comp_t));
-
+			
 			/* Swap channels in following channel definitions, don't bother with j <= i that are already processed */
-			for (j = i + 1; j < n ; ++j)
+			for (j = (OPJ_UINT16)(i + 1U); j < n ; ++j)
 			{
 				if (info[j].cn == cn) {
 					info[j].cn = acn;
@@ -1234,14 +1234,14 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 				/* asoc is related to color index. Do not update. */
 			}
 		}
-
+		
 		image->comps[cn].alpha = info[i].typ;
 	}
-
+	
 	if(color->jp2_cdef->info) opj_free(color->jp2_cdef->info);
-
+	
 	opj_free(color->jp2_cdef); color->jp2_cdef = NULL;
-
+	
 }/* jp2_apply_cdef() */
 
 OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
@@ -1487,7 +1487,7 @@ OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
 		l_writers[l_nb_pass].handler = opj_jp2_write_cdef;
 		l_nb_pass++;
 	}
-
+	
 	/* write box header */
 	/* write JP2H type */
 	opj_write_bytes(l_jp2h_data+4,JP2_JP2H,4);
@@ -1693,7 +1693,7 @@ OPJ_BOOL opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	OPJ_UINT32 alpha_count;
 	OPJ_UINT32 color_channels = 0U;
 	OPJ_UINT32 alpha_channel = 0U;
-
+	
 
 	if(!jp2 || !parameters || !image)
 		return OPJ_FALSE;
@@ -1969,7 +1969,7 @@ OPJ_BOOL opj_jp2_default_validation (	opj_jp2_t * jp2,
 	l_is_valid &= (jp2->w > 0);
 	/* precision */
 	for (i = 0; i < jp2->numcomps; ++i)	{
-		l_is_valid &= (jp2->comps[i].bpcc > 0);
+		l_is_valid &= ((jp2->comps[i].bpcc & 0x7FU) < 38U); /* 0 is valid, ignore sign for check */
 	}
 
 	/* METH */
@@ -2066,6 +2066,16 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 			}
 		}
 		else {
+            if (!(jp2->jp2_state & JP2_STATE_SIGNATURE)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Malformed JP2 file format: first box must be JPEG 2000 signature box\n");
+                opj_free(l_current_data);
+                return OPJ_FALSE;
+            }
+            if (!(jp2->jp2_state & JP2_STATE_FILE_TYPE)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Malformed JP2 file format: second box must be file type box\n");
+                opj_free(l_current_data);
+                return OPJ_FALSE;
+            }
 			jp2->jp2_state |= JP2_STATE_UNKNOWN;
 			if (opj_stream_skip(stream,l_current_data_size,p_manager) != l_current_data_size) {
 				opj_event_msg(p_manager, EVT_ERROR, "Problem with skipping JPEG2000 box, stream error\n");
@@ -2719,7 +2729,7 @@ OPJ_BOOL opj_jp2_get_tile(	opj_jp2_t *p_jp2,
 		else
 			opj_jp2_apply_pclr(p_image, &(p_jp2->color));
 	}
-
+	
 	/* Apply the color space if needed */
 	if(p_jp2->color.jp2_cdef) {
 		opj_jp2_apply_cdef(p_image, &(p_jp2->color));
