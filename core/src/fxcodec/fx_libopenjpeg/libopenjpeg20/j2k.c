@@ -1919,7 +1919,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         OPJ_UINT32 l_nb_comp_remain;
         OPJ_UINT32 l_remaining_size;
         OPJ_UINT32 l_nb_tiles;
-        OPJ_UINT32 l_tmp;
+        OPJ_UINT32 l_tmp, l_tx1, l_ty1;
         opj_image_t *l_image = 00;
         opj_cp_t *l_cp = 00;
         opj_image_comp_t * l_img_comp = 00;
@@ -1981,8 +1981,9 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         }
 
         /* testcase 4035.pdf.SIGSEGV.d8b.3375 */
-        if (l_image->x0 > l_image->x1 || l_image->y0 > l_image->y1) {
-                opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: negative image size (%d x %d)\n", l_image->x1 - l_image->x0, l_image->y1 - l_image->y0);
+        /* testcase issue427-null-image-size.jp2 */
+        if ((l_image->x0 >= l_image->x1) || (l_image->y0 >= l_image->y1)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: negative or zero image size (%d x %d)\n", l_image->x1 - l_image->x0, l_image->y1 - l_image->y0);
                 return OPJ_FALSE;
         }
         /* testcase 2539.pdf.SIGFPE.706.1712 (also 3622.pdf.SIGFPE.706.2916 and 4008.pdf.SIGFPE.706.3345 and maybe more) */
@@ -1994,6 +1995,20 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         /* testcase 1610.pdf.SIGSEGV.59c.681 */
         if (((OPJ_UINT64)l_image->x1) * ((OPJ_UINT64)l_image->y1) != (l_image->x1 * l_image->y1)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Prevent buffer overflow (x1: %d, y1: %d)\n", l_image->x1, l_image->y1);
+                return OPJ_FALSE;
+        }
+
+        /* testcase issue427-illegal-tile-offset.jp2 */
+        l_tx1 = l_cp->tx0 + l_cp->tdx;
+        if (l_tx1 < l_cp->tx0) { /* manage overflow */
+                l_tx1 = 0xFFFFFFFFU;
+        }
+        l_ty1 = l_cp->ty0 + l_cp->tdy;
+        if (l_ty1 < l_cp->ty0) { /* manage overflow */
+                l_ty1 = 0xFFFFFFFFU;
+        }
+        if ((l_cp->tx0 > l_image->x0) || (l_cp->ty0 > l_image->y0) || (l_tx1 <= l_image->x0) || (l_ty1 <= l_image->y0) ) {
+                opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: illegal tile offset\n");
                 return OPJ_FALSE;
         }
 
@@ -5221,6 +5236,7 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
                 }
 
                 l_mct_data = l_tcp->m_mct_records + l_tcp->m_nb_mct_records;
+                ++l_tcp->m_nb_mct_records;
         }
 
         if (l_mct_data->m_data) {
@@ -5249,7 +5265,6 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
         memcpy(l_mct_data->m_data,p_header_data,p_header_size);
 
         l_mct_data->m_data_size = p_header_size;
-        ++l_tcp->m_nb_mct_records;
 
         return OPJ_TRUE;
 }
@@ -6571,7 +6586,7 @@ OPJ_BOOL opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                     }
                 }
                 else {
-                    if(tcp->mct==1 && image->numcomps == 3) { /* RGB->YCC MCT is enabled */
+                    if(tcp->mct==1 && image->numcomps >= 3) { /* RGB->YCC MCT is enabled */
                         if ((image->comps[0].dx != image->comps[1].dx) ||
                                 (image->comps[0].dx != image->comps[2].dx) ||
                                 (image->comps[0].dy != image->comps[1].dy) ||
@@ -7059,21 +7074,20 @@ OPJ_BOOL opj_j2k_encoding_validation (  opj_j2k_t * p_j2k,
         /* make sure a validation list is present */
         l_is_valid &= (p_j2k->m_validation_list != 00);
 
-	      /* ISO 15444-1:2004 states between 1 & 33 (0 -> 32) */
-	      /* 33 (32) would always fail the 2 checks below (if a cast to 64bits was done) */
-	      /* 32 (31) would always fail the 2 checks below (if a cast to 64bits was done) */
-        /* FIXME Shall we change OPJ_J2K_MAXRLVLS to 31 ? */
-        if ((p_j2k->m_cp.tcps->tccps->numresolutions <= 0) || (p_j2k->m_cp.tcps->tccps->numresolutions > 31)) {
+        /* ISO 15444-1:2004 states between 1 & 33 (0 -> 32) */
+        /* 33 (32) would always fail the check below (if a cast to 64bits was done) */
+        /* FIXME Shall we change OPJ_J2K_MAXRLVLS to 32 ? */
+        if ((p_j2k->m_cp.tcps->tccps->numresolutions <= 0) || (p_j2k->m_cp.tcps->tccps->numresolutions > 32)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
                 return OPJ_FALSE;
         }
 
-        if ((p_j2k->m_cp.tdx) < (OPJ_UINT32) (1 << p_j2k->m_cp.tcps->tccps->numresolutions)) {
+        if ((p_j2k->m_cp.tdx) < (OPJ_UINT32) (1 << (p_j2k->m_cp.tcps->tccps->numresolutions - 1U))) {
                 opj_event_msg(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
                 return OPJ_FALSE;
         }
 
-        if ((p_j2k->m_cp.tdy) < (OPJ_UINT32) (1 << p_j2k->m_cp.tcps->tccps->numresolutions)) {
+        if ((p_j2k->m_cp.tdy) < (OPJ_UINT32) (1 << (p_j2k->m_cp.tcps->tccps->numresolutions - 1U))) {
                 opj_event_msg(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
                 return OPJ_FALSE;
         }
@@ -7151,7 +7165,7 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
 
                 /* Check if the current marker ID is valid */
                 if (l_current_marker < 0xff00) {
-                        opj_event_msg(p_manager, EVT_ERROR, "We expected read a marker ID (0xff--) instead of %.8x\n", l_current_marker);
+                        opj_event_msg(p_manager, EVT_ERROR, "A marker ID was expected (0xff--) instead of %.8x\n", l_current_marker);
                         return OPJ_FALSE;
                 }
 
@@ -9776,7 +9790,7 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
         assert(p_j2k != 00);
         assert(p_stream != 00);
         assert(p_manager != 00);
-
+	
         p_tcd = p_j2k->m_tcd;
 
         l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
