@@ -56,7 +56,7 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage, FX_FLOAT pdf_x, FX_FLO
         return NULL;
     }
     int size = pPageLinkList->GetSize();
-    for (int i = 0; i < size; i ++) {
+    for (int i = size - 1; i >= 0; --i) {
         CPDF_Link Link = (CPDF_Dictionary*)pPageLinkList->GetAt(i);
         CPDF_Rect rect = Link.GetRect();
         if (rect.Contains(pdf_x, pdf_y)) {
