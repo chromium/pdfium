@@ -250,6 +250,7 @@ CPDF_Array*	CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc, FX_BSTR sName)
     }
     return NULL;
 }
+#if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_ || _FXM_PLATFORM_  == _FXM_PLATFORM_WINDOWS_
 static CFX_WideString ChangeSlashToPlatform(FX_LPCWSTR str)
 {
     CFX_WideString result;
@@ -257,10 +258,8 @@ static CFX_WideString ChangeSlashToPlatform(FX_LPCWSTR str)
         if (*str == '/') {
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
             result += ':';
-#elif _FXM_PLATFORM_  == _FXM_PLATFORM_WINDOWS_
-            result += '\\';
 #else
-            result += *str;
+            result += '\\';
 #endif
         } else {
             result += *str;
@@ -269,6 +268,20 @@ static CFX_WideString ChangeSlashToPlatform(FX_LPCWSTR str)
     }
     return result;
 }
+static CFX_WideString ChangeSlashToPDF(FX_LPCWSTR str)
+{
+    CFX_WideString result;
+    while (*str) {
+        if (*str == '\\' || *str == ':') {
+            result += '/';
+        } else {
+            result += *str;
+        }
+        str++;
+    }
+    return result;
+}
+#endif
 static CFX_WideString FILESPEC_DecodeFileName(FX_WSTR filepath)
 {
     if (filepath.GetLength() <= 1) {
@@ -348,19 +361,6 @@ FX_BOOL CPDF_FileSpec::IsURL() const
         return FALSE;
     }
     return ((CPDF_Dictionary*)m_pObj)->GetString(FX_BSTRC("FS")) == FX_BSTRC("URL");
-}
-static CFX_WideString ChangeSlashToPDF(FX_LPCWSTR str)
-{
-    CFX_WideString result;
-    while (*str) {
-        if (*str == '\\' || *str == ':') {
-            result += '/';
-        } else {
-            result += *str;
-        }
-        str++;
-    }
-    return result;
 }
 CFX_WideString FILESPEC_EncodeFileName(FX_WSTR filepath)
 {

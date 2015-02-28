@@ -61,23 +61,6 @@ FX_BOOL CPDF_ModuleMgr::DownloadModule(FX_LPCSTR module_name)
     }
     return m_pDownloadCallback(module_name);
 }
-static CFX_ByteString _GetPath(const CFX_ByteString& folder, FX_LPCSTR name)
-{
-    FX_STRSIZE folder_len = folder.GetLength();
-#if _FX_OS_ == _FX_SYMBIAN_ || _FXM_PLATFORM_  == _FXM_PLATFORM_WINDOWS_
-    if (folder[folder_len - 1] == '\\') {
-        return folder + name;
-    } else {
-        return (folder + "\\") + name;
-    }
-#else
-    if (folder[folder_len - 1] == '/') {
-        return folder + name;
-    } else {
-        return (folder + "/") + name;
-    }
-#endif
-}
 void CPDF_ModuleMgr::NotifyModuleAvailable(FX_LPCSTR module_name)
 {
     if (FXSYS_strcmp(module_name, ADDIN_NAME_CJK) == 0) {

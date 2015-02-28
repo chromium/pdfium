@@ -397,28 +397,6 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device
 	pDevice->RestoreState();
 }
 
-static void AddLineToPageObjects(CPDF_PageObjects* pPageObjs, FX_COLORREF crStroke, 
-								 const CPDF_Point& pt1, const CPDF_Point& pt2)
-{
-	CPDF_PathObject* pPathObj = new CPDF_PathObject;
-	CPDF_PathData* pPathData = pPathObj->m_Path.GetModify();
-
-	pPathData->SetPointCount(2);
-	pPathData->SetPoint(0, pt1.x, pt1.y, FXPT_MOVETO);
-	pPathData->SetPoint(1, pt2.x, pt2.y, FXPT_LINETO);
-
-	FX_FLOAT rgb[3];
-	rgb[0] = FXARGB_R(crStroke) / 255.0f;
-	rgb[1] = FXARGB_G(crStroke) / 255.0f;
-	rgb[2] = FXARGB_B(crStroke) / 255.0f;
-	pPathObj->m_ColorState.SetStrokeColor(CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
-
-	CFX_GraphStateData* pData = pPathObj->m_GraphState.GetModify();
-	pData->m_LineWidth = 1;
-
-	pPageObjs->InsertObject(pPageObjs->GetLastObjectPosition(),pPathObj);
-}
-
 static void AddRectToPageObjects(CPDF_PageObjects* pPageObjs, FX_COLORREF crFill, const CPDF_Rect& rcFill)
 {
 	CPDF_PathObject* pPathObj = new CPDF_PathObject;

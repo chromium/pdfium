@@ -329,7 +329,6 @@ int	CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc, const CPDF_Stream* p
     if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
         return 0;
     }
-    const CFX_ByteString& decoder = m_pStreamAcc->GetImageDecoder();
     int ret = CreateDecoder();
     if (ret != 1) {
         if (!ret) {
