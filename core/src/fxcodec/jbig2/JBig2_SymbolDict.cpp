@@ -27,8 +27,12 @@ CJBig2_SymbolDict *CJBig2_SymbolDict::DeepCopy()
     dst->SDEXSYMS = (CJBig2_Image**)m_pModule->JBig2_Malloc2(
         sizeof(CJBig2_Image*), src->SDNUMEXSYMS);
     for(FX_DWORD i = 0; i < src->SDNUMEXSYMS; i++) {
-        JBIG2_ALLOC(dst->SDEXSYMS[i],
-                    CJBig2_Image(*(src->SDEXSYMS[i])));
+        if (src->SDEXSYMS[i]) {
+            JBIG2_ALLOC(dst->SDEXSYMS[i],
+                        CJBig2_Image(*(src->SDEXSYMS[i])));
+        } else {
+            dst->SDEXSYMS[i] = NULL;
+        }
     }
     return dst;
 }
