@@ -436,6 +436,7 @@ protected:
     FX_BOOL				m_bLoadMask;
     FX_BOOL				m_bDefaultDecode;
     FX_BOOL				m_bImageMask;
+    FX_BOOL				m_bDoBpcCheck;
     FX_BOOL				m_bColorKey;
     DIB_COMP_DATA*		m_pCompData;
     FX_LPBYTE			m_pLineBuf;
