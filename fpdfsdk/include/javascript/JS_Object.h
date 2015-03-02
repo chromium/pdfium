@@ -7,6 +7,11 @@
 #ifndef _JS_OBJECT_H_
 #define _JS_OBJECT_H_
 
+#include "../fsdk_define.h"  // For FX_UINT
+#include "../fsdk_mgr.h"  // For CPDFDoc_Environment
+#include "../fx_systemhandler.h"  // For IFX_SystemHandler
+
+class CPDFSDK_PageView;
 class CJS_Object;
 class CJS_Timer;
 class CJS_Context;

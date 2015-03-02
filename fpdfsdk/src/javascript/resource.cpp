@@ -39,9 +39,24 @@ CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id)
         return L"The second parameter can't be converted to a Date.";
     case IDS_STRING_JSPRINT2:
         return L"The second parameter is an invalid Date!";
-    case IDS_JSPARAM_INCORRECT:
+    case IDS_STRING_JSNOGLOBAL:
         return L"Global value not found.";
+    case IDS_STRING_JSREADONLY:
+        return L"Cannot assign to readonly property.";
     default:
         return L"";
     }
+}
+
+CFX_WideString JSFormatErrorString(const char* class_name,
+                                   const char* property_name,
+                                   const CFX_WideString& details) {
+    CFX_WideString result = CFX_WideString::FromLocal(class_name);
+    if (property_name) {
+        result += L".";
+        result += CFX_WideString::FromLocal(property_name);
+    }
+    result += L": ";
+    result += details;
+    return result;
 }

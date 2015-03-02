@@ -26,8 +26,12 @@ class CJS_Context;
 #define IDS_STRING_RUN                  25630
 #define IDS_STRING_JSPRINT1             25632
 #define IDS_STRING_JSPRINT2             25633
-#define IDS_JSPARAM_INCORRECT           25635
+#define IDS_STRING_JSNOGLOBAL           25635
+#define IDS_STRING_JSREADONLY           25636
 
 CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id);
+CFX_WideString JSFormatErrorString(const char* class_name,
+                                   const char* property_name,
+                                   const CFX_WideString& details);
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_RESOURCE_H_

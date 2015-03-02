@@ -457,9 +457,14 @@ int JS_GetObjDefnID(IJS_Runtime * pJSRuntime, const wchar_t* pObjName)
 	return -1;
 }
 
-void JS_Error(v8::Value * pError,const wchar_t * main,const wchar_t * sub)
+void JS_Error(v8::Isolate* isolate, const CFX_WideString& message)
 {
-
+    // Conversion from pdfium's wchar_t wide-strings to v8's uint16_t
+    // wide-strings isn't handled by v8, so use UTF8 as a common
+    // intermediate format.
+    CFX_ByteString utf8_message = message.UTF8Encode();
+    isolate->ThrowException(v8::String::NewFromUtf8(isolate,
+                                                    utf8_message.c_str()));
 }
 
 unsigned JS_CalcHash(const wchar_t* main, unsigned nLen)
@@ -491,11 +496,6 @@ const wchar_t*	JS_GetTypeof(v8::Handle<v8::Value> pObj)
 	return NULL;
 
 }
-const wchar_t*	JS_GetClassname(v8::Handle<v8::Object> pObj)
-{
-	return NULL;
-}
-
 void JS_SetPrivate(v8::Handle<v8::Object> pObj, void* p)
 {
 	JS_SetPrivate(NULL, pObj, p);

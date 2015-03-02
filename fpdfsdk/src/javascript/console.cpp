@@ -10,9 +10,7 @@
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Value.h"
 #include "../../include/javascript/console.h"
-//#include "../../include/javascript/JS_Module.h"
 #include "../../include/javascript/JS_EventHandler.h"
-//#include "../../include/javascript/JS_ResMgr.h"
 #include "../../include/javascript/JS_Context.h"
 
 /* ------------------------ console ------------------------ */

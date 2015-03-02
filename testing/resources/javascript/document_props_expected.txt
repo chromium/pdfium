@@ -41,10 +41,10 @@ Alert: this.creationDate = 3; yields 3
 Alert: this.creator = 3; yields 3
 Alert: this.delay = 3; yields 3
 Alert: this.dirty = 3; yields 3
-Alert: this.documentFileName = 3; yields 3
+Alert: ERROR: Document.documentFileName: Cannot assign to readonly property.
 Alert: this.external = 3; yields 3
-Alert: this.filesize = 3; yields 3
-Alert: this.icons = 3; yields 3
+Alert: ERROR: Document.filesize: Cannot assign to readonly property.
+Alert: ERROR: Document.icons: Cannot assign to readonly property.
 Alert: this.info = 3; yields 3
 Alert: this.keywords = 3; yields 3
 Alert: this.layout = 3; yields 3
@@ -52,12 +52,12 @@ Alert: this.media = 3; yields 3
 Alert: this.modDate = 3; yields 3
 Alert: this.mouseX = 3; yields 3
 Alert: this.mouseY = 3; yields 3
-Alert: this.numFields = 3; yields 3
-Alert: this.numPages = 3; yields 3
+Alert: ERROR: Document.numFields: Cannot assign to readonly property.
+Alert: ERROR: Document.numPages: Cannot assign to readonly property.
 Goto Page: 3
 Alert: this.pageNum = 3; yields 3
 Alert: this.pageWindowRect = 3; yields 3
-Alert: this.path = 3; yields 3
+Alert: ERROR: Document.path: Cannot assign to readonly property.
 Alert: this.producer = 3; yields 3
 Alert: this.subject = 3; yields 3
 Alert: this.title = 3; yields 3
