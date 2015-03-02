@@ -14,11 +14,11 @@ public:
 	virtual ~util(void);
 
 public:
-	FX_BOOL printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
-	FX_BOOL printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
-	FX_BOOL printx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
-	FX_BOOL scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
-	FX_BOOL byteToChar(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL printx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL byteToChar(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 
 public:
 	static void		printd(const std::wstring &cFormat,CJS_Date Date,bool bXFAPicture, std::wstring &cPurpose);

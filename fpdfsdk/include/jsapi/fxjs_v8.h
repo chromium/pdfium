@@ -42,8 +42,8 @@ typedef v8::Isolate IJS_Runtime;
 class IFXJS_Context;
 class IFXJS_Runtime;
 
-typedef unsigned (*LP_CONSTRUCTOR)(IFXJS_Context* cc, v8::Handle<v8::Object> obj, v8::Handle<v8::Object> global);
-typedef unsigned (*LP_DESTRUCTOR)(v8::Handle<v8::Object> obj);
+typedef void (*LP_CONSTRUCTOR)(IFXJS_Context* cc, v8::Handle<v8::Object> obj, v8::Handle<v8::Object> global);
+typedef void (*LP_DESTRUCTOR)(v8::Handle<v8::Object> obj);
 
 
 int								JS_DefineObj(IJS_Runtime* pJSRuntime, const wchar_t* sObjName, FXJSOBJTYPE eObjType, LP_CONSTRUCTOR pConstructor, LP_DESTRUCTOR pDestructor, unsigned bApplyNew);

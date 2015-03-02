@@ -30,8 +30,6 @@ END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_Console,console)
 
-#define MAXCONSOLECONTENTS			10000
-
 console::console(CJS_Object* pJSObject): CJS_EmbedObj(pJSObject)
 {
 }
@@ -40,34 +38,26 @@ console::~console()
 {
 }
 
-FX_BOOL console::clear(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL console::clear(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
-
-
-
 	return TRUE;
 }
 
-FX_BOOL console::hide(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL console::hide(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
-
-
-	
-
 	return TRUE;
 }
 
-FX_BOOL console::println(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL console::println(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	if (params.size() < 1)
 	{
 		return FALSE;
 	}
-  
 	return TRUE;
 }
 
-FX_BOOL console::show(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL console::show(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return TRUE;
 }

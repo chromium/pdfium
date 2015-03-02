@@ -37,7 +37,7 @@ public:
 	CPDFDoc_Environment(CPDF_Document * pDoc);
 	~CPDFDoc_Environment();
 
-	int RegAppHandle(FPDF_FORMFILLINFO* pFFinfo);//{ m_pInfo  = pFFinfo; return TRUE;}
+	int RegAppHandle(FPDF_FORMFILLINFO* pFFinfo);
 
 	void FFI_Invalidate(FPDF_PAGE page, double left, double top, double right, double bottom)
 	{
@@ -332,38 +332,27 @@ public:
 		}
 	}
 
-public:
 	FX_BOOL				IsJSInitiated();
 
-public:
 	void				SetCurrentDoc(CPDFSDK_Document* pFXDoc) {m_pSDKDoc = pFXDoc;}
 	CPDFSDK_Document*	GetCurrentDoc();
 	CPDF_Document*		GetPDFDocument() {return m_pPDFDoc;}
-// 	CPDFSDK_Document*   GetDocument(int nIndex);
-// 	int					CountDocuments() {return m_docMap.GetCount();}
-
-	CPDFSDK_Document*		OpenDocument(CFX_WideString &fileName){return NULL;}
-	CPDFSDK_Document*		OpenMemPDFDoc(CPDF_Document* pNewDoc, CFX_WideString &fileName){return NULL;}
-
 
 	CFX_ByteString		GetAppName() {return "";}
 
 	CFFL_IFormFiller*	GetIFormFiller();
 	IFX_SystemHandler*	GetSysHandler() {return m_pSysHandler;}
 
-public:
 	CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();
 	IFXJS_Runtime*	GetJSRuntime();
 	CPDFSDK_ActionHandler* GetActionHander();
+	FPDF_FORMFILLINFO* GetFormFillInfo() {return m_pInfo;}
+
 private:
 	CPDFSDK_AnnotHandlerMgr* m_pAnnotHandlerMgr;
 	CPDFSDK_ActionHandler*	m_pActionHandler;
 	IFXJS_Runtime*	m_pJSRuntime;
-public:
-	FPDF_FORMFILLINFO* GetFormFillInfo() {return m_pInfo;}
-private:
 	FPDF_FORMFILLINFO*	m_pInfo;
-//	CFX_MapPtrTemplate<CPDF_Document*, CPDFSDK_Document*> m_docMap;
 	CPDFSDK_Document* m_pSDKDoc;
 	CPDF_Document* m_pPDFDoc;
 
@@ -376,30 +365,16 @@ public:
 
 
 
-// class CFX_App
-// {
-// public:
-// 	CFX_App():m_pCurDoc(NULL) {}
-// 	void SetAt(CPDF_Document* pPDFDoc, CPDFSDK_Document* pFXDoc);
-// 	CPDFSDK_Document* GetAt(CPDF_Document* pPDFDoc);
-// public:
-// 	void SetCurrentDocument(CPDFSDK_Document* pFXDoc) {m_pCurDoc = pFXDoc;}
-// 	CPDFSDK_Document* GetCurrentDocument() {return m_pCurDoc;}
-// private:
-// 	CFX_MapPtrTemplate<CPDF_Document*, CPDFSDK_Document*> m_docArray;
-// 	CPDFSDK_Document* m_pCurDoc;
-// };
 class CPDFSDK_InterForm;
 class CPDFSDK_Document
 {
 public:
 	CPDFSDK_Document(CPDF_Document* pDoc, CPDFDoc_Environment* pEnv);
 	~CPDFSDK_Document();
-public:
+
 	CPDFSDK_InterForm*		GetInterForm() ;
 	CPDF_Document*			GetDocument() {return m_pDoc;}
 
-public:
 	void					InitPageView();
 	void					AddPageView(CPDF_Page* pPDFPage, CPDFSDK_PageView* pPageView);
 	CPDFSDK_PageView*		GetPageView(CPDF_Page* pPDFPage, FX_BOOL ReNew = TRUE);
@@ -408,11 +383,11 @@ public:
 	void					ReMovePageView(CPDF_Page* pPDFPage);
 	void					UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
-	CPDFSDK_Annot*			GetFocusAnnot();//{return NULL;}
+	CPDFSDK_Annot*			GetFocusAnnot();
 
 	IFXJS_Runtime *			GetJsRuntime();
 
-	FX_BOOL					SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag = 0);//{return FALSE;}
+	FX_BOOL					SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag = 0);
 	FX_BOOL					KillFocusAnnot(FX_UINT nFlag = 0);
 
 	FX_BOOL					ExtractPages(const CFX_WordArray &arrExtraPages, CPDF_Document* pDstDoc);
@@ -427,8 +402,6 @@ public:
 	FX_BOOL					GetChangeMark() {return m_bChangeMask;}
 	void					SetChangeMark() {m_bChangeMask = TRUE;}
 	void					ClearChangeMark() {m_bChangeMask= FALSE;}
-//	FX_BOOL					GetChangeMark(){return FALSE;}//IsAnnotModified()||IsFormModified() || IsWidgetModified()|| m_nChangeMark>0 ;}
-//	void                    ClearChangeMark(){}
 	CFX_WideString			GetPath() ;
 	CPDF_Page*				GetPage(int nIndex);
 	CPDFDoc_Environment *	GetEnv() {return m_pEnv; }
@@ -436,10 +409,8 @@ public:
 	FX_BOOL					ProcOpenAction();
 	CPDF_OCContext*			GetOCContext();
 private:
-	//CFX_ArrayTemplate<CPDFSDK_PageView*> m_pageArray;
 	CFX_MapPtrTemplate<CPDF_Page*, CPDFSDK_PageView*> m_pageMap;
 	CPDF_Document*			m_pDoc;
-
 	CPDFSDK_InterForm*		m_pInterForm;
 	CPDFSDK_Annot*			m_pFocusAnnot;
 	CPDFDoc_Environment *	m_pEnv;

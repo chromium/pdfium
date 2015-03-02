@@ -13,7 +13,6 @@
 typedef v8::Value			JSValue;
 typedef v8::Handle<v8::Object>	JSObject;
 typedef v8::Handle<v8::Object>	JSFXObject;
-typedef unsigned		JSBool;
 
 #include "JS_Object.h"
 #include "JS_Value.h"
@@ -39,13 +38,6 @@ struct JSMethodSpec
 	v8::FunctionCallback pMethodCall;
 	unsigned nParamNum;
 };
-
-#define JS_TRUE			(unsigned)1
-#define JS_FALSE		(unsigned)0
-
-typedef CFX_WideString JS_ErrorString;
-typedef CFX_ArrayTemplate<float> CJS_PointsArray;
-typedef CFX_ArrayTemplate<int> CJS_IntArray;
 
 /* ====================================== PUBLIC DEFINE SPEC ============================================== */
 #define JS_WIDESTRING(widestring) L###widestring
@@ -169,8 +161,8 @@ void JSMethod(const char* method_name_string,
 /* ===================================== JS CLASS =============================================== */
 
 #define DECLARE_JS_CLASS(js_class_name) \
-	static JSBool JSConstructor(IFXJS_Context* cc, JSFXObject obj,JSFXObject global);\
-	static JSBool JSDestructor(JSFXObject obj);\
+	static void JSConstructor(IFXJS_Context* cc, JSFXObject obj,JSFXObject global);\
+	static void JSDestructor(JSFXObject obj);\
 	static int Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType);\
 	static JSConstSpec JS_Class_Consts[];\
 	static JSPropertySpec JS_Class_Properties[];\
@@ -179,22 +171,20 @@ void JSMethod(const char* method_name_string,
 
 #define IMPLEMENT_JS_CLASS_RICH(js_class_name, class_alternate, class_name) \
 const wchar_t* js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
-JSBool js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject obj, JSFXObject global)\
+void js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject obj, JSFXObject global)\
 {\
 	CJS_Object* pObj = FX_NEW js_class_name(obj);\
 	pObj->SetEmbedObject(FX_NEW class_alternate(pObj));\
 	JS_SetPrivate(NULL,obj,(void*)pObj); \
 	pObj->InitInstance(cc);\
-	return JS_TRUE;\
 }\
 \
-JSBool js_class_name::JSDestructor(JSFXObject obj) \
+void js_class_name::JSDestructor(JSFXObject obj) \
 {\
 	js_class_name* pObj = (js_class_name*)JS_GetPrivate(NULL,obj);\
 	ASSERT(pObj != NULL);\
 	pObj->ExitInstance();\
 	delete pObj;\
-	return JS_TRUE;\
 }\
 \
 int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
@@ -330,8 +320,8 @@ void JSSpecialPropDel(const char* class_name,
 }
 
 #define DECLARE_SPECIAL_JS_CLASS(js_class_name) \
-	static JSBool JSConstructor(IFXJS_Context* cc, JSFXObject obj, JSFXObject global);\
-	static JSBool JSDestructor(JSFXObject obj);\
+	static void JSConstructor(IFXJS_Context* cc, JSFXObject obj, JSFXObject global);\
+	static void JSDestructor(JSFXObject obj);\
 	static JSConstSpec JS_Class_Consts[];\
 	static JSPropertySpec JS_Class_Properties[];\
 	static JSMethodSpec	JS_Class_Methods[];\
@@ -356,22 +346,20 @@ void js_class_name::putprop_##js_class_name##_static(v8::Local<v8::String> prope
 void js_class_name::delprop_##js_class_name##_static(v8::Local<v8::String> property,const v8::PropertyCallbackInfo<v8::Boolean>& info) { \
   JSSpecialPropDel<class_alternate>(#class_name, property, info); \
 } \
-JSBool js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject  obj,JSFXObject  global)\
+void js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject  obj,JSFXObject  global)\
 {\
 	CJS_Object* pObj = FX_NEW js_class_name(obj);\
 	pObj->SetEmbedObject(FX_NEW class_alternate(pObj));\
 	JS_SetPrivate(NULL,obj, (void*)pObj); \
 	pObj->InitInstance(cc);\
-	return JS_TRUE;\
 }\
 \
-JSBool js_class_name::JSDestructor(JSFXObject obj) \
+void js_class_name::JSDestructor(JSFXObject obj) \
 {\
 	js_class_name* pObj = (js_class_name*)JS_GetPrivate(NULL,obj);\
 	ASSERT(pObj != NULL);\
 	pObj->ExitInstance();\
 	delete pObj;\
-	return JS_TRUE;\
 }\
 \
 int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
