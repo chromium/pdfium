@@ -41,12 +41,12 @@ public:
 	virtual ~global_alternate();
 
 public:
-	FX_BOOL						setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError);
+	FX_BOOL						setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 
 public:
 	FX_BOOL						QueryProperty(FX_LPCWSTR propname);
-	FX_BOOL						DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS_PropValue & vp, JS_ErrorString & sError);
-	FX_BOOL						DelProperty(IFXJS_Context* cc, FX_LPCWSTR propname, JS_ErrorString & sError);
+	FX_BOOL						DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS_PropValue & vp, CFX_WideString & sError);
+	FX_BOOL						DelProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CFX_WideString & sError);
 
 	void						Initial(CPDFDoc_Environment* pApp);
 

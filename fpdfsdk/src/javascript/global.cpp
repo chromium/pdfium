@@ -144,7 +144,7 @@ FX_BOOL	global_alternate::QueryProperty(FX_LPCWSTR propname)
 	return CFX_WideString(propname) != L"setPersistent";
 }
 
-FX_BOOL	global_alternate::DelProperty(IFXJS_Context* cc, FX_LPCWSTR propname, JS_ErrorString& sError)
+FX_BOOL	global_alternate::DelProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CFX_WideString& sError)
 {
 	js_global_data* pData = NULL;
 	CFX_ByteString sPropName = CFX_ByteString::FromUnicode(propname);
@@ -158,7 +158,7 @@ FX_BOOL	global_alternate::DelProperty(IFXJS_Context* cc, FX_LPCWSTR propname, JS
 	return FALSE;
 }
 
-FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsSetting())
 	{
@@ -270,7 +270,7 @@ FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS
 	return FALSE;
 }
 
-FX_BOOL global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	CJS_Context* pContext = static_cast<CJS_Context*>(cc);
 	if (params.size() != 2)

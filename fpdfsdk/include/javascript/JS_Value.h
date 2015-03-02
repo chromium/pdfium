@@ -73,13 +73,16 @@ protected:
 	v8::Isolate* m_isolate;
 };
 
-template<class TYPE> class CJS_ParametersTmpl : public CFX_ArrayTemplate<TYPE>
+class CJS_Parameters : public CFX_ArrayTemplate<CJS_Value>
 {
 public:
-	void push_back(TYPE newElement){CFX_ArrayTemplate<TYPE>::Add(newElement);}
-	int size() const{return CFX_ArrayTemplate<TYPE>::GetSize();}
+	void push_back(const CJS_Value& newElement) {
+		CFX_ArrayTemplate<CJS_Value>::Add(newElement);
+	}
+	int size() const {
+		return CFX_ArrayTemplate<CJS_Value>::GetSize();
+	}
 };
-typedef CJS_ParametersTmpl<CJS_Value> CJS_Parameters;
 
 class CJS_PropValue: public CJS_Value
 {

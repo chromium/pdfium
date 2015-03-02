@@ -137,7 +137,7 @@ int util::ParstDataType(std::wstring* sFormat)
 	return -1;
 }
 
-FX_BOOL util::printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL util::printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	int iSize = params.size();
 	if (iSize < 1)
@@ -202,7 +202,7 @@ FX_BOOL util::printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 	return TRUE;
 }
 
-FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	v8::Isolate* isolate = GetIsolate(cc);
 
@@ -455,16 +455,14 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 		}
 	}
 
-		CFX_WideString strFormat;
-//		strFormat.Format(L"%d,%d,%d,%d,%d,%d",iYear, iMonth, iDay, iHour, iMin, iSec);
-//		CString strFormat = cppTm.Format(cFormat.c_str());
-		wchar_t buf[64] = {0};
-		strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
-		cFormat = buf;
-		cPurpose = cFormat;
+	CFX_WideString strFormat;
+	wchar_t buf[64] = {0};
+	strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
+	cFormat = buf;
+	cPurpose = cFormat;
 }
 
-FX_BOOL util::printx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL util::printx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	int iSize = params.size();
 	if (iSize<2)
@@ -578,7 +576,7 @@ void util::printx(const std::string &cFormat,const std::string &cSource2,std::st
 	}
 }
 
-FX_BOOL util::scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL util::scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	v8::Isolate* isolate = GetIsolate(cc);
 	int iSize = params.size();
@@ -635,7 +633,7 @@ FX_INT64 FX_atoi64(const char *nptr)
             return total;   /* return result, negated if necessary */
 }
 
-FX_BOOL util::byteToChar(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL util::byteToChar(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	int iSize = params.size();
 	if (iSize == 0)

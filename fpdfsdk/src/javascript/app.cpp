@@ -134,7 +134,7 @@ app::~app(void)
 	m_aTimer.RemoveAll();
 }
 
-FX_BOOL app::activeDocs(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::activeDocs(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsGetting())
 	{
@@ -192,7 +192,7 @@ FX_BOOL app::activeDocs(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sE
 	return FALSE;
 }
 
-FX_BOOL app::calculate(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::calculate(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsSetting())
 	{
@@ -210,17 +210,12 @@ FX_BOOL app::calculate(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sEr
 		ASSERT(pRuntime != NULL);
 
 		CJS_Array aDocs(pRuntime->GetIsolate());
-// 		int iNumDocs = pApp->CountDocuments();
-//
-// 		for (int iIndex = 0;iIndex < iNumDocs; iIndex++)
-// 		{
-			if (CPDFSDK_Document* pDoc = pApp->GetCurrentDoc())
-			{
-				CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDoc->GetInterForm();
-				ASSERT(pInterForm != NULL);
-				pInterForm->EnableCalculate((FX_BOOL)m_bCalculate);
-			}
-//		}
+		if (CPDFSDK_Document* pDoc = pApp->GetCurrentDoc())
+		{
+			CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDoc->GetInterForm();
+			ASSERT(pInterForm != NULL);
+			pInterForm->EnableCalculate((FX_BOOL)m_bCalculate);
+		}
 	}
 	else
 	{
@@ -230,7 +225,7 @@ FX_BOOL app::calculate(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sEr
 	return TRUE;
 }
 
-FX_BOOL app::formsVersion(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::formsVersion(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsGetting())
 	{
@@ -241,7 +236,7 @@ FX_BOOL app::formsVersion(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& 
 	return FALSE;
 }
 
-FX_BOOL app::viewerType(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::viewerType(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsGetting())
 	{
@@ -252,7 +247,7 @@ FX_BOOL app::viewerType(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sE
 	return FALSE;
 }
 
-FX_BOOL app::viewerVariation(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::viewerVariation(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsGetting())
 	{
@@ -263,7 +258,7 @@ FX_BOOL app::viewerVariation(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorStrin
 	return FALSE;
 }
 
-FX_BOOL app::viewerVersion(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::viewerVersion(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsGetting())
 	{
@@ -286,7 +281,7 @@ FX_BOOL app::viewerVersion(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString&
 	return FALSE;
 }
 
-FX_BOOL app::platform(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::platform(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsGetting())
 	{
@@ -297,7 +292,7 @@ FX_BOOL app::platform(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sErr
 	return FALSE;
 }
 
-FX_BOOL app::language(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::language(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsGetting())
 	{
@@ -312,7 +307,7 @@ FX_BOOL app::language(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sErr
 //comment: need reader support
 //note:
 //CFDF_Document * CPDFDoc_Environment::NewFDF();
-FX_BOOL app::newFDF(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::newFDF(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return TRUE;
 }
@@ -321,12 +316,12 @@ FX_BOOL app::newFDF(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& 
 //note: as defined in js reference, the proto of this function's fourth parmeters, how old an fdf document while do not show it.
 //CFDF_Document * CPDFDoc_Environment::OpenFDF(string strPath,bool bUserConv);
 
-FX_BOOL app::openFDF(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::openFDF(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return TRUE;
 }
 
-FX_BOOL app::alert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::alert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	int iSize = params.size();
 	if (iSize < 1)
@@ -451,7 +446,7 @@ FX_BOOL app::alert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& v
 }
 
 
-FX_BOOL app::beep(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::beep(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	if (params.size() == 1)
 	{
@@ -469,22 +464,22 @@ FX_BOOL app::beep(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vR
 	}
 }
 
-FX_BOOL app::findComponent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::findComponent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return TRUE;
 }
 
-FX_BOOL app::popUpMenuEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::popUpMenuEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return FALSE;
 }
 
-FX_BOOL app::fs(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::fs(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	return FALSE;
 }
 
-FX_BOOL app::setInterval(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::setInterval(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	if (params.size() > 2 || params.size() == 0)
 	{
@@ -533,7 +528,7 @@ FX_BOOL app::setInterval(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Va
 	return TRUE;
 }
 
-FX_BOOL app::setTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::setTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	if (params.size() > 2 || params.size() == 0)
 	{
@@ -584,7 +579,7 @@ FX_BOOL app::setTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 	return TRUE;
 }
 
-FX_BOOL app::clearTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::clearTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -632,7 +627,7 @@ FX_BOOL app::clearTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_V
 	return TRUE;
 }
 
-FX_BOOL app::clearInterval(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::clearInterval(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -680,7 +675,7 @@ FX_BOOL app::clearInterval(IFXJS_Context* cc, const CJS_Parameters& params, CJS_
 	return TRUE;
 }
 
-FX_BOOL app::execMenuItem(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::execMenuItem(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return FALSE;
 }
@@ -720,19 +715,19 @@ void app::RunJsScript(CJS_Runtime* pRuntime,const CFX_WideString& wsScript)
 	}
 }
 
-FX_BOOL app::goBack(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::goBack(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
   // Not supported.
   return TRUE;
 }
 
-FX_BOOL app::goForward(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::goForward(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
   // Not supported.
   return TRUE;
 }
 
-FX_BOOL app::mailMsg(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::mailMsg(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -796,13 +791,13 @@ FX_BOOL app::mailMsg(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 	return FALSE;
 }
 
-FX_BOOL app::launchURL(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::launchURL(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
   // Unsafe, not supported.
   return TRUE;
 }
 
-FX_BOOL app::runtimeHighlight(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::runtimeHighlight(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsSetting())
 	{
@@ -816,18 +811,18 @@ FX_BOOL app::runtimeHighlight(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorStri
 	return TRUE;
 }
 
-FX_BOOL app::fullscreen(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::fullscreen(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	return FALSE;
 }
 
-FX_BOOL app::popUpMenu(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::popUpMenu(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return FALSE;
 }
 
 
-FX_BOOL app::browseForDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::browseForDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
   // Unsafe, not supported.
   return TRUE;
@@ -859,17 +854,17 @@ CFX_WideString app::SysPathToPDFPath(const CFX_WideString& sOldPath)
 	return sRet;
 }
 
-FX_BOOL app::newDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::newDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return FALSE;
 }
 
-FX_BOOL app::openDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::openDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return FALSE;
 }
 
-FX_BOOL app::response(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::response(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	CFX_WideString swQuestion = L"";
 	CFX_WideString swLabel = L"";
@@ -949,12 +944,12 @@ FX_BOOL app::response(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value
 	return TRUE;
 }
 
-FX_BOOL app::media(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
+FX_BOOL app::media(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	return FALSE;
 }
 
-FX_BOOL app::execDialog(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
+FX_BOOL app::execDialog(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	return TRUE;
 }
