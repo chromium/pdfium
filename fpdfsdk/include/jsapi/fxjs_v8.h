@@ -8,6 +8,7 @@
 #define FXJSAPI_H
 
 #include <v8.h>
+#include "../../core/include/fxcrt/fx_string.h"  // For CFX_WideString
 
 enum FXJSOBJTYPE
 {
@@ -66,11 +67,10 @@ v8::Handle<v8::Object>			JS_GetThisObj(IJS_Runtime * pJSRuntime);
 int								JS_GetObjDefnID(v8::Handle<v8::Object> pObj);
 IJS_Runtime*					JS_GetRuntime(v8::Handle<v8::Object> pObj);
 int								JS_GetObjDefnID(IJS_Runtime * pJSRuntime, const wchar_t* pObjName);
-void							JS_Error(v8::Value * pError,const wchar_t * main,const wchar_t * sub);
+void							JS_Error(v8::Isolate* isolate, const CFX_WideString& message);
 unsigned						JS_CalcHash(const wchar_t* main, unsigned nLen);
 unsigned						JS_CalcHash(const wchar_t* main);
 const wchar_t*					JS_GetTypeof(v8::Handle<v8::Value> pObj);
-const wchar_t*					JS_GetClassname(v8::Handle<v8::Object> pObj);
 void							JS_SetPrivate(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj, void* p);
 void*							JS_GetPrivate(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj);
 void							JS_SetPrivate(v8::Handle<v8::Object> pObj, void* p);

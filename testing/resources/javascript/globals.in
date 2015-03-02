@@ -63,21 +63,34 @@ var props_to_test = [
 function setup_global() {
   for (var i = 0; i < props_to_test.length; ++i) {
     var prop = props_to_test[i];
-    global[prop.name] = prop.value;
+    try {
+      global[prop.name] = prop.value;
+    } catch (e) {
+      app.alert("For " + prop.name + ": Setup: ERROR: " + e.toString());
+    }
   }
 }
 
 function delete_global() {
   for (var i = 0; i < props_to_test.length; ++i) {
     var prop = props_to_test[i];
-    delete global[prop.name];
+    try {
+      delete global[prop.name];
+    } catch (e) {
+      app.alert("For " + prop.name + ": Delete: ERROR: " + e.toString());
+    }
   }
 }
 
 function persist_global(should_persist) {
   for (var i = 0; i < props_to_test.length; ++i) {
     var prop = props_to_test[i];
-    global.setPersistent(prop.name, should_persist);
+    try {
+      global.setPersistent(prop.name, should_persist);
+    } catch (e) {
+      app.alert("For " + prop.name +
+                ": Set Persistent: ERROR: " + e.toString());
+    }
   }
 }
 
@@ -85,18 +98,27 @@ function dump_global(msg) {
   app.alert("************ " + msg + " ************");
   app.alert("Enumerable Globals:");
   for (var name in global) {
-    app.alert("  " + name + " = " + global[name] +
-              ", own property = " + global.hasOwnProperty(name));
+    try {
+      app.alert("  " + name + " = " + global[name] +
+                ", own property = " + global.hasOwnProperty(name));
+    } catch (e) {
+      app.alert("For " + name + ": Dump: ERROR: " + e.toString());
+    }
   }
   app.alert("Expected Globals:");
   for (var i = 0; i < props_to_test.length; ++i) {
     var prop = props_to_test[i];
-    var actual = global[prop.name];
-    app.alert("  " + prop.name + " = " + actual);
-    if (actual != null && typeof actual == "object") {
-      app.alert("    " + actual.colors[0]);
-      app.alert("    " + actual.colors[1]);
-      app.alert("    " + actual.colors[2]);
+    try {
+      var actual = global[prop.name];
+      app.alert("  " + prop.name + " = " + actual);
+      if (actual != null && typeof actual == "object") {
+        app.alert("    " + actual.colors[0]);
+        app.alert("    " + actual.colors[1]);
+        app.alert("    " + actual.colors[2]);
+      }
+    } catch (e) {
+      app.alert("For " + prop.name +
+                ": Dump Expected: ERROR: " + e.toString());
     }
   }
 }

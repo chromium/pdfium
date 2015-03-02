@@ -16,7 +16,7 @@
 #include "../../include/javascript/app.h"
 #include "../../include/javascript/Field.h"
 #include "../../include/javascript/Icon.h"
-#include "../../include/javascript/Field.h"
+#include "../../include/javascript/resource.h"
 
 #include "../../../third_party/base/numerics/safe_math.h"
 
@@ -192,18 +192,14 @@ Document::~Document()
 //the total number of fileds in document.
 FX_BOOL Document::numFields(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
-	if (!vp.IsGetting()) return FALSE;
-
-	ASSERT(m_pDocument != NULL);
-
+	if (vp.IsSetting()) {
+		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSREADONLY);
+		return FALSE;
+	}
 	CPDFSDK_InterForm *pInterForm = m_pDocument->GetInterForm();
-	ASSERT(pInterForm != NULL);
-
 	CPDF_InterForm *pPDFForm = pInterForm->GetInterForm();
-	ASSERT(pPDFForm != NULL);
-
 	vp << (int)pPDFForm->CountFields();
-
 	return TRUE;
 }
 
@@ -878,7 +874,7 @@ FX_BOOL Document::info(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sEr
 	CFX_WideString cwTrapped		= pDictionary->GetUnicodeText("Trapped");
 
 	v8::Isolate* isolate = GetIsolate(cc);
-	if (!vp.IsSetting())
+	if (vp.IsGetting())
 	{
 		CJS_Context* pContext = (CJS_Context *)cc;
 		CJS_Runtime* pRuntime = pContext->GetJSRuntime();
@@ -1135,16 +1131,13 @@ FX_BOOL Document::title(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sE
 
 FX_BOOL Document::numPages(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
-	if (vp.IsGetting())
-	{
-		ASSERT(m_pDocument != NULL);
-		vp << m_pDocument->GetPageCount();
-		return TRUE;
-	}
-	else
-	{
+	if (vp.IsSetting()) {
+		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSREADONLY);
 		return FALSE;
 	}
+	vp << m_pDocument->GetPageCount();
+	return TRUE;
 }
 
 FX_BOOL Document::external(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
@@ -1156,8 +1149,11 @@ FX_BOOL Document::external(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString&
 
 FX_BOOL Document::filesize(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
-
+	if (vp.IsSetting()) {
+		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSREADONLY);
+		return FALSE;
+	}
 	vp << 0;
 	return TRUE;
 }
@@ -1213,11 +1209,12 @@ FX_BOOL Document::calculate(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString
 
 FX_BOOL Document::documentFileName(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
-	if (!vp.IsGetting())
+	if (vp.IsSetting()) {
+		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSREADONLY);
 		return FALSE;
-
+	}
 	CFX_WideString wsFilePath = m_pDocument->GetPath();
-
 	FX_INT32 i = wsFilePath.GetLength() - 1;
 	for ( ; i >= 0; i-- )
 	{
@@ -1282,10 +1279,12 @@ CFX_WideString Document::CutString(CFX_WideString cbFrom)
 
 FX_BOOL Document::path(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
-	if (!vp.IsGetting()) return FALSE;
-
+	if (vp.IsSetting()) {
+		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSREADONLY);
+		return FALSE;
+	}
 	vp << app::SysPathToPDFPath(m_pDocument->GetPath());
-
 	return TRUE;
 }
 
@@ -1491,8 +1490,11 @@ FX_BOOL Document::addIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_V
 
 FX_BOOL Document::icons(IFXJS_Context* cc, CJS_PropValue& vp, JS_ErrorString& sError)
 {
-	if (vp.IsSetting())
+	if (vp.IsSetting()) {
+		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSREADONLY);
 		return FALSE;
+	}
 
 	if (!m_pIconTree)
 	{
@@ -1619,7 +1621,8 @@ FX_BOOL Document::getPageNthWord(IFXJS_Context* cc, const CJS_Parameters& params
 
 	if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
 	{
-		//sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
+		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
 		return FALSE;
 	}
 
@@ -1688,7 +1691,8 @@ FX_BOOL Document::getPageNumWords(IFXJS_Context* cc, const CJS_Parameters& param
 
 	if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
 	{
-		//sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
+		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
 		return FALSE;
 	}
 

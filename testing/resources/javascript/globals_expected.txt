@@ -45,6 +45,7 @@ Alert:   string_var = undefined
 Alert:   object_var = undefined
 Alert:   null_var = undefined
 Alert:   undefined_var = undefined
+Alert: For undefined_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: ************ After Setup and Persist false ************
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true
@@ -68,6 +69,14 @@ Alert:     green
 Alert:     blue
 Alert:   null_var = null
 Alert:   undefined_var = undefined
+Alert: For true_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
+Alert: For false_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
+Alert: For zero_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
+Alert: For number_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
+Alert: For string_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
+Alert: For object_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
+Alert: For null_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
+Alert: For undefined_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: ************ After Delete and Persist ************
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true
@@ -80,6 +89,7 @@ Alert:   string_var = undefined
 Alert:   object_var = undefined
 Alert:   null_var = undefined
 Alert:   undefined_var = undefined
+Alert: For undefined_var: Set Persistent: ERROR: global.setPersistent: Global value not found.
 Alert: ************ After Setup and Persist true ************
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true

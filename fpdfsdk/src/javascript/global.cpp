@@ -4,16 +4,17 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/javascript/JavaScript.h"
 #include "../../include/javascript/IJavaScript.h"
+#include "../../include/javascript/JS_Context.h"
 #include "../../include/javascript/JS_Define.h"
+#include "../../include/javascript/JS_EventHandler.h"
+#include "../../include/javascript/JS_GlobalData.h"
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Value.h"
-#include "../../include/javascript/JS_GlobalData.h"
+#include "../../include/javascript/JavaScript.h"
 #include "../../include/javascript/global.h"
-#include "../../include/javascript/JS_EventHandler.h"
-#include "../../include/javascript/JS_Context.h"
 #include "../../include/fpdfxfa/fpdfxfa_app.h"
+#include "../../include/javascript/resource.h"
 
 /* ---------------------------- global ---------------------------- */
 
@@ -271,9 +272,10 @@ FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS
 
 FX_BOOL global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, JS_ErrorString& sError)
 {
+	CJS_Context* pContext = static_cast<CJS_Context*>(cc);
 	if (params.size() != 2)
 	{
-		//sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);	
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
 		return FALSE;
 	}
 
@@ -289,7 +291,7 @@ FX_BOOL global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters&
 		}
 	}
 
-	//sError = JSGetStringFromID(IDS_JSPARAM_INCORRECT);	
+	sError = JSGetStringFromID(pContext, IDS_STRING_JSNOGLOBAL);
 	return FALSE;
 }
 

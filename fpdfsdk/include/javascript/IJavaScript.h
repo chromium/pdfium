@@ -7,6 +7,14 @@
 #ifndef _IJAVASCRIPT_H_
 #define _IJAVASCRIPT_H_
 
+#include "../../../core/include/fxcrt/fx_basic.h"
+#include "../../../xfa/include/fxjse/fxjse.h"
+
+class CPDF_Bookmark;
+class CPDF_FormField;
+class CPDFSDK_Annot;
+class CPDFSDK_Document;
+
 class IFXJS_Context
 {
 public:

@@ -105,27 +105,27 @@ var document_props = [
 ];
 
 function testGetProps(props) {
-  try {
-    app.alert('*** Getting properties ***');
-    for (var i = 0; i < props.length; ++i) {
-        var expr1 = "this." + props[i];
-        var expr2 = "typeof " + expr1;
-        app.alert(expr1 + " is " + eval(expr2) + ' ' + eval(expr1));
+  app.alert('*** Getting properties ***');
+  for (var i = 0; i < props.length; ++i) {
+    try {
+      var expr1 = "this." + props[i];
+      var expr2 = "typeof " + expr1;
+      app.alert(expr1 + " is " + eval(expr2) + ' ' + eval(expr1));
+    } catch (e) {
+      app.alert("ERROR: " + e.toString());
     }
-  } catch (e) {
-    app.alert("ERROR: " + e.toString());
   }
 }
 
 function testSetProps(props) {
-  try {
-    app.alert('*** Setting properties ***');
-    for (var i = 0; i < props.length; ++i) {
-        var expr1 = "this." + props[i] + ' = 3;'
-        app.alert(expr1 + " yields " + eval(expr1));
+  app.alert('*** Setting properties ***');
+  for (var i = 0; i < props.length; ++i) {
+    try {
+      var expr1 = "this." + props[i] + ' = 3;'
+      app.alert(expr1 + " yields " + eval(expr1));
+    } catch (e) {
+      app.alert("ERROR: " + e.toString());
     }
-  } catch (e) {
-    app.alert("ERROR: " + e.toString());
   }
 }
 
