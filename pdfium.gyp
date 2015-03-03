@@ -934,10 +934,13 @@
       'dependencies': [
         '<(DEPTH)/testing/gmock.gyp:gmock',
         '<(DEPTH)/testing/gtest.gyp:gtest',
+        '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
         'pdfium',
       ],
       'include_dirs': [
-        '<(DEPTH)'
+        '<(DEPTH)',
+        '<(DEPTH)/v8',
+        '<(DEPTH)/v8/include',
       ],
       'sources': [
         'fpdfsdk/src/fpdf_dataavail_embeddertest.cpp',

@@ -19,6 +19,7 @@
 #include "../core/include/fxcrt/fx_system.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "v8/include/v8.h"
+#include "v8/include/libplatform/libplatform.h"
 
 #ifdef _WIN32
 #define snprintf _snprintf
@@ -193,6 +194,9 @@ EmbedderTest::~EmbedderTest() {
 
 void EmbedderTest::SetUp() {
     v8::V8::InitializeICU();
+  v8::Platform* platform = v8::platform::CreateDefaultPlatform();
+  v8::V8::InitializePlatform(platform);
+  v8::V8::Initialize();
 
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
     ASSERT_TRUE(GetExternalData(g_exe_path_, "natives_blob.bin", &natives_));
@@ -226,6 +230,7 @@ void EmbedderTest::TearDown() {
   if (file_contents_) {
     free(file_contents_);
   }
+  v8::V8::ShutdownPlatform();
 }
 
 bool EmbedderTest::OpenDocument(const std::string& filename) {
