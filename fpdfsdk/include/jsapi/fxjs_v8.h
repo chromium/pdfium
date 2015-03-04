@@ -8,7 +8,7 @@
 #define FXJSAPI_H
 
 #include <v8.h>
-#include "../../core/include/fxcrt/fx_string.h"  // For CFX_WideString
+#include "../../../core/include/fxcrt/fx_string.h"  // For CFX_WideString
 
 enum FXJSOBJTYPE
 {
