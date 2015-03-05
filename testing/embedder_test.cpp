@@ -261,7 +261,12 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
   if (!document_) {
     return false;
   }
-  (void) FPDF_LoadXFA(document_);
+  int docType = DOCTYPE_PDF;
+  if (FPDF_HasXFAField(document_, docType))
+  {
+    if (docType != DOCTYPE_PDF)
+      (void) FPDF_LoadXFA(document_);
+  }
   (void) FPDF_GetDocPermissions(document_);
   (void) FPDFAvail_IsFormAvail(avail_, &hints_);
 

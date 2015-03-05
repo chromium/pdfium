@@ -308,7 +308,11 @@ DLLEXPORT FX_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int& docType)
 	if (!document)
 		return FALSE;
 
-	CPDF_Dictionary* pRoot = ((CPDF_Document*)document)->GetRoot();
+	CPDF_Document *pdfDoc = (static_cast<CPDFXFA_Document *>(document))->GetPDFDoc();
+	if (!pdfDoc)
+		return FALSE;
+
+	CPDF_Dictionary* pRoot = pdfDoc->GetRoot();
 	if (!pRoot)
 		return FALSE;
 
@@ -332,14 +336,7 @@ DLLEXPORT FX_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int& docType)
 
 DLLEXPORT  FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document)
 {
-	if (!document) 
-		return FALSE;
-
-	int iDocType = DOCTYPE_PDF;
-	FX_BOOL hasXFAField = FPDF_HasXFAField(document, iDocType);
-	if (!hasXFAField)
-		return FALSE;
-	return ((CPDFXFA_Document*)document)->LoadXFADoc();
+	return document && (static_cast<CPDFXFA_Document *>(document))->LoadXFADoc();
 }
 
 

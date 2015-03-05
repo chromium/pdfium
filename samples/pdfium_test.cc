@@ -468,12 +468,21 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
     doc = FPDFAvail_GetDocument(pdf_avail, NULL);
   }
 
+  if (!doc)
+  {
+    fprintf(stderr, "Load pdf docs unsuccessful.\n");
+    return;
+  }
+
   (void) FPDF_GetDocPermissions(doc);
   (void) FPDFAvail_IsFormAvail(pdf_avail, &hints);
 
   FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
-  if (!FPDF_LoadXFA(doc)) {
-    fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
+  int docType = DOCTYPE_PDF;
+  if (FPDF_HasXFAField(doc, docType))
+  {
+      if (docType != DOCTYPE_PDF && !FPDF_LoadXFA(doc))
+          fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
   }
   FPDF_SetFormFieldHighlightColor(form, 0, 0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form, 100);
