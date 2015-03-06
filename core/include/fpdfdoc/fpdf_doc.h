@@ -545,26 +545,16 @@ protected:
 class CPDF_Link : public CFX_Object
 {
 public:
+    CPDF_Link() : m_pDict(nullptr) { }
+    explicit CPDF_Link(CPDF_Dictionary* pDict) : m_pDict(pDict) { }
 
-    CPDF_Link(CPDF_Dictionary* pDict = NULL)
-    {
-        m_pDict = pDict;
-    }
-
-    operator CPDF_Dictionary*() const
-    {
-        return m_pDict;
-    }
+    CPDF_Dictionary* GetDict() const { return m_pDict; }
 
     CFX_FloatRect		GetRect();
-
-
-
     CPDF_Dest			GetDest(CPDF_Document* pDoc);
-
     CPDF_Action			GetAction();
 
-
+protected:
     CPDF_Dictionary*	m_pDict;
 };
 #define ANNOTFLAG_INVISIBLE			1

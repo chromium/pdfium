@@ -180,18 +180,17 @@ DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page, double x, do
 		pLinkList = FX_NEW CPDF_LinkList(pDoc);
 		pDoc->SetPrivateData(&THISMODULE, pLinkList, ReleaseLinkList);
 	}
-	return pLinkList->GetLinkAtPoint(pPage, (FX_FLOAT)x, (FX_FLOAT)y);
+	return pLinkList->GetLinkAtPoint(pPage, (FX_FLOAT)x, (FX_FLOAT)y).GetDict();
 }
 
 DLLEXPORT FPDF_DEST STDCALL FPDFLink_GetDest(FPDF_DOCUMENT document, FPDF_LINK pDict)
 {
 	if (!document)
 		return NULL;
-    CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 	if (!pDict)
 		return NULL;
-	CPDF_Link link = (CPDF_Dictionary*)pDict;
-
+	CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+	CPDF_Link link((CPDF_Dictionary*)pDict);
 	FPDF_DEST dest = link.GetDest(pDoc).GetObject();
 	if (dest)
 		return dest;
@@ -206,7 +205,7 @@ DLLEXPORT FPDF_ACTION STDCALL FPDFLink_GetAction(FPDF_LINK pDict)
 {
 	if (!pDict)
 		return NULL;
-	CPDF_Link link = (CPDF_Dictionary*)pDict;
+	CPDF_Link link((CPDF_Dictionary*)pDict);
 	return link.GetAction().GetDict();
 }
 
