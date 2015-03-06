@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../include/fsdk_define.h"
@@ -11,7 +11,7 @@
 
 /* -------------------------- CBA_ActionHandler -------------------------- */
 
-CPDFSDK_ActionHandler::CPDFSDK_ActionHandler(CPDFDoc_Environment* pEvi) : 
+CPDFSDK_ActionHandler::CPDFSDK_ActionHandler(CPDFDoc_Environment* pEvi) :
 	m_pFormActionHandler(NULL),
 	m_pMediaActionHandler(NULL)
 {
@@ -47,16 +47,15 @@ void CPDFSDK_ActionHandler::Destroy()
 }
 
 //document open
-FX_BOOL	CPDFSDK_ActionHandler::DoAction_DocOpen(const CPDF_Action& action, CPDFSDK_Document* pDocument
-												/*CReader_Document* pDocument, CReader_DocView *pDocView*/)
+FX_BOOL	CPDFSDK_ActionHandler::DoAction_DocOpen(const CPDF_Action& action, CPDFSDK_Document* pDocument)
 {
 	CFX_PtrList list;
-	return ExecuteDocumentOpenAction(action, pDocument, /*pDocView, */list);
+	return ExecuteDocumentOpenAction(action, pDocument, list);
 }
 
 //document open
 FX_BOOL	CPDFSDK_ActionHandler::DoAction_JavaScript(const CPDF_Action& JsAction,CFX_WideString csJSName,
-							CPDFSDK_Document* pDocument/*, CReader_DocView *pDocView*/)
+							CPDFSDK_Document* pDocument)
 {
 	if (JsAction.GetType() == CPDF_Action::JavaScript)
 	{
@@ -71,8 +70,8 @@ FX_BOOL	CPDFSDK_ActionHandler::DoAction_JavaScript(const CPDF_Action& JsAction,C
 	return FALSE;
 }
 
-FX_BOOL	CPDFSDK_ActionHandler::DoAction_FieldJavaScript(const CPDF_Action& JsAction, CPDF_AAction::AActionType type, 
-									CPDFSDK_Document* pDocument, CPDF_FormField* pFormField, 
+FX_BOOL	CPDFSDK_ActionHandler::DoAction_FieldJavaScript(const CPDF_Action& JsAction, CPDF_AAction::AActionType type,
+									CPDFSDK_Document* pDocument, CPDF_FormField* pFormField,
 									PDFSDK_FieldAction& data)
 {
 	CPDFDoc_Environment* pEnv = pDocument->GetEnv();
@@ -90,56 +89,56 @@ FX_BOOL	CPDFSDK_ActionHandler::DoAction_FieldJavaScript(const CPDF_Action& JsAct
 }
 
 FX_BOOL	CPDFSDK_ActionHandler::DoAction_Page(const CPDF_Action& action, enum CPDF_AAction::AActionType eType,
-										CPDFSDK_Document* pDocument/*, CReader_DocView *pDocView*/)
+										CPDFSDK_Document* pDocument)
 {
 	CFX_PtrList list;
-	return ExecuteDocumentPageAction(action, eType, pDocument,/* pDocView,*/ list);
+	return ExecuteDocumentPageAction(action, eType, pDocument, list);
 }
 
 FX_BOOL	CPDFSDK_ActionHandler::DoAction_Document(const CPDF_Action& action, enum CPDF_AAction::AActionType eType,
-											 CPDFSDK_Document* pDocument/*, CReader_DocView *pDocView*/)
+											 CPDFSDK_Document* pDocument)
 {
 	CFX_PtrList list;
-	return ExecuteDocumentPageAction(action, eType, pDocument,/* pDocView,*/ list);
+	return ExecuteDocumentPageAction(action, eType, pDocument, list);
 }
 
-FX_BOOL	CPDFSDK_ActionHandler::DoAction_BookMark(CPDF_Bookmark *pBookMark, const CPDF_Action& action, CPDF_AAction::AActionType type, 
-							CPDFSDK_Document* pDocument/*, CReader_DocView *pDocView*/)
+FX_BOOL	CPDFSDK_ActionHandler::DoAction_BookMark(CPDF_Bookmark *pBookMark, const CPDF_Action& action, CPDF_AAction::AActionType type,
+							CPDFSDK_Document* pDocument)
 {
 	CFX_PtrList list;
-	return this->ExecuteBookMark(action, pDocument,/* pDocView,*/ pBookMark, list);
+	return this->ExecuteBookMark(action, pDocument, pBookMark, list);
 }
 
-FX_BOOL	CPDFSDK_ActionHandler::DoAction_Screen(const CPDF_Action& action, CPDF_AAction::AActionType type, 
-										CPDFSDK_Document* pDocument,/* CReader_DocView *pDocView,*/ CPDFSDK_Annot* pScreen)
+FX_BOOL	CPDFSDK_ActionHandler::DoAction_Screen(const CPDF_Action& action, CPDF_AAction::AActionType type,
+										CPDFSDK_Document* pDocument, CPDFSDK_Annot* pScreen)
 {
 	CFX_PtrList list;
-	return this->ExecuteScreenAction(action, type, pDocument,/* pDocView,*/ pScreen, list);
+	return this->ExecuteScreenAction(action, type, pDocument, pScreen, list);
 }
 
-FX_BOOL	CPDFSDK_ActionHandler::DoAction_Link(const CPDF_Action& action, 
-										CPDFSDK_Document* pDocument/*, CReader_DocView *pDocView*/)
+FX_BOOL	CPDFSDK_ActionHandler::DoAction_Link(const CPDF_Action& action,
+										CPDFSDK_Document* pDocument)
 {
 	CFX_PtrList list;
-	return ExecuteLinkAction(action, pDocument,/* pDocView,*/ list);
+	return ExecuteLinkAction(action, pDocument, list);
 }
 
-FX_BOOL	CPDFSDK_ActionHandler::DoAction_Field(const CPDF_Action& action, CPDF_AAction::AActionType type, 
-										CPDFSDK_Document* pDocument,/* CReader_DocView *pDocView,*/ 
+FX_BOOL	CPDFSDK_ActionHandler::DoAction_Field(const CPDF_Action& action, CPDF_AAction::AActionType type,
+										CPDFSDK_Document* pDocument,
 										CPDF_FormField* pFormField, PDFSDK_FieldAction& data)
 {
 	CFX_PtrList list;
-	return ExecuteFieldAction(action, type, pDocument,/* pDocView,*/ pFormField, data, list);
+	return ExecuteFieldAction(action, type, pDocument, pFormField, data, list);
 }
 
 FX_BOOL	CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(const CPDF_Action& action, CPDFSDK_Document* pDocument,
-													 /*CReader_DocView *pDocView,*/ CFX_PtrList& list)
+                                                         CFX_PtrList& list)
 {
-	ASSERT(pDocument != NULL);
-
-	if (list.Find((CPDF_Dictionary*)action))
+	CPDF_Dictionary* pDict = action.GetDict();
+	if (list.Find(pDict))
 		return FALSE;
-	list.AddTail((CPDF_Dictionary*)action);
+
+	list.AddTail(pDict);
 
 	CPDFDoc_Environment* pEnv = pDocument->GetEnv();
 	ASSERT(pEnv);
@@ -156,29 +155,28 @@ FX_BOOL	CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(const CPDF_Action& acti
 	}
 	else
 	{
-		DoAction_NoJs(action, pDocument/*, pDocView*/);
+		DoAction_NoJs(action, pDocument);
 	}
-
-// 	if (!IsValidDocView(pDocument, pDocView))
-// 		return FALSE;
 
 	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
-		if (!ExecuteDocumentOpenAction(subaction, pDocument,/* pDocView,*/ list)) return FALSE;
+		if (!ExecuteDocumentOpenAction(subaction, pDocument, list)) return FALSE;
 	}
 
 	return TRUE;
 }
 
 FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(const CPDF_Action& action,	CPDFSDK_Document* pDocument,
-												 /*CReader_DocView* pDocView,*/ CFX_PtrList& list)
+												  CFX_PtrList& list)
 {
 	ASSERT(pDocument != NULL);
 
-	if (list.Find((CPDF_Dictionary*)action))
+	CPDF_Dictionary* pDict = action.GetDict();
+	if (list.Find(pDict))
 		return FALSE;
-	list.AddTail((CPDF_Dictionary*)action);
+
+	list.AddTail(pDict);
 
 	CPDFDoc_Environment* pEnv = pDocument->GetEnv();
 	ASSERT(pEnv);
@@ -203,7 +201,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(const CPDF_Action& action,	CPDF
 				FX_BOOL bRet = pContext->RunScript(swJS, csInfo);
 				if (!bRet)
 				{
-					//CBCL_FormNotify::MsgBoxJSError(pPageView->GetPageViewWnd(), csInfo);
+					// FIXME: return error.
 				}
 
 				pRuntime->ReleaseContext(pContext);
@@ -212,29 +210,28 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(const CPDF_Action& action,	CPDF
 	}
 	else
 	{
-		DoAction_NoJs(action, pDocument/*, pDocView*/);
+		DoAction_NoJs(action, pDocument);
 	}
-
-// 	if (!IsValidDocView(pDocument, pDocView))
-// 		return FALSE;
 
 	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
-		if (!ExecuteLinkAction(subaction, pDocument,/* pDocView,*/ list)) return FALSE;
+		if (!ExecuteLinkAction(subaction, pDocument, list)) return FALSE;
 	}
 
 	return TRUE;
 }
 
 FX_BOOL	CPDFSDK_ActionHandler::ExecuteDocumentPageAction(const CPDF_Action& action, CPDF_AAction::AActionType type,
-												 CPDFSDK_Document* pDocument,/* CReader_DocView* pDocView,*/ CFX_PtrList& list)
+												 CPDFSDK_Document* pDocument, CFX_PtrList& list)
 {
 	ASSERT(pDocument != NULL);
 
-	if (list.Find((CPDF_Dictionary*)action))
+	CPDF_Dictionary* pDict = action.GetDict();
+	if (list.Find(pDict))
 		return FALSE;
-	list.AddTail((CPDF_Dictionary*)action);
+
+	list.AddTail(pDict);
 
 	CPDFDoc_Environment* pEnv = pDocument->GetEnv();
 	ASSERT(pEnv);
@@ -251,16 +248,16 @@ FX_BOOL	CPDFSDK_ActionHandler::ExecuteDocumentPageAction(const CPDF_Action& acti
 	}
 	else
 	{
-		DoAction_NoJs(action, pDocument/*, pDocView*/);
+		DoAction_NoJs(action, pDocument);
 	}
 
-	if (!IsValidDocView(pDocument/*, pDocView*/))
+	if (!IsValidDocView(pDocument))
 		return FALSE;
 
 	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
-		if (!ExecuteDocumentPageAction(subaction, type, pDocument,/* pDocView,*/ list)) return FALSE;
+		if (!ExecuteDocumentPageAction(subaction, type, pDocument, list)) return FALSE;
 	}
 
 	return TRUE;
@@ -280,15 +277,17 @@ FX_BOOL	CPDFSDK_ActionHandler::IsValidField(CPDFSDK_Document* pDocument, CPDF_Di
   return pPDFInterForm->GetFieldByDict(pFieldDict) != NULL;
 }
 
-FX_BOOL	CPDFSDK_ActionHandler::ExecuteFieldAction(const CPDF_Action& action, CPDF_AAction::AActionType type, 
-										  CPDFSDK_Document* pDocument,/* CReader_DocView* pDocView,*/ CPDF_FormField* pFormField, 
+FX_BOOL	CPDFSDK_ActionHandler::ExecuteFieldAction(const CPDF_Action& action, CPDF_AAction::AActionType type,
+										  CPDFSDK_Document* pDocument, CPDF_FormField* pFormField,
 										  PDFSDK_FieldAction& data, CFX_PtrList& list)
 {
 	ASSERT(pDocument != NULL);
 
-	if (list.Find((CPDF_Dictionary*)action))
+	CPDF_Dictionary* pDict = action.GetDict();
+	if (list.Find(pDict))
 		return FALSE;
-	list.AddTail((CPDF_Dictionary*)action);
+
+	list.AddTail(pDict);
 
 	CPDFDoc_Environment* pEnv = pDocument->GetEnv();
 	ASSERT(pEnv);
@@ -307,28 +306,28 @@ FX_BOOL	CPDFSDK_ActionHandler::ExecuteFieldAction(const CPDF_Action& action, CPD
 	}
 	else
 	{
-		DoAction_NoJs(action, pDocument/*, pDocView*/);
-// 		if (!IsValidDocView(pDocument, pDocView))
-// 			return FALSE;
+		DoAction_NoJs(action, pDocument);
 	}
 
 	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
-		if (!ExecuteFieldAction(subaction, type, pDocument,/* pDocView,*/ pFormField, data, list)) return FALSE;
+		if (!ExecuteFieldAction(subaction, type, pDocument, pFormField, data, list)) return FALSE;
 	}
 
 	return TRUE;
 }
 
-FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(const CPDF_Action& action, CPDF_AAction::AActionType type, 
-										CPDFSDK_Document* pDocument,/* CReader_DocView* pDocView,*/ CPDFSDK_Annot* pScreen, CFX_PtrList& list)
+FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(const CPDF_Action& action, CPDF_AAction::AActionType type,
+										CPDFSDK_Document* pDocument, CPDFSDK_Annot* pScreen, CFX_PtrList& list)
 {
 	ASSERT(pDocument != NULL);
 
-	if (list.Find((CPDF_Dictionary*)action))
+	CPDF_Dictionary* pDict = action.GetDict();
+	if (list.Find(pDict))
 		return FALSE;
-	list.AddTail((CPDF_Dictionary*)action);
+
+	list.AddTail(pDict);
 
 	CPDFDoc_Environment* pEnv = pDocument->GetEnv();
 	ASSERT(pEnv);
@@ -397,29 +396,28 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(const CPDF_Action& action, CP
 	}
 	else
 	{
-		DoAction_NoJs(action, pDocument/*, pDocView*/);
+		DoAction_NoJs(action, pDocument);
 	}
-
-// 	if (!IsValidDocView(pDocument, pDocView))
-// 		return FALSE;
 
 	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
-		if (!ExecuteScreenAction(subaction, type, pDocument,/* pDocView,*/ pScreen, list)) return FALSE;
+		if (!ExecuteScreenAction(subaction, type, pDocument, pScreen, list)) return FALSE;
 	}
 
 	return TRUE;
 }
 
-FX_BOOL	CPDFSDK_ActionHandler::ExecuteBookMark(const CPDF_Action& action, CPDFSDK_Document* pDocument, 
-										/*CReader_DocView* pDocView,*/ CPDF_Bookmark* pBookmark, CFX_PtrList& list)
+FX_BOOL	CPDFSDK_ActionHandler::ExecuteBookMark(const CPDF_Action& action, CPDFSDK_Document* pDocument,
+										 CPDF_Bookmark* pBookmark, CFX_PtrList& list)
 {
 	ASSERT(pDocument != NULL);
 
-	if (list.Find((CPDF_Dictionary*)action))
+	CPDF_Dictionary* pDict = action.GetDict();
+	if (list.Find(pDict))
 		return FALSE;
-	list.AddTail((CPDF_Dictionary*)action);
+
+	list.AddTail(pDict);
 
 	CPDFDoc_Environment* pEnv = pDocument->GetEnv();
 	ASSERT(pEnv);
@@ -453,29 +451,26 @@ FX_BOOL	CPDFSDK_ActionHandler::ExecuteBookMark(const CPDF_Action& action, CPDFSD
 	}
 	else
 	{
-		DoAction_NoJs(action, pDocument/*, pDocView*/);
+		DoAction_NoJs(action, pDocument);
 	}
-
-// 	if (!IsValidDocView(pDocument, pDocView))
-// 		return FALSE;
 
 	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
-		if (!ExecuteBookMark(subaction, pDocument,/* pDocView,*/ pBookmark, list)) return FALSE;
+		if (!ExecuteBookMark(subaction, pDocument, pBookmark, list)) return FALSE;
 	}
 
 	return TRUE;
 }
 
-void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action, CPDFSDK_Document* pDocument/*, CReader_DocView* pDocView*/)
+void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action, CPDFSDK_Document* pDocument)
 {
 	ASSERT(pDocument != NULL);
 
 	switch (action.GetType())
 	{
 	case CPDF_Action::GoTo:
-		DoAction_GoTo(pDocument,/* pDocView,*/ action);
+		DoAction_GoTo(pDocument, action);
 		break;
 	case CPDF_Action::GoToR:
 		DoAction_GoToR(pDocument, action);
@@ -493,13 +488,13 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action, CPDFSDK_Doc
 	case CPDF_Action::Sound:
 		if (m_pMediaActionHandler)
 		{
-			m_pMediaActionHandler->DoAction_Sound(action, pDocument/*, pDocView*/);
+			m_pMediaActionHandler->DoAction_Sound(action, pDocument);
 		}
 		break;
 	case CPDF_Action::Movie:
 		if (m_pMediaActionHandler)
 		{
-			m_pMediaActionHandler->DoAction_Movie(action, pDocument/*, pDocView*/);
+			m_pMediaActionHandler->DoAction_Movie(action, pDocument);
 		}
 		break;
 	case CPDF_Action::Hide:
@@ -514,7 +509,7 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action, CPDFSDK_Doc
 	case CPDF_Action::SubmitForm:
 		if (m_pFormActionHandler)
 		{
-			m_pFormActionHandler->DoAction_SubmitForm(action, pDocument/*, pDocView*/);
+			m_pFormActionHandler->DoAction_SubmitForm(action, pDocument);
 		}
 		break;
 	case CPDF_Action::ResetForm:
@@ -526,19 +521,19 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action, CPDFSDK_Doc
 	case CPDF_Action::ImportData:
 		if (m_pFormActionHandler)
 		{
-			m_pFormActionHandler->DoAction_ImportData(action, pDocument/*, pDocView*/);
+			m_pFormActionHandler->DoAction_ImportData(action, pDocument);
 		}
 		break;
 	case CPDF_Action::JavaScript:
 		ASSERT(FALSE);
 		break;
 	case CPDF_Action::SetOCGState:
-		DoAction_SetOCGState(pDocument, /*pDocView,*/ action);
+		DoAction_SetOCGState(pDocument,  action);
 		break;
 	case CPDF_Action::Rendition:
 		if (m_pMediaActionHandler)
 		{
-			m_pMediaActionHandler->DoAction_Rendition(action, pDocument/*, pDocView*/);
+			m_pMediaActionHandler->DoAction_Rendition(action, pDocument);
 		}
 		break;
 	case CPDF_Action::Trans:
@@ -550,21 +545,16 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action, CPDFSDK_Doc
 	}
 }
 
-FX_BOOL	CPDFSDK_ActionHandler::IsValidDocView(CPDFSDK_Document* pDocument/*, CReader_DocView* pDocView*/)
+FX_BOOL	CPDFSDK_ActionHandler::IsValidDocView(CPDFSDK_Document* pDocument)
 {
 	ASSERT(pDocument != NULL);
-	//ASSERT(pDocView != NULL);
-
-	//return pDocument->IsValidDocView(pDocView);
 	return TRUE;
 }
 
-void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument, /*CReader_DocView* pDocView,*/
+void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
 								  const CPDF_Action& action)
 {
-	ASSERT(pDocument != NULL);
-//	ASSERT(pDocView != NULL);
-	ASSERT(action != NULL);
+	ASSERT(action);
 
 	CPDF_Document* pPDFDocument = pDocument->GetDocument();
 	ASSERT(pPDFDocument != NULL);
@@ -604,27 +594,25 @@ void CPDFSDK_ActionHandler::DoAction_Launch(CPDFSDK_Document* pDocument, const C
 
 void CPDFSDK_ActionHandler::DoAction_URI(CPDFSDK_Document* pDocument, const CPDF_Action& action)
 {
- 	ASSERT(pDocument != NULL);
- 	ASSERT(action != NULL);
+ 	ASSERT(action);
 
  	CPDFDoc_Environment* pApp = pDocument->GetEnv();
  	ASSERT(pApp != NULL);
- 
+
  	CFX_ByteString sURI = action.GetURI(pDocument->GetDocument());
  	pApp->FFI_DoURIAction(FX_LPCSTR(sURI));
 }
 
 void CPDFSDK_ActionHandler::DoAction_Named(CPDFSDK_Document* pDocument, const CPDF_Action& action)
 {
- 	ASSERT(pDocument != NULL);
- 	ASSERT(action != NULL);
- 
+ 	ASSERT(action);
+
  	CFX_ByteString csName = action.GetNamedAction();
  	pDocument->GetEnv()->FFI_ExecuteNamedAction(csName);
 }
 
 
-void CPDFSDK_ActionHandler::DoAction_SetOCGState(CPDFSDK_Document* pDocument,/* CReader_DocView* pDocView,*/ const CPDF_Action& action)
+void CPDFSDK_ActionHandler::DoAction_SetOCGState(CPDFSDK_Document* pDocument, const CPDF_Action& action)
 {
 }
 
@@ -665,7 +653,7 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(CPDFSDK_Document* pDocument, CPDF
 		pContext->OnField_Blur(data.bModifier, data.bShift, pFormField, data.sValue);
 		break;
 	case CPDF_AAction::KeyStroke:
-		pContext->OnField_Keystroke(data.nCommitKey, data.sChange, data.sChangeEx, data.bKeyDown, 
+		pContext->OnField_Keystroke(data.nCommitKey, data.sChange, data.sChangeEx, data.bKeyDown,
 			data.bModifier, data.nSelEnd, data.nSelStart, data.bShift, pFormField, data.sValue,
 			data.bWillCommit, data.bFieldFull, data.bRC);
 		break;
@@ -725,7 +713,7 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(CPDFSDK_Document* pDocumen
 	ASSERT(pContext != NULL);
 
 	switch (type)
-	{	
+	{
 	case CPDF_AAction::OpenPage:
 		pContext->OnPage_Open(pDocument);
 		break;
@@ -772,57 +760,57 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(CPDFSDK_Document* pDocumen
 FX_BOOL	CPDFSDK_FormActionHandler::DoAction_Hide(const CPDF_Action& action, CPDFSDK_Document* pDocument)
 {
 	ASSERT(pDocument != NULL);
-	
+
 	CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);
-	
+
 	if (pInterForm->DoAction_Hide(action))
 	{
 		pDocument->SetChangeMark();
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
 FX_BOOL	CPDFSDK_FormActionHandler::DoAction_SubmitForm(const CPDF_Action& action, CPDFSDK_Document* pDocument)
 {
 	ASSERT(pDocument != NULL);
-	
+
 	CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);
-	
+
 	return pInterForm->DoAction_SubmitForm(action);
 }
 
 FX_BOOL	CPDFSDK_FormActionHandler::DoAction_ResetForm(const CPDF_Action& action, CPDFSDK_Document* pDocument)
 {
 	ASSERT(pDocument != NULL);
-	
+
 	CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);
-	
+
 	if (pInterForm->DoAction_ResetForm(action))
-	{	
+	{
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
 FX_BOOL	CPDFSDK_FormActionHandler::DoAction_ImportData(const CPDF_Action& action, CPDFSDK_Document* pDocument)
 {
 	ASSERT(pDocument != NULL);
-	
+
 	CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);
-	
+
 	if (pInterForm->DoAction_ImportData(action))
 	{
-		pDocument->SetChangeMark();	
+		pDocument->SetChangeMark();
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -840,4 +828,3 @@ FX_BOOL	CPDFSDK_MediaActionHandler::DoAction_Movie(const CPDF_Action& action, CP
 {
 	return FALSE;
 }
-

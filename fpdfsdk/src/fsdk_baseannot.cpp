@@ -1090,43 +1090,30 @@ FX_BOOL	CPDFSDK_Annot::IsVisible() const
 
 CPDF_Action CPDFSDK_Annot::GetAction() const
 {
-	ASSERT(m_pAnnot != NULL);
-	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
-	
-	return m_pAnnot->m_pAnnotDict->GetDict("A");
+	return CPDF_Action(m_pAnnot->m_pAnnotDict->GetDict("A"));
 }
 
 void CPDFSDK_Annot::SetAction(const CPDF_Action& action)
 {
-	ASSERT(m_pAnnot != NULL);
-	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
-	
-	ASSERT(action != NULL);
-	
-	if ((CPDF_Action&)action != m_pAnnot->m_pAnnotDict->GetDict("A"))
+	ASSERT(action);
+	if ((CPDF_Action&)action != CPDF_Action(m_pAnnot->m_pAnnotDict->GetDict("A")))
 	{
 		CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
-		ASSERT(pDoc != NULL);
-		
-		if (action.m_pDict && (action.m_pDict->GetObjNum() == 0))
-			pDoc->AddIndirectObject(action.m_pDict); 
-		m_pAnnot->m_pAnnotDict->SetAtReference("A", pDoc, action.m_pDict->GetObjNum());
+		CPDF_Dictionary* pDict = action.GetDict();
+		if (pDict && pDict->GetObjNum() == 0) {
+			pDoc->AddIndirectObject(pDict);
+		}
+		m_pAnnot->m_pAnnotDict->SetAtReference("A", pDoc, pDict->GetObjNum());
 	}
 }
 
 void CPDFSDK_Annot::RemoveAction()
 {
-	ASSERT(m_pAnnot != NULL);
-	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
-	
 	m_pAnnot->m_pAnnotDict->RemoveAt("A");
 }
 
 CPDF_AAction CPDFSDK_Annot::GetAAction() const
 {
-	ASSERT(m_pAnnot != NULL);
-	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
-	
 	return m_pAnnot->m_pAnnotDict->GetDict("AA");
 }
 
@@ -1151,17 +1138,14 @@ void CPDFSDK_Annot::RemoveAAction()
 CPDF_Action	CPDFSDK_Annot::GetAAction(CPDF_AAction::AActionType eAAT)
 {
 	CPDF_AAction AAction = GetAAction();
-	
+
 	if (AAction.ActionExist(eAAT))
-	{
 		return AAction.GetAction(eAAT);
-	}
-	else if (eAAT == CPDF_AAction::ButtonUp)
-	{
+
+	if (eAAT == CPDF_AAction::ButtonUp)
 		return GetAction();
-	}
-	
-	return NULL;
+
+	return CPDF_Action();
 }
 
 void  CPDFSDK_Annot::Annot_OnDraw(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, CPDF_RenderOptions* pOptions)

@@ -97,14 +97,14 @@ DLLEXPORT FPDF_ACTION STDCALL FPDFBookmark_GetAction(FPDF_BOOKMARK pDict)
 	if (!pDict)
 		return NULL;
 	CPDF_Bookmark bookmark((CPDF_Dictionary*)pDict);
-	return bookmark.GetAction();
+	return bookmark.GetAction().GetDict();
 }
 
 DLLEXPORT unsigned long STDCALL FPDFAction_GetType(FPDF_ACTION pDict)
 {
 	if (!pDict)
 		return 0;
-	CPDF_Action action = (CPDF_Dictionary*)pDict;
+	CPDF_Action action((CPDF_Dictionary*)pDict);
 	CPDF_Action::ActionType type = action.GetType();
 	switch (type) {
 		case CPDF_Action::GoTo:
@@ -128,7 +128,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFAction_GetDest(FPDF_DOCUMENT document, FPDF_ACTI
 	if (!pDict)
 		return NULL;
 	CPDF_Document* pDoc = (CPDF_Document*)document;
-	CPDF_Action action = (CPDF_Dictionary*)pDict;
+	CPDF_Action action((CPDF_Dictionary*)pDict);
 	return action.GetDest(pDoc);
 }
 
@@ -140,7 +140,7 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document, FP
 	if (!pDict)
 		return 0;
 	CPDF_Document* pDoc = (CPDF_Document*)document;
-	CPDF_Action action = (CPDF_Dictionary*)pDict;
+	CPDF_Action action((CPDF_Dictionary*)pDict);
 	CFX_ByteString path = action.GetURI(pDoc);
 	unsigned long len = path.GetLength() + 1;
 	if (buffer != NULL && buflen >= len)
@@ -203,7 +203,7 @@ DLLEXPORT FPDF_ACTION STDCALL FPDFLink_GetAction(FPDF_LINK pDict)
 	if (!pDict)
 		return NULL;
 	CPDF_Link link = (CPDF_Dictionary*)pDict;
-	return link.GetAction();
+	return link.GetAction().GetDict();
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page, int* startPos, FPDF_LINK* linkAnnot)
