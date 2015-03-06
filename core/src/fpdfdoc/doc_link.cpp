@@ -90,16 +90,17 @@ CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc)
 {
     CPDF_Object* pDest = m_pDict->GetElementValue("Dest");
     if (pDest == NULL) {
-        return NULL;
+        return CPDF_Dest();
     }
     if (pDest->GetType() == PDFOBJ_STRING || pDest->GetType() == PDFOBJ_NAME) {
         CPDF_NameTree name_tree(pDoc, FX_BSTRC("Dests"));
         CFX_ByteStringC name = pDest->GetString();
-        return name_tree.LookupNamedDest(pDoc, name);
-    } else if (pDest->GetType() == PDFOBJ_ARRAY) {
-        return (CPDF_Array*)pDest;
+        return CPDF_Dest(name_tree.LookupNamedDest(pDoc, name));
     }
-    return NULL;
+    if (pDest->GetType() == PDFOBJ_ARRAY) {
+        return CPDF_Dest((CPDF_Array*)pDest);
+    }
+    return CPDF_Dest();
 }
 CPDF_Action CPDF_Link::GetAction()
 {

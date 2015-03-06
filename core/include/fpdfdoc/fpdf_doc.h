@@ -124,28 +124,19 @@ public:
 class CPDF_Dest : public CFX_Object
 {
 public:
+    CPDF_Dest() : m_pObj(nullptr) { }
+    explicit CPDF_Dest(CPDF_Object* pObj) : m_pObj(pObj) { }
 
-    CPDF_Dest(CPDF_Object* pObj = NULL)
-    {
-        m_pObj = pObj;
-    }
-
-    operator CPDF_Object* () const
-    {
-        return m_pObj;
-    }
+    operator bool () const { return m_pObj != NULL; }
+    CPDF_Object* GetObject() const { return m_pObj; }
 
     CFX_ByteString		GetRemoteName();
-
     int					GetPageIndex(CPDF_Document* pDoc);
-
     FX_DWORD			GetPageObjNum();
-
     int					GetZoomMode();
-
     FX_FLOAT			GetParam(int index);
 
-
+protected:
     CPDF_Object*		m_pObj;
 };
 class CPDF_OCContext : public CFX_Object, public IPDF_OCContext

@@ -564,7 +564,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
 	CPDF_Dest MyDest = action.GetDest(pPDFDocument);
 	int nPageIndex = MyDest.GetPageIndex(pPDFDocument);
 	int nFitType = MyDest.GetZoomMode();
-	const CPDF_Array * pMyArray = (CPDF_Array*)MyDest.m_pObj;
+	const CPDF_Array * pMyArray = (CPDF_Array*)MyDest.GetObject();
 	float* pPosAry = NULL;
 	int sizeOfAry = 0;
 	if (pMyArray != NULL)

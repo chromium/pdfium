@@ -68,20 +68,21 @@ CFX_WideString CPDF_Bookmark::GetTitle() const
 CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const
 {
     if (!m_pDict) {
-        return NULL;
+        return CPDF_Dest();
     }
     CPDF_Object* pDest = m_pDict->GetElementValue("Dest");
     if (!pDest) {
-        return NULL;
+        return CPDF_Dest();
     }
     if (pDest->GetType() == PDFOBJ_STRING || pDest->GetType() == PDFOBJ_NAME) {
         CPDF_NameTree name_tree(pDocument, FX_BSTRC("Dests"));
         CFX_ByteStringC name = pDest->GetString();
-        return name_tree.LookupNamedDest(pDocument, name);
-    } else if (pDest->GetType() == PDFOBJ_ARRAY) {
-        return (CPDF_Array*)pDest;
+        return CPDF_Dest(name_tree.LookupNamedDest(pDocument, name));
     }
-    return NULL;
+    if (pDest->GetType() == PDFOBJ_ARRAY) {
+        return CPDF_Dest((CPDF_Array*)pDest);
+    }
+    return CPDF_Dest();
 }
 CPDF_Action CPDF_Bookmark::GetAction() const
 {
