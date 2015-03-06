@@ -44,26 +44,26 @@ int CPDF_LinkList::CountLinks(CPDF_Page* pPage)
 CPDF_Link CPDF_LinkList::GetLink(CPDF_Page* pPage, int index)
 {
     CFX_PtrArray* pPageLinkList = GetPageLinks(pPage);
-    if (pPageLinkList == NULL) {
-        return NULL;
+    if (!pPageLinkList) {
+        return CPDF_Link();
     }
-    return (CPDF_Dictionary*)pPageLinkList->GetAt(index);
+    return CPDF_Link((CPDF_Dictionary*)pPageLinkList->GetAt(index));
 }
 CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage, FX_FLOAT pdf_x, FX_FLOAT pdf_y)
 {
     CFX_PtrArray* pPageLinkList = GetPageLinks(pPage);
-    if (pPageLinkList == NULL) {
-        return NULL;
+    if (!pPageLinkList) {
+        return CPDF_Link();
     }
     int size = pPageLinkList->GetSize();
     for (int i = size - 1; i >= 0; --i) {
-        CPDF_Link Link = (CPDF_Dictionary*)pPageLinkList->GetAt(i);
-        CPDF_Rect rect = Link.GetRect();
+        CPDF_Link link((CPDF_Dictionary*)pPageLinkList->GetAt(i));
+        CPDF_Rect rect = link.GetRect();
         if (rect.Contains(pdf_x, pdf_y)) {
-            return Link;
+            return link;
         }
     }
-    return NULL;
+    return CPDF_Link();
 }
 void CPDF_LinkList::LoadPageLinks(CPDF_Page* pPage, CFX_PtrArray* pList)
 {
