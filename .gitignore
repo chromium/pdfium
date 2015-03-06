@@ -2,6 +2,7 @@
 /build/Release
 /build/gyp
 /out
+/testing/gmock
 /testing/gtest
 /v8
 /xcodebuild
