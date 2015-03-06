@@ -10,31 +10,31 @@ group("third_party") {
   ]
 }
 
-static_library("bigint") {
+source_set("bigint") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
-      "//third_party/pdfium:pdfium_config",
-      "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
+    "//build/config/compiler:no_chromium_code",
   ]
   sources = [
+    "bigint/BigInteger.cc",
     "bigint/BigInteger.hh",
     "bigint/BigIntegerLibrary.hh",
-    "bigint/BigIntegerUtils.hh",
-    "bigint/BigUnsigned.hh",
-    "bigint/NumberlikeArray.hh",
-    "bigint/BigUnsignedInABase.hh",
-    "bigint/BigInteger.cc",
     "bigint/BigIntegerUtils.cc",
+    "bigint/BigIntegerUtils.hh",
     "bigint/BigUnsigned.cc",
+    "bigint/BigUnsigned.hh",
     "bigint/BigUnsignedInABase.cc",
+    "bigint/BigUnsignedInABase.hh",
+    "bigint/NumberlikeArray.hh",
   ]
 }
 
-static_library("freetype") {
+source_set("freetype") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
-      "//third_party/pdfium:pdfium_config",
-      "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
+    "//build/config/compiler:no_chromium_code",
   ]
   defines = [ "FT2_BUILD_LIBRARY" ]
   sources = [
@@ -43,13 +43,10 @@ static_library("freetype") {
     "freetype/include/ftmm.h",
     "freetype/include/ftotval.h",
     "freetype/include/ftoutln.h",
-    "freetype/include/tttables.h",
     "freetype/include/internal/ftobjs.h",
     "freetype/include/internal/ftstream.h",
     "freetype/include/internal/tttypes.h",
-    "freetype/src/cff/cffobjs.h",
-    "freetype/src/cff/cfftypes.h",
-    "freetype/src/cff/cff.c",
+    "freetype/include/tttables.h",
     "freetype/src/base/ftbase.c",
     "freetype/src/base/ftbitmap.c",
     "freetype/src/base/ftglyph.c",
@@ -57,6 +54,10 @@ static_library("freetype") {
     "freetype/src/base/ftlcdfil.c",
     "freetype/src/base/ftmm.c",
     "freetype/src/base/ftsystem.c",
+    "freetype/src/cff/cff.c",
+    "freetype/src/cff/cffobjs.h",
+    "freetype/src/cff/cfftypes.h",
+    "freetype/src/cid/type1cid.c",
     "freetype/src/psaux/psaux.c",
     "freetype/src/pshinter/pshinter.c",
     "freetype/src/psnames/psmodule.c",
@@ -65,24 +66,22 @@ static_library("freetype") {
     "freetype/src/smooth/smooth.c",
     "freetype/src/truetype/truetype.c",
     "freetype/src/type1/type1.c",
-    "freetype/src/cid/type1cid.c",
   ]
 }
 
-component("pdfium_base") {
+source_set("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
-      "//third_party/pdfium:pdfium_config",
-      "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
+    "//build/config/compiler:no_chromium_code",
   ]
   sources = [
     "base/logging.h",
     "base/macros.h",
-    "base/template_util.h",
     "base/numerics/safe_conversions.h",
     "base/numerics/safe_conversions_impl.h",
     "base/numerics/safe_math.h",
     "base/numerics/safe_math_impl.h",
+    "base/template_util.h",
   ]
 }
-

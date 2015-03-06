@@ -9,7 +9,7 @@ pdf_use_skia = false
 declare_args() {
   # On Android there's no system FreeType. On Windows and Mac, only a few
   # methods are used from it.
-  bundle_freetype = !is_linux
+  pdfium_bundle_freetype = !is_linux
 }
 
 config("pdfium_config") {
@@ -47,51 +47,54 @@ config("pdfium_config") {
 
 static_library("pdfium") {
   sources = [
+    "fpdfsdk/include/fpdf_dataavail.h",
+    "fpdfsdk/include/fpdf_ext.h",
+    "fpdfsdk/include/fpdf_flatten.h",
+    "fpdfsdk/include/fpdf_progressive.h",
+    "fpdfsdk/include/fpdf_searchex.h",
+    "fpdfsdk/include/fpdf_sysfontinfo.h",
+    "fpdfsdk/include/fpdf_sysfontinfo.h",
+    "fpdfsdk/include/fpdf_transformpage.h",
     "fpdfsdk/include/fpdfdoc.h",
     "fpdfsdk/include/fpdfedit.h",
     "fpdfsdk/include/fpdfformfill.h",
     "fpdfsdk/include/fpdftext.h",
     "fpdfsdk/include/fpdfview.h",
-    "fpdfsdk/include/fpdf_dataavail.h",
-    "fpdfsdk/include/fpdf_flatten.h",
-    "fpdfsdk/include/fpdf_progressive.h",
-    "fpdfsdk/include/fpdf_searchex.h",
-    "fpdfsdk/include/fpdf_sysfontinfo.h",
-    "fpdfsdk/include/fpdf_ext.h",
-    "fpdfsdk/include/fpdf_sysfontinfo.h",
     "fpdfsdk/include/fsdk_actionhandler.h",
     "fpdfsdk/include/fsdk_annothandler.h",
     "fpdfsdk/include/fsdk_baseannot.h",
     "fpdfsdk/include/fsdk_baseform.h",
-    "fpdfsdk/src/fpdfdoc.cpp",
-    "fpdfsdk/src/fpdfeditimg.cpp",
-    "fpdfsdk/src/fpdfeditpage.cpp",
-    "fpdfsdk/src/fpdfformfill.cpp",
-    "fpdfsdk/src/fpdfppo.cpp",
-    "fpdfsdk/src/fpdfsave.cpp",
-    "fpdfsdk/src/fpdftext.cpp",
-    "fpdfsdk/src/fpdfview.cpp",
     "fpdfsdk/src/fpdf_dataavail.cpp",
     "fpdfsdk/src/fpdf_ext.cpp",
     "fpdfsdk/src/fpdf_flatten.cpp",
     "fpdfsdk/src/fpdf_progressive.cpp",
     "fpdfsdk/src/fpdf_searchex.cpp",
     "fpdfsdk/src/fpdf_sysfontinfo.cpp",
+    "fpdfsdk/src/fpdf_transformpage.cpp",
+    "fpdfsdk/src/fpdfdoc.cpp",
+    "fpdfsdk/src/fpdfeditimg.cpp",
+    "fpdfsdk/src/fpdfeditpage.cpp",
+    "fpdfsdk/src/fpdfformfill.cpp",
+    "fpdfsdk/src/fpdfppo.cpp",
+    "fpdfsdk/src/fpdfsave.cpp",
+    "fpdfsdk/src/fpdfsdkdll.rc",
+    "fpdfsdk/src/fpdftext.cpp",
+    "fpdfsdk/src/fpdfview.cpp",
     "fpdfsdk/src/fsdk_actionhandler.cpp",
     "fpdfsdk/src/fsdk_annothandler.cpp",
     "fpdfsdk/src/fsdk_baseannot.cpp",
     "fpdfsdk/src/fsdk_baseform.cpp",
     "fpdfsdk/src/fsdk_mgr.cpp",
     "fpdfsdk/src/fsdk_rendercontext.cpp",
-    "fpdfsdk/src/fpdfsdkdll.rc",
     "fpdfsdk/src/resource.h",
-    "fpdfsdk/include/fpdf_transformpage.h",
-    "fpdfsdk/src/fpdf_transformpage.cpp",
   ]
 
   libs = []
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 
   deps = [
     "third_party:bigint",
@@ -111,14 +114,21 @@ static_library("pdfium") {
   ]
 
   if (is_win) {
-    libs += [ "advapi32.lib", "gdi32.lib", "user32.lib" ]
+    libs += [
+      "advapi32.lib",
+      "gdi32.lib",
+      "user32.lib",
+    ]
   }
 
   if (is_mac) {
-    libs += [ "AppKit.framework", "CoreFoundation.framework" ]
+    libs += [
+      "AppKit.framework",
+      "CoreFoundation.framework",
+    ]
   }
 
-  if (bundle_freetype) {
+  if (pdfium_bundle_freetype) {
     deps += [ "third_party:freetype" ]
   } else {
     libs += [ "freetype" ]
@@ -136,7 +146,10 @@ static_library("fdrm") {
     "core/src/fdrm/crypto/fx_crypt_sha.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 static_library("fpdfdoc") {
@@ -165,13 +178,14 @@ static_library("fpdfdoc") {
     "core/src/fpdfdoc/tagged_int.h",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
-
 
 static_library("fpdfapi") {
   sources = [
-    "core/include/fpdfapi/fpdfapi.h",
     "core/include/fpdfapi/fpdf_module.h",
     "core/include/fpdfapi/fpdf_objects.h",
     "core/include/fpdfapi/fpdf_page.h",
@@ -180,12 +194,11 @@ static_library("fpdfapi") {
     "core/include/fpdfapi/fpdf_render.h",
     "core/include/fpdfapi/fpdf_resource.h",
     "core/include/fpdfapi/fpdf_serial.h",
+    "core/include/fpdfapi/fpdfapi.h",
     "core/src/fpdfapi/fpdf_basic_module.cpp",
-    "core/src/fpdfapi/fpdf_cmaps/cmap_int.h",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/Adobe-CNS1-UCS2_5.cpp",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/B5pc-H_0.cpp",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/B5pc-V_0.cpp",
-    "core/src/fpdfapi/fpdf_cmaps/CNS1/cmaps_cns1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/CNS-EUC-H_0.cpp",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/CNS-EUC-V_0.cpp",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/ETen-B5-H_0.cpp",
@@ -197,9 +210,8 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_cmaps/CNS1/UniCNS-UCS2-H_3.cpp",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/UniCNS-UCS2-V_3.cpp",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/UniCNS-UTF16-H_0.cpp",
-    "core/src/fpdfapi/fpdf_cmaps/fpdf_cmaps.cpp",
+    "core/src/fpdfapi/fpdf_cmaps/CNS1/cmaps_cns1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/GB1/Adobe-GB1-UCS2_5.cpp",
-    "core/src/fpdfapi/fpdf_cmaps/GB1/cmaps_gb1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/GB1/GB-EUC-H_0.cpp",
     "core/src/fpdfapi/fpdf_cmaps/GB1/GB-EUC-V_0.cpp",
     "core/src/fpdfapi/fpdf_cmaps/GB1/GBK-EUC-H_2.cpp",
@@ -212,6 +224,7 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_cmaps/GB1/GBpc-EUC-V_0.cpp",
     "core/src/fpdfapi/fpdf_cmaps/GB1/UniGB-UCS2-H_4.cpp",
     "core/src/fpdfapi/fpdf_cmaps/GB1/UniGB-UCS2-V_4.cpp",
+    "core/src/fpdfapi/fpdf_cmaps/GB1/cmaps_gb1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/83pv-RKSJ-H_1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/90ms-RKSJ-H_2.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/90ms-RKSJ-V_2.cpp",
@@ -221,7 +234,6 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_cmaps/Japan1/Add-RKSJ-H_1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/Add-RKSJ-V_1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/Adobe-Japan1-UCS2_4.cpp",
-    "core/src/fpdfapi/fpdf_cmaps/Japan1/cmaps_japan1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/EUC-H_1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/EUC-V_1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/Ext-RKSJ-H_2.cpp",
@@ -234,8 +246,8 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_cmaps/Japan1/UniJIS-UTF16-H_5.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/UniJIS-UTF16-V_5.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Japan1/V_1.cpp",
+    "core/src/fpdfapi/fpdf_cmaps/Japan1/cmaps_japan1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Korea1/Adobe-Korea1-UCS2_2.cpp",
-    "core/src/fpdfapi/fpdf_cmaps/Korea1/cmaps_korea1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Korea1/KSC-EUC-H_0.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Korea1/KSC-EUC-V_0.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Korea1/KSCms-UHC-HW-H_1.cpp",
@@ -246,6 +258,9 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_cmaps/Korea1/UniKS-UCS2-H_1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Korea1/UniKS-UCS2-V_1.cpp",
     "core/src/fpdfapi/fpdf_cmaps/Korea1/UniKS-UTF16-H_0.cpp",
+    "core/src/fpdfapi/fpdf_cmaps/Korea1/cmaps_korea1.cpp",
+    "core/src/fpdfapi/fpdf_cmaps/cmap_int.h",
+    "core/src/fpdfapi/fpdf_cmaps/fpdf_cmaps.cpp",
     "core/src/fpdfapi/fpdf_edit/editint.h",
     "core/src/fpdfapi/fpdf_edit/fpdf_edit_content.cpp",
     "core/src/fpdfapi/fpdf_edit/fpdf_edit_create.cpp",
@@ -287,7 +302,10 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_render/render_int.h",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 static_library("fpdftext") {
@@ -302,7 +320,10 @@ static_library("fpdftext") {
     "core/src/fpdftext/unicodenormalizationdata.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 static_library("fxcodec") {
@@ -473,7 +494,10 @@ static_library("fxcodec") {
     # conversion to check that an address is 16-bit aligned (benign).
     cflags_c = [ "-Wno-pointer-to-int-cast" ]
   }
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 static_library("fxcrt") {
@@ -489,13 +513,6 @@ static_library("fxcrt") {
     "core/include/fxcrt/fx_ucd.h",
     "core/include/fxcrt/fx_xml.h",
     "core/src/fxcrt/extension.h",
-    "core/src/fxcrt/fx_safe_types.h",
-    "core/src/fxcrt/fxcrt_platforms.cpp",
-    "core/src/fxcrt/fxcrt_platforms.h",
-    "core/src/fxcrt/fxcrt_posix.cpp",
-    "core/src/fxcrt/fxcrt_posix.h",
-    "core/src/fxcrt/fxcrt_windows.cpp",
-    "core/src/fxcrt/fxcrt_windows.h",
     "core/src/fxcrt/fx_arabic.cpp",
     "core/src/fxcrt/fx_arabic.h",
     "core/src/fxcrt/fx_basic_array.cpp",
@@ -511,15 +528,25 @@ static_library("fxcrt") {
     "core/src/fxcrt/fx_basic_util.cpp",
     "core/src/fxcrt/fx_basic_wstring.cpp",
     "core/src/fxcrt/fx_extension.cpp",
+    "core/src/fxcrt/fx_safe_types.h",
     "core/src/fxcrt/fx_ucddata.cpp",
     "core/src/fxcrt/fx_unicode.cpp",
     "core/src/fxcrt/fx_xml_composer.cpp",
     "core/src/fxcrt/fx_xml_parser.cpp",
+    "core/src/fxcrt/fxcrt_platforms.cpp",
+    "core/src/fxcrt/fxcrt_platforms.h",
+    "core/src/fxcrt/fxcrt_posix.cpp",
+    "core/src/fxcrt/fxcrt_posix.h",
+    "core/src/fxcrt/fxcrt_windows.cpp",
+    "core/src/fxcrt/fxcrt_windows.h",
     "core/src/fxcrt/plex.h",
     "core/src/fxcrt/xml_int.h",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 static_library("fxge") {
@@ -531,6 +558,7 @@ static_library("fxge") {
     "core/include/fxge/fx_ge.h",
     "core/include/fxge/fx_ge_apple.h",
     "core/include/fxge/fx_ge_win32.h",
+    "core/src/fxge/agg/include/fx_agg_driver.h",
     "core/src/fxge/agg/include/fxfx_agg_basics.h",
     "core/src/fxge/agg/include/fxfx_agg_clip_liang_barsky.h",
     "core/src/fxge/agg/include/fxfx_agg_conv_dash.h",
@@ -541,7 +569,6 @@ static_library("fxge") {
     "core/src/fxge/agg/include/fxfx_agg_renderer_scanline.h",
     "core/src/fxge/agg/include/fxfx_agg_rendering_buffer.h",
     "core/src/fxge/agg/include/fxfx_agg_scanline_u.h",
-    "core/src/fxge/agg/include/fx_agg_driver.h",
     "core/src/fxge/agg/src/fxfx_agg_curves.cpp",
     "core/src/fxge/agg/src/fxfx_agg_driver.cpp",
     "core/src/fxge/agg/src/fxfx_agg_path_storage.cpp",
@@ -597,7 +624,10 @@ static_library("fxge") {
   ]
 
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 
   if (pdf_use_skia) {
     sources = [
@@ -614,7 +644,9 @@ static_library("fxge") {
       "//third_party/skia/include/utils",
       "//third_party/skia/src/core",
     ]
-    deps = [ "//skia" ]
+    deps = [
+      "//skia",
+    ]
   }
 
   if (is_win) {
@@ -627,9 +659,7 @@ static_library("fxge") {
       "core/src/fxge/win32/fx_win32_print.cpp",
       "core/src/fxge/win32/win32_int.h",
     ]
-    configs -= [
-      "//build/config/win:lean_and_mean",
-    ]
+    configs -= [ "//build/config/win:lean_and_mean" ]
   }
 }
 
@@ -646,7 +676,10 @@ static_library("fxedit") {
     "fpdfsdk/src/fxedit/fxet_pageobjs.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 static_library("pdfwindow") {
@@ -689,22 +722,19 @@ static_library("pdfwindow") {
     "fpdfsdk/src/pdfwindow/PWL_Wnd.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 static_library("javascript") {
   sources = [
-    "fpdfsdk/include/javascript/app.h",
-    "fpdfsdk/include/javascript/color.h",
-    "fpdfsdk/include/javascript/console.h",
     "fpdfsdk/include/javascript/Consts.h",
     "fpdfsdk/include/javascript/Document.h",
-    "fpdfsdk/include/javascript/event.h",
     "fpdfsdk/include/javascript/Field.h",
-    "fpdfsdk/include/javascript/global.h",
-    "fpdfsdk/include/javascript/Icon.h",
     "fpdfsdk/include/javascript/IJavaScript.h",
-    "fpdfsdk/include/javascript/JavaScript.h",
+    "fpdfsdk/include/javascript/Icon.h",
     "fpdfsdk/include/javascript/JS_Context.h",
     "fpdfsdk/include/javascript/JS_Define.h",
     "fpdfsdk/include/javascript/JS_EventHandler.h",
@@ -713,18 +743,19 @@ static_library("javascript") {
     "fpdfsdk/include/javascript/JS_Object.h",
     "fpdfsdk/include/javascript/JS_Runtime.h",
     "fpdfsdk/include/javascript/JS_Value.h",
+    "fpdfsdk/include/javascript/JavaScript.h",
     "fpdfsdk/include/javascript/PublicMethods.h",
+    "fpdfsdk/include/javascript/app.h",
+    "fpdfsdk/include/javascript/color.h",
+    "fpdfsdk/include/javascript/console.h",
+    "fpdfsdk/include/javascript/event.h",
+    "fpdfsdk/include/javascript/global.h",
     "fpdfsdk/include/javascript/report.h",
     "fpdfsdk/include/javascript/resource.h",
     "fpdfsdk/include/javascript/util.h",
-    "fpdfsdk/src/javascript/app.cpp",
-    "fpdfsdk/src/javascript/color.cpp",
-    "fpdfsdk/src/javascript/console.cpp",
     "fpdfsdk/src/javascript/Consts.cpp",
     "fpdfsdk/src/javascript/Document.cpp",
-    "fpdfsdk/src/javascript/event.cpp",
     "fpdfsdk/src/javascript/Field.cpp",
-    "fpdfsdk/src/javascript/global.cpp",
     "fpdfsdk/src/javascript/Icon.cpp",
     "fpdfsdk/src/javascript/JS_Context.cpp",
     "fpdfsdk/src/javascript/JS_EventHandler.cpp",
@@ -733,13 +764,21 @@ static_library("javascript") {
     "fpdfsdk/src/javascript/JS_Runtime.cpp",
     "fpdfsdk/src/javascript/JS_Value.cpp",
     "fpdfsdk/src/javascript/PublicMethods.cpp",
+    "fpdfsdk/src/javascript/app.cpp",
+    "fpdfsdk/src/javascript/color.cpp",
+    "fpdfsdk/src/javascript/console.cpp",
+    "fpdfsdk/src/javascript/event.cpp",
+    "fpdfsdk/src/javascript/global.cpp",
     "fpdfsdk/src/javascript/report.cpp",
     "fpdfsdk/src/javascript/resource.cpp",
     "fpdfsdk/src/javascript/util.cpp",
   ]
 
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
   include_dirs = [
     "//v8",
     "//v8/include",
@@ -757,7 +796,10 @@ static_library("jsapi") {
   ]
 
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
   include_dirs = [
     "//v8",
     "//v8/include",
@@ -795,7 +837,10 @@ static_library("formfiller") {
     "fpdfsdk/src/formfiller/FFL_Utils.cpp",
   ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 test("pdfium_unittests") {
@@ -809,11 +854,14 @@ test("pdfium_unittests") {
   deps = [
     "//testing/gtest",
     "//testing/gtest:gtest_main",
-    ":pdfium"
+    ":pdfium",
   ]
   include_dirs = [ "." ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 test("pdfium_embeddertests") {
@@ -832,9 +880,12 @@ test("pdfium_embeddertests") {
   deps = [
     "//testing/gmock",
     "//testing/gtest",
-    ":pdfium"
+    ":pdfium",
   ]
   include_dirs = [ "." ]
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
