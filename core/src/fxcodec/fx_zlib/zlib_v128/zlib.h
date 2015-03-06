@@ -1779,6 +1779,8 @@ ZEXTERN int ZEXPORT gzgetc_ OF((gzFile file));  /* backward compatibility */
 #    define gzseek gzseek64
 #    define gztell gztell64
 #    define gzoffset gzoffset64
+#    undef adler32_combine
+#    undef crc32_combine
 #    define adler32_combine adler32_combine64
 #    define crc32_combine crc32_combine64
 #  endif
