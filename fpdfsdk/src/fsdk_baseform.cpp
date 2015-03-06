@@ -2310,24 +2310,22 @@ CPDF_Action	CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT)
 	case CPDF_AAction::PageVisible:
 	case CPDF_AAction::PageInvisible:
 		return CPDFSDK_BAAnnot::GetAAction(eAAT);
+
 	case CPDF_AAction::KeyStroke:
 	case CPDF_AAction::Format:
 	case CPDF_AAction::Validate:
 	case CPDF_AAction::Calculate:
 		{
 			CPDF_FormField* pField = this->GetFormField();
-			ASSERT(pField != NULL);
-
 			if (CPDF_AAction aa = pField->GetAdditionalAction())
 				return aa.GetAction(eAAT);
-			else 
-				return CPDFSDK_BAAnnot::GetAAction(eAAT);
+			return CPDFSDK_BAAnnot::GetAAction(eAAT);
 		}
 	default:
-		return NULL;
+		break;
 	}
 
-	return NULL;
+	return CPDF_Action();
 }
 
 
@@ -2930,7 +2928,7 @@ void CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField, CFX_WideString& c
 
 FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action)
 {
-	ASSERT(action != NULL);
+	ASSERT(action);
 
 	CPDF_ActionFields af = action.GetWidgets();
 	CFX_PtrArray fieldObjects;
@@ -2986,13 +2984,13 @@ FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action)
 
 FX_BOOL CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action)
 {
-	ASSERT(action != NULL);
+	ASSERT(action);
 	ASSERT(m_pInterForm != NULL);
 
 	CFX_WideString sDestination = action.GetFilePath();
 	if (sDestination.IsEmpty()) return FALSE;
 
-	CPDF_Dictionary* pActionDict = action;
+	CPDF_Dictionary* pActionDict = action.GetDict();
 	if (pActionDict->KeyExist("Fields"))
 	{
 		CPDF_ActionFields af = action.GetWidgets();
@@ -3238,29 +3236,22 @@ FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf)
 
 FX_BOOL CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action)
 {
-	ASSERT(action != NULL);
+	ASSERT(action);
 
-	CPDF_Dictionary* pActionDict = action;
-
+	CPDF_Dictionary* pActionDict = action.GetDict();
 	if (pActionDict->KeyExist("Fields"))
 	{
 		CPDF_ActionFields af = action.GetWidgets();
 		FX_DWORD dwFlags = action.GetFlags();
-		
+
 		CFX_PtrArray fieldObjects;
 		af.GetAllFields(fieldObjects);
 		CFX_PtrArray fields;
 		GetFieldFromObjects(fieldObjects, fields);
-		
-		ASSERT(m_pInterForm != NULL);
-
 		return m_pInterForm->ResetForm(fields, !(dwFlags & 0x01), TRUE);
 	}
-	else
-	{
-		ASSERT(m_pInterForm != NULL);
-		return m_pInterForm->ResetForm(TRUE);
-	}
+
+	return m_pInterForm->ResetForm(TRUE);
 }
 
 FX_BOOL CPDFSDK_InterForm::DoAction_ImportData(const CPDF_Action& action)

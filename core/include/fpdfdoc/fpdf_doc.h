@@ -264,17 +264,6 @@ public:
 class CPDF_Action : public CFX_Object
 {
 public:
-
-    CPDF_Action(CPDF_Dictionary* pDict = NULL)
-    {
-        m_pDict = pDict;
-    }
-
-    operator CPDF_Dictionary* () const
-    {
-        return m_pDict;
-    }
-
     enum ActionType {
         Unknown = 0,
         GoTo,
@@ -296,6 +285,13 @@ public:
         Trans,
         GoTo3DView
     };
+
+    CPDF_Action() : m_pDict(nullptr) { }
+    explicit CPDF_Action(CPDF_Dictionary* pDict) : m_pDict(pDict) { }
+
+    operator bool () const { return m_pDict != NULL; }
+
+    CPDF_Dictionary* GetDict() const { return m_pDict; }
 
     CFX_ByteString		GetTypeName() const
     {
@@ -422,7 +418,7 @@ public:
 
     CPDF_Action			GetSubAction(FX_DWORD iIndex) const;
 
-
+protected:
     CPDF_Dictionary*	m_pDict;
 };
 class CPDF_AAction : public CFX_Object

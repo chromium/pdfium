@@ -248,18 +248,17 @@ int CPDF_FormControl::GetTextPosition()
 }
 CPDF_Action CPDF_FormControl::GetAction()
 {
-    if (m_pWidgetDict == NULL) {
-        return NULL;
+    if (!m_pWidgetDict) {
+        return CPDF_Action();
     }
     if (m_pWidgetDict->KeyExist("A")) {
-        return m_pWidgetDict->GetDict("A");
-    } else {
-        CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "A");
-        if (pObj == NULL) {
-            return NULL;
-        }
-        return pObj->GetDict();
+        return CPDF_Action(m_pWidgetDict->GetDict("A"));
     }
+    CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "A");
+    if (!pObj) {
+        return CPDF_Action();
+    }
+    return CPDF_Action(pObj->GetDict());
 }
 CPDF_AAction CPDF_FormControl::GetAdditionalAction()
 {

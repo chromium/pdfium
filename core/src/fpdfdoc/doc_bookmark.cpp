@@ -86,7 +86,7 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const
 CPDF_Action CPDF_Bookmark::GetAction() const
 {
     if (!m_pDict) {
-        return NULL;
+        return CPDF_Action();
     }
-    return m_pDict->GetDict("A");
+    return CPDF_Action(m_pDict->GetDict("A"));
 }
