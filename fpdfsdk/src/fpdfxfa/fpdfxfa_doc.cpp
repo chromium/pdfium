@@ -92,64 +92,50 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc()
 
 	m_XFAPageList.RemoveAll();
 
-	int iDocType = DOCTYPE_PDF;
-	FX_BOOL hasXFAField = FPDF_HasXFAField(m_pPDFDoc, iDocType);
+	IXFA_App* pApp = m_pApp->GetXFAApp();
+	if (!pApp)
+		return FALSE;
 
-	if (hasXFAField)
+	m_pXFADoc = pApp->CreateDoc(this, m_pPDFDoc);
+	if (!m_pXFADoc)
 	{
-		IXFA_App* pApp = m_pApp->GetXFAApp();
-		if (pApp)
-		{
-			m_pXFADoc = pApp->CreateDoc(this, m_pPDFDoc);
-			if (!m_pXFADoc)
-			{
-				SetLastError(FPDF_ERR_XFALOAD);
-				return FALSE;
-			}
-
-			IXFA_DocHandler* pDocHandler = pApp->GetDocHandler();
-			if (pDocHandler)
-			{
-				int iStatus = pDocHandler->StartLoad(m_pXFADoc);
-				iStatus = pDocHandler->DoLoad(m_pXFADoc, NULL);
-				if (iStatus != 100) 
-				{
-					CloseXFADoc(pDocHandler);
-					SetLastError(FPDF_ERR_XFALOAD);
-					return FALSE;
-				}
-				pDocHandler->StopLoad(m_pXFADoc);
-				pDocHandler->SetJSERuntime(m_pXFADoc, m_pApp->GetJSERuntime());
-
-				if (pDocHandler->GetDocType(m_pXFADoc) == XFA_DOCTYPE_Dynamic)
-					m_iDocType = DOCTYPE_DYNIMIC_XFA;
-				else
-					m_iDocType = DOCTYPE_STATIC_XFA;
-
-				m_pXFADocView = pDocHandler->CreateDocView(m_pXFADoc, XFA_DOCVIEW_View);
-				FXSYS_assert(m_pXFADocView);
-
-				if (m_pXFADocView->StartLayout() < 0) 
-				{
-					CloseXFADoc(pDocHandler);
-					SetLastError(FPDF_ERR_XFALAYOUT);
-					return FALSE;
-				}
-				else
-				{
-					m_pXFADocView->DoLayout(NULL);
-					m_pXFADocView->StopLayout();
-
-					return TRUE;
-				}				
-			}
-
-			return FALSE;
-		}
-
+		SetLastError(FPDF_ERR_XFALOAD);
 		return FALSE;
 	}
-	
+
+	IXFA_DocHandler* pDocHandler = pApp->GetDocHandler();
+	if (!pDocHandler)
+	{
+		SetLastError(FPDF_ERR_XFALOAD);
+		return FALSE;
+	}
+
+	pDocHandler->StartLoad(m_pXFADoc);
+	int iStatus = pDocHandler->DoLoad(m_pXFADoc, NULL);
+	if (iStatus != XFA_PARSESTATUS_Done) 
+	{
+		CloseXFADoc(pDocHandler);
+		SetLastError(FPDF_ERR_XFALOAD);
+		return FALSE;
+	}
+	pDocHandler->StopLoad(m_pXFADoc);
+	pDocHandler->SetJSERuntime(m_pXFADoc, m_pApp->GetJSERuntime());
+
+	if (pDocHandler->GetDocType(m_pXFADoc) == XFA_DOCTYPE_Dynamic)
+		m_iDocType = DOCTYPE_DYNIMIC_XFA;
+	else
+		m_iDocType = DOCTYPE_STATIC_XFA;
+
+	m_pXFADocView = pDocHandler->CreateDocView(m_pXFADoc, XFA_DOCVIEW_View);
+	if (m_pXFADocView->StartLayout() < 0)
+	{
+		CloseXFADoc(pDocHandler);
+		SetLastError(FPDF_ERR_XFALAYOUT);
+		return FALSE;
+	}
+
+	m_pXFADocView->DoLayout(NULL);
+	m_pXFADocView->StopLayout();
 	return TRUE;
 }
 
