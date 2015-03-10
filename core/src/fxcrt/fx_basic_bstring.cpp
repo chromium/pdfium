@@ -676,10 +676,10 @@ void CFX_ByteString::FormatV(FX_LPCSTR lpszFormat, va_list argList)
                     if (nWidth + nPrecision > 100) {
                         nItemLen = nPrecision + nWidth + 128;
                     } else {
-                        double f;
                         char pszTemp[256];
-                        f = va_arg(argList, double);
-                        FXSYS_sprintf(pszTemp, "%*.*f", nWidth, nPrecision + 6, f );
+                        double f = va_arg(argList, double);
+                        memset(pszTemp, 0, sizeof(pszTemp));
+                        FXSYS_snprintf(pszTemp, sizeof(pszTemp) - 1, "%*.*f", nWidth, nPrecision + 6, f);
                         nItemLen = (FX_STRSIZE)FXSYS_strlen(pszTemp);
                     }
                     break;
@@ -697,9 +697,11 @@ void CFX_ByteString::FormatV(FX_LPCSTR lpszFormat, va_list argList)
         }
         nMaxLen += nItemLen;
     }
+    nMaxLen += 32;  // Fudge factor.
     GetBuffer(nMaxLen);
     if (m_pData) {
-        FXSYS_vsprintf(m_pData->m_String, lpszFormat, argListSave);
+        memset(m_pData->m_String, 0, nMaxLen);
+        FXSYS_vsnprintf(m_pData->m_String, nMaxLen - 1, lpszFormat, argListSave);
         ReleaseBuffer();
     }
     va_end(argListSave);

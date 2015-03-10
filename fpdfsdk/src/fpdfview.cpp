@@ -411,7 +411,8 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 #ifdef DEBUG_TRACE
 	{
 		char str[128];
-		sprintf(str, "Rendering DIB %d x %d", width, height);
+		memset(str, 0, sizeof(str));
+		FXSYS_snprintf(str, sizeof(str) - 1, "Rendering DIB %d x %d", width, height);
 		CPDF_ModuleMgr::Get()->ReportError(999, str);
 	}
 #endif
@@ -429,7 +430,8 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 	if (pContext->m_hBitmap == NULL) {
 #if defined(DEBUG) || defined(_DEBUG)
 		char str[128];
-		sprintf(str, "Error CreateDIBSection: %d x %d, error code = %d", width, height, GetLastError());
+		memset(str, 0, sizeof(str));
+		FXSYS_snprintf(str, sizeof(str) - 1, "Error CreateDIBSection: %d x %d, error code = %d", width, height, GetLastError());
 		CPDF_ModuleMgr::Get()->ReportError(FPDFERR_OUT_OF_MEMORY, str);
 #else
 		CPDF_ModuleMgr::Get()->ReportError(FPDFERR_OUT_OF_MEMORY, NULL);
@@ -465,7 +467,8 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 	if (hMemDC == NULL) {
 #if defined(DEBUG) || defined(_DEBUG)
 		char str[128];
-		sprintf(str, "Error CreateCompatibleDC. Error code = %d", GetLastError());
+		memset(str, 0, sizeof(str));
+		FXSYS_snprintf(str, sizeof(str) - 1, "Error CreateCompatibleDC. Error code = %d", GetLastError());
 		CPDF_ModuleMgr::Get()->ReportError(FPDFERR_OUT_OF_MEMORY, str);
 #else
 		CPDF_ModuleMgr::Get()->ReportError(FPDFERR_OUT_OF_MEMORY, NULL);

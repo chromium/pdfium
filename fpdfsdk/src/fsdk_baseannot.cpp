@@ -357,13 +357,16 @@ CFX_ByteString CPDFSDK_DateTime::ToPDFDateTimeString()
 {
 	CFX_ByteString dtStr;
 	char tempStr[32];
-	sprintf(tempStr, "D:%04d%02d%02d%02d%02d%02d", dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second);
+	memset(tempStr, 0, sizeof(tempStr));
+	FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "D:%04d%02d%02d%02d%02d%02d",
+                   dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second);
 	dtStr = CFX_ByteString(tempStr);
 	if (dt.tzHour < 0)
 		dtStr += CFX_ByteString("-");
 	else
 		dtStr += CFX_ByteString("+");
-	sprintf(tempStr, "%02d'%02d'", abs(dt.tzHour), dt.tzMinute);
+	memset(tempStr, 0, sizeof(tempStr));
+	FXSYS_snprintf(tempStr, sizeof(tempStr) - 1, "%02d'%02d'", abs(dt.tzHour), dt.tzMinute);
 	dtStr += CFX_ByteString(tempStr);
 	return dtStr;
 }
