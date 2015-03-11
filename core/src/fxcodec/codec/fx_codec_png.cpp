@@ -50,8 +50,10 @@ static void _png_load_bmp_attribute(png_structp png_ptr, png_infop info_ptr, CFX
         png_timep t = NULL;
         png_get_tIME(png_ptr, info_ptr, &t);
         if (t) {
-            FXSYS_memset32(pAttribute->m_strTime, 0, 20);
-            FXSYS_sprintf((FX_LPSTR)pAttribute->m_strTime, "%4d:%2d:%2d %2d:%2d:%2d", t->year, t->month, t->day, t->hour, t->minute, t->second);
+            FXSYS_memset32(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
+            FXSYS_snprintf((FX_LPSTR)pAttribute->m_strTime, sizeof(pAttribute->m_strTime), "%4d:%2d:%2d %2d:%2d:%2d",
+                           t->year, t->month, t->day, t->hour, t->minute, t->second);
+            pAttribute->m_strTime[sizeof(pAttribute->m_strTime) - 1] = 0;
             bTime = 1;
         }
 #endif

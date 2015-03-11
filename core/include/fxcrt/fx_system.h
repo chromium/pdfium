@@ -139,11 +139,13 @@ typedef FX_UINT64				FX_QWORD;
 #define FX_PI	3.1415926535897932384626433832795f
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define FXSYS_snprintf	_snprintf
+#define FXSYS_vsnprintf	_vsnprintf
 #else
 #define FXSYS_snprintf	snprintf
+#define FXSYS_vsnprintf	vsnprintf
 #endif
-#define FXSYS_sprintf	sprintf
-#define FXSYS_vsprintf	vsprintf
+#define FXSYS_sprintf	DO_NOT_USE_SPRINTF_DIE_DIE_DIE
+#define FXSYS_vsprintf	DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
 #define FXSYS_strchr	strchr
 #define FXSYS_strlen	strlen
 #define FXSYS_strncmp	strncmp

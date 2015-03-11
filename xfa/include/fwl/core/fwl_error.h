@@ -29,8 +29,9 @@ typedef FX_INT32	FWL_ERR;
     { \
         if ((arg) != FWL_ERR_Succeeded) \
         { \
-            char buf[16]; \
-            sprintf(buf, "Error code is %d\n", arg); \
+            char buf[36]; \
+            memset(buf, 0, sizeof(buf)); \
+            FXSYS_snprintf(buf, sizeof(buf) - 1, "Error code is %d\n", arg); \
             ::OutputDebugString(buf); \
         } \
     }

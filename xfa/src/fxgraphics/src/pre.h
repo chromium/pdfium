@@ -100,7 +100,8 @@ static const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {
     WORD wSecond = stop.wSecond - start.wSecond; \
     WORD wMilliseconds = stop.wMilliseconds - start.wMilliseconds; \
     char buf[256]; \
-    sprintf(buf, "duration is %d millisecond\n", wSecond * 1000 + wMilliseconds); \
+    memset(buf, 0, sizeof(buf)); \
+    snprintf(buf, sizeof(buf) - 1, "duration is %d millisecond\n", wSecond * 1000 + wMilliseconds); \
     ::OutputDebugString(buf);
 #elif defined (__linux) || defined (linux)
 #define FX_START_TIMER
