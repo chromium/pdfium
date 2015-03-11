@@ -69,8 +69,9 @@ static void _png_load_bmp_attribute(png_structp png_ptr, png_infop info_ptr, CFX
             buf = "Time";
             if (!FXSYS_memcmp32(buf, text[i].key, FX_MIN(len, FXSYS_strlen(buf)))) {
                 if (!bTime) {
-                    FXSYS_memset32(pAttribute->m_strTime, 0, 20);
-                    FXSYS_memcpy32(pAttribute->m_strTime, text[i].text, text[i].text_length);
+                    FXSYS_memset32(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
+                    FXSYS_memcpy32(pAttribute->m_strTime, text[i].text,
+                                   FX_MIN(sizeof(pAttribute->m_strTime) - 1, text[i].text_length));
                 }
             } else {
                 buf = "Author";
