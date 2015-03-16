@@ -52,8 +52,12 @@ static OPJ_SIZE_T opj_write_from_memory (void * p_buffer, OPJ_SIZE_T p_nb_bytes,
 static OPJ_OFF_T opj_skip_from_memory (OPJ_OFF_T p_nb_bytes, void* p_user_data)
 {
     DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-    if (srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
+    if (srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL) {
         return -1;
+    }
+    if (srcData->offset >= srcData->src_size) {
+        srcData->offset = srcData->src_size;
+        return p_nb_bytes;
     }
     OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
     OPJ_SIZE_T skipLength = p_nb_bytes < bufferLength ? p_nb_bytes : bufferLength;
@@ -63,8 +67,11 @@ static OPJ_OFF_T opj_skip_from_memory (OPJ_OFF_T p_nb_bytes, void* p_user_data)
 static OPJ_BOOL opj_seek_from_memory (OPJ_OFF_T p_nb_bytes, void* p_user_data)
 {
     DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-    if (srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL || srcData->offset >= srcData->src_size) {
+    if (srcData == NULL || srcData->src_size == 0 || srcData->src_data == NULL) {
         return OPJ_FALSE;
+    }
+    if (srcData->offset >= srcData->src_size) {
+        return OPJ_TRUE;
     }
     if (p_nb_bytes >= srcData->src_size) {
         return OPJ_FALSE;
@@ -629,7 +636,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size)
             image = NULL;
             return FALSE;
         }
-        if (!(opj_decode(l_codec, l_stream, image) && opj_end_decompress(l_codec,	l_stream))) {
+        if (!(opj_decode(l_codec, l_stream, image) && opj_end_decompress(l_codec, l_stream))) {
             opj_image_destroy(image);
             image = NULL;
             return FALSE;
