@@ -2,6 +2,9 @@ deps = {
   "build/gyp":
     "https://chromium.googlesource.com/external/gyp",
 
+  "testing/corpus":
+     "https://pdfium.googlesource.com/pdfium_tests",
+
   "testing/gmock":
      "https://chromium.googlesource.com/external/googlemock.git@29763965ab52f24565299976b936d1265cb6a271",
 
