@@ -9,6 +9,7 @@
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_render.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
+#include "../../fxcrt/fx_safe_types.h"
 #include "../fpdf_page/pageint.h"
 #include "render_int.h"
 FX_BOOL CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj, const CFX_AffineMatrix* pObj2Device)
@@ -1007,13 +1008,18 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
             pCS = m_pContext->m_pDocument->LoadColorSpace(pCSObj);
             if (pCS) {
                 FX_FLOAT R, G, B;
-                FX_DWORD num_floats = 8;
-                if (pCS->CountComponents() > (FX_INT32)num_floats) {
-                    num_floats = (FX_DWORD)pCS->CountComponents();
+                FX_DWORD comps = 8;
+                if (pCS->CountComponents() > static_cast<FX_INT32>(comps)) {
+                    comps = (FX_DWORD)pCS->CountComponents();
                 }
-                CFX_FixedBufGrow<FX_FLOAT, 8> float_array(num_floats);
+                CFX_FixedBufGrow<FX_FLOAT, 8> float_array(comps);
                 FX_FLOAT* pFloats = float_array;
-                FXSYS_memset32(pFloats, 0, num_floats * sizeof(FX_FLOAT));
+                FX_SAFE_DWORD num_floats = comps;
+                num_floats *= sizeof(FX_FLOAT);
+                if (!num_floats.IsValid()) {
+                    return NULL;  
+                } 
+                FXSYS_memset32(pFloats, 0, num_floats.ValueOrDie());
                 int count = pBC->GetCount() > 8 ? 8 : pBC->GetCount();
                 for (int i = 0; i < count; i ++) {
                     pFloats[i] = pBC->GetNumber(i);
