@@ -219,9 +219,6 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
         state->row_converter = &ConvertRGBtoBGRA;
         state->output_channels = 4;
         break;
-      default:
-        NOTREACHED();
-        break;
     }
   } else if (channels == 4) {
     switch (state->output_format) {
@@ -236,9 +233,6 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
       case FORMAT_BGRA:
         state->row_converter = &ConvertBetweenBGRAandRGBA;
         state->output_channels = 4;
-        break;
-      default:
-        NOTREACHED();
         break;
     }
   } else {
@@ -568,10 +562,6 @@ bool EncodeWithCompressionLevel(const unsigned char* input, ColorFormat format,
         converter = ConvertBetweenBGRAandRGBA;
       }
       break;
-
-    default:
-      NOTREACHED();
-      return false;
   }
 
   // Row stride should be at least as long as the length of the data.

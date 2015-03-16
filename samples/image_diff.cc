@@ -9,11 +9,11 @@
 // what the run-webkit-tests script expects.
 
 #include <assert.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
 #include <algorithm>
-#include <cstdint>
 #include <iostream>
 #include <map>
 #include <string>
