@@ -1,4 +1,5 @@
 Alert: ************ Initial State ************
+BOOGEY BOOGEY BOOGEY
 Alert: Enumerable Globals:
 Alert:   setPersistent = function setPersistent() { [native code] }, own property = true
 Alert: Expected Globals:
