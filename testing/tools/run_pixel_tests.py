@@ -40,6 +40,8 @@ def generate_and_test(input_filename, source_dir, working_dir,
       i += 1
   except subprocess.CalledProcessError as e:
     print "FAILURE: " + input_filename + "; " + str(e)
+    return False
+  return True
 
 def main():
   parser = optparse.OptionParser()
@@ -90,14 +92,17 @@ def main():
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 
+  os_exit_code = 0
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]in$')
   for input_filename in os.listdir(source_dir):
     if input_file_re.match(input_filename):
       input_path = os.path.join(source_dir, input_filename)
       if os.path.isfile(input_path):
-        generate_and_test(input_filename, source_dir, working_dir,
-                          fixup_path, pdfium_test_path, pdfium_diff_path)
-  return 0
+        if not generate_and_test(input_filename, source_dir, working_dir,
+                                 fixup_path, pdfium_test_path, pdfium_diff_path):
+          os_exit_code = 1
+
+  return os_exit_code
 
 
 if __name__ == '__main__':
