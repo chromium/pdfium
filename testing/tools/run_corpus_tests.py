@@ -39,6 +39,8 @@ def test_one_file(input_filename, source_dir, working_dir,
       i += 1
   except subprocess.CalledProcessError as e:
     print "FAILURE: " + input_filename + "; " + str(e)
+    return False
+  return True
 
 def main():
   parser = optparse.OptionParser()
@@ -83,6 +85,7 @@ def main():
     os.makedirs(working_dir)
 
   # test files are under .../pdfium/testing/corpus.
+  os_exit_code = 0
   walk_from_dir = os.path.join(testing_dir, 'corpus');
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]pdf$')
   for source_dir, _, filename_list in os.walk(walk_from_dir):
@@ -90,9 +93,11 @@ def main():
       if input_file_re.match(input_filename):
          input_path = os.path.join(source_dir, input_filename)
          if os.path.isfile(input_path):
-           test_one_file(input_filename, source_dir, working_dir,
-                         pdfium_test_path, pdfium_diff_path)
-  return 0
+           if not test_one_file(input_filename, source_dir, working_dir,
+                                pdfium_test_path, pdfium_diff_path):
+             os_exit_code = 1
+
+  return os_exit_code
 
 
 if __name__ == '__main__':
