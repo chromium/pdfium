@@ -7,7 +7,6 @@
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fxcodec/fx_codec.h"
-#include "../../fxcrt/fx_safe_types.h"
 #include "pageint.h"
 #include <limits.h>
 void sRGB_to_AdobeCMYK(FX_FLOAT R, FX_FLOAT G, FX_FLOAT B, FX_FLOAT& c, FX_FLOAT& m, FX_FLOAT& y, FX_FLOAT& k)
@@ -802,7 +801,6 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
     }
     m_pCountedBaseCS = pDocPageData->FindColorSpacePtr(m_pBaseCS->GetArray());
     m_nBaseComponents = m_pBaseCS->CountComponents();
-    m_nComponents = m_nBaseComponents;
     m_pCompMinMax = FX_Alloc(FX_FLOAT, m_nBaseComponents * 2);
     FX_FLOAT defvalue;
     for (int i = 0; i < m_nBaseComponents; i ++) {
@@ -825,29 +823,22 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
 }
 FX_BOOL CPDF_IndexedCS::GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const
 {
-    int index = static_cast<FX_INT32>(*pBuf);
-    if (index < 0 || index > m_MaxIndex || m_nBaseComponents < 1) {
+    int index = (FX_INT32)(*pBuf);
+    if (index < 0 || index > m_MaxIndex) {
         return FALSE;
     }
-    FX_SAFE_INT32 colIndex = index;
-    colIndex *= m_nBaseComponents;
-    colIndex += m_nBaseComponents - 1; 
-    if (!colIndex.IsValid() || colIndex.ValueOrDie() >= m_Table.GetLength()) {
-        R = G = B = 0;
-        return FALSE;
+    if (m_nBaseComponents) {
+        if (index == INT_MAX || (index + 1) > INT_MAX / m_nBaseComponents ||
+                (index + 1)*m_nBaseComponents > (int)m_Table.GetLength()) {
+            R = G = B = 0;
+            return FALSE;
+        }
     }
-
     CFX_FixedBufGrow<FX_FLOAT, 16> Comps(m_nBaseComponents);
     FX_FLOAT* comps = Comps;
-    if (m_pBaseCS->sRGB()) {
-        for (int i = 0; i < m_nBaseComponents; i ++) {
-            comps[i] = pBuf[i] / 255;
-        }
-    } else {
-        FX_LPCBYTE pTable = m_Table;
-        for (int i = 0; i < m_nBaseComponents; i ++) {
-            comps[i] = m_pCompMinMax[i * 2] + m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
-        }
+    FX_LPCBYTE pTable = m_Table;
+    for (int i = 0; i < m_nBaseComponents; i ++) {
+        comps[i] = m_pCompMinMax[i * 2] + m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
     }
     m_pBaseCS->GetRGB(comps, R, G, B);
     return TRUE;

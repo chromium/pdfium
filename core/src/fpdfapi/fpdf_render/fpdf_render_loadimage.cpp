@@ -505,14 +505,10 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode, FX
     }
     int max_data = (1 << m_bpc) - 1;
     CPDF_Array* pDecode = m_pDict->GetArray(FX_BSTRC("Decode"));
-    FX_DWORD arrSize = pDecode ? pDecode->GetCount() : 0;
-    if (arrSize == 0) {
-        return NULL;
-    }
     if (pDecode) {
         for (FX_DWORD i = 0; i < m_nComponents; i ++) {
-            pCompData[i].m_DecodeMin = pDecode->GetNumber((i * 2) % arrSize);
-            FX_FLOAT max = pDecode->GetNumber((i * 2 + 1) % arrSize);
+            pCompData[i].m_DecodeMin = pDecode->GetNumber(i * 2);
+            FX_FLOAT max = pDecode->GetNumber(i * 2 + 1);
             pCompData[i].m_DecodeStep = (max - pCompData[i].m_DecodeMin) / max_data;
             FX_FLOAT def_value, def_min, def_max;
             m_pColorSpace->GetDefaultValue(i, def_value, def_min, def_max);
