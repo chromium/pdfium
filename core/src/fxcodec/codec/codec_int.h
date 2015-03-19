@@ -4,9 +4,16 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#ifndef CORE_SRC_FXCODEC_CODEC_CODEC_INT_H_
+#define CORE_SRC_FXCODEC_CODEC_CODEC_INT_H_
+
 #include <limits.h>
 #include <list>
+
+#include "../../../include/fxcodec/fx_codec.h"
 #include "../jbig2/JBig2_Context.h"
+#include "../fx_libopenjpeg/libopenjpeg20/openjpeg.h"  // For OPJ_SIZE_T.
+
 class CCodec_BasicModule : public ICodec_BasicModule
 {
 public:
@@ -272,3 +279,21 @@ public:
     std::list<CJBig2_CachePair> m_SymbolDictCache;
 private:
 };
+
+struct DecodeData {
+public:
+    DecodeData(unsigned char* src_data, OPJ_SIZE_T src_size) :
+        src_data(src_data), src_size(src_size), offset(0) {
+    }
+    unsigned char* src_data;
+    OPJ_SIZE_T     src_size;
+    OPJ_SIZE_T     offset;
+};
+
+/* Wrappers for C-style callbacks. */
+OPJ_SIZE_T opj_read_from_memory (void* p_buffer, OPJ_SIZE_T nb_bytes,  void* p_user_data);
+OPJ_SIZE_T opj_write_from_memory (void* p_buffer, OPJ_SIZE_T nb_bytes, void* p_user_data);
+OPJ_OFF_T opj_skip_from_memory (OPJ_OFF_T nb_bytes, void* p_user_data);
+OPJ_BOOL opj_seek_from_memory (OPJ_OFF_T nb_bytes, void* p_user_data);
+
+#endif  // CORE_SRC_FXCODEC_CODEC_CODEC_INT_H_
