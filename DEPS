@@ -5,7 +5,7 @@ deps = {
     "https://chromium.googlesource.com/external/gyp",
 
   "testing/corpus":
-     "https://pdfium.googlesource.com/pdfium_tests@de794ce99bb503209b9ef7320adceeb02f10b9a7",
+     "https://pdfium.googlesource.com/pdfium_tests@963fa2f89a051f611befcc1771dc0e66c859f493",
 
   "testing/gmock":
      "https://chromium.googlesource.com/external/googlemock.git@29763965ab52f24565299976b936d1265cb6a271",
