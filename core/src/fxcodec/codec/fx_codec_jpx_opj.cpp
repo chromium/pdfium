@@ -4,6 +4,7 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
 #include <limits>
 
 #include "../../../include/fxcodec/fx_codec.h"
