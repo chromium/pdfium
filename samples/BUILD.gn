@@ -44,7 +44,11 @@ executable("pdfium_diff") {
     "//third_party/pdfium",
     ":fx_lpng",
   ]
-  configs += [ ":pdfium_samples_config" ]
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    ":pdfium_samples_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
 }
 
 static_library("fx_lpng") {
