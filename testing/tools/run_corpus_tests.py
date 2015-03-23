@@ -87,7 +87,8 @@ def main():
     os.makedirs(working_dir)
 
   with open(os.path.join(testing_dir, 'SUPPRESSIONS')) as f:
-    suppression_list = [x.strip() for x in f.readlines()]
+    suppression_list = [y for y in [
+      x.split('#')[0].strip() for x in f.readlines()] if y]
 
   # test files are under .../pdfium/testing/corpus.
   failures = []
