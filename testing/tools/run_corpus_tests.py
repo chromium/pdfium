@@ -86,6 +86,9 @@ def main():
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 
+  with open(os.path.join(testing_dir, 'SUPPRESSIONS')) as f:
+    suppression_list = [x.strip() for x in f.readlines()]
+
   # test files are under .../pdfium/testing/corpus.
   failures = []
   walk_from_dir = os.path.join(testing_dir, 'corpus');
@@ -95,7 +98,10 @@ def main():
       if input_file_re.match(input_filename):
          input_path = os.path.join(source_dir, input_filename)
          if os.path.isfile(input_path):
-           if not test_one_file(input_filename, source_dir, working_dir,
+           if input_filename in suppression_list:
+             print "Not running %s, found in SUPPRESSIONS file" % input_filename
+             continue
+         if not test_one_file(input_filename, source_dir, working_dir,
                                 pdfium_test_path, pdfium_diff_path):
              failures.append(input_path)
 
