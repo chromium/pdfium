@@ -5,6 +5,7 @@
 #ifndef PDFIUM_THIRD_PARTY_BASE_LOGGING_H_
 #define PDFIUM_THIRD_PARTY_BASE_LOGGING_H_
 
+#include <assert.h>
 #include <stdlib.h>
 
 #define CHECK(condition)                                                \
@@ -13,6 +14,6 @@
     *(reinterpret_cast<volatile char*>(NULL) + 42) = 0x42;              \
   }
 
-#define NOTREACHED() abort()
+#define NOTREACHED() assert(false)
 
 #endif  // PDFIUM_THIRD_PARTY_BASE_LOGGING_H_
