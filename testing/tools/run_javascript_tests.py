@@ -23,6 +23,7 @@ def generate_and_test(input_filename, source_dir, working_dir,
   txt_path = os.path.join(working_dir, input_root + '.txt')
   expected_path = os.path.join(source_dir, input_root + '_expected.txt')
   try:
+    sys.stdout.flush()
     subprocess.check_call(
         [fixup_path, '--output-dir=' + working_dir, input_path])
     with open(txt_path, 'w') as outfile:
@@ -80,7 +81,7 @@ def main():
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 
-  os_exit_code = 0
+  failures = []
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]in$')
   for input_filename in os.listdir(source_dir):
     if input_file_re.match(input_filename):
@@ -88,9 +89,14 @@ def main():
       if os.path.isfile(input_path):
         if not generate_and_test(input_filename, source_dir, working_dir,
                                  fixup_path, pdfium_test_path):
-          os_exit_code = 1
+          failures.append(input_path)
 
-  return os_exit_code
+  if failures:
+    print '\n\nSummary of Failures:'
+    for failure in failures:
+      print failure
+    return 1
+  return 0
 
 
 if __name__ == '__main__':

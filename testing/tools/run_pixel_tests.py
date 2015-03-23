@@ -24,6 +24,7 @@ def generate_and_test(input_filename, source_dir, working_dir,
   expected_path_template = os.path.join(source_dir,
                                         input_root + '_expected.pdf.%d.png')
   try:
+    sys.stdout.flush()
     subprocess.check_call(
         [fixup_path, '--output-dir=' + working_dir, input_path])
     subprocess.check_call([pdfium_test_path, '--png', pdf_path])
@@ -36,6 +37,7 @@ def generate_and_test(input_filename, source_dir, working_dir,
           print "WARNING: no expected results files found for " + input_filename
         break
       print "Checking " + actual_path
+      sys.stdout.flush()
       subprocess.check_call([pdfium_diff_path, expected_path, actual_path])
       i += 1
   except subprocess.CalledProcessError as e:
@@ -92,7 +94,7 @@ def main():
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 
-  os_exit_code = 0
+  failures = []
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]in$')
   for input_filename in os.listdir(source_dir):
     if input_file_re.match(input_filename):
@@ -100,10 +102,14 @@ def main():
       if os.path.isfile(input_path):
         if not generate_and_test(input_filename, source_dir, working_dir,
                                  fixup_path, pdfium_test_path, pdfium_diff_path):
-          os_exit_code = 1
+          failures.append(input_path)
 
-  return os_exit_code
-
+  if failures:
+    print '\n\nSummary of Failures:'
+    for failure in failures:
+      print failure
+    return 1
+  return 0
 
 if __name__ == '__main__':
   sys.exit(main())
