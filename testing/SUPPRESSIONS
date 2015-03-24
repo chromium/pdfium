@@ -1,3 +1,5 @@
+# List of tests to be skipped, one per line.
+# Try to keep the file alphabetized.
 1_10_watermark.pdf
 1_1_textbox.pdf
 1_2_typewriter.pdf
