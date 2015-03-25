@@ -2,6 +2,7 @@
 /build/Release
 /build/gyp
 /out
+/testing/corpus
 /testing/gmock
 /testing/gtest
 /v8
