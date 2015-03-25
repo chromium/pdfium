@@ -15,6 +15,12 @@ import sys
 #   x_path - "path/to/a/b/c/x.ext"
 #   c_dir - "path/to/a/b/c"
 
+def extract_suppressions(filename):
+  with open(filename) as f:
+    suppressions = [y for y in [
+      x.split('#')[0].strip() for x in f.readlines()] if y]
+  return suppressions
+
 def test_one_file(input_filename, source_dir, working_dir,
                   pdfium_test_path, pdfium_diff_path):
   input_root, _ = os.path.splitext(input_filename)
@@ -45,6 +51,16 @@ def test_one_file(input_filename, source_dir, working_dir,
   return True
 
 def main():
+  if sys.platform.startswith('linux'):
+    os_name = 'linux'
+  elif sys.platform.startswith('win'):
+    os_name = 'win'
+  elif sys.platform.startswith('darwin'):
+    os_name = 'mac'
+  else:
+    print 'Confused, can not determine OS, aborting.'
+    return 1
+
   parser = optparse.OptionParser()
   parser.add_option('--build-dir', default=os.path.join('out', 'Debug'),
                     help='relative path from the base source directory')
@@ -76,7 +92,7 @@ def main():
   # Compiled binaries are found under the build path.
   pdfium_test_path = os.path.join(build_dir, 'pdfium_test')
   pdfium_diff_path = os.path.join(build_dir, 'pdfium_diff')
-  if sys.platform.startswith('win'):
+  if os_name == 'win':
     pdfium_test_path = pdfium_test_path + '.exe'
     pdfium_diff_path = pdfium_diff_path + '.exe'
   # TODO(tsepez): Mac may require special handling here.
@@ -86,9 +102,12 @@ def main():
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 
-  with open(os.path.join(testing_dir, 'SUPPRESSIONS')) as f:
-    suppression_list = [y for y in [
-      x.split('#')[0].strip() for x in f.readlines()] if y]
+  suppression_list = extract_suppressions(
+    os.path.join(testing_dir, 'SUPPRESSIONS'))
+
+  platform_suppression_filename = 'SUPPRESSIONS_%s' % os_name
+  platform_suppression_list = extract_suppressions(
+    os.path.join(testing_dir, platform_suppression_filename))
 
   # test files are under .../pdfium/testing/corpus.
   failures = []
@@ -102,6 +121,11 @@ def main():
            if input_filename in suppression_list:
              print "Not running %s, found in SUPPRESSIONS file" % input_filename
              continue
+           if input_filename in platform_suppression_list:
+             print ("Not running %s, found in %s file" %
+                    (input_filename, platform_suppression_filename))
+             continue
+
          if not test_one_file(input_filename, source_dir, working_dir,
                                 pdfium_test_path, pdfium_diff_path):
              failures.append(input_path)
