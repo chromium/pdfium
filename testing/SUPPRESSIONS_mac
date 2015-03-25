@@ -1,2 +1,3 @@
 # List of tests to be skipped on mac platforms, one per line.
 # Try to keep the file alphabetized.
+font_size.in
