@@ -7,6 +7,7 @@ import optparse
 import os
 import re
 import subprocess
+import shutil
 import sys
 
 # Nomenclature:
@@ -30,8 +31,8 @@ def test_one_file(input_filename, source_dir, working_dir,
   expected_path_template = os.path.join(source_dir,
                                         input_root + '_expected.pdf.%d.png')
   try:
+    shutil.copyfile(input_path, pdf_path)
     sys.stdout.flush()
-    subprocess.check_call(['cp', input_path, pdf_path])
     subprocess.check_call([pdfium_test_path, '--png', pdf_path])
     i = 0;
     while True:

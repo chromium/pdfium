@@ -32,7 +32,7 @@ def generate_and_test(input_filename, source_dir, working_dir,
   try:
     sys.stdout.flush()
     subprocess.check_call(
-        [fixup_path, '--output-dir=' + working_dir, input_path])
+        [sys.executable, fixup_path, '--output-dir=' + working_dir, input_path])
     subprocess.check_call([pdfium_test_path, '--png', pdf_path])
     i = 0;
     while True:

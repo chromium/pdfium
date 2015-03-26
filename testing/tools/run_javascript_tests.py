@@ -16,7 +16,7 @@ import sys
 #   c_dir - "path/to/a/b/c"
 
 def generate_and_test(input_filename, source_dir, working_dir,
-                      fixup_path, pdfium_test_path):
+                      fixup_path, pdfium_test_path, text_diff_path):
   input_root, _ = os.path.splitext(input_filename)
   input_path = os.path.join(source_dir, input_root + '.in')
   pdf_path = os.path.join(working_dir, input_root + '.pdf')
@@ -25,10 +25,11 @@ def generate_and_test(input_filename, source_dir, working_dir,
   try:
     sys.stdout.flush()
     subprocess.check_call(
-        [fixup_path, '--output-dir=' + working_dir, input_path])
+        [sys.executable, fixup_path, '--output-dir=' + working_dir, input_path])
     with open(txt_path, 'w') as outfile:
       subprocess.check_call([pdfium_test_path, pdf_path], stdout=outfile)
-    subprocess.check_call(['diff', expected_path, txt_path])
+    subprocess.check_call(
+        [sys.executable, text_diff_path, expected_path, txt_path])
   except subprocess.CalledProcessError as e:
     print "FAILURE: " + input_filename + "; " + str(e)
     return False
@@ -51,6 +52,7 @@ def main():
 
   # Other scripts are found in the same directory as this one.
   fixup_path = os.path.join(my_dir, 'fixup_pdf_template.py')
+  text_diff_path = os.path.join(my_dir, 'text_diff.py')
 
   # test files are in .../pdfium/testing/resources/javascript.
   source_dir = os.path.join(testing_dir, 'resources', 'javascript')
@@ -88,7 +90,7 @@ def main():
       input_path = os.path.join(source_dir, input_filename)
       if os.path.isfile(input_path):
         if not generate_and_test(input_filename, source_dir, working_dir,
-                                 fixup_path, pdfium_test_path):
+                                 fixup_path, pdfium_test_path, text_diff_path):
           failures.append(input_path)
 
   if failures:
