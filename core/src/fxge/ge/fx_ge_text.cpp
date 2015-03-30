@@ -1336,7 +1336,17 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_inde
     int load_flags = (m_Face->face_flags & FT_FACE_FLAG_SFNT) ? FXFT_LOAD_NO_BITMAP : (FXFT_LOAD_NO_BITMAP | FT_LOAD_NO_HINTING);
     int error = FXFT_Load_Glyph(m_Face, glyph_index, load_flags);
     if (error) {
-        return NULL;
+        //if an error is returned, try to reload glyphs without hinting.
+        if (load_flags & FT_LOAD_NO_HINTING || load_flags & FT_LOAD_NO_SCALE) {
+            return NULL;
+        }
+
+        load_flags |= FT_LOAD_NO_HINTING;
+        error = FXFT_Load_Glyph(m_Face, glyph_index, load_flags);
+
+        if (error) { 
+            return NULL;
+        }
     }
     int weight = 0;
     if (bUseCJKSubFont) {
