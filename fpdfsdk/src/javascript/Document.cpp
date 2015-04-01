@@ -1139,7 +1139,9 @@ FX_BOOL Document::numPages(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString&
 FX_BOOL Document::external(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	//In Chrome case,should always return true.
-	vp << TRUE;
+	if (vp.IsGetting()) {
+		vp << TRUE;
+	}
 	return TRUE;
 }
 
@@ -1169,13 +1171,12 @@ FX_BOOL Document::baseURL(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& 
 	if (vp.IsGetting())
 	{
 		vp << m_cwBaseURL;
-		return TRUE;
 	}
 	else
 	{
 		vp >> m_cwBaseURL;
-		return TRUE;
 	}
+	return TRUE;
 }
 
 FX_BOOL Document::calculate(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
@@ -1302,11 +1303,6 @@ FX_BOOL Document::addLink(IFXJS_Context* cc, const CJS_Parameters& params, CJS_V
 FX_BOOL Document::closeDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	ASSERT(m_pDocument != NULL);
-
-
-
-
-
 	return TRUE;
 }
 
@@ -1314,7 +1310,6 @@ FX_BOOL Document::getPageBox(IFXJS_Context* cc, const CJS_Parameters& params, CJ
 {
 	return TRUE;
 }
-
 
 FX_BOOL Document::getAnnot(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
