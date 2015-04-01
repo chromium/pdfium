@@ -1,2 +1,29 @@
 # List of tests to be skipped on windows platforms, one per line.
 # Try to keep the file alphabetized.
+050_extra_m.pdf
+12.pdf
+2_uncolor_tiling.pdf
+3bigpreview.pdf
+5.5_simple_font.pdf
+bookmarkgetcolor.pdf
+en_contact.pdf
+en_diy.pdf
+example_010.pdf
+example_014.pdf
+example_015.pdf
+example_033.pdf
+example_036.pdf
+example_038.pdf
+example_041.pdf
+example_044.pdf
+example_045.pdf
+example_046.pdf
+example_053.pdf
+example_055.pdf
+example_065.pdf
+font_1_embedded_font_en_feature.pdf
+font_2_embedded_font_en_size14.pdf
+form_combobox_num.pdf
+form_combobox_per.pdf
+path_5_pattern.pdf
+test_m.pdf
