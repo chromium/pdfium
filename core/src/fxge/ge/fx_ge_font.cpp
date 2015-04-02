@@ -166,7 +166,7 @@ static FXFT_Face FT_LoadFont(FX_LPBYTE pData, int size)
         FXFT_Init_FreeType(&CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary);
     }
     library = CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary;
-    FXFT_Face face;
+    FXFT_Face face = NULL;
     int error = FXFT_New_Memory_Face(library, pData, size, 0, &face);
     if (error) {
         return NULL;
