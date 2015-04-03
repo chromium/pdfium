@@ -9,6 +9,8 @@ import re
 import subprocess
 import sys
 
+import common
+
 # Nomenclature:
 #   x_root - "x"
 #   x_filename - "x.ext"
@@ -40,46 +42,12 @@ def main():
   parser.add_option('--build-dir', default=os.path.join('out', 'Debug'),
                     help='relative path from the base source directory')
   options, args = parser.parse_args()
-
-  # Expect |my_dir| to be .../pdfium/testing/tools.
-  my_dir = os.path.dirname(os.path.realpath(__file__))
-  testing_dir = os.path.dirname(my_dir)
-  pdfium_dir = os.path.dirname(testing_dir)
-  if (os.path.basename(my_dir) != 'tools' or
-      os.path.basename(testing_dir) != 'testing'):
-    print 'Confused, can not find pdfium root directory, aborting.'
-    return 1
-
-  # Other scripts are found in the same directory as this one.
-  fixup_path = os.path.join(my_dir, 'fixup_pdf_template.py')
-  text_diff_path = os.path.join(my_dir, 'text_diff.py')
-
-  # test files are in .../pdfium/testing/resources/javascript.
-  source_dir = os.path.join(testing_dir, 'resources', 'javascript')
-
-  # Find path to build directory.  This depends on whether this is a
-  # standalone build vs. a build as part of a chromium checkout. For
-  # standalone, we expect a path like .../pdfium/out/Debug, but for
-  # chromium, we expect a path like .../src/out/Debug two levels
-  # higher (to skip over the third_party/pdfium path component under
-  # which chromium sticks pdfium).
-  base_dir = pdfium_dir
-  one_up_dir = os.path.dirname(base_dir)
-  two_up_dir = os.path.dirname(one_up_dir)
-  if (os.path.basename(two_up_dir) == 'src' and
-      os.path.basename(one_up_dir) == 'third_party'):
-    base_dir = two_up_dir
-  build_dir = os.path.join(base_dir, options.build_dir)
-
-  # Compiled binaries are found under the build path.
-  pdfium_test_path = os.path.join(build_dir, 'pdfium_test')
-  if sys.platform.startswith('win'):
-    pdfium_test_path = pdfium_test_path + '.exe'
-  # TODO(tsepez): Mac may require special handling here.
-
-  # Place generated files under the build directory, not source directory.
-  gen_dir = os.path.join(build_dir, 'gen', 'pdfium')
-  working_dir = os.path.join(gen_dir, 'testing', 'javascript')
+  finder = common.DirectoryFinder(options.build_dir)
+  fixup_path = finder.ScriptPath('fixup_pdf_template.py')
+  text_diff_path = finder.ScriptPath('text_diff.py')
+  source_dir = finder.TestingDir(os.path.join('resources', 'javascript'))
+  pdfium_test_path = finder.ExecutablePath('pdfium_test')
+  working_dir = finder.WorkingDir(os.path.join('testing', 'javascript'))
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 
