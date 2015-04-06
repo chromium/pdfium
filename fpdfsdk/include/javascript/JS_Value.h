@@ -52,6 +52,7 @@ public:
 	void operator = (double);
 	void operator = (float);
 	void operator = (CJS_Object*);
+	void operator = (CJS_Document*);
 	void operator = (v8::Handle<v8::Object>);
 	void operator = (CJS_Array &);
 	void operator = (CJS_Date &);
@@ -87,37 +88,34 @@ public:
 class CJS_PropValue: public CJS_Value
 {
 public:
-	CJS_PropValue(const CJS_Value &);
+	CJS_PropValue(const CJS_Value&);
 	CJS_PropValue(v8::Isolate* isolate);
 	~CJS_PropValue();
 public:
 	FX_BOOL IsSetting();
 	FX_BOOL IsGetting();
-	void operator<<(int );
-	void operator>>(int &) const;
+	void operator<<(int);
+	void operator>>(int&) const;
 	void operator<<(bool);
-	void operator>>(bool &) const;
-	void operator<<(double );
-	void operator>>(double &) const;
-	void operator<<(CJS_Object *pObj);
-	void operator>>(CJS_Object *&ppObj) const;
+	void operator>>(bool&) const;
+	void operator<<(double);
+	void operator>>(double&) const;
+	void operator<<(CJS_Object* pObj);
+	void operator>>(CJS_Object*& ppObj) const;
+	void operator<<(CJS_Document* pJsDoc);
+	void operator>>(CJS_Document*& ppJsDoc) const;
 	void operator<<(CFX_ByteString);
-	void operator>>(CFX_ByteString &) const;
+	void operator>>(CFX_ByteString&) const;
 	void operator<<(CFX_WideString);
-	void operator>>(CFX_WideString &) const;
+	void operator>>(CFX_WideString&) const;
 	void operator<<(FX_LPCWSTR c_string);
-
 	void operator<<(JSFXObject);
-	void operator>>(JSFXObject &) const;
-
-	void operator>>(CJS_Array &array) const;
-	void operator<<(CJS_Array &array);
-
-	void operator<<(CJS_Date &date);
-	void operator>>(CJS_Date &date) const;
-
+	void operator>>(JSFXObject&) const;
+	void operator>>(CJS_Array& array) const;
+	void operator<<(CJS_Array& array);
+	void operator<<(CJS_Date& date);
+	void operator>>(CJS_Date& date) const;
 	operator v8::Handle<v8::Value>() const;
-
 	void StartSetting();
 	void StartGetting();
 private:

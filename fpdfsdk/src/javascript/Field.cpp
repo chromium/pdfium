@@ -1500,26 +1500,22 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument, const CFX_WideString& swFiel
 
 FX_BOOL Field::doc(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	ASSERT(m_pJSDoc != NULL);
-
-	if (!vp.IsGetting())return FALSE;
-
-	vp << (CJS_Object*)(*m_pJSDoc);
-
+	if (!vp.IsGetting()) {
+		return FALSE;
+	}
+	vp << m_pJSDoc->GetCJSDoc();
 	return TRUE;
 }
 
 FX_BOOL Field::editable(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	ASSERT(m_pDocument != NULL);
-
 	if (vp.IsSetting())
 	{
 		if (!m_bCanSet) return FALSE;
 
 		bool bVP;
 		vp >> bVP;
-
 	}
 	else
 	{

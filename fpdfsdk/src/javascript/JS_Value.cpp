@@ -202,6 +202,14 @@ void CJS_Value::operator =(CJS_Object * pObj)
 		operator = ((JSFXObject)*pObj);
 }
 
+void CJS_Value::operator = (CJS_Document* pJsDoc)
+{
+	m_eType = VT_object;
+	if (pJsDoc) {
+		m_pValue = static_cast<JSFXObject>(*pJsDoc);
+	}
+}
+
 void CJS_Value::operator =(FX_LPCWSTR pWstr)
 {
 	m_pValue = JS_NewString(m_isolate,(wchar_t *)pWstr);
@@ -344,7 +352,7 @@ void CJS_PropValue::operator <<(bool bValue)
 	CJS_Value::operator =(bValue);
 }
 
-void CJS_PropValue::operator >>(bool &bValue) const
+void CJS_PropValue::operator >>(bool& bValue) const
 {
 	ASSERT(m_bIsSetting);
 	bValue = CJS_Value::operator bool();
@@ -357,22 +365,34 @@ void CJS_PropValue::operator <<(double dValue)
 	CJS_Value::operator =(dValue);
 }
 
-void CJS_PropValue::operator >>(double &dValue) const
+void CJS_PropValue::operator >>(double& dValue) const
 {
 	ASSERT(m_bIsSetting);
 	dValue = CJS_Value::operator double();
 }
 
-void CJS_PropValue::operator <<(CJS_Object *pObj)
+void CJS_PropValue::operator <<(CJS_Object* pObj)
 {
-	ASSERT(!m_bIsSetting);
+	ASSERT(!m_bIsSetting)
 	CJS_Value::operator = (pObj);
 }
 
-void CJS_PropValue::operator >>(CJS_Object *&ppObj) const
+void CJS_PropValue::operator >>(CJS_Object*& ppObj) const
+{
+	ASSERT(m_bIsSetting)
+	ppObj = CJS_Value::operator CJS_Object *();
+}
+
+void CJS_PropValue::operator <<(CJS_Document* pJsDoc)
+{
+	ASSERT(!m_bIsSetting);
+	CJS_Value::operator = (pJsDoc);
+}
+
+void CJS_PropValue::operator >>(CJS_Document*& ppJsDoc) const
 {
 	ASSERT(m_bIsSetting);
-	ppObj = CJS_Value::operator CJS_Object *();
+	ppJsDoc = static_cast<CJS_Document*>(CJS_Value::operator CJS_Object *());
 }
 
 void CJS_PropValue::operator<<(JSFXObject pObj)
