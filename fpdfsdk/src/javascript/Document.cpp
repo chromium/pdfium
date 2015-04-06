@@ -1947,3 +1947,9 @@ void Document::DoAnnotDelay()
 		m_DelayData.RemoveAt(DelArray[j]);
 	}
 }
+
+CJS_Document* Document::GetCJSDoc() const 
+{
+	return static_cast<CJS_Document*>(m_pJSObject);
+}
+

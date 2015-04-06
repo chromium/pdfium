@@ -160,38 +160,32 @@ public:
 	FX_BOOL	removeIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 	
 public:
-	void AttachDoc(CPDFSDK_Document* pDoc);
-	CPDFSDK_Document* GetReaderDoc();
-
-	static FX_BOOL				ExtractFileName(CPDFSDK_Document* pDoc, CFX_ByteString& strFileName);
-	static FX_BOOL				ExtractFolderName(CPDFSDK_Document* pDoc, CFX_ByteString& strFolderName);
-
-public:
-	void						AddDelayData(CJS_DelayData* pData);
-	void						DoFieldDelay(const CFX_WideString& sFieldName, int nControlIndex);
-
-	void						AddDelayAnnotData(CJS_AnnotObj *pData);
-	void						DoAnnotDelay();
-	void						SetIsolate(v8::Isolate* isolate) {m_isolate = isolate;}
+	void                                    AttachDoc(CPDFSDK_Document* pDoc);
+	CPDFSDK_Document*                       GetReaderDoc();
+	static FX_BOOL                          ExtractFileName(CPDFSDK_Document* pDoc, CFX_ByteString& strFileName);
+	static FX_BOOL                          ExtractFolderName(CPDFSDK_Document* pDoc, CFX_ByteString& strFolderName);
+	void                                    AddDelayData(CJS_DelayData* pData);
+	void                                    DoFieldDelay(const CFX_WideString& sFieldName, int nControlIndex);
+	void                                    AddDelayAnnotData(CJS_AnnotObj *pData);
+	void                                    DoAnnotDelay();
+	void                                    SetIsolate(v8::Isolate* isolate) {m_isolate = isolate;}
+	CJS_Document*                           GetCJSDoc() const; 
 
 private:
-	CFX_WideString				ReversalStr(CFX_WideString cbFrom);
-	CFX_WideString				CutString(CFX_WideString cbFrom);
-	bool						IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect);
-	int							CountWords(CPDF_TextObject* pTextObj);
-	CFX_WideString				GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
+	CFX_WideString                          ReversalStr(CFX_WideString cbFrom);
+	CFX_WideString                          CutString(CFX_WideString cbFrom);
+	bool                                    IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect);
+	int                                     CountWords(CPDF_TextObject* pTextObj);
+	CFX_WideString                          GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
+	FX_BOOL                                 ParserParams(JSObject *pObj,CJS_AnnotObj& annotobj);
 
-	FX_BOOL						ParserParams(JSObject *pObj,CJS_AnnotObj& annotobj);
-
-private:
-	v8::Isolate*					m_isolate;
-	IconTree*					m_pIconTree;
-	CPDFSDK_Document*			m_pDocument;
-	CFX_WideString				m_cwBaseURL;
-
-	FX_BOOL								m_bDelay;
-	CFX_ArrayTemplate<CJS_DelayData*>	m_DelayData;
-	CFX_ArrayTemplate<CJS_AnnotObj*>	m_DelayAnnotData;
+	v8::Isolate*                            m_isolate;
+	IconTree*                               m_pIconTree;
+	CPDFSDK_Document*                       m_pDocument;
+	CFX_WideString                          m_cwBaseURL;
+	FX_BOOL                                 m_bDelay;
+	CFX_ArrayTemplate<CJS_DelayData*>       m_DelayData;
+	CFX_ArrayTemplate<CJS_AnnotObj*>        m_DelayAnnotData;
 };
 
 class CJS_Document : public CJS_Object
