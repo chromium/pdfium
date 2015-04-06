@@ -6,18 +6,11 @@
 
 #ifndef _FX_BASIC_H_
 #define _FX_BASIC_H_
-#ifndef _FX_SYSTEM_H_
-#include "fx_system.h"
-#endif
-#ifndef _FX_MEMORY_H_
+
 #include "fx_memory.h"
-#endif
-#ifndef _FX_STRING_H_
-#include "fx_string.h"
-#endif
-#ifndef _FX_STREAM_H_
 #include "fx_stream.h"
-#endif
+#include "fx_string.h"
+#include "fx_system.h"
 
 // The FX_ArraySize(arr) macro returns the # of elements in an array arr.
 // The expression is a compile-time constant, and therefore can be

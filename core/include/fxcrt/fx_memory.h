@@ -6,9 +6,9 @@
 
 #ifndef _FX_MEMORY_H_
 #define _FX_MEMORY_H_
-#ifndef _FX_SYSTEM_H_
+
 #include "fx_system.h"
-#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

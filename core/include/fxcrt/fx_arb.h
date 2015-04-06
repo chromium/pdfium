@@ -6,6 +6,10 @@
 
 #ifndef _FX_ARABIC_
 #define _FX_ARABIC_
+
+#include "fx_system.h"
+#include "fx_ucd.h"
+
 class IFX_ArabicChar;
 class IFX_BidiChar;
 #ifdef __cplusplus
