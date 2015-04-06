@@ -373,13 +373,13 @@ void CJS_PropValue::operator >>(double& dValue) const
 
 void CJS_PropValue::operator <<(CJS_Object* pObj)
 {
-	ASSERT(!m_bIsSetting)
+	ASSERT(!m_bIsSetting);
 	CJS_Value::operator = (pObj);
 }
 
 void CJS_PropValue::operator >>(CJS_Object*& ppObj) const
 {
-	ASSERT(m_bIsSetting)
+	ASSERT(m_bIsSetting);
 	ppObj = CJS_Value::operator CJS_Object *();
 }
 
