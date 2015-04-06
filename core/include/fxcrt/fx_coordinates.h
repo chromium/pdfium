@@ -6,6 +6,9 @@
 
 #ifndef _FXCRT_COORDINATES_
 #define _FXCRT_COORDINATES_
+
+#include "fx_basic.h"
+
 template<class baseType> class CFX_PSVTemplate;
 template<class baseType> class CFX_VTemplate;
 template<class baseType> class CFX_PRLTemplate;

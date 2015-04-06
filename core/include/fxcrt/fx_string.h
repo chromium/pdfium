@@ -6,6 +6,9 @@
 
 #ifndef _FX_STRING_H_
 #define _FX_STRING_H_
+
+#include "fx_memory.h"
+
 class CFX_ByteStringC;
 class CFX_ByteString;
 class CFX_WideStringC;

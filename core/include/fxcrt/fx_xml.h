@@ -6,9 +6,9 @@
 
 #ifndef _FX_XML_H_
 #define _FX_XML_H_
-#ifndef _FX_BASIC_H_
+
 #include "fx_basic.h"
-#endif
+
 class CXML_AttrItem : public CFX_Object
 {
 public:

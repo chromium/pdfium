@@ -6,6 +6,9 @@
 
 #ifndef _FX_ARABIC_
 #define _FX_ARABIC_
+
+#include "fx_system.h"
+
 class IFX_BidiChar
 {
 public:

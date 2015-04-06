@@ -6,6 +6,9 @@
 
 #ifndef _FX_UNICODE_
 #define _FX_UNICODE_
+
+#include "fx_system.h"
+
 enum FX_CHARBREAKPROP {
     FX_CBP_OP = 0,
     FX_CBP_CL = 1,

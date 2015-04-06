@@ -6,9 +6,10 @@
 
 #ifndef _FX_STREAM_H_
 #define _FX_STREAM_H_
-#ifndef _FX_MEMORY_H_
+
 #include "fx_memory.h"
-#endif
+#include "fx_string.h"
+
 void* FX_OpenFolder(FX_LPCSTR path);
 void* FX_OpenFolder(FX_LPCWSTR path);
 FX_BOOL FX_GetNextFile(void* handle, CFX_ByteString& filename, FX_BOOL& bFolder);
