@@ -1573,11 +1573,10 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess, FX_BOOL bReParse
             return FALSE;
         }
         FX_INT32 xrefsize = GetDirectInteger(m_pTrailer, FX_BSTRC("Size"));
-        if (xrefsize == 0) {
-            return FALSE;
+        if (xrefsize > 0) {
+            m_CrossRef.SetSize(xrefsize);
+            m_V5Type.SetSize(xrefsize);
         }
-        m_CrossRef.SetSize(xrefsize);
-        m_V5Type.SetSize(xrefsize);
     }
     FX_DWORD dwRet = SetEncryptHandler();
     if (dwRet != PDFPARSE_ERROR_SUCCESS) {
