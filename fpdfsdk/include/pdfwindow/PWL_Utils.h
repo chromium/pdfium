@@ -13,7 +13,7 @@
 #include "PWL_Wnd.h"
 
 class CFX_PathData;
-class CPWL_Color;
+struct CPWL_Color;
 
 template<class T> T PWL_MIN (const T & i, const T & j) { return ((i < j) ? i : j); }
 template<class T> T PWL_MAX (const T & i, const T & j) { return ((i > j) ? i : j); }

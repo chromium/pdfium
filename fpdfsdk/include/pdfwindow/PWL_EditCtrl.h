@@ -11,12 +11,12 @@
 #include "../fxedit/fx_edit.h"
 #include "PWL_Wnd.h"
 
-class CPVT_WordPlace;
 class CPWL_Caret;
 class CPWL_Edit;
 class CPWL_EditCtrl;
 class IFX_Edit;
 class IPWL_Edit_Notify;
+struct CPVT_WordPlace;
 
 enum PWL_EDIT_ALIGNFORMAT_H
 {
