@@ -7,6 +7,9 @@
 #ifndef _COLOR_H_
 #define _COLOR_H_
 
+#include "JS_Define.h"
+// TODO(tsepez): include CPWL_Color.h once its own IWYU is fixed.
+
 class color : public CJS_EmbedObj
 {
 public:

@@ -10,10 +10,6 @@
 #include "../jsapi/fxjs_v8.h"
 #include "resource.h"
 
-typedef v8::Value			JSValue;
-typedef v8::Handle<v8::Object>	JSObject;
-typedef v8::Handle<v8::Object>	JSFXObject;
-
 #include "JS_Object.h"
 #include "JS_Value.h"
 

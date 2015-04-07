@@ -7,7 +7,11 @@
 #ifndef _GLOBAL_H_
 #define _GLOBAL_H_
 
+#include "JS_Define.h"
+
 class CJS_GlobalData;
+class CJS_GlobalVariableArray;
+class CJS_KeyValue;
 
 struct js_global_data
 {

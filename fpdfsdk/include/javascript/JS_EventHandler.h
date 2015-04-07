@@ -7,7 +7,14 @@
 #ifndef _JS_EVENTHANDLER_H_
 #define _JS_EVENTHANDLER_H_
 
+#include "../../../core/include/fxcrt/fx_string.h"
+#include "../../../core/include/fxcrt/fx_system.h"
+
 class CJS_Context;
+class CPDFSDK_Annot;
+class CPDFSDK_Document;
+class CPDF_Bookmark;
+class CPDF_FormField;
 class Field;
 
 enum JS_EVENT_T

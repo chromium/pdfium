@@ -4,11 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+// PDFium wrapper around V8 APIs. PDFium code should include this file rather
+// than including V8 headers directly.
+
 #ifndef FXJSAPI_H
 #define FXJSAPI_H
 
 #include <v8.h>
 #include "../../../core/include/fxcrt/fx_string.h"  // For CFX_WideString
+
+typedef v8::Value			JSValue;
+typedef v8::Handle<v8::Object>	JSObject;
+typedef v8::Handle<v8::Object>	JSFXObject;
 
 enum FXJSOBJTYPE
 {

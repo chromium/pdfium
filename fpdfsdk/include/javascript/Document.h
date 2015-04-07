@@ -7,7 +7,7 @@
 #ifndef _DOCUMENT_H_
 #define _DOCUMENT_H_
 
-
+#include "JS_Define.h"
 
 class PrintParamsObj : public CJS_EmbedObj
 {

@@ -7,6 +7,8 @@
 #ifndef _JS_GLOBALDATA_H_
 #define _JS_GLOBALDATA_H_
 
+#include "../../../core/include/fxcrt/fx_basic.h"
+
 #define JS_GLOBALDATA_TYPE_NUMBER		0
 #define JS_GLOBALDATA_TYPE_BOOLEAN		1
 #define JS_GLOBALDATA_TYPE_STRING		2
@@ -14,8 +16,7 @@
 #define JS_GLOBALDATA_TYPE_NULL			4
 
 class CJS_KeyValue;
-class CJS_GlobalVariableArray;
-class CJS_GlobalData_Element;
+class CPDFDoc_Environment;
 
 class CJS_GlobalVariableArray
 {

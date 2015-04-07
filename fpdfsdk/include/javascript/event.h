@@ -7,6 +7,8 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
+#include "JS_Define.h"
+
 class event : public CJS_EmbedObj
 {
 public:
