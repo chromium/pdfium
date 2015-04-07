@@ -7,6 +7,9 @@
 #ifndef _JS_VALUE_H_
 #define _JS_VALUE_H_
 
+#include "../jsapi/fxjs_v8.h"
+#include "../../../core/include/fxcrt/fx_basic.h"
+
 class CJS_Array;
 class CJS_Date;
 class CJS_Document;

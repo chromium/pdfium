@@ -7,6 +7,10 @@
 #ifndef _JS_CONTEXT_H_
 #define _JS_CONTEXT_H_
 
+#include "../../../core/include/fxcrt/fx_system.h"
+#include "../../../core/include/fxcrt/fx_string.h"
+#include "IJavaScript.h"
+
 class CJS_EventHandler;
 class CJS_Runtime;
 

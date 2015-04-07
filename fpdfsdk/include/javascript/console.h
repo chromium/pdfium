@@ -7,6 +7,8 @@
 #ifndef _CONSOLE_H_
 #define _CONSOLE_H_
 
+#include "JS_Define.h"
+
 class console : public CJS_EmbedObj
 {
 public:

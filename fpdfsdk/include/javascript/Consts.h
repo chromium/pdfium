@@ -7,6 +7,8 @@
 #ifndef _CONSTS_H_
 #define _CONSTS_H_
 
+#include "JS_Define.h"
+
 /* ------------------------------ border ------------------------------ */
 
 class CJS_Border : public CJS_Object

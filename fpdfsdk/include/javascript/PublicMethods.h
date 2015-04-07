@@ -7,6 +7,8 @@
 #ifndef _PUBLICMETHODS_H_
 #define _PUBLICMETHODS_H_
 
+#include "JS_Define.h"
+
 class CJS_PublicMethods : public CJS_Object
 {
 public:

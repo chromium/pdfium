@@ -10,6 +10,7 @@
 #include "../fsdk_define.h"  // For FX_UINT
 #include "../fsdk_mgr.h"  // For CPDFDoc_Environment
 #include "../fx_systemhandler.h"  // For IFX_SystemHandler
+#include "../jsapi/fxjs_v8.h"
 
 class CPDFSDK_PageView;
 class CJS_Object;

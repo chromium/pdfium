@@ -746,7 +746,6 @@
         'fpdfsdk/include/javascript/JS_Define.h',
         'fpdfsdk/include/javascript/JS_EventHandler.h',
         'fpdfsdk/include/javascript/JS_GlobalData.h',
-        'fpdfsdk/include/javascript/JS_Module.h',
         'fpdfsdk/include/javascript/JS_Object.h',
         'fpdfsdk/include/javascript/JS_Runtime.h',
         'fpdfsdk/include/javascript/JS_Value.h',

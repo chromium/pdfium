@@ -7,6 +7,11 @@
 #ifndef _FIELD_H_
 #define _FIELD_H_
 
+#include <string>  // For std::wstring.
+
+// TODO(tsepez): include PWL_Wnd.h for PWL_Color after fixing its IWYU.
+#include "JS_Define.h"
+
 class Document;
 
 enum FIELD_PROP

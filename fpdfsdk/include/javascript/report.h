@@ -7,6 +7,8 @@
 #ifndef _REPORT_H_
 #define _REPORT_H_
 
+#include "JS_Define.h"
+
 class Report : public CJS_EmbedObj
 {
 public:

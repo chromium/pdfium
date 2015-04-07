@@ -7,6 +7,10 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
+#include <string>  // For std::wstring.
+
+#include "JS_Define.h"
+
 class util : public CJS_EmbedObj
 {
 public:

@@ -7,6 +7,13 @@
 #ifndef _JS_RUNTIME_H_
 #define _JS_RUNTIME_H_
 
+#include "../../../core/include/fxcrt/fx_basic.h"
+#include "../jsapi/fxjs_v8.h"
+#include "IJavaScript.h"
+#include "JS_EventHandler.h"
+
+class CJS_Context;
+
 class CJS_FieldEvent
 {
 public:
