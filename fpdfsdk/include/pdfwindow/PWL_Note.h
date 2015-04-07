@@ -7,22 +7,26 @@
 #ifndef _PWL_NOTE_H_
 #define _PWL_NOTE_H_
 
-class IPWL_NoteNotify;
+#include "PWL_Button.h"
+#include "PWL_Edit.h"
+#include "PWL_ListCtrl.h"
+#include "PWL_ScrollBar.h"
+#include "PWL_Wnd.h"
+
+class CPWL_Label;
+class CPWL_Note;
+class CPWL_NoteItem;
+class CPWL_Note_CloseBox;
+class CPWL_Note_Contents;
+class CPWL_Note_Edit;
+class CPWL_Note_Icon;
+class CPWL_Note_LBBox;
+class CPWL_Note_Options;
+class CPWL_Note_RBBox;
 class IPWL_NoteHandler;
 class IPWL_NoteItem;
-class CPWL_NoteItem;
-class CPWL_Note;
-class CPWL_Label;
-class CPWL_Edit;
-class CPWL_Note_Icon;
-class CPWL_Note_CloseBox;
-class CPWL_Note_LBBox;
-class CPWL_Note_RBBox;
-class CPWL_Note_Edit;
-class CPWL_Note_Options;
-class CPWL_Note_Contents;
+class IPWL_NoteNotify;
 class IPopup_Note;
-
 
 class IPWL_NoteNotify
 {

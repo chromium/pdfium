@@ -7,6 +7,34 @@
 #ifndef _FX_EDIT_H_
 #define _FX_EDIT_H_
 
+#include "../../../core/include/fxcrt/fx_basic.h"
+#include "../../../core/include/fxge/fx_dib.h"
+
+class CFX_RenderDevice;
+class CPDF_Font;
+class CPDF_Matrix;
+class CPDF_PageObjects;
+class CPDF_Point;
+class CPDF_Rect;
+class CPDF_TextObject;
+class IFX_Edit;
+class IFX_Edit_FontMap;
+class IFX_Edit_Iterator;
+class IFX_Edit_Notify;
+class IFX_Edit_UndoItem;
+class IFX_List;
+class IFX_List_Notify;
+class IFX_SystemHandler;
+class IPDF_VariableText;
+class IPDF_VariableText_Provider;
+struct CPVT_Line;
+struct CPVT_SecProps;
+struct CPVT_Section;
+struct CPVT_Word;
+struct CPVT_WordPlace;
+struct CPVT_WordProps;
+struct CPVT_WordRange;
+
 #define PVTWORD_STYLE_NORMAL				0x0000L
 #define PVTWORD_STYLE_HIGHLIGHT				0x0001L
 #define PVTWORD_STYLE_UNDERLINE				0x0002L
@@ -31,15 +59,6 @@
 #ifndef DEFAULT_CHARSET
 #define DEFAULT_CHARSET         1
 #endif 
-
-class IFX_Edit_FontMap;
-class IFX_Edit_Notify;
-class IFX_Edit_Iterator;
-class IFX_Edit_UndoItem;
-class IFX_Edit;
-class IFX_List_Notify;
-class IFX_List;
-class IFX_SystemHandler;
 
 class IFX_Edit_FontMap
 {

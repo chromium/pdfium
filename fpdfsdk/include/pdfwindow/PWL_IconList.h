@@ -7,6 +7,10 @@
 #ifndef _PWL_IconList_H_
 #define _PWL_IconList_H_
 
+#include "../../../core/include/fxcrt/fx_string.h"
+#include "PWL_ListCtrl.h"
+#include "PWL_Wnd.h"
+
 class IPWL_IconList_Notify;
 class CPWL_IconList_Item;
 class CPWL_IconList_Content;

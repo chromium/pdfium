@@ -7,6 +7,10 @@
 #ifndef _PWL_COMBOBOX_H_
 #define _PWL_COMBOBOX_H_
 
+#include "PWL_Edit.h"
+#include "PWL_ListBox.h"
+#include "PWL_Wnd.h"
+
 class CPWL_CBEdit : public CPWL_Edit
 {
 public:

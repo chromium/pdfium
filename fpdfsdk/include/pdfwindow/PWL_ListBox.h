@@ -7,6 +7,9 @@
 #ifndef _PWL_LISTBOX_H_
 #define _PWL_LISTBOX_H_
 
+#include "../fxedit/fx_edit.h"
+#include "PWL_Wnd.h"
+
 class CPDF_ListCtrl;
 class CPWL_List_Notify;
 class CPWL_ListBox;

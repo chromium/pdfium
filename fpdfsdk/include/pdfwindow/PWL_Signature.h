@@ -7,9 +7,11 @@
 #ifndef _PWL_SIGNATURE_H_
 #define _PWL_SIGNATURE_H_
 
-class CPWL_Signature;
+#include "PWL_Icon.h"
+#include "PWL_Wnd.h"
+
+class CFX_DIBSource;
 class CPWL_Label;
-class CPWL_Signature_Image;
 
 class CPWL_Signature_Image : public CPWL_Image
 {
