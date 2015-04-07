@@ -7,6 +7,7 @@
 #ifndef _FXET_EDIT_H_
 #define _FXET_EDIT_H_
 
+#include "../../../core/include/fpdfdoc/fpdf_vt.h"
 #include "fx_edit.h"
 
 class CFX_Edit_Page;

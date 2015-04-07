@@ -7,6 +7,9 @@
 #ifndef _PWL_ICON_H_
 #define _PWL_ICON_H_
 
+#include "../../../core/include/fxcrt/fx_string.h"
+#include "PWL_Wnd.h"
+
 class PWL_CLASS CPWL_Image : public CPWL_Wnd
 {
 public:

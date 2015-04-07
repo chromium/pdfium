@@ -7,6 +7,8 @@
 #ifndef _PWL_SCROLLBAR_H_
 #define _PWL_SCROLLBAR_H_
 
+#include "PWL_Wnd.h"
+
 class CPWL_SBButton;
 class CPWL_ScrollBar;
 

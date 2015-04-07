@@ -6,16 +6,20 @@
 
 #ifndef _FPDF_VT_H_
 #define _FPDF_VT_H_
-#include "../fxcrt/fx_basic.h"
+
 #include "../fpdfapi/fpdf_parser.h"
-struct CPVT_WordPlace;
-struct CPVT_WordRange;
-struct CPVT_Word;
+#include "../fxcrt/fx_basic.h"
+#include "../fxge/fx_dib.h"
+
+class IPDF_VariableText;
+class IPDF_VariableText_Iterator;
+class IPDF_VariableText_Provider;
 struct CPVT_Line;
 struct CPVT_Section;
-class IPDF_VariableText_Provider;
-class IPDF_VariableText_Iterator;
-class IPDF_VariableText;
+struct CPVT_Word;
+struct CPVT_WordPlace;
+struct CPVT_WordRange;
+
 struct CPVT_WordPlace {
 
     CPVT_WordPlace() : nSecIndex(-1), nLineIndex(-1), nWordIndex(-1)

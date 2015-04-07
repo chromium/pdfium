@@ -7,6 +7,11 @@
 #ifndef _PWL_FONTMAP_H_
 #define _PWL_FONTMAP_H_
 
+#include "../fxedit/fx_edit.h"
+
+class CPDF_Document;
+class IFX_SystemHandler;
+
 struct CPWL_FontMap_Data
 {
 	CPDF_Font*			pFont;
@@ -53,7 +58,6 @@ struct CPWL_FontMap_Native
 	#endif
 #endif
 
-class IFX_SystemHandler;
 class PWL_CLASS CPWL_FontMap : public IFX_Edit_FontMap
 {
 public:

@@ -7,15 +7,19 @@
 #ifndef _PWL_WND_H_
 #define _PWL_WND_H_
 
-class IPWL_Provider;
-class CPWL_Wnd;
+#include "../../../core/include/fxcrt/fx_basic.h"
+#include "../../../core/include/fpdfdoc/fpdf_doc.h"
+#include "../fx_systemhandler.h"
+
 class CPWL_MsgControl;
-class CPWL_Wnd;
 class CPWL_ScrollBar;
 class CPWL_Timer;
 class CPWL_TimerHandler;
-class IPWL_SpellCheck;
+class CPWL_Wnd;
+class IFX_Edit_FontMap;
 class IFX_SystemHandler;
+class IPWL_Provider;
+class IPWL_SpellCheck;
 
 #ifdef FX_READER_DLL
 	#ifdef PWL_EXPORT

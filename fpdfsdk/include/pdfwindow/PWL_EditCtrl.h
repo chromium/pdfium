@@ -7,6 +7,17 @@
 #ifndef _PWL_EDITCTRL_H_
 #define _PWL_EDITCTRL_H_
 
+#include "../../../core/include/fxcrt/fx_string.h"
+#include "../fxedit/fx_edit.h"
+#include "PWL_Wnd.h"
+
+class CPWL_Caret;
+class CPWL_Edit;
+class CPWL_EditCtrl;
+class IFX_Edit;
+class IPWL_Edit_Notify;
+struct CPVT_WordPlace;
+
 enum PWL_EDIT_ALIGNFORMAT_H
 {
 	PEAH_LEFT = 0,
@@ -16,16 +27,10 @@ enum PWL_EDIT_ALIGNFORMAT_H
 
 enum PWL_EDIT_ALIGNFORMAT_V
 {
-	PEAV_TOP = 0,	
+	PEAV_TOP = 0,
 	PEAV_CENTER,
 	PEAV_BOTTOM
 };
-
-class IPWL_Edit_Notify;
-class CPWL_EditCtrl;
-class CPWL_Caret;
-class IFX_Edit;
-class CPWL_Edit;
 
 class IPWL_Edit_Notify
 {

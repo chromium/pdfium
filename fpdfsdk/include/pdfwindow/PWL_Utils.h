@@ -7,6 +7,14 @@
 #ifndef _PWL_UTILS_H_
 #define _PWL_UTILS_H_
 
+#include "../../../core/include/fpdfapi/fpdf_parser.h"  // For CPDF_Point.
+#include "../../../core/include/fpdfdoc/fpdf_vt.h"  // For CPVT_WordRange.
+#include "../fxedit/fx_edit.h"
+#include "PWL_Wnd.h"
+
+class CFX_PathData;
+struct CPWL_Color;
+
 template<class T> T PWL_MIN (const T & i, const T & j) { return ((i < j) ? i : j); }
 template<class T> T PWL_MAX (const T & i, const T & j) { return ((i > j) ? i : j); }
 

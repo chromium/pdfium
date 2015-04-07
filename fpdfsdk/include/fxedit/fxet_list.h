@@ -7,6 +7,7 @@
 #ifndef _FXET_LIST_H_
 #define _FXET_LIST_H_
 
+#include "../../../core/include/fpdfapi/fpdf_parser.h"  // For CPDF_Point.
 #include "fx_edit.h"
 
 class IFX_Edit;

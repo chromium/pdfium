@@ -7,8 +7,12 @@
 #ifndef _PWL_EDIT_H_
 #define _PWL_EDIT_H_
 
-class IPWL_Filler_Notify;
+#include "../../../core/include/fxcrt/fx_basic.h"
+#include "PWL_EditCtrl.h"
+#include "PWL_Wnd.h"
+
 class CPWL_Edit;
+class IPWL_Filler_Notify;
 class IPWL_SpellCheck;
 
 class IPWL_Filler_Notify
