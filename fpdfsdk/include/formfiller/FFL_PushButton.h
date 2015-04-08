@@ -7,6 +7,8 @@
 #ifndef _FFL_PUSHBUTTON_H_
 #define _FFL_PUSHBUTTON_H_
 
+#include "FFL_FormFiller.h"
+
 class CFFL_PushButton : public CFFL_Button
 {
 public:

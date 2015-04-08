@@ -15,7 +15,8 @@
 
 class CBA_FontMap;
 
-class CFFL_EditUndoItem //: public IUndoItem
+
+class CFFL_EditUndoItem
 {
 public:
 	CFFL_EditUndoItem(CPWL_Edit* pEdit);

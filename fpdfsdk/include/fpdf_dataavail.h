@@ -7,10 +7,9 @@
 #ifndef _FPDF_DATAAVAIL_H_
 #define _FPDF_DATAAVAIL_H_
 
-#ifndef _FPDFVIEW_H_
-#include "fpdfview.h"
-#endif
+#include <stddef.h>  // For size_t.
 
+#include "fpdfview.h"
 
 /** The result of the process which check linearized PDF. */
 #define FSDK_IS_LINEARIZED			1

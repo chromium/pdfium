@@ -4,10 +4,14 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if !defined(_FFL_NOTIFY_H_)
+#ifndef _FFL_NOTIFY_H_
 #define _FFL_NOTIFY_H_
 
+#include "../../../core/include/fpdfdoc/fpdf_doc.h"
+#include "../../../core/include/fxcrt/fx_string.h"
+
 class CFFL_FormFiller;
+class CPDF_FormField;
 
 class CFFL_Notify
 {
@@ -38,7 +42,6 @@ public:
 	FX_BOOL									IsNotifying() const {return m_nNotifyFlag > 0;}
 
 private:
-//	CReader_InterForm *						GetReaderInterForm();
  	FX_BOOL									DoAAction(CPDF_AAction::AActionType eAAT, FX_BOOL & bExit);
  	FX_BOOL									FindAAction(CPDF_AAction::AActionType eAAT,CPDF_Action & action);
  	FX_BOOL									FindAAction(CPDF_AAction aaction,CPDF_AAction::AActionType eAAT,CPDF_Action & action);

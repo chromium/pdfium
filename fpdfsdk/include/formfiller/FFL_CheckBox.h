@@ -7,6 +7,8 @@
 #ifndef _FFL_CHECKBOX_H_
 #define _FFL_CHECKBOX_H_
 
+#include "FFL_FormFiller.h"
+
 class CFFL_CheckBox : public CFFL_Button
 {
 public:

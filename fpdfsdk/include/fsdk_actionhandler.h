@@ -7,8 +7,16 @@
 #ifndef _FSDK_ACTIONHANDLER_H_
 #define _FSDK_ACTIONHANDLER_H_
 
+#include "../../core/include/fpdfdoc/fpdf_doc.h"
+#include "../../core/include/fxcrt/fx_string.h"
+#include "fsdk_baseform.h"
 
+class CFX_PtrList;
 class CPDFDoc_Environment;
+class CPDFSDK_Annot;
+class CPDFSDK_Document;
+class CPDF_Bookmark;
+class CPDF_Dictionary;
 class IFXJS_Runtime;
 
 class CPDFSDK_FormActionHandler

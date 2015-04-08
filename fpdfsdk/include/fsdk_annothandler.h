@@ -7,11 +7,20 @@
 #ifndef _FSDK_ANNOTHANDLER_H_
 #define _FSDK_ANNOTHANDLER_H_
 
+#include "../../core/include/fxcrt/fx_basic.h"
+
 #define FSDK_XFAWIDGET_TYPENAME "XFAWidget"
 
-class CPDFDoc_Environment;
 class CFFL_IFormFiller;
+class CFX_RenderDevice;
+class CPDFDoc_Environment;
+class CPDFSDK_Annot;
 class CPDFSDK_PageView;
+class CPDF_Annot;
+class CPDF_Matrix;
+class CPDF_Point;
+class CPDF_Rect;
+
 class IPDFSDK_AnnotHandler
 {
 

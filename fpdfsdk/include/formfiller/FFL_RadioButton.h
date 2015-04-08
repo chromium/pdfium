@@ -7,6 +7,8 @@
 #ifndef _FFL_RADIOBUTTON_H_
 #define _FFL_RADIOBUTTON_H_
 
+#include "FFL_FormFiller.h"
+
 class CFFL_RadioButton : public CFFL_Button
 {
 public:
