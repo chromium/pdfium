@@ -7,7 +7,10 @@
 #ifndef _FFL_LISTBOX_H_
 #define _FFL_LISTBOX_H_
 
+#include "FFL_FormFiller.h"
+
 class  CBA_FontMap;
+
 class CFFL_ListBox : public CFFL_FormFiller
 {
 public:

@@ -5,7 +5,13 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef _FFL_COMBOBOX_H_
- #define _FFL_COMBOBOX_H_
+#define _FFL_COMBOBOX_H_
+
+#include "../../../core/include/fxcrt/fx_string.h"
+#include "FFL_FormFiller.h"
+
+class CBA_FontMap;
+class CPDFSDK_Document;
 
 struct FFL_ComboBoxState
 {
@@ -14,7 +20,6 @@ struct FFL_ComboBoxState
 	int nEnd;
 	CFX_WideString sValue;
 };
-class CBA_FontMap;
 
 class CFFL_ComboBox : public CFFL_FormFiller, public IPWL_FocusHandler, public IPWL_Edit_Notify
 {

@@ -7,10 +7,9 @@
 #ifndef _RAO_FONTMAP_H_
 #define _RAO_FONTMAP_H_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+#include "../pdfwindow/PWL_FontMap.h"
 
+class CPDF_Dictionary;
 class CPDFSDK_Annot;
 
 class CBA_FontMap : public CPWL_FontMap

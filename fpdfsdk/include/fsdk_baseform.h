@@ -13,13 +13,21 @@
 #include <ctime>
 #endif
 
-class CPDFSDK_Document;
-class  CPDFSDK_DateTime;
-struct CPWL_Color;
-class CFFL_FormFiller;
-class CPDFSDK_PageView;
-class CPDFSDK_InterForm;
+#include "../../core/include/fpdfapi/fpdf_parser.h"
+#include "../../core/include/fpdfdoc/fpdf_doc.h"
+#include "../../core/include/fxcrt/fx_basic.h"
+#include "../../core/include/fxge/fx_dib.h"
+#include "fsdk_baseannot.h"
 
+class CFFL_FormFiller;
+class CPDFSDK_Annot;
+class CPDFSDK_DateTime;
+class CPDFSDK_Document;
+class CPDFSDK_InterForm;
+class CPDFSDK_PageView;
+class CPDF_Action;
+class CPDF_FormField;
+struct CPWL_Color;
 
 typedef struct _PDFSDK_FieldAction
 {
