@@ -1,0 +1,3 @@
+# List of tests to be skipped on linux platforms, one per line.
+# Try to keep the file alphabetized.
+format_custom_format.pdf
