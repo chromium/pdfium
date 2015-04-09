@@ -830,6 +830,12 @@ FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const
                 break;
             }
     }
+	
+    if (unicode < 0x80) {
+        return static_cast<FX_DWORD>(unicode);
+    } else if (m_pCMap->m_Coding == CIDCODING_CID) {
+        return 0;
+    }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     FX_BYTE buffer[32];
     int ret = FXSYS_WideCharToMultiByte(g_CharsetCPs[m_pCMap->m_Coding], 0, &unicode, 1, (char*)buffer, 4, NULL, NULL);
@@ -840,15 +846,10 @@ FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const
     }
     return 0;
 #endif
-    if (unicode < 0x80) {
-        return (FX_DWORD)unicode;
-    } else {
-        if (m_pCMap->m_pEmbedMap) {
-            return _EmbeddedCharcodeFromUnicode(m_pCMap->m_pEmbedMap, m_pCMap->m_Charset, unicode);
-        } else {
-            return 0;
-        }
+    if (m_pCMap->m_pEmbedMap) {
+        return _EmbeddedCharcodeFromUnicode(m_pCMap->m_pEmbedMap, m_pCMap->m_Charset, unicode);
     }
+    return 0;
 }
 static void FT_UseCIDCharmap(FXFT_Face face, int coding)
 {
