@@ -42,6 +42,7 @@
     'target_arch%': '<(target_arch)',
     'werror%': '-Werror',
     'v8_optimized_debug%': 0,
+    'v8_use_external_startup_data%': 0,
     'icu_gyp_path': '../v8/third_party/icu/icu.gyp',
     'conditions': [
       ['OS == "win"', {
@@ -57,7 +58,7 @@
       'Debug': {
         'cflags': [
           '-g',
-          '-O0',          
+          '-O0',
           '-fdata-sections',
           '-ffunction-sections',
         ],
@@ -140,9 +141,6 @@
         'msvs_configuration_platform': 'x64',
       },
     },
-    'defines!': [
-      'DEBUG',
-    ],
     'cflags': [
       '-Wall',
       '-W',
@@ -264,6 +262,13 @@
         ],  # target_conditions
       },  # target_defaults
     }],  # OS=="mac"
+    ['v8_use_external_startup_data==1', {
+      'target_defaults': {
+        'defines': [
+          'V8_USE_EXTERNAL_STARTUP_DATA',
+        ],
+      },
+    }],  # v8_use_external_startup_data==1
   ],
   'xcode_settings': {
     # See comment in Chromium's common.gypi for why this is needed.
