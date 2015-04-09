@@ -10,6 +10,7 @@ Makefile
 .DS_Store
 .gclient
 .gclient_entries
+*.aps
 *.filters
 *.mk
 *.opensdf
