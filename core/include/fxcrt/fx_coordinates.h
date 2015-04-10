@@ -132,9 +132,10 @@ public:
     typedef CFX_PSVTemplate<baseType>	FXT_POINT;
     typedef CFX_PSVTemplate<baseType>	FXT_SIZE;
     typedef CFX_VTemplate<baseType>		FXT_VECTOR;
-    void		Set(baseType x, baseType y)
+    void		Set(baseType newx, baseType newy)
     {
-        FXT_PSV::x = x, FXT_PSV::y = y;
+        FXT_PSV::x = newx;
+        FXT_PSV::y = newy;
     }
     void		Set(const FXT_PSV &psv)
     {
@@ -165,26 +166,26 @@ public:
         FXT_PSV::x = ((baseType)FXT_PSV::x) / fLen;
         FXT_PSV::y = ((baseType)FXT_PSV::y) / fLen;
     }
-    baseType	DotProduct(baseType x, baseType y) const
+    baseType	DotProduct(baseType otherx, baseType othery) const
     {
-        return FXT_PSV::x * x + FXT_PSV::y * y;
+        return FXT_PSV::x * otherx + FXT_PSV::y * othery;
     }
     baseType	DotProduct(const FXT_VECTOR &v) const
     {
         return FXT_PSV::x * v.x + FXT_PSV::y * v.y;
     }
-    FX_BOOL		IsParallel(baseType x, baseType y) const
+    FX_BOOL		IsParallel(baseType otherx, baseType othery) const
     {
-        baseType t = FXT_PSV::x * y - FXT_PSV::y * x;
+        baseType t = FXT_PSV::x * othery - FXT_PSV::y * otherx;
         return FXSYS_fabs(t) < 0x0001f;
     }
     FX_BOOL		IsParallel(const FXT_VECTOR &v) const
     {
         return IsParallel(v.x, v.y);
     }
-    FX_BOOL		IsPerpendicular(baseType x, baseType y) const
+    FX_BOOL		IsPerpendicular(baseType otherx, baseType othery) const
     {
-        baseType t = DotProduct(x, y);
+        baseType t = DotProduct(otherx, othery);
         return FXSYS_fabs(t) < 0x0001f;
     }
     FX_BOOL		IsPerpendicular(const FXT_VECTOR &v) const
