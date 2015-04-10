@@ -976,9 +976,9 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
                         nItemLen = nPrecision + nWidth + 128;
                     } else {
                         double f;
-                        char pszTemp[256] = {0};
+                        char pszTemp[256];
                         f = va_arg(argList, double);
-                        FXSYS_snprintf(pszTemp, sizeof(pszTemp) - 1, "%*.*f", nWidth, nPrecision + 6, f );
+                        FXSYS_snprintf(pszTemp, sizeof(pszTemp), "%*.*f", nWidth, nPrecision + 6, f );
                         nItemLen = (FX_STRSIZE)FXSYS_strlen(pszTemp);
                     }
                     break;
