@@ -169,6 +169,24 @@ FX_FLOAT FX_atof(FX_BSTR strc)
     }
     return bNegative ? -value : value;
 }
+
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
+void FXSYS_snprintf(char *str, size_t size, _Printf_format_string_ const char* fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    FXSYS_vsnprintf(str, size, fmt, ap);
+    va_end(ap);
+}
+void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap)
+{
+    (void) _vsnprintf(str, size, fmt, ap);
+    if (size) {
+        str[size - 1] = 0;
+    }
+}
+#endif  // _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
+
 static FX_BOOL FX_IsDigit(FX_BYTE ch)
 {
     return (ch >= '0' && ch <= '9') ? TRUE : FALSE;

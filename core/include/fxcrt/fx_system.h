@@ -34,8 +34,9 @@
 #endif
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define _CRT_SECURE_NO_WARNINGS
+#include <sal.h>
 #include <windows.h>
-#endif
+#endif  // _FXM_PLATFORM_WINDOWS_
 #define _FX_W32_		1
 #define _FX_W64_		2
 #ifndef _FX_WORDSIZE_
@@ -137,13 +138,18 @@ typedef FX_UINT64				FX_QWORD;
 #define FX_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define FX_MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define FX_PI	3.1415926535897932384626433832795f
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#define FXSYS_snprintf	_snprintf
-#define FXSYS_vsnprintf	_vsnprintf
+
+// NOTE: prevent use of the return value from snprintf() since some platforms
+// have different return values (e.g. windows _vsnprintf()), and provide
+// versions that always NUL-terminate.
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
+void FXSYS_snprintf(char *str, size_t size, _Printf_format_string_ const char* fmt, ...);
+void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap);
 #else
-#define FXSYS_snprintf	snprintf
-#define FXSYS_vsnprintf	vsnprintf
+#define FXSYS_snprintf	(void) snprintf
+#define FXSYS_vsnprintf	(void) vsnprintf
 #endif
+
 #define FXSYS_sprintf	DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf	DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
 #define FXSYS_strchr	strchr
