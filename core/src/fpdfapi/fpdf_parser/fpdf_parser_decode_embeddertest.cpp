@@ -7,9 +7,13 @@
 
 #include "../../../../fpdfsdk/include/fpdfview.h"
 #include "../../../../testing/fx_string_testhelpers.h"
-#include "../../../include/fxcrt/fx_basic.h"
 #include "../../../include/fpdfapi/fpdf_parser.h"
+#include "../../../include/fxcrt/fx_basic.h"
+#include "../../../testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+class FPDFParserDecodeEmbeddertest : public EmbedderTest {
+};
 
 // NOTE: python's zlib.compress() and zlib.decompress() may be useful for
 // external validation of the FlateEncode/FlateDecode test cases.
@@ -18,7 +22,7 @@
   { (const unsigned char*)input_literal, sizeof(input_literal) - 1, \
     (const unsigned char*)expected_literal, sizeof(expected_literal) - 1 }
 
-TEST(ParserDecode, FlateEncode) {
+TEST_F(FPDFParserDecodeEmbeddertest, FlateEncode) {
   struct FlateEncodeCase {
     const unsigned char* input;
     unsigned int input_size;
@@ -42,7 +46,6 @@ TEST(ParserDecode, FlateEncode) {
               ),
   };
 
-  FPDF_InitLibrary();
   for (size_t i = 0; i < FX_ArraySize(flate_encode_cases); ++i) {
     FlateEncodeCase* ptr = &flate_encode_cases[i];
     unsigned char* result;
@@ -52,10 +55,9 @@ TEST(ParserDecode, FlateEncode) {
               std::string((const char*)result, result_size))
         << " for case " << i;
   }
-  FPDF_DestroyLibrary();
 }
 
-TEST(ParserDecode, FlateDecode) {
+TEST_F(FPDFParserDecodeEmbeddertest, FlateDecode) {
   struct FlateDecodeCase {
     const unsigned char* input;
     unsigned int input_size;
@@ -81,7 +83,6 @@ TEST(ParserDecode, FlateDecode) {
               ),
   };
 
-  FPDF_InitLibrary();
   for (size_t i = 0; i < FX_ArraySize(flate_decode_cases); ++i) {
     FlateDecodeCase* ptr = &flate_decode_cases[i];
     unsigned char* result;
@@ -91,7 +92,6 @@ TEST(ParserDecode, FlateDecode) {
               std::string((const char*)result, result_size))
         << " for case " << i;
   }
-  FPDF_DestroyLibrary();
 }
 
 

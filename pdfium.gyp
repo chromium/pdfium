@@ -835,7 +835,6 @@
         '<(DEPTH)'
       ],
       'sources': [
-        'core/src/fpdfapi/fpdf_parser/fpdf_parser_decode_unittest.cpp',
         'core/src/fxcodec/codec/fx_codec_jpx_unittest.cpp',
         'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
         'core/src/fxcrt/fx_basic_wstring_unittest.cpp',
@@ -855,6 +854,7 @@
         '<(DEPTH)'
       ],
       'sources': [
+        'core/src/fpdfapi/fpdf_parser/fpdf_parser_decode_embeddertest.cpp',
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_parser_embeddertest.cpp',
         'fpdfsdk/src/fpdf_dataavail_embeddertest.cpp',
         'fpdfsdk/src/fpdfdoc_embeddertest.cpp',
