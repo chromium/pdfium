@@ -1039,7 +1039,11 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL 
             CPDF_Object* pCountObj = pArray->GetElement(i * 2 + 1);
             if (pStartNumObj && pStartNumObj->GetType() == PDFOBJ_NUMBER
                 && pCountObj && pCountObj->GetType() == PDFOBJ_NUMBER) {
-                arrIndex.push_back(std::make_pair(pStartNumObj->GetInteger(), pCountObj->GetInteger()));
+                int nStartNum = pStartNumObj->GetInteger();
+                int nCount = pCountObj->GetInteger();
+                if (nStartNum >= 0 && nCount > 0) {
+                    arrIndex.push_back(std::make_pair(nStartNum, nCount));
+                }
             }
         }
     }
