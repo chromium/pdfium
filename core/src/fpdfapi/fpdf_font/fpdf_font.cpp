@@ -213,7 +213,7 @@ CFX_WideString CPDF_Font::DecodeString(const CFX_ByteString& str) const
     FX_LPCSTR src_buf = str;
     int src_pos = 0;
     while (src_pos < src_len) {
-        FX_DWORD charcode = GetNextChar(src_buf, src_pos);
+        FX_DWORD charcode = GetNextChar(src_buf, src_len, src_pos);
         CFX_WideString unicode = UnicodeFromCharCode(charcode);
         if (!unicode.IsEmpty()) {
             result += unicode;
@@ -379,7 +379,7 @@ int CPDF_Font::GetStringWidth(FX_LPCSTR pString, int size)
     int offset = 0;
     int width = 0;
     while (offset < size) {
-        FX_DWORD charcode = GetNextChar(pString, offset);
+        FX_DWORD charcode = GetNextChar(pString, size, offset);
         width += GetCharWidthF(charcode);
     }
     return width;

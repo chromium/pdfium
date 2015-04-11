@@ -181,7 +181,7 @@ CTextBaseLine* CTextPage::InsertTextBox(CTextBaseLine* pBaseLine, FX_FLOAT basey
     FX_LPCSTR pStr = str;
     int len = str.GetLength(), offset = 0;
     while (offset < len) {
-        FX_DWORD ch = pFont->GetNextChar(pStr, offset);
+        FX_DWORD ch = pFont->GetNextChar(pStr, len, offset);
         CFX_WideString unicode_str = pFont->UnicodeFromCharCode(ch);
         if (unicode_str.IsEmpty()) {
             text += (FX_WCHAR)ch;
