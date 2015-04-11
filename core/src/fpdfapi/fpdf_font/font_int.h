@@ -95,8 +95,8 @@ public:
     FX_WORD					CIDFromCharCode(FX_DWORD charcode) const;
     FX_DWORD				CharCodeFromCID(FX_WORD CID) const;
     int						GetCharSize(FX_DWORD charcode) const;
-    FX_DWORD				GetNextChar(const FX_CHAR* pString, int& offset) const;
-    int						CountChar(const FX_CHAR* pString, int size) const;
+    FX_DWORD				GetNextChar(FX_LPCSTR pString, int nStrLen, int& offset) const;
+    int						CountChar(FX_LPCSTR pString, int size) const;
     int						AppendChar(FX_LPSTR str, FX_DWORD charcode) const;
     typedef enum {OneByte, TwoBytes, MixedTwoBytes, MixedFourBytes} CodingScheme;
 protected:

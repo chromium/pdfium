@@ -247,7 +247,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs, FX_FLOAT* pKernin
             FX_LPCSTR segment = pStrs[i];
             int offset = 0, len = pStrs[i].GetLength();
             while (offset < len) {
-                m_pCharCodes[index++] = pFont->GetNextChar(segment, offset);
+                m_pCharCodes[index++] = pFont->GetNextChar(segment, len, offset);
             }
             if (i != nsegs - 1) {
                 m_pCharPos[index - 1] = pKerning[i];
@@ -256,7 +256,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs, FX_FLOAT* pKernin
         }
     } else {
         int offset = 0;
-        m_pCharCodes = (FX_DWORD*)(FX_UINTPTR)pFont->GetNextChar(pStrs[0], offset);
+        m_pCharCodes = (FX_DWORD*)(FX_UINTPTR)pFont->GetNextChar(pStrs[0], pStrs[0].GetLength(), offset);
     }
 }
 void CPDF_TextObject::SetText(const CFX_ByteString& str)
