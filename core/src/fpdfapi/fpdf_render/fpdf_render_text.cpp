@@ -613,7 +613,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice, FX_FLOAT origi
     FX_DWORD* pCharCodes;
     FX_FLOAT* pCharPos;
     if (nChars == 1) {
-        charcode = pFont->GetNextChar(str, offset);
+        charcode = pFont->GetNextChar(str, str.GetLength(), offset);
         pCharCodes = (FX_DWORD*)(FX_UINTPTR)charcode;
         pCharPos = NULL;
     } else {
@@ -621,7 +621,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice, FX_FLOAT origi
         pCharPos = FX_Alloc(FX_FLOAT, nChars - 1);
         FX_FLOAT cur_pos = 0;
         for (int i = 0; i < nChars; i ++) {
-            pCharCodes[i] = pFont->GetNextChar(str, offset);
+            pCharCodes[i] = pFont->GetNextChar(str, str.GetLength(), offset);
             if (i) {
                 pCharPos[i - 1] = cur_pos;
             }

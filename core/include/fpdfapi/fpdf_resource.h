@@ -164,11 +164,13 @@ public:
         return m_Font.GetFace();
     }
 
-
-
-    virtual FX_DWORD		GetNextChar(FX_LPCSTR pString, int& offset) const
+    virtual FX_DWORD		GetNextChar(FX_LPCSTR pString, int nStrLen, int& offset) const
     {
-        return (FX_BYTE)pString[offset++];
+        if (offset < 0 || nStrLen < 1) {
+            return 0;
+        }
+        FX_BYTE ch = offset < nStrLen ? pString[offset++] : pString[nStrLen-1];
+        return static_cast<FX_DWORD>(ch);
     }
 
     virtual int				CountChar(FX_LPCSTR pString, int size) const
@@ -512,99 +514,74 @@ public:
 
     virtual ~CPDF_CIDFont();
 
-    FX_BOOL					LoadGB2312();
-    virtual int				GlyphFromCharCode(FX_DWORD charcode, FX_BOOL *pVertGlyph = NULL);
-    virtual int				GetCharWidthF(FX_DWORD charcode, int level = 0);
-    virtual void			GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0);
+    FX_BOOL                 LoadGB2312();
+    virtual int             GlyphFromCharCode(FX_DWORD charcode, FX_BOOL *pVertGlyph = NULL);
+    virtual int             GetCharWidthF(FX_DWORD charcode, int level = 0);
+    virtual void            GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0);
+    FX_WORD                 CIDFromCharCode(FX_DWORD charcode) const;
 
-    FX_WORD					CIDFromCharCode(FX_DWORD charcode) const;
-
-    FX_BOOL					IsTrueType()
+    FX_BOOL                 IsTrueType()
     {
         return !m_bType1;
     }
 
+    virtual FX_DWORD        GetNextChar(const FX_LPCSTR pString, int nStrLen, int& offset) const override;
+    virtual int             CountChar(const FX_LPCSTR pString, int size) const;
+    virtual int             AppendChar(FX_LPSTR str, FX_DWORD charcode) const;
+    virtual int             GetCharSize(FX_DWORD charcode) const;
 
-    virtual FX_DWORD		GetNextChar(const FX_CHAR* pString, int& offset) const;
-    virtual int				CountChar(const FX_CHAR* pString, int size) const;
-    virtual int				AppendChar(FX_LPSTR str, FX_DWORD charcode) const;
-    virtual int				GetCharSize(FX_DWORD charcode) const;
-
-
-    int						GetCharset() const
+    int                     GetCharset() const
     {
         return m_Charset;
     }
 
-    FX_LPCBYTE				GetCIDTransform(FX_WORD CID) const;
+    FX_LPCBYTE              GetCIDTransform(FX_WORD CID) const;
+    virtual FX_BOOL         IsVertWriting() const;
+    short                   GetVertWidth(FX_WORD CID) const;
+    void                    GetVertOrigin(FX_WORD CID, short& vx, short& vy) const;
+    virtual FX_BOOL         IsUnicodeCompatible() const;
+    virtual FX_BOOL         IsFontStyleFromCharCode(FX_DWORD charcode) const;
 
-
-
-    virtual FX_BOOL			IsVertWriting() const;
-
-    short					GetVertWidth(FX_WORD CID) const;
-
-    void					GetVertOrigin(FX_WORD CID, short& vx, short& vy) const;
-
-    virtual FX_BOOL			IsUnicodeCompatible() const;
-    virtual FX_BOOL			IsFontStyleFromCharCode(FX_DWORD charcode) const;
 protected:
-    friend class			CPDF_Font;
-    virtual FX_BOOL			_Load();
-    virtual FX_WCHAR		_UnicodeFromCharCode(FX_DWORD charcode) const;
-    virtual FX_DWORD		_CharCodeFromUnicode(FX_WCHAR Unicode) const;
-    int				GetGlyphIndex(FX_DWORD unicodeb, FX_BOOL *pVertGlyph);
+    friend class            CPDF_Font;
+    virtual FX_BOOL         _Load();
+    virtual FX_WCHAR        _UnicodeFromCharCode(FX_DWORD charcode) const;
+    virtual FX_DWORD        _CharCodeFromUnicode(FX_WCHAR Unicode) const;
+    int                     GetGlyphIndex(FX_DWORD unicodeb, FX_BOOL *pVertGlyph);
 
-    CPDF_CMap*				m_pCMap;
+    CPDF_CMap*              m_pCMap;
+    CPDF_CMap*              m_pAllocatedCMap;
+    CPDF_CID2UnicodeMap*    m_pCID2UnicodeMap;
+    int                     m_Charset;
+    FX_BOOL                 m_bType1;
+    CPDF_StreamAcc*         m_pCIDToGIDMap;
+    FX_BOOL                 m_bCIDIsGID;
+    FX_WORD                 m_DefaultWidth;
+    FX_WORD*                m_pAnsiWidths;
+    FX_SMALL_RECT           m_CharBBox[256];
+    CFX_DWordArray          m_WidthList;
+    short                   m_DefaultVY;
+    short                   m_DefaultW1;
+    CFX_DWordArray          m_VertMetrics;
 
-    CPDF_CMap*				m_pAllocatedCMap;
-
-    CPDF_CID2UnicodeMap*	m_pCID2UnicodeMap;
-
-    int						m_Charset;
-
-    FX_BOOL					m_bType1;
-
-    CPDF_StreamAcc*			m_pCIDToGIDMap;
-    FX_BOOL					m_bCIDIsGID;
-
-
-
-    FX_WORD					m_DefaultWidth;
-
-    FX_WORD*				m_pAnsiWidths;
-
-    FX_SMALL_RECT			m_CharBBox[256];
-
-    CFX_DWordArray			m_WidthList;
-
-    short					m_DefaultVY;
-
-    short					m_DefaultW1;
-
-    CFX_DWordArray			m_VertMetrics;
-
-
-    void					LoadMetricsArray(CPDF_Array* pArray, CFX_DWordArray& result, int nElements);
-
-    void					LoadSubstFont();
+    void                    LoadMetricsArray(CPDF_Array* pArray, CFX_DWordArray& result, int nElements);
+    void                    LoadSubstFont();
 
     FX_BOOL					m_bAdobeCourierStd;
-
-    CFX_CTTGSUBTable*			m_pTTGSUBTable;
+    CFX_CTTGSUBTable*       m_pTTGSUBTable;
 };
-#define PDFCS_DEVICEGRAY		1
 
-#define PDFCS_DEVICERGB			2
-#define PDFCS_DEVICECMYK		3
-#define PDFCS_CALGRAY			4
-#define PDFCS_CALRGB			5
-#define PDFCS_LAB				6
-#define PDFCS_ICCBASED			7
-#define PDFCS_SEPARATION		8
-#define PDFCS_DEVICEN			9
-#define PDFCS_INDEXED			10
-#define PDFCS_PATTERN			11
+#define PDFCS_DEVICEGRAY        1
+#define PDFCS_DEVICERGB         2
+#define PDFCS_DEVICECMYK        3
+#define PDFCS_CALGRAY           4
+#define PDFCS_CALRGB            5
+#define PDFCS_LAB               6
+#define PDFCS_ICCBASED          7
+#define PDFCS_SEPARATION        8
+#define PDFCS_DEVICEN           9
+#define PDFCS_INDEXED           10
+#define PDFCS_PATTERN           11
 class CPDF_ColorSpace : public CFX_Object
 {
 public:
