@@ -525,8 +525,8 @@ public:
         return !m_bType1;
     }
 
-    virtual FX_DWORD        GetNextChar(const FX_LPCSTR pString, int nStrLen, int& offset) const override;
-    virtual int             CountChar(const FX_LPCSTR pString, int size) const;
+    virtual FX_DWORD        GetNextChar(FX_LPCSTR pString, int nStrLen, int& offset) const override;
+    virtual int             CountChar(FX_LPCSTR pString, int size) const;
     virtual int             AppendChar(FX_LPSTR str, FX_DWORD charcode) const;
     virtual int             GetCharSize(FX_DWORD charcode) const;
 
