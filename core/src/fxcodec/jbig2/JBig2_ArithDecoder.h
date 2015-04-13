@@ -72,6 +72,10 @@ inline void CJBig2_ArithDecoder::BYTEIN()
 }
 inline int CJBig2_ArithDecoder::DECODE(JBig2ArithCtx *pCX)
 {
+    if (!pCX || pCX->I >= JBIG2_QE_NUM) {
+        return 0;
+    }
+
     int D;
     const JBig2ArithQe * qe = &QeTable[pCX->I];
     A = A - qe->Qe;
