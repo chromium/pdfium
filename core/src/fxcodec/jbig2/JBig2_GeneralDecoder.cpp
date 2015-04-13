@@ -61,6 +61,8 @@ extern const JBig2ArithQe QeTable[] = {
     { 0x5601, 46, 46, 0 }
 };
 
+extern const unsigned int JBIG2_QE_NUM = sizeof(QeTable) / sizeof(JBig2ArithQe);
+
 CJBig2_Image *CJBig2_GRDProc::decode_Arith(CJBig2_ArithDecoder *pArithDecoder, JBig2ArithCtx *gbContext)
 {
     if (GBW == 0 || GBH == 0) {
