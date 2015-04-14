@@ -128,14 +128,12 @@ FX_BOOL CPDF_Font::Initialize()
 }
 CPDF_Font::~CPDF_Font()
 {
-    if (m_pCharMap) {
-        FX_Free(m_pCharMap);
-        m_pCharMap = NULL;
-    }
-    if (m_pToUnicodeMap) {
-        delete m_pToUnicodeMap;
-        m_pToUnicodeMap = NULL;
-    }
+    delete m_pCharMap;
+    m_pCharMap = NULL;
+
+    delete m_pToUnicodeMap;
+    m_pToUnicodeMap = NULL;
+
     if (m_pFontFile) {
         m_pDocument->GetPageData()->ReleaseFontFileStreamAcc((CPDF_Stream*)m_pFontFile->GetStream());
     }
