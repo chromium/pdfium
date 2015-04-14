@@ -10,16 +10,6 @@
 #include "class.h"
 #include <math.h>
 #include "util_inline.h"
-#if !defined(__PLACEMENT_NEW_INLINE) && !defined(_MFC_VER) && !defined(_NEW)
-#define __PLACEMENT_NEW_INLINE
-inline void* operator new(size_t size, void* pos)
-{
-    return pos;
-}
-inline void operator delete(void* ptr, void* pos)
-{
-}
-#endif
 FX_BOOL FXJSE_Value_IsUndefined	(FXJSE_HVALUE hValue)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
