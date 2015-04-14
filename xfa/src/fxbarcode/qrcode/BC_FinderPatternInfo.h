@@ -7,8 +7,7 @@
 #ifndef _BC_FINDERPATTERNINFO_H_
 #define _BC_FINDERPATTERNINFO_H_
 class CBC_QRFinderPattern;
-class CBC_QRFinderPatternInfo;
-class CBC_QRFinderPatternInfo : public CFX_Object
+class CBC_QRFinderPatternInfo
 {
 private:
     CBC_QRFinderPattern *m_bottomLeft;

@@ -7,7 +7,7 @@
 #ifndef _BC_DIMENSION_H_
 #define _BC_DIMENSION_H_
 class CBC_Dimension;
-class CBC_Dimension : public CFX_Object
+class CBC_Dimension
 {
 public:
     CBC_Dimension();

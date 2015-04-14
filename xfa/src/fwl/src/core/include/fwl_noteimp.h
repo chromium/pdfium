@@ -16,7 +16,7 @@ class CFWL_NoteLoop;
 class CFWL_NoteDriver;
 class CFWL_EventTarget;
 class CFWL_ToolTipContainer;
-class CFWL_NoteLoop : public CFX_Object
+class CFWL_NoteLoop
 {
 public:
     CFWL_NoteLoop(CFWL_WidgetImp *pForm = NULL);
@@ -33,7 +33,7 @@ protected:
     CFWL_WidgetImp	*m_pForm;
     FX_BOOL			m_bContinueModal;
 };
-class CFWL_NoteDriver : public CFX_Object
+class CFWL_NoteDriver
 {
 public:
     CFWL_NoteDriver();
@@ -97,7 +97,7 @@ protected:
     FX_LPVOID              m_hookInfo;
 };
 typedef CFX_MapPtrTemplate<FX_LPVOID, FX_DWORD> CFWL_EventSource;
-class CFWL_EventTarget : public CFX_Object
+class CFWL_EventTarget
 {
 public:
     CFWL_EventTarget(CFWL_NoteDriver *pNoteDriver, IFWL_Widget *pListener)
@@ -124,7 +124,7 @@ protected:
     CFWL_NoteDriver *m_pNoteDriver;
     FX_BOOL	m_bInvalid;
 };
-class CFWL_ToolTipContainer: public CFX_Object
+class CFWL_ToolTipContainer
 {
 public:
     static CFWL_ToolTipContainer* getInstance();

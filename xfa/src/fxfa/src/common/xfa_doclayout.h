@@ -23,7 +23,7 @@ public:
     CXFA_LayoutItem*	GetNext() const;
     CXFA_LayoutItem*	GetLast() const;
 };
-class CXFA_LayoutItemImpl : public CFX_Object
+class CXFA_LayoutItemImpl
 {
 public:
     CXFA_LayoutItemImpl(CXFA_Node *pNode, FX_BOOL bIsContentLayoutItem);

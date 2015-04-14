@@ -7,8 +7,7 @@
 #ifndef _BC_READSOLOMONGF256POLY_H_
 #define _BC_READSOLOMONGF256POLY_H_
 class CBC_ReedSolomonGF256;
-class CBC_ReedSolomonGF256Poly;
-class CBC_ReedSolomonGF256Poly : public CFX_Object
+class CBC_ReedSolomonGF256Poly
 {
 public:
     CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, FX_INT32 coefficients);

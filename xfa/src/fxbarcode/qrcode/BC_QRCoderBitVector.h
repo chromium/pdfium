@@ -6,8 +6,7 @@
 
 #ifndef _BC_QRECODERBITVECTOR_H_
 #define _BC_QRECODERBITVECTOR_H_
-class CBC_QRCoderBitVector;
-class CBC_QRCoderBitVector  : public CFX_Object
+class CBC_QRCoderBitVector
 {
 private:
     FX_INT32 m_sizeInBits;

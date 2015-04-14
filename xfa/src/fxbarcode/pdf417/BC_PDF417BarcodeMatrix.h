@@ -7,8 +7,7 @@
 #ifndef _BC_BARCODEMATRIX_H_
 #define _BC_BARCODEMATRIX_H_
 class CBC_BarcodeRow;
-class CBC_BarcodeMatrix;
-class CBC_BarcodeMatrix : public CFX_Object
+class CBC_BarcodeMatrix
 {
 public:
     CBC_BarcodeMatrix();

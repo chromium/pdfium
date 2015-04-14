@@ -13,7 +13,7 @@ class CFWL_WidgetMgrItem;
 class CFWL_WidgetMgr;
 class CFWL_WidgetMgrDelegate;
 class IFWL_AdapterNative;
-class CFWL_WidgetMgrItem : public CFX_Object
+class CFWL_WidgetMgrItem
 {
 public:
     CFWL_WidgetMgrItem()
@@ -49,7 +49,7 @@ public:
     FX_BOOL				bOutsideChanged;
 #endif
 };
-class CFWL_WidgetMgr : public CFX_Object
+class CFWL_WidgetMgr
 {
 public:
     CFWL_WidgetMgr(IFWL_AdapterNative *pAdapterNative);
@@ -123,7 +123,7 @@ protected:
     CFX_RectF				m_rtScreen;
 #endif
 };
-class CFWL_WidgetMgrDelegate : public CFX_Object
+class CFWL_WidgetMgrDelegate
 {
 public:
     CFWL_WidgetMgrDelegate(CFWL_WidgetMgr *pWidgetMgr);

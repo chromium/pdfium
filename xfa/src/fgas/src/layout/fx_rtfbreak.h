@@ -8,7 +8,7 @@
 #define _FX_RTFBREAK_IMP
 class CFX_RTFLine;
 class CFX_RTFBreak;
-class CFX_RTFLine : public CFX_Object
+class CFX_RTFLine
 {
 public:
     CFX_RTFLine() : m_LinePieces(16)
@@ -78,7 +78,7 @@ public:
     FX_INT32			m_iArabicChars;
     FX_INT32			m_iMBCSChars;
 };
-class CFX_RTFBreak : public IFX_RTFBreak, public CFX_Object
+class CFX_RTFBreak : public IFX_RTFBreak
 {
 public:
     CFX_RTFBreak(FX_DWORD dwPolicies);

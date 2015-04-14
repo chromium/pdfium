@@ -9,8 +9,7 @@
 class CBC_CommonByteMatrix;
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderBitVector;
-class CBC_QRCoderMatrixUtil;
-class CBC_QRCoderMatrixUtil  : public CFX_Object
+class CBC_QRCoderMatrixUtil
 {
 private:
     const static FX_INT32 POSITION_DETECTION_PATTERN[7][7];

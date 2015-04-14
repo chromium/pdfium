@@ -8,7 +8,7 @@
 #define _FDE_TXTEDTPARAG_H
 class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtParag;
-class CFDE_TxtEdtParag : public IFDE_TxtEdtParag, public CFX_Object
+class CFDE_TxtEdtParag : public IFDE_TxtEdtParag
 {
 public:
     CFDE_TxtEdtParag(CFDE_TxtEdtEngine * pEngine);

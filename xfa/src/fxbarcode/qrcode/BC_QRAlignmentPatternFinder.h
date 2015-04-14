@@ -8,8 +8,7 @@
 #define _BC_QRALIGNMENTPATTERNFINDER_H_
 class CBC_CommonBitMatrix;
 class CBC_QRAlignmentPattern;
-class CBC_QRAlignmentPatternFinder;
-class CBC_QRAlignmentPatternFinder  : public CFX_Object
+class CBC_QRAlignmentPatternFinder
 {
 private:
     CBC_CommonBitMatrix *m_image;

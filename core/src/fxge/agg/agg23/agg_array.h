@@ -18,7 +18,7 @@
 #include "agg_basics.h"
 namespace agg
 {
-template<class T> class pod_array : public CFX_Object
+template<class T> class pod_array 
 {
 public:
     typedef T value_type;
@@ -157,7 +157,7 @@ pod_array<T>::operator = (const pod_array<T>&v)
     }
     return *this;
 }
-template<class T, unsigned S = 6> class pod_deque : public CFX_Object
+template<class T, unsigned S = 6> class pod_deque 
 {
 public:
     enum block_scale_e {
@@ -409,7 +409,7 @@ unsigned pod_deque<T, S>::byte_size() const
 {
     return m_size * sizeof(T);
 }
-class pod_allocator : public CFX_Object
+class pod_allocator 
 {
 public:
     void remove_all()

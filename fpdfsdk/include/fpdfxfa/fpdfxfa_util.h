@@ -12,7 +12,7 @@
 #define JS_STR_VIEWERVARIATION			L"Full"
 #define JS_STR_VIEWERVERSION_XFA		L"11"
 
-class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr, public CFX_Object
+class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr
 {
 public:
 	CXFA_FWLAdapterTimerMgr(CPDFDoc_Environment* pEnv) : m_pEnv(pEnv)
@@ -29,7 +29,7 @@ protected:
 	CPDFDoc_Environment* m_pEnv;
 };
 
-class CFWL_TimerInfo : public CFX_Object
+class CFWL_TimerInfo
 {
 public:
 	CFWL_TimerInfo()

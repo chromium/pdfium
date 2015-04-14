@@ -9,8 +9,7 @@
 class CBC_QRCoderECBlocks;
 class CBC_CommonBitMatrix;
 class CBC_QRCoderErrorCorrectionLevel;
-class CBC_QRCoderVersion;
-class CBC_QRCoderVersion : public CFX_Object
+class CBC_QRCoderVersion
 {
 private:
     const static FX_INT32 VERSION_DECODE_INFO[34];

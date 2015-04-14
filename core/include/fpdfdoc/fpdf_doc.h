@@ -42,7 +42,7 @@ class CPDF_FormControl;
 class CPDF_LWinParam;
 class CFieldTree;
 class CPDF_ApSettings;
-class CPDF_NameTree : public CFX_Object
+class CPDF_NameTree 
 {
 public:
 
@@ -73,7 +73,7 @@ protected:
 
     CPDF_Dictionary*		m_pRoot;
 };
-class CPDF_BookmarkTree : public CFX_Object
+class CPDF_BookmarkTree 
 {
 public:
     CPDF_BookmarkTree(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
@@ -89,7 +89,7 @@ protected:
 };
 #define PDFBOOKMARK_ITALIC			1
 #define PDFBOOKMARK_BOLD			2
-class CPDF_Bookmark : public CFX_Object
+class CPDF_Bookmark 
 {
 public:
 
@@ -121,7 +121,7 @@ public:
 #define PDFZOOM_FITBBOX				6
 #define PDFZOOM_FITBHORZ			7
 #define PDFZOOM_FITBVERT			8
-class CPDF_Dest : public CFX_Object
+class CPDF_Dest 
 {
 public:
     CPDF_Dest() : m_pObj(nullptr) { }
@@ -139,7 +139,7 @@ public:
 protected:
     CPDF_Object*		m_pObj;
 };
-class CPDF_OCContext : public CFX_Object, public IPDF_OCContext
+class CPDF_OCContext : public IPDF_OCContext
 {
 public:
 
@@ -185,7 +185,7 @@ protected:
 
     CFX_MapPtrTemplate<const CPDF_Dictionary*, void*>	m_OCGStates;
 };
-class CPDF_LWinParam : public CFX_Object
+class CPDF_LWinParam 
 {
 public:
 
@@ -224,7 +224,7 @@ public:
 
     CPDF_Dictionary*		m_pDict;
 };
-class CPDF_ActionFields : public CFX_Object
+class CPDF_ActionFields 
 {
 public:
 
@@ -252,7 +252,7 @@ public:
 #define PDFNAMED_FIRSTPAGE		3
 #define PDFNAMED_LASTPAGE		4
 #define PDFJS_MAXLENGTH			64
-class CPDF_Action : public CFX_Object
+class CPDF_Action 
 {
 public:
     enum ActionType {
@@ -412,7 +412,7 @@ public:
 protected:
     CPDF_Dictionary*	m_pDict;
 };
-class CPDF_AAction : public CFX_Object
+class CPDF_AAction 
 {
 public:
 
@@ -460,7 +460,7 @@ public:
 
     CPDF_Dictionary*	m_pDict;
 };
-class CPDF_DocJSActions : public CFX_Object
+class CPDF_DocJSActions 
 {
 public:
     CPDF_DocJSActions(CPDF_Document* pDoc);
@@ -484,7 +484,7 @@ protected:
 
     CPDF_Document*		m_pDocument;
 };
-class CPDF_FileSpec : public CFX_Object
+class CPDF_FileSpec 
 {
 public:
 
@@ -511,7 +511,7 @@ protected:
 
     CPDF_Object		*m_pObj;
 };
-class CPDF_LinkList : public CFX_Object
+class CPDF_LinkList 
 {
 public:
 
@@ -542,7 +542,7 @@ protected:
 
     void				LoadPageLinks(CPDF_Page* pPage, CFX_PtrArray* pList);
 };
-class CPDF_Link : public CFX_Object
+class CPDF_Link 
 {
 public:
     CPDF_Link() : m_pDict(nullptr) { }
@@ -566,7 +566,7 @@ protected:
 #define ANNOTFLAG_READONLY			0x40
 #define ANNOTFLAG_LOCKED			0x80
 #define ANNOTFLAG_TOGGLENOVIEW		0x100
-class CPDF_Annot : public CFX_PrivateData, public CFX_Object
+class CPDF_Annot : public CFX_PrivateData
 {
 public:
 
@@ -623,7 +623,7 @@ protected:
 
     CPDF_Reference*		NewAnnotRef();
 };
-class CPDF_AnnotList : public CFX_Object
+class CPDF_AnnotList 
 {
 public:
 
@@ -695,7 +695,7 @@ protected:
 #define COLORTYPE_GRAY			1
 #define COLORTYPE_RGB			2
 #define COLORTYPE_CMYK			3
-class CPDF_DefaultAppearance : public CFX_Object
+class CPDF_DefaultAppearance 
 {
 public:
 
@@ -767,7 +767,7 @@ protected:
 #define FIELDTYPE_LISTBOX			5
 #define FIELDTYPE_TEXTFIELD			6
 #define FIELDTYPE_SIGNATURE			7
-class CPDF_InterForm : public CFX_PrivateData, public CFX_Object
+class CPDF_InterForm : public CFX_PrivateData
 {
 public:
 
@@ -1025,7 +1025,7 @@ protected:
 #define FORMTEXT_COMB			0x800
 #define FORMCOMBO_EDIT			0x100
 #define FORMLIST_MULTISELECT	0x100
-class CPDF_FormField : public CFX_Object
+class CPDF_FormField 
 {
 public:
 
@@ -1248,7 +1248,7 @@ protected:
     CPDF_Font*				m_pFont;
 };
 CPDF_Object*	FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict, const FX_CHAR* name, int nLevel = 0);
-class CPDF_IconFit : public CFX_Object
+class CPDF_IconFit 
 {
 public:
 
@@ -1300,7 +1300,7 @@ public:
 #define TEXTPOS_RIGHT		4
 #define TEXTPOS_LEFT		5
 #define TEXTPOS_OVERLAID	6
-class CPDF_FormControl : public CFX_Object
+class CPDF_FormControl 
 {
 public:
 
@@ -1508,7 +1508,7 @@ protected:
     friend class			CPDF_InterForm;
     friend class			CPDF_FormField;
 };
-class CPDF_FormNotify : public CFX_Object
+class CPDF_FormNotify 
 {
 public:
 
@@ -1560,7 +1560,7 @@ public:
     }
 };
 FX_BOOL		FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
-class CPDF_PageLabel : public CFX_Object
+class CPDF_PageLabel 
 {
 public:
 
@@ -1624,7 +1624,7 @@ public:
 protected:
     CPDF_Document*	m_pDoc;
 };
-class CPDF_ApSettings : public CFX_Object
+class CPDF_ApSettings 
 {
 public:
 

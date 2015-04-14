@@ -6,7 +6,7 @@
 
 #ifndef _FPDF_EDITINT_
 #define _FPDF_EDITINT_
-class CPDF_ObjectStream : public CFX_Object
+class CPDF_ObjectStream 
 {
 public:
     CPDF_ObjectStream();
@@ -27,7 +27,7 @@ protected:
 
     CFX_DWordArray		m_OffsetArray;
 };
-class CPDF_XRefStream : public CFX_Object
+class CPDF_XRefStream 
 {
 public:
 

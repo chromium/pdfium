@@ -6,8 +6,7 @@
 
 #ifndef _BC_SYMBOLSHAPEHINT_H_
 #define _BC_SYMBOLSHAPEHINT_H_
-class CBC_SymbolShapeHint;
-class CBC_SymbolShapeHint : public CFX_Object
+class CBC_SymbolShapeHint
 {
 public:
     CBC_SymbolShapeHint();

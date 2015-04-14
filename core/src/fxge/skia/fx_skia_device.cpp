@@ -117,7 +117,7 @@ void SuperBlitter_skia::DrawPath(const SkPath& srcPath, SkBlitter* blitter, cons
 	proc(*devPathPtr, rect, blitter);
 }
 
-class CSkia_PathData : public CFX_Object
+class CSkia_PathData 
 {
 public:
 	CSkia_PathData() {}

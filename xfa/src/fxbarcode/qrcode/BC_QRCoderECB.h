@@ -6,8 +6,7 @@
 
 #ifndef _BC_QRCODERECB_H_
 #define _BC_QRCODERECB_H_
-class CBC_QRCoderECB;
-class CBC_QRCoderECB  : public CFX_Object
+class CBC_QRCoderECB
 {
 private:
     FX_INT32 m_count;

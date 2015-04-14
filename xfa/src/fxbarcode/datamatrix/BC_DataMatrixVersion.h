@@ -6,10 +6,9 @@
 
 #ifndef _BC_DATAMATRIXVERSION_H_
 #define _BC_DATAMATRIXVERSION_H_
-class ECB;
 class ECBlocks;
 class CBC_DataMatrixVersion;
-class ECB : public CFX_Object
+class ECB
 {
 public:
     ECB(FX_INT32 count, FX_INT32 dataCodewords)
@@ -31,7 +30,7 @@ private:
     FX_INT32 m_count;
     FX_INT32 m_dataCodewords;
 };
-class ECBlocks : public CFX_Object
+class ECBlocks
 {
 public:
     ECBlocks(FX_INT32 ecCodewords, ECB *ecBlocks)
@@ -67,7 +66,7 @@ private:
     FX_INT32 m_ecCodewords;
     CFX_PtrArray m_ecBlocks;
 };
-class CBC_DataMatrixVersion  : public CFX_Object
+class CBC_DataMatrixVersion
 {
 public:
     CBC_DataMatrixVersion(FX_INT32 versionNumber,

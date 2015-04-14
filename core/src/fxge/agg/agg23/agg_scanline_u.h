@@ -26,13 +26,13 @@
 #include "agg_array.h"
 namespace agg
 {
-template<class CoverT> class scanline_u : public CFX_Object
+template<class CoverT> class scanline_u 
 {
 public:
     typedef scanline_u<CoverT> self_type;
     typedef CoverT cover_type;
     typedef int16  coord_type;
-    struct span : public CFX_Object {
+    struct span  {
         coord_type  x;
         coord_type  len;
         cover_type* covers;

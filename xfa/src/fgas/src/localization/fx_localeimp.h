@@ -7,7 +7,7 @@
 #ifndef _FX_LOCALE_IMP_H_
 #define _FX_LOCALE_IMP_H_
 class CFX_LCNumeric;
-class CFX_Locale : public IFX_Locale, public CFX_Object
+class CFX_Locale : public IFX_Locale
 {
 public:
     CFX_Locale(CXML_Element* pLocaleData);
@@ -33,7 +33,7 @@ protected:
     virtual ~CFX_Locale();
     CXML_Element* m_pElement;
 };
-class CFX_FormatString : public IFX_FormatString, public CFX_Object
+class CFX_FormatString : public IFX_FormatString
 {
 public:
     CFX_FormatString(IFX_LocaleMgr* pLocaleMgr, FX_BOOL bUseLCID);

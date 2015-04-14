@@ -6,7 +6,7 @@
 
 #ifndef _XFA_FM_PARSE_H
 #define _XFA_FM_PARSE_H
-class CXFA_FMParse : public CFX_Object
+class CXFA_FMParse
 {
 public:
     CXFA_FMParse();

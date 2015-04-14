@@ -164,7 +164,7 @@ struct CPVT_WordRange {
 
     CPVT_WordPlace EndPos;
 };
-struct CPVT_SecProps : public CFX_Object {
+struct CPVT_SecProps  {
 
     CPVT_SecProps() : fLineLeading(0.0f), fLineIndent(0.0f), nAlignment(0)
     {
@@ -186,7 +186,7 @@ struct CPVT_SecProps : public CFX_Object {
 
     FX_INT32			nAlignment;
 };
-struct CPVT_WordProps : public CFX_Object {
+struct CPVT_WordProps  {
 
     CPVT_WordProps() : nFontIndex(-1), fFontSize(0.0f), dwWordColor(0), nScriptType(0), nWordStyle(0),
         fCharSpace(0.0f), nHorzScale(0)

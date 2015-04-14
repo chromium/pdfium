@@ -6,8 +6,7 @@
 
 #ifndef _BC_QRCODERERRORCORRECTIONLEVEL_H_
 #define _BC_QRCODERERRORCORRECTIONLEVEL_H_
-class CBC_QRCoderErrorCorrectionLevel;
-class CBC_QRCoderErrorCorrectionLevel  : public CFX_Object
+class CBC_QRCoderErrorCorrectionLevel
 {
 private:
     FX_INT32 m_ordinal;

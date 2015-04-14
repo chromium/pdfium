@@ -24,7 +24,7 @@ enum FX_WordBreakProp {
     FX_WordBreakProp_ExtendNumLet	,
 };
 FX_WordBreakProp FX_GetWordBreakProperty(FX_WCHAR wcCodePoint);
-class CFX_CharIter : public IFX_CharIter, public CFX_Object
+class CFX_CharIter : public IFX_CharIter
 {
 public:
     CFX_CharIter(const CFX_WideString & wsText);
@@ -41,7 +41,7 @@ private:
     const CFX_WideString &m_wsText;
     FX_INT32	m_nIndex;
 };
-class CFX_WordBreak : public IFX_WordBreak, public CFX_Object
+class CFX_WordBreak : public IFX_WordBreak
 {
 public:
     CFX_WordBreak();

@@ -7,8 +7,7 @@
 #ifndef _BC_COMMONBITMATRIX_H_
 #define _BC_COMMONBITMATRIX_H_
 class CBC_CommonBitArray;
-class CBC_CommonBitMatrix;
-class CBC_CommonBitMatrix  : public CFX_Object
+class CBC_CommonBitMatrix
 {
 public:
     CBC_CommonBitMatrix();

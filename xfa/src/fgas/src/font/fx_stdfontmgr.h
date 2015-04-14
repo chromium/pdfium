@@ -9,7 +9,7 @@
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 FX_INT32 FX_GetSimilarValue(FX_LPCFONTDESCRIPTOR pFont, FX_DWORD dwFontStyles);
 FX_LPCFONTDESCRIPTOR FX_DefFontMatcher(FX_LPFONTMATCHPARAMS pParams, const CFX_FontDescriptors &fonts, FX_LPVOID pUserData);
-class CFX_StdFontMgrImp : public IFX_FontMgr, public CFX_Object
+class CFX_StdFontMgrImp : public IFX_FontMgr
 {
 public:
     CFX_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator, FX_LPMatchFont pMatcher, FX_LPVOID pUserData);
@@ -48,7 +48,7 @@ protected:
 };
 FX_DWORD FX_GetGdiFontStyles(const LOGFONTW &lf);
 #else
-class CFX_FontDescriptor : public CFX_Object
+class CFX_FontDescriptor
 {
 public:
     CFX_FontDescriptor()
@@ -92,7 +92,7 @@ public:
     };
 };
 typedef CFX_ArrayTemplate<FX_FontDescriptorInfo> CFX_FontDescriptorInfos;
-struct FX_HandleParentPath : public CFX_Object {
+struct FX_HandleParentPath {
     FX_HandleParentPath()
     {
     }
@@ -104,7 +104,7 @@ struct FX_HandleParentPath : public CFX_Object {
     void* pFileHandle;
     CFX_ByteString bsParentPath;
 };
-class CFX_FontSourceEnum_File : public IFX_FontSourceEnum, public CFX_Object
+class CFX_FontSourceEnum_File : public IFX_FontSourceEnum
 {
 public:
     CFX_FontSourceEnum_File();
@@ -127,7 +127,7 @@ typedef CFX_MapPtrTemplate<FX_DWORD, CFX_ArrayTemplate<IFX_Font*>* > CFX_HashFon
 typedef CFX_MapPtrTemplate<FX_WCHAR, IFX_Font*> CFX_UnicodeFontMap;
 typedef CFX_MapPtrTemplate<IFX_FileAccess*, CFX_ArrayTemplate<IFX_Font*>* > CFX_FileFontMap;
 typedef CFX_MapPtrTemplate<IFX_Font*, IFX_FileRead*> CFX_FonStreamtMap;
-class CFX_FontMgrImp : public IFX_FontMgr, public CFX_Object
+class CFX_FontMgrImp : public IFX_FontMgr
 {
 public:
     CFX_FontMgrImp(IFX_FontSourceEnum* pFontEnum, IFX_FontMgrDelegate* pDelegate = NULL, FX_LPVOID pUserData = NULL);

@@ -11,7 +11,7 @@ class CPDFXFA_App;
 class IFXJS_Runtime;
 class CJS_RuntimeFactory;
 
-class CPDFXFA_App : public IXFA_AppProvider, public CFX_Object 
+class CPDFXFA_App : public IXFA_AppProvider
 {
 public:
 	CPDFXFA_App();

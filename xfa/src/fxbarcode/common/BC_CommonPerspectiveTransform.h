@@ -6,8 +6,7 @@
 
 #ifndef _BC_COMMONPERSPECTIVETRANSFORM_H_
 #define _BC_COMMONPERSPECTIVETRANSFORM_H_
-class CBC_CommonPerspectiveTransform;
-class CBC_CommonPerspectiveTransform : public CFX_Object
+class CBC_CommonPerspectiveTransform
 {
 public:
     CBC_CommonPerspectiveTransform(FX_FLOAT a11, FX_FLOAT a21, FX_FLOAT a31,

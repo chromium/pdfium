@@ -8,7 +8,7 @@
 #define _FX_TEXTBREAK_IMP
 class CFX_TxtLine;
 class CFX_Txtbreak;
-class CFX_TxtLine : public CFX_Object
+class CFX_TxtLine
 {
 public:
     CFX_TxtLine(FX_INT32 iBlockSize) : m_iStart(0)
@@ -66,7 +66,7 @@ public:
     FX_INT32			m_iWidth;
     FX_INT32			m_iArabicChars;
 };
-class CFX_TxtBreak : public IFX_TxtBreak, public CFX_Object
+class CFX_TxtBreak : public IFX_TxtBreak
 {
 public:
     CFX_TxtBreak(FX_DWORD dwPolicies);

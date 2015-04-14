@@ -8,8 +8,7 @@
 #define _BC_WHITERECTANLEDETECTOR_H_
 class CBC_CommonBitMatrix;
 class CBC_ResultPoint;
-class CBC_WhiteRectangleDetector;
-class CBC_WhiteRectangleDetector : public CFX_Object
+class CBC_WhiteRectangleDetector
 {
 public:
     CBC_WhiteRectangleDetector(CBC_CommonBitMatrix *image);

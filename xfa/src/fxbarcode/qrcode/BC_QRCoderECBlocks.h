@@ -7,8 +7,7 @@
 #ifndef _BC_QRCODERECBLOCKS_H_
 #define _BC_QRCODERECBLOCKS_H_
 class CBC_QRCoderECB;
-class CBC_QRCoderECBlocks;
-class CBC_QRCoderECBlocks  : public CFX_Object
+class CBC_QRCoderECBlocks
 {
 private:
     FX_INT32 m_ecCodeWordsPerBlock;

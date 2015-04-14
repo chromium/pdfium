@@ -6,7 +6,7 @@
 
 #ifndef _FXMATH_BARCODEIMP_H_
 #define _FXMATH_BARCODEIMP_H_
-class CFX_Barcode : public IFX_Barcode, public CFX_Object
+class CFX_Barcode : public IFX_Barcode
 {
 public:
     CFX_Barcode();

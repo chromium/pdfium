@@ -7,7 +7,7 @@
 #ifndef _BC_RESULTPOINT_H_
 #define _BC_RESULTPOINT_H_
 class CBC_ResultPoint;
-class CBC_ResultPoint : public CFX_Object
+class CBC_ResultPoint
 {
 public:
     CBC_ResultPoint();

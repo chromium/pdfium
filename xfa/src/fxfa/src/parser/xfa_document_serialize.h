@@ -6,7 +6,7 @@
 
 #ifndef _XFA_DOCUMENT_SERIALIZE_H_
 #define _XFA_DOCUMENT_SERIALIZE_H_
-class CXFA_DataImporter : public IXFA_PacketImport, public CFX_Object
+class CXFA_DataImporter : public IXFA_PacketImport
 {
 public:
     CXFA_DataImporter(CXFA_Document *pDocument);
@@ -18,7 +18,7 @@ public:
 protected:
     CXFA_Document				*m_pDocument;
 };
-class CXFA_DataExporter : public IXFA_PacketExport, public CFX_Object
+class CXFA_DataExporter : public IXFA_PacketExport
 {
 public:
     CXFA_DataExporter(CXFA_Document *pDocument);

@@ -16,7 +16,7 @@ class IFXJS_Runtime;
 class IFXJS_Context;
 class IXFA_DocHandler;
 
-class CPDFXFA_Document : public IXFA_DocProvider, public CFX_Object
+class CPDFXFA_Document : public IXFA_DocProvider
 {
 public:
 	CPDFXFA_Document(CPDF_Document* pPDFDoc, CPDFXFA_App* pProvider);

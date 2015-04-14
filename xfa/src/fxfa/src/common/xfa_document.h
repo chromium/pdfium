@@ -106,7 +106,7 @@ class CScript_HostPseudoModel;
 class CScript_LogPseudoModel;
 class CScript_LayoutPseudoModel;
 class CScript_SignaturePseudoModel;
-class CXFA_Document : public IXFA_ObjFactory, public CFX_Object
+class CXFA_Document : public IXFA_ObjFactory
 {
 public:
     CXFA_Document(IXFA_DocParser *pParser);

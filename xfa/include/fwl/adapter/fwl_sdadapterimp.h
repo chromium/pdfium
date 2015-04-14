@@ -14,7 +14,7 @@ class IFWL_WidgetMgrDelegate;
 class CFWL_SDAdatperNative;
 class CFWL_SDAdapterWidgetMgr;
 class CFWL_SDAdapterTimerMgr;
-class CFWL_SDAdapterWidgetMgr : public IFWL_AdapterWidgetMgr, public CFX_Object
+class CFWL_SDAdapterWidgetMgr : public IFWL_AdapterWidgetMgr
 {
 public:
     CFWL_SDAdapterWidgetMgr();
@@ -56,7 +56,7 @@ public:
     virtual	FWL_ERR  SetMessageHook(IFWL_AdapterMessageHook *hook);
     virtual FWL_ERR  GetSystemBorder(FX_FLOAT &l, FX_FLOAT &t, FX_FLOAT &r, FX_FLOAT &b);
 };
-class CFWL_SDAdapterThreadMgr : public IFWL_AdapterThreadMgr, public CFX_Object
+class CFWL_SDAdapterThreadMgr : public IFWL_AdapterThreadMgr
 {
 public:
     CFWL_SDAdapterThreadMgr();

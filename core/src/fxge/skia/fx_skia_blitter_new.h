@@ -6,7 +6,7 @@
 #define _FX_SKIABLITTER_H_
 //#define _SKIA_SUPPORT_
 #if defined(_SKIA_SUPPORT_)
-class CFX_SkiaRenderer : public SkBlitter, public CFX_Object
+class CFX_SkiaRenderer : public SkBlitter
 {
 protected:
 	int			m_Alpha, 
@@ -208,7 +208,7 @@ public:
 	FX_BOOL Init(CFX_DIBitmap* pDevice, CFX_DIBitmap* pOriDevice, const CFX_ClipRgn* pClipRgn, FX_DWORD color, FX_BOOL bFullCover, FX_BOOL bRgbByteOrder, 
 		int alpha_flag = 0, void* pIccTransform = NULL); //The alpha flag must be fill_flag if exist.
 };
-class CFX_SkiaA8Renderer : public SkBlitter, public CFX_Object
+class CFX_SkiaA8Renderer : public SkBlitter
 {
 public:
     //--------------------------------------------------------------------

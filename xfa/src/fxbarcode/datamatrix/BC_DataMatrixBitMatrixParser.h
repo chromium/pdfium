@@ -8,8 +8,7 @@
 #define _BC_DATAMATRIXBITMATRIXPARSER_H_
 class CBC_CommonBitMatrix;
 class CBC_DataMatrixVersion;
-class CBC_DataMatrixBitMatrixParser;
-class CBC_DataMatrixBitMatrixParser : public CFX_Object
+class CBC_DataMatrixBitMatrixParser
 {
 public:
     CBC_DataMatrixBitMatrixParser();

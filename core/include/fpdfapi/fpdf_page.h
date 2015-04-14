@@ -32,7 +32,7 @@ class CPDF_ResourceNaming;
 #define PDF_CONTENT_NOT_PARSED	0
 #define PDF_CONTENT_PARSING		1
 #define PDF_CONTENT_PARSED		2
-class CPDF_PageObjects : public CFX_Object
+class CPDF_PageObjects 
 {
 public:
 
@@ -199,7 +199,7 @@ protected:
 
     CPDF_PageRenderCache*	m_pPageRender;
 };
-class CPDF_ParseOptions : public CFX_Object
+class CPDF_ParseOptions 
 {
 public:
 
@@ -229,7 +229,7 @@ public:
 
     CPDF_Form*			Clone() const;
 };
-class CPDF_PageContentGenerate : public CFX_Object
+class CPDF_PageContentGenerate 
 {
 public:
     CPDF_PageContentGenerate(CPDF_Page* pPage);

@@ -70,7 +70,7 @@ void vertex_sequence<T, S>::close(bool closed)
     }
 }
 const FX_FLOAT vertex_dist_epsilon = 1e-14f;
-struct vertex_dist : public CFX_Object {
+struct vertex_dist  {
     FX_FLOAT   x;
     FX_FLOAT   y;
     FX_FLOAT   dist;

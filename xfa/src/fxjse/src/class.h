@@ -8,7 +8,7 @@
 #define FXJSE_CLASS_H_
 class CFXJSE_Context;
 class CFXJSE_Value;
-class CFXJSE_Class : public CFX_Object
+class CFXJSE_Class
 {
 protected:
     CFXJSE_Class(CFXJSE_Context* lpContext) : m_pContext(lpContext) {}

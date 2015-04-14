@@ -30,8 +30,7 @@ protected:
     void	SetCornerColor(FX_DWORD *pData);
     FX_INT32	GetColorID(FX_DWORD dwStates);
 
-    struct PBThemeData : CFX_Object {
-    public:
+    struct PBThemeData {
         FX_ARGB clrBorder[5];
         FX_ARGB clrStart[5];
         FX_ARGB clrEnd[5];

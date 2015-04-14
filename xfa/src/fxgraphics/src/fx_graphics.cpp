@@ -6,7 +6,7 @@
 
 #include "pre.h"
 #include "fx_path_generator.h"
-class CAGG_Graphics : public CFX_Object
+class CAGG_Graphics
 {
 public:
     CAGG_Graphics();

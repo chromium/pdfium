@@ -6,7 +6,7 @@
 
 #ifndef _XFA_FWL_THEME_IMP_H
 #define _XFA_FWL_THEME_IMP_H
-class CXFA_FWLTheme : public IFWL_ThemeProvider, public CFX_Object
+class CXFA_FWLTheme : public IFWL_ThemeProvider
 {
 public:
     CXFA_FWLTheme(CXFA_FFApp *pApp);

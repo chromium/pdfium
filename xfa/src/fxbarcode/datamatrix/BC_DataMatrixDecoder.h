@@ -9,8 +9,7 @@
 class CBC_ReedSolomonDecoder;
 class CBC_CommonDecoderResult;
 class CBC_CommonBitMatrix;
-class  CBC_DataMatrixDecoder;
-class CBC_DataMatrixDecoder  : public CFX_Object
+class CBC_DataMatrixDecoder
 {
 public:
     CBC_DataMatrixDecoder();

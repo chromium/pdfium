@@ -9,7 +9,7 @@
 class CFWL_Theme;
 class IFWL_App;
 class CFWL_App;
-class CFWL_App : public CFX_Object
+class CFWL_App
 {
 public:
     CFWL_App();

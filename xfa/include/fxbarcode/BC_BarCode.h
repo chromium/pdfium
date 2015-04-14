@@ -36,7 +36,7 @@ enum BC_TYPE {
     BC_PDF417,
     BC_DATAMATRIX
 };
-class CBC_CodeBase : public CFX_Object
+class CBC_CodeBase
 {
 public:
     CBC_CodeBase();

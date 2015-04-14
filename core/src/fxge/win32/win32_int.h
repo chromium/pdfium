@@ -58,7 +58,7 @@ protected:
     HMODULE         m_GdiModule;
 };
 #include "dwrite_int.h"
-class CWin32Platform : public CFX_Object
+class CWin32Platform 
 {
 public:
     FX_BOOL			m_bHalfTone;
@@ -164,7 +164,7 @@ protected:
     int				m_HorzSize, m_VertSize;
     FX_BOOL			m_bSupportROP;
 };
-class CPSOutput : public IFX_PSOutput, public CFX_Object
+class CPSOutput : public IFX_PSOutput
 {
 public:
     CPSOutput(HDC hDC);

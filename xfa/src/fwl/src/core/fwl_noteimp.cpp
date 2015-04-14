@@ -808,7 +808,7 @@ void CFWL_NoteDriver::ClearInvalidEventTargets(FX_BOOL bRemoveAll)
         }
     }
 }
-class CFWL_CoreToopTipDP : public IFWL_ToolTipDP, public CFX_Object
+class CFWL_CoreToopTipDP : public IFWL_ToolTipDP
 {
 public:
     FWL_ERR			GetCaption(IFWL_Widget *pWidget, CFX_WideString &wsCaption);

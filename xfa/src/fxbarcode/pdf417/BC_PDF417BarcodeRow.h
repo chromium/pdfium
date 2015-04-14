@@ -6,8 +6,7 @@
 
 #ifndef _BC_BARCODEROW_H_
 #define _BC_BARCODEROW_H_
-class CBC_BarcodeRow;
-class CBC_BarcodeRow : public CFX_Object
+class CBC_BarcodeRow
 {
 public:
     CBC_BarcodeRow(FX_INT32 width);

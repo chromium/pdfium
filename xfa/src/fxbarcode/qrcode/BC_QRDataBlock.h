@@ -10,8 +10,7 @@ class CBC_QRCoderVersion;
 class CBC_QRCoderECBlocks;
 class CBC_QRCoderECB;
 class CBC_QRCoderErrorCorrectionLevel;
-class CBC_QRDataBlock;
-class CBC_QRDataBlock : public CFX_Object
+class CBC_QRDataBlock
 {
 private:
     FX_INT32 m_numDataCodewords;

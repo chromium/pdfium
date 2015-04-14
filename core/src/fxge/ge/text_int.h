@@ -12,7 +12,7 @@ struct _CFX_UniqueKeyGen {
     FX_CHAR		m_Key[128];
     int			m_KeyLen;
 };
-class CFX_SizeGlyphCache : public CFX_Object
+class CFX_SizeGlyphCache 
 {
 public:
     CFX_SizeGlyphCache()
@@ -22,7 +22,7 @@ public:
     ~CFX_SizeGlyphCache();
     CFX_MapPtrToPtr			m_GlyphMap;
 };
-class CTTFontDesc : public CFX_Object
+class CTTFontDesc 
 {
 public:
     CTTFontDesc()
@@ -74,7 +74,7 @@ private:
 #define CHARSET_FLAG_BIG5		8
 #define CHARSET_FLAG_GB			16
 #define CHARSET_FLAG_KOREAN		32
-class CFontFaceInfo : public CFX_Object
+class CFontFaceInfo 
 {
 public:
     CFX_ByteString		m_FilePath;
@@ -85,7 +85,7 @@ public:
     FX_DWORD			m_FileSize;
     CFX_ByteString		m_FontTables;
 };
-class CFontFileFaceInfo : public CFX_Object
+class CFontFileFaceInfo 
 {
 public:
     CFontFileFaceInfo();

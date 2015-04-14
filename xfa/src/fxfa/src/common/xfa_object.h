@@ -38,7 +38,7 @@ enum XFA_OBJECTTYPE {
     XFA_NODEFLAG_UnusedNode       = 0x08000,
     XFA_NODEFLAG_LayoutGeneratedNode = 0x10000,
 };
-class CXFA_Object : public CFX_Object
+class CXFA_Object
 {
 public:
     CXFA_Object(CXFA_Document* pDocument, FX_DWORD uFlags);
@@ -109,7 +109,7 @@ typedef struct _XFA_MAPDATABLOCKCALLBACKINFO {
     PD_CALLBACK_FREEDATA		pFree;
     PD_CALLBACK_DUPLICATEDATA	pCopy;
 } XFA_MAPDATABLOCKCALLBACKINFO;
-typedef struct _XFA_MAPDATABLOCK : public CFX_Object {
+typedef struct _XFA_MAPDATABLOCK {
     FX_LPBYTE				GetData() const
     {
         return (FX_LPBYTE)this + sizeof(_XFA_MAPDATABLOCK);
@@ -117,7 +117,7 @@ typedef struct _XFA_MAPDATABLOCK : public CFX_Object {
     XFA_MAPDATABLOCKCALLBACKINFO*	pCallbackInfo;
     FX_INT32						iBytes;
 } XFA_MAPDATABLOCK, * XFA_LPMAPDATABLOCK;
-typedef struct _XFA_MAPMODULEDATA : public CFX_Object {
+typedef struct _XFA_MAPMODULEDATA {
     CFX_MapPtrToPtr			m_ValueMap;
     CFX_MapPtrTemplate<FX_LPVOID, XFA_LPMAPDATABLOCK> m_BufferMap;
 } XFA_MAPMODULEDATA, * XFA_LPMAPMODULEDATA;

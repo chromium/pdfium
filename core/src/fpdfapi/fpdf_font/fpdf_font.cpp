@@ -35,7 +35,7 @@ CPDF_FontGlobals::~CPDF_FontGlobals()
         FX_Free(m_pContrastRamps);
     }
 }
-class CFX_StockFontArray : public CFX_Object
+class CFX_StockFontArray 
 {
 public:
     CFX_StockFontArray()

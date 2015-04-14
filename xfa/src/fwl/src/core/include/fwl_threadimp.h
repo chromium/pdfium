@@ -13,7 +13,7 @@ class IFWL_NoteDriver;
 class CFWL_Thread;
 class CFWL_NoteThread;
 class CFWL_ControlThread;
-class CFWL_Thread : public CFX_Object
+class CFWL_Thread
 {
 public:
     CFWL_Thread();

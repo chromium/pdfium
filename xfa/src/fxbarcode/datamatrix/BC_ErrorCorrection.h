@@ -7,8 +7,7 @@
 #ifndef _BC_ERRORCORRECTION_H_
 #define _BC_ERRORCORRECTION_H_
 class CBC_SymbolInfo;
-class CBC_ErrorCorrection;
-class CBC_ErrorCorrection : public CFX_Object
+class CBC_ErrorCorrection
 {
 public:
     CBC_ErrorCorrection();

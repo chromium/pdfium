@@ -9,7 +9,7 @@
 
 #include "BC_PDF417Compaction.h"
 
-class CBC_PDF417HighLevelEncoder : public CFX_Object
+class CBC_PDF417HighLevelEncoder
 {
 public:
     static CFX_WideString encodeHighLevel(CFX_WideString msg, Compaction compaction, FX_INT32 &e);

@@ -8,8 +8,7 @@
 #define _BC_DETECTIONRESULTCOLUMN_H_
 class CBC_Codeword;
 class CBC_BoundingBox;
-class CBC_DetectionResultColumn;
-class CBC_DetectionResultColumn : public CFX_Object
+class CBC_DetectionResultColumn
 {
 public:
     CBC_DetectionResultColumn(CBC_BoundingBox* boundingBox);

@@ -17,7 +17,7 @@ enum XFA_FM_ERRMSG {
     FMERR_EXPTECTED_OPERATOR,
     FMERR_MAXIMUM
 };
-class CXFA_FMErrorInfo : public CFX_Object
+class CXFA_FMErrorInfo
 {
 public:
     CXFA_FMErrorInfo() : linenum(0) {};

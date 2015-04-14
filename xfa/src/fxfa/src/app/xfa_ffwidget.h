@@ -23,7 +23,7 @@ enum XFA_WIDGETITEM {
     XFA_WIDGETITEM_NextSibling,
     XFA_WIDGETITEM_PrevSibling,
 };
-class CXFA_CalcData : public CFX_Object
+class CXFA_CalcData
 {
 public:
     CXFA_CalcData() : m_iRefCount(0) {}

@@ -11,7 +11,7 @@ class CFX_GEFontMgr;
 #ifndef FXFONT_SUBST_ITALIC
 #define FXFONT_SUBST_ITALIC	0x02
 #endif
-class CFX_GEFont : public IFX_Font, public CFX_ThreadLock, public CFX_Object
+class CFX_GEFont : public IFX_Font, public CFX_ThreadLock
 {
 public:
     CFX_GEFont(const CFX_GEFont &src, FX_DWORD dwFontStyles);

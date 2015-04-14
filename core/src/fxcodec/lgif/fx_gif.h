@@ -117,7 +117,7 @@ typedef struct tagGifPlainText {
     GifPTE*			pte_ptr;
     CFX_ByteString* string_ptr;
 } GifPlainText;
-class CGifLZWDecoder : public CFX_Object
+class CGifLZWDecoder
 {
 public:
     struct tag_Table {
@@ -158,7 +158,7 @@ private:
 
     FX_LPSTR	err_msg_ptr;
 };
-class CGifLZWEncoder : public CFX_Object
+class CGifLZWEncoder
 {
 public:
     struct tag_Table {

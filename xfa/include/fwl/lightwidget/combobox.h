@@ -96,7 +96,7 @@ protected:
     };
     CFWL_ComboBoxDP m_comboBoxData;
 };
-class CFWL_ComboBoxItem : public CFX_Object
+class CFWL_ComboBoxItem
 {
 public:
     CFWL_ComboBoxItem()

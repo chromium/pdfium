@@ -28,7 +28,7 @@ static double GetNan()
 }
 
 
-class CJS_PrivateData: public CFX_Object
+class CJS_PrivateData
 {
 public:
 	CJS_PrivateData():ObjDefID(-1), pPrivate(NULL) {}
@@ -37,7 +37,7 @@ public:
 };
 
 
-class CJS_ObjDefintion: public CFX_Object
+class CJS_ObjDefintion
 {
 public:
 	CJS_ObjDefintion(v8::Isolate* isolate, const wchar_t* sObjName, FXJSOBJTYPE eObjType, LP_CONSTRUCTOR pConstructor, LP_DESTRUCTOR pDestructor, unsigned bApplyNew):

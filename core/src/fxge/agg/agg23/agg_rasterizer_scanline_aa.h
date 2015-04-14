@@ -46,7 +46,7 @@ inline int poly_coord(FX_FLOAT c)
 {
     return int(c * poly_base_size);
 }
-struct cell_aa : public CFX_Object {
+struct cell_aa  {
     int x;
     int y;
     int cover;
@@ -56,7 +56,7 @@ struct cell_aa : public CFX_Object {
     void set_cover(int c, int a);
     void add_cover(int c, int a);
 };
-class outline_aa : public CFX_Object
+class outline_aa 
 {
     enum cell_block_scale_e {
         cell_block_shift = 12,
@@ -65,7 +65,7 @@ class outline_aa : public CFX_Object
         cell_block_pool  = 256,
         cell_block_limit = 1024
     };
-    struct sorted_y : public CFX_Object {
+    struct sorted_y  {
         unsigned start;
         unsigned num;
     };
@@ -134,7 +134,7 @@ private:
     int       m_max_y;
     bool      m_sorted;
 };
-class scanline_hit_test : public CFX_Object
+class scanline_hit_test 
 {
 public:
     scanline_hit_test(int x) : m_x(x), m_hit(false) {}
@@ -168,7 +168,7 @@ enum filling_rule_e {
     fill_non_zero,
     fill_even_odd
 };
-class rasterizer_scanline_aa : public CFX_Object
+class rasterizer_scanline_aa 
 {
     enum status {
         status_initial,

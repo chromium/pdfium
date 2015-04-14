@@ -12,7 +12,7 @@ class CFWL_ThemePart;
 class CFWL_WidgetTP;
 class IFWL_Widget;
 class CFWL_Theme;
-class CFWL_Theme : public CFX_Object
+class CFWL_Theme
 {
 public:
     virtual FX_BOOL		IsValidWidget(IFWL_Widget *pWidget);

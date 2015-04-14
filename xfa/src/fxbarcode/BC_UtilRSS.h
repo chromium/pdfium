@@ -7,7 +7,7 @@
 #ifndef _BC_UTILRESS_H_
 #define _BC_UTILRESS_H_
 class CBC_RssPair;
-class CBC_UtilRSS : public CFX_Object
+class CBC_UtilRSS
 {
 public:
     virtual ~CBC_UtilRSS();

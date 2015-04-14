@@ -6,8 +6,7 @@
 
 #ifndef _BC_CODEWORD_H_
 #define _BC_CODEWORD_H_
-class CBC_Codeword;
-class CBC_Codeword : public CFX_Object
+class CBC_Codeword
 {
 public:
     CBC_Codeword(FX_INT32 startX, FX_INT32 endX, FX_INT32 bucket, FX_INT32 value);

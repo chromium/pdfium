@@ -6,8 +6,7 @@
 
 #ifndef _BC_COMMONBITSOURCE_H_
 #define _BC_COMMONBITSOURCE_H_
-class CBC_CommonBitSource;
-class CBC_CommonBitSource  : public CFX_Object
+class CBC_CommonBitSource
 {
 public:
     CBC_CommonBitSource(CFX_ByteArray *bytes);

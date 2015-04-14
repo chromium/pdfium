@@ -6,8 +6,7 @@
 
 #ifndef _BC_COMMONBYTEMATRIX_H_
 #define _BC_COMMONBYTEMATRIX_H_
-class CBC_CommonByteMatrix;
-class CBC_CommonByteMatrix  : public CFX_Object
+class CBC_CommonByteMatrix
 {
 public:
     CBC_CommonByteMatrix(FX_INT32 width, FX_INT32 height);

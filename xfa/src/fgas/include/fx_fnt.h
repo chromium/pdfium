@@ -73,7 +73,7 @@ public:
 #endif
 };
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-typedef struct _FX_FONTMATCHPARAMS : public CFX_Object {
+typedef struct _FX_FONTMATCHPARAMS {
     FX_LPCWSTR				pwsFamily;
     FX_DWORD				dwFontStyles;
     FX_DWORD				dwUSB;

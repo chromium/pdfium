@@ -14,7 +14,7 @@ typedef struct _XFA_NOTSUREATTRIBUTE {
 } XFA_NOTSUREATTRIBUTE, * XFA_LPNOTSUREATTRIBUTE;
 typedef XFA_NOTSUREATTRIBUTE const * XFA_LPCNOTSUREATTRIBUTE;
 XFA_LPCNOTSUREATTRIBUTE XFA_GetNotsureAttribute(XFA_ELEMENT eElement, XFA_ATTRIBUTE eAttribute, XFA_ATTRIBUTETYPE eType = XFA_ATTRIBUTETYPE_NOTSURE);
-class CXFA_WideTextRead : public IFX_Stream, public CFX_Object
+class CXFA_WideTextRead : public IFX_Stream
 {
 public:
     CXFA_WideTextRead(const CFX_WideString &wsBuffer);

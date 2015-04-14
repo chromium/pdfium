@@ -49,7 +49,7 @@ enum XFA_FM_AccessorIndex {
     ACCESSOR_POSITIVE_INDEX,
     ACCESSOR_NEGATIVE_INDEX
 };
-class CXFA_FMSimpleExpression : public CFX_Object
+class CXFA_FMSimpleExpression
 {
 public:
     CXFA_FMSimpleExpression(FX_DWORD line, XFA_FM_TOKEN op);

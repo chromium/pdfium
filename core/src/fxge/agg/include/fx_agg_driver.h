@@ -8,7 +8,7 @@
 #define _FX_AGG_DEVICE_DRIVER_
 #include "fxfx_agg_path_storage.h"
 #include "fxfx_agg_rasterizer_scanline_aa.h"
-class CAgg_PathData : public CFX_Object
+class CAgg_PathData 
 {
 public:
     CAgg_PathData() {}

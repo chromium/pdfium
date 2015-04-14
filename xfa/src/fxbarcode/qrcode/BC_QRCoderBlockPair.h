@@ -7,8 +7,7 @@
 #ifndef _BC_QRCODERBLOCKPAIR_H_
 #define _BC_QRCODERBLOCKPAIR_H_
 class CBC_CommonByteArray;
-class CBC_QRCoderBlockPair;
-class CBC_QRCoderBlockPair : public CFX_Object
+class CBC_QRCoderBlockPair
 {
 private:
     CBC_CommonByteArray* m_dataBytes;

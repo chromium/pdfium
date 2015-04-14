@@ -2714,7 +2714,7 @@ static void XFA_ScriptInstanceManager_ReorderDataNodes_SortNodeArrayByDocumentId
         }
     }
 }
-struct CXFA_DualNodeArray : CFX_Object {
+struct CXFA_DualNodeArray {
     CXFA_NodeSet firstNodeList;
     CXFA_NodeSet secondNodeList;
 };

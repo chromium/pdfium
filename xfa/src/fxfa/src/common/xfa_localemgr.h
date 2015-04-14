@@ -25,7 +25,7 @@ class CXFA_LocaleMgr;
 #define XFA_LANGID_pt_BR	0x0416
 #define XFA_LANGID_nl_NL	0x0413
 #define XFA_LANGID_ru_RU	0x0419
-class CXFA_LocaleMgr : public IFX_LocaleMgr, public CFX_Object
+class CXFA_LocaleMgr : public IFX_LocaleMgr
 {
 public:
     CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid);
@@ -56,7 +56,7 @@ public:
 
     virtual void		GetTimeZone(FX_TIMEZONE& tz) = 0;
 };
-class CXFA_TimeZoneProvider : public IXFA_TimeZoneProvider, public CFX_Object
+class CXFA_TimeZoneProvider : public IXFA_TimeZoneProvider
 {
 public:
     CXFA_TimeZoneProvider();

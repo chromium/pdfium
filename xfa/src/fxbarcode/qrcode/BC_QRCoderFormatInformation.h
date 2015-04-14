@@ -7,8 +7,7 @@
 #ifndef _BC_QRCODERFORMATINFORMATION_H_
 #define _BC_QRCODERFORMATINFORMATION_H_
 class CBC_QRCoderErrorCorrectionLevel;
-class CBC_QRCoderFormatInformation;
-class CBC_QRCoderFormatInformation  : public CFX_Object
+class CBC_QRCoderFormatInformation
 {
 private:
     const static FX_INT32 FORMAT_INFO_MASK_QR;

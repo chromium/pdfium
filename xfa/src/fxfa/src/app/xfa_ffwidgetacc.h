@@ -14,7 +14,7 @@ enum XFA_TEXTPROVIDERTYPE {
     XFA_TEXTPROVIDERTYPE_Rollover,
     XFA_TEXTPROVIDERTYPE_Down,
 };
-class CXFA_TextProvider : public IXFA_TextProvider, public CFX_Object
+class CXFA_TextProvider : public IXFA_TextProvider
 {
 public:
     CXFA_TextProvider(CXFA_WidgetAcc *pWidgetAcc, XFA_TEXTPROVIDERTYPE eType, CXFA_Node* pTextNode = NULL)

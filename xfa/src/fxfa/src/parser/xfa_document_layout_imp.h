@@ -10,7 +10,7 @@ class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutPageMgr;
 class CXFA_LayoutAppAdapter;
 class CXFA_ContainerLayoutItemImpl;
-class CXFA_LayoutProcessor : public IXFA_DocLayout, public CFX_Object
+class CXFA_LayoutProcessor : public IXFA_DocLayout
 {
 public:
     CXFA_LayoutProcessor(CXFA_Document* pDocument);

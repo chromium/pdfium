@@ -7,8 +7,7 @@
 #ifndef _BC_ENCODER_H_
 #define _BC_ENCODER_H_
 class CBC_EncoderContext;
-class CBC_Encoder;
-class CBC_Encoder : public CFX_Object
+class CBC_Encoder
 {
 public:
     CBC_Encoder();

@@ -14,7 +14,7 @@ class CBC_QRCoderBitVector;
 class CBC_CommonByteArray;
 class CBC_CommonByteMatrix;
 class CBC_QRCoderEncoder;
-class CBC_QRCoderEncoder : public CFX_Object
+class CBC_QRCoderEncoder
 {
 private:
     const static FX_INT32 m_alphaNumbericTable[96];

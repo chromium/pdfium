@@ -10,7 +10,7 @@ class CBC_LuminanceSource;
 class CBC_CommonBitMatrix;
 class CBC_CommonBitArray;
 class CBC_BinaryBitmap;
-class CBC_Binarizer  : public CFX_Object
+class CBC_Binarizer
 {
 public:
     CBC_Binarizer(CBC_LuminanceSource *source);

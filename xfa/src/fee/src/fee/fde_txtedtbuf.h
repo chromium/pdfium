@@ -9,7 +9,7 @@
 class IFX_CharIter;
 class CFDE_TxtEdtBufIter;
 class CFDE_TxtEdtBuf;
-class CFDE_TxtEdtBufIter : public IFX_CharIter, public CFX_Object
+class CFDE_TxtEdtBufIter : public IFX_CharIter
 {
 public:
 #ifdef FDE_USEFORMATBLOCK
@@ -39,16 +39,16 @@ private:
 #endif
     FX_WCHAR		m_Alias;
 };
-class CFDE_TxtEdtBuf : public IFDE_TxtEdtBuf, public CFX_Object
+class CFDE_TxtEdtBuf : public IFDE_TxtEdtBuf
 {
     friend class CFDE_TxtEdtBufIter;
-    struct _FDE_CHUNKHEADER : public CFX_Object {
+    struct _FDE_CHUNKHEADER {
         FX_INT32	nUsed;
         FX_WCHAR	wChars[1];
     };
     typedef _FDE_CHUNKHEADER	FDE_CHUNKHEADER;
     typedef _FDE_CHUNKHEADER*	FDE_LPCHUNKHEADER;
-    struct _FDE_CHUNKPLACE : public CFX_Object {
+    struct _FDE_CHUNKPLACE {
         FX_INT32	nChunkIndex;
         FX_INT32	nCharIndex;
     };

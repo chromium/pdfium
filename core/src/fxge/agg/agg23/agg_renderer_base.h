@@ -23,7 +23,7 @@
 #include "agg_rendering_buffer.h"
 namespace agg
 {
-template<class PixelFormat> class renderer_base : public CFX_Object
+template<class PixelFormat> class renderer_base 
 {
 public:
     typedef PixelFormat pixfmt_type;

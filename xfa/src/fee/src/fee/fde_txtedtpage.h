@@ -43,7 +43,7 @@ static FDE_TXTEDT_CHARTYPE FDE_GetEditSelCharType(FX_WCHAR wChar)
         return FDE_TXTEDT_CHARTYPE_Char;
     }
 }
-typedef struct _FDE_TXTEDTPIECE : public CFX_Object {
+typedef struct _FDE_TXTEDTPIECE {
     FX_INT32	nStart;
     FX_INT32	nCount;
     FX_INT32	nBidiLevel;
@@ -51,7 +51,7 @@ typedef struct _FDE_TXTEDTPIECE : public CFX_Object {
     FX_DWORD	dwCharStyles;
 } FDE_TEXTEDITPIECE, * FDE_LPTEXTEDITPIECE;
 typedef CFX_MassArrayTemplate<FDE_TEXTEDITPIECE> CFDE_TXTEDTPieceMassArray;
-class CFDE_TxtEdtTextSet : public IFDE_TextSet, public CFX_Object
+class CFDE_TxtEdtTextSet : public IFDE_TextSet
 {
 public:
     CFDE_TxtEdtTextSet(CFDE_TxtEdtPage * pPage);
@@ -73,7 +73,7 @@ private:
 
     CFDE_TxtEdtPage * m_pPage;
 };
-class CFDE_TxtEdtPage : public CFX_Object, public IFDE_TxtEdtPage
+class CFDE_TxtEdtPage : public IFDE_TxtEdtPage
 {
 public:
     CFDE_TxtEdtPage(IFDE_TxtEdtEngine * pEngine, FX_INT32 nLineIndex);

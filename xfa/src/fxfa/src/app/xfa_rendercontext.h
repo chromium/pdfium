@@ -6,7 +6,7 @@
 
 #ifndef	_FXFA_FORMFILLER_RENDERCONTEXT_IMP_H
 #define _FXFA_FORMFILLER_RENDERCONTEXT_IMP_H
-class CXFA_RenderContext : public IXFA_RenderContext, public CFX_Object
+class CXFA_RenderContext : public IXFA_RenderContext
 {
 public:
     CXFA_RenderContext();

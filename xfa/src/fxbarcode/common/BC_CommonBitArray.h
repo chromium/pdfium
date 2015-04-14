@@ -6,8 +6,7 @@
 
 #ifndef _BC_COMMONBITARRAY_H_
 #define _BC_COMMONBITARRAY_H_
-class CBC_CommonBitArray;
-class CBC_CommonBitArray  : public CFX_Object
+class CBC_CommonBitArray
 {
 public:
     CBC_CommonBitArray(CBC_CommonBitArray* array);

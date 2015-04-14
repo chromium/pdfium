@@ -18,8 +18,7 @@ public:
 protected:
     void DrawDropDownButton(CFWL_ThemeBackground *pParams, CFX_Matrix *pMatrix);
     void	initThemeData();
-    struct DTPThemeData : public CFX_Object {
-    public:
+    struct DTPThemeData {
         FX_ARGB BoxBkColor[13][2];
     } *m_pThemeData;
 };

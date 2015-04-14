@@ -7,8 +7,7 @@
 #ifndef _BC_DATAMATRIXDATABLOCK_H_
 #define _BC_DATAMATRIXDATABLOCK_H_
 class CBC_DataMatrixVersion;
-class CBC_DataMatrixDataBlock;
-class CBC_DataMatrixDataBlock : public CFX_Object
+class CBC_DataMatrixDataBlock
 {
 public:
     virtual ~CBC_DataMatrixDataBlock();

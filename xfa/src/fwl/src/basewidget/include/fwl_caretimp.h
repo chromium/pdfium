@@ -33,7 +33,7 @@ public:
     virtual FWL_ERR SetColor(CFX_Color crFill);
 protected:
     FX_BOOL		  DrawCaretBK(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix);
-    class CFWL_CaretTimer : public CFX_Object
+    class CFWL_CaretTimer
     {
     public:
         CFWL_CaretTimer(CFWL_CaretImp *m_pCaret);

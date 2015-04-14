@@ -8,7 +8,7 @@
 #define _XFA_RESOLVEPROCESSOR_H_
 class CXFA_NodeHelper;
 class CXFA_ScriptContext;
-class CXFA_ResolveNodesData : public CFX_Object
+class CXFA_ResolveNodesData
 {
 public:
     CXFA_ResolveNodesData(CXFA_ScriptContext *pSC = NULL)
@@ -39,7 +39,7 @@ public:
     XFA_LPCSCRIPTATTRIBUTEINFO	m_pScriptAttribute;
     XFA_RESOVENODE_RSTYPE		m_dwFlag;
 };
-class CXFA_ResolveProcessor : public CFX_Object
+class CXFA_ResolveProcessor
 {
 public:
     CXFA_ResolveProcessor(void);

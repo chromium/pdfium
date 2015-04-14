@@ -8,8 +8,7 @@
 #define _BC_COMMONDECODERRESULT_H_
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_PDF417ResultMetadata;
-class CBC_CommonDecoderResult;
-class CBC_CommonDecoderResult  : public CFX_Object
+class CBC_CommonDecoderResult
 {
 public:
     CBC_CommonDecoderResult();

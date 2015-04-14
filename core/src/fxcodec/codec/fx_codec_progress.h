@@ -17,7 +17,7 @@ struct PixelWeight {
     int		m_SrcEnd;
     int		m_Weights[1];
 };
-class CFXCODEC_WeightTable : public CFX_Object
+class CFXCODEC_WeightTable
 {
 public:
     CFXCODEC_WeightTable()
@@ -40,7 +40,7 @@ public:
     int				m_DestMin, m_ItemSize;
     FX_LPBYTE		m_pWeightTables;
 };
-class CFXCODEC_HorzTable : public CFX_Object
+class CFXCODEC_HorzTable
 {
 public:
     CFXCODEC_HorzTable()
@@ -63,7 +63,7 @@ public:
     int				m_ItemSize;
     FX_LPBYTE		m_pWeightTables;
 };
-class CFXCODEC_VertTable : public CFX_Object
+class CFXCODEC_VertTable
 {
 public:
     CFXCODEC_VertTable()

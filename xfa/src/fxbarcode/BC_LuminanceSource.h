@@ -7,7 +7,7 @@
 #ifndef _BC_LUMINANCESOURCE_H
 #define _BC_LUMINANCESOURCE_H
 class CBC_LuminanceSource;
-class CBC_LuminanceSource  : public CFX_Object
+class CBC_LuminanceSource
 {
 public:
     CBC_LuminanceSource(FX_INT32 width, FX_INT32 height);

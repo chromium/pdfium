@@ -120,7 +120,7 @@ class IFWL_NoteLoop;
 #define FWL_KEYFLAG_LButton					(1 << 4)
 #define FWL_KEYFLAG_RButton					(1 << 5)
 #define FWL_KEYFLAG_MButton					(1 << 6)
-class CFWL_Note : public CFX_Object
+class CFWL_Note
 {
 public:
     virtual FX_DWORD		Release()

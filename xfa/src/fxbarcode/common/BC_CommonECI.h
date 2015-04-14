@@ -6,8 +6,7 @@
 
 #ifndef _BC_COMMONECI_H_
 #define _BC_COMMONECI_H_
-class CBC_CommonECI;
-class CBC_CommonECI  : public CFX_Object
+class CBC_CommonECI
 {
 public:
     CBC_CommonECI(FX_INT32 value);

@@ -61,7 +61,7 @@ public:
     void saveGraphicsState(void* graphics);
     void restoreGraphicsState(void* graphics);
 };
-class CApplePlatform : public CFX_Object
+class CApplePlatform 
 {
 public:
     CApplePlatform()

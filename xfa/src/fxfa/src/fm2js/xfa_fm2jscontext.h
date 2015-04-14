@@ -6,7 +6,7 @@
 
 #ifndef _XFA_FM2JS_CONTEXT_H
 #define _XFA_FM2JS_CONTEXT_H
-class CXFA_FM2JSContext : public CFX_Object
+class CXFA_FM2JSContext
 {
 public:
     static void Abs		(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);

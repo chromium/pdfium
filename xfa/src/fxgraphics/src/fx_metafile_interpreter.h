@@ -6,7 +6,7 @@
 
 #ifndef __H_FX_METAFILE_INTERPRETER__
 #define __H_FX_METAFILE_INTERPRETER__
-class CFX_MetafileInterpreter : public CFX_Object
+class CFX_MetafileInterpreter
 {
 public:
     CFX_MetafileInterpreter();

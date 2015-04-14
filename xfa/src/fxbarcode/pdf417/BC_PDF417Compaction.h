@@ -13,7 +13,7 @@ enum Compaction {
     BYTES,
     NUMERIC
 };
-class CBC_Compaction : public CFX_Object
+class CBC_Compaction
 {
 public:
     CBC_Compaction();

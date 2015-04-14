@@ -11,7 +11,7 @@ enum  XFA_LOGIC_TYPE {
     XFA_LOGIC_NoTransparent,
     XFA_LOGIC_Transparent,
 };
-class CXFA_NodeHelper : public CFX_Object
+class CXFA_NodeHelper
 {
 public:
     CXFA_NodeHelper(void);

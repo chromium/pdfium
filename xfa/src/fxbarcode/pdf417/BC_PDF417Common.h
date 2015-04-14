@@ -6,8 +6,7 @@
 
 #ifndef _BC_PDF417COMMON_H_
 #define _BC_PDF417COMMON_H_
-class CBC_PDF417Common;
-class CBC_PDF417Common : public CFX_Object
+class CBC_PDF417Common
 {
 public:
     CBC_PDF417Common();

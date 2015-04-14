@@ -16,8 +16,8 @@ class CBC_BarcodeMetadata;
 class CBC_BarcodeValue;
 class CBC_DetectionResult;
 class CBC_DetectionResultRowIndicatorColumn;
-class CBC_PDF417ScanningDecoder;
-class CBC_PDF417ScanningDecoder  : public CFX_Object
+
+class CBC_PDF417ScanningDecoder
 {
 public:
     CBC_PDF417ScanningDecoder();

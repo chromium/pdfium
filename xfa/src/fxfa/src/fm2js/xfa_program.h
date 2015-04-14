@@ -6,7 +6,7 @@
 
 #ifndef _XFA_FM_PROGRAM_H
 #define _XFA_FM_PROGRAM_H
-class CXFA_FMProgram : public CFX_Object
+class CXFA_FMProgram
 {
 public:
     CXFA_FMProgram();

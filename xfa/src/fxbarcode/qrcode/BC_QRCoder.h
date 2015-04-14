@@ -9,8 +9,8 @@
 class CBC_QRCoderErrorCorrectionLevel ;
 class CBC_QRCoderMode;
 class CBC_CommonByteMatrix;
-class CBC_QRCoder;
-class CBC_QRCoder : public CFX_Object
+
+class CBC_QRCoder
 {
 private:
     CBC_QRCoderMode* m_mode;

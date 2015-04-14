@@ -7,7 +7,7 @@
 #ifndef LayoutProvider_TaggedPDF_H
 #define LayoutProvider_TaggedPDF_H
 #include "../../include/reflow/reflowengine.h"
-class CPDF_LayoutElement : public IPDF_LayoutElement, public CFX_Object
+class CPDF_LayoutElement : public IPDF_LayoutElement
 {
 public:
     CPDF_LayoutElement();
@@ -47,7 +47,7 @@ protected:
     FX_COLORREF		GetDefaultColorValue(LayoutAttr attr_type);
     CFX_PtrArray	m_ObjArray;
 };
-class CPDF_LayoutProvider_TaggedPDF : public IPDF_LayoutProvider, public CFX_Object
+class CPDF_LayoutProvider_TaggedPDF : public IPDF_LayoutProvider
 {
 public:
     CPDF_LayoutProvider_TaggedPDF();

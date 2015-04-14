@@ -8,8 +8,7 @@
 #define _BC_PDF417ECERRORCORRECTION_H_
 class CBC_PDF417ECModulusGF;
 class CBC_PDF417ECModulusPoly;
-class CBC_PDF417ECErrorCorrection;
-class CBC_PDF417ECErrorCorrection : public CFX_Object
+class CBC_PDF417ECErrorCorrection
 {
 public:
     CBC_PDF417ECErrorCorrection();

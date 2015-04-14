@@ -7,7 +7,7 @@
 #ifndef _FXFA_FORMFILLER_ANNOTHANDLER_IMP_H
 #define _FXFA_FORMFILLER_ANNOTHANDLER_IMP_H
 class CXFA_FFDocView;
-class CXFA_FFWidgetHandler : public IXFA_WidgetHandler, public CFX_Object
+class CXFA_FFWidgetHandler : public IXFA_WidgetHandler
 {
 public:
     CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView);
@@ -77,7 +77,7 @@ protected:
 
     CXFA_FFDocView*		m_pDocView;
 };
-class CXFA_FFMenuHandler : public IXFA_MenuHandler, public CFX_Object
+class CXFA_FFMenuHandler : public IXFA_MenuHandler
 {
 public:
     CXFA_FFMenuHandler();

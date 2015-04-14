@@ -7,7 +7,7 @@
 #ifndef FXJSE_RUNTIME_H_
 #define FXJSE_RUNTIME_H_
 class CFXJSE_RuntimeList;
-class CFXJSE_RuntimeData : public CFX_Object
+class CFXJSE_RuntimeData
 {
 protected:
     CFXJSE_RuntimeData(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {};
@@ -25,7 +25,7 @@ protected:
     CFXJSE_RuntimeData(const CFXJSE_RuntimeData&);
     CFXJSE_RuntimeData& operator = (const CFXJSE_RuntimeData&);
 };
-class CFXJSE_RuntimeList : public CFX_Object
+class CFXJSE_RuntimeList
 {
 public:
     typedef void (*RuntimeDisposeCallback)(v8::Isolate*);

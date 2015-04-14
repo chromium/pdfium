@@ -27,7 +27,7 @@ struct XFA_FMKeyword {
     FX_LPCWSTR		m_keword;
 };
 FX_LPCWSTR XFA_FM_KeywordToString(XFA_FM_TOKEN op);
-class CXFA_FMToken : public CFX_Object
+class CXFA_FMToken
 {
 public:
     CXFA_FMToken();
@@ -38,7 +38,7 @@ public:
     FX_DWORD		m_uLinenum;
     CXFA_FMToken*	m_pNext;
 };
-class CXFA_FMLexer : public CFX_Object
+class CXFA_FMLexer
 {
 public:
     CXFA_FMLexer(FX_WSTR wsFormcalc, CXFA_FMErrorInfo *pErrorInfo);

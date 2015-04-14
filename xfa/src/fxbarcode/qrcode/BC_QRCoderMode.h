@@ -7,8 +7,7 @@
 #ifndef _BC_QRCODERMODE_H_
 #define _BC_QRCODERMODE_H_
 class CBC_QRCoderVersion;
-class CBC_QRCoderMode;
-class CBC_QRCoderMode  : public CFX_Object
+class CBC_QRCoderMode
 {
 private:
     FX_INT32* m_characterCountBitsForVersions;

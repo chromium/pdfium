@@ -7,7 +7,7 @@
 #ifndef _FX_SAX_IMP_
 #define _FX_SAX_IMP_
 #define FX_SAXFILE_BUFSIZE	32768
-class CFX_SAXFile : public CFX_Object
+class CFX_SAXFile
 {
 public:
     CFX_SAXFile();
@@ -39,7 +39,7 @@ enum FX_SAXMODE {
     FX_SAXMODE_TargetData,
     FX_SAXMODE_MAX,
 };
-class CFX_SAXItem : public CFX_Object
+class CFX_SAXItem
 {
 public:
     CFX_SAXItem() : m_pNode(NULL)
@@ -56,7 +56,7 @@ public:
     CFX_SAXItem*	m_pPrev;
     CFX_SAXItem*	m_pNext;
 };
-class CFX_SAXCommentContext : public CFX_Object
+class CFX_SAXCommentContext
 {
 public:
     CFX_SAXCommentContext() : m_iHeaderCount(0)
@@ -66,7 +66,7 @@ public:
     FX_INT32		m_iHeaderCount;
     FX_INT32		m_iTailCount;
 };
-class CFX_SAXReader : public IFX_SAXReader, public CFX_Object
+class CFX_SAXReader : public IFX_SAXReader
 {
 public:
     CFX_SAXReader();

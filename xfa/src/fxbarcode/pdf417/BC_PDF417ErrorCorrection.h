@@ -6,8 +6,7 @@
 
 #ifndef _BC_PDF417ERRORCORRECTION_H_
 #define _BC_PDF417ERRORCORRECTION_H_
-class CBC_PDF417ErrorCorrection;
-class CBC_PDF417ErrorCorrection : public CFX_Object
+class CBC_PDF417ErrorCorrection
 {
 public:
     CBC_PDF417ErrorCorrection();

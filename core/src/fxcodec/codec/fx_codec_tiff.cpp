@@ -13,7 +13,7 @@ extern "C" {
 void* IccLib_CreateTransform_sRGB(const unsigned char* pProfileData, unsigned int dwProfileSize, int nComponents, int intent, FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT);
 void IccLib_TranslateImage(void* pTransform, unsigned char* pDest, const unsigned char* pSrc, int pixels);
 void IccLib_DestroyTransform(void* pTransform);
-class CCodec_TiffContext : public CFX_Object
+class CCodec_TiffContext
 {
 public:
     CCodec_TiffContext();

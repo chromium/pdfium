@@ -7,8 +7,7 @@
 #ifndef _BC_QRDATAMASK_H_
 #define _BC_QRDATAMASK_H_
 class CBC_CommonBitMatrix;
-class CBC_QRDataMask;
-class CBC_QRDataMask  : public CFX_Object
+class CBC_QRDataMask
 {
 public:
     static CFX_PtrArray *DATA_MASKS;

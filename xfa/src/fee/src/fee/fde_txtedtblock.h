@@ -39,7 +39,7 @@ enum FDE_FORMAT_CARET_DIRECTION {
     FDE_FORMAT_CARET_MIDDLE,
     FDE_FORMAT_CARET_BACKWARD
 };
-class CFDE_TxtEdtBlock : public CFX_Object
+class CFDE_TxtEdtBlock
 {
 public:
     CFDE_TxtEdtBlock(CFDE_TxtEdtEngine * pEngine, const CFX_WideString &wsBlock, FX_INT32 nPosition);
@@ -72,7 +72,7 @@ private:
     CFX_ArrayTemplate<CFDE_TxtEdtField*> m_FieldArr;
     CFX_ArrayTemplate<CFDE_TxtEdtField*> m_EditFieldArr;
 };
-class CFDE_TxtEdtFieldFormatParser : public CFX_Object
+class CFDE_TxtEdtFieldFormatParser
 {
 public:
     CFDE_TxtEdtFieldFormatParser();
@@ -81,7 +81,7 @@ public:
     FX_INT32	CountItems() const;
     void		GetItem(FX_INT32 nIndex, CFX_WideString &wsKey, CFX_WideString &wsValue) const;
 private:
-    typedef struct : public CFX_Object {
+    typedef struct {
         FX_INT32 nKeyStart;
         FX_INT32 nKeyCount;
         FX_INT32 nValStart;
@@ -91,7 +91,7 @@ private:
     CFX_WideString m_wsFormat;
     CFX_ArrayTemplate<FDE_LPTXTEDTFORMATITEM> m_ItemArr;
 };
-class CFDE_TxtEdtField : public CFX_Object
+class CFDE_TxtEdtField
 {
 public:
     static CFDE_TxtEdtField * Create(const CFX_WideString &wsField, FX_INT32 nIndex, CFDE_TxtEdtBlock * pBlock);

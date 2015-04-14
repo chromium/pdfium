@@ -63,7 +63,7 @@ public:
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent) = 0;
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL) = 0;
 };
-class CFWL_WidgetImpProperties : public CFX_Object
+class CFWL_WidgetImpProperties
 {
 public:
     CFWL_WidgetImpProperties()

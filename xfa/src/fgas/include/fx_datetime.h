@@ -21,7 +21,7 @@ enum FX_WEEKDAY {
 FX_BOOL		FX_IsLeapYear(FX_INT32 iYear);
 FX_INT32	FX_DaysInYear(FX_INT32 iYear);
 FX_BYTE		FX_DaysInMonth(FX_INT32 iYear, FX_BYTE iMonth);
-class CFX_Unitime : public CFX_Object
+class CFX_Unitime
 {
 public:
     CFX_Unitime()
@@ -278,7 +278,7 @@ typedef FX_DATETIMEZONE const * FX_LPCDATETIMEZONE;
 #if _FX_OS_ != _FX_ANDROID_
 #pragma pack(pop)
 #endif
-class CFX_DateTime : public CFX_Object
+class CFX_DateTime
 {
 public:
     CFX_DateTime() {}

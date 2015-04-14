@@ -10,8 +10,7 @@ class CBC_BarcodeMetadata;
 class CBC_BoundingBox;
 class CBC_Codeword;
 class CBC_DetectionResultColumn;
-class CBC_DetectionResult;
-class CBC_DetectionResult : public CFX_Object
+class CBC_DetectionResult
 {
 public:
     CBC_DetectionResult(CBC_BarcodeMetadata* barcodeMetadata, CBC_BoundingBox* boundingBox);

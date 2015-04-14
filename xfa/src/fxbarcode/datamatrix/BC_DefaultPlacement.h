@@ -6,8 +6,7 @@
 
 #ifndef _BC_DEFAULTPLACEMENT_H_
 #define _BC_DEFAULTPLACEMENT_H_
-class CBC_DefaultPlacement;
-class CBC_DefaultPlacement : public CFX_Object
+class CBC_DefaultPlacement
 {
 public:
     CBC_DefaultPlacement(CFX_WideString codewords, FX_INT32 numcols, FX_INT32 numrows);

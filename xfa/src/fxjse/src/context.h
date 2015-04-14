@@ -8,7 +8,7 @@
 #define FXJSE_CONTEXT_H_
 class CFXJSE_Class;
 class CFXJSE_Value;
-class CFXJSE_Context : public CFX_Object
+class CFXJSE_Context
 {
 protected:
     CFXJSE_Context(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}

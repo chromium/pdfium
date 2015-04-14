@@ -6,7 +6,7 @@
 
 #ifndef _FXFA_FORMFILLER_DOCHANDLER_IMP_H
 #define _FXFA_FORMFILLER_DOCHANDLER_IMP_H
-class CXFA_FFDocHandler : public IXFA_DocHandler, public CFX_Object
+class CXFA_FFDocHandler : public IXFA_DocHandler
 {
 public:
     CXFA_FFDocHandler();

@@ -385,7 +385,7 @@ enum XFA_EVENTTYPE {
 #define XFA_VALIDATE_prePrint		2
 #define XFA_VALIDATE_preExecute		3
 #define XFA_VALIDATE_preSave		4
-class CXFA_EventParam : public CFX_Object
+class CXFA_EventParam
 {
 public:
     CXFA_EventParam()
@@ -492,7 +492,7 @@ public:
     virtual XFA_HWIDGET		GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) = 0;
     virtual IXFA_WidgetIterator* CreateWidgetIterator(FX_DWORD dwTraverseWay = XFA_TRAVERSEWAY_Form, FX_DWORD dwWidgetFilter = XFA_WIDGETFILTER_Visible | XFA_WIDGETFILTER_Viewable | XFA_WIDGETFILTER_AllType) = 0;
 };
-class CXFA_RenderOptions : public CFX_Object
+class CXFA_RenderOptions
 {
 public:
     CXFA_RenderOptions()

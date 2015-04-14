@@ -6,8 +6,7 @@
 
 #ifndef _BC_COMMONBYTEARRAY_H_
 #define _BC_COMMONBYTEARRAY_H_
-class CBC_CommonByteArray;
-class CBC_CommonByteArray  : public CFX_Object
+class CBC_CommonByteArray
 {
 private:
     FX_INT32 m_size;

@@ -18,7 +18,7 @@ public:
     virtual	CXFA_FFDoc*			GetDocNode() = 0;
     virtual FX_BOOL				GetEmbbedObj(FX_BOOL bURI, FX_BOOL bRaw, const CFX_WideString &wsAttr, CFX_WideString &wsValue) = 0;
 };
-class CXFA_CSSTagProvider : public IFDE_CSSTagProvider, public CFX_Object
+class CXFA_CSSTagProvider : public IFDE_CSSTagProvider
 {
 public:
     CXFA_CSSTagProvider ()
@@ -79,7 +79,7 @@ protected:
     FX_DWORD				m_dwMatchedDecls : 28;
     FDE_CSSDISPLAY			m_eDisplay		 : 4;
 };
-class CXFA_TextParser : public CFX_Object
+class CXFA_TextParser
 {
 public:
     CXFA_TextParser() : m_pAllocator(NULL), m_pSelector(NULL), m_pUASheet(NULL) {}
@@ -120,7 +120,7 @@ private:
     IFDE_CSSStyleSheet		*m_pUASheet;
     CFX_MapPtrTemplate<IFDE_XMLNode*, CXFA_TextParseContext*>	m_mapXMLNodeToParseContext;
 };
-class CXFA_LoaderContext : public CFX_Object
+class CXFA_LoaderContext
 {
 public:
     CXFA_LoaderContext() : m_bSaveLineHeight(FALSE)
@@ -278,7 +278,7 @@ struct XFA_TABSTOPS {
     FX_DWORD dwAlign;
     FX_FLOAT fTabstops;
 };
-class CXFA_TextTabstopsContext : public CFX_Object
+class CXFA_TextTabstopsContext
 {
 public:
     CXFA_TextTabstopsContext() : m_iTabCount(0), m_iTabIndex(-1), m_bTabstops(FALSE), m_fTabWidth(0), m_fLeft(0) {}
@@ -317,7 +317,7 @@ public:
     FX_FLOAT		m_fTabWidth;
     FX_FLOAT		m_fLeft;
 };
-class CXFA_TextLayout : public CFX_Object
+class CXFA_TextLayout
 {
 public:
     CXFA_TextLayout(IXFA_TextProvider *pTextProvider);

@@ -18,7 +18,7 @@ class CXFA_LocaleMgr;
 #define XFA_VT_DATE					32
 #define XFA_VT_TIME					64
 #define XFA_VT_DATETIME				128
-class CXFA_LocaleValue : public CFX_Object
+class CXFA_LocaleValue
 {
 public:
     CXFA_LocaleValue();

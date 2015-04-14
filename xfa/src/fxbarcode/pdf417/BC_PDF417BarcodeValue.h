@@ -6,8 +6,7 @@
 
 #ifndef _BC_BARCODEVALUE_H_
 #define _BC_BARCODEVALUE_H_
-class CBC_BarcodeValue;
-class CBC_BarcodeValue : public CFX_Object
+class CBC_BarcodeValue
 {
 public:
     CBC_BarcodeValue();

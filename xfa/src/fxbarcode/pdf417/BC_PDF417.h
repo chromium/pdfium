@@ -9,8 +9,7 @@
 class CBC_Compaction;
 class CBC_BarcodeRow;
 class CBC_BarcodeMatrix;
-class CBC_PDF417;
-class CBC_PDF417 : public CFX_Object
+class CBC_PDF417
 {
 public:
     CBC_PDF417();

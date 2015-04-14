@@ -48,7 +48,7 @@ public:
     }
     FXJSE_HRUNTIME		m_hRunTime;
 };
-typedef struct _XFA_RESOLVENODE_RS : public CFX_Object {
+typedef struct _XFA_RESOLVENODE_RS {
     _XFA_RESOLVENODE_RS() : dwFlags(XFA_RESOVENODE_RSTYPE_Nodes), pScriptAttribute(NULL) { }
     ~_XFA_RESOLVENODE_RS()
     {

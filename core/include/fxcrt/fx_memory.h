@@ -10,6 +10,7 @@
 #include "fx_system.h"
 
 #ifdef __cplusplus
+#include <new>
 extern "C" {
 #endif
 #define FX_Alloc(type, size)						(type*)calloc(size, sizeof(type))
@@ -22,76 +23,18 @@ void*	FXMEM_DefaultRealloc(void* pointer, size_t new_size, int flags);
 void	FXMEM_DefaultFree(void* pointer, int flags);
 #ifdef __cplusplus
 }
-#endif
-#ifdef __cplusplus
-class CFX_Object
-{
-public:
-    void*			operator new (size_t size, FX_LPCSTR file, int line)
-    {
-        return malloc(size);
-    }
-    void			operator delete (void* p, FX_LPCSTR file, int line)
-    {
-        free(p);
-    }
-    void*			operator new (size_t size)
-    {
-        return malloc(size);
-    }
-    void			operator delete (void* p)
-    {
-        free(p);
-    }
-    void*			operator new[] (size_t size, FX_LPCSTR file, int line)
-    {
-        return malloc(size);
-    }
-    void			operator delete[] (void* p, FX_LPCSTR file, int line)
-    {
-        free(p);
-    }
-    void*			operator new[] (size_t size)
-    {
-        return malloc(size);
-    }
-    void			operator delete[] (void* p)
-    {
-        free(p);
-    }
-    void*			operator new (size_t, void* buf)
-    {
-        return buf;
-    }
-    void			operator delete (void*, void*)							{}
-};
-#endif
-#ifdef __cplusplus
-#if defined(_DEBUG)
-#define FX_NEW new(__FILE__, __LINE__)
-#else
 
-#define FX_NEW new
-#endif
-#define FX_NEW_VECTOR(Pointer, Class, Count) \
-    { \
-        Pointer = FX_Alloc(Class, Count); \
-        if (Pointer) { \
-            for (int i = 0; i < (Count); i ++) new (Pointer + i) Class; \
-        } \
-    }
-#define FX_DELETE_VECTOR(Pointer, Class, Count) \
-    { \
-        for (int i = 0; i < (Count); i ++) Pointer[i].~Class(); \
-        FX_Free(Pointer); \
-    }
-class CFX_DestructObject : public CFX_Object
+#define FX_NEW new(std::nothrow)
+#define FX_NEW_VECTOR(Pointer, Class, Count) (Pointer = FX_NEW Class[Count])
+#define FX_DELETE_VECTOR(Pointer, Class, Count) delete[] Pointer
+
+class CFX_DestructObject 
 {
 public:
 
     virtual ~CFX_DestructObject() {}
 };
-class CFX_GrowOnlyPool : public CFX_Object
+class CFX_GrowOnlyPool 
 {
 public:
 

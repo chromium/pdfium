@@ -26,7 +26,7 @@ class IFWL_ThemeProvider;
 #define FWL_WGTCAPACITY_UIMargin			12
 #define FWL_WGTCAPACITY_SpaceAboveBelow		13
 #define FWL_WGTCAPACITY_MAX					65535
-class CFWL_ThemePart : public CFX_Object
+class CFWL_ThemePart
 {
 public:
     CFWL_ThemePart()

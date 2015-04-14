@@ -59,7 +59,7 @@ inline FX_BOOL XFA_IsDigit(FX_WCHAR c)
 }
 typedef CFX_ArrayTemplate<CXFA_Node*> CXFA_NodeArray;
 typedef CFX_ArrayTemplate<CXFA_Object*> CXFA_ObjArray;
-class CXFA_Data : public CFX_Object
+class CXFA_Data
 {
 public:
     CXFA_Data(CXFA_Node* pNode) : m_pNode(pNode) {}

@@ -28,7 +28,7 @@ enum XFA_DOCVIEW_LAYOUTSTATUS {
     XFA_DOCVIEW_LAYOUTSTATUS_End,
     XFA_DOCVIEW_LAYOUTSTATUS_Next,
 };
-class CXFA_FFDocView : public IXFA_DocView, public CFX_Object
+class CXFA_FFDocView : public IXFA_DocView
 {
 public:
     CXFA_FFDocView(CXFA_FFDoc* pDoc);
@@ -116,7 +116,7 @@ protected:
     FX_INT32							m_iLock;
     friend class CXFA_FFNotify;
 };
-class CXFA_FFDocWidgetIterator : public IXFA_WidgetIterator, public CFX_Object
+class CXFA_FFDocWidgetIterator : public IXFA_WidgetIterator
 {
 public:
     CXFA_FFDocWidgetIterator(CXFA_FFDocView* pDocView, CXFA_Node* pTravelRoot);
@@ -139,7 +139,7 @@ protected:
     CXFA_FFDocView*				m_pDocView;
     CXFA_FFWidget*				m_pCurWidget;
 };
-class CXFA_WidgetAccIterator : public IXFA_WidgetAccIterator, public CFX_Object
+class CXFA_WidgetAccIterator : public IXFA_WidgetAccIterator
 {
 public:
     CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView, CXFA_Node* pTravelRoot);

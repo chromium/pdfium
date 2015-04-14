@@ -7,8 +7,7 @@
 #ifndef _FWL_TARGET_IMP_H
 #define _FWL_TARGET_IMP_H
 class IFWL_Target;
-class CFWL_Target;
-class CFWL_Target : public CFX_Object
+class CFWL_Target
 {
 public:
     virtual FX_DWORD		Release();

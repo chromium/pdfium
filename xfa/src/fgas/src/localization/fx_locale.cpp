@@ -256,7 +256,7 @@ static const FX_FLOAT gs_fraction_scales[] = {0.1f, 0.01f, 0.001f, 0.0001f, 0.00
                                               0.0000001f, 0.00000001f, 0.000000001f, 0.0000000001f, 0.00000000001f
                                              };
 static const FX_INT32 gs_fraction_count = sizeof(gs_fraction_scales) / sizeof(FX_FLOAT);
-class CFX_LCNumeric : public CFX_Object
+class CFX_LCNumeric
 {
 public:
     CFX_LCNumeric();

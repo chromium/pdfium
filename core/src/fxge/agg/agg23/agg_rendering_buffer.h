@@ -22,17 +22,17 @@
 #include "agg_basics.h"
 namespace agg
 {
-class rendering_buffer : public CFX_Object
+class rendering_buffer 
 {
 public:
-    struct row_data : public CFX_Object {
+    struct row_data  {
         int x1, x2;
         const int8u* ptr;
         row_data() {}
         row_data(int x1_, int x2_, const int8u* ptr_) :
             x1(x1_), x2(x2_), ptr(ptr_) {}
     };
-    struct span_data : public CFX_Object {
+    struct span_data  {
         int x;
         unsigned len;
         int8u* ptr;

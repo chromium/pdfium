@@ -8,8 +8,7 @@
 #define _BC_READSOLOMON_H_
 class CBC_ReedSolomonGF256;
 class CBC_ReedSolomonGF256Poly;
-class  CBC_ReedSolomonEncoder;
-class CBC_ReedSolomonEncoder : public CFX_Object
+class CBC_ReedSolomonEncoder
 {
 private:
     CBC_ReedSolomonGF256* m_field;

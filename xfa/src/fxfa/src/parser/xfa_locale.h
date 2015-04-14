@@ -6,7 +6,7 @@
 
 #ifndef _FXFA_LOCALE_H
 #define _FXFA_LOCALE_H
-class CXFA_XMLLocale : public IFX_Locale, public CFX_Object
+class CXFA_XMLLocale : public IFX_Locale
 {
 public:
     CXFA_XMLLocale(CXML_Element* pLocaleData);
@@ -32,7 +32,7 @@ protected:
 private:
     CXML_Element*	m_pLocaleData;
 };
-class CXFA_NodeLocale : public IFX_Locale, public CFX_Object
+class CXFA_NodeLocale : public IFX_Locale
 {
 public:
     CXFA_NodeLocale(CXFA_Node* pLocale);

@@ -16,7 +16,7 @@ enum XFA_FM_EXPTYPE {
     XFA_FM_EXPTYPE_BREAK,
     XFA_FM_EXPTYPE_CONTINUE,
 };
-class CXFA_FMExpression : public CFX_Object
+class CXFA_FMExpression
 {
 public:
     CXFA_FMExpression(FX_DWORD line);

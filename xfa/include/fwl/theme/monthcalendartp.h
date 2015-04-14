@@ -32,7 +32,7 @@ protected:
     FX_BOOL		DrawWeekNumSep(CFWL_ThemeBackground *pParams, CFX_Matrix *pMatrix);
     FWLTHEME_STATE GetState(FX_DWORD dwFWLStates);
     void	SetThemeData(FX_DWORD dwThemeID);
-    class MCThemeData : public CFX_Object
+    class MCThemeData
     {
     public:
         FX_ARGB clrCaption;

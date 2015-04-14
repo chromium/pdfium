@@ -41,7 +41,7 @@ public:
     CFWL_ListBox();
     virtual ~CFWL_ListBox();
 protected:
-    class CFWL_ListBoxDP : public IFWL_ListBoxDP, public CFX_Object
+    class CFWL_ListBoxDP : public IFWL_ListBoxDP
     {
     public:
         CFWL_ListBoxDP();
@@ -74,7 +74,7 @@ protected:
     };
     CFWL_ListBoxDP m_ListBoxDP;
 };
-class CFWL_ListItem : public CFX_Object
+class CFWL_ListItem
 {
 public:
     CFWL_ListItem()

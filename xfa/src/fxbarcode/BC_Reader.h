@@ -8,7 +8,7 @@
 #define _BC_READER_H_
 class CBC_BinaryBitmap;
 class CBC_Reader;
-class CBC_Reader : public CFX_Object
+class CBC_Reader
 {
 public:
     CBC_Reader();

@@ -108,7 +108,7 @@ public:
     virtual FX_BOOL FormatZero(const CFX_WideString& wsPattern, CFX_WideString& wsOutput) = 0;
     virtual FX_BOOL FormatNull(const CFX_WideString& wsPattern, CFX_WideString& wsOutput) = 0;
 };
-class CFX_Decimal : CFX_Object
+class CFX_Decimal
 {
 public:
     CFX_Decimal();

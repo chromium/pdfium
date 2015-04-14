@@ -6,7 +6,7 @@
 
 #ifndef _XFA_LAYOUT_PAGEMGR_H_
 #define _XFA_LAYOUT_PAGEMGR_H_
-class CXFA_ContainerRecord : public CFX_Object
+class CXFA_ContainerRecord
 {
 public:
     CXFA_ContainerRecord(CXFA_ContainerLayoutItemImpl* pPageSet = NULL, CXFA_ContainerLayoutItemImpl* pPageArea = NULL, CXFA_ContainerLayoutItemImpl* pContentArea = NULL)
@@ -17,7 +17,7 @@ public:
     CXFA_ContainerLayoutItemImpl* pCurPageArea;
     CXFA_ContainerLayoutItemImpl* pCurContentArea;
 };
-class CXFA_LayoutPageMgr : public CFX_Object
+class CXFA_LayoutPageMgr
 {
 public:
     CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor);

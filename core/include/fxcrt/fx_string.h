@@ -21,7 +21,7 @@ class CFX_WideStringL;
 
 // An immutable string with caller-provided storage which must outlive the
 // string itself.
-class CFX_ByteStringC : public CFX_Object
+class CFX_ByteStringC 
 {
 public:
     typedef FX_CHAR value_type;
@@ -171,7 +171,7 @@ struct CFX_StringData {
 
     FX_CHAR		m_String[1];
 };
-class CFX_ByteString : public CFX_Object
+class CFX_ByteString 
 {
 public:
     typedef FX_CHAR value_type;
@@ -428,7 +428,7 @@ inline CFX_ByteString operator + (FX_BSTR str1, const CFX_ByteString& str2)
 {
     return CFX_ByteString(str1, str2);
 }
-class CFX_StringBufBase : public CFX_Object
+class CFX_StringBufBase 
 {
 public:
 
@@ -484,7 +484,7 @@ public:
     FX_CHAR		m_Buffer[limit];
 };
 typedef CFX_StringBufTemplate<256> CFX_StringBuf256;
-class CFX_WideStringC : public CFX_Object
+class CFX_WideStringC 
 {
 public:
     typedef FX_WCHAR value_type;
@@ -630,7 +630,7 @@ struct CFX_StringDataW {
 
     FX_WCHAR	m_String[1];
 };
-class CFX_WideString : public CFX_Object
+class CFX_WideString 
 {
 public:
     typedef FX_WCHAR value_type;

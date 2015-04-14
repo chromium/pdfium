@@ -12,7 +12,7 @@ class CFWL_GridLength;
 class CFWL_GridColRow;
 class CFWL_GridWidgetInfo;
 class CFWL_GridImp;
-class CFWL_GridLength : public CFX_Object
+class CFWL_GridLength
 {
 public:
     CFWL_GridLength()
@@ -28,7 +28,7 @@ public:
     FX_FLOAT fLength;
     FWL_GRIDUNIT eUnit;
 };
-class CFWL_GridColRow : public CFX_Object
+class CFWL_GridColRow
 {
 public:
     CFWL_GridColRow()
@@ -45,7 +45,7 @@ public:
     FX_FLOAT		m_fActualSize;
     FX_FLOAT		m_fActualPos;
 };
-class CFWL_GridWidgetInfo : public CFX_Object
+class CFWL_GridWidgetInfo
 {
 public:
     CFWL_GridWidgetInfo()

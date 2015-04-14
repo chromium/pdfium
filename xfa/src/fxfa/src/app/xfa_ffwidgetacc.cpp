@@ -25,7 +25,7 @@ static void XFA_FFDeleteCalcData(FX_LPVOID pData)
     }
 }
 static XFA_MAPDATABLOCKCALLBACKINFO gs_XFADeleteCalcData = {XFA_FFDeleteCalcData, NULL};
-class CXFA_WidgetLayoutData : public CFX_Object
+class CXFA_WidgetLayoutData
 {
 public:
     CXFA_WidgetLayoutData()

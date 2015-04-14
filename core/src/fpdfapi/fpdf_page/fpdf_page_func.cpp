@@ -21,7 +21,7 @@ typedef enum {PSOP_ADD, PSOP_SUB, PSOP_MUL, PSOP_DIV, PSOP_IDIV, PSOP_MOD,
               PSOP_IF, PSOP_IFELSE, PSOP_POP, PSOP_EXCH, PSOP_DUP, PSOP_COPY,
               PSOP_INDEX, PSOP_ROLL, PSOP_PROC, PSOP_CONST
              } PDF_PSOP;
-class CPDF_PSProc : public CFX_Object
+class CPDF_PSProc 
 {
 public:
     ~CPDF_PSProc();
@@ -30,7 +30,7 @@ public:
     CFX_PtrArray		m_Operators;
 };
 #define PSENGINE_STACKSIZE 100
-class CPDF_PSEngine : public CFX_Object
+class CPDF_PSEngine 
 {
 public:
     CPDF_PSEngine();

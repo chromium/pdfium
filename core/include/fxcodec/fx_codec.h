@@ -28,7 +28,7 @@ class ICodec_BmpModule;
 class ICodec_TiffModule;
 class CFX_DIBAttribute;
 class ICodec_ScanlineDecoder;
-class CCodec_ModuleMgr : public CFX_Object
+class CCodec_ModuleMgr 
 {
 public:
 
@@ -109,7 +109,7 @@ protected:
     ICodec_TiffModule*	m_pTiffModule;
 
 };
-class ICodec_BasicModule : public CFX_Object
+class ICodec_BasicModule 
 {
 public:
 
@@ -121,7 +121,7 @@ public:
     virtual ICodec_ScanlineDecoder*	CreateRunLengthDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc) = 0;
 };
-class ICodec_ScanlineDecoder : public CFX_Object
+class ICodec_ScanlineDecoder 
 {
 public:
 
@@ -147,7 +147,7 @@ public:
 
     virtual void		ClearImageData() = 0;
 };
-class ICodec_FlateModule : public CFX_Object
+class ICodec_FlateModule 
 {
 public:
 
@@ -162,7 +162,7 @@ public:
                                FX_LPBYTE& dest_buf, FX_DWORD& dest_size) = 0;
     virtual FX_BOOL		Encode(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size) = 0;
 };
-class ICodec_FaxModule : public CFX_Object
+class ICodec_FaxModule 
 {
 public:
 
@@ -175,7 +175,7 @@ public:
     virtual FX_BOOL		Encode(FX_LPCBYTE src_buf, int width, int height, int pitch,
                                FX_LPBYTE& dest_buf, FX_DWORD& dest_size) = 0;
 };
-class ICodec_JpegModule : public CFX_Object
+class ICodec_JpegModule 
 {
 public:
 
@@ -210,7 +210,7 @@ public:
 
     virtual FX_DWORD	GetAvailInput(void* pContext, FX_LPBYTE* avail_buf_ptr = NULL) = 0;
 };
-class ICodec_JpxModule : public CFX_Object
+class ICodec_JpxModule 
 {
 public:
 
@@ -226,7 +226,7 @@ public:
 
     virtual void		DestroyDecoder(FX_LPVOID ctx) = 0;
 };
-class ICodec_PngModule : public CFX_Object
+class ICodec_PngModule
 {
 public:
 
@@ -244,7 +244,7 @@ public:
 
     void				(*FillScanlineBufCompletedCallback)(void* pModule, int pass, int line);
 };
-class ICodec_GifModule : public CFX_Object
+class ICodec_GifModule
 {
 public:
 
@@ -276,7 +276,7 @@ public:
 
     void				(*ReadScanlineCallback)(void* pModule, FX_INT32 row_num, FX_LPBYTE row_buf);
 };
-class ICodec_BmpModule : public CFX_Object
+class ICodec_BmpModule
 {
 public:
 
@@ -299,7 +299,7 @@ public:
 
     void				(*ReadScanlineCallback)(void* pModule, FX_INT32 row_num, FX_LPBYTE row_buf);
 };
-class ICodec_TiffModule : public CFX_Object
+class ICodec_TiffModule
 {
 public:
 
@@ -317,7 +317,7 @@ public:
 
     virtual void		DestroyDecoder(FX_LPVOID ctx) = 0;
 };
-class ICodec_Jbig2Module : public CFX_Object
+class ICodec_Jbig2Module 
 {
 public:
 
@@ -338,7 +338,7 @@ public:
     virtual FXCODEC_STATUS		ContinueDecode(void* pJbig2Content, IFX_Pause* pPause) = 0;
     virtual void				DestroyJbig2Context(void* pJbig2Content) = 0;
 };
-class ICodec_ProgressiveDecoder : public CFX_Object
+class ICodec_ProgressiveDecoder
 {
 public:
 
@@ -366,13 +366,13 @@ public:
 
     virtual FXCODEC_STATUS		ContinueDecode(IFX_Pause* pPause = NULL) = 0;
 };
-class ICodec_Jbig2Encoder : public CFX_Object
+class ICodec_Jbig2Encoder 
 {
 public:
 
     virtual ~ICodec_Jbig2Encoder() {}
 };
-class ICodec_IccModule : public CFX_Object
+class ICodec_IccModule 
 {
 public:
     typedef enum {
@@ -434,7 +434,7 @@ public:
 void AdobeCMYK_to_sRGB(FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B);
 void AdobeCMYK_to_sRGB1(FX_BYTE c, FX_BYTE m, FX_BYTE y, FX_BYTE k, FX_BYTE& R, FX_BYTE& G, FX_BYTE& B);
 FX_BOOL MD5ComputeID(FX_LPCVOID buf, FX_DWORD dwSize, FX_BYTE ID[16]);
-class CFX_DIBAttribute : public CFX_Object
+class CFX_DIBAttribute
 {
 public:
     CFX_DIBAttribute();
@@ -462,7 +462,7 @@ public:
     FX_INT32		m_nBmpCompressType;
     class IFX_DIBAttributeExif* m_pExif;
 };
-class IFX_DIBAttributeExif : public CFX_Object
+class IFX_DIBAttributeExif
 {
 public:
     virtual ~IFX_DIBAttributeExif() {};

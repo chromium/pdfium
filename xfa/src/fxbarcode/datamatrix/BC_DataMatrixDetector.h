@@ -12,7 +12,7 @@ class CBC_ResultPoint;
 class CBC_QRDetectorResult;
 class CBC_DataMatrixDetector;
 class ResultPointsAndTransitions;
-class CBC_ResultPointsAndTransitions : public CFX_Object
+class CBC_ResultPointsAndTransitions
 {
 public:
     CBC_ResultPointsAndTransitions(CBC_ResultPoint *from, CBC_ResultPoint *to, FX_INT32 transitions)

@@ -8,8 +8,7 @@
 #define _BC_DATAMATRIXDECODEDBITSTREAMPARSER_H_
 class CBC_CommonDecoderResult;
 class CBC_CommonBitSource;
-class CBC_DataMatrixDecodedBitStreamParser;
-class CBC_DataMatrixDecodedBitStreamParser : public CFX_Object
+class CBC_DataMatrixDecodedBitStreamParser
 {
 public:
     CBC_DataMatrixDecodedBitStreamParser();

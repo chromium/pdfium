@@ -7,9 +7,7 @@
 #ifndef _FPDFXFA_PAGEVIEW_H_
 #define _FPDFXFA_PAGEVIEW_H_
 
-class CPDFXFA_Page;
-
-class CPDFXFA_Page : public CFX_Object 
+class CPDFXFA_Page
 {
 public:
 	CPDFXFA_Page(CPDFXFA_Document* pDoc, int page_index);

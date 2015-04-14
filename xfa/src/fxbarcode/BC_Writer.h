@@ -7,7 +7,7 @@
 #ifndef _BC_WRITER_H_
 #define _BC_WRITER_H_
 class CBC_Writer;
-class CBC_Writer : public CFX_Object
+class CBC_Writer
 {
 public:
     CBC_Writer();

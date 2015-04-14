@@ -6,7 +6,7 @@
 
 #ifndef _FX_LOCALEMGR_IMP_H_
 #define _FX_LOCALEMGR_IMP_H_
-class CFX_LocaleMgr : public IFX_LocaleMgr, public CFX_Object
+class CFX_LocaleMgr : public IFX_LocaleMgr
 {
 public:
     CFX_LocaleMgr(FX_WORD wDefLCID);

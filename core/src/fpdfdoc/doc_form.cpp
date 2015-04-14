@@ -29,7 +29,7 @@ FX_BOOL			NeedPDFEncodeForFieldTree(CPDF_Dictionary* pFieldDict, int nLevel = 0)
 void			EncodeFieldName(const CFX_WideString& csName, CFX_ByteString& csT);
 void			UpdateEncodeFieldName(CPDF_Dictionary* pFieldDict, int nLevel = 0);
 const int nMaxRecursion = 32;
-class _CFieldNameExtractor : public CFX_Object
+class _CFieldNameExtractor 
 {
 public:
     _CFieldNameExtractor(const CFX_WideString& full_name)
@@ -54,10 +54,10 @@ protected:
     FX_LPCWSTR m_pEnd;
     FX_LPCWSTR m_pCur;
 };
-class CFieldTree : public CFX_Object
+class CFieldTree 
 {
 public:
-    struct _Node : public CFX_Object {
+    struct _Node  {
         _Node *parent;
         CFX_PtrArray children;
         CFX_WideString short_name;

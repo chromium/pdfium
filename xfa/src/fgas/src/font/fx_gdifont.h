@@ -13,7 +13,7 @@ typedef struct _FX_GDIGOCACHE {
     FX_LPBYTE		pOutline;
 } FX_GDIGOCACHE, * FX_LPGDIGOCACHE;
 typedef FX_GDIGOCACHE const * FX_LPCGDIGOCACHE;
-class CFX_GdiFontCache : public CFX_Object
+class CFX_GdiFontCache
 {
 public:
     CFX_GdiFontCache();
@@ -23,7 +23,7 @@ public:
 protected:
     CFX_MapPtrToPtr		m_GlyphMap;
 };
-class CFX_GdiFont : public IFX_Font, public CFX_ThreadLock, public CFX_Object
+class CFX_GdiFont : public IFX_Font, public CFX_ThreadLock
 {
 public:
     CFX_GdiFont(IFX_FontMgr *pFontMgr);

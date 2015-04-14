@@ -7,7 +7,7 @@
 #ifndef FXJSE_VALUE_H_
 #define FXJSE_VALUE_H_
 #include "scope_inline.h"
-class CFXJSE_Value : public CFX_Object
+class CFXJSE_Value
 {
 public:
     CFXJSE_Value(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}

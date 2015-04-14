@@ -6,8 +6,7 @@
 
 #ifndef _BC_DIMENSIONS_H_
 #define _BC_DIMENSIONS_H_
-class CBC_Dimensions;
-class CBC_Dimensions : public CFX_Object
+class CBC_Dimensions
 {
 public:
     CBC_Dimensions(FX_INT32 minCols, FX_INT32 maxCols, FX_INT32 minRows, FX_INT32 maxRows);

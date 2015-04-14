@@ -10,7 +10,7 @@
 #define XFA_JSBUILTIN_Initialized			0x0001
 #define XFA_JSBUILTIN_HasCount				0x0002
 class CXFA_ResolveProcessor;
-class CXFA_ScriptContext : public IXFA_ScriptContext, public CFX_Object
+class CXFA_ScriptContext : public IXFA_ScriptContext
 {
 public:
     CXFA_ScriptContext(CXFA_Document* pDocument);

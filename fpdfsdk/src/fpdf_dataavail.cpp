@@ -80,7 +80,7 @@ private:
 	FX_DOWNLOADHINTS* m_pDownloadHints;
 };
 
-class CFPDF_DataAvail : public CFX_Object
+class CFPDF_DataAvail 
 {
 public:
 	CFPDF_DataAvail()

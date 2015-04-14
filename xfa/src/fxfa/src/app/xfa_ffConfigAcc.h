@@ -6,7 +6,7 @@
 
 #ifndef _FXFA_FORMFILLERCONFIGACC_IMP_H
 #define _FXFA_FORMFILLERCONFIGACC_IMP_H
-class CXFA_FFConfigAcc : public CFX_Object
+class CXFA_FFConfigAcc
 {
 public:
     CXFA_FFConfigAcc(CXFA_Node *pNode);

@@ -17,7 +17,7 @@ class CFX_TextStream;
 class CFX_FileRead;
 class CFX_FileWrite;
 class CFX_BufferAccImp;
-class CFX_StreamImp : public CFX_ThreadLock, public CFX_Object
+class CFX_StreamImp : public CFX_ThreadLock
 {
 public:
     virtual void			Release()
@@ -197,7 +197,7 @@ enum FX_STREAMTYPE {
     FX_STREAMTYPE_Stream		,
     FX_STREAMTYPE_BufferRead	,
 };
-class CFX_Stream : public IFX_Stream, public CFX_ThreadLock, public CFX_Object
+class CFX_Stream : public IFX_Stream, public CFX_ThreadLock
 {
 public:
     CFX_Stream();
@@ -245,7 +245,7 @@ protected:
     FX_INT32				m_iLength;
     FX_INT32				m_iRefCount;
 };
-class CFX_TextStream : public IFX_Stream, public CFX_ThreadLock, public CFX_Object
+class CFX_TextStream : public IFX_Stream, public CFX_ThreadLock
 {
 public:
     CFX_TextStream(IFX_Stream *pStream, FX_BOOL bDelStream);
@@ -292,7 +292,7 @@ protected:
     void		InitStream();
 };
 #ifdef FX_FILESIZE
-class CFGAS_FileRead : public IFX_FileRead, public CFX_Object
+class CFGAS_FileRead : public IFX_FileRead
 {
 public:
     CFGAS_FileRead(IFX_Stream *pStream, FX_BOOL bReleaseStream);
@@ -308,7 +308,7 @@ protected:
     IFX_Stream				*m_pStream;
 };
 #else
-class CFGAS_FileRead : public IFX_FileRead, public CFX_Object
+class CFGAS_FileRead : public IFX_FileRead
 {
 public:
     CFGAS_FileRead(IFX_Stream *pStream, FX_BOOL bReleaseStream);
@@ -327,7 +327,7 @@ protected:
 };
 #endif
 #ifdef FX_FILESIZE
-class CFX_BufferAccImp : public IFX_FileRead, public CFX_Object
+class CFX_BufferAccImp : public IFX_FileRead
 {
 public:
     CFX_BufferAccImp(IFX_BufferRead *pBufferRead, FX_FILESIZE iFileSize, FX_BOOL bReleaseStream);
@@ -344,7 +344,7 @@ protected:
     FX_FILESIZE				m_iBufSize;
 };
 #else
-class CFX_BufferAccImp : public IFX_FileRead, public CFX_Object
+class CFX_BufferAccImp : public IFX_FileRead
 {
 public:
     CFX_BufferAccImp(IFX_BufferRead *pBufferRead, FX_INT32 iFileSize, FX_BOOL bReleaseStream);
@@ -364,7 +364,7 @@ protected:
 };
 #endif
 #ifdef FX_FILESIZE
-class CFGAS_FileWrite : public IFX_FileWrite, public CFX_Object
+class CFGAS_FileWrite : public IFX_FileWrite
 {
 public:
     CFGAS_FileWrite(IFX_Stream *pStream, FX_BOOL bReleaseStream);
@@ -382,7 +382,7 @@ protected:
     FX_BOOL					m_bReleaseStream;
 };
 #else
-class CFGAS_FileWrite : public IFX_FileWrite, public CFX_Object
+class CFGAS_FileWrite : public IFX_FileWrite
 {
 public:
     CFGAS_FileWrite(IFX_Stream *pStream, FX_BOOL bReleaseStream);

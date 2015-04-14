@@ -9,7 +9,7 @@
 #endif
 class CPDF_QuickStretcher;
 #define TYPE3_MAX_BLUES		16
-class CPDF_Type3Glyphs : public CFX_Object
+class CPDF_Type3Glyphs 
 {
 public:
     CPDF_Type3Glyphs()
@@ -25,7 +25,7 @@ public:
     int						m_TopBlueCount, m_BottomBlueCount;
 };
 class CFX_GlyphBitmap;
-class CPDF_Type3Cache : public CFX_Object
+class CPDF_Type3Cache 
 {
 public:
     CPDF_Type3Cache(CPDF_Type3Font* pFont)
@@ -39,7 +39,7 @@ protected:
     CPDF_Type3Font*			m_pFont;
     CFX_MapByteStringToPtr	m_SizeMap;
 };
-class CPDF_TransferFunc : public CFX_Object
+class CPDF_TransferFunc 
 {
 public:
     CPDF_Document*	m_pPDFDoc;
@@ -51,7 +51,7 @@ public:
 };
 typedef CFX_MapPtrTemplate<CPDF_Font*, CPDF_CountedObject<CPDF_Type3Cache*>*> CPDF_Type3CacheMap;
 typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedObject<CPDF_TransferFunc*>*> CPDF_TransferFuncMap;
-class CPDF_DocRenderData : public CFX_Object
+class CPDF_DocRenderData 
 {
 public:
     CPDF_DocRenderData(CPDF_Document* pPDFDoc = NULL);
@@ -78,7 +78,7 @@ public:
     CFX_AffineMatrix			m_Matrix;
 };
 typedef CFX_ArrayTemplate<_PDF_RenderItem>	CPDF_RenderLayer;
-class IPDF_ObjectRenderer : public CFX_Object
+class IPDF_ObjectRenderer 
 {
 public:
     static IPDF_ObjectRenderer* Create(int type);
@@ -87,7 +87,7 @@ public:
     virtual FX_BOOL Continue(IFX_Pause* pPause) = 0;
     FX_BOOL		m_Result;
 };
-class CPDF_RenderStatus : public CFX_Object
+class CPDF_RenderStatus 
 {
 public:
     CPDF_RenderStatus();
@@ -179,7 +179,7 @@ protected:
     FX_ARGB					m_T3FillColor;
     int                     m_curBlend;
 };
-class CPDF_ImageLoader : public CFX_Object
+class CPDF_ImageLoader 
 {
 public:
     CPDF_ImageLoader()
@@ -205,7 +205,7 @@ protected:
     FX_INT32                m_nDownsampleWidth;
     FX_INT32                m_nDownsampleHeight;
 };
-class CPDF_ProgressiveImageLoaderHandle : public CFX_Object
+class CPDF_ProgressiveImageLoaderHandle 
 {
 public:
     CPDF_ProgressiveImageLoaderHandle();
@@ -258,7 +258,7 @@ protected:
     FX_BOOL				DrawMaskedImage();
     FX_BOOL				DrawPatternImage(const CFX_Matrix* pObj2Device);
 };
-class CPDF_ScaledRenderBuffer : public CFX_Object
+class CPDF_ScaledRenderBuffer 
 {
 public:
     CPDF_ScaledRenderBuffer();
@@ -283,7 +283,7 @@ private:
     CFX_AffineMatrix	m_Matrix;
 };
 class ICodec_ScanlineDecoder;
-class CPDF_QuickStretcher : public CFX_Object
+class CPDF_QuickStretcher 
 {
 public:
     CPDF_QuickStretcher();
@@ -300,7 +300,7 @@ public:
     CPDF_StreamAcc m_StreamAcc;
     int			m_LineIndex;
 };
-class CPDF_DeviceBuffer : public CFX_Object
+class CPDF_DeviceBuffer 
 {
 public:
     CPDF_DeviceBuffer();
@@ -324,7 +324,7 @@ private:
     CFX_DIBitmap*		m_pBitmap;
     CFX_AffineMatrix	m_Matrix;
 };
-class CPDF_ImageCache : public CFX_Object
+class CPDF_ImageCache 
 {
 public:
     CPDF_ImageCache(CPDF_Document* pDoc, CPDF_Stream* pStream);

@@ -50,7 +50,7 @@ CBC_QRCoderEncoder::CBC_QRCoderEncoder()
 CBC_QRCoderEncoder::~CBC_QRCoderEncoder()
 {
 }
-class Make_Pair : public CFX_Object
+class Make_Pair
 {
 public:
     CBC_QRCoderMode* m_mode;

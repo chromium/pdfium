@@ -8,8 +8,7 @@
 #define _BC_PDF417ECMODULUSGF_H_
 class CBC_PDF417ECModulusPoly;
 class CBC_PDF417Common;
-class CBC_PDF417ECModulusGF;
-class CBC_PDF417ECModulusGF : public CFX_Object
+class CBC_PDF417ECModulusGF
 {
 public:
     CBC_PDF417ECModulusGF(FX_INT32 modulus, FX_INT32 generator, FX_INT32 &e);

@@ -7,7 +7,7 @@
 #ifndef _BC_UTILCODINGCONVERT_H_
 #define _BC_UTILCODINGCONVERT_H_
 class  CBC_UtilCodingConvert;
-class CBC_UtilCodingConvert : public CFX_Object
+class CBC_UtilCodingConvert
 {
 public:
     CBC_UtilCodingConvert();

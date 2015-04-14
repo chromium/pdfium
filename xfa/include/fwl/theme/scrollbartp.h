@@ -23,8 +23,7 @@ protected:
     void	DrawMaxMinBtn(CFX_Graphics *pGraphics, const CFX_RectF *pRect, FWLTHEME_DIRECTION eDict, FWLTHEME_STATE eState, CFX_Matrix *pMatrix = NULL);
     void    DrawPaw(CFX_Graphics *pGraphics, const CFX_RectF *pRect, FX_BOOL bVert, FWLTHEME_STATE eState, CFX_Matrix *pMatrix = NULL);
     void	SetThemeData(FX_DWORD dwID);
-    struct SBThemeData : public CFX_Object {
-    public:
+    struct SBThemeData {
         FX_ARGB clrPawColorLight[4];
         FX_ARGB clrPawColorDark[4];
         FX_ARGB clrBtnBK[4][2];

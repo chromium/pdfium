@@ -112,7 +112,7 @@ FX_BOOL FX_IsCombinationChar(FX_WCHAR wch);
 FX_BOOL	FX_IsBidiChar(FX_WCHAR wch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_DWORD dwProps, FX_BOOL bRTL, FX_BOOL bVertical);
-class CFX_Char : public CFX_Object
+class CFX_Char
 {
 public:
     CFX_Char() : m_wCharCode(0)

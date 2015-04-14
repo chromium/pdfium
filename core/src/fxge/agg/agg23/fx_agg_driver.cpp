@@ -369,7 +369,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(const CFX_PathData* pPathData,
     SetClipMask(rasterizer);
     return TRUE;
 }
-class CFX_Renderer : public CFX_Object
+class CFX_Renderer 
 {
 private:
     int			m_Alpha,

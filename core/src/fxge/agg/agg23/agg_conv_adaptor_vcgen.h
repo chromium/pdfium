@@ -18,7 +18,7 @@
 #include "agg_basics.h"
 namespace agg
 {
-struct null_markers : public CFX_Object {
+struct null_markers  {
     void remove_all() {}
     void add_vertex(FX_FLOAT, FX_FLOAT, unsigned) {}
     void prepare_src() {}
@@ -30,7 +30,7 @@ struct null_markers : public CFX_Object {
 };
 template<class VertexSource,
          class Generator,
-         class Markers = null_markers> class conv_adaptor_vcgen : public CFX_Object
+         class Markers = null_markers> class conv_adaptor_vcgen 
 {
     enum status {
         initial,

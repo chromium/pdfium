@@ -6,7 +6,7 @@
 
 #ifndef _FXFA_FORMFILLER_APP_IMP_H
 #define _FXFA_FORMFILLER_APP_IMP_H
-class CXFA_FileRead : public IFX_FileRead, public CFX_Object
+class CXFA_FileRead : public IFX_FileRead
 {
 public:
     CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*> &streams);
@@ -22,7 +22,7 @@ protected:
     CFX_DWordArray							m_StreamSize;
     FX_DWORD								m_dwSize;
 };
-class CXFA_FileRead2 : public IFX_FileRead, public CFX_Object
+class CXFA_FileRead2 : public IFX_FileRead
 {
 public:
     CXFA_FileRead2(const CFX_ArrayTemplate<CPDF_Stream*> &streams);
@@ -43,7 +43,7 @@ class CXFA_FWLTheme;
 class CXFA_FFDocHandler;
 class CXFA_FFMenuHandler;
 class CXFA_FontMgr;
-class CXFA_FFApp : public IXFA_App, public IFWL_AdapterNative, public CFX_Object
+class CXFA_FFApp : public IXFA_App, public IFWL_AdapterNative
 {
 public:
     CXFA_FFApp(IXFA_AppProvider* pProvider);

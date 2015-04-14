@@ -79,7 +79,7 @@ enum FDE_TXTEDIT_LINEEND {
     FDE_TXTEDIT_LINEEND_CR,
     FDE_TXTEDIT_LINEEND_LF,
 };
-struct _FDE_TXTEDTPARAMS : public CFX_Object {
+struct _FDE_TXTEDTPARAMS {
     _FDE_TXTEDTPARAMS()
         : fPlateWidth(0)
         , fPlateHeight(0)
@@ -129,7 +129,7 @@ enum FDE_TXTEDT_TEXTCHANGE_TYPE {
     FDE_TXTEDT_TEXTCHANGE_TYPE_Delete		,
     FDE_TXTEDT_TEXTCHANGE_TYPE_Replace		,
 };
-struct _FDE_TXTEDT_TEXTCHANGE_INFO : public CFX_Object {
+struct _FDE_TXTEDT_TEXTCHANGE_INFO {
     FX_INT32		nChangeType;
     CFX_WideString	wsInsert;
     CFX_WideString	wsDelete;

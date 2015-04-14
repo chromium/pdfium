@@ -8,7 +8,7 @@
 #define _FXFA_FORMFILLER_CHECKSUM_IMP_H
 class CXFA_SAXReaderHandler;
 class CXFA_ChecksumContext;
-class CXFA_SAXContext : public CFX_Object
+class CXFA_SAXContext
 {
 public:
     CXFA_SAXContext() : m_eNode(FX_SAXNODE_Unknown)
@@ -18,7 +18,7 @@ public:
     CFX_ByteString		m_bsTagName;
     FX_SAXNODE			m_eNode;
 };
-class CXFA_SAXReaderHandler : public IFX_SAXReaderHandler, public CFX_Object
+class CXFA_SAXReaderHandler : public IFX_SAXReaderHandler
 {
 public:
     CXFA_SAXReaderHandler(CXFA_ChecksumContext *pContext);
@@ -36,7 +36,7 @@ protected:
     CXFA_ChecksumContext	*m_pContext;
     CXFA_SAXContext			m_SAXContext;
 };
-class CXFA_ChecksumContext : public IXFA_ChecksumContext, public CFX_Object
+class CXFA_ChecksumContext : public IXFA_ChecksumContext
 {
 public:
     CXFA_ChecksumContext();

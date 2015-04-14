@@ -7,8 +7,7 @@
 #ifndef _BC_REEDSOLOMONGF256_H_
 #define _BC_REEDSOLOMONGF256_H_
 class CBC_ReedSolomonGF256Poly;
-class CBC_ReedSolomonGF256;
-class CBC_ReedSolomonGF256 : public CFX_Object
+class CBC_ReedSolomonGF256
 {
 public:
     static void Initialize();

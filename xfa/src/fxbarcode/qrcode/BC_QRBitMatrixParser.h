@@ -10,8 +10,7 @@ class CBC_CommonBitMatrix ;
 class CBC_QRCoderVersion;
 class CBC_QRCoderFormatInformation;
 class CBC_QRDataMask;
-class CBC_QRBitMatrixParser;
-class CBC_QRBitMatrixParser  : public CFX_Object
+class CBC_QRBitMatrixParser
 {
 private:
     CBC_CommonBitMatrix *m_bitMatrix;

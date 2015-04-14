@@ -19,7 +19,7 @@
 #include "agg_array.h"
 namespace agg
 {
-struct curve4_points : public CFX_Object {
+struct curve4_points  {
     FX_FLOAT cp[8];
     curve4_points() {}
     curve4_points(FX_FLOAT x1, FX_FLOAT y1,
@@ -59,7 +59,7 @@ struct curve4_points : public CFX_Object {
         return cp[i];
     }
 };
-class curve4_div : public CFX_Object
+class curve4_div 
 {
 public:
     curve4_div() :
@@ -135,7 +135,7 @@ private:
     unsigned              m_count;
     pod_deque<point_type> m_points;
 };
-class curve4 : public CFX_Object
+class curve4 
 {
 public:
     curve4() {}

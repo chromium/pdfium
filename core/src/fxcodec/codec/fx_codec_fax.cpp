@@ -926,7 +926,7 @@ static void _FaxEncode2DLine(FX_LPBYTE dest_buf, int& dest_bitpos, FX_LPCBYTE sr
         }
     }
 }
-class CCodec_FaxEncoder : public CFX_Object
+class CCodec_FaxEncoder 
 {
 public:
     CCodec_FaxEncoder(FX_LPCBYTE src_buf, int width, int height, int pitch);

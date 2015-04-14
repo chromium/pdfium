@@ -294,7 +294,7 @@ CFX_WideString FX_DecodeURI(const CFX_ByteString& bsURI)
     return CFX_WideString::FromUTF8(rURI, rURI.GetLength());
 }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-class CFindFileData : public CFX_Object
+class CFindFileData 
 {
 public:
     virtual ~CFindFileData() {}

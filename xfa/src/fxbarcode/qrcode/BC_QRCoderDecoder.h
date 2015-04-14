@@ -12,8 +12,7 @@ class CBC_CommonDecoderResult;
 class CBC_QRBitMatrixParser;
 class CBC_QRCoderVersion;
 class CBC_QRDataBlock;
-class CBC_QRCoderDecoder;
-class CBC_QRCoderDecoder  : public CFX_Object
+class CBC_QRCoderDecoder
 {
 private:
     CBC_ReedSolomonDecoder *m_rsDecoder;

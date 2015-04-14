@@ -10,7 +10,7 @@
 class CFPF_SkiaFontDescriptor;
 class CFPF_SkiaFontMgr;
 class SkTypeface;
-class CFPF_SkiaFont : public IFPF_Font, public CFX_Object
+class CFPF_SkiaFont : public IFPF_Font
 {
 public:
     CFPF_SkiaFont();

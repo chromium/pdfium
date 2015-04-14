@@ -48,8 +48,7 @@ protected:
     CFX_RectF		m_rtDisLBorder;
     CFX_RectF		m_rtDisRBorder;
     CFX_RectF		m_rtDisBBorder;
-    struct SBThemeData : public CFX_Object {
-    public:
+    struct SBThemeData {
         FX_ARGB clrHeadBK[2][4];
         FX_ARGB clrHeadEdgeLeft[2][3];
         FX_ARGB clrHeadEdgeRight[2][3];

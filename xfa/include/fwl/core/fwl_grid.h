@@ -12,7 +12,7 @@ class IFWL_Grid;
 #define FWL_CLASS_Grid			L"FWL_GRID"
 #define FWL_CLASSHASH_Grid		3150298670
 #define FWL_GRIDSTYLEEXT_ShowGridLines (1L << 0)
-struct FWL_LAYOUTDATA : public CFX_Object {
+struct FWL_LAYOUTDATA {
     FX_FLOAT fWidth;
     FX_FLOAT fHeight;
 };

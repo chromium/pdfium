@@ -17,7 +17,7 @@ FX_BOOL MD5ComputeID( FX_LPCVOID buf, FX_DWORD dwSize, FX_BYTE ID[16] )
 {
     return cmsMD5computeIDExt(buf, dwSize, ID);
 }
-struct CLcmsCmm : public CFX_Object {
+struct CLcmsCmm  {
     cmsHTRANSFORM m_hTransform;
     int			m_nSrcComponents;
     int			m_nDstComponents;
@@ -342,7 +342,7 @@ FX_DWORD TransferProfileType(FX_LPVOID pProfile, FX_DWORD dwFormat)
             return 0;
     }
 }
-class CFX_IccProfileCache : public CFX_Object
+class CFX_IccProfileCache 
 {
 public:
     CFX_IccProfileCache();
@@ -366,7 +366,7 @@ CFX_IccProfileCache::~CFX_IccProfileCache()
 void CFX_IccProfileCache::Purge()
 {
 }
-class CFX_IccTransformCache : public CFX_Object
+class CFX_IccTransformCache 
 {
 public:
     CFX_IccTransformCache(CLcmsCmm* pCmm = NULL);

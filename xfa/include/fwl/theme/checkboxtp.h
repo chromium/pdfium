@@ -32,8 +32,7 @@ protected:
     void	DrawSignBorder(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, const CFX_RectF *pRtBox, FX_BOOL bDisable = FALSE, CFX_Matrix *pMatrix = NULL);
     void	SetThemeData(FX_DWORD dwID);
     void	initCheckPath(FX_FLOAT fCheckLen);
-    struct CKBThemeData : public CFX_Object {
-    public:
+    struct CKBThemeData {
         FX_ARGB clrBoxBk[13][2];
         FX_ARGB	clrSignBorderNormal;
         FX_ARGB	clrSignBorderDisable;

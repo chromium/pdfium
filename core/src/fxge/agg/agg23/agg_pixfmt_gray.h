@@ -28,7 +28,7 @@
 #include "agg_rendering_buffer.h"
 namespace agg
 {
-template<class ColorT> struct blender_gray : public CFX_Object {
+template<class ColorT> struct blender_gray  {
     typedef ColorT color_type;
     typedef typename color_type::value_type value_type;
     typedef typename color_type::calc_type calc_type;
@@ -40,7 +40,7 @@ template<class ColorT> struct blender_gray : public CFX_Object {
     }
 };
 template<class Blender, unsigned Step = 1, unsigned Offset = 0>
-class pixel_formats_gray : public CFX_Object
+class pixel_formats_gray 
 {
 public:
     typedef rendering_buffer::row_data row_data;

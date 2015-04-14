@@ -30,7 +30,7 @@ enum XFA_ItemLayoutProcessorStages {
     XFA_ItemLayoutProcessorStages_BookendTrailer,
     XFA_ItemLayoutProcessorStages_Done,
 };
-class CXFA_LayoutContext : public CFX_Object
+class CXFA_LayoutContext
 {
 public:
     CXFA_LayoutContext(): m_prgSpecifiedColumnWidths(NULL)
@@ -50,7 +50,7 @@ public:
     CXFA_ItemLayoutProcessor*		m_pOverflowProcessor;
     CXFA_Node*						m_pOverflowNode;
 };
-class CXFA_ItemLayoutProcessor : public CFX_Object
+class CXFA_ItemLayoutProcessor
 {
 public:
     CXFA_ItemLayoutProcessor(CXFA_Node *pNode, CXFA_LayoutPageMgr* pPageMgr);

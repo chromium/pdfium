@@ -10,7 +10,7 @@ typedef struct _FX_ARABICCHARRANGE {
     FX_WCHAR wStart;
     FX_WCHAR wEnd;
 } FX_ARABICCHARRANGE;
-class CFX_ArabicChar : public IFX_ArabicChar, public CFX_Object
+class CFX_ArabicChar : public IFX_ArabicChar
 {
 public:
     virtual void		Release()
@@ -179,7 +179,7 @@ void FX_BidiResolveImplicit(const CFX_Int32Array &classes, CFX_Int32Array &level
 void FX_BidiResolveWhitespace(FX_INT32 iBaseLevel, const CFX_Int32Array &classes, CFX_Int32Array &levels);
 FX_INT32 FX_BidiReorderLevel(FX_INT32 iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels, FX_INT32 iStart, FX_BOOL bReverse = FALSE);
 void FX_BidiReorder(FX_INT32 iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels);
-class CFX_BidiChar : public IFX_BidiChar, public CFX_Object
+class CFX_BidiChar FX_FINAL : public IFX_BidiChar
 {
 public:
     CFX_BidiChar();

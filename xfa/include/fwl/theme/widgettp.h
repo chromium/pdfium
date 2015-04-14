@@ -6,7 +6,6 @@
 
 #ifndef _FWL_WIDGETTP_H
 #define _FWL_WIDGETTP_H
-class CFX_Object;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
 class IFDE_TextOut;
@@ -17,7 +16,7 @@ class IFX_FontSourceEnum;
 #endif
 class CFWL_WidgetTP;
 class CFWL_ArrowData;
-class CFWL_WidgetTP : public CFX_Object
+class CFWL_WidgetTP
 {
 public:
     virtual FX_BOOL		IsValidWidget(IFWL_Widget *pWidget);
@@ -71,7 +70,7 @@ void	FWLTHEME_Release();
 FX_DWORD FWL_GetThemeLayout(FX_DWORD dwThemeID);
 FX_DWORD FWL_GetThemeColor(FX_DWORD dwThemeID);
 FX_DWORD FWL_MakeThemeID(FX_DWORD dwLayout, FX_DWORD dwColor);
-class CFWL_ArrowData : public CFX_Object
+class CFWL_ArrowData
 {
 public:
     static CFWL_ArrowData* GetInstance();
@@ -80,7 +79,7 @@ public:
     virtual ~CFWL_ArrowData();
     void SetColorData(FX_DWORD	dwID);
 
-    class CColorData : public CFX_Object
+    class CColorData
     {
     public:
         FX_ARGB clrBorder[4];
@@ -92,7 +91,7 @@ protected:
     CFWL_ArrowData();
     static CFWL_ArrowData *m_pInstance;
 };
-class CFWL_FontData : public CFX_Object
+class CFWL_FontData
 {
 public:
     CFWL_FontData();
@@ -113,7 +112,7 @@ protected:
     IFX_FontSourceEnum		*m_pFontSource;
 #endif
 };
-class CFWL_FontManager : public CFX_Object
+class CFWL_FontManager
 {
 public:
     CFWL_FontManager();

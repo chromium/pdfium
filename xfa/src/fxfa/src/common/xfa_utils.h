@@ -8,7 +8,7 @@
 #define _XFA_UTILS_H_
 FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(IFDE_XMLElement* pNode, FX_WSTR wsQualifier, CFX_WideString& wsNamespaceURI);
 template <class NodeType, class TraverseStrategy>
-class CXFA_NodeIteratorTemplate : public CFX_Object
+class CXFA_NodeIteratorTemplate
 {
 public:
     CXFA_NodeIteratorTemplate(NodeType* pRootNode = NULL)

@@ -58,7 +58,7 @@ enum cover_scale_e {
     cover_none  = 0,
     cover_full  = cover_mask
 };
-template<class T> struct rect_base : public CFX_Object {
+template<class T> struct rect_base  {
     typedef rect_base<T> self_type;
     T x1;
     T y1;
@@ -257,7 +257,7 @@ inline unsigned set_orientation(unsigned c, unsigned o)
     c &= ~path_flags_jr;
     return clear_orientation(c) | o;
 }
-struct point_type : public CFX_Object {
+struct point_type  {
     FX_FLOAT x, y;
     unsigned flag;
     point_type() {}
@@ -271,7 +271,7 @@ struct point_type_flag : public point_type {
     }
     point_type_flag(FX_FLOAT x_, FX_FLOAT y_, unsigned flag_ = 0) : point_type(x_, y_), flag(flag_) {}
 };
-struct vertex_type : public CFX_Object {
+struct vertex_type  {
     FX_FLOAT   x, y;
     unsigned cmd;
     vertex_type() {}

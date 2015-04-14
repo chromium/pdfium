@@ -6,8 +6,7 @@
 
 #ifndef _BC_PDF417READER_H_
 #define _BC_PDF417READER_H_
-class CBC_PDF417ResultMetadata;
-class CBC_PDF417ResultMetadata : public CFX_Object
+class CBC_PDF417ResultMetadata
 {
 public:
     CBC_PDF417ResultMetadata();

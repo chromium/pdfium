@@ -33,7 +33,7 @@ protected:
     FX_BOOL					m_bLoaded;
 };
 typedef		CXFA_NodeIteratorTemplate<CXFA_LayoutItem, CXFA_TraverseStrategy_LayoutItem> CXFA_LayoutItemIterator;
-class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator, public CFX_Object
+class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator
 {
 public:
     CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView, FX_DWORD dwFilter);
@@ -59,7 +59,7 @@ protected:
     CXFA_LayoutItemIterator		m_sIterator;
 };
 typedef 	CFX_ArrayTemplate<CXFA_FFWidget*> CXFA_WidgetArray;
-class CXFA_TabParam : public CFX_Object
+class CXFA_TabParam
 {
 public:
     CXFA_TabParam() : m_pWidget(NULL) {}
@@ -68,7 +68,7 @@ public:
     CXFA_FFWidget*		m_pWidget;
     CXFA_WidgetArray		m_Children;
 };
-class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator, public CFX_Object
+class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator
 {
 public:
     CXFA_FFTabOrderPageWidgetIterator(CXFA_FFPageView* pPageView, FX_DWORD dwFilter);

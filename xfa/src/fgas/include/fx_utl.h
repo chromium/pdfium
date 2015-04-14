@@ -752,7 +752,7 @@ protected:
     friend class CFX_CPLTree<baseType>;
 };
 template<class baseType>
-class CFX_CPLTree : public CFX_Object
+class CFX_CPLTree
 {
 public:
     typedef CFX_CPLTreeNode<baseType>	CPLTreeNode;

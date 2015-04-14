@@ -7,8 +7,7 @@
 #ifndef _BC_PDF417ECMODULUSPOLY_H_
 #define _BC_PDF417ECMODULUSPOLY_H_
 class CBC_PDF417ECModulusGF;
-class CBC_PDF417ECModulusPoly;
-class CBC_PDF417ECModulusPoly : public CFX_Object
+class CBC_PDF417ECModulusPoly
 {
 public:
     CBC_PDF417ECModulusPoly(CBC_PDF417ECModulusGF* field, CFX_Int32Array &coefficients, FX_INT32 &e);

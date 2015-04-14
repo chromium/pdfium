@@ -10,7 +10,7 @@ class CBC_Binarizer;
 class CBC_CommonBitMatrix;
 class CBC_CommonBitArray;
 class CBC_BinaryBitmap;
-class CBC_BinaryBitmap : public CFX_Object
+class CBC_BinaryBitmap
 {
 public:
     CBC_BinaryBitmap(CBC_Binarizer *binarizer);

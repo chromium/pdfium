@@ -11,8 +11,7 @@ class CBC_QRCoderErrorCorrectionLevel;
 class CBC_CommonBitSource;
 class CBC_QRCoderVersion;
 class CBC_CommonCharacterSetECI;
-class CBC_QRDecodedBitStreamParser;
-class CBC_QRDecodedBitStreamParser  : public CFX_Object
+class CBC_QRDecodedBitStreamParser
 {
 private:
     const static FX_CHAR ALPHANUMERIC_CHARS[45];

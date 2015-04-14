@@ -6,7 +6,7 @@
 
 #ifndef __H_FX_PATH_GENERATOR__
 #define __H_FX_PATH_GENERATOR__
-class CFX_PathGenerator : public CFX_Object
+class CFX_PathGenerator
 {
 public:
     CFX_PathGenerator();

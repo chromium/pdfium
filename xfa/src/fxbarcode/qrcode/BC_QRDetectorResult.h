@@ -8,8 +8,7 @@
 #define _BC_QRDETECTORRESULT_H_
 class CBC_CommonBitMatrix;
 class CBC_ResultPoint;
-class CBC_QRDetectorResult;
-class CBC_QRDetectorResult  : public CFX_Object
+class CBC_QRDetectorResult
 {
 private:
     CBC_CommonBitMatrix *m_bits;

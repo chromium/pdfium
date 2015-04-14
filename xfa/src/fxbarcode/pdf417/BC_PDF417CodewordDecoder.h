@@ -6,10 +6,10 @@
 
 #ifndef _BC_PDF417CODEWORDDECODER_H_
 #define _BC_PDF417CODEWORDDECODER_H_
-class CBC_PDF417Common;
 class CBC_PDF417CodewordDecoder;
 #define    column     8
-class CBC_PDF417CodewordDecoder : public CFX_Object
+class CBC_PDF417Common;
+class CBC_PDF417CodewordDecoder
 {
 public:
     CBC_PDF417CodewordDecoder();

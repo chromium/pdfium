@@ -8,8 +8,7 @@
 #define _BC_BOUNDINGBOX_H_
 class CBC_CommonBitMatrix;
 class CBC_ResultPoint;
-class CBC_BoundingBox;
-class CBC_BoundingBox : public CFX_Object
+class CBC_BoundingBox
 {
 public:
     CBC_BoundingBox(CBC_CommonBitMatrix* image, CBC_ResultPoint* topLeft, CBC_ResultPoint* bottomLeft, CBC_ResultPoint* topRight, CBC_ResultPoint* bottomRight, FX_INT32 &e);

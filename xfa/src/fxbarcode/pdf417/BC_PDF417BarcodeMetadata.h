@@ -7,7 +7,7 @@
 #ifndef _BC_BARCODEMETADATA_H_
 #define _BC_BARCODEMETADATA_H_
 class CBC_BarcodeMetadata;
-class CBC_BarcodeMetadata : public CFX_Object
+class CBC_BarcodeMetadata
 {
 public:
     CBC_BarcodeMetadata(FX_INT32 columnCount, FX_INT32 rowCountUpperPart, FX_INT32 rowCountLowerPart, FX_INT32 errorCorrectionLevel);

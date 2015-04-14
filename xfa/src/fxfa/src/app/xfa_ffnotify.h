@@ -6,7 +6,7 @@
 
 #ifndef _FXFA_FFNOTIFY_H_
 #define _FXFA_FFNOTIFY_H_
-class CXFA_FFNotify : public IXFA_Notify, public CFX_Object
+class CXFA_FFNotify : public IXFA_Notify
 {
 public:
     CXFA_FFNotify(CXFA_FFDoc* pDoc);

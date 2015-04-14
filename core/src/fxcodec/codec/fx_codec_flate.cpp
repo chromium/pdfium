@@ -74,7 +74,7 @@ extern "C"
         compress(dest_buf, dest_size, src_buf, src_size);
     }
 }
-class CLZWDecoder : public CFX_Object
+class CLZWDecoder 
 {
 public:
     FX_BOOL Decode(FX_LPBYTE output, FX_DWORD& outlen, const FX_BYTE* input, FX_DWORD& size, FX_BOOL bEarlyChange);

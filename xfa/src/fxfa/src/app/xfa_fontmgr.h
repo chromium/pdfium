@@ -13,7 +13,7 @@ struct XFA_FONTINFO {
     FX_WORD		dwStyles;
     FX_WORD		wCodePage;
 };
-class CXFA_DefFontMgr : public IXFA_FontMgr, public CFX_Object
+class CXFA_DefFontMgr : public IXFA_FontMgr
 {
 public:
     CXFA_DefFontMgr() {}
@@ -27,7 +27,7 @@ public:
 protected:
     CFX_PtrArray			m_CacheFonts;
 };
-class CXFA_PDFFontMgr : public IFX_FontProvider, public CFX_Object
+class CXFA_PDFFontMgr : public IFX_FontProvider
 {
 public:
     CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
@@ -42,7 +42,7 @@ protected:
     CXFA_FFDoc*								m_pDoc;
     CFX_CMapByteStringToPtr					m_FontArray;
 };
-class CXFA_FontMgr : public CFX_Object
+class CXFA_FontMgr
 {
 public:
     CXFA_FontMgr();

@@ -340,7 +340,7 @@ void CFX_BaseMassArray::RemoveAll(FX_BOOL bLeaveMemory)
 {
     m_pData->RemoveAll(bLeaveMemory);
 }
-typedef struct _FX_BASEDISCRETEARRAYDATA : public CFX_Object {
+typedef struct _FX_BASEDISCRETEARRAYDATA {
     FX_INT32		iBlockSize;
     FX_INT32		iChunkSize;
     FX_INT32		iChunkCount;

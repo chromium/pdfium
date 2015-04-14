@@ -8,7 +8,7 @@
 #define _XFA_PARSER_IMP
 #define _XFA_VERIFY_Checksum_
 class CXFA_XMLParser;
-class CXFA_SimpleParser : public IXFA_Parser, public CFX_Object
+class CXFA_SimpleParser : public IXFA_Parser
 {
 public:
     CXFA_SimpleParser(IXFA_ObjFactory *pFactory, FX_BOOL bDocumentParser = FALSE);
@@ -63,7 +63,7 @@ protected:
     FX_BOOL						m_bDocumentParser;
     friend class CXFA_DocumentParser;
 };
-class CXFA_DocumentParser : public IXFA_DocParser, public CFX_Object
+class CXFA_DocumentParser : public IXFA_DocParser
 {
 public:
     CXFA_DocumentParser(IXFA_Notify *pNotify);
@@ -103,7 +103,7 @@ protected:
     CXFA_Document*				m_pDocument;
 };
 typedef CFX_StackTemplate<IFDE_XMLNode*> CXFA_XMLNodeStack;
-class CXFA_XMLParser : public IFDE_XMLParser, public CFX_Object
+class CXFA_XMLParser : public IFDE_XMLParser
 {
 public:
     CXFA_XMLParser(IFDE_XMLNode *pRoot, IFX_Stream *pStream);

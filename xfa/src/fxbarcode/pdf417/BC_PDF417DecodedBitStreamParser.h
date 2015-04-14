@@ -8,8 +8,7 @@
 #define _BC_DECODEDBITSTREAMPARSER_H_
 class CBC_CommonDecoderResult;
 class CBC_PDF417ResultMetadata;
-class CBC_DecodedBitStreamPaser;
-class CBC_DecodedBitStreamPaser : public CFX_Object
+class CBC_DecodedBitStreamPaser
 {
 public:
     CBC_DecodedBitStreamPaser();

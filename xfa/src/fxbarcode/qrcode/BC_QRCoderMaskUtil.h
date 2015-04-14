@@ -7,8 +7,7 @@
 #ifndef _BC_QRCODERMASKUTIL_H_
 #define _BC_QRCODERMASKUTIL_H_
 class CBC_CommonByteMatrix;
-class CBC_QRCoderMaskUtil;
-class CBC_QRCoderMaskUtil  : public CFX_Object
+class CBC_QRCoderMaskUtil
 {
 public:
     CBC_QRCoderMaskUtil();

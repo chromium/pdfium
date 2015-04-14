@@ -97,7 +97,7 @@ const FX_DWORD g_dwMacPalette[256] = {
     0xffEEEEEE, 0xffDDDDDD, 0xffBBBBBB, 0xffAAAAAA, 0xff888888, 0xff777777,
     0xff555555, 0xff444444, 0xff222222, 0xff111111, 0xff000000
 };
-class CFX_Palette : public CFX_Object
+class CFX_Palette 
 {
 public:
     CFX_Palette();

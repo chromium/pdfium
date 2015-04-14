@@ -94,7 +94,6 @@ enum {
 };
 typedef FX_INT32 FX_DeviceCap;
 typedef FX_INT32 FX_FillMode;
-class CFX_Object;
 class CFX_RenderDevice;
 class CFX_GraphStateData;
 class CFX_Matrix;
@@ -110,7 +109,7 @@ class CFX_Color;
 class CFX_Path;
 class CFX_Pattern;
 class CFX_Shading;
-class CFX_Graphics : public CFX_Object
+class CFX_Graphics
 {
 public:
 
@@ -295,7 +294,7 @@ private:
 protected:
     FX_INT32		_type;
 private:
-    struct TInfo : public CFX_Object {
+    struct TInfo {
         CFX_GraphStateData	_graphState;
         FX_BOOL				_isAntialiasing;
         FX_StrokeAlignment	_strokeAlignment;
@@ -314,7 +313,7 @@ private:
     friend class CAGG_Graphics;
 
 };
-class CFX_Path : public CFX_Object
+class CFX_Path
 {
 public:
 
@@ -388,7 +387,7 @@ public:
 private:
     CFX_PathGenerator *	_generator;
 };
-class CFX_Color : public CFX_Object
+class CFX_Color
 {
 public:
 
@@ -426,7 +425,7 @@ private:
 
     friend class CFX_Graphics;
 };
-class CFX_Pattern : public CFX_Object
+class CFX_Pattern
 {
 public:
 
@@ -468,7 +467,7 @@ private:
     };
     friend class CFX_Graphics;
 };
-class CFX_Shading : public CFX_Object
+class CFX_Shading
 {
 public:
 

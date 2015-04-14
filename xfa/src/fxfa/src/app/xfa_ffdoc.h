@@ -15,7 +15,7 @@ typedef struct _FX_IMAGEDIB_AND_DPI {
     FX_INT32	   iImageXDpi;
     FX_INT32	   iImageYDpi;
 } FX_IMAGEDIB_AND_DPI;
-class CXFA_FFDoc : public CFX_Object
+class CXFA_FFDoc
 {
 public:
     CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider);

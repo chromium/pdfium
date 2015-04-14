@@ -13,7 +13,7 @@ class IFWL_WidgetDelegate;
 class IFWL_Widget;
 class CFWL_Widget;
 class CFWL_WidgetDelegate;
-class CFWL_WidgetProperties : public CFX_Object
+class CFWL_WidgetProperties
 {
 public:
     CFWL_WidgetProperties()
@@ -35,7 +35,7 @@ public:
     CFWL_Widget			*m_pParent;
     CFWL_Widget			*m_pOwner;
 };
-class CFWL_Widget : public CFX_Object
+class CFWL_Widget
 {
 public:
     IFWL_Widget*	GetWidget();
@@ -89,7 +89,7 @@ public:
     CFWL_WidgetMgr		*m_pWidgetMgr;
     CFWL_WidgetProperties *m_pProperties;
 };
-class CFWL_WidgetDelegate : public CFX_Object, public IFWL_WidgetDelegate
+class CFWL_WidgetDelegate
 {
 public:
     CFWL_WidgetDelegate();

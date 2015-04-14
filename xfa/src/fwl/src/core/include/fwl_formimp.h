@@ -19,7 +19,7 @@ class CFWL_FormDelegate;
 #define FWL_SYSBUTTONSTATE_Hover		0x0001
 #define FWL_SYSBUTTONSTATE_Pressed		0x0002
 #define FWL_SYSBUTTONSTATE_Disabled		0x0010
-class CFWL_SysBtn : public CFX_Object
+class CFWL_SysBtn
 {
 public:
     CFWL_SysBtn()

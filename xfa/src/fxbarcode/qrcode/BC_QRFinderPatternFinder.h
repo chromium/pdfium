@@ -10,8 +10,8 @@ class CBC_CommonBitMatrix;
 class CBC_QRFinderPattern;
 class CBC_ResultPoint;
 class CBC_QRFinderPatternInfo;
-class CBC_QRFinderPatternFinder;
-class CBC_QRFinderPatternFinder  : public CFX_Object
+
+class CBC_QRFinderPatternFinder
 {
 private:
     const static FX_INT32 CENTER_QUORUM;

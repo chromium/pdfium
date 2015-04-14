@@ -35,7 +35,7 @@ public:
     virtual FX_BOOL Undo() = 0;
     virtual void	Serialize(CFX_ByteString &bsDoRecord) const = 0;
 };
-class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine, public CFX_Object
+class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine
 {
     friend class CFDE_TxtEdtDoRecord_Insert;
     friend class CFDE_TxtEdtDoRecord_DeleteRange;
@@ -46,13 +46,13 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine, public CFX_Object
     friend class CFDE_TxtEdtDoRecord_FormatReplace;
     friend class CFDE_TxtEdtBlock;
 #endif
-    struct _FDE_TXTEDTSELRANGE : public CFX_Object {
+    struct _FDE_TXTEDTSELRANGE {
         FX_INT32 nStart;
         FX_INT32 nCount;
     };
     typedef _FDE_TXTEDTSELRANGE		FDE_TXTEDTSELRANGE;
     typedef _FDE_TXTEDTSELRANGE *	FDE_LPTXTEDTSELRANGE;
-    struct _FDE_TXTEDTPARAGPOS : public CFX_Object {
+    struct _FDE_TXTEDTPARAGPOS {
         FX_INT32	nParagIndex;
         FX_INT32	nCharIndex;
     };
@@ -197,7 +197,7 @@ private:
 
     FDE_TXTEDT_TEXTCHANGE_INFO m_ChangeInfo;
 };
-class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord, public CFX_Object
+class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord
 {
 public:
     CFDE_TxtEdtDoRecord_Insert(FX_BSTR bsDoRecord);
@@ -217,7 +217,7 @@ private:
     FX_INT32			m_nCaret;
     CFX_WideString		m_wsInsert;
 };
-class CFDE_TxtEdtDoRecord_DeleteRange : public IFDE_TxtEdtDoRecord, public CFX_Object
+class CFDE_TxtEdtDoRecord_DeleteRange : public IFDE_TxtEdtDoRecord
 {
 public:
     CFDE_TxtEdtDoRecord_DeleteRange(FX_BSTR bsDoRecord);
@@ -241,7 +241,7 @@ private:
     CFX_WideString		m_wsRange;
 };
 #ifdef FDE_USEFORMATBLOCK
-class CFDE_TxtEdtDoRecord_FieldInsert : public IFDE_TxtEdtDoRecord, public CFX_Object
+class CFDE_TxtEdtDoRecord_FieldInsert : public IFDE_TxtEdtDoRecord
 {
 public:
     CFDE_TxtEdtDoRecord_FieldInsert(FX_BSTR bsDoRecord);
@@ -273,7 +273,7 @@ private:
     CFX_WideString		m_wsIns;
     FX_BOOL				m_bSel;
 };
-class CFDE_TxtEdtDoRecord_FieldDelete : public IFDE_TxtEdtDoRecord, public CFX_Object
+class CFDE_TxtEdtDoRecord_FieldDelete : public IFDE_TxtEdtDoRecord
 {
 public:
     CFDE_TxtEdtDoRecord_FieldDelete(FX_BSTR bsDoRecord);
@@ -304,7 +304,7 @@ private:
     CFX_WideString		m_wsDel;
     FX_BOOL				m_bSel;
 };
-class CFDE_TxtEdtDoRecord_FieldReplace : public IFDE_TxtEdtDoRecord, public CFX_Object
+class CFDE_TxtEdtDoRecord_FieldReplace : public IFDE_TxtEdtDoRecord
 {
 public:
     CFDE_TxtEdtDoRecord_FieldReplace(FX_BSTR bsDoRecord);

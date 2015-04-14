@@ -117,7 +117,7 @@ protected:
     friend void FWL_SetWidgetStates(IFWL_Widget *widget, FX_DWORD dwStates);
     friend void FWL_SetWidgetStyles(IFWL_Widget *widget, FX_DWORD dwStyles);
 };
-class CFWL_WidgetImpDelegate : public CFX_Object
+class CFWL_WidgetImpDelegate
 {
 public:
     CFWL_WidgetImpDelegate();
