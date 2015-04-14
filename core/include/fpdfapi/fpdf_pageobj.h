@@ -99,7 +99,7 @@ public:
         return m_pObject->IsRect();
     }
 };
-class CPDF_ClipPathData : public CFX_Object
+class CPDF_ClipPathData 
 {
 public:
 
@@ -161,7 +161,7 @@ public:
 
     void				Transform(const CFX_AffineMatrix& matrix);
 };
-class CPDF_ColorStateData : public CFX_Object
+class CPDF_ColorStateData 
 {
 public:
 
@@ -208,7 +208,7 @@ class CPDF_GraphState : public CFX_CountRef<CFX_GraphStateData>
 {
 public:
 };
-class CPDF_TextStateData : public CFX_Object
+class CPDF_TextStateData 
 {
 public:
 
@@ -267,7 +267,7 @@ public:
 
 };
 class CPDF_TransferFunc;
-class CPDF_GeneralStateData : public CFX_Object
+class CPDF_GeneralStateData 
 {
 public:
 
@@ -336,7 +336,7 @@ public:
         return m_pObject ? FXSYS_round((bStroke ? m_pObject->m_StrokeAlpha : m_pObject->m_FillAlpha) * 255) : 255;
     }
 };
-class CPDF_ContentMarkItem : public CFX_Object
+class CPDF_ContentMarkItem 
 {
 public:
 
@@ -388,7 +388,7 @@ private:
 
     void*				m_pParam;
 };
-class CPDF_ContentMarkData : public CFX_Object
+class CPDF_ContentMarkData 
 {
 public:
 
@@ -434,7 +434,7 @@ public:
 #define PDFPAGE_SHADING		4
 #define PDFPAGE_FORM		5
 #define PDFPAGE_INLINES		6
-class CPDF_GraphicStates : public CFX_Object
+class CPDF_GraphicStates 
 {
 public:
 
@@ -507,7 +507,7 @@ protected:
 
     virtual ~CPDF_PageObject() {}
 };
-struct CPDF_TextObjectItem : public CFX_Object {
+struct CPDF_TextObjectItem  {
 
     FX_DWORD			m_CharCode;
 

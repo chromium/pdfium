@@ -2724,7 +2724,7 @@ void CPDF_SyntaxParser::GetBinary(FX_BYTE* buffer, FX_DWORD size)
     }
 }
 
-class CPDF_DataAvail FX_FINAL : public CFX_Object, public IPDF_DataAvail
+class CPDF_DataAvail FX_FINAL : public IPDF_DataAvail
 {
 public:
     CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead);

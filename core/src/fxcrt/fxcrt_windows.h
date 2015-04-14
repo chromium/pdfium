@@ -8,7 +8,7 @@
 #define _FXCRT_WINDOWS_
 #include "extension.h"
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-class CFXCRT_FileAccess_Win64 : public IFXCRT_FileAccess, public CFX_Object
+class CFXCRT_FileAccess_Win64 : public IFXCRT_FileAccess
 {
 public:
     CFXCRT_FileAccess_Win64();

@@ -20,7 +20,7 @@
 #include "agg_render_scanlines.h"
 namespace agg
 {
-template<class BaseRenderer, class SpanGenerator> class renderer_scanline_aa : public CFX_Object
+template<class BaseRenderer, class SpanGenerator> class renderer_scanline_aa 
 {
 public:
     typedef BaseRenderer  base_ren_type;

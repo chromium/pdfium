@@ -26,7 +26,7 @@ inline InterfaceType* SafeAcquire(InterfaceType* newObject)
     }
     return newObject;
 }
-class CDwFontFileStream FX_FINAL : public IDWriteFontFileStream, public CFX_Object
+class CDwFontFileStream FX_FINAL : public IDWriteFontFileStream
 {
 public:
     explicit CDwFontFileStream(void const* fontFileReferenceKey, UINT32 fontFileReferenceKeySize);
@@ -46,7 +46,7 @@ private:
     void const* resourcePtr_;
     DWORD resourceSize_;
 };
-class CDwFontFileLoader FX_FINAL : public IDWriteFontFileLoader, public CFX_Object
+class CDwFontFileLoader FX_FINAL : public IDWriteFontFileLoader
 {
 public:
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** ppvObject);
@@ -71,7 +71,7 @@ private:
     ULONG refCount_;
     static IDWriteFontFileLoader* instance_;
 };
-class CDwFontContext : public CFX_Object
+class CDwFontContext 
 {
 public:
     CDwFontContext(IDWriteFactory* dwriteFactory);
@@ -83,7 +83,7 @@ private:
     HRESULT hr_;
     IDWriteFactory* dwriteFactory_;
 };
-class CDwGdiTextRenderer : public CFX_Object
+class CDwGdiTextRenderer 
 {
 public:
     CDwGdiTextRenderer(

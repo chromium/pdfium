@@ -136,7 +136,7 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
 #define FXSETFLAG_COLORTYPE(flag, val)		flag = (((val)<<8)|(flag&0xffff00ff))
 #define FXSETFLAG_ALPHA_FILL(flag, val)		flag = ((val)|(flag&0xffffff00))
 #define FXSETFLAG_ALPHA_STROKE(flag, val)	flag = (((val)<<16)|(flag&0xff00ffff))
-class CFX_DIBSource : public CFX_Object
+class CFX_DIBSource 
 {
 public:
 
@@ -353,7 +353,7 @@ protected:
 
     FX_BOOL			GetGrayData(void* pIccTransform = NULL);
 };
-class CFX_DIBExtractor : public CFX_Object
+class CFX_DIBExtractor 
 {
 public:
 
@@ -408,7 +408,7 @@ public:
 
     virtual FX_BOOL		SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette) = 0;
 };
-class CFX_ScanlineCompositor : public CFX_Object
+class CFX_ScanlineCompositor 
 {
 public:
     CFX_ScanlineCompositor();
@@ -450,7 +450,7 @@ protected:
     int					m_CacheSize;
     FX_BOOL             m_bRgbByteOrder;
 };
-class CFX_BitmapComposer : public IFX_ScanlineComposer, public CFX_Object
+class CFX_BitmapComposer : public IFX_ScanlineComposer
 {
 public:
 
@@ -487,7 +487,7 @@ protected:
     void				ComposeScanlineV(int line, FX_LPCBYTE scanline, FX_LPCBYTE scan_extra_alpha = NULL);
     FX_LPBYTE			m_pScanlineV, m_pClipScanV, m_pAddClipScan, m_pScanlineAlphaV;
 };
-class CFX_BitmapStorer : public IFX_ScanlineComposer, public CFX_Object
+class CFX_BitmapStorer : public IFX_ScanlineComposer
 {
 public:
 
@@ -511,7 +511,7 @@ private:
     CFX_DIBitmap*		m_pBitmap;
 };
 class CStretchEngine;
-class CFX_ImageStretcher : public CFX_Object
+class CFX_ImageStretcher 
 {
 public:
 
@@ -548,7 +548,7 @@ public:
 
     FX_INT32		ContinueStretch(IFX_Pause* pPause);
 };
-class CFX_ImageTransformer : public CFX_Object
+class CFX_ImageTransformer 
 {
 public:
 
@@ -569,7 +569,7 @@ public:
     FX_DWORD	m_Flags;
     int			m_Status;
 };
-class CFX_ImageRenderer : public CFX_Object
+class CFX_ImageRenderer 
 {
 public:
 

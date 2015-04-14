@@ -39,7 +39,7 @@ typedef struct FT_FaceRec_* FXFT_Face;
 class CFX_CTTGSUBTable;
 class CPDF_Page;
 
-template <class ObjClass> class CPDF_CountedObject : public CFX_Object
+template <class ObjClass> class CPDF_CountedObject 
 {
 public:
     ObjClass	m_Obj;
@@ -76,7 +76,7 @@ typedef CFX_MapPtrTemplate<CPDF_Stream*, CPDF_CountedStreamAcc*>    CPDF_FontFil
 #define PDFFONT_USEEXTERNATTR	0x80000
 FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name);
 CFX_ByteString PDF_AdobeNameFromUnicode(FX_WCHAR unicode);
-class CPDF_Font : public CFX_Object
+class CPDF_Font 
 {
 public:
 
@@ -323,7 +323,7 @@ protected:
 #define PDFFONT_ENCODING_PDFDOC			7
 #define PDFFONT_ENCODING_MS_SYMBOL		8
 #define PDFFONT_ENCODING_UNICODE		9
-class CPDF_FontEncoding : public CFX_Object
+class CPDF_FontEncoding 
 {
 public:
 
@@ -438,7 +438,7 @@ protected:
     virtual FX_BOOL			_Load();
     virtual void			LoadGlyphMap();
 };
-class CPDF_Type3Char : public CFX_Object
+class CPDF_Type3Char 
 {
 public:
 
@@ -582,7 +582,8 @@ protected:
 #define PDFCS_DEVICEN           9
 #define PDFCS_INDEXED           10
 #define PDFCS_PATTERN           11
-class CPDF_ColorSpace : public CFX_Object
+
+class CPDF_ColorSpace
 {
 public:
 
@@ -677,7 +678,7 @@ protected:
 
     FX_DWORD				m_dwStdConversion;
 };
-class CPDF_Color : public CFX_Object
+class CPDF_Color 
 {
 public:
 
@@ -726,7 +727,7 @@ protected:
 };
 #define PATTERN_TILING		1
 #define PATTERN_SHADING		2
-class CPDF_Pattern : public CFX_Object
+class CPDF_Pattern 
 {
 public:
    
@@ -803,7 +804,7 @@ struct CPDF_MeshVertex {
     FX_FLOAT x, y;
     FX_FLOAT r, g, b;
 };
-class CPDF_MeshStream : public CFX_Object
+class CPDF_MeshStream 
 {
 public:
 
@@ -843,7 +844,7 @@ public:
     FX_ARGB* pMatteColor;
     FX_INT32 nQuality;
 };
-class CPDF_Image : public CFX_Object
+class CPDF_Image 
 {
 public:
 

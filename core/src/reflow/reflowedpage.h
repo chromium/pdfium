@@ -18,7 +18,6 @@ class CRF_AttrOperation;
 class CRF_OperationDate;
 class CPDF_ReflowedPage;
 class CPDF_Rect;
-class CFX_Object;
 typedef CFX_SegmentedArray<CRF_Data*> CRF_DataPtrArray;
 class CRF_CharState;
 typedef CFX_SegmentedArray<CRF_CharState> CRF_CharStateArray;
@@ -26,7 +25,7 @@ typedef CFX_SegmentedArray<CRF_CharState> CRF_CharStateArray;
 #define SST_BLSE	2
 #define SST_ILSE	3
 #define SST_IE		4
-class CPDF_LayoutProcessor_Reflow : public IPDF_LayoutProcessor, public CFX_Object
+class CPDF_LayoutProcessor_Reflow : public IPDF_LayoutProcessor
 {
 public:
     CPDF_LayoutProcessor_Reflow();
@@ -106,7 +105,7 @@ struct RF_TableCell {
     LayoutEnum	m_InlineAlign;
 };
 typedef CFX_ArrayTemplate<RF_TableCell*> CRF_TableCellArray;
-class CRF_Table : public CFX_Object
+class CRF_Table 
 {
 public:
     CRF_Table()
@@ -120,7 +119,7 @@ public:
     FX_FLOAT			m_TableWidth;
     FX_FLOAT			m_ReflowPageHeight;
 };
-class CRF_CharState : public CFX_Object
+class CRF_CharState 
 {
 public:
     CPDF_Font*	m_pFont;
@@ -132,7 +131,7 @@ public:
 
     CPDF_TextObject*	m_pTextObj;
 };
-class CRF_PageInfo : public CFX_Object
+class CRF_PageInfo 
 {
 public:
     CRF_PageInfo(CPDF_PageObject* pPageObj, CRF_PageInfo* pParent = NULL)
@@ -158,7 +157,7 @@ protected:
     CPDF_PageObject*		m_pPageObj;
     CRF_PageInfo*			m_pParent;
 };
-class CPDF_ReflowedPage : public IPDF_ReflowedPage, public CFX_PrivateData, public CFX_Object
+class CPDF_ReflowedPage : public IPDF_ReflowedPage, public CFX_PrivateData
 {
 public:
 
@@ -192,7 +191,7 @@ public:
 
     CFX_MapPtrToPtr*		m_pPageInfos;
 };
-class CPDF_ProgressiveReflowPageParser : public IPDF_ProgressiveReflowPageParser, public CFX_Object
+class CPDF_ProgressiveReflowPageParser : public IPDF_ProgressiveReflowPageParser
 {
 public:
     CPDF_ProgressiveReflowPageParser();
@@ -227,7 +226,7 @@ protected:
     int					m_nObjProcessed;
     int m_flags;
 };
-class CPDF_ProgressiveReflowPageRender : public IPDF_ProgressiveReflowPageRender, public CFX_Object
+class CPDF_ProgressiveReflowPageRender : public IPDF_ProgressiveReflowPageRender
 {
 public:
     CPDF_ProgressiveReflowPageRender();
@@ -292,7 +291,7 @@ protected:
 #define TYPE_PATH		2
 #define TYPE_IMAGE		3
 #define TYPE_LINE		4
-class CRF_Data : public CFX_Object
+class CRF_Data 
 {
 public:
     typedef enum {Unknow, Text, Image, Path, Line, paragraph} RF_DataType;

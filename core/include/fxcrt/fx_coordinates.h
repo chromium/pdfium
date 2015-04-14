@@ -18,7 +18,7 @@ template<class baseType> class CFX_ATemplate;
 template<class baseType> class CFX_RRTemplate;
 class CFX_Matrix;
 template<class baseType>
-class CFX_PSVTemplate : public CFX_Object
+class CFX_PSVTemplate 
 {
 public:
     typedef CFX_PSVTemplate<baseType>	FXT_PSV;
@@ -230,7 +230,7 @@ public:
 typedef CFX_VTemplate<FX_INT32> CFX_Vector;
 typedef CFX_VTemplate<FX_FLOAT> CFX_VectorF;
 template<class baseType>
-class CFX_RTemplate: public CFX_Object
+class CFX_RTemplate
 {
 public:
     typedef CFX_PSVTemplate<baseType>	FXT_POINT;
@@ -610,7 +610,7 @@ struct FX_SMALL_RECT {
 
     FX_SHORT	Bottom;
 };
-class CFX_FloatRect : public CFX_Object
+class CFX_FloatRect 
 {
 public:
 
@@ -749,7 +749,7 @@ public:
 
     FX_FLOAT			top;
 };
-class CFX_Matrix : public CFX_Object
+class CFX_Matrix 
 {
 public:
 

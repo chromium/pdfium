@@ -59,7 +59,7 @@ class IPDF_ReflowedPage;
 #define FPDFTEXT_WRITINGMODE_LRTB	1
 #define FPDFTEXT_WRITINGMODE_RLTB	2
 #define FPDFTEXT_WRITINGMODE_TBRL	3
-class CPDFText_ParseOptions : public CFX_Object
+class CPDFText_ParseOptions 
 {
 public:
 
@@ -68,7 +68,7 @@ public:
     FX_BOOL			m_bNormalizeObjs;
     FX_BOOL			m_bOutputHyphen;
 };
-class IPDF_TextPage : public CFX_Object
+class IPDF_TextPage 
 {
 public:
 
@@ -130,7 +130,7 @@ public:
 #define FPDFTEXT_MATCHCASE      0x00000001
 #define FPDFTEXT_MATCHWHOLEWORD 0x00000002
 #define FPDFTEXT_CONSECUTIVE	0x00000004
-class IPDF_TextPageFind : public CFX_Object
+class IPDF_TextPageFind 
 {
 public:
 
@@ -151,7 +151,7 @@ public:
 
     virtual int					GetMatchedCount() const = 0;
 };
-class IPDF_LinkExtract : public CFX_Object
+class IPDF_LinkExtract 
 {
 public:
 

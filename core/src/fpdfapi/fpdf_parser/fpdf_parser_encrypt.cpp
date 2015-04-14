@@ -54,7 +54,7 @@ CPDF_CryptoHandler* CPDF_StandardSecurityHandler::CreateCryptoHandler()
 {
     return FX_NEW CPDF_StandardCryptoHandler;
 }
-typedef struct _PDF_CRYPTOITEM : public CFX_Object {
+typedef struct _PDF_CRYPTOITEM  {
     FX_INT32	m_Cipher;
     FX_INT32	m_KeyLen;
     FX_BOOL		m_bChecked;

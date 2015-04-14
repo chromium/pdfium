@@ -136,7 +136,7 @@ struct CPVT_LineInfo {
     FX_FLOAT					fLineAscent;
     FX_FLOAT					fLineDescent;
 };
-struct CPVT_WordInfo : public CFX_Object {
+struct CPVT_WordInfo  {
     CPVT_WordInfo() : Word(0), nCharset(0),
         fWordX(0.0f), fWordY(0.0f), fWordTail(0.0f), nFontIndex(-1), pWordProps(NULL)
     {
@@ -215,7 +215,7 @@ public:
         }
     }
 };
-class CLine : public CFX_Object
+class CLine 
 {
 public:
     CLine();
@@ -282,7 +282,7 @@ private:
     CPVT_ArrayTemplate<CLine*>				m_Lines;
     FX_INT32								m_nTotal;
 };
-class CSection : public CFX_Object
+class CSection 
 {
     friend class CTypeset;
 public:
@@ -400,7 +400,7 @@ private:
     CPDF_Rect								m_rcPlate;
     CPVT_FloatRect							m_rcContent;
 };
-class CPDF_VariableText : public IPDF_VariableText, public CFX_Object, private CPDF_EditContainer
+class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer
 {
     friend class CTypeset;
     friend class CSection;
@@ -613,7 +613,7 @@ private:
     IPDF_VariableText_Provider *			m_pVTProvider;
     CPDF_VariableText_Iterator *			m_pVTIterator;
 };
-class CPDF_VariableText_Iterator : public IPDF_VariableText_Iterator, public CFX_Object
+class CPDF_VariableText_Iterator : public IPDF_VariableText_Iterator
 {
 public:
     CPDF_VariableText_Iterator(CPDF_VariableText * pVT);

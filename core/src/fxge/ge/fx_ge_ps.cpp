@@ -13,7 +13,7 @@ struct PSGlyph {
     FX_BOOL			m_bGlyphAdjust;
     FX_FLOAT		m_AdjustMatrix[4];
 };
-class CPSFont : public CFX_Object
+class CPSFont 
 {
 public:
     PSGlyph			m_Glyphs[256];

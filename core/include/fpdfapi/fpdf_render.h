@@ -55,7 +55,7 @@ public:
 #define RENDER_NOPATHSMOOTH			0x20000000
 #define RENDER_NOIMAGESMOOTH		0x40000000
 #define RENDER_LIMITEDIMAGECACHE	0x80000000
-class CPDF_RenderOptions : public CFX_Object
+class CPDF_RenderOptions 
 {
 public:
 
@@ -81,7 +81,7 @@ public:
 
     FX_ARGB			TranslateColor(FX_ARGB argb) const;
 };
-class CPDF_RenderContext : public CFX_Object
+class CPDF_RenderContext 
 {
 public:
 
@@ -144,7 +144,7 @@ public:
         const CFX_AffineMatrix* pOriginal2Bitmap
     ) = 0;
 };
-class CPDF_ProgressiveRenderer : public CFX_Object
+class CPDF_ProgressiveRenderer 
 {
 public:
 
@@ -201,7 +201,7 @@ protected:
 
     void				RenderStep();
 };
-class CPDF_TextRenderer : public CFX_Object
+class CPDF_TextRenderer 
 {
 public:
 
@@ -249,7 +249,7 @@ public:
 
     virtual void		SetCacheLimit(FX_DWORD limit) = 0;
 };
-class CPDF_PageRenderCache : public CFX_Object
+class CPDF_PageRenderCache 
 {
 public:
     CPDF_PageRenderCache(CPDF_Page* pPage)
@@ -307,7 +307,7 @@ protected:
     FX_DWORD			m_nCacheSize;
     FX_BOOL				m_bCurFindCache;
 };
-class CPDF_RenderConfig : public CFX_Object
+class CPDF_RenderConfig 
 {
 public:
     CPDF_RenderConfig();

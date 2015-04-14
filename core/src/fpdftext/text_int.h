@@ -6,7 +6,7 @@
 
 #ifndef _PDF_TEXT_INT_H_
 #define _PDF_TEXT_INT_H_
-class CPDF_TextParseOptions : public CFX_Object
+class CPDF_TextParseOptions 
 {
 public:
     CPDF_TextParseOptions();
@@ -27,7 +27,7 @@ class CPDF_DocProgressiveSearch;
 #define FPDFTEXT_MC_PASS			0
 #define FPDFTEXT_MC_DONE			1
 #define FPDFTEXT_MC_DELAY			2
-typedef struct _PAGECHAR_INFO: public CFX_Object {
+typedef struct _PAGECHAR_INFO {
     int					m_CharCode;
     FX_WCHAR			m_Unicode;
     FX_FLOAT			m_OriginX;
@@ -177,7 +177,7 @@ private:
     CFX_RectArray					m_resArray;
     FX_BOOL							m_IsFind;
 };
-class CPDF_LinkExt: public CFX_Object
+class CPDF_LinkExt
 {
 public:
     CPDF_LinkExt() {};

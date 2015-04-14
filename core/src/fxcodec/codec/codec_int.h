@@ -205,7 +205,7 @@ public:
     FX_BOOL		Decode(void* ctx, FX_LPBYTE dest_data, int pitch, FX_BOOL bTranslateColor, FX_LPBYTE offsets);
     void		DestroyDecoder(void* ctx);
 };
-class CPDF_Jbig2Interface : public CFX_Object, public CJBig2_Module
+class CPDF_Jbig2Interface : public CJBig2_Module
 {
 public:
     virtual void *JBig2_Malloc(FX_DWORD dwSize)
@@ -239,7 +239,7 @@ public:
         FX_Free(pMem);
     }
 };
-class CCodec_Jbig2Context : public CFX_Object
+class CCodec_Jbig2Context 
 {
 public:
     CCodec_Jbig2Context();

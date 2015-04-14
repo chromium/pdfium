@@ -11,7 +11,7 @@
 #define	FPF_SKIAFONTTYPE_Path		1
 #define FPF_SKIAFONTTYPE_File		2
 #define FPF_SKIAFONTTYPE_Buffer		3
-class CFPF_SkiaFontDescriptor : public CFX_Object
+class CFPF_SkiaFontDescriptor 
 {
 public:
     CFPF_SkiaFontDescriptor() : m_pFamily(NULL), m_dwStyle(0), m_iFaceIndex(0), m_dwCharsets(0), m_iGlyphNum(0) {}
@@ -88,7 +88,7 @@ public:
     FX_LPVOID			m_pBuffer;
     size_t				m_szBuffer;
 };
-class CFPF_SkiaFontMgr : public IFPF_FontMgr, public CFX_Object
+class CFPF_SkiaFontMgr : public IFPF_FontMgr
 {
 public:
     CFPF_SkiaFontMgr();

@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 typedef void* FXFT_Library;
-class CPDF_CMapManager : public CFX_Object
+class CPDF_CMapManager 
 {
 public:
     CPDF_CMapManager();
@@ -22,7 +22,7 @@ private:
     CFX_MapByteStringToPtr	m_CMaps;
     CPDF_CID2UnicodeMap*	m_CID2UnicodeMaps[6];
 };
-class CPDF_FontGlobals : public CFX_Object
+class CPDF_FontGlobals 
 {
 public:
     CPDF_FontGlobals();
@@ -48,7 +48,7 @@ struct _CMap_CodeRange {
     FX_BYTE		m_Lower[4];
     FX_BYTE		m_Upper[4];
 };
-class CPDF_CMapParser : public CFX_Object
+class CPDF_CMapParser 
 {
 public:
     CPDF_CMapParser();
@@ -73,7 +73,7 @@ private:
 #define CIDCODING_UCS2		5
 #define CIDCODING_CID		6
 #define CIDCODING_UTF16		7
-class CPDF_CMap : public CFX_Object
+class CPDF_CMap 
 {
 public:
     CPDF_CMap();
@@ -138,7 +138,7 @@ typedef struct _FileHeader {
     FX_DWORD	dwDataOffset;
     FX_DWORD	dwRecordSize;
 } FXMP_FILEHEADER;
-class CPDF_CID2UnicodeMap : public CFX_Object
+class CPDF_CID2UnicodeMap 
 {
 public:
     CPDF_CID2UnicodeMap();
@@ -152,7 +152,7 @@ protected:
     const FX_WORD*	m_pEmbeddedMap;
     FX_DWORD	m_EmbeddedCount;
 };
-class CPDF_ToUnicodeMap : public CFX_Object
+class CPDF_ToUnicodeMap 
 {
 public:
     void					Load(CPDF_Stream* pStream);
@@ -163,7 +163,7 @@ protected:
     CPDF_CID2UnicodeMap*	m_pBaseMap;
     CFX_WideTextBuf			m_MultiCharBuf;
 };
-class CPDF_FontCharMap : public CFX_CharMap, public CFX_Object
+class CPDF_FontCharMap : public CFX_CharMap
 {
 public:
     CPDF_FontCharMap(CPDF_Font* pFont);

@@ -10,7 +10,7 @@
 #if _FX_OS_ == _FX_ANDROID_
 void	FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_ByteString &bsMode);
 void	FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_WideString &wsMode);
-class CFXCRT_FileAccess_CRT : public IFXCRT_FileAccess, public CFX_Object
+class CFXCRT_FileAccess_CRT : public IFXCRT_FileAccess
 {
 public:
     CFXCRT_FileAccess_CRT();

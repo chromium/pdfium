@@ -584,7 +584,7 @@ void color_apply_conversion(opj_image_t *image)
         return;
     }
 }
-class CJPX_Decoder : public CFX_Object
+class CJPX_Decoder 
 {
 public:
     CJPX_Decoder();

@@ -27,7 +27,7 @@ class CFX_RenderDevice;
 
 #define CFX_IntArray				CFX_ArrayTemplate<int>
 
-class  CPDFSDK_DateTime : public CFX_Object
+class  CPDFSDK_DateTime 
 {
 public:
 	CPDFSDK_DateTime();

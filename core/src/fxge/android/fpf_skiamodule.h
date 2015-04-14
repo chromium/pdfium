@@ -8,7 +8,7 @@
 #define _FPF_MODULE_H_
 #if _FX_OS_ == _FX_ANDROID_
 class CFPF_SkiaFontMgr;
-class CFPF_SkiaDeviceModule : public IFPF_DeviceModule, public CFX_Object
+class CFPF_SkiaDeviceModule : public IFPF_DeviceModule
 {
 public:
     CFPF_SkiaDeviceModule() : m_pFontMgr(NULL) {}

@@ -12,7 +12,7 @@ class CPDF_AutoReflowElement;
 class CPDF_AutoReflowLayoutProvider;
 typedef CFX_ArrayTemplate<CPDF_AutoReflowElement*> CAR_ElmPtrArray;
 typedef CFX_ArrayTemplate<CPDF_PageObject*> CAR_ObjPtrArray;
-class CRF_CELL : public CFX_Object
+class CRF_CELL 
 {
 public:
     CRF_CELL() { };
@@ -21,7 +21,7 @@ public:
     int			m_CellWritingMode;
     FX_RECT		m_BBox;
 };
-class CPDF_AutoReflowElement : public IPDF_LayoutElement, public CFX_Object
+class CPDF_AutoReflowElement : public IPDF_LayoutElement
 {
 public:
     CPDF_AutoReflowElement(LayoutType layoutType = LayoutUnknown , CPDF_AutoReflowElement* pParent = NULL) ;
@@ -68,7 +68,7 @@ public:
 #define AUTOREFLOW_STEP_GENERATEParagraph	2
 #define AUTOREFLOW_STEP_CREATEELEMENT		3
 #define AUTOREFLOW_STEP_REMOVEDATA			4
-class CPDF_AutoReflowLayoutProvider : public IPDF_LayoutProvider, public CFX_Object
+class CPDF_AutoReflowLayoutProvider : public IPDF_LayoutProvider
 {
 public:
     CPDF_AutoReflowLayoutProvider(CPDF_PageObjects* pPage, FX_BOOL bReadOrder);

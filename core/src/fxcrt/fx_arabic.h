@@ -6,7 +6,7 @@
 
 #ifndef _FX_ARABIC_IMP
 #define _FX_ARABIC_IMP
-class CFX_BidiChar FX_FINAL : public IFX_BidiChar, public CFX_Object
+class CFX_BidiChar FX_FINAL : public IFX_BidiChar
 {
 public:
     CFX_BidiChar();

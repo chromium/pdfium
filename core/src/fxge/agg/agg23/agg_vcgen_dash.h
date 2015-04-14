@@ -23,7 +23,7 @@
 #include "agg_vertex_sequence.h"
 namespace agg
 {
-class vcgen_dash : public CFX_Object
+class vcgen_dash 
 {
     enum max_dashes_e {
         max_dashes = 32

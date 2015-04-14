@@ -6,14 +6,14 @@
 
 #ifndef _PDF_TXTPROC_H_
 #define _PDF_TXTPROC_H_
-class CTextColumn : public CFX_Object
+class CTextColumn 
 {
 public:
     FX_FLOAT	m_AvgPos;
     int		m_Count;
     int		m_TextPos;
 };
-class CTextBox : public CFX_Object
+class CTextBox 
 {
 public:
     CFX_WideString	m_Text;
@@ -25,7 +25,7 @@ public:
     FX_FLOAT	m_FontSizeV;
     CTextColumn* m_pColumn;
 };
-class CTextBaseLine : public CFX_Object
+class CTextBaseLine 
 {
 public:
     CTextBaseLine();
@@ -46,7 +46,7 @@ public:
 };
 class CPDF_PageObject;
 class CPDF_TextObject;
-class CTextPage : public CFX_Object
+class CTextPage 
 {
 public:
     CTextPage();

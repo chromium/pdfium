@@ -8,7 +8,7 @@
 #define _FXCRT_LINUX_
 #include "extension.h"
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
-class CFXCRT_FileAccess_Posix : public IFXCRT_FileAccess, public CFX_Object
+class CFXCRT_FileAccess_Posix : public IFXCRT_FileAccess
 {
 public:
     CFXCRT_FileAccess_Posix();

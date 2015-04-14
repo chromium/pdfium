@@ -11,7 +11,7 @@
 #define PARSE_STEP_LIMIT		100
 #define STREAM_PARSE_BUFSIZE	20480
 class CPDF_QuickFontCache;
-class CPDF_StreamParser : public CFX_Object
+class CPDF_StreamParser 
 {
 public:
 
@@ -118,7 +118,7 @@ typedef struct {
 #define _FPDF_MAX_FORM_LEVEL_		30
 #define _FPDF_MAX_TYPE3_FORM_LEVEL_	4
 #define _FPDF_MAX_OBJECT_STACK_SIZE_ 512
-class CPDF_StreamContentParser : public CFX_Object
+class CPDF_StreamContentParser 
 {
 public:
     CPDF_StreamContentParser();
@@ -280,7 +280,7 @@ public:
     void Handle_NextLineShowText_Space();
     void Handle_Invalid();
 };
-class CPDF_ContentParser : public CFX_Object
+class CPDF_ContentParser 
 {
 public:
     CPDF_ContentParser();
@@ -359,7 +359,7 @@ FX_BOOL PDF_DocPageData_Release(CFX_MapPtrTemplate<KeyType, CPDF_CountedObject<V
     }
     return FALSE;
 }
-class CPDF_DocPageData : public CFX_Object
+class CPDF_DocPageData 
 {
 public:
     CPDF_DocPageData(CPDF_Document *pPDFDoc);
@@ -393,7 +393,7 @@ public:
     CPDF_FontFileMap            m_FontFileMap;
     FX_BOOL                     m_bForceClear;
 };
-class CPDF_Function : public CFX_Object
+class CPDF_Function 
 {
 public:
     static CPDF_Function*	Load(CPDF_Object* pFuncObj);
@@ -416,7 +416,7 @@ protected:
     virtual FX_BOOL	v_Init(CPDF_Object* pObj) = 0;
     virtual FX_BOOL	v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const = 0;
 };
-class CPDF_IccProfile : public CFX_Object
+class CPDF_IccProfile 
 {
 public:
     CPDF_IccProfile(FX_LPCBYTE pData, FX_DWORD dwSize);
@@ -451,10 +451,10 @@ public:
     CPDF_CountedColorSpace*	m_pCountedBaseCS;
 };
 #define	MAX_PAGE_OBJECTS_UNIFY_NAMING				4096
-class CPDF_ResourceNaming : public CFX_Object
+class CPDF_ResourceNaming 
 {
 public:
-    struct _NamingState : public CFX_Object {
+    struct _NamingState  {
         CFX_ByteString	m_Prefix;
         int				m_nIndex;
     };

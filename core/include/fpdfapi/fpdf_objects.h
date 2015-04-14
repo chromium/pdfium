@@ -35,7 +35,7 @@ class CPDF_CryptoHandler;
 #define PDFOBJ_NULL			8
 #define PDFOBJ_REFERENCE	9
 typedef IFX_FileStream* (*FPDF_LPFCloneStreamCallback)(CPDF_Stream *pStream, FX_LPVOID pUserData);
-class CPDF_Object : public CFX_Object
+class CPDF_Object 
 {
 public:
 
@@ -568,7 +568,7 @@ protected:
     friend class			CPDF_StreamAcc;
     friend class			CPDF_AttachmentAcc;
 };
-class CPDF_StreamAcc : public CFX_Object
+class CPDF_StreamAcc 
 {
 public:
 
@@ -622,7 +622,7 @@ protected:
 };
 CFX_DataFilter* FPDF_CreateFilter(FX_BSTR name, const CPDF_Dictionary* pParam, int width = 0, int height = 0);
 #define FPDF_FILTER_BUFFER_SIZE		20480
-class CPDF_StreamFilter : public CFX_Object
+class CPDF_StreamFilter 
 {
 public:
 
@@ -705,7 +705,7 @@ protected:
     FX_DWORD				m_RefObjNum;
     friend class			CPDF_Object;
 };
-class CPDF_IndirectObjects : public CFX_Object
+class CPDF_IndirectObjects 
 {
 public:
 

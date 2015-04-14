@@ -18,7 +18,7 @@
 #include "agg_basics.h"
 namespace agg
 {
-class path_storage : public CFX_Object
+class path_storage 
 {
     enum block_scale_e {
         block_shift = 8,
@@ -27,7 +27,7 @@ class path_storage : public CFX_Object
         block_pool  = 256
     };
 public:
-    class vertex_source : public CFX_Object
+    class vertex_source 
     {
     public:
         vertex_source() {}

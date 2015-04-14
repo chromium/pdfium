@@ -50,7 +50,7 @@ class CFontFileFaceInfo;
 #define FXFONT_FF_SCRIPT		(4<<4)
 #define FXFONT_FW_NORMAL		400
 #define FXFONT_FW_BOLD			700
-class CFX_Font : public CFX_Object
+class CFX_Font 
 {
 public:
     CFX_Font();
@@ -145,7 +145,7 @@ protected:
 };
 #define ENCODING_INTERNAL		0
 #define ENCODING_UNICODE		1
-class IFX_FontEncoding : public CFX_Object
+class IFX_FontEncoding 
 {
 public:
     virtual ~IFX_FontEncoding() {}
@@ -164,7 +164,7 @@ IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont);
 #define FXFONT_SUBST_NONSYMBOL		0x20
 #define FXFONT_SUBST_EXACT			0x40
 #define FXFONT_SUBST_STANDARD		0x80
-class CFX_SubstFont : public CFX_Object
+class CFX_SubstFont 
 {
 public:
 
@@ -199,7 +199,7 @@ typedef struct {
     FX_LPCBYTE	m_pFontData;
     FX_DWORD	m_dwSize;
 } FoxitFonts;
-class CFX_FontMgr : public CFX_Object
+class CFX_FontMgr 
 {
 public:
     CFX_FontMgr();
@@ -229,7 +229,7 @@ public:
     FXFT_Library	m_FTLibrary;
     FoxitFonts m_ExternalFonts[16];
 };
-class IFX_FontMapper : public CFX_Object
+class IFX_FontMapper 
 {
 public:
 
@@ -293,7 +293,7 @@ private:
     FXFT_Face			m_FoxitFaces[14];
     IFX_FontEnumerator*		m_pFontEnumerator;
 };
-class IFX_SystemFontInfo : public CFX_Object
+class IFX_SystemFontInfo 
 {
 public:
     static IFX_SystemFontInfo*	CreateDefault();
@@ -339,14 +339,14 @@ protected:
     void				ScanFile(CFX_ByteString& path);
     void				ReportFace(CFX_ByteString& path, FXSYS_FILE* pFile, FX_DWORD filesize, FX_DWORD offset);
 };
-class CFX_CountedFaceCache : public CFX_Object
+class CFX_CountedFaceCache 
 {
 public:
     CFX_FaceCache*	m_Obj;
     FX_DWORD		m_nCount;
 };
 typedef CFX_MapPtrTemplate<FXFT_Face, CFX_CountedFaceCache*> CFX_FTCacheMap;
-class CFX_FontCache : public CFX_Object
+class CFX_FontCache 
 {
 public:
     ~CFX_FontCache();
@@ -374,14 +374,14 @@ public:
     CFX_Font* m_pFont;
 };
 #define FX_FONTCACHE_DEFINE(pFontCache, pFont) CFX_AutoFontCache autoFontCache((pFontCache), (pFont))
-class CFX_GlyphBitmap : public CFX_Object
+class CFX_GlyphBitmap 
 {
 public:
     int						m_Top;
     int						m_Left;
     CFX_DIBitmap			m_Bitmap;
 };
-class CFX_FaceCache : public CFX_Object
+class CFX_FaceCache 
 {
 public:
     ~CFX_FaceCache();
