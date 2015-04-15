@@ -107,6 +107,11 @@
  * this in $(CC), e.g. "CC=gcc -mfpu=neon", but people who build libpng rarely
  * do this.
  */
+/*
+ * pdfium: This version of libpng does not contain the arm neon optimized code
+ * so we should never try to reference it.
+ */
+#if 0
 #ifndef PNG_ARM_NEON_OPT
    /* ARM NEON optimizations are being controlled by the compiler settings,
     * typically the target FPU.  If the FPU has been set to NEON (-mfpu=neon
@@ -126,6 +131,7 @@
     * callbacks to do this.
     */
 #  define PNG_FILTER_OPTIMIZATIONS png_init_filter_functions_neon
+#endif
 #endif
 
 /* Is this a build of a DLL where compilation of the object modules requires
