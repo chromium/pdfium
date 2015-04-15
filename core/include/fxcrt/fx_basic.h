@@ -1271,12 +1271,8 @@ public:
             if (m_pObject->m_RefCount <= 0) {
                 delete m_pObject;
             }
-            m_pObject = NULL;
         }
-        m_pObject = FX_NEW CountedObj;
-        if (!m_pObject) {
-            return NULL;
-        }
+        m_pObject = new CountedObj;
         m_pObject->m_RefCount = 1;
         return m_pObject;
     }
@@ -1331,18 +1327,13 @@ public:
     ObjClass*			GetModify()
     {
         if (m_pObject == NULL) {
-            m_pObject = FX_NEW CountedObj;
-            if (m_pObject) {
-                m_pObject->m_RefCount = 1;
-            }
+            m_pObject = new CountedObj;
+            m_pObject->m_RefCount = 1;
         } else if (m_pObject->m_RefCount > 1) {
             m_pObject->m_RefCount --;
             CountedObj* pOldObject = m_pObject;
-            m_pObject = NULL;
-            m_pObject = FX_NEW CountedObj(*pOldObject);
-            if (m_pObject) {
-                m_pObject->m_RefCount = 1;
-            }
+            m_pObject = new CountedObj(*pOldObject);
+            m_pObject->m_RefCount = 1;
         }
         return m_pObject;
     }

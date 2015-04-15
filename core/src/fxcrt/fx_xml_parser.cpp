@@ -14,18 +14,12 @@ CXML_Parser::~CXML_Parser()
 }
 FX_BOOL CXML_Parser::Init(FX_LPBYTE pBuffer, size_t size)
 {
-    m_pDataAcc = FX_NEW CXML_DataBufAcc(pBuffer, size);
-    if (!m_pDataAcc) {
-        return FALSE;
-    }
+    m_pDataAcc = new CXML_DataBufAcc(pBuffer, size);
     return Init(TRUE);
 }
 FX_BOOL CXML_Parser::Init(IFX_FileRead *pFileRead)
 {
-    m_pDataAcc = FX_NEW CXML_DataStmAcc(pFileRead);
-    if (!m_pDataAcc) {
-        return FALSE;
-    }
+    m_pDataAcc = new CXML_DataStmAcc(pFileRead);
     return Init(TRUE);
 }
 FX_BOOL CXML_Parser::Init(IFX_BufferRead *pBuffer)
@@ -377,15 +371,9 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent, FX_BOOL bStartTag
     if (tag_name.IsEmpty() || bEndTag) {
         return NULL;
     }
-    CXML_Element* pElement;
-    pElement = FX_NEW CXML_Element;
-    if (pElement) {
-        pElement->m_pParent = pParent;
-        pElement->SetTag(tag_space, tag_name);
-    }
-    if (!pElement) {
-        return NULL;
-    }
+    CXML_Element* pElement = new CXML_Element;
+    pElement->m_pParent = pParent;
+    pElement->SetTag(tag_space, tag_name);
     do {
         CFX_ByteString attr_space, attr_name;
         while (m_dwIndex < m_dwBufferSize) {
@@ -529,11 +517,7 @@ void CXML_Parser::InsertContentSegment(FX_BOOL bCDATA, FX_WSTR content, CXML_Ele
     if (content.IsEmpty()) {
         return;
     }
-    CXML_Content* pContent;
-    pContent = FX_NEW CXML_Content;
-    if (!pContent) {
-        return;
-    }
+    CXML_Content* pContent = new CXML_Content;
     pContent->Set(bCDATA, content);
     pElement->m_Children.Add((FX_LPVOID)CXML_Element::Content);
     pElement->m_Children.Add(pContent);
@@ -818,10 +802,7 @@ void CXML_AttrMap::SetAt(FX_BSTR space, FX_BSTR name, FX_WSTR value)
         }
     }
     if (!m_pMap) {
-        m_pMap = FX_NEW CFX_ObjectArray < CXML_AttrItem > ;
-    }
-    if (!m_pMap) {
-        return;
+        m_pMap = new CFX_ObjectArray<CXML_AttrItem>;
     }
     CXML_AttrItem* pItem = (CXML_AttrItem*)m_pMap->AddSpace();
     if (!pItem) {
