@@ -148,10 +148,7 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData, FX_DWORD dwSr
         cmsCloseProfile(dstProfile);
         return NULL;
     }
-    pCmm = FX_NEW CLcmsCmm;
-    if (pCmm == NULL) {
-        return NULL;
-    }
+    pCmm = new CLcmsCmm;
     pCmm->m_nSrcComponents = nSrcComponents;
     pCmm->m_nDstComponents = nDstComponents;
     pCmm->m_hTransform = hTransform;
@@ -438,10 +435,7 @@ FX_LPVOID CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
     ASSERT(pTransformKey);
     pTransformKey->AppendBlock(ProfileKey.GetBuffer(0), ProfileKey.GetLength());
     if (!m_MapProfile.Lookup(ProfileKey, (FX_LPVOID&)pCache)) {
-        pCache = FX_NEW CFX_IccProfileCache;
-        if (pCache == NULL) {
-            return NULL;
-        }
+        pCache = new CFX_IccProfileCache;
         switch (pIccParam->dwProfileType) {
             case Icc_PARAMTYPE_BUFFER:
                 pCache->m_pProfile = cmsOpenProfileFromMem(pIccParam->pProfileData, pIccParam->dwProfileSize);
@@ -503,11 +497,7 @@ FX_LPVOID CCodec_IccModule::CreateTransform(ICodec_IccModule::IccParam* pInputPa
         pCmm->m_nSrcComponents = T_CHANNELS(dwInputProfileType);
         pCmm->m_nDstComponents = T_CHANNELS(dwOutputProfileType);
         pCmm->m_bLab = T_COLORSPACE(pInputParam->dwFormat) == PT_Lab;
-        pTransformCache = FX_NEW CFX_IccTransformCache(pCmm);
-        if (pTransformCache == NULL) {
-            FX_Free(pCmm);
-            return NULL;
-        }
+        pTransformCache = new CFX_IccTransformCache(pCmm);
         if (pProofProfile) {
             pTransformCache->m_pIccTransform = cmsCreateProofingTransform(pInputProfile, dwInputProfileType, pOutputProfile, dwOutputProfileType,
                                                pProofProfile, dwIntent, dwPrfIntent, dwPrfFlag);

@@ -851,10 +851,7 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
 ICodec_ScanlineDecoder*	CCodec_FlateModule::CreateDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
         int nComps, int bpc, int predictor, int Colors, int BitsPerComponent, int Columns)
 {
-    CCodec_FlateScanlineDecoder* pDecoder = FX_NEW CCodec_FlateScanlineDecoder;
-    if (pDecoder == NULL) {
-        return NULL;
-    }
+    CCodec_FlateScanlineDecoder* pDecoder = new CCodec_FlateScanlineDecoder;
     pDecoder->Create(src_buf, src_size, width, height, nComps, bpc, predictor, Colors, BitsPerComponent, Columns);
     return pDecoder;
 }
@@ -874,10 +871,7 @@ FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_b
         }
     }
     if (bLZW) {
-        pDecoder = FX_NEW CLZWDecoder;
-        if (pDecoder == NULL) {
-            return -1;
-        }
+        pDecoder = new CLZWDecoder;
         dest_size = (FX_DWORD) - 1;
         offset = src_size;
         int err = pDecoder->Decode(NULL, dest_size, src_buf, offset, bEarlyChange);
@@ -885,10 +879,7 @@ FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_b
         if (err || dest_size == 0 || dest_size + 1 < dest_size) {
             return (FX_DWORD) - 1;
         }
-        pDecoder = FX_NEW CLZWDecoder;
-        if (pDecoder == NULL) {
-            return -1;
-        }
+        pDecoder = new CLZWDecoder;
         dest_buf = FX_Alloc( FX_BYTE, dest_size + 1);
         if (dest_buf == NULL) {
             return -1;

@@ -801,10 +801,7 @@ CCodec_JpxModule::CCodec_JpxModule()
 }
 void* CCodec_JpxModule::CreateDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size , FX_BOOL useColorSpace)
 {
-    CJPX_Decoder* pDecoder = FX_NEW CJPX_Decoder;
-    if (pDecoder == NULL) {
-        return NULL;
-    }
+    CJPX_Decoder* pDecoder = new CJPX_Decoder;
     pDecoder->m_useColorSpace = useColorSpace;
     if (!pDecoder->Init(src_buf, src_size)) {
         delete pDecoder;

@@ -15,7 +15,7 @@ CCodec_Jbig2Module::~CCodec_Jbig2Module()
 }
 void* CCodec_Jbig2Module::CreateJbig2Context()
 {
-    return FX_NEW CCodec_Jbig2Context();
+    return new CCodec_Jbig2Context();
 }
 void CCodec_Jbig2Module::DestroyJbig2Context(void* pJbig2Content)
 {
