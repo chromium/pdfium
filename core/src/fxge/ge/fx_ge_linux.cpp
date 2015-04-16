@@ -208,10 +208,7 @@ void* CFX_LinuxFontInfo::FindFont(int weight, FX_BOOL bItalic, int charset, int 
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault()
 {
-    CFX_LinuxFontInfo* pInfo = FX_NEW CFX_LinuxFontInfo;
-    if (!pInfo) {
-        return NULL;
-    }
+    CFX_LinuxFontInfo* pInfo = new CFX_LinuxFontInfo;
     if (!pInfo->ParseFontCfg()) {
         pInfo->AddPath("/usr/share/fonts");
         pInfo->AddPath("/usr/share/X11/fonts/Type1");

@@ -984,19 +984,8 @@ CFX_FaceCache* CFX_FontCache::GetCachedFace(CFX_Font* pFont)
         counted_face_cache->m_nCount++;
         return counted_face_cache->m_Obj;
     }
-    CFX_FaceCache* face_cache = NULL;
-    face_cache = FX_NEW CFX_FaceCache(bExternal ? NULL : (FXFT_Face)face);
-    if (face_cache == NULL)	{
-        return NULL;
-    }
-    counted_face_cache = FX_NEW CFX_CountedFaceCache;
-    if (!counted_face_cache) {
-        if (face_cache) {
-            delete face_cache;
-            face_cache = NULL;
-        }
-        return NULL;
-    }
+    CFX_FaceCache* face_cache = new CFX_FaceCache(bExternal ? NULL : (FXFT_Face)face);
+    counted_face_cache = new CFX_CountedFaceCache;
     counted_face_cache->m_nCount = 2;
     counted_face_cache->m_Obj = face_cache;
     map.SetAt((FXFT_Face)face, counted_face_cache);
@@ -1081,10 +1070,7 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(CFX_Font* pFont, const CFX_Aff
 {
     CFX_SizeGlyphCache* pSizeCache = NULL;
     if (!m_SizeMap.Lookup(FaceGlyphsKey, (void*&)pSizeCache)) {
-        pSizeCache = FX_NEW CFX_SizeGlyphCache;
-        if (pSizeCache == NULL)	{
-            return NULL;
-        }
+        pSizeCache = new CFX_SizeGlyphCache;
         m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
     }
     CFX_GlyphBitmap* pGlyphBitmap = NULL;
@@ -1153,10 +1139,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont, FX_DWORD 
         } else {
             pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix, dest_width, anti_alias);
             if (pGlyphBitmap) {
-                pSizeCache = FX_NEW CFX_SizeGlyphCache;
-                if (pSizeCache == NULL)	{
-                    return NULL;
-                }
+                pSizeCache = new CFX_SizeGlyphCache;
                 m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
                 pSizeCache->m_GlyphMap.SetAt((FX_LPVOID)(FX_UINTPTR)glyph_index, pGlyphBitmap);
                 return pGlyphBitmap;
@@ -1378,10 +1361,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_inde
         return NULL;
     }
     int dib_width = bmwidth;
-    CFX_GlyphBitmap* pGlyphBitmap = FX_NEW CFX_GlyphBitmap;
-    if (!pGlyphBitmap) {
-        return NULL;
-    }
+    CFX_GlyphBitmap* pGlyphBitmap = new CFX_GlyphBitmap;
     pGlyphBitmap->m_Bitmap.Create(dib_width, bmheight,
                                   anti_alias == FXFT_RENDER_MODE_MONO ? FXDIB_1bppMask : FXDIB_8bppMask);
     pGlyphBitmap->m_Left = FXFT_Get_Glyph_BitmapLeft(m_Face);
@@ -1676,10 +1656,7 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width)
     if (params.m_PointCount == 0) {
         return NULL;
     }
-    CFX_PathData* pPath = FX_NEW CFX_PathData;
-    if (!pPath) {
-        return NULL;
-    }
+    CFX_PathData* pPath = new CFX_PathData;
     pPath->SetPointCount(params.m_PointCount);
     params.m_bCount = FALSE;
     params.m_PointCount = 0;

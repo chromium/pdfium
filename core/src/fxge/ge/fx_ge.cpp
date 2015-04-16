@@ -33,11 +33,8 @@ CFX_GEModule* CFX_GEModule::Get()
 }
 void CFX_GEModule::Create()
 {
-    g_pGEModule = FX_NEW CFX_GEModule;
-    if (!g_pGEModule) {
-        return;
-    }
-    g_pGEModule->m_pFontMgr = FX_NEW CFX_FontMgr;
+    g_pGEModule = new CFX_GEModule;
+    g_pGEModule->m_pFontMgr = new CFX_FontMgr;
     g_pGEModule->InitPlatform();
     g_pGEModule->SetTextGamma(2.2f);
 }
@@ -55,7 +52,7 @@ void CFX_GEModule::Destroy()
 CFX_FontCache* CFX_GEModule::GetFontCache()
 {
     if (m_pFontCache == NULL) {
-        m_pFontCache = FX_NEW CFX_FontCache();
+        m_pFontCache = new CFX_FontCache();
     }
     return m_pFontCache;
 }

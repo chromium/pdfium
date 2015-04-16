@@ -68,10 +68,7 @@ FX_BOOL CFX_Font::LoadSubst(const CFX_ByteString& face_name, FX_BOOL bTrueType, 
 {
     m_bEmbedded = FALSE;
     m_bVertical = bVertical;
-    m_pSubstFont = FX_NEW CFX_SubstFont;
-    if (!m_pSubstFont) {
-        return FALSE;
-    }
+    m_pSubstFont = new CFX_SubstFont;
     m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(face_name, bTrueType, flags, weight, italic_angle,
              CharsetCP, m_pSubstFont);
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
@@ -442,7 +439,5 @@ FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCodeEx(FX_DWORD charcode, int encodin
 }
 IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont)
 {
-    CFX_UnicodeEncoding* pEncoding = NULL;
-    pEncoding = FX_NEW CFX_UnicodeEncoding(pFont);
-    return pEncoding;
+    return new CFX_UnicodeEncoding(pFont);
 }

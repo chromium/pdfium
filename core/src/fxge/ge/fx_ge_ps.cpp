@@ -526,10 +526,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache, CFX_Font* pFont,
             }
     }
     if (m_PSFontList.GetSize() == 0 || m_PSFontList[m_PSFontList.GetSize() - 1]->m_nGlyphs == 256) {
-        CPSFont* pPSFont = FX_NEW CPSFont;
-        if (!pPSFont) {
-            return;
-        }
+        CPSFont* pPSFont = new CPSFont;
         pPSFont->m_nGlyphs = 0;
         m_PSFontList.Add(pPSFont);
         CFX_ByteTextBuf buf;
