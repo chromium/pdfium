@@ -31,7 +31,6 @@ public:
     void				Clear(void* key);
     CPDF_Font*			Find(void* key, int index);
     void				Set(void* key, int index, CPDF_Font* pFont);
-    CFX_MapPtrToPtr		m_pStockMap;
     CPDF_CMapManager	m_CMapManager;
     struct {
         const struct FXCMAP_CMap*	m_pMapList;
@@ -41,6 +40,8 @@ public:
         const FX_WORD*	m_pMap;
         int				m_Count;
     } m_EmbeddedToUnicodes[NUMBER_OF_CIDSETS];
+private:
+    CFX_MapPtrToPtr		m_pStockMap;
     FX_LPBYTE			m_pContrastRamps;
 };
 struct _CMap_CodeRange {
