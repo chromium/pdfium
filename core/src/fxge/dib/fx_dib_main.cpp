@@ -164,10 +164,7 @@ CFX_DIBitmap* CFX_DIBSource::Clone(const FX_RECT* pClip) const
             return NULL;
         }
     }
-    CFX_DIBitmap* pNewBitmap = FX_NEW CFX_DIBitmap;
-    if (!pNewBitmap) {
-        return NULL;
-    }
+    CFX_DIBitmap* pNewBitmap = new CFX_DIBitmap;
     if (!pNewBitmap->Create(rect.Width(), rect.Height(), GetFormat())) {
         delete pNewBitmap;
         return NULL;
@@ -236,10 +233,7 @@ FX_BOOL CFX_DIBSource::BuildAlphaMask()
     if (m_pAlphaMask) {
         return TRUE;
     }
-    m_pAlphaMask = FX_NEW CFX_DIBitmap;
-    if (!m_pAlphaMask) {
-        return FALSE;
-    }
+    m_pAlphaMask = new CFX_DIBitmap;
     if (!m_pAlphaMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
         delete m_pAlphaMask;
         m_pAlphaMask = NULL;
@@ -574,10 +568,7 @@ CFX_DIBitmap* CFX_DIBSource::GetAlphaMask(const FX_RECT* pClip) const
             return NULL;
         }
     }
-    CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
-    if (!pMask) {
-        return NULL;
-    }
+    CFX_DIBitmap* pMask = new CFX_DIBitmap;
     if (!pMask->Create(rect.Width(), rect.Height(), FXDIB_8bppMask)) {
         delete pMask;
         return NULL;
@@ -902,10 +893,7 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform)
                     int b = (FX_BYTE)m_pPalette[i];
                     gray[i] = (FX_BYTE)FXRGB2GRAY(r, g, b);
                 }
-                CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
-                if (!pMask) {
-                    return FALSE;
-                }
+                CFX_DIBitmap* pMask = new CFX_DIBitmap;
                 if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
                     delete pMask;
                     return FALSE;
@@ -936,10 +924,7 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform)
                     int b = (FX_BYTE)m_pPalette[i];
                     gray[i] = (FX_BYTE)FXRGB2GRAY(r, g, b);
                 }
-                CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
-                if (!pMask) {
-                    return FALSE;
-                }
+                CFX_DIBitmap* pMask = new CFX_DIBitmap;
                 if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
                     delete pMask;
                     return FALSE;
@@ -956,10 +941,7 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform)
                 break;
             }
         case FXDIB_Rgb: {
-                CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
-                if (!pMask) {
-                    return FALSE;
-                }
+                CFX_DIBitmap* pMask = new CFX_DIBitmap;
                 if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
                     delete pMask;
                     return FALSE;
@@ -977,10 +959,7 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform)
                 break;
             }
         case FXDIB_Rgb32: {
-                CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
-                if (!pMask) {
-                    return FALSE;
-                }
+                CFX_DIBitmap* pMask = new CFX_DIBitmap;
                 if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
                     delete pMask;
                     return FALSE;
@@ -1414,10 +1393,7 @@ FX_BOOL CFX_DIBitmap::DitherFS(const FX_DWORD* pPalette, int pal_size, const FX_
 }
 CFX_DIBitmap* CFX_DIBSource::FlipImage(FX_BOOL bXFlip, FX_BOOL bYFlip) const
 {
-    CFX_DIBitmap* pFlipped = FX_NEW CFX_DIBitmap;
-    if (!pFlipped) {
-        return NULL;
-    }
+    CFX_DIBitmap* pFlipped = new CFX_DIBitmap;
     if (!pFlipped->Create(m_Width, m_Height, GetFormat())) {
         delete pFlipped;
         return NULL;
@@ -1491,10 +1467,7 @@ CFX_DIBExtractor::CFX_DIBExtractor(const CFX_DIBSource* pSrc)
     if (pSrc->GetBuffer() == NULL) {
         m_pBitmap = pSrc->Clone();
     } else {
-        m_pBitmap = FX_NEW CFX_DIBitmap;
-        if (!m_pBitmap) {
-            return;
-        }
+        m_pBitmap = new CFX_DIBitmap;
         if (!m_pBitmap->Create(pSrc->GetWidth(), pSrc->GetHeight(), pSrc->GetFormat(), pSrc->GetBuffer())) {
             delete m_pBitmap;
             m_pBitmap = NULL;
@@ -1605,10 +1578,7 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice, const CFX_ClipRgn* pClip
             return TRUE;
         }
         m_Status = 2;
-        m_pTransformer = FX_NEW CFX_ImageTransformer;
-        if (!m_pTransformer) {
-            return FALSE;
-        }
+        m_pTransformer = new CFX_ImageTransformer;
         m_pTransformer->Start(pSource, &m_Matrix, dib_flags, &m_ClipBox);
         return TRUE;
     }
@@ -1707,10 +1677,7 @@ void CFX_BitmapStorer::ComposeScanline(int line, FX_LPCBYTE scanline, FX_LPCBYTE
 }
 FX_BOOL CFX_BitmapStorer::SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette)
 {
-    m_pBitmap = FX_NEW CFX_DIBitmap;
-    if (!m_pBitmap) {
-        return FALSE;
-    }
+    m_pBitmap = new CFX_DIBitmap;
     if (!m_pBitmap->Create(width, height, src_format)) {
         delete m_pBitmap;
         m_pBitmap = NULL;

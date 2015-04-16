@@ -87,10 +87,7 @@ void* CFX_MacFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pit
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault()
 {
-    CFX_MacFontInfo* pInfo = FX_NEW CFX_MacFontInfo;
-    if (!pInfo) {
-        return NULL;
-    }
+    CFX_MacFontInfo* pInfo = new CFX_MacFontInfo;
     pInfo->AddPath("~/Library/Fonts");
     pInfo->AddPath("/Library/Fonts");
     pInfo->AddPath("/System/Library/Fonts");
@@ -98,7 +95,7 @@ IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault()
 }
 void CFX_GEModule::InitPlatform()
 {
-    m_pPlatformData = FX_NEW CApplePlatform;
+    m_pPlatformData = new CApplePlatform;
     m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault());
 }
 void CFX_GEModule::DestroyPlatform()

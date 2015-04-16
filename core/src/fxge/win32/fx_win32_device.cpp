@@ -393,14 +393,11 @@ FX_BOOL CWin32FontInfo::GetFontCharset(void* hFont, int& charset)
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault()
 {
-    return FX_NEW CWin32FontInfo;
+    return new CWin32FontInfo;
 }
 void CFX_GEModule::InitPlatform()
 {
-    CWin32Platform* pPlatformData = FX_NEW CWin32Platform;
-    if (!pPlatformData) {
-        return;
-    }
+    CWin32Platform* pPlatformData = new CWin32Platform;
     OSVERSIONINFO ver;
     ver.dwOSVersionInfoSize = sizeof(ver);
     GetVersionEx(&ver);
@@ -1143,10 +1140,7 @@ CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC, FX_BOOL bCmykOutput, FX_BOOL bForc
     m_bForcePSOutput = bForcePSOutput;
     m_psLevel = psLevel;
     if (bForcePSOutput) {
-        IFX_RenderDeviceDriver* pDriver = FX_NEW CPSPrinterDriver;
-        if (!pDriver) {
-            return;
-        }
+        IFX_RenderDeviceDriver* pDriver = new CPSPrinterDriver;
         ((CPSPrinterDriver*)pDriver)->Init(hDC, psLevel, bCmykOutput);
         SetDeviceDriver(pDriver);
         return;
@@ -1172,9 +1166,9 @@ IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC, FX_BOOL bCmykOu
         device_class = FXDC_DISPLAY;
     }
     if (device_class == FXDC_PRINTER) {
-        return FX_NEW CGdiPrinterDriver(hDC);
+        return new CGdiPrinterDriver(hDC);
     }
-    return FX_NEW CGdiDisplayDriver(hDC);
+    return new CGdiDisplayDriver(hDC);
 }
 CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width, int height, FXDIB_Format format)
 {
@@ -1190,18 +1184,12 @@ CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width, int height, FXDIB_Format for
     if (m_hBitmap == NULL) {
         return;
     }
-    CFX_DIBitmap* pBitmap = FX_NEW CFX_DIBitmap;
-    if (!pBitmap) {
-        return;
-    }
+    CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
     pBitmap->Create(width, height, format, pBuffer);
     SetBitmap(pBitmap);
     m_hDC = ::CreateCompatibleDC(NULL);
     m_hOldBitmap = (HBITMAP)SelectObject(m_hDC, m_hBitmap);
-    IFX_RenderDeviceDriver* pDriver = FX_NEW CGdiDisplayDriver(m_hDC);
-    if (!pDriver) {
-        return;
-    }
+    IFX_RenderDeviceDriver* pDriver = new CGdiDisplayDriver(m_hDC);
     SetDeviceDriver(pDriver);
 }
 CFX_WinBitmapDevice::~CFX_WinBitmapDevice()

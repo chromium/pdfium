@@ -57,8 +57,7 @@ public:
     static IDWriteFontFileLoader* GetLoader()
     {
         if (instance_ == NULL) {
-            instance_ = FX_NEW CDwFontFileLoader();
-            return instance_;
+            instance_ = new CDwFontFileLoader();
         }
         return instance_;
     }
@@ -209,10 +208,7 @@ FX_BOOL CDWriteExt::DwCreateRenderingTarget(CFX_DIBitmap* pBitmap, void** render
     if (FAILED(hr)) {
         goto failed;
     }
-    *(CDwGdiTextRenderer**)renderTarget = FX_NEW CDwGdiTextRenderer(pBitmap, pBitmapRenderTarget, pRenderingParams);
-    if (*(CDwGdiTextRenderer**)renderTarget == NULL) {
-        goto failed;
-    }
+    *(CDwGdiTextRenderer**)renderTarget = new CDwGdiTextRenderer(pBitmap, pBitmapRenderTarget, pRenderingParams);
     SafeRelease(&pGdiInterop);
     SafeRelease(&pBitmapRenderTarget);
     SafeRelease(&pRenderingParams);
@@ -372,10 +368,7 @@ HRESULT STDMETHODCALLTYPE CDwFontFileLoader::CreateStreamFromKey(
 )
 {
     *fontFileStream = NULL;
-    CDwFontFileStream* stream = FX_NEW CDwFontFileStream(fontFileReferenceKey, fontFileReferenceKeySize);
-    if (stream == NULL)	{
-        return E_OUTOFMEMORY;
-    }
+    CDwFontFileStream* stream = new CDwFontFileStream(fontFileReferenceKey, fontFileReferenceKeySize);
     if (!stream->IsInitialized()) {
         delete stream;
         return E_FAIL;
