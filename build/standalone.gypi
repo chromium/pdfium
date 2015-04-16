@@ -163,7 +163,12 @@
       'IntermediateDirectory': '$(OutDir)\\obj\\$(ProjectName)',
       'CharacterSet': '1',
     },
-    'msvs_disabled_warnings': [4800, 4996],
+    'msvs_disabled_warnings': [4800, 4996, 4456, 4457, 4458, 4459, 4091],
+    # 4456, 4457, 4458, 4459 are variable shadowing warnings that are new in
+    # VS2015.
+    # C4091: 'typedef ': ignored on left of 'X' when no variable is
+    #                    declared.
+    # This happens in a number of Windows headers with VS 2015.
     'msvs_settings': {
       'VCCLCompilerTool': {
         'MinimalRebuild': 'false',
