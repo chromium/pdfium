@@ -55,7 +55,7 @@ FX_BOOL CPDF_TilingPattern::Load()
         return FALSE;
     }
     CPDF_Stream* pStream = (CPDF_Stream*)m_pPatternObj;
-    m_pForm = FX_NEW CPDF_Form(m_pDocument, NULL, pStream);
+    m_pForm = new CPDF_Form(m_pDocument, NULL, pStream);
     m_pForm->ParseContent(NULL, &m_ParentMatrix, NULL, NULL);
     m_BBox = pDict->GetRect(FX_BSTRC("BBox"));
     return TRUE;

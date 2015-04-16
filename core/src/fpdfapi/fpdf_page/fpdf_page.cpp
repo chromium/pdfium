@@ -15,15 +15,15 @@ CPDF_PageObject* CPDF_PageObject::Create(int type)
 {
     switch (type) {
         case PDFPAGE_TEXT:
-            return FX_NEW CPDF_TextObject;
+            return new CPDF_TextObject;
         case PDFPAGE_IMAGE:
-            return FX_NEW CPDF_ImageObject;
+            return new CPDF_ImageObject;
         case PDFPAGE_PATH:
-            return FX_NEW CPDF_PathObject;
+            return new CPDF_PathObject;
         case PDFPAGE_SHADING:
-            return FX_NEW CPDF_ShadingObject;
+            return new CPDF_ShadingObject;
         case PDFPAGE_FORM:
-            return FX_NEW CPDF_FormObject;
+            return new CPDF_FormObject;
     }
     return NULL;
 }
@@ -896,7 +896,7 @@ void CPDF_Page::StartParse(CPDF_ParseOptions* pOptions, FX_BOOL bReParse)
     if (m_ParseState == PDF_CONTENT_PARSED || m_ParseState == PDF_CONTENT_PARSING) {
         return;
     }
-    m_pParser = FX_NEW CPDF_ContentParser;
+    m_pParser = new CPDF_ContentParser;
     m_pParser->Start(this, pOptions);
     m_ParseState = PDF_CONTENT_PARSING;
 }
@@ -960,7 +960,7 @@ void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates, CFX_AffineMatrix* pPa
     if (m_ParseState == PDF_CONTENT_PARSED || m_ParseState == PDF_CONTENT_PARSING) {
         return;
     }
-    m_pParser = FX_NEW CPDF_ContentParser;
+    m_pParser = new CPDF_ContentParser;
     m_pParser->Start(this, pGraphicStates, pParentMatrix, pType3Char, pOptions, level);
     m_ParseState = PDF_CONTENT_PARSING;
 }
@@ -972,7 +972,7 @@ void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates, CFX_AffineMatrix* p
 }
 CPDF_Form* CPDF_Form::Clone() const
 {
-    CPDF_Form* pClone = FX_NEW CPDF_Form(m_pDocument, m_pPageResources, m_pFormStream, m_pResources);
+    CPDF_Form* pClone = new CPDF_Form(m_pDocument, m_pPageResources, m_pFormStream, m_pResources);
     FX_POSITION pos = m_ObjectList.GetHeadPosition();
     while (pos) {
         CPDF_PageObject* pObj = (CPDF_PageObject*)m_ObjectList.GetNext(pos);

@@ -13,7 +13,7 @@ CPDF_ModuleMgr* CPDF_ModuleMgr::Get()
 }
 void CPDF_ModuleMgr::Create()
 {
-    g_FPDFAPI_pDefaultMgr = FX_NEW CPDF_ModuleMgr;
+    g_FPDFAPI_pDefaultMgr = new CPDF_ModuleMgr;
     g_FPDFAPI_pDefaultMgr->Initialize();
 }
 void CPDF_ModuleMgr::Destroy()
@@ -38,8 +38,8 @@ void CPDF_ModuleMgr::Initialize()
 void CPDF_ModuleMgr::InitModules()
 {
     m_pCodecModule = NULL;
-    m_pPageModule = FX_NEW CPDF_PageModuleDef;
-    m_pRenderModule = FX_NEW CPDF_RenderModuleDef;
+    m_pPageModule = new CPDF_PageModuleDef;
+    m_pRenderModule = new CPDF_RenderModuleDef;
 }
 CPDF_ModuleMgr::~CPDF_ModuleMgr()
 {

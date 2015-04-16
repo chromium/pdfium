@@ -961,7 +961,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions)
     }
     if (pContent->GetType() == PDFOBJ_STREAM) {
         m_nStreams = 0;
-        m_pSingleStream = FX_NEW CPDF_StreamAcc;
+        m_pSingleStream = new CPDF_StreamAcc;
         m_pSingleStream->LoadAllData((CPDF_Stream*)pContent, FALSE);
     } else if (pContent->GetType() == PDFOBJ_ARRAY) {
         CPDF_Array* pArray = (CPDF_Array*)pContent;
@@ -1003,7 +1003,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm, CPDF_AllStates* pGraphicStates,
         }
     }
     CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDict(FX_BSTRC("Resources"));
-    m_pParser = FX_NEW CPDF_StreamContentParser;
+    m_pParser = new CPDF_StreamContentParser;
     m_pParser->Initialize();
     m_pParser->PrepareParse(pForm->m_pDocument, pForm->m_pPageResources, pForm->m_pResources, pParentMatrix, pForm,
                             pResources, &form_bbox, pOptions, pGraphicStates, level);
@@ -1020,7 +1020,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm, CPDF_AllStates* pGraphicStates,
         pData->m_pSoftMask = NULL;
     }
     m_nStreams = 0;
-    m_pSingleStream = FX_NEW CPDF_StreamAcc;
+    m_pSingleStream = new CPDF_StreamAcc;
     if (pForm->m_pDocument) {
         m_pSingleStream->LoadAllData(pForm->m_pFormStream, FALSE);
     } else {
@@ -1071,7 +1071,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause)
                 m_CurrentOffset = 0;
             } else {
                 CPDF_Array* pContent = m_pObjects->m_pFormDict->GetArray(FX_BSTRC("Contents"));
-                m_pStreamArray[m_CurrentOffset] = FX_NEW CPDF_StreamAcc;
+                m_pStreamArray[m_CurrentOffset] = new CPDF_StreamAcc;
                 CPDF_Stream* pStreamObj = (CPDF_Stream*)(pContent ? pContent->GetElementValue(m_CurrentOffset) : NULL);
                 m_pStreamArray[m_CurrentOffset]->LoadAllData(pStreamObj, FALSE);
                 m_CurrentOffset ++;
@@ -1079,7 +1079,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause)
         }
         if (m_InternalStage == PAGEPARSE_STAGE_PARSE) {
             if (m_pParser == NULL) {
-                m_pParser = FX_NEW CPDF_StreamContentParser;
+                m_pParser = new CPDF_StreamContentParser;
                 m_pParser->Initialize();
                 m_pParser->PrepareParse(m_pObjects->m_pDocument, m_pObjects->m_pPageResources, NULL, NULL, m_pObjects,
                                         m_pObjects->m_pResources, &m_pObjects->m_BBox, &m_Options, NULL, 0);

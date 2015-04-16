@@ -103,7 +103,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap, int left, int
     else
         pBackdrop->CompositeMask(left - back_left, top - back_top, pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), pDIBitmap,
                                  mask_argb, 0, 0, blend_mode);
-    CFX_DIBitmap* pBackdrop1 = FX_NEW CFX_DIBitmap;
+    CFX_DIBitmap* pBackdrop1 = new CFX_DIBitmap;
     pBackdrop1->Create(pBackdrop->GetWidth(), pBackdrop->GetHeight(), FXDIB_Rgb32);
     pBackdrop1->Clear((FX_DWORD) - 1);
     pBackdrop1->CompositeBitmap(0, 0, pBackdrop->GetWidth(), pBackdrop->GetHeight(), pBackdrop, 0, 0);
@@ -119,7 +119,7 @@ FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF rgb)
 }
 CFX_DIBSource* CPDF_TransferFunc::TranslateImage(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc)
 {
-    CPDF_DIBTransferFunc* pDest = FX_NEW CPDF_DIBTransferFunc(this);
+    CPDF_DIBTransferFunc* pDest = new CPDF_DIBTransferFunc(this);
     pDest->LoadSrc(pSrc, bAutoDropSrc);
     return pDest;
 }
@@ -676,7 +676,7 @@ FX_BOOL CPDF_ImageRenderer::StartDIBSource()
         FX_RECT clip_box = m_pRenderStatus->m_pDevice->GetClipBox();
         clip_box.Intersect(image_rect);
         m_Status = 2;
-        m_pTransformer = FX_NEW CFX_ImageTransformer;
+        m_pTransformer = new CFX_ImageTransformer;
         m_pTransformer->Start(m_pDIBSource, &m_ImageMatrix, m_Flags, &clip_box);
         return TRUE;
     }
@@ -891,7 +891,7 @@ FX_BOOL CPDF_QuickStretcher::Start(CPDF_ImageObject* pImageObj, CFX_AffineMatrix
         }
         m_pDecoder->DownScale(m_DestWidth, m_DestHeight);
     }
-    m_pBitmap = FX_NEW CFX_DIBitmap;
+    m_pBitmap = new CFX_DIBitmap;
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
     m_pBitmap->Create(m_ResultWidth, m_ResultHeight, FXDIB_Rgb32);
 #else
@@ -1043,7 +1043,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
     status.Initialize(m_pContext, &bitmap_device, NULL, NULL, NULL, NULL,
                       &options, 0, m_bDropObjects, pFormResource, TRUE, NULL, 0, pCS ? pCS->GetFamily() : 0, bLuminosity);
     status.RenderObjectList(&form, &matrix);
-    pMask = FX_NEW CFX_DIBitmap;
+    pMask = new CFX_DIBitmap;
     if (!pMask->Create(width, height, FXDIB_8bppMask)) {
         delete pMask;
         return NULL;

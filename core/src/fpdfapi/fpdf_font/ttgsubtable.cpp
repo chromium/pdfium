@@ -439,10 +439,7 @@ IFX_GSUBTable* FXGE_CreateGSUBTable(CFX_Font* pFont)
     }
     int error = FXFT_Load_Sfnt_Table(pFont->m_Face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, pFont->m_pGsubData, NULL);
     if (!error && pFont->m_pGsubData) {
-        CFX_GSUBTable* pGsubTable = FX_NEW CFX_GSUBTable;
-        if (!pGsubTable) {
-            return NULL;
-        }
+        CFX_GSUBTable* pGsubTable = new CFX_GSUBTable;
         if (pGsubTable->m_GsubImp.LoadGSUBTable((FT_Bytes)pFont->m_pGsubData)) {
             return pGsubTable;
         }

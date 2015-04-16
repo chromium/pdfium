@@ -38,7 +38,7 @@ CPDF_CMap* CPDF_CMapManager::GetPredefinedCMap(const CFX_ByteString& name, FX_BO
 }
 CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPromptCJK)
 {
-    CPDF_CMap* pCMap = FX_NEW CPDF_CMap;
+    CPDF_CMap* pCMap = new CPDF_CMap;
     FX_LPCSTR pname = name;
     if (*pname == '/') {
         pname ++;
@@ -97,7 +97,7 @@ CPDF_CID2UnicodeMap* CPDF_CMapManager::GetCID2UnicodeMap(int charset, FX_BOOL bP
 }
 CPDF_CID2UnicodeMap* CPDF_CMapManager::LoadCID2UnicodeMap(int charset, FX_BOOL bPromptCJK)
 {
-    CPDF_CID2UnicodeMap* pMap = FX_NEW CPDF_CID2UnicodeMap();
+    CPDF_CID2UnicodeMap* pMap = new CPDF_CID2UnicodeMap();
     if (!pMap->Initialize()) {
         delete pMap;
         return NULL;
@@ -918,7 +918,7 @@ FX_BOOL CPDF_CIDFont::_Load()
         m_pCMap = CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals()->m_CMapManager.GetPredefinedCMap(cmap,
                   m_pFontFile && m_bType1);
     } else if (pEncoding->GetType() == PDFOBJ_STREAM) {
-        m_pAllocatedCMap = m_pCMap = FX_NEW CPDF_CMap;
+        m_pAllocatedCMap = m_pCMap = new CPDF_CMap;
         CPDF_Stream* pStream = (CPDF_Stream*)pEncoding;
         CPDF_StreamAcc acc;
         acc.LoadAllData(pStream, FALSE);
@@ -959,7 +959,7 @@ FX_BOOL CPDF_CIDFont::_Load()
             CPDF_Object* pmap = pCIDFontDict->GetElementValue(FX_BSTRC("CIDToGIDMap"));
             if (pmap) {
                 if (pmap->GetType() == PDFOBJ_STREAM) {
-                    m_pCIDToGIDMap = FX_NEW CPDF_StreamAcc;
+                    m_pCIDToGIDMap = new CPDF_StreamAcc;
                     m_pCIDToGIDMap->LoadAllData((CPDF_Stream*)pmap, FALSE);
                 } else if (pmap->GetString() == FX_BSTRC("Identity")) {
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
@@ -1155,7 +1155,7 @@ int	CPDF_CIDFont::GetGlyphIndex(FX_DWORD unicode, FX_BOOL *pVertGlyph)
         }
         int error = FXFT_Load_Sfnt_Table( m_Font.m_Face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, m_Font.m_pGsubData, NULL);
         if (!error && m_Font.m_pGsubData) {
-            m_pTTGSUBTable = FX_NEW CFX_CTTGSUBTable;
+            m_pTTGSUBTable = new CFX_CTTGSUBTable;
             m_pTTGSUBTable->LoadGSUBTable((FT_Bytes)m_Font.m_pGsubData);
             TT_uint32_t vindex = 0;
             m_pTTGSUBTable->GetVerticalGlyph(index, &vindex);

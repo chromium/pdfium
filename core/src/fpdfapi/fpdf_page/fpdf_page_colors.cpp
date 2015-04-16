@@ -1142,21 +1142,21 @@ CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj)
     CPDF_ColorSpace* pCS = NULL;
     FX_DWORD id = familyname.GetID();
     if (id == FXBSTR_ID('C', 'a', 'l', 'G')) {
-        pCS = FX_NEW CPDF_CalGray();
+        pCS = new CPDF_CalGray();
     } else if (id == FXBSTR_ID('C', 'a', 'l', 'R')) {
-        pCS = FX_NEW CPDF_CalRGB();
+        pCS = new CPDF_CalRGB();
     } else if (id == FXBSTR_ID('L', 'a', 'b', 0)) {
-        pCS = FX_NEW CPDF_LabCS();
+        pCS = new CPDF_LabCS();
     } else if (id == FXBSTR_ID('I', 'C', 'C', 'B')) {
-        pCS = FX_NEW CPDF_ICCBasedCS();
+        pCS = new CPDF_ICCBasedCS();
     } else if (id == FXBSTR_ID('I', 'n', 'd', 'e') || id == FXBSTR_ID('I', 0, 0, 0)) {
-        pCS = FX_NEW CPDF_IndexedCS();
+        pCS = new CPDF_IndexedCS();
     } else if (id == FXBSTR_ID('S', 'e', 'p', 'a')) {
-        pCS = FX_NEW CPDF_SeparationCS();
+        pCS = new CPDF_SeparationCS();
     } else if (id == FXBSTR_ID('D', 'e', 'v', 'i')) {
-        pCS = FX_NEW CPDF_DeviceNCS();
+        pCS = new CPDF_DeviceNCS();
     } else if (id == FXBSTR_ID('P', 'a', 't', 't')) {
-        pCS = FX_NEW CPDF_PatternCS();
+        pCS = new CPDF_PatternCS();
     } else {
         return NULL;
     }

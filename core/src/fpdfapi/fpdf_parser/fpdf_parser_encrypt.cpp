@@ -52,7 +52,7 @@ void CalcEncryptKey(CPDF_Dictionary* pEncrypt, FX_LPCBYTE password, FX_DWORD pas
 }
 CPDF_CryptoHandler* CPDF_StandardSecurityHandler::CreateCryptoHandler()
 {
-    return FX_NEW CPDF_StandardCryptoHandler;
+    return new CPDF_StandardCryptoHandler;
 }
 typedef struct _PDF_CRYPTOITEM  {
     FX_INT32	m_Cipher;
@@ -495,7 +495,7 @@ FX_BOOL CPDF_StandardSecurityHandler::IsMetadataEncrypted()
 }
 CPDF_SecurityHandler* FPDF_CreateStandardSecurityHandler()
 {
-    return FX_NEW CPDF_StandardSecurityHandler;
+    return new CPDF_StandardSecurityHandler;
 }
 void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_Array* pIdArray,
         FX_LPCBYTE user_pass, FX_DWORD user_size,

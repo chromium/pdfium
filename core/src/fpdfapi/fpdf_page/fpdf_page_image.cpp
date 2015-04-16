@@ -54,7 +54,7 @@ CPDF_Image* CPDF_Image::Clone()
     if (m_pStream->GetObjNum()) {
         return m_pDocument->GetPageData()->GetImage(m_pStream);
     }
-    CPDF_Image* pImage = FX_NEW CPDF_Image(m_pDocument);
+    CPDF_Image* pImage = new CPDF_Image(m_pDocument);
     pImage->LoadImageF((CPDF_Stream*)((CPDF_Object*)m_pStream)->Clone(), m_bInline);
     if (m_bInline) {
         CPDF_Dictionary *pInlineDict = (CPDF_Dictionary*)m_pInlineDict->Clone(TRUE);

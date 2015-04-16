@@ -111,7 +111,7 @@ void CPDF_PageRenderCache::GetCachedBitmap(CPDF_Stream* pStream, CFX_DIBSource*&
     CPDF_ImageCache* pImageCache;
     FX_BOOL bFind = m_ImageCaches.Lookup(pStream, (FX_LPVOID&)pImageCache);
     if (!bFind) {
-        pImageCache = FX_NEW CPDF_ImageCache(m_pPage->m_pDocument, pStream);
+        pImageCache = new CPDF_ImageCache(m_pPage->m_pDocument, pStream);
     }
     m_nTimeCount ++;
     FX_BOOL bCached = pImageCache->GetCachedBitmap(pBitmap, pMask, MatteColor, m_pPage->m_pPageResources, bStdCS, GroupFamily, bLoadMask, pRenderStatus, downsampleWidth, downsampleHeight);
@@ -126,7 +126,7 @@ FX_BOOL	CPDF_PageRenderCache::StartGetCachedBitmap(CPDF_Stream* pStream, FX_BOOL
 {
     m_bCurFindCache = m_ImageCaches.Lookup(pStream, (FX_LPVOID&)m_pCurImageCache);
     if (!m_bCurFindCache) {
-        m_pCurImageCache = FX_NEW CPDF_ImageCache(m_pPage->m_pDocument, pStream);
+        m_pCurImageCache = new CPDF_ImageCache(m_pPage->m_pDocument, pStream);
     }
     int ret = m_pCurImageCache->StartGetCachedBitmap(pRenderStatus->m_pFormResource, m_pPage->m_pPageResources, bStdCS, GroupFamily, bLoadMask, pRenderStatus, downsampleWidth, downsampleHeight);
     if (ret == 2) {
@@ -163,7 +163,7 @@ void CPDF_PageRenderCache::ResetBitmap(CPDF_Stream* pStream, const CFX_DIBitmap*
         if (pBitmap == NULL) {
             return;
         }
-        pImageCache = FX_NEW CPDF_ImageCache(m_pPage->m_pDocument, pStream);
+        pImageCache = new CPDF_ImageCache(m_pPage->m_pDocument, pStream);
         m_ImageCaches.SetAt(pStream, pImageCache);
     }
     int oldsize = pImageCache->EstimateSize();
@@ -240,7 +240,7 @@ FX_BOOL CPDF_ImageCache::GetCachedBitmap(CFX_DIBSource*& pBitmap, CFX_DIBSource*
     CPDF_RenderContext*pContext = pRenderStatus->GetContext();
     CPDF_PageRenderCache* pPageRenderCache = pContext->m_pPageCache;
     m_dwTimeCount = pPageRenderCache->GetTimeCount();
-    CPDF_DIBSource* pSrc = FX_NEW CPDF_DIBSource;
+    CPDF_DIBSource* pSrc = new CPDF_DIBSource;
     CPDF_DIBSource* pMaskSrc = NULL;
     if (!pSrc->Load(m_pDocument, m_pStream, &pMaskSrc, &MatteColor, pRenderStatus->m_pFormResource, pPageResources, bStdCS, GroupFamily, bLoadMask)) {
         delete pSrc;
@@ -289,7 +289,7 @@ int	CPDF_ImageCache::StartGetCachedBitmap(CPDF_Dictionary* pFormResources, CPDF_
         return 0;
     }
     m_pRenderStatus = pRenderStatus;
-    m_pCurBitmap = FX_NEW CPDF_DIBSource;
+    m_pCurBitmap = new CPDF_DIBSource;
     int ret = ((CPDF_DIBSource*)m_pCurBitmap)->StartLoadDIBSource(m_pDocument, m_pStream, TRUE, pFormResources, pPageResources, bStdCS, GroupFamily, bLoadMask);
     if (ret == 2) {
         return ret;
