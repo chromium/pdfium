@@ -28,14 +28,13 @@ CPDF_Metadata::CPDF_Metadata()
 {
     m_pData = FX_Alloc(PDFDOC_METADATA, 1);
     CFX_CMapByteStringToPtr *&pStringMap = ((PDFDOC_LPMETADATA)m_pData)->m_pStringMap;
-    pStringMap = FX_NEW CFX_CMapByteStringToPtr;
-    if (pStringMap != NULL) {
-        CFX_ByteString bstr;
-        for (int i = 0; i < 18; i += 2) {
-            bstr = gs_FPDFDOC_Metadata_Titles[i];
-            pStringMap->AddValue(bstr, (void*)gs_FPDFDOC_Metadata_Titles[i + 1]);
-        }
+    pStringMap = new CFX_CMapByteStringToPtr;
+    CFX_ByteString bstr;
+    for (int i = 0; i < 18; i += 2) {
+        bstr = gs_FPDFDOC_Metadata_Titles[i];
+        pStringMap->AddValue(bstr, (void*)gs_FPDFDOC_Metadata_Titles[i + 1]);
     }
+
 }
 CPDF_Metadata::~CPDF_Metadata()
 {

@@ -126,10 +126,7 @@ CFieldTree::_Node *CFieldTree::AddChild(_Node *pParent, const CFX_WideString &sh
     if (pParent == NULL) {
         return NULL;
     }
-    _Node *pNode = FX_NEW _Node;
-    if (pNode == NULL) {
-        return NULL;
-    }
+    _Node* pNode = new _Node;
     pNode->parent = pParent;
     pNode->short_name = short_name;
     pNode->field_ptr = field_ptr;
@@ -270,7 +267,7 @@ CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument, FX_BOOL bGenerateAP) : 
     m_bGenerateAP = bGenerateAP;
     m_pFormNotify = NULL;
     m_bUpdated = FALSE;
-    m_pFieldTree = FX_NEW CFieldTree;
+    m_pFieldTree = new CFieldTree;
     CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
     m_pFormDict = pRoot->GetDict("AcroForm");
     if (m_pFormDict == NULL) {
@@ -1334,7 +1331,7 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(const CPDF_Dictionary* pFieldDi
                 }
             }
         }
-        pField = FX_NEW CPDF_FormField(this, pParent);
+        pField = new CPDF_FormField(this, pParent);
         CPDF_Object* pTObj = pDict->GetElement("T");
         if (pTObj && pTObj->GetType() == PDFOBJ_REFERENCE) {
             CPDF_Object* pClone = pTObj->Clone(TRUE);
@@ -1371,10 +1368,7 @@ CPDF_FormControl* CPDF_InterForm::AddControl(const CPDF_FormField* pField, const
     if (m_ControlMap.Lookup((CPDF_Dictionary*)pWidgetDict, rValue)) {
         return (CPDF_FormControl*)rValue;
     }
-    CPDF_FormControl* pControl = FX_NEW CPDF_FormControl((CPDF_FormField*)pField, (CPDF_Dictionary*)pWidgetDict);
-    if (pControl == NULL) {
-        return NULL;
-    }
+    CPDF_FormControl* pControl = new CPDF_FormControl((CPDF_FormField*)pField, (CPDF_Dictionary*)pWidgetDict);
     m_ControlMap.SetAt((CPDF_Dictionary*)pWidgetDict, pControl);
     ((CPDF_FormField*)pField)->m_ControlList.Add(pControl);
     return pControl;

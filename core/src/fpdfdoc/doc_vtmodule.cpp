@@ -9,7 +9,7 @@
 #include "pdf_vt.h"
 IPDF_VariableText* IPDF_VariableText::NewVariableText()
 {
-    return FX_NEW CPDF_VariableText();
+    return new CPDF_VariableText();
 }
 void IPDF_VariableText::DelVariableText(IPDF_VariableText* pVT)
 {

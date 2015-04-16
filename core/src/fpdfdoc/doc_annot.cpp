@@ -37,10 +37,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
             pAnnots->RemoveAt(i + 1);
             pDict = pAnnots->GetDict(i);
         }
-        CPDF_Annot* pAnnot = FX_NEW CPDF_Annot(pDict);
-        if (pAnnot == NULL) {
-            break;
-        }
+        CPDF_Annot* pAnnot = new CPDF_Annot(pDict);
         pAnnot->m_pList = this;
         m_AnnotList.Add(pAnnot);
         if (bRegenerateAP && pDict->GetConstString(FX_BSTRC("Subtype")) == FX_BSTRC("Widget"))
@@ -225,10 +222,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode)
     if (m_APMap.Lookup(pStream, (void*&)pForm)) {
         return pForm;
     }
-    pForm = FX_NEW CPDF_Form(m_pList->m_pDocument, pPage->m_pResources, pStream);
-    if (pForm == NULL) {
-        return NULL;
-    }
+    pForm = new CPDF_Form(m_pList->m_pDocument, pPage->m_pResources, pStream);
     pForm->ParseContent(NULL, NULL, NULL, NULL);
     m_APMap.SetAt(pStream, pForm);
     return pForm;
@@ -323,10 +317,7 @@ CPDF_PageObject* CPDF_Annot::GetBorder(FX_BOOL bPrint, const CPDF_RenderOptions*
         int B = (FX_INT32)(pColor->GetNumber(2) * 255);
         argb = ArgbEncode(0xff, R, G, B);
     }
-    CPDF_PathObject *pPathObject = FX_NEW CPDF_PathObject();
-    if (!pPathObject) {
-        return NULL;
-    }
+    CPDF_PathObject *pPathObject = new CPDF_PathObject();
     CPDF_GraphStateData *pGraphState = pPathObject->m_GraphState.GetModify();
     if (!pGraphState) {
         pPathObject->Release();

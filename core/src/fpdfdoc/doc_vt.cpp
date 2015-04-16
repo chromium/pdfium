@@ -77,13 +77,12 @@ void CSection::ResetLinePlace()
 }
 CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace & place, const CPVT_WordInfo & wordinfo)
 {
-    if (CPVT_WordInfo * pWord = FX_NEW CPVT_WordInfo(wordinfo)) {
-        FX_INT32 nWordIndex = FPDF_MAX(FPDF_MIN(place.nWordIndex, this->m_WordArray.GetSize()), 0);
-        if (nWordIndex == m_WordArray.GetSize()) {
-            m_WordArray.Add(pWord);
-        } else {
-            m_WordArray.InsertAt(nWordIndex, pWord);
-        }
+    CPVT_WordInfo * pWord = new CPVT_WordInfo(wordinfo);
+    FX_INT32 nWordIndex = FPDF_MAX(FPDF_MIN(place.nWordIndex, this->m_WordArray.GetSize()), 0);
+    if (nWordIndex == m_WordArray.GetSize()) {
+        m_WordArray.Add(pWord);
+    } else {
+        m_WordArray.InsertAt(nWordIndex, pWord);
     }
     return place;
 }
@@ -834,8 +833,8 @@ void CPDF_VariableText::Initialize()
     if (!m_bInitial) {
         CPVT_SectionInfo secinfo;
         if (m_bRichText) {
-            secinfo.pSecProps = FX_NEW CPVT_SecProps(0.0f, 0.0f, 0);
-            secinfo.pWordProps = FX_NEW CPVT_WordProps(GetDefaultFontIndex(), PVT_DEFAULT_FONTSIZE, 0, 0, 0);
+            secinfo.pSecProps = new CPVT_SecProps(0.0f, 0.0f, 0);
+            secinfo.pWordProps = new CPVT_WordProps(GetDefaultFontIndex(), PVT_DEFAULT_FONTSIZE, 0, 0, 0);
         }
         CPVT_WordPlace place;
         place.nSecIndex = 0;
@@ -868,11 +867,9 @@ CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace & place, FX_WO
     CPVT_WordPlace newplace = place;
     newplace.nWordIndex ++;
     if (m_bRichText) {
-        CPVT_WordProps * pNewProps = pWordProps ? FX_NEW CPVT_WordProps(*pWordProps) : FX_NEW CPVT_WordProps();
-        if (pNewProps) {
-            pNewProps->nFontIndex = GetWordFontIndex(word, charset, pWordProps->nFontIndex);
-            return AddWord(newplace, CPVT_WordInfo(word, charset, -1, pNewProps));
-        }
+        CPVT_WordProps * pNewProps = pWordProps ? new CPVT_WordProps(*pWordProps) : new CPVT_WordProps();
+        pNewProps->nFontIndex = GetWordFontIndex(word, charset, pWordProps->nFontIndex);
+        return AddWord(newplace, CPVT_WordInfo(word, charset, -1, pNewProps));
     } else {
         FX_INT32 nFontIndex = GetSubWord() > 0 ? GetDefaultFontIndex() : GetWordFontIndex(word, charset, GetDefaultFontIndex());
         return AddWord(newplace, CPVT_WordInfo(word, charset, nFontIndex, NULL));
@@ -900,10 +897,10 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(const CPVT_WordPlace & place, co
         CPVT_SectionInfo secinfo;
         if (m_bRichText) {
             if (pSecProps) {
-                secinfo.pSecProps = FX_NEW CPVT_SecProps(*pSecProps);
+                secinfo.pSecProps = new CPVT_SecProps(*pSecProps);
             }
             if (pWordProps) {
-                secinfo.pWordProps = FX_NEW CPVT_WordProps(*pWordProps);
+                secinfo.pWordProps = new CPVT_WordProps(*pWordProps);
             }
         }
         AddSection(NewPlace, secinfo);
@@ -989,10 +986,10 @@ void CPDF_VariableText::SetText(FX_LPCWSTR text, FX_INT32 charset, const CPVT_Se
     CPVT_SectionInfo secinfo;
     if (m_bRichText) {
         if (pSecProps) {
-            secinfo.pSecProps = FX_NEW CPVT_SecProps(*pSecProps);
+            secinfo.pSecProps = new CPVT_SecProps(*pSecProps);
         }
         if (pWordProps) {
-            secinfo.pWordProps = FX_NEW CPVT_WordProps(*pWordProps);
+            secinfo.pWordProps = new CPVT_WordProps(*pWordProps);
         }
     }
     if (CSection * pSection = m_SectionArray.GetAt(0)) {
@@ -1280,10 +1277,7 @@ CPVT_WordPlace CPDF_VariableText::AddSection(const CPVT_WordPlace & place, const
         return place;
     }
     FX_INT32 nSecIndex = FPDF_MAX(FPDF_MIN(place.nSecIndex, m_SectionArray.GetSize()), 0);
-    CSection * pSection = FX_NEW CSection(this);
-    if (!pSection) {
-        return place;
-    }
+    CSection * pSection = new CSection(this);
     pSection->m_SecInfo = secinfo;
     pSection->SecPlace.nSecIndex = nSecIndex;
     if (nSecIndex == m_SectionArray.GetSize()) {
@@ -1676,7 +1670,7 @@ FX_BOOL	CPDF_VariableText::IsLatinWord(FX_WORD word)
 IPDF_VariableText_Iterator * CPDF_VariableText::GetIterator()
 {
     if (!m_pVTIterator) {
-        return m_pVTIterator = FX_NEW CPDF_VariableText_Iterator(this);
+        m_pVTIterator = new CPDF_VariableText_Iterator(this);
     }
     return m_pVTIterator;
 }
