@@ -144,6 +144,10 @@
     'cflags': [
       '-Wall',
       '-W',
+      '-Wno-missing-field-initializers',
+      # Code might someday be made clean for -Wsign-compare, but for now
+      # this produces too much noise to be useful.
+      '-Wno-sign-compare',
       '-Wno-unused-parameter',
       '-pthread',
       '-fno-exceptions',
