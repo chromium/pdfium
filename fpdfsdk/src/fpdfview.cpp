@@ -180,37 +180,7 @@ FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy)
 #define _T(x) x
 #endif
 
-#ifdef API5
-	CPDF_ModuleMgr*	g_pModuleMgr = NULL;
-#else
-	CCodec_ModuleMgr*	g_pCodecModule = NULL;
-#endif
-
-//extern CPDFSDK_FormFillApp* g_pFormFillApp;
-
-#if _FX_OS_ == _FX_LINUX_EMBEDDED_
-class CFontMapper : public IPDF_FontMapper
-{
-public:
-	CFontMapper();
-	virtual ~CFontMapper();
-
-	virtual FT_Face FindSubstFont(
-							CPDF_Document* pDoc,				// [IN] The PDF document
-							const CFX_ByteString& face_name,	// [IN] Original name
-							FX_BOOL bTrueType,					// [IN] TrueType or Type1
-							FX_DWORD flags,						// [IN] PDF font flags (see PDF Reference section 5.7.1)
-							int font_weight,					// [IN] original font weight. 0 for not specified
-							int CharsetCP,						// [IN] code page for charset (see Win32 GetACP())
-							FX_BOOL bVertical,
-							CPDF_SubstFont* pSubstFont			// [OUT] Subst font data
-						);
-
-	FT_Face m_SysFace;
-};
-
-CFontMapper* g_pFontMapper = NULL;
-#endif		// #if _FX_OS_ == _FX_LINUX_EMBEDDED_
+CCodec_ModuleMgr*	g_pCodecModule = NULL;
 
 DLLEXPORT void STDCALL FPDF_InitLibrary()
 {
@@ -232,17 +202,9 @@ DLLEXPORT void STDCALL FPDF_InitLibrary()
 DLLEXPORT void STDCALL FPDF_DestroyLibrary()
 {
 	FPDFXFA_ReleaseApp();
-
-#if _FX_OS_ == _FX_LINUX_EMBEDDED_
-	if (g_pFontMapper) delete g_pFontMapper;
-#endif
-#ifdef API5
-	g_pModuleMgr->Destroy();
-#else
 	CPDF_ModuleMgr::Destroy();
 	CFX_GEModule::Destroy();
 	g_pCodecModule->Destroy();
-#endif
 }
 
 #ifndef _WIN32

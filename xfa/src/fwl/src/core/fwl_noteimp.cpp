@@ -307,7 +307,7 @@ FWL_ERR	CFWL_NoteDriver::Run()
             }
         } while (pWidgetMgr->CheckMessage_Native());
     }
-#elif (_FX_OS_==_FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_LINUX_EMBEDDED_)
+#elif (_FX_OS_==_FX_LINUX_DESKTOP_)
     CFWL_NoteLoop *pTopLoop = NULL;
     for (;;) {
         pTopLoop = GetTopLoop();

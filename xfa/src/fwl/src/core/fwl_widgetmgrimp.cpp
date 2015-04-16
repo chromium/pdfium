@@ -738,7 +738,7 @@ FWL_ERR	CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget *	  pWidget,
         return FWL_ERR_Succeeded;
     }
     CFX_RectF clipBounds;
-#if (_FX_OS_==_FX_WIN32_DESKTOP_) || (_FX_OS_==_FX_WIN64_) || (_FX_OS_ == _FX_LINUX_DESKTOP_) || (_FX_OS_ == _FX_LINUX_EMBEDDED_) || (_FX_OS_ == _FX_ANDROID_)
+#if (_FX_OS_==_FX_WIN32_DESKTOP_) || (_FX_OS_==_FX_WIN64_) || (_FX_OS_ == _FX_LINUX_DESKTOP_) || (_FX_OS_ == _FX_ANDROID_)
     IFWL_WidgetDelegate *pDelegate = pWidget->SetDelegate(NULL);
     pDelegate->OnDrawWidget(pTemp, pMatrix);
     pGraphics->GetClipRect(clipBounds);

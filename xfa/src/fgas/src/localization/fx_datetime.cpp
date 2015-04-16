@@ -115,7 +115,7 @@ static void FX_DaysToDate(FX_INT64 iDays, FX_INT32 &iYear, FX_BYTE &iMonth, FX_B
     }
     iDay += (FX_BYTE)iDays;
 }
-#if _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_LINUX_EMBEDDED_ || _FX_OS_ == _FX_ANDROID_ || _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_
+#if _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_ || _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_
 #include <time.h>
 #include <sys/time.h>
 #endif

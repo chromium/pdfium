@@ -394,6 +394,7 @@ void CFX_FontMgr::ReleaseFace(FXFT_Face face)
     if (face == NULL) {
         return;
     }
+    FX_BOOL bFaceDone = FALSE;
     FX_POSITION pos = m_FaceMap.GetStartPosition();
     while(pos) {
         CFX_ByteString Key;
@@ -401,7 +402,11 @@ void CFX_FontMgr::ReleaseFace(FXFT_Face face)
         m_FaceMap.GetNextAssoc(pos, Key, (void*&)ttface);
         if (ttface->ReleaseFace(face)) {
             m_FaceMap.RemoveKey(Key);
+            bFaceDone = TRUE;
         }
+    }
+    if (!bFaceDone) {
+        FXFT_Done_Face(face);
     }
 }
 extern "C" {

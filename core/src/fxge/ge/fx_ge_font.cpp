@@ -80,7 +80,7 @@ CFX_Font::~CFX_Font()
         }
     }
     if (m_pOwnedStream) {
-        FX_Free(m_pOwnedStream);
+        FX_Free(m_pOwnedStream); 
         m_pOwnedStream = NULL;
     }
     if (m_pGsubData) {
