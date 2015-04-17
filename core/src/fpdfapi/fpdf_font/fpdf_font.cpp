@@ -110,21 +110,15 @@ void CPDF_FontGlobals::ClearAll()
         m_pStockMap.RemoveKey(key);
     }
 }
-CPDF_Font::CPDF_Font()
+CPDF_Font::CPDF_Font(int fonttype) : m_FontType(fonttype)
 {
-    m_FontType = 0;
     m_FontBBox.left = m_FontBBox.right = m_FontBBox.top = m_FontBBox.bottom = 0;
     m_StemV = m_Ascent = m_Descent = m_ItalicAngle = 0;
     m_pFontFile = NULL;
     m_Flags = 0;
     m_pToUnicodeMap = NULL;
     m_bToUnicodeLoaded = FALSE;
-    m_pCharMap = NULL;
-}
-FX_BOOL CPDF_Font::Initialize()
-{
-    m_pCharMap = FX_NEW CPDF_FontCharMap(this);
-    return TRUE;
+    m_pCharMap = new CPDF_FontCharMap(this);
 }
 CPDF_Font::~CPDF_Font()
 {
@@ -442,8 +436,6 @@ CPDF_Font* CPDF_Font::CreateFontF(CPDF_Document* pDoc, CPDF_Dictionary* pFontDic
                 CPDF_Dictionary* pFontDesc = pFontDict->GetDict(FX_BSTRC("FontDescriptor"));
                 if (pFontDesc == NULL || !pFontDesc->KeyExist(FX_BSTRC("FontFile2"))) {
                     pFont = FX_NEW CPDF_CIDFont;
-                    pFont->Initialize();
-                    pFont->m_FontType = PDFFONT_CIDFONT;
                     pFont->m_pFontDict = pFontDict;
                     pFont->m_pDocument = pDoc;
                     if (!pFont->Load()) {
@@ -456,20 +448,12 @@ CPDF_Font* CPDF_Font::CreateFontF(CPDF_Document* pDoc, CPDF_Dictionary* pFontDic
 #endif
         }
         pFont = FX_NEW CPDF_TrueTypeFont;
-        pFont->Initialize();
-        pFont->m_FontType = PDFFONT_TRUETYPE;
     } else if (type == FX_BSTRC("Type3")) {
         pFont = FX_NEW CPDF_Type3Font;
-        pFont->Initialize();
-        pFont->m_FontType = PDFFONT_TYPE3;
     } else if (type == FX_BSTRC("Type0")) {
         pFont = FX_NEW CPDF_CIDFont;
-        pFont->Initialize();
-        pFont->m_FontType = PDFFONT_CIDFONT;
     } else {
         pFont = FX_NEW CPDF_Type1Font;
-        pFont->Initialize();
-        pFont->m_FontType = PDFFONT_TYPE1;
     }
     pFont->m_pFontDict = pFontDict;
     pFont->m_pDocument = pDoc;
@@ -830,7 +814,7 @@ FX_BOOL CPDF_Font::IsStandardFont() const
     return TRUE;
 }
 extern FX_LPCSTR PDF_CharNameFromPredefinedCharSet(int encoding, FX_BYTE charcode);
-CPDF_SimpleFont::CPDF_SimpleFont()
+CPDF_SimpleFont::CPDF_SimpleFont(int fonttype) : CPDF_Font(fonttype)
 {
     FXSYS_memset8(m_CharBBox, 0xff, sizeof m_CharBBox);
     FXSYS_memset8(m_CharWidth, 0xff, sizeof m_CharWidth);
@@ -1028,7 +1012,7 @@ void CPDF_SimpleFont::LoadSubstFont()
         }
     }
     int weight = m_StemV < 140 ? m_StemV * 5 : (m_StemV * 4 + 140);
-    m_Font.LoadSubst(m_BaseFont, m_FontType == PDFFONT_TRUETYPE, m_Flags, weight, m_ItalicAngle, 0);
+    m_Font.LoadSubst(m_BaseFont, IsFontType(PDFFONT_TRUETYPE), m_Flags, weight, m_ItalicAngle, 0);
     if (m_Font.m_pSubstFont->m_SubstFlags & FXFONT_SUBST_NONSYMBOL) {
     }
 }
@@ -1037,7 +1021,7 @@ FX_BOOL CPDF_SimpleFont::IsUnicodeCompatible() const
     return m_BaseEncoding != PDFFONT_ENCODING_BUILTIN && m_BaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
            m_BaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS;
 }
-CPDF_Type1Font::CPDF_Type1Font()
+CPDF_Type1Font::CPDF_Type1Font() : CPDF_SimpleFont(PDFFONT_TYPE1)
 {
     m_Base14Font = -1;
 }
@@ -1429,7 +1413,7 @@ CPDF_Object* CPDF_FontEncoding::Realize()
     pDict->SetAt(FX_BSTRC("Differences"), pDiff);
     return pDict;
 }
-CPDF_TrueTypeFont::CPDF_TrueTypeFont()
+CPDF_TrueTypeFont::CPDF_TrueTypeFont() : CPDF_SimpleFont(PDFFONT_TRUETYPE)
 {
 }
 FX_BOOL CPDF_TrueTypeFont::_Load()
@@ -1611,7 +1595,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap()
         m_GlyphIndex[charcode] = charcode;
     }
 }
-CPDF_Type3Font::CPDF_Type3Font()
+CPDF_Type3Font::CPDF_Type3Font() : CPDF_SimpleFont(PDFFONT_TYPE3)
 {
     m_pPageResources = NULL;
     FXSYS_memset32(m_CharWidthL, 0, sizeof m_CharWidthL);

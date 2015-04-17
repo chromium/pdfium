@@ -693,7 +693,7 @@ void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr, int charset, FX_BOOL bPro
     FPDFAPI_LoadCID2UnicodeMap(charset, m_pEmbeddedMap, m_EmbeddedCount);
 }
 #include "ttgsubtable.h"
-CPDF_CIDFont::CPDF_CIDFont()
+CPDF_CIDFont::CPDF_CIDFont() : CPDF_Font(PDFFONT_CIDFONT)
 {
     m_pCMap = NULL;
     m_pAllocatedCMap = NULL;
