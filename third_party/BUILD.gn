@@ -78,11 +78,12 @@ component("pdfium_base") {
   sources = [
     "base/logging.h",
     "base/macros.h",
-    "base/template_util.h",
+    "base/nonstd_unique_ptr.h",
     "base/numerics/safe_conversions.h",
     "base/numerics/safe_conversions_impl.h",
     "base/numerics/safe_math.h",
     "base/numerics/safe_math_impl.h",
+    "base/template_util.h",
   ]
 }
 
