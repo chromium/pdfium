@@ -41,7 +41,7 @@ CPDF_Document* CPWL_FontMap::GetDocument()
 	{
 		if (CPDF_ModuleMgr::Get())
 		{
-			m_pPDFDoc = FX_NEW CPDF_Document;
+			m_pPDFDoc = new CPDF_Document;
 			m_pPDFDoc->CreateNewDoc();
 		}
 	}

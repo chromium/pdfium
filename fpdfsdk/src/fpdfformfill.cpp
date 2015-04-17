@@ -206,13 +206,10 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle, FPDF_BITMAP bitmap,
 		options.m_ForeColor = 0;
 		options.m_BackColor = 0xffffff;
 	}
-	
+
 	options.m_AddFlags = flags >> 8;
+	options.m_pOCContext = new CPDF_OCContext(pPage->m_pDocument);
 
-	options.m_pOCContext = FX_NEW CPDF_OCContext(pPage->m_pDocument);
-
-	//FXMT_CSLOCK_OBJ(&pPage->m_PageLock);
-	
 	CFX_AffineMatrix matrix;
 	pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate); 
 	
@@ -223,30 +220,15 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle, FPDF_BITMAP bitmap,
 	clip.bottom = start_y + size_y;
 
 #ifdef _SKIA_SUPPORT_
-	CFX_SkiaDevice* pDevice = FX_NEW CFX_SkiaDevice;
+	CFX_SkiaDevice* pDevice = new CFX_SkiaDevice;
 #else
-	CFX_FxgeDevice* pDevice = NULL;
-	pDevice = FX_NEW CFX_FxgeDevice;
+	CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
 #endif
-
-	if (!pDevice)
-		return;
 	pDevice->Attach((CFX_DIBitmap*)bitmap);
 	pDevice->SaveState();
 	pDevice->SetClip_Rect(&clip);
-	
 
-	CPDF_RenderContext* pContext = NULL;
-	pContext = FX_NEW CPDF_RenderContext;
-	if (!pContext)
-	{
-		delete pDevice;
-		pDevice = NULL;
-		return;
-	}
-
-
-//	CPDF_Document* pDoc = pPage->m_pDocument;
+	CPDF_RenderContext* pContext = new CPDF_RenderContext;
 	CPDFDoc_Environment* pEnv = (CPDFDoc_Environment*)hHandle;
 	CPDFSDK_Document* pFXDoc = pEnv->GetCurrentDoc();
 	if(!pFXDoc)

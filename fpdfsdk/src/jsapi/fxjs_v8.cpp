@@ -80,12 +80,12 @@ int JS_DefineObj(IJS_Runtime* pJSRuntime, const wchar_t* sObjName, FXJSOBJTYPE e
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(0);
-	if(!pArray) 
+	if(!pArray)
 	{
-		pArray = FX_NEW CFX_PtrArray();
+		pArray = new CFX_PtrArray();
 		isolate->SetData(0, pArray);
 	}
-	CJS_ObjDefintion* pObjDef = FX_NEW CJS_ObjDefintion(isolate, sObjName, eObjType, pConstructor, pDestructor, bApplyNew);
+	CJS_ObjDefintion* pObjDef = new CJS_ObjDefintion(isolate, sObjName, eObjType, pConstructor, pDestructor, bApplyNew);
 	pArray->Add(pObjDef);
 	return pArray->GetSize()-1;
 }
@@ -263,7 +263,7 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,IFXJS_Runtime* pFXRuntime, IFXJS_
 			if(ws.Equal(L"Document"))
 			{
 
-				CJS_PrivateData* pPrivateData = FX_NEW CJS_PrivateData;
+				CJS_PrivateData* pPrivateData = new CJS_PrivateData;
 				pPrivateData->ObjDefID = i;
 				v8::Handle<v8::External> ptr = v8::External::New(isolate, pPrivateData);
 
@@ -377,14 +377,13 @@ v8::Handle<v8::Object> JS_NewFxDynamicObj(IJS_Runtime* pJSRuntime, IFXJS_Context
 
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();
 	v8::Local<v8::ObjectTemplate> objTemp = v8::Local<v8::ObjectTemplate>::New(isolate, pObjDef->m_objTemplate);
-
 	v8::Local<v8::Object> obj = objTemp->NewInstance();
-	
-	CJS_PrivateData* pPrivateData = FX_NEW CJS_PrivateData;
-	pPrivateData->ObjDefID = nObjDefnID;
-	v8::Handle<v8::External> ptr = v8::External::New(isolate, pPrivateData);
-	obj->SetInternalField(0, ptr); 
 
+	CJS_PrivateData* pPrivateData = new CJS_PrivateData;
+	pPrivateData->ObjDefID = nObjDefnID;
+
+	v8::Handle<v8::External> ptr = v8::External::New(isolate, pPrivateData);
+	obj->SetInternalField(0, ptr);
 	if(pObjDef->m_pConstructor)
 		pObjDef->m_pConstructor(pJSContext, obj, context->Global()->GetPrototype()->ToObject());
 

@@ -1564,13 +1564,13 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType, CPDF_St
 	CPDF_Dictionary* pStreamResList = pStreamDict->GetDict("Resources");
 	if (!pStreamResList)
 	{
-		pStreamResList = FX_NEW CPDF_Dictionary();
+		pStreamResList = new CPDF_Dictionary();
 		pStreamDict->SetAt("Resources", pStreamResList);
 	}
 
-	if (pStreamResList) 
+	if (pStreamResList)
 	{
-		CPDF_Dictionary* pXObject = FX_NEW CPDF_Dictionary;			
+		CPDF_Dictionary* pXObject = new CPDF_Dictionary;
 		pXObject->SetAtReference(sImageAlias, pDoc, pImage);
 		pStreamResList->SetAt("XObject", pXObject);
 	}

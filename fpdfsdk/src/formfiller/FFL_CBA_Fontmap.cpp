@@ -172,9 +172,9 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAl
 
 	CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDict("AP");
 
-	if (pAPDict == NULL) 
+	if (pAPDict == NULL)
 	{
-		pAPDict = FX_NEW CPDF_Dictionary;
+		pAPDict = new CPDF_Dictionary;
 		m_pAnnotDict->SetAt("AP", pAPDict);
 	}
 
@@ -184,9 +184,9 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAl
 		return;
 
 	CPDF_Stream* pStream = pAPDict->GetStream(m_sAPType);
-	if (pStream == NULL) 
+	if (pStream == NULL)
 	{
-		pStream = FX_NEW CPDF_Stream(NULL, 0, NULL);
+		pStream = new CPDF_Stream(NULL, 0, NULL);
 		FX_INT32 objnum = m_pDocument->AddIndirectObject(pStream);
 		pAPDict->SetAtReference(m_sAPType, m_pDocument, objnum);
 	}
@@ -195,7 +195,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAl
 
 	if (!pStreamDict)
 	{
-		pStreamDict = FX_NEW CPDF_Dictionary;
+		pStreamDict = new CPDF_Dictionary;
 		pStream->InitStream(NULL, 0, pStreamDict);
 	}
 
@@ -204,7 +204,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAl
 		CPDF_Dictionary* pStreamResList = pStreamDict->GetDict("Resources");
 		if (!pStreamResList)
 		{
-			pStreamResList = FX_NEW CPDF_Dictionary();
+			pStreamResList = new CPDF_Dictionary();
 			pStreamDict->SetAt("Resources", pStreamResList);
 		}
 
@@ -213,7 +213,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAl
 			CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDict("Font");
 			if (!pStreamResFontList) 
 			{
-				pStreamResFontList = FX_NEW CPDF_Dictionary;
+				pStreamResFontList = new CPDF_Dictionary;
 				FX_INT32 objnum = m_pDocument->AddIndirectObject(pStreamResFontList);
 				pStreamResList->SetAtReference("Font", m_pDocument, objnum);
 			}

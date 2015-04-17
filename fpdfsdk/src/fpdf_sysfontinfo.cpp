@@ -89,7 +89,7 @@ DLLEXPORT void STDCALL FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt)
 {
 	if (pFontInfoExt->version != 1) return;
 
-	CSysFontInfo_Ext* pFontInfo = FX_NEW CSysFontInfo_Ext;
+	CSysFontInfo_Ext* pFontInfo = new CSysFontInfo_Ext;
 	pFontInfo->m_pInfo = pFontInfoExt;
 	CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(pFontInfo);
 }
