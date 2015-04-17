@@ -314,8 +314,8 @@ public:
     FX_BOOL                     IsBuiltinFace(const FXFT_Face face) const;
 
 private:
-    const static size_t         MM_FACE_COUNT = 2;
-    const static size_t         FOXIT_FACE_COUNT = 14;
+    static const size_t         MM_FACE_COUNT = 2;
+    static const size_t         FOXIT_FACE_COUNT = 14;
     CFX_ByteString              GetPSNameFromTT(void* hFont);
     CFX_ByteString              MatchInstalledFonts(const CFX_ByteString& norm_name);
     FXFT_Face                   UseInternalSubst(CFX_SubstFont* pSubstFont, int iBaseFont, int italic_angle, int weight, int picthfamily);
