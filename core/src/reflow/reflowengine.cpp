@@ -8,8 +8,7 @@
 #include "reflowedpage.h"
 IPDF_ReflowedPage* IPDF_ReflowedPage::Create()
 {
-    CPDF_ReflowedPage* pRefPage = FX_NEW CPDF_ReflowedPage(NULL);
-    return pRefPage;
+    return new CPDF_ReflowedPage(NULL);
 }
 IPDF_ReflowedPage* Create_ReflowPage()
 {
@@ -21,10 +20,7 @@ IPDF_ProgressiveReflowPageParser* Create_ReflowPageParser()
 }
 IPDF_ProgressiveReflowPageParser* IPDF_ProgressiveReflowPageParser::Create()
 {
-    CPDF_ProgressiveReflowPageParser* pParser = FX_NEW CPDF_ProgressiveReflowPageParser;
-    if (NULL == pParser) {
-        return NULL;
-    }
+    CPDF_ProgressiveReflowPageParser* pParser = new CPDF_ProgressiveReflowPageParser;
     pParser->Init();
     return pParser;
 }
@@ -34,5 +30,5 @@ IPDF_ProgressiveReflowPageRender* Create_ReflowPageRender()
 }
 IPDF_ProgressiveReflowPageRender* IPDF_ProgressiveReflowPageRender::Create()
 {
-    return FX_NEW CPDF_ProgressiveReflowPageRender;
+    return new CPDF_ProgressiveReflowPageRender;
 }

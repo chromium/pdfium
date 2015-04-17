@@ -9,7 +9,7 @@
 extern const FX_DWORD gs_FX_TextLayout_CodeProperties[65536];
 IFX_BidiChar* IFX_BidiChar::Create()
 {
-    return FX_NEW CFX_BidiChar;
+    return new CFX_BidiChar;
 }
 CFX_BidiChar::CFX_BidiChar()
     : m_bSeparateNeutral(TRUE)

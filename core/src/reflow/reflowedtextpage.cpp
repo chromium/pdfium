@@ -4,10 +4,13 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "reflowedtextpage.h"
+
 IPDF_TextPage*	IPDF_TextPage::CreateReflowTextPage(IPDF_ReflowedPage* pRefPage)
 {
-    return FX_NEW CRF_TextPage(pRefPage);
+    return new CRF_TextPage(pRefPage);
 }
 CRF_TextPage::CRF_TextPage(IPDF_ReflowedPage* pRefPage)
 {
@@ -32,24 +35,14 @@ FX_BOOL CRF_TextPage::ParseTextPage()
         return FALSE;
     }
     int count = m_pRefPage->m_pReflowed->GetSize();
-    if(count < 500) {
-        m_pDataList = FX_NEW CRF_CharDataPtrArray(count);
-    } else {
-        m_pDataList = FX_NEW CRF_CharDataPtrArray(500);
-    }
-    if (NULL == m_pDataList) {
-        return FALSE;
-    }
+    m_pDataList = new CRF_CharDataPtrArray(std::min(count, 500));
     for(int i = 0; i < count; i++) {
         CRF_Data* pData = (*(m_pRefPage->m_pReflowed))[i];
         if(pData->GetType() == CRF_Data::Text) {
             m_pDataList->Add((CRF_CharData*)pData);
         }
     }
-    m_CountBSArray = FX_NEW CFX_CountBSINT32Array(20);
-    if(NULL == m_CountBSArray) {
-        return FALSE;
-    }
+    m_CountBSArray = new CFX_CountBSINT32Array(20);
     return TRUE;
 }
 FX_BOOL	CRF_TextPage::IsParsered() const

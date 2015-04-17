@@ -36,11 +36,11 @@ CPDF_ReflowedPage::CPDF_ReflowedPage(CFX_GrowOnlyPool*	pMemoryPool)
         m_pMemoryPool = pMemoryPool;
         m_bCreateMemoryPool = FALSE;
     } else {
-        m_pMemoryPool = FX_NEW CFX_GrowOnlyPool;
+        m_pMemoryPool = new CFX_GrowOnlyPool;
         m_bCreateMemoryPool = TRUE;
     }
-    m_pCharState = FX_NEW CRF_CharStateArray(10);
-    m_pReflowed = FX_NEW CRF_DataPtrArray(500);
+    m_pCharState = new CRF_CharStateArray(10);
+    m_pReflowed = new CRF_DataPtrArray(500);
     m_pPageInfos = NULL;
 }
 CPDF_ReflowedPage::~CPDF_ReflowedPage()
@@ -79,7 +79,7 @@ FX_BOOL CPDF_ReflowedPage::RetainPageObjsMemberShip()
         return FALSE;
     }
     if (NULL == m_pPageInfos) {
-        m_pPageInfos = FX_NEW CFX_MapPtrToPtr();
+        m_pPageInfos = new CFX_MapPtrToPtr();
     } else {
         return TRUE;
     }
@@ -100,10 +100,7 @@ void CPDF_ReflowedPage::MarkPageObjMemberShip(CPDF_PageObject* pObj, CRF_PageInf
     if (NULL == m_pPageInfos) {
         return;
     }
-    CRF_PageInfo* pPageInfo = FX_NEW CRF_PageInfo(pObj, pParent);
-    if (NULL == pPageInfo) {
-        return;
-    }
+    CRF_PageInfo* pPageInfo = new CRF_PageInfo(pObj, pParent);
     m_pPageInfos->SetAt(pObj, pPageInfo);
     if (PDFPAGE_FORM != pObj->m_Type) {
         return;
@@ -593,11 +590,9 @@ void CPDF_ProgressiveReflowPageRender::Start(IPDF_ReflowedPage* pReflowPage, CFX
     m_pReflowPage = (CPDF_ReflowedPage*)pReflowPage;
     m_pFXDevice = pDevice;
     if(NULL == m_pDisplayMatrix) {
-        m_pDisplayMatrix = FX_NEW CFX_AffineMatrix;
+        m_pDisplayMatrix = new CFX_AffineMatrix;
     }
-    if (m_pDisplayMatrix) {
-        m_pDisplayMatrix->Copy(*pMatrix);
-    }
+    m_pDisplayMatrix->Copy(*pMatrix);
     m_Status = ToBeContinued;
     Display(pPause);
 }

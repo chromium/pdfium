@@ -12,10 +12,7 @@ IPDF_LayoutProcessor* IPDF_LayoutProcessor::Create_LayoutProcessor_Reflow(FX_FLO
     if(pReflowedPage == NULL || fWidth <= 20) {
         return NULL;
     }
-    CPDF_LayoutProcessor_Reflow* pReflowEngine = FX_NEW CPDF_LayoutProcessor_Reflow();
-    if (NULL == pReflowEngine) {
-        return NULL;
-    }
+    CPDF_LayoutProcessor_Reflow* pReflowEngine = new CPDF_LayoutProcessor_Reflow();
     pReflowEngine->Init(TopIndent, fWidth, fHeight, (CPDF_ReflowedPage*)pReflowedPage, flags, lineSpace);
     return pReflowEngine;
 }
@@ -29,8 +26,8 @@ CPDF_LayoutProcessor_Reflow::CPDF_LayoutProcessor_Reflow()
     m_fCurrLineHeight = 0;
     m_bIllustration = FALSE;
     m_pPreObj = NULL;
-    m_pCurrLine = FX_NEW CRF_DataPtrArray(50);
-    m_pTempLine = FX_NEW CRF_DataPtrArray(50);
+    m_pCurrLine = new CRF_DataPtrArray(50);
+    m_pTempLine = new CRF_DataPtrArray(50);
     m_StartIndent = 0;
     m_PausePosition = 0;
 }
@@ -557,10 +554,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessElement(IPDF_LayoutElement* pElement, F
         }
         switch(layoutType) {
             case LayoutTable: {
-                    CRF_Table* pTable = FX_NEW CRF_Table;
-                    if (NULL == pTable) {
-                        break;
-                    }
+                    CRF_Table* pTable = new CRF_Table;
                     m_TableArray.Add(pTable);
                     pTable->m_ReflowPageHeight = m_pReflowedPage->m_PageHeight;
                     pTable->m_TableWidth = GetElmWidth(pElement);
@@ -771,10 +765,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessObject(CPDF_PageObject* pObj, FX_FLOAT 
         if(!(m_flags & RF_PARSER_IMAGE)) {
             return;
         }
-        CPDF_PageObjects* pObjs = FX_NEW CPDF_PageObjects(FALSE);
-        if (NULL == pObjs) {
-            return;
-        }
+        CPDF_PageObjects* pObjs = new CPDF_PageObjects(FALSE);
         FX_POSITION pos = pObjs->GetLastObjectPosition();
         pos = pObjs->InsertObject(pos, pObj);
         CFX_AffineMatrix matrix;

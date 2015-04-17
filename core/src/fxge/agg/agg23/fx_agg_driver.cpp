@@ -187,7 +187,7 @@ static void RasterizeStroke(agg::rasterizer_scanline_aa& rasterizer, agg::path_s
 }
 IFX_RenderDeviceDriver* IFX_RenderDeviceDriver::CreateFxgeDriver(CFX_DIBitmap* pBitmap, FX_BOOL bRgbByteOrder, CFX_DIBitmap* pOriDevice, FX_BOOL bGroupKnockout)
 {
-    return FX_NEW CFX_AggDeviceDriver(pBitmap, 0, bRgbByteOrder, pOriDevice, bGroupKnockout);
+    return new CFX_AggDeviceDriver(pBitmap, 0, bRgbByteOrder, pOriDevice, bGroupKnockout);
 }
 CFX_AggDeviceDriver::CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap, int dither_bits, FX_BOOL bRgbByteOrder, CFX_DIBitmap* pOriDevice, FX_BOOL bGroupKnockout)
 {
@@ -267,10 +267,7 @@ void CFX_AggDeviceDriver::SaveState()
 {
     void* pClip = NULL;
     if (m_pClipRgn) {
-        pClip = FX_NEW CFX_ClipRgn(*m_pClipRgn);
-        if (!pClip) {
-            return;
-        }
+        pClip = new CFX_ClipRgn(*m_pClipRgn);
     }
     m_StateStack.Add(pClip);
 }
@@ -290,7 +287,7 @@ void CFX_AggDeviceDriver::RestoreState(FX_BOOL bKeepSaved)
     }
     if (bKeepSaved) {
         if (pSavedClip) {
-            m_pClipRgn = FX_NEW CFX_ClipRgn(*pSavedClip);
+            m_pClipRgn = new CFX_ClipRgn(*pSavedClip);
         }
     } else {
         m_StateStack.RemoveAt(m_StateStack.GetSize() - 1);
@@ -325,10 +322,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
 {
     m_FillFlags = fill_mode;
     if (m_pClipRgn == NULL) {
-        m_pClipRgn = FX_NEW CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
-        if (!m_pClipRgn) {
-            return FALSE;
-        }
+        m_pClipRgn = new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
     }
     if (pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) {
         CFX_FloatRect rectf;
@@ -355,10 +349,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(const CFX_PathData* pPathData,
                                                )
 {
     if (m_pClipRgn == NULL) {
-        m_pClipRgn = FX_NEW CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
-        if (!m_pClipRgn) {
-            return FALSE;
-        }
+        m_pClipRgn = new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
     }
     CAgg_PathData path_data;
     path_data.BuildPath(pPathData, NULL);
@@ -1565,10 +1556,7 @@ FX_BOOL	CFX_AggDeviceDriver::StartDIBits(const CFX_DIBSource* pSource, int bitma
     if (m_pBitmap->GetBuffer() == NULL) {
         return TRUE;
     }
-    CFX_ImageRenderer* pRenderer = FX_NEW CFX_ImageRenderer;
-    if (!pRenderer) {
-        return FALSE;
-    }
+    CFX_ImageRenderer* pRenderer = new CFX_ImageRenderer;
     pRenderer->Start(m_pBitmap, m_pClipRgn, pSource, bitmap_alpha, argb, pMatrix, render_flags, m_bRgbByteOrder, alpha_flag, pIccTransform);
     handle = pRenderer;
     return TRUE;
@@ -1597,29 +1585,20 @@ FX_BOOL CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap, int dither_bits, FX_BOOL b
         return FALSE;
     }
     SetBitmap(pBitmap);
-    IFX_RenderDeviceDriver* pDriver = FX_NEW CFX_AggDeviceDriver(pBitmap, dither_bits, bRgbByteOrder, pOriDevice, bGroupKnockout);
-    if (!pDriver) {
-        return FALSE;
-    }
+    IFX_RenderDeviceDriver* pDriver = new CFX_AggDeviceDriver(pBitmap, dither_bits, bRgbByteOrder, pOriDevice, bGroupKnockout);
     SetDeviceDriver(pDriver);
     return TRUE;
 }
 FX_BOOL CFX_FxgeDevice::Create(int width, int height, FXDIB_Format format, int dither_bits, CFX_DIBitmap* pOriDevice)
 {
     m_bOwnedBitmap = TRUE;
-    CFX_DIBitmap* pBitmap = FX_NEW CFX_DIBitmap;
-    if (!pBitmap) {
-        return FALSE;
-    }
+    CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
     if (!pBitmap->Create(width, height, format)) {
         delete pBitmap;
         return FALSE;
     }
     SetBitmap(pBitmap);
-    IFX_RenderDeviceDriver* pDriver = FX_NEW CFX_AggDeviceDriver(pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
-    if (!pDriver) {
-        return FALSE;
-    }
+    IFX_RenderDeviceDriver* pDriver = new CFX_AggDeviceDriver(pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
     SetDeviceDriver(pDriver);
     return TRUE;
 }

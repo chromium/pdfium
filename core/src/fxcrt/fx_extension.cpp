@@ -90,7 +90,7 @@ IFX_FileStream* FX_CreateFileStream(FX_LPCSTR filename, FX_DWORD dwModes)
         pFA->Release();
         return NULL;
     }
-    return FX_NEW CFX_CRTFileStream(pFA);
+    return new CFX_CRTFileStream(pFA);
 }
 IFX_FileStream* FX_CreateFileStream(FX_LPCWSTR filename, FX_DWORD dwModes)
 {
@@ -102,7 +102,7 @@ IFX_FileStream* FX_CreateFileStream(FX_LPCWSTR filename, FX_DWORD dwModes)
         pFA->Release();
         return NULL;
     }
-    return FX_NEW CFX_CRTFileStream(pFA);
+    return new CFX_CRTFileStream(pFA);
 }
 IFX_FileWrite* FX_CreateFileWrite(FX_LPCSTR filename)
 {
@@ -122,11 +122,11 @@ IFX_FileRead* FX_CreateFileRead(FX_LPCWSTR filename)
 }
 IFX_MemoryStream* FX_CreateMemoryStream(FX_LPBYTE pBuffer, size_t dwSize, FX_BOOL bTakeOver)
 {
-    return FX_NEW CFX_MemoryStream(pBuffer, dwSize, bTakeOver);
+    return new CFX_MemoryStream(pBuffer, dwSize, bTakeOver);
 }
 IFX_MemoryStream* FX_CreateMemoryStream(FX_BOOL bConsecutive)
 {
-    return FX_NEW CFX_MemoryStream(bConsecutive);
+    return new CFX_MemoryStream(bConsecutive);
 }
 #ifdef __cplusplus
 extern "C" {

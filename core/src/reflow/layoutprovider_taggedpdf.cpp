@@ -636,10 +636,7 @@ IPDF_LayoutProvider* IPDF_LayoutProvider::Create_LayoutProvider_TaggedPDF(CPDF_P
     if(pPage == NULL) {
         return NULL;
     }
-    CPDF_LayoutProvider_TaggedPDF* pProvider = FX_NEW CPDF_LayoutProvider_TaggedPDF;
-    if (!pProvider) {
-        return NULL;
-    }
+    CPDF_LayoutProvider_TaggedPDF* pProvider = new CPDF_LayoutProvider_TaggedPDF;
     pProvider->Init(pPage);
     return pProvider;
 }
@@ -672,11 +669,7 @@ void CPDF_LayoutProvider_TaggedPDF::ProcessElement(CPDF_LayoutElement*pParent, C
         m_Status = LayoutError;
         return;
     }
-    CPDF_LayoutElement* pElement = FX_NEW CPDF_LayoutElement;
-    if (!pElement) {
-        m_Status = LayoutError;
-        return;
-    }
+    CPDF_LayoutElement* pElement = new CPDF_LayoutElement;
     pElement->m_pParentElement = pParent;
     pElement->m_pTaggedElement = pTaggedElement;
     pParent->m_ChildArray.Add(pElement);
@@ -729,11 +722,7 @@ LayoutStatus CPDF_LayoutProvider_TaggedPDF::StartLoad(IFX_Pause* pPause)
         m_Status = LayoutError;
         return LayoutError;
     }
-    m_pRoot = FX_NEW CPDF_LayoutElement;
-    if (!m_pRoot) {
-        m_Status = LayoutError;
-        return LayoutError;
-    }
+    m_pRoot = new CPDF_LayoutElement;
     for(int i = 0; i < count; i++) {
         CPDF_StructElement* pElement = m_pPageTree->GetTopElement(i);
         if(pElement) {

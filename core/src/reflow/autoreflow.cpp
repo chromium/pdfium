@@ -100,7 +100,7 @@ void CPDF_AutoReflowLayoutProvider::Conver2AppreceOrder(const CPDF_PageObjects* 
 }
 IPDF_LayoutProvider* IPDF_LayoutProvider::Create_LayoutProvider_AutoReflow(CPDF_PageObjects* pPage, FX_BOOL bReadOrder)
 {
-    return FX_NEW CPDF_AutoReflowLayoutProvider(pPage, bReadOrder);
+    return new CPDF_AutoReflowLayoutProvider(pPage, bReadOrder);
 }
 CPDF_AutoReflowElement::CPDF_AutoReflowElement(LayoutType layoutType , CPDF_AutoReflowElement* pParent)
 {
@@ -251,8 +251,7 @@ void CPDF_AutoReflowLayoutProvider::CreateElement()
         } else {
             pNextCell = NULL;
         }
-        pCurrElm = NULL;
-        pCurrElm = FX_NEW CPDF_AutoReflowElement(LayoutParagraph, pParent);
+        pCurrElm = new CPDF_AutoReflowElement(LayoutParagraph, pParent);
         if(pCurrElm->GetType() == LayoutParagraph && plastCell) {
             int SpaceBefore = 0;
             if(pCell->m_CellWritingMode != plastCell->m_CellWritingMode ) {
@@ -561,7 +560,7 @@ void CPDF_AutoReflowLayoutProvider::GenerateLine(CFX_PtrArray& cellArray)
         pPerObj = pObj;
         if(bNewLine) {
             int c = pCell ? pCell->m_ObjList.GetCount() : 0;
-            pCell = FX_NEW CRF_CELL;
+            pCell = new CRF_CELL;
             pCell->m_CellWritingMode = m_WritingMode;
             pCell->m_BBox = ObjBBox;
             if(pObj->m_Type == PDFPAGE_TEXT) {
@@ -719,10 +718,7 @@ int CPDF_AutoReflowLayoutProvider::GetWritingMode(CPDF_PageObject* pPreObj, CPDF
 LayoutStatus CPDF_AutoReflowLayoutProvider::StartLoad(IFX_Pause* pPause)
 {
     m_pPause = pPause;
-    m_pRoot = FX_NEW CPDF_AutoReflowElement(LayoutDocument);
-    if(!m_pRoot) {
-        return LayoutError;
-    }
+    m_pRoot = new CPDF_AutoReflowElement(LayoutDocument);
     m_Step = 0;
     return Continue();
 }

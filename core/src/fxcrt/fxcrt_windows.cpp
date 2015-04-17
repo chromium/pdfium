@@ -25,7 +25,7 @@ FX_BOOL FX_File_Exist(FX_WSTR fileName)
 }
 IFXCRT_FileAccess* FXCRT_FileAccess_Create()
 {
-    return FX_NEW CFXCRT_FileAccess_Win64;
+    return new CFXCRT_FileAccess_Win64;
 }
 void FXCRT_Windows_GetFileMode(FX_DWORD dwMode, FX_DWORD &dwAccess, FX_DWORD &dwShare, FX_DWORD &dwCreation)
 {

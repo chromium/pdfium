@@ -352,16 +352,12 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(FX_BSTR bsFamilyname, FX_BYTE uCharset, 
     }
     if (nItem > -1) {
         CFPF_SkiaFontDescriptor *pFontDes = (CFPF_SkiaFontDescriptor*)m_FontFaces.ElementAt(nItem);
-        CFPF_SkiaFont *pFont = FX_NEW CFPF_SkiaFont;
-        if (pFont) {
-            if (pFont->InitFont(this, pFontDes, bsFamilyname, dwStyle, uCharset)) {
-                m_FamilyFonts.SetAt((void*)(FX_UINTPTR)dwHash, (void*)pFont);
-                return pFont->Retain();
-            }
-            pFont->Release();
-            pFont = NULL;
+        CFPF_SkiaFont *pFont = new CFPF_SkiaFont;
+        if (pFont->InitFont(this, pFontDes, bsFamilyname, dwStyle, uCharset)) {
+            m_FamilyFonts.SetAt((void*)(FX_UINTPTR)dwHash, (void*)pFont);
+            return pFont->Retain();
         }
-        return pFont;
+        pFont->Release();
     }
     return NULL;
 }
@@ -464,10 +460,7 @@ void CFPF_SkiaFontMgr::ScanFile(FX_BSTR file)
 {
     FXFT_Face face = GetFontFace(file);
     if (face) {
-        CFPF_SkiaPathFont *pFontDesc = FX_NEW CFPF_SkiaPathFont;
-        if (!pFontDesc) {
-            return;
-        }
+        CFPF_SkiaPathFont *pFontDesc = new CFPF_SkiaPathFont;
         pFontDesc->SetPath(file.GetCStr());
         ReportFace(face, pFontDesc);
         m_FontFaces.Add(pFontDesc);
