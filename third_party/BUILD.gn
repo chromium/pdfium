@@ -78,6 +78,7 @@ source_set("pdfium_base") {
   sources = [
     "base/logging.h",
     "base/macros.h",
+    "base/nonstd_unique_ptr.h",
     "base/numerics/safe_conversions.h",
     "base/numerics/safe_conversions_impl.h",
     "base/numerics/safe_math.h",
