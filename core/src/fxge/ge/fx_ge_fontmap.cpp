@@ -36,11 +36,11 @@ CTTFontDesc::~CTTFontDesc()
         FX_Free(m_pFontData);
     }
 }
-FX_BOOL CTTFontDesc::ReleaseFace(FXFT_Face face)
+FX_INT32 CTTFontDesc::ReleaseFace(FXFT_Face face)
 {
     if (m_Type == 1) {
         if (m_SingleFace.m_pFace != face) {
-            return FALSE;
+            return -1;
         }
     } else if (m_Type == 2) {
         int i;
@@ -49,15 +49,15 @@ FX_BOOL CTTFontDesc::ReleaseFace(FXFT_Face face)
                 break;
             }
         if (i == 16) {
-            return FALSE;
+            return -1;
         }
     }
     m_RefCount --;
     if (m_RefCount) {
-        return FALSE;
+        return m_RefCount;
     }
     delete this;
-    return TRUE;
+    return 0;
 }
 CFX_FontMgr::CFX_FontMgr()
 {
@@ -394,18 +394,21 @@ void CFX_FontMgr::ReleaseFace(FXFT_Face face)
     if (face == NULL) {
         return;
     }
-    FX_BOOL bFaceDone = FALSE;
     FX_POSITION pos = m_FaceMap.GetStartPosition();
+    FX_BOOL bNeedFaceDone = TRUE;
     while(pos) {
         CFX_ByteString Key;
         CTTFontDesc* ttface;
         m_FaceMap.GetNextAssoc(pos, Key, (void*&)ttface);
-        if (ttface->ReleaseFace(face)) {
+        int nRet = ttface->ReleaseFace(face);
+        if (nRet == 0) {
             m_FaceMap.RemoveKey(Key);
-            bFaceDone = TRUE;
+            bNeedFaceDone = FALSE;
+        } else if (nRet > 0) {
+            bNeedFaceDone = FALSE;
         }
     }
-    if (!bFaceDone) {
+    if (bNeedFaceDone && !m_pBuiltinMapper->IsBuiltinFace(face)) {
         FXFT_Done_Face(face);
     }
 }
@@ -1341,6 +1344,21 @@ FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(FX_DWORD dwUnicode, FX_DWORD fl
     m_pFontInfo->DeleteFont(hFont);
     return face;
 }
+
+FX_BOOL CFX_FontMapper::IsBuiltinFace(const FXFT_Face face) const
+{
+    for (int i = 0; i < MM_FACE_COUNT; ++i) {
+        if (m_MMFaces[i] == face) {
+            return TRUE;
+        }
+    }
+    for (int i = 0; i < FOXIT_FACE_COUNT; ++i) {
+        if (m_FoxitFaces[i] == face) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+} 
 extern "C" {
     unsigned long _FTStreamRead(FXFT_Stream stream, unsigned long offset,
                                 unsigned char* buffer, unsigned long count);
