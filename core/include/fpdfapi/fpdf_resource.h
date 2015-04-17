@@ -76,23 +76,16 @@ typedef CFX_MapPtrTemplate<CPDF_Stream*, CPDF_CountedStreamAcc*>    CPDF_FontFil
 #define PDFFONT_USEEXTERNATTR	0x80000
 FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name);
 CFX_ByteString PDF_AdobeNameFromUnicode(FX_WCHAR unicode);
-class CPDF_Font 
+class CPDF_Font
 {
 public:
-
     static CPDF_Font*		CreateFontF(CPDF_Document* pDoc, CPDF_Dictionary* pFontDict);
-
     static CPDF_Font*		GetStockFont(CPDF_Document* pDoc, FX_BSTR fontname);
 
     virtual ~CPDF_Font();
 
-
-
-
-    int						GetFontType() const
-    {
-        return m_FontType;
-    }
+    bool IsFontType(int fonttype) const { return fonttype == m_FontType; }
+    int	GetFontType() const { return m_FontType;  }
 
     CFX_ByteString			GetFontTypeName() const;
 
@@ -256,9 +249,9 @@ public:
     class CFX_PathData*		LoadGlyphPath(FX_DWORD charcode, int dest_width = 0);
 
     CFX_Font				m_Font;
-protected:
 
-    CPDF_Font();
+protected:
+    explicit CPDF_Font(int fonttype);
 
     FX_BOOL					Initialize();
 
@@ -285,8 +278,6 @@ protected:
 
 
 
-    int						m_FontType;
-
     CFX_ByteString			m_BaseFont;
 
     CPDF_StreamAcc*			m_pFontFile;
@@ -312,6 +303,8 @@ protected:
 
     int						m_ItalicAngle;
 
+private:
+    const int				m_FontType;
 };
 #define PDFFONT_ENCODING_BUILTIN		0
 #define PDFFONT_ENCODING_WINANSI		1
@@ -355,10 +348,8 @@ public:
 class CPDF_SimpleFont : public CPDF_Font
 {
 public:
-
-    CPDF_SimpleFont();
-
-    virtual ~CPDF_SimpleFont();
+    explicit CPDF_SimpleFont(int fonttype);
+    ~CPDF_SimpleFont() override;
 
     CPDF_FontEncoding*		GetEncoding()
     {
@@ -469,7 +460,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont
 {
 public:
     CPDF_Type3Font();
-    virtual ~CPDF_Type3Font();
+    ~CPDF_Type3Font() override;
     void					SetPageResources(CPDF_Dictionary* pResources)
     {
         m_pPageResources = pResources;
