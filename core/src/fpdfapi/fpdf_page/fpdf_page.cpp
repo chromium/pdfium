@@ -7,10 +7,6 @@
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "pageint.h"
-void CPDF_PageObject::Release()
-{
-    delete this;
-}
 CPDF_PageObject* CPDF_PageObject::Create(int type)
 {
     switch (type) {
@@ -26,6 +22,9 @@ CPDF_PageObject* CPDF_PageObject::Create(int type)
             return FX_NEW CPDF_FormObject;
     }
     return NULL;
+}
+CPDF_PageObject::~CPDF_PageObject()
+{
 }
 CPDF_PageObject* CPDF_PageObject::Clone() const
 {
@@ -689,11 +688,7 @@ CPDF_PageObjects::~CPDF_PageObjects()
     }
     FX_POSITION pos = m_ObjectList.GetHeadPosition();
     while (pos) {
-        CPDF_PageObject* pPageObj = (CPDF_PageObject*)m_ObjectList.GetNext(pos);
-        if (!pPageObj) {
-            continue;
-        }
-        pPageObj->Release();
+        delete (CPDF_PageObject*)m_ObjectList.GetNext(pos);
     }
 }
 void CPDF_PageObjects::ContinueParse(IFX_Pause* pPause)
@@ -808,11 +803,7 @@ void CPDF_PageObjects::ClearCacheObjects()
     if (m_bReleaseMembers) {
         FX_POSITION pos = m_ObjectList.GetHeadPosition();
         while (pos) {
-            CPDF_PageObject* pPageObj = (CPDF_PageObject*)m_ObjectList.GetNext(pos);
-            if (!pPageObj) {
-                continue;
-            }
-            pPageObj->Release();
+            delete (CPDF_PageObject*)m_ObjectList.GetNext(pos);
         }
     }
     m_ObjectList.RemoveAll();

@@ -164,13 +164,11 @@ public:
 class IFX_Edit_UndoItem
 {
 public:
-	virtual void							Release() = 0;
+	virtual ~IFX_Edit_UndoItem() { }
+
 	virtual void							Undo() = 0;
 	virtual void							Redo() = 0;
 	virtual CFX_WideString					GetUndoTitle() = 0;
-
-protected:
-        ~IFX_Edit_UndoItem() { }
 };
 
 class FXET_CLASS IFX_Edit

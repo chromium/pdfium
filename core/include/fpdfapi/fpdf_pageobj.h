@@ -455,10 +455,8 @@ public:
 class CPDF_PageObject : public CPDF_GraphicStates
 {
 public:
-
     static CPDF_PageObject* Create(int type);
-
-    void				Release();
+    virtual ~CPDF_PageObject();
 
     CPDF_PageObject*	Clone() const;
 
@@ -505,7 +503,6 @@ protected:
 
     CPDF_PageObject() {}
 
-    virtual ~CPDF_PageObject() {}
 };
 struct CPDF_TextObjectItem  {
 

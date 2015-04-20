@@ -192,8 +192,7 @@ void CPDF_ClipPath::AppendTexts(CPDF_TextObject** pTexts, int count)
     CPDF_ClipPathData* pData = GetModify();
     if (pData->m_TextCount + count > FPDF_CLIPPATH_MAX_TEXTS) {
         for (int i = 0; i < count; i ++) {
-            if (pTexts[i])
-                pTexts[i]->Release();
+            delete pTexts[i];
         }
         return;
     }

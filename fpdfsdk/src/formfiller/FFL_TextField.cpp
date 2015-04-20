@@ -4,37 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-//#include "../include/FormFiller.h"
-//#include "../include/FFL_FormFiller.h"
 #include "../../include/formfiller/FFL_TextField.h"
 #include "../../include/formfiller/FFL_CBA_Fontmap.h"
-//#include "../include/FFL_Notify.h"
-
-CFFL_EditUndoItem::CFFL_EditUndoItem(CPWL_Edit* pEdit)
-{
-}
-
-CFFL_EditUndoItem::~CFFL_EditUndoItem()
-{
-}
-
-void CFFL_EditUndoItem::Undo()
-{
-}
-
-void CFFL_EditUndoItem::Redo()
-{
-}
-
-CFX_WideString CFFL_EditUndoItem::GetDescr()
-{
-	return L"Input";
-}
-
-void CFFL_EditUndoItem::Release()
-{
-	delete this;
-}
 
 /* ------------------------------- CFFL_TextField ------------------------------- */
 
