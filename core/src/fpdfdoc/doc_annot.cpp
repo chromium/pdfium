@@ -4,8 +4,10 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../include/fpdfdoc/fpdf_doc.h"
 #include "../../include/fpdfapi/fpdf_pageobj.h"
+
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
 {
     ASSERT(pPage != NULL);
@@ -317,16 +319,14 @@ CPDF_PageObject* CPDF_Annot::GetBorder(FX_BOOL bPrint, const CPDF_RenderOptions*
         int B = (FX_INT32)(pColor->GetNumber(2) * 255);
         argb = ArgbEncode(0xff, R, G, B);
     }
-    CPDF_PathObject *pPathObject = new CPDF_PathObject();
+    nonstd::unique_ptr<CPDF_PathObject> pPathObject(new CPDF_PathObject());
     CPDF_GraphStateData *pGraphState = pPathObject->m_GraphState.GetModify();
     if (!pGraphState) {
-        pPathObject->Release();
         return NULL;
     }
     pGraphState->m_LineWidth = width;
     CPDF_ColorStateData *pColorData = pPathObject->m_ColorState.GetModify();
     if (!pColorData) {
-        pPathObject->Release();
         return NULL;
     }
     pColorData->m_StrokeRGB = argb;
@@ -340,7 +340,6 @@ CPDF_PageObject* CPDF_Annot::GetBorder(FX_BOOL bPrint, const CPDF_RenderOptions*
             }
             pGraphState->m_DashArray = FX_Alloc(FX_FLOAT, dash_count);
             if (pGraphState->m_DashArray == NULL) {
-                pPathObject->Release();
                 return NULL;
             }
             pGraphState->m_DashCount = dash_count;
@@ -354,7 +353,6 @@ CPDF_PageObject* CPDF_Annot::GetBorder(FX_BOOL bPrint, const CPDF_RenderOptions*
         } else {
             pGraphState->m_DashArray = FX_Alloc(FX_FLOAT, 2);
             if (pGraphState->m_DashArray == NULL) {
-                pPathObject->Release();
                 return NULL;
             }
             pGraphState->m_DashCount = 2;
@@ -369,7 +367,7 @@ CPDF_PageObject* CPDF_Annot::GetBorder(FX_BOOL bPrint, const CPDF_RenderOptions*
         pPathData->AppendRect(rect.left + width, rect.bottom + width, rect.right - width, rect.top - width);
     }
     pPathObject->CalcBoundingBox();
-    return pPathObject;
+    return pPathObject.release();
 }
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice, const CFX_AffineMatrix* pUser2Device, const CPDF_RenderOptions* pOptions)
 {
