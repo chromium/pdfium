@@ -15,19 +15,6 @@
 
 class CBA_FontMap;
 
-
-class CFFL_EditUndoItem
-{
-public:
-	CFFL_EditUndoItem(CPWL_Edit* pEdit);
-	virtual ~CFFL_EditUndoItem();
-	
-	virtual void					Undo();
-	virtual void					Redo();
-	virtual CFX_WideString			GetDescr();
-	virtual void					Release();
-};
-
 struct FFL_TextFieldState
 {
 	int nStart;
@@ -79,9 +66,8 @@ public:
 	
 private:
 	CBA_FontMap*				m_pFontMap;
-//	CBA_SpellCheck*				m_pSpellCheck;
 	FFL_TextFieldState			m_State;
-//	CFFL_IM_BOX					m_IMBox;
+
 };
 
 #endif // !defined(AFX_FFL_EDIT_H__8E0C9456_CBA2_4EFB_9F31_53C6D8C1A8AC__INCLUDED_)

@@ -453,10 +453,7 @@ void CFX_Edit_Undo::RemoveHeads()
 {
 	ASSERT(m_UndoItemStack.GetSize() > 1);
 
-	IFX_Edit_UndoItem* pItem = m_UndoItemStack.GetAt(0);
-	ASSERT(pItem != NULL);
-
-	pItem->Release();
+	delete m_UndoItemStack.GetAt(0);
 	m_UndoItemStack.RemoveAt(0);
 }
 
@@ -464,10 +461,7 @@ void CFX_Edit_Undo::RemoveTails()
 {
 	for (FX_INT32 i = m_UndoItemStack.GetSize()-1; i >= m_nCurUndoPos; i--)
 	{
-		IFX_Edit_UndoItem* pItem = m_UndoItemStack.GetAt(i);
-		ASSERT(pItem != NULL);
-
-		pItem->Release();
+		delete m_UndoItemStack.GetAt(i);
 		m_UndoItemStack.RemoveAt(i);
 	}
 }
@@ -476,10 +470,7 @@ void CFX_Edit_Undo::Reset()
 {
 	for (FX_INT32 i=0, sz=m_UndoItemStack.GetSize(); i < sz; i++)
 	{
-		IFX_Edit_UndoItem * pItem = m_UndoItemStack.GetAt(i);
-		ASSERT(pItem != NULL);
-
-		pItem->Release();
+		delete m_UndoItemStack.GetAt(i);
 	}
 	m_nCurUndoPos = 0;
 	m_UndoItemStack.RemoveAll();
@@ -495,10 +486,7 @@ CFX_Edit_GroupUndoItem::~CFX_Edit_GroupUndoItem()
 {
 	for (int i=0,sz=m_Items.GetSize(); i<sz; i++)
 	{
-		CFX_Edit_UndoItem* pUndoItem = m_Items[i];
-		ASSERT(pUndoItem != NULL);
-
-		pUndoItem->Release();
+		delete m_Items[i];
 	}
 
 	m_Items.RemoveAll();
@@ -556,11 +544,6 @@ void CFX_Edit_GroupUndoItem::Redo()
 CFX_WideString CFX_Edit_GroupUndoItem::GetUndoTitle()
 {
 	return m_sTitle;
-}
-
-void CFX_Edit_GroupUndoItem::Release()
-{
-	delete this;
 }
 
 /* ------------------------------------- CFX_Edit_UndoItem derived classes ------------------------------------- */
