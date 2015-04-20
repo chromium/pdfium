@@ -4,6 +4,7 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_mgr.h"
 #include "../include/fsdk_baseannot.h"
@@ -1727,22 +1728,13 @@ FX_BOOL CPDFSDK_InterForm::HighlightWidgets()
 
 CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget, FX_BOOL bNext) const
 {
-	ASSERT(pWidget != NULL);
+    nonstd::unique_ptr<CBA_AnnotIterator> pIterator(
+        new CBA_AnnotIterator(pWidget->GetPageView(), "Widget", ""));
 
-	CBA_AnnotIterator* pIterator = new CBA_AnnotIterator(pWidget->GetPageView(), "Widget", "");
-	ASSERT(pIterator != NULL);
-
-	CPDFSDK_Widget* pRet = NULL;
-
-	if (bNext)
-		pRet = (CPDFSDK_Widget*)pIterator->GetNextAnnot(pWidget);
-	else
-		pRet = (CPDFSDK_Widget*)pIterator->GetPrevAnnot(pWidget);
-
-	pIterator->Release();
-	
-	return pRet;
-
+    if (bNext) {
+        return (CPDFSDK_Widget*)pIterator->GetNextAnnot(pWidget);
+    }
+    return (CPDFSDK_Widget*)pIterator->GetPrevAnnot(pWidget);
 }
 
 CPDFSDK_Widget*	CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const
