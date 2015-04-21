@@ -428,62 +428,6 @@ inline CFX_ByteString operator + (FX_BSTR str1, const CFX_ByteString& str2)
 {
     return CFX_ByteString(str1, str2);
 }
-class CFX_StringBufBase 
-{
-public:
-
-    CFX_StringBufBase(FX_STRSIZE limit)
-    {
-        m_Size = 0;
-        m_Limit = limit;
-    }
-
-    FX_CHAR*	GetPtr() const
-    {
-        return (FX_CHAR*)(this + 1);
-    }
-
-    FX_STRSIZE	GetSize() const
-    {
-        return m_Size;
-    }
-
-    void		Empty()
-    {
-        m_Size = 0;
-    }
-
-    void		Copy(FX_BSTR str);
-
-    void		Append(FX_BSTR str);
-
-    void		Append(int i, FX_DWORD flags = 0);
-
-    CFX_ByteStringC		GetStringC() const
-    {
-        return CFX_ByteStringC((FX_CHAR*)(this + 1), m_Size);
-    }
-
-    CFX_ByteString		GetString() const
-    {
-        return CFX_ByteString((FX_CHAR*)(this + 1), m_Size);
-    }
-protected:
-
-    FX_STRSIZE	m_Limit;
-
-    FX_STRSIZE	m_Size;
-};
-template<FX_STRSIZE limit>
-class CFX_StringBufTemplate : public CFX_StringBufBase
-{
-public:
-
-    CFX_StringBufTemplate() : CFX_StringBufBase(limit) {}
-
-    FX_CHAR		m_Buffer[limit];
-};
-typedef CFX_StringBufTemplate<256> CFX_StringBuf256;
 class CFX_WideStringC 
 {
 public:
