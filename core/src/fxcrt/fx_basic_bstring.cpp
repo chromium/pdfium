@@ -1137,28 +1137,3 @@ CFX_ByteString CFX_ByteString::FormatFloat(FX_FLOAT d, int precision)
     FX_STRSIZE len = FX_ftoa(d, buf);
     return CFX_ByteString(buf, len);
 }
-void CFX_StringBufBase::Copy(FX_BSTR str)
-{
-    m_Size = str.GetLength();
-    if (m_Size > m_Limit) {
-        m_Size = m_Limit;
-    }
-    FX_CHAR* pBuffer = (FX_CHAR*)(this + 1);
-    FXSYS_memcpy32(pBuffer, str.GetPtr(), m_Size);
-}
-void CFX_StringBufBase::Append(FX_BSTR str)
-{
-    int len = str.GetLength();
-    if (len > m_Limit - m_Size) {
-        len = m_Limit - m_Size;
-    }
-    FX_CHAR* pBuffer = (FX_CHAR*)(this + 1);
-    FXSYS_memcpy32(pBuffer + m_Size, str.GetPtr(), len);
-    m_Size += len;
-}
-void CFX_StringBufBase::Append(int i, FX_DWORD flags)
-{
-    char buf[32];
-    int len = _Buffer_itoa(buf, i, flags);
-    Append(CFX_ByteStringC(buf, len));
-}
