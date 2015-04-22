@@ -51,7 +51,7 @@ CPDF_SimpleParser::CPDF_SimpleParser(FX_LPCBYTE pData, FX_DWORD dwSize)
 }
 CPDF_SimpleParser::CPDF_SimpleParser(FX_BSTR str)
 {
-    m_pData = str;
+    m_pData = str.GetPtr();
     m_dwSize = str.GetLength();
     m_dwCurPos = 0;
 }
@@ -198,7 +198,7 @@ FX_BOOL CPDF_SimpleParser::SearchToken(FX_BSTR token)
 {
     int token_len = token.GetLength();
     while (m_dwCurPos < m_dwSize - token_len) {
-        if (FXSYS_memcmp32(m_pData + m_dwCurPos, token, token_len) == 0) {
+        if (FXSYS_memcmp32(m_pData + m_dwCurPos, token.GetPtr(), token_len) == 0) {
             break;
         }
         m_dwCurPos ++;

@@ -276,7 +276,7 @@ bool CFX_ByteString::EqualNoCase(FX_BSTR str) const
         return false;
     }
     FX_LPCBYTE pThis = (FX_LPCBYTE)m_pData->m_String;
-    FX_LPCBYTE pThat = (FX_LPCBYTE)str;
+    FX_LPCBYTE pThat = str.GetPtr();
     for (FX_STRSIZE i = 0; i < len; i ++) {
         if ((*pThis) != (*pThat)) {
             FX_BYTE bThis = *pThis;

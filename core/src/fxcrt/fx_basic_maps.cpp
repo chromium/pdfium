@@ -352,7 +352,7 @@ inline FX_DWORD CFX_MapByteStringToPtr::HashKey(FX_BSTR key) const
 {
     FX_DWORD nHash = 0;
     int len = key.GetLength();
-    FX_LPCBYTE buf = key;
+    FX_LPCBYTE buf = key.GetPtr();
     for (int i = 0; i < len; i ++) {
         nHash = (nHash << 5) + nHash + buf[i];
     }
@@ -518,7 +518,7 @@ void CFX_CMapByteStringToPtr::SetAt(FX_BSTR key, void* value)
     int size = m_Buffer.GetSize();
     for (index = 0; index < size; index ++) {
         _CompactString* pKey = (_CompactString*)m_Buffer.GetAt(index);
-        if (!_CompactStringSame(pKey, (FX_LPCBYTE)key, key_len)) {
+        if (!_CompactStringSame(pKey, key.GetPtr(), key_len)) {
             continue;
         }
         *(void**)(pKey + 1) = value;
@@ -529,19 +529,19 @@ void CFX_CMapByteStringToPtr::SetAt(FX_BSTR key, void* value)
         if (pKey->m_CompactLen) {
             continue;
         }
-        _CompactStringStore(pKey, (FX_LPCBYTE)key, key_len);
+        _CompactStringStore(pKey, key.GetPtr(), key_len);
         *(void**)(pKey + 1) = value;
         return;
     }
     _CompactString* pKey = (_CompactString*)m_Buffer.Add();
-    _CompactStringStore(pKey, (FX_LPCBYTE)key, key_len);
+    _CompactStringStore(pKey, key.GetPtr(), key_len);
     *(void**)(pKey + 1) = value;
 }
 void CFX_CMapByteStringToPtr::AddValue(FX_BSTR key, void* value)
 {
     ASSERT(value != NULL);
     _CompactString* pKey = (_CompactString*)m_Buffer.Add();
-    _CompactStringStore(pKey, (FX_LPCBYTE)key, key.GetLength());
+    _CompactStringStore(pKey, key.GetPtr(), key.GetLength());
     *(void**)(pKey + 1) = value;
 }
 void CFX_CMapByteStringToPtr::RemoveKey(FX_BSTR key)
@@ -550,7 +550,7 @@ void CFX_CMapByteStringToPtr::RemoveKey(FX_BSTR key)
     int size = m_Buffer.GetSize();
     for (int index = 0; index < size; index++) {
         _CompactString* pKey = (_CompactString*)m_Buffer.GetAt(index);
-        if (!_CompactStringSame(pKey, (FX_LPCBYTE)key, key_len)) {
+        if (!_CompactStringSame(pKey, key.GetPtr(), key_len)) {
             continue;
         }
         _CompactStringRelease(pKey);

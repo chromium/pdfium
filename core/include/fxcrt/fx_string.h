@@ -23,7 +23,7 @@ class CFX_WideStringL;
 
 // An immutable string with caller-provided storage which must outlive the
 // string itself.
-class CFX_ByteStringC 
+class CFX_ByteStringC
 {
 public:
     typedef FX_CHAR value_type;
@@ -102,7 +102,6 @@ public:
     {
         return 	str.m_Length != m_Length || FXSYS_memcmp32(str.m_Ptr, m_Ptr, m_Length) != 0;
     }
-#define FXBSTR_ID(c1, c2, c3, c4) ((c1 << 24) | (c2 << 16) | (c3 << 8) | (c4))
 
     FX_DWORD		GetID(FX_STRSIZE start_pos = 0) const;
 
@@ -126,11 +125,6 @@ public:
         return m_Length == 0;
     }
 
-    operator		FX_LPCBYTE() const
-    {
-        return m_Ptr;
-    }
-
     FX_BYTE			GetAt(FX_STRSIZE index) const
     {
         return m_Ptr[index];
@@ -149,13 +143,23 @@ public:
         }
         return CFX_ByteStringC(m_Ptr + index, count);
     }
+
+    const FX_BYTE& operator[] (size_t index) const
+    {
+        return m_Ptr[index];
+    }
+
+    bool operator< (const CFX_ByteStringC& that) const
+    {
+        int result = memcmp(m_Ptr, that.m_Ptr, std::min(m_Length, that.m_Length));
+        return result < 0 || (result == 0 && m_Length < that.m_Length);
+    }
+
 protected:
-
     FX_LPCBYTE		m_Ptr;
-
     FX_STRSIZE		m_Length;
-private:
 
+private:
     void*			operator new (size_t) throw()
     {
         return NULL;
@@ -163,6 +167,7 @@ private:
 };
 typedef const CFX_ByteStringC& FX_BSTR;
 #define FX_BSTRC(str) CFX_ByteStringC(str, sizeof str-1)
+#define FXBSTR_ID(c1, c2, c3, c4) ((c1 << 24) | (c2 << 16) | (c3 << 8) | (c4))
 struct CFX_StringData {
 
     long		m_nRefs;
