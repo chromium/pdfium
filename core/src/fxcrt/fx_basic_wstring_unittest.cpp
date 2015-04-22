@@ -66,3 +66,43 @@ TEST(fxcrt, WideStringUTF16LE_Encode) {
         << " for case number " << i;
   }
 }
+
+TEST(fxcrt, WideStringCOperatorSubscript) {
+    // CFX_WideStringC includes the NUL terminator for non-empty strings.
+    CFX_WideStringC abc(L"abc");
+    EXPECT_EQ(L'a', abc[0]);
+    EXPECT_EQ(L'b', abc[1]);
+    EXPECT_EQ(L'c', abc[2]);
+    EXPECT_EQ(L'\0', abc[3]);
+}
+
+TEST(fxcrt, WideStringCOperatorLT) {
+    CFX_WideStringC empty;
+    CFX_WideStringC a(L"a");
+    CFX_WideStringC abc(L"\x0110qq");  // Comes before despite endianness.
+    CFX_WideStringC def(L"\x1001qq");  // Comes after despite endianness.
+
+    EXPECT_FALSE(empty < empty);
+    EXPECT_FALSE(a < a);
+    EXPECT_FALSE(abc < abc);
+    EXPECT_FALSE(def < def);
+
+    EXPECT_TRUE(empty < a);
+    EXPECT_FALSE(a < empty);
+
+    EXPECT_TRUE(empty < abc);
+    EXPECT_FALSE(abc < empty);
+
+    EXPECT_TRUE(empty < def);
+    EXPECT_FALSE(def < empty);
+
+    EXPECT_TRUE(a < abc);
+    EXPECT_FALSE(abc < a);
+
+    EXPECT_TRUE(a < def);
+    EXPECT_FALSE(def < a);
+
+    EXPECT_TRUE(abc < def);
+    EXPECT_FALSE(def < abc);
+}
+

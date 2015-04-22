@@ -441,7 +441,7 @@ inline CFX_ByteString operator + (FX_BSTR str1, const CFX_ByteString& str2)
 {
     return CFX_ByteString(str1, str2);
 }
-class CFX_WideStringC 
+class CFX_WideStringC
 {
 public:
     typedef FX_WCHAR value_type;
@@ -563,13 +563,23 @@ public:
         }
         return CFX_WideStringC(m_Ptr + m_Length - count, count);
     }
+
+    const FX_WCHAR& operator[] (size_t index) const
+    {
+        return m_Ptr[index];
+    }
+
+    bool operator< (const CFX_WideStringC& that) const
+    {
+        int result = wmemcmp(m_Ptr, that.m_Ptr, std::min(m_Length, that.m_Length));
+        return result < 0 || (result == 0 && m_Length < that.m_Length);
+     }
+
 protected:
-
     FX_LPCWSTR		m_Ptr;
-
     FX_STRSIZE		m_Length;
-private:
 
+private:
     void*			operator new (size_t) throw()
     {
         return NULL;
