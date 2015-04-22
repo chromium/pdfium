@@ -654,6 +654,11 @@ public:
 
     const CFX_WideString&	operator += (const CFX_WideStringC& str);
 
+    bool operator< (const CFX_WideString& str) const {
+        int result = wmemcmp(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
+        return result < 0 || (result == 0 && GetLength() < str.GetLength());
+    }
+
     FX_WCHAR				GetAt(FX_STRSIZE nIndex) const
     {
         return m_pData ? m_pData->m_String[nIndex] : 0;
