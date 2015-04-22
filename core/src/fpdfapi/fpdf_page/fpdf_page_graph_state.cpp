@@ -427,7 +427,7 @@ void CPDF_GeneralStateData::SetBlendMode(FX_BSTR blend_mode)
     if (blend_mode.GetLength() > 15) {
         return;
     }
-    FXSYS_memcpy32(m_BlendMode, (FX_LPCBYTE)blend_mode, blend_mode.GetLength());
+    FXSYS_memcpy32(m_BlendMode, blend_mode.GetPtr(), blend_mode.GetLength());
     m_BlendMode[blend_mode.GetLength()] = 0;
     m_BlendType = ::GetBlendType(blend_mode);
 }

@@ -2562,7 +2562,7 @@ FX_BOOL CPDF_SyntaxParser::SearchWord(FX_BSTR tag, FX_BOOL bWholeWord, FX_BOOL b
     if (!bForward) {
         offset = taglen - 1;
     }
-    FX_LPCBYTE tag_data = tag;
+    FX_LPCBYTE tag_data = tag.GetPtr();
     FX_BYTE byte;
     while (1) {
         if (bForward) {
@@ -2599,7 +2599,7 @@ FX_BOOL CPDF_SyntaxParser::SearchWord(FX_BSTR tag, FX_BOOL bWholeWord, FX_BOOL b
                 }
             }
             FX_FILESIZE startpos = bForward ? pos - taglen + 1 : pos;
-            if (!bWholeWord || IsWholeWord(startpos, limit, tag, taglen)) {
+            if (!bWholeWord || IsWholeWord(startpos, limit, tag.GetPtr(), taglen)) {
                 m_Pos = startpos;
                 return TRUE;
             }

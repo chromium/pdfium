@@ -1046,7 +1046,7 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments)
             return;
         }
         pStream->SetCodePage(FX_CODEPAGE_UTF8);
-        pStream->WriteData(bsXMLHeader, bsXMLHeader.GetLength());
+        pStream->WriteData(bsXMLHeader.GetPtr(), bsXMLHeader.GetLength());
         XFA_DataExporter_RegenerateFormFile(this, pStream, NULL, TRUE);
         FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), CFX_ByteStringC(pMemoryStream->GetBuffer(), pMemoryStream->GetSize()));
         pStream->Release();
@@ -1072,7 +1072,7 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments)
             IFX_Stream *pStream = IFX_Stream::CreateStream((IFX_FileWrite*)pMemoryStream, FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
             if (pStream) {
                 pStream->SetCodePage(FX_CODEPAGE_UTF8);
-                pStream->WriteData(bsXMLHeader, bsXMLHeader.GetLength());
+                pStream->WriteData(bsXMLHeader.GetPtr(), bsXMLHeader.GetLength());
                 pElement->SaveXMLNode(pStream);
                 FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), CFX_ByteStringC(pMemoryStream->GetBuffer(), pMemoryStream->GetSize()));
                 pStream->Release();

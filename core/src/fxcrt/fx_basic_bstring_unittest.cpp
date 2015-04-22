@@ -6,6 +6,45 @@
 #include "../../../testing/fx_string_testhelpers.h"
 #include "../../include/fxcrt/fx_basic.h"
 
+TEST(fxcrt, ByteStringOperatorSubscript) {
+    // CFX_ByteString includes the NUL terminator for non-empty strings.
+    CFX_ByteString abc("abc");
+    EXPECT_EQ('a', abc[0]);
+    EXPECT_EQ('b', abc[1]);
+    EXPECT_EQ('c', abc[2]);
+    EXPECT_EQ(0, abc[3]);
+}
+
+TEST(fxcrt, ByteStringOperatorLT) {
+    CFX_ByteString empty;
+    CFX_ByteString a("a");
+    CFX_ByteString abc("abc");
+    CFX_ByteString def("def");
+
+    EXPECT_FALSE(empty < empty);
+    EXPECT_FALSE(a < a);
+    EXPECT_FALSE(abc < abc);
+    EXPECT_FALSE(def < def);
+
+    EXPECT_TRUE(empty < a);
+    EXPECT_FALSE(a < empty);
+
+    EXPECT_TRUE(empty < abc);
+    EXPECT_FALSE(abc < empty);
+
+    EXPECT_TRUE(empty < def);
+    EXPECT_FALSE(def < empty);
+
+    EXPECT_TRUE(a < abc);
+    EXPECT_FALSE(abc < a);
+
+    EXPECT_TRUE(a < def);
+    EXPECT_FALSE(def < a);
+
+    EXPECT_TRUE(abc < def);
+    EXPECT_FALSE(def < abc);
+}
+
 TEST(fxcrt, ByteStringCNull) {
   CFX_ByteStringC null_string;
   EXPECT_EQ(null_string.GetPtr(), nullptr);
@@ -189,4 +228,43 @@ TEST(fxcrt, ByteStringCGetAt) {
   EXPECT_EQ('b', embedded_nul_string.GetAt(1));
   EXPECT_EQ('\0', embedded_nul_string.GetAt(2));
   EXPECT_EQ('c', embedded_nul_string.GetAt(3));
+}
+
+TEST(fxcrt, ByteStringCOperatorSubscript) {
+    // CFX_ByteStringC includes the NUL terminator for non-empty strings.
+    CFX_ByteStringC abc("abc");
+    EXPECT_EQ('a', abc[0]);
+    EXPECT_EQ('b', abc[1]);
+    EXPECT_EQ('c', abc[2]);
+    EXPECT_EQ(0, abc[3]);
+}
+
+TEST(fxcrt, ByteStringCOperatorLT) {
+    CFX_ByteStringC empty;
+    CFX_ByteStringC a("a");
+    CFX_ByteStringC abc("abc");
+    CFX_ByteStringC def("def");
+
+    EXPECT_FALSE(empty < empty);
+    EXPECT_FALSE(a < a);
+    EXPECT_FALSE(abc < abc);
+    EXPECT_FALSE(def < def);
+
+    EXPECT_TRUE(empty < a);
+    EXPECT_FALSE(a < empty);
+
+    EXPECT_TRUE(empty < abc);
+    EXPECT_FALSE(abc < empty);
+
+    EXPECT_TRUE(empty < def);
+    EXPECT_FALSE(def < empty);
+
+    EXPECT_TRUE(a < abc);
+    EXPECT_FALSE(abc < a);
+
+    EXPECT_TRUE(a < def);
+    EXPECT_FALSE(def < a);
+
+    EXPECT_TRUE(abc < def);
+    EXPECT_FALSE(def < abc);
 }
