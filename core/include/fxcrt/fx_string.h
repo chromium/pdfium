@@ -7,6 +7,8 @@
 #ifndef _FX_STRING_H_
 #define _FX_STRING_H_
 
+#include <algorithm>
+
 #include "fx_memory.h"
 
 class CFX_ByteStringC;
@@ -259,6 +261,12 @@ public:
     bool					operator != (const CFX_ByteString& str) const
     {
         return !operator==(str);
+    }
+
+    bool operator< (const CFX_ByteString& str) const
+    {
+        int result = FXSYS_memcmp32(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
+        return result < 0 || (result == 0 && GetLength() < str.GetLength());
     }
 
     void					Empty();
