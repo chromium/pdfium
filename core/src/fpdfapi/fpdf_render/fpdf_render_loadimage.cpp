@@ -238,7 +238,7 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     if (m_bColorKey) {
         m_bpp = 32;
         m_AlphaFlag = 2;
-        FX_SAFE_DWORD pitch = CalculatePitch32(m_bpp, m_Width);
+        pitch = CalculatePitch32(m_bpp, m_Width);
         if (!pitch.IsValid()) {
             return FALSE;
         }
@@ -282,7 +282,7 @@ int	CPDF_DIBSource::ContinueToLoadMask()
     if (m_bColorKey) {
         m_bpp = 32;
         m_AlphaFlag = 2;
-        FX_SAFE_DWORD pitch = CalculatePitch32(m_bpp, m_Width);
+        pitch = CalculatePitch32(m_bpp, m_Width);
         if (!pitch.IsValid()) {
             return 0;
         }
