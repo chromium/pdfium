@@ -39,16 +39,16 @@ public:
 	void Detach();
 
 
-	operator int() const;
-	operator bool() const;
-	operator double() const;
-	operator float() const;
-	operator CJS_Object*() const;
-	operator v8::Handle<v8::Object>() const;
-	operator v8::Handle<v8::Array>() const;
-	operator CFX_WideString() const;
-	operator CFX_ByteString() const;
-	v8::Handle<v8::Value> ToJSValue();
+	int ToInt() const;
+	bool ToBool() const;
+	double ToDouble() const;
+	float  ToFloat() const;
+	CJS_Object* ToCJSObject() const;
+	CFX_WideString ToCFXWideString() const;
+	CFX_ByteString ToCFXByteString() const;
+	v8::Handle<v8::Object> ToV8Object() const;
+	v8::Handle<v8::Array> ToV8Array() const;
+	v8::Handle<v8::Value> ToV8Value() const;
 
 	void operator = (int iValue);
 	void operator = (bool bValue);

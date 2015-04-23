@@ -352,7 +352,7 @@ FX_BOOL event::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 	CFX_WideString & val = pEvent->Value();
 	if (vp.IsSetting())
 	{
-		val = vp;
+		vp >> val;
 	}
 	else
 	{

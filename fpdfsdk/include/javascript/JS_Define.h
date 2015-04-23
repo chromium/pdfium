@@ -137,7 +137,7 @@ void JSMethod(const char* method_name_string,
       JS_Error(isolate, JSFormatErrorString(class_name_string, method_name_string, sError));
     return;
   }
-  info.GetReturnValue().Set(valueRes.ToJSValue());
+  info.GetReturnValue().Set(valueRes.ToV8Value());
 }
 
 #define JS_STATIC_METHOD(method_name, class_name) \
@@ -404,7 +404,7 @@ void JSGlobalFunc(const char *func_name_string,
       JS_Error(isolate, JSFormatErrorString(func_name_string, nullptr, sError));
     return;
   }
-  info.GetReturnValue().Set(valueRes.ToJSValue());
+  info.GetReturnValue().Set(valueRes.ToV8Value());
 }
 
 #define JS_STATIC_GLOBAL_FUN(fun_name) \
@@ -452,7 +452,7 @@ for (int i=0; i<size; i++) array.SetElement(i,CJS_Value(pRuntime,ArrayContent[i]
 \
 CJS_PropValue prop(pRuntime);\
 prop << array;\
-if (JS_DefineGlobalConst(pRuntime, (const wchar_t*)ArrayName, prop.ToJSValue()) < 0)\
+if (JS_DefineGlobalConst(pRuntime, (const wchar_t*)ArrayName, prop.ToV8Value()) < 0)\
 	return -1
 
 /* ============================================================ */
