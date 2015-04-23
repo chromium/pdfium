@@ -8008,14 +8008,18 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
         l_img_comp_dest = p_output_image->comps;
 
         for (i=0; i<l_image_src->numcomps; i++) {
-
                 /* Allocate output component buffer if necessary */
                 if (!l_img_comp_dest->data) {
-
-                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc(l_img_comp_dest->w * l_img_comp_dest->h, sizeof(OPJ_INT32));
-                        if (! l_img_comp_dest->data) {
-                                return OPJ_FALSE;
-                        }
+                    OPJ_UINT32 width = l_img_comp_dest->w;
+                    OPJ_UINT32 height = l_img_comp_dest->h;
+                    const OPJ_UINT32 MAX_SIZE = UINT32_MAX / sizeof(OPJ_INT32);
+                    if (height == 0 || width > MAX_SIZE / height) {
+                        return OPJ_FALSE;
+                    } 
+                    l_img_comp_dest->data = (OPJ_INT32*) opj_calloc(width * height, sizeof(OPJ_INT32));
+                    if (!l_img_comp_dest->data) {
+                        return OPJ_FALSE;
+                    }
                 }
 
                 /* Copy info from decoded comp image to output image */
