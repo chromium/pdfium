@@ -85,7 +85,7 @@ void CJS_Value::Attach(v8::Handle<v8::Value> pValue,FXJSVALUETYPE t)
 void CJS_Value::Attach(CJS_Value *pValue)
 {
 	if (pValue)
-		Attach(pValue->ToJSValue(),pValue->GetType());
+		Attach(pValue->ToV8Value(), pValue->GetType());
 }
 
 void CJS_Value::Detach()
@@ -96,63 +96,53 @@ void CJS_Value::Detach()
 
 /* ---------------------------------------------------------------------------------------- */
 
-CJS_Value::operator int() const
+int CJS_Value::ToInt() const
 {
-
 	return JS_ToInt32(m_pValue);
-
 }
 
-CJS_Value::operator bool() const
+bool CJS_Value::ToBool() const
 {
-
 	return JS_ToBoolean(m_pValue);
-	
 }
 
-CJS_Value::operator double() const
+double CJS_Value::ToDouble() const
 {
-
 	return JS_ToNumber(m_pValue);
-	
 }
 
-CJS_Value::operator float() const
+float CJS_Value::ToFloat() const
 {
-
-	return (float)JS_ToNumber(m_pValue);
-
+	return (float)ToDouble();
 }
 
-CJS_Value::operator CJS_Object *() const
+CJS_Object* CJS_Value::ToCJSObject() const
 {
-
 	v8::Handle<v8::Object>	pObj = JS_ToObject(m_pValue);
 	return (CJS_Object*)JS_GetPrivate(m_isolate, pObj);
 }
 
-CJS_Value::operator v8::Handle<v8::Object>() const
+v8::Handle<v8::Object> CJS_Value::ToV8Object() const
 {
 	return JS_ToObject(m_pValue);
 }
 
-CJS_Value::operator CFX_WideString() const
+CFX_WideString CJS_Value::ToCFXWideString() const
 {
 	return JS_ToString(m_pValue);
 }
 
-CJS_Value::operator CFX_ByteString() const
+CFX_ByteString CJS_Value::ToCFXByteString() const
 {
-	return CFX_ByteString::FromUnicode(operator CFX_WideString());
+	return CFX_ByteString::FromUnicode(ToCFXWideString());
 }
 
-v8::Handle<v8::Value> CJS_Value::ToJSValue()
+v8::Handle<v8::Value> CJS_Value::ToV8Value() const
 {
 	return m_pValue;
 }
 
-
-CJS_Value::operator v8::Handle<v8::Array>() const
+v8::Handle<v8::Array>CJS_Value::ToV8Array() const
 {
 	if (IsArrayObject())
 		return v8::Handle<v8::Array>::Cast(JS_ToObject(m_pValue));
@@ -245,7 +235,7 @@ void CJS_Value::operator = (CJS_Date & date)
 
 void CJS_Value::operator = (CJS_Value value)
 {
-	m_pValue = value.ToJSValue();
+	m_pValue = value.ToV8Value();
 
 	m_eType = value.m_eType;
 }
@@ -342,7 +332,7 @@ void CJS_PropValue::operator <<(int iValue)
 void CJS_PropValue::operator >>(int & iValue) const
 {
 	ASSERT(m_bIsSetting);
-	iValue = CJS_Value::operator int();
+	iValue = CJS_Value::ToInt();
 }
 
 
@@ -355,8 +345,7 @@ void CJS_PropValue::operator <<(bool bValue)
 void CJS_PropValue::operator >>(bool& bValue) const
 {
 	ASSERT(m_bIsSetting);
-	bValue = CJS_Value::operator bool();
-
+	bValue = CJS_Value::ToBool();
 }
 
 void CJS_PropValue::operator <<(double dValue)
@@ -368,7 +357,7 @@ void CJS_PropValue::operator <<(double dValue)
 void CJS_PropValue::operator >>(double& dValue) const
 {
 	ASSERT(m_bIsSetting);
-	dValue = CJS_Value::operator double();
+	dValue = CJS_Value::ToDouble();
 }
 
 void CJS_PropValue::operator <<(CJS_Object* pObj)
@@ -380,7 +369,7 @@ void CJS_PropValue::operator <<(CJS_Object* pObj)
 void CJS_PropValue::operator >>(CJS_Object*& ppObj) const
 {
 	ASSERT(m_bIsSetting);
-	ppObj = CJS_Value::operator CJS_Object *();
+	ppObj = CJS_Value::ToCJSObject();
 }
 
 void CJS_PropValue::operator <<(CJS_Document* pJsDoc)
@@ -392,7 +381,7 @@ void CJS_PropValue::operator <<(CJS_Document* pJsDoc)
 void CJS_PropValue::operator >>(CJS_Document*& ppJsDoc) const
 {
 	ASSERT(m_bIsSetting);
-	ppJsDoc = static_cast<CJS_Document*>(CJS_Value::operator CJS_Object *());
+	ppJsDoc = static_cast<CJS_Document*>(CJS_Value::ToCJSObject());
 }
 
 void CJS_PropValue::operator<<(JSFXObject pObj)
@@ -404,7 +393,7 @@ void CJS_PropValue::operator<<(JSFXObject pObj)
 void CJS_PropValue::operator>>(JSFXObject &ppObj) const
 {
 	ASSERT(m_bIsSetting);
-	ppObj = CJS_Value::operator JSFXObject ();
+	ppObj = CJS_Value::ToV8Object();
 }
 
 
@@ -426,7 +415,7 @@ void CJS_PropValue::operator <<(CFX_ByteString string)
 void CJS_PropValue::operator >>(CFX_ByteString &string) const
 {
 	ASSERT(m_bIsSetting);
-	string = CJS_Value::operator CFX_ByteString();
+	string = CJS_Value::ToCFXByteString();
 }
 
 void CJS_PropValue::operator <<(FX_LPCWSTR c_string)
@@ -438,7 +427,7 @@ void CJS_PropValue::operator <<(FX_LPCWSTR c_string)
 void CJS_PropValue::operator >>(CFX_WideString &wide_string) const
 {
 	ASSERT(m_bIsSetting);
-	wide_string = CJS_Value::operator CFX_WideString();
+	wide_string = CJS_Value::ToCFXWideString();
 }
 
 void CJS_PropValue::operator <<(CFX_WideString wide_string)
@@ -508,7 +497,7 @@ void CJS_Array::SetElement(unsigned index,CJS_Value value)
 	if (m_pArray.IsEmpty())
 		m_pArray = JS_NewArray(m_isolate);
 
-	JS_PutArrayElement(m_pArray,index,value.ToJSValue(),value.GetType());
+	JS_PutArrayElement(m_pArray, index, value.ToV8Value(), value.GetType());
 }
 
 int CJS_Array::GetLength()

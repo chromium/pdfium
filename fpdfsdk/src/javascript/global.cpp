@@ -175,7 +175,7 @@ FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS
 			{
 				bool bData;
 				vp >> bData;
-				return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_BOOLEAN, 0, (bool)vp, "", v8::Handle<v8::Object>(), FALSE);
+				return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_BOOLEAN, 0, bData, "", v8::Handle<v8::Object>(), FALSE);
 			}
 		case VT_string:
 			{
@@ -185,20 +185,9 @@ FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS
 			}
 		case VT_object:
 			{
-				JSObject pData = (JSObject)vp;
+				JSObject pData;
+				vp >> pData;
 				return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_OBJECT, 0, false, "", pData, FALSE);
-// 				else
-// 				{
-// 					if (vp.IsArrayObject())
-// 					{
-// 						CJS_Array array;
-// 						vp.ConvertToArray(array);
-// 						return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_OBJECT, 0, false, "", 
-// 							(Dobject*)(Darray*)array, FALSE);
-// 					}
-// 					else
-// 						return FALSE;
-// 				}
 			}
 		case VT_null:
 			{
@@ -279,14 +268,14 @@ FX_BOOL global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters&
 		return FALSE;
 	}
 
-	CFX_ByteString sName = params[0];
+	CFX_ByteString sName = params[0].ToCFXByteString();
 
 	js_global_data* pData = NULL;
 	if (m_mapGlobal.Lookup(sName, (FX_LPVOID&)pData))
 	{
 		if (pData && !pData->bDeleted)
 		{
-			pData->bPersistent = (bool)params[1];
+			pData->bPersistent = params[1].ToBool();
 			return TRUE;
 		}
 	}
@@ -435,7 +424,7 @@ void global_alternate::ObjectToArray(v8::Handle<v8::Object> pObj, CJS_GlobalVari
 			break;
 		case VT_string:
 			{
-				CFX_ByteString sValue = CJS_Value(isolate, v, VT_string);
+				CFX_ByteString sValue = CJS_Value(isolate, v, VT_string).ToCFXByteString();
 				CJS_KeyValue* pObjElement = new CJS_KeyValue;
 				pObjElement->nType = JS_GLOBALDATA_TYPE_STRING;
 				pObjElement->sKey = sKey;

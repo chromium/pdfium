@@ -104,9 +104,8 @@ void color::ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color)
 	if (nArrayLen < 1) return;
 
 	CJS_Value value(array.GetIsolate());
-	CFX_ByteString sSpace;
 	array.GetElement(0, value);
-	sSpace = value;
+	CFX_ByteString sSpace = value.ToCFXByteString();
 
 	double d1 = 0;
 	double d2 = 0;
@@ -116,25 +115,25 @@ void color::ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color)
 	if (nArrayLen > 1)
 	{
 		array.GetElement(1, value);
-		d1 = value;
+		d1 = value.ToDouble();
 	}
 
 	if (nArrayLen > 2)
 	{
 		array.GetElement(2, value);
-		d2 = value;
+		d2 = value.ToDouble();
 	}
 
 	if (nArrayLen > 3)
 	{
 		array.GetElement(3, value);
-		d3 = value;
+		d3 = value.ToDouble();
 	}
 
 	if (nArrayLen > 4)
 	{
 		array.GetElement(4, value);
-		d4 = value;
+		d4 = value.ToDouble();
 	}
 
 	if (sSpace == "T")
@@ -199,10 +198,9 @@ FX_BOOL color::convert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Valu
 	CPWL_Color crSource;
 	ConvertArrayToPWLColor(aSource, crSource);
 
-	CFX_ByteString sDestSpace = params[1];
-
+	CFX_ByteString sDestSpace = params[1].ToCFXByteString();
 	int nColorType = COLORTYPE_TRANSPARENT;
-	
+
 	if (sDestSpace == "T")
 	{
 		nColorType = COLORTYPE_TRANSPARENT;
