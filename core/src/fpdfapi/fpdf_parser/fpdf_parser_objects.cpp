@@ -7,6 +7,9 @@
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fxcrt/fx_string.h"
 
+//static
+int CPDF_Object::s_nCurRefDepth = 0;
+
 void CPDF_Object::Release()
 {
     if (m_ObjNum) {
@@ -107,6 +110,10 @@ FX_FLOAT CPDF_Object::GetNumber16() const
 }
 int CPDF_Object::GetInteger() const
 {
+    CFX_AutoRestorer<int> restorer(&s_nCurRefDepth);
+    if (++s_nCurRefDepth > OBJECT_REF_MAX_DEPTH) {
+        return 0;
+    }
     switch (m_Type) {
         case PDFOBJ_BOOLEAN:
             return ((CPDF_Boolean*)this)->m_bValue;
