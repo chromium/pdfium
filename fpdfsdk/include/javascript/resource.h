@@ -28,6 +28,8 @@ class CJS_Context;
 #define IDS_STRING_JSPRINT2             25633
 #define IDS_STRING_JSNOGLOBAL           25635
 #define IDS_STRING_JSREADONLY           25636
+#define IDS_STRING_JSTYPEERROR          25637
+#define IDS_STRING_JSVALUEERROR         25638
 
 CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id);
 CFX_WideString JSFormatErrorString(const char* class_name,

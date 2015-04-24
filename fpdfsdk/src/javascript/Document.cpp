@@ -98,46 +98,46 @@ BEGIN_JS_STATIC_PROP(CJS_Document)
 END_JS_STATIC_PROP()
 
 BEGIN_JS_STATIC_METHOD(CJS_Document)
-	JS_STATIC_METHOD_ENTRY(addAnnot,0)
-	JS_STATIC_METHOD_ENTRY(addField, 4)
-	JS_STATIC_METHOD_ENTRY(addLink, 0)
-	JS_STATIC_METHOD_ENTRY(addIcon, 0)
-	JS_STATIC_METHOD_ENTRY(calculateNow, 0)
-	JS_STATIC_METHOD_ENTRY(closeDoc, 0)
-	JS_STATIC_METHOD_ENTRY(createDataObject, 0)
-	JS_STATIC_METHOD_ENTRY(deletePages, 2)
-	JS_STATIC_METHOD_ENTRY(exportAsText, 3)
-	JS_STATIC_METHOD_ENTRY(exportAsFDF, 6)
-	JS_STATIC_METHOD_ENTRY(exportAsXFDF, 5)
-	JS_STATIC_METHOD_ENTRY(extractPages, 3)
-	JS_STATIC_METHOD_ENTRY(getAnnot, 0)
-	JS_STATIC_METHOD_ENTRY(getAnnots, 2)
-	JS_STATIC_METHOD_ENTRY(getAnnot3D, 2)
-	JS_STATIC_METHOD_ENTRY(getAnnots3D, 1)
-	JS_STATIC_METHOD_ENTRY(getField, 1)
-	JS_STATIC_METHOD_ENTRY(getIcon, 0)
-	JS_STATIC_METHOD_ENTRY(getLinks, 0)
-	JS_STATIC_METHOD_ENTRY(getNthFieldName, 1)
-	JS_STATIC_METHOD_ENTRY(getOCGs, 0)
-	JS_STATIC_METHOD_ENTRY(getPageBox, 0)
-	JS_STATIC_METHOD_ENTRY(getPageNthWord, 3)
-	JS_STATIC_METHOD_ENTRY(getPageNthWordQuads, 2)
-	JS_STATIC_METHOD_ENTRY(getPageNumWords, 1)
-	JS_STATIC_METHOD_ENTRY(getPrintParams, 0)
-	JS_STATIC_METHOD_ENTRY(getURL, 2)
-	JS_STATIC_METHOD_ENTRY(importAnFDF, 1)
-	JS_STATIC_METHOD_ENTRY(importAnXFDF, 1)
-	JS_STATIC_METHOD_ENTRY(importTextData, 2)
-	JS_STATIC_METHOD_ENTRY(insertPages, 4)
-	JS_STATIC_METHOD_ENTRY(mailForm, 6)
-	JS_STATIC_METHOD_ENTRY(print, 9)
-	JS_STATIC_METHOD_ENTRY(removeField, 1)
-	JS_STATIC_METHOD_ENTRY(replacePages, 4)
-	JS_STATIC_METHOD_ENTRY(resetForm, 1)
-	JS_STATIC_METHOD_ENTRY(removeIcon, 0)
-	JS_STATIC_METHOD_ENTRY(saveAs, 5)
-	JS_STATIC_METHOD_ENTRY(submitForm, 23)
-	JS_STATIC_METHOD_ENTRY(mailDoc, 0)
+	JS_STATIC_METHOD_ENTRY(addAnnot)
+	JS_STATIC_METHOD_ENTRY(addField)
+	JS_STATIC_METHOD_ENTRY(addLink)
+	JS_STATIC_METHOD_ENTRY(addIcon)
+	JS_STATIC_METHOD_ENTRY(calculateNow)
+	JS_STATIC_METHOD_ENTRY(closeDoc)
+	JS_STATIC_METHOD_ENTRY(createDataObject)
+	JS_STATIC_METHOD_ENTRY(deletePages)
+	JS_STATIC_METHOD_ENTRY(exportAsText)
+	JS_STATIC_METHOD_ENTRY(exportAsFDF)
+	JS_STATIC_METHOD_ENTRY(exportAsXFDF)
+	JS_STATIC_METHOD_ENTRY(extractPages)
+	JS_STATIC_METHOD_ENTRY(getAnnot)
+	JS_STATIC_METHOD_ENTRY(getAnnots)
+	JS_STATIC_METHOD_ENTRY(getAnnot3D)
+	JS_STATIC_METHOD_ENTRY(getAnnots3D)
+	JS_STATIC_METHOD_ENTRY(getField)
+	JS_STATIC_METHOD_ENTRY(getIcon)
+	JS_STATIC_METHOD_ENTRY(getLinks)
+	JS_STATIC_METHOD_ENTRY(getNthFieldName)
+	JS_STATIC_METHOD_ENTRY(getOCGs)
+	JS_STATIC_METHOD_ENTRY(getPageBox)
+	JS_STATIC_METHOD_ENTRY(getPageNthWord)
+	JS_STATIC_METHOD_ENTRY(getPageNthWordQuads)
+	JS_STATIC_METHOD_ENTRY(getPageNumWords)
+	JS_STATIC_METHOD_ENTRY(getPrintParams)
+	JS_STATIC_METHOD_ENTRY(getURL)
+	JS_STATIC_METHOD_ENTRY(importAnFDF)
+	JS_STATIC_METHOD_ENTRY(importAnXFDF)
+	JS_STATIC_METHOD_ENTRY(importTextData)
+	JS_STATIC_METHOD_ENTRY(insertPages)
+	JS_STATIC_METHOD_ENTRY(mailForm)
+	JS_STATIC_METHOD_ENTRY(print)
+	JS_STATIC_METHOD_ENTRY(removeField)
+	JS_STATIC_METHOD_ENTRY(replacePages)
+	JS_STATIC_METHOD_ENTRY(resetForm)
+	JS_STATIC_METHOD_ENTRY(removeIcon)
+	JS_STATIC_METHOD_ENTRY(saveAs)
+	JS_STATIC_METHOD_ENTRY(submitForm)
+	JS_STATIC_METHOD_ENTRY(mailDoc)
 END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_Document, Document)
@@ -321,58 +321,51 @@ FX_BOOL Document::exportAsXFDF(IFXJS_Context* cc, const CJS_Parameters& params, 
 
 FX_BOOL Document::getField(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
-	v8::Isolate* isolate = GetIsolate(cc);
-	ASSERT(m_pDocument != NULL);
-
-	if (params.size() < 1) return FALSE;
+	CJS_Context* pContext = (CJS_Context*)cc;
+	if (params.size() < 1) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+		return FALSE;
+	}
 
 	CFX_WideString wideName = params[0].ToCFXWideString();
 
 	CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
-	ASSERT(pInterForm != NULL);
-
 	CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-	ASSERT(pPDFForm != NULL);
-
 	if (pPDFForm->CountFields(wideName) <= 0)
 	{
 		vRet.SetNull();
 		return TRUE;
 	}
 
-	CJS_Context* pContext = (CJS_Context*)cc;
-	ASSERT(pContext != NULL);
 	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-	ASSERT(pRuntime != NULL);
+	JSFXObject pFieldObj = JS_NewFxDynamicObj(*pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"Field"));
 
-	JSFXObject  pFieldObj = JS_NewFxDynamicObj(*pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"Field"));
-
-	CJS_Field * pJSField = (CJS_Field*)JS_GetPrivate(isolate,pFieldObj);
-	ASSERT(pJSField != NULL);
-
-	Field * pField = (Field *)pJSField->GetEmbedObject();
-	ASSERT(pField != NULL);
-
+	v8::Isolate* isolate = GetIsolate(cc);
+	CJS_Field* pJSField = (CJS_Field*)JS_GetPrivate(isolate,pFieldObj);
+	Field* pField = (Field *)pJSField->GetEmbedObject();
 	pField->AttachField(this, wideName);
-	vRet = pJSField;
 
+	vRet = pJSField;
 	return TRUE;
 }
 
 //Gets the name of the nth field in the document
 FX_BOOL Document::getNthFieldName(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
-	ASSERT(m_pDocument != NULL);
+	CJS_Context* pContext = (CJS_Context*)cc;
+	if (params.size() != 1) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+		return FALSE;
+	}
 
-	int nIndex = params.size() > 0 ? params[0].ToInt() : -1;
-	if (nIndex == -1) return FALSE;
+	int nIndex = params[0].ToInt();
+	if (nIndex < 0) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
+		return FALSE;
+	}
 
 	CPDFSDK_InterForm* pInterForm = m_pDocument->GetInterForm();
-	ASSERT(pInterForm != NULL);
-
 	CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-	ASSERT(pPDFForm != NULL);
-
 	CPDF_FormField* pField = pPDFForm->GetField(nIndex);
 	if (!pField)
 		return FALSE;
@@ -523,11 +516,13 @@ FX_BOOL Document::removeField(IFXJS_Context* cc, const CJS_Parameters& params, C
 	if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
 		m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM))) return FALSE;
 
-	if (params.size() < 1)
-		return TRUE;
+	CJS_Context* pContext = (CJS_Context*)cc;
+	if (params.size() != 1) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+		return FALSE;
+	}
 
 	CFX_WideString sFieldName = params[0].ToCFXWideString();
-
 	CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
 	ASSERT(pInterForm != NULL);
 
@@ -641,11 +636,12 @@ FX_BOOL Document::saveAs(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Va
 FX_BOOL Document::submitForm(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	ASSERT(m_pDocument != NULL);
-
-//	if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS)) return FALSE;
-
+	CJS_Context* pContext = (CJS_Context*)cc;
 	int nSize = params.size();
-	if (nSize < 1) return FALSE;
+	if (nSize < 1) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+		return FALSE;
+	}
 
 	CFX_WideString strURL;
 	FX_BOOL bFDF = TRUE;
@@ -1457,22 +1453,28 @@ void IconTree::DeleteIconElement(CFX_WideString swIconName)
 
 FX_BOOL Document::addIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
-	if (params.size() != 2)return FALSE;
-
 	CJS_Context* pContext = (CJS_Context*)cc;
-	ASSERT(pContext != NULL);
-	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-	ASSERT(pRuntime != NULL);
+	if (params.size() != 2) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+		return FALSE;
+	}
 
 	CFX_WideString swIconName = params[0].ToCFXWideString();
-
 	JSFXObject pJSIcon = params[1].ToV8Object();
-	if (JS_GetObjDefnID(pJSIcon) != JS_GetObjDefnID(*pRuntime, L"Icon")) return FALSE;
+
+	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+	if (JS_GetObjDefnID(pJSIcon) != JS_GetObjDefnID(*pRuntime, L"Icon")) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
+		return FALSE;
+	}
 
 	CJS_EmbedObj* pEmbedObj = params[1].ToCJSObject()->GetEmbedObject();
-	if (!pEmbedObj)return FALSE;
-	Icon* pIcon = (Icon*)pEmbedObj;
+	if (!pEmbedObj) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
+		return FALSE;
+	}
 
+	Icon* pIcon = (Icon*)pEmbedObj;
 	if (!m_pIconTree)
 		m_pIconTree = new IconTree();
 
@@ -1529,13 +1531,17 @@ FX_BOOL Document::icons(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 
 FX_BOOL Document::getIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
-	if (params.size() != 1)return FALSE;
+	CJS_Context* pContext = (CJS_Context *)cc;
+	if (params.size() != 1) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+		return FALSE;
+	}
+
 	if(!m_pIconTree)
 		return FALSE;
 	CFX_WideString swIconName = params[0].ToCFXWideString();
 	int iIconCounts = m_pIconTree->GetLength();
 
-	CJS_Context* pContext = (CJS_Context *)cc;
 	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 
 	for (int i = 0; i < iIconCounts; i++)
@@ -1565,7 +1571,12 @@ FX_BOOL Document::getIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_V
 
 FX_BOOL Document::removeIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
-	if (params.size() != 1)return FALSE;
+	CJS_Context* pContext = (CJS_Context *)cc;
+	if (params.size() != 1) {
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+		return FALSE;
+	}
+
 	if(!m_pIconTree)
 		return FALSE;
 	CFX_WideString swIconName = params[0].ToCFXWideString();
@@ -1615,10 +1626,10 @@ FX_BOOL Document::getPageNthWord(IFXJS_Context* cc, const CJS_Parameters& params
 	CPDF_Document* pDocument = m_pDocument->GetDocument()->GetPDFDoc();
 	if (!pDocument) return FALSE;
 
+	CJS_Context* pContext = static_cast<CJS_Context*>(cc);
 	if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
 	{
-		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
 		return FALSE;
 	}
 
@@ -1685,10 +1696,10 @@ FX_BOOL Document::getPageNumWords(IFXJS_Context* cc, const CJS_Parameters& param
 	CPDF_Document* pDocument = m_pDocument->GetDocument()->GetPDFDoc();
 	ASSERT(pDocument != NULL);
 
+	CJS_Context* pContext = static_cast<CJS_Context*>(cc);
 	if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
 	{
-		CJS_Context* pContext = static_cast<CJS_Context*>(cc);
-		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
 		return FALSE;
 	}
 
@@ -1724,13 +1735,12 @@ FX_BOOL Document::getPageNumWords(IFXJS_Context* cc, const CJS_Parameters& param
 FX_BOOL Document::getPrintParams(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
-	ASSERT(pContext != NULL);
 	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-	ASSERT(pRuntime != NULL);
 	JSFXObject pRetObj = JS_NewFxDynamicObj(*pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"PrintParamsObj"));
-	//not implemented yet.
-	vRet = pRetObj;
 
+	// Not implemented yet.
+
+	vRet = pRetObj;
 	return TRUE;
 }
 
