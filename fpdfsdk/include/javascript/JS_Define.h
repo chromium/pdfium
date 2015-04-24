@@ -32,7 +32,6 @@ struct JSMethodSpec
 {
 	const wchar_t* pName;
 	v8::FunctionCallback pMethodCall;
-	unsigned nParamNum;
 };
 
 /* ====================================== PUBLIC DEFINE SPEC ============================================== */
@@ -48,8 +47,8 @@ struct JSMethodSpec
 #define END_JS_STATIC_PROP() {0, 0, 0}};
 
 #define BEGIN_JS_STATIC_METHOD(js_class_name) JSMethodSpec js_class_name::JS_Class_Methods[] = {
-#define JS_STATIC_METHOD_ENTRY(method_name, nargs) {JS_WIDESTRING(method_name), method_name##_static, nargs},
-#define END_JS_STATIC_METHOD() {0, 0, 0}};
+#define JS_STATIC_METHOD_ENTRY(method_name) {JS_WIDESTRING(method_name), method_name##_static},
+#define END_JS_STATIC_METHOD() {0, 0}};
 
 /* ======================================== PROP CALLBACK ============================================ */
 
@@ -194,7 +193,7 @@ int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 		}\
 		for (int k=0, szk=sizeof(JS_Class_Methods)/sizeof(JSMethodSpec)-1; k<szk; k++)\
 		{\
-			if (JS_DefineObjMethod(pRuntime, nObjDefnID,JS_Class_Methods[k].pName, JS_Class_Methods[k].pMethodCall, JS_Class_Methods[k].nParamNum) < 0) return -1;\
+			if (JS_DefineObjMethod(pRuntime, nObjDefnID,JS_Class_Methods[k].pName, JS_Class_Methods[k].pMethodCall) < 0) return -1;\
 		}\
 		return nObjDefnID;\
 	}\
@@ -372,7 +371,7 @@ int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 \
 		for (int k=0, szk=sizeof(JS_Class_Methods)/sizeof(JSMethodSpec)-1; k<szk; k++)\
 		{\
-			if (JS_DefineObjMethod(pRuntime, nObjDefnID,JS_Class_Methods[k].pName,JS_Class_Methods[k].pMethodCall,JS_Class_Methods[k].nParamNum)<0)return -1;\
+			if (JS_DefineObjMethod(pRuntime, nObjDefnID,JS_Class_Methods[k].pName,JS_Class_Methods[k].pMethodCall)<0)return -1;\
 		}\
 		if (JS_DefineObjAllProperties(pRuntime, nObjDefnID, js_class_name::queryprop_##js_class_name##_static, js_class_name::getprop_##js_class_name##_static,js_class_name::putprop_##js_class_name##_static,js_class_name::delprop_##js_class_name##_static)<0) return -1;\
 \
@@ -419,7 +418,7 @@ static int Init(IJS_Runtime* pRuntime)
 #define BEGIN_JS_STATIC_GLOBAL_FUN(js_class_name) \
 JSMethodSpec js_class_name::global_methods[] = {
 
-#define JS_STATIC_GLOBAL_FUN_ENTRY(method_name,nargs) JS_STATIC_METHOD_ENTRY(method_name,nargs)
+#define JS_STATIC_GLOBAL_FUN_ENTRY(method_name) JS_STATIC_METHOD_ENTRY(method_name)
 
 #define END_JS_STATIC_GLOBAL_FUN() END_JS_STATIC_METHOD()
 
@@ -430,8 +429,7 @@ int js_class_name::Init(IJS_Runtime* pRuntime)\
 	{\
 		if (JS_DefineGlobalMethod(pRuntime,\
 				js_class_name::global_methods[i].pName,\
-				js_class_name::global_methods[i].pMethodCall,\
-				js_class_name::global_methods[i].nParamNum\
+				js_class_name::global_methods[i].pMethodCall\
 				) < 0\
 			)return -1;\
 	}\

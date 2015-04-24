@@ -43,6 +43,10 @@ CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id)
         return L"Global value not found.";
     case IDS_STRING_JSREADONLY:
         return L"Cannot assign to readonly property.";
+    case IDS_STRING_JSTYPEERROR:
+        return L"Incorrect parameter type.";
+    case IDS_STRING_JSVALUEERROR:
+        return L"Incorrect parameter value.";
     default:
         return L"";
     }
