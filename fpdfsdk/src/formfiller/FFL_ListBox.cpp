@@ -76,11 +76,9 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView
 	CFFL_IFormFiller* pIFormFiller = m_pApp->GetIFormFiller();
 	pWnd->SetFillerNotify(pIFormFiller);
 
-	ASSERT(m_pWidget != NULL);
-	
 	for (FX_INT32 i=0,sz=m_pWidget->CountOptions(); i<sz; i++)
-		pWnd->AddString(m_pWidget->GetOptionLabel(i));
-	
+		pWnd->AddString(m_pWidget->GetOptionLabel(i).c_str());
+
 	if (pWnd->HasFlag(PLBS_MULTIPLESEL))
 	{
 		m_OriginSelections.RemoveAll();

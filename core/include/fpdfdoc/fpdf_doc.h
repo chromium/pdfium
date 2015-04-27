@@ -1162,7 +1162,7 @@ public:
 
     int						FindOption(CFX_WideString csOptLabel);
 
-    int						FindOptionValue(FX_LPCWSTR csOptValue, int iStartIndex = 0);
+    int						FindOptionValue(const CFX_WideString& csOptValue, int iStartIndex = 0);
 
 
 

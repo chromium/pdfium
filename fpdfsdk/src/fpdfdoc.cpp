@@ -11,7 +11,7 @@ static int THISMODULE = 0;
 
 static CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree, CPDF_Bookmark bookmark, const CFX_WideString& title)
 {
-	if (bookmark && bookmark.GetTitle().CompareNoCase(title) == 0) {
+	if (bookmark && bookmark.GetTitle().CompareNoCase(title.c_str()) == 0) {
 		// First check this item
 		return bookmark;
 	}

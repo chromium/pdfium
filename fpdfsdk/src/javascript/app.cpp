@@ -416,7 +416,7 @@ FX_BOOL app::alert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& v
 	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 	ASSERT(pRuntime != NULL);
 	pRuntime->BeginBlock();
-	vRet = MsgBox(pRuntime->GetReaderApp(), JSGetPageView(cc),swMsg,swTitle,iType,iIcon);
+	vRet = MsgBox(pRuntime->GetReaderApp(), JSGetPageView(cc), swMsg.c_str(), swTitle.c_str(), iType, iIcon);
 	pRuntime->EndBlock();
 
 	return TRUE;
@@ -455,24 +455,21 @@ FX_BOOL app::fs(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 
 FX_BOOL app::setInterval(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
+	CJS_Context* pContext = (CJS_Context*)cc;
 	if (params.size() > 2 || params.size() == 0)
 	{
-		sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPARAMERROR);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
 		return FALSE;
 	}
 
-	CJS_Context* pContext = (CJS_Context*)cc;
-	ASSERT(pContext != NULL);
-	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-	ASSERT(pRuntime != NULL);
-
-	CFX_WideString script = params.size() > 0 ?  (FX_LPCWSTR)(params[0].ToCFXWideString()) : L"";
+	CFX_WideString script = params.size() > 0 ?  params[0].ToCFXWideString() : L"";
 	if (script.IsEmpty())
 	{
-		sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSAFNUMBER_KEYSTROKE);
+		sError = JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE);
 		return TRUE;
 	}
 
+	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 	FX_DWORD dwInterval = params.size() > 1 ? params[1].ToInt() : 1000;
 
 	CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
@@ -515,7 +512,7 @@ FX_BOOL app::setTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 	ASSERT(pRuntime != NULL);
 
-	CFX_WideString script = params.size() > 0 ?  (FX_LPCWSTR)(params[0].ToCFXWideString()) : L"";
+	CFX_WideString script = params.size() > 0 ? params[0].ToCFXWideString() : L"";
 	if (script.IsEmpty())
 	{
 		sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSAFNUMBER_KEYSTROKE);
@@ -903,7 +900,8 @@ FX_BOOL app::response(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value
 		return FALSE;
 
 	memset(pBuff, 0, MAX_INPUT_BYTES + 2);
-	int nLengthBytes = pApp->JS_appResponse(swQuestion, swTitle, swDefault, swLabel, bPassWord, pBuff, MAX_INPUT_BYTES);
+	int nLengthBytes = pApp->JS_appResponse(swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(),
+                                            swLabel.c_str(), bPassWord, pBuff, MAX_INPUT_BYTES);
 	if (nLengthBytes <= 0)
 	{
 		vRet.SetNull();
@@ -913,7 +911,7 @@ FX_BOOL app::response(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value
 	if (nLengthBytes > MAX_INPUT_BYTES)
 		nLengthBytes = MAX_INPUT_BYTES;
 
-	vRet = CFX_WideString::FromUTF16LE((unsigned short*)pBuff, nLengthBytes / sizeof(unsigned short));
+	vRet = CFX_WideString::FromUTF16LE((unsigned short*)pBuff, nLengthBytes / sizeof(unsigned short)).c_str();
 	delete[] pBuff;
 	return TRUE;
 }

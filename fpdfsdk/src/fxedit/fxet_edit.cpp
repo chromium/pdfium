@@ -745,7 +745,7 @@ void CFXEU_Clear::Undo()
 	{
 		m_pEdit->SelectNone();
 		m_pEdit->SetCaret(m_wrSel.BeginPos);
-		m_pEdit->InsertText(m_swText, DEFAULT_CHARSET, NULL,NULL,FALSE,TRUE);
+		m_pEdit->InsertText(m_swText.c_str(), DEFAULT_CHARSET, NULL, NULL, FALSE, TRUE);
 		m_pEdit->SetSel(m_wrSel.BeginPos,m_wrSel.EndPos);
 	}
 }
@@ -833,7 +833,7 @@ void CFXEU_InsertText::Redo()
 	{
 		m_pEdit->SelectNone();
 		m_pEdit->SetCaret(m_wpOld);
-		m_pEdit->InsertText(m_swText, m_nCharset,&m_SecProps, &m_WordProps,FALSE,TRUE);
+		m_pEdit->InsertText(m_swText.c_str(), m_nCharset, &m_SecProps, &m_WordProps, FALSE, TRUE);
 	}
 }
 
