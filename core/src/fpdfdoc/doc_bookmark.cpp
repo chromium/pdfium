@@ -55,15 +55,13 @@ CFX_WideString CPDF_Bookmark::GetTitle() const
         return CFX_WideString();
     }
     CFX_WideString title = pString->GetUnicodeText();
-    FX_LPWSTR buf = title.LockBuffer();
     int len = title.GetLength();
+    FX_WCHAR buf[len];
     for (int i = 0; i < len; i++) {
-        if (buf[i] < 0x20) {
-            buf[i] = 0x20;
-        }
+        FX_WCHAR w = title[i];
+        buf[i] = w > 0x20 ? w : 0x20;
     }
-    title.ReleaseBuffer(len);
-    return title;
+    return CFX_WideString(buf, len);
 }
 CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const
 {
