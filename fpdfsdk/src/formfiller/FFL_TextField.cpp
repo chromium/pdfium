@@ -129,9 +129,8 @@ CPWL_Wnd* CFFL_TextField::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageVi
 			pWnd->SetLimitChar(nMaxLen);
 		}
 	}
-	
-	pWnd->SetText(swValue);
-	
+
+	pWnd->SetText(swValue.c_str());
 	return pWnd;
 }
 
@@ -251,7 +250,7 @@ void CFFL_TextField::SetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AA
 		{
 			pEdit->SetFocus();
 			pEdit->SetSel(fa.nSelStart, fa.nSelEnd);
-			pEdit->ReplaceSel(fa.sChange);
+			pEdit->ReplaceSel(fa.sChange.c_str());
 		}
 		break;
 	default:
@@ -292,7 +291,7 @@ void CFFL_TextField::RestoreState(CPDFSDK_PageView* pPageView)
 
 	if (CPWL_Edit* pWnd = (CPWL_Edit*)GetPDFWindow(pPageView, TRUE))
 	{
-		pWnd->SetText(m_State.sValue);
+		pWnd->SetText(m_State.sValue.c_str());
 		pWnd->SetSel(m_State.nStart, m_State.nEnd);
 	}
 }

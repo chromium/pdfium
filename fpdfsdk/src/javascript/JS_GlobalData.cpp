@@ -353,8 +353,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables()
 	FX_LPBYTE pBuffer = NULL;
 	FX_INT32 nLength = 0;
 
-	LoadFileBuffer(m_sFilePath, pBuffer, nLength);
-
+	LoadFileBuffer(m_sFilePath.c_str(), pBuffer, nLength);
 	CRYPT_ArcFourCryptBlock(pBuffer, nLength, JS_RC4KEY, sizeof(JS_RC4KEY));
 
 	if (pBuffer)
@@ -509,7 +508,7 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables()
 	sFile.AppendBlock(sData.GetBuffer(), sData.GetSize());
 
 	CRYPT_ArcFourCryptBlock(sFile.GetBuffer(), sFile.GetSize(), JS_RC4KEY, sizeof(JS_RC4KEY));
-	WriteFileBuffer(m_sFilePath, (FX_LPCSTR)sFile.GetBuffer(), sFile.GetSize());
+	WriteFileBuffer(m_sFilePath.c_str(), (FX_LPCSTR)sFile.GetBuffer(), sFile.GetSize());
 }
 
 void CJS_GlobalData::LoadFileBuffer(FX_LPCWSTR sFilePath, FX_LPBYTE& pBuffer, FX_INT32& nLength)

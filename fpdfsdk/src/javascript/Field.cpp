@@ -11,7 +11,6 @@
 #include "../../include/javascript/JS_Value.h"
 #include "../../include/javascript/Field.h"
 #include "../../include/javascript/JS_EventHandler.h"
-//#include "../include/JS_ResMgr.h"
 #include "../../include/javascript/JS_Context.h"
 #include "../../include/javascript/JS_Runtime.h"
 #include "../../include/javascript/Document.h"
@@ -259,7 +258,7 @@ void Field::UpdateFormField(CPDFSDK_Document* pDocument, CPDF_FormField* pFormFi
 				FX_BOOL bFormated = FALSE;
 				CFX_WideString sValue = pWidget->OnFormat(0, bFormated);
 				if (bFormated)
-					pWidget->ResetAppearance(sValue, FALSE);
+					pWidget->ResetAppearance(sValue.c_str(), FALSE);
 				else
 					pWidget->ResetAppearance(NULL, FALSE);
 			}
@@ -316,7 +315,7 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument, CPDF_FormControl* pFo
 				FX_BOOL bFormated = FALSE;
 				CFX_WideString sValue = pWidget->OnFormat(0, bFormated);
 				if (bFormated)
-					pWidget->ResetAppearance(sValue, FALSE);
+					pWidget->ResetAppearance(sValue.c_str(), FALSE);
 				else
 					pWidget->ResetAppearance(NULL, FALSE);
 			}
@@ -3127,7 +3126,7 @@ FX_BOOL Field::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 
 				double dRet;
 				FX_BOOL bDot;
-				if (CJS_PublicMethods::ConvertStringToNumber(swValue,dRet,bDot))
+				if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet, bDot))
 				{
 					if (bDot)
 						vp << dRet;
@@ -3148,9 +3147,9 @@ FX_BOOL Field::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 					for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++)
 					{
 						iIndex = pFormField->GetSelectedIndex(i);
-						ElementValue = pFormField->GetOptionValue(iIndex);
+						ElementValue = pFormField->GetOptionValue(iIndex).c_str();
 						if (FXSYS_wcslen(ElementValue.ToCFXWideString().c_str()) == 0)
-							ElementValue = pFormField->GetOptionLabel(iIndex);
+							ElementValue = pFormField->GetOptionLabel(iIndex).c_str();
 						ValueArray.SetElement(i, ElementValue);
 					}
 					vp << ValueArray;
@@ -3161,7 +3160,7 @@ FX_BOOL Field::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 				
 					double dRet;
 					FX_BOOL bDot;
-					if (CJS_PublicMethods::ConvertStringToNumber(swValue,dRet,bDot))
+					if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet, bDot))
 					{
 						if (bDot)
 							vp << dRet;
@@ -3182,10 +3181,9 @@ FX_BOOL Field::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 					if (pFormField->GetControl(i)->IsChecked())
 					{
 						CFX_WideString swValue = pFormField->GetControl(i)->GetExportValue();
-						
 						double dRet;
 						FX_BOOL bDot;
-						if (CJS_PublicMethods::ConvertStringToNumber(swValue,dRet,bDot))
+						if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet, bDot))
 						{
 							if (bDot)
 								vp << dRet;
@@ -3391,11 +3389,11 @@ FX_BOOL Field::buttonGetCaption(IFXJS_Context* cc, const CJS_Parameters& params,
 	if (!pFormControl)return FALSE;
 	
 	if (nface == 0)
-		vRet = pFormControl->GetNormalCaption();
+		vRet = pFormControl->GetNormalCaption().c_str();
 	else if (nface == 1)
-		vRet = pFormControl->GetDownCaption();
+		vRet = pFormControl->GetDownCaption().c_str();
 	else if (nface == 2)
-		vRet = pFormControl->GetRolloverCaption();
+		vRet = pFormControl->GetRolloverCaption().c_str();
 	else
 		return FALSE;
 
@@ -3685,12 +3683,12 @@ FX_BOOL Field::getItemAt(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Va
 		{
 			CFX_WideString strval = pFormField->GetOptionValue(nIdx);
 			if (strval.IsEmpty())
-				vRet = pFormField->GetOptionLabel(nIdx);
+				vRet = pFormField->GetOptionLabel(nIdx).c_str();
 			else
-				vRet = strval;
+				vRet = strval.c_str();
 		}
 		else
-			vRet = pFormField->GetOptionLabel(nIdx);
+			vRet = pFormField->GetOptionLabel(nIdx).c_str();
 	}
 	else
 		return FALSE;

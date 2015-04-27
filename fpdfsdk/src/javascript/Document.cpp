@@ -370,7 +370,7 @@ FX_BOOL Document::getNthFieldName(IFXJS_Context* cc, const CJS_Parameters& param
 	if (!pField)
 		return FALSE;
 
-	vRet = pField->GetFullName();
+	vRet = pField->GetFullName().c_str();
 	return TRUE;
 }
 
@@ -878,15 +878,15 @@ FX_BOOL Document::info(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sEr
 
 		JSFXObject  pObj = JS_NewFxDynamicObj(*pRuntime, pContext, -1);
 
-		JS_PutObjectString(isolate,pObj, L"Author", cwAuthor);
-		JS_PutObjectString(isolate,pObj, L"Title", cwTitle);
-		JS_PutObjectString(isolate,pObj, L"Subject", cwSubject);
-		JS_PutObjectString(isolate,pObj, L"Keywords", cwKeywords);
-		JS_PutObjectString(isolate,pObj, L"Creator", cwCreator);
-		JS_PutObjectString(isolate,pObj, L"Producer", cwProducer);
-		JS_PutObjectString(isolate,pObj, L"CreationDate", cwCreationDate);
-		JS_PutObjectString(isolate,pObj, L"ModDate", cwModDate);
-		JS_PutObjectString(isolate,pObj, L"Trapped", cwTrapped);
+		JS_PutObjectString(isolate, pObj, L"Author", cwAuthor.c_str());
+		JS_PutObjectString(isolate, pObj, L"Title", cwTitle.c_str());
+		JS_PutObjectString(isolate, pObj, L"Subject", cwSubject.c_str());
+		JS_PutObjectString(isolate, pObj, L"Keywords", cwKeywords.c_str());
+		JS_PutObjectString(isolate, pObj, L"Creator", cwCreator.c_str());
+		JS_PutObjectString(isolate, pObj, L"Producer", cwProducer.c_str());
+		JS_PutObjectString(isolate, pObj, L"CreationDate", cwCreationDate.c_str());
+		JS_PutObjectString(isolate, pObj, L"ModDate", cwModDate.c_str());
+		JS_PutObjectString(isolate, pObj, L"Trapped", cwTrapped.c_str());
 
 // It's to be compatible to non-standard info dictionary.
 		FX_POSITION pos = pDictionary->GetStartPos();
@@ -896,11 +896,11 @@ FX_BOOL Document::info(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sEr
 			CPDF_Object* pValueObj = pDictionary->GetNextElement(pos, bsKey);
 			CFX_WideString wsKey  = CFX_WideString::FromUTF8(bsKey, bsKey.GetLength());
 			if((pValueObj->GetType()==PDFOBJ_STRING) || (pValueObj->GetType()==PDFOBJ_NAME) )
-					JS_PutObjectString(isolate,pObj, wsKey, pValueObj->GetUnicodeText());
+				JS_PutObjectString(isolate, pObj, wsKey.c_str(), pValueObj->GetUnicodeText().c_str());
 			if(pValueObj->GetType()==PDFOBJ_NUMBER)
-				JS_PutObjectNumber(isolate,pObj, wsKey, (float)pValueObj->GetNumber());
+				JS_PutObjectNumber(isolate,pObj, wsKey.c_str(), (float)pValueObj->GetNumber());
 			if(pValueObj->GetType()==PDFOBJ_BOOLEAN)
-				JS_PutObjectBoolean(isolate,pObj, wsKey, (bool)pValueObj->GetInteger());
+				JS_PutObjectBoolean(isolate,pObj, wsKey.c_str(), (bool)pValueObj->GetInteger());
 		}
 
 		vp << pObj;
@@ -1672,7 +1672,7 @@ FX_BOOL Document::getPageNthWord(IFXJS_Context* cc, const CJS_Parameters& params
 		swRet.TrimRight();
 	}
 
-	vRet = swRet;
+	vRet = swRet.c_str();
 	return TRUE;
 }
 

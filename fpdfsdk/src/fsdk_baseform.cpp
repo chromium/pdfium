@@ -3321,7 +3321,7 @@ int	CPDFSDK_InterForm::AfterValueChange(const CPDF_FormField* pField)
 		FX_BOOL bFormated = FALSE;
 		CFX_WideString sValue = this->OnFormat(pFormField, 0, bFormated);
 		if (bFormated)
-			this->ResetFieldAppearance(pFormField, sValue, TRUE);
+			this->ResetFieldAppearance(pFormField, sValue.c_str(), TRUE);
 		else
 			this->ResetFieldAppearance(pFormField, NULL, TRUE);
 		this->UpdateField(pFormField);

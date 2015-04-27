@@ -2372,7 +2372,7 @@ FX_BOOL CPDF_TextPageFind::FindNext()
             continue;
         }
         int endIndex;
-        nResultPos = m_strText.Find(csWord, nStartPos);
+        nResultPos = m_strText.Find(csWord.c_str(), nStartPos);
         if (nResultPos == -1) {
             m_IsFind = FALSE;
             return m_IsFind;
@@ -2489,7 +2489,7 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat)
     int index = 0;
     while(1) {
         CFX_WideString csWord = TEXT_EMPTY;
-        int ret = ExtractSubString(csWord, findwhat, index, TEXT_BLANK_CHAR);
+        int ret = ExtractSubString(csWord, findwhat.c_str(), index, TEXT_BLANK_CHAR);
         if(csWord.IsEmpty()) {
             if(ret) {
                 m_csFindWhatArray.Add(CFX_WideString(L""));

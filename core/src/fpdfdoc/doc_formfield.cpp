@@ -646,7 +646,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index, FX_BOOL bSelected, FX_BOOL b
         if (m_Type == ListBox) {
             SelectOption(index, TRUE);
             if (!(m_Flags & FORMLIST_MULTISELECT)) {
-                m_pDict->SetAtString("V", PDF_EncodeText(opt_value, opt_value.GetLength()));
+                m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
             } else {
                 CPDF_Array* pArray = CPDF_Array::Create();
                 if (pArray == NULL) {
@@ -668,7 +668,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index, FX_BOOL bSelected, FX_BOOL b
                 m_pDict->SetAt("V", pArray);
             }
         } else if (m_Type == ComboBox) {
-            m_pDict->SetAtString("V", PDF_EncodeText(opt_value, opt_value.GetLength()));
+            m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
             CPDF_Array* pI = CPDF_Array::Create();
             if (pI == NULL) {
                 return FALSE;
@@ -783,7 +783,7 @@ int CPDF_FormField::FindOption(CFX_WideString csOptLabel)
     }
     return -1;
 }
-int CPDF_FormField::FindOptionValue(FX_LPCWSTR csOptValue, int iStartIndex)
+int CPDF_FormField::FindOptionValue(const CFX_WideString& csOptValue, int iStartIndex)
 {
     if (iStartIndex < 0) {
         iStartIndex = 0;
@@ -882,7 +882,7 @@ FX_BOOL CPDF_FormField::CheckControl(int iControlIndex, FX_BOOL bChecked, FX_BOO
     if (bNotify && m_pForm->m_pFormNotify != NULL) {
         SaveCheckedFieldStatus(this, statusArray);
     }
-    CFX_WideString csWExport =  pControl->GetExportValue();
+    CFX_WideString csWExport = pControl->GetExportValue();
     CFX_ByteString csBExport = PDF_EncodeText(csWExport);
     int iCount = CountControls();
     FX_BOOL bUnison = PDF_FormField_IsUnison(this);

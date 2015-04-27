@@ -265,7 +265,7 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 			return FALSE;
 		}
 
-		vRet = swResult;
+		vRet = swResult.c_str();
 		return TRUE;
 	}
 	else if (p1.GetType() == VT_string)
@@ -288,9 +288,9 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 		{
 			int iStart = 0;
 			int iEnd;
-			while((iEnd = cFormat.find((CFX_WideString)fcTable[iIndex].lpszJSMark, iStart)) != -1)
+			while((iEnd = cFormat.find(fcTable[iIndex].lpszJSMark, iStart)) != -1)
 			{
-				cFormat.replace(iEnd, FXSYS_wcslen(fcTable[iIndex].lpszJSMark), (CFX_WideString)fcTable[iIndex].lpszCppMark);
+				cFormat.replace(iEnd, FXSYS_wcslen(fcTable[iIndex].lpszJSMark), fcTable[iIndex].lpszCppMark);
 				iStart = iEnd;
 			}
 		}
@@ -342,7 +342,7 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 			//strFormat.Format(strFormat,cTableAd[iIndex].iValue);
 			int iStart = 0;
 			int iEnd;
-			while((iEnd = cFormat.find((CFX_WideString)cTableAd[iIndex].lpszJSMark,iStart)) != -1)
+			while((iEnd = cFormat.find(cTableAd[iIndex].lpszJSMark, iStart)) != -1)
 			{
 				if (iEnd > 0)
 				{
@@ -384,9 +384,9 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 	{
 		int iStart = 0;
 		int iEnd;
-		while((iEnd = cFormat.find((CFX_WideString)fcTable[iIndex].lpszJSMark,iStart)) != -1)
+		while((iEnd = cFormat.find(fcTable[iIndex].lpszJSMark, iStart)) != -1)
 		{
-			cFormat.replace(iEnd,FXSYS_wcslen(fcTable[iIndex].lpszJSMark), (CFX_WideString)fcTable[iIndex].lpszCppMark);
+			cFormat.replace(iEnd,FXSYS_wcslen(fcTable[iIndex].lpszJSMark), fcTable[iIndex].lpszCppMark);
 			iStart = iEnd;
 		}
 	}
@@ -438,7 +438,7 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 		//strFormat.Format(strFormat,cTableAd[iIndex].iValue);
 		int iStart = 0;
 		int iEnd;
-		while((iEnd = cFormat.find((CFX_WideString)cTableAd[iIndex].lpszJSMark,iStart)) != -1)
+		while((iEnd = cFormat.find(cTableAd[iIndex].lpszJSMark, iStart)) != -1)
 		{
 			if (iEnd > 0)
 			{
@@ -640,6 +640,6 @@ FX_BOOL util::byteToChar(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Va
 	unsigned char cByte = (unsigned char)nByte;
 	CFX_WideString csValue;
 	csValue.Format(L"%c", cByte);
-	vRet = csValue; 
+	vRet = csValue.c_str();
 	return TRUE;
 }
