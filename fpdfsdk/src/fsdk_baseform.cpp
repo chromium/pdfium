@@ -1862,7 +1862,7 @@ CPDF_Stream* CPDFSDK_InterForm::LoadImageFromFile(const CFX_WideString& sFile)
 
 	CPDF_Stream* pRetStream = NULL;
 
-	if (CFX_DIBitmap* pBmp = CFX_WindowsDIB::LoadFromFile(sFile))
+	if (CFX_DIBitmap* pBmp = CFX_WindowsDIB::LoadFromFile(sFile.c_str()))
 	{
 		int nWidth = pBmp->GetWidth();
 		int nHeight = pBmp->GetHeight();
