@@ -107,7 +107,7 @@ void CPWL_IconList_Item::SetIcon(FX_INT32 nIconIndex)
 
 void CPWL_IconList_Item::SetText(const CFX_WideString& str)
 {
-	m_pText->SetText(str);
+	m_pText->SetText(str.c_str());
 }
 
 CFX_WideString CPWL_IconList_Item::GetText() const

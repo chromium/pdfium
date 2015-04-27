@@ -973,7 +973,7 @@ void CFFL_IFormFiller::OnFormat(CPDFSDK_Widget* pWidget, CPDFSDK_PageView* pPage
 
 		if (bFormated)
 		{
-			pInterForm->ResetFieldAppearance(pWidget->GetFormField(), sValue, TRUE);
+			pInterForm->ResetFieldAppearance(pWidget->GetFormField(), sValue.c_str(), TRUE);
 			pInterForm->UpdateField(pWidget->GetFormField());
 		}
 

@@ -641,9 +641,8 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CPDF_Rect & rcBBox,IFX_Edit_Fo
 	CFX_ByteTextBuf sRet;
 
 	if (IFX_Edit * pEdit = IFX_Edit::NewEdit())
-	{			
+	{
 		pEdit->SetFontMap(pFontMap);
-
 		pEdit->SetPlateRect(rcBBox);
 		pEdit->SetAlignmentH(nAlignmentH);
 		pEdit->SetAlignmentV(nAlignmentV);
@@ -653,16 +652,15 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CPDF_Rect & rcBBox,IFX_Edit_Fo
 			pEdit->SetAutoFontSize(TRUE);
 		else
 			pEdit->SetFontSize(fFontSize);
-		pEdit->Initialize();
 
-		pEdit->SetText(sText);
-		
+		pEdit->Initialize();
+		pEdit->SetText(sText.c_str());
+
 		CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(pEdit, CPDF_Point(0.0f,0.0f));
 		if (sEdit.GetLength() > 0)
 		{
 			sRet << "BT\n" << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n";
 		}
-		
 		IFX_Edit::DelEdit(pEdit);
 	}
 
@@ -681,9 +679,8 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect & rcBBox,
 	const FX_FLOAT fAutoFontScale = 1.0f / 3.0f;	
 
 	if (IFX_Edit * pEdit = IFX_Edit::NewEdit())
-	{			
+	{
 		pEdit->SetFontMap(pFontMap);
-
 		pEdit->SetAlignmentH(1);
 		pEdit->SetAlignmentV(1);
 		pEdit->SetMultiLine(FALSE);
@@ -692,11 +689,11 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect & rcBBox,
 			pEdit->SetAutoFontSize(TRUE);
 		else
 			pEdit->SetFontSize(fFontSize);
+
 		pEdit->Initialize();
-		pEdit->SetText(sLabel);
+		pEdit->SetText(sLabel.c_str());
 
 		CPDF_Rect rcLabelContent = pEdit->GetContentRect();
-		
 		CPWL_Icon Icon;
 		PWL_CREATEPARAM cp;
 		cp.dwFlags = PWS_VISIBLE;

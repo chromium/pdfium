@@ -636,14 +636,7 @@ public:
         return m_pData ? m_pData->m_String : L"";
     }
 
-    // Implicit conversion to C-style wide string -- deprecated
-    operator FX_LPCWSTR() const
-    {
-        return m_pData ? m_pData->m_String : L"";
-    }
-
     void					Empty();
-
 
     FX_BOOL					IsEmpty() const
     {

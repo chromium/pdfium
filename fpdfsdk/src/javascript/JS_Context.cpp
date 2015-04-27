@@ -72,11 +72,11 @@ FX_BOOL CJS_Context::DoJob(int nMode, const CFX_WideString& script, CFX_WideStri
 	{
 		if (nMode == 0)
 		{
-			nRet = JS_Execute(*m_pRuntime, this, script, script.GetLength(), &error);
+			nRet = JS_Execute(*m_pRuntime, this, script.c_str(), script.GetLength(), &error);
 		}
 		else
 		{
-			nRet = JS_Parse(*m_pRuntime, this, script, script.GetLength(), &error);
+			nRet = JS_Parse(*m_pRuntime, this, script.c_str(), script.GetLength(), &error);
 		}
 	}
 

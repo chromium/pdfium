@@ -464,7 +464,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                     vt.SetLimitChar(dwMaxLen);
                 }
                 vt.Initialize();
-                vt.SetText(swValue);
+                vt.SetText(swValue.c_str());
                 vt.RearrangeAll();
                 CPDF_Rect rcContent = vt.GetContentRect();
                 CPDF_Point ptOffset(0.0f, 0.0f);
@@ -502,7 +502,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                     vt.SetFontSize(fFontSize);
                 }
                 vt.Initialize();
-                vt.SetText(swValue);
+                vt.SetText(swValue.c_str());
                 vt.RearrangeAll();
                 CPDF_Rect rcContent = vt.GetContentRect();
                 CPDF_Point ptOffset = CPDF_Point(0.0f, (rcContent.Height() - rcEdit.Height()) / 2.0f);
@@ -573,7 +573,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                                 vt.SetFontSize(fFontSize);
                             }
                             vt.Initialize();
-                            vt.SetText(swItem);
+                            vt.SetText(swItem.c_str());
                             vt.RearrangeAll();
                             FX_FLOAT fItemHeight = vt.GetContentRect().Height();
                             if (bSelected) {

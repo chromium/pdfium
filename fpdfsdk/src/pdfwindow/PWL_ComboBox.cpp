@@ -266,7 +266,7 @@ void CPWL_ComboBox::SetSelect(FX_INT32 nItemIndex)
 	if (m_pList)
 		m_pList->Select(nItemIndex);
 
-	m_pEdit->SetText(m_pList->GetText());
+	m_pEdit->SetText(m_pList->GetText().c_str());
 
 	m_nSelectItem = nItemIndex;
 }
@@ -638,7 +638,7 @@ void CPWL_ComboBox::SetSelectText()
 {
 	CFX_WideString swText = m_pList->GetText();
 	m_pEdit->SelectAll();
-	m_pEdit->ReplaceSel(m_pList->GetText());
+	m_pEdit->ReplaceSel(m_pList->GetText().c_str());
 	m_pEdit->SelectAll();
 
 	m_nSelectItem = m_pList->GetCurSel();
