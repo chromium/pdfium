@@ -38,7 +38,7 @@ public:
 
     static CFX_DIBitmap* LoadFromFile(FX_LPCSTR filename)
     {
-        return LoadFromFile(CFX_WideString::FromLocal(filename));
+        return LoadFromFile(CFX_WideString::FromLocal(filename).c_str());
     }
 
     static CFX_DIBitmap* LoadDIBitmap(WINDIB_Open_Args_ args);

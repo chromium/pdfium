@@ -353,9 +353,9 @@ void* FX_OpenFolder(FX_LPCWSTR path)
         return NULL;
     }
 #ifdef _FX_WINAPI_PARTITION_DESKTOP_
-    pData->m_Handle = FindFirstFileW(CFX_WideString(path) + L"/*.*", &pData->m_FindData);
+    pData->m_Handle = FindFirstFileW((CFX_WideString(path) + L"/*.*").c_str(), &pData->m_FindData);
 #else
-    pData->m_Handle = FindFirstFileExW(CFX_WideString(path) + L"/*.*", FindExInfoStandard, &pData->m_FindData, FindExSearchNameMatch, NULL, 0);
+    pData->m_Handle = FindFirstFileExW((CFX_WideString(path) + L"/*.*").c_str(), FindExInfoStandard, &pData->m_FindData, FindExSearchNameMatch, NULL, 0);
 #endif
     if (pData->m_Handle == INVALID_HANDLE_VALUE) {
         delete pData;
