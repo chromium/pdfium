@@ -375,7 +375,7 @@ void CPDF_Number::SetNumber(FX_FLOAT value)
     m_Float = value;
 }
 CPDF_String::CPDF_String(const CFX_WideString& str) : CPDF_Object(PDFOBJ_STRING), m_bHex(FALSE) {
-    m_String = PDF_EncodeText(str);
+    m_String = PDF_EncodeText(str, str.GetLength());
 }
 CPDF_Array::~CPDF_Array()
 {

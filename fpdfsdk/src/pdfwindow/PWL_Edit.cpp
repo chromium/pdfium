@@ -78,7 +78,7 @@ void CPWL_Edit::SetText(FX_LPCWSTR csText)
 		}
 	}	
 
-	m_pEdit->SetText(swText.c_str());
+	m_pEdit->SetText(swText);
 }
 
 void CPWL_Edit::RePosChildWnd()
@@ -192,7 +192,7 @@ void CPWL_Edit::PasteText()
 	if (swClipboard.GetLength() > 0)
 	{
 		Clear();
-		InsertText(swClipboard.c_str());
+		InsertText(swClipboard);
 	}
 
 	if (m_pFillerNotify)
@@ -682,23 +682,23 @@ FX_BOOL CPWL_Edit::OnRButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 		break;
 	case WM_PWLEDIT_SUGGEST + 0:
 		SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-		ReplaceSel(sSuggestWords[0].UTF8Decode().c_str());
+		ReplaceSel(sSuggestWords[0].UTF8Decode());
 		break;
 	case WM_PWLEDIT_SUGGEST + 1:
 		SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-		ReplaceSel(sSuggestWords[1].UTF8Decode().c_str());
+		ReplaceSel(sSuggestWords[1].UTF8Decode());
 		break;
 	case WM_PWLEDIT_SUGGEST + 2:
 		SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-		ReplaceSel(sSuggestWords[2].UTF8Decode().c_str());
+		ReplaceSel(sSuggestWords[2].UTF8Decode());
 		break;
 	case WM_PWLEDIT_SUGGEST + 3:
 		SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-		ReplaceSel(sSuggestWords[3].UTF8Decode().c_str());
+		ReplaceSel(sSuggestWords[3].UTF8Decode());
 		break;
-	case WM_PWLEDIT_SUGGEST + 4:
+	case WM_PWLEDIT_SUGGEST + 4:		
 		SetSel(m_pEdit->WordPlaceToWordIndex(wrLatin.BeginPos),m_pEdit->WordPlaceToWordIndex(wrLatin.EndPos));
-		ReplaceSel(sSuggestWords[4].UTF8Decode().c_str());
+		ReplaceSel(sSuggestWords[4].UTF8Decode());
 		break;
 	default:
 		break;

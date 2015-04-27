@@ -567,6 +567,6 @@ FX_INT32 CPDF_PageLabel::GetPageByLabel(FX_BSTR bsLabel) const
 }
 FX_INT32 CPDF_PageLabel::GetPageByLabel(FX_WSTR wsLabel) const
 {
-    CFX_ByteString bsLabel = PDF_EncodeText(wsLabel.GetPtr());
+    CFX_ByteString bsLabel = PDF_EncodeText((CFX_WideString)wsLabel);
     return GetPageByLabel(bsLabel);
 }

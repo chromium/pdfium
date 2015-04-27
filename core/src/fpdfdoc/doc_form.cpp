@@ -34,7 +34,7 @@ class _CFieldNameExtractor
 public:
     _CFieldNameExtractor(const CFX_WideString& full_name)
     {
-        m_pStart = full_name.c_str();
+        m_pStart = full_name;
         m_pEnd = m_pStart + full_name.GetLength();
         m_pCur = m_pStart;
     }
@@ -733,8 +733,7 @@ int CPDF_InterForm::CompareFieldName(const CFX_ByteString& name1, const CFX_Byte
 }
 int CPDF_InterForm::CompareFieldName(const CFX_WideString& name1, const CFX_WideString& name2)
 {
-    FX_LPCWSTR ptr1 = name1.c_str();
-    FX_LPCWSTR ptr2 = name2.c_str();
+    FX_LPCWSTR ptr1 = name1, ptr2 = name2;
     if (name1.GetLength() != name2.GetLength()) {
         int i = 0;
         while (ptr1[i] == ptr2[i]) {

@@ -1062,13 +1062,13 @@ static CFX_ByteString _DefMap_GetByteString(CFX_CharMap* pCharMap, const CFX_Wid
 {
     int src_len = widestr.GetLength();
     int codepage = pCharMap->m_GetCodePage ? pCharMap->m_GetCodePage() : 0;
-    int dest_len = FXSYS_WideCharToMultiByte(codepage, 0, widestr.c_str(), src_len, NULL, 0, NULL, NULL);
+    int dest_len = FXSYS_WideCharToMultiByte(codepage, 0, widestr, src_len, NULL, 0, NULL, NULL);
     if (dest_len == 0) {
         return CFX_ByteString();
     }
     CFX_ByteString bytestr;
     FX_LPSTR dest_buf = bytestr.GetBuffer(dest_len);
-    FXSYS_WideCharToMultiByte(codepage, 0, widestr.c_str(), src_len, dest_buf, dest_len, NULL, NULL);
+    FXSYS_WideCharToMultiByte(codepage, 0, widestr, src_len, dest_buf, dest_len, NULL, NULL);
     bytestr.ReleaseBuffer(dest_len);
     return bytestr;
 }

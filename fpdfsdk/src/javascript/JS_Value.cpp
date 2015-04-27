@@ -216,7 +216,7 @@ void CJS_Value::SetNull()
 
 void CJS_Value::operator = (FX_LPCSTR pStr)
 {	
-	operator = (CFX_WideString::FromLocal(pStr).c_str());
+	operator = (CFX_WideString::FromLocal(pStr));
 }
 
 void CJS_Value::operator = (CJS_Array & array)
@@ -433,7 +433,7 @@ void CJS_PropValue::operator >>(CFX_WideString &wide_string) const
 void CJS_PropValue::operator <<(CFX_WideString wide_string)
 {
 	ASSERT(!m_bIsSetting);
-	CJS_Value::operator = (wide_string.c_str());
+	CJS_Value::operator = (wide_string);
 }
 
 void CJS_PropValue::operator >>(CJS_Array &array) const

@@ -82,7 +82,7 @@ void CPWL_Note_Options::CreateChildWnd(const PWL_CREATEPARAM & cp)
 
 void CPWL_Note_Options::SetText(const CFX_WideString& sText)
 {
-	m_pText->SetText(sText.c_str());
+	m_pText->SetText(sText);
 }
 
 void CPWL_Note_Options::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device)
@@ -443,9 +443,9 @@ void CPWL_Note_Contents::SetText(const CFX_WideString& sText)
 	if (m_pEdit)
 	{
 		m_pEdit->EnableNotify(FALSE);
-		m_pEdit->SetText(sText.c_str());
+		m_pEdit->SetText(sText);
 		m_pEdit->EnableNotify(TRUE);
-		OnNotify(m_pEdit, PNM_NOTEEDITCHANGED, 0, 0);
+		OnNotify(m_pEdit, PNM_NOTEEDITCHANGED, 0, 0);		
 	}
 }
 
@@ -811,7 +811,7 @@ void CPWL_NoteItem::SetSubjectName(const CFX_WideString& sName)
 {
 	if (m_pSubject)
 	{
-		m_pSubject->SetText(sName.c_str());
+		m_pSubject->SetText(sName);	
 	}
 
 	if (IPWL_NoteNotify* pNotify = GetNoteNotify())
@@ -848,10 +848,11 @@ void CPWL_NoteItem::ResetSubjectName(FX_INT32 nItemIndex)
 	ASSERT(pNote != NULL);
 
 	CFX_WideString sSubject;
-	sSubject.Format(pNote->GetReplyString().c_str(), nItemIndex);
+	sSubject.Format(pNote->GetReplyString(), nItemIndex);
 
 	if (!m_sAuthor.IsEmpty())
 	{
+		
 		sSubject += L" - ";
 		sSubject += m_sAuthor;
 	}
@@ -862,12 +863,12 @@ void CPWL_NoteItem::ResetSubjectName(FX_INT32 nItemIndex)
 void CPWL_NoteItem::SetDateTime(FX_SYSTEMTIME time)
 {
 	m_dtNote = time;
-
+	
 	CFX_WideString swTime;
 	swTime.Format(L"%04d-%02d-%02d %02d:%02d:%02d", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
 	if (m_pDateTime)
 	{
-		m_pDateTime->SetText(swTime.c_str());
+		m_pDateTime->SetText(swTime);
 	}
 
 	this->RePosChildWnd();
@@ -1527,14 +1528,14 @@ void CPWL_Note::SetAuthorName(const CFX_WideString& sName)
 {
 	if (m_pAuthor)
 	{
-		m_pAuthor->SetText(sName.c_str());
+		m_pAuthor->SetText(sName);
 		RePosChildWnd();
 	}
 
 	if (IPWL_NoteNotify* pNotify = GetNoteNotify())
 	{
 		pNotify->OnSetAuthorName(this);
-	}
+	}	
 }
 
 CFX_WideString CPWL_Note::GetAuthorName() const

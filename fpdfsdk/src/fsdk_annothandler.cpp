@@ -668,22 +668,27 @@ void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot)
 	else
 	{
 		CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
-		if (!pWidget->IsAppearanceValid())
+		
+	if (!pWidget->IsAppearanceValid())
 			pWidget->ResetAppearance(NULL, FALSE);
-
+		
 		int nFieldType = pWidget->GetFieldType();
+		
 		if (nFieldType == FIELDTYPE_TEXTFIELD || nFieldType == FIELDTYPE_COMBOBOX)
 		{
 			FX_BOOL bFormated = FALSE;
 			CFX_WideString sValue = pWidget->OnFormat(0, bFormated);
+			
 			if (bFormated && nFieldType == FIELDTYPE_COMBOBOX)
 			{
-				pWidget->ResetAppearance(sValue.c_str(), FALSE);
+				pWidget->ResetAppearance(sValue, FALSE);
 			}
 		}
+		
 
 		if (m_pFormFiller)
 			m_pFormFiller->OnLoad(pAnnot);
+
 	}
 }
 
