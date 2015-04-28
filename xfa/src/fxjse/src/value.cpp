@@ -506,7 +506,7 @@ FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, F
     }
     if(lpLocalArgs) {
         for (FX_UINT32 i = 0; i < nArgCount; i++) {
-            lpLocalArgs[i].~Handle();
+            lpLocalArgs[i].~Local();
         }
         FX_Free(lpLocalArgs);
     }
