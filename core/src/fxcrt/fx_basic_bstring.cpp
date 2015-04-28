@@ -341,15 +341,6 @@ void CFX_ByteString::ReleaseBuffer(FX_STRSIZE nNewLength)
     m_pData->m_nDataLength = nNewLength;
     m_pData->m_String[nNewLength] = 0;
 }
-FX_LPSTR CFX_ByteString::LockBuffer()
-{
-    if (m_pData == NULL) {
-        return NULL;
-    }
-    FX_LPSTR lpsz = GetBuffer(0);
-    m_pData->m_nRefs = -1;
-    return lpsz;
-}
 void CFX_ByteString::Reserve(FX_STRSIZE len)
 {
     GetBuffer(len);
