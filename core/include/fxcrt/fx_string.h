@@ -320,8 +320,6 @@ public:
 
     FX_LPSTR				GetBuffer(FX_STRSIZE len);
 
-    FX_LPSTR				LockBuffer();
-
     void					ReleaseBuffer(FX_STRSIZE len = -1);
 
     CFX_ByteString			Mid(FX_STRSIZE first) const;
@@ -729,8 +727,6 @@ public:
     void					Reserve(FX_STRSIZE len);
 
     FX_LPWSTR				GetBuffer(FX_STRSIZE len);
-
-    FX_LPWSTR				LockBuffer();
 
     void					ReleaseBuffer(FX_STRSIZE len = -1);
 

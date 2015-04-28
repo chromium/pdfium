@@ -4,7 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <vector>
+
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../include/fpdfdoc/fpdf_doc.h"
+
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(const CPDF_Bookmark& parent) const
 {
     if (!parent.m_pDict) {
@@ -55,15 +59,18 @@ CFX_WideString CPDF_Bookmark::GetTitle() const
         return CFX_WideString();
     }
     CFX_WideString title = pString->GetUnicodeText();
-    FX_LPWSTR buf = title.LockBuffer();
     int len = title.GetLength();
-    for (int i = 0; i < len; i++) {
-        if (buf[i] < 0x20) {
-            buf[i] = 0x20;
-        }
+    if (!len) {
+        return CFX_WideString();
     }
-    title.ReleaseBuffer(len);
-    return title;
+    nonstd::unique_ptr<std::vector<FX_WCHAR> > vec;
+    vec.reset(new std::vector<FX_WCHAR>(len));
+    FX_WCHAR* buf = &vec->front();
+    for (int i = 0; i < len; i++) {
+        FX_WCHAR w = title[i];
+        buf[i] = w > 0x20 ? w : 0x20;
+    }
+    return CFX_WideString(buf, len);
 }
 CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const
 {
