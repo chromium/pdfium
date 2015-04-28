@@ -535,15 +535,6 @@ int CFX_WideString::Compare(const CFX_WideString& str) const
     }
     return 0;
 }
-FX_LPWSTR CFX_WideString::LockBuffer()
-{
-    if (m_pData == NULL) {
-        return NULL;
-    }
-    FX_LPWSTR lpsz = GetBuffer(0);
-    m_pData->m_nRefs = -1;
-    return lpsz;
-}
 void CFX_WideString::SetAt(FX_STRSIZE nIndex, FX_WCHAR ch)
 {
     if (m_pData == NULL) {
