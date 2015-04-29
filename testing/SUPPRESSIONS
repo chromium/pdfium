@@ -7,6 +7,11 @@
 2_6_textbox.pdf
 3_4_textbox.pdf
 5.2.pdf
+FRC_3.5_CF_Strf_stmf_DefaultCryptFilter.pdf
+FRC_3.5_EncryptMetadata_T.pdf
+FRC_3.5_Encrypt_is_damage.pdf
+FRC_3.5_Filter_PubSec_SubFilter_s5.pdf
+FRC_3.5_Filter_PubSec_Sub_SubFilter_s4.pdf
 action.pdf
 all_trigger_alert.pdf
 all_trigger_browsefordoc.pdf
@@ -37,6 +42,7 @@ javascriptaction.pdf
 js_calculate.pdf
 list_box.pdf
 number.pdf
+outline.pdf
 push_button.pdf
 radio_button.pdf
 run_custom_validate_script.pdf
