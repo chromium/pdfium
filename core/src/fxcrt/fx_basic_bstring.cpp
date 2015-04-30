@@ -52,13 +52,25 @@ static CFX_StringData* FX_AllocString(int nLen)
     if (nLen == 0 || nLen < 0) {
         return NULL;
     }
+
+    int overhead = sizeof(long) * 3 + 1;  // 3 longs in header plus 1 for NUL.
     pdfium::base::CheckedNumeric<int> nSize = nLen;
-    nSize += sizeof(long) * 3 + 1;
-    CFX_StringData* pData = (CFX_StringData*)FX_Alloc(FX_BYTE, nSize.ValueOrDie());
+    nSize += overhead;
+
+    // Now round to an 8-byte boundary. We'd expect that this is the minimum
+    // granularity of any of the underlying allocators, so there may be cases
+    // where we can save a re-alloc when adding a few characters to a string
+    // by using this otherwise wasted space.
+    nSize += 7;
+    int totalSize = nSize.ValueOrDie() & ~7;
+    int usableSize = totalSize - overhead;
+    FXSYS_assert(usableSize >= nLen);
+
+    CFX_StringData* pData = (CFX_StringData*)FX_Alloc(FX_BYTE, totalSize);
     if (!pData) {
         return NULL;
     }
-    pData->m_nAllocLength = nLen;
+    pData->m_nAllocLength = usableSize;
     pData->m_nDataLength = nLen;
     pData->m_nRefs = 1;
     pData->m_String[nLen] = 0;
