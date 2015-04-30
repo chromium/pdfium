@@ -91,17 +91,32 @@ void CJS_RuntimeFactory::ReleaseGlobalData()
 	}
 }
 
+void* CJS_ArrayBufferAllocator::Allocate(size_t length) {
+    return calloc(1, length);
+}
+
+void* CJS_ArrayBufferAllocator::AllocateUninitialized(size_t length) {
+    return malloc(length);
+}
+
+void CJS_ArrayBufferAllocator::Free(void* data, size_t length) {
+    free(data);
+}
+
 /* ------------------------------ CJS_Runtime ------------------------------ */
 
 CJS_Runtime::CJS_Runtime(CPDFDoc_Environment * pApp) : 
 	m_pApp(pApp),
 	m_pDocument(NULL),
 	m_bBlocking(FALSE),
-	m_pFieldEventPath(NULL),
-	m_bRegistered(FALSE)
+	m_bRegistered(FALSE),
+	m_pFieldEventPath(NULL)
 {
-	m_isolate = v8::Isolate::New();
-	//m_isolate->Enter();
+	m_pArrayBufferAllocator.reset(new CJS_ArrayBufferAllocator());
+
+	v8::Isolate::CreateParams params;
+	params.array_buffer_allocator = m_pArrayBufferAllocator.get();
+	m_isolate = v8::Isolate::New(params);
 
 	InitJSObjects();
 
