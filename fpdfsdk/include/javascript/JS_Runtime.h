@@ -7,12 +7,19 @@
 #ifndef _JS_RUNTIME_H_
 #define _JS_RUNTIME_H_
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../core/include/fxcrt/fx_basic.h"
 #include "../jsapi/fxjs_v8.h"
 #include "IJavaScript.h"
 #include "JS_EventHandler.h"
 
 class CJS_Context;
+
+class CJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
+    void* Allocate(size_t length) override;
+    void* AllocateUninitialized(size_t length) override;
+    void Free(void* data, size_t length) override;
+};
 
 class CJS_FieldEvent
 {
@@ -57,15 +64,16 @@ public:
 	virtual	FX_BOOL							GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue);
 	virtual	FX_BOOL							SetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue);
 protected:
-	CFX_ArrayTemplate<CJS_Context *>		m_ContextArray;
-	CPDFDoc_Environment *					m_pApp;
-	CPDFSDK_Document *						m_pDocument;
+	CFX_ArrayTemplate<CJS_Context*>		m_ContextArray;
+	CPDFDoc_Environment*							m_pApp;
+	CPDFSDK_Document*						m_pDocument;
 	FX_BOOL									m_bBlocking;
+	FX_BOOL									m_bRegistered;
 	CJS_FieldEvent*							m_pFieldEventPath;
 
-	v8::Isolate*							m_isolate;
-	v8::Persistent<v8::Context>				m_context;
-	FX_BOOL									m_bRegistered;
+	v8::Isolate* m_isolate;
+	nonstd::unique_ptr<CJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
+	v8::Persistent<v8::Context> m_context;
 };
 
 #endif //_JS_RUNTIME_H_

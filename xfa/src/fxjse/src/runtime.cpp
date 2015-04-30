@@ -8,6 +8,21 @@
 #include "fxv8.h"
 #include "runtime.h"
 #include "scope_inline.h"
+
+// Duplicates fpdfsdk's JS_Runtime.h, but keeps XFA from depending on it.
+// TODO(tsepez): make a single version of this.
+class FXJSE_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
+    void* Allocate(size_t length) override {
+        return calloc(1, length);
+    }
+    void* AllocateUninitialized(size_t length) override {
+        return malloc(length);
+    }
+    void Free(void* data, size_t length) override {
+        free(data);
+    }
+};
+
 static void FXJSE_KillV8()
 {
     v8::V8::Dispose();
@@ -51,7 +66,9 @@ void FXJSE_Finalize()
 }
 FXJSE_HRUNTIME	FXJSE_Runtime_Create()
 {
-    v8::Isolate* pIsolate = v8::Isolate::New();
+    v8::Isolate::CreateParams params;
+    params.array_buffer_allocator = new FXJSE_ArrayBufferAllocator();
+    v8::Isolate* pIsolate = v8::Isolate::New(params);
     ASSERT(pIsolate && CFXJSE_RuntimeData::g_RuntimeList);
     CFXJSE_RuntimeData::g_RuntimeList->AppendRuntime(pIsolate);
     return reinterpret_cast<FXJSE_HRUNTIME>(pIsolate);
