@@ -9,23 +9,32 @@
 
 static CFX_StringDataW* FX_AllocStringW(int nLen)
 {
+    // TODO(palmer): |nLen| should really be declared as |size_t|, or
+    // at least unsigned.
     if (nLen == 0 || nLen < 0) {
         return NULL;
     }
 
-    pdfium::base::CheckedNumeric<int> iSize = static_cast<int>(sizeof(FX_WCHAR));
-    iSize *= nLen + 1;
-    iSize += sizeof(long) * 3;
+    int overhead = 3 * sizeof(long) + sizeof(FX_WCHAR);  // +WCHAR is for NUL.
+    pdfium::base::CheckedNumeric<int> iSize = nLen;
+    iSize *= sizeof(FX_WCHAR);
+    iSize += overhead;
+
+    // Now round to an 8-byte boundary. We'd expect that this is the minimum
+    // granularity of any of the underlying allocators, so there may be cases
+    // where we can save a re-alloc when adding a few characters to a string
+    // by using this otherwise wasted space.
+    iSize += 7;
+    int totalSize = iSize.ValueOrDie() & ~7;
+    int usableLen = (totalSize - overhead) / sizeof(FX_WCHAR);
+    FXSYS_assert(usableLen >= nLen);
+
     CFX_StringDataW* pData = (CFX_StringDataW*)FX_Alloc(FX_BYTE, iSize.ValueOrDie());
     if (!pData) {
         return NULL;
     }
 
-    // TODO(palmer): |nLen| should really be declared as |size_t|, but for
-    // now I just want to fix the overflow without changing any interfaces.
-    // Declaring |nLen| as |size_t| will also simplify the above code
-    // somewhat.
-    pData->m_nAllocLength = nLen;
+    pData->m_nAllocLength = usableLen;
     pData->m_nDataLength = nLen;
     pData->m_nRefs = 1;
     pData->m_String[nLen] = 0;
