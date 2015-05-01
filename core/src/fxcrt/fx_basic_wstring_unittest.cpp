@@ -45,6 +45,120 @@ TEST(fxcrt, WideStringOperatorLT) {
     EXPECT_FALSE(def < abc);
 }
 
+TEST(fxcrt, WideStringOperatorEQ) {
+    CFX_WideString wide_string(L"hello");
+    ASSERT_TRUE(wide_string == wide_string);
+
+    CFX_WideString wide_string_same1(L"hello");
+    ASSERT_TRUE(wide_string == wide_string_same1);
+    ASSERT_TRUE(wide_string_same1 == wide_string);
+
+    CFX_WideString wide_string_same2(wide_string);
+    ASSERT_TRUE(wide_string == wide_string_same2);
+    ASSERT_TRUE(wide_string_same2 == wide_string);
+
+    CFX_WideString wide_string1(L"he");
+    CFX_WideString wide_string2(L"hellp");
+    CFX_WideString wide_string3(L"hellod");
+    ASSERT_FALSE(wide_string == wide_string1);
+    ASSERT_FALSE(wide_string == wide_string2);
+    ASSERT_FALSE(wide_string == wide_string3);
+    ASSERT_FALSE(wide_string1 == wide_string);
+    ASSERT_FALSE(wide_string2 == wide_string);
+    ASSERT_FALSE(wide_string3 == wide_string);
+
+    CFX_WideStringC wide_string_c_same1(L"hello");
+    ASSERT_TRUE(wide_string == wide_string_c_same1);
+    ASSERT_TRUE(wide_string_c_same1 == wide_string);
+
+    CFX_WideStringC wide_string_c1(L"he");
+    CFX_WideStringC wide_string_c2(L"hellp");
+    CFX_WideStringC wide_string_c3(L"hellod");
+    ASSERT_FALSE(wide_string == wide_string_c1);
+    ASSERT_FALSE(wide_string == wide_string_c2);
+    ASSERT_FALSE(wide_string == wide_string_c3);
+    ASSERT_FALSE(wide_string_c1 == wide_string);
+    ASSERT_FALSE(wide_string_c2 == wide_string);
+    ASSERT_FALSE(wide_string_c3 == wide_string);
+
+    const wchar_t* c_string_same1 = L"hello";
+    ASSERT_TRUE(wide_string == c_string_same1);
+#if 0
+    // TODO(tsepez): Missing operator - there's a prototype but no actual
+    // implementation (at least we already removed implicit c_str() casting).
+    ASSERT_TRUE(c_string_same1 == wide_string);
+#endif
+
+    const wchar_t* c_string1 = L"he";
+    const wchar_t* c_string2 = L"hellp";
+    const wchar_t* c_string3 = L"hellod";
+    ASSERT_FALSE(wide_string == c_string1);
+    ASSERT_FALSE(wide_string == c_string2);
+    ASSERT_FALSE(wide_string == c_string3);
+#if 0
+    // See above TODO.
+    ASSERT_FALSE(c_string1 == wide_string);
+    ASSERT_FALSE(c_string2 == wide_string);
+    ASSERT_FALSE(c_string3 == wide_string);
+#endif
+}
+
+TEST(fxcrt, WideStringOperatorNE) {
+    CFX_WideString wide_string(L"hello");
+    ASSERT_FALSE(wide_string != wide_string);
+
+    CFX_WideString wide_string_same1(L"hello");
+    ASSERT_FALSE(wide_string != wide_string_same1);
+    ASSERT_FALSE(wide_string_same1 != wide_string);
+
+    CFX_WideString wide_string_same2(wide_string);
+    ASSERT_FALSE(wide_string != wide_string_same2);
+    ASSERT_FALSE(wide_string_same2 != wide_string);
+
+    CFX_WideString wide_string1(L"he");
+    CFX_WideString wide_string2(L"hellp");
+    CFX_WideString wide_string3(L"hellod");
+    ASSERT_TRUE(wide_string != wide_string1);
+    ASSERT_TRUE(wide_string != wide_string2);
+    ASSERT_TRUE(wide_string != wide_string3);
+    ASSERT_TRUE(wide_string1 != wide_string);
+    ASSERT_TRUE(wide_string2 != wide_string);
+    ASSERT_TRUE(wide_string3 != wide_string);
+
+    CFX_WideStringC wide_string_c_same1(L"hello");
+    ASSERT_FALSE(wide_string != wide_string_c_same1);
+    ASSERT_FALSE(wide_string_c_same1 != wide_string);
+
+    CFX_WideStringC wide_string_c1(L"he");
+    CFX_WideStringC wide_string_c2(L"hellp");
+    CFX_WideStringC wide_string_c3(L"hellod");
+    ASSERT_TRUE(wide_string != wide_string_c1);
+    ASSERT_TRUE(wide_string != wide_string_c2);
+    ASSERT_TRUE(wide_string != wide_string_c3);
+    ASSERT_TRUE(wide_string_c1 != wide_string);
+    ASSERT_TRUE(wide_string_c2 != wide_string);
+    ASSERT_TRUE(wide_string_c3 != wide_string);
+
+    const wchar_t* c_string_same1 = L"hello";
+    ASSERT_FALSE(wide_string != c_string_same1);
+#if 0
+    // See above TODO.
+    ASSERT_FALSE(c_string_same1 != wide_string);
+#endif
+    const wchar_t* c_string1 = L"he";
+    const wchar_t* c_string2 = L"hellp";
+    const wchar_t* c_string3 = L"hellod";
+    ASSERT_TRUE(wide_string != c_string1);
+    ASSERT_TRUE(wide_string != c_string2);
+    ASSERT_TRUE(wide_string != c_string3);
+#if 0
+    // See above TODO.
+    ASSERT_TRUE(c_string1 != wide_string);
+    ASSERT_TRUE(c_string2 != wide_string);
+    ASSERT_TRUE(c_string3 != wide_string);
+#endif
+}
+
 #define ByteStringLiteral(str) CFX_ByteString(FX_BSTRC(str))
 
 TEST(fxcrt, WideStringUTF16LE_Encode) {

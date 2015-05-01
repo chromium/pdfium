@@ -182,7 +182,10 @@ struct CFX_StringData {
     FX_STRSIZE	m_nAllocLength;
     FX_CHAR		m_String[1];
 };
-class CFX_ByteString 
+
+// A mutable string with shared buffers using copy-on-write semantics that
+// avoids the cost of std::string's iterator stability guarantees.
+class CFX_ByteString
 {
 public:
     typedef FX_CHAR value_type;
@@ -595,7 +598,10 @@ struct CFX_StringDataW {
     FX_STRSIZE	m_nAllocLength;
     FX_WCHAR	m_String[1];
 };
-class CFX_WideString 
+
+// A mutable string with shared buffers using copy-on-write semantics that
+// avoids the cost of std::string's iterator stability guarantees.
+class CFX_WideString
 {
 public:
     typedef FX_WCHAR value_type;
