@@ -220,3 +220,112 @@ TEST(fxcrt, WideStringCOperatorLT) {
     EXPECT_FALSE(def < abc);
 }
 
+TEST(fxcrt, WideStringCOperatorEQ) {
+    CFX_WideStringC wide_string_c(L"hello");
+    ASSERT_TRUE(wide_string_c == wide_string_c);
+
+    CFX_WideStringC wide_string_c_same1(L"hello");
+    ASSERT_TRUE(wide_string_c == wide_string_c_same1);
+    ASSERT_TRUE(wide_string_c_same1 == wide_string_c);
+
+    CFX_WideStringC wide_string_c_same2(wide_string_c);
+    ASSERT_TRUE(wide_string_c == wide_string_c_same2);
+    ASSERT_TRUE(wide_string_c_same2 == wide_string_c);
+
+    CFX_WideStringC wide_string_c1(L"he");
+    CFX_WideStringC wide_string_c2(L"hellp");
+    CFX_WideStringC wide_string_c3(L"hellod");
+    ASSERT_FALSE(wide_string_c == wide_string_c1);
+    ASSERT_FALSE(wide_string_c == wide_string_c2);
+    ASSERT_FALSE(wide_string_c == wide_string_c3);
+    ASSERT_FALSE(wide_string_c1 == wide_string_c);
+    ASSERT_FALSE(wide_string_c2 == wide_string_c);
+    ASSERT_FALSE(wide_string_c3 == wide_string_c);
+
+    CFX_WideString wide_string_same1(L"hello");
+    ASSERT_TRUE(wide_string_c == wide_string_same1);
+    ASSERT_TRUE(wide_string_same1 == wide_string_c);
+
+    CFX_WideString wide_string1(L"he");
+    CFX_WideString wide_string2(L"hellp");
+    CFX_WideString wide_string3(L"hellod");
+    ASSERT_FALSE(wide_string_c == wide_string1);
+    ASSERT_FALSE(wide_string_c == wide_string2);
+    ASSERT_FALSE(wide_string_c == wide_string3);
+    ASSERT_FALSE(wide_string1 == wide_string_c);
+    ASSERT_FALSE(wide_string2 == wide_string_c);
+    ASSERT_FALSE(wide_string3 == wide_string_c);
+
+#if 0
+    // TODO(tsepez): ambiguos overload prevents compilation
+    const wchar_t* c_string_same1 = L"hello";
+    ASSERT_TRUE(wide_string_c == c_string_same1);
+    ASSERT_TRUE(c_string_same1 == wide_string_c);
+
+    const wchar_t* c_string1 = L"he";
+    const wchar_t* c_string2 = L"hellp";
+    const wchar_t* c_string3 = L"hellod";
+    ASSERT_FALSE(wide_string_c == c_string1);
+    ASSERT_FALSE(wide_string_c == c_string2);
+    ASSERT_FALSE(wide_string_c == c_string3);
+
+    ASSERT_FALSE(c_string1 == wide_string_c);
+    ASSERT_FALSE(c_string2 == wide_string_c);
+    ASSERT_FALSE(c_string3 == wide_string_c);
+#endif
+}
+
+TEST(fxcrt, WideStringCOperatorNE) {
+    CFX_WideStringC wide_string_c(L"hello");
+    ASSERT_FALSE(wide_string_c != wide_string_c);
+
+    CFX_WideStringC wide_string_c_same1(L"hello");
+    ASSERT_FALSE(wide_string_c != wide_string_c_same1);
+    ASSERT_FALSE(wide_string_c_same1 != wide_string_c);
+
+    CFX_WideStringC wide_string_c_same2(wide_string_c);
+    ASSERT_FALSE(wide_string_c != wide_string_c_same2);
+    ASSERT_FALSE(wide_string_c_same2 != wide_string_c);
+
+    CFX_WideStringC wide_string_c1(L"he");
+    CFX_WideStringC wide_string_c2(L"hellp");
+    CFX_WideStringC wide_string_c3(L"hellod");
+    ASSERT_TRUE(wide_string_c != wide_string_c1);
+    ASSERT_TRUE(wide_string_c != wide_string_c2);
+    ASSERT_TRUE(wide_string_c != wide_string_c3);
+    ASSERT_TRUE(wide_string_c1 != wide_string_c);
+    ASSERT_TRUE(wide_string_c2 != wide_string_c);
+    ASSERT_TRUE(wide_string_c3 != wide_string_c);
+
+    CFX_WideString wide_string_same1(L"hello");
+    ASSERT_FALSE(wide_string_c != wide_string_same1);
+    ASSERT_FALSE(wide_string_same1 != wide_string_c);
+
+    CFX_WideString wide_string1(L"he");
+    CFX_WideString wide_string2(L"hellp");
+    CFX_WideString wide_string3(L"hellod");
+    ASSERT_TRUE(wide_string_c != wide_string1);
+    ASSERT_TRUE(wide_string_c != wide_string2);
+    ASSERT_TRUE(wide_string_c != wide_string3);
+    ASSERT_TRUE(wide_string1 != wide_string_c);
+    ASSERT_TRUE(wide_string2 != wide_string_c);
+    ASSERT_TRUE(wide_string3 != wide_string_c);
+
+#if 0
+    // See above TODO.
+    const wchar_t* c_string_same1 = L"hello";
+    ASSERT_FALSE(wide_string_c != c_string_same1);
+    ASSERT_FALSE(c_string_same1 != wide_string_c);
+
+    const wchar_t* c_string1 = L"he";
+    const wchar_t* c_string2 = L"hellp";
+    const wchar_t* c_string3 = L"hellod";
+    ASSERT_TRUE(wide_string_c != c_string1);
+    ASSERT_TRUE(wide_string_c != c_string2);
+    ASSERT_TRUE(wide_string_c != c_string3);
+
+    ASSERT_TRUE(c_string1 != wide_string_c);
+    ASSERT_TRUE(c_string2 != wide_string_c);
+    ASSERT_TRUE(c_string3 != wide_string_c);
+#endif
+}

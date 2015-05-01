@@ -376,3 +376,117 @@ TEST(fxcrt, ByteStringCOperatorLT) {
     EXPECT_TRUE(abc < def);
     EXPECT_FALSE(def < abc);
 }
+
+TEST(fxcrt, ByteStringCOperatorEQ) {
+    CFX_ByteStringC byte_string_c("hello");
+    ASSERT_TRUE(byte_string_c == byte_string_c);
+
+    CFX_ByteStringC byte_string_c_same1("hello");
+    ASSERT_TRUE(byte_string_c == byte_string_c_same1);
+    ASSERT_TRUE(byte_string_c_same1 == byte_string_c);
+
+    CFX_ByteStringC byte_string_c_same2(byte_string_c);
+    ASSERT_TRUE(byte_string_c == byte_string_c_same2);
+    ASSERT_TRUE(byte_string_c_same2 == byte_string_c);
+
+    CFX_ByteStringC byte_string_c1("he");
+    CFX_ByteStringC byte_string_c2("hellp");
+    CFX_ByteStringC byte_string_c3("hellod");
+    ASSERT_FALSE(byte_string_c == byte_string_c1);
+    ASSERT_FALSE(byte_string_c == byte_string_c2);
+    ASSERT_FALSE(byte_string_c == byte_string_c3);
+    ASSERT_FALSE(byte_string_c1 == byte_string_c);
+    ASSERT_FALSE(byte_string_c2 == byte_string_c);
+    ASSERT_FALSE(byte_string_c3 == byte_string_c);
+
+    CFX_ByteString byte_string_same1("hello");
+    ASSERT_TRUE(byte_string_c == byte_string_same1);
+    ASSERT_TRUE(byte_string_same1 == byte_string_c);
+
+    CFX_ByteString byte_string1("he");
+    CFX_ByteString byte_string2("hellp");
+    CFX_ByteString byte_string3("hellod");
+    ASSERT_FALSE(byte_string_c == byte_string1);
+    ASSERT_FALSE(byte_string_c == byte_string2);
+    ASSERT_FALSE(byte_string_c == byte_string3);
+    ASSERT_FALSE(byte_string1 == byte_string_c);
+    ASSERT_FALSE(byte_string2 == byte_string_c);
+    ASSERT_FALSE(byte_string3 == byte_string_c);
+
+    const char* c_string_same1 = "hello";
+    ASSERT_TRUE(byte_string_c == c_string_same1);
+#if 0
+    // TODO(tsepez): missing operator (but no implicit cast to c_str).
+    ASSERT_TRUE(c_string_same1 == byte_string_c);
+#endif
+
+    const char* c_string1 = "he";
+    const char* c_string2 = "hellp";
+    const char* c_string3 = "hellod";
+    ASSERT_FALSE(byte_string_c == c_string1);
+    ASSERT_FALSE(byte_string_c == c_string2);
+    ASSERT_FALSE(byte_string_c == c_string3);
+#if 0
+    // See above TODO.
+    ASSERT_FALSE(c_string1 == byte_string_c);
+    ASSERT_FALSE(c_string2 == byte_string_c);
+    ASSERT_FALSE(c_string3 == byte_string_c);
+#endif
+}
+
+TEST(fxcrt, ByteStringCOperatorNE) {
+    CFX_ByteStringC byte_string_c("hello");
+    ASSERT_FALSE(byte_string_c != byte_string_c);
+
+    CFX_ByteStringC byte_string_c_same1("hello");
+    ASSERT_FALSE(byte_string_c != byte_string_c_same1);
+    ASSERT_FALSE(byte_string_c_same1 != byte_string_c);
+
+    CFX_ByteStringC byte_string_c_same2(byte_string_c);
+    ASSERT_FALSE(byte_string_c != byte_string_c_same2);
+    ASSERT_FALSE(byte_string_c_same2 != byte_string_c);
+
+    CFX_ByteStringC byte_string_c1("he");
+    CFX_ByteStringC byte_string_c2("hellp");
+    CFX_ByteStringC byte_string_c3("hellod");
+    ASSERT_TRUE(byte_string_c != byte_string_c1);
+    ASSERT_TRUE(byte_string_c != byte_string_c2);
+    ASSERT_TRUE(byte_string_c != byte_string_c3);
+    ASSERT_TRUE(byte_string_c1 != byte_string_c);
+    ASSERT_TRUE(byte_string_c2 != byte_string_c);
+    ASSERT_TRUE(byte_string_c3 != byte_string_c);
+
+    CFX_ByteString byte_string_same1("hello");
+    ASSERT_FALSE(byte_string_c != byte_string_same1);
+    ASSERT_FALSE(byte_string_same1 != byte_string_c);
+
+    CFX_ByteString byte_string1("he");
+    CFX_ByteString byte_string2("hellp");
+    CFX_ByteString byte_string3("hellod");
+    ASSERT_TRUE(byte_string_c != byte_string1);
+    ASSERT_TRUE(byte_string_c != byte_string2);
+    ASSERT_TRUE(byte_string_c != byte_string3);
+    ASSERT_TRUE(byte_string1 != byte_string_c);
+    ASSERT_TRUE(byte_string2 != byte_string_c);
+    ASSERT_TRUE(byte_string3 != byte_string_c);
+
+    const char* c_string_same1 = "hello";
+    ASSERT_FALSE(byte_string_c != c_string_same1);
+#if 0
+    // TODO(tsepez): missing operator (but no implicit cast to c_str).
+    ASSERT_FALSE(c_string_same1 != byte_string_c);
+#endif
+
+    const char* c_string1 = "he";
+    const char* c_string2 = "hellp";
+    const char* c_string3 = "hellod";
+    ASSERT_TRUE(byte_string_c != c_string1);
+    ASSERT_TRUE(byte_string_c != c_string2);
+    ASSERT_TRUE(byte_string_c != c_string3);
+#if 0
+    // See above TODO.
+    ASSERT_TRUE(c_string1 != byte_string_c);
+    ASSERT_TRUE(c_string2 != byte_string_c);
+    ASSERT_TRUE(c_string3 != byte_string_c);
+#endif
+}
