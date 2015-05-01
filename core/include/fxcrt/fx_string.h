@@ -7,6 +7,7 @@
 #ifndef _FX_STRING_H_
 #define _FX_STRING_H_
 
+#include <stdint.h>  // For intptr_t.
 #include <algorithm>
 
 #include "fx_memory.h"
@@ -168,14 +169,17 @@ private:
 typedef const CFX_ByteStringC& FX_BSTR;
 #define FX_BSTRC(str) CFX_ByteStringC(str, sizeof str-1)
 #define FXBSTR_ID(c1, c2, c3, c4) ((c1 << 24) | (c2 << 16) | (c3 << 8) | (c4))
+
+// To ensure ref counts do not overflow, consider the worst possible case:
+// the entire address space contains nothing but pointers to this object.
+// Since the count increments with each new pointer, the largest value is
+// the number of pointers that can fit into the address space. The size of
+// the address space itself is a good upper bound on it; we need not go
+// larger.
 struct CFX_StringData {
-
-    long		m_nRefs;
-
+    intptr_t	m_nRefs;  // Would prefer ssize_t, but no windows support.
     FX_STRSIZE	m_nDataLength;
-
     FX_STRSIZE	m_nAllocLength;
-
     FX_CHAR		m_String[1];
 };
 class CFX_ByteString 
@@ -586,13 +590,9 @@ private:
 typedef const CFX_WideStringC&	FX_WSTR;
 #define FX_WSTRC(wstr) CFX_WideStringC(wstr, FX_ArraySize(wstr) - 1)
 struct CFX_StringDataW {
-
-    long		m_nRefs;
-
+    intptr_t	m_nRefs;  // Would prefer ssize_t, but no windows support.
     FX_STRSIZE	m_nDataLength;
-
     FX_STRSIZE	m_nAllocLength;
-
     FX_WCHAR	m_String[1];
 };
 class CFX_WideString 

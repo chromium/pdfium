@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <stddef.h>  // For offsetof().
+
 #include "../../include/fxcrt/fx_basic.h"
 #include "../../../third_party/base/numerics/safe_math.h"
 
@@ -53,7 +55,9 @@ static CFX_StringData* FX_AllocString(int nLen)
         return NULL;
     }
 
-    int overhead = sizeof(long) * 3 + 1;  // 3 longs in header plus 1 for NUL.
+    // Fixed portion of header plus a NUL char not included in m_nAllocLength.
+    // sizeof(FX_CHAR) is always 1, used for consistency with CFX_Widestring.
+    int overhead = offsetof(CFX_StringData, m_String) + sizeof(FX_CHAR);
     pdfium::base::CheckedNumeric<int> nSize = nLen;
     nSize += overhead;
 
