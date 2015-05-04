@@ -18,7 +18,9 @@ public:
 };
 IFPF_DeviceModule*	FPF_GetDeviceModule();
 #define FPF_MATCHFONT_REPLACEANSI		1
-FX_DEFINEHANDLE(FPF_HFONT);
+typedef struct FPF_HFONT_ {
+    FX_LPVOID pData;
+}* FPF_HFONT;
 class IFPF_Font
 {
 public:

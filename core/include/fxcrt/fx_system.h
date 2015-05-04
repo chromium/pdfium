@@ -110,7 +110,6 @@ typedef wchar_t*				FX_LPWSTR;
 typedef wchar_t const*			FX_LPCWSTR;
 typedef FX_DWORD				FX_UINT32;
 typedef FX_UINT64				FX_QWORD;
-#define FX_DEFINEHANDLE(name)	typedef struct _##name {FX_LPVOID pData;} * name;
 #if defined(DEBUG) && !defined(_DEBUG)
 #define _DEBUG
 #endif

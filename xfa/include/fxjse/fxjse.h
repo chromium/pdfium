@@ -6,16 +6,22 @@
 
 #ifndef _FXJSE_H_
 #define _FXJSE_H_
-#ifdef __cplusplus
-#define FXJSE_DEFINEINHERITHANDLE(name, subtypename) typedef struct _##subtypename : public _##name {} * subtypename;
-#else
-#define FXJSE_DEFINEINHERITHANDLE(name, subtypename) typedef name subtypename;
-#endif
-FX_DEFINEHANDLE(FXJSE_HRUNTIME);
-FX_DEFINEHANDLE(FXJSE_HCONTEXT);
-FX_DEFINEHANDLE(FXJSE_HCLASS);
-FX_DEFINEHANDLE(FXJSE_HVALUE);
-FXJSE_DEFINEINHERITHANDLE(FXJSE_HVALUE, FXJSE_HOBJECT);
+
+typedef struct FXJSE_HRUNTIME_ {
+    FX_LPVOID pData;
+}* FXJSE_HRUNTIME;
+typedef struct FXJSE_HCONTEXT_ {
+    FX_LPVOID pData;
+}* FXJSE_HCONTEXT;
+typedef struct FXJSE_HCLASS_ {
+    FX_LPVOID pData;
+}* FXJSE_HCLASS;
+typedef struct FXJSE_HVALUE_ {
+    FX_LPVOID pData;
+}* FXJSE_HVALUE;
+typedef struct FXJSE_HOBJECT_ : public FXJSE_HVALUE_ {
+}* FXJSE_HOBJECT;
+
 typedef double FXJSE_DOUBLE;
 void FXJSE_Initialize();
 void FXJSE_Finalize();
