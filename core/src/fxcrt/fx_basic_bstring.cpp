@@ -251,24 +251,37 @@ const CFX_ByteString& CFX_ByteString::operator+=(FX_BSTR string)
     ConcatInPlace(string.GetLength(), string.GetCStr());
     return *this;
 }
-bool CFX_ByteString::Equal(FX_BSTR str) const
+bool CFX_ByteString::Equal(const char* ptr) const
+{
+    if (!m_pData) {
+        return !ptr;
+    }
+    if (!ptr) {
+        return false;
+    }
+    return strlen(ptr) == m_pData->m_nDataLength &&
+        FXSYS_memcmp32(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
+}
+bool CFX_ByteString::Equal(const CFX_ByteStringC& str) const
 {
     if (m_pData == NULL) {
         return str.IsEmpty();
     }
     return m_pData->m_nDataLength == str.GetLength() &&
-           FXSYS_memcmp32(m_pData->m_String, str.GetCStr(), str.GetLength()) == 0;
+        FXSYS_memcmp32(m_pData->m_String, str.GetCStr(), str.GetLength()) == 0;
 }
-bool CFX_ByteString::operator ==(const CFX_ByteString& s2) const
+bool CFX_ByteString::Equal(const CFX_ByteString& other) const
 {
-    if (m_pData == NULL) {
-        return s2.IsEmpty();
+    if (!m_pData) {
+        return other.IsEmpty();
     }
-    if (s2.m_pData == NULL) {
+    if (!other.m_pData) {
         return false;
     }
-    return m_pData->m_nDataLength == s2.m_pData->m_nDataLength &&
-           FXSYS_memcmp32(m_pData->m_String, s2.m_pData->m_String, m_pData->m_nDataLength) == 0;
+    return other.m_pData->m_nDataLength == m_pData->m_nDataLength &&
+        FXSYS_memcmp32(other.m_pData->m_String,
+                       m_pData->m_String,
+                       m_pData->m_nDataLength) == 0;
 }
 void CFX_ByteString::Empty()
 {
