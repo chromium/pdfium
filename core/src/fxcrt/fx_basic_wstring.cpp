@@ -205,41 +205,16 @@ const CFX_WideString& CFX_WideString::operator+=(const CFX_WideStringC& string)
     ConcatInPlace(string.GetLength(), string.GetPtr());
     return *this;
 }
-bool operator==(const CFX_WideString& s1, FX_LPCWSTR s2)
+bool CFX_WideString::Equal(const wchar_t* ptr) const
 {
-    return s1.Equal(s2);
-}
-bool operator==(FX_LPCWSTR s1, const CFX_WideString& s2)
-{
-    return s2.Equal(s1);
-}
-bool operator==(const CFX_WideString& s1, const CFX_WideString& s2)
-{
-    return s1.Equal(s2);
-}
-bool operator==(const CFX_WideString& s1, const CFX_WideStringC& s2)
-{
-    return s1.Equal(s2);
-}
-bool operator==(const CFX_WideStringC& s1, const CFX_WideString& s2)
-{
-    return s2.Equal(s1);
-}
-bool operator != (const CFX_WideString& s1, FX_LPCWSTR s2)
-{
-    return !s1.Equal(s2);
-}
-bool operator!=(const CFX_WideString& s1, const CFX_WideString& s2)
-{
-    return !s1.Equal(s2);
-}
-bool operator!=(const CFX_WideString& s1, const CFX_WideStringC& s2)
-{
-    return !s1.Equal(s2);
-}
-bool operator!=(const CFX_WideStringC& s1, const CFX_WideString& s2)
-{
-    return !s2.Equal(s1);
+    if (!m_pData) {
+        return !ptr;
+    }
+    if (!ptr) {
+        return false;
+    }
+    return wcslen(ptr) == m_pData->m_nDataLength &&
+            wmemcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 bool CFX_WideString::Equal(const CFX_WideStringC& str) const
 {
@@ -247,7 +222,20 @@ bool CFX_WideString::Equal(const CFX_WideStringC& str) const
         return str.IsEmpty();
     }
     return str.GetLength() == m_pData->m_nDataLength &&
-           FXSYS_memcmp32(str.GetPtr(), m_pData->m_String, m_pData->m_nDataLength * sizeof(FX_WCHAR)) == 0;
+        wmemcmp(str.GetPtr(), m_pData->m_String, m_pData->m_nDataLength) == 0;
+}
+bool CFX_WideString::Equal(const CFX_WideString& other) const
+{
+    if (!m_pData) {
+        return other.IsEmpty();
+    }
+    if (!other.m_pData) {
+        return false;
+    }
+    return other.m_pData->m_nDataLength == m_pData->m_nDataLength &&
+        wmemcmp(other.m_pData->m_String,
+                m_pData->m_String,
+                m_pData->m_nDataLength) == 0;
 }
 void CFX_WideString::Empty()
 {

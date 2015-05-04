@@ -511,14 +511,17 @@ public:
 
     CFX_WideStringC& operator = (const CFX_WideString& src);
 
-    bool			operator == (const CFX_WideStringC& str) const
-    {
-        return 	str.m_Length == m_Length && FXSYS_memcmp32(str.m_Ptr, m_Ptr, m_Length * sizeof(FX_WCHAR)) == 0;
+    bool operator== (const wchar_t* ptr) const  {
+        return FXSYS_wcslen(ptr) == m_Length &&
+            wmemcmp(ptr, m_Ptr, m_Length) == 0;
     }
-
-    bool			operator != (const CFX_WideStringC& str) const
-    {
-        return 	str.m_Length != m_Length || FXSYS_memcmp32(str.m_Ptr, m_Ptr, m_Length * sizeof(FX_WCHAR)) != 0;
+    bool operator== (const CFX_WideStringC& str) const  {
+        return str.m_Length == m_Length &&
+            wmemcmp(str.m_Ptr, m_Ptr, m_Length) == 0;
+    }
+    bool operator!= (const wchar_t* ptr) const { return !(*this == ptr); }
+    bool operator!= (const CFX_WideStringC& str) const {
+        return !(*this == str);
     }
 
     FX_LPCWSTR		GetPtr() const
@@ -598,8 +601,15 @@ private:
         return NULL;
     }
 };
+inline bool operator== (const wchar_t* lhs, const CFX_WideStringC& rhs) {
+    return rhs == lhs;
+}
+inline bool operator!= (const wchar_t* lhs, const CFX_WideStringC& rhs) {
+    return rhs != lhs;
+}
 typedef const CFX_WideStringC&	FX_WSTR;
 #define FX_WSTRC(wstr) CFX_WideStringC(wstr, FX_ArraySize(wstr) - 1)
+
 struct CFX_StringDataW {
     intptr_t	m_nRefs;  // Would prefer ssize_t, but no windows support.
     FX_STRSIZE	m_nDataLength;
@@ -681,6 +691,18 @@ public:
 
     const CFX_WideString&	operator += (const CFX_WideStringC& str);
 
+    bool operator== (const wchar_t* ptr) const { return Equal(ptr); }
+    bool operator== (const CFX_WideStringC& str) const { return Equal(str); }
+    bool operator== (const CFX_WideString& other) const { return Equal(other); }
+
+    bool operator!= (const wchar_t* ptr) const { return !(*this == ptr); }
+    bool operator!= (const CFX_WideStringC& str) const {
+        return !(*this == str);
+    }
+    bool operator!= (const CFX_WideString& other) const {
+        return !(*this == other);
+    }
+
     bool operator< (const CFX_WideString& str) const {
         int result = wmemcmp(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
         return result < 0 || (result == 0 && GetLength() < str.GetLength());
@@ -704,7 +726,9 @@ public:
 
     int						CompareNoCase(FX_LPCWSTR str) const;
 
-    bool					Equal(const CFX_WideStringC& str) const;
+    bool Equal(const wchar_t* ptr) const;
+    bool Equal(const CFX_WideStringC& str) const;
+    bool Equal(const CFX_WideString& other) const;
 
     CFX_WideString			Mid(FX_STRSIZE first) const;
 
@@ -832,17 +856,18 @@ inline CFX_WideString operator + (const CFX_WideStringC& str1, const CFX_WideStr
 {
     return CFX_WideString(str1, str2);
 }
-
-bool operator==(const CFX_WideString& s1, const CFX_WideString& s2);
-bool operator==(const CFX_WideString& s1, const CFX_WideStringC& s2);
-bool operator==(const CFX_WideStringC& s1, const CFX_WideString& s2);
-bool operator== (const CFX_WideString& s1, FX_LPCWSTR s2);
-bool operator==(FX_LPCWSTR s1, const CFX_WideString& s2);
-bool operator!=(const CFX_WideString& s1, const CFX_WideString& s2);
-bool operator!=(const CFX_WideString& s1, const CFX_WideStringC& s2);
-bool operator!=(const CFX_WideStringC& s1, const CFX_WideString& s2);
-bool operator!= (const CFX_WideString& s1, FX_LPCWSTR s2);
-bool operator!=(FX_LPCWSTR s1, const CFX_WideString& s2);
+inline bool operator== (const wchar_t* lhs, const CFX_WideString& rhs) {
+    return rhs == lhs;
+}
+inline bool operator== (const CFX_WideStringC& lhs, const CFX_WideString& rhs) {
+    return rhs == lhs;
+}
+inline bool operator!= (const wchar_t* lhs, const CFX_WideString& rhs) {
+    return rhs != lhs;
+}
+inline bool operator!= (const CFX_WideStringC& lhs, const CFX_WideString& rhs) {
+    return rhs != lhs;
+}
 FX_FLOAT FX_atof(FX_BSTR str);
 void FX_atonum(FX_BSTR str, FX_BOOL& bInteger, void* pData);
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_LPSTR buf);
