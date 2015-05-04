@@ -83,11 +83,7 @@ TEST(fxcrt, ByteStringOperatorEQ) {
 
     const char* c_string_same1 = "hello";
     ASSERT_TRUE(byte_string == c_string_same1);
-#if 0
-    // TODO(tsepez): See, you don't want implicit c_str() casting.
-    // This degrades to a pointer comparision, which flunks.
     ASSERT_TRUE(c_string_same1 == byte_string);
-#endif
 
     const char* c_string1 = "he";
     const char* c_string2 = "hellp";
@@ -138,10 +134,8 @@ TEST(fxcrt, ByteStringOperatorNE) {
 
     const char* c_string_same1 = "hello";
     ASSERT_FALSE(byte_string != c_string_same1);
-#if 0
-    // See above TODO.
     ASSERT_FALSE(c_string_same1 != byte_string);
-#endif
+
     const char* c_string1 = "he";
     const char* c_string2 = "hellp";
     const char* c_string3 = "hellod";
@@ -415,10 +409,7 @@ TEST(fxcrt, ByteStringCOperatorEQ) {
 
     const char* c_string_same1 = "hello";
     ASSERT_TRUE(byte_string_c == c_string_same1);
-#if 0
-    // TODO(tsepez): missing operator (but no implicit cast to c_str).
     ASSERT_TRUE(c_string_same1 == byte_string_c);
-#endif
 
     const char* c_string1 = "he";
     const char* c_string2 = "hellp";
@@ -426,12 +417,10 @@ TEST(fxcrt, ByteStringCOperatorEQ) {
     ASSERT_FALSE(byte_string_c == c_string1);
     ASSERT_FALSE(byte_string_c == c_string2);
     ASSERT_FALSE(byte_string_c == c_string3);
-#if 0
-    // See above TODO.
+
     ASSERT_FALSE(c_string1 == byte_string_c);
     ASSERT_FALSE(c_string2 == byte_string_c);
     ASSERT_FALSE(c_string3 == byte_string_c);
-#endif
 }
 
 TEST(fxcrt, ByteStringCOperatorNE) {
@@ -472,10 +461,7 @@ TEST(fxcrt, ByteStringCOperatorNE) {
 
     const char* c_string_same1 = "hello";
     ASSERT_FALSE(byte_string_c != c_string_same1);
-#if 0
-    // TODO(tsepez): missing operator (but no implicit cast to c_str).
     ASSERT_FALSE(c_string_same1 != byte_string_c);
-#endif
 
     const char* c_string1 = "he";
     const char* c_string2 = "hellp";
@@ -483,10 +469,8 @@ TEST(fxcrt, ByteStringCOperatorNE) {
     ASSERT_TRUE(byte_string_c != c_string1);
     ASSERT_TRUE(byte_string_c != c_string2);
     ASSERT_TRUE(byte_string_c != c_string3);
-#if 0
-    // See above TODO.
+
     ASSERT_TRUE(c_string1 != byte_string_c);
     ASSERT_TRUE(c_string2 != byte_string_c);
     ASSERT_TRUE(c_string3 != byte_string_c);
-#endif
 }

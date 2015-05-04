@@ -94,14 +94,17 @@ public:
 
     CFX_ByteStringC& operator = (const CFX_ByteString& src);
 
-    bool			operator == (const CFX_ByteStringC& str) const
-    {
-        return 	str.m_Length == m_Length && FXSYS_memcmp32(str.m_Ptr, m_Ptr, m_Length) == 0;
+    bool operator== (const char* ptr) const {
+        return strlen(ptr) == m_Length &&
+                FXSYS_memcmp32(ptr, m_Ptr, m_Length) == 0;
     }
-
-    bool			operator != (const CFX_ByteStringC& str) const
-    {
-        return 	str.m_Length != m_Length || FXSYS_memcmp32(str.m_Ptr, m_Ptr, m_Length) != 0;
+    bool operator== (const CFX_ByteStringC& other) const {
+        return other.m_Length == m_Length &&
+                FXSYS_memcmp32(other.m_Ptr, m_Ptr, m_Length) == 0;
+    }
+    bool operator!= (const char* ptr) const { return !(*this == ptr); }
+    bool operator!= (const CFX_ByteStringC& other) const {
+        return !(*this == other);
     }
 
     FX_DWORD		GetID(FX_STRSIZE start_pos = 0) const;
@@ -166,6 +169,12 @@ private:
         return NULL;
     }
 };
+inline bool operator== (const char* lhs, const CFX_ByteStringC& rhs) {
+    return rhs == lhs;
+}
+inline bool operator!= (const char* lhs, const CFX_ByteStringC& rhs) {
+    return rhs != lhs;
+}
 typedef const CFX_ByteStringC& FX_BSTR;
 #define FX_BSTRC(str) CFX_ByteStringC(str, sizeof str-1)
 #define FXBSTR_ID(c1, c2, c3, c4) ((c1 << 24) | (c2 << 16) | (c3 << 8) | (c4))
@@ -243,36 +252,22 @@ public:
     int						Compare(FX_BSTR str) const;
 
 
-    bool					Equal(FX_BSTR str) const;
+    bool Equal(const char* ptr) const;
+    bool Equal(const CFX_ByteStringC& str) const;
+    bool Equal(const CFX_ByteString& other) const;
 
+    bool EqualNoCase(FX_BSTR str) const;
 
-    bool					EqualNoCase(FX_BSTR str) const;
+    bool operator== (const char* ptr) const { return Equal(ptr); }
+    bool operator== (const CFX_ByteStringC& str) const { return Equal(str); }
+    bool operator== (const CFX_ByteString& other) const { return Equal(other); }
 
-    bool					operator == (FX_LPCSTR str) const
-    {
-        return Equal(str);
+    bool operator!= (const char* ptr) const { return !(*this == ptr); }
+    bool operator!= (const CFX_ByteStringC& str) const {
+        return !(*this == str);
     }
-
-    bool					operator == (FX_BSTR str) const
-    {
-        return Equal(str);
-    }
-
-    bool					operator == (const CFX_ByteString& str) const;
-
-    bool					operator != (FX_LPCSTR str) const
-    {
-        return !Equal(str);
-    }
-
-    bool					operator != (FX_BSTR str) const
-    {
-        return !Equal(str);
-    }
-
-    bool					operator != (const CFX_ByteString& str) const
-    {
-        return !operator==(str);
+    bool operator!= (const CFX_ByteString& other) const {
+        return !(*this == other);
     }
 
     bool operator< (const CFX_ByteString& str) const
@@ -396,6 +391,19 @@ inline CFX_ByteStringC& CFX_ByteStringC::operator = (const CFX_ByteString& src)
     m_Ptr = (FX_LPCBYTE)src;
     m_Length = src.GetLength();
     return *this;
+}
+
+inline bool operator== (const char* lhs, const CFX_ByteString& rhs) {
+    return rhs == lhs;
+}
+inline bool operator== (const CFX_ByteStringC& lhs, const CFX_ByteString& rhs) {
+    return rhs == lhs;
+}
+inline bool operator!= (const char* lhs, const CFX_ByteString& rhs) {
+    return rhs != lhs;
+}
+inline bool operator!= (const CFX_ByteStringC& lhs, const CFX_ByteString& rhs) {
+    return rhs != lhs;
 }
 
 inline CFX_ByteString operator + (FX_BSTR str1, FX_BSTR str2)
