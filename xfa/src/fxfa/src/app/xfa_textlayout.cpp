@@ -520,7 +520,7 @@ FX_BOOL	CXFA_TextParser::GetEmbbedObj(IXFA_TextProvider *pTextProvider, IFDE_XML
         if (wsAttr.IsEmpty()) {
             return FALSE;
         }
-        if (wsAttr.GetAt(0) == FX_WSTRC(L"#")) {
+        if (wsAttr.GetAt(0) == L'#') {
             wsAttr.Delete(0);
         }
         CFX_WideString ws;
