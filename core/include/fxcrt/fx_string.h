@@ -12,15 +12,11 @@
 
 #include "fx_memory.h"
 
-class CFX_ByteStringC;
+class CFX_BinaryBuf;
 class CFX_ByteString;
-class CFX_WideStringC;
 class CFX_WideString;
 struct CFX_CharMap;
-class CFX_BinaryBuf;
 typedef int FX_STRSIZE;
-class CFX_ByteStringL;
-class CFX_WideStringL;
 
 // An immutable string with caller-provided storage which must outlive the
 // string itself.
@@ -208,12 +204,14 @@ public:
 
     CFX_ByteString(char ch);
 
-    CFX_ByteString(FX_LPCSTR ptr, FX_STRSIZE len = -1);
+    CFX_ByteString(FX_LPCSTR ptr)
+            : CFX_ByteString(ptr, ptr ? FXSYS_strlen(ptr) : 0) { }
+
+    CFX_ByteString(FX_LPCSTR ptr, FX_STRSIZE len);
 
     CFX_ByteString(FX_LPCBYTE ptr, FX_STRSIZE len);
 
     CFX_ByteString(FX_BSTR bstrc);
-
     CFX_ByteString(FX_BSTR bstrc1, FX_BSTR bstrc2);
 
     ~CFX_ByteString();
@@ -631,10 +629,10 @@ public:
 
     CFX_WideString(const CFX_WideString& str);
 
-    CFX_WideString(FX_LPCWSTR ptr, FX_STRSIZE len = -1)
-    {
-        InitStr(ptr, len);
-    }
+    CFX_WideString(FX_LPCWSTR ptr)
+            : CFX_WideString(ptr, ptr ? FXSYS_wcslen(ptr) : 0) { }
+
+    CFX_WideString(FX_LPCWSTR ptr, FX_STRSIZE len);
 
     CFX_WideString(FX_WCHAR ch);
 
@@ -785,16 +783,16 @@ public:
     CFX_ByteString			UTF16LE_Encode() const;
 
     void					ConvertFrom(const CFX_ByteString& str, CFX_CharMap* pCharMap = NULL);
-protected:
-    void					InitStr(FX_LPCWSTR ptr, int len);
 
-    CFX_StringDataW*		m_pData;
+protected:
     void					CopyBeforeWrite();
     void					AllocBeforeWrite(FX_STRSIZE nLen);
     void					ConcatInPlace(FX_STRSIZE nSrcLen, FX_LPCWSTR lpszSrcData);
     void					ConcatCopy(FX_STRSIZE nSrc1Len, FX_LPCWSTR lpszSrc1Data, FX_STRSIZE nSrc2Len, FX_LPCWSTR lpszSrc2Data);
     void					AssignCopy(FX_STRSIZE nSrcLen, FX_LPCWSTR lpszSrcData);
     void					AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex) const;
+
+    CFX_StringDataW*		m_pData;
 };
 inline CFX_WideStringC::CFX_WideStringC(const CFX_WideString& src)
 {

@@ -63,21 +63,6 @@ CFX_WideString::~CFX_WideString()
         FX_Free(m_pData);
     }
 }
-void CFX_WideString::InitStr(FX_LPCWSTR lpsz, FX_STRSIZE nLen)
-{
-    if (nLen < 0) {
-        nLen = lpsz ? (FX_STRSIZE)FXSYS_wcslen(lpsz) : 0;
-    }
-    if (nLen) {
-        m_pData = FX_AllocStringW(nLen);
-        if (!m_pData) {
-            return;
-        }
-        FXSYS_memcpy32(m_pData->m_String, lpsz, nLen * sizeof(FX_WCHAR));
-    } else {
-        m_pData = NULL;
-    }
-}
 CFX_WideString::CFX_WideString(const CFX_WideString& stringSrc)
 {
     if (stringSrc.m_pData == NULL) {
@@ -90,6 +75,19 @@ CFX_WideString::CFX_WideString(const CFX_WideString& stringSrc)
     } else {
         m_pData = NULL;
         *this = stringSrc;
+    }
+}
+CFX_WideString::CFX_WideString(FX_LPCWSTR lpsz, FX_STRSIZE nLen) {
+    if (nLen < 0) {
+        nLen = lpsz ? (FX_STRSIZE)FXSYS_wcslen(lpsz) : 0;
+    }
+    if (nLen) {
+        m_pData = FX_AllocStringW(nLen);
+        if (m_pData) {
+            FXSYS_memcpy32(m_pData->m_String, lpsz, nLen * sizeof(FX_WCHAR));
+        }
+    } else {
+        m_pData = NULL;
     }
 }
 CFX_WideString::CFX_WideString(FX_WCHAR ch)
