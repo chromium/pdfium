@@ -336,6 +336,9 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document, int page_i
 #define FPDF_RENDER_LIMITEDIMAGECACHE	0x200	// Limit image cache size. 
 #define FPDF_RENDER_FORCEHALFTONE		0x400	// Always use halftone for image stretching.
 #define FPDF_PRINTING		0x800	// Render for printing.
+#define FPDF_RENDER_NO_SMOOTHTEXT	0x1000  // Set to disable anti-aliasing on text.
+#define FPDF_RENDER_NO_SMOOTHIMAGE	0x2000  // Set to disable anti-aliasing on images.
+#define FPDF_RENDER_NO_SMOOTHPATH	0x4000  // Set to disable anti-aliasing on paths.
 #define FPDF_REVERSE_BYTE_ORDER		0x10		//set whether render in a reverse Byte order, this flag only 
 												//enable when render to a bitmap.
 #ifdef _WIN32

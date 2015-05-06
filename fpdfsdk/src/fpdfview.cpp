@@ -689,6 +689,12 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_
 		pContext->m_pOptions->m_Flags |= RENDER_LIMITEDIMAGECACHE;
 	if (flags & FPDF_RENDER_FORCEHALFTONE)
 		pContext->m_pOptions->m_Flags |= RENDER_FORCE_HALFTONE;
+	if (flags & FPDF_RENDER_NO_SMOOTHTEXT)
+		pContext->m_pOptions->m_Flags |= RENDER_NOTEXTSMOOTH;
+	if (flags & FPDF_RENDER_NO_SMOOTHIMAGE)
+		pContext->m_pOptions->m_Flags |= RENDER_NOIMAGESMOOTH;
+	if (flags & FPDF_RENDER_NO_SMOOTHPATH)
+		pContext->m_pOptions->m_Flags |= RENDER_NOPATHSMOOTH;
 	//Grayscale output
 	if (flags & FPDF_GRAYSCALE)
 	{
