@@ -79,7 +79,7 @@ CFX_WideString::CFX_WideString(const CFX_WideString& stringSrc)
 }
 CFX_WideString::CFX_WideString(FX_LPCWSTR lpsz, FX_STRSIZE nLen) {
     if (nLen < 0) {
-        nLen = lpsz ? (FX_STRSIZE)FXSYS_wcslen(lpsz) : 0;
+        nLen = lpsz ? FXSYS_wcslen(lpsz) : 0;
     }
     if (nLen) {
         m_pData = FX_AllocStringW(nLen);
@@ -128,7 +128,7 @@ void CFX_WideString::ReleaseBuffer(FX_STRSIZE nNewLength)
     }
     CopyBeforeWrite();
     if (nNewLength == -1) {
-        nNewLength = m_pData ? (FX_STRSIZE)FXSYS_wcslen(m_pData->m_String) : 0;
+        nNewLength = m_pData ? FXSYS_wcslen(m_pData->m_String) : 0;
     }
     if (nNewLength == 0) {
         Empty();
@@ -143,7 +143,7 @@ const CFX_WideString& CFX_WideString::operator=(FX_LPCWSTR lpsz)
     if (lpsz == NULL || lpsz[0] == 0) {
         Empty();
     } else {
-        AssignCopy((FX_STRSIZE)FXSYS_wcslen(lpsz), lpsz);
+        AssignCopy(FXSYS_wcslen(lpsz), lpsz);
     }
     return *this;
 }
@@ -183,7 +183,7 @@ const CFX_WideString& CFX_WideString::operator+=(FX_WCHAR ch)
 const CFX_WideString& CFX_WideString::operator+=(FX_LPCWSTR lpsz)
 {
     if (lpsz) {
-        ConcatInPlace((FX_STRSIZE)FXSYS_wcslen(lpsz), lpsz);
+        ConcatInPlace(FXSYS_wcslen(lpsz), lpsz);
     }
     return *this;
 }
@@ -658,11 +658,11 @@ FX_STRSIZE CFX_WideString::Replace(FX_LPCWSTR lpszOld, FX_LPCWSTR lpszNew)
     if (lpszOld == NULL) {
         return 0;
     }
-    FX_STRSIZE nSourceLen = (FX_STRSIZE)FXSYS_wcslen(lpszOld);
+    FX_STRSIZE nSourceLen = FXSYS_wcslen(lpszOld);
     if (nSourceLen == 0) {
         return 0;
     }
-    FX_STRSIZE nReplacementLen = lpszNew ? (FX_STRSIZE)FXSYS_wcslen(lpszNew) : 0;
+    FX_STRSIZE nReplacementLen = lpszNew ? FXSYS_wcslen(lpszNew) : 0;
     FX_STRSIZE nCount = 0;
     FX_LPWSTR lpszStart = m_pData->m_String;
     FX_LPWSTR lpszEnd = m_pData->m_String + m_pData->m_nDataLength;
@@ -791,7 +791,7 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
     int nMaxLen = 0;
     for (FX_LPCWSTR lpsz = lpszFormat; *lpsz != 0; lpsz ++) {
         if (*lpsz != '%' || *(lpsz = lpsz + 1) == '%') {
-            nMaxLen += (FX_STRSIZE)FXSYS_wcslen(lpsz);
+            nMaxLen += FXSYS_wcslen(lpsz);
             continue;
         }
         int nItemLen = 0;
@@ -877,7 +877,7 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
                     if (pstrNextArg == NULL) {
                         nItemLen = 6;
                     } else {
-                        nItemLen = (FX_STRSIZE)FXSYS_wcslen(pstrNextArg);
+                        nItemLen = FXSYS_wcslen(pstrNextArg);
                         if (nItemLen < 1) {
                             nItemLen = 1;
                         }
@@ -889,7 +889,7 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
                     if (pstrNextArg == NULL) {
                         nItemLen = 6;
                     } else {
-                        nItemLen = (FX_STRSIZE)FXSYS_strlen(pstrNextArg);
+                        nItemLen = FXSYS_strlen(pstrNextArg);
                         if (nItemLen < 1) {
                             nItemLen = 1;
                         }
@@ -902,7 +902,7 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
                     if (pstrNextArg == NULL) {
                         nItemLen = 6;
                     } else {
-                        nItemLen = (FX_STRSIZE)FXSYS_strlen(pstrNextArg);
+                        nItemLen = FXSYS_strlen(pstrNextArg);
                         if (nItemLen < 1) {
                             nItemLen = 1;
                         }
@@ -915,7 +915,7 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
                     if (pstrNextArg == NULL) {
                         nItemLen = 6;
                     } else {
-                        nItemLen = (FX_STRSIZE)FXSYS_wcslen(pstrNextArg);
+                        nItemLen = FXSYS_wcslen(pstrNextArg);
                         if (nItemLen < 1) {
                             nItemLen = 1;
                         }
@@ -968,7 +968,7 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
                         char pszTemp[256];
                         f = va_arg(argList, double);
                         FXSYS_snprintf(pszTemp, sizeof(pszTemp), "%*.*f", nWidth, nPrecision + 6, f );
-                        nItemLen = (FX_STRSIZE)FXSYS_strlen(pszTemp);
+                        nItemLen = FXSYS_strlen(pszTemp);
                     }
                     break;
                 case 'p':

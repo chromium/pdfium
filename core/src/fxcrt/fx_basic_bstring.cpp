@@ -103,7 +103,7 @@ CFX_ByteString::~CFX_ByteString()
 CFX_ByteString::CFX_ByteString(FX_LPCSTR lpsz, FX_STRSIZE nLen)
 {
     if (nLen < 0) {
-        nLen = lpsz ? (FX_STRSIZE)FXSYS_strlen(lpsz) : 0;
+        nLen = lpsz ? FXSYS_strlen(lpsz) : 0;
     }
     if (nLen) {
         m_pData = FX_AllocString(nLen);
@@ -174,7 +174,7 @@ const CFX_ByteString& CFX_ByteString::operator=(FX_LPCSTR lpsz)
     if (lpsz == NULL || lpsz[0] == 0) {
         Empty();
     } else {
-        AssignCopy((FX_STRSIZE)FXSYS_strlen(lpsz), lpsz);
+        AssignCopy(FXSYS_strlen(lpsz), lpsz);
     }
     return *this;
 }
@@ -226,7 +226,7 @@ void CFX_ByteString::Load(FX_LPCBYTE buf, FX_STRSIZE len)
 const CFX_ByteString& CFX_ByteString::operator+=(FX_LPCSTR lpsz)
 {
     if (lpsz) {
-        ConcatInPlace((FX_STRSIZE)FXSYS_strlen(lpsz), lpsz);
+        ConcatInPlace(FXSYS_strlen(lpsz), lpsz);
     }
     return *this;
 }
@@ -360,7 +360,7 @@ void CFX_ByteString::ReleaseBuffer(FX_STRSIZE nNewLength)
     }
     CopyBeforeWrite();
     if (nNewLength == -1) {
-        nNewLength = (FX_STRSIZE)FXSYS_strlen((FX_LPCSTR)m_pData->m_String);
+        nNewLength = FXSYS_strlen((FX_LPCSTR)m_pData->m_String);
     }
     if (nNewLength == 0) {
         Empty();
@@ -523,7 +523,7 @@ void CFX_ByteString::FormatV(FX_LPCSTR lpszFormat, va_list argList)
     int nMaxLen = 0;
     for (FX_LPCSTR lpsz = lpszFormat; *lpsz != 0; lpsz ++) {
         if (*lpsz != '%' || *(lpsz = lpsz + 1) == '%') {
-            nMaxLen += (FX_STRSIZE)FXSYS_strlen(lpsz);
+            nMaxLen += FXSYS_strlen(lpsz);
             continue;
         }
         int nItemLen = 0;
@@ -609,7 +609,7 @@ void CFX_ByteString::FormatV(FX_LPCSTR lpszFormat, va_list argList)
                     if (pstrNextArg == NULL) {
                         nItemLen = 6;
                     } else {
-                        nItemLen = (FX_STRSIZE)FXSYS_strlen(pstrNextArg);
+                        nItemLen = FXSYS_strlen(pstrNextArg);
                         if (nItemLen < 1) {
                             nItemLen = 1;
                         }
@@ -621,7 +621,7 @@ void CFX_ByteString::FormatV(FX_LPCSTR lpszFormat, va_list argList)
                     if (pstrNextArg == NULL) {
                         nItemLen = 6;
                     } else {
-                        nItemLen = (FX_STRSIZE)FXSYS_wcslen(pstrNextArg);
+                        nItemLen = FXSYS_wcslen(pstrNextArg);
                         if (nItemLen < 1) {
                             nItemLen = 1;
                         }
@@ -634,7 +634,7 @@ void CFX_ByteString::FormatV(FX_LPCSTR lpszFormat, va_list argList)
                     if (pstrNextArg == NULL) {
                         nItemLen = 6;
                     } else {
-                        nItemLen = (FX_STRSIZE)FXSYS_strlen(pstrNextArg);
+                        nItemLen = FXSYS_strlen(pstrNextArg);
                         if (nItemLen < 1) {
                             nItemLen = 1;
                         }
@@ -647,7 +647,7 @@ void CFX_ByteString::FormatV(FX_LPCSTR lpszFormat, va_list argList)
                     if (pstrNextArg == NULL) {
                         nItemLen = 6;
                     } else {
-                        nItemLen = (FX_STRSIZE)FXSYS_wcslen(pstrNextArg);
+                        nItemLen = FXSYS_wcslen(pstrNextArg);
                         if (nItemLen < 1) {
                             nItemLen = 1;
                         }
@@ -700,7 +700,7 @@ void CFX_ByteString::FormatV(FX_LPCSTR lpszFormat, va_list argList)
                         double f = va_arg(argList, double);
                         memset(pszTemp, 0, sizeof(pszTemp));
                         FXSYS_snprintf(pszTemp, sizeof(pszTemp) - 1, "%*.*f", nWidth, nPrecision + 6, f);
-                        nItemLen = (FX_STRSIZE)FXSYS_strlen(pszTemp);
+                        nItemLen = FXSYS_strlen(pszTemp);
                     }
                     break;
                 case 'p':
@@ -969,7 +969,7 @@ CFX_WideString CFX_ByteString::UTF8Decode() const
 CFX_ByteString CFX_ByteString::FromUnicode(FX_LPCWSTR str, FX_STRSIZE len)
 {
     if (len < 0) {
-        len = (FX_STRSIZE)FXSYS_wcslen(str);
+        len = FXSYS_wcslen(str);
     }
     CFX_ByteString bstr;
     bstr.ConvertFrom(CFX_WideString(str, len));
@@ -1135,7 +1135,7 @@ FX_STRSIZE FX_ftoa(FX_FLOAT d, FX_LPSTR buf)
     }
     int i = scaled / scale;
     FXSYS_itoa(i, buf2, 10);
-    FX_STRSIZE len = (FX_STRSIZE)FXSYS_strlen(buf2);
+    FX_STRSIZE len = FXSYS_strlen(buf2);
     FXSYS_memcpy32(buf + buf_size, buf2, len);
     buf_size += len;
     int fraction = scaled % scale;

@@ -11,12 +11,12 @@
 #include <algorithm>
 
 #include "fx_memory.h"
+#include "fx_system.h"
 
 class CFX_BinaryBuf;
 class CFX_ByteString;
 class CFX_WideString;
 struct CFX_CharMap;
-typedef int FX_STRSIZE;
 
 // An immutable string with caller-provided storage which must outlive the
 // string itself.
@@ -40,7 +40,7 @@ public:
     CFX_ByteStringC(FX_LPCSTR ptr)
     {
         m_Ptr = (FX_LPCBYTE)ptr;
-        m_Length = ptr ? (FX_STRSIZE)FXSYS_strlen(ptr) : 0;
+        m_Length = ptr ? FXSYS_strlen(ptr) : 0;
     }
 
     // |ch| must be an lvalue that outlives the the CFX_ByteStringC. However,
@@ -59,11 +59,7 @@ public:
     CFX_ByteStringC(FX_LPCSTR ptr, FX_STRSIZE len)
     {
         m_Ptr = (FX_LPCBYTE)ptr;
-        if (len == -1) {
-            m_Length = (FX_STRSIZE)FXSYS_strlen(ptr);
-        } else {
-            m_Length = len;
-        }
+        m_Length = (len == -1) ? FXSYS_strlen(ptr) : len;
     }
 
     CFX_ByteStringC(const CFX_ByteStringC& src)
@@ -77,7 +73,7 @@ public:
     CFX_ByteStringC& operator = (FX_LPCSTR src)
     {
         m_Ptr = (FX_LPCBYTE)src;
-        m_Length = m_Ptr ? (FX_STRSIZE)FXSYS_strlen(src) : 0;
+        m_Length = m_Ptr ? FXSYS_strlen(src) : 0;
         return *this;
     }
 
@@ -466,7 +462,7 @@ public:
     CFX_WideStringC(FX_LPCWSTR ptr)
     {
         m_Ptr = ptr;
-        m_Length = ptr ? (FX_STRSIZE)FXSYS_wcslen(ptr) : 0;
+        m_Length = ptr ? FXSYS_wcslen(ptr) : 0;
     }
 
     CFX_WideStringC(FX_WCHAR& ch)
@@ -478,11 +474,7 @@ public:
     CFX_WideStringC(FX_LPCWSTR ptr, FX_STRSIZE len)
     {
         m_Ptr = ptr;
-        if (len == -1) {
-            m_Length = (FX_STRSIZE)FXSYS_wcslen(ptr);
-        } else {
-            m_Length = len;
-        }
+        m_Length = (len == -1) ? FXSYS_wcslen(ptr) : len;
     }
 
     CFX_WideStringC(const CFX_WideStringC& src)
@@ -496,7 +488,7 @@ public:
     CFX_WideStringC& operator = (FX_LPCWSTR src)
     {
         m_Ptr = src;
-        m_Length = (FX_STRSIZE)FXSYS_wcslen(src);
+        m_Length = FXSYS_wcslen(src);
         return *this;
     }
 
