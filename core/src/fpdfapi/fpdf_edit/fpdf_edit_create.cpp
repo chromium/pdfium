@@ -1485,7 +1485,7 @@ FX_INT32 CPDF_Creator::WriteDoc_Stage1(IFX_Pause *pPause)
         CPDF_Dictionary* pDict = m_pDocument->GetRoot();
         m_pMetadata = pDict ? pDict->GetElementValue(FX_BSTRC("Metadata")) : NULL;
         if (m_dwFlags & FPDFCREATE_OBJECTSTREAM) {
-            m_pXRefStream = FX_NEW CPDF_XRefStream;
+            m_pXRefStream = new CPDF_XRefStream;
             m_pXRefStream->Start();
             if ((m_dwFlags & FPDFCREATE_INCREMENTAL) != 0 && m_pParser) {
                 FX_FILESIZE prev = m_pParser->GetLastXRefOffset();
@@ -2072,7 +2072,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault )
             if (m_pCryptoHandler && m_bNewCrypto) {
                 delete m_pCryptoHandler;
             }
-            m_pCryptoHandler = FX_NEW CPDF_StandardCryptoHandler;
+            m_pCryptoHandler = new CPDF_StandardCryptoHandler;
             m_pCryptoHandler->Init(m_pEncryptDict, &handler);
             m_bNewCrypto = TRUE;
             m_bSecurityChanged = TRUE;

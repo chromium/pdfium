@@ -83,7 +83,7 @@ void CPDF_StreamContentParser::PrepareParse(CPDF_Document* pDocument,
         m_BBox = *pBBox;
     }
     m_Level = level;
-    m_pCurStates = FX_NEW CPDF_AllStates;
+    m_pCurStates = new CPDF_AllStates;
     if (pStates) {
         m_pCurStates->Copy(*pStates);
     } else {
@@ -731,8 +731,8 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream)
         parser.Parse(stream.GetData(), stream.GetSize(), 0);
         return;
     }
-    CPDF_FormObject* pFormObj = FX_NEW CPDF_FormObject;
-    pFormObj->m_pForm = FX_NEW CPDF_Form(m_pDocument, m_pPageResources, pStream, m_pResources);
+    CPDF_FormObject* pFormObj = new CPDF_FormObject;
+    pFormObj->m_pForm = new CPDF_Form(m_pDocument, m_pPageResources, pStream, m_pResources);
     pFormObj->m_FormMatrix = m_pCurStates->m_CTM;
     pFormObj->m_FormMatrix.Concat(m_mtContentToUser);
     CPDF_AllStates status;
@@ -756,13 +756,13 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream, CPDF_
     CFX_AffineMatrix ImageMatrix;
     ImageMatrix.Copy(m_pCurStates->m_CTM);
     ImageMatrix.Concat(m_mtContentToUser);
-    CPDF_ImageObject* pImageObj = FX_NEW CPDF_ImageObject;
+    CPDF_ImageObject* pImageObj = new CPDF_ImageObject;
     if (pImage) {
         pImageObj->m_pImage = m_pDocument->GetPageData()->GetImage(pImage->GetStream());
     } else if (pStream->GetObjNum()) {
         pImageObj->m_pImage = m_pDocument->LoadImageF(pStream);
     } else {
-        pImageObj->m_pImage = FX_NEW CPDF_Image(m_pDocument);
+        pImageObj->m_pImage = new CPDF_Image(m_pDocument);
         pImageObj->m_pImage->LoadImageF(pStream, bInline);
     }
     SetGraphicStates(pImageObj, pImageObj->m_pImage->IsMask(), FALSE, FALSE);
@@ -942,7 +942,7 @@ void CPDF_StreamContentParser::Handle_EndPath()
 }
 void CPDF_StreamContentParser::Handle_SaveGraphState()
 {
-    CPDF_AllStates* pStates = FX_NEW CPDF_AllStates;
+    CPDF_AllStates* pStates = new CPDF_AllStates;
     pStates->Copy(*m_pCurStates);
     m_StateStack.Add(pStates);
 }
@@ -1129,7 +1129,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill()
     if (!pShading->Load()) {
         return;
     }
-    CPDF_ShadingObject* pObj = FX_NEW CPDF_ShadingObject;
+    CPDF_ShadingObject* pObj = new CPDF_ShadingObject;
     pObj->m_pShading = pShading;
     SetGraphicStates(pObj, FALSE, FALSE, FALSE);
     pObj->m_Matrix = m_pCurStates->m_CTM;
@@ -1289,7 +1289,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs, FX_FLOAT fIn
     } else {
         textmode = m_pCurStates->m_TextState.GetObject()->m_TextMode;
     }
-    CPDF_TextObject* pText = FX_NEW CPDF_TextObject;
+    CPDF_TextObject* pText = new CPDF_TextObject;
     m_pLastTextObject = pText;
     SetGraphicStates(pText, TRUE, TRUE, TRUE);
     if (textmode && textmode != 3 && textmode != 4 && textmode != 7) {
@@ -1308,7 +1308,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs, FX_FLOAT fIn
     m_pCurStates->m_TextX += x_advance;
     m_pCurStates->m_TextY += y_advance;
     if (textmode > 3) {
-        CPDF_TextObject* pCopy = FX_NEW CPDF_TextObject;
+        CPDF_TextObject* pCopy = new CPDF_TextObject;
         pCopy->Copy(pText);
         m_ClipTextList.Add(pCopy);
     }
@@ -1529,7 +1529,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke)
     CFX_AffineMatrix matrix = m_pCurStates->m_CTM;
     matrix.Concat(m_mtContentToUser);
     if (bStroke || FillType) {
-        CPDF_PathObject* pPathObj = FX_NEW CPDF_PathObject;
+        CPDF_PathObject* pPathObj = new CPDF_PathObject;
         pPathObj->m_bStroke = bStroke;
         pPathObj->m_FillType = FillType;
         pPathObj->m_Path = Path;

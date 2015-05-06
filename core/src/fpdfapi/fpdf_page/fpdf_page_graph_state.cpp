@@ -73,7 +73,7 @@ CPDF_ClipPathData::CPDF_ClipPathData(const CPDF_ClipPathData& src)
         m_pTextList = FX_Alloc(CPDF_TextObject*, m_TextCount);
         for (int i = 0; i < m_TextCount; i ++) {
             if (src.m_pTextList[i]) {
-                m_pTextList[i] = FX_NEW CPDF_TextObject;
+                m_pTextList[i] = new CPDF_TextObject;
                 m_pTextList[i]->Copy(src.m_pTextList[i]);
             } else {
                 m_pTextList[i] = NULL;

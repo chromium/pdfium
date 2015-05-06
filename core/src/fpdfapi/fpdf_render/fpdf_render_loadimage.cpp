@@ -59,7 +59,7 @@ FX_SAFE_DWORD CalculatePitch32(int bpp, int width)
 
 CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask, FX_DWORD* pMatteColor, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask) const
 {
-    CPDF_DIBSource* pSource = FX_NEW CPDF_DIBSource;
+    CPDF_DIBSource* pSource = new CPDF_DIBSource;
     if (pSource->Load(m_pDocument, m_pStream, (CPDF_DIBSource**)ppMask, pMatteColor, NULL, NULL, bStdCS, GroupFamily, bLoadMask)) {
         return pSource;
     }
@@ -80,7 +80,7 @@ CFX_DIBSource* CPDF_Image::DetachMask()
 }
 FX_BOOL CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource, CPDF_Dictionary* pPageResource, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask)
 {
-    m_pDIBSource = FX_NEW CPDF_DIBSource;
+    m_pDIBSource = new CPDF_DIBSource;
     int ret = ((CPDF_DIBSource*)m_pDIBSource)->StartLoadDIBSource(m_pDocument, m_pStream, TRUE, pFormResource, pPageResource, bStdCS, GroupFamily, bLoadMask);
     if (ret == 2) {
         return TRUE;
@@ -206,7 +206,7 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     if (!src_pitch.IsValid()) {
         return FALSE;
     }
-    m_pStreamAcc = FX_NEW CPDF_StreamAcc;
+    m_pStreamAcc = new CPDF_StreamAcc;
     m_pStreamAcc->LoadAllData(pStream, FALSE, src_pitch.ValueOrDie(), TRUE);
     if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
         return FALSE;
@@ -321,7 +321,7 @@ int	CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc, const CPDF_Stream* p
     if (!src_pitch.IsValid()) {
         return 0;
     }
-    m_pStreamAcc = FX_NEW CPDF_StreamAcc;
+    m_pStreamAcc = new CPDF_StreamAcc;
     m_pStreamAcc->LoadAllData(pStream, FALSE, src_pitch.ValueOrDie(), TRUE);
     if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
         return 0;
@@ -367,7 +367,7 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
             if (m_pStreamAcc->GetImageParam()) {
                 CPDF_Stream* pGlobals = m_pStreamAcc->GetImageParam()->GetStream(FX_BSTRC("JBIG2Globals"));
                 if (pGlobals) {
-                    m_pGlobalStream = FX_NEW CPDF_StreamAcc;
+                    m_pGlobalStream = new CPDF_StreamAcc;
                     m_pGlobalStream->LoadAllData(pGlobals, FALSE);
                 }
             }
@@ -598,7 +598,7 @@ int CPDF_DIBSource::CreateDecoder()
         LoadJpxBitmap();
         return m_pCachedBitmap != NULL ? 1 : 0;
     } else if (decoder == FX_BSTRC("JBIG2Decode")) {
-        m_pCachedBitmap = FX_NEW CFX_DIBitmap;
+        m_pCachedBitmap = new CFX_DIBitmap;
         if (!m_pCachedBitmap->Create(m_Width, m_Height, m_bImageMask ? FXDIB_1bppMask : FXDIB_1bppRgb)) {
             delete m_pCachedBitmap;
             m_pCachedBitmap = NULL;
@@ -683,7 +683,7 @@ void CPDF_DIBSource::LoadJpxBitmap()
         width = (width * output_nComps + 2) / 3;
         format = FXDIB_Rgb;
     }
-    m_pCachedBitmap = FX_NEW CFX_DIBitmap;
+    m_pCachedBitmap = new CFX_DIBitmap;
     if (!m_pCachedBitmap->Create(width, height, format)) {
         delete m_pCachedBitmap;
         m_pCachedBitmap = NULL;
@@ -798,7 +798,7 @@ CPDF_DIBSource*	CPDF_DIBSource::DetachMask()
 }
 CPDF_DIBSource* CPDF_DIBSource::LoadMaskDIB(CPDF_Stream* pMask)
 {
-    CPDF_DIBSource* pMaskSource = FX_NEW CPDF_DIBSource;
+    CPDF_DIBSource* pMaskSource = new CPDF_DIBSource;
     if (!pMaskSource->Load(m_pDocument, pMask, NULL, NULL, NULL, NULL, TRUE)) {
         delete pMaskSource;
         return NULL;
@@ -807,7 +807,7 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMaskDIB(CPDF_Stream* pMask)
 }
 int CPDF_DIBSource::StartLoadMaskDIB()
 {
-    m_pMask = FX_NEW CPDF_DIBSource;
+    m_pMask = new CPDF_DIBSource;
     int ret = m_pMask->StartLoadDIBSource(m_pDocument, (CPDF_Stream*)m_pMaskStream, FALSE, NULL, NULL, TRUE);
     if (ret == 2) {
         if (m_Status == 0) {
@@ -1498,8 +1498,7 @@ FX_BOOL CPDF_ImageLoader::StartLoadImage(const CPDF_ImageObject* pImage, CPDF_Pa
 {
     m_nDownsampleWidth = nDownsampleWidth;
     m_nDownsampleHeight = nDownsampleHeight;
-    CPDF_ProgressiveImageLoaderHandle* pLoaderHandle = NULL;
-    pLoaderHandle =	FX_NEW CPDF_ProgressiveImageLoaderHandle;
+    CPDF_ProgressiveImageLoaderHandle* pLoaderHandle = new CPDF_ProgressiveImageLoaderHandle;
     FX_BOOL ret = pLoaderHandle->Start(this, pImage, pCache, bStdCS, GroupFamily, bLoadMask, pRenderStatus, m_nDownsampleWidth, m_nDownsampleHeight);
     LoadHandle = pLoaderHandle;
     return ret;

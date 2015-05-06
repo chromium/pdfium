@@ -29,7 +29,7 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(FX_DWORD charcode, const CFX_AffineM
     CFX_ByteStringC FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
     CPDF_Type3Glyphs* pSizeCache = NULL;
     if(!m_SizeMap.Lookup(FaceGlyphsKey, (void*&)pSizeCache)) {
-        pSizeCache = FX_NEW CPDF_Type3Glyphs;
+        pSizeCache = new CPDF_Type3Glyphs;
         m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
     }
     CFX_GlyphBitmap* pGlyphBitmap;
@@ -167,7 +167,7 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize, FX_DWORD 
     if (pResBitmap == NULL) {
         return NULL;
     }
-    CFX_GlyphBitmap* pGlyph = FX_NEW CFX_GlyphBitmap;
+    CFX_GlyphBitmap* pGlyph = new CFX_GlyphBitmap;
     pGlyph->m_Left = left;
     pGlyph->m_Top = -top;
     pGlyph->m_Bitmap.TakeOver(pResBitmap);
@@ -689,7 +689,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj, 
 {
     if (!bStroke) {
         CPDF_PathObject path;
-        CPDF_TextObject* pCopy = FX_NEW CPDF_TextObject;
+        CPDF_TextObject* pCopy = new CPDF_TextObject;
         pCopy->Copy(textobj);
         path.m_bStroke = FALSE;
         path.m_FillType = FXFILL_WINDING;

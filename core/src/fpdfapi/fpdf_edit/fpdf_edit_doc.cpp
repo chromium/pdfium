@@ -21,16 +21,16 @@ CPDF_Document::CPDF_Document() : CPDF_IndirectObjects(NULL)
 void CPDF_Document::CreateNewDoc()
 {
     ASSERT(m_pRootDict == NULL && m_pInfoDict == NULL);
-    m_pRootDict = FX_NEW CPDF_Dictionary;
+    m_pRootDict = new CPDF_Dictionary;
     m_pRootDict->SetAtName("Type", "Catalog");
     int objnum = AddIndirectObject(m_pRootDict);
-    CPDF_Dictionary* pPages = FX_NEW CPDF_Dictionary;
+    CPDF_Dictionary* pPages = new CPDF_Dictionary;
     pPages->SetAtName("Type", "Pages");
     pPages->SetAtNumber("Count", 0);
-    pPages->SetAt("Kids", FX_NEW CPDF_Array);
+    pPages->SetAt("Kids", new CPDF_Array);
     objnum = AddIndirectObject(pPages);
     m_pRootDict->SetAtReference("Pages", this, objnum);
-    m_pInfoDict = FX_NEW CPDF_Dictionary;
+    m_pInfoDict = new CPDF_Dictionary;
     AddIndirectObject(m_pInfoDict);
 }
 static const FX_WCHAR g_FX_CP874Unicodes[128] = {
@@ -207,7 +207,7 @@ static void _InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArr
         pWidthArray->AddInteger(first + size - 1);
         pWidthArray->AddInteger(*widths);
     } else {
-        CPDF_Array* pWidthArray1 = FX_NEW CPDF_Array;
+        CPDF_Array* pWidthArray1 = new CPDF_Array;
         pWidthArray->Add(pWidthArray1);
         for (i = 0; i < size; i ++) {
             pWidthArray1->AddInteger(widths[i]);
@@ -288,7 +288,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont, FX_BOOL bVert, FX_B
     bbox[3] = ptm->otmrcFontBox.top;
     FX_Free(tm_buf);
     basefont.Replace(" ", "");
-    CPDF_Dictionary* pBaseDict = FX_NEW CPDF_Dictionary;
+    CPDF_Dictionary* pBaseDict = new CPDF_Dictionary;
     pBaseDict->SetAtName("Type", "Font");
     CPDF_Dictionary* pFontDict = pBaseDict;
     if (!bCJK) {
@@ -308,9 +308,9 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont, FX_BOOL bVert, FX_B
                     break;
                 }
             if (i < sizeof g_FX_CharsetUnicodes / sizeof(FX_CharsetUnicodes)) {
-                CPDF_Dictionary* pEncoding = FX_NEW CPDF_Dictionary;
+                CPDF_Dictionary* pEncoding = new CPDF_Dictionary;
                 pEncoding->SetAtName(FX_BSTRC("BaseEncoding"), "WinAnsiEncoding");
-                CPDF_Array* pArray = FX_NEW CPDF_Array;
+                CPDF_Array* pArray = new CPDF_Array;
                 pArray->AddInteger(128);
                 const FX_WCHAR* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
                 for (int j = 0; j < 128; j ++) {
@@ -339,18 +339,18 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont, FX_BOOL bVert, FX_B
         pBaseDict->SetAtNumber("LastChar", 255);
         int char_widths[224];
         GetCharWidth(hDC, 32, 255, char_widths);
-        CPDF_Array* pWidths = FX_NEW CPDF_Array;
+        CPDF_Array* pWidths = new CPDF_Array;
         for (int i = 0; i < 224; i ++) {
             pWidths->AddInteger(char_widths[i]);
         }
         pBaseDict->SetAt("Widths", pWidths);
     } else {
         flags |= PDFFONT_NONSYMBOLIC;
-        pFontDict = FX_NEW CPDF_Dictionary;
+        pFontDict = new CPDF_Dictionary;
         CFX_ByteString cmap;
         CFX_ByteString ordering;
         int supplement;
-        CPDF_Array* pWidthArray = FX_NEW CPDF_Array;
+        CPDF_Array* pWidthArray = new CPDF_Array;
         switch (pLogFont->lfCharSet) {
             case CHINESEBIG5_CHARSET:
                 cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
@@ -395,22 +395,22 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont, FX_BOOL bVert, FX_B
         pFontDict->SetAtName("Type", "Font");
         pFontDict->SetAtName("Subtype", "CIDFontType2");
         pFontDict->SetAtName("BaseFont", basefont);
-        CPDF_Dictionary* pCIDSysInfo = FX_NEW CPDF_Dictionary;
+        CPDF_Dictionary* pCIDSysInfo = new CPDF_Dictionary;
         pCIDSysInfo->SetAtString("Registry", "Adobe");
         pCIDSysInfo->SetAtString("Ordering", ordering);
         pCIDSysInfo->SetAtInteger("Supplement", supplement);
         pFontDict->SetAt("CIDSystemInfo", pCIDSysInfo);
-        CPDF_Array* pArray = FX_NEW CPDF_Array;
+        CPDF_Array* pArray = new CPDF_Array;
         pBaseDict->SetAt("DescendantFonts", pArray);
         AddIndirectObject(pFontDict);
         pArray->AddReference(this, pFontDict);
     }
     AddIndirectObject(pBaseDict);
-    CPDF_Dictionary* pFontDesc = FX_NEW CPDF_Dictionary;
+    CPDF_Dictionary* pFontDesc = new CPDF_Dictionary;
     pFontDesc->SetAtName("Type", "FontDescriptor");
     pFontDesc->SetAtName("FontName", basefont);
     pFontDesc->SetAtInteger("Flags", flags);
-    CPDF_Array* pBBox = FX_NEW CPDF_Array;
+    CPDF_Array* pBBox = new CPDF_Array;
     for (int i = 0; i < 4; i ++) {
         pBBox->AddInteger(bbox[i]);
     }
@@ -590,7 +590,7 @@ static void _InsertWidthArray(CTFontRef font, int start, int end, CPDF_Array* pW
         pWidthArray->AddInteger(first + size - 1);
         pWidthArray->AddInteger(*widths);
     } else {
-        CPDF_Array* pWidthArray1 = FX_NEW CPDF_Array;
+        CPDF_Array* pWidthArray1 = new CPDF_Array;
         pWidthArray->Add(pWidthArray1);
         for (i = 0; i < size; i ++) {
             pWidthArray1->AddInteger(widths[i]);
@@ -666,9 +666,8 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
         CFRelease(fullName);
     }
     basefont.Replace(" ", "");
-    CPDF_Dictionary* pFontDict = NULL;
-    CPDF_Dictionary* pBaseDict = FX_NEW CPDF_Dictionary;
-    pFontDict = pBaseDict;
+    CPDF_Dictionary* pBaseDict = new CPDF_Dictionary;
+    CPDF_Dictionary* pFontDict = pBaseDict;
     if (!bCJK) {
         charSets.RemoveAll();
         charSets.Add(FXFONT_ANSI_CHARSET);
@@ -694,9 +693,9 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
                 }
             }
             if (i < sizeof g_FX_CharsetUnicodes / sizeof(FX_CharsetUnicodes)) {
-                CPDF_Dictionary* pEncoding = FX_NEW CPDF_Dictionary;
+                CPDF_Dictionary* pEncoding = new CPDF_Dictionary;
                 pEncoding->SetAtName(FX_BSTRC("BaseEncoding"), "WinAnsiEncoding");
-                CPDF_Array* pArray = FX_NEW CPDF_Array;
+                CPDF_Array* pArray = new CPDF_Array;
                 pArray->AddInteger(128);
                 const FX_WCHAR* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
                 for (int j = 0; j < 128; j ++) {
@@ -725,7 +724,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
         pBaseDict->SetAtNumber("LastChar", 255);
         int char_widths[224];
         FX_GetCharWidth(font, 32, 255, char_widths);
-        CPDF_Array* pWidths = FX_NEW CPDF_Array;
+        CPDF_Array* pWidths = new CPDF_Array;
         for (int i = 0; i < 224; i ++) {
             pWidths->AddInteger(char_widths[i]);
         }
@@ -733,12 +732,12 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
     }  else {
         flags |= PDFFONT_NONSYMBOLIC;
         CPDF_Array* pArray = NULL;
-        pFontDict = FX_NEW CPDF_Dictionary;
+        pFontDict = new CPDF_Dictionary;
         CFX_ByteString cmap;
         CFX_ByteString ordering;
         int supplement;
         FX_BOOL bFound = FALSE;
-        CPDF_Array* pWidthArray = FX_NEW CPDF_Array;
+        CPDF_Array* pWidthArray = new CPDF_Array;
         charSets.RemoveAll();
         charSets.Add(FXFONT_CHINESEBIG5_CHARSET);
         if (IsHasCharSet(languages, charSets)) {
@@ -792,22 +791,22 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
         pFontDict->SetAtName("Type", "Font");
         pFontDict->SetAtName("Subtype", "CIDFontType2");
         pFontDict->SetAtName("BaseFont", basefont);
-        CPDF_Dictionary* pCIDSysInfo = FX_NEW CPDF_Dictionary;
+        CPDF_Dictionary* pCIDSysInfo = new CPDF_Dictionary;
         pCIDSysInfo->SetAtString("Registry", "Adobe");
         pCIDSysInfo->SetAtString("Ordering", ordering);
         pCIDSysInfo->SetAtInteger("Supplement", supplement);
         pFontDict->SetAt("CIDSystemInfo", pCIDSysInfo);
-        pArray = FX_NEW CPDF_Array;
+        pArray = new CPDF_Array;
         pBaseDict->SetAt("DescendantFonts", pArray);
         AddIndirectObject(pFontDict);
         pArray->AddReference(this, pFontDict);
     }
     AddIndirectObject(pBaseDict);
-    CPDF_Dictionary* pFontDesc = FX_NEW CPDF_Dictionary;
+    CPDF_Dictionary* pFontDesc = new CPDF_Dictionary;
     pFontDesc->SetAtName("Type", "FontDescriptor");
     pFontDesc->SetAtName("FontName", basefont);
     pFontDesc->SetAtInteger("Flags", flags);
-    CPDF_Array* pBBox = FX_NEW CPDF_Array;
+    CPDF_Array* pBBox = new CPDF_Array;
     for (int i = 0; i < 4; i ++) {
         pBBox->AddInteger(bbox[i]);
     }
@@ -859,7 +858,7 @@ static void _InsertWidthArray1(CFX_Font* pFont, IFX_FontEncoding* pEncoding, FX_
         pWidthArray->AddInteger(first + size - 1);
         pWidthArray->AddInteger(*widths);
     } else {
-        CPDF_Array* pWidthArray1 = FX_NEW CPDF_Array;
+        CPDF_Array* pWidthArray1 = new CPDF_Array;
         pWidthArray->Add(pWidthArray1);
         for (i = 0; i < size; i ++) {
             pWidthArray1->AddInteger(widths[i]);
@@ -886,12 +885,12 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert)
     if (pFont->IsFixedWidth()) {
         flags |= PDFFONT_FIXEDPITCH;
     }
-    CPDF_Dictionary* pBaseDict = FX_NEW CPDF_Dictionary;
+    CPDF_Dictionary* pBaseDict = new CPDF_Dictionary;
     pBaseDict->SetAtName("Type", "Font");
     IFX_FontEncoding* pEncoding = FXGE_CreateUnicodeEncoding(pFont);
     CPDF_Dictionary* pFontDict = pBaseDict;
     if (!bCJK) {
-        CPDF_Array* pWidths = FX_NEW CPDF_Array;
+        CPDF_Array* pWidths = new CPDF_Array;
         int charcode;
         for (charcode = 32; charcode < 128; charcode ++) {
             int glyph_index = pEncoding->GlyphFromCharCode(charcode);
@@ -919,9 +918,9 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert)
                     break;
                 }
             if (i < sizeof g_FX_CharsetUnicodes / sizeof(FX_CharsetUnicodes)) {
-                CPDF_Dictionary* pEncodingDict = FX_NEW CPDF_Dictionary;
+                CPDF_Dictionary* pEncodingDict = new CPDF_Dictionary;
                 pEncodingDict->SetAtName(FX_BSTRC("BaseEncoding"), "WinAnsiEncoding");
-                CPDF_Array* pArray = FX_NEW CPDF_Array;
+                CPDF_Array* pArray = new CPDF_Array;
                 pArray->AddInteger(128);
                 const FX_WCHAR* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
                 for (int j = 0; j < 128; j ++) {
@@ -954,11 +953,11 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert)
         pBaseDict->SetAt("Widths", pWidths);
     } else {
         flags |= PDFFONT_NONSYMBOLIC;
-        pFontDict = FX_NEW CPDF_Dictionary;
+        pFontDict = new CPDF_Dictionary;
         CFX_ByteString cmap;
         CFX_ByteString ordering;
         int supplement;
-        CPDF_Array* pWidthArray = FX_NEW CPDF_Array;
+        CPDF_Array* pWidthArray = new CPDF_Array;
         switch (charset) {
             case FXFONT_CHINESEBIG5_CHARSET:
                 cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
@@ -1003,18 +1002,18 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert)
         pFontDict->SetAtName("Type", "Font");
         pFontDict->SetAtName("Subtype", "CIDFontType2");
         pFontDict->SetAtName("BaseFont", basefont);
-        CPDF_Dictionary* pCIDSysInfo = FX_NEW CPDF_Dictionary;
+        CPDF_Dictionary* pCIDSysInfo = new CPDF_Dictionary;
         pCIDSysInfo->SetAtString("Registry", "Adobe");
         pCIDSysInfo->SetAtString("Ordering", ordering);
         pCIDSysInfo->SetAtInteger("Supplement", supplement);
         pFontDict->SetAt("CIDSystemInfo", pCIDSysInfo);
-        CPDF_Array* pArray = FX_NEW CPDF_Array;
+        CPDF_Array* pArray = new CPDF_Array;
         pBaseDict->SetAt("DescendantFonts", pArray);
         AddIndirectObject(pFontDict);
         pArray->AddReference(this, pFontDict);
     }
     AddIndirectObject(pBaseDict);
-    CPDF_Dictionary* pFontDesc = FX_NEW CPDF_Dictionary;
+    CPDF_Dictionary* pFontDesc = new CPDF_Dictionary;
     pFontDesc->SetAtName("Type", "FontDescriptor");
     pFontDesc->SetAtName("FontName", basefont);
     pFontDesc->SetAtInteger("Flags", flags);
@@ -1023,7 +1022,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert)
     pFontDesc->SetAtInteger("Descent", pFont->GetDescent());
     FX_RECT bbox;
     pFont->GetBBox(bbox);
-    CPDF_Array* pBBox = FX_NEW CPDF_Array;
+    CPDF_Array* pBBox = new CPDF_Array;
     pBBox->AddInteger(bbox.left);
     pBBox->AddInteger(bbox.bottom);
     pBBox->AddInteger(bbox.right);
@@ -1114,7 +1113,7 @@ static int InsertNewPage(CPDF_Document* pDoc, int iPage, CPDF_Dictionary* pPageD
     if (iPage == nPages) {
         CPDF_Array* pPagesList = pPages->GetArray(FX_BSTRC("Kids"));
         if (!pPagesList) {
-            pPagesList = FX_NEW CPDF_Array;
+            pPagesList = new CPDF_Array;
             pPages->SetAt(FX_BSTRC("Kids"), pPagesList);
         }
         pPagesList->Add(pPageDict, pDoc);
@@ -1132,7 +1131,7 @@ static int InsertNewPage(CPDF_Document* pDoc, int iPage, CPDF_Dictionary* pPageD
 }
 CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage)
 {
-    CPDF_Dictionary* pDict = FX_NEW CPDF_Dictionary;
+    CPDF_Dictionary* pDict = new CPDF_Dictionary;
     pDict->SetAtName("Type", "Page");
     FX_DWORD dwObjNum = AddIndirectObject(pDict);
     if (InsertNewPage(this, iPage, pDict, m_PageList) < 0) {

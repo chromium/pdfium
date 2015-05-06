@@ -62,10 +62,8 @@ void CPDF_FontGlobals::Set(void* key, int index, CPDF_Font* pFont)
         ((CFX_StockFontArray*)value)->m_pStockFonts[index] = pFont;
         return;
     }
-    CFX_StockFontArray* pFonts = FX_NEW CFX_StockFontArray();
-    if (pFonts) {
-        pFonts->m_pStockFonts[index] = pFont;
-    }
+    CFX_StockFontArray* pFonts = new CFX_StockFontArray();
+    pFonts->m_pStockFonts[index] = pFont;
     m_pStockMap.SetAt(key, pFonts);
 }
 void CPDF_FontGlobals::Clear(void* key)
@@ -363,7 +361,7 @@ void CPDF_Font::LoadUnicodeMap()
     if (pStream == NULL) {
         return;
     }
-    m_pToUnicodeMap = FX_NEW CPDF_ToUnicodeMap;
+    m_pToUnicodeMap = new CPDF_ToUnicodeMap;
     m_pToUnicodeMap->Load(pStream);
 }
 int CPDF_Font::GetStringWidth(FX_LPCSTR pString, int size)
@@ -435,7 +433,7 @@ CPDF_Font* CPDF_Font::CreateFontF(CPDF_Document* pDoc, CPDF_Dictionary* pFontDic
             if (i < count) {
                 CPDF_Dictionary* pFontDesc = pFontDict->GetDict(FX_BSTRC("FontDescriptor"));
                 if (pFontDesc == NULL || !pFontDesc->KeyExist(FX_BSTRC("FontFile2"))) {
-                    pFont = FX_NEW CPDF_CIDFont;
+                    pFont = new CPDF_CIDFont;
                     pFont->m_pFontDict = pFontDict;
                     pFont->m_pDocument = pDoc;
                     if (!pFont->Load()) {
@@ -447,13 +445,13 @@ CPDF_Font* CPDF_Font::CreateFontF(CPDF_Document* pDoc, CPDF_Dictionary* pFontDic
             }
 #endif
         }
-        pFont = FX_NEW CPDF_TrueTypeFont;
+        pFont = new CPDF_TrueTypeFont;
     } else if (type == FX_BSTRC("Type3")) {
-        pFont = FX_NEW CPDF_Type3Font;
+        pFont = new CPDF_Type3Font;
     } else if (type == FX_BSTRC("Type0")) {
-        pFont = FX_NEW CPDF_CIDFont;
+        pFont = new CPDF_CIDFont;
     } else {
-        pFont = FX_NEW CPDF_Type1Font;
+        pFont = new CPDF_Type1Font;
     }
     pFont->m_pFontDict = pFontDict;
     pFont->m_pDocument = pDoc;
@@ -1688,8 +1686,8 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level)
     if (pStream == NULL || pStream->GetType() != PDFOBJ_STREAM) {
         return NULL;
     }
-    pChar = FX_NEW CPDF_Type3Char;
-    pChar->m_pForm = FX_NEW CPDF_Form(m_pDocument, m_pFontResources ? m_pFontResources : m_pPageResources, pStream, NULL);
+    pChar = new CPDF_Type3Char;
+    pChar->m_pForm = new CPDF_Form(m_pDocument, m_pFontResources ? m_pFontResources : m_pPageResources, pStream, NULL);
     pChar->m_pForm->ParseContent(NULL, NULL, pChar, NULL, level + 1);
     FX_FLOAT scale = m_FontMatrix.GetXUnit();
     pChar->m_Width = (FX_INT32)(pChar->m_Width * scale + 0.5f);

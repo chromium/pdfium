@@ -76,12 +76,12 @@ CFX_DataFilter* FPDF_CreateFilter(FX_BSTR name, const CPDF_Dictionary* pParam, i
         case FXBSTR_ID('L', 'Z', 'W', 0): {
                 CFX_DataFilter* pFilter;
                 if (id == FXBSTR_ID('L', 'Z', 'W', 'D') || id == FXBSTR_ID('L', 'Z', 'W', 0)) {
-                    pFilter = FX_NEW CPDF_LzwFilter(pParam ? pParam->GetInteger("EarlyChange", 1) : 1);
+                    pFilter = new CPDF_LzwFilter(pParam ? pParam->GetInteger("EarlyChange", 1) : 1);
                 } else {
-                    pFilter = FX_NEW CPDF_FlateFilter;
+                    pFilter = new CPDF_FlateFilter;
                 }
                 if ((pParam ? pParam->GetInteger("Predictor", 1) : 1) > 1) {
-                    CFX_DataFilter* pPredictor = FX_NEW CPDF_PredictorFilter(pParam->GetInteger(FX_BSTRC("Predictor"), 1),
+                    CFX_DataFilter* pPredictor = new CPDF_PredictorFilter(pParam->GetInteger(FX_BSTRC("Predictor"), 1),
                                                  pParam->GetInteger(FX_BSTRC("Colors"), 1), pParam->GetInteger(FX_BSTRC("BitsPerComponent"), 8),
                                                  pParam->GetInteger(FX_BSTRC("Columns"), 1));
                     pFilter->SetDestFilter(pPredictor);
@@ -90,15 +90,15 @@ CFX_DataFilter* FPDF_CreateFilter(FX_BSTR name, const CPDF_Dictionary* pParam, i
             }
         case FXBSTR_ID('A', 'S', 'C', 'I'):
             if (name == "ASCIIHexDecode") {
-                return FX_NEW CPDF_AsciiHexFilter;
+                return new CPDF_AsciiHexFilter;
             }
-            return FX_NEW CPDF_Ascii85Filter;
+            return new CPDF_Ascii85Filter;
         case FXBSTR_ID('A', 'H', 'x', 0):
-            return FX_NEW CPDF_AsciiHexFilter;
+            return new CPDF_AsciiHexFilter;
         case FXBSTR_ID('A', '8', '5', 0):
-            return FX_NEW CPDF_Ascii85Filter;
+            return new CPDF_Ascii85Filter;
         case FXBSTR_ID('R', 'u', 'n', 'L'):
-            return FX_NEW CPDF_RunLenFilter;
+            return new CPDF_RunLenFilter;
         case FXBSTR_ID('C', 'C', 'I', 'T'): {
                 int Encoding = 0;
                 int bEndOfLine = FALSE;
@@ -120,12 +120,12 @@ CFX_DataFilter* FPDF_CreateFilter(FX_BSTR name, const CPDF_Dictionary* pParam, i
                 if (nRows == 0) {
                     nRows = height;
                 }
-                CPDF_FaxFilter* pFilter = FX_NEW CPDF_FaxFilter();
+                CPDF_FaxFilter* pFilter = new CPDF_FaxFilter();
                 pFilter->Initialize(Encoding, bEndOfLine, bByteAlign, bBlack, nRows, nColumns);
                 return pFilter;
             }
         case FXBSTR_ID('D', 'C', 'T', 'D'):
-            return FX_NEW CPDF_JpegFilter;
+            return new CPDF_JpegFilter;
         default:
             return NULL;
     }
@@ -170,7 +170,7 @@ CPDF_StreamFilter* CPDF_Stream::GetStreamFilter(FX_BOOL bRaw) const
 {
     CFX_DataFilter* pFirstFilter = NULL;
     if (m_pCryptoHandler) {
-        pFirstFilter = FX_NEW CPDF_DecryptFilter(m_pCryptoHandler, m_ObjNum, m_GenNum);
+        pFirstFilter = new CPDF_DecryptFilter(m_pCryptoHandler, m_ObjNum, m_GenNum);
     }
     if (!bRaw) {
         CFX_DataFilter* pFilter = _FPDF_CreateFilterFromDict(m_pDict);
@@ -182,7 +182,7 @@ CPDF_StreamFilter* CPDF_Stream::GetStreamFilter(FX_BOOL bRaw) const
             }
         }
     }
-    CPDF_StreamFilter* pStreamFilter = FX_NEW CPDF_StreamFilter;
+    CPDF_StreamFilter* pStreamFilter = new CPDF_StreamFilter;
     pStreamFilter->m_pStream = this;
     pStreamFilter->m_pFilter = pFirstFilter;
     pStreamFilter->m_pBuffer = NULL;
@@ -226,7 +226,7 @@ FX_DWORD CPDF_StreamFilter::ReadBlock(FX_LPBYTE buffer, FX_DWORD buf_size)
     if (m_pFilter->IsEOF()) {
         return read_size;
     }
-    m_pBuffer = FX_NEW CFX_BinaryBuf;
+    m_pBuffer = new CFX_BinaryBuf;
     m_pBuffer->EstimateSize(FPDF_FILTER_BUFFER_SIZE, FPDF_FILTER_BUFFER_SIZE);
     m_BufOffset = 0;
     while (1) {
