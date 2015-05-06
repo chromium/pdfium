@@ -91,7 +91,7 @@ public:
     CFX_ByteStringC& operator = (const CFX_ByteString& src);
 
     bool operator== (const char* ptr) const {
-        return strlen(ptr) == m_Length &&
+        return (FX_STRSIZE)FXSYS_strlen(ptr) == m_Length &&
                 FXSYS_memcmp32(ptr, m_Ptr, m_Length) == 0;
     }
     bool operator== (const CFX_ByteStringC& other) const {
@@ -510,7 +510,7 @@ public:
     CFX_WideStringC& operator = (const CFX_WideString& src);
 
     bool operator== (const wchar_t* ptr) const  {
-        return FXSYS_wcslen(ptr) == m_Length &&
+        return (FX_STRSIZE)FXSYS_wcslen(ptr) == m_Length &&
             wmemcmp(ptr, m_Ptr, m_Length) == 0;
     }
     bool operator== (const CFX_WideStringC& str) const  {
