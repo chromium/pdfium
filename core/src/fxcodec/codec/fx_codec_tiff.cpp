@@ -492,10 +492,7 @@ FX_BOOL CCodec_TiffContext::Decode(CFX_DIBitmap* pDIBitmap)
 }
 FX_LPVOID CCodec_TiffModule::CreateDecoder(IFX_FileRead* file_ptr)
 {
-    CCodec_TiffContext* pDecoder = FX_NEW CCodec_TiffContext;
-    if (pDecoder == NULL) {
-        return NULL;
-    }
+    CCodec_TiffContext* pDecoder = new CCodec_TiffContext;
     if (!pDecoder->InitDecoder(file_ptr)) {
         delete pDecoder;
         return NULL;

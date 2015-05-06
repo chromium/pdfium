@@ -8,17 +8,17 @@
 #include "codec_int.h"
 CCodec_ModuleMgr::CCodec_ModuleMgr()
 {
-    m_pBasicModule = FX_NEW CCodec_BasicModule;
-    m_pFaxModule = FX_NEW CCodec_FaxModule;
-    m_pJpegModule = FX_NEW CCodec_JpegModule;
-    m_pJpxModule = FX_NEW CCodec_JpxModule;
-    m_pJbig2Module = FX_NEW CCodec_Jbig2Module;
-    m_pIccModule = FX_NEW CCodec_IccModule;
-    m_pPngModule = FX_NEW CCodec_PngModule;
-    m_pGifModule = FX_NEW CCodec_GifModule;
-    m_pBmpModule = FX_NEW CCodec_BmpModule;
-    m_pTiffModule = FX_NEW CCodec_TiffModule;
-    m_pFlateModule = FX_NEW CCodec_FlateModule;
+    m_pBasicModule = new CCodec_BasicModule;
+    m_pFaxModule = new CCodec_FaxModule;
+    m_pJpegModule = new CCodec_JpegModule;
+    m_pJpxModule = new CCodec_JpxModule;
+    m_pJbig2Module = new CCodec_Jbig2Module;
+    m_pIccModule = new CCodec_IccModule;
+    m_pPngModule = new CCodec_PngModule;
+    m_pGifModule = new CCodec_GifModule;
+    m_pBmpModule = new CCodec_BmpModule;
+    m_pTiffModule = new CCodec_TiffModule;
+    m_pFlateModule = new CCodec_FlateModule;
 }
 CCodec_ModuleMgr::~CCodec_ModuleMgr()
 {
@@ -247,7 +247,7 @@ FX_BOOL CCodec_BasicModule::A85Encode(const FX_BYTE* src_buf, FX_DWORD src_size,
 }
 CCodec_ModuleMgr* CCodec_ModuleMgr::Create()
 {
-    return FX_NEW CCodec_ModuleMgr;
+    return new CCodec_ModuleMgr;
 }
 void CCodec_ModuleMgr::Destroy()
 {
@@ -259,7 +259,7 @@ CFX_DIBAttribute::CFX_DIBAttribute()
     m_nXDPI = -1;
     m_nYDPI = -1;
     m_fAspectRatio = -1.0f;
-    m_pExif = FX_NEW CFX_DIBAttributeExif;
+    m_pExif = new CFX_DIBAttributeExif;
 }
 CFX_DIBAttribute::~CFX_DIBAttribute()
 {
@@ -774,10 +774,7 @@ void CCodec_RLScanlineDecoder::UpdateOperator(FX_BYTE used_bytes)
 ICodec_ScanlineDecoder* CCodec_BasicModule::CreateRunLengthDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
         int nComps, int bpc)
 {
-    CCodec_RLScanlineDecoder* pRLScanlineDecoder = FX_NEW CCodec_RLScanlineDecoder;
-    if (pRLScanlineDecoder == NULL) {
-        return NULL;
-    }
+    CCodec_RLScanlineDecoder* pRLScanlineDecoder = new CCodec_RLScanlineDecoder;
     if (!pRLScanlineDecoder->Create(src_buf, src_size, width, height, nComps, bpc)) {
         delete pRLScanlineDecoder;
         return NULL;

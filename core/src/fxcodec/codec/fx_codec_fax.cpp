@@ -994,10 +994,7 @@ FX_BOOL	CCodec_FaxModule::Encode(FX_LPCBYTE src_buf, int width, int height, int 
 ICodec_ScanlineDecoder*	CCodec_FaxModule::CreateDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
         int K, FX_BOOL EndOfLine, FX_BOOL EncodedByteAlign, FX_BOOL BlackIs1, int Columns, int Rows)
 {
-    CCodec_FaxDecoder* pDecoder = FX_NEW CCodec_FaxDecoder;
-    if (pDecoder == NULL) {
-        return NULL;
-    }
+    CCodec_FaxDecoder* pDecoder = new CCodec_FaxDecoder;
     pDecoder->Create(src_buf, src_size, width, height, K, EndOfLine, EncodedByteAlign, BlackIs1, Columns, Rows);
     return pDecoder;
 }

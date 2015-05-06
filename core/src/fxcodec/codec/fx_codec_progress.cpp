@@ -2110,12 +2110,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause)
                     }
                     return m_status = FXCODEC_STATUS_DECODE_FINISH;
                 } else {
-                    CFX_DIBitmap* pDIBitmap = FX_NEW CFX_DIBitmap;
-                    if(pDIBitmap == NULL) {
-                        m_pDeviceBitmap = NULL;
-                        m_pFile = NULL;
-                        return m_status = FXCODEC_STATUS_ERR_MEMORY;
-                    }
+                    CFX_DIBitmap* pDIBitmap = new CFX_DIBitmap;
                     pDIBitmap->Create(m_SrcWidth, m_SrcHeight, FXDIB_Argb);
                     if(pDIBitmap->GetBuffer() == NULL) {
                         delete pDIBitmap;
@@ -2146,39 +2141,19 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause)
                     CFX_DIBitmap* pFormatBitmap = NULL;
                     switch(m_pDeviceBitmap->GetFormat()) {
                         case FXDIB_8bppRgb:
-                            pFormatBitmap = FX_NEW CFX_DIBitmap;
-                            if(pFormatBitmap == NULL) {
-                                m_pDeviceBitmap = NULL;
-                                m_pFile = NULL;
-                                return m_status = FXCODEC_STATUS_ERR_MEMORY;
-                            }
+                            pFormatBitmap = new CFX_DIBitmap;
                             pFormatBitmap->Create(pClipBitmap->GetWidth(), pClipBitmap->GetHeight(), FXDIB_8bppRgb);
                             break;
                         case FXDIB_8bppMask:
-                            pFormatBitmap = FX_NEW CFX_DIBitmap;
-                            if(pFormatBitmap == NULL) {
-                                m_pDeviceBitmap = NULL;
-                                m_pFile = NULL;
-                                return m_status = FXCODEC_STATUS_ERR_MEMORY;
-                            }
+                            pFormatBitmap = new CFX_DIBitmap;
                             pFormatBitmap->Create(pClipBitmap->GetWidth(), pClipBitmap->GetHeight(), FXDIB_8bppMask);
                             break;
                         case FXDIB_Rgb:
-                            pFormatBitmap = FX_NEW CFX_DIBitmap;
-                            if(pFormatBitmap == NULL) {
-                                m_pDeviceBitmap = NULL;
-                                m_pFile = NULL;
-                                return m_status = FXCODEC_STATUS_ERR_MEMORY;
-                            }
+                            pFormatBitmap = new CFX_DIBitmap;
                             pFormatBitmap->Create(pClipBitmap->GetWidth(), pClipBitmap->GetHeight(), FXDIB_Rgb);
                             break;
                         case FXDIB_Rgb32:
-                            pFormatBitmap = FX_NEW CFX_DIBitmap;
-                            if(pFormatBitmap == NULL) {
-                                m_pDeviceBitmap = NULL;
-                                m_pFile = NULL;
-                                return m_status = FXCODEC_STATUS_ERR_MEMORY;
-                            }
+                            pFormatBitmap = new CFX_DIBitmap;
                             pFormatBitmap->Create(pClipBitmap->GetWidth(), pClipBitmap->GetHeight(), FXDIB_Rgb32);
                             break;
                         case FXDIB_Argb:
@@ -2259,5 +2234,5 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause)
 }
 ICodec_ProgressiveDecoder* CCodec_ModuleMgr::CreateProgressiveDecoder()
 {
-    return FX_NEW CCodec_ProgressiveDecoder(this);
+    return new CCodec_ProgressiveDecoder(this);
 }

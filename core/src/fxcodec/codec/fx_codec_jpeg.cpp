@@ -557,10 +557,7 @@ ICodec_ScanlineDecoder*	CCodec_JpegModule::CreateDecoder(FX_LPCBYTE src_buf, FX_
     if (src_buf == NULL || src_size == 0) {
         return NULL;
     }
-    CCodec_JpegDecoder* pDecoder = FX_NEW CCodec_JpegDecoder;
-    if (pDecoder == NULL) {
-        return NULL;
-    }
+    CCodec_JpegDecoder* pDecoder = new CCodec_JpegDecoder;
     if (!pDecoder->Create(src_buf, src_size, width, height, nComps, ColorTransform, m_pExtProvider)) {
         delete pDecoder;
         return NULL;
