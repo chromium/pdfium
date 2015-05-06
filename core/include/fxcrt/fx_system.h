@@ -14,6 +14,7 @@
 #define _FXM_PLATFORM_LINUX_		2
 #define _FXM_PLATFORM_APPLE_		3
 #define _FXM_PLATFORM_ANDROID_		4
+
 #ifndef _FX_OS_
 #if defined(__ANDROID__)
 #define _FX_OS_ _FX_ANDROID_
@@ -29,9 +30,11 @@
 #define _FXM_PLATFORM_ _FXM_PLATFORM_APPLE_
 #endif
 #endif
+
 #if !defined(_FX_OS_) || _FX_OS_ == 0
 #error Sorry, can not figure out what OS you are targeting to. Please specify _FX_OS_ macro.
 #endif
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define _CRT_SECURE_NO_WARNINGS
 #include <sal.h>
@@ -46,6 +49,7 @@
 #define _FX_WORDSIZE_	_FX_W32_
 #endif
 #endif
+
 #include <stddef.h>
 #include <stdarg.h>
 #include <setjmp.h>
@@ -54,6 +58,7 @@
 #include <string.h>
 #include <assert.h>
 #include <wchar.h>
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include <libkern/OSAtomic.h>
 #if _FX_OS_ == _FX_MACOSX_
@@ -63,6 +68,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 #endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -110,6 +116,12 @@ typedef wchar_t*				FX_LPWSTR;
 typedef wchar_t const*			FX_LPCWSTR;
 typedef FX_DWORD				FX_UINT32;
 typedef FX_UINT64				FX_QWORD;
+
+// PDFium string sizes are limited to 2^31-1, and the value is signed to
+// allow -1 as a placeholder for "unknown".
+// TODO(palmer): it should be a |size_t|, or at least unsigned.
+typedef int FX_STRSIZE;
+
 #if defined(DEBUG) && !defined(_DEBUG)
 #define _DEBUG
 #endif
@@ -152,7 +164,6 @@ void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap);
 #define FXSYS_sprintf	DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf	DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
 #define FXSYS_strchr	strchr
-#define FXSYS_strlen	strlen
 #define FXSYS_strncmp	strncmp
 #define FXSYS_strcmp	strcmp
 #define FXSYS_strcpy	strcpy
@@ -169,6 +180,7 @@ void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap);
 #define FXSYS_fwrite	fwrite
 #define FXSYS_fprintf	fprintf
 #define FXSYS_fflush	fflush
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #ifdef _NATIVE_WCHAR_T_DEFINED
 #define FXSYS_wfopen(f, m) _wfopen((const wchar_t*)(f), (const wchar_t*)(m))
@@ -179,7 +191,17 @@ void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap);
 FXSYS_FILE* FXSYS_wfopen(FX_LPCWSTR filename, FX_LPCWSTR mode);
 #endif
 
-#define FXSYS_wcslen	wcslen
+#ifdef __cplusplus
+} // extern "C"
+#include "../../../third_party/base/numerics/safe_conversions.h"
+#define FXSYS_strlen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(strlen(ptr))
+#define FXSYS_wcslen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(wcslen(ptr))
+extern "C" {
+#else
+#define FXSYS_strlen(ptr) ((FX_STRSIZE)strlen(ptr))
+#define FXSYS_wcslen(ptr) ((FX_STRSIZE)wcslen(ptr))
+#endif
+
 #define FXSYS_wcscmp	wcscmp
 #define FXSYS_wcschr	wcschr
 #define FXSYS_wcsstr	wcsstr

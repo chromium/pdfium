@@ -80,7 +80,7 @@ CFX_ByteString FX_UTF8Encode(FX_LPCWSTR pwsStr, FX_STRSIZE len)
 {
     FXSYS_assert(pwsStr != NULL);
     if (len < 0) {
-        len = (FX_STRSIZE)FXSYS_wcslen(pwsStr);
+        len = FXSYS_wcslen(pwsStr);
     }
     CFX_UTF8Encoder encoder;
     while (len -- > 0) {

@@ -150,14 +150,14 @@ CFX_ByteTextBuf& CFX_ByteTextBuf::operator << (int i)
 {
     char buf[32];
     FXSYS_itoa(i, buf, 10);
-    AppendBlock(buf, (FX_STRSIZE)FXSYS_strlen(buf));
+    AppendBlock(buf, FXSYS_strlen(buf));
     return *this;
 }
 CFX_ByteTextBuf& CFX_ByteTextBuf::operator << (FX_DWORD i)
 {
     char buf[32];
     FXSYS_itoa(i, buf, 10);
-    AppendBlock(buf, (FX_STRSIZE)FXSYS_strlen(buf));
+    AppendBlock(buf, FXSYS_strlen(buf));
     return *this;
 }
 CFX_ByteTextBuf& CFX_ByteTextBuf::operator << (double f)
@@ -199,7 +199,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator << (int i)
 {
     char buf[32];
     FXSYS_itoa(i, buf, 10);
-    FX_STRSIZE len = (FX_STRSIZE)FXSYS_strlen(buf);
+    FX_STRSIZE len = FXSYS_strlen(buf);
     if (m_AllocSize < m_DataSize + (FX_STRSIZE)(len * sizeof(FX_WCHAR))) {
         ExpandBuf(len * sizeof(FX_WCHAR));
     }
@@ -228,7 +228,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator << (double f)
 }
 CFX_WideTextBuf& CFX_WideTextBuf::operator << (FX_LPCWSTR lpsz)
 {
-    AppendBlock(lpsz, (FX_STRSIZE)FXSYS_wcslen(lpsz)*sizeof(FX_WCHAR));
+    AppendBlock(lpsz, FXSYS_wcslen(lpsz)*sizeof(FX_WCHAR));
     return *this;
 }
 CFX_WideTextBuf& CFX_WideTextBuf::operator << (const CFX_WideTextBuf& buf)
@@ -294,7 +294,7 @@ CFX_ArchiveSaver& CFX_ArchiveSaver::operator << (FX_BSTR bstr)
 }
 CFX_ArchiveSaver& CFX_ArchiveSaver::operator << (FX_LPCWSTR wstr)
 {
-    FX_STRSIZE len = (FX_STRSIZE)FXSYS_wcslen(wstr);
+    FX_STRSIZE len = FXSYS_wcslen(wstr);
     if (m_pStream) {
         m_pStream->WriteBlock(&len, sizeof(int));
         m_pStream->WriteBlock(wstr, len);
