@@ -63,14 +63,12 @@ CFX_WideString CPDF_Bookmark::GetTitle() const
     if (!len) {
         return CFX_WideString();
     }
-    nonstd::unique_ptr<std::vector<FX_WCHAR> > vec;
-    vec.reset(new std::vector<FX_WCHAR>(len));
-    FX_WCHAR* buf = &vec->front();
+    nonstd::unique_ptr<FX_WCHAR[]> buf(new FX_WCHAR[len]);
     for (int i = 0; i < len; i++) {
         FX_WCHAR w = title[i];
         buf[i] = w > 0x20 ? w : 0x20;
     }
-    return CFX_WideString(buf, len);
+    return CFX_WideString(buf.get(), len);
 }
 CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const
 {

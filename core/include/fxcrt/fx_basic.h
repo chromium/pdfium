@@ -773,32 +773,6 @@ private:
     DataType		m_Data[FixedSize];
     DataType*		m_pData;
 };
-template <class DataType>
-class CFX_TempBuf
-{
-public:
-    CFX_TempBuf(int size)
-    {
-        m_pData = FX_Alloc(DataType, size);
-    }
-    ~CFX_TempBuf()
-    {
-        if (m_pData) {
-            FX_Free(m_pData);
-        }
-    }
-    DataType&	operator[](int i)
-    {
-        FXSYS_assert(m_pData != NULL);
-        return m_pData[i];
-    }
-    operator DataType*()
-    {
-        return m_pData;
-    }
-private:
-    DataType*		m_pData;
-};
 class CFX_MapPtrToPtr 
 {
 protected:
