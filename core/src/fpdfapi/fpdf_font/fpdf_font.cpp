@@ -10,6 +10,7 @@
 #include "font_int.h"
 #include "../fpdf_page/pageint.h"
 #include "../../../include/fxge/fx_freetype.h"
+
 FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id)
 {
     for (int i = 0; i < FXFT_Get_Face_CharmapCount(face); i ++) {
@@ -23,10 +24,10 @@ FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id)
 }
 extern const FX_WORD* PDF_UnicodesForPredefinedCharSet(int);
 CPDF_FontGlobals::CPDF_FontGlobals()
+    : m_pContrastRamps(NULL)
 {
-    FXSYS_memset32(m_EmbeddedCharsets, 0, sizeof m_EmbeddedCharsets);
-    FXSYS_memset32(m_EmbeddedToUnicodes, 0, sizeof m_EmbeddedToUnicodes);
-    m_pContrastRamps = NULL;
+    FXSYS_memset32(m_EmbeddedCharsets, 0, sizeof(m_EmbeddedCharsets));
+    FXSYS_memset32(m_EmbeddedToUnicodes, 0, sizeof(m_EmbeddedToUnicodes));
 }
 CPDF_FontGlobals::~CPDF_FontGlobals()
 {
@@ -35,14 +36,39 @@ CPDF_FontGlobals::~CPDF_FontGlobals()
         FX_Free(m_pContrastRamps);
     }
 }
-class CFX_StockFontArray 
+class CFX_StockFontArray
 {
 public:
     CFX_StockFontArray()
     {
-        FXSYS_memset32(m_pStockFonts, 0, sizeof(CPDF_Font*) * 14);
+        FXSYS_memset32(m_pStockFonts, 0, sizeof(m_pStockFonts));
     }
-    CPDF_Font*			m_pStockFonts[14];
+    ~CFX_StockFontArray()
+    {
+        for (int i = 0; i < FX_ArraySize(m_pStockFonts); i++) {
+            if (!m_pStockFonts[i])
+                continue;
+            CPDF_Dictionary* pFontDict = m_pStockFonts[i]->GetFontDict();
+            if (pFontDict)
+                pFontDict->Release();
+            delete m_pStockFonts[i];
+        }
+    }
+    CPDF_Font* GetFont(int index) const
+    {
+        if (index < 0 || index >= FX_ArraySize(m_pStockFonts))
+            return NULL;
+        return m_pStockFonts[index];
+    }
+    void SetFont(int index, CPDF_Font* font)
+    {
+        if (index < 0 || index >= FX_ArraySize(m_pStockFonts))
+            return;
+        delete m_pStockFonts[index];
+        m_pStockFonts[index] = font;
+    }
+private:
+    CPDF_Font* m_pStockFonts[14];
 };
 CPDF_Font* CPDF_FontGlobals::Find(void* key, int index)
 {
@@ -53,18 +79,19 @@ CPDF_Font* CPDF_FontGlobals::Find(void* key, int index)
     if (!value) {
         return NULL;
     }
-    return ((CFX_StockFontArray*)value)->m_pStockFonts[index];
+    return static_cast<CFX_StockFontArray*>(value)->GetFont(index);
 }
 void CPDF_FontGlobals::Set(void* key, int index, CPDF_Font* pFont)
 {
     void* value = NULL;
+    CFX_StockFontArray* font_array = NULL;
     if (m_pStockMap.Lookup(key, value)) {
-        ((CFX_StockFontArray*)value)->m_pStockFonts[index] = pFont;
-        return;
+        font_array = static_cast<CFX_StockFontArray*>(value);
+    } else {
+        font_array = new CFX_StockFontArray();
+        m_pStockMap.SetAt(key, font_array);
     }
-    CFX_StockFontArray* pFonts = new CFX_StockFontArray();
-    pFonts->m_pStockFonts[index] = pFont;
-    m_pStockMap.SetAt(key, pFonts);
+    font_array->SetFont(index, pFont);
 }
 void CPDF_FontGlobals::Clear(void* key)
 {
@@ -72,39 +99,17 @@ void CPDF_FontGlobals::Clear(void* key)
     if (!m_pStockMap.Lookup(key, value)) {
         return;
     }
-    if (value) {
-        CFX_StockFontArray* pStockFonts = (CFX_StockFontArray*)value;
-        for (int i = 0; i < 14; i ++) {
-            if (pStockFonts->m_pStockFonts[i]) {
-                CPDF_Dictionary* pFontDict = pStockFonts->m_pStockFonts[i]->GetFontDict();
-                if (pFontDict)
-                    pFontDict->Release();
-                delete pStockFonts->m_pStockFonts[i];
-            }
-        }
-        delete pStockFonts;
-    }
+    delete static_cast<CFX_StockFontArray*>(value);
     m_pStockMap.RemoveKey(key);
 }
 void CPDF_FontGlobals::ClearAll()
 {
     FX_POSITION pos = m_pStockMap.GetStartPosition();
     while (pos) {
-        void *key = NULL;
+        void* key = NULL;
         void* value = NULL;
         m_pStockMap.GetNextAssoc(pos, key, value);
-        if (value) {
-            CFX_StockFontArray* pStockFonts = (CFX_StockFontArray*)value;
-            for (int i = 0; i < 14; i ++) {
-                if (pStockFonts->m_pStockFonts[i]) {
-                    CPDF_Dictionary* pFontDict = pStockFonts->m_pStockFonts[i]->GetFontDict();
-                    if (pFontDict)
-                        pFontDict->Release();
-                    delete pStockFonts->m_pStockFonts[i];
-                }
-            }
-            delete pStockFonts;
-        }
+        delete static_cast<CFX_StockFontArray*>(value);
         m_pStockMap.RemoveKey(key);
     }
 }
