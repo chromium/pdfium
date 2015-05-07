@@ -35,6 +35,13 @@
 // a pointer within a scope, and automatically destroying the pointer at the
 // end of a scope.
 //
+// A unique_ptr<T> is like a T*, except that the destructor of unique_ptr<T>
+// automatically deletes the pointer it holds (if any).
+// That is, unique_ptr<T> owns the T object that it points to.
+// Like a T*, a unique_ptr<T> may hold either NULL or a pointer to a T object.
+// Also like T*, unique_ptr<T> is thread-compatible, and once you
+// dereference it, you get the thread safety guarantees of T.
+//
 // Example usage (unique_ptr):
 //   {
 //     unique_ptr<Foo> foo(new Foo("wee"));
@@ -53,6 +60,8 @@
 //     foo.reset();                  // Foo("wee4") destroyed, foo no longer
 //                                   // manages a pointer.
 //   }  // foo wasn't managing a pointer, so nothing was destroyed.
+//
+// The size of a unique_ptr is small: sizeof(unique_ptr<C>) == sizeof(C*)
 
 #ifndef NONSTD_UNIQUE_PTR_H_
 #define NONSTD_UNIQUE_PTR_H_
@@ -66,45 +75,17 @@
 
 namespace nonstd {
 
-// A unique_ptr<T> is like a T*, except that the destructor of unique_ptr<T>
-// automatically deletes the pointer it holds (if any).
-// That is, unique_ptr<T> owns the T object that it points to.
-// Like a T*, a unique_ptr<T> may hold either NULL or a pointer to a T object.
-// Also like T*, unique_ptr<T> is thread-compatible, and once you
-// dereference it, you get the threadsafety guarantees of T.
-//
-// The size of a unique_ptr is small:
-// sizeof(unique_ptr<C>) == sizeof(C*)
+// Common implementation for both pointers to elements and pointers to
+// arrays. These are differentiated below based on the need to invoke
+// delete vs. delete[] as appropriate.
 template <class C>
-class unique_ptr {
+class unique_ptr_base {
  public:
 
   // The element type
   typedef C element_type;
 
-  // Constructor.  Defaults to initializing with NULL.
-  // There is no way to create an uninitialized unique_ptr.
-  // The input parameter must be allocated with new.
-  explicit unique_ptr(C* p = NULL) : ptr_(p) { }
-
-  // Destructor.  If there is a C object, delete it.
-  // We don't need to test ptr_ == NULL because C++ does that for us.
-  ~unique_ptr() {
-    enum { type_must_be_complete = sizeof(C) };
-    delete ptr_;
-  }
-
-  // Reset.  Deletes the current owned object, if any.
-  // Then takes ownership of a new object, if given.
-  // this->reset(this->get()) works.
-  void reset(C* p = NULL) {
-    if (p != ptr_) {
-      enum { type_must_be_complete = sizeof(C) };
-      C* old_ptr = ptr_;
-      ptr_ = p;
-      delete old_ptr;
-    }
-  }
+  explicit unique_ptr_base(C* p) : ptr_(p) { }
 
   // Accessors to get the owned object.
   // operator* and operator-> will assert() if there is no current object.
@@ -125,7 +106,7 @@ class unique_ptr {
   bool operator!=(C* p) const { return ptr_ != p; }
 
   // Swap two scoped pointers.
-  void swap(unique_ptr& p2) {
+  void swap(unique_ptr_base& p2) {
     C* tmp = ptr_;
     ptr_ = p2.ptr_;
     p2.ptr_ = tmp;
@@ -145,9 +126,86 @@ class unique_ptr {
   // Allow promotion to bool for conditional statements.
   operator bool() const { return ptr_ != NULL; }
 
- private:
+ protected:
   C* ptr_;
+};
 
+// Implementation for ordinary pointers using delete.
+template <class C>
+class unique_ptr : public unique_ptr_base<C> {
+ public:
+  using unique_ptr_base<C>::ptr_;
+
+  // Constructor. Defaults to initializing with NULL. There is no way
+  // to create an uninitialized unique_ptr. The input parameter must be
+  // allocated with new (not new[] - see below).
+  explicit unique_ptr(C* p = NULL) : unique_ptr_base<C>(p) { }
+
+  // Destructor.  If there is a C object, delete it.
+  // We don't need to test ptr_ == NULL because C++ does that for us.
+  ~unique_ptr() {
+    enum { type_must_be_complete = sizeof(C) };
+    delete ptr_;
+  }
+
+  // Reset.  Deletes the current owned object, if any.
+  // Then takes ownership of a new object, if given.
+  // this->reset(this->get()) works.
+  void reset(C* p = NULL) {
+    if (p != ptr_) {
+      enum { type_must_be_complete = sizeof(C) };
+      C* old_ptr = ptr_;
+      ptr_ = p;
+      delete old_ptr;
+    }
+  }
+
+private:
+  // Forbid comparison of unique_ptr types.  If C2 != C, it totally doesn't
+  // make sense, and if C2 == C, it still doesn't make sense because you should
+  // never have the same object owned by two different unique_ptrs.
+  template <class C2> bool operator==(unique_ptr<C2> const& p2) const;
+  template <class C2> bool operator!=(unique_ptr<C2> const& p2) const;
+
+  // Disallow evil constructors
+  unique_ptr(const unique_ptr&);
+  void operator=(const unique_ptr&);
+};
+
+// Specialization for arrays using delete[].
+template <class C>
+class unique_ptr<C[]> : public unique_ptr_base<C> {
+ public:
+  using unique_ptr_base<C>::ptr_;
+
+  // Constructor. Defaults to initializing with NULL. There is no way
+  // to create an uninitialized unique_ptr. The input parameter must be
+  // allocated with new[] (not new - see above).
+  explicit unique_ptr(C* p = NULL) : unique_ptr_base<C>(p) { }
+
+  // Destructor.  If there is a C object, delete it.
+  // We don't need to test ptr_ == NULL because C++ does that for us.
+  ~unique_ptr() {
+    enum { type_must_be_complete = sizeof(C) };
+    delete[] ptr_;
+  }
+
+  // Reset.  Deletes the current owned object, if any.
+  // Then takes ownership of a new object, if given.
+  // this->reset(this->get()) works.
+  void reset(C* p = NULL) {
+    if (p != ptr_) {
+      enum { type_must_be_complete = sizeof(C) };
+      C* old_ptr = ptr_;
+      ptr_ = p;
+      delete[] old_ptr;
+    }
+  }
+
+  // Support indexing since it is holding array.
+  C& operator[] (size_t i) { return ptr_[i]; }
+
+private:
   // Forbid comparison of unique_ptr types.  If C2 != C, it totally doesn't
   // make sense, and if C2 == C, it still doesn't make sense because you should
   // never have the same object owned by two different unique_ptrs.
