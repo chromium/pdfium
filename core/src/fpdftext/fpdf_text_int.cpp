@@ -1361,8 +1361,6 @@ void CPDF_TextPage::CloseTempLine()
             }
         }
     }
-    int ntext = m_TextBuf.GetSize();
-    ntext = m_charList.GetSize();
     order.RemoveAll();
     m_TempCharList.RemoveAll();
     m_TempTextBuf.Delete(0, m_TempTextBuf.GetLength());
@@ -2507,7 +2505,6 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat)
             }
         }
         int pos = 0;
-        FX_BOOL bLastIgnore = FALSE;
         while(pos < csWord.GetLength()) {
             CFX_WideString curStr = csWord.Mid(pos, 1);
             FX_WCHAR curChar = csWord.GetAt(pos);
@@ -2527,10 +2524,7 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat)
                 }
                 csWord = csWord.Right(csWord.GetLength() - pos - 1);
                 pos = 0;
-                bLastIgnore = TRUE;
                 continue;
-            } else {
-                bLastIgnore = FALSE;
             }
             pos++;
         }
@@ -2539,7 +2533,6 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat)
         }
         index++;
     }
-    return;
 }
 FX_BOOL CPDF_TextPageFind::IsMatchWholeWord(const CFX_WideString& csPageText, int startPos, int endPos)
 {

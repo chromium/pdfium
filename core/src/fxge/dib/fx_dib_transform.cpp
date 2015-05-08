@@ -70,7 +70,6 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip, FX_BOOL bYFlip, const FX_REC
         return NULL;
     }
     pTransBitmap->CopyPalette(m_pPalette);
-    int src_pitch = m_Pitch;
     int dest_pitch = pTransBitmap->GetPitch();
     FX_LPBYTE dest_buf = pTransBitmap->GetBuffer();
     int row_start = bXFlip ? m_Height - dest_clip.right : dest_clip.left;
@@ -130,7 +129,6 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip, FX_BOOL bYFlip, const FX_REC
         }
     }
     if (m_pAlphaMask) {
-        src_pitch = m_pAlphaMask->m_Pitch;
         dest_pitch = pTransBitmap->m_pAlphaMask->GetPitch();
         dest_buf = pTransBitmap->m_pAlphaMask->GetBuffer();
         int dest_step = bYFlip ? -dest_pitch : dest_pitch;

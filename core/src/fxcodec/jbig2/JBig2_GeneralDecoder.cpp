@@ -888,7 +888,7 @@ CJBig2_Image *CJBig2_GRDProc::decode_Arith_Template3_opt2(CJBig2_ArithDecoder *p
     CJBig2_Image *GBREG;
     FX_DWORD line1;
     FX_BYTE *pLine, cVal;
-    FX_INTPTR nStride, nStride2;
+    FX_INTPTR nStride;
     FX_INT32 nBits, k;
     LTP = 0;
     JBIG2_ALLOC(GBREG, CJBig2_Image(GBW, GBH));
@@ -899,7 +899,6 @@ CJBig2_Image *CJBig2_GRDProc::decode_Arith_Template3_opt2(CJBig2_ArithDecoder *p
     }
     pLine = GBREG->m_pData;
     nStride = GBREG->m_nStride;
-    nStride2 = nStride << 1;
     for(FX_DWORD h = 0; h < GBH; h++) {
         if(TPGDON) {
             SLTP = pArithDecoder->DECODE(&gbContext[0x0195]);
@@ -2335,7 +2334,7 @@ CJBig2_SymbolDict *CJBig2_SDDProc::decode_Arith(CJBig2_ArithDecoder *pArithDecod
     CJBig2_Image **SDNEWSYMS;
     FX_DWORD HCHEIGHT, NSYMSDECODED;
     FX_INT32 HCDH;
-    FX_DWORD SYMWIDTH, TOTWIDTH, HCFIRSTSYM;
+    FX_DWORD SYMWIDTH, TOTWIDTH;
     FX_INT32 DW;
     CJBig2_Image *BS;
     FX_DWORD I, J, REFAGGNINST;
@@ -2345,7 +2344,6 @@ CJBig2_SymbolDict *CJBig2_SDDProc::decode_Arith(CJBig2_ArithDecoder *pArithDecod
     FX_DWORD EXRUNLENGTH;
     FX_INT32 nVal;
     FX_DWORD nTmp;
-    FX_BOOL SBHUFF;
     FX_DWORD SBNUMSYMS;
     FX_BYTE SBSYMCODELEN;
     FX_DWORD IDI;
@@ -2394,7 +2392,6 @@ CJBig2_SymbolDict *CJBig2_SDDProc::decode_Arith(CJBig2_ArithDecoder *pArithDecod
         }
         SYMWIDTH = 0;
         TOTWIDTH = 0;
-        HCFIRSTSYM = NSYMSDECODED;
         for(;;) {
             nVal = IADW->decode(pArithDecoder, &DW);
             if(nVal == JBIG2_OOB) {
@@ -2537,7 +2534,6 @@ CJBig2_SymbolDict *CJBig2_SDDProc::decode_Arith(CJBig2_ArithDecoder *pArithDecod
                     delete SBHUFFRSIZE;
                     delete pDecoder;
                 } else if(REFAGGNINST == 1) {
-                    SBHUFF = SDHUFF;
                     SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
                     if(IAID->decode(pArithDecoder, (int*)&IDI) == -1) {
                         m_pModule->JBig2_Error("symbol dictionary decoding procedure (arith): too short.");
@@ -2686,7 +2682,6 @@ CJBig2_SymbolDict *CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream *pStream,
     FX_DWORD EXRUNLENGTH;
     FX_INT32 nVal, nBits;
     FX_DWORD nTmp;
-    FX_BOOL SBHUFF;
     FX_DWORD SBNUMSYMS;
     FX_BYTE SBSYMCODELEN;
     JBig2HuffmanCode *SBSYMCODES;
@@ -2843,7 +2838,6 @@ CJBig2_SymbolDict *CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream *pStream,
                     delete SBHUFFRSIZE;
                     delete pDecoder;
                 } else if(REFAGGNINST == 1) {
-                    SBHUFF = SDHUFF;
                     SBNUMSYMS = SDNUMINSYMS + SDNUMNEWSYMS;
                     nTmp = 1;
                     while((FX_DWORD)(1 << nTmp) < SBNUMSYMS) {

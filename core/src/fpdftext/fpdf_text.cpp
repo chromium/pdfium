@@ -148,7 +148,6 @@ void CTextPage::ProcessObject(CPDF_PageObject* pObject)
                                   topy, bottomy, spacew, fontsize_v, segment, pFont);
     FX_Free(pPosArray);
 }
-static void ConvertPDFString(CFX_ByteString& result, CFX_ByteString& src, CPDF_Font* pFont);
 CTextBaseLine* CTextPage::InsertTextBox(CTextBaseLine* pBaseLine, FX_FLOAT basey, FX_FLOAT leftx,
                                         FX_FLOAT rightx, FX_FLOAT topy, FX_FLOAT bottomy, FX_FLOAT spacew, FX_FLOAT fontsize_v,
                                         CFX_ByteString& str, CPDF_Font* pFont)

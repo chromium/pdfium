@@ -4148,15 +4148,7 @@ FX_BOOL CFX_DIBitmap::CompositeBitmap(int dest_left, int dest_top, int width, in
     }
     int dest_Bpp = m_bpp / 8;
     int src_Bpp = pSrcBitmap->GetBPP() / 8;
-    FX_BOOL bRgb = FALSE;
-    FX_BOOL bCmyk = FALSE;
-    if (src_Bpp > 1) {
-        if (pSrcBitmap->IsCmykImage()) {
-            bCmyk = TRUE;
-        } else {
-            bRgb = TRUE;
-        }
-    }
+    FX_BOOL bRgb = src_Bpp > 1 && !pSrcBitmap->IsCmykImage();
     CFX_DIBitmap* pSrcAlphaMask = pSrcBitmap->m_pAlphaMask;
     for (int row = 0; row < height; row ++) {
         FX_LPBYTE dest_scan = m_pBuffer + (dest_top + row) * m_Pitch + dest_left * dest_Bpp;
