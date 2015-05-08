@@ -163,6 +163,7 @@ static_library("fpdfdoc") {
     "core/src/fpdfdoc/doc_ocg.cpp",
     "core/src/fpdfdoc/doc_tagged.cpp",
     "core/src/fpdfdoc/doc_utils.cpp",
+    "core/src/fpdfdoc/doc_utils.h",
     "core/src/fpdfdoc/doc_viewerPreferences.cpp",
     "core/src/fpdfdoc/doc_vt.cpp",
     "core/src/fpdfdoc/doc_vtmodule.cpp",
