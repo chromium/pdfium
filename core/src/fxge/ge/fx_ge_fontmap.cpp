@@ -1367,7 +1367,7 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path)
     FX_BYTE buffer[16];
     FXSYS_fseek(pFile, 0, FXSYS_SEEK_SET);
     size_t readCnt = FXSYS_fread(buffer, 12, 1, pFile);
-    if (readCnt != 12) {
+    if (readCnt != 1) {
         FXSYS_fclose(pFile);
         return;
     }
@@ -1386,6 +1386,7 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path)
         }
         readCnt = FXSYS_fread(offsets, face_bytes, 1, pFile);
         if (readCnt != face_bytes) {
+            FX_Free(offsets);
             FXSYS_fclose(pFile);
             return;
         }
