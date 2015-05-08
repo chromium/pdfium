@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fpdfdoc/fpdf_doc.h"
-CFX_WideString		GetFullName(CPDF_Dictionary* pFieldDict);
-void				SaveCheckedFieldStatus(CPDF_FormField* pField, CFX_ByteArray& statusArray);
+#include "doc_utils.h"
+
 FX_BOOL PDF_FormField_IsUnison(CPDF_FormField *pField)
 {
     FX_BOOL bUnison = FALSE;
