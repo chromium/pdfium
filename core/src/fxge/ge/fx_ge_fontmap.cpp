@@ -1464,14 +1464,29 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path)
     FX_BYTE buffer[16];
     FXSYS_fseek(pFile, 0, FXSYS_SEEK_SET);
     size_t readCnt = FXSYS_fread(buffer, 12, 1, pFile);
+    if (readCnt != 1) {
+        FXSYS_fclose(pFile);
+        return;
+    }
+
     if (GET_TT_LONG(buffer) == 0x74746366) {
         FX_DWORD nFaces = GET_TT_LONG(buffer + 8);
-        FX_LPBYTE offsets = FX_Alloc(FX_BYTE, nFaces * 4);
+        if (nFaces > FX_DWORD_MAX / 4) {
+            FXSYS_fclose(pFile);
+            return;
+        }
+        FX_DWORD face_bytes = nFaces * 4;
+        FX_LPBYTE offsets = FX_Alloc(FX_BYTE, face_bytes);
         if (!offsets) {
             FXSYS_fclose(pFile);
             return;
         }
-        readCnt = FXSYS_fread(offsets, nFaces * 4, 1, pFile);
+        readCnt = FXSYS_fread(offsets, face_bytes, 1, pFile);
+        if (readCnt != face_bytes) {
+            FX_Free(offsets);
+            FXSYS_fclose(pFile);
+            return;
+        }
         for (FX_DWORD i = 0; i < nFaces; i ++) {
             FX_LPBYTE p = offsets + i * 4;
             ReportFace(path, pFile, filesize, GET_TT_LONG(p));

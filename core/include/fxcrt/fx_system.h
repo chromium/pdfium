@@ -95,6 +95,7 @@ typedef int						FX_ERR;
 typedef char					FX_CHAR;
 typedef char*					FX_LPSTR;
 typedef char const*				FX_LPCSTR;
+#define FX_DWORD_MAX UINT_MAX
 typedef unsigned int		FX_DWORD;
 typedef unsigned int*		FX_LPDWORD;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

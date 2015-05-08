@@ -423,8 +423,9 @@ public:
     ~CPDF_IccProfile();
     FX_INT32 GetComponents() const { return m_nSrcComponents; }
     FX_BOOL					m_bsRGB;
-    FX_INT32                m_nSrcComponents;
     FX_LPVOID				m_pTransform;
+private:
+    FX_INT32                m_nSrcComponents;
 };
 class CPDF_DeviceCS : public CPDF_ColorSpace
 {

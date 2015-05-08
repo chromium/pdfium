@@ -1095,13 +1095,11 @@ void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj, const CFX
 }
 void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj, const CFX_AffineMatrix* pObj2Device, int& filltype, FX_BOOL& bStroke)
 {
-    FX_BOOL bPattern = FALSE;
     if(filltype) {
         CPDF_Color& FillColor = *pPathObj->m_ColorState.GetFillColor();
         if(FillColor.m_pCS && FillColor.m_pCS->GetFamily() == PDFCS_PATTERN) {
             DrawPathWithPattern(pPathObj, pObj2Device, &FillColor, FALSE);
             filltype = 0;
-            bPattern = TRUE;
         }
     }
     if(bStroke) {
@@ -1109,7 +1107,6 @@ void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj, const CFX_
         if(StrokeColor.m_pCS && StrokeColor.m_pCS->GetFamily() == PDFCS_PATTERN) {
             DrawPathWithPattern(pPathObj, pObj2Device, &StrokeColor, TRUE);
             bStroke = FALSE;
-            bPattern = TRUE;
         }
     }
 }
