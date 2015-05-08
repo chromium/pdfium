@@ -11,6 +11,7 @@
 #include "../include/fpdf_progressive.h"
 #include "../include/fpdf_ext.h"
 #include "../../../core/src/fxcrt/fx_safe_types.h"
+#include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../../third_party/base/numerics/safe_conversions_impl.h"
 #include "../include/fpdfformfill.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
@@ -710,9 +711,11 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page, int start_x, int start_
 
 DLLEXPORT FPDF_BITMAP STDCALL FPDFBitmap_Create(int width, int height, int alpha)
 {
-	CFX_DIBitmap* pBitmap = FX_NEW CFX_DIBitmap;
-	pBitmap->Create(width, height, alpha ? FXDIB_Argb : FXDIB_Rgb32);
-	return pBitmap;
+    nonstd::unique_ptr<CFX_DIBitmap> pBitmap(new CFX_DIBitmap);
+    if (!pBitmap->Create(width, height, alpha ? FXDIB_Argb : FXDIB_Rgb32)) {
+        return NULL;
+    }
+    return pBitmap.release();
 }
 
 DLLEXPORT FPDF_BITMAP STDCALL FPDFBitmap_CreateEx(int width, int height, int format, void* first_scan, int stride)

@@ -518,6 +518,12 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
     int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
 
     FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
+    if (!bitmap) {
+      fprintf(stderr, "Page was too large to be rendered.\n");
+      bad_pages++;
+      continue;
+    }
+
     FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
     rendered_pages ++;
