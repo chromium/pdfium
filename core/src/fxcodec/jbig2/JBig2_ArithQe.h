@@ -13,4 +13,5 @@ typedef struct {
     unsigned int nSwitch;
 } JBig2ArithQe;
 extern const JBig2ArithQe QeTable[];
+extern const unsigned int JBIG2_QE_NUM;
 #endif
