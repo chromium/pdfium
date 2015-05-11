@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../public/fpdf_ext.h"
 #include "../include/fsdk_define.h"
-#include "../include/fpdf_ext.h"
 
 #define  FPDFSDK_UNSUPPORT_CALL 100
 

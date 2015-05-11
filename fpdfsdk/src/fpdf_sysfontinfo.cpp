@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../public/fpdf_sysfontinfo.h"
 #include "../include/fsdk_define.h"
-#include "../include/fpdf_sysfontinfo.h"
 
 class CSysFontInfo_Ext FX_FINAL : public IFX_SystemFontInfo
 {

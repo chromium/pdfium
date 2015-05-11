@@ -19,7 +19,7 @@
 	#include "../../../core/include/fpdfdoc/fpdf_vt.h" 
 	#include "../../../core/include/fxcrt/fx_xml.h" 
 
-	#include "../fpdf_fwlevent.h"
+	#include "../../../public/fpdf_fwlevent.h"
 	#include "../fx_systemhandler.h"
 #endif
 

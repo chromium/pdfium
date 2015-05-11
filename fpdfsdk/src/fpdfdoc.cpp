@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../include/fsdk_define.h"
-#include "../include/fpdfdoc.h"
+#include "../../public/fpdf_doc.h"
 
 static int THISMODULE = 0;
 

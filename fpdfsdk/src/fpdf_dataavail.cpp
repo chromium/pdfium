@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../public/fpdf_dataavail.h"
 #include "../include/fsdk_define.h"
-#include "../include/fpdf_dataavail.h"
 
 extern void ProcessParseError(FX_DWORD err_code);
 class CFPDF_FileAvailWrap : public IFX_FileAvail

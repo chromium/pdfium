@@ -4,9 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../include/fpdf_progressive.h"
+#include "../../public/fpdf_progressive.h"
+#include "../../public/fpdfview.h"
 #include "../include/fsdk_define.h"
-#include "../include/fpdfview.h"
 #include "../include/fsdk_rendercontext.h"
 
 extern void (*Func_RenderPage)( CRenderContext*, FPDF_PAGE page, int start_x, int start_y, int size_x, int size_y,

@@ -6,10 +6,10 @@
 
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_mgr.h"
-#include "../include/fpdfview.h"
 #include "../include/fsdk_rendercontext.h"
-#include "../include/fpdf_progressive.h"
-#include "../include/fpdf_ext.h"
+#include "../../public/fpdfview.h"
+#include "../../public/fpdf_progressive.h"
+#include "../../public/fpdf_ext.h"
 #include "../../../core/src/fxcrt/fx_safe_types.h"
 #include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../../third_party/base/numerics/safe_conversions_impl.h"

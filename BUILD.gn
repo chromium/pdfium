@@ -47,19 +47,6 @@ config("pdfium_config") {
 
 static_library("pdfium") {
   sources = [
-    "fpdfsdk/include/fpdf_dataavail.h",
-    "fpdfsdk/include/fpdf_ext.h",
-    "fpdfsdk/include/fpdf_flatten.h",
-    "fpdfsdk/include/fpdf_progressive.h",
-    "fpdfsdk/include/fpdf_searchex.h",
-    "fpdfsdk/include/fpdf_sysfontinfo.h",
-    "fpdfsdk/include/fpdf_sysfontinfo.h",
-    "fpdfsdk/include/fpdf_transformpage.h",
-    "fpdfsdk/include/fpdfdoc.h",
-    "fpdfsdk/include/fpdfedit.h",
-    "fpdfsdk/include/fpdfformfill.h",
-    "fpdfsdk/include/fpdftext.h",
-    "fpdfsdk/include/fpdfview.h",
     "fpdfsdk/include/fsdk_actionhandler.h",
     "fpdfsdk/include/fsdk_annothandler.h",
     "fpdfsdk/include/fsdk_baseannot.h",
@@ -87,6 +74,21 @@ static_library("pdfium") {
     "fpdfsdk/src/fsdk_mgr.cpp",
     "fpdfsdk/src/fsdk_rendercontext.cpp",
     "fpdfsdk/src/resource.h",
+    "public/fpdf_dataavail.h",
+    "public/fpdf_doc.h",
+    "public/fpdf_edit.h",
+    "public/fpdf_ext.h",
+    "public/fpdf_flatten.h",
+    "public/fpdf_formfill.h",
+    "public/fpdf_fwlevent.h",
+    "public/fpdf_ppo.h",
+    "public/fpdf_progressive.h",
+    "public/fpdf_save.h",
+    "public/fpdf_searchex.h",
+    "public/fpdf_sysfontinfo.h",
+    "public/fpdf_text.h",
+    "public/fpdf_transformpage.h",
+    "public/fpdfview.h",
   ]
 
   libs = []

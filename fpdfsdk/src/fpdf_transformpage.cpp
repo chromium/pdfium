@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../public/fpdf_transformpage.h"
 #include "../include/fsdk_define.h"
-#include "../include/fpdf_transformpage.h"
 
 DLLEXPORT void STDCALL FPDFPage_SetMediaBox(FPDF_PAGE page, float left, float bottom, float right, float top)
 {
