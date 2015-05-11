@@ -4,6 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+// NOTE: External docs refer to this file as "fpdfview.h", so do not rename
+// despite lack of consitency with other public files.
 
 #ifndef _FPDFVIEW_H_
 #define _FPDFVIEW_H_

@@ -5,8 +5,8 @@
 #include <limits>
 #include <string>
 
+#include "../../public/fpdfview.h"
 #include "../../testing/embedder_test.h"
-#include "../../fpdfsdk/include/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class FPDFViewEmbeddertest : public EmbedderTest {

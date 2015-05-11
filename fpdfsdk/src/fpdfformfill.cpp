@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../include/fpdfview.h"
-#include "../include/fpdfformfill.h"
+#include "../../public/fpdf_formfill.h"
+#include "../../public/fpdfview.h"
 #include "../include/fsdk_define.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fsdk_mgr.h"

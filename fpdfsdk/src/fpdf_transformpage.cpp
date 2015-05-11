@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../public/fpdf_transformpage.h"
 #include "../include/fsdk_define.h"
-#include "../include/fpdf_transformpage.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 

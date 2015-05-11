@@ -4,12 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../public/fpdf_ext.h"
 #include "../include/fsdk_define.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"
 #include "../include/fsdk_mgr.h"
-#include "../include/fpdf_ext.h"
 #include "../include/formfiller/FFL_FormFiller.h"
 #include "../include/javascript/IJavaScript.h"
 #include "../include/fpdfxfa/fpdfxfa_app.h"

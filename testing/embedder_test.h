@@ -8,10 +8,10 @@
 #include <string>
 
 #include "../core/include/fxcrt/fx_system.h"
-#include "../fpdfsdk/include/fpdf_dataavail.h"
-#include "../fpdfsdk/include/fpdf_ext.h"
-#include "../fpdfsdk/include/fpdfformfill.h"
-#include "../fpdfsdk/include/fpdfview.h"
+#include "../public/fpdf_dataavail.h"
+#include "../public/fpdf_ext.h"
+#include "../public/fpdf_formfill.h"
+#include "../public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "v8/include/v8.h"
 

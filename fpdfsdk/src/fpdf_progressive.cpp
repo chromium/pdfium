@@ -4,9 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../include/fpdf_progressive.h"
+#include "../../public/fpdf_progressive.h"
+#include "../../public/fpdfview.h"
 #include "../include/fsdk_define.h"
-#include "../include/fpdfview.h"
 #include "../include/fsdk_rendercontext.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"

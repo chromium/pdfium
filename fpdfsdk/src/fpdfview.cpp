@@ -4,16 +4,16 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../public/fpdf_ext.h"
+#include "../../public/fpdf_formfill.h"
+#include "../../public/fpdf_progressive.h"
+#include "../../public/fpdfview.h"
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_mgr.h"
-#include "../include/fpdfview.h"
 #include "../include/fsdk_rendercontext.h"
-#include "../include/fpdf_progressive.h"
-#include "../include/fpdf_ext.h"
 #include "../../../core/src/fxcrt/fx_safe_types.h"
 #include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../../third_party/base/numerics/safe_conversions_impl.h"
-#include "../include/fpdfformfill.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"

@@ -7,6 +7,8 @@
 #ifndef _FPDFSDK_MGR_H
 #define _FPDFSDK_MGR_H
 
+#include "../../public/fpdf_formfill.h"
+#include "../../public/fpdf_fwlevent.h" // cross platform keycode and events define.
 #include "fsdk_common.h"
 #include "fsdk_define.h"
 #include "fx_systemhandler.h"
@@ -14,13 +16,8 @@
 #include "fpdfxfa/fpdfxfa_page.h"
 #include "fsdk_baseannot.h"
 #include "fsdk_baseform.h"
-#include "fpdfformfill.h"
 #include "fsdk_annothandler.h"
 #include "fsdk_actionhandler.h"
-
-//cross platform keycode and events define.
-#include "fpdf_fwlevent.h"
-
 
 class CPDFSDK_Document;
 class CPDFSDK_PageView;

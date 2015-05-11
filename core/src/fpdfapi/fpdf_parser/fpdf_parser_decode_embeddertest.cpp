@@ -5,7 +5,7 @@
 #include <cstring>
 #include <string>
 
-#include "../../../../fpdfsdk/include/fpdfview.h"
+#include "../../../../public/fpdfview.h"
 #include "../../../../testing/fx_string_testhelpers.h"
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fxcrt/fx_basic.h"

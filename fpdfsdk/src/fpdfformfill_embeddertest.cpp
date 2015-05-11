@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 
-#include "../../fpdfsdk/include/fpdfformfill.h"
+#include "../../public/fpdf_formfill.h"
 #include "../../testing/embedder_test.h"
 #include "../../testing/embedder_test_mock_delegate.h"
 #include "testing/gmock/include/gmock/gmock.h"
