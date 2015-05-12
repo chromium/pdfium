@@ -878,6 +878,8 @@ test("pdfium_embeddertests") {
     "fpdfsdk/src/fpdfdoc_embeddertest.cpp",
     "fpdfsdk/src/fpdfformfill_embeddertest.cpp",
     "fpdfsdk/src/fpdftext_embeddertest.cpp",
+    "fpdfsdk/src/fpdfview_c_api_test.c",
+    "fpdfsdk/src/fpdfview_c_api_test.h",
     "fpdfsdk/src/fpdfview_embeddertest.cpp",
     "testing/embedder_test.cpp",
     "testing/embedder_test.h",

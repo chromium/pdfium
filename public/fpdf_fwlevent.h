@@ -9,6 +9,10 @@
 
 #include "fpdfview.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef int			FPDF_INT32;
 typedef unsigned int FPDF_UINT32;
 typedef float		FPDF_FLOAT;
@@ -280,6 +284,10 @@ struct FWL_EVENT
 		struct FWL_EVENT_KEY key;
 	}s;
 };  
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //_FWL_EVENT_H
 

@@ -825,10 +825,10 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,FPDF_
 	return name_tree.LookupNamedDest(pDoc, name);
 }
 
-DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, long& buflen)
+DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, long* buflen)
 {
     if (!buffer)
-        buflen = 0;
+        *buflen = 0;
     if (!document || index < 0) return NULL;
     CPDF_Document* pDoc = (CPDF_Document*)document;
 
@@ -865,12 +865,12 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index,
     CFX_ByteString utf16Name = wsName.UTF16LE_Encode();
     unsigned int len = utf16Name.GetLength();
     if (!buffer) {
-        buflen = len;
-    } else if (buflen >= len) {
+        *buflen = len;
+    } else if (*buflen >= len) {
         memcpy(buffer, utf16Name.c_str(), len);
-        buflen = len;
+        *buflen = len;
     } else {
-        buflen = -1;
+        *buflen = -1;
     }
     return (FPDF_DEST)pDestObj;
 }

@@ -53,8 +53,8 @@ typedef	struct _UNSUPPORT_INFO
 	* 		None.
 	* */
 
-	void(*FSDK_UnSupport_Handler)(_UNSUPPORT_INFO* pThis,int nType);
-}UNSUPPORT_INFO;
+	void(*FSDK_UnSupport_Handler)(struct _UNSUPPORT_INFO* pThis, int nType);
+} UNSUPPORT_INFO;
 
 
 /**

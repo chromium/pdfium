@@ -15,7 +15,7 @@ extern "C" {
 
 
 // Structure for custom file write
-struct FPDF_FILEWRITE{
+typedef struct FPDF_FILEWRITE_ {
 
 	//
 	//Version number of the interface. Currently must be 1.
@@ -38,9 +38,9 @@ struct FPDF_FILEWRITE{
 	// Return value:
 	//			Should be non-zero if successful, zero for error.
 	//
-	int		(*WriteBlock)( FPDF_FILEWRITE* pThis, const void* pData, unsigned long size);
+	int		(*WriteBlock)(struct FPDF_FILEWRITE_* pThis, const void* pData, unsigned long size);
 
-};
+} FPDF_FILEWRITE;
 
 
 /** @brief Incremental. */

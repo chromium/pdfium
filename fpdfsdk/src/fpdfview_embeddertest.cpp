@@ -7,7 +7,12 @@
 
 #include "../../public/fpdfview.h"
 #include "../../testing/embedder_test.h"
+#include "fpdfview_c_api_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+TEST(fpdf, CApiTest) {
+  EXPECT_TRUE(CheckPDFiumCApi());
+}
 
 class FPDFViewEmbeddertest : public EmbedderTest {
 };
@@ -50,20 +55,20 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
 
   // Query the size of the first item.
   buffer_size = 2000000; // Absurdly large, check not used for this case.
-  dest = FPDF_GetNamedDest(document(), 0, nullptr, buffer_size);
+  dest = FPDF_GetNamedDest(document(), 0, nullptr, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(12u, buffer_size);
 
   // Try to retrieve the first item with too small a buffer.
   buffer_size = 10;
-  dest = FPDF_GetNamedDest(document(), 0, fixed_buffer, buffer_size);
+  dest = FPDF_GetNamedDest(document(), 0, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(-1, buffer_size);
 
   // Try to retrieve the first item with correctly sized buffer. Item is
   // taken from Dests NameTree in named_dests.pdf.
   buffer_size = 12;
-  dest = FPDF_GetNamedDest(document(), 0, fixed_buffer, buffer_size);
+  dest = FPDF_GetNamedDest(document(), 0, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(12u, buffer_size);
   EXPECT_EQ(std::string("F\0i\0r\0s\0t\0\0\0", 12),
@@ -72,7 +77,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   // Try to retrieve the second item with ample buffer. Item is taken
   // from Dests NameTree but has a sub-dictionary in named_dests.pdf.
   buffer_size = sizeof(fixed_buffer);
-  dest = FPDF_GetNamedDest(document(), 1, fixed_buffer, buffer_size);
+  dest = FPDF_GetNamedDest(document(), 1, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(10u, buffer_size);
   EXPECT_EQ(std::string("N\0e\0x\0t\0\0\0", 10),
@@ -82,21 +87,21 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   // from Dests NameTree but has a bad sub-dictionary in named_dests.pdf.
   // in named_dests.pdf).
   buffer_size = sizeof(fixed_buffer);
-  dest = FPDF_GetNamedDest(document(), 2, fixed_buffer, buffer_size);
+  dest = FPDF_GetNamedDest(document(), 2, fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
   EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
 
   // Try to retrieve the forth item with ample buffer. Item is taken
   // from Dests NameTree but has a vale of the wrong type in named_dests.pdf.
   buffer_size = sizeof(fixed_buffer);
-  dest = FPDF_GetNamedDest(document(), 3, fixed_buffer, buffer_size);
+  dest = FPDF_GetNamedDest(document(), 3, fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
   EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
 
   // Try to retrieve fifth item with ample buffer. Item taken from the
   // old-style Dests dictionary object in named_dests.pdf.
   buffer_size = sizeof(fixed_buffer);
-  dest = FPDF_GetNamedDest(document(), 4, fixed_buffer, buffer_size);
+  dest = FPDF_GetNamedDest(document(), 4, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(30u, buffer_size);
   EXPECT_EQ(
@@ -107,7 +112,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   // old-style Dests dictionary object but has a sub-dictionary in
   // named_dests.pdf.
   buffer_size = sizeof(fixed_buffer);
-  dest = FPDF_GetNamedDest(document(), 5, fixed_buffer, buffer_size);
+  dest = FPDF_GetNamedDest(document(), 5, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(28u, buffer_size);
   EXPECT_EQ(
@@ -116,25 +121,25 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
 
   // Try to retrieve non-existent item with ample buffer.
   buffer_size = sizeof(fixed_buffer);
-  dest = FPDF_GetNamedDest(document(), 6, fixed_buffer, buffer_size);
+  dest = FPDF_GetNamedDest(document(), 6, fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
   EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
 
   // Try to underflow/overflow the integer index.
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), std::numeric_limits<int>::max(),
-                           fixed_buffer, buffer_size);
+                           fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
   EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
 
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), std::numeric_limits<int>::min(),
-                           fixed_buffer, buffer_size);
+                           fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
   EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
 
   buffer_size = sizeof(fixed_buffer);
-  dest = FPDF_GetNamedDest(document(), -1, fixed_buffer, buffer_size);
+  dest = FPDF_GetNamedDest(document(), -1, fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
   EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
 }
@@ -156,7 +161,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {
 
   long ignore_len = 0;
   FPDF_DEST dest_by_index =
-      FPDF_GetNamedDest(document(), 0, nullptr, ignore_len);
+      FPDF_GetNamedDest(document(), 0, nullptr, &ignore_len);
   EXPECT_EQ(dest_by_index, dest);
 
   // Item from Dests dictionary.
@@ -164,7 +169,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {
   EXPECT_NE(nullptr, dest);
 
   ignore_len = 0;
-  dest_by_index = FPDF_GetNamedDest(document(), 4, nullptr, ignore_len);
+  dest_by_index = FPDF_GetNamedDest(document(), 4, nullptr, &ignore_len);
   EXPECT_EQ(dest_by_index, dest);
 
   // Bad value type for item from Dests NameTree array.
