@@ -7,6 +7,7 @@
 #ifndef _PWL_FONTMAP_H_
 #define _PWL_FONTMAP_H_
 
+#include "../../../public/fpdf_sysfontinfo.h"
 #include "../fxedit/fx_edit.h"
 
 class CPDF_Document;
@@ -111,10 +112,7 @@ private:
 	CFX_ByteString								GetNativeFont(FX_INT32 nCharset);
 
 public:
-	struct CharsetFontMap {
-		FX_INT32								charset;
-		const char*								fontname;
-	};
+    using CharsetFontMap = FPDF_CharsetFontMap;
 	static const CharsetFontMap					defaultTTFMap[];
 
 protected:
