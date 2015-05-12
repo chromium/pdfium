@@ -6,6 +6,7 @@
 
 #include "../../public/fpdf_sysfontinfo.h"
 #include "../include/fsdk_define.h"
+#include "../include/pdfwindow/PWL_FontMap.h"
 
 class CSysFontInfo_Ext FX_FINAL : public IFX_SystemFontInfo
 {
@@ -92,6 +93,11 @@ DLLEXPORT void STDCALL FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt)
 	CSysFontInfo_Ext* pFontInfo = FX_NEW CSysFontInfo_Ext;
 	pFontInfo->m_pInfo = pFontInfoExt;
 	CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(pFontInfo);
+}
+
+DLLEXPORT const FPDF_CharsetFontMap* STDCALL FPDF_GetDefaultTTFMap()
+{
+    return CPWL_FontMap::defaultTTFMap;
 }
 
 struct FPDF_SYSFONTINFO_DEFAULT : public FPDF_SYSFONTINFO

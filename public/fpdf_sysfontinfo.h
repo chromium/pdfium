@@ -32,7 +32,6 @@
 extern "C" {
 #endif
 
-
 /** 
  * Interface: FPDF_SYSFONTINFO
  *			Interface for getting system font information and font mapping
@@ -191,6 +190,28 @@ typedef struct _FPDF_SYSFONTINFO {
 	 **/
 	void (*DeleteFont)(struct _FPDF_SYSFONTINFO* pThis, void* hFont);
 } FPDF_SYSFONTINFO;
+
+/**
+ * Struct: FPDF_CharsetFontMap
+ *    Provides the name of a font to use for a given charset value.
+ **/
+typedef struct FPDF_CharsetFontMap_
+{
+    int charset;  // Character Set Enum value, see FXFONT_*_CHARSET above.
+    const char* fontname;  // Name of default font to use with that charset.
+} FPDF_CharsetFontMap;
+
+/**
+ * Function: FPDF_GetDefaultTTFMap
+ *    Returns a pointer to the default character set to TT Font name map. The
+ *    map is an array of FPDF_CharsetFontMap structs, with its end indicated
+ *    by a { -1, NULL } entry.
+ * Parameters:
+ *     None.
+ * Return Value:
+ *     Pointer to the Charset Font Map.
+ **/
+DLLEXPORT const FPDF_CharsetFontMap* STDCALL FPDF_GetDefaultTTFMap();
 
 /**
  * Function: FPDF_AddInstalledFont
