@@ -192,8 +192,16 @@ void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap);
 FXSYS_FILE* FXSYS_wfopen(FX_LPCWSTR filename, FX_LPCWSTR mode);
 #endif
 
+#ifdef __cplusplus
+} // extern "C"
+#include "../../../third_party/base/numerics/safe_conversions.h"
+#define FXSYS_strlen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(strlen(ptr))
+#define FXSYS_wcslen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(wcslen(ptr))
+extern "C" {
+#else
 #define FXSYS_strlen(ptr) ((FX_STRSIZE)strlen(ptr))
 #define FXSYS_wcslen(ptr) ((FX_STRSIZE)wcslen(ptr))
+#endif
 
 #define FXSYS_wcscmp	wcscmp
 #define FXSYS_wcschr	wcschr
