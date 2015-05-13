@@ -11,6 +11,10 @@
 #include "fpdfview.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void* FPDF_PAGEARCSAVER;
 typedef void* FPDF_PAGEARCLOADER;
 /**
@@ -113,6 +117,10 @@ DLLEXPORT void STDCALL FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath);
 * by this clip path. The method can not support this feature for the document consists of dynamic XFA fields.
 */
 DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,FPDF_CLIPPATH clipPath);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

@@ -266,7 +266,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BY
 	return pDocument;
 }
 
-DLLEXPORT FX_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int& docType)
+DLLEXPORT FX_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int* docType)
 {
 	if (!document)
 		return FALSE;
@@ -290,9 +290,9 @@ DLLEXPORT FX_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int& docType)
 	FX_BOOL bDynamicXFA = pRoot->GetBoolean("NeedsRendering", FALSE);
 
 	if (bDynamicXFA)
-		docType = DOCTYPE_DYNIMIC_XFA;
+		*docType = DOCTYPE_DYNIMIC_XFA;
 	else
-		docType = DOCTYPE_STATIC_XFA;
+		*docType = DOCTYPE_STATIC_XFA;
 
 	return TRUE;
 }
@@ -1011,10 +1011,10 @@ FPDF_RESULT	FPDF_BStr_Clear(FPDF_BSTR* str)
 	return 0;
 }
 
-DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, long& buflen)
+DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, long* buflen)
 {
     if (!buffer)
-        buflen = 0;
+        *buflen = 0;
     if (!document || index < 0) return NULL;
 	CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 
@@ -1051,12 +1051,12 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index,
     CFX_ByteString utf16Name = wsName.UTF16LE_Encode();
     unsigned int len = utf16Name.GetLength();
     if (!buffer) {
-        buflen = len;
-    } else if (buflen >= len) {
+        *buflen = len;
+    } else if (*buflen >= len) {
         memcpy(buffer, utf16Name.c_str(), len);
-        buflen = len;
+        *buflen = len;
     } else {
-        buflen = -1;
+        *buflen = -1;
     }
     return (FPDF_DEST)pDestObj;
 }

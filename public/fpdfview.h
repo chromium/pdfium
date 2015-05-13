@@ -738,7 +738,7 @@ DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document);
 // Return value:
 //			The handle of the dest.
 //
-DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,FPDF_BYTESTRING name);
+DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name);
 
 // Function: FPDF_GetNamedDest
 //			Get the specified named destinations of the PDF document by index.
@@ -755,7 +755,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,FPDF_
 //			2) Second time pass in allocated |buffer| and buflen to retrieve |buffer|, which should be used as wchar_t*.
 //			   If buflen is not sufficiently large, it will be set to -1 upon return.
 //
-DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, long& buflen);
+DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document, int index, void* buffer, long* buflen);
 
 // Function: FPDF_BStr_Init	
 //			Helper function to initialize a byte string.

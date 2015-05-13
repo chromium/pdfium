@@ -1107,7 +1107,7 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,FPDF_BITMAP bitmap, 
  * Return Value:
  *                      TRUE indicates that the input document has XFA fields, otherwise FALSE.
  **/
-DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int& docType);
+DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int* docType);
 
 /**
  * Function: FPDF_LoadXFA

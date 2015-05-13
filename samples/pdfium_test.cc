@@ -414,7 +414,7 @@ int Get_Block(void* param, unsigned long pos, unsigned char* pBuf,
   return 1;
 }
 
-bool Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
+FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
   return true;
 }
 
@@ -478,7 +478,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
   FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
   int docType = DOCTYPE_PDF;
-  if (FPDF_HasXFAField(doc, docType))
+  if (FPDF_HasXFAField(doc, &docType))
   {
       if (docType != DOCTYPE_PDF && !FPDF_LoadXFA(doc))
           fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");

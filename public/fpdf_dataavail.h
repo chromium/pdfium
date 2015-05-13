@@ -47,7 +47,7 @@ typedef struct _FX_FILEAVAIL {
 	 * Comments:
 	 *		Called by Foxit SDK to check whether the data section is ready.
 	 */
-	bool (*IsDataAvail)(struct _FX_FILEAVAIL* pThis, size_t offset, size_t size);
+	FPDF_BOOL (*IsDataAvail)(struct _FX_FILEAVAIL* pThis, size_t offset, size_t size);
 } FX_FILEAVAIL;
 
 typedef void* FPDF_AVAIL;
