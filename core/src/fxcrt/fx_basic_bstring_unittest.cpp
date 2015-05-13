@@ -46,105 +46,207 @@ TEST(fxcrt, ByteStringOperatorLT) {
 }
 
 TEST(fxcrt, ByteStringOperatorEQ) {
+    CFX_ByteString null_string;
+    EXPECT_TRUE(null_string == null_string);
+
+    CFX_ByteString empty_string("");
+    EXPECT_TRUE(empty_string == empty_string);
+    EXPECT_TRUE(empty_string == null_string);
+    EXPECT_TRUE(null_string == empty_string);
+
+    CFX_ByteString deleted_string("hello");
+    deleted_string.Delete(0, 5);
+    EXPECT_TRUE(deleted_string == deleted_string);
+    EXPECT_TRUE(deleted_string == null_string);
+    EXPECT_TRUE(deleted_string == empty_string);
+    EXPECT_TRUE(null_string == deleted_string);
+    EXPECT_TRUE(empty_string == deleted_string);
+
     CFX_ByteString byte_string("hello");
-    ASSERT_TRUE(byte_string == byte_string);
+    EXPECT_TRUE(byte_string == byte_string);
+    EXPECT_FALSE(byte_string == null_string);
+    EXPECT_FALSE(byte_string == empty_string);
+    EXPECT_FALSE(byte_string == deleted_string);
+    EXPECT_FALSE(null_string == byte_string);
+    EXPECT_FALSE(empty_string == byte_string);
+    EXPECT_FALSE(deleted_string == byte_string);
 
     CFX_ByteString byte_string_same1("hello");
-    ASSERT_TRUE(byte_string == byte_string_same1);
-    ASSERT_TRUE(byte_string_same1 == byte_string);
+    EXPECT_TRUE(byte_string == byte_string_same1);
+    EXPECT_TRUE(byte_string_same1 == byte_string);
 
     CFX_ByteString byte_string_same2(byte_string);
-    ASSERT_TRUE(byte_string == byte_string_same2);
-    ASSERT_TRUE(byte_string_same2 == byte_string);
+    EXPECT_TRUE(byte_string == byte_string_same2);
+    EXPECT_TRUE(byte_string_same2 == byte_string);
 
     CFX_ByteString byte_string1("he");
     CFX_ByteString byte_string2("hellp");
     CFX_ByteString byte_string3("hellod");
-    ASSERT_FALSE(byte_string == byte_string1);
-    ASSERT_FALSE(byte_string == byte_string2);
-    ASSERT_FALSE(byte_string == byte_string3);
-    ASSERT_FALSE(byte_string1 == byte_string);
-    ASSERT_FALSE(byte_string2 == byte_string);
-    ASSERT_FALSE(byte_string3 == byte_string);
+    EXPECT_FALSE(byte_string == byte_string1);
+    EXPECT_FALSE(byte_string == byte_string2);
+    EXPECT_FALSE(byte_string == byte_string3);
+    EXPECT_FALSE(byte_string1 == byte_string);
+    EXPECT_FALSE(byte_string2 == byte_string);
+    EXPECT_FALSE(byte_string3 == byte_string);
+
+    CFX_ByteStringC null_string_c;
+    CFX_ByteStringC empty_string_c("");
+    EXPECT_TRUE(null_string == null_string_c);
+    EXPECT_TRUE(null_string == empty_string_c);
+    EXPECT_TRUE(empty_string == null_string_c);
+    EXPECT_TRUE(empty_string == empty_string_c);
+    EXPECT_TRUE(deleted_string == null_string_c);
+    EXPECT_TRUE(deleted_string == empty_string_c);
+    EXPECT_TRUE(null_string_c == null_string);
+    EXPECT_TRUE(empty_string_c == null_string);
+    EXPECT_TRUE(null_string_c == empty_string);
+    EXPECT_TRUE(empty_string_c == empty_string);
+    EXPECT_TRUE(null_string_c == deleted_string);
+    EXPECT_TRUE(empty_string_c == deleted_string);
 
     CFX_ByteStringC byte_string_c_same1("hello");
-    ASSERT_TRUE(byte_string == byte_string_c_same1);
-    ASSERT_TRUE(byte_string_c_same1 == byte_string);
+    EXPECT_TRUE(byte_string == byte_string_c_same1);
+    EXPECT_TRUE(byte_string_c_same1 == byte_string);
 
     CFX_ByteStringC byte_string_c1("he");
     CFX_ByteStringC byte_string_c2("hellp");
     CFX_ByteStringC byte_string_c3("hellod");
-    ASSERT_FALSE(byte_string == byte_string_c1);
-    ASSERT_FALSE(byte_string == byte_string_c2);
-    ASSERT_FALSE(byte_string == byte_string_c3);
-    ASSERT_FALSE(byte_string_c1 == byte_string);
-    ASSERT_FALSE(byte_string_c2 == byte_string);
-    ASSERT_FALSE(byte_string_c3 == byte_string);
+    EXPECT_FALSE(byte_string == byte_string_c1);
+    EXPECT_FALSE(byte_string == byte_string_c2);
+    EXPECT_FALSE(byte_string == byte_string_c3);
+    EXPECT_FALSE(byte_string_c1 == byte_string);
+    EXPECT_FALSE(byte_string_c2 == byte_string);
+    EXPECT_FALSE(byte_string_c3 == byte_string);
+
+    const char* c_null_string = nullptr;
+    const char* c_empty_string = "";
+    EXPECT_TRUE(null_string == c_null_string);
+    EXPECT_TRUE(null_string == c_empty_string);
+    EXPECT_TRUE(empty_string == c_null_string);
+    EXPECT_TRUE(empty_string == c_empty_string);
+    EXPECT_TRUE(deleted_string == c_null_string);
+    EXPECT_TRUE(deleted_string == c_empty_string);
+    EXPECT_TRUE(c_null_string == null_string);
+    EXPECT_TRUE(c_empty_string == null_string);
+    EXPECT_TRUE(c_null_string == empty_string);
+    EXPECT_TRUE(c_empty_string == empty_string);
+    EXPECT_TRUE(c_null_string == deleted_string);
+    EXPECT_TRUE(c_empty_string == deleted_string);
 
     const char* c_string_same1 = "hello";
-    ASSERT_TRUE(byte_string == c_string_same1);
-    ASSERT_TRUE(c_string_same1 == byte_string);
+    EXPECT_TRUE(byte_string == c_string_same1);
+    EXPECT_TRUE(c_string_same1 == byte_string);
 
     const char* c_string1 = "he";
     const char* c_string2 = "hellp";
     const char* c_string3 = "hellod";
-    ASSERT_FALSE(byte_string == c_string1);
-    ASSERT_FALSE(byte_string == c_string2);
-    ASSERT_FALSE(byte_string == c_string3);
-    ASSERT_FALSE(c_string1 == byte_string);
-    ASSERT_FALSE(c_string2 == byte_string);
-    ASSERT_FALSE(c_string3 == byte_string);
+    EXPECT_FALSE(byte_string == c_string1);
+    EXPECT_FALSE(byte_string == c_string2);
+    EXPECT_FALSE(byte_string == c_string3);
+    EXPECT_FALSE(c_string1 == byte_string);
+    EXPECT_FALSE(c_string2 == byte_string);
+    EXPECT_FALSE(c_string3 == byte_string);
 }
 
 TEST(fxcrt, ByteStringOperatorNE) {
+    CFX_ByteString null_string;
+    EXPECT_FALSE(null_string != null_string);
+
+    CFX_ByteString empty_string("");
+    EXPECT_FALSE(empty_string != empty_string);
+    EXPECT_FALSE(empty_string != null_string);
+    EXPECT_FALSE(null_string != empty_string);
+
+    CFX_ByteString deleted_string("hello");
+    deleted_string.Delete(0, 5);
+    EXPECT_FALSE(deleted_string != deleted_string);
+    EXPECT_FALSE(deleted_string != null_string);
+    EXPECT_FALSE(deleted_string != empty_string);
+    EXPECT_FALSE(deleted_string != deleted_string);
+    EXPECT_FALSE(null_string != deleted_string);
+    EXPECT_FALSE(empty_string != deleted_string);
+    EXPECT_FALSE(deleted_string != deleted_string);
+
     CFX_ByteString byte_string("hello");
-    ASSERT_FALSE(byte_string != byte_string);
+    EXPECT_FALSE(byte_string != byte_string);
+    EXPECT_TRUE(byte_string != null_string);
+    EXPECT_TRUE(byte_string != empty_string);
+    EXPECT_TRUE(byte_string != deleted_string);
+    EXPECT_TRUE(null_string != byte_string);
+    EXPECT_TRUE(empty_string != byte_string);
+    EXPECT_TRUE(deleted_string != byte_string);
 
     CFX_ByteString byte_string_same1("hello");
-    ASSERT_FALSE(byte_string != byte_string_same1);
-    ASSERT_FALSE(byte_string_same1 != byte_string);
+    EXPECT_FALSE(byte_string != byte_string_same1);
+    EXPECT_FALSE(byte_string_same1 != byte_string);
 
     CFX_ByteString byte_string_same2(byte_string);
-    ASSERT_FALSE(byte_string != byte_string_same2);
-    ASSERT_FALSE(byte_string_same2 != byte_string);
+    EXPECT_FALSE(byte_string != byte_string_same2);
+    EXPECT_FALSE(byte_string_same2 != byte_string);
 
     CFX_ByteString byte_string1("he");
     CFX_ByteString byte_string2("hellp");
     CFX_ByteString byte_string3("hellod");
-    ASSERT_TRUE(byte_string != byte_string1);
-    ASSERT_TRUE(byte_string != byte_string2);
-    ASSERT_TRUE(byte_string != byte_string3);
-    ASSERT_TRUE(byte_string1 != byte_string);
-    ASSERT_TRUE(byte_string2 != byte_string);
-    ASSERT_TRUE(byte_string3 != byte_string);
+    EXPECT_TRUE(byte_string != byte_string1);
+    EXPECT_TRUE(byte_string != byte_string2);
+    EXPECT_TRUE(byte_string != byte_string3);
+    EXPECT_TRUE(byte_string1 != byte_string);
+    EXPECT_TRUE(byte_string2 != byte_string);
+    EXPECT_TRUE(byte_string3 != byte_string);
+
+    CFX_ByteStringC null_string_c;
+    CFX_ByteStringC empty_string_c("");
+    EXPECT_FALSE(null_string != null_string_c);
+    EXPECT_FALSE(null_string != empty_string_c);
+    EXPECT_FALSE(empty_string != null_string_c);
+    EXPECT_FALSE(empty_string != empty_string_c);
+    EXPECT_FALSE(null_string_c != null_string);
+    EXPECT_FALSE(empty_string_c != null_string);
+    EXPECT_FALSE(null_string_c != empty_string);
+    EXPECT_FALSE(empty_string_c != empty_string);
 
     CFX_ByteStringC byte_string_c_same1("hello");
-    ASSERT_FALSE(byte_string != byte_string_c_same1);
-    ASSERT_FALSE(byte_string_c_same1 != byte_string);
+    EXPECT_FALSE(byte_string != byte_string_c_same1);
+    EXPECT_FALSE(byte_string_c_same1 != byte_string);
 
     CFX_ByteStringC byte_string_c1("he");
     CFX_ByteStringC byte_string_c2("hellp");
     CFX_ByteStringC byte_string_c3("hellod");
-    ASSERT_TRUE(byte_string != byte_string_c1);
-    ASSERT_TRUE(byte_string != byte_string_c2);
-    ASSERT_TRUE(byte_string != byte_string_c3);
-    ASSERT_TRUE(byte_string_c1 != byte_string);
-    ASSERT_TRUE(byte_string_c2 != byte_string);
-    ASSERT_TRUE(byte_string_c3 != byte_string);
+    EXPECT_TRUE(byte_string != byte_string_c1);
+    EXPECT_TRUE(byte_string != byte_string_c2);
+    EXPECT_TRUE(byte_string != byte_string_c3);
+    EXPECT_TRUE(byte_string_c1 != byte_string);
+    EXPECT_TRUE(byte_string_c2 != byte_string);
+    EXPECT_TRUE(byte_string_c3 != byte_string);
+
+    const char* c_null_string = nullptr;
+    const char* c_empty_string = "";
+    EXPECT_FALSE(null_string != c_null_string);
+    EXPECT_FALSE(null_string != c_empty_string);
+    EXPECT_FALSE(empty_string != c_null_string);
+    EXPECT_FALSE(empty_string != c_empty_string);
+    EXPECT_FALSE(deleted_string != c_null_string);
+    EXPECT_FALSE(deleted_string != c_empty_string);
+    EXPECT_FALSE(c_null_string != null_string);
+    EXPECT_FALSE(c_empty_string != null_string);
+    EXPECT_FALSE(c_null_string != empty_string);
+    EXPECT_FALSE(c_empty_string != empty_string);
+    EXPECT_FALSE(c_null_string != deleted_string);
+    EXPECT_FALSE(c_empty_string != deleted_string);
 
     const char* c_string_same1 = "hello";
-    ASSERT_FALSE(byte_string != c_string_same1);
-    ASSERT_FALSE(c_string_same1 != byte_string);
+    EXPECT_FALSE(byte_string != c_string_same1);
+    EXPECT_FALSE(c_string_same1 != byte_string);
 
     const char* c_string1 = "he";
     const char* c_string2 = "hellp";
     const char* c_string3 = "hellod";
-    ASSERT_TRUE(byte_string != c_string1);
-    ASSERT_TRUE(byte_string != c_string2);
-    ASSERT_TRUE(byte_string != c_string3);
-    ASSERT_TRUE(c_string1 != byte_string);
-    ASSERT_TRUE(c_string2 != byte_string);
-    ASSERT_TRUE(c_string3 != byte_string);
+    EXPECT_TRUE(byte_string != c_string1);
+    EXPECT_TRUE(byte_string != c_string2);
+    EXPECT_TRUE(byte_string != c_string3);
+    EXPECT_TRUE(c_string1 != byte_string);
+    EXPECT_TRUE(c_string2 != byte_string);
+    EXPECT_TRUE(c_string3 != byte_string);
 }
 
 TEST(fxcrt, ByteStringCNull) {
@@ -373,104 +475,104 @@ TEST(fxcrt, ByteStringCOperatorLT) {
 
 TEST(fxcrt, ByteStringCOperatorEQ) {
     CFX_ByteStringC byte_string_c("hello");
-    ASSERT_TRUE(byte_string_c == byte_string_c);
+    EXPECT_TRUE(byte_string_c == byte_string_c);
 
     CFX_ByteStringC byte_string_c_same1("hello");
-    ASSERT_TRUE(byte_string_c == byte_string_c_same1);
-    ASSERT_TRUE(byte_string_c_same1 == byte_string_c);
+    EXPECT_TRUE(byte_string_c == byte_string_c_same1);
+    EXPECT_TRUE(byte_string_c_same1 == byte_string_c);
 
     CFX_ByteStringC byte_string_c_same2(byte_string_c);
-    ASSERT_TRUE(byte_string_c == byte_string_c_same2);
-    ASSERT_TRUE(byte_string_c_same2 == byte_string_c);
+    EXPECT_TRUE(byte_string_c == byte_string_c_same2);
+    EXPECT_TRUE(byte_string_c_same2 == byte_string_c);
 
     CFX_ByteStringC byte_string_c1("he");
     CFX_ByteStringC byte_string_c2("hellp");
     CFX_ByteStringC byte_string_c3("hellod");
-    ASSERT_FALSE(byte_string_c == byte_string_c1);
-    ASSERT_FALSE(byte_string_c == byte_string_c2);
-    ASSERT_FALSE(byte_string_c == byte_string_c3);
-    ASSERT_FALSE(byte_string_c1 == byte_string_c);
-    ASSERT_FALSE(byte_string_c2 == byte_string_c);
-    ASSERT_FALSE(byte_string_c3 == byte_string_c);
+    EXPECT_FALSE(byte_string_c == byte_string_c1);
+    EXPECT_FALSE(byte_string_c == byte_string_c2);
+    EXPECT_FALSE(byte_string_c == byte_string_c3);
+    EXPECT_FALSE(byte_string_c1 == byte_string_c);
+    EXPECT_FALSE(byte_string_c2 == byte_string_c);
+    EXPECT_FALSE(byte_string_c3 == byte_string_c);
 
     CFX_ByteString byte_string_same1("hello");
-    ASSERT_TRUE(byte_string_c == byte_string_same1);
-    ASSERT_TRUE(byte_string_same1 == byte_string_c);
+    EXPECT_TRUE(byte_string_c == byte_string_same1);
+    EXPECT_TRUE(byte_string_same1 == byte_string_c);
 
     CFX_ByteString byte_string1("he");
     CFX_ByteString byte_string2("hellp");
     CFX_ByteString byte_string3("hellod");
-    ASSERT_FALSE(byte_string_c == byte_string1);
-    ASSERT_FALSE(byte_string_c == byte_string2);
-    ASSERT_FALSE(byte_string_c == byte_string3);
-    ASSERT_FALSE(byte_string1 == byte_string_c);
-    ASSERT_FALSE(byte_string2 == byte_string_c);
-    ASSERT_FALSE(byte_string3 == byte_string_c);
+    EXPECT_FALSE(byte_string_c == byte_string1);
+    EXPECT_FALSE(byte_string_c == byte_string2);
+    EXPECT_FALSE(byte_string_c == byte_string3);
+    EXPECT_FALSE(byte_string1 == byte_string_c);
+    EXPECT_FALSE(byte_string2 == byte_string_c);
+    EXPECT_FALSE(byte_string3 == byte_string_c);
 
     const char* c_string_same1 = "hello";
-    ASSERT_TRUE(byte_string_c == c_string_same1);
-    ASSERT_TRUE(c_string_same1 == byte_string_c);
+    EXPECT_TRUE(byte_string_c == c_string_same1);
+    EXPECT_TRUE(c_string_same1 == byte_string_c);
 
     const char* c_string1 = "he";
     const char* c_string2 = "hellp";
     const char* c_string3 = "hellod";
-    ASSERT_FALSE(byte_string_c == c_string1);
-    ASSERT_FALSE(byte_string_c == c_string2);
-    ASSERT_FALSE(byte_string_c == c_string3);
+    EXPECT_FALSE(byte_string_c == c_string1);
+    EXPECT_FALSE(byte_string_c == c_string2);
+    EXPECT_FALSE(byte_string_c == c_string3);
 
-    ASSERT_FALSE(c_string1 == byte_string_c);
-    ASSERT_FALSE(c_string2 == byte_string_c);
-    ASSERT_FALSE(c_string3 == byte_string_c);
+    EXPECT_FALSE(c_string1 == byte_string_c);
+    EXPECT_FALSE(c_string2 == byte_string_c);
+    EXPECT_FALSE(c_string3 == byte_string_c);
 }
 
 TEST(fxcrt, ByteStringCOperatorNE) {
     CFX_ByteStringC byte_string_c("hello");
-    ASSERT_FALSE(byte_string_c != byte_string_c);
+    EXPECT_FALSE(byte_string_c != byte_string_c);
 
     CFX_ByteStringC byte_string_c_same1("hello");
-    ASSERT_FALSE(byte_string_c != byte_string_c_same1);
-    ASSERT_FALSE(byte_string_c_same1 != byte_string_c);
+    EXPECT_FALSE(byte_string_c != byte_string_c_same1);
+    EXPECT_FALSE(byte_string_c_same1 != byte_string_c);
 
     CFX_ByteStringC byte_string_c_same2(byte_string_c);
-    ASSERT_FALSE(byte_string_c != byte_string_c_same2);
-    ASSERT_FALSE(byte_string_c_same2 != byte_string_c);
+    EXPECT_FALSE(byte_string_c != byte_string_c_same2);
+    EXPECT_FALSE(byte_string_c_same2 != byte_string_c);
 
     CFX_ByteStringC byte_string_c1("he");
     CFX_ByteStringC byte_string_c2("hellp");
     CFX_ByteStringC byte_string_c3("hellod");
-    ASSERT_TRUE(byte_string_c != byte_string_c1);
-    ASSERT_TRUE(byte_string_c != byte_string_c2);
-    ASSERT_TRUE(byte_string_c != byte_string_c3);
-    ASSERT_TRUE(byte_string_c1 != byte_string_c);
-    ASSERT_TRUE(byte_string_c2 != byte_string_c);
-    ASSERT_TRUE(byte_string_c3 != byte_string_c);
+    EXPECT_TRUE(byte_string_c != byte_string_c1);
+    EXPECT_TRUE(byte_string_c != byte_string_c2);
+    EXPECT_TRUE(byte_string_c != byte_string_c3);
+    EXPECT_TRUE(byte_string_c1 != byte_string_c);
+    EXPECT_TRUE(byte_string_c2 != byte_string_c);
+    EXPECT_TRUE(byte_string_c3 != byte_string_c);
 
     CFX_ByteString byte_string_same1("hello");
-    ASSERT_FALSE(byte_string_c != byte_string_same1);
-    ASSERT_FALSE(byte_string_same1 != byte_string_c);
+    EXPECT_FALSE(byte_string_c != byte_string_same1);
+    EXPECT_FALSE(byte_string_same1 != byte_string_c);
 
     CFX_ByteString byte_string1("he");
     CFX_ByteString byte_string2("hellp");
     CFX_ByteString byte_string3("hellod");
-    ASSERT_TRUE(byte_string_c != byte_string1);
-    ASSERT_TRUE(byte_string_c != byte_string2);
-    ASSERT_TRUE(byte_string_c != byte_string3);
-    ASSERT_TRUE(byte_string1 != byte_string_c);
-    ASSERT_TRUE(byte_string2 != byte_string_c);
-    ASSERT_TRUE(byte_string3 != byte_string_c);
+    EXPECT_TRUE(byte_string_c != byte_string1);
+    EXPECT_TRUE(byte_string_c != byte_string2);
+    EXPECT_TRUE(byte_string_c != byte_string3);
+    EXPECT_TRUE(byte_string1 != byte_string_c);
+    EXPECT_TRUE(byte_string2 != byte_string_c);
+    EXPECT_TRUE(byte_string3 != byte_string_c);
 
     const char* c_string_same1 = "hello";
-    ASSERT_FALSE(byte_string_c != c_string_same1);
-    ASSERT_FALSE(c_string_same1 != byte_string_c);
+    EXPECT_FALSE(byte_string_c != c_string_same1);
+    EXPECT_FALSE(c_string_same1 != byte_string_c);
 
     const char* c_string1 = "he";
     const char* c_string2 = "hellp";
     const char* c_string3 = "hellod";
-    ASSERT_TRUE(byte_string_c != c_string1);
-    ASSERT_TRUE(byte_string_c != c_string2);
-    ASSERT_TRUE(byte_string_c != c_string3);
+    EXPECT_TRUE(byte_string_c != c_string1);
+    EXPECT_TRUE(byte_string_c != c_string2);
+    EXPECT_TRUE(byte_string_c != c_string3);
 
-    ASSERT_TRUE(c_string1 != byte_string_c);
-    ASSERT_TRUE(c_string2 != byte_string_c);
-    ASSERT_TRUE(c_string3 != byte_string_c);
+    EXPECT_TRUE(c_string1 != byte_string_c);
+    EXPECT_TRUE(c_string2 != byte_string_c);
+    EXPECT_TRUE(c_string3 != byte_string_c);
 }

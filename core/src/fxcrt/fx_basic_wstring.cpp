@@ -206,10 +206,10 @@ const CFX_WideString& CFX_WideString::operator+=(const CFX_WideStringC& string)
 bool CFX_WideString::Equal(const wchar_t* ptr) const
 {
     if (!m_pData) {
-        return !ptr;
+        return !ptr || ptr[0] == L'\0';
     }
     if (!ptr) {
-        return false;
+        return m_pData->m_nDataLength == 0;
     }
     return wcslen(ptr) == m_pData->m_nDataLength &&
             wmemcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
@@ -224,10 +224,10 @@ bool CFX_WideString::Equal(const CFX_WideStringC& str) const
 }
 bool CFX_WideString::Equal(const CFX_WideString& other) const
 {
-    if (!m_pData) {
+    if (IsEmpty()) {
         return other.IsEmpty();
     }
-    if (!other.m_pData) {
+    if (other.IsEmpty()) {
         return false;
     }
     return other.m_pData->m_nDataLength == m_pData->m_nDataLength &&
