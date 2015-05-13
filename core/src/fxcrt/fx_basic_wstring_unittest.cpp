@@ -46,106 +46,207 @@ TEST(fxcrt, WideStringOperatorLT) {
 }
 
 TEST(fxcrt, WideStringOperatorEQ) {
+    CFX_WideString null_string;
+    EXPECT_TRUE(null_string == null_string);
+
+    CFX_WideString empty_string(L"");
+    EXPECT_TRUE(empty_string == empty_string);
+    EXPECT_TRUE(empty_string == null_string);
+    EXPECT_TRUE(null_string == empty_string);
+
+    CFX_WideString deleted_string(L"hello");
+    deleted_string.Delete(0, 5);
+    EXPECT_TRUE(deleted_string == deleted_string);
+    EXPECT_TRUE(deleted_string == null_string);
+    EXPECT_TRUE(deleted_string == empty_string);
+    EXPECT_TRUE(null_string == deleted_string);
+    EXPECT_TRUE(null_string == empty_string);
+
     CFX_WideString wide_string(L"hello");
-    ASSERT_TRUE(wide_string == wide_string);
+    EXPECT_TRUE(wide_string == wide_string);
+    EXPECT_FALSE(wide_string == null_string);
+    EXPECT_FALSE(wide_string == empty_string);
+    EXPECT_FALSE(wide_string == deleted_string);
+    EXPECT_FALSE(null_string == wide_string);
+    EXPECT_FALSE(empty_string == wide_string);
+    EXPECT_FALSE(deleted_string == wide_string);
 
     CFX_WideString wide_string_same1(L"hello");
-    ASSERT_TRUE(wide_string == wide_string_same1);
-    ASSERT_TRUE(wide_string_same1 == wide_string);
+    EXPECT_TRUE(wide_string == wide_string_same1);
+    EXPECT_TRUE(wide_string_same1 == wide_string);
 
     CFX_WideString wide_string_same2(wide_string);
-    ASSERT_TRUE(wide_string == wide_string_same2);
-    ASSERT_TRUE(wide_string_same2 == wide_string);
+    EXPECT_TRUE(wide_string == wide_string_same2);
+    EXPECT_TRUE(wide_string_same2 == wide_string);
 
     CFX_WideString wide_string1(L"he");
     CFX_WideString wide_string2(L"hellp");
     CFX_WideString wide_string3(L"hellod");
-    ASSERT_FALSE(wide_string == wide_string1);
-    ASSERT_FALSE(wide_string == wide_string2);
-    ASSERT_FALSE(wide_string == wide_string3);
-    ASSERT_FALSE(wide_string1 == wide_string);
-    ASSERT_FALSE(wide_string2 == wide_string);
-    ASSERT_FALSE(wide_string3 == wide_string);
+    EXPECT_FALSE(wide_string == wide_string1);
+    EXPECT_FALSE(wide_string == wide_string2);
+    EXPECT_FALSE(wide_string == wide_string3);
+    EXPECT_FALSE(wide_string1 == wide_string);
+    EXPECT_FALSE(wide_string2 == wide_string);
+    EXPECT_FALSE(wide_string3 == wide_string);
+
+    CFX_WideStringC null_string_c;
+    CFX_WideStringC empty_string_c(L"");
+    EXPECT_TRUE(null_string == null_string_c);
+    EXPECT_TRUE(null_string == empty_string_c);
+    EXPECT_TRUE(empty_string == null_string_c);
+    EXPECT_TRUE(empty_string == empty_string_c);
+    EXPECT_TRUE(deleted_string == null_string_c);
+    EXPECT_TRUE(deleted_string == empty_string_c);
+    EXPECT_TRUE(null_string_c == null_string);
+    EXPECT_TRUE(empty_string_c == null_string);
+    EXPECT_TRUE(null_string_c == empty_string);
+    EXPECT_TRUE(empty_string_c == empty_string);
+    EXPECT_TRUE(null_string_c == deleted_string);
+    EXPECT_TRUE(empty_string_c == deleted_string);
 
     CFX_WideStringC wide_string_c_same1(L"hello");
-    ASSERT_TRUE(wide_string == wide_string_c_same1);
-    ASSERT_TRUE(wide_string_c_same1 == wide_string);
+    EXPECT_TRUE(wide_string == wide_string_c_same1);
+    EXPECT_TRUE(wide_string_c_same1 == wide_string);
 
     CFX_WideStringC wide_string_c1(L"he");
     CFX_WideStringC wide_string_c2(L"hellp");
     CFX_WideStringC wide_string_c3(L"hellod");
-    ASSERT_FALSE(wide_string == wide_string_c1);
-    ASSERT_FALSE(wide_string == wide_string_c2);
-    ASSERT_FALSE(wide_string == wide_string_c3);
-    ASSERT_FALSE(wide_string_c1 == wide_string);
-    ASSERT_FALSE(wide_string_c2 == wide_string);
-    ASSERT_FALSE(wide_string_c3 == wide_string);
+    EXPECT_FALSE(wide_string == wide_string_c1);
+    EXPECT_FALSE(wide_string == wide_string_c2);
+    EXPECT_FALSE(wide_string == wide_string_c3);
+    EXPECT_FALSE(wide_string_c1 == wide_string);
+    EXPECT_FALSE(wide_string_c2 == wide_string);
+    EXPECT_FALSE(wide_string_c3 == wide_string);
+
+    const wchar_t* c_null_string = nullptr;
+    const wchar_t* c_empty_string = L"";
+    EXPECT_TRUE(null_string == c_null_string);
+    EXPECT_TRUE(null_string == c_empty_string);
+    EXPECT_TRUE(empty_string == c_null_string);
+    EXPECT_TRUE(empty_string == c_empty_string);
+    EXPECT_TRUE(deleted_string == c_null_string);
+    EXPECT_TRUE(deleted_string == c_empty_string);
+    EXPECT_TRUE(c_null_string == null_string);
+    EXPECT_TRUE(c_empty_string == null_string);
+    EXPECT_TRUE(c_null_string == empty_string);
+    EXPECT_TRUE(c_empty_string == empty_string);
+    EXPECT_TRUE(c_null_string == deleted_string);
+    EXPECT_TRUE(c_empty_string == deleted_string);
 
     const wchar_t* c_string_same1 = L"hello";
-    ASSERT_TRUE(wide_string == c_string_same1);
-    ASSERT_TRUE(c_string_same1 == wide_string);
+    EXPECT_TRUE(wide_string == c_string_same1);
+    EXPECT_TRUE(c_string_same1 == wide_string);
 
     const wchar_t* c_string1 = L"he";
     const wchar_t* c_string2 = L"hellp";
     const wchar_t* c_string3 = L"hellod";
-    ASSERT_FALSE(wide_string == c_string1);
-    ASSERT_FALSE(wide_string == c_string2);
-    ASSERT_FALSE(wide_string == c_string3);
-    ASSERT_FALSE(c_string1 == wide_string);
-    ASSERT_FALSE(c_string2 == wide_string);
-    ASSERT_FALSE(c_string3 == wide_string);
+    EXPECT_FALSE(wide_string == c_string1);
+    EXPECT_FALSE(wide_string == c_string2);
+    EXPECT_FALSE(wide_string == c_string3);
+    EXPECT_FALSE(c_string1 == wide_string);
+    EXPECT_FALSE(c_string2 == wide_string);
+    EXPECT_FALSE(c_string3 == wide_string);
 }
 
 TEST(fxcrt, WideStringOperatorNE) {
+    CFX_WideString null_string;
+    EXPECT_FALSE(null_string != null_string);
+
+    CFX_WideString empty_string(L"");
+    EXPECT_FALSE(empty_string != empty_string);
+    EXPECT_FALSE(empty_string != null_string);
+    EXPECT_FALSE(null_string != empty_string);
+
+    CFX_WideString deleted_string(L"hello");
+    deleted_string.Delete(0, 5);
+    EXPECT_FALSE(deleted_string != deleted_string);
+    EXPECT_FALSE(deleted_string != null_string);
+    EXPECT_FALSE(deleted_string != empty_string);
+    EXPECT_FALSE(null_string != deleted_string);
+    EXPECT_FALSE(null_string != empty_string);
+
     CFX_WideString wide_string(L"hello");
-    ASSERT_FALSE(wide_string != wide_string);
+    EXPECT_FALSE(wide_string != wide_string);
+    EXPECT_TRUE(wide_string != null_string);
+    EXPECT_TRUE(wide_string != empty_string);
+    EXPECT_TRUE(wide_string != deleted_string);
+    EXPECT_TRUE(null_string != wide_string);
+    EXPECT_TRUE(empty_string != wide_string);
+    EXPECT_TRUE(deleted_string != wide_string);
 
     CFX_WideString wide_string_same1(L"hello");
-    ASSERT_FALSE(wide_string != wide_string_same1);
-    ASSERT_FALSE(wide_string_same1 != wide_string);
+    EXPECT_FALSE(wide_string != wide_string_same1);
+    EXPECT_FALSE(wide_string_same1 != wide_string);
 
     CFX_WideString wide_string_same2(wide_string);
-    ASSERT_FALSE(wide_string != wide_string_same2);
-    ASSERT_FALSE(wide_string_same2 != wide_string);
+    EXPECT_FALSE(wide_string != wide_string_same2);
+    EXPECT_FALSE(wide_string_same2 != wide_string);
 
     CFX_WideString wide_string1(L"he");
     CFX_WideString wide_string2(L"hellp");
     CFX_WideString wide_string3(L"hellod");
-    ASSERT_TRUE(wide_string != wide_string1);
-    ASSERT_TRUE(wide_string != wide_string2);
-    ASSERT_TRUE(wide_string != wide_string3);
-    ASSERT_TRUE(wide_string1 != wide_string);
-    ASSERT_TRUE(wide_string2 != wide_string);
-    ASSERT_TRUE(wide_string3 != wide_string);
+    EXPECT_TRUE(wide_string != wide_string1);
+    EXPECT_TRUE(wide_string != wide_string2);
+    EXPECT_TRUE(wide_string != wide_string3);
+    EXPECT_TRUE(wide_string1 != wide_string);
+    EXPECT_TRUE(wide_string2 != wide_string);
+    EXPECT_TRUE(wide_string3 != wide_string);
+
+    CFX_WideStringC null_string_c;
+    CFX_WideStringC empty_string_c(L"");
+    EXPECT_FALSE(null_string != null_string_c);
+    EXPECT_FALSE(null_string != empty_string_c);
+    EXPECT_FALSE(empty_string != null_string_c);
+    EXPECT_FALSE(empty_string != empty_string_c);
+    EXPECT_FALSE(deleted_string != null_string_c);
+    EXPECT_FALSE(deleted_string != empty_string_c);
+    EXPECT_FALSE(null_string_c != null_string);
+    EXPECT_FALSE(empty_string_c != null_string);
+    EXPECT_FALSE(null_string_c != empty_string);
+    EXPECT_FALSE(empty_string_c != empty_string);
 
     CFX_WideStringC wide_string_c_same1(L"hello");
-    ASSERT_FALSE(wide_string != wide_string_c_same1);
-    ASSERT_FALSE(wide_string_c_same1 != wide_string);
+    EXPECT_FALSE(wide_string != wide_string_c_same1);
+    EXPECT_FALSE(wide_string_c_same1 != wide_string);
 
     CFX_WideStringC wide_string_c1(L"he");
     CFX_WideStringC wide_string_c2(L"hellp");
     CFX_WideStringC wide_string_c3(L"hellod");
-    ASSERT_TRUE(wide_string != wide_string_c1);
-    ASSERT_TRUE(wide_string != wide_string_c2);
-    ASSERT_TRUE(wide_string != wide_string_c3);
-    ASSERT_TRUE(wide_string_c1 != wide_string);
-    ASSERT_TRUE(wide_string_c2 != wide_string);
-    ASSERT_TRUE(wide_string_c3 != wide_string);
+    EXPECT_TRUE(wide_string != wide_string_c1);
+    EXPECT_TRUE(wide_string != wide_string_c2);
+    EXPECT_TRUE(wide_string != wide_string_c3);
+    EXPECT_TRUE(wide_string_c1 != wide_string);
+    EXPECT_TRUE(wide_string_c2 != wide_string);
+    EXPECT_TRUE(wide_string_c3 != wide_string);
+
+    const wchar_t* c_null_string = nullptr;
+    const wchar_t* c_empty_string = L"";
+    EXPECT_FALSE(null_string != c_null_string);
+    EXPECT_FALSE(null_string != c_empty_string);
+    EXPECT_FALSE(empty_string != c_null_string);
+    EXPECT_FALSE(empty_string != c_empty_string);
+    EXPECT_FALSE(deleted_string != c_null_string);
+    EXPECT_FALSE(deleted_string != c_empty_string);
+    EXPECT_FALSE(c_null_string != null_string);
+    EXPECT_FALSE(c_empty_string != null_string);
+    EXPECT_FALSE(c_null_string != empty_string);
+    EXPECT_FALSE(c_empty_string != empty_string);
+    EXPECT_FALSE(c_null_string != deleted_string);
+    EXPECT_FALSE(c_empty_string != deleted_string);
 
     const wchar_t* c_string_same1 = L"hello";
-    ASSERT_FALSE(wide_string != c_string_same1);
-    ASSERT_FALSE(c_string_same1 != wide_string);
+    EXPECT_FALSE(wide_string != c_string_same1);
+    EXPECT_FALSE(c_string_same1 != wide_string);
 
     const wchar_t* c_string1 = L"he";
     const wchar_t* c_string2 = L"hellp";
     const wchar_t* c_string3 = L"hellod";
-    ASSERT_TRUE(wide_string != c_string1);
-    ASSERT_TRUE(wide_string != c_string2);
-    ASSERT_TRUE(wide_string != c_string3);
-
-    ASSERT_TRUE(c_string1 != wide_string);
-    ASSERT_TRUE(c_string2 != wide_string);
-    ASSERT_TRUE(c_string3 != wide_string);
+    EXPECT_TRUE(wide_string != c_string1);
+    EXPECT_TRUE(wide_string != c_string2);
+    EXPECT_TRUE(wide_string != c_string3);
+    EXPECT_TRUE(c_string1 != wide_string);
+    EXPECT_TRUE(c_string2 != wide_string);
+    EXPECT_TRUE(c_string3 != wide_string);
 }
 
 #define ByteStringLiteral(str) CFX_ByteString(FX_BSTRC(str))
@@ -211,104 +312,104 @@ TEST(fxcrt, WideStringCOperatorLT) {
 
 TEST(fxcrt, WideStringCOperatorEQ) {
     CFX_WideStringC wide_string_c(L"hello");
-    ASSERT_TRUE(wide_string_c == wide_string_c);
+    EXPECT_TRUE(wide_string_c == wide_string_c);
 
     CFX_WideStringC wide_string_c_same1(L"hello");
-    ASSERT_TRUE(wide_string_c == wide_string_c_same1);
-    ASSERT_TRUE(wide_string_c_same1 == wide_string_c);
+    EXPECT_TRUE(wide_string_c == wide_string_c_same1);
+    EXPECT_TRUE(wide_string_c_same1 == wide_string_c);
 
     CFX_WideStringC wide_string_c_same2(wide_string_c);
-    ASSERT_TRUE(wide_string_c == wide_string_c_same2);
-    ASSERT_TRUE(wide_string_c_same2 == wide_string_c);
+    EXPECT_TRUE(wide_string_c == wide_string_c_same2);
+    EXPECT_TRUE(wide_string_c_same2 == wide_string_c);
 
     CFX_WideStringC wide_string_c1(L"he");
     CFX_WideStringC wide_string_c2(L"hellp");
     CFX_WideStringC wide_string_c3(L"hellod");
-    ASSERT_FALSE(wide_string_c == wide_string_c1);
-    ASSERT_FALSE(wide_string_c == wide_string_c2);
-    ASSERT_FALSE(wide_string_c == wide_string_c3);
-    ASSERT_FALSE(wide_string_c1 == wide_string_c);
-    ASSERT_FALSE(wide_string_c2 == wide_string_c);
-    ASSERT_FALSE(wide_string_c3 == wide_string_c);
+    EXPECT_FALSE(wide_string_c == wide_string_c1);
+    EXPECT_FALSE(wide_string_c == wide_string_c2);
+    EXPECT_FALSE(wide_string_c == wide_string_c3);
+    EXPECT_FALSE(wide_string_c1 == wide_string_c);
+    EXPECT_FALSE(wide_string_c2 == wide_string_c);
+    EXPECT_FALSE(wide_string_c3 == wide_string_c);
 
     CFX_WideString wide_string_same1(L"hello");
-    ASSERT_TRUE(wide_string_c == wide_string_same1);
-    ASSERT_TRUE(wide_string_same1 == wide_string_c);
+    EXPECT_TRUE(wide_string_c == wide_string_same1);
+    EXPECT_TRUE(wide_string_same1 == wide_string_c);
 
     CFX_WideString wide_string1(L"he");
     CFX_WideString wide_string2(L"hellp");
     CFX_WideString wide_string3(L"hellod");
-    ASSERT_FALSE(wide_string_c == wide_string1);
-    ASSERT_FALSE(wide_string_c == wide_string2);
-    ASSERT_FALSE(wide_string_c == wide_string3);
-    ASSERT_FALSE(wide_string1 == wide_string_c);
-    ASSERT_FALSE(wide_string2 == wide_string_c);
-    ASSERT_FALSE(wide_string3 == wide_string_c);
+    EXPECT_FALSE(wide_string_c == wide_string1);
+    EXPECT_FALSE(wide_string_c == wide_string2);
+    EXPECT_FALSE(wide_string_c == wide_string3);
+    EXPECT_FALSE(wide_string1 == wide_string_c);
+    EXPECT_FALSE(wide_string2 == wide_string_c);
+    EXPECT_FALSE(wide_string3 == wide_string_c);
 
     const wchar_t* c_string_same1 = L"hello";
-    ASSERT_TRUE(wide_string_c == c_string_same1);
-    ASSERT_TRUE(c_string_same1 == wide_string_c);
+    EXPECT_TRUE(wide_string_c == c_string_same1);
+    EXPECT_TRUE(c_string_same1 == wide_string_c);
 
     const wchar_t* c_string1 = L"he";
     const wchar_t* c_string2 = L"hellp";
     const wchar_t* c_string3 = L"hellod";
-    ASSERT_FALSE(wide_string_c == c_string1);
-    ASSERT_FALSE(wide_string_c == c_string2);
-    ASSERT_FALSE(wide_string_c == c_string3);
+    EXPECT_FALSE(wide_string_c == c_string1);
+    EXPECT_FALSE(wide_string_c == c_string2);
+    EXPECT_FALSE(wide_string_c == c_string3);
 
-    ASSERT_FALSE(c_string1 == wide_string_c);
-    ASSERT_FALSE(c_string2 == wide_string_c);
-    ASSERT_FALSE(c_string3 == wide_string_c);
+    EXPECT_FALSE(c_string1 == wide_string_c);
+    EXPECT_FALSE(c_string2 == wide_string_c);
+    EXPECT_FALSE(c_string3 == wide_string_c);
 }
 
 TEST(fxcrt, WideStringCOperatorNE) {
     CFX_WideStringC wide_string_c(L"hello");
-    ASSERT_FALSE(wide_string_c != wide_string_c);
+    EXPECT_FALSE(wide_string_c != wide_string_c);
 
     CFX_WideStringC wide_string_c_same1(L"hello");
-    ASSERT_FALSE(wide_string_c != wide_string_c_same1);
-    ASSERT_FALSE(wide_string_c_same1 != wide_string_c);
+    EXPECT_FALSE(wide_string_c != wide_string_c_same1);
+    EXPECT_FALSE(wide_string_c_same1 != wide_string_c);
 
     CFX_WideStringC wide_string_c_same2(wide_string_c);
-    ASSERT_FALSE(wide_string_c != wide_string_c_same2);
-    ASSERT_FALSE(wide_string_c_same2 != wide_string_c);
+    EXPECT_FALSE(wide_string_c != wide_string_c_same2);
+    EXPECT_FALSE(wide_string_c_same2 != wide_string_c);
 
     CFX_WideStringC wide_string_c1(L"he");
     CFX_WideStringC wide_string_c2(L"hellp");
     CFX_WideStringC wide_string_c3(L"hellod");
-    ASSERT_TRUE(wide_string_c != wide_string_c1);
-    ASSERT_TRUE(wide_string_c != wide_string_c2);
-    ASSERT_TRUE(wide_string_c != wide_string_c3);
-    ASSERT_TRUE(wide_string_c1 != wide_string_c);
-    ASSERT_TRUE(wide_string_c2 != wide_string_c);
-    ASSERT_TRUE(wide_string_c3 != wide_string_c);
+    EXPECT_TRUE(wide_string_c != wide_string_c1);
+    EXPECT_TRUE(wide_string_c != wide_string_c2);
+    EXPECT_TRUE(wide_string_c != wide_string_c3);
+    EXPECT_TRUE(wide_string_c1 != wide_string_c);
+    EXPECT_TRUE(wide_string_c2 != wide_string_c);
+    EXPECT_TRUE(wide_string_c3 != wide_string_c);
 
     CFX_WideString wide_string_same1(L"hello");
-    ASSERT_FALSE(wide_string_c != wide_string_same1);
-    ASSERT_FALSE(wide_string_same1 != wide_string_c);
+    EXPECT_FALSE(wide_string_c != wide_string_same1);
+    EXPECT_FALSE(wide_string_same1 != wide_string_c);
 
     CFX_WideString wide_string1(L"he");
     CFX_WideString wide_string2(L"hellp");
     CFX_WideString wide_string3(L"hellod");
-    ASSERT_TRUE(wide_string_c != wide_string1);
-    ASSERT_TRUE(wide_string_c != wide_string2);
-    ASSERT_TRUE(wide_string_c != wide_string3);
-    ASSERT_TRUE(wide_string1 != wide_string_c);
-    ASSERT_TRUE(wide_string2 != wide_string_c);
-    ASSERT_TRUE(wide_string3 != wide_string_c);
+    EXPECT_TRUE(wide_string_c != wide_string1);
+    EXPECT_TRUE(wide_string_c != wide_string2);
+    EXPECT_TRUE(wide_string_c != wide_string3);
+    EXPECT_TRUE(wide_string1 != wide_string_c);
+    EXPECT_TRUE(wide_string2 != wide_string_c);
+    EXPECT_TRUE(wide_string3 != wide_string_c);
 
     const wchar_t* c_string_same1 = L"hello";
-    ASSERT_FALSE(wide_string_c != c_string_same1);
-    ASSERT_FALSE(c_string_same1 != wide_string_c);
+    EXPECT_FALSE(wide_string_c != c_string_same1);
+    EXPECT_FALSE(c_string_same1 != wide_string_c);
 
     const wchar_t* c_string1 = L"he";
     const wchar_t* c_string2 = L"hellp";
     const wchar_t* c_string3 = L"hellod";
-    ASSERT_TRUE(wide_string_c != c_string1);
-    ASSERT_TRUE(wide_string_c != c_string2);
-    ASSERT_TRUE(wide_string_c != c_string3);
+    EXPECT_TRUE(wide_string_c != c_string1);
+    EXPECT_TRUE(wide_string_c != c_string2);
+    EXPECT_TRUE(wide_string_c != c_string3);
 
-    ASSERT_TRUE(c_string1 != wide_string_c);
-    ASSERT_TRUE(c_string2 != wide_string_c);
-    ASSERT_TRUE(c_string3 != wide_string_c);
+    EXPECT_TRUE(c_string1 != wide_string_c);
+    EXPECT_TRUE(c_string2 != wide_string_c);
+    EXPECT_TRUE(c_string3 != wide_string_c);
 }

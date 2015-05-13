@@ -254,10 +254,10 @@ const CFX_ByteString& CFX_ByteString::operator+=(FX_BSTR string)
 bool CFX_ByteString::Equal(const char* ptr) const
 {
     if (!m_pData) {
-        return !ptr;
+        return !ptr || ptr[0] == '\0';
     }
     if (!ptr) {
-        return false;
+        return m_pData->m_nDataLength == 0;
     }
     return strlen(ptr) == m_pData->m_nDataLength &&
         FXSYS_memcmp32(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
@@ -272,10 +272,10 @@ bool CFX_ByteString::Equal(const CFX_ByteStringC& str) const
 }
 bool CFX_ByteString::Equal(const CFX_ByteString& other) const
 {
-    if (!m_pData) {
+    if (IsEmpty()) {
         return other.IsEmpty();
     }
-    if (!other.m_pData) {
+    if (other.IsEmpty()) {
         return false;
     }
     return other.m_pData->m_nDataLength == m_pData->m_nDataLength &&
