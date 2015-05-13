@@ -265,9 +265,8 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,IFXJS_Runtime* pFXRuntime, IFXJS_
 
 				CJS_PrivateData* pPrivateData = new CJS_PrivateData;
 				pPrivateData->ObjDefID = i;
-				v8::Handle<v8::External> ptr = v8::External::New(isolate, pPrivateData);
 
-				v8Context->Global()->GetPrototype()->ToObject()->SetInternalField(0, ptr); 
+				v8Context->Global()->GetPrototype()->ToObject()->SetAlignedPointerInInternalField(0, pPrivateData);
 
 				if(pObjDef->m_pConstructor)
 					pObjDef->m_pConstructor(context, v8Context->Global()->GetPrototype()->ToObject(), v8Context->Global()->GetPrototype()->ToObject());
@@ -382,8 +381,7 @@ v8::Handle<v8::Object> JS_NewFxDynamicObj(IJS_Runtime* pJSRuntime, IFXJS_Context
 	CJS_PrivateData* pPrivateData = new CJS_PrivateData;
 	pPrivateData->ObjDefID = nObjDefnID;
 
-	v8::Handle<v8::External> ptr = v8::External::New(isolate, pPrivateData);
-	obj->SetInternalField(0, ptr);
+	obj->SetAlignedPointerInInternalField(0, pPrivateData);
 	if(pObjDef->m_pConstructor)
 		pObjDef->m_pConstructor(pJSContext, obj, context->Global()->GetPrototype()->ToObject());
 
@@ -424,8 +422,7 @@ v8::Handle<v8::Object>	JS_GetThisObj(IJS_Runtime * pJSRuntime)
 int	JS_GetObjDefnID(v8::Handle<v8::Object> pObj)
 {
 	if(pObj.IsEmpty() || !pObj->InternalFieldCount()) return -1;
-	v8::Handle<v8::External> field = v8::Handle<v8::External>::Cast(pObj->GetInternalField(0));
-	CJS_PrivateData* pPrivateData = (CJS_PrivateData*)field->Value();
+	CJS_PrivateData* pPrivateData = (CJS_PrivateData*)pObj->GetAlignedPointerFromInternalField(0);
 	if(pPrivateData)
 		return pPrivateData->ObjDefID;
 	return -1;
@@ -508,8 +505,7 @@ void* JS_GetPrivate(v8::Handle<v8::Object> pObj)
 void JS_SetPrivate(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj, void* p)
 {
 	if(pObj.IsEmpty() || !pObj->InternalFieldCount()) return;
-	v8::Handle<v8::External> ptr = v8::Handle<v8::External>::Cast(pObj->GetInternalField(0));
-	CJS_PrivateData* pPrivateData  = (CJS_PrivateData*)ptr->Value();
+	CJS_PrivateData* pPrivateData  = (CJS_PrivateData*)pObj->GetAlignedPointerFromInternalField(0);
 	if(!pPrivateData) return;
 	pPrivateData->pPrivate = p;
 }
@@ -517,19 +513,16 @@ void JS_SetPrivate(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj, void* p
 void* JS_GetPrivate(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj)
 {
 	if(pObj.IsEmpty()) return NULL;
-	v8::Local<v8::Value> value;
+	CJS_PrivateData* pPrivateData  = NULL;
 	if(pObj->InternalFieldCount())
-		value = pObj->GetInternalField(0); 
+                pPrivateData = (CJS_PrivateData*)pObj->GetAlignedPointerFromInternalField(0);
 	else
 	{
 		//It could be a global proxy object.
 		v8::Local<v8::Value> v = pObj->GetPrototype();
 		if(v->IsObject())
-			value = v->ToObject()->GetInternalField(0);
+                        pPrivateData = (CJS_PrivateData*)v->ToObject()->GetAlignedPointerFromInternalField(0);
 	}
-	if(value.IsEmpty() || value->IsUndefined()) return NULL;
-	v8::Handle<v8::External> ptr = v8::Handle<v8::External>::Cast(value);
-	CJS_PrivateData* pPrivateData  = (CJS_PrivateData*)ptr->Value();
 	if(!pPrivateData) return NULL;
 	return pPrivateData->pPrivate;
 }
@@ -537,11 +530,8 @@ void* JS_GetPrivate(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj)
 void JS_FreePrivate(v8::Handle<v8::Object> pObj)
 {
 	if(pObj.IsEmpty() || !pObj->InternalFieldCount()) return;
-	v8::Handle<v8::External> ptr = v8::Handle<v8::External>::Cast(pObj->GetInternalField(0));
-	delete (CJS_PrivateData*)ptr->Value();
-	v8::Local<v8::Context> context = pObj->CreationContext();
-
-	pObj->SetInternalField(0, v8::External::New(context->GetIsolate(), NULL));
+	delete (CJS_PrivateData*)pObj->GetAlignedPointerFromInternalField(0);
+	pObj->SetAlignedPointerInInternalField(0, NULL);
 }
 
 
