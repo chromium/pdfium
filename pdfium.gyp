@@ -928,6 +928,7 @@
         'testing/fx_string_testhelpers.h',
         'testing/fx_string_testhelpers.cpp',
         'xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
+        'xfa/src/fxfa/src/parser/xfa_utils_imp_unittest.cpp',
       ],
     },
     {

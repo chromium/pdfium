@@ -1792,7 +1792,7 @@ FX_INT32 CXFA_WidgetData::GetRotate()
         return 0;
     }
     FX_INT32 iRotate =  FXSYS_round(ms.GetValue());
-    iRotate = (iRotate < 0 ? (iRotate % 360) + 360 : iRotate % 360);
+    iRotate = XFA_MapRotation(iRotate);
     return iRotate / 90 * 90;
 }
 CXFA_Border CXFA_WidgetData::GetBorder(FX_BOOL bModified)
@@ -1933,12 +1933,7 @@ FX_BOOL CXFA_WidgetData::SetPresence(FX_INT32 iPresence)
 }
 FX_BOOL CXFA_WidgetData::SetRotate(FX_INT32 iRotate)
 {
-    while (iRotate < 0) {
-        iRotate += 360;
-    }
-    while (iRotate >= 360) {
-        iRotate -= 360;
-    }
+    iRotate = XFA_MapRotation(iRotate);
     CXFA_Measurement ms((FX_FLOAT)iRotate, XFA_UNIT_Angle);
     return m_pNode->SetMeasure(XFA_ATTRIBUTE_Rotate, ms);
 }

@@ -712,10 +712,6 @@ static inline void XFA_ItemLayoutProcessor_CalculateContainerComponentSizeFromCo
 }
 void CXFA_ItemLayoutProcessor::CalculatePositionedContainerPos(CXFA_Node* pNode, FX_FLOAT fWidth, FX_FLOAT fHeight, FX_FLOAT& fAbsoluteX, FX_FLOAT& fAbsoluteY)
 {
-    FX_FLOAT fAnchorX = pNode->GetMeasure(XFA_ATTRIBUTE_X).ToUnit(XFA_UNIT_Pt);
-    FX_FLOAT fAnchorY = pNode->GetMeasure(XFA_ATTRIBUTE_Y).ToUnit(XFA_UNIT_Pt);
-    FX_INT32 nRotate = FXSYS_round(pNode->GetMeasure(XFA_ATTRIBUTE_Rotate).GetValue());
-    nRotate = (nRotate < 0 ? (nRotate % 360) + 360 : nRotate % 360) / 90;
     XFA_ATTRIBUTEENUM eAnchorType = pNode->GetEnum(XFA_ATTRIBUTE_AnchorType);
     FX_INT32 nAnchorType = 0;
     switch(eAnchorType) {
@@ -749,7 +745,15 @@ void CXFA_ItemLayoutProcessor::CalculatePositionedContainerPos(CXFA_Node* pNode,
         default:
             break;
     }
-    static const FX_UINT8 nNextPos[4][9] = {{0, 1, 2, 3, 4, 5, 6, 7, 8}, {6, 3, 0, 7, 4, 1, 8, 5, 2}, {8, 7, 6, 5, 4, 3, 2, 1, 0}, {2, 5, 8, 1, 4, 7, 0, 3, 6}};
+    static const FX_UINT8 nNextPos[4][9] = { {0, 1, 2, 3, 4, 5, 6, 7, 8},
+                                             {6, 3, 0, 7, 4, 1, 8, 5, 2}, 
+                                             {8, 7, 6, 5, 4, 3, 2, 1, 0},
+                                             {2, 5, 8, 1, 4, 7, 0, 3, 6} };
+
+    FX_FLOAT fAnchorX = pNode->GetMeasure(XFA_ATTRIBUTE_X).ToUnit(XFA_UNIT_Pt);
+    FX_FLOAT fAnchorY = pNode->GetMeasure(XFA_ATTRIBUTE_Y).ToUnit(XFA_UNIT_Pt);
+    FX_INT32 nRotate = FXSYS_round(pNode->GetMeasure(XFA_ATTRIBUTE_Rotate).GetValue());
+    nRotate = XFA_MapRotation(nRotate) / 90;
     FX_INT32 nAbsoluteAnchorType = nNextPos[nRotate][nAnchorType];
     fAbsoluteX = fAnchorX;
     fAbsoluteY = fAnchorY;
@@ -2297,7 +2301,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutField()
     FX_FLOAT fWidth = -1;
     pNotify->StartFieldDrawLayout(m_pFormNode, fWidth, fHeight);
     FX_INT32 nRotate = FXSYS_round(m_pFormNode->GetMeasure(XFA_ATTRIBUTE_Rotate).GetValue());
-    nRotate = (nRotate < 0 ? (nRotate % 360) + 360 : nRotate % 360);
+    nRotate = XFA_MapRotation(nRotate);
     if(nRotate == 90 || nRotate == 270) {
         FX_FLOAT fTmp = fWidth;
         fWidth = fHeight;

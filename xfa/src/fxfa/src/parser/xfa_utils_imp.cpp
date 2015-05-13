@@ -375,8 +375,16 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString &wsStringVal)
     }
     return dValue;
 }
+
 FX_DOUBLE XFA_ByteStringToDouble(FX_BSTR szStringVal)
 {
     CFX_WideString wsValue = CFX_WideString::FromUTF8(szStringVal.GetCStr(), szStringVal.GetLength());
     return XFA_WideStringToDouble(wsValue);
 }
+
+FX_INT32 XFA_MapRotation(FX_INT32 nRotation) {
+    nRotation = nRotation % 360;
+    nRotation = nRotation < 0 ? nRotation + 360 : nRotation;
+    return nRotation;
+}
+

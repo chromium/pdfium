@@ -216,22 +216,24 @@ public:
 class CXFA_Node;
 class CXFA_WidgetData;
 #include "fxfa_localevalue.h"
-CXFA_Node*			XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType);
-CXFA_LocaleValue	XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
-CFX_WideString		XFA_NumericLimit(const CFX_WideString &wsValue, FX_INT32 iLead, FX_INT32 iTread);
-FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString &wsStringVal);
-FX_DOUBLE XFA_ByteStringToDouble(FX_BSTR szStringVal);
+CXFA_Node*          XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType);
+CXFA_LocaleValue    XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
+CFX_WideString	    XFA_NumericLimit(const CFX_WideString &wsValue, FX_INT32 iLead, FX_INT32 iTread);
+FX_DOUBLE           XFA_WideStringToDouble(const CFX_WideString &wsStringVal);
+FX_DOUBLE           XFA_ByteStringToDouble(FX_BSTR szStringVal);
+FX_INT32            XFA_MapRotation(FX_INT32 nRotation); 
 #ifndef XFA_PARSE_HAS_LINEIDENTIFIER
 #define XFA_PARSE_HAS_LINEIDENTIFIER
 #endif
-FX_BOOL XFA_RecognizeRichText(IFDE_XMLElement* pRichTextXMLNode);
-void	XFA_GetPlainTextFromRichText(IFDE_XMLNode *pXMLNode, CFX_WideString &wsPlainText);
-FX_BOOL XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
-IFX_Stream* XFA_CreateWideTextRead(const CFX_WideString &wsBuffer);
-FX_BOOL		XFA_IsLayoutElement(XFA_ELEMENT eElement, FX_BOOL bLayoutContainer = FALSE);
-FX_BOOL		XFA_IsTakingupSpace(XFA_ATTRIBUTEENUM ePresence);
-FX_BOOL		XFA_IsFlowingLayout(XFA_ATTRIBUTEENUM eLayout);
-FX_BOOL		XFA_IsHorizontalFlow(XFA_ATTRIBUTEENUM eLayout);
-void		XFA_DataExporter_DealWithDataGroupNode(CXFA_Node *pDataNode);
-void		XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode, IFX_Stream* pStream, FX_LPCSTR pChecksum = NULL, FX_BOOL bSaveXML = FALSE);
+FX_BOOL             XFA_RecognizeRichText(IFDE_XMLElement* pRichTextXMLNode);
+void                XFA_GetPlainTextFromRichText(IFDE_XMLNode *pXMLNode, CFX_WideString &wsPlainText);
+FX_BOOL             XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
+IFX_Stream*         XFA_CreateWideTextRead(const CFX_WideString &wsBuffer);
+FX_BOOL             XFA_IsLayoutElement(XFA_ELEMENT eElement, FX_BOOL bLayoutContainer = FALSE);
+FX_BOOL             XFA_IsTakingupSpace(XFA_ATTRIBUTEENUM ePresence);
+FX_BOOL             XFA_IsFlowingLayout(XFA_ATTRIBUTEENUM eLayout);
+FX_BOOL	            XFA_IsHorizontalFlow(XFA_ATTRIBUTEENUM eLayout);
+void                XFA_DataExporter_DealWithDataGroupNode(CXFA_Node *pDataNode);
+void                XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode, IFX_Stream* pStream,
+                                                        FX_LPCSTR pChecksum = NULL, FX_BOOL bSaveXML = FALSE);
 #endif
