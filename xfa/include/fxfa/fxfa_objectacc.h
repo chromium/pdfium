@@ -623,198 +623,152 @@ class CXFA_WidgetData : public CXFA_Data
 {
 public:
     CXFA_WidgetData(CXFA_Node *pNode);
-    CXFA_Node*		GetUIChild();
+    CXFA_Node*          GetUIChild();
 
-    XFA_ELEMENT		GetUIType();
-    CFX_WideString	GetRawValue();
+    XFA_ELEMENT         GetUIType();
+    CFX_WideString      GetRawValue();
+    FX_INT32            GetAccess(FX_BOOL bTemplate = FALSE);
+    FX_BOOL             GetAccessKey(CFX_WideStringC &wsAccessKey);
+    FX_INT32            GetAnchorType();
+    FX_INT32            GetColSpan();
+    FX_INT32            GetPresence();
+    FX_INT32            GetRotate();
+    CXFA_Border         GetBorder(FX_BOOL bModified = FALSE);
+    CXFA_Caption        GetCaption(FX_BOOL bModified = FALSE);
+    CXFA_Font           GetFont(FX_BOOL bModified = FALSE);
+    CXFA_Margin         GetMargin(FX_BOOL bModified = FALSE);
+    CXFA_Para           GetPara(FX_BOOL bModified = FALSE);
+    CXFA_Keep           GetKeep(FX_BOOL bModified = FALSE);
+    void                GetEventList(CXFA_NodeArray &events);
+    FX_INT32            GetEventByActivity(FX_INT32 iActivity,
+                                           CXFA_NodeArray &events,
+                                           FX_BOOL bIsFormReady = FALSE);
+    CXFA_Value          GetDefaultValue(FX_BOOL bModified = FALSE);
+    CXFA_Value          GetFormValue(FX_BOOL bModified = FALSE);
+    CXFA_Calculate      GetCalculate(FX_BOOL bModified = FALSE);
+    CXFA_Validate       GetValidate(FX_BOOL bModified = FALSE);
+    CXFA_Variables      GetVariables(FX_BOOL bModified = FALSE);
+    CXFA_Bind           GetBind(FX_BOOL bModified = FALSE);
+    CXFA_Assist         GetAssist(FX_BOOL bModified = FALSE);
+    void                GetRelevant(CFX_WideStringC &wsRelevant);
+    FX_DWORD            GetRelevantStatus();
+    FX_BOOL             GetWidth(FX_FLOAT &fWidth);
+    FX_BOOL             GetHeight(FX_FLOAT &fHeight);
+    FX_BOOL             GetMinWidth(FX_FLOAT &fMinWidth);
+    FX_BOOL             GetMinHeight(FX_FLOAT &fMinHeight);
+    FX_BOOL             GetMaxWidth(FX_FLOAT &fMaxWidth);
+    FX_BOOL             GetMaxHeight(FX_FLOAT &fMaxHeight);
+    CXFA_BindItems      GetBindItems();
+    FX_BOOL             SetAccess(FX_INT32 iAccess, FX_BOOL bNotify = TRUE);
+    FX_BOOL             SetAccessKey(const CFX_WideString& wsAccessKey);
+    FX_BOOL             SetAnchorType(FX_INT32 iType);
+    FX_BOOL             SetColSpan(FX_INT32 iColSpan);
+    FX_BOOL             SetPresence(FX_INT32 iPresence);
+    FX_BOOL             SetRotate(FX_INT32 iRotate);
+    FX_BOOL             SetRelevant(const CFX_WideString& wsRelevant);
+    FX_BOOL             SetStatus(FX_DWORD dwStatus);
+    FX_BOOL             SetWidth(FX_FLOAT fWidth);
+    FX_BOOL             SetHeight(FX_FLOAT fHeight);
+    FX_BOOL             SetMinWidth(FX_FLOAT fMinWidth);
+    FX_BOOL             SetMinHeight(FX_FLOAT fMinHeight);
+    FX_BOOL             SetMaxWidth(FX_FLOAT fMaxWidth);
+    FX_BOOL             SetMaxHeight(FX_FLOAT fMaxHeight);
+    FX_BOOL             SetPos(FX_FLOAT x, FX_FLOAT y);
+    FX_BOOL             SetName(const CFX_WideString& wsName);
+    FX_BOOL             SetButtonHighlight(FX_INT32 iButtonHighlight);
+    FX_BOOL             SetButtonRollover(const CFX_WideString &wsRollover, FX_BOOL bRichText);
+    FX_BOOL             SetButtonDown(const CFX_WideString& wsDown, FX_BOOL bRichText);
+    FX_BOOL             SetCheckButtonShape(FX_INT32 iCheckButtonShape);
+    FX_BOOL             SetCheckButtonMark(FX_INT32 iCheckButtonMark);
+    FX_BOOL             SetCheckButtonSize(FX_FLOAT fCheckButtonMark);
+    CXFA_Border         GetUIBorder(FX_BOOL bModified = FALSE);
+    CXFA_Margin         GetUIMargin(FX_BOOL bModified = FALSE);
+    void                GetUIMargin(CFX_RectF &rtUIMargin);
+    FX_INT32            GetButtonHighlight();
+    FX_BOOL             GetButtonRollover(CFX_WideString &wsRollover, FX_BOOL &bRichText);
+    FX_BOOL             GetButtonDown(CFX_WideString &wsDown, FX_BOOL &bRichText);
+    FX_INT32            GetCheckButtonShape();
+    FX_INT32            GetCheckButtonMark();
+    FX_FLOAT            GetCheckButtonSize();
+    FX_BOOL             IsAllowNeutral();
+    FX_BOOL             IsRadioButton();
+    XFA_CHECKSTATE      GetCheckState();
+    void                SetCheckState(XFA_CHECKSTATE eCheckState, FX_BOOL bNotify = TRUE);
+    CXFA_Node*          GetExclGroupNode();
+    CXFA_Node*          GetSelectedMember();
+    CXFA_Node*          SetSelectedMember(FX_WSTR wsName, FX_BOOL bNotify = TRUE);
+    void                SetSelectedMemberByValue(FX_WSTR wsValue, 
+                                                 FX_BOOL bNotify = TRUE,
+                                                 FX_BOOL bScriptModify = FALSE,
+                                                 FX_BOOL bSyncData = TRUE);
+    CXFA_Node*          GetExclGroupFirstMember();
+    CXFA_Node*          GetExclGroupNextMember(CXFA_Node* pNode);
+    FX_INT32            GetChoiceListCommitOn();
+    FX_BOOL             IsChoiceListAllowTextEntry();
+    FX_INT32            GetChoiceListOpen();
+    FX_BOOL             IsListBox();
+    FX_INT32            CountChoiceListItems(FX_BOOL bSaveValue = FALSE);
+    FX_BOOL             GetChoiceListItem(CFX_WideString &wsText, FX_INT32 nIndex, FX_BOOL bSaveValue = FALSE);
+    void                GetChoiceListItems(CFX_WideStringArray &wsTextArray, FX_BOOL bSaveValue = FALSE);
+    FX_INT32            CountSelectedItems();
+    FX_INT32            GetSelectedItem(FX_INT32 nIndex = 0);
+    void                GetSelectedItems(CFX_Int32Array &iSelArray);
+    void                GetSelectedItemsValue(CFX_WideStringArray &wsSelTextArray);
+    FX_BOOL             GetItemState(FX_INT32 nIndex);
+    void                SetItemState(FX_INT32 nIndex, FX_BOOL bSelected, 
+                                     FX_BOOL bNotify = FALSE, FX_BOOL bScriptModify = FALSE, 
+                                     FX_BOOL bSyncData = TRUE);
+    void                SetSelectdItems(CFX_Int32Array &iSelArray, FX_BOOL bNotify = FALSE,
+                                        FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
+    void                ClearAllSelections();
+    void                InsertItem(const CFX_WideString &wsLabel, const CFX_WideString &wsValue,
+                                   FX_INT32 nIndex = -1, FX_BOOL bNotify = FALSE);
+    void                GetItemLabel(FX_WSTR wsValue, CFX_WideString &wsLabel);
+    void                GetItemValue(FX_WSTR wsLabel, CFX_WideString &wsValue);
+    FX_BOOL             DeleteItem(FX_INT32 nIndex, FX_BOOL bNotify = FALSE,
+                                   FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
+    FX_INT32            GetHorizontalScrollPolicy();
+    FX_INT32            GetNumberOfCells();
+    FX_BOOL             IsDateTimeEditUsePicker();
+    FX_BOOL             SetValue(const CFX_WideString& wsValue, XFA_VALUEPICTURE eValueType);
+    FX_BOOL             GetPictureContent(CFX_WideString &wsPicture, XFA_VALUEPICTURE ePicture);
+    IFX_Locale*         GetLocal();
+    FX_BOOL             GetValue(CFX_WideString &wsValue, XFA_VALUEPICTURE eValueType);
+    FX_BOOL             GetNormalizeDataValue(FX_WSTR wsValue, CFX_WideString &wsNormalizeValue);
+    FX_BOOL             GetFormatDataValue(FX_WSTR wsValue, CFX_WideString &wsFormatedValue);
+    void                NormalizeNumStr(const CFX_WideString& wsValue, CFX_WideString& wsOutput);
+    CFX_WideString      GetBarcodeType();
+    FX_BOOL             GetBarcodeAttribute_CharEncoding(FX_INT32& val);
+    FX_BOOL             GetBarcodeAttribute_Checksum(FX_INT32& val);
+    FX_BOOL             GetBarcodeAttribute_DataLength(FX_INT32& val);
+    FX_BOOL             GetBarcodeAttribute_StartChar(FX_CHAR& val);
+    FX_BOOL             GetBarcodeAttribute_EndChar(FX_CHAR& val);
+    FX_BOOL             GetBarcodeAttribute_ECLevel(FX_INT32& val);
+    FX_BOOL             GetBarcodeAttribute_ModuleWidth(FX_INT32& val);
+    FX_BOOL             GetBarcodeAttribute_ModuleHeight(FX_INT32& val);
+    FX_BOOL             GetBarcodeAttribute_PrintChecksum(FX_BOOL& val);
+    FX_BOOL             GetBarcodeAttribute_TextLocation(FX_INT32& val);
+    FX_BOOL             GetBarcodeAttribute_Truncate(FX_BOOL& val);
+    FX_BOOL             GetBarcodeAttribute_WideNarrowRatio(FX_FLOAT& val);
+    void                GetPasswordChar(CFX_WideString &wsPassWord);
+    FX_BOOL             IsAllowRichText();
+    FX_BOOL             IsMultiLine();
+    FX_INT32            GetVerticalScrollPolicy();
+    FX_INT32            GetMaxChars(XFA_ELEMENT& eType);
+    FX_BOOL             GetFracDigits(FX_INT32 &iFracDigits);
+    FX_BOOL             GetLeadDigits(FX_INT32 &iLeadDigits);
+    CXFA_Filter         GetFilter(FX_BOOL bModified = FALSE);
+    CXFA_Manifest       GetManifest(FX_BOOL bModified = FALSE);
 
-    FX_INT32		GetAccess(FX_BOOL bTemplate = FALSE);
-
-    FX_BOOL			GetAccessKey(CFX_WideStringC &wsAccessKey);
-
-    FX_INT32		GetAnchorType();
-
-    FX_INT32		GetColSpan();
-
-    FX_INT32		GetPresence();
-
-    FX_INT32		GetRotate();
-
-    CXFA_Border		GetBorder(FX_BOOL bModified = FALSE);
-
-    CXFA_Caption	GetCaption(FX_BOOL bModified = FALSE);
-
-    CXFA_Font		GetFont(FX_BOOL bModified = FALSE);
-
-    CXFA_Margin		GetMargin(FX_BOOL bModified = FALSE);
-
-    CXFA_Para		GetPara(FX_BOOL bModified = FALSE);
-
-    CXFA_Keep		GetKeep(FX_BOOL bModified = FALSE);
-
-    void			GetEventList(CXFA_NodeArray &events);
-    FX_INT32		GetEventByActivity(FX_INT32 iActivity, CXFA_NodeArray &events, FX_BOOL bIsFormReady = FALSE);
-
-    CXFA_Value		GetDefaultValue(FX_BOOL bModified = FALSE);
-
-    CXFA_Value		GetFormValue(FX_BOOL bModified = FALSE);
-
-    CXFA_Calculate	GetCalculate(FX_BOOL bModified = FALSE);
-
-    CXFA_Validate	GetValidate(FX_BOOL bModified = FALSE);
-
-    CXFA_Variables	GetVariables(FX_BOOL bModified = FALSE);
-
-    CXFA_Bind		GetBind(FX_BOOL bModified = FALSE);
-
-    CXFA_Assist		GetAssist(FX_BOOL bModified = FALSE);
-
-    void			GetRelevant(CFX_WideStringC &wsRelevant);
-    FX_DWORD		GetRelevantStatus();
-
-    FX_BOOL			GetWidth(FX_FLOAT &fWidth);
-    FX_BOOL			GetHeight(FX_FLOAT &fHeight);
-
-    FX_BOOL			GetMinWidth(FX_FLOAT &fMinWidth);
-    FX_BOOL			GetMinHeight(FX_FLOAT &fMinHeight);
-
-    FX_BOOL			GetMaxWidth(FX_FLOAT &fMaxWidth);
-    FX_BOOL			GetMaxHeight(FX_FLOAT &fMaxHeight);
-
-    CXFA_BindItems	GetBindItems();
-    FX_BOOL			SetAccess(FX_INT32 iAccess, FX_BOOL bNotify = TRUE);
-    FX_BOOL			SetAccessKey(const CFX_WideString& wsAccessKey);
-    FX_BOOL			SetAnchorType(FX_INT32 iType);
-    FX_BOOL			SetColSpan(FX_INT32 iColSpan);
-    FX_BOOL			SetPresence(FX_INT32 iPresence);
-    FX_BOOL			SetRotate(FX_INT32 iRotate);
-    FX_BOOL			SetRelevant(const CFX_WideString& wsRelevant);
-    FX_BOOL			SetStatus(FX_DWORD dwStatus);
-    FX_BOOL			SetWidth(FX_FLOAT fWidth);
-    FX_BOOL			SetHeight(FX_FLOAT fHeight);
-    FX_BOOL			SetMinWidth(FX_FLOAT fMinWidth);
-    FX_BOOL			SetMinHeight(FX_FLOAT fMinHeight);
-    FX_BOOL			SetMaxWidth(FX_FLOAT fMaxWidth);
-    FX_BOOL			SetMaxHeight(FX_FLOAT fMaxHeight);
-    FX_BOOL			SetPos(FX_FLOAT x, FX_FLOAT y);
-    FX_BOOL			SetName(const CFX_WideString& wsName);
-    FX_BOOL			SetButtonHighlight(FX_INT32 iButtonHighlight);
-    FX_BOOL			SetButtonRollover(const CFX_WideString &wsRollover, FX_BOOL bRichText);
-    FX_BOOL			SetButtonDown(const CFX_WideString& wsDown, FX_BOOL bRichText);
-    FX_BOOL			SetCheckButtonShape(FX_INT32 iCheckButtonShape);
-    FX_BOOL			SetCheckButtonMark(FX_INT32 iCheckButtonMark);
-    FX_BOOL			SetCheckButtonSize(FX_FLOAT fCheckButtonMark);
-
-    CXFA_Border		GetUIBorder(FX_BOOL bModified = FALSE);
-
-    CXFA_Margin		GetUIMargin(FX_BOOL bModified = FALSE);
-    void			GetUIMargin(CFX_RectF &rtUIMargin);
-
-    FX_INT32		GetButtonHighlight();
-    FX_BOOL			GetButtonRollover(CFX_WideString &wsRollover, FX_BOOL &bRichText);
-    FX_BOOL			GetButtonDown(CFX_WideString &wsDown, FX_BOOL &bRichText);
-
-
-    FX_INT32		GetCheckButtonShape();
-
-    FX_INT32		GetCheckButtonMark();
-
-    FX_FLOAT		GetCheckButtonSize();
-
-    FX_BOOL			IsAllowNeutral();
-    FX_BOOL			IsRadioButton();
-    XFA_CHECKSTATE	GetCheckState();
-    void			SetCheckState(XFA_CHECKSTATE eCheckState, FX_BOOL bNotify = TRUE);
-
-    CXFA_Node*		GetExclGroupNode();
-
-    CXFA_Node*		GetSelectedMember();
-
-    CXFA_Node*		SetSelectedMember(FX_WSTR wsName, FX_BOOL bNotify = TRUE);
-
-    void			SetSelectedMemberByValue(FX_WSTR wsValue, FX_BOOL bNotify = TRUE, FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
-    CXFA_Node*		GetExclGroupFirstMember();
-    CXFA_Node*		GetExclGroupNextMember(CXFA_Node* pNode);
-
-    FX_INT32		GetChoiceListCommitOn();
-
-    FX_BOOL			IsChoiceListAllowTextEntry();
-
-    FX_INT32		GetChoiceListOpen();
-    FX_BOOL			IsListBox();
-    FX_INT32		CountChoiceListItems(FX_BOOL bSaveValue = FALSE);
-
-    FX_BOOL			GetChoiceListItem(CFX_WideString &wsText, FX_INT32 nIndex, FX_BOOL bSaveValue = FALSE);
-    void			GetChoiceListItems(CFX_WideStringArray &wsTextArray, FX_BOOL bSaveValue = FALSE);
-
-    FX_INT32		CountSelectedItems();
-
-    FX_INT32		GetSelectedItem(FX_INT32 nIndex = 0);
-    void			GetSelectedItems(CFX_Int32Array &iSelArray);
-    void			GetSelectedItemsValue(CFX_WideStringArray &wsSelTextArray);
-
-    FX_BOOL			GetItemState(FX_INT32 nIndex);
-
-    void			SetItemState(FX_INT32 nIndex, FX_BOOL bSelected, FX_BOOL bNotify = FALSE, FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
-    void			SetSelectdItems(CFX_Int32Array &iSelArray, FX_BOOL bNotify = FALSE, FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
-    void			ClearAllSelections();
-    void			InsertItem(const CFX_WideString &wsLabel, const CFX_WideString &wsValue, FX_INT32 nIndex = -1, FX_BOOL bNotify = FALSE);
-    void			GetItemLabel(FX_WSTR wsValue, CFX_WideString &wsLabel);
-    void			GetItemValue(FX_WSTR wsLabel, CFX_WideString &wsValue);
-    FX_BOOL			DeleteItem(FX_INT32 nIndex, FX_BOOL bNotify = FALSE, FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
-
-    FX_INT32		GetHorizontalScrollPolicy();
-
-    FX_INT32		GetNumberOfCells();
-
-    FX_BOOL			IsDateTimeEditUsePicker();
-
-    FX_BOOL		SetValue(const CFX_WideString& wsValue, XFA_VALUEPICTURE eValueType);
-    FX_BOOL		GetPictureContent(CFX_WideString &wsPicture, XFA_VALUEPICTURE ePicture);
-    IFX_Locale* GetLocal();
-    FX_BOOL		GetValue(CFX_WideString &wsValue, XFA_VALUEPICTURE eValueType);
-    FX_BOOL		GetNormalizeDataValue(FX_WSTR wsValue, CFX_WideString &wsNormalizeValue);
-    FX_BOOL		GetFormatDataValue(FX_WSTR wsValue, CFX_WideString &wsFormatedValue);
-    void		NormalizeNumStr(const CFX_WideString& wsValue, CFX_WideString& wsOutput);
-
-    CFX_WideString	GetBarcodeType();
-    FX_BOOL			GetBarcodeAttribute_CharEncoding(FX_INT32& val);
-    FX_BOOL			GetBarcodeAttribute_Checksum(FX_INT32& val);
-    FX_BOOL			GetBarcodeAttribute_DataLength(FX_INT32& val);
-    FX_BOOL			GetBarcodeAttribute_StartChar(FX_CHAR& val);
-    FX_BOOL			GetBarcodeAttribute_EndChar(FX_CHAR& val);
-    FX_BOOL			GetBarcodeAttribute_ECLevel(FX_INT32& val);
-    FX_BOOL			GetBarcodeAttribute_ModuleWidth(FX_INT32& val);
-    FX_BOOL			GetBarcodeAttribute_ModuleHeight(FX_INT32& val);
-    FX_BOOL			GetBarcodeAttribute_PrintChecksum(FX_BOOL& val);
-    FX_BOOL			GetBarcodeAttribute_TextLocation(FX_INT32& val);
-    FX_BOOL			GetBarcodeAttribute_Truncate(FX_BOOL& val);
-    FX_BOOL			GetBarcodeAttribute_WideNarrowRatio(FX_FLOAT& val);
-
-    void			GetPasswordChar(CFX_WideString &wsPassWord);
-
-    FX_BOOL			IsAllowRichText();
-
-    FX_BOOL			IsMultiLine();
-
-    FX_INT32		GetVerticalScrollPolicy();
-
-    FX_INT32		GetMaxChars(XFA_ELEMENT& eType);
-
-    FX_BOOL			GetFracDigits(FX_INT32 &iFracDigits);
-
-    FX_BOOL			GetLeadDigits(FX_INT32 &iLeadDigits);
-
-    CXFA_Filter		GetFilter(FX_BOOL bModified = FALSE);
-    CXFA_Manifest	GetManifest(FX_BOOL bModified = FALSE);
-    FX_BOOL			m_bIsNull;
-    FX_BOOL			m_bPreNull;
+    FX_BOOL             m_bIsNull;
+    FX_BOOL             m_bPreNull;
 protected:
-    void			SyncValue(const CFX_WideString& wsValue, FX_BOOL bNotify);
-    void			InsertListTextItem(CXFA_Node* pItems, FX_WSTR wsText, FX_INT32 nIndex = -1);
-    void			FormatNumStr(const CFX_WideString& wsValue, IFX_Locale* pLocale, CFX_WideString& wsOutput);
-    CXFA_Node*		m_pUiChildNode;
-    XFA_ELEMENT		m_eUIType;
+    void                SyncValue(const CFX_WideString& wsValue, FX_BOOL bNotify);
+    void                InsertListTextItem(CXFA_Node* pItems, FX_WSTR wsText, FX_INT32 nIndex = -1);
+    void                FormatNumStr(const CFX_WideString& wsValue, IFX_Locale* pLocale, CFX_WideString& wsOutput);
+
+    CXFA_Node*          m_pUiChildNode;
+    XFA_ELEMENT         m_eUIType;
 };
 class CXFA_Occur : public CXFA_Data
 {
