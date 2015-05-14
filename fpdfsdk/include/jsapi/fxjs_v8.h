@@ -82,6 +82,7 @@ void							JS_SetPrivate(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj, v
 void*							JS_GetPrivate(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj);
 void							JS_SetPrivate(v8::Handle<v8::Object> pObj, void* p);
 void*							JS_GetPrivate(v8::Handle<v8::Object> pObj);
+void							JS_FreePrivate(void* p);
 void							JS_FreePrivate(v8::Handle<v8::Object> pObj);
 v8::Handle<v8::Value>			JS_GetObjectValue(v8::Handle<v8::Object> pObj);
 v8::Handle<v8::Value>			JS_GetObjectElement(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj,const wchar_t* PropertyName);

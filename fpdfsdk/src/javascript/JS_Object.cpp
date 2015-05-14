@@ -88,16 +88,19 @@ void CJS_EmbedObj::EndTimer(CJS_Timer* pTimer)
 }
 
 /* ---------------------------------  CJS_Object --------------------------------- */
-void  FreeObject(const v8::WeakCallbackData<v8::Object, CJS_Object>& data)
+void  FreeObject(const v8::WeakCallbackInfo<CJS_Object>& data)
 {
 	CJS_Object* pJSObj  = data.GetParameter();
-	if(pJSObj)
-	{
-		pJSObj->ExitInstance();
-		delete pJSObj;
-	}
-	v8::Local<v8::Object> obj = data.GetValue();
-	JS_FreePrivate(obj);
+        pJSObj->ExitInstance();
+        delete pJSObj;
+	JS_FreePrivate(data.GetInternalField(0));
+}
+
+void  DisposeObject(const v8::WeakCallbackInfo<CJS_Object>& data)
+{
+	CJS_Object* pJSObj  = data.GetParameter();
+        pJSObj->Dispose();
+        data.SetSecondPassCallback(FreeObject);
 }
 
 CJS_Object::CJS_Object(JSFXObject pObject) :m_pEmbedObj(NULL)
@@ -117,7 +120,13 @@ CJS_Object::~CJS_Object(void)
 
 void	CJS_Object::MakeWeak()
 {
-	m_pObject.SetWeak(this, FreeObject);
+	m_pObject.SetWeak(
+            this, DisposeObject, v8::WeakCallbackType::kInternalFields);
+}
+
+void    CJS_Object::Dispose()
+{
+        m_pObject.Reset();
 }
 
 CPDFSDK_PageView* CJS_Object::JSGetPageView(IFXJS_Context* cc)

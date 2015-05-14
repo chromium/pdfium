@@ -46,6 +46,7 @@ public:
 	virtual ~CJS_Object(void);
 
 	void						MakeWeak();
+        void                                            Dispose();
 
 	virtual FX_BOOL				IsType(FX_LPCSTR sClassName){return TRUE;};
 	virtual CFX_ByteString		GetClassName(){return "";};

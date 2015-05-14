@@ -47,7 +47,7 @@ public:
 		  v8::HandleScope handle_scope(isolate);
 
 		  v8::Handle<v8::ObjectTemplate> objTemplate = v8::ObjectTemplate::New(isolate);
-		  objTemplate->SetInternalFieldCount(1);
+		  objTemplate->SetInternalFieldCount(2);
 		  m_objTemplate.Reset(isolate, objTemplate);
 
 		 //Document as the global object.
@@ -527,10 +527,15 @@ void* JS_GetPrivate(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj)
 	return pPrivateData->pPrivate;
 }
 
+void JS_FreePrivate(void* pPrivateData)
+{
+        delete (CJS_PrivateData*)pPrivateData;
+}
+
 void JS_FreePrivate(v8::Handle<v8::Object> pObj)
 {
 	if(pObj.IsEmpty() || !pObj->InternalFieldCount()) return;
-	delete (CJS_PrivateData*)pObj->GetAlignedPointerFromInternalField(0);
+	JS_FreePrivate(pObj->GetAlignedPointerFromInternalField(0));
 	pObj->SetAlignedPointerInInternalField(0, NULL);
 }
 
