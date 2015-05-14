@@ -4,6 +4,7 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <limits.h>
 #include "../../include/fxcrt/fx_ext.h"
 void FX_RECT::Normalize()
 {
@@ -53,15 +54,14 @@ FX_BOOL GetIntersection(FX_FLOAT low1, FX_FLOAT high1, FX_FLOAT low2, FX_FLOAT h
 }
 extern "C" int FXSYS_round(FX_FLOAT d)
 {
-    int iRet = 0;
-    if (d >= 0.0f) {
-        iRet = (int)(d + 0.5f);
-        if (iRet >= 0) {
-            return iRet;
-        }
-        return -iRet;
+    if (d < (FX_FLOAT)INT_MIN) {
+        return INT_MIN;
     }
-    return (int)(d - 0.5f);
+    if (d > (FX_FLOAT)INT_MAX) {
+        return INT_MAX;
+    }
+
+    return (int)round(d);
 }
 CFX_FloatRect::CFX_FloatRect(const FX_RECT& rect)
 {
