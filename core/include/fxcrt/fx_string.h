@@ -171,19 +171,6 @@ typedef const CFX_ByteStringC& FX_BSTR;
 #define FX_BSTRC(str) CFX_ByteStringC(str, sizeof str-1)
 #define FXBSTR_ID(c1, c2, c3, c4) ((c1 << 24) | (c2 << 16) | (c3 << 8) | (c4))
 
-// To ensure ref counts do not overflow, consider the worst possible case:
-// the entire address space contains nothing but pointers to this object.
-// Since the count increments with each new pointer, the largest value is
-// the number of pointers that can fit into the address space. The size of
-// the address space itself is a good upper bound on it; we need not go
-// larger.
-struct CFX_StringData {
-    intptr_t	m_nRefs;  // Would prefer ssize_t, but no windows support.
-    FX_STRSIZE	m_nDataLength;
-    FX_STRSIZE	m_nAllocLength;
-    FX_CHAR		m_String[1];
-};
-
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
 class CFX_ByteString
@@ -363,17 +350,45 @@ public:
 #define FXFORMAT_CAPITAL		4
 
     static CFX_ByteString	FormatInteger(int i, FX_DWORD flags = 0);
-
     static CFX_ByteString	FormatFloat(FX_FLOAT f, int precision = 0);
-protected:
 
-    struct CFX_StringData*	m_pData;
+protected:
+    // To ensure ref counts do not overflow, consider the worst possible case:
+    // the entire address space contains nothing but pointers to this object.
+    // Since the count increments with each new pointer, the largest value is
+    // the number of pointers that can fit into the address space. The size of
+    // the address space itself is a good upper bound on it; we need not go
+    // larger.
+    class StringData {
+      public:
+        static StringData* Create(int nLen);
+        void Retain() { ++m_nRefs; }
+        void Release() { if (--m_nRefs <= 0) FX_Free(this); }
+
+        intptr_t    m_nRefs;  // Would prefer ssize_t, but no windows support.
+        FX_STRSIZE  m_nDataLength;
+        FX_STRSIZE  m_nAllocLength;
+        FX_CHAR     m_String[1];
+
+      private:
+        StringData(FX_STRSIZE dataLen, FX_STRSIZE allocLen)
+                : m_nRefs(1), m_nDataLength(dataLen), m_nAllocLength(allocLen) {
+            FXSYS_assert(dataLen >= 0);
+            FXSYS_assert(allocLen >= 0);
+            FXSYS_assert(dataLen <= allocLen);
+            m_String[dataLen] = 0;
+        }
+        ~StringData() = delete;
+    };
+
     void					AllocCopy(CFX_ByteString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex) const;
     void					AssignCopy(FX_STRSIZE nSrcLen, FX_LPCSTR lpszSrcData);
     void					ConcatCopy(FX_STRSIZE nSrc1Len, FX_LPCSTR lpszSrc1Data, FX_STRSIZE nSrc2Len, FX_LPCSTR lpszSrc2Data);
     void					ConcatInPlace(FX_STRSIZE nSrcLen, FX_LPCSTR lpszSrcData);
     void					CopyBeforeWrite();
     void					AllocBeforeWrite(FX_STRSIZE nLen);
+
+    StringData* m_pData;
 };
 inline CFX_ByteStringC::CFX_ByteStringC(const CFX_ByteString& src)
 {
@@ -600,13 +615,6 @@ inline bool operator!= (const wchar_t* lhs, const CFX_WideStringC& rhs) {
 typedef const CFX_WideStringC&	FX_WSTR;
 #define FX_WSTRC(wstr) CFX_WideStringC(wstr, FX_ArraySize(wstr) - 1)
 
-struct CFX_StringDataW {
-    intptr_t	m_nRefs;  // Would prefer ssize_t, but no windows support.
-    FX_STRSIZE	m_nDataLength;
-    FX_STRSIZE	m_nAllocLength;
-    FX_WCHAR	m_String[1];
-};
-
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
 class CFX_WideString
@@ -777,14 +785,36 @@ public:
     void					ConvertFrom(const CFX_ByteString& str, CFX_CharMap* pCharMap = NULL);
 
 protected:
-    void					CopyBeforeWrite();
-    void					AllocBeforeWrite(FX_STRSIZE nLen);
-    void					ConcatInPlace(FX_STRSIZE nSrcLen, FX_LPCWSTR lpszSrcData);
-    void					ConcatCopy(FX_STRSIZE nSrc1Len, FX_LPCWSTR lpszSrc1Data, FX_STRSIZE nSrc2Len, FX_LPCWSTR lpszSrc2Data);
-    void					AssignCopy(FX_STRSIZE nSrcLen, FX_LPCWSTR lpszSrcData);
-    void					AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex) const;
+    class StringData {
+      public:
+        static StringData* Create(int nLen);
+        void Retain() { ++m_nRefs; }
+        void Release() { if (--m_nRefs <= 0) FX_Free(this); }
 
-    CFX_StringDataW*		m_pData;
+        intptr_t    m_nRefs;  // Would prefer ssize_t, but no windows support.
+        FX_STRSIZE  m_nDataLength;
+        FX_STRSIZE  m_nAllocLength;
+        FX_WCHAR    m_String[1];
+
+      private:
+        StringData(FX_STRSIZE dataLen, FX_STRSIZE allocLen)
+                : m_nRefs(1), m_nDataLength(dataLen), m_nAllocLength(allocLen) {
+            FXSYS_assert(dataLen >= 0);
+            FXSYS_assert(allocLen >= 0);
+            FXSYS_assert(dataLen <= allocLen);
+            m_String[dataLen] = 0;
+        }
+        ~StringData() = delete;
+    };
+
+    void                    CopyBeforeWrite();
+    void                    AllocBeforeWrite(FX_STRSIZE nLen);
+    void                    ConcatInPlace(FX_STRSIZE nSrcLen, FX_LPCWSTR lpszSrcData);
+    void                    ConcatCopy(FX_STRSIZE nSrc1Len, FX_LPCWSTR lpszSrc1Data, FX_STRSIZE nSrc2Len, FX_LPCWSTR lpszSrc2Data);
+    void                    AssignCopy(FX_STRSIZE nSrcLen, FX_LPCWSTR lpszSrcData);
+    void                    AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex) const;
+
+    StringData* m_pData;
 };
 inline CFX_WideStringC::CFX_WideStringC(const CFX_WideString& src)
 {
