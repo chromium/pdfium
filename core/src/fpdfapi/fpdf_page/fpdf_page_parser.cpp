@@ -1348,8 +1348,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning()
         };
         return;
     }
-    CFX_ByteString* pStrs;
-    FX_NEW_VECTOR(pStrs, CFX_ByteString, nsegs);
+    CFX_ByteString* pStrs = new CFX_ByteString[nsegs];
     FX_FLOAT* pKerning = FX_Alloc(FX_FLOAT, nsegs);
     int iSegment = 0;
     FX_FLOAT fInitKerning = 0;
@@ -1372,7 +1371,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning()
         }
     }
     AddTextObject(pStrs, fInitKerning, pKerning, iSegment);
-    FX_DELETE_VECTOR(pStrs, CFX_ByteString, nsegs);
+    delete[] pStrs;
     FX_Free(pKerning);
 }
 void CPDF_StreamContentParser::Handle_SetTextLeading()

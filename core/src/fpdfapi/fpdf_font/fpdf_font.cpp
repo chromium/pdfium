@@ -786,7 +786,7 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding, int& iBaseEncoding, CFX_
     if (pDiffs == NULL) {
         return;
     }
-    FX_NEW_VECTOR(pCharNames, CFX_ByteString, 256);
+    pCharNames = new CFX_ByteString[256];
     FX_DWORD cur_code = 0;
     for (FX_DWORD i = 0; i < pDiffs->GetCount(); i ++) {
         CPDF_Object* pElement = pDiffs->GetElementValue(i);
@@ -828,9 +828,7 @@ CPDF_SimpleFont::CPDF_SimpleFont(int fonttype) : CPDF_Font(fonttype)
 }
 CPDF_SimpleFont::~CPDF_SimpleFont()
 {
-    if (m_pCharNames) {
-        FX_DELETE_VECTOR(m_pCharNames, CFX_ByteString, 256);
-    }
+    delete[] m_pCharNames;
 }
 int CPDF_SimpleFont::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL *pVertGlyph)
 {
@@ -971,10 +969,8 @@ FX_BOOL CPDF_SimpleFont::LoadCommon()
     CPDF_Object* pEncoding = m_pFontDict->GetElementValue(FX_BSTRC("Encoding"));
     LoadPDFEncoding(pEncoding, m_BaseEncoding, m_pCharNames, m_pFontFile != NULL, m_Font.IsTTFont());
     LoadGlyphMap();
-    if (m_pCharNames) {
-        FX_DELETE_VECTOR(m_pCharNames, CFX_ByteString, 256);
-        m_pCharNames = NULL;
-    }
+    delete[] m_pCharNames;
+    m_pCharNames = NULL;
     if (m_Font.m_Face == NULL) {
         return TRUE;
     }

@@ -33,9 +33,7 @@ CPDF_ClipPathData::CPDF_ClipPathData()
 CPDF_ClipPathData::~CPDF_ClipPathData()
 {
     int i;
-    if (m_pPathList) {
-        FX_DELETE_VECTOR(m_pPathList, CPDF_Path, m_PathCount);
-    }
+    delete[] m_pPathList;
     if (m_pTypeList) {
         FX_Free(m_pTypeList);
     }
@@ -58,7 +56,7 @@ CPDF_ClipPathData::CPDF_ClipPathData(const CPDF_ClipPathData& src)
         if (alloc_size % 8) {
             alloc_size += 8 - (alloc_size % 8);
         }
-        FX_NEW_VECTOR(m_pPathList, CPDF_Path, alloc_size);
+        m_pPathList = new CPDF_Path[alloc_size];
         for (int i = 0; i < m_PathCount; i ++) {
             m_pPathList[i] = src.m_pPathList[i];
         }
@@ -89,7 +87,7 @@ void CPDF_ClipPathData::SetCount(int path_count, int text_count)
     if (path_count) {
         m_PathCount = path_count;
         int alloc_size = (path_count + 7) / 8 * 8;
-        FX_NEW_VECTOR(m_pPathList, CPDF_Path, alloc_size);
+        m_pPathList = new CPDF_Path[alloc_size];
         m_pTypeList = FX_Alloc(FX_BYTE, alloc_size);
     }
     if (text_count) {
@@ -152,14 +150,11 @@ void CPDF_ClipPath::AppendPath(CPDF_Path path, int type, FX_BOOL bAutoMerge)
         }
     }
     if (pData->m_PathCount % 8 == 0) {
-        CPDF_Path* pNewPath;
-        FX_NEW_VECTOR(pNewPath, CPDF_Path, pData->m_PathCount + 8);
+        CPDF_Path* pNewPath = new CPDF_Path[pData->m_PathCount + 8];
         for (int i = 0; i < pData->m_PathCount; i ++) {
             pNewPath[i] = pData->m_pPathList[i];
         }
-        if (pData->m_pPathList) {
-            FX_DELETE_VECTOR(pData->m_pPathList, CPDF_Path, pData->m_PathCount);
-        }
+        delete[] pData->m_pPathList;
         FX_BYTE* pNewType = FX_Alloc(FX_BYTE, pData->m_PathCount + 8);
         FXSYS_memcpy32(pNewType, pData->m_pTypeList, pData->m_PathCount);
         if (pData->m_pTypeList) {
