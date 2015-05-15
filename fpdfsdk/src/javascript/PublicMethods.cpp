@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -96,9 +96,9 @@ static FX_LPCWSTR months[] =
 	L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec"
 };
 
-static FX_LPCWSTR fullmonths[] = 
-{ 
-	L"January", L"February", L"March", L"April", L"May", L"June", L"July", L"August", L"September", L"October", L"November", L"December" 
+static FX_LPCWSTR fullmonths[] =
+{
+	L"January", L"February", L"March", L"April", L"May", L"June", L"July", L"August", L"September", L"October", L"November", L"December"
 };
 
 FX_BOOL CJS_PublicMethods::IsNumber(FX_LPCWSTR string)
@@ -174,13 +174,13 @@ FX_BOOL CJS_PublicMethods::maskSatisfied(wchar_t c_Change,wchar_t c_Mask)
 	switch (c_Mask)
 	{
 	case L'9':
-        return IsDigit(c_Change);		
+        return IsDigit(c_Change);
     case L'A':
-        return IsAlphabetic(c_Change);		
+        return IsAlphabetic(c_Change);
     case L'O':
-        return IsAlphaNumeric(c_Change);		
+        return IsAlphaNumeric(c_Change);
     case L'X':
-        return TRUE;		
+        return TRUE;
 	default:
         return (c_Change == c_Mask);
 	}
@@ -300,7 +300,7 @@ double CJS_PublicMethods::ParseNumber(FX_LPCWSTR swSource, FX_BOOL& bAllDigits, 
 	CFX_WideString swDigits;
 
 	while (p <= pEnd)
-	{	
+	{
 		c = *p;
 
 		if (IsDigit(c))
@@ -308,7 +308,7 @@ double CJS_PublicMethods::ParseNumber(FX_LPCWSTR swSource, FX_BOOL& bAllDigits, 
 			swDigits += c;
 			bDigitExist = TRUE;
 		}
-		else 
+		else
 		{
 			switch (c)
 			{
@@ -454,11 +454,11 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(v8::Isolate* isolate, CJS_Valu
 
 			StrArray.SetElement(nIndex, CJS_Value(isolate, StrTrim(pSub).c_str()));
 			delete []pSub;
-			
+
 			nIndex ++;
 			p = ++pTemp;
 		}
-		
+
 	}
 	return StrArray;
 }
@@ -477,7 +477,7 @@ int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& string,int nStar
 		{
 			nRet = nRet * 10 + (c - '0');
 			nSkip = i - nStart + 1;
-			if (nSkip >= nMaxStep) 
+			if (nSkip >= nMaxStep)
 				break;
 		}
 		else
@@ -531,7 +531,7 @@ double CJS_PublicMethods::ParseNormalDate(const CFX_WideString & value, FX_BOOL&
 		if (IsDigit((wchar_t)c))
 		{
 			number[nIndex++] = ParseStringInteger(value, i, nSkip, 4);
-			i += nSkip;			
+			i += nSkip;
 		}
 		else
 		{
@@ -1066,42 +1066,42 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 	}
 	if(!pEvent->m_pValue)
 		return FALSE;
-	CFX_WideString& Value = pEvent->Value();	
+	CFX_WideString& Value = pEvent->Value();
 	CFX_ByteString strValue = StrTrim(CFX_ByteString::FromUnicode(Value));
-	
+
 	if (strValue.IsEmpty()) return TRUE;
-	
+
 	int iDec = params[0].ToInt();
 	int iSepStyle = params[1].ToInt();
 	int iNegStyle = params[2].ToInt();
 	// params[3] is iCurrStyle, it's not used.
 	std::wstring wstrCurrency(params[4].ToCFXWideString().c_str());
 	FX_BOOL bCurrencyPrepend = params[5].ToBool();
-	
+
 	if (iDec < 0) iDec = -iDec;
-	
+
 	if (iSepStyle < 0 || iSepStyle > 3)
 		iSepStyle = 0;
-	
+
 	if (iNegStyle < 0 || iNegStyle > 3)
 		iNegStyle = 0;
-	
-	
+
+
 	//////////////////////////////////////////////////////
 	//for processing decimal places
 	strValue.Replace(",", ".");
 	double dValue = atof(strValue);
 	if (iDec > 0)
-		dValue += DOUBLE_CORRECT;//
-		    
-	int iDec2;
-	FX_BOOL bNagative = FALSE;
+		dValue += DOUBLE_CORRECT;
 
-	strValue = fcvt(dValue,iDec,&iDec2,&bNagative);
+	int iDec2;
+	FX_BOOL bNegative = FALSE;
+
+	strValue = fcvt(dValue,iDec,&iDec2,&bNegative);
 	if (strValue.IsEmpty())
 	{
 		dValue = 0;
-		strValue = fcvt(dValue,iDec,&iDec2,&bNagative);
+		strValue = fcvt(dValue,iDec,&iDec2,&bNegative);
 		if (strValue.IsEmpty())
 		{
 			strValue = "0";
@@ -1117,7 +1117,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 			strValue = "0" + strValue;
 		}
 		iDec2 = 0;
-		
+
 	}
 	int iMax = strValue.GetLength();
 	if (iDec2 > iMax)
@@ -1126,7 +1126,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 		{
 			strValue += "0";
 		}
-		iMax = iDec2+1;			
+		iMax = iDec2+1;
 	}
 	///////////////////////////////////////////////////////
     //for processing seperator style
@@ -1142,7 +1142,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 			strValue.Insert(iDec2, ',');
 			iMax++;
 		}
-		
+
 		if (iDec2 == 0)
 			strValue.Insert(iDec2, '0');
 	}
@@ -1153,18 +1153,17 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 			cSeperator = ',';
 		else
 			cSeperator = '.';
-		
-		int iDecPositive,iDecNagative;
+
+		int iDecPositive;
 		iDecPositive = iDec2;
-		iDecNagative = iDec2;		
-		
+
 		for (iDecPositive = iDec2 -3; iDecPositive > 0;iDecPositive -= 3)
 		{
 			strValue.Insert(iDecPositive, cSeperator);
 			iMax++;
 		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
     //for processing currency string
 
@@ -1175,12 +1174,12 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 		strValue2 = wstrCurrency + strValue2;
 	else
 		strValue2 = strValue2 + wstrCurrency;
-	
-	
-	
+
+
+
 	/////////////////////////////////////////////////////////////////////////
 	//for processing negative style
-	if (bNagative)
+	if (bNegative)
 	{
 		if (iNegStyle == 0)
 		{
@@ -1203,9 +1202,9 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 				arColor.SetElement(1,vColElm);
 				vColElm = 0;
 				arColor.SetElement(2,vColElm);
-				
+
 				arColor.SetElement(3,vColElm);
-				
+
 				CJS_PropValue vProp(isolate);
 				vProp.StartGetting();
 				vProp<<arColor;
@@ -1228,11 +1227,11 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 				arColor.SetElement(1,vColElm);
 				arColor.SetElement(2,vColElm);
 				arColor.SetElement(3,vColElm);
-				
+
 				CJS_PropValue vProp(isolate);
 				vProp.StartGetting();
 				fTarget->textColor(cc,vProp,sError);
-				
+
 				CJS_Array aProp(isolate);
 				vProp.ConvertToArray(aProp);
 
@@ -1264,16 +1263,16 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc, const CJS_Param
 	ASSERT(pContext != NULL);
 	CJS_EventHandler* pEvent = pContext->GetEventHandler();
 	ASSERT(pEvent != NULL);
-	
+
 	if(params.size() < 2)
 		return FALSE;
 	int iSepStyle = params[1].ToInt();
-	
+
 	if (iSepStyle < 0 || iSepStyle > 3)
 		iSepStyle = 0;
 	if(!pEvent->m_pValue)
 		return FALSE;
-	CFX_WideString & val = pEvent->Value();	
+	CFX_WideString & val = pEvent->Value();
 	CFX_WideString & w_strChange = pEvent->Change();
     CFX_WideString w_strValue = val;
 
@@ -1283,7 +1282,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc, const CJS_Param
 		CFX_WideString wstrValue = StrLTrim(w_strValue.c_str());
 		if (wstrValue.IsEmpty())
 			return TRUE;
-		
+
 		CFX_WideString swTemp = wstrValue;
 		swTemp.Replace(L",", L".");
 		if (!IsNumber(swTemp.c_str()))
@@ -1326,7 +1325,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc, const CJS_Param
 		cSep = L',';
 		break;
 	}
-	
+
 	FX_BOOL bHasSep = (w_strValue2.find(cSep) != -1);
 	for (std::wstring::iterator it = w_strChange2.begin(); it != w_strChange2.end(); it++)
 	{
@@ -1367,16 +1366,16 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc, const CJS_Param
 			bHasSign = TRUE;
 			continue;
 		}
-		
+
 		if (!IsDigit(*it))
-		{			
+		{
 			FX_BOOL &bRc = pEvent->Rc();
 			bRc = FALSE;
 			return TRUE;
 		}
 	}
-	
-	
+
+
 	std::wstring w_prefix = w_strValue2.substr(0,pEvent->SelStart());
 	std::wstring w_postfix;
 	if (pEvent->SelEnd()<(int)w_strValue2.length())
@@ -1384,8 +1383,8 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc, const CJS_Param
 	w_strValue2 = w_prefix + w_strChange2 + w_postfix;
 	w_strValue = w_strValue2.c_str();
 	val = w_strValue;
-	return TRUE;		
-	
+	return TRUE;
+
 }
 
 //function AFPercent_Format(nDec, sepStyle)
@@ -1426,12 +1425,12 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
 		dValue += DOUBLE_CORRECT;//Ð£Õý
 
 	int iDec2;
-	FX_BOOL bNagative = FALSE;
-	strValue = fcvt(dValue,iDec,&iDec2,&bNagative);
+	FX_BOOL bNegative = FALSE;
+	strValue = fcvt(dValue,iDec,&iDec2,&bNegative);
     if (strValue.IsEmpty())
 	{
 		dValue = 0;
-		strValue = fcvt(dValue,iDec,&iDec2,&bNagative);
+		strValue = fcvt(dValue,iDec,&iDec2,&bNegative);
 	}
 
 	if (iDec2 < 0)
@@ -1441,7 +1440,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
 			strValue = "0" + strValue;
 		}
 		iDec2 = 0;
-		
+
 	}
 	int iMax = strValue.GetLength();
 	if (iDec2 > iMax)
@@ -1450,7 +1449,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
 		{
 			strValue += "0";
 		}
-		iMax = iDec2+1;			
+		iMax = iDec2+1;
 	}
 	///////////////////////////////////////////////////////
     //for processing seperator style
@@ -1466,7 +1465,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
 			strValue.Insert(iDec2, ',');
 			iMax++;
 		}
-		
+
 		if (iDec2 == 0)
 			strValue.Insert(iDec2, '0');
 	}
@@ -1477,11 +1476,10 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
 			cSeperator = ',';
 		else
 			cSeperator = '.';
-		
-		int iDecPositive,iDecNagative;
+
+		int iDecPositive;
 		iDecPositive = iDec2;
-		iDecNagative = iDec2;
-			
+
 		for (iDecPositive = iDec2 -3; iDecPositive > 0; iDecPositive -= 3)
 		{
 			strValue.Insert(iDecPositive,cSeperator);
@@ -1489,8 +1487,8 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
 		}
 	}
 	////////////////////////////////////////////////////////////////////
-	//nagative mark
-	if(bNagative)
+	//negative mark
+	if(bNegative)
 		strValue = "-" + strValue;
 	strValue += "%";
 	Value = CFX_WideString::FromLocal(strValue);
@@ -1569,7 +1567,7 @@ double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue)
 	{
 		FX_WCHAR c = strValue.GetAt(i);
 		if(c == L' ' || c == L':')
-		{	
+		{
 			wsArray.Add(sTemp);
 			sTemp = L"";
 			continue;
@@ -1577,7 +1575,7 @@ double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue)
 
 		sTemp += c;
 	}
-	
+
 	wsArray.Add(sTemp);
 	if(wsArray.GetSize() != 8)return 0;
 
@@ -1607,7 +1605,7 @@ double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue)
 	{
 		dRet = JS_DateParse(strValue.c_str());
 	}
-	
+
 	return dRet;
 }
 
@@ -1793,24 +1791,24 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(IFXJS_Context* cc, const CJS_Paramet
 
 	if(!pEvent->m_pValue)
 		return FALSE;
-	CFX_WideString& Value = pEvent->Value();	
+	CFX_WideString& Value = pEvent->Value();
 	std::string strSrc = CFX_ByteString::FromUnicode(Value).c_str();
-	
-	switch (iIndex) 
+
+	switch (iIndex)
 	{
-	case 0:                         
+	case 0:
 		cFormat = "99999";
 		break;
-	case 1:                         
+	case 1:
 		cFormat = "99999-9999";
 		break;
-	case 2:                         
+	case 2:
 		{
 			std::string NumberStr;
-			util::printx("9999999999", strSrc,NumberStr); 
+			util::printx("9999999999", strSrc,NumberStr);
 			if (NumberStr.length() >= 10 )
 				cFormat = "(999) 999-9999";
-			else 
+			else
 				cFormat = "999-9999";
 			break;
 		}
@@ -1818,7 +1816,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(IFXJS_Context* cc, const CJS_Paramet
 		cFormat = "999-99-9999";
 		break;
 	}
-	
+
 	std::string strDes;
 	util::printx(cFormat,strSrc,strDes);
 	Value = CFX_WideString::FromLocal(strDes.c_str());
@@ -1946,23 +1944,23 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(IFXJS_Context* cc, const CJS_Para
 	std::string strSrc = CFX_ByteString::FromUnicode(val).c_str();
 	std::wstring wstrChange = pEvent->Change().c_str();
 
-	switch (iIndex) 
+	switch (iIndex)
 	{
-	case 0:                         
+	case 0:
 		cFormat = "99999";
 		break;
-	case 1:                         
+	case 1:
 		//cFormat = "99999-9999";
 		cFormat = "999999999";
 		break;
-	case 2:                         
+	case 2:
 		{
 			std::string NumberStr;
-			util::printx("9999999999", strSrc,NumberStr); 
+			util::printx("9999999999", strSrc,NumberStr);
 			if (strSrc.length() + wstrChange.length() > 7 )
 				//cFormat = "(999) 999-9999";
 				cFormat = "9999999999";
-			else 
+			else
 				//cFormat = "999-9999";
 				cFormat = "9999999";
 			break;
@@ -1972,11 +1970,11 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(IFXJS_Context* cc, const CJS_Para
 		cFormat = "999999999";
 		break;
 	}
-    
+
 	CJS_Parameters params2;
 	CJS_Value vMask(isolate, cFormat.c_str());
 	params2.push_back(vMask);
-	
+
     return AFSpecial_KeystrokeEx(cc,params2,vRet,sError);
 }
 
@@ -2199,7 +2197,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(IFXJS_Context* cc, const CJS_Param
 	return TRUE;
 }
 
-/* This function validates the current event to ensure that its value is 
+/* This function validates the current event to ensure that its value is
 ** within the specified range. */
 
 FX_BOOL CJS_PublicMethods::AFRange_Validate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
@@ -2209,7 +2207,7 @@ FX_BOOL CJS_PublicMethods::AFRange_Validate(IFXJS_Context* cc, const CJS_Paramet
 	CJS_EventHandler* pEvent = pContext->GetEventHandler();
 	ASSERT(pEvent != NULL);
 
-	if (params.size() != 4) 
+	if (params.size() != 4)
 	{
 		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
 		return FALSE;
@@ -2260,7 +2258,7 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(IFXJS_Context* cc, const CJS_Parameters
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
 
-	if (params.size() != 1) 
+	if (params.size() != 1)
 	{
 		sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
 		return FALSE;
@@ -2295,7 +2293,7 @@ FX_BOOL CJS_PublicMethods::AFExtractNums(IFXJS_Context* cc, const CJS_Parameters
 
 	if (sPart.GetLength() > 0)
 	{
-		nums.SetElement(nIndex,CJS_Value(isolate,sPart.c_str()));	
+		nums.SetElement(nIndex,CJS_Value(isolate,sPart.c_str()));
 	}
 
 	if (nums.GetLength() > 0)

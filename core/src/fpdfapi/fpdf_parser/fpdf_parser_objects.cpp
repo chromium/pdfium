@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_parser.h"
@@ -158,7 +158,7 @@ CPDF_Dictionary* CPDF_Object::GetDict() const
 }
 CPDF_Array* CPDF_Object::GetArray() const
 {
-    if (m_Type == PDFOBJ_ARRAY) 
+    if (m_Type == PDFOBJ_ARRAY)
         return (CPDF_Array*)this;
     else
         return NULL;
@@ -995,15 +995,14 @@ FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const
         IFX_FileRead* pFile = NULL;
         FX_LPBYTE pBuf = NULL;
         FX_DWORD offset = 0;
-        if (m_GenNum != (FX_DWORD) - 1) {
-            pFile = m_pFile;
-            pBuf = pOther->m_pDataBuf;
-            offset = m_FileOffset;
-        }
         if (pOther->m_GenNum != (FX_DWORD) - 1) {
             pFile = pOther->m_pFile;
             pBuf = m_pDataBuf;
             offset = pOther->m_FileOffset;
+        } else if (m_GenNum != (FX_DWORD) - 1) {
+            pFile = m_pFile;
+            pBuf = pOther->m_pDataBuf;
+            offset = m_FileOffset;
         }
         if (NULL == pBuf) {
             return FALSE;
@@ -1011,8 +1010,8 @@ FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const
         FX_BYTE srcBuf[1024];
         FX_DWORD size = m_dwSize;
         while (size > 0) {
-            FX_DWORD actualSize = size > 1024 ? 1024 : size;
-            m_pFile->ReadBlock(srcBuf, offset, actualSize);
+            FX_DWORD actualSize = std::min(size, 1024U);
+            pFile->ReadBlock(srcBuf, offset, actualSize);
             if (FXSYS_memcmp32(srcBuf, pBuf, actualSize) != 0) {
                 return FALSE;
             }
@@ -1276,9 +1275,9 @@ void CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum, CPDF_Object* pO
         {
             if (pObj->GetGenNum() <= ((CPDF_Object*)value)->GetGenNum())
                 return;
-            else 
+            else
                 ((CPDF_Object*)value)->Destroy();
-         }         
+         }
     }
     pObj->m_ObjNum = objnum;
     m_IndirectObjs.SetAt((FX_LPVOID)(FX_UINTPTR)objnum, pObj);
