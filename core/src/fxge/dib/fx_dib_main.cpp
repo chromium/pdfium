@@ -84,7 +84,7 @@ FX_BOOL CFX_DIBitmap::Create(int width, int height, FXDIB_Format format, FX_LPBY
         int size = pitch * height + 4;
         int oomlimit = _MAX_OOM_LIMIT_;
         if (oomlimit >= 0 && size >= oomlimit) {
-            m_pBuffer = FX_AllocNL(FX_BYTE, size);
+            m_pBuffer = FX_TryAlloc(FX_BYTE, size);
         } else {
             m_pBuffer = FX_Alloc(FX_BYTE, size);
         }

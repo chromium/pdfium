@@ -6,10 +6,12 @@
 
 #ifndef _FX_SYSTEM_H_
 #define _FX_SYSTEM_H_
+
 #define _FX_WIN32_DESKTOP_		1
 #define _FX_LINUX_DESKTOP_		4
 #define _FX_MACOSX_				7
 #define _FX_ANDROID_			12
+
 #define _FXM_PLATFORM_WINDOWS_		1
 #define _FXM_PLATFORM_LINUX_		2
 #define _FXM_PLATFORM_APPLE_		3
@@ -341,12 +343,20 @@ int			FXSYS_round(FX_FLOAT f);
 #define PRIuS "zu"
 #endif
 
-#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#else  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 #if !defined(PRIuS)
 #define PRIuS "Iu"
 #endif
 
-#endif
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
-#endif
+// Prevent a function from ever being inlined, typically because we'd
+// like it to appear in stack traces.
+#if  _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#define NEVER_INLINE __declspec(noinline)
+#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#define NEVER_INLINE __attribute__((__noinline__))
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+
+#endif  // _FX_SYSTEM_H_
