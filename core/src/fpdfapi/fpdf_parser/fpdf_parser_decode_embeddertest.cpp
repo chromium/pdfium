@@ -50,10 +50,12 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateEncode) {
     FlateEncodeCase* ptr = &flate_encode_cases[i];
     unsigned char* result;
     unsigned int result_size;
-    FlateEncode(ptr->input, ptr->input_size, result, result_size); // Leaks.
+    FlateEncode(ptr->input, ptr->input_size, result, result_size);
+    ASSERT_TRUE(result);
     EXPECT_EQ(std::string((const char*)ptr->expected, ptr->expected_size),
               std::string((const char*)result, result_size))
         << " for case " << i;
+    FX_Free(result);
   }
 }
 
@@ -87,10 +89,12 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateDecode) {
     FlateDecodeCase* ptr = &flate_decode_cases[i];
     unsigned char* result;
     unsigned int result_size;
-    FlateDecode(ptr->input, ptr->input_size, result, result_size); // Leaks.
+    FlateDecode(ptr->input, ptr->input_size, result, result_size);
+    ASSERT_TRUE(result);
     EXPECT_EQ(std::string((const char*)ptr->expected, ptr->expected_size),
               std::string((const char*)result, result_size))
         << " for case " << i;
+    FX_Free(result);
   }
 }
 

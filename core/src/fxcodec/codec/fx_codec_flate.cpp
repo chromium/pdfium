@@ -742,6 +742,7 @@ FX_DWORD CCodec_FlateScanlineDecoder::GetSrcOffset()
 static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig_size,
                             FX_LPBYTE& dest_buf, FX_DWORD& dest_size, FX_DWORD& offset)
 {
+    const FX_BOOL useOldImpl = src_size < 10240;
     FX_DWORD guess_size = orig_size ? orig_size : src_size * 2;
     FX_DWORD alloc_step = orig_size ? 10240 : (src_size < 10240 ? 10240 : src_size);
     static const FX_DWORD kMaxInitialAllocSize = 10000000;
@@ -749,87 +750,88 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
         guess_size = kMaxInitialAllocSize;
         alloc_step = kMaxInitialAllocSize;
     }
-    FX_LPBYTE guess_buf = FX_Alloc(FX_BYTE, guess_size + 1);
-    if (!guess_buf) {
-        dest_buf = NULL;
-        dest_size = 0;
-        return;
-    }
-    guess_buf[guess_size] = '\0';
-    FX_BOOL useOldImpl = src_size < 10240;
-    void* context = FPDFAPI_FlateInit(my_alloc_func, my_free_func);
-    if (context == NULL) {
-        dest_buf = NULL;
-        dest_size = 0;
-        return ;
-    }
-    FPDFAPI_FlateInput(context, src_buf, src_size);
-    CFX_ArrayTemplate<FX_LPBYTE> result_tmp_bufs;
-    FX_LPBYTE buf = guess_buf;
     FX_DWORD buf_size = guess_size;
     FX_DWORD last_buf_size = buf_size;
-    while (1) {
-        FX_INT32 ret = FPDFAPI_FlateOutput(context, buf, buf_size);
-        FX_INT32 avail_buf_size = FPDFAPI_FlateGetAvailOut(context);
-        if (!useOldImpl) {
-            if (ret != Z_OK) {
-                last_buf_size = buf_size - avail_buf_size;
-                result_tmp_bufs.Add(buf);
+    void* context = nullptr;
+
+    FX_LPBYTE guess_buf = FX_Alloc(FX_BYTE, guess_size + 1);
+    FX_LPBYTE cur_buf = guess_buf;
+    if (!guess_buf)
+        goto fail;
+    guess_buf[guess_size] = '\0';
+    context = FPDFAPI_FlateInit(my_alloc_func, my_free_func);
+    if (!context)
+        goto fail;
+    FPDFAPI_FlateInput(context, src_buf, src_size);
+    if (useOldImpl) {
+        while (1) {
+            FX_INT32 ret = FPDFAPI_FlateOutput(context, cur_buf, buf_size);
+            if (ret != Z_OK)
                 break;
-            }
-            if (avail_buf_size == 0) {
-                result_tmp_bufs.Add(buf);
-                buf = NULL;
-                buf = FX_Alloc(FX_BYTE, buf_size + 1);
-                if (!buf) {
-                    dest_buf = NULL;
-                    dest_size = 0;
-                    return;
-                }
-                buf[buf_size] = '\0';
-            } else {
-                last_buf_size = buf_size - avail_buf_size;
-                result_tmp_bufs.Add(buf);
-                buf = NULL;
+            FX_INT32 avail_buf_size = FPDFAPI_FlateGetAvailOut(context);
+            if (avail_buf_size != 0)
                 break;
-            }
-        } else {
-            if (ret != Z_OK) {
-                break;
-            }
-            if (avail_buf_size == 0) {
-                FX_DWORD old_size = guess_size;
-                guess_size += alloc_step;
-                if (guess_size < old_size || guess_size + 1 < guess_size) {
-                    dest_buf = NULL;
-                    dest_size = 0;
-                    return;
-                }
-                guess_buf = FX_Realloc(FX_BYTE, guess_buf, guess_size + 1);
-                if (!guess_buf) {
-                    dest_buf = NULL;
-                    dest_size = 0;
-                    return;
-                }
-                guess_buf[guess_size] = '\0';
-                buf = guess_buf + old_size;
-                buf_size = guess_size - old_size;
-            } else {
-                break;
-            }
+
+            // |avail_buf_size| == 0 case.
+            FX_DWORD old_size = guess_size;
+            guess_size += alloc_step;
+            if (guess_size < old_size || guess_size + 1 < guess_size)
+                goto fail;
+            guess_buf = FX_Realloc(FX_BYTE, guess_buf, guess_size + 1);
+            if (!guess_buf)
+                goto fail;
+            guess_buf[guess_size] = '\0';
+            cur_buf = guess_buf + old_size;
+            buf_size = guess_size - old_size;
         }
-    }
-    dest_size = FPDFAPI_FlateGetTotalOut(context);
-    offset = FPDFAPI_FlateGetTotalIn(context);
-    if (!useOldImpl) {
+        dest_size = FPDFAPI_FlateGetTotalOut(context);
+        offset = FPDFAPI_FlateGetTotalIn(context);
+        if (guess_size / 2 > dest_size) {
+            guess_buf = FX_Realloc(FX_BYTE, guess_buf, dest_size + 1);
+            if (!guess_buf)
+                goto fail;
+            guess_size = dest_size;
+            guess_buf[guess_size] = '\0';
+        }
+        dest_buf = guess_buf;
+    } else {
+        CFX_ArrayTemplate<FX_LPBYTE> result_tmp_bufs;
+        while (1) {
+            FX_INT32 ret = FPDFAPI_FlateOutput(context, cur_buf, buf_size);
+            FX_INT32 avail_buf_size = FPDFAPI_FlateGetAvailOut(context);
+            if (ret != Z_OK) {
+                last_buf_size = buf_size - avail_buf_size;
+                result_tmp_bufs.Add(cur_buf);
+                break;
+            }
+            if (avail_buf_size != 0) {
+                last_buf_size = buf_size - avail_buf_size;
+                result_tmp_bufs.Add(cur_buf);
+                break;
+            }
+
+            // |avail_buf_size| == 0 case.
+            result_tmp_bufs.Add(cur_buf);
+            cur_buf = FX_Alloc(FX_BYTE, buf_size + 1);
+            if (!cur_buf) {
+                for (FX_INT32 i = 0; i < result_tmp_bufs.GetSize(); i++) {
+                    FX_Free(result_tmp_bufs[i]);
+                }
+                goto fail;
+            }
+            cur_buf[buf_size] = '\0';
+        }
+        dest_size = FPDFAPI_FlateGetTotalOut(context);
+        offset = FPDFAPI_FlateGetTotalIn(context);
         if (result_tmp_bufs.GetSize() == 1) {
             dest_buf = result_tmp_bufs[0];
         } else {
             FX_LPBYTE result_buf = FX_Alloc(FX_BYTE, dest_size);
             if (!result_buf) {
-                dest_buf = NULL;
-                dest_size = 0;
-                return;
+                for (FX_INT32 i = 0; i < result_tmp_bufs.GetSize(); i++) {
+                    FX_Free(result_tmp_bufs[i]);
+                }
+                goto fail;
             }
             FX_DWORD result_pos = 0;
             for (FX_INT32 i = 0; i < result_tmp_bufs.GetSize(); i++) {
@@ -840,27 +842,19 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
                 }
                 FXSYS_memcpy32(result_buf + result_pos, tmp_buf, tmp_buf_size);
                 result_pos += tmp_buf_size;
-                FX_Free(tmp_buf);
-                tmp_buf = NULL;
-                result_tmp_bufs[i] = NULL;
+                FX_Free(result_tmp_bufs[i]);
             }
             dest_buf = result_buf;
         }
-    } else {
-        if (guess_size / 2 > dest_size) {
-            guess_buf = FX_Realloc(FX_BYTE, guess_buf, dest_size + 1);
-            if (!guess_buf) {
-                dest_buf = NULL;
-                dest_size = 0;
-                return;
-            }
-            guess_size = dest_size;
-            guess_buf[guess_size] = '\0';
-        }
-        dest_buf = guess_buf;
     }
     FPDFAPI_FlateEnd(context);
-    context = NULL;
+    return;
+
+fail:
+    FX_Free(guess_buf);
+    dest_buf = nullptr;
+    dest_size = 0;
+    return;
 }
 ICodec_ScanlineDecoder*	CCodec_FlateModule::CreateDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
         int nComps, int bpc, int predictor, int Colors, int BitsPerComponent, int Columns)
