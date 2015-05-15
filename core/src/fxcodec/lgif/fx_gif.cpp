@@ -1147,7 +1147,7 @@ static FX_BOOL _gif_write_header( gif_compress_struct_p gif_ptr, FX_LPBYTE& dst_
         return TRUE;
     }
     dst_len = sizeof(GifHeader) + sizeof(GifLSD) + sizeof(GifGF);
-    dst_buf = FX_AllocNL(FX_BYTE, dst_len);
+    dst_buf = FX_TryAlloc(FX_BYTE, dst_len);
     if (dst_buf == NULL)	{
         return FALSE;
     }

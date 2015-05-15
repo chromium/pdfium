@@ -882,7 +882,7 @@ FX_BOOL _bmp_encode_image( bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, FX
         pal_size = sizeof(FX_DWORD) * bmp_ptr->info_header.biClrUsed;
     }
     dst_size = head_size + sizeof(FX_DWORD) * bmp_ptr->pal_num;
-    dst_buf = FX_AllocNL(FX_BYTE, dst_size);
+    dst_buf = FX_TryAlloc(FX_BYTE, dst_size);
     if (dst_buf == NULL) {
         return FALSE;
     }

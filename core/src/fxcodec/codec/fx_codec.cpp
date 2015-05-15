@@ -123,7 +123,7 @@ void CCodec_ScanlineDecoder::DownScale(int dest_width, int dest_height)
         FX_Free(m_pDataCache);
         m_pDataCache = NULL;
     }
-    m_pDataCache = (CCodec_ImageDataCache*)FX_AllocNL(FX_BYTE, sizeof(CCodec_ImageDataCache) + m_Pitch * m_OutputHeight);
+    m_pDataCache = (CCodec_ImageDataCache*)FX_TryAlloc(FX_BYTE, sizeof(CCodec_ImageDataCache) + m_Pitch * m_OutputHeight);
     if (m_pDataCache == NULL) {
         return;
     }

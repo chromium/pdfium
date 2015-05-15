@@ -1015,7 +1015,7 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format, void* pIccTransfor
     }
     int dest_bpp = dest_format & 0xff;
     int dest_pitch = (dest_bpp * m_Width + 31) / 32 * 4;
-    FX_LPBYTE dest_buf = FX_AllocNL(FX_BYTE, dest_pitch * m_Height + 4);
+    FX_LPBYTE dest_buf = FX_TryAlloc(FX_BYTE, dest_pitch * m_Height + 4);
     if (dest_buf == NULL) {
         return FALSE;
     }
