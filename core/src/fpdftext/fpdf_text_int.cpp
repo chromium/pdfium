@@ -2226,13 +2226,16 @@ FX_BOOL	CPDF_TextPage::IsLetter(FX_WCHAR unicode)
     return TRUE;
 }
 CPDF_TextPageFind::CPDF_TextPageFind(const IPDF_TextPage* pTextPage)
-    : m_pTextPage(NULL),
+    : m_pTextPage(pTextPage),
+      m_flags(0),
+      m_findNextStart(-1),
+      m_findPreStart(-1),
+      m_bMatchCase(FALSE),
+      m_bMatchWholeWord(FALSE),
+      m_resStart(0),
+      m_resEnd(-1),
       m_IsFind(FALSE)
 {
-    if (!pTextPage) {
-        return;
-    }
-    m_pTextPage = pTextPage;
     m_strText = m_pTextPage->GetPageText();
     int nCount = pTextPage->CountChars();
     if(nCount) {
@@ -2266,8 +2269,6 @@ CPDF_TextPageFind::CPDF_TextPageFind(const IPDF_TextPage* pTextPage)
     if(indexSize % 2) {
         m_CharIndex.RemoveAt(indexSize - 1);
     }
-    m_resStart = 0;
-    m_resEnd = -1;
 }
 int CPDF_TextPageFind::GetCharIndex(int index) const
 {
