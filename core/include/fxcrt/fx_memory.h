@@ -24,9 +24,6 @@ void	FXMEM_DefaultFree(void* pointer, int flags);
 #ifdef __cplusplus
 }
 
-#define FX_NEW_VECTOR(Pointer, Class, Count) (Pointer = new Class[Count])
-#define FX_DELETE_VECTOR(Pointer, Class, Count) delete[] Pointer
-
 class CFX_DestructObject 
 {
 public:
