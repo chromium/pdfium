@@ -249,6 +249,33 @@ TEST(fxcrt, WideStringOperatorNE) {
     EXPECT_TRUE(c_string3 != wide_string);
 }
 
+TEST(fxcrt, WideStringConcatInPlace) {
+    CFX_WideString fred;
+    fred.ConcatInPlace(4, L"FRED");
+    EXPECT_EQ(L"FRED", fred);
+
+    fred.ConcatInPlace(2, L"DY");
+    EXPECT_EQ(L"FREDDY", fred);
+
+    fred.Delete(3, 3);
+    EXPECT_EQ(L"FRE", fred);
+
+    fred.ConcatInPlace(1, L"D");
+    EXPECT_EQ(L"FRED", fred);
+
+    CFX_WideString copy = fred;
+    fred.ConcatInPlace(2, L"DY");
+    EXPECT_EQ(L"FREDDY", fred);
+    EXPECT_EQ(L"FRED", copy);
+
+    // Test invalid arguments.
+    copy = fred;
+    fred.ConcatInPlace(-6, L"freddy");
+    CFX_WideString not_aliased(L"xxxxxx");
+    EXPECT_EQ(L"FREDDY", fred);
+    EXPECT_EQ(L"xxxxxx", not_aliased);
+}
+
 #define ByteStringLiteral(str) CFX_ByteString(FX_BSTRC(str))
 
 TEST(fxcrt, WideStringUTF16LE_Encode) {
