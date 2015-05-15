@@ -422,9 +422,7 @@ void CFX_ByteString::ConcatInPlace(FX_STRSIZE nSrcLen, FX_LPCSTR lpszSrcData)
         return;
     }
     if (m_pData->m_nRefs > 1 || m_pData->m_nDataLength + nSrcLen > m_pData->m_nAllocLength) {
-        StringData* pOldData = m_pData;
         ConcatCopy(m_pData->m_nDataLength, m_pData->m_String, nSrcLen, lpszSrcData);
-        pOldData->Release();
     } else {
         FXSYS_memcpy32(m_pData->m_String + m_pData->m_nDataLength, lpszSrcData, nSrcLen);
         m_pData->m_nDataLength += nSrcLen;
@@ -435,14 +433,17 @@ void CFX_ByteString::ConcatCopy(FX_STRSIZE nSrc1Len, FX_LPCSTR lpszSrc1Data,
                                 FX_STRSIZE nSrc2Len, FX_LPCSTR lpszSrc2Data)
 {
     int nNewLen = nSrc1Len + nSrc2Len;
-    if (nNewLen == 0) {
+    if (nNewLen <= 0) {
         return;
     }
+    // Don't release until done copying, might be one of the arguments.
+    StringData* pOldData = m_pData;
     m_pData = StringData::Create(nNewLen);
     if (m_pData) {
-        FXSYS_memcpy32(m_pData->m_String, lpszSrc1Data, nSrc1Len);
-        FXSYS_memcpy32(m_pData->m_String + nSrc1Len, lpszSrc2Data, nSrc2Len);
+        memcpy(m_pData->m_String, lpszSrc1Data, nSrc1Len);
+        memcpy(m_pData->m_String + nSrc1Len, lpszSrc2Data, nSrc2Len);
     }
+    pOldData->Release();
 }
 CFX_ByteString CFX_ByteString::Mid(FX_STRSIZE nFirst) const
 {

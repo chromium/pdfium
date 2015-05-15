@@ -389,6 +389,7 @@ protected:
     void					AllocBeforeWrite(FX_STRSIZE nLen);
 
     StringData* m_pData;
+    friend class fxcrt_ByteStringConcatInPlace_Test;
 };
 inline CFX_ByteStringC::CFX_ByteStringC(const CFX_ByteString& src)
 {
@@ -815,6 +816,7 @@ protected:
     void                    AllocCopy(CFX_WideString& dest, FX_STRSIZE nCopyLen, FX_STRSIZE nCopyIndex) const;
 
     StringData* m_pData;
+    friend class fxcrt_WideStringConcatInPlace_Test;
 };
 inline CFX_WideStringC::CFX_WideStringC(const CFX_WideString& src)
 {
