@@ -36,7 +36,7 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
   EXPECT_NE(nullptr, textpage);
 
-  const char expected[] = "Hello, world!\r\nGoodbye, world!";
+  static const char expected[] = "Hello, world!\r\nGoodbye, world!";
   unsigned short fixed_buffer[128];
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
 
@@ -134,6 +134,7 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   EXPECT_EQ(0xbdbd, fixed_buffer[10]);
 
   FPDFText_ClosePage(textpage);
+  UnloadPage(page);
 }
 
 TEST_F(FPDFTextEmbeddertest, TextSearch) {
@@ -239,6 +240,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
   FPDFText_FindClose(search);
 
   FPDFText_ClosePage(textpage);
+  UnloadPage(page);
 }
 
 // Test that the page has characters despite a bad stream length.
@@ -252,6 +254,7 @@ TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
   EXPECT_EQ(13, FPDFText_CountChars(textpage));
 
   FPDFText_ClosePage(textpage);
+  UnloadPage(page);
 }
 
 TEST_F(FPDFTextEmbeddertest, WebLinks) {
@@ -277,7 +280,7 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
   EXPECT_EQ(25, FPDFLink_GetURL(pagelink, 0, nullptr, 0));
   EXPECT_EQ(26, FPDFLink_GetURL(pagelink, 1, nullptr, 0));
 
-  const char expected_url[] = "http://example.com?q=foo";
+  static const char expected_url[] = "http://example.com?q=foo";
   unsigned short fixed_buffer[128];
 
   // Retrieve a link with too small a buffer.  Buffer will not be
@@ -358,4 +361,5 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
 
   FPDFLink_CloseWebLinks(pagelink);
   FPDFText_ClosePage(textpage);
+  UnloadPage(page);
 }

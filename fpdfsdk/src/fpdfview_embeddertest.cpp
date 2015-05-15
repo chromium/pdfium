@@ -194,6 +194,7 @@ TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
   EXPECT_TRUE(OpenDocument("testing/resources/bug_452455.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
+  UnloadPage(page);
 }
 
 TEST_F(FPDFViewEmbeddertest, Crasher3) {

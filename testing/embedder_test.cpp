@@ -36,24 +36,24 @@ static char* GetFileContents(const char* filename, size_t* retlen) {
   FILE* file = fopen(filename, "rb");
   if (!file) {
     fprintf(stderr, "Failed to open: %s\n", filename);
-    return NULL;
+    return nullptr;
   }
   (void) fseek(file, 0, SEEK_END);
   size_t file_length = ftell(file);
   if (!file_length) {
-    return NULL;
+    return nullptr;
   }
   (void) fseek(file, 0, SEEK_SET);
   char* buffer = (char*) malloc(file_length);
   if (!buffer) {
-    return NULL;
+    return nullptr;
   }
   size_t bytes_read = fread(buffer, 1, file_length, file);
   (void) fclose(file);
   if (bytes_read != file_length) {
     fprintf(stderr, "Failed to read: %s\n", filename);
     free(buffer);
-    return NULL;
+    return nullptr;
   }
   *retlen = bytes_read;
   return buffer;
@@ -211,21 +211,15 @@ void EmbedderTest::SetUp() {
   }
 
 void EmbedderTest::TearDown() {
-  if (form_handle_) {
-    FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
-    FPDFDOC_ExitFormFillEnvironment(form_handle_);
-  }
   if (document_) {
+    FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
     FPDF_CloseDocument(document_);
+    FPDFDOC_ExitFormFillEnvironment(form_handle_);
   }
   FPDFAvail_Destroy(avail_);
   FPDF_DestroyLibrary();
-  if (loader_) {
-    delete loader_;
-  }
-  if (file_contents_) {
-    free(file_contents_);
-  }
+  delete loader_;
+  free(file_contents_);
 }
 
 bool EmbedderTest::OpenDocument(const std::string& filename) {
@@ -249,9 +243,9 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
   (void) FPDFAvail_IsDocAvail(avail_, &hints_);
 
   if (!FPDFAvail_IsLinearized(avail_)) {
-    document_ = FPDF_LoadCustomDocument(&file_access_, NULL);
+    document_ = FPDF_LoadCustomDocument(&file_access_, nullptr);
   } else {
-    document_ = FPDFAvail_GetDocument(avail_, NULL);
+    document_ = FPDFAvail_GetDocument(avail_, nullptr);
   }
 
   (void) FPDF_GetDocPermissions(document_);

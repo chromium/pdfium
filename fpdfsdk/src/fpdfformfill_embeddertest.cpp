@@ -24,4 +24,5 @@ TEST_F(FPDFFormFillEmbeddertest, FirstTest) {
   EXPECT_TRUE(OpenDocument("testing/resources/hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
+  UnloadPage(page);
 }

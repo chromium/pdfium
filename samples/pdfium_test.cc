@@ -550,8 +550,8 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   }
 
   FORM_DoDocumentAAction(form, FPDFDOC_AACTION_WC);
-  FPDFDOC_ExitFormFillEnvironment(form);
   FPDF_CloseDocument(doc);
+  FPDFDOC_ExitFormFillEnvironment(form);
   FPDFAvail_Destroy(pdf_avail);
 
   fprintf(stderr, "Rendered %d pages.\n", rendered_pages);
