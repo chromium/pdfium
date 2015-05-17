@@ -86,7 +86,7 @@ void							JS_FreePrivate(void* p);
 void							JS_FreePrivate(v8::Handle<v8::Object> pObj);
 v8::Handle<v8::Value>			JS_GetObjectValue(v8::Handle<v8::Object> pObj);
 v8::Handle<v8::Value>			JS_GetObjectElement(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj,const wchar_t* PropertyName);
-v8::Handle<v8::Array>			JS_GetObjectElementNames(v8::Handle<v8::Object> pObj);
+v8::Handle<v8::Array>			JS_GetObjectElementNames(IJS_Runtime* pJSRuntime, v8::Handle<v8::Object> pObj);
 void							JS_PutObjectString(IJS_Runtime* pJSRuntime,v8::Handle<v8::Object> pObj, const wchar_t* PropertyName, const wchar_t* sValue);
 void							JS_PutObjectNumber(IJS_Runtime* pJSRuntime,v8::Handle<v8::Object> pObj, const wchar_t* PropertyName, int nValue);
 void							JS_PutObjectNumber(IJS_Runtime* pJSRuntime,v8::Handle<v8::Object> pObj, const wchar_t* PropertyName, float fValue);
@@ -94,10 +94,10 @@ void							JS_PutObjectNumber(IJS_Runtime* pJSRuntime,v8::Handle<v8::Object> pOb
 void							JS_PutObjectBoolean(IJS_Runtime* pJSRuntime,v8::Handle<v8::Object> pObj, const wchar_t* PropertyName, bool bValue);
 void							JS_PutObjectObject(IJS_Runtime* pJSRuntime,v8::Handle<v8::Object> pObj, const wchar_t* PropertyName, v8::Handle<v8::Object> pPut);
 void							JS_PutObjectNull(IJS_Runtime* pJSRuntime,v8::Handle<v8::Object> pObj, const wchar_t* PropertyName);
-unsigned						JS_PutArrayElement(v8::Handle<v8::Array> pArray,unsigned index,v8::Handle<v8::Value> pValue,FXJSVALUETYPE eType);
-v8::Handle<v8::Value>			JS_GetArrayElemnet(v8::Handle<v8::Array> pArray,unsigned index);
+unsigned						JS_PutArrayElement(IJS_Runtime* pJSRuntime, v8::Handle<v8::Array> pArray,unsigned index,v8::Handle<v8::Value> pValue,FXJSVALUETYPE eType);
+v8::Handle<v8::Value>			JS_GetArrayElement(IJS_Runtime* pJSRuntime, v8::Handle<v8::Array> pArray,unsigned index);
 unsigned						JS_GetArrayLength(v8::Handle<v8::Array> pArray);
-v8::Handle<v8::Value>			JS_GetListValue(v8::Handle<v8::Value> pList, int index);
+v8::Handle<v8::Value>			JS_GetListValue(IJS_Runtime* pJSRuntime, v8::Handle<v8::Value> pList, int index);
 
 
 v8::Handle<v8::Array>			JS_NewArray(IJS_Runtime* pJSRuntime);
@@ -114,12 +114,12 @@ v8::Handle<v8::Value>			JS_NewDate(IJS_Runtime* pJSRuntime,double d);
 v8::Handle<v8::Value>			JS_NewValue(IJS_Runtime* pJSRuntime);
 
 
-int								JS_ToInt32(v8::Handle<v8::Value> pValue);
-bool							JS_ToBoolean(v8::Handle<v8::Value> pValue);
-double							JS_ToNumber(v8::Handle<v8::Value> pValue);
-v8::Handle<v8::Object>			JS_ToObject(v8::Handle<v8::Value> pValue);
-CFX_WideString					JS_ToString(v8::Handle<v8::Value> pValue);
-v8::Handle<v8::Array>			JS_ToArray(v8::Handle<v8::Value> pValue);
+int								JS_ToInt32(IJS_Runtime* pJSRuntime, v8::Handle<v8::Value> pValue);
+bool							JS_ToBoolean(IJS_Runtime* pJSRuntime, v8::Handle<v8::Value> pValue);
+double							JS_ToNumber(IJS_Runtime* pJSRuntime, v8::Handle<v8::Value> pValue);
+v8::Handle<v8::Object>			JS_ToObject(IJS_Runtime* pJSRuntime, v8::Handle<v8::Value> pValue);
+CFX_WideString					JS_ToString(IJS_Runtime* pJSRuntime, v8::Handle<v8::Value> pValue);
+v8::Handle<v8::Array>			JS_ToArray(IJS_Runtime* pJSRuntime, v8::Handle<v8::Value> pValue);
 void							JS_ValueCopy(v8::Handle<v8::Value>& pTo, v8::Handle<v8::Value> pFrom);
 
 double							JS_GetDateTime();

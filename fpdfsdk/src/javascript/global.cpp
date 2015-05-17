@@ -387,16 +387,15 @@ void global_alternate::CommitGlobalPersisitentVariables()
 
 void global_alternate::ObjectToArray(v8::Handle<v8::Object> pObj, CJS_GlobalVariableArray& array)
 {
-	v8::Handle<v8::Array> pKeyList = JS_GetObjectElementNames(pObj);
-	int	nObjElements = pKeyList->Length();
-
 	v8::Local<v8::Context> context = pObj->CreationContext();
 	v8::Isolate* isolate = context->GetIsolate();
+	v8::Handle<v8::Array> pKeyList = JS_GetObjectElementNames(isolate, pObj);
+	int	nObjElements = pKeyList->Length();
 
 	for (int i=0; i<nObjElements; i++)
 	{
 		
-		CFX_WideString ws = JS_ToString(JS_GetArrayElemnet(pKeyList, i));
+		CFX_WideString ws = JS_ToString(isolate, JS_GetArrayElement(isolate, pKeyList, i));
 		CFX_ByteString sKey = ws.UTF8Encode();
 
 		v8::Handle<v8::Value> v = JS_GetObjectElement(isolate, pObj, ws.c_str());
@@ -408,7 +407,7 @@ void global_alternate::ObjectToArray(v8::Handle<v8::Object> pObj, CJS_GlobalVari
 				CJS_KeyValue* pObjElement = new CJS_KeyValue;
 				pObjElement->nType = JS_GLOBALDATA_TYPE_NUMBER;
 				pObjElement->sKey = sKey;
-				pObjElement->dData = JS_ToNumber(v);
+				pObjElement->dData = JS_ToNumber(isolate, v);
 				array.Add(pObjElement);
 			}
 			break;
@@ -417,7 +416,7 @@ void global_alternate::ObjectToArray(v8::Handle<v8::Object> pObj, CJS_GlobalVari
 				CJS_KeyValue* pObjElement = new CJS_KeyValue;
 				pObjElement->nType = JS_GLOBALDATA_TYPE_BOOLEAN;
 				pObjElement->sKey = sKey;
-				pObjElement->dData = JS_ToBoolean(v);
+				pObjElement->dData = JS_ToBoolean(isolate, v);
 				array.Add(pObjElement);
 			}
 			break;
@@ -436,7 +435,7 @@ void global_alternate::ObjectToArray(v8::Handle<v8::Object> pObj, CJS_GlobalVari
 				CJS_KeyValue* pObjElement = new CJS_KeyValue;
 				pObjElement->nType = JS_GLOBALDATA_TYPE_OBJECT;
 				pObjElement->sKey = sKey;
-				ObjectToArray(JS_ToObject(v), pObjElement->objData);
+				ObjectToArray(JS_ToObject(isolate, v), pObjElement->objData);
 				array.Add(pObjElement);
 			}
 			break;
