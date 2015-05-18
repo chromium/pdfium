@@ -1463,10 +1463,7 @@ public:
         while (nCount > 0) {
             FX_INT32 temp_count = FX_MIN(nCount, FX_DATALIST_LENGTH);
             DataList list;
-            list.data = FX_Alloc(FX_BYTE, temp_count * unit);
-            if (!list.data) {
-                break;
-            }
+            list.data = FX_Alloc2D(FX_BYTE, temp_count, unit);
             list.start = nStart;
             list.count = temp_count;
             Append(list);

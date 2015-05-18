@@ -316,10 +316,7 @@ FX_BOOL CStretchEngine::StartStretchHorz()
         return FALSE;
     }
     if (m_pSource && m_bHasAlpha && m_pSource->m_pAlphaMask) {
-        m_pExtraAlphaBuf = FX_Alloc(unsigned char, m_SrcClip.Height() * m_ExtraMaskPitch);
-        if (!m_pExtraAlphaBuf) {
-            return FALSE;
-        }
+        m_pExtraAlphaBuf = FX_Alloc2D(unsigned char, m_SrcClip.Height(), m_ExtraMaskPitch);
         FX_DWORD size = (m_DestClip.Width() * 8 + 31) / 32 * 4;
         m_pDestMaskScanline = FX_TryAlloc(unsigned char, size);
         if (!m_pDestMaskScanline) {

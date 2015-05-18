@@ -210,7 +210,7 @@ static void SkRasterizeStroke(SkPaint& spaint, SkPath* dstPathData, SkPath& path
 		dstPathData->transform(smatrix);
 	} else {
 		int count = (pGraphState->m_DashCount+1)/2;
-		SkScalar* intervals = FX_Alloc(SkScalar, count* sizeof (SkScalar));
+		SkScalar* intervals = FX_Alloc2D(SkScalar, count, sizeof(SkScalar));
 		// Set dash pattern
 		for (int i = 0; i < count; i ++) {
 			FX_FIXFLOAT on = pGraphState->m_DashArray[i*2];

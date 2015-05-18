@@ -422,7 +422,7 @@ static void _DrawLatticeGouraudShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* 
     if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS)) {
         return;
     }
-    CPDF_MeshVertex* vertex = FX_Alloc(CPDF_MeshVertex, row_verts * 2);
+    CPDF_MeshVertex* vertex = FX_Alloc2D(CPDF_MeshVertex, row_verts, 2);
     if (!stream.GetVertexRow(vertex, row_verts, pObject2Bitmap)) {
         FX_Free(vertex);
         return;

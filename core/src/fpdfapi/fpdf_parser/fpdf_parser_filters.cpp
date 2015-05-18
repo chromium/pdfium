@@ -296,7 +296,7 @@ void CPDF_DecryptFilter::v_FilterFinish(CFX_BinaryBuf& dest_buf)
 extern "C" {
     static void* my_alloc_func (void* opaque, unsigned int items, unsigned int size)
     {
-        return FX_Alloc(FX_BYTE, items * size);
+        return FX_Alloc2D(FX_BYTE, items, size);
     }
     static void   my_free_func  (void* opaque, void* address)
     {

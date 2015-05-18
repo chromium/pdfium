@@ -13,7 +13,7 @@ extern "C"
 {
     static void* my_alloc_func (void* opaque, unsigned int items, unsigned int size)
     {
-        return FX_Alloc(FX_BYTE, items * size);
+        return FX_Alloc2D(FX_BYTE, items, size);
     }
     static void   my_free_func  (void* opaque, void* address)
     {
@@ -241,9 +241,7 @@ static FX_BOOL PNG_PredictorEncode(FX_LPBYTE& data_buf, FX_DWORD& data_size,
         return FALSE;
     const int row_count = (data_size + row_size - 1) / row_size;
     const int last_row_size = data_size % row_size;
-    FX_LPBYTE dest_buf = FX_Alloc( FX_BYTE, (row_size + 1) * row_count);
-    if (dest_buf == NULL)
-        return FALSE;
+    FX_LPBYTE dest_buf = FX_Alloc2D(FX_BYTE, row_size + 1, row_count);
     int byte_cnt = 0;
     FX_LPBYTE pSrcData = data_buf;
     FX_LPBYTE pDestData = dest_buf;
@@ -397,9 +395,7 @@ static FX_BOOL PNG_Predictor(FX_LPBYTE& data_buf, FX_DWORD& data_size,
         return FALSE;
     const int row_count = (data_size + row_size) / (row_size + 1);
     const int last_row_size = data_size % (row_size + 1);
-    FX_LPBYTE dest_buf = FX_Alloc( FX_BYTE, row_size * row_count);
-    if (dest_buf == NULL)
-        return FALSE;
+    FX_LPBYTE dest_buf = FX_Alloc2D(FX_BYTE, row_size, row_count);
     int byte_cnt = 0;
     FX_LPBYTE pSrcData = data_buf;
     FX_LPBYTE pDestData = dest_buf;

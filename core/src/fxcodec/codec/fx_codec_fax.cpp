@@ -949,10 +949,7 @@ CCodec_FaxEncoder::CCodec_FaxEncoder(FX_LPCBYTE src_buf, int width, int height, 
         return;
     }
     FXSYS_memset8(m_pRefLine, 0xff, m_Pitch);
-    m_pLineBuf = FX_Alloc(FX_BYTE, m_Pitch * 8);
-    if (m_pLineBuf == NULL) {
-        return;
-    }
+    m_pLineBuf = FX_Alloc2D(FX_BYTE, m_Pitch, 8);
     m_DestBuf.EstimateSize(0, 10240);
 }
 CCodec_FaxEncoder::~CCodec_FaxEncoder()

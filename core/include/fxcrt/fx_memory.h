@@ -43,6 +43,14 @@ inline void* FX_AllocOrDie(size_t num_members, size_t member_size) {
     return nullptr;  // Suppress compiler warning.
 }
 
+inline void* FX_AllocOrDie2D(size_t w, size_t h, size_t member_size) {
+    if (w < std::numeric_limits<size_t>::max() / h) {
+        return FX_AllocOrDie(w * h, member_size);
+    }
+    FX_OutOfMemoryTerminate();  // Never returns.
+    return nullptr;  // Suppress compiler warning.
+}
+
 inline void* FX_ReallocOrDie(void* ptr, size_t num_members, size_t member_size) {
     if (void* result = FX_SafeRealloc(ptr, num_members, member_size)) {
         return result;
@@ -53,6 +61,7 @@ inline void* FX_ReallocOrDie(void* ptr, size_t num_members, size_t member_size) 
 
 // Never returns NULL.
 #define FX_Alloc(type, size) (type*)FX_AllocOrDie(size, sizeof(type))
+#define FX_Alloc2D(type, w, h) (type*)FX_AllocOrDie2D(w, h, sizeof(type))
 #define FX_Realloc(type, ptr, size) \
     (type*)FX_ReallocOrDie(ptr, size, sizeof(type))
 

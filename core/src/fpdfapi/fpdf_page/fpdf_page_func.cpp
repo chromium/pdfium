@@ -670,8 +670,8 @@ FX_BOOL CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj)
         }
     }
     CPDF_Array* pArray1 = pDict->GetArray(FX_BSTRC("C1"));
-    m_pBeginValues = FX_Alloc(FX_FLOAT, m_nOutputs * 2);
-    m_pEndValues = FX_Alloc(FX_FLOAT, m_nOutputs * 2);
+    m_pBeginValues = FX_Alloc2D(FX_FLOAT, m_nOutputs, 2);
+    m_pEndValues = FX_Alloc2D(FX_FLOAT, m_nOutputs, 2);
     for (int i = 0; i < m_nOutputs; i ++) {
         m_pBeginValues[i] = pArray0 ? pArray0->GetFloat(i) : 0.0f;
         m_pEndValues[i] = pArray1 ? pArray1->GetFloat(i) : 1.0f;
@@ -768,7 +768,7 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj)
         m_pBounds[i + 1] = pArray->GetFloat(i);
     }
     m_pBounds[m_nSubs] = m_pDomains[1];
-    m_pEncode = FX_Alloc(FX_FLOAT, m_nSubs * 2);
+    m_pEncode = FX_Alloc2D(FX_FLOAT, m_nSubs, 2);
     pArray = pDict->GetArray(FX_BSTRC("Encode"));
     if (pArray == NULL) {
         return FALSE;
@@ -857,7 +857,7 @@ FX_BOOL CPDF_Function::Init(CPDF_Object* pObj)
     if (m_nInputs == 0) {
         return FALSE;
     }
-    m_pDomains = FX_Alloc(FX_FLOAT, m_nInputs * 2);
+    m_pDomains = FX_Alloc2D(FX_FLOAT, m_nInputs, 2);
     for (int i = 0; i < m_nInputs * 2; i ++) {
         m_pDomains[i] = pDomains->GetFloat(i);
     }
@@ -865,7 +865,7 @@ FX_BOOL CPDF_Function::Init(CPDF_Object* pObj)
     m_nOutputs = 0;
     if (pRanges) {
         m_nOutputs = pRanges->GetCount() / 2;
-        m_pRanges = FX_Alloc(FX_FLOAT, m_nOutputs * 2);
+        m_pRanges = FX_Alloc2D(FX_FLOAT, m_nOutputs, 2);
         for (int i = 0; i < m_nOutputs * 2; i ++) {
             m_pRanges[i] = pRanges->GetFloat(i);
         }

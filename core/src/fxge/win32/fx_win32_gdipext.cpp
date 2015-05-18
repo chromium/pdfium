@@ -1272,16 +1272,14 @@ CFX_DIBitmap* CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args)
     int height = abs(pInfo->pbmi->bmiHeader.biHeight);
     int width = pInfo->pbmi->bmiHeader.biWidth;
     int dest_pitch = (width * pInfo->pbmi->bmiHeader.biBitCount + 31) / 32 * 4;
-    LPBYTE pData = FX_Alloc(BYTE, dest_pitch * height);
-    if (pData == NULL) {
-        FreeDIBitmap(pInfo);
-        return NULL;
-    }
+    LPBYTE pData = FX_Alloc2D(BYTE, dest_pitch, height);
     if (dest_pitch == pInfo->Stride) {
         FXSYS_memcpy32(pData, pInfo->pScan0, dest_pitch * height);
-    } else for (int i = 0; i < height; i ++) {
+    } else {
+        for (int i = 0; i < height; i ++) {
             FXSYS_memcpy32(pData + dest_pitch * i, pInfo->pScan0 + pInfo->Stride * i, dest_pitch);
         }
+    }
     CFX_DIBitmap* pDIBitmap = _FX_WindowsDIB_LoadFromBuf(pInfo->pbmi, pData, pInfo->pbmi->bmiHeader.biBitCount == 32);
     FX_Free(pData);
     FreeDIBitmap(pInfo);
