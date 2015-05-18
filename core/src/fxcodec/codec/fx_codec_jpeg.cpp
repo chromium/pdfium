@@ -6,6 +6,7 @@
 
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../../../include/fxge/fx_dib.h"
+#include "../../../src/fxcrt/fx_safe_types.h"
 #include "codec_int.h"
 extern "C" {
     static void _JpegScanSOI(const FX_BYTE*& src_buf, FX_DWORD& src_size)
@@ -85,9 +86,6 @@ static	FX_BOOL _JpegEmbedIccProfile(j_compress_ptr cinfo, FX_LPCBYTE icc_buf_ptr
     }
     FX_DWORD icc_data_length = JPEG_OVERHEAD_LEN + (icc_segment_num > 1 ? icc_segment_size : icc_length);
     FX_LPBYTE icc_data = FX_Alloc(FX_BYTE, icc_data_length);
-    if (icc_data == NULL) {
-        return FALSE;
-    }
     FXSYS_memcpy32(icc_data, "\x49\x43\x43\x5f\x50\x52\x4f\x46\x49\x4c\x45\x00", 12);
     icc_data[13] = (FX_BYTE)icc_segment_num;
     for (FX_BYTE i = 0; i < (icc_segment_num - 1); i++) {
@@ -114,25 +112,44 @@ extern "C" {
 #define	JPEG_BLOCK_SIZE	1048576
 static void _JpegEncode(const CFX_DIBSource* pSource, FX_LPBYTE& dest_buf, FX_STRSIZE& dest_size, int quality, FX_LPCBYTE icc_buf, FX_DWORD icc_length)
 {
-    struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
     jerr.error_exit = _error_do_nothing;
     jerr.emit_message = _error_do_nothing1;
     jerr.output_message = _error_do_nothing;
     jerr.format_message = _error_do_nothing2;
     jerr.reset_error_mgr = _error_do_nothing;
+
+    struct jpeg_compress_struct cinfo;
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.err = &jerr;
     jpeg_create_compress(&cinfo);
     int Bpp = pSource->GetBPP() / 8;
-    int nComponents = Bpp >= 3 ? (pSource->IsCmykImage() ? 4 : 3) : 1;
-    int pitch = pSource->GetPitch();
-    int width = pSource->GetWidth();
-    int height = pSource->GetHeight();
-    FX_DWORD dest_buf_length = width * height * nComponents + 1024 + (icc_length ? (icc_length + 255 * 18) : 0);
-    dest_buf = FX_Alloc(FX_BYTE, dest_buf_length);
-    while (dest_buf == NULL) {
-        dest_buf_length >>= 1;
-        dest_buf = FX_Alloc(FX_BYTE, dest_buf_length);
+    FX_DWORD nComponents = Bpp >= 3 ? (pSource->IsCmykImage() ? 4 : 3) : 1;
+    FX_DWORD pitch = pSource->GetPitch();
+    FX_DWORD width = pdfium::base::checked_cast<FX_DWORD>(pSource->GetWidth());
+    FX_DWORD height = pdfium::base::checked_cast<FX_DWORD>(pSource->GetHeight());
+    FX_SAFE_DWORD safe_buf_len = width;
+    safe_buf_len *= height;
+    safe_buf_len *= nComponents;
+    safe_buf_len += 1024;
+    if (icc_length) {
+        safe_buf_len += 255 * 18;
+        safe_buf_len += icc_length;
+    }
+    FX_DWORD dest_buf_length = 0;
+    if (!safe_buf_len.IsValid()) {
+        dest_buf = nullptr;
+    } else {
+        dest_buf_length = safe_buf_len.ValueOrDie();
+        dest_buf = FX_TryAlloc(FX_BYTE, dest_buf_length);
+        const int MIN_TRY_BUF_LEN = 1024;
+        while (!dest_buf && dest_buf_length > MIN_TRY_BUF_LEN) {
+            dest_buf_length >>= 1;
+            dest_buf = FX_TryAlloc(FX_BYTE, dest_buf_length);
+        }
+    }
+    if (!dest_buf) {
+        FX_OutOfMemoryTerminate(); 
     }
     struct jpeg_destination_mgr dest;
     dest.init_destination = _dest_do_nothing;
@@ -188,10 +205,6 @@ static void _JpegEncode(const CFX_DIBSource* pSource, FX_LPBYTE& dest_buf, FX_ST
         jpeg_write_scanlines(&cinfo, row_pointer, 1);
         if (cinfo.next_scanline == row) {
             dest_buf = FX_Realloc(FX_BYTE, dest_buf, dest_buf_length + JPEG_BLOCK_SIZE);
-            if (dest_buf == NULL) {
-                FX_Free(line_buf);
-                return;
-            }
             dest.next_output_byte = dest_buf + dest_buf_length - dest.free_in_buffer;
             dest_buf_length += JPEG_BLOCK_SIZE;
             dest.free_in_buffer += JPEG_BLOCK_SIZE;
@@ -389,9 +402,6 @@ FX_BOOL CCodec_JpegDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_size, int wi
     }
     m_Pitch = (cinfo.image_width * cinfo.num_components + 3) / 4 * 4;
     m_pScanlineBuf = FX_Alloc(FX_BYTE, m_Pitch);
-    if (m_pScanlineBuf == NULL) {
-        return FALSE;
-    }
     m_nComps = cinfo.num_components;
     m_bpc = 8;
     m_bColorTransformed = FALSE;
@@ -552,9 +562,6 @@ void* CCodec_JpegModule::Start()
         return m_pExtProvider->Start();
     }
     FXJPEG_Context* p = (FXJPEG_Context*)FX_Alloc(FX_BYTE, sizeof(FXJPEG_Context));
-    if (p == NULL) {
-        return NULL;
-    }
     p->m_AllocFunc = jpeg_alloc_func;
     p->m_FreeFunc = jpeg_free_func;
     p->m_ErrMgr.error_exit = _error_fatal1;
