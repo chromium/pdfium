@@ -663,7 +663,7 @@ FX_BOOL Document::submitForm(IFXJS_Context* cc, const CJS_Parameters& params, CJ
 	else if (v.GetType() == VT_object)
 	{
 		JSObject pObj = params[0].ToV8Object();
-		v8::Handle<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"cURL");
+		v8::Local<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"cURL");
 		if (!pValue.IsEmpty())
 			strURL = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 		pValue = JS_GetObjectElement(isolate, pObj, L"bFDF");
@@ -796,7 +796,7 @@ FX_BOOL Document::mailDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_V
 	{
 		JSObject pObj = params[0].ToV8Object();
 
-		v8::Handle<v8::Value> pValue = JS_GetObjectElement(isolate,pObj, L"bUI");
+		v8::Local<v8::Value> pValue = JS_GetObjectElement(isolate,pObj, L"bUI");
 		bUI = CJS_Value(isolate,pValue,GET_VALUE_TYPE(pValue)).ToInt();
 
 		pValue = JS_GetObjectElement(isolate,pObj, L"cTo");
@@ -1863,7 +1863,7 @@ FX_BOOL Document::deletePages(IFXJS_Context* cc, const CJS_Parameters& params, C
 		if (params[0].GetType() == VT_object)
 		{
 			JSObject pObj = params[0].ToV8Object();
-			v8::Handle<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"nStart");
+			v8::Local<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"nStart");
             nStart = CJS_Value(m_isolate, pValue, GET_VALUE_TYPE(pValue)).ToInt();
 
 			pValue = JS_GetObjectElement(isolate, pObj, L"nEnd");

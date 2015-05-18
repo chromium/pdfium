@@ -15,7 +15,7 @@
 CJS_Value::CJS_Value(v8::Isolate* isolate) : m_eType(VT_unknown),m_isolate(isolate)
 {
 }
-CJS_Value::CJS_Value(v8::Isolate* isolate, v8::Handle<v8::Value> pValue,FXJSVALUETYPE t) :
+CJS_Value::CJS_Value(v8::Isolate* isolate, v8::Local<v8::Value> pValue,FXJSVALUETYPE t) :
 	m_pValue(pValue), m_eType(t), m_isolate(isolate)
 {
 }
@@ -76,7 +76,7 @@ CJS_Value::~CJS_Value()
 {
 }
 
-void CJS_Value::Attach(v8::Handle<v8::Value> pValue,FXJSVALUETYPE t)
+void CJS_Value::Attach(v8::Local<v8::Value> pValue,FXJSVALUETYPE t)
 {
 	m_pValue = pValue;
 	m_eType = t;
@@ -90,7 +90,7 @@ void CJS_Value::Attach(CJS_Value *pValue)
 
 void CJS_Value::Detach()
 {
-	m_pValue = v8::Handle<v8::Value>();
+	m_pValue = v8::Local<v8::Value>();
 	m_eType = VT_unknown;
 }
 
@@ -118,11 +118,11 @@ float CJS_Value::ToFloat() const
 
 CJS_Object* CJS_Value::ToCJSObject() const
 {
-	v8::Handle<v8::Object>	pObj = JS_ToObject(m_isolate, m_pValue);
+	v8::Local<v8::Object>	pObj = JS_ToObject(m_isolate, m_pValue);
 	return (CJS_Object*)JS_GetPrivate(m_isolate, pObj);
 }
 
-v8::Handle<v8::Object> CJS_Value::ToV8Object() const
+v8::Local<v8::Object> CJS_Value::ToV8Object() const
 {
 	return JS_ToObject(m_isolate, m_pValue);
 }
@@ -137,16 +137,16 @@ CFX_ByteString CJS_Value::ToCFXByteString() const
 	return CFX_ByteString::FromUnicode(ToCFXWideString());
 }
 
-v8::Handle<v8::Value> CJS_Value::ToV8Value() const
+v8::Local<v8::Value> CJS_Value::ToV8Value() const
 {
 	return m_pValue;
 }
 
-v8::Handle<v8::Array>CJS_Value::ToV8Array() const
+v8::Local<v8::Array>CJS_Value::ToV8Array() const
 {
 	if (IsArrayObject())
-		return v8::Handle<v8::Array>::Cast(JS_ToObject(m_isolate, m_pValue));
-	return v8::Handle<v8::Array>();
+		return v8::Local<v8::Array>::Cast(JS_ToObject(m_isolate, m_pValue));
+	return v8::Local<v8::Array>();
 }
 
 /* ---------------------------------------------------------------------------------------- */
@@ -178,7 +178,7 @@ void CJS_Value::operator = (float fValue)
 	m_eType = VT_number;
 }
 
-void CJS_Value::operator =(v8::Handle<v8::Object> pObj)
+void CJS_Value::operator =(v8::Local<v8::Object> pObj)
 {
 
 	m_pValue = JS_NewObject(m_isolate,pObj);
@@ -221,7 +221,7 @@ void CJS_Value::operator = (FX_LPCSTR pStr)
 
 void CJS_Value::operator = (CJS_Array & array)
 {
-	m_pValue = JS_NewObject2(m_isolate,(v8::Handle<v8::Array>)array);
+	m_pValue = JS_NewObject2(m_isolate,(v8::Local<v8::Array>)array);
 
 	m_eType = VT_object;
 }
@@ -461,7 +461,7 @@ void CJS_PropValue::operator<<(CJS_Date &date)
 	CJS_Value::operator=(date);
 }
 
-CJS_PropValue::operator v8::Handle<v8::Value>() const
+CJS_PropValue::operator v8::Local<v8::Value>() const
 {
 	return m_pValue;
 }
@@ -475,7 +475,7 @@ CJS_Array::~CJS_Array()
 {		
 }
 
-void CJS_Array::Attach(v8::Handle<v8::Array> pArray)
+void CJS_Array::Attach(v8::Local<v8::Array> pArray)
 {
 	m_pArray = pArray;
 }
@@ -489,7 +489,7 @@ void CJS_Array::GetElement(unsigned index,CJS_Value &value)
 {
 	if (m_pArray.IsEmpty())
 		return;
-	v8::Handle<v8::Value>  p = JS_GetArrayElement(m_isolate, m_pArray,index);
+	v8::Local<v8::Value>  p = JS_GetArrayElement(m_isolate, m_pArray,index);
 	value.Attach(p,VT_object);
 }
 
@@ -508,7 +508,7 @@ int CJS_Array::GetLength()
 	return JS_GetArrayLength(m_pArray);
 }
 
-CJS_Array:: operator v8::Handle<v8::Array>()
+CJS_Array:: operator v8::Local<v8::Array>()
 {
 	if (m_pArray.IsEmpty())
 		m_pArray = JS_NewArray(m_isolate);
@@ -549,7 +549,7 @@ FX_BOOL	CJS_Date::IsValidDate()
 	return !JS_PortIsNan(JS_ToNumber(m_isolate, m_pDate));
 }
 
-void CJS_Date::Attach(v8::Handle<v8::Value> pDate)
+void CJS_Date::Attach(v8::Local<v8::Value> pDate)
 {
 	m_pDate = pDate;
 }
@@ -642,7 +642,7 @@ void CJS_Date::SetSeconds(int seconds)
 	JS_ValueCopy(m_pDate,JS_NewDate(m_isolate,date));
 }
 
-CJS_Date::operator v8::Handle<v8::Value>()
+CJS_Date::operator v8::Local<v8::Value>()
 {
 	return m_pDate;
 }

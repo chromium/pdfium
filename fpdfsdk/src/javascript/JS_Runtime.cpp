@@ -149,7 +149,7 @@ FX_BOOL CJS_Runtime::InitJSObjects()
 {
 	v8::Isolate::Scope isolate_scope(GetIsolate());
 	v8::HandleScope handle_scope(GetIsolate());
-	v8::Handle<v8::Context> context = v8::Context::New(GetIsolate());
+	v8::Local<v8::Context> context = v8::Context::New(GetIsolate());
 	v8::Context::Scope context_scope(context);
 	//0 - 8
 	if (CJS_Border::Init(*this, JS_STATIC) < 0) return FALSE;
@@ -328,7 +328,7 @@ void CJS_Runtime::RemoveEventsInLoop(CJS_FieldEvent* pStart)
 	}
 }
 
-v8::Handle<v8::Context>	CJS_Runtime::NewJSContext()
+v8::Local<v8::Context>	CJS_Runtime::NewJSContext()
 {
 	return v8::Local<v8::Context>::New(m_isolate, m_context);
 }
