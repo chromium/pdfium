@@ -134,7 +134,7 @@ FX_BOOL CPDFXFA_App::RemoveFormFillEnv(CPDFDoc_Environment* pEnv)
 }
 void CPDFXFA_App::ReleaseRuntime() 
 {
-	v8::Persistent<v8::Context> context;
+	v8::Global<v8::Context> context;
 	JS_ReleaseRuntime((IJS_Runtime*)m_hJSERuntime, context);
 }
 

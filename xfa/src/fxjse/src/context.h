@@ -26,12 +26,12 @@ protected:
     CFXJSE_Context(const CFXJSE_Context&);
     CFXJSE_Context& operator = (const CFXJSE_Context&);
 protected:
-    v8::Persistent<v8::Context>			m_hContext;
+    v8::Global<v8::Context>			m_hContext;
     v8::Isolate*						m_pIsolate;
     CFX_ArrayTemplate<CFXJSE_Class*>	m_rgClasses;
     friend class CFXJSE_Class;
     friend class CFXJSE_ScopeUtil_IsolateHandleContext;
     friend class CFXJSE_ScopeUtil_IsolateHandleRootOrNormalContext;
 };
-v8::Handle<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate, v8::TryCatch& trycatch);
+v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate, v8::TryCatch& trycatch);
 #endif

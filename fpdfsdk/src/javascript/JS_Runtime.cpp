@@ -106,7 +106,7 @@ void CJS_ArrayBufferAllocator::Free(void* data, size_t length) {
 }
 
 /* ------------------------------ CJS_Runtime ------------------------------ */
-extern v8::Persistent<v8::ObjectTemplate>& _getGlobalObjectTemplate(IJS_Runtime* pJSRuntime);
+extern v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(IJS_Runtime* pJSRuntime);
 CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp) :
 	m_pApp(pApp),
 	m_pDocument(NULL),
@@ -168,7 +168,7 @@ FX_BOOL CJS_Runtime::InitJSObjects()
 	v8::Isolate::Scope isolate_scope(GetIsolate());
 	v8::Locker locker(GetIsolate());
 	v8::HandleScope handle_scope(GetIsolate());
-	v8::Handle<v8::Context> context = v8::Context::New(GetIsolate());
+	v8::Local<v8::Context> context = v8::Context::New(GetIsolate());
 	v8::Context::Scope context_scope(context);
 	//0 - 8
 	if (CJS_Border::Init(*this, JS_STATIC) < 0) return FALSE;
@@ -348,7 +348,7 @@ void CJS_Runtime::RemoveEventsInLoop(CJS_FieldEvent* pStart)
 	}
 }
 
-v8::Handle<v8::Context>	CJS_Runtime::NewJSContext()
+v8::Local<v8::Context>	CJS_Runtime::NewJSContext()
 {
 	return v8::Local<v8::Context>::New(m_isolate, m_context);
 }

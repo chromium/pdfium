@@ -21,7 +21,7 @@ void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext, const FXJSE_FUNCTION* lpFunc
     ASSERT(lpContext);
     CFXJSE_ScopeUtil_IsolateHandleContext scope(lpContext);
     v8::Isolate *pIsolate = lpContext->GetRuntime();
-    v8::Handle<v8::Object>  hGlobalObject = FXJSE_GetGlobalObjectFromContext(scope.GetLocalContext());
+    v8::Local<v8::Object>  hGlobalObject = FXJSE_GetGlobalObjectFromContext(scope.GetLocalContext());
     for(FX_INT32 i = 0; i < nNum; i++) {
         hGlobalObject->ForceSet(v8::String::NewFromUtf8(pIsolate, lpFunctions[i].name),
                                 v8::Function::New(pIsolate, FXJSE_V8FunctionCallback_Wrapper, v8::External::New(pIsolate, const_cast<FXJSE_FUNCTION*>(lpFunctions + i))),
@@ -164,14 +164,14 @@ FX_FLOAT		CFXJSE_Arguments::GetFloat(FX_INT32 index) const
 CFX_ByteString	CFXJSE_Arguments::GetUTF8String(FX_INT32 index) const
 {
     const CFXJSE_ArgumentsImpl* lpArguments = reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-    v8::Handle<v8::String> hString = (*lpArguments->m_pInfo)[index]->ToString();
+    v8::Local<v8::String> hString = (*lpArguments->m_pInfo)[index]->ToString();
     v8::String::Utf8Value  szStringVal(hString);
     return CFX_ByteString(*szStringVal);
 }
 FX_LPVOID		CFXJSE_Arguments::GetObject(FX_INT32 index, FXJSE_HCLASS hClass ) const
 {
     const CFXJSE_ArgumentsImpl* lpArguments = reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-    v8::Handle<v8::Value> hValue = (*lpArguments->m_pInfo)[index];
+    v8::Local<v8::Value> hValue = (*lpArguments->m_pInfo)[index];
     ASSERT(!hValue.IsEmpty());
     if(!hValue->IsObject()) {
         return NULL;

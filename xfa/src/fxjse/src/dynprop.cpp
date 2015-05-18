@@ -146,7 +146,7 @@ static void FXJSE_V8ProxyCallback_getPropertyDescriptor		(const v8::FunctionCall
     v8::Local<v8::Script> fnSource = v8::Script::Compile(v8::String::NewFromUtf8(pIsolate,
                                      "(function (o, name) { var fn, x, d; fn = Object.getOwnPropertyDescriptor; x = o; while(x && !(d = fn(x, name))){x = x.__proto__;} return d; })"));
     v8::Local<v8::Function> fn = fnSource->Run().As<v8::Function>();
-    v8::Handle<v8::Value> rgArgs[] = {hChainObj, info[0]};
+    v8::Local<v8::Value> rgArgs[] = {hChainObj, info[0]};
     v8::Local<v8::Value> hChainDescriptor = fn->Call(info.This(), 2, rgArgs);
     if(!hChainDescriptor.IsEmpty() && hChainDescriptor->IsObject()) {
         info.GetReturnValue().Set(hChainDescriptor);
@@ -270,7 +270,7 @@ void CFXJSE_Class::SetUpDynPropHandler(CFXJSE_Context* pContext, CFXJSE_Value* p
     hTrapper->ForceSet(v8::String::NewFromUtf8(pIsolate, "delete"),						v8::Function::New(pIsolate, FXJSE_V8ProxyCallback_delete,					v8::External::New(pIsolate, const_cast<FXJSE_CLASS*>(lpClassDefinition))));
     hTrapper->ForceSet(v8::String::NewFromUtf8(pIsolate, "defineProperty"),				v8::Function::New(pIsolate, FXJSE_V8ProxyCallback_defineProperty,			v8::External::New(pIsolate, const_cast<FXJSE_CLASS*>(lpClassDefinition))));
     hTrapper->ForceSet(v8::String::NewFromUtf8(pIsolate, "fix"),						v8::Function::New(pIsolate, FXJSE_V8ProxyCallback_fix,						v8::External::New(pIsolate, const_cast<FXJSE_CLASS*>(lpClassDefinition))));
-    v8::Handle<v8::Value> rgArgs[] = {hTrapper, hOldPrototype};
+    v8::Local<v8::Value> rgArgs[] = {hTrapper, hOldPrototype};
     v8::Local<v8::Value> hNewPrototype = hHarmonyProxyCreateFn->Call(hHarmonyProxyObj, 2, rgArgs);
     hObject->SetPrototype(hNewPrototype);
 }

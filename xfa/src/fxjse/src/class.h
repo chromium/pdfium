@@ -17,7 +17,7 @@ public:
     {
         return m_pContext;
     }
-    inline v8::Persistent<v8::FunctionTemplate>& GetTemplate()
+    inline v8::Global<v8::FunctionTemplate>& GetTemplate()
     {
         return m_hTemplate;
     }
@@ -29,7 +29,7 @@ public:
 protected:
     CFX_ByteString							m_szClassName;
     CFXJSE_Context*							m_pContext;
-    v8::Persistent<v8::FunctionTemplate>	m_hTemplate;
+    v8::Global<v8::FunctionTemplate>	m_hTemplate;
     friend class CFXJSE_Context;
     friend class CFXJSE_Value;
 };

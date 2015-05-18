@@ -58,7 +58,7 @@ public:
 	v8::Isolate*							GetIsolate(){return m_isolate;};
 	void									SetIsolate(v8::Isolate* isolate){m_isolate = isolate;}
 
-	v8::Handle<v8::Context>					NewJSContext();
+	v8::Local<v8::Context>					NewJSContext();
 
 
 	virtual	FX_BOOL							GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue);
@@ -73,7 +73,7 @@ protected:
 
 	v8::Isolate* m_isolate;
 	nonstd::unique_ptr<CJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
-	v8::Persistent<v8::Context> m_context;
+	v8::Global<v8::Context> m_context;
 };
 
 #endif //_JS_RUNTIME_H_

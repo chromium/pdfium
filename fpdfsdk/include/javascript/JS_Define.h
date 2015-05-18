@@ -69,7 +69,7 @@ void JSPropGetter(const char* prop_name_string,
     JS_Error(isolate, JSFormatErrorString(class_name_string, prop_name_string, sError));
     return;
   }
-  info.GetReturnValue().Set((v8::Handle<v8::Value>)value);
+  info.GetReturnValue().Set((v8::Local<v8::Value>)value);
 }
 
 template <class C, FX_BOOL (C::*M)(IFXJS_Context*, CJS_PropValue&, CFX_WideString&)>
@@ -255,7 +255,7 @@ void JSSpecialPropGet(const char* class_name,
       JS_Error(isolate, JSFormatErrorString(class_name, "GetProperty", sError));
       return;
   }
-  info.GetReturnValue().Set((v8::Handle<v8::Value>)value);
+  info.GetReturnValue().Set((v8::Local<v8::Value>)value);
 }
 
 template <class Alt>
@@ -445,6 +445,6 @@ if (JS_DefineGlobalConst(pRuntime, (const wchar_t*)ArrayName, prop.ToV8Value()) 
 #define VALUE_NAME_NULL			L"null"
 #define VALUE_NAME_UNDEFINED	L"undefined"
 
-FXJSVALUETYPE GET_VALUE_TYPE(v8::Handle<v8::Value> p);
+FXJSVALUETYPE GET_VALUE_TYPE(v8::Local<v8::Value> p);
 
 #endif //_JS_DEFINE_H_

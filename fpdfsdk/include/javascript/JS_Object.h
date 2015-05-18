@@ -46,6 +46,7 @@ public:
 	virtual ~CJS_Object(void);
 
 	void						MakeWeak();
+        void                                            Dispose();
 
 	virtual FX_BOOL				IsType(FX_LPCSTR sClassName){return TRUE;};
 	virtual CFX_ByteString		GetClassName(){return "";};
@@ -66,7 +67,7 @@ public:
 	v8::Isolate*					GetIsolate() {return m_pIsolate;}
 protected:
 	CJS_EmbedObj *				m_pEmbedObj;
-	v8::Persistent<v8::Object>			m_pObject;
+	v8::Global<v8::Object>			m_pObject;
 	v8::Isolate*					m_pIsolate;
 };
 

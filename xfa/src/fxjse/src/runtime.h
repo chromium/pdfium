@@ -16,8 +16,8 @@ public:
     static CFXJSE_RuntimeData* Get(v8::Isolate* pIsolate);
 public:
     v8::Isolate*							m_pIsolate;
-    v8::Persistent<v8::FunctionTemplate>	m_hRootContextGlobalTemplate;
-    v8::Persistent<v8::Context>				m_hRootContext;
+    v8::Global<v8::FunctionTemplate>	m_hRootContextGlobalTemplate;
+    v8::Global<v8::Context>				m_hRootContext;
 public:
     static CFXJSE_RuntimeList*	g_RuntimeList;
 protected:

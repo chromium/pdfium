@@ -254,8 +254,8 @@ void FXJSE_ThrowMessage(FX_BSTR utf8Name, FX_BSTR utf8Message)
     v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
     ASSERT(pIsolate);
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
-    v8::Handle<v8::String> hMessage = v8::String::NewFromUtf8(pIsolate, utf8Message.GetCStr(), v8::String::kNormalString, utf8Message.GetLength());
-    v8::Handle<v8::Value> hError;
+    v8::Local<v8::String> hMessage = v8::String::NewFromUtf8(pIsolate, utf8Message.GetCStr(), v8::String::kNormalString, utf8Message.GetLength());
+    v8::Local<v8::Value> hError;
     if(utf8Name == "RangeError") {
         hError = v8::Exception::RangeError(hMessage);
     } else if(utf8Name == "ReferenceError") {
@@ -433,7 +433,7 @@ FX_BOOL CFXJSE_Value::SetObjectOwnProperty(FX_BSTR szPropName, CFXJSE_Value* lpP
 FX_BOOL CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction, CFXJSE_Value* lpNewThis)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
-    v8::Handle<v8::Value> rgArgs[2];
+    v8::Local<v8::Value> rgArgs[2];
     v8::Local<v8::Value> hOldFunction = v8::Local<v8::Value>::New(m_pIsolate, lpOldFunction->DirectGetValue());
     if(hOldFunction.IsEmpty() || !hOldFunction->IsFunction()) {
         return FALSE;
@@ -467,14 +467,14 @@ FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, F
         return FALSE;
     }
     v8::Local<v8::Value> hReturnValue;
-    v8::Handle<v8::Value>* lpLocalArgs = NULL;
+    v8::Local<v8::Value>* lpLocalArgs = NULL;
     if(nArgCount) {
-        lpLocalArgs = FX_Alloc(v8::Handle<v8::Value>, nArgCount);
+        lpLocalArgs = FX_Alloc(v8::Local<v8::Value>, nArgCount);
         if (!lpLocalArgs) {
             return FALSE;
         }
         for (FX_UINT32 i = 0; i < nArgCount; i++) {
-            new (lpLocalArgs + i) v8::Handle<v8::Value>;
+            new (lpLocalArgs + i) v8::Local<v8::Value>;
             CFXJSE_Value* lpArg = (CFXJSE_Value*)lpArgs[i];
             if(lpArg) {
                 lpLocalArgs[i] = v8::Local<v8::Value>::New(m_pIsolate, lpArg->DirectGetValue());

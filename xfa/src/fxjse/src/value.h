@@ -209,7 +209,7 @@ public:
     {
         return m_pIsolate;
     }
-    V8_INLINE const v8::Persistent<v8::Value>& DirectGetValue() const
+    V8_INLINE const v8::Global<v8::Value>& DirectGetValue() const
     {
         return m_hValue;
     }
@@ -229,7 +229,7 @@ public:
     static CFXJSE_Value* Create(v8::Isolate* pIsolate);
 protected:
     v8::Isolate*				m_pIsolate;
-    v8::Persistent<v8::Value>	m_hValue;
+    v8::Global<v8::Value>	m_hValue;
     friend class CFXJSE_Context;
     friend class CFXJSE_Class;
 };

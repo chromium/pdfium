@@ -24,7 +24,7 @@ static V8_INLINE FX_LPVOID				FXJSE_RetrieveObjectBinding(const v8::Local<v8::Ob
     }
     v8::Local<v8::Object> hObject = hJSObject;
     if(hObject->InternalFieldCount() == 0) {
-        v8::Handle<v8::Value> hProtoObject = hObject->GetPrototype();
+        v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
         if(hProtoObject.IsEmpty() || !hProtoObject->IsObject()) {
             return NULL;
         }

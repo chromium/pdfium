@@ -63,12 +63,12 @@ FX_BOOL	FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext, FX_LPCSTR szScript, FXJSE_H
     ASSERT(pContext);
     return pContext->ExecuteScript(szScript, reinterpret_cast<CFXJSE_Value*>(hRetValue), reinterpret_cast<CFXJSE_Value*>(hNewThisObject));
 }
-v8::Handle<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate, v8::TryCatch& trycatch)
+v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate, v8::TryCatch& trycatch)
 {
-    v8::Handle<v8::Object> hReturnValue = v8::Object::New(pIsolate);
+    v8::Local<v8::Object> hReturnValue = v8::Object::New(pIsolate);
     if (trycatch.HasCaught()) {
-        v8::Handle<v8::Value> hException = trycatch.Exception();
-        v8::Handle<v8::Message> hMessage = trycatch.Message();
+        v8::Local<v8::Value> hException = trycatch.Exception();
+        v8::Local<v8::Message> hMessage = trycatch.Message();
         if (hException->IsObject()) {
             v8::Local<v8::Value> hValue;
             hValue = hException.As<v8::Object>()->Get(v8::String::NewFromUtf8(pIsolate, "name"));
@@ -207,7 +207,7 @@ FX_BOOL	CFXJSE_Context::ExecuteScript(FX_LPCSTR szScript, CFXJSE_Value* lpRetVal
         ASSERT(hWrapperValue->IsFunction());
         v8::Local<v8::Function>	hWrapperFn    = hWrapperValue.As<v8::Function>();
         if(!trycatch.HasCaught()) {
-            v8::Handle<v8::Value> rgArgs[] = {hScriptString};
+            v8::Local<v8::Value> rgArgs[] = {hScriptString};
             v8::Local<v8::Value> hValue = hWrapperFn->Call(hNewThis.As<v8::Object>(), 1, rgArgs);
             if(!trycatch.HasCaught()) {
                 if(lpRetValue) {
