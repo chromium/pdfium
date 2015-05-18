@@ -153,10 +153,7 @@ static void _JpegEncode(const CFX_DIBSource* pSource, FX_LPBYTE& dest_buf, FX_ST
     }
     FX_LPBYTE line_buf = NULL;
     if (nComponents > 1) {
-        line_buf = FX_Alloc(FX_BYTE, width * nComponents);
-        if (line_buf == NULL) {
-            return;
-        }
+        line_buf = FX_Alloc2D(FX_BYTE, width, nComponents);
     }
     jpeg_set_defaults(&cinfo);
     if(quality != 75) {

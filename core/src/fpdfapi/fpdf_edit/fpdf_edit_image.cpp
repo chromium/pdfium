@@ -162,7 +162,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, FX_INT32 iCompress, IFX_F
             pCS->AddName(FX_BSTRC("Indexed"));
             pCS->AddName(FX_BSTRC("DeviceRGB"));
             pCS->AddInteger(iPalette - 1);
-            FX_LPBYTE pColorTable = FX_Alloc(FX_BYTE, iPalette * 3);
+            FX_LPBYTE pColorTable = FX_Alloc2D(FX_BYTE, iPalette, 3);
             FX_LPBYTE ptr = pColorTable;
             for (FX_INT32 i = 0; i < iPalette; i ++) {
                 FX_DWORD argb = pBitmap->GetPaletteArgb(i);

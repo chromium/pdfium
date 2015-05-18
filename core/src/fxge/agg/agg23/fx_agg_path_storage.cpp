@@ -51,10 +51,7 @@ void path_storage::allocate_block(unsigned nb)
 {
     if(nb >= m_max_blocks) {
         FX_FLOAT** new_coords =
-            FX_Alloc( FX_FLOAT*, (m_max_blocks + block_pool) * 2);
-        if (!new_coords) {
-            return;
-        }
+            FX_Alloc2D(FX_FLOAT*, m_max_blocks + block_pool, 2);
         unsigned char** new_cmds =
             (unsigned char**)(new_coords + m_max_blocks + block_pool);
         if(m_coord_blocks) {

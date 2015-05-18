@@ -254,7 +254,7 @@ void CPDF_CMapParser::ParseWord(FX_BSTR word)
             if (nSegs > 1) {
                 m_pCMap->m_CodingScheme = CPDF_CMap::MixedFourBytes;
                 m_pCMap->m_nCodeRanges = nSegs;
-                m_pCMap->m_pLeadingBytes = FX_Alloc(FX_BYTE, nSegs * sizeof(_CMap_CodeRange));
+                m_pCMap->m_pLeadingBytes = FX_Alloc2D(FX_BYTE, nSegs, sizeof(_CMap_CodeRange));
                 FXSYS_memcpy32(m_pCMap->m_pLeadingBytes, m_CodeRanges.GetData(), nSegs * sizeof(_CMap_CodeRange));
             } else if (nSegs == 1) {
                 m_pCMap->m_CodingScheme = (m_CodeRanges[0].m_CharSize == 2) ? CPDF_CMap::TwoBytes : CPDF_CMap::OneByte;

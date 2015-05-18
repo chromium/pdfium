@@ -12,6 +12,8 @@ namespace {
 const size_t kMaxByteAlloc = std::numeric_limits<size_t>::max();
 const size_t kMaxIntAlloc = kMaxByteAlloc / sizeof(int);
 const size_t kOverflowIntAlloc = kMaxIntAlloc + 100;
+const size_t kWidth = 640;
+const size_t kOverflowIntAlloc2D = kMaxIntAlloc / kWidth + 10;
 
 }  // namespace
 
@@ -33,6 +35,11 @@ TEST(fxcrt, FX_AllocOverflow) {
     EXPECT_TRUE(ptr);
     EXPECT_DEATH_IF_SUPPORTED(FX_Realloc(int, ptr, kOverflowIntAlloc), "");
     FX_Free(ptr);
+}
+
+TEST(fxcrt, FX_AllocOverflow2D) {
+    EXPECT_DEATH_IF_SUPPORTED(
+        FX_Alloc2D(int, kWidth, kOverflowIntAlloc2D), "");
 }
 
 TEST(fxcrt, DISABLED_FX_TryAllocOOM) {

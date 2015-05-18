@@ -57,10 +57,9 @@ void CTextPage::ProcessObject(CPDF_PageObject* pObject)
     CPDF_TextObject* pText = (CPDF_TextObject*)pObject;
     CPDF_Font* pFont = pText->m_TextState.GetFont();
     int count = pText->CountItems();
-    FX_FLOAT* pPosArray = FX_Alloc(FX_FLOAT, count * 2);
-    if (pPosArray) {
-        pText->CalcCharPos(pPosArray);
-    }
+    FX_FLOAT* pPosArray = FX_Alloc2D(FX_FLOAT, count, 2);
+    pText->CalcCharPos(pPosArray);
+
     FX_FLOAT fontsize_h = pText->m_TextState.GetFontSizeH();
     FX_FLOAT fontsize_v = pText->m_TextState.GetFontSizeV();
     FX_DWORD space_charcode = pFont->CharCodeFromUnicode(' ');

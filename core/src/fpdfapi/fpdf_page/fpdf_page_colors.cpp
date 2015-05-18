@@ -643,7 +643,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
         }
     }
     CPDF_Array* pRanges = pDict->GetArray(FX_BSTRC("Range"));
-    m_pRanges = FX_Alloc(FX_FLOAT, m_nComponents * 2);
+    m_pRanges = FX_Alloc2D(FX_FLOAT, m_nComponents, 2);
     for (int i = 0; i < m_nComponents * 2; i ++) {
         if (pRanges) {
             m_pRanges[i] = pRanges->GetNumber(i);
@@ -715,8 +715,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf,
             CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(m_pProfile->m_pTransform, pDestBuf, pSrcBuf, pixels);
         } else {
             if (m_pCache == NULL) {
-                ((CPDF_ICCBasedCS*)this)->m_pCache = FX_Alloc(FX_BYTE, nMaxColors * 3);
-                FX_LPBYTE temp_src = FX_Alloc(FX_BYTE, nMaxColors * m_nComponents);
+                ((CPDF_ICCBasedCS*)this)->m_pCache = FX_Alloc2D(FX_BYTE, nMaxColors, 3);
+                FX_LPBYTE temp_src = FX_Alloc2D(FX_BYTE, nMaxColors, m_nComponents);
                 FX_LPBYTE pSrc = temp_src;
                 for (int i = 0; i < nMaxColors; i ++) {
                     FX_DWORD color = i;
@@ -804,7 +804,7 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
     }
     m_pCountedBaseCS = pDocPageData->FindColorSpacePtr(m_pBaseCS->GetArray());
     m_nBaseComponents = m_pBaseCS->CountComponents();
-    m_pCompMinMax = FX_Alloc(FX_FLOAT, m_nBaseComponents * 2);
+    m_pCompMinMax = FX_Alloc2D(FX_FLOAT, m_nBaseComponents, 2);
     FX_FLOAT defvalue;
     for (int i = 0; i < m_nBaseComponents; i ++) {
         m_pBaseCS->GetDefaultValue(i, defvalue, m_pCompMinMax[i * 2], m_pCompMinMax[i * 2 + 1]);

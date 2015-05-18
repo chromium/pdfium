@@ -43,7 +43,7 @@ void CPDF_PageRenderCache::CacheOptimization(FX_INT32 dwLimitCacheSize)
         return;
     }
     int nCount = m_ImageCaches.GetCount();
-    CACHEINFO* pCACHEINFO = (CACHEINFO*)FX_Alloc(FX_BYTE, (sizeof (CACHEINFO)) * nCount);
+    CACHEINFO* pCACHEINFO = (CACHEINFO*)FX_Alloc2D(FX_BYTE, sizeof(CACHEINFO), nCount);
     FX_POSITION pos = m_ImageCaches.GetStartPosition();
     int i = 0;
     while (pos) {

@@ -189,10 +189,7 @@ void* CFX_BaseSegmentedArray::Add()
     if (m_DataSize % m_SegmentSize) {
         return GetAt(m_DataSize ++);
     }
-    void* pSegment = FX_Alloc(FX_BYTE, m_UnitSize * m_SegmentSize);
-    if (!pSegment) {
-        return NULL;
-    }
+    void* pSegment = FX_Alloc2D(FX_BYTE, m_UnitSize, m_SegmentSize);
     if (m_pIndex == NULL) {
         m_pIndex = pSegment;
         m_DataSize ++;
