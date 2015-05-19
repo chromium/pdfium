@@ -69,6 +69,12 @@ CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi, LPVOID pData, FX_BOOL
     FXSYS_memcpy32(pBitmap->GetBuffer(), pData, pitch * height);
     if (bBottomUp) {
         FX_LPBYTE temp_buf = FX_Alloc(FX_BYTE, pitch);
+        if (!temp_buf) {
+            if (pBitmap) {
+                delete pBitmap;
+            }
+            return NULL;
+        }
         int top = 0, bottom = height - 1;
         while (top < bottom) {
             FXSYS_memcpy32(temp_buf, pBitmap->GetBuffer() + top * pitch, pitch);
@@ -197,6 +203,13 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadFromDDB(HDC hDC, HBITMAP hBitmap, FX_DWORD* pP
             size += sizeof (FX_DWORD) * 254;
         }
         BITMAPINFO* pbmih = (BITMAPINFO*)FX_Alloc(FX_BYTE, size);
+        if (!pbmih) {
+            delete pDIBitmap;
+            if (bCreatedDC) {
+                DeleteDC(hDC);
+            }
+            return NULL;
+        }
         pbmih->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
         pbmih->bmiHeader.biBitCount = bmih.biBitCount;
         pbmih->bmiHeader.biCompression = BI_RGB;

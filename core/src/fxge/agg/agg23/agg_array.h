@@ -111,8 +111,12 @@ void pod_array<T>::capacity(unsigned cap, unsigned extra_tail)
         m_capacity = 0;
     } else if(full_cap > m_capacity) {
         FX_Free(m_array);
+        m_array = 0;
+        m_capacity = 0;
         m_array = FX_Alloc(T, full_cap);
-        m_capacity = full_cap;
+        if (m_array) {
+            m_capacity = full_cap;
+        }
     }
 }
 template<class T>

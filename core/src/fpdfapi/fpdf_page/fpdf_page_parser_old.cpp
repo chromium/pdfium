@@ -262,8 +262,8 @@ FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder, FX_LPBYTE& dest_b
         delete pDecoder;
         return -1;
     }
-    dest_buf = FX_Alloc2D(FX_BYTE, pitch, height);
-    dest_size = pitch * height;  // Safe since checked alloc returned.
+    dest_size = pitch * height;
+    dest_buf = FX_Alloc( FX_BYTE, dest_size);
     for (int row = 0; row < height; row ++) {
         FX_LPBYTE pLine = pDecoder->GetScanline(row);
         if (pLine == NULL) {
@@ -1050,6 +1050,10 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause)
                         m_Size += size + 1;
                     }
                     m_pData = FX_Alloc(FX_BYTE, m_Size);
+                    if (!m_pData) {
+                        m_Status = Done;
+                        return;
+                    }
                     FX_DWORD pos = 0;
                     for (i = 0; i < m_nStreams; i ++) {
                         FXSYS_memcpy32(m_pData + pos, m_pStreamArray[i]->GetData(), m_pStreamArray[i]->GetSize());

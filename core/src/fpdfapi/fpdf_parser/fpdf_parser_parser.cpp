@@ -2477,6 +2477,9 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict, PARSE_CONTEXT
     }
     CPDF_Stream* pStream;
     FX_LPBYTE pData = FX_Alloc(FX_BYTE, len);
+    if (!pData) {
+        return NULL;
+    }
     ReadBlock(pData, len);
     if (pCryptoHandler) {
         CFX_BinaryBuf dest_buf;

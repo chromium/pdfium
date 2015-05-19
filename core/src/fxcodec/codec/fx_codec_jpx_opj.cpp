@@ -715,8 +715,14 @@ FX_BOOL CJPX_Decoder::Decode(FX_LPBYTE dest_buf, int pitch, FX_BOOL bTranslateCo
     }
     FXSYS_memset8(dest_buf, 0xff, image->y1 * pitch);
     FX_BYTE** channel_bufs = FX_Alloc(FX_BYTE*, image->numcomps);
+    if (channel_bufs == NULL) {
+        return FALSE;
+    }
     FX_BOOL result = FALSE;
     int* adjust_comps = FX_Alloc(int, image->numcomps);
+    if (adjust_comps == NULL) {
+        goto done;
+    }
     for (i = 0; i < (int)image->numcomps; i ++) {
         channel_bufs[i] = dest_buf + offsets[i];
         adjust_comps[i] = image->comps[i].prec - 8;

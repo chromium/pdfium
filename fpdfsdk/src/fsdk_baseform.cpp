@@ -2352,10 +2352,13 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(FX_LPBYTE& pBuf, FX_STRSIZE& nBuf
   			if(i != pFields->GetCount()-1)
   				fdfEncodedData = fdfEncodedData<<"&";
  		}
-
+		
 		nBufSize = fdfEncodedData.GetLength();
 		pBuf = FX_Alloc(FX_BYTE, nBufSize);
+		if(!pBuf)
+			return FALSE;
 		FXSYS_memcpy(pBuf, fdfEncodedData.GetBuffer(), nBufSize);
+ 		
  	}
 	return TRUE;
 }

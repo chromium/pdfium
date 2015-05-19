@@ -203,6 +203,9 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pChar
     CFX_FaceCache* pFaceCache = pCache->GetCachedFace(pFont);
     FX_FONTCACHE_DEFINE(pCache, pFont);
     FXTEXT_GLYPHPOS* pGlyphAndPos = FX_Alloc(FXTEXT_GLYPHPOS, nChars);
+    if (!pGlyphAndPos) {
+        return FALSE;
+    }
     int iChar;
     deviceCtm = char2device;
     CFX_AffineMatrix matrixCTM = GetCTM();

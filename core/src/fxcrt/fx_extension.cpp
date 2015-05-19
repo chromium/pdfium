@@ -275,6 +275,9 @@ extern "C" {
 FX_LPVOID FX_Random_MT_Start(FX_DWORD dwSeed)
 {
     FX_LPMTRANDOMCONTEXT pContext = FX_Alloc(FX_MTRANDOMCONTEXT, 1);
+    if (!pContext) {
+        return NULL;
+    }
     pContext->mt[0] = dwSeed;
     FX_DWORD &i = pContext->mti;
     FX_LPDWORD pBuf = pContext->mt;

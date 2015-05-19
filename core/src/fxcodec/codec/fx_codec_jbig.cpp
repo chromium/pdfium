@@ -53,6 +53,9 @@ FX_BOOL CCodec_Jbig2Module::Decode(IFX_FileRead* file_ptr,
     CJBig2_Image* dest_image = NULL;
     FX_DWORD src_size = (FX_DWORD)file_ptr->GetSize();
     FX_LPBYTE src_buf = FX_Alloc(FX_BYTE, src_size);
+    if (src_buf == NULL) {
+        return FALSE;
+    }
     int ret = 0;
     if(!file_ptr->ReadBlock(src_buf, 0, src_size)) {
         goto failed;
@@ -130,6 +133,9 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context, IFX_FileRead
     m_pJbig2Context->m_dest_image = NULL;
     m_pJbig2Context->m_src_size = (FX_DWORD)file_ptr->GetSize();
     m_pJbig2Context->m_src_buf = FX_Alloc(FX_BYTE, m_pJbig2Context->m_src_size);
+    if (m_pJbig2Context->m_src_buf == NULL) {
+        return FXCODEC_STATUS_ERR_MEMORY;
+    }
     int ret = 0;
     if(!file_ptr->ReadBlock((void*)m_pJbig2Context->m_src_buf, 0, m_pJbig2Context->m_src_size)) {
         goto failed;

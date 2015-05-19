@@ -500,6 +500,9 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode, FX
         return NULL;
     }
     DIB_COMP_DATA* pCompData = FX_Alloc(DIB_COMP_DATA, m_nComponents);
+    if (pCompData == NULL) {
+        return NULL;
+    }
     int max_data = (1 << m_bpc) - 1;
     CPDF_Array* pDecode = m_pDict->GetArray(FX_BSTRC("Decode"));
     if (pDecode) {

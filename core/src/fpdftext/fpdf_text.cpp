@@ -223,42 +223,44 @@ void CTextPage::WriteOutput(CFX_WideStringArray& lines, int iMinWidth)
     }
     if (m_bAutoWidth) {
         int* widths = FX_Alloc(int, m_BaseLines.GetSize());
-        for (i = 0; i < m_BaseLines.GetSize(); i ++) {
-            widths[i] = 0;
-            CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
-            int TotalChars = 0;
-            FX_FLOAT TotalWidth = 0;
-            int minchars;
-            pBaseLine->CountChars(TotalChars, TotalWidth, minchars);
-            if (TotalChars) {
-                FX_FLOAT charwidth = TotalWidth / TotalChars;
-                widths[i] = (int)((MaxRightX - MinLeftX) / charwidth);
+        if (widths) {
+            for (i = 0; i < m_BaseLines.GetSize(); i ++) {
+                widths[i] = 0;
+                CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
+                int TotalChars = 0;
+                FX_FLOAT TotalWidth = 0;
+                int minchars;
+                pBaseLine->CountChars(TotalChars, TotalWidth, minchars);
+                if (TotalChars) {
+                    FX_FLOAT charwidth = TotalWidth / TotalChars;
+                    widths[i] = (int)((MaxRightX - MinLeftX) / charwidth);
+                }
+                if (widths[i] > 1000) {
+                    widths[i] = 1000;
+                }
+                if (widths[i] < minchars) {
+                    widths[i] = minchars;
+                }
             }
-            if (widths[i] > 1000) {
-                widths[i] = 1000;
+            int AvgWidth = 0, widthcount = 0;
+            for (i = 0; i < m_BaseLines.GetSize(); i ++)
+                if (widths[i]) {
+                    AvgWidth += widths[i];
+                    widthcount ++;
+                }
+            AvgWidth = int((FX_FLOAT)AvgWidth / widthcount + 0.5);
+            int MaxWidth = 0;
+            for (i = 0; i < m_BaseLines.GetSize(); i ++)
+                if (MaxWidth < widths[i]) {
+                    MaxWidth = widths[i];
+                }
+            if (MaxWidth > AvgWidth * 6 / 5) {
+                MaxWidth = AvgWidth * 6 / 5;
             }
-            if (widths[i] < minchars) {
-                widths[i] = minchars;
+            FX_Free(widths);
+            if (iMinWidth < MaxWidth) {
+                iMinWidth = MaxWidth;
             }
-        }
-        int AvgWidth = 0, widthcount = 0;
-        for (i = 0; i < m_BaseLines.GetSize(); i ++)
-            if (widths[i]) {
-                AvgWidth += widths[i];
-                widthcount ++;
-            }
-        AvgWidth = int((FX_FLOAT)AvgWidth / widthcount + 0.5);
-        int MaxWidth = 0;
-        for (i = 0; i < m_BaseLines.GetSize(); i ++)
-            if (MaxWidth < widths[i]) {
-                MaxWidth = widths[i];
-            }
-        if (MaxWidth > AvgWidth * 6 / 5) {
-            MaxWidth = AvgWidth * 6 / 5;
-        }
-        FX_Free(widths);
-        if (iMinWidth < MaxWidth) {
-            iMinWidth = MaxWidth;
         }
     }
     for (i = 0; i < m_BaseLines.GetSize(); i ++) {

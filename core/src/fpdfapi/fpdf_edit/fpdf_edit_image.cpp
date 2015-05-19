@@ -71,11 +71,17 @@ void CPDF_Image::SetJpegImage(IFX_FileRead *pFile)
         dwEstimateSize = 8192;
     }
     FX_LPBYTE pData = FX_Alloc(FX_BYTE, dwEstimateSize);
+    if (!pData) {
+        return;
+    }
     pFile->ReadBlock(pData, 0, dwEstimateSize);
     CPDF_Dictionary *pDict = InitJPEG(pData, dwEstimateSize);
     FX_Free(pData);
     if (!pDict && size > dwEstimateSize) {
         pData = FX_Alloc(FX_BYTE, size);
+        if (!pData) {
+            return;
+        }
         pFile->ReadBlock(pData, 0, size);
         pDict = InitJPEG(pData, size);
         FX_Free(pData);
@@ -217,8 +223,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, FX_INT32 iCompress, IFX_F
         } else if (pMaskBitmap->GetFormat() == FXDIB_1bppMask) {
             _JBIG2EncodeBitmap(pMaskDict, pMaskBitmap, m_pDocument, mask_buf, mask_size, TRUE);
         } else {
-            mask_buf = FX_Alloc2D(FX_BYTE, maskHeight, maskWidth);
-            mask_size = maskHeight * maskWidth;  // Safe since checked alloc returned.
+            mask_size = maskHeight * maskWidth;
+            mask_buf = FX_Alloc(FX_BYTE, mask_size);
             for (FX_INT32 a = 0; a < maskHeight; a ++) {
                 FXSYS_memcpy32(mask_buf + a * maskWidth, pMaskBitmap->GetScanline(a), maskWidth);
             }
@@ -300,8 +306,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, FX_INT32 iCompress, IFX_F
         }
     } else if (opType == 1) {
         if (!bStream) {
-            dest_buf = FX_Alloc2D(FX_BYTE, dest_pitch, BitmapHeight);
-            dest_size = dest_pitch * BitmapHeight;  // Safe since checked alloc returned.
+            dest_size = dest_pitch * BitmapHeight;
+            dest_buf = FX_Alloc(FX_BYTE, dest_size);
         }
         FX_LPBYTE pDest = dest_buf;
         for (FX_INT32 i = 0; i < BitmapHeight; i ++) {
@@ -315,8 +321,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, FX_INT32 iCompress, IFX_F
         }
     } else if (opType == 2) {
         if (!bStream) {
-            dest_buf = FX_Alloc2D(FX_BYTE, dest_pitch, BitmapHeight);
-            dest_size = dest_pitch * BitmapHeight;  // Safe since checked alloc returned.
+            dest_size = dest_pitch * BitmapHeight;
+            dest_buf = FX_Alloc(FX_BYTE, dest_size);
         } else {
             dest_buf = FX_Alloc(FX_BYTE, dest_pitch);
         }

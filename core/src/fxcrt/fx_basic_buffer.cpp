@@ -88,8 +88,10 @@ void CFX_BinaryBuf::ExpandBuf(FX_STRSIZE add_size)
     } else {
         pNewBuffer = FX_Alloc(FX_BYTE, new_size);
     }
-    m_pBuffer = pNewBuffer;
-    m_AllocSize = new_size;
+    if (pNewBuffer) {
+        m_pBuffer = pNewBuffer;
+        m_AllocSize = new_size;
+    }
 }
 void CFX_BinaryBuf::CopyData(const void* pStr, FX_STRSIZE size)
 {
@@ -454,6 +456,9 @@ FX_INT32 IFX_BufferArchive::AppendBlock(const void* pBuf, size_t size)
     }
     if (!m_pBuffer) {
         m_pBuffer = FX_Alloc(FX_BYTE, m_BufSize);
+        if (!m_pBuffer) {
+            return -1;
+        }
     }
     FX_LPBYTE buffer = (FX_LPBYTE)pBuf;
     FX_STRSIZE temp_size = (FX_STRSIZE)size;

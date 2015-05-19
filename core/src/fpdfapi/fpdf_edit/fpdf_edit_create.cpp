@@ -415,6 +415,9 @@ FX_BOOL CPDF_Encryptor::Initialize(CPDF_CryptoHandler* pHandler, int objnum, FX_
     }
     m_dwSize = pHandler->EncryptGetSize(objnum, 0, src_data, src_size);
     m_pData = FX_Alloc(FX_BYTE, m_dwSize);
+    if(!m_pData) {
+        return FALSE;
+    }
     pHandler->EncryptContent(objnum, 0, src_data, src_size, m_pData, m_dwSize);
     m_bNewBuf = TRUE;
     return TRUE;

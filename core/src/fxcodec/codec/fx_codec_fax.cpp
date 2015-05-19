@@ -622,7 +622,13 @@ FX_BOOL CCodec_FaxDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_size, int wid
     m_OutputWidth = m_OrigWidth;
     m_OutputHeight = m_OrigHeight;
     m_pScanlineBuf = FX_Alloc(FX_BYTE, m_Pitch);
+    if (m_pScanlineBuf == NULL) {
+        return FALSE;
+    }
     m_pRefBuf = FX_Alloc(FX_BYTE, m_Pitch);
+    if (m_pRefBuf == NULL) {
+        return FALSE;
+    }
     m_pSrcBuf = src_buf;
     m_SrcSize = src_size;
     m_nComps = 1;
@@ -699,6 +705,9 @@ extern "C" {
             pitch = (width + 7) / 8;
         }
         FX_LPBYTE ref_buf = FX_Alloc(FX_BYTE, pitch);
+        if (ref_buf == NULL) {
+            return;
+        }
         FXSYS_memset8(ref_buf, 0xff, pitch);
         int bitpos = *pbitpos;
         for (int iRow = 0; iRow < height; iRow ++) {
@@ -936,6 +945,9 @@ CCodec_FaxEncoder::CCodec_FaxEncoder(FX_LPCBYTE src_buf, int width, int height, 
     m_Rows = height;
     m_Pitch = pitch;
     m_pRefLine = FX_Alloc(FX_BYTE, m_Pitch);
+    if (m_pRefLine == NULL) {
+        return;
+    }
     FXSYS_memset8(m_pRefLine, 0xff, m_Pitch);
     m_pLineBuf = FX_Alloc2D(FX_BYTE, m_Pitch, 8);
     m_DestBuf.EstimateSize(0, 10240);
