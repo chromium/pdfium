@@ -40,9 +40,6 @@ FX_DWORD _A85Decode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_b
         return (FX_DWORD) - 1;
     }
     dest_buf = FX_Alloc(FX_BYTE, zcount * 4 + (pos - zcount));
-    if (dest_buf == NULL) {
-        return (FX_DWORD) - 1;
-    }
     int state = 0;
     FX_UINT32 res = 0;
     pos = dest_size = 0;
@@ -153,9 +150,6 @@ FX_DWORD RunLengthDecode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& d
         return -1;
     }
     dest_buf = FX_Alloc( FX_BYTE, dest_size);
-    if (!dest_buf) {
-        return -1;
-    }
     i = 0;
     int dest_count = 0;
     while (i < src_size) {

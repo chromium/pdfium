@@ -71,9 +71,6 @@ void path_storage::allocate_block(unsigned nb)
         FX_Alloc( FX_FLOAT, block_size * 2 +
                   block_size /
                   (sizeof(FX_FLOAT) / sizeof(unsigned char)));
-    if (!m_coord_blocks[nb]) {
-        return;
-    }
     m_cmd_blocks[nb]  =
         (unsigned char*)(m_coord_blocks[nb] + block_size * 2);
     m_total_blocks++;

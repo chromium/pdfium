@@ -655,9 +655,6 @@ static HPEN _CreatePen(const CFX_GraphStateData* pGraphState, const CFX_AffineMa
     FX_DWORD* pDash = NULL;
     if (pGraphState->m_DashCount) {
         pDash = FX_Alloc(FX_DWORD, pGraphState->m_DashCount);
-        if (!pDash) {
-            return NULL;
-        }
         for (int i = 0; i < pGraphState->m_DashCount; i ++) {
             pDash[i] = FXSYS_round(pMatrix ? pMatrix->TransformDistance(pGraphState->m_DashArray[i]) : pGraphState->m_DashArray[i]);
             if (pDash[i] < 1) {

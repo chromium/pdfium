@@ -204,11 +204,10 @@ void CPDF_TextObject::CopyData(const CPDF_PageObject* pSrc)
     if (m_nChars > 1) {
         m_pCharCodes = FX_Alloc(FX_DWORD, m_nChars);
         m_pCharPos = FX_Alloc(FX_FLOAT, m_nChars - 1);
-        int i;
-        for (i = 0; i < m_nChars; i ++) {
+        for (int i = 0; i < m_nChars; i ++) {
             m_pCharCodes[i] = pSrcObj->m_pCharCodes[i];
         }
-        for (i = 0; i < m_nChars - 1; i ++) {
+        for (int i = 0; i < m_nChars - 1; i ++) {
             m_pCharPos[i] = pSrcObj->m_pCharPos[i];
         }
     } else {

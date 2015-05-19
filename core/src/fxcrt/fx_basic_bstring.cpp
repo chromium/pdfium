@@ -73,9 +73,6 @@ CFX_ByteString::StringData* CFX_ByteString::StringData::Create(int nLen)
     FXSYS_assert(usableSize >= nLen);
 
     void* pData = FX_Alloc(FX_BYTE, totalSize);
-    if (!pData) {
-        return NULL;
-    }
     return new (pData) StringData(nLen, usableSize);
 }
 CFX_ByteString::~CFX_ByteString()

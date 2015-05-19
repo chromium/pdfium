@@ -426,17 +426,15 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser
 				gsd.m_LineWidth = (FX_FLOAT)GetBorderWidth();
 
 				CFX_PathData path;
-				if (!path.SetPointCount(nCharArraySafe.ValueOrDie())) {
-					return;
-				}
-				
+				path.SetPointCount(nCharArraySafe.ValueOrDie());
+
 				for (FX_INT32 i=0; i<nCharArray-1; i++)
-				{					
-					path.SetPoint(i*2, rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*(i+1), 
+				{
+					path.SetPoint(i*2, rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*(i+1),
 						rcClient.bottom, FXPT_MOVETO);
 					path.SetPoint(i*2+1, rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*(i+1),
-						rcClient.top, FXPT_LINETO);											
-				}			
+						rcClient.top, FXPT_LINETO);
+				}
 				if (path.GetPointCount() > 0)
 					pDevice->DrawPath(&path, pUser2Device, &gsd,0,  
 						CPWL_Utils::PWLColorToFXColor(GetBorderColor(),255), FXFILL_ALTERNATE);
@@ -453,19 +451,17 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser
 				gsd.m_DashPhase = (FX_FLOAT)GetBorderDash().nPhase;
 
 				CFX_PathData path;
-				if (!path.SetPointCount(nCharArraySafe.ValueOrDie())) {
-					return;
-				}
-				
+				path.SetPointCount(nCharArraySafe.ValueOrDie());
+
 				for (FX_INT32 i=0; i<nCharArray-1; i++)
-				{					
-					path.SetPoint(i*2, rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*(i+1), 
+				{
+					path.SetPoint(i*2, rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*(i+1),
 						rcClient.bottom, FXPT_MOVETO);
 					path.SetPoint(i*2+1, rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*(i+1),
-						rcClient.top, FXPT_LINETO);											
-				}		
+						rcClient.top, FXPT_LINETO);
+				}
 				if (path.GetPointCount() > 0)
-					pDevice->DrawPath(&path, pUser2Device, &gsd,0,  
+					pDevice->DrawPath(&path, pUser2Device, &gsd,0,
 						CPWL_Utils::PWLColorToFXColor(GetBorderColor(),255), FXFILL_ALTERNATE);
 			}
 			break;

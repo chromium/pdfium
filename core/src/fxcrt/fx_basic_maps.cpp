@@ -413,9 +413,7 @@ static void _CompactStringStore(_CompactString* pCompact, FX_LPCBYTE pStr, int l
     pCompact->m_LenHigh = len / 256;
     pCompact->m_LenLow = len % 256;
     pCompact->m_pBuffer = FX_Alloc(FX_BYTE, len);
-    if (pCompact->m_pBuffer) {
-        FXSYS_memcpy32(pCompact->m_pBuffer, pStr, len);
-    }
+    FXSYS_memcpy32(pCompact->m_pBuffer, pStr, len);
 }
 static CFX_ByteStringC _CompactStringGet(_CompactString* pCompact)
 {

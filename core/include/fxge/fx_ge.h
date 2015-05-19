@@ -186,11 +186,9 @@ public:
         return m_pPoints;
     }
 
-    FX_BOOL				SetPointCount(int nPoints);
-
-    FX_BOOL				AllocPointCount(int nPoints);
-
-    FX_BOOL				AddPointCount(int addPoints);
+    void SetPointCount(int nPoints);
+    void AllocPointCount(int nPoints);
+    void AddPointCount(int addPoints);
 
     CFX_FloatRect		GetBoundingBox() const;
 
@@ -204,15 +202,14 @@ public:
 
     FX_BOOL				IsRect(const CFX_AffineMatrix* pMatrix, CFX_FloatRect* rect) const;
 
-    FX_BOOL				Append(const CFX_PathData* pSrc, const CFX_AffineMatrix* pMatrix);
-
-    FX_BOOL				AppendRect(FX_FLOAT left, FX_FLOAT bottom, FX_FLOAT right, FX_FLOAT top);
+    void Append(const CFX_PathData* pSrc, const CFX_AffineMatrix* pMatrix);
+    void AppendRect(FX_FLOAT left, FX_FLOAT bottom, FX_FLOAT right, FX_FLOAT top);
 
     void				SetPoint(int index, FX_FLOAT x, FX_FLOAT y, int flag);
 
     void				TrimPoints(int nPoints);
 
-    FX_BOOL				Copy(const CFX_PathData &src);
+    void Copy(const CFX_PathData &src);
 protected:
     friend class		CPDF_Path;
 

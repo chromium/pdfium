@@ -169,9 +169,6 @@ FX_BOOL FX_File_Copy(FX_BSTR fileNameSrc, FX_BSTR fileNameDst)
     }
     FX_FILESIZE num = 0;
     FX_LPBYTE pBuffer = FX_Alloc(FX_BYTE, 32768);
-    if (!pBuffer) {
-        return FALSE;
-    }
     while (num = src.Read(pBuffer, 32768)) {
         if (dst.Write(pBuffer, num) != num) {
             break;
