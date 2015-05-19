@@ -104,9 +104,6 @@ extern "C" {
 FX_BOOL _LoadFile(FXFT_Library library, FXFT_Face* Face, IFX_FileRead* pFile, FXFT_Stream* stream)
 {
     FXFT_Stream stream1 = (FXFT_Stream)FX_Alloc(FX_BYTE, sizeof (FXFT_StreamRec));
-    if (!stream1) {
-        return FALSE;
-    }
     stream1->base = NULL;
     stream1->size = (unsigned long)pFile->GetSize();
     stream1->pos = 0;
@@ -177,9 +174,6 @@ static FXFT_Face FT_LoadFont(FX_LPBYTE pData, int size)
 FX_BOOL CFX_Font::LoadEmbedded(FX_LPCBYTE data, FX_DWORD size)
 {
     m_pFontDataAllocation = FX_Alloc(FX_BYTE, size);
-    if (!m_pFontDataAllocation) {
-        return FALSE;
-    }
     FXSYS_memcpy32(m_pFontDataAllocation, data, size);
     m_Face = FT_LoadFont((FX_LPBYTE)m_pFontDataAllocation, size);
     m_pFontData = (FX_LPBYTE)m_pFontDataAllocation;

@@ -39,10 +39,6 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
             return FALSE;
         }
         m_pData = FX_Alloc(FX_BYTE, totalSize.ValueOrDie());
-        if (!m_pData) {
-            m_nSize = m_nMaxSize = 0;
-            return FALSE;
-        }
         m_nSize = m_nMaxSize = nNewSize;
     } else if (nNewSize <= m_nMaxSize) {
         if (nNewSize > m_nSize) {
@@ -197,10 +193,6 @@ void* CFX_BaseSegmentedArray::Add()
     }
     if (m_IndexDepth == 0) {
         void** pIndex = (void**)FX_Alloc(void*, m_IndexSize);
-        if (pIndex == NULL) {
-            FX_Free(pSegment);
-            return NULL;
-        }
         pIndex[0] = m_pIndex;
         pIndex[1] = pSegment;
         m_pIndex = pIndex;
@@ -222,10 +214,6 @@ void* CFX_BaseSegmentedArray::Add()
     }
     if (m_DataSize == tree_size * m_SegmentSize) {
         void** pIndex = (void**)FX_Alloc(void*, m_IndexSize);
-        if (pIndex == NULL) {
-            FX_Free(pSegment);
-            return NULL;
-        }
         pIndex[0] = m_pIndex;
         m_pIndex = pIndex;
         m_IndexDepth ++;
@@ -236,9 +224,6 @@ void* CFX_BaseSegmentedArray::Add()
     for (i = 1; i < m_IndexDepth; i ++) {
         if (pSpot[seg_index / tree_size] == NULL) {
             pSpot[seg_index / tree_size] = (void*)FX_Alloc(void*, m_IndexSize);
-            if (pSpot[seg_index / tree_size] == NULL) {
-                break;
-            }
         }
         pSpot = (void**)pSpot[seg_index / tree_size];
         seg_index = seg_index % tree_size;

@@ -348,9 +348,7 @@ public:
         if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
             if (m_Blocks.GetSize() < 1) {
                 FX_LPBYTE pBlock = FX_Alloc(FX_BYTE, FX_MAX(nInitSize, 4096));
-                if (pBlock) {
-                    m_Blocks.Add(pBlock);
-                }
+                m_Blocks.Add(pBlock);
             }
             m_nGrowSize = FX_MAX(nGrowSize, 4096);
         } else if (m_Blocks.GetSize() < 1) {
@@ -407,9 +405,6 @@ protected:
         m_Blocks.SetSize(m_Blocks.GetSize() + (FX_INT32)size);
         while (size --) {
             FX_LPBYTE pBlock = FX_Alloc(FX_BYTE, m_nGrowSize);
-            if (!pBlock) {
-                return FALSE;
-            }
             m_Blocks.SetAt(iCount ++, pBlock);
             m_nTotalSize += m_nGrowSize;
         }

@@ -796,14 +796,8 @@ FX_BOOL CFX_ImageStretcher::StartQuickStretch()
     }
     size *= m_DestBPP;
     m_pScanline = FX_Alloc(FX_BYTE, (size / 8 + 3) / 4 * 4);
-    if (!m_pScanline) {
-        return FALSE;
-    }
     if (m_pSource->m_pAlphaMask) {
         m_pMaskScanline = FX_Alloc(FX_BYTE, (m_ClipRect.Width() + 3) / 4 * 4);
-        if (!m_pMaskScanline) {
-            return FALSE;
-        }
     }
     if (m_pSource->GetWidth() * m_pSource->GetHeight() < MAX_PROGRESSIVE_STRETCH_PIXELS) {
         ContinueQuickStretch(NULL);

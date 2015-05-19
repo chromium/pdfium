@@ -1086,7 +1086,7 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream, FX_BOOL bRawAccess,
     }
     if (!pStream->IsMemoryBased()) {
         pSrcData = m_pSrcData = FX_Alloc(FX_BYTE, dwSrcSize);
-        if (!pSrcData || !pStream->ReadRawData(0, pSrcData, dwSrcSize)) {
+        if (!pStream->ReadRawData(0, pSrcData, dwSrcSize)) {
             return;
         }
     } else {
@@ -1165,9 +1165,6 @@ FX_LPBYTE CPDF_StreamAcc::DetachData()
         return p;
     }
     FX_LPBYTE p = FX_Alloc(FX_BYTE, m_dwSize);
-    if (p == NULL) {
-        return NULL;
-    }
     FXSYS_memcpy32(p, m_pData, m_dwSize);
     return p;
 }

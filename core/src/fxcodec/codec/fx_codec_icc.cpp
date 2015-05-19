@@ -285,9 +285,6 @@ ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(IFX_FileRead* pFile)
     ICodec_IccModule::IccCS cs;
     FX_DWORD dwSize = (FX_DWORD)pFile->GetSize();
     FX_LPBYTE pBuf = FX_Alloc(FX_BYTE, dwSize);
-    if (pBuf == NULL) {
-        return IccCS_Unknown;
-    }
     pFile->ReadBlock(pBuf, 0, dwSize);
     cs = GetProfileCS(pBuf, dwSize);
     FX_Free(pBuf);
@@ -491,9 +488,6 @@ FX_LPVOID CCodec_IccModule::CreateTransform(ICodec_IccModule::IccParam* pInputPa
     CFX_IccTransformCache* pTransformCache;
     if (!m_MapTranform.Lookup(TransformKey, (FX_LPVOID&)pTransformCache)) {
         pCmm = FX_Alloc(CLcmsCmm, 1);
-        if (pCmm == NULL) {
-            return NULL;
-        }
         pCmm->m_nSrcComponents = T_CHANNELS(dwInputProfileType);
         pCmm->m_nDstComponents = T_CHANNELS(dwOutputProfileType);
         pCmm->m_bLab = T_COLORSPACE(pInputParam->dwFormat) == PT_Lab;
