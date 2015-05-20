@@ -88,47 +88,44 @@ void ParserStream( CPDF_Dictionary * pPageDic, CPDF_Dictionary* pStream, CPDF_Re
 
 int ParserAnnots( CPDF_Document* pSourceDoc, CPDF_Dictionary * pPageDic, CPDF_RectArray * pRectArray, CPDF_ObjectArray * pObjectArray, int nUsage)
 {
-	if (!pSourceDoc || !pPageDic) return FLATTEN_FAIL;
-	
-	GetContentsRect( pSourceDoc, pPageDic, pRectArray );
-	CPDF_Array* pAnnots = pPageDic->GetArray("Annots");
-	if (pAnnots)
-	{
-		FX_DWORD dwSize = pAnnots->GetCount();
-		
-		for (int i = 0; i < (int)dwSize; i++)
-		{
-			CPDF_Object* pObj = pAnnots->GetElementValue(i);
-			
-			if (!pObj)continue;
-			
-			if (pObj->GetType() == PDFOBJ_DICTIONARY)
-			{
-				CPDF_Dictionary* pAnnotDic = (CPDF_Dictionary*)pObj;
-				CFX_ByteString sSubtype = pAnnotDic->GetString("Subtype");
-				if (sSubtype == "Popup")continue;
+    if (!pSourceDoc || !pPageDic)
+        return FLATTEN_FAIL;
 
-				int nAnnotFlag = pAnnotDic->GetInteger("F");
+    GetContentsRect( pSourceDoc, pPageDic, pRectArray );
+    CPDF_Array* pAnnots = pPageDic->GetArray("Annots");
+    if (!pAnnots)
+        return FLATTEN_NOTHINGTODO;
 
-				if(nAnnotFlag & ANNOTFLAG_HIDDEN) 
-					continue;
-				if(nUsage == FLAT_NORMALDISPLAY)
-				{
-					if(nAnnotFlag & ANNOTFLAG_INVISIBLE)
-						continue;
-					ParserStream( pPageDic, pAnnotDic, pRectArray, pObjectArray );		
-				}
-				else
-				{
-					if(nAnnotFlag & ANNOTFLAG_PRINT)
-						ParserStream( pPageDic, pAnnotDic, pRectArray, pObjectArray );
-				}			
-			}
-		}
-		return FLATTEN_SUCCESS;
-	}else{
-		return FLATTEN_NOTINGTODO;
-	}
+    FX_DWORD dwSize = pAnnots->GetCount();
+    for (int i = 0; i < (int)dwSize; i++)
+    {
+        CPDF_Object* pObj = pAnnots->GetElementValue(i);
+        if (!pObj || pObj->GetType() != PDFOBJ_DICTIONARY)
+            continue;
+
+        CPDF_Dictionary* pAnnotDic = (CPDF_Dictionary*)pObj;
+        CFX_ByteString sSubtype = pAnnotDic->GetString("Subtype");
+        if (sSubtype == "Popup")
+            continue;
+
+        int nAnnotFlag = pAnnotDic->GetInteger("F");
+        if (nAnnotFlag & ANNOTFLAG_HIDDEN)
+            continue;
+
+        if(nUsage == FLAT_NORMALDISPLAY)
+        {
+            if (nAnnotFlag & ANNOTFLAG_INVISIBLE)
+                continue;
+
+            ParserStream( pPageDic, pAnnotDic, pRectArray, pObjectArray );
+        }
+        else
+        {
+            if (nAnnotFlag & ANNOTFLAG_PRINT)
+                ParserStream( pPageDic, pAnnotDic, pRectArray, pObjectArray );
+        }
+    }
+    return FLATTEN_SUCCESS;
 }
 
 
@@ -351,14 +348,9 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 
 	int iRet = FLATTEN_FAIL;
 	iRet = ParserAnnots( pDocument, pPageDict, &RectArray, &ObjectArray, nFlag);
-	if (iRet == FLATTEN_NOTINGTODO)
-	{
-		return FLATTEN_NOTINGTODO;
-	}else if (iRet == FLATTEN_FAIL)
-	{
-		return FLATTEN_FAIL;
-	}
-	
+	if (iRet == FLATTEN_NOTHINGTODO || iRet == FLATTEN_FAIL)
+		return iRet;
+
 	CPDF_Rect rcOriginalCB;
 	CPDF_Rect rcMerger = CalculateRect( &RectArray );
 	CPDF_Rect rcOriginalMB = pPageDict->GetRect("MediaBox");

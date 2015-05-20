@@ -100,8 +100,6 @@ typedef const unsigned short* FPDF_STRING;
 typedef const char* FPDF_STRING;
 #endif
 
-#ifndef _FS_DEF_MATRIX_
-#define _FS_DEF_MATRIX_
 /** @brief Matrix for transformation. */
 typedef struct _FS_MATRIX_
 {
@@ -112,10 +110,7 @@ typedef struct _FS_MATRIX_
     float   e;  /**< @brief Coefficient e.*/
     float   f;  /**< @brief Coefficient f.*/
 } FS_MATRIX;
-#endif
 
-#ifndef _FS_DEF_RECTF_
-#define _FS_DEF_RECTF_
 /** @brief Rectangle area(float) in device or page coordination system. */
 typedef struct _FS_RECTF_
 {
@@ -132,7 +127,6 @@ typedef struct _FS_RECTF_
 }* FS_LPRECTF, FS_RECTF;
 /** @brief Const Pointer to ::FS_RECTF structure.*/
 typedef const FS_RECTF* FS_LPCRECTF;
-#endif
 
 #if defined(_WIN32) && defined(FPDFSDK_EXPORTS)
 // On Windows system, functions are exported in a DLL
@@ -142,9 +136,6 @@ typedef const FS_RECTF* FS_LPCRECTF;
 #define DLLEXPORT
 #define STDCALL
 #endif
-
-extern const char g_ExpireDate[];
-extern const char g_ModuleCodes[];
 
 // Exported Functions
 #ifdef __cplusplus
@@ -159,9 +150,7 @@ extern "C" {
 //          None.
 // Comments:
 //          You have to call this function before you can call any PDF processing functions.
-
 DLLEXPORT void STDCALL FPDF_InitLibrary();
-
 
 // Function: FPDF_DestroyLibary
 //          Release all resources allocated by the FPDFSDK library.
@@ -186,19 +175,20 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary();
 //          None.
 DLLEXPORT void  STDCALL FPDF_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 
-/**
-* Open and load a PDF document.
-* @param[in] file_path  -   Path to the PDF file (including extension).
-* @param[in] password   -   A string used as the password for PDF file.
-*                           If no password needed, empty or NULL can be used.
-* @note     Loaded document can be closed by FPDF_CloseDocument.
-*           If this function fails, you can use FPDF_GetLastError() to retrieve
-*           the reason why it fails.
-*           The application should call ::FPDF_LoadXFA function after PDF document loaded
-*           to support XFA fields in fpdfformfill.h file.
-*
-* @retval   A handle to the loaded document. If failed, NULL is returned.
-*/
+// Function: FPDF_LoadDocument
+//          Open and load a PDF document.
+// Parameters:
+//          file_path [in] -  Path to the PDF file (including extension).
+//          password [in]  -  A string used as the password for PDF file.
+//                            If no password needed, empty or NULL can be used.
+// Return value:
+//          A handle to the loaded document, or NULL on failure.
+// Comments:
+//          Loaded document can be closed by FPDF_CloseDocument().
+//          If this function fails, you can use FPDF_GetLastError() to retrieve
+//          the reason why it failed.
+//          The application should call ::FPDF_LoadXFA function after PDF document loaded
+//          to support XFA fields in fpdfformfill.h file.
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
     FPDF_BYTESTRING password);
 
@@ -436,7 +426,6 @@ DLLEXPORT double STDCALL FPDF_GetPageHeight(FPDF_PAGE page);
 //          Non-zero for success. 0 for error (document or page not found).
 //
 DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document, int page_index, double* width, double* height);
-
 
 // Page rendering flags. They can be combined with bit OR.
 #define FPDF_ANNOT          0x01        // Set if annotations are to be rendered.
