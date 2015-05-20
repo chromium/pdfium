@@ -161,6 +161,10 @@
     'ldflags': [
       '-pthread',
     ],
+    'defines': [
+      # Don't use deprecated V8 APIs anywhere.
+      'V8_DEPRECATION_WARNINGS',
+    ],
     'msvs_cygwin_dirs': ['<(DEPTH)/v8/third_party/cygwin'],
     'msvs_configuration_attributes': {
       'OutputDirectory': '<(DEPTH)\\build\\$(ConfigurationName)',
