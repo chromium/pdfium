@@ -674,9 +674,6 @@ FX_BOOL CCodec_RLScanlineDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_size, 
     m_Pitch = (width * nComps * bpc + 31) / 32 * 4;
     m_dwLineBytes = (width * nComps * bpc + 7) / 8;
     m_pScanline = FX_Alloc(FX_BYTE, m_Pitch);
-    if (m_pScanline == NULL) {
-        return FALSE;
-    }
     return CheckDestSize();
 }
 FX_BOOL CCodec_RLScanlineDecoder::v_Rewind()

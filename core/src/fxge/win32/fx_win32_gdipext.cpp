@@ -769,9 +769,6 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState, const CFX_Af
     CallFunc(GdipSetPenLineJoin)(pPen, lineJoin);
     if(pGraphState->m_DashCount) {
         FX_FLOAT* pDashArray = FX_Alloc(FX_FLOAT, pGraphState->m_DashCount + pGraphState->m_DashCount % 2);
-        if (!pDashArray) {
-            return NULL;
-        }
         int nCount = 0;
         FX_FLOAT on_leftover = 0, off_leftover = 0;
         for (int i = 0; i < pGraphState->m_DashCount; i += 2) {
@@ -873,14 +870,7 @@ BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
         CallFunc(GdipSetWorldTransform)(pGraphics, pMatrix);
     }
     PointF *points = FX_Alloc(PointF, nPoints);
-    if (!points) {
-        return FALSE;
-    }
     BYTE * types  = FX_Alloc(BYTE, nPoints);
-    if (!types) {
-        FX_Free(points);
-        return FALSE;
-    }
     int nSubPathes = 0;
     FX_BOOL bSubClose = FALSE;
     int pos_subclose = 0;
@@ -1198,12 +1188,6 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args)
         dest_pixel_format = PixelFormat32bppARGB;
     }
     LPBYTE buf = FX_Alloc(BYTE, info_size);
-    if (!buf) {
-        if (pStream) {
-            pStream->Release();
-        }
-        return NULL;
-    }
     BITMAPINFOHEADER* pbmih = (BITMAPINFOHEADER*)buf;
     pbmih->biBitCount = bpp;
     pbmih->biCompression = BI_RGB;
@@ -1212,12 +1196,6 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args)
     pbmih->biWidth = width;
     Rect rect(0, 0, width, height);
     BitmapData* pBitmapData = FX_Alloc(BitmapData, 1);
-    if (!pBitmapData) {
-        if (pStream) {
-            pStream->Release();
-        }
-        return NULL;
-    }
     CallFunc(GdipBitmapLockBits)(pBitmap, &rect, ImageLockModeRead,
                                  dest_pixel_format, pBitmapData);
     if (pixel_format == PixelFormat1bppIndexed || pixel_format == PixelFormat8bppIndexed) {
@@ -1236,12 +1214,6 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args)
         }
     }
     PREVIEW3_DIBITMAP* pInfo = FX_Alloc(PREVIEW3_DIBITMAP, 1);
-    if (!pInfo) {
-        if (pStream) {
-            pStream->Release();
-        }
-        return NULL;
-    }
     pInfo->pbmi = (BITMAPINFO*)buf;
     pInfo->pScan0 = (LPBYTE)pBitmapData->Scan0;
     pInfo->Stride = pBitmapData->Stride;

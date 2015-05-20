@@ -85,11 +85,11 @@ FX_BOOL CFX_DIBitmap::Create(int width, int height, FXDIB_Format format, FX_LPBY
         int oomlimit = _MAX_OOM_LIMIT_;
         if (oomlimit >= 0 && size >= oomlimit) {
             m_pBuffer = FX_TryAlloc(FX_BYTE, size);
+            if (m_pBuffer == NULL) {
+                return FALSE;
+            }
         } else {
             m_pBuffer = FX_Alloc(FX_BYTE, size);
-        }
-        if (m_pBuffer == NULL) {
-            return FALSE;
         }
     }
     m_Width = width;
@@ -205,9 +205,6 @@ void CFX_DIBSource::BuildPalette()
     }
     if (GetBPP() == 1) {
         m_pPalette = FX_Alloc(FX_DWORD, 2);
-        if (!m_pPalette) {
-            return;
-        }
         if(IsCmykImage()) {
             m_pPalette[0] = 0xff;
             m_pPalette[1] = 0;
@@ -217,9 +214,6 @@ void CFX_DIBSource::BuildPalette()
         }
     } else if (GetBPP() == 8) {
         m_pPalette = FX_Alloc(FX_DWORD, 256);
-        if (!m_pPalette) {
-            return;
-        }
         if(IsCmykImage()) {
             for (int i = 0; i < 256; i ++) {
                 m_pPalette[i] = 0xff - i;
@@ -536,9 +530,6 @@ void CFX_DIBSource::CopyPalette(const FX_DWORD* pSrc, FX_DWORD size)
         FX_DWORD pal_size = 1 << GetBPP();
         if (m_pPalette == NULL) {
             m_pPalette = FX_Alloc(FX_DWORD, pal_size);
-        }
-        if (!m_pPalette) {
-            return;
         }
         if (pal_size > size) {
             pal_size = size;

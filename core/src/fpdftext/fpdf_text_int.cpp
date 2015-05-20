@@ -1167,9 +1167,6 @@ void CPDF_TextPage::AddCharInfoByLRDirection(CFX_WideString& str, int i)
             FX_STRSIZE nCount = FX_Unicode_GetNormalization(wChar, pDst);
             if (nCount >= 1) {
                 pDst = FX_Alloc(FX_WCHAR, nCount);
-                if (!pDst) {
-                    return;
-                }
                 FX_Unicode_GetNormalization(wChar, pDst);
                 for (int nIndex = 0; nIndex < nCount; nIndex++) {
                     PAGECHAR_INFO Info2 = Info;
@@ -1202,9 +1199,6 @@ void CPDF_TextPage::AddCharInfoByRLDirection(CFX_WideString& str, int i)
         FX_STRSIZE nCount = FX_Unicode_GetNormalization(wChar, pDst);
         if (nCount >= 1) {
             pDst = FX_Alloc(FX_WCHAR, nCount);
-            if (!pDst) {
-                return;
-            }
             FX_Unicode_GetNormalization(wChar, pDst);
             for (int nIndex = 0; nIndex < nCount; nIndex++) {
                 PAGECHAR_INFO Info2 = Info;

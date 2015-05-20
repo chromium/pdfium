@@ -9,9 +9,6 @@
 CFX_Plex* CFX_Plex::Create(CFX_Plex*& pHead, FX_DWORD nMax, FX_DWORD cbElement)
 {
     CFX_Plex* p = (CFX_Plex*)FX_Alloc(FX_BYTE, sizeof(CFX_Plex) + nMax * cbElement);
-    if (!p) {
-        return NULL;
-    }
     p->pNext = pHead;
     pHead = p;
     return p;

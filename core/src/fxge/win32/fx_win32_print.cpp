@@ -304,9 +304,6 @@ FX_BOOL CPSPrinterDriver::Init(HDC hDC, int pslevel, FX_BOOL bCmykOutput)
         ret = ::GetRegionData(hRgn, 0, NULL);
         if (ret) {
             RGNDATA* pData = (RGNDATA*)FX_Alloc(FX_BYTE, ret);
-            if (!pData) {
-                return FALSE;
-            }
             ret = ::GetRegionData(hRgn, ret, pData);
             if (ret) {
                 CFX_PathData path;

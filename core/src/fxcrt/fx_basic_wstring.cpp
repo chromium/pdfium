@@ -34,9 +34,6 @@ CFX_WideString::StringData* CFX_WideString::StringData::Create(int nLen)
     FXSYS_assert(usableLen >= nLen);
 
     void* pData = FX_Alloc(FX_BYTE, iSize.ValueOrDie());
-    if (!pData) {
-        return NULL;
-    }
     return new (pData) StringData(nLen, usableLen);
 }
 CFX_WideString::~CFX_WideString()

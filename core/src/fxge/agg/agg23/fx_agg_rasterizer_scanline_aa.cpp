@@ -117,9 +117,6 @@ void outline_aa::allocate_block()
     if(m_cur_block >= m_num_blocks) {
         if(m_num_blocks >= m_max_blocks) {
             cell_aa** new_cells = FX_Alloc( cell_aa*, m_max_blocks + cell_block_pool);
-            if (!new_cells) {
-                return;
-            }
             if(m_cells) {
                 FXSYS_memcpy32(new_cells, m_cells, m_max_blocks * sizeof(cell_aa*));
                 FX_Free(m_cells);
@@ -128,9 +125,6 @@ void outline_aa::allocate_block()
             m_max_blocks += cell_block_pool;
         }
         m_cells[m_num_blocks++] = FX_Alloc(cell_aa, cell_block_size);
-        if (!m_cells[m_num_blocks - 1]) {
-            return;
-        }
     }
     m_cur_cell_ptr = m_cells[m_cur_block++];
 }

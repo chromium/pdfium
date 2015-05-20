@@ -581,9 +581,6 @@ CFX_ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont)
     FX_DWORD size = m_pFontInfo->GetFontData(hFont, 0x6e616d65, NULL, 0);
     if (size) {
         FX_LPBYTE buffer = FX_Alloc(FX_BYTE, size);
-        if (!buffer) {
-            return result;
-        }
         m_pFontInfo->GetFontData(hFont, 0x6e616d65, buffer, size);
         result = _FPDF_GetNameFromTT(buffer, 6);
         FX_Free(buffer);
@@ -1229,21 +1226,15 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
         face = m_pFontMgr->GetCachedTTCFace(ttc_size, checksum, ttc_size - font_size, pFontData);
         if (face == NULL) {
             pFontData = FX_Alloc(FX_BYTE, ttc_size);
-            if (pFontData) {
-                m_pFontInfo->GetFontData(hFont, 0x74746366, pFontData, ttc_size);
-                face = m_pFontMgr->AddCachedTTCFace(ttc_size, checksum, pFontData, ttc_size,
-                                                    ttc_size - font_size);
-            }
+            m_pFontInfo->GetFontData(hFont, 0x74746366, pFontData, ttc_size);
+            face = m_pFontMgr->AddCachedTTCFace(ttc_size, checksum, pFontData, ttc_size,
+                                                ttc_size - font_size);
         }
     } else {
         FX_LPBYTE pFontData;
         face = m_pFontMgr->GetCachedFace(SubstName, weight, bItalic, pFontData);
         if (face == NULL) {
             pFontData = FX_Alloc(FX_BYTE, font_size);
-            if (!pFontData) {
-                m_pFontInfo->DeleteFont(hFont);
-                return NULL;
-            }
             m_pFontInfo->GetFontData(hFont, 0, pFontData, font_size);
             face = m_pFontMgr->AddCachedFace(SubstName, weight, bItalic, pFontData, font_size, m_pFontInfo->GetFaceIndex(hFont));
         }
@@ -1477,10 +1468,6 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path)
         }
         FX_DWORD face_bytes = nFaces * 4;
         FX_LPBYTE offsets = FX_Alloc(FX_BYTE, face_bytes);
-        if (!offsets) {
-            FXSYS_fclose(pFile);
-            return;
-        }
         readCnt = FXSYS_fread(offsets, face_bytes, 1, pFile);
         if (readCnt != face_bytes) {
             FX_Free(offsets);

@@ -583,8 +583,8 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder
 public:
     CCodec_FlateScanlineDecoder();
     ~CCodec_FlateScanlineDecoder();
-    FX_BOOL		Create(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height, int nComps, int bpc,
-                       int predictor, int Colors, int BitsPerComponent, int Columns);
+    void Create(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height, int nComps, int bpc,
+                int predictor, int Colors, int BitsPerComponent, int Columns);
     virtual void		Destroy()
     {
         delete this;
@@ -630,7 +630,7 @@ CCodec_FlateScanlineDecoder::~CCodec_FlateScanlineDecoder()
         FPDFAPI_FlateEnd(m_pFlate);
     }
 }
-FX_BOOL CCodec_FlateScanlineDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
+void CCodec_FlateScanlineDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
         int nComps, int bpc, int predictor, int Colors, int BitsPerComponent, int Columns)
 {
     m_SrcBuf = src_buf;
@@ -642,9 +642,6 @@ FX_BOOL CCodec_FlateScanlineDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_siz
     m_bColorTransformed = FALSE;
     m_Pitch = (width * nComps * bpc + 7) / 8;
     m_pScanline = FX_Alloc(FX_BYTE, m_Pitch);
-    if (m_pScanline == NULL) {
-        return FALSE;
-    }
     m_Predictor = 0;
     if (predictor) {
         if (predictor >= 10) {
@@ -663,20 +660,10 @@ FX_BOOL CCodec_FlateScanlineDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_siz
             m_Columns = Columns;
             m_PredictPitch = (m_BitsPerComponent * m_Colors * m_Columns + 7) / 8;
             m_pLastLine = FX_Alloc(FX_BYTE, m_PredictPitch);
-            if (m_pLastLine == NULL) {
-                return FALSE;
-            }
             m_pPredictRaw = FX_Alloc(FX_BYTE, m_PredictPitch + 1);
-            if (m_pPredictRaw == NULL) {
-                return FALSE;
-            }
             m_pPredictBuffer = FX_Alloc(FX_BYTE, m_PredictPitch);
-            if (m_pPredictBuffer == NULL) {
-                return FALSE;
-            }
         }
     }
-    return TRUE;
 }
 FX_BOOL CCodec_FlateScanlineDecoder::v_Rewind()
 {
@@ -752,8 +739,6 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
 
     FX_LPBYTE guess_buf = FX_Alloc(FX_BYTE, guess_size + 1);
     FX_LPBYTE cur_buf = guess_buf;
-    if (!guess_buf)
-        goto fail;
     guess_buf[guess_size] = '\0';
     context = FPDFAPI_FlateInit(my_alloc_func, my_free_func);
     if (!context)
@@ -809,12 +794,6 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
             // |avail_buf_size| == 0 case.
             result_tmp_bufs.Add(cur_buf);
             cur_buf = FX_Alloc(FX_BYTE, buf_size + 1);
-            if (!cur_buf) {
-                for (FX_INT32 i = 0; i < result_tmp_bufs.GetSize(); i++) {
-                    FX_Free(result_tmp_bufs[i]);
-                }
-                goto fail;
-            }
             cur_buf[buf_size] = '\0';
         }
         dest_size = FPDFAPI_FlateGetTotalOut(context);
@@ -823,12 +802,6 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
             dest_buf = result_tmp_bufs[0];
         } else {
             FX_LPBYTE result_buf = FX_Alloc(FX_BYTE, dest_size);
-            if (!result_buf) {
-                for (FX_INT32 i = 0; i < result_tmp_bufs.GetSize(); i++) {
-                    FX_Free(result_tmp_bufs[i]);
-                }
-                goto fail;
-            }
             FX_DWORD result_pos = 0;
             for (FX_INT32 i = 0; i < result_tmp_bufs.GetSize(); i++) {
                 FX_LPBYTE tmp_buf = result_tmp_bufs[i];
@@ -887,9 +860,6 @@ FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_b
         {
             nonstd::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
             dest_buf = FX_Alloc( FX_BYTE, dest_size + 1);
-            if (dest_buf == NULL) {
-                return -1;
-            }
             dest_buf[dest_size] = '\0';
             decoder->Decode(dest_buf, dest_size, src_buf, offset, bEarlyChange);
         }
@@ -918,9 +888,6 @@ FX_BOOL CCodec_FlateModule::Encode(const FX_BYTE* src_buf, FX_DWORD src_size,
     }
     FX_LPBYTE pSrcBuf = NULL;
     pSrcBuf = FX_Alloc(FX_BYTE, src_size);
-    if (pSrcBuf == NULL) {
-        return FALSE;
-    }
     FXSYS_memcpy32(pSrcBuf, src_buf, src_size);
     FX_BOOL ret = TRUE;
     if (predictor == 2) {
@@ -939,9 +906,6 @@ FX_BOOL CCodec_FlateModule::Encode(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_LPB
 {
     dest_size = src_size + src_size / 1000 + 12;
     dest_buf = FX_Alloc( FX_BYTE, dest_size);
-    if (dest_buf == NULL) {
-        return FALSE;
-    }
     unsigned long temp_size = dest_size;
     FPDFAPI_FlateCompress(dest_buf, &temp_size, src_buf, src_size);
     dest_size = (FX_DWORD)temp_size;

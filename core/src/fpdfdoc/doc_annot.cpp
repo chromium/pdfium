@@ -345,9 +345,6 @@ CPDF_PageObject* CPDF_Annot::GetBorder(FX_BOOL bPrint, const CPDF_RenderOptions*
                 dash_count ++;
             }
             pGraphState->m_DashArray = FX_Alloc(FX_FLOAT, dash_count);
-            if (pGraphState->m_DashArray == NULL) {
-                return NULL;
-            }
             pGraphState->m_DashCount = dash_count;
             FX_DWORD i;
             for (i = 0; i < pDashArray->GetCount(); i ++) {
@@ -358,9 +355,6 @@ CPDF_PageObject* CPDF_Annot::GetBorder(FX_BOOL bPrint, const CPDF_RenderOptions*
             }
         } else {
             pGraphState->m_DashArray = FX_Alloc(FX_FLOAT, 2);
-            if (pGraphState->m_DashArray == NULL) {
-                return NULL;
-            }
             pGraphState->m_DashCount = 2;
             pGraphState->m_DashArray[0] = pGraphState->m_DashArray[1] = 3 * 1.0f;
         }
@@ -447,9 +441,6 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice, const CFX_AffineMatrix* p
                 dash_count ++;
             }
             graph_state.m_DashArray = FX_Alloc(FX_FLOAT, dash_count);
-            if (graph_state.m_DashArray == NULL) {
-                return ;
-            }
             graph_state.m_DashCount = dash_count;
             FX_DWORD i;
             for (i = 0; i < pDashArray->GetCount(); i ++) {
@@ -460,9 +451,6 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice, const CFX_AffineMatrix* p
             }
         } else {
             graph_state.m_DashArray = FX_Alloc(FX_FLOAT, 2);
-            if (graph_state.m_DashArray == NULL) {
-                return ;
-            }
             graph_state.m_DashCount = 2;
             graph_state.m_DashArray[0] = graph_state.m_DashArray[1] = 3 * 1.0f;
         }
