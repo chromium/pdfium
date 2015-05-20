@@ -258,7 +258,7 @@ void CFXJSE_Class::SetUpDynPropHandler(CFXJSE_Context* pContext, CFXJSE_Value* p
     v8::Isolate* pIsolate = pValue->GetIsolate();
     CFXJSE_ScopeUtil_IsolateHandleRootOrNormalContext scope(pIsolate, pContext);
     v8::Local<v8::Context> hContext = v8::Local<v8::Context>::New(pIsolate, pContext ? pContext->m_hContext : CFXJSE_RuntimeData::Get(pIsolate)->m_hRootContext);
-    v8::Local<v8::Object> hObject = v8::Local<v8::Object>::New(pIsolate, pValue->m_hValue.As<v8::Object>());
+    v8::Local<v8::Object> hObject = v8::Local<v8::Value>::New(pIsolate, pValue->m_hValue).As<v8::Object>();
     v8::Local<v8::Object> hHarmonyProxyObj =  hContext->Global()->Get(v8::String::NewFromUtf8(pIsolate, "Proxy")).As<v8::Object>();
     v8::Local<v8::Function> hHarmonyProxyCreateFn = hHarmonyProxyObj->Get(v8::String::NewFromUtf8(pIsolate, "create")).As<v8::Function>();
     v8::Local<v8::Value> hOldPrototype = hObject->GetPrototype();
