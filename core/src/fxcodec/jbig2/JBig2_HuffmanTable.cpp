@@ -103,10 +103,10 @@ int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine *pTable, in
 int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream *pStream)
 {
     unsigned char HTPS, HTRS;
-    int HTLOW, HTHIGH;
-    int CURRANGELOW;
-    int nSize = 16;
-    int CURLEN, LENMAX, CURCODE, CURTEMP, i;
+    FX_DWORD HTLOW, HTHIGH;
+    FX_DWORD CURRANGELOW;
+    FX_DWORD nSize = 16;
+    int CURLEN, LENMAX, CURCODE, CURTEMP;
     int *LENCOUNT;
     int *FIRSTCODE;
     unsigned char cTemp;
@@ -116,8 +116,9 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream *pStream)
     HTOOB = cTemp & 0x01;
     HTPS  = ((cTemp >> 1) & 0x07) + 1;
     HTRS  = ((cTemp >> 4) & 0x07) + 1;
-    if(pStream->readInteger((FX_DWORD*)&HTLOW) == -1 ||
-            pStream->readInteger((FX_DWORD*)&HTHIGH) == -1) {
+    if(pStream->readInteger(&HTLOW) == -1  ||
+       pStream->readInteger(&HTHIGH) == -1 ||
+       HTLOW > HTHIGH) {
         goto failed;
     }
     PREFLEN  = (int*)m_pModule->JBig2_Malloc2(sizeof(int), nSize);
@@ -127,8 +128,8 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream *pStream)
     NTEMP = 0;
     do {
         HT_CHECK_MEMORY_ADJUST
-        if((pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
-                || (pStream->readNBits(HTRS, &RANGELEN[NTEMP]) == -1)) {
+        if((pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1) ||
+           (pStream->readNBits(HTRS, &RANGELEN[NTEMP]) == -1)) {
             goto failed;
         }
         RANGELOW[NTEMP] = CURRANGELOW;
@@ -158,7 +159,7 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream *pStream)
     }
     CODES = (int*)m_pModule->JBig2_Malloc2(sizeof(int), NTEMP);
     LENMAX = 0;
-    for(i = 0; i < NTEMP; i++) {
+    for(int i = 0; i < NTEMP; i++) {
         if(PREFLEN[i] > LENMAX) {
             LENMAX = PREFLEN[i];
         }
@@ -166,7 +167,7 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream *pStream)
     LENCOUNT = (int*)m_pModule->JBig2_Malloc2(sizeof(int), (LENMAX + 1));
     JBIG2_memset(LENCOUNT, 0, sizeof(int) * (LENMAX + 1));
     FIRSTCODE = (int*)m_pModule->JBig2_Malloc2(sizeof(int), (LENMAX + 1));
-    for(i = 0; i < NTEMP; i++) {
+    for(int i = 0; i < NTEMP; i++) {
         LENCOUNT[PREFLEN[i]] ++;
     }
     CURLEN = 1;
