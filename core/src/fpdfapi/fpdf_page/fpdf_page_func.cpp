@@ -73,7 +73,6 @@ CPDF_PSProc::~CPDF_PSProc()
         }
     }
 }
-#pragma optimize( "", off )
 FX_BOOL CPDF_PSProc::Execute(CPDF_PSEngine* pEngine)
 {
     int size = m_Operators.GetSize();
@@ -107,7 +106,6 @@ FX_BOOL CPDF_PSProc::Execute(CPDF_PSEngine* pEngine)
     }
     return TRUE;
 }
-#pragma optimize( "", on )
 CPDF_PSEngine::CPDF_PSEngine()
 {
     m_StackCount = 0;

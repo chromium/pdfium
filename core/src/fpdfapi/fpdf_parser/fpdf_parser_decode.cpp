@@ -232,11 +232,9 @@ ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(FX_LPCBYTE src_buf, FX_DWORD 
         int nComps, int bpc, const CPDF_Dictionary* pParams)
 {
     int predictor = 0;
-    FX_BOOL bEarlyChange = TRUE;
     int Colors = 0, BitsPerComponent = 0, Columns = 0;
     if (pParams) {
         predictor = ((CPDF_Dictionary*)pParams)->GetInteger(FX_BSTRC("Predictor"));
-        bEarlyChange = ((CPDF_Dictionary*)pParams)->GetInteger(FX_BSTRC("EarlyChange"), 1);
         Colors = pParams->GetInteger(FX_BSTRC("Colors"), 1);
         BitsPerComponent = pParams->GetInteger(FX_BSTRC("BitsPerComponent"), 8);
         Columns = pParams->GetInteger(FX_BSTRC("Columns"), 1);
