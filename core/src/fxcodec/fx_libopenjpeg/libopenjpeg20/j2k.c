@@ -2431,7 +2431,14 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
         l_tcp = (p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_TPH) ?
                                 &l_cp->tcps[p_j2k->m_current_tile_number] :
                                 p_j2k->m_specific_param.m_decoder.m_default_tcp;
-
+	
+        /* Only one COD per tile */
+        if (l_tcp->cod) {
+                opj_event_msg(p_manager, EVT_ERROR, "COD marker already read. No more than one COD marker per tile.\n");
+                return OPJ_FALSE;
+        }
+        l_tcp->cod = 1;
+	
         /* Make sure room is sufficient */
         if (p_header_size < 5) {
                 opj_event_msg(p_manager, EVT_ERROR, "Error reading COD marker\n");
@@ -2455,6 +2462,11 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
         }
         opj_read_bytes(p_header_data,&l_tcp->numlayers,2);      /* SGcod (B) */
         p_header_data+=2;
+	
+        if ((l_tcp->numlayers < 1U) || (l_tcp->numlayers > 65535U)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Invalid number of layers in COD marker : %d not in range [1-65535]\n", l_tcp->numlayers);
+                return OPJ_FALSE;
+        }
 
         /* If user didn't set a number layer to decode take the max specify in the codestream. */
         if      (l_cp->m_specific_param.m_dec.m_layer) {
@@ -7350,6 +7362,7 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd (       opj_j2k_t * p_j2
                 /*Copy default coding parameters into the current tile coding parameters*/
                 memcpy(l_tcp, l_default_tcp, sizeof(opj_tcp_t));
                 /* Initialize some values of the current tile coding parameters*/
+                l_tcp->cod = 0;
                 l_tcp->ppt = 0;
                 l_tcp->ppt_data = 00;
                 /* Remove memory not owned by this tile in case of early error return. */
@@ -7395,7 +7408,6 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd (       opj_j2k_t * p_j2
 
                         ++l_src_mct_rec;
                         ++l_dest_mct_rec;
-
                         /* Update with each pass to free exactly what has been allocated on early return. */
                         l_tcp->m_nb_max_mct_records += 1;
                 }
@@ -8018,6 +8030,7 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
         l_img_comp_dest = p_output_image->comps;
 
         for (i=0; i<l_image_src->numcomps; i++) {
+
                 /* Allocate output component buffer if necessary */
                 if (!l_img_comp_dest->data) {
                     OPJ_UINT32 width = l_img_comp_dest->w;
@@ -8636,6 +8649,12 @@ OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
         opj_read_bytes(l_current_ptr,&l_tccp->cblkh ,1);                /* SPcoc (F) */
         ++l_current_ptr;
         l_tccp->cblkh += 2;
+
+        if ((l_tccp->cblkw > 10) || (l_tccp->cblkh > 10) || ((l_tccp->cblkw + l_tccp->cblkh) > 12)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Error reading SPCod SPCoc element, Invalid cblkw/cblkh combination\n");
+                return OPJ_FALSE;
+        }
+	
 
         opj_read_bytes(l_current_ptr,&l_tccp->cblksty ,1);              /* SPcoc (G) */
         ++l_current_ptr;
