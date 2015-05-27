@@ -17,11 +17,7 @@ class CXFA_DefFontMgr : public IXFA_FontMgr
 {
 public:
     CXFA_DefFontMgr() {}
-    virtual ~CXFA_DefFontMgr();
-    virtual	void			Release()
-    {
-        delete this;
-    }
+    ~CXFA_DefFontMgr() override;
     virtual IFX_Font*		GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF);
     virtual IFX_Font*		GetDefaultFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF);
 protected:

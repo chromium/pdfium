@@ -134,9 +134,14 @@ FX_BOOL CXFA_FileRead2::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
     }
     return FALSE;
 }
+// static
 IXFA_App* IXFA_App::Create(IXFA_AppProvider* pProvider)
 {
-    return FX_NEW CXFA_FFApp(pProvider);
+    return new CXFA_FFApp(pProvider);
+}
+// virtual
+IXFA_App::~IXFA_App()
+{
 }
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
     : m_pDocHandler(NULL)

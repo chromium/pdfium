@@ -47,11 +47,8 @@ class CXFA_FFApp : public IXFA_App, public IFWL_AdapterNative
 {
 public:
     CXFA_FFApp(IXFA_AppProvider* pProvider);
-    ~CXFA_FFApp();
-    virtual void		Release()
-    {
-        delete this;
-    }
+    ~CXFA_FFApp() override;
+
     virtual IXFA_DocHandler*	GetDocHandler();
     virtual XFA_HDOC			CreateDoc(IXFA_DocProvider* pProvider, IFX_FileRead* pStream, FX_BOOL bTakeOverFile);
     virtual XFA_HDOC			CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc);

@@ -1010,9 +1010,14 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(FX_WSTR wsFontName)
     return NULL;
 #endif
 }
-IXFA_FontMgr* XFA_GetDefaultFontMgr()
+// static
+IXFA_FontMgr* IXFA_FontMgr::CreateDefault()
 {
     return FX_NEW CXFA_DefFontMgr;
+}
+// virtual
+IXFA_FontMgr::~IXFA_FontMgr()
+{
 }
 CXFA_DefFontMgr::~CXFA_DefFontMgr()
 {

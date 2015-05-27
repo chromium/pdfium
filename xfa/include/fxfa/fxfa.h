@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA
-#define _FXFA
+#ifndef FXFA_H_
+#define FXFA_H_
+
 class IFDE_XMLElement;
 class CXFA_Node;
 class CXFA_NodeList;
@@ -145,66 +146,133 @@ typedef struct _XFA_HWIDGET {
 #define XFA_IDS_ValidateWarning					97
 #define XFA_IDS_ValidateError					98
 #define XFA_IDS_ValidateNumberError				99
+
+// Probably should be called IXFA_AppDelegate.
 class IXFA_AppProvider
 {
 public:
     virtual ~IXFA_AppProvider() { }
 
-    virtual void		SetAppType(FX_WSTR wsAppType) = 0;
-    virtual void		GetAppType(CFX_WideString &wsAppType) = 0;
+    /**
+     * Specifies the name of the client application in which a form currently exists. Such as Exchange-Pro.
+     */
+    virtual void SetAppType(const CFX_WideStringC& wsAppType) = 0;
+    virtual void GetAppType(CFX_WideString &wsAppType) = 0;
+    virtual void SetFoxitAppType(const CFX_WideStringC& wsFoxitAppType) { }
+    virtual void GetFoxitAppType(CFX_WideString &wsFoxitAppType) {
+        wsFoxitAppType.Empty();
+    }
 
-    virtual void		SetFoxitAppType(FX_WSTR wsFoxitAppType) { }
-    virtual void		GetFoxitAppType(CFX_WideString &wsFoxitAppType) { }
+    /**
+     * Returns the language of the running host application. Such as zh_CN
+     */
+    virtual void GetLanguage(CFX_WideString &wsLanguage) = 0;
 
-    virtual void		GetLanguage(CFX_WideString &wsLanguage) = 0;
-    virtual void		GetPlatform(CFX_WideString &wsPlatform) = 0;
-    virtual void		GetVariation(CFX_WideString &wsVariation) = 0;
+    /**
+     * Returns the platform of the machine running the script. Such as WIN
+     */
+    virtual void GetPlatform(CFX_WideString &wsPlatform) = 0;
 
-    virtual void		GetVersion(CFX_WideString &wsVersion) = 0;
-    virtual void		GetFoxitVersion(CFX_WideString &wsFoxitVersion) { }
+    /**
+     * Indicates the packaging of the application that is running the script. Such as Full
+     */
+    virtual void GetVariation(CFX_WideString &wsVariation) = 0;
 
-    virtual void		GetAppName(CFX_WideString& wsName) = 0;
-    virtual void		GetFoxitAppName(CFX_WideString& wsFoxitName) { }
+    /**
+     * Indicates the version number of the current application. Such as 9
+     */
+    virtual void GetVersion(CFX_WideString &wsVersion) = 0;
+    virtual void GetFoxitVersion(CFX_WideString &wsFoxitVersion) {
+        wsFoxitVersion.Empty();
+    }
 
-    virtual void		Beep(FX_DWORD dwType) = 0;
+    /**
+     * Get application name, such as Phantom.
+     */
+    virtual void GetAppName(CFX_WideString& wsName) = 0;
+    virtual void GetFoxitAppName(CFX_WideString& wsFoxitName) {
+        wsFoxitName.Empty();
+    }
 
-    virtual FX_INT32	MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle = FX_WSTRC(L""), FX_DWORD dwIconType = 0, FX_DWORD dwButtonType = 0) = 0;
-    virtual void		Response(CFX_WideString &wsAnswer, FX_WSTR wsQuestion, FX_WSTR wsTitle = FX_WSTRC(L""), FX_WSTR wsDefaultAnswer = FX_WSTRC(L""), FX_BOOL bMark = TRUE) = 0;
-    virtual FX_INT32	GetDocumentCountInBatch() = 0;
-    virtual FX_INT32	GetCurDocumentInBatch() = 0;
+    /**
+     * Causes the system to play a sound.
+     * @param[in] dwType The system code for the appropriate sound.0 (Error)1 (Warning)2 (Question)3 (Status)4 (Default)
+     */
+    virtual void Beep(FX_DWORD dwType) = 0;
+
+    /**
+     * Displays a message box.
+     * @param[in] dwIconType    Icon type, refer to XFA_MBICON.
+     * @param[in] dwButtonType  Button type, refer to XFA_MESSAGEBUTTON.
+     * @return A valid integer representing the value of the button pressed by the user, refer to XFA_ID.
+     */
+    virtual FX_INT32 MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle = FX_WSTRC(L""),
+                            FX_DWORD dwIconType = 0, FX_DWORD dwButtonType = 0) = 0;
+
+    /**
+     * Get a response from the user.
+     * @param[in] bMark - Mask the user input with * (asterisks) when true,
+     */
+    virtual void Response(CFX_WideString &wsAnswer, FX_WSTR wsQuestion, FX_WSTR wsTitle = FX_WSTRC(L""),
+                          FX_WSTR wsDefaultAnswer = FX_WSTRC(L""), FX_BOOL bMark = TRUE) = 0;
+
+    virtual FX_INT32 GetDocumentCountInBatch() = 0;
+    virtual FX_INT32 GetCurDocumentInBatch() = 0;
+
+    /**
+     * Download something from somewhere.
+     * @param[in] wsURL - http, ftp, such as "http://www.w3.org/TR/REC-xml-names/".
+     */
     virtual IFX_FileRead* DownloadURL(FX_WSTR wsURL) = 0;
 
-    virtual FX_BOOL		PostRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsContentType,
-                                       FX_WSTR wsEncode, FX_WSTR wsHeader, CFX_WideString &wsResponse) = 0;
+    /**
+     * POST data to the given url.
+     * @param[in] wsURL         the URL being uploaded.
+     * @param[in] wsData        the data being uploaded.
+     * @param[in] wsContentType the content type of data including text/html, text/xml, text/plain, multipart/form-data,
+     *                          application/x-www-form-urlencoded, application/octet-stream, any valid MIME type.
+     * @param[in] wsEncode      the encode of data including UTF-8, UTF-16, ISO8859-1, any recognized [IANA]character encoding
+     * @param[in] wsHeader      any additional HTTP headers to be included in the post.
+     * @param[out] wsResponse   decoded response from server.
+     * @return TRUE Server permitted the post request, FALSE otherwise.
+     */
+    virtual FX_BOOL PostRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsContentType,
+                                   FX_WSTR wsEncode, FX_WSTR wsHeader, CFX_WideString &wsResponse) = 0;
 
-    virtual FX_BOOL		PutRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsEncode) = 0;
-    virtual void		LoadString(FX_INT32 iStringID, CFX_WideString &wsString) = 0;
-    virtual	FX_BOOL		ShowFileDialog(FX_WSTR wsTitle, FX_WSTR wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen = TRUE) = 0;
+    /**
+     * PUT data to the given url.
+     * @param[in] wsURL         the URL being uploaded.
+     * @param[in] wsData            the data being uploaded.
+     * @param[in] wsEncode      the encode of data including UTF-8, UTF-16, ISO8859-1, any recognized [IANA]character encoding
+     * @return TRUE Server permitted the post request, FALSE otherwise.
+     */
+    virtual FX_BOOL     PutRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsEncode) = 0;
+
+    virtual void LoadString(FX_INT32 iStringID, CFX_WideString &wsString) = 0;
+    virtual FX_BOOL ShowFileDialog(FX_WSTR wsTitle, FX_WSTR wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen = TRUE) = 0;
     virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
 class IXFA_FontMgr
 {
 public:
-    virtual void		Release() = 0;
+    static IXFA_FontMgr* CreateDefault();
+    virtual ~IXFA_FontMgr();
+
     virtual IFX_Font*	GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
     virtual IFX_Font*	GetDefaultFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
-protected:
-    ~IXFA_FontMgr() { }
 };
-IXFA_FontMgr*	XFA_GetDefaultFontMgr();
 class IXFA_App
 {
 public:
-    static IXFA_App*	Create(IXFA_AppProvider* pProvider);
-    virtual void		Release() = 0;
+    static IXFA_App* Create(IXFA_AppProvider* pProvider);
+    virtual ~IXFA_App();
+
     virtual IXFA_DocHandler*	GetDocHandler() = 0;
     virtual XFA_HDOC			CreateDoc(IXFA_DocProvider* pProvider, IFX_FileRead* pStream, FX_BOOL bTakeOverFile = TRUE) = 0;
     virtual XFA_HDOC			CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc) = 0;
     virtual	IXFA_AppProvider*	GetAppProvider() = 0;
     virtual void				SetDefaultFontMgr(IXFA_FontMgr* pFontMgr) = 0;
     virtual IXFA_MenuHandler*	GetMenuHandler() = 0;
-protected:
-    ~IXFA_App() { }
 };
 class IXFA_MenuHandler
 {
@@ -627,4 +695,5 @@ protected:
     ~IXFA_ChecksumContext() { }
 };
 IXFA_ChecksumContext*	XFA_Checksum_Create();
-#endif
+
+#endif  // FXFA_H_

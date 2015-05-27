@@ -137,11 +137,8 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDFAvail_GetDocument(FPDF_AVAIL avail,	FPDF_BYT
 	((CFPDF_DataAvail*)avail)->m_pDataAvail->SetDocument(pParser->GetDocument());
 	CheckUnSupportError(pParser->GetDocument(), FPDF_ERR_SUCCESS);
 	CPDF_Document* pPDFDoc = pParser->GetDocument();
-
-	CPDFXFA_App* pApp = FPDFXFA_GetApp();
+	CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
 	CPDFXFA_Document* pDocument = FX_NEW CPDFXFA_Document(pPDFDoc, pApp);
-	//pDocument->LoadXFADoc();
-
 	return pDocument;
 }
 

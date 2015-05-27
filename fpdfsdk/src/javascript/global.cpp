@@ -119,22 +119,17 @@ global_alternate::global_alternate(CJS_Object* pJSObject)
 global_alternate::~global_alternate(void)
 {
 	ASSERT(m_pApp != NULL);
-
-//	CommitGlobalPersisitentVariables();
 	DestroyGlobalPersisitentVariables();
 
-	CJS_RuntimeFactory* pFactory = FPDFXFA_GetApp()->GetRuntimeFactory();
-	ASSERT(pFactory);
-
+	CJS_RuntimeFactory* pFactory = CPDFXFA_App::GetInstance()->GetRuntimeFactory();
 	pFactory->ReleaseGlobalData();
 }
-  
+
 void global_alternate::Initial(CPDFDoc_Environment* pApp)
 {
 	m_pApp = pApp;
 
-	CJS_RuntimeFactory* pFactory = FPDFXFA_GetApp()->GetRuntimeFactory();
-	ASSERT(pFactory);
+	CJS_RuntimeFactory* pFactory = CPDFXFA_App::GetInstance()->GetRuntimeFactory();
 	m_pGlobalData = pFactory->NewGlobalData(pApp);
 	UpdateGlobalPersistentVariables();
 }

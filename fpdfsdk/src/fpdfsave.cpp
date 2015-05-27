@@ -67,17 +67,18 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument, CFX_PtrArray& fileList
 		return FALSE;
 	if (pDocument->GetDocType() != DOCTYPE_DYNIMIC_XFA && pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
 		return TRUE;
-	if (!FPDFXFA_GetApp()->GetXFAApp())
+	if (!CPDFXFA_App::GetInstance()->GetXFAApp())
 		return TRUE;
 
 	IXFA_DocView* pXFADocView = pDocument->GetXFADocView();
 	if (NULL == pXFADocView)
 		return TRUE;
-	IXFA_DocHandler *pXFADocHandler = FPDFXFA_GetApp()->GetXFAApp()->GetDocHandler();
-	
+
+	IXFA_DocHandler *pXFADocHandler = CPDFXFA_App::GetInstance()->GetXFAApp()->GetDocHandler();
 	CPDF_Document * pPDFDocument = pDocument->GetPDFDoc();
-	if (pDocument == NULL) 
+	if (pDocument == NULL)
 		return FALSE;
+
 	CPDF_Dictionary* pRoot = pPDFDocument->GetRoot();
 	if (pRoot == NULL)
 		return FALSE;

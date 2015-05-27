@@ -215,8 +215,6 @@ FX_SYSTEMTIME CFX_SystemHandler::GetLocalTime()
 	return m_pEnv->FFI_GetLocalTime();
 }
 
-
-
 CPDFDoc_Environment::CPDFDoc_Environment(CPDFXFA_Document* pDoc) :
 	m_pAnnotHandlerMgr(NULL),
 	m_pActionHandler(NULL),
@@ -226,50 +224,34 @@ CPDFDoc_Environment::CPDFDoc_Environment(CPDFXFA_Document* pDoc) :
 	m_pDoc(pDoc),
 	m_pIFormFiller(NULL)
 {
-
 	m_pSysHandler = NULL;
 	m_pSysHandler = new CFX_SystemHandler(this);
-
-	//m_pJSRuntimeFactory = pDoc->GetApp()->GetRuntimeFactory();
-	
 }
 
 CPDFDoc_Environment::~CPDFDoc_Environment()
 {
 
-	if ( m_pIFormFiller )
-	{
-		delete m_pIFormFiller;
-		m_pIFormFiller = NULL;
-	}
+    delete m_pIFormFiller;
+    m_pIFormFiller = NULL;
 
-	if (m_pJSRuntime && FPDFXFA_GetApp()->GetRuntimeFactory())
-		FPDFXFA_GetApp()->GetRuntimeFactory()->DeleteJSRuntime(m_pJSRuntime);
+    CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
+    if (m_pJSRuntime && pProvider->GetRuntimeFactory())
+        pProvider->GetRuntimeFactory()->DeleteJSRuntime(m_pJSRuntime);
 
-	if (FPDFXFA_GetApp()->m_pEnvList.GetSize() == 0)
-	{
-		FPDFXFA_GetApp()->ReleaseRuntime();
-		FPDFXFA_GetApp()->InitRuntime(TRUE);
-	}
+    if (pProvider->m_pEnvList.GetSize() == 0)
+    {
+        pProvider->ReleaseRuntime();
+        pProvider->InitRuntime(TRUE);
+    }
 
-	if(m_pSysHandler)
-	{
-		delete m_pSysHandler;
-		m_pSysHandler = NULL;
-	}
+    delete m_pSysHandler;
+    m_pSysHandler = NULL;
 
-	if(m_pAnnotHandlerMgr)
-	{
-		delete m_pAnnotHandlerMgr;
-		m_pAnnotHandlerMgr = NULL;
-	}
-	if(m_pActionHandler)
-	{
-		delete m_pActionHandler;
-		m_pActionHandler = NULL;
-	}
+    delete m_pAnnotHandlerMgr;
+    m_pAnnotHandlerMgr = NULL;
 
-
+    delete m_pActionHandler;
+    m_pActionHandler = NULL;
 }
 
 
@@ -278,7 +260,7 @@ IFXJS_Runtime* CPDFDoc_Environment::GetJSRuntime()
 	if(!IsJSInitiated())
 		return NULL;
 	if(!m_pJSRuntime)
-		m_pJSRuntime = FPDFXFA_GetApp()->GetRuntimeFactory()->NewJSRuntime(this);
+		m_pJSRuntime = CPDFXFA_App::GetInstance()->GetRuntimeFactory()->NewJSRuntime(this);
 	return m_pJSRuntime;
 }
 

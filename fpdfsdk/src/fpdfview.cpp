@@ -176,36 +176,29 @@ FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy)
 	return FALSE;
 }
 
-
-#ifndef _T
-#define _T(x) x
-#endif
-
 CCodec_ModuleMgr*	g_pCodecModule = NULL;
 
 DLLEXPORT void STDCALL FPDF_InitLibrary()
 {
-	g_pCodecModule = CCodec_ModuleMgr::Create();
-	
-	CFX_GEModule::Create();
-	CFX_GEModule::Get()->SetCodecModule(g_pCodecModule);
-	
-	CPDF_ModuleMgr::Create();
-	CPDF_ModuleMgr::Get()->SetCodecModule(g_pCodecModule);
-	CPDF_ModuleMgr::Get()->InitPageModule();
-	CPDF_ModuleMgr::Get()->InitRenderModule();
+    g_pCodecModule = CCodec_ModuleMgr::Create();
 
-	CPDFXFA_App* pAppProvider = FPDFXFA_GetApp();
-	pAppProvider->Initialize();
+    CFX_GEModule::Create();
+    CFX_GEModule::Get()->SetCodecModule(g_pCodecModule);
+
+    CPDF_ModuleMgr::Create();
+    CPDF_ModuleMgr::Get()->SetCodecModule(g_pCodecModule);
+    CPDF_ModuleMgr::Get()->InitPageModule();
+    CPDF_ModuleMgr::Get()->InitRenderModule();
+
+    CPDFXFA_App::GetInstance()->Initialize();
 }
-
 
 DLLEXPORT void STDCALL FPDF_DestroyLibrary()
 {
-	FPDFXFA_ReleaseApp();
-	CPDF_ModuleMgr::Destroy();
-	CFX_GEModule::Destroy();
-	g_pCodecModule->Destroy();
+    CPDFXFA_App::ReleaseInstance();
+    CPDF_ModuleMgr::Destroy();
+    CFX_GEModule::Destroy();
+    g_pCodecModule->Destroy();
 }
 
 #ifndef _WIN32
@@ -261,7 +254,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BY
 	if (!pPDFDoc)
 		return NULL;
 
-	CPDFXFA_App* pProvider = FPDFXFA_GetApp();
+	CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
 	CPDFXFA_Document* pDocument = FX_NEW CPDFXFA_Document(pPDFDoc, pProvider);
 	return pDocument;
 }
@@ -347,10 +340,8 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf, int s
 	if (!pPDFDoc)
 		return NULL;
 
-	CPDFXFA_App* pProvider = FPDFXFA_GetApp();
+	CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
 	CPDFXFA_Document* pDocument = FX_NEW CPDFXFA_Document(pPDFDoc, pProvider);
-	//pDocument->LoadXFADoc();
-
 	return pDocument;
 }
 
@@ -372,10 +363,8 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAc
 	if (!pPDFDoc)
 		return NULL;
 
-	CPDFXFA_App* pProvider = FPDFXFA_GetApp();
+	CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
 	CPDFXFA_Document* pDocument = FX_NEW CPDFXFA_Document(pPDFDoc, pProvider);
-	//pDocument->LoadXFADoc();
-
 	return pDocument;
 }
 

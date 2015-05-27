@@ -39,7 +39,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument()
 			}
 		}
 	}
-	
+
 	CPDF_Dictionary* pInfoDict = NULL;
 	pInfoDict = pDoc->GetInfo();
 	if (pInfoDict)
@@ -49,9 +49,8 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument()
 		pInfoDict->SetAt("Creator",FX_NEW CPDF_String(L"PDFium"));
 	}
 
-	CPDFXFA_App* pApp = FPDFXFA_GetApp();
+	CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
 	CPDFXFA_Document* document = FX_NEW CPDFXFA_Document(pDoc, pApp);
-
 	return document;
 }
 

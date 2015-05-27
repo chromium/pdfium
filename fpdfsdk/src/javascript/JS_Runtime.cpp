@@ -114,8 +114,8 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp) :
 	m_bRegistered(FALSE),
 	m_pFieldEventPath(NULL)
 {
-	if (FPDFXFA_GetApp()->GetJSERuntime()) {
-		m_isolate = (v8::Isolate*)FPDFXFA_GetApp()->GetJSERuntime();
+	if (CPDFXFA_App::GetInstance()->GetJSERuntime()) {
+		m_isolate = (v8::Isolate*)CPDFXFA_App::GetInstance()->GetJSERuntime();
 	} else {
 		m_pArrayBufferAllocator.reset(new CJS_ArrayBufferAllocator());
 		v8::Isolate::CreateParams params;
@@ -127,7 +127,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp) :
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::Locker locker(isolate);
 	v8::HandleScope handle_scope(isolate);
-	if (FPDFXFA_GetApp()->InitRuntime(FALSE)) {
+	if (CPDFXFA_App::GetInstance()->InitRuntime(FALSE)) {
 		CJS_Context * pContext = (CJS_Context*)NewContext();
 		JS_InitialRuntime(*this, this, pContext, m_context);
 		ReleaseContext(pContext);
