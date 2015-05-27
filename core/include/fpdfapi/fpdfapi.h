@@ -4,12 +4,14 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDFAPI_H_
-#define _FPDFAPI_H_
-#include "../../include/fxcrt/fx_basic.h"
-#include "../../include/fxge/fx_ge.h"
+#ifndef FPDFAPI_H_
+#define FPDFAPI_H_
+
+#include "../fxcrt/fx_basic.h"
+#include "../fxge/fx_ge.h"
 #include "fpdf_module.h"
 #include "fpdf_pageobj.h"
 #include "fpdf_render.h"
 #include "fpdf_serial.h"
-#endif
+
+#endif  // FPDFAPI_H_

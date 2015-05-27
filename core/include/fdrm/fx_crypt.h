@@ -1,14 +1,18 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_CRYPT_H_
-#define _FX_CRYPT_H_
+#ifndef FX_CRYPT_H_
+#define FX_CRYPT_H_
+
+#include "../fxcrt/fx_basic.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 void CRYPT_ArcFourCryptBlock(FX_LPBYTE data, FX_DWORD size, FX_LPCBYTE key, FX_DWORD keylen);
 void CRYPT_ArcFourSetup(FX_LPVOID context, FX_LPCBYTE key, FX_DWORD length);
 void CRYPT_ArcFourCrypt(FX_LPVOID context, FX_LPBYTE data, FX_DWORD size);
@@ -37,7 +41,9 @@ void CRYPT_SHA512Update(FX_LPVOID context, FX_LPCBYTE data, FX_DWORD size);
 void CRYPT_SHA512Finish(FX_LPVOID context, FX_BYTE digest[64]);
 void CRYPT_SHA512Generate(FX_LPCBYTE data, FX_DWORD size, FX_BYTE digest[64]);
 void CRYPT_SetPubKeyDecryptor(FX_BOOL (*func)(FX_LPCBYTE pData, FX_DWORD size, FX_LPBYTE data_buf, FX_DWORD& data_len));
+
 #ifdef __cplusplus
 };
 #endif
-#endif
+
+#endif  // FX_CRYPT_H_
