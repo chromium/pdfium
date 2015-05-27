@@ -4,14 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_FONT_H_
-#define _FX_FONT_H_
-#ifndef _FXCRT_EXTENSION_
-#include "../../include/fxcrt/fx_ext.h"
-#endif
-#ifndef _FX_DIB_H_
+#ifndef FX_FONT_H_
+#define FX_FONT_H_
+
+#include "../fxcrt/fx_ext.h"
 #include "fx_dib.h"
-#endif
+
 typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;
 class IFX_FontEncoding;
@@ -433,4 +431,5 @@ protected:
      ~IFX_GSUBTable() { }
 };
 IFX_GSUBTable* FXGE_CreateGSUBTable(CFX_Font* pFont);
-#endif
+
+#endif  // FX_FONT_H_
