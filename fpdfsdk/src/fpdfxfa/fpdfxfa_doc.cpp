@@ -252,7 +252,7 @@ void CPDFXFA_Document::FXRect2PDFRect(const CFX_RectF& fxRectF, CPDF_Rect& pdfRe
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CPDFXFA_Document::SetChangeMark(XFA_HDOC hDoc)
+void CPDFXFA_Document::SetChangeMark(IXFA_Doc* hDoc)
 {
 	if (hDoc == m_pXFADoc && m_pSDKDoc)
 	{
@@ -260,7 +260,7 @@ void CPDFXFA_Document::SetChangeMark(XFA_HDOC hDoc)
 	}
 }
 
-FX_BOOL CPDFXFA_Document::GetChangeMark(XFA_HDOC hDoc)
+FX_BOOL CPDFXFA_Document::GetChangeMark(IXFA_Doc* hDoc)
 {
 	if (hDoc == m_pXFADoc && m_pSDKDoc)
 		return m_pSDKDoc->GetChangeMark();
@@ -633,7 +633,7 @@ void CPDFXFA_Document::WidgetEvent(XFA_HWIDGET hWidget, CXFA_WidgetAcc* pWidgetD
 	}
 }
 
-FX_INT32 CPDFXFA_Document::CountPages(XFA_HDOC hDoc)
+FX_INT32 CPDFXFA_Document::CountPages(IXFA_Doc* hDoc)
 {
 	if (hDoc == m_pXFADoc && m_pSDKDoc)
 	{
@@ -641,7 +641,7 @@ FX_INT32 CPDFXFA_Document::CountPages(XFA_HDOC hDoc)
 	}
 	return 0;
 }
-FX_INT32 CPDFXFA_Document::GetCurrentPage(XFA_HDOC hDoc)
+FX_INT32 CPDFXFA_Document::GetCurrentPage(IXFA_Doc* hDoc)
 {
 	if (hDoc != m_pXFADoc || !m_pSDKDoc)
 		return -1;
@@ -655,7 +655,7 @@ FX_INT32 CPDFXFA_Document::GetCurrentPage(XFA_HDOC hDoc)
 
 	return pEnv->FFI_GetCurrentPageIndex(this);
 }
-void CPDFXFA_Document::SetCurrentPage(XFA_HDOC hDoc, FX_INT32 iCurPage)
+void CPDFXFA_Document::SetCurrentPage(IXFA_Doc* hDoc, FX_INT32 iCurPage)
 {
 	if (hDoc != m_pXFADoc || !m_pSDKDoc)
 		return;
@@ -668,7 +668,7 @@ void CPDFXFA_Document::SetCurrentPage(XFA_HDOC hDoc, FX_INT32 iCurPage)
 
 	pEnv->FFI_SetCurrentPage(this, iCurPage);
 }
-FX_BOOL	CPDFXFA_Document::IsCalculationsEnabled(XFA_HDOC hDoc)
+FX_BOOL	CPDFXFA_Document::IsCalculationsEnabled(IXFA_Doc* hDoc)
 {
 	if (hDoc != m_pXFADoc || !m_pSDKDoc)
 		return FALSE;
@@ -678,7 +678,7 @@ FX_BOOL	CPDFXFA_Document::IsCalculationsEnabled(XFA_HDOC hDoc)
 	return FALSE;
 
 }
-void CPDFXFA_Document::SetCalculationsEnabled(XFA_HDOC hDoc, FX_BOOL bEnabled)
+void CPDFXFA_Document::SetCalculationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled)
 {
 	if (hDoc != m_pXFADoc || !m_pSDKDoc)
 		return;
@@ -686,7 +686,7 @@ void CPDFXFA_Document::SetCalculationsEnabled(XFA_HDOC hDoc, FX_BOOL bEnabled)
 		m_pSDKDoc->GetInterForm()->XfaEnableCalculate(bEnabled);
 }
 
-void CPDFXFA_Document::GetTitle(XFA_HDOC hDoc, CFX_WideString &wsTitle)
+void CPDFXFA_Document::GetTitle(IXFA_Doc* hDoc, CFX_WideString &wsTitle)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -701,7 +701,7 @@ void CPDFXFA_Document::GetTitle(XFA_HDOC hDoc, CFX_WideString &wsTitle)
     wsTitle = wsTitle.FromLocal(csTitle.GetBuffer(csTitle.GetLength()));
 	csTitle.ReleaseBuffer(csTitle.GetLength());
 }
-void CPDFXFA_Document::SetTitle(XFA_HDOC hDoc, FX_WSTR wsTitle)
+void CPDFXFA_Document::SetTitle(IXFA_Doc* hDoc, FX_WSTR wsTitle)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -713,7 +713,7 @@ void CPDFXFA_Document::SetTitle(XFA_HDOC hDoc, FX_WSTR wsTitle)
 		return;
 	pInfoDict->SetAt("Title", FX_NEW CPDF_String(wsTitle));
 }
-void CPDFXFA_Document::ExportData(XFA_HDOC hDoc, FX_WSTR wsFilePath, FX_BOOL bXDP)
+void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bXDP)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -834,12 +834,12 @@ void CPDFXFA_Document::ExportData(XFA_HDOC hDoc, FX_WSTR wsFilePath, FX_BOOL bXD
 	}
 	FX_BOOL bError= fileWrite.Flush();
 }
-void CPDFXFA_Document::ImportData(XFA_HDOC hDoc, FX_WSTR wsFilePath)
+void CPDFXFA_Document::ImportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath)
 {
 	//TODO...
 }
 
-void CPDFXFA_Document::GotoURL(XFA_HDOC hDoc, FX_WSTR bsURL, FX_BOOL bAppend)
+void CPDFXFA_Document::GotoURL(IXFA_Doc* hDoc, FX_WSTR bsURL, FX_BOOL bAppend)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -857,7 +857,7 @@ void CPDFXFA_Document::GotoURL(XFA_HDOC hDoc, FX_WSTR bsURL, FX_BOOL bAppend)
 
 }
 
-FX_BOOL	CPDFXFA_Document::IsValidationsEnabled(XFA_HDOC hDoc)
+FX_BOOL	CPDFXFA_Document::IsValidationsEnabled(IXFA_Doc* hDoc)
 {
 	if (hDoc != m_pXFADoc || !m_pSDKDoc)
 		return FALSE;
@@ -866,14 +866,14 @@ FX_BOOL	CPDFXFA_Document::IsValidationsEnabled(XFA_HDOC hDoc)
 
 	return TRUE;
 }
-void CPDFXFA_Document::SetValidationsEnabled(XFA_HDOC hDoc, FX_BOOL bEnabled)
+void CPDFXFA_Document::SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled)
 {
 	if (hDoc != m_pXFADoc || !m_pSDKDoc)
 		return;
 	if (m_pSDKDoc->GetInterForm())
 		m_pSDKDoc->GetInterForm()->XfaSetValidationsEnabled(bEnabled);
 }
-void  CPDFXFA_Document::SetFocusWidget(XFA_HDOC hDoc, XFA_HWIDGET hWidget)
+void  CPDFXFA_Document::SetFocusWidget(IXFA_Doc* hDoc, XFA_HWIDGET hWidget)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -896,7 +896,7 @@ void  CPDFXFA_Document::SetFocusWidget(XFA_HDOC hDoc, XFA_HWIDGET hWidget)
 		}
 	}
 }
-void CPDFXFA_Document::Print(XFA_HDOC hDoc, FX_INT32 nStartPage, FX_INT32 nEndPage, FX_DWORD dwOptions)
+void CPDFXFA_Document::Print(IXFA_Doc* hDoc, FX_INT32 nStartPage, FX_INT32 nEndPage, FX_DWORD dwOptions)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -914,7 +914,7 @@ void CPDFXFA_Document::Print(XFA_HDOC hDoc, FX_INT32 nStartPage, FX_INT32 nEndPa
 		dwOptions&XFA_PRINTOPT_ReverseOrder,dwOptions&XFA_PRINTOPT_PrintAnnot);
 }
 
-void CPDFXFA_Document::GetURL(XFA_HDOC hDoc, CFX_WideString &wsDocURL)
+void CPDFXFA_Document::GetURL(IXFA_Doc* hDoc, CFX_WideString &wsDocURL)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -926,7 +926,7 @@ void CPDFXFA_Document::GetURL(XFA_HDOC hDoc, CFX_WideString &wsDocURL)
 	pEnv->FFI_GetURL(this, wsDocURL);
 }
 
-FX_ARGB	CPDFXFA_Document::GetHighlightColor(XFA_HDOC hDoc)
+FX_ARGB	CPDFXFA_Document::GetHighlightColor(IXFA_Doc* hDoc)
 {
 	if (hDoc != m_pXFADoc)
 		return 0;
@@ -1039,7 +1039,7 @@ void CPDFXFA_Document::_OnAfterNotifySumbit()
 	m_pXFADocView->UpdateDocView();
 }
 
-FX_BOOL CPDFXFA_Document::SubmitData(XFA_HDOC hDoc, CXFA_Submit submit)
+FX_BOOL CPDFXFA_Document::SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit)
 {
 	if (!_NotifySubmit(TRUE))
 		return FALSE;
@@ -1052,7 +1052,7 @@ FX_BOOL CPDFXFA_Document::SubmitData(XFA_HDOC hDoc, CXFA_Submit submit)
 	return ret;
 }
 
-IFX_FileRead* CPDFXFA_Document::OpenLinkedFile(XFA_HDOC hDoc, const CFX_WideString& wsLink)
+IFX_FileRead* CPDFXFA_Document::OpenLinkedFile(IXFA_Doc* hDoc, const CFX_WideString& wsLink)
 {
 	CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
 	if (pEnv == NULL)
@@ -1277,7 +1277,7 @@ FX_BOOL CPDFXFA_Document::_MailToInfo(CFX_WideString& csURL, CFX_WideString& csT
 	return TRUE;
 }
 
-FX_BOOL CPDFXFA_Document::_SubmitData(XFA_HDOC hDoc, CXFA_Submit submit)
+FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit)
 {
 	CFX_WideStringC csURLC;
 	submit.GetSubmitTarget(csURLC);
@@ -1392,7 +1392,7 @@ FX_BOOL CPDFXFA_Document::_SubmitData(XFA_HDOC hDoc, CXFA_Submit submit)
 	return bRet;
 }
 
-FX_BOOL	CPDFXFA_Document::SetGlobalProperty(XFA_HDOC hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+FX_BOOL	CPDFXFA_Document::SetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue)
 {
 	if (hDoc != m_pXFADoc)
 		return FALSE;
@@ -1401,7 +1401,7 @@ FX_BOOL	CPDFXFA_Document::SetGlobalProperty(XFA_HDOC hDoc, FX_BSTR szPropName, F
 		return m_pSDKDoc->GetEnv()->GetJSRuntime()->SetHValueByName(szPropName, hValue);
 	return FALSE;
 }
-FX_BOOL	CPDFXFA_Document::GetPDFScriptObject(XFA_HDOC hDoc, FX_BSTR utf8Name, FXJSE_HVALUE hValue)
+FX_BOOL	CPDFXFA_Document::GetPDFScriptObject(IXFA_Doc* hDoc, FX_BSTR utf8Name, FXJSE_HVALUE hValue)
 {
 	if (hDoc != m_pXFADoc)
 		return FALSE;
@@ -1418,7 +1418,7 @@ FX_BOOL	CPDFXFA_Document::GetPDFScriptObject(XFA_HDOC hDoc, FX_BSTR utf8Name, FX
 	return _GetHValueByName(utf8Name, hValue, m_pSDKDoc->GetEnv()->GetJSRuntime());
 
 }
-FX_BOOL CPDFXFA_Document::GetGlobalProperty(XFA_HDOC hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+FX_BOOL CPDFXFA_Document::GetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue)
 {
 	if (hDoc != m_pXFADoc)
 		return FALSE;

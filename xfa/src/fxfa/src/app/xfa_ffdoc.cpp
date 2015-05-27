@@ -126,13 +126,13 @@ FX_INT32 CXFA_FFDoc::DoLoad(IFX_Pause *pPause )
             CFX_WideString wsHref;
             ((IFDE_XMLElement*)pPDFXML)->GetString(L"href", wsHref);
             if (!wsHref.IsEmpty()) {
-                pXFAReader = GetDocProvider()->OpenLinkedFile((XFA_HDOC)this, wsHref);
+                pXFAReader = GetDocProvider()->OpenLinkedFile(this, wsHref);
             }
         }
         if (!pXFAReader) {
             return XFA_PARSESTATUS_SyntaxErr;
         }
-        CPDF_Document* pPDFDocument = GetDocProvider()->OpenPDF(reinterpret_cast<XFA_HDOC>(this), pXFAReader, TRUE);
+        CPDF_Document* pPDFDocument = GetDocProvider()->OpenPDF(this, pXFAReader, TRUE);
         FXSYS_assert(!m_pPDFDoc);
         if (!OpenDoc(pPDFDocument)) {
             return XFA_PARSESTATUS_SyntaxErr;
@@ -158,7 +158,7 @@ FX_INT32 CXFA_FFDoc::DoLoad(IFX_Pause *pPause )
 }
 void CXFA_FFDoc::StopLoad()
 {
-    m_pApp->GetXFAFontMgr()->LoadDocFonts((XFA_HDOC)this);
+    m_pApp->GetXFAFontMgr()->LoadDocFonts(this);
     m_dwDocType = XFA_DOCTYPE_Static;
     CXFA_Node* pConfig = (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Config);
     if (!pConfig) {
@@ -296,7 +296,7 @@ FX_BOOL CXFA_FFDoc::CloseDoc()
         delete m_pNotify;
         m_pNotify = NULL;
     }
-    m_pApp->GetXFAFontMgr()->ReleaseDocFonts((XFA_HDOC)this);
+    m_pApp->GetXFAFontMgr()->ReleaseDocFonts(this);
     if (m_dwDocType != XFA_DOCTYPE_XDP && m_pStream && m_bOwnStream) {
         m_pStream->Release();
         m_pStream = NULL;

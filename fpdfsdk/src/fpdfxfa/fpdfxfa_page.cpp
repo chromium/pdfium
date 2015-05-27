@@ -69,7 +69,7 @@ FX_BOOL CPDFXFA_Page::LoadXFAPageView()
 {
 	if (!m_pDocument)
 		return FALSE;
-	XFA_HDOC pXFADoc = m_pDocument->GetXFADoc();
+	IXFA_Doc* pXFADoc = m_pDocument->GetXFADoc();
 	if (pXFADoc)
 	{
 		IXFA_DocView* pXFADocView = m_pDocument->GetXFADocView();
@@ -99,9 +99,6 @@ FX_BOOL CPDFXFA_Page::LoadPage()
 		return FALSE;
 
 	int iDocType = m_pDocument->GetDocType();
-	CPDF_Document* pPDFDoc = m_pDocument->GetPDFDoc();
-	XFA_HDOC pXFADoc = m_pDocument->GetXFADoc();
-
 	switch (iDocType)
 	{
 	case DOCTYPE_PDF:

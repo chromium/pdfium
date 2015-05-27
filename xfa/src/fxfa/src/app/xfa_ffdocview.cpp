@@ -277,7 +277,7 @@ void CXFA_FFDocView::ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc )
         }
     }
     if (bChanged) {
-        m_pDoc->GetDocProvider()->SetChangeMark((XFA_HDOC)m_pDoc);
+        m_pDoc->GetDocProvider()->SetChangeMark(m_pDoc);
     }
 }
 FX_INT32 CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam, CXFA_WidgetAcc* pWidgetAcc )
@@ -419,7 +419,7 @@ void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc)
     if (SetFocus((XFA_HWIDGET)pNewFocus)) {
         m_pFocusAcc = pWidgetAcc;
         if (m_iStatus >= XFA_DOCVIEW_LAYOUTSTATUS_End) {
-            m_pDoc->GetDocProvider()->SetFocusWidget((XFA_HDOC)m_pDoc, (XFA_HWIDGET)m_pFocusWidget);
+            m_pDoc->GetDocProvider()->SetFocusWidget(m_pDoc, (XFA_HWIDGET)m_pFocusWidget);
         }
     }
 }
@@ -709,8 +709,8 @@ void CXFA_FFDocView::RunCalculateRecursive(FX_INT32& iIndex)
 }
 FX_INT32 CXFA_FFDocView::RunCalculateWidgets()
 {
-    if (!m_pDoc->GetDocProvider()->IsCalculationsEnabled((XFA_HDOC)m_pDoc)) {
-        return  XFA_EVENTERROR_Disabled;
+    if (!m_pDoc->GetDocProvider()->IsCalculationsEnabled(m_pDoc)) {
+        return XFA_EVENTERROR_Disabled;
     }
     FX_INT32 iCounts = m_CalculateAccs.GetSize();
     FX_INT32 iIndex = 0;
@@ -737,7 +737,7 @@ FX_BOOL CXFA_FFDocView::InitCalculate(CXFA_Node* pNode)
 }
 FX_BOOL CXFA_FFDocView::InitValidate(CXFA_Node* pNode)
 {
-    if (!m_pDoc->GetDocProvider()->IsValidationsEnabled((XFA_HDOC)m_pDoc)) {
+    if (!m_pDoc->GetDocProvider()->IsValidationsEnabled(m_pDoc)) {
         return FALSE;
     }
     ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Validate);
@@ -746,7 +746,7 @@ FX_BOOL CXFA_FFDocView::InitValidate(CXFA_Node* pNode)
 }
 FX_BOOL CXFA_FFDocView::RunValidate()
 {
-    if (!m_pDoc->GetDocProvider()->IsValidationsEnabled((XFA_HDOC)m_pDoc)) {
+    if (!m_pDoc->GetDocProvider()->IsValidationsEnabled(m_pDoc)) {
         return FALSE;
     }
     FX_INT32 iCounts = m_ValidateAccs.GetSize();
@@ -841,7 +841,7 @@ void CXFA_FFDocView::SetChangeMark()
     if (m_iStatus < XFA_DOCVIEW_LAYOUTSTATUS_End) {
         return;
     }
-    m_pDoc->GetDocProvider()->SetChangeMark((XFA_HDOC)m_pDoc);
+    m_pDoc->GetDocProvider()->SetChangeMark(m_pDoc);
 }
 CXFA_Node* CXFA_FFDocView::GetRootSubform()
 {

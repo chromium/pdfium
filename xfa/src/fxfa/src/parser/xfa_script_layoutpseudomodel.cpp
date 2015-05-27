@@ -33,7 +33,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Ready(FXJSE_HVALUE hVal
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     if (bSetting) {
         ThrowScriptErrorMessage(XFA_IDS_UNABLE_SET_READY);
         return;
@@ -369,7 +369,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageCountInBatch(CFX
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     FX_INT32 iPageCount = pNotify->GetDocProvider()->AbsPageCountInBatch(hDoc);
     FXJSE_HVALUE hValue =  pArguments->GetReturnValue();
     if (hValue) {
@@ -382,7 +382,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetCountInBatch(CFXJS
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     FX_INT32 iPageCount = pNotify->GetDocProvider()->SheetCountInBatch(hDoc);
     FXJSE_HVALUE hValue =  pArguments->GetReturnValue();
     if (hValue) {
@@ -431,7 +431,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageInBatch(CFXJSE_A
     if (!hWidget) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     FX_INT32 iPageCount = pNotify->GetDocProvider()->AbsPageInBatch(hDoc, hWidget);
     FXJSE_HVALUE hValue =  pArguments->GetReturnValue();
     if (hValue) {
@@ -464,7 +464,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetInBatch(CFXJSE_Arg
     if (!hWidget) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     FX_INT32 iPageCount = pNotify->GetDocProvider()->SheetInBatch(hDoc, hWidget);
     FXJSE_HVALUE hValue =  pArguments->GetReturnValue();
     if (hValue) {

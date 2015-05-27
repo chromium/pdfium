@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_APP_IMP_H
-#define _FXFA_FORMFILLER_APP_IMP_H
+#ifndef XFA_FFAPP_H_
+#define XFA_FFAPP_H_
+
 class CXFA_FileRead : public IFX_FileRead
 {
 public:
@@ -50,8 +51,8 @@ public:
     ~CXFA_FFApp() override;
 
     virtual IXFA_DocHandler*	GetDocHandler();
-    virtual XFA_HDOC			CreateDoc(IXFA_DocProvider* pProvider, IFX_FileRead* pStream, FX_BOOL bTakeOverFile);
-    virtual XFA_HDOC			CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc);
+    virtual IXFA_Doc*			CreateDoc(IXFA_DocProvider* pProvider, IFX_FileRead* pStream, FX_BOOL bTakeOverFile);
+    virtual IXFA_Doc*			CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc);
     virtual	IXFA_AppProvider*	GetAppProvider()
     {
         return m_pProvider;
@@ -86,4 +87,5 @@ protected:
     CXFA_FFMenuHandler*		m_pMenuHandler;
     CFWL_SDAdapterThreadMgr* m_pAdapterThreadMgr;
 };
-#endif
+
+#endif  // XFA_FFAPP_H_

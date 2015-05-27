@@ -4,18 +4,23 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_DOC_IMP_H
-#define _FXFA_FORMFILLER_DOC_IMP_H
+#ifndef FXFA_SRC_APP_XFA_FFDOC_H_
+#define FXFA_SRC_APP_XFA_FFDOC_H_
+
+#include "../../../../include/fxfa/fxfa.h"
+
 class CXFA_FFApp;
 class CXFA_FFNotify;
 class CXFA_FFDocView;
 class IXFA_Locale;
+
 typedef struct _FX_IMAGEDIB_AND_DPI {
     CFX_DIBSource* pDibSource;
     FX_INT32	   iImageXDpi;
     FX_INT32	   iImageYDpi;
 } FX_IMAGEDIB_AND_DPI;
-class CXFA_FFDoc
+
+class CXFA_FFDoc : public IXFA_Doc
 {
 public:
     CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider);
@@ -60,4 +65,5 @@ protected:
     FX_DWORD				m_dwDocType;
     FX_BOOL					m_bOwnStream;
 };
-#endif
+
+#endif  // FXFA_SRC_APP_XFA_FFDOC_H_

@@ -65,7 +65,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_CalculationsEnabled(FXJSE_H
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     if (bSetting) {
         pNotify->GetDocProvider()->SetCalculationsEnabled(hDoc, FXJSE_Value_ToBoolean(hValue));
         return;
@@ -79,7 +79,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_CurrentPage(FXJSE_HVALUE hV
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     if (bSetting) {
         pNotify->GetDocProvider()->SetCurrentPage(hDoc, FXJSE_Value_ToInteger(hValue));
         return;
@@ -107,7 +107,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_NumPages(FXJSE_HVALUE hValu
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     if (bSetting) {
         ThrowScriptErrorMessage(XFA_IDS_UNABLE_SET_NUMPAGES);
         return;
@@ -138,7 +138,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Title(FXJSE_HVALUE hValue, 
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     if (bSetting) {
         CFX_ByteString bsValue;
         FXJSE_Value_ToUTF8String(hValue, bsValue);
@@ -155,7 +155,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ValidationsEnabled(FXJSE_HV
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     if (bSetting) {
         pNotify->GetDocProvider()->SetValidationsEnabled(hDoc, FXJSE_Value_ToBoolean(hValue));
         return;
@@ -250,7 +250,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_GotoURL(CFXJSE_Arguments* p
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     CFX_WideString wsURL;
     if (iLength >= 1) {
         CFX_ByteString bsURL = pArguments->GetUTF8String(0);
@@ -466,7 +466,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(CFXJSE_Arguments* 
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     CXFA_Node* pNode = NULL;
     if (iLength >= 1) {
         FXJSE_HVALUE hValue = pArguments->GetValue(0);
@@ -608,7 +608,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Print(CFXJSE_Arguments* pAr
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     FX_DWORD dwOptions = 0;
     FX_BOOL bShowDialog = TRUE;
     if (iLength >= 1) {
@@ -679,7 +679,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ImportData(CFXJSE_Arguments
         CFX_ByteString bsFilePath = pArguments->GetUTF8String(0);
         wsFilePath = CFX_WideString::FromUTF8(bsFilePath, bsFilePath.GetLength());
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     pNotify->GetDocProvider()->ImportData(hDoc, wsFilePath);
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_ExportData(CFXJSE_Arguments* pArguments)
@@ -693,7 +693,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ExportData(CFXJSE_Arguments
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     CFX_WideString wsFilePath;
     FX_BOOL bXDP = TRUE;
     if (iLength >= 1) {
@@ -711,7 +711,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_PageUp(CFXJSE_Arguments* pA
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     FX_INT32 nCurPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
     FX_INT32 nNewPage = 0;
     if (nCurPage <= 1) {
@@ -726,7 +726,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_PageDown(CFXJSE_Arguments* 
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     FX_INT32 nCurPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
     FX_INT32 nPageCount = pNotify->GetDocProvider()->CountPages(hDoc);
     if (!nPageCount || nCurPage == nPageCount) {

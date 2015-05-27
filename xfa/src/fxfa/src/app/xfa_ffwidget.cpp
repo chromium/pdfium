@@ -997,7 +997,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc *pDoc, CXFA_Image *pImage, FX_BOOL &b
                 return pBitmap;
             }
         }
-        pImageFileRead = pDoc->GetDocProvider()->OpenLinkedFile((XFA_HDOC)pDoc, wsURL);
+        pImageFileRead = pDoc->GetDocProvider()->OpenLinkedFile(pDoc, wsURL);
     }
     if (!pImageFileRead) {
         if (pImageBuffer) {

@@ -36,7 +36,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(CFXJSE_Arg
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     CXFA_Node* pNode = NULL;
     if (iLength >= 1) {
         pNode = (CXFA_Node*)pArguments->GetObject(0);
@@ -58,7 +58,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(CFXJSE_Argum
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     CXFA_NodeList* pNodeList = NULL;
     CFX_WideString wsExpression;
     CFX_WideString wsXMLIdent;
@@ -90,7 +90,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(CFXJSE_
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     CXFA_NodeList *pList =  pNotify->GetDocProvider()->Enumerate(hDoc);
     FXJSE_Value_Set(pArguments->GetReturnValue(), m_pDocument->GetScriptContext()->GetJSValueFromMap(pList));
 }
@@ -105,7 +105,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Clear(CFXJSE_Argu
     if (!pNotify) {
         return;
     }
-    XFA_HDOC hDoc = pNotify->GetHDOC();
+    IXFA_Doc* hDoc = pNotify->GetHDOC();
     CXFA_Node* pNode = NULL;
     FX_BOOL bClear = TRUE;
     if (iLength >= 1) {

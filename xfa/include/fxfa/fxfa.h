@@ -27,9 +27,14 @@ class IXFA_WidgetIterator;
 class IXFA_MenuHandler;
 class IXFA_ChecksumContext;
 class IXFA_WidgetAccIterator;
-typedef struct _XFA_HDOC {
-    FX_LPVOID pData;
-}* XFA_HDOC;
+
+class IXFA_Doc {
+public:
+    virtual ~IXFA_Doc() { }
+protected:
+    IXFA_Doc() { }
+};
+
 typedef struct _XFA_HWIDGET {
     FX_LPVOID pData;
 }* XFA_HWIDGET;
@@ -258,8 +263,8 @@ public:
     static IXFA_FontMgr* CreateDefault();
     virtual ~IXFA_FontMgr();
 
-    virtual IFX_Font*	GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
-    virtual IFX_Font*	GetDefaultFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
+    virtual IFX_Font*	GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
+    virtual IFX_Font*	GetDefaultFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
 };
 class IXFA_App
 {
@@ -268,8 +273,8 @@ public:
     virtual ~IXFA_App();
 
     virtual IXFA_DocHandler*	GetDocHandler() = 0;
-    virtual XFA_HDOC			CreateDoc(IXFA_DocProvider* pProvider, IFX_FileRead* pStream, FX_BOOL bTakeOverFile = TRUE) = 0;
-    virtual XFA_HDOC			CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc) = 0;
+    virtual IXFA_Doc*			CreateDoc(IXFA_DocProvider* pProvider, IFX_FileRead* pStream, FX_BOOL bTakeOverFile = TRUE) = 0;
+    virtual IXFA_Doc*			CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc) = 0;
     virtual	IXFA_AppProvider*	GetAppProvider() = 0;
     virtual void				SetDefaultFontMgr(IXFA_FontMgr* pFontMgr) = 0;
     virtual IXFA_MenuHandler*	GetMenuHandler() = 0;
@@ -319,7 +324,7 @@ class IXFA_DocProvider
 public:
     virtual ~IXFA_DocProvider() { }
 
-    virtual void		SetChangeMark(XFA_HDOC hDoc) = 0;
+    virtual void		SetChangeMark(IXFA_Doc* hDoc) = 0;
     virtual void		InvalidateRect(IXFA_PageView* pPageView, const CFX_RectF& rt, FX_DWORD dwFlags = 0) = 0;
     virtual void		DisplayCaret(XFA_HWIDGET hWidget, FX_BOOL bVisible, const CFX_RectF* pRtAnchor) = 0;
     virtual FX_BOOL		GetPopupPos(XFA_HWIDGET hWidget, FX_FLOAT fMinPopup, FX_FLOAT fMaxPopup,
@@ -331,52 +336,52 @@ public:
     {
         return FALSE;
     }
-    virtual	FX_INT32	CountPages(XFA_HDOC hDoc) = 0;
-    virtual	FX_INT32	GetCurrentPage(XFA_HDOC hDoc) = 0;
-    virtual void		SetCurrentPage(XFA_HDOC hDoc, FX_INT32 iCurPage) = 0;
-    virtual FX_BOOL		IsCalculationsEnabled(XFA_HDOC hDoc) = 0;
-    virtual void		SetCalculationsEnabled(XFA_HDOC hDoc, FX_BOOL bEnabled) = 0;
-    virtual void		GetTitle(XFA_HDOC hDoc, CFX_WideString &wsTitle) = 0;
-    virtual void		SetTitle(XFA_HDOC hDoc, FX_WSTR wsTitle) = 0;
-    virtual void		ExportData(XFA_HDOC hDoc, FX_WSTR wsFilePath, FX_BOOL bXDP = TRUE) = 0;
-    virtual void		ImportData(XFA_HDOC hDoc, FX_WSTR wsFilePath) = 0;
-    virtual void		GotoURL(XFA_HDOC hDoc, FX_WSTR bsURL, FX_BOOL bAppend = TRUE) = 0;
-    virtual FX_BOOL		IsValidationsEnabled(XFA_HDOC hDoc) = 0;
-    virtual void		SetValidationsEnabled(XFA_HDOC hDoc, FX_BOOL bEnabled) = 0;
-    virtual void		SetFocusWidget(XFA_HDOC hDoc, XFA_HWIDGET hWidget) = 0;
-    virtual void		Print(XFA_HDOC hDoc, FX_INT32 nStartPage, FX_INT32 nEndPage, FX_DWORD dwOptions) = 0;
-    virtual FX_INT32			AbsPageCountInBatch(XFA_HDOC hDoc) = 0;
-    virtual FX_INT32			AbsPageInBatch(XFA_HDOC hDoc, XFA_HWIDGET hWidget) = 0;
-    virtual FX_INT32			SheetCountInBatch(XFA_HDOC hDoc) = 0;
-    virtual FX_INT32			SheetInBatch(XFA_HDOC hDoc, XFA_HWIDGET hWidget) = 0;
-    virtual FX_INT32			Verify(XFA_HDOC hDoc, CXFA_Node* pSigNode, FX_BOOL bUsed = TRUE)
+    virtual	FX_INT32	CountPages(IXFA_Doc* hDoc) = 0;
+    virtual	FX_INT32	GetCurrentPage(IXFA_Doc* hDoc) = 0;
+    virtual void		SetCurrentPage(IXFA_Doc* hDoc, FX_INT32 iCurPage) = 0;
+    virtual FX_BOOL		IsCalculationsEnabled(IXFA_Doc* hDoc) = 0;
+    virtual void		SetCalculationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled) = 0;
+    virtual void		GetTitle(IXFA_Doc* hDoc, CFX_WideString &wsTitle) = 0;
+    virtual void		SetTitle(IXFA_Doc* hDoc, FX_WSTR wsTitle) = 0;
+    virtual void		ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bXDP = TRUE) = 0;
+    virtual void		ImportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath) = 0;
+    virtual void		GotoURL(IXFA_Doc* hDoc, FX_WSTR bsURL, FX_BOOL bAppend = TRUE) = 0;
+    virtual FX_BOOL		IsValidationsEnabled(IXFA_Doc* hDoc) = 0;
+    virtual void		SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled) = 0;
+    virtual void		SetFocusWidget(IXFA_Doc* hDoc, XFA_HWIDGET hWidget) = 0;
+    virtual void		Print(IXFA_Doc* hDoc, FX_INT32 nStartPage, FX_INT32 nEndPage, FX_DWORD dwOptions) = 0;
+    virtual FX_INT32			AbsPageCountInBatch(IXFA_Doc* hDoc) = 0;
+    virtual FX_INT32			AbsPageInBatch(IXFA_Doc* hDoc, XFA_HWIDGET hWidget) = 0;
+    virtual FX_INT32			SheetCountInBatch(IXFA_Doc* hDoc) = 0;
+    virtual FX_INT32			SheetInBatch(IXFA_Doc* hDoc, XFA_HWIDGET hWidget) = 0;
+    virtual FX_INT32			Verify(IXFA_Doc* hDoc, CXFA_Node* pSigNode, FX_BOOL bUsed = TRUE)
     {
         return 0;
     }
-    virtual FX_BOOL				Sign(XFA_HDOC hDoc, CXFA_NodeList* pNodeList, FX_WSTR wsExpression, FX_WSTR wsXMLIdent, FX_WSTR wsValue = FX_WSTRC(L"open"), FX_BOOL bUsed = TRUE)
+    virtual FX_BOOL				Sign(IXFA_Doc* hDoc, CXFA_NodeList* pNodeList, FX_WSTR wsExpression, FX_WSTR wsXMLIdent, FX_WSTR wsValue = FX_WSTRC(L"open"), FX_BOOL bUsed = TRUE)
     {
         return 0;
     }
-    virtual CXFA_NodeList*		Enumerate(XFA_HDOC hDoc)
+    virtual CXFA_NodeList*		Enumerate(IXFA_Doc* hDoc)
     {
         return 0;
     }
-    virtual FX_BOOL				Clear(XFA_HDOC hDoc, CXFA_Node* pSigNode, FX_BOOL bCleared = TRUE)
+    virtual FX_BOOL				Clear(IXFA_Doc* hDoc, CXFA_Node* pSigNode, FX_BOOL bCleared = TRUE)
     {
         return 0;
     }
-    virtual void		GetURL(XFA_HDOC hDoc, CFX_WideString &wsDocURL) = 0;
-    virtual FX_ARGB		GetHighlightColor(XFA_HDOC hDoc) = 0;
+    virtual void		GetURL(IXFA_Doc* hDoc, CFX_WideString &wsDocURL) = 0;
+    virtual FX_ARGB		GetHighlightColor(IXFA_Doc* hDoc) = 0;
     virtual void		AddDoRecord(XFA_HWIDGET hWidget) = 0;
 
-    virtual FX_BOOL		SubmitData(XFA_HDOC hDoc, CXFA_Submit submit) = 0;
-    virtual FX_BOOL		CheckWord(XFA_HDOC hDoc, FX_BSTR sWord) = 0;
-    virtual FX_BOOL		GetSuggestWords(XFA_HDOC hDoc, FX_BSTR sWord, CFX_ByteStringArray& sSuggest) = 0;
-    virtual FX_BOOL		GetPDFScriptObject(XFA_HDOC hDoc, FX_BSTR utf8Name, FXJSE_HVALUE hValue) = 0;
-    virtual FX_BOOL		GetGlobalProperty(XFA_HDOC hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue) = 0;
-    virtual FX_BOOL		SetGlobalProperty(XFA_HDOC hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue) = 0;
-    virtual CPDF_Document*  OpenPDF(XFA_HDOC hDoc, IFX_FileRead* pFile, FX_BOOL bTakeOverFile) = 0;
-    virtual IFX_FileRead*	OpenLinkedFile(XFA_HDOC hDoc, const CFX_WideString& wsLink) = 0;
+    virtual FX_BOOL		SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) = 0;
+    virtual FX_BOOL		CheckWord(IXFA_Doc* hDoc, FX_BSTR sWord) = 0;
+    virtual FX_BOOL		GetSuggestWords(IXFA_Doc* hDoc, FX_BSTR sWord, CFX_ByteStringArray& sSuggest) = 0;
+    virtual FX_BOOL		GetPDFScriptObject(IXFA_Doc* hDoc, FX_BSTR utf8Name, FXJSE_HVALUE hValue) = 0;
+    virtual FX_BOOL		GetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue) = 0;
+    virtual FX_BOOL		SetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue) = 0;
+    virtual CPDF_Document*  OpenPDF(IXFA_Doc* hDoc, IFX_FileRead* pFile, FX_BOOL bTakeOverFile) = 0;
+    virtual IFX_FileRead*	OpenLinkedFile(IXFA_Doc* hDoc, const CFX_WideString& wsLink) = 0;
 };
 #define XFA_DOCVIEW_View		0x00000000
 #define XFA_DOCVIEW_MasterPage	0x00000001
@@ -394,27 +399,27 @@ class IXFA_DocHandler
 public:
     virtual ~IXFA_DocHandler() { }
 
-    virtual void				ReleaseDoc(XFA_HDOC hDoc) = 0;
-    virtual IXFA_DocProvider*	GetDocProvider(XFA_HDOC hDoc) = 0;
+    virtual void				ReleaseDoc(IXFA_Doc* hDoc) = 0;
+    virtual IXFA_DocProvider*	GetDocProvider(IXFA_Doc* hDoc) = 0;
 
-    virtual FX_DWORD			GetDocType(XFA_HDOC hDoc) = 0;
-    virtual	FX_INT32			StartLoad(XFA_HDOC hDoc) = 0;
-    virtual FX_INT32			DoLoad(XFA_HDOC hDoc, IFX_Pause *pPause = NULL) = 0;
-    virtual void				StopLoad(XFA_HDOC hDoc) = 0;
+    virtual FX_DWORD			GetDocType(IXFA_Doc* hDoc) = 0;
+    virtual	FX_INT32			StartLoad(IXFA_Doc* hDoc) = 0;
+    virtual FX_INT32			DoLoad(IXFA_Doc* hDoc, IFX_Pause *pPause = NULL) = 0;
+    virtual void				StopLoad(IXFA_Doc* hDoc) = 0;
 
-    virtual IXFA_DocView*		CreateDocView(XFA_HDOC hDoc, FX_DWORD dwView = 0) = 0;
+    virtual IXFA_DocView*		CreateDocView(IXFA_Doc* hDoc, FX_DWORD dwView = 0) = 0;
 
-    virtual FX_INT32			CountPackages(XFA_HDOC hDoc) = 0;
-    virtual	void				GetPackageName(XFA_HDOC hDoc, FX_INT32 iPackage, CFX_WideStringC &wsPackage) = 0;
+    virtual FX_INT32			CountPackages(IXFA_Doc* hDoc) = 0;
+    virtual	void				GetPackageName(IXFA_Doc* hDoc, FX_INT32 iPackage, CFX_WideStringC &wsPackage) = 0;
 
-    virtual FX_BOOL				SavePackage(XFA_HDOC hDoc, FX_WSTR wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext = NULL) = 0;
-    virtual FX_BOOL				CloseDoc(XFA_HDOC hDoc) = 0;
+    virtual FX_BOOL				SavePackage(IXFA_Doc* hDoc, FX_WSTR wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext = NULL) = 0;
+    virtual FX_BOOL				CloseDoc(IXFA_Doc* hDoc) = 0;
 
-    virtual FX_BOOL				ImportData(XFA_HDOC hDoc, IFX_FileRead* pStream, FX_BOOL bXDP = TRUE) = 0;
-    virtual	void				SetJSERuntime(XFA_HDOC hDoc, FXJSE_HRUNTIME hRuntime) = 0;
-    virtual FXJSE_HVALUE		GetXFAScriptObject(XFA_HDOC hDoc) = 0;
-    virtual XFA_ATTRIBUTEENUM	GetRestoreState(XFA_HDOC hDoc) = 0;
-    virtual FX_BOOL				RunDocScript(XFA_HDOC hDoc, XFA_SCRIPTTYPE eScriptType, FX_WSTR wsScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hThisObject) = 0;
+    virtual FX_BOOL				ImportData(IXFA_Doc* hDoc, IFX_FileRead* pStream, FX_BOOL bXDP = TRUE) = 0;
+    virtual	void				SetJSERuntime(IXFA_Doc* hDoc, FXJSE_HRUNTIME hRuntime) = 0;
+    virtual FXJSE_HVALUE		GetXFAScriptObject(IXFA_Doc* hDoc) = 0;
+    virtual XFA_ATTRIBUTEENUM	GetRestoreState(IXFA_Doc* hDoc) = 0;
+    virtual FX_BOOL				RunDocScript(IXFA_Doc* hDoc, XFA_SCRIPTTYPE eScriptType, FX_WSTR wsScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hThisObject) = 0;
 };
 enum XFA_EVENTTYPE {
     XFA_EVENT_Click,
@@ -517,7 +522,7 @@ class IXFA_DocView
 public:
     virtual ~IXFA_DocView() { }
 
-    virtual XFA_HDOC			GetDoc() = 0;
+    virtual IXFA_Doc*			GetDoc() = 0;
     virtual	FX_INT32			StartLayout(FX_INT32 iStartPage = 0) = 0;
     virtual FX_INT32			DoLayout(IFX_Pause *pPause = NULL) = 0;
     virtual void				StopLayout() = 0;

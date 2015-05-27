@@ -82,7 +82,7 @@ void CXFA_FFField::DrawHighlight(CFX_Graphics* pGS, CFX_Matrix* pMatrix, FX_DWOR
     }
     if ((dwStatus & XFA_WIDGETSTATUS_Highlight) && m_pDataAcc->GetAccess() == XFA_ATTRIBUTEENUM_Open) {
         CXFA_FFDoc* pDoc = GetDoc();
-        CFX_Color crHighlight(pDoc->GetDocProvider()->GetHighlightColor((XFA_HDOC)pDoc));
+        CFX_Color crHighlight(pDoc->GetDocProvider()->GetHighlightColor(pDoc));
         pGS->SetFillColor(&crHighlight);
         CFX_Path path;
         path.Create();

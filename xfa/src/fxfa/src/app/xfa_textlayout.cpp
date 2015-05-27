@@ -378,7 +378,7 @@ IFX_Font* CXFA_TextParser::GetFont(IXFA_TextProvider *pTextProvider, IFDE_CSSCom
     CXFA_FFDoc *pDoc = pTextProvider->GetDocNode();
     FXSYS_assert(pDoc != NULL);
     CXFA_FontMgr *pFontMgr = pDoc->GetApp()->GetXFAFontMgr();
-    return pFontMgr->GetFont((XFA_HDOC)pDoc, wsFamily, dwStyle);
+    return pFontMgr->GetFont(pDoc, wsFamily, dwStyle);
 }
 FX_FLOAT CXFA_TextParser::GetFontSize(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle) const
 {

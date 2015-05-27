@@ -382,7 +382,7 @@ FX_INT32 CXFA_WidgetAcc::ProcessEvent(CXFA_Event& event, CXFA_EventParam* pEvent
             break;
         case XFA_ELEMENT_Submit: {
                 CXFA_Submit submit = event.GetSubmit();
-                return GetDoc()->GetDocProvider()->SubmitData((XFA_HDOC)GetDoc(), submit);
+                return GetDoc()->GetDocProvider()->SubmitData(GetDoc(), submit);
             }
         default:
             break;
@@ -1549,7 +1549,7 @@ IFX_Font* CXFA_WidgetAcc::GetFDEFont()
         font.GetTypeface(wsFontName);
     }
     CXFA_FFDoc* pDoc = GetDoc();
-    return pDoc->GetApp()->GetXFAFontMgr()->GetFont((XFA_HDOC)pDoc, wsFontName, dwFontStyle);
+    return pDoc->GetApp()->GetXFAFontMgr()->GetFont(pDoc, wsFontName, dwFontStyle);
 }
 FX_FLOAT CXFA_WidgetAcc::GetFontSize()
 {

@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_DOCVIEW_IMP_H
-#define _FXFA_FORMFILLER_DOCVIEW_IMP_H
+#ifndef FXFA_SRC_APP_XFA_FFDOCVIEW_H_
+#define FXFA_SRC_APP_XFA_FFDOCVIEW_H_
+
+#include "xfa_ffdoc.h"
+
 class CXFA_FFPageView;
 class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
@@ -33,10 +36,8 @@ class CXFA_FFDocView : public IXFA_DocView
 public:
     CXFA_FFDocView(CXFA_FFDoc* pDoc);
     ~CXFA_FFDocView();
-    virtual XFA_HDOC		GetDoc()
-    {
-        return (XFA_HDOC)m_pDoc;
-    }
+
+    virtual IXFA_Doc* GetDoc() { return m_pDoc; }
     virtual	FX_INT32		StartLayout(FX_INT32 iStartPage = 0);
     virtual FX_INT32		DoLayout(IFX_Pause *pPause = NULL);
     virtual void			StopLayout();
@@ -161,4 +162,5 @@ protected:
     CXFA_FFDocView*				m_pDocView;
     CXFA_WidgetAcc*				m_pCurWidgetAcc;
 };
-#endif
+
+#endif  // FXFA_SRC_APP_XFA_FFDOCVIEW_H_

@@ -212,7 +212,7 @@ IXFA_DocHandler* CXFA_FFApp::GetDocHandler()
     }
     return m_pDocHandler;
 }
-XFA_HDOC CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider, IFX_FileRead* pStream, FX_BOOL bTakeOverFile)
+IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider, IFX_FileRead* pStream, FX_BOOL bTakeOverFile)
 {
     CXFA_FFDoc* pDoc = FX_NEW CXFA_FFDoc(this, pProvider);
     if (!pDoc) {
@@ -223,9 +223,9 @@ XFA_HDOC CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider, IFX_FileRead* pStrea
         delete pDoc;
         pDoc = NULL;
     }
-    return (XFA_HDOC)pDoc;
+    return pDoc;
 }
-XFA_HDOC CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document *pPDFDoc)
+IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document *pPDFDoc)
 {
     if (pPDFDoc == NULL) {
         return NULL;
@@ -239,7 +239,7 @@ XFA_HDOC CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document *pPDFD
         delete pDoc;
         pDoc = NULL;
     }
-    return (XFA_HDOC)pDoc;
+    return pDoc;
 }
 
 void CXFA_FFApp::SetDefaultFontMgr(IXFA_FontMgr* pFontMgr)

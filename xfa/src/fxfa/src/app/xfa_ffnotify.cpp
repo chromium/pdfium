@@ -298,9 +298,9 @@ void CXFA_FFNotify::AddCalcValidate(CXFA_Node* pNode)
     pDocView->AddCalculateWidgetAcc(pWidgetAcc);
     pDocView->AddValidateWidget(pWidgetAcc);
 }
-XFA_HDOC CXFA_FFNotify::GetHDOC()
+IXFA_Doc* CXFA_FFNotify::GetHDOC()
 {
-    return (XFA_HDOC)m_pDoc;
+    return m_pDoc;
 }
 IXFA_DocProvider* CXFA_FFNotify::GetDocProvider()
 {
@@ -529,7 +529,7 @@ void CXFA_FFNotify::OnChildAdded(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID
     }
     FX_BOOL bLayoutReady = !(pDocView->m_bInLayoutStatus) && (pDocView->GetLayoutStatus() >= XFA_DOCVIEW_LAYOUTSTATUS_End);
     if (bLayoutReady) {
-        m_pDoc->GetDocProvider()->SetChangeMark((XFA_HDOC)m_pDoc);
+        m_pDoc->GetDocProvider()->SetChangeMark(m_pDoc);
     }
 }
 void CXFA_FFNotify::OnChildRemoved(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)
@@ -537,7 +537,7 @@ void CXFA_FFNotify::OnChildRemoved(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVO
     if (CXFA_FFDocView* pDocView = m_pDoc->GetDocView()) {
         FX_BOOL bLayoutReady = !(pDocView->m_bInLayoutStatus) && (pDocView->GetLayoutStatus() >= XFA_DOCVIEW_LAYOUTSTATUS_End);
         if (bLayoutReady) {
-            m_pDoc->GetDocProvider()->SetChangeMark((XFA_HDOC)m_pDoc);
+            m_pDoc->GetDocProvider()->SetChangeMark(m_pDoc);
         }
     }
 }

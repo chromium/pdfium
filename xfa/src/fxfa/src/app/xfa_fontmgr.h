@@ -18,8 +18,8 @@ class CXFA_DefFontMgr : public IXFA_FontMgr
 public:
     CXFA_DefFontMgr() {}
     ~CXFA_DefFontMgr() override;
-    virtual IFX_Font*		GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF);
-    virtual IFX_Font*		GetDefaultFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF);
+    virtual IFX_Font*		GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF);
+    virtual IFX_Font*		GetDefaultFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF);
 protected:
     CFX_PtrArray			m_CacheFonts;
 };
@@ -43,10 +43,10 @@ class CXFA_FontMgr
 public:
     CXFA_FontMgr();
     ~CXFA_FontMgr();
-    IFX_Font*		GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles,
+    IFX_Font*		GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles,
                             FX_WORD wCodePage = 0xFFFF);
-    void			LoadDocFonts(XFA_HDOC hDoc);
-    void			ReleaseDocFonts(XFA_HDOC hDoc);
+    void			LoadDocFonts(IXFA_Doc* hDoc);
+    void			ReleaseDocFonts(IXFA_Doc* hDoc);
 
     void			SetDefFontMgr(IXFA_FontMgr* pFontMgr);
 protected:

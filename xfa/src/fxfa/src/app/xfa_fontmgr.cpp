@@ -1028,7 +1028,7 @@ CXFA_DefFontMgr::~CXFA_DefFontMgr()
     m_CacheFonts.RemoveAll();
 }
 #define _FXFA_USEGASFONTMGR_
-IFX_Font* CXFA_DefFontMgr::GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage )
+IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage )
 {
     CFX_WideString wsFontName = wsFontFamily;
     IFX_FontMgr* pFDEFontMgr = ((CXFA_FFDoc*)hDoc)->GetApp()->GetFDEFontMgr();
@@ -1081,7 +1081,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD
     }
     return pFont;
 }
-IFX_Font* CXFA_DefFontMgr::GetDefaultFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
+IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
 {
     IFX_FontMgr* pFDEFontMgr = ((CXFA_FFDoc*)hDoc)->GetApp()->GetFDEFontMgr();
 #ifdef _FXFA_USEGASFONTMGR_
@@ -1305,7 +1305,7 @@ CXFA_FontMgr::~CXFA_FontMgr()
 {
     DelAllMgrMap();
 }
-IFX_Font* CXFA_FontMgr::GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles,
+IFX_Font* CXFA_FontMgr::GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles,
                                 FX_WORD wCodePage )
 {
     FX_DWORD dwHash = FX_HashCode_String_GetW(wsFontFamily.GetPtr(), wsFontFamily.GetLength(), FALSE);
@@ -1348,13 +1348,13 @@ IFX_Font* CXFA_FontMgr::GetFont(XFA_HDOC hDoc, FX_WSTR wsFontFamily, FX_DWORD dw
     }
     return pFont;
 }
-void CXFA_FontMgr::LoadDocFonts(XFA_HDOC hDoc)
+void CXFA_FontMgr::LoadDocFonts(IXFA_Doc* hDoc)
 {
     if (!m_PDFFontMgrArray.GetValueAt(hDoc)) {
         m_PDFFontMgrArray.SetAt(hDoc, FX_NEW CXFA_PDFFontMgr((CXFA_FFDoc*)hDoc));
     }
 }
-void CXFA_FontMgr::ReleaseDocFonts(XFA_HDOC hDoc)
+void CXFA_FontMgr::ReleaseDocFonts(IXFA_Doc* hDoc)
 {
     CXFA_PDFFontMgr* pMgr = NULL;
     if (m_PDFFontMgrArray.Lookup(hDoc, (void*&)pMgr)) {
@@ -1368,7 +1368,7 @@ void CXFA_FontMgr::DelAllMgrMap()
 {
     FX_POSITION ps = m_PDFFontMgrArray.GetStartPosition();
     while (ps) {
-        XFA_HDOC hDoc = NULL;
+        IXFA_Doc* hDoc = NULL;
         CXFA_PDFFontMgr* pMgr = NULL;
         m_PDFFontMgrArray.GetNextAssoc(ps, (void*&)hDoc, (void*&)pMgr);
         if (pMgr != NULL) {

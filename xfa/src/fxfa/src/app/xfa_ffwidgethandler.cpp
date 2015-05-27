@@ -78,7 +78,7 @@ FX_BOOL	CXFA_FFWidgetHandler::OnLButtonDown(XFA_HWIDGET hWidget, FX_DWORD dwFlag
     ((CXFA_FFWidget*)hWidget)->Rotate2Normal(fx, fy);
     FX_BOOL bRet =  ((CXFA_FFWidget*)hWidget)->OnLButtonDown(dwFlags, fx, fy);
     if (bRet && m_pDocView->SetFocus(hWidget)) {
-        ((CXFA_FFDoc*)m_pDocView->GetDoc())->GetDocProvider()->SetFocusWidget((XFA_HDOC)m_pDocView->GetDoc(), (XFA_HWIDGET)hWidget);
+        ((CXFA_FFDoc*)m_pDocView->GetDoc())->GetDocProvider()->SetFocusWidget(m_pDocView->GetDoc(), (XFA_HWIDGET)hWidget);
     }
     m_pDocView->UnlockUpdate();
     m_pDocView->UpdateDocView();
@@ -120,7 +120,7 @@ FX_BOOL	CXFA_FFWidgetHandler::OnRButtonDown(XFA_HWIDGET hWidget, FX_DWORD dwFlag
     ((CXFA_FFWidget*)hWidget)->Rotate2Normal(fx, fy);
     FX_BOOL bRet = ((CXFA_FFWidget*)hWidget)->OnRButtonDown(dwFlags, fx, fy);
     if (bRet && m_pDocView->SetFocus(hWidget)) {
-        ((CXFA_FFDoc*)m_pDocView->GetDoc())->GetDocProvider()->SetFocusWidget((XFA_HDOC)m_pDocView->GetDoc(), (XFA_HWIDGET)hWidget);
+        ((CXFA_FFDoc*)m_pDocView->GetDoc())->GetDocProvider()->SetFocusWidget(m_pDocView->GetDoc(), (XFA_HWIDGET)hWidget);
     }
     m_pDocView->RunInvalidate();
     return bRet;

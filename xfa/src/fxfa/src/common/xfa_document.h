@@ -76,7 +76,7 @@ public:
     virtual FX_BOOL				RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) = 0;
     virtual	FX_INT32			ExecEventByDeepFirst(CXFA_Node* pFormNode, XFA_EVENTTYPE eEventType, FX_BOOL bIsFormReady = FALSE, FX_BOOL bRecursive = TRUE, CXFA_WidgetAcc* pExclude = NULL) = 0;
     virtual void				AddCalcValidate(CXFA_Node* pNode) = 0;
-    virtual XFA_HDOC			GetHDOC() = 0;
+    virtual IXFA_Doc*			GetHDOC() = 0;
     virtual IXFA_DocProvider*	GetDocProvider() = 0;
     virtual IXFA_AppProvider*	GetAppProvider() = 0;
     virtual IXFA_WidgetHandler*	GetWidgetHandler() = 0;

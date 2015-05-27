@@ -395,14 +395,14 @@ FX_BOOL CXFA_FFTextEdit::CheckWord(FX_BSTR sWord)
     if (sWord.IsEmpty() || m_pDataAcc->GetUIType() != XFA_ELEMENT_TextEdit) {
         return TRUE;
     }
-    return GetDoc()->GetDocProvider()->CheckWord((XFA_HDOC)GetDoc(), sWord);
+    return GetDoc()->GetDocProvider()->CheckWord(GetDoc(), sWord);
 }
 FX_BOOL CXFA_FFTextEdit::GetSuggestWords(FX_BSTR sWord, CFX_ByteStringArray &sSuggest)
 {
     if (m_pDataAcc->GetUIType() != XFA_ELEMENT_TextEdit) {
         return FALSE;
     }
-    return GetDoc()->GetDocProvider()->GetSuggestWords((XFA_HDOC)GetDoc(), sWord, sSuggest);
+    return GetDoc()->GetDocProvider()->GetSuggestWords(GetDoc(), sWord, sSuggest);
 }
 FX_INT32 CXFA_FFTextEdit::OnProcessMessage(CFWL_Message *pMessage)
 {
@@ -829,7 +829,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget *pWidget, FX_INT32 iYear, 
     CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)m_pNormalWidget;
     pDateTime->SetEditText(wsDate);
     pDateTime->Update();
-    GetDoc()->GetDocProvider()->SetFocusWidget((XFA_HDOC)GetDoc(), NULL);
+    GetDoc()->GetDocProvider()->SetFocusWidget(GetDoc(), NULL);
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_Change;
     eParam.m_pTarget = m_pDataAcc;
