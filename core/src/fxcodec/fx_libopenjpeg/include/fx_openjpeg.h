@@ -4,10 +4,13 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_OPENJPEG_H_
-#define _FX_OPENJPEG_H_
+#ifndef CORE_SRC_FXCODEC_FX_LIBOPENJPEG_INCLUDE_FX_OPENJPEG_H_
+#define CORE_SRC_FXCODEC_FX_LIBOPENJPEG_INCLUDE_FX_OPENJPEG_H_
+
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+
 #include "../libopenjpeg20/openjpeg.h"
-#endif
+
+#endif  // CORE_SRC_FXCODEC_FX_LIBOPENJPEG_INCLUDE_FX_OPENJPEG_H_

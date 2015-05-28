@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_DIRECT_WRITE_
-#define _FX_DIRECT_WRITE_
+#ifndef CORE_SRC_FXGE_WIN32_DWRITE_INT_H_
+#define CORE_SRC_FXGE_WIN32_DWRITE_INT_H_
+
 #ifndef DECLSPEC_UUID
 #if (_MSC_VER >= 1100) && defined (__cplusplus)
 #define DECLSPEC_UUID(x)    __declspec(uuid(x))
@@ -56,4 +57,5 @@ protected:
     void*		    m_pDwFontContext;
     void*	        m_pDwTextRenderer;
 };
-#endif
+
+#endif  // CORE_SRC_FXGE_WIN32_DWRITE_INT_H_

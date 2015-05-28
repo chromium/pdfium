@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXET_EDIT_H_
-#define _FXET_EDIT_H_
+#ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
+#define FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
 
 #include "../../../core/include/fpdfdoc/fpdf_vt.h"
 #include "fx_edit.h"
@@ -814,5 +814,4 @@ private:
 	IFX_Edit_FontMap*			m_pFontMap;
 };
 
-#endif //_FXET_EDIT_H_
-
+#endif  // FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_

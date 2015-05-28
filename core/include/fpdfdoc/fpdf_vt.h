@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_VT_H_
-#define _FPDF_VT_H_
+#ifndef CORE_INCLUDE_FPDFDOC_FPDF_VT_H_
+#define CORE_INCLUDE_FPDFDOC_FPDF_VT_H_
 
 #include "../fpdfapi/fpdf_parser.h"
 #include "../fxcrt/fx_basic.h"
@@ -448,4 +448,5 @@ public:
 protected:
     ~IPDF_VariableText() { }
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFDOC_FPDF_VT_H_

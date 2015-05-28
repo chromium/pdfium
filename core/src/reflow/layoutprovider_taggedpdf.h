@@ -4,9 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef LayoutProvider_TaggedPDF_H
-#define LayoutProvider_TaggedPDF_H
+#ifndef CORE_SRC_REFLOW_LAYOUTPROVIDER_TAGGEDPDF_H_
+#define CORE_SRC_REFLOW_LAYOUTPROVIDER_TAGGEDPDF_H_
+
 #include "../../include/reflow/reflowengine.h"
+
 class CPDF_LayoutElement : public IPDF_LayoutElement
 {
 public:
@@ -79,4 +81,5 @@ protected:
     CPDF_StructTree*	m_pPageTree;
     int					m_TopElementIndex;
 };
-#endif
+
+#endif  // CORE_SRC_REFLOW_LAYOUTPROVIDER_TAGGEDPDF_H_

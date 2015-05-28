@@ -3,6 +3,8 @@
 // found in the LICENSE file.
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+#ifndef CORE_SRC_FPDFAPI_FPDF_FONT_FONT_INT_H_
+#define CORE_SRC_FPDFAPI_FPDF_FONT_FONT_INT_H_
 
 typedef void* FXFT_Library;
 class CPDF_CMapManager 
@@ -170,3 +172,5 @@ public:
     CPDF_FontCharMap(CPDF_Font* pFont);
     CPDF_Font*		m_pFont;
 };
+
+#endif  // CORE_SRC_FPDFAPI_FPDF_FONT_FONT_INT_H_

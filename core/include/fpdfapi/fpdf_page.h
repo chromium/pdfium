@@ -4,17 +4,13 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_PAGE_
-#define _FPDF_PAGE_
-#ifndef _FPDF_PARSER_
-#include "fpdf_parser.h"
-#endif
-#ifndef _FPDF_RESOURCE_
-#include "fpdf_resource.h"
-#endif
-#ifndef _FX_DIB_H_
+#ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
+#define CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
+
 #include "../fxge/fx_dib.h"
-#endif
+#include "fpdf_parser.h"
+#include "fpdf_resource.h"
+
 class CPDF_PageObjects;
 class CPDF_Page;
 class CPDF_Form;
@@ -246,4 +242,5 @@ private:
     CPDF_Document*  m_pDocument;
     CFX_PtrArray    m_pageObjects;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_

@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_COMBOBOX_H_
-#define _PWL_COMBOBOX_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_COMBOBOX_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_COMBOBOX_H_
 
 #include "PWL_Edit.h"
 #include "PWL_ListBox.h"
@@ -115,5 +115,4 @@ private:
 	void*							m_pFormFiller;
 };
 
-#endif // !defined(AFX_PWL_COMBOBOX_H__9D6645F8_64AA_4806_94E8_95FDEDD39C17__INCLUDED_)
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_COMBOBOX_H_

@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FFL_PUSHBUTTON_H_
-#define _FFL_PUSHBUTTON_H_
+#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_PUSHBUTTON_H_
+#define FPDFSDK_INCLUDE_FORMFILLER_FFL_PUSHBUTTON_H_
 
 #include "FFL_FormFiller.h"
 
@@ -23,5 +23,4 @@ public:
 									FX_DWORD dwFlags);
 };
 
-#endif //_FFL_PUSHBUTTON_H_
-
+#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_PUSHBUTTON_H_

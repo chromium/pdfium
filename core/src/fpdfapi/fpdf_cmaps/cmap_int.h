@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDFAPI_CMAP_INT_H_
-#define _FPDFAPI_CMAP_INT_H_
+#ifndef CORE_SRC_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_
+#define CORE_SRC_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_
+
 struct FXCMAP_CMap {
     typedef enum { None, Single, Range, Reverse } MapType;
     const char*		m_Name;
@@ -17,4 +18,5 @@ struct FXCMAP_CMap {
     int				m_DWordCount;
     int				m_UseOffset;
 };
-#endif
+
+#endif  // CORE_SRC_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_

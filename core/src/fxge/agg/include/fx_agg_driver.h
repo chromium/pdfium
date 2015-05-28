@@ -4,10 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_AGG_DEVICE_DRIVER_
-#define _FX_AGG_DEVICE_DRIVER_
+#ifndef FX_AGG_DRIVER_H_
+#define FX_AGG_DRIVER_H_
+
 #include "fxfx_agg_path_storage.h"
 #include "fxfx_agg_rasterizer_scanline_aa.h"
+
 class CAgg_PathData 
 {
 public:
@@ -118,4 +120,5 @@ public:
     CFX_DIBitmap*       m_pOriDevice;
     FX_BOOL             m_bGroupKnockout;
 };
-#endif
+
+#endif  // FX_AGG_DRIVER_H_

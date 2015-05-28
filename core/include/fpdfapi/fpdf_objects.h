@@ -4,11 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_OBJECTS_
-#define _FPDF_OBJECTS_
-#ifndef _FXCRT_EXTENSION_
+#ifndef CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_
+#define CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_
+
 #include "../fxcrt/fx_ext.h"
-#endif
+
 class CPDF_Document;
 class CPDF_IndirectObjects;
 class CPDF_Null;
@@ -742,4 +742,5 @@ protected:
 
     FX_DWORD				m_LastObjNum;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_

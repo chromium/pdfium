@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FSDK_ACTIONHANDLER_H_
-#define _FSDK_ACTIONHANDLER_H_
+#ifndef FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
+#define FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
 
 #include "../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../core/include/fxcrt/fx_string.h"
@@ -85,5 +85,4 @@ private:
 	CPDFSDK_MediaActionHandler*		m_pMediaActionHandler;
 };
 
-#endif //_BA_ACTIONHANDLER_H_
-
+#endif  // FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_

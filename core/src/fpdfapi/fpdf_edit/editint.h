@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_EDITINT_
-#define _FPDF_EDITINT_
+#ifndef CORE_SRC_FPDFAPI_FPDF_EDIT_EDITINT_H_
+#define CORE_SRC_FPDFAPI_FPDF_EDIT_EDITINT_H_
+
 class CPDF_ObjectStream 
 {
 public:
@@ -56,4 +57,5 @@ protected:
     CPDF_ObjectStream	m_ObjStream;
     CFX_ByteTextBuf		m_Buffer;
 };
-#endif
+
+#endif  // CORE_SRC_FPDFAPI_FPDF_EDIT_EDITINT_H_

@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_UNICODE_
-#define _FX_UNICODE_
+#ifndef CORE_INCLUDE_FXCRT_FX_UCD_H_
+#define CORE_INCLUDE_FXCRT_FX_UCD_H_
 
 #include "fx_basic.h"
 
@@ -197,4 +197,5 @@ public:
     IFX_Unknown			*m_pUserData;
 };
 typedef CFX_ArrayTemplate<CFX_RTFChar>	CFX_RTFCharArray;
-#endif
+
+#endif  // CORE_INCLUDE_FXCRT_FX_UCD_H_

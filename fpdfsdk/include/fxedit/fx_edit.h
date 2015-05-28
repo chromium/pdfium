@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_EDIT_H_
-#define _FX_EDIT_H_
+#ifndef FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_
+#define FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_
 
 #include "../../../core/include/fxcrt/fx_basic.h"
 #include "../../../core/include/fxge/fx_dib.h"
@@ -492,5 +492,4 @@ protected:
         ~IFX_List() { }
 };
 
-#endif
-
+#endif  // FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_

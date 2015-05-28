@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _ICON_H_
-#define _ICON_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_ICON_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_ICON_H_
 
 #include "JS_Define.h"
 
@@ -37,5 +37,4 @@ public:
 	JS_STATIC_PROP(name, Icon);
 };
 
-#endif //_ICON_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_ICON_H_

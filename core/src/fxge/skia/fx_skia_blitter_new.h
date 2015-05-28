@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef _FX_SKIABLITTER_H_
-#define _FX_SKIABLITTER_H_
-//#define _SKIA_SUPPORT_
+#ifndef CORE_SRC_FXGE_SKIA_FX_SKIA_BLITTER_NEW_H_
+#define CORE_SRC_FXGE_SKIA_FX_SKIA_BLITTER_NEW_H_
+
 #if defined(_SKIA_SUPPORT_)
 class CFX_SkiaRenderer : public SkBlitter
 {
@@ -226,4 +226,5 @@ public:
 	int m_dstHeight;
 };
 #endif
-#endif
+
+#endif  // CORE_SRC_FXGE_SKIA_FX_SKIA_BLITTER_NEW_H_

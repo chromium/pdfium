@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _COLOR_H_
-#define _COLOR_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_COLOR_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_COLOR_H_
 
 #include "JS_Define.h"
 // TODO(tsepez): include CPWL_Color.h once its own IWYU is fixed.
@@ -77,5 +77,4 @@ public:
 
 };
 
-#endif //_COLOR_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_COLOR_H_

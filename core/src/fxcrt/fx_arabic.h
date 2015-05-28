@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_ARABIC_IMP
-#define _FX_ARABIC_IMP
+#ifndef CORE_SRC_FXCRT_FX_ARABIC_H_
+#define CORE_SRC_FXCRT_FX_ARABIC_H_
+
 typedef struct _FX_ARABICCHARRANGE {
     FX_WCHAR wStart;
     FX_WCHAR wEnd;
@@ -206,4 +207,5 @@ private:
     FX_INT32	m_iLastStart;
     FX_INT32	m_iLastCount;
 };
-#endif
+
+#endif  // CORE_SRC_FXCRT_FX_ARABIC_H_

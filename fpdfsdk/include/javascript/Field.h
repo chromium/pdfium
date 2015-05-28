@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FIELD_H_
-#define _FIELD_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_FIELD_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_FIELD_H_
 
 #include <string>  // For std::wstring.
 
@@ -356,5 +356,4 @@ public:
 	JS_STATIC_METHOD(signatureValidate, Field);
 };
 
-#endif //_FIELD_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_FIELD_H_

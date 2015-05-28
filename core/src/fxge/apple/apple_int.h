@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _APPLE_INT_H_
-#define _APPLE_INT_H_
+#ifndef CORE_SRC_FXGE_APPLE_APPLE_INT_H_
+#define CORE_SRC_FXGE_APPLE_APPLE_INT_H_
+
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
 #if _FX_OS_ == _FX_MACOSX_
 #include <Carbon/Carbon.h>
@@ -243,4 +244,5 @@ FX_DWORD  FX_IOSGetMatchFamilyNameHashcode(FX_LPCSTR pFontName);
 FX_UINT32 FX_IOSGetFamilyNamesCount();
 FX_LPCSTR FX_IOSGetFamilyName( FX_UINT32 uIndex);
 #endif
-#endif
+
+#endif  // CORE_SRC_FXGE_APPLE_APPLE_INT_H_

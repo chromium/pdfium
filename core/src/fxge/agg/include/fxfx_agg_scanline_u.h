@@ -4,7 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFX_AGG_SCANLINE_U_H_
-#define _FXFX_AGG_SCANLINE_U_H_
+#ifndef FXFX_AGG_SCANLINE_U_H_
+#define FXFX_AGG_SCANLINE_U_H_
+
 #include "../agg23/agg_scanline_u.h"
-#endif
+
+#endif  // FXFX_AGG_SCANLINE_U_H_

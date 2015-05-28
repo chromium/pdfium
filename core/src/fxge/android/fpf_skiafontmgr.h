@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPF_SKIA_FONTMGR_H_
-#define _FPF_SKIA_FONTMGR_H_
+#ifndef CORE_SRC_FXGE_ANDROID_FPF_SKIAFONTMGR_H_
+#define CORE_SRC_FXGE_ANDROID_FPF_SKIAFONTMGR_H_
+
 #if _FX_OS_ == _FX_ANDROID_
 #define FPF_SKIAFONTTYPE_Unknown	0
 #define	FPF_SKIAFONTTYPE_Path		1
@@ -114,4 +115,5 @@ protected:
     CFX_MapPtrToPtr		m_FamilyFonts;
 };
 #endif
-#endif
+
+#endif  // CORE_SRC_FXGE_ANDROID_FPF_SKIAFONTMGR_H_

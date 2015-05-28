@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PDF_TXTPROC_H_
-#define _PDF_TXTPROC_H_
+#ifndef CORE_SRC_FPDFTEXT_TXTPROC_H_
+#define CORE_SRC_FPDFTEXT_TXTPROC_H_
+
 class CTextColumn 
 {
 public:
@@ -67,4 +68,5 @@ private:
     CTextColumn*	FindColumn(FX_FLOAT xpos);
     void	BreakSpace(CPDF_TextObject* pTextObj);
 };
-#endif
+
+#endif  // CORE_SRC_FPDFTEXT_TXTPROC_H_

@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPF_MODULE_H_
-#define _FPF_MODULE_H_
+#ifndef CORE_SRC_FXGE_ANDROID_FPF_SKIAMODULE_H_
+#define CORE_SRC_FXGE_ANDROID_FPF_SKIAMODULE_H_
+
 #if _FX_OS_ == _FX_ANDROID_
 class CFPF_SkiaFontMgr;
 class CFPF_SkiaDeviceModule : public IFPF_DeviceModule
@@ -19,4 +20,5 @@ protected:
     CFPF_SkiaFontMgr	*m_pFontMgr;
 };
 #endif
-#endif
+
+#endif  // CORE_SRC_FXGE_ANDROID_FPF_SKIAMODULE_H_

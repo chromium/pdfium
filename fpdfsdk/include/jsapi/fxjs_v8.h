@@ -7,8 +7,8 @@
 // PDFium wrapper around V8 APIs. PDFium code should include this file rather
 // than including V8 headers directly.
 
-#ifndef FXJSAPI_H
-#define FXJSAPI_H
+#ifndef FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
+#define FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
 
 #include <v8.h>
 #include "../../../core/include/fxcrt/fx_string.h"  // For CFX_WideString
@@ -136,4 +136,4 @@ double							JS_MakeDate(double day, double time);
 bool							JS_PortIsNan(double d);
 double							JS_LocalTime(double d);
 
-#endif //FXJSAPI_H
+#endif  // FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_

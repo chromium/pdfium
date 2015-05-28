@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _GLOBAL_H_
-#define _GLOBAL_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_GLOBAL_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_GLOBAL_H_
 
 #include "JS_Define.h"
 
@@ -86,4 +86,4 @@ public:
 
 };
 
-#endif //_GLOBAL_H_
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_GLOBAL_H_

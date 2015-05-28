@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _DIB_INT_H_
-#define _DIB_INT_H_
+#ifndef CORE_SRC_FXGE_DIB_DIB_INT_H_
+#define CORE_SRC_FXGE_DIB_DIB_INT_H_
 
 class CPDF_FixedMatrix 
 {
@@ -90,4 +90,4 @@ public:
     int		m_State;
 };
 
-#endif  // _DIB_INT_H_
+#endif  // CORE_SRC_FXGE_DIB_DIB_INT_H_

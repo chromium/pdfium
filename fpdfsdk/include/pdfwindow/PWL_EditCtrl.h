@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_EDITCTRL_H_
-#define _PWL_EDITCTRL_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_
 
 #include "../../../core/include/fxcrt/fx_string.h"
 #include "../fxedit/fx_edit.h"
@@ -173,5 +173,4 @@ private:
 	FX_INT32						m_nCodePage;
 };
 
-#endif
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_

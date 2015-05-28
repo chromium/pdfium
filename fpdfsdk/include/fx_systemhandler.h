@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_SYSTEMHANDLER_H_
-#define _FX_SYSTEMHANDLER_H_
+#ifndef FPDFSDK_INCLUDE_FX_SYSTEMHANDLER_H_
+#define FPDFSDK_INCLUDE_FX_SYSTEMHANDLER_H_
 
 typedef FX_LPVOID				FX_HWND;
 typedef FX_LPVOID				FX_HMENU;
@@ -90,5 +90,4 @@ public:
 	virtual void 				SetCharSet(FX_INT32 nCharSet) = 0;
 };
 
-#endif //_FX_SYSTEMHANDLER_H_
-
+#endif  // FPDFSDK_INCLUDE_FX_SYSTEMHANDLER_H_

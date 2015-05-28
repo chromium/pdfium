@@ -4,14 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_RENDER_
-#define _FPDF_RENDER_
-#ifndef _FPDF_PAGE_
-#include "fpdf_page.h"
-#endif
-#ifndef _FX_GE_H_
+#ifndef CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_
+#define CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_
+
 #include "../fxge/fx_ge.h"
-#endif
+#include "fpdf_page.h"
+
 class CPDF_RenderContext;
 class CPDF_RenderOptions;
 class CPDF_ImageCache;
@@ -315,4 +313,5 @@ public:
     int					m_HalftoneLimit;
     int					m_RenderStepLimit;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_

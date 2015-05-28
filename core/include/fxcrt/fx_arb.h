@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_ARABIC_
-#define _FX_ARABIC_
+#ifndef CORE_INCLUDE_FXCRT_FX_ARB_H_
+#define CORE_INCLUDE_FXCRT_FX_ARB_H_
 
 #include "fx_system.h"
 #include "fx_ucd.h"
@@ -72,4 +72,5 @@ public:
 protected:
     ~IFX_BidiChar() { }
 };
-#endif
+
+#endif  // CORE_INCLUDE_FXCRT_FX_ARB_H_

@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_TAGGED_INT_H_
-#define _FPDF_TAGGED_INT_H_
+#ifndef CORE_SRC_FPDFDOC_TAGGED_INT_H_
+#define CORE_SRC_FPDFDOC_TAGGED_INT_H_
 
 #include "../../include/fpdfdoc/fpdf_tagged.h"
 
@@ -91,4 +91,5 @@ protected:
 
     friend class CPDF_StructTreeImpl;
 };
-#endif
+
+#endif  // CORE_SRC_FPDFDOC_TAGGED_INT_H_

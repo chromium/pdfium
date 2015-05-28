@@ -4,11 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JS_VALUE_H_
-#define _JS_VALUE_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_VALUE_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_VALUE_H_
 
-#include "../jsapi/fxjs_v8.h"
 #include "../../../core/include/fxcrt/fx_basic.h"
+#include "../jsapi/fxjs_v8.h"
 
 class CJS_Array;
 class CJS_Date;
@@ -186,5 +186,4 @@ protected:
 	v8::Isolate* m_isolate;
 };
 
-#endif //_JS_VALUE_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_VALUE_H_

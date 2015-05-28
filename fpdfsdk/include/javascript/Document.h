@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _DOCUMENT_H_
-#define _DOCUMENT_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_DOCUMENT_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_DOCUMENT_H_
 
 #include "JS_Define.h"
 
@@ -272,5 +272,4 @@ public:
 	JS_STATIC_METHOD(mailDoc, Document);
 };
 
-#endif//_DOCUMENT_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_DOCUMENT_H_

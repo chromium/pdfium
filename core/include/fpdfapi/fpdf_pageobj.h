@@ -4,14 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_PAGEOBJ_H_
-#define _FPDF_PAGEOBJ_H_
-#ifndef _FPDF_RESOURCE_
-#include "fpdf_resource.h"
-#endif
-#ifndef _FX_GE_H_
+#ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGEOBJ_H_
+#define CORE_INCLUDE_FPDFAPI_FPDF_PAGEOBJ_H_
+
 #include "../fxge/fx_ge.h"
-#endif
+#include "fpdf_resource.h"
+
 class CPDF_Path;
 class CPDF_ClipPathData;
 class CPDF_ClipPath;
@@ -717,4 +715,5 @@ protected:
     virtual void		Transform(const CFX_AffineMatrix& matrix) {}
     virtual void		CopyData(const CPDF_PageObject* pSrcObjet) {}
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFAPI_FPDF_PAGEOBJ_H_

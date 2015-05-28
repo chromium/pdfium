@@ -4,14 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_SERIAL_
-#define _FPDF_SERIAL_
-#ifndef _FPDF_PAGE_
+#ifndef CORE_INCLUDE_FPDFAPI_FPDF_SERIAL_H_
+#define CORE_INCLUDE_FPDFAPI_FPDF_SERIAL_H_
+
 #include "fpdf_page.h"
-#endif
-#ifndef _FPDF_PAGEOBJ_H_
 #include "fpdf_pageobj.h"
-#endif
+
 class CPDF_ObjectStream;
 class CPDF_XRefStream;
 CFX_ByteTextBuf& operator << (CFX_ByteTextBuf& buf, const CPDF_Object* pObj);
@@ -202,4 +200,5 @@ protected:
     friend class CPDF_ObjectStream;
     friend class CPDF_XRefStream;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFAPI_FPDF_SERIAL_H_

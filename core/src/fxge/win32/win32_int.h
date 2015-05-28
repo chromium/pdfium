@@ -3,6 +3,8 @@
 // found in the LICENSE file.
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+#ifndef CORE_SRC_FXGE_WIN32_WIN32_INT_H_
+#define CORE_SRC_FXGE_WIN32_WIN32_INT_H_
 
 struct  WINDIB_Open_Args_;
 class CGdiplusExt
@@ -236,3 +238,5 @@ protected:
     CFX_PSRenderer	m_PSRenderer;
 };
 void _Color2Argb(FX_ARGB& argb, FX_DWORD color, int alpha_flag, void* pIccTransform);
+
+#endif  // CORE_SRC_FXGE_WIN32_WIN32_INT_H_

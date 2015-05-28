@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_CODEC_DEF_H_
-#define _FX_CODEC_DEF_H_
+#ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_DEF_H_
+#define CORE_INCLUDE_FXCODEC_FX_CODEC_DEF_H_
+
 enum FXCODEC_IMAGE_TYPE {
     FXCODEC_IMAGE_UNKNOWN = 0,
     FXCODEC_IMAGE_BMP,
@@ -83,4 +84,5 @@ enum FXCODEC_RESUNIT {
 #define EXIFTAG_STRING_IAMGEDESCRIPTION		270
 #define EXIFTAG_STRING_DATETIME				306
 #define EXIFTAG_STRING_COPYRIGHT			33432
-#endif
+
+#endif  // CORE_INCLUDE_FXCODEC_FX_CODEC_DEF_H_

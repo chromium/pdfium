@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_LISTBOX_H_
-#define _PWL_LISTBOX_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_LISTBOX_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_LISTBOX_H_
 
 #include "../fxedit/fx_edit.h"
 #include "PWL_Wnd.h"
@@ -101,6 +101,4 @@ private:
 	void*							m_pFormFiller;
 };
 
-#endif // !defined(AFX_PWL_LISTBOX_H__F8C0DD72_CC3C_4806_86FB_E9D02B04A34B__INCLUDED_)
-
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_LISTBOX_H_

@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_SYSTEM_H_
-#define _FX_SYSTEM_H_
+#ifndef CORE_INCLUDE_FXCRT_FX_SYSTEM_H_
+#define CORE_INCLUDE_FXCRT_FX_SYSTEM_H_
 
 #define _FX_WIN32_DESKTOP_		1
 #define _FX_LINUX_DESKTOP_		4
@@ -359,4 +359,4 @@ int			FXSYS_round(FX_FLOAT f);
 #define NEVER_INLINE __attribute__((__noinline__))
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-#endif  // _FX_SYSTEM_H_
+#endif  // CORE_INCLUDE_FXCRT_FX_SYSTEM_H_

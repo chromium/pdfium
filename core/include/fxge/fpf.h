@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_PALTFORM_DEVICE_H_
-#define _FX_PALTFORM_DEVICE_H_
+#ifndef CORE_INCLUDE_FXGE_FPF_H_
+#define CORE_INCLUDE_FXGE_FPF_H_
+
 class IFPF_DeviceModule;
 class IFPF_FontMgr;
 class IFPF_Font;
@@ -59,4 +60,5 @@ public:
 
     virtual IFPF_Font*		CreateFont(FX_BSTR bsFamilyname, FX_BYTE charset, FX_DWORD dwStyle, FX_DWORD dwMatch = 0) = 0;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FXGE_FPF_H_

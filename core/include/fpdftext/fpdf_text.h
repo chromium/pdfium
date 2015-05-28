@@ -4,17 +4,13 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_TEXT_H_
-#define _FPDF_TEXT_H_
-#ifndef _FPDF_PARSER_
-#include "../fpdfapi/fpdf_parser.h"
-#endif
-#ifndef _FPDF_PAGEOBJ_H_
-#include "../fpdfapi/fpdf_pageobj.h"
-#endif
-#ifndef _FPDF_PAGE_
+#ifndef CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
+#define CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
+
 #include "../fpdfapi/fpdf_page.h"
-#endif
+#include "../fpdfapi/fpdf_pageobj.h"
+#include "../fpdfapi/fpdf_parser.h"
+
 class CPDF_PageObjects;
 #define PDF2TXT_AUTO_ROTATE		1
 #define PDF2TXT_AUTO_WIDTH		2
@@ -170,4 +166,5 @@ public:
 
     virtual void				GetRects(int index, CFX_RectArray& rects) const = 0;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_

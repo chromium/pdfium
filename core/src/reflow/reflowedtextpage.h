@@ -4,10 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _REFLOWED_TEXT_PAGE_H
-#define _REFLOWED_TEXT_PAGE_H
+#ifndef CORE_SRC_REFLOW_REFLOWEDTEXTPAGE_H_
+#define CORE_SRC_REFLOW_REFLOWEDTEXTPAGE_H_
+
 #include "../../include/reflow/reflowengine.h"
 #include "../../src/reflow/reflowedpage.h"
+
 typedef CFX_SegmentedArray<CRF_CharData*> CRF_CharDataPtrArray;
 typedef CFX_SegmentedArray<FX_INT32> CFX_CountBSINT32Array;
 class CRF_TextPage : public IPDF_TextPage
@@ -68,4 +70,5 @@ private:
     CFX_RectArray			m_rectArray;
     CFX_CountBSINT32Array*	m_CountBSArray;
 };
-#endif
+
+#endif  // CORE_SRC_REFLOW_REFLOWEDTEXTPAGE_H_

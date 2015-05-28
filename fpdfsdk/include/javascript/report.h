@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _REPORT_H_
-#define _REPORT_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_REPORT_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_REPORT_H_
 
 #include "JS_Define.h"
 
@@ -33,5 +33,4 @@ public:
 	JS_STATIC_METHOD(writeText, Report);
 };
 
-#endif //_REPORT_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_REPORT_H_

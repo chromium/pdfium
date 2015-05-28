@@ -4,14 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_RESOURCE_
-#define _FPDF_RESOURCE_
-#ifndef _FPDF_PARSER_
-#include "fpdf_parser.h"
-#endif
-#ifndef _FX_FONT_H_
+#ifndef CORE_INCLUDE_FPDFAPI_FPDF_RESOURCE_H_
+#define CORE_INCLUDE_FPDFAPI_FPDF_RESOURCE_H_
+
 #include "../fxge/fx_font.h"
-#endif
+#include "fpdf_parser.h"
+
 class CPDF_Font;
 class CPDF_Type1Font;
 class CPDF_TrueTypeFont;
@@ -946,4 +944,5 @@ private:
     CPDF_Dictionary*		m_pOC;
     CPDF_Dictionary*	InitJPEG(FX_LPBYTE pData, FX_DWORD size);
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFAPI_FPDF_RESOURCE_H_

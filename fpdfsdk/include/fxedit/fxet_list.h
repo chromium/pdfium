@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXET_LIST_H_
-#define _FXET_LIST_H_
+#ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
+#define FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
 
 #include "../../../core/include/fpdfapi/fpdf_parser.h"  // For CPDF_Point.
 #include "fx_edit.h"
@@ -360,4 +360,4 @@ private:
 	FX_INT32						m_nCaretIndex;	//for multiple
 };
 
-#endif
+#endif  // FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_

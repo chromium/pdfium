@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FX_SAFE_TYPES_H_
-#define FX_SAFE_TYPES_H_
+#ifndef CORE_SRC_FXCRT_FX_SAFE_TYPES_H_
+#define CORE_SRC_FXCRT_FX_SAFE_TYPES_H_
 
 #include <stdlib.h>  // For size_t.
 
@@ -14,4 +14,4 @@ typedef pdfium::base::CheckedNumeric<FX_INT32> FX_SAFE_INT32;
 typedef pdfium::base::CheckedNumeric<size_t> FX_SAFE_SIZE_T;
 typedef pdfium::base::CheckedNumeric<FX_FILESIZE> FX_SAFE_FILESIZE;
 
-#endif  // FX_SAFE_TYPES_H_
+#endif  // CORE_SRC_FXCRT_FX_SAFE_TYPES_H_

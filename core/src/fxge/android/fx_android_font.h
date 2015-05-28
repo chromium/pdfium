@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_ANDROID_FONT_H_
-#define _FX_ANDROID_FONT_H_
+#ifndef CORE_SRC_FXGE_ANDROID_FX_ANDROID_FONT_H_
+#define CORE_SRC_FXGE_ANDROID_FX_ANDROID_FONT_H_
+
 #if _FX_OS_ == _FX_ANDROID_
 class IFPF_FontMgr;
 class CFX_AndroidFontInfo : public IFX_SystemFontInfo
@@ -33,4 +34,5 @@ protected:
     IFPF_FontMgr		*m_pFontMgr;
 };
 #endif
-#endif
+
+#endif  // CORE_SRC_FXGE_ANDROID_FX_ANDROID_FONT_H_

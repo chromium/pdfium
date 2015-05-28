@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FX_CRYPT_H_
-#define FX_CRYPT_H_
+#ifndef CORE_INCLUDE_FDRM_FX_CRYPT_H_
+#define CORE_INCLUDE_FDRM_FX_CRYPT_H_
 
 #include "../fxcrt/fx_basic.h"
 
@@ -46,4 +46,4 @@ void CRYPT_SetPubKeyDecryptor(FX_BOOL (*func)(FX_LPCBYTE pData, FX_DWORD size, F
 };
 #endif
 
-#endif  // FX_CRYPT_H_
+#endif  // CORE_INCLUDE_FDRM_FX_CRYPT_H_

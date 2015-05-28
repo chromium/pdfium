@@ -4,13 +4,13 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_CODEC_H_
-#define _FX_CODEC_H_
-#ifndef _FXCRT_EXTENSION_
+#ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
+#define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
+
 #include "../fxcrt/fx_ext.h"
-#endif
 #include "fx_codec_def.h"
 #include "fx_codec_provider.h"
+
 class CFX_DIBSource;
 class ICodec_ScanlineDecoder;
 class ICodec_ProgressiveDecoder;
@@ -468,4 +468,5 @@ public:
     virtual ~IFX_DIBAttributeExif() {};
     virtual FX_BOOL		GetInfo(FX_WORD tag, FX_LPVOID val) = 0;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FXCODEC_FX_CODEC_H_
