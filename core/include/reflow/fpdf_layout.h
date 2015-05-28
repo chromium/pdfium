@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDFAPI_LAYOUT_H_
-#define _FPDFAPI_LAYOUT_H_
+#ifndef CORE_INCLUDE_REFLOW_FPDF_LAYOUT_H_
+#define CORE_INCLUDE_REFLOW_FPDF_LAYOUT_H_
+
 class IPDF_LayoutElement;
 class IPDF_LayoutProcessor;
 class IPDF_LayoutProvider;
@@ -277,4 +278,4 @@ public:
 
     virtual IPDF_LayoutElement* GetRoot() = 0;
 };
-#endif
+#endif  // CORE_INCLUDE_REFLOW_FPDF_LAYOUT_H_

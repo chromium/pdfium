@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JS_EVENTHANDLER_H_
-#define _JS_EVENTHANDLER_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_EVENTHANDLER_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_EVENTHANDLER_H_
 
 #include "../../../core/include/fxcrt/fx_string.h"
 #include "../../../core/include/fxcrt/fx_system.h"
@@ -170,5 +170,4 @@ public:
 	CPDFSDK_Annot*			m_pTargetAnnot;
 };
 
-#endif //_JS_EVENTHANDLER_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_EVENTHANDLER_H_

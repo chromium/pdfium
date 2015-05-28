@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FX_FONT_H_
-#define FX_FONT_H_
+#ifndef CORE_INCLUDE_FXGE_FX_FONT_H_
+#define CORE_INCLUDE_FXGE_FX_FONT_H_
 
 #include "../fxcrt/fx_ext.h"
 #include "fx_dib.h"
@@ -432,4 +432,4 @@ protected:
 };
 IFX_GSUBTable* FXGE_CreateGSUBTable(CFX_Font* pFont);
 
-#endif  // FX_FONT_H_
+#endif  // CORE_INCLUDE_FXGE_FX_FONT_H_

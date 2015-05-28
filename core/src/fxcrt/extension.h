@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXCRT_EXTENSION_IMP_
-#define _FXCRT_EXTENSION_IMP_
+#ifndef CORE_SRC_FXCRT_EXTENSION_H_
+#define CORE_SRC_FXCRT_EXTENSION_H_
 
 #include "fx_safe_types.h"
 
@@ -436,4 +436,5 @@ FX_BOOL FX_GenerateCryptoRandom(FX_LPDWORD pBuffer, FX_INT32 iCount);
 #ifdef __cplusplus
 }
 #endif
-#endif
+
+#endif  // CORE_SRC_FXCRT_EXTENSION_H_

@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_BUTTON_H_
-#define _PWL_BUTTON_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_BUTTON_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_BUTTON_H_
 
 #include "PWL_Wnd.h"
 
@@ -24,4 +24,4 @@ protected:
 	FX_BOOL						m_bMouseDown;
 };
 
-#endif
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_BUTTON_H_

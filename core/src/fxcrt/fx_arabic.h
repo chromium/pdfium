@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_ARABIC_IMP
-#define _FX_ARABIC_IMP
+#ifndef CORE_SRC_FXCRT_FX_ARABIC_H_
+#define CORE_SRC_FXCRT_FX_ARABIC_H_
+
 class CFX_BidiChar FX_FINAL : public IFX_BidiChar
 {
 public:
@@ -33,4 +34,5 @@ private:
     FX_INT32	m_iLastStart;
     FX_INT32	m_iLastCount;
 };
-#endif
+
+#endif  // CORE_SRC_FXCRT_FX_ARABIC_H_

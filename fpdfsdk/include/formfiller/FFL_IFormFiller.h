@@ -4,10 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FFL_IFORMFILLER_H_
-#define _FFL_IFORMFILLER_H_
+#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_IFORMFILLER_H_
+#define FPDFSDK_INCLUDE_FORMFILLER_FFL_IFORMFILLER_H_
 
 #include "FormFiller.h"
+
 class CFFL_FormFiller;
 class CFFL_PrivateData;
 
@@ -140,5 +141,5 @@ public:
 	int					nValueAge;
 };
 
-#endif //_FFL_IFORMFILLER_H_
+#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_IFORMFILLER_H_
 

@@ -4,11 +4,13 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef TTGSUBTable_H
-#define TTGSUBTable_H
+#ifndef CORE_SRC_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_
+#define CORE_SRC_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_
+
 #include "../../../include/fxge/fx_freetype.h"
 #include "../../../include/fxcrt/fx_basic.h"
 #include "common.h"
+
 class CFX_GlyphMap
 {
 public:
@@ -420,5 +422,5 @@ public:
 private:
     ~CFX_GSUBTable() { }
 };
-#endif
 
+#endif  // CORE_SRC_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_

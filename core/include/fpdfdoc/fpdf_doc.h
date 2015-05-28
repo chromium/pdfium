@@ -4,14 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_DOC_H_
-#define _FPDF_DOC_H_
-#ifndef _FPDF_PARSER_
+#ifndef CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
+#define CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
+
 #include "../fpdfapi/fpdf_parser.h"
-#endif
-#ifndef _FPDF_RENDER_
 #include "../fpdfapi/fpdf_render.h"
-#endif
+
 class CPDF_Action;
 class CPDF_Annot;
 class CPDF_AnnotList;
@@ -1751,4 +1749,5 @@ protected:
     CPDF_Stream*			GetIcon(FX_BSTR csEntry);
     friend class			CPDF_FormControl;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_

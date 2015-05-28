@@ -4,14 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_GE_H_
-#define _FX_GE_H_
-#ifndef _FX_DIB_H_
+#ifndef CORE_INCLUDE_FXGE_FX_GE_H_
+#define CORE_INCLUDE_FXGE_FX_GE_H_
+
 #include "fx_dib.h"
-#endif
-#ifndef _FX_FONT_H_
 #include "fx_font.h"
-#endif
+
 class CFX_ClipRgn;
 class CFX_PathData;
 class CFX_GraphStateData;
@@ -23,6 +21,7 @@ class CFX_RenderDevice;
 class IFX_RenderDeviceDriver;
 class CCodec_ModuleMgr;
 class IFXG_PaintModuleMgr;
+
 class CFX_GEModule 
 {
 public:
@@ -729,4 +728,5 @@ private:
 
     void			WritePSBinary(FX_LPCBYTE data, int len);
 };
-#endif
+
+#endif  // CORE_INCLUDE_FXGE_FX_GE_H_

@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PDF_TEXT_INT_H_
-#define _PDF_TEXT_INT_H_
+#ifndef CORE_SRC_FPDFTEXT_TEXT_INT_H_
+#define CORE_SRC_FPDFTEXT_TEXT_INT_H_
+
 class CPDF_TextParseOptions 
 {
 public:
@@ -217,4 +218,5 @@ private:
 FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_LPWSTR pDst);
 void NormalizeString(CFX_WideString& str);
 void NormalizeCompositeChar(FX_WCHAR wChar, CFX_WideString& sDest);
-#endif
+
+#endif  // CORE_SRC_FPDFTEXT_TEXT_INT_H_

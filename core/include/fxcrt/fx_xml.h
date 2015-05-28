@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_XML_H_
-#define _FX_XML_H_
+#ifndef CORE_INCLUDE_FXCRT_FX_XML_H_
+#define CORE_INCLUDE_FXCRT_FX_XML_H_
 
 #include "fx_basic.h"
 
@@ -176,4 +176,5 @@ protected:
     friend class CXML_Parser;
     friend class CXML_Composer;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FXCRT_FX_XML_H_

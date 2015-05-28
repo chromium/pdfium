@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_STREAM_H_
-#define _FX_STREAM_H_
+#ifndef CORE_INCLUDE_FXCRT_FX_STREAM_H_
+#define CORE_INCLUDE_FXCRT_FX_STREAM_H_
 
 #include "fx_memory.h"
 #include "fx_string.h"
@@ -200,4 +200,5 @@ public:
 
     virtual FX_FILESIZE		GetBlockOffset() = 0;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FXCRT_FX_STREAM_H_

@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef _FX_SKIA_DEVICE_DRIVER_
-#define _FX_SKIA_DEVICE_DRIVER_
-//#define _SKIA_SUPPORT_
+#ifndef CORE_SRC_FXGE_SKIA_FX_SKIA_DEVICE_H_
+#define CORE_SRC_FXGE_SKIA_FX_SKIA_DEVICE_H_
+
 #if defined(_SKIA_SUPPORT_)
 class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver
 {
@@ -86,5 +86,6 @@ public:
 
 	CFX_AggDeviceDriver* m_pAggDriver;
 };
-#endif 
-#endif// _FX_SKIA_DEVICE_DRIVER_
+#endif  // defined(_SKIA_SUPPORT_)
+
+#endif  // CORE_SRC_FXGE_SKIA_FX_SKIA_DEVICE_H_

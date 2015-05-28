@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _IPDFWINDOW_H_
-#define _IPDFWINDOW_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_IPDFWINDOW_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_IPDFWINDOW_H_
 
 #include "PWL_Button.h"
 #include "PWL_Caret.h"
@@ -25,4 +25,4 @@
 #include "PWL_Utils.h"
 #include "PWL_Wnd.h"
 
-#endif //_IPDFWINDOW_H_
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_IPDFWINDOW_H_

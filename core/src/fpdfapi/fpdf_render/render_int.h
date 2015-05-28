@@ -4,9 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_PAGEOBJ_H_
+#ifndef CORE_SRC_FPDFAPI_FPDF_RENDER_RENDER_INT_H_
+#define CORE_SRC_FPDFAPI_FPDF_RENDER_RENDER_INT_H_
+
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
-#endif
+
 class CPDF_QuickStretcher;
 #define TYPE3_MAX_BLUES		16
 class CPDF_Type3Glyphs 
@@ -465,3 +467,5 @@ struct _CPDF_UniqueKeyGen {
     FX_CHAR		m_Key[128];
     int			m_KeyLen;
 };
+
+#endif  // CORE_SRC_FPDFAPI_FPDF_RENDER_RENDER_INT_H_

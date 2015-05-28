@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef PDFWINDOW_H_
-#define PDFWINDOW_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PDFWINDOW_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PDFWINDOW_H_
 
 #include "../../../core/include/fpdfapi/fpdf_module.h"
 #include "../../../core/include/fpdfdoc/fpdf_doc.h"
@@ -15,4 +15,4 @@
 #include "../fx_systemhandler.h"
 #include "../fxedit/fx_edit.h"
 
-#endif  // PDFWINDOW_H_
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PDFWINDOW_H_

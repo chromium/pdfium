@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FFL_UTILS_H_
-#define _FFL_UTILS_H_
+#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_UTILS_H_
+#define FPDFSDK_INCLUDE_FORMFILLER_FFL_UTILS_H_
 
 #include "../../../core/include/fpdfapi/fpdf_parser.h"
 #include "../../../core/include/fxcrt/fx_memory.h"
@@ -21,4 +21,4 @@ public:
 	static FX_BOOL					TraceObject(CPDF_Object* pObj);
 };
 
-#endif  // _FFL_UTILS_H_
+#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_UTILS_H_

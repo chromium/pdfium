@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JS_OBJECT_H_
-#define _JS_OBJECT_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_OBJECT_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_OBJECT_H_
 
 #include "../fsdk_define.h"  // For FX_UINT
 #include "../fsdk_mgr.h"  // For CPDFDoc_Environment
@@ -291,4 +291,5 @@ private:
 
 	CPDFDoc_Environment*			m_pApp;
 };
-#endif //_JS_OBJECT_H_
+
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_OBJECT_H_

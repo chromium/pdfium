@@ -4,14 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_PARSER_
-#define _FPDF_PARSER_
-#ifndef _FX_BASIC_H_
+#ifndef CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
+#define CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
+
 #include "../fxcrt/fx_ext.h"
-#endif
-#ifndef _FPDF_OBJECTS_
 #include "fpdf_objects.h"
-#endif
+
 class CPDF_Document;
 class IPDF_DocParser;
 class CPDF_Parser;
@@ -947,4 +945,5 @@ enum PDF_DATAAVAIL_STATUS {
     PDF_DATAAVAIL_LOADALLFILE,
     PDF_DATAAVAIL_TRAILER_APPEND
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_

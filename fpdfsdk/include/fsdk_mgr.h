@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDFSDK_MGR_H
-#define _FPDFSDK_MGR_H
+#ifndef FPDFSDK_INCLUDE_FSDK_MGR_H_
+#define FPDFSDK_INCLUDE_FSDK_MGR_H_
 
 #include "../../public/fpdf_formfill.h"
 #include "../../public/fpdf_fwlevent.h" // cross platform keycode and events define.
@@ -559,5 +559,4 @@ private:
 	}
 };
 
-
-#endif //_FPDFSDK_MGR_H
+#endif  // FPDFSDK_INCLUDE_FSDK_MGR_H_

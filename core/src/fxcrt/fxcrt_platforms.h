@@ -4,9 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXCRT_PLATFORMS_
-#define _FXCRT_PLATFORMS_
+#ifndef CORE_SRC_FXCRT_FXCRT_PLATFORMS_H_
+#define CORE_SRC_FXCRT_FXCRT_PLATFORMS_H_
+
 #include "extension.h"
+
 #if _FX_OS_ == _FX_ANDROID_
 void	FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_ByteString &bsMode);
 void	FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_WideString &wsMode);
@@ -32,4 +34,5 @@ protected:
     FXSYS_FILE*	m_hFile;
 };
 #endif
-#endif
+
+#endif  // CORE_SRC_FXCRT_FXCRT_PLATFORMS_H_

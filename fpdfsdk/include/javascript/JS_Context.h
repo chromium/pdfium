@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JS_CONTEXT_H_
-#define _JS_CONTEXT_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_CONTEXT_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_CONTEXT_H_
 
 #include "../../../core/include/fxcrt/fx_system.h"
 #include "../../../core/include/fxcrt/fx_string.h"
@@ -94,12 +94,4 @@ private:
 	FX_BOOL						m_bMsgBoxEnable;
 };
 
-// static CFX_WideString JSGetStringFromID(CJS_Context* pContext, UINT ID)
-// {
-// 	ASSERT(pContext != NULL);
-// 
-// 	return JS_LoadString(pContext->GetReaderApp(), ID);
-// }
-
-#endif //_JS_CONTEXT_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_CONTEXT_H_

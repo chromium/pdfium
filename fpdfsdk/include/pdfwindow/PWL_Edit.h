@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_EDIT_H_
-#define _PWL_EDIT_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDIT_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDIT_H_
 
 #include "../../../core/include/fxcrt/fx_basic.h"
 #include "PWL_EditCtrl.h"
@@ -139,5 +139,4 @@ private:
 	void*							m_pFormFiller;
 };
 
-#endif 
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDIT_H_

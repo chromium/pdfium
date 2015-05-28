@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FORMFILLER_H_
-#define FORMFILLER_H_
+#ifndef FPDFSDK_INCLUDE_FORMFILLER_FORMFILLER_H_
+#define FPDFSDK_INCLUDE_FORMFILLER_FORMFILLER_H_
 
 #include "../../../core/include/fpdfapi/fpdf_module.h"
 #include "../../../core/include/fpdfdoc/fpdf_doc.h"
@@ -15,4 +15,4 @@
 #include "../fxedit/fx_edit.h"
 #include "../pdfwindow/IPDFWindow.h"
 
-#endif  // FORMFILLER_H_
+#endif  // FPDFSDK_INCLUDE_FORMFILLER_FORMFILLER_H_

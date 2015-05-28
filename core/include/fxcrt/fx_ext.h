@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXCRT_EXTENSION_
-#define _FXCRT_EXTENSION_
+#ifndef CORE_INCLUDE_FXCRT_FX_EXT_H_
+#define CORE_INCLUDE_FXCRT_FX_EXT_H_
 
 #include "fx_arb.h"
 #include "fx_basic.h"
@@ -90,4 +90,5 @@ public:
         }
     }
 };
-#endif
+
+#endif  // CORE_INCLUDE_FXCRT_FX_EXT_H_

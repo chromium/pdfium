@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FSDK_BASEANNOT_H_
-#define _FSDK_BASEANNOT_H_
+#ifndef FPDFSDK_INCLUDE_FSDK_BASEANNOT_H_
+#define FPDFSDK_INCLUDE_FSDK_BASEANNOT_H_
 
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
@@ -190,7 +190,4 @@ protected:
 	
 };
 
-
-
-#endif
-
+#endif  // FPDFSDK_INCLUDE_FSDK_BASEANNOT_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef JAVASCRIPT_H_
-#define JAVASCRIPT_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JAVASCRIPT_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_JAVASCRIPT_H_
 
 #include <string>
 #include <vector>
@@ -23,4 +23,4 @@
 #include "../jsapi/fxjs_v8.h"
 #include "../pdfwindow/IPDFWindow.h"
 
-#endif  // JAVASCRIPT_H_
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JAVASCRIPT_H_

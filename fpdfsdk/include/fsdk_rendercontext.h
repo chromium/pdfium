@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FSDK_RENDERCONTEXT_H_
-#define FSDK_RENDERCONTEXT_H_
+#ifndef FPDFSDK_INCLUDE_FSDK_RENDERCONTEXT_H_
+#define FPDFSDK_INCLUDE_FSDK_RENDERCONTEXT_H_
 
 #include "../../public/fpdf_progressive.h"
 #include "fsdk_define.h"
@@ -40,4 +40,4 @@ private:
 	IFSDK_PAUSE* m_IPause;
 };
 
-#endif  // FSDK_RENDERCONTEXT_H_
+#endif  // FPDFSDK_INCLUDE_FSDK_RENDERCONTEXT_H_

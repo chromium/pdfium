@@ -4,13 +4,13 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_CODEC_H_
-#define _FX_CODEC_H_
-#ifndef _FXCRT_EXTENSION_
+#ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
+#define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
+
 #include "../fxcrt/fx_ext.h"
-#endif
 #include "fx_codec_def.h"
 #include "fx_codec_provider.h"
+
 class CFX_DIBSource;
 class ICodec_ScanlineDecoder;
 class ICodec_BasicModule;
@@ -286,4 +286,5 @@ public:
 void AdobeCMYK_to_sRGB(FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B);
 void AdobeCMYK_to_sRGB1(FX_BYTE c, FX_BYTE m, FX_BYTE y, FX_BYTE k, FX_BYTE& R, FX_BYTE& G, FX_BYTE& B);
 FX_BOOL MD5ComputeID(FX_LPCVOID buf, FX_DWORD dwSize, FX_BYTE ID[16]);
-#endif
+
+#endif  // CORE_INCLUDE_FXCODEC_FX_CODEC_H_

@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PDF_VT_H_
-#define _PDF_VT_H_
+#ifndef CORE_SRC_FPDFDOC_PDF_VT_H_
+#define CORE_SRC_FPDFDOC_PDF_VT_H_
 
 class CPVT_Size;
 class CPVT_FloatRect;
@@ -635,4 +635,4 @@ private:
     CPDF_VariableText *						m_pVT;
 };
 
-#endif  // _PDF_VT_H_
+#endif  // CORE_SRC_FPDFDOC_PDF_VT_H_

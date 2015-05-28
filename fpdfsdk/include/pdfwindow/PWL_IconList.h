@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_IconList_H_
-#define _PWL_IconList_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_
 
 #include "../../../core/include/fxcrt/fx_string.h"
 #include "PWL_ListCtrl.h"
@@ -124,7 +124,5 @@ private:
 	CPWL_IconList_Content*				m_pListContent;
 	FX_INT32							m_nListCount;
 };
- 
-#endif //_PWL_IconList_H_
 
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_

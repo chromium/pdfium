@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FFL_FORMFILLER_H_
-#define _FFL_FORMFILLER_H_
+#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
+#define FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
 
 #include "FFL_IFormFiller.h"
 #include "FFL_CBA_Fontmap.h"
@@ -173,6 +173,4 @@ protected:
 	FX_BOOL						m_bMouseDown;
 };
 
-//#define CFFL_IM_BOX				CFX_ArrayTemplate<CBA_EditInput*>
-
-#endif
+#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_

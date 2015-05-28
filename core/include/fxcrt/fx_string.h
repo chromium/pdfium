@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_STRING_H_
-#define _FX_STRING_H_
+#ifndef CORE_INCLUDE_FXCRT_FX_STRING_H_
+#define CORE_INCLUDE_FXCRT_FX_STRING_H_
 
 #include <stdint.h>  // For intptr_t.
 #include <algorithm>
@@ -902,4 +902,5 @@ inline CFX_ByteString	FX_UTF8Encode(const CFX_WideString &wsStr)
 {
     return FX_UTF8Encode(wsStr.c_str(), wsStr.GetLength());
 }
-#endif
+
+#endif  // CORE_INCLUDE_FXCRT_FX_STRING_H_

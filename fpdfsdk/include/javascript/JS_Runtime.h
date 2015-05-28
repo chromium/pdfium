@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JS_RUNTIME_H_
-#define _JS_RUNTIME_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
 
 #include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../core/include/fxcrt/fx_basic.h"
@@ -72,5 +72,4 @@ protected:
 	v8::Global<v8::Context> m_context;
 };
 
-#endif //_JS_RUNTIME_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_

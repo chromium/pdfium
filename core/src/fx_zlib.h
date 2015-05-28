@@ -4,7 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_SRC_ZLIB_H_
-#define _FX_SRC_ZLIB_H_
-#include "./fxcodec/fx_zlib/zlib_v128/zlib.h"
-#endif
+#ifndef CORE_SRC_FX_ZLIB_H_
+#define CORE_SRC_FX_ZLIB_H_
+
+#include "fxcodec/fx_zlib/zlib_v128/zlib.h"
+
+#endif  // CORE_SRC_FX_ZLIB_H_

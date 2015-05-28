@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDFSDK_DEFINE_H
-#define _FPDFSDK_DEFINE_H
+#ifndef FPDFSDK_INCLUDE_FSDK_DEFINE_H_
+#define FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 
 #ifdef _WIN32
 #include <tchar.h>
@@ -87,4 +87,4 @@ void		FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL	FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy);
 
 
-#endif//_FPDFSDK_DEFINE_H
+#endif  // FPDFSDK_INCLUDE_FSDK_DEFINE_H_

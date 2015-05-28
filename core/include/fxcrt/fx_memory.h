@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_MEMORY_H_
-#define _FX_MEMORY_H_
+#ifndef CORE_INCLUDE_FXCRT_FX_MEMORY_H_
+#define CORE_INCLUDE_FXCRT_FX_MEMORY_H_
 
 #include "fx_system.h"
 
@@ -115,5 +115,6 @@ private:
 
     void*	m_pFirstTrunk;
 };
-#endif  // __cplusplust
-#endif  // _FX_MEMORY_H_
+#endif  // __cplusplus
+
+#endif  // CORE_INCLUDE_FXCRT_FX_MEMORY_H_

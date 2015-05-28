@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXCRT_WINDOWS_
-#define _FXCRT_WINDOWS_
+#ifndef CORE_SRC_FXCRT_FXCRT_WINDOWS_H_
+#define CORE_SRC_FXCRT_FXCRT_WINDOWS_H_
+
 #include "extension.h"
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 class CFXCRT_FileAccess_Win64 : public IFXCRT_FileAccess
 {
@@ -30,4 +32,5 @@ protected:
     FX_LPVOID	m_hFile;
 };
 #endif
-#endif
+
+#endif  // CORE_SRC_FXCRT_FXCRT_WINDOWS_H_

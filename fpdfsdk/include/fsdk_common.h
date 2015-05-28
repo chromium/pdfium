@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FSDK_COMMON_H_
-#define _FSDK_COMMON_H_
+#ifndef FPDFSDK_INCLUDE_FSDK_COMMON_H_
+#define FPDFSDK_INCLUDE_FSDK_COMMON_H_
 
 #define BFFT_SIGNATURE				"Signature"
 
@@ -42,5 +42,4 @@
 #define BBS_INSET					3
 #define BBS_UNDERLINE				4
 
-
-#endif
+#endif  // FPDFSDK_INCLUDE_FSDK_COMMON_H_

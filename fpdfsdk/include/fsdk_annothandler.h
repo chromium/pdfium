@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FSDK_ANNOTHANDLER_H_
-#define _FSDK_ANNOTHANDLER_H_
+#ifndef FPDFSDK_INCLUDE_FSDK_ANNOTHANDLER_H_
+#define FPDFSDK_INCLUDE_FSDK_ANNOTHANDLER_H_
 
 #include "../../core/include/fxcrt/fx_basic.h"
 
@@ -252,7 +252,4 @@ protected:
 	FX_BOOL              m_bCircle;
 };
 
-
-
-#endif
-
+#endif  // FPDFSDK_INCLUDE_FSDK_ANNOTHANDLER_H_

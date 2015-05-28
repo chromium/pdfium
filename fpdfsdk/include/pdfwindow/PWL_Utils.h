@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_UTILS_H_
-#define _PWL_UTILS_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
 
 #include "../../../core/include/fpdfapi/fpdf_parser.h"  // For CPDF_Point.
 #include "../../../core/include/fpdfdoc/fpdf_vt.h"  // For CPVT_WordRange.
@@ -240,6 +240,4 @@ private:
 	static void								GetGraphics_Foxit(CFX_ByteString& sPathData, CFX_PathData& path, const CPDF_Rect& crBBox, const PWL_PATH_TYPE type);
 };
 
-#endif // !defined(AFX_PWL_UTILS_H__D32812AD_A875_4E08_9D3C_0A57020987C6__INCLUDED_)
-
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_

@@ -4,10 +4,12 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _AUTOREFLOW_H
-#define _AUTOREFLOW_H
+#ifndef CORE_SRC_REFLOW_AUTOREFLOW_H_
+#define CORE_SRC_REFLOW_AUTOREFLOW_H_
+
 #include "../../include/reflow/reflowengine.h"
 #include "reflowedpage.h"
+
 class CPDF_AutoReflowElement;
 class CPDF_AutoReflowLayoutProvider;
 typedef CFX_ArrayTemplate<CPDF_AutoReflowElement*> CAR_ElmPtrArray;
@@ -119,4 +121,5 @@ public:
     CFX_PtrArray m_cellArray;
     int			m_Step;
 };
-#endif
+
+#endif  // CORE_SRC_REFLOW_AUTOREFLOW_H_

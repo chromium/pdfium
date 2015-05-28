@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FFL_COMBOBOX_H_
-#define _FFL_COMBOBOX_H_
+#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_COMBOBOX_H_
+#define FPDFSDK_INCLUDE_FORMFILLER_FFL_COMBOBOX_H_
 
 #include "../../../core/include/fxcrt/fx_string.h"
 #include "FFL_FormFiller.h"
@@ -67,8 +67,6 @@ private:
 private:
 	CBA_FontMap*				m_pFontMap;
 	FFL_ComboBoxState				m_State;
-	//CFFL_IM_BOX					m_IMBox;
 };
 
-#endif //_FFL_COMBOBOX_H_
-
+#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_COMBOBOX_H_

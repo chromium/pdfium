@@ -4,8 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_GE_APPLE_H_
-#define _FX_GE_APPLE_H_
+#ifndef CORE_INCLUDE_FXGE_FX_GE_APPLE_H_
+#define CORE_INCLUDE_FXGE_FX_GE_APPLE_H_
+
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
 class CFX_QuartzDevice : public CFX_RenderDevice
 {
@@ -23,4 +24,5 @@ protected:
     FX_BOOL m_bOwnedBitmap;
 };
 #endif
-#endif
+
+#endif  // CORE_INCLUDE_FXGE_FX_GE_APPLE_H_

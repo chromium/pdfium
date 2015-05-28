@@ -4,7 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_LCMS2_H_
-#define _FX_LCMS2_H_
+#ifndef CORE_SRC_FXCODEC_LCMS2_INCLUDE_FX_LCMS2_H_
+#define CORE_SRC_FXCODEC_LCMS2_INCLUDE_FX_LCMS2_H_
+
 #include "../lcms2-2.6/include/lcms2.h"
-#endif
+
+#endif  // CORE_SRC_FXCODEC_LCMS2_INCLUDE_FX_LCMS2_H_

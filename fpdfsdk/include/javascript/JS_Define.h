@@ -4,12 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JS_DEFINE_H_
-#define _JS_DEFINE_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_DEFINE_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_DEFINE_H_
 
 #include "../jsapi/fxjs_v8.h"
 #include "resource.h"
-
 #include "JS_Object.h"
 #include "JS_Value.h"
 
@@ -466,4 +465,4 @@ if (JS_DefineGlobalConst(pRuntime, (const wchar_t*)ArrayName, prop.ToV8Value()) 
 
 FXJSVALUETYPE GET_VALUE_TYPE(v8::Local<v8::Value> p);
 
-#endif //_JS_DEFINE_H_
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_DEFINE_H_

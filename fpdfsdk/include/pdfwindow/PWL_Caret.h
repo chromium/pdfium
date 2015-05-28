@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_CARET_H_
-#define _PWL_CARET_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_CARET_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_CARET_H_
 
 #include "PWL_Wnd.h"
 
@@ -50,5 +50,4 @@ private:
 	CPDF_Rect					m_rcInvalid;
 };
 
-#endif
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_CARET_H_

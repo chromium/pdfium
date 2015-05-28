@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_SCROLLBAR_H_
-#define _PWL_SCROLLBAR_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_SCROLLBAR_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_SCROLLBAR_H_
 
 #include "PWL_Wnd.h"
 
@@ -163,6 +163,4 @@ private:
 	FX_FLOAT					m_fOldPosButton;
 };
 
-#endif // !defined(AFX_PWL_SCROLLBAR_H__DCFEC082_2651_48A4_B8F3_63F1B3CC5E10__INCLUDED_)
-
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_SCROLLBAR_H_

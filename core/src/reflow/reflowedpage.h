@@ -4,9 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _REFLOWED_PAGE_H
-#define _REFLOWED_PAGE_H
+#ifndef CORE_SRC_REFLOW_REFLOWEDPAGE_H_
+#define CORE_SRC_REFLOW_REFLOWEDPAGE_H_
+
 #include "../../include/reflow/reflowengine.h"
+
 #define GET_SIGNED(a) ( (a)>0 ? a/a : (a==0 ? 0 : -a/a) )
 class CRF_Data;
 class CRF_LineData;
@@ -368,4 +370,5 @@ public:
     FX_ARGB		m_stroke_argb;
     int			m_fill_mode;
 };
-#endif
+
+#endif  // CORE_SRC_REFLOW_REFLOWEDPAGE_H_

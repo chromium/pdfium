@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_LABEL_H_
-#define _PWL_LABEL_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_LABEL_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_LABEL_H_
 
 #include "PWL_Wnd.h"
 
@@ -42,6 +42,4 @@ private:
 	IFX_Edit*						m_pEdit;
 };
 
-#endif
-
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_LABEL_H_

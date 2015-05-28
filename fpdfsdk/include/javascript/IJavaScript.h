@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _IJAVASCRIPT_H_
-#define _IJAVASCRIPT_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
 
 #include "../../../core/include/fxcrt/fx_basic.h"
 
@@ -109,5 +109,4 @@ private:
 	FX_INT32						m_nGlobalDataCount;
 };
 
-#endif //_IJAVASCRIPT_H_
-
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_

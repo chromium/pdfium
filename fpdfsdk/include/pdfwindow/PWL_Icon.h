@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_ICON_H_
-#define _PWL_ICON_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICON_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICON_H_
 
 #include "../../../core/include/fxcrt/fx_string.h"
 #include "PWL_Wnd.h"
@@ -57,6 +57,4 @@ private:
 };
 
 
-#endif // !defined(AFX_PWL_BUTTON_H__5A6080AA_33C5_4FC9_91FC_D9644C41120A__INCLUDED_)
-
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICON_H_

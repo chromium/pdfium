@@ -4,11 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_DIB_H_
-#define _FPDF_DIB_H_
-#ifndef _FXCRT_EXTENSION_
+#ifndef CORE_INCLUDE_FXGE_FX_DIB_H_
+#define CORE_INCLUDE_FXGE_FX_DIB_H_
+
 #include "../fxcrt/fx_ext.h"
-#endif
+
 enum FXDIB_Format {
     FXDIB_Invalid = 0,
     FXDIB_1bppMask = 0x101,
@@ -602,4 +602,5 @@ protected:
     FX_BOOL				m_bRgbByteOrder;
     int					m_BlendType;
 };
-#endif
+
+#endif  // CORE_INCLUDE_FXGE_FX_DIB_H_

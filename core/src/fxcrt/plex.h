@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+#ifndef CORE_SRC_FXCRT_PLEX_H_
+#define CORE_SRC_FXCRT_PLEX_H_
 
 struct CFX_Plex {
     CFX_Plex* pNext;
@@ -13,3 +15,5 @@ struct CFX_Plex {
     static CFX_Plex* Create(CFX_Plex*& head, FX_DWORD nMax, FX_DWORD cbElement);
     void FreeDataChain();
 };
+
+#endif  // CORE_SRC_FXCRT_PLEX_H_

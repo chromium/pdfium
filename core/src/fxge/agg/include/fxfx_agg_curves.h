@@ -4,7 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFX_AGG_CURVERS_H_
-#define _FXFX_AGG_CURVERS_H_
+#ifndef FXFX_AGG_CURVES_H_
+#define FXFX_AGG_CURVES_H_
+
 #include "../agg23/agg_curves.h"
-#endif
+
+#endif  // FXFX_AGG_CURVES_H_

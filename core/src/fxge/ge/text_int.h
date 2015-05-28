@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _TEXT_INT_H_
-#define _TEXT_INT_H_
+#ifndef CORE_SRC_FXGE_GE_TEXT_INT_H_
+#define CORE_SRC_FXGE_GE_TEXT_INT_H_
 
 struct _CFX_UniqueKeyGen {
     void		Generate(int count, ...);
@@ -102,4 +102,4 @@ public:
     CFX_ByteString		m_FontTables;
 };
 
-#endif  // _TEXT_INT_H_
+#endif  // CORE_SRC_FXGE_GE_TEXT_INT_H_

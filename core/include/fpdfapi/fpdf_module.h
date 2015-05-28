@@ -4,11 +4,11 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDF_MODULE_
-#define _FPDF_MODULE_
-#ifndef _FXCRT_EXTENSION_
+#ifndef CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
+#define CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
+
 #include "../fxcrt/fx_ext.h"
-#endif
+
 class CPDF_ModuleMgr;
 class CPDF_PageModuleDef;
 class CPDF_RenderModuleDef;
@@ -193,4 +193,5 @@ public:
         return NULL;
     }
 };
-#endif
+
+#endif  // CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_

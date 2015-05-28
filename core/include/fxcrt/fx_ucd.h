@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_UNICODE_
-#define _FX_UNICODE_
+#ifndef CORE_INCLUDE_FXCRT_FX_UCD_H_
+#define CORE_INCLUDE_FXCRT_FX_UCD_H_
 
 #include "fx_system.h"
 
@@ -98,4 +98,5 @@ FX_BOOL FX_IsCombinationChar(FX_WCHAR wch);
 FX_BOOL	FX_IsBidiChar(FX_WCHAR wch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_DWORD dwProps, FX_BOOL bRTL, FX_BOOL bVertical);
-#endif
+
+#endif  // CORE_INCLUDE_FXCRT_FX_UCD_H_

@@ -4,13 +4,15 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _REFLOW_ENGINE_H
-#define _REFLOW_ENGINE_H
+#ifndef CORE_INCLUDE_REFLOW_REFLOWENGINE_H_
+#define CORE_INCLUDE_REFLOW_REFLOWENGINE_H_
+
+#include "../fpdfapi/fpdf_pageobj.h"
 #include "../fpdfapi/fpdf_render.h"
+#include "../fpdfdoc/fpdf_tagged.h"
 #include "../fpdftext/fpdf_text.h"
 #include "fpdf_layout.h"
-#include "../fpdfapi/fpdf_pageobj.h"
-#include "../fpdfdoc/fpdf_tagged.h"
+
 class IPDF_ReflowedPage
 {
 public:
@@ -73,4 +75,5 @@ public:
 IPDF_ReflowedPage* Create_ReflowPage();
 IPDF_ProgressiveReflowPageParser* Create_ReflowPageParser();
 IPDF_ProgressiveReflowPageRender* Create_ReflowPageRender();
-#endif
+
+#endif  // CORE_INCLUDE_REFLOW_REFLOWENGINE_H_

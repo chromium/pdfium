@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _UTIL_H_
-#define _UTIL_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_UTIL_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_UTIL_H_
 
 #include <string>  // For std::wstring.
 
@@ -46,4 +46,5 @@ public:
 };
 
 FX_INT64 FX_atoi64(const char *nptr);
-#endif //_UTIL_H_
+
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_UTIL_H_

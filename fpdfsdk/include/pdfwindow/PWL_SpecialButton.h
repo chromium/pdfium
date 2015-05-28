@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_SPECIALBUTTON_H_
-#define _PWL_SPECIALBUTTON_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_
 
 #include "PWL_Button.h"
 
@@ -53,6 +53,4 @@ private:
 	FX_BOOL						m_bChecked;
 };
 
-#endif
-
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_

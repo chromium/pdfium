@@ -4,6 +4,9 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#ifndef CORE_SRC_FPDFAPI_FPDF_PARSER_FILTERS_INT_H_
+#define CORE_SRC_FPDFAPI_FPDF_PARSER_FILTERS_INT_H_
+
 class CPDF_DecryptFilter : public CFX_DataFilter
 {
 public:
@@ -117,3 +120,5 @@ public:
                                 CFX_BinaryBuf& dest_buf);
     FX_BOOL			ReadLine(FX_LPCBYTE src_buf, int bitsize, int& bitpos);
 };
+
+#endif  // CORE_SRC_FPDFAPI_FPDF_PARSER_FILTERS_INT_H_

@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JS_GLOBALDATA_H_
-#define _JS_GLOBALDATA_H_
+#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_GLOBALDATA_H_
+#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_GLOBALDATA_H_
 
 #include "../../../core/include/fxcrt/fx_basic.h"
 
@@ -94,4 +94,4 @@ private:
 	CFX_WideString								m_sFilePath;
 };
 
-#endif //_JS_GLOBALDATA_H_
+#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_GLOBALDATA_H_

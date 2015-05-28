@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _PWL_NOTE_H_
-#define _PWL_NOTE_H_
+#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_NOTE_H_
+#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_NOTE_H_
 
 #include "PWL_Button.h"
 #include "PWL_Edit.h"
@@ -357,5 +357,4 @@ private:
 	CFX_WideString						m_sReplyString;
 };
 
-#endif
-
+#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_NOTE_H_

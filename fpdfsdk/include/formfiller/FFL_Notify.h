@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FFL_NOTIFY_H_
-#define _FFL_NOTIFY_H_
+#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_NOTIFY_H_
+#define FPDFSDK_INCLUDE_FORMFILLER_FFL_NOTIFY_H_
 
 #include "../../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../../core/include/fxcrt/fx_string.h"
@@ -52,5 +52,4 @@ private:
 	FX_INT32								m_nNotifyFlag;
 };
 
-#endif
-
+#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_NOTIFY_H_

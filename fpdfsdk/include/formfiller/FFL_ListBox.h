@@ -4,8 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FFL_LISTBOX_H_
-#define _FFL_LISTBOX_H_
+#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_LISTBOX_H_
+#define FPDFSDK_INCLUDE_FORMFILLER_FFL_LISTBOX_H_
 
 #include "FFL_FormFiller.h"
 
@@ -43,5 +43,4 @@ private:
 };
 
 
-#endif //_FFL_LISTBOX_H_
-
+#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_LISTBOX_H_
