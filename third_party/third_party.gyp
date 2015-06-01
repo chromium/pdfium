@@ -66,7 +66,7 @@
       'sources': [
         'base/logging.h',
         'base/macros.h',
-        'base/nonstd_unique_ptr.h'
+        'base/nonstd_unique_ptr.h',
         'base/template_util.h',
         'base/numerics/safe_conversions.h',
         'base/numerics/safe_conversions_impl.h',
