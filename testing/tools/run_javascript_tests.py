@@ -47,6 +47,10 @@ def main():
   text_diff_path = finder.ScriptPath('text_diff.py')
   source_dir = finder.TestingDir(os.path.join('resources', 'javascript'))
   pdfium_test_path = finder.ExecutablePath('pdfium_test')
+  if not os.path.exists(pdfium_test_path):
+    print "FAILURE: Can't find test executable '%s'" % pdfium_test_path
+    print "Use --build-dir to specify its location."
+    return 1
   working_dir = finder.WorkingDir(os.path.join('testing', 'javascript'))
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)

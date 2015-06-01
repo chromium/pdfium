@@ -46,6 +46,10 @@ def main():
   fixup_path = finder.ScriptPath('fixup_pdf_template.py')
   source_dir = finder.TestingDir(os.path.join('resources', 'pixel'))
   pdfium_test_path = finder.ExecutablePath('pdfium_test')
+  if not os.path.exists(pdfium_test_path):
+    print "FAILURE: Can't find test executable '%s'" % pdfium_test_path
+    print "Use --build-dir to specify its location."
+    return 1
   working_dir = finder.WorkingDir(os.path.join('testing', 'pixel'))
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
