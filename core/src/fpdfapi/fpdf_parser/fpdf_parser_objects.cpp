@@ -1173,7 +1173,7 @@ void CPDF_Reference::SetRef(CPDF_IndirectObjects* pDoc, FX_DWORD objnum)
     m_pObjList = pDoc;
     m_RefObjNum = objnum;
 }
-CPDF_IndirectObjects::CPDF_IndirectObjects(IPDF_DocParser* pParser)
+CPDF_IndirectObjects::CPDF_IndirectObjects(CPDF_Parser* pParser)
 {
     m_pParser = pParser;
     m_IndirectObjs.InitHashTable(1013);

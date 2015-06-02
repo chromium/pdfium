@@ -9,21 +9,22 @@
 
 #include "../fxcrt/fx_ext.h"
 
+class CPDF_Array;
+class CPDF_Boolean;
+class CPDF_CryptoHandler;
+class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_IndirectObjects;
 class CPDF_Null;
-class CPDF_Boolean;
 class CPDF_Number;
-class CPDF_String;
+class CPDF_Parser;
+class CPDF_Reference;
 class CPDF_Stream;
 class CPDF_StreamAcc;
 class CPDF_StreamFilter;
-class CPDF_Array;
-class CPDF_Dictionary;
-class CPDF_Reference;
-class IPDF_DocParser;
+class CPDF_String;
 class IFX_FileRead;
-class CPDF_CryptoHandler;
+
 #define PDFOBJ_INVALID		0
 #define	PDFOBJ_BOOLEAN		1
 #define PDFOBJ_NUMBER		2
@@ -34,6 +35,7 @@ class CPDF_CryptoHandler;
 #define PDFOBJ_STREAM		7
 #define PDFOBJ_NULL			8
 #define PDFOBJ_REFERENCE	9
+
 typedef IFX_FileStream* (*FPDF_LPFCloneStreamCallback)(CPDF_Stream *pStream, FX_LPVOID pUserData);
 class CPDF_Object 
 {
@@ -709,7 +711,7 @@ class CPDF_IndirectObjects
 {
 public:
 
-    CPDF_IndirectObjects(IPDF_DocParser* pParser);
+    CPDF_IndirectObjects(CPDF_Parser* pParser);
 
     ~CPDF_IndirectObjects();
 
@@ -738,7 +740,7 @@ protected:
 
     CFX_MapPtrToPtr			m_IndirectObjs;
 
-    IPDF_DocParser*			m_pParser;
+    CPDF_Parser*			m_pParser;
 
     FX_DWORD				m_LastObjNum;
 };
