@@ -988,15 +988,25 @@ FX_BOOL Document::delay(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 		}
 		else
 		{
-			for (int i=0,sz=m_DelayData.GetSize(); i<sz; i++)
+			CFX_ArrayTemplate<CJS_DelayData*> DelayDataToProcess;
+
+			for (int i=0,sz=m_DelayData.GetSize(); i < sz; i++)
 			{
 				if (CJS_DelayData* pData = m_DelayData.GetAt(i))
 				{
-					Field::DoDelay(m_pDocument, pData);
-					delete m_DelayData.GetAt(i);
+					DelayDataToProcess.Add(pData);
+					m_DelayData.SetAt(i, NULL);
 				}
 			}
 			m_DelayData.RemoveAll();
+
+			for (int i=0,sz=DelayDataToProcess.GetSize(); i < sz; i++)
+			{
+				CJS_DelayData* pData = DelayDataToProcess.GetAt(i);
+				Field::DoDelay(m_pDocument, pData);
+				DelayDataToProcess.SetAt(i,NULL);
+				delete pData;
+			}
 		}
 
 		return TRUE;
@@ -1927,6 +1937,7 @@ void Document::AddDelayData(CJS_DelayData* pData)
 void Document::DoFieldDelay(const CFX_WideString& sFieldName, int nControlIndex)
 {
 	CFX_DWordArray DelArray;
+	CFX_ArrayTemplate<CJS_DelayData*> DelayDataForFieldAndControlIndex;
 
 	for (int i=0,sz=m_DelayData.GetSize(); i<sz; i++)
 	{
@@ -1934,8 +1945,7 @@ void Document::DoFieldDelay(const CFX_WideString& sFieldName, int nControlIndex)
 		{
 			if (pData->sFieldName == sFieldName && pData->nControlIndex == nControlIndex)
 			{
-				Field::DoDelay(m_pDocument, pData);
-				delete pData;
+				DelayDataForFieldAndControlIndex.Add(pData);
 				m_DelayData.SetAt(i, NULL);
 				DelArray.Add(i);
 			}
@@ -1945,6 +1955,14 @@ void Document::DoFieldDelay(const CFX_WideString& sFieldName, int nControlIndex)
 	for (int j=DelArray.GetSize()-1; j>=0; j--)
 	{
 		m_DelayData.RemoveAt(DelArray[j]);
+	}
+
+	for (int i=0,sz=DelayDataForFieldAndControlIndex.GetSize(); i < sz; i++)
+	{
+		CJS_DelayData* pData = DelayDataForFieldAndControlIndex.GetAt(i);
+		Field::DoDelay(m_pDocument, pData);
+		DelayDataForFieldAndControlIndex.SetAt(i,NULL);
+		delete pData;
 	}
 }
 
