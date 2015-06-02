@@ -6,9 +6,8 @@
 
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
-extern FX_LPVOID PDFPreviewInitCache(CPDF_Document* pDoc);
-extern void PDFPreviewClearCache(FX_LPVOID pCache);
-CPDF_Document::CPDF_Document(IPDF_DocParser* pParser) : CPDF_IndirectObjects(pParser)
+
+CPDF_Document::CPDF_Document(CPDF_Parser* pParser) : CPDF_IndirectObjects(pParser)
 {
     ASSERT(pParser != NULL);
     m_pRootDict = NULL;
