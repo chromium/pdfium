@@ -582,9 +582,11 @@ int main(int argc, const char* argv[]) {
   v8::Platform* platform = v8::platform::CreateDefaultPlatform();
   v8::V8::InitializePlatform(platform);
   v8::V8::Initialize();
-  // By enabling predicatble mode, V8 won't post any background tasks.
-  const char predictable_flag[] = "--predictable";
-  v8::V8::SetFlagsFromString(predictable_flag, strlen(predictable_flag));
+
+  // By enabling predictable mode, V8 won't post any background tasks.
+  static const char predictable_flag[] = "--predictable";
+  v8::V8::SetFlagsFromString(predictable_flag,
+                             static_cast<int>(strlen(predictable_flag)));
 
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   v8::StartupData natives;
