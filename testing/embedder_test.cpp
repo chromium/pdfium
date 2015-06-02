@@ -18,6 +18,7 @@
 #include "../public/fpdf_text.h"
 #include "../public/fpdfview.h"
 #include "testing/gmock/include/gmock/gmock.h"
+#include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
 
 #ifdef _WIN32
@@ -94,58 +95,6 @@ static bool GetExternalData(const std::string& exe_path,
 
 }  // namespace
 
-class EmbedderTestDefaultDelegate : public EmbedderTest::Delegate {
- public:
-  int Alert(FPDF_WIDESTRING, FPDF_WIDESTRING, int, int) override {
-    printf("Form_Alert called.\n");
-    return 0;
-  }
-
-  void UnsupportedHandler(int type) {
-    std::string feature = "Unknown";
-    switch (type) {
-      case FPDF_UNSP_DOC_XFAFORM:
-        feature = "XFA";
-        break;
-      case FPDF_UNSP_DOC_PORTABLECOLLECTION:
-        feature = "Portfolios_Packages";
-        break;
-      case FPDF_UNSP_DOC_ATTACHMENT:
-      case FPDF_UNSP_ANNOT_ATTACHMENT:
-        feature = "Attachment";
-        break;
-      case FPDF_UNSP_DOC_SECURITY:
-        feature = "Rights_Management";
-        break;
-      case FPDF_UNSP_DOC_SHAREDREVIEW:
-        feature = "Shared_Review";
-        break;
-      case FPDF_UNSP_DOC_SHAREDFORM_ACROBAT:
-      case FPDF_UNSP_DOC_SHAREDFORM_FILESYSTEM:
-      case FPDF_UNSP_DOC_SHAREDFORM_EMAIL:
-        feature = "Shared_Form";
-        break;
-      case FPDF_UNSP_ANNOT_3DANNOT:
-        feature = "3D";
-        break;
-      case FPDF_UNSP_ANNOT_MOVIE:
-        feature = "Movie";
-        break;
-      case FPDF_UNSP_ANNOT_SOUND:
-        feature = "Sound";
-        break;
-      case FPDF_UNSP_ANNOT_SCREEN_MEDIA:
-      case FPDF_UNSP_ANNOT_SCREEN_RICHMEDIA:
-        feature = "Screen";
-        break;
-      case FPDF_UNSP_ANNOT_SIG:
-        feature = "Digital_Signature";
-        break;
-    }
-    printf("Unsupported feature: %s.\n", feature.c_str());
-  }
-};
-
 class TestLoader {
  public:
   TestLoader(const char* pBuf, size_t len);
@@ -183,7 +132,7 @@ EmbedderTest::EmbedderTest() :
   memset(&hints_, 0, sizeof(hints_));
   memset(&file_access_, 0, sizeof(file_access_));
   memset(&file_avail_, 0, sizeof(file_avail_));
-  default_delegate_ = new EmbedderTestDefaultDelegate();
+  default_delegate_ = new EmbedderTest::Delegate();
   delegate_ = default_delegate_;
 }
 
@@ -193,9 +142,15 @@ EmbedderTest::~EmbedderTest() {
 
 void EmbedderTest::SetUp() {
     v8::V8::InitializeICU();
-    // By enabling predicatble mode, V8 won't post any background tasks.
+
+    platform_ = v8::platform::CreateDefaultPlatform();
+    v8::V8::InitializePlatform(platform_);
+    v8::V8::Initialize();
+
+    // By enabling predictable mode, V8 won't post any background tasks.
     const char predictable_flag[] = "--predictable";
-    v8::V8::SetFlagsFromString(predictable_flag, strlen(predictable_flag));
+    v8::V8::SetFlagsFromString(predictable_flag,
+                               static_cast<int>(strlen(predictable_flag)));
 
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
     ASSERT_TRUE(GetExternalData(g_exe_path_, "natives_blob.bin", &natives_));
@@ -221,6 +176,8 @@ void EmbedderTest::TearDown() {
   }
   FPDFAvail_Destroy(avail_);
   FPDF_DestroyLibrary();
+  v8::V8::ShutdownPlatform();
+  delete platform_;
   delete loader_;
   free(file_contents_);
 }
@@ -262,6 +219,8 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
   FPDF_FORMFILLINFO* formfillinfo = static_cast<FPDF_FORMFILLINFO*>(this);
   memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));
   formfillinfo->version = 1;
+  formfillinfo->FFI_SetTimer = SetTimerTrampoline;
+  formfillinfo->FFI_KillTimer = KillTimerTrampoline;
   formfillinfo->m_pJsPlatform = platform;
 
   form_handle_ = FPDFDOC_InitFormFillEnvironment(document_, formfillinfo);
@@ -331,6 +290,19 @@ int EmbedderTest::AlertTrampoline(IPDF_JSPLATFORM* platform,
                                   int icon) {
   EmbedderTest* test = static_cast<EmbedderTest*>(platform);
   return test->delegate_->Alert(message, title, type, icon);
+}
+
+// static
+int EmbedderTest::SetTimerTrampoline(FPDF_FORMFILLINFO* info,
+                                     int msecs, TimerCallback fn) {
+  EmbedderTest* test = static_cast<EmbedderTest*>(info);
+  return test->delegate_->SetTimer(msecs, fn);
+}
+
+// static
+void EmbedderTest::KillTimerTrampoline(FPDF_FORMFILLINFO* info, int id) {
+  EmbedderTest* test = static_cast<EmbedderTest*>(info);
+  return test->delegate_->KillTimer(id);
 }
 
 // Can't use gtest-provided main since we need to stash the path to the

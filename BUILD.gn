@@ -886,15 +886,21 @@ test("pdfium_embeddertests") {
     "testing/embedder_test.cpp",
     "testing/embedder_test.h",
     "testing/embedder_test_mock_delegate.h",
+    "testing/embedder_test_timer_handling_delegate.h",
     "testing/fx_string_testhelpers.cpp",
     "testing/fx_string_testhelpers.h",
   ]
   deps = [
     "//testing/gmock",
     "//testing/gtest",
+    "//v8:v8_libplatform",
     ":pdfium",
   ]
-  include_dirs = [ "." ]
+  include_dirs = [
+    "//v8",
+    "//v8/include",
+    "."
+  ]
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     ":pdfium_config",

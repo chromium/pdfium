@@ -852,10 +852,12 @@
       'dependencies': [
         '<(DEPTH)/testing/gmock.gyp:gmock',
         '<(DEPTH)/testing/gtest.gyp:gtest',
+        '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
         'pdfium',
       ],
       'include_dirs': [
-        '<(DEPTH)'
+        '<(DEPTH)',
+        '<(DEPTH)/v8',
       ],
       'sources': [
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_decode_embeddertest.cpp',
@@ -870,6 +872,7 @@
         'testing/embedder_test.cpp',
         'testing/embedder_test.h',
         'testing/embedder_test_mock_delegate.h',
+        'testing/embedder_test_timer_handling_delegate.h',
         'testing/fx_string_testhelpers.cpp',
         'testing/fx_string_testhelpers.h',
       ],
