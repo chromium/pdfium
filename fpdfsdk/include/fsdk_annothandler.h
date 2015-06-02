@@ -36,7 +36,7 @@ public:
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) = 0;
 
-	virtual CPDFSDK_Annot*		NewAnnot(XFA_HWIDGET hWidget, CPDFSDK_PageView* pPage) = 0;
+	virtual CPDFSDK_Annot*		NewAnnot(IXFA_Widget* hWidget, CPDFSDK_PageView* pPage) = 0;
 
 	virtual void				ReleaseAnnot(CPDFSDK_Annot* pAnnot) = 0;
 
@@ -110,7 +110,7 @@ public:
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage);
 
-	virtual CPDFSDK_Annot*		NewAnnot(XFA_HWIDGET hWidget, CPDFSDK_PageView* pPage);
+	virtual CPDFSDK_Annot*		NewAnnot(IXFA_Widget* hWidget, CPDFSDK_PageView* pPage);
 
 	virtual void				ReleaseAnnot(CPDFSDK_Annot* pAnnot)  ;
 
@@ -189,7 +189,7 @@ public:
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) { return NULL; }
 
-	virtual CPDFSDK_Annot*		NewAnnot(XFA_HWIDGET pAnnot, CPDFSDK_PageView* pPage);
+	virtual CPDFSDK_Annot*		NewAnnot(IXFA_Widget* pAnnot, CPDFSDK_PageView* pPage);
 
 	virtual void				ReleaseAnnot(CPDFSDK_Annot* pAnnot);
 
@@ -266,7 +266,7 @@ public:
 	void						UnRegisterAnnotHandler(IPDFSDK_AnnotHandler* pAnnotHandler);
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot * pAnnot, CPDFSDK_PageView *pPageView);
-	virtual CPDFSDK_Annot*		NewAnnot(XFA_HWIDGET pAnnot, CPDFSDK_PageView* pPageView);
+	virtual CPDFSDK_Annot*		NewAnnot(IXFA_Widget* pAnnot, CPDFSDK_PageView* pPageView);
 	virtual void				ReleaseAnnot(CPDFSDK_Annot * pAnnot);
 	
 	virtual void				Annot_OnCreate(CPDFSDK_Annot* pAnnot);

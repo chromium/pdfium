@@ -84,7 +84,7 @@ void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent
                 CXFA_FFWidget* pWidget = pWidgetAcc->GetNextWidget(NULL);
                 if (!pWidget) {
                     if (bStaticNotify) {
-                        pWidgetAcc->GetDoc()->GetDocProvider()->WidgetEvent((XFA_HWIDGET)pWidget, pWidgetAcc, XFA_WIDGETEVENT_ListItemAdded, pParam, pAdditional);
+                        pWidgetAcc->GetDoc()->GetDocProvider()->WidgetEvent(pWidget, pWidgetAcc, XFA_WIDGETEVENT_ListItemAdded, pParam, pAdditional);
                     }
                     return;
                 }
@@ -97,7 +97,7 @@ void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent
                         }
                     }
                     if (bStaticNotify) {
-                        pWidgetAcc->GetDoc()->GetDocProvider()->WidgetEvent((XFA_HWIDGET)pWidget, pWidgetAcc, XFA_WIDGETEVENT_ListItemAdded, pParam, pAdditional);
+                        pWidgetAcc->GetDoc()->GetDocProvider()->WidgetEvent(pWidget, pWidgetAcc, XFA_WIDGETEVENT_ListItemAdded, pParam, pAdditional);
                     }
                     pWidget = pWidgetAcc->GetNextWidget(pWidget);
                 }
@@ -111,7 +111,7 @@ void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent
                 CXFA_FFWidget* pWidget = pWidgetAcc->GetNextWidget(NULL);
                 if (!pWidget) {
                     if (bStaticNotify) {
-                        pWidgetAcc->GetDoc()->GetDocProvider()->WidgetEvent((XFA_HWIDGET)pWidget, pWidgetAcc, XFA_WIDGETEVENT_ListItemRemoved, pParam, pAdditional);
+                        pWidgetAcc->GetDoc()->GetDocProvider()->WidgetEvent(pWidget, pWidgetAcc, XFA_WIDGETEVENT_ListItemRemoved, pParam, pAdditional);
                     }
                     return;
                 }
@@ -124,7 +124,7 @@ void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent
                         }
                     }
                     if (bStaticNotify) {
-                        pWidgetAcc->GetDoc()->GetDocProvider()->WidgetEvent((XFA_HWIDGET)pWidget, pWidgetAcc, XFA_WIDGETEVENT_ListItemRemoved, pParam, pAdditional);
+                        pWidgetAcc->GetDoc()->GetDocProvider()->WidgetEvent(pWidget, pWidgetAcc, XFA_WIDGETEVENT_ListItemRemoved, pParam, pAdditional);
                     }
                     pWidget = pWidgetAcc->GetNextWidget(pWidget);
                 }
@@ -315,11 +315,11 @@ IXFA_WidgetHandler* CXFA_FFNotify::GetWidgetHandler()
     CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
     return pDocView ? pDocView->GetWidgetHandler() : NULL;
 }
-XFA_HWIDGET	CXFA_FFNotify::GetHWidget(CXFA_LayoutItem* pLayoutItem)
+IXFA_Widget* CXFA_FFNotify::GetHWidget(CXFA_LayoutItem* pLayoutItem)
 {
-    return (XFA_HWIDGET)XFA_GetWidgetFromLayoutItem(pLayoutItem);
+    return XFA_GetWidgetFromLayoutItem(pLayoutItem);
 }
-void CXFA_FFNotify::OpenDropDownList(XFA_HWIDGET hWidget)
+void CXFA_FFNotify::OpenDropDownList(IXFA_Widget* hWidget)
 {
     CXFA_FFWidget* pWidget = (CXFA_FFWidget*)hWidget;
     if (pWidget->GetDataAcc()->GetUIType() != XFA_ELEMENT_ChoiceList) {
@@ -553,7 +553,7 @@ void CXFA_FFNotify::OnLayoutItemAdd(CXFA_FFDocView* pDocView, IXFA_DocLayout *pL
         IXFA_PageView* pPrePageView = pWidget->GetPageView();
         if (pPrePageView != pNewPageView || (dwStatus & (XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable)) == (XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable)) {
             pWidget->SetPageView(pNewPageView);
-            m_pDoc->GetDocProvider()->WidgetEvent((XFA_HWIDGET)pWidget, pWidget->GetDataAcc(), XFA_WIDGETEVENT_PostAdded, pNewPageView, pPrePageView);
+            m_pDoc->GetDocProvider()->WidgetEvent(pWidget, pWidget->GetDataAcc(), XFA_WIDGETEVENT_PostAdded, pNewPageView, pPrePageView);
         }
         if ((dwStatus & XFA_WIDGETSTATUS_Visible) == 0) {
             return;
@@ -580,7 +580,7 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_FFDocView* pDocView, IXFA_DocLayou
     if (pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End) {
         return;
     }
-    m_pDoc->GetDocProvider()->WidgetEvent((XFA_HWIDGET)pWidget, pWidget->GetDataAcc(), XFA_WIDGETEVENT_PreRemoved, NULL, NULL);
+    m_pDoc->GetDocProvider()->WidgetEvent(pWidget, pWidget->GetDataAcc(), XFA_WIDGETEVENT_PreRemoved, NULL, NULL);
     pWidget->AddInvalidateRect(NULL);
 }
 void CXFA_FFNotify::OnLayoutItemRectChanged(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)

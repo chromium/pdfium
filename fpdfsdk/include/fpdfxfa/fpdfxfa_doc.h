@@ -45,21 +45,21 @@ public:
 	//used in dynamic xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
 	virtual void		InvalidateRect(IXFA_PageView* pPageView, const CFX_RectF& rt, FX_DWORD dwFlags = 0);
 	//used in static xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
-	virtual void		InvalidateRect(XFA_HWIDGET hWidget, FX_DWORD dwFlags = 0);
+	virtual void		InvalidateRect(IXFA_Widget* hWidget, FX_DWORD dwFlags = 0);
 	//show or hide caret
-	virtual void		DisplayCaret(XFA_HWIDGET hWidget, FX_BOOL bVisible, const CFX_RectF* pRtAnchor);
+	virtual void		DisplayCaret(IXFA_Widget* hWidget, FX_BOOL bVisible, const CFX_RectF* pRtAnchor);
 	//dwPos: (0:bottom 1:top)
-	virtual FX_BOOL		GetPopupPos(XFA_HWIDGET hWidget, FX_FLOAT fMinPopup, FX_FLOAT fMaxPopup, 
+	virtual FX_BOOL		GetPopupPos(IXFA_Widget* hWidget, FX_FLOAT fMinPopup, FX_FLOAT fMaxPopup, 
 							const CFX_RectF &rtAnchor, CFX_RectF &rtPopup);
-	virtual FX_BOOL		PopupMenu(XFA_HWIDGET hWidget, CFX_PointF ptPopup, const CFX_RectF* pRectExclude = NULL);
+	virtual FX_BOOL		PopupMenu(IXFA_Widget* hWidget, CFX_PointF ptPopup, const CFX_RectF* pRectExclude = NULL);
 
 	//dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
 	virtual void		PageViewEvent(IXFA_PageView* pPageView, FX_DWORD dwFlags);
 	//dwEvent refer to XFA_WIDGETEVENT_XXX
-	virtual void		WidgetEvent(XFA_HWIDGET hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, FX_LPVOID pParam = NULL, FX_LPVOID pAdditional = NULL);
+	virtual void		WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, FX_LPVOID pParam = NULL, FX_LPVOID pAdditional = NULL);
 	
 	//return true if render it.
-	virtual FX_BOOL		RenderCustomWidget(XFA_HWIDGET hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix, const CFX_RectF& rtUI){return FALSE;}
+	virtual FX_BOOL		RenderCustomWidget(IXFA_Widget* hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix, const CFX_RectF& rtUI){return FALSE;}
 
 	//host method
 	virtual	FX_INT32	CountPages(IXFA_Doc* hDoc);
@@ -74,14 +74,14 @@ public:
 	virtual void		GotoURL(IXFA_Doc* hDoc, FX_WSTR bsURL, FX_BOOL bAppend = TRUE);
 	virtual FX_BOOL		IsValidationsEnabled(IXFA_Doc* hDoc);
 	virtual void		SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled);
-	virtual void		SetFocusWidget(IXFA_Doc* hDoc, XFA_HWIDGET hWidget);
+	virtual void		SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget);
 	virtual void		Print(IXFA_Doc* hDoc, FX_INT32 nStartPage, FX_INT32 nEndPage, FX_DWORD dwOptions);
 
 	//LayoutPseudo method
 	virtual FX_INT32			AbsPageCountInBatch(IXFA_Doc* hDoc){return 0;}
-	virtual FX_INT32			AbsPageInBatch(IXFA_Doc* hDoc, XFA_HWIDGET hWidget){return 0;}
+	virtual FX_INT32			AbsPageInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget){return 0;}
 	virtual FX_INT32			SheetCountInBatch(IXFA_Doc* hDoc){return 0;}
-	virtual FX_INT32			SheetInBatch(IXFA_Doc* hDoc, XFA_HWIDGET hWidget){return 0;}
+	virtual FX_INT32			SheetInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget){return 0;}
 
 	//SignaturePseudoModel method
 	//TODO:
@@ -93,7 +93,7 @@ public:
 	//Get document path
 	virtual void		GetURL(IXFA_Doc* hDoc, CFX_WideString &wsDocURL);
 	virtual FX_ARGB		GetHighlightColor(IXFA_Doc* hDoc);
-	virtual void		AddDoRecord(XFA_HWIDGET hWidget);
+	virtual void		AddDoRecord(IXFA_Widget* hWidget);
 	/** 
 	 *Submit data to email, http, ftp.	
 	 * @param[in] hDoc The document handler.

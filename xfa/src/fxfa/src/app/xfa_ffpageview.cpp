@@ -66,7 +66,7 @@ FX_BOOL CXFA_FFPageView::IsPageViewLoaded()
 {
     return m_bLoaded;
 }
-XFA_HWIDGET CXFA_FFPageView::GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy)
+IXFA_Widget* CXFA_FFPageView::GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy)
 {
     if (!m_bLoaded) {
         return NULL;
@@ -87,7 +87,7 @@ XFA_HWIDGET CXFA_FFPageView::GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy)
         if (( FWL_WGTHITTEST_Client == dwFlag
                 ||  FWL_WGTHITTEST_Transparent == dwFlag)) {
             pIterator->Release();
-            return (XFA_HWIDGET)pWidget;
+            return pWidget;
         }
     }
     pIterator->Release();
@@ -135,52 +135,52 @@ void CXFA_FFPageWidgetIterator::Reset()
 {
     m_sIterator.Reset();
 }
-XFA_HWIDGET CXFA_FFPageWidgetIterator::MoveToFirst()
+IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToFirst()
 {
     m_sIterator.Reset();
     for(CXFA_LayoutItem* pLayoutItem = m_sIterator.GetCurrent(); pLayoutItem; pLayoutItem = m_sIterator.MoveToNext()) {
-        if (XFA_HWIDGET hWidget = GetWidget(pLayoutItem)) {
+        if (IXFA_Widget* hWidget = GetWidget(pLayoutItem)) {
             return hWidget;
         }
     }
     return NULL;
 }
-XFA_HWIDGET CXFA_FFPageWidgetIterator::MoveToLast()
+IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToLast()
 {
     m_sIterator.SetCurrent(NULL);
     return MoveToPrevious();
 }
-XFA_HWIDGET CXFA_FFPageWidgetIterator::MoveToNext()
+IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToNext()
 {
     for(CXFA_LayoutItem* pLayoutItem = m_sIterator.MoveToNext(); pLayoutItem; pLayoutItem = m_sIterator.MoveToNext()) {
-        if (XFA_HWIDGET hWidget = GetWidget(pLayoutItem)) {
+        if (IXFA_Widget* hWidget = GetWidget(pLayoutItem)) {
             return hWidget;
         }
     }
     return NULL;
 }
-XFA_HWIDGET CXFA_FFPageWidgetIterator::MoveToPrevious()
+IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToPrevious()
 {
     for(CXFA_LayoutItem* pLayoutItem = m_sIterator.MoveToPrev(); pLayoutItem; pLayoutItem = m_sIterator.MoveToPrev()) {
-        if (XFA_HWIDGET hWidget = GetWidget(pLayoutItem)) {
+        if (IXFA_Widget* hWidget = GetWidget(pLayoutItem)) {
             return hWidget;
         }
     }
     return NULL;
 }
-XFA_HWIDGET CXFA_FFPageWidgetIterator::GetCurrentWidget()
+IXFA_Widget* CXFA_FFPageWidgetIterator::GetCurrentWidget()
 {
     CXFA_LayoutItem* pLayoutItem = m_sIterator.GetCurrent();
-    return pLayoutItem ? (XFA_HWIDGET)XFA_GetWidgetFromLayoutItem(pLayoutItem) : NULL;
+    return pLayoutItem ? XFA_GetWidgetFromLayoutItem(pLayoutItem) : NULL;
 }
-FX_BOOL CXFA_FFPageWidgetIterator::SetCurrentWidget(XFA_HWIDGET hWidget)
+FX_BOOL CXFA_FFPageWidgetIterator::SetCurrentWidget(IXFA_Widget* hWidget)
 {
     if(hWidget && m_sIterator.SetCurrent(((CXFA_FFWidget*)hWidget)->GetLayoutItem())) {
         return TRUE;
     }
     return FALSE;
 }
-XFA_HWIDGET CXFA_FFPageWidgetIterator::GetWidget(CXFA_LayoutItem* pLayoutItem)
+IXFA_Widget* CXFA_FFPageWidgetIterator::GetWidget(CXFA_LayoutItem* pLayoutItem)
 {
     if (CXFA_FFWidget* pWidget = XFA_GetWidgetFromLayoutItem(pLayoutItem)) {
         if (!XFA_PageWidgetFilter(pWidget, m_dwFilter, FALSE, m_bIgnorerelevant)) {
@@ -189,7 +189,7 @@ XFA_HWIDGET CXFA_FFPageWidgetIterator::GetWidget(CXFA_LayoutItem* pLayoutItem)
         if (!pWidget->IsLoaded() && (pWidget->GetStatus() & XFA_WIDGETSTATUS_Visible) != 0) {
             pWidget->LoadWidget();
         }
-        return (XFA_HWIDGET)pWidget;
+        return pWidget;
     }
     return NULL;
 }
@@ -213,62 +213,62 @@ void CXFA_FFTabOrderPageWidgetIterator::Reset()
     CreateTabOrderWidgetArray();
     m_iCurWidget = -1;
 }
-XFA_HWIDGET CXFA_FFTabOrderPageWidgetIterator::MoveToFirst()
+IXFA_Widget* CXFA_FFTabOrderPageWidgetIterator::MoveToFirst()
 {
     if (m_TabOrderWidgetArray.GetSize() > 0) {
         for (FX_INT32 i = 0; i < m_TabOrderWidgetArray.GetSize(); i++) {
             if (XFA_PageWidgetFilter(m_TabOrderWidgetArray[i], m_dwFilter, TRUE, m_bIgnorerelevant)) {
                 m_iCurWidget = i;
-                return (XFA_HWIDGET)m_TabOrderWidgetArray[m_iCurWidget];
+                return m_TabOrderWidgetArray[m_iCurWidget];
             }
         }
     }
     return NULL;
 }
-XFA_HWIDGET CXFA_FFTabOrderPageWidgetIterator::MoveToLast()
+IXFA_Widget* CXFA_FFTabOrderPageWidgetIterator::MoveToLast()
 {
     if (m_TabOrderWidgetArray.GetSize() > 0) {
         for (FX_INT32 i = m_TabOrderWidgetArray.GetSize() - 1; i >= 0; i--) {
             if (XFA_PageWidgetFilter(m_TabOrderWidgetArray[i], m_dwFilter, TRUE, m_bIgnorerelevant)) {
                 m_iCurWidget = i;
-                return (XFA_HWIDGET)m_TabOrderWidgetArray[m_iCurWidget];
+                return m_TabOrderWidgetArray[m_iCurWidget];
             }
         }
     }
     return NULL;
 }
-XFA_HWIDGET CXFA_FFTabOrderPageWidgetIterator::MoveToNext()
+IXFA_Widget* CXFA_FFTabOrderPageWidgetIterator::MoveToNext()
 {
     for (FX_INT32 i = m_iCurWidget + 1; i < m_TabOrderWidgetArray.GetSize(); i++) {
         if (XFA_PageWidgetFilter(m_TabOrderWidgetArray[i], m_dwFilter, TRUE, m_bIgnorerelevant)) {
             m_iCurWidget = i;
-            return (XFA_HWIDGET)m_TabOrderWidgetArray[m_iCurWidget];
+            return m_TabOrderWidgetArray[m_iCurWidget];
         }
     }
     m_iCurWidget = -1;
     return NULL;
 }
-XFA_HWIDGET CXFA_FFTabOrderPageWidgetIterator::MoveToPrevious()
+IXFA_Widget* CXFA_FFTabOrderPageWidgetIterator::MoveToPrevious()
 {
     for (FX_INT32 i = m_iCurWidget - 1; i >= 0; i--) {
         if (XFA_PageWidgetFilter(m_TabOrderWidgetArray[i], m_dwFilter, TRUE, m_bIgnorerelevant)) {
             m_iCurWidget = i;
-            return (XFA_HWIDGET)m_TabOrderWidgetArray[m_iCurWidget];
+            return m_TabOrderWidgetArray[m_iCurWidget];
         }
     }
     m_iCurWidget = -1;
     return NULL;
 }
-XFA_HWIDGET CXFA_FFTabOrderPageWidgetIterator::GetCurrentWidget()
+IXFA_Widget* CXFA_FFTabOrderPageWidgetIterator::GetCurrentWidget()
 {
     if (m_iCurWidget >= 0) {
-        return (XFA_HWIDGET)m_TabOrderWidgetArray[m_iCurWidget];
+        return m_TabOrderWidgetArray[m_iCurWidget];
     }
     return NULL;
 }
-FX_BOOL CXFA_FFTabOrderPageWidgetIterator::SetCurrentWidget(XFA_HWIDGET hWidget)
+FX_BOOL CXFA_FFTabOrderPageWidgetIterator::SetCurrentWidget(IXFA_Widget* hWidget)
 {
-    FX_INT32 iWidgetIndex = m_TabOrderWidgetArray.Find((CXFA_FFWidget*)hWidget);
+    FX_INT32 iWidgetIndex = m_TabOrderWidgetArray.Find(static_cast<CXFA_FFWidget*>(hWidget));
     if (iWidgetIndex >= 0) {
         m_iCurWidget = iWidgetIndex;
         return TRUE;

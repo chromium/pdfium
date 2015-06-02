@@ -21,7 +21,7 @@ public:
     virtual void			UnloadPageView();
     FX_BOOL					IsPageViewLoaded();
 
-    virtual XFA_HWIDGET		GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy);
+    virtual IXFA_Widget*		GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy);
     virtual IXFA_WidgetIterator* CreateWidgetIterator(FX_DWORD dwTraverseWay = XFA_TRAVERSEWAY_Form,
             FX_DWORD dwWidgetFilter = XFA_WIDGETFILTER_Visible | XFA_WIDGETFILTER_Viewable | XFA_WIDGETFILTER_AllType);
     IXFA_LayoutPage*		GetLayoutPage()
@@ -44,16 +44,16 @@ public:
     }
 
     virtual void				Reset();
-    virtual XFA_HWIDGET			MoveToFirst();
-    virtual XFA_HWIDGET			MoveToLast();
-    virtual XFA_HWIDGET			MoveToNext();
-    virtual XFA_HWIDGET			MoveToPrevious();
-    virtual XFA_HWIDGET			GetCurrentWidget();
-    virtual FX_BOOL				SetCurrentWidget(XFA_HWIDGET hWidget);
+    virtual IXFA_Widget*			MoveToFirst();
+    virtual IXFA_Widget*			MoveToLast();
+    virtual IXFA_Widget*			MoveToNext();
+    virtual IXFA_Widget*			MoveToPrevious();
+    virtual IXFA_Widget*			GetCurrentWidget();
+    virtual FX_BOOL				SetCurrentWidget(IXFA_Widget* hWidget);
 protected:
-    XFA_HWIDGET					GetWidget(CXFA_LayoutItem* pLayoutItem);
+    IXFA_Widget*					GetWidget(CXFA_LayoutItem* pLayoutItem);
     CXFA_FFPageView*			m_pPageView;
-    XFA_HWIDGET					m_hCurWidget;
+    IXFA_Widget*					m_hCurWidget;
     FX_DWORD					m_dwFilter;
     FX_BOOL						m_bIgnorerelevant;
     CXFA_LayoutItemIterator		m_sIterator;
@@ -77,12 +77,12 @@ public:
     virtual void Release();
 
     virtual void Reset();
-    virtual XFA_HWIDGET MoveToFirst();
-    virtual XFA_HWIDGET MoveToLast();
-    virtual XFA_HWIDGET MoveToNext();
-    virtual XFA_HWIDGET MoveToPrevious();
-    virtual XFA_HWIDGET GetCurrentWidget();
-    virtual FX_BOOL		SetCurrentWidget(XFA_HWIDGET hWidget);
+    virtual IXFA_Widget* MoveToFirst();
+    virtual IXFA_Widget* MoveToLast();
+    virtual IXFA_Widget* MoveToNext();
+    virtual IXFA_Widget* MoveToPrevious();
+    virtual IXFA_Widget* GetCurrentWidget();
+    virtual FX_BOOL		SetCurrentWidget(IXFA_Widget* hWidget);
 protected:
     CXFA_WidgetArray						m_TabOrderWidgetArray;
     CXFA_FFPageView*					m_pPageView;

@@ -306,7 +306,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(CFXJSE_Arguments* 
     if (!pDocLayout) {
         return;
     }
-    XFA_HWIDGET hWidget = pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
+    IXFA_Widget* hWidget = pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
     if (!hWidget) {
         return;
     }

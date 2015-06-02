@@ -74,7 +74,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CPDF_Annot * pAnnot, CPDFSDK_Pa
 	return new CPDFSDK_BAAnnot(pAnnot, pPageView);
 }
 
-CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(XFA_HWIDGET pAnnot, CPDFSDK_PageView* pPageView)
+CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(IXFA_Widget* pAnnot, CPDFSDK_PageView* pPageView)
 {
 	ASSERT(pAnnot != NULL);
 	ASSERT(pPageView != NULL);
@@ -398,7 +398,7 @@ CPDFSDK_Annot*	CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,FX
 		return  NULL;
 	if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())	
 		pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
-	XFA_HWIDGET hNextFocus = NULL;
+	IXFA_Widget* hNextFocus = NULL;
 	hNextFocus = bNext?pWidgetIterator->MoveToNext():pWidgetIterator->MoveToPrevious();
 	if (hNextFocus == NULL && pSDKAnnot != NULL)
 		hNextFocus = pWidgetIterator->MoveToFirst();
@@ -466,7 +466,7 @@ CPDFSDK_Annot*		CPDFSDK_BFAnnotHandler::NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_Pag
 	return pWidget;
 }
 
-CPDFSDK_Annot*		CPDFSDK_BFAnnotHandler::NewAnnot(XFA_HWIDGET hWidget, CPDFSDK_PageView* pPage)
+CPDFSDK_Annot*		CPDFSDK_BFAnnotHandler::NewAnnot(IXFA_Widget* hWidget, CPDFSDK_PageView* pPage)
 {
 	return NULL;
 }
@@ -837,7 +837,7 @@ CPDFSDK_XFAAnnotHandler::CPDFSDK_XFAAnnotHandler(CPDFDoc_Environment* pApp) :
 
 }
 
-CPDFSDK_Annot* CPDFSDK_XFAAnnotHandler::NewAnnot(XFA_HWIDGET pAnnot, CPDFSDK_PageView* pPage)
+CPDFSDK_Annot* CPDFSDK_XFAAnnotHandler::NewAnnot(IXFA_Widget* pAnnot, CPDFSDK_PageView* pPage)
 {
 	ASSERT(pPage != NULL);
 	ASSERT(pAnnot != NULL);
@@ -879,7 +879,7 @@ void CPDFSDK_XFAAnnotHandler::OnDraw(CPDFSDK_PageView *pPageView, CPDFSDK_Annot*
 	CFX_Matrix mt;
 	mt = *(CFX_Matrix*)pUser2Device;
 
-	XFA_HWIDGET hWidget = pAnnot->GetXFAWidget();
+	IXFA_Widget* hWidget = pAnnot->GetXFAWidget();
 	ASSERT(hWidget != NULL);
 
 	FX_BOOL bIsHighlight = FALSE;
@@ -1149,10 +1149,8 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot, CPD
 
 	if (pWidgetHandler)
 	{
-		FX_BOOL bRet = TRUE; /*pWidgetHandler->OnFocusChange(pNewAnnot ? pNewAnnot->GetXFAWidget() : NULL,
-			pOldAnnot ? pOldAnnot->GetXFAWidget() : NULL); */
-
-		XFA_HWIDGET hWidget = pNewAnnot ? pNewAnnot->GetXFAWidget() : NULL;
+		FX_BOOL bRet = TRUE;
+		IXFA_Widget* hWidget = pNewAnnot ? pNewAnnot->GetXFAWidget() : NULL;
 		if (hWidget)
 		{
 			IXFA_PageView* pXFAPageView = pWidgetHandler->GetPageView(hWidget);

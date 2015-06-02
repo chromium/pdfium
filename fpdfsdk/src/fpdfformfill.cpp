@@ -57,7 +57,7 @@ DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle, FPDF_
 		if (!pWidgetHandler)
 			return -1;
 
-		XFA_HWIDGET pXFAAnnot = NULL;
+		IXFA_Widget* pXFAAnnot = NULL;
 		IXFA_WidgetIterator* pWidgetIterator = pPageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form, XFA_WIDGETFILTER_Viewable|XFA_WIDGETFILTER_AllType);
 		if (!pWidgetIterator)
 			return -1;
@@ -352,7 +352,7 @@ DLLEXPORT void STDCALL FPDF_Widget_Undo(FPDF_DOCUMENT document, FPDF_WIDGET hWid
 	if (pXFAMenuHander == NULL)
 		return;
 
-	pXFAMenuHander->Undo((XFA_HWIDGET)hWidget);
+	pXFAMenuHander->Undo((IXFA_Widget*)hWidget);
 
 }
 DLLEXPORT void STDCALL FPDF_Widget_Redo(FPDF_DOCUMENT document, FPDF_WIDGET hWidget)
@@ -368,7 +368,7 @@ DLLEXPORT void STDCALL FPDF_Widget_Redo(FPDF_DOCUMENT document, FPDF_WIDGET hWid
 	if (pXFAMenuHander == NULL)
 		return;
 
-	pXFAMenuHander->Redo((XFA_HWIDGET)hWidget);
+	pXFAMenuHander->Redo((IXFA_Widget*)hWidget);
 }
 
 DLLEXPORT void STDCALL FPDF_Widget_SelectAll(FPDF_DOCUMENT document, FPDF_WIDGET hWidget)
@@ -384,7 +384,7 @@ DLLEXPORT void STDCALL FPDF_Widget_SelectAll(FPDF_DOCUMENT document, FPDF_WIDGET
 	if (pXFAMenuHander == NULL)
 		return;
 
-	pXFAMenuHander->SelectAll((XFA_HWIDGET)hWidget);
+	pXFAMenuHander->SelectAll((IXFA_Widget*)hWidget);
 }
 DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document, FPDF_WIDGET hWidget, FPDF_WIDESTRING wsText, FPDF_DWORD* size)
 {
@@ -400,7 +400,7 @@ DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document, FPDF_WIDGET hWid
 		return;
 
 	CFX_WideString wsCpText;
-	pXFAMenuHander->Copy((XFA_HWIDGET)hWidget, wsCpText);
+	pXFAMenuHander->Copy((IXFA_Widget*)hWidget, wsCpText);
 
 	CFX_ByteString bsCpText = wsCpText.UTF16LE_Encode();
 	int len = bsCpText.GetLength()/sizeof(unsigned short);
@@ -430,7 +430,7 @@ DLLEXPORT void STDCALL FPDF_Widget_Cut(FPDF_DOCUMENT document, FPDF_WIDGET hWidg
 		return;
 
 	CFX_WideString wsCpText;
-	pXFAMenuHander->Cut((XFA_HWIDGET)hWidget, wsCpText);
+	pXFAMenuHander->Cut((IXFA_Widget*)hWidget, wsCpText);
 
 	CFX_ByteString bsCpText = wsCpText.UTF16LE_Encode();
 	int len = bsCpText.GetLength()/sizeof(unsigned short);
@@ -461,7 +461,7 @@ DLLEXPORT void STDCALL FPDF_Widget_Paste(FPDF_DOCUMENT document, FPDF_WIDGET hWi
 		return;
 
 	CFX_WideString wstr = CFX_WideString::FromUTF16LE(wsText, size);
-	pXFAMenuHander->Paste((XFA_HWIDGET)hWidget, wstr);
+	pXFAMenuHander->Paste((IXFA_Widget*)hWidget, wstr);
 
 }
 DLLEXPORT void STDCALL FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document, FPDF_WIDGET hWidget, float x, float y, FPDF_BYTESTRING bsText)
@@ -481,7 +481,7 @@ DLLEXPORT void STDCALL FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
 	ptPopup.x = x;
 	ptPopup.y = y;
 	CFX_ByteStringC bs(bsText);
-	pXFAMenuHander->ReplaceSpellCheckWord((XFA_HWIDGET)hWidget,ptPopup,bs);
+	pXFAMenuHander->ReplaceSpellCheckWord((IXFA_Widget*)hWidget,ptPopup,bs);
 
 }
 DLLEXPORT void STDCALL FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document, FPDF_WIDGET hWidget, float x, float y, FPDF_STRINGHANDLE* stringHandle)
@@ -501,7 +501,7 @@ DLLEXPORT void STDCALL FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document, FP
 	CFX_PointF ptPopup;
 	ptPopup.x = x;
 	ptPopup.y = y;
-	pXFAMenuHander->GetSuggestWords((XFA_HWIDGET)hWidget, ptPopup, *sSuggestWords);
+	pXFAMenuHander->GetSuggestWords((IXFA_Widget*)hWidget, ptPopup, *sSuggestWords);
 	*stringHandle = (FPDF_STRINGHANDLE)sSuggestWords;
 }
 DLLEXPORT int STDCALL FPDF_StringHandleCounts(FPDF_STRINGHANDLE stringHandle)

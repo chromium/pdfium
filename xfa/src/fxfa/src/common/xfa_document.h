@@ -80,8 +80,8 @@ public:
     virtual IXFA_DocProvider*	GetDocProvider() = 0;
     virtual IXFA_AppProvider*	GetAppProvider() = 0;
     virtual IXFA_WidgetHandler*	GetWidgetHandler() = 0;
-    virtual XFA_HWIDGET			GetHWidget(CXFA_LayoutItem* pLayoutItem) = 0;
-    virtual void				OpenDropDownList(XFA_HWIDGET hWidget) = 0;
+    virtual IXFA_Widget*		GetHWidget(CXFA_LayoutItem* pLayoutItem) = 0;
+    virtual void				OpenDropDownList(IXFA_Widget* hWidget) = 0;
     virtual CFX_WideString		GetCurrentDateTime() = 0;
     virtual void				ResetData(CXFA_WidgetData* pWidgetData = NULL) = 0;
     virtual FX_INT32			GetLayoutStatus() = 0;

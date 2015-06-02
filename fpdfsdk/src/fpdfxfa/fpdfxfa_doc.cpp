@@ -290,7 +290,7 @@ void CPDFXFA_Document::InvalidateRect(IXFA_PageView* pPageView, const CFX_RectF&
 	pEnv->FFI_Invalidate((FPDF_PAGE)pPage, rcPage.left, rcPage.bottom, rcPage.right, rcPage.top);
 }
 
-void CPDFXFA_Document::InvalidateRect(XFA_HWIDGET hWidget, FX_DWORD dwFlags /* = 0 */)
+void CPDFXFA_Document::InvalidateRect(IXFA_Widget* hWidget, FX_DWORD dwFlags /* = 0 */)
 {
 	if (!hWidget)
 		return;
@@ -314,7 +314,7 @@ void CPDFXFA_Document::InvalidateRect(XFA_HWIDGET hWidget, FX_DWORD dwFlags /* =
 	InvalidateRect(pPageView, rect, dwFlags);
 }
 
-void CPDFXFA_Document::DisplayCaret(XFA_HWIDGET hWidget, FX_BOOL bVisible, const CFX_RectF* pRtAnchor)
+void CPDFXFA_Document::DisplayCaret(IXFA_Widget* hWidget, FX_BOOL bVisible, const CFX_RectF* pRtAnchor)
 {
 	if (!hWidget || pRtAnchor == NULL) 
 		return;
@@ -349,7 +349,7 @@ void CPDFXFA_Document::DisplayCaret(XFA_HWIDGET hWidget, FX_BOOL bVisible, const
 
 }
 
-FX_BOOL CPDFXFA_Document::GetPopupPos(XFA_HWIDGET hWidget, FX_FLOAT fMinPopup, FX_FLOAT fMaxPopup, const CFX_RectF &rtAnchor, CFX_RectF &rtPopup)
+FX_BOOL CPDFXFA_Document::GetPopupPos(IXFA_Widget* hWidget, FX_FLOAT fMinPopup, FX_FLOAT fMaxPopup, const CFX_RectF &rtAnchor, CFX_RectF &rtPopup)
 {
 	if (NULL == hWidget)
 	{
@@ -510,7 +510,7 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(XFA_HWIDGET hWidget, FX_FLOAT fMinPopup, F
 	return TRUE;
 }
 
-FX_BOOL	CPDFXFA_Document::PopupMenu(XFA_HWIDGET hWidget, CFX_PointF ptPopup, const CFX_RectF* pRectExclude)
+FX_BOOL	CPDFXFA_Document::PopupMenu(IXFA_Widget* hWidget, CFX_PointF ptPopup, const CFX_RectF* pRectExclude)
 {
 	if (NULL == hWidget)
 	{
@@ -573,7 +573,7 @@ void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView, FX_DWORD dwFlags)
 	}
 }
 
-void CPDFXFA_Document::WidgetEvent(XFA_HWIDGET hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, FX_LPVOID pParam, FX_LPVOID pAdditional)
+void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, FX_LPVOID pParam, FX_LPVOID pAdditional)
 {
 	if (m_iDocType != DOCTYPE_DYNIMIC_XFA || NULL == hWidget)
 		return;
@@ -873,7 +873,7 @@ void CPDFXFA_Document::SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled)
 	if (m_pSDKDoc->GetInterForm())
 		m_pSDKDoc->GetInterForm()->XfaSetValidationsEnabled(bEnabled);
 }
-void  CPDFXFA_Document::SetFocusWidget(IXFA_Doc* hDoc, XFA_HWIDGET hWidget)
+void  CPDFXFA_Document::SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -943,7 +943,7 @@ FX_ARGB	CPDFXFA_Document::GetHighlightColor(IXFA_Doc* hDoc)
 	return 0;
 }
 
-void CPDFXFA_Document::AddDoRecord(XFA_HWIDGET hWidget)
+void CPDFXFA_Document::AddDoRecord(IXFA_Widget* hWidget)
 {
 	CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
 	if (pEnv == NULL)

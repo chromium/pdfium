@@ -222,9 +222,9 @@ IXFA_PageView* CXFA_FFDocView::GetPageView(FX_INT32 nIndex)
     }
     return (CXFA_FFPageView*)m_pXFADocLayout->GetPage(nIndex);
 }
-XFA_HWIDGET CXFA_FFDocView::GetWidgetByName(FX_WSTR wsName)
+IXFA_Widget* CXFA_FFDocView::GetWidgetByName(FX_WSTR wsName)
 {
-    return (XFA_HWIDGET)GetWidgetByName(wsName, NULL);
+    return GetWidgetByName(wsName, NULL);
 }
 CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(FX_WSTR wsName)
 {
@@ -353,9 +353,9 @@ IXFA_WidgetAccIterator* CXFA_FFDocView::CreateWidgetAccIterator(XFA_WIDGETORDER 
     }
     return FX_NEW CXFA_WidgetAccIterator(this, pFormRoot);
 }
-XFA_HWIDGET CXFA_FFDocView::GetFocusWidget()
+IXFA_Widget* CXFA_FFDocView::GetFocusWidget()
 {
-    return (XFA_HWIDGET)m_pFocusWidget;
+    return m_pFocusWidget;
 }
 void CXFA_FFDocView::KillFocus()
 {
@@ -366,7 +366,7 @@ void CXFA_FFDocView::KillFocus()
     m_pFocusWidget = NULL;
     m_pOldFocusWidget = NULL;
 }
-FX_BOOL CXFA_FFDocView::SetFocus(XFA_HWIDGET hWidget)
+FX_BOOL CXFA_FFDocView::SetFocus(IXFA_Widget* hWidget)
 {
     CXFA_FFWidget* pNewFocus = (CXFA_FFWidget*)hWidget;
     if (m_pOldFocusWidget == pNewFocus) {
@@ -416,10 +416,10 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetFocusWidgetAcc()
 void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc)
 {
     CXFA_FFWidget* pNewFocus = pWidgetAcc ? pWidgetAcc->GetNextWidget(NULL) : NULL;
-    if (SetFocus((XFA_HWIDGET)pNewFocus)) {
+    if (SetFocus(pNewFocus)) {
         m_pFocusAcc = pWidgetAcc;
         if (m_iStatus >= XFA_DOCVIEW_LAYOUTSTATUS_End) {
-            m_pDoc->GetDocProvider()->SetFocusWidget(m_pDoc, (XFA_HWIDGET)m_pFocusWidget);
+            m_pDoc->GetDocProvider()->SetFocusWidget(m_pDoc, m_pFocusWidget);
         }
     }
 }
@@ -865,15 +865,15 @@ void CXFA_FFDocWidgetIterator::Reset()
     m_ContentIterator.Reset();
     m_pCurWidget = NULL;
 }
-XFA_HWIDGET CXFA_FFDocWidgetIterator::MoveToFirst()
+IXFA_Widget* CXFA_FFDocWidgetIterator::MoveToFirst()
 {
     return NULL;
 }
-XFA_HWIDGET CXFA_FFDocWidgetIterator::MoveToLast()
+IXFA_Widget* CXFA_FFDocWidgetIterator::MoveToLast()
 {
     return NULL;
 }
-XFA_HWIDGET CXFA_FFDocWidgetIterator::MoveToNext()
+IXFA_Widget* CXFA_FFDocWidgetIterator::MoveToNext()
 {
     CXFA_Node* pItem = m_pCurWidget ? m_ContentIterator.MoveToNext() : m_ContentIterator.GetCurrent();
     while (pItem) {
@@ -882,22 +882,22 @@ XFA_HWIDGET CXFA_FFDocWidgetIterator::MoveToNext()
                 if (!m_pCurWidget->IsLoaded() && (m_pCurWidget->GetStatus() & XFA_WIDGETSTATUS_Visible)) {
                     m_pCurWidget->LoadWidget();
                 }
-                return (XFA_HWIDGET)m_pCurWidget;
+                return m_pCurWidget;
             }
         }
         pItem = m_ContentIterator.MoveToNext();
     }
     return NULL;
 }
-XFA_HWIDGET CXFA_FFDocWidgetIterator::MoveToPrevious()
+IXFA_Widget* CXFA_FFDocWidgetIterator::MoveToPrevious()
 {
     return NULL;
 }
-XFA_HWIDGET CXFA_FFDocWidgetIterator::GetCurrentWidget()
+IXFA_Widget* CXFA_FFDocWidgetIterator::GetCurrentWidget()
 {
     return NULL;
 }
-FX_BOOL CXFA_FFDocWidgetIterator::SetCurrentWidget(XFA_HWIDGET hWidget)
+FX_BOOL CXFA_FFDocWidgetIterator::SetCurrentWidget(IXFA_Widget* hWidget)
 {
     return FALSE;
 }

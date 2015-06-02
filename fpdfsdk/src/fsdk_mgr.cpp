@@ -805,7 +805,7 @@ CPDFSDK_Annot*	CPDFSDK_PageView::AddAnnot(CPDF_Annot * pPDFAnnot)
 	 return pSDKAnnot;
 }
 
-CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(XFA_HWIDGET pPDFAnnot)
+CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(IXFA_Widget* pPDFAnnot)
 {
 	if (!pPDFAnnot) return NULL;
 
@@ -905,7 +905,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(CPDF_Dictionary * pDict)
  	}
 	return NULL;
 }
-CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(XFA_HWIDGET hWidget)
+CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(IXFA_Widget* hWidget)
 {
 	if (hWidget == NULL)
 		return NULL;
@@ -1118,7 +1118,6 @@ void CPDFSDK_PageView::LoadFXAnnots()
 		pageView = m_page->GetXFAPageView();
 		ASSERT(pageView != NULL);
 
-		XFA_HWIDGET pXFAAnnot = NULL;
 		IXFA_WidgetIterator* pWidgetHander = pageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form, XFA_WIDGETFILTER_Visible|XFA_WIDGETFILTER_Viewable|XFA_WIDGETFILTER_AllType);
 		if (!pWidgetHander)
 		{
@@ -1127,7 +1126,7 @@ void CPDFSDK_PageView::LoadFXAnnots()
 			return;
 		}
 
-		pXFAAnnot = pWidgetHander->MoveToNext();
+        IXFA_Widget* pXFAAnnot = pWidgetHander->MoveToNext();
 		while (pXFAAnnot) {
 			CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(pXFAAnnot, this);
 			if(!pAnnot) {

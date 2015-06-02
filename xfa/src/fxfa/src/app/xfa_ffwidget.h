@@ -6,11 +6,15 @@
 
 #ifndef _FXFA_FORMFILLER_WIDGET_IMP_H
 #define _FXFA_FORMFILLER_WIDGET_IMP_H
+
+#include "../../../../include/fxfa/fxfa.h"
+
 class CXFA_FFPageView;
 class CXFA_FFDocView;
 class CXFA_FFDoc;
 class CXFA_FFApp;
 class CXFA_LayoutItem;
+
 #define XFA_GOTO_POSITION_IF_FAIL(arg, pos) { if (!(arg)) goto pos; }
 inline FX_FLOAT XFA_UnitPx2Pt(FX_FLOAT fPx, FX_FLOAT fDpi)
 {
@@ -34,7 +38,7 @@ public:
     CFX_PtrArray				m_Globals;
     FX_INT32					m_iRefCount;
 };
-class CXFA_FFWidget : public CFX_PrivateData, public CXFA_ContentLayoutItemImpl
+class CXFA_FFWidget : public IXFA_Widget, public CFX_PrivateData, public CXFA_ContentLayoutItemImpl
 {
 public:
     CXFA_FFWidget(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);

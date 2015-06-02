@@ -83,7 +83,7 @@ public:
 	virtual int					GetLayoutOrder() const { return 5; }
 
 	virtual CPDF_Annot*			GetPDFAnnot() { return NULL; }
-	virtual XFA_HWIDGET			GetXFAWidget() { return NULL; }
+	virtual IXFA_Widget*		GetXFAWidget() { return NULL; }
 	
 	virtual CFX_ByteString		GetType() const { return ""; }
 	virtual CFX_ByteString		GetSubType() const { return ""; }

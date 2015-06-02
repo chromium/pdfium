@@ -45,16 +45,16 @@ public:
     virtual	void			UpdateDocView();
     virtual FX_INT32		CountPageViews();
     virtual IXFA_PageView*	GetPageView(FX_INT32 nIndex);
-    virtual XFA_HWIDGET		GetWidgetByName(FX_WSTR wsName);
+    virtual IXFA_Widget*		GetWidgetByName(FX_WSTR wsName);
     virtual CXFA_WidgetAcc* GetWidgetAccByName(FX_WSTR wsName);
     virtual void			ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = NULL);
     virtual FX_INT32		ProcessWidgetEvent(CXFA_EventParam* pParam, CXFA_WidgetAcc* pWidgetAcc = NULL);
     virtual IXFA_WidgetHandler*			GetWidgetHandler();
     virtual IXFA_WidgetIterator*		CreateWidgetIterator();
     virtual IXFA_WidgetAccIterator*		CreateWidgetAccIterator(XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder);
-    virtual XFA_HWIDGET		GetFocusWidget();
+    virtual IXFA_Widget*		GetFocusWidget();
     virtual void			KillFocus();
-    virtual FX_BOOL			SetFocus(XFA_HWIDGET hWidget);
+    virtual FX_BOOL			SetFocus(IXFA_Widget* hWidget);
     CXFA_FFWidget*		GetWidgetByName(FX_WSTR wsName, CXFA_FFWidget* pRefWidget = NULL);
     CXFA_WidgetAcc*		GetWidgetAccByName(FX_WSTR wsName, CXFA_WidgetAcc* pRefWidgetAcc = NULL);
     IXFA_DocLayout*		GetXFALayout() const;
@@ -129,12 +129,12 @@ public:
     }
 
     virtual void				Reset();
-    virtual XFA_HWIDGET			MoveToFirst();
-    virtual XFA_HWIDGET			MoveToLast();
-    virtual XFA_HWIDGET			MoveToNext();
-    virtual XFA_HWIDGET			MoveToPrevious();
-    virtual XFA_HWIDGET			GetCurrentWidget();
-    virtual FX_BOOL				SetCurrentWidget(XFA_HWIDGET hWidget);
+    virtual IXFA_Widget*			MoveToFirst();
+    virtual IXFA_Widget*			MoveToLast();
+    virtual IXFA_Widget*			MoveToNext();
+    virtual IXFA_Widget*			MoveToPrevious();
+    virtual IXFA_Widget*			GetCurrentWidget();
+    virtual FX_BOOL				SetCurrentWidget(IXFA_Widget* hWidget);
 protected:
     CXFA_ContainerIterator		m_ContentIterator;
     CXFA_FFDocView*				m_pDocView;

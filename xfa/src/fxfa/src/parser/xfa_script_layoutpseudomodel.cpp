@@ -427,7 +427,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageInBatch(CFXJSE_A
     if (!pDocLayout) {
         return;
     }
-    XFA_HWIDGET hWidget = pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
+    IXFA_Widget* hWidget = pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
     if (!hWidget) {
         return;
     }
@@ -460,7 +460,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetInBatch(CFXJSE_Arg
     if (!pDocLayout) {
         return;
     }
-    XFA_HWIDGET hWidget = pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
+    IXFA_Widget* hWidget = pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
     if (!hWidget) {
         return;
     }

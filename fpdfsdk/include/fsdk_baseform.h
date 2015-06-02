@@ -67,8 +67,8 @@ typedef struct _PDFSDK_FieldAction
 class CPDFSDK_Widget:public CPDFSDK_BAAnnot
 {
 public:
-	XFA_HWIDGET						GetMixXFAWidget();
-	XFA_HWIDGET						GetGroupMixXFAWidget();
+	IXFA_Widget*						GetMixXFAWidget();
+	IXFA_Widget*						GetGroupMixXFAWidget();
 	IXFA_WidgetHandler*				GetXFAWidgetHandler();
 
 	FX_BOOL							HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT);
@@ -78,9 +78,9 @@ public:
 	void							SynchronizeXFAValue();
 	void							SynchronizeXFAItems();
 
-	static void						SynchronizeXFAValue(IXFA_DocView* pXFADocView, XFA_HWIDGET hWidget, 
+	static void						SynchronizeXFAValue(IXFA_DocView* pXFADocView, IXFA_Widget* hWidget, 
 		CPDF_FormField* pFormField, CPDF_FormControl* pFormControl);
-	static void						SynchronizeXFAItems(IXFA_DocView* pXFADocView, XFA_HWIDGET hWidget, 
+	static void						SynchronizeXFAItems(IXFA_DocView* pXFADocView, IXFA_Widget* hWidget, 
 		CPDF_FormField* pFormField, CPDF_FormControl* pFormControl);
 
 public:
@@ -192,19 +192,19 @@ private:
 	FX_INT32						m_nAppAge;
 	FX_INT32						m_nValueAge;
 
-	XFA_HWIDGET						m_hMixXFAWidget;
+	IXFA_Widget*						m_hMixXFAWidget;
 	IXFA_WidgetHandler*				m_pWidgetHandler;
 };
 
 class CPDFSDK_XFAWidget : public CPDFSDK_Annot
 {
 public:
-	CPDFSDK_XFAWidget(XFA_HWIDGET pAnnot, CPDFSDK_PageView* pPageView, CPDFSDK_InterForm* pInterForm);
+	CPDFSDK_XFAWidget(IXFA_Widget* pAnnot, CPDFSDK_PageView* pPageView, CPDFSDK_InterForm* pInterForm);
 	virtual ~CPDFSDK_XFAWidget(){}
 
 public:
 	virtual FX_BOOL				IsXFAField();
-	virtual XFA_HWIDGET			GetXFAWidget() { return m_hXFAWidget; }
+	virtual IXFA_Widget*			GetXFAWidget() { return m_hXFAWidget; }
 
 	virtual CFX_ByteString		GetType() const ;
 	virtual CFX_ByteString		GetSubType() const { return ""; }
@@ -216,11 +216,11 @@ public:
 
 private:
 	CPDFSDK_InterForm*				m_pInterForm;
-	XFA_HWIDGET						m_hXFAWidget;
+	IXFA_Widget*						m_hXFAWidget;
 };
 
 #define CPDFSDK_WidgetMap				CFX_MapPtrTemplate<CPDF_FormControl*, CPDFSDK_Widget*>
-#define CPDFSDK_XFAWidgetMap			CFX_MapPtrTemplate<XFA_HWIDGET, CPDFSDK_XFAWidget*>
+#define CPDFSDK_XFAWidgetMap			CFX_MapPtrTemplate<IXFA_Widget*, CPDFSDK_XFAWidget*>
 #define CPDFSDK_FieldSynchronizeMap		CFX_MapPtrTemplate<CPDF_FormField*, int>
 
 class CPDFSDK_InterForm : public CPDF_FormNotify
@@ -244,9 +244,9 @@ public:
 	void							AddMap(CPDF_FormControl* pControl, CPDFSDK_Widget* pWidget);
 	void							RemoveMap(CPDF_FormControl* pControl);
 	
-	void							AddXFAMap(XFA_HWIDGET hWidget, CPDFSDK_XFAWidget* pWidget);
-	void							RemoveXFAMap(XFA_HWIDGET hWidget);
-	CPDFSDK_XFAWidget*				GetXFAWidget(XFA_HWIDGET hWidget);
+	void							AddXFAMap(IXFA_Widget* hWidget, CPDFSDK_XFAWidget* pWidget);
+	void							RemoveXFAMap(IXFA_Widget* hWidget);
+	CPDFSDK_XFAWidget*				GetXFAWidget(IXFA_Widget* hWidget);
 	
 	void							EnableCalculate(FX_BOOL bEnabled);
 	FX_BOOL							IsCalculateEnabled() const;

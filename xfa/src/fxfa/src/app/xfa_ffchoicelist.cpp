@@ -309,7 +309,7 @@ FX_BOOL CXFA_FFComboBox::OnRButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
     }
     CFX_PointF pt;
     pt.Set(fx, fy);
-    GetDoc()->GetDocProvider()->PopupMenu((XFA_HWIDGET)this, pt, NULL);
+    GetDoc()->GetDocProvider()->PopupMenu(this, pt, NULL);
     return TRUE;
 }
 FX_BOOL CXFA_FFComboBox::OnKillFocus(CXFA_FFWidget* pNewWidget)
@@ -531,7 +531,7 @@ void CXFA_FFComboBox::OnPostOpen(IFWL_Widget *pWidget)
 }
 void CXFA_FFComboBox::OnAddDoRecord(IFWL_Widget *pWidget)
 {
-    GetDoc()->GetDocProvider()->AddDoRecord((XFA_HWIDGET)this);
+    GetDoc()->GetDocProvider()->AddDoRecord(this);
 }
 FX_INT32 CXFA_FFComboBox::OnProcessMessage(CFWL_Message *pMessage)
 {

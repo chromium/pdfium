@@ -20,7 +20,7 @@ public:
     virtual	void		StopRender();
 protected:
     IXFA_WidgetIterator* m_pWidgetIterator;
-    XFA_HWIDGET			 m_pWidget;
+    IXFA_Widget*		 m_pWidget;
     IXFA_PageView*		 m_pPageView;
     CFX_Graphics*		 m_pGS;
     CFX_Matrix			 m_matrix;

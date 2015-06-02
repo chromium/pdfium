@@ -782,13 +782,13 @@ public:
 	CPDFSDK_Annot*					AddAnnot(CPDF_Dictionary * pDict);
 	CPDFSDK_Annot*					AddAnnot(FX_LPCSTR lpSubType,CPDF_Dictionary * pDict);
 	CPDFSDK_Annot*					AddAnnot(CPDF_Annot * pPDFAnnot);
-	CPDFSDK_Annot*					AddAnnot(XFA_HWIDGET pPDFAnnot);
+	CPDFSDK_Annot*					AddAnnot(IXFA_Widget* pPDFAnnot);
 	FX_BOOL							DeleteAnnot(CPDFSDK_Annot* pAnnot);
 
 	int								CountAnnots();
 	CPDFSDK_Annot*					GetAnnot(int nIndex);
 	CPDFSDK_Annot*				    GetAnnotByDict(CPDF_Dictionary * pDict);
-	CPDFSDK_Annot*					GetAnnotByXFAWidget(XFA_HWIDGET hWidget);
+	CPDFSDK_Annot*					GetAnnotByXFAWidget(IXFA_Widget* hWidget);
 	CPDFXFA_Page*					GetPDFXFAPage(){return m_page;}
 	CPDF_Page*						GetPDFPage();
 	CPDF_Document*					GetPDFDocument();

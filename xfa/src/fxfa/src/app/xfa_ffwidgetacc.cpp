@@ -752,7 +752,7 @@ void CXFA_WidgetAcc::NotifyEvent(FX_DWORD dwEvent, CXFA_FFWidget* pWidget , FX_L
 {
     IXFA_DocProvider* pDocProvider = GetDoc()->GetDocProvider();
     if (pWidget) {
-        pDocProvider->WidgetEvent((XFA_HWIDGET)pWidget, this, dwEvent, pParam, pAdditional);
+        pDocProvider->WidgetEvent(pWidget, this, dwEvent, pParam, pAdditional);
     } else {
         pWidget = GetNextWidget(pWidget);
         if (pWidget == NULL) {
@@ -760,7 +760,7 @@ void CXFA_WidgetAcc::NotifyEvent(FX_DWORD dwEvent, CXFA_FFWidget* pWidget , FX_L
             return;
         }
         while (pWidget) {
-            pDocProvider->WidgetEvent((XFA_HWIDGET)pWidget, this, dwEvent, pParam, pAdditional);
+            pDocProvider->WidgetEvent(pWidget, this, dwEvent, pParam, pAdditional);
             pWidget = GetNextWidget(pWidget);
         }
     }

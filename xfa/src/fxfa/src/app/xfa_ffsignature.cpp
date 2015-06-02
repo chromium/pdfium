@@ -40,7 +40,7 @@ void CXFA_FFSignature::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_
     CFX_RectF rtWidget = m_rtUI;
     IXFA_DocProvider* pDocProvider =  m_pDataAcc->GetDoc()->GetDocProvider();
     FXSYS_assert(pDocProvider);
-    pDocProvider->RenderCustomWidget((XFA_HWIDGET)this, pGS, &mtRotate, rtWidget);
+    pDocProvider->RenderCustomWidget(this, pGS, &mtRotate, rtWidget);
 }
 FX_BOOL CXFA_FFSignature::OnMouseEnter()
 {

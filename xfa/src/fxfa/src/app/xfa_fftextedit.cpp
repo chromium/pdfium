@@ -138,7 +138,7 @@ FX_BOOL CXFA_FFTextEdit::OnRButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
     }
     CFX_PointF pt;
     pt.Set(fx, fy);
-    GetDoc()->GetDocProvider()->PopupMenu((XFA_HWIDGET)this, pt, NULL);
+    GetDoc()->GetDocProvider()->PopupMenu(this, pt, NULL);
     return TRUE;
 }
 FX_BOOL CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget)
@@ -388,7 +388,7 @@ void CXFA_FFTextEdit::OnTextFull(IFWL_Widget *pWidget)
 }
 void CXFA_FFTextEdit::OnAddDoRecord(IFWL_Widget *pWidget)
 {
-    GetDoc()->GetDocProvider()->AddDoRecord((XFA_HWIDGET)this);
+    GetDoc()->GetDocProvider()->AddDoRecord(this);
 }
 FX_BOOL CXFA_FFTextEdit::CheckWord(FX_BSTR sWord)
 {

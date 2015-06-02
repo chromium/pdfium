@@ -35,9 +35,15 @@ protected:
     IXFA_Doc() { }
 };
 
-typedef struct _XFA_HWIDGET {
-    FX_LPVOID pData;
-}* XFA_HWIDGET;
+
+class IXFA_Widget {
+public:
+    virtual ~IXFA_Widget() { }
+protected:
+    IXFA_Widget() { }
+};
+
+
 #include "fxfa_basic.h"
 #include "fxfa_widget.h"
 #define XFA_MBICON_Error	0
@@ -284,24 +290,24 @@ class IXFA_MenuHandler
 public:
     virtual ~IXFA_MenuHandler() { }
 
-    virtual FX_BOOL		CanCopy(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		CanCut(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		CanPaste(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		CanSelectAll(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		CanDelete(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		CanDeSelect(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		Copy(XFA_HWIDGET hWidget, CFX_WideString &wsText) = 0;
-    virtual FX_BOOL		Cut(XFA_HWIDGET hWidget, CFX_WideString &wsText) = 0;
-    virtual FX_BOOL		Paste(XFA_HWIDGET hWidget, const CFX_WideString &wsText) = 0;
-    virtual FX_BOOL		SelectAll(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		Delete(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		DeSelect(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		CanUndo(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		CanRedo(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		Undo(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		Redo(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL		GetSuggestWords(XFA_HWIDGET hWidget, CFX_PointF pointf, CFX_ByteStringArray &sSuggest) = 0;
-    virtual FX_BOOL		ReplaceSpellCheckWord(XFA_HWIDGET hWidget, CFX_PointF pointf, FX_BSTR bsReplace) = 0;
+    virtual FX_BOOL		CanCopy(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		CanCut(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		CanPaste(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		CanSelectAll(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		CanDelete(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		CanDeSelect(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		Copy(IXFA_Widget* hWidget, CFX_WideString &wsText) = 0;
+    virtual FX_BOOL		Cut(IXFA_Widget* hWidget, CFX_WideString &wsText) = 0;
+    virtual FX_BOOL		Paste(IXFA_Widget* hWidget, const CFX_WideString &wsText) = 0;
+    virtual FX_BOOL		SelectAll(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		Delete(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		DeSelect(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		CanUndo(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		CanRedo(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		Undo(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		Redo(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL		GetSuggestWords(IXFA_Widget* hWidget, CFX_PointF pointf, CFX_ByteStringArray &sSuggest) = 0;
+    virtual FX_BOOL		ReplaceSpellCheckWord(IXFA_Widget* hWidget, CFX_PointF pointf, FX_BSTR bsReplace) = 0;
 };
 #define XFA_INVALIDATE_AllPages		0x00000000
 #define XFA_INVALIDATE_CurrentPage	0x00000001
@@ -326,13 +332,13 @@ public:
 
     virtual void		SetChangeMark(IXFA_Doc* hDoc) = 0;
     virtual void		InvalidateRect(IXFA_PageView* pPageView, const CFX_RectF& rt, FX_DWORD dwFlags = 0) = 0;
-    virtual void		DisplayCaret(XFA_HWIDGET hWidget, FX_BOOL bVisible, const CFX_RectF* pRtAnchor) = 0;
-    virtual FX_BOOL		GetPopupPos(XFA_HWIDGET hWidget, FX_FLOAT fMinPopup, FX_FLOAT fMaxPopup,
+    virtual void		DisplayCaret(IXFA_Widget* hWidget, FX_BOOL bVisible, const CFX_RectF* pRtAnchor) = 0;
+    virtual FX_BOOL		GetPopupPos(IXFA_Widget* hWidget, FX_FLOAT fMinPopup, FX_FLOAT fMaxPopup,
                                     const CFX_RectF &rtAnchor, CFX_RectF &rtPopup) = 0;
-    virtual FX_BOOL		PopupMenu(XFA_HWIDGET hWidget, CFX_PointF ptPopup, const CFX_RectF* pRectExclude = NULL) = 0;
+    virtual FX_BOOL		PopupMenu(IXFA_Widget* hWidget, CFX_PointF ptPopup, const CFX_RectF* pRectExclude = NULL) = 0;
     virtual void		PageViewEvent(IXFA_PageView* pPageView, FX_DWORD dwFlags) = 0;
-    virtual void		WidgetEvent(XFA_HWIDGET hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, FX_LPVOID pParam = NULL, FX_LPVOID pAdditional = NULL) = 0;
-    virtual FX_BOOL		RenderCustomWidget(XFA_HWIDGET hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix, const CFX_RectF& rtUI)
+    virtual void		WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, FX_LPVOID pParam = NULL, FX_LPVOID pAdditional = NULL) = 0;
+    virtual FX_BOOL		RenderCustomWidget(IXFA_Widget* hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix, const CFX_RectF& rtUI)
     {
         return FALSE;
     }
@@ -348,12 +354,12 @@ public:
     virtual void		GotoURL(IXFA_Doc* hDoc, FX_WSTR bsURL, FX_BOOL bAppend = TRUE) = 0;
     virtual FX_BOOL		IsValidationsEnabled(IXFA_Doc* hDoc) = 0;
     virtual void		SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled) = 0;
-    virtual void		SetFocusWidget(IXFA_Doc* hDoc, XFA_HWIDGET hWidget) = 0;
+    virtual void		SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget) = 0;
     virtual void		Print(IXFA_Doc* hDoc, FX_INT32 nStartPage, FX_INT32 nEndPage, FX_DWORD dwOptions) = 0;
     virtual FX_INT32			AbsPageCountInBatch(IXFA_Doc* hDoc) = 0;
-    virtual FX_INT32			AbsPageInBatch(IXFA_Doc* hDoc, XFA_HWIDGET hWidget) = 0;
+    virtual FX_INT32			AbsPageInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget) = 0;
     virtual FX_INT32			SheetCountInBatch(IXFA_Doc* hDoc) = 0;
-    virtual FX_INT32			SheetInBatch(IXFA_Doc* hDoc, XFA_HWIDGET hWidget) = 0;
+    virtual FX_INT32			SheetInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget) = 0;
     virtual FX_INT32			Verify(IXFA_Doc* hDoc, CXFA_Node* pSigNode, FX_BOOL bUsed = TRUE)
     {
         return 0;
@@ -372,7 +378,7 @@ public:
     }
     virtual void		GetURL(IXFA_Doc* hDoc, CFX_WideString &wsDocURL) = 0;
     virtual FX_ARGB		GetHighlightColor(IXFA_Doc* hDoc) = 0;
-    virtual void		AddDoRecord(XFA_HWIDGET hWidget) = 0;
+    virtual void		AddDoRecord(IXFA_Widget* hWidget) = 0;
 
     virtual FX_BOOL		SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) = 0;
     virtual FX_BOOL		CheckWord(IXFA_Doc* hDoc, FX_BSTR sWord) = 0;
@@ -531,16 +537,16 @@ public:
     virtual	void				UpdateDocView() = 0;
     virtual FX_INT32			CountPageViews() = 0;
     virtual IXFA_PageView*		GetPageView(FX_INT32 nIndex) = 0;
-    virtual XFA_HWIDGET			GetWidgetByName(FX_WSTR wsName) = 0;
+    virtual IXFA_Widget*			GetWidgetByName(FX_WSTR wsName) = 0;
     virtual CXFA_WidgetAcc*		GetWidgetAccByName(FX_WSTR wsName) = 0;
     virtual void				ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = NULL) = 0;
     virtual FX_INT32			ProcessWidgetEvent(CXFA_EventParam* pParam, CXFA_WidgetAcc* pWidgetAcc = NULL) = 0;
     virtual IXFA_WidgetHandler*	GetWidgetHandler() = 0;
     virtual IXFA_WidgetIterator*	CreateWidgetIterator() = 0;
     virtual IXFA_WidgetAccIterator* CreateWidgetAccIterator(XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder) = 0;
-    virtual XFA_HWIDGET			GetFocusWidget() = 0;
+    virtual IXFA_Widget*			GetFocusWidget() = 0;
     virtual void				KillFocus() = 0;
-    virtual FX_BOOL				SetFocus(XFA_HWIDGET hWidget) = 0;
+    virtual FX_BOOL				SetFocus(IXFA_Widget* hWidget) = 0;
 };
 #define XFA_TRAVERSEWAY_Tranvalse		0x0001
 #define XFA_TRAVERSEWAY_Form			0x0002
@@ -562,7 +568,7 @@ public:
 
     virtual FX_INT32		LoadPageView(IFX_Pause *pPause = NULL) = 0;
     virtual void			UnloadPageView() = 0;
-    virtual XFA_HWIDGET		GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual IXFA_Widget*		GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) = 0;
     virtual IXFA_WidgetIterator* CreateWidgetIterator(FX_DWORD dwTraverseWay = XFA_TRAVERSEWAY_Form, FX_DWORD dwWidgetFilter = XFA_WIDGETFILTER_Visible | XFA_WIDGETFILTER_Viewable | XFA_WIDGETFILTER_AllType) = 0;
 };
 class CXFA_RenderOptions
@@ -625,35 +631,35 @@ class IXFA_WidgetHandler
 public:
     virtual ~IXFA_WidgetHandler() { }
 
-    virtual XFA_HWIDGET		CreateWidget(XFA_HWIDGET hParent, XFA_WIDGETTYPE eType, XFA_HWIDGET hBefore = NULL) = 0;
-    virtual IXFA_PageView*	GetPageView(XFA_HWIDGET hWidget) = 0;
-    virtual void			GetRect(XFA_HWIDGET hWidget, CFX_RectF &rt) = 0;
-    virtual FX_DWORD		GetStatus(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL			GetBBox(XFA_HWIDGET hWidget, CFX_RectF &rtBox, FX_DWORD dwStatus, FX_BOOL bDrawFocus = FALSE) = 0;
-    virtual CXFA_WidgetAcc*	GetDataAcc(XFA_HWIDGET hWidget) = 0;
+    virtual IXFA_Widget*		CreateWidget(IXFA_Widget* hParent, XFA_WIDGETTYPE eType, IXFA_Widget* hBefore = NULL) = 0;
+    virtual IXFA_PageView*	GetPageView(IXFA_Widget* hWidget) = 0;
+    virtual void			GetRect(IXFA_Widget* hWidget, CFX_RectF &rt) = 0;
+    virtual FX_DWORD		GetStatus(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL			GetBBox(IXFA_Widget* hWidget, CFX_RectF &rtBox, FX_DWORD dwStatus, FX_BOOL bDrawFocus = FALSE) = 0;
+    virtual CXFA_WidgetAcc*	GetDataAcc(IXFA_Widget* hWidget) = 0;
 
-    virtual void			GetName(XFA_HWIDGET hWidget, CFX_WideString &wsName, FX_INT32 iNameType = 0) = 0;
-    virtual	FX_BOOL			GetToolTip(XFA_HWIDGET hWidget, CFX_WideString &wsToolTip) = 0;
-    virtual	void			SetPrivateData(XFA_HWIDGET hWidget, FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback) = 0;
-    virtual	FX_LPVOID		GetPrivateData(XFA_HWIDGET hWidget, FX_LPVOID module_id) = 0;
-    virtual FX_BOOL			OnMouseEnter(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL			OnMouseExit(XFA_HWIDGET hWidget) = 0;
-    virtual FX_BOOL			OnLButtonDown(XFA_HWIDGET hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
-    virtual FX_BOOL			OnLButtonUp(XFA_HWIDGET hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
-    virtual FX_BOOL			OnLButtonDblClk(XFA_HWIDGET hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
-    virtual FX_BOOL			OnMouseMove(XFA_HWIDGET hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
-    virtual FX_BOOL			OnMouseWheel(XFA_HWIDGET hWidget, FX_DWORD dwFlags, FX_SHORT zDelta, FX_FLOAT fx, FX_FLOAT fy) = 0;
-    virtual FX_BOOL			OnRButtonDown(XFA_HWIDGET hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
-    virtual FX_BOOL			OnRButtonUp(XFA_HWIDGET hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
-    virtual FX_BOOL			OnRButtonDblClk(XFA_HWIDGET hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual void			GetName(IXFA_Widget* hWidget, CFX_WideString &wsName, FX_INT32 iNameType = 0) = 0;
+    virtual	FX_BOOL			GetToolTip(IXFA_Widget* hWidget, CFX_WideString &wsToolTip) = 0;
+    virtual	void			SetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback) = 0;
+    virtual	FX_LPVOID		GetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id) = 0;
+    virtual FX_BOOL			OnMouseEnter(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL			OnMouseExit(IXFA_Widget* hWidget) = 0;
+    virtual FX_BOOL			OnLButtonDown(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual FX_BOOL			OnLButtonUp(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual FX_BOOL			OnLButtonDblClk(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual FX_BOOL			OnMouseMove(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual FX_BOOL			OnMouseWheel(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_SHORT zDelta, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual FX_BOOL			OnRButtonDown(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual FX_BOOL			OnRButtonUp(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual FX_BOOL			OnRButtonDblClk(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;
 
-    virtual FX_BOOL			OnKeyDown(XFA_HWIDGET hWidget, FX_DWORD dwKeyCode, FX_DWORD dwFlags) = 0;
-    virtual FX_BOOL			OnKeyUp(XFA_HWIDGET hWidget, FX_DWORD dwKeyCode, FX_DWORD dwFlags) = 0;
-    virtual FX_BOOL			OnChar(XFA_HWIDGET hWidget, FX_DWORD dwChar, FX_DWORD dwFlags) = 0;
-    virtual	FX_DWORD		OnHitTest(XFA_HWIDGET hWidget, FX_FLOAT fx, FX_FLOAT fy) = 0;
-    virtual FX_BOOL			OnSetCursor(XFA_HWIDGET hWidget, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual FX_BOOL			OnKeyDown(IXFA_Widget* hWidget, FX_DWORD dwKeyCode, FX_DWORD dwFlags) = 0;
+    virtual FX_BOOL			OnKeyUp(IXFA_Widget* hWidget, FX_DWORD dwKeyCode, FX_DWORD dwFlags) = 0;
+    virtual FX_BOOL			OnChar(IXFA_Widget* hWidget, FX_DWORD dwChar, FX_DWORD dwFlags) = 0;
+    virtual	FX_DWORD		OnHitTest(IXFA_Widget* hWidget, FX_FLOAT fx, FX_FLOAT fy) = 0;
+    virtual FX_BOOL			OnSetCursor(IXFA_Widget* hWidget, FX_FLOAT fx, FX_FLOAT fy) = 0;
 
-    virtual void			RenderWidget(XFA_HWIDGET hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_BOOL bHighlight = FALSE) = 0;
+    virtual void			RenderWidget(IXFA_Widget* hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_BOOL bHighlight = FALSE) = 0;
     virtual FX_BOOL			HasEvent(CXFA_WidgetAcc* pWidgetAcc, XFA_EVENTTYPE eEventType) = 0;
     virtual FX_INT32		ProcessEvent(CXFA_WidgetAcc* pWidgetAcc, CXFA_EventParam* pParam) = 0;
 };
@@ -662,12 +668,12 @@ class IXFA_WidgetIterator
 public:
     virtual void				Release() = 0;
     virtual void				Reset() = 0;
-    virtual XFA_HWIDGET			MoveToFirst() = 0;
-    virtual XFA_HWIDGET			MoveToLast() = 0;
-    virtual	XFA_HWIDGET			MoveToNext() = 0;
-    virtual XFA_HWIDGET			MoveToPrevious() = 0;
-    virtual	XFA_HWIDGET			GetCurrentWidget() = 0;
-    virtual	FX_BOOL				SetCurrentWidget(XFA_HWIDGET hWidget)  = 0;
+    virtual IXFA_Widget*			MoveToFirst() = 0;
+    virtual IXFA_Widget*			MoveToLast() = 0;
+    virtual	IXFA_Widget*			MoveToNext() = 0;
+    virtual IXFA_Widget*			MoveToPrevious() = 0;
+    virtual	IXFA_Widget*			GetCurrentWidget() = 0;
+    virtual	FX_BOOL				SetCurrentWidget(IXFA_Widget* hWidget)  = 0;
 protected:
     ~IXFA_WidgetIterator() { }
 };

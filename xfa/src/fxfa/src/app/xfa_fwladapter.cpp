@@ -39,10 +39,10 @@ FX_BOOL	FWL_ShowCaret(IFWL_Widget *pWidget, FX_BOOL bVisible, const CFX_RectF *p
         pXFAWidget->GetRotateMatrix(mt);
         CFX_RectF rt(*pRtAnchor);
         mt.TransformRect(rt);
-        pDocProvider->DisplayCaret((XFA_HWIDGET)pXFAWidget, bVisible, &rt);
+        pDocProvider->DisplayCaret(pXFAWidget, bVisible, &rt);
         return TRUE;
     }
-    pDocProvider->DisplayCaret((XFA_HWIDGET)pXFAWidget, bVisible, pRtAnchor);
+    pDocProvider->DisplayCaret(pXFAWidget, bVisible, pRtAnchor);
     return TRUE;
 }
 FWL_ERR CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget *pWidget, const CFX_RectF *pRect)
@@ -75,6 +75,6 @@ FX_BOOL	CXFA_FWLAdapterWidgetMgr::GetPopupPos(IFWL_Widget* pWidget, FX_FLOAT fMi
     pFFWidget->GetRotateMatrix(mt);
     CFX_RectF rtRotateAnchor(rtAnchor);
     mt.TransformRect(rtRotateAnchor);
-    pFFWidget->GetDoc()->GetDocProvider()->GetPopupPos((XFA_HWIDGET)pFFWidget, fMinHeight, fMaxHeight, rtRotateAnchor, rtPopup);
+    pFFWidget->GetDoc()->GetDocProvider()->GetPopupPos(pFFWidget, fMinHeight, fMaxHeight, rtRotateAnchor, rtPopup);
     return TRUE;
 }
