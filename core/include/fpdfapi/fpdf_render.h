@@ -96,8 +96,6 @@ public:
 
     void			AppendObjectList(CPDF_PageObjects* pObjs, const CFX_AffineMatrix* pObject2Device);
 
-    void			SetBackground(class IPDF_BackgroundDraw* pBackground);
-
     void			Render(CFX_RenderDevice* pDevice, const CPDF_RenderOptions* pOptions = NULL,
                            const CFX_AffineMatrix* pFinalMatrix = NULL);
 
@@ -124,23 +122,12 @@ protected:
 
     CFX_ArrayTemplate<struct _PDF_RenderItem>	m_ContentList;
 
-    IPDF_BackgroundDraw*	m_pBackgroundDraw;
-
     FX_BOOL					m_bFirstLayer;
 
     void			Render(CFX_RenderDevice* pDevice, const CPDF_PageObject* pStopObj,
                            const CPDF_RenderOptions* pOptions, const CFX_AffineMatrix* pFinalMatrix);
     friend class CPDF_RenderStatus;
     friend class CPDF_ProgressiveRenderer;
-};
-class IPDF_BackgroundDraw
-{
-public:
-    virtual ~IPDF_BackgroundDraw() { }
-    virtual	void	OnDrawBackground(
-        CFX_RenderDevice* pBitmapDevice,
-        const CFX_AffineMatrix* pOriginal2Bitmap
-    ) = 0;
 };
 class CPDF_ProgressiveRenderer 
 {
@@ -233,19 +220,6 @@ public:
     static FX_BOOL	DrawType3Text(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
                                   CPDF_Font* pFont, FX_FLOAT font_size, const CFX_AffineMatrix* pText2Device,
                                   FX_ARGB fill_argb);
-};
-class IPDF_PageImageCache
-{
-public:
-
-    static IPDF_PageImageCache* Create();
-
-    virtual ~IPDF_PageImageCache() {}
-
-    virtual void		OutputPage(CFX_RenderDevice* pDevice, CPDF_Page* pPage,
-                                   int pos_x, int pos_y, int size_x, int size_y, int rotate) = 0;
-
-    virtual void		SetCacheLimit(FX_DWORD limit) = 0;
 };
 class CPDF_PageRenderCache 
 {

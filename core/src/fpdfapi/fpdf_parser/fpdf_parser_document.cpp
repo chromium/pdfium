@@ -297,39 +297,6 @@ int CPDF_Document::_GetPageCount() const
     }
     return _CountPages(pPages, 0);
 }
-static FX_BOOL _EnumPages(CPDF_Dictionary* pPages, IPDF_EnumPageHandler* pHandler)
-{
-    CPDF_Array* pKidList = pPages->GetArray(FX_BSTRC("Kids"));
-    if (pKidList == NULL) {
-        return pHandler->EnumPage(pPages);
-    }
-    for (FX_DWORD i = 0; i < pKidList->GetCount(); i ++) {
-        CPDF_Dictionary* pKid = pKidList->GetDict(i);
-        if (pKid == NULL) {
-            continue;
-        }
-        if (!pKid->KeyExist(FX_BSTRC("Kids"))) {
-            if (!pHandler->EnumPage(pKid)) {
-                return FALSE;
-            }
-        } else {
-            return _EnumPages(pKid, pHandler);
-        }
-    }
-    return TRUE;
-}
-void CPDF_Document::EnumPages(IPDF_EnumPageHandler* pHandler)
-{
-    CPDF_Dictionary* pRoot = GetRoot();
-    if (pRoot == NULL) {
-        return;
-    }
-    CPDF_Dictionary* pPages = pRoot->GetDict(FX_BSTRC("Pages"));
-    if (pPages == NULL) {
-        return;
-    }
-    _EnumPages(pPages, pHandler);
-}
 FX_BOOL CPDF_Document::IsContentUsedElsewhere(FX_DWORD objnum, CPDF_Dictionary* pThisPageDict)
 {
     for (int i = 0; i < m_PageList.GetSize(); i ++) {

@@ -915,12 +915,9 @@ void CPDF_RenderContext::GetBackground(CFX_DIBitmap* pBuffer, const CPDF_PageObj
 {
     CFX_FxgeDevice device;
     device.Attach(pBuffer);
-    if (m_pBackgroundDraw) {
-        m_pBackgroundDraw->OnDrawBackground(&device, pFinalMatrix);
-    } else {
-        FX_RECT rect(0, 0, device.GetWidth(), device.GetHeight());
-        device.FillRect(&rect, 0xffffffff);
-    }
+
+    FX_RECT rect(0, 0, device.GetWidth(), device.GetHeight());
+    device.FillRect(&rect, 0xffffffff);
     Render(&device, pObj, pOptions, pFinalMatrix);
 }
 CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(const CPDF_GraphicStates* pSrcStates, FX_BOOL bStroke)
@@ -946,7 +943,6 @@ CPDF_RenderContext::CPDF_RenderContext()
 void CPDF_RenderContext::Create(CPDF_Document* pDoc, CPDF_PageRenderCache* pPageCache,
                                 CPDF_Dictionary* pPageResources, FX_BOOL bFirstLayer)
 {
-    m_pBackgroundDraw = NULL;
     m_pDocument = pDoc;
     m_pPageResources = pPageResources;
     m_pPageCache = pPageCache;
@@ -954,7 +950,6 @@ void CPDF_RenderContext::Create(CPDF_Document* pDoc, CPDF_PageRenderCache* pPage
 }
 void CPDF_RenderContext::Create(CPDF_Page* pPage, FX_BOOL bFirstLayer)
 {
-    m_pBackgroundDraw = NULL;
     m_pDocument = pPage->m_pDocument;
     m_pPageResources = pPage->m_pPageResources;
     m_pPageCache = pPage->GetRenderCache();
@@ -968,7 +963,6 @@ void CPDF_RenderContext::Clear()
     m_pDocument = NULL;
     m_pPageResources = NULL;
     m_pPageCache = NULL;
-    m_pBackgroundDraw = NULL;
     m_bFirstLayer = TRUE;
     m_ContentList.RemoveAll();
 }

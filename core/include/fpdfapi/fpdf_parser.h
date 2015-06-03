@@ -51,12 +51,6 @@ class CFX_PrivateData;
 //   'R' - otherwise.
 extern const char PDF_CharType[256];
 
-class IPDF_EnumPageHandler
-{
-public:
-    virtual ~IPDF_EnumPageHandler() { }
-    virtual FX_BOOL EnumPage(CPDF_Dictionary* pPageDict) = 0;
-};
 class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjects
 {
 public:
@@ -91,8 +85,6 @@ public:
     CPDF_Dictionary*		GetPage(int iPage);
 
     int						GetPageIndex(FX_DWORD objnum);
-
-    void					EnumPages(IPDF_EnumPageHandler* pHandler);
 
     FX_DWORD				GetUserPermissions(FX_BOOL bCheckRevision = FALSE) const;
 

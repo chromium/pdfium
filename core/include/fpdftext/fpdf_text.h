@@ -12,6 +12,11 @@
 #include "../fpdfapi/fpdf_parser.h"
 
 class CPDF_PageObjects;
+class IPDF_LinkExtract;
+class IPDF_ReflowedPage;
+class IPDF_TextPage;
+class IPDF_TextPageFind;
+
 #define PDF2TXT_AUTO_ROTATE		1
 #define PDF2TXT_AUTO_WIDTH		2
 #define PDF2TXT_KEEP_COLUMN		4
@@ -24,9 +29,6 @@ void PDF_GetPageText_Unicode(CFX_WideStringArray& lines, CPDF_Document* pDoc, CP
 void PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_Document* pDoc, CPDF_Dictionary* pPage,
                                FX_DWORD flags);
 CFX_WideString PDF_GetFirstTextLine_Unicode(CPDF_Document* pDoc, CPDF_Dictionary* pPage);
-class IPDF_TextPage;
-class IPDF_LinkExtract;
-class IPDF_TextPageFind;
 #define CHAR_ERROR			-1
 #define CHAR_NORMAL			0
 #define CHAR_GENERATED		1
@@ -50,7 +52,6 @@ typedef	CFX_ArrayTemplate<CFX_FloatRect> CFX_RectArray;
 #define FPDFTEXT_RIGHT			1
 #define FPDFTEXT_UP				-2
 #define FPDFTEXT_DOWN			2
-class IPDF_ReflowedPage;
 #define FPDFTEXT_WRITINGMODE_UNKNOW	0
 #define FPDFTEXT_WRITINGMODE_LRTB	1
 #define FPDFTEXT_WRITINGMODE_RLTB	2
