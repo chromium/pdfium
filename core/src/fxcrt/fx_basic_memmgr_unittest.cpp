@@ -20,26 +20,27 @@ const size_t kOverflowIntAlloc2D = kMaxIntAlloc / kWidth + 10;
 // TODO(tsepez): re-enable OOM tests if we can find a way to
 // prevent it from hosing the bots.
 TEST(fxcrt, DISABLED_FX_AllocOOM) {
-    EXPECT_DEATH_IF_SUPPORTED(FX_Alloc(int, kMaxIntAlloc), "");
+    EXPECT_DEATH_IF_SUPPORTED((void) FX_Alloc(int, kMaxIntAlloc), "");
 
     int* ptr = FX_Alloc(int, 1);
     EXPECT_TRUE(ptr);
-    EXPECT_DEATH_IF_SUPPORTED(FX_Realloc(int, ptr, kMaxIntAlloc), "");
+    EXPECT_DEATH_IF_SUPPORTED((void) FX_Realloc(int, ptr, kMaxIntAlloc), "");
     FX_Free(ptr);
 }
 
 TEST(fxcrt, FX_AllocOverflow) {
-    EXPECT_DEATH_IF_SUPPORTED(FX_Alloc(int, kOverflowIntAlloc), "");
+    EXPECT_DEATH_IF_SUPPORTED((void) FX_Alloc(int, kOverflowIntAlloc), "");
 
     int* ptr = FX_Alloc(int, 1);
     EXPECT_TRUE(ptr);
-    EXPECT_DEATH_IF_SUPPORTED(FX_Realloc(int, ptr, kOverflowIntAlloc), "");
+    EXPECT_DEATH_IF_SUPPORTED(
+        (void) FX_Realloc(int, ptr, kOverflowIntAlloc), "");
     FX_Free(ptr);
 }
 
 TEST(fxcrt, FX_AllocOverflow2D) {
     EXPECT_DEATH_IF_SUPPORTED(
-        FX_Alloc2D(int, kWidth, kOverflowIntAlloc2D), "");
+        (void) FX_Alloc2D(int, kWidth, kOverflowIntAlloc2D), "");
 }
 
 TEST(fxcrt, DISABLED_FX_TryAllocOOM) {
