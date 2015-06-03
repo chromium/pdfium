@@ -959,6 +959,7 @@
         'testing/embedder_test.cpp',
         'testing/embedder_test.h',
         'testing/embedder_test_mock_delegate.h',
+        'testing/embedder_test_timer_handling_delegate.h',
         'testing/fx_string_testhelpers.cpp',
         'testing/fx_string_testhelpers.h',
       ],
