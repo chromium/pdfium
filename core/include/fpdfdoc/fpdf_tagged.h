@@ -7,13 +7,13 @@
 #ifndef CORE_INCLUDE_FPDFDOC_FPDF_TAGGED_H_
 #define CORE_INCLUDE_FPDFDOC_FPDF_TAGGED_H_
 
-class CPDF_StructTree;
-class CPDF_StructElement;
-struct CPDF_StructKid;
 class CPDF_Document;
 class CPDF_Page;
-class IPDF_ReflowEngine;
+class CPDF_StructElement;
+class CPDF_StructTree;
 class IPDF_ReflowedPage;
+struct CPDF_StructKid;
+
 class CPDF_StructTree 
 {
 public:
