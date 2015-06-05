@@ -773,7 +773,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pag
 
 FX_BOOL CPDFSDK_PageView::Annot_HasAppearance(CPDF_Annot* pAnnot)
 {
-	CPDF_Dictionary* pAnnotDic = pAnnot->m_pAnnotDict;
+	CPDF_Dictionary* pAnnotDic = pAnnot->GetAnnotDict();
 	if(pAnnotDic)
 		return	pAnnotDic->KeyExist("AS");
 	return FALSE;
@@ -900,7 +900,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(CPDF_Dictionary * pDict)
  	for(int i=0; i<nCount; i++)
  	{
 		CPDFSDK_Annot* pAnnot = (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(i);
- 		if(pDict==pAnnot->GetPDFAnnot()->m_pAnnotDict) 
+ 		if (pDict == pAnnot->GetPDFAnnot()->GetAnnotDict())
  			return pAnnot;
  	}
 	return NULL;

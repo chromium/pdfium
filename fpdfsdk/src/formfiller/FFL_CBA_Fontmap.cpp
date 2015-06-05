@@ -19,7 +19,7 @@ CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot, IFX_SystemHandler* pSystemHandle
 	CPDF_Page* pPage = pAnnot->GetPDFPage();
 
 	m_pDocument = pPage->m_pDocument;
-	m_pAnnotDict = pAnnot->GetPDFAnnot()->m_pAnnotDict;
+	m_pAnnotDict = pAnnot->GetPDFAnnot()->GetAnnotDict();
 }
 
 CBA_FontMap::CBA_FontMap(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict, 

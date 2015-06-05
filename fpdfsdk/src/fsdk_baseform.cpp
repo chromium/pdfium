@@ -564,10 +564,7 @@ void CPDFSDK_Widget::SynchronizeXFAItems(IXFA_DocView* pXFADocView, IXFA_Widget*
 
 FX_BOOL		CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode)
 {
-	ASSERT(m_pAnnot != NULL);
-	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
-	
-	CPDF_Dictionary* pAP = m_pAnnot->m_pAnnotDict->GetDict("AP");
+	CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDict("AP");
 	if (pAP == NULL) return FALSE;
 	
 	// Choose the right sub-ap
@@ -638,7 +635,7 @@ int CPDFSDK_Widget::GetFieldFlags() const
 	CPDF_InterForm* pPDFInterForm = m_pInterForm->GetInterForm();
 	ASSERT(pPDFInterForm != NULL);
 
-	CPDF_FormControl* pFormControl = pPDFInterForm->GetControlByDict(m_pAnnot->m_pAnnotDict);
+	CPDF_FormControl* pFormControl = pPDFInterForm->GetControlByDict(m_pAnnot->GetAnnotDict());
 	CPDF_FormField* pFormField = pFormControl->GetField();
 	return pFormField->GetFieldFlags();
 }
@@ -2182,13 +2179,10 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType, CPDF_St
 {
 	ASSERT(pImage != NULL);
 
-	ASSERT(m_pAnnot != NULL);
-	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
-
 	CPDF_Document* pDoc = m_pPageView->GetPDFDocument();//pDocument->GetDocument();
 	ASSERT(pDoc != NULL);
 
-	CPDF_Dictionary* pAPDict = m_pAnnot->m_pAnnotDict->GetDict("AP");
+	CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDict("AP");
 	ASSERT(pAPDict != NULL);
 
 	CPDF_Stream* pStream = pAPDict->GetStream(sAPType);
@@ -2223,10 +2217,7 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType, CPDF_St
 
 void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType)
 {
-	ASSERT(m_pAnnot != NULL);
-	ASSERT(m_pAnnot->m_pAnnotDict != NULL);
-
-	if (CPDF_Dictionary* pAPDict = m_pAnnot->m_pAnnotDict->GetDict("AP"))
+	if (CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDict("AP"))
 	{
 		pAPDict->RemoveAt(sAPType);
 	}
