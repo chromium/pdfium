@@ -178,20 +178,22 @@ class CFX_ByteString
 public:
     typedef FX_CHAR value_type;
 
-    CFX_ByteString()
-    {
-        m_pData = NULL;
-    }
+    CFX_ByteString() : m_pData(nullptr) { }
 
+    // Copy constructor.
     CFX_ByteString(const CFX_ByteString& str);
 
-    CFX_ByteString(char ch);
+    // Move constructor.
+    inline CFX_ByteString(CFX_ByteString&& other) {
+        this->m_pData = other.m_pData;
+        other.m_pData = nullptr;
+    }
 
+    CFX_ByteString(char ch);
     CFX_ByteString(FX_LPCSTR ptr)
             : CFX_ByteString(ptr, ptr ? FXSYS_strlen(ptr) : 0) { }
 
     CFX_ByteString(FX_LPCSTR ptr, FX_STRSIZE len);
-
     CFX_ByteString(FX_LPCBYTE ptr, FX_STRSIZE len);
 
     CFX_ByteString(FX_BSTR bstrc);
@@ -623,12 +625,16 @@ class CFX_WideString
 public:
     typedef FX_WCHAR value_type;
 
-    CFX_WideString()
-    {
-        m_pData = NULL;
-    }
+    CFX_WideString() : m_pData(nullptr) { }
 
+    // Copy constructor.
     CFX_WideString(const CFX_WideString& str);
+
+    // Move constructor.
+    inline CFX_WideString(CFX_WideString&& other) {
+        this->m_pData = other.m_pData;
+        other.m_pData = nullptr;
+    }
 
     CFX_WideString(FX_LPCWSTR ptr)
             : CFX_WideString(ptr, ptr ? FXSYS_wcslen(ptr) : 0) { }
