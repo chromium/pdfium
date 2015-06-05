@@ -91,12 +91,10 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnCreate(CPDFSDK_Annot* pAnnot)
 	ASSERT(pAnnot != NULL);
 	
 	CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
-	ASSERT(pPDFAnnot != NULL);
-	ASSERT(pPDFAnnot->m_pAnnotDict != NULL);
 	
 	CPDFSDK_DateTime curTime;
-	pPDFAnnot->m_pAnnotDict->SetAtString("M", curTime.ToPDFDateTimeString());
-	pPDFAnnot->m_pAnnotDict->SetAtNumber("F", (int)0);	
+	pPDFAnnot->GetAnnotDict()->SetAtString("M", curTime.ToPDFDateTimeString());
+	pPDFAnnot->GetAnnotDict()->SetAtNumber("F", 0);
 	
 	if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot))
 	{
@@ -402,7 +400,7 @@ CPDFSDK_Annot*		CPDFSDK_BFAnnotHandler::NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_Pag
 	ASSERT(pInterForm != NULL);
 	
 	CPDFSDK_Widget* pWidget = NULL;
-	if (CPDF_FormControl* pCtrl = CPDFSDK_Widget::GetFormControl(pInterForm->GetInterForm(), pAnnot->m_pAnnotDict))
+	if (CPDF_FormControl* pCtrl = CPDFSDK_Widget::GetFormControl(pInterForm->GetInterForm(), pAnnot->GetAnnotDict()))
 	{
 		pWidget = new CPDFSDK_Widget(pAnnot, pPage, pInterForm);
 		pInterForm->AddMap(pCtrl, pWidget);

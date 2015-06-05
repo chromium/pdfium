@@ -292,13 +292,13 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
 		CFX_AffineMatrix matrix((FX_FLOAT)a,(FX_FLOAT)b,(FX_FLOAT)c,(FX_FLOAT)d,(FX_FLOAT)e,(FX_FLOAT)f);
 		rect.Transform(&matrix);
 		CPDF_Array *pRectArray = NULL;
-		pRectArray = pAnnot->m_pAnnotDict->GetArray("Rect");
+		pRectArray = pAnnot->GetAnnotDict()->GetArray("Rect");
 		if (!pRectArray) pRectArray=CPDF_Array::Create();
 		pRectArray->SetAt(0, new CPDF_Number(rect.left));
 		pRectArray->SetAt(1, new CPDF_Number(rect.bottom));
 		pRectArray->SetAt(2, new CPDF_Number(rect.right));
 		pRectArray->SetAt(3, new CPDF_Number(rect.top));
-		pAnnot->m_pAnnotDict->SetAt("Rect",pRectArray);
+		pAnnot->GetAnnotDict()->SetAt("Rect",pRectArray);
 
 		//Transform AP's rectangle
 		//To Do

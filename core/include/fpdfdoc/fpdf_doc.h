@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
@@ -10,37 +10,37 @@
 #include "../fpdfapi/fpdf_parser.h"
 #include "../fpdfapi/fpdf_render.h"
 
+class CFieldTree;
+class CPDF_AAction;
 class CPDF_Action;
+class CPDF_ActionFields;
 class CPDF_Annot;
 class CPDF_AnnotList;
+class CPDF_ApSettings;
 class CPDF_Bookmark;
 class CPDF_BookmarkTree;
-class CPDF_Dest;
-class CPDF_Link;
-class CPDF_LinkList;
-class CPDF_Metadata;
-class CPDF_NameTree;
-class CPDF_NumberTree;
-class CPDF_TextObject;
-class CPDF_ViewerPreferences;
-class CPDF_Page;
-class CPDF_RenderOptions;
-class CXML_Element;
-class CPDF_OCContext;
-class CPDF_DocJSActions;
-class CPDF_ActionFields;
-class CPDF_AAction;
-class CPDF_FileSpec;
-class CPDF_IconFit;
 class CPDF_DefaultAppearance;
-class CPDF_InterForm;
+class CPDF_Dest;
+class CPDF_DocJSActions;
+class CPDF_FileSpec;
+class CPDF_FormControl;
 class CPDF_FormField;
 class CPDF_FormNotify;
-class CPDF_FormControl;
+class CPDF_IconFit;
+class CPDF_InterForm;
+class CPDF_Link;
+class CPDF_LinkList;
 class CPDF_LWinParam;
-class CFieldTree;
-class CPDF_ApSettings;
-class CPDF_NameTree 
+class CPDF_Metadata;
+class CPDF_NumberTree;
+class CPDF_OCContext;
+class CPDF_Page;
+class CPDF_RenderOptions;
+class CPDF_TextObject;
+class CPDF_ViewerPreferences;
+class CXML_Element;
+
+class CPDF_NameTree
 {
 public:
 
@@ -71,7 +71,7 @@ protected:
 
     CPDF_Dictionary*		m_pRoot;
 };
-class CPDF_BookmarkTree 
+class CPDF_BookmarkTree
 {
 public:
     CPDF_BookmarkTree(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
@@ -87,7 +87,7 @@ protected:
 };
 #define PDFBOOKMARK_ITALIC			1
 #define PDFBOOKMARK_BOLD			2
-class CPDF_Bookmark 
+class CPDF_Bookmark
 {
 public:
 
@@ -119,7 +119,7 @@ public:
 #define PDFZOOM_FITBBOX				6
 #define PDFZOOM_FITBHORZ			7
 #define PDFZOOM_FITBVERT			8
-class CPDF_Dest 
+class CPDF_Dest
 {
 public:
     CPDF_Dest() : m_pObj(nullptr) { }
@@ -183,7 +183,7 @@ protected:
 
     CFX_MapPtrTemplate<const CPDF_Dictionary*, void*>	m_OCGStates;
 };
-class CPDF_LWinParam 
+class CPDF_LWinParam
 {
 public:
 
@@ -222,7 +222,7 @@ public:
 
     CPDF_Dictionary*		m_pDict;
 };
-class CPDF_ActionFields 
+class CPDF_ActionFields
 {
 public:
 
@@ -250,7 +250,7 @@ public:
 #define PDFNAMED_FIRSTPAGE		3
 #define PDFNAMED_LASTPAGE		4
 #define PDFJS_MAXLENGTH			64
-class CPDF_Action 
+class CPDF_Action
 {
 public:
     enum ActionType {
@@ -289,91 +289,49 @@ public:
 
     ActionType			GetType() const;
 
-
-
     CPDF_Dest			GetDest(CPDF_Document* pDoc) const;
 
-
-
-
-
     CFX_WideString		GetFilePath() const;
-
-
-
 
     FX_BOOL				GetNewWindow() const
     {
         return m_pDict->GetBoolean("NewWindow");
     }
 
-
-
-
     CPDF_LWinParam		GetWinParam() const;
 
-
-
-
     CFX_ByteString		GetURI(CPDF_Document* pDoc) const;
-
-
-
 
     FX_BOOL				GetMouseMap() const
     {
         return m_pDict->GetBoolean("IsMap");
     }
 
-
-
-
     CPDF_ActionFields	GetWidgets() const
     {
         return this;
     }
-
-
-
 
     FX_BOOL				GetHideStatus() const
     {
         return m_pDict->GetBoolean("H", TRUE);
     }
 
-
-
-
     CFX_ByteString		GetNamedAction() const
     {
         return m_pDict->GetString("N");
     }
-
-
-
 
     FX_DWORD			GetFlags() const
     {
         return m_pDict->GetInteger("Flags");
     }
 
-
-
-
     CFX_WideString		GetJavaScript() const;
-
-
-
 
     CPDF_Dictionary*	GetAnnot() const;
 
-
-
-
     FX_INT32			GetOperationType() const;
-
-
-
 
     CPDF_Stream*		GetSoundStream() const
     {
@@ -400,9 +358,6 @@ public:
         return m_pDict->GetBoolean("Mix");
     }
 
-
-
-
     FX_DWORD			GetSubActionsCount() const;
 
     CPDF_Action			GetSubAction(FX_DWORD iIndex) const;
@@ -410,7 +365,7 @@ public:
 protected:
     CPDF_Dictionary*	m_pDict;
 };
-class CPDF_AAction 
+class CPDF_AAction
 {
 public:
 
@@ -458,7 +413,7 @@ public:
 
     CPDF_Dictionary*	m_pDict;
 };
-class CPDF_DocJSActions 
+class CPDF_DocJSActions
 {
 public:
     CPDF_DocJSActions(CPDF_Document* pDoc);
@@ -482,7 +437,7 @@ protected:
 
     CPDF_Document*		m_pDocument;
 };
-class CPDF_FileSpec 
+class CPDF_FileSpec
 {
 public:
 
@@ -509,7 +464,7 @@ protected:
 
     CPDF_Object		*m_pObj;
 };
-class CPDF_LinkList 
+class CPDF_LinkList
 {
 public:
 
@@ -540,7 +495,7 @@ protected:
 
     void				LoadPageLinks(CPDF_Page* pPage, CFX_PtrArray* pList);
 };
-class CPDF_Link 
+class CPDF_Link
 {
 public:
     CPDF_Link() : m_pDict(nullptr) { }
@@ -555,73 +510,65 @@ public:
 protected:
     CPDF_Dictionary*	m_pDict;
 };
-#define ANNOTFLAG_INVISIBLE			1
-#define ANNOTFLAG_HIDDEN			2
-#define ANNOTFLAG_PRINT				4
-#define ANNOTFLAG_NOZOOM			8
-#define ANNOTFLAG_NOROTATE			0x10
-#define ANNOTFLAG_NOVIEW			0x20
-#define ANNOTFLAG_READONLY			0x40
-#define ANNOTFLAG_LOCKED			0x80
-#define ANNOTFLAG_TOGGLENOVIEW		0x100
+
+#define ANNOTFLAG_INVISIBLE     0x0001
+#define ANNOTFLAG_HIDDEN        0x0002
+#define ANNOTFLAG_PRINT         0x0004
+#define ANNOTFLAG_NOZOOM        0x0008
+#define ANNOTFLAG_NOROTATE      0x0010
+#define ANNOTFLAG_NOVIEW        0x0020
+#define ANNOTFLAG_READONLY      0x0040
+#define ANNOTFLAG_LOCKED        0x0080
+#define ANNOTFLAG_TOGGLENOVIEW  0x0100
+
 class CPDF_Annot : public CFX_PrivateData
 {
-public:
-
-    CPDF_Annot(CPDF_Dictionary* pDict);
-
-    ~CPDF_Annot();
-
-    CPDF_Dictionary*	m_pAnnotDict;
-
-    CFX_ByteString		GetSubType() const;
-
-    FX_DWORD			GetFlags() const
-    {
-        return m_pAnnotDict->GetInteger("F");
-    }
-
-    void				GetRect(CFX_FloatRect& rect) const;
-
-    enum AppearanceMode	{
+  public:
+    enum AppearanceMode {
         Normal,
         Rollover,
         Down
     };
 
-    FX_BOOL				DrawAppearance(const CPDF_Page* pPage, CFX_RenderDevice* pDevice, const CFX_AffineMatrix* pUser2Device,
-                                       AppearanceMode mode, const CPDF_RenderOptions* pOptions);
+    CPDF_Annot(CPDF_Dictionary* pDict, CPDF_AnnotList* pList);
+    ~CPDF_Annot();
 
-    FX_BOOL				DrawInContext(const CPDF_Page* pPage, const CPDF_RenderContext* pContext,
-                                      const CFX_AffineMatrix* pUser2Device, AppearanceMode mode);
+    CFX_ByteString GetSubType() const;
 
-    void				ClearCachedAP();
+    FX_DWORD GetFlags() const;
 
+    void GetRect(CFX_FloatRect& rect) const;
 
-    void				DrawBorder(CFX_RenderDevice* pDevice, const CFX_AffineMatrix* pUser2Device,
-                                   const CPDF_RenderOptions* pOptions);
+    CPDF_Dictionary* GetAnnotDict();
 
-    CPDF_PageObject*	GetBorder(FX_BOOL bPrint, const CPDF_RenderOptions* pOptions);
+    FX_BOOL DrawAppearance(const CPDF_Page* pPage,
+                           CFX_RenderDevice* pDevice,
+                           const CFX_AffineMatrix* pUser2Device,
+                           AppearanceMode mode,
+                           const CPDF_RenderOptions* pOptions);
 
+    FX_BOOL DrawInContext(const CPDF_Page* pPage,
+                          const CPDF_RenderContext* pContext,
+                          const CFX_AffineMatrix* pUser2Device,
+                          AppearanceMode mode);
 
+    void ClearCachedAP();
 
-    int					CountIRTNotes();
+    void DrawBorder(CFX_RenderDevice* pDevice,
+                    const CFX_AffineMatrix* pUser2Device,
+                    const CPDF_RenderOptions* pOptions);
 
-    CPDF_Annot*			GetIRTNote(int index);
+    CPDF_Form* GetAPForm(const CPDF_Page* pPage, AppearanceMode mode);
 
+  private:
+    CPDF_Dictionary* const m_pAnnotDict;
 
-    CPDF_Form*			GetAPForm(const CPDF_Page* pPage, AppearanceMode mode);
-private:
+    CPDF_AnnotList* const m_pList;
 
-    CFX_MapPtrToPtr		m_APMap;
-protected:
-    friend class		CPDF_AnnotList;
-
-    CPDF_AnnotList*		m_pList;
-
-    CPDF_Reference*		NewAnnotRef();
+    CFX_MapPtrToPtr m_APMap;
 };
-class CPDF_AnnotList 
+
+class CPDF_AnnotList
 {
 public:
 
@@ -693,7 +640,7 @@ protected:
 #define COLORTYPE_GRAY			1
 #define COLORTYPE_RGB			2
 #define COLORTYPE_CMYK			3
-class CPDF_DefaultAppearance 
+class CPDF_DefaultAppearance
 {
 public:
 
@@ -1023,7 +970,7 @@ protected:
 #define FORMTEXT_COMB			0x800
 #define FORMCOMBO_EDIT			0x100
 #define FORMLIST_MULTISELECT	0x100
-class CPDF_FormField 
+class CPDF_FormField
 {
 public:
 
@@ -1245,7 +1192,7 @@ protected:
     CPDF_Font*				m_pFont;
 };
 CPDF_Object*	FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict, const FX_CHAR* name, int nLevel = 0);
-class CPDF_IconFit 
+class CPDF_IconFit
 {
 public:
 
@@ -1297,7 +1244,7 @@ public:
 #define TEXTPOS_RIGHT		4
 #define TEXTPOS_LEFT		5
 #define TEXTPOS_OVERLAID	6
-class CPDF_FormControl 
+class CPDF_FormControl
 {
 public:
 
@@ -1505,7 +1452,7 @@ protected:
     friend class			CPDF_InterForm;
     friend class			CPDF_FormField;
 };
-class CPDF_FormNotify 
+class CPDF_FormNotify
 {
 public:
 
@@ -1557,7 +1504,7 @@ public:
     }
 };
 FX_BOOL		FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
-class CPDF_PageLabel 
+class CPDF_PageLabel
 {
 public:
 
@@ -1621,7 +1568,7 @@ public:
 protected:
     CPDF_Document*	m_pDoc;
 };
-class CPDF_ApSettings 
+class CPDF_ApSettings
 {
 public:
 

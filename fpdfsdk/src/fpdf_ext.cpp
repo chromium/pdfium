@@ -64,7 +64,7 @@ void CheckUnSupportAnnot(CPDF_Document * pDoc, CPDF_Annot* pPDFAnnot)
 	}
 	else if(cbSubType.Compare("Screen") ==0)
 	{
-		CPDF_Dictionary* pAnnotDict = pPDFAnnot->m_pAnnotDict;
+		CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
 		CFX_ByteString cbString;
 		if(pAnnotDict->KeyExist("IT"))
 			cbString = pAnnotDict->GetString("IT");
@@ -89,7 +89,7 @@ void CheckUnSupportAnnot(CPDF_Document * pDoc, CPDF_Annot* pPDFAnnot)
 	}
 	else if(cbSubType.Compare("Widget") ==0)
 	{
-		CPDF_Dictionary* pAnnotDict = pPDFAnnot->m_pAnnotDict;
+		CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
 		CFX_ByteString cbString;
 		if(pAnnotDict->KeyExist("FT"))
 		{
