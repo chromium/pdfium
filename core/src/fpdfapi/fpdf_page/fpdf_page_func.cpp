@@ -6,9 +6,9 @@
 
 #include <limits.h>
 
-#include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../src/fxcrt/fx_safe_types.h"
+#include "../../../include/fpdfapi/fpdf_page.h"
+#include "../../../include/fxcrt/fx_safe_types.h"
 #include "../../../third_party/base/numerics/safe_conversions_impl.h"
 #include "pageint.h"
 

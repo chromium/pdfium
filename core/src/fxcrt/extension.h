@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FXCRT_EXTENSION_H_
 #define CORE_SRC_FXCRT_EXTENSION_H_
 
-#include "fx_safe_types.h"
+#include "../../include/fxcrt/fx_safe_types.h"
 
 class IFXCRT_FileAccess
 {

@@ -5,9 +5,10 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxcodec/fx_codec.h"
+#include "../../../include/fxcrt/fx_safe_types.h"
 #include "../../../include/fxge/fx_dib.h"
-#include "../../../src/fxcrt/fx_safe_types.h"
 #include "codec_int.h"
+
 extern "C" {
     static void _JpegScanSOI(const FX_BYTE*& src_buf, FX_DWORD& src_size)
     {

@@ -4,14 +4,15 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_ge.h"
-#include "../../../include/fxcodec/fx_codec.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../include/fpdfapi/fpdf_render.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
-#include "../../fxcrt/fx_safe_types.h"
+#include "../../../include/fpdfapi/fpdf_render.h"
+#include "../../../include/fxcodec/fx_codec.h"
+#include "../../../include/fxcrt/fx_safe_types.h"
+#include "../../../include/fxge/fx_ge.h"
 #include "../fpdf_page/pageint.h"
 #include "render_int.h"
+
 FX_BOOL CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj, const CFX_AffineMatrix* pObj2Device)
 {
     CPDF_ImageRenderer render;
