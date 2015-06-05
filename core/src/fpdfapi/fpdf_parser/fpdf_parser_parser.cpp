@@ -4,13 +4,14 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_parser.h"
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../src/fxcrt/fx_safe_types.h"
-#include "../fpdf_page/pageint.h"
 #include <utility>
 #include <vector>
+
+#include "../../../include/fpdfapi/fpdf_module.h"
+#include "../../../include/fpdfapi/fpdf_page.h"
+#include "../../../include/fpdfapi/fpdf_parser.h"
+#include "../../../include/fxcrt/fx_safe_types.h"
+#include "../fpdf_page/pageint.h"
 
 FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict)
 {

@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fpdfdoc/fpdf_doc.h"
-#include "../../src/fxcrt/fx_safe_types.h"
+#include "../../include/fxcrt/fx_safe_types.h"
 
 CPDF_LinkList::~CPDF_LinkList()
 {

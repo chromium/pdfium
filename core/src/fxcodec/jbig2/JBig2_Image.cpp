@@ -5,9 +5,10 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits.h>
+
 #include "../../../include/fxcrt/fx_basic.h"
 #include "../../../include/fxcrt/fx_coordinates.h"
-#include "../../../src/fxcrt/fx_safe_types.h"
+#include "../../../include/fxcrt/fx_safe_types.h"
 #include "JBig2_Image.h"
 
 CJBig2_Image::CJBig2_Image(FX_INT32 w, FX_INT32 h)
