@@ -2,6 +2,9 @@ deps = {
   "build/gyp":
     "https://chromium.googlesource.com/external/gyp",
 
+  "buildtools":
+    "https://chromium.googlesource.com/chromium/buildtools.git@46ce8cb60364e9e0b21a81136c7debdddfd063a8",
+
   "testing/corpus":
      "https://pdfium.googlesource.com/pdfium_tests@73e1d0c915fe574a470fcbc76dd36246ac9fec45",
 
@@ -24,3 +27,11 @@ deps_os = {
       "https://chromium.googlesource.com/chromium/deps/cygwin@c89e446b273697fadf3a10ff1007a97c0b7de6df",
   },
 }
+
+include_rules = [
+ '+core/include',
+ '+fpdfsdk/include',
+ '+public',
+ '+testing',
+ '+third_party/base',
+]

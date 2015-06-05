@@ -1,6 +1,7 @@
 /build/Debug
 /build/Release
 /build/gyp
+/buildtools
 /out
 /testing/gmock
 /testing/gtest
