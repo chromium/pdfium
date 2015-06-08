@@ -4,6 +4,7 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../../include/fpdfapi/fpdf_render.h"
@@ -54,6 +55,49 @@ FX_SAFE_DWORD CalculatePitch32(int bpp, int width)
     pitch /= 8;
     return pitch;
 }
+
+// Wrapper class to hold objects allocated in CPDF_DIBSource::LoadJpxBitmap(),
+// because nonstd::unique_ptr does not support custom deleters yet.
+class JpxBitMapContext
+{
+  public:
+    explicit JpxBitMapContext(ICodec_JpxModule* jpx_module)
+        : jpx_module_(jpx_module),
+          ctx_(nullptr),
+          output_offsets_(nullptr) {}
+
+    ~JpxBitMapContext() {
+        FX_Free(output_offsets_);
+        jpx_module_->DestroyDecoder(ctx_);
+    }
+
+    // Takes ownership of |ctx|.
+    void set_context(void* ctx) {
+        ctx_ = ctx;
+    }
+
+    void* context() {
+        return ctx_;
+    }
+
+    // Takes ownership of |output_offsets|.
+    void set_output_offsets(unsigned char* output_offsets) {
+      output_offsets_ = output_offsets;
+    }
+
+    unsigned char* output_offsets() {
+      return output_offsets_;
+    }
+
+  private:
+    ICodec_JpxModule* jpx_module_;  // Weak pointer.
+    void* ctx_;  // Decoder context, owned.
+    unsigned char* output_offsets_;  // Output offsets for decoding, owned.
+
+    // Disallow evil constructors
+    JpxBitMapContext(const JpxBitMapContext&);
+    void operator=(const JpxBitMapContext&);
+};
 
 }  // namespace
 
@@ -124,7 +168,6 @@ CPDF_DIBSource::CPDF_DIBSource()
     m_pCompData = NULL;
     m_bColorKey = FALSE;
     m_pMaskedLine = m_pLineBuf = NULL;
-    m_pCachedBitmap = NULL;
     m_pDecoder = NULL;
     m_nComponents = 0;
     m_bpc = 0;
@@ -148,7 +191,7 @@ CPDF_DIBSource::~CPDF_DIBSource()
     if (m_pLineBuf) {
         FX_Free(m_pLineBuf);
     }
-    delete m_pCachedBitmap;
+    m_pCachedBitmap.reset();
     delete m_pDecoder;
     if (m_pCompData) {
         FX_Free(m_pCompData);
@@ -165,10 +208,7 @@ CPDF_DIBSource::~CPDF_DIBSource()
 }
 CFX_DIBitmap* CPDF_DIBSource::GetBitmap() const
 {
-    if (m_pCachedBitmap) {
-        return m_pCachedBitmap;
-    }
-    return Clone();
+    return m_pCachedBitmap ? m_pCachedBitmap.get() : Clone();
 }
 void CPDF_DIBSource::ReleaseBitmap(CFX_DIBitmap* pBitmap) const
 {
@@ -375,8 +415,7 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
                                             m_pGlobalStream ? m_pGlobalStream->GetData() : NULL, m_pGlobalStream ? m_pGlobalStream->GetSize() : 0, m_pCachedBitmap->GetBuffer(),
                                             m_pCachedBitmap->GetPitch(), pPause);
             if (ret < 0) {
-                delete m_pCachedBitmap;
-                m_pCachedBitmap = NULL;
+                m_pCachedBitmap.reset();
                 delete m_pGlobalStream;
                 m_pGlobalStream = NULL;
                 pJbig2Module->DestroyJbig2Context(m_pJbig2Context);
@@ -401,8 +440,7 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
         }
         FXCODEC_STATUS ret = pJbig2Module->ContinueDecode(m_pJbig2Context, pPause);
         if (ret < 0) {
-            delete m_pCachedBitmap;
-            m_pCachedBitmap = NULL;
+            m_pCachedBitmap.reset();
             delete m_pGlobalStream;
             m_pGlobalStream = NULL;
             pJbig2Module->DestroyJbig2Context(m_pJbig2Context);
@@ -593,12 +631,11 @@ int CPDF_DIBSource::CreateDecoder()
         m_pDecoder = FPDFAPI_CreateFlateDecoder(src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc, pParams);
     } else if (decoder == FX_BSTRC("JPXDecode")) {
         LoadJpxBitmap();
-        return m_pCachedBitmap != NULL ? 1 : 0;
+        return m_pCachedBitmap ? 1 : 0;
     } else if (decoder == FX_BSTRC("JBIG2Decode")) {
-        m_pCachedBitmap = new CFX_DIBitmap;
+        m_pCachedBitmap.reset(new CFX_DIBitmap);
         if (!m_pCachedBitmap->Create(m_Width, m_Height, m_bImageMask ? FXDIB_1bppMask : FXDIB_1bppRgb)) {
-            delete m_pCachedBitmap;
-            m_pCachedBitmap = NULL;
+            m_pCachedBitmap.reset();
             return 0;
         }
         m_Status = 1;
@@ -629,30 +666,37 @@ int CPDF_DIBSource::CreateDecoder()
 void CPDF_DIBSource::LoadJpxBitmap()
 {
     ICodec_JpxModule* pJpxModule = CPDF_ModuleMgr::Get()->GetJpxModule();
-    if (pJpxModule == NULL) {
+    if (!pJpxModule)
         return;
-    }
-    FX_LPVOID ctx = pJpxModule->CreateDecoder(m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(), m_pColorSpace != NULL);
-    if (ctx == NULL) {
+
+    nonstd::unique_ptr<JpxBitMapContext> context(
+        new JpxBitMapContext(pJpxModule));
+    context->set_context(pJpxModule->CreateDecoder(m_pStreamAcc->GetData(),
+                                                   m_pStreamAcc->GetSize(),
+                                                   m_pColorSpace != nullptr));
+    if (!context->context())
         return;
-    }
-    FX_DWORD width = 0, height = 0, codestream_nComps = 0, image_nComps = 0;
-    pJpxModule->GetImageInfo(ctx, width, height, codestream_nComps, image_nComps);
-    if ((int)width < m_Width || (int)height < m_Height) {
-        pJpxModule->DestroyDecoder(ctx);
+
+    FX_DWORD width = 0;
+    FX_DWORD height = 0;
+    FX_DWORD codestream_nComps = 0;
+    FX_DWORD image_nComps = 0;
+    pJpxModule->GetImageInfo(context->context(), width, height,
+                             codestream_nComps, image_nComps);
+    if ((int)width < m_Width || (int)height < m_Height)
         return;
-    }
+
     int output_nComps;
-    FX_BOOL bTranslateColor, bSwapRGB = FALSE;
+    FX_BOOL bTranslateColor;
+    FX_BOOL bSwapRGB = FALSE;
     if (m_pColorSpace) {
-        if (codestream_nComps != (FX_DWORD)m_pColorSpace->CountComponents()) {
+        if (codestream_nComps != (FX_DWORD)m_pColorSpace->CountComponents())
             return;
-        }
         output_nComps = codestream_nComps;
         bTranslateColor = FALSE;
         if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB)) {
             bSwapRGB = TRUE;
-            m_pColorSpace = NULL;
+            m_pColorSpace = nullptr;
         }
     } else {
         bTranslateColor = TRUE;
@@ -680,35 +724,36 @@ void CPDF_DIBSource::LoadJpxBitmap()
         width = (width * output_nComps + 2) / 3;
         format = FXDIB_Rgb;
     }
-    m_pCachedBitmap = new CFX_DIBitmap;
+    m_pCachedBitmap.reset(new CFX_DIBitmap);
     if (!m_pCachedBitmap->Create(width, height, format)) {
-        delete m_pCachedBitmap;
-        m_pCachedBitmap = NULL;
+        m_pCachedBitmap.reset();
         return;
     }
     m_pCachedBitmap->Clear(0xFFFFFFFF);
-    FX_LPBYTE output_offsets = FX_Alloc(FX_BYTE, output_nComps);
-    for (int i = 0; i < output_nComps; i ++) {
-        output_offsets[i] = i;
-    }
+    context->set_output_offsets(FX_Alloc(unsigned char, output_nComps));
+    for (int i = 0; i < output_nComps; ++i)
+        context->output_offsets()[i] = i;
     if (bSwapRGB) {
-        output_offsets[0] = 2;
-        output_offsets[2] = 0;
+        context->output_offsets()[0] = 2;
+        context->output_offsets()[2] = 0;
     }
-    if (!pJpxModule->Decode(ctx, m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), bTranslateColor, output_offsets)) {
-        delete m_pCachedBitmap;
-        m_pCachedBitmap = NULL;
+    if (!pJpxModule->Decode(context->context(),
+                            m_pCachedBitmap->GetBuffer(),
+                            m_pCachedBitmap->GetPitch(),
+                            bTranslateColor,
+                            context->output_offsets())) {
+        m_pCachedBitmap.reset();
         return;
     }
-    FX_Free(output_offsets);
-    pJpxModule->DestroyDecoder(ctx);
-    if (m_pColorSpace && m_pColorSpace->GetFamily() == PDFCS_INDEXED && m_bpc < 8) {
+    if (m_pColorSpace &&
+        m_pColorSpace->GetFamily() == PDFCS_INDEXED &&
+        m_bpc < 8) {
         int scale = 8 - m_bpc;
-        for (FX_DWORD row = 0; row < height; row ++) {
+        for (FX_DWORD row = 0; row < height; ++row) {
             FX_LPBYTE scanline = (FX_LPBYTE)m_pCachedBitmap->GetScanline(row);
-            for (FX_DWORD col = 0; col < width; col ++) {
+            for (FX_DWORD col = 0; col < width; ++col) {
                 *scanline = (*scanline) >> scale;
-                scanline++;
+                ++scanline;
             }
         }
     }
