@@ -4,6 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <setjmp.h>
+
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../../../include/fxcrt/fx_safe_types.h"
 #include "../../../include/fxge/fx_dib.h"

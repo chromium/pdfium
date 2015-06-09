@@ -14,14 +14,14 @@
 #include <ctime>
 #endif
 
-class CFX_IFileWrite FX_FINAL : public IFX_StreamWrite
+class CFX_IFileWrite final : public IFX_StreamWrite
 {
 	
 public:
 	CFX_IFileWrite();
 	FX_BOOL				Init( FPDF_FILEWRITE * pFileWriteStruct );
-	virtual	FX_BOOL		WriteBlock(const void* pData, size_t size) FX_OVERRIDE;
-	virtual void		Release() FX_OVERRIDE {}
+	virtual	FX_BOOL		WriteBlock(const void* pData, size_t size) override;
+	virtual void		Release() override {}
 	
 protected:
 	FPDF_FILEWRITE*		m_pFileWriteStruct;

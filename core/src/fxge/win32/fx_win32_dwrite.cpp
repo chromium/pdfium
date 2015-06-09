@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxge/fx_ge.h"
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
+#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include "../../../include/fxge/fx_ge_win32.h"
 #include "dwrite_int.h"
 #include <dwrite.h>
@@ -26,7 +26,7 @@ inline InterfaceType* SafeAcquire(InterfaceType* newObject)
     }
     return newObject;
 }
-class CDwFontFileStream FX_FINAL : public IDWriteFontFileStream
+class CDwFontFileStream final : public IDWriteFontFileStream
 {
 public:
     explicit CDwFontFileStream(void const* fontFileReferenceKey, UINT32 fontFileReferenceKeySize);
@@ -46,7 +46,7 @@ private:
     void const* resourcePtr_;
     DWORD resourceSize_;
 };
-class CDwFontFileLoader FX_FINAL : public IDWriteFontFileLoader
+class CDwFontFileLoader final : public IDWriteFontFileLoader
 {
 public:
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** ppvObject);

@@ -4,6 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <limits>
+
 #include "../../../include/fxge/fx_ge.h"
 #include "../../../include/fxge/fx_freetype.h"
 #include "text_int.h"
@@ -1365,7 +1367,7 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path)
 
     if (GET_TT_LONG(buffer) == 0x74746366) {
         FX_DWORD nFaces = GET_TT_LONG(buffer + 8);
-        if (nFaces > FX_DWORD_MAX / 4) {
+        if (nFaces > std::numeric_limits<FX_DWORD>::max() / 4) {
             FXSYS_fclose(pFile);
             return;
         }

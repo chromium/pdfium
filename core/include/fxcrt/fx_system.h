@@ -1,28 +1,44 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FXCRT_FX_SYSTEM_H_
 #define CORE_INCLUDE_FXCRT_FX_SYSTEM_H_
 
-#define _FX_WIN32_DESKTOP_		1
-#define _FX_LINUX_DESKTOP_		4
-#define _FX_MACOSX_				7
-#define _FX_ANDROID_			12
+#include <assert.h>
+#include <math.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
 
-#define _FXM_PLATFORM_WINDOWS_		1
-#define _FXM_PLATFORM_LINUX_		2
-#define _FXM_PLATFORM_APPLE_		3
-#define _FXM_PLATFORM_ANDROID_		4
+// _FX_OS_ values:
+#define _FX_WIN32_DESKTOP_      1
+#define _FX_WIN64_DESKTOP_      2
+#define _FX_LINUX_DESKTOP_      4
+#define _FX_MACOSX_             7
+#define _FX_ANDROID_           12
+
+// _FXM_PLATFORM_ values;
+#define _FXM_PLATFORM_WINDOWS_  1  // _FX_WIN32_DESKTOP_ or _FX_WIN64_DESKTOP_.
+#define _FXM_PLATFORM_LINUX_    2  // _FX_LINUX_DESKTOP_ always.
+#define _FXM_PLATFORM_APPLE_    3  // _FX_MACOSX_ always.
+#define _FXM_PLATFORM_ANDROID_  4  // _FX_ANDROID_ always.
 
 #ifndef _FX_OS_
 #if defined(__ANDROID__)
 #define _FX_OS_ _FX_ANDROID_
 #define _FXM_PLATFORM_ _FXM_PLATFORM_ANDROID_
-#elif defined(_WIN32) || defined(_WIN64)
+#elif defined(_WIN32)
 #define _FX_OS_ _FX_WIN32_DESKTOP_
+#define _FXM_PLATFORM_ _FXM_PLATFORM_WINDOWS_
+#elif defined(_WIN64)
+#define _FX_OS_ _FX_WIN64_DESKTOP_
 #define _FXM_PLATFORM_ _FXM_PLATFORM_WINDOWS_
 #elif defined(__linux__)
 #define _FX_OS_ _FX_LINUX_DESKTOP_
@@ -31,94 +47,56 @@
 #define _FX_OS_ _FX_MACOSX_
 #define _FXM_PLATFORM_ _FXM_PLATFORM_APPLE_
 #endif
-#endif
+#endif  // _FX_OS_
 
 #if !defined(_FX_OS_) || _FX_OS_ == 0
-#error Sorry, can not figure out what OS you are targeting to. Please specify _FX_OS_ macro.
+#error Sorry, can not figure out target OS. Please specify _FX_OS_ macro.
 #endif
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define _CRT_SECURE_NO_WARNINGS
 #include <sal.h>
 #include <windows.h>
-#endif  // _FXM_PLATFORM_WINDOWS_
-#define _FX_W32_		1
-#define _FX_W64_		2
-#ifndef _FX_WORDSIZE_
-#if defined(_WIN64) || defined(__arm64) || defined(__arm64__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IA64) || defined(__powerpc64__) || defined(__x86_64__) || __WORDSIZE == 64 || defined(__LP64__)
-#define _FX_WORDSIZE_	_FX_W64_
-#else
-#define _FX_WORDSIZE_	_FX_W32_
 #endif
-#endif
-
-#include <stddef.h>
-#include <stdarg.h>
-#include <setjmp.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include <wchar.h>
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include <libkern/OSAtomic.h>
-#if _FX_OS_ == _FX_MACOSX_
 #include <Carbon/Carbon.h>
-#elif _FX_OS_ == _FX_IOS_
-#include <CoreText/CoreText.h>
-#include <CoreGraphics/CoreGraphics.h>
-#endif
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-typedef void*					FX_LPVOID;
-typedef void const*				FX_LPCVOID;
-typedef void*					FX_POSITION;
-typedef signed char				FX_INT8;
-typedef unsigned char			FX_UINT8;
-typedef unsigned char			FX_BYTE;
-typedef unsigned char*			FX_LPBYTE;
-typedef unsigned char const*	FX_LPCBYTE;
-typedef short					FX_INT16;
-typedef unsigned short			FX_UINT16;
-typedef short					FX_SHORT;
-typedef unsigned short			FX_WORD;
-typedef unsigned short*			FX_LPWORD;
-typedef unsigned short const*	FX_LPCWORD;
-typedef int						FX_INT32;
-typedef float					FX_FLOAT;
-typedef int						FX_BOOL;
-typedef int						FX_ERR;
-#define FX_SUCCEEDED(Status)	((FX_ERR)(Status) >= 0)
-#define FX_FAILED(Status)		((FX_ERR)(Status) < 0)
-typedef char					FX_CHAR;
-typedef char*					FX_LPSTR;
-typedef char const*				FX_LPCSTR;
-#define FX_DWORD_MAX UINT_MAX
-typedef unsigned int		FX_DWORD;
-typedef unsigned int*		FX_LPDWORD;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-typedef __int64				FX_INT64;
-typedef unsigned __int64	FX_UINT64;
-#else
-typedef long long int		FX_INT64;
-typedef unsigned long long	FX_UINT64;
-#endif
-#if _FX_WORDSIZE_ == _FX_W64_
-typedef FX_INT64			FX_INTPTR;
-typedef FX_UINT64			FX_UINTPTR;
-#else
-typedef int					FX_INTPTR;
-typedef unsigned int		FX_UINTPTR;
-#endif
-typedef wchar_t					FX_WCHAR;
-typedef wchar_t*				FX_LPWSTR;
-typedef wchar_t const*			FX_LPCWSTR;
-typedef FX_DWORD				FX_UINT32;
-typedef FX_UINT64				FX_QWORD;
+typedef void*                   FX_LPVOID;   // Deprecate, use with void*.
+typedef void const*             FX_LPCVOID;  // Deprecate, use with const void*.
+typedef void*                   FX_POSITION; // Keep until fxcrt containers gone
+typedef signed char             FX_INT8;     // Deprecate, use int8_t.
+typedef unsigned char           FX_UINT8;    // Deprecate, use uint8_t.
+typedef unsigned char           FX_BYTE;     // Deprecate, use uint8_t.
+typedef unsigned char*          FX_LPBYTE;   // Deprecate, use uint8_t*.
+typedef unsigned char const*    FX_LPCBYTE;  // Deprecate, use const uint8_t*.
+typedef short                   FX_INT16;    // Deprecate, use int16_t.
+typedef unsigned short          FX_UINT16;   // Deprecate, use uint16_t.
+typedef short                   FX_SHORT;    // Deprecate, use int16_t.
+typedef unsigned short          FX_WORD;     // Keep - "an efficient small type"
+typedef unsigned short*         FX_LPWORD;   // Deprecate, use FX_WORD*.
+typedef unsigned short const*   FX_LPCWORD;  // Deprecate, use const FX_WORD*.
+typedef int                     FX_INT32;    // Deprecate, use int32_t.
+typedef unsigned int            FX_UINT32;   // Deprecate, use uint32_t.
+typedef unsigned int            FX_DWORD;    // Keep - "an efficient type"
+typedef unsigned int*           FX_LPDWORD;  // Deprecate, use FX_DWORD*.
+typedef int64_t                 FX_INT64;    // Deprecate, use int64_t.
+typedef uint64_t                FX_UINT64;   // Deprecate, use uint64_t.
+typedef intptr_t                FX_INTPTR;   // Deprecate, use intptr_t.
+typedef uintptr_t               FX_UINTPTR;  // Deprecate, use uintptr_t.
+typedef float                   FX_FLOAT;    // Keep, allow upgrade to doubles.
+typedef int                     FX_BOOL;     // Sadly not always 0 or 1.
+typedef char                    FX_CHAR;     // Keep, questionable signedness.
+typedef char*                   FX_LPSTR;    // Deprecate, use FX_CHAR*.
+typedef char const*             FX_LPCSTR;   // Deprecate, use const FX_CHAR*.
+typedef wchar_t                 FX_WCHAR;    // Keep, maybe bad platform wchars.
+typedef wchar_t*                FX_LPWSTR;   // Deprecate, use FX_WCHAR*.
+typedef wchar_t const*          FX_LPCWSTR;  // Deprecate, use const FX_WCHAR*.
 
 // PDFium string sizes are limited to 2^31-1, and the value is signed to
 // allow -1 as a placeholder for "unknown".
@@ -128,27 +106,28 @@ typedef int FX_STRSIZE;
 #if defined(DEBUG) && !defined(_DEBUG)
 #define _DEBUG
 #endif
-#ifndef TRUE
 
+#ifndef TRUE
 #define TRUE	1
 #endif
-#ifndef FALSE
 
+#ifndef FALSE
 #define FALSE	0
 #endif
-#ifndef NULL
 
+#ifndef NULL
 #define NULL	0
 #endif
+
 #define FXSYS_assert assert
 #ifndef ASSERT
 #ifdef _DEBUG
 #define ASSERT FXSYS_assert
 #else
-
 #define ASSERT(a)
 #endif
 #endif
+
 #define FX_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define FX_MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define FX_PI	3.1415926535897932384626433832795f
@@ -192,7 +171,7 @@ void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap);
 #endif
 #else
 FXSYS_FILE* FXSYS_wfopen(FX_LPCWSTR filename, FX_LPCWSTR mode);
-#endif
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 #ifdef __cplusplus
 } // extern "C"
@@ -219,6 +198,7 @@ extern "C" {
 #define FXSYS_memchr	memchr
 #define FXSYS_qsort		qsort
 #define FXSYS_bsearch	bsearch
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define FXSYS_GetACP GetACP
 #define FXSYS_itoa _itoa
@@ -255,16 +235,13 @@ int			FXSYS_stricmp(const char*, const char*);
 int			FXSYS_wcsicmp(const wchar_t *string1, const wchar_t *string2);
 wchar_t*	FXSYS_wcslwr(wchar_t* str);
 wchar_t*	FXSYS_wcsupr(wchar_t* str);
-#endif
+#endif  // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
+
 #define FXSYS_memcpy32		FXSYS_memcpy
 #define FXSYS_memcmp32		FXSYS_memcmp
 #define FXSYS_memset32		FXSYS_memset
 #define FXSYS_memset8		FXSYS_memset
 #define FXSYS_memmove32		FXSYS_memmove
-#ifdef __cplusplus
-}
-#endif
-#include <math.h>
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define FXSYS_pow(a, b)		(FX_FLOAT)powf(a, b)
 #else
@@ -282,10 +259,6 @@ wchar_t*	FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_log10(a)		(FX_FLOAT)log10(a)
 #define FXSYS_fmod(a, b)	(FX_FLOAT)fmod(a, b)
 #define FXSYS_abs			abs
-#ifdef __cplusplus
-extern "C" {
-#endif
-#define _FX_LSB_FIRST_
 #define FXDWORD_FROM_LSBFIRST(i)	(i)
 #define FXDWORD_FROM_MSBFIRST(i)	(((FX_BYTE)(i) << 24) | ((FX_BYTE)((i) >> 8) << 16) | ((FX_BYTE)((i) >> 16) << 8) | (FX_BYTE)((i) >> 24))
 #define FXDWORD_GET_LSBFIRST(p)		((((FX_LPBYTE)(p))[3] << 24) | (((FX_LPBYTE)(p))[2] << 16) | (((FX_LPBYTE)(p))[1] << 8) | (((FX_LPBYTE)(p))[0]))
@@ -307,18 +280,6 @@ int			FXSYS_round(FX_FLOAT f);
 #define		FXSYS_sqrt2(a, b) (FX_FLOAT)FXSYS_sqrt((a)*(a) + (b)*(b))
 #ifdef __cplusplus
 };
-
-#if defined(__clang__) || _MSC_VER >= 1700
-#define FX_FINAL final
-#define FX_OVERRIDE override
-#elif defined(__GNUC__) && __cplusplus >= 201103 && \
-      (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) >= 40700
-#define FX_FINAL final
-#define FX_OVERRIDE override
-#else
-#define FX_FINAL
-#define FX_OVERRIDE
-#endif
 #endif
 
 // To print a size_t value in a portable way:

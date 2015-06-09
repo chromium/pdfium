@@ -67,17 +67,17 @@ typedef unsigned int FX_UINT;
 
 #include "../../public/fpdfview.h"
 
-class CPDF_CustomAccess FX_FINAL : public IFX_FileRead
+class CPDF_CustomAccess final : public IFX_FileRead
 {
 public:
 	CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
 	~CPDF_CustomAccess() {}
 
-	virtual FX_FILESIZE	GetSize() FX_OVERRIDE { return m_FileAccess.m_FileLen; }
+	virtual FX_FILESIZE	GetSize() override { return m_FileAccess.m_FileLen; }
 
-	virtual void		Release() FX_OVERRIDE { delete this; }
+	virtual void		Release() override { delete this; }
 
-	virtual FX_BOOL		ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) FX_OVERRIDE;
+	virtual FX_BOOL		ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
 private:
 	FPDF_FILEACCESS		m_FileAccess;

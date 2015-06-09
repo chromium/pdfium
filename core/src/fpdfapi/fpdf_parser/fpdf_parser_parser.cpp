@@ -2718,28 +2718,28 @@ void CPDF_SyntaxParser::GetBinary(FX_BYTE* buffer, FX_DWORD size)
     }
 }
 
-class CPDF_DataAvail FX_FINAL : public IPDF_DataAvail
+class CPDF_DataAvail final : public IPDF_DataAvail
 {
 public:
     CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead);
     ~CPDF_DataAvail();
 
-    virtual FX_BOOL                     IsDocAvail(IFX_DownloadHints* pHints)  FX_OVERRIDE;
+    virtual FX_BOOL                     IsDocAvail(IFX_DownloadHints* pHints)  override;
 
-    virtual void                        SetDocument(CPDF_Document* pDoc)  FX_OVERRIDE;
+    virtual void                        SetDocument(CPDF_Document* pDoc)  override;
 
-    virtual FX_BOOL                     IsPageAvail(int iPage, IFX_DownloadHints* pHints)  FX_OVERRIDE;
+    virtual FX_BOOL                     IsPageAvail(int iPage, IFX_DownloadHints* pHints)  override;
 
-    virtual FX_INT32                    IsFormAvail(IFX_DownloadHints *pHints)  FX_OVERRIDE;
+    virtual FX_INT32                    IsFormAvail(IFX_DownloadHints *pHints)  override;
 
-    virtual FX_INT32                    IsLinearizedPDF()  FX_OVERRIDE;
+    virtual FX_INT32                    IsLinearizedPDF()  override;
 
-    virtual FX_BOOL                     IsLinearized()  FX_OVERRIDE
+    virtual FX_BOOL                     IsLinearized()  override
     {
         return m_bLinearized;
     }
 
-    virtual void                        GetLinearizedMainXRefInfo(FX_FILESIZE *pPos, FX_DWORD *pSize)  FX_OVERRIDE;
+    virtual void                        GetLinearizedMainXRefInfo(FX_FILESIZE *pPos, FX_DWORD *pSize)  override;
 
 protected:
     static const int kMaxDataAvailRecursionDepth = 64;
