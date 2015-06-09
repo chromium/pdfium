@@ -191,7 +191,7 @@ const FX_CharsetUnicodes g_FX_CharsetUnicodes[] = {
     { FXFONT_ARABIC_CHARSET, g_FX_CP1256Unicodes },
     { FXFONT_BALTIC_CHARSET, g_FX_CP1257Unicodes },
 };
-#if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || _FX_OS_ == _FX_WIN64_)
+#if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_)
 static void _InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArray)
 {
     int size = end - start + 1;

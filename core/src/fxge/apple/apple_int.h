@@ -186,28 +186,28 @@ protected:
     FX_INT32	_horzSize;
     FX_INT32	_vertSize;
 };
-class CFX_FontProvider FX_FINAL : public IFX_FileRead
+class CFX_FontProvider final : public IFX_FileRead
 {
 public:
-    virtual void			Release() FX_OVERRIDE
+    virtual void			Release() override
     {
         delete this;
     }
-    virtual FX_FILESIZE		GetSize() FX_OVERRIDE
+    virtual FX_FILESIZE		GetSize() override
     {
         return (FX_FILESIZE)_totalSize;
     }
-    virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) FX_OVERRIDE;
+    virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
-    virtual FX_BOOL			IsEOF() FX_OVERRIDE
+    virtual FX_BOOL			IsEOF() override
     {
         return _offSet == _totalSize;
     }
-    virtual FX_FILESIZE		GetPosition() FX_OVERRIDE
+    virtual FX_FILESIZE		GetPosition() override
     {
         return (FX_FILESIZE)_offSet;
     }
-    virtual size_t			ReadBlock(void* buffer, size_t size) FX_OVERRIDE;
+    virtual size_t			ReadBlock(void* buffer, size_t size) override;
 public:
     CFX_FontProvider(CGFontRef cgFont);
     ~CFX_FontProvider();

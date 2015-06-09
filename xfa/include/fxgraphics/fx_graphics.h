@@ -6,6 +6,8 @@
 
 #ifndef __H_FX_GRAPHICS__
 #define __H_FX_GRAPHICS__
+
+typedef int FX_ERR;
 #define FX_ERR_Succeeded					0
 #define FX_ERR_Indefinite					-1
 #define FX_ERR_Parameter_Invalid			-100
@@ -19,6 +21,7 @@
 #define _FX_ERR_CHECK_RETURN_IF_FAIL(arg) {if ((arg) != FX_ERR_Succeeded) return;}
 #define _FX_ERR_CHECK_RETURN_VALUE_IF_FAIL(arg, val) {if ((arg) != FX_ERR_Succeeded) return val;}
 #define _FX_ERR_CHECK_GOTO_POSITION_IF_FAIL(arg, pos) {if ((arg) != FX_ERR_Succeeded) goto pos;}
+
 #define FX_SHADING_Steps	256
 typedef FX_INT32 FX_DashStyle;
 enum {

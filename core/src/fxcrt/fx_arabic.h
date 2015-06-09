@@ -180,22 +180,22 @@ void FX_BidiResolveImplicit(const CFX_Int32Array &classes, CFX_Int32Array &level
 void FX_BidiResolveWhitespace(FX_INT32 iBaseLevel, const CFX_Int32Array &classes, CFX_Int32Array &levels);
 FX_INT32 FX_BidiReorderLevel(FX_INT32 iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels, FX_INT32 iStart, FX_BOOL bReverse = FALSE);
 void FX_BidiReorder(FX_INT32 iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels);
-class CFX_BidiChar FX_FINAL : public IFX_BidiChar
+class CFX_BidiChar final : public IFX_BidiChar
 {
 public:
     CFX_BidiChar();
-    virtual void		Release() FX_OVERRIDE
+    virtual void		Release() override
     {
         delete this;
     }
-    virtual void		SetPolicy(FX_BOOL bSeparateNeutral = TRUE) FX_OVERRIDE
+    virtual void		SetPolicy(FX_BOOL bSeparateNeutral = TRUE) override
     {
         m_bSeparateNeutral = bSeparateNeutral;
     }
-    virtual FX_BOOL		AppendChar(FX_WCHAR wch) FX_OVERRIDE;
-    virtual FX_BOOL		EndChar() FX_OVERRIDE;
-    virtual FX_INT32	GetBidiInfo(FX_INT32 &iStart, FX_INT32 &iCount) FX_OVERRIDE;
-    virtual void		Reset() FX_OVERRIDE;
+    virtual FX_BOOL		AppendChar(FX_WCHAR wch) override;
+    virtual FX_BOOL		EndChar() override;
+    virtual FX_INT32	GetBidiInfo(FX_INT32 &iStart, FX_INT32 &iCount) override;
+    virtual void		Reset() override;
 
 private:
     ~CFX_BidiChar() { }

@@ -408,14 +408,14 @@ private:
     struct TFeatureList FeatureList;
     struct TLookupList LookupList;
 };
-class CFX_GSUBTable FX_FINAL : public IFX_GSUBTable
+class CFX_GSUBTable final : public IFX_GSUBTable
 {
 public:
-    virtual void	Release() FX_OVERRIDE
+    virtual void	Release() override
     {
         delete this;
     }
-    virtual FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) FX_OVERRIDE;
+    virtual FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) override;
 
     CFX_CTTGSUBTable m_GsubImp;
 

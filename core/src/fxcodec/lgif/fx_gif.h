@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_BASIC_H_
+#include <setjmp.h>
+
 #include "../../../include/fxcrt/fx_basic.h"
-#endif
+
 extern FX_WORD _GetWord_LSBFirst(FX_LPBYTE p);
 extern void _SetWord_LSBFirst(FX_LPBYTE p, FX_WORD v);
 extern void _BpcConvert(FX_LPCBYTE src_buf, FX_DWORD src_len, FX_INT32 src_bpc, FX_INT32 dst_bpc,

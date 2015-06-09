@@ -299,7 +299,7 @@ DLLEXPORT  FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document)
 
 extern void CheckUnSupportError(CPDF_Document * pDoc, FX_DWORD err_code);
 
-class CMemFile FX_FINAL: public IFX_FileRead
+class CMemFile final : public IFX_FileRead
 {
 public:
 	CMemFile(FX_BYTE* pBuf, FX_FILESIZE size):m_pBuf(pBuf),m_size(size) {}

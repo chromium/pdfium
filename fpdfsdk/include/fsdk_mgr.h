@@ -30,7 +30,7 @@ class CJS_RuntimeFactory;
 
 #include "javascript/IJavaScript.h"
 
-class CPDFDoc_Environment FX_FINAL
+class CPDFDoc_Environment final
 {
 public:
 	CPDFDoc_Environment(CPDFXFA_Document * pDoc);
@@ -763,8 +763,7 @@ private:
 	CPDF_OCContext *		m_pOccontent;
 	FX_BOOL					m_bChangeMask;
 };
-
-class CPDFSDK_PageView FX_FINAL
+class CPDFSDK_PageView final
 {
 public:
 	CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,CPDFXFA_Page* page);

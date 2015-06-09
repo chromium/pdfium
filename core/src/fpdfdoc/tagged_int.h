@@ -34,7 +34,7 @@ protected:
     CFX_ArrayTemplate<CPDF_StructElementImpl*>	m_Kids;
     friend class CPDF_StructElementImpl;
 };
-class CPDF_StructElementImpl FX_FINAL : public CPDF_StructElement
+class CPDF_StructElementImpl final : public CPDF_StructElement
 {
 public:
     CPDF_StructElementImpl(CPDF_StructTreeImpl* pTree, CPDF_StructElementImpl* pParent, CPDF_Dictionary* pDict);

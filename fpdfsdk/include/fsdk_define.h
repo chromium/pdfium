@@ -75,20 +75,19 @@ typedef unsigned int FX_UINT;
 
 #include "../../public/fpdfview.h"
 
-class CPDF_CustomAccess FX_FINAL : public IFX_FileRead
+class CPDF_CustomAccess final : public IFX_FileRead
 {
 public:
 	CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
 	~CPDF_CustomAccess() {}
 
-	virtual CFX_ByteString GetFullPath() { return ""; }
-	virtual FX_FILESIZE	GetSize() FX_OVERRIDE { return m_FileAccess.m_FileLen; }
 
+	virtual CFX_ByteString GetFullPath() { return ""; }
+	virtual FX_FILESIZE	GetSize() override { return m_FileAccess.m_FileLen; }
 	virtual FX_BOOL		GetByte(FX_DWORD pos, FX_BYTE& ch);
 	virtual FX_BOOL		GetBlock(FX_DWORD pos, FX_LPBYTE pBuf, FX_DWORD size);
-	virtual void		Release() FX_OVERRIDE { delete this; }
-
-	virtual FX_BOOL		ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) FX_OVERRIDE;
+	virtual void		Release() override { delete this; }
+	virtual FX_BOOL		ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
 	FPDF_FILEACCESS		m_FileAccess;
 	FX_BYTE				m_Buffer[512];

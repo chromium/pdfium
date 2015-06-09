@@ -8,19 +8,19 @@
 #include "../include/fsdk_define.h"
 #include "../include/pdfwindow/PWL_FontMap.h"
 
-class CSysFontInfo_Ext FX_FINAL : public IFX_SystemFontInfo
+class CSysFontInfo_Ext final : public IFX_SystemFontInfo
 {
 public:
 	FPDF_SYSFONTINFO*	m_pInfo;
 
-	virtual void		Release() FX_OVERRIDE
+	virtual void		Release() override
 	{
 		if (m_pInfo->Release)
 			m_pInfo->Release(m_pInfo);
 		delete this;
 	}
 
-	virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper) FX_OVERRIDE
+	virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper) override
 	{
 		if (m_pInfo->EnumFonts) {
 			m_pInfo->EnumFonts(m_pInfo, pMapper);
@@ -29,28 +29,28 @@ public:
 		return FALSE;
 	}
 
-	virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR family, FX_BOOL& bExact)  FX_OVERRIDE
+	virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR family, FX_BOOL& bExact)  override
 	{
 		if (m_pInfo->MapFont)
 			return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family, family, &bExact);
 		return NULL;
 	}
 
-	virtual void*		GetFont(FX_LPCSTR family)  FX_OVERRIDE
+	virtual void*		GetFont(FX_LPCSTR family)  override
 	{
 		if (m_pInfo->GetFont)
 			return m_pInfo->GetFont(m_pInfo, family);
 		return NULL;
 	}
 
-	virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, FX_LPBYTE buffer, FX_DWORD size)  FX_OVERRIDE
+	virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, FX_LPBYTE buffer, FX_DWORD size)  override
 	{
 		if (m_pInfo->GetFontData)
 			return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer, size);
 		return 0;
 	}
 
-	virtual FX_BOOL		GetFaceName(void* hFont, CFX_ByteString& name)  FX_OVERRIDE
+	virtual FX_BOOL		GetFaceName(void* hFont, CFX_ByteString& name)  override
 	{
 		if (m_pInfo->GetFaceName == NULL) return FALSE;
 		FX_DWORD size = m_pInfo->GetFaceName(m_pInfo, hFont, NULL, 0);
@@ -62,7 +62,7 @@ public:
 		return TRUE;
 	}
 
-	virtual FX_BOOL		GetFontCharset(void* hFont, int& charset)  FX_OVERRIDE
+	virtual FX_BOOL		GetFontCharset(void* hFont, int& charset)  override
 	{
 		if (m_pInfo->GetFontCharset) {
 			charset = m_pInfo->GetFontCharset(m_pInfo, hFont);
@@ -71,7 +71,7 @@ public:
 		return FALSE;
 	}
 
-	virtual void		DeleteFont(void* hFont)  FX_OVERRIDE
+	virtual void		DeleteFont(void* hFont)  override
 	{
 		if (m_pInfo->DeleteFont)
 			m_pInfo->DeleteFont(m_pInfo, hFont);
