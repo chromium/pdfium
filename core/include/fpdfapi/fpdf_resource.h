@@ -160,7 +160,7 @@ public:
         if (offset < 0 || nStrLen < 1) {
             return 0;
         }
-        FX_BYTE ch = offset < nStrLen ? pString[offset++] : pString[nStrLen-1];
+        uint8_t ch = offset < nStrLen ? pString[offset++] : pString[nStrLen-1];
         return static_cast<FX_DWORD>(ch);
     }
 
@@ -326,14 +326,14 @@ public:
 
     FX_BOOL					IsIdentical(CPDF_FontEncoding* pAnother) const;
 
-    FX_WCHAR				UnicodeFromCharCode(FX_BYTE charcode) const
+    FX_WCHAR				UnicodeFromCharCode(uint8_t charcode) const
     {
         return m_Unicodes[charcode];
     }
 
     int						CharCodeFromUnicode(FX_WCHAR unicode) const;
 
-    void					SetUnicode(FX_BYTE charcode, FX_WCHAR unicode)
+    void					SetUnicode(uint8_t charcode, FX_WCHAR unicode)
     {
         m_Unicodes[charcode] = unicode;
     }
@@ -368,7 +368,7 @@ protected:
     virtual void			LoadGlyphMap() = 0;
     virtual FX_WCHAR		_UnicodeFromCharCode(FX_DWORD charcode) const
     {
-        return m_Encoding.UnicodeFromCharCode((FX_BYTE)charcode);
+        return m_Encoding.UnicodeFromCharCode((uint8_t)charcode);
     }
     virtual FX_DWORD		_CharCodeFromUnicode(FX_WCHAR Unicode) const
     {
@@ -831,7 +831,7 @@ public:
     {
     }
     FX_ARGB* pMatteColor;
-    FX_INT32 nQuality;
+    int32_t nQuality;
 };
 class CPDF_Image 
 {
@@ -884,12 +884,12 @@ public:
 
 
 
-    FX_INT32				GetPixelHeight() const
+    int32_t				GetPixelHeight() const
     {
         return m_Height;
     }
 
-    FX_INT32				GetPixelWidth() const
+    int32_t				GetPixelWidth() const
     {
         return m_Width;
     }
@@ -909,9 +909,9 @@ public:
 
 
 
-    void					SetImage(const CFX_DIBitmap* pDIBitmap, FX_INT32 iCompress, IFX_FileWrite *pFileWrite = NULL, IFX_FileRead *pFileRead = NULL, const CFX_DIBitmap* pMask = NULL, const CPDF_ImageSetParam* pParam = NULL);
+    void					SetImage(const CFX_DIBitmap* pDIBitmap, int32_t iCompress, IFX_FileWrite *pFileWrite = NULL, IFX_FileRead *pFileRead = NULL, const CFX_DIBitmap* pMask = NULL, const CPDF_ImageSetParam* pParam = NULL);
 
-    void					SetJpegImage(FX_BYTE* pImageData, FX_DWORD size);
+    void					SetJpegImage(uint8_t* pImageData, FX_DWORD size);
 
     void					SetJpegImage(IFX_FileRead *pFile);
 
@@ -931,9 +931,9 @@ private:
     FX_BOOL					m_bInline;
     CPDF_Dictionary*		m_pInlineDict;
 
-    FX_INT32				m_Height;
+    int32_t				m_Height;
 
-    FX_INT32				m_Width;
+    int32_t				m_Width;
 
     FX_BOOL					m_bIsMask;
 

@@ -45,7 +45,7 @@ public:
 	virtual void					GetScale(FX_FLOAT & fHScale,FX_FLOAT & fVScale);
 	virtual void					GetImageOffset(FX_FLOAT & x,FX_FLOAT & y);
 
-	FX_INT32						GetScaleMethod();
+	int32_t						GetScaleMethod();
 	FX_BOOL							IsProportionalScale();
 	void							GetIconPosition(FX_FLOAT & fLeft, FX_FLOAT & fBottom);
 	FX_BOOL							GetFittingBounds();

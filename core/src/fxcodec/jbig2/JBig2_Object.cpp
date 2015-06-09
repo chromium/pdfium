@@ -36,9 +36,9 @@ void *CJBig2_Object::operator new[](size_t size, CJBig2_Module *pModule, size_t 
                                     FX_LPCSTR filename, int line)
 {
     void *p;
-    FX_BYTE *pCur, *pEnd;
-    p = (FX_BYTE *)pModule->JBig2_Malloc((FX_DWORD)size);
-    pCur = (FX_BYTE *)p;
+    uint8_t *pCur, *pEnd;
+    p = (uint8_t *)pModule->JBig2_Malloc((FX_DWORD)size);
+    pCur = (uint8_t *)p;
     pEnd = pCur + size;
     for(; pCur < pEnd; pCur += unit_size) {
         ((CJBig2_Object *)pCur)->m_pModule = pModule;
@@ -53,9 +53,9 @@ void CJBig2_Object::operator delete[](void *p, CJBig2_Module *pModule, size_t un
 void *CJBig2_Object::operator new[](size_t size, CJBig2_Module *pModule, size_t unit_size)
 {
     void *p;
-    FX_BYTE *pCur, *pEnd;
-    p = (FX_BYTE *)pModule->JBig2_Malloc((FX_DWORD)size);
-    pCur = (FX_BYTE *)p;
+    uint8_t *pCur, *pEnd;
+    p = (uint8_t *)pModule->JBig2_Malloc((FX_DWORD)size);
+    pCur = (uint8_t *)p;
     pEnd = pCur + size;
     for(; pCur < pEnd; pCur += unit_size) {
         ((CJBig2_Object *)pCur)->m_pModule = pModule;

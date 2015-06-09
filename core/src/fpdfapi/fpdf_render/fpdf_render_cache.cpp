@@ -37,13 +37,13 @@ void CPDF_PageRenderCache::ClearAll()
     m_nCacheSize = 0;
     m_nTimeCount = 0;
 }
-void CPDF_PageRenderCache::CacheOptimization(FX_INT32 dwLimitCacheSize)
+void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize)
 {
     if (m_nCacheSize <= (FX_DWORD)dwLimitCacheSize) {
         return;
     }
     int nCount = m_ImageCaches.GetCount();
-    CACHEINFO* pCACHEINFO = (CACHEINFO*)FX_Alloc2D(FX_BYTE, sizeof(CACHEINFO), nCount);
+    CACHEINFO* pCACHEINFO = (CACHEINFO*)FX_Alloc2D(uint8_t, sizeof(CACHEINFO), nCount);
     FX_POSITION pos = m_ImageCaches.GetStartPosition();
     int i = 0;
     while (pos) {
@@ -106,7 +106,7 @@ FX_DWORD CPDF_PageRenderCache::GetCachedSize(CPDF_Stream* pStream) const
 }
 void CPDF_PageRenderCache::GetCachedBitmap(CPDF_Stream* pStream, CFX_DIBSource*& pBitmap, CFX_DIBSource*& pMask, FX_DWORD& MatteColor,
         FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus,
-        FX_INT32 downsampleWidth, FX_INT32 downsampleHeight)
+        int32_t downsampleWidth, int32_t downsampleHeight)
 {
     CPDF_ImageCache* pImageCache;
     FX_BOOL bFind = m_ImageCaches.Lookup(pStream, (FX_LPVOID&)pImageCache);
@@ -122,7 +122,7 @@ void CPDF_PageRenderCache::GetCachedBitmap(CPDF_Stream* pStream, CFX_DIBSource*&
         m_nCacheSize += pImageCache->EstimateSize();
     }
 }
-FX_BOOL	CPDF_PageRenderCache::StartGetCachedBitmap(CPDF_Stream* pStream, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus, FX_INT32 downsampleWidth, FX_INT32 downsampleHeight)
+FX_BOOL	CPDF_PageRenderCache::StartGetCachedBitmap(CPDF_Stream* pStream, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus, int32_t downsampleWidth, int32_t downsampleHeight)
 {
     m_bCurFindCache = m_ImageCaches.Lookup(pStream, (FX_LPVOID&)m_pCurImageCache);
     if (!m_bCurFindCache) {
@@ -226,7 +226,7 @@ static FX_DWORD FPDF_ImageCache_EstimateImageSize(const CFX_DIBSource* pDIB)
 }
 FX_BOOL CPDF_ImageCache::GetCachedBitmap(CFX_DIBSource*& pBitmap, CFX_DIBSource*& pMask, FX_DWORD& MatteColor, CPDF_Dictionary* pPageResources,
         FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus,
-        FX_INT32 downsampleWidth, FX_INT32 downsampleHeight)
+        int32_t downsampleWidth, int32_t downsampleHeight)
 {
     if (m_pCachedBitmap) {
         pBitmap = m_pCachedBitmap;
@@ -278,7 +278,7 @@ CFX_DIBSource* CPDF_ImageCache::DetachMask()
 }
 int	CPDF_ImageCache::StartGetCachedBitmap(CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources, FX_BOOL bStdCS,
         FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus,
-        FX_INT32 downsampleWidth, FX_INT32 downsampleHeight)
+        int32_t downsampleWidth, int32_t downsampleHeight)
 {
     if (m_pCachedBitmap) {
         m_pCurBitmap = m_pCachedBitmap;

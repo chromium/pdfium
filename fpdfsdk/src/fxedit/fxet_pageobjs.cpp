@@ -11,7 +11,7 @@
 #define FX_EDIT_UNDERLINEHALFWIDTH				0.5f
 #define FX_EDIT_CROSSOUTHALFWIDTH				0.5f
 
-extern CFX_ByteString GetPDFWordString(IFX_Edit_FontMap * pFontMap, FX_INT32 nFontIndex, FX_WORD Word, FX_WORD SubWord);
+extern CFX_ByteString GetPDFWordString(IFX_Edit_FontMap * pFontMap, int32_t nFontIndex, FX_WORD Word, FX_WORD SubWord);
 
 CPDF_Rect GetUnderLineRect(const CPVT_Word& word)
 {
@@ -26,7 +26,7 @@ CPDF_Rect GetCrossoutRect(const CPVT_Word& word)
 }
 
 static void DrawTextString(CFX_RenderDevice* pDevice, const CPDF_Point& pt, CPDF_Font* pFont, FX_FLOAT fFontSize, CPDF_Matrix* pUser2Device,
-					  const CFX_ByteString& str, FX_ARGB crTextFill, FX_ARGB crTextStroke, FX_INT32 nHorzScale)
+					  const CFX_ByteString& str, FX_ARGB crTextFill, FX_ARGB crTextStroke, int32_t nHorzScale)
 {
 	FX_FLOAT x = pt.x, y = pt.y;
 	pUser2Device->Transform(x, y);
@@ -87,10 +87,10 @@ void IFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Devic
 		CPDF_Rect rcTemp = rcClip;
 		pUser2Device->TransformRect(rcTemp);
 		FX_RECT rcDevClip;
-		rcDevClip.left = (FX_INT32)rcTemp.left;
-		rcDevClip.right = (FX_INT32)rcTemp.right;
-		rcDevClip.top = (FX_INT32)rcTemp.top;
-		rcDevClip.bottom = (FX_INT32)rcTemp.bottom;
+		rcDevClip.left = (int32_t)rcTemp.left;
+		rcDevClip.right = (int32_t)rcTemp.right;
+		rcDevClip.top = (int32_t)rcTemp.top;
+		rcDevClip.bottom = (int32_t)rcTemp.bottom;
 		pDevice->SetClip_Rect(&rcDevClip);
 	}
 
@@ -139,7 +139,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, IF
 	FX_WORD SubWord = pEdit->GetPasswordChar();
 	FX_FLOAT fFontSize = pEdit->GetFontSize();
 	CPVT_WordRange wrSelect = pEdit->GetSelectWordRange();
-	FX_INT32 nHorzScale = pEdit->GetHorzScale();
+	int32_t nHorzScale = pEdit->GetHorzScale();
 
 	FX_COLORREF crCurFill = crTextFill;
 	FX_COLORREF crOldFill = crCurFill;
@@ -149,7 +149,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, IF
 	const FX_COLORREF crSelBK = ArgbEncode(255,0,51,113);
 
 	CFX_ByteTextBuf sTextBuf;
-	FX_INT32 nFontIndex = -1;
+	int32_t nFontIndex = -1;
 	CPDF_Point ptBT(0.0f,0.0f);
 
 	pDevice->SaveState();
@@ -159,10 +159,10 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, IF
 		CPDF_Rect rcTemp = rcClip;
 		pUser2Device->TransformRect(rcTemp);
 		FX_RECT rcDevClip;
-		rcDevClip.left = (FX_INT32)rcTemp.left;
-		rcDevClip.right = (FX_INT32)rcTemp.right;
-		rcDevClip.top = (FX_INT32)rcTemp.top;
-		rcDevClip.bottom = (FX_INT32)rcTemp.bottom;
+		rcDevClip.left = (int32_t)rcTemp.left;
+		rcDevClip.right = (int32_t)rcTemp.right;
+		rcDevClip.top = (int32_t)rcTemp.top;
+		rcDevClip.bottom = (int32_t)rcTemp.bottom;
 		pDevice->SetClip_Rect(&rcDevClip);
 	}
 
@@ -293,10 +293,10 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device
 		CPDF_Rect rcTemp = rcClip;
 		pUser2Device->TransformRect(rcTemp);
 		FX_RECT rcDevClip;
-		rcDevClip.left = (FX_INT32)rcTemp.left;
-		rcDevClip.right = (FX_INT32)rcTemp.right;
-		rcDevClip.top = (FX_INT32)rcTemp.top;
-		rcDevClip.bottom = (FX_INT32)rcTemp.bottom;
+		rcDevClip.left = (int32_t)rcTemp.left;
+		rcDevClip.right = (int32_t)rcTemp.right;
+		rcDevClip.top = (int32_t)rcTemp.top;
+		rcDevClip.bottom = (int32_t)rcTemp.bottom;
 		pDevice->SetClip_Rect(&rcDevClip);
 	}
 
@@ -416,7 +416,7 @@ static void AddRectToPageObjects(CPDF_PageObjects* pPageObjs, FX_COLORREF crFill
 }
 
 static CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjects* pPageObjs, FX_COLORREF crText, 
-							 CPDF_Font* pFont, FX_FLOAT fFontSize, FX_FLOAT fCharSpace, FX_INT32 nHorzScale, 
+							 CPDF_Font* pFont, FX_FLOAT fFontSize, FX_FLOAT fCharSpace, int32_t nHorzScale, 
 							 const CPDF_Point& point, const CFX_ByteString& text)
 {
 	CPDF_TextObject* pTxtObj = new CPDF_TextObject;
@@ -452,7 +452,7 @@ void IFX_Edit::GeneratePageObjects(CPDF_PageObjects* pPageObjects, IFX_Edit* pEd
 {
 	FX_FLOAT fFontSize = pEdit->GetFontSize();
 
-	FX_INT32 nOldFontIndex = -1;
+	int32_t nOldFontIndex = -1;
 
 	CFX_ByteTextBuf sTextBuf;
 	CPDF_Point ptBT(0.0f,0.0f);

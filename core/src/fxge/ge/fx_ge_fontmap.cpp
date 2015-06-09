@@ -565,7 +565,7 @@ CFX_ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont)
     CFX_ByteString result;
     FX_DWORD size = m_pFontInfo->GetFontData(hFont, 0x6e616d65, NULL, 0);
     if (size) {
-        FX_LPBYTE buffer = FX_Alloc(FX_BYTE, size);
+        FX_LPBYTE buffer = FX_Alloc(uint8_t, size);
         m_pFontInfo->GetFontData(hFont, 0x6e616d65, buffer, size);
         result = _FPDF_GetNameFromTT(buffer, 6);
         FX_Free(buffer);
@@ -644,7 +644,7 @@ CFX_ByteString CFX_FontMapper::MatchInstalledFonts(const CFX_ByteString& norm_na
     return match;
 }
 typedef struct _CHARSET_MAP_ {
-    FX_BYTE charset;
+    uint8_t charset;
     FX_WORD codepage;
 } CHARSET_MAP;
 static const CHARSET_MAP g_Codepage2CharsetTable[] = {
@@ -680,11 +680,11 @@ static const CHARSET_MAP g_Codepage2CharsetTable[] = {
     { 88, 10029 },
     { 89, 10007 },
 };
-FX_BYTE _GetCharsetFromCodePage(FX_WORD codepage)
+uint8_t _GetCharsetFromCodePage(FX_WORD codepage)
 {
-    FX_INT32 iEnd = sizeof(g_Codepage2CharsetTable) / sizeof(CHARSET_MAP) - 1;
+    int32_t iEnd = sizeof(g_Codepage2CharsetTable) / sizeof(CHARSET_MAP) - 1;
     FXSYS_assert(iEnd >= 0);
-    FX_INT32 iStart = 0, iMid;
+    int32_t iStart = 0, iMid;
     do {
         iMid = (iStart + iEnd) / 2;
         const CHARSET_MAP & cp = g_Codepage2CharsetTable[iMid];
@@ -824,7 +824,7 @@ static CFX_ByteString _GetFontFamily(CFX_ByteString fontName, int nStyle)
 };
 typedef struct _FX_FontStyle {
     FX_LPCSTR style;
-    FX_INT32 len;
+    int32_t len;
 } FX_FontStyle;
 const FX_FontStyle g_FontStyles[] = {
   { "Bold", 4 },
@@ -848,9 +848,9 @@ CFX_ByteString ParseStyle(FX_LPCSTR pStyle, int iLen, int iIndex)
     }
     return buf.GetByteString();
 }
-FX_INT32 GetStyleType(const CFX_ByteString &bsStyle, FX_BOOL bRevert)
+int32_t GetStyleType(const CFX_ByteString &bsStyle, FX_BOOL bRevert)
 {
-    FX_INT32 iLen = bsStyle.GetLength();
+    int32_t iLen = bsStyle.GetLength();
     if (!iLen) {
         return -1;
     }
@@ -968,7 +968,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
         }
         if (!bHasHypen) {
             int nLen = family.GetLength();
-            FX_INT32 nRet = GetStyleType(family, TRUE);
+            int32_t nRet = GetStyleType(family, TRUE);
             if (nRet > -1) {
                 family = family.Left(nLen - g_FontStyles[nRet].len);
                 if (nRet == 0) {
@@ -1000,7 +1000,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
         CFX_ByteString buf;
         while (i < nLen) {
             buf = ParseStyle(pStyle, nLen, i);
-            FX_INT32 nRet = GetStyleType(buf, FALSE);
+            int32_t nRet = GetStyleType(buf, FALSE);
             if ((i && !bStyleAvail) || (!i && nRet < 0)) {
                 family = SubstName;
                 iBaseFont = 12;
@@ -1198,7 +1198,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
     }
     FXFT_Face face = NULL;
     if (ttc_size) {
-        FX_BYTE temp[1024];
+        uint8_t temp[1024];
         m_pFontInfo->GetFontData(hFont, 0x74746366, temp, 1024);
         FX_DWORD checksum = 0;
         for (int i = 0; i < 256; i ++) {
@@ -1207,7 +1207,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
         FX_LPBYTE pFontData;
         face = m_pFontMgr->GetCachedTTCFace(ttc_size, checksum, ttc_size - font_size, pFontData);
         if (face == NULL) {
-            pFontData = FX_Alloc(FX_BYTE, ttc_size);
+            pFontData = FX_Alloc(uint8_t, ttc_size);
             m_pFontInfo->GetFontData(hFont, 0x74746366, pFontData, ttc_size);
             face = m_pFontMgr->AddCachedTTCFace(ttc_size, checksum, pFontData, ttc_size,
                                                 ttc_size - font_size);
@@ -1216,7 +1216,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
         FX_LPBYTE pFontData;
         face = m_pFontMgr->GetCachedFace(SubstName, weight, bItalic, pFontData);
         if (face == NULL) {
-            pFontData = FX_Alloc(FX_BYTE, font_size);
+            pFontData = FX_Alloc(uint8_t, font_size);
             m_pFontInfo->GetFontData(hFont, 0, pFontData, font_size);
             face = m_pFontMgr->AddCachedFace(SubstName, weight, bItalic, pFontData, font_size, m_pFontInfo->GetFaceIndex(hFont));
         }
@@ -1357,7 +1357,7 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path)
     }
     FXSYS_fseek(pFile, 0, FXSYS_SEEK_END);
     FX_DWORD filesize = FXSYS_ftell(pFile);
-    FX_BYTE buffer[16];
+    uint8_t buffer[16];
     FXSYS_fseek(pFile, 0, FXSYS_SEEK_SET);
     size_t readCnt = FXSYS_fread(buffer, 12, 1, pFile);
     if (readCnt != 1) {
@@ -1372,7 +1372,7 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path)
             return;
         }
         FX_DWORD face_bytes = nFaces * 4;
-        FX_LPBYTE offsets = FX_Alloc(FX_BYTE, face_bytes);
+        FX_LPBYTE offsets = FX_Alloc(uint8_t, face_bytes);
         readCnt = FXSYS_fread(offsets, face_bytes, 1, pFile);
         if (readCnt != face_bytes) {
             FX_Free(offsets);

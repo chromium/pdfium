@@ -649,7 +649,7 @@ void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO & info) const
     info.m_Matrix.Copy(charinfo.m_Matrix);
     return;
 }
-void CPDF_TextPage::CheckMarkedContentObject(FX_INT32& start, FX_INT32& nCount) const
+void CPDF_TextPage::CheckMarkedContentObject(int32_t& start, int32_t& nCount) const
 {
     PAGECHAR_INFO charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(start);
     PAGECHAR_INFO charinfo2 = *(PAGECHAR_INFO*)m_charList.GetAt(start + nCount - 1);
@@ -960,24 +960,24 @@ int CPDF_TextPage::GetWordBreak(int index, int direction) const
     }
     return breakPos;
 }
-FX_INT32 CPDF_TextPage::FindTextlineFlowDirection()
+int32_t CPDF_TextPage::FindTextlineFlowDirection()
 {
     if (!m_pPage)	{
         return -1;
     }
-    const FX_INT32 nPageWidth = (FX_INT32)((CPDF_Page*)m_pPage)->GetPageWidth();
-    const FX_INT32 nPageHeight = (FX_INT32)((CPDF_Page*)m_pPage)->GetPageHeight();
+    const int32_t nPageWidth = (int32_t)((CPDF_Page*)m_pPage)->GetPageWidth();
+    const int32_t nPageHeight = (int32_t)((CPDF_Page*)m_pPage)->GetPageHeight();
     CFX_ByteArray nHorizontalMask;
     if (!nHorizontalMask.SetSize(nPageWidth)) {
         return -1;
     }
-    FX_BYTE* pDataH = nHorizontalMask.GetData();
+    uint8_t* pDataH = nHorizontalMask.GetData();
     CFX_ByteArray nVerticalMask;
     if (!nVerticalMask.SetSize(nPageHeight)) {
         return -1;
     }
-    FX_BYTE* pDataV = nVerticalMask.GetData();
-    FX_INT32 index = 0;
+    uint8_t* pDataV = nVerticalMask.GetData();
+    int32_t index = 0;
     FX_FLOAT fLineHeight = 0.0f;
     CPDF_PageObject* pPageObj = NULL;
     FX_POSITION	pos = NULL;
@@ -993,10 +993,10 @@ FX_INT32 CPDF_TextPage::FindTextlineFlowDirection()
         if(PDFPAGE_TEXT != pPageObj->m_Type) {
             continue;
         }
-        FX_INT32 minH = (FX_INT32)pPageObj->m_Left < 0 ? 0 : (FX_INT32)pPageObj->m_Left;
-        FX_INT32 maxH = (FX_INT32)pPageObj->m_Right > nPageWidth ? nPageWidth : (FX_INT32)pPageObj->m_Right;
-        FX_INT32 minV = (FX_INT32)pPageObj->m_Bottom < 0 ? 0 : (FX_INT32)pPageObj->m_Bottom;
-        FX_INT32 maxV = (FX_INT32)pPageObj->m_Top > nPageHeight ? nPageHeight : (FX_INT32)pPageObj->m_Top;
+        int32_t minH = (int32_t)pPageObj->m_Left < 0 ? 0 : (int32_t)pPageObj->m_Left;
+        int32_t maxH = (int32_t)pPageObj->m_Right > nPageWidth ? nPageWidth : (int32_t)pPageObj->m_Right;
+        int32_t minV = (int32_t)pPageObj->m_Bottom < 0 ? 0 : (int32_t)pPageObj->m_Bottom;
+        int32_t maxV = (int32_t)pPageObj->m_Top > nPageHeight ? nPageHeight : (int32_t)pPageObj->m_Top;
         if (minH >= maxH || minV >= maxV) {
             continue;
         }
@@ -1007,8 +1007,8 @@ FX_INT32 CPDF_TextPage::FindTextlineFlowDirection()
         }
         pPageObj = NULL;
     }
-    FX_INT32 nStartH = 0;
-    FX_INT32 nEndH = 0;
+    int32_t nStartH = 0;
+    int32_t nEndH = 0;
     FX_FLOAT nSumH = 0.0f;
     for (index = 0; index < nPageWidth; index++)
         if(1 == nHorizontalMask[index]) {
@@ -1024,8 +1024,8 @@ FX_INT32 CPDF_TextPage::FindTextlineFlowDirection()
         nSumH += nHorizontalMask[index];
     }
     nSumH /= nEndH - nStartH;
-    FX_INT32 nStartV = 0;
-    FX_INT32 nEndV = 0;
+    int32_t nStartV = 0;
+    int32_t nEndV = 0;
     FX_FLOAT nSumV = 0.0f;
     for (index = 0; index < nPageHeight; index++)
         if(1 == nVerticalMask[index]) {
@@ -1041,10 +1041,10 @@ FX_INT32 CPDF_TextPage::FindTextlineFlowDirection()
         nSumV += nVerticalMask[index];
     }
     nSumV /= nEndV - nStartV;
-    if ((nEndV - nStartV) < (FX_INT32)(2 * fLineHeight)) {
+    if ((nEndV - nStartV) < (int32_t)(2 * fLineHeight)) {
         return 0;
     }
-    if ((nEndH - nStartH) < (FX_INT32)(2 * fLineHeight)) {
+    if ((nEndH - nStartH) < (int32_t)(2 * fLineHeight)) {
         return 1;
     }
     if (nSumH > 0.8f) {
@@ -1138,8 +1138,8 @@ int CPDF_TextPage::GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const
 }
 void CPDF_TextPage::OnPiece(IFX_BidiChar* pBidi, CFX_WideString& str)
 {
-    FX_INT32 start, count;
-    FX_INT32 ret = pBidi->GetBidiInfo(start, count);
+    int32_t start, count;
+    int32_t ret = pBidi->GetBidiInfo(start, count);
     if(ret == 2) {
         for(int i = start + count - 1; i >= start; i--) {
             m_TextBuf.AppendChar(str.GetAt(i));
@@ -1229,7 +1229,7 @@ void CPDF_TextPage::CloseTempLine()
     CFX_WideString str = m_TempTextBuf.GetWideString();
     CFX_WordArray order;
     FX_BOOL bR2L = FALSE;
-    FX_INT32 start = 0, count = 0;
+    int32_t start = 0, count = 0;
     int nR2L = 0, nL2R = 0;
     FX_BOOL bPrevSpace = FALSE;
     for (int i = 0; i < str.GetLength(); i++) {
@@ -1247,7 +1247,7 @@ void CPDF_TextPage::CloseTempLine()
             bPrevSpace = FALSE;
         }
         if(BidiChar && BidiChar->AppendChar(str.GetAt(i))) {
-            FX_INT32 ret = BidiChar->GetBidiInfo(start, count);
+            int32_t ret = BidiChar->GetBidiInfo(start, count);
             order.Add(start);
             order.Add(count);
             order.Add(ret);
@@ -1261,7 +1261,7 @@ void CPDF_TextPage::CloseTempLine()
         }
     }
     if(BidiChar && BidiChar->EndChar()) {
-        FX_INT32 ret = BidiChar->GetBidiInfo(start, count);
+        int32_t ret = BidiChar->GetBidiInfo(start, count);
         order.Add(start);
         order.Add(count);
         order.Add(ret);
@@ -1435,7 +1435,7 @@ void CPDF_TextPage::ProcessTextObject(CPDF_TextObject*	pTextObj, const CFX_Affin
         m_LineObj.Add(Obj);
     }
 }
-FX_INT32 CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj)
+int32_t CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj)
 {
     CPDF_TextObject* pTextObj = Obj.m_pTextObj;
     CPDF_ContentMarkData* pMarkData = (CPDF_ContentMarkData*)pTextObj->m_ContentMark.GetObject();
@@ -1595,7 +1595,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
     CFX_AffineMatrix matrix;
     pTextObj->GetTextMatrix(&matrix);
     matrix.Concat(formMatrix);
-    FX_INT32 bPreMKC = PreMarkedContent(Obj);
+    int32_t bPreMKC = PreMarkedContent(Obj);
     if (FPDFTEXT_MC_DONE == bPreMKC) {
         m_pPreTextObj = pTextObj;
         m_perMatrix.Copy(formMatrix);
@@ -1642,7 +1642,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
                 }
             }
         } else if (result == 3 && !m_ParseOptions.m_bOutputHyphen) {
-            FX_INT32 nChars = pTextObj->CountChars();
+            int32_t nChars = pTextObj->CountChars();
             if (nChars == 1) {
                 CPDF_TextObjectItem item;
                 pTextObj->GetCharInfo(0, &item);
@@ -1682,8 +1682,8 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
     const FX_BOOL bR2L = IsRightToLeft(pTextObj, pFont, nItems);
     const FX_BOOL bIsBidiAndMirrorInverse =
         bR2L && (matrix.a * matrix.d - matrix.b * matrix.c) < 0;
-    FX_INT32 iBufStartAppend = m_TempTextBuf.GetLength();
-    FX_INT32 iCharListStartAppend = m_TempCharList.GetSize();
+    int32_t iBufStartAppend = m_TempTextBuf.GetLength();
+    int32_t iCharListStartAppend = m_TempCharList.GetSize();
 
     FX_FLOAT spacing = 0;
     for (int i = 0; i < nItems; i++) {
@@ -1830,10 +1830,10 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj)
         SwapTempTextBuf(iCharListStartAppend, iBufStartAppend);
     }
 }
-void CPDF_TextPage::SwapTempTextBuf(FX_INT32 iCharListStartAppend,
-                                    FX_INT32 iBufStartAppend)
+void CPDF_TextPage::SwapTempTextBuf(int32_t iCharListStartAppend,
+                                    int32_t iBufStartAppend)
 {
-    FX_INT32 i, j;
+    int32_t i, j;
     i = iCharListStartAppend;
     j = m_TempCharList.GetSize() - 1;
     for (; i < j; i++, j--) {
@@ -1852,11 +1852,11 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
                                      int nItems) const
 {
     IFX_BidiChar* BidiChar = IFX_BidiChar::Create();
-    FX_INT32 nR2L = 0;
-    FX_INT32 nL2R = 0;
-    FX_INT32 start = 0, count = 0;
+    int32_t nR2L = 0;
+    int32_t nL2R = 0;
+    int32_t start = 0, count = 0;
     CPDF_TextObjectItem item;
-    for (FX_INT32 i = 0; i < nItems; i++) {
+    for (int32_t i = 0; i < nItems; i++) {
         pTextObj->GetItemInfo(i, &item);
         if (item.m_CharCode == (FX_DWORD)-1) {
             continue;
@@ -1870,7 +1870,7 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
             continue;
         }
         if (BidiChar && BidiChar->AppendChar(wChar)) {
-            FX_INT32 ret = BidiChar->GetBidiInfo(start, count);
+            int32_t ret = BidiChar->GetBidiInfo(start, count);
             if (ret == 2) {
                 nR2L++;
             }
@@ -1880,7 +1880,7 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
         }
     }
     if (BidiChar && BidiChar->EndChar()) {
-        FX_INT32 ret = BidiChar->GetBidiInfo(start, count);
+        int32_t ret = BidiChar->GetBidiInfo(start, count);
         if (ret == 2) {
             nR2L++;
         }
@@ -1892,9 +1892,9 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
       BidiChar->Release();
     return (nR2L > 0 && nR2L >= nL2R);
 }
-FX_INT32 CPDF_TextPage::GetTextObjectWritingMode(const CPDF_TextObject* pTextObj)
+int32_t CPDF_TextPage::GetTextObjectWritingMode(const CPDF_TextObject* pTextObj)
 {
-    FX_INT32 nChars = pTextObj->CountChars();
+    int32_t nChars = pTextObj->CountChars();
     if (nChars == 1) {
         return m_TextlineDir;
     }
@@ -2058,7 +2058,7 @@ int CPDF_TextPage::ProcessInsertObject(const CPDF_TextObject* pObj, const CFX_Af
         }
         return 2;
     }
-    FX_INT32 nChars = pObj->CountChars();
+    int32_t nChars = pObj->CountChars();
     if (nChars == 1 && ( 0x2D == curChar || 0xAD == curChar))
         if (IsHyphen(curChar)) {
             return 3;

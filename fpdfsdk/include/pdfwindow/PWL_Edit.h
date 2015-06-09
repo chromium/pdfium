@@ -20,8 +20,8 @@ class IPWL_Filler_Notify
 public:
         virtual ~IPWL_Filler_Notify() { }
 	virtual void					QueryWherePopup(void* pPrivateData, FX_FLOAT fPopupMin,FX_FLOAT fPopupMax, 
-										FX_INT32 & nRet, FX_FLOAT & fPopupRet) = 0; //nRet: (0:bottom 1:top)
-	virtual void					OnBeforeKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_INT32 nKeyCode,
+										int32_t & nRet, FX_FLOAT & fPopupRet) = 0; //nRet: (0:bottom 1:top)
+	virtual void					OnBeforeKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, int32_t nKeyCode,
 										CFX_WideString & strChange, const CFX_WideString& strChangeEx, 
 										int nSelStart, int nSelEnd,
 										FX_BOOL bKeyDown, FX_BOOL & bRC, FX_BOOL & bExit, FX_DWORD nFlag) = 0;
@@ -58,10 +58,10 @@ public:
 	void							SetAlignFormatH(PWL_EDIT_ALIGNFORMAT_H nFormat = PEAH_LEFT, FX_BOOL bPaint = TRUE);	//0:left 1:right 2:middle 
 	void							SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat = PEAV_TOP, FX_BOOL bPaint = TRUE);	//0:top 1:bottom 2:center
 
-	void							SetCharArray(FX_INT32 nCharArray);
-	void							SetLimitChar(FX_INT32 nLimitChar);
+	void							SetCharArray(int32_t nCharArray);
+	void							SetLimitChar(int32_t nLimitChar);
 
-	void							SetHorzScale(FX_INT32 nHorzScale, FX_BOOL bPaint = TRUE);
+	void							SetHorzScale(int32_t nHorzScale, FX_BOOL bPaint = TRUE);
 	void							SetCharSpace(FX_FLOAT fCharSpace, FX_BOOL bPaint = TRUE);
 
 	void							SetLineLeading(FX_FLOAT fLineLeading, FX_BOOL bPaint = TRUE);
@@ -87,7 +87,7 @@ public:
 
 	FX_BOOL							IsTextFull() const;	
 
-	static FX_FLOAT					GetCharArrayAutoFontSize(CPDF_Font* pFont, const CPDF_Rect& rcPlate, FX_INT32 nCharArray);
+	static FX_FLOAT					GetCharArrayAutoFontSize(CPDF_Font* pFont, const CPDF_Rect& rcPlate, int32_t nCharArray);
 
 	void							SetFillerNotify(IPWL_Filler_Notify* pNotify) {m_pFillerNotify = pNotify;}
 
@@ -116,7 +116,7 @@ private:
 	FX_BOOL							IsVScrollBarVisible() const;
 	void							SetParamByFlag();
 
-	FX_FLOAT						GetCharArrayAutoFontSize(FX_INT32 nCharArray);
+	FX_FLOAT						GetCharArrayAutoFontSize(int32_t nCharArray);
 	CPDF_Point						GetWordRightBottomPoint(const CPVT_WordPlace& wpWord);
 
 	CPVT_WordRange					CombineWordRange(const CPVT_WordRange& wr1, const CPVT_WordRange& wr2);

@@ -137,7 +137,7 @@ CPWL_Icon::~CPWL_Icon()
 {
 }
 
-FX_INT32 CPWL_Icon::GetScaleMethod()
+int32_t CPWL_Icon::GetScaleMethod()
 {
 	if (m_pIconFit)
 		return m_pIconFit->GetScaleMethod();
@@ -199,7 +199,7 @@ void CPWL_Icon::GetScale(FX_FLOAT & fHScale,FX_FLOAT & fVScale)
 
 		GetImageSize(fImageWidth,fImageHeight);
 
-		FX_INT32 nScaleMethod = this->GetScaleMethod();
+		int32_t nScaleMethod = this->GetScaleMethod();
 
 		/*
 		enum ScaleMethod

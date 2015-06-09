@@ -121,7 +121,7 @@ public:
         return m_Length == 0;
     }
 
-    FX_BYTE			GetAt(FX_STRSIZE index) const
+    uint8_t			GetAt(FX_STRSIZE index) const
     {
         return m_Ptr[index];
     }
@@ -140,7 +140,7 @@ public:
         return CFX_ByteStringC(m_Ptr + index, count);
     }
 
-    const FX_BYTE& operator[] (size_t index) const
+    const uint8_t& operator[] (size_t index) const
     {
         return m_Ptr[index];
     }
@@ -279,12 +279,12 @@ public:
 
     const CFX_ByteString&	operator += (FX_BSTR bstrc);
 
-    FX_BYTE					GetAt(FX_STRSIZE nIndex) const
+    uint8_t					GetAt(FX_STRSIZE nIndex) const
     {
         return m_pData ? m_pData->m_String[nIndex] : 0;
     }
 
-    FX_BYTE					operator[](FX_STRSIZE nIndex) const
+    uint8_t					operator[](FX_STRSIZE nIndex) const
     {
         return m_pData ? m_pData->m_String[nIndex] : 0;
     }

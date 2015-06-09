@@ -719,7 +719,7 @@ void CFFL_IFormFiller::SetFocusAnnotTab(CPDFSDK_Annot* pWidget, FX_BOOL bSameFie
 
 }
 
-void CFFL_IFormFiller::QueryWherePopup(void* pPrivateData, FX_FLOAT fPopupMin,FX_FLOAT fPopupMax, FX_INT32 & nRet, FX_FLOAT & fPopupRet)
+void CFFL_IFormFiller::QueryWherePopup(void* pPrivateData, FX_FLOAT fPopupMin,FX_FLOAT fPopupMax, int32_t & nRet, FX_FLOAT & fPopupRet)
 {
 	ASSERT(pPrivateData != NULL);
 
@@ -834,7 +834,7 @@ void CFFL_IFormFiller::OnSetWindowRect(void* pPrivateData, const CPDF_Rect & rcW
 	}
 }
 
-void CFFL_IFormFiller::OnKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_INT32 nKeyCode, CFX_WideString& strChange, 
+void CFFL_IFormFiller::OnKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, int32_t nKeyCode, CFX_WideString& strChange, 
 								   const CFX_WideString& strChangeEx, FX_BOOL bKeyDown, 
 								   FX_BOOL & bRC, FX_BOOL & bExit)
 {
@@ -1097,7 +1097,7 @@ void CFFL_IFormFiller::DoPaste(CPDFSDK_Document* pDocument)
 {
 
 }
-void CFFL_IFormFiller::OnBeforeKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_INT32 nKeyCode,
+void CFFL_IFormFiller::OnBeforeKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, int32_t nKeyCode,
 											  CFX_WideString & strChange, const CFX_WideString& strChangeEx, 
 											  int nSelStart, int nSelEnd,
 										FX_BOOL bKeyDown, FX_BOOL & bRC, FX_BOOL & bExit, FX_DWORD nFlag)

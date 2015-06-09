@@ -404,10 +404,10 @@ FX_BOOL IsSameLine(FX_BOOL bHorizontal, CFX_FloatRect Rect1, CFX_FloatRect Rect2
     }
     return TRUE;
 }
-FX_INT32 IsCanMergeParagraph(IPDF_LayoutElement* pPrevElement, IPDF_LayoutElement* pNextElement)
+int32_t IsCanMergeParagraph(IPDF_LayoutElement* pPrevElement, IPDF_LayoutElement* pNextElement)
 {
-    FX_INT32 analogial = 100;
-    FX_INT32 nPrevObj = pPrevElement->CountObjects(), i;
+    int32_t analogial = 100;
+    int32_t nPrevObj = pPrevElement->CountObjects(), i;
     CPDF_PageObject* pPrevObj = NULL;
     CFX_FloatRect prevRect, rect;
     CFX_PtrArray prevLine, line;
@@ -446,7 +446,7 @@ FX_INT32 IsCanMergeParagraph(IPDF_LayoutElement* pPrevElement, IPDF_LayoutElemen
     CPDF_PageObject* pObj = pPrevElement->GetObject(nPrevObj - 1);
     if(pObj->m_Type == PDFPAGE_TEXT) {
         CPDF_TextObject* pText = (CPDF_TextObject*)pObj;
-        FX_INT32 nItem = pText->CountItems();
+        int32_t nItem = pText->CountItems();
         CPDF_TextObjectItem item;
         pText->GetItemInfo(nItem - 1, &item);
         CFX_WideString wStr = pText->GetFont()->UnicodeFromCharCode(item.m_CharCode);
@@ -468,7 +468,7 @@ FX_INT32 IsCanMergeParagraph(IPDF_LayoutElement* pPrevElement, IPDF_LayoutElemen
     prevLine.RemoveAll();
     prevLine.Append(line);
     line.RemoveAll();
-    FX_INT32 nNextObj = pNextElement->CountObjects();
+    int32_t nNextObj = pNextElement->CountObjects();
     pPrevObj = NULL;
     FX_BOOL bFirst = TRUE;
     for(i = 0; i < nNextObj; i++) {
@@ -519,7 +519,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessElement(IPDF_LayoutElement* pElement, F
     }
     if(m_Status == LayoutReady) {
         LayoutType layoutType = pElement->GetType();
-        FX_INT32 ElementType = GetElementTypes(layoutType);
+        int32_t ElementType = GetElementTypes(layoutType);
         switch(ElementType) {
             case SST_IE:
                 m_bIllustration = TRUE;
@@ -639,7 +639,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessElement(IPDF_LayoutElement* pElement, F
     if(m_Status == LayoutReady) {
         FX_FLOAT dx = 0;
         LayoutType layoutType = pElement->GetType();
-        FX_INT32 ElementType = GetElementTypes(layoutType);
+        int32_t ElementType = GetElementTypes(layoutType);
         switch(ElementType) {
             case SST_IE:
                 m_bIllustration = FALSE;
@@ -705,7 +705,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessElement(IPDF_LayoutElement* pElement, F
         m_PausePosition = 100;
     }
 }
-FX_INT32 CPDF_LayoutProcessor_Reflow::GetElementTypes(LayoutType layoutType)
+int32_t CPDF_LayoutProcessor_Reflow::GetElementTypes(LayoutType layoutType)
 {
     switch(layoutType) {
         case LayoutParagraph:
@@ -1201,7 +1201,7 @@ int CPDF_LayoutProcessor_Reflow::ProcessInsertObject(CPDF_TextObject* pObj, CFX_
     }
     return 0;
 }
-FX_INT32 CPDF_LayoutProcessor_Reflow::LogicPreObj(CPDF_TextObject* pObj)
+int32_t CPDF_LayoutProcessor_Reflow::LogicPreObj(CPDF_TextObject* pObj)
 {
     CPDF_TextObject* pPreObj = m_pPreObj;
     m_pPreObj = pObj;
@@ -1338,7 +1338,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessTextObject(CPDF_TextObject *pTextObj, F
         return;
     }
     CPDF_PageObject* pPreObj = m_pPreObj;
-    FX_INT32 logic = ProcessInsertObject(pTextObj, objMatrix);
+    int32_t logic = ProcessInsertObject(pTextObj, objMatrix);
     m_pPreObj = pTextObj;
     m_perMatrix.Copy(objMatrix);
     int size = m_pTempLine->GetSize();
@@ -1533,7 +1533,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessUnitaryObjs(CPDF_PageObjects *pObjs, FX
     while(pos) {
         CPDF_PageObject* pObj = pObjs->GetNextObject(pos);
         if(pObj->m_Type == PDFPAGE_TEXT) {
-            FX_INT32 ret = LogicPreObj((CPDF_TextObject*)pObj);
+            int32_t ret = LogicPreObj((CPDF_TextObject*)pObj);
             if(ret == 1 || ret == 2) {
                 continue;
             }

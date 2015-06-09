@@ -49,7 +49,7 @@ private:
  	FX_BOOL									ExecuteAction(CPDF_AAction::AActionType eAAT,CPDF_Action & action,FX_BOOL& bExit);
 
 	FX_BOOL									m_bDoActioning;
-	FX_INT32								m_nNotifyFlag;
+	int32_t								m_nNotifyFlag;
 };
 
 #endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_NOTIFY_H_

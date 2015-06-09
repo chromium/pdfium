@@ -60,7 +60,7 @@ void CPDF_SimpleParser::ParseWord(FX_LPCBYTE& pStart, FX_DWORD& dwSize, int& typ
     pStart = NULL;
     dwSize = 0;
     type = PDFWORD_EOF;
-    FX_BYTE ch;
+    uint8_t ch;
     char chartype;
     while (1) {
         if (m_dwSize <= m_dwCurPos) {
@@ -322,7 +322,7 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig)
     int dest_len = 0;
     int i;
     for (i = 0; i < src_len; i ++) {
-        FX_BYTE ch = src_buf[i];
+        uint8_t ch = src_buf[i];
         if (ch >= 0x80 || PDF_CharType[ch] == 'W' || ch == '#' ||
                 PDF_CharType[ch] == 'D') {
             dest_len += 3;
@@ -337,7 +337,7 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig)
     FX_LPSTR dest_buf = res.GetBuffer(dest_len);
     dest_len = 0;
     for (i = 0; i < src_len; i ++) {
-        FX_BYTE ch = src_buf[i];
+        uint8_t ch = src_buf[i];
         if (ch >= 0x80 || PDF_CharType[ch] == 'W' || ch == '#' ||
                 PDF_CharType[ch] == 'D') {
             dest_buf[dest_len++] = '#';

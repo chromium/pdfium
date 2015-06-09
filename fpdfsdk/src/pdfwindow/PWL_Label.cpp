@@ -132,7 +132,7 @@ IFX_SystemHandler* pSysHandler = GetSystemHandler();
 		rcClip, CPDF_Point(0.0f,0.0f), pRange,pSysHandler, NULL);
 }
 
-void CPWL_Label::SetHorzScale(FX_INT32 nHorzScale)
+void CPWL_Label::SetHorzScale(int32_t nHorzScale)
 {
 	m_pEdit->SetHorzScale(nHorzScale);
 }
@@ -172,12 +172,12 @@ CFX_WideString CPWL_Label::GetText() const
 	return m_pEdit->GetText();
 }
 
-void CPWL_Label::SetLimitChar(FX_INT32 nLimitChar)
+void CPWL_Label::SetLimitChar(int32_t nLimitChar)
 {
 	m_pEdit->SetLimitChar(nLimitChar);
 }
 
-FX_INT32 CPWL_Label::GetTotalWords()
+int32_t CPWL_Label::GetTotalWords()
 {
 	if (m_pEdit)
 		return m_pEdit->GetTotalWords();

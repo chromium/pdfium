@@ -58,14 +58,14 @@ public:
 	
 	struct FX_DATETIME
 	{
-		FX_SHORT	year;
-		FX_BYTE		month;
-		FX_BYTE		day;
-		FX_BYTE		hour;
-		FX_BYTE		minute;
-		FX_BYTE		second;
-		FX_INT8 	tzHour;
-		FX_BYTE		tzMinute;
+		int16_t	year;
+		uint8_t		month;
+		uint8_t		day;
+		uint8_t		hour;
+		uint8_t		minute;
+		uint8_t		second;
+		int8_t 	tzHour;
+		uint8_t		tzMinute;
 	}dt;
 };
 

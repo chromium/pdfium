@@ -77,7 +77,7 @@ FX_BOOL CPDF_PSProc::Execute(CPDF_PSEngine* pEngine)
 {
     int size = m_Operators.GetSize();
     for (int i = 0; i < size; i ++) {
-        PDF_PSOP op = (PDF_PSOP)(FX_UINTPTR)m_Operators[i];
+        PDF_PSOP op = (PDF_PSOP)(uintptr_t)m_Operators[i];
         if (op == PSOP_PROC) {
             i ++;
         } else if (op == PSOP_CONST) {
@@ -492,7 +492,7 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj)
         if (!pSize && i == 0) {
             m_pEncodeInfo[i].sizes = pDict->GetInteger(FX_BSTRC("Size"));
         }
-        if (nTotalSamples > 0 && (FX_UINT32)(m_pEncodeInfo[i].sizes) > UINT_MAX / nTotalSamples) {
+        if (nTotalSamples > 0 && (uint32_t)(m_pEncodeInfo[i].sizes) > UINT_MAX / nTotalSamples) {
             return FALSE;
         }
         nTotalSamples *= m_pEncodeInfo[i].sizes;
@@ -512,7 +512,7 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj)
         return FALSE;
     }
     nTotalSamples *= m_nBitsPerSample;
-    if (nTotalSamples > 0 && ((FX_UINT32)m_nOutputs) > UINT_MAX / nTotalSamples) {
+    if (nTotalSamples > 0 && ((uint32_t)m_nOutputs) > UINT_MAX / nTotalSamples) {
         return FALSE;
     }
     nTotalSamples *= m_nOutputs;

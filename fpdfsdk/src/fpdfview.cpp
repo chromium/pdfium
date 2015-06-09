@@ -202,7 +202,7 @@ extern void CheckUnSupportError(CPDF_Document * pDoc, FX_DWORD err_code);
 class CMemFile final: public IFX_FileRead
 {
 public:
-	CMemFile(FX_BYTE* pBuf, FX_FILESIZE size):m_pBuf(pBuf),m_size(size) {}
+	CMemFile(uint8_t* pBuf, FX_FILESIZE size):m_pBuf(pBuf),m_size(size) {}
 
 	virtual void			Release() {delete this;}
 	virtual FX_FILESIZE		GetSize() {return m_size;}
@@ -220,14 +220,14 @@ public:
 	    return TRUE;
 	}
 private:
-	FX_BYTE* m_pBuf;
+	uint8_t* m_pBuf;
 	FX_FILESIZE m_size;
 };
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password)
 {
 	CPDF_Parser* pParser = new CPDF_Parser;
 	pParser->SetPassword(password);
-	CMemFile* pMemFile = new CMemFile((FX_BYTE*)data_buf, size);
+	CMemFile* pMemFile = new CMemFile((uint8_t*)data_buf, size);
 	FX_DWORD err_code = pParser->StartParse(pMemFile);
 	if (err_code) {
 		delete pParser;

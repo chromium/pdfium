@@ -148,14 +148,14 @@ CPDF_Dictionary* CPDF_ReflowedPage::GetFormResDict(CPDF_PageObject* pObj)
     }
     return pPageInfo->GetFormDict();
 }
-void CPDF_ReflowedPage::GetDisplayMatrix(CFX_AffineMatrix& matrix, FX_INT32 xPos, FX_INT32 yPos, FX_INT32 xSize, FX_INT32 ySize, FX_INT32 iRotate, const CFX_AffineMatrix* pPageMatrix)
+void CPDF_ReflowedPage::GetDisplayMatrix(CFX_AffineMatrix& matrix, int32_t xPos, int32_t yPos, int32_t xSize, int32_t ySize, int32_t iRotate, const CFX_AffineMatrix* pPageMatrix)
 {
     CFX_AffineMatrix display_matrix;
     if(m_PageHeight == 0) {
         matrix.Set(1, 0, 0, -1, 0, 0);
         return;
     }
-    FX_INT32 x0, y0, x1, y1, x2, y2;
+    int32_t x0, y0, x1, y1, x2, y2;
     iRotate %= 4;
     switch (iRotate) {
         case 0:
@@ -204,7 +204,7 @@ FX_FLOAT CPDF_ReflowedPage::GetPageHeight()
 {
     return m_PageHeight;
 }
-void CPDF_ReflowedPage::FocusGetData(const CFX_AffineMatrix matrix, FX_INT32 x, FX_INT32 y, CFX_ByteString& str)
+void CPDF_ReflowedPage::FocusGetData(const CFX_AffineMatrix matrix, int32_t x, int32_t y, CFX_ByteString& str)
 {
     if (NULL == m_pReflowed) {
         return;
@@ -215,8 +215,8 @@ void CPDF_ReflowedPage::FocusGetData(const CFX_AffineMatrix matrix, FX_INT32 x, 
     revMatrix.Transform((float)x, (float)y, x1, y1);
     int count = m_pReflowed->GetSize();
     FX_FLOAT dx = 1000, dy = 1000;
-    FX_INT32 pos = 0;
-    FX_INT32 i;
+    int32_t pos = 0;
+    int32_t i;
     for(i = 0; i < count; i++) {
         CRF_Data* pData = (*m_pReflowed)[i];
         FX_FLOAT tempdy = FXSYS_fabs(pData->m_PosY - y1);
@@ -263,12 +263,12 @@ void CPDF_ReflowedPage::FocusGetData(const CFX_AffineMatrix matrix, FX_INT32 x, 
     }
     str.Format("%d", pos);
 }
-FX_BOOL CPDF_ReflowedPage::FocusGetPosition(const CFX_AffineMatrix matrix, CFX_ByteString str, FX_INT32& x, FX_INT32& y)
+FX_BOOL CPDF_ReflowedPage::FocusGetPosition(const CFX_AffineMatrix matrix, CFX_ByteString str, int32_t& x, int32_t& y)
 {
     if (NULL == m_pReflowed) {
         return FALSE;
     }
-    FX_INT32 pos = FXSYS_atoi(str);
+    int32_t pos = FXSYS_atoi(str);
     if(pos < 0 || pos >= m_pReflowed->GetSize()) {
         return FALSE;
     }
@@ -423,7 +423,7 @@ CPDF_ProgressiveReflowPageRender::CPDF_ProgressiveReflowPageRender()
     m_pFontEncoding = NULL;
     m_DisplayColor = -1;
 }
-static FX_FLOAT _CIDTransformToFloat(FX_BYTE ch)
+static FX_FLOAT _CIDTransformToFloat(uint8_t ch)
 {
     if (ch < 128) {
         return ch * 1.0f / 127;

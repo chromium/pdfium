@@ -45,6 +45,6 @@ public:
 	JS_STATIC_METHOD(byteToChar, util);
 };
 
-FX_INT64 FX_atoi64(const char *nptr);
+int64_t FX_atoi64(const char *nptr);
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_UTIL_H_

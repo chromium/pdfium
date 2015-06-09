@@ -158,7 +158,7 @@ FX_BOOL	CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(const CPDF_Action& acti
 		DoAction_NoJs(action, pDocument);
 	}
 
-	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
+	for (int32_t i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
 		if (!ExecuteDocumentOpenAction(subaction, pDocument, list)) return FALSE;
@@ -213,7 +213,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(const CPDF_Action& action,	CPDF
 		DoAction_NoJs(action, pDocument);
 	}
 
-	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
+	for (int32_t i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
 		if (!ExecuteLinkAction(subaction, pDocument, list)) return FALSE;
@@ -254,7 +254,7 @@ FX_BOOL	CPDFSDK_ActionHandler::ExecuteDocumentPageAction(const CPDF_Action& acti
 	if (!IsValidDocView(pDocument))
 		return FALSE;
 
-	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
+	for (int32_t i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
 		if (!ExecuteDocumentPageAction(subaction, type, pDocument, list)) return FALSE;
@@ -309,7 +309,7 @@ FX_BOOL	CPDFSDK_ActionHandler::ExecuteFieldAction(const CPDF_Action& action, CPD
 		DoAction_NoJs(action, pDocument);
 	}
 
-	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
+	for (int32_t i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
 		if (!ExecuteFieldAction(subaction, type, pDocument, pFormField, data, list)) return FALSE;
@@ -399,7 +399,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(const CPDF_Action& action, CP
 		DoAction_NoJs(action, pDocument);
 	}
 
-	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
+	for (int32_t i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
 		if (!ExecuteScreenAction(subaction, type, pDocument, pScreen, list)) return FALSE;
@@ -454,7 +454,7 @@ FX_BOOL	CPDFSDK_ActionHandler::ExecuteBookMark(const CPDF_Action& action, CPDFSD
 		DoAction_NoJs(action, pDocument);
 	}
 
-	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
+	for (int32_t i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
 		if (!ExecuteBookMark(subaction, pDocument, pBookmark, list)) return FALSE;

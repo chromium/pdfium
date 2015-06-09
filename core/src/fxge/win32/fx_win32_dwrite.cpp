@@ -310,7 +310,7 @@ HRESULT STDMETHODCALLTYPE CDwFontFileStream::ReadFileFragment(
 {
     if (fileOffset <= resourceSize_ &&
             fragmentSize <= resourceSize_ - fileOffset) {
-        *fragmentStart = static_cast<FX_BYTE const*>(resourcePtr_) + static_cast<size_t>(fileOffset);
+        *fragmentStart = static_cast<uint8_t const*>(resourcePtr_) + static_cast<size_t>(fileOffset);
         *fragmentContext = NULL;
         return S_OK;
     } else {

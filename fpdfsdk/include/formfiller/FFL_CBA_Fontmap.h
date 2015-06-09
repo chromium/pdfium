@@ -29,12 +29,12 @@ public:
 	void						SetAPType(const CFX_ByteString& sAPType);
 
 protected:
-	virtual CPDF_Font*			FindFontSameCharset(CFX_ByteString& sFontAlias, FX_INT32 nCharset);
+	virtual CPDF_Font*			FindFontSameCharset(CFX_ByteString& sFontAlias, int32_t nCharset);
 	virtual void				AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
 	virtual CPDF_Document*		GetDocument();
 private:
 	CPDF_Font*					FindResFontSameCharset(CPDF_Dictionary* pResDict, CFX_ByteString& sFontAlias,
-									FX_INT32 nCharset);
+									int32_t nCharset);
 	CPDF_Font*					GetAnnotDefaultFont(CFX_ByteString &csNameTag);
 	void						AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAlias);
 

@@ -30,7 +30,7 @@ protected:
 	FX_LPBYTE m_pOriScan;
 	FX_LPBYTE m_pClipScan;
 
-	void (CFX_SkiaRenderer::*composite_span)(FX_LPBYTE,FX_LPBYTE,int,int,int,int,FX_BYTE,int,int,int,FX_LPBYTE,FX_LPBYTE);
+	void (CFX_SkiaRenderer::*composite_span)(FX_LPBYTE,FX_LPBYTE,int,int,int,int,uint8_t,int,int,int,FX_LPBYTE,FX_LPBYTE);
 public:
     
     //--------------------------------------------------------------------
@@ -43,35 +43,35 @@ public:
 	/*------------------------------------------------------------------------------------------------------*/
 	// A general alpha merge function (with clipping mask). Gray device.
 	void CompositeSpan1bpp_0(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpan1bpp_1(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpan1bpp_4(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpan1bpp_5(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpan1bpp_8(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpan1bpp_9(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpan1bpp_12(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpan1bpp_13(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
@@ -79,119 +79,119 @@ public:
 	
 	// A general alpha merge function (with clipping mask). Gray device.
 	void CompositeSpanGray_2(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 	void CompositeSpanGray_3(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 	void CompositeSpanGray_6(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 	void CompositeSpanGray_7(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 	void CompositeSpanGray_10(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 
 	void CompositeSpanGray_11(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 	void CompositeSpanGray_14(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 	void CompositeSpanGray_15(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 	/*--------------------------------------------------------------------------------------------------------*/
 	void CompositeSpanARGB_2(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 	void CompositeSpanARGB_3(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 
 	void CompositeSpanARGB_6(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
 
 	void CompositeSpanARGB_7(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	// ...
 	/*--------------------------------------------------------------------------------------------------------*/
 	void CompositeSpanRGB32_2(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB32_3(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB32_6(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB32_7(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	
 	/*---------------------------------------------------------------------------------------------------------*/
 
 	void CompositeSpanRGB24_2(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB24_3(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB24_6(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB24_7(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB24_10(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB24_11(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB24_14(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 	void CompositeSpanRGB24_15(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
 
@@ -199,7 +199,7 @@ public:
 	
 	// A general alpha merge function (with clipping mask). Cmyka/Cmyk device.
 	void CompositeSpanCMYK(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, FX_BYTE cover_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan, 
 			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
 			FX_LPBYTE dest_extra_alpha_scan);
    

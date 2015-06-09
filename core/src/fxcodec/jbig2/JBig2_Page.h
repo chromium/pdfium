@@ -12,7 +12,7 @@ struct JBig2PageInfo : public CJBig2_Object {
              m_dwHeight;
     FX_DWORD m_dwResolutionX,
              m_dwResolutionY;
-    FX_BYTE m_cFlags;
+    uint8_t m_cFlags;
     FX_BOOL m_bIsStriped;
     FX_WORD m_wMaxStripeSize;
 };

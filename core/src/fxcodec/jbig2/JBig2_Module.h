@@ -22,7 +22,7 @@ public:
 
     virtual void JBig2_Free(FX_LPVOID pMem) = 0;
 
-    virtual void JBig2_Assert(FX_INT32 nExpression) {};
+    virtual void JBig2_Assert(int32_t nExpression) {};
 
     virtual	void JBig2_Error(FX_LPCSTR format, ...) {};
 

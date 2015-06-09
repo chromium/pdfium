@@ -245,7 +245,7 @@ void InitInterFormDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument)
     if (!pFormDict->KeyExist("DR")) {
         CPDF_Font* pFont = NULL;
         CFX_ByteString csBaseName, csDefault;
-        FX_BYTE charSet = CPDF_InterForm::GetNativeCharSet();
+        uint8_t charSet = CPDF_InterForm::GetNativeCharSet();
         pFont = CPDF_InterForm::AddStandardFont(pDocument, "Helvetica");
         if (pFont != NULL) {
             AddInterFormFont(pFormDict, pDocument, pFont, csBaseName);
@@ -409,7 +409,7 @@ CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pDocument
     }
     return NULL;
 }
-CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pDocument, FX_BYTE charSet, CFX_ByteString& csNameTag)
+CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pDocument, uint8_t charSet, CFX_ByteString& csNameTag)
 {
     if (pFormDict == NULL) {
         return NULL;
@@ -456,7 +456,7 @@ CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pDo
 CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pDocument, CFX_ByteString& csNameTag)
 {
     csNameTag = "";
-    FX_BYTE charSet = CPDF_InterForm::GetNativeCharSet();
+    uint8_t charSet = CPDF_InterForm::GetNativeCharSet();
     CFX_SubstFont* pSubst;
     CPDF_Font* pFont = GetDefaultInterFormFont(pFormDict, pDocument);
     if (pFont != NULL) {
@@ -586,7 +586,7 @@ void AddInterFormFont(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument, con
     csNameTag = CPDF_InterForm::GenerateNewResourceName(pDR, "Font", 4, csNameTag);
     pFonts->SetAtReference(csNameTag, pDocument, pFont->GetFontDict());
 }
-CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument, FX_BYTE charSet, CFX_ByteString& csNameTag)
+CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument, uint8_t charSet, CFX_ByteString& csNameTag)
 {
     if (pFormDict == NULL) {
         InitInterFormDict(pFormDict, pDocument);
@@ -611,7 +611,7 @@ CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict, CPDF_Document* pD
 }
 CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument, CFX_ByteString& csNameTag)
 {
-    FX_BYTE charSet = CPDF_InterForm::GetNativeCharSet();
+    uint8_t charSet = CPDF_InterForm::GetNativeCharSet();
     return AddNativeInterFormFont(pFormDict, pDocument, charSet, csNameTag);
 }
 void RemoveInterFormFont(CPDF_Dictionary* pFormDict, const CPDF_Font* pFont)

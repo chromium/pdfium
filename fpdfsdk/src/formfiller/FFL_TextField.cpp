@@ -114,7 +114,7 @@ CPWL_Wnd* CFFL_TextField::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageVi
 	pWnd->SetFillerNotify(pIFormFiller);
 
 	ASSERT(m_pWidget != NULL);
-	FX_INT32 nMaxLen = m_pWidget->GetMaxLen();
+	int32_t nMaxLen = m_pWidget->GetMaxLen();
 	CFX_WideString swValue = m_pWidget->GetValue();
 	
 	if (nMaxLen > 0)

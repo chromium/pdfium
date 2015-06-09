@@ -45,7 +45,7 @@ void CBA_FontMap::Reset()
 
 void CBA_FontMap::Initial(FX_LPCSTR fontname)
 {
-	FX_INT32 nCharset = DEFAULT_CHARSET;
+	int32_t nCharset = DEFAULT_CHARSET;
 
 	if (!m_pDefaultFont)
 	{
@@ -83,13 +83,13 @@ void CBA_FontMap::SetDefaultFont(CPDF_Font * pFont, const CFX_ByteString & sFont
 //	if (m_sDefaultFontName.IsEmpty())
 //		m_sDefaultFontName = pFont->GetFontTypeName();
 
-	FX_INT32 nCharset = DEFAULT_CHARSET;
+	int32_t nCharset = DEFAULT_CHARSET;
 	if (const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont())
 		nCharset = pSubstFont->m_Charset;
 	AddFontData(m_pDefaultFont, m_sDefaultFontName, nCharset);
 }
 
-CPDF_Font* CBA_FontMap::FindFontSameCharset(CFX_ByteString& sFontAlias, FX_INT32 nCharset)
+CPDF_Font* CBA_FontMap::FindFontSameCharset(CFX_ByteString& sFontAlias, int32_t nCharset)
 {
 	ASSERT(m_pAnnotDict != NULL);
 
@@ -119,7 +119,7 @@ CPDF_Document* CBA_FontMap::GetDocument()
 }
 
 CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict, CFX_ByteString& sFontAlias, 
-													FX_INT32 nCharset)
+													int32_t nCharset)
 {
 	if (!pResDict) return NULL;
 
@@ -187,7 +187,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAl
 	if (pStream == NULL)
 	{
 		pStream = new CPDF_Stream(NULL, 0, NULL);
-		FX_INT32 objnum = m_pDocument->AddIndirectObject(pStream);
+		int32_t objnum = m_pDocument->AddIndirectObject(pStream);
 		pAPDict->SetAtReference(m_sAPType, m_pDocument, objnum);
 	}
 
@@ -214,7 +214,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAl
 			if (!pStreamResFontList) 
 			{
 				pStreamResFontList = new CPDF_Dictionary;
-				FX_INT32 objnum = m_pDocument->AddIndirectObject(pStreamResFontList);
+				int32_t objnum = m_pDocument->AddIndirectObject(pStreamResFontList);
 				pStreamResList->SetAtReference("Font", m_pDocument, objnum);
 			}
 			if (!pStreamResFontList->KeyExist(sAlias))

@@ -67,15 +67,15 @@ public:
 	virtual FX_BOOL				OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 
 public:
-	virtual void				QueryWherePopup(void* pPrivateData, FX_FLOAT fPopupMin,FX_FLOAT fPopupMax, FX_INT32 & nRet, FX_FLOAT & fPopupRet);
-	virtual void				OnBeforeKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_INT32 nKeyCode,
+	virtual void				QueryWherePopup(void* pPrivateData, FX_FLOAT fPopupMin,FX_FLOAT fPopupMax, int32_t & nRet, FX_FLOAT & fPopupRet);
+	virtual void				OnBeforeKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, int32_t nKeyCode,
 										CFX_WideString & strChange, const CFX_WideString& strChangeEx, 
 										int nSelStart, int nSelEnd,
 										FX_BOOL bKeyDown, FX_BOOL & bRC, FX_BOOL & bExit, FX_DWORD nFlag);
 	virtual void				OnAfterKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_BOOL & bExit, FX_DWORD nFlag) ;
 
 	virtual void				OnSetWindowRect(void* pPrivateData, const CPDF_Rect & rcWindow);
-	virtual void				OnKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_INT32 nKeyCode, CFX_WideString & strChange, 
+	virtual void				OnKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, int32_t nKeyCode, CFX_WideString & strChange, 
 									const CFX_WideString& strChangeEx, FX_BOOL bKeyDown, FX_BOOL & bRC, FX_BOOL & bExit);
 
 public:

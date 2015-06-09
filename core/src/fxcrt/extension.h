@@ -160,7 +160,7 @@ public:
     ~CFX_MemoryStream()
     {
         if (m_dwFlags & FX_MEMSTREAM_TakeOver) {
-            for (FX_INT32 i = 0; i < m_Blocks.GetSize(); i++) {
+            for (int32_t i = 0; i < m_Blocks.GetSize(); i++) {
                 FX_Free((FX_LPBYTE)m_Blocks[i]);
             }
         }
@@ -270,7 +270,7 @@ public:
             }
         }
         size_t nRead = FX_MIN(size, m_nCurSize - m_nCurPos);
-        if (!ReadBlock(buffer, (FX_INT32)m_nCurPos, nRead)) {
+        if (!ReadBlock(buffer, (int32_t)m_nCurPos, nRead)) {
             return 0;
         }
         return nRead;
@@ -293,10 +293,10 @@ public:
             if (m_nCurPos > m_nTotalSize) {
                 m_nTotalSize = (m_nCurPos + m_nGrowSize - 1) / m_nGrowSize * m_nGrowSize;
                 if (m_Blocks.GetSize() < 1) {
-                    void* block = FX_Alloc(FX_BYTE, m_nTotalSize);
+                    void* block = FX_Alloc(uint8_t, m_nTotalSize);
                     m_Blocks.Add(block);
                 } else {
-                    m_Blocks[0] = FX_Realloc(FX_BYTE, m_Blocks[0], m_nTotalSize);
+                    m_Blocks[0] = FX_Realloc(uint8_t, m_Blocks[0], m_nTotalSize);
                 }
                 if (!m_Blocks[0]) {
                     m_Blocks.RemoveAll();
@@ -347,7 +347,7 @@ public:
     {
         if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
             if (m_Blocks.GetSize() < 1) {
-                FX_LPBYTE pBlock = FX_Alloc(FX_BYTE, FX_MAX(nInitSize, 4096));
+                FX_LPBYTE pBlock = FX_Alloc(uint8_t, FX_MAX(nInitSize, 4096));
                 m_Blocks.Add(pBlock);
             }
             m_nGrowSize = FX_MAX(nGrowSize, 4096);
@@ -400,11 +400,11 @@ protected:
         if (size <= m_nTotalSize) {
             return TRUE;
         }
-        FX_INT32 iCount = m_Blocks.GetSize();
+        int32_t iCount = m_Blocks.GetSize();
         size = (size - m_nTotalSize + m_nGrowSize - 1) / m_nGrowSize;
-        m_Blocks.SetSize(m_Blocks.GetSize() + (FX_INT32)size);
+        m_Blocks.SetSize(m_Blocks.GetSize() + (int32_t)size);
         while (size --) {
-            FX_LPBYTE pBlock = FX_Alloc(FX_BYTE, m_nGrowSize);
+            FX_LPBYTE pBlock = FX_Alloc(uint8_t, m_nGrowSize);
             m_Blocks.SetAt(iCount ++, pBlock);
             m_nTotalSize += m_nGrowSize;
         }
@@ -431,7 +431,7 @@ typedef struct _FX_MTRANDOMCONTEXT {
 } FX_MTRANDOMCONTEXT, * FX_LPMTRANDOMCONTEXT;
 typedef FX_MTRANDOMCONTEXT const * FX_LPCMTRANDOMCONTEXT;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-FX_BOOL FX_GenerateCryptoRandom(FX_LPDWORD pBuffer, FX_INT32 iCount);
+FX_BOOL FX_GenerateCryptoRandom(FX_LPDWORD pBuffer, int32_t iCount);
 #endif
 #ifdef __cplusplus
 }

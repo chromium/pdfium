@@ -24,8 +24,8 @@ CFX_BidiChar::CFX_BidiChar()
 FX_BOOL CFX_BidiChar::AppendChar(FX_WCHAR wch)
 {
     FX_DWORD dwProps = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch];
-    FX_INT32 iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
-    FX_INT32 iContext = 0;
+    int32_t iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
+    int32_t iContext = 0;
     switch (iBidiCls) {
         case FX_BIDICLASS_L:
         case FX_BIDICLASS_AN:
@@ -69,7 +69,7 @@ FX_BOOL CFX_BidiChar::EndChar()
     m_iLastCount = m_iCurCount - m_iLastStart;
     return m_iLastCount > 0;
 }
-FX_INT32 CFX_BidiChar::GetBidiInfo(FX_INT32 &iStart, FX_INT32 &iCount)
+int32_t CFX_BidiChar::GetBidiInfo(int32_t &iStart, int32_t &iCount)
 {
     iStart = m_iLastStart;
     iCount = m_iLastCount;

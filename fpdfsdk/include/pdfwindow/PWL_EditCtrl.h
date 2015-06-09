@@ -37,7 +37,7 @@ class IPWL_Edit_Notify
 public:
         virtual ~IPWL_Edit_Notify() { }
 	//when the position of caret is changed in edit
-	virtual void					OnCaretMove(FX_INT32 x1, FX_INT32 y1, FX_INT32 x2, FX_INT32 y2) {}
+	virtual void					OnCaretMove(int32_t x1, int32_t y1, int32_t x2, int32_t y2) {}
 	virtual void					OnContentChange(const CPDF_Rect& rcContent){}
 	//OprType: 0 InsertWord
 	//1 InsertReturn
@@ -73,7 +73,7 @@ public:
 	virtual FX_BOOL					OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);	
 	virtual FX_BOOL					OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);	
 	virtual FX_BOOL					OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam = 0, FX_INTPTR lParam = 0);
+	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
 	virtual void					CreateChildWnd(const PWL_CREATEPARAM & cp);
 	virtual void					RePosChildWnd();	
@@ -88,20 +88,20 @@ public:
 	virtual void 					CutText();
 
 	CPDF_Rect						GetContentRect() const;
-	void							GetCaretPos(FX_INT32& x, FX_INT32& y) const;
+	void							GetCaretPos(int32_t& x, int32_t& y) const;
 	FX_BOOL							IsModified() const;
 
 	CFX_WideString					GetText() const;
-	void							SetSel(FX_INT32 nStartChar,FX_INT32 nEndChar);
-	void							GetSel(FX_INT32 & nStartChar, FX_INT32 & nEndChar ) const;
-	void							GetTextRange(const CPDF_Rect& rect, FX_INT32 & nStartChar, FX_INT32 & nEndChar) const;
-	CFX_WideString					GetText(FX_INT32 & nStartChar, FX_INT32 & nEndChar) const;
+	void							SetSel(int32_t nStartChar,int32_t nEndChar);
+	void							GetSel(int32_t & nStartChar, int32_t & nEndChar ) const;
+	void							GetTextRange(const CPDF_Rect& rect, int32_t & nStartChar, int32_t & nEndChar) const;
+	CFX_WideString					GetText(int32_t & nStartChar, int32_t & nEndChar) const;
 	void							Clear();
 	void							SelectAll();
 
-	FX_INT32						GetCaret() const;
-	void							SetCaret(FX_INT32 nPos);
-	FX_INT32						GetTotalWords() const;
+	int32_t						GetCaret() const;
+	void							SetCaret(int32_t nPos);
+	int32_t						GetTotalWords() const;
 
 	void							Paint();
 
@@ -111,11 +111,11 @@ public:
 
 	void							SetEditNotify(IPWL_Edit_Notify* pNotify) {m_pEditNotify = pNotify;}	
 
-	void							SetCharSet(FX_BYTE nCharSet){m_nCharSet = nCharSet;}
-	FX_INT32						GetCharSet() const;
+	void							SetCharSet(uint8_t nCharSet){m_nCharSet = nCharSet;}
+	int32_t						GetCharSet() const;
 
-	void							SetCodePage(FX_INT32 nCodePage){m_nCodePage = nCodePage;}
-	FX_INT32						GetCodePage() const {return m_nCodePage;}
+	void							SetCodePage(int32_t nCodePage){m_nCodePage = nCodePage;}
+	int32_t						GetCodePage() const {return m_nCodePage;}
 
 	CPDF_Font *						GetCaretFont() const;
 	FX_FLOAT						GetCaretFontSize() const;
@@ -129,7 +129,7 @@ public:
 protected:
 	virtual void					ShowVScrollBar(FX_BOOL bShow);
 
-	virtual void					InsertWord(FX_WORD word, FX_INT32 nCharset);
+	virtual void					InsertWord(FX_WORD word, int32_t nCharset);
 	virtual void					InsertReturn();
 	virtual void					InsertText(FX_LPCWSTR csText);
 
@@ -169,8 +169,8 @@ protected:
 	IPWL_Edit_Notify*				m_pEditNotify;	
 
 private:
-	FX_INT32						m_nCharSet;
-	FX_INT32						m_nCodePage;
+	int32_t						m_nCharSet;
+	int32_t						m_nCodePage;
 };
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_

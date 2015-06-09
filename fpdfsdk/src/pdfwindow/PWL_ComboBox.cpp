@@ -256,12 +256,12 @@ void CPWL_ComboBox::AddString(FX_LPCWSTR string)
 		m_pList->AddString(string);
 }
 
-FX_INT32 CPWL_ComboBox::GetSelect() const
+int32_t CPWL_ComboBox::GetSelect() const
 {
 	return m_nSelectItem;
 }
 
-void CPWL_ComboBox::SetSelect(FX_INT32 nItemIndex)
+void CPWL_ComboBox::SetSelect(int32_t nItemIndex)
 {
 	if (m_pList)
 		m_pList->Select(nItemIndex);
@@ -271,7 +271,7 @@ void CPWL_ComboBox::SetSelect(FX_INT32 nItemIndex)
 	m_nSelectItem = nItemIndex;
 }
 
-void CPWL_ComboBox::SetEditSel(FX_INT32 nStartChar,FX_INT32 nEndChar)
+void CPWL_ComboBox::SetEditSel(int32_t nStartChar,int32_t nEndChar)
 {
 	if (m_pEdit)
 	{
@@ -279,7 +279,7 @@ void CPWL_ComboBox::SetEditSel(FX_INT32 nStartChar,FX_INT32 nEndChar)
 	}
 }
 
-void CPWL_ComboBox::GetEditSel(FX_INT32 & nStartChar, FX_INT32 & nEndChar) const
+void CPWL_ComboBox::GetEditSel(int32_t & nStartChar, int32_t & nEndChar) const
 {
 	nStartChar = -1;
 	nEndChar = -1;
@@ -502,7 +502,7 @@ void CPWL_ComboBox::SetPopup(FX_BOOL bPopup)
 	{
 		if (m_pFillerNotify)
 		{
-			FX_INT32 nWhere = 0;
+			int32_t nWhere = 0;
 			FX_FLOAT fPopupRet = 0.0f;
 			FX_FLOAT fPopupMin = 0.0f;
 			if (m_pList->GetCount() > 3)
@@ -601,7 +601,7 @@ FX_BOOL CPWL_ComboBox::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 	}
 }
 
-void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTPTR lParam)
+void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t lParam)
 {
 	switch (msg)
 	{

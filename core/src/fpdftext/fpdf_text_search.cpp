@@ -266,14 +266,14 @@ FX_BOOL CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj, FX_BOOL bFir
             m_Buffer.AppendChar((FX_WCHAR)item.m_CharCode);
             if (m_pObjArray) {
                 m_pObjArray->Add((void*)pObj);
-                m_pObjArray->Add((void*)(FX_INTPTR)item_index);
+                m_pObjArray->Add((void*)(intptr_t)item_index);
             }
         } else {
             m_Buffer << unicode_str;
             if (m_pObjArray) {
                 for (int i = 0; i < unicode_str.GetLength(); i ++) {
                     m_pObjArray->Add((void*)pObj);
-                    m_pObjArray->Add((void*)(FX_INTPTR)item_index);
+                    m_pObjArray->Add((void*)(intptr_t)item_index);
                 }
             }
         }

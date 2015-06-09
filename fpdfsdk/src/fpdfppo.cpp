@@ -178,7 +178,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 		FX_DWORD dwOldPageObj = pSrcPageDict->GetObjNum();
 		FX_DWORD dwNewPageObj = pCurPageDict->GetObjNum();
 		
-		pMapPtrToPtr->SetAt((FX_LPVOID)(FX_UINTPTR)dwOldPageObj, (FX_LPVOID)(FX_UINTPTR)dwNewPageObj);
+		pMapPtrToPtr->SetAt((FX_LPVOID)(uintptr_t)dwOldPageObj, (FX_LPVOID)(uintptr_t)dwNewPageObj);
 
 		this->UpdateReference(pCurPageDict, pDestPDFDoc, pMapPtrToPtr);
 		curpage++;

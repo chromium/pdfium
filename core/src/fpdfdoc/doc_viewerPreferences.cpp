@@ -29,7 +29,7 @@ FX_BOOL CPDF_ViewerPreferences::PrintScaling() const
     }
     return FX_BSTRC("None") != pDict->GetString(FX_BSTRC("PrintScaling"));
 }
-FX_INT32 CPDF_ViewerPreferences::NumCopies() const
+int32_t CPDF_ViewerPreferences::NumCopies() const
 {
     CPDF_Dictionary *pDict = m_pDoc->GetRoot();
     pDict = pDict->GetDict(FX_BSTRC("ViewerPreferences"));

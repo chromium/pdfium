@@ -107,25 +107,25 @@ class IPWL_SpellCheck;
 
 struct CPWL_Dash
 {
-	CPWL_Dash(FX_INT32 dash, FX_INT32 gap, FX_INT32 phase) : nDash(dash), nGap(gap), nPhase(phase)
+	CPWL_Dash(int32_t dash, int32_t gap, int32_t phase) : nDash(dash), nGap(gap), nPhase(phase)
 	{}
 
-	FX_INT32			nDash;
-	FX_INT32			nGap;
-	FX_INT32			nPhase;
+	int32_t			nDash;
+	int32_t			nGap;
+	int32_t			nPhase;
 };
 
 struct PWL_CLASS CPWL_Color
 {
-	CPWL_Color(FX_INT32 type = COLORTYPE_TRANSPARENT, FX_FLOAT color1 = 0.0f, FX_FLOAT color2 = 0.0f, FX_FLOAT color3 = 0.0f, FX_FLOAT color4 = 0.0f)
+	CPWL_Color(int32_t type = COLORTYPE_TRANSPARENT, FX_FLOAT color1 = 0.0f, FX_FLOAT color2 = 0.0f, FX_FLOAT color3 = 0.0f, FX_FLOAT color4 = 0.0f)
 		: nColorType(type), fColor1(color1), fColor2(color2), fColor3(color3), fColor4(color4)
 	{}
 
-	CPWL_Color(FX_INT32 r, FX_INT32 g, FX_INT32 b) :
+	CPWL_Color(int32_t r, int32_t g, int32_t b) :
 		nColorType(COLORTYPE_RGB), fColor1(r/255.0f), fColor2(g/255.0f), fColor3(b/255.0f), fColor4(0)
 	{}
 	
-	void ConvertColorType(FX_INT32 nColorType);
+	void ConvertColorType(int32_t nColorType);
 
 	/*
 	COLORTYPE_TRANSPARENT
@@ -133,7 +133,7 @@ struct PWL_CLASS CPWL_Color
 	COLORTYPE_CMYK
 	COLORTYPE_GRAY
 	*/
-	FX_INT32					nColorType; 
+	int32_t					nColorType; 
 	FX_FLOAT					fColor1,fColor2,fColor3,fColor4;
 };
 
@@ -194,7 +194,7 @@ public:
 	5 L"&Delete"
 	6  L"&Select All\tCtrl+A"
 	*/
-	virtual CFX_WideString					LoadPopupMenuString(FX_INT32 nIndex) = 0;
+	virtual CFX_WideString					LoadPopupMenuString(int32_t nIndex) = 0;
 };
 
 class IPWL_FocusHandler
@@ -242,18 +242,18 @@ public:
 	CPWL_Color				sBackgroundColor;		//optional
 	FX_HWND					hAttachedWnd;			//required for no-reader framework
 	IPWL_SpellCheck*		pSpellCheck;			//required for spellchecking
-	FX_INT32				nBorderStyle;			//optional
-	FX_INT32				dwBorderWidth;			//optional
+	int32_t				nBorderStyle;			//optional
+	int32_t				dwBorderWidth;			//optional
 	CPWL_Color				sBorderColor;			//optional
 	CPWL_Color				sTextColor;				//optional
 	CPWL_Color				sTextStrokeColor;		//optional
-	FX_INT32				nTransparency;			//optional
+	int32_t				nTransparency;			//optional
 	FX_FLOAT				fFontSize;				//optional
 	CPWL_Dash				sDash;					//optional
 	void*					pAttachedData;			//optional
 	CPWL_Wnd*				pParentWnd;				//ignore
 	CPWL_MsgControl*		pMsgControl;			//ignore
-	FX_INT32				eCursorType;			//ignore
+	int32_t				eCursorType;			//ignore
 	CPDF_Matrix				mtChild;				//ignore
 };
 
@@ -263,12 +263,12 @@ public:
 	CPWL_Timer(CPWL_TimerHandler* pAttached, IFX_SystemHandler* pSystemHandler);
 	virtual ~CPWL_Timer();
 
-	FX_INT32							SetPWLTimer(FX_INT32 nElapse);
+	int32_t							SetPWLTimer(int32_t nElapse);
 	void								KillPWLTimer();
-	static void 						TimerProc(FX_INT32 idEvent);
+	static void 						TimerProc(int32_t idEvent);
 
 private:
-	FX_INT32							m_nTimerID;	
+	int32_t							m_nTimerID;	
 	CPWL_TimerHandler*					m_pAttached;
 	IFX_SystemHandler*					m_pSystemHandler;
 };
@@ -279,7 +279,7 @@ public:
 	CPWL_TimerHandler();
 	virtual ~CPWL_TimerHandler();
 
-	void								BeginTimer(FX_INT32 nElapse);
+	void								BeginTimer(int32_t nElapse);
 	void								EndTimer();
 	virtual void						TimerProc();
 	virtual IFX_SystemHandler*			GetSystemHandler() const = 0;
@@ -324,7 +324,7 @@ public:
 	void							SetCapture();
 	void							ReleaseCapture();
 
-	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam = 0, FX_INTPTR lParam = 0);
+	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 	virtual void					SetTextColor(const CPWL_Color & color);
 	virtual void					SetTextStrokeColor(const CPWL_Color & color);
 	virtual void					SetVisible(FX_BOOL bVisible);
@@ -335,9 +335,9 @@ public:
 	virtual CPWL_Color				GetTextColor() const;
 	virtual CPWL_Color				GetTextStrokeColor() const;
 	virtual FX_FLOAT				GetFontSize() const;
-	virtual FX_INT32				GetInnerBorderWidth() const;
-	virtual CPWL_Color				GetBorderLeftTopColor(FX_INT32 nBorderStyle) const;
-	virtual CPWL_Color				GetBorderRightBottomColor(FX_INT32 nBorderStyle) const;
+	virtual int32_t				GetInnerBorderWidth() const;
+	virtual CPWL_Color				GetBorderLeftTopColor(int32_t nBorderStyle) const;
+	virtual CPWL_Color				GetBorderRightBottomColor(int32_t nBorderStyle) const;
 
 	virtual FX_BOOL					IsModified() const {return FALSE;}
 
@@ -345,9 +345,9 @@ public:
 
 	void							SetBackgroundColor(const CPWL_Color & color);		
 	void							SetBorderColor(const CPWL_Color & color);
-	void							SetBorderWidth(FX_INT32 nBorderWidth);
+	void							SetBorderWidth(int32_t nBorderWidth);
 	void							SetClipRect(const CPDF_Rect & rect);
-	void							SetBorderStyle(FX_INT32 eBorderStyle);	
+	void							SetBorderStyle(int32_t eBorderStyle);	
 	void							SetBorderDash(const CPWL_Dash & sDash);
 
 	CPDF_Rect						GetOriginWindowRect() const;
@@ -356,14 +356,14 @@ public:
 	CPDF_Point						GetCenterPoint() const;
 	CPDF_Rect						GetClientCenterSquare() const;
 	CPDF_Rect						GetWindowCenterSquare() const;		
-	FX_INT32						GetBorderWidth() const;		
+	int32_t						GetBorderWidth() const;		
 	FX_BOOL							IsVisible() const {return m_bVisible;}	
 	FX_BOOL							HasFlag(FX_DWORD dwFlags) const;
 	void							AddFlag(FX_DWORD dwFlags);
 	void							RemoveFlag(FX_DWORD dwFlags);
 	CPDF_Rect						GetClipRect() const;		
 	CPWL_Wnd*						GetParentWindow() const;		
-	FX_INT32						GetBorderStyle() const;	
+	int32_t						GetBorderStyle() const;	
 	CPWL_Dash						GetBorderDash() const;
 	void*							GetAttachedData() const;
 	
@@ -381,8 +381,8 @@ public:
 	virtual IFX_SystemHandler*		GetSystemHandler() const;
 	IPWL_FocusHandler*				GetFocusHandler() const;
 	
-	FX_INT32						GetTransparency();
-	void							SetTransparency(FX_INT32 nTransparency);
+	int32_t						GetTransparency();
+	void							SetTransparency(int32_t nTransparency);
 
 	CPDF_Matrix						GetChildToRoot() const;
 	CPDF_Matrix						GetChildMatrix() const;
@@ -431,7 +431,7 @@ protected:
 	
 	void							InvalidateRectMove(const CPDF_Rect & rcOld, const CPDF_Rect & rcNew);
 
-	void							PWLtoWnd(const CPDF_Point & point, FX_INT32& x, FX_INT32& y) const;
+	void							PWLtoWnd(const CPDF_Point & point, int32_t& x, int32_t& y) const;
 	FX_RECT							PWLtoWnd(const CPDF_Rect & rect) const;	
 	FX_HWND							GetAttachedHWnd() const;
 	

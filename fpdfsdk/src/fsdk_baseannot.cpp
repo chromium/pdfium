@@ -12,24 +12,24 @@
 //---------------------------------------------------------------------------
 //								CPDFSDK_DateTime	
 //---------------------------------------------------------------------------
-int _gAfxGetTimeZoneInSeconds(FX_CHAR tzhour, FX_BYTE tzminute)
+int _gAfxGetTimeZoneInSeconds(FX_CHAR tzhour, uint8_t tzminute)
 {
 	return (int)tzhour * 3600 + (int)tzminute * (tzhour >= 0 ? 60 : -60);
 }
 
-FX_BOOL _gAfxIsLeapYear(FX_SHORT year)
+FX_BOOL _gAfxIsLeapYear(int16_t year)
 {
 	return ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0)));
 }
 
-FX_WORD _gAfxGetYearDays(FX_SHORT year)
+FX_WORD _gAfxGetYearDays(int16_t year)
 {
 	return (_gAfxIsLeapYear(year) == TRUE ? 366 : 365);
 }
 
-FX_BYTE _gAfxGetMonthDays(FX_SHORT year, FX_BYTE month)
+uint8_t _gAfxGetMonthDays(int16_t year, uint8_t month)
 {
-	FX_BYTE	mDays;
+	uint8_t	mDays;
 	switch (month)
 	{
 	case 1:
@@ -117,12 +117,12 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::operator = (const FX_SYSTEMTIME& st)
 {
 	tzset();
 
-	dt.year = (FX_SHORT)st.wYear;
-	dt.month = (FX_BYTE)st.wMonth;
-	dt.day = (FX_BYTE)st.wDay;
-	dt.hour = (FX_BYTE)st.wHour;
-	dt.minute = (FX_BYTE)st.wMinute;
-	dt.second = (FX_BYTE)st.wSecond;
+	dt.year = (int16_t)st.wYear;
+	dt.month = (uint8_t)st.wMonth;
+	dt.day = (uint8_t)st.wDay;
+	dt.hour = (uint8_t)st.wHour;
+	dt.minute = (uint8_t)st.wMinute;
+	dt.second = (uint8_t)st.wSecond;
 // 	dt.tzHour = _timezone / 3600 * -1;
 // 	dt.tzMinute = (abs(_timezone) % 3600) / 60;
 	return *this;
@@ -234,7 +234,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(const CFX_ByteString& 
 			if (ch < '0' || ch > '9') break;
 			i ++;
 		}
-		dt.year = (FX_SHORT)k;
+		dt.year = (int16_t)k;
 		if (i >= strLength || j < 4) return *this;
 
 		j = 0;
@@ -247,7 +247,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(const CFX_ByteString& 
 			if (ch < '0' || ch > '9') break;
 			i ++;
 		}
-		dt.month = (FX_BYTE)k;
+		dt.month = (uint8_t)k;
 		if (i >= strLength || j < 2) return *this;
 
 		j = 0;
@@ -260,7 +260,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(const CFX_ByteString& 
 			if (ch < '0' || ch > '9') break;
 			i ++;
 		}
-		dt.day = (FX_BYTE)k;
+		dt.day = (uint8_t)k;
 		if (i >= strLength || j < 2) return *this;
 
 		j = 0;
@@ -273,7 +273,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(const CFX_ByteString& 
 			if (ch < '0' || ch > '9') break;
 			i ++;
 		}
-		dt.hour = (FX_BYTE)k;
+		dt.hour = (uint8_t)k;
 		if (i >= strLength || j < 2) return *this;
 
 		j = 0;
@@ -286,7 +286,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(const CFX_ByteString& 
 			if (ch < '0' || ch > '9') break;
 			i ++;
 		}
-		dt.minute = (FX_BYTE)k;
+		dt.minute = (uint8_t)k;
 		if (i >= strLength || j < 2) return *this;
 
 		j = 0;
@@ -299,7 +299,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(const CFX_ByteString& 
 			if (ch < '0' || ch > '9') break;
 			i ++;
 		}
-		dt.second = (FX_BYTE)k;
+		dt.second = (uint8_t)k;
 		if (i >= strLength || j < 2) return *this;
 
 		ch = dtStr[i ++];
@@ -333,7 +333,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(const CFX_ByteString& 
 			if (ch < '0' || ch > '9') break;
 			i ++;
 		}
-		dt.tzMinute = (FX_BYTE)k;
+		dt.tzMinute = (uint8_t)k;
 		if (i >= strLength || j < 2) return *this;
 	}
 
@@ -401,9 +401,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddDays(short days)
 {
 	if (days == 0) return *this;
 
-	FX_SHORT	y = dt.year, yy;
-	FX_BYTE		m = dt.month;
-	FX_BYTE		d = dt.day;
+	int16_t	y = dt.year, yy;
+	uint8_t		m = dt.month;
+	uint8_t		d = dt.day;
 	int			mdays, ydays, ldays;
 
 	ldays = days;
@@ -489,11 +489,11 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddSeconds(int seconds)
 		days = n / 86400;
 		n %= 86400;
 	}
-	dt.hour = (FX_BYTE)(n / 3600);
+	dt.hour = (uint8_t)(n / 3600);
 	dt.hour %= 24;
 	n %= 3600;
-	dt.minute = (FX_BYTE)(n / 60);
-	dt.second = (FX_BYTE)(n % 60);
+	dt.minute = (uint8_t)(n / 60);
+	dt.second = (uint8_t)(n % 60);
 	if (days != 0) AddDays(days);
 
 	return *this;
@@ -965,7 +965,7 @@ void CPDFSDK_Annot::WriteAppearance(const CFX_ByteString& sAPType, const CPDF_Re
 	{
 		CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
 		pStream = new CPDF_Stream(NULL, 0, NULL);
-		FX_INT32 objnum = pDoc->AddIndirectObject(pStream);
+		int32_t objnum = pDoc->AddIndirectObject(pStream);
 		pParentDict->SetAtReference(sAPType, pDoc, objnum);
 	}
 
@@ -985,7 +985,7 @@ void CPDFSDK_Annot::WriteAppearance(const CFX_ByteString& sAPType, const CPDF_Re
 		pStreamDict->SetAtRect("BBox", rcBBox);		
 	}
 	
-	pStream->SetData((FX_BYTE*)sContents.c_str(), sContents.GetLength(), FALSE, FALSE);
+	pStream->SetData((uint8_t*)sContents.c_str(), sContents.GetLength(), FALSE, FALSE);
 }
 
 #define BA_ANNOT_MINWIDTH			1

@@ -17,7 +17,7 @@ public:
     virtual void			SetPolicy(FX_BOOL bSeparateNeutral = TRUE) = 0;
     virtual FX_BOOL			AppendChar(FX_WCHAR wch) = 0;
     virtual FX_BOOL			EndChar() = 0;
-    virtual FX_INT32		GetBidiInfo(FX_INT32 &iStart, FX_INT32 &iCount) = 0;
+    virtual int32_t		GetBidiInfo(int32_t &iStart, int32_t &iCount) = 0;
     virtual void			Reset() = 0;
 
 protected:

@@ -73,7 +73,7 @@ void CPDF_Metadata::LoadDoc(CPDF_Document *pDoc)
         pElmntRdf = pXmlElmnt->GetElement(NULL, FX_BSTRC("RDF"));
     }
 }
-FX_INT32 CPDF_Metadata::GetString(FX_BSTR bsItem, CFX_WideString &wsStr)
+int32_t CPDF_Metadata::GetString(FX_BSTR bsItem, CFX_WideString &wsStr)
 {
     if (!((PDFDOC_LPMETADATA)m_pData)->m_pXmlElmnt) {
         return -1;

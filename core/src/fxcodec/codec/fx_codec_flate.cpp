@@ -13,7 +13,7 @@ extern "C"
 {
     static void* my_alloc_func (void* opaque, unsigned int items, unsigned int size)
     {
-        return FX_Alloc2D(FX_BYTE, items, size);
+        return FX_Alloc2D(uint8_t, items, size);
     }
     static void   my_free_func  (void* opaque, void* address)
     {
@@ -79,22 +79,22 @@ extern "C"
 class CLZWDecoder 
 {
 public:
-    FX_BOOL Decode(FX_LPBYTE output, FX_DWORD& outlen, const FX_BYTE* input, FX_DWORD& size, FX_BOOL bEarlyChange);
+    FX_BOOL Decode(FX_LPBYTE output, FX_DWORD& outlen, const uint8_t* input, FX_DWORD& size, FX_BOOL bEarlyChange);
 private:
     FX_DWORD	m_InPos;
     FX_DWORD	m_OutPos;
     FX_LPBYTE	m_pOutput;
-    const FX_BYTE*	m_pInput;
+    const uint8_t*	m_pInput;
     FX_BOOL		m_Early;
-    void		AddCode(FX_DWORD prefix_code, FX_BYTE append_char);
+    void		AddCode(FX_DWORD prefix_code, uint8_t append_char);
     FX_DWORD	m_CodeArray[5021];
     FX_DWORD	m_nCodes;
-    FX_BYTE		m_DecodeStack[4000];
+    uint8_t		m_DecodeStack[4000];
     FX_DWORD	m_StackLen;
     void		DecodeString(FX_DWORD code);
     int			m_CodeLen;
 };
-void CLZWDecoder::AddCode(FX_DWORD prefix_code, FX_BYTE append_char)
+void CLZWDecoder::AddCode(FX_DWORD prefix_code, uint8_t append_char)
 {
     if (m_nCodes + m_Early == 4094) {
         return;
@@ -119,15 +119,15 @@ void CLZWDecoder::DecodeString(FX_DWORD code)
         if (m_StackLen >= sizeof(m_DecodeStack)) {
             return;
         }
-        m_DecodeStack[m_StackLen++] = (FX_BYTE)data;
+        m_DecodeStack[m_StackLen++] = (uint8_t)data;
         code = data >> 16;
     }
     if (m_StackLen >= sizeof(m_DecodeStack)) {
         return;
     }
-    m_DecodeStack[m_StackLen++] = (FX_BYTE)code;
+    m_DecodeStack[m_StackLen++] = (uint8_t)code;
 }
-int CLZWDecoder::Decode(FX_LPBYTE dest_buf, FX_DWORD& dest_size, const FX_BYTE* src_buf, FX_DWORD& src_size, FX_BOOL bEarlyChange)
+int CLZWDecoder::Decode(FX_LPBYTE dest_buf, FX_DWORD& dest_size, const uint8_t* src_buf, FX_DWORD& src_size, FX_BOOL bEarlyChange)
 {
     m_CodeLen = 9;
     m_InPos = 0;
@@ -137,7 +137,7 @@ int CLZWDecoder::Decode(FX_LPBYTE dest_buf, FX_DWORD& dest_size, const FX_BYTE* 
     m_Early = bEarlyChange ? 1 : 0;
     m_nCodes = 0;
     FX_DWORD old_code = (FX_DWORD) - 1;
-    FX_BYTE last_char;
+    uint8_t last_char;
     while (1) {
         if (m_InPos + m_CodeLen > src_size * 8) {
             break;
@@ -164,10 +164,10 @@ int CLZWDecoder::Decode(FX_LPBYTE dest_buf, FX_DWORD& dest_size, const FX_BYTE* 
                 return -5;
             }
             if (m_pOutput) {
-                m_pOutput[m_OutPos] = (FX_BYTE)code;
+                m_pOutput[m_OutPos] = (uint8_t)code;
             }
             m_OutPos ++;
-            last_char = (FX_BYTE)code;
+            last_char = (uint8_t)code;
             if (old_code != (FX_DWORD) - 1) {
                 AddCode(old_code, last_char);
             }
@@ -217,19 +217,19 @@ int CLZWDecoder::Decode(FX_LPBYTE dest_buf, FX_DWORD& dest_size, const FX_BYTE* 
     src_size = (m_InPos + 7) / 8;
     return 0;
 }
-static FX_BYTE PaethPredictor(int a, int b, int c)
+static uint8_t PaethPredictor(int a, int b, int c)
 {
     int p = a + b - c;
     int pa = FXSYS_abs(p - a);
     int pb = FXSYS_abs(p - b);
     int pc = FXSYS_abs(p - c);
     if (pa <= pb && pa <= pc) {
-        return (FX_BYTE)a;
+        return (uint8_t)a;
     }
     if (pb <= pc) {
-        return (FX_BYTE)b;
+        return (uint8_t)b;
     }
-    return (FX_BYTE)c;
+    return (uint8_t)c;
 }
 static FX_BOOL PNG_PredictorEncode(FX_LPBYTE& data_buf, FX_DWORD& data_size,
                                    int predictor, int Colors,
@@ -241,7 +241,7 @@ static FX_BOOL PNG_PredictorEncode(FX_LPBYTE& data_buf, FX_DWORD& data_size,
         return FALSE;
     const int row_count = (data_size + row_size - 1) / row_size;
     const int last_row_size = data_size % row_size;
-    FX_LPBYTE dest_buf = FX_Alloc2D(FX_BYTE, row_size + 1, row_count);
+    FX_LPBYTE dest_buf = FX_Alloc2D(uint8_t, row_size + 1, row_count);
     int byte_cnt = 0;
     FX_LPBYTE pSrcData = data_buf;
     FX_LPBYTE pDestData = dest_buf;
@@ -262,7 +262,7 @@ static FX_BOOL PNG_PredictorEncode(FX_LPBYTE& data_buf, FX_DWORD& data_size,
             switch (predictor) {
                 case 11: {
                         pDestData[0] = 1;
-                        FX_BYTE left = 0;
+                        uint8_t left = 0;
                         if (byte >= BytesPerPixel) {
                             left = pSrcData[byte - BytesPerPixel];
                         }
@@ -271,7 +271,7 @@ static FX_BOOL PNG_PredictorEncode(FX_LPBYTE& data_buf, FX_DWORD& data_size,
                     break;
                 case 12: {
                         pDestData[0] = 2;
-                        FX_BYTE up = 0;
+                        uint8_t up = 0;
                         if (row) {
                             up = pSrcData[byte - row_size];
                         }
@@ -280,11 +280,11 @@ static FX_BOOL PNG_PredictorEncode(FX_LPBYTE& data_buf, FX_DWORD& data_size,
                     break;
                 case 13: {
                         pDestData[0] = 3;
-                        FX_BYTE left = 0;
+                        uint8_t left = 0;
                         if (byte >= BytesPerPixel) {
                             left = pSrcData[byte - BytesPerPixel];
                         }
-                        FX_BYTE up = 0;
+                        uint8_t up = 0;
                         if (row) {
                             up = pSrcData[byte - row_size];
                         }
@@ -293,15 +293,15 @@ static FX_BOOL PNG_PredictorEncode(FX_LPBYTE& data_buf, FX_DWORD& data_size,
                     break;
                 case 14: {
                         pDestData[0] = 4;
-                        FX_BYTE left = 0;
+                        uint8_t left = 0;
                         if (byte >= BytesPerPixel) {
                             left = pSrcData[byte - BytesPerPixel];
                         }
-                        FX_BYTE up = 0;
+                        uint8_t up = 0;
                         if (row) {
                             up = pSrcData[byte - row_size];
                         }
-                        FX_BYTE upper_left = 0;
+                        uint8_t upper_left = 0;
                         if (byte >= BytesPerPixel && row) {
                             upper_left = pSrcData[byte - row_size - BytesPerPixel];
                         }
@@ -328,16 +328,16 @@ static void PNG_PredictLine(FX_LPBYTE pDestData, FX_LPCBYTE pSrcData, FX_LPCBYTE
 {
     int row_size = (nPixels * bpc * nColors + 7) / 8;
     int BytesPerPixel = (bpc * nColors + 7) / 8;
-    FX_BYTE tag = pSrcData[0];
+    uint8_t tag = pSrcData[0];
     if (tag == 0) {
         FXSYS_memmove32(pDestData, pSrcData + 1, row_size);
         return;
     }
     for (int byte = 0; byte < row_size; byte ++) {
-        FX_BYTE raw_byte = pSrcData[byte + 1];
+        uint8_t raw_byte = pSrcData[byte + 1];
         switch (tag) {
             case 1:	{
-                    FX_BYTE left = 0;
+                    uint8_t left = 0;
                     if (byte >= BytesPerPixel) {
                         left = pDestData[byte - BytesPerPixel];
                     }
@@ -345,7 +345,7 @@ static void PNG_PredictLine(FX_LPBYTE pDestData, FX_LPCBYTE pSrcData, FX_LPCBYTE
                     break;
                 }
             case 2: {
-                    FX_BYTE up = 0;
+                    uint8_t up = 0;
                     if (pLastLine) {
                         up = pLastLine[byte];
                     }
@@ -353,11 +353,11 @@ static void PNG_PredictLine(FX_LPBYTE pDestData, FX_LPCBYTE pSrcData, FX_LPCBYTE
                     break;
                 }
             case 3: {
-                    FX_BYTE left = 0;
+                    uint8_t left = 0;
                     if (byte >= BytesPerPixel) {
                         left = pDestData[byte - BytesPerPixel];
                     }
-                    FX_BYTE up = 0;
+                    uint8_t up = 0;
                     if (pLastLine) {
                         up = pLastLine[byte];
                     }
@@ -365,15 +365,15 @@ static void PNG_PredictLine(FX_LPBYTE pDestData, FX_LPCBYTE pSrcData, FX_LPCBYTE
                     break;
                 }
             case 4: {
-                    FX_BYTE left = 0;
+                    uint8_t left = 0;
                     if (byte >= BytesPerPixel) {
                         left = pDestData[byte - BytesPerPixel];
                     }
-                    FX_BYTE up = 0;
+                    uint8_t up = 0;
                     if (pLastLine) {
                         up = pLastLine[byte];
                     }
-                    FX_BYTE upper_left = 0;
+                    uint8_t upper_left = 0;
                     if (byte >= BytesPerPixel && pLastLine) {
                         upper_left = pLastLine[byte - BytesPerPixel];
                     }
@@ -395,12 +395,12 @@ static FX_BOOL PNG_Predictor(FX_LPBYTE& data_buf, FX_DWORD& data_size,
         return FALSE;
     const int row_count = (data_size + row_size) / (row_size + 1);
     const int last_row_size = data_size % (row_size + 1);
-    FX_LPBYTE dest_buf = FX_Alloc2D(FX_BYTE, row_size, row_count);
+    FX_LPBYTE dest_buf = FX_Alloc2D(uint8_t, row_size, row_count);
     int byte_cnt = 0;
     FX_LPBYTE pSrcData = data_buf;
     FX_LPBYTE pDestData = dest_buf;
     for (int row = 0; row < row_count; row ++) {
-        FX_BYTE tag = pSrcData[0];
+        uint8_t tag = pSrcData[0];
         byte_cnt++;
         if (tag == 0) {
             int move_size = row_size;
@@ -414,10 +414,10 @@ static FX_BOOL PNG_Predictor(FX_LPBYTE& data_buf, FX_DWORD& data_size,
             continue;
         }
         for (int byte = 0; byte < row_size && byte_cnt < (int)data_size; byte ++) {
-            FX_BYTE raw_byte = pSrcData[byte + 1];
+            uint8_t raw_byte = pSrcData[byte + 1];
             switch (tag) {
                 case 1:	{
-                        FX_BYTE left = 0;
+                        uint8_t left = 0;
                         if (byte >= BytesPerPixel) {
                             left = pDestData[byte - BytesPerPixel];
                         }
@@ -425,7 +425,7 @@ static FX_BOOL PNG_Predictor(FX_LPBYTE& data_buf, FX_DWORD& data_size,
                         break;
                     }
                 case 2: {
-                        FX_BYTE up = 0;
+                        uint8_t up = 0;
                         if (row) {
                             up = pDestData[byte - row_size];
                         }
@@ -433,11 +433,11 @@ static FX_BOOL PNG_Predictor(FX_LPBYTE& data_buf, FX_DWORD& data_size,
                         break;
                     }
                 case 3: {
-                        FX_BYTE left = 0;
+                        uint8_t left = 0;
                         if (byte >= BytesPerPixel) {
                             left = pDestData[byte - BytesPerPixel];
                         }
-                        FX_BYTE up = 0;
+                        uint8_t up = 0;
                         if (row) {
                             up = pDestData[byte - row_size];
                         }
@@ -445,15 +445,15 @@ static FX_BOOL PNG_Predictor(FX_LPBYTE& data_buf, FX_DWORD& data_size,
                         break;
                     }
                 case 4: {
-                        FX_BYTE left = 0;
+                        uint8_t left = 0;
                         if (byte >= BytesPerPixel) {
                             left = pDestData[byte - BytesPerPixel];
                         }
-                        FX_BYTE up = 0;
+                        uint8_t up = 0;
                         if (row) {
                             up = pDestData[byte - row_size];
                         }
-                        FX_BYTE upper_left = 0;
+                        uint8_t upper_left = 0;
                         if (byte >= BytesPerPixel && row) {
                             upper_left = pDestData[byte - row_size - BytesPerPixel];
                         }
@@ -478,7 +478,7 @@ static void TIFF_PredictorEncodeLine(FX_LPBYTE dest_buf, int row_size, int BitsP
 {
     int BytesPerPixel = BitsPerComponent * Colors / 8;
     if (BitsPerComponent < 8) {
-        FX_BYTE mask = 0x01;
+        uint8_t mask = 0x01;
         if (BitsPerComponent == 2) {
             mask = 0x03;
         } else if (BitsPerComponent == 4) {
@@ -490,8 +490,8 @@ static void TIFF_PredictorEncodeLine(FX_LPBYTE dest_buf, int row_size, int BitsP
             int index = i / 8;
             int col_pre = (col == 0) ? (8 - BitsPerComponent) : (col - BitsPerComponent);
             int index_pre = (col == 0) ? (index - 1) : index;
-            FX_BYTE cur = (dest_buf[index] >> (8 - col - BitsPerComponent)) & mask;
-            FX_BYTE left = (dest_buf[index_pre] >> (8 - col_pre - BitsPerComponent)) & mask;
+            uint8_t cur = (dest_buf[index] >> (8 - col - BitsPerComponent)) & mask;
+            uint8_t left = (dest_buf[index_pre] >> (8 - col_pre - BitsPerComponent)) & mask;
             cur -= left;
             cur &= mask;
             cur <<= (8 - col - BitsPerComponent);
@@ -507,7 +507,7 @@ static void TIFF_PredictorEncodeLine(FX_LPBYTE dest_buf, int row_size, int BitsP
             FX_WORD pixel = (dest_buf[i] << 8) | dest_buf[i + 1];
             pixel -= (dest_buf[i - BytesPerPixel] << 8) | dest_buf[i - BytesPerPixel + 1];
             dest_buf[i] = pixel >> 8;
-            dest_buf[i + 1] = (FX_BYTE)pixel;
+            dest_buf[i + 1] = (uint8_t)pixel;
         }
     }
 }
@@ -553,7 +553,7 @@ static void TIFF_PredictLine(FX_LPBYTE dest_buf, int row_size, int BitsPerCompon
             FX_WORD pixel = (dest_buf[i - BytesPerPixel] << 8) | dest_buf[i - BytesPerPixel + 1];
             pixel += (dest_buf[i] << 8) | dest_buf[i + 1];
             dest_buf[i] = pixel >> 8;
-            dest_buf[i + 1] = (FX_BYTE)pixel;
+            dest_buf[i + 1] = (uint8_t)pixel;
         }
     } else {
         for (int i = BytesPerPixel; i < row_size; i ++) {
@@ -641,7 +641,7 @@ void CCodec_FlateScanlineDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_size, 
     m_bpc = bpc;
     m_bColorTransformed = FALSE;
     m_Pitch = (width * nComps * bpc + 7) / 8;
-    m_pScanline = FX_Alloc(FX_BYTE, m_Pitch);
+    m_pScanline = FX_Alloc(uint8_t, m_Pitch);
     m_Predictor = 0;
     if (predictor) {
         if (predictor >= 10) {
@@ -659,9 +659,9 @@ void CCodec_FlateScanlineDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_size, 
             m_BitsPerComponent = BitsPerComponent;
             m_Columns = Columns;
             m_PredictPitch = (m_BitsPerComponent * m_Colors * m_Columns + 7) / 8;
-            m_pLastLine = FX_Alloc(FX_BYTE, m_PredictPitch);
-            m_pPredictRaw = FX_Alloc(FX_BYTE, m_PredictPitch + 1);
-            m_pPredictBuffer = FX_Alloc(FX_BYTE, m_PredictPitch);
+            m_pLastLine = FX_Alloc(uint8_t, m_PredictPitch);
+            m_pPredictRaw = FX_Alloc(uint8_t, m_PredictPitch + 1);
+            m_pPredictBuffer = FX_Alloc(uint8_t, m_PredictPitch);
         }
     }
 }
@@ -737,7 +737,7 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
     FX_DWORD last_buf_size = buf_size;
     void* context = nullptr;
 
-    FX_LPBYTE guess_buf = FX_Alloc(FX_BYTE, guess_size + 1);
+    FX_LPBYTE guess_buf = FX_Alloc(uint8_t, guess_size + 1);
     FX_LPBYTE cur_buf = guess_buf;
     guess_buf[guess_size] = '\0';
     context = FPDFAPI_FlateInit(my_alloc_func, my_free_func);
@@ -746,10 +746,10 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
     FPDFAPI_FlateInput(context, src_buf, src_size);
     if (useOldImpl) {
         while (1) {
-            FX_INT32 ret = FPDFAPI_FlateOutput(context, cur_buf, buf_size);
+            int32_t ret = FPDFAPI_FlateOutput(context, cur_buf, buf_size);
             if (ret != Z_OK)
                 break;
-            FX_INT32 avail_buf_size = FPDFAPI_FlateGetAvailOut(context);
+            int32_t avail_buf_size = FPDFAPI_FlateGetAvailOut(context);
             if (avail_buf_size != 0)
                 break;
 
@@ -758,7 +758,7 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
             guess_size += alloc_step;
             if (guess_size < old_size || guess_size + 1 < guess_size)
                 goto fail;
-            guess_buf = FX_Realloc(FX_BYTE, guess_buf, guess_size + 1);
+            guess_buf = FX_Realloc(uint8_t, guess_buf, guess_size + 1);
             if (!guess_buf)
                 goto fail;
             guess_buf[guess_size] = '\0';
@@ -768,7 +768,7 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
         dest_size = FPDFAPI_FlateGetTotalOut(context);
         offset = FPDFAPI_FlateGetTotalIn(context);
         if (guess_size / 2 > dest_size) {
-            guess_buf = FX_Realloc(FX_BYTE, guess_buf, dest_size + 1);
+            guess_buf = FX_Realloc(uint8_t, guess_buf, dest_size + 1);
             if (!guess_buf)
                 goto fail;
             guess_size = dest_size;
@@ -778,8 +778,8 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
     } else {
         CFX_ArrayTemplate<FX_LPBYTE> result_tmp_bufs;
         while (1) {
-            FX_INT32 ret = FPDFAPI_FlateOutput(context, cur_buf, buf_size);
-            FX_INT32 avail_buf_size = FPDFAPI_FlateGetAvailOut(context);
+            int32_t ret = FPDFAPI_FlateOutput(context, cur_buf, buf_size);
+            int32_t avail_buf_size = FPDFAPI_FlateGetAvailOut(context);
             if (ret != Z_OK) {
                 last_buf_size = buf_size - avail_buf_size;
                 result_tmp_bufs.Add(cur_buf);
@@ -793,7 +793,7 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
 
             // |avail_buf_size| == 0 case.
             result_tmp_bufs.Add(cur_buf);
-            cur_buf = FX_Alloc(FX_BYTE, buf_size + 1);
+            cur_buf = FX_Alloc(uint8_t, buf_size + 1);
             cur_buf[buf_size] = '\0';
         }
         dest_size = FPDFAPI_FlateGetTotalOut(context);
@@ -801,9 +801,9 @@ static void FlateUncompress(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_DWORD orig
         if (result_tmp_bufs.GetSize() == 1) {
             dest_buf = result_tmp_bufs[0];
         } else {
-            FX_LPBYTE result_buf = FX_Alloc(FX_BYTE, dest_size);
+            FX_LPBYTE result_buf = FX_Alloc(uint8_t, dest_size);
             FX_DWORD result_pos = 0;
-            for (FX_INT32 i = 0; i < result_tmp_bufs.GetSize(); i++) {
+            for (int32_t i = 0; i < result_tmp_bufs.GetSize(); i++) {
                 FX_LPBYTE tmp_buf = result_tmp_bufs[i];
                 FX_DWORD tmp_buf_size = buf_size;
                 if (i == result_tmp_bufs.GetSize() - 1) {
@@ -832,7 +832,7 @@ ICodec_ScanlineDecoder*	CCodec_FlateModule::CreateDecoder(FX_LPCBYTE src_buf, FX
     pDecoder->Create(src_buf, src_size, width, height, nComps, bpc, predictor, Colors, BitsPerComponent, Columns);
     return pDecoder;
 }
-FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_buf, FX_DWORD src_size, FX_BOOL bEarlyChange,
+FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW, const uint8_t* src_buf, FX_DWORD src_size, FX_BOOL bEarlyChange,
         int predictor, int Colors, int BitsPerComponent, int Columns,
         FX_DWORD estimated_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
 {
@@ -859,7 +859,7 @@ FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_b
         }
         {
             nonstd::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
-            dest_buf = FX_Alloc( FX_BYTE, dest_size + 1);
+            dest_buf = FX_Alloc( uint8_t, dest_size + 1);
             dest_buf[dest_size] = '\0';
             decoder->Decode(dest_buf, dest_size, src_buf, offset, bEarlyChange);
         }
@@ -879,7 +879,7 @@ FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_b
     }
     return ret ? offset : -1;
 }
-FX_BOOL CCodec_FlateModule::Encode(const FX_BYTE* src_buf, FX_DWORD src_size,
+FX_BOOL CCodec_FlateModule::Encode(const uint8_t* src_buf, FX_DWORD src_size,
                                    int predictor, int Colors, int BitsPerComponent, int Columns,
                                    FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
 {
@@ -887,7 +887,7 @@ FX_BOOL CCodec_FlateModule::Encode(const FX_BYTE* src_buf, FX_DWORD src_size,
         return Encode(src_buf, src_size, dest_buf, dest_size);
     }
     FX_LPBYTE pSrcBuf = NULL;
-    pSrcBuf = FX_Alloc(FX_BYTE, src_size);
+    pSrcBuf = FX_Alloc(uint8_t, src_size);
     FXSYS_memcpy32(pSrcBuf, src_buf, src_size);
     FX_BOOL ret = TRUE;
     if (predictor == 2) {
@@ -905,7 +905,7 @@ FX_BOOL CCodec_FlateModule::Encode(const FX_BYTE* src_buf, FX_DWORD src_size,
 FX_BOOL CCodec_FlateModule::Encode(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
 {
     dest_size = src_size + src_size / 1000 + 12;
-    dest_buf = FX_Alloc( FX_BYTE, dest_size);
+    dest_buf = FX_Alloc( uint8_t, dest_size);
     unsigned long temp_size = dest_size;
     FPDFAPI_FlateCompress(dest_buf, &temp_size, src_buf, src_size);
     dest_size = (FX_DWORD)temp_size;

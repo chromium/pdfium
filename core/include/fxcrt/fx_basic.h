@@ -41,14 +41,14 @@ public:
 
     void					AppendBlock(const void* pBuf, FX_STRSIZE size);
 
-    void					AppendFill(FX_BYTE byte, FX_STRSIZE count);
+    void					AppendFill(uint8_t byte, FX_STRSIZE count);
 
     void					AppendString(FX_BSTR str)
     {
         AppendBlock(str.GetPtr(), str.GetLength());
     }
 
-    inline void				AppendByte(FX_BYTE byte)
+    inline void				AppendByte(uint8_t byte)
     {
         if (m_AllocSize <= m_DataSize) {
             ExpandBuf(1);
@@ -99,7 +99,7 @@ public:
 
     void					AppendChar(int ch)
     {
-        AppendByte((FX_BYTE)ch);
+        AppendByte((uint8_t)ch);
     }
 
     CFX_ByteTextBuf&		operator << (int i);
@@ -160,7 +160,7 @@ class CFX_ArchiveSaver
 public:
     CFX_ArchiveSaver() : m_pStream(NULL) {}
 
-    CFX_ArchiveSaver&		operator << (FX_BYTE i);
+    CFX_ArchiveSaver&		operator << (uint8_t i);
 
     CFX_ArchiveSaver&		operator << (int i);
 
@@ -178,7 +178,7 @@ public:
 
     void					Write(const void* pData, FX_STRSIZE dwSize);
 
-    FX_INTPTR				GetLength()
+    intptr_t				GetLength()
     {
         return m_SavingBuf.GetSize();
     }
@@ -204,7 +204,7 @@ public:
 
     CFX_ArchiveLoader(FX_LPCBYTE pData, FX_DWORD dwSize);
 
-    CFX_ArchiveLoader&		operator >> (FX_BYTE& i);
+    CFX_ArchiveLoader&		operator >> (uint8_t& i);
 
     CFX_ArchiveLoader&		operator >> (int& i);
 
@@ -241,14 +241,14 @@ public:
     FX_BOOL					Flush();
 
 
-    FX_INT32				AppendBlock(const void* pBuf, size_t size);
+    int32_t				AppendBlock(const void* pBuf, size_t size);
 
-    FX_INT32				AppendByte(FX_BYTE byte);
+    int32_t				AppendByte(uint8_t byte);
 
-    FX_INT32				AppendDWord(FX_DWORD i);
+    int32_t				AppendDWord(FX_DWORD i);
 
 
-    FX_INT32				AppendString(FX_BSTR lpsz);
+    int32_t				AppendString(FX_BSTR lpsz);
 
 protected:
 
@@ -282,14 +282,14 @@ private:
 };
 struct CFX_CharMap {
 
-    static CFX_CharMap*		GetDefaultMapper(FX_INT32 codepage = 0);
+    static CFX_CharMap*		GetDefaultMapper(int32_t codepage = 0);
 
 
     CFX_WideString	(*m_GetWideString)(CFX_CharMap* pMap, const CFX_ByteString& bstr);
 
     CFX_ByteString	(*m_GetByteString)(CFX_CharMap* pMap, const CFX_WideString& wstr);
 
-    FX_INT32		(*m_GetCodePage)();
+    int32_t		(*m_GetCodePage)();
 };
 class CFX_UTF8Decoder
 {
@@ -301,7 +301,7 @@ public:
 
     void			Clear();
 
-    void			Input(FX_BYTE byte);
+    void			Input(uint8_t byte);
 
     void			AppendChar(FX_DWORD ch);
 
@@ -541,13 +541,13 @@ public:
         return -1;
     }
 };
-typedef CFX_ArrayTemplate<FX_BYTE>		CFX_ByteArray;
+typedef CFX_ArrayTemplate<uint8_t>		CFX_ByteArray;
 typedef CFX_ArrayTemplate<FX_WORD>		CFX_WordArray;
 typedef CFX_ArrayTemplate<FX_DWORD>		CFX_DWordArray;
 typedef CFX_ArrayTemplate<void*>		CFX_PtrArray;
 typedef CFX_ArrayTemplate<FX_FILESIZE>	CFX_FileSizeArray;
 typedef CFX_ArrayTemplate<FX_FLOAT>		CFX_FloatArray;
-typedef CFX_ArrayTemplate<FX_INT32>		CFX_Int32Array;
+typedef CFX_ArrayTemplate<int32_t>		CFX_Int32Array;
 template <class ObjectClass>
 class CFX_ObjectArray : public CFX_BasicArray
 {
@@ -574,12 +574,12 @@ public:
         return InsertSpaceAt(m_nSize, 1);
     }
 
-    FX_INT32		Append(const CFX_ObjectArray& src, FX_INT32 nStart = 0, FX_INT32 nCount = -1)
+    int32_t		Append(const CFX_ObjectArray& src, int32_t nStart = 0, int32_t nCount = -1)
     {
         if (nCount == 0) {
             return 0;
         }
-        FX_INT32 nSize = src.GetSize();
+        int32_t nSize = src.GetSize();
         if (!nSize) {
             return 0;
         }
@@ -597,18 +597,18 @@ public:
         InsertSpaceAt(m_nSize, nCount);
         ObjectClass* pStartObj = (ObjectClass*)GetDataPtr(nSize);
         nSize = nStart + nCount;
-        for (FX_INT32 i = nStart; i < nSize; i ++, pStartObj++) {
+        for (int32_t i = nStart; i < nSize; i ++, pStartObj++) {
             new ((void*)pStartObj) ObjectClass(src[i]);
         }
         return nCount;
     }
 
-    FX_INT32		Copy(const CFX_ObjectArray& src, FX_INT32 nStart = 0, FX_INT32 nCount = -1)
+    int32_t		Copy(const CFX_ObjectArray& src, int32_t nStart = 0, int32_t nCount = -1)
     {
         if (nCount == 0) {
             return 0;
         }
-        FX_INT32 nSize = src.GetSize();
+        int32_t nSize = src.GetSize();
         if (!nSize) {
             return 0;
         }
@@ -626,7 +626,7 @@ public:
         SetSize(nCount);
         ObjectClass* pStartObj = (ObjectClass*)m_pData;
         nSize = nStart + nCount;
-        for (FX_INT32 i = nStart; i < nSize; i ++, pStartObj++) {
+        for (int32_t i = nStart; i < nSize; i ++, pStartObj++) {
             new ((void*)pStartObj) ObjectClass(src[i]);
         }
         return nCount;
@@ -704,9 +704,9 @@ private:
 
     short			m_SegmentSize;
 
-    FX_BYTE			m_IndexSize;
+    uint8_t			m_IndexSize;
 
-    FX_BYTE			m_IndexDepth;
+    uint8_t			m_IndexDepth;
 
     int				m_DataSize;
 
@@ -859,26 +859,26 @@ public:
     FX_BOOL	Lookup(KeyType key, ValueType& rValue) const
     {
         FX_LPVOID pValue = NULL;
-        if (!CFX_MapPtrToPtr::Lookup((void*)(FX_UINTPTR)key, pValue)) {
+        if (!CFX_MapPtrToPtr::Lookup((void*)(uintptr_t)key, pValue)) {
             return FALSE;
         }
-        rValue = (ValueType)(FX_UINTPTR)pValue;
+        rValue = (ValueType)(uintptr_t)pValue;
         return TRUE;
     }
 
     ValueType& operator[](KeyType key)
     {
-        return (ValueType&)CFX_MapPtrToPtr::operator []((void*)(FX_UINTPTR)key);
+        return (ValueType&)CFX_MapPtrToPtr::operator []((void*)(uintptr_t)key);
     }
 
     void SetAt(KeyType key, ValueType newValue)
     {
-        CFX_MapPtrToPtr::SetAt((void*)(FX_UINTPTR)key, (void*)(FX_UINTPTR)newValue);
+        CFX_MapPtrToPtr::SetAt((void*)(uintptr_t)key, (void*)(uintptr_t)newValue);
     }
 
     FX_BOOL	RemoveKey(KeyType key)
     {
-        return CFX_MapPtrToPtr::RemoveKey((void*)(FX_UINTPTR)key);
+        return CFX_MapPtrToPtr::RemoveKey((void*)(uintptr_t)key);
     }
 
     void GetNextAssoc(FX_POSITION& rNextPosition, KeyType& rKey, ValueType& rValue) const
@@ -886,8 +886,8 @@ public:
         void* pKey = NULL;
         void* pValue = NULL;
         CFX_MapPtrToPtr::GetNextAssoc(rNextPosition, pKey, pValue);
-        rKey = (KeyType)(FX_UINTPTR)pKey;
-        rValue = (ValueType)(FX_UINTPTR)pValue;
+        rKey = (KeyType)(uintptr_t)pKey;
+        rValue = (ValueType)(uintptr_t)pValue;
     }
 };
 class CFX_CMapDWordToDWord 
@@ -1419,9 +1419,9 @@ protected:
 
     struct DataList {
 
-        FX_INT32	start;
+        int32_t	start;
 
-        FX_INT32	count;
+        int32_t	count;
         FX_LPBYTE	data;
     };
 public:
@@ -1436,7 +1436,7 @@ public:
 
     void			Clear()
     {
-        for (FX_INT32 i = m_DataLists.GetUpperBound(); i >= 0; i--) {
+        for (int32_t i = m_DataLists.GetUpperBound(); i >= 0; i--) {
             DataList list = m_DataLists.ElementAt(i);
             if (list.data) {
                 FX_Free(list.data);
@@ -1446,15 +1446,15 @@ public:
         m_CurList = 0;
     }
 
-    void			Append(FX_INT32 nStart, FX_INT32 nCount)
+    void			Append(int32_t nStart, int32_t nCount)
     {
         if (nStart < 0) {
             return;
         }
         while (nCount > 0) {
-            FX_INT32 temp_count = FX_MIN(nCount, FX_DATALIST_LENGTH);
+            int32_t temp_count = FX_MIN(nCount, FX_DATALIST_LENGTH);
             DataList list;
-            list.data = FX_Alloc2D(FX_BYTE, temp_count, unit);
+            list.data = FX_Alloc2D(uint8_t, temp_count, unit);
             list.start = nStart;
             list.count = temp_count;
             Append(list);
@@ -1463,7 +1463,7 @@ public:
         }
     }
 
-    FX_LPBYTE		GetAt(FX_INT32 nIndex)
+    FX_LPBYTE		GetAt(int32_t nIndex)
     {
         if (nIndex < 0) {
             return NULL;
@@ -1474,9 +1474,9 @@ public:
         DataList *pCurList = m_DataLists.GetDataPtr(m_CurList);
         if (!pCurList || nIndex < pCurList->start || nIndex >= pCurList->start + pCurList->count) {
             pCurList = NULL;
-            FX_INT32 iStart = 0;
-            FX_INT32 iEnd = m_DataLists.GetUpperBound();
-            FX_INT32 iMid = 0;
+            int32_t iStart = 0;
+            int32_t iEnd = m_DataLists.GetUpperBound();
+            int32_t iMid = 0;
             while (iStart <= iEnd) {
                 iMid = (iStart + iEnd) / 2;
                 DataList* list = m_DataLists.GetDataPtr(iMid);
@@ -1496,11 +1496,11 @@ public:
 protected:
     void			Append(const DataList& list)
     {
-        FX_INT32 iStart = 0;
-        FX_INT32 iEnd = m_DataLists.GetUpperBound();
-        FX_INT32 iFind = 0;
+        int32_t iStart = 0;
+        int32_t iEnd = m_DataLists.GetUpperBound();
+        int32_t iFind = 0;
         while (iStart <= iEnd) {
-            FX_INT32 iMid = (iStart + iEnd) / 2;
+            int32_t iMid = (iStart + iEnd) / 2;
             DataList* cur_list = m_DataLists.GetDataPtr(iMid);
             if (list.start < cur_list->start + cur_list->count) {
                 iEnd = iMid - 1;
@@ -1520,7 +1520,7 @@ protected:
         }
         m_DataLists.InsertAt(iFind, list);
     }
-    FX_INT32		m_CurList;
+    int32_t		m_CurList;
     CFX_ArrayTemplate<DataList>	m_DataLists;
 };
 template<typename T1, typename T2>
@@ -1533,19 +1533,19 @@ public:
         m_Data.Clear();
     }
 
-    void			Add(FX_INT32 nStart, FX_INT32 nCount)
+    void			Add(int32_t nStart, int32_t nCount)
     {
         m_Data.Append(nStart, nCount);
     }
 
-    T2&				operator [] (FX_INT32 nIndex)
+    T2&				operator [] (int32_t nIndex)
     {
         FX_LPBYTE data = m_Data.GetAt(nIndex);
         FXSYS_assert(data != NULL);
         return (T2&)(*(volatile T2*)data);
     }
 
-    T2*				GetPtrAt(FX_INT32 nIndex)
+    T2*				GetPtrAt(int32_t nIndex)
     {
         return (T2*)m_Data.GetAt(nIndex);
     }

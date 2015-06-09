@@ -93,7 +93,7 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData, const CFX_AffineM
     CFX_ByteTextBuf buf;
     buf.EstimateSize(nPoints * 10);
     for (int i = 0; i < nPoints; i ++) {
-        FX_BYTE flag = pPathData->GetFlag(i);
+        uint8_t flag = pPathData->GetFlag(i);
         FX_FLOAT x = pPathData->GetPointX(i);
         FX_FLOAT y = pPathData->GetPointY(i);
         if (pObject2Device) {
@@ -348,7 +348,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
     if (pSource->GetBPP() == 1 && pSource->GetPalette() == NULL) {
         int pitch = (width + 7) / 8;
         FX_DWORD src_size = height * pitch;
-        FX_LPBYTE src_buf = FX_Alloc(FX_BYTE, src_size);
+        FX_LPBYTE src_buf = FX_Alloc(uint8_t, src_size);
         for (int row = 0; row < height; row ++) {
             FX_LPCBYTE src_scan = pSource->GetScanline(row);
             FXSYS_memcpy32(src_buf + row * pitch, src_scan, pitch);
@@ -421,7 +421,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
         if (filter == NULL) {
             int src_pitch = width * Bpp;
             output_size = height * src_pitch;
-            output_buf = FX_Alloc(FX_BYTE, output_size);
+            output_buf = FX_Alloc(uint8_t, output_size);
             for (int row = 0; row < height; row ++) {
                 FX_LPCBYTE src_scan = pConverted->GetScanline(row);
                 FX_LPBYTE dest_scan = output_buf + row * src_pitch;

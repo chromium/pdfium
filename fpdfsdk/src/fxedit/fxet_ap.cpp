@@ -8,7 +8,7 @@
 #include "../../include/fxedit/fx_edit.h"
 #include "../../include/fxedit/fxet_edit.h"
 
-CFX_ByteString GetPDFWordString(IFX_Edit_FontMap * pFontMap, FX_INT32 nFontIndex, FX_WORD Word, FX_WORD SubWord) 
+CFX_ByteString GetPDFWordString(IFX_Edit_FontMap * pFontMap, int32_t nFontIndex, FX_WORD Word, FX_WORD SubWord) 
 {
 	ASSERT (pFontMap != NULL);
 
@@ -50,7 +50,7 @@ static CFX_ByteString GetWordRenderString(const CFX_ByteString & strWords)
 	return "";
 }
 
-static CFX_ByteString GetFontSetString(IFX_Edit_FontMap * pFontMap, FX_INT32 nFontIndex, FX_FLOAT fFontSize)
+static CFX_ByteString GetFontSetString(IFX_Edit_FontMap * pFontMap, int32_t nFontIndex, FX_FLOAT fFontSize)
 {
 	CFX_ByteTextBuf sRet;
 
@@ -71,7 +71,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Poi
 	CFX_ByteTextBuf sEditStream, sWords;
 
 	CPDF_Point ptOld(0.0f,0.0f),ptNew(0.0f,0.0f);
-	FX_INT32 nCurFontIndex = -1;
+	int32_t nCurFontIndex = -1;
 
 	if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator())
 	{
@@ -171,7 +171,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Poi
 	CFX_ByteTextBuf sAppStream;
 	if (sEditStream.GetSize() > 0)
 	{
-		FX_INT32 nHorzScale = pEdit->GetHorzScale();
+		int32_t nHorzScale = pEdit->GetHorzScale();
 		if (nHorzScale != 100)
 		{
 			sAppStream << nHorzScale << " Tz\n";

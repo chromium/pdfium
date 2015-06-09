@@ -61,7 +61,7 @@ public:
 	virtual FX_BOOL				OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);	
 	virtual FX_BOOL				OnChar(FX_WORD nChar, FX_DWORD nFlag);
 
-	virtual void				OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam = 0, FX_INTPTR lParam = 0);
+	virtual void				OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
 	virtual void				CreateChildWnd(const PWL_CREATEPARAM & cp);
 	virtual void				RePosChildWnd();
@@ -80,11 +80,11 @@ public:
 	void						SetText(FX_LPCWSTR text);
 
 	void						AddString(FX_LPCWSTR string);
-	FX_INT32					GetSelect() const;
-	void						SetSelect(FX_INT32 nItemIndex);
+	int32_t					GetSelect() const;
+	void						SetSelect(int32_t nItemIndex);
 
-	void						SetEditSel(FX_INT32 nStartChar,FX_INT32 nEndChar);
-	void						GetEditSel(FX_INT32 & nStartChar, FX_INT32 & nEndChar ) const;
+	void						SetEditSel(int32_t nStartChar,int32_t nEndChar);
+	void						GetEditSel(int32_t & nStartChar, int32_t & nEndChar ) const;
 	void						Clear();
 	void						SelectAll();
 	FX_BOOL						IsPopup() const;
@@ -105,8 +105,8 @@ private:
 
 	FX_BOOL						m_bPopup;
 	CPDF_Rect					m_rcOldWindow;
-	FX_INT32					m_nPopupWhere;
-	FX_INT32					m_nSelectItem;
+	int32_t					m_nPopupWhere;
+	int32_t					m_nSelectItem;
 	IPWL_Filler_Notify*			m_pFillerNotify;
 
 public:

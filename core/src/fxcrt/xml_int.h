@@ -107,7 +107,7 @@ public:
         }
         m_dwSize = (size_t)FX_MIN(FX_XMLDATASTREAM_BufferSize, nLength - m_nStart);
         if (!m_pBuffer) {
-            m_pBuffer = FX_Alloc(FX_BYTE, m_dwSize);
+            m_pBuffer = FX_Alloc(uint8_t, m_dwSize);
         }
         return m_pFileRead->ReadBlock(m_pBuffer, m_nStart, m_dwSize);
     }

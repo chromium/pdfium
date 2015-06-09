@@ -256,7 +256,7 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc, const CFX_AffineM
     m_Status = 3;
     return TRUE;
 }
-FX_BYTE _bilinear_interpol(FX_LPCBYTE buf, int row_offset_l, int row_offset_r,
+uint8_t _bilinear_interpol(FX_LPCBYTE buf, int row_offset_l, int row_offset_r,
                            int src_col_l, int src_col_r, int res_x, int res_y,
                            int bpp, int c_offset)
 {
@@ -269,23 +269,23 @@ FX_BYTE _bilinear_interpol(FX_LPCBYTE buf, int row_offset_l, int row_offset_r,
     FX_LPCBYTE src_pos1 = buf_u + col_bpp_r;
     FX_LPCBYTE src_pos2 = buf_d + col_bpp_l;
     FX_LPCBYTE src_pos3 = buf_d + col_bpp_r;
-    FX_BYTE r_pos_0 = (*src_pos0 * i_resx + *src_pos1 * res_x) >> 8;
-    FX_BYTE r_pos_1 = (*src_pos2 * i_resx + *src_pos3 * res_x) >> 8;
+    uint8_t r_pos_0 = (*src_pos0 * i_resx + *src_pos1 * res_x) >> 8;
+    uint8_t r_pos_1 = (*src_pos2 * i_resx + *src_pos3 * res_x) >> 8;
     return (r_pos_0 * (255 - res_y) + r_pos_1 * res_y) >> 8;
 }
-FX_BYTE _bicubic_interpol(FX_LPCBYTE buf, int pitch, int pos_pixel[], int u_w[], int v_w[], int res_x, int res_y,
+uint8_t _bicubic_interpol(FX_LPCBYTE buf, int pitch, int pos_pixel[], int u_w[], int v_w[], int res_x, int res_y,
                           int bpp, int c_offset)
 {
     int s_result = 0;
     for (int i = 0; i < 4; i ++) {
         int a_result = 0;
         for (int j = 0; j < 4; j ++) {
-            a_result += u_w[j] * (*(FX_BYTE*)(buf + pos_pixel[i + 4] * pitch + pos_pixel[j] * bpp + c_offset));
+            a_result += u_w[j] * (*(uint8_t*)(buf + pos_pixel[i + 4] * pitch + pos_pixel[j] * bpp + c_offset));
         }
         s_result += a_result * v_w[i];
     }
     s_result >>= 16;
-    return (FX_BYTE)(s_result < 0 ? 0 : s_result > 255 ? 255 : s_result);
+    return (uint8_t)(s_result < 0 ? 0 : s_result > 255 ? 255 : s_result);
 }
 void _bicubic_get_pos_weight(int pos_pixel[], int u_w[], int v_w[], int src_col_l, int src_row_l,
                              int res_x, int res_y, int stretch_width, int stretch_height)
@@ -384,7 +384,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
         if (!(m_Flags & FXDIB_DOWNSAMPLE) && !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
             CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
             for (int row = 0; row < m_ResultHeight; row ++) {
-                FX_BYTE* dest_pos_mask = (FX_BYTE*)pTransformed->m_pAlphaMask->GetScanline(row);
+                uint8_t* dest_pos_mask = (uint8_t*)pTransformed->m_pAlphaMask->GetScanline(row);
                 for (int col = 0; col < m_ResultWidth; col ++) {
                     int src_col_l, src_row_l, res_x, res_y;
                     result2stretch_fix.Transform(col, row, src_col_l, src_row_l, res_x, res_y);
@@ -413,7 +413,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
         } else if (m_Flags & FXDIB_BICUBIC_INTERPOL) {
             CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
             for (int row = 0; row < m_ResultHeight; row ++) {
-                FX_BYTE* dest_pos_mask = (FX_BYTE*)pTransformed->m_pAlphaMask->GetScanline(row);
+                uint8_t* dest_pos_mask = (uint8_t*)pTransformed->m_pAlphaMask->GetScanline(row);
                 for (int col = 0; col < m_ResultWidth; col ++) {
                     int src_col_l, src_row_l, res_x, res_y;
                     result2stretch_fix.Transform(col, row, src_col_l, src_row_l, res_x, res_y);
@@ -435,7 +435,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
         } else {
             CPDF_FixedMatrix result2stretch_fix(result2stretch, 8);
             for (int row = 0; row < m_ResultHeight; row ++) {
-                FX_BYTE* dest_pos_mask = (FX_BYTE*)pTransformed->m_pAlphaMask->GetScanline(row);
+                uint8_t* dest_pos_mask = (uint8_t*)pTransformed->m_pAlphaMask->GetScanline(row);
                 for (int col = 0; col < m_ResultWidth; col ++) {
                     int src_col, src_row;
                     result2stretch_fix.Transform(col, row, src_col, src_row);
@@ -549,7 +549,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
             if (!(m_Flags & FXDIB_DOWNSAMPLE) && !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
                 CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
                 for (int row = 0; row < m_ResultHeight; row ++) {
-                    FX_BYTE* dest_pos = (FX_BYTE*)pTransformed->GetScanline(row);
+                    uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
                     for (int col = 0; col < m_ResultWidth; col ++) {
                         int src_col_l, src_row_l, res_x, res_y;
                         result2stretch_fix.Transform(col, row, src_col_l, src_row_l, res_x, res_y);
@@ -572,9 +572,9 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
                             int row_offset_r = src_row_r * stretch_pitch;
                             FX_DWORD r_bgra_cmyk = argb[_bilinear_interpol(stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r, res_x, res_y, 1, 0)];
                             if (transformF == FXDIB_Rgba) {
-                                dest_pos[0] = (FX_BYTE)(r_bgra_cmyk >> 24);
-                                dest_pos[1] = (FX_BYTE)(r_bgra_cmyk >> 16);
-                                dest_pos[2] = (FX_BYTE)(r_bgra_cmyk >> 8);
+                                dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
+                                dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
+                                dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
                             } else {
                                 *(FX_DWORD*)dest_pos = r_bgra_cmyk;
                             }
@@ -585,7 +585,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
             } else if (m_Flags & FXDIB_BICUBIC_INTERPOL) {
                 CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
                 for (int row = 0; row < m_ResultHeight; row ++) {
-                    FX_BYTE* dest_pos = (FX_BYTE*)pTransformed->GetScanline(row);
+                    uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
                     for (int col = 0; col < m_ResultWidth; col ++) {
                         int src_col_l, src_row_l, res_x, res_y;
                         result2stretch_fix.Transform(col, row, src_col_l, src_row_l, res_x, res_y);
@@ -601,9 +601,9 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
                             _bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l, res_x, res_y, stretch_width, stretch_height);
                             FX_DWORD r_bgra_cmyk = argb[_bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w, v_w, res_x, res_y, 1, 0)];
                             if (transformF == FXDIB_Rgba) {
-                                dest_pos[0] = (FX_BYTE)(r_bgra_cmyk >> 24);
-                                dest_pos[1] = (FX_BYTE)(r_bgra_cmyk >> 16);
-                                dest_pos[2] = (FX_BYTE)(r_bgra_cmyk >> 8);
+                                dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
+                                dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
+                                dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
                             } else {
                                 *(FX_DWORD*)dest_pos = r_bgra_cmyk;
                             }
@@ -614,7 +614,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
             } else {
                 CPDF_FixedMatrix result2stretch_fix(result2stretch, 8);
                 for (int row = 0; row < m_ResultHeight; row ++) {
-                    FX_BYTE* dest_pos = (FX_BYTE*)pTransformed->GetScanline(row);
+                    uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
                     for (int col = 0; col < m_ResultWidth; col ++) {
                         int src_col, src_row;
                         result2stretch_fix.Transform(col, row, src_col, src_row);
@@ -627,9 +627,9 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
                             }
                             FX_DWORD r_bgra_cmyk = argb[stretch_buf[src_row * stretch_pitch + src_col]];
                             if (transformF == FXDIB_Rgba) {
-                                dest_pos[0] = (FX_BYTE)(r_bgra_cmyk >> 24);
-                                dest_pos[1] = (FX_BYTE)(r_bgra_cmyk >> 16);
-                                dest_pos[2] = (FX_BYTE)(r_bgra_cmyk >> 8);
+                                dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
+                                dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
+                                dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
                             } else {
                                 *(FX_DWORD*)dest_pos = r_bgra_cmyk;
                             }
@@ -644,7 +644,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
             if (!(m_Flags & FXDIB_DOWNSAMPLE) && !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
                 CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
                 for (int row = 0; row < m_ResultHeight; row ++) {
-                    FX_BYTE* dest_pos = (FX_BYTE*)pTransformed->GetScanline(row);
+                    uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
                     for (int col = 0; col < m_ResultWidth; col ++) {
                         int src_col_l, src_row_l, res_x, res_y, r_pos_k_r = 0;
                         result2stretch_fix.Transform(col, row, src_col_l, src_row_l, res_x, res_y);
@@ -665,9 +665,9 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
                             }
                             int row_offset_l = src_row_l * stretch_pitch;
                             int row_offset_r = src_row_r * stretch_pitch;
-                            FX_BYTE r_pos_red_y_r   = _bilinear_interpol(stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r, res_x, res_y, Bpp, 2);
-                            FX_BYTE r_pos_green_m_r = _bilinear_interpol(stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r, res_x, res_y, Bpp, 1);
-                            FX_BYTE r_pos_blue_c_r  = _bilinear_interpol(stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r, res_x, res_y, Bpp, 0);
+                            uint8_t r_pos_red_y_r   = _bilinear_interpol(stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r, res_x, res_y, Bpp, 2);
+                            uint8_t r_pos_green_m_r = _bilinear_interpol(stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r, res_x, res_y, Bpp, 1);
+                            uint8_t r_pos_blue_c_r  = _bilinear_interpol(stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r, res_x, res_y, Bpp, 0);
                             if (bHasAlpha) {
                                 if (transformF != FXDIB_Argb) {
                                     if (transformF == FXDIB_Rgba) {
@@ -679,7 +679,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
                                         *(FX_DWORD*)dest_pos = FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r, r_pos_red_y_r, r_pos_k_r));
                                     }
                                 } else {
-                                    FX_BYTE r_pos_a_r = _bilinear_interpol(stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r, res_x, res_y, Bpp, 3);
+                                    uint8_t r_pos_a_r = _bilinear_interpol(stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r, res_x, res_y, Bpp, 3);
                                     *(FX_DWORD*)dest_pos = FXARGB_TODIB(FXARGB_MAKE(r_pos_a_r, r_pos_red_y_r, r_pos_green_m_r, r_pos_blue_c_r));
                                 }
                             } else {
@@ -698,7 +698,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
             } else if (m_Flags & FXDIB_BICUBIC_INTERPOL) {
                 CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
                 for (int row = 0; row < m_ResultHeight; row ++) {
-                    FX_BYTE* dest_pos = (FX_BYTE*)pTransformed->GetScanline(row);
+                    uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
                     for (int col = 0; col < m_ResultWidth; col ++) {
                         int src_col_l, src_row_l, res_x, res_y, r_pos_k_r = 0;
                         result2stretch_fix.Transform(col, row, src_col_l, src_row_l, res_x, res_y);
@@ -712,9 +712,9 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
                                 src_row_l--;
                             }
                             _bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l, res_x, res_y, stretch_width, stretch_height);
-                            FX_BYTE r_pos_red_y_r   = _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w, v_w, res_x, res_y, Bpp, 2);
-                            FX_BYTE r_pos_green_m_r = _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w, v_w, res_x, res_y, Bpp, 1);
-                            FX_BYTE r_pos_blue_c_r  = _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w, v_w, res_x, res_y, Bpp, 0);
+                            uint8_t r_pos_red_y_r   = _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w, v_w, res_x, res_y, Bpp, 2);
+                            uint8_t r_pos_green_m_r = _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w, v_w, res_x, res_y, Bpp, 1);
+                            uint8_t r_pos_blue_c_r  = _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w, v_w, res_x, res_y, Bpp, 0);
                             if (bHasAlpha) {
                                 if (transformF != FXDIB_Argb) {
                                     if (transformF == FXDIB_Rgba) {
@@ -726,7 +726,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
                                         *(FX_DWORD*)dest_pos = FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r, r_pos_red_y_r, r_pos_k_r));
                                     }
                                 } else {
-                                    FX_BYTE r_pos_a_r = _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w, v_w, res_x, res_y, Bpp, 3);
+                                    uint8_t r_pos_a_r = _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w, v_w, res_x, res_y, Bpp, 3);
                                     *(FX_DWORD*)dest_pos = FXARGB_TODIB(FXARGB_MAKE(r_pos_a_r, r_pos_red_y_r, r_pos_green_m_r, r_pos_blue_c_r));
                                 }
                             } else {
@@ -745,7 +745,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
             } else {
                 CPDF_FixedMatrix result2stretch_fix(result2stretch, 8);
                 for (int row = 0; row < m_ResultHeight; row ++) {
-                    FX_BYTE* dest_pos = (FX_BYTE*)pTransformed->GetScanline(row);
+                    uint8_t* dest_pos = (uint8_t*)pTransformed->GetScanline(row);
                     for (int col = 0; col < m_ResultWidth; col ++) {
                         int src_col, src_row;
                         result2stretch_fix.Transform(col, row, src_col, src_row);

@@ -331,7 +331,7 @@ public:
 
     CPDF_Dictionary*	GetAnnot() const;
 
-    FX_INT32			GetOperationType() const;
+    int32_t				GetOperationType() const;
 
     CPDF_Stream*		GetSoundStream() const
     {
@@ -733,19 +733,19 @@ public:
 
     static CPDF_Font*		AddSystemDefaultFont(const CPDF_Document* pDocument);
 
-    static CPDF_Font*		AddSystemFont(const CPDF_Document* pDocument, CFX_ByteString csFontName, FX_BYTE iCharSet = 1);
+    static CPDF_Font*		AddSystemFont(const CPDF_Document* pDocument, CFX_ByteString csFontName, uint8_t iCharSet = 1);
 
-    static CPDF_Font*		AddSystemFont(const CPDF_Document* pDocument, CFX_WideString csFontName, FX_BYTE iCharSet = 1);
+    static CPDF_Font*		AddSystemFont(const CPDF_Document* pDocument, CFX_WideString csFontName, uint8_t iCharSet = 1);
 
     static CPDF_Font*		AddStandardFont(const CPDF_Document* pDocument, CFX_ByteString csFontName);
 
-    static CFX_ByteString	GetNativeFont(FX_BYTE iCharSet, FX_LPVOID pLogFont = NULL);
+    static CFX_ByteString	GetNativeFont(uint8_t iCharSet, FX_LPVOID pLogFont = NULL);
 
     static CFX_ByteString	GetNativeFont(FX_LPVOID pLogFont = NULL);
 
-    static FX_BYTE			GetNativeCharSet();
+    static uint8_t			GetNativeCharSet();
 
-    static CPDF_Font*		AddNativeFont(FX_BYTE iCharSet, const CPDF_Document* pDocument);
+    static CPDF_Font*		AddNativeFont(uint8_t iCharSet, const CPDF_Document* pDocument);
 
     static CPDF_Font*		AddNativeFont(const CPDF_Document* pDocument);
 
@@ -837,7 +837,7 @@ public:
 
     CPDF_Font*				GetFormFont(CFX_ByteString csFontName, CFX_ByteString& csNameTag);
 
-    CPDF_Font*				GetNativeFormFont(FX_BYTE iCharSet, CFX_ByteString& csNameTag);
+    CPDF_Font*				GetNativeFormFont(uint8_t iCharSet, CFX_ByteString& csNameTag);
 
     CPDF_Font*				GetNativeFormFont(CFX_ByteString& csNameTag);
 
@@ -856,7 +856,7 @@ public:
 
     void					AddFormFont(const CPDF_Font* pFont, CFX_ByteString& csNameTag);
 
-    CPDF_Font*				AddNativeFormFont(FX_BYTE iCharSet, CFX_ByteString& csNameTag);
+    CPDF_Font*				AddNativeFormFont(uint8_t iCharSet, CFX_ByteString& csNameTag);
 
     CPDF_Font*				AddNativeFormFont(CFX_ByteString& csNameTag);
 
@@ -1516,10 +1516,10 @@ public:
 
     CFX_WideString					GetLabel(int nPage) const;
 
-    FX_INT32						GetPageByLabel(FX_BSTR bsLabel) const;
+    int32_t						GetPageByLabel(FX_BSTR bsLabel) const;
 
 
-    FX_INT32						GetPageByLabel(FX_WSTR wsLabel) const;
+    int32_t						GetPageByLabel(FX_WSTR wsLabel) const;
 
 protected:
     CPDF_Document*					m_pDocument;
@@ -1536,7 +1536,7 @@ public:
     void				LoadDoc(CPDF_Document *pDoc);
 
 
-    FX_INT32			GetString(FX_BSTR bsItem, CFX_WideString &wsStr);
+    int32_t			GetString(FX_BSTR bsItem, CFX_WideString &wsStr);
 
     CXML_Element*		GetRoot() const;
 
@@ -1559,7 +1559,7 @@ public:
 
     FX_BOOL PrintScaling() const;
 
-    FX_INT32 NumCopies() const;
+    int32_t NumCopies() const;
 
     CPDF_Array* PrintPageRange() const;
 

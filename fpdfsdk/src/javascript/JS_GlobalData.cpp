@@ -105,7 +105,7 @@ void CJS_GlobalVariableArray::Empty()
 #define PHANTOM_JS_GLOBALDATA_FILENAME				L"Phantom_JsGlobal.Data"
 #define SDK_JS_GLOBALDATA_FILENAME					L"SDK_JsGlobal.Data"
 
-static const FX_BYTE JS_RC4KEY[] = {0x19,0xa8,0xe8,0x01,0xf6,0xa8,0xb6,0x4d,0x82,0x04,
+static const uint8_t JS_RC4KEY[] = {0x19,0xa8,0xe8,0x01,0xf6,0xa8,0xb6,0x4d,0x82,0x04,
 							0x45,0x6d,0xb4,0xcf,0xd7,0x77,0x67,0xf9,0x75,0x9f,
 							0xf0,0xe0,0x1e,0x51,0xee,0x46,0xfd,0x0b,0xc9,0x93,
 							0x25,0x55,0x4a,0xee,0xe0,0x16,0xd0,0xdf,0x8c,0xfa,
@@ -338,7 +338,7 @@ FX_BOOL CJS_GlobalData::DeleteGlobalVariable(FX_LPCSTR propname)
 	return FALSE;
 }
 
-FX_INT32 CJS_GlobalData::GetSize() const
+int32_t CJS_GlobalData::GetSize() const
 {
 	return m_arrayGlobalData.GetSize();
 }
@@ -351,7 +351,7 @@ CJS_GlobalData_Element* CJS_GlobalData::GetAt(int index) const
 void CJS_GlobalData::LoadGlobalPersistentVariables()
 {
 	FX_LPBYTE pBuffer = NULL;
-	FX_INT32 nLength = 0;
+	int32_t nLength = 0;
 
 	LoadFileBuffer(m_sFilePath.c_str(), pBuffer, nLength);
 	CRYPT_ArcFourCryptBlock(pBuffer, nLength, JS_RC4KEY, sizeof(JS_RC4KEY));
@@ -379,7 +379,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables()
 
 			if (dwSize == nLength - sizeof(FX_WORD) * 2 - sizeof(FX_DWORD)* 2)
 			{
-				for (FX_INT32 i=0,sz=dwCount; i<sz; i++)
+				for (int32_t i=0,sz=dwCount; i<sz; i++)
 				{
 					if (p > pBuffer + nLength)
 						break;
@@ -511,12 +511,12 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables()
 	WriteFileBuffer(m_sFilePath.c_str(), (FX_LPCSTR)sFile.GetBuffer(), sFile.GetSize());
 }
 
-void CJS_GlobalData::LoadFileBuffer(FX_LPCWSTR sFilePath, FX_LPBYTE& pBuffer, FX_INT32& nLength)
+void CJS_GlobalData::LoadFileBuffer(FX_LPCWSTR sFilePath, FX_LPBYTE& pBuffer, int32_t& nLength)
 {
 //UnSupport.
 }
 
-void CJS_GlobalData::WriteFileBuffer(FX_LPCWSTR sFilePath, FX_LPCSTR pBuffer, FX_INT32 nLength)
+void CJS_GlobalData::WriteFileBuffer(FX_LPCWSTR sFilePath, FX_LPCSTR pBuffer, int32_t nLength)
 {
 //UnSupport.
 }

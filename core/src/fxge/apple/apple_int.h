@@ -56,7 +56,7 @@ public:
                                FX_FLOAT             fontSize,
                                FX_WORD*             glyphIndices,
                                CGPoint*          glyphPositions,
-                               FX_INT32             chars,
+                               int32_t             chars,
                                FX_ARGB              argb,
                                CFX_AffineMatrix*    matrix = NULL);
     void saveGraphicsState(void* graphics);
@@ -81,7 +81,7 @@ public:
 class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver
 {
 public:
-    CFX_QuartzDeviceDriver(CGContextRef context, FX_INT32 deviceClass);
+    CFX_QuartzDeviceDriver(CGContextRef context, int32_t deviceClass);
     virtual ~CFX_QuartzDeviceDriver();
 
     virtual int		GetDeviceCaps(int caps_id);
@@ -176,15 +176,15 @@ protected:
     CGContextRef	_context;
     CGAffineTransform _foxitDevice2User;
     CGAffineTransform _user2FoxitDevice;
-    FX_INT32        m_saveCount;
+    int32_t        m_saveCount;
 
-    FX_INT32		_width;
-    FX_INT32		_height;
-    FX_INT32		_bitsPerPixel;
-    FX_INT32		_deviceClass;
-    FX_INT32		_renderCaps;
-    FX_INT32	_horzSize;
-    FX_INT32	_vertSize;
+    int32_t		_width;
+    int32_t		_height;
+    int32_t		_bitsPerPixel;
+    int32_t		_deviceClass;
+    int32_t		_renderCaps;
+    int32_t	_horzSize;
+    int32_t	_vertSize;
 };
 class CFX_FontProvider final : public IFX_FileRead
 {
@@ -239,10 +239,10 @@ private:
     int _tableCount;
     int _totalSize;
 };
-FX_UINT32 FX_GetHashCode( FX_LPCSTR pStr);
+uint32_t FX_GetHashCode( FX_LPCSTR pStr);
 FX_DWORD  FX_IOSGetMatchFamilyNameHashcode(FX_LPCSTR pFontName);
-FX_UINT32 FX_IOSGetFamilyNamesCount();
-FX_LPCSTR FX_IOSGetFamilyName( FX_UINT32 uIndex);
+uint32_t FX_IOSGetFamilyNamesCount();
+FX_LPCSTR FX_IOSGetFamilyName( uint32_t uIndex);
 #endif
 
 #endif  // CORE_SRC_FXGE_APPLE_APPLE_INT_H_

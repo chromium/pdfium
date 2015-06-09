@@ -402,7 +402,7 @@ public:
                     } else {
                         src_alpha = m_Alpha;
                     }
-                    FX_BYTE dest_alpha = ori_scan[3] + src_alpha - ori_scan[3] * src_alpha / 255;
+                    uint8_t dest_alpha = ori_scan[3] + src_alpha - ori_scan[3] * src_alpha / 255;
                     dest_scan[3] = dest_alpha;
                     int alpha_ratio = src_alpha * 255 / dest_alpha;
                     if (m_bFullCover) {
@@ -476,7 +476,7 @@ public:
                         dest_scan += 2;
                         continue;
                     }
-                    FX_BYTE cover = cover_scan[col];
+                    uint8_t cover = cover_scan[col];
                     dest_scan[3] = FXDIB_ALPHA_MERGE(dest_scan[3], src_alpha, cover);
                     *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Blue, cover);
                     dest_scan ++;
@@ -535,7 +535,7 @@ public:
         } else {
             int index = 0;
             if (m_pDevice->GetPalette() == NULL) {
-                index = ((FX_BYTE)m_Color == 0xff) ? 1 : 0;
+                index = ((uint8_t)m_Color == 0xff) ? 1 : 0;
             } else {
                 for (int i = 0; i < 2; i ++)
                     if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color) {
@@ -573,7 +573,7 @@ public:
         dest_scan += col_start / 8;
         int index = 0;
         if (m_pDevice->GetPalette() == NULL) {
-            index = ((FX_BYTE)m_Color == 0xff) ? 1 : 0;
+            index = ((uint8_t)m_Color == 0xff) ? 1 : 0;
         } else {
             for (int i = 0; i < 2; i ++)
                 if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color) {
@@ -628,7 +628,7 @@ public:
                         *dest_scan = m_Gray;
                         *dest_extra_alpha_scan = m_Alpha;
                     } else {
-                        FX_BYTE dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
+                        uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
                                              (*dest_extra_alpha_scan) * src_alpha / 255;
                         *dest_extra_alpha_scan++ = dest_alpha;
                         int alpha_ratio = src_alpha * 255 / dest_alpha;
@@ -687,7 +687,7 @@ public:
                     if (src_alpha == 255) {
                         *(FX_DWORD*)dest_scan = m_Color;
                     } else {
-                        FX_BYTE dest_alpha = dest_scan[3] + src_alpha - dest_scan[3] * src_alpha / 255;
+                        uint8_t dest_alpha = dest_scan[3] + src_alpha - dest_scan[3] * src_alpha / 255;
                         dest_scan[3] = dest_alpha;
                         int alpha_ratio = src_alpha * 255 / dest_alpha;
                         *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Red, alpha_ratio);
@@ -730,7 +730,7 @@ public:
                         dest_scan += 2;
                         continue;
                     }
-                    FX_BYTE dest_alpha = dest_scan[3] + src_alpha - dest_scan[3] * src_alpha / 255;
+                    uint8_t dest_alpha = dest_scan[3] + src_alpha - dest_scan[3] * src_alpha / 255;
                     dest_scan[3] = dest_alpha;
                     int alpha_ratio = src_alpha * 255 / dest_alpha;
                     *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Blue, alpha_ratio);
@@ -803,13 +803,13 @@ public:
                 }
                 if (src_alpha) {
                     if (src_alpha == 255) {
-                        *dest_scan++ = (FX_BYTE)m_Blue;
-                        *dest_scan++ = (FX_BYTE)m_Green;
-                        *dest_scan++ = (FX_BYTE)m_Red;
-                        *dest_extra_alpha_scan++ = (FX_BYTE)m_Alpha;
+                        *dest_scan++ = (uint8_t)m_Blue;
+                        *dest_scan++ = (uint8_t)m_Green;
+                        *dest_scan++ = (uint8_t)m_Red;
+                        *dest_extra_alpha_scan++ = (uint8_t)m_Alpha;
                         continue;
                     } else {
-                        FX_BYTE dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
+                        uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
                                              (*dest_extra_alpha_scan) * src_alpha / 255;
                         *dest_extra_alpha_scan++ = dest_alpha;
                         int alpha_ratio = src_alpha * 255 / dest_alpha;
@@ -893,9 +893,9 @@ public:
                 if (src_alpha) {
                     if (src_alpha == 255) {
                         *(FX_CMYK*)dest_scan = m_Color;
-                        *dest_extra_alpha_scan = (FX_BYTE)m_Alpha;
+                        *dest_extra_alpha_scan = (uint8_t)m_Alpha;
                     } else {
-                        FX_BYTE dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
+                        uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
                                              (*dest_extra_alpha_scan) * src_alpha / 255;
                         *dest_extra_alpha_scan++ = dest_alpha;
                         int alpha_ratio = src_alpha * 255 / dest_alpha;
@@ -1029,13 +1029,13 @@ public:
                 m_Gray = 255;
             } else {
                 if (pIccTransform) {
-                    FX_BYTE gray;
+                    uint8_t gray;
                     color = bObjectCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
                     pIccModule->TranslateScanline(pIccTransform, &gray, (FX_LPCBYTE)&color, 1);
                     m_Gray = gray;
                 } else {
                     if (bObjectCMYK) {
-                        FX_BYTE r, g, b;
+                        uint8_t r, g, b;
                         AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color), FXSYS_GetYValue(color), FXSYS_GetKValue(color),
                                            r, g, b);
                         m_Gray = FXRGB2GRAY(r, g, b);
@@ -1080,7 +1080,7 @@ public:
                 }
             } else {
                 if (bObjectCMYK) {
-                    FX_BYTE r, g, b;
+                    uint8_t r, g, b;
                     AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color), FXSYS_GetYValue(color), FXSYS_GetKValue(color),
                                        r, g, b);
                     m_Color = FXARGB_MAKE(m_Alpha, r, g, b);
@@ -1192,7 +1192,7 @@ void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, FX_DWORD argb)
     if (x < 0 || x >= pBitmap->GetWidth() || y < 0 || y >= pBitmap->GetHeight()) {
         return;
     }
-    FX_LPBYTE pos = (FX_BYTE*)pBitmap->GetBuffer() + y * pBitmap->GetPitch() + x * pBitmap->GetBPP() / 8;
+    FX_LPBYTE pos = (uint8_t*)pBitmap->GetBuffer() + y * pBitmap->GetPitch() + x * pBitmap->GetBPP() / 8;
     if (pBitmap->GetFormat() == FXDIB_Argb) {
         FXARGB_SETRGBORDERDIB(pos, ArgbGamma(argb));
     } else {
@@ -1215,7 +1215,7 @@ void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap, int left, int top, int wid
     int Bpp = pBitmap->GetBPP() / 8;
     FX_BOOL bAlpha = pBitmap->HasAlpha();
     int dib_argb = FXARGB_TOBGRORDERDIB(argb);
-    FX_BYTE* pBuffer = pBitmap->GetBuffer();
+    uint8_t* pBuffer = pBitmap->GetBuffer();
     if (src_alpha == 255) {
         for (int row = rect.top; row < rect.bottom; row ++) {
             FX_LPBYTE dest_scan = pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
@@ -1241,13 +1241,13 @@ void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap, int left, int top, int wid
         FX_LPBYTE dest_scan = pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
         if (bAlpha) {
             for (int col = 0; col < width; col ++) {
-                FX_BYTE back_alpha = dest_scan[3];
+                uint8_t back_alpha = dest_scan[3];
                 if (back_alpha == 0) {
                     FXARGB_SETRGBORDERDIB(dest_scan, FXARGB_MAKE(src_alpha, src_r, src_g, src_b));
                     dest_scan += 4;
                     continue;
                 }
-                FX_BYTE dest_alpha = back_alpha + src_alpha - back_alpha * src_alpha / 255;
+                uint8_t dest_alpha = back_alpha + src_alpha - back_alpha * src_alpha / 255;
                 dest_scan[3] = dest_alpha;
                 int alpha_ratio = src_alpha * 255 / dest_alpha;
                 *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_r, alpha_ratio);
@@ -1286,7 +1286,7 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap, int dest_left, int dest_t
     FXDIB_Format dest_format = pBitmap->GetFormat();
     FXDIB_Format src_format = pSrcBitmap->GetFormat();
     int pitch = pBitmap->GetPitch();
-    FX_BYTE* buffer = pBitmap->GetBuffer();
+    uint8_t* buffer = pBitmap->GetBuffer();
     if (dest_format == src_format) {
         for (int row = 0; row < height; row ++) {
             FX_LPBYTE dest_scan = buffer + (dest_top + row) * pitch + dest_left * Bpp;
@@ -1313,7 +1313,7 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap, int dest_left, int dest_t
         if (src_format == FXDIB_Rgb32) {
             for (int row = 0; row < height; row ++) {
                 FX_LPBYTE dest_scan = dest_buf + row * pitch;
-                FX_LPBYTE src_scan = (FX_BYTE*)pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
+                FX_LPBYTE src_scan = (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
                 for (int col = 0; col < width; col ++) {
                     *dest_scan++ = src_scan[2];
                     *dest_scan++ = src_scan[1];
@@ -1327,8 +1327,8 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap, int dest_left, int dest_t
     } else if (dest_format == FXDIB_Argb || dest_format == FXDIB_Rgb32) {
         if (src_format == FXDIB_Rgb) {
             for (int row = 0; row < height; row ++) {
-                FX_BYTE* dest_scan = (FX_BYTE*)(dest_buf + row * pitch);
-                FX_LPBYTE src_scan = (FX_BYTE*)pSrcBitmap->GetScanline(src_top + row) + src_left * 3;
+                uint8_t* dest_scan = (uint8_t*)(dest_buf + row * pitch);
+                FX_LPBYTE src_scan = (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 3;
                 if (src_format == FXDIB_Argb) {
                     for (int col = 0; col < width; col ++) {
                         FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, FX_GAMMA(src_scan[0]), FX_GAMMA(src_scan[1]), FX_GAMMA(src_scan[2])));
@@ -1359,9 +1359,9 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap, int dest_left, int dest_t
         ASSERT(FALSE);
     }
 }
-FX_ARGB _DefaultCMYK2ARGB(FX_CMYK cmyk, FX_BYTE alpha)
+FX_ARGB _DefaultCMYK2ARGB(FX_CMYK cmyk, uint8_t alpha)
 {
-    FX_BYTE r, g, b;
+    uint8_t r, g, b;
     AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk), FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk),
                        r, g, b);
     return ArgbEncode(alpha, r, g, b);

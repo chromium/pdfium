@@ -23,9 +23,9 @@ CFX_PtrArray* CPDF_LinkList::GetPageLinks(CPDF_Page* pPage)
         return NULL;
     }
     CFX_PtrArray* pPageLinkList = NULL;
-    if (!m_PageMap.Lookup((FX_LPVOID)(FX_UINTPTR)objnum, (FX_LPVOID&)pPageLinkList)) {
+    if (!m_PageMap.Lookup((FX_LPVOID)(uintptr_t)objnum, (FX_LPVOID&)pPageLinkList)) {
         pPageLinkList = new CFX_PtrArray;
-        m_PageMap.SetAt((FX_LPVOID)(FX_UINTPTR)objnum, pPageLinkList);
+        m_PageMap.SetAt((FX_LPVOID)(uintptr_t)objnum, pPageLinkList);
         LoadPageLinks(pPage, pPageLinkList);
     }
     return pPageLinkList;

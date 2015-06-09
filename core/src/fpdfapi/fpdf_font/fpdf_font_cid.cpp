@@ -124,7 +124,7 @@ static FX_DWORD CMap_GetCode(FX_BSTR word)
     int num = 0;
     if (word.GetAt(0) == '<') {
         for (int i = 1; i < word.GetLength(); i ++) {
-            FX_BYTE digit = word.GetAt(i);
+            uint8_t digit = word.GetAt(i);
             if (digit >= '0' && digit <= '9') {
                 digit = digit - '0';
             } else if (digit >= 'a' && digit <= 'f') {
@@ -161,17 +161,17 @@ static FX_BOOL _CMap_GetCodeRange(_CMap_CodeRange& range, FX_BSTR first, FX_BSTR
         return FALSE;
     }
     for (i = 0; i < range.m_CharSize; i ++) {
-        FX_BYTE digit1 = first.GetAt(i * 2 + 1);
-        FX_BYTE digit2 = first.GetAt(i * 2 + 2);
-        FX_BYTE byte = (digit1 >= '0' && digit1 <= '9') ? (digit1 - '0') : ((digit1 & 0xdf) - 'A' + 10);
+        uint8_t digit1 = first.GetAt(i * 2 + 1);
+        uint8_t digit2 = first.GetAt(i * 2 + 2);
+        uint8_t byte = (digit1 >= '0' && digit1 <= '9') ? (digit1 - '0') : ((digit1 & 0xdf) - 'A' + 10);
         byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9') ? (digit2 - '0') : ((digit2 & 0xdf) - 'A' + 10));
         range.m_Lower[i] = byte;
     }
     FX_DWORD size = second.GetLength();
     for (i = 0; i < range.m_CharSize; i ++) {
-        FX_BYTE digit1 = ((FX_DWORD)i * 2 + 1 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 1) : 0;
-        FX_BYTE digit2 = ((FX_DWORD)i * 2 + 2 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 2) : 0;
-        FX_BYTE byte = (digit1 >= '0' && digit1 <= '9') ? (digit1 - '0') : ((digit1 & 0xdf) - 'A' + 10);
+        uint8_t digit1 = ((FX_DWORD)i * 2 + 1 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 1) : 0;
+        uint8_t digit2 = ((FX_DWORD)i * 2 + 2 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 2) : 0;
+        uint8_t byte = (digit1 >= '0' && digit1 <= '9') ? (digit1 - '0') : ((digit1 & 0xdf) - 'A' + 10);
         byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9') ? (digit2 - '0') : ((digit2 & 0xdf) - 'A' + 10));
         range.m_Upper[i] = byte;
     }
@@ -254,7 +254,7 @@ void CPDF_CMapParser::ParseWord(FX_BSTR word)
             if (nSegs > 1) {
                 m_pCMap->m_CodingScheme = CPDF_CMap::MixedFourBytes;
                 m_pCMap->m_nCodeRanges = nSegs;
-                m_pCMap->m_pLeadingBytes = FX_Alloc2D(FX_BYTE, nSegs, sizeof(_CMap_CodeRange));
+                m_pCMap->m_pLeadingBytes = FX_Alloc2D(uint8_t, nSegs, sizeof(_CMap_CodeRange));
                 FXSYS_memcpy32(m_pCMap->m_pLeadingBytes, m_CodeRanges.GetData(), nSegs * sizeof(_CMap_CodeRange));
             } else if (nSegs == 1) {
                 m_pCMap->m_CodingScheme = (m_CodeRanges[0].m_CharSize == 2) ? CPDF_CMap::TwoBytes : CPDF_CMap::OneByte;
@@ -376,7 +376,7 @@ FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr, FX_LPCSTR pName, FX_BO
     m_Coding = map.m_Coding;
     m_CodingScheme = map.m_CodingScheme;
     if (m_CodingScheme == MixedTwoBytes) {
-        m_pLeadingBytes = FX_Alloc(FX_BYTE, 256);
+        m_pLeadingBytes = FX_Alloc(uint8_t, 256);
         for (FX_DWORD i = 0; i < map.m_LeadingSegCount; i ++) {
             for (int b = map.m_LeadingSegs[i * 2]; b <= map.m_LeadingSegs[i * 2 + 1]; b ++) {
                 m_pLeadingBytes[b] = 1;
@@ -410,7 +410,7 @@ FX_BOOL CPDF_CMap::LoadEmbedded(FX_LPCBYTE pData, FX_DWORD size)
         parser.ParseWord(word);
     }
     if (m_CodingScheme == MixedFourBytes && parser.m_AddMaps.GetSize()) {
-        m_pAddMapping = FX_Alloc(FX_BYTE, parser.m_AddMaps.GetSize() + 4);
+        m_pAddMapping = FX_Alloc(uint8_t, parser.m_AddMaps.GetSize() + 4);
         *(FX_DWORD*)m_pAddMapping = parser.m_AddMaps.GetSize() / 8;
         FXSYS_memcpy32(m_pAddMapping + 4, parser.m_AddMaps.GetBuffer(), parser.m_AddMaps.GetSize());
         FXSYS_qsort(m_pAddMapping + 4, parser.m_AddMaps.GetSize() / 8, 8, compare_dword);
@@ -500,15 +500,15 @@ FX_DWORD CPDF_CMap::GetNextChar(FX_LPCSTR pString, int nStrLen, int& offset) con
             offset += 2;
             return ((FX_LPBYTE)pString)[offset - 2] * 256 + ((FX_LPBYTE)pString)[offset - 1];
         case MixedTwoBytes: {
-                FX_BYTE byte1 = ((FX_LPBYTE)pString)[offset++];
+                uint8_t byte1 = ((FX_LPBYTE)pString)[offset++];
                 if (!m_pLeadingBytes[byte1]) {
                     return byte1;
                 }
-                FX_BYTE byte2 = ((FX_LPBYTE)pString)[offset++];
+                uint8_t byte2 = ((FX_LPBYTE)pString)[offset++];
                 return byte1 * 256 + byte2;
             }
         case MixedFourBytes: {
-                FX_BYTE codes[4];
+                uint8_t codes[4];
                 int char_size = 1;
                 codes[0] = ((FX_LPBYTE)pString)[offset++];
                 _CMap_CodeRange* pRanges = (_CMap_CodeRange*)m_pLeadingBytes;
@@ -589,10 +589,10 @@ int _GetCharSize(FX_DWORD charcode, _CMap_CodeRange* pRanges, int iRangesSize)
     if (!iRangesSize) {
         return 1;
     }
-    FX_BYTE codes[4];
+    uint8_t codes[4];
     codes[0] = codes[1] = 0x00;
-    codes[2] = (FX_BYTE)(charcode >> 8 & 0xFF);
-    codes[3] = (FX_BYTE)charcode;
+    codes[2] = (uint8_t)(charcode >> 8 & 0xFF);
+    codes[3] = (uint8_t)charcode;
     int offset = 0, size = 4;
     for (int i = 0; i < 4; ++i) {
         int iSeg = iRangesSize - 1;
@@ -623,11 +623,11 @@ int CPDF_CMap::AppendChar(FX_LPSTR str, FX_DWORD charcode) const
 {
     switch (m_CodingScheme) {
         case OneByte:
-            str[0] = (FX_BYTE)charcode;
+            str[0] = (uint8_t)charcode;
             return 1;
         case TwoBytes:
-            str[0] = (FX_BYTE)(charcode / 256);
-            str[1] = (FX_BYTE)(charcode % 256);
+            str[0] = (uint8_t)(charcode / 256);
+            str[1] = (uint8_t)(charcode % 256);
             return 2;
         case MixedTwoBytes:
         case MixedFourBytes:
@@ -638,24 +638,24 @@ int CPDF_CMap::AppendChar(FX_LPSTR str, FX_DWORD charcode) const
                     iSize = 1;
                 }
                 if (iSize > 1) {
-                    FXSYS_memset32(str, 0, sizeof(FX_BYTE) * iSize);
+                    FXSYS_memset32(str, 0, sizeof(uint8_t) * iSize);
                 }
-                str[iSize - 1] = (FX_BYTE)charcode;
+                str[iSize - 1] = (uint8_t)charcode;
                 return iSize;
             } else if (charcode < 0x10000) {
-                str[0] = (FX_BYTE)(charcode >> 8);
-                str[1] = (FX_BYTE)charcode;
+                str[0] = (uint8_t)(charcode >> 8);
+                str[1] = (uint8_t)charcode;
                 return 2;
             } else if (charcode < 0x1000000) {
-                str[0] = (FX_BYTE)(charcode >> 16);
-                str[1] = (FX_BYTE)(charcode >> 8);
-                str[2] = (FX_BYTE)charcode;
+                str[0] = (uint8_t)(charcode >> 16);
+                str[1] = (uint8_t)(charcode >> 8);
+                str[2] = (uint8_t)charcode;
                 return 3;
             } else {
-                str[0] = (FX_BYTE)(charcode >> 24);
-                str[1] = (FX_BYTE)(charcode >> 16);
-                str[2] = (FX_BYTE)(charcode >> 8);
-                str[3] = (FX_BYTE)charcode;
+                str[0] = (uint8_t)(charcode >> 24);
+                str[1] = (uint8_t)(charcode >> 16);
+                str[2] = (uint8_t)(charcode >> 8);
+                str[3] = (uint8_t)charcode;
                 return 4;
             }
     }
@@ -837,7 +837,7 @@ FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const
         return 0;
     }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    FX_BYTE buffer[32];
+    uint8_t buffer[32];
     int ret = FXSYS_WideCharToMultiByte(g_CharsetCPs[m_pCMap->m_Coding], 0, &unicode, 1, (char*)buffer, 4, NULL, NULL);
     if (ret == 1) {
         return buffer[0];
@@ -990,7 +990,7 @@ FX_BOOL CPDF_CIDFont::_Load()
     }
     return TRUE;
 }
-FX_FLOAT _CIDTransformToFloat(FX_BYTE ch)
+FX_FLOAT _CIDTransformToFloat(uint8_t ch)
 {
     if (ch < 128) {
         return ch * 1.0f / 127;
@@ -1150,7 +1150,7 @@ int	CPDF_CIDFont::GetGlyphIndex(FX_DWORD unicode, FX_BOOL *pVertGlyph)
             unsigned long length = 0;
             int error = FXFT_Load_Sfnt_Table( m_Font.m_Face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, NULL, &length);
             if (!error) {
-                m_Font.m_pGsubData = (unsigned char*)FX_Alloc(FX_BYTE, length);
+                m_Font.m_pGsubData = (unsigned char*)FX_Alloc(uint8_t, length);
             }
         }
         int error = FXFT_Load_Sfnt_Table( m_Font.m_Face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, m_Font.m_pGsubData, NULL);
@@ -1421,7 +1421,7 @@ FX_BOOL CPDF_CIDFont::LoadGB2312()
 }
 const struct _CIDTransform {
     FX_WORD		CID;
-    FX_BYTE		a, b, c, d, e, f;
+    uint8_t		a, b, c, d, e, f;
 }
 Japan1_VertCIDs[] = {
     {97, 129, 0, 0, 127, 55, 0},

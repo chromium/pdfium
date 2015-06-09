@@ -412,7 +412,7 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, FX_BSTR name)
     pFontGlobals->Set(pDoc, font_id, pFont);
     return pFont;
 }
-const FX_BYTE ChineseFontNames[][5] = {
+const uint8_t ChineseFontNames[][5] = {
     {0xCB, 0xCE, 0xCC, 0xE5, 0x00},
     {0xBF, 0xAC, 0xCC, 0xE5, 0x00},
     {0xBA, 0xDA, 0xCC, 0xE5, 0x00},
@@ -816,7 +816,7 @@ FX_BOOL CPDF_Font::IsStandardFont() const
     }
     return TRUE;
 }
-extern FX_LPCSTR PDF_CharNameFromPredefinedCharSet(int encoding, FX_BYTE charcode);
+extern FX_LPCSTR PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode);
 CPDF_SimpleFont::CPDF_SimpleFont(int fonttype) : CPDF_Font(fonttype)
 {
     FXSYS_memset8(m_CharBBox, 0xff, sizeof m_CharBBox);
@@ -838,7 +838,7 @@ int CPDF_SimpleFont::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL *pVertGlyph)
     if (charcode > 0xff) {
         return -1;
     }
-    int index = m_GlyphIndex[(FX_BYTE)charcode];
+    int index = m_GlyphIndex[(uint8_t)charcode];
     if (index == 0xffff) {
         return -1;
     }
@@ -892,14 +892,14 @@ int CPDF_SimpleFont::GetCharWidthF(FX_DWORD charcode, int level)
             m_CharWidth[charcode] = 0;
         }
     }
-    return (FX_INT16)m_CharWidth[charcode];
+    return (int16_t)m_CharWidth[charcode];
 }
 void CPDF_SimpleFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level)
 {
     if (charcode > 0xff) {
         charcode = 0;
     }
-    if (m_CharBBox[charcode].Left == (FX_SHORT)0xffff) {
+    if (m_CharBBox[charcode].Left == (int16_t)0xffff) {
         LoadCharMetrics(charcode);
     }
     rect.left = m_CharBBox[charcode].Left;
@@ -1073,7 +1073,7 @@ int CPDF_Type1Font::GlyphFromCharCodeExt(FX_DWORD charcode)
     if (charcode > 0xff) {
         return -1;
     }
-    int index = m_ExtGID[(FX_BYTE)charcode];
+    int index = m_ExtGID[(uint8_t)charcode];
     if (index == 0xffff) {
         return -1;
     }
@@ -1130,7 +1130,7 @@ void CPDF_Type1Font::LoadGlyphMap()
         if (FT_UseTTCharmap(m_Font.m_Face, 3, 0)) {
             FX_BOOL bGotOne = FALSE;
             for (int charcode = 0; charcode < 256; charcode ++) {
-                const FX_BYTE prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
+                const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
                 for (int j = 0; j < 4; j ++) {
                     FX_WORD unicode = prefix[j] * 256 + charcode;
                     m_GlyphIndex[charcode] = FXFT_Get_Char_Index(m_Font.m_Face, unicode);
@@ -1482,7 +1482,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap()
             }
             m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
             if (bMSSymbol) {
-                const FX_BYTE prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
+                const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
                 for (int j = 0; j < 4; j ++) {
                     FX_WORD unicode = prefix[j] * 256 + charcode;
                     m_GlyphIndex[charcode] = FXFT_Get_Char_Index(m_Font.m_Face, unicode);
@@ -1525,7 +1525,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap()
         return;
     }
     if (FT_UseTTCharmap(m_Font.m_Face, 3, 0)) {
-        const FX_BYTE prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
+        const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
         FX_BOOL bGotOne = FALSE;
         for (int charcode = 0; charcode < 256; charcode ++) {
             for (int j = 0; j < 4; j ++) {
@@ -1627,10 +1627,10 @@ FX_BOOL CPDF_Type3Font::_Load()
     }
     CPDF_Array* pBBox = m_pFontDict->GetArray(FX_BSTRC("FontBBox"));
     if (pBBox) {
-        m_FontBBox.left = (FX_INT32)(FXSYS_Mul(pBBox->GetNumber(0), xscale) * 1000);
-        m_FontBBox.bottom = (FX_INT32)(FXSYS_Mul(pBBox->GetNumber(1), yscale) * 1000);
-        m_FontBBox.right = (FX_INT32)(FXSYS_Mul(pBBox->GetNumber(2), xscale) * 1000);
-        m_FontBBox.top = (FX_INT32)(FXSYS_Mul(pBBox->GetNumber(3), yscale) * 1000);
+        m_FontBBox.left = (int32_t)(FXSYS_Mul(pBBox->GetNumber(0), xscale) * 1000);
+        m_FontBBox.bottom = (int32_t)(FXSYS_Mul(pBBox->GetNumber(1), yscale) * 1000);
+        m_FontBBox.right = (int32_t)(FXSYS_Mul(pBBox->GetNumber(2), xscale) * 1000);
+        m_FontBBox.top = (int32_t)(FXSYS_Mul(pBBox->GetNumber(3), yscale) * 1000);
     }
     int StartChar = m_pFontDict->GetInteger(FX_BSTRC("FirstChar"));
     CPDF_Array* pWidthArray = m_pFontDict->GetArray(FX_BSTRC("Widths"));
@@ -1671,10 +1671,10 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level)
         return NULL;
     }
     CPDF_Type3Char* pChar = NULL;
-    if (m_CacheMap.Lookup((FX_LPVOID)(FX_UINTPTR)charcode, (FX_LPVOID&)pChar)) {
+    if (m_CacheMap.Lookup((FX_LPVOID)(uintptr_t)charcode, (FX_LPVOID&)pChar)) {
         if (pChar->m_bPageRequired && m_pPageResources) {
             delete pChar;
-            m_CacheMap.RemoveKey((FX_LPVOID)(FX_UINTPTR)charcode);
+            m_CacheMap.RemoveKey((FX_LPVOID)(uintptr_t)charcode);
             return LoadChar(charcode, level + 1);
         }
         return pChar;
@@ -1691,7 +1691,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level)
     pChar->m_pForm = new CPDF_Form(m_pDocument, m_pFontResources ? m_pFontResources : m_pPageResources, pStream, NULL);
     pChar->m_pForm->ParseContent(NULL, NULL, pChar, NULL, level + 1);
     FX_FLOAT scale = m_FontMatrix.GetXUnit();
-    pChar->m_Width = (FX_INT32)(pChar->m_Width * scale + 0.5f);
+    pChar->m_Width = (int32_t)(pChar->m_Width * scale + 0.5f);
     FX_RECT &rcBBox = pChar->m_BBox;
     CFX_FloatRect char_rect((FX_FLOAT)rcBBox.left / 1000.0f, (FX_FLOAT)rcBBox.bottom / 1000.0f,
                             (FX_FLOAT)rcBBox.right / 1000.0f, (FX_FLOAT)rcBBox.top / 1000.0f);
@@ -1703,7 +1703,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level)
     rcBBox.right = FXSYS_round(char_rect.right * 1000);
     rcBBox.top = FXSYS_round(char_rect.top * 1000);
     rcBBox.bottom = FXSYS_round(char_rect.bottom * 1000);
-    m_CacheMap.SetAt((FX_LPVOID)(FX_UINTPTR)charcode, pChar);
+    m_CacheMap.SetAt((FX_LPVOID)(uintptr_t)charcode, pChar);
     if (pChar->m_pForm->CountObjects() == 0) {
         delete pChar->m_pForm;
         pChar->m_pForm = NULL;

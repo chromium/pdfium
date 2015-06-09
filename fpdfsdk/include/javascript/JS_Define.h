@@ -17,7 +17,7 @@ struct JSConstSpec
 	const wchar_t* pName;
 	double number;
 	const wchar_t* string;
-	FX_BYTE t; //0:double 1:str
+	uint8_t t; //0:double 1:str
 };
 
 struct JSPropertySpec

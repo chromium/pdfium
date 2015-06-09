@@ -603,10 +603,10 @@ FX_BOOL util::scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& 
 	return TRUE;
 }
 
-FX_INT64 FX_atoi64(const char *nptr)
+int64_t FX_atoi64(const char *nptr)
 {
         int c;              /* current char */
-        FX_INT64 total;      /* current total */
+        int64_t total;      /* current total */
         int sign;           /* if '-', then negative, otherwise positive */
 
         /* skip whitespace */

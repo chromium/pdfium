@@ -20,8 +20,8 @@ extern "C" {
     }
 };
 struct _IntPair {
-    FX_INT32 key;
-    FX_INT32 value;
+    int32_t key;
+    int32_t value;
 };
 void CFX_GlyphMap::SetAt(int key, int value)
 {
@@ -431,7 +431,7 @@ IFX_GSUBTable* FXGE_CreateGSUBTable(CFX_Font* pFont)
         unsigned long length = 0;
         int error = FXFT_Load_Sfnt_Table(pFont->m_Face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, NULL, &length);
         if (!error) {
-            pFont->m_pGsubData = (unsigned char*)FX_Alloc(FX_BYTE, length);
+            pFont->m_pGsubData = (unsigned char*)FX_Alloc(uint8_t, length);
         }
         if (!pFont->m_pGsubData) {
             return NULL;

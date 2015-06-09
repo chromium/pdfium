@@ -361,10 +361,10 @@ FX_BOOL CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj, con
         FX_FLOAT a = FXSYS_fabs(dCTM.a);
         FX_FLOAT d = FXSYS_fabs(dCTM.d);
         if (a != 1.0f || d != 1.0f) {
-            rect.right = rect.left + (FX_INT32)FXSYS_ceil((FX_FLOAT)rect.Width() * a);
-            rect.bottom = rect.top + (FX_INT32)FXSYS_ceil((FX_FLOAT)rect.Height() * d);
-            rtClip.right = rtClip.left + (FX_INT32)FXSYS_ceil((FX_FLOAT)rtClip.Width() * a);
-            rtClip.bottom = rtClip.top + (FX_INT32)FXSYS_ceil((FX_FLOAT)rtClip.Height() * d);
+            rect.right = rect.left + (int32_t)FXSYS_ceil((FX_FLOAT)rect.Width() * a);
+            rect.bottom = rect.top + (int32_t)FXSYS_ceil((FX_FLOAT)rect.Height() * d);
+            rtClip.right = rtClip.left + (int32_t)FXSYS_ceil((FX_FLOAT)rtClip.Width() * a);
+            rtClip.bottom = rtClip.top + (int32_t)FXSYS_ceil((FX_FLOAT)rtClip.Height() * d);
         }
     }
     rect.Intersect(rtClip);
@@ -568,7 +568,7 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj, FX_BOOL bTyp
     const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState;
     int alpha;
     if (pGeneralData) {
-        alpha = (FX_INT32)(pGeneralData->m_FillAlpha * 255);
+        alpha = (int32_t)(pGeneralData->m_FillAlpha * 255);
         if (pGeneralData->m_pTR) {
             if (!pGeneralData->m_pTransferFunc) {
                 ((CPDF_GeneralStateData*)pGeneralData)->m_pTransferFunc = GetTransferFunc(pGeneralData->m_pTR);
@@ -597,7 +597,7 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const
     const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState;
     int alpha;
     if (pGeneralData) {
-        alpha = (FX_INT32)(pGeneralData->m_StrokeAlpha * 255);
+        alpha = (int32_t)(pGeneralData->m_StrokeAlpha * 255);
         if (pGeneralData->m_pTR) {
             if (!pGeneralData->m_pTransferFunc) {
                 ((CPDF_GeneralStateData*)pGeneralData)->m_pTransferFunc = GetTransferFunc(pGeneralData->m_pTR);
@@ -857,7 +857,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj, 
         pTextMask = NULL;
     }
     if (Transparency & PDFTRANS_GROUP && group_alpha != 1.0f) {
-        bitmap->MultiplyAlpha((FX_INT32)(group_alpha * 255));
+        bitmap->MultiplyAlpha((int32_t)(group_alpha * 255));
     }
     Transparency = m_Transparency;
     if (pPageObj->m_Type == PDFPAGE_FORM) {
@@ -1371,13 +1371,13 @@ FX_BOOL CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext, CFX_Re
     }
     m_pBitmapDevice = new CFX_FxgeDevice;
     FXDIB_Format dibFormat = FXDIB_Rgb;
-    FX_INT32 bpp = 24;
+    int32_t bpp = 24;
     if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT) {
         dibFormat = FXDIB_Argb;
         bpp = 32;
     }
     CFX_FloatRect rect;
-    FX_INT32 iWidth, iHeight, iPitch;
+    int32_t iWidth, iHeight, iPitch;
     while (1) {
         rect = *pRect;
         m_Matrix.TransformRect(rect);

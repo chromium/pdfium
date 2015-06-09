@@ -295,8 +295,8 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect, CFX_MapPtrToPtr* visite
         case PDFOBJ_REFERENCE: {
                 CPDF_Reference* pRef = (CPDF_Reference*)this;
                 FX_DWORD obj_num = pRef->m_RefObjNum;
-                if (bDirect && !visited->GetValueAt((void*)(FX_UINTPTR)obj_num)) {
-                    visited->SetAt((void*)(FX_UINTPTR)obj_num, (void*)1);
+                if (bDirect && !visited->GetValueAt((void*)(uintptr_t)obj_num)) {
+                    visited->SetAt((void*)(uintptr_t)obj_num, (void*)1);
                     CPDF_Object* ret;
                     if (pRef->GetDirect())
                         ret = pRef->GetDirect()->CloneInternal(TRUE, visited);
@@ -896,7 +896,7 @@ void CPDF_Stream::InitStream(FX_LPBYTE pData, FX_DWORD size, CPDF_Dictionary* pD
 {
     InitStream(pDict);
     m_GenNum = (FX_DWORD) - 1;
-    m_pDataBuf = FX_Alloc(FX_BYTE, size);
+    m_pDataBuf = FX_Alloc(uint8_t, size);
     if (pData) {
         FXSYS_memcpy32(m_pDataBuf, pData, size);
     }
@@ -918,7 +918,7 @@ void CPDF_Stream::SetData(FX_LPCBYTE pData, FX_DWORD size, FX_BOOL bCompressed, 
     if (bKeepBuf) {
         m_pDataBuf = (FX_LPBYTE)pData;
     } else {
-        m_pDataBuf = FX_Alloc(FX_BYTE, size);
+        m_pDataBuf = FX_Alloc(uint8_t, size);
         if (pData) {
             FXSYS_memcpy32(m_pDataBuf, pData, size);
         }
@@ -970,8 +970,8 @@ FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const
         if (!m_pFile || !pOther->m_pFile) {
             return FALSE;
         }
-        FX_BYTE srcBuf[1024];
-        FX_BYTE destBuf[1024];
+        uint8_t srcBuf[1024];
+        uint8_t destBuf[1024];
         FX_DWORD size = m_dwSize;
         FX_DWORD srcOffset = m_FileOffset;
         FX_DWORD destOffset = pOther->m_FileOffset;
@@ -1007,7 +1007,7 @@ FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const
         if (NULL == pBuf) {
             return FALSE;
         }
-        FX_BYTE srcBuf[1024];
+        uint8_t srcBuf[1024];
         FX_DWORD size = m_dwSize;
         while (size > 0) {
             FX_DWORD actualSize = std::min(size, 1024U);
@@ -1039,7 +1039,7 @@ CPDF_Stream* CPDF_Stream::Clone(FX_BOOL bDirect, FPDF_LPFCloneStreamCallback lpf
     CPDF_Stream* pObj = new CPDF_Stream(NULL, 0, NULL);
     CPDF_StreamFilter *pSF = GetStreamFilter(TRUE);
     if (pSF) {
-        FX_LPBYTE pBuf = FX_Alloc(FX_BYTE, 4096);
+        FX_LPBYTE pBuf = FX_Alloc(uint8_t, 4096);
         FX_DWORD dwRead;
         do {
             dwRead = pSF->ReadBlock(pBuf, 4096);
@@ -1085,7 +1085,7 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream, FX_BOOL bRawAccess,
         return;
     }
     if (!pStream->IsMemoryBased()) {
-        pSrcData = m_pSrcData = FX_Alloc(FX_BYTE, dwSrcSize);
+        pSrcData = m_pSrcData = FX_Alloc(uint8_t, dwSrcSize);
         if (!pStream->ReadRawData(0, pSrcData, dwSrcSize)) {
             return;
         }
@@ -1164,7 +1164,7 @@ FX_LPBYTE CPDF_StreamAcc::DetachData()
         m_dwSize = 0;
         return p;
     }
-    FX_LPBYTE p = FX_Alloc(FX_BYTE, m_dwSize);
+    FX_LPBYTE p = FX_Alloc(uint8_t, m_dwSize);
     FXSYS_memcpy32(p, m_pData, m_dwSize);
     return p;
 }
@@ -1199,7 +1199,7 @@ CPDF_Object* CPDF_IndirectObjects::GetIndirectObject(FX_DWORD objnum, struct PAR
     }
     FX_LPVOID value;
     {
-        if (m_IndirectObjs.Lookup((FX_LPVOID)(FX_UINTPTR)objnum, value)) {
+        if (m_IndirectObjs.Lookup((FX_LPVOID)(uintptr_t)objnum, value)) {
             if (((CPDF_Object*)value)->GetObjNum() == -1) {
                 return NULL;
             }
@@ -1217,25 +1217,25 @@ CPDF_Object* CPDF_IndirectObjects::GetIndirectObject(FX_DWORD objnum, struct PAR
     if (m_LastObjNum < objnum) {
         m_LastObjNum = objnum;
     }
-    if (m_IndirectObjs.Lookup((FX_LPVOID)(FX_UINTPTR)objnum, value)) {
+    if (m_IndirectObjs.Lookup((FX_LPVOID)(uintptr_t)objnum, value)) {
         if (value) {
             ((CPDF_Object *)value)->Destroy();
         }
     }
-    m_IndirectObjs.SetAt((FX_LPVOID)(FX_UINTPTR)objnum, pObj);
+    m_IndirectObjs.SetAt((FX_LPVOID)(uintptr_t)objnum, pObj);
     return pObj;
 }
 int CPDF_IndirectObjects::GetIndirectType(FX_DWORD objnum)
 {
     FX_LPVOID value;
-    if (m_IndirectObjs.Lookup((FX_LPVOID)(FX_UINTPTR)objnum, value)) {
+    if (m_IndirectObjs.Lookup((FX_LPVOID)(uintptr_t)objnum, value)) {
         return ((CPDF_Object*)value)->GetType();
     }
     if (m_pParser) {
         PARSE_CONTEXT context;
         FXSYS_memset32(&context, 0, sizeof(PARSE_CONTEXT));
         context.m_Flags = PDFPARSE_TYPEONLY;
-        return (int)(FX_UINTPTR)m_pParser->ParseIndirectObject(this, objnum, &context);
+        return (int)(uintptr_t)m_pParser->ParseIndirectObject(this, objnum, &context);
     }
     return 0;
 }
@@ -1245,21 +1245,21 @@ FX_DWORD CPDF_IndirectObjects::AddIndirectObject(CPDF_Object* pObj)
         return pObj->m_ObjNum;
     }
     m_LastObjNum ++;
-    m_IndirectObjs.SetAt((FX_LPVOID)(FX_UINTPTR)m_LastObjNum, pObj);
+    m_IndirectObjs.SetAt((FX_LPVOID)(uintptr_t)m_LastObjNum, pObj);
     pObj->m_ObjNum = m_LastObjNum;
     return m_LastObjNum;
 }
 void CPDF_IndirectObjects::ReleaseIndirectObject(FX_DWORD objnum)
 {
     FX_LPVOID value;
-    if (!m_IndirectObjs.Lookup((FX_LPVOID)(FX_UINTPTR)objnum, value)) {
+    if (!m_IndirectObjs.Lookup((FX_LPVOID)(uintptr_t)objnum, value)) {
         return;
     }
     if (((CPDF_Object*)value)->GetObjNum() == -1) {
         return;
     }
     ((CPDF_Object*)value)->Destroy();
-    m_IndirectObjs.RemoveKey((FX_LPVOID)(FX_UINTPTR)objnum);
+    m_IndirectObjs.RemoveKey((FX_LPVOID)(uintptr_t)objnum);
 }
 void CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum, CPDF_Object* pObj)
 {
@@ -1267,7 +1267,7 @@ void CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum, CPDF_Object* pO
         return;
     }
     FX_LPVOID value = NULL;
-    if (m_IndirectObjs.Lookup((FX_LPVOID)(FX_UINTPTR)objnum, value)) {
+    if (m_IndirectObjs.Lookup((FX_LPVOID)(uintptr_t)objnum, value)) {
         if (value)
         {
             if (pObj->GetGenNum() <= ((CPDF_Object*)value)->GetGenNum())
@@ -1277,7 +1277,7 @@ void CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum, CPDF_Object* pO
          }
     }
     pObj->m_ObjNum = objnum;
-    m_IndirectObjs.SetAt((FX_LPVOID)(FX_UINTPTR)objnum, pObj);
+    m_IndirectObjs.SetAt((FX_LPVOID)(uintptr_t)objnum, pObj);
     if (m_LastObjNum < objnum) {
         m_LastObjNum = objnum;
     }

@@ -42,8 +42,8 @@ void CPWL_Signature_Image::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Ma
 		FX_FLOAT x, y;
 		pUser2Device->Transform(rcClient.left, rcClient.top, x, y);
 
-		pDevice->StretchDIBits(m_pImage, (FX_INT32)x, (FX_INT32)y, 
-			(FX_INT32)rcClient.Width(), (FX_INT32)rcClient.Height());
+		pDevice->StretchDIBits(m_pImage, (int32_t)x, (int32_t)y, 
+			(int32_t)rcClient.Width(), (int32_t)rcClient.Height());
 	}
 }
 

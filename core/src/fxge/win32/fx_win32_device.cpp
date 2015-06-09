@@ -64,9 +64,9 @@ FX_BOOL CWin32FontInfo::IsOpenTypeFromDiv(const LOGFONTA *plf)
     FX_DWORD font_size  = GetFontData(hFont, 0, NULL, 0);
     if (font_size != GDI_ERROR && font_size >= sizeof(FX_DWORD)) {
         FX_DWORD lVersion = 0;
-        GetFontData(hFont, 0, (FX_BYTE*)(&lVersion), sizeof(FX_DWORD));
-        lVersion = (((FX_DWORD)(FX_BYTE)(lVersion)) << 24) | ((FX_DWORD)((FX_BYTE)(lVersion >> 8))) << 16 |
-                   ((FX_DWORD)((FX_BYTE)(lVersion >> 16))) << 8 | ((FX_BYTE)(lVersion >> 24));
+        GetFontData(hFont, 0, (uint8_t*)(&lVersion), sizeof(FX_DWORD));
+        lVersion = (((FX_DWORD)(uint8_t)(lVersion)) << 24) | ((FX_DWORD)((uint8_t)(lVersion >> 8))) << 16 |
+                   ((FX_DWORD)((uint8_t)(lVersion >> 16))) << 8 | ((uint8_t)(lVersion >> 24));
         if (lVersion == TT_MAKE_TAG('O', 'T', 'T', 'O') ||
                 lVersion == 0x00010000 ||
                 lVersion == TT_MAKE_TAG('t', 't', 'c', 'f') ||
@@ -85,9 +85,9 @@ FX_BOOL CWin32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf)
     FX_DWORD font_size  = GetFontData(hFont, 0, NULL, 0);
     if (font_size != GDI_ERROR && font_size >= sizeof(FX_DWORD)) {
         FX_DWORD lVersion = 0;
-        GetFontData(hFont, 0, (FX_BYTE*)(&lVersion), sizeof(FX_DWORD));
-        lVersion = (((FX_DWORD)(FX_BYTE)(lVersion)) << 24) | ((FX_DWORD)((FX_BYTE)(lVersion >> 8))) << 16 |
-                   ((FX_DWORD)((FX_BYTE)(lVersion >> 16))) << 8 | ((FX_BYTE)(lVersion >> 24));
+        GetFontData(hFont, 0, (uint8_t*)(&lVersion), sizeof(FX_DWORD));
+        lVersion = (((FX_DWORD)(uint8_t)(lVersion)) << 24) | ((FX_DWORD)((uint8_t)(lVersion >> 8))) << 16 |
+                   ((FX_DWORD)((uint8_t)(lVersion >> 16))) << 8 | ((uint8_t)(lVersion >> 24));
         if (lVersion == TT_MAKE_TAG('O', 'T', 'T', 'O') ||
                 lVersion == 0x00010000 ||
                 lVersion == TT_MAKE_TAG('t', 't', 'c', 'f') ||
@@ -145,7 +145,7 @@ FX_BOOL CWin32FontInfo::EnumFontList(CFX_FontMapper* pMapper)
     lf.lfCharSet = DEFAULT_CHARSET;
     lf.lfFaceName[0] = 0;
     lf.lfPitchAndFamily = 0;
-    EnumFontFamiliesExA(m_hDC, &lf, (FONTENUMPROCA)FontEnumProc, (FX_UINTPTR)this, 0);
+    EnumFontFamiliesExA(m_hDC, &lf, (FONTENUMPROCA)FontEnumProc, (uintptr_t)this, 0);
     if (pMapper->GetFontEnumerator()) {
         pMapper->GetFontEnumerator()->Finish();
     }
@@ -518,7 +518,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchDIBits(const CFX_DIBitmap* pBitmap1, int de
         return FALSE;
     }
     CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
-    if ((FX_INT64)abs(dest_width) * abs(dest_height) < (FX_INT64)pBitmap1->GetWidth() * pBitmap1->GetHeight() * 4 ||
+    if ((int64_t)abs(dest_width) * abs(dest_height) < (int64_t)pBitmap1->GetWidth() * pBitmap1->GetHeight() * 4 ||
             (flags & FXDIB_INTERPOL) || (flags & FXDIB_BICUBIC_INTERPOL)) {
         SetStretchBltMode(m_hDC, HALFTONE);
     } else {
@@ -526,7 +526,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchDIBits(const CFX_DIBitmap* pBitmap1, int de
     }
     CFX_DIBitmap* pToStrechBitmap = pBitmap;
     bool del = false;
-    if (m_DeviceClass == FXDC_PRINTER && ((FX_INT64)pBitmap->GetWidth() * pBitmap->GetHeight() > (FX_INT64)abs(dest_width) * abs(dest_height))) {
+    if (m_DeviceClass == FXDC_PRINTER && ((int64_t)pBitmap->GetWidth() * pBitmap->GetHeight() > (int64_t)abs(dest_width) * abs(dest_height))) {
         pToStrechBitmap = pBitmap->StretchTo(dest_width, dest_height);
         del = true;
     }

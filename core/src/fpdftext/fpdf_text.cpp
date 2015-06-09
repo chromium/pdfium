@@ -75,7 +75,7 @@ void CTextPage::ProcessObject(CPDF_PageObject* pObject)
         CFX_AffineMatrix matrix;
         pText->GetTextMatrix(&matrix);
         for (int i = 0; i < pText->m_nChars; i ++) {
-            FX_DWORD charcode = pText->m_nChars == 1 ? (FX_DWORD)(FX_UINTPTR)pText->m_pCharCodes : pText->m_pCharCodes[i];
+            FX_DWORD charcode = pText->m_nChars == 1 ? (FX_DWORD)(uintptr_t)pText->m_pCharCodes : pText->m_pCharCodes[i];
             if (charcode == (FX_DWORD) - 1) {
                 continue;
             }
@@ -113,7 +113,7 @@ void CTextPage::ProcessObject(CPDF_PageObject* pObject)
     int space_count = 0;
     FX_FLOAT last_left = 0, last_right = 0, segment_left = 0, segment_right = 0;
     for (int i = 0; i < pText->m_nChars; i ++) {
-        FX_DWORD charcode = pText->m_nChars == 1 ? (FX_DWORD)(FX_UINTPTR)pText->m_pCharCodes : pText->m_pCharCodes[i];
+        FX_DWORD charcode = pText->m_nChars == 1 ? (FX_DWORD)(uintptr_t)pText->m_pCharCodes : pText->m_pCharCodes[i];
         if (charcode == (FX_DWORD) - 1) {
             continue;
         }
@@ -311,11 +311,11 @@ void NormalizeString(CFX_WideString& str)
     }
     CFX_WordArray order;
     FX_BOOL bR2L = FALSE;
-    FX_INT32 start = 0, count = 0, i = 0;
+    int32_t start = 0, count = 0, i = 0;
     int nR2L = 0, nL2R = 0;
     for (i = 0; i < str.GetLength(); i++) {
         if(BidiChar->AppendChar(str.GetAt(i))) {
-            FX_INT32 ret = BidiChar->GetBidiInfo(start, count);
+            int32_t ret = BidiChar->GetBidiInfo(start, count);
             order.Add(start);
             order.Add(count);
             order.Add(ret);
@@ -329,7 +329,7 @@ void NormalizeString(CFX_WideString& str)
         }
     }
     if(BidiChar->EndChar()) {
-        FX_INT32 ret = BidiChar->GetBidiInfo(start, count);
+        int32_t ret = BidiChar->GetBidiInfo(start, count);
         order.Add(start);
         order.Add(count);
         order.Add(ret);

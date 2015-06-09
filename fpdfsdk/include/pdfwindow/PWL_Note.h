@@ -43,8 +43,8 @@ public:
 	virtual void						OnSetContents(IPWL_NoteItem* pItem) = 0;
 	virtual void						OnSetDateTime(IPWL_NoteItem* pItem) = 0;
 	virtual void						OnSetSubjectName(IPWL_NoteItem* pItem) = 0;
-	virtual void						OnPopupMenu(FX_INT32 x, FX_INT32 y) = 0;
-	virtual void						OnPopupMenu(IPWL_NoteItem* pItem, FX_INT32 x, FX_INT32 y) = 0;
+	virtual void						OnPopupMenu(int32_t x, int32_t y) = 0;
+	virtual void						OnPopupMenu(IPWL_NoteItem* pItem, int32_t x, int32_t y) = 0;
 };
 
 class IPWL_NoteHandler
@@ -66,8 +66,8 @@ public:
 	virtual void						SetContents(const CFX_WideString& sContents) = 0;
 
 	virtual IPWL_NoteItem*				CreateSubItem() = 0;
-	virtual FX_INT32					CountSubItems() const = 0;
-	virtual IPWL_NoteItem*				GetSubItems(FX_INT32 index) const = 0;
+	virtual int32_t					CountSubItems() const = 0;
+	virtual IPWL_NoteItem*				GetSubItems(int32_t index) const = 0;
 	virtual void						DeleteSubItem(IPWL_NoteItem* pNoteItem) = 0;
 	virtual void						SetFocus() = 0;
 	
@@ -88,7 +88,7 @@ public:
 	CPWL_Note_Icon();
 	virtual ~CPWL_Note_Icon();
 
-	void								SetIconType(FX_INT32 nType);
+	void								SetIconType(int32_t nType);
 
 public:
 
@@ -96,7 +96,7 @@ protected:
 	virtual void						DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device);
 
 private:
-	FX_INT32							m_nType;
+	int32_t							m_nType;
 };
 
 class CPWL_Note_CloseBox : public CPWL_Button
@@ -148,7 +148,7 @@ public:
 	virtual void						SetText(FX_LPCWSTR csText);
 
 protected:
-	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam = 0, FX_INTPTR lParam = 0);
+	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 	virtual void						RePosChildWnd();
 	virtual void						OnSetFocus();
 	virtual void						OnKillFocus();	
@@ -187,7 +187,7 @@ public:
 	virtual ~CPWL_Note_Contents();
 
 	virtual CFX_ByteString				GetClassName() const;
-	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam = 0, FX_INTPTR lParam = 0);
+	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 	virtual FX_BOOL						OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
 
 	void								SetEditFocus(FX_BOOL bLast);
@@ -199,8 +199,8 @@ public:
 
 	CPWL_NoteItem*						CreateSubItem();
 	void								DeleteSubItem(IPWL_NoteItem* pNoteItem);
-	FX_INT32							CountSubItems() const;
-	IPWL_NoteItem*						GetSubItems(FX_INT32 index) const;
+	int32_t							CountSubItems() const;
+	IPWL_NoteItem*						GetSubItems(int32_t index) const;
 
 	virtual IPWL_NoteItem*				GetHitNoteItem(const CPDF_Point& point);
 	void								EnableRead(FX_BOOL bEnabled);
@@ -228,8 +228,8 @@ public:
 	virtual void						SetContents(const CFX_WideString& sContents);
 
 	virtual IPWL_NoteItem*				CreateSubItem();
-	virtual FX_INT32					CountSubItems() const;
-	virtual IPWL_NoteItem*				GetSubItems(FX_INT32 index) const;
+	virtual int32_t					CountSubItems() const;
+	virtual IPWL_NoteItem*				GetSubItems(int32_t index) const;
 	virtual void						DeleteSubItem(IPWL_NoteItem* pNoteItem);
 	virtual void						SetFocus(){SetNoteFocus(FALSE);}
 
@@ -250,7 +250,7 @@ public:
 	virtual IPWL_NoteItem*				GetHitNoteItem(const CPDF_Point& point);
 	virtual IPWL_NoteItem*				GetFocusedNoteItem() const;
 
-	virtual void						ResetSubjectName(FX_INT32 nItemIndex);
+	virtual void						ResetSubjectName(int32_t nItemIndex);
 	void								EnableRead(FX_BOOL bEnabled);
 	void								EnableModify(FX_BOOL bEnabled);
 
@@ -258,7 +258,7 @@ protected:
 	virtual void						RePosChildWnd();
 	virtual void						CreateChildWnd(const PWL_CREATEPARAM & cp);
 
-	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam = 0, FX_INTPTR lParam = 0);
+	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
 public:
 	virtual FX_FLOAT					GetItemHeight(FX_FLOAT fLimitWidth);
@@ -304,7 +304,7 @@ public:
 	virtual void						SetAuthorName(const CFX_WideString& sName);
 	virtual CFX_WideString				GetAuthorName() const;
 	virtual void						SetBkColor(const CPWL_Color& color);
-	virtual void						ResetSubjectName(FX_INT32 nItemIndex){}
+	virtual void						ResetSubjectName(int32_t nItemIndex){}
 	virtual FX_BOOL						IsTopItem() const {return TRUE;}
 	virtual const CPWL_Note*			GetNote() const;
 	virtual IPWL_NoteNotify*			GetNoteNotify() const;
@@ -312,7 +312,7 @@ public:
 public:
 	IPWL_NoteItem*						Reply();
 	void								EnableNotify(FX_BOOL bEnabled);
-	void								SetIconType(FX_INT32 nType);
+	void								SetIconType(int32_t nType);
 	void								SetOptionsText(const CFX_WideString& sText);
 	void								EnableRead(FX_BOOL bEnabled);
 	void								EnableModify(FX_BOOL bEnabled);
@@ -321,7 +321,7 @@ public:
 	void								SetReplyString(const CFX_WideString& string);
 
 	//0-normal / 1-caption / 2-leftbottom corner / 3-rightbottom corner / 4-close / 5-options 
-	FX_INT32							NoteHitTest(const CPDF_Point& point) const;
+	int32_t							NoteHitTest(const CPDF_Point& point) const;
 	CPDF_Rect							GetCaptionRect() const {return m_rcCaption;}
 	IPopup_Note*						GetPopupNote() const {return m_pPopupNote;}
 
@@ -334,7 +334,7 @@ protected:
 	virtual void						RePosChildWnd();
 	virtual void						CreateChildWnd(const PWL_CREATEPARAM & cp);
 
-	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam = 0, FX_INTPTR lParam = 0);
+	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
 	FX_BOOL								ResetScrollBar();
 	void								RePosNoteChildren();

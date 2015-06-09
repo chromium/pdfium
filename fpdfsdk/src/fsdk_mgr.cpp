@@ -30,8 +30,8 @@ public:
 	virtual CFX_WideString		GetClipboardText(FX_HWND hWnd){return L"";}
 	virtual FX_BOOL				SetClipboardText(FX_HWND hWnd, CFX_WideString string) {return FALSE;}
 	
-	virtual void				ClientToScreen(FX_HWND hWnd, FX_INT32& x, FX_INT32& y) {}
-	virtual void				ScreenToClient(FX_HWND hWnd, FX_INT32& x, FX_INT32& y) {}
+	virtual void				ClientToScreen(FX_HWND hWnd, int32_t& x, int32_t& y) {}
+	virtual void				ScreenToClient(FX_HWND hWnd, int32_t& x, int32_t& y) {}
 
 	/*cursor style
 	FXCT_ARROW	
@@ -41,20 +41,20 @@ public:
 	FXCT_HBEAM		
 	FXCT_HAND
 	*/
-	virtual void				SetCursor(FX_INT32 nCursorType);
+	virtual void				SetCursor(int32_t nCursorType);
 
 	virtual FX_HMENU			CreatePopupMenu() {return NULL;}
-	virtual FX_BOOL				AppendMenuItem(FX_HMENU hMenu, FX_INT32 nIDNewItem, CFX_WideString string) {return FALSE;}
-	virtual FX_BOOL				EnableMenuItem(FX_HMENU hMenu, FX_INT32 nIDItem, FX_BOOL bEnabled) {return FALSE;}
-	virtual FX_INT32			TrackPopupMenu(FX_HMENU hMenu, FX_INT32 x, FX_INT32 y, FX_HWND hParent) {return -1;}
+	virtual FX_BOOL				AppendMenuItem(FX_HMENU hMenu, int32_t nIDNewItem, CFX_WideString string) {return FALSE;}
+	virtual FX_BOOL				EnableMenuItem(FX_HMENU hMenu, int32_t nIDItem, FX_BOOL bEnabled) {return FALSE;}
+	virtual int32_t			TrackPopupMenu(FX_HMENU hMenu, int32_t x, int32_t y, FX_HWND hParent) {return -1;}
 	virtual void				DestroyMenu(FX_HMENU hMenu) {}
 
-	virtual CFX_ByteString		GetNativeTrueTypeFont(FX_INT32 nCharset);
-	virtual FX_BOOL				FindNativeTrueTypeFont(FX_INT32 nCharset, CFX_ByteString sFontFaceName);
-	virtual CPDF_Font*			AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc, CFX_ByteString sFontFaceName, FX_BYTE nCharset);
+	virtual CFX_ByteString		GetNativeTrueTypeFont(int32_t nCharset);
+	virtual FX_BOOL				FindNativeTrueTypeFont(int32_t nCharset, CFX_ByteString sFontFaceName);
+	virtual CPDF_Font*			AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc, CFX_ByteString sFontFaceName, uint8_t nCharset);
 
-	virtual FX_INT32			SetTimer(FX_INT32 uElapse, TimerCallback lpTimerFunc) ;
-	virtual void				KillTimer(FX_INT32 nID) ;
+	virtual int32_t			SetTimer(int32_t uElapse, TimerCallback lpTimerFunc) ;
+	virtual void				KillTimer(int32_t nID) ;
 
 
 	virtual FX_BOOL				IsSHIFTKeyDown(FX_DWORD nFlag) {return m_pEnv->FFI_IsSHIFTKeyDown(nFlag);}
@@ -64,14 +64,14 @@ public:
 
 	virtual	FX_SYSTEMTIME		GetLocalTime();
 
-	virtual FX_INT32			GetCharSet() {return m_nCharSet;}
-	virtual void 				SetCharSet(FX_INT32 nCharSet) {m_nCharSet = nCharSet;}
+	virtual int32_t			GetCharSet() {return m_nCharSet;}
+	virtual void 				SetCharSet(int32_t nCharSet) {m_nCharSet = nCharSet;}
 private:
 	CPDFDoc_Environment* m_pEnv;
 	int		m_nCharSet;
 };
 
-void CFX_SystemHandler::SetCursor(FX_INT32 nCursorType)
+void CFX_SystemHandler::SetCursor(int32_t nCursorType)
 {
 
 	m_pEnv->FFI_SetCursor(nCursorType);
@@ -132,12 +132,12 @@ FX_BOOL CFX_SystemHandler::IsSelectionImplemented()
 	return FALSE;
 }
 
-CFX_ByteString CFX_SystemHandler::GetNativeTrueTypeFont(FX_INT32 nCharset)
+CFX_ByteString CFX_SystemHandler::GetNativeTrueTypeFont(int32_t nCharset)
 {
 	return "";
 }
 
-FX_BOOL	CFX_SystemHandler::FindNativeTrueTypeFont(FX_INT32 nCharset, CFX_ByteString sFontFaceName) 
+FX_BOOL	CFX_SystemHandler::FindNativeTrueTypeFont(int32_t nCharset, CFX_ByteString sFontFaceName) 
 {
 	CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
 //	FXFT_Face nFace = pFontMgr->FindSubstFont(sFontFaceName,TRUE,0,0,0,0,NULL);
@@ -182,7 +182,7 @@ static int CharSet2CP(int charset)
 	return 0;
 }
 CPDF_Font* CFX_SystemHandler::AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc, CFX_ByteString sFontFaceName, 
-														 FX_BYTE nCharset) 
+														 uint8_t nCharset) 
 {
 	if(pDoc)
 	{
@@ -197,11 +197,11 @@ CPDF_Font* CFX_SystemHandler::AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc, CF
 }
 
 
-FX_INT32 CFX_SystemHandler::SetTimer(FX_INT32 uElapse, TimerCallback lpTimerFunc)
+int32_t CFX_SystemHandler::SetTimer(int32_t uElapse, TimerCallback lpTimerFunc)
 {
 	return m_pEnv->FFI_SetTimer(uElapse, lpTimerFunc);
 }
-void CFX_SystemHandler::KillTimer(FX_INT32 nID)
+void CFX_SystemHandler::KillTimer(int32_t nID)
 {
 	m_pEnv->FFI_KillTimer(nID);
 }

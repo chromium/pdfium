@@ -475,7 +475,7 @@ const FX_LPCSTR  ZapfEncodingNames[224] = {
     NULL, "a201", "a183", "a184", "a197", "a185", "a194", "a198",
     "a186", "a195", "a187", "a188", "a189", "a190", "a191", NULL
 };
-const FX_CHAR*  PDF_CharNameFromPredefinedCharSet(int encoding, FX_BYTE charcode)
+const FX_CHAR*  PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode)
 {
     if (encoding == PDFFONT_ENCODING_PDFDOC) {
         if (charcode < 24) {
@@ -512,15 +512,15 @@ FX_WCHAR FT_UnicodeFromCharCode(int encoding, FX_DWORD charcode)
         case FXFT_ENCODING_UNICODE:
             return (FX_WORD)charcode;
         case FXFT_ENCODING_ADOBE_STANDARD:
-            return StandardEncoding[(FX_BYTE)charcode];
+            return StandardEncoding[(uint8_t)charcode];
         case FXFT_ENCODING_ADOBE_EXPERT:
-            return MacExpertEncoding[(FX_BYTE)charcode];
+            return MacExpertEncoding[(uint8_t)charcode];
         case FXFT_ENCODING_ADOBE_LATIN_1:
-            return AdobeWinAnsiEncoding[(FX_BYTE)charcode];
+            return AdobeWinAnsiEncoding[(uint8_t)charcode];
         case FXFT_ENCODING_APPLE_ROMAN:
-            return MacRomanEncoding[(FX_BYTE)charcode];
+            return MacRomanEncoding[(uint8_t)charcode];
         case PDFFONT_ENCODING_PDFDOC:
-            return PDFDocEncoding[(FX_BYTE)charcode];
+            return PDFDocEncoding[(uint8_t)charcode];
     }
     return 0;
 }

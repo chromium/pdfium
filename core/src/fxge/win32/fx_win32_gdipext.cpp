@@ -220,7 +220,7 @@ typedef GpStatus (WINGDIPAPI *FuncType_GdipSetImagePalette)(GpImage *image, GDIP
 typedef GpStatus (WINGDIPAPI *FuncType_GdipSetInterpolationMode)(GpGraphics *graphics, InterpolationMode interpolationMode);
 typedef GpStatus (WINGDIPAPI *FuncType_GdipDrawImagePointsI)(GpGraphics *graphics, GpImage *image, GDIPCONST GpPoint *dstpoints, INT count);
 typedef GpStatus (WINGDIPAPI *FuncType_GdipCreateBitmapFromGdiDib)(GDIPCONST BITMAPINFO* gdiBitmapInfo, VOID* gdiBitmapData, GpBitmap** bitmap);
-typedef Status (WINAPI *FuncType_GdiplusStartup)(OUT FX_UINTPTR *token, const GdiplusStartupInput *input, OUT GdiplusStartupOutput *output);
+typedef Status (WINAPI *FuncType_GdiplusStartup)(OUT uintptr_t *token, const GdiplusStartupInput *input, OUT GdiplusStartupOutput *output);
 typedef GpStatus (WINGDIPAPI *FuncType_GdipDrawLineI)(GpGraphics *graphics, GpPen *pen, int x1, int y1, int x2, int y2);
 typedef GpStatus (WINGDIPAPI *FuncType_GdipResetClip)(GpGraphics *graphics);
 typedef GpStatus (WINGDIPAPI *FuncType_GdipCreatePath)(GpFillMode brushMode, GpPath **path);
@@ -506,7 +506,7 @@ void CGdiplusExt::Load()
             return;
         }
     }
-    FX_UINTPTR gdiplusToken;
+    uintptr_t gdiplusToken;
     GdiplusStartupInput gdiplusStartupInput;
     ((FuncType_GdiplusStartup)m_Functions[FuncId_GdiplusStartup])(&gdiplusToken, &gdiplusStartupInput, NULL);
     m_GdiModule = LoadLibraryA("GDI32.DLL");
@@ -1044,7 +1044,7 @@ public:
         bytes_left = m_InterStream.GetLength() - m_ReadPos;
         bytes_out = FX_MIN(cb, bytes_left);
         FXSYS_memcpy32(Output, m_InterStream.GetBuffer() + m_ReadPos, bytes_out);
-        m_ReadPos += (FX_INT32)bytes_out;
+        m_ReadPos += (int32_t)bytes_out;
         if (pcbRead != NULL) {
             *pcbRead = (ULONG)bytes_out;
         }

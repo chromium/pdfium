@@ -29,7 +29,7 @@ FX_BOOL FX_IsCombinationChar(FX_WCHAR wch)
 FX_BOOL	FX_IsBidiChar(FX_WCHAR wch)
 {
     FX_DWORD dwProps = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch];
-    FX_INT32 iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
+    int32_t iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
     return (FX_BIDICLASS_R == iBidiCls || FX_BIDICLASS_AL == iBidiCls);
 }
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical)

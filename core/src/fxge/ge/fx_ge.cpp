@@ -61,7 +61,7 @@ void CFX_GEModule::SetTextGamma(FX_FLOAT gammaValue)
     gammaValue /= 2.2f;
     int i = 0;
     while (i < 256) {
-        m_GammaValue[i] = (FX_BYTE)(FXSYS_pow((FX_FLOAT)i / 255, gammaValue) * 255.0f + 0.5f);
+        m_GammaValue[i] = (uint8_t)(FXSYS_pow((FX_FLOAT)i / 255, gammaValue) * 255.0f + 0.5f);
         i++;
     }
 }

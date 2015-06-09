@@ -62,8 +62,8 @@ CFX_DIBitmap::CFX_DIBitmap()
 FX_BOOL CFX_DIBitmap::Create(int width, int height, FXDIB_Format format, FX_LPBYTE pBuffer, int pitch)
 {
     m_pBuffer = NULL;
-    m_bpp = (FX_BYTE)format;
-    m_AlphaFlag = (FX_BYTE)(format >> 8);
+    m_bpp = (uint8_t)format;
+    m_AlphaFlag = (uint8_t)(format >> 8);
     m_Width = m_Height = m_Pitch = 0;
     if (width <= 0 || height <= 0 || pitch < 0) {
         return FALSE;
@@ -84,12 +84,12 @@ FX_BOOL CFX_DIBitmap::Create(int width, int height, FXDIB_Format format, FX_LPBY
         int size = pitch * height + 4;
         int oomlimit = _MAX_OOM_LIMIT_;
         if (oomlimit >= 0 && size >= oomlimit) {
-            m_pBuffer = FX_TryAlloc(FX_BYTE, size);
+            m_pBuffer = FX_TryAlloc(uint8_t, size);
             if (m_pBuffer == NULL) {
                 return FALSE;
             }
         } else {
-            m_pBuffer = FX_Alloc(FX_BYTE, size);
+            m_pBuffer = FX_Alloc(uint8_t, size);
         }
     }
     m_Width = width;
@@ -267,14 +267,14 @@ int CFX_DIBSource::FindPalette(FX_DWORD color) const
     if (m_pPalette == NULL) {
         if (IsCmykImage()) {
             if (GetBPP() == 1) {
-                return ((FX_BYTE)color == 0xff) ? 0 : 1;
+                return ((uint8_t)color == 0xff) ? 0 : 1;
             }
-            return 0xff - (FX_BYTE)color;
+            return 0xff - (uint8_t)color;
         }
         if (GetBPP() == 1) {
-            return ((FX_BYTE)color == 0xff) ? 1 : 0;
+            return ((uint8_t)color == 0xff) ? 1 : 0;
         }
-        return (FX_BYTE)color;
+        return (uint8_t)color;
     }
     int palsize = (1 << GetBPP());
     for (int i = 0; i < palsize; i ++)
@@ -457,7 +457,7 @@ FX_BOOL CFX_DIBitmap::TransferMask(int dest_left, int dest_top, int width, int h
         }
     }
     if(!IsCmykImage()) {
-        color_p[3] = (FX_BYTE)alpha;
+        color_p[3] = (uint8_t)alpha;
     }
     if (GetFormat() == FXDIB_Argb) {
         for (int row = 0; row < height; row ++) {
@@ -877,12 +877,12 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform)
                 if (m_pPalette == NULL) {
                     return FALSE;
                 }
-                FX_BYTE gray[2];
+                uint8_t gray[2];
                 for (int i = 0; i < 2; i ++) {
-                    int r = (FX_BYTE)(m_pPalette[i] >> 16);
-                    int g = (FX_BYTE)(m_pPalette[i] >> 8);
-                    int b = (FX_BYTE)m_pPalette[i];
-                    gray[i] = (FX_BYTE)FXRGB2GRAY(r, g, b);
+                    int r = (uint8_t)(m_pPalette[i] >> 16);
+                    int g = (uint8_t)(m_pPalette[i] >> 8);
+                    int b = (uint8_t)m_pPalette[i];
+                    gray[i] = (uint8_t)FXRGB2GRAY(r, g, b);
                 }
                 CFX_DIBitmap* pMask = new CFX_DIBitmap;
                 if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
@@ -908,12 +908,12 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform)
                 if (m_pPalette == NULL) {
                     return FALSE;
                 }
-                FX_BYTE gray[256];
+                uint8_t gray[256];
                 for (int i = 0; i < 256; i ++) {
-                    int r = (FX_BYTE)(m_pPalette[i] >> 16);
-                    int g = (FX_BYTE)(m_pPalette[i] >> 8);
-                    int b = (FX_BYTE)m_pPalette[i];
-                    gray[i] = (FX_BYTE)FXRGB2GRAY(r, g, b);
+                    int r = (uint8_t)(m_pPalette[i] >> 16);
+                    int g = (uint8_t)(m_pPalette[i] >> 8);
+                    int b = (uint8_t)m_pPalette[i];
+                    gray[i] = (uint8_t)FXRGB2GRAY(r, g, b);
                 }
                 CFX_DIBitmap* pMask = new CFX_DIBitmap;
                 if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
@@ -1090,13 +1090,13 @@ void CFX_DIBitmap::SetPixel(int x, int y, FX_DWORD color)
             }
             break;
         case FXDIB_8bppMask:
-            *pos = (FX_BYTE)(color >> 24);
+            *pos = (uint8_t)(color >> 24);
             break;
         case FXDIB_8bppRgb: {
                 if (m_pPalette) {
                     for (int i = 0; i < 256; i ++) {
                         if (m_pPalette[i] == color) {
-                            *pos = (FX_BYTE)i;
+                            *pos = (uint8_t)i;
                             return;
                         }
                     }
@@ -1225,7 +1225,7 @@ FX_BOOL CFX_DIBitmap::ConvertColorScale(FX_DWORD forecolor, FX_DWORD backcolor)
         int size = 1 << m_bpp;
         if (isCmykImage) {
             for (int i = 0; i < size; i ++) {
-                FX_BYTE b, g, r;
+                uint8_t b, g, r;
                 AdobeCMYK_to_sRGB1(FXSYS_GetCValue(m_pPalette[i]), FXSYS_GetMValue(m_pPalette[i]), FXSYS_GetYValue(m_pPalette[i]), FXSYS_GetKValue(m_pPalette[i]),
                                    r, g, b);
                 int gray = 255 - FXRGB2GRAY(r, g, b);
@@ -1245,7 +1245,7 @@ FX_BOOL CFX_DIBitmap::ConvertColorScale(FX_DWORD forecolor, FX_DWORD backcolor)
             for (int row = 0; row < m_Height; row ++) {
                 FX_LPBYTE scanline = m_pBuffer + row * m_Pitch;
                 for (int col = 0; col < m_Width; col ++) {
-                    FX_BYTE b, g, r;
+                    uint8_t b, g, r;
                     AdobeCMYK_to_sRGB1(scanline[0], scanline[1], scanline[2], scanline[3],
                                        r, g, b);
                     *scanline ++ = 0;
@@ -1274,7 +1274,7 @@ FX_BOOL CFX_DIBitmap::ConvertColorScale(FX_DWORD forecolor, FX_DWORD backcolor)
         for (int row = 0; row < m_Height; row ++) {
             FX_LPBYTE scanline = m_pBuffer + row * m_Pitch;
             for (int col = 0; col < m_Width; col ++) {
-                FX_BYTE b, g, r;
+                uint8_t b, g, r;
                 AdobeCMYK_to_sRGB1(scanline[0], scanline[1], scanline[2], scanline[3],
                                    r, g, b);
                 int gray = 255 - FXRGB2GRAY(r, g, b);
@@ -1314,11 +1314,11 @@ FX_BOOL CFX_DIBitmap::DitherFS(const FX_DWORD* pPalette, int pal_size, const FX_
     if (pRect) {
         rect.Intersect(*pRect);
     }
-    FX_BYTE translate[256];
+    uint8_t translate[256];
     for (int i = 0; i < 256; i ++) {
         int err2 = 65536;
         for (int j = 0; j < pal_size; j ++) {
-            FX_BYTE entry = (FX_BYTE)pPalette[j];
+            uint8_t entry = (uint8_t)pPalette[j];
             int err = (int)entry - i;
             if (err * err < err2) {
                 err2 = err * err;
@@ -1332,7 +1332,7 @@ FX_BOOL CFX_DIBitmap::DitherFS(const FX_DWORD* pPalette, int pal_size, const FX_
         for (int col = rect.left; col < rect.right; col ++) {
             int src_pixel = scan[col];
             int dest_pixel = translate[src_pixel];
-            scan[col] = (FX_BYTE)dest_pixel;
+            scan[col] = (uint8_t)dest_pixel;
             int error = -dest_pixel + src_pixel;
             if (col < rect.right - 1) {
                 int src = scan[col + 1];
@@ -1495,11 +1495,11 @@ void CFX_FilteredDIB::LoadSrc(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc)
     m_Width = pSrc->GetWidth();
     m_Height = pSrc->GetHeight();
     FXDIB_Format format = GetDestFormat();
-    m_bpp = (FX_BYTE)format;
-    m_AlphaFlag = (FX_BYTE)(format >> 8);
+    m_bpp = (uint8_t)format;
+    m_AlphaFlag = (uint8_t)(format >> 8);
     m_Pitch = (m_Width * (format & 0xff) + 31) / 32 * 4;
     m_pPalette = GetDestPalette();
-    m_pScanline = FX_Alloc(FX_BYTE, m_Pitch);
+    m_pScanline = FX_Alloc(uint8_t, m_Pitch);
 }
 FX_LPCBYTE CFX_FilteredDIB::GetScanline(int line) const
 {
@@ -1611,7 +1611,7 @@ FX_BOOL CFX_ImageRenderer::Continue(IFX_Pause* pPause)
         if (pBitmap->IsAlphaMask()) {
             if (m_BitmapAlpha != 255) {
                 if (m_AlphaFlag >> 8) {
-                    m_AlphaFlag = (((FX_BYTE)((m_AlphaFlag & 0xff) * m_BitmapAlpha / 255)) | ((m_AlphaFlag >> 8) << 8));
+                    m_AlphaFlag = (((uint8_t)((m_AlphaFlag & 0xff) * m_BitmapAlpha / 255)) | ((m_AlphaFlag >> 8) << 8));
                 } else {
                     m_MaskColor = FXARGB_MUL_ALPHA(m_MaskColor, m_BitmapAlpha);
                 }

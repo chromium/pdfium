@@ -128,8 +128,8 @@ public:
 	void							ClearAppModified();
 	FX_BOOL							IsAppModified() const;
 	
-	FX_INT32						GetAppearanceAge() const;
-	FX_INT32						GetValueAge() const;
+	int32_t						GetAppearanceAge() const;
+	int32_t						GetValueAge() const;
 	
 private:
 	void							ResetAppearance_PushButton();
@@ -161,8 +161,8 @@ public:
 private:
 	CPDFSDK_InterForm*				m_pInterForm;
 	FX_BOOL							m_bAppModified;
-	FX_INT32						m_nAppAge;
-	FX_INT32						m_nValueAge;
+	int32_t						m_nAppAge;
+	int32_t						m_nValueAge;
 };
 
 #define CPDFSDK_WidgetMap				CFX_MapPtrTemplate<CPDF_FormControl*, CPDFSDK_Widget*>
@@ -245,13 +245,13 @@ private:
 public:
 	FX_BOOL IsNeedHighLight(int nFieldType);
 	void    RemoveAllHighLight();
-	void    SetHighlightAlpha(FX_BYTE alpha) {m_iHighlightAlpha = alpha;}
-	FX_BYTE GetHighlightAlpha() {return m_iHighlightAlpha;}
+	void    SetHighlightAlpha(uint8_t alpha) {m_iHighlightAlpha = alpha;}
+	uint8_t GetHighlightAlpha() {return m_iHighlightAlpha;}
 	void    SetHighlightColor(FX_COLORREF clr, int nFieldType);
 	FX_COLORREF GetHighlightColor(int nFieldType);
 private:
 	FX_COLORREF m_aHighlightColor[6];
-	FX_BYTE m_iHighlightAlpha;
+	uint8_t m_iHighlightAlpha;
 	FX_BOOL	m_bNeedHightlight[6];
 };
 

@@ -597,7 +597,7 @@ FX_BOOL Field::buttonAlignX(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString
 		FX_FLOAT fLeft,fBottom;
 		IconFit.GetIconPosition(fLeft,fBottom);
 
-		vp << (FX_INT32)fLeft;
+		vp << (int32_t)fLeft;
 	}
 
 	return TRUE;
@@ -648,7 +648,7 @@ FX_BOOL Field::buttonAlignY(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString
 		FX_FLOAT fLeft,fBottom;
 		IconFit.GetIconPosition(fLeft,fBottom);
 
-		vp <<  (FX_INT32)fBottom;
+		vp <<  (int32_t)fBottom;
 	}
 
 	return TRUE;
@@ -788,9 +788,9 @@ FX_BOOL Field::buttonScaleHow(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideStri
 
 		CPDF_IconFit IconFit = pFormControl->GetIconFit();
 		if (IconFit.IsProportionalScale())
-			vp << (FX_INT32)0;
+			vp << (int32_t)0;
 		else
-			vp << (FX_INT32)1;
+			vp << (int32_t)1;
 	}
 
 	return TRUE;
@@ -841,16 +841,16 @@ FX_BOOL Field::buttonScaleWhen(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideStr
 		switch (ScaleM)
 		{
 			case CPDF_IconFit::Always :
-				vp <<  (FX_INT32) CPDF_IconFit::Always;
+				vp <<  (int32_t) CPDF_IconFit::Always;
 				break;
 			case CPDF_IconFit::Bigger :
-				vp <<  (FX_INT32) CPDF_IconFit::Bigger;
+				vp <<  (int32_t) CPDF_IconFit::Bigger;
 				break;
 			case CPDF_IconFit::Never :
-				vp <<  (FX_INT32) CPDF_IconFit::Never;
+				vp <<  (int32_t) CPDF_IconFit::Never;
 				break;
 			case CPDF_IconFit::Smaller :
-				vp <<  (FX_INT32) CPDF_IconFit::Smaller;
+				vp <<  (int32_t) CPDF_IconFit::Smaller;
 				break;
 		}
 	}
@@ -901,7 +901,7 @@ FX_BOOL Field::calcOrderIndex(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideStri
 		CPDF_InterForm* pInterForm = pRDInterForm->GetInterForm();
 		ASSERT(pInterForm != NULL);
 
-		vp << (FX_INT32)pInterForm->FindFieldInCalculationOrder(pFormField);
+		vp << (int32_t)pInterForm->FindFieldInCalculationOrder(pFormField);
 	}
 
 	return TRUE;
@@ -944,7 +944,7 @@ FX_BOOL Field::charLimit(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 		if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
 			return FALSE;
 
-		vp << (FX_INT32)pFormField->GetMaxLen();
+		vp << (int32_t)pFormField->GetMaxLen();
 	}
 	return TRUE;
 }
@@ -1141,7 +1141,7 @@ void Field::SetCurrentValueIndices(CPDFSDK_Document* pDocument, const CFX_WideSt
 					break;
 				}
 
-				int iSelecting = (FX_INT32)array.GetAt(i);
+				int iSelecting = (int32_t)array.GetAt(i);
 				if (iSelecting < pFormField->CountOptions() && !pFormField->IsItemSelected(iSelecting))
 					pFormField->SetItemSelection(iSelecting, TRUE);
 
@@ -1365,7 +1365,7 @@ FX_BOOL Field::display(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sEr
 
 		if (ANNOTFLAG_INVISIBLE & dwFlag || ANNOTFLAG_HIDDEN & dwFlag) 
 		{
-			vp << (FX_INT32)1;
+			vp << (int32_t)1;
 		}
 		else 
 		{
@@ -1373,16 +1373,16 @@ FX_BOOL Field::display(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sEr
 			{
 				if (ANNOTFLAG_NOVIEW & dwFlag)
 				{
-					vp << (FX_INT32)3;
+					vp << (int32_t)3;
 				}
 				else
 				{
-					vp << (FX_INT32)0;
+					vp << (int32_t)0;
 				}
 			}
 			else
 			{
-				vp << (FX_INT32)2;
+				vp << (int32_t)2;
 			}				
 		}
 	}
@@ -1932,7 +1932,7 @@ FX_BOOL Field::lineWidth(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 		CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormField->GetControl(0));
 		if (!pWidget) return FALSE;
 
-		vp << (FX_INT32)pWidget->GetBorderWidth();
+		vp << (int32_t)pWidget->GetBorderWidth();
 	}
 
 	return TRUE;
@@ -2110,7 +2110,7 @@ FX_BOOL Field::numItems(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 
 	if (!vp.IsGetting()) return FALSE;
 
-	vp << (FX_INT32)pFormField->CountOptions();
+	vp << (int32_t)pFormField->CountOptions();
 
 	return TRUE;
 }
@@ -2147,14 +2147,14 @@ FX_BOOL Field::page(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError
 			if(!pPageView)
 				return FALSE;
 
-			PageArray.SetElement(i, CJS_Value(m_isolate,(FX_INT32)pPageView->GetPageIndex()));
+			PageArray.SetElement(i, CJS_Value(m_isolate,(int32_t)pPageView->GetPageIndex()));
 		}
 
 		vp << PageArray;
 	}
 	else
 	{
-		vp << (FX_INT32) -1;
+		vp << (int32_t) -1;
 	}
 
 	return TRUE;
@@ -2407,10 +2407,10 @@ FX_BOOL Field::rect(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError
 
 		CFX_FloatRect crRect = pWidget->GetRect();
 		CJS_Value Upper_Leftx(m_isolate),Upper_Lefty(m_isolate),Lower_Rightx(m_isolate),Lower_Righty(m_isolate);
-		Upper_Leftx = (FX_INT32)crRect.left;
-		Upper_Lefty = (FX_INT32)crRect.top;
-		Lower_Rightx = (FX_INT32)crRect.right;
-		Lower_Righty = (FX_INT32)crRect.bottom;
+		Upper_Leftx = (int32_t)crRect.left;
+		Upper_Lefty = (int32_t)crRect.top;
+		Lower_Rightx = (int32_t)crRect.right;
+		Lower_Righty = (int32_t)crRect.bottom;
 
 		CJS_Array rcArray(m_isolate);
 		rcArray.SetElement(0,Upper_Leftx);
@@ -2643,7 +2643,7 @@ FX_BOOL Field::rotation(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 		CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
 		if (!pFormControl)return FALSE;
 
-		vp << (FX_INT32)pFormControl->GetRotation();
+		vp << (int32_t)pFormControl->GetRotation();
 	}
 
 	return TRUE;
@@ -2850,7 +2850,7 @@ FX_BOOL Field::textColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 		FX_ARGB color;
 		CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
 		FieldAppearance.GetColor(color, iColorType);
-		FX_INT32 a,r,g,b;
+		int32_t a,r,g,b;
 		ArgbDecode(color, a, r, g, b);
 
 		CPWL_Color crRet = CPWL_Color(COLORTYPE_RGB, r / 255.0f,
@@ -3791,7 +3791,7 @@ FX_BOOL Field::setFocus(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 	CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
 	ASSERT(pFormField != NULL);
 
-	FX_INT32 nCount = pFormField->CountControls();
+	int32_t nCount = pFormField->CountControls();
 
 	if (nCount < 1) return FALSE;
 
@@ -3812,7 +3812,7 @@ FX_BOOL Field::setFocus(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 			return FALSE;
 		if (CPDFSDK_PageView* pCurPageView = m_pDocument->GetPageView(pPage))
 		{
-			for (FX_INT32 i=0; i<nCount; i++)
+			for (int32_t i=0; i<nCount; i++)
 			{
 				if (CPDFSDK_Widget* pTempWidget =  pInterForm->GetWidget(pFormField->GetControl(i)))
 				{				
@@ -3886,7 +3886,7 @@ FX_BOOL Field::source(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErr
 
 /////////////////////////////////////////// delay /////////////////////////////////////////////
 
-void Field::AddDelay_Int(enum FIELD_PROP prop, FX_INT32 n)
+void Field::AddDelay_Int(enum FIELD_PROP prop, int32_t n)
 {
 	ASSERT(m_pJSDoc != NULL);
 

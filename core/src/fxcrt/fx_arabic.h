@@ -21,18 +21,18 @@ public:
     }
     virtual FX_BOOL		AppendChar(FX_WCHAR wch) override;
     virtual FX_BOOL		EndChar() override;
-    virtual FX_INT32	GetBidiInfo(FX_INT32 &iStart, FX_INT32 &iCount) override;
+    virtual int32_t 	GetBidiInfo(int32_t &iStart, int32_t &iCount) override;
     virtual void		Reset() override;
 
 private:
     ~CFX_BidiChar() { }
-    FX_BOOL		m_bSeparateNeutral;
-    FX_INT32	m_iCurStart;
-    FX_INT32	m_iCurCount;
-    FX_INT32	m_iCurBidi;
-    FX_INT32	m_iLastBidi;
-    FX_INT32	m_iLastStart;
-    FX_INT32	m_iLastCount;
+    FX_BOOL	m_bSeparateNeutral;
+    int32_t	m_iCurStart;
+    int32_t	m_iCurCount;
+    int32_t	m_iCurBidi;
+    int32_t	m_iLastBidi;
+    int32_t	m_iLastStart;
+    int32_t	m_iLastCount;
 };
 
 #endif  // CORE_SRC_FXCRT_FX_ARABIC_H_

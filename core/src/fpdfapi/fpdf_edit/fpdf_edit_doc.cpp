@@ -178,7 +178,7 @@ static const FX_WCHAR g_FX_CP1257Unicodes[128] = {
     0x0173, 0x0142, 0x015B, 0x016B, 0x00FC, 0x017C, 0x017E, 0x02D9,
 };
 typedef struct {
-    FX_BYTE		m_Charset;
+    uint8_t		m_Charset;
     const FX_WCHAR*	m_pUnicodes;
 } FX_CharsetUnicodes;
 const FX_CharsetUnicodes g_FX_CharsetUnicodes[] = {
@@ -429,12 +429,12 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont, FX_BOOL bVert, FX_B
 }
 #endif
 #if (_FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_)
-FX_UINT32 FX_GetLangHashCode( FX_LPCSTR pStr)
+uint32_t FX_GetLangHashCode( FX_LPCSTR pStr)
 {
     FXSYS_assert( pStr != NULL);
-    FX_INT32 iLength = FXSYS_strlen(pStr);
+    int32_t iLength = FXSYS_strlen(pStr);
     FX_LPCSTR pStrEnd = pStr + iLength;
-    FX_UINT32 uHashCode = 0;
+    uint32_t uHashCode = 0;
     while ( pStr < pStrEnd) {
         uHashCode = 31 * uHashCode + tolower(*pStr++);
     }
@@ -512,12 +512,12 @@ static const FX_LANG2CS gs_FXLang2CharsetTable[] = {
     {3923451837, 134},
     {3923451838, 136},
 };
-static FX_WORD FX_GetCsFromLangCode(FX_UINT32 uCode)
+static FX_WORD FX_GetCsFromLangCode(uint32_t uCode)
 {
-    FX_INT32 iStart = 0;
-    FX_INT32 iEnd = sizeof(gs_FXLang2CharsetTable) / sizeof(FX_LANG2CS) - 1;
+    int32_t iStart = 0;
+    int32_t iEnd = sizeof(gs_FXLang2CharsetTable) / sizeof(FX_LANG2CS) - 1;
     while (iStart <= iEnd) {
-        FX_INT32 iMid = (iStart + iEnd) / 2;
+        int32_t iMid = (iStart + iEnd) / 2;
         const FX_LANG2CS &charset = gs_FXLang2CharsetTable[iMid];
         if (uCode == charset.uLang) {
             return charset.uCharset;
@@ -529,13 +529,13 @@ static FX_WORD FX_GetCsFromLangCode(FX_UINT32 uCode)
     };
     return 0;
 }
-static FX_WORD FX_GetCharsetFromLang(FX_LPCSTR pLang, FX_INT32 iLength)
+static FX_WORD FX_GetCharsetFromLang(FX_LPCSTR pLang, int32_t iLength)
 {
     FXSYS_assert(pLang);
     if (iLength < 0) {
         iLength = FXSYS_strlen(pLang);
     }
-    FX_UINT32 uHash = FX_GetLangHashCode(pLang);
+    uint32_t uHash = FX_GetLangHashCode(pLang);
     return FX_GetCsFromLangCode(uHash);
 }
 static void _CFString2CFXByteString(CFStringRef src, CFX_ByteString &dest)
@@ -1028,7 +1028,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert)
     pBBox->AddInteger(bbox.right);
     pBBox->AddInteger(bbox.top);
     pFontDesc->SetAt("FontBBox", pBBox);
-    FX_INT32 nStemV = 0;
+    int32_t nStemV = 0;
     if (pFont->m_pSubstFont) {
         nStemV = pFont->m_pSubstFont->m_Weight / 5;
     } else {

@@ -13,7 +13,7 @@ const FX_DWORD N_COMPONENT_RGB = 3;
 const FX_DWORD N_COMPONENT_CMYK = 4;
 const FX_DWORD N_COMPONENT_DEFAULT = 3;
 
-FX_BOOL MD5ComputeID( FX_LPCVOID buf, FX_DWORD dwSize, FX_BYTE ID[16] )
+FX_BOOL MD5ComputeID( FX_LPCVOID buf, FX_DWORD dwSize, uint8_t ID[16] )
 {
     return cmsMD5computeIDExt(buf, dwSize, ID);
 }
@@ -65,7 +65,7 @@ FX_BOOL CheckComponents(cmsColorSpaceSignature cs, int nComponents, FX_BOOL bDst
     }
     return TRUE;
 }
-FX_INT32 GetCSComponents(cmsColorSpaceSignature cs)
+int32_t GetCSComponents(cmsColorSpaceSignature cs)
 {
     FX_DWORD components;
     switch (cs) {
@@ -87,8 +87,8 @@ FX_INT32 GetCSComponents(cmsColorSpaceSignature cs)
     }
     return components;
 }
-void* IccLib_CreateTransform(const unsigned char* pSrcProfileData, FX_DWORD dwSrcProfileSize, FX_INT32& nSrcComponents,
-                             const unsigned char* pDstProfileData, FX_DWORD dwDstProfileSize, FX_INT32 nDstComponents,
+void* IccLib_CreateTransform(const unsigned char* pSrcProfileData, FX_DWORD dwSrcProfileSize, int32_t& nSrcComponents,
+                             const unsigned char* pDstProfileData, FX_DWORD dwDstProfileSize, int32_t nDstComponents,
                              int intent, FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT, FX_DWORD dwDstFormat = Icc_FORMAT_DEFAULT)
 {
     cmsHPROFILE srcProfile = NULL;
@@ -157,7 +157,7 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData, FX_DWORD dwSr
     cmsCloseProfile(dstProfile);
     return pCmm;
 }
-void* IccLib_CreateTransform_sRGB(const unsigned char* pProfileData, FX_DWORD dwProfileSize, FX_INT32& nComponents, FX_INT32 intent, FX_DWORD dwSrcFormat)
+void* IccLib_CreateTransform_sRGB(const unsigned char* pProfileData, FX_DWORD dwProfileSize, int32_t& nComponents, int32_t intent, FX_DWORD dwSrcFormat)
 {
     return IccLib_CreateTransform(pProfileData, dwProfileSize, nComponents, NULL, 0, 3, intent, dwSrcFormat);
 }
@@ -175,7 +175,7 @@ void IccLib_Translate(void* pTransform, FX_DWORD nSrcComponents, FX_FLOAT* pSrcV
         return;
     }
     CLcmsCmm* p = (CLcmsCmm*)pTransform;
-    FX_BYTE output[4];
+    uint8_t output[4];
     if (p->m_bLab) {
         CFX_FixedBufGrow<double, 16> inputs(nSrcComponents);
         double* input = inputs;
@@ -184,8 +184,8 @@ void IccLib_Translate(void* pTransform, FX_DWORD nSrcComponents, FX_FLOAT* pSrcV
         }
         cmsDoTransform(p->m_hTransform, input, output, 1);
     } else {
-        CFX_FixedBufGrow<FX_BYTE, 16> inputs(nSrcComponents);
-        FX_BYTE* input = inputs;
+        CFX_FixedBufGrow<uint8_t, 16> inputs(nSrcComponents);
+        uint8_t* input = inputs;
         for (FX_DWORD i = 0; i < nSrcComponents; i ++) {
             if (pSrcValues[i] > 1.0f) {
                 input[i] = 255;
@@ -214,7 +214,7 @@ void IccLib_Translate(void* pTransform, FX_DWORD nSrcComponents, FX_FLOAT* pSrcV
             break;
     }
 }
-void IccLib_TranslateImage(void* pTransform, unsigned char* pDest, const unsigned char* pSrc, FX_INT32 pixels)
+void IccLib_TranslateImage(void* pTransform, unsigned char* pDest, const unsigned char* pSrc, int32_t pixels)
 {
     cmsDoTransform(((CLcmsCmm*)pTransform)->m_hTransform, (void*)pSrc, pDest, pixels);
 }
@@ -284,7 +284,7 @@ ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(IFX_FileRead* pFile)
     }
     ICodec_IccModule::IccCS cs;
     FX_DWORD dwSize = (FX_DWORD)pFile->GetSize();
-    FX_LPBYTE pBuf = FX_Alloc(FX_BYTE, dwSize);
+    FX_LPBYTE pBuf = FX_Alloc(uint8_t, dwSize);
     pFile->ReadBlock(pBuf, 0, dwSize);
     cs = GetProfileCS(pBuf, dwSize);
     FX_Free(pBuf);
@@ -406,7 +406,7 @@ FX_LPVOID CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
     CFX_ByteStringKey key;
     CFX_ByteString text;
     key << pIccParam->ColorSpace << (pIccParam->dwProfileType | ic << 8);
-    FX_BYTE ID[16];
+    uint8_t ID[16];
     switch (pIccParam->dwProfileType) {
         case Icc_PARAMTYPE_NONE:
             return NULL;
@@ -526,12 +526,12 @@ CCodec_IccModule::~CCodec_IccModule()
         }
     }
 }
-void* CCodec_IccModule::CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, FX_INT32& nComponents, FX_INT32 intent, FX_DWORD dwSrcFormat)
+void* CCodec_IccModule::CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, int32_t& nComponents, int32_t intent, FX_DWORD dwSrcFormat)
 {
     return IccLib_CreateTransform_sRGB(pProfileData, dwProfileSize, nComponents, intent, dwSrcFormat);
 }
-void* CCodec_IccModule::CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, FX_INT32& nSrcComponents,
-    FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, FX_INT32 intent,
+void* CCodec_IccModule::CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, int32_t& nSrcComponents,
+    FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, int32_t intent,
         FX_DWORD dwSrcFormat , FX_DWORD dwDstFormat)
 {
     return IccLib_CreateTransform(pSrcProfileData, dwSrcProfileSize, nSrcComponents,
@@ -545,11 +545,11 @@ void CCodec_IccModule::Translate(void* pTransform, FX_FLOAT* pSrcValues, FX_FLOA
 {
     IccLib_Translate(pTransform, m_nComponents, pSrcValues, pDestValues);
 }
-void CCodec_IccModule::TranslateScanline(void* pTransform, FX_LPBYTE pDest, FX_LPCBYTE pSrc, FX_INT32 pixels)
+void CCodec_IccModule::TranslateScanline(void* pTransform, FX_LPBYTE pDest, FX_LPCBYTE pSrc, int32_t pixels)
 {
     IccLib_TranslateImage(pTransform, pDest, pSrc, pixels);
 }
-const FX_BYTE g_CMYKSamples[81 * 81 * 3] = {
+const uint8_t g_CMYKSamples[81 * 81 * 3] = {
     255, 255, 255, 225, 226, 228, 199, 200, 202, 173, 174, 178, 147, 149, 152, 123, 125, 128,  99, 99, 102,  69, 70, 71,  34, 30, 31,
     255, 253, 229, 226, 224, 203, 200, 199, 182, 173, 173, 158, 149, 148, 135, 125, 124, 113,  99, 99, 90,  70, 69, 63,  33, 29, 24,
     255, 251, 204, 228, 223, 182, 201, 198, 163, 174, 172, 142, 150, 147, 122, 125, 123, 101,  99, 98, 80,  70, 68, 54,  32, 28, 16,
@@ -1280,7 +1280,7 @@ const FX_BYTE g_CMYKSamples[81 * 81 * 3] = {
     53, 53, 66,  47, 44, 57,  40, 36, 48,  32, 27, 39,  22, 18, 30,   9,  4, 18,   0,  0,  3,   0,  0,  0,   0,  0,  0,
     54, 53, 57,  48, 45, 49,  41, 37, 41,  33, 28, 32,  22, 19, 23,  11,  6, 10,   1,  0,  0,   0,  0,  0,   0,  0,  0,
 };
-void AdobeCMYK_to_sRGB1(FX_BYTE c, FX_BYTE m, FX_BYTE y, FX_BYTE k, FX_BYTE& R, FX_BYTE& G, FX_BYTE& B)
+void AdobeCMYK_to_sRGB1(uint8_t c, uint8_t m, uint8_t y, uint8_t k, uint8_t& R, uint8_t& G, uint8_t& B)
 {
     int fix_c = c << 8;
     int fix_m = m << 8;
@@ -1357,11 +1357,11 @@ void AdobeCMYK_to_sRGB1(FX_BYTE c, FX_BYTE m, FX_BYTE y, FX_BYTE k, FX_BYTE& R, 
 }
 void AdobeCMYK_to_sRGB(FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B)
 {
-    FX_BYTE c1 = FXSYS_round(c * 255);
-    FX_BYTE m1 = FXSYS_round(m * 255);
-    FX_BYTE y1 = FXSYS_round(y * 255);
-    FX_BYTE k1 = FXSYS_round(k * 255);
-    FX_BYTE r, g, b;
+    uint8_t c1 = FXSYS_round(c * 255);
+    uint8_t m1 = FXSYS_round(m * 255);
+    uint8_t y1 = FXSYS_round(y * 255);
+    uint8_t k1 = FXSYS_round(k * 255);
+    uint8_t r, g, b;
     AdobeCMYK_to_sRGB1(c1, m1, y1, k1, r, g, b);
     R = 1.0f * r / 255;
     G = 1.0f * g / 255;

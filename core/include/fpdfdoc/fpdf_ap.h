@@ -15,19 +15,19 @@ class IPVT_FontMap
 {
 public:
     virtual ~IPVT_FontMap() { }
-    virtual CPDF_Font*						GetPDFFont(FX_INT32 nFontIndex) = 0;
-    virtual CFX_ByteString					GetPDFFontAlias(FX_INT32 nFontIndex) = 0;
+    virtual CPDF_Font*						GetPDFFont(int32_t nFontIndex) = 0;
+    virtual CFX_ByteString					GetPDFFontAlias(int32_t nFontIndex) = 0;
 };
 struct CPVT_Dash {
 
-    CPVT_Dash(FX_INT32 dash, FX_INT32 gap, FX_INT32 phase) : nDash(dash), nGap(gap), nPhase(phase)
+    CPVT_Dash(int32_t dash, int32_t gap, int32_t phase) : nDash(dash), nGap(gap), nPhase(phase)
     {}
 
-    FX_INT32			nDash;
+    int32_t			nDash;
 
-    FX_INT32			nGap;
+    int32_t			nGap;
 
-    FX_INT32			nPhase;
+    int32_t			nPhase;
 };
 #define CT_TRANSPARENT		0
 #define	CT_GRAY				1
@@ -35,11 +35,11 @@ struct CPVT_Dash {
 #define	CT_CMYK				3
 struct CPVT_Color {
 
-    CPVT_Color(FX_INT32 type = 0, FX_FLOAT color1 = 0.0f, FX_FLOAT color2 = 0.0f, FX_FLOAT color3 = 0.0f, FX_FLOAT color4 = 0.0f)
+    CPVT_Color(int32_t type = 0, FX_FLOAT color1 = 0.0f, FX_FLOAT color2 = 0.0f, FX_FLOAT color3 = 0.0f, FX_FLOAT color4 = 0.0f)
         : nColorType(type), fColor1(color1), fColor2(color2), fColor3(color3), fColor4(color4)
     {}
 
-    FX_INT32			nColorType;
+    int32_t			nColorType;
     FX_FLOAT			fColor1;
     FX_FLOAT			fColor2;
     FX_FLOAT			fColor3;
@@ -53,17 +53,17 @@ public:
 
     virtual ~CPVT_Provider();
 
-    FX_INT32						GetCharWidth(FX_INT32 nFontIndex, FX_WORD word, FX_INT32 nWordStyle);
+    int32_t						GetCharWidth(int32_t nFontIndex, FX_WORD word, int32_t nWordStyle);
 
-    FX_INT32						GetTypeAscent(FX_INT32 nFontIndex);
+    int32_t						GetTypeAscent(int32_t nFontIndex);
 
-    FX_INT32						GetTypeDescent(FX_INT32 nFontIndex);
+    int32_t						GetTypeDescent(int32_t nFontIndex);
 
-    FX_INT32						GetWordFontIndex(FX_WORD word, FX_INT32 charset, FX_INT32 nFontIndex);
+    int32_t						GetWordFontIndex(FX_WORD word, int32_t charset, int32_t nFontIndex);
 
     FX_BOOL							IsLatinWord(FX_WORD word);
 
-    FX_INT32						GetDefaultFontIndex();
+    int32_t						GetDefaultFontIndex();
 private:
 
     IPVT_FontMap *	m_pFontMap;
@@ -88,7 +88,7 @@ public:
 
     static CFX_ByteString					GenerateBorderAP(const CPDF_Rect & rect, FX_FLOAT fWidth,
             const CPVT_Color & color, const CPVT_Color & crLeftTop, const CPVT_Color & crRightBottom,
-            FX_INT32 nStyle, const CPVT_Dash & dash);
+            int32_t nStyle, const CPVT_Dash & dash);
 
     static CFX_ByteString					GenerateColorAP(const CPVT_Color & color, const FX_BOOL & bFillOrStroke);
 };

@@ -40,7 +40,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap, int left, int
         } else {
             FX_DWORD fill_argb = m_Options.TranslateColor(mask_argb);
             if (bitmap_alpha < 255) {
-                ((FX_BYTE*)&fill_argb)[3] = ((FX_BYTE*)&fill_argb)[3] * bitmap_alpha / 255;
+                ((uint8_t*)&fill_argb)[3] = ((uint8_t*)&fill_argb)[3] * bitmap_alpha / 255;
             }
             if (m_pDevice->SetBitMask(pDIBitmap, left, top, fill_argb)) {
                 return;
@@ -1010,7 +1010,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
             if (pCS) {
                 FX_FLOAT R, G, B;
                 FX_DWORD comps = 8;
-                if (pCS->CountComponents() > static_cast<FX_INT32>(comps)) {
+                if (pCS->CountComponents() > static_cast<int32_t>(comps)) {
                     comps = (FX_DWORD)pCS->CountComponents();
                 }
                 CFX_FixedBufGrow<FX_FLOAT, 8> float_array(comps);
@@ -1026,7 +1026,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                     pFloats[i] = pBC->GetNumber(i);
                 }
                 pCS->GetRGB(pFloats, R, G, B);
-                back_color = 0xff000000 | ((FX_INT32)(R * 255) << 16) | ((FX_INT32)(G * 255) << 8) | (FX_INT32)(B * 255);
+                back_color = 0xff000000 | ((int32_t)(R * 255) << 16) | ((int32_t)(G * 255) << 8) | (int32_t)(B * 255);
                 m_pContext->m_pDocument->GetPageData()->ReleaseColorSpace(pCSObj);
             }
         }
@@ -1053,7 +1053,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
     int dest_pitch = pMask->GetPitch();
     FX_LPBYTE src_buf = bitmap.GetBuffer();
     int src_pitch = bitmap.GetPitch();
-    FX_LPBYTE pTransfer = FX_Alloc(FX_BYTE, 256);
+    FX_LPBYTE pTransfer = FX_Alloc(uint8_t, 256);
     if (pFunc) {
         CFX_FixedBufGrow<FX_FLOAT, 16> results(pFunc->CountOutputs());
         for (int i = 0; i < 256; i ++) {

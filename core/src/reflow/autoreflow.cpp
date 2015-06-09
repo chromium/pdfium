@@ -415,7 +415,7 @@ void CPDF_AutoReflowLayoutProvider::GenerateParagraph(CFX_PtrArray& cellArray)
 void CPDF_AutoReflowLayoutProvider::ProcessObj(CFX_PtrArray& cellArray, CPDF_PageObject* pObj, CFX_AffineMatrix matrix)
 {
 }
-FX_INT32 CPDF_AutoReflowLayoutProvider::LogicPreObj(CPDF_PageObject* pObj)
+int32_t CPDF_AutoReflowLayoutProvider::LogicPreObj(CPDF_PageObject* pObj)
 {
     CPDF_PageObject* pPreObj = m_pPreObj;
     m_pPreObj = pObj;

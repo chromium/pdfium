@@ -106,7 +106,7 @@ private:
 	FX_BOOL m_bInit;
 	int m_nRef;
 	CJS_GlobalData*					m_pGlobalData;
-	FX_INT32						m_nGlobalDataCount;
+	int32_t						m_nGlobalDataCount;
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_

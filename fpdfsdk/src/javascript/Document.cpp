@@ -1223,7 +1223,7 @@ FX_BOOL Document::documentFileName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_Wid
 		return FALSE;
 	}
 	CFX_WideString wsFilePath = m_pDocument->GetPath();
-	FX_INT32 i = wsFilePath.GetLength() - 1;
+	int32_t i = wsFilePath.GetLength() - 1;
 	for ( ; i >= 0; i-- )
 	{
 		if ( wsFilePath.GetAt( i ) == L'\\' || wsFilePath.GetAt( i ) == L'/' )

@@ -77,7 +77,7 @@ static void _DrawAxialShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2B
             FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
             matrix.Transform(x, y);
             FX_FLOAT scale = FXSYS_Div(FXSYS_Mul(x - start_x, x_span) + FXSYS_Mul(y - start_y, y_span), axis_len_square);
-            int index = (FX_INT32)(scale * (SHADING_STEPS - 1));
+            int index = (int32_t)(scale * (SHADING_STEPS - 1));
             if (index < 0) {
                 if (!bStartExtend) {
                     continue;
@@ -205,7 +205,7 @@ static void _DrawRadialShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2
                     continue;
                 }
             }
-            int index = (FX_INT32)(s * (SHADING_STEPS - 1));
+            int index = (int32_t)(s * (SHADING_STEPS - 1));
             if (index < 0) {
                 if (!bStartExtend) {
                     continue;
@@ -277,7 +277,7 @@ static void _DrawFuncShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2Bi
             }
             FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
             pCS->GetRGB(pResults, R, G, B);
-            dib_buf[column] = FXARGB_TODIB(FXARGB_MAKE(alpha, (FX_INT32)(R * 255), (FX_INT32)(G * 255), (FX_INT32)(B * 255)));
+            dib_buf[column] = FXARGB_TODIB(FXARGB_MAKE(alpha, (int32_t)(R * 255), (int32_t)(G * 255), (int32_t)(B * 255)));
         }
     }
 }
@@ -368,7 +368,7 @@ static void _DrawGouraud(CFX_DIBitmap* pBitmap, int alpha, CPDF_MeshVertex trian
             R += r_unit;
             G += g_unit;
             B += b_unit;
-            FXARGB_SETDIB(dib_buf, FXARGB_MAKE(alpha, (FX_INT32)(R * 255), (FX_INT32)(G * 255), (FX_INT32)(B * 255)));
+            FXARGB_SETDIB(dib_buf, FXARGB_MAKE(alpha, (int32_t)(R * 255), (int32_t)(G * 255), (int32_t)(B * 255)));
             dib_buf += 4;
         }
     }
@@ -746,9 +746,9 @@ static void _DrawCoonPatchMeshes(FX_BOOL bTensor, CFX_DIBitmap* pBitmap, CFX_Aff
         for (i = iStartColor; i < 4; i ++) {
             FX_FLOAT r=0.0f, g=0.0f, b=0.0f;
             stream.GetColor(r, g, b);
-            patch.patch_colors[i].comp[0] = (FX_INT32)(r * 255);
-            patch.patch_colors[i].comp[1] = (FX_INT32)(g * 255);
-            patch.patch_colors[i].comp[2] = (FX_INT32)(b * 255);
+            patch.patch_colors[i].comp[0] = (int32_t)(r * 255);
+            patch.patch_colors[i].comp[1] = (int32_t)(g * 255);
+            patch.patch_colors[i].comp[2] = (int32_t)(b * 255);
         }
         CFX_FloatRect bbox = CFX_FloatRect::GetBBox(coords, point_count);
         if (bbox.right <= 0 || bbox.left >= (FX_FLOAT)pBitmap->GetWidth() || bbox.top <= 0 ||
@@ -787,7 +787,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern, CFX_AffineMat
             }
             FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
             pColorSpace->GetRGB(comps, R, G, B);
-            background = ArgbEncode(255, (FX_INT32)(R * 255), (FX_INT32)(G * 255), (FX_INT32)(B * 255));
+            background = ArgbEncode(255, (int32_t)(R * 255), (int32_t)(G * 255), (int32_t)(B * 255));
         }
     }
     if (pDict->KeyExist(FX_BSTRC("BBox"))) {
@@ -939,8 +939,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern, CPDF_Pag
     CFX_Matrix dCTM = m_pDevice->GetCTM();
     FX_FLOAT sa = FXSYS_fabs(dCTM.a);
     FX_FLOAT sd = FXSYS_fabs(dCTM.d);
-    clip_box.right = clip_box.left + (FX_INT32)FXSYS_ceil(clip_box.Width() * sa);
-    clip_box.bottom = clip_box.top + (FX_INT32)FXSYS_ceil(clip_box.Height() * sd);
+    clip_box.right = clip_box.left + (int32_t)FXSYS_ceil(clip_box.Width() * sa);
+    clip_box.bottom = clip_box.top + (int32_t)FXSYS_ceil(clip_box.Height() * sd);
     CFX_AffineMatrix mtPattern2Device = pPattern->m_Pattern2Form;
     mtPattern2Device.Concat(*pObj2Device);
     GetScaledMatrix(mtPattern2Device);

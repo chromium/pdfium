@@ -33,11 +33,11 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(FX_DWORD charcode, const CFX_AffineM
         m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
     }
     CFX_GlyphBitmap* pGlyphBitmap;
-    if(pSizeCache->m_GlyphMap.Lookup((FX_LPVOID)(FX_UINTPTR)charcode, (void*&)pGlyphBitmap)) {
+    if(pSizeCache->m_GlyphMap.Lookup((FX_LPVOID)(uintptr_t)charcode, (void*&)pGlyphBitmap)) {
         return pGlyphBitmap;
     }
     pGlyphBitmap = RenderGlyph(pSizeCache, charcode, pMatrix, retinaScaleX, retinaScaleY);
-    pSizeCache->m_GlyphMap.SetAt((FX_LPVOID)(FX_UINTPTR)charcode, pGlyphBitmap);
+    pSizeCache->m_GlyphMap.SetAt((FX_LPVOID)(uintptr_t)charcode, pGlyphBitmap);
     return pGlyphBitmap;
 }
 CPDF_Type3Glyphs::~CPDF_Type3Glyphs()
@@ -512,7 +512,7 @@ public:
     FXTEXT_CHARPOS*		m_pCharPos;
     FX_DWORD			m_nChars;
 };
-FX_FLOAT _CIDTransformToFloat(FX_BYTE ch);
+FX_FLOAT _CIDTransformToFloat(uint8_t ch);
 CPDF_CharPosList::CPDF_CharPosList()
 {
     m_pCharPos = NULL;
@@ -531,7 +531,7 @@ void CPDF_CharPosList::Load(int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos
     CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
     FX_BOOL bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
     for (int iChar = 0; iChar < nChars; iChar ++) {
-        FX_DWORD CharCode = nChars == 1 ? (FX_DWORD)(FX_UINTPTR)pCharCodes : pCharCodes[iChar];
+        FX_DWORD CharCode = nChars == 1 ? (FX_DWORD)(uintptr_t)pCharCodes : pCharCodes[iChar];
         if (CharCode == (FX_DWORD) - 1) {
             continue;
         }
@@ -614,7 +614,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice, FX_FLOAT origi
     FX_FLOAT* pCharPos;
     if (nChars == 1) {
         charcode = pFont->GetNextChar(str, str.GetLength(), offset);
-        pCharCodes = (FX_DWORD*)(FX_UINTPTR)charcode;
+        pCharCodes = (FX_DWORD*)(uintptr_t)charcode;
         pCharPos = NULL;
     } else {
         pCharCodes = FX_Alloc(FX_DWORD, nChars);

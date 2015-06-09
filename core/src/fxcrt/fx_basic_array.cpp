@@ -38,7 +38,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
             m_nSize = m_nMaxSize = 0;
             return FALSE;
         }
-        m_pData = FX_Alloc(FX_BYTE, totalSize.ValueOrDie());
+        m_pData = FX_Alloc(uint8_t, totalSize.ValueOrDie());
         m_nSize = m_nMaxSize = nNewSize;
     } else if (nNewSize <= m_nMaxSize) {
         if (nNewSize > m_nSize) {
@@ -52,7 +52,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
         if (!totalSize.IsValid() || nNewMax < m_nSize) {
             return FALSE;
         }
-        FX_LPBYTE pNewData = FX_Realloc(FX_BYTE, m_pData, totalSize.ValueOrDie());
+        FX_LPBYTE pNewData = FX_Realloc(uint8_t, m_pData, totalSize.ValueOrDie());
         if (pNewData == NULL) {
             return FALSE;
         }
@@ -185,7 +185,7 @@ void* CFX_BaseSegmentedArray::Add()
     if (m_DataSize % m_SegmentSize) {
         return GetAt(m_DataSize ++);
     }
-    void* pSegment = FX_Alloc2D(FX_BYTE, m_UnitSize, m_SegmentSize);
+    void* pSegment = FX_Alloc2D(uint8_t, m_UnitSize, m_SegmentSize);
     if (m_pIndex == NULL) {
         m_pIndex = pSegment;
         m_DataSize ++;
@@ -315,8 +315,8 @@ void CFX_BaseSegmentedArray::Delete(int index, int count)
     }
     int i;
     for (i = index; i < m_DataSize - count; i ++) {
-        FX_BYTE* pSrc = (FX_BYTE*)GetAt(i + count);
-        FX_BYTE* pDest = (FX_BYTE*)GetAt(i);
+        uint8_t* pSrc = (uint8_t*)GetAt(i + count);
+        uint8_t* pDest = (uint8_t*)GetAt(i);
         for (int j = 0; j < m_UnitSize; j ++) {
             pDest[j] = pSrc[j];
         }

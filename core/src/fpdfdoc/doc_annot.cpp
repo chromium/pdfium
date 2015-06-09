@@ -329,9 +329,9 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice, const CFX_AffineMatrix* p
     CPDF_Array* pColor = m_pAnnotDict->GetArray("C");
     FX_DWORD argb = 0xff000000;
     if (pColor != NULL) {
-        int R = (FX_INT32)(pColor->GetNumber(0) * 255);
-        int G = (FX_INT32)(pColor->GetNumber(1) * 255);
-        int B = (FX_INT32)(pColor->GetNumber(2) * 255);
+        int R = (int32_t)(pColor->GetNumber(0) * 255);
+        int G = (int32_t)(pColor->GetNumber(1) * 255);
+        int B = (int32_t)(pColor->GetNumber(2) * 255);
         argb = ArgbEncode(0xff, R, G, B);
     }
     CPDF_GraphStateData graph_state;

@@ -64,7 +64,7 @@ FX_BOOL CXML_Parser::IsEOF()
 #define FXCRTM_XML_CHARTYPE_HexLowerLetter	0x40
 #define FXCRTM_XML_CHARTYPE_HexUpperLetter	0x60
 #define FXCRTM_XML_CHARTYPE_HexChar			0x60
-FX_BYTE g_FXCRT_XML_ByteTypes[256] = {
+uint8_t g_FXCRT_XML_ByteTypes[256] = {
     0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
     0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x00,
@@ -82,27 +82,27 @@ FX_BYTE g_FXCRT_XML_ByteTypes[256] = {
     0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A,
     0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x1A, 0x01, 0x01,
 };
-FX_BOOL g_FXCRT_XML_IsWhiteSpace(FX_BYTE ch)
+FX_BOOL g_FXCRT_XML_IsWhiteSpace(uint8_t ch)
 {
     return (g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_SpaceChar) != 0;
 }
-FX_BOOL g_FXCRT_XML_IsLetter(FX_BYTE ch)
+FX_BOOL g_FXCRT_XML_IsLetter(uint8_t ch)
 {
     return (g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_Letter) != 0;
 }
-FX_BOOL g_FXCRT_XML_IsDigital(FX_BYTE ch)
+FX_BOOL g_FXCRT_XML_IsDigital(uint8_t ch)
 {
     return (g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_Digital) != 0;
 }
-FX_BOOL g_FXCRT_XML_IsNameIntro(FX_BYTE ch)
+FX_BOOL g_FXCRT_XML_IsNameIntro(uint8_t ch)
 {
     return (g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_NameIntro) != 0;
 }
-FX_BOOL g_FXCRT_XML_IsNameChar(FX_BYTE ch)
+FX_BOOL g_FXCRT_XML_IsNameChar(uint8_t ch)
 {
     return (g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_NameChar) != 0;
 }
-FX_BOOL g_FXCRT_XML_IsHexChar(FX_BYTE ch)
+FX_BOOL g_FXCRT_XML_IsHexChar(uint8_t ch)
 {
     return (g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_HexChar) != 0;
 }
@@ -129,7 +129,7 @@ void CXML_Parser::GetName(CFX_ByteString &space, CFX_ByteString &name)
         return;
     }
     CFX_ByteTextBuf buf;
-    FX_BYTE ch;
+    uint8_t ch;
     do {
         while (m_dwIndex < m_dwBufferSize) {
             ch = m_pBuffer[m_dwIndex];
@@ -156,7 +156,7 @@ void CXML_Parser::SkipLiterals(FX_BSTR str)
     if (IsEOF()) {
         return;
     }
-    FX_INT32 i = 0, iLen = str.GetLength();
+    int32_t i = 0, iLen = str.GetLength();
     do {
         while (m_dwIndex < m_dwBufferSize) {
             if (str.GetAt(i) != m_pBuffer[m_dwIndex ++]) {
@@ -188,8 +188,8 @@ FX_DWORD CXML_Parser::GetCharRef()
     if (IsEOF()) {
         return 0;
     }
-    FX_BYTE ch;
-    FX_INT32 iState = 0;
+    uint8_t ch;
+    int32_t iState = 0;
     CFX_ByteTextBuf buf;
     FX_DWORD code = 0;
     do {
@@ -246,7 +246,7 @@ FX_DWORD CXML_Parser::GetCharRef()
                         iState = 10;
                         break;
                     }
-                    FX_BYTE nHex = g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_HexChar;
+                    uint8_t nHex = g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_HexChar;
                     if (nHex) {
                         if (nHex == FXCRTM_XML_CHARTYPE_HexDigital) {
                             code = (code << 4) + ch - '0';
@@ -276,7 +276,7 @@ void CXML_Parser::GetAttrValue(CFX_WideString &value)
         return;
     }
     CFX_UTF8Decoder decoder;
-    FX_BYTE mark = 0, ch = 0;
+    uint8_t mark = 0, ch = 0;
     do {
         while (m_dwIndex < m_dwBufferSize) {
             ch = m_pBuffer[m_dwIndex];
@@ -317,8 +317,8 @@ void CXML_Parser::GetTagName(CFX_ByteString &space, CFX_ByteString &name, FX_BOO
         return;
     }
     bEndTag = FALSE;
-    FX_BYTE ch;
-    FX_INT32 iState = bStartTag ? 1 : 0;
+    uint8_t ch;
+    int32_t iState = bStartTag ? 1 : 0;
     do {
         while (m_dwIndex < m_dwBufferSize) {
             ch = m_pBuffer[m_dwIndex];
@@ -410,7 +410,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent, FX_BOOL bStartTag
     if (IsEOF()) {
         return pElement;
     }
-    FX_BYTE ch = m_pBuffer[m_dwIndex ++];
+    uint8_t ch = m_pBuffer[m_dwIndex ++];
     if (ch == '/') {
         m_dwIndex ++;
         m_nOffset = m_nBufferOffset + (FX_FILESIZE)m_dwIndex;
@@ -428,7 +428,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent, FX_BOOL bStartTag
     CFX_UTF8Decoder decoder;
     CFX_WideTextBuf content;
     FX_BOOL bCDATA = FALSE;
-    FX_INT32 iState = 0;
+    int32_t iState = 0;
     do {
         while (m_dwIndex < m_dwBufferSize) {
             ch = m_pBuffer[m_dwIndex ++];
@@ -588,7 +588,7 @@ void CXML_Element::Empty()
 void CXML_Element::RemoveChildren()
 {
     for (int i = 0; i < m_Children.GetSize(); i += 2) {
-        ChildType type = (ChildType)(FX_UINTPTR)m_Children.GetAt(i);
+        ChildType type = (ChildType)(uintptr_t)m_Children.GetAt(i);
         if (type == Content) {
             CXML_Content* content = (CXML_Content*)m_Children.GetAt(i + 1);
             delete content;
@@ -710,13 +710,13 @@ CXML_Element::ChildType CXML_Element::GetChildType(FX_DWORD index) const
     if (index >= (FX_DWORD)m_Children.GetSize()) {
         return Invalid;
     }
-    return (ChildType)(FX_UINTPTR)m_Children.GetAt(index);
+    return (ChildType)(uintptr_t)m_Children.GetAt(index);
 }
 CFX_WideString CXML_Element::GetContent(FX_DWORD index) const
 {
     index <<= 1;
     if (index >= (FX_DWORD)m_Children.GetSize() ||
-            (ChildType)(FX_UINTPTR)m_Children.GetAt(index) != Content) {
+            (ChildType)(uintptr_t)m_Children.GetAt(index) != Content) {
         return CFX_WideString();
     }
     CXML_Content* pContent = (CXML_Content*)m_Children.GetAt(index + 1);
@@ -729,7 +729,7 @@ CXML_Element* CXML_Element::GetElement(FX_DWORD index) const
 {
     index <<= 1;
     if (index >= (FX_DWORD)m_Children.GetSize() ||
-            (ChildType)(FX_UINTPTR)m_Children.GetAt(index) != Element) {
+            (ChildType)(uintptr_t)m_Children.GetAt(index) != Element) {
         return NULL;
     }
     return (CXML_Element*)m_Children.GetAt(index + 1);
@@ -738,7 +738,7 @@ FX_DWORD CXML_Element::CountElements(FX_BSTR space, FX_BSTR tag) const
 {
     int count = 0;
     for (int i = 0; i < m_Children.GetSize(); i += 2) {
-        ChildType type = (ChildType)(FX_UINTPTR)m_Children.GetAt(i);
+        ChildType type = (ChildType)(uintptr_t)m_Children.GetAt(i);
         if (type != Element) {
             continue;
         }
@@ -755,7 +755,7 @@ CXML_Element* CXML_Element::GetElement(FX_BSTR space, FX_BSTR tag, int index) co
         return NULL;
     }
     for (int i = 0; i < m_Children.GetSize(); i += 2) {
-        ChildType type = (ChildType)(FX_UINTPTR)m_Children.GetAt(i);
+        ChildType type = (ChildType)(uintptr_t)m_Children.GetAt(i);
         if (type != Element) {
             continue;
         }
@@ -772,7 +772,7 @@ CXML_Element* CXML_Element::GetElement(FX_BSTR space, FX_BSTR tag, int index) co
 FX_DWORD CXML_Element::FindElement(CXML_Element *pChild) const
 {
     for (int i = 0; i < m_Children.GetSize(); i += 2) {
-        if ((ChildType)(FX_UINTPTR)m_Children.GetAt(i) == Element &&
+        if ((ChildType)(uintptr_t)m_Children.GetAt(i) == Element &&
                 (CXML_Element*)m_Children.GetAt(i + 1) == pChild) {
             return (FX_DWORD)(i >> 1);
         }

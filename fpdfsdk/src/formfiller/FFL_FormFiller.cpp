@@ -9,9 +9,9 @@
 #include "../../include/formfiller/FFL_Notify.h"
 #include "../../include/formfiller/FFL_CBA_Fontmap.h"
 
-#define GetRed(rgb)			((FX_BYTE)(rgb))
-#define GetGreen(rgb)		((FX_BYTE)(((FX_WORD)(rgb)) >> 8))
-#define GetBlue(rgb)		((FX_BYTE)((rgb)>>16))
+#define GetRed(rgb)			((uint8_t)(rgb))
+#define GetGreen(rgb)		((uint8_t)(((FX_WORD)(rgb)) >> 8))
+#define GetBlue(rgb)		((uint8_t)((rgb)>>16))
 
 #define FFL_HINT_ELAPSE		800
 

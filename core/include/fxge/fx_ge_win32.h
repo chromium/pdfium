@@ -17,7 +17,7 @@ typedef struct  WINDIB_Open_Args_ {
 
     int         flags;
 
-    const FX_BYTE*  memory_base;
+    const uint8_t*  memory_base;
 
     size_t    memory_size;
 

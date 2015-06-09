@@ -85,9 +85,9 @@ class ICodec_BasicModule
 public:
 
     virtual ~ICodec_BasicModule() {}
-    virtual FX_BOOL	RunLengthEncode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
+    virtual FX_BOOL	RunLengthEncode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
                                     FX_DWORD& dest_size) = 0;
-    virtual FX_BOOL	A85Encode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
+    virtual FX_BOOL	A85Encode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
                               FX_DWORD& dest_size) = 0;
     virtual ICodec_ScanlineDecoder*	CreateRunLengthDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc) = 0;
@@ -125,10 +125,10 @@ public:
     virtual ~ICodec_FlateModule() {}
     virtual ICodec_ScanlineDecoder*	CreateDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc, int predictor, int Colors, int BitsPerComponent, int Columns) = 0;
-    virtual FX_DWORD	FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_buf, FX_DWORD src_size, FX_BOOL bEarlyChange,
+    virtual FX_DWORD	FlateOrLZWDecode(FX_BOOL bLZW, const uint8_t* src_buf, FX_DWORD src_size, FX_BOOL bEarlyChange,
                                          int predictor, int Colors, int BitsPerComponent, int Columns,
                                          FX_DWORD estimated_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size) = 0;
-    virtual FX_BOOL		Encode(const FX_BYTE* src_buf, FX_DWORD src_size,
+    virtual FX_BOOL		Encode(const uint8_t* src_buf, FX_DWORD src_size,
                                int predictor, int Colors, int BitsPerComponent, int Columns,
                                FX_LPBYTE& dest_buf, FX_DWORD& dest_size) = 0;
     virtual FX_BOOL		Encode(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size) = 0;
@@ -267,11 +267,11 @@ public:
                                      ) = 0;
 
 
-    virtual FX_LPVOID	CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, FX_INT32& nComponents, FX_INT32 intent = 0,
+    virtual FX_LPVOID	CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, int32_t& nComponents, int32_t intent = 0,
             FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT) = 0;
 
-    virtual FX_LPVOID	CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, FX_INT32& nSrcComponents,
-            FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, FX_INT32 intent = 0,
+    virtual FX_LPVOID	CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, int32_t& nSrcComponents,
+            FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, int32_t intent = 0,
             FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT,
             FX_DWORD dwDstFormat = Icc_FORMAT_DEFAULT
                                           ) = 0;
@@ -284,7 +284,7 @@ public:
     virtual void                        SetComponents(FX_DWORD nComponents) = 0;
 };
 void AdobeCMYK_to_sRGB(FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B);
-void AdobeCMYK_to_sRGB1(FX_BYTE c, FX_BYTE m, FX_BYTE y, FX_BYTE k, FX_BYTE& R, FX_BYTE& G, FX_BYTE& B);
-FX_BOOL MD5ComputeID(FX_LPCVOID buf, FX_DWORD dwSize, FX_BYTE ID[16]);
+void AdobeCMYK_to_sRGB1(uint8_t c, uint8_t m, uint8_t y, uint8_t k, uint8_t& R, uint8_t& G, uint8_t& B);
+FX_BOOL MD5ComputeID(FX_LPCVOID buf, FX_DWORD dwSize, uint8_t ID[16]);
 
 #endif  // CORE_INCLUDE_FXCODEC_FX_CODEC_H_

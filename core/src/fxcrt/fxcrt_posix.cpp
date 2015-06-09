@@ -11,7 +11,7 @@ IFXCRT_FileAccess* FXCRT_FileAccess_Create()
 {
     return new CFXCRT_FileAccess_Posix;
 }
-void FXCRT_Posix_GetFileMode(FX_DWORD dwModes, FX_INT32 &nFlags, FX_INT32 &nMasks)
+void FXCRT_Posix_GetFileMode(FX_DWORD dwModes, int32_t &nFlags, int32_t &nMasks)
 {
     nFlags = O_BINARY | O_LARGEFILE;
     if (dwModes & FX_FILEMODE_ReadOnly) {
@@ -38,7 +38,7 @@ FX_BOOL CFXCRT_FileAccess_Posix::Open(FX_BSTR fileName, FX_DWORD dwMode)
     if (m_nFD > -1) {
         return FALSE;
     }
-    FX_INT32 nFlags, nMasks;
+    int32_t nFlags, nMasks;
     FXCRT_Posix_GetFileMode(dwMode, nFlags, nMasks);
     m_nFD = open(fileName.GetCStr(), nFlags, nMasks);
     return m_nFD > -1;
@@ -164,7 +164,7 @@ FX_BOOL FX_File_Copy(FX_BSTR fileNameSrc, FX_BSTR fileNameDst)
         return FALSE;
     }
     size_t num = 0;
-    FX_LPBYTE pBuffer = FX_Alloc(FX_BYTE, 32768);
+    FX_LPBYTE pBuffer = FX_Alloc(uint8_t, 32768);
     num = src.Read(pBuffer, 32768);
     while (num) {
         if (dst.Write(pBuffer, num) != num) {

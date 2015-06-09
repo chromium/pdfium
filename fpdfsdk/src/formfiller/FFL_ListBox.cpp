@@ -76,7 +76,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView
 	CFFL_IFormFiller* pIFormFiller = m_pApp->GetIFormFiller();
 	pWnd->SetFillerNotify(pIFormFiller);
 
-	for (FX_INT32 i=0,sz=m_pWidget->CountOptions(); i<sz; i++)
+	for (int32_t i=0,sz=m_pWidget->CountOptions(); i<sz; i++)
 		pWnd->AddString(m_pWidget->GetOptionLabel(i).c_str());
 
 	if (pWnd->HasFlag(PLBS_MULTIPLESEL))
@@ -84,7 +84,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView
 		m_OriginSelections.RemoveAll();
 		
 		FX_BOOL bSetCaret = FALSE;
-		for (FX_INT32 i=0,sz=m_pWidget->CountOptions(); i<sz; i++)
+		for (int32_t i=0,sz=m_pWidget->CountOptions(); i<sz; i++)
 		{
 			if (m_pWidget->IsOptionSelected(i))
 			{
@@ -130,7 +130,7 @@ FX_BOOL	CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView)
 		if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT)
 		{
 			int nSelCount = 0;
-			for (FX_INT32 i=0,sz=pListBox->GetCount(); i<sz; i++)
+			for (int32_t i=0,sz=pListBox->GetCount(); i<sz; i++)
 			{
 				if (pListBox->IsItemSelected(i))
 				{
@@ -172,13 +172,13 @@ void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView)
 		}
 
 		
-		FX_INT32 nNewTopIndex = pListBox->GetTopVisibleIndex();
+		int32_t nNewTopIndex = pListBox->GetTopVisibleIndex();
 
 		m_pWidget->ClearSelection(FALSE);	
 
 		if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT)
 		{
-			for (FX_INT32 i=0,sz=pListBox->GetCount(); i<sz; i++)
+			for (int32_t i=0,sz=pListBox->GetCount(); i<sz; i++)
 			{
 				if (pListBox->IsItemSelected(i))
 				{
@@ -215,7 +215,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AAct
 			if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, FALSE))
 			{
 				ASSERT(m_pWidget != NULL);
-				FX_INT32 nCurSel = pListBox->GetCurSel();
+				int32_t nCurSel = pListBox->GetCurSel();
 				if (nCurSel >= 0)
 					fa.sValue = m_pWidget->GetOptionLabel(nCurSel);
 			}
@@ -230,7 +230,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AAct
 		else
 		{
 			ASSERT(m_pWidget != NULL);
-			FX_INT32 nCurSel = m_pWidget->GetSelectedIndex(0);
+			int32_t nCurSel = m_pWidget->GetSelectedIndex(0);
 			if (nCurSel >= 0)
 				fa.sValue = m_pWidget->GetOptionLabel(nCurSel);
 		}
@@ -252,7 +252,7 @@ void CFFL_ListBox::SaveState(CPDFSDK_PageView* pPageView)
 
 	if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, FALSE))
 	{
-		for (FX_INT32 i=0,sz=pListBox->GetCount(); i<sz; i++)
+		for (int32_t i=0,sz=pListBox->GetCount(); i<sz; i++)
 		{
 			if (pListBox->IsItemSelected(i))
 			{
