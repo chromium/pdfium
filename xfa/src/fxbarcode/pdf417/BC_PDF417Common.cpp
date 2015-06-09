@@ -22,16 +22,16 @@
 
 #include "../barcode.h"
 #include "BC_PDF417Common.h"
-FX_INT32 CBC_PDF417Common::NUMBER_OF_CODEWORDS = 929;
-FX_INT32 CBC_PDF417Common::MAX_CODEWORDS_IN_BARCODE = NUMBER_OF_CODEWORDS - 1;
-FX_INT32 CBC_PDF417Common::MIN_ROWS_IN_BARCODE = 3;
-FX_INT32 CBC_PDF417Common::MAX_ROWS_IN_BARCODE = 90;
-FX_INT32 CBC_PDF417Common::MAX_CODEWORDS_IN_ROW = 32;
-FX_INT32 CBC_PDF417Common::MODULES_IN_CODEWORD = 17;
-FX_INT32 CBC_PDF417Common::MODULES_IN_STOP_PATTERN = 18;
-FX_INT32 CBC_PDF417Common::BARS_IN_MODULE = 8;
+int32_t CBC_PDF417Common::NUMBER_OF_CODEWORDS = 929;
+int32_t CBC_PDF417Common::MAX_CODEWORDS_IN_BARCODE = NUMBER_OF_CODEWORDS - 1;
+int32_t CBC_PDF417Common::MIN_ROWS_IN_BARCODE = 3;
+int32_t CBC_PDF417Common::MAX_ROWS_IN_BARCODE = 90;
+int32_t CBC_PDF417Common::MAX_CODEWORDS_IN_ROW = 32;
+int32_t CBC_PDF417Common::MODULES_IN_CODEWORD = 17;
+int32_t CBC_PDF417Common::MODULES_IN_STOP_PATTERN = 18;
+int32_t CBC_PDF417Common::BARS_IN_MODULE = 8;
 CFX_Int32Array* CBC_PDF417Common::EMPTY_INT_ARRAY = NULL;
-FX_INT32 CBC_PDF417Common::SYMBOL_TABLE[] = {
+int32_t CBC_PDF417Common::SYMBOL_TABLE[] = {
     0x1025e, 0x1027a, 0x1029e, 0x102bc, 0x102f2, 0x102f4, 0x1032e, 0x1034e, 0x1035c, 0x10396, 0x103a6, 0x103ac,
     0x10422, 0x10428, 0x10436, 0x10442, 0x10444, 0x10448, 0x10450, 0x1045e, 0x10466, 0x1046c, 0x1047a, 0x10482,
     0x1049e, 0x104a0, 0x104bc, 0x104c6, 0x104d8, 0x104ee, 0x104f2, 0x104f4, 0x10504, 0x10508, 0x10510, 0x1051e,
@@ -266,7 +266,7 @@ FX_INT32 CBC_PDF417Common::SYMBOL_TABLE[] = {
     0x1fb3a, 0x1fb46, 0x1fb4c, 0x1fb58, 0x1fb6e, 0x1fb72, 0x1fb74, 0x1fb8a, 0x1fb92, 0x1fb94, 0x1fba2, 0x1fba4,
     0x1fba8, 0x1fbb6, 0x1fbda
 };
-FX_INT32 CBC_PDF417Common::CODEWORD_TABLE[] = {
+int32_t CBC_PDF417Common::CODEWORD_TABLE[] = {
     2627, 1819, 2622, 2621, 1813, 1812, 2729, 2724, 2723, 2779, 2774, 2773, 902, 896, 908, 868, 865, 861, 859, 2511,
     873, 871, 1780, 835, 2493, 825, 2491, 842, 837, 844, 1764, 1762, 811, 810, 809, 2483, 807, 2482, 806, 2480, 815,
     814, 813, 812, 2484, 817, 816, 1745, 1744, 1742, 1746, 2655, 2637, 2635, 2626, 2625, 2623, 2628, 1820, 2752,
@@ -414,30 +414,30 @@ CBC_PDF417Common::CBC_PDF417Common()
 CBC_PDF417Common::~CBC_PDF417Common()
 {
 }
-FX_INT32 CBC_PDF417Common::getBitCountSum(CFX_Int32Array& moduleBitCount)
+int32_t CBC_PDF417Common::getBitCountSum(CFX_Int32Array& moduleBitCount)
 {
-    FX_INT32 bitCountSum = 0;
-    for (FX_INT32 i = 0; i < moduleBitCount.GetSize(); i++) {
-        FX_INT32 count = moduleBitCount.GetAt(i);
+    int32_t bitCountSum = 0;
+    for (int32_t i = 0; i < moduleBitCount.GetSize(); i++) {
+        int32_t count = moduleBitCount.GetAt(i);
         bitCountSum += count;
     }
     return bitCountSum;
 }
-FX_INT32 CBC_PDF417Common::getCodeword(FX_DWORD symbol)
+int32_t CBC_PDF417Common::getCodeword(FX_DWORD symbol)
 {
     FX_DWORD sym = symbol & 0x3FFFF;
-    FX_INT32 i = findCodewordIndex(sym);
+    int32_t i = findCodewordIndex(sym);
     if (i == -1) {
         return -1;
     }
     return (CODEWORD_TABLE[i] - 1) % NUMBER_OF_CODEWORDS;
 }
-FX_INT32 CBC_PDF417Common::findCodewordIndex(FX_DWORD symbol)
+int32_t CBC_PDF417Common::findCodewordIndex(FX_DWORD symbol)
 {
-    FX_INT32 first = 0;
-    FX_INT32 upto = sizeof(SYMBOL_TABLE) / sizeof(SYMBOL_TABLE[0]);
+    int32_t first = 0;
+    int32_t upto = sizeof(SYMBOL_TABLE) / sizeof(SYMBOL_TABLE[0]);
     while (first < upto) {
-        FX_INT32 mid = ((FX_DWORD)(first + upto)) >> 1;
+        int32_t mid = ((FX_DWORD)(first + upto)) >> 1;
         if (symbol < (FX_DWORD)SYMBOL_TABLE[mid]) {
             upto = mid;
         } else if (symbol > (FX_DWORD)SYMBOL_TABLE[mid]) {

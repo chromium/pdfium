@@ -25,8 +25,8 @@
 #include "BC_SymbolShapeHint.h"
 #include "BC_SymbolInfo.h"
 #include "BC_ErrorCorrection.h"
-FX_INT32 CBC_ErrorCorrection::FACTOR_SETS[] = {5, 7, 10, 11, 12, 14, 18, 20, 24, 28, 36, 42, 48, 56, 62, 68};
-FX_INT32 CBC_ErrorCorrection::FACTORS[][100] = {
+int32_t CBC_ErrorCorrection::FACTOR_SETS[] = {5, 7, 10, 11, 12, 14, 18, 20, 24, 28, 36, 42, 48, 56, 62, 68};
+int32_t CBC_ErrorCorrection::FACTORS[][100] = {
     {228, 48, 15, 111, 62},
     {23, 68, 144, 134, 240, 92, 254},
     {28, 24, 185, 166, 223, 248, 116, 255, 110, 61},
@@ -78,13 +78,13 @@ FX_INT32 CBC_ErrorCorrection::FACTORS[][100] = {
         96, 103, 82, 186
     }
 };
-FX_INT32 CBC_ErrorCorrection::MODULO_VALUE = 0x12D;
-FX_INT32 CBC_ErrorCorrection::LOG[256] = {0};
-FX_INT32 CBC_ErrorCorrection::ALOG[256] = {0};
+int32_t CBC_ErrorCorrection::MODULO_VALUE = 0x12D;
+int32_t CBC_ErrorCorrection::LOG[256] = {0};
+int32_t CBC_ErrorCorrection::ALOG[256] = {0};
 void CBC_ErrorCorrection::Initialize()
 {
-    FX_INT32 p = 1;
-    for (FX_INT32 i = 0; i < 255; i++) {
+    int32_t p = 1;
+    for (int32_t i = 0; i < 255; i++) {
         ALOG[i] = p;
         LOG[p] = i;
         p <<= 1;
@@ -102,7 +102,7 @@ CBC_ErrorCorrection::CBC_ErrorCorrection()
 CBC_ErrorCorrection::~CBC_ErrorCorrection()
 {
 }
-CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords, CBC_SymbolInfo* symbolInfo, FX_INT32 &e)
+CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords, CBC_SymbolInfo* symbolInfo, int32_t &e)
 {
     if (codewords.GetLength() != symbolInfo->m_dataCapacity) {
         e = BCExceptionIllegalArgument;
@@ -110,7 +110,7 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords, CBC_S
     }
     CFX_WideString sb;
     sb += codewords;
-    FX_INT32 blockCount = symbolInfo->getInterleavedBlockCount();
+    int32_t blockCount = symbolInfo->getInterleavedBlockCount();
     if (blockCount == 1) {
         CFX_WideString ecc = createECCBlock(codewords, symbolInfo->m_errorCodewords, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
@@ -122,7 +122,7 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords, CBC_S
         errorSizes.SetSize(blockCount);
         CFX_Int32Array startPos;
         startPos.SetSize(blockCount);
-        for (FX_INT32 i = 0; i < blockCount; i++) {
+        for (int32_t i = 0; i < blockCount; i++) {
             dataSizes[i] = symbolInfo->getDataLengthForInterleavedBlock(i + 1);
             errorSizes[i] = symbolInfo->getErrorLengthForInterleavedBlock(i + 1);
             startPos[i] = 0;
@@ -130,29 +130,29 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords, CBC_S
                 startPos[i] = startPos[i - 1] + dataSizes[i];
             }
         }
-        for (FX_INT32 block = 0; block < blockCount; block++) {
+        for (int32_t block = 0; block < blockCount; block++) {
             CFX_WideString temp;
-            for (FX_INT32 d = block; d < symbolInfo->m_dataCapacity; d += blockCount) {
+            for (int32_t d = block; d < symbolInfo->m_dataCapacity; d += blockCount) {
                 temp += (FX_WCHAR)codewords.GetAt(d);
             }
             CFX_WideString ecc = createECCBlock(temp, errorSizes[block], e);
             BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
-            FX_INT32 pos = 0;
-            for (FX_INT32 l = block; l < errorSizes[block] * blockCount; l += blockCount) {
+            int32_t pos = 0;
+            for (int32_t l = block; l < errorSizes[block] * blockCount; l += blockCount) {
                 sb.SetAt(symbolInfo->m_dataCapacity + l, ecc.GetAt(pos++));
             }
         }
     }
     return sb;
 }
-CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords, FX_INT32 numECWords, FX_INT32 &e)
+CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords, int32_t numECWords, int32_t &e)
 {
     return createECCBlock(codewords, 0, codewords.GetLength(), numECWords, e);
 }
-CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords, FX_INT32 start, FX_INT32 len, FX_INT32 numECWords, FX_INT32 &e)
+CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords, int32_t start, int32_t len, int32_t numECWords, int32_t &e)
 {
-    FX_INT32 table = -1;
-    for (FX_INT32 i = 0; i < sizeof(FACTOR_SETS) / sizeof(FX_INT32); i++) {
+    int32_t table = -1;
+    for (int32_t i = 0; i < sizeof(FACTOR_SETS) / sizeof(int32_t); i++) {
         if (FACTOR_SETS[i] == numECWords) {
             table = i;
             break;
@@ -164,14 +164,14 @@ CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords, FX_
     }
     FX_WORD* ecc = FX_Alloc(FX_WORD, numECWords);
     FXSYS_memset32(ecc, 0, numECWords * sizeof(FX_WORD));
-    for (FX_INT32 l = start; l < start + len; l++) {
-        FX_BYTE A = (FX_BYTE)codewords.GetAt(l);
+    for (int32_t l = start; l < start + len; l++) {
+        uint8_t A = (uint8_t)codewords.GetAt(l);
         FX_WORD B = ecc[numECWords - 1];
         FX_WORD m = ecc[numECWords - 1] ^ codewords.GetAt(l);
-        for (FX_INT32 k = numECWords - 1; k > 0; k--) {
+        for (int32_t k = numECWords - 1; k > 0; k--) {
             if (m != 0 && FACTORS[table][k] != 0) {
-                FX_INT32 a = LOG[FACTORS[table][k]];
-                FX_INT32 b = ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255];
+                int32_t a = LOG[FACTORS[table][k]];
+                int32_t b = ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255];
                 FX_WORD c = ecc[k - 1];
                 FX_WORD D = (ecc[k - 1] ^ ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255]);
                 ecc[k] = (FX_WORD ) (ecc[k - 1] ^ ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255]);
@@ -186,7 +186,7 @@ CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords, FX_
         }
     }
     CFX_WideString strecc;
-    for (FX_INT32 j = 0; j < numECWords; j++) {
+    for (int32_t j = 0; j < numECWords; j++) {
         strecc += (FX_WCHAR)ecc[numECWords - j - 1];
     }
     FX_Free(ecc);

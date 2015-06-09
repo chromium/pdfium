@@ -18,7 +18,7 @@ CXFA_FFExclGroup::CXFA_FFExclGroup(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* p
 CXFA_FFExclGroup::~CXFA_FFExclGroup()
 {
 }
-void CXFA_FFExclGroup::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFExclGroup::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;

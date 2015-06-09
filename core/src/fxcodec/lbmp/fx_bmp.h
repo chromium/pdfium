@@ -47,14 +47,14 @@ typedef struct tagBmpCoreHeader {
 } BmpCoreHeader, *BmpCoreHeaderPtr;
 typedef struct tagBmpInfoHeader {
     FX_DWORD	biSize;
-    FX_INT32	biWidth;
-    FX_INT32	biHeight;
+    int32_t	biWidth;
+    int32_t	biHeight;
     FX_WORD		biPlanes;
     FX_WORD		biBitCount;
     FX_DWORD	biCompression;
     FX_DWORD	biSizeImage;
-    FX_INT32	biXPelsPerMeter;
-    FX_INT32	biYPelsPerMeter;
+    int32_t	biXPelsPerMeter;
+    int32_t	biYPelsPerMeter;
     FX_DWORD	biClrUsed;
     FX_DWORD	biClrImportant;
 } BmpInfoHeader, *BmpInfoHeaderPtr;
@@ -71,26 +71,26 @@ struct tag_bmp_decompress_struct {
 
     BmpFileHeaderPtr	bmp_header_ptr;
     BmpInfoHeaderPtr	bmp_infoheader_ptr;
-    FX_INT32		width;
-    FX_INT32		height;
+    int32_t		width;
+    int32_t		height;
     FX_DWORD		compress_flag;
-    FX_INT32		components;
-    FX_INT32		src_row_bytes;
-    FX_INT32		out_row_bytes;
+    int32_t		components;
+    int32_t		src_row_bytes;
+    int32_t		out_row_bytes;
     FX_LPBYTE		out_row_buffer;
     FX_WORD			bitCounts;
     FX_DWORD		color_used;
     FX_BOOL			imgTB_flag;
-    FX_INT32		pal_num;
-    FX_INT32		pal_type;
+    int32_t		pal_num;
+    int32_t		pal_type;
     FX_DWORD*		pal_ptr;
     FX_DWORD		data_size;
     FX_DWORD		img_data_offset;
     FX_DWORD		img_ifh_size;
-    FX_INT32		row_num;
-    FX_INT32		col_num;
-    FX_INT32		dpi_x;
-    FX_INT32		dpi_y;
+    int32_t		row_num;
+    int32_t		col_num;
+    int32_t		dpi_x;
+    int32_t		dpi_y;
 #ifdef BMP_SUPPORT_BITFIELD
     FX_DWORD		mask_red;
     FX_DWORD		mask_green;
@@ -98,22 +98,22 @@ struct tag_bmp_decompress_struct {
 #endif
 
     FX_BOOL			(*_bmp_get_data_position_fn)(bmp_decompress_struct_p bmp_ptr, FX_DWORD cur_pos);
-    void			(*_bmp_get_row_fn)(bmp_decompress_struct_p bmp_ptr, FX_INT32 row_num, FX_LPBYTE row_buf);
+    void			(*_bmp_get_row_fn)(bmp_decompress_struct_p bmp_ptr, int32_t row_num, FX_LPBYTE row_buf);
     FX_LPBYTE		next_in;
     FX_DWORD		avail_in;
     FX_DWORD		skip_size;
-    FX_INT32		decode_status;
+    int32_t		decode_status;
 };
 void _bmp_error(bmp_decompress_struct_p bmp_ptr, FX_LPCSTR err_msg);
 bmp_decompress_struct_p _bmp_create_decompress();
 void _bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr);
-FX_INT32 _bmp_read_header(bmp_decompress_struct_p bmp_ptr);
-FX_INT32 _bmp_decode_image(bmp_decompress_struct_p bmp_ptr);
-FX_INT32 _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr);
-FX_INT32 _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr);
-FX_INT32 _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr);
+int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr);
+int32_t _bmp_decode_image(bmp_decompress_struct_p bmp_ptr);
+int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr);
+int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr);
+int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr);
 FX_LPBYTE _bmp_read_data(bmp_decompress_struct_p bmp_ptr, FX_LPBYTE* des_buf_pp, FX_DWORD data_size);
-void _bmp_save_decoding_status(bmp_decompress_struct_p bmp_ptr, FX_INT32 status);
+void _bmp_save_decoding_status(bmp_decompress_struct_p bmp_ptr, int32_t status);
 void _bmp_input_buffer(bmp_decompress_struct_p bmp_ptr, FX_LPBYTE src_buf, FX_DWORD src_size);
 FX_DWORD _bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr, FX_LPBYTE* avial_buf_ptr);
 #define BMP_PTR_NOT_NULL(ptr,bmp_ptr)	if(ptr == NULL){						\
@@ -129,13 +129,13 @@ struct tag_bmp_compress_struct {
     FX_LPBYTE		src_buf;
     FX_DWORD		src_pitch;
     FX_DWORD		src_row;
-    FX_BYTE			src_bpp;
+    uint8_t			src_bpp;
     FX_DWORD		src_width;
     FX_BOOL			src_free;
     FX_DWORD*		pal_ptr;
     FX_WORD			pal_num;
 #ifdef BMP_SUPPORT_BITFIELD
-    FX_BYTE			bit_type;
+    uint8_t			bit_type;
 #endif
 };
 bmp_compress_struct_p _bmp_create_compress();

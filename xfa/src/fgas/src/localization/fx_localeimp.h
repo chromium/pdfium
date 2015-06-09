@@ -20,8 +20,8 @@ public:
     virtual void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType, CFX_WideString& wsNumSymbol) const;
 
     virtual void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const;
-    virtual void GetMonthName(FX_INT32 nMonth, CFX_WideString& wsMonthName, FX_BOOL bAbbr = TRUE) const;
-    virtual void GetDayName(FX_INT32 nWeek, CFX_WideString& wsDayName, FX_BOOL bAbbr = TRUE) const;
+    virtual void GetMonthName(int32_t nMonth, CFX_WideString& wsMonthName, FX_BOOL bAbbr = TRUE) const;
+    virtual void GetDayName(int32_t nWeek, CFX_WideString& wsDayName, FX_BOOL bAbbr = TRUE) const;
     virtual void GetMeridiemName(CFX_WideString& wsMeridiemName, FX_BOOL bAM = TRUE) const;
     virtual void GetTimeZone(FX_TIMEZONE& tz) const;
     virtual void GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD = TRUE) const;
@@ -63,7 +63,7 @@ public:
 protected:
     virtual ~CFX_FormatString();
     IFX_Locale* GetTextFormat(const CFX_WideString &wsPattern, FX_WSTR wsCategory, CFX_WideString& wsPurgePattern);
-    IFX_Locale* GetNumericFormat(const CFX_WideString& wsPattern, FX_INT32& iDotIndex, FX_DWORD& dwStyle, CFX_WideString& wsPurgePattern);
+    IFX_Locale* GetNumericFormat(const CFX_WideString& wsPattern, int32_t& iDotIndex, FX_DWORD& dwStyle, CFX_WideString& wsPurgePattern);
     FX_BOOL 	FormatStrNum(FX_WSTR wsInputNum, const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
     FX_BOOL		FormatLCNumeric(CFX_LCNumeric& lcNum, const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
     FX_DATETIMETYPE GetDateTimeFormat(const CFX_WideString& wsPattern, IFX_Locale*& pLocale, CFX_WideString &wsDatePattern, CFX_WideString &wsTimePattern);

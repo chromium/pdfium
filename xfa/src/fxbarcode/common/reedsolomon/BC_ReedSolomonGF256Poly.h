@@ -10,21 +10,21 @@ class CBC_ReedSolomonGF256;
 class CBC_ReedSolomonGF256Poly
 {
 public:
-    CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, FX_INT32 coefficients);
+    CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, int32_t coefficients);
     CBC_ReedSolomonGF256Poly();
     virtual ~CBC_ReedSolomonGF256Poly();
-    FX_INT32 GetCoefficients(FX_INT32 degree);
+    int32_t GetCoefficients(int32_t degree);
     CFX_Int32Array* GetCoefficients();
-    FX_INT32		GetDegree();
+    int32_t		GetDegree();
     FX_BOOL			IsZero();
-    FX_INT32		EvaluateAt(FX_INT32 a);
-    CBC_ReedSolomonGF256Poly* AddOrSubtract(CBC_ReedSolomonGF256Poly* other, FX_INT32 &e);
-    CBC_ReedSolomonGF256Poly* Multiply(CBC_ReedSolomonGF256Poly* other, FX_INT32 &e);
-    CBC_ReedSolomonGF256Poly* Multiply(FX_INT32 scalar, FX_INT32 &e);
-    CBC_ReedSolomonGF256Poly* MultiplyByMonomial(FX_INT32 degree, FX_INT32 coefficient, FX_INT32 &e);
-    CFX_PtrArray* Divide(CBC_ReedSolomonGF256Poly *other, FX_INT32 &e);
-    CBC_ReedSolomonGF256Poly* Clone(FX_INT32 &e);
-    virtual void Init(CBC_ReedSolomonGF256* field, CFX_Int32Array* coefficients, FX_INT32 &e);
+    int32_t		EvaluateAt(int32_t a);
+    CBC_ReedSolomonGF256Poly* AddOrSubtract(CBC_ReedSolomonGF256Poly* other, int32_t &e);
+    CBC_ReedSolomonGF256Poly* Multiply(CBC_ReedSolomonGF256Poly* other, int32_t &e);
+    CBC_ReedSolomonGF256Poly* Multiply(int32_t scalar, int32_t &e);
+    CBC_ReedSolomonGF256Poly* MultiplyByMonomial(int32_t degree, int32_t coefficient, int32_t &e);
+    CFX_PtrArray* Divide(CBC_ReedSolomonGF256Poly *other, int32_t &e);
+    CBC_ReedSolomonGF256Poly* Clone(int32_t &e);
+    virtual void Init(CBC_ReedSolomonGF256* field, CFX_Int32Array* coefficients, int32_t &e);
 private:
     CBC_ReedSolomonGF256* m_field;
     CFX_Int32Array m_coefficients;

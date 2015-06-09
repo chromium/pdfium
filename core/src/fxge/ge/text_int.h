@@ -44,7 +44,7 @@ public:
             FXFT_Face	m_pFaces[16];
         } m_TTCFace;
     };
-    FX_BYTE*		m_pFontData;
+    uint8_t*		m_pFontData;
     int				m_RefCount;
 };
 class CFX_UnicodeEncoding : public IFX_FontEncoding

@@ -42,8 +42,8 @@ public:
     CPVT_FontMap(CPDF_Document * pDoc, CPDF_Dictionary * pResDict, CPDF_Font * pDefFont,
                  const CFX_ByteString & sDefFontAlias);
     virtual ~CPVT_FontMap();
-    CPDF_Font*						GetPDFFont(FX_INT32 nFontIndex);
-    CFX_ByteString					GetPDFFontAlias(FX_INT32 nFontIndex);
+    CPDF_Font*						GetPDFFont(int32_t nFontIndex);
+    CFX_ByteString					GetPDFFontAlias(int32_t nFontIndex);
     static void						GetAnnotSysPDFFont(CPDF_Document * pDoc, CPDF_Dictionary * pResDict,
             CPDF_Font * & pSysFont, CFX_ByteString & sSysFontAlias);
 private:
@@ -84,7 +84,7 @@ void CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document * pDoc, CPDF_Dictionary * pR
         }
     }
 }
-CPDF_Font* CPVT_FontMap::GetPDFFont(FX_INT32 nFontIndex)
+CPDF_Font* CPVT_FontMap::GetPDFFont(int32_t nFontIndex)
 {
     switch (nFontIndex) {
         case 0:
@@ -97,7 +97,7 @@ CPDF_Font* CPVT_FontMap::GetPDFFont(FX_INT32 nFontIndex)
     }
     return NULL;
 }
-CFX_ByteString CPVT_FontMap::GetPDFFontAlias(FX_INT32 nFontIndex)
+CFX_ByteString CPVT_FontMap::GetPDFFontAlias(int32_t nFontIndex)
 {
     switch (nFontIndex) {
         case 0:
@@ -117,7 +117,7 @@ CPVT_Provider::CPVT_Provider(IPVT_FontMap * pFontMap) : m_pFontMap(pFontMap)
 CPVT_Provider::~CPVT_Provider()
 {
 }
-FX_INT32 CPVT_Provider::GetCharWidth(FX_INT32 nFontIndex, FX_WORD word, FX_INT32 nWordStyle)
+int32_t CPVT_Provider::GetCharWidth(int32_t nFontIndex, FX_WORD word, int32_t nWordStyle)
 {
     if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
         FX_DWORD charcode = pPDFFont->CharCodeFromUnicode(word);
@@ -127,21 +127,21 @@ FX_INT32 CPVT_Provider::GetCharWidth(FX_INT32 nFontIndex, FX_WORD word, FX_INT32
     }
     return 0;
 }
-FX_INT32 CPVT_Provider::GetTypeAscent(FX_INT32 nFontIndex)
+int32_t CPVT_Provider::GetTypeAscent(int32_t nFontIndex)
 {
     if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
         return pPDFFont->GetTypeAscent();
     }
     return 0;
 }
-FX_INT32 CPVT_Provider::GetTypeDescent(FX_INT32 nFontIndex)
+int32_t CPVT_Provider::GetTypeDescent(int32_t nFontIndex)
 {
     if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
         return pPDFFont->GetTypeDescent();
     }
     return 0;
 }
-FX_INT32 CPVT_Provider::GetWordFontIndex(FX_WORD word, FX_INT32 charset, FX_INT32 nFontIndex)
+int32_t CPVT_Provider::GetWordFontIndex(FX_WORD word, int32_t charset, int32_t nFontIndex)
 {
     if (CPDF_Font* pDefFont = m_pFontMap->GetPDFFont(0)) {
         if (pDefFont->CharCodeFromUnicode(word) != -1) {
@@ -161,11 +161,11 @@ FX_BOOL CPVT_Provider::IsLatinWord(FX_WORD word)
     }
     return FALSE;
 }
-FX_INT32 CPVT_Provider::GetDefaultFontIndex()
+int32_t CPVT_Provider::GetDefaultFontIndex()
 {
     return 0;
 }
-static CFX_ByteString GetPDFWordString(IPVT_FontMap * pFontMap, FX_INT32 nFontIndex, FX_WORD Word, FX_WORD SubWord)
+static CFX_ByteString GetPDFWordString(IPVT_FontMap * pFontMap, int32_t nFontIndex, FX_WORD Word, FX_WORD SubWord)
 {
     CFX_ByteString sWord;
     if (SubWord > 0) {
@@ -193,7 +193,7 @@ static CFX_ByteString GetWordRenderString(const CFX_ByteString & strWords)
     }
     return "";
 }
-static CFX_ByteString GetFontSetString(IPVT_FontMap * pFontMap, FX_INT32 nFontIndex, FX_FLOAT fFontSize)
+static CFX_ByteString GetFontSetString(IPVT_FontMap * pFontMap, int32_t nFontIndex, FX_FLOAT fFontSize)
 {
     CFX_ByteTextBuf sRet;
     if (pFontMap) {
@@ -244,7 +244,7 @@ static CPVT_Color ParseColor(const CPDF_Array & array)
     }
     return rt;
 }
-static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict, const FX_INT32 & nWidgetType)
+static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict, const int32_t & nWidgetType)
 {
     CPDF_Dictionary* pFormDict = NULL;
     if (CPDF_Dictionary * pRootDict = pDoc->GetRoot()) {
@@ -310,7 +310,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
         return FALSE;
     }
     CPDF_Rect rcAnnot = pAnnotDict->GetRect("Rect");
-    FX_INT32 nRotate = 0;
+    int32_t nRotate = 0;
     if (CPDF_Dictionary * pMKDict = pAnnotDict->GetDict("MK")) {
         nRotate = pMKDict->GetInteger("R");
     }
@@ -333,7 +333,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
             rcBBox = CPDF_Rect(0, 0, rcAnnot.top - rcAnnot.bottom, rcAnnot.right - rcAnnot.left);
             break;
     }
-    FX_INT32 nBorderStyle = PBS_SOLID;
+    int32_t nBorderStyle = PBS_SOLID;
     FX_FLOAT fBorderWidth = 1;
     CPVT_Dash dsBorder(3, 0, 0);
     CPVT_Color crLeftTop, crRightBottom;
@@ -405,7 +405,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
         if (pNormalStream == NULL) {
             return FALSE;
         }
-        FX_INT32 objnum = pDoc->AddIndirectObject(pNormalStream);
+        int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
         pAnnotDict->GetDict("AP")->SetAtReference("N", pDoc, objnum);
     }
     CPDF_Dictionary * pStreamDict = pNormalStream->GetDict();
@@ -433,7 +433,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
     switch (nWidgetType) {
         case 0: {
                 CFX_WideString swValue = FPDF_GetFieldAttr(pAnnotDict, "V")? FPDF_GetFieldAttr(pAnnotDict, "V")->GetUnicodeText() : CFX_WideString();
-                FX_INT32 nAlign = FPDF_GetFieldAttr(pAnnotDict, "Q")? FPDF_GetFieldAttr(pAnnotDict, "Q")->GetInteger() : 0;
+                int32_t nAlign = FPDF_GetFieldAttr(pAnnotDict, "Q")? FPDF_GetFieldAttr(pAnnotDict, "Q")->GetInteger() : 0;
                 FX_DWORD dwFlags = FPDF_GetFieldAttr(pAnnotDict, "Ff")? FPDF_GetFieldAttr(pAnnotDict, "Ff")->GetInteger() : 0;
                 FX_DWORD dwMaxLen = FPDF_GetFieldAttr(pAnnotDict, "MaxLen") ? FPDF_GetFieldAttr(pAnnotDict, "MaxLen")->GetInteger() : 0;
                 CPVT_FontMap map(pDoc, pStreamDict ? pStreamDict->GetDict("Resources") : NULL , pDefFont, sFontName.Right(sFontName.GetLength() - 1));
@@ -540,11 +540,11 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                 CPVT_Provider prd(&map);
                 CPDF_Array * pOpts = FPDF_GetFieldAttr(pAnnotDict, "Opt") ? FPDF_GetFieldAttr(pAnnotDict, "Opt")->GetArray() : NULL;
                 CPDF_Array * pSels = FPDF_GetFieldAttr(pAnnotDict, "I") ? FPDF_GetFieldAttr(pAnnotDict, "I")->GetArray() : NULL;
-                FX_INT32 nTop = FPDF_GetFieldAttr(pAnnotDict, "TI") ? FPDF_GetFieldAttr(pAnnotDict, "TI")->GetInteger() : 0;
+                int32_t nTop = FPDF_GetFieldAttr(pAnnotDict, "TI") ? FPDF_GetFieldAttr(pAnnotDict, "TI")->GetInteger() : 0;
                 CFX_ByteTextBuf sBody;
                 if (pOpts) {
                     FX_FLOAT fy = rcBody.top;
-                    for (FX_INT32 i = nTop, sz = pOpts->GetCount(); i < sz; i++) {
+                    for (int32_t i = nTop, sz = pOpts->GetCount(); i < sz; i++) {
                         if (IsFloatSmaller(fy, rcBody.bottom)) {
                             break;
                         }
@@ -598,7 +598,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
             break;
     }
     if (pNormalStream) {
-        pNormalStream->SetData((FX_BYTE*)sAppStream.GetBuffer(), sAppStream.GetSize(), FALSE, FALSE);
+        pNormalStream->SetData((uint8_t*)sAppStream.GetBuffer(), sAppStream.GetSize(), FALSE, FALSE);
         pStreamDict = pNormalStream->GetDict();
         if (pStreamDict) {
             pStreamDict->SetAtMatrix("Matrix", matrix);
@@ -640,7 +640,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(IPVT_FontMap * pFontMap, IPDF_Var
 {
     CFX_ByteTextBuf sEditStream, sLineStream, sWords;
     CPDF_Point ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);
-    FX_INT32 nCurFontIndex = -1;
+    int32_t nCurFontIndex = -1;
     if (pIterator) {
         if (pVisible) {
             pIterator->SetAt(pVisible->BeginPos);
@@ -713,7 +713,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(IPVT_FontMap * pFontMap, IPDF_Var
 }
 CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(const CPDF_Rect & rect, FX_FLOAT fWidth,
         const CPVT_Color & color, const CPVT_Color & crLeftTop, const CPVT_Color & crRightBottom,
-        FX_INT32 nStyle, const CPVT_Dash & dash)
+        int32_t nStyle, const CPVT_Dash & dash)
 {
     CFX_ByteTextBuf sAppStream;
     CFX_ByteString sColor;

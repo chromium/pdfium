@@ -68,35 +68,23 @@
 extern "C" {
 #endif
 typedef void*                   FX_LPVOID;   // Deprecate, use with void*.
-typedef void const*             FX_LPCVOID;  // Deprecate, use with const void*.
+typedef const void*             FX_LPCVOID;  // Deprecate, use with const void*.
 typedef void*                   FX_POSITION; // Keep until fxcrt containers gone
-typedef signed char             FX_INT8;     // Deprecate, use int8_t.
-typedef unsigned char           FX_UINT8;    // Deprecate, use uint8_t.
-typedef unsigned char           FX_BYTE;     // Deprecate, use uint8_t.
-typedef unsigned char*          FX_LPBYTE;   // Deprecate, use uint8_t*.
-typedef unsigned char const*    FX_LPCBYTE;  // Deprecate, use const uint8_t*.
-typedef short                   FX_INT16;    // Deprecate, use int16_t.
-typedef unsigned short          FX_UINT16;   // Deprecate, use uint16_t.
-typedef short                   FX_SHORT;    // Deprecate, use int16_t.
+typedef uint8_t*                FX_LPBYTE;   // Deprecate, use uint8_t*.
+typedef const uint8_t*          FX_LPCBYTE;  // Deprecate, use const uint8_t*.
 typedef unsigned short          FX_WORD;     // Keep - "an efficient small type"
-typedef unsigned short*         FX_LPWORD;   // Deprecate, use FX_WORD*.
-typedef unsigned short const*   FX_LPCWORD;  // Deprecate, use const FX_WORD*.
-typedef int                     FX_INT32;    // Deprecate, use int32_t.
-typedef unsigned int            FX_UINT32;   // Deprecate, use uint32_t.
+typedef FX_WORD*                FX_LPWORD;   // Deprecate, use FX_WORD*.
+typedef const FX_WORD*          FX_LPCWORD;  // Deprecate, use const FX_WORD*.
 typedef unsigned int            FX_DWORD;    // Keep - "an efficient type"
-typedef unsigned int*           FX_LPDWORD;  // Deprecate, use FX_DWORD*.
-typedef int64_t                 FX_INT64;    // Deprecate, use int64_t.
-typedef uint64_t                FX_UINT64;   // Deprecate, use uint64_t.
-typedef intptr_t                FX_INTPTR;   // Deprecate, use intptr_t.
-typedef uintptr_t               FX_UINTPTR;  // Deprecate, use uintptr_t.
+typedef FX_DWORD*               FX_LPDWORD;  // Deprecate, use FX_DWORD*.
 typedef float                   FX_FLOAT;    // Keep, allow upgrade to doubles.
 typedef int                     FX_BOOL;     // Sadly not always 0 or 1.
 typedef char                    FX_CHAR;     // Keep, questionable signedness.
-typedef char*                   FX_LPSTR;    // Deprecate, use FX_CHAR*.
-typedef char const*             FX_LPCSTR;   // Deprecate, use const FX_CHAR*.
+typedef FX_CHAR*                FX_LPSTR;    // Deprecate, use FX_CHAR*.
+typedef const FX_CHAR*          FX_LPCSTR;   // Deprecate, use const FX_CHAR*.
 typedef wchar_t                 FX_WCHAR;    // Keep, maybe bad platform wchars.
-typedef wchar_t*                FX_LPWSTR;   // Deprecate, use FX_WCHAR*.
-typedef wchar_t const*          FX_LPCWSTR;  // Deprecate, use const FX_WCHAR*.
+typedef FX_WCHAR*               FX_LPWSTR;   // Deprecate, use FX_WCHAR*.
+typedef const FX_WCHAR*         FX_LPCWSTR;  // Deprecate, use const FX_WCHAR*.
 
 // PDFium string sizes are limited to 2^31-1, and the value is signed to
 // allow -1 as a placeholder for "unknown".
@@ -260,19 +248,19 @@ wchar_t*	FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_fmod(a, b)	(FX_FLOAT)fmod(a, b)
 #define FXSYS_abs			abs
 #define FXDWORD_FROM_LSBFIRST(i)	(i)
-#define FXDWORD_FROM_MSBFIRST(i)	(((FX_BYTE)(i) << 24) | ((FX_BYTE)((i) >> 8) << 16) | ((FX_BYTE)((i) >> 16) << 8) | (FX_BYTE)((i) >> 24))
+#define FXDWORD_FROM_MSBFIRST(i)	(((uint8_t)(i) << 24) | ((uint8_t)((i) >> 8) << 16) | ((uint8_t)((i) >> 16) << 8) | (uint8_t)((i) >> 24))
 #define FXDWORD_GET_LSBFIRST(p)		((((FX_LPBYTE)(p))[3] << 24) | (((FX_LPBYTE)(p))[2] << 16) | (((FX_LPBYTE)(p))[1] << 8) | (((FX_LPBYTE)(p))[0]))
 #define FXDWORD_GET_MSBFIRST(p) ((((FX_LPBYTE)(p))[0] << 24) | (((FX_LPBYTE)(p))[1] << 16) | (((FX_LPBYTE)(p))[2] << 8) | (((FX_LPBYTE)(p))[3]))
-#define FXSYS_HIBYTE(word)	((FX_BYTE)((word) >> 8))
-#define FXSYS_LOBYTE(word)	((FX_BYTE)(word))
+#define FXSYS_HIBYTE(word)	((uint8_t)((word) >> 8))
+#define FXSYS_LOBYTE(word)	((uint8_t)(word))
 #define FXSYS_HIWORD(dword)	((FX_WORD)((dword) >> 16))
 #define FXSYS_LOWORD(dword)	((FX_WORD)(dword))
-FX_INT32	FXSYS_atoi(FX_LPCSTR str);
-FX_INT32	FXSYS_wtoi(FX_LPCWSTR str);
-FX_INT64	FXSYS_atoi64(FX_LPCSTR str);
-FX_INT64	FXSYS_wtoi64(FX_LPCWSTR str);
-FX_LPCSTR	FXSYS_i64toa(FX_INT64 value, FX_LPSTR str, int radix);
-FX_LPCWSTR	FXSYS_i64tow(FX_INT64 value, FX_LPWSTR str, int radix);
+int32_t	FXSYS_atoi(FX_LPCSTR str);
+int32_t	FXSYS_wtoi(FX_LPCWSTR str);
+int64_t	FXSYS_atoi64(FX_LPCSTR str);
+int64_t	FXSYS_wtoi64(FX_LPCWSTR str);
+FX_LPCSTR	FXSYS_i64toa(int64_t value, FX_LPSTR str, int radix);
+FX_LPCWSTR	FXSYS_i64tow(int64_t value, FX_LPWSTR str, int radix);
 int			FXSYS_round(FX_FLOAT f);
 #define		FXSYS_Mul(a, b) ((a) * (b))
 #define		FXSYS_Div(a, b) ((a) / (b))

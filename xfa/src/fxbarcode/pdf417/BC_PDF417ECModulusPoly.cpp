@@ -24,15 +24,15 @@
 #include "BC_PDF417Common.h"
 #include "BC_PDF417ECModulusGF.h"
 #include "BC_PDF417ECModulusPoly.h"
-CBC_PDF417ECModulusPoly::CBC_PDF417ECModulusPoly(CBC_PDF417ECModulusGF* field, CFX_Int32Array &coefficients, FX_INT32 &e)
+CBC_PDF417ECModulusPoly::CBC_PDF417ECModulusPoly(CBC_PDF417ECModulusGF* field, CFX_Int32Array &coefficients, int32_t &e)
 {
     if (coefficients.GetSize() == 0) {
         e = BCExceptionIllegalArgument;
     }
     m_field = field;
-    FX_INT32 coefficientsLength = coefficients.GetSize();
+    int32_t coefficientsLength = coefficients.GetSize();
     if (coefficientsLength > 1 && coefficients[0] == 0) {
-        FX_INT32 firstNonZero = 1;
+        int32_t firstNonZero = 1;
         while (firstNonZero < coefficientsLength && coefficients[firstNonZero] == 0) {
             firstNonZero++;
         }
@@ -40,8 +40,8 @@ CBC_PDF417ECModulusPoly::CBC_PDF417ECModulusPoly(CBC_PDF417ECModulusGF* field, C
             m_coefficients = field->getZero()->m_coefficients;
         } else {
             m_coefficients.SetSize(coefficientsLength - firstNonZero);
-            FX_INT32 l = 0;
-            for (FX_INT32 i = firstNonZero; i < firstNonZero + m_coefficients.GetSize(); i++) {
+            int32_t l = 0;
+            for (int32_t i = firstNonZero; i < firstNonZero + m_coefficients.GetSize(); i++) {
                 m_coefficients.SetAt(l, coefficients.GetAt(i));
                 l++;
             }
@@ -61,7 +61,7 @@ CBC_PDF417ECModulusGF* CBC_PDF417ECModulusPoly::getField()
 {
     return m_field;
 }
-FX_INT32 CBC_PDF417ECModulusPoly::getDegree()
+int32_t CBC_PDF417ECModulusPoly::getDegree()
 {
     return m_coefficients.GetSize() - 1;
 }
@@ -69,31 +69,31 @@ FX_BOOL CBC_PDF417ECModulusPoly::isZero()
 {
     return m_coefficients[0] == 0;
 }
-FX_INT32 CBC_PDF417ECModulusPoly::getCoefficient(FX_INT32 degree)
+int32_t CBC_PDF417ECModulusPoly::getCoefficient(int32_t degree)
 {
     return m_coefficients[m_coefficients.GetSize() - 1 - degree];
 }
-FX_INT32 CBC_PDF417ECModulusPoly::evaluateAt(FX_INT32 a)
+int32_t CBC_PDF417ECModulusPoly::evaluateAt(int32_t a)
 {
     if (a == 0) {
         return getCoefficient(0);
     }
-    FX_INT32 size = m_coefficients.GetSize();
+    int32_t size = m_coefficients.GetSize();
     if (a == 1) {
-        FX_INT32 result = 0;
-        for (FX_INT32 l = 0; l < m_coefficients.GetSize(); l++) {
-            FX_INT32 coefficient = m_coefficients.GetAt(l);
+        int32_t result = 0;
+        for (int32_t l = 0; l < m_coefficients.GetSize(); l++) {
+            int32_t coefficient = m_coefficients.GetAt(l);
             result = m_field->add(result, coefficient);
         }
         return result;
     }
-    FX_INT32 result = m_coefficients[0];
-    for (FX_INT32 i = 1; i < size; i++) {
+    int32_t result = m_coefficients[0];
+    for (int32_t i = 1; i < size; i++) {
         result = m_field->add(m_field->multiply(a, result), m_coefficients[i]);
     }
     return result;
 }
-CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::add(CBC_PDF417ECModulusPoly* other, FX_INT32 &e)
+CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::add(CBC_PDF417ECModulusPoly* other, int32_t &e)
 {
     CBC_PDF417ECModulusPoly* modulusPoly = NULL;
     if (isZero()) {
@@ -118,18 +118,18 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::add(CBC_PDF417ECModulusPoly* o
     }
     CFX_Int32Array sumDiff;
     sumDiff.SetSize(largerCoefficients.GetSize());
-    FX_INT32 lengthDiff = largerCoefficients.GetSize() - smallerCoefficients.GetSize();
-    for (FX_INT32 l = 0; l < lengthDiff; l++) {
+    int32_t lengthDiff = largerCoefficients.GetSize() - smallerCoefficients.GetSize();
+    for (int32_t l = 0; l < lengthDiff; l++) {
         sumDiff.SetAt(l, largerCoefficients.GetAt(l));
     }
-    for (FX_INT32 i = lengthDiff; i < largerCoefficients.GetSize(); i++) {
+    for (int32_t i = lengthDiff; i < largerCoefficients.GetSize(); i++) {
         sumDiff[i] = m_field->add(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
     }
     modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(m_field, sumDiff, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
 }
-CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::subtract(CBC_PDF417ECModulusPoly* other, FX_INT32 &e)
+CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::subtract(CBC_PDF417ECModulusPoly* other, int32_t &e)
 {
     CBC_PDF417ECModulusPoly* modulusPoly = NULL;
     if (other->isZero()) {
@@ -144,7 +144,7 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::subtract(CBC_PDF417ECModulusPo
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
 }
-CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(CBC_PDF417ECModulusPoly* other, FX_INT32 &e)
+CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(CBC_PDF417ECModulusPoly* other, int32_t &e)
 {
     CBC_PDF417ECModulusPoly* modulusPoly = NULL;
     if (isZero() || other->isZero()) {
@@ -154,15 +154,15 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(CBC_PDF417ECModulusPo
     }
     CFX_Int32Array aCoefficients;
     aCoefficients.Copy(m_coefficients);
-    FX_INT32 aLength = aCoefficients.GetSize();
+    int32_t aLength = aCoefficients.GetSize();
     CFX_Int32Array bCoefficients;
     bCoefficients.Copy(other->m_coefficients);
-    FX_INT32 bLength = bCoefficients.GetSize();
+    int32_t bLength = bCoefficients.GetSize();
     CFX_Int32Array product;
     product.SetSize(aLength + bLength - 1);
-    for (FX_INT32 i = 0; i < aLength; i++) {
-        FX_INT32 aCoeff = aCoefficients[i];
-        for (FX_INT32 j = 0; j < bLength; j++) {
+    for (int32_t i = 0; i < aLength; i++) {
+        int32_t aCoeff = aCoefficients[i];
+        for (int32_t j = 0; j < bLength; j++) {
             product[i + j] = m_field->add(product[i + j], m_field->multiply(aCoeff, bCoefficients[j]));
         }
     }
@@ -170,19 +170,19 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(CBC_PDF417ECModulusPo
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
 }
-CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::negative(FX_INT32 &e)
+CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::negative(int32_t &e)
 {
-    FX_INT32 size = m_coefficients.GetSize();
+    int32_t size = m_coefficients.GetSize();
     CFX_Int32Array negativeCoefficients;
     negativeCoefficients.SetSize(size);
-    for (FX_INT32 i = 0; i < size; i++) {
+    for (int32_t i = 0; i < size; i++) {
         negativeCoefficients[i] = m_field->subtract(0, m_coefficients[i]);
     }
     CBC_PDF417ECModulusPoly* modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(m_field, negativeCoefficients, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
 }
-CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(FX_INT32 scalar, FX_INT32 &e)
+CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(int32_t scalar, int32_t &e)
 {
     CBC_PDF417ECModulusPoly* modulusPoly = NULL;
     if (scalar == 0) {
@@ -195,17 +195,17 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(FX_INT32 scalar, FX_I
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         return modulusPoly;
     }
-    FX_INT32 size = m_coefficients.GetSize();
+    int32_t size = m_coefficients.GetSize();
     CFX_Int32Array product;
     product.SetSize(size);
-    for (FX_INT32 i = 0; i < size; i++) {
+    for (int32_t i = 0; i < size; i++) {
         product[i] = m_field->multiply(m_coefficients[i], scalar);
     }
     modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(m_field, product, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
 }
-CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiplyByMonomial(FX_INT32 degree, FX_INT32 coefficient, FX_INT32 &e)
+CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiplyByMonomial(int32_t degree, int32_t coefficient, int32_t &e)
 {
     if (degree < 0) {
         e = BCExceptionIllegalArgument;
@@ -217,17 +217,17 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiplyByMonomial(FX_INT32 de
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         return modulusPoly;
     }
-    FX_INT32 size = m_coefficients.GetSize();
+    int32_t size = m_coefficients.GetSize();
     CFX_Int32Array product;
     product.SetSize(size + degree);
-    for (FX_INT32 i = 0; i < size; i++) {
+    for (int32_t i = 0; i < size; i++) {
         product[i] = m_field->multiply(m_coefficients[i], coefficient);
     }
     modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(m_field, product, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
 }
-CFX_PtrArray* CBC_PDF417ECModulusPoly::divide(CBC_PDF417ECModulusPoly* other, FX_INT32 &e)
+CFX_PtrArray* CBC_PDF417ECModulusPoly::divide(CBC_PDF417ECModulusPoly* other, int32_t &e)
 {
     if (other->isZero()) {
         e = BCExceptionDivideByZero;
@@ -240,16 +240,16 @@ CFX_PtrArray* CBC_PDF417ECModulusPoly::divide(CBC_PDF417ECModulusPoly* other, FX
         delete quotient;
         return NULL;
     }
-    FX_INT32 denominatorLeadingTerm = other->getCoefficient(other->getDegree());
-    FX_INT32 inverseDenominatorLeadingTerm = m_field->inverse(denominatorLeadingTerm, e);
+    int32_t denominatorLeadingTerm = other->getCoefficient(other->getDegree());
+    int32_t inverseDenominatorLeadingTerm = m_field->inverse(denominatorLeadingTerm, e);
     if (e != BCExceptionNO) {
         delete quotient;
         delete remainder;
         return NULL;
     }
     while (remainder->getDegree() >= other->getDegree() && !remainder->isZero()) {
-        FX_INT32 degreeDifference = remainder->getDegree() - other->getDegree();
-        FX_INT32 scale = m_field->multiply(remainder->getCoefficient(remainder->getDegree()), inverseDenominatorLeadingTerm);
+        int32_t degreeDifference = remainder->getDegree() - other->getDegree();
+        int32_t scale = m_field->multiply(remainder->getCoefficient(remainder->getDegree()), inverseDenominatorLeadingTerm);
         CBC_PDF417ECModulusPoly* term = other->multiplyByMonomial(degreeDifference, scale, e);
         if (e != BCExceptionNO) {
             delete quotient;
@@ -288,8 +288,8 @@ CFX_PtrArray* CBC_PDF417ECModulusPoly::divide(CBC_PDF417ECModulusPoly* other, FX
 CFX_ByteString CBC_PDF417ECModulusPoly::toString()
 {
     CFX_ByteString result;
-    for (FX_INT32 degree = getDegree(); degree >= 0; degree--) {
-        FX_INT32 coefficient = getCoefficient(degree);
+    for (int32_t degree = getDegree(); degree >= 0; degree--) {
+        int32_t coefficient = getCoefficient(degree);
         if (coefficient != 0) {
             if (coefficient < 0) {
                 result += " - ";

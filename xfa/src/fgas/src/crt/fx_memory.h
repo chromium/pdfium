@@ -21,7 +21,7 @@ public:
     }
     virtual void*			Alloc(size_t size)
     {
-        return FX_Alloc(FX_BYTE, size);
+        return FX_Alloc(uint8_t, size);
     }
     virtual void			Free(void *pBlock)
     {

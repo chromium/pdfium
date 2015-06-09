@@ -44,7 +44,7 @@ CBC_DataMatrixReader::~CBC_DataMatrixReader()
     }
     m_decoder = NULL;
 }
-CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e)
 {
     CBC_CommonBitMatrix *cdr = image->GetBlackMatrix(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
@@ -59,7 +59,7 @@ CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap *image, FX_INT32 hi
     CBC_AutoPtr<CBC_CommonDecoderResult> decodeResult(ResultTemp);
     return decodeResult->GetText();
 }
-CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap *image, FX_INT32 &e)
+CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap *image, int32_t &e)
 {
     CFX_ByteString bs = Decode(image, 0, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");

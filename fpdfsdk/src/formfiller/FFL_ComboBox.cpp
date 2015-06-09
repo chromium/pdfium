@@ -80,14 +80,14 @@ CPWL_Wnd* CFFL_ComboBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageVie
 	CFFL_IFormFiller* pFormFiller = m_pApp->GetIFormFiller();
 	pWnd->SetFillerNotify(pFormFiller);
 
-	FX_INT32 nCurSel = m_pWidget->GetSelectedIndex(0);
+	int32_t nCurSel = m_pWidget->GetSelectedIndex(0);
 	CFX_WideString swText;
 	if (nCurSel < 0)
 		swText = m_pWidget->GetValue();
 	else
 		swText = m_pWidget->GetOptionLabel(nCurSel);
 
-	for (FX_INT32 i=0,sz=m_pWidget->CountOptions(); i<sz; i++)
+	for (int32_t i=0,sz=m_pWidget->CountOptions(); i<sz; i++)
 	{
 		pWnd->AddString(m_pWidget->GetOptionLabel(i).c_str());
 	}
@@ -107,7 +107,7 @@ FX_BOOL	CFFL_ComboBox::IsDataChanged(CPDFSDK_PageView* pPageView)
 {
 	if (CPWL_ComboBox * pWnd = (CPWL_ComboBox*)GetPDFWindow(pPageView, FALSE))
 	{
-		FX_INT32 nCurSel = pWnd->GetSelect();
+		int32_t nCurSel = pWnd->GetSelect();
 
 		ASSERT(m_pWidget != NULL);
 
@@ -138,7 +138,7 @@ void CFFL_ComboBox::SaveData(CPDFSDK_PageView* pPageView)
 	if (CPWL_ComboBox* pWnd = (CPWL_ComboBox*)GetPDFWindow(pPageView, FALSE))
 	{
 		CFX_WideString swText = pWnd->GetText();
-		FX_INT32 nCurSel = pWnd->GetSelect();
+		int32_t nCurSel = pWnd->GetSelect();
 
 		//mantis:0004157
 		FX_BOOL bSetValue = TRUE;

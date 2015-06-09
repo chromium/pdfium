@@ -40,7 +40,7 @@ void CPWL_List_Notify::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
 	Info.fSmallStep = fSmallStep;
 	Info.fBigStep = fBigStep;
 
-	m_pList->OnNotify(m_pList,PNM_SETSCROLLINFO,SBT_VSCROLL,(FX_INTPTR)&Info);
+	m_pList->OnNotify(m_pList,PNM_SETSCROLLINFO,SBT_VSCROLL,(intptr_t)&Info);
 
 	if (CPWL_ScrollBar * pScroll = m_pList->GetVScrollBar())
 	{
@@ -66,7 +66,7 @@ void CPWL_List_Notify::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
 
 void CPWL_List_Notify::IOnSetScrollPosY(FX_FLOAT fy)
 {
-	m_pList->OnNotify(m_pList,PNM_SETSCROLLPOS,SBT_VSCROLL,(FX_INTPTR)&fy);
+	m_pList->OnNotify(m_pList,PNM_SETSCROLLPOS,SBT_VSCROLL,(intptr_t)&fy);
 }
 
 void CPWL_List_Notify::IOnInvalidateRect(CPDF_Rect * pRect)
@@ -139,7 +139,7 @@ void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream)
 	if (m_pList)
 	{
 		CPDF_Rect rcPlate = m_pList->GetPlateRect();
-		for (FX_INT32 i=0,sz=m_pList->GetCount(); i<sz; i++)
+		for (int32_t i=0,sz=m_pList->GetCount(); i<sz; i++)
 		{
 			CPDF_Rect rcItem = m_pList->GetItemRect(i);
 
@@ -191,7 +191,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pU
 		CPDF_Rect rcList = GetListRect();
 		CPDF_Rect rcClient = GetClientRect();
 
-		for (FX_INT32 i=0,sz=m_pList->GetCount(); i<sz; i++)
+		for (int32_t i=0,sz=m_pList->GetCount(); i<sz; i++)
 		{
 			CPDF_Rect rcItem = m_pList->GetItemRect(i);
 			if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom) continue;
@@ -356,7 +356,7 @@ FX_BOOL CPWL_ListBox::OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag)
 	return TRUE;
 }
 
-void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTPTR lParam)
+void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t lParam)
 {
 	CPWL_Wnd::OnNotify(pWnd,msg,wParam,lParam);
 
@@ -406,7 +406,7 @@ void CPWL_ListBox::KillFocus()
 	/*
 	if (this->IsMultipleSel())
 	{
-		for(FX_INT32 i=0;i<this->GetCount();i++)
+		for(int32_t i=0;i<this->GetCount();i++)
 		{
 			if (this->IsListItemSelected(i))
 			{
@@ -496,25 +496,25 @@ FX_FLOAT CPWL_ListBox::GetFontSize() const
 	return 0.0f;
 }
 
-void CPWL_ListBox::Select(FX_INT32 nItemIndex)
+void CPWL_ListBox::Select(int32_t nItemIndex)
 {
 	if (m_pList)
 		m_pList->Select(nItemIndex);
 }
 
-void CPWL_ListBox::SetCaret(FX_INT32 nItemIndex)
+void CPWL_ListBox::SetCaret(int32_t nItemIndex)
 {
 	if (m_pList)
 		m_pList->SetCaret(nItemIndex);
 }
 
-void CPWL_ListBox::SetTopVisibleIndex(FX_INT32 nItemIndex)
+void CPWL_ListBox::SetTopVisibleIndex(int32_t nItemIndex)
 {
 	if (m_pList)
 		m_pList->SetTopItem(nItemIndex);
 }
 
-void CPWL_ListBox::ScrollToListItem(FX_INT32 nItemIndex)
+void CPWL_ListBox::ScrollToListItem(int32_t nItemIndex)
 {
 	if (m_pList)
 		m_pList->ScrollToListItem(nItemIndex);
@@ -540,7 +540,7 @@ FX_BOOL CPWL_ListBox::IsMultipleSel() const
 	return FALSE;
 }
 
-FX_INT32 CPWL_ListBox::GetCaretIndex() const
+int32_t CPWL_ListBox::GetCaretIndex() const
 {
 	if (m_pList)
 		return m_pList->GetCaret();
@@ -548,7 +548,7 @@ FX_INT32 CPWL_ListBox::GetCaretIndex() const
 	return -1;
 }
 
-FX_INT32 CPWL_ListBox::GetCurSel() const
+int32_t CPWL_ListBox::GetCurSel() const
 {
 	if (m_pList)
 		return m_pList->GetSelect();
@@ -556,7 +556,7 @@ FX_INT32 CPWL_ListBox::GetCurSel() const
 	return -1;
 }
 
-FX_BOOL CPWL_ListBox::IsItemSelected(FX_INT32 nItemIndex) const
+FX_BOOL CPWL_ListBox::IsItemSelected(int32_t nItemIndex) const
 {
 	if (m_pList)
 		return m_pList->IsItemSelected(nItemIndex);
@@ -564,7 +564,7 @@ FX_BOOL CPWL_ListBox::IsItemSelected(FX_INT32 nItemIndex) const
 	return FALSE;
 }
 
-FX_INT32 CPWL_ListBox::GetTopVisibleIndex() const
+int32_t CPWL_ListBox::GetTopVisibleIndex() const
 {
 	if (m_pList)
 	{
@@ -575,7 +575,7 @@ FX_INT32 CPWL_ListBox::GetTopVisibleIndex() const
 	return -1;
 }
 
-FX_INT32 CPWL_ListBox::GetCount() const
+int32_t CPWL_ListBox::GetCount() const
 {
 	if (m_pList)
 		return m_pList->GetCount();
@@ -583,7 +583,7 @@ FX_INT32 CPWL_ListBox::GetCount() const
 	return 0;
 }
 
-FX_INT32 CPWL_ListBox::FindNext(FX_INT32 nIndex,FX_WCHAR nChar) const
+int32_t CPWL_ListBox::FindNext(int32_t nIndex,FX_WCHAR nChar) const
 {
 	if (m_pList)
 		return m_pList->FindNext(nIndex,nChar);

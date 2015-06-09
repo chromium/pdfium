@@ -44,7 +44,7 @@ CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter()
 }
 FX_BOOL	CBC_OnedUPCAWriter::CheckContentValidity(FX_WSTR contents)
 {
-    FX_INT32 i = 0;
+    int32_t i = 0;
     for (i = 0; i < contents.GetLength(); i++) {
         if (contents.GetAt(i) >= '0' && contents.GetAt(i) <= '9') {
             continue;
@@ -58,7 +58,7 @@ CFX_WideString	CBC_OnedUPCAWriter::FilterContents(FX_WSTR contents)
 {
     CFX_WideString filtercontents;
     FX_WCHAR ch;
-    for (FX_INT32 i = 0; i < contents.GetLength(); i++) {
+    for (int32_t i = 0; i < contents.GetLength(); i++) {
         ch = contents.GetAt(i);
         if(ch > 175) {
             i++;
@@ -70,12 +70,12 @@ CFX_WideString	CBC_OnedUPCAWriter::FilterContents(FX_WSTR contents)
     }
     return filtercontents;
 }
-FX_INT32 CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString &contents)
+int32_t CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString &contents)
 {
-    FX_INT32 odd = 0;
-    FX_INT32 even = 0;
-    FX_INT32 j = 1;
-    for(FX_INT32 i = contents.GetLength() - 1; i >= 0; i--) {
+    int32_t odd = 0;
+    int32_t even = 0;
+    int32_t j = 1;
+    for(int32_t i = contents.GetLength() - 1; i >= 0; i--) {
         if(j % 2) {
             odd += FXSYS_atoi(contents.Mid(i, 1));
         } else {
@@ -83,17 +83,17 @@ FX_INT32 CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString &contents)
         }
         j++;
     }
-    FX_INT32 checksum = (odd * 3 + even) % 10;
+    int32_t checksum = (odd * 3 + even) % 10;
     checksum = (10 - checksum) % 10;
     return (checksum);
 }
-FX_BYTE *CBC_OnedUPCAWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e)
+uint8_t *CBC_OnedUPCAWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e)
 {
-    FX_BYTE *ret = Encode(contents, format, outWidth, outHeight, 0, e);
+    uint8_t *ret = Encode(contents, format, outWidth, outHeight, 0, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return ret;
 }
-FX_BYTE *CBC_OnedUPCAWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e)
+uint8_t *CBC_OnedUPCAWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e)
 {
     if (format != BCFORMAT_UPC_A) {
         e = BCExceptionOnlyEncodeUPC_A;
@@ -101,20 +101,20 @@ FX_BYTE *CBC_OnedUPCAWriter::Encode(const CFX_ByteString &contents, BCFORMAT for
     }
     CFX_ByteString toEAN13String = '0' + contents;
     m_iDataLenth = 13;
-    FX_BYTE *ret = m_subWriter->Encode(toEAN13String, BCFORMAT_EAN_13, outWidth, outHeight, hints, e);
+    uint8_t *ret = m_subWriter->Encode(toEAN13String, BCFORMAT_EAN_13, outWidth, outHeight, hints, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return ret;
 }
-void CBC_OnedUPCAWriter::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, FX_INT32 barWidth, FX_INT32 multiple, FX_INT32 &e)
+void CBC_OnedUPCAWriter::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e)
 {
     if (device == NULL && pOutBitmap == NULL) {
         e = BCExceptionIllegalArgument;
         return;
     }
-    FX_INT32 leftPadding = 7 * multiple;
-    FX_INT32 leftPosition = 10 * multiple + leftPadding;
+    int32_t leftPadding = 7 * multiple;
+    int32_t leftPosition = 10 * multiple + leftPadding;
     CFX_ByteString str = FX_UTF8Encode(contents);
-    FX_INT32 iLen = str.GetLength();
+    int32_t iLen = str.GetLength();
     FXTEXT_CHARPOS* pCharPos = FX_Alloc(FXTEXT_CHARPOS, iLen);
     if (!pCharPos) {
         return;
@@ -129,8 +129,8 @@ void CBC_OnedUPCAWriter::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, C
     }
     FX_FLOAT charsWidth = 0;
     iLen = tempStr.GetLength();
-    FX_INT32 iFontSize = (FX_INT32)fabs(m_fFontSize);
-    FX_INT32 iTextHeight = iFontSize + 1;
+    int32_t iFontSize = (int32_t)fabs(m_fFontSize);
+    int32_t iTextHeight = iFontSize + 1;
     if (pOutBitmap == NULL) {
         CFX_Matrix matr(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
         CFX_FloatRect rect((FX_FLOAT)leftPosition, (FX_FLOAT)(m_Height - iTextHeight), (FX_FLOAT)(leftPosition  + strWidth - 0.5), (FX_FLOAT)m_Height);
@@ -278,7 +278,7 @@ void CBC_OnedUPCAWriter::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, C
     }
     FX_Free(pCharPos);
 }
-void CBC_OnedUPCAWriter::RenderResult(FX_WSTR contents, FX_BYTE* code, FX_INT32 codeLength, FX_BOOL isDevice, FX_INT32 &e)
+void CBC_OnedUPCAWriter::RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
 {
     CBC_OneDimWriter::RenderResult(contents, code, codeLength, isDevice, e);
 }

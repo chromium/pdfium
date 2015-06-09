@@ -63,8 +63,8 @@ public:
         , m_iTailCount(0)
     {
     }
-    FX_INT32		m_iHeaderCount;
-    FX_INT32		m_iTailCount;
+    int32_t		m_iHeaderCount;
+    int32_t		m_iTailCount;
 };
 class CFX_SAXReader : public IFX_SAXReader
 {
@@ -75,12 +75,12 @@ public:
     {
         delete this;
     }
-    virtual FX_INT32	StartParse(IFX_FileRead *pFile, FX_DWORD dwStart = 0, FX_DWORD dwLen = -1, FX_DWORD dwParseMode = 0);
-    virtual FX_INT32	ContinueParse(IFX_Pause *pPause = NULL);
+    virtual int32_t	StartParse(IFX_FileRead *pFile, FX_DWORD dwStart = 0, FX_DWORD dwLen = -1, FX_DWORD dwParseMode = 0);
+    virtual int32_t	ContinueParse(IFX_Pause *pPause = NULL);
     virtual void		SkipCurrentNode();
     virtual void		SetHandler(IFX_SAXReaderHandler *pHandler);
-    void		AppendData(FX_BYTE ch);
-    void		AppendName(FX_BYTE ch);
+    void		AppendData(uint8_t ch);
+    void		AppendName(uint8_t ch);
     void		ParseText();
     void		ParseNodeStart();
     void		ParseInstruction();
@@ -99,32 +99,32 @@ public:
 protected:
     CFX_SAXFile				m_File;
     IFX_SAXReaderHandler*	m_pHandler;
-    FX_INT32				m_iState;
+    int32_t				m_iState;
     CFX_SAXItem*			m_pRoot;
     CFX_SAXItem*			m_pCurItem;
     FX_DWORD				m_dwItemID;
     FX_SAXMODE				m_eMode;
     FX_SAXMODE				m_ePrevMode;
     FX_BOOL					m_bCharData;
-    FX_BYTE					m_CurByte;
+    uint8_t					m_CurByte;
     FX_DWORD				m_dwDataOffset;
     CFX_ByteArray			m_SkipStack;
-    FX_BYTE					m_SkipChar;
+    uint8_t					m_SkipChar;
     FX_DWORD				m_dwNodePos;
     FX_LPBYTE				m_pszData;
-    FX_INT32				m_iDataSize;
-    FX_INT32				m_iDataLength;
-    FX_INT32				m_iEntityStart;
-    FX_INT32				m_iDataPos;
+    int32_t				m_iDataSize;
+    int32_t				m_iDataLength;
+    int32_t				m_iEntityStart;
+    int32_t				m_iDataPos;
     FX_LPBYTE				m_pszName;
-    FX_INT32				m_iNameSize;
-    FX_INT32				m_iNameLength;
+    int32_t				m_iNameSize;
+    int32_t				m_iNameLength;
     FX_DWORD				m_dwParseMode;
     CFX_SAXCommentContext	*m_pCommentContext;
     void		Reset();
     void		Push();
     void		Pop();
-    FX_BOOL		SkipSpace(FX_BYTE ch);
+    FX_BOOL		SkipSpace(uint8_t ch);
     void		SkipNode();
     void		NotifyData();
     void		NotifyEnter();
@@ -135,6 +135,6 @@ protected:
     void		NotifyTargetData();
     void		ReallocDataBuffer();
     void		ReallocNameBuffer();
-    void		ParseChar(FX_BYTE ch);
+    void		ParseChar(uint8_t ch);
 };
 #endif

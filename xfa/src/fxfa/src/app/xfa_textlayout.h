@@ -64,7 +64,7 @@ public:
     {
         return m_eDisplay;
     }
-    void						SetDecls(const IFDE_CSSDeclaration **ppDeclArray, FX_INT32 iDeclCount);
+    void						SetDecls(const IFDE_CSSDeclaration **ppDeclArray, int32_t iDeclCount);
     const IFDE_CSSDeclaration**	GetDecls()
     {
         return (const IFDE_CSSDeclaration**)m_ppMatchedDecls;
@@ -93,17 +93,17 @@ public:
         return m_pAllocator != NULL;
     }
 
-    FX_INT32					GetVAlgin(IXFA_TextProvider *pTextProvider) const;
+    int32_t					GetVAlgin(IXFA_TextProvider *pTextProvider) const;
     FX_FLOAT					GetTabInterval(IFDE_CSSComputedStyle *pStyle) const;
-    FX_INT32					CountTabs(IFDE_CSSComputedStyle *pStyle) const;
+    int32_t					CountTabs(IFDE_CSSComputedStyle *pStyle) const;
     FX_BOOL						IsSpaceRun(IFDE_CSSComputedStyle *pStyle) const;
     FX_BOOL						GetTabstops(IFDE_CSSComputedStyle *pStyle, CXFA_TextTabstopsContext	*pTabstopContext);
     IFX_Font*					GetFont(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle) const;
     FX_FLOAT					GetFontSize(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle) const;
-    FX_INT32					GetHorScale(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle, IFDE_XMLNode *pXMLNode) const;
-    FX_INT32					GetVerScale(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle) const;
-    void						GetUnderline(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle, FX_INT32 &iUnderline, FX_INT32 &iPeriod) const;
-    void						GetLinethrough(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle, FX_INT32 &iLinethrough) const;
+    int32_t					GetHorScale(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle, IFDE_XMLNode *pXMLNode) const;
+    int32_t					GetVerScale(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle) const;
+    void						GetUnderline(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle, int32_t &iUnderline, int32_t &iPeriod) const;
+    void						GetLinethrough(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle, int32_t &iLinethrough) const;
     FX_ARGB						GetColor(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle) const;
     FX_FLOAT					GetBaseline(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle) const;
     FX_FLOAT					GetLineHeight(IXFA_TextProvider *pTextProvider, IFDE_CSSComputedStyle *pStyle, FX_BOOL bFirst, FX_FLOAT fVerScale) const;
@@ -140,9 +140,9 @@ public:
     FX_FLOAT			m_fHeight;
     FX_FLOAT			m_fLastPos;
     FX_FLOAT			m_fStartLineOffset;
-    FX_INT32			m_iChar;
-    FX_INT32			m_iLines;
-    FX_INT32			m_iTotalLines;
+    int32_t			m_iChar;
+    int32_t			m_iLines;
+    int32_t			m_iTotalLines;
     IFDE_XMLNode		*m_pXMLNode;
     CXFA_Node			*m_pNode;
     IFDE_CSSComputedStyle		*m_pParentStyle;
@@ -237,14 +237,14 @@ protected:
 };
 typedef struct _XFA_TEXTPIECE : public CFX_Target {
     FX_LPWSTR		pszText;
-    FX_INT32		iChars;
-    FX_INT32		*pWidths;
-    FX_INT32		iHorScale;
-    FX_INT32		iVerScale;
-    FX_INT32		iBidiLevel;
-    FX_INT32		iUnderline;
-    FX_INT32		iPeriod;
-    FX_INT32		iLineThrough;
+    int32_t		iChars;
+    int32_t		*pWidths;
+    int32_t		iHorScale;
+    int32_t		iVerScale;
+    int32_t		iBidiLevel;
+    int32_t		iUnderline;
+    int32_t		iPeriod;
+    int32_t		iLineThrough;
     IFX_Font		*pFont;
     FX_ARGB			dwColor;
     FX_FLOAT		fFontSize;
@@ -284,7 +284,7 @@ public:
     CXFA_TextTabstopsContext() : m_iTabCount(0), m_iTabIndex(-1), m_bTabstops(FALSE), m_fTabWidth(0), m_fLeft(0) {}
     void Append(FX_DWORD dwAlign, FX_FLOAT fTabstops)
     {
-        FX_INT32 i = 0;
+        int32_t i = 0;
         for (i = 0; i < m_iTabCount; i++) {
             XFA_TABSTOPS *pTabstop = m_tabstops.GetDataPtr(i);
             if (fTabstops < pTabstop->fTabstops) {
@@ -311,8 +311,8 @@ public:
         m_fLeft = 0;
     }
     CFX_ArrayTemplate<XFA_TABSTOPS>		m_tabstops;
-    FX_INT32		m_iTabCount;
-    FX_INT32		m_iTabIndex;
+    int32_t		m_iTabCount;
+    int32_t		m_iTabIndex;
     FX_BOOL			m_bTabstops;
     FX_FLOAT		m_fTabWidth;
     FX_FLOAT		m_fLeft;
@@ -322,15 +322,15 @@ class CXFA_TextLayout
 public:
     CXFA_TextLayout(IXFA_TextProvider *pTextProvider);
     virtual ~CXFA_TextLayout();
-    FX_INT32			GetText(CFX_WideString &wsText);
+    int32_t			GetText(CFX_WideString &wsText);
     FX_FLOAT			GetLayoutHeight();
     FX_FLOAT			StartLayout(FX_FLOAT fWidth = -1);
-    FX_BOOL				DoLayout(FX_INT32 iBlockIndex, FX_FLOAT &fCalcHeight, FX_FLOAT fContentAreaHeight = -1, FX_FLOAT fTextHeight = -1);
+    FX_BOOL				DoLayout(int32_t iBlockIndex, FX_FLOAT &fCalcHeight, FX_FLOAT fContentAreaHeight = -1, FX_FLOAT fTextHeight = -1);
 
     FX_BOOL				CalcSize(const CFX_SizeF &minSize, const CFX_SizeF &maxSize, CFX_SizeF &defaultSize);
     FX_BOOL				Layout(const CFX_SizeF &size, FX_FLOAT* fHeight = NULL);
-    void				ItemBlocks(const CFX_RectF& rtText, FX_INT32 iBlockIndex);
-    FX_BOOL				DrawString(CFX_RenderDevice *pFxDevice, const CFX_Matrix &tmDoc2Device, const CFX_RectF &rtClip, FX_INT32 iBlock = 0);
+    void				ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex);
+    FX_BOOL				DrawString(CFX_RenderDevice *pFxDevice, const CFX_Matrix &tmDoc2Device, const CFX_RectF &rtClip, int32_t iBlock = 0);
 
     FX_BOOL				IsLoaded() const
     {
@@ -347,7 +347,7 @@ private:
     FX_BOOL				Loader(const CFX_SizeF &szText, FX_FLOAT &fLinePos, FX_BOOL bSavePieces = TRUE);
 
     void				LoadText(CXFA_Node *pNode, const CFX_SizeF &szText, FX_FLOAT &fLinePos, FX_BOOL bSavePieces);
-    FX_BOOL				LoadRichText(IFDE_XMLNode *pXMLNode, const CFX_SizeF &szText, FX_FLOAT &fLinePos, IFDE_CSSComputedStyle *pParentStyle, FX_BOOL bSavePieces, CXFA_LinkUserData* pLinkData = NULL, FX_BOOL bEndBreak = TRUE, FX_BOOL bIsOl = FALSE, FX_INT32 iLiCount = 0);
+    FX_BOOL				LoadRichText(IFDE_XMLNode *pXMLNode, const CFX_SizeF &szText, FX_FLOAT &fLinePos, IFDE_CSSComputedStyle *pParentStyle, FX_BOOL bSavePieces, CXFA_LinkUserData* pLinkData = NULL, FX_BOOL bEndBreak = TRUE, FX_BOOL bIsOl = FALSE, int32_t iLiCount = 0);
 
     FX_BOOL				AppendChar(const CFX_WideString &wsText, FX_FLOAT &fLinePos,  FX_FLOAT fSpaceAbove, FX_BOOL bSavePieces);
 
@@ -359,16 +359,16 @@ private:
     void				UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom);
 
     void				RenderString(IFDE_RenderDevice *pDevice, IFDE_SolidBrush *pBrush, CXFA_PieceLine *pPieceLine,
-                                     FX_INT32 iPiece, FXTEXT_CHARPOS *pCharPos, const CFX_Matrix &tmDoc2Device);
-    void				RenderPath(IFDE_RenderDevice *pDevice, IFDE_Pen *pPen, CXFA_PieceLine *pPieceLine, FX_INT32 iPiece,
+                                     int32_t iPiece, FXTEXT_CHARPOS *pCharPos, const CFX_Matrix &tmDoc2Device);
+    void				RenderPath(IFDE_RenderDevice *pDevice, IFDE_Pen *pPen, CXFA_PieceLine *pPieceLine, int32_t iPiece,
                                    FXTEXT_CHARPOS *pCharPos, const CFX_Matrix &tmDoc2Device);
 
-    FX_INT32			GetDisplayPos(XFA_LPCTEXTPIECE pPiece, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode = FALSE);
+    int32_t			GetDisplayPos(XFA_LPCTEXTPIECE pPiece, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode = FALSE);
     FX_BOOL				ToRun(XFA_LPCTEXTPIECE pPiece, FX_RTFTEXTOBJ &tr);
 
     void				DoTabstops(IFDE_CSSComputedStyle *pStyle, CXFA_PieceLine *pPieceLine);
-    FX_BOOL				Layout(FX_INT32 iBlock);
-    FX_INT32			CountBlocks() const;
+    FX_BOOL				Layout(int32_t iBlock);
+    int32_t			CountBlocks() const;
     IXFA_TextProvider	*m_pTextProvider;
     CXFA_Node			*m_pTextDataNode;
     FX_BOOL				m_bRichText;
@@ -377,7 +377,7 @@ private:
     FX_DWORD			m_dwTextData;
 
     CXFA_LoaderContext	*m_pLoader;
-    FX_INT32			m_iLines;
+    int32_t			m_iLines;
     FX_FLOAT			m_fMaxWidth;
 
     CXFA_TextParser		m_textParser;

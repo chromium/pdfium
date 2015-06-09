@@ -22,6 +22,6 @@ enum FX_LINEBREAKTYPE {
 #define FX_LBCP	FX_LBT_COM_PROHIBITED_BRK
 #define FX_LBPB	FX_LBT_PROHIBITED_BRK
 #define FX_LBHS	FX_LBT_HANGUL_SPACE_BRK
-void	FX_GetLineBreakPositions(FX_LPCWSTR pwsText, FX_LINEBREAKTYPE *pBrkType, FX_INT32 iLength);
-void	FX_GetLineBreakPositions(FX_LPCWSTR pwsText, FX_INT32 iLength, CFX_Int32MassArray &bp);
+void	FX_GetLineBreakPositions(FX_LPCWSTR pwsText, FX_LINEBREAKTYPE *pBrkType, int32_t iLength);
+void	FX_GetLineBreakPositions(FX_LPCWSTR pwsText, int32_t iLength, CFX_Int32MassArray &bp);
 #endif

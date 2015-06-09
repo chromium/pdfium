@@ -28,11 +28,11 @@ CBC_PDF417ResultMetadata::CBC_PDF417ResultMetadata()
 CBC_PDF417ResultMetadata::~CBC_PDF417ResultMetadata()
 {
 }
-FX_INT32 CBC_PDF417ResultMetadata::getSegmentIndex()
+int32_t CBC_PDF417ResultMetadata::getSegmentIndex()
 {
     return m_segmentIndex;
 }
-void CBC_PDF417ResultMetadata::setSegmentIndex(FX_INT32 segmentIndex)
+void CBC_PDF417ResultMetadata::setSegmentIndex(int32_t segmentIndex)
 {
     m_segmentIndex = segmentIndex;
 }

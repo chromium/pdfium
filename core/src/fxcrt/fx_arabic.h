@@ -26,8 +26,8 @@ public:
 protected:
     FX_LPCARBFORMTABLE ParseChar(const CFX_Char *pTC, FX_WCHAR &wChar, FX_CHARTYPE &eType) const;
 };
-void FX_BidiReverseString(CFX_WideString &wsText, FX_INT32 iStart, FX_INT32 iCount);
-void FX_BidiSetDeferredRun(CFX_Int32Array &values, FX_INT32 iStart, FX_INT32 iCount, FX_INT32 iValue);
+void FX_BidiReverseString(CFX_WideString &wsText, int32_t iStart, int32_t iCount);
+void FX_BidiSetDeferredRun(CFX_Int32Array &values, int32_t iStart, int32_t iCount, int32_t iValue);
 #define FX_BCON		FX_BIDICLASS_ON
 #define FX_BCL		FX_BIDICLASS_L
 #define FX_BCR		FX_BIDICLASS_R
@@ -52,7 +52,7 @@ void FX_BidiClassify(const CFX_WideString &wsText, CFX_Int32Array &classes, FX_B
 #define FX_BIDIMAXLEVEL			61
 #define FX_BidiGreaterEven(a)	(FX_IsOdd(a) ? ((a) + 1) : ((a) + 2))
 #define FX_BidiGreaterOdd(a)	(FX_IsOdd(a) ? ((a) + 2) : ((a) + 1))
-FX_INT32 FX_BidiResolveExplicit(FX_INT32 iBaseLevel, FX_INT32 iDirection, CFX_Int32Array &classes, CFX_Int32Array &levels, FX_INT32 iStart, FX_INT32 iCount, FX_INT32 iNest = 0);
+int32_t FX_BidiResolveExplicit(int32_t iBaseLevel, int32_t iDirection, CFX_Int32Array &classes, CFX_Int32Array &levels, int32_t iStart, int32_t iCount, int32_t iNest = 0);
 #define FX_BidiDirection(a)	(FX_IsOdd(a) ? FX_BIDICLASS_R : FX_BIDICLASS_L)
 enum FX_BIDIWEAKSTATE {
     FX_BIDIWEAKSTATE_xa = 0,
@@ -144,7 +144,7 @@ enum FX_BIDIWEAKACTION {
 #define FX_BWALxx	FX_BIDIWEAKACTION_Lxx
 #define FX_BidiGetDeferredType(a)	(((a) >> 4) & 0x0F)
 #define FX_BidiGetResolvedType(a)	((a) & 0x0F)
-void FX_BidiResolveWeak(FX_INT32 iBaseLevel, CFX_Int32Array &classes, CFX_Int32Array &levels);
+void FX_BidiResolveWeak(int32_t iBaseLevel, CFX_Int32Array &classes, CFX_Int32Array &levels);
 enum FX_BIDINEUTRALSTATE {
     FX_BIDINEUTRALSTATE_r = 0,
     FX_BIDINEUTRALSTATE_l,
@@ -173,13 +173,13 @@ enum FX_BIDINEUTRALACTION {
 #define FX_BNALn	FX_BIDINEUTRALACTION_Ln
 #define FX_BNAIn	FX_BIDINEUTRALACTION_In
 #define FX_BNALnL	FX_BIDINEUTRALACTION_LnL
-FX_INT32 FX_BidiGetDeferredNeutrals(FX_INT32 iAction, FX_INT32 iLevel);
-FX_INT32 FX_BidiGetResolvedNeutrals(FX_INT32 iAction);
-void FX_BidiResolveNeutrals(FX_INT32 iBaseLevel, CFX_Int32Array &classes, const CFX_Int32Array &levels);
+int32_t FX_BidiGetDeferredNeutrals(int32_t iAction, int32_t iLevel);
+int32_t FX_BidiGetResolvedNeutrals(int32_t iAction);
+void FX_BidiResolveNeutrals(int32_t iBaseLevel, CFX_Int32Array &classes, const CFX_Int32Array &levels);
 void FX_BidiResolveImplicit(const CFX_Int32Array &classes, CFX_Int32Array &levels);
-void FX_BidiResolveWhitespace(FX_INT32 iBaseLevel, const CFX_Int32Array &classes, CFX_Int32Array &levels);
-FX_INT32 FX_BidiReorderLevel(FX_INT32 iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels, FX_INT32 iStart, FX_BOOL bReverse = FALSE);
-void FX_BidiReorder(FX_INT32 iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels);
+void FX_BidiResolveWhitespace(int32_t iBaseLevel, const CFX_Int32Array &classes, CFX_Int32Array &levels);
+int32_t FX_BidiReorderLevel(int32_t iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels, int32_t iStart, FX_BOOL bReverse = FALSE);
+void FX_BidiReorder(int32_t iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels);
 class CFX_BidiChar final : public IFX_BidiChar
 {
 public:
@@ -194,18 +194,18 @@ public:
     }
     virtual FX_BOOL		AppendChar(FX_WCHAR wch) override;
     virtual FX_BOOL		EndChar() override;
-    virtual FX_INT32	GetBidiInfo(FX_INT32 &iStart, FX_INT32 &iCount) override;
+    virtual int32_t 	GetBidiInfo(int32_t &iStart, int32_t &iCount) override;
     virtual void		Reset() override;
 
 private:
     ~CFX_BidiChar() { }
-    FX_BOOL		m_bSeparateNeutral;
-    FX_INT32	m_iCurStart;
-    FX_INT32	m_iCurCount;
-    FX_INT32	m_iCurBidi;
-    FX_INT32	m_iLastBidi;
-    FX_INT32	m_iLastStart;
-    FX_INT32	m_iLastCount;
+    FX_BOOL	m_bSeparateNeutral;
+    int32_t	m_iCurStart;
+    int32_t	m_iCurCount;
+    int32_t	m_iCurBidi;
+    int32_t	m_iLastBidi;
+    int32_t	m_iLastStart;
+    int32_t	m_iLastCount;
 };
 
 #endif  // CORE_SRC_FXCRT_FX_ARABIC_H_

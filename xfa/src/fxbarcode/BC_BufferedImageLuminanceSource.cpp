@@ -47,7 +47,7 @@ static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread)
     bitmap->Create(pImageCodec->GetWidth(), pImageCodec->GetHeight(), FXDIB_Argb);
     bitmap->Clear(FXARGB_MAKE(0xFF, 0xFF, 0xFF, 0xFF));
     CBC_Pause pause;
-    FX_INT32 frames;
+    int32_t frames;
     status = pImageCodec->GetFrames(frames, &pause);
     while (status == FXCODEC_STATUS_FRAME_TOBECONTINUE) {
         status = pImageCodec->GetFrames(frames, &pause);
@@ -105,7 +105,7 @@ CBC_BufferedImageLuminanceSource::CBC_BufferedImageLuminanceSource(const CFX_Wid
     m_top = 0;
     m_left = 0;
 }
-void CBC_BufferedImageLuminanceSource::Init(FX_INT32 &e)
+void CBC_BufferedImageLuminanceSource::Init(int32_t &e)
 {
     IFX_FileRead* fileread = FX_CreateFileRead(m_filename);
     m_pBitmap = CreateDIBSource(fileread);
@@ -137,27 +137,27 @@ CBC_BufferedImageLuminanceSource::~CBC_BufferedImageLuminanceSource()
     delete m_pBitmap;
     m_pBitmap = NULL;
 }
-CFX_ByteArray *CBC_BufferedImageLuminanceSource::GetRow(FX_INT32 y, CFX_ByteArray &row, FX_INT32 &e)
+CFX_ByteArray *CBC_BufferedImageLuminanceSource::GetRow(int32_t y, CFX_ByteArray &row, int32_t &e)
 {
     if (y < 0 || y >= m_height) {
         e = BCExceptionRequestedRowIsOutSizeTheImage;
         return NULL;
     }
-    FX_INT32 width = m_width;
+    int32_t width = m_width;
     if(row.GetSize() == 0 || row.GetSize() < width) {
         row.SetSize(width);
     }
     if(m_rgbData.GetSize() == 0 || m_rgbData.GetSize() < width) {
         m_rgbData.SetSize(width);
     }
-    FX_INT32* rowLine = (FX_INT32*)m_pBitmap->GetScanline(y);
-    FX_INT32 x;
+    int32_t* rowLine = (int32_t*)m_pBitmap->GetScanline(y);
+    int32_t x;
     for (x = 0; x < width; x++) {
-        FX_INT32 pixel = rowLine[x];
-        FX_INT32 luminance = (306 * ((pixel >> 16) & 0xFF) +
+        int32_t pixel = rowLine[x];
+        int32_t luminance = (306 * ((pixel >> 16) & 0xFF) +
                               601 * ((pixel >> 8) & 0xFF) +
                               117 * (pixel & 0xFF)) >> 10;
-        row[x] = (FX_BYTE) luminance;
+        row[x] = (uint8_t) luminance;
     }
     return &row;
 }
@@ -165,17 +165,17 @@ CFX_ByteArray *CBC_BufferedImageLuminanceSource::GetMatrix()
 {
     CFX_ByteArray *matirx = FX_NEW CFX_ByteArray();
     matirx->SetSize(m_bytesPerLine * m_height);
-    FX_INT32 *rgb = (FX_INT32*)m_pBitmap->GetBuffer();
-    FX_INT32 y;
+    int32_t *rgb = (int32_t*)m_pBitmap->GetBuffer();
+    int32_t y;
     for(y = 0; y < m_height; y++) {
-        FX_INT32 offset = y * m_width;
-        FX_INT32 x;
+        int32_t offset = y * m_width;
+        int32_t x;
         for(x = 0; x < m_width; x++) {
-            FX_INT32 pixel = rgb[offset + x];
-            FX_INT32 luminance = (306 * ((pixel >> 16) & 0xFF) +
+            int32_t pixel = rgb[offset + x];
+            int32_t luminance = (306 * ((pixel >> 16) & 0xFF) +
                                   601 * ((pixel >> 8) & 0xFF) +
                                   117 * (pixel & 0xFF)) >> 10;
-            (*matirx)[offset + x] = (FX_BYTE) luminance;
+            (*matirx)[offset + x] = (uint8_t) luminance;
         }
     }
     return matirx;
@@ -188,17 +188,17 @@ FX_BOOL CBC_BufferedImageLuminanceSource::IsRotateSupported()
 {
     return TRUE;
 }
-CBC_LuminanceSource *CBC_BufferedImageLuminanceSource::Crop(FX_INT32 left, FX_INT32 top, FX_INT32 width, FX_INT32 height)
+CBC_LuminanceSource *CBC_BufferedImageLuminanceSource::Crop(int32_t left, int32_t top, int32_t width, int32_t height)
 {
     return NULL;
 }
-CBC_LuminanceSource *CBC_BufferedImageLuminanceSource::RotateCounterClockwise(FX_INT32 &e)
+CBC_LuminanceSource *CBC_BufferedImageLuminanceSource::RotateCounterClockwise(int32_t &e)
 {
     if (!IsRotateSupported()) {
         e = BCExceptionRotateNotSupported;
         return NULL;
     }
-    FX_INT32 sourceWidth = m_width;
-    FX_INT32 sourceHeight = m_height;
+    int32_t sourceWidth = m_width;
+    int32_t sourceHeight = m_height;
     return NULL;
 }

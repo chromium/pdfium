@@ -9,24 +9,24 @@
 class CFX_BaseMassArrayImp : public CFX_Target
 {
 public:
-    CFX_BaseMassArrayImp(FX_INT32 iChunkSize, FX_INT32 iBlockSize);
+    CFX_BaseMassArrayImp(int32_t iChunkSize, int32_t iBlockSize);
     ~CFX_BaseMassArrayImp();
     FX_LPBYTE	AddSpace()
     {
         return AddSpaceTo(m_iBlockCount);
     }
-    FX_LPBYTE	AddSpaceTo(FX_INT32 index);
-    FX_LPBYTE	GetAt(FX_INT32 index) const;
-    FX_INT32	Append(const CFX_BaseMassArrayImp &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1);
-    FX_INT32	Copy(const CFX_BaseMassArrayImp &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1);
-    FX_INT32	RemoveLast(FX_INT32 iCount = -1);
+    FX_LPBYTE	AddSpaceTo(int32_t index);
+    FX_LPBYTE	GetAt(int32_t index) const;
+    int32_t	Append(const CFX_BaseMassArrayImp &src, int32_t iStart = 0, int32_t iCount = -1);
+    int32_t	Copy(const CFX_BaseMassArrayImp &src, int32_t iStart = 0, int32_t iCount = -1);
+    int32_t	RemoveLast(int32_t iCount = -1);
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE);
-    FX_INT32		m_iChunkSize;
-    FX_INT32		m_iBlockSize;
-    FX_INT32		m_iChunkCount;
-    FX_INT32		m_iBlockCount;
+    int32_t		m_iChunkSize;
+    int32_t		m_iBlockSize;
+    int32_t		m_iChunkCount;
+    int32_t		m_iBlockCount;
     CFX_PtrArray	*m_pData;
 protected:
-    void	Append(FX_INT32 iDstStart, const CFX_BaseMassArrayImp &src, FX_INT32 iSrcStart = 0, FX_INT32 iSrcCount = -1);
+    void	Append(int32_t iDstStart, const CFX_BaseMassArrayImp &src, int32_t iSrcStart = 0, int32_t iSrcCount = -1);
 };
 #endif

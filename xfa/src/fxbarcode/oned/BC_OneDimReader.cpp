@@ -25,11 +25,11 @@
 #include "../common/BC_CommonBitArray.h"
 #include "BC_OneDReader.h"
 #include "BC_OneDimReader.h"
-const FX_INT32 CBC_OneDimReader::MAX_AVG_VARIANCE = (FX_INT32)(256 * 0.48f);
-const FX_INT32 CBC_OneDimReader::MAX_INDIVIDUAL_VARIANCE = (FX_INT32)(256 * 0.7f);
-const FX_INT32 CBC_OneDimReader::START_END_PATTERN[3] = {1, 1, 1};
-const FX_INT32 CBC_OneDimReader::MIDDLE_PATTERN[5] = {1, 1, 1, 1, 1};
-const FX_INT32 CBC_OneDimReader::L_PATTERNS[10][4] = {
+const int32_t CBC_OneDimReader::MAX_AVG_VARIANCE = (int32_t)(256 * 0.48f);
+const int32_t CBC_OneDimReader::MAX_INDIVIDUAL_VARIANCE = (int32_t)(256 * 0.7f);
+const int32_t CBC_OneDimReader::START_END_PATTERN[3] = {1, 1, 1};
+const int32_t CBC_OneDimReader::MIDDLE_PATTERN[5] = {1, 1, 1, 1, 1};
+const int32_t CBC_OneDimReader::L_PATTERNS[10][4] = {
     {3, 2, 1, 1},
     {2, 2, 2, 1},
     {2, 1, 2, 2},
@@ -41,7 +41,7 @@ const FX_INT32 CBC_OneDimReader::L_PATTERNS[10][4] = {
     {1, 2, 1, 3},
     {3, 1, 1, 2}
 };
-const FX_INT32 CBC_OneDimReader::L_AND_G_PATTERNS[20][4] = {
+const int32_t CBC_OneDimReader::L_AND_G_PATTERNS[20][4] = {
     {3, 2, 1, 1},
     {2, 2, 2, 1},
     {2, 1, 2, 2},
@@ -69,7 +69,7 @@ CBC_OneDimReader::CBC_OneDimReader()
 CBC_OneDimReader::~CBC_OneDimReader()
 {
 }
-CFX_Int32Array *CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray *row, FX_INT32 &e)
+CFX_Int32Array *CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray *row, int32_t &e)
 {
     FX_BOOL foundStart = FALSE;
     CFX_Int32Array *startRange = NULL;
@@ -78,7 +78,7 @@ CFX_Int32Array *CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray *row,
     startEndPattern[0] = START_END_PATTERN[0];
     startEndPattern[1] = START_END_PATTERN[1];
     startEndPattern[2] = START_END_PATTERN[2];
-    FX_INT32 nextStart = 0;
+    int32_t nextStart = 0;
     while (!foundStart) {
         if(startRange != NULL) {
             delete startRange;
@@ -86,12 +86,12 @@ CFX_Int32Array *CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray *row,
         }
         startRange = FindGuardPattern(row, nextStart, FALSE, &startEndPattern, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-        FX_INT32 start = (*startRange)[0];
+        int32_t start = (*startRange)[0];
         nextStart = (*startRange)[1];
         if (start <= 1) {
             break;
         }
-        FX_INT32 quietStart = start - (nextStart - start);
+        int32_t quietStart = start - (nextStart - start);
         if (quietStart >= 0) {
             FX_BOOL booT = row->IsRange(quietStart, start, FALSE, e);
             BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
@@ -100,7 +100,7 @@ CFX_Int32Array *CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray *row,
     }
     return startRange;
 }
-CFX_ByteString CBC_OneDimReader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_OneDimReader::DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, int32_t hints, int32_t &e)
 {
     CFX_Int32Array* StartPattern = FindStartGuardPattern(row, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
@@ -109,10 +109,10 @@ CFX_ByteString CBC_OneDimReader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArra
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     return temp;
 }
-CFX_ByteString CBC_OneDimReader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, CFX_Int32Array *startGuardRange, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_OneDimReader::DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, CFX_Int32Array *startGuardRange, int32_t hints, int32_t &e)
 {
     CFX_ByteString result;
-    FX_INT32 endStart = DecodeMiddle(row, startGuardRange, result, e);
+    int32_t endStart = DecodeMiddle(row, startGuardRange, result, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     FX_BOOL b = CheckChecksum(result, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
@@ -122,21 +122,21 @@ CFX_ByteString CBC_OneDimReader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArra
     }
     return result;
 }
-FX_BOOL CBC_OneDimReader::CheckChecksum(CFX_ByteString &s, FX_INT32 &e)
+FX_BOOL CBC_OneDimReader::CheckChecksum(CFX_ByteString &s, int32_t &e)
 {
     FX_BOOL temp = CheckStandardUPCEANChecksum(s, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return temp;
 }
-FX_BOOL CBC_OneDimReader::CheckStandardUPCEANChecksum(CFX_ByteString &s, FX_INT32 &e)
+FX_BOOL CBC_OneDimReader::CheckStandardUPCEANChecksum(CFX_ByteString &s, int32_t &e)
 {
-    FX_INT32 length = s.GetLength();
+    int32_t length = s.GetLength();
     if (length == 0) {
         return FALSE;
     }
-    FX_INT32 sum = 0;
-    for (FX_INT32 i = length - 2; i >= 0; i -= 2) {
-        FX_INT32 digit = (FX_INT32) s[i] - (FX_INT32) '0';
+    int32_t sum = 0;
+    for (int32_t i = length - 2; i >= 0; i -= 2) {
+        int32_t digit = (int32_t) s[i] - (int32_t) '0';
         if (digit < 0 || digit > 9) {
             e = BCExceptionFormatException;
             return FALSE;
@@ -144,8 +144,8 @@ FX_BOOL CBC_OneDimReader::CheckStandardUPCEANChecksum(CFX_ByteString &s, FX_INT3
         sum += digit;
     }
     sum *= 3;
-    for (FX_INT32 j = length - 1; j >= 0; j -= 2) {
-        FX_INT32 digit = (FX_INT32) s[j] - (FX_INT32) '0';
+    for (int32_t j = length - 1; j >= 0; j -= 2) {
+        int32_t digit = (int32_t) s[j] - (int32_t) '0';
         if (digit < 0 || digit > 9) {
             e = BCExceptionFormatException;
             return FALSE;
@@ -154,7 +154,7 @@ FX_BOOL CBC_OneDimReader::CheckStandardUPCEANChecksum(CFX_ByteString &s, FX_INT3
     }
     return sum % 10 == 0;
 }
-CFX_Int32Array *CBC_OneDimReader::DecodeEnd(CBC_CommonBitArray* row, FX_INT32 endStart, FX_INT32 &e)
+CFX_Int32Array *CBC_OneDimReader::DecodeEnd(CBC_CommonBitArray* row, int32_t endStart, int32_t &e)
 {
     CFX_Int32Array startEndPattern;
     startEndPattern.Add(START_END_PATTERN[0]);
@@ -164,12 +164,12 @@ CFX_Int32Array *CBC_OneDimReader::DecodeEnd(CBC_CommonBitArray* row, FX_INT32 en
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return FindGuard;
 }
-CFX_Int32Array *CBC_OneDimReader::FindGuardPattern(CBC_CommonBitArray *row, FX_INT32 rowOffset, FX_BOOL whiteFirst, CFX_Int32Array *pattern, FX_INT32 &e)
+CFX_Int32Array *CBC_OneDimReader::FindGuardPattern(CBC_CommonBitArray *row, int32_t rowOffset, FX_BOOL whiteFirst, CFX_Int32Array *pattern, int32_t &e)
 {
-    FX_INT32 patternLength = pattern->GetSize();
+    int32_t patternLength = pattern->GetSize();
     CFX_Int32Array counters;
     counters.SetSize(patternLength);
-    FX_INT32 width = row->GetSize();
+    int32_t width = row->GetSize();
     FX_BOOL isWhite = FALSE;
     while (rowOffset < width) {
         isWhite = !row->Get(rowOffset);
@@ -178,9 +178,9 @@ CFX_Int32Array *CBC_OneDimReader::FindGuardPattern(CBC_CommonBitArray *row, FX_I
         }
         rowOffset++;
     }
-    FX_INT32 counterPosition = 0;
-    FX_INT32 patternStart = rowOffset;
-    for (FX_INT32 x = rowOffset; x < width; x++) {
+    int32_t counterPosition = 0;
+    int32_t patternStart = rowOffset;
+    for (int32_t x = rowOffset; x < width; x++) {
         FX_BOOL pixel = row->Get(x);
         if (pixel ^ isWhite) {
             counters[counterPosition]++;
@@ -194,7 +194,7 @@ CFX_Int32Array *CBC_OneDimReader::FindGuardPattern(CBC_CommonBitArray *row, FX_I
                     return result;
                 }
                 patternStart += counters[0] + counters[1];
-                for (FX_INT32 y = 2; y < patternLength; y++) {
+                for (int32_t y = 2; y < patternLength; y++) {
                     counters[y - 2] = counters[y];
                 }
                 counters[patternLength - 2] = 0;
@@ -211,15 +211,15 @@ CFX_Int32Array *CBC_OneDimReader::FindGuardPattern(CBC_CommonBitArray *row, FX_I
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return NULL;
 }
-FX_INT32 CBC_OneDimReader::DecodeDigit(CBC_CommonBitArray *row, CFX_Int32Array *counters, FX_INT32 rowOffset, const FX_INT32* patterns, FX_INT32 patternLength, FX_INT32 &e)
+int32_t CBC_OneDimReader::DecodeDigit(CBC_CommonBitArray *row, CFX_Int32Array *counters, int32_t rowOffset, const int32_t* patterns, int32_t patternLength, int32_t &e)
 {
     RecordPattern(row, rowOffset, counters, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, 0);
-    FX_INT32 bestVariance = MAX_AVG_VARIANCE;
-    FX_INT32 bestMatch = -1;
-    FX_INT32 max = patternLength;
-    for (FX_INT32 i = 0; i < max; i++) {
-        FX_INT32 variance = PatternMatchVariance(counters, &patterns[i * 4], MAX_INDIVIDUAL_VARIANCE);
+    int32_t bestVariance = MAX_AVG_VARIANCE;
+    int32_t bestMatch = -1;
+    int32_t max = patternLength;
+    for (int32_t i = 0; i < max; i++) {
+        int32_t variance = PatternMatchVariance(counters, &patterns[i * 4], MAX_INDIVIDUAL_VARIANCE);
         if (variance < bestVariance) {
             bestVariance = variance;
             bestMatch = i;

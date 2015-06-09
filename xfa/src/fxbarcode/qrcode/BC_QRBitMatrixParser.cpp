@@ -29,7 +29,7 @@
 CBC_QRBitMatrixParser::CBC_QRBitMatrixParser()
 {
 }
-void CBC_QRBitMatrixParser::Init(CBC_CommonBitMatrix *bitMatrix, FX_INT32 &e)
+void CBC_QRBitMatrixParser::Init(CBC_CommonBitMatrix *bitMatrix, int32_t &e)
 {
     m_dimension = bitMatrix->GetDimension(e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -50,34 +50,34 @@ CBC_QRBitMatrixParser::~CBC_QRBitMatrixParser()
     }
     m_version = NULL;
 }
-CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(FX_INT32 &e)
+CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(int32_t &e)
 {
     if(m_parsedFormatInfo != NULL) {
         return m_parsedFormatInfo;
     }
-    FX_INT32 formatInfoBits = 0;
-    FX_INT32 j;
+    int32_t formatInfoBits = 0;
+    int32_t j;
     for( j = 0; j < 6; j++) {
         formatInfoBits = CopyBit(8, j, formatInfoBits);
     }
     formatInfoBits = CopyBit(8, 7, formatInfoBits);
     formatInfoBits = CopyBit(8, 8, formatInfoBits);
     formatInfoBits = CopyBit(7, 8, formatInfoBits);
-    for(FX_INT32 i = 5; i >= 0; i--) {
+    for(int32_t i = 5; i >= 0; i--) {
         formatInfoBits = CopyBit(i, 8, formatInfoBits);
     }
     m_parsedFormatInfo = CBC_QRCoderFormatInformation::DecodeFormatInformation(formatInfoBits);
     if(m_parsedFormatInfo != NULL) {
         return m_parsedFormatInfo;
     }
-    FX_INT32 dimension = m_bitMatrix->GetDimension(e);
+    int32_t dimension = m_bitMatrix->GetDimension(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     formatInfoBits = 0;
-    FX_INT32 iMin = dimension - 8;
+    int32_t iMin = dimension - 8;
     for(j = dimension - 1; j >= iMin; j--) {
         formatInfoBits = CopyBit(j, 8, formatInfoBits);
     }
-    for(FX_INT32 k = dimension - 7; k < dimension; k++) {
+    for(int32_t k = dimension - 7; k < dimension; k++) {
         formatInfoBits = CopyBit(8, k , formatInfoBits);
     }
     m_parsedFormatInfo = CBC_QRCoderFormatInformation::DecodeFormatInformation(formatInfoBits);
@@ -88,23 +88,23 @@ CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(FX_IN
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return NULL;
 }
-CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(FX_INT32 &e)
+CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(int32_t &e)
 {
     if(m_version != NULL) {
         return m_version;
     }
-    FX_INT32 dimension = m_bitMatrix->GetDimension(e);
+    int32_t dimension = m_bitMatrix->GetDimension(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    FX_INT32 provisionVersion = (dimension - 17) >> 2;
+    int32_t provisionVersion = (dimension - 17) >> 2;
     if(provisionVersion <= 6) {
         CBC_QRCoderVersion* qrv = CBC_QRCoderVersion::GetVersionForNumber(provisionVersion, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         return qrv;
     }
-    FX_INT32 versionBits = 0;
-    for (FX_INT32 i = 5; i >= 0; i--) {
-        FX_INT32 jMin = dimension - 11;
-        for (FX_INT32 j = dimension - 9; j >= jMin; j--) {
+    int32_t versionBits = 0;
+    for (int32_t i = 5; i >= 0; i--) {
+        int32_t jMin = dimension - 11;
+        for (int32_t j = dimension - 9; j >= jMin; j--) {
             versionBits = CopyBit(i, j, versionBits);
         }
     }
@@ -114,9 +114,9 @@ CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(FX_INT32 &e)
         return m_version;
     }
     versionBits = 0;
-    for (FX_INT32 j = 5; j >= 0; j--) {
-        FX_INT32 iMin = dimension - 11;
-        for (FX_INT32 i = dimension - 9; i >= iMin; i--) {
+    for (int32_t j = 5; j >= 0; j--) {
+        int32_t iMin = dimension - 11;
+        for (int32_t i = dimension - 9; i >= iMin; i--) {
             versionBits = CopyBit(i, j, versionBits);
         }
     }
@@ -129,19 +129,19 @@ CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(FX_INT32 &e)
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return NULL;
 }
-FX_INT32 CBC_QRBitMatrixParser::CopyBit(FX_INT32 i, FX_INT32 j, FX_INT32 versionBits)
+int32_t CBC_QRBitMatrixParser::CopyBit(int32_t i, int32_t j, int32_t versionBits)
 {
     return m_bitMatrix->Get(j, i) ? (versionBits << 1) | 0x1 : versionBits << 1;
 }
-CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(FX_INT32 &e)
+CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(int32_t &e)
 {
     CBC_QRCoderFormatInformation *formatInfo   = ReadFormatInformation(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL)
     CBC_QRCoderVersion			  *version		= ReadVersion(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    CBC_QRDataMask		  *dataMask		= CBC_QRDataMask::ForReference((FX_INT32)(formatInfo->GetDataMask()), e);
+    CBC_QRDataMask		  *dataMask		= CBC_QRDataMask::ForReference((int32_t)(formatInfo->GetDataMask()), e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    FX_INT32				  dimension		= m_bitMatrix->GetDimension(e);
+    int32_t				  dimension		= m_bitMatrix->GetDimension(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     dataMask->UnmaskBitMatirx(m_bitMatrix, dimension);
     CBC_CommonBitMatrix* cbm = version->BuildFunctionPattern(e);
@@ -151,16 +151,16 @@ CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(FX_INT32 &e)
     CFX_ByteArray * temp = FX_NEW CFX_ByteArray;
     temp->SetSize(version->GetTotalCodeWords());
     CBC_AutoPtr<CFX_ByteArray> result(temp);
-    FX_INT32				   resultOffset = 0;
-    FX_INT32				   currentByte	= 0;
-    FX_INT32				   bitsRead		= 0;
-    for(FX_INT32 j = dimension - 1; j > 0; j -= 2) {
+    int32_t				   resultOffset = 0;
+    int32_t				   currentByte	= 0;
+    int32_t				   bitsRead		= 0;
+    for(int32_t j = dimension - 1; j > 0; j -= 2) {
         if(j == 6) {
             j--;
         }
-        for(FX_INT32 count = 0; count < dimension; count++) {
-            FX_INT32 i = readingUp ? dimension - 1 - count : count;
-            for(FX_INT32 col = 0; col < 2; col++) {
+        for(int32_t count = 0; count < dimension; count++) {
+            int32_t i = readingUp ? dimension - 1 - count : count;
+            for(int32_t col = 0; col < 2; col++) {
                 if(!functionPattern->Get(j - col, i)) {
                     bitsRead++;
                     currentByte <<= 1;
@@ -168,7 +168,7 @@ CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(FX_INT32 &e)
                         currentByte |= 1;
                     }
                     if(bitsRead == 8) {
-                        (*result)[resultOffset++] = (FX_BYTE) currentByte;
+                        (*result)[resultOffset++] = (uint8_t) currentByte;
                         bitsRead = 0;
                         currentByte = 0;
                     }

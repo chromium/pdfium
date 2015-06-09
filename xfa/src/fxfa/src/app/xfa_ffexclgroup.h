@@ -12,7 +12,7 @@ public:
     CXFA_FFExclGroup(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
     virtual ~CXFA_FFExclGroup();
 
-    virtual void	RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_DWORD dwStatus = 0, FX_INT32 iRotate = 0);
+    virtual void	RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_DWORD dwStatus = 0, int32_t iRotate = 0);
 protected:
 };
 #endif

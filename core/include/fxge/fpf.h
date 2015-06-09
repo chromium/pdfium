@@ -31,19 +31,19 @@ public:
     virtual CFX_ByteString	GetFamilyName() = 0;
     virtual CFX_WideString	GetPsName() = 0;
     virtual FX_DWORD		GetFontStyle() const = 0;
-    virtual FX_BYTE			GetCharset() const = 0;
+    virtual uint8_t			GetCharset() const = 0;
 
-    virtual FX_INT32		GetGlyphIndex(FX_WCHAR wUnicode) = 0;
-    virtual FX_INT32		GetGlyphWidth(FX_INT32 iGlyphIndex) = 0;
+    virtual int32_t		GetGlyphIndex(FX_WCHAR wUnicode) = 0;
+    virtual int32_t		GetGlyphWidth(int32_t iGlyphIndex) = 0;
 
-    virtual FX_INT32		GetAscent() const = 0;
-    virtual FX_INT32		GetDescent() const = 0;
+    virtual int32_t		GetAscent() const = 0;
+    virtual int32_t		GetDescent() const = 0;
 
-    virtual FX_BOOL			GetGlyphBBox(FX_INT32 iGlyphIndex, FX_RECT &rtBBox) = 0;
+    virtual FX_BOOL			GetGlyphBBox(int32_t iGlyphIndex, FX_RECT &rtBBox) = 0;
     virtual FX_BOOL			GetBBox(FX_RECT &rtBBox) = 0;
 
-    virtual FX_INT32		GetHeight() const = 0;
-    virtual FX_INT32		GetItalicAngle() const = 0;
+    virtual int32_t		GetHeight() const = 0;
+    virtual int32_t		GetItalicAngle() const = 0;
     virtual FX_DWORD		GetFontData(FX_DWORD dwTable, FX_LPBYTE pBuffer, FX_DWORD dwSize) = 0;
 
 protected:
@@ -58,7 +58,7 @@ public:
     virtual void			LoadPrivateFont(FX_BSTR bsFileName) = 0;
     virtual void			LoadPrivateFont(FX_LPVOID pBuffer, size_t szBuffer) = 0;
 
-    virtual IFPF_Font*		CreateFont(FX_BSTR bsFamilyname, FX_BYTE charset, FX_DWORD dwStyle, FX_DWORD dwMatch = 0) = 0;
+    virtual IFPF_Font*		CreateFont(FX_BSTR bsFamilyname, uint8_t charset, FX_DWORD dwStyle, FX_DWORD dwMatch = 0) = 0;
 };
 
 #endif  // CORE_INCLUDE_FXGE_FPF_H_

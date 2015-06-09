@@ -17,8 +17,8 @@ public:
         FDE_Delete this;
     }
 
-    virtual FX_INT32			GetWidth() const;
-    virtual FX_INT32			GetHeight() const;
+    virtual int32_t			GetWidth() const;
+    virtual int32_t			GetHeight() const;
     virtual FDE_HDEVICESTATE	SaveState();
     virtual void				RestoreState(FDE_HDEVICESTATE hState);
     virtual FX_BOOL				SetClipPath(const IFDE_Path *pClip);
@@ -30,7 +30,7 @@ public:
     virtual FX_FLOAT			GetDpiY() const;
 
     virtual FX_BOOL				DrawImage(CFX_DIBSource *pDib, const CFX_RectF *pSrcRect, const CFX_RectF &dstRect, const CFX_Matrix *pImgMatrix = NULL, const CFX_Matrix *pDevMatrix = NULL);
-    virtual FX_BOOL				DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, FX_INT32 iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix = NULL);
+    virtual FX_BOOL				DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, int32_t iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix = NULL);
     virtual FX_BOOL				DrawBezier(IFDE_Pen *pPen, FX_FLOAT fPenWidth, const CFX_PointF &pt1, const CFX_PointF &pt2, const CFX_PointF &pt3, const CFX_PointF &pt4, const CFX_Matrix *pMatrix = NULL);
     virtual FX_BOOL				DrawCurve(IFDE_Pen *pPen, FX_FLOAT fPenWidth, const CFX_PointsF &points, FX_BOOL bClosed, FX_FLOAT fTension = 0.5f, const CFX_Matrix *pMatrix = NULL);
     virtual FX_BOOL				DrawEllipse(IFDE_Pen *pPen, FX_FLOAT fPenWidth, const CFX_RectF &rect, const CFX_Matrix *pMatrix = NULL);
@@ -48,16 +48,16 @@ public:
     FX_BOOL						FillHatchPath(IFDE_Brush *pBrush, const CFX_PathData *pPath, const CFX_Matrix *pMatrix);
     FX_BOOL						FillTexturePath(IFDE_Brush *pBrush, const CFX_PathData *pPath, const CFX_Matrix *pMatrix);
     FX_BOOL						FillLinearGradientPath(IFDE_Brush *pBrush, const CFX_PathData *pPath, const CFX_Matrix *pMatrix);
-    FX_BOOL						DrawSolidString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, FX_INT32 iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix);
-    FX_BOOL						DrawStringPath(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, FX_INT32 iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix);
+    FX_BOOL						DrawSolidString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, int32_t iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix);
+    FX_BOOL						DrawStringPath(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, int32_t iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix);
 protected:
     FX_BOOL						CreatePen(IFDE_Pen *pPen, FX_FLOAT fPenWidth, CFX_GraphStateData &graphState);
-    FX_BOOL						WrapTexture(FX_INT32 iWrapMode, const CFX_DIBitmap *pBitmap, const CFX_PathData *pPath, const CFX_Matrix *pMatrix);
+    FX_BOOL						WrapTexture(int32_t iWrapMode, const CFX_DIBitmap *pBitmap, const CFX_PathData *pPath, const CFX_Matrix *pMatrix);
     CFX_RenderDevice			*m_pDevice;
     CFX_RectF					m_rtClip;
     FX_BOOL						m_bOwnerDevice;
     FXTEXT_CHARPOS				*m_pCharPos;
-    FX_INT32					m_iCharCount;
+    int32_t					m_iCharCount;
 };
 #endif
 #endif

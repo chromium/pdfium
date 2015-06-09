@@ -1553,7 +1553,7 @@ CFX_ByteString _FPDF_ByteStringFromHex(CFX_BinaryBuf& src_buf)
     FX_LPCBYTE str = src_buf.GetBuffer();
     FX_DWORD size = src_buf.GetSize();
     for (FX_DWORD i = 0; i < size; i ++) {
-        FX_BYTE ch = str[i];
+        uint8_t ch = str[i];
         if (ch >= '0' && ch <= '9') {
             if (bFirst) {
                 code = (ch - '0') * 16;

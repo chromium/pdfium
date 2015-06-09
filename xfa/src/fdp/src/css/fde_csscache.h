@@ -22,7 +22,7 @@ public:
         FDE_Delete this;
     }
 
-    virtual void					SetMaxItems(FX_INT32 iMaxCount = 5)
+    virtual void					SetMaxItems(int32_t iMaxCount = 5)
     {
         FXSYS_assert(iMaxCount >= 3);
         m_iMaxItems = iMaxCount;
@@ -35,7 +35,7 @@ protected:
     void							RemoveLowestActivityItem();
     CFX_MapByteStringToPtr			m_Stylesheets;
     IFX_MEMAllocator				*m_pFixedStore;
-    FX_INT32						m_iMaxItems;
+    int32_t						m_iMaxItems;
 };
 typedef struct _FDE_CSSTAGCACHE : public CFX_Target {
 public:
@@ -57,11 +57,11 @@ public:
     {
         return dwTagHash;
     }
-    FX_INT32						CountHashClass() const
+    int32_t						CountHashClass() const
     {
         return dwClassHashs.GetSize();
     }
-    void							SetClassIndex(FX_INT32 index)
+    void							SetClassIndex(int32_t index)
     {
         iClassIndex = index;
     }
@@ -74,7 +74,7 @@ protected:
     _FDE_CSSTAGCACHE				*pParent;
     FX_DWORD						dwIDHash;
     FX_DWORD						dwTagHash;
-    FX_INT32						iClassIndex;
+    int32_t						iClassIndex;
     CFDE_DWordArray					dwClassHashs;
 } FDE_CSSTAGCACHE, * FDE_LPCSSTAGCACHE;
 typedef CFX_ObjectStackTemplate<FDE_CSSTAGCACHE> CFDE_CSSTagStack;

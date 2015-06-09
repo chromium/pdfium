@@ -42,7 +42,7 @@ public:
     CFX_Matrix				 m_matrix;
     CFX_RectF				 m_rtPart;
     IFWL_Widget				*m_pWidget;
-    FX_INT32				 m_iPart;
+    int32_t				 m_iPart;
     FX_DWORD				 m_dwStates;
     FX_DWORD				 m_dwData;
     FX_LPVOID				 m_pData;
@@ -69,7 +69,7 @@ public:
     }
     CFX_WideString			 m_wsText;
     FX_DWORD				 m_dwTTOStyles;
-    FX_INT32				 m_iTTOAlign;
+    int32_t				 m_iTTOAlign;
     CFX_Graphics		    *m_pGraphics;
 };
 class IFWL_ThemeProvider

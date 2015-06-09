@@ -13,14 +13,14 @@ class CBC_PDF417Writer : public CBC_TwoDimWriter
 public:
     CBC_PDF417Writer();
     virtual ~CBC_PDF417Writer();
-    FX_BYTE *	Encode(const CFX_WideString &contents, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e);
+    uint8_t *	Encode(const CFX_WideString &contents, int32_t &outWidth, int32_t &outHeight, int32_t &e);
 
-    FX_BYTE *	Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e);
-    FX_BYTE *	Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e);
-    FX_BOOL		SetErrorCorrectionLevel(FX_INT32 level);
+    uint8_t *	Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e);
+    uint8_t *	Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e);
+    FX_BOOL		SetErrorCorrectionLevel(int32_t level);
     void		SetTruncated(FX_BOOL truncated);
 private:
-    void		rotateArray(CFX_ByteArray& bitarray, FX_INT32 width, FX_INT32 height);
+    void		rotateArray(CFX_ByteArray& bitarray, int32_t width, int32_t height);
     FX_BOOL		m_bTruncated;
 };
 #endif

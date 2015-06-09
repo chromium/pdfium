@@ -62,9 +62,9 @@ public:
 	virtual FX_BOOL		RenderCustomWidget(IXFA_Widget* hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix, const CFX_RectF& rtUI){return FALSE;}
 
 	//host method
-	virtual	FX_INT32	CountPages(IXFA_Doc* hDoc);
-	virtual	FX_INT32	GetCurrentPage(IXFA_Doc* hDoc);
-	virtual void		SetCurrentPage(IXFA_Doc* hDoc, FX_INT32 iCurPage);
+	virtual	int32_t	CountPages(IXFA_Doc* hDoc);
+	virtual	int32_t	GetCurrentPage(IXFA_Doc* hDoc);
+	virtual void		SetCurrentPage(IXFA_Doc* hDoc, int32_t iCurPage);
 	virtual FX_BOOL		IsCalculationsEnabled(IXFA_Doc* hDoc);
 	virtual void		SetCalculationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled);
 	virtual void		GetTitle(IXFA_Doc* hDoc, CFX_WideString &wsTitle);
@@ -75,17 +75,17 @@ public:
 	virtual FX_BOOL		IsValidationsEnabled(IXFA_Doc* hDoc);
 	virtual void		SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled);
 	virtual void		SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget);
-	virtual void		Print(IXFA_Doc* hDoc, FX_INT32 nStartPage, FX_INT32 nEndPage, FX_DWORD dwOptions);
+	virtual void		Print(IXFA_Doc* hDoc, int32_t nStartPage, int32_t nEndPage, FX_DWORD dwOptions);
 
 	//LayoutPseudo method
-	virtual FX_INT32			AbsPageCountInBatch(IXFA_Doc* hDoc){return 0;}
-	virtual FX_INT32			AbsPageInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget){return 0;}
-	virtual FX_INT32			SheetCountInBatch(IXFA_Doc* hDoc){return 0;}
-	virtual FX_INT32			SheetInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget){return 0;}
+	virtual int32_t			AbsPageCountInBatch(IXFA_Doc* hDoc){return 0;}
+	virtual int32_t			AbsPageInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget){return 0;}
+	virtual int32_t			SheetCountInBatch(IXFA_Doc* hDoc){return 0;}
+	virtual int32_t			SheetInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget){return 0;}
 
 	//SignaturePseudoModel method
 	//TODO:
-	virtual FX_INT32			Verify(IXFA_Doc* hDoc, CXFA_Node* pSigNode, FX_BOOL bUsed = TRUE/*, SecurityHandler* pHandler, SignatureInfo &info*/) {return 0;}
+	virtual int32_t			Verify(IXFA_Doc* hDoc, CXFA_Node* pSigNode, FX_BOOL bUsed = TRUE/*, SecurityHandler* pHandler, SignatureInfo &info*/) {return 0;}
 	virtual FX_BOOL				Sign(IXFA_Doc* hDoc, CXFA_NodeList* pNodeList, FX_WSTR wsExpression, FX_WSTR wsXMLIdent, FX_WSTR wsValue = FX_WSTRC(L"open"), FX_BOOL bUsed = TRUE/*, SecurityHandler* pHandler = NULL, SignatureInfo &info*/) {return 0;}
 	virtual CXFA_NodeList*		Enumerate(IXFA_Doc* hDoc) {return 0;}
 	virtual FX_BOOL				Clear(IXFA_Doc* hDoc, CXFA_Node* pSigNode, FX_BOOL bCleared = TRUE) {return 0;}

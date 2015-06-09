@@ -15,10 +15,10 @@ public:
     virtual ~CBC_QRDataMask();
     static void Initialize();
     static void Finalize();
-    virtual FX_BOOL IsMasked(FX_INT32 i, FX_INT32 j) = 0;
-    void UnmaskBitMatirx(CBC_CommonBitMatrix *bits, FX_INT32 dimension);
-    static CBC_QRDataMask* ForReference(FX_INT32 reference, FX_INT32 &e);
-    static FX_INT32 BuildDataMasks();
+    virtual FX_BOOL IsMasked(int32_t i, int32_t j) = 0;
+    void UnmaskBitMatirx(CBC_CommonBitMatrix *bits, int32_t dimension);
+    static CBC_QRDataMask* ForReference(int32_t reference, int32_t &e);
+    static int32_t BuildDataMasks();
     static void Destroy();
 };
 #endif

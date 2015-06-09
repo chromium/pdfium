@@ -16,7 +16,7 @@ public:
     virtual FX_BOOL	OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL	OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual	FX_DWORD	OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
-    virtual void	RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_DWORD dwStatus = 0, FX_INT32 iRotate = 0);
+    virtual void	RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_DWORD dwStatus = 0, int32_t iRotate = 0);
     virtual	FX_BOOL	IsLoaded();
     virtual FX_BOOL LayoutWidget();
 private:

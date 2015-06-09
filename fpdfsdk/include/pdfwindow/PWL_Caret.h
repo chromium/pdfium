@@ -46,7 +46,7 @@ private:
 	CPDF_Point					m_ptHead;
 	CPDF_Point					m_ptFoot;
 	FX_FLOAT					m_fWidth;
-	FX_INT32					m_nDelay;
+	int32_t					m_nDelay;
 	CPDF_Rect					m_rcInvalid;
 };
 

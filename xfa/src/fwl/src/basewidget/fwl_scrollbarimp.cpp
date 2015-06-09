@@ -302,7 +302,7 @@ FX_BOOL CFWL_ScrollBarImp::DoScroll(FX_DWORD dwCode, FX_FLOAT fPos )
     }
     return OnScroll(dwCode, fPos);
 }
-FX_INT32 CFWL_ScrollBarImp::Run(FWL_HTIMER hTimer)
+int32_t CFWL_ScrollBarImp::Run(FWL_HTIMER hTimer)
 {
     if (m_hTimer) {
         FWL_StopTimer(m_hTimer);
@@ -693,10 +693,10 @@ CFWL_ScrollBarImpDelegate::CFWL_ScrollBarImpDelegate(CFWL_ScrollBarImp *pOwner)
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
-    FX_INT32 iRet = 1;
+    int32_t iRet = 1;
     FX_DWORD dwMsgCode = pMessage->GetClassID();
     if (dwMsgCode == FWL_MSGHASH_Mouse) {
         CFWL_MsgMouse *pMsg = (CFWL_MsgMouse*)pMessage;
@@ -794,11 +794,11 @@ void CFWL_ScrollBarImpDelegate::OnMouseLeave()
 }
 void CFWL_ScrollBarImpDelegate::OnMouseWheel(FX_FLOAT fx, FX_FLOAT fy, FX_DWORD	dwFlags, FX_FLOAT fDeltaX, FX_FLOAT	fDeltaY)
 {
-    m_pOwner->m_iMouseWheel = (FX_INT32)fDeltaX;
+    m_pOwner->m_iMouseWheel = (int32_t)fDeltaX;
     m_pOwner->SendEvent();
     m_pOwner->m_iMouseWheel = 0;
 }
-void CFWL_ScrollBarImpDelegate::DoMouseDown(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState, FX_FLOAT fx, FX_FLOAT fy)
+void CFWL_ScrollBarImpDelegate::DoMouseDown(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState, FX_FLOAT fx, FX_FLOAT fy)
 {
     if (!rtItem.Contains(fx, fy)) {
         return;
@@ -809,9 +809,9 @@ void CFWL_ScrollBarImpDelegate::DoMouseDown(FX_INT32 iItem, const CFX_RectF &rtI
     iState = FWL_PARTSTATE_SCB_Pressed;
     m_pOwner->Repaint(&rtItem);
 }
-void CFWL_ScrollBarImpDelegate::DoMouseUp(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState, FX_FLOAT fx, FX_FLOAT fy)
+void CFWL_ScrollBarImpDelegate::DoMouseUp(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState, FX_FLOAT fx, FX_FLOAT fy)
 {
-    FX_INT32 iNewState = rtItem.Contains(fx, fy) ? FWL_PARTSTATE_SCB_Hovered : FWL_PARTSTATE_SCB_Normal;
+    int32_t iNewState = rtItem.Contains(fx, fy) ? FWL_PARTSTATE_SCB_Hovered : FWL_PARTSTATE_SCB_Normal;
     if (iState == iNewState) {
         return;
     }
@@ -819,10 +819,10 @@ void CFWL_ScrollBarImpDelegate::DoMouseUp(FX_INT32 iItem, const CFX_RectF &rtIte
     m_pOwner->Repaint(&rtItem);
     m_pOwner->OnScroll(FWL_SCBCODE_EndScroll, m_pOwner->m_fTrackPos);
 }
-void CFWL_ScrollBarImpDelegate::DoMouseMove(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState, FX_FLOAT fx, FX_FLOAT fy)
+void CFWL_ScrollBarImpDelegate::DoMouseMove(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState, FX_FLOAT fx, FX_FLOAT fy)
 {
     if (!m_pOwner->m_bMouseDown) {
-        FX_INT32 iNewState = rtItem.Contains(fx, fy) ? FWL_PARTSTATE_SCB_Hovered : FWL_PARTSTATE_SCB_Normal;
+        int32_t iNewState = rtItem.Contains(fx, fy) ? FWL_PARTSTATE_SCB_Hovered : FWL_PARTSTATE_SCB_Normal;
         if (iState == iNewState) {
             return;
         }
@@ -834,7 +834,7 @@ void CFWL_ScrollBarImpDelegate::DoMouseMove(FX_INT32 iItem, const CFX_RectF &rtI
         m_pOwner->OnScroll(FWL_SCBCODE_TrackPos, fPos);
     }
 }
-void CFWL_ScrollBarImpDelegate::DoMouseLeave(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState)
+void CFWL_ScrollBarImpDelegate::DoMouseLeave(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState)
 {
     if (iState == FWL_PARTSTATE_SCB_Normal) {
         return;
@@ -842,7 +842,7 @@ void CFWL_ScrollBarImpDelegate::DoMouseLeave(FX_INT32 iItem, const CFX_RectF &rt
     iState = FWL_PARTSTATE_SCB_Normal;
     m_pOwner->Repaint(&rtItem);
 }
-void CFWL_ScrollBarImpDelegate::DoMouseHover(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState)
+void CFWL_ScrollBarImpDelegate::DoMouseHover(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState)
 {
     if (iState == FWL_PARTSTATE_SCB_Hovered) {
         return;

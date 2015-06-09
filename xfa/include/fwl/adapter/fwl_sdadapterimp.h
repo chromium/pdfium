@@ -31,7 +31,7 @@ public:
     virtual FWL_ERR SetMinimize(IFWL_Widget *pWidget);
     virtual FWL_ERR RunWidget(IFWL_Widget *pWidget);
     virtual FWL_ERR RepaintWidget(IFWL_Widget *pWidget, const CFX_RectF *pRect);
-    virtual	FWL_ERR Exit(FX_INT32 iExitCode);
+    virtual	FWL_ERR Exit(int32_t iExitCode);
     virtual FWL_ERR CreateWidgetWithNativeId(IFWL_Widget *pWidget, void *vp);
     virtual FX_BOOL	GetPopupPos(IFWL_Widget* pWidget, FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight, const CFX_RectF &rtAnchor, CFX_RectF &rtPopup);
 public:
@@ -51,8 +51,8 @@ public:
     virtual FWL_ERR  RunLoop(IFWL_Widget *widget);
     virtual FWL_ERR  EndLoop();
     virtual FWL_ERR  InitMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData);
-    virtual FWL_ERR  UpdateMenu(IFWL_Menu *pMenu, FX_LPCVOID hItem, FX_INT32 iType);
-    virtual FX_INT32 TrackPopupMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData);
+    virtual FWL_ERR  UpdateMenu(IFWL_Menu *pMenu, FX_LPCVOID hItem, int32_t iType);
+    virtual int32_t TrackPopupMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData);
     virtual	FWL_ERR  SetMessageHook(IFWL_AdapterMessageHook *hook);
     virtual FWL_ERR  GetSystemBorder(FX_FLOAT &l, FX_FLOAT &t, FX_FLOAT &r, FX_FLOAT &b);
 };
@@ -65,8 +65,8 @@ public:
     virtual FWL_ERR		Start(IFWL_Thread *pThread, FWL_HTHREAD &hThread, FX_BOOL bSuspended = FALSE);
     virtual FWL_ERR		Resume(FWL_HTHREAD hThread);
     virtual FWL_ERR		Suspend(FWL_HTHREAD hThread);
-    virtual FWL_ERR		Kill(FWL_HTHREAD hThread, FX_INT32 iExitCode);
-    virtual FWL_ERR		Stop(FWL_HTHREAD hThread, FX_INT32 iExitCode);
+    virtual FWL_ERR		Kill(FWL_HTHREAD hThread, int32_t iExitCode);
+    virtual FWL_ERR		Stop(FWL_HTHREAD hThread, int32_t iExitCode);
     virtual IFWL_Thread* GetCurrentThread();
 };
 #endif

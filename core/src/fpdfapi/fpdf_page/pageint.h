@@ -16,7 +16,7 @@ class CPDF_StreamParser
 {
 public:
 
-    CPDF_StreamParser(const FX_BYTE* pData, FX_DWORD dwSize);
+    CPDF_StreamParser(const uint8_t* pData, FX_DWORD dwSize);
     ~CPDF_StreamParser();
 
     CPDF_Stream*		ReadInlineStream(CPDF_Document* pDoc, CPDF_Dictionary* pDict, CPDF_Object* pCSObj, FX_BOOL bDecode);
@@ -52,10 +52,10 @@ protected:
     void				GetNextWord(FX_BOOL& bIsNumber);
     CFX_ByteString		ReadString();
     CFX_ByteString		ReadHexString();
-    const FX_BYTE*		m_pBuf;
+    const uint8_t*		m_pBuf;
     FX_DWORD			m_Size;
     FX_DWORD			m_Pos;
-    FX_BYTE				m_WordBuffer[256];
+    uint8_t				m_WordBuffer[256];
     FX_DWORD			m_WordSize;
     CPDF_Object*		m_pLastObj;
 };
@@ -153,7 +153,7 @@ public:
     FX_FLOAT		GetNumber16(FX_DWORD index);
     int					GetInteger(FX_DWORD index)
     {
-        return (FX_INT32)(GetNumber(index));
+        return (int32_t)(GetNumber(index));
     }
     FX_BOOL				OnOperator(FX_LPCSTR op);
     void				BigCaseCaller(int index);
@@ -338,7 +338,7 @@ KeyType PDF_DocPageData_FindValue(const CFX_MapPtrTemplate<KeyType, CPDF_Counted
         }
     }
     findData = NULL;
-    return (KeyType)(FX_UINTPTR)NULL;
+    return (KeyType)(uintptr_t)NULL;
 }
 template <class KeyType, class ValueType>
 FX_BOOL PDF_DocPageData_Release(CFX_MapPtrTemplate<KeyType, CPDF_CountedObject<ValueType>*> &map, KeyType findKey, ValueType findValue, FX_BOOL bForce = FALSE)
@@ -422,11 +422,11 @@ class CPDF_IccProfile
 public:
     CPDF_IccProfile(FX_LPCBYTE pData, FX_DWORD dwSize);
     ~CPDF_IccProfile();
-    FX_INT32 GetComponents() const { return m_nSrcComponents; }
+    int32_t GetComponents() const { return m_nSrcComponents; }
     FX_BOOL					m_bsRGB;
     FX_LPVOID				m_pTransform;
 private:
-    FX_INT32                m_nSrcComponents;
+    int32_t                m_nSrcComponents;
 };
 class CPDF_DeviceCS : public CPDF_ColorSpace
 {

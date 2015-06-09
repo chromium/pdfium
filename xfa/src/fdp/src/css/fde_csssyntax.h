@@ -11,9 +11,9 @@ class CFDE_CSSTextBuf : public CFX_Target
 public:
     CFDE_CSSTextBuf();
     ~CFDE_CSSTextBuf();
-    FX_BOOL							AttachBuffer(FX_LPCWSTR pBuffer, FX_INT32 iBufLen);
-    FX_BOOL							EstimateSize(FX_INT32 iAllocSize);
-    FX_INT32						LoadFromStream(IFX_Stream *pTxtStream, FX_INT32 iStreamOffset, FX_INT32 iMaxChars, FX_BOOL &bEOS);
+    FX_BOOL							AttachBuffer(FX_LPCWSTR pBuffer, int32_t iBufLen);
+    FX_BOOL							EstimateSize(int32_t iAllocSize);
+    int32_t						LoadFromStream(IFX_Stream *pTxtStream, int32_t iStreamOffset, int32_t iMaxChars, FX_BOOL &bEOS);
     FX_BOOL							AppendChar(FX_WCHAR wch)
     {
         if (m_iDatLen >= m_iBufLen && !ExpandBuf(m_iBufLen * 2)) {
@@ -26,7 +26,7 @@ public:
         m_iDatPos = m_iDatLen = 0;
     }
     void							Reset();
-    FX_INT32						TrimEnd()
+    int32_t						TrimEnd()
     {
         while (m_iDatLen > 0 && m_pBuffer[m_iDatLen - 1] <= ' ') {
             --m_iDatLen;
@@ -34,12 +34,12 @@ public:
         AppendChar(0);
         return --m_iDatLen;
     }
-    void							Subtract(FX_INT32 iStart, FX_INT32 iLength);
+    void							Subtract(int32_t iStart, int32_t iLength);
     FX_BOOL							IsEOF() const
     {
         return m_iDatPos >= m_iDatLen;
     }
-    FX_WCHAR						GetAt(FX_INT32 index) const
+    FX_WCHAR						GetAt(int32_t index) const
     {
         return m_pBuffer[index];
     }
@@ -55,7 +55,7 @@ public:
     {
         m_iDatPos++;
     }
-    FX_INT32						GetLength() const
+    int32_t						GetLength() const
     {
         return m_iDatLen;
     }
@@ -64,12 +64,12 @@ public:
         return m_pBuffer;
     }
 protected:
-    FX_BOOL							ExpandBuf(FX_INT32 iDesiredSize);
+    FX_BOOL							ExpandBuf(int32_t iDesiredSize);
     FX_BOOL							m_bExtBuf;
     FX_LPWSTR						m_pBuffer;
-    FX_INT32						m_iBufLen;
-    FX_INT32						m_iDatLen;
-    FX_INT32						m_iDatPos;
+    int32_t						m_iBufLen;
+    int32_t						m_iDatLen;
+    int32_t						m_iDatPos;
 };
 #define FDE_CSSSYNTAXCHECK_AllowCharset	1
 #define FDE_CSSSYNTAXCHECK_AllowImport	2
@@ -96,18 +96,18 @@ public:
     {
         FDE_Delete this;
     }
-    virtual FX_BOOL					Init(IFX_Stream *pStream, FX_INT32 iCSSPlaneSize, FX_INT32 iTextDataSize = 32, FX_BOOL bOnlyDeclaration = FALSE);
-    virtual FX_BOOL					Init(FX_LPCWSTR pBuffer, FX_INT32 iBufferSize, FX_INT32 iTextDatSize = 32, FX_BOOL bOnlyDeclaration = FALSE);
+    virtual FX_BOOL					Init(IFX_Stream *pStream, int32_t iCSSPlaneSize, int32_t iTextDataSize = 32, FX_BOOL bOnlyDeclaration = FALSE);
+    virtual FX_BOOL					Init(FX_LPCWSTR pBuffer, int32_t iBufferSize, int32_t iTextDatSize = 32, FX_BOOL bOnlyDeclaration = FALSE);
     virtual FDE_CSSSYNTAXSTATUS		DoSyntaxParse();
-    virtual FX_LPCWSTR				GetCurrentString(FX_INT32 &iLength) const;
+    virtual FX_LPCWSTR				GetCurrentString(int32_t &iLength) const;
 protected:
     void							Reset(FX_BOOL bOnlyDeclaration);
     void							SwitchMode(FDE_CSSSYNTAXMODE eMode);
-    FX_INT32						SwitchToComment();
+    int32_t						SwitchToComment();
 
     FX_BOOL							RestoreMode();
     FX_BOOL							AppendChar(FX_WCHAR wch);
-    FX_INT32						SaveTextData();
+    int32_t						SaveTextData();
     FX_BOOL							IsCharsetEnabled() const
     {
         return (m_dwCheck & FDE_CSSSYNTAXCHECK_AllowCharset) != 0;
@@ -122,11 +122,11 @@ protected:
         m_dwCheck = 0;
     }
     IFX_Stream						*m_pStream;
-    FX_INT32						m_iStreamPos;
-    FX_INT32						m_iPlaneSize;
+    int32_t						m_iStreamPos;
+    int32_t						m_iPlaneSize;
     CFDE_CSSTextBuf					m_TextData;
     CFDE_CSSTextBuf					m_TextPlane;
-    FX_INT32						m_iTextDatLen;
+    int32_t						m_iTextDatLen;
     FX_DWORD						m_dwCheck;
     FDE_CSSSYNTAXMODE				m_eMode;
     FDE_CSSSYNTAXSTATUS				m_eStatus;

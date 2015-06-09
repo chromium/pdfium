@@ -11,7 +11,7 @@
 #include "../../src/reflow/reflowedpage.h"
 
 typedef CFX_SegmentedArray<CRF_CharData*> CRF_CharDataPtrArray;
-typedef CFX_SegmentedArray<FX_INT32> CFX_CountBSINT32Array;
+typedef CFX_SegmentedArray<int32_t> CFX_CountBSINT32Array;
 class CRF_TextPage : public IPDF_TextPage
 {
 public:

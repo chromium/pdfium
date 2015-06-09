@@ -47,12 +47,12 @@ void CPWL_Edit::SetText(FX_LPCWSTR csText)
 		
 		if (CXML_Element * pXML = CXML_Element::Parse(sValue.c_str(), sValue.GetLength()))
 		{
-			FX_INT32 nCount = pXML->CountChildren();
+			int32_t nCount = pXML->CountChildren();
 			FX_BOOL bFirst = TRUE;
 
 			swText.Empty();
 
-			for (FX_INT32 i=0; i<nCount; i++)
+			for (int32_t i=0; i<nCount; i++)
 			{
 				if (CXML_Element * pSubElement = pXML->GetElement(i))
 				{
@@ -61,7 +61,7 @@ void CPWL_Edit::SetText(FX_LPCWSTR csText)
 					{
 						int nChild = pSubElement->CountChildren();
 						CFX_WideString swSection;
-						for(FX_INT32 j=0; j<nChild; j++)
+						for(int32_t j=0; j<nChild; j++)
 						{
 							swSection += pSubElement->GetContent(j);
 						}
@@ -119,12 +119,12 @@ CPDF_Rect CPWL_Edit::GetClientRect() const
 
 void CPWL_Edit::SetAlignFormatH(PWL_EDIT_ALIGNFORMAT_H nFormat, FX_BOOL bPaint/* = TRUE*/)
 {
-	m_pEdit->SetAlignmentH((FX_INT32)nFormat, bPaint);
+	m_pEdit->SetAlignmentH((int32_t)nFormat, bPaint);
 }
 
 void CPWL_Edit::SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat, FX_BOOL bPaint/* = TRUE*/)
 {
-	m_pEdit->SetAlignmentV((FX_INT32)nFormat, bPaint);
+	m_pEdit->SetAlignmentV((int32_t)nFormat, bPaint);
 }
 
 FX_BOOL	CPWL_Edit::CanSelectAll() const
@@ -298,7 +298,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream)
 	CPDF_Rect rcClient = GetClientRect();
 	CFX_ByteTextBuf sLine;
 
-	FX_INT32 nCharArray = m_pEdit->GetCharArray();
+	int32_t nCharArray = m_pEdit->GetCharArray();
 
 	if (nCharArray > 0)
 	{
@@ -309,7 +309,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream)
 				sLine << "q\n" << GetBorderWidth() << " w\n" 
 					<< CPWL_Utils::GetColorAppStream(GetBorderColor(),FALSE) << " 2 J 0 j\n";					
 
-				for (FX_INT32 i=1;i<nCharArray;i++)
+				for (int32_t i=1;i<nCharArray;i++)
 				{
 					sLine << rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*i << " "
 						<< rcClient.bottom << " m\n"
@@ -328,7 +328,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream)
 					<< GetBorderDash().nGap << "] " 
 					<< GetBorderDash().nPhase << " d\n";
 
-				for (FX_INT32 i=1;i<nCharArray;i++)					
+				for (int32_t i=1;i<nCharArray;i++)					
 				{
 					sLine << rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*i << " "
 						<< rcClient.bottom << " m\n"
@@ -411,7 +411,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser
 	CPDF_Rect rcClient = GetClientRect();
 	CFX_ByteTextBuf sLine;
 
-	FX_INT32 nCharArray = m_pEdit->GetCharArray();
+	int32_t nCharArray = m_pEdit->GetCharArray();
 	FX_SAFE_INT32 nCharArraySafe = nCharArray;
 	nCharArraySafe -= 1;
 	nCharArraySafe *= 2;
@@ -428,7 +428,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser
 				CFX_PathData path;
 				path.SetPointCount(nCharArraySafe.ValueOrDie());
 
-				for (FX_INT32 i=0; i<nCharArray-1; i++)
+				for (int32_t i=0; i<nCharArray-1; i++)
 				{
 					path.SetPoint(i*2, rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*(i+1),
 						rcClient.bottom, FXPT_MOVETO);
@@ -453,7 +453,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser
 				CFX_PathData path;
 				path.SetPointCount(nCharArraySafe.ValueOrDie());
 
-				for (FX_INT32 i=0; i<nCharArray-1; i++)
+				for (int32_t i=0; i<nCharArray-1; i++)
 				{
 					path.SetPoint(i*2, rcClient.left + ((rcClient.right - rcClient.left)/nCharArray)*(i+1),
 						rcClient.bottom, FXPT_MOVETO);
@@ -563,9 +563,9 @@ FX_BOOL CPWL_Edit::OnRButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 				{						
 					m_pSpellCheck->SuggestWords(sLatin,sSuggestWords);
 
-					FX_INT32 nSuggest = sSuggestWords.GetSize();
+					int32_t nSuggest = sSuggestWords.GetSize();
 
-					for (FX_INT32 nWord=0; nWord<nSuggest; nWord++)
+					for (int32_t nWord=0; nWord<nSuggest; nWord++)
 					{	
 						pSH->AppendMenuItem(hPopup, WM_PWLEDIT_SUGGEST+nWord, sSuggestWords[nWord].UTF8Decode());
 					}
@@ -643,11 +643,11 @@ FX_BOOL CPWL_Edit::OnRButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 		pSH->EnableMenuItem(hPopup, WM_PWLEDIT_SELECTALL, FALSE);
 	}
 
-	FX_INT32 x, y;
+	int32_t x, y;
 	PWLtoWnd(ptPopup, x, y);
 	pSH->ClientToScreen(GetAttachedHWnd(), x, y);
 	pSH->SetCursor(FXCT_ARROW);
-	FX_INT32 nCmd = pSH->TrackPopupMenu(hPopup,
+	int32_t nCmd = pSH->TrackPopupMenu(hPopup,
 					 x,
 					 y,
 					 GetAttachedHWnd());
@@ -736,7 +736,7 @@ void CPWL_Edit::OnKillFocus()
 	m_bFocus = FALSE;
 }
 
-void CPWL_Edit::SetHorzScale(FX_INT32 nHorzScale, FX_BOOL bPaint/* = TRUE*/)
+void CPWL_Edit::SetHorzScale(int32_t nHorzScale, FX_BOOL bPaint/* = TRUE*/)
 {
 	m_pEdit->SetHorzScale(nHorzScale, bPaint);
 }
@@ -761,8 +761,8 @@ CPVT_WordRange CPWL_Edit::GetSelectWordRange() const
 {
 	if (m_pEdit->IsSelected())
 	{
-		FX_INT32 nStart = -1;
-		FX_INT32 nEnd = -1;
+		int32_t nStart = -1;
+		int32_t nEnd = -1;
 
 		m_pEdit->GetSel(nStart, nEnd);
 
@@ -821,7 +821,7 @@ FX_BOOL	CPWL_Edit::IsTextFull() const
 	return m_pEdit->IsTextFull();
 }
 
-FX_FLOAT CPWL_Edit::GetCharArrayAutoFontSize(CPDF_Font* pFont, const CPDF_Rect& rcPlate, FX_INT32 nCharArray)
+FX_FLOAT CPWL_Edit::GetCharArrayAutoFontSize(CPDF_Font* pFont, const CPDF_Rect& rcPlate, int32_t nCharArray)
 {
 	if (pFont && !pFont->IsStandardFont())
 	{
@@ -838,7 +838,7 @@ FX_FLOAT CPWL_Edit::GetCharArrayAutoFontSize(CPDF_Font* pFont, const CPDF_Rect& 
 	return 0.0f;
 }
 
-void CPWL_Edit::SetCharArray(FX_INT32 nCharArray)
+void CPWL_Edit::SetCharArray(int32_t nCharArray)
 {
 	if (HasFlag(PES_CHARARRAY) && nCharArray > 0)
 	{
@@ -860,7 +860,7 @@ void CPWL_Edit::SetCharArray(FX_INT32 nCharArray)
 	}
 }
 
-void CPWL_Edit::SetLimitChar(FX_INT32 nLimitChar)
+void CPWL_Edit::SetLimitChar(int32_t nLimitChar)
 {
 	m_pEdit->SetLimitChar(nLimitChar);
 }
@@ -1016,7 +1016,7 @@ FX_BOOL CPWL_Edit::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 		if (m_pFillerNotify)
 		{
 			CFX_WideString swChange;
-			FX_INT32 nKeyCode;
+			int32_t nKeyCode;
 
 			int nSelStart = 0;
 			int nSelEnd = 0;
@@ -1048,8 +1048,8 @@ FX_BOOL CPWL_Edit::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 
 	if (IFX_Edit_FontMap * pFontMap = GetFontMap())
 	{
-		FX_INT32 nOldCharSet = GetCharSet();
-		FX_INT32 nNewCharSet = pFontMap->CharSetFromUnicode(nChar, DEFAULT_CHARSET);
+		int32_t nOldCharSet = GetCharSet();
+		int32_t nNewCharSet = pFontMap->CharSetFromUnicode(nChar, DEFAULT_CHARSET);
 		if(nOldCharSet != nNewCharSet)
 		{
 			SetCharSet(nNewCharSet);

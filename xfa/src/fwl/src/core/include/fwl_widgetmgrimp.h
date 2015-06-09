@@ -44,7 +44,7 @@ public:
     CFWL_WidgetMgrItem	*pNext;
     IFWL_Widget			*pWidget;
     CFX_Graphics		*pOffscreen;
-    FX_INT32			iRedrawCounter;
+    int32_t			iRedrawCounter;
 #if (_FX_OS_==_FX_WIN32_DESKTOP_) || (_FX_OS_==_FX_WIN64_)
     FX_BOOL				bOutsideChanged;
 #endif
@@ -54,11 +54,11 @@ class CFWL_WidgetMgr
 public:
     CFWL_WidgetMgr(IFWL_AdapterNative *pAdapterNative);
     ~CFWL_WidgetMgr();
-    virtual FX_INT32		CountWidgets(IFWL_Widget *pParent = NULL);
-    virtual IFWL_Widget*	GetWidget(FX_INT32 nIndex, IFWL_Widget *pParent = NULL);
+    virtual int32_t		CountWidgets(IFWL_Widget *pParent = NULL);
+    virtual IFWL_Widget*	GetWidget(int32_t nIndex, IFWL_Widget *pParent = NULL);
     virtual IFWL_Widget*	GetWidget(IFWL_Widget *pWidget, FWL_WGTRELATION eRelation);
-    virtual FX_INT32		GetWidgetIndex(IFWL_Widget *pWidget);
-    virtual FX_BOOL			SetWidgetIndex(IFWL_Widget *pWidget, FX_INT32 nIndex);
+    virtual int32_t		GetWidgetIndex(IFWL_Widget *pWidget);
+    virtual FX_BOOL			SetWidgetIndex(IFWL_Widget *pWidget, int32_t nIndex);
     virtual FX_BOOL			IsWidget(FX_LPVOID pObj);
     virtual FWL_ERR			RepaintWidget(IFWL_Widget *pWidget, const CFX_RectF *pRect = NULL);
     virtual FX_DWORD		GetCapability()
@@ -66,7 +66,7 @@ public:
         return m_dwCapability;
     }
     void			AddWidget(IFWL_Widget *pWidget);
-    void			InsertWidget(IFWL_Widget *pParent, IFWL_Widget *pChild, FX_INT32 nIndex = -1);
+    void			InsertWidget(IFWL_Widget *pParent, IFWL_Widget *pChild, int32_t nIndex = -1);
     void			RemoveWidget(IFWL_Widget *pWidget);
     void			SetOwner(IFWL_Widget *pOwner, IFWL_Widget *pOwned);
     void			SetParent(IFWL_Widget *pParent, IFWL_Widget *pChild);
@@ -87,12 +87,12 @@ public:
     FX_BOOL			CheckMessage_Native();
     FWL_ERR			DispatchMessage_Native();
     FX_BOOL			IsIdleMessage_Native();
-    FWL_ERR			Exit_Native(FX_INT32 iExitCode);
+    FWL_ERR			Exit_Native(int32_t iExitCode);
     FWL_ERR			CreateWidgetWithNativeId_Native(IFWL_Widget *pWidget, void *vp);
     IFWL_Widget*	GetWidgetAtPoint(IFWL_Widget *pParent, FX_FLOAT fx, FX_FLOAT fy);
     void			NotifySizeChanged(IFWL_Widget *pForm, FX_FLOAT fx, FX_FLOAT fy);
     IFWL_Widget*	nextTab(IFWL_Widget *parent, IFWL_Widget *focus, FX_BOOL &bFind);
-    FX_INT32		CountRadioButtonGroup(IFWL_Widget *pFirst);
+    int32_t		CountRadioButtonGroup(IFWL_Widget *pFirst);
     IFWL_Widget*	GetSiblingRadioButton(IFWL_Widget *pWidget, FX_BOOL bNext);
     IFWL_Widget*	GetRadioButtonGroupHeader(IFWL_Widget *pRadioButton);
     void			GetSameGroupRadioButton(IFWL_Widget *pRadioButton, CFX_PtrArray &group);
@@ -112,7 +112,7 @@ public:
     FX_BOOL					IsFormDisabled();
     FX_BOOL			GetAdapterPopupPos(IFWL_Widget* pWidget, FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight, const CFX_RectF &rtAnchor, CFX_RectF &rtPopup);
 protected:
-    FX_INT32				TravelWidgetMgr(CFWL_WidgetMgrItem *pParent, FX_INT32 *pIndex, CFWL_WidgetMgrItem *pItem, IFWL_Widget **pWidget = NULL);
+    int32_t				TravelWidgetMgr(CFWL_WidgetMgrItem *pParent, int32_t *pIndex, CFWL_WidgetMgrItem *pItem, IFWL_Widget **pWidget = NULL);
     FX_BOOL					IsAbleNative(IFWL_Widget *pWidget);
     CFX_MapPtrToPtr			m_mapWidgetItem;
     IFWL_AdapterWidgetMgr  *m_pAdapter;
@@ -128,7 +128,7 @@ class CFWL_WidgetMgrDelegate
 public:
     CFWL_WidgetMgrDelegate(CFWL_WidgetMgr *pWidgetMgr);
     virtual FWL_ERR		OnSetCapability(FX_DWORD dwCapability = FWL_WGTMGR_DisableThread);
-    virtual FX_INT32	OnProcessMessageToForm(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessageToForm(CFWL_Message *pMessage);
     virtual	FWL_ERR		OnDrawWidget(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix );
 protected:
     void	DrawChild(IFWL_Widget *pParent, const CFX_RectF &rtClip, CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix );

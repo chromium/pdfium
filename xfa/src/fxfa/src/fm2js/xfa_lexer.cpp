@@ -16,7 +16,7 @@ struct XFA_FMDChar {
         --p;
         return p;
     }
-    static FX_UINT16 get(FX_LPCWSTR p)
+    static uint16_t get(FX_LPCWSTR p)
     {
         return *p;
     }
@@ -50,7 +50,7 @@ struct XFA_FMDChar {
     }
     static FX_BOOL isAvalid(FX_LPCWSTR p, FX_BOOL flag = 0);
     static FX_BOOL string2number(FX_LPCWSTR s, FX_DOUBLE *pValue, FX_LPCWSTR &pEnd);
-    static FX_BOOL isUnicodeAlpha(FX_UINT16 ch);
+    static FX_BOOL isUnicodeAlpha(uint16_t ch);
 };
 inline FX_BOOL XFA_FMDChar::isAvalid(FX_LPCWSTR p, FX_BOOL flag)
 {
@@ -74,7 +74,7 @@ inline FX_BOOL XFA_FMDChar::string2number(FX_LPCWSTR s, FX_DOUBLE *pValue, FX_LP
     }
     return 0;
 }
-inline FX_BOOL XFA_FMDChar::isUnicodeAlpha(FX_UINT16 ch)
+inline FX_BOOL XFA_FMDChar::isUnicodeAlpha(uint16_t ch)
 {
     if (ch == 0 || ch == 0x0A || ch == 0x0D || ch == 0x09 || ch == 0x0B || ch == 0x0C || ch == 0x20 || ch == '.'
             || ch == ';' || ch == '"' || ch == '=' || ch == '<' || ch == '>' || ch == ',' || ch == '(' || ch == ')'
@@ -195,7 +195,7 @@ CXFA_FMToken *CXFA_FMLexer::NextToken()
 }
 CXFA_FMToken * CXFA_FMLexer::Scan()
 {
-    FX_UINT16 ch = 0;
+    uint16_t ch = 0;
     CXFA_FMToken * p = FX_NEW CXFA_FMToken(m_uCurrentLine);
     if (!XFA_FMDChar::isAvalid(m_ptr)) {
         ch = XFA_FMDChar::get(m_ptr);
@@ -444,7 +444,7 @@ FX_DWORD CXFA_FMLexer::Number(CXFA_FMToken *t, FX_LPCWSTR p, FX_LPCWSTR &pEnd)
 FX_DWORD CXFA_FMLexer::String(CXFA_FMToken *t, FX_LPCWSTR p, FX_LPCWSTR &pEnd)
 {
     FX_LPCWSTR pStart = p;
-    FX_UINT16 ch = 0;
+    uint16_t ch = 0;
     XFA_FMDChar::inc(p);
     ch = XFA_FMDChar::get(p);
     while (ch) {
@@ -482,7 +482,7 @@ NEXT:
 FX_DWORD CXFA_FMLexer::Identifiers(CXFA_FMToken *t, FX_LPCWSTR p, FX_LPCWSTR &pEnd)
 {
     FX_LPCWSTR pStart = p;
-    FX_UINT16 ch = 0;
+    uint16_t ch = 0;
     ch = XFA_FMDChar::get(p);
     XFA_FMDChar::inc(p);
     if (!XFA_FMDChar::isAvalid(p)) {
@@ -536,10 +536,10 @@ void CXFA_FMLexer::Comment( FX_LPCWSTR p, FX_LPCWSTR &pEnd )
 }
 XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(FX_WSTR str)
 {
-    FX_INT32 iLength = str.GetLength();
-    FX_UINT32 uHash = FX_HashCode_String_GetW(str.GetPtr(), iLength, TRUE);
-    FX_INT32 iStart = KEYWORD_START, iEnd = KEYWORD_END;
-    FX_INT32 iMid = (iStart + iEnd) / 2;
+    int32_t iLength = str.GetLength();
+    uint32_t uHash = FX_HashCode_String_GetW(str.GetPtr(), iLength, TRUE);
+    int32_t iStart = KEYWORD_START, iEnd = KEYWORD_END;
+    int32_t iMid = (iStart + iEnd) / 2;
     XFA_FMKeyword keyword;
     do {
         iMid = (iStart + iEnd) / 2;

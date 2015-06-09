@@ -14,9 +14,9 @@ public:
     virtual void		Attach(IFX_CharIter * pIter) = 0;
     virtual void		Attach(const CFX_WideString & wsText) = 0;
     virtual FX_BOOL		Next(FX_BOOL bPrev) = 0;
-    virtual void		SetAt(FX_INT32 nIndex) = 0;
-    virtual FX_INT32	GetWordPos() const = 0;
-    virtual FX_INT32	GetWordLength() const = 0;
+    virtual void		SetAt(int32_t nIndex) = 0;
+    virtual int32_t	GetWordPos() const = 0;
+    virtual int32_t	GetWordLength() const = 0;
     virtual void		GetWord(CFX_WideString &wsWord) const = 0;
     virtual FX_BOOL		IsEOF(FX_BOOL bTail = TRUE) const = 0;
 };

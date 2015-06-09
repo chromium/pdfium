@@ -14,7 +14,7 @@ FWL_ERR CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer *pTimer, FX_DWORD dwElapse, FW
 {
 	if (m_pEnv)
 	{
-		FX_UINT32 uIDEvent = m_pEnv->FFI_SetTimer(dwElapse, TimerProc);
+		uint32_t uIDEvent = m_pEnv->FFI_SetTimer(dwElapse, TimerProc);
 		CFWL_TimerInfo *pInfo = FX_NEW CFWL_TimerInfo;
 		pInfo->uIDEvent = uIDEvent;
 		pInfo->pTimer = pTimer;
@@ -37,7 +37,7 @@ FWL_ERR CXFA_FWLAdapterTimerMgr::Stop(FWL_HTIMER hTimer)
 
 		m_pEnv->FFI_KillTimer(pInfo->uIDEvent);
 
-		FX_INT32 index = ms_timerArray.Find(pInfo);
+		int32_t index = ms_timerArray.Find(pInfo);
 		if (index >= 0)
 		{
 			ms_timerArray.RemoveAt(index);
@@ -49,11 +49,11 @@ FWL_ERR CXFA_FWLAdapterTimerMgr::Stop(FWL_HTIMER hTimer)
 	return FWL_ERR_Indefinite;
 }
 
-void CXFA_FWLAdapterTimerMgr::TimerProc(FX_INT32 idEvent)
+void CXFA_FWLAdapterTimerMgr::TimerProc(int32_t idEvent)
 {
 	CFWL_TimerInfo *pInfo = NULL;
-	FX_INT32 iCount = CXFA_FWLAdapterTimerMgr::ms_timerArray.GetSize();
-	for (FX_INT32 i = 0; i < iCount; i++)
+	int32_t iCount = CXFA_FWLAdapterTimerMgr::ms_timerArray.GetSize();
+	for (int32_t i = 0; i < iCount; i++)
 	{
 		CFWL_TimerInfo *pTemp = (CFWL_TimerInfo*)CXFA_FWLAdapterTimerMgr::ms_timerArray.GetAt(i);
 		if (pTemp->uIDEvent == idEvent)

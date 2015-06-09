@@ -22,7 +22,7 @@ public:
     virtual IFWL_AdapterNative*	GetAdapterNative() = 0;
     virtual IFWL_WidgetMgr*		GetWidgetMgr() = 0;
     virtual FWL_ERR				SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) = 0;
-    virtual FWL_ERR				Exit(FX_INT32 iExitCode = 0) = 0;
+    virtual FWL_ERR				Exit(int32_t iExitCode = 0) = 0;
 };
 IFWL_App* FWL_GetApp();
 void FWL_SetApp(IFWL_App *pApp);

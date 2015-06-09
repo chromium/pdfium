@@ -22,8 +22,8 @@ public:
 	void								SetTopSpace(FX_FLOAT fSpace);
 	void								SetBottomSpace(FX_FLOAT fSpace);
 	void								ResetFace();
-	void								ResetContent(FX_INT32 nStart);
-	FX_INT32							GetItemIndex(CPWL_Wnd* pItem);
+	void								ResetContent(int32_t nStart);
+	int32_t							GetItemIndex(CPWL_Wnd* pItem);
 	FX_FLOAT							GetContentsHeight(FX_FLOAT fLimitWidth);
 	CPDF_Point							InToOut(const CPDF_Point& point) const;
 	CPDF_Point							OutToIn(const CPDF_Point& point) const;
@@ -35,7 +35,7 @@ protected:
 	virtual void						DrawChildAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device);
 
 private:
-	void								ResetAll(FX_BOOL bMove,FX_INT32 nStart);
+	void								ResetAll(FX_BOOL bMove,int32_t nStart);
 
 	CPDF_Rect							m_rcContent;
 	CPDF_Point							m_ptScroll;

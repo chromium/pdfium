@@ -10,15 +10,15 @@ class CBC_QRCoderECB;
 class CBC_QRCoderECBlocks
 {
 private:
-    FX_INT32 m_ecCodeWordsPerBlock;
+    int32_t m_ecCodeWordsPerBlock;
     CFX_PtrArray m_ecBlocks;
 public:
-    CBC_QRCoderECBlocks(FX_INT32 ecCodeWordsPerBlock, CBC_QRCoderECB* ecBlocks);
-    CBC_QRCoderECBlocks(FX_INT32 ecCodeWordsPerBlock, CBC_QRCoderECB* ecBlocks1, CBC_QRCoderECB* ecBlocks2);
+    CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock, CBC_QRCoderECB* ecBlocks);
+    CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock, CBC_QRCoderECB* ecBlocks1, CBC_QRCoderECB* ecBlocks2);
     virtual ~CBC_QRCoderECBlocks();
-    FX_INT32 GetECCodeWordsPerBlock();
-    FX_INT32 GetNumBlocks();
-    FX_INT32 GetTotalECCodeWords();
+    int32_t GetECCodeWordsPerBlock();
+    int32_t GetNumBlocks();
+    int32_t GetTotalECCodeWords();
     CFX_PtrArray* GetECBlocks();
 };
 #endif

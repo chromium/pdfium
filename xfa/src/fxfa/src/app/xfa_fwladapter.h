@@ -22,7 +22,7 @@ public:
     }
     virtual void		OnPreOpen(IFWL_Widget *pWidget) {}
     virtual void		OnPostOpen(IFWL_Widget *pWidget) {}
-    virtual	void		OnSelectChanged(IFWL_Widget *pWidget, FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay) {}
+    virtual	void		OnSelectChanged(IFWL_Widget *pWidget, int32_t iYear, int32_t iMonth, int32_t iDay) {}
     virtual	void		OnTextChanged(IFWL_Widget *pWidget, const CFX_WideString &wsChanged) {}
     virtual void		OnTextFull(IFWL_Widget *pWidget) {}
     virtual FX_BOOL		OnValidate(IFWL_Widget *pWidget, CFX_WideString &wsText)

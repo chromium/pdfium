@@ -11,12 +11,12 @@ class CBC_UtilRSS
 {
 public:
     virtual ~CBC_UtilRSS();
-    static FX_INT32 GetRSSvalue(CFX_Int32Array &widths, FX_INT32 maxWidth, FX_BOOL noNarrow);
+    static int32_t GetRSSvalue(CFX_Int32Array &widths, int32_t maxWidth, FX_BOOL noNarrow);
 
 protected:
-    static CFX_Int32Array *GetRssWidths(FX_INT32 val, FX_INT32 n, FX_INT32 elements, FX_INT32 maxWidth, FX_BOOL noNarrow);
-    static FX_INT32 Combins(FX_INT32 n, FX_INT32 r);
-    static CFX_Int32Array *Elements(CFX_Int32Array &eDist, FX_INT32 N, FX_INT32 K);
+    static CFX_Int32Array *GetRssWidths(int32_t val, int32_t n, int32_t elements, int32_t maxWidth, FX_BOOL noNarrow);
+    static int32_t Combins(int32_t n, int32_t r);
+    static CFX_Int32Array *Elements(CFX_Int32Array &eDist, int32_t N, int32_t K);
 private:
     CBC_UtilRSS();
 };

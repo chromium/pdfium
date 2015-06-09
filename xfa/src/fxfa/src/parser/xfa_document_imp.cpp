@@ -282,9 +282,9 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(CFX_WideString& wsTemplateN
     if(nDotPos == (FX_STRSIZE)-1) {
         return XFA_VERSION_UNKNOWN;
     }
-    FX_INT8 iMajor = FXSYS_wtoi(wsTemplateNS.Mid(nPrefixLength, nDotPos - nPrefixLength));
-    FX_INT8 iMinor = FXSYS_wtoi(wsTemplateNS.Mid(nDotPos + 1, wsTemplateNS.GetLength() - nDotPos - 2));
-    XFA_VERSION eVersion = (XFA_VERSION)((FX_INT32)iMajor * 100 + iMinor);
+    int8_t iMajor = FXSYS_wtoi(wsTemplateNS.Mid(nPrefixLength, nDotPos - nPrefixLength));
+    int8_t iMinor = FXSYS_wtoi(wsTemplateNS.Mid(nDotPos + 1, wsTemplateNS.GetLength() - nDotPos - 2));
+    XFA_VERSION eVersion = (XFA_VERSION)((int32_t)iMajor * 100 + iMinor);
     if(eVersion < XFA_VERSION_MIN || eVersion > XFA_VERSION_MAX) {
         return XFA_VERSION_UNKNOWN;
     }
@@ -401,7 +401,7 @@ void CXFA_Document::DoProtoMerge()
         if(!wsSOM.IsEmpty()) {
             FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings;
             XFA_RESOLVENODE_RS resoveNodeRS;
-            FX_INT32 iRet = m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM, resoveNodeRS, dwFlag);
+            int32_t iRet = m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM, resoveNodeRS, dwFlag);
             if(iRet > 0 && resoveNodeRS.nodes[0]->IsNode()) {
                 pProtoNode = (CXFA_Node*)resoveNodeRS.nodes[0];
             }

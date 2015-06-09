@@ -14,25 +14,25 @@ class CBC_OnedCodaBarWriter : public CBC_OneDimWriter
 public:
     CBC_OnedCodaBarWriter();
     virtual ~CBC_OnedCodaBarWriter();
-    FX_BYTE* Encode(const CFX_ByteString &contents, FX_INT32 &outLength, FX_INT32 &e);
-    FX_BYTE *Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e);
-    FX_BYTE *Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e);
+    uint8_t* Encode(const CFX_ByteString &contents, int32_t &outLength, int32_t &e);
+    uint8_t *Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e);
+    uint8_t *Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e);
     CFX_WideString          encodedContents(FX_WSTR contents);
     FX_BOOL					CheckContentValidity(FX_WSTR contents);
     CFX_WideString			FilterContents(FX_WSTR contents);
     FX_BOOL					SetStartChar(FX_CHAR start);
     FX_BOOL					SetEndChar(FX_CHAR end);
-    void					SetDataLength(FX_INT32 length);
+    void					SetDataLength(int32_t length);
     FX_BOOL					SetTextLocation(BC_TEXT_LOC location);
-    FX_BOOL					SetWideNarrowRatio(FX_INT32 ratio);
+    FX_BOOL					SetWideNarrowRatio(int32_t ratio);
     FX_BOOL					FindChar(FX_WCHAR ch, FX_BOOL isContent);
 private:
-    void RenderResult(FX_WSTR contents, FX_BYTE* code, FX_INT32 codeLength, FX_BOOL isDevice, FX_INT32 &e);
+    void RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e);
     const static FX_CHAR START_END_CHARS[];
     const static FX_CHAR CONTENT_CHARS[];
     FX_CHAR			m_chStart;
     FX_CHAR			m_chEnd;
-    FX_INT32		m_iWideNarrRatio;
+    int32_t		m_iWideNarrRatio;
 
 };
 #endif

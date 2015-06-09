@@ -21,7 +21,7 @@ FWL_ERR IFWL_Content::Initialize()
     ((CFWL_ContentImp*)m_pData)->SetInterface(this);
     return ((CFWL_ContentImp*)m_pData)->Initialize();
 }
-FWL_ERR IFWL_Content::InsertWidget(IFWL_Widget *pChild, FX_INT32 nIndex )
+FWL_ERR IFWL_Content::InsertWidget(IFWL_Widget *pChild, int32_t nIndex )
 {
     return ((CFWL_ContentImp*)m_pData)->InsertWidget(pChild, nIndex);
 }
@@ -78,7 +78,7 @@ CFWL_ContentImp::CFWL_ContentImp(const CFWL_WidgetImpProperties &properties)
 CFWL_ContentImp::~CFWL_ContentImp()
 {
 }
-FWL_ERR CFWL_ContentImp::InsertWidget(IFWL_Widget *pChild, FX_INT32 nIndex )
+FWL_ERR CFWL_ContentImp::InsertWidget(IFWL_Widget *pChild, int32_t nIndex )
 {
     _FWL_RETURN_VALUE_IF_FAIL(pChild, FWL_ERR_Indefinite);
     pChild->SetParent(m_pInterface);

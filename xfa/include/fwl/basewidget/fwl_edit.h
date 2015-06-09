@@ -78,7 +78,7 @@ BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtAddDoRecord, FWL_EVTHASH_EDT_AddDoRecord)
 CFX_ByteString m_wsDoRecord;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtTextChanged, FWL_EVTHASH_EDT_TextChanged)
-FX_INT32 nChangeType;
+int32_t nChangeType;
 CFX_WideString wsInsert;
 CFX_WideString wsDelete;
 CFX_WideString wsPrevText;
@@ -121,25 +121,25 @@ public:
     FWL_ERR		Initialize(IFWL_Widget *pOuter = NULL);
     FWL_ERR		Initialize(const CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
     FWL_ERR		SetText(const CFX_WideString &wsText);
-    FX_INT32	GetTextLength() const;
-    FWL_ERR		GetText(CFX_WideString &wsText, FX_INT32 nStart = 0, FX_INT32 nCount = -1) const;
+    int32_t	GetTextLength() const;
+    FWL_ERR		GetText(CFX_WideString &wsText, int32_t nStart = 0, int32_t nCount = -1) const;
     FWL_ERR		ClearText();
-    FX_INT32	GetCaretPos() const;
-    FX_INT32	SetCaretPos(FX_INT32 nIndex, FX_BOOL bBefore = TRUE);
-    FWL_ERR		AddSelRange(FX_INT32 nStart, FX_INT32 nCount = -1);
-    FX_INT32	CountSelRanges();
-    FX_INT32	GetSelRange(FX_INT32 nIndex, FX_INT32 &nStart);
+    int32_t	GetCaretPos() const;
+    int32_t	SetCaretPos(int32_t nIndex, FX_BOOL bBefore = TRUE);
+    FWL_ERR		AddSelRange(int32_t nStart, int32_t nCount = -1);
+    int32_t	CountSelRanges();
+    int32_t	GetSelRange(int32_t nIndex, int32_t &nStart);
     FWL_ERR		ClearSelections();
-    FX_INT32	GetLimit();
-    FWL_ERR		SetLimit(FX_INT32 nLimit);
+    int32_t	GetLimit();
+    FWL_ERR		SetLimit(int32_t nLimit);
     FWL_ERR		SetAliasChar(FX_WCHAR wAlias);
     FWL_ERR		SetFormatString(const CFX_WideString &wsFormat);
-    FWL_ERR Insert(FX_INT32 nStart, FX_LPCWSTR lpText, FX_INT32 nLen);
+    FWL_ERR Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLen);
     FWL_ERR DeleteSelections();
-    FWL_ERR DeleteRange(FX_INT32 nStart, FX_INT32 nCount = -1);
+    FWL_ERR DeleteRange(int32_t nStart, int32_t nCount = -1);
     FWL_ERR ReplaceSelections(const CFX_WideStringC &wsReplace);
-    FWL_ERR Replace(FX_INT32 nStart, FX_INT32 nLen, const CFX_WideStringC &wsReplace);
-    FWL_ERR	DoClipboard(FX_INT32 iCmd);
+    FWL_ERR Replace(int32_t nStart, int32_t nLen, const CFX_WideStringC &wsReplace);
+    FWL_ERR	DoClipboard(int32_t iCmd);
     FX_BOOL	Copy(CFX_WideString &wsCopy);
     FX_BOOL	Cut(CFX_WideString &wsCut);
     FX_BOOL	Paste(const CFX_WideString &wsPaste);
@@ -152,7 +152,7 @@ public:
     FX_BOOL	CanRedo();
     FWL_ERR SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
     FWL_ERR	SetOuter(IFWL_Widget *pOuter);
-    FWL_ERR	SetNumberRange(FX_INT32 iMin, FX_INT32 iMax);
+    FWL_ERR	SetNumberRange(int32_t iMin, int32_t iMax);
     FWL_ERR SetBackColor(FX_DWORD dwColor);
     FWL_ERR SetFont(const CFX_WideString &wsFont, FX_FLOAT fSize);
     void	SetScrollOffset(FX_FLOAT fScrollOffset);

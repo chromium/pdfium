@@ -252,7 +252,7 @@ typedef struct _LayoutProviderStyle {
         m_Language = LP_Lang_Unknow;
         m_bIgnoreInvisibleText = TRUE;
     }
-    FX_INT32	m_Language;
+    int32_t	m_Language;
     FX_BOOL		m_bIgnoreInvisibleText;
 } LAYOUTPROVIDER_STYLE;
 class IPDF_LayoutProvider

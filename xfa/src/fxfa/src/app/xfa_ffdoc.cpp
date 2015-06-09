@@ -31,15 +31,15 @@ FX_DWORD CXFA_FFDoc::GetDocType()
 {
     return m_dwDocType;
 }
-FX_INT32 CXFA_FFDoc::StartLoad()
+int32_t CXFA_FFDoc::StartLoad()
 {
     m_pNotify = FX_NEW CXFA_FFNotify(this);
     IXFA_DocParser* pDocParser = IXFA_DocParser::Create(m_pNotify);
-    FX_INT32 iStatus = pDocParser->StartParse(m_pStream);
+    int32_t iStatus = pDocParser->StartParse(m_pStream);
     m_pDocument = pDocParser->GetDocument();
     return iStatus;
 }
-FX_BOOL XFA_GetPDFContentsFromPDFXML(IFDE_XMLNode *pPDFElement, FX_LPBYTE &pByteBuffer, FX_INT32& iBufferSize)
+FX_BOOL XFA_GetPDFContentsFromPDFXML(IFDE_XMLNode *pPDFElement, FX_LPBYTE &pByteBuffer, int32_t& iBufferSize)
 {
     IFDE_XMLElement* pDocumentElement = NULL;
     for (IFDE_XMLNode *pXMLNode = pPDFElement->GetNodeItem(IFDE_XMLNode::FirstChild); pXMLNode; pXMLNode = pXMLNode->GetNodeItem(IFDE_XMLNode::NextSibling)) {
@@ -74,7 +74,7 @@ FX_BOOL XFA_GetPDFContentsFromPDFXML(IFDE_XMLNode *pPDFElement, FX_LPBYTE &pByte
     CFX_WideString wsPDFContent;
     pChunkElement->GetTextData(wsPDFContent);
     iBufferSize = FX_Base64DecodeW(wsPDFContent, wsPDFContent.GetLength(), NULL);
-    pByteBuffer = FX_Alloc(FX_BYTE, iBufferSize + 1);
+    pByteBuffer = FX_Alloc(uint8_t, iBufferSize + 1);
     if (!pByteBuffer) {
         return FALSE;
     }
@@ -98,9 +98,9 @@ void XFA_XPDPacket_MergeRootNode(CXFA_Node *pOriginRoot, CXFA_Node* pNewRoot)
         }
     }
 }
-FX_INT32 CXFA_FFDoc::DoLoad(IFX_Pause *pPause )
+int32_t CXFA_FFDoc::DoLoad(IFX_Pause *pPause )
 {
-    FX_INT32 iStatus = m_pDocument->GetParser()->DoParse(pPause);
+    int32_t iStatus = m_pDocument->GetParser()->DoParse(pPause);
     if (iStatus == XFA_PARSESTATUS_Done && !m_pPDFDoc) {
         CXFA_Node* pPDFNode = (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Pdf);
         if (!pPDFNode) {
@@ -110,7 +110,7 @@ FX_INT32 CXFA_FFDoc::DoLoad(IFX_Pause *pPause )
         if (pPDFXML->GetType() != FDE_XMLNODE_Element) {
             return XFA_PARSESTATUS_SyntaxErr;
         }
-        FX_INT32 iBufferSize = 0;
+        int32_t iBufferSize = 0;
         FX_LPBYTE pByteBuffer = NULL;
         IFX_FileRead* pXFAReader = NULL;
         if (XFA_GetPDFContentsFromPDFXML(pPDFXML, pByteBuffer, iBufferSize)) {
@@ -183,10 +183,10 @@ void CXFA_FFDoc::StopLoad()
 }
 IXFA_DocView* CXFA_FFDoc::CreateDocView(FX_DWORD dwView )
 {
-    CXFA_FFDocView* pDocView = (CXFA_FFDocView*)m_mapTypeToDocView.GetValueAt((FX_LPVOID)(FX_UINTPTR)dwView);
+    CXFA_FFDocView* pDocView = (CXFA_FFDocView*)m_mapTypeToDocView.GetValueAt((FX_LPVOID)(uintptr_t)dwView);
     if (!pDocView) {
         pDocView = FX_NEW CXFA_FFDocView(this);
-        m_mapTypeToDocView.SetAt((FX_LPVOID)(FX_UINTPTR)dwView, pDocView);
+        m_mapTypeToDocView.SetAt((FX_LPVOID)(uintptr_t)dwView, pDocView);
     }
     return pDocView;
 }
@@ -237,7 +237,7 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc)
     if (pElementXFA == NULL) {
         return FALSE;
     }
-    FX_INT32 iObjType = pElementXFA->GetType();
+    int32_t iObjType = pElementXFA->GetType();
     CFX_ArrayTemplate<CPDF_Stream*> xfaStreams;
     if (iObjType == PDFOBJ_ARRAY) {
         CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
@@ -327,14 +327,14 @@ CPDF_Document* CXFA_FFDoc::GetPDFDoc()
     return m_pPDFDoc;
 }
 #define _FXLIB_NEW_VERSION_
-CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(FX_WSTR wsName, FX_INT32 &iImageXDpi, FX_INT32 &iImageYDpi)
+CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(FX_WSTR wsName, int32_t &iImageXDpi, int32_t &iImageYDpi)
 {
     if (!m_pPDFDoc) {
         return NULL;
     }
     FX_DWORD dwHash = FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength(), FALSE);
     FX_IMAGEDIB_AND_DPI *imageDIBDpi = NULL;
-    if (m_mapNamedImages.Lookup((void*)(FX_UINTPTR)dwHash, (void*&)imageDIBDpi)) {
+    if (m_mapNamedImages.Lookup((void*)(uintptr_t)dwHash, (void*&)imageDIBDpi)) {
         iImageXDpi = imageDIBDpi->iImageXDpi;
         iImageYDpi = imageDIBDpi->iImageYDpi;
         return (CFX_DIBitmap*)imageDIBDpi->pDibSource;
@@ -356,8 +356,8 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(FX_WSTR wsName, FX_INT32 &iImageXDpi,
     CFX_ByteString bsName = PDF_EncodeText(wsName.GetPtr(), wsName.GetLength());
     CPDF_Object* pObject = nametree.LookupValue(bsName);
     if (!pObject) {
-        FX_INT32 iCount = nametree.GetCount();
-        for (FX_INT32 i = 0; i < iCount; i++) {
+        int32_t iCount = nametree.GetCount();
+        for (int32_t i = 0; i < iCount; i++) {
             CFX_ByteString bsTemp;
             CPDF_Object* pTempObject = nametree.LookupValue(i, bsTemp);
             if (bsTemp == bsName) {
@@ -369,8 +369,8 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(FX_WSTR wsName, FX_INT32 &iImageXDpi,
 #else
     CPDF_Object* pObject = nametree.LookupValue(wsName);
     if (!pObject) {
-        FX_INT32 iCount = nametree.GetCount();
-        for (FX_INT32 i = 0; i < iCount; i++) {
+        int32_t iCount = nametree.GetCount();
+        for (int32_t i = 0; i < iCount; i++) {
             CFX_WideString wsTemp;
             CPDF_Object* pTempObject = nametree.LookupValue(i, wsTemp);
             if (wsTemp == wsName) {
@@ -396,7 +396,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(FX_WSTR wsName, FX_INT32 &iImageXDpi,
         imageDIBDpi->iImageYDpi = iImageYDpi;
         pImageFileRead->Release();
     }
-    m_mapNamedImages.SetAt((void*)(FX_UINTPTR)dwHash, imageDIBDpi);
+    m_mapNamedImages.SetAt((void*)(uintptr_t)dwHash, imageDIBDpi);
     return (CFX_DIBitmap*)imageDIBDpi->pDibSource;
 }
 IFDE_XMLElement* CXFA_FFDoc::GetPackageData(FX_WSTR wsPackage)

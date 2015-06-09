@@ -35,13 +35,13 @@ public:
     CXFA_HVALUEArray(FXJSE_HRUNTIME hRunTime) : m_hRunTime(hRunTime) {};
     ~CXFA_HVALUEArray()
     {
-        for (FX_INT32 i = 0; i < GetSize(); i++) {
+        for (int32_t i = 0; i < GetSize(); i++) {
             FXJSE_Value_Release(GetAt(i));
         }
     }
     void GetAttributeObject(CXFA_ObjArray& objArray)
     {
-        for (FX_INT32 i = 0; i < GetSize(); i++) {
+        for (int32_t i = 0; i < GetSize(); i++) {
             CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(GetAt(i), NULL);
             objArray.Add(pObject);
         }
@@ -54,11 +54,11 @@ typedef struct _XFA_RESOLVENODE_RS {
     {
         nodes.RemoveAll();
     }
-    FX_INT32 GetAttributeResult(CXFA_HVALUEArray& hValueArray) const
+    int32_t GetAttributeResult(CXFA_HVALUEArray& hValueArray) const
     {
         if (pScriptAttribute && pScriptAttribute->eValueType == XFA_SCRIPT_Object) {
             FXJSE_HRUNTIME hRunTime = hValueArray.m_hRunTime;
-            for (FX_INT32 i = 0; i < nodes.GetSize(); i++) {
+            for (int32_t i = 0; i < nodes.GetSize(); i++) {
                 FXJSE_HVALUE hValue = FXJSE_Value_Create(hRunTime);
                 (nodes[i]->*(pScriptAttribute->lpfnCallback))(hValue, FALSE, (XFA_ATTRIBUTE)pScriptAttribute->eAttribute);
                 hValueArray.Add(hValue);
@@ -71,11 +71,11 @@ typedef struct _XFA_RESOLVENODE_RS {
     XFA_RESOVENODE_RSTYPE		dwFlags;
 } XFA_RESOLVENODE_RS, * XFA_LPRESOLVENODE_RS;
 typedef struct _XFA_JSBUILTININFO {
-    FX_UINT32						uUnicodeHash;
+    uint32_t						uUnicodeHash;
     FX_LPCSTR						pName;
 } XFA_JSBUILTININFO, * XFA_LPJSBUILTININFO;
 typedef XFA_JSBUILTININFO const * XFA_LPCJSBUILTININFO;
-XFA_LPCJSBUILTININFO XFA_GetJSBuiltinByHash(FX_UINT32 uHashCode);
+XFA_LPCJSBUILTININFO XFA_GetJSBuiltinByHash(uint32_t uHashCode);
 class IXFA_ScriptContext
 {
 public:
@@ -85,13 +85,13 @@ public:
     virtual void				SetEventParam(CXFA_EventParam* pEventParam) = 0;
     virtual CXFA_EventParam*	GetEventParam() = 0;
     virtual FX_BOOL		RunScript(XFA_SCRIPTLANGTYPE eScriptType, FX_WSTR wsScript, FXJSE_HVALUE hRetValue, CXFA_Object* pThisObject = NULL) = 0;
-    virtual FX_INT32	ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS, FX_DWORD dwStyles = XFA_RESOLVENODE_Children, CXFA_Node* bindNode = NULL) = 0;
+    virtual int32_t	ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS, FX_DWORD dwStyles = XFA_RESOLVENODE_Children, CXFA_Node* bindNode = NULL) = 0;
     virtual FXJSE_HVALUE		GetJSValueFromMap(CXFA_Object* pObject) = 0;
     virtual void				CacheList(CXFA_NodeList* pList) = 0;
     virtual CXFA_Object*		GetThisObject() const = 0;
     virtual FXJSE_HRUNTIME		GetRuntime() const = 0;
-    virtual FX_INT32			GetIndexByName(CXFA_Node* refNode) = 0;
-    virtual FX_INT32			GetIndexByClassName(CXFA_Node* refNode) = 0;
+    virtual int32_t			GetIndexByName(CXFA_Node* refNode) = 0;
+    virtual int32_t			GetIndexByClassName(CXFA_Node* refNode) = 0;
     virtual void				GetSomExpression(CXFA_Node* refNode, CFX_WideString &wsExpression) = 0;
 
     virtual void				SetNodesOfRunScript(CXFA_NodeArray *pArray) = 0;

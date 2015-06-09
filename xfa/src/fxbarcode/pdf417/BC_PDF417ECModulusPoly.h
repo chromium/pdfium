@@ -10,21 +10,21 @@ class CBC_PDF417ECModulusGF;
 class CBC_PDF417ECModulusPoly
 {
 public:
-    CBC_PDF417ECModulusPoly(CBC_PDF417ECModulusGF* field, CFX_Int32Array &coefficients, FX_INT32 &e);
+    CBC_PDF417ECModulusPoly(CBC_PDF417ECModulusGF* field, CFX_Int32Array &coefficients, int32_t &e);
     virtual ~CBC_PDF417ECModulusPoly();
     CFX_Int32Array& getCoefficients();
     CBC_PDF417ECModulusGF* getField();
-    FX_INT32 getDegree();
+    int32_t getDegree();
     FX_BOOL isZero();
-    FX_INT32 getCoefficient(FX_INT32 degree);
-    FX_INT32 evaluateAt(FX_INT32 a);
-    CBC_PDF417ECModulusPoly* add(CBC_PDF417ECModulusPoly* other, FX_INT32 &e);
-    CBC_PDF417ECModulusPoly* subtract(CBC_PDF417ECModulusPoly* other, FX_INT32 &e);
-    CBC_PDF417ECModulusPoly* multiply(CBC_PDF417ECModulusPoly* other, FX_INT32 &e);
-    CBC_PDF417ECModulusPoly* negative(FX_INT32 &e);
-    CBC_PDF417ECModulusPoly* multiply(FX_INT32 scalar, FX_INT32 &e);
-    CBC_PDF417ECModulusPoly* multiplyByMonomial(FX_INT32 degree, FX_INT32 coefficient, FX_INT32 &e);
-    CFX_PtrArray* divide(CBC_PDF417ECModulusPoly* other, FX_INT32 &e);
+    int32_t getCoefficient(int32_t degree);
+    int32_t evaluateAt(int32_t a);
+    CBC_PDF417ECModulusPoly* add(CBC_PDF417ECModulusPoly* other, int32_t &e);
+    CBC_PDF417ECModulusPoly* subtract(CBC_PDF417ECModulusPoly* other, int32_t &e);
+    CBC_PDF417ECModulusPoly* multiply(CBC_PDF417ECModulusPoly* other, int32_t &e);
+    CBC_PDF417ECModulusPoly* negative(int32_t &e);
+    CBC_PDF417ECModulusPoly* multiply(int32_t scalar, int32_t &e);
+    CBC_PDF417ECModulusPoly* multiplyByMonomial(int32_t degree, int32_t coefficient, int32_t &e);
+    CFX_PtrArray* divide(CBC_PDF417ECModulusPoly* other, int32_t &e);
     CFX_ByteString toString();
 private:
     CBC_PDF417ECModulusGF* m_field;

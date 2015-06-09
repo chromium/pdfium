@@ -65,7 +65,7 @@ static FX_LPCWSTR g_FWLTheme_CalFonts[] = {
 FWL_ERR CXFA_FWLTheme::Initialize()
 {
     m_pTextOut = IFDE_TextOut::Create();
-    for (FX_INT32 i = 0; NULL == m_pCalendarFont && i < sizeof(g_FWLTheme_CalFonts) / sizeof(FX_LPCWSTR); i++) {
+    for (int32_t i = 0; NULL == m_pCalendarFont && i < sizeof(g_FWLTheme_CalFonts) / sizeof(FX_LPCWSTR); i++) {
         m_pCalendarFont = IFX_Font::LoadFont(g_FWLTheme_CalFonts[i], 0, 0, m_pApp->GetFDEFontMgr());
     }
     if (NULL == m_pCalendarFont)
@@ -349,7 +349,7 @@ FX_BOOL	CXFA_FWLCheckBoxTP::DrawBackground(CFWL_ThemeBackground *pParams)
     }
     return TRUE;
 }
-void CXFA_FWLCheckBoxTP::DrawCheckSign(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, const CFX_RectF *pRtBox, FX_INT32 iState, CFX_Matrix* pMatrix)
+void CXFA_FWLCheckBoxTP::DrawCheckSign(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, const CFX_RectF *pRtBox, int32_t iState, CFX_Matrix* pMatrix)
 {
     CFX_RectF rtSign(*pRtBox);
     FX_DWORD dwColor = 0xFF000000;

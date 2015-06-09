@@ -22,7 +22,7 @@ FX_BOOL CXFA_FFSignature::LoadWidget()
 {
     return CXFA_FFField::LoadWidget();
 }
-void CXFA_FFSignature::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFSignature::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;
@@ -66,7 +66,7 @@ FX_BOOL	CXFA_FFSignature::OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy
 {
     return FALSE;
 }
-FX_BOOL	CXFA_FFSignature::OnMouseWheel(FX_DWORD dwFlags, FX_SHORT zDelta, FX_FLOAT fx, FX_FLOAT fy)
+FX_BOOL	CXFA_FFSignature::OnMouseWheel(FX_DWORD dwFlags, int16_t zDelta, FX_FLOAT fx, FX_FLOAT fy)
 {
     return FALSE;
 }

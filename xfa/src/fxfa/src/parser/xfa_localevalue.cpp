@@ -100,8 +100,8 @@ FX_BOOL CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue, const CFX
     CFX_WideStringArray wsPatterns;
     pFormat->SplitFormatString(wsPattern, wsPatterns);
     FX_BOOL bRet = FALSE;
-    FX_INT32 iCount = wsPatterns.GetSize();
-    FX_INT32 i = 0;
+    int32_t iCount = wsPatterns.GetSize();
+    int32_t i = 0;
     for (; i < iCount && !bRet; i++) {
         CFX_WideString wsFormat = wsPatterns[i];
         FX_LOCALECATEGORY eCategory = pFormat->GetCategory(wsFormat);
@@ -199,9 +199,9 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const
 {
     if (m_bValid && (m_dwType == XFA_VT_BOOLEAN || m_dwType == XFA_VT_INTEGER ||
                      m_dwType == XFA_VT_DECIMAL || m_dwType == XFA_VT_FLOAT)) {
-        FX_INT64 nIntegral = 0;
+        int64_t nIntegral = 0;
         FX_DWORD dwFractional = 0;
-        FX_INT32 nExponent = 0;
+        int32_t nExponent = 0;
         int cc = 0;
         FX_BOOL bNegative = FALSE, bExpSign = FALSE;
         FX_LPCWSTR str = (FX_LPCWSTR)m_wsValue;
@@ -275,10 +275,10 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const
 {
     if (m_bValid && (m_dwType == XFA_VT_BOOLEAN || m_dwType == XFA_VT_INTEGER ||
                      m_dwType == XFA_VT_DECIMAL || m_dwType == XFA_VT_FLOAT)) {
-        FX_INT64 nIntegral = 0;
+        int64_t nIntegral = 0;
         FX_DWORD dwFractional = 0;
-        FX_INT32 nExponent = 0;
-        FX_INT32 cc = 0;
+        int32_t nExponent = 0;
+        int32_t cc = 0;
         FX_BOOL bNegative = FALSE, bExpSign = FALSE;
         FX_LPCWSTR str = (FX_LPCWSTR)m_wsValue;
         int len = m_wsValue.GetLength();
@@ -294,7 +294,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const
             bNegative = TRUE;
             cc++;
         }
-        FX_INT32 nIntegralLen = 0;
+        int32_t nIntegralLen = 0;
         while (cc < len) {
             if (str[cc] == '.' || !XFA_IsDigit(str[cc]) || nIntegralLen > 17) {
                 break;
@@ -304,7 +304,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const
             nIntegralLen++;
         }
         nIntegral = bNegative ? -nIntegral : nIntegral;
-        FX_INT32 scale = 0;
+        int32_t scale = 0;
         FX_DOUBLE fraction = 0.0;
         if (cc < len && str[cc] == '.') {
             cc ++;
@@ -369,7 +369,7 @@ CFX_Unitime CXFA_LocaleValue::GetTime() const
 CFX_Unitime CXFA_LocaleValue::GetDateTime() const
 {
     if (m_bValid && m_dwType == XFA_VT_DATETIME) {
-        FX_INT32 index = m_wsValue.Find('T');
+        int32_t index = m_wsValue.Find('T');
         CFX_Unitime dt;
         FX_DateFromCanonical(m_wsValue.Left(index), dt);
         FXSYS_assert(m_pLocaleMgr);
@@ -454,8 +454,8 @@ FX_BOOL CXFA_LocaleValue::FormatPatterns(CFX_WideString& wsResult, const CFX_Wid
     IFX_FormatString* pFormat = IFX_FormatString::Create(m_pLocaleMgr, FALSE);
     CFX_WideStringArray wsPatterns;
     pFormat->SplitFormatString(wsFormat, wsPatterns);
-    FX_INT32 iCount = wsPatterns.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i++) {
+    int32_t iCount = wsPatterns.GetSize();
+    for (int32_t i = 0; i < iCount; i++) {
         bRet = FormatSinglePattern(wsResult, wsPatterns[i], pLocale, eValueType);
         if (bRet) {
             break;
@@ -650,7 +650,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate, CF
         return FALSE;
     }
     CFX_Unitime ut;
-    ut.Set(wYear, static_cast<FX_BYTE>(wMonth), static_cast<FX_BYTE>(wDay));
+    ut.Set(wYear, static_cast<uint8_t>(wMonth), static_cast<uint8_t>(wDay));
     unDate = unDate + ut;
     return TRUE;
 }
@@ -718,7 +718,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime)
         if (pTime[nIndex] == 'Z') {
             nIndex++;
         } else if (pTime[nIndex] == '-' || pTime[nIndex] == '+') {
-            FX_SHORT nOffsetH = 0, nOffsetM = 0;
+            int16_t nOffsetH = 0, nOffsetM = 0;
             nIndex++;
             nStart = nIndex;
             while (pTime[nIndex] != '\0' && nIndex - nStart < wCountH && nIndex < nLen) {
@@ -796,8 +796,8 @@ FX_BOOL CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue, const
     CFX_WideStringArray wsPatterns;
     pFormat->SplitFormatString(wsPattern, wsPatterns);
     FX_BOOL bRet = FALSE;
-    FX_INT32 iCount = wsPatterns.GetSize();
-    for (FX_INT32 i = 0; i < iCount && !bRet; i++) {
+    int32_t iCount = wsPatterns.GetSize();
+    for (int32_t i = 0; i < iCount && !bRet; i++) {
         CFX_WideString wsFormat = wsPatterns[i];
         FX_LOCALECATEGORY eCategory = pFormat->GetCategory(wsFormat);
         eCategory = XFA_ValugeCategory(eCategory, m_dwType);
@@ -867,17 +867,17 @@ FX_BOOL CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue, const
     }
     return bRet;
 }
-void CXFA_LocaleValue::GetNumbericFormat(CFX_WideString &wsFormat, FX_INT32 nIntLen, FX_INT32 nDecLen, FX_BOOL bSign )
+void CXFA_LocaleValue::GetNumbericFormat(CFX_WideString &wsFormat, int32_t nIntLen, int32_t nDecLen, FX_BOOL bSign )
 {
     FXSYS_assert(wsFormat.IsEmpty());
     FXSYS_assert(nIntLen >= -1 && nDecLen >= -1);
-    FX_INT32 nTotalLen \
+    int32_t nTotalLen \
         = (nIntLen >= 0 ? nIntLen : 2) \
           + (bSign ? 1 : 0) \
           + (nDecLen >= 0 ? nDecLen : 2) \
           + (nDecLen == 0 ? 0 : 1);
     FX_LPWSTR lpBuf = wsFormat.GetBuffer(nTotalLen);
-    FX_INT32 nPos = 0;
+    int32_t nPos = 0;
     if (bSign) {
         lpBuf[nPos++] = L's';
     }
@@ -904,14 +904,14 @@ void CXFA_LocaleValue::GetNumbericFormat(CFX_WideString &wsFormat, FX_INT32 nInt
     }
     wsFormat.ReleaseBuffer(nTotalLen);
 }
-FX_BOOL CXFA_LocaleValue::ValidateNumericTemp(CFX_WideString& wsNumeric, CFX_WideString& wsFormat, IFX_Locale* pLocale , FX_INT32* pos )
+FX_BOOL CXFA_LocaleValue::ValidateNumericTemp(CFX_WideString& wsNumeric, CFX_WideString& wsFormat, IFX_Locale* pLocale , int32_t* pos )
 {
     if (wsFormat.IsEmpty() || wsNumeric.IsEmpty()) {
         return TRUE;
     }
     FX_LPCWSTR pNum = FX_LPCWSTR(wsNumeric);
     FX_LPCWSTR pFmt = FX_LPCWSTR(wsFormat);
-    FX_INT32 n = 0, nf = 0;
+    int32_t n = 0, nf = 0;
     FX_WCHAR c	= pNum[n];
     FX_WCHAR cf	= pFmt[nf];
     if (cf == L's') {
@@ -921,8 +921,8 @@ FX_BOOL CXFA_LocaleValue::ValidateNumericTemp(CFX_WideString& wsNumeric, CFX_Wid
         ++nf;
     }
     FX_BOOL bLimit = TRUE;
-    FX_INT32 nCount		= wsNumeric.GetLength();
-    FX_INT32 nCountFmt	= wsFormat.GetLength();
+    int32_t nCount		= wsNumeric.GetLength();
+    int32_t nCountFmt	= wsFormat.GetLength();
     while (n < nCount && (bLimit ? nf < nCountFmt : TRUE) && XFA_IsDigit(c = pNum[n])) {
         if (bLimit == TRUE) {
             if ((cf = pFmt[nf]) == L'*') {

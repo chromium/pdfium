@@ -16,8 +16,8 @@ public:
     CBC_Binarizer(CBC_LuminanceSource *source);
     virtual ~CBC_Binarizer();
     CBC_LuminanceSource *GetLuminanceSource();
-    virtual CBC_CommonBitMatrix *GetBlackMatrix(FX_INT32 &e) = 0;
-    virtual CBC_CommonBitArray *GetBlackRow(FX_INT32 y, CBC_CommonBitArray *row, FX_INT32 &e) = 0;
+    virtual CBC_CommonBitMatrix *GetBlackMatrix(int32_t &e) = 0;
+    virtual CBC_CommonBitArray *GetBlackRow(int32_t y, CBC_CommonBitArray *row, int32_t &e) = 0;
 private:
     CBC_LuminanceSource *m_source;
 };

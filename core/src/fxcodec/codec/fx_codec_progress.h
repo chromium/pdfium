@@ -108,28 +108,28 @@ public:
     {
         return m_imagType;
     }
-    virtual FX_INT32			GetWidth()
+    virtual int32_t			GetWidth()
     {
         return m_SrcWidth;
     }
-    virtual FX_INT32			GetHeight()
+    virtual int32_t			GetHeight()
     {
         return m_SrcHeight;
     }
-    virtual FX_INT32			GetNumComponents()
+    virtual int32_t			GetNumComponents()
     {
         return m_SrcComponents;
     }
-    virtual FX_INT32			GetBPC()
+    virtual int32_t			GetBPC()
     {
         return m_SrcBPC;
     }
     virtual void				SetClipBox(FX_RECT* clip);
-    virtual FXCODEC_STATUS		GetFrames(FX_INT32& frames, IFX_Pause* pPause);
+    virtual FXCODEC_STATUS		GetFrames(int32_t& frames, IFX_Pause* pPause);
 
     virtual FXCODEC_STATUS		StartDecode(CFX_DIBitmap* pDIBitmap,
                                             int start_x, int start_y, int size_x, int size_y,
-                                            FX_INT32 frames, FX_BOOL bInterpol);
+                                            int32_t frames, FX_BOOL bInterpol);
 
     virtual FXCODEC_STATUS		ContinueDecode(IFX_Pause* pPause);
 
@@ -137,27 +137,27 @@ protected:
     FX_BOOL						DetectImageType(FXCODEC_IMAGE_TYPE imageType, CFX_DIBAttribute* pAttribute = NULL);
     void						GetDownScale(int& down_scale);
     void						GetTransMethod(FXDIB_Format des_format, FXCodec_Format src_format);
-    void						ReSampleScanline(CFX_DIBitmap* pDeviceBitmap, FX_INT32 des_line, FX_LPBYTE src_scan, FXCodec_Format src_format);
-    void						Resample(CFX_DIBitmap* pDeviceBitmap, FX_INT32 src_line, FX_LPBYTE src_scan, FXCodec_Format src_format);
+    void						ReSampleScanline(CFX_DIBitmap* pDeviceBitmap, int32_t des_line, FX_LPBYTE src_scan, FXCodec_Format src_format);
+    void						Resample(CFX_DIBitmap* pDeviceBitmap, int32_t src_line, FX_LPBYTE src_scan, FXCodec_Format src_format);
     void						ResampleVert(CFX_DIBitmap* pDeviceBitmap, double scale_y, int des_row);
     FX_BOOL						JpegReadMoreData(ICodec_JpegModule* pJpegModule, FXCODEC_STATUS& err_status);
     static FX_BOOL				PngReadHeaderFunc(void* pModule, int width, int height, int bpc, int pass, int* color_type, double* gamma);
     static FX_BOOL				PngAskScanlineBufFunc(void* pModule, int line, FX_LPBYTE& src_buf);
     static void					PngFillScanlineBufCompletedFunc(void* pModule, int pass, int line);
-    void						PngOneOneMapResampleHorz(CFX_DIBitmap* pDeviceBitmap, FX_INT32 des_line, FX_LPBYTE src_scan, FXCodec_Format src_format);
+    void						PngOneOneMapResampleHorz(CFX_DIBitmap* pDeviceBitmap, int32_t des_line, FX_LPBYTE src_scan, FXCodec_Format src_format);
 
     FX_BOOL						GifReadMoreData(ICodec_GifModule* pGifModule, FXCODEC_STATUS& err_status);
     static void					GifRecordCurrentPositionCallback(void* pModule, FX_DWORD& cur_pos);
-    static FX_LPBYTE			GifAskLocalPaletteBufCallback(void* pModule, FX_INT32 frame_num, FX_INT32 pal_size);
+    static FX_LPBYTE			GifAskLocalPaletteBufCallback(void* pModule, int32_t frame_num, int32_t pal_size);
     static FX_BOOL				GifInputRecordPositionBufCallback(void* pModule, FX_DWORD rcd_pos, const FX_RECT& img_rc,
-            FX_INT32 pal_num, void* pal_ptr,
-            FX_INT32 delay_time, FX_BOOL user_input,
-            FX_INT32 trans_index, FX_INT32 disposal_method, FX_BOOL interlace);
-    static void					GifReadScanlineCallback(void* pModule, FX_INT32 row_num, FX_LPBYTE row_buf);
+            int32_t pal_num, void* pal_ptr,
+            int32_t delay_time, FX_BOOL user_input,
+            int32_t trans_index, int32_t disposal_method, FX_BOOL interlace);
+    static void					GifReadScanlineCallback(void* pModule, int32_t row_num, FX_LPBYTE row_buf);
     void						GifDoubleLineResampleVert(CFX_DIBitmap* pDeviceBitmap, double scale_y, int des_row);
     FX_BOOL						BmpReadMoreData(ICodec_BmpModule* pBmpModule, FXCODEC_STATUS& err_status);
     static FX_BOOL				BmpInputImagePositionBufCallback(void* pModule, FX_DWORD rcd_pos);
-    static void					BmpReadScanlineCallback(void* pModule, FX_INT32 row_num, FX_LPBYTE row_buf);
+    static void					BmpReadScanlineCallback(void* pModule, int32_t row_num, FX_LPBYTE row_buf);
     void						ResampleVertBT(CFX_DIBitmap* pDeviceBitmap, double scale_y, int des_row);
 public:
     IFX_FileRead*				m_pFile;
@@ -197,7 +197,7 @@ public:
     int			m_FrameCur;
     int				m_GifBgIndex;
     FX_LPBYTE		m_pGifPalette;
-    FX_INT32		m_GifPltNumber;
+    int32_t		m_GifPltNumber;
     int				m_GifTransIndex;
     FX_RECT			m_GifFrameRect;
     FX_BOOL			m_BmpIsTopBottom;

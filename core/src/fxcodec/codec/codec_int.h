@@ -17,9 +17,9 @@
 class CCodec_BasicModule : public ICodec_BasicModule
 {
 public:
-    virtual FX_BOOL	RunLengthEncode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
+    virtual FX_BOOL	RunLengthEncode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
                                     FX_DWORD& dest_size);
-    virtual FX_BOOL	A85Encode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
+    virtual FX_BOOL	A85Encode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
                               FX_DWORD& dest_size);
     virtual ICodec_ScanlineDecoder*	CreateRunLengthDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc);
@@ -27,7 +27,7 @@ public:
 struct CCodec_ImageDataCache {
     int			m_Width, m_Height;
     int			m_nCachedLines;
-    FX_BYTE		m_Data;
+    uint8_t		m_Data;
 };
 class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder
 {
@@ -126,10 +126,10 @@ class CCodec_FlateModule : public ICodec_FlateModule
 public:
     virtual ICodec_ScanlineDecoder*	CreateDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc, int predictor, int Colors, int BitsPerComponent, int Columns);
-    virtual FX_DWORD FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_buf, FX_DWORD src_size, FX_BOOL bEarlyChange,
+    virtual FX_DWORD FlateOrLZWDecode(FX_BOOL bLZW, const uint8_t* src_buf, FX_DWORD src_size, FX_BOOL bEarlyChange,
                                       int predictor, int Colors, int BitsPerComponent, int Columns,
                                       FX_DWORD estimated_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
-    virtual FX_BOOL Encode(const FX_BYTE* src_buf, FX_DWORD src_size,
+    virtual FX_BOOL Encode(const uint8_t* src_buf, FX_DWORD src_size,
                            int predictor, int Colors, int BitsPerComponent, int Columns,
                            FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
     virtual FX_BOOL		Encode(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
@@ -185,12 +185,12 @@ public:
     virtual FX_DWORD	GetAvailInput(void* pContext, FX_LPBYTE* avail_buf_ptr);
     virtual void		Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size);
 
-    virtual FX_INT32	ReadHeader(void* pContext, int* width, int* height,
+    virtual int32_t	ReadHeader(void* pContext, int* width, int* height,
                                    int* pal_num, void** pal_pp, int* bg_index, CFX_DIBAttribute* pAttribute);
 
-    virtual FX_INT32	LoadFrameInfo(void* pContext, int* frame_num);
+    virtual int32_t	LoadFrameInfo(void* pContext, int* frame_num);
 
-    virtual FX_INT32	LoadFrame(void* pContext, int frame_num, CFX_DIBAttribute* pAttribute);
+    virtual int32_t	LoadFrame(void* pContext, int frame_num, CFX_DIBAttribute* pAttribute);
 
 protected:
     FX_CHAR				m_szLastError[256];
@@ -206,8 +206,8 @@ public:
     virtual void		Finish(void* pContext);
     virtual FX_DWORD	GetAvailInput(void* pContext, FX_LPBYTE* avail_buf_ptr);
     virtual void		Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size);
-    virtual FX_INT32	ReadHeader(void* pContext, FX_INT32* width, FX_INT32* height, FX_BOOL* tb_flag, FX_INT32* components, FX_INT32* pal_num, FX_DWORD** pal_pp, CFX_DIBAttribute* pAttribute);
-    virtual FX_INT32	LoadImage(void* pContext);
+    virtual int32_t	ReadHeader(void* pContext, int32_t* width, int32_t* height, FX_BOOL* tb_flag, int32_t* components, int32_t* pal_num, FX_DWORD** pal_pp, CFX_DIBAttribute* pAttribute);
+    virtual int32_t	LoadImage(void* pContext);
 
 protected:
     FX_CHAR				m_szLastError[256];
@@ -225,10 +225,10 @@ public:
                                             FX_DWORD dwPrfIntent = Icc_INTENT_ABSOLUTE_COLORIMETRIC,
                                             FX_DWORD dwPrfFlag = Icc_FLAGS_SOFTPROOFING
                                       );
-    virtual FX_LPVOID		CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, FX_INT32& nComponents, FX_INT32 intent = 0,
+    virtual FX_LPVOID		CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, int32_t& nComponents, int32_t intent = 0,
             FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT);
-    virtual FX_LPVOID		CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, FX_INT32& nSrcComponents,
-            FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, FX_INT32 intent = 0,
+    virtual FX_LPVOID		CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, int32_t& nSrcComponents,
+            FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, int32_t intent = 0,
             FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT,
             FX_DWORD dwDstFormat = Icc_FORMAT_DEFAULT
                                            );
@@ -263,8 +263,8 @@ class CCodec_TiffModule : public ICodec_TiffModule
 {
 public:
     virtual FX_LPVOID 	CreateDecoder(IFX_FileRead* file_ptr);
-    virtual void		GetFrames(FX_LPVOID ctx, FX_INT32& frames);
-    virtual FX_BOOL		LoadFrameInfo(FX_LPVOID ctx, FX_INT32 frame, FX_DWORD& width, FX_DWORD& height, FX_DWORD& comps, FX_DWORD& bpc, CFX_DIBAttribute* pAttribute = NULL);
+    virtual void		GetFrames(FX_LPVOID ctx, int32_t& frames);
+    virtual FX_BOOL		LoadFrameInfo(FX_LPVOID ctx, int32_t frame, FX_DWORD& width, FX_DWORD& height, FX_DWORD& comps, FX_DWORD& bpc, CFX_DIBAttribute* pAttribute = NULL);
     virtual FX_BOOL		Decode(FX_LPVOID ctx, class CFX_DIBitmap* pDIBitmap);
     virtual void		DestroyDecoder(FX_LPVOID ctx);
 };
@@ -273,14 +273,14 @@ class CPDF_Jbig2Interface : public CJBig2_Module
 public:
     virtual void *JBig2_Malloc(FX_DWORD dwSize)
     {
-        return FX_Alloc(FX_BYTE, dwSize);
+        return FX_Alloc(uint8_t, dwSize);
     }
     virtual void *JBig2_Malloc2(FX_DWORD num, FX_DWORD dwSize)
     {
         if (dwSize && num >= UINT_MAX / dwSize) {
             return NULL;
         }
-        return FX_Alloc(FX_BYTE, num * dwSize);
+        return FX_Alloc(uint8_t, num * dwSize);
     }
     virtual void *JBig2_Malloc3(FX_DWORD num, FX_DWORD dwSize, FX_DWORD dwSize2)
     {
@@ -291,11 +291,11 @@ public:
         if (size && num >= UINT_MAX / size) {
             return NULL;
         }
-        return FX_Alloc(FX_BYTE, num * size);
+        return FX_Alloc(uint8_t, num * size);
     }
     virtual void *JBig2_Realloc(FX_LPVOID pMem, FX_DWORD dwSize)
     {
-        return FX_Realloc(FX_BYTE, pMem, dwSize);
+        return FX_Realloc(uint8_t, pMem, dwSize);
     }
     virtual void JBig2_Free(FX_LPVOID pMem)
     {

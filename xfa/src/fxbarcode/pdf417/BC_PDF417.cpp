@@ -27,9 +27,9 @@
 #include "BC_PDF417ErrorCorrection.h"
 #include "BC_PDF417HighLevelEncoder.h"
 #include "BC_PDF417.h"
-FX_INT32 CBC_PDF417::START_PATTERN = 0x1fea8;
-FX_INT32 CBC_PDF417::STOP_PATTERN = 0x3fa29;
-FX_INT32 CBC_PDF417::CODEWORD_TABLE[][1000] = {
+int32_t CBC_PDF417::START_PATTERN = 0x1fea8;
+int32_t CBC_PDF417::STOP_PATTERN = 0x3fa29;
+int32_t CBC_PDF417::CODEWORD_TABLE[][1000] = {
     {
         0x1d5c0, 0x1eaf0, 0x1f57c, 0x1d4e0, 0x1ea78, 0x1f53e,
         0x1a8c0, 0x1d470, 0x1a860, 0x15040, 0x1a830, 0x15020,
@@ -535,28 +535,28 @@ CBC_BarcodeMatrix* CBC_PDF417::getBarcodeMatrix()
 {
     return m_barcodeMatrix;
 }
-void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg, FX_INT32 errorCorrectionLevel, FX_INT32 &e)
+void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg, int32_t errorCorrectionLevel, int32_t &e)
 {
-    FX_INT32 errorCorrectionCodeWords = CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(errorCorrectionLevel, e);
+    int32_t errorCorrectionCodeWords = CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(errorCorrectionLevel, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     CFX_WideString highLevel = CBC_PDF417HighLevelEncoder::encodeHighLevel(msg, m_compaction, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    FX_INT32 sourceCodeWords = highLevel.GetLength();
+    int32_t sourceCodeWords = highLevel.GetLength();
     CFX_Int32Array* dimension = determineDimensions(sourceCodeWords, errorCorrectionCodeWords, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    FX_INT32 cols = dimension->GetAt(0);
-    FX_INT32 rows = dimension->GetAt(1);
+    int32_t cols = dimension->GetAt(0);
+    int32_t rows = dimension->GetAt(1);
     delete dimension;
-    FX_INT32 pad = getNumberOfPadCodewords(sourceCodeWords, errorCorrectionCodeWords, cols, rows);
+    int32_t pad = getNumberOfPadCodewords(sourceCodeWords, errorCorrectionCodeWords, cols, rows);
     if (sourceCodeWords + errorCorrectionCodeWords + 1 > 929) {
         e = BCExceptionEncodedMessageContainsTooManyCodeWords;
         return;
     }
-    FX_INT32 n = sourceCodeWords + pad + 1;
+    int32_t n = sourceCodeWords + pad + 1;
     CFX_WideString sb;
     sb += (FX_WCHAR) n;
     sb += highLevel;
-    for (FX_INT32 i = 0; i < pad; i++) {
+    for (int32_t i = 0; i < pad; i++) {
         sb += (FX_WCHAR) 900;
     }
     CFX_WideString dataCodewords(sb);
@@ -566,7 +566,7 @@ void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg, FX_INT32 errorCorrecti
     m_barcodeMatrix = FX_NEW CBC_BarcodeMatrix(rows, cols);
     encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel, m_barcodeMatrix);
 }
-void CBC_PDF417::setDimensions(FX_INT32 maxCols, FX_INT32 minCols, FX_INT32 maxRows, FX_INT32 minRows)
+void CBC_PDF417::setDimensions(int32_t maxCols, int32_t minCols, int32_t maxRows, int32_t minRows)
 {
     m_maxCols = maxCols;
     m_minCols = minCols;
@@ -581,25 +581,25 @@ void CBC_PDF417::setCompact(FX_BOOL compact)
 {
     m_compact = compact;
 }
-FX_INT32 CBC_PDF417::calculateNumberOfRows(FX_INT32 m, FX_INT32 k, FX_INT32 c)
+int32_t CBC_PDF417::calculateNumberOfRows(int32_t m, int32_t k, int32_t c)
 {
-    FX_INT32 r = ((m + 1 + k) / c) + 1;
+    int32_t r = ((m + 1 + k) / c) + 1;
     if (c * r >= (m + 1 + k + c)) {
         r--;
     }
     return r;
 }
-FX_INT32 CBC_PDF417::getNumberOfPadCodewords(FX_INT32 m, FX_INT32 k, FX_INT32 c, FX_INT32 r)
+int32_t CBC_PDF417::getNumberOfPadCodewords(int32_t m, int32_t k, int32_t c, int32_t r)
 {
-    FX_INT32 n = c * r - k;
+    int32_t n = c * r - k;
     return n > m + 1 ? n - m - 1 : 0;
 }
-void CBC_PDF417::encodeChar(FX_INT32 pattern, FX_INT32 len, CBC_BarcodeRow* logic)
+void CBC_PDF417::encodeChar(int32_t pattern, int32_t len, CBC_BarcodeRow* logic)
 {
-    FX_INT32 map = 1 << (len - 1);
+    int32_t map = 1 << (len - 1);
     FX_BOOL last = ((pattern & map) != 0);
-    FX_INT32 width = 0;
-    for (FX_INT32 i = 0; i < len; i++) {
+    int32_t width = 0;
+    for (int32_t i = 0; i < len; i++) {
         FX_BOOL black = ((pattern & map) != 0);
         if (last == black) {
             width++;
@@ -612,16 +612,16 @@ void CBC_PDF417::encodeChar(FX_INT32 pattern, FX_INT32 len, CBC_BarcodeRow* logi
     }
     logic->addBar(last, width);
 }
-void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords, FX_INT32 c, FX_INT32 r, FX_INT32 errorCorrectionLevel, CBC_BarcodeMatrix* logic)
+void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords, int32_t c, int32_t r, int32_t errorCorrectionLevel, CBC_BarcodeMatrix* logic)
 {
-    FX_INT32 idx = 0;
-    for (FX_INT32 y = 0; y < r; y++) {
-        FX_INT32 cluster = y % 3;
+    int32_t idx = 0;
+    for (int32_t y = 0; y < r; y++) {
+        int32_t cluster = y % 3;
         logic->startRow();
-        FX_INT32 a = START_PATTERN;
+        int32_t a = START_PATTERN;
         encodeChar(START_PATTERN, 17, logic->getCurrentRow());
-        FX_INT32 left;
-        FX_INT32 right;
+        int32_t left;
+        int32_t right;
         if (cluster == 0) {
             left = (30 * (y / 3)) + ((r - 1) / 3);
             right = (30 * (y / 3)) + (c - 1);
@@ -632,9 +632,9 @@ void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords, FX_INT32 c, FX_INT
             left = (30 * (y / 3)) + (c - 1);
             right = (30 * (y / 3)) + (errorCorrectionLevel * 3) + ((r - 1) % 3);
         }
-        FX_INT32 pattern = CODEWORD_TABLE[cluster][left];
+        int32_t pattern = CODEWORD_TABLE[cluster][left];
         encodeChar(pattern, 17, logic->getCurrentRow());
-        for (FX_INT32 x = 0; x < c; x++) {
+        for (int32_t x = 0; x < c; x++) {
             pattern = CODEWORD_TABLE[cluster][fullCodewords.GetAt(idx)];
             encodeChar(pattern, 17, logic->getCurrentRow());
             idx++;
@@ -648,12 +648,12 @@ void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords, FX_INT32 c, FX_INT
         }
     }
 }
-CFX_Int32Array* CBC_PDF417::determineDimensions(FX_INT32 sourceCodeWords, FX_INT32 errorCorrectionCodeWords, FX_INT32 &e)
+CFX_Int32Array* CBC_PDF417::determineDimensions(int32_t sourceCodeWords, int32_t errorCorrectionCodeWords, int32_t &e)
 {
     FX_FLOAT ratio = 0.0f;
     CFX_Int32Array* dimension = NULL;
-    for (FX_INT32 cols = m_minCols; cols <= m_maxCols; cols++) {
-        FX_INT32 rows = calculateNumberOfRows(sourceCodeWords, errorCorrectionCodeWords, cols);
+    for (int32_t cols = m_minCols; cols <= m_maxCols; cols++) {
+        int32_t rows = calculateNumberOfRows(sourceCodeWords, errorCorrectionCodeWords, cols);
         if (rows < m_minRows) {
             break;
         }
@@ -673,7 +673,7 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(FX_INT32 sourceCodeWords, FX_INT
         dimension->Add(rows);
     }
     if (dimension == NULL) {
-        FX_INT32 rows = calculateNumberOfRows(sourceCodeWords, errorCorrectionCodeWords, m_minCols);
+        int32_t rows = calculateNumberOfRows(sourceCodeWords, errorCorrectionCodeWords, m_minCols);
         if (rows < m_minRows) {
             dimension = FX_NEW CFX_Int32Array;
             dimension->Add(m_minCols);

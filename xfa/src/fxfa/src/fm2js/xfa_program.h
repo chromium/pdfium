@@ -11,9 +11,9 @@ class CXFA_FMProgram
 public:
     CXFA_FMProgram();
     ~CXFA_FMProgram();
-    FX_INT32 Init(FX_WSTR wsFormcalc);
-    FX_INT32 ParseProgram();
-    FX_INT32 TranslateProgram(CFX_WideTextBuf &wsJavaScript);
+    int32_t Init(FX_WSTR wsFormcalc);
+    int32_t ParseProgram();
+    int32_t TranslateProgram(CFX_WideTextBuf &wsJavaScript);
     CXFA_FMErrorInfo& GetError()
     {
         return m_pErrorInfo;

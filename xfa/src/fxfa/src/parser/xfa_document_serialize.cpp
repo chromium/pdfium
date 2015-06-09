@@ -74,8 +74,8 @@ FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument)
 CFX_WideString XFA_ExportEncodeAttribute(const CFX_WideString& str)
 {
     CFX_WideTextBuf textBuf;
-    FX_INT32 iLen = str.GetLength();
-    for (FX_INT32 i = 0; i < iLen; i++) {
+    int32_t iLen = str.GetLength();
+    for (int32_t i = 0; i < iLen; i++) {
         switch (str[i]) {
             case '&':
                 textBuf << FX_WSTRC(L"&amp;");
@@ -101,8 +101,8 @@ CFX_WideString XFA_ExportEncodeAttribute(const CFX_WideString& str)
 CFX_WideString XFA_ExportEncodeContent(FX_WSTR str)
 {
     CFX_WideTextBuf textBuf;
-    FX_INT32 iLen = str.GetLength();
-    for (FX_INT32 i = 0; i < iLen; i++) {
+    int32_t iLen = str.GetLength();
+    for (int32_t i = 0; i < iLen; i++) {
         FX_WCHAR ch = str.GetAt(i);
         if (!FDE_IsXMLValidChar(ch)) {
             continue;
@@ -202,7 +202,7 @@ static void XFA_DataExporter_RecognizeXFAVersionNumber(CXFA_Node *pTemplateRoot,
 static void XFA_DataExporter_RegenerateFormFile_Changed(CXFA_Node* pNode, CFX_WideTextBuf& buf, FX_BOOL bSaveXML = FALSE)
 {
     CFX_WideString wsAttrs;
-    FX_INT32 iAttrs = 0;
+    int32_t iAttrs = 0;
     FX_LPCBYTE pAttrs = XFA_GetElementAttributes(pNode->GetClassID(), iAttrs);
     while (iAttrs--) {
         XFA_LPCATTRIBUTEINFO pAttr = XFA_GetAttributeByID((XFA_ATTRIBUTE)pAttrs[iAttrs]);
@@ -251,8 +251,8 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(CXFA_Node* pNode, CFX_Wi
                         break;
                     }
                     CFX_WideStringArray wsSelTextArray;
-                    FX_INT32 iStart = 0;
-                    FX_INT32 iEnd = wsRawValue.Find(L'\n', iStart);
+                    int32_t iStart = 0;
+                    int32_t iEnd = wsRawValue.Find(L'\n', iStart);
                     iEnd = (iEnd == -1) ? wsRawValue.GetLength() : iEnd;
                     while (iEnd >= iStart) {
                         wsSelTextArray.Add(wsRawValue.Mid(iStart, iEnd - iStart));
@@ -274,7 +274,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(CXFA_Node* pNode, CFX_Wi
                     buf << FX_WSTRC(L"<");
                     buf << bodyTagName;
                     buf << FX_WSTRC(L" xmlns=\"\"\n>");
-                    for (FX_INT32 i = 0; i < wsSelTextArray.GetSize(); i++) {
+                    for (int32_t i = 0; i < wsSelTextArray.GetSize(); i++) {
                         buf << FX_WSTRC(L"<value\n>");
                         buf << XFA_ExportEncodeContent(wsSelTextArray[i]);
                         buf << FX_WSTRC(L"</value\n>");
@@ -364,7 +364,7 @@ static void XFA_DataExporter_RegenerateFormFile_Container(CXFA_Node* pNode, IFX_
     CFX_WideString wsOutput;
     XFA_SaveAttribute(pNode, XFA_ATTRIBUTE_Name, FX_WSTRC(L"name"), TRUE, wsOutput);
     CFX_WideString wsAttrs;
-    FX_INT32 iAttrs = 0;
+    int32_t iAttrs = 0;
     FX_LPCBYTE pAttrs = XFA_GetElementAttributes(pNode->GetClassID(), iAttrs);
     while (iAttrs--) {
         XFA_LPCATTRIBUTEINFO pAttr = XFA_GetAttributeByID((XFA_ATTRIBUTE)pAttrs[iAttrs]);
@@ -521,7 +521,7 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node *pDataNode)
     if (!pDataNode || pDataNode->GetClassID() == XFA_ELEMENT_DataValue) {
         return;
     }
-    FX_INT32 iChildNum = 0;
+    int32_t iChildNum = 0;
     for (CXFA_Node *pChildNode = pDataNode->GetNodeItem(XFA_NODEITEM_FirstChild); pChildNode; pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
         iChildNum++;
         XFA_DataExporter_DealWithDataGroupNode(pChildNode);

@@ -105,7 +105,7 @@ public:
     int GetRectHeight(FX_RECT rect);
     int GetRectWidth(FX_RECT rect);
     void ProcessObj(CFX_PtrArray& cellArray, CPDF_PageObject* pObj, CFX_AffineMatrix matrix);
-    FX_INT32 LogicPreObj(CPDF_PageObject* pObj);
+    int32_t LogicPreObj(CPDF_PageObject* pObj);
 
     CPDF_AutoReflowElement* m_pRoot;
     CPDF_AutoReflowElement* m_pCurrElm;

@@ -16,8 +16,8 @@ class IXFA_Locale;
 
 typedef struct _FX_IMAGEDIB_AND_DPI {
     CFX_DIBSource* pDibSource;
-    FX_INT32	   iImageXDpi;
-    FX_INT32	   iImageYDpi;
+    int32_t	   iImageXDpi;
+    int32_t	   iImageYDpi;
 } FX_IMAGEDIB_AND_DPI;
 
 class CXFA_FFDoc : public IXFA_Doc
@@ -30,8 +30,8 @@ public:
         return m_pDocProvider;
     }
     FX_DWORD				GetDocType();
-    FX_INT32				StartLoad();
-    FX_INT32				DoLoad(IFX_Pause *pPause = NULL);
+    int32_t				StartLoad();
+    int32_t				DoLoad(IFX_Pause *pPause = NULL);
     void					StopLoad();
     IXFA_DocView*			CreateDocView(FX_DWORD dwView = 0);
     FX_BOOL					OpenDoc(IFX_FileRead* pStream, FX_BOOL bTakeOverFile);
@@ -49,7 +49,7 @@ public:
     CXFA_FFDocView*			GetDocView(IXFA_DocLayout* pLayout);
     CXFA_FFDocView*			GetDocView();
     CPDF_Document*			GetPDFDoc();
-    CFX_DIBitmap*			GetPDFNamedImage(FX_WSTR wsName, FX_INT32 &iImageXDpi, FX_INT32 &iImageYDpi);
+    CFX_DIBitmap*			GetPDFNamedImage(FX_WSTR wsName, int32_t &iImageXDpi, int32_t &iImageYDpi);
     IFDE_XMLElement*		GetPackageData(FX_WSTR wsPackage);
     FX_BOOL					SavePackage(FX_WSTR wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext = NULL);
     FX_BOOL					ImportData(IFX_FileRead* pStream, FX_BOOL bXDP = TRUE);

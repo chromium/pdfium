@@ -58,29 +58,29 @@ STR_T FXSYS_IntToStr(T value, STR_T string, int radix)
 #ifdef __cplusplus
 extern "C" {
 #endif
-FX_INT32 FXSYS_atoi(FX_LPCSTR str)
+int32_t FXSYS_atoi(FX_LPCSTR str)
 {
-    return FXSYS_StrToInt<FX_INT32, FX_LPCSTR>(str);
+    return FXSYS_StrToInt<int32_t, FX_LPCSTR>(str);
 }
-FX_INT32 FXSYS_wtoi(FX_LPCWSTR str)
+int32_t FXSYS_wtoi(FX_LPCWSTR str)
 {
-    return FXSYS_StrToInt<FX_INT32, FX_LPCWSTR>(str);
+    return FXSYS_StrToInt<int32_t, FX_LPCWSTR>(str);
 }
-FX_INT64 FXSYS_atoi64(FX_LPCSTR str)
+int64_t FXSYS_atoi64(FX_LPCSTR str)
 {
-    return FXSYS_StrToInt<FX_INT64, FX_LPCSTR>(str);
+    return FXSYS_StrToInt<int64_t, FX_LPCSTR>(str);
 }
-FX_INT64 FXSYS_wtoi64(FX_LPCWSTR str)
+int64_t FXSYS_wtoi64(FX_LPCWSTR str)
 {
-    return FXSYS_StrToInt<FX_INT64, FX_LPCWSTR>(str);
+    return FXSYS_StrToInt<int64_t, FX_LPCWSTR>(str);
 }
-FX_LPCSTR FXSYS_i64toa(FX_INT64 value, FX_LPSTR str, int radix)
+FX_LPCSTR FXSYS_i64toa(int64_t value, FX_LPSTR str, int radix)
 {
-    return FXSYS_IntToStr<FX_INT64, FX_LPSTR>(value, str, radix);
+    return FXSYS_IntToStr<int64_t, FX_LPSTR>(value, str, radix);
 }
-FX_LPCWSTR FXSYS_i64tow(FX_INT64 value, FX_LPWSTR str, int radix)
+FX_LPCWSTR FXSYS_i64tow(int64_t value, FX_LPWSTR str, int radix)
 {
-    return FXSYS_IntToStr<FX_INT64, FX_LPWSTR>(value, str, radix);
+    return FXSYS_IntToStr<int64_t, FX_LPWSTR>(value, str, radix);
 }
 #ifdef __cplusplus
 }
@@ -194,7 +194,7 @@ int FXSYS_wcsicmp(const FX_WCHAR *dst, const FX_WCHAR *src)
 }
 char* FXSYS_itoa(int value, char* string, int radix)
 {
-    return FXSYS_IntToStr<FX_INT32, FX_LPSTR>(value, string, radix);
+    return FXSYS_IntToStr<int32_t, FX_LPSTR>(value, string, radix);
 }
 #ifdef __cplusplus
 }

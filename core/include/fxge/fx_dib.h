@@ -74,10 +74,10 @@ class CFX_DIBitmap;
 #define FXSYS_GetBValue(rgb) (((rgb) >> 16) & 0xff)
 #define FX_CCOLOR(val) (255-(val))
 #define FXSYS_CMYK(c, m, y, k) (((c) << 24) | ((m) << 16) | ((y) << 8) | (k))
-#define FXSYS_GetCValue(cmyk) ((FX_BYTE)((cmyk) >> 24) & 0xff)
-#define FXSYS_GetMValue(cmyk) ((FX_BYTE)((cmyk) >> 16) & 0xff)
-#define FXSYS_GetYValue(cmyk) ((FX_BYTE)((cmyk) >> 8) & 0xff)
-#define FXSYS_GetKValue(cmyk) ((FX_BYTE)(cmyk) & 0xff)
+#define FXSYS_GetCValue(cmyk) ((uint8_t)((cmyk) >> 24) & 0xff)
+#define FXSYS_GetMValue(cmyk) ((uint8_t)((cmyk) >> 16) & 0xff)
+#define FXSYS_GetYValue(cmyk) ((uint8_t)((cmyk) >> 8) & 0xff)
+#define FXSYS_GetKValue(cmyk) ((uint8_t)(cmyk) & 0xff)
 void CmykDecode(FX_CMYK cmyk, int& c, int& m, int& y, int& k);
 inline FX_CMYK CmykEncode(int c, int m, int y, int k)
 {
@@ -90,10 +90,10 @@ inline FX_ARGB ArgbEncode(int a, int r, int g, int b)
     return (a << 24) | (r << 16) | (g << 8) | b;
 }
 FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
-#define FXARGB_A(argb) ((FX_BYTE)((argb) >> 24))
-#define FXARGB_R(argb) ((FX_BYTE)((argb) >> 16))
-#define FXARGB_G(argb) ((FX_BYTE)((argb) >> 8))
-#define FXARGB_B(argb) ((FX_BYTE)(argb))
+#define FXARGB_A(argb) ((uint8_t)((argb) >> 24))
+#define FXARGB_R(argb) ((uint8_t)((argb) >> 16))
+#define FXARGB_G(argb) ((uint8_t)((argb) >> 8))
+#define FXARGB_B(argb) ((uint8_t)(argb))
 #define FXARGB_MAKE(a,r,g,b) (((FX_DWORD)(a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #define FXARGB_MUL_ALPHA(argb, alpha) (((((argb) >> 24) * (alpha) / 255) << 24) | ((argb) & 0xffffff))
 #define FXRGB2GRAY(r,g,b) (((b) * 11 + (g) * 59 + (r) * 30) / 100)
@@ -101,15 +101,15 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
 #define FXDIB_ALPHA_MERGE(backdrop, source, source_alpha) (((backdrop) * (255-(source_alpha)) + (source)*(source_alpha))/255)
 #define FXDIB_ALPHA_UNION(dest, src) ((dest) + (src) - (dest)*(src)/255)
 #define FXCMYK_GETDIB(p) ((((FX_LPBYTE)(p))[0] << 24 | (((FX_LPBYTE)(p))[1] << 16) | (((FX_LPBYTE)(p))[2] << 8) | ((FX_LPBYTE)(p))[3]))
-#define FXCMYK_SETDIB(p, cmyk)  ((FX_LPBYTE)(p))[0] = (FX_BYTE)((cmyk) >> 24), \
-        ((FX_LPBYTE)(p))[1] = (FX_BYTE)((cmyk) >> 16), \
-                              ((FX_LPBYTE)(p))[2] = (FX_BYTE)((cmyk) >> 8), \
-                                      ((FX_LPBYTE)(p))[3] = (FX_BYTE)(cmyk))
+#define FXCMYK_SETDIB(p, cmyk)  ((FX_LPBYTE)(p))[0] = (uint8_t)((cmyk) >> 24), \
+        ((FX_LPBYTE)(p))[1] = (uint8_t)((cmyk) >> 16), \
+                              ((FX_LPBYTE)(p))[2] = (uint8_t)((cmyk) >> 8), \
+                                      ((FX_LPBYTE)(p))[3] = (uint8_t)(cmyk))
 #define FXARGB_GETDIB(p) ((((FX_LPBYTE)(p))[0]) | (((FX_LPBYTE)(p))[1] << 8) | (((FX_LPBYTE)(p))[2] << 16) | (((FX_LPBYTE)(p))[3] << 24))
-#define FXARGB_SETDIB(p, argb) ((FX_LPBYTE)(p))[0] = (FX_BYTE)(argb), \
-        ((FX_LPBYTE)(p))[1] = (FX_BYTE)((argb) >> 8), \
-                              ((FX_LPBYTE)(p))[2] = (FX_BYTE)((argb) >> 16), \
-                                      ((FX_LPBYTE)(p))[3] = (FX_BYTE)((argb) >> 24)
+#define FXARGB_SETDIB(p, argb) ((FX_LPBYTE)(p))[0] = (uint8_t)(argb), \
+        ((FX_LPBYTE)(p))[1] = (uint8_t)((argb) >> 8), \
+                              ((FX_LPBYTE)(p))[2] = (uint8_t)((argb) >> 16), \
+                                      ((FX_LPBYTE)(p))[3] = (uint8_t)((argb) >> 24)
 #define FXARGB_COPY(dest, src) *(FX_LPBYTE)(dest) = *(FX_LPBYTE)(src), \
         *((FX_LPBYTE)(dest)+1) = *((FX_LPBYTE)(src)+1), \
                                  *((FX_LPBYTE)(dest)+2) = *((FX_LPBYTE)(src)+2), \
@@ -118,21 +118,21 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
         *((FX_LPBYTE)(dest)+1) = *((FX_LPBYTE)(src)+1), \
                                  *((FX_LPBYTE)(dest)+2) = *((FX_LPBYTE)(src)+2), \
                                          *((FX_LPBYTE)(dest)+3) = *((FX_LPBYTE)(src)+3)
-#define FXARGB_SETRGBORDERDIB(p, argb) ((FX_LPBYTE)(p))[3] = (FX_BYTE)(argb>>24), \
-        ((FX_LPBYTE)(p))[0] = (FX_BYTE)((argb) >> 16), \
-                              ((FX_LPBYTE)(p))[1] = (FX_BYTE)((argb) >> 8), \
-                                      ((FX_LPBYTE)(p))[2] = (FX_BYTE)(argb)
+#define FXARGB_SETRGBORDERDIB(p, argb) ((FX_LPBYTE)(p))[3] = (uint8_t)(argb>>24), \
+        ((FX_LPBYTE)(p))[0] = (uint8_t)((argb) >> 16), \
+                              ((FX_LPBYTE)(p))[1] = (uint8_t)((argb) >> 8), \
+                                      ((FX_LPBYTE)(p))[2] = (uint8_t)(argb)
 #define FXARGB_GETRGBORDERDIB(p) (((FX_LPBYTE)(p))[2]) | (((FX_LPBYTE)(p))[1] << 8) | (((FX_LPBYTE)(p))[0] << 16) | (((FX_LPBYTE)(p))[3] << 24)
 #define FXARGB_RGBORDERCOPY(dest, src) *((FX_LPBYTE)(dest)+3) = *((FX_LPBYTE)(src)+3), \
         *(FX_LPBYTE)(dest) = *((FX_LPBYTE)(src)+2), \
                              *((FX_LPBYTE)(dest)+1) = *((FX_LPBYTE)(src)+1), \
                                      *((FX_LPBYTE)(dest)+2) = *((FX_LPBYTE)(src))
 #define FXARGB_TODIB(argb) (argb)
-#define FXCMYK_TODIB(cmyk) ((FX_BYTE)((cmyk) >> 24) | ((FX_BYTE)((cmyk) >> 16)) << 8 | ((FX_BYTE)((cmyk) >> 8)) << 16 | ((FX_BYTE)(cmyk) << 24))
-#define FXARGB_TOBGRORDERDIB(argb) ((FX_BYTE)(argb>>16) | ((FX_BYTE)(argb>>8)) << 8 | ((FX_BYTE)(argb)) << 16 | ((FX_BYTE)(argb>>24) << 24))
-#define FXGETFLAG_COLORTYPE(flag)			(FX_BYTE)((flag)>>8)
-#define FXGETFLAG_ALPHA_FILL(flag)			(FX_BYTE)(flag)
-#define FXGETFLAG_ALPHA_STROKE(flag)		(FX_BYTE)((flag)>>16)
+#define FXCMYK_TODIB(cmyk) ((uint8_t)((cmyk) >> 24) | ((uint8_t)((cmyk) >> 16)) << 8 | ((uint8_t)((cmyk) >> 8)) << 16 | ((uint8_t)(cmyk) << 24))
+#define FXARGB_TOBGRORDERDIB(argb) ((uint8_t)(argb>>16) | ((uint8_t)(argb>>8)) << 8 | ((uint8_t)(argb)) << 16 | ((uint8_t)(argb>>24) << 24))
+#define FXGETFLAG_COLORTYPE(flag)			(uint8_t)((flag)>>8)
+#define FXGETFLAG_ALPHA_FILL(flag)			(uint8_t)(flag)
+#define FXGETFLAG_ALPHA_STROKE(flag)		(uint8_t)((flag)>>16)
 #define FXSETFLAG_COLORTYPE(flag, val)		flag = (((val)<<8)|(flag&0xffff00ff))
 #define FXSETFLAG_ALPHA_FILL(flag, val)		flag = ((val)|(flag&0xffffff00))
 #define FXSETFLAG_ALPHA_STROKE(flag, val)	flag = (((val)<<16)|(flag&0xff00ffff))
@@ -415,7 +415,7 @@ public:
 
     ~CFX_ScanlineCompositor();
 
-    FX_BOOL				Init(FXDIB_Format dest_format, FXDIB_Format src_format, FX_INT32 width, FX_DWORD* pSrcPalette,
+    FX_BOOL				Init(FXDIB_Format dest_format, FXDIB_Format src_format, int32_t width, FX_DWORD* pSrcPalette,
                              FX_DWORD mask_color, int blend_type, FX_BOOL bClip, FX_BOOL bRgbByteOrder = FALSE, int alpha_flag = 0, void* pIccTransform = NULL);
 
 
@@ -519,11 +519,11 @@ public:
 
     ~CFX_ImageStretcher();
 
-    FX_INT32		Start(IFX_ScanlineComposer* pDest, const CFX_DIBSource* pBitmap,
+    int32_t		Start(IFX_ScanlineComposer* pDest, const CFX_DIBSource* pBitmap,
                           int dest_width, int dest_height, const FX_RECT& bitmap_rect, FX_DWORD flags);
 
 
-    FX_INT32		Continue(IFX_Pause* pPause);
+    int32_t		Continue(IFX_Pause* pPause);
     IFX_ScanlineComposer*	m_pDest;
     const CFX_DIBSource*	m_pSource;
     CStretchEngine*		m_pStretchEngine;
@@ -538,15 +538,15 @@ public:
     FX_LPBYTE		m_pScanline;
     FX_LPBYTE       m_pMaskScanline;
     FXDIB_Format	m_DestFormat;
-    FX_INT32		m_Status;
+    int32_t		m_Status;
 
-    FX_INT32		StartQuickStretch();
+    int32_t		StartQuickStretch();
 
-    FX_INT32		StartStretch();
+    int32_t		StartStretch();
 
-    FX_INT32		ContinueQuickStretch(IFX_Pause* pPause);
+    int32_t		ContinueQuickStretch(IFX_Pause* pPause);
 
-    FX_INT32		ContinueStretch(IFX_Pause* pPause);
+    int32_t		ContinueStretch(IFX_Pause* pPause);
 };
 class CFX_ImageTransformer 
 {
@@ -556,10 +556,10 @@ public:
 
     ~CFX_ImageTransformer();
 
-    FX_INT32	Start(const CFX_DIBSource* pSrc, const CFX_AffineMatrix* pMatrix, int flags, const FX_RECT* pClip);
+    int32_t	Start(const CFX_DIBSource* pSrc, const CFX_AffineMatrix* pMatrix, int flags, const FX_RECT* pClip);
 
 
-    FX_INT32	Continue(IFX_Pause* pPause);
+    int32_t	Continue(IFX_Pause* pPause);
     CFX_AffineMatrix* m_pMatrix;
     FX_RECT		m_StretchClip;
     int			m_ResultLeft, m_ResultTop, m_ResultWidth, m_ResultHeight;
@@ -577,13 +577,13 @@ public:
 
     ~CFX_ImageRenderer();
 
-    FX_INT32			Start(CFX_DIBitmap* pDevice, const CFX_ClipRgn* pClipRgn,
+    int32_t			Start(CFX_DIBitmap* pDevice, const CFX_ClipRgn* pClipRgn,
                               const CFX_DIBSource* pSource, int bitmap_alpha,
                               FX_DWORD mask_color, const CFX_AffineMatrix* pMatrix, FX_DWORD dib_flags,
                               FX_BOOL bRgbByteOrder = FALSE, int alpha_flag = 0, void* pIccTransform = NULL,
                               int blend_type = FXDIB_BLEND_NORMAL);
 
-    FX_INT32			Continue(IFX_Pause* pPause);
+    int32_t			Continue(IFX_Pause* pPause);
 protected:
     CFX_DIBitmap*		m_pDevice;
     const CFX_ClipRgn*	m_pClipRgn;

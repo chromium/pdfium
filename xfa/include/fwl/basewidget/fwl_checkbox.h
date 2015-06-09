@@ -74,8 +74,8 @@ public:
     static IFWL_CheckBox* Create();
     FWL_ERR		Initialize(IFWL_Widget *pOuter = NULL);
     FWL_ERR		Initialize(const CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
-    FX_INT32	GetCheckState();
-    FWL_ERR		SetCheckState(FX_INT32 iCheck);
+    int32_t	GetCheckState();
+    FWL_ERR		SetCheckState(int32_t iCheck);
 protected:
     IFWL_CheckBox();
     virtual ~IFWL_CheckBox();
@@ -86,8 +86,8 @@ public:
     static IFWL_RadioButton* Create();
     FWL_ERR		Initialize(IFWL_Widget *pOuter = NULL);
     FWL_ERR		Initialize(const CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
-    FX_INT32	GetCheckState();
-    FWL_ERR		SetCheckState(FX_INT32 iCheck);
+    int32_t	GetCheckState();
+    FWL_ERR		SetCheckState(int32_t iCheck);
 protected:
     IFWL_RadioButton();
     virtual ~IFWL_RadioButton();

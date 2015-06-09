@@ -71,7 +71,7 @@ FX_DWORD CFWL_FormTP::SetThemeID(IFWL_Widget *pWidget, FX_DWORD dwThemeID, FX_BO
 FX_BOOL CFWL_FormTP::DrawBackground(CFWL_ThemeBackground *pParams)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
-    FX_INT32 iActive = 0;
+    int32_t iActive = 0;
     if (pParams->m_dwStates & FWL_PARTSTATE_FRM_Inactive) {
         iActive = 1;
     }
@@ -285,7 +285,7 @@ void CFWL_FormTP::CalCaption(IFWL_Widget *pWidget, CFX_RectF &rect)
 void CFWL_FormTP::CalIcon(IFWL_Widget *pWidget, CFX_RectF &rect)
 {
 }
-void CFWL_FormTP::DrawFormBorder(CFX_Graphics *pGraphics, const CFX_RectF *pRect, FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive)
+void CFWL_FormTP::DrawFormBorder(CFX_Graphics *pGraphics, const CFX_RectF *pRect, FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive)
 {
     CFX_RectF rt;
     rt.Set(pRect->left, pRect->top, 1, pRect->height);
@@ -332,7 +332,7 @@ void CFWL_FormTP::DrawFormBorder(CFX_Graphics *pGraphics, const CFX_RectF *pRect
     m_rtDisBBorder.Set(pRect->left, pRect->bottom() - 4, pRect->width, 4);
     m_rtDisCaption.Set(pRect->left, pRect->top, pRect->width, 29);
 }
-void CFWL_FormTP::DrawCaption(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive)
+void CFWL_FormTP::DrawCaption(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive)
 {
     CFX_RectF rt;
     FX_FLOAT  fBottom, fRight;
@@ -368,10 +368,10 @@ void CFWL_FormTP::DrawCaption(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  
         pGraphics->StretchImage(m_pDeactivebitmap, rect, pMatrix);
     }
 }
-void CFWL_FormTP::DrawNarrowCaption(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive)
+void CFWL_FormTP::DrawNarrowCaption(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive)
 {
 }
-void CFWL_FormTP::DrawCloseBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive)
+void CFWL_FormTP::DrawCloseBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive)
 {
     FX_FLOAT fRight = pRect->right();
     FX_FLOAT fBottom = pRect->bottom();
@@ -438,7 +438,7 @@ void CFWL_FormTP::DrawCloseBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect, 
     pGraphics->StrokePath(&path, pMatrix);
     pGraphics->RestoreGraphState();
 }
-void CFWL_FormTP::DrawMinMaxBoxCommon(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive)
+void CFWL_FormTP::DrawMinMaxBoxCommon(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive)
 {
     pGraphics->SaveGraphState();
     FX_FLOAT fRight = pRect->right();
@@ -489,14 +489,14 @@ void CFWL_FormTP::DrawMinMaxBoxCommon(CFX_Graphics *pGraphics, const CFX_RectF *
                      m_pThemeData->clrNormalBtBKEnd[iActive][eState - 1],
                      &path, FXFILL_WINDING, pMatrix);
 }
-void CFWL_FormTP::DrawMinimizeBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive)
+void CFWL_FormTP::DrawMinimizeBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive)
 {
     DrawMinMaxBoxCommon(pGraphics, pRect, eState, pMatrix);
     CFX_RectF rtMin;
     rtMin.Set(pRect->left + 5, pRect->top + 13, pRect->width - 14, pRect->height - 18);
     FillSoildRect(pGraphics, 0xFFFFFFFF, &rtMin, pMatrix);
 }
-void CFWL_FormTP::DrawMaximizeBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, FX_BOOL bMax, CFX_Matrix *pMatrix, FX_INT32 iActive)
+void CFWL_FormTP::DrawMaximizeBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, FX_BOOL bMax, CFX_Matrix *pMatrix, int32_t iActive)
 {
     DrawMinMaxBoxCommon(pGraphics, pRect, eState, pMatrix);
     FX_FLOAT fWidth = pRect->width;
@@ -534,7 +534,7 @@ void CFWL_FormTP::DrawMaximizeBox(CFX_Graphics *pGraphics, const CFX_RectF *pRec
         pGraphics->RestoreGraphState();
     }
 }
-void CFWL_FormTP::DrawIconImage(CFX_Graphics *pGraphics, CFX_DIBitmap *pDIBitmap,  const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive)
+void CFWL_FormTP::DrawIconImage(CFX_Graphics *pGraphics, CFX_DIBitmap *pDIBitmap,  const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive)
 {
     pGraphics->StretchImage(pDIBitmap, *pRect, pMatrix);
 }
@@ -739,8 +739,8 @@ void CFWL_FormTP::DeactiveForm()
 }
 void CFWL_FormTP::TransModeColor(FX_ARGB clrFore, FX_ARGB &clrBack)
 {
-    FX_INT32 iAlfaF, iRF, iGF, iBF;
-    FX_INT32 iAlfaB, iRB, iGB, iBB;
+    int32_t iAlfaF, iRF, iGF, iBF;
+    int32_t iAlfaB, iRB, iGB, iBB;
     ArgbDecode(clrFore, iAlfaF, iRF, iGF, iBF);
     ArgbDecode(clrBack, iAlfaB, iRB, iGB, iBB);
     clrBack = ArgbEncode(0xff,

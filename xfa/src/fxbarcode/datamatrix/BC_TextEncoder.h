@@ -12,7 +12,7 @@ class CBC_TextEncoder : public CBC_C40Encoder
 public:
     CBC_TextEncoder();
     virtual ~CBC_TextEncoder();
-    FX_INT32 getEncodingMode();
-    FX_INT32 encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e);
+    int32_t getEncodingMode();
+    int32_t encodeChar(FX_WCHAR c, CFX_WideString &sb, int32_t &e);
 };
 #endif

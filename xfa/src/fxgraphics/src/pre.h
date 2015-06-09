@@ -33,9 +33,9 @@ enum {
 };
 #define	FX_HATCHSTYLE_Total	53
 struct FX_HATCHDATA {
-    FX_INT32	width;
-    FX_INT32	height;
-    FX_BYTE		maskBits[64];
+    int32_t	width;
+    int32_t	height;
+    uint8_t		maskBits[64];
 };
 typedef FX_HATCHDATA const * FX_LPCHATCHDATA;
 static const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {

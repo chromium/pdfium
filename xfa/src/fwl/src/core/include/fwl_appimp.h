@@ -23,7 +23,7 @@ public:
     virtual IFWL_AdapterNative*	GetAdapterNative();
     virtual IFWL_WidgetMgr*		GetWidgetMgr();
     virtual FWL_ERR				SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
-    virtual FWL_ERR				Exit(FX_INT32 iExitCode = 0);
+    virtual FWL_ERR				Exit(int32_t iExitCode = 0);
     IFWL_ThemeProvider*			GetThemeProvider();
 protected:
     CFWL_WidgetMgr		*m_pWidgetMgr;

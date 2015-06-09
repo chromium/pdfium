@@ -27,8 +27,8 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device, const CFX_Ma
     CFX_PathData path;
     path.AppendRect(0, 0, (FX_FLOAT)m_Width, (FX_FLOAT)m_Height);
     device->DrawPath(&path, matrix, &stateData, m_backgroundColor, m_backgroundColor, FXFILL_ALTERNATE);
-    FX_INT32 leftPos = 0;
-    FX_INT32 topPos = 0;
+    int32_t leftPos = 0;
+    int32_t topPos = 0;
     if ( m_bFixedSize) {
         leftPos = (m_Width - m_output->GetWidth()) / 2;
         topPos = (m_Height - m_output->GetHeight()) / 2;
@@ -39,8 +39,8 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device, const CFX_Ma
         matriScale.Concat(*matrix);
         matri = matriScale;
     }
-    for (FX_INT32 x = 0; x < m_output->GetWidth(); x++) {
-        for (FX_INT32 y = 0; y < m_output->GetHeight(); y++) {
+    for (int32_t x = 0; x < m_output->GetWidth(); x++) {
+        for (int32_t y = 0; y < m_output->GetHeight(); y++) {
             CFX_PathData rect;
             rect.AppendRect((FX_FLOAT)leftPos + x, (FX_FLOAT)topPos + y, (FX_FLOAT)(leftPos + x + 1), (FX_FLOAT)(topPos + y + 1));
             CFX_GraphStateData stateData;
@@ -50,7 +50,7 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device, const CFX_Ma
         }
     }
 }
-void CBC_TwoDimWriter::RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, FX_INT32& e)
+void CBC_TwoDimWriter::RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, int32_t& e)
 {
     if (m_bFixedSize) {
         pOutBitmap = CreateDIBitmap(m_Width, m_Height);
@@ -62,14 +62,14 @@ void CBC_TwoDimWriter::RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, FX_INT32& e
         return;
     }
     pOutBitmap->Clear(m_backgroundColor);
-    FX_INT32 leftPos = 0;
-    FX_INT32 topPos = 0;
+    int32_t leftPos = 0;
+    int32_t topPos = 0;
     if ( m_bFixedSize) {
         leftPos = (m_Width - m_output->GetWidth()) / 2;
         topPos = (m_Height - m_output->GetHeight()) / 2;
     }
-    for (FX_INT32 x = 0; x < m_output->GetWidth(); x++) {
-        for (FX_INT32 y = 0; y < m_output->GetHeight(); y++) {
+    for (int32_t x = 0; x < m_output->GetWidth(); x++) {
+        for (int32_t y = 0; y < m_output->GetHeight(); y++) {
             if (m_output->Get(x, y)) {
                 pOutBitmap->SetPixel(leftPos + x, topPos + y, m_barColor);
             }
@@ -83,22 +83,22 @@ void CBC_TwoDimWriter::RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, FX_INT32& e
         pOutBitmap = pStretchBitmap;
     }
 }
-void CBC_TwoDimWriter::RenderResult(FX_BYTE *code, FX_INT32 codeWidth, FX_INT32 codeHeight, FX_INT32 &e)
+void CBC_TwoDimWriter::RenderResult(uint8_t *code, int32_t codeWidth, int32_t codeHeight, int32_t &e)
 {
-    FX_INT32 inputWidth = codeWidth;
-    FX_INT32 inputHeight = codeHeight;
-    FX_INT32 tempWidth = inputWidth + (1 << 1);
-    FX_INT32 tempHeight = inputHeight + (1 << 1);
+    int32_t inputWidth = codeWidth;
+    int32_t inputHeight = codeHeight;
+    int32_t tempWidth = inputWidth + (1 << 1);
+    int32_t tempHeight = inputHeight + (1 << 1);
     FX_FLOAT moduleHSize = (FX_FLOAT)FX_MIN(m_ModuleWidth, m_ModuleHeight);
     if (moduleHSize > 8) {
         moduleHSize = 8;
     } else if (moduleHSize < 1) {
         moduleHSize = 1;
     }
-    FX_INT32 outputWidth = (FX_INT32)FX_MAX(tempWidth * moduleHSize, tempWidth);
-    FX_INT32 outputHeight = (FX_INT32)FX_MAX(tempHeight * moduleHSize, tempHeight);
-    FX_INT32 multiX = 1;
-    FX_INT32 multiY = 1;
+    int32_t outputWidth = (int32_t)FX_MAX(tempWidth * moduleHSize, tempWidth);
+    int32_t outputHeight = (int32_t)FX_MAX(tempHeight * moduleHSize, tempHeight);
+    int32_t multiX = 1;
+    int32_t multiY = 1;
     if (m_bFixedSize) {
         if (m_Width < outputWidth || m_Height < outputHeight) {
             e = BCExceptionBitmapSizeError;
@@ -106,18 +106,18 @@ void CBC_TwoDimWriter::RenderResult(FX_BYTE *code, FX_INT32 codeWidth, FX_INT32 
         }
     } else {
         if (m_Width > outputWidth || m_Height > outputHeight) {
-            outputWidth = (FX_INT32)(outputWidth * ceil ( (FX_FLOAT)m_Width / (FX_FLOAT)outputWidth));
-            outputHeight = (FX_INT32)(outputHeight * ceil ( (FX_FLOAT)m_Height / (FX_FLOAT)outputHeight));
+            outputWidth = (int32_t)(outputWidth * ceil ( (FX_FLOAT)m_Width / (FX_FLOAT)outputWidth));
+            outputHeight = (int32_t)(outputHeight * ceil ( (FX_FLOAT)m_Height / (FX_FLOAT)outputHeight));
         }
     }
-    multiX = (FX_INT32)ceil((FX_FLOAT)outputWidth / (FX_FLOAT)tempWidth);
-    multiY = (FX_INT32)ceil((FX_FLOAT)outputHeight / (FX_FLOAT) tempHeight);
+    multiX = (int32_t)ceil((FX_FLOAT)outputWidth / (FX_FLOAT)tempWidth);
+    multiY = (int32_t)ceil((FX_FLOAT)outputHeight / (FX_FLOAT) tempHeight);
     if (m_bFixedSize) {
         multiX = FX_MIN(multiX, multiY);
         multiY = multiX;
     }
-    FX_INT32 leftPadding = (outputWidth - (inputWidth * multiX)) / 2;
-    FX_INT32 topPadding = (outputHeight - (inputHeight * multiY)) / 2;
+    int32_t leftPadding = (outputWidth - (inputWidth * multiX)) / 2;
+    int32_t topPadding = (outputHeight - (inputHeight * multiY)) / 2;
     if (leftPadding < 0) {
         leftPadding = 0;
     }
@@ -126,8 +126,8 @@ void CBC_TwoDimWriter::RenderResult(FX_BYTE *code, FX_INT32 codeWidth, FX_INT32 
     }
     m_output = FX_NEW CBC_CommonBitMatrix;
     m_output->Init(outputWidth, outputHeight);
-    for (FX_INT32 inputY = 0, outputY = topPadding; (inputY < inputHeight) && (outputY < outputHeight - multiY); inputY++, outputY += multiY) {
-        for (FX_INT32 inputX = 0, outputX = leftPadding; (inputX < inputWidth) && (outputX < outputWidth - multiX); inputX++, outputX += multiX) {
+    for (int32_t inputY = 0, outputY = topPadding; (inputY < inputHeight) && (outputY < outputHeight - multiY); inputY++, outputY += multiY) {
+        for (int32_t inputX = 0, outputX = leftPadding; (inputX < inputWidth) && (outputX < outputWidth - multiX); inputX++, outputX += multiX) {
             if (code[inputX + inputY * inputWidth] == 1) {
                 m_output->SetRegion(outputX, outputY, multiX, multiY, e);
                 BC_EXCEPTION_CHECK_ReturnVoid(e);

@@ -16,7 +16,7 @@ public:
     virtual ~CFWL_App();
     FWL_ERR		Initialize();
     CFWL_Theme*		GetTheme();
-    FWL_ERR		Exit(FX_INT32 iExitCode = 0);
+    FWL_ERR		Exit(int32_t iExitCode = 0);
     IFWL_App*	GetApp();
 protected:
     IFWL_App	*m_pAppImp;

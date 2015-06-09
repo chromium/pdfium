@@ -14,13 +14,13 @@ class CBC_PDF417Reader : public CBC_Reader
 public:
     CBC_PDF417Reader();
     virtual ~CBC_PDF417Reader();
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 &e);
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_BOOL multiple, FX_INT32 hints, FX_INT32 &e);
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e);
+    CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t &e);
+    CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_BOOL multiple, int32_t hints, int32_t &e);
+    CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e);
 private:
-    static FX_INT32 getMaxWidth(CBC_ResultPoint* p1, CBC_ResultPoint* p2);
-    static FX_INT32 getMinWidth(CBC_ResultPoint* p1, CBC_ResultPoint* p2);
-    static FX_INT32 getMaxCodewordWidth(CFX_PtrArray& p);
-    static FX_INT32 getMinCodewordWidth(CFX_PtrArray& p);
+    static int32_t getMaxWidth(CBC_ResultPoint* p1, CBC_ResultPoint* p2);
+    static int32_t getMinWidth(CBC_ResultPoint* p1, CBC_ResultPoint* p2);
+    static int32_t getMaxCodewordWidth(CFX_PtrArray& p);
+    static int32_t getMinCodewordWidth(CFX_PtrArray& p);
 };
 #endif

@@ -9,26 +9,26 @@
 class CBC_DefaultPlacement
 {
 public:
-    CBC_DefaultPlacement(CFX_WideString codewords, FX_INT32 numcols, FX_INT32 numrows);
+    CBC_DefaultPlacement(CFX_WideString codewords, int32_t numcols, int32_t numrows);
     virtual ~CBC_DefaultPlacement();
 
-    FX_INT32 getNumrows();
-    FX_INT32 getNumcols();
+    int32_t getNumrows();
+    int32_t getNumcols();
     CFX_ByteArray& getBits();
-    FX_BOOL getBit(FX_INT32 col, FX_INT32 row);
-    void setBit(FX_INT32 col, FX_INT32 row, FX_BOOL bit);
-    FX_BOOL hasBit(FX_INT32 col, FX_INT32 row);
+    FX_BOOL getBit(int32_t col, int32_t row);
+    void setBit(int32_t col, int32_t row, FX_BOOL bit);
+    FX_BOOL hasBit(int32_t col, int32_t row);
     void place();
 private:
     CFX_WideString m_codewords;
-    FX_INT32 m_numrows;
-    FX_INT32 m_numcols;
+    int32_t m_numrows;
+    int32_t m_numcols;
     CFX_ByteArray m_bits;
-    void module(FX_INT32 row, FX_INT32 col, FX_INT32 pos, FX_INT32 bit);
-    void utah(FX_INT32 row, FX_INT32 col, FX_INT32 pos);
-    void corner1(FX_INT32 pos);
-    void corner2(FX_INT32 pos);
-    void corner3(FX_INT32 pos);
-    void corner4(FX_INT32 pos);
+    void module(int32_t row, int32_t col, int32_t pos, int32_t bit);
+    void utah(int32_t row, int32_t col, int32_t pos);
+    void corner1(int32_t pos);
+    void corner2(int32_t pos);
+    void corner3(int32_t pos);
+    void corner4(int32_t pos);
 };
 #endif

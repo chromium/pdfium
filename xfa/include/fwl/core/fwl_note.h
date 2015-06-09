@@ -174,7 +174,7 @@ protected:
     {
         return TRUE;
     }
-    virtual FX_INT32		Finalize()
+    virtual int32_t		Finalize()
     {
         return 0;
     }
@@ -235,8 +235,8 @@ END_FWL_MESSAGE_DEF
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgCursor, FWL_MSGHASH_Cursor)
 END_FWL_MESSAGE_DEF
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgSize, FWL_MSGHASH_Size)
-FX_INT32	m_iWidth;
-FX_INT32	m_iHeight;
+int32_t	m_iWidth;
+int32_t	m_iHeight;
 END_FWL_MESSAGE_DEF
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgWindowMove, FWL_MSGHASH_WindowMove)
 FX_FLOAT	m_fx;
@@ -321,7 +321,7 @@ FX_FLOAT   m_fPosY;
 IFWL_Widget *m_pOwner;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtMenuCommand, FWL_EVTHASH_MenuCommand)
-FX_INT32 m_iCommand;
+int32_t m_iCommand;
 FX_LPVOID m_pData;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtSizeChanged, FWL_EVTHASH_SizeChanged)
@@ -351,8 +351,8 @@ public:
     virtual FWL_ERR		RegisterEventTarget(IFWL_Widget *pListener, IFWL_Widget *pEventSource = NULL, FX_DWORD dwFilter = FWL_EVENT_ALL_MASK) = 0;
     virtual FWL_ERR		UnregisterEventTarget(IFWL_Widget *pListener) = 0;
     virtual void		ClearEventTargets(FX_BOOL bRemoveAll) = 0;
-    virtual FX_INT32	GetQueueMaxSize() const = 0;
-    virtual FWL_ERR		SetQueueMaxSize(const FX_INT32 size) = 0;
+    virtual int32_t	GetQueueMaxSize() const = 0;
+    virtual FWL_ERR		SetQueueMaxSize(const int32_t size) = 0;
     virtual IFWL_NoteThread* GetOwnerThread() const = 0;
     virtual FWL_ERR		PushNoteLoop(IFWL_NoteLoop *pNoteLoop) = 0;
     virtual IFWL_NoteLoop*	PopNoteLoop() = 0;
@@ -364,7 +364,7 @@ class IFWL_NoteLoop
 {
 public:
     virtual FX_BOOL PreProcessMessage(CFWL_Message *pMessage) = 0;
-    virtual FWL_ERR	Idle(FX_INT32 count) = 0;
+    virtual FWL_ERR	Idle(int32_t count) = 0;
 };
 class IFWL_ToolTipTarget
 {
@@ -382,8 +382,8 @@ public:
 };
 FWL_ERR FWL_AddToolTipTarget(IFWL_ToolTipTarget *pTarget);
 FWL_ERR FWL_RemoveToolTipTarget(IFWL_ToolTipTarget *pTarget);
-FWL_ERR	FWL_SetToolTipInitialDelay(FX_INT32 iDelayTime);
-FWL_ERR	FWL_SetToolTipAutoPopDelay(FX_INT32 iDelayTime);
+FWL_ERR	FWL_SetToolTipInitialDelay(int32_t iDelayTime);
+FWL_ERR	FWL_SetToolTipAutoPopDelay(int32_t iDelayTime);
 typedef FX_BOOL (*FWLMessageHookCallback)(CFWL_Message *msg, FX_LPVOID info);
 FWL_ERR FWL_SetHook(IFWL_NoteDriver *driver, FWLMessageHookCallback callback, FX_LPVOID info);
 #endif

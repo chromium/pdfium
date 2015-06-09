@@ -18,9 +18,9 @@ public:
         delete this;
     }
 
-    virtual FX_INT32			StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
-    virtual FX_INT32			DoParse(IFX_Pause *pPause = NULL);
-    virtual FX_INT32			ParseXMLData(const CFX_WideString &wsXML, IFDE_XMLNode* &pXMLNode, IFX_Pause *pPause = NULL);
+    virtual int32_t			StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
+    virtual int32_t			DoParse(IFX_Pause *pPause = NULL);
+    virtual int32_t			ParseXMLData(const CFX_WideString &wsXML, IFDE_XMLNode* &pXMLNode, IFX_Pause *pPause = NULL);
     virtual void				ConstructXFANode(CXFA_Node* pXFANode, IFDE_XMLNode* pXMLNode);
     virtual IXFA_ObjFactory*	GetFactory() const
     {
@@ -72,9 +72,9 @@ public:
     {
         delete this;
     }
-    virtual FX_INT32			StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
-    virtual FX_INT32			DoParse(IFX_Pause *pPause = NULL);
-    virtual FX_INT32			ParseXMLData(const CFX_WideString &wsXML, IFDE_XMLNode* &pXMLNode, IFX_Pause *pPause = NULL);
+    virtual int32_t			StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
+    virtual int32_t			DoParse(IFX_Pause *pPause = NULL);
+    virtual int32_t			ParseXMLData(const CFX_WideString &wsXML, IFDE_XMLNode* &pXMLNode, IFX_Pause *pPause = NULL);
     virtual void				ConstructXFANode(CXFA_Node* pXFANode, IFDE_XMLNode* pXMLNode);
     virtual IXFA_ObjFactory*	GetFactory() const
     {
@@ -113,7 +113,7 @@ public:
     {
         delete this;
     }
-    virtual FX_INT32		DoParser(IFX_Pause *pPause);
+    virtual int32_t		DoParser(IFX_Pause *pPause);
 protected:
     IFDE_XMLNode			*m_pRoot;
     IFX_Stream				*m_pStream;

@@ -23,8 +23,8 @@
 #include "../barcode.h"
 #include "BC_QRCoderErrorCorrectionLevel.h"
 #include "BC_QRCoderFormatInformation.h"
-const FX_INT32 CBC_QRCoderFormatInformation::FORMAT_INFO_MASK_QR = 0X5412;
-const FX_INT32 CBC_QRCoderFormatInformation::FORMAT_INFO_DECODE_LOOKUP[32][2] = {
+const int32_t CBC_QRCoderFormatInformation::FORMAT_INFO_MASK_QR = 0X5412;
+const int32_t CBC_QRCoderFormatInformation::FORMAT_INFO_DECODE_LOOKUP[32][2] = {
     {0x5412, 0x00},
     {0x5125, 0x01},
     {0x5E7C, 0x02},
@@ -58,17 +58,17 @@ const FX_INT32 CBC_QRCoderFormatInformation::FORMAT_INFO_DECODE_LOOKUP[32][2] = 
     {0x2EDA, 0x1E},
     {0x2BED, 0x1F},
 };
-const FX_INT32 CBC_QRCoderFormatInformation::BITS_SET_IN_HALF_BYTE[] =
+const int32_t CBC_QRCoderFormatInformation::BITS_SET_IN_HALF_BYTE[] =
 {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4};
-CBC_QRCoderFormatInformation::CBC_QRCoderFormatInformation(FX_INT32 formatInfo)
+CBC_QRCoderFormatInformation::CBC_QRCoderFormatInformation(int32_t formatInfo)
 {
     m_errorCorrectLevl = CBC_QRCoderErrorCorrectionLevel::ForBits((formatInfo >> 3) & 0x03);
-    m_dataMask = (FX_BYTE) (formatInfo & 0x07);
+    m_dataMask = (uint8_t) (formatInfo & 0x07);
 }
 CBC_QRCoderFormatInformation::~CBC_QRCoderFormatInformation()
 {
 }
-FX_INT32 CBC_QRCoderFormatInformation::NumBitsDiffering(FX_INT32 a, FX_INT32 b)
+int32_t CBC_QRCoderFormatInformation::NumBitsDiffering(int32_t a, int32_t b)
 {
     a ^= b;
     return BITS_SET_IN_HALF_BYTE[a & 0x0F] +
@@ -80,7 +80,7 @@ FX_INT32 CBC_QRCoderFormatInformation::NumBitsDiffering(FX_INT32 a, FX_INT32 b)
            BITS_SET_IN_HALF_BYTE[(a >> 24) & 0x0F] +
            BITS_SET_IN_HALF_BYTE[(a >> 28) & 0x0F];
 }
-FX_BYTE CBC_QRCoderFormatInformation::GetDataMask()
+uint8_t CBC_QRCoderFormatInformation::GetDataMask()
 {
     return m_dataMask;
 }
@@ -88,7 +88,7 @@ CBC_QRCoderErrorCorrectionLevel *CBC_QRCoderFormatInformation::GetErrorCorrectio
 {
     return m_errorCorrectLevl;
 }
-CBC_QRCoderFormatInformation* CBC_QRCoderFormatInformation::DecodeFormatInformation(FX_INT32 maskedFormatInfo)
+CBC_QRCoderFormatInformation* CBC_QRCoderFormatInformation::DecodeFormatInformation(int32_t maskedFormatInfo)
 {
     CBC_QRCoderFormatInformation* formatInfo = DoDecodeFormatInformation(maskedFormatInfo);
     if(formatInfo != NULL) {
@@ -96,17 +96,17 @@ CBC_QRCoderFormatInformation* CBC_QRCoderFormatInformation::DecodeFormatInformat
     }
     return DoDecodeFormatInformation(maskedFormatInfo ^ FORMAT_INFO_MASK_QR);
 }
-CBC_QRCoderFormatInformation* CBC_QRCoderFormatInformation::DoDecodeFormatInformation(FX_INT32 maskedFormatInfo)
+CBC_QRCoderFormatInformation* CBC_QRCoderFormatInformation::DoDecodeFormatInformation(int32_t maskedFormatInfo)
 {
-    FX_INT32 bestDifference = (FX_INT32)FXSYS_nan();
-    FX_INT32 bestFormatInfo = 0;
-    for(FX_INT32 i = 0; i < 32; i++) {
-        FX_INT32 const* decodeInfo = &FORMAT_INFO_DECODE_LOOKUP[i][0];
-        FX_INT32 targetInfo = decodeInfo[0];
+    int32_t bestDifference = (int32_t)FXSYS_nan();
+    int32_t bestFormatInfo = 0;
+    for(int32_t i = 0; i < 32; i++) {
+        int32_t const* decodeInfo = &FORMAT_INFO_DECODE_LOOKUP[i][0];
+        int32_t targetInfo = decodeInfo[0];
         if(targetInfo == maskedFormatInfo) {
             return FX_NEW CBC_QRCoderFormatInformation(decodeInfo[1]);
         }
-        FX_INT32 bitsDifference = NumBitsDiffering(maskedFormatInfo, targetInfo);
+        int32_t bitsDifference = NumBitsDiffering(maskedFormatInfo, targetInfo);
         if(bitsDifference < bestDifference) {
             bestFormatInfo = decodeInfo[1];
             bestDifference = bitsDifference;

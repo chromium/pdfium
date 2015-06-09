@@ -16,13 +16,13 @@ class CFWL_DateTimePicker : public CFWL_Widget
 public:
     static CFWL_DateTimePicker* Create();
     FWL_ERR	Initialize(const CFWL_WidgetProperties *pProperties = NULL);
-    FWL_ERR SetToday(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    FWL_ERR SetToday(int32_t iYear, int32_t iMonth, int32_t iDay);
     FWL_ERR	GetEditText(CFX_WideString &wsText);
     FWL_ERR	SetEditText(FX_WSTR wsText);
-    FX_INT32 CountSelRanges();
-    FX_INT32 GetSelRange(FX_INT32 nIndex, FX_INT32 &nStart);
-    FWL_ERR GetCurSel(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay);
-    FWL_ERR	SetCurSel(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    int32_t CountSelRanges();
+    int32_t GetSelRange(int32_t nIndex, int32_t &nStart);
+    FWL_ERR GetCurSel(int32_t &iYear, int32_t &iMonth, int32_t &iDay);
+    FWL_ERR	SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
     FX_BOOL		CanUndo();
     FX_BOOL		CanRedo();
     FX_BOOL		Undo();
@@ -37,7 +37,7 @@ public:
     FX_BOOL		Delete();
     FX_BOOL		DeSelect();
     FWL_ERR		GetBBox(CFX_RectF &rect);
-    FWL_ERR		SetEditLimit(FX_INT32 nLimit);
+    FWL_ERR		SetEditLimit(int32_t nLimit);
     FWL_ERR		ModifyEditStylesEx(FX_DWORD dwStylesExAdded, FX_DWORD dwStylesExRemoved);
 protected:
     CFWL_DateTimePicker();
@@ -47,10 +47,10 @@ protected:
     public:
         CFWL_DateTimePickerDP();
         virtual FWL_ERR GetCaption(IFWL_Widget *pWidget, CFX_WideString &wsCaption);
-        virtual FWL_ERR GetToday(IFWL_Widget *pWidget, FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay);
-        FX_INT32 m_iYear;
-        FX_INT32 m_iMonth;
-        FX_INT32 m_iDay;
+        virtual FWL_ERR GetToday(IFWL_Widget *pWidget, int32_t &iYear, int32_t &iMonth, int32_t &iDay);
+        int32_t m_iYear;
+        int32_t m_iMonth;
+        int32_t m_iDay;
         CFX_WideString	m_wsData;
     };
     CFWL_DateTimePickerDP m_DateTimePickerDP;

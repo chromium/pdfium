@@ -11,9 +11,9 @@ class CBC_BarcodeValue
 public:
     CBC_BarcodeValue();
     virtual ~CBC_BarcodeValue();
-    void setValue(FX_INT32 value);
+    void setValue(int32_t value);
     CFX_Int32Array* getValue();
-    FX_INT32 getConfidence(FX_INT32 value);
+    int32_t getConfidence(int32_t value);
 private:
     CFX_Int32Array m_keys;
     CFX_Int32Array m_values;

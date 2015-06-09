@@ -26,7 +26,7 @@
 CBC_Dimension::CBC_Dimension()
 {
 }
-CBC_Dimension::CBC_Dimension(FX_INT32 width, FX_INT32 height, FX_INT32 &e)
+CBC_Dimension::CBC_Dimension(int32_t width, int32_t height, int32_t &e)
 {
     if (width < 0 || height < 0) {
         e = BCExceptionHeightAndWidthMustBeAtLeast1;
@@ -37,15 +37,15 @@ CBC_Dimension::CBC_Dimension(FX_INT32 width, FX_INT32 height, FX_INT32 &e)
 CBC_Dimension::~CBC_Dimension()
 {
 }
-FX_INT32 CBC_Dimension::getWidth()
+int32_t CBC_Dimension::getWidth()
 {
     return m_width;
 }
-FX_INT32 CBC_Dimension::getHeight()
+int32_t CBC_Dimension::getHeight()
 {
     return m_height;
 }
-FX_INT32 CBC_Dimension::hashCode()
+int32_t CBC_Dimension::hashCode()
 {
     return m_width * 32713 + m_height;
 }

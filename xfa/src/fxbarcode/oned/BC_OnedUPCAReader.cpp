@@ -42,7 +42,7 @@ CBC_OnedUPCAReader::~CBC_OnedUPCAReader()
     }
     m_ean13Reader = NULL;
 }
-CFX_ByteString CBC_OnedUPCAReader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_OnedUPCAReader::DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, int32_t hints, int32_t &e)
 {
     CFX_ByteString bytestring = m_ean13Reader->DecodeRow(rowNumber, row, hints, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
@@ -50,7 +50,7 @@ CFX_ByteString CBC_OnedUPCAReader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitAr
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     return temp;
 }
-CFX_ByteString CBC_OnedUPCAReader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, CFX_Int32Array *startGuardRange, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_OnedUPCAReader::DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, CFX_Int32Array *startGuardRange, int32_t hints, int32_t &e)
 {
     CFX_ByteString bytestring = m_ean13Reader->DecodeRow(rowNumber, row, startGuardRange, hints, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
@@ -58,7 +58,7 @@ CFX_ByteString CBC_OnedUPCAReader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitAr
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     return temp;
 }
-CFX_ByteString CBC_OnedUPCAReader::Decode(CBC_BinaryBitmap *image, FX_INT32 &e)
+CFX_ByteString CBC_OnedUPCAReader::Decode(CBC_BinaryBitmap *image, int32_t &e)
 {
     CFX_ByteString bytestring = m_ean13Reader->Decode(image, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
@@ -66,7 +66,7 @@ CFX_ByteString CBC_OnedUPCAReader::Decode(CBC_BinaryBitmap *image, FX_INT32 &e)
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     return temp;
 }
-CFX_ByteString CBC_OnedUPCAReader::Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_OnedUPCAReader::Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e)
 {
     CFX_ByteString bytestring = m_ean13Reader->Decode(image, hints, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
@@ -74,13 +74,13 @@ CFX_ByteString CBC_OnedUPCAReader::Decode(CBC_BinaryBitmap *image, FX_INT32 hint
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     return temp;
 }
-FX_INT32 CBC_OnedUPCAReader::DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultString, FX_INT32 &e)
+int32_t CBC_OnedUPCAReader::DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultString, int32_t &e)
 {
-    FX_INT32 temp = m_ean13Reader->DecodeMiddle(row, startRange, resultString, e);
+    int32_t temp = m_ean13Reader->DecodeMiddle(row, startRange, resultString, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, 0);
     return temp;
 }
-CFX_ByteString CBC_OnedUPCAReader::MaybeReturnResult(CFX_ByteString &result, FX_INT32 &e)
+CFX_ByteString CBC_OnedUPCAReader::MaybeReturnResult(CFX_ByteString &result, int32_t &e)
 {
     if(result[0] == '0') {
         result.Delete(0);

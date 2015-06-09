@@ -47,11 +47,11 @@ CFDE_GdiDevice::~CFDE_GdiDevice()
         FDE_Free(m_pGlyphBuf);
     }
 }
-FX_INT32 CFDE_GdiDevice::GetWidth() const
+int32_t CFDE_GdiDevice::GetWidth() const
 {
     return m_pBitmap->GetWidth();
 }
-FX_INT32 CFDE_GdiDevice::GetHeight() const
+int32_t CFDE_GdiDevice::GetHeight() const
 {
     return m_pBitmap->GetHeight();
 }
@@ -144,7 +144,7 @@ FX_BOOL CFDE_GdiDevice::DrawImage(CFX_DIBSource *pDib, const CFX_RectF *pSrcRect
     CFDE_GdiImage img(&bmp);
     return DrawImage(&img, pSrcRect, dstRect, pImgMatrix, pDevMatrix);
 }
-FX_BOOL CFDE_GdiDevice::DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, FX_INT32 iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix)
+FX_BOOL CFDE_GdiDevice::DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, int32_t iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix)
 {
     FXSYS_assert(pBrush != NULL && pFont != NULL && pCharPos != NULL);
     FX_ARGB argb = 0xFF000000;

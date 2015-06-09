@@ -124,7 +124,7 @@ FWL_ERR CFWL_ToolTipImp::GetWidgetRect(CFX_RectF &rect, FX_BOOL bAutoSize )
         if (pData) {
             pData->GetCaption(m_pInterface, wsCaption);
         }
-        FX_INT32 iLen = wsCaption.GetLength();
+        int32_t iLen = wsCaption.GetLength();
         if (iLen > 0) {
             CFX_SizeF sz = CalcTextSize(wsCaption, m_pProperties->m_pThemeProvider);
             rect.Set(0, 0, sz.x, sz.y);
@@ -240,7 +240,7 @@ FWL_ERR CFWL_ToolTipImp::SetAnchor(const CFX_RectF &rtAnchor)
 FWL_ERR CFWL_ToolTipImp::Show()
 {
     IFWL_ToolTipDP *pData = (IFWL_ToolTipDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 nInitDelay = pData->GetInitialDelay(m_pInterface);
+    int32_t nInitDelay = pData->GetInitialDelay(m_pInterface);
     if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible)) {
         m_hTimerShow = FWL_StartTimer( &m_TimerShow, nInitDelay, FALSE);
     }
@@ -263,7 +263,7 @@ FWL_ERR CFWL_ToolTipImp::SetStates(FX_DWORD dwStates, FX_BOOL bSet )
 {
     if ( (dwStates & FWL_WGTSTATE_Invisible) && !bSet) {
         IFWL_ToolTipDP *pData = (IFWL_ToolTipDP*)m_pProperties->m_pDataProvider;
-        FX_INT32 nAutoPopDelay = pData->GetAutoPopDelay(m_pInterface);
+        int32_t nAutoPopDelay = pData->GetAutoPopDelay(m_pInterface);
         m_hTimerHide = FWL_StartTimer( &m_TimerHide, nAutoPopDelay, FALSE);
     }
     return CFWL_WidgetImp::SetStates(dwStates, bSet);
@@ -301,7 +301,7 @@ CFWL_ToolTipImp::CFWL_ToolTipTimer::CFWL_ToolTipTimer(CFWL_ToolTipImp * pToolTip
     : m_pToolTip(pToolTip)
 {
 }
-FX_INT32 CFWL_ToolTipImp::CFWL_ToolTipTimer::Run(FWL_HTIMER hTimer)
+int32_t CFWL_ToolTipImp::CFWL_ToolTipTimer::Run(FWL_HTIMER hTimer)
 {
     if (m_pToolTip->m_hTimerShow == hTimer && m_pToolTip->m_hTimerShow) {
         if (m_pToolTip->GetStates() & FWL_WGTSTATE_Invisible) {
@@ -324,7 +324,7 @@ CFWL_ToolTipImpDelegate::CFWL_ToolTipImpDelegate(CFWL_ToolTipImp *pOwner)
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_ToolTipImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_ToolTipImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     return	CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
 }

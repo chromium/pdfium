@@ -15,8 +15,8 @@ public:
     {
         delete this;
     }
-    virtual FX_INT32	StartRender(IXFA_PageView* pPageView, CFX_Graphics* pGS, const CFX_Matrix& matrix, const CXFA_RenderOptions& options);
-    virtual FX_INT32	DoRender(IFX_Pause* pPause = NULL);
+    virtual int32_t	StartRender(IXFA_PageView* pPageView, CFX_Graphics* pGS, const CFX_Matrix& matrix, const CXFA_RenderOptions& options);
+    virtual int32_t	DoRender(IFX_Pause* pPause = NULL);
     virtual	void		StopRender();
 protected:
     IXFA_WidgetIterator* m_pWidgetIterator;

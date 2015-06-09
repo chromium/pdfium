@@ -18,7 +18,7 @@ public:
     virtual FX_DWORD		GetStatus(IXFA_Widget* hWidget);
     virtual FX_BOOL			GetBBox(IXFA_Widget* hWidget, CFX_RectF &rtBox, FX_DWORD dwStatus, FX_BOOL bDrawFocus = FALSE);
     virtual CXFA_WidgetAcc*	GetDataAcc(IXFA_Widget* hWidget);
-    virtual void			GetName(IXFA_Widget* hWidget, CFX_WideString &wsName, FX_INT32 iNameType = 0);
+    virtual void			GetName(IXFA_Widget* hWidget, CFX_WideString &wsName, int32_t iNameType = 0);
     virtual	FX_BOOL			GetToolTip(IXFA_Widget* hWidget, CFX_WideString &wsToolTip);
     virtual	void			SetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback);
     virtual	FX_LPVOID		GetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id);
@@ -28,7 +28,7 @@ public:
     virtual FX_BOOL		OnLButtonUp(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnLButtonDblClk(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnMouseMove(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-    virtual FX_BOOL		OnMouseWheel(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_SHORT zDelta, FX_FLOAT fx, FX_FLOAT fy);
+    virtual FX_BOOL		OnMouseWheel(IXFA_Widget* hWidget, FX_DWORD dwFlags, int16_t zDelta, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnRButtonDown(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnRButtonUp(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnRButtonDblClk(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
@@ -40,7 +40,7 @@ public:
     virtual FX_BOOL		OnSetCursor(IXFA_Widget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
     virtual void		RenderWidget(IXFA_Widget* hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_BOOL bHighlight = FALSE);
     virtual FX_BOOL		HasEvent(CXFA_WidgetAcc* pWidgetAcc, XFA_EVENTTYPE eEventType);
-    virtual FX_INT32	ProcessEvent(CXFA_WidgetAcc* pWidgetAcc, CXFA_EventParam* pParam);
+    virtual int32_t	ProcessEvent(CXFA_WidgetAcc* pWidgetAcc, CXFA_EventParam* pParam);
 protected:
     CXFA_Node*		CreateWidgetFormItem(XFA_WIDGETTYPE eType, CXFA_Node* pParent, CXFA_Node* pBefore) const;
 

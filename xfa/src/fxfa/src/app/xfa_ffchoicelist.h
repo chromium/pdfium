@@ -20,10 +20,10 @@ protected:
     FX_DWORD			GetAlignment();
 public:
     void		OnSelectChanged(IFWL_Widget *pWidget, const CFX_Int32Array &arrSels);
-    void			SetItemState(FX_INT32 nIndex, FX_BOOL bSelected);
-    void			InsertItem(FX_WSTR wsLabel, FX_INT32 nIndex = -1);
-    void			DeleteItem(FX_INT32 nIndex);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    void			SetItemState(int32_t nIndex, FX_BOOL bSelected);
+    void			InsertItem(FX_WSTR wsLabel, int32_t nIndex = -1);
+    void			DeleteItem(int32_t nIndex);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:
@@ -70,10 +70,10 @@ public:
     void	OnPreOpen(IFWL_Widget *pWidget);
     void	OnPostOpen(IFWL_Widget *pWidget);
     void	OnAddDoRecord(IFWL_Widget *pWidget);
-    void			SetItemState(FX_INT32 nIndex, FX_BOOL bSelected);
-    void			InsertItem(FX_WSTR wsLabel, FX_INT32 nIndex = -1);
-    void			DeleteItem(FX_INT32 nIndex);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    void			SetItemState(int32_t nIndex, FX_BOOL bSelected);
+    void			InsertItem(FX_WSTR wsLabel, int32_t nIndex = -1);
+    void			DeleteItem(int32_t nIndex);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:

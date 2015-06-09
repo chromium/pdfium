@@ -30,7 +30,7 @@ CBC_QRDetectorResult::CBC_QRDetectorResult(CBC_CommonBitMatrix *bits, CFX_PtrArr
 }
 CBC_QRDetectorResult::~CBC_QRDetectorResult()
 {
-    for(FX_INT32 i = 0; i < m_points->GetSize(); i++) {
+    for(int32_t i = 0; i < m_points->GetSize(); i++) {
         delete (CBC_ResultPoint*) (*m_points)[i];
     }
     m_points->RemoveAll();

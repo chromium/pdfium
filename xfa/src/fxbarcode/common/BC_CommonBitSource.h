@@ -11,12 +11,12 @@ class CBC_CommonBitSource
 public:
     CBC_CommonBitSource(CFX_ByteArray *bytes);
     virtual ~CBC_CommonBitSource();
-    FX_INT32 ReadBits(FX_INT32 numBits, FX_INT32 &e);
-    FX_INT32 Available();
-    FX_INT32 getByteOffset();
+    int32_t ReadBits(int32_t numBits, int32_t &e);
+    int32_t Available();
+    int32_t getByteOffset();
 private:
     CFX_ByteArray m_bytes;
-    FX_INT32 m_byteOffset;
-    FX_INT32 m_bitOffset;
+    int32_t m_byteOffset;
+    int32_t m_bitOffset;
 };
 #endif

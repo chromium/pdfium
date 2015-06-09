@@ -21,7 +21,7 @@ class IPWL_IconList_Notify
 {
 public:
         virtual ~IPWL_IconList_Notify() { }
-	virtual void						OnNoteListSelChanged(FX_INT32 nItemIndex) = 0;
+	virtual void						OnNoteListSelChanged(int32_t nItemIndex) = 0;
 };
 
 class CPWL_IconList_Item : public CPWL_Wnd
@@ -37,7 +37,7 @@ public:
 	void								SetSelect(FX_BOOL bSelected);
 	FX_BOOL								IsSelected() const;
 	void								SetData(void* pData);
-	void								SetIcon(FX_INT32 nIconIndex);
+	void								SetIcon(int32_t nIconIndex);
 	void								SetText(const CFX_WideString& str);
 	void								SetIconFillColor(const CPWL_Color& color);
 	CFX_WideString						GetText() const;
@@ -50,7 +50,7 @@ protected:
 	virtual void						OnDisabled();
 
 private:
-	FX_INT32							m_nIconIndex;
+	int32_t							m_nIconIndex;
 	void*								m_pData;
 	FX_BOOL								m_bSelected;
 	CPWL_Label*							m_pText;
@@ -60,20 +60,20 @@ private:
 class CPWL_IconList_Content : public CPWL_ListCtrl
 {
 public:
-	CPWL_IconList_Content(FX_INT32 nListCount);
+	CPWL_IconList_Content(int32_t nListCount);
 	virtual ~CPWL_IconList_Content();
 
-	void								SetSelect(FX_INT32 nIndex);
-	FX_INT32							GetSelect() const;
+	void								SetSelect(int32_t nIndex);
+	int32_t							GetSelect() const;
 	void								SetNotify(IPWL_IconList_Notify* pNotify);
 	void								EnableNotify(FX_BOOL bNotify);
-	void								SetListData(FX_INT32 nItemIndex, void* pData);
-	void								SetListIcon(FX_INT32 nItemIndex, FX_INT32 nIconIndex);
-	void								SetListString(FX_INT32 nItemIndex, const CFX_WideString& str);
+	void								SetListData(int32_t nItemIndex, void* pData);
+	void								SetListIcon(int32_t nItemIndex, int32_t nIconIndex);
+	void								SetListString(int32_t nItemIndex, const CFX_WideString& str);
 	void								SetIconFillColor(const CPWL_Color& color);
-	CFX_WideString						GetListString(FX_INT32 nItemIndex) const;
+	CFX_WideString						GetListString(int32_t nItemIndex) const;
 	IPWL_IconList_Notify*				GetNotify() const;
-	void								ScrollToItem(FX_INT32 nItemIndex);
+	void								ScrollToItem(int32_t nItemIndex);
 
 protected:
 	virtual void						CreateChildWnd(const PWL_CREATEPARAM & cp);
@@ -83,46 +83,46 @@ protected:
 	virtual FX_BOOL						OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
 
 private:
-	CPWL_IconList_Item*					GetListItem(FX_INT32 nItemIndex) const;
-	void								SelectItem(FX_INT32 nItemIndex, FX_BOOL bSelect);
-	FX_INT32							FindItemIndex(const CPDF_Point& point);
+	CPWL_IconList_Item*					GetListItem(int32_t nItemIndex) const;
+	void								SelectItem(int32_t nItemIndex, FX_BOOL bSelect);
+	int32_t							FindItemIndex(const CPDF_Point& point);
 	
 	FX_BOOL								m_nSelectIndex;
 	IPWL_IconList_Notify*				m_pNotify;
 	FX_BOOL								m_bEnableNotify;
 	FX_BOOL								m_bMouseDown;
-	FX_INT32							m_nListCount;
+	int32_t							m_nListCount;
 };
 
 class PWL_CLASS CPWL_IconList : public CPWL_Wnd
 {
 public:
-	CPWL_IconList(FX_INT32 nListCount);
+	CPWL_IconList(int32_t nListCount);
 	virtual ~CPWL_IconList();
 
 	virtual FX_BOOL						OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag);
 
-	void								SetSelect(FX_INT32 nIndex);
-	void								SetTopItem(FX_INT32 nIndex);
-	FX_INT32							GetSelect() const;
+	void								SetSelect(int32_t nIndex);
+	void								SetTopItem(int32_t nIndex);
+	int32_t							GetSelect() const;
 	void								SetNotify(IPWL_IconList_Notify* pNotify);
 	void								EnableNotify(FX_BOOL bNotify);
-	void								SetListData(FX_INT32 nItemIndex, void* pData);
-	void								SetListIcon(FX_INT32 nItemIndex, FX_INT32 nIconIndex);
-	void								SetListString(FX_INT32 nItemIndex, const CFX_WideString& str);
+	void								SetListData(int32_t nItemIndex, void* pData);
+	void								SetListIcon(int32_t nItemIndex, int32_t nIconIndex);
+	void								SetListString(int32_t nItemIndex, const CFX_WideString& str);
 	void								SetIconFillColor(const CPWL_Color& color);
-	CFX_WideString						GetListString(FX_INT32 nItemIndex) const;
+	CFX_WideString						GetListString(int32_t nItemIndex) const;
 
 protected:
 	virtual void						OnCreated();
 	virtual void						RePosChildWnd();
 	virtual void						CreateChildWnd(const PWL_CREATEPARAM & cp);
 	
-	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam = 0, FX_INTPTR lParam = 0);
+	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
 private:
 	CPWL_IconList_Content*				m_pListContent;
-	FX_INT32							m_nListCount;
+	int32_t							m_nListCount;
 };
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_

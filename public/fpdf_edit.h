@@ -7,16 +7,18 @@
 #ifndef PUBLIC_FPDF_EDIT_H_
 #define PUBLIC_FPDF_EDIT_H_
 
+#include <stdint.h>
+
 #include "fpdfview.h"
 
 // Define all types used in the SDK. Note they can be simply regarded as opaque pointers
 // or long integer numbers.
 
-#define FPDF_ARGB(a,r,g,b)      ((((FX_DWORD)(((FX_BYTE)(b)|((FX_WORD)((FX_BYTE)(g))<<8))|(((FX_DWORD)(FX_BYTE)(r))<<16)))) | (((FX_DWORD)(FX_BYTE)(a))<<24))
-#define FPDF_GetBValue(argb)    ((FX_BYTE)(argb))
-#define FPDF_GetGValue(argb)    ((FX_BYTE)(((FX_WORD)(argb)) >> 8))
-#define FPDF_GetRValue(argb)    ((FX_BYTE)((argb)>>16))
-#define FPDF_GetAValue(argb)    ((FX_BYTE)((argb)>>24))
+#define FPDF_ARGB(a,r,g,b)      ((((uint32_t)(((uint8_t)(b)|((FX_WORD)((uint8_t)(g))<<8))|(((FX_DWORD)(uint8_t)(r))<<16)))) | (((FX_DWORD)(uint8_t)(a))<<24))
+#define FPDF_GetBValue(argb)    ((uint8_t)(argb))
+#define FPDF_GetGValue(argb)    ((uint8_t)(((uint16_t)(argb)) >> 8))
+#define FPDF_GetRValue(argb)    ((uint8_t)((argb)>>16))
+#define FPDF_GetAValue(argb)    ((uint8_t)((argb)>>24))
 
 #ifdef __cplusplus
 extern "C" {

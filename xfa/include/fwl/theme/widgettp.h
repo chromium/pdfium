@@ -47,7 +47,7 @@ protected:
     void	DrawBorder(CFX_Graphics *pGraphics, const CFX_RectF *pRect, CFX_Matrix *pMatrix = NULL);
     void	FillBackground(CFX_Graphics *pGraphics, const CFX_RectF *pRect, CFX_Matrix *pMatrix = NULL);
     void	FillSoildRect(CFX_Graphics *pGraphics, FX_ARGB fillColor, const CFX_RectF *pRect, CFX_Matrix *pMatrix = NULL);
-    void	DrawAxialShading(CFX_Graphics *pGraphics, FX_FLOAT fx1, FX_FLOAT fy1, FX_FLOAT fx2, FX_FLOAT fy2, FX_ARGB beginColor, FX_ARGB endColor, CFX_Path *path, FX_INT32 fillMode = FXFILL_WINDING, CFX_Matrix *pMatrix = NULL);
+    void	DrawAxialShading(CFX_Graphics *pGraphics, FX_FLOAT fx1, FX_FLOAT fy1, FX_FLOAT fx2, FX_FLOAT fy2, FX_ARGB beginColor, FX_ARGB endColor, CFX_Path *path, int32_t fillMode = FXFILL_WINDING, CFX_Matrix *pMatrix = NULL);
     void	DrawAnnulusRect(CFX_Graphics *pGraphics, FX_ARGB fillColor, const CFX_RectF *pRect, FX_FLOAT fRingWidth = 1, CFX_Matrix *pMatrix = NULL);
     void	DrawAnnulusCircle(CFX_Graphics *pGraphics, FX_ARGB fillColor, const CFX_RectF *pRect, FX_FLOAT fWidth = 1, CFX_Matrix *pMatrix = NULL);
     void	DrawFocus(CFX_Graphics *pGraphics, const CFX_RectF *pRect, CFX_Matrix *pMatrix = NULL);
@@ -55,7 +55,7 @@ protected:
     void	DrawArrow(CFX_Graphics *pGraphics, const CFX_RectF *pRect, FWLTHEME_DIRECTION eDict, FX_ARGB argSign, CFX_Matrix *pMatrix = NULL);
     void	DrawBtn(CFX_Graphics *pGraphics, const CFX_RectF *pRect, FWLTHEME_STATE eState, CFX_Matrix *pMatrix = NULL);
     void	DrawArrowBtn(CFX_Graphics *pGraphics, const CFX_RectF *pRect, FWLTHEME_DIRECTION eDict, FWLTHEME_STATE eState, CFX_Matrix *pMatrix = NULL);
-    FWLCOLOR BlendColor(FWLCOLOR srcColor, FWLCOLOR renderColor, FX_BYTE scale);
+    FWLCOLOR BlendColor(FWLCOLOR srcColor, FWLCOLOR renderColor, uint8_t scale);
     FX_DWORD		m_dwRefCount;
     IFDE_TextOut   *m_pTextOut;
     IFX_Font	   *m_pFDEFont;

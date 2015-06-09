@@ -51,20 +51,20 @@ FWL_ERR CFWL_ToolTip::SetCaption(FX_WSTR wsCaption)
     m_tooltipData.m_wsCaption = wsCaption;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_ToolTip::GetInitialDelay()
+int32_t CFWL_ToolTip::GetInitialDelay()
 {
     return m_tooltipData.m_nInitDelayTime;
 }
-FX_INT32 CFWL_ToolTip::SetInitialDelay(FX_INT32 nDelayTime)
+int32_t CFWL_ToolTip::SetInitialDelay(int32_t nDelayTime)
 {
     m_tooltipData.m_nInitDelayTime = nDelayTime;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_ToolTip::GetAutoPopDelay()
+int32_t CFWL_ToolTip::GetAutoPopDelay()
 {
     return m_tooltipData.m_nAutoPopDelayTime;
 }
-FX_INT32 CFWL_ToolTip::SetAutoPopDelay(FX_INT32 nDelayTime)
+int32_t CFWL_ToolTip::SetAutoPopDelay(int32_t nDelayTime)
 {
     m_tooltipData.m_nAutoPopDelayTime = nDelayTime;
     return FWL_ERR_Succeeded;
@@ -119,11 +119,11 @@ FWL_ERR CFWL_ToolTip::CFWL_ToolTipDP::GetCaption(IFWL_Widget *pWidget, CFX_WideS
     wsCaption = m_wsCaption;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_ToolTip::CFWL_ToolTipDP::GetInitialDelay(IFWL_Widget *pWidget)
+int32_t CFWL_ToolTip::CFWL_ToolTipDP::GetInitialDelay(IFWL_Widget *pWidget)
 {
     return m_nInitDelayTime;
 }
-FX_INT32 CFWL_ToolTip::CFWL_ToolTipDP::GetAutoPopDelay(IFWL_Widget *pWidget)
+int32_t CFWL_ToolTip::CFWL_ToolTipDP::GetAutoPopDelay(IFWL_Widget *pWidget)
 {
     return m_nAutoPopDelayTime;
 }

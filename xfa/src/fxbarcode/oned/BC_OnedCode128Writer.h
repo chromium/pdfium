@@ -14,24 +14,24 @@ public:
     CBC_OnedCode128Writer();
     CBC_OnedCode128Writer(BC_TYPE type);
     virtual ~CBC_OnedCode128Writer();
-    FX_BYTE *					Encode(const CFX_ByteString &contents, BCFORMAT format,
-                                       FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e);
-    FX_BYTE *					Encode(const CFX_ByteString &contents, BCFORMAT format,
-                                       FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e);
-    FX_BYTE *					Encode(const CFX_ByteString &contents, FX_INT32 &outLength , FX_INT32 &e);
+    uint8_t *					Encode(const CFX_ByteString &contents, BCFORMAT format,
+                                       int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e);
+    uint8_t *					Encode(const CFX_ByteString &contents, BCFORMAT format,
+                                       int32_t &outWidth, int32_t &outHeight, int32_t &e);
+    uint8_t *					Encode(const CFX_ByteString &contents, int32_t &outLength , int32_t &e);
     FX_BOOL						CheckContentValidity(FX_WSTR contents);
     CFX_WideString				FilterContents(FX_WSTR contents);
     FX_BOOL						SetTextLocation(BC_TEXT_LOC location);
     BC_TYPE						GetType();
 private:
-    FX_BOOL IsDigits(const CFX_ByteString &contents, FX_INT32 start, FX_INT32 length);
-    FX_INT32 Encode128B(const CFX_ByteString &contents, CFX_PtrArray &patterns);
-    FX_INT32 Encode128C(const CFX_ByteString &contents, CFX_PtrArray &patterns);
+    FX_BOOL IsDigits(const CFX_ByteString &contents, int32_t start, int32_t length);
+    int32_t Encode128B(const CFX_ByteString &contents, CFX_PtrArray &patterns);
+    int32_t Encode128C(const CFX_ByteString &contents, CFX_PtrArray &patterns);
     BC_TYPE						m_codeFormat;
-    const static	FX_INT32	CODE_START_B;
-    const static	FX_INT32	CODE_START_C;
-    const static	FX_INT32	CODE_CODE_B;
-    const static	FX_INT32	CODE_CODE_C;
-    const static	FX_INT32	CODE_STOP;
+    const static	int32_t	CODE_START_B;
+    const static	int32_t	CODE_START_C;
+    const static	int32_t	CODE_CODE_B;
+    const static	int32_t	CODE_CODE_C;
+    const static	int32_t	CODE_STOP;
 };
 #endif

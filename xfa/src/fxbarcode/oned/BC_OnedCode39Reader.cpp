@@ -27,14 +27,14 @@
 #include "BC_OnedCode39Reader.h"
 FX_LPCSTR CBC_OnedCode39Reader::ALPHABET_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. *$/+%";
 FX_LPCSTR CBC_OnedCode39Reader::CHECKSUM_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
-const FX_INT32 CBC_OnedCode39Reader::CHARACTER_ENCODINGS[44] = {
+const int32_t CBC_OnedCode39Reader::CHARACTER_ENCODINGS[44] = {
     0x034, 0x121, 0x061, 0x160, 0x031, 0x130, 0x070, 0x025, 0x124, 0x064,
     0x109, 0x049, 0x148, 0x019, 0x118, 0x058, 0x00D, 0x10C, 0x04C, 0x01C,
     0x103, 0x043, 0x142, 0x013, 0x112, 0x052, 0x007, 0x106, 0x046, 0x016,
     0x181, 0x0C1, 0x1C0, 0x091, 0x190, 0x0D0, 0x085, 0x184, 0x0C4, 0x094,
     0x0A8, 0x0A2, 0x08A, 0x02A
 };
-const FX_INT32 CBC_OnedCode39Reader::ASTERISK_ENCODING = 0x094;
+const int32_t CBC_OnedCode39Reader::ASTERISK_ENCODING = 0x094;
 CBC_OnedCode39Reader::CBC_OnedCode39Reader(): m_extendedMode(FALSE), m_usingCheckDigit(FALSE)
 {
 }
@@ -51,16 +51,16 @@ CBC_OnedCode39Reader::CBC_OnedCode39Reader(FX_BOOL usingCheckDigit, FX_BOOL exte
 CBC_OnedCode39Reader::~CBC_OnedCode39Reader()
 {
 }
-CFX_ByteString CBC_OnedCode39Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_OnedCode39Reader::DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, int32_t hints, int32_t &e)
 {
     CFX_Int32Array *start = FindAsteriskPattern(row, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
-    FX_INT32 nextStart = (*start)[1];
+    int32_t nextStart = (*start)[1];
     if(start != NULL) {
         delete start;
         start = NULL;
     }
-    FX_INT32 end = row->GetSize();
+    int32_t end = row->GetSize();
     while (nextStart < end && !row->Get(nextStart)) {
         nextStart++;
     }
@@ -68,11 +68,11 @@ CFX_ByteString CBC_OnedCode39Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBit
     CFX_Int32Array counters;
     counters.SetSize(9);
     FX_CHAR decodedChar;
-    FX_INT32 lastStart;
+    int32_t lastStart;
     do {
         RecordPattern(row, nextStart, &counters, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, "");
-        FX_INT32 pattern = ToNarrowWidePattern(&counters);
+        int32_t pattern = ToNarrowWidePattern(&counters);
         if (pattern < 0) {
             e = BCExceptionNotFound;
             return "";
@@ -81,7 +81,7 @@ CFX_ByteString CBC_OnedCode39Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBit
         BC_EXCEPTION_CHECK_ReturnValue(e, "");
         result += decodedChar;
         lastStart = nextStart;
-        for (FX_INT32 i = 0; i < counters.GetSize(); i++) {
+        for (int32_t i = 0; i < counters.GetSize(); i++) {
             nextStart += counters[i];
         }
         while (nextStart < end && !row->Get(nextStart)) {
@@ -89,17 +89,17 @@ CFX_ByteString CBC_OnedCode39Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBit
         }
     } while (decodedChar != '*');
     result = result.Mid(0, result.GetLength() - 1);
-    FX_INT32 lastPatternSize = 0;
-    for (FX_INT32 j = 0; j < counters.GetSize(); j++) {
+    int32_t lastPatternSize = 0;
+    for (int32_t j = 0; j < counters.GetSize(); j++) {
         lastPatternSize += counters[j];
     }
-    FX_INT32 whiteSpaceAfterEnd = nextStart - lastStart - lastPatternSize;
+    int32_t whiteSpaceAfterEnd = nextStart - lastStart - lastPatternSize;
     if(m_usingCheckDigit) {
-        FX_INT32 max = result.GetLength() - 1;
-        FX_INT32 total = 0;
-        FX_INT32 len = (FX_INT32)strlen(ALPHABET_STRING);
-        for (FX_INT32 k = 0; k < max; k++) {
-            for (FX_INT32 j = 0; j < len; j++)
+        int32_t max = result.GetLength() - 1;
+        int32_t total = 0;
+        int32_t len = (int32_t)strlen(ALPHABET_STRING);
+        for (int32_t k = 0; k < max; k++) {
+            for (int32_t j = 0; j < len; j++)
                 if (ALPHABET_STRING[j] == result[k]) {
                     total += j;
                 }
@@ -122,23 +122,23 @@ CFX_ByteString CBC_OnedCode39Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBit
         return result;
     }
 }
-CFX_Int32Array *CBC_OnedCode39Reader::FindAsteriskPattern(CBC_CommonBitArray *row, FX_INT32 &e)
+CFX_Int32Array *CBC_OnedCode39Reader::FindAsteriskPattern(CBC_CommonBitArray *row, int32_t &e)
 {
-    FX_INT32 width = row->GetSize();
-    FX_INT32 rowOffset = 0;
+    int32_t width = row->GetSize();
+    int32_t rowOffset = 0;
     while (rowOffset < width) {
         if (row->Get(rowOffset)) {
             break;
         }
         rowOffset++;
     }
-    FX_INT32 counterPosition = 0;
+    int32_t counterPosition = 0;
     CFX_Int32Array counters;
     counters.SetSize(9);
-    FX_INT32 patternStart = rowOffset;
+    int32_t patternStart = rowOffset;
     FX_BOOL isWhite = FALSE;
-    FX_INT32 patternLength = counters.GetSize();
-    for (FX_INT32 i = rowOffset; i < width; i++) {
+    int32_t patternLength = counters.GetSize();
+    for (int32_t i = rowOffset; i < width; i++) {
         FX_BOOL pixel = row->Get(i);
         if (pixel ^ isWhite) {
             counters[counterPosition]++;
@@ -156,7 +156,7 @@ CFX_Int32Array *CBC_OnedCode39Reader::FindAsteriskPattern(CBC_CommonBitArray *ro
                     }
                 }
                 patternStart += counters[0] + counters[1];
-                for (FX_INT32 y = 2; y < patternLength; y++) {
+                for (int32_t y = 2; y < patternLength; y++) {
                     counters[y - 2] = counters[y];
                 }
                 counters[patternLength - 2] = 0;
@@ -172,26 +172,26 @@ CFX_Int32Array *CBC_OnedCode39Reader::FindAsteriskPattern(CBC_CommonBitArray *ro
     e = BCExceptionNotFound;
     return NULL;
 }
-FX_INT32 CBC_OnedCode39Reader::ToNarrowWidePattern(CFX_Int32Array *counters)
+int32_t CBC_OnedCode39Reader::ToNarrowWidePattern(CFX_Int32Array *counters)
 {
-    FX_INT32 numCounters = counters->GetSize();
-    FX_INT32 maxNarrowCounter = 0;
-    FX_INT32 wideCounters;
+    int32_t numCounters = counters->GetSize();
+    int32_t maxNarrowCounter = 0;
+    int32_t wideCounters;
     do {
 #undef max
-        FX_INT32 minCounter = FXSYS_IntMax;
-        for (FX_INT32 i = 0; i < numCounters; i++) {
-            FX_INT32 counter = (*counters)[i];
+        int32_t minCounter = FXSYS_IntMax;
+        for (int32_t i = 0; i < numCounters; i++) {
+            int32_t counter = (*counters)[i];
             if (counter < minCounter && counter > maxNarrowCounter) {
                 minCounter = counter;
             }
         }
         maxNarrowCounter = minCounter;
         wideCounters = 0;
-        FX_INT32 totalWideCountersWidth = 0;
-        FX_INT32 pattern = 0;
-        for (FX_INT32 j = 0; j < numCounters; j++) {
-            FX_INT32 counter = (*counters)[j];
+        int32_t totalWideCountersWidth = 0;
+        int32_t pattern = 0;
+        for (int32_t j = 0; j < numCounters; j++) {
+            int32_t counter = (*counters)[j];
             if ((*counters)[j] > maxNarrowCounter) {
                 pattern |= 1 << (numCounters - 1 - j);
                 wideCounters++;
@@ -199,8 +199,8 @@ FX_INT32 CBC_OnedCode39Reader::ToNarrowWidePattern(CFX_Int32Array *counters)
             }
         }
         if (wideCounters == 3) {
-            for (FX_INT32 k = 0; k < numCounters && wideCounters > 0; k++) {
-                FX_INT32 counter = (*counters)[k];
+            for (int32_t k = 0; k < numCounters && wideCounters > 0; k++) {
+                int32_t counter = (*counters)[k];
                 if ((*counters)[k] > maxNarrowCounter) {
                     wideCounters--;
                     if ((counter << 1) >= totalWideCountersWidth) {
@@ -213,9 +213,9 @@ FX_INT32 CBC_OnedCode39Reader::ToNarrowWidePattern(CFX_Int32Array *counters)
     } while (wideCounters > 3);
     return -1;
 }
-FX_CHAR CBC_OnedCode39Reader::PatternToChar(FX_INT32 pattern, FX_INT32 &e)
+FX_CHAR CBC_OnedCode39Reader::PatternToChar(int32_t pattern, int32_t &e)
 {
-    for (FX_INT32 i = 0; i < 44; i++) {
+    for (int32_t i = 0; i < 44; i++) {
         if (CHARACTER_ENCODINGS[i] == pattern) {
             return (ALPHABET_STRING)[i];
         }
@@ -223,12 +223,12 @@ FX_CHAR CBC_OnedCode39Reader::PatternToChar(FX_INT32 pattern, FX_INT32 &e)
     e = BCExceptionNotFound;
     return 0;
 }
-CFX_ByteString CBC_OnedCode39Reader::DecodeExtended(CFX_ByteString &encoded, FX_INT32 &e)
+CFX_ByteString CBC_OnedCode39Reader::DecodeExtended(CFX_ByteString &encoded, int32_t &e)
 {
-    FX_INT32 length = encoded.GetLength();
+    int32_t length = encoded.GetLength();
     CFX_ByteString decoded;
     FX_CHAR c, next;
-    for(FX_INT32 i = 0; i < length; i++) {
+    for(int32_t i = 0; i < length; i++) {
         c = encoded[i];
         if(c == '+' || c == '$' || c == '%' || c == '/') {
             next = encoded[i + 1];

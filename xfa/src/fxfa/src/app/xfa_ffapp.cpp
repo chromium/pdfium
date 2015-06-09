@@ -28,10 +28,10 @@ FX_FILESIZE CXFA_FileRead::GetSize()
     if (m_StreamSize.GetSize() > 0) {
         return m_dwSize;
     }
-    FX_INT32 iCount = m_Streams.GetSize();
+    int32_t iCount = m_Streams.GetSize();
     FX_DWORD iBufferSize = 4096;
-    FX_LPBYTE pBuf = FX_Alloc(FX_BYTE, iBufferSize);
-    for (FX_INT32 i = 0; i < iCount; i++) {
+    FX_LPBYTE pBuf = FX_Alloc(uint8_t, iBufferSize);
+    for (int32_t i = 0; i < iCount; i++) {
         CPDF_StreamFilter* pStreamFilter = m_Streams[i]->GetStreamFilter(FALSE);
         FX_DWORD dwCurSize = 0;
         while (TRUE) {
@@ -51,8 +51,8 @@ FX_FILESIZE CXFA_FileRead::GetSize()
 FX_BOOL CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
 {
     FX_FILESIZE dwLen = 0;
-    FX_INT32 iCount = m_Streams.GetSize();
-    FX_INT32 i = 0;
+    int32_t iCount = m_Streams.GetSize();
+    int32_t i = 0;
     for (; i < iCount; i++) {
         dwLen += m_StreamSize[i];
         if (dwLen > offset) {
@@ -65,7 +65,7 @@ FX_BOOL CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
     }
     CPDF_StreamFilter* pStreamFilter = m_Streams[i]->GetStreamFilter(FALSE);
     if ((offset -= dwLen) > 0) {
-        FX_LPBYTE pBuf = FX_Alloc(FX_BYTE, offset);
+        FX_LPBYTE pBuf = FX_Alloc(uint8_t, offset);
         FX_DWORD dwRead = pStreamFilter->ReadBlock(pBuf, offset);
         FX_Free(pBuf);
     }
@@ -76,7 +76,7 @@ FX_BOOL CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
         return TRUE;
     }
     FX_DWORD dwReadSize = dwHadRead;
-    for (FX_INT32 iStart = i + 1; iStart < iCount; iStart++) {
+    for (int32_t iStart = i + 1; iStart < iCount; iStart++) {
         CPDF_StreamFilter* pStreamFilter = m_Streams[iStart]->GetStreamFilter(FALSE);
         FX_DWORD dwHadRead = pStreamFilter->ReadBlock(((FX_LPBYTE)buffer) + dwReadSize, size);
         delete pStreamFilter;
@@ -90,8 +90,8 @@ FX_BOOL CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
 }
 CXFA_FileRead2::CXFA_FileRead2(const CFX_ArrayTemplate<CPDF_Stream*> &streams)
 {
-    FX_INT32 iCount = streams.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i++) {
+    int32_t iCount = streams.GetSize();
+    for (int32_t i = 0; i < iCount; i++) {
         CPDF_StreamAcc &acc = m_Data.Add();
         acc.LoadAllData(streams[i]);
     }
@@ -99,8 +99,8 @@ CXFA_FileRead2::CXFA_FileRead2(const CFX_ArrayTemplate<CPDF_Stream*> &streams)
 FX_FILESIZE CXFA_FileRead2::GetSize()
 {
     FX_DWORD dwSize = 0;
-    FX_INT32 iCount = m_Data.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i++) {
+    int32_t iCount = m_Data.GetSize();
+    for (int32_t i = 0; i < iCount; i++) {
         CPDF_StreamAcc &acc = m_Data[i];
         dwSize += acc.GetSize();
     }
@@ -108,8 +108,8 @@ FX_FILESIZE CXFA_FileRead2::GetSize()
 }
 FX_BOOL CXFA_FileRead2::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
 {
-    FX_INT32 iCount = m_Data.GetSize();
-    FX_INT32 index = 0;
+    int32_t iCount = m_Data.GetSize();
+    int32_t index = 0;
     while (index < iCount) {
         CPDF_StreamAcc &acc = m_Data[index];
         FX_FILESIZE dwSize = acc.GetSize();

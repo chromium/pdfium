@@ -62,23 +62,23 @@ void CRYPT_ArcFourCryptBlock(FX_LPBYTE pData, FX_DWORD size, FX_LPCBYTE key, FX_
 struct md5_context {
     FX_DWORD total[2];
     FX_DWORD state[4];
-    FX_BYTE buffer[64];
+    uint8_t buffer[64];
 };
 #define GET_FX_DWORD(n,b,i)                                       \
     {                                                               \
-        (n) = (FX_DWORD) ((FX_BYTE *) b)[(i)]                           \
-              | (((FX_DWORD) ((FX_BYTE *) b)[(i)+1]) <<  8)                 \
-              | (((FX_DWORD) ((FX_BYTE *) b)[(i)+2]) << 16)                 \
-              | (((FX_DWORD) ((FX_BYTE *) b)[(i)+3]) << 24);                \
+        (n) = (FX_DWORD) ((uint8_t *) b)[(i)]                           \
+              | (((FX_DWORD) ((uint8_t *) b)[(i)+1]) <<  8)                 \
+              | (((FX_DWORD) ((uint8_t *) b)[(i)+2]) << 16)                 \
+              | (((FX_DWORD) ((uint8_t *) b)[(i)+3]) << 24);                \
     }
 #define PUT_FX_DWORD(n,b,i)                                       \
     {                                                               \
-        (((FX_BYTE *) b)[(i)]  ) = (FX_BYTE) (((n)      ) & 0xFF);      \
-        (((FX_BYTE *) b)[(i)+1]) = (FX_BYTE) (((n) >>  8) & 0xFF);      \
-        (((FX_BYTE *) b)[(i)+2]) = (FX_BYTE) (((n) >> 16) & 0xFF);      \
-        (((FX_BYTE *) b)[(i)+3]) = (FX_BYTE) (((n) >> 24) & 0xFF);      \
+        (((uint8_t *) b)[(i)]  ) = (uint8_t) (((n)      ) & 0xFF);      \
+        (((uint8_t *) b)[(i)+1]) = (uint8_t) (((n) >>  8) & 0xFF);      \
+        (((uint8_t *) b)[(i)+2]) = (uint8_t) (((n) >> 16) & 0xFF);      \
+        (((uint8_t *) b)[(i)+3]) = (uint8_t) (((n) >> 24) & 0xFF);      \
     }
-void md5_process( struct md5_context *ctx, const FX_BYTE data[64] )
+void md5_process( struct md5_context *ctx, const uint8_t data[64] )
 {
     FX_DWORD A, B, C, D, X[16];
     GET_FX_DWORD( X[0],  data,  0 );
@@ -222,17 +222,17 @@ void CRYPT_MD5Update(FX_LPVOID pctx, FX_LPCBYTE input, FX_DWORD length )
         FXSYS_memcpy32( (void *) (ctx->buffer + left), (void *) input, length );
     }
 }
-const FX_BYTE md5_padding[64] = {
+const uint8_t md5_padding[64] = {
     0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-void CRYPT_MD5Finish(FX_LPVOID pctx, FX_BYTE digest[16] )
+void CRYPT_MD5Finish(FX_LPVOID pctx, uint8_t digest[16] )
 {
     struct md5_context *ctx = (struct md5_context *)pctx;
     FX_DWORD last, padn;
-    FX_BYTE msglen[8];
+    uint8_t msglen[8];
     PUT_FX_DWORD( ctx->total[0], msglen, 0 );
     PUT_FX_DWORD( ctx->total[1], msglen, 4 );
     last = ( ctx->total[0] >> 3 ) & 0x3F;
@@ -244,7 +244,7 @@ void CRYPT_MD5Finish(FX_LPVOID pctx, FX_BYTE digest[16] )
     PUT_FX_DWORD( ctx->state[2], digest,  8 );
     PUT_FX_DWORD( ctx->state[3], digest, 12 );
 }
-void CRYPT_MD5Generate(FX_LPCBYTE input, FX_DWORD length, FX_BYTE digest[16])
+void CRYPT_MD5Generate(FX_LPCBYTE input, FX_DWORD length, uint8_t digest[16])
 {
     md5_context ctx;
     CRYPT_MD5Start(&ctx);

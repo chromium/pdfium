@@ -13,7 +13,7 @@ class IFWL_Content : public IFWL_Widget
 public:
     static IFWL_Content* Create();
     FWL_ERR		Initialize();
-    FWL_ERR		InsertWidget(IFWL_Widget *pChild, FX_INT32 nIndex = -1);
+    FWL_ERR		InsertWidget(IFWL_Widget *pChild, int32_t nIndex = -1);
     FWL_ERR		RemoveWidget(IFWL_Widget *pWidget);
     FWL_ERR		RemoveAllWidgets();
     FWL_ERR		GetMinSize(FX_FLOAT &fWidth, FX_FLOAT &fHeight);

@@ -48,8 +48,8 @@ private:
 };
 struct _CMap_CodeRange {
     int			m_CharSize;
-    FX_BYTE		m_Lower[4];
-    FX_BYTE		m_Upper[4];
+    uint8_t		m_Lower[4];
+    uint8_t		m_Upper[4];
 };
 class CPDF_CMapParser 
 {
@@ -113,7 +113,7 @@ protected:
     int						m_Charset, m_Coding;
     CodingScheme			m_CodingScheme;
     int						m_nCodeRanges;
-    FX_BYTE*				m_pLeadingBytes;
+    uint8_t*				m_pLeadingBytes;
     FX_WORD*				m_pMapping;
     FX_LPBYTE				m_pAddMapping;
     FX_BOOL					m_bLoaded;
@@ -128,13 +128,13 @@ public:
     int			m_Coding;
     CPDF_CMap::CodingScheme	m_CodingScheme;
     FX_DWORD	m_LeadingSegCount;
-    FX_BYTE		m_LeadingSegs[4];
+    uint8_t		m_LeadingSegs[4];
 };
 typedef struct _FileHeader {
-    FX_BYTE		btTag[4];
-    FX_BYTE		btVersion;
-    FX_BYTE		btFormat;
-    FX_BYTE		btReserved1[2];
+    uint8_t		btTag[4];
+    uint8_t		btVersion;
+    uint8_t		btFormat;
+    uint8_t		btReserved1[2];
     FX_DWORD	dwStartIndex;
     FX_DWORD	dwEndIndex;
     FX_DWORD	dwDataSize;

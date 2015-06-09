@@ -22,7 +22,7 @@ public:
             FX_Free(m_pFamily);
         }
     }
-    virtual	FX_INT32	GetType() const
+    virtual	int32_t	GetType() const
     {
         return FPF_SKIAFONTTYPE_Unknown;
     }
@@ -31,16 +31,16 @@ public:
         if (m_pFamily) {
             FX_Free(m_pFamily);
         }
-        FX_INT32 iSize = FXSYS_strlen(pFamily);
+        int32_t iSize = FXSYS_strlen(pFamily);
         m_pFamily = FX_Alloc(FX_CHAR, iSize + 1);
         FXSYS_memcpy32(m_pFamily, pFamily, iSize * sizeof(FX_CHAR));
         m_pFamily[iSize] = 0;
     }
     FX_LPSTR		m_pFamily;
     FX_DWORD		m_dwStyle;
-    FX_INT32		m_iFaceIndex;
+    int32_t		m_iFaceIndex;
     FX_DWORD		m_dwCharsets;
-    FX_INT32		m_iGlyphNum;
+    int32_t		m_iGlyphNum;
 };
 class CFPF_SkiaPathFont : public CFPF_SkiaFontDescriptor
 {
@@ -52,7 +52,7 @@ public:
             FX_Free(m_pPath);
         }
     }
-    virtual	FX_INT32	GetType() const
+    virtual	int32_t	GetType() const
     {
         return FPF_SKIAFONTTYPE_Path;
     }
@@ -61,7 +61,7 @@ public:
         if (m_pPath) {
             FX_Free(m_pPath);
         }
-        FX_INT32 iSize = FXSYS_strlen(pPath);
+        int32_t iSize = FXSYS_strlen(pPath);
         m_pPath = FX_Alloc(FX_CHAR, iSize + 1);
         FXSYS_memcpy32(m_pPath, pPath, iSize * sizeof(FX_CHAR));
         m_pPath[iSize] = 0;
@@ -72,7 +72,7 @@ class CFPF_SkiaFileFont : public CFPF_SkiaFontDescriptor
 {
 public:
     CFPF_SkiaFileFont() : m_pFile(NULL) {}
-    virtual FX_INT32	GetType() const
+    virtual int32_t	GetType() const
     {
         return FPF_SKIAFONTTYPE_File;
     }
@@ -82,7 +82,7 @@ class CFPF_SkiaBufferFont : public CFPF_SkiaFontDescriptor
 {
 public:
     CFPF_SkiaBufferFont() : m_pBuffer(NULL), m_szBuffer(0) {}
-    virtual FX_INT32	GetType() const
+    virtual int32_t	GetType() const
     {
         return FPF_SKIAFONTTYPE_Buffer;
     }
@@ -100,10 +100,10 @@ public:
     virtual void			LoadPrivateFont(FX_BSTR bsFileName);
     virtual void			LoadPrivateFont(FX_LPVOID pBuffer, size_t szBuffer);
 
-    virtual IFPF_Font*		CreateFont(FX_BSTR bsFamilyname, FX_BYTE uCharset, FX_DWORD dwStyle, FX_DWORD dwMatch = 0);
-    FXFT_Face				GetFontFace(IFX_FileRead *pFileRead, FX_INT32 iFaceIndex = 0);
-    FXFT_Face				GetFontFace(FX_BSTR bsFile, FX_INT32 iFaceIndex = 0);
-    FXFT_Face				GetFontFace(FX_LPCBYTE pBuffer, size_t szBuffer, FX_INT32 iFaceIndex = 0);
+    virtual IFPF_Font*		CreateFont(FX_BSTR bsFamilyname, uint8_t uCharset, FX_DWORD dwStyle, FX_DWORD dwMatch = 0);
+    FXFT_Face				GetFontFace(IFX_FileRead *pFileRead, int32_t iFaceIndex = 0);
+    FXFT_Face				GetFontFace(FX_BSTR bsFile, int32_t iFaceIndex = 0);
+    FXFT_Face				GetFontFace(FX_LPCBYTE pBuffer, size_t szBuffer, int32_t iFaceIndex = 0);
 protected:
     void				ScanPath(FX_BSTR path);
     void				ScanFile(FX_BSTR file);

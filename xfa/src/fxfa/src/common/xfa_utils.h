@@ -70,7 +70,7 @@ public:
     NodeType* MoveToPrev()
     {
         NodeType *pCurrent = GetCurrent();
-        FX_INT32 nStackLength = m_NodeStack.GetSize();
+        int32_t nStackLength = m_NodeStack.GetSize();
         if(nStackLength == 1) {
             return NULL;
         } else if(nStackLength > 1) {
@@ -210,7 +210,7 @@ public:
         void* pKey = NULL;
         void* pValue = NULL;
         CFX_MapPtrToPtr::GetNextAssoc(rNextPosition, pKey, pValue);
-        rKey = (KeyType)(FX_UINTPTR)pKey;
+        rKey = (KeyType)(uintptr_t)pKey;
     }
 };
 class CXFA_Node;
@@ -218,10 +218,10 @@ class CXFA_WidgetData;
 #include "fxfa_localevalue.h"
 CXFA_Node*          XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType);
 CXFA_LocaleValue    XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
-CFX_WideString	    XFA_NumericLimit(const CFX_WideString &wsValue, FX_INT32 iLead, FX_INT32 iTread);
+CFX_WideString	    XFA_NumericLimit(const CFX_WideString &wsValue, int32_t iLead, int32_t iTread);
 FX_DOUBLE           XFA_WideStringToDouble(const CFX_WideString &wsStringVal);
 FX_DOUBLE           XFA_ByteStringToDouble(FX_BSTR szStringVal);
-FX_INT32            XFA_MapRotation(FX_INT32 nRotation); 
+int32_t            XFA_MapRotation(int32_t nRotation); 
 #ifndef XFA_PARSE_HAS_LINEIDENTIFIER
 #define XFA_PARSE_HAS_LINEIDENTIFIER
 #endif

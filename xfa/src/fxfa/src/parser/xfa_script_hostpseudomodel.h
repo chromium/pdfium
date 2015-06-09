@@ -45,6 +45,6 @@ public:
     void	Script_HostPseudoModel_CurrentDateTime(CFXJSE_Arguments* pArguments);
 protected:
     void Script_HostPseudoModel_LoadString(FXJSE_HVALUE hValue, IXFA_Notify* pNotify, FX_DWORD dwFlag);
-    FX_BOOL Script_HostPseudoModel_ValidateArgsForMsg(CFXJSE_Arguments* pArguments, FX_INT32 iArgIndex, CFX_WideString& wsValue);
+    FX_BOOL Script_HostPseudoModel_ValidateArgsForMsg(CFXJSE_Arguments* pArguments, int32_t iArgIndex, CFX_WideString& wsValue);
 };
 #endif

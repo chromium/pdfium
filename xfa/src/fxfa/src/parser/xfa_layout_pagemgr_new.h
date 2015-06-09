@@ -29,9 +29,9 @@ public:
     void		SubmitContentItem(CXFA_ContentLayoutItemImpl* pContentLayoutItem, XFA_ItemLayoutProcessorResult eStatus);
     void		FinishPaginatedPageSets();
     void		SyncLayoutData();
-    FX_INT32			GetPageCount() const;
-    IXFA_LayoutPage*	GetPage(FX_INT32 index) const;
-    FX_INT32			GetPageIndex(IXFA_LayoutPage* pPage) const;
+    int32_t			GetPageCount() const;
+    IXFA_LayoutPage*	GetPage(int32_t index) const;
+    int32_t			GetPageIndex(IXFA_LayoutPage* pPage) const;
     inline CXFA_ContainerLayoutItemImpl*	GetRootLayoutItem() const
     {
         return m_pPageSetLayoutItemRoot;
@@ -59,7 +59,7 @@ protected:
     FX_BOOL		ResolveBookendLeaderOrTrailer(CXFA_Node* pBookendNode, FX_BOOL bLeader, CXFA_Node* &pBookendAppendTemplate);
     FX_BOOL		ExecuteBreakBeforeOrAfter(CXFA_Node* pCurNode, FX_BOOL bBefore, CXFA_Node* &pBreakLeaderTemplate, CXFA_Node* &pBreakTrailerTemplate);
 
-    FX_INT32	CreateMinPageRecord(CXFA_Node* pPageArea, FX_BOOL bTargetPageArea, FX_BOOL bCreateLast = FALSE);
+    int32_t	CreateMinPageRecord(CXFA_Node* pPageArea, FX_BOOL bTargetPageArea, FX_BOOL bCreateLast = FALSE);
     void		CreateMinPageSetRecord(CXFA_Node* pPageSet, FX_BOOL bCreateAll = FALSE);
     void		CreateNextMinRecord(CXFA_Node* pRecordNode);
     FX_BOOL		FindPageAreaFromPageSet(CXFA_Node* pPageSet, CXFA_Node* pStartChild, CXFA_Node* pTargetPageArea = NULL, CXFA_Node* pTargetContentArea = NULL, FX_BOOL bNewPage = FALSE, FX_BOOL bQuery = FALSE);
@@ -86,11 +86,11 @@ protected:
     FX_POSITION							m_pCurrentContainerRecord;
     CFX_PtrList							m_rgProposedContainerRecord;
     CXFA_Node*							m_pCurPageArea;
-    FX_INT32							m_nAvailPages;
-    FX_INT32							m_nCurPageCount;
+    int32_t							m_nAvailPages;
+    int32_t							m_nCurPageCount;
     XFA_ATTRIBUTEENUM					m_ePageSetMode;
     FX_BOOL								m_bCreateOverFlowPage;
-    CFX_MapPtrTemplate<CXFA_Node*, FX_INT32> m_pPageSetMap;
+    CFX_MapPtrTemplate<CXFA_Node*, int32_t> m_pPageSetMap;
 #ifdef _XFA_LAYOUTITEM_MAPCACHE_
     void						SaveLayoutItem(CXFA_LayoutItemImpl* pParentLayoutItem);
     CFX_MapPtrToPtr				m_NodeToContent;

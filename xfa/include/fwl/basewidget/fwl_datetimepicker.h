@@ -54,17 +54,17 @@ BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpEditChanged, FWL_EVTHASH_DTP_EditChanged)
 CFX_WideString m_wsText;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpHoverChanged, FWL_EVTHASH_DTP_HoverChanged)
-FX_INT32 hoverday;
+int32_t hoverday;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpSelectChanged, FWL_EVTHASH_DTP_SelectChanged)
-FX_INT32 iYear;
-FX_INT32 iMonth;
-FX_INT32 iDay;
+int32_t iYear;
+int32_t iMonth;
+int32_t iDay;
 END_FWL_EVENT_DEF
 class IFWL_DateTimePickerDP : public IFWL_DataProvider
 {
 public:
-    virtual FWL_ERR GetToday(IFWL_Widget *pWidget, FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay) = 0;
+    virtual FWL_ERR GetToday(IFWL_Widget *pWidget, int32_t &iYear, int32_t &iMonth, int32_t &iDay) = 0;
 };
 class IFWL_DateTimePicker : public IFWL_Widget
 {
@@ -72,12 +72,12 @@ public:
     static IFWL_DateTimePicker* Create();
     FWL_ERR		Initialize(IFWL_Widget *pOuter = NULL);
     FWL_ERR		Initialize(const CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
-    FWL_ERR		GetCurSel(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay);
-    FWL_ERR		SetCurSel(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    FWL_ERR		GetCurSel(int32_t &iYear, int32_t &iMonth, int32_t &iDay);
+    FWL_ERR		SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
     FWL_ERR		SetEditText(const CFX_WideString &wsText);
-    FWL_ERR		GetEditText(CFX_WideString &wsText, FX_INT32 nStart = 0, FX_INT32 nCount = -1) const;
-    FX_INT32	CountSelRanges();
-    FX_INT32	GetSelRange(FX_INT32 nIndex, FX_INT32 &nStart);
+    FWL_ERR		GetEditText(CFX_WideString &wsText, int32_t nStart = 0, int32_t nCount = -1) const;
+    int32_t	CountSelRanges();
+    int32_t	GetSelRange(int32_t nIndex, int32_t &nStart);
     FX_BOOL		CanUndo();
     FX_BOOL		CanRedo();
     FX_BOOL		Undo();
@@ -92,7 +92,7 @@ public:
     FX_BOOL		Delete();
     FX_BOOL		DeSelect();
     FWL_ERR		GetBBox(CFX_RectF &rect);
-    FWL_ERR		SetEditLimit(FX_INT32 nLimit);
+    FWL_ERR		SetEditLimit(int32_t nLimit);
     FWL_ERR		ModifyEditStylesEx(FX_DWORD dwStylesExAdded, FX_DWORD dwStylesExRemoved);
 protected:
     IFWL_DateTimePicker();

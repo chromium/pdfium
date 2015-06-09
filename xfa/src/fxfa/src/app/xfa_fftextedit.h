@@ -47,7 +47,7 @@ public:
     void	OnAddDoRecord(IFWL_Widget *pWidget);
     FX_BOOL		CheckWord(FX_BSTR sWord);
     FX_BOOL		GetSuggestWords(FX_BSTR sWord, CFX_ByteStringArray &sSuggest);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 };
@@ -111,7 +111,7 @@ protected:
     virtual FX_BOOL	UpdateFWLData();
     virtual FX_BOOL IsDataChanged();
 public:
-    void	OnSelectChanged(IFWL_Widget *pWidget, FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    void	OnSelectChanged(IFWL_Widget *pWidget, int32_t iYear, int32_t iMonth, int32_t iDay);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
 };
 #endif

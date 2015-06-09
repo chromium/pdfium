@@ -117,7 +117,7 @@ void CFFL_RadioButton::SaveData(CPDFSDK_PageView* pPageView)
 			CPDF_FormField* pField = m_pWidget->GetFormField();
 			ASSERT(pField != NULL);
 
-			for (FX_INT32 i=0,sz=pField->CountControls(); i<sz; i++)
+			for (int32_t i=0,sz=pField->CountControls(); i<sz; i++)
 			{
 				if (CPDF_FormControl* pCtrl = pField->GetControl(i))
 				{

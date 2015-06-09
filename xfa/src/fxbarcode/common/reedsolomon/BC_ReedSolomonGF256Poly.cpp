@@ -23,7 +23,7 @@
 #include "../../barcode.h"
 #include "BC_ReedSolomonGF256.h"
 #include "BC_ReedSolomonGF256Poly.h"
-CBC_ReedSolomonGF256Poly::CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, FX_INT32 coefficients)
+CBC_ReedSolomonGF256Poly::CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, int32_t coefficients)
 {
     if(field == NULL) {
         return;
@@ -35,16 +35,16 @@ CBC_ReedSolomonGF256Poly::CBC_ReedSolomonGF256Poly()
 {
     m_field = NULL;
 }
-void CBC_ReedSolomonGF256Poly::Init(CBC_ReedSolomonGF256* field, CFX_Int32Array* coefficients, FX_INT32 &e)
+void CBC_ReedSolomonGF256Poly::Init(CBC_ReedSolomonGF256* field, CFX_Int32Array* coefficients, int32_t &e)
 {
     if(coefficients == NULL || coefficients->GetSize() == 0) {
         e = BCExceptionCoefficientsSizeIsNull;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
     m_field = field;
-    FX_INT32 coefficientsLength = coefficients->GetSize();
+    int32_t coefficientsLength = coefficients->GetSize();
     if((coefficientsLength > 1 && (*coefficients)[0] == 0)) {
-        FX_INT32 firstNonZero = 1;
+        int32_t firstNonZero = 1;
         while((firstNonZero < coefficientsLength) && ((*coefficients)[firstNonZero] == 0)) {
             firstNonZero++;
         }
@@ -52,7 +52,7 @@ void CBC_ReedSolomonGF256Poly::Init(CBC_ReedSolomonGF256* field, CFX_Int32Array*
             m_coefficients.Copy( *(m_field->GetZero()->GetCoefficients()));
         } else {
             m_coefficients.SetSize(coefficientsLength - firstNonZero);
-            for(FX_INT32 i = firstNonZero, j = 0; i < coefficientsLength; i++, j++) {
+            for(int32_t i = firstNonZero, j = 0; i < coefficientsLength; i++, j++) {
                 m_coefficients[j] = coefficients->operator [](i);
             }
         }
@@ -64,7 +64,7 @@ CFX_Int32Array* CBC_ReedSolomonGF256Poly::GetCoefficients()
 {
     return &m_coefficients;
 }
-FX_INT32 CBC_ReedSolomonGF256Poly::GetDegree()
+int32_t CBC_ReedSolomonGF256Poly::GetDegree()
 {
     return m_coefficients.GetSize() - 1;
 }
@@ -72,39 +72,39 @@ FX_BOOL CBC_ReedSolomonGF256Poly::IsZero()
 {
     return m_coefficients[0] == 0;
 }
-FX_INT32 CBC_ReedSolomonGF256Poly::GetCoefficients(FX_INT32 degree)
+int32_t CBC_ReedSolomonGF256Poly::GetCoefficients(int32_t degree)
 {
     return m_coefficients[m_coefficients.GetSize() - 1 - degree];
 }
-FX_INT32 CBC_ReedSolomonGF256Poly::EvaluateAt(FX_INT32 a)
+int32_t CBC_ReedSolomonGF256Poly::EvaluateAt(int32_t a)
 {
     if(a == 0) {
         return GetCoefficients(0);
     }
-    FX_INT32 size = m_coefficients.GetSize();
+    int32_t size = m_coefficients.GetSize();
     if(a == 1) {
-        FX_INT32 result = 0;
-        for(FX_INT32 i = 0; i < size; i++) {
+        int32_t result = 0;
+        for(int32_t i = 0; i < size; i++) {
             result = CBC_ReedSolomonGF256::AddOrSubtract(result, m_coefficients[i]);
         }
         return result;
     }
-    FX_INT32 result = m_coefficients[0];
-    for(FX_INT32 j = 1; j < size; j++) {
+    int32_t result = m_coefficients[0];
+    for(int32_t j = 1; j < size; j++) {
         result = CBC_ReedSolomonGF256::AddOrSubtract(
                      m_field->Multiply(a, result),
                      m_coefficients[j]);
     }
     return result;
 }
-CBC_ReedSolomonGF256Poly *CBC_ReedSolomonGF256Poly::Clone(FX_INT32 &e)
+CBC_ReedSolomonGF256Poly *CBC_ReedSolomonGF256Poly::Clone(int32_t &e)
 {
     CBC_ReedSolomonGF256Poly *temp  = FX_NEW CBC_ReedSolomonGF256Poly();
     temp->Init(m_field, &m_coefficients, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return temp;
 }
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(CBC_ReedSolomonGF256Poly* other, FX_INT32 &e)
+CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(CBC_ReedSolomonGF256Poly* other, int32_t &e)
 {
     if(IsZero()) {
         return other->Clone(e);
@@ -126,11 +126,11 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(CBC_ReedSolomo
     }
     CFX_Int32Array sumDiff;
     sumDiff.SetSize(largerCoefficients.GetSize() );
-    FX_INT32 lengthDiff = largerCoefficients.GetSize() - smallerCoefficients.GetSize();
-    for(FX_INT32 i = 0; i < lengthDiff; i++) {
+    int32_t lengthDiff = largerCoefficients.GetSize() - smallerCoefficients.GetSize();
+    for(int32_t i = 0; i < lengthDiff; i++) {
         sumDiff[i] = largerCoefficients[i];
     }
-    for(FX_INT32 j = lengthDiff; j < largerCoefficients.GetSize(); j++) {
+    for(int32_t j = lengthDiff; j < largerCoefficients.GetSize(); j++) {
         sumDiff[j] = (CBC_ReedSolomonGF256::AddOrSubtract(smallerCoefficients[j - lengthDiff],
                       largerCoefficients[j]));
     }
@@ -139,7 +139,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(CBC_ReedSolomo
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return temp;
 }
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(CBC_ReedSolomonGF256Poly* other, FX_INT32 &e)
+CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(CBC_ReedSolomonGF256Poly* other, int32_t &e)
 {
     if(IsZero() || other->IsZero()) {
         CBC_ReedSolomonGF256Poly *temp = m_field->GetZero()->Clone(e);
@@ -148,15 +148,15 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(CBC_ReedSolomonGF25
     }
     CFX_Int32Array aCoefficients ;
     aCoefficients.Copy(m_coefficients);
-    FX_INT32 aLength = m_coefficients.GetSize();
+    int32_t aLength = m_coefficients.GetSize();
     CFX_Int32Array bCoefficients;
     bCoefficients.Copy(*(other->GetCoefficients()));
-    FX_INT32 bLength = other->GetCoefficients()->GetSize();
+    int32_t bLength = other->GetCoefficients()->GetSize();
     CFX_Int32Array product;
     product.SetSize(aLength + bLength - 1);
-    for(FX_INT32 i = 0; i < aLength; i++) {
-        FX_INT32 aCoeff = m_coefficients[i];
-        for(FX_INT32 j = 0; j < bLength; j++) {
+    for(int32_t i = 0; i < aLength; i++) {
+        int32_t aCoeff = m_coefficients[i];
+        for(int32_t j = 0; j < bLength; j++) {
             product[i + j] = CBC_ReedSolomonGF256::AddOrSubtract(
                                  product[i + j],
                                  m_field->Multiply(aCoeff, other->GetCoefficients()->operator [](j)));
@@ -167,7 +167,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(CBC_ReedSolomonGF25
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return temp;
 }
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(FX_INT32 scalar, FX_INT32 &e)
+CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(int32_t scalar, int32_t &e)
 {
     if(scalar == 0) {
         CBC_ReedSolomonGF256Poly *temp = m_field->GetZero()->Clone(e);
@@ -178,10 +178,10 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(FX_INT32 scalar, FX
         return this->Clone(e);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     }
-    FX_INT32 size = m_coefficients.GetSize();
+    int32_t size = m_coefficients.GetSize();
     CFX_Int32Array product;
     product.SetSize(size);
-    for(FX_INT32 i = 0; i < size; i++) {
+    for(int32_t i = 0; i < size; i++) {
         product[i] = m_field->Multiply(m_coefficients[i], scalar);
     }
     CBC_ReedSolomonGF256Poly *temp = FX_NEW CBC_ReedSolomonGF256Poly();
@@ -189,7 +189,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(FX_INT32 scalar, FX
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return temp;
 }
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(FX_INT32 degree, FX_INT32 coefficient, FX_INT32 &e)
+CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(int32_t degree, int32_t coefficient, int32_t &e)
 {
     if(degree < 0) {
         e = BCExceptionDegreeIsNegative;
@@ -200,10 +200,10 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(FX_INT32 
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         return temp;
     }
-    FX_INT32 size = m_coefficients.GetSize();
+    int32_t size = m_coefficients.GetSize();
     CFX_Int32Array product;
     product.SetSize(size + degree);
-    for(FX_INT32 i = 0; i < size; i++) {
+    for(int32_t i = 0; i < size; i++) {
         product[i] = (m_field->Multiply(m_coefficients[i], coefficient));
     }
     CBC_ReedSolomonGF256Poly *temp = FX_NEW CBC_ReedSolomonGF256Poly();
@@ -211,7 +211,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(FX_INT32 
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return temp;
 }
-CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly *other, FX_INT32 &e)
+CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly *other, int32_t &e)
 {
     if(other->IsZero()) {
         e = BCExceptionDivideByZero;
@@ -223,13 +223,13 @@ CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly *other, 
     CBC_ReedSolomonGF256Poly* rsg2 = this->Clone(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     CBC_AutoPtr<CBC_ReedSolomonGF256Poly> remainder(rsg2);
-    FX_INT32 denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());
-    FX_INT32 inverseDenominatorLeadingTeam = m_field->Inverse(denominatorLeadingTerm, e);
+    int32_t denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());
+    int32_t inverseDenominatorLeadingTeam = m_field->Inverse(denominatorLeadingTerm, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     FX_BOOL bFirst = TRUE;
     while(remainder->GetDegree() >= other->GetDegree() && !remainder->IsZero()) {
-        FX_INT32 degreeDifference = remainder->GetDegree() - other->GetDegree();
-        FX_INT32 scale = m_field->Multiply(remainder->GetCoefficients((remainder->GetDegree())),
+        int32_t degreeDifference = remainder->GetDegree() - other->GetDegree();
+        int32_t scale = m_field->Multiply(remainder->GetCoefficients((remainder->GetDegree())),
                                            inverseDenominatorLeadingTeam);
         CBC_ReedSolomonGF256Poly* rsg3 = other->MultiplyByMonomial(degreeDifference, scale, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);

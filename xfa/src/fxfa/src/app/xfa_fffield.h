@@ -16,7 +16,7 @@ public:
     virtual ~CXFA_FFField();
 
     virtual FX_BOOL	GetBBox(CFX_RectF &rtBox, FX_DWORD dwStatus, FX_BOOL bDrawFocus = FALSE);
-    virtual void	RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_DWORD dwStatus = 0, FX_INT32 iRotate = 0);
+    virtual void	RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_DWORD dwStatus = 0, int32_t iRotate = 0);
     virtual	FX_BOOL	IsLoaded();
     virtual FX_BOOL	LoadWidget();
     virtual void	UnloadWidget();
@@ -29,7 +29,7 @@ public:
     virtual FX_BOOL		OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnLButtonDblClk(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-    virtual FX_BOOL		OnMouseWheel(FX_DWORD dwFlags, FX_SHORT zDelta, FX_FLOAT fx, FX_FLOAT fy);
+    virtual FX_BOOL		OnMouseWheel(FX_DWORD dwFlags, int16_t zDelta, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnRButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnRButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL		OnRButtonDblClk(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
@@ -53,8 +53,8 @@ protected:
     void			LayoutCaption();
     void			RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL);
 
-    FX_INT32		CalculateOverride();
-    FX_INT32		CalculateWidgetAcc(CXFA_WidgetAcc* pAcc);
+    int32_t		CalculateOverride();
+    int32_t		CalculateWidgetAcc(CXFA_WidgetAcc* pAcc);
     FX_BOOL			ProcessCommittedData();
     virtual FX_BOOL	CommitData();
     virtual	FX_BOOL	IsDataChanged();
@@ -62,11 +62,11 @@ protected:
     void			DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix);
     void			TranslateFWLMessage(CFWL_Message* pMessage);
     void			CapPlacement();
-    void			CapTopBottomPlacement(CXFA_Caption caption, const CFX_RectF &rtWidget, FX_INT32 iCapPlacement);
-    void			CapLeftRightPlacement(CXFA_Caption caption, const CFX_RectF &rtWidget, FX_INT32 iCapPlacement);
+    void			CapTopBottomPlacement(CXFA_Caption caption, const CFX_RectF &rtWidget, int32_t iCapPlacement);
+    void			CapLeftRightPlacement(CXFA_Caption caption, const CFX_RectF &rtWidget, int32_t iCapPlacement);
     void			SetEditScrollOffset();
 public:
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:

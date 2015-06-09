@@ -12,26 +12,26 @@ class CBC_CommonBitMatrix
 public:
     CBC_CommonBitMatrix();
     virtual ~CBC_CommonBitMatrix();
-    FX_BOOL Get(FX_INT32 x, FX_INT32 y);
-    void Set(FX_INT32 x, FX_INT32 y);
-    void Flip(FX_INT32 x, FX_INT32 y);
+    FX_BOOL Get(int32_t x, int32_t y);
+    void Set(int32_t x, int32_t y);
+    void Flip(int32_t x, int32_t y);
     void Clear();
-    void SetRegion(FX_INT32 left, FX_INT32 top, FX_INT32 width, FX_INT32 height, FX_INT32 &e);
-    CBC_CommonBitArray* GetRow(FX_INT32 y, CBC_CommonBitArray* row);
-    void SetRow(FX_INT32 y, CBC_CommonBitArray* row);
-    CBC_CommonBitArray* GetCol(FX_INT32 y, CBC_CommonBitArray* row);
-    void SetCol(FX_INT32 y, CBC_CommonBitArray* col);
-    FX_INT32 GetWidth();
-    FX_INT32 GetHeight();
-    FX_INT32 GetRowSize();
-    FX_INT32 GetDimension(FX_INT32 &e);
-    virtual void Init(FX_INT32 dimension);
-    virtual void Init(FX_INT32 width, FX_INT32 height);
-    FX_INT32* GetBits();
+    void SetRegion(int32_t left, int32_t top, int32_t width, int32_t height, int32_t &e);
+    CBC_CommonBitArray* GetRow(int32_t y, CBC_CommonBitArray* row);
+    void SetRow(int32_t y, CBC_CommonBitArray* row);
+    CBC_CommonBitArray* GetCol(int32_t y, CBC_CommonBitArray* row);
+    void SetCol(int32_t y, CBC_CommonBitArray* col);
+    int32_t GetWidth();
+    int32_t GetHeight();
+    int32_t GetRowSize();
+    int32_t GetDimension(int32_t &e);
+    virtual void Init(int32_t dimension);
+    virtual void Init(int32_t width, int32_t height);
+    int32_t* GetBits();
 private:
-    FX_INT32 m_width;
-    FX_INT32 m_height;
-    FX_INT32 m_rowSize;
-    FX_INT32* m_bits;
+    int32_t m_width;
+    int32_t m_height;
+    int32_t m_rowSize;
+    int32_t* m_bits;
 };
 #endif

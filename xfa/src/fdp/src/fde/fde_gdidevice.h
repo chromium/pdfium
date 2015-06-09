@@ -20,8 +20,8 @@ public:
         FDE_Delete this;
     }
 
-    virtual FX_INT32			GetWidth() const;
-    virtual FX_INT32			GetHeight() const;
+    virtual int32_t			GetWidth() const;
+    virtual int32_t			GetHeight() const;
     virtual FDE_HDEVICESTATE	SaveState();
     virtual void				RestoreState(FDE_HDEVICESTATE hState);
     virtual FX_BOOL				SetClipPath(const IFDE_Path *pClip);
@@ -34,7 +34,7 @@ public:
 
     virtual FX_BOOL				DrawImage(CFX_DIBSource *pDib, const CFX_RectF *pSrcRect, const CFX_RectF &dstRect, const CFX_Matrix *pImgMatrix = NULL, const CFX_Matrix *pDevMatrix = NULL);
     virtual FX_BOOL				DrawImage(IFDE_Image *pImg, const CFX_RectF *pSrcRect, const CFX_RectF &dstRect, const CFX_Matrix *pImgMatrix = NULL, const CFX_Matrix *pDevMatrix = NULL);
-    virtual FX_BOOL				DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, FX_INT32 iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix = NULL);
+    virtual FX_BOOL				DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, int32_t iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix = NULL);
     virtual FX_BOOL				DrawArc(IFDE_Pen *pPen, FX_FLOAT fPenWidth, const CFX_RectF &rect, FX_FLOAT startAngle, FX_FLOAT sweepAngle, const CFX_Matrix *pMatrix = NULL);
     virtual FX_BOOL				DrawBezier(IFDE_Pen *pPen, FX_FLOAT fPenWidth, const CFX_PointF &pt1, const CFX_PointF &pt2, const CFX_PointF &pt3, const CFX_PointF &pt4, const CFX_Matrix *pMatrix = NULL);
     virtual FX_BOOL				DrawCurve(IFDE_Pen *pPen, FX_FLOAT fPenWidth, const CFX_PointsF &points, FX_BOOL bClosed, FX_FLOAT fTension = 0.5f, const CFX_Matrix *pMatrix = NULL);

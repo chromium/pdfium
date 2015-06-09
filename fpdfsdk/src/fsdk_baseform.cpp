@@ -284,7 +284,7 @@ FX_BOOL	CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT, PDFSDK_Field
 					{
 						CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hWidget);
 						param.m_pTarget = pAcc;
-						FX_INT32 nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);	
+						int32_t nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);	
 						return nRet == XFA_EVENTERROR_Sucess;
 					}
 				}
@@ -292,7 +292,7 @@ FX_BOOL	CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT, PDFSDK_Field
 				{
 					CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hWidget);
 					param.m_pTarget = pAcc;
-					FX_INT32 nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);	
+					int32_t nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);	
 					return nRet == XFA_EVENTERROR_Sucess;
 				}
 
@@ -1093,7 +1093,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice, CPDFSDK_PageView* pPa
 //  		{
 			CPDF_Rect rc  = GetRect();
 			FX_COLORREF color = m_pInterForm->GetHighlightColor(nFieldType);
-			FX_BYTE alpha = m_pInterForm->GetHighlightAlpha();
+			uint8_t alpha = m_pInterForm->GetHighlightAlpha();
 
 			CFX_FloatRect rcDevice;
 			ASSERT(m_pInterForm->GetDocument());
@@ -1125,7 +1125,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton()
 	
 	CPDF_Rect rcWindow = GetRotatedRect();	
 
-	FX_INT32 nLayout = 0;
+	int32_t nLayout = 0;
 
 	switch (pControl->GetTextPosition())
 	{
@@ -1166,7 +1166,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton()
 		crBorder = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
 
 	FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
-	FX_INT32 nBorderStyle = 0;
+	int32_t nBorderStyle = 0;
 	CPWL_Dash dsBorder(3,0,0);
 	CPWL_Color crLeftTop,crRightBottom;
 
@@ -1372,7 +1372,7 @@ void CPDFSDK_Widget::ResetAppearance_CheckBox()
 		crBorder = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
 
 	FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
-	FX_INT32 nBorderStyle = 0;
+	int32_t nBorderStyle = 0;
 	CPWL_Dash dsBorder(3,0,0);
 	CPWL_Color crLeftTop,crRightBottom;
 
@@ -1412,7 +1412,7 @@ void CPDFSDK_Widget::ResetAppearance_CheckBox()
 		crText = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
 	}
 
-	FX_INT32 nStyle = 0;
+	int32_t nStyle = 0;
 
 	CFX_WideString csWCaption = pControl->GetNormalCaption();
 	if (csWCaption.GetLength() > 0)
@@ -1504,7 +1504,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton()
 		crBorder = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
 
 	FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
-	FX_INT32 nBorderStyle = 0;
+	int32_t nBorderStyle = 0;
 	CPWL_Dash dsBorder(3,0,0);
 	CPWL_Color crLeftTop,crRightBottom;
 
@@ -1544,7 +1544,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton()
 		crText = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
 	}
 
-	FX_INT32 nStyle = 0;
+	int32_t nStyle = 0;
 
 	CFX_WideString csWCaption = pControl->GetNormalCaption();
 	if (csWCaption.GetLength() > 0)
@@ -1706,7 +1706,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(FX_LPCWSTR sValue)
 			pEdit->SetText(sValue);
 		else
 		{
-			FX_INT32 nCurSel = pField->GetSelectedIndex(0);
+			int32_t nCurSel = pField->GetSelectedIndex(0);
 
 			if (nCurSel < 0)
 				pEdit->SetText(pField->GetValue().c_str());
@@ -1780,14 +1780,14 @@ void CPDFSDK_Widget::ResetAppearance_ListBox()
 		CFX_ByteTextBuf sList;
 		FX_FLOAT fy = rcClient.top;
 
-		FX_INT32 nTop = pField->GetTopVisibleIndex();
-		FX_INT32 nCount = pField->CountOptions();
-		FX_INT32 nSelCount = pField->CountSelectedItems();
+		int32_t nTop = pField->GetTopVisibleIndex();
+		int32_t nCount = pField->CountOptions();
+		int32_t nSelCount = pField->CountSelectedItems();
 
-		for (FX_INT32 i=nTop; i<nCount; i++)
+		for (int32_t i=nTop; i<nCount; i++)
 		{
 			FX_BOOL bSelected = FALSE;				
-			for (FX_INT32 j=0; j<nSelCount; j++)
+			for (int32_t j=0; j<nSelCount; j++)
 			{
 				if (pField->GetSelectedIndex(j) == i)
 				{
@@ -1954,7 +1954,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(FX_LPCWSTR sValue)
 						sLines << "q\n" << GetBorderWidth() << " w\n" 
 							<< CPWL_Utils::GetColorAppStream(GetBorderPWLColor(),FALSE) << " 2 J 0 j\n";					
 
-						for (FX_INT32 i=1;i<nMaxLen;i++)
+						for (int32_t i=1;i<nMaxLen;i++)
 						{
 							sLines << rcClient.left + ((rcClient.right - rcClient.left)/nMaxLen)*i << " "
 								<< rcClient.bottom << " m\n"
@@ -1979,7 +1979,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(FX_LPCWSTR sValue)
 							<< dsBorder.nGap << "] " 
 							<< dsBorder.nPhase << " d\n";
 
-						for (FX_INT32 i=1;i<nMaxLen;i++)					
+						for (int32_t i=1;i<nMaxLen;i++)					
 						{
 							sLines << rcClient.left + ((rcClient.right - rcClient.left)/nMaxLen)*i << " "
 								<< rcClient.bottom << " m\n"
@@ -2059,7 +2059,7 @@ CFX_ByteString CPDFSDK_Widget::GetBorderAppStream() const
 	CPWL_Color crLeftTop, crRightBottom;
 
 	FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
-	FX_INT32 nBorderStyle = 0;
+	int32_t nBorderStyle = 0;
 	CPWL_Dash dsBorder(3,0,0);
 
 	switch (GetBorderStyle())
@@ -2134,7 +2134,7 @@ CPWL_Color CPDFSDK_Widget::GetTextPWLColor() const
 	CPDF_DefaultAppearance da = pFormCtrl->GetDefaultAppearance();
 	if (da.HasColor())
 	{
-		FX_INT32 iColorType;
+		int32_t iColorType;
 		FX_FLOAT fc[4];
 		da.GetColor(iColorType, fc);
 		crText = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
@@ -2150,7 +2150,7 @@ CPWL_Color CPDFSDK_Widget::GetBorderPWLColor() const
 	CPDF_FormControl* pFormCtrl = GetFormControl();
 	ASSERT(pFormCtrl != NULL);
 
-	FX_INT32 iColorType;
+	int32_t iColorType;
 	FX_FLOAT fc[4];
 	pFormCtrl->GetOriginalBorderColor(iColorType, fc);
 	if (iColorType > 0)
@@ -2166,7 +2166,7 @@ CPWL_Color CPDFSDK_Widget::GetFillPWLColor() const
 	CPDF_FormControl* pFormCtrl = GetFormControl();
 	ASSERT(pFormCtrl != NULL);
 
-	FX_INT32 iColorType;
+	int32_t iColorType;
 	FX_FLOAT fc[4];
 	pFormCtrl->GetOriginalBackgroundColor(iColorType, fc);
 	if (iColorType > 0)
@@ -2261,7 +2261,7 @@ FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type, PDFSDK_FieldAc
 
 				CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hWidget);
 				param.m_pTarget = pAcc;
-				FX_INT32 nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);
+				int32_t nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);
 
 				if (IXFA_DocView* pDocView = pDoc->GetXFADocView())
 				{
@@ -2329,12 +2329,12 @@ CFX_WideString CPDFSDK_Widget::GetAlternateName() const
 	return pFormField->GetAlternateName();
 }
 
-FX_INT32	CPDFSDK_Widget::GetAppearanceAge() const
+int32_t	CPDFSDK_Widget::GetAppearanceAge() const
 {
 	return m_nAppAge;
 }
 
-FX_INT32 CPDFSDK_Widget::GetValueAge() const
+int32_t CPDFSDK_Widget::GetValueAge() const
 {
 	return m_nValueAge;
 }
@@ -2666,7 +2666,7 @@ CPDF_Stream* CPDFSDK_InterForm::LoadImageFromFile(const CFX_WideString& sFile)
 			pRetStream = new CPDF_Stream(NULL, 0, NULL);
 			CFX_ByteString csStream;
 			csStream.Format("q\n%d 0 0 %d 0 0 cm\n/Img Do\nQ", nWidth, nHeight);
-			pRetStream->InitStream((FX_BYTE*)csStream.c_str(), csStream.GetLength(), pStreamDict);
+			pRetStream->InitStream((uint8_t*)csStream.c_str(), csStream.GetLength(), pStreamDict);
 			pDocument->AddIndirectObject(pRetStream);
 		}
 
@@ -3113,7 +3113,7 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(FX_LPBYTE& pBuf, FX_STRSIZE& nBuf
  		}
 
 		nBufSize = fdfEncodedData.GetLength();
-		pBuf = FX_Alloc(FX_BYTE, nBufSize);
+		pBuf = FX_Alloc(uint8_t, nBufSize);
 		FXSYS_memcpy(pBuf, fdfEncodedData.GetBuffer(), nBufSize);
  	}
 	return TRUE;

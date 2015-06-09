@@ -63,7 +63,7 @@ FWL_ERR CFWL_SDAdapterWidgetMgr::RepaintWidget(IFWL_Widget *pWidget, const CFX_R
 {
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_SDAdapterWidgetMgr::Exit(FX_INT32 iExitCode)
+FWL_ERR CFWL_SDAdapterWidgetMgr::Exit(int32_t iExitCode)
 {
     return FWL_ERR_Succeeded;
 }
@@ -135,11 +135,11 @@ FWL_ERR		CFWL_SDAdapterWidgetMgr::InitMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuD
 {
     return FWL_ERR_Succeeded;
 }
-FWL_ERR		CFWL_SDAdapterWidgetMgr::UpdateMenu(IFWL_Menu *pMenu, FX_LPCVOID hItem, FX_INT32 iType)
+FWL_ERR		CFWL_SDAdapterWidgetMgr::UpdateMenu(IFWL_Menu *pMenu, FX_LPCVOID hItem, int32_t iType)
 {
     return FWL_ERR_Succeeded;
 }
-FX_INT32	CFWL_SDAdapterWidgetMgr::TrackPopupMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData)
+int32_t	CFWL_SDAdapterWidgetMgr::TrackPopupMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData)
 {
     return 0;
 }
@@ -173,11 +173,11 @@ FWL_ERR CFWL_SDAdapterThreadMgr::Suspend(FWL_HTHREAD hThread)
 {
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_SDAdapterThreadMgr::Kill(FWL_HTHREAD hThread, FX_INT32 iExitCode)
+FWL_ERR CFWL_SDAdapterThreadMgr::Kill(FWL_HTHREAD hThread, int32_t iExitCode)
 {
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_SDAdapterThreadMgr::Stop(FWL_HTHREAD hThread, FX_INT32 iExitCode)
+FWL_ERR CFWL_SDAdapterThreadMgr::Stop(FWL_HTHREAD hThread, int32_t iExitCode)
 {
     return FWL_ERR_Succeeded;
 }

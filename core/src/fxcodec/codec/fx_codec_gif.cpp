@@ -33,7 +33,7 @@ static void _gif_error_data(gif_decompress_struct_p gif_ptr, FX_LPCSTR err_msg)
     FXSYS_strncpy((char*)gif_ptr->err_ptr, err_msg, GIF_MAX_ERROR_SIZE - 1);
     longjmp(gif_ptr->jmpbuf, 1);
 }
-static FX_LPBYTE _gif_ask_buf_for_pal(gif_decompress_struct_p gif_ptr, FX_INT32 pal_size)
+static FX_LPBYTE _gif_ask_buf_for_pal(gif_decompress_struct_p gif_ptr, int32_t pal_size)
 {
     FXGIF_Context* p = (FXGIF_Context*)gif_ptr->context_ptr;
     CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
@@ -47,17 +47,17 @@ static void _gif_record_current_position(gif_decompress_struct_p gif_ptr, FX_DWO
     CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
     pModule->RecordCurrentPositionCallback(p->child_ptr, *cur_pos_ptr);
 }
-static void _gif_read_scanline(gif_decompress_struct_p gif_ptr, FX_INT32 row_num, FX_LPBYTE row_buf)
+static void _gif_read_scanline(gif_decompress_struct_p gif_ptr, int32_t row_num, FX_LPBYTE row_buf)
 {
     FXGIF_Context* p = (FXGIF_Context*)gif_ptr->context_ptr;
     CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
     pModule->ReadScanlineCallback(p->child_ptr, row_num, row_buf);
 }
 static FX_BOOL _gif_get_record_position(gif_decompress_struct_p gif_ptr, FX_DWORD cur_pos,
-                                        FX_INT32 left, FX_INT32 top, FX_INT32 width, FX_INT32 height,
-                                        FX_INT32 pal_num, void* pal_ptr,
-                                        FX_INT32 delay_time, FX_BOOL user_input,
-                                        FX_INT32 trans_index, FX_INT32 disposal_method, FX_BOOL interlace)
+                                        int32_t left, int32_t top, int32_t width, int32_t height,
+                                        int32_t pal_num, void* pal_ptr,
+                                        int32_t delay_time, FX_BOOL user_input,
+                                        int32_t trans_index, int32_t disposal_method, FX_BOOL interlace)
 {
     FXGIF_Context* p = (FXGIF_Context*)gif_ptr->context_ptr;
     CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
@@ -66,7 +66,7 @@ static FX_BOOL _gif_get_record_position(gif_decompress_struct_p gif_ptr, FX_DWOR
 }
 void* CCodec_GifModule::Start(void* pModule)
 {
-    FXGIF_Context* p = (FXGIF_Context*)FX_Alloc(FX_BYTE, sizeof(FXGIF_Context));
+    FXGIF_Context* p = (FXGIF_Context*)FX_Alloc(uint8_t, sizeof(FXGIF_Context));
     if (p == NULL) {
         return NULL;
     }
@@ -98,14 +98,14 @@ void CCodec_GifModule::Finish(void* pContext)
         p->m_FreeFunc(p);
     }
 }
-FX_INT32 CCodec_GifModule::ReadHeader(void* pContext, int* width, int* height,
+int32_t CCodec_GifModule::ReadHeader(void* pContext, int* width, int* height,
                                       int* pal_num, void** pal_pp, int* bg_index, CFX_DIBAttribute* pAttribute)
 {
     FXGIF_Context* p = (FXGIF_Context*)pContext;
     if(setjmp(p->gif_ptr->jmpbuf)) {
         return 0;
     }
-    FX_INT32 ret = _gif_read_header(p->gif_ptr);
+    int32_t ret = _gif_read_header(p->gif_ptr);
     if (ret != 1) {
         return ret;
     }
@@ -118,26 +118,26 @@ FX_INT32 CCodec_GifModule::ReadHeader(void* pContext, int* width, int* height,
     *bg_index = p->gif_ptr->bc_index;
     return 1;
 }
-FX_INT32 CCodec_GifModule::LoadFrameInfo(void* pContext, int* frame_num)
+int32_t CCodec_GifModule::LoadFrameInfo(void* pContext, int* frame_num)
 {
     FXGIF_Context* p = (FXGIF_Context*)pContext;
     if(setjmp(p->gif_ptr->jmpbuf)) {
         return 0;
     }
-    FX_INT32 ret = _gif_get_frame(p->gif_ptr);
+    int32_t ret = _gif_get_frame(p->gif_ptr);
     if (ret != 1) {
         return ret;
     }
     *frame_num = _gif_get_frame_num(p->gif_ptr);
     return 1;
 }
-FX_INT32 CCodec_GifModule::LoadFrame(void* pContext, int frame_num, CFX_DIBAttribute* pAttribute)
+int32_t CCodec_GifModule::LoadFrame(void* pContext, int frame_num, CFX_DIBAttribute* pAttribute)
 {
     FXGIF_Context* p = (FXGIF_Context*)pContext;
     if(setjmp(p->gif_ptr->jmpbuf)) {
         return 0;
     }
-    FX_INT32 ret = _gif_load_frame(p->gif_ptr, frame_num);
+    int32_t ret = _gif_load_frame(p->gif_ptr, frame_num);
     if (ret == 1) {
         if (pAttribute) {
             pAttribute->m_nGifLeft = p->gif_ptr->img_ptr_arr_ptr->GetAt(frame_num)->image_info_ptr->left;
@@ -147,7 +147,7 @@ FX_INT32 CCodec_GifModule::LoadFrame(void* pContext, int frame_num, CFX_DIBAttri
                 FX_LPCBYTE buf = (FX_LPCBYTE)p->gif_ptr->cmt_data_ptr->GetBuffer(0);
                 FX_DWORD len = p->gif_ptr->cmt_data_ptr->GetLength();
                 if (len > 21) {
-                    FX_BYTE size = *buf++;
+                    uint8_t size = *buf++;
                     if (size) {
                         pAttribute->m_strAuthor = CFX_ByteString(buf, size);
                     } else {

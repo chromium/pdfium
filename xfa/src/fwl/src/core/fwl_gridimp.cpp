@@ -27,19 +27,19 @@ FWL_ERR	IFWL_Grid::Initialize(CFWL_WidgetImpProperties &properties)
     ((CFWL_GridImp*)m_pData)->SetInterface(this);
     return ((CFWL_GridImp*)m_pData)->Initialize();
 }
-FWL_HGRIDCOLROW	IFWL_Grid::InsertColRow(FX_BOOL bColumn, FX_INT32 nIndex )
+FWL_HGRIDCOLROW	IFWL_Grid::InsertColRow(FX_BOOL bColumn, int32_t nIndex )
 {
     return ((CFWL_GridImp*)m_pData)->InsertColRow(bColumn, nIndex);
 }
-FX_INT32 IFWL_Grid::CountColRows(FX_BOOL bColumn)
+int32_t IFWL_Grid::CountColRows(FX_BOOL bColumn)
 {
     return ((CFWL_GridImp*)m_pData)->CountColRows(bColumn);
 }
-FWL_HGRIDCOLROW	IFWL_Grid::GetColRow(FX_BOOL bColumn, FX_INT32 nIndex)
+FWL_HGRIDCOLROW	IFWL_Grid::GetColRow(FX_BOOL bColumn, int32_t nIndex)
 {
     return ((CFWL_GridImp*)m_pData)->GetColRow(bColumn, nIndex);
 }
-FX_INT32 IFWL_Grid::GetIndex(FWL_HGRIDCOLROW hColRow)
+int32_t IFWL_Grid::GetIndex(FWL_HGRIDCOLROW hColRow)
 {
     return ((CFWL_GridImp*)m_pData)->GetIndex(hColRow);
 }
@@ -75,19 +75,19 @@ FX_BOOL IFWL_Grid::IsColumn(FWL_HGRIDCOLROW hColRow)
 {
     return ((CFWL_GridImp*)m_pData)->IsColumn(hColRow);
 }
-FX_INT32 IFWL_Grid::GetWidgetPos(IFWL_Widget *pWidget, FX_BOOL bColumn)
+int32_t IFWL_Grid::GetWidgetPos(IFWL_Widget *pWidget, FX_BOOL bColumn)
 {
     return ((CFWL_GridImp*)m_pData)->GetWidgetPos(pWidget, bColumn);
 }
-FWL_ERR IFWL_Grid::SetWidgetPos(IFWL_Widget *pWidget, FX_INT32 iPos, FX_BOOL bColumn)
+FWL_ERR IFWL_Grid::SetWidgetPos(IFWL_Widget *pWidget, int32_t iPos, FX_BOOL bColumn)
 {
     return ((CFWL_GridImp*)m_pData)->SetWidgetPos(pWidget, iPos, bColumn);
 }
-FX_INT32 IFWL_Grid::GetWidgetSpan(IFWL_Widget *pWidget, FX_BOOL bColumn)
+int32_t IFWL_Grid::GetWidgetSpan(IFWL_Widget *pWidget, FX_BOOL bColumn)
 {
     return ((CFWL_GridImp*)m_pData)->GetWidgetSpan(pWidget, bColumn);
 }
-FWL_ERR IFWL_Grid::SetWidgetSpan(IFWL_Widget *pWidget, FX_INT32 iSpan, FX_BOOL bColumn)
+FWL_ERR IFWL_Grid::SetWidgetSpan(IFWL_Widget *pWidget, int32_t iSpan, FX_BOOL bColumn)
 {
     return ((CFWL_GridImp*)m_pData)->SetWidgetSpan(pWidget, iSpan , bColumn);
 }
@@ -163,13 +163,13 @@ CFWL_GridImp::CFWL_GridImp(const CFWL_WidgetImpProperties &properties)
 }
 CFWL_GridImp::~CFWL_GridImp()
 {
-    FX_INT32 iCount = m_Columns.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i++) {
+    int32_t iCount = m_Columns.GetSize();
+    for (int32_t i = 0; i < iCount; i++) {
         delete (CFWL_GridColRow *) m_Columns[i];
     }
     m_Columns.RemoveAll();
     iCount = m_Rows.GetSize();
-    for (FX_INT32 j = 0; j < iCount; j++) {
+    for (int32_t j = 0; j < iCount; j++) {
         delete (CFWL_GridColRow*) m_Rows[j];
     }
     m_Rows.RemoveAll();
@@ -251,8 +251,8 @@ FWL_ERR CFWL_GridImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMat
         FX_BOOL bDrawLine = FALSE;
         CFX_Path path;
         path.Create();
-        FX_INT32 iColumns = m_Columns.GetSize();
-        for (FX_INT32 i = 1; i < iColumns; i++) {
+        int32_t iColumns = m_Columns.GetSize();
+        for (int32_t i = 1; i < iColumns; i++) {
             CFWL_GridColRow *pColRow = (CFWL_GridColRow*)m_Columns[i];
             if (!pColRow) {
                 continue;
@@ -265,8 +265,8 @@ FWL_ERR CFWL_GridImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMat
                          pColRow->m_fActualPos,
                          m_pProperties->m_rtWidget.height);
         }
-        FX_INT32 iRows = m_Rows.GetSize();
-        for (FX_INT32 j = 1; j < iRows; j++) {
+        int32_t iRows = m_Rows.GetSize();
+        for (int32_t j = 1; j < iRows; j++) {
             CFWL_GridColRow *pColRow = (CFWL_GridColRow*)m_Rows[j];
             if (!pColRow) {
                 continue;
@@ -288,7 +288,7 @@ FWL_ERR CFWL_GridImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMat
     pGraphics->RestoreGraphState();
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_GridImp::InsertWidget(IFWL_Widget *pChild, FX_INT32 nIndex )
+FWL_ERR CFWL_GridImp::InsertWidget(IFWL_Widget *pChild, int32_t nIndex )
 {
     _FWL_RETURN_VALUE_IF_FAIL(pChild, FWL_ERR_Indefinite);
     CFWL_ContentImp::InsertWidget(pChild, nIndex);
@@ -306,12 +306,12 @@ FWL_ERR CFWL_GridImp::RemoveWidget(IFWL_Widget* pWidget)
     if (CFWL_GridWidgetInfo *pInfo = (CFWL_GridWidgetInfo*)m_mapWidgetInfo.GetValueAt(pWidget)) {
         m_mapWidgetInfo.RemoveKey(pWidget);
         delete pInfo;
-        FX_INT32 nIndex = m_Widgets.Find(pWidget);
+        int32_t nIndex = m_Widgets.Find(pWidget);
         m_Widgets.RemoveAt(nIndex, 1);
     }
     return FWL_ERR_Succeeded;
 }
-FWL_HGRIDCOLROW CFWL_GridImp::InsertColRow(FX_BOOL bColumn, FX_INT32 nIndex )
+FWL_HGRIDCOLROW CFWL_GridImp::InsertColRow(FX_BOOL bColumn, int32_t nIndex )
 {
     if (bColumn) {
         if (nIndex < 0 || nIndex > m_Columns.GetSize()) {
@@ -328,14 +328,14 @@ FWL_HGRIDCOLROW CFWL_GridImp::InsertColRow(FX_BOOL bColumn, FX_INT32 nIndex )
     m_Rows.InsertAt(nIndex, pRow, 1);
     return (FWL_HGRIDCOLROW)pRow;
 }
-FX_INT32 CFWL_GridImp::CountColRows(FX_BOOL bColumn)
+int32_t CFWL_GridImp::CountColRows(FX_BOOL bColumn)
 {
     if (bColumn) {
         return m_Columns.GetSize();
     }
     return m_Rows.GetSize();
 }
-FWL_HGRIDCOLROW CFWL_GridImp::GetColRow(FX_BOOL bColumn, FX_INT32 nIndex)
+FWL_HGRIDCOLROW CFWL_GridImp::GetColRow(FX_BOOL bColumn, int32_t nIndex)
 {
     if (bColumn) {
         if (nIndex < 0 || nIndex >= m_Columns.GetSize()) {
@@ -348,7 +348,7 @@ FWL_HGRIDCOLROW CFWL_GridImp::GetColRow(FX_BOOL bColumn, FX_INT32 nIndex)
     }
     return (FWL_HGRIDCOLROW)m_Rows[nIndex];
 }
-FX_INT32 CFWL_GridImp::GetIndex(FWL_HGRIDCOLROW hColRow)
+int32_t CFWL_GridImp::GetIndex(FWL_HGRIDCOLROW hColRow)
 {
     if (IsColumn(hColRow)) {
         return m_Columns.Find(hColRow);
@@ -402,7 +402,7 @@ FWL_ERR CFWL_GridImp::SetMaxSize(FWL_HGRIDCOLROW hColRow, FX_FLOAT fSize, FWL_GR
 }
 FX_BOOL CFWL_GridImp::DeleteColRow(FWL_HGRIDCOLROW hColRow)
 {
-    FX_INT32 nIndex = m_Columns.Find(hColRow);
+    int32_t nIndex = m_Columns.Find(hColRow);
     if (nIndex >= 0) {
         m_Columns.RemoveAt(nIndex);
         delete (CFWL_GridColRow*)hColRow;
@@ -420,7 +420,7 @@ FX_BOOL CFWL_GridImp::IsColumn(FWL_HGRIDCOLROW hColRow)
 {
     return m_Columns.Find(hColRow) != -1;
 }
-FX_INT32 CFWL_GridImp::GetWidgetPos(IFWL_Widget *pWidget, FX_BOOL bColumn)
+int32_t CFWL_GridImp::GetWidgetPos(IFWL_Widget *pWidget, FX_BOOL bColumn)
 {
     CFWL_GridWidgetInfo *pInfo = (CFWL_GridWidgetInfo*)GetWidgetInfo(pWidget);
     if (pInfo) {
@@ -428,7 +428,7 @@ FX_INT32 CFWL_GridImp::GetWidgetPos(IFWL_Widget *pWidget, FX_BOOL bColumn)
     }
     return -1;
 }
-FWL_ERR CFWL_GridImp::SetWidgetPos(IFWL_Widget *pWidget, FX_INT32 iPos, FX_BOOL bColumn)
+FWL_ERR CFWL_GridImp::SetWidgetPos(IFWL_Widget *pWidget, int32_t iPos, FX_BOOL bColumn)
 {
     CFWL_GridWidgetInfo *pInfo = (CFWL_GridWidgetInfo*)GetWidgetInfo(pWidget);
     if (pInfo) {
@@ -436,7 +436,7 @@ FWL_ERR CFWL_GridImp::SetWidgetPos(IFWL_Widget *pWidget, FX_INT32 iPos, FX_BOOL 
     }
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_GridImp::GetWidgetSpan(IFWL_Widget *pWidget, FX_BOOL bColumn)
+int32_t CFWL_GridImp::GetWidgetSpan(IFWL_Widget *pWidget, FX_BOOL bColumn)
 {
     CFWL_GridWidgetInfo *pInfo = (CFWL_GridWidgetInfo*)GetWidgetInfo(pWidget);
     if (pInfo) {
@@ -444,7 +444,7 @@ FX_INT32 CFWL_GridImp::GetWidgetSpan(IFWL_Widget *pWidget, FX_BOOL bColumn)
     }
     return 0;
 }
-FWL_ERR CFWL_GridImp::SetWidgetSpan(IFWL_Widget *pWidget, FX_INT32 iSpan, FX_BOOL bColumn)
+FWL_ERR CFWL_GridImp::SetWidgetSpan(IFWL_Widget *pWidget, int32_t iSpan, FX_BOOL bColumn)
 {
     CFWL_GridWidgetInfo *pInfo = (CFWL_GridWidgetInfo*)GetWidgetInfo(pWidget);
     if (pInfo) {
@@ -511,7 +511,7 @@ CFWL_GridWidgetInfo* CFWL_GridImp::GetWidgetInfo(IFWL_Widget* pWidget)
 {
     return (CFWL_GridWidgetInfo*)m_mapWidgetInfo.GetValueAt(pWidget);
 }
-void CFWL_GridImp::ProcFixedColRow(CFWL_GridColRow *pColRow, FX_INT32 nIndex, FX_FLOAT fColRowSize, FX_BOOL bColumn)
+void CFWL_GridImp::ProcFixedColRow(CFWL_GridColRow *pColRow, int32_t nIndex, FX_FLOAT fColRowSize, FX_BOOL bColumn)
 {
     pColRow->m_fActualSize = fColRowSize;
     FX_POSITION ps = m_mapWidgetInfo.GetStartPosition();
@@ -530,7 +530,7 @@ void CFWL_GridImp::ProcFixedColRow(CFWL_GridColRow *pColRow, FX_INT32 nIndex, FX
         }
     }
 }
-void CFWL_GridImp::ProcAutoColRow(CFWL_GridColRow *pColRow, FX_INT32 nIndex, FX_BOOL bColumn)
+void CFWL_GridImp::ProcAutoColRow(CFWL_GridColRow *pColRow, int32_t nIndex, FX_BOOL bColumn)
 {
     _FWL_RETURN_IF_FAIL(pColRow);
     FX_FLOAT fMaxSize = 0, fWidgetSize = 0;
@@ -562,7 +562,7 @@ void CFWL_GridImp::ProcAutoColRow(CFWL_GridColRow *pColRow, FX_INT32 nIndex, FX_
     }
     SetColRowActualSize(pColRow, fMaxSize);
 }
-void CFWL_GridImp::ProcScaledColRow(CFWL_GridColRow *pColRow, FX_INT32 nIndex, FX_FLOAT fColRowSize, FX_BOOL bColumn)
+void CFWL_GridImp::ProcScaledColRow(CFWL_GridColRow *pColRow, int32_t nIndex, FX_FLOAT fColRowSize, FX_BOOL bColumn)
 {
     if (fColRowSize > 0) {
         ProcFixedColRow(pColRow, nIndex, fColRowSize, bColumn);
@@ -655,7 +655,7 @@ FX_FLOAT CFWL_GridImp::ProcessColumns(FX_FLOAT fWidth)
     if (fWidth <= 0) {
         return ProcessUnCertainColumns();
     }
-    FX_INT32 iColumns = m_Columns.GetSize();
+    int32_t iColumns = m_Columns.GetSize();
     if (iColumns < 1) {
         return fWidth;
     }
@@ -664,7 +664,7 @@ FX_FLOAT CFWL_GridImp::ProcessColumns(FX_FLOAT fWidth)
     CFX_PtrArray autoColumns;
     CFX_PtrArray scaledColumns;
     FX_FLOAT fScaledColumnNum = 0;
-    for (FX_INT32 i = 0; i < iColumns; i++) {
+    for (int32_t i = 0; i < iColumns; i++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)m_Columns[i];
         if (!pColRow) {
             continue;
@@ -698,9 +698,9 @@ FX_FLOAT CFWL_GridImp::ProcessColumns(FX_FLOAT fWidth)
         }
         CFX_PtrArray spanAutoColumns;
         FX_FLOAT fSpanSize = 0;
-        FX_INT32 iAutoColRows = 0;
-        FX_INT32 iScaledColRows = 0;
-        for (FX_INT32 i = 0; i < pInfo->m_iColumnSpan; i++) {
+        int32_t iAutoColRows = 0;
+        int32_t iScaledColRows = 0;
+        for (int32_t i = 0; i < pInfo->m_iColumnSpan; i++) {
             CFWL_GridColRow *pColumn = (CFWL_GridColRow*)GetColRow(TRUE, pInfo->m_iColumn + i);
             if (!pColumn) {
                 break;
@@ -724,8 +724,8 @@ FX_FLOAT CFWL_GridImp::ProcessColumns(FX_FLOAT fWidth)
             }
         }
     }
-    FX_INT32 iAutoCols = autoColumns.GetSize();
-    for (FX_INT32 k = 0; k < iAutoCols; k++) {
+    int32_t iAutoCols = autoColumns.GetSize();
+    for (int32_t k = 0; k < iAutoCols; k++) {
         fAutoWidth += ((CFWL_GridColRow*)autoColumns[k])->m_fActualSize;
     }
     FX_FLOAT fScaledWidth = fWidth - fFixedWidth - fAutoWidth;
@@ -739,7 +739,7 @@ FX_FLOAT CFWL_GridImp::ProcessRows(FX_FLOAT fHeight)
     if (fHeight <= 0) {
         return ProcessUnCertainRows();
     }
-    FX_INT32 iRows = m_Rows.GetSize();
+    int32_t iRows = m_Rows.GetSize();
     if (iRows < 1) {
         return fHeight;
     }
@@ -748,7 +748,7 @@ FX_FLOAT CFWL_GridImp::ProcessRows(FX_FLOAT fHeight)
     CFX_PtrArray autoRows;
     CFX_PtrArray scaledRows;
     FX_FLOAT fScaledRowNum = 0;
-    for (FX_INT32 i = 0; i < iRows; i++) {
+    for (int32_t i = 0; i < iRows; i++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)m_Rows[i];
         if (!pColRow) {
             continue;
@@ -783,9 +783,9 @@ FX_FLOAT CFWL_GridImp::ProcessRows(FX_FLOAT fHeight)
         }
         CFX_PtrArray spanAutoRows;
         FX_FLOAT fSpanSize = 0;
-        FX_INT32 iAutoColRows = 0;
-        FX_INT32 iScaledColRows = 0;
-        for (FX_INT32 i = 0; i < pInfo->m_iRowSpan; i++) {
+        int32_t iAutoColRows = 0;
+        int32_t iScaledColRows = 0;
+        for (int32_t i = 0; i < pInfo->m_iRowSpan; i++) {
             CFWL_GridColRow *pRow = (CFWL_GridColRow*)GetColRow(FALSE, pInfo->m_iRow + i);
             if (!pRow) {
                 break;
@@ -809,8 +809,8 @@ FX_FLOAT CFWL_GridImp::ProcessRows(FX_FLOAT fHeight)
             }
         }
     }
-    FX_INT32 iAutoRows = autoRows.GetSize();
-    for (FX_INT32 k = 0; k < iAutoRows; k++) {
+    int32_t iAutoRows = autoRows.GetSize();
+    for (int32_t k = 0; k < iAutoRows; k++) {
         fAutoHeigt += ((CFWL_GridColRow*)autoRows[k])->m_fActualSize;
     }
     FX_FLOAT fScaledHeight = fHeight - fFixedHeight - fAutoHeigt;
@@ -821,7 +821,7 @@ FX_FLOAT CFWL_GridImp::ProcessRows(FX_FLOAT fHeight)
 }
 FX_FLOAT CFWL_GridImp::ProcessUnCertainColumns()
 {
-    FX_INT32 iColumns = m_Columns.GetSize();
+    int32_t iColumns = m_Columns.GetSize();
     if (iColumns < 1) {
         CFWL_GridColRow *pColRow = new CFWL_GridColRow;
         pColRow->m_Size.eUnit = FWL_GRIDUNIT_Auto;
@@ -835,7 +835,7 @@ FX_FLOAT CFWL_GridImp::ProcessUnCertainColumns()
     CFX_PtrArray scaledColumns;
     FX_FLOAT fScaledColumnNum = 0;
     FX_FLOAT fScaledMaxPerWidth = 0;
-    for (FX_INT32 i = 0; i < iColumns; i++) {
+    for (int32_t i = 0; i < iColumns; i++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)m_Columns[i];
         if (!pColRow) {
             continue;
@@ -867,7 +867,7 @@ FX_FLOAT CFWL_GridImp::ProcessUnCertainColumns()
         }
     }
     iColumns = scaledColumns.GetSize();
-    for (FX_INT32 j = 0; j < iColumns; j++) {
+    for (int32_t j = 0; j < iColumns; j++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)scaledColumns[j];
         if (!pColRow) {
             continue;
@@ -886,9 +886,9 @@ FX_FLOAT CFWL_GridImp::ProcessUnCertainColumns()
         CFX_PtrArray spanScaledColumns;
         FX_FLOAT fSpanSize = 0;
         FX_FLOAT fScaledSum = 0;
-        FX_INT32 iAutoColRows = 0;
-        FX_INT32 iScaledColRows = 0;
-        for (FX_INT32 i = 0; i < pInfo->m_iColumnSpan; i++) {
+        int32_t iAutoColRows = 0;
+        int32_t iScaledColRows = 0;
+        for (int32_t i = 0; i < pInfo->m_iColumnSpan; i++) {
             CFWL_GridColRow *pColumn = (CFWL_GridColRow*)GetColRow(TRUE, pInfo->m_iColumn + i);
             if (!pColumn) {
                 break;
@@ -919,20 +919,20 @@ FX_FLOAT CFWL_GridImp::ProcessUnCertainColumns()
         }
     }
     FX_FLOAT fAutoWidth = 0;
-    FX_INT32 iAutoCols = autoColumns.GetSize();
-    for (FX_INT32 m = 0; m < iAutoCols; m++) {
+    int32_t iAutoCols = autoColumns.GetSize();
+    for (int32_t m = 0; m < iAutoCols; m++) {
         fAutoWidth += ((CFWL_GridColRow*)autoColumns[m])->m_fActualSize;
     }
     FX_FLOAT fScaledWidth = 0;
     iColumns = scaledColumns.GetSize();
-    for (FX_INT32 n = 0; n < iColumns; n++) {
+    for (int32_t n = 0; n < iColumns; n++) {
         fScaledWidth += ((CFWL_GridColRow*)scaledColumns[n])->m_fActualSize;
     }
     return fFixedWidth + fAutoWidth + fScaledWidth;
 }
 FX_FLOAT CFWL_GridImp::ProcessUnCertainRows()
 {
-    FX_INT32 iRows = m_Rows.GetSize();
+    int32_t iRows = m_Rows.GetSize();
     if (iRows < 1) {
         CFWL_GridColRow *pColRow = new CFWL_GridColRow;
         pColRow->m_Size.eUnit = FWL_GRIDUNIT_Auto;
@@ -946,7 +946,7 @@ FX_FLOAT CFWL_GridImp::ProcessUnCertainRows()
     CFX_PtrArray scaledRows;
     FX_FLOAT fScaledRowNum = 0;
     FX_FLOAT fScaledMaxPerHeight = 0;
-    for (FX_INT32 i = 0; i < iRows; i++) {
+    for (int32_t i = 0; i < iRows; i++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)m_Rows[i];
         if (!pColRow) {
             continue;
@@ -978,7 +978,7 @@ FX_FLOAT CFWL_GridImp::ProcessUnCertainRows()
         }
     }
     iRows = scaledRows.GetSize();
-    for (FX_INT32 j = 0; j < iRows; j++) {
+    for (int32_t j = 0; j < iRows; j++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)scaledRows[j];
         if (!pColRow) {
             continue;
@@ -997,9 +997,9 @@ FX_FLOAT CFWL_GridImp::ProcessUnCertainRows()
         CFX_PtrArray spanScaledRows;
         FX_FLOAT fSpanSize = 0;
         FX_FLOAT fScaledSum = 0;
-        FX_INT32 iAutoColRows = 0;
-        FX_INT32 iScaledColRows = 0;
-        for (FX_INT32 i = 0; i < pInfo->m_iRowSpan; i++) {
+        int32_t iAutoColRows = 0;
+        int32_t iScaledColRows = 0;
+        for (int32_t i = 0; i < pInfo->m_iRowSpan; i++) {
             CFWL_GridColRow *pRow = (CFWL_GridColRow*)GetColRow(FALSE, pInfo->m_iRow + i);
             if (!pRow) {
                 break;
@@ -1030,13 +1030,13 @@ FX_FLOAT CFWL_GridImp::ProcessUnCertainRows()
         }
     }
     FX_FLOAT fAutoHeigt = 0;
-    FX_INT32 iAutoRows = autoRows.GetSize();
-    for (FX_INT32 m = 0; m < iAutoRows; m++) {
+    int32_t iAutoRows = autoRows.GetSize();
+    for (int32_t m = 0; m < iAutoRows; m++) {
         fAutoHeigt += ((CFWL_GridColRow*)autoRows[m])->m_fActualSize;
     }
     FX_FLOAT fScaledHeight = 0;
     iRows = scaledRows.GetSize();
-    for (FX_INT32 n = 0; n < iRows; n++) {
+    for (int32_t n = 0; n < iRows; n++) {
         fScaledHeight += ((CFWL_GridColRow*)scaledRows[n])->m_fActualSize;
     }
     return fFixedHeight + fAutoHeigt + fScaledHeight;
@@ -1086,8 +1086,8 @@ FX_FLOAT CFWL_GridImp::SetWidgetActualHeight(CFWL_GridWidgetInfo* pInfo, FX_FLOA
 void CFWL_GridImp::SetAllWidgetsRect()
 {
     FX_FLOAT fStartLeft = 0;
-    FX_INT32 iColumns = m_Columns.GetSize();
-    for (FX_INT32 i = 0; i < iColumns; i++) {
+    int32_t iColumns = m_Columns.GetSize();
+    for (int32_t i = 0; i < iColumns; i++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)m_Columns[i];
         if (!pColRow) {
             continue;
@@ -1096,8 +1096,8 @@ void CFWL_GridImp::SetAllWidgetsRect()
         fStartLeft += pColRow->m_fActualSize;
     }
     FX_FLOAT fStartTop = 0;
-    FX_INT32 iRows = m_Rows.GetSize();
-    for (FX_INT32 j = 0; j < iRows; j++) {
+    int32_t iRows = m_Rows.GetSize();
+    for (int32_t j = 0; j < iRows; j++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)m_Rows[j];
         if (!pColRow) {
             continue;
@@ -1125,7 +1125,7 @@ void CFWL_GridImp::SetAllWidgetsRect()
         }
         FX_FLOAT fColumnWidth = 0;
         if (iColumns > 0) {
-            for (FX_INT32 j = 0; j < pInfo->m_iColumnSpan; j++) {
+            for (int32_t j = 0; j < pInfo->m_iColumnSpan; j++) {
                 CFWL_GridColRow *pCol = (CFWL_GridColRow*)GetColRow(TRUE, pInfo->m_iColumn + j);
                 if (!pCol) {
                     break;
@@ -1137,7 +1137,7 @@ void CFWL_GridImp::SetAllWidgetsRect()
         }
         FX_FLOAT fRowHeight = 0;
         if (iRows > 0) {
-            for (FX_INT32 k = 0; k < pInfo->m_iRowSpan; k++) {
+            for (int32_t k = 0; k < pInfo->m_iRowSpan; k++) {
                 CFWL_GridColRow *pR = (CFWL_GridColRow*)GetColRow(FALSE, pInfo->m_iRow + k);
                 if (!pR) {
                     break;
@@ -1220,20 +1220,20 @@ FX_BOOL CFWL_GridImp::IsGrid(IFWL_Widget* pWidget)
 }
 void CFWL_GridImp::SetSpanAutoColRowSize(const CFX_PtrArray &spanAutos, FX_FLOAT fTotalSize)
 {
-    FX_INT32 iAutoColRows = spanAutos.GetSize();
+    int32_t iAutoColRows = spanAutos.GetSize();
     if (iAutoColRows < 1) {
         return;
     }
     CFX_PtrArray autoNoMinMaxs;
     FX_FLOAT fAutoPer = fTotalSize / iAutoColRows;
-    for (FX_INT32 j = 0; j < iAutoColRows; j++) {
+    for (int32_t j = 0; j < iAutoColRows; j++) {
         CFWL_GridColRow *pColumn = (CFWL_GridColRow*)spanAutos[j];
         FX_FLOAT fOrgSize = pColumn->m_fActualSize;
         if (SetColRowActualSize(pColumn, pColumn->m_fActualSize + fAutoPer, TRUE)) {
             autoNoMinMaxs.Add(pColumn);
         } else {
             fTotalSize -= pColumn->m_fActualSize - fOrgSize;
-            FX_INT32 iNoMinMax = iAutoColRows - (j + 1 - autoNoMinMaxs.GetSize());
+            int32_t iNoMinMax = iAutoColRows - (j + 1 - autoNoMinMaxs.GetSize());
             if (iNoMinMax > 0 && fTotalSize > 0) {
                 fAutoPer = fTotalSize / iNoMinMax;
             } else {
@@ -1241,11 +1241,11 @@ void CFWL_GridImp::SetSpanAutoColRowSize(const CFX_PtrArray &spanAutos, FX_FLOAT
             }
         }
     }
-    FX_INT32 iNormals = autoNoMinMaxs.GetSize();
+    int32_t iNormals = autoNoMinMaxs.GetSize();
     if (fTotalSize > 0) {
         if (iNormals == iAutoColRows) {
             fAutoPer = fTotalSize / iNormals;
-            for (FX_INT32 k = 0; k < iNormals; k++) {
+            for (int32_t k = 0; k < iNormals; k++) {
                 CFWL_GridColRow *pColumn = (CFWL_GridColRow*)autoNoMinMaxs[k];
                 pColumn->m_fActualSize += fAutoPer;
             }
@@ -1257,20 +1257,20 @@ void CFWL_GridImp::SetSpanAutoColRowSize(const CFX_PtrArray &spanAutos, FX_FLOAT
 }
 void CFWL_GridImp::SetSpanScaledColRowSize(const CFX_PtrArray &spanScaleds, FX_FLOAT fTotalSize, FX_FLOAT fTotalScaledNum)
 {
-    FX_INT32 iScaledColRows = spanScaleds.GetSize();
+    int32_t iScaledColRows = spanScaleds.GetSize();
     if (iScaledColRows < 1) {
         return;
     }
     CFX_PtrArray autoNoMinMaxs;
     FX_FLOAT fPerSize = fTotalSize / fTotalScaledNum;
-    for (FX_INT32 i = 0; i < iScaledColRows; i++) {
+    for (int32_t i = 0; i < iScaledColRows; i++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)spanScaleds[i];
         if (SetColRowActualSize(pColRow, pColRow->m_fActualSize + fPerSize * pColRow->m_Size.fLength, TRUE)) {
             autoNoMinMaxs.Add(pColRow);
         } else {
             fTotalSize -= pColRow->m_fActualSize;
             fTotalScaledNum -= pColRow->m_Size.fLength;
-            FX_INT32 iNoMinMax = iScaledColRows - (i + 1 - autoNoMinMaxs.GetSize());
+            int32_t iNoMinMax = iScaledColRows - (i + 1 - autoNoMinMaxs.GetSize());
             if (iNoMinMax > 0 && fTotalSize > 0) {
                 fPerSize = fTotalSize / fTotalScaledNum;
             } else {
@@ -1278,11 +1278,11 @@ void CFWL_GridImp::SetSpanScaledColRowSize(const CFX_PtrArray &spanScaleds, FX_F
             }
         }
     }
-    FX_INT32 iNormals = autoNoMinMaxs.GetSize();
+    int32_t iNormals = autoNoMinMaxs.GetSize();
     if (fTotalSize > 0) {
         if (iNormals == iScaledColRows) {
             fPerSize = fTotalSize / fTotalScaledNum;
-            for (FX_INT32 j = 0; j < iNormals; j++) {
+            for (int32_t j = 0; j < iNormals; j++) {
                 CFWL_GridColRow *pColumn = (CFWL_GridColRow*)autoNoMinMaxs[j];
                 pColumn->m_fActualSize += fPerSize * pColumn->m_Size.fLength;
             }
@@ -1294,13 +1294,13 @@ void CFWL_GridImp::SetSpanScaledColRowSize(const CFX_PtrArray &spanScaleds, FX_F
 }
 void CFWL_GridImp::SetScaledColRowsSize(const CFX_PtrArray &spanScaleds, FX_FLOAT fTotalSize, FX_FLOAT fTotalScaledNum)
 {
-    FX_INT32 iScaledColRows = spanScaleds.GetSize();
+    int32_t iScaledColRows = spanScaleds.GetSize();
     if (iScaledColRows < 1) {
         return;
     }
     CFX_PtrArray autoNoMinMaxs;
     FX_FLOAT fPerSize = fTotalSize / fTotalScaledNum;
-    for (FX_INT32 i = 0; i < iScaledColRows; i++) {
+    for (int32_t i = 0; i < iScaledColRows; i++) {
         CFWL_GridColRow *pColRow = (CFWL_GridColRow*)spanScaleds[i];
         if (!pColRow) {
             continue;
@@ -1312,7 +1312,7 @@ void CFWL_GridImp::SetScaledColRowsSize(const CFX_PtrArray &spanScaleds, FX_FLOA
         } else {
             fTotalSize -= pColRow->m_fActualSize - fOrgSize;
             fTotalScaledNum -= pColRow->m_Size.fLength;
-            FX_INT32 iNoMinMax = iScaledColRows - (i + 1 - autoNoMinMaxs.GetSize());
+            int32_t iNoMinMax = iScaledColRows - (i + 1 - autoNoMinMaxs.GetSize());
             if (iNoMinMax > 0 && fTotalSize > 0) {
                 fPerSize = fTotalSize / fTotalScaledNum;
             } else {
@@ -1320,11 +1320,11 @@ void CFWL_GridImp::SetScaledColRowsSize(const CFX_PtrArray &spanScaleds, FX_FLOA
             }
         }
     }
-    FX_INT32 iNormals = autoNoMinMaxs.GetSize();
+    int32_t iNormals = autoNoMinMaxs.GetSize();
     if (fTotalSize > 0) {
         if (iNormals == iScaledColRows) {
             fPerSize = fTotalSize / fTotalScaledNum;
-            for (FX_INT32 i = 0; i < iNormals; i++) {
+            for (int32_t i = 0; i < iNormals; i++) {
                 CFWL_GridColRow *pColRow = (CFWL_GridColRow*)autoNoMinMaxs[i];
                 if (!pColRow) {
                     continue;
@@ -1342,7 +1342,7 @@ CFWL_GridDelegate::CFWL_GridDelegate(CFWL_GridImp *pOwner)
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_GridDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_GridDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     if (pMessage->GetClassID() != FWL_MSGHASH_Mouse) {
         return 0;

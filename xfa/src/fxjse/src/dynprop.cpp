@@ -32,7 +32,7 @@ static void FXJSE_DynPropGetterAdapter_MethodCallback	(const v8::FunctionCallbac
 static void FXJSE_DynPropGetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue)
 {
     ASSERT(lpClass);
-    FX_INT32 nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
+    int32_t nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
     if(nPropType == FXJSE_ClassPropType_Property) {
         if(lpClass->dynPropGetter) {
             lpClass->dynPropGetter(hObject, szPropName, hValue);
@@ -54,7 +54,7 @@ static void FXJSE_DynPropGetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HO
 static void FXJSE_DynPropSetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue)
 {
     ASSERT(lpClass);
-    FX_INT32 nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
+    int32_t nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
     if(nPropType != FXJSE_ClassPropType_Method) {
         if(lpClass->dynPropSetter) {
             lpClass->dynPropSetter(hObject, szPropName, hValue);
@@ -64,13 +64,13 @@ static void FXJSE_DynPropSetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HO
 static FX_BOOL FXJSE_DynPropQueryAdapter				(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, FX_BSTR szPropName)
 {
     ASSERT(lpClass);
-    FX_INT32 nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, TRUE);
+    int32_t nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, TRUE);
     return nPropType != FXJSE_ClassPropType_None;
 }
 static FX_BOOL FXJSE_DynPropDeleterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, FX_BSTR szPropName)
 {
     ASSERT(lpClass);
-    FX_INT32 nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
+    int32_t nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
     if(nPropType != FXJSE_ClassPropType_Method) {
         if(lpClass->dynPropDeleter) {
             return lpClass->dynPropDeleter(hObject, szPropName);
@@ -230,7 +230,7 @@ static void FXJSE_V8_NamedPropertyQueryCallback(v8::Local<v8::String> property, 
     if(FXJSE_DynPropQueryAdapter(lpClass, reinterpret_cast<FXJSE_HOBJECT>(lpThisValue), szFxPropName)) {
         info.GetReturnValue().Set(v8::DontDelete);
     } else {
-        const FX_INT32 iV8Absent = 64;
+        const int32_t iV8Absent = 64;
         info.GetReturnValue().Set(iV8Absent);
     }
     delete lpThisValue;

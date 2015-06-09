@@ -27,7 +27,7 @@ CXFA_RenderContext::~CXFA_RenderContext()
 {
     StopRender();
 }
-FX_INT32 CXFA_RenderContext::StartRender(IXFA_PageView* pPageView, CFX_Graphics* pGS, const CFX_Matrix& matrix, const CXFA_RenderOptions& options)
+int32_t CXFA_RenderContext::StartRender(IXFA_PageView* pPageView, CFX_Graphics* pGS, const CFX_Matrix& matrix, const CXFA_RenderOptions& options)
 {
     m_pPageView = pPageView;
     m_pGS = pGS;
@@ -45,9 +45,9 @@ FX_INT32 CXFA_RenderContext::StartRender(IXFA_PageView* pPageView, CFX_Graphics*
     m_pWidget = m_pWidgetIterator->MoveToNext();
     return XFA_RENDERSTATUS_Ready;
 }
-FX_INT32 CXFA_RenderContext::DoRender(IFX_Pause* pPause)
+int32_t CXFA_RenderContext::DoRender(IFX_Pause* pPause)
 {
-    FX_INT32 iCount = 0;
+    int32_t iCount = 0;
     while(m_pWidget) {
         CXFA_FFWidget* pWidget = (CXFA_FFWidget*)m_pWidget;
         CFX_RectF rtWidgetBox;

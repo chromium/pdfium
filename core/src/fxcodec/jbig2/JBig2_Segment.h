@@ -42,19 +42,19 @@ public:
     FX_DWORD m_dwNumber;
     union {
         struct {
-            FX_BYTE type					:	6;
-            FX_BYTE page_association_size	:	1;
-            FX_BYTE deferred_non_retain		:	1;
+            uint8_t type					:	6;
+            uint8_t page_association_size	:	1;
+            uint8_t deferred_non_retain		:	1;
         } s;
-        FX_BYTE c;
+        uint8_t c;
     } m_cFlags;
-    FX_INT32 m_nReferred_to_segment_count;
+    int32_t m_nReferred_to_segment_count;
     FX_DWORD * m_pReferred_to_segment_numbers;
     FX_DWORD m_dwPage_association;
     FX_DWORD m_dwData_length;
 
     FX_DWORD m_dwHeader_Length;
-    FX_BYTE  *m_pData;
+    uint8_t  *m_pData;
     JBig2_SegmentState m_State;
     JBig2_ResultType m_nResultType;
     union {

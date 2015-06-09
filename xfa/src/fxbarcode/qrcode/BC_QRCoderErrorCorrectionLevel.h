@@ -9,10 +9,10 @@
 class CBC_QRCoderErrorCorrectionLevel
 {
 private:
-    FX_INT32 m_ordinal;
-    FX_INT32 m_bits;
+    int32_t m_ordinal;
+    int32_t m_bits;
     CFX_ByteString m_name;
-    CBC_QRCoderErrorCorrectionLevel(FX_INT32 ordinal, FX_INT32 bits, FX_CHAR* name);
+    CBC_QRCoderErrorCorrectionLevel(int32_t ordinal, int32_t bits, FX_CHAR* name);
     CBC_QRCoderErrorCorrectionLevel();
 public:
     static CBC_QRCoderErrorCorrectionLevel* L;
@@ -22,10 +22,10 @@ public:
     virtual ~CBC_QRCoderErrorCorrectionLevel();
     static void Initialize();
     static void Finalize();
-    FX_INT32 Ordinal();
-    FX_INT32 GetBits();
+    int32_t Ordinal();
+    int32_t GetBits();
     CFX_ByteString GetName();
     static void Destroy();
-    static CBC_QRCoderErrorCorrectionLevel* ForBits(FX_INT32 bits);
+    static CBC_QRCoderErrorCorrectionLevel* ForBits(int32_t bits);
 };
 #endif

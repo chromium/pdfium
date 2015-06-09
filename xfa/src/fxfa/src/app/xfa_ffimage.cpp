@@ -36,7 +36,7 @@ void CXFA_FFImage::UnloadWidget()
 {
     GetDataAcc()->SetImageImage(NULL);
 }
-void CXFA_FFImage::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFImage::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;
@@ -53,17 +53,17 @@ void CXFA_FFImage::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWOR
         if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
             XFA_RectWidthoutMargin(rtImage, mgWidget);
         }
-        FX_INT32 iHorzAlign = XFA_ATTRIBUTEENUM_Left;
-        FX_INT32 iVertAlign = XFA_ATTRIBUTEENUM_Top;
+        int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left;
+        int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top;
         if (CXFA_Para para = m_pDataAcc->GetPara()) {
             iHorzAlign = para.GetHorizontalAlign();
             iVertAlign = para.GetVerticalAlign();
         }
         CXFA_Value value = m_pDataAcc->GetFormValue();
         CXFA_Image imageObj = value.GetImage();
-        FX_INT32 iAspect = imageObj.GetAspect();
-        FX_INT32 iImageXDpi = 0;
-        FX_INT32 iImageYDpi = 0;
+        int32_t iAspect = imageObj.GetAspect();
+        int32_t iImageXDpi = 0;
+        int32_t iImageYDpi = 0;
         m_pDataAcc->GetImageDpi(iImageXDpi, iImageYDpi);
         XFA_DrawImage(pGS, rtImage, &mtRotate, pDIBitmap, iAspect, iImageXDpi, iImageYDpi, iHorzAlign, iVertAlign);
     }

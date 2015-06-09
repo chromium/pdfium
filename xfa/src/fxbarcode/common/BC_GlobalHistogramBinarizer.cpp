@@ -26,19 +26,19 @@
 #include "BC_CommonBitMatrix.h"
 #include "BC_CommonBitArray.h"
 #include "BC_GlobalHistogramBinarizer.h"
-const FX_INT32 LUMINANCE_BITS = 5;
-const FX_INT32 LUMINANCE_SHIFT = 8 - LUMINANCE_BITS;
-const FX_INT32 LUMINANCE_BUCKETS = 1 << LUMINANCE_BITS;
+const int32_t LUMINANCE_BITS = 5;
+const int32_t LUMINANCE_SHIFT = 8 - LUMINANCE_BITS;
+const int32_t LUMINANCE_BUCKETS = 1 << LUMINANCE_BITS;
 CBC_GlobalHistogramBinarizer::CBC_GlobalHistogramBinarizer(CBC_LuminanceSource *source): CBC_Binarizer(source)
 {
 }
 CBC_GlobalHistogramBinarizer::~CBC_GlobalHistogramBinarizer()
 {
 }
-CBC_CommonBitArray *CBC_GlobalHistogramBinarizer::GetBlackRow(FX_INT32 y, CBC_CommonBitArray *row, FX_INT32 &e)
+CBC_CommonBitArray *CBC_GlobalHistogramBinarizer::GetBlackRow(int32_t y, CBC_CommonBitArray *row, int32_t &e)
 {
     CBC_LuminanceSource *source = GetLuminanceSource();
-    FX_INT32 width = source->GetWidth();
+    int32_t width = source->GetWidth();
     CBC_AutoPtr<CBC_CommonBitArray> result(FX_NEW CBC_CommonBitArray(width));
     InitArrays(width);
     CFX_ByteArray *localLuminances = source->GetRow(y, m_luminance, e);
@@ -47,20 +47,20 @@ CBC_CommonBitArray *CBC_GlobalHistogramBinarizer::GetBlackRow(FX_INT32 y, CBC_Co
     }
     CFX_Int32Array localBuckets;
     localBuckets.Copy(m_buckets);
-    FX_INT32 x;
+    int32_t x;
     for (x = 0; x < width; x++) {
-        FX_INT32 pixel = (*localLuminances)[x] & 0xff;
+        int32_t pixel = (*localLuminances)[x] & 0xff;
         localBuckets[pixel >> LUMINANCE_SHIFT]++;
     }
-    FX_INT32 blackPoint = EstimateBlackPoint(localBuckets, e);
+    int32_t blackPoint = EstimateBlackPoint(localBuckets, e);
     if (e != BCExceptionNO) {
         return result.release();
     }
-    FX_INT32 left = (*localLuminances)[0] & 0xff;
-    FX_INT32 center = (*localLuminances)[1] & 0xff;
+    int32_t left = (*localLuminances)[0] & 0xff;
+    int32_t center = (*localLuminances)[1] & 0xff;
     for (x = 1; x < width - 1; x++) {
-        FX_INT32 right = (*localLuminances)[x + 1] & 0xff;
-        FX_INT32 luminance = ((center << 2) - left - right) >> 1;
+        int32_t right = (*localLuminances)[x + 1] & 0xff;
+        int32_t luminance = ((center << 2) - left - right) >> 1;
         if (luminance < blackPoint) {
             result->Set(x);
         }
@@ -69,36 +69,36 @@ CBC_CommonBitArray *CBC_GlobalHistogramBinarizer::GetBlackRow(FX_INT32 y, CBC_Co
     }
     return  result.release();
 }
-CBC_CommonBitMatrix *CBC_GlobalHistogramBinarizer::GetBlackMatrix(FX_INT32 &e)
+CBC_CommonBitMatrix *CBC_GlobalHistogramBinarizer::GetBlackMatrix(int32_t &e)
 {
     CBC_LuminanceSource *source = GetLuminanceSource();
-    FX_INT32 width = source->GetWidth();
-    FX_INT32 height = source->GetHeight();
+    int32_t width = source->GetWidth();
+    int32_t height = source->GetHeight();
     CBC_CommonBitMatrix *BitMatrixTemp = FX_NEW CBC_CommonBitMatrix();
     BitMatrixTemp->Init(width, height);
     CBC_AutoPtr<CBC_CommonBitMatrix> matrix(BitMatrixTemp);
     InitArrays(width);
     CFX_Int32Array localBuckets;
     localBuckets.Copy(m_buckets);
-    FX_INT32 y;
+    int32_t y;
     for (y = 1; y < 5; y++) {
-        FX_INT32 row = height * y / 5;
+        int32_t row = height * y / 5;
         CFX_ByteArray *localLuminances = source->GetRow(row, m_luminance, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-        FX_INT32 right = (width << 2) / 5;
-        FX_INT32 x;
+        int32_t right = (width << 2) / 5;
+        int32_t x;
         for (x = width / 5; x < right; x++) {
-            FX_INT32 pixel = (*localLuminances)[x] & 0xff;
+            int32_t pixel = (*localLuminances)[x] & 0xff;
             localBuckets[pixel >> LUMINANCE_SHIFT]++;
         }
     }
-    FX_INT32 blackPoint = EstimateBlackPoint(localBuckets, e);
+    int32_t blackPoint = EstimateBlackPoint(localBuckets, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     CBC_AutoPtr<CFX_ByteArray> localLuminances(source->GetMatrix());
     for (y = 0; y < height; y++) {
-        FX_INT32 offset = y * width;
-        for (FX_INT32 x = 0; x < width; x++) {
-            FX_INT32 pixel = (*localLuminances)[offset + x] & 0xff;
+        int32_t offset = y * width;
+        for (int32_t x = 0; x < width; x++) {
+            int32_t pixel = (*localLuminances)[offset + x] & 0xff;
             if (pixel < blackPoint) {
                 matrix->Set(x, y);
             }
@@ -106,7 +106,7 @@ CBC_CommonBitMatrix *CBC_GlobalHistogramBinarizer::GetBlackMatrix(FX_INT32 &e)
     }
     return matrix.release();
 }
-void CBC_GlobalHistogramBinarizer::InitArrays(FX_INT32 luminanceSize)
+void CBC_GlobalHistogramBinarizer::InitArrays(int32_t luminanceSize)
 {
     if(m_luminance.GetSize() < luminanceSize) {
         m_luminance.SetSize(luminanceSize);
@@ -114,19 +114,19 @@ void CBC_GlobalHistogramBinarizer::InitArrays(FX_INT32 luminanceSize)
     if(m_buckets.GetSize() <= 0) {
         m_buckets.SetSize(LUMINANCE_BUCKETS);
     } else {
-        FX_INT32 x;
+        int32_t x;
         for(x = 0; x < LUMINANCE_BUCKETS; x++) {
             m_buckets[x] = 0;
         }
     }
 }
-FX_INT32 CBC_GlobalHistogramBinarizer::EstimateBlackPoint(CFX_Int32Array &buckets, FX_INT32 &e)
+int32_t CBC_GlobalHistogramBinarizer::EstimateBlackPoint(CFX_Int32Array &buckets, int32_t &e)
 {
-    FX_INT32 numBuckets = buckets.GetSize();
-    FX_INT32 maxBucketCount = 0;
-    FX_INT32 firstPeak = 0;
-    FX_INT32 firstPeakSize = 0;
-    FX_INT32 x;
+    int32_t numBuckets = buckets.GetSize();
+    int32_t maxBucketCount = 0;
+    int32_t firstPeak = 0;
+    int32_t firstPeakSize = 0;
+    int32_t x;
     for (x = 0; x < numBuckets; x++) {
         if (buckets[x] > firstPeakSize) {
             firstPeak = x;
@@ -136,18 +136,18 @@ FX_INT32 CBC_GlobalHistogramBinarizer::EstimateBlackPoint(CFX_Int32Array &bucket
             maxBucketCount = buckets[x];
         }
     }
-    FX_INT32 secondPeak = 0;
-    FX_INT32 secondPeakScore = 0;
+    int32_t secondPeak = 0;
+    int32_t secondPeakScore = 0;
     for (x = 0; x < numBuckets; x++) {
-        FX_INT32 distanceToBiggest = x - firstPeak;
-        FX_INT32 score = buckets[x] * distanceToBiggest * distanceToBiggest;
+        int32_t distanceToBiggest = x - firstPeak;
+        int32_t score = buckets[x] * distanceToBiggest * distanceToBiggest;
         if (score > secondPeakScore) {
             secondPeak = x;
             secondPeakScore = score;
         }
     }
     if (firstPeak > secondPeak) {
-        FX_INT32 temp = firstPeak;
+        int32_t temp = firstPeak;
         firstPeak = secondPeak;
         secondPeak = temp;
     }
@@ -155,11 +155,11 @@ FX_INT32 CBC_GlobalHistogramBinarizer::EstimateBlackPoint(CFX_Int32Array &bucket
         e = BCExceptionRead;
         return 0;
     }
-    FX_INT32 bestValley = secondPeak - 1;
-    FX_INT32 bestValleyScore = -1;
+    int32_t bestValley = secondPeak - 1;
+    int32_t bestValleyScore = -1;
     for (x = secondPeak - 1; x > firstPeak; x--) {
-        FX_INT32 fromFirst = x - firstPeak;
-        FX_INT32 score = fromFirst * fromFirst * (secondPeak - x) * (maxBucketCount - buckets[x]);
+        int32_t fromFirst = x - firstPeak;
+        int32_t score = fromFirst * fromFirst * (secondPeak - x) * (maxBucketCount - buckets[x]);
         if (score > bestValleyScore) {
             bestValley = x;
             bestValleyScore = score;

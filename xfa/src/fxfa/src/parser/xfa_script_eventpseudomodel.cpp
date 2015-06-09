@@ -35,7 +35,7 @@ void Script_EventPseudoModel_StringProperty(FXJSE_HVALUE hValue, CFX_WideString&
         FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsValue));
     }
 }
-void Script_EventPseudoModel_InterProperty(FXJSE_HVALUE hValue, FX_INT32& iValue, FX_BOOL bSetting)
+void Script_EventPseudoModel_InterProperty(FXJSE_HVALUE hValue, int32_t& iValue, FX_BOOL bSetting)
 {
     if (bSetting) {
         iValue = FXJSE_Value_ToInteger(hValue);

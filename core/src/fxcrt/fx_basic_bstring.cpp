@@ -72,7 +72,7 @@ CFX_ByteString::StringData* CFX_ByteString::StringData::Create(int nLen)
     int usableSize = totalSize - overhead;
     FXSYS_assert(usableSize >= nLen);
 
-    void* pData = FX_Alloc(FX_BYTE, totalSize);
+    void* pData = FX_Alloc(uint8_t, totalSize);
     return new (pData) StringData(nLen, usableSize);
 }
 CFX_ByteString::~CFX_ByteString()
@@ -284,11 +284,11 @@ bool CFX_ByteString::EqualNoCase(FX_BSTR str) const
     FX_LPCBYTE pThat = str.GetPtr();
     for (FX_STRSIZE i = 0; i < len; i ++) {
         if ((*pThis) != (*pThat)) {
-            FX_BYTE bThis = *pThis;
+            uint8_t bThis = *pThis;
             if (bThis >= 'A' && bThis <= 'Z') {
                 bThis += 'a' - 'A';
             }
-            FX_BYTE bThat = *pThat;
+            uint8_t bThat = *pThat;
             if (bThat >= 'A' && bThat <= 'Z') {
                 bThat += 'a' - 'A';
             }
@@ -645,7 +645,7 @@ void CFX_ByteString::FormatV(FX_LPCSTR lpszFormat, va_list argList)
                 case 'X':
                 case 'o':
                     if (nModifier & FORCE_INT64) {
-                        va_arg(argList, FX_INT64);
+                        va_arg(argList, int64_t);
                     } else {
                         va_arg(argList, int);
                     }
@@ -936,7 +936,7 @@ CFX_WideString CFX_ByteString::UTF8Decode() const
 {
     CFX_UTF8Decoder decoder;
     for (FX_STRSIZE i = 0; i < GetLength(); i ++) {
-        decoder.Input((FX_BYTE)m_pData->m_String[i]);
+        decoder.Input((uint8_t)m_pData->m_String[i]);
     }
     return decoder.GetResult();
 }
@@ -969,9 +969,9 @@ int CFX_ByteString::Compare(FX_BSTR str) const
     int that_len = str.GetLength();
     int min_len = this_len < that_len ? this_len : that_len;
     for (int i = 0; i < min_len; i ++) {
-        if ((FX_BYTE)m_pData->m_String[i] < str.GetAt(i)) {
+        if ((uint8_t)m_pData->m_String[i] < str.GetAt(i)) {
             return -1;
-        } else if ((FX_BYTE)m_pData->m_String[i] > str.GetAt(i)) {
+        } else if ((uint8_t)m_pData->m_String[i] > str.GetAt(i)) {
             return 1;
         }
     }

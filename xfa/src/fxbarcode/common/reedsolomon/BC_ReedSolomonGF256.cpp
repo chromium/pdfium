@@ -43,17 +43,17 @@ void CBC_ReedSolomonGF256::Finalize()
     }
     DataMatrixField = NULL;
 }
-CBC_ReedSolomonGF256::CBC_ReedSolomonGF256(FX_INT32 primitive)
+CBC_ReedSolomonGF256::CBC_ReedSolomonGF256(int32_t primitive)
 {
-    FX_INT32 x = 1;
-    for(FX_INT32 j = 0; j < 256; j++) {
+    int32_t x = 1;
+    for(int32_t j = 0; j < 256; j++) {
         m_expTable[j] = x;
         x <<= 1;
         if(x >= 0x100) {
             x ^= primitive;
         }
     }
-    for(FX_INT32 i = 0; i < 255; i++) {
+    for(int32_t i = 0; i < 255; i++) {
         m_logTable[m_expTable[i]] = i;
     }
     m_logTable[0] = 0;
@@ -82,7 +82,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::GetOne()
 {
     return m_one;
 }
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(FX_INT32 degree, FX_INT32 coefficient, FX_INT32 &e)
+CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(int32_t degree, int32_t coefficient, int32_t &e)
 {
     if(degree < 0) {
         e = BCExceptionDegreeIsNegative;
@@ -101,15 +101,15 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(FX_INT32 degree, F
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return temp;
 }
-FX_INT32 CBC_ReedSolomonGF256::AddOrSubtract(FX_INT32 a, FX_INT32 b)
+int32_t CBC_ReedSolomonGF256::AddOrSubtract(int32_t a, int32_t b)
 {
     return a ^ b;
 }
-FX_INT32 CBC_ReedSolomonGF256::Exp(FX_INT32 a)
+int32_t CBC_ReedSolomonGF256::Exp(int32_t a)
 {
     return m_expTable[a];
 }
-FX_INT32 CBC_ReedSolomonGF256::Log(FX_INT32 a, FX_INT32 &e)
+int32_t CBC_ReedSolomonGF256::Log(int32_t a, int32_t &e)
 {
     if(a == 0) {
         e = BCExceptionAIsZero;
@@ -117,7 +117,7 @@ FX_INT32 CBC_ReedSolomonGF256::Log(FX_INT32 a, FX_INT32 &e)
     }
     return m_logTable[a];
 }
-FX_INT32 CBC_ReedSolomonGF256::Inverse(FX_INT32 a, FX_INT32 &e)
+int32_t CBC_ReedSolomonGF256::Inverse(int32_t a, int32_t &e)
 {
     if(a == 0) {
         e = BCExceptionAIsZero;
@@ -125,7 +125,7 @@ FX_INT32 CBC_ReedSolomonGF256::Inverse(FX_INT32 a, FX_INT32 &e)
     }
     return m_expTable[255 - m_logTable[a]];
 }
-FX_INT32 CBC_ReedSolomonGF256::Multiply(FX_INT32 a, FX_INT32 b)
+int32_t CBC_ReedSolomonGF256::Multiply(int32_t a, int32_t b)
 {
     if(a == 0 || b == 0) {
         return 0;

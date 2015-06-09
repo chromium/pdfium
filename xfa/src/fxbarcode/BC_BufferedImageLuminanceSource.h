@@ -14,18 +14,18 @@ public:
     CBC_BufferedImageLuminanceSource(const CFX_WideString &filename);
     CBC_BufferedImageLuminanceSource(CFX_DIBitmap *pBitmap);
     virtual ~CBC_BufferedImageLuminanceSource();
-    CBC_LuminanceSource *RotateCounterClockwise(FX_INT32 &e);
-    CBC_LuminanceSource *Crop(FX_INT32 left, FX_INT32 top, FX_INT32 width, FX_INT32 height);
+    CBC_LuminanceSource *RotateCounterClockwise(int32_t &e);
+    CBC_LuminanceSource *Crop(int32_t left, int32_t top, int32_t width, int32_t height);
 
-    CFX_ByteArray *GetRow(FX_INT32 y, CFX_ByteArray &row, FX_INT32 &e);
+    CFX_ByteArray *GetRow(int32_t y, CFX_ByteArray &row, int32_t &e);
     CFX_ByteArray *GetMatrix();
     FX_BOOL IsCropSupported();
     FX_BOOL IsRotateSupported();
-    virtual void Init(FX_INT32 &e);
+    virtual void Init(int32_t &e);
 private:
-    FX_INT32 m_bytesPerLine;
-    FX_INT32 m_left;
-    FX_INT32 m_top;
+    int32_t m_bytesPerLine;
+    int32_t m_left;
+    int32_t m_top;
     CFX_Int32Array m_rgbData;
     CFX_DIBitmap *m_pBitmap;
     const CFX_WideString m_filename;

@@ -121,7 +121,7 @@ void CRYPT_SHA1Update(FX_LPVOID context, FX_LPCBYTE data, FX_DWORD size)
         s->blkused = len;
     }
 }
-void CRYPT_SHA1Finish(FX_LPVOID context, FX_BYTE digest[20])
+void CRYPT_SHA1Finish(FX_LPVOID context, uint8_t digest[20])
 {
     SHA_State * s = (SHA_State*)context;
     int i;
@@ -154,7 +154,7 @@ void CRYPT_SHA1Finish(FX_LPVOID context, FX_BYTE digest[20])
         digest[i * 4 + 3] = (s->h[i]) & 0xFF;
     }
 }
-void CRYPT_SHA1Generate(FX_LPCBYTE data, FX_DWORD size, FX_BYTE digest[20])
+void CRYPT_SHA1Generate(FX_LPCBYTE data, FX_DWORD size, uint8_t digest[20])
 {
     SHA_State s;
     CRYPT_SHA1Start(&s);
@@ -164,7 +164,7 @@ void CRYPT_SHA1Generate(FX_LPCBYTE data, FX_DWORD size, FX_BYTE digest[20])
 typedef struct {
     FX_DWORD total[2];
     FX_DWORD state[8];
-    FX_BYTE buffer[64];
+    uint8_t buffer[64];
 }
 sha256_context;
 #define GET_FX_DWORD(n,b,i)                       \
@@ -176,10 +176,10 @@ sha256_context;
     }
 #define PUT_FX_DWORD(n,b,i)                       \
     {                                               \
-        (b)[(i)    ] = (FX_BYTE) ( (n) >> 24 );       \
-        (b)[(i) + 1] = (FX_BYTE) ( (n) >> 16 );       \
-        (b)[(i) + 2] = (FX_BYTE) ( (n) >>  8 );       \
-        (b)[(i) + 3] = (FX_BYTE) ( (n)       );       \
+        (b)[(i)    ] = (uint8_t) ( (n) >> 24 );       \
+        (b)[(i) + 1] = (uint8_t) ( (n) >> 16 );       \
+        (b)[(i) + 2] = (uint8_t) ( (n) >>  8 );       \
+        (b)[(i) + 3] = (uint8_t) ( (n)       );       \
     }
 void CRYPT_SHA256Start( FX_LPVOID context )
 {
@@ -195,7 +195,7 @@ void CRYPT_SHA256Start( FX_LPVOID context )
     ctx->state[6] = 0x1F83D9AB;
     ctx->state[7] = 0x5BE0CD19;
 }
-static void sha256_process( sha256_context *ctx, const FX_BYTE data[64] )
+static void sha256_process( sha256_context *ctx, const uint8_t data[64] )
 {
     FX_DWORD temp1, temp2, W[64];
     FX_DWORD A, B, C, D, E, F, G, H;
@@ -347,18 +347,18 @@ void CRYPT_SHA256Update( void* context, FX_LPCBYTE input, FX_DWORD length )
                         (void *) input, length );
     }
 }
-static const FX_BYTE sha256_padding[64] = {
+static const uint8_t sha256_padding[64] = {
     0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-void CRYPT_SHA256Finish( FX_LPVOID context, FX_BYTE digest[32] )
+void CRYPT_SHA256Finish( FX_LPVOID context, uint8_t digest[32] )
 {
     sha256_context *ctx = (sha256_context *)context;
     FX_DWORD last, padn;
     FX_DWORD high, low;
-    FX_BYTE msglen[8];
+    uint8_t msglen[8];
     high = ( ctx->total[0] >> 29 )
            | ( ctx->total[1] <<  3 );
     low  = ( ctx->total[0] <<  3 );
@@ -377,7 +377,7 @@ void CRYPT_SHA256Finish( FX_LPVOID context, FX_BYTE digest[32] )
     PUT_FX_DWORD( ctx->state[6], digest, 24 );
     PUT_FX_DWORD( ctx->state[7], digest, 28 );
 }
-void CRYPT_SHA256Generate(FX_LPCBYTE data, FX_DWORD size, FX_BYTE digest[32])
+void CRYPT_SHA256Generate(FX_LPCBYTE data, FX_DWORD size, uint8_t digest[32])
 {
     sha256_context ctx;
     CRYPT_SHA256Start(&ctx);
@@ -385,14 +385,14 @@ void CRYPT_SHA256Generate(FX_LPCBYTE data, FX_DWORD size, FX_BYTE digest[32])
     CRYPT_SHA256Finish(&ctx, digest);
 }
 typedef struct {
-    FX_UINT64	total[2];
-    FX_UINT64	state[8];
-    FX_BYTE		buffer[128];
+    uint64_t	total[2];
+    uint64_t	state[8];
+    uint8_t		buffer[128];
 } sha384_context;
-FX_UINT64 FX_ato64i(FX_LPCSTR str)
+uint64_t FX_ato64i(FX_LPCSTR str)
 {
     FXSYS_assert(str != NULL);
-    FX_UINT64 ret = 0;
+    uint64_t ret = 0;
     int len = (int)FXSYS_strlen(str);
     len = len > 16 ? 16 : len;
     for (int i = 0; i < len; ++i) {
@@ -441,7 +441,7 @@ void CRYPT_SHA384Start(FX_LPVOID context)
         temp2 = SHA384_S2(a) + SHA384_F0(a,b,c);					\
         d += temp1; h = temp1 + temp2;								\
     }
-static const FX_BYTE sha384_padding[128] = {
+static const uint8_t sha384_padding[128] = {
     0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -536,31 +536,31 @@ static FX_LPCSTR constants[] = {
 };
 #define GET_FX_64WORD(n,b,i)                       \
     {                                               \
-        (n) = ( (FX_UINT64) (b)[(i)    ] << 56 )       \
-              | ( (FX_UINT64) (b)[(i) + 1] << 48 )       \
-              | ( (FX_UINT64) (b)[(i) + 2] << 40 )       \
-              | ( (FX_UINT64) (b)[(i) + 3] << 32 )      \
-              | ( (FX_UINT64) (b)[(i) + 4] << 24 )       \
-              | ( (FX_UINT64) (b)[(i) + 5] << 16 )       \
-              | ( (FX_UINT64) (b)[(i) + 6] <<  8 )       \
-              | ( (FX_UINT64) (b)[(i) + 7]       );      \
+        (n) = ( (uint64_t) (b)[(i)    ] << 56 )       \
+              | ( (uint64_t) (b)[(i) + 1] << 48 )       \
+              | ( (uint64_t) (b)[(i) + 2] << 40 )       \
+              | ( (uint64_t) (b)[(i) + 3] << 32 )      \
+              | ( (uint64_t) (b)[(i) + 4] << 24 )       \
+              | ( (uint64_t) (b)[(i) + 5] << 16 )       \
+              | ( (uint64_t) (b)[(i) + 6] <<  8 )       \
+              | ( (uint64_t) (b)[(i) + 7]       );      \
     }
 #define PUT_FX_64DWORD(n,b,i)                       \
     {                                               \
-        (b)[(i)    ] = (FX_BYTE) ( (n) >> 56 );       \
-        (b)[(i) + 1] = (FX_BYTE) ( (n) >> 48 );       \
-        (b)[(i) + 2] = (FX_BYTE) ( (n) >> 40 );       \
-        (b)[(i) + 3] = (FX_BYTE) ( (n) >> 32 );       \
-        (b)[(i) + 4] = (FX_BYTE) ( (n) >> 24 );       \
-        (b)[(i) + 5] = (FX_BYTE) ( (n) >> 16 );       \
-        (b)[(i) + 6] = (FX_BYTE) ( (n) >>  8 );       \
-        (b)[(i) + 7] = (FX_BYTE) ( (n) );       \
+        (b)[(i)    ] = (uint8_t) ( (n) >> 56 );       \
+        (b)[(i) + 1] = (uint8_t) ( (n) >> 48 );       \
+        (b)[(i) + 2] = (uint8_t) ( (n) >> 40 );       \
+        (b)[(i) + 3] = (uint8_t) ( (n) >> 32 );       \
+        (b)[(i) + 4] = (uint8_t) ( (n) >> 24 );       \
+        (b)[(i) + 5] = (uint8_t) ( (n) >> 16 );       \
+        (b)[(i) + 6] = (uint8_t) ( (n) >>  8 );       \
+        (b)[(i) + 7] = (uint8_t) ( (n) );       \
     }
-static void sha384_process( sha384_context *ctx, const FX_BYTE data[128] )
+static void sha384_process( sha384_context *ctx, const uint8_t data[128] )
 {
-    FX_UINT64 temp1, temp2;
-    FX_UINT64 A, B, C, D, E, F, G, H;
-    FX_UINT64 W[80];
+    uint64_t temp1, temp2;
+    uint64_t A, B, C, D, E, F, G, H;
+    uint64_t W[80];
     GET_FX_64WORD(W[0], data, 0);
     GET_FX_64WORD(W[1], data, 8);
     GET_FX_64WORD(W[2], data, 16);
@@ -586,7 +586,7 @@ static void sha384_process( sha384_context *ctx, const FX_BYTE data[128] )
     G = ctx->state[6];
     H = ctx->state[7];
     for (int i = 0; i < 10; ++i) {
-        FX_UINT64 temp[8];
+        uint64_t temp[8];
         if (i < 2) {
             temp[0] = W[i * 8];
             temp[1] = W[i * 8 + 1];
@@ -655,13 +655,13 @@ void CRYPT_SHA384Update(FX_LPVOID context, FX_LPCBYTE input, FX_DWORD length)
                         (void *) input, length );
     }
 }
-void CRYPT_SHA384Finish(FX_LPVOID context, FX_BYTE digest[48])
+void CRYPT_SHA384Finish(FX_LPVOID context, uint8_t digest[48])
 {
     sha384_context *ctx = (sha384_context *)context;
     FX_DWORD last, padn;
-    FX_BYTE msglen[16];
+    uint8_t msglen[16];
     FXSYS_memset32(msglen, 0, 16);
-    FX_UINT64 high, low;
+    uint64_t high, low;
     high = ( ctx->total[0] >> 29 )
            | ( ctx->total[1] <<  3 );
     low  = ( ctx->total[0] <<  3 );
@@ -678,7 +678,7 @@ void CRYPT_SHA384Finish(FX_LPVOID context, FX_BYTE digest[48])
     PUT_FX_64DWORD(ctx->state[4], digest, 32);
     PUT_FX_64DWORD(ctx->state[5], digest, 40);
 }
-void CRYPT_SHA384Generate(FX_LPCBYTE data, FX_DWORD size, FX_BYTE digest[64])
+void CRYPT_SHA384Generate(FX_LPCBYTE data, FX_DWORD size, uint8_t digest[64])
 {
     sha384_context context;
     CRYPT_SHA384Start(&context);
@@ -705,13 +705,13 @@ void CRYPT_SHA512Update(FX_LPVOID context, FX_LPCBYTE data, FX_DWORD size)
 {
     CRYPT_SHA384Update(context, data, size);
 }
-void CRYPT_SHA512Finish(FX_LPVOID context, FX_BYTE digest[64])
+void CRYPT_SHA512Finish(FX_LPVOID context, uint8_t digest[64])
 {
     sha384_context *ctx = (sha384_context *)context;
     FX_DWORD last, padn;
-    FX_BYTE msglen[16];
+    uint8_t msglen[16];
     FXSYS_memset32(msglen, 0, 16);
-    FX_UINT64 high, low;
+    uint64_t high, low;
     high = ( ctx->total[0] >> 29 )
            | ( ctx->total[1] <<  3 );
     low  = ( ctx->total[0] <<  3 );
@@ -730,7 +730,7 @@ void CRYPT_SHA512Finish(FX_LPVOID context, FX_BYTE digest[64])
     PUT_FX_64DWORD(ctx->state[6], digest, 48);
     PUT_FX_64DWORD(ctx->state[7], digest, 56);
 }
-void CRYPT_SHA512Generate(FX_LPCBYTE data, FX_DWORD size, FX_BYTE digest[64])
+void CRYPT_SHA512Generate(FX_LPCBYTE data, FX_DWORD size, uint8_t digest[64])
 {
     sha384_context context;
     CRYPT_SHA512Start(&context);

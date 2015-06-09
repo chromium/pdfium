@@ -17,14 +17,14 @@ private:
     CBC_CommonBitMatrix *m_tempBitMatrix;
     CBC_QRCoderVersion   *m_version;
     CBC_QRCoderFormatInformation *m_parsedFormatInfo;
-    FX_INT32 m_dimension;
+    int32_t m_dimension;
 public:
     CBC_QRBitMatrixParser();
     virtual ~CBC_QRBitMatrixParser();
-    CBC_QRCoderFormatInformation *ReadFormatInformation(FX_INT32 &e);
-    CBC_QRCoderVersion			  *ReadVersion(FX_INT32 &e);
-    FX_INT32				   CopyBit(FX_INT32 i, FX_INT32 j, FX_INT32 versionBits);
-    CFX_ByteArray	  *ReadCodewords(FX_INT32 &e);
-    virtual void Init(CBC_CommonBitMatrix *bitMatrix, FX_INT32 &e);
+    CBC_QRCoderFormatInformation *ReadFormatInformation(int32_t &e);
+    CBC_QRCoderVersion			  *ReadVersion(int32_t &e);
+    int32_t				   CopyBit(int32_t i, int32_t j, int32_t versionBits);
+    CFX_ByteArray	  *ReadCodewords(int32_t &e);
+    virtual void Init(CBC_CommonBitMatrix *bitMatrix, int32_t &e);
 };
 #endif

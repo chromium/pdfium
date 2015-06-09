@@ -25,7 +25,7 @@ public:
     CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode);
     ~CXFA_WidgetAcc();
 
-    FX_BOOL			GetName(CFX_WideString &wsName, FX_INT32 iNameType = 0);
+    FX_BOOL			GetName(CFX_WideString &wsName, int32_t iNameType = 0);
     FX_BOOL			ProcessValueChanged();
 
 public:
@@ -41,21 +41,21 @@ public:
     CXFA_FFApp*			GetApp();
     IXFA_AppProvider*	GetAppProvider();
 
-    FX_INT32		ProcessEvent(FX_INT32 iActivity, CXFA_EventParam* pEventParam);
-    FX_INT32		ProcessEvent(CXFA_Event& event, CXFA_EventParam* pEventParam);
-    FX_INT32		ProcessCalculate();
-    FX_INT32		ProcessValidate(FX_INT32 iFlags = 0);
-    FX_INT32		ExecuteScript(CXFA_Script script, CXFA_EventParam* pEventParam, FXJSE_HVALUE* pRetValue = NULL);
+    int32_t		ProcessEvent(int32_t iActivity, CXFA_EventParam* pEventParam);
+    int32_t		ProcessEvent(CXFA_Event& event, CXFA_EventParam* pEventParam);
+    int32_t		ProcessCalculate();
+    int32_t		ProcessValidate(int32_t iFlags = 0);
+    int32_t		ExecuteScript(CXFA_Script script, CXFA_EventParam* pEventParam, FXJSE_HVALUE* pRetValue = NULL);
 
     CXFA_FFWidget*	GetNextWidget(CXFA_FFWidget* pWidget);
     void			StartWidgetLayout(FX_FLOAT &fCalcWidth, FX_FLOAT& fCalcHeight);
-    FX_BOOL			FindSplitPos(FX_INT32 iBlockIndex, FX_FLOAT &fCalcHeight);
+    FX_BOOL			FindSplitPos(int32_t iBlockIndex, FX_FLOAT &fCalcHeight);
     FX_BOOL				LoadCaption();
     FX_BOOL				LoadText();
     FX_BOOL				LoadImageImage();
     FX_BOOL				LoadImageEditImage();
-    void				GetImageDpi(FX_INT32 &iImageXDpi, FX_INT32 &iImageYDpi);
-    void				GetImageEditDpi(FX_INT32 &iImageXDpi, FX_INT32 &iImageYDpi);
+    void				GetImageDpi(int32_t &iImageXDpi, int32_t &iImageYDpi);
+    void				GetImageEditDpi(int32_t &iImageXDpi, int32_t &iImageYDpi);
     CXFA_TextLayout*	GetCaptionTextLayout();
     CXFA_TextLayout*	GetTextLayout();
     CFX_DIBitmap*		GetImageImage();
@@ -73,9 +73,9 @@ public:
     FX_FLOAT		GetLineHeight();
     CXFA_WidgetLayoutData* GetWidgetLayoutData();
 protected:
-    void			ProcessScriptTestValidate(CXFA_Validate validate, FX_INT32 iRet, FXJSE_HVALUE pRetValue, FX_BOOL bVersionFlag);
-    FX_INT32		ProcessFormatTestValidate(CXFA_Validate validate, FX_BOOL bVersionFlag);
-    FX_INT32		ProcessNullTestValidate(CXFA_Validate validate, FX_INT32 iFlags, FX_BOOL bVersionFlag);
+    void			ProcessScriptTestValidate(CXFA_Validate validate, int32_t iRet, FXJSE_HVALUE pRetValue, FX_BOOL bVersionFlag);
+    int32_t		ProcessFormatTestValidate(CXFA_Validate validate, FX_BOOL bVersionFlag);
+    int32_t		ProcessNullTestValidate(CXFA_Validate validate, int32_t iFlags, FX_BOOL bVersionFlag);
     void			GetValidateCaptionName(CFX_WideString& wsCaptionName, FX_BOOL bVersionFlag);
     void			GetValidateMessage(IXFA_AppProvider* pAppProvider, CFX_WideString& wsMessage, FX_BOOL bError, FX_BOOL bVersionFlag);
     void			CalcCaptionSize(CFX_SizeF &szCap);

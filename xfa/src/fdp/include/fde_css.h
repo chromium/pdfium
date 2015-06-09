@@ -242,11 +242,11 @@ public:
     virtual FDE_CSSPRIMITIVETYPE	GetPrimitiveType() const = 0;
     virtual FX_ARGB					GetRGBColor() const = 0;
     virtual FX_FLOAT				GetFloat() const = 0;
-    virtual FX_LPCWSTR				GetString(FX_INT32 &iLength) const = 0;
+    virtual FX_LPCWSTR				GetString(int32_t &iLength) const = 0;
     virtual FDE_CSSPROPERTYVALUE	GetEnum() const = 0;
     virtual	FX_LPCWSTR				GetFuncName() const = 0;
-    virtual FX_INT32				CountArgs() const = 0;
-    virtual IFDE_CSSValue*			GetArgs(FX_INT32 index) const = 0;
+    virtual int32_t				CountArgs() const = 0;
+    virtual IFDE_CSSValue*			GetArgs(int32_t index) const = 0;
 };
 class IFDE_CSSValueList : public IFDE_CSSValue
 {
@@ -255,8 +255,8 @@ public:
     {
         return FDE_CSSVALUETYPE_List;
     }
-    virtual FX_INT32				CountValues() const = 0;
-    virtual IFDE_CSSValue*			GetValue(FX_INT32 index) const = 0;
+    virtual int32_t				CountValues() const = 0;
+    virtual IFDE_CSSValue*			GetValue(int32_t index) const = 0;
 };
 enum FDE_CSSPROPERTY {
     FDE_CSSPROPERTY_WritingMode,
@@ -429,8 +429,8 @@ public:
     {
         return FDE_CSSRULETYPE_Style;
     }
-    virtual FX_INT32				CountSelectorLists() const = 0;
-    virtual IFDE_CSSSelector*		GetSelectorList(FX_INT32 index) const = 0;
+    virtual int32_t				CountSelectorLists() const = 0;
+    virtual IFDE_CSSSelector*		GetSelectorList(int32_t index) const = 0;
     virtual IFDE_CSSDeclaration*	GetDeclaration() const = 0;
 };
 class IFDE_CSSMediaRule : public IFDE_CSSRule
@@ -441,8 +441,8 @@ public:
         return FDE_CSSRULETYPE_Media;
     }
     virtual FX_DWORD				GetMediaList() const = 0;
-    virtual FX_INT32				CountRules() const = 0;
-    virtual IFDE_CSSRule*			GetRule(FX_INT32 index) = 0;
+    virtual int32_t				CountRules() const = 0;
+    virtual IFDE_CSSRule*			GetRule(int32_t index) = 0;
 };
 class IFDE_CSSFontFaceRule : public IFDE_CSSRule
 {
@@ -458,13 +458,13 @@ class IFDE_CSSStyleSheet : public IFX_Unknown
 public:
     static IFDE_CSSStyleSheet*		LoadHTMLStandardStyleSheet();
     static IFDE_CSSStyleSheet*		LoadFromStream(const CFX_WideString &szUrl, IFX_Stream *pStream, FX_WORD wCodePage, FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
-    static IFDE_CSSStyleSheet*		LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, FX_INT32 iBufSize, FX_WORD wCodePage, FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
+    static IFDE_CSSStyleSheet*		LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, int32_t iBufSize, FX_WORD wCodePage, FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
     virtual FX_BOOL					GetUrl(CFX_WideString &szUrl) = 0;
     virtual FX_DWORD				GetMediaList() const = 0;
     virtual FX_WORD					GetCodePage() const = 0;
 
-    virtual FX_INT32				CountRules() const = 0;
-    virtual IFDE_CSSRule*			GetRule(FX_INT32 index) = 0;
+    virtual int32_t				CountRules() const = 0;
+    virtual IFDE_CSSRule*			GetRule(int32_t index) = 0;
 };
 typedef CFX_ArrayTemplate<IFDE_CSSStyleSheet*> CFDE_CSSStyleSheetArray;
 #define FDE_CSSUSERSTYLESHEET		(FX_BSTRC("#USERSHEET"))
@@ -474,7 +474,7 @@ class IFDE_CSSStyleSheetCache
 public:
     static IFDE_CSSStyleSheetCache*	Create();
     virtual void					Release() = 0;
-    virtual void					SetMaxItems(FX_INT32 iMaxCount = 5) = 0;
+    virtual void					SetMaxItems(int32_t iMaxCount = 5) = 0;
     virtual void					AddStyleSheet(FX_BSTR szKey, IFDE_CSSStyleSheet *pStyleSheet) = 0;
     virtual IFDE_CSSStyleSheet*		GetStyleSheet(FX_BSTR szKey) const = 0;
     virtual void					RemoveStyleSheet(FX_BSTR szKey) = 0;
@@ -503,11 +503,11 @@ class IFDE_CSSSyntaxParser
 public:
     static IFDE_CSSSyntaxParser*	Create();
     virtual void					Release() = 0;
-    virtual FX_BOOL					Init(IFX_Stream *pStream, FX_INT32 iCSSPlaneSize, FX_INT32 iTextDataSize = 32, FX_BOOL bOnlyDeclaration = FALSE) = 0;
-    virtual FX_BOOL					Init(FX_LPCWSTR pBuffer, FX_INT32 iBufferSize, FX_INT32 iTextDatSize = 32, FX_BOOL bOnlyDeclaration = FALSE) = 0;
+    virtual FX_BOOL					Init(IFX_Stream *pStream, int32_t iCSSPlaneSize, int32_t iTextDataSize = 32, FX_BOOL bOnlyDeclaration = FALSE) = 0;
+    virtual FX_BOOL					Init(FX_LPCWSTR pBuffer, int32_t iBufferSize, int32_t iTextDatSize = 32, FX_BOOL bOnlyDeclaration = FALSE) = 0;
 
     virtual FDE_CSSSYNTAXSTATUS		DoSyntaxParse() = 0;
-    virtual FX_LPCWSTR				GetCurrentString(FX_INT32 &iLength) const = 0;
+    virtual FX_LPCWSTR				GetCurrentString(int32_t &iLength) const = 0;
 };
 enum FDE_CSSLENGTHUNIT {
     FDE_CSSLENGTHUNIT_Auto,
@@ -526,7 +526,7 @@ struct FDE_CSSLENGTH {
     }
     FDE_CSSLENGTH&					Set(FDE_CSSLENGTHUNIT eUnit, FX_FLOAT fValue)
     {
-        m_iData = ((FX_INTPTR)(fValue * 1024.0f) << FDE_CSSUNITBITS) | eUnit;
+        m_iData = ((intptr_t)(fValue * 1024.0f) << FDE_CSSUNITBITS) | eUnit;
         return *this;
     }
     FDE_CSSLENGTHUNIT				GetUnit() const
@@ -542,7 +542,7 @@ struct FDE_CSSLENGTH {
         return (m_iData >> FDE_CSSUNITBITS) != 0;
     }
 private:
-    FX_INTPTR						m_iData;
+    intptr_t						m_iData;
 };
 struct FDE_CSSPOINT {
     FDE_CSSPOINT&					Set(FDE_CSSLENGTHUNIT eUnit)
@@ -867,19 +867,19 @@ public:
 class IFDE_CSSGeneratedContentStyle
 {
 public:
-    virtual FX_INT32				CountCounters() = 0;
-    virtual FX_LPCWSTR				GetCounterIdentifier(FX_INT32 index) = 0;
-    virtual FX_BOOL					GetCounterReset(FX_INT32 index, FX_INT32 &iValue) = 0;
-    virtual FX_BOOL					GetCounterIncrement(FX_INT32 index, FX_INT32 &iValue) = 0;
+    virtual int32_t				CountCounters() = 0;
+    virtual FX_LPCWSTR				GetCounterIdentifier(int32_t index) = 0;
+    virtual FX_BOOL					GetCounterReset(int32_t index, int32_t &iValue) = 0;
+    virtual FX_BOOL					GetCounterIncrement(int32_t index, int32_t &iValue) = 0;
     virtual IFDE_CSSValueList*		GetContent() const = 0;
-    virtual FX_INT32				CountQuotes() const = 0;
-    virtual FX_LPCWSTR				GetQuotes(FX_INT32 index) const = 0;
+    virtual int32_t				CountQuotes() const = 0;
+    virtual FX_LPCWSTR				GetQuotes(int32_t index) const = 0;
 };
 class IFDE_CSSFontStyle
 {
 public:
-    virtual FX_INT32				CountFontFamilies() const = 0;
-    virtual FX_LPCWSTR				GetFontFamily(FX_INT32 index) const = 0;
+    virtual int32_t				CountFontFamilies() const = 0;
+    virtual FX_LPCWSTR				GetFontFamily(int32_t index) const = 0;
     virtual FX_WORD					GetFontWeight() const = 0;
     virtual FDE_CSSFONTVARIANT		GetFontVariant() const = 0;
     virtual FDE_CSSFONTSTYLE		GetFontStyle() const = 0;
@@ -955,12 +955,12 @@ public:
     virtual const FDE_CSSLENGTH&	GetWordSpacing() const = 0;
     virtual FDE_CSSWRITINGMODE		GetWritingMode() const = 0;
     virtual FDE_CSSWORDBREAK		GetWordBreak() const = 0;
-    virtual FX_INT32				GetWidows() const = 0;
+    virtual int32_t				GetWidows() const = 0;
     virtual FX_ARGB					GetTextEmphasisColor() const = 0;
     virtual FDE_CSSPAGEBREAK		GetPageBreakBefore() const = 0;
     virtual FDE_CSSPAGEBREAK		GetPageBreakAfter() const = 0;
     virtual FDE_CSSPAGEBREAK		GetPageBreakInside() const = 0;
-    virtual FX_INT32				GetOrphans() const = 0;
+    virtual int32_t				GetOrphans() const = 0;
     virtual FDE_CSSLINEBREAK		GetLineBreak() const = 0;
     virtual FDE_CSSTEXTEMPHASISMARK	GetTextEmphasisMark() const = 0;
     virtual FDE_CSSTEXTEMPHASISFILL	GetTextEmphasisFill() const = 0;
@@ -980,12 +980,12 @@ public:
     virtual void				 	SetWordSpacing(const FDE_CSSLENGTH &wordSpacing) = 0;
     virtual void					SetWritingMode(FDE_CSSWRITINGMODE eWritingMode) = 0;
     virtual void					SetWordBreak(FDE_CSSWORDBREAK eWordBreak) = 0;
-    virtual void					SetWidows(FX_INT32 iWidows) = 0;
+    virtual void					SetWidows(int32_t iWidows) = 0;
     virtual void					SetTextEmphasisColor(FX_ARGB dwTextEmphasisColor) = 0;
     virtual void					SetPageBreakBefore(FDE_CSSPAGEBREAK ePageBreakBefore) = 0;
     virtual void					SetPageBreakAfter(FDE_CSSPAGEBREAK ePageBreakAfter) = 0;
     virtual void					SetPageBreakInside(FDE_CSSPAGEBREAK ePageBreakInside) = 0;
-    virtual void					SetOrphans(FX_INT32 iOrphans) = 0;
+    virtual void					SetOrphans(int32_t iOrphans) = 0;
     virtual void					SetLineBreak(FDE_CSSLINEBREAK eLineBreak) = 0;
 };
 class IFDE_CSSBackgroundStyle
@@ -1076,7 +1076,7 @@ public:
     virtual void					UpdateStyleIndex(FX_DWORD dwMediaList) = 0;
     virtual IFDE_CSSAccelerator*	InitAccelerator() = 0;
     virtual IFDE_CSSComputedStyle*	CreateComputedStyle(IFDE_CSSComputedStyle *pParentStyle) = 0;
-    virtual FX_INT32				MatchDeclarations(IFDE_CSSTagProvider *pTag, CFDE_CSSDeclarationArray &matchedDecls, FDE_CSSPERSUDO ePersudoType = FDE_CSSPERSUDO_NONE) = 0;
-    virtual void					ComputeStyle(IFDE_CSSTagProvider *pTag, const IFDE_CSSDeclaration **ppDeclArray, FX_INT32 iDeclCount, IFDE_CSSComputedStyle *pDestStyle) = 0;
+    virtual int32_t				MatchDeclarations(IFDE_CSSTagProvider *pTag, CFDE_CSSDeclarationArray &matchedDecls, FDE_CSSPERSUDO ePersudoType = FDE_CSSPERSUDO_NONE) = 0;
+    virtual void					ComputeStyle(IFDE_CSSTagProvider *pTag, const IFDE_CSSDeclaration **ppDeclArray, int32_t iDeclCount, IFDE_CSSComputedStyle *pDestStyle) = 0;
 };
 #endif

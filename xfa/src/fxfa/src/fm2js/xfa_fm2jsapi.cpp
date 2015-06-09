@@ -9,14 +9,14 @@
 extern "C"
 {
 #endif
-FX_INT32 XFA_FM2JS_Translate(FX_WSTR wsFormcalc, CFX_WideTextBuf& wsJavascript, CFX_WideString& wsError)
+int32_t XFA_FM2JS_Translate(FX_WSTR wsFormcalc, CFX_WideTextBuf& wsJavascript, CFX_WideString& wsError)
 {
     if (wsFormcalc.IsEmpty()) {
         wsJavascript.Clear();
         wsError.Empty();
         return 0;
     }
-    FX_INT32 status = 0;
+    int32_t status = 0;
     CXFA_FMProgram program;
     status = program.Init(wsFormcalc);
     if(status) {

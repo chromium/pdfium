@@ -38,11 +38,11 @@ FWL_ERR	IFWL_CheckBox::Initialize(const CFWL_WidgetImpProperties &properties, IF
     ((CFWL_CheckBoxImp*)m_pData)->SetInterface(this);
     return ((CFWL_CheckBoxImp*)m_pData)->Initialize();
 }
-FX_INT32 IFWL_CheckBox::GetCheckState()
+int32_t IFWL_CheckBox::GetCheckState()
 {
     return ((CFWL_CheckBoxImp*)m_pData)->GetCheckState();
 }
-FWL_ERR IFWL_CheckBox::SetCheckState(FX_INT32 iCheck)
+FWL_ERR IFWL_CheckBox::SetCheckState(int32_t iCheck)
 {
     return ((CFWL_CheckBoxImp*)m_pData)->SetCheckState(iCheck);
 }
@@ -174,7 +174,7 @@ FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *
     if (HasEdge()) {
         DrawEdge(pGraphics, FWL_PART_CKB_Edge, pTheme, pMatrix);
     }
-    FX_INT32 dwStates = GetPartStates();
+    int32_t dwStates = GetPartStates();
     {
         CFWL_ThemeBackground param;
         param.m_pWidget = m_pInterface;
@@ -197,7 +197,7 @@ FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *
     {
         CFX_WideString wsCaption;
         m_pProperties->m_pDataProvider->GetCaption(m_pInterface, wsCaption);
-        FX_INT32 iLen = wsCaption.GetLength();
+        int32_t iLen = wsCaption.GetLength();
         _FWL_RETURN_VALUE_IF_FAIL(iLen > 0, FWL_ERR_Indefinite);
         CFWL_ThemeText textParam;
         textParam.m_pWidget = m_pInterface;
@@ -215,7 +215,7 @@ FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *
     }
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_CheckBoxImp::GetCheckState()
+int32_t CFWL_CheckBoxImp::GetCheckState()
 {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_3State)
             && ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) == FWL_STATE_CKB_Neutral)) {
@@ -226,7 +226,7 @@ FX_INT32 CFWL_CheckBoxImp::GetCheckState()
     }
     return 0;
 }
-FWL_ERR CFWL_CheckBoxImp::SetCheckState(FX_INT32 iCheck)
+FWL_ERR CFWL_CheckBoxImp::SetCheckState(int32_t iCheck)
 {
     m_pProperties->m_dwStates &= ~FWL_STATE_CKB_CheckMask;
     switch(iCheck) {
@@ -251,8 +251,8 @@ FWL_ERR CFWL_CheckBoxImp::SetCheckState(FX_INT32 iCheck)
 }
 void CFWL_CheckBoxImp::Layout()
 {
-    FX_INT32 width = FX_INT32(m_pProperties->m_rtWidget.width + 0.5f);
-    FX_INT32 height = FX_INT32(m_pProperties->m_rtWidget.height + 0.5f);
+    int32_t width = int32_t(m_pProperties->m_rtWidget.width + 0.5f);
+    int32_t height = int32_t(m_pProperties->m_rtWidget.height + 0.5f);
     m_pProperties->m_rtWidget.width = (FX_FLOAT)width;
     m_pProperties->m_rtWidget.height = (FX_FLOAT)height;
     GetClientRect(m_rtClient);
@@ -322,7 +322,7 @@ void CFWL_CheckBoxImp::Layout()
 }
 FX_DWORD CFWL_CheckBoxImp::GetPartStates()
 {
-    FX_INT32 dwStates = FWL_PARTSTATE_CKB_UnChecked;
+    int32_t dwStates = FWL_PARTSTATE_CKB_UnChecked;
     if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) == FWL_STATE_CKB_Neutral) {
         dwStates = FWL_PARTSTATE_CKB_Neutral;
     } else if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) == FWL_STATE_CKB_Checked) {
@@ -406,8 +406,8 @@ void CFWL_CheckBoxImp::NextStates()
                 CFX_PtrArray radioarr;
                 pWidgetMgr->GetSameGroupRadioButton(m_pInterface, radioarr);
                 IFWL_CheckBox *pCheckBox = NULL;
-                FX_INT32 iCount = radioarr.GetSize();
-                for (FX_INT32 i = 0; i < iCount; i++) {
+                int32_t iCount = radioarr.GetSize();
+                for (int32_t i = 0; i < iCount; i++) {
                     pCheckBox = (IFWL_CheckBox *)radioarr[i];
                     if (pCheckBox != m_pInterface && pCheckBox->GetStates() & FWL_STATE_CKB_Checked) {
                         pCheckBox->SetCheckState(0);
@@ -449,11 +449,11 @@ CFWL_CheckBoxImpDelegate::CFWL_CheckBoxImpDelegate(CFWL_CheckBoxImp *pOwner)
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
     FX_DWORD dwMsgCode = pMessage->GetClassID();
-    FX_INT32 iRet = 1;
+    int32_t iRet = 1;
     switch (dwMsgCode) {
         case FWL_MSGHASH_Activate: {
                 OnActivate(pMessage);

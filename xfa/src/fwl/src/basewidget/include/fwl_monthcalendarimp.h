@@ -12,7 +12,7 @@ class CFWL_WidgetImpDelegate;
 class IFWL_Widget;
 class IFDE_DateTime;
 class CFDE_DateTime;
-extern FX_BYTE FX_DaysInMonth(FX_INT32 iYear, FX_BYTE iMonth);
+extern uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 class CFWL_MonthCalendarImp;
 class CFWL_MonthCalendarImpDelegate;
 class CFWL_MonthCalendarImp : public CFWL_WidgetImp
@@ -28,9 +28,9 @@ public:
     virtual FWL_ERR		GetWidgetRect(CFX_RectF &rect, FX_BOOL bAutoSize = FALSE);
     virtual	FWL_ERR		Update();
     virtual FWL_ERR		DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
-    virtual FX_INT32	CountSelect();
-    virtual	FX_BOOL		GetSelect(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay, FX_INT32 nIndex = 0);
-    virtual	FX_BOOL		SetSelect(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    virtual int32_t	CountSelect();
+    virtual	FX_BOOL		GetSelect(int32_t &iYear, int32_t &iMonth, int32_t &iDay, int32_t nIndex = 0);
+    virtual	FX_BOOL		SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay);
 protected:
     void		DrawBkground(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix);
     void		DrawHeadBK(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix);
@@ -53,25 +53,25 @@ protected:
     void		CalcTodaySize();
     void		CalDateItem();
     void		GetCapValue();
-    FX_INT32	CalWeekNumber(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    int32_t	CalWeekNumber(int32_t iYear, int32_t iMonth, int32_t iDay);
 
-    FX_BOOL		GetMinDate(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay);
-    FX_BOOL		SetMinDate(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
-    FX_BOOL		GetMaxDate(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay);
-    FX_BOOL		SetMaxDate(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    FX_BOOL		GetMinDate(int32_t &iYear, int32_t &iMonth, int32_t &iDay);
+    FX_BOOL		SetMinDate(int32_t iYear, int32_t iMonth, int32_t iDay);
+    FX_BOOL		GetMaxDate(int32_t &iYear, int32_t &iMonth, int32_t &iDay);
+    FX_BOOL		SetMaxDate(int32_t iYear, int32_t iMonth, int32_t iDay);
     FX_BOOL     InitDate();
     void		ClearDateItem();
     void		ReSetDateItem();
     FX_BOOL		NextMonth();
     FX_BOOL		PrevMonth();
-    void		ChangeToMonth(FX_INT32 iYear, FX_INT32 iMonth);
-    FX_BOOL		RemoveSelDay(FX_INT32 iDay, FX_BOOL bAll = FALSE);
-    FX_BOOL		AddSelDay(FX_INT32 iDay);
+    void		ChangeToMonth(int32_t iYear, int32_t iMonth);
+    FX_BOOL		RemoveSelDay(int32_t iDay, FX_BOOL bAll = FALSE);
+    FX_BOOL		AddSelDay(int32_t iDay);
     FX_BOOL		JumpToToday();
-    void		GetHeadText(FX_INT32 iYear, FX_INT32 iMonth, CFX_WideString &wsHead);
-    void		GetTodayText(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay, CFX_WideString &wsToday);
-    FX_INT32	GetDayAtPoint(FX_FLOAT x, FX_FLOAT y);
-    FX_BOOL		GetDayRect(FX_INT32 iDay, CFX_RectF &rtDay);
+    void		GetHeadText(int32_t iYear, int32_t iMonth, CFX_WideString &wsHead);
+    void		GetTodayText(int32_t iYear, int32_t iMonth, int32_t iDay, CFX_WideString &wsToday);
+    int32_t	GetDayAtPoint(FX_FLOAT x, FX_FLOAT y);
+    FX_BOOL		GetDayRect(int32_t iDay, CFX_RectF &rtDay);
     typedef struct _DATE {
         _DATE()
         {
@@ -79,7 +79,7 @@ protected:
             iMonth = 0;
             iDay = 0;
         }
-        _DATE(FX_INT32 year, FX_INT32 month, FX_INT32 day) : iYear(year), iMonth(month), iDay(day) {}
+        _DATE(int32_t year, int32_t month, int32_t day) : iYear(year), iMonth(month), iDay(day) {}
         FX_BOOL operator < (const _DATE &right)
         {
             if (iYear < right.iYear) {
@@ -106,9 +106,9 @@ protected:
             }
             return FALSE;
         }
-        FX_INT32 iYear;
-        FX_INT32 iMonth;
-        FX_INT32 iDay;
+        int32_t iYear;
+        int32_t iMonth;
+        int32_t iDay;
 
     } DATE, *LPDATE;
     FX_BOOL				m_bInit;
@@ -128,22 +128,22 @@ protected:
     CFX_WideString		m_wsToday;
     CFX_DateTime		*m_pDateTime;
     CFX_PtrArray		m_arrDates;
-    FX_INT32			m_iCurYear;
-    FX_INT32			m_iCurMonth;
-    FX_INT32			m_iYear;
-    FX_INT32			m_iMonth;
-    FX_INT32			m_iDay;
-    FX_INT32			m_iHovered;
-    FX_INT32			m_iLBtnPartStates;
-    FX_INT32			m_iRBtnPartStates;
+    int32_t			m_iCurYear;
+    int32_t			m_iCurMonth;
+    int32_t			m_iYear;
+    int32_t			m_iMonth;
+    int32_t			m_iDay;
+    int32_t			m_iHovered;
+    int32_t			m_iLBtnPartStates;
+    int32_t			m_iRBtnPartStates;
     DATE				m_dtMin;
     DATE				m_dtMax;
     CFX_SizeF			m_szHead;
     CFX_SizeF			m_szCell;
     CFX_SizeF			m_szToday;
-    typedef CFX_ArrayTemplate<FX_INT32>	CFWL_Int32Array;
+    typedef CFX_ArrayTemplate<int32_t>	CFWL_Int32Array;
     CFWL_Int32Array		m_arrSelDays;
-    FX_INT32			m_iMaxSel;
+    int32_t			m_iMaxSel;
     CFX_RectF			m_rtClient;
     FX_FLOAT m_fHeadWid;
     FX_FLOAT m_fHeadHei;
@@ -178,9 +178,9 @@ protected:
     friend class CFWL_MonthCalendarImpDelegate;
 };
 typedef struct _DATEINFO {
-    _DATEINFO(FX_INT32 day, FX_INT32 dayofweek, FX_DWORD dwSt, CFX_RectF rc, CFX_WideString &wsday) : iDay(day), iDayOfWeek(dayofweek), dwStates(dwSt), rect(rc), wsDay(wsday) {}
-    FX_INT32 iDay;
-    FX_INT32 iDayOfWeek;
+    _DATEINFO(int32_t day, int32_t dayofweek, FX_DWORD dwSt, CFX_RectF rc, CFX_WideString &wsday) : iDay(day), iDayOfWeek(dayofweek), dwStates(dwSt), rect(rc), wsDay(wsday) {}
+    int32_t iDay;
+    int32_t iDayOfWeek;
     FX_DWORD dwStates;
     CFX_RectF rect;
     CFX_WideString wsDay;
@@ -189,7 +189,7 @@ class CFWL_MonthCalendarImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_MonthCalendarImpDelegate(CFWL_MonthCalendarImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:
     void		OnActivate(CFWL_Message *pMsg);

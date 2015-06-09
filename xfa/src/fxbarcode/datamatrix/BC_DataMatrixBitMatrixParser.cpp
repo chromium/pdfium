@@ -30,9 +30,9 @@ CBC_DataMatrixBitMatrixParser::CBC_DataMatrixBitMatrixParser()
     m_version = NULL;
     m_readMappingMatrix = NULL;
 }
-void CBC_DataMatrixBitMatrixParser::Init(CBC_CommonBitMatrix *bitMatrix, FX_INT32 &e)
+void CBC_DataMatrixBitMatrixParser::Init(CBC_CommonBitMatrix *bitMatrix, int32_t &e)
 {
-    FX_INT32 dimension = bitMatrix->GetHeight();
+    int32_t dimension = bitMatrix->GetHeight();
     if (dimension < 8 || dimension > 144 || (dimension & 0x01) != 0) {
         e = BCExceptionFormatException;
         return;
@@ -59,45 +59,45 @@ CBC_DataMatrixVersion *CBC_DataMatrixBitMatrixParser::GetVersion()
 {
     return m_version;
 }
-CBC_DataMatrixVersion *CBC_DataMatrixBitMatrixParser::ReadVersion(CBC_CommonBitMatrix *bitMatrix, FX_INT32 &e)
+CBC_DataMatrixVersion *CBC_DataMatrixBitMatrixParser::ReadVersion(CBC_CommonBitMatrix *bitMatrix, int32_t &e)
 {
-    FX_INT32 rows = bitMatrix->GetHeight();
-    FX_INT32 columns = bitMatrix->GetWidth();
+    int32_t rows = bitMatrix->GetHeight();
+    int32_t columns = bitMatrix->GetWidth();
     CBC_DataMatrixVersion *temp = CBC_DataMatrixVersion::GetVersionForDimensions(rows, columns, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return temp;
 }
-CFX_ByteArray *CBC_DataMatrixBitMatrixParser::ReadCodewords(FX_INT32 &e)
+CFX_ByteArray *CBC_DataMatrixBitMatrixParser::ReadCodewords(int32_t &e)
 {
     CBC_AutoPtr<CFX_ByteArray> result(FX_NEW CFX_ByteArray());
     result->SetSize(m_version->GetTotalCodewords());
-    FX_INT32 resultOffset = 0;
-    FX_INT32 row = 4;
-    FX_INT32 column = 0;
-    FX_INT32 numRows = m_mappingBitMatrix->GetHeight();
-    FX_INT32 numColumns = m_mappingBitMatrix->GetWidth();
+    int32_t resultOffset = 0;
+    int32_t row = 4;
+    int32_t column = 0;
+    int32_t numRows = m_mappingBitMatrix->GetHeight();
+    int32_t numColumns = m_mappingBitMatrix->GetWidth();
     FX_BOOL corner1Read = FALSE;
     FX_BOOL corner2Read = FALSE;
     FX_BOOL corner3Read = FALSE;
     FX_BOOL corner4Read = FALSE;
     do {
         if ((row == numRows) && (column == 0) && !corner1Read) {
-            (*result)[resultOffset++] = (FX_BYTE) ReadCorner1(numRows, numColumns);
+            (*result)[resultOffset++] = (uint8_t) ReadCorner1(numRows, numColumns);
             row -= 2;
             column += 2;
             corner1Read = TRUE;
         } else if ((row == numRows - 2) && (column == 0) && ((numColumns & 0x03) != 0) && !corner2Read) {
-            (*result)[resultOffset++] = (FX_BYTE) ReadCorner2(numRows, numColumns);
+            (*result)[resultOffset++] = (uint8_t) ReadCorner2(numRows, numColumns);
             row -= 2;
             column += 2;
             corner2Read = TRUE;
         } else if ((row == numRows + 4) && (column == 2) && ((numColumns & 0x07) == 0) && !corner3Read) {
-            (*result)[resultOffset++] = (FX_BYTE) ReadCorner3(numRows, numColumns);
+            (*result)[resultOffset++] = (uint8_t) ReadCorner3(numRows, numColumns);
             row -= 2;
             column += 2;
             corner3Read = TRUE;
         } else if ((row == numRows - 2) && (column == 0) && ((numColumns & 0x07) == 4) && !corner4Read) {
-            (*result)[resultOffset++] = (FX_BYTE) ReadCorner4(numRows, numColumns);
+            (*result)[resultOffset++] = (uint8_t) ReadCorner4(numRows, numColumns);
             row -= 2;
             column += 2;
             corner4Read = TRUE;
@@ -105,7 +105,7 @@ CFX_ByteArray *CBC_DataMatrixBitMatrixParser::ReadCodewords(FX_INT32 &e)
             do {
                 if ((row < numRows) && (column >= 0) && !m_readMappingMatrix->Get(column, row)) {
                     if (resultOffset < (*result).GetSize() ) {
-                        (*result)[resultOffset++] = (FX_BYTE) ReadUtah(row, column, numRows, numColumns);
+                        (*result)[resultOffset++] = (uint8_t) ReadUtah(row, column, numRows, numColumns);
                     }
                 }
                 row -= 2;
@@ -116,7 +116,7 @@ CFX_ByteArray *CBC_DataMatrixBitMatrixParser::ReadCodewords(FX_INT32 &e)
             do {
                 if ((row >= 0) && (column < numColumns) && !m_readMappingMatrix->Get(column, row)) {
                     if (resultOffset < (*result).GetSize() ) {
-                        (*result)[resultOffset++] = (FX_BYTE) ReadUtah(row, column, numRows, numColumns);
+                        (*result)[resultOffset++] = (uint8_t) ReadUtah(row, column, numRows, numColumns);
                     }
                 }
                 row += 2;
@@ -132,7 +132,7 @@ CFX_ByteArray *CBC_DataMatrixBitMatrixParser::ReadCodewords(FX_INT32 &e)
     }
     return result.release();
 }
-FX_BOOL CBC_DataMatrixBitMatrixParser::ReadModule(FX_INT32 row, FX_INT32 column, FX_INT32 numRows, FX_INT32 numColumns)
+FX_BOOL CBC_DataMatrixBitMatrixParser::ReadModule(int32_t row, int32_t column, int32_t numRows, int32_t numColumns)
 {
     if (row < 0) {
         row += numRows;
@@ -145,9 +145,9 @@ FX_BOOL CBC_DataMatrixBitMatrixParser::ReadModule(FX_INT32 row, FX_INT32 column,
     m_readMappingMatrix->Set(column, row);
     return m_mappingBitMatrix->Get(column, row);
 }
-FX_INT32 CBC_DataMatrixBitMatrixParser::ReadUtah(FX_INT32 row, FX_INT32 column, FX_INT32 numRows, FX_INT32 numColumns)
+int32_t CBC_DataMatrixBitMatrixParser::ReadUtah(int32_t row, int32_t column, int32_t numRows, int32_t numColumns)
 {
-    FX_INT32 currentByte = 0;
+    int32_t currentByte = 0;
     if (ReadModule(row - 2, column - 2, numRows, numColumns)) {
         currentByte |= 1;
     }
@@ -181,9 +181,9 @@ FX_INT32 CBC_DataMatrixBitMatrixParser::ReadUtah(FX_INT32 row, FX_INT32 column, 
     }
     return currentByte;
 }
-FX_INT32 CBC_DataMatrixBitMatrixParser::ReadCorner1(FX_INT32 numRows, FX_INT32 numColumns)
+int32_t CBC_DataMatrixBitMatrixParser::ReadCorner1(int32_t numRows, int32_t numColumns)
 {
-    FX_INT32 currentByte = 0;
+    int32_t currentByte = 0;
     if (ReadModule(numRows - 1, 0, numRows, numColumns)) {
         currentByte |= 1;
     }
@@ -217,9 +217,9 @@ FX_INT32 CBC_DataMatrixBitMatrixParser::ReadCorner1(FX_INT32 numRows, FX_INT32 n
     }
     return currentByte;
 }
-FX_INT32 CBC_DataMatrixBitMatrixParser::ReadCorner2(FX_INT32 numRows, FX_INT32 numColumns)
+int32_t CBC_DataMatrixBitMatrixParser::ReadCorner2(int32_t numRows, int32_t numColumns)
 {
-    FX_INT32 currentByte = 0;
+    int32_t currentByte = 0;
     if (ReadModule(numRows - 3, 0, numRows, numColumns)) {
         currentByte |= 1;
     }
@@ -253,9 +253,9 @@ FX_INT32 CBC_DataMatrixBitMatrixParser::ReadCorner2(FX_INT32 numRows, FX_INT32 n
     }
     return currentByte;
 }
-FX_INT32 CBC_DataMatrixBitMatrixParser::ReadCorner3(FX_INT32 numRows, FX_INT32 numColumns)
+int32_t CBC_DataMatrixBitMatrixParser::ReadCorner3(int32_t numRows, int32_t numColumns)
 {
-    FX_INT32 currentByte = 0;
+    int32_t currentByte = 0;
     if (ReadModule(numRows - 1, 0, numRows, numColumns)) {
         currentByte |= 1;
     }
@@ -289,9 +289,9 @@ FX_INT32 CBC_DataMatrixBitMatrixParser::ReadCorner3(FX_INT32 numRows, FX_INT32 n
     }
     return currentByte;
 }
-FX_INT32 CBC_DataMatrixBitMatrixParser::ReadCorner4(FX_INT32 numRows, FX_INT32 numColumns)
+int32_t CBC_DataMatrixBitMatrixParser::ReadCorner4(int32_t numRows, int32_t numColumns)
 {
-    FX_INT32 currentByte = 0;
+    int32_t currentByte = 0;
     if (ReadModule(numRows - 3, 0, numRows, numColumns)) {
         currentByte |= 1;
     }
@@ -325,37 +325,37 @@ FX_INT32 CBC_DataMatrixBitMatrixParser::ReadCorner4(FX_INT32 numRows, FX_INT32 n
     }
     return currentByte;
 }
-CBC_CommonBitMatrix *CBC_DataMatrixBitMatrixParser::ExtractDataRegion(CBC_CommonBitMatrix *bitMatrix , FX_INT32 &e)
+CBC_CommonBitMatrix *CBC_DataMatrixBitMatrixParser::ExtractDataRegion(CBC_CommonBitMatrix *bitMatrix , int32_t &e)
 {
-    FX_INT32 symbolSizeRows = m_version->GetSymbolSizeRows();
-    FX_INT32 symbolSizeColumns = m_version->GetSymbolSizeColumns();
+    int32_t symbolSizeRows = m_version->GetSymbolSizeRows();
+    int32_t symbolSizeColumns = m_version->GetSymbolSizeColumns();
     if (bitMatrix->GetHeight() != symbolSizeRows) {
         e = BCExceptionCanNotCallGetDimensionOnNonSquareMatrix;
         return NULL;
     }
-    FX_INT32 dataRegionSizeRows = m_version->GetDataRegionSizeRows();
-    FX_INT32 dataRegionSizeColumns = m_version->GetDataRegionSizeColumns();
-    FX_INT32 numDataRegionsRow = symbolSizeRows / dataRegionSizeRows;
-    FX_INT32 numDataRegionsColumn = symbolSizeColumns / dataRegionSizeColumns;
-    FX_INT32 sizeDataRegionRow = numDataRegionsRow * dataRegionSizeRows;
-    FX_INT32 sizeDataRegionColumn = numDataRegionsColumn * dataRegionSizeColumns;
+    int32_t dataRegionSizeRows = m_version->GetDataRegionSizeRows();
+    int32_t dataRegionSizeColumns = m_version->GetDataRegionSizeColumns();
+    int32_t numDataRegionsRow = symbolSizeRows / dataRegionSizeRows;
+    int32_t numDataRegionsColumn = symbolSizeColumns / dataRegionSizeColumns;
+    int32_t sizeDataRegionRow = numDataRegionsRow * dataRegionSizeRows;
+    int32_t sizeDataRegionColumn = numDataRegionsColumn * dataRegionSizeColumns;
     CBC_CommonBitMatrix *bitMatrixWithoutAlignment = FX_NEW CBC_CommonBitMatrix();
     bitMatrixWithoutAlignment->Init(sizeDataRegionColumn, sizeDataRegionRow);
-    FX_INT32 dataRegionRow;
+    int32_t dataRegionRow;
     for (dataRegionRow = 0; dataRegionRow < numDataRegionsRow; ++dataRegionRow) {
-        FX_INT32 dataRegionRowOffset = dataRegionRow * dataRegionSizeRows;
-        FX_INT32 dataRegionColumn;
+        int32_t dataRegionRowOffset = dataRegionRow * dataRegionSizeRows;
+        int32_t dataRegionColumn;
         for (dataRegionColumn = 0; dataRegionColumn < numDataRegionsColumn; ++dataRegionColumn) {
-            FX_INT32 dataRegionColumnOffset = dataRegionColumn * dataRegionSizeColumns;
-            FX_INT32 i;
+            int32_t dataRegionColumnOffset = dataRegionColumn * dataRegionSizeColumns;
+            int32_t i;
             for (i = 0; i < dataRegionSizeRows; ++i) {
-                FX_INT32 readRowOffset = dataRegionRow * (dataRegionSizeRows + 2) + 1 + i;
-                FX_INT32 writeRowOffset = dataRegionRowOffset + i;
-                FX_INT32 j;
+                int32_t readRowOffset = dataRegionRow * (dataRegionSizeRows + 2) + 1 + i;
+                int32_t writeRowOffset = dataRegionRowOffset + i;
+                int32_t j;
                 for (j = 0; j < dataRegionSizeColumns; ++j) {
-                    FX_INT32 readColumnOffset = dataRegionColumn * (dataRegionSizeColumns + 2) + 1 + j;
+                    int32_t readColumnOffset = dataRegionColumn * (dataRegionSizeColumns + 2) + 1 + j;
                     if (bitMatrix->Get(readColumnOffset, readRowOffset)) {
-                        FX_INT32 writeColumnOffset = dataRegionColumnOffset + j;
+                        int32_t writeColumnOffset = dataRegionColumnOffset + j;
                         bitMatrixWithoutAlignment->Set(writeColumnOffset, writeRowOffset);
                     }
                 }

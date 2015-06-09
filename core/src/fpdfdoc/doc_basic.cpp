@@ -103,7 +103,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode, const CFX_ByteString&
         FX_DWORD dwCount = pNames->GetCount() / 2;
         for (FX_DWORD i = 0; i < dwCount; i ++) {
             CFX_ByteString csValue = pNames->GetString(i * 2);
-            FX_INT32 iCompare = csValue.Compare(csName);
+            int32_t iCompare = csValue.Compare(csName);
             if (iCompare <= 0) {
                 if (ppFind != NULL) {
                     *ppFind = pNames;
@@ -405,7 +405,7 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() const
     if (m_pObj == NULL) {
         return NULL;
     }
-    FX_INT32 iType = m_pObj->GetType();
+    int32_t iType = m_pObj->GetType();
     if (iType == PDFOBJ_STREAM) {
         return (CPDF_Stream*)m_pObj;
     } else if (iType == PDFOBJ_DICTIONARY) {
@@ -426,7 +426,7 @@ static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object *pObj, FX_WSTR wsFileName, 
     } else {
         wsStr = FILESPEC_EncodeFileName(wsFileName);
     }
-    FX_INT32 iType = pObj->GetType();
+    int32_t iType = pObj->GetType();
     if (iType == PDFOBJ_STRING) {
         pObj->SetString(CFX_ByteString::FromUnicode(wsStr));
     } else if (iType == PDFOBJ_DICTIONARY) {
@@ -540,7 +540,7 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const
     wsLabel.Format(L"%d", nPage + 1);
     return wsLabel;
 }
-FX_INT32 CPDF_PageLabel::GetPageByLabel(FX_BSTR bsLabel) const
+int32_t CPDF_PageLabel::GetPageByLabel(FX_BSTR bsLabel) const
 {
     if (m_pDocument == NULL) {
         return -1;
@@ -565,7 +565,7 @@ FX_INT32 CPDF_PageLabel::GetPageByLabel(FX_BSTR bsLabel) const
     }
     return -1;
 }
-FX_INT32 CPDF_PageLabel::GetPageByLabel(FX_WSTR wsLabel) const
+int32_t CPDF_PageLabel::GetPageByLabel(FX_WSTR wsLabel) const
 {
     CFX_ByteString bsLabel = PDF_EncodeText(wsLabel.GetPtr());
     return GetPageByLabel(bsLabel);

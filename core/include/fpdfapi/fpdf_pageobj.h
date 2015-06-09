@@ -114,7 +114,7 @@ public:
 
     CPDF_Path*			m_pPathList;
 
-    FX_BYTE*			m_pTypeList;
+    uint8_t*			m_pTypeList;
 
     int					m_TextCount;
 

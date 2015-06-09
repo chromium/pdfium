@@ -35,14 +35,14 @@ FWL_ERR	CFWL_ComboBox::Initialize(const CFWL_WidgetProperties *pProperties )
     }
     return ret;
 }
-FX_INT32 CFWL_ComboBox::AddString(FX_WSTR wsText)
+int32_t CFWL_ComboBox::AddString(FX_WSTR wsText)
 {
     CFWL_ComboBoxItem *pItem = FX_NEW CFWL_ComboBoxItem;
     pItem->m_wsText = wsText;
     pItem->m_dwStyles = 0;
     return m_comboBoxData.m_arrItem.Add(pItem);
 }
-FX_INT32 CFWL_ComboBox::AddString(FX_WSTR wsText, CFX_DIBitmap *pIcon)
+int32_t CFWL_ComboBox::AddString(FX_WSTR wsText, CFX_DIBitmap *pIcon)
 {
     CFWL_ComboBoxItem *pItem = FX_NEW CFWL_ComboBoxItem;
     pItem->m_wsText = wsText;
@@ -50,32 +50,32 @@ FX_INT32 CFWL_ComboBox::AddString(FX_WSTR wsText, CFX_DIBitmap *pIcon)
     pItem->m_pDIB = pIcon;
     return m_comboBoxData.m_arrItem.Add(pItem);
 }
-FX_INT32 CFWL_ComboBox::RemoveAt(FX_INT32 iIndex)
+int32_t CFWL_ComboBox::RemoveAt(int32_t iIndex)
 {
     return m_comboBoxData.m_arrItem.RemoveAt(iIndex);
 }
-FX_INT32 CFWL_ComboBox::RemoveAll()
+int32_t CFWL_ComboBox::RemoveAll()
 {
     m_comboBoxData.m_arrItem.RemoveAll();
     return 0;
 }
-FX_INT32 CFWL_ComboBox::CountItems()
+int32_t CFWL_ComboBox::CountItems()
 {
     return m_comboBoxData.CountItems(GetWidget());
 }
-FWL_ERR CFWL_ComboBox::GetTextByIndex(FX_INT32 iIndex, CFX_WideString &wsText)
+FWL_ERR CFWL_ComboBox::GetTextByIndex(int32_t iIndex, CFX_WideString &wsText)
 {
     CFWL_ComboBoxItem *pItem = (CFWL_ComboBoxItem*)(m_comboBoxData.GetItem((IFWL_Widget *)this, iIndex));
     _FWL_RETURN_VALUE_IF_FAIL(pItem, FWL_ERR_Indefinite);
     wsText = pItem->m_wsText;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_ComboBox::GetCurSel()
+int32_t CFWL_ComboBox::GetCurSel()
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, -1);
     return ((IFWL_ComboBox*)m_pImp)->GetCurSel();
 }
-FWL_ERR CFWL_ComboBox::SetCurSel(FX_INT32 iSel)
+FWL_ERR CFWL_ComboBox::SetCurSel(int32_t iSel)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_ComboBox*)m_pImp)->SetCurSel(iSel);
@@ -85,37 +85,37 @@ FWL_ERR CFWL_ComboBox::SetEditText(FX_WSTR wsText)
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_ComboBox*)m_pImp)->SetEditText(wsText);
 }
-FX_INT32 CFWL_ComboBox::GetEditTextLength() const
+int32_t CFWL_ComboBox::GetEditTextLength() const
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
     return ((IFWL_ComboBox*)m_pImp)->GetEditTextLength();
 }
-FWL_ERR CFWL_ComboBox::GetEditText(CFX_WideString &wsText, FX_INT32 nStart, FX_INT32 nCount) const
+FWL_ERR CFWL_ComboBox::GetEditText(CFX_WideString &wsText, int32_t nStart, int32_t nCount) const
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_ComboBox*)m_pImp)->GetEditText(wsText, nStart, nCount);
 }
-FWL_ERR CFWL_ComboBox::SetEditSelRange(FX_INT32 nStart, FX_INT32 nCount)
+FWL_ERR CFWL_ComboBox::SetEditSelRange(int32_t nStart, int32_t nCount)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_ComboBox*)m_pImp)->SetEditSelRange(nStart, nCount);
 }
-FX_INT32 CFWL_ComboBox::GetEditSelRange(FX_INT32 nIndex, FX_INT32 &nStart)
+int32_t CFWL_ComboBox::GetEditSelRange(int32_t nIndex, int32_t &nStart)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
     return ((IFWL_ComboBox*)m_pImp)->GetEditSelRange(nIndex, nStart);
 }
-FX_INT32 CFWL_ComboBox::GetEditLimit()
+int32_t CFWL_ComboBox::GetEditLimit()
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
     return ((IFWL_ComboBox*)m_pImp)->GetEditLimit();
 }
-FWL_ERR CFWL_ComboBox::SetEditLimit(FX_INT32 nLimit)
+FWL_ERR CFWL_ComboBox::SetEditLimit(int32_t nLimit)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_ComboBox*)m_pImp)->SetEditLimit(nLimit);
 }
-FWL_ERR CFWL_ComboBox::EditDoClipboard(FX_INT32 iCmd)
+FWL_ERR CFWL_ComboBox::EditDoClipboard(int32_t iCmd)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_ComboBox*)m_pImp)->EditDoClipboard(iCmd);
@@ -135,14 +135,14 @@ FWL_ERR CFWL_ComboBox::SetMaxListHeight(FX_FLOAT fMaxHeight)
     m_comboBoxData.m_fMaxListHeight = fMaxHeight;
     return FWL_ERR_Succeeded;
 }
-FWL_ERR	CFWL_ComboBox::SetItemData(FX_INT32 iIndex, FX_LPVOID pData)
+FWL_ERR	CFWL_ComboBox::SetItemData(int32_t iIndex, FX_LPVOID pData)
 {
     CFWL_ComboBoxItem *pItem = (CFWL_ComboBoxItem*)(m_comboBoxData.GetItem((IFWL_Widget *)this, iIndex));
     _FWL_RETURN_VALUE_IF_FAIL(pItem, FWL_ERR_Indefinite);
     pItem->m_pData = pData;
     return FWL_ERR_Succeeded;
 }
-FX_LPVOID CFWL_ComboBox::GetItemData(FX_INT32 iIndex)
+FX_LPVOID CFWL_ComboBox::GetItemData(int32_t iIndex)
 {
     CFWL_ComboBoxItem *pItem = (CFWL_ComboBoxItem*)(m_comboBoxData.GetItem((IFWL_Widget *)this, iIndex));
     _FWL_RETURN_VALUE_IF_FAIL(pItem, NULL);
@@ -249,8 +249,8 @@ CFWL_ComboBox::CFWL_ComboBoxDP::CFWL_ComboBoxDP()
 }
 CFWL_ComboBox::CFWL_ComboBoxDP::~CFWL_ComboBoxDP()
 {
-    FX_INT32 nCount = m_arrItem.GetSize();
-    for (FX_INT32 i = 0; i < nCount; i ++) {
+    int32_t nCount = m_arrItem.GetSize();
+    for (int32_t i = 0; i < nCount; i ++) {
         CFWL_ComboBoxItem *pItem = (CFWL_ComboBoxItem*)m_arrItem[i];
         if (pItem) {
             delete pItem;
@@ -258,23 +258,23 @@ CFWL_ComboBox::CFWL_ComboBoxDP::~CFWL_ComboBoxDP()
     }
     m_arrItem.RemoveAll();
 }
-FX_INT32 CFWL_ComboBox::CFWL_ComboBoxDP::CountItems(IFWL_Widget *pWidget)
+int32_t CFWL_ComboBox::CFWL_ComboBoxDP::CountItems(IFWL_Widget *pWidget)
 {
     return m_arrItem.GetSize();
 }
-FWL_HLISTITEM CFWL_ComboBox::CFWL_ComboBoxDP::GetItem(IFWL_Widget *pWidget, FX_INT32 nIndex)
+FWL_HLISTITEM CFWL_ComboBox::CFWL_ComboBoxDP::GetItem(IFWL_Widget *pWidget, int32_t nIndex)
 {
-    FX_INT32 iCount = m_arrItem.GetSize();
+    int32_t iCount = m_arrItem.GetSize();
     if (nIndex >= iCount || nIndex < 0) {
         return NULL;
     }
     return (FWL_HLISTITEM)m_arrItem[nIndex];
 }
-FX_INT32 CFWL_ComboBox::CFWL_ComboBoxDP::GetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem)
+int32_t CFWL_ComboBox::CFWL_ComboBoxDP::GetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem)
 {
     return m_arrItem.Find(hItem);
 }
-FX_BOOL CFWL_ComboBox::CFWL_ComboBoxDP::SetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_INT32 nIndex)
+FX_BOOL CFWL_ComboBox::CFWL_ComboBoxDP::SetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, int32_t nIndex)
 {
     return m_arrItem.SetAt(nIndex, hItem);
 }

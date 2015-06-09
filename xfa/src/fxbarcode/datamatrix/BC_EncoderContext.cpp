@@ -28,13 +28,13 @@
 #include "BC_SymbolShapeHint.h"
 #include "BC_SymbolInfo.h"
 #include "BC_EncoderContext.h"
-CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString msg, CFX_WideString ecLevel, FX_INT32 &e)
+CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString msg, CFX_WideString ecLevel, int32_t &e)
 {
     CFX_ByteString dststr;
     CBC_UtilCodingConvert::UnicodeToUTF8(msg, dststr);
     CFX_WideString sb;
-    FX_INT32 c = dststr.GetLength();
-    for (FX_INT32 i = 0; i < c; i++) {
+    int32_t c = dststr.GetLength();
+    for (int32_t i = 0; i < c; i++) {
         FX_WCHAR ch =  (FX_WCHAR)(dststr.GetAt(i) & 0xff);
         if (ch == '?' && dststr.GetAt(i) != '?') {
             e = BCExceptionCharactersOutsideISO88591Encoding;
@@ -66,7 +66,7 @@ CFX_WideString CBC_EncoderContext::getMessage()
 {
     return m_msg;
 }
-void CBC_EncoderContext::setSkipAtEnd(FX_INT32 count)
+void CBC_EncoderContext::setSkipAtEnd(int32_t count)
 {
     m_skipAtEnd = count;
 }
@@ -86,11 +86,11 @@ void CBC_EncoderContext::writeCodeword(FX_WCHAR codeword)
 {
     m_codewords += codeword;
 }
-FX_INT32 CBC_EncoderContext::getCodewordCount()
+int32_t CBC_EncoderContext::getCodewordCount()
 {
     return m_codewords.GetLength();
 }
-void CBC_EncoderContext::signalEncoderChange(FX_INT32 encoding)
+void CBC_EncoderContext::signalEncoderChange(int32_t encoding)
 {
     m_newEncoding = encoding;
 }
@@ -102,15 +102,15 @@ FX_BOOL CBC_EncoderContext::hasMoreCharacters()
 {
     return m_pos < getTotalMessageCharCount();
 }
-FX_INT32 CBC_EncoderContext::getRemainingCharacters()
+int32_t CBC_EncoderContext::getRemainingCharacters()
 {
     return getTotalMessageCharCount() - m_pos;
 }
-void CBC_EncoderContext::updateSymbolInfo(FX_INT32 &e)
+void CBC_EncoderContext::updateSymbolInfo(int32_t &e)
 {
     updateSymbolInfo(getCodewordCount(), e);
 }
-void CBC_EncoderContext::updateSymbolInfo(FX_INT32 len, FX_INT32 &e)
+void CBC_EncoderContext::updateSymbolInfo(int32_t len, int32_t &e)
 {
     if (m_symbolInfo == NULL || len > m_symbolInfo->m_dataCapacity) {
         m_symbolInfo = CBC_SymbolInfo::lookup(len, m_shape, m_minSize, m_maxSize, true, e);
@@ -121,7 +121,7 @@ void CBC_EncoderContext::resetSymbolInfo()
 {
     m_shape = FORCE_NONE;
 }
-FX_INT32 CBC_EncoderContext::getTotalMessageCharCount()
+int32_t CBC_EncoderContext::getTotalMessageCharCount()
 {
     return m_msg.GetLength() - m_skipAtEnd;
 }

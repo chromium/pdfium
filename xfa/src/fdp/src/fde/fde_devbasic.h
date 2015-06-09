@@ -7,10 +7,10 @@
 #ifndef _FDE_DEVICE_BASIC_IMP
 #define _FDE_DEVICE_BASIC_IMP
 struct FDE_HATCHDATA {
-    FX_INT32	iWidth;
-    FX_INT32	iHeight;
-    FX_BYTE		MaskBits[64];
+    int32_t	iWidth;
+    int32_t	iHeight;
+    uint8_t		MaskBits[64];
 };
 typedef FDE_HATCHDATA const * FDE_LPCHATCHDATA;
-FDE_LPCHATCHDATA FDE_DEVGetHatchData(FX_INT32 iHatchStyle);
+FDE_LPCHATCHDATA FDE_DEVGetHatchData(int32_t iHatchStyle);
 #endif

@@ -18,9 +18,9 @@ FX_DWORD CFWL_Theme::GetThemeID(IFWL_Widget *pWidget)
 }
 FX_DWORD CFWL_Theme::SetThemeID(IFWL_Widget *pWidget, FX_DWORD dwThemeID, FX_BOOL bChildren )
 {
-    FX_INT32 iCount = m_arrThemes.GetSize();
+    int32_t iCount = m_arrThemes.GetSize();
     FX_DWORD dwID;
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    for (int32_t i = 0; i < iCount; i ++) {
         CFWL_WidgetTP *pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
         dwID = pTheme->GetThemeID(pWidget);
         pTheme->SetThemeID(pWidget, dwThemeID, FALSE);
@@ -79,8 +79,8 @@ FX_BOOL	CFWL_Theme::CalcTextRect(CFWL_ThemeText *pParams, CFX_RectF &rect)
 }
 FWL_ERR	CFWL_Theme::Initialize()
 {
-    FX_INT32 iCount = m_arrThemes.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = m_arrThemes.GetSize();
+    for (int32_t i = 0; i < iCount; i ++) {
         CFWL_WidgetTP *pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
         pTheme->Initialize();
     }
@@ -89,8 +89,8 @@ FWL_ERR	CFWL_Theme::Initialize()
 }
 FWL_ERR	CFWL_Theme::Finalize()
 {
-    FX_INT32 iCount = m_arrThemes.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = m_arrThemes.GetSize();
+    for (int32_t i = 0; i < iCount; i ++) {
         CFWL_WidgetTP *pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
         pTheme->Finalize();
     }
@@ -126,8 +126,8 @@ CFWL_Theme::CFWL_Theme()
 }
 CFWL_Theme::~CFWL_Theme()
 {
-    FX_INT32 iCount = m_arrThemes.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = m_arrThemes.GetSize();
+    for (int32_t i = 0; i < iCount; i ++) {
         CFWL_WidgetTP *pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
         delete pTheme;
     }
@@ -135,8 +135,8 @@ CFWL_Theme::~CFWL_Theme()
 }
 FWL_ERR	CFWL_Theme::SetFont(IFWL_Widget *pWidget, FX_LPCWSTR strFont, FX_FLOAT fFontSize, FX_ARGB rgbFont)
 {
-    FX_INT32 iCount = m_arrThemes.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = m_arrThemes.GetSize();
+    for (int32_t i = 0; i < iCount; i ++) {
         CFWL_WidgetTP *pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
         pTheme->SetFont(pWidget, strFont, fFontSize, rgbFont);
     }
@@ -144,8 +144,8 @@ FWL_ERR	CFWL_Theme::SetFont(IFWL_Widget *pWidget, FX_LPCWSTR strFont, FX_FLOAT f
 }
 CFWL_WidgetTP* CFWL_Theme::GetTheme(IFWL_Widget* pWidget)
 {
-    FX_INT32 iCount = m_arrThemes.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = m_arrThemes.GetSize();
+    for (int32_t i = 0; i < iCount; i ++) {
         CFWL_WidgetTP *pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
         if (pTheme->IsValidWidget(pWidget)) {
             return pTheme;

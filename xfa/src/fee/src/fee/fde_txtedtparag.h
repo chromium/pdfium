@@ -13,25 +13,25 @@ class CFDE_TxtEdtParag : public IFDE_TxtEdtParag
 public:
     CFDE_TxtEdtParag(CFDE_TxtEdtEngine * pEngine);
     ~CFDE_TxtEdtParag();
-    virtual FX_INT32			GetTextLength() const
+    virtual int32_t			GetTextLength() const
     {
         return m_nCharCount;
     }
-    virtual	FX_INT32			GetStartIndex() const
+    virtual	int32_t			GetStartIndex() const
     {
         return m_nCharStart;
     }
-    virtual FX_INT32			CountLines() const
+    virtual int32_t			CountLines() const
     {
         return m_nLineCount;
     }
-    virtual void				GetLineRange(FX_INT32 nLineIndex, FX_INT32& nStart, FX_INT32& nCount) const;
+    virtual void				GetLineRange(int32_t nLineIndex, int32_t& nStart, int32_t& nCount) const;
     void	LoadParag();
     void	UnloadParag();
     void	CalcLines();
-    FX_INT32	m_nCharStart;
-    FX_INT32	m_nCharCount;
-    FX_INT32	m_nLineCount;
+    int32_t	m_nCharStart;
+    int32_t	m_nCharCount;
+    int32_t	m_nLineCount;
 private:
     FX_LPVOID			m_lpData;
     CFDE_TxtEdtEngine*	m_pEngine;

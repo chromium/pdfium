@@ -45,7 +45,7 @@ FX_FLOAT CBC_QRFinderPattern::GetEstimatedModuleSize()
 {
     return m_estimatedModuleSize;
 }
-FX_INT32 CBC_QRFinderPattern::GetCount()
+int32_t CBC_QRFinderPattern::GetCount()
 {
     return m_count;
 }

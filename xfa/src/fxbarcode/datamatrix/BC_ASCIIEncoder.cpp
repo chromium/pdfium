@@ -34,13 +34,13 @@ CBC_ASCIIEncoder::CBC_ASCIIEncoder()
 CBC_ASCIIEncoder::~CBC_ASCIIEncoder()
 {
 }
-FX_INT32 CBC_ASCIIEncoder::getEncodingMode()
+int32_t CBC_ASCIIEncoder::getEncodingMode()
 {
     return ASCII_ENCODATION;
 }
-void CBC_ASCIIEncoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
+void CBC_ASCIIEncoder::Encode(CBC_EncoderContext &context, int32_t &e)
 {
-    FX_INT32 n = CBC_HighLevelEncoder::determineConsecutiveDigitCount(context.m_msg, context.m_pos);
+    int32_t n = CBC_HighLevelEncoder::determineConsecutiveDigitCount(context.m_msg, context.m_pos);
     if (n >= 2) {
         FX_WCHAR code = encodeASCIIDigits(context.m_msg.GetAt(context.m_pos), context.m_msg.GetAt(context.m_pos + 1), e);
         if (e != BCExceptionNO) {
@@ -50,7 +50,7 @@ void CBC_ASCIIEncoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
         context.m_pos += 2;
     } else {
         FX_WCHAR c = context.getCurrentChar();
-        FX_INT32 newMode = CBC_HighLevelEncoder::lookAheadTest(context.m_msg, context.m_pos, getEncodingMode());
+        int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(context.m_msg, context.m_pos, getEncodingMode());
         if (newMode != getEncodingMode()) {
             switch (newMode) {
                 case BASE256_ENCODATION:
@@ -87,10 +87,10 @@ void CBC_ASCIIEncoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
         }
     }
 }
-FX_WCHAR CBC_ASCIIEncoder::encodeASCIIDigits(FX_WCHAR digit1, FX_WCHAR digit2, FX_INT32 &e)
+FX_WCHAR CBC_ASCIIEncoder::encodeASCIIDigits(FX_WCHAR digit1, FX_WCHAR digit2, int32_t &e)
 {
     if (CBC_HighLevelEncoder::isDigit(digit1) && CBC_HighLevelEncoder::isDigit(digit2)) {
-        FX_INT32 num = (digit1 - 48) * 10 + (digit2 - 48);
+        int32_t num = (digit1 - 48) * 10 + (digit2 - 48);
         FX_WCHAR a = (FX_WCHAR) (num + 130);
         return (FX_WCHAR) (num + 130);
     }

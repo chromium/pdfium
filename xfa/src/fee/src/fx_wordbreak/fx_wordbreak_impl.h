@@ -7,7 +7,7 @@
 #ifndef _FX_WORDBREAK_IMPL_H
 #define _FX_WORDBREAK_IMPL_H
 extern const FX_WORD gs_FX_WordBreak_Table[16];
-extern const FX_BYTE gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1];
+extern const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1];
 enum FX_WordBreakProp {
     FX_WordBreakProp_None		= 0	,
     FX_WordBreakProp_CR				,
@@ -31,15 +31,15 @@ public:
     virtual void		Release();
     virtual FX_BOOL		Next(FX_BOOL bPrev = FALSE);
     virtual FX_WCHAR	GetChar();
-    virtual void		SetAt(FX_INT32 nIndex);
-    virtual FX_INT32	GetAt() const;
+    virtual void		SetAt(int32_t nIndex);
+    virtual int32_t	GetAt() const;
     virtual FX_BOOL		IsEOF(FX_BOOL bTail = TRUE) const;
     virtual IFX_CharIter * Clone();
 protected:
     ~CFX_CharIter();
 private:
     const CFX_WideString &m_wsText;
-    FX_INT32	m_nIndex;
+    int32_t	m_nIndex;
 };
 class CFX_WordBreak : public IFX_WordBreak
 {
@@ -49,9 +49,9 @@ public:
     virtual void		Attach(IFX_CharIter * pIter);
     virtual void		Attach(const CFX_WideString &wsText);
     virtual FX_BOOL		Next(FX_BOOL bPrev);
-    virtual void		SetAt(FX_INT32 nIndex);
-    virtual FX_INT32	GetWordPos() const;
-    virtual FX_INT32	GetWordLength() const;
+    virtual void		SetAt(int32_t nIndex);
+    virtual int32_t	GetWordPos() const;
+    virtual int32_t	GetWordLength() const;
     virtual void		GetWord(CFX_WideString &wsWord) const;
     virtual FX_BOOL		IsEOF(FX_BOOL bTail ) const;
 protected:

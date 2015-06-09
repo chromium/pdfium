@@ -42,7 +42,7 @@ void CBC_QRCodeWriter::ReleaseAll()
 {
     CBC_QRCodeReader::ReleaseAll();
 }
-FX_BOOL CBC_QRCodeWriter::SetVersion(FX_INT32 version)
+FX_BOOL CBC_QRCodeWriter::SetVersion(int32_t version)
 {
     if (version < 0 || version > 40) {
         return FALSE;
@@ -50,7 +50,7 @@ FX_BOOL CBC_QRCodeWriter::SetVersion(FX_INT32 version)
     m_iVersion = version;
     return TRUE;
 }
-FX_BOOL CBC_QRCodeWriter::SetErrorCorrectionLevel(FX_INT32 level)
+FX_BOOL CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level)
 {
     if (level < 0 || level > 3) {
         return FALSE;
@@ -58,7 +58,7 @@ FX_BOOL CBC_QRCodeWriter::SetErrorCorrectionLevel(FX_INT32 level)
     m_iCorrectLevel = level;
     return TRUE;
 }
-FX_BYTE* CBC_QRCodeWriter::Encode(const CFX_WideString& contents, FX_INT32 ecLevel, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e)
+uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents, int32_t ecLevel, int32_t &outWidth, int32_t &outHeight, int32_t &e)
 {
     CBC_QRCoderErrorCorrectionLevel *ec = NULL;
     switch(ecLevel) {
@@ -89,15 +89,15 @@ FX_BYTE* CBC_QRCodeWriter::Encode(const CFX_WideString& contents, FX_INT32 ecLev
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     outWidth = qr.GetMatrixWidth();
     outHeight = qr.GetMatrixWidth();
-    FX_BYTE* result = FX_Alloc(FX_BYTE, outWidth * outWidth);
+    uint8_t* result = FX_Alloc(uint8_t, outWidth * outWidth);
     FXSYS_memcpy32(result, qr.GetMatrix()->GetArray(), outWidth * outHeight);
     return result;
 }
-FX_BYTE *CBC_QRCodeWriter::Encode(const CFX_ByteString& contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e)
+uint8_t *CBC_QRCodeWriter::Encode(const CFX_ByteString& contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e)
 {
     return NULL;
 }
-FX_BYTE* CBC_QRCodeWriter::Encode(const CFX_ByteString& contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e)
+uint8_t* CBC_QRCodeWriter::Encode(const CFX_ByteString& contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e)
 {
     return NULL;
 }

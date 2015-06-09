@@ -23,12 +23,12 @@
 #include "../barcode.h"
 #include "BC_QRCoderECB.h"
 #include "BC_QRCoderECBlocks.h"
-CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(FX_INT32 ecCodeWordsPerBlock, CBC_QRCoderECB* ecBlocks)
+CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock, CBC_QRCoderECB* ecBlocks)
 {
     m_ecCodeWordsPerBlock = ecCodeWordsPerBlock;
     m_ecBlocks.Add(ecBlocks);
 }
-CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(FX_INT32 ecCodeWordsPerBlock,
+CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock,
         CBC_QRCoderECB* ecBlocks1,
         CBC_QRCoderECB* ecBlocks2)
 {
@@ -38,24 +38,24 @@ CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(FX_INT32 ecCodeWordsPerBlock,
 }
 CBC_QRCoderECBlocks::~CBC_QRCoderECBlocks()
 {
-    for (FX_INT32 i = 0 ; i < m_ecBlocks.GetSize(); i++) {
+    for (int32_t i = 0 ; i < m_ecBlocks.GetSize(); i++) {
         delete ( (CBC_QRCoderECB*)(m_ecBlocks[i]) ) ;
     }
     m_ecBlocks.RemoveAll();
 }
-FX_INT32 CBC_QRCoderECBlocks::GetECCodeWordsPerBlock()
+int32_t CBC_QRCoderECBlocks::GetECCodeWordsPerBlock()
 {
     return m_ecCodeWordsPerBlock;
 }
-FX_INT32 CBC_QRCoderECBlocks::GetNumBlocks()
+int32_t CBC_QRCoderECBlocks::GetNumBlocks()
 {
-    FX_INT32 total = 0;
-    for(FX_INT32 i = 0; i < m_ecBlocks.GetSize(); i++) {
+    int32_t total = 0;
+    for(int32_t i = 0; i < m_ecBlocks.GetSize(); i++) {
         total += ( (CBC_QRCoderECB*)(m_ecBlocks[i]) )->GetCount();
     }
     return total;
 }
-FX_INT32 CBC_QRCoderECBlocks::GetTotalECCodeWords()
+int32_t CBC_QRCoderECBlocks::GetTotalECCodeWords()
 {
     return m_ecCodeWordsPerBlock * GetNumBlocks();
 }

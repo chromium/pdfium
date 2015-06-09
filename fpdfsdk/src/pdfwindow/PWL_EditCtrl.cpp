@@ -81,7 +81,7 @@ void CPWL_EditCtrl::RePosChildWnd()
 	m_pEdit->SetPlateRect(GetClientRect());
 }
 
-void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTPTR lParam)
+void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t lParam)
 {
 	CPWL_Wnd::OnNotify(pWnd,msg,wParam,lParam);
 
@@ -409,7 +409,7 @@ void CPWL_EditCtrl::GetCaretInfo(CPDF_Point & ptHead, CPDF_Point & ptFoot) const
 	}
 }
 
-void CPWL_EditCtrl::GetCaretPos(FX_INT32& x, FX_INT32& y) const
+void CPWL_EditCtrl::GetCaretPos(int32_t& x, int32_t& y) const
 {
 	CPDF_Point ptHead(0,0), ptFoot(0,0);
 
@@ -439,12 +439,12 @@ CFX_WideString CPWL_EditCtrl::GetText() const
 	return m_pEdit->GetText();
 }
 
-void CPWL_EditCtrl::SetSel(FX_INT32 nStartChar,FX_INT32 nEndChar)
+void CPWL_EditCtrl::SetSel(int32_t nStartChar,int32_t nEndChar)
 {
 	m_pEdit->SetSel(nStartChar, nEndChar);
 }
 
-void CPWL_EditCtrl::GetSel(FX_INT32 & nStartChar, FX_INT32 & nEndChar ) const
+void CPWL_EditCtrl::GetSel(int32_t & nStartChar, int32_t & nEndChar ) const
 {
 	m_pEdit->GetSel(nStartChar, nEndChar);
 }
@@ -472,7 +472,7 @@ void CPWL_EditCtrl::EnableRefresh(FX_BOOL bRefresh)
 		m_pEdit->EnableRefresh(bRefresh);
 }
 
-FX_INT32 CPWL_EditCtrl::GetCaret() const
+int32_t CPWL_EditCtrl::GetCaret() const
 {
 	if (m_pEdit)
 		return m_pEdit->GetCaret();
@@ -480,13 +480,13 @@ FX_INT32 CPWL_EditCtrl::GetCaret() const
 	return -1;
 }
 
-void CPWL_EditCtrl::SetCaret(FX_INT32 nPos)
+void CPWL_EditCtrl::SetCaret(int32_t nPos)
 {
 	if (m_pEdit)
 		m_pEdit->SetCaret(nPos);
 }
 
-FX_INT32 CPWL_EditCtrl::GetTotalWords() const
+int32_t CPWL_EditCtrl::GetTotalWords() const
 {
 	if (m_pEdit)
 		return m_pEdit->GetTotalWords();
@@ -510,7 +510,7 @@ CPDF_Point CPWL_EditCtrl::GetScrollPos() const
 
 CPDF_Font * CPWL_EditCtrl::GetCaretFont() const
 {
-	FX_INT32 nFontIndex = 0;
+	int32_t nFontIndex = 0;
 
 	if (IFX_Edit_Iterator * pIterator = m_pEdit->GetIterator())
 	{
@@ -588,7 +588,7 @@ void CPWL_EditCtrl::InsertText(FX_LPCWSTR csText)
 		m_pEdit->InsertText(csText);
 }
 
-void CPWL_EditCtrl::InsertWord(FX_WORD word, FX_INT32 nCharset)
+void CPWL_EditCtrl::InsertWord(FX_WORD word, int32_t nCharset)
 {
 	if (!IsReadOnly())
 		m_pEdit->InsertWord(word, nCharset);
@@ -646,7 +646,7 @@ void CPWL_EditCtrl::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
 	Info.fSmallStep = fSmallStep;
 	Info.fBigStep = fBigStep;
 
-	this->OnNotify(this,PNM_SETSCROLLINFO,SBT_VSCROLL,(FX_INTPTR)&Info);
+	this->OnNotify(this,PNM_SETSCROLLINFO,SBT_VSCROLL,(intptr_t)&Info);
 
 //	PWL_TRACE("set scroll info:%f\n",fContentMax - fContentMin);
 
@@ -664,7 +664,7 @@ void CPWL_EditCtrl::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
 void CPWL_EditCtrl::IOnSetScrollPosY(FX_FLOAT fy)
 {
 //	PWL_TRACE("set scroll position:%f\n",fy);
-	this->OnNotify(this,PNM_SETSCROLLPOS,SBT_VSCROLL,(FX_INTPTR)&fy);
+	this->OnNotify(this,PNM_SETSCROLLPOS,SBT_VSCROLL,(intptr_t)&fy);
 }
 
 void CPWL_EditCtrl::IOnSetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot, const CPVT_WordPlace& place)
@@ -674,7 +674,7 @@ void CPWL_EditCtrl::IOnSetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, con
 	cInfo.ptHead = ptHead;
 	cInfo.ptFoot = ptFoot;
 
-	this->OnNotify(this,PNM_SETCARETINFO,(FX_INTPTR)&cInfo,(FX_INTPTR)NULL);
+	this->OnNotify(this,PNM_SETCARETINFO,(intptr_t)&cInfo,(intptr_t)NULL);
 }
 
 void CPWL_EditCtrl::IOnCaretChange(const CPVT_SecProps & secProps, const CPVT_WordProps & wordProps)
@@ -697,7 +697,7 @@ void CPWL_EditCtrl::IOnInvalidateRect(CPDF_Rect * pRect)
 	this->InvalidateRect(pRect);
 }
 
-FX_INT32 CPWL_EditCtrl::GetCharSet() const
+int32_t CPWL_EditCtrl::GetCharSet() const
 {
 	if (m_nCharSet < 0)
 		return DEFAULT_CHARSET; 
@@ -705,13 +705,13 @@ FX_INT32 CPWL_EditCtrl::GetCharSet() const
 		return m_nCharSet;
 }
 
-void CPWL_EditCtrl::GetTextRange(const CPDF_Rect& rect, FX_INT32 & nStartChar, FX_INT32 & nEndChar) const
+void CPWL_EditCtrl::GetTextRange(const CPDF_Rect& rect, int32_t & nStartChar, int32_t & nEndChar) const
 {
 	nStartChar = m_pEdit->WordPlaceToWordIndex(m_pEdit->SearchWordPlace(CPDF_Point(rect.left, rect.top)));
 	nEndChar = m_pEdit->WordPlaceToWordIndex(m_pEdit->SearchWordPlace(CPDF_Point(rect.right, rect.bottom)));
 }
 
-CFX_WideString CPWL_EditCtrl::GetText(FX_INT32 & nStartChar, FX_INT32 & nEndChar) const
+CFX_WideString CPWL_EditCtrl::GetText(int32_t & nStartChar, int32_t & nEndChar) const
 {
 	CPVT_WordPlace wpStart = m_pEdit->WordIndexToWordPlace(nStartChar);
 	CPVT_WordPlace wpEnd = m_pEdit->WordIndexToWordPlace(nEndChar);

@@ -22,8 +22,8 @@ public:
     static IFDE_RenderDevice*	Create(CFX_RenderDevice *pDevice);
     virtual void				Release() = 0;
 
-    virtual FX_INT32			GetWidth() const = 0;
-    virtual FX_INT32			GetHeight() const = 0;
+    virtual int32_t			GetWidth() const = 0;
+    virtual int32_t			GetHeight() const = 0;
     virtual FDE_HDEVICESTATE	SaveState() = 0;
     virtual void				RestoreState(FDE_HDEVICESTATE hState) = 0;
     virtual FX_BOOL				SetClipPath(const IFDE_Path *pClip) = 0;
@@ -35,7 +35,7 @@ public:
     virtual FX_FLOAT			GetDpiY() const = 0;
 
     virtual FX_BOOL				DrawImage(CFX_DIBSource *pDib, const CFX_RectF *pSrcRect, const CFX_RectF &dstRect, const CFX_Matrix *pImgMatrix = NULL, const CFX_Matrix *pDevMatrix = NULL) = 0;
-    virtual FX_BOOL				DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, FX_INT32 iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix = NULL) = 0;
+    virtual FX_BOOL				DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, int32_t iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix = NULL) = 0;
     virtual FX_BOOL				DrawBezier(IFDE_Pen *pPen, FX_FLOAT fPenWidth, const CFX_PointF &pt1, const CFX_PointF &pt2, const CFX_PointF &pt3, const CFX_PointF &pt4, const CFX_Matrix *pMatrix = NULL) = 0;
     virtual FX_BOOL				DrawCurve(IFDE_Pen *pPen, FX_FLOAT fPenWidth, const CFX_PointsF &points, FX_BOOL bClosed, FX_FLOAT fTension = 0.5f, const CFX_Matrix *pMatrix = NULL) = 0;
     virtual FX_BOOL				DrawEllipse(IFDE_Pen *pPen, FX_FLOAT fPenWidth, const CFX_RectF &rect, const CFX_Matrix *pMatrix = NULL) = 0;

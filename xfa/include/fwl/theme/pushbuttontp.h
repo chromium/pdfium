@@ -28,7 +28,7 @@ protected:
     void	SetBackgroudColor(FX_DWORD *pData);
     void	SetCaptionColor(FX_DWORD *pData);
     void	SetCornerColor(FX_DWORD *pData);
-    FX_INT32	GetColorID(FX_DWORD dwStates);
+    int32_t	GetColorID(FX_DWORD dwStates);
 
     struct PBThemeData {
         FX_ARGB clrBorder[5];

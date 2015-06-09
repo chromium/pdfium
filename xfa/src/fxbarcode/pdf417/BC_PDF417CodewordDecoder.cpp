@@ -34,10 +34,10 @@ CBC_PDF417CodewordDecoder::~CBC_PDF417CodewordDecoder()
 }
 void CBC_PDF417CodewordDecoder::Initialize()
 {
-    for (FX_INT32 i = 0; i < SYMBOL_TABLE_Length; i++) {
-        FX_INT32 currentSymbol = CBC_PDF417Common::SYMBOL_TABLE[i];
-        FX_INT32 currentBit = currentSymbol & 0x1;
-        for (FX_INT32 j = 0; j < CBC_PDF417Common::BARS_IN_MODULE; j++) {
+    for (int32_t i = 0; i < SYMBOL_TABLE_Length; i++) {
+        int32_t currentSymbol = CBC_PDF417Common::SYMBOL_TABLE[i];
+        int32_t currentBit = currentSymbol & 0x1;
+        for (int32_t j = 0; j < CBC_PDF417Common::BARS_IN_MODULE; j++) {
             FX_FLOAT size = 0.0f;
             while ((currentSymbol & 0x1) == currentBit) {
                 size += 1.0f;
@@ -51,10 +51,10 @@ void CBC_PDF417CodewordDecoder::Initialize()
 void CBC_PDF417CodewordDecoder::Finalize()
 {
 }
-FX_INT32 CBC_PDF417CodewordDecoder::getDecodedValue(CFX_Int32Array& moduleBitCount)
+int32_t CBC_PDF417CodewordDecoder::getDecodedValue(CFX_Int32Array& moduleBitCount)
 {
     CFX_Int32Array* array = sampleBitCounts(moduleBitCount);
-    FX_INT32 decodedValue = getDecodedCodewordValue(*array);
+    int32_t decodedValue = getDecodedCodewordValue(*array);
     delete array;
     if (decodedValue != -1) {
         return decodedValue;
@@ -66,9 +66,9 @@ CFX_Int32Array* CBC_PDF417CodewordDecoder::sampleBitCounts(CFX_Int32Array& modul
     FX_FLOAT bitCountSum = (FX_FLOAT)CBC_PDF417Common::getBitCountSum(moduleBitCount);
     CFX_Int32Array* bitCount = FX_NEW CFX_Int32Array();
     bitCount->SetSize(CBC_PDF417Common::BARS_IN_MODULE);
-    FX_INT32 bitCountIndex = 0;
-    FX_INT32 sumPreviousBits = 0;
-    for (FX_INT32 i = 0; i < CBC_PDF417Common::MODULES_IN_CODEWORD; i++) {
+    int32_t bitCountIndex = 0;
+    int32_t sumPreviousBits = 0;
+    for (int32_t i = 0; i < CBC_PDF417Common::MODULES_IN_CODEWORD; i++) {
         FX_FLOAT sampleIndex = bitCountSum / (2 * CBC_PDF417Common::MODULES_IN_CODEWORD) + (i * bitCountSum) / CBC_PDF417Common::MODULES_IN_CODEWORD;
         if (sumPreviousBits + moduleBitCount.GetAt(bitCountIndex) <= sampleIndex) {
             sumPreviousBits += moduleBitCount.GetAt(bitCountIndex);
@@ -78,34 +78,34 @@ CFX_Int32Array* CBC_PDF417CodewordDecoder::sampleBitCounts(CFX_Int32Array& modul
     }
     return bitCount;
 }
-FX_INT32 CBC_PDF417CodewordDecoder::getDecodedCodewordValue(CFX_Int32Array& moduleBitCount)
+int32_t CBC_PDF417CodewordDecoder::getDecodedCodewordValue(CFX_Int32Array& moduleBitCount)
 {
-    FX_INT32 decodedValue = getBitValue(moduleBitCount);
+    int32_t decodedValue = getBitValue(moduleBitCount);
     return CBC_PDF417Common::getCodeword(decodedValue) == -1 ? -1 : decodedValue;
 }
-FX_INT32 CBC_PDF417CodewordDecoder::getBitValue(CFX_Int32Array& moduleBitCount)
+int32_t CBC_PDF417CodewordDecoder::getBitValue(CFX_Int32Array& moduleBitCount)
 {
-    FX_INT64 result = 0;
-    for (FX_INT32 i = 0; i < moduleBitCount.GetSize(); i++) {
-        for (FX_INT32 bit = 0; bit < moduleBitCount.GetAt(i); bit++) {
+    int64_t result = 0;
+    for (int32_t i = 0; i < moduleBitCount.GetSize(); i++) {
+        for (int32_t bit = 0; bit < moduleBitCount.GetAt(i); bit++) {
             result = (result << 1) | (i % 2 == 0 ? 1 : 0);
         }
     }
-    return (FX_INT32) result;
+    return (int32_t) result;
 }
-FX_INT32 CBC_PDF417CodewordDecoder::getClosestDecodedValue(CFX_Int32Array& moduleBitCount)
+int32_t CBC_PDF417CodewordDecoder::getClosestDecodedValue(CFX_Int32Array& moduleBitCount)
 {
-    FX_INT32 bitCountSum = CBC_PDF417Common::getBitCountSum(moduleBitCount);
+    int32_t bitCountSum = CBC_PDF417Common::getBitCountSum(moduleBitCount);
     CFX_FloatArray bitCountRatios;
     bitCountRatios.SetSize(CBC_PDF417Common::BARS_IN_MODULE);
-    for (FX_INT32 i = 0; i < bitCountRatios.GetSize(); i++) {
+    for (int32_t i = 0; i < bitCountRatios.GetSize(); i++) {
         bitCountRatios[i] = moduleBitCount.GetAt(i) / (FX_FLOAT) bitCountSum;
     }
     FX_FLOAT bestMatchError = (FX_FLOAT)Float_MAX_VALUE;
-    FX_INT32 bestMatch = -1;
-    for (FX_INT32 j = 0; j < SYMBOL_TABLE_Length; j++) {
+    int32_t bestMatch = -1;
+    for (int32_t j = 0; j < SYMBOL_TABLE_Length; j++) {
         FX_FLOAT error = 0.0f;
-        for (FX_INT32 k = 0; k < CBC_PDF417Common::BARS_IN_MODULE; k++) {
+        for (int32_t k = 0; k < CBC_PDF417Common::BARS_IN_MODULE; k++) {
             FX_FLOAT diff = RATIOS_TABLE[j][k] - bitCountRatios[k];
             error += diff * diff;
         }

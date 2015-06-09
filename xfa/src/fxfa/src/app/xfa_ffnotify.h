@@ -20,9 +20,9 @@ public:
     virtual void				OnLayoutEvent(IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, XFA_LAYOUTEVENT eEvent, FX_LPVOID pParam = NULL, FX_LPVOID pParam2 = NULL);
 
     virtual void				StartFieldDrawLayout(CXFA_Node *pItem, FX_FLOAT &fCalcWidth, FX_FLOAT &fCalcHeight);
-    virtual FX_BOOL				FindSplitPos(CXFA_Node *pItem, FX_INT32 iBlockIndex, FX_FLOAT &fCalcHeightPos);
+    virtual FX_BOOL				FindSplitPos(CXFA_Node *pItem, int32_t iBlockIndex, FX_FLOAT &fCalcHeightPos);
     virtual FX_BOOL				RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem);
-    virtual	FX_INT32			ExecEventByDeepFirst(CXFA_Node* pFormNode, XFA_EVENTTYPE eEventType, FX_BOOL bIsFormReady = FALSE, FX_BOOL bRecursive = TRUE, CXFA_WidgetAcc	* pExclude = NULL);
+    virtual	int32_t			ExecEventByDeepFirst(CXFA_Node* pFormNode, XFA_EVENTTYPE eEventType, FX_BOOL bIsFormReady = FALSE, FX_BOOL bRecursive = TRUE, CXFA_WidgetAcc	* pExclude = NULL);
     virtual void				AddCalcValidate(CXFA_Node* pNode);
     virtual IXFA_Doc*			GetHDOC();
     virtual IXFA_DocProvider*	GetDocProvider();
@@ -32,7 +32,7 @@ public:
     virtual void				OpenDropDownList(IXFA_Widget* hWidget);
     virtual CFX_WideString		GetCurrentDateTime();
     virtual void				ResetData(CXFA_WidgetData* pWidgetData = NULL);
-    virtual FX_INT32			GetLayoutStatus();
+    virtual int32_t			GetLayoutStatus();
     virtual void				RunNodeInitialize(CXFA_Node* pNode);
     virtual void				RunSubformIndexChange(CXFA_Node* pSubformNode);
     virtual CXFA_Node*			GetFocusWidgetNode();

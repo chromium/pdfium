@@ -40,7 +40,7 @@ public:
     virtual FWL_ERR		SetTrackPos(FX_FLOAT fTrackPos);
     virtual FX_BOOL		DoScroll(FX_DWORD dwCode, FX_FLOAT fPos = 0.0f);
     virtual	FWL_ERR		SetOuter(IFWL_Widget *pOuter);
-    virtual	FX_INT32	Run(FWL_HTIMER hTimer);
+    virtual	int32_t	Run(FWL_HTIMER hTimer);
 protected:
     void		DrawTrack(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, FX_BOOL bLower = TRUE, const CFX_Matrix *pMatrix = NULL);
     void		DrawArrowBtn(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, FX_BOOL bMinBtn = TRUE, const CFX_Matrix *pMatrix = NULL);
@@ -64,15 +64,15 @@ protected:
     FX_FLOAT				m_fStepSize;
     FX_FLOAT				m_fPos;
     FX_FLOAT				m_fTrackPos;
-    FX_INT32				m_iMinButtonState;
-    FX_INT32				m_iMaxButtonState;
-    FX_INT32				m_iThumbButtonState;
-    FX_INT32				m_iMinTrackState;
-    FX_INT32				m_iMaxTrackState;
+    int32_t				m_iMinButtonState;
+    int32_t				m_iMaxButtonState;
+    int32_t				m_iThumbButtonState;
+    int32_t				m_iMinTrackState;
+    int32_t				m_iMaxTrackState;
     FX_FLOAT				m_fLastTrackPos;
     FX_FLOAT				m_cpTrackPointX;
     FX_FLOAT				m_cpTrackPointY;
-    FX_INT32				m_iMouseWheel;
+    int32_t				m_iMouseWheel;
     FX_BOOL					m_bTrackMouseLeave;
     FX_BOOL					m_bMouseHover;
     FX_BOOL					m_bMouseDown;
@@ -94,7 +94,7 @@ class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_ScrollBarImpDelegate(CFWL_ScrollBarImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:
     void		OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
@@ -102,11 +102,11 @@ protected:
     void		OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     void		OnMouseLeave();
     void		OnMouseWheel(FX_FLOAT fx, FX_FLOAT fy, FX_DWORD	dwFlags, FX_FLOAT fDeltaX, FX_FLOAT	fDeltaY);
-    void		DoMouseDown(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState, FX_FLOAT fx, FX_FLOAT fy);
-    void		DoMouseUp(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState, FX_FLOAT fx, FX_FLOAT fy);
-    void		DoMouseMove(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState, FX_FLOAT fx, FX_FLOAT fy);
-    void		DoMouseLeave(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState);
-    void		DoMouseHover(FX_INT32 iItem, const CFX_RectF &rtItem, FX_INT32 &iState);
+    void		DoMouseDown(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState, FX_FLOAT fx, FX_FLOAT fy);
+    void		DoMouseUp(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState, FX_FLOAT fx, FX_FLOAT fy);
+    void		DoMouseMove(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState, FX_FLOAT fx, FX_FLOAT fy);
+    void		DoMouseLeave(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState);
+    void		DoMouseHover(int32_t iItem, const CFX_RectF &rtItem, int32_t &iState);
 
     CFWL_ScrollBarImp *m_pOwner;
 };

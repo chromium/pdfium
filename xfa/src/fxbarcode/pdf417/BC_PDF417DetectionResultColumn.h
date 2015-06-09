@@ -13,11 +13,11 @@ class CBC_DetectionResultColumn
 public:
     CBC_DetectionResultColumn(CBC_BoundingBox* boundingBox);
     virtual ~CBC_DetectionResultColumn();
-    CBC_Codeword* getCodewordNearby(FX_INT32 imageRow);
-    FX_INT32 imageRowToCodewordIndex(FX_INT32 imageRow);
-    FX_INT32 codewordIndexToImageRow(FX_INT32 codewordIndex);
-    void setCodeword(FX_INT32 imageRow, CBC_Codeword* codeword);
-    CBC_Codeword* getCodeword(FX_INT32 imageRow);
+    CBC_Codeword* getCodewordNearby(int32_t imageRow);
+    int32_t imageRowToCodewordIndex(int32_t imageRow);
+    int32_t codewordIndexToImageRow(int32_t codewordIndex);
+    void setCodeword(int32_t imageRow, CBC_Codeword* codeword);
+    CBC_Codeword* getCodeword(int32_t imageRow);
     CBC_BoundingBox* getBoundingBox();
     CFX_PtrArray* getCodewords();
     CFX_ByteString toString();
@@ -25,6 +25,6 @@ public:
     CBC_BoundingBox* m_boundingBox;
     CFX_PtrArray* m_codewords;
 private:
-    static FX_INT32 MAX_NEARBY_DISTANCE;
+    static int32_t MAX_NEARBY_DISTANCE;
 };
 #endif

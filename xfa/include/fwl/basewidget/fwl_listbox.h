@@ -54,7 +54,7 @@ END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtLtbDrawItem, FWL_EVTHASH_LTB_DrawItem)
 CFX_Graphics *m_pGraphics;
 CFX_Matrix m_matrix;
-FX_INT32 m_index;
+int32_t m_index;
 CFX_RectF m_rect;
 END_FWL_EVENT_DEF
 typedef struct _FWL_HLISTITEM {
@@ -62,15 +62,15 @@ typedef struct _FWL_HLISTITEM {
 }* FWL_HLISTITEM;
 typedef struct _FWL_ListBoxItemData {
     IFWL_ListBoxDP *pDataProvider;
-    FX_INT32 iIndex;
+    int32_t iIndex;
 } FWL_ListBoxItemData;
 class IFWL_ListBoxDP : public IFWL_DataProvider
 {
 public:
-    virtual	FX_INT32			CountItems(IFWL_Widget *pWidget) = 0;
-    virtual	FWL_HLISTITEM		GetItem(IFWL_Widget *pWidget, FX_INT32 nIndex) = 0;
-    virtual	FX_INT32			GetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem) = 0;
-    virtual FX_BOOL				SetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_INT32 nIndex) = 0;
+    virtual	int32_t			CountItems(IFWL_Widget *pWidget) = 0;
+    virtual	FWL_HLISTITEM		GetItem(IFWL_Widget *pWidget, int32_t nIndex) = 0;
+    virtual	int32_t			GetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem) = 0;
+    virtual FX_BOOL				SetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, int32_t nIndex) = 0;
     virtual	FX_DWORD			GetItemStyles(IFWL_Widget *pWidget, FWL_HLISTITEM hItem) = 0;
     virtual	FWL_ERR				GetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, CFX_WideString &wsText) = 0;
     virtual FWL_ERR				GetItemRect(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, CFX_RectF &rtItem) = 0;
@@ -88,7 +88,7 @@ public:
 class IFWL_ListBoxCompare
 {
 public:
-    virtual FX_INT32 Compare(FWL_HLISTITEM hLeft, FWL_HLISTITEM hRight) = 0;
+    virtual int32_t Compare(FWL_HLISTITEM hLeft, FWL_HLISTITEM hRight) = 0;
 };
 class IFWL_ListBox : public IFWL_Widget
 {
@@ -96,9 +96,9 @@ public:
     static IFWL_ListBox* Create();
     FWL_ERR			Initialize(IFWL_Widget *pOuter = NULL);
     FWL_ERR			Initialize(const CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
-    FX_INT32		CountSelItems();
-    FWL_HLISTITEM	GetSelItem(FX_INT32 nIndexSel);
-    FX_INT32		GetSelIndex(FX_INT32 nIndex);
+    int32_t		CountSelItems();
+    FWL_HLISTITEM	GetSelItem(int32_t nIndexSel);
+    int32_t		GetSelIndex(int32_t nIndex);
     FWL_ERR			SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect = TRUE);
     FWL_ERR			GetItemText(FWL_HLISTITEM hItem, CFX_WideString &wsText);
     FWL_ERR			GetScrollPos(FX_FLOAT &fPos, FX_BOOL bVert = TRUE);

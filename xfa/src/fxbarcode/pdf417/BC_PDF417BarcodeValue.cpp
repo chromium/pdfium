@@ -29,10 +29,10 @@ CBC_BarcodeValue::CBC_BarcodeValue()
 CBC_BarcodeValue::~CBC_BarcodeValue()
 {
 }
-void CBC_BarcodeValue::setValue(FX_INT32 value)
+void CBC_BarcodeValue::setValue(int32_t value)
 {
-    FX_INT32 confidence = 0;
-    for (FX_INT32 i = 0; i < m_keys.GetSize(); i++) {
+    int32_t confidence = 0;
+    for (int32_t i = 0; i < m_keys.GetSize(); i++) {
         if (m_keys.GetAt(i) == value) {
             confidence = m_values.GetAt(i);
             m_values.SetAt(i, confidence + 1);
@@ -45,9 +45,9 @@ void CBC_BarcodeValue::setValue(FX_INT32 value)
 }
 CFX_Int32Array* CBC_BarcodeValue::getValue()
 {
-    FX_INT32 maxConfidence = -1;
+    int32_t maxConfidence = -1;
     CFX_Int32Array* result = FX_NEW CFX_Int32Array;
-    for (FX_INT32 i = 0; i < m_keys.GetSize(); i++) {
+    for (int32_t i = 0; i < m_keys.GetSize(); i++) {
         if (m_values.GetAt(i) > maxConfidence) {
             maxConfidence = m_values.GetAt(i);
             result->RemoveAll();
@@ -58,9 +58,9 @@ CFX_Int32Array* CBC_BarcodeValue::getValue()
     }
     return result;
 }
-FX_INT32 CBC_BarcodeValue::getConfidence(FX_INT32 value)
+int32_t CBC_BarcodeValue::getConfidence(int32_t value)
 {
-    for (FX_INT32 i = 0; i < m_keys.GetSize(); i++)
+    for (int32_t i = 0; i < m_keys.GetSize(); i++)
         if (m_keys.GetAt(i) == value) {
             return m_values.GetAt(i);
         }

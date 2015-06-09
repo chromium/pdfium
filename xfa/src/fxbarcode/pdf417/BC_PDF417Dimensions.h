@@ -9,16 +9,16 @@
 class CBC_Dimensions
 {
 public:
-    CBC_Dimensions(FX_INT32 minCols, FX_INT32 maxCols, FX_INT32 minRows, FX_INT32 maxRows);
+    CBC_Dimensions(int32_t minCols, int32_t maxCols, int32_t minRows, int32_t maxRows);
     virtual ~CBC_Dimensions();
-    FX_INT32 getMinCols();
-    FX_INT32 getMaxCols();
-    FX_INT32 getMinRows();
-    FX_INT32 getMaxRows();
+    int32_t getMinCols();
+    int32_t getMaxCols();
+    int32_t getMinRows();
+    int32_t getMaxRows();
 private:
-    FX_INT32 m_minCols;
-    FX_INT32 m_maxCols;
-    FX_INT32 m_minRows;
-    FX_INT32 m_maxRows;
+    int32_t m_minCols;
+    int32_t m_maxCols;
+    int32_t m_minRows;
+    int32_t m_maxRows;
 };
 #endif

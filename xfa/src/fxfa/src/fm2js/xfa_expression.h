@@ -145,7 +145,7 @@ class CXFA_FMForExpression : public CXFA_FMLoopExpression
 {
 public:
     CXFA_FMForExpression(FX_DWORD line, FX_WSTR wsVariant, CXFA_FMSimpleExpression *pAssignment,
-                         CXFA_FMSimpleExpression *pAccessor, FX_INT32 iDirection, CXFA_FMSimpleExpression *pStep, CXFA_FMExpression *pList);
+                         CXFA_FMSimpleExpression *pAccessor, int32_t iDirection, CXFA_FMSimpleExpression *pStep, CXFA_FMExpression *pList);
     virtual ~CXFA_FMForExpression();
     virtual void ToJavaScript(CFX_WideTextBuf& javascript);
     virtual void ToImpliedReturnJS(CFX_WideTextBuf&);
@@ -153,7 +153,7 @@ private:
     CFX_WideStringC m_wsVariant;
     CXFA_FMSimpleExpression * m_pAssignment;
     CXFA_FMSimpleExpression *m_pAccessor;
-    FX_INT32 m_iDirection;
+    int32_t m_iDirection;
     CXFA_FMSimpleExpression *m_pStep;
     CXFA_FMExpression *m_pList;
 };

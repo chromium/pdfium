@@ -59,7 +59,7 @@ public:
 class IFWL_WidgetDelegate
 {
 public:
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage) = 0;
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage) = 0;
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent) = 0;
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL) = 0;
 };

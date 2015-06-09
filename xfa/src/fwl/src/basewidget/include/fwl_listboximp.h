@@ -28,9 +28,9 @@ public:
     virtual FX_DWORD	HitTest(FX_FLOAT fx, FX_FLOAT fy);
     virtual FWL_ERR		DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
     virtual FWL_ERR		SetThemeProvider(IFWL_ThemeProvider *pThemeProvider);
-    virtual FX_INT32	CountSelItems();
-    virtual FWL_HLISTITEM	GetSelItem(FX_INT32 nIndexSel);
-    virtual FX_INT32	GetSelIndex(FX_INT32 nIndex);
+    virtual int32_t	CountSelItems();
+    virtual FWL_HLISTITEM	GetSelItem(int32_t nIndexSel);
+    virtual int32_t	GetSelIndex(int32_t nIndex);
     virtual FWL_ERR		SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect = TRUE);
     virtual FWL_ERR		GetItemText(FWL_HLISTITEM hItem, CFX_WideString &wsText);
     virtual FWL_ERR		GetScrollPos(FX_FLOAT &fPos, FX_BOOL bVert = TRUE);
@@ -51,7 +51,7 @@ protected:
     FX_BOOL		ScrollToVisible(FWL_HLISTITEM hItem);
     void		DrawBkground(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
     void		DrawItems(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
-    void		DrawItem(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, FWL_HLISTITEM hItem, FX_INT32 Index, const CFX_RectF &rtItem, const CFX_Matrix *pMatrix = NULL);
+    void		DrawItem(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, FWL_HLISTITEM hItem, int32_t Index, const CFX_RectF &rtItem, const CFX_Matrix *pMatrix = NULL);
     void		DrawStatic(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme);
     CFX_SizeF	CalcSize(FX_BOOL bAutoSize = FALSE);
     void		GetItemSize(CFX_SizeF &size, FWL_HLISTITEM hItem, FX_FLOAT fWidth, FX_FLOAT fHeight, FX_BOOL bAutoSize = FALSE);
@@ -69,7 +69,7 @@ protected:
     IFWL_ScrollBar*		m_pHorzScrollBar;
     IFWL_ScrollBar*		m_pVertScrollBar;
     FX_DWORD			m_dwTTOStyles;
-    FX_INT32			m_iTTOAligns;
+    int32_t			m_iTTOAligns;
     FWL_HLISTITEM		m_hAnchor;
     FX_FLOAT			m_fItemHeight;
     FX_FLOAT			m_fScorllBarWidth;
@@ -81,7 +81,7 @@ class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_ListBoxImpDelegate(CFWL_ListBoxImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:

@@ -26,10 +26,10 @@
 #include "BC_QRAlignmentPattern.h"
 #include "BC_QRAlignmentPatternFinder.h"
 CBC_QRAlignmentPatternFinder::CBC_QRAlignmentPatternFinder(CBC_CommonBitMatrix *image,
-        FX_INT32 startX,
-        FX_INT32 startY,
-        FX_INT32 width,
-        FX_INT32 height,
+        int32_t startX,
+        int32_t startY,
+        int32_t width,
+        int32_t height,
         FX_FLOAT moduleSize): m_image(image),
     m_startX(startX),
     m_startY(startY),
@@ -42,29 +42,29 @@ CBC_QRAlignmentPatternFinder::CBC_QRAlignmentPatternFinder(CBC_CommonBitMatrix *
 }
 CBC_QRAlignmentPatternFinder::~CBC_QRAlignmentPatternFinder()
 {
-    for (FX_INT32 i = 0; i < m_possibleCenters.GetSize(); i++) {
+    for (int32_t i = 0; i < m_possibleCenters.GetSize(); i++) {
         delete (CBC_QRAlignmentPattern*)m_possibleCenters[i];
     }
     m_possibleCenters.RemoveAll();
 }
-CBC_QRAlignmentPattern  *CBC_QRAlignmentPatternFinder::Find(FX_INT32 &e)
+CBC_QRAlignmentPattern  *CBC_QRAlignmentPatternFinder::Find(int32_t &e)
 {
-    FX_INT32 startX = m_startX;
-    FX_INT32 height = m_height;
-    FX_INT32 maxJ = startX + m_width;
-    FX_INT32 middleI = m_startY + (height >> 1);
+    int32_t startX = m_startX;
+    int32_t height = m_height;
+    int32_t maxJ = startX + m_width;
+    int32_t middleI = m_startY + (height >> 1);
     CFX_Int32Array stateCount;
     stateCount.SetSize(3);
-    for (FX_INT32 iGen = 0; iGen < height; iGen++) {
-        FX_INT32 i = middleI + ((iGen & 0x01) == 0 ? ((iGen + 1) >> 1) : -((iGen + 1) >> 1));
+    for (int32_t iGen = 0; iGen < height; iGen++) {
+        int32_t i = middleI + ((iGen & 0x01) == 0 ? ((iGen + 1) >> 1) : -((iGen + 1) >> 1));
         stateCount[0] = 0;
         stateCount[1] = 0;
         stateCount[2] = 0;
-        FX_INT32 j = startX;
+        int32_t j = startX;
         while (j < maxJ && !m_image->Get(j, i)) {
             j++;
         }
-        FX_INT32 currentState = 0;
+        int32_t currentState = 0;
         while (j < maxJ) {
             if (m_image->Get(j, i)) {
                 if (currentState == 1) {
@@ -107,7 +107,7 @@ CBC_QRAlignmentPattern  *CBC_QRAlignmentPatternFinder::Find(FX_INT32 &e)
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return NULL;
 }
-FX_FLOAT CBC_QRAlignmentPatternFinder::CenterFromEnd(const CFX_Int32Array &stateCount, FX_INT32 end)
+FX_FLOAT CBC_QRAlignmentPatternFinder::CenterFromEnd(const CFX_Int32Array &stateCount, int32_t end)
 {
     return (FX_FLOAT) (end - stateCount[2]) - stateCount[1] / 2.0f;
 }
@@ -115,23 +115,23 @@ FX_BOOL CBC_QRAlignmentPatternFinder::FoundPatternCross(const CFX_Int32Array &st
 {
     FX_FLOAT moduleSize = m_moduleSize;
     FX_FLOAT maxVariance = moduleSize / 2.0f;
-    for (FX_INT32 i = 0; i < 3; i++) {
+    for (int32_t i = 0; i < 3; i++) {
         if (fabs(moduleSize - stateCount[i]) >= maxVariance) {
             return false;
         }
     }
     return TRUE;
 }
-FX_FLOAT CBC_QRAlignmentPatternFinder::CrossCheckVertical(FX_INT32 startI, FX_INT32 centerJ, FX_INT32 maxCount, FX_INT32 originalStateCountTotal)
+FX_FLOAT CBC_QRAlignmentPatternFinder::CrossCheckVertical(int32_t startI, int32_t centerJ, int32_t maxCount, int32_t originalStateCountTotal)
 {
     CBC_CommonBitMatrix *image = m_image;
-    FX_INT32 maxI = m_image->GetHeight();
+    int32_t maxI = m_image->GetHeight();
     CFX_Int32Array stateCount;
     stateCount.Copy(m_crossCheckStateCount);
     stateCount[0] = 0;
     stateCount[1] = 0;
     stateCount[2] = 0;
-    FX_INT32 i = startI;
+    int32_t i = startI;
     while (i >= 0 && m_image->Get(centerJ, i) && stateCount[1] <= maxCount) {
         stateCount[1]++;
         i--;
@@ -161,21 +161,21 @@ FX_FLOAT CBC_QRAlignmentPatternFinder::CrossCheckVertical(FX_INT32 startI, FX_IN
     if (stateCount[2] > maxCount) {
         return FXSYS_nan();
     }
-    FX_INT32 stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
+    int32_t stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
     if (5 * abs(stateCountTotal - originalStateCountTotal) >= originalStateCountTotal) {
         return FXSYS_nan();
     }
     return FoundPatternCross(stateCount) ? CenterFromEnd(stateCount, i) : FXSYS_nan();
 }
-CBC_QRAlignmentPattern *CBC_QRAlignmentPatternFinder::HandlePossibleCenter(const CFX_Int32Array &stateCount, FX_INT32 i, FX_INT32 j)
+CBC_QRAlignmentPattern *CBC_QRAlignmentPatternFinder::HandlePossibleCenter(const CFX_Int32Array &stateCount, int32_t i, int32_t j)
 {
-    FX_INT32 stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
+    int32_t stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
     FX_FLOAT centerJ = CenterFromEnd(stateCount, j);
-    FX_FLOAT centerI = CrossCheckVertical(i, (FX_INT32) centerJ, 2 * stateCount[1], stateCountTotal);
+    FX_FLOAT centerI = CrossCheckVertical(i, (int32_t) centerJ, 2 * stateCount[1], stateCountTotal);
     if (!FXSYS_isnan(centerI)) {
         FX_FLOAT estimatedModuleSize = (FX_FLOAT) (stateCount[0] + stateCount[1] + stateCount[2]) / 3.0f;
-        FX_INT32 max = m_possibleCenters.GetSize();
-        for (FX_INT32 index = 0; index < max; index++) {
+        int32_t max = m_possibleCenters.GetSize();
+        for (int32_t index = 0; index < max; index++) {
             CBC_QRAlignmentPattern *center = (CBC_QRAlignmentPattern *)(m_possibleCenters[index]);
             if (center->AboutEquals(estimatedModuleSize, centerI, centerJ)) {
                 return FX_NEW CBC_QRAlignmentPattern(centerJ, centerI, estimatedModuleSize);

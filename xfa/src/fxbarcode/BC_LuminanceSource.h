@@ -10,12 +10,12 @@ class CBC_LuminanceSource;
 class CBC_LuminanceSource
 {
 public:
-    CBC_LuminanceSource(FX_INT32 width, FX_INT32 height);
+    CBC_LuminanceSource(int32_t width, int32_t height);
     virtual ~CBC_LuminanceSource();
-    FX_INT32 GetWidth();
-    FX_INT32 GetHeight();
+    int32_t GetWidth();
+    int32_t GetHeight();
 
-    virtual CFX_ByteArray *GetRow(FX_INT32 y, CFX_ByteArray &row, FX_INT32 &e) = 0;
+    virtual CFX_ByteArray *GetRow(int32_t y, CFX_ByteArray &row, int32_t &e) = 0;
     virtual CFX_ByteArray *GetMatrix() = 0;
     virtual FX_BOOL IsCropSupported()
     {
@@ -26,9 +26,9 @@ public:
         return FALSE;
     }
 
-    virtual CBC_LuminanceSource *RotateCounterClockwise(FX_INT32 &e) = 0;
+    virtual CBC_LuminanceSource *RotateCounterClockwise(int32_t &e) = 0;
 protected:
-    FX_INT32 m_width;
-    FX_INT32 m_height;
+    int32_t m_width;
+    int32_t m_height;
 };
 #endif

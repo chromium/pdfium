@@ -269,7 +269,7 @@ public:
 
     CFX_ByteString		GetKeyword();
 
-    void				GetBinary(FX_BYTE* buffer, FX_DWORD size);
+    void				GetBinary(uint8_t* buffer, FX_DWORD size);
 
     void				ToNextLine();
 
@@ -291,18 +291,18 @@ public:
         return m_pCryptoHandler != NULL;
     }
 
-    FX_BOOL				GetCharAt(FX_FILESIZE pos, FX_BYTE& ch);
+    FX_BOOL				GetCharAt(FX_FILESIZE pos, uint8_t& ch);
 
-    FX_BOOL				ReadBlock(FX_BYTE* pBuf, FX_DWORD size);
+    FX_BOOL				ReadBlock(uint8_t* pBuf, FX_DWORD size);
 
     CFX_ByteString		GetNextWord(FX_BOOL& bIsNumber);
 protected:
     static const int kParserMaxRecursionDepth = 64;
     static int s_CurrentRecursionDepth;
 
-    virtual FX_BOOL				GetNextChar(FX_BYTE& ch);
+    virtual FX_BOOL				GetNextChar(uint8_t& ch);
 
-    FX_BOOL				GetCharAtBackward(FX_FILESIZE pos, FX_BYTE& ch);
+    FX_BOOL				GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch);
 
     void				GetNextWord();
 
@@ -326,7 +326,7 @@ protected:
 
     FX_FILESIZE			m_FileLen;
 
-    FX_BYTE*			m_pFileBuf;
+    uint8_t*			m_pFileBuf;
 
     FX_DWORD			m_BufSize;
 
@@ -334,7 +334,7 @@ protected:
 
     CPDF_CryptoHandler*	m_pCryptoHandler;
 
-    FX_BYTE				m_WordBuffer[257];
+    uint8_t				m_WordBuffer[257];
 
     FX_DWORD			m_WordSize;
 
@@ -458,7 +458,7 @@ public:
         return m_ObjVersion[objnum];
     }
 
-    void				GetIndirectBinary(FX_DWORD objnum, FX_BYTE*& pBuffer, FX_DWORD& size);
+    void				GetIndirectBinary(FX_DWORD objnum, uint8_t*& pBuffer, FX_DWORD& size);
 
     FX_BOOL				GetFileStreamOption()
     {
@@ -635,7 +635,7 @@ public:
                                  FX_LPCBYTE user_pass, FX_DWORD user_size, FX_DWORD type = PDF_ENCRYPT_CONTENT);
 
     CFX_ByteString		GetUserPassword(FX_LPCBYTE owner_pass, FX_DWORD pass_size);
-    CFX_ByteString		GetUserPassword(FX_LPCBYTE owner_pass, FX_DWORD pass_size, FX_INT32 key_len);
+    CFX_ByteString		GetUserPassword(FX_LPCBYTE owner_pass, FX_DWORD pass_size, int32_t key_len);
     int					GetVersion()
     {
         return m_Version;
@@ -661,16 +661,16 @@ private:
     FX_BOOL				LoadDict(CPDF_Dictionary* pEncryptDict, FX_DWORD type, int& cipher, int& key_len);
 
     FX_BOOL				CheckUserPassword(FX_LPCBYTE password, FX_DWORD pass_size,
-                                          FX_BOOL bIgnoreEncryptMeta, FX_LPBYTE key, FX_INT32 key_len);
+                                          FX_BOOL bIgnoreEncryptMeta, FX_LPBYTE key, int32_t key_len);
 
-    FX_BOOL				CheckOwnerPassword(FX_LPCBYTE password, FX_DWORD pass_size, FX_LPBYTE key, FX_INT32 key_len);
+    FX_BOOL				CheckOwnerPassword(FX_LPCBYTE password, FX_DWORD pass_size, FX_LPBYTE key, int32_t key_len);
     FX_BOOL				AES256_CheckPassword(FX_LPCBYTE password, FX_DWORD size, FX_BOOL bOwner, FX_LPBYTE key);
     void				AES256_SetPassword(CPDF_Dictionary* pEncryptDict, FX_LPCBYTE password, FX_DWORD size, FX_BOOL bOwner, FX_LPCBYTE key);
     void				AES256_SetPerms(CPDF_Dictionary* pEncryptDict, FX_DWORD permission, FX_BOOL bEncryptMetadata, FX_LPCBYTE key);
     void				OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_Array* pIdArray,
                                  FX_LPCBYTE user_pass, FX_DWORD user_size,
                                  FX_LPCBYTE owner_pass, FX_DWORD owner_size, FX_BOOL bDefault, FX_DWORD type);
-    FX_BOOL				CheckSecurity(FX_INT32 key_len);
+    FX_BOOL				CheckSecurity(int32_t key_len);
 
     FX_BOOL				m_bOwner;
 
@@ -678,7 +678,7 @@ private:
 
     int					m_Cipher;
 
-    FX_BYTE				m_EncryptKey[32];
+    uint8_t				m_EncryptKey[32];
 
     int					m_KeyLen;
 };
@@ -731,7 +731,7 @@ protected:
     virtual FX_BOOL		CryptStream(FX_LPVOID context, FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf, FX_BOOL bEncrypt);
     virtual FX_BOOL		CryptFinish(FX_LPVOID context, CFX_BinaryBuf& dest_buf, FX_BOOL bEncrypt);
 
-    FX_BYTE				m_EncryptKey[32];
+    uint8_t				m_EncryptKey[32];
 
     int					m_KeyLen;
 
@@ -798,9 +798,9 @@ protected:
 CFX_WideString	FPDF_FileSpec_GetWin32Path(const CPDF_Object* pFileSpec);
 void			FPDF_FileSpec_SetWin32Path(CPDF_Object* pFileSpec, const CFX_WideString& fullpath);
 
-void FlateEncode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
-FX_DWORD FlateDecode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
-FX_DWORD RunLengthDecode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
+void FlateEncode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
+FX_DWORD FlateDecode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
+FX_DWORD RunLengthDecode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
 class CPDF_NumberTree 
 {
 public:
@@ -847,8 +847,8 @@ public:
     virtual void			SetDocument(CPDF_Document* pDoc) = 0;
     virtual FX_BOOL			IsPageAvail(int iPage, IFX_DownloadHints* pHints) = 0;
     virtual FX_BOOL			IsLinearized() = 0;
-    virtual FX_INT32		IsFormAvail(IFX_DownloadHints *pHints) = 0;
-    virtual FX_INT32		IsLinearizedPDF() = 0;
+    virtual int32_t		IsFormAvail(IFX_DownloadHints *pHints) = 0;
+    virtual int32_t		IsLinearizedPDF() = 0;
     virtual void				GetLinearizedMainXRefInfo(FX_FILESIZE *pPos, FX_DWORD *pSize) = 0;
 
 protected:

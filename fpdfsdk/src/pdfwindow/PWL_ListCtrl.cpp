@@ -55,7 +55,7 @@ void CPWL_ListCtrl::ResetFace()
 	ResetAll(FALSE, 0);
 }
 
-void CPWL_ListCtrl::ResetContent(FX_INT32 nStart)
+void CPWL_ListCtrl::ResetContent(int32_t nStart)
 {
 	if (nStart < 0)
 		nStart = 0;
@@ -71,7 +71,7 @@ FX_FLOAT CPWL_ListCtrl::GetContentsHeight(FX_FLOAT fLimitWidth)
 
 	if (fLimitWidth > fBorderWidth* 2)
 	{
-		for (FX_INT32 i=0,sz=m_aChildren.GetSize(); i<sz; i++)
+		for (int32_t i=0,sz=m_aChildren.GetSize(); i<sz; i++)
 		{
 			if (CPWL_Wnd* pChild = m_aChildren.GetAt(i))
 			{
@@ -91,7 +91,7 @@ FX_FLOAT CPWL_ListCtrl::GetContentsHeight(FX_FLOAT fLimitWidth)
 	return fRet;
 }
 
-void CPWL_ListCtrl::ResetAll(FX_BOOL bMove, FX_INT32 nStart)
+void CPWL_ListCtrl::ResetAll(FX_BOOL bMove, int32_t nStart)
 {
 	CPDF_Rect rcClient = GetClientRect();
 
@@ -103,7 +103,7 @@ void CPWL_ListCtrl::ResetAll(FX_BOOL bMove, FX_INT32 nStart)
 		if (CPWL_Wnd* pChild = m_aChildren.GetAt(nStart-1))
 			fy = pChild->GetWindowRect().bottom - m_fItemSpace;
 
-	for (FX_INT32 i=nStart,sz=m_aChildren.GetSize(); i<sz; i++)
+	for (int32_t i=nStart,sz=m_aChildren.GetSize(); i<sz; i++)
 	{
 		if (CPWL_Wnd* pChild = m_aChildren.GetAt(i))
 		{
@@ -165,14 +165,14 @@ void CPWL_ListCtrl::DrawChildAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* 
 	CPDF_Rect rcClient = GetClientRect();
 	CPDF_Rect rcTemp = rcClient;
 	pUser2Device->TransformRect(rcTemp);
-	FX_RECT rcClip((FX_INT32)rcTemp.left,
-		(FX_INT32)rcTemp.bottom,
-		(FX_INT32)rcTemp.right,
-		(FX_INT32)rcTemp.top);
+	FX_RECT rcClip((int32_t)rcTemp.left,
+		(int32_t)rcTemp.bottom,
+		(int32_t)rcTemp.right,
+		(int32_t)rcTemp.top);
 
 	pDevice->SetClip_Rect(&rcClip);
 
-	for (FX_INT32 i=0,sz=m_aChildren.GetSize(); i<sz; i++)
+	for (int32_t i=0,sz=m_aChildren.GetSize(); i<sz; i++)
 	{
 		if (CPWL_Wnd * pChild = m_aChildren.GetAt(i))
 		{
@@ -196,9 +196,9 @@ void CPWL_ListCtrl::DrawChildAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* 
 	pDevice->RestoreState();
 }
 
-FX_INT32 CPWL_ListCtrl::GetItemIndex(CPWL_Wnd* pItem)
+int32_t CPWL_ListCtrl::GetItemIndex(CPWL_Wnd* pItem)
 {
-	for (FX_INT32 i=0, sz=m_aChildren.GetSize(); i<sz; i++)
+	for (int32_t i=0, sz=m_aChildren.GetSize(); i<sz; i++)
 	{
 		if (pItem == m_aChildren.GetAt(i))
 			return i;

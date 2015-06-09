@@ -113,7 +113,7 @@ CPDF_TextObject::~CPDF_TextObject()
 }
 void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const
 {
-    pInfo->m_CharCode = m_nChars == 1 ? (FX_DWORD)(FX_UINTPTR)m_pCharCodes : m_pCharCodes[index];
+    pInfo->m_CharCode = m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[index];
     pInfo->m_OriginX = index ? m_pCharPos[index - 1] : 0;
     pInfo->m_OriginY = 0;
     if (pInfo->m_CharCode == -1) {
@@ -150,7 +150,7 @@ int CPDF_TextObject::CountChars() const
 void CPDF_TextObject::GetCharInfo(int index, FX_DWORD& charcode, FX_FLOAT& kerning) const
 {
     if (m_nChars == 1) {
-        charcode = (FX_DWORD)(FX_UINTPTR)m_pCharCodes;
+        charcode = (FX_DWORD)(uintptr_t)m_pCharCodes;
         kerning = 0;
         return;
     }
@@ -254,7 +254,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs, FX_FLOAT* pKernin
         }
     } else {
         int offset = 0;
-        m_pCharCodes = (FX_DWORD*)(FX_UINTPTR)pFont->GetNextChar(pStrs[0], pStrs[0].GetLength(), offset);
+        m_pCharCodes = (FX_DWORD*)(uintptr_t)pFont->GetNextChar(pStrs[0], pStrs[0].GetLength(), offset);
     }
 }
 void CPDF_TextObject::SetText(const CFX_ByteString& str)
@@ -311,7 +311,7 @@ void CPDF_TextObject::SetText(int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pKerni
             }
         }
     } else {
-        m_pCharCodes = (FX_DWORD*)(FX_UINTPTR)pCharCodes[0];
+        m_pCharCodes = (FX_DWORD*)(uintptr_t)pCharCodes[0];
     }
     RecalcPositionData();
 }
@@ -360,7 +360,7 @@ void CPDF_TextObject::GetCharRect(int index, CFX_FloatRect& rect) const
     FX_FLOAT fontsize = m_TextState.GetFontSize() / 1000;
     int count = 0;
     for (int i = 0; i < m_nChars; i ++) {
-        FX_DWORD charcode = m_nChars == 1 ? (FX_DWORD)(FX_UINTPTR)m_pCharCodes : m_pCharCodes[i];
+        FX_DWORD charcode = m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
         if (charcode == (FX_DWORD) - 1) {
             continue;
         }
@@ -404,7 +404,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX, FX_FLOAT* pTextA
     }
     FX_FLOAT fontsize = m_TextState.GetFontSize();
     for (int i = 0; i < m_nChars; i ++) {
-        FX_DWORD charcode = m_nChars == 1 ? (FX_DWORD)(FX_UINTPTR)m_pCharCodes : m_pCharCodes[i];
+        FX_DWORD charcode = m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
         if (charcode == (FX_DWORD) - 1) {
             curpos -= FXSYS_Mul(m_pCharPos[i - 1], fontsize) / 1000;
             continue;
@@ -531,7 +531,7 @@ void CPDF_TextObject::CalcCharPos(FX_FLOAT* pPosArray) const
     FX_FLOAT fontsize = m_TextState.GetFontSize();
     int index = 0;
     for (int i = 0; i < m_nChars; i ++) {
-        FX_DWORD charcode = m_nChars == 1 ? (FX_DWORD)(FX_UINTPTR)m_pCharCodes : m_pCharCodes[i];
+        FX_DWORD charcode = m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
         if (charcode == (FX_DWORD) - 1) {
             continue;
         }
@@ -583,7 +583,7 @@ void CPDF_TextObject::SetData(int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharP
         return;
     }
     if (nChars == 1) {
-        m_pCharCodes = (FX_DWORD*)(FX_UINTPTR) * pCharCodes;
+        m_pCharCodes = (FX_DWORD*)(uintptr_t) * pCharCodes;
     } else {
         m_pCharCodes = FX_Alloc(FX_DWORD, nChars);
         FXSYS_memcpy32(m_pCharCodes, pCharCodes, sizeof(FX_DWORD)*nChars);

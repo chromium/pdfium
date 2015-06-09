@@ -9,20 +9,20 @@
 class CBC_CommonByteMatrix
 {
 public:
-    CBC_CommonByteMatrix(FX_INT32 width, FX_INT32 height);
+    CBC_CommonByteMatrix(int32_t width, int32_t height);
     virtual ~CBC_CommonByteMatrix();
-    FX_INT32 GetHeight();
-    FX_INT32 GetWidth();
-    FX_BYTE Get(FX_INT32 x, FX_INT32 y);
-    FX_BYTE* GetArray();
+    int32_t GetHeight();
+    int32_t GetWidth();
+    uint8_t Get(int32_t x, int32_t y);
+    uint8_t* GetArray();
 
-    void Set(FX_INT32 x, FX_INT32 y, FX_INT32 value);
-    void Set(FX_INT32 x, FX_INT32 y, FX_BYTE value);
-    void clear(FX_BYTE value);
+    void Set(int32_t x, int32_t y, int32_t value);
+    void Set(int32_t x, int32_t y, uint8_t value);
+    void clear(uint8_t value);
     virtual void Init();
 private:
-    FX_BYTE *m_bytes;
-    FX_INT32 m_width;
-    FX_INT32 m_height;
+    uint8_t *m_bytes;
+    int32_t m_width;
+    int32_t m_height;
 };
 #endif

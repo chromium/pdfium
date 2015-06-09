@@ -26,7 +26,7 @@ public:
     virtual	void	v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf);
     virtual void	v_FilterFinish(CFX_BinaryBuf& dest_buf) {}
     void*			m_pContext;
-    FX_BYTE			m_DestBuffer[FPDF_FILTER_BUFFER_SIZE];
+    uint8_t			m_DestBuffer[FPDF_FILTER_BUFFER_SIZE];
 };
 class CPDF_LzwFilter : public CFX_DataFilter
 {
@@ -40,11 +40,11 @@ public:
     FX_DWORD		m_nCodes;
     FX_DWORD		m_CodeLen;
     FX_DWORD		m_OldCode;
-    FX_BYTE			m_LastChar;
+    uint8_t			m_LastChar;
     FX_DWORD		m_nLeftBits, m_LeftBits;
-    FX_BYTE			m_DecodeStack[4000];
+    uint8_t			m_DecodeStack[4000];
     FX_DWORD		m_StackLen;
-    void			AddCode(FX_DWORD prefix_code, FX_BYTE append_char);
+    void			AddCode(FX_DWORD prefix_code, uint8_t append_char);
     void			DecodeString(FX_DWORD code);
 };
 class CPDF_PredictorFilter : public CFX_DataFilter

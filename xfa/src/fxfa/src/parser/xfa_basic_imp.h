@@ -22,31 +22,31 @@ public:
     virtual IFX_Stream*		Retain();
 
     virtual FX_DWORD			GetAccessModes() const;
-    virtual FX_INT32			GetLength() const;
-    virtual FX_INT32			Seek(FX_STREAMSEEK eSeek, FX_INT32 iOffset);
-    virtual FX_INT32			GetPosition();
+    virtual int32_t			GetLength() const;
+    virtual int32_t			Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
+    virtual int32_t			GetPosition();
     virtual FX_BOOL				IsEOF() const;
 
-    virtual FX_INT32			ReadData(FX_LPBYTE pBuffer, FX_INT32 iBufferSize)
+    virtual int32_t			ReadData(FX_LPBYTE pBuffer, int32_t iBufferSize)
     {
         return 0;
     }
-    virtual FX_INT32			ReadString(FX_LPWSTR pStr, FX_INT32 iMaxLength, FX_BOOL &bEOS, FX_INT32 const *pByteSize = NULL);
-    virtual FX_INT32			WriteData(FX_LPCBYTE pBuffer, FX_INT32 iBufferSize)
+    virtual int32_t			ReadString(FX_LPWSTR pStr, int32_t iMaxLength, FX_BOOL &bEOS, int32_t const *pByteSize = NULL);
+    virtual int32_t			WriteData(FX_LPCBYTE pBuffer, int32_t iBufferSize)
     {
         return 0;
     }
-    virtual FX_INT32			WriteString(FX_LPCWSTR pStr, FX_INT32 iLength)
+    virtual int32_t			WriteString(FX_LPCWSTR pStr, int32_t iLength)
     {
         return 0;
     }
     virtual void				Flush() {}
-    virtual FX_BOOL				SetLength(FX_INT32 iLength)
+    virtual FX_BOOL				SetLength(int32_t iLength)
     {
         return FALSE;
     }
 
-    virtual FX_INT32			GetBOM(FX_BYTE bom[4]) const
+    virtual int32_t			GetBOM(uint8_t bom[4]) const
     {
         return 0;
     }
@@ -56,7 +56,7 @@ public:
     virtual void				Lock() {}
     virtual void				Unlock() {}
 
-    virtual IFX_Stream*		CreateSharedStream(FX_DWORD dwAccess, FX_INT32 iOffset, FX_INT32 iLength)
+    virtual IFX_Stream*		CreateSharedStream(FX_DWORD dwAccess, int32_t iOffset, int32_t iLength)
     {
         return NULL;
     }
@@ -67,7 +67,7 @@ public:
     }
 protected:
     CFX_WideString				m_wsBuffer;
-    FX_INT32					m_iPosition;
-    FX_INT32					m_iRefCount;
+    int32_t					m_iPosition;
+    int32_t					m_iRefCount;
 };
 #endif

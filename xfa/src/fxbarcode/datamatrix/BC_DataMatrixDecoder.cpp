@@ -44,7 +44,7 @@ CBC_DataMatrixDecoder::~CBC_DataMatrixDecoder()
     }
     m_rsDecoder = NULL;
 }
-CBC_CommonDecoderResult *CBC_DataMatrixDecoder::Decode(CBC_CommonBitMatrix *bits, FX_INT32 &e)
+CBC_CommonDecoderResult *CBC_DataMatrixDecoder::Decode(CBC_CommonBitMatrix *bits, int32_t &e)
 {
     CBC_DataMatrixBitMatrixParser parser;
     parser.Init(bits, e);
@@ -55,9 +55,9 @@ CBC_CommonDecoderResult *CBC_DataMatrixDecoder::Decode(CBC_CommonBitMatrix *bits
     CBC_AutoPtr<CFX_ByteArray> codewords(byteTemp);
     CFX_PtrArray *dataBlocks = CBC_DataMatrixDataBlock::GetDataBlocks(codewords.get(), version, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    FX_INT32 dataBlocksCount = dataBlocks->GetSize();
-    FX_INT32 totalBytes = 0;
-    FX_INT32 i, j;
+    int32_t dataBlocksCount = dataBlocks->GetSize();
+    int32_t totalBytes = 0;
+    int32_t i, j;
     for (i = 0; i < dataBlocksCount; i++) {
         totalBytes += ((CBC_DataMatrixDataBlock*)(*dataBlocks)[i])->GetNumDataCodewords();
     }
@@ -65,17 +65,17 @@ CBC_CommonDecoderResult *CBC_DataMatrixDecoder::Decode(CBC_CommonBitMatrix *bits
     resultBytes.SetSize(totalBytes);
     for (j = 0; j < dataBlocksCount; j++) {
         CFX_ByteArray *codewordBytes = ((CBC_DataMatrixDataBlock*)(*dataBlocks)[j])->GetCodewords();
-        FX_INT32 numDataCodewords = ((CBC_DataMatrixDataBlock*)(*dataBlocks)[j])->GetNumDataCodewords();
+        int32_t numDataCodewords = ((CBC_DataMatrixDataBlock*)(*dataBlocks)[j])->GetNumDataCodewords();
         CorrectErrors(*codewordBytes, numDataCodewords, e);
         if (e != BCExceptionNO) {
-            for(FX_INT32 i = 0; i < dataBlocks->GetSize(); i++) {
+            for(int32_t i = 0; i < dataBlocks->GetSize(); i++) {
                 delete (CBC_DataMatrixDataBlock*)(*dataBlocks)[i];
             }
             delete dataBlocks;
             dataBlocks = NULL;
             return NULL;
         }
-        FX_INT32 i;
+        int32_t i;
         for (i = 0; i < numDataCodewords; i++) {
             resultBytes[i * dataBlocksCount + j] = (*codewordBytes)[i];
         }
@@ -89,22 +89,22 @@ CBC_CommonDecoderResult *CBC_DataMatrixDecoder::Decode(CBC_CommonBitMatrix *bits
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return resultR;
 }
-void CBC_DataMatrixDecoder::CorrectErrors(CFX_ByteArray &codewordBytes, FX_INT32 numDataCodewords, FX_INT32 &e)
+void CBC_DataMatrixDecoder::CorrectErrors(CFX_ByteArray &codewordBytes, int32_t numDataCodewords, int32_t &e)
 {
-    FX_INT32 numCodewords = codewordBytes.GetSize();
+    int32_t numCodewords = codewordBytes.GetSize();
     CFX_Int32Array codewordsInts;
     codewordsInts.SetSize(numCodewords);
-    FX_INT32 i;
+    int32_t i;
     for (i = 0; i < numCodewords; i++) {
         codewordsInts[i] = codewordBytes[i] & 0xFF;
     }
-    FX_INT32 numECCodewords = codewordBytes.GetSize() - numDataCodewords;
+    int32_t numECCodewords = codewordBytes.GetSize() - numDataCodewords;
     m_rsDecoder->Decode(&codewordsInts, numECCodewords, e);
     if (e != BCExceptionNO) {
         e = BCExceptionChecksumException;
         return ;
     }
     for (i = 0; i < numDataCodewords; i++) {
-        codewordBytes[i] = (FX_BYTE) codewordsInts[i];
+        codewordBytes[i] = (uint8_t) codewordsInts[i];
     }
 }

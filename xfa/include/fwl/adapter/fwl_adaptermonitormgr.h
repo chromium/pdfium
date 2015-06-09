@@ -13,8 +13,8 @@ typedef struct _FWL_HMONITOR {
 class IFWL_AdapterMonitorMgr
 {
 public:
-    virtual FX_INT32		CountMonitors() = 0;
-    virtual FWL_HMONITOR	GetMonitor(FX_INT32 nIndex) = 0;
+    virtual int32_t		CountMonitors() = 0;
+    virtual FWL_HMONITOR	GetMonitor(int32_t nIndex) = 0;
     virtual FWL_HMONITOR	GetCurrentMonitor() = 0;
     virtual FWL_HMONITOR	GetMonitorByRect(const CFX_RectF &rect) = 0;
     virtual FWL_HMONITOR	GetMonitorByPoint(FX_FLOAT fx, FX_FLOAT fy) = 0;

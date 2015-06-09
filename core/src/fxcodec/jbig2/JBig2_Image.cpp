@@ -11,7 +11,7 @@
 #include "../../../include/fxcrt/fx_safe_types.h"
 #include "JBig2_Image.h"
 
-CJBig2_Image::CJBig2_Image(FX_INT32 w, FX_INT32 h)
+CJBig2_Image::CJBig2_Image(int32_t w, int32_t h)
 {
     m_nWidth	= w;
     m_nHeight	= h;
@@ -22,13 +22,13 @@ CJBig2_Image::CJBig2_Image(FX_INT32 w, FX_INT32 h)
     }
     m_nStride  = ((w + 31) >> 5) << 2;
     if (m_nStride * m_nHeight > 0 && 104857600 / (int)m_nStride > m_nHeight) {
-        m_pData = (FX_BYTE *)m_pModule->JBig2_Malloc2(m_nStride, m_nHeight);
+        m_pData = (uint8_t *)m_pModule->JBig2_Malloc2(m_nStride, m_nHeight);
     } else {
         m_pData = NULL;
     }
     m_bNeedFree = TRUE;
 }
-CJBig2_Image::CJBig2_Image(FX_INT32 w, FX_INT32 h, FX_INT32 stride, FX_BYTE*pBuf)
+CJBig2_Image::CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t*pBuf)
 {
     m_nWidth = w;
     m_nHeight = h;
@@ -43,7 +43,7 @@ CJBig2_Image::CJBig2_Image(CJBig2_Image &im)
     m_nHeight	= im.m_nHeight;
     m_nStride	= im.m_nStride;
     if (im.m_pData) {
-        m_pData = (FX_BYTE*)m_pModule->JBig2_Malloc2(m_nStride, m_nHeight);
+        m_pData = (uint8_t*)m_pModule->JBig2_Malloc2(m_nStride, m_nHeight);
         JBIG2_memcpy(m_pData, im.m_pData, m_nStride * m_nHeight);
     } else {
         m_pData = NULL;
@@ -56,12 +56,12 @@ CJBig2_Image::~CJBig2_Image()
         m_pModule->JBig2_Free(m_pData);
     }
 }
-FX_BOOL CJBig2_Image::getPixel(FX_INT32 x, FX_INT32 y)
+FX_BOOL CJBig2_Image::getPixel(int32_t x, int32_t y)
 {
     if (!m_pData) {
         return 0;
     }
-    FX_INT32 m, n;
+    int32_t m, n;
     if(x < 0 || x >= m_nWidth) {
         return 0;
     }
@@ -73,12 +73,12 @@ FX_BOOL CJBig2_Image::getPixel(FX_INT32 x, FX_INT32 y)
     return ((m_pData[m] >> (7 - n)) & 1);
 }
 
-FX_INT32 CJBig2_Image::setPixel(FX_INT32 x, FX_INT32 y, FX_BOOL v)
+int32_t CJBig2_Image::setPixel(int32_t x, int32_t y, FX_BOOL v)
 {
     if (!m_pData) {
         return 0;
     }
-    FX_INT32 m, n;
+    int32_t m, n;
     if(x < 0 || x >= m_nWidth) {
         return 0;
     }
@@ -94,7 +94,7 @@ FX_INT32 CJBig2_Image::setPixel(FX_INT32 x, FX_INT32 y, FX_BOOL v)
     }
     return 1;
 }
-void CJBig2_Image::copyLine(FX_INT32 hTo, FX_INT32 hFrom)
+void CJBig2_Image::copyLine(int32_t hTo, int32_t hFrom)
 {
     if (!m_pData) {
         return;
@@ -112,14 +112,14 @@ void CJBig2_Image::fill(FX_BOOL v)
     }
     JBIG2_memset(m_pData, v ? 0xff : 0, m_nStride * m_nHeight);
 }
-FX_BOOL CJBig2_Image::composeTo(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
 {
     if (!m_pData) {
         return FALSE;
     }
     return composeTo_opt2(pDst, x, y, op);
 }
-FX_BOOL CJBig2_Image::composeTo(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, JBig2ComposeOp op, const FX_RECT* pSrcRect)
+FX_BOOL CJBig2_Image::composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect)
 {
     if (!m_pData) {
         return FALSE;
@@ -129,10 +129,10 @@ FX_BOOL CJBig2_Image::composeTo(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, JBig
     }
     return composeTo_opt2(pDst, x, y, op, pSrcRect);
 }
-FX_BOOL CJBig2_Image::composeTo_unopt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeTo_unopt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
 {
-    FX_INT32 w, h, dx, dy;
-    FX_INT32 i, j;
+    int32_t w, h, dx, dy;
+    int32_t i, j;
     w = m_nWidth;
     h = m_nHeight;
     dx = dy = 0;
@@ -196,10 +196,10 @@ FX_BOOL CJBig2_Image::composeTo_unopt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y
     return TRUE;
 }
 
-FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
 {
-    FX_INT32 x0, x1, y0, y1, xx, yy;
-    FX_BYTE *pLineSrc, *pLineDst, *srcPtr, *destPtr;
+    int32_t x0, x1, y0, y1, xx, yy;
+    uint8_t *pLineSrc, *pLineDst, *srcPtr, *destPtr;
     FX_DWORD src0, src1, src, dest, s1, s2, m1, m2, m3;
     FX_BOOL oneByte;
     if (!m_pData) {
@@ -247,7 +247,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc;
                             dest = *destPtr;
                             dest |= (*srcPtr >> s1) & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -259,7 +259,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc;
                             dest = *destPtr;
                             dest &= ((0xff00 | *srcPtr) >> s1) | m1;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -271,7 +271,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc;
                             dest = *destPtr;
                             dest ^= (*srcPtr >> s1) & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -283,7 +283,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc;
                             dest = *destPtr;
                             dest ^= ((*srcPtr ^ 0xff) >> s1) & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -295,7 +295,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc;
                             dest = *destPtr;
                             dest = (dest & ~m3) | ((*srcPtr >> s1) & m3);
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -310,7 +310,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc + (-x >> 3);
                             dest = *destPtr;
                             dest |= *srcPtr & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -322,7 +322,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc + (-x >> 3);
                             dest = *destPtr;
                             dest &= *srcPtr | m1;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -334,7 +334,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc + (-x >> 3);
                             dest = *destPtr;
                             dest ^= *srcPtr & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -346,7 +346,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc + (-x >> 3);
                             dest = *destPtr;
                             dest ^= (*srcPtr ^ 0xff) & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -358,7 +358,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             srcPtr = pLineSrc + (-x >> 3);
                             dest = *destPtr;
                             dest = (*srcPtr & m2) | (dest & m1);
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -376,7 +376,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             src1 = *srcPtr++;
                             dest = *destPtr;
                             dest |= src1 >> s1;
-                            *destPtr++ = (FX_BYTE)dest;
+                            *destPtr++ = (uint8_t)dest;
                             xx = x0 + 8;
                             for (; xx < x1 - 8; xx += 8) {
                                 dest = *destPtr;
@@ -384,7 +384,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest |= src;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -395,7 +395,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest |= src & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -408,7 +408,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             src1 = *srcPtr++;
                             dest = *destPtr;
                             dest &= (0xff00 | src1) >> s1;
-                            *destPtr++ = (FX_BYTE)dest;
+                            *destPtr++ = (uint8_t)dest;
                             xx = x0 + 8;
                             for (; xx < x1 - 8; xx += 8) {
                                 dest = *destPtr;
@@ -416,7 +416,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest &= src;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -427,7 +427,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest &= src | m1;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -440,7 +440,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             src1 = *srcPtr++;
                             dest = *destPtr;
                             dest ^= src1 >> s1;
-                            *destPtr++ = (FX_BYTE)dest;
+                            *destPtr++ = (uint8_t)dest;
                             xx = x0 + 8;
                             for (; xx < x1 - 8; xx += 8) {
                                 dest = *destPtr;
@@ -448,7 +448,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest ^= src;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -459,7 +459,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest ^= src & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -472,7 +472,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             src1 = *srcPtr++;
                             dest = *destPtr;
                             dest ^= (src1 ^ 0xff) >> s1;
-                            *destPtr++ = (FX_BYTE)dest;
+                            *destPtr++ = (uint8_t)dest;
                             xx = x0 + 8;
                             for (; xx < x1 - 8; xx += 8) {
                                 dest = *destPtr;
@@ -480,7 +480,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest ^= src ^ 0xff;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -491,7 +491,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest ^= (src ^ 0xff) & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -504,7 +504,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             src1 = *srcPtr++;
                             dest = *destPtr;
                             dest = (dest & (0xff << s2)) | (src1 >> s1);
-                            *destPtr++ = (FX_BYTE)dest;
+                            *destPtr++ = (uint8_t)dest;
                             xx = x0 + 8;
                             for (; xx < x1 - 8; xx += 8) {
                                 dest = *destPtr;
@@ -512,7 +512,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest = src;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -523,7 +523,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest = (src & m2) | (dest & m1);
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -544,7 +544,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest |= src;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -555,7 +555,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest |= src & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -573,7 +573,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest &= src;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -584,7 +584,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest &= src | m1;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -602,7 +602,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest ^= src;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -613,7 +613,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest ^= src & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -631,7 +631,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest ^= src ^ 0xff;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -642,7 +642,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest ^= (src ^ 0xff) & m2;
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -660,7 +660,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                                 src1 = *srcPtr++;
                                 src = (((src0 << 8) | src1) >> s1) & 0xff;
                                 dest = src;
-                                *destPtr++ = (FX_BYTE)dest;
+                                *destPtr++ = (uint8_t)dest;
                             }
                             dest = *destPtr;
                             src0 = src1;
@@ -671,7 +671,7 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
                             }
                             src = (((src0 << 8) | src1) >> s1) & 0xff;
                             dest = (src & m2) | (dest & m1);
-                            *destPtr = (FX_BYTE)dest;
+                            *destPtr = (uint8_t)dest;
                             pLineDst += pDst->m_nStride;
                             pLineSrc += m_nStride;
                         }
@@ -682,24 +682,24 @@ FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, 
     }
     return TRUE;
 }
-FX_BOOL CJBig2_Image::composeFrom(FX_INT32 x, FX_INT32 y, CJBig2_Image *pSrc, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op)
 {
     if (!m_pData) {
         return FALSE;
     }
     return pSrc->composeTo(this, x, y, op);
 }
-FX_BOOL CJBig2_Image::composeFrom(FX_INT32 x, FX_INT32 y, CJBig2_Image *pSrc, JBig2ComposeOp op, const FX_RECT* pSrcRect)
+FX_BOOL CJBig2_Image::composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op, const FX_RECT* pSrcRect)
 {
     if (!m_pData) {
         return FALSE;
     }
     return pSrc->composeTo(this, x, y, op, pSrcRect);
 }
-CJBig2_Image *CJBig2_Image::subImage_unopt(FX_INT32 x, FX_INT32 y, FX_INT32 w, FX_INT32 h)
+CJBig2_Image *CJBig2_Image::subImage_unopt(int32_t x, int32_t y, int32_t w, int32_t h)
 {
     CJBig2_Image *pImage;
-    FX_INT32 i, j;
+    int32_t i, j;
     JBIG2_ALLOC(pImage, CJBig2_Image(w, h));
     for(j = 0; j < h; j++) {
         for(i = 0; i < w; i++) {
@@ -709,13 +709,13 @@ CJBig2_Image *CJBig2_Image::subImage_unopt(FX_INT32 x, FX_INT32 y, FX_INT32 w, F
     return pImage;
 }
 #define JBIG2_GETDWORD(buf)	((FX_DWORD)(((buf)[0] << 24) | ((buf)[1] << 16) | ((buf)[2] << 8) | (buf)[3]))
-CJBig2_Image *CJBig2_Image::subImage(FX_INT32 x, FX_INT32 y, FX_INT32 w, FX_INT32 h)
+CJBig2_Image *CJBig2_Image::subImage(int32_t x, int32_t y, int32_t w, int32_t h)
 {
     CJBig2_Image *pImage;
-    FX_INT32 m, n, j;
-    FX_BYTE *pLineSrc, *pLineDst;
+    int32_t m, n, j;
+    uint8_t *pLineSrc, *pLineDst;
     FX_DWORD wTmp;
-    FX_BYTE *pSrc, *pSrcEnd, *pDst, *pDstEnd;
+    uint8_t *pSrc, *pSrcEnd, *pDst, *pDstEnd;
     if (w == 0 || h == 0) {
         return NULL;
     }
@@ -755,10 +755,10 @@ CJBig2_Image *CJBig2_Image::subImage(FX_INT32 x, FX_INT32 y, FX_INT32 w, FX_INT3
                 } else {
                     wTmp = JBIG2_GETDWORD(pSrc) << n;
                 }
-                pDst[0] = (FX_BYTE)(wTmp >> 24);
-                pDst[1] = (FX_BYTE)(wTmp >> 16);
-                pDst[2] = (FX_BYTE)(wTmp >> 8);
-                pDst[3] = (FX_BYTE)wTmp;
+                pDst[0] = (uint8_t)(wTmp >> 24);
+                pDst[1] = (uint8_t)(wTmp >> 16);
+                pDst[2] = (uint8_t)(wTmp >> 8);
+                pDst[3] = (uint8_t)wTmp;
             }
             pLineSrc += m_nStride;
             pLineDst += pImage->m_nStride;
@@ -766,7 +766,7 @@ CJBig2_Image *CJBig2_Image::subImage(FX_INT32 x, FX_INT32 y, FX_INT32 w, FX_INT3
     }
     return pImage;
 }
-void CJBig2_Image::expand(FX_INT32 h, FX_BOOL v)
+void CJBig2_Image::expand(int32_t h, FX_BOOL v)
 {
     if (!m_pData || h <= m_nHeight) {
         return;
@@ -780,7 +780,7 @@ void CJBig2_Image::expand(FX_INT32 h, FX_BOOL v)
         return;
     }
     //The guaranteed reallocated memory is to be < 4GB (unsigned int). 
-    m_pData = (FX_BYTE*)m_pModule->JBig2_Realloc(m_pData, safeMemSize.ValueOrDie());
+    m_pData = (uint8_t*)m_pModule->JBig2_Realloc(m_pData, safeMemSize.ValueOrDie());
     //The result of dwHeight * dwStride doesn't overflow after the 
     //checking of safeMemSize.
     //The same as the result of (dwH - dwHeight) * dwStride) because
@@ -789,15 +789,15 @@ void CJBig2_Image::expand(FX_INT32 h, FX_BOOL v)
     JBIG2_memset(m_pData + dwHeight * dwStride, v ? 0xff : 0, (dwH - dwHeight) * dwStride);
     m_nHeight = h;
 }
-FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
 {
-    FX_INT32 xs0 = 0, ys0  = 0, xs1  = 0, ys1   = 0, xd0    = 0, yd0          = 0, xd1      = 0, 
+    int32_t xs0 = 0, ys0  = 0, xs1  = 0, ys1   = 0, xd0    = 0, yd0          = 0, xd1      = 0, 
              yd1 = 0, xx   = 0, yy   = 0, w     = 0, h      = 0, middleDwords = 0, lineLeft = 0;
 
     FX_DWORD s1  = 0, d1   = 0, d2   = 0, shift = 0, shift1 = 0, shift2       = 0, 
              tmp = 0, tmp1 = 0, tmp2 = 0, maskL = 0, maskR  = 0, maskM        = 0;
 
-    FX_BYTE *lineSrc = NULL, *lineDst = NULL, *sp = NULL, *dp = NULL;
+    uint8_t *lineSrc = NULL, *lineDst = NULL, *sp = NULL, *dp = NULL;
 
     if (!m_pData) {
         return FALSE;
@@ -867,10 +867,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
                             break;
                     }
-                    lineDst[0] = (FX_BYTE)(tmp >> 24);
-                    lineDst[1] = (FX_BYTE)(tmp >> 16);
-                    lineDst[2] = (FX_BYTE)(tmp >> 8);
-                    lineDst[3] = (FX_BYTE)tmp;
+                    lineDst[0] = (uint8_t)(tmp >> 24);
+                    lineDst[1] = (uint8_t)(tmp >> 16);
+                    lineDst[2] = (uint8_t)(tmp >> 8);
+                    lineDst[3] = (uint8_t)tmp;
                     lineSrc += m_nStride;
                     lineDst += pDst->m_nStride;
                 }
@@ -896,10 +896,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
                             break;
                     }
-                    lineDst[0] = (FX_BYTE)(tmp >> 24);
-                    lineDst[1] = (FX_BYTE)(tmp >> 16);
-                    lineDst[2] = (FX_BYTE)(tmp >> 8);
-                    lineDst[3] = (FX_BYTE)tmp;
+                    lineDst[0] = (uint8_t)(tmp >> 24);
+                    lineDst[1] = (uint8_t)(tmp >> 16);
+                    lineDst[2] = (uint8_t)(tmp >> 8);
+                    lineDst[3] = (uint8_t)tmp;
                     lineSrc += m_nStride;
                     lineDst += pDst->m_nStride;
                 }
@@ -927,10 +927,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                         tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
                         break;
                 }
-                lineDst[0] = (FX_BYTE)(tmp >> 24);
-                lineDst[1] = (FX_BYTE)(tmp >> 16);
-                lineDst[2] = (FX_BYTE)(tmp >> 8);
-                lineDst[3] = (FX_BYTE)tmp;
+                lineDst[0] = (uint8_t)(tmp >> 24);
+                lineDst[1] = (uint8_t)(tmp >> 16);
+                lineDst[2] = (uint8_t)(tmp >> 8);
+                lineDst[3] = (uint8_t)tmp;
                 lineSrc += m_nStride;
                 lineDst += pDst->m_nStride;
             }
@@ -963,10 +963,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -990,10 +990,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = tmp1;
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -1018,10 +1018,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                 }
                 lineSrc += m_nStride;
                 lineDst += pDst->m_nStride;
@@ -1051,10 +1051,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -1078,10 +1078,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = tmp1;
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -1105,10 +1105,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                 }
                 lineSrc += m_nStride;
                 lineDst += pDst->m_nStride;
@@ -1140,10 +1140,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     dp += 4;
                 }
                 for(xx = 0; xx < middleDwords; xx++) {
@@ -1166,10 +1166,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = tmp1;
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -1194,10 +1194,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                 }
                 lineSrc += m_nStride;
                 lineDst += pDst->m_nStride;
@@ -1206,12 +1206,12 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
     }
     return 1;
 }
-FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, JBig2ComposeOp op, const FX_RECT* pSrcRect)
+FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect)
 {
-    FX_INT32 xs0, ys0, xs1, ys1, xd0, yd0, xd1, yd1, xx, yy, w, h, middleDwords, lineLeft;
+    int32_t xs0, ys0, xs1, ys1, xd0, yd0, xd1, yd1, xx, yy, w, h, middleDwords, lineLeft;
     FX_DWORD s1, d1, d2, shift, shift1, shift2, tmp, tmp1, tmp2, maskL, maskR, maskM;
-    FX_BYTE *lineSrc, *lineDst, *sp, *dp;
-    FX_INT32 sw, sh;
+    uint8_t *lineSrc, *lineDst, *sp, *dp;
+    int32_t sw, sh;
     if (!m_pData) {
         return FALSE;
     }
@@ -1290,10 +1290,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
                             break;
                     }
-                    lineDst[0] = (FX_BYTE)(tmp >> 24);
-                    lineDst[1] = (FX_BYTE)(tmp >> 16);
-                    lineDst[2] = (FX_BYTE)(tmp >> 8);
-                    lineDst[3] = (FX_BYTE)tmp;
+                    lineDst[0] = (uint8_t)(tmp >> 24);
+                    lineDst[1] = (uint8_t)(tmp >> 16);
+                    lineDst[2] = (uint8_t)(tmp >> 8);
+                    lineDst[3] = (uint8_t)tmp;
                     lineSrc += m_nStride;
                     lineDst += pDst->m_nStride;
                 }
@@ -1319,10 +1319,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
                             break;
                     }
-                    lineDst[0] = (FX_BYTE)(tmp >> 24);
-                    lineDst[1] = (FX_BYTE)(tmp >> 16);
-                    lineDst[2] = (FX_BYTE)(tmp >> 8);
-                    lineDst[3] = (FX_BYTE)tmp;
+                    lineDst[0] = (uint8_t)(tmp >> 24);
+                    lineDst[1] = (uint8_t)(tmp >> 16);
+                    lineDst[2] = (uint8_t)(tmp >> 8);
+                    lineDst[3] = (uint8_t)tmp;
                     lineSrc += m_nStride;
                     lineDst += pDst->m_nStride;
                 }
@@ -1350,10 +1350,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                         tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
                         break;
                 }
-                lineDst[0] = (FX_BYTE)(tmp >> 24);
-                lineDst[1] = (FX_BYTE)(tmp >> 16);
-                lineDst[2] = (FX_BYTE)(tmp >> 8);
-                lineDst[3] = (FX_BYTE)tmp;
+                lineDst[0] = (uint8_t)(tmp >> 24);
+                lineDst[1] = (uint8_t)(tmp >> 16);
+                lineDst[2] = (uint8_t)(tmp >> 8);
+                lineDst[3] = (uint8_t)tmp;
                 lineSrc += m_nStride;
                 lineDst += pDst->m_nStride;
             }
@@ -1386,10 +1386,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -1413,10 +1413,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = tmp1;
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -1441,10 +1441,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                 }
                 lineSrc += m_nStride;
                 lineDst += pDst->m_nStride;
@@ -1474,10 +1474,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -1501,10 +1501,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = tmp1;
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -1528,10 +1528,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                 }
                 lineSrc += m_nStride;
                 lineDst += pDst->m_nStride;
@@ -1563,10 +1563,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     dp += 4;
                 }
                 for(xx = 0; xx < middleDwords; xx++) {
@@ -1589,10 +1589,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = tmp1;
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                     sp += 4;
                     dp += 4;
                 }
@@ -1617,10 +1617,10 @@ FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y,
                             tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
                             break;
                     }
-                    dp[0] = (FX_BYTE)(tmp >> 24);
-                    dp[1] = (FX_BYTE)(tmp >> 16);
-                    dp[2] = (FX_BYTE)(tmp >> 8);
-                    dp[3] = (FX_BYTE)tmp;
+                    dp[0] = (uint8_t)(tmp >> 24);
+                    dp[1] = (uint8_t)(tmp >> 16);
+                    dp[2] = (uint8_t)(tmp >> 8);
+                    dp[3] = (uint8_t)tmp;
                 }
                 lineSrc += m_nStride;
                 lineDst += pDst->m_nStride;

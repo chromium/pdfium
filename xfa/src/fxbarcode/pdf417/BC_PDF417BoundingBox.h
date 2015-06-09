@@ -11,17 +11,17 @@ class CBC_ResultPoint;
 class CBC_BoundingBox
 {
 public:
-    CBC_BoundingBox(CBC_CommonBitMatrix* image, CBC_ResultPoint* topLeft, CBC_ResultPoint* bottomLeft, CBC_ResultPoint* topRight, CBC_ResultPoint* bottomRight, FX_INT32 &e);
+    CBC_BoundingBox(CBC_CommonBitMatrix* image, CBC_ResultPoint* topLeft, CBC_ResultPoint* bottomLeft, CBC_ResultPoint* topRight, CBC_ResultPoint* bottomRight, int32_t &e);
     CBC_BoundingBox(CBC_BoundingBox* boundingBox);
     virtual ~CBC_BoundingBox();
-    static CBC_BoundingBox* merge(CBC_BoundingBox* leftBox, CBC_BoundingBox* rightBox, FX_INT32 &e);
-    CBC_BoundingBox* addMissingRows(FX_INT32 missingStartRows, FX_INT32 missingEndRows, FX_BOOL isLeft, FX_INT32 &e);
+    static CBC_BoundingBox* merge(CBC_BoundingBox* leftBox, CBC_BoundingBox* rightBox, int32_t &e);
+    CBC_BoundingBox* addMissingRows(int32_t missingStartRows, int32_t missingEndRows, FX_BOOL isLeft, int32_t &e);
     void setTopRight(CBC_ResultPoint topRight);
     void setBottomRight(CBC_ResultPoint bottomRight);
-    FX_INT32 getMinX();
-    FX_INT32 getMaxX();
-    FX_INT32 getMinY();
-    FX_INT32 getMaxY();
+    int32_t getMinX();
+    int32_t getMaxX();
+    int32_t getMinY();
+    int32_t getMaxY();
     CBC_ResultPoint* getTopLeft();
     CBC_ResultPoint* getTopRight();
     CBC_ResultPoint* getBottomLeft();
@@ -32,10 +32,10 @@ private:
     CBC_ResultPoint* m_bottomLeft;
     CBC_ResultPoint* m_topRight;
     CBC_ResultPoint* m_bottomRight;
-    FX_INT32 m_minX;
-    FX_INT32 m_maxX;
-    FX_INT32 m_minY;
-    FX_INT32 m_maxY;
+    int32_t m_minX;
+    int32_t m_maxX;
+    int32_t m_minY;
+    int32_t m_maxY;
     void init(CBC_CommonBitMatrix* image, CBC_ResultPoint* topLeft, CBC_ResultPoint* bottomLeft, CBC_ResultPoint* topRight, CBC_ResultPoint* bottomRight);
     void calculateMinMaxValues();
 };

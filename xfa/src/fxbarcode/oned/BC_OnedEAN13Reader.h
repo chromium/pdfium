@@ -12,13 +12,13 @@ class CBC_OnedEAN13Reader;
 class CBC_OnedEAN13Reader : public CBC_OneDimReader
 {
 public:
-    const static FX_INT32 FIRST_DIGIT_ENCODINGS[10];
+    const static int32_t FIRST_DIGIT_ENCODINGS[10];
     CBC_OnedEAN13Reader();
     virtual ~CBC_OnedEAN13Reader();
 private:
-    void DetermineFirstDigit(CFX_ByteString &result,  FX_INT32 lgPatternFound, FX_INT32 &e);
+    void DetermineFirstDigit(CFX_ByteString &result,  int32_t lgPatternFound, int32_t &e);
 protected:
-    FX_INT32 DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultString, FX_INT32 &e);
+    int32_t DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultString, int32_t &e);
     friend class CBC_OnedUPCAReader;
 };
 #endif

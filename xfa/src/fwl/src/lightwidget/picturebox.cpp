@@ -53,20 +53,20 @@ FWL_ERR CFWL_PictureBox::SetRotation(FX_FLOAT fRotation)
     m_PictureBoxDP.m_fRotation = fRotation;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_PictureBox::GetFlipMode()
+int32_t CFWL_PictureBox::GetFlipMode()
 {
     return m_PictureBoxDP.GetFlipMode((IFWL_Widget*)this);
 }
-FWL_ERR CFWL_PictureBox::SetFlipMode(FX_INT32 iFlipMode)
+FWL_ERR CFWL_PictureBox::SetFlipMode(int32_t iFlipMode)
 {
     m_PictureBoxDP.m_iFlipMode = iFlipMode;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_PictureBox::GetOpacity()
+int32_t CFWL_PictureBox::GetOpacity()
 {
     return m_PictureBoxDP.GetOpacity((IFWL_Widget*)this);
 }
-FWL_ERR CFWL_PictureBox::SetOpacity(FX_INT32 iOpacity)
+FWL_ERR CFWL_PictureBox::SetOpacity(int32_t iOpacity)
 {
     m_PictureBoxDP.m_iOpacity = iOpacity;
     return FWL_ERR_Succeeded;
@@ -120,7 +120,7 @@ CFX_DIBitmap* CFWL_PictureBox::CFWL_PictureBoxDP::GetInitialPicture(IFWL_Widget 
 {
     return m_pBitmap;
 }
-FX_INT32 CFWL_PictureBox::CFWL_PictureBoxDP::GetOpacity(IFWL_Widget *pWidget)
+int32_t CFWL_PictureBox::CFWL_PictureBoxDP::GetOpacity(IFWL_Widget *pWidget)
 {
     return m_iOpacity;
 }
@@ -138,7 +138,7 @@ FWL_ERR CFWL_PictureBox::CFWL_PictureBoxDP::GetMatrix(IFWL_Widget *pWidget, CFX_
     matrix.Translate(m_fOffSetX, m_fOffSetY);
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_PictureBox::CFWL_PictureBoxDP::GetFlipMode(IFWL_Widget *pWidget)
+int32_t CFWL_PictureBox::CFWL_PictureBoxDP::GetFlipMode(IFWL_Widget *pWidget)
 {
     return m_iFlipMode;
 }

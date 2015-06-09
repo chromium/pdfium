@@ -9,7 +9,7 @@
 #include "../../../include/fxcodec/fx_codec.h"
 #include <limits.h>
 #define _STREAM_MAX_SIZE_		20 * 1024 * 1024
-FX_DWORD _A85Decode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
+FX_DWORD _A85Decode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
 {
     dest_size = 0;
     dest_buf = NULL;
@@ -19,7 +19,7 @@ FX_DWORD _A85Decode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_b
     FX_DWORD zcount = 0;
     FX_DWORD pos = 0;
     while (pos < src_size) {
-        FX_BYTE ch = src_buf[pos];
+        uint8_t ch = src_buf[pos];
         if (ch < '!' && ch != '\n' && ch != '\r' && ch != ' ' && ch != '\t') {
             break;
         }
@@ -39,12 +39,12 @@ FX_DWORD _A85Decode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_b
     if (zcount * 4 > UINT_MAX - (pos - zcount)) {
         return (FX_DWORD) - 1;
     }
-    dest_buf = FX_Alloc(FX_BYTE, zcount * 4 + (pos - zcount));
+    dest_buf = FX_Alloc(uint8_t, zcount * 4 + (pos - zcount));
     int state = 0;
-    FX_UINT32 res = 0;
+    uint32_t res = 0;
     pos = dest_size = 0;
     while (pos < src_size) {
-        FX_BYTE ch = src_buf[pos++];
+        uint8_t ch = src_buf[pos++];
         if (ch == '\n' || ch == '\r' || ch == ' ' || ch == '\t') {
             continue;
         }
@@ -61,7 +61,7 @@ FX_DWORD _A85Decode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_b
             state ++;
             if (state == 5) {
                 for (int i = 0; i < 4; i ++) {
-                    dest_buf[dest_size++] = (FX_BYTE)(res >> (3 - i) * 8);
+                    dest_buf[dest_size++] = (uint8_t)(res >> (3 - i) * 8);
                 }
                 state = 0;
                 res = 0;
@@ -74,7 +74,7 @@ FX_DWORD _A85Decode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_b
             res = res * 85 + 84;
         }
         for (i = 0; i < state - 1; i ++) {
-            dest_buf[dest_size++] = (FX_BYTE)(res >> (3 - i) * 8);
+            dest_buf[dest_size++] = (uint8_t)(res >> (3 - i) * 8);
         }
     }
     if (pos < src_size && src_buf[pos] == '>') {
@@ -82,18 +82,18 @@ FX_DWORD _A85Decode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_b
     }
     return pos;
 }
-FX_DWORD _HexDecode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
+FX_DWORD _HexDecode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
 {
     FX_DWORD i;
     for (i = 0; i < src_size; i ++)
         if (src_buf[i] == '>') {
             break;
         }
-    dest_buf = FX_Alloc( FX_BYTE, i / 2 + 1);
+    dest_buf = FX_Alloc( uint8_t, i / 2 + 1);
     dest_size = 0;
     FX_BOOL bFirstDigit = TRUE;
     for (i = 0; i < src_size; i ++) {
-        FX_BYTE ch = src_buf[i];
+        uint8_t ch = src_buf[i];
         if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r') {
             continue;
         }
@@ -122,7 +122,7 @@ FX_DWORD _HexDecode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_b
     }
     return i;
 }
-FX_DWORD RunLengthDecode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
+FX_DWORD RunLengthDecode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
 {
     FX_DWORD i = 0;
     FX_DWORD old;
@@ -149,7 +149,7 @@ FX_DWORD RunLengthDecode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& d
     if (dest_size >= _STREAM_MAX_SIZE_) {
         return -1;
     }
-    dest_buf = FX_Alloc( FX_BYTE, dest_size);
+    dest_buf = FX_Alloc( uint8_t, dest_size);
     i = 0;
     int dest_count = 0;
     while (i < src_size) {
@@ -245,7 +245,7 @@ ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(FX_LPCBYTE src_buf, FX_DWORD 
     return CPDF_ModuleMgr::Get()->GetFlateModule()->CreateDecoder(src_buf, src_size, width, height,
             nComps, bpc, predictor, Colors, BitsPerComponent, Columns);
 }
-FX_DWORD FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_buf, FX_DWORD src_size, CPDF_Dictionary* pParams,
+FX_DWORD FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW, const uint8_t* src_buf, FX_DWORD src_size, CPDF_Dictionary* pParams,
                                   FX_DWORD estimated_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
 {
     int predictor = 0;
@@ -468,7 +468,7 @@ CFX_ByteString PDF_EncodeText(FX_LPCWSTR pString, int len, CFX_CharMap* pCharMap
     dest_buf2 += 2;
     for (int i = 0; i < len; i ++) {
         *dest_buf2++ = pString[i] >> 8;
-        *dest_buf2++ = (FX_BYTE)pString[i];
+        *dest_buf2++ = (uint8_t)pString[i];
     }
     result.ReleaseBuffer(encLen);
     return result;
@@ -488,7 +488,7 @@ CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, FX_BOOL bHex)
     }
     result.AppendChar('(');
     for (int i = 0; i < srclen; i ++) {
-        FX_BYTE ch = src[i];
+        uint8_t ch = src[i];
         if (ch == ')' || ch == '\\' || ch == '(') {
             result.AppendChar('\\');
         } else if (ch == 0x0a) {
@@ -503,7 +503,7 @@ CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, FX_BOOL bHex)
     result.AppendChar(')');
     return result.GetByteString();
 }
-void FlateEncode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
+void FlateEncode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
 {
     CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
     if (pEncoders) {
@@ -518,7 +518,7 @@ void FlateEncode(FX_LPCBYTE src_buf, FX_DWORD src_size, int predictor, int Color
         pEncoders->GetFlateModule()->Encode(src_buf, src_size, predictor, Colors, BitsPerComponent, Columns, dest_buf, dest_size);
     }
 }
-FX_DWORD FlateDecode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
+FX_DWORD FlateDecode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
 {
     CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
     if (pEncoders) {

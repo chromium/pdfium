@@ -38,15 +38,15 @@ FWL_ERR	IFWL_ListBox::Initialize(const CFWL_WidgetImpProperties &properties, IFW
     ((CFWL_ListBoxImp*)m_pData)->SetInterface(this);
     return ((CFWL_ListBoxImp*)m_pData)->Initialize();
 }
-FX_INT32 IFWL_ListBox::CountSelItems()
+int32_t IFWL_ListBox::CountSelItems()
 {
     return ((CFWL_ListBoxImp*)m_pData)->CountSelItems();
 }
-FWL_HLISTITEM IFWL_ListBox::GetSelItem(FX_INT32 nIndexSel)
+FWL_HLISTITEM IFWL_ListBox::GetSelItem(int32_t nIndexSel)
 {
     return ((CFWL_ListBoxImp*)m_pData)->GetSelItem(nIndexSel);
 }
-FX_INT32 IFWL_ListBox::GetSelIndex(FX_INT32 nIndex)
+int32_t IFWL_ListBox::GetSelIndex(int32_t nIndex)
 {
     return ((CFWL_ListBoxImp*)m_pData)->GetSelIndex(nIndex);
 }
@@ -244,13 +244,13 @@ FWL_ERR CFWL_ListBoxImp::SetThemeProvider(IFWL_ThemeProvider *pThemeProvider)
     m_pProperties->m_pThemeProvider = pThemeProvider;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_ListBoxImp::CountSelItems()
+int32_t CFWL_ListBoxImp::CountSelItems()
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, 0);
-    FX_INT32 iRet = 0;
+    int32_t iRet = 0;
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 iCount = pData->CountItems(m_pInterface);
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = pData->CountItems(m_pInterface);
+    for (int32_t i = 0; i < iCount; i ++) {
         FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
         if (!hItem) {
             continue;
@@ -262,13 +262,13 @@ FX_INT32 CFWL_ListBoxImp::CountSelItems()
     }
     return iRet;
 }
-FWL_HLISTITEM CFWL_ListBoxImp::GetSelItem(FX_INT32 nIndexSel)
+FWL_HLISTITEM CFWL_ListBoxImp::GetSelItem(int32_t nIndexSel)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, NULL);
-    FX_INT32 index = 0;
+    int32_t index = 0;
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 iCount = pData->CountItems(m_pInterface);
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = pData->CountItems(m_pInterface);
+    for (int32_t i = 0; i < iCount; i ++) {
         FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
         if (!hItem) {
             return NULL;
@@ -284,13 +284,13 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetSelItem(FX_INT32 nIndexSel)
     }
     return NULL;
 }
-FX_INT32 CFWL_ListBoxImp::GetSelIndex(FX_INT32 nIndex)
+int32_t CFWL_ListBoxImp::GetSelIndex(int32_t nIndex)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, -1);
-    FX_INT32 index = 0;
+    int32_t index = 0;
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 iCount = pData->CountItems(m_pInterface);
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = pData->CountItems(m_pInterface);
+    for (int32_t i = 0; i < iCount; i ++) {
         FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
         if (!hItem) {
             return -1;
@@ -346,9 +346,9 @@ FWL_ERR* CFWL_ListBoxImp::Sort(IFWL_ListBoxCompare *pCom)
 {
     FWL_HLISTITEM hTemp;
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 sz = pData->CountItems(m_pInterface);
-    for (FX_INT32 i = 0; i < sz - 1; i++) {
-        for (FX_INT32 j = i + 1; j < sz; j++) {
+    int32_t sz = pData->CountItems(m_pInterface);
+    for (int32_t i = 0; i < sz - 1; i++) {
+        for (int32_t j = i + 1; j < sz; j++) {
             if (pCom->Compare(pData->GetItem(m_pInterface, i), pData->GetItem(m_pInterface, j)) > 0) {
                 hTemp = pData->GetItem(m_pInterface, i);
                 pData->SetItemIndex(m_pInterface, pData->GetItem(m_pInterface, j), i);
@@ -371,14 +371,14 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetItem(FWL_HLISTITEM hItem, FX_DWORD dwKeyCode)
                 FX_BOOL bHome = dwKeyCode == FWL_VKEY_Home;
                 FX_BOOL bEnd = dwKeyCode == FWL_VKEY_End;
                 IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-                FX_INT32 iDstItem = -1;
+                int32_t iDstItem = -1;
                 if (bUp || bDown) {
-                    FX_INT32 index = pData->GetItemIndex(m_pInterface, hItem);
+                    int32_t index = pData->GetItemIndex(m_pInterface, hItem);
                     iDstItem = dwKeyCode == FWL_VKEY_Up ? index - 1 : index + 1;
                 } else if (bHome) {
                     iDstItem = 0;
                 } else {
-                    FX_INT32 iCount = pData->CountItems(m_pInterface);
+                    int32_t iCount = pData->CountItems(m_pInterface);
                     iDstItem = iCount - 1;
                 }
                 hRet = pData->GetItem(m_pInterface, iDstItem);
@@ -392,16 +392,16 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetItem(FWL_HLISTITEM hItem, FX_DWORD dwKeyCode)
 void CFWL_ListBoxImp::SetSelection(FWL_HLISTITEM hStart, FWL_HLISTITEM hEnd, FX_BOOL bSelected)
 {
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 iStart = pData->GetItemIndex(m_pInterface, hStart);
-    FX_INT32 iEnd = pData->GetItemIndex(m_pInterface, hEnd);
+    int32_t iStart = pData->GetItemIndex(m_pInterface, hStart);
+    int32_t iEnd = pData->GetItemIndex(m_pInterface, hEnd);
     if (iStart > iEnd) {
-        FX_INT32 iTemp = iStart;
+        int32_t iTemp = iStart;
         iStart = iEnd;
         iEnd = iTemp;
     }
     if (bSelected) {
-        FX_INT32 iCount = pData->CountItems(m_pInterface);
-        for (FX_INT32 i = 0; i < iCount; i++ ) {
+        int32_t iCount = pData->CountItems(m_pInterface);
+        for (int32_t i = 0; i < iCount; i++ ) {
             FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
             SetSelectionDirect(hItem, FALSE);
         }
@@ -429,8 +429,8 @@ void CFWL_ListBoxImp::ClearSelection()
 {
     FX_BOOL bMulti = m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection;
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 iCount = pData->CountItems(m_pInterface);
-    for (FX_INT32 i = 0; i < iCount; i++ ) {
+    int32_t iCount = pData->CountItems(m_pInterface);
+    for (int32_t i = 0; i < iCount; i++ ) {
         FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
         FX_DWORD dwState = pData->GetItemStyles(m_pInterface, hItem);
         FX_BOOL bFindSel = dwState & FWL_ITEMSTATE_LTB_Selected;
@@ -450,7 +450,7 @@ void CFWL_ListBoxImp::SelectAll()
         return;
     }
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 iCount = pData->CountItems(m_pInterface);
+    int32_t iCount = pData->CountItems(m_pInterface);
     if (iCount > 0) {
         FWL_HLISTITEM hItemStart = pData->GetItem(m_pInterface, 0);
         FWL_HLISTITEM hItemEnd = pData->GetItem(m_pInterface, iCount - 1);
@@ -460,8 +460,8 @@ void CFWL_ListBoxImp::SelectAll()
 FWL_HLISTITEM CFWL_ListBoxImp::GetFocusedItem()
 {
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 iCount = pData->CountItems(m_pInterface);
-    for (FX_INT32 i = 0; i < iCount; i++) {
+    int32_t iCount = pData->CountItems(m_pInterface);
+    for (int32_t i = 0; i < iCount; i++) {
         FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
         _FWL_RETURN_VALUE_IF_FAIL(hItem, NULL);
         if (pData->GetItemStyles(m_pInterface, hItem) & FWL_ITEMSTATE_LTB_Focused) {
@@ -499,8 +499,8 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy)
         fPosY = m_pVertScrollBar->GetPos();
     }
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 nCount = pData->CountItems(m_pInterface);
-    for (FX_INT32 i = 0; i < nCount; i ++) {
+    int32_t nCount = pData->CountItems(m_pInterface);
+    for (int32_t i = 0; i < nCount; i ++) {
         FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
         if (!hItem) {
             continue;
@@ -610,8 +610,8 @@ void CFWL_ListBoxImp::DrawItems(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTh
     }
     FX_BOOL bMultiCol = m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiColumn;
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 iCount = pData->CountItems(m_pInterface);
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = pData->CountItems(m_pInterface);
+    for (int32_t i = 0; i < iCount; i ++) {
         FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
         if (!hItem) {
             continue;
@@ -641,7 +641,7 @@ void CFWL_ListBoxImp::DrawItems(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTh
         }
     }
 }
-void CFWL_ListBoxImp::DrawItem(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, FWL_HLISTITEM hItem, FX_INT32 Index, const CFX_RectF &rtItem, const CFX_Matrix *pMatrix )
+void CFWL_ListBoxImp::DrawItem(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, FWL_HLISTITEM hItem, int32_t Index, const CFX_RectF &rtItem, const CFX_Matrix *pMatrix )
 {
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
     FX_DWORD dwItemStyles = pData->GetItemStyles(m_pInterface, hItem);
@@ -665,7 +665,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pThe
         param.m_pGraphics = pGraphics;
         param.m_matrix.Concat(*pMatrix);
         param.m_rtPart = rtItem;
-        param.m_dwData = (FX_DWORD)(FX_UINTPTR)(&itemData);
+        param.m_dwData = (FX_DWORD)(uintptr_t)(&itemData);
         CFX_RectF rtFocus(rtItem);
         param.m_pData = &rtFocus;
         if (m_pVertScrollBar && !m_pHorzScrollBar && (dwPartStates & FWL_PARTSTATE_LTB_Focused)) {
@@ -688,7 +688,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pThe
                 param.m_pGraphics = pGraphics;
                 param.m_matrix.Concat(*pMatrix);
                 param.m_rtPart = rtDIB;
-                param.m_dwData = (FX_DWORD)(FX_UINTPTR)(&itemData);
+                param.m_dwData = (FX_DWORD)(uintptr_t)(&itemData);
                 param.m_pImage = pDib;
                 pTheme->DrawBackground(&param);
             }
@@ -710,7 +710,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pThe
             }
             param.m_matrix.Concat(*pMatrix);
             param.m_rtPart = rtCheck;
-            param.m_dwData = (FX_DWORD)(FX_UINTPTR)(&itemData);
+            param.m_dwData = (FX_DWORD)(uintptr_t)(&itemData);
             pTheme->DrawBackground(&param);
         }
         CFX_WideString wsText;
@@ -733,7 +733,7 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pThe
         textParam.m_wsText = wsText;
         textParam.m_dwTTOStyles = m_dwTTOStyles;
         textParam.m_iTTOAlign = m_iTTOAligns;
-        textParam.m_dwData = (FX_DWORD)(FX_UINTPTR)(&itemData);
+        textParam.m_dwData = (FX_DWORD)(uintptr_t)(&itemData);
         pTheme->DrawText(&textParam);
     }
 }
@@ -757,8 +757,8 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize )
         IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
         if (!bAutoSize) {
         }
-        FX_INT32 iCount = pData->CountItems(m_pInterface);
-        for (FX_INT32 i = 0; i < iCount; i ++) {
+        int32_t iCount = pData->CountItems(m_pInterface);
+        for (int32_t i = 0; i < iCount; i ++) {
             FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
             CFWL_ThemePart itemPart;
             itemPart.m_pWidget = m_pInterface;
@@ -795,8 +795,8 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize )
         if (bHasIcon) {
             fWidth += m_fItemHeight;
         }
-        FX_INT32 iCount = pData->CountItems(m_pInterface);
-        for (FX_INT32 i = 0; i < iCount; i ++) {
+        int32_t iCount = pData->CountItems(m_pInterface);
+        for (int32_t i = 0; i < iCount; i ++) {
             FWL_HLISTITEM htem = pData->GetItem(m_pInterface, i);
             GetItemSize(fs, htem, fWidth, m_fItemHeight, bAutoSize);
         }
@@ -917,8 +917,8 @@ FX_FLOAT CFWL_ListBoxImp::GetMaxTextWidth()
 {
     FX_FLOAT fRet = 0.0f;
     IFWL_ListBoxDP *pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-    FX_INT32 iCount = pData->CountItems(m_pInterface);
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = pData->CountItems(m_pInterface);
+    for (int32_t i = 0; i < iCount; i ++) {
         FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
         if (!hItem) {
             continue;
@@ -974,8 +974,8 @@ void CFWL_ListBoxImp::ProcessSelChanged()
     CFWL_EvtLtbSelChanged selEvent;
     selEvent.m_pSrcTarget = m_pInterface;
     CFX_Int32Array arrSels;
-    FX_INT32 iCount = CountSelItems();
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = CountSelItems();
+    for (int32_t i = 0; i < iCount; i ++) {
         FWL_HLISTITEM item = GetSelItem(i);
         if (item == NULL) {
             continue;
@@ -988,14 +988,14 @@ CFWL_ListBoxImpDelegate::CFWL_ListBoxImpDelegate(CFWL_ListBoxImp *pOwner)
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
     if (!m_pOwner->IsEnabled()) {
         return 1;
     }
     FX_DWORD dwMsgCode = pMessage->GetClassID();
-    FX_INT32 iRet = 1;
+    int32_t iRet = 1;
     switch (dwMsgCode) {
         case FWL_MSGHASH_SetFocus:
         case FWL_MSGHASH_KillFocus: {

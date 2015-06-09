@@ -40,7 +40,7 @@ FX_BOOL CXFA_FFBarcode::LoadWidget()
     m_pNormalWidget->UnlockUpdate();
     return CXFA_FFField::LoadWidget();
 }
-void CXFA_FFBarcode::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFBarcode::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;
@@ -69,7 +69,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty()
     XFA_LPCBARCODETYPEENUMINFO pBarcodeTypeInfo = XFA_GetBarcodeTypeByName(wsType);
     pBarCodeWidget->SetType(pBarcodeTypeInfo->eBCType);
     CXFA_WidgetAcc *pAcc = GetDataAcc();
-    FX_INT32 intVal;
+    int32_t intVal;
     FX_CHAR  charVal;
     FX_BOOL  boolVal;
     FX_FLOAT floatVal;
@@ -107,7 +107,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty()
         pBarCodeWidget->SetTruncated(boolVal);
     }
     if (pAcc->GetBarcodeAttribute_WideNarrowRatio(floatVal))	{
-        pBarCodeWidget->SetWideNarrowRatio((FX_INT32)floatVal);
+        pBarCodeWidget->SetWideNarrowRatio((int32_t)floatVal);
     }
     if (pBarcodeTypeInfo->eName == XFA_BARCODETYPE_code3Of9
             || pBarcodeTypeInfo->eName == XFA_BARCODETYPE_ean8
@@ -199,17 +199,17 @@ extern const XFA_BARCODETYPEENUMINFO g_XFABarCodeTypeEnumData[] = {
     {0xfaeaf37f, L"postUSStandard", XFA_BARCODETYPE_postUSStandard, BC_UNKNOWN},
     {0xfb48155c, L"code3Of9", XFA_BARCODETYPE_code3Of9, BC_CODE39},
 };
-extern const FX_INT32 g_iXFABarcodeTypeCount = sizeof(g_XFABarCodeTypeEnumData) / sizeof(XFA_BARCODETYPEENUMINFO);
+extern const int32_t g_iXFABarcodeTypeCount = sizeof(g_XFABarCodeTypeEnumData) / sizeof(XFA_BARCODETYPEENUMINFO);
 static XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(FX_WSTR wsName)
 {
-    FX_INT32 iLength = wsName.GetLength();
+    int32_t iLength = wsName.GetLength();
     if (iLength == 0) {
         return NULL;
     }
-    FX_UINT32 uHash = FX_HashCode_String_GetW(wsName.GetPtr(), iLength, TRUE);
-    FX_INT32 iStart = 0, iEnd = g_iXFABarcodeTypeCount - 1;
+    uint32_t uHash = FX_HashCode_String_GetW(wsName.GetPtr(), iLength, TRUE);
+    int32_t iStart = 0, iEnd = g_iXFABarcodeTypeCount - 1;
     do {
-        FX_INT32 iMid = (iStart + iEnd) / 2;
+        int32_t iMid = (iStart + iEnd) / 2;
         XFA_LPCBARCODETYPEENUMINFO pInfo = g_XFABarCodeTypeEnumData + iMid;
         if (uHash == pInfo->uHash) {
             return pInfo;

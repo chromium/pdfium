@@ -18,7 +18,7 @@ struct CPWL_Color;
 template<class T> T PWL_MIN (const T & i, const T & j) { return ((i < j) ? i : j); }
 template<class T> T PWL_MAX (const T & i, const T & j) { return ((i > j) ? i : j); }
 
-#define PWL_PDF2WIN(color)					(FX_BYTE(color*255))
+#define PWL_PDF2WIN(color)					(uint8_t(color*255))
 #define PWL_WIN2PDF(color)					((FX_FLOAT)((FX_FLOAT)color/255.0f))
 
 #define PWL_MAKEDWORD(low,high)				((FX_DWORD)((FX_WORD)(low) | (FX_DWORD)(((FX_WORD)(high))<<16))) 
@@ -119,17 +119,17 @@ public:
 	static CPDF_Rect						MaxRect(const CPDF_Rect & rect1,const CPDF_Rect & rect2);
 	static CPDF_Rect						OffsetRect(const CPDF_Rect & rect,FX_FLOAT x,FX_FLOAT y);
 	static CPDF_Point						OffsetPoint(const  CPDF_Point & point,FX_FLOAT x,FX_FLOAT y);
-	static FX_COLORREF						PWLColorToFXColor(const CPWL_Color& color, FX_INT32 nTransparancy = 255);
+	static FX_COLORREF						PWLColorToFXColor(const CPWL_Color& color, int32_t nTransparancy = 255);
 	static FX_BOOL							IsBlackOrWhite(const CPWL_Color& color);
 	static CPWL_Color						GetReverseColor(const CPWL_Color& color);
 
 	static CFX_ByteString					GetColorAppStream(const CPWL_Color & color,const FX_BOOL & bFillOrStroke = TRUE);
 	static CFX_ByteString					GetBorderAppStream(const CPDF_Rect & rect, FX_FLOAT fWidth,
 												const CPWL_Color & color, const CPWL_Color & crLeftTop, const CPWL_Color & crRightBottom,
-												FX_INT32 nStyle, const CPWL_Dash & dash);
+												int32_t nStyle, const CPWL_Dash & dash);
 	static CFX_ByteString					GetCircleBorderAppStream(const CPDF_Rect & rect, FX_FLOAT fWidth,
 												const CPWL_Color & color, const CPWL_Color & crLeftTop, const CPWL_Color & crRightBottom,
-												FX_INT32 nStyle, const CPWL_Dash & dash);
+												int32_t nStyle, const CPWL_Dash & dash);
 	static CFX_ByteString					GetRectFillAppStream(const CPDF_Rect & rect,const CPWL_Color & color);
 	static CFX_ByteString					GetCircleFillAppStream(const CPDF_Rect & rect,const CPWL_Color & color);
 
@@ -140,12 +140,12 @@ public:
 														const CFX_WideString & sLabel,														
 														const CPWL_Color & crText,
 														FX_FLOAT fFontSize,
-														FX_INT32 nLayOut);
+														int32_t nLayOut);
 	static CFX_ByteString					GetCheckBoxAppStream(const CPDF_Rect & rcBBox,
-														FX_INT32 nStyle,
+														int32_t nStyle,
 														const CPWL_Color & crText);
 	static CFX_ByteString					GetRadioButtonAppStream(const CPDF_Rect & rcBBox,
-														FX_INT32 nStyle,
+														int32_t nStyle,
 														const CPWL_Color & crText);
 
 	static CFX_ByteString					GetEditAppStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset, const CPVT_WordRange * pRange = NULL, 
@@ -156,12 +156,12 @@ public:
 														const CPDF_Point & ptOffset,
 														const CPVT_WordRange * pRange = NULL);
 	static CFX_ByteString					GetTextAppStream(const CPDF_Rect & rcBBox,IFX_Edit_FontMap * pFontMap,
-														const CFX_WideString & sText, FX_INT32 nAlignmentH, FX_INT32 nAlignmentV,
+														const CFX_WideString & sText, int32_t nAlignmentH, int32_t nAlignmentV,
 														FX_FLOAT fFontSize, FX_BOOL bMultiLine, FX_BOOL bAutoReturn, const CPWL_Color & crText);
 	static CFX_ByteString					GetDropButtonAppStream(const CPDF_Rect & rcBBox);
 
 	static void								DrawFillRect(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,const CPDF_Rect & rect,
-														const CPWL_Color & color, FX_INT32 nTransparancy);
+														const CPWL_Color & color, int32_t nTransparancy);
 	static void								DrawFillRect(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 														const CPDF_Rect & rect,const FX_COLORREF & color);
 	static void								DrawStrokeRect(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,const CPDF_Rect & rect,
@@ -171,12 +171,12 @@ public:
 	static void								DrawBorder(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 												const CPDF_Rect & rect, FX_FLOAT fWidth,
 												const CPWL_Color & color, const CPWL_Color & crLeftTop, const CPWL_Color & crRightBottom,
-												FX_INT32 nStyle, const CPWL_Dash & dash, FX_INT32 nTransparancy);
+												int32_t nStyle, const CPWL_Dash & dash, int32_t nTransparancy);
 	static void								DrawFillArea(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
-														const CPDF_Point* pPts, FX_INT32 nCount, const FX_COLORREF& color);
+														const CPDF_Point* pPts, int32_t nCount, const FX_COLORREF& color);
 	static void								DrawShadow(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 														FX_BOOL bVertical, FX_BOOL bHorizontal, CPDF_Rect rect,
-														FX_INT32 nTransparancy, FX_INT32 nStartGray, FX_INT32 nEndGray);
+														int32_t nTransparancy, int32_t nStartGray, int32_t nEndGray);
 	static void								DrawEditSpellCheck(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, IFX_Edit* pEdit, 
 														const CPDF_Rect& rcClip, const CPDF_Point& ptOffset, const CPVT_WordRange* pRange, 
 														IPWL_SpellCheck* pSpellCheck);
@@ -190,18 +190,18 @@ public:
 	static void								ConvertCMYK2GRAY(FX_FLOAT dC,FX_FLOAT dM,FX_FLOAT dY,FX_FLOAT dK,FX_FLOAT &dGray);
 	static void								ConvertGRAY2CMYK(FX_FLOAT dGray,FX_FLOAT &dC,FX_FLOAT &dM,FX_FLOAT &dY,FX_FLOAT &dK);
 
-	static void								PWLColorToARGB(const CPWL_Color& color, FX_INT32& alpha, FX_FLOAT& red, FX_FLOAT& green, FX_FLOAT& blue);
+	static void								PWLColorToARGB(const CPWL_Color& color, int32_t& alpha, FX_FLOAT& red, FX_FLOAT& green, FX_FLOAT& blue);
 
 public:
-	static CFX_ByteString					GetIconAppStream(FX_INT32 nType, const CPDF_Rect& rect, const CPWL_Color& crFill, 
+	static CFX_ByteString					GetIconAppStream(int32_t nType, const CPDF_Rect& rect, const CPWL_Color& crFill, 
 												const CPWL_Color& crStroke = PWL_DEFAULT_BLACKCOLOR);
 	static void								DrawIconAppStream(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
-												FX_INT32 nType, const CPDF_Rect & rect, const CPWL_Color& crFill, 
-												const CPWL_Color& crStroke, const FX_INT32 nTransparancy);
+												int32_t nType, const CPDF_Rect & rect, const CPWL_Color& crFill, 
+												const CPWL_Color& crStroke, const int32_t nTransparancy);
 
 private:
-	static CFX_ByteString					GetAppStreamFromArray(const CPWL_PathData* pPathData, FX_INT32 nCount);
-	static void								GetPathDataFromArray(CFX_PathData& path, const CPWL_PathData* pPathData, FX_INT32 nCount);
+	static CFX_ByteString					GetAppStreamFromArray(const CPWL_PathData* pPathData, int32_t nCount);
+	static void								GetPathDataFromArray(CFX_PathData& path, const CPWL_PathData* pPathData, int32_t nCount);
 
 	static CFX_ByteString					GetAppStream_Check(const CPDF_Rect & rcBBox, const CPWL_Color & crText);
 	static CFX_ByteString					GetAppStream_Circle(const CPDF_Rect & rcBBox, const CPWL_Color & crText);

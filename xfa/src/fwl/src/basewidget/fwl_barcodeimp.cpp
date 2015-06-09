@@ -113,7 +113,7 @@ FWL_ERR CFWL_BarcodeImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *p
         if (pMatrix) {
             mt.Concat(*pMatrix);
         }
-        FX_INT32 errorCode = 0;
+        int32_t errorCode = 0;
         _FWL_RETURN_VALUE_IF_FAIL(m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix, errorCode), FWL_ERR_Indefinite);
         return FWL_ERR_Succeeded;
     }
@@ -147,8 +147,8 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache()
     if(pFontColor) {
         m_pBarcodeEngine->SetFontColor(*pFontColor);
     }
-    m_pBarcodeEngine->SetHeight(FX_INT32(m_rtClient.height));
-    m_pBarcodeEngine->SetWidth(FX_INT32(m_rtClient.width));
+    m_pBarcodeEngine->SetHeight(int32_t(m_rtClient.height));
+    m_pBarcodeEngine->SetWidth(int32_t(m_rtClient.width));
     FX_DWORD dwAttributeMask = pData->GetBarcodeAttributeMask();
     if (dwAttributeMask & FWL_BCDATTRIBUTE_CHARENCODING)	{
         m_pBarcodeEngine->SetCharEncoding			(pData->GetCharEncoding());
@@ -189,7 +189,7 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache()
     if (dwAttributeMask & FWL_BCDATTRIBUTE_TRUNCATED) {
         m_pBarcodeEngine->SetTruncated				(pData->GetTruncated());
     }
-    FX_INT32 errorCode = 0;
+    int32_t errorCode = 0;
     m_dwStatus = m_pBarcodeEngine->Encode(wsText, TRUE, errorCode) ? XFA_BCS_EncodeSuccess : 0;
 }
 void CFWL_BarcodeImp::CreateBarcodeEngine()

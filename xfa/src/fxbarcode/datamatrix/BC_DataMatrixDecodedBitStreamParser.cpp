@@ -42,26 +42,26 @@ const FX_CHAR CBC_DataMatrixDecodedBitStreamParser::TEXT_SHIFT3_SET_CHARS[] = {
     '\'', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
     'O',  'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '{', '|', '}', '~', (FX_CHAR) 127
 };
-const FX_INT32 CBC_DataMatrixDecodedBitStreamParser::PAD_ENCODE = 0;
-const FX_INT32 CBC_DataMatrixDecodedBitStreamParser::ASCII_ENCODE = 1;
-const FX_INT32 CBC_DataMatrixDecodedBitStreamParser::C40_ENCODE = 2;
-const FX_INT32 CBC_DataMatrixDecodedBitStreamParser::TEXT_ENCODE = 3;
-const FX_INT32 CBC_DataMatrixDecodedBitStreamParser::ANSIX12_ENCODE = 4;
-const FX_INT32 CBC_DataMatrixDecodedBitStreamParser::EDIFACT_ENCODE = 5;
-const FX_INT32 CBC_DataMatrixDecodedBitStreamParser::BASE256_ENCODE = 6;
+const int32_t CBC_DataMatrixDecodedBitStreamParser::PAD_ENCODE = 0;
+const int32_t CBC_DataMatrixDecodedBitStreamParser::ASCII_ENCODE = 1;
+const int32_t CBC_DataMatrixDecodedBitStreamParser::C40_ENCODE = 2;
+const int32_t CBC_DataMatrixDecodedBitStreamParser::TEXT_ENCODE = 3;
+const int32_t CBC_DataMatrixDecodedBitStreamParser::ANSIX12_ENCODE = 4;
+const int32_t CBC_DataMatrixDecodedBitStreamParser::EDIFACT_ENCODE = 5;
+const int32_t CBC_DataMatrixDecodedBitStreamParser::BASE256_ENCODE = 6;
 CBC_DataMatrixDecodedBitStreamParser::CBC_DataMatrixDecodedBitStreamParser()
 {
 }
 CBC_DataMatrixDecodedBitStreamParser::~CBC_DataMatrixDecodedBitStreamParser()
 {
 }
-CBC_CommonDecoderResult *CBC_DataMatrixDecodedBitStreamParser::Decode(CFX_ByteArray &bytes, FX_INT32 &e)
+CBC_CommonDecoderResult *CBC_DataMatrixDecodedBitStreamParser::Decode(CFX_ByteArray &bytes, int32_t &e)
 {
     CBC_CommonBitSource bits(&bytes);
     CFX_ByteString result;
     CFX_ByteString resultTrailer;
     CFX_Int32Array byteSegments;
-    FX_INT32 mode = ASCII_ENCODE;
+    int32_t mode = ASCII_ENCODE;
     do {
         if (mode == 1) {
             mode = DecodeAsciiSegment(&bits, result, resultTrailer, e);
@@ -104,12 +104,12 @@ CBC_CommonDecoderResult *CBC_DataMatrixDecodedBitStreamParser::Decode(CFX_ByteAr
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return tempCp;
 }
-FX_INT32 CBC_DataMatrixDecodedBitStreamParser::DecodeAsciiSegment(CBC_CommonBitSource *bits, CFX_ByteString &result, CFX_ByteString &resultTrailer, FX_INT32 &e)
+int32_t CBC_DataMatrixDecodedBitStreamParser::DecodeAsciiSegment(CBC_CommonBitSource *bits, CFX_ByteString &result, CFX_ByteString &resultTrailer, int32_t &e)
 {
     FX_CHAR buffer[128];
     FX_BOOL upperShift = FALSE;
     do {
-        FX_INT32 oneByte = bits->ReadBits(8, e);
+        int32_t oneByte = bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, 0);
         if (oneByte == 0) {
             e = BCExceptionFormatException;
@@ -122,7 +122,7 @@ FX_INT32 CBC_DataMatrixDecodedBitStreamParser::DecodeAsciiSegment(CBC_CommonBitS
         } else if (oneByte == 129) {
             return PAD_ENCODE;
         } else if (oneByte <= 229) {
-            FX_INT32 value = oneByte - 130;
+            int32_t value = oneByte - 130;
 #if defined(_FX_WINAPI_PARTITION_APP_)
             memset(buffer, 0, sizeof(FX_CHAR) * 128);
             _itoa_s(value, buffer, 128, 10);
@@ -174,7 +174,7 @@ FX_INT32 CBC_DataMatrixDecodedBitStreamParser::DecodeAsciiSegment(CBC_CommonBitS
     } while (bits->Available() > 0);
     return ASCII_ENCODE;
 }
-void CBC_DataMatrixDecodedBitStreamParser::DecodeC40Segment(CBC_CommonBitSource *bits, CFX_ByteString &result, FX_INT32 &e)
+void CBC_DataMatrixDecodedBitStreamParser::DecodeC40Segment(CBC_CommonBitSource *bits, CFX_ByteString &result, int32_t &e)
 {
     FX_BOOL upperShift = FALSE;
     CFX_Int32Array cValues;
@@ -183,18 +183,18 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeC40Segment(CBC_CommonBitSource 
         if (bits->Available() == 8) {
             return;
         }
-        FX_INT32 firstByte = bits->ReadBits(8, e);
+        int32_t firstByte = bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         if (firstByte == 254) {
             return;
         }
-        FX_INT32 tempp = bits->ReadBits(8, e);
+        int32_t tempp = bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         ParseTwoBytes(firstByte, tempp, cValues);
-        FX_INT32 shift = 0;
-        FX_INT32 i;
+        int32_t shift = 0;
+        int32_t i;
         for (i = 0; i < 3; i++) {
-            FX_INT32 cValue = cValues[i];
+            int32_t cValue = cValues[i];
             switch (shift) {
                 case 0:
                     if (cValue < 3) {
@@ -258,26 +258,26 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeC40Segment(CBC_CommonBitSource 
         }
     } while (bits->Available() > 0);
 }
-void CBC_DataMatrixDecodedBitStreamParser::DecodeTextSegment(CBC_CommonBitSource *bits, CFX_ByteString &result, FX_INT32 &e)
+void CBC_DataMatrixDecodedBitStreamParser::DecodeTextSegment(CBC_CommonBitSource *bits, CFX_ByteString &result, int32_t &e)
 {
     FX_BOOL upperShift = FALSE;
     CFX_Int32Array cValues;
     cValues.SetSize(3);
-    FX_INT32 shift = 0;
+    int32_t shift = 0;
     do {
         if (bits->Available() == 8) {
             return;
         }
-        FX_INT32 firstByte = bits->ReadBits(8, e);
+        int32_t firstByte = bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         if (firstByte == 254) {
             return;
         }
-        FX_INT32 inTp = bits->ReadBits(8, e);
+        int32_t inTp = bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         ParseTwoBytes(firstByte, inTp, cValues);
-        for (FX_INT32 i = 0; i < 3; i++) {
-            FX_INT32 cValue = cValues[i];
+        for (int32_t i = 0; i < 3; i++) {
+            int32_t cValue = cValues[i];
             switch (shift) {
                 case 0:
                     if (cValue < 3) {
@@ -347,7 +347,7 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeTextSegment(CBC_CommonBitSource
         }
     } while (bits->Available() > 0);
 }
-void CBC_DataMatrixDecodedBitStreamParser::DecodeAnsiX12Segment(CBC_CommonBitSource *bits, CFX_ByteString &result, FX_INT32 &e)
+void CBC_DataMatrixDecodedBitStreamParser::DecodeAnsiX12Segment(CBC_CommonBitSource *bits, CFX_ByteString &result, int32_t &e)
 {
     CFX_Int32Array cValues;
     cValues.SetSize(3);
@@ -355,17 +355,17 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeAnsiX12Segment(CBC_CommonBitSou
         if (bits->Available() == 8) {
             return;
         }
-        FX_INT32 firstByte = bits->ReadBits(8, e);
+        int32_t firstByte = bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         if (firstByte == 254) {
             return;
         }
-        FX_INT32 iTemp1 = bits->ReadBits(8, e);
+        int32_t iTemp1 = bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         ParseTwoBytes(firstByte, iTemp1, cValues);
-        FX_INT32 i;
+        int32_t i;
         for (i = 0; i < 3; i++) {
-            FX_INT32 cValue = cValues[i];
+            int32_t cValue = cValues[i];
             if (cValue == 0) {
                 BC_FX_ByteString_Append(result, 1, '\r');
             } else if (cValue == 1) {
@@ -385,17 +385,17 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeAnsiX12Segment(CBC_CommonBitSou
         }
     } while (bits->Available() > 0);
 }
-void CBC_DataMatrixDecodedBitStreamParser::ParseTwoBytes(FX_INT32 firstByte, FX_INT32 secondByte, CFX_Int32Array &result)
+void CBC_DataMatrixDecodedBitStreamParser::ParseTwoBytes(int32_t firstByte, int32_t secondByte, CFX_Int32Array &result)
 {
-    FX_INT32 fullBitValue = (firstByte << 8) + secondByte - 1;
-    FX_INT32 temp = fullBitValue / 1600;
+    int32_t fullBitValue = (firstByte << 8) + secondByte - 1;
+    int32_t temp = fullBitValue / 1600;
     result[0] = temp;
     fullBitValue -= temp * 1600;
     temp = fullBitValue / 40;
     result[1] = temp;
     result[2] = fullBitValue - temp * 40;
 }
-void CBC_DataMatrixDecodedBitStreamParser::DecodeEdifactSegment(CBC_CommonBitSource *bits, CFX_ByteString &result, FX_INT32 &e)
+void CBC_DataMatrixDecodedBitStreamParser::DecodeEdifactSegment(CBC_CommonBitSource *bits, CFX_ByteString &result, int32_t &e)
 {
     FX_CHAR buffer[128];
     FX_BOOL unlatch = FALSE;
@@ -403,9 +403,9 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeEdifactSegment(CBC_CommonBitSou
         if (bits->Available() <= 16) {
             return;
         }
-        FX_INT32 i;
+        int32_t i;
         for (i = 0; i < 4; i++) {
-            FX_INT32 edifactValue = bits->ReadBits(6, e);
+            int32_t edifactValue = bits->ReadBits(6, e);
             BC_EXCEPTION_CHECK_ReturnVoid(e);
             if (edifactValue == 0x1F) {
                 unlatch = TRUE;
@@ -425,19 +425,19 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeEdifactSegment(CBC_CommonBitSou
         }
     } while (!unlatch && bits->Available() > 0);
 }
-void CBC_DataMatrixDecodedBitStreamParser::DecodeBase256Segment(CBC_CommonBitSource *bits, CFX_ByteString &result, CFX_Int32Array &byteSegments, FX_INT32 &e)
+void CBC_DataMatrixDecodedBitStreamParser::DecodeBase256Segment(CBC_CommonBitSource *bits, CFX_ByteString &result, CFX_Int32Array &byteSegments, int32_t &e)
 {
-    FX_INT32 codewordPosition = 1 + bits->getByteOffset();
-    FX_INT32 iTmp =  bits->ReadBits(8, e);
+    int32_t codewordPosition = 1 + bits->getByteOffset();
+    int32_t iTmp =  bits->ReadBits(8, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    FX_INT32 d1 = Unrandomize255State(iTmp, codewordPosition++);
-    FX_INT32 count;
+    int32_t d1 = Unrandomize255State(iTmp, codewordPosition++);
+    int32_t count;
     if (d1 == 0) {
         count = bits->Available() / 8;
     } else if (d1 < 250) {
         count = d1;
     } else {
-        FX_INT32 iTmp3 = bits->ReadBits(8, e);
+        int32_t iTmp3 = bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         count = 250 * (d1 - 249) + Unrandomize255State(iTmp3, codewordPosition++);
     }
@@ -447,14 +447,14 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeBase256Segment(CBC_CommonBitSou
     }
     CFX_ByteArray *bytes = FX_NEW CFX_ByteArray();
     bytes->SetSize(count);
-    FX_INT32 i;
+    int32_t i;
     for (i = 0; i < count; i++) {
         if (bits->Available() < 8) {
             e  = BCExceptionFormatException;
             delete bytes;
             return;
         }
-        FX_INT32 iTemp5 = bits->ReadBits(8, e);
+        int32_t iTemp5 = bits->ReadBits(8, e);
         if (e != BCExceptionNO) {
             delete bytes;
             return;
@@ -464,9 +464,9 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeBase256Segment(CBC_CommonBitSou
     BC_FX_ByteString_Append(result, *bytes);
     delete bytes;
 }
-FX_BYTE CBC_DataMatrixDecodedBitStreamParser::Unrandomize255State(FX_INT32 randomizedBase256Codeword, FX_INT32 base256CodewordPosition)
+uint8_t CBC_DataMatrixDecodedBitStreamParser::Unrandomize255State(int32_t randomizedBase256Codeword, int32_t base256CodewordPosition)
 {
-    FX_INT32 pseudoRandomNumber = ((149 * base256CodewordPosition) % 255) + 1;
-    FX_INT32 tempVariable = randomizedBase256Codeword - pseudoRandomNumber;
-    return (FX_BYTE) (tempVariable >= 0 ? tempVariable : tempVariable + 256);
+    int32_t pseudoRandomNumber = ((149 * base256CodewordPosition) % 255) + 1;
+    int32_t tempVariable = randomizedBase256Codeword - pseudoRandomNumber;
+    return (uint8_t) (tempVariable >= 0 ? tempVariable : tempVariable + 256);
 }

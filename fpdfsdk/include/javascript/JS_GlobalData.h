@@ -75,7 +75,7 @@ public:
 	FX_BOOL								SetGlobalVariablePersistent(FX_LPCSTR propname, FX_BOOL bPersistent);
 	FX_BOOL								DeleteGlobalVariable(FX_LPCSTR propname);
 	
-	FX_INT32							GetSize() const;
+	int32_t							GetSize() const;
 	CJS_GlobalData_Element*				GetAt(int index) const;
 
 private:
@@ -85,8 +85,8 @@ private:
 	CJS_GlobalData_Element*				GetGlobalVariable(FX_LPCSTR propname);	
 	int									FindGlobalVariable(FX_LPCSTR propname);
 
-	void								LoadFileBuffer(FX_LPCWSTR sFilePath, FX_LPBYTE& pBuffer, FX_INT32& nLength);
-	void								WriteFileBuffer(FX_LPCWSTR sFilePath, FX_LPCSTR pBuffer, FX_INT32 nLength);
+	void								LoadFileBuffer(FX_LPCWSTR sFilePath, FX_LPBYTE& pBuffer, int32_t& nLength);
+	void								WriteFileBuffer(FX_LPCWSTR sFilePath, FX_LPCSTR pBuffer, int32_t nLength);
 	void								MakeByteString(const CFX_ByteString& name, CJS_KeyValue* pData, CFX_BinaryBuf& sData);
 
 private:

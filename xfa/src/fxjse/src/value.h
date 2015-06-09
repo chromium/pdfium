@@ -128,12 +128,12 @@ public:
         v8::Local<v8::Value> hValue = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
         return static_cast<FXJSE_DOUBLE>(hValue->NumberValue());
     }
-    V8_INLINE FX_INT32		ToInteger()	const
+    V8_INLINE int32_t		ToInteger()	const
     {
         ASSERT(!m_hValue.IsEmpty());
         CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
         v8::Local<v8::Value> hValue = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
-        return static_cast<FX_INT32>(hValue->NumberValue());
+        return static_cast<int32_t>(hValue->NumberValue());
     }
     V8_INLINE void			ToString(CFX_ByteString& szStrOutput) const
     {
@@ -164,7 +164,7 @@ public:
         v8::Local<v8::Value> hValue = v8::Boolean::New(m_pIsolate, bBoolean != FALSE);
         m_hValue.Reset(m_pIsolate, hValue);
     }
-    V8_INLINE void SetInteger(FX_INT32 nInteger)
+    V8_INLINE void SetInteger(int32_t nInteger)
     {
         CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
         v8::Local<v8::Value> hValue = v8::Integer::New(m_pIsolate, nInteger);
@@ -192,18 +192,18 @@ public:
         m_hValue.Reset(m_pIsolate, hValue);
     }
     void SetHostObject(FX_LPVOID lpObject, CFXJSE_Class* lpClass);
-    void SetArray(FX_UINT32 uValueCount, CFXJSE_Value** rgValues);
+    void SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues);
     void SetDate(FXJSE_DOUBLE dDouble);
 public:
     FX_BOOL GetObjectProperty(FX_BSTR	szPropName,	CFXJSE_Value* lpPropValue);
     FX_BOOL SetObjectProperty(FX_BSTR	szPropName,	CFXJSE_Value* lpPropValue);
-    FX_BOOL GetObjectProperty(FX_UINT32	uPropIdx,	CFXJSE_Value* lpPropValue);
-    FX_BOOL SetObjectProperty(FX_UINT32	uPropIdx,	CFXJSE_Value* lpPropValue);
+    FX_BOOL GetObjectProperty(uint32_t	uPropIdx,	CFXJSE_Value* lpPropValue);
+    FX_BOOL SetObjectProperty(uint32_t	uPropIdx,	CFXJSE_Value* lpPropValue);
     FX_BOOL DeleteObjectProperty(FX_BSTR szPropName);
     FX_BOOL HasObjectOwnProperty(FX_BSTR   szPropName, FX_BOOL	bUseTypeGetter);
     FX_BOOL SetObjectOwnProperty(FX_BSTR   szPropName, CFXJSE_Value* lpPropValue);
     FX_BOOL	SetFunctionBind(CFXJSE_Value* lpOldFunction, CFXJSE_Value* lpNewThis);
-    FX_BOOL Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, FX_UINT32 nArgCount, FXJSE_HVALUE* lpArgs);
+    FX_BOOL Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, uint32_t nArgCount, FXJSE_HVALUE* lpArgs);
 public:
     V8_INLINE v8::Isolate* GetIsolate()	const
     {

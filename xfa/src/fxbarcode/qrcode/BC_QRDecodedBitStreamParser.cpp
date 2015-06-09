@@ -42,7 +42,7 @@ CBC_QRDecodedBitStreamParser::~CBC_QRDecodedBitStreamParser()
 {
 }
 CBC_CommonDecoderResult* CBC_QRDecodedBitStreamParser::Decode(CFX_ByteArray *bytes, CBC_QRCoderVersion *version,
-        CBC_QRCoderErrorCorrectionLevel* ecLevel, FX_INT32 byteModeDecode, FX_INT32 &e)
+        CBC_QRCoderErrorCorrectionLevel* ecLevel, int32_t byteModeDecode, int32_t &e)
 {
     CBC_CommonBitSource bits(bytes);
     CFX_ByteString result;
@@ -54,7 +54,7 @@ CBC_CommonDecoderResult* CBC_QRDecodedBitStreamParser::Decode(CFX_ByteArray *byt
         if(bits.Available() < 4) {
             mode = CBC_QRCoderMode::sTERMINATOR;
         } else {
-            FX_INT32 iTemp1 = bits.ReadBits(4, e);
+            int32_t iTemp1 = bits.ReadBits(4, e);
             BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
             mode = CBC_QRCoderMode::ForBits(iTemp1, e);
             BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
@@ -70,7 +70,7 @@ CBC_CommonDecoderResult* CBC_QRDecodedBitStreamParser::Decode(CFX_ByteArray *byt
                 bits.ReadBits(16, e);
                 BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
             } else if(mode == CBC_QRCoderMode::sECI) {
-                FX_INT32 value = ParseECIValue(&bits, e);
+                int32_t value = ParseECIValue(&bits, e);
                 BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
                 currentCharacterSetECI = CBC_CommonCharacterSetECI::GetCharacterSetECIByValue(value);
             } else {
@@ -78,9 +78,9 @@ CBC_CommonDecoderResult* CBC_QRDecodedBitStreamParser::Decode(CFX_ByteArray *byt
                     bits.ReadBits(4, e);
                     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
                 }
-                FX_INT32 numBits = mode->GetCharacterCountBits(version, e);
+                int32_t numBits = mode->GetCharacterCountBits(version, e);
                 BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-                FX_INT32 count = bits.ReadBits(numBits, e);
+                int32_t count = bits.ReadBits(numBits, e);
                 BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
                 if(mode == CBC_QRCoderMode::sNUMERIC) {
                     DecodeNumericSegment(&bits, result, count, e);
@@ -109,46 +109,46 @@ CBC_CommonDecoderResult* CBC_QRDecodedBitStreamParser::Decode(CFX_ByteArray *byt
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return tempCd;
 }
-void CBC_QRDecodedBitStreamParser::DecodeGBKSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, FX_INT32 count, FX_INT32 &e)
+void CBC_QRDecodedBitStreamParser::DecodeGBKSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, int32_t count, int32_t &e)
 {
     CFX_ByteString buffer;
-    FX_INT32 offset = 0;
+    int32_t offset = 0;
     while (count > 0) {
-        FX_INT32 twoBytes = bits->ReadBits(13, e);
+        int32_t twoBytes = bits->ReadBits(13, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
-        FX_INT32 assembledTwoBytes = ((twoBytes / 0x060) << 8) | (twoBytes % 0x060);
+        int32_t assembledTwoBytes = ((twoBytes / 0x060) << 8) | (twoBytes % 0x060);
         if (assembledTwoBytes <= 0x0095d) {
             assembledTwoBytes += 0x0a1a1;
         } else {
             assembledTwoBytes += 0x0a6a1;
         }
-        buffer += (FX_BYTE) (assembledTwoBytes >> 8);
-        buffer += (FX_BYTE) assembledTwoBytes;
+        buffer += (uint8_t) (assembledTwoBytes >> 8);
+        buffer += (uint8_t) assembledTwoBytes;
         count--;
     }
     CBC_UtilCodingConvert::LocaleToUtf8(buffer, result);
 }
-void CBC_QRDecodedBitStreamParser::DecodeKanjiSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, FX_INT32 count, FX_INT32 &e)
+void CBC_QRDecodedBitStreamParser::DecodeKanjiSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, int32_t count, int32_t &e)
 {
     CFX_ByteString buffer;
     while (count > 0) {
-        FX_INT32 twoBytes = bits->ReadBits(13, e);
+        int32_t twoBytes = bits->ReadBits(13, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
-        FX_INT32 assembledTwoBytes = ((twoBytes / 0x0c0) << 8) | (twoBytes % 0x0c0);
+        int32_t assembledTwoBytes = ((twoBytes / 0x0c0) << 8) | (twoBytes % 0x0c0);
         if (assembledTwoBytes <= 0x01f00) {
             assembledTwoBytes += 0x08140;
         } else {
             assembledTwoBytes += 0x0c140;
         }
-        buffer += (FX_BYTE) (assembledTwoBytes >> 8);
-        buffer += (FX_BYTE) assembledTwoBytes;
+        buffer += (uint8_t) (assembledTwoBytes >> 8);
+        buffer += (uint8_t) assembledTwoBytes;
         count--;
     }
     CBC_UtilCodingConvert::LocaleToUtf8(buffer, result);
 }
-void CBC_QRDecodedBitStreamParser::DecodeByteSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, FX_INT32 count,
+void CBC_QRDecodedBitStreamParser::DecodeByteSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, int32_t count,
         CBC_CommonCharacterSetECI *currentCharacterSetECI,
-        CFX_Int32Array *byteSegments, FX_INT32 byteModeDecode, FX_INT32 &e)
+        CFX_Int32Array *byteSegments, int32_t byteModeDecode, int32_t &e)
 {
     if(count < 0) {
         e = BCExceptionNotFound;
@@ -158,10 +158,10 @@ void CBC_QRDecodedBitStreamParser::DecodeByteSegment(CBC_CommonBitSource* bits, 
         e = BCExceptionRead;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    FX_BYTE *readBytes = FX_Alloc(FX_BYTE, count);
+    uint8_t *readBytes = FX_Alloc(uint8_t, count);
     FXSYS_memset32(readBytes, 0x00, count);
-    for(FX_INT32 i = 0; i < count; i++) {
-        readBytes[i] = (FX_BYTE) bits->ReadBits(8, e);
+    for(int32_t i = 0; i < count; i++) {
+        readBytes[i] = (uint8_t) bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
     CFX_ByteString bs(readBytes, count);
@@ -169,23 +169,23 @@ void CBC_QRDecodedBitStreamParser::DecodeByteSegment(CBC_CommonBitSource* bits, 
     FX_Free(readBytes);
 }
 void CBC_QRDecodedBitStreamParser::DecodeAlphanumericSegment(CBC_CommonBitSource* bits,
-        CFX_ByteString &result, FX_INT32 count, FX_BOOL fac1InEffect, FX_INT32 &e)
+        CFX_ByteString &result, int32_t count, FX_BOOL fac1InEffect, int32_t &e)
 {
-    FX_INT32 start = result.GetLength();
+    int32_t start = result.GetLength();
     while(count > 1) {
-        FX_INT32 nextTwoCharsBits = bits->ReadBits(11, e);
+        int32_t nextTwoCharsBits = bits->ReadBits(11, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         BC_FX_ByteString_Append(result, 1, ALPHANUMERIC_CHARS[nextTwoCharsBits / 45]);
         BC_FX_ByteString_Append(result, 1, ALPHANUMERIC_CHARS[nextTwoCharsBits % 45]);
         count -= 2;
     }
     if(count == 1) {
-        FX_INT32 itemp = bits->ReadBits(6, e);
+        int32_t itemp = bits->ReadBits(6, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         BC_FX_ByteString_Append(result,  1, ALPHANUMERIC_CHARS[itemp]);
     }
     if(fac1InEffect) {
-        for(FX_INT32 i = start; i < result.GetLength(); i++) {
+        for(int32_t i = start; i < result.GetLength(); i++) {
             if(result[i] == '%') {
                 if((i < result.GetLength() - 1) && result[i + 1] == '%') {
                     result.Delete(i + 1, 1);
@@ -196,10 +196,10 @@ void CBC_QRDecodedBitStreamParser::DecodeAlphanumericSegment(CBC_CommonBitSource
         }
     }
 }
-void CBC_QRDecodedBitStreamParser::DecodeNumericSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, FX_INT32 count, FX_INT32 &e)
+void CBC_QRDecodedBitStreamParser::DecodeNumericSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, int32_t count, int32_t &e)
 {
     while(count >= 3) {
-        FX_INT32 threeDigitsBits = bits->ReadBits(10, e);
+        int32_t threeDigitsBits = bits->ReadBits(10, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         if(threeDigitsBits >= 1000) {
             e = BCExceptionRead;
@@ -211,7 +211,7 @@ void CBC_QRDecodedBitStreamParser::DecodeNumericSegment(CBC_CommonBitSource* bit
         count -= 3;
     }
     if(count == 2) {
-        FX_INT32 twoDigitBits = bits->ReadBits(7, e);
+        int32_t twoDigitBits = bits->ReadBits(7, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         if(twoDigitBits >= 100) {
             e = BCExceptionRead;
@@ -220,7 +220,7 @@ void CBC_QRDecodedBitStreamParser::DecodeNumericSegment(CBC_CommonBitSource* bit
         BC_FX_ByteString_Append(result, 1, ALPHANUMERIC_CHARS[twoDigitBits / 10]);
         BC_FX_ByteString_Append(result, 1, ALPHANUMERIC_CHARS[twoDigitBits % 10]);
     } else if(count == 1) {
-        FX_INT32 digitBits = bits->ReadBits(4, e);
+        int32_t digitBits = bits->ReadBits(4, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         if(digitBits >= 10) {
             e = BCExceptionRead;
@@ -233,18 +233,18 @@ const CFX_ByteString CBC_QRDecodedBitStreamParser::GuessEncoding(CFX_ByteArray *
 {
     return *UTF_8;
 }
-FX_INT32 CBC_QRDecodedBitStreamParser::ParseECIValue(CBC_CommonBitSource* bits, FX_INT32 &e)
+int32_t CBC_QRDecodedBitStreamParser::ParseECIValue(CBC_CommonBitSource* bits, int32_t &e)
 {
-    FX_INT32 firstByte = bits->ReadBits(8, e);
+    int32_t firstByte = bits->ReadBits(8, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, 0);
     if((firstByte & 0x80) == 0) {
         return firstByte & 0x7f;
     } else if((firstByte & 0xc0) == 0x80) {
-        FX_INT32 secondByte = bits->ReadBits(8, e);
+        int32_t secondByte = bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, 0);
         return ((firstByte & 0x3f) << 8) | secondByte;
     } else if((firstByte & 0xe0) == 0xc0) {
-        FX_INT32 secondThirdByte = bits->ReadBits(16, e);
+        int32_t secondThirdByte = bits->ReadBits(16, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, 0);
         return ((firstByte & 0x1f) << 16) | secondThirdByte;
     }

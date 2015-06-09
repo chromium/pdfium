@@ -21,7 +21,7 @@ FX_BOOL CFX_MetafileInterpreter::SetCurrentElement(CXML_Element * element)
     _element = element;
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineCap(FX_INT32 & lineCap)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineCap(int32_t & lineCap)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * lineCapElement = _element->GetElement(0);
@@ -30,8 +30,8 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineCap(FX_INT32 & lineCap)
     return TRUE;
 }
 FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineDash(FX_FLOAT &	dashPhase,
-        FX_INT32 &	dashArray,
-        FX_INT32 &	dashCount)
+        int32_t &	dashArray,
+        int32_t &	dashCount)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * dashPhaseElement = _element->GetElement(0);
@@ -42,10 +42,10 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineDash(FX_FLOAT &	dashPhase,
     dashArray = dashArrayElement->GetAttrInteger("FX_FLOAT *");
     CXML_Element * dashCountElement = _element->GetElement(2);
     _FX_RETURN_VALUE_IF_FAIL(dashCountElement, FALSE);
-    dashCount = dashCountElement->GetAttrInteger("FX_INT32");
+    dashCount = dashCountElement->GetAttrInteger("int32_t");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineDash(FX_INT32 & dashStyle)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineDash(int32_t & dashStyle)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * dashStyleElement = _element->GetElement(0);
@@ -53,7 +53,7 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineDash(FX_INT32 & dashStyle)
     dashStyle = dashStyleElement->GetAttrInteger("FX_DashStyle");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineJoin(FX_INT32 & lineJoin)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineJoin(int32_t & lineJoin)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * lineJoinElement = _element->GetElement(0);
@@ -70,7 +70,7 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetMiterLimit(FX_FLOAT & miterLimit)
     return TRUE;
 }
 FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineWidth(FX_FLOAT & lineWidth,
-        FX_INT32 & isActOnDash)
+        int32_t & isActOnDash)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * lineWidthElement = _element->GetElement(0);
@@ -81,7 +81,7 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetLineWidth(FX_FLOAT & lineWidth,
     isActOnDash = isActOnDashElement->GetAttrInteger("FX_BOOL");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_SetStrokeColor(FX_INT32 & color)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_SetStrokeColor(int32_t & color)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * colorElement = _element->GetElement(0);
@@ -89,7 +89,7 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetStrokeColor(FX_INT32 & color)
     color = colorElement->GetAttrInteger("CFX_Color *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_SetFillColor(FX_INT32 & color)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_SetFillColor(int32_t & color)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * colorElement = _element->GetElement(0);
@@ -97,7 +97,7 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetFillColor(FX_INT32 & color)
     color = colorElement->GetAttrInteger("CFX_Color *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_StrokePath(FX_INT32 & path, FX_INT32 & matrix)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_StrokePath(int32_t & path, int32_t & matrix)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * pathElement = _element->GetElement(0);
@@ -108,9 +108,9 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_StrokePath(FX_INT32 & path, FX_INT32 & 
     matrix = matrixElement->GetAttrInteger("CFX_Matrix *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_FillPath(FX_INT32 & path,
-        FX_INT32 & fillMode,
-        FX_INT32 & matrix)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_FillPath(int32_t & path,
+        int32_t & fillMode,
+        int32_t & matrix)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * pathElement = _element->GetElement(0);
@@ -124,9 +124,9 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_FillPath(FX_INT32 & path,
     matrix = matrixElement->GetAttrInteger("CFX_Matrix *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_ClipPath(FX_INT32 & path,
-        FX_INT32 & fillMode,
-        FX_INT32 & matrix)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_ClipPath(int32_t & path,
+        int32_t & fillMode,
+        int32_t & matrix)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * pathElement = _element->GetElement(0);
@@ -140,9 +140,9 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_ClipPath(FX_INT32 & path,
     matrix = matrixElement->GetAttrInteger("CFX_Matrix *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_DrawImage(FX_INT32 & source,
-        FX_INT32 & point,
-        FX_INT32 & matrix)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_DrawImage(int32_t & source,
+        int32_t & point,
+        int32_t & matrix)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * sourceElement = _element->GetElement(0);
@@ -156,9 +156,9 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_DrawImage(FX_INT32 & source,
     matrix = matrixElement->GetAttrInteger("CFX_Matrix *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_StretchImage(FX_INT32 & source,
-        FX_INT32 & rect,
-        FX_INT32 & matrix)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_StretchImage(int32_t & source,
+        int32_t & rect,
+        int32_t & matrix)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * sourceElement = _element->GetElement(0);
@@ -172,7 +172,7 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_StretchImage(FX_INT32 & source,
     matrix = matrixElement->GetAttrInteger("CFX_Matrix *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_ConcatMatrix(FX_INT32 & matrix)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_ConcatMatrix(int32_t & matrix)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * matrixElement = _element->GetElement(0);
@@ -180,7 +180,7 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_ConcatMatrix(FX_INT32 & matrix)
     matrix = matrixElement->GetAttrInteger("CFX_Matrix *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_SetClipRect(FX_INT32 & rect)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_SetClipRect(int32_t & rect)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * rectElement = _element->GetElement(0);
@@ -188,7 +188,7 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetClipRect(FX_INT32 & rect)
     rect = rectElement->GetAttrInteger("CFX_RectF *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_SetFont(FX_INT32 & font)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_SetFont(int32_t & font)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * fontElement = _element->GetElement(0);
@@ -220,17 +220,17 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetCharSpacing(FX_FLOAT & spacing)
     spacing = spacingElement->GetAttrFloat("FX_FLOAT");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_SetTextDrawingMode(FX_INT32 & mode)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_SetTextDrawingMode(int32_t & mode)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * modeElement = _element->GetElement(0);
     _FX_RETURN_VALUE_IF_FAIL(modeElement, FALSE);
-    mode = modeElement->GetAttrInteger("FX_INT32");
+    mode = modeElement->GetAttrInteger("int32_t");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_SetText(FX_INT32 &	point,
-        FX_INT32 &	text,
-        FX_INT32 &	matrix)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_SetText(int32_t &	point,
+        int32_t &	text,
+        int32_t &	matrix)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * pointElement = _element->GetElement(0);
@@ -244,7 +244,7 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_SetText(FX_INT32 &	point,
     matrix = matrixElement->GetAttrInteger("CFX_Matrix *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_Transfer(FX_INT32 & graphics, FX_INT32 & matrix)
+FX_BOOL CFX_MetafileInterpreter::ParamOf_Transfer(int32_t & graphics, int32_t & matrix)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * graphicsElement = _element->GetElement(0);
@@ -255,11 +255,11 @@ FX_BOOL CFX_MetafileInterpreter::ParamOf_Transfer(FX_INT32 & graphics, FX_INT32 
     matrix = matrixElement->GetAttrInteger("CFX_Matrix *");
     return TRUE;
 }
-FX_BOOL CFX_MetafileInterpreter::ParamOf_Transfer(FX_INT32 & graphics,
+FX_BOOL CFX_MetafileInterpreter::ParamOf_Transfer(int32_t & graphics,
         FX_FLOAT & srcLeft,
         FX_FLOAT & srcTop,
-        FX_INT32 & dstRect,
-        FX_INT32 & matrix)
+        int32_t & dstRect,
+        int32_t & matrix)
 {
     _FX_RETURN_VALUE_IF_FAIL(_element, FALSE);
     CXML_Element * graphicsElement = _element->GetElement(0);

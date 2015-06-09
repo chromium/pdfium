@@ -127,7 +127,7 @@ FX_BOOL	CFFL_Notify::ExecuteActionTree(CPDF_AAction::AActionType eAAT,CPDF_Actio
 	if (!ExecuteAction(eAAT,action,bExit)) return FALSE;
 	if (bExit) return TRUE;
 
-	for (FX_INT32 i=0,sz=action.GetSubActionsCount(); i<sz; i++)
+	for (int32_t i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
 		if (!ExecuteActionTree(eAAT,subaction,bExit)) return FALSE;

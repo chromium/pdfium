@@ -14,7 +14,7 @@
 #include "fde_txtedtparag.h"
 #include "fde_txtedtbuf.h"
 #define FDE_TXTEDT_TOLERANCE 0.1f
-IFDE_TxtEdtPage * IFDE_TxtEdtPage::Create(IFDE_TxtEdtEngine * pEngine, FX_INT32 nIndex)
+IFDE_TxtEdtPage * IFDE_TxtEdtPage::Create(IFDE_TxtEdtEngine * pEngine, int32_t nIndex)
 {
     return (IFDE_TxtEdtPage*)FX_NEW CFDE_TxtEdtPage(pEngine, nIndex);
 }
@@ -46,11 +46,11 @@ FX_BOOL CFDE_TxtEdtTextSet::GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF &rt)
 {
     return FALSE;
 }
-FX_INT32 CFDE_TxtEdtTextSet::GetString(FDE_HVISUALOBJ hText, CFX_WideString &wsText)
+int32_t CFDE_TxtEdtTextSet::GetString(FDE_HVISUALOBJ hText, CFX_WideString &wsText)
 {
     FDE_LPTEXTEDITPIECE pPiece = (FDE_LPTEXTEDITPIECE)hText;
     FX_LPWSTR pBuffer = wsText.GetBuffer(pPiece->nCount);
-    for (FX_INT32 i = 0; i < pPiece->nCount; i++) {
+    for (int32_t i = 0; i < pPiece->nCount; i++) {
         pBuffer[i] = m_pPage->GetChar((FX_LPVOID)hText, i);
     }
     wsText.ReleaseBuffer(pPiece->nCount);
@@ -68,13 +68,13 @@ FX_ARGB CFDE_TxtEdtTextSet::GetFontColor(FDE_HVISUALOBJ hText)
 {
     return m_pPage->GetEngine()->GetEditParams()->dwFontColor;
 }
-FX_INT32 CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode , CFX_WideString *pWSForms )
+int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode , CFX_WideString *pWSForms )
 {
     if (hText == NULL) {
         return 0;
     }
     FDE_LPTEXTEDITPIECE pPiece = (FDE_LPTEXTEDITPIECE)hText;
-    FX_INT32 nLength = pPiece->nCount;
+    int32_t nLength = pPiece->nCount;
     if (nLength < 1) {
         return 0;
     }
@@ -97,18 +97,18 @@ FX_INT32 CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText, FXTEXT_CHARPOS 
     tr.wLineBreakChar	= pTextParams->wLineBreakChar;
     return pBreak->GetDisplayPos(&tr, pCharPos, bCharCode, pWSForms);
 }
-FX_INT32 CFDE_TxtEdtTextSet::GetCharRects(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray)
+int32_t CFDE_TxtEdtTextSet::GetCharRects(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray)
 {
     return GetCharRects_Impl(hText, rtArray);
 }
-FX_INT32 CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray, FX_BOOL bBBox )
+int32_t CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray, FX_BOOL bBBox )
 {
     if (hText == NULL) {
         return 0;
     }
     FDE_LPTEXTEDITPIECE pPiece = (FDE_LPTEXTEDITPIECE)hText;
     CFDE_TxtEdtEngine * pEngine = (CFDE_TxtEdtEngine*)(m_pPage->GetEngine());
-    FX_INT32 nLength = pPiece->nCount;
+    int32_t nLength = pPiece->nCount;
     if (nLength < 1) {
         return 0;
     }
@@ -129,7 +129,7 @@ FX_INT32 CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText, CFX_RectFAr
     tr.wLineBreakChar	= pTextParams->wLineBreakChar;
     return pEngine->GetTextBreak()->GetCharRects(&tr, rtArray, bBBox);
 }
-CFDE_TxtEdtPage::CFDE_TxtEdtPage(IFDE_TxtEdtEngine * pEngine, FX_INT32 nPageIndex)
+CFDE_TxtEdtPage::CFDE_TxtEdtPage(IFDE_TxtEdtEngine * pEngine, int32_t nPageIndex)
     : m_pIter(NULL)
     , m_pTextSet(NULL)
     , m_nRefCount(0)
@@ -192,15 +192,15 @@ FX_BOOL CFDE_TxtEdtPage::GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF &rt)
 {
     return FALSE;
 }
-FX_INT32 CFDE_TxtEdtPage::GetCharRect(FX_INT32 nIndex, CFX_RectF &rect, FX_BOOL bBBox ) const
+int32_t CFDE_TxtEdtPage::GetCharRect(int32_t nIndex, CFX_RectF &rect, FX_BOOL bBBox ) const
 {
     FXSYS_assert(m_nRefCount > 0);
     FXSYS_assert(nIndex >= 0 && nIndex < m_nCharCount);
     if (m_nRefCount < 1) {
         return 0;
     }
-    FX_INT32 nCount = m_PieceMassArr.GetSize();
-    for (FX_INT32 i = 0; i < nCount; i ++) {
+    int32_t nCount = m_PieceMassArr.GetSize();
+    for (int32_t i = 0; i < nCount; i ++) {
         const FDE_LPTEXTEDITPIECE  pPiece = m_PieceMassArr.GetPtrAt(i);
         if (nIndex >= pPiece->nStart && nIndex < (pPiece->nStart + pPiece->nCount)) {
             CFX_RectFArray rectArr;
@@ -216,17 +216,17 @@ FX_INT32 CFDE_TxtEdtPage::GetCharRect(FX_INT32 nIndex, CFX_RectF &rect, FX_BOOL 
     FXSYS_assert(0);
     return 0;
 }
-FX_INT32 CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF &fPoint, FX_BOOL &bBefore)
+int32_t CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF &fPoint, FX_BOOL &bBefore)
 {
     FX_BOOL	bVertical	= m_pEditEngine->GetEditParams()->dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical;
     CFX_PointF ptF = fPoint;
     NormalizePt2Rect(ptF, m_rtPageContents, FDE_TXTEDT_TOLERANCE);
-    FX_INT32 nCount = m_PieceMassArr.GetSize();
+    int32_t nCount = m_PieceMassArr.GetSize();
     CFX_RectF rtLine;
-    FX_INT32 nBgn = 0;
-    FX_INT32 nEnd = 0;
+    int32_t nBgn = 0;
+    int32_t nEnd = 0;
     FX_BOOL bInLine = FALSE;
-    FX_INT32 i = 0;
+    int32_t i = 0;
     for (i = 0; i < nCount; i ++) {
         const FDE_LPTEXTEDITPIECE pPiece = m_PieceMassArr.GetPtrAt(i);
         if (!bInLine && (bVertical ? (pPiece->rtPiece.left <= ptF.x && pPiece->rtPiece.right() > ptF.x) \
@@ -245,7 +245,7 @@ FX_INT32 CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF &fPoint, FX_BOOL &bBefor
         }
     }
     NormalizePt2Rect(ptF, rtLine, FDE_TXTEDT_TOLERANCE);
-    FX_INT32 nCaret = 0;
+    int32_t nCaret = 0;
     FDE_LPTEXTEDITPIECE pPiece = NULL;
     for (i = nBgn; i <= nEnd; i ++) {
         pPiece = m_PieceMassArr.GetPtrAt(i);
@@ -253,8 +253,8 @@ FX_INT32 CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF &fPoint, FX_BOOL &bBefor
         if (pPiece->rtPiece.Contains(ptF)) {
             CFX_RectFArray rectArr;
             m_pTextSet->GetCharRects((FDE_HVISUALOBJ)pPiece, rectArr);
-            FX_INT32 nRtCount = rectArr.GetSize();
-            for (FX_INT32 j = 0; j < nRtCount; j ++) {
+            int32_t nRtCount = rectArr.GetSize();
+            for (int32_t j = 0; j < nRtCount; j ++) {
                 if (rectArr[j].Contains(ptF)) {
                     nCaret = m_nPageStart + pPiece->nStart + j;
                     if (nCaret >= m_pEditEngine->GetTextBufLength()) {
@@ -285,34 +285,34 @@ FX_INT32 CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF &fPoint, FX_BOOL &bBefor
     bBefore = TRUE;
     return nCaret;
 }
-FX_INT32 CFDE_TxtEdtPage::GetCharStart() const
+int32_t CFDE_TxtEdtPage::GetCharStart() const
 {
     return m_nPageStart;
 }
-FX_INT32 CFDE_TxtEdtPage::GetCharCount() const
+int32_t CFDE_TxtEdtPage::GetCharCount() const
 {
     return m_nCharCount;
 }
-FX_INT32 CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF &rtClip, FXTEXT_CHARPOS *&pCharPos, FX_LPRECTF pBBox ) const
+int32_t CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF &rtClip, FXTEXT_CHARPOS *&pCharPos, FX_LPRECTF pBBox ) const
 {
     pCharPos = (FXTEXT_CHARPOS*)FDE_Alloc(sizeof(FXTEXT_CHARPOS) * m_nCharCount);
-    FX_INT32		nCharPosCount	= 0;
+    int32_t		nCharPosCount	= 0;
     FDE_HVISUALOBJ	hVisualObj		= NULL;
-    FX_INT32		nVisualObjCount	= m_PieceMassArr.GetSize();
+    int32_t		nVisualObjCount	= m_PieceMassArr.GetSize();
     FXTEXT_CHARPOS*	pos				= pCharPos;
     CFX_RectF rtObj;
-    for (FX_INT32 i = 0; i < nVisualObjCount; i ++) {
+    for (int32_t i = 0; i < nVisualObjCount; i ++) {
         hVisualObj = (FDE_HVISUALOBJ)m_PieceMassArr.GetPtrAt(i);
         m_pTextSet->GetRect(hVisualObj, rtObj);
         if (!rtClip.IntersectWith(rtObj)) {
             continue;
         }
-        FX_INT32 nCount	= m_pTextSet->GetDisplayPos(hVisualObj, pos, FALSE);
+        int32_t nCount	= m_pTextSet->GetDisplayPos(hVisualObj, pos, FALSE);
         nCharPosCount	+= nCount;
         pos				+= nCount;
     }
     if ((nCharPosCount * 5) < (m_nCharCount << 2)) {
-        FX_INT32 nLength = sizeof(FXTEXT_CHARPOS) * nCharPosCount;
+        int32_t nLength = sizeof(FXTEXT_CHARPOS) * nCharPosCount;
         FXTEXT_CHARPOS * pTemp = (FXTEXT_CHARPOS*)FDE_Alloc(nLength);
         FXSYS_memcpy(pTemp, pCharPos, nLength);
         FDE_Free(pCharPos);
@@ -320,16 +320,16 @@ FX_INT32 CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF &rtClip, FXTEXT_CHARPOS 
     }
     return nCharPosCount;
 }
-void CFDE_TxtEdtPage::CalcRangeRectArray(FX_INT32 nStart, FX_INT32 nCount, CFX_RectFArray &RectFArr) const
+void CFDE_TxtEdtPage::CalcRangeRectArray(int32_t nStart, int32_t nCount, CFX_RectFArray &RectFArr) const
 {
-    FX_INT32	nPieceCount	= m_PieceMassArr.GetSize();
-    FX_INT32	nEnd		= nStart + nCount - 1;
+    int32_t	nPieceCount	= m_PieceMassArr.GetSize();
+    int32_t	nEnd		= nStart + nCount - 1;
     FX_BOOL		bInRange	= FALSE;
-    for (FX_INT32 i = 0; i < nPieceCount; i ++) {
+    for (int32_t i = 0; i < nPieceCount; i ++) {
         FDE_LPTEXTEDITPIECE piece = m_PieceMassArr.GetPtrAt(i);
         if (!bInRange) {
             if (nStart >= piece->nStart && nStart < (piece->nStart + piece->nCount)) {
-                FX_INT32 nRangeEnd = piece->nCount - 1;
+                int32_t nRangeEnd = piece->nCount - 1;
                 FX_BOOL bEnd = FALSE;
                 if (nEnd >= piece->nStart && nEnd < (piece->nStart + piece->nCount)) {
                     nRangeEnd = nEnd - piece->nStart;
@@ -337,7 +337,7 @@ void CFDE_TxtEdtPage::CalcRangeRectArray(FX_INT32 nStart, FX_INT32 nCount, CFX_R
                 }
                 CFX_RectFArray rcArr;
                 m_pTextSet->GetCharRects((FDE_HVISUALOBJ)piece, rcArr);
-                FX_INT32 nSize = rcArr.GetSize();
+                int32_t nSize = rcArr.GetSize();
                 CFX_RectF rectPiece = rcArr[nStart - piece->nStart];
                 rectPiece.Union(rcArr[nRangeEnd]);
                 RectFArr.Add(rectPiece);
@@ -360,14 +360,14 @@ void CFDE_TxtEdtPage::CalcRangeRectArray(FX_INT32 nStart, FX_INT32 nCount, CFX_R
     }
     return;
 }
-FX_INT32 CFDE_TxtEdtPage::SelectWord(const CFX_PointF &fPoint, FX_INT32 &nCount)
+int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF &fPoint, int32_t &nCount)
 {
     if (m_nRefCount < 0) {
         return - 1;
     }
     IFDE_TxtEdtBuf * pBuf = m_pEditEngine->GetTextBuf();
     FX_BOOL bBefore;
-    FX_INT32 nIndex = GetCharIndex(fPoint, bBefore);
+    int32_t nIndex = GetCharIndex(fPoint, bBefore);
     if (nIndex == m_pEditEngine->GetTextBufLength()) {
         nIndex = m_pEditEngine->GetTextBufLength() - 1;
     }
@@ -378,7 +378,7 @@ FX_INT32 CFDE_TxtEdtPage::SelectWord(const CFX_PointF &fPoint, FX_INT32 &nCount)
     pIter->Attach(FX_NEW CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf));
     pIter->SetAt(nIndex);
     nCount = pIter->GetWordLength();
-    FX_INT32 nRet = pIter->GetWordPos();
+    int32_t nRet = pIter->GetWordPos();
     pIter->Release();
     return nRet;
 }
@@ -386,7 +386,7 @@ FX_BOOL CFDE_TxtEdtPage::IsLoaded(FX_LPCRECTF pClipBox )
 {
     return m_bLoaded;
 }
-FX_INT32 CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
+int32_t CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
 {
     if (m_nRefCount > 0) {
         m_nRefCount ++;
@@ -405,12 +405,12 @@ FX_INT32 CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
     IFX_TxtBreak *	pBreak	= m_pEditEngine->GetTextBreak();
     pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
     pBreak->ClearBreakPieces();
-    FX_INT32 nLineCount		= m_pEditEngine->GetLineCount();
-    FX_INT32 nPageLineCount = m_pEditEngine->GetPageLineCount();
-    FX_INT32 nLength = pBuf->GetTextLength();
-    FX_INT32 nStartLine	= nPageLineCount * m_nPageIndex;
-    FX_INT32 nEndLine	= FX_MIN((nStartLine + nPageLineCount - 1), (m_pEditEngine->GetLineCount() - 1));
-    FX_INT32 nPageStart, nPageEnd, nTemp, nBgnParag, nStartLineInParag, nEndParag, nEndLineInParag;
+    int32_t nLineCount		= m_pEditEngine->GetLineCount();
+    int32_t nPageLineCount = m_pEditEngine->GetPageLineCount();
+    int32_t nLength = pBuf->GetTextLength();
+    int32_t nStartLine	= nPageLineCount * m_nPageIndex;
+    int32_t nEndLine	= FX_MIN((nStartLine + nPageLineCount - 1), (m_pEditEngine->GetLineCount() - 1));
+    int32_t nPageStart, nPageEnd, nTemp, nBgnParag, nStartLineInParag, nEndParag, nEndLineInParag;
     nBgnParag = m_pEditEngine->Line2Parag(0, 0, nStartLine, nStartLineInParag);
     m_pBgnParag = (CFDE_TxtEdtParag*)m_pEditEngine->GetParag(nBgnParag);
     m_pBgnParag->LoadParag();
@@ -430,12 +430,12 @@ FX_INT32 CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
     }
     m_PieceMassArr.RemoveAll(TRUE);
     FX_DWORD dwBreakStatus	= FX_TXTBREAK_None;
-    FX_INT32 nLineStart		= nPageStart;
-    FX_INT32 nPieceStart	= 0;
+    int32_t nLineStart		= nPageStart;
+    int32_t nPieceStart	= 0;
     if (m_pCharWidth != NULL) {
         delete [] m_pCharWidth;
     }
-    m_pCharWidth = new FX_INT32[nPageEnd - nPageStart + 1];
+    m_pCharWidth = new int32_t[nPageEnd - nPageStart + 1];
     pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
     pBreak->ClearBreakPieces();
     m_nPageStart = nPageStart;
@@ -445,7 +445,7 @@ FX_INT32 CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
     IFX_CharIter * pIter = m_pIter->Clone();
     pIter->SetAt(nPageStart);
     m_pIter->SetAt(nPageStart);
-    FX_INT32 nTextEnd = m_pEditEngine->GetTextBufLength();
+    int32_t nTextEnd = m_pEditEngine->GetTextBufLength();
     FX_BOOL	bFirstPiece = TRUE;
     do {
         if (bReload) {
@@ -458,8 +458,8 @@ FX_INT32 CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
             dwBreakStatus = pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
         }
         if (dwBreakStatus > FX_TXTBREAK_PieceBreak) {
-            FX_INT32 nPieceCount = pBreak->CountBreakPieces();
-            for (FX_INT32 j = 0; j < nPieceCount; j ++) {
+            int32_t nPieceCount = pBreak->CountBreakPieces();
+            for (int32_t j = 0; j < nPieceCount; j ++) {
                 const CFX_TxtPiece * pPiece = pBreak->GetBreakPiece(j);
                 FDE_TEXTEDITPIECE TxtEdtPiece;
                 FXSYS_memset(&TxtEdtPiece, 0, sizeof(FDE_TEXTEDITPIECE));
@@ -508,7 +508,7 @@ FX_INT32 CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
                 }
                 nPieceStart += TxtEdtPiece.nCount;
                 m_PieceMassArr.Add(TxtEdtPiece);
-                for (FX_INT32 k = 0; k < TxtEdtPiece.nCount; k ++) {
+                for (int32_t k = 0; k < TxtEdtPiece.nCount; k ++) {
                     CFX_Char* ptc = pPiece->GetCharPtr(k);
                     m_pCharWidth[TxtEdtPiece.nStart + k] = ptc->m_iCharWidth;
                 }
@@ -528,8 +528,8 @@ FX_INT32 CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
                 fDelta = pParams->fPlateWidth - m_rtPageContents.width;
             } else if (pParams->dwAlignment & FDE_TEXTEDITALIGN_Center) {
                 if ((pParams->dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText) && m_nCharCount > 1) {
-                    FX_INT32 nCount = m_nCharCount - 1;
-                    FX_INT32 n = (m_pEditEngine->m_nLimit - nCount) / 2;
+                    int32_t nCount = m_nCharCount - 1;
+                    int32_t n = (m_pEditEngine->m_nLimit - nCount) / 2;
                     fDelta = (m_rtPageContents.width / nCount) * n;
                 } else {
                     fDelta = (pParams->fPlateWidth - m_rtPageContents.width) / 2;
@@ -537,8 +537,8 @@ FX_INT32 CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
             }
         }
         FX_FLOAT fOffset = m_rtPageContents.left - fDelta;
-        FX_INT32 nCount = m_PieceMassArr.GetSize();
-        for (FX_INT32 i = 0; i < nCount; i ++) {
+        int32_t nCount = m_PieceMassArr.GetSize();
+        for (int32_t i = 0; i < nCount; i ++) {
             FDE_LPTEXTEDITPIECE pPiece = m_PieceMassArr.GetPtrAt(i);
             pPiece->rtPiece.Offset(-fOffset, 0.0f);
         }
@@ -546,7 +546,7 @@ FX_INT32 CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox , IFX_Pause *pPause )
     }
     if (m_pEditEngine->GetEditParams()->dwLayoutStyles & FDE_TEXTEDITLAYOUT_LastLineHeight) {
         m_rtPageContents.height -= pParams->fLineSpace - pParams->fFontSize;
-        FX_INT32 nCount = m_PieceMassArr.GetSize();
+        int32_t nCount = m_PieceMassArr.GetSize();
         FDE_LPTEXTEDITPIECE pPiece = m_PieceMassArr.GetPtrAt(nCount - 1);
         pPiece->rtPiece.height = pParams->fFontSize;
     }
@@ -601,12 +601,12 @@ FDE_HVISUALOBJ CFDE_TxtEdtPage::GetNext(FDE_HVISUALOBJ hCanvas, FX_POSITION &pos
         pos = NULL;
         return NULL;
     }
-    FX_INT32 nPos = (FX_INT32)(FX_UINTPTR)pos;
+    int32_t nPos = (int32_t)(uintptr_t)pos;
     pVisualSet = m_pTextSet;
     if (nPos + 1 > m_PieceMassArr.GetSize()) {
         pos = NULL;
     } else {
-        pos = (FX_POSITION)(FX_UINTPTR)(nPos + 1);
+        pos = (FX_POSITION)(uintptr_t)(nPos + 1);
     }
     return (FDE_HVISUALOBJ)(m_PieceMassArr.GetPtrAt(nPos - 1));
 }
@@ -614,9 +614,9 @@ FDE_HVISUALOBJ CFDE_TxtEdtPage::GetParentCanvas(FDE_HVISUALOBJ hCanvas, IFDE_Vis
 {
     return NULL;
 }
-FX_WCHAR CFDE_TxtEdtPage::GetChar(FX_LPVOID pIdentity, FX_INT32 index) const
+FX_WCHAR CFDE_TxtEdtPage::GetChar(FX_LPVOID pIdentity, int32_t index) const
 {
-    FX_INT32 nIndex = m_nPageStart + ((FDE_LPTEXTEDITPIECE)pIdentity)->nStart + index;
+    int32_t nIndex = m_nPageStart + ((FDE_LPTEXTEDITPIECE)pIdentity)->nStart + index;
     if (nIndex != m_pIter->GetAt()) {
         m_pIter->SetAt(nIndex);
     }
@@ -624,9 +624,9 @@ FX_WCHAR CFDE_TxtEdtPage::GetChar(FX_LPVOID pIdentity, FX_INT32 index) const
     m_pIter->Next();
     return wChar;
 }
-FX_INT32 CFDE_TxtEdtPage::GetWidth(FX_LPVOID pIdentity, FX_INT32 index) const
+int32_t CFDE_TxtEdtPage::GetWidth(FX_LPVOID pIdentity, int32_t index) const
 {
-    FX_INT32 nWidth = m_pCharWidth[((FDE_LPTEXTEDITPIECE)pIdentity)->nStart + index];
+    int32_t nWidth = m_pCharWidth[((FDE_LPTEXTEDITPIECE)pIdentity)->nStart + index];
     return nWidth;
 }
 void CFDE_TxtEdtPage::NormalizePt2Rect(CFX_PointF &ptF, const CFX_RectF &rtF, FX_FLOAT fTolerance) const

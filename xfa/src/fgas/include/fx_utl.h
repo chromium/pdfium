@@ -34,16 +34,16 @@ private:
 class CFX_BaseArray : public CFX_Target
 {
 protected:
-    CFX_BaseArray(FX_INT32 iGrowSize, FX_INT32 iBlockSize);
+    CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize);
     ~CFX_BaseArray();
-    FX_INT32	GetSize() const;
-    FX_INT32	GetBlockSize() const;
-    FX_LPBYTE	AddSpaceTo(FX_INT32 index);
-    FX_LPBYTE	GetAt(FX_INT32 index) const;
+    int32_t	GetSize() const;
+    int32_t	GetBlockSize() const;
+    FX_LPBYTE	AddSpaceTo(int32_t index);
+    FX_LPBYTE	GetAt(int32_t index) const;
     FX_LPBYTE	GetBuffer() const;
-    FX_INT32	Append(const CFX_BaseArray &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1);
-    FX_INT32	Copy(const CFX_BaseArray &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1);
-    FX_INT32	RemoveLast(FX_INT32 iCount = -1);
+    int32_t	Append(const CFX_BaseArray &src, int32_t iStart = 0, int32_t iCount = -1);
+    int32_t	Copy(const CFX_BaseArray &src, int32_t iStart = 0, int32_t iCount = -1);
+    int32_t	RemoveLast(int32_t iCount = -1);
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE);
     FX_LPVOID	m_pData;
 };
@@ -51,13 +51,13 @@ template<class baseType>
 class CFX_BaseArrayTemplate : public CFX_BaseArray
 {
 public:
-    CFX_BaseArrayTemplate(FX_INT32 iGrowSize = 100) : CFX_BaseArray(iGrowSize, sizeof(baseType)) {}
-    CFX_BaseArrayTemplate(FX_INT32 iGrowSize, FX_INT32 iBlockSize) : CFX_BaseArray(iGrowSize, iBlockSize) {}
-    FX_INT32	GetSize() const
+    CFX_BaseArrayTemplate(int32_t iGrowSize = 100) : CFX_BaseArray(iGrowSize, sizeof(baseType)) {}
+    CFX_BaseArrayTemplate(int32_t iGrowSize, int32_t iBlockSize) : CFX_BaseArray(iGrowSize, iBlockSize) {}
+    int32_t	GetSize() const
     {
         return CFX_BaseArray::GetSize();
     }
-    FX_INT32	GetBlockSize() const
+    int32_t	GetBlockSize() const
     {
         return CFX_BaseArray::GetBlockSize();
     }
@@ -65,9 +65,9 @@ public:
     {
         return (baseType*)CFX_BaseArray::AddSpaceTo(CFX_BaseArray::GetSize());
     }
-    FX_INT32	Add(const baseType &element)
+    int32_t	Add(const baseType &element)
     {
-        FX_INT32 index = CFX_BaseArray::GetSize();
+        int32_t index = CFX_BaseArray::GetSize();
         *(baseType*)CFX_BaseArray::AddSpaceTo(index) = element;
         return index;
     }
@@ -75,31 +75,31 @@ public:
     {
         return (baseType*)CFX_BaseArray::GetBuffer();
     }
-    baseType&	GetAt(FX_INT32 index) const
+    baseType&	GetAt(int32_t index) const
     {
         return *(baseType*)CFX_BaseArray::GetAt(index);
     }
-    baseType*	GetPtrAt(FX_INT32 index) const
+    baseType*	GetPtrAt(int32_t index) const
     {
         return (baseType*)CFX_BaseArray::GetAt(index);
     }
-    void		SetAt(FX_INT32 index, const baseType &element)
+    void		SetAt(int32_t index, const baseType &element)
     {
         *(baseType*)CFX_BaseArray::GetAt(index) = element;
     }
-    void		SetAtGrow(FX_INT32 index, const baseType &element)
+    void		SetAtGrow(int32_t index, const baseType &element)
     {
         *(baseType*)CFX_BaseArray::AddSpaceTo(index) = element;
     }
-    FX_INT32	Append(const CFX_BaseArrayTemplate &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1)
+    int32_t	Append(const CFX_BaseArrayTemplate &src, int32_t iStart = 0, int32_t iCount = -1)
     {
         return CFX_BaseArray::Append(src, iStart, iCount);
     }
-    FX_INT32	Copy(const CFX_BaseArrayTemplate &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1)
+    int32_t	Copy(const CFX_BaseArrayTemplate &src, int32_t iStart = 0, int32_t iCount = -1)
     {
         return CFX_BaseArray::Copy(src, iStart, iCount);
     }
-    FX_INT32	RemoveLast(FX_INT32 iCount = -1)
+    int32_t	RemoveLast(int32_t iCount = -1)
     {
         return CFX_BaseArray::RemoveLast(iCount);
     }
@@ -115,41 +115,41 @@ template<class baseType>
 class CFX_ObjectBaseArrayTemplate : public CFX_BaseArray
 {
 public:
-    CFX_ObjectBaseArrayTemplate(FX_INT32 iGrowSize = 100) : CFX_BaseArray(iGrowSize, sizeof(baseType)) {}
+    CFX_ObjectBaseArrayTemplate(int32_t iGrowSize = 100) : CFX_BaseArray(iGrowSize, sizeof(baseType)) {}
     ~CFX_ObjectBaseArrayTemplate()
     {
         RemoveAll(FALSE);
     }
-    FX_INT32	GetSize() const
+    int32_t	GetSize() const
     {
         return CFX_BaseArray::GetSize();
     }
-    FX_INT32	GetBlockSize() const
+    int32_t	GetBlockSize() const
     {
         return CFX_BaseArray::GetBlockSize();
     }
-    FX_INT32	Add(const baseType &element)
+    int32_t	Add(const baseType &element)
     {
-        FX_INT32 index = CFX_BaseArray::GetSize();
+        int32_t index = CFX_BaseArray::GetSize();
         baseType *p = (baseType*)CFX_BaseArray::AddSpaceTo(index);
         FXTARGET_New ((void*)p)baseType(element);
         return index;
     }
-    baseType&	GetAt(FX_INT32 index) const
+    baseType&	GetAt(int32_t index) const
     {
         return *(baseType*)CFX_BaseArray::GetAt(index);
     }
-    baseType*	GetPtrAt(FX_INT32 index) const
+    baseType*	GetPtrAt(int32_t index) const
     {
         return (baseType*)CFX_BaseArray::GetAt(index);
     }
-    FX_INT32	Append(const CFX_ObjectBaseArrayTemplate &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1)
+    int32_t	Append(const CFX_ObjectBaseArrayTemplate &src, int32_t iStart = 0, int32_t iCount = -1)
     {
         FXSYS_assert(GetBlockSize() == src.GetBlockSize());
         if (iCount == 0) {
             return 0;
         }
-        FX_INT32 iSize = src.GetSize();
+        int32_t iSize = src.GetSize();
         FXSYS_assert(iStart > -1 && iStart < iSize);
         if (iCount < 0) {
             iCount = iSize;
@@ -163,21 +163,21 @@ public:
         iSize = CFX_BaseArray::GetSize();
         CFX_BaseArray::AddSpaceTo(iSize + iCount - 1);
         FX_LPBYTE *pStart = CFX_BaseArray::GetAt(iSize);
-        FX_INT32 iBlockSize = CFX_BaseArray::GetBlockSize();
+        int32_t iBlockSize = CFX_BaseArray::GetBlockSize();
         iSize = iStart + iCount;
-        for (FX_INT32 i = iStart; i < iSize; i ++) {
+        for (int32_t i = iStart; i < iSize; i ++) {
             FXTARGET_NewWith ((void*)pStart)baseType(src.GetAt(i));
             pStart += iBlockSize;
         }
         return iCount;
     }
-    FX_INT32	Copy(const CFX_ObjectBaseArrayTemplate &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1)
+    int32_t	Copy(const CFX_ObjectBaseArrayTemplate &src, int32_t iStart = 0, int32_t iCount = -1)
     {
         FXSYS_assert(GetBlockSize() == src.GetBlockSize());
         if (iCount == 0) {
             return 0;
         }
-        FX_INT32 iSize = src.GetSize();
+        int32_t iSize = src.GetSize();
         FXSYS_assert(iStart > -1 && iStart < iSize);
         if (iCount < 0) {
             iCount = iSize;
@@ -191,32 +191,32 @@ public:
         RemoveAll(TRUE);
         CFX_BaseArray::AddSpaceTo(iCount - 1);
         FX_LPBYTE *pStart = CFX_BaseArray::GetAt(0);
-        FX_INT32 iBlockSize = CFX_BaseArray::GetBlockSize();
+        int32_t iBlockSize = CFX_BaseArray::GetBlockSize();
         iSize = iStart + iCount;
-        for (FX_INT32 i = iStart; i < iSize; i ++) {
+        for (int32_t i = iStart; i < iSize; i ++) {
             FXTARGET_New ((void*)pStart)baseType(src.GetAt(i));
             pStart += iBlockSize;
         }
         return iCount;
     }
-    FX_INT32	RemoveLast(FX_INT32 iCount = -1)
+    int32_t	RemoveLast(int32_t iCount = -1)
     {
-        FX_INT32 iSize = CFX_BaseArray::GetSize();
+        int32_t iSize = CFX_BaseArray::GetSize();
         if (iCount < 0 || iCount > iSize) {
             iCount = iSize;
         }
         if (iCount == 0) {
             return iSize;
         }
-        for (FX_INT32 i = iSize - iCount; i < iSize; i ++) {
+        for (int32_t i = iSize - iCount; i < iSize; i ++) {
             ((baseType*)GetPtrAt(i))->~baseType();
         }
         return CFX_BaseArray::RemoveLast(iCount);
     }
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE)
     {
-        FX_INT32 iSize = CFX_BaseArray::GetSize();
-        for (FX_INT32 i = 0; i < iSize; i ++) {
+        int32_t iSize = CFX_BaseArray::GetSize();
+        for (int32_t i = 0; i < iSize; i ++) {
             ((baseType*)GetPtrAt(i))->~baseType();
         }
         CFX_BaseArray::RemoveAll(bLeaveMemory);
@@ -225,14 +225,14 @@ public:
 class CFX_BaseMassArray : public CFX_Target
 {
 protected:
-    CFX_BaseMassArray(FX_INT32 iChunkSize, FX_INT32 iBlockSize);
+    CFX_BaseMassArray(int32_t iChunkSize, int32_t iBlockSize);
     ~CFX_BaseMassArray();
-    FX_INT32	GetSize() const;
-    FX_LPBYTE	AddSpaceTo(FX_INT32 index);
-    FX_LPBYTE	GetAt(FX_INT32 index) const;
-    FX_INT32	Append(const CFX_BaseMassArray &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1);
-    FX_INT32	Copy(const CFX_BaseMassArray &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1);
-    FX_INT32	RemoveLast(FX_INT32 iCount = -1);
+    int32_t	GetSize() const;
+    FX_LPBYTE	AddSpaceTo(int32_t index);
+    FX_LPBYTE	GetAt(int32_t index) const;
+    int32_t	Append(const CFX_BaseMassArray &src, int32_t iStart = 0, int32_t iCount = -1);
+    int32_t	Copy(const CFX_BaseMassArray &src, int32_t iStart = 0, int32_t iCount = -1);
+    int32_t	RemoveLast(int32_t iCount = -1);
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE);
     CFX_BaseMassArrayImp* m_pData;
 };
@@ -240,9 +240,9 @@ template<class baseType>
 class CFX_MassArrayTemplate : public CFX_BaseMassArray
 {
 public:
-    CFX_MassArrayTemplate(FX_INT32 iChunkSize = 100) : CFX_BaseMassArray(iChunkSize, sizeof(baseType)) {}
-    CFX_MassArrayTemplate(FX_INT32 iChunkSize, FX_INT32 iBlockSize) : CFX_BaseMassArray(iChunkSize, iBlockSize) {}
-    FX_INT32	GetSize() const
+    CFX_MassArrayTemplate(int32_t iChunkSize = 100) : CFX_BaseMassArray(iChunkSize, sizeof(baseType)) {}
+    CFX_MassArrayTemplate(int32_t iChunkSize, int32_t iBlockSize) : CFX_BaseMassArray(iChunkSize, iBlockSize) {}
+    int32_t	GetSize() const
     {
         return CFX_BaseMassArray::GetSize();
     }
@@ -250,37 +250,37 @@ public:
     {
         return (baseType*)CFX_BaseMassArray::AddSpaceTo(CFX_BaseMassArray::GetSize());
     }
-    FX_INT32	Add(const baseType &element)
+    int32_t	Add(const baseType &element)
     {
-        FX_INT32 index = CFX_BaseMassArray::GetSize();
+        int32_t index = CFX_BaseMassArray::GetSize();
         *(baseType*)CFX_BaseMassArray::AddSpaceTo(index) = element;
         return index;
     }
-    baseType&	GetAt(FX_INT32 index) const
+    baseType&	GetAt(int32_t index) const
     {
         return *(baseType*)CFX_BaseMassArray::GetAt(index);
     }
-    baseType*	GetPtrAt(FX_INT32 index) const
+    baseType*	GetPtrAt(int32_t index) const
     {
         return (baseType*)CFX_BaseMassArray::GetAt(index);
     }
-    void		SetAt(FX_INT32 index, const baseType &element)
+    void		SetAt(int32_t index, const baseType &element)
     {
         *(baseType*)CFX_BaseMassArray::GetAt(index) = element;
     }
-    void		SetAtGrow(FX_INT32 index, const baseType &element)
+    void		SetAtGrow(int32_t index, const baseType &element)
     {
         *(baseType*)CFX_BaseMassArray::AddSpaceTo(index) = element;
     }
-    FX_INT32	Append(const CFX_MassArrayTemplate &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1)
+    int32_t	Append(const CFX_MassArrayTemplate &src, int32_t iStart = 0, int32_t iCount = -1)
     {
         return CFX_BaseMassArray::Append(src, iStart, iCount);
     }
-    FX_INT32	Copy(const CFX_MassArrayTemplate &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1)
+    int32_t	Copy(const CFX_MassArrayTemplate &src, int32_t iStart = 0, int32_t iCount = -1)
     {
         return CFX_BaseMassArray::Copy(src, iStart, iCount);
     }
-    FX_INT32	RemoveLast(FX_INT32 iCount = -1)
+    int32_t	RemoveLast(int32_t iCount = -1)
     {
         return CFX_BaseMassArray::RemoveLast(iCount);
     }
@@ -290,7 +290,7 @@ public:
     }
 };
 typedef CFX_MassArrayTemplate<FX_LPVOID>	CFX_PtrMassArray;
-typedef CFX_MassArrayTemplate<FX_INT32>		CFX_Int32MassArray;
+typedef CFX_MassArrayTemplate<int32_t>		CFX_Int32MassArray;
 typedef CFX_MassArrayTemplate<FX_DWORD>		CFX_DWordMassArray;
 typedef CFX_MassArrayTemplate<FX_WORD>		CFX_WordMassArray;
 typedef CFX_MassArrayTemplate<CFX_Rect>		CFX_RectMassArray;
@@ -299,87 +299,87 @@ template<class baseType>
 class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray
 {
 public:
-    CFX_ObjectMassArrayTemplate(FX_INT32 iChunkSize = 100) : CFX_BaseMassArray(iChunkSize, sizeof(baseType)) {}
+    CFX_ObjectMassArrayTemplate(int32_t iChunkSize = 100) : CFX_BaseMassArray(iChunkSize, sizeof(baseType)) {}
     ~CFX_ObjectMassArrayTemplate()
     {
         RemoveAll(FALSE);
     }
-    FX_INT32	GetSize() const
+    int32_t	GetSize() const
     {
         return CFX_BaseMassArray::GetSize();
     }
-    FX_INT32	Add(const baseType &element)
+    int32_t	Add(const baseType &element)
     {
-        FX_INT32 index = CFX_BaseMassArray::GetSize();
+        int32_t index = CFX_BaseMassArray::GetSize();
         baseType *p = (baseType*)CFX_BaseMassArray::AddSpaceTo(index);
         FXTARGET_New ((void*)p)baseType(element);
         return index;
     }
-    baseType&	GetAt(FX_INT32 index) const
+    baseType&	GetAt(int32_t index) const
     {
         return *(baseType*)CFX_BaseMassArray::GetAt(index);
     }
-    baseType*	GetPtrAt(FX_INT32 index) const
+    baseType*	GetPtrAt(int32_t index) const
     {
         return (baseType*)CFX_BaseMassArray::GetAt(index);
     }
-    FX_INT32	Append(const CFX_ObjectMassArrayTemplate &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1)
+    int32_t	Append(const CFX_ObjectMassArrayTemplate &src, int32_t iStart = 0, int32_t iCount = -1)
     {
         if (iCount == 0) {
             return CFX_BaseMassArray::GetSize();
         }
-        FX_INT32 iSize = src.GetSize();
+        int32_t iSize = src.GetSize();
         FXSYS_assert(iStart > -1 && iStart < iSize);
         if (iCount < 0) {
             iCount = iSize;
         }
-        FX_INT32 iEnd = iStart + iCount;
+        int32_t iEnd = iStart + iCount;
         if (iEnd > iSize) {
             iEnd = iSize;
         }
-        for (FX_INT32 i = iStart; i < iEnd; i ++) {
+        for (int32_t i = iStart; i < iEnd; i ++) {
             Add(src.GetAt(i));
         }
         return CFX_BaseMassArray::GetSize();
     }
-    FX_INT32	Copy(const CFX_ObjectMassArrayTemplate &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1)
+    int32_t	Copy(const CFX_ObjectMassArrayTemplate &src, int32_t iStart = 0, int32_t iCount = -1)
     {
         if (iCount == 0) {
             return CFX_BaseMassArray::GetSize();
         }
-        FX_INT32 iSize = src.GetSize();
+        int32_t iSize = src.GetSize();
         FXSYS_assert(iStart > -1 && iStart < iSize);
         if (iCount < 0) {
             iCount = iSize;
         }
-        FX_INT32 iEnd = iStart + iCount;
+        int32_t iEnd = iStart + iCount;
         if (iEnd > iSize) {
             iEnd = iSize;
         }
         RemoveAll(TRUE);
-        for (FX_INT32 i = iStart; i < iEnd; i ++) {
+        for (int32_t i = iStart; i < iEnd; i ++) {
             Add(src.GetAt(i));
         }
         return CFX_BaseMassArray::GetSize();
     }
-    FX_INT32	RemoveLast(FX_INT32 iCount = -1)
+    int32_t	RemoveLast(int32_t iCount = -1)
     {
-        FX_INT32 iSize = CFX_BaseMassArray::GetSize();
+        int32_t iSize = CFX_BaseMassArray::GetSize();
         if (iCount < 0 || iCount > iSize) {
             iCount = iSize;
         }
         if (iCount == 0) {
             return iSize;
         }
-        for (FX_INT32 i = iSize - iCount; i < iSize; i ++) {
+        for (int32_t i = iSize - iCount; i < iSize; i ++) {
             ((baseType*)GetPtrAt(i))->~baseType();
         }
         return CFX_BaseMassArray::RemoveLast(iCount);
     }
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE)
     {
-        FX_INT32 iSize = CFX_BaseMassArray::GetSize();
-        for (FX_INT32 i = 0; i < iSize; i ++) {
+        int32_t iSize = CFX_BaseMassArray::GetSize();
+        for (int32_t i = 0; i < iSize; i ++) {
             ((baseType*)GetPtrAt(i))->~baseType();
         }
         CFX_BaseMassArray::RemoveAll(bLeaveMemory);
@@ -388,10 +388,10 @@ public:
 class CFX_BaseDiscreteArray : public CFX_Target
 {
 protected:
-    CFX_BaseDiscreteArray(FX_INT32 iChunkSize, FX_INT32 iBlockSize);
+    CFX_BaseDiscreteArray(int32_t iChunkSize, int32_t iBlockSize);
     ~CFX_BaseDiscreteArray();
-    FX_LPBYTE	AddSpaceTo(FX_INT32 index);
-    FX_LPBYTE	GetAt(FX_INT32 index) const;
+    FX_LPBYTE	AddSpaceTo(int32_t index);
+    FX_LPBYTE	GetAt(int32_t index) const;
     void		RemoveAll();
     FX_LPVOID	m_pData;
 };
@@ -399,17 +399,17 @@ template<class baseType>
 class CFX_DiscreteArrayTemplate : public CFX_BaseDiscreteArray
 {
 public:
-    CFX_DiscreteArrayTemplate(FX_INT32 iChunkSize = 100) : CFX_BaseDiscreteArray(iChunkSize, sizeof(baseType)) {}
-    baseType&	GetAt(FX_INT32 index, const baseType &defValue) const
+    CFX_DiscreteArrayTemplate(int32_t iChunkSize = 100) : CFX_BaseDiscreteArray(iChunkSize, sizeof(baseType)) {}
+    baseType&	GetAt(int32_t index, const baseType &defValue) const
     {
         baseType *p = (baseType*)CFX_BaseDiscreteArray::GetAt(index);
         return p == NULL ? (baseType&)defValue : *p;
     }
-    baseType*	GetPtrAt(FX_INT32 index) const
+    baseType*	GetPtrAt(int32_t index) const
     {
         return (baseType*)CFX_BaseDiscreteArray::GetAt(index);
     }
-    void		SetAtGrow(FX_INT32 index, const baseType &element)
+    void		SetAtGrow(int32_t index, const baseType &element)
     {
         *(baseType*)CFX_BaseDiscreteArray::AddSpaceTo(index) = element;
     }
@@ -424,13 +424,13 @@ typedef CFX_DiscreteArrayTemplate<FX_WORD>		CFX_WordDiscreteArray;
 class CFX_BaseStack : public CFX_Target
 {
 protected:
-    CFX_BaseStack(FX_INT32 iChunkSize, FX_INT32 iBlockSize);
+    CFX_BaseStack(int32_t iChunkSize, int32_t iBlockSize);
     ~CFX_BaseStack();
     FX_LPBYTE	Push();
     void		Pop();
     FX_LPBYTE	GetTopElement() const;
-    FX_INT32	GetSize() const;
-    FX_LPBYTE	GetAt(FX_INT32 index) const;
+    int32_t	GetSize() const;
+    FX_LPBYTE	GetAt(int32_t index) const;
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE);
     CFX_BaseMassArrayImp* m_pData;
 };
@@ -438,10 +438,10 @@ template<class baseType>
 class CFX_StackTemplate : public CFX_BaseStack
 {
 public:
-    CFX_StackTemplate(FX_INT32 iChunkSize = 100) : CFX_BaseStack(iChunkSize, sizeof(baseType)) {}
-    FX_INT32	Push(const baseType &element)
+    CFX_StackTemplate(int32_t iChunkSize = 100) : CFX_BaseStack(iChunkSize, sizeof(baseType)) {}
+    int32_t	Push(const baseType &element)
     {
-        FX_INT32 index = CFX_BaseStack::GetSize();
+        int32_t index = CFX_BaseStack::GetSize();
         *(baseType*)CFX_BaseStack::Push() = element;
         return index;
     }
@@ -453,11 +453,11 @@ public:
     {
         return (baseType*)CFX_BaseStack::GetTopElement();
     }
-    FX_INT32	GetSize() const
+    int32_t	GetSize() const
     {
         return CFX_BaseStack::GetSize();
     }
-    baseType*	GetAt(FX_INT32 index) const
+    baseType*	GetAt(int32_t index) const
     {
         return (baseType*)CFX_BaseStack::GetAt(index);
     }
@@ -469,19 +469,19 @@ public:
 typedef CFX_StackTemplate<FX_LPVOID>	CFX_PtrStack;
 typedef CFX_StackTemplate<FX_DWORD>	CFX_DWordStack;
 typedef CFX_StackTemplate<FX_WORD>		CFX_WordStack;
-typedef CFX_StackTemplate<FX_INT32>	CFX_Int32Stack;
+typedef CFX_StackTemplate<int32_t>	CFX_Int32Stack;
 template<class baseType>
 class CFX_ObjectStackTemplate : public CFX_BaseStack
 {
 public:
-    CFX_ObjectStackTemplate(FX_INT32 iChunkSize = 100) : CFX_BaseStack(iChunkSize, sizeof(baseType)) {}
+    CFX_ObjectStackTemplate(int32_t iChunkSize = 100) : CFX_BaseStack(iChunkSize, sizeof(baseType)) {}
     ~CFX_ObjectStackTemplate()
     {
         RemoveAll();
     }
-    FX_INT32	Push(const baseType &element)
+    int32_t	Push(const baseType &element)
     {
-        FX_INT32 index = CFX_BaseStack::GetSize();
+        int32_t index = CFX_BaseStack::GetSize();
         baseType *p = (baseType*)CFX_BaseStack::Push();
         FXTARGET_New ((void*)p)baseType(element);
         return index;
@@ -498,38 +498,38 @@ public:
     {
         return (baseType*)CFX_BaseStack::GetTopElement();
     }
-    FX_INT32	GetSize() const
+    int32_t	GetSize() const
     {
         return CFX_BaseStack::GetSize();
     }
-    baseType*	GetAt(FX_INT32 index) const
+    baseType*	GetAt(int32_t index) const
     {
         return (baseType*)CFX_BaseStack::GetAt(index);
     }
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE)
     {
-        FX_INT32 iSize = CFX_BaseStack::GetSize();
-        for (FX_INT32 i = 0; i < iSize; i ++) {
+        int32_t iSize = CFX_BaseStack::GetSize();
+        for (int32_t i = 0; i < iSize; i ++) {
             ((baseType*)CFX_BaseStack::GetAt(i))->~baseType();
         }
         CFX_BaseStack::RemoveAll(bLeaveMemory);
     }
-    FX_INT32	Copy(const CFX_ObjectStackTemplate &src, FX_INT32 iStart = 0, FX_INT32 iCount = -1)
+    int32_t	Copy(const CFX_ObjectStackTemplate &src, int32_t iStart = 0, int32_t iCount = -1)
     {
         if (iCount == 0) {
             return CFX_BaseStack::GetSize();
         }
-        FX_INT32 iSize = src.GetSize();
+        int32_t iSize = src.GetSize();
         FXSYS_assert(iStart > -1 && iStart < iSize);
         if (iCount < 0) {
             iCount = iSize;
         }
-        FX_INT32 iEnd = iStart + iCount;
+        int32_t iEnd = iStart + iCount;
         if (iEnd > iSize) {
             iEnd = iSize;
         }
         RemoveAll(TRUE);
-        for (FX_INT32 i = iStart; i < iEnd; i ++) {
+        for (int32_t i = iStart; i < iEnd; i ++) {
             Push(*src.GetAt(i));
         }
         return CFX_BaseStack::GetSize();
@@ -659,9 +659,9 @@ public:
     {
         m_pParentNode = pNode;
     }
-    FX_INT32 CountChildNodes() const
+    int32_t CountChildNodes() const
     {
-        FX_INT32 iCount = 0;
+        int32_t iCount = 0;
         CPLTreeNode *pNode = m_pChildNode;
         while (pNode) {
             iCount ++;
@@ -669,9 +669,9 @@ public:
         }
         return iCount;
     }
-    CPLTreeNode* GetChildNode(FX_INT32 iIndex) const
+    CPLTreeNode* GetChildNode(int32_t iIndex) const
     {
-        FX_INT32 iCount = 0;
+        int32_t iCount = 0;
         CPLTreeNode *pNode = m_pChildNode;
         while (pNode) {
             if (iIndex == iCount) {
@@ -682,9 +682,9 @@ public:
         }
         return NULL;
     }
-    FX_INT32 GetNodeIndex() const
+    int32_t GetNodeIndex() const
     {
-        FX_INT32 index = 0;
+        int32_t index = 0;
         CPLTreeNode *pNode = m_pPrevNode;
         while (pNode != NULL) {
             index ++;
@@ -722,9 +722,9 @@ public:
     {
         m_pNextNode = pNode;
     }
-    FX_INT32 GetNodeLevel() const
+    int32_t GetNodeLevel() const
     {
-        FX_INT32 iLevel = 0;
+        int32_t iLevel = 0;
         CPLTreeNode *pNode = (CPLTreeNode*)this;
         while ((pNode = pNode->m_pParentNode) != NULL) {
             iLevel ++;

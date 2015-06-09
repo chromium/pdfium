@@ -15,14 +15,14 @@ class CBC_QRCodeWriter  : public CBC_TwoDimWriter
 public:
     CBC_QRCodeWriter();
     virtual ~CBC_QRCodeWriter();
-    FX_BYTE* Encode(const CFX_WideString& contents, FX_INT32 ecLevel, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32  &e);
-    FX_BYTE* Encode(const CFX_ByteString& contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e);
-    FX_BYTE* Encode(const CFX_ByteString& contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e);
-    FX_BOOL SetVersion(FX_INT32 version);
-    FX_BOOL SetErrorCorrectionLevel(FX_INT32 level);
+    uint8_t* Encode(const CFX_WideString& contents, int32_t ecLevel, int32_t &outWidth, int32_t &outHeight, int32_t  &e);
+    uint8_t* Encode(const CFX_ByteString& contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e);
+    uint8_t* Encode(const CFX_ByteString& contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e);
+    FX_BOOL SetVersion(int32_t version);
+    FX_BOOL SetErrorCorrectionLevel(int32_t level);
     static void ReleaseAll();
 private:
 
-    FX_INT32 m_iVersion;
+    int32_t m_iVersion;
 };
 #endif

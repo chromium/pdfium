@@ -55,7 +55,7 @@ CBC_QRCodeReader::~CBC_QRCodeReader()
     }
     m_decoder = NULL;
 }
-CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e)
 {
     CBC_CommonBitMatrix *matrix = image->GetMatrix(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
@@ -68,7 +68,7 @@ CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap *image, FX_INT32 hints,
     CBC_AutoPtr<CBC_CommonDecoderResult> decodeResult(qdr2);
     return (decodeResult->GetText());
 }
-CFX_ByteString CBC_QRCodeReader::Decode(const CFX_WideString &filename, FX_INT32 hints, FX_INT32 byteModeDecode, FX_INT32 &e)
+CFX_ByteString CBC_QRCodeReader::Decode(const CFX_WideString &filename, int32_t hints, int32_t byteModeDecode, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(filename);
     source.Init(e);
@@ -79,7 +79,7 @@ CFX_ByteString CBC_QRCodeReader::Decode(const CFX_WideString &filename, FX_INT32
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     return bs;
 }
-CFX_ByteString CBC_QRCodeReader::Decode(CFX_DIBitmap *pBitmap, FX_INT32 hints, FX_INT32 byteModeDecode, FX_INT32 &e)
+CFX_ByteString CBC_QRCodeReader::Decode(CFX_DIBitmap *pBitmap, int32_t hints, int32_t byteModeDecode, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);
@@ -88,7 +88,7 @@ CFX_ByteString CBC_QRCodeReader::Decode(CFX_DIBitmap *pBitmap, FX_INT32 hints, F
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     return bs;
 }
-CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap *image, FX_INT32 &e)
+CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap *image, int32_t &e)
 {
     CFX_ByteString bs = Decode(image, 0, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");

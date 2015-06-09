@@ -97,7 +97,7 @@ void BC_Library_Init()
     CBC_SymbolInfo::Initialize();
     CBC_ErrorCorrection::Initialize();
     CBC_PDF417HighLevelEncoder::Initialize();
-    FX_INT32 e = 0;
+    int32_t e = 0;
     CBC_PDF417ECModulusGF::Initialize(e);
     CBC_DecodedBitStreamPaser::Initialize();
     CBC_PDF417CodewordDecoder::Initialize();

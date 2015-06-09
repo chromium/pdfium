@@ -33,7 +33,7 @@ CFX_WideString::StringData* CFX_WideString::StringData::Create(int nLen)
     int usableLen = (totalSize - overhead) / sizeof(FX_WCHAR);
     FXSYS_assert(usableLen >= nLen);
 
-    void* pData = FX_Alloc(FX_BYTE, iSize.ValueOrDie());
+    void* pData = FX_Alloc(uint8_t, iSize.ValueOrDie());
     return new (pData) StringData(nLen, usableLen);
 }
 CFX_WideString::~CFX_WideString()
@@ -911,7 +911,7 @@ void CFX_WideString::FormatV(FX_LPCWSTR lpszFormat, va_list argList)
                 case 'X':
                 case 'o':
                     if (nModifier & FORCE_INT64) {
-                        va_arg(argList, FX_INT64);
+                        va_arg(argList, int64_t);
                     } else {
                         va_arg(argList, int);
                     }
@@ -1068,7 +1068,7 @@ static const CFX_CharMap g_DefaultGBKMapper = {&_DefMap_GetWideString, &_DefMap_
 static const CFX_CharMap g_DefaultJISMapper = {&_DefMap_GetWideString, &_DefMap_GetByteString, &_DefMap_GetJISCodePage};
 static const CFX_CharMap g_DefaultUHCMapper = {&_DefMap_GetWideString, &_DefMap_GetByteString, &_DefMap_GetUHCCodePage};
 static const CFX_CharMap g_DefaultBig5Mapper = {&_DefMap_GetWideString, &_DefMap_GetByteString, &_DefMap_GetBig5CodePage};
-CFX_CharMap* CFX_CharMap::GetDefaultMapper(FX_INT32 codepage)
+CFX_CharMap* CFX_CharMap::GetDefaultMapper(int32_t codepage)
 {
     switch (codepage) {
         case 0:

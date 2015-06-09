@@ -38,20 +38,20 @@ CFDE_CSSSyntaxParser::~CFDE_CSSSyntaxParser()
     m_TextData.Reset();
     m_TextPlane.Reset();
 }
-FX_BOOL CFDE_CSSSyntaxParser::Init(IFX_Stream *pStream, FX_INT32 iCSSPlaneSize, FX_INT32 iTextDataSize , FX_BOOL bOnlyDeclaration )
+FX_BOOL CFDE_CSSSyntaxParser::Init(IFX_Stream *pStream, int32_t iCSSPlaneSize, int32_t iTextDataSize , FX_BOOL bOnlyDeclaration )
 {
     FXSYS_assert(pStream != NULL && iCSSPlaneSize > 0 && iTextDataSize > 0);
     Reset(bOnlyDeclaration);
     if (!m_TextData.EstimateSize(iTextDataSize)) {
         return FALSE;
     }
-    FX_BYTE bom[4];
+    uint8_t bom[4];
     m_pStream = pStream;
     m_iStreamPos = m_pStream->GetBOM(bom);
     m_iPlaneSize = iCSSPlaneSize;
     return TRUE;
 }
-FX_BOOL CFDE_CSSSyntaxParser::Init(FX_LPCWSTR pBuffer, FX_INT32 iBufferSize, FX_INT32 iTextDatSize , FX_BOOL bOnlyDeclaration )
+FX_BOOL CFDE_CSSSyntaxParser::Init(FX_LPCWSTR pBuffer, int32_t iBufferSize, int32_t iTextDatSize , FX_BOOL bOnlyDeclaration )
 {
     FXSYS_assert(pBuffer != NULL && iBufferSize > 0 && iTextDatSize > 0);
     Reset(bOnlyDeclaration);
@@ -83,7 +83,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse()
                 return m_eStatus = FDE_CSSSYNTAXSTATUS_EOS;
             }
             FX_BOOL bEOS;
-            FX_INT32 iLen = m_TextPlane.LoadFromStream(m_pStream, m_iStreamPos, m_iPlaneSize, bEOS);
+            int32_t iLen = m_TextPlane.LoadFromStream(m_pStream, m_iStreamPos, m_iPlaneSize, bEOS);
             m_iStreamPos = m_pStream->GetPosition();
             if (iLen < 1) {
                 if (m_eMode == FDE_CSSSYNTAXMODE_PropertyValue && m_TextData.GetLength() > 0) {
@@ -280,7 +280,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse()
                             return m_eStatus = FDE_CSSSYNTAXSTATUS_Error;
                         }
                         if (wch <= ' ' || wch == ';') {
-                            FX_INT32 iURIStart, iURILength = m_TextData.GetLength();
+                            int32_t iURIStart, iURILength = m_TextData.GetLength();
                             if (iURILength > 0 && FDE_ParseCSSURI(m_TextData.GetBuffer(), iURILength, iURIStart, iURILength)) {
                                 m_TextData.Subtract(iURIStart, iURILength);
                                 SwitchMode(FDE_CSSSYNTAXMODE_MediaType);
@@ -298,7 +298,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse()
                     if (wch > ' ') {
                         AppendChar(wch);
                     } else {
-                        FX_INT32 iLen = m_TextData.GetLength();
+                        int32_t iLen = m_TextData.GetLength();
                         FX_LPCWSTR psz = m_TextData.GetBuffer();
                         if (FXSYS_wcsncmp(L"charset", psz, iLen) == 0) {
                             SwitchMode(FDE_CSSSYNTAXMODE_Charset);
@@ -378,7 +378,7 @@ inline FX_BOOL CFDE_CSSSyntaxParser::AppendChar(FX_WCHAR wch)
     }
     return FALSE;
 }
-inline FX_INT32 CFDE_CSSSyntaxParser::SaveTextData()
+inline int32_t CFDE_CSSSyntaxParser::SaveTextData()
 {
     m_iTextDatLen = m_TextData.TrimEnd();
     m_TextData.Clear();
@@ -389,9 +389,9 @@ inline void CFDE_CSSSyntaxParser::SwitchMode(FDE_CSSSYNTAXMODE eMode)
     m_eMode = eMode;
     SaveTextData();
 }
-inline FX_INT32 CFDE_CSSSyntaxParser::SwitchToComment()
+inline int32_t CFDE_CSSSyntaxParser::SwitchToComment()
 {
-    FX_INT32 iLength = m_TextData.GetLength();
+    int32_t iLength = m_TextData.GetLength();
     m_ModeStack.Push(m_eMode);
     SwitchMode(FDE_CSSSYNTAXMODE_Comment);
     return iLength;
@@ -406,7 +406,7 @@ inline FX_BOOL CFDE_CSSSyntaxParser::RestoreMode()
     m_ModeStack.Pop();
     return TRUE;
 }
-FX_LPCWSTR CFDE_CSSSyntaxParser::GetCurrentString(FX_INT32 &iLength) const
+FX_LPCWSTR CFDE_CSSSyntaxParser::GetCurrentString(int32_t &iLength) const
 {
     iLength = m_iTextDatLen;
     return m_TextData.GetBuffer();
@@ -431,21 +431,21 @@ void CFDE_CSSTextBuf::Reset()
     }
     m_iDatPos = m_iDatLen = m_iBufLen;
 }
-FX_BOOL CFDE_CSSTextBuf::AttachBuffer(FX_LPCWSTR pBuffer, FX_INT32 iBufLen)
+FX_BOOL CFDE_CSSTextBuf::AttachBuffer(FX_LPCWSTR pBuffer, int32_t iBufLen)
 {
     Reset();
     m_pBuffer = (FX_LPWSTR)pBuffer;
     m_iDatLen = m_iBufLen = iBufLen;
     return m_bExtBuf = TRUE;
 }
-FX_BOOL CFDE_CSSTextBuf::EstimateSize(FX_INT32 iAllocSize)
+FX_BOOL CFDE_CSSTextBuf::EstimateSize(int32_t iAllocSize)
 {
     FXSYS_assert(iAllocSize > 0);
     Clear();
     m_bExtBuf = FALSE;
     return ExpandBuf(iAllocSize);
 }
-FX_INT32 CFDE_CSSTextBuf::LoadFromStream(IFX_Stream *pTxtStream, FX_INT32 iStreamOffset, FX_INT32 iMaxChars, FX_BOOL &bEOS)
+int32_t CFDE_CSSTextBuf::LoadFromStream(IFX_Stream *pTxtStream, int32_t iStreamOffset, int32_t iMaxChars, FX_BOOL &bEOS)
 {
     FXSYS_assert(iStreamOffset >= 0 && iMaxChars > 0);
     Clear();
@@ -461,7 +461,7 @@ FX_INT32 CFDE_CSSTextBuf::LoadFromStream(IFX_Stream *pTxtStream, FX_INT32 iStrea
     pTxtStream->Unlock();
     return m_iDatLen;
 }
-FX_BOOL CFDE_CSSTextBuf::ExpandBuf(FX_INT32 iDesiredSize)
+FX_BOOL CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize)
 {
     if (m_bExtBuf) {
         return FALSE;
@@ -480,7 +480,7 @@ FX_BOOL CFDE_CSSTextBuf::ExpandBuf(FX_INT32 iDesiredSize)
         return TRUE;
     }
 }
-void CFDE_CSSTextBuf::Subtract(FX_INT32 iStart, FX_INT32 iLength)
+void CFDE_CSSTextBuf::Subtract(int32_t iStart, int32_t iLength)
 {
     FXSYS_assert(iStart >= 0 && iLength > 0);
     if (iLength > m_iDatLen - iStart) {

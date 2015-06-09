@@ -291,7 +291,7 @@ extern const XFA_ATTRIBUTEENUMINFO g_XFAEnumData[] = {
     {0xfefc4885, L"urlencoded", XFA_ATTRIBUTEENUM_Urlencoded},
 	{0xff795ad2, L"lowered", XFA_ATTRIBUTEENUM_Lowered},
 };
-extern const FX_INT32 g_iXFAEnumCount = sizeof(g_XFAEnumData) / sizeof(XFA_ATTRIBUTEENUMINFO);
+extern const int32_t g_iXFAEnumCount = sizeof(g_XFAEnumData) / sizeof(XFA_ATTRIBUTEENUMINFO);
 static const CXFA_Measurement g_XFAMeasurementData[] = {
     CXFA_Measurement(0, XFA_UNIT_In),
     CXFA_Measurement(0, XFA_UNIT_Pt),
@@ -548,7 +548,7 @@ extern const XFA_ATTRIBUTEINFO g_XFAAttributeData[] = {
     {0xf889e747, L"xdpContent", XFA_ATTRIBUTE_XdpContent, XFA_ATTRIBUTETYPE_Cdata, XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (FX_LPVOID)NULL},
     {0xfea53ec6, L"decipherOnly", XFA_ATTRIBUTE_DecipherOnly, XFA_ATTRIBUTETYPE_Cdata, XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, (FX_LPVOID)NULL},
 };
-extern const FX_INT32 g_iXFAAttributeCount = sizeof(g_XFAAttributeData) / sizeof(XFA_ATTRIBUTEINFO);
+extern const int32_t g_iXFAAttributeCount = sizeof(g_XFAAttributeData) / sizeof(XFA_ATTRIBUTEINFO);
 extern const XFA_NOTSUREATTRIBUTE g_XFANotsureAttributes[] = {
     {XFA_ELEMENT_SubformSet, XFA_ATTRIBUTE_Relation, XFA_ATTRIBUTETYPE_Enum, (FX_LPVOID)XFA_ATTRIBUTEENUM_Ordered},
     {XFA_ELEMENT_NumberPattern, XFA_ATTRIBUTE_Name, XFA_ATTRIBUTETYPE_Enum, (FX_LPVOID)XFA_ATTRIBUTEENUM_Numeric},
@@ -599,7 +599,7 @@ extern const XFA_NOTSUREATTRIBUTE g_XFANotsureAttributes[] = {
     {XFA_ELEMENT_Occur, XFA_ATTRIBUTE_Max, XFA_ATTRIBUTETYPE_Integer, (FX_LPVOID)1},
     {XFA_ELEMENT_NumberSymbol, XFA_ATTRIBUTE_Name, XFA_ATTRIBUTETYPE_Enum, (FX_LPVOID)XFA_ATTRIBUTEENUM_Decimal},
 };
-extern const FX_INT32 g_iXFANotsureCount = sizeof(g_XFANotsureAttributes) / sizeof(XFA_NOTSUREATTRIBUTE);
+extern const int32_t g_iXFANotsureCount = sizeof(g_XFANotsureAttributes) / sizeof(XFA_NOTSUREATTRIBUTE);
 extern const XFA_ELEMENTINFO g_XFAElementData[] = {
     {0x23ee3, L"ps", XFA_ELEMENT_Ps, XFA_XDPPACKET_Config, XFA_OBJECTTYPE_Node},
     {0x25363, L"to", XFA_ELEMENT_To, XFA_XDPPACKET_Config, XFA_OBJECTTYPE_ContentNode},
@@ -914,7 +914,7 @@ extern const XFA_ELEMENTINFO g_XFAElementData[] = {
     {0xfcbd606c, L"tagged", XFA_ELEMENT_Tagged, XFA_XDPPACKET_Config, XFA_OBJECTTYPE_ContentNode},
     {0xff063802, L"items", XFA_ELEMENT_Items, XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, XFA_OBJECTTYPE_Node},
 };
-extern const FX_INT32 g_iXFAElementCount = sizeof(g_XFAElementData) / sizeof(XFA_ELEMENTINFO);
+extern const int32_t g_iXFAElementCount = sizeof(g_XFAElementData) / sizeof(XFA_ELEMENTINFO);
 extern const XFA_ELEMENTHIERARCHY g_XFAElementPropertyIndex[] = {
     {0, 8},	{8, 0},	{8, 14},	{22, 0},	{22, 0},	{22, 6},	{28, 0},	{28, 0},	{28, 1},	{29, 3},	{32, 0},	{32, 0},	{32, 0},	{32, 3},	{35, 1},	{36, 0},	{36, 0},	{36, 2},	{38, 0},	{38, 0},
     {38, 0},	{38, 4},	{42, 0},	{42, 0},	{42, 1},	{43, 0},	{43, 8},	{51, 19},	{70, 0},	{70, 0},	{70, 2},	{72, 1},	{73, 0},	{73, 2},	{75, 4},	{79, 1},	{80, 1},	{81, 0},	{81, 0},	{81, 3},
@@ -1040,7 +1040,7 @@ extern const XFA_ELEMENTHIERARCHY g_XFAElementAttributeIndex[] = {
     {1037, 2},	{1039, 0},	{1039, 4},	{1043, 2},	{1045, 0},	{1045, 2},	{1047, 3},	{1050, 2},	{1052, 5},	{1057, 2},	{1059, 2},	{1061, 4},	{1065, 3},	{1068, 0},	{1068, 4},	{1072, 2},	{1074, 2},	{1076, 3},	{1079, 4},	{1083, 8},
     {1091, 5},	{1096, 0},	{1096, 4},	{1100, 6},	{1106, 2},	{1108, 1},	{1109, 2},	{1111, 2},	{1113, 2},	{1115, 1},	{1116, 2},	{1118, 7},
 };
-extern const FX_BYTE g_XFAElementAttributeData[] = {
+extern const uint8_t g_XFAElementAttributeData[] = {
     XFA_ATTRIBUTE_Name,	XFA_ATTRIBUTE_Desc,	XFA_ATTRIBUTE_Lock,	XFA_ATTRIBUTE_Desc,	XFA_ATTRIBUTE_Lock,	XFA_ATTRIBUTE_Id,	XFA_ATTRIBUTE_Use,	XFA_ATTRIBUTE_Usehref,	XFA_ATTRIBUTE_Id,	XFA_ATTRIBUTE_Name,
     XFA_ATTRIBUTE_Max,	XFA_ATTRIBUTE_Use,	XFA_ATTRIBUTE_EofAction,	XFA_ATTRIBUTE_CursorType,	XFA_ATTRIBUTE_LockType,	XFA_ATTRIBUTE_BofAction,	XFA_ATTRIBUTE_Usehref,	XFA_ATTRIBUTE_CursorLocation,	XFA_ATTRIBUTE_Desc,	XFA_ATTRIBUTE_Lock,
     XFA_ATTRIBUTE_Id,	XFA_ATTRIBUTE_Name,	XFA_ATTRIBUTE_Use,	XFA_ATTRIBUTE_Relation,	XFA_ATTRIBUTE_Relevant,	XFA_ATTRIBUTE_Usehref,	XFA_ATTRIBUTE_Desc,	XFA_ATTRIBUTE_Lock,	XFA_ATTRIBUTE_Name,	XFA_ATTRIBUTE_Id,
@@ -1172,7 +1172,7 @@ extern const XFA_PACKETINFO g_XFAPacketData[] = {
     {0xcd309ff4, L"form", XFA_XDPPACKET_Form, L"http://www.xfa.org/schema/xfa-form/", XFA_XDPPACKET_FLAGS_NOMATCH | XFA_XDPPACKET_FLAGS_SUPPORTONE},
     {0xe14c801c, L"connectionSet", XFA_XDPPACKET_ConnectionSet, L"http://www.xfa.org/schema/xfa-connection-set/", XFA_XDPPACKET_FLAGS_NOMATCH | XFA_XDPPACKET_FLAGS_SUPPORTONE},
 };
-extern const FX_INT32 g_iXFAPacketCount = sizeof(g_XFAPacketData) / sizeof(XFA_PACKETINFO);
+extern const int32_t g_iXFAPacketCount = sizeof(g_XFAPacketData) / sizeof(XFA_PACKETINFO);
 extern const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
     {0, 0, 0, 2, 316},	{0, 0, 2, 2, 316},	{0, 0, 4, 2, 316},	{0, 0, 6, 8, 316},	{0, 0, 14, 4, 316},	{0, 0, 18, 5, 317},	{0, 0, 23, 2, 316},	{0, 0, 25, 1, 316},	{0, 0, 26, 12, 316},	{0, 0, 38, 2, 316},	{0, 0, 40, 1, 316},	{0, 0, 41, 3, 316},	{0, 0, 44, 2, 316},	{0, 0, 46, 6, 316},	{0, 0, 52, 0, 316},	{0, 0, 52, 2, 319},	{0, 0, 54, 2, 316},	{0, 0, 56, 6, 316},	{0, 0, 62, 0, 316},	{0, 0, 62, 0, 316},
     {0, 0, 62, 2, 316},	{0, 0, 64, 2, 316},	{0, 0, 66, 6, 316},	{0, 0, 72, 4, 316},	{0, 0, 76, 7, 316},	{0, 0, 83, 2, 320},	{0, 0, 85, 3, 316},	{0, 0, 88, 3, 316},	{0, 0, 91, 2, 320},	{0, 0, 93, 6, 320},	{0, 0, 99, 4, 316},	{0, 0, 103, 2, 316},	{0, 0, 105, 3, 319},	{0, 0, 108, 4, 316},	{0, 0, 112, 3, 316},	{0, 0, 115, 2, 316},	{0, 0, 117, 6, 316},	{0, 0, 123, 12, 316},	{0, 0, 135, 2, 316},	{0, 0, 137, 5, 316},
@@ -1240,7 +1240,7 @@ extern const XFA_METHODINFO g_SomMethodData[] = {
     {0xe006a76b, L"assignNode", (XFA_METHOD_CALLBACK)&CXFA_Node::Script_NodeClass_AssignNode},	{0x7303fcea, L"getDelta", (XFA_METHOD_CALLBACK)&CXFA_Node::Script_ContainerClass_GetDelta},	{0xe7742c9d, L"getDeltas", (XFA_METHOD_CALLBACK)&CXFA_Node::Script_ContainerClass_GetDeltas},
     {0x30ff6aad, L"clearErrorList", (XFA_METHOD_CALLBACK)&CXFA_Node::Script_ModelClass_ClearErrorList},	{0x712c6afa, L"createNode", (XFA_METHOD_CALLBACK)&CXFA_Node::Script_ModelClass_CreateNode},	{0x83a6411d, L"isCompatibleNS", (XFA_METHOD_CALLBACK)&CXFA_Node::Script_ModelClass_IsCompatibleNS},
 };
-extern const FX_INT32 g_iSomMethodCount = sizeof(g_SomMethodData) / sizeof(XFA_METHODINFO);
+extern const int32_t g_iSomMethodCount = sizeof(g_SomMethodData) / sizeof(XFA_METHODINFO);
 extern const _XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
     {0xbe52dfbf, L"desc", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String, XFA_ATTRIBUTE_Desc, XFA_SCRIPT_Basic},	{0xf6b47749, L"lock", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_BOOL, XFA_ATTRIBUTE_Lock, XFA_SCRIPT_Basic},	{0xbe52dfbf, L"desc", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String, XFA_ATTRIBUTE_Desc, XFA_SCRIPT_Basic},
     {0xf6b47749, L"lock", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_BOOL, XFA_ATTRIBUTE_Lock, XFA_SCRIPT_Basic},	{0xc0811ed, L"use", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String, XFA_ATTRIBUTE_Use, XFA_SCRIPT_Basic},	{0xbc254332, L"usehref", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String, XFA_ATTRIBUTE_Usehref, XFA_SCRIPT_Basic},
@@ -1603,4 +1603,4 @@ extern const _XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
     {0x97c1c65, L"context", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_ModelClass_Context, -1, XFA_SCRIPT_Object},	{0x58be2870, L"aliasNode", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_ModelClass_AliasNode, -1, XFA_SCRIPT_Object},	{0xa52682bd, L"{default}", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Som_DefaultValue, -1, XFA_SCRIPT_Basic},
     {0xd6e27f1d, L"value", (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Som_DefaultValue, -1, XFA_SCRIPT_Basic},
 };
-extern const FX_INT32 g_iSomAttributeCount = sizeof(g_SomAttributeData) / sizeof(XFA_ATTRIBUTEINFO);
+extern const int32_t g_iSomAttributeCount = sizeof(g_SomAttributeData) / sizeof(XFA_ATTRIBUTEINFO);

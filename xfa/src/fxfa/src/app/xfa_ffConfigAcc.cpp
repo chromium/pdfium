@@ -15,20 +15,20 @@ CXFA_FFConfigAcc::CXFA_FFConfigAcc(CXFA_Node *pNode)
 CXFA_FFConfigAcc::~CXFA_FFConfigAcc()
 {
 }
-FX_INT32 CXFA_FFConfigAcc::CountChildren()
+int32_t CXFA_FFConfigAcc::CountChildren()
 {
     GetPsMapNode();
     if (m_pPsMapNode == NULL) {
         return 0;
     }
-    FX_INT32 iCount = 0;
+    int32_t iCount = 0;
     CXFA_Node* pNode = m_pPsMapNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
         iCount++;
     }
     return iCount;
 }
-FX_BOOL CXFA_FFConfigAcc::GetFontInfo(FX_INT32 index, CFX_WideString &wsFontFamily, CFX_WideString &wsPsName, FX_BOOL bBold, FX_BOOL bItalic)
+FX_BOOL CXFA_FFConfigAcc::GetFontInfo(int32_t index, CFX_WideString &wsFontFamily, CFX_WideString &wsPsName, FX_BOOL bBold, FX_BOOL bItalic)
 {
     if (index < 0 || index >= CountChildren()) {
         return FALSE;

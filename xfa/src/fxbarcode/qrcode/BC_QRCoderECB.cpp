@@ -22,7 +22,7 @@
 
 #include "../barcode.h"
 #include "BC_QRCoderECB.h"
-CBC_QRCoderECB::CBC_QRCoderECB(FX_INT32 count, FX_INT32 dataCodeWords)
+CBC_QRCoderECB::CBC_QRCoderECB(int32_t count, int32_t dataCodeWords)
 {
     m_dataCodeWords = dataCodeWords;
     m_count = count;
@@ -30,11 +30,11 @@ CBC_QRCoderECB::CBC_QRCoderECB(FX_INT32 count, FX_INT32 dataCodeWords)
 CBC_QRCoderECB::~CBC_QRCoderECB()
 {
 }
-FX_INT32 CBC_QRCoderECB::GetCount()
+int32_t CBC_QRCoderECB::GetCount()
 {
     return m_count;
 }
-FX_INT32 CBC_QRCoderECB::GetDataCodeWords()
+int32_t CBC_QRCoderECB::GetDataCodeWords()
 {
     return m_dataCodeWords;
 }

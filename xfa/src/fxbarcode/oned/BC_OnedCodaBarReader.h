@@ -14,16 +14,16 @@ class CBC_OnedCodaBarReader : public CBC_OneDReader
 public:
     CBC_OnedCodaBarReader();
     virtual ~CBC_OnedCodaBarReader();
-    CFX_ByteString DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, FX_INT32 hints, FX_INT32 &e);
-    CFX_Int32Array *FindAsteriskPattern(CBC_CommonBitArray *row, FX_INT32 &e);
+    CFX_ByteString DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, int32_t hints, int32_t &e);
+    CFX_Int32Array *FindAsteriskPattern(CBC_CommonBitArray *row, int32_t &e);
     FX_BOOL ArrayContains(const FX_CHAR array[], FX_CHAR key);
     FX_CHAR ToNarrowWidePattern(CFX_Int32Array *counter);
     static FX_LPCSTR ALPHABET_STRING;
 
 
-    const static FX_INT32 CHARACTER_ENCODINGS[22];
+    const static int32_t CHARACTER_ENCODINGS[22];
 
-    const static FX_INT32 minCharacterLength;
+    const static int32_t minCharacterLength;
 
     const static FX_CHAR STARTEND_ENCODING[8];
 };

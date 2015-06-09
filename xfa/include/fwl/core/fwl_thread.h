@@ -25,8 +25,8 @@ public:
 FWL_HTHREAD FWL_StartThread(IFWL_Thread *pThread, FX_BOOL bSuspended = FALSE);
 FWL_ERR FWL_ResumeThread(FWL_HTHREAD hThread);
 FWL_ERR FWL_SuspendThread(FWL_HTHREAD hThread);
-FWL_ERR FWL_KillThread(FWL_HTHREAD hThread, FX_INT32 iExitCode);
-FWL_ERR FWL_StopThread(FWL_HTHREAD hThread, FX_INT32 iExitCode);
+FWL_ERR FWL_KillThread(FWL_HTHREAD hThread, int32_t iExitCode);
+FWL_ERR FWL_StopThread(FWL_HTHREAD hThread, int32_t iExitCode);
 FWL_ERR FWL_Sleep(FX_DWORD dwMilliseconds);
 class IFWL_NoteThread : public IFWL_Thread
 {
@@ -50,7 +50,7 @@ typedef struct _FWL_HSEMAPHORE {
 FWL_HSEMAPHORE	FWL_CreateSemaphore();
 FWL_ERR		FWL_DestroySemaphore(FWL_HSEMAPHORE hSemaphore);
 FWL_ERR		FWL_WaitSemaphore(FWL_HSEMAPHORE hSemaphore);
-FWL_ERR		FWL_PostSemaphore(FWL_HSEMAPHORE hSemaphore, FX_INT32 down = 1);
-FWL_ERR		FWL_GetSemaphoreValue(FWL_HSEMAPHORE hSemaphore, FX_INT32 &value);
-FWL_ERR		FWL_ResetSemaphore(FWL_HSEMAPHORE hSemaphore, FX_INT32 init);
+FWL_ERR		FWL_PostSemaphore(FWL_HSEMAPHORE hSemaphore, int32_t down = 1);
+FWL_ERR		FWL_GetSemaphoreValue(FWL_HSEMAPHORE hSemaphore, int32_t &value);
+FWL_ERR		FWL_ResetSemaphore(FWL_HSEMAPHORE hSemaphore, int32_t init);
 #endif

@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 #include "fde_render.h"
-void FDE_GetPageMatrix(CFX_Matrix &pageMatrix, const CFX_RectF &docPageRect, const CFX_Rect &devicePageRect, FX_INT32 iRotate, FX_DWORD dwCoordinatesType)
+void FDE_GetPageMatrix(CFX_Matrix &pageMatrix, const CFX_RectF &docPageRect, const CFX_Rect &devicePageRect, int32_t iRotate, FX_DWORD dwCoordinatesType)
 {
     FXSYS_assert(iRotate >= 0 && iRotate <= 3);
     FX_BOOL bFlipX = (dwCoordinatesType & 0x01) != 0;
@@ -108,7 +108,7 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause *pPause)
     IFDE_VisualSet *pVisualSet;
     FDE_HVISUALOBJ hVisualObj;
     CFX_RectF rtObj;
-    FX_INT32 iCount = 0;
+    int32_t iCount = 0;
     while(TRUE) {
         hVisualObj = m_pIterator->GetNext(pVisualSet);
         if (hVisualObj == NULL || pVisualSet == NULL) {
@@ -175,7 +175,7 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet *pTextSet, FDE_HVISUALOBJ hText
     if (pFont == NULL) {
         return;
     }
-    FX_INT32 iCount = pTextSet->GetDisplayPos(hText, NULL, FALSE);
+    int32_t iCount = pTextSet->GetDisplayPos(hText, NULL, FALSE);
     if (iCount < 1) {
         return;
     }
@@ -214,7 +214,7 @@ void CFDE_RenderContext::RenderPath(IFDE_PathSet *pPathSet, FDE_HVISUALOBJ hPath
     }
     FDE_HDEVICESTATE hState;
     FX_BOOL bClip = ApplyClip(pPathSet, hPath, hState);
-    FX_INT32 iRenderMode = pPathSet->GetRenderMode(hPath);
+    int32_t iRenderMode = pPathSet->GetRenderMode(hPath);
     if (iRenderMode & FDE_PATHRENDER_Stroke) {
         IFDE_Pen *pPen = pPathSet->GetPen(hPath);
         FX_FLOAT fWidth = pPathSet->GetPenWidth(hPath);

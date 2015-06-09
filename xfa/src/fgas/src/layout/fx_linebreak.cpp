@@ -72,7 +72,7 @@ extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32] = {
     {FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN,	FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN,	FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN},
     {FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN,	FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN,	FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN},
 };
-void FX_GetLineBreakPositions(FX_LPCWSTR pwsText, FX_LINEBREAKTYPE *pBrkType, FX_INT32 iLength)
+void FX_GetLineBreakPositions(FX_LPCWSTR pwsText, FX_LINEBREAKTYPE *pBrkType, int32_t iLength)
 {
     if (iLength < 2) {
         return;
@@ -82,7 +82,7 @@ void FX_GetLineBreakPositions(FX_LPCWSTR pwsText, FX_LINEBREAKTYPE *pBrkType, FX
     wch = *pwsText ++;
     dwCur = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & 0x003F;
     iLength --;
-    for (FX_INT32 i = 0; i < iLength; i ++) {
+    for (int32_t i = 0; i < iLength; i ++) {
         wch = *pwsText ++;
         dwNext = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & 0x003F;
         if (dwNext == FX_CBP_SP) {
@@ -94,7 +94,7 @@ void FX_GetLineBreakPositions(FX_LPCWSTR pwsText, FX_LINEBREAKTYPE *pBrkType, FX
     }
     pBrkType[iLength] = FX_LBT_INDIRECT_BRK;
 }
-void FX_GetLineBreakPositions(FX_LPCWSTR pwsText, FX_INT32 iLength, CFX_Int32MassArray &bp)
+void FX_GetLineBreakPositions(FX_LPCWSTR pwsText, int32_t iLength, CFX_Int32MassArray &bp)
 {
     if (iLength < 2) {
         return;
@@ -105,7 +105,7 @@ void FX_GetLineBreakPositions(FX_LPCWSTR pwsText, FX_INT32 iLength, CFX_Int32Mas
     wch = *pwsText ++;
     dwCur = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & 0x003F;
     iLength --;
-    for (FX_INT32 i = 0; i < iLength; i ++) {
+    for (int32_t i = 0; i < iLength; i ++) {
         wch = *pwsText ++;
         dwNext = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & 0x003F;
         if (dwNext == FX_CBP_SP) {

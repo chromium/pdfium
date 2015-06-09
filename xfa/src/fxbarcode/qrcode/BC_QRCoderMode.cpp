@@ -33,9 +33,9 @@ CBC_QRCoderMode* CBC_QRCoderMode::sTERMINATOR = NULL;
 CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_FIRST_POSITION = NULL;
 CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_SECOND_POSITION = NULL;
 CBC_QRCoderMode* CBC_QRCoderMode::sSTRUCTURED_APPEND = NULL;
-CBC_QRCoderMode::CBC_QRCoderMode(FX_INT32 *characterCountBitsForVersions,
-                                 FX_INT32 x1, FX_INT32 x2, FX_INT32 x3,
-                                 FX_INT32 bits, CFX_ByteString name)
+CBC_QRCoderMode::CBC_QRCoderMode(int32_t *characterCountBitsForVersions,
+                                 int32_t x1, int32_t x2, int32_t x3,
+                                 int32_t bits, CFX_ByteString name)
 {
     m_characterCountBitsForVersions = characterCountBitsForVersions;
     if (m_characterCountBitsForVersions != NULL) {
@@ -54,16 +54,16 @@ CBC_QRCoderMode::~CBC_QRCoderMode()
 }
 void CBC_QRCoderMode::Initialize()
 {
-    sBYTE = FX_NEW CBC_QRCoderMode(FX_Alloc(FX_INT32, 3), 8, 16, 16, 0x4, "BYTE");
-    sALPHANUMERIC = FX_NEW CBC_QRCoderMode(FX_Alloc(FX_INT32, 3), 9, 11, 13, 0x2, "ALPHANUMERIC");
+    sBYTE = FX_NEW CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 16, 16, 0x4, "BYTE");
+    sALPHANUMERIC = FX_NEW CBC_QRCoderMode(FX_Alloc(int32_t, 3), 9, 11, 13, 0x2, "ALPHANUMERIC");
     sECI = FX_NEW CBC_QRCoderMode(NULL, 0, 0, 0, 0x7, "ECI");
-    sKANJI = FX_NEW CBC_QRCoderMode(FX_Alloc(FX_INT32, 3), 8, 10, 12, 0x8, "KANJI");
-    sNUMERIC = FX_NEW CBC_QRCoderMode(FX_Alloc(FX_INT32, 3), 10, 12, 14, 0x1, "NUMERIC");
-    sGBK = FX_NEW CBC_QRCoderMode(FX_Alloc(FX_INT32, 3), 8, 10, 12, 0x0D, "GBK");
-    sTERMINATOR = FX_NEW CBC_QRCoderMode(FX_Alloc(FX_INT32, 3), 0, 0, 0, 0x00, "TERMINATOR");
+    sKANJI = FX_NEW CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 10, 12, 0x8, "KANJI");
+    sNUMERIC = FX_NEW CBC_QRCoderMode(FX_Alloc(int32_t, 3), 10, 12, 14, 0x1, "NUMERIC");
+    sGBK = FX_NEW CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 10, 12, 0x0D, "GBK");
+    sTERMINATOR = FX_NEW CBC_QRCoderMode(FX_Alloc(int32_t, 3), 0, 0, 0, 0x00, "TERMINATOR");
     sFNC1_FIRST_POSITION = FX_NEW CBC_QRCoderMode(NULL, 0, 0, 0, 0x05, "FNC1_FIRST_POSITION");
     sFNC1_SECOND_POSITION = FX_NEW CBC_QRCoderMode(NULL, 0, 0, 0, 0x09, "FNC1_SECOND_POSITION");
-    sSTRUCTURED_APPEND = FX_NEW CBC_QRCoderMode(FX_Alloc(FX_INT32, 3), 0, 0, 0, 0x03, "STRUCTURED_APPEND");
+    sSTRUCTURED_APPEND = FX_NEW CBC_QRCoderMode(FX_Alloc(int32_t, 3), 0, 0, 0, 0x03, "STRUCTURED_APPEND");
 }
 void CBC_QRCoderMode::Finalize()
 {
@@ -78,7 +78,7 @@ void CBC_QRCoderMode::Finalize()
     delete sFNC1_SECOND_POSITION;
     delete sSTRUCTURED_APPEND;
 }
-CBC_QRCoderMode* CBC_QRCoderMode::ForBits(FX_INT32 bits, FX_INT32 &e)
+CBC_QRCoderMode* CBC_QRCoderMode::ForBits(int32_t bits, int32_t &e)
 {
     switch (bits) {
         case 0x0:
@@ -108,7 +108,7 @@ CBC_QRCoderMode* CBC_QRCoderMode::ForBits(FX_INT32 bits, FX_INT32 &e)
     }
     return NULL;
 }
-FX_INT32 CBC_QRCoderMode::GetBits()
+int32_t CBC_QRCoderMode::GetBits()
 {
     return m_bits;
 }
@@ -116,14 +116,14 @@ CFX_ByteString CBC_QRCoderMode::GetName()
 {
     return m_name;
 }
-FX_INT32 CBC_QRCoderMode::GetCharacterCountBits(CBC_QRCoderVersion* version, FX_INT32 &e)
+int32_t CBC_QRCoderMode::GetCharacterCountBits(CBC_QRCoderVersion* version, int32_t &e)
 {
     if(m_characterCountBitsForVersions == NULL) {
         e = BCExceptionCharacterNotThisMode;
         BC_EXCEPTION_CHECK_ReturnValue(e, 0);
     }
-    FX_INT32 number = version->GetVersionNumber();
-    FX_INT32 offset;
+    int32_t number = version->GetVersionNumber();
+    int32_t offset;
     if(number <= 9) {
         offset = 0;
     } else if(number <= 26) {

@@ -13,16 +13,16 @@ class IFDE_TxtEdtBuf
 public:
     virtual void		Release() = 0;
 
-    virtual FX_BOOL		SetChunkSize(FX_INT32 nChunkSize) = 0;
-    virtual FX_INT32	GetChunkSize() const = 0;
-    virtual FX_INT32	GetTextLength() const = 0;
+    virtual FX_BOOL		SetChunkSize(int32_t nChunkSize) = 0;
+    virtual int32_t	GetChunkSize() const = 0;
+    virtual int32_t	GetTextLength() const = 0;
     virtual void		SetText(const CFX_WideString &wsText) = 0;
     virtual void		GetText(CFX_WideString &wsText) const = 0;
-    virtual FX_WCHAR	GetCharByIndex(FX_INT32 nIndex) const = 0;
-    virtual void		GetRange(CFX_WideString &wsText, FX_INT32 nBegin, FX_INT32 nCount = - 1) const = 0;
+    virtual FX_WCHAR	GetCharByIndex(int32_t nIndex) const = 0;
+    virtual void		GetRange(CFX_WideString &wsText, int32_t nBegin, int32_t nCount = - 1) const = 0;
 
-    virtual void		Insert(FX_INT32 nPos, FX_LPCWSTR lpText, FX_INT32 nLength = 1) = 0;
-    virtual void		Delete(FX_INT32 nIndex, FX_INT32 nLength = 1) = 0;
+    virtual void		Insert(int32_t nPos, FX_LPCWSTR lpText, int32_t nLength = 1) = 0;
+    virtual void		Delete(int32_t nIndex, int32_t nLength = 1) = 0;
 
     virtual void		Clear(FX_BOOL bRelease = TRUE) = 0;
 

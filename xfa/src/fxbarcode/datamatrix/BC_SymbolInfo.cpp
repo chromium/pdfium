@@ -62,19 +62,19 @@ void CBC_SymbolInfo::Initialize()
     m_PROD_SYMBOLS[27] = FX_NEW CBC_SymbolInfo(FALSE, 1050, 408, 18, 18, 36, 175, 68);
     m_PROD_SYMBOLS[28] = FX_NEW CBC_SymbolInfo(FALSE, 1304, 496, 20, 20, 36, 163, 62);
     m_PROD_SYMBOLS[29] = FX_NEW CBC_DataMatrixSymbolInfo144();
-    for (FX_INT32 i = 0; i < SYMBOLS_COUNT; i++) {
+    for (int32_t i = 0; i < SYMBOLS_COUNT; i++) {
         m_symbols[i] = m_PROD_SYMBOLS[i];
     }
 }
 void CBC_SymbolInfo::Finalize()
 {
-    for (FX_INT32 i = 0; i < SYMBOLS_COUNT; i++) {
+    for (int32_t i = 0; i < SYMBOLS_COUNT; i++) {
         delete m_PROD_SYMBOLS[i];
         m_PROD_SYMBOLS[i] = NULL;
         m_symbols[i] = NULL;
     }
 }
-CBC_SymbolInfo::CBC_SymbolInfo(FX_BOOL rectangular, FX_INT32 dataCapacity, FX_INT32 errorCodewords, FX_INT32 matrixWidth, FX_INT32 matrixHeight, FX_INT32 dataRegions)
+CBC_SymbolInfo::CBC_SymbolInfo(FX_BOOL rectangular, int32_t dataCapacity, int32_t errorCodewords, int32_t matrixWidth, int32_t matrixHeight, int32_t dataRegions)
 {
     m_rectangular = rectangular;
     m_dataCapacity = dataCapacity;
@@ -85,8 +85,8 @@ CBC_SymbolInfo::CBC_SymbolInfo(FX_BOOL rectangular, FX_INT32 dataCapacity, FX_IN
     m_rsBlockData = dataCapacity;
     m_rsBlockError = errorCodewords;
 }
-CBC_SymbolInfo::CBC_SymbolInfo(FX_BOOL rectangular, FX_INT32 dataCapacity, FX_INT32 errorCodewords, FX_INT32 matrixWidth, FX_INT32 matrixHeight, FX_INT32 dataRegions,
-                               FX_INT32 rsBlockData, FX_INT32 rsBlockError)
+CBC_SymbolInfo::CBC_SymbolInfo(FX_BOOL rectangular, int32_t dataCapacity, int32_t errorCodewords, int32_t matrixWidth, int32_t matrixHeight, int32_t dataRegions,
+                               int32_t rsBlockData, int32_t rsBlockError)
 {
     m_rectangular = rectangular;
     m_dataCapacity = dataCapacity;
@@ -101,26 +101,26 @@ CBC_SymbolInfo::~CBC_SymbolInfo()
 {
 }
 
-CBC_SymbolInfo* CBC_SymbolInfo::lookup(FX_INT32 dataCodewords, FX_INT32 &e)
+CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords, int32_t &e)
 {
     return lookup(dataCodewords, FORCE_NONE, TRUE, e);
 }
-CBC_SymbolInfo* CBC_SymbolInfo::lookup(FX_INT32 dataCodewords, SymbolShapeHint shape, FX_INT32 &e)
+CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords, SymbolShapeHint shape, int32_t &e)
 {
     return lookup(dataCodewords, shape, TRUE, e);
 }
-CBC_SymbolInfo* CBC_SymbolInfo::lookup(FX_INT32 dataCodewords, FX_BOOL allowRectangular, FX_BOOL fail, FX_INT32 &e)
+CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords, FX_BOOL allowRectangular, FX_BOOL fail, int32_t &e)
 {
     SymbolShapeHint shape = allowRectangular ? FORCE_NONE : FORCE_SQUARE;
     return lookup(dataCodewords, shape, fail, e);
 }
-CBC_SymbolInfo* CBC_SymbolInfo::lookup(FX_INT32 dataCodewords, SymbolShapeHint shape, FX_BOOL fail, FX_INT32 &e)
+CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords, SymbolShapeHint shape, FX_BOOL fail, int32_t &e)
 {
     return lookup(dataCodewords, shape, NULL, NULL, fail, e);
 }
-CBC_SymbolInfo* CBC_SymbolInfo::lookup(FX_INT32 dataCodewords, SymbolShapeHint shape, CBC_Dimension* minSize, CBC_Dimension* maxSize, FX_BOOL fail, FX_INT32 &e)
+CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords, SymbolShapeHint shape, CBC_Dimension* minSize, CBC_Dimension* maxSize, FX_BOOL fail, int32_t &e)
 {
-    for (FX_INT32 i = 0; i < SYMBOLS_COUNT; i++) {
+    for (int32_t i = 0; i < SYMBOLS_COUNT; i++) {
         CBC_SymbolInfo* symbol = m_symbols[i];
         if (shape == FORCE_SQUARE && symbol->m_rectangular) {
             continue;
@@ -146,7 +146,7 @@ CBC_SymbolInfo* CBC_SymbolInfo::lookup(FX_INT32 dataCodewords, SymbolShapeHint s
     }
     return NULL;
 }
-FX_INT32 CBC_SymbolInfo::getHorizontalDataRegions(FX_INT32 &e)
+int32_t CBC_SymbolInfo::getHorizontalDataRegions(int32_t &e)
 {
     switch (m_dataRegions) {
         case 1:
@@ -164,7 +164,7 @@ FX_INT32 CBC_SymbolInfo::getHorizontalDataRegions(FX_INT32 &e)
             return 0;
     }
 }
-FX_INT32 CBC_SymbolInfo::getVerticalDataRegions(FX_INT32 &e)
+int32_t CBC_SymbolInfo::getVerticalDataRegions(int32_t &e)
 {
     switch (m_dataRegions) {
         case 1:
@@ -182,39 +182,39 @@ FX_INT32 CBC_SymbolInfo::getVerticalDataRegions(FX_INT32 &e)
             return 0;
     }
 }
-FX_INT32 CBC_SymbolInfo::getSymbolDataWidth(FX_INT32 &e)
+int32_t CBC_SymbolInfo::getSymbolDataWidth(int32_t &e)
 {
     return getHorizontalDataRegions(e) * m_matrixWidth;
 }
-FX_INT32 CBC_SymbolInfo::getSymbolDataHeight(FX_INT32 &e)
+int32_t CBC_SymbolInfo::getSymbolDataHeight(int32_t &e)
 {
     return getVerticalDataRegions(e) * m_matrixHeight;
 }
-FX_INT32 CBC_SymbolInfo::getSymbolWidth(FX_INT32 &e)
+int32_t CBC_SymbolInfo::getSymbolWidth(int32_t &e)
 {
     return getSymbolDataWidth(e) + (getHorizontalDataRegions(e) * 2);
 }
-FX_INT32 CBC_SymbolInfo::getSymbolHeight(FX_INT32 &e)
+int32_t CBC_SymbolInfo::getSymbolHeight(int32_t &e)
 {
     return getSymbolDataHeight(e) + (getVerticalDataRegions(e) * 2);
 }
-FX_INT32 CBC_SymbolInfo::getCodewordCount()
+int32_t CBC_SymbolInfo::getCodewordCount()
 {
     return m_dataCapacity + m_errorCodewords;
 }
-FX_INT32 CBC_SymbolInfo::getInterleavedBlockCount()
+int32_t CBC_SymbolInfo::getInterleavedBlockCount()
 {
     return m_dataCapacity / m_rsBlockData;
 }
-FX_INT32 CBC_SymbolInfo::getDataLengthForInterleavedBlock(FX_INT32 index)
+int32_t CBC_SymbolInfo::getDataLengthForInterleavedBlock(int32_t index)
 {
     return m_rsBlockData;
 }
-FX_INT32 CBC_SymbolInfo::getErrorLengthForInterleavedBlock(FX_INT32 index)
+int32_t CBC_SymbolInfo::getErrorLengthForInterleavedBlock(int32_t index)
 {
     return m_rsBlockError;
 }
-CFX_WideString CBC_SymbolInfo::toString(FX_INT32 &e)
+CFX_WideString CBC_SymbolInfo::toString(int32_t &e)
 {
     CFX_WideString sb;
     sb += (FX_LPWSTR)(m_rectangular ? "Rectangular Symbol:" : "Square Symbol:");

@@ -45,7 +45,7 @@ CFX_StaticStore::~CFX_StaticStore()
 FX_LPSTATICSTORECHUNK CFX_StaticStore::AllocChunk(size_t size)
 {
     FXSYS_assert(size != 0);
-    register FX_LPSTATICSTORECHUNK pChunk = (FX_LPSTATICSTORECHUNK)FX_Alloc(FX_BYTE, sizeof(FX_STATICSTORECHUNK) + size);
+    register FX_LPSTATICSTORECHUNK pChunk = (FX_LPSTATICSTORECHUNK)FX_Alloc(uint8_t, sizeof(FX_STATICSTORECHUNK) + size);
     if (pChunk == NULL) {
         return NULL;
     }
@@ -106,8 +106,8 @@ CFX_FixedStore::~CFX_FixedStore()
 }
 FX_LPFIXEDSTORECHUNK CFX_FixedStore::AllocChunk()
 {
-    FX_INT32 iTotalSize = sizeof(FX_FIXEDSTORECHUNK) + m_iDefChunkSize + m_iBlockSize * m_iDefChunkSize;
-    register FX_LPFIXEDSTORECHUNK pChunk = (FX_LPFIXEDSTORECHUNK)FX_Alloc(FX_BYTE, iTotalSize);
+    int32_t iTotalSize = sizeof(FX_FIXEDSTORECHUNK) + m_iDefChunkSize + m_iBlockSize * m_iDefChunkSize;
+    register FX_LPFIXEDSTORECHUNK pChunk = (FX_LPFIXEDSTORECHUNK)FX_Alloc(uint8_t, iTotalSize);
     if (pChunk == NULL) {
         return NULL;
     }
@@ -206,7 +206,7 @@ CFX_DynamicStore::~CFX_DynamicStore()
 FX_LPDYNAMICSTORECHUNK CFX_DynamicStore::AllocChunk(size_t size)
 {
     FXSYS_assert(size != 0);
-    register FX_LPDYNAMICSTORECHUNK pChunk = (FX_LPDYNAMICSTORECHUNK)FX_Alloc(FX_BYTE, sizeof(FX_DYNAMICSTORECHUNK) + sizeof(FX_DYNAMICSTOREBLOCK) * 2 + size);
+    register FX_LPDYNAMICSTORECHUNK pChunk = (FX_LPDYNAMICSTORECHUNK)FX_Alloc(uint8_t, sizeof(FX_DYNAMICSTORECHUNK) + sizeof(FX_DYNAMICSTOREBLOCK) * 2 + size);
     if (pChunk == NULL) {
         return NULL;
     }

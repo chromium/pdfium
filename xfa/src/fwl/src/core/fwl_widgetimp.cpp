@@ -450,8 +450,8 @@ FWL_ERR	CFWL_WidgetImp::GetMatrix(CFX_Matrix &matrix, FX_BOOL bGlobal )
         matrix.Reset();
         CFX_Matrix ctmOnParent;
         CFX_RectF rect;
-        FX_INT32 count = parents.GetSize();
-        for (FX_INT32 i = count - 2; i >= 0; i--) {
+        int32_t count = parents.GetSize();
+        for (int32_t i = count - 2; i >= 0; i--) {
             parent = (IFWL_Widget *) parents.GetAt(i);
             parent->GetMatrix(ctmOnParent, FALSE);
             parent->GetWidgetRect(rect);
@@ -708,7 +708,7 @@ CFWL_WidgetImp* CFWL_WidgetImp::GetSameAncestor(CFWL_WidgetImp *pWidget)
         arr2.Add(pAncestor);
         relation =  pAncestor->IsPopup() ? FWL_WGTRELATION_Owner : FWL_WGTRELATION_Parent;
     } while ((pAncestor = (CFWL_WidgetImp*)m_pWidgetMgr->GetWidget(pAncestor->m_pInterface, relation)) != NULL);
-    for (FX_INT32 i = 0; i < arr1.GetSize(); i ++) {
+    for (int32_t i = 0; i < arr1.GetSize(); i ++) {
         FX_LPVOID pVoid = arr1[i];
         if (arr2.Find(pVoid) < 0) {
             continue;
@@ -755,7 +755,7 @@ FX_BOOL	CFWL_WidgetImp::TransformFromOuter(FX_FLOAT &fx, FX_FLOAT &fy)
 #define FWL_WGT_CalcHeight				2048
 #define FWL_WGT_CalcWidth				2048
 #define FWL_WGT_CalcMultiLineDefWidth	120.0f
-CFX_SizeF CFWL_WidgetImp::CalcTextSize(const CFX_WideString &wsText, IFWL_ThemeProvider *pTheme, FX_BOOL bMultiLine , FX_INT32 iLineWidth )
+CFX_SizeF CFWL_WidgetImp::CalcTextSize(const CFX_WideString &wsText, IFWL_ThemeProvider *pTheme, FX_BOOL bMultiLine , int32_t iLineWidth )
 {
     CFX_SizeF sz;
     sz.Set(0, 0);
@@ -775,7 +775,7 @@ CFX_SizeF CFWL_WidgetImp::CalcTextSize(const CFX_WideString &wsText, IFWL_ThemeP
     sz.y = rect.height;
     return sz;
 }
-void CFWL_WidgetImp::CalcTextRect(const CFX_WideString &wsText, IFWL_ThemeProvider *pTheme, FX_DWORD dwTTOStyles, FX_INT32 iTTOAlign, CFX_RectF &rect)
+void CFWL_WidgetImp::CalcTextRect(const CFX_WideString &wsText, IFWL_ThemeProvider *pTheme, FX_DWORD dwTTOStyles, int32_t iTTOAlign, CFX_RectF &rect)
 {
     CFWL_ThemeText calPart;
     calPart.m_pWidget = m_pInterface;
@@ -955,7 +955,7 @@ void CFWL_WidgetImp::Repaint(const CFX_RectF *pRect )
     m_pWidgetMgr->RepaintWidget(m_pInterface, &rect);
 }
 void CFWL_WidgetImp::DrawBackground(CFX_Graphics		 *pGraphics,
-                                    FX_INT32			  iPartBk,
+                                    int32_t			  iPartBk,
                                     IFWL_ThemeProvider   *pTheme,
                                     const CFX_Matrix	 *pMatrix )
 {
@@ -972,7 +972,7 @@ void CFWL_WidgetImp::DrawBackground(CFX_Graphics		 *pGraphics,
     pTheme->DrawBackground(&param);
 }
 void CFWL_WidgetImp::DrawBorder(CFX_Graphics		*pGraphics,
-                                FX_INT32			 iPartBorder,
+                                int32_t			 iPartBorder,
                                 IFWL_ThemeProvider	*pTheme,
                                 const CFX_Matrix	*pMatrix )
 {
@@ -989,7 +989,7 @@ void CFWL_WidgetImp::DrawBorder(CFX_Graphics		*pGraphics,
     pTheme->DrawBackground(&param);
 }
 void CFWL_WidgetImp::DrawEdge(CFX_Graphics			*pGraphics,
-                              FX_INT32				 iPartEdge,
+                              int32_t				 iPartEdge,
                               IFWL_ThemeProvider    *pTheme,
                               const CFX_Matrix		*pMatrix )
 {
@@ -1051,7 +1051,7 @@ FX_BOOL	CFWL_WidgetImp::IsParent(IFWL_Widget *pParent)
 CFWL_WidgetImpDelegate::CFWL_WidgetImpDelegate()
 {
 }
-FX_INT32 CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pMessage->m_pDstTarget, 0);
     CFWL_WidgetImp *pWidget = (CFWL_WidgetImp*)((IFWL_TargetData*)pMessage->m_pDstTarget)->GetData();

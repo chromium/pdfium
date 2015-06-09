@@ -14,8 +14,8 @@ public:
 
     FX_BOOL				Start();
 
-    FX_INT32			CompressIndirectObject(FX_DWORD dwObjNum, const CPDF_Object *pObj);
-    FX_INT32			CompressIndirectObject(FX_DWORD dwObjNum, FX_LPCBYTE pBuffer, FX_DWORD dwSize);
+    int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const CPDF_Object *pObj);
+    int32_t			CompressIndirectObject(FX_DWORD dwObjNum, FX_LPCBYTE pBuffer, FX_DWORD dwSize);
 
     FX_FILESIZE			End(CPDF_Creator* pCreator);
 
@@ -23,7 +23,7 @@ public:
 
     CFX_ByteTextBuf		m_Buffer;
     FX_DWORD			m_dwObjNum;
-    FX_INT32			m_index;
+    int32_t			m_index;
 protected:
 
     CFX_DWordArray		m_OffsetArray;
@@ -36,9 +36,9 @@ public:
 
     FX_BOOL				Start();
 
-    FX_INT32			CompressIndirectObject(FX_DWORD dwObjNum, const CPDF_Object *pObj, CPDF_Creator *pCreator);
+    int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const CPDF_Object *pObj, CPDF_Creator *pCreator);
 
-    FX_INT32			CompressIndirectObject(FX_DWORD dwObjNum, FX_LPCBYTE pBuffer, FX_DWORD dwSize, CPDF_Creator *pCreator);
+    int32_t			CompressIndirectObject(FX_DWORD dwObjNum, FX_LPCBYTE pBuffer, FX_DWORD dwSize, CPDF_Creator *pCreator);
 
     FX_BOOL				End(CPDF_Creator *pCreator, FX_BOOL bEOF = FALSE);
     FX_BOOL				AddObjectNumberToIndexArray(FX_DWORD objnum);
@@ -51,9 +51,9 @@ public:
     FX_DWORD			m_dwTempObjNum;
 
 protected:
-    FX_INT32			EndObjectStream(CPDF_Creator *pCreator, FX_BOOL bEOF = TRUE);
+    int32_t			EndObjectStream(CPDF_Creator *pCreator, FX_BOOL bEOF = TRUE);
     FX_BOOL				GenerateXRefStream(CPDF_Creator* pCreator, FX_BOOL bEOF);
-    FX_INT32			m_iSeg;
+    int32_t			m_iSeg;
     CPDF_ObjectStream	m_ObjStream;
     CFX_ByteTextBuf		m_Buffer;
 };

@@ -20,12 +20,12 @@ CBC_Writer::CBC_Writer()
 CBC_Writer::~CBC_Writer()
 {
 }
-FX_BOOL CBC_Writer::SetCharEncoding(FX_INT32 encoding)
+FX_BOOL CBC_Writer::SetCharEncoding(int32_t encoding)
 {
     m_CharEncoding = encoding;
     return TRUE;
 }
-FX_BOOL CBC_Writer::SetModuleHeight(FX_INT32 moduleHeight)
+FX_BOOL CBC_Writer::SetModuleHeight(int32_t moduleHeight)
 {
     if (moduleHeight > 10 || moduleHeight < 1) {
         return FALSE;
@@ -33,7 +33,7 @@ FX_BOOL CBC_Writer::SetModuleHeight(FX_INT32 moduleHeight)
     m_ModuleHeight = moduleHeight;
     return TRUE;
 }
-FX_BOOL CBC_Writer::SetModuleWidth(FX_INT32 moduleWidth)
+FX_BOOL CBC_Writer::SetModuleWidth(int32_t moduleWidth)
 {
     if ( moduleWidth > 10 || moduleWidth < 1) {
         return FALSE;
@@ -41,12 +41,12 @@ FX_BOOL CBC_Writer::SetModuleWidth(FX_INT32 moduleWidth)
     m_ModuleWidth = moduleWidth;
     return TRUE;
 }
-FX_BOOL CBC_Writer::SetHeight(FX_INT32 height)
+FX_BOOL CBC_Writer::SetHeight(int32_t height)
 {
     m_Height = height;
     return TRUE;
 }
-FX_BOOL CBC_Writer::SetWidth(FX_INT32 width)
+FX_BOOL CBC_Writer::SetWidth(int32_t width)
 {
     m_Width = width;
     return TRUE;
@@ -59,7 +59,7 @@ void CBC_Writer::SetBarcodeColor(FX_ARGB foregroundColor)
 {
     m_barColor = foregroundColor;
 }
-CFX_DIBitmap* CBC_Writer::CreateDIBitmap(FX_INT32 width, FX_INT32 height)
+CFX_DIBitmap* CBC_Writer::CreateDIBitmap(int32_t width, int32_t height)
 {
     CFX_DIBitmap *pDIBitmap = NULL;
     pDIBitmap = FX_NEW CFX_DIBitmap;

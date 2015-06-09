@@ -69,11 +69,11 @@ void CXFA_FFTextEdit::UpdateWidgetProperty()
         dwExtendedStyle |= FWL_STYLEEXT_EDT_MultiLine;
     }
     XFA_ELEMENT eType = XFA_ELEMENT_UNKNOWN;
-    FX_INT32 iMaxChars = m_pDataAcc->GetMaxChars(eType);
+    int32_t iMaxChars = m_pDataAcc->GetMaxChars(eType);
     if (eType == XFA_ELEMENT_ExData) {
         iMaxChars = 0;
     }
-    FX_INT32 iNumCells = m_pDataAcc->GetNumberOfCells();
+    int32_t iNumCells = m_pDataAcc->GetNumberOfCells();
     if (iNumCells == 0) {
         dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
         pWidget->SetLimit(iMaxChars > 0 ? iMaxChars : 1);
@@ -208,7 +208,7 @@ FX_DWORD CXFA_FFTextEdit::GetAlignment()
 {
     FX_DWORD dwExtendedStyle = 0;
     if (CXFA_Para para = m_pDataAcc->GetPara()) {
-        FX_INT32 iHorz = para.GetHorizontalAlign();
+        int32_t iHorz = para.GetHorizontalAlign();
         switch(iHorz) {
             case XFA_ATTRIBUTEENUM_Center:
                 dwExtendedStyle |= FWL_STYLEEXT_EDT_HCenter;
@@ -227,7 +227,7 @@ FX_DWORD CXFA_FFTextEdit::GetAlignment()
                 dwExtendedStyle |= FWL_STYLEEXT_EDT_HNear;
                 break;
         }
-        FX_INT32 iVert = para.GetVerticalAlign();
+        int32_t iVert = para.GetVerticalAlign();
         switch(iVert) {
             case XFA_ATTRIBUTEENUM_Middle:
                 dwExtendedStyle |= FWL_STYLEEXT_EDT_VCenter;
@@ -254,7 +254,7 @@ FX_BOOL CXFA_FFTextEdit::UpdateFWLData()
     FX_BOOL bUpdate = FALSE;
     if (m_pDataAcc->GetUIType() == XFA_ELEMENT_TextEdit && m_pDataAcc->GetNumberOfCells() < 0) {
         XFA_ELEMENT elementType = XFA_ELEMENT_UNKNOWN;
-        FX_INT32 iMaxChars = m_pDataAcc->GetMaxChars(elementType);
+        int32_t iMaxChars = m_pDataAcc->GetMaxChars(elementType);
         if (elementType == XFA_ELEMENT_ExData) {
             iMaxChars = eType == XFA_VALUEPICTURE_Edit ? iMaxChars : 0;
         }
@@ -294,7 +294,7 @@ FX_BOOL CXFA_FFTextEdit::Redo()
 }
 FX_BOOL CXFA_FFTextEdit::CanCopy()
 {
-    FX_INT32 nCount = ((CFWL_Edit*)m_pNormalWidget)->CountSelRanges();
+    int32_t nCount = ((CFWL_Edit*)m_pNormalWidget)->CountSelRanges();
     return nCount > 0;
 }
 FX_BOOL CXFA_FFTextEdit::CanCut()
@@ -302,7 +302,7 @@ FX_BOOL CXFA_FFTextEdit::CanCut()
     if (m_pNormalWidget->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly) {
         return FALSE;
     }
-    FX_INT32 nCount = ((CFWL_Edit*)m_pNormalWidget)->CountSelRanges();
+    int32_t nCount = ((CFWL_Edit*)m_pNormalWidget)->CountSelRanges();
     return nCount > 0;
 }
 FX_BOOL CXFA_FFTextEdit::CanPaste()
@@ -327,7 +327,7 @@ FX_BOOL CXFA_FFTextEdit::Paste(const CFX_WideString &wsPaste)
 }
 FX_BOOL CXFA_FFTextEdit::SelectAll()
 {
-    FX_INT32 nCount = ((CFWL_Edit*)m_pNormalWidget)->GetTextLength();
+    int32_t nCount = ((CFWL_Edit*)m_pNormalWidget)->GetTextLength();
     return ((CFWL_Edit*)m_pNormalWidget)->AddSelRange(0, nCount);
 }
 FX_BOOL CXFA_FFTextEdit::Delete()
@@ -366,13 +366,13 @@ void CXFA_FFTextEdit::OnTextChanged(IFWL_Widget *pWidget, const CFX_WideString &
     if (m_pDataAcc->GetUIType() == XFA_ELEMENT_DateTimeEdit) {
         CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)pEdit;
         pDateTime->GetEditText(eParam.m_wsNewText);
-        FX_INT32 iSels = pDateTime->CountSelRanges();
+        int32_t iSels = pDateTime->CountSelRanges();
         if (iSels ) {
             eParam.m_iSelEnd = pDateTime->GetSelRange(0, eParam.m_iSelStart);
         }
     } else {
         pEdit->GetText(eParam.m_wsNewText);
-        FX_INT32 iSels = pEdit->CountSelRanges();
+        int32_t iSels = pEdit->CountSelRanges();
         if (iSels ) {
             eParam.m_iSelEnd = pEdit->GetSelRange(0, eParam.m_iSelStart);
         }
@@ -404,7 +404,7 @@ FX_BOOL CXFA_FFTextEdit::GetSuggestWords(FX_BSTR sWord, CFX_ByteStringArray &sSu
     }
     return GetDoc()->GetDocProvider()->GetSuggestWords(GetDoc(), sWord, sSuggest);
 }
-FX_INT32 CXFA_FFTextEdit::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CXFA_FFTextEdit::OnProcessMessage(CFWL_Message *pMessage)
 {
     return m_pOldDelegate->OnProcessMessage(pMessage);
 }
@@ -485,7 +485,7 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty()
     if (m_pDataAcc->GetHorizontalScrollPolicy() != XFA_ATTRIBUTEENUM_Off) {
         dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
     }
-    FX_INT32 iNumCells = m_pDataAcc->GetNumberOfCells();
+    int32_t iNumCells = m_pDataAcc->GetNumberOfCells();
     if (iNumCells > 0) {
         dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
         pWidget->SetLimit(iNumCells);
@@ -515,9 +515,9 @@ FX_BOOL CXFA_FFNumericEdit::OnValidate(IFWL_Widget *pWidget, CFX_WideString &wsT
     if (!wsPattern.IsEmpty()) {
         return TRUE;
     }
-    FX_INT32 iLeads = 0;
+    int32_t iLeads = 0;
     m_pDataAcc->GetLeadDigits(iLeads);
-    FX_INT32 iFracs = 0;
+    int32_t iFracs = 0;
     m_pDataAcc->GetFracDigits(iFracs);
     CFX_WideString wsFormat;
     CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(m_pDataAcc);
@@ -661,7 +661,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty()
     dwExtendedStyle |= GetAlignment();
     m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
     FX_DWORD dwEditStyles = FWL_STYLEEXT_EDT_LastLineHeight;
-    FX_INT32 iNumCells = m_pDataAcc->GetNumberOfCells();
+    int32_t iNumCells = m_pDataAcc->GetNumberOfCells();
     if (iNumCells > 0) {
         dwEditStyles |= FWL_STYLEEXT_EDT_CombText;
         pWidget->SetEditLimit(iNumCells);
@@ -678,7 +678,7 @@ FX_DWORD CXFA_FFDateTimeEdit::GetAlignment()
 {
     FX_DWORD dwExtendedStyle = 0;
     if (CXFA_Para para = m_pDataAcc->GetPara()) {
-        FX_INT32 iHorz = para.GetHorizontalAlign();
+        int32_t iHorz = para.GetHorizontalAlign();
         switch(iHorz) {
             case XFA_ATTRIBUTEENUM_Center:
                 dwExtendedStyle |= FWL_STYLEEXT_DTP_EditHCenter;
@@ -697,7 +697,7 @@ FX_DWORD CXFA_FFDateTimeEdit::GetAlignment()
                 dwExtendedStyle |= FWL_STYLEEXT_DTP_EditHNear;
                 break;
         }
-        FX_INT32 iVert = para.GetVerticalAlign();
+        int32_t iVert = para.GetVerticalAlign();
         switch(iVert) {
             case XFA_ATTRIBUTEENUM_Middle:
                 dwExtendedStyle |= FWL_STYLEEXT_DTP_EditVCenter;
@@ -816,7 +816,7 @@ FX_BOOL CXFA_FFDateTimeEdit::DeSelect()
 {
     return ((CFWL_DateTimePicker*)m_pNormalWidget)->DeSelect();
 }
-void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget *pWidget, FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay)
+void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget *pWidget, int32_t iYear, int32_t iMonth, int32_t iDay)
 {
     CFX_WideString wsPicture;
     m_pDataAcc->GetPictureContent(wsPicture, XFA_VALUEPICTURE_Edit);

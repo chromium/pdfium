@@ -60,16 +60,16 @@ CFX_ByteArray& CBC_HighLevelEncoder::getBytesForMessage(CFX_WideString msg)
 {
     CFX_ByteString bytestr;
     CBC_UtilCodingConvert::UnicodeToUTF8(msg, bytestr);
-    for (FX_INT32 i = 0; i < bytestr.GetLength(); i++) {
+    for (int32_t i = 0; i < bytestr.GetLength(); i++) {
         m_bytearray.Add(bytestr.GetAt(i));
     }
     return m_bytearray;
 }
-CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg, CFX_WideString ecLevel, FX_INT32 &e)
+CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg, CFX_WideString ecLevel, int32_t &e)
 {
     return encodeHighLevel(msg, ecLevel, FORCE_NONE, NULL, NULL, e);
 }
-CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,  CFX_WideString ecLevel, SymbolShapeHint shape, CBC_Dimension* minSize, CBC_Dimension* maxSize, FX_INT32 &e)
+CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,  CFX_WideString ecLevel, SymbolShapeHint shape, CBC_Dimension* minSize, CBC_Dimension* maxSize, int32_t &e)
 {
     CBC_EncoderContext context(msg, ecLevel, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
@@ -91,11 +91,11 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,  CFX_Wi
     encoders.Add(FX_NEW CBC_X12Encoder());
     encoders.Add(FX_NEW CBC_EdifactEncoder());
     encoders.Add(FX_NEW CBC_Base256Encoder());
-    FX_INT32 encodingMode = ASCII_ENCODATION;
+    int32_t encodingMode = ASCII_ENCODATION;
     while (context.hasMoreCharacters()) {
         ((CBC_Encoder*)encoders.GetAt(encodingMode))->Encode(context, e);
         if (e != BCExceptionNO) {
-            for (FX_INT32 i = 0; i < encoders.GetSize(); i++) {
+            for (int32_t i = 0; i < encoders.GetSize(); i++) {
                 delete (CBC_Encoder*)encoders.GetAt(i);
             }
             encoders.RemoveAll();
@@ -106,16 +106,16 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,  CFX_Wi
             context.resetEncoderSignal();
         }
     }
-    FX_INT32 len = context.m_codewords.GetLength();
+    int32_t len = context.m_codewords.GetLength();
     context.updateSymbolInfo(e);
     if (e != BCExceptionNO) {
-        for (FX_INT32 i = 0; i < encoders.GetSize(); i++) {
+        for (int32_t i = 0; i < encoders.GetSize(); i++) {
             delete (CBC_Encoder*)encoders.GetAt(i);
         }
         encoders.RemoveAll();
         return (FX_LPWSTR)"";
     }
-    FX_INT32 capacity = context.m_symbolInfo->m_dataCapacity;
+    int32_t capacity = context.m_symbolInfo->m_dataCapacity;
     if (len < capacity) {
         if (encodingMode != ASCII_ENCODATION && encodingMode != BASE256_ENCODATION) {
             context.writeCodeword(0x00fe);
@@ -128,13 +128,13 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,  CFX_Wi
     while (codewords.GetLength() < capacity) {
         codewords += (randomize253State(PAD, codewords.GetLength() + 1));
     }
-    for (FX_INT32 i = 0; i < encoders.GetSize(); i++) {
+    for (int32_t i = 0; i < encoders.GetSize(); i++) {
         delete (CBC_Encoder*)encoders.GetAt(i);
     }
     encoders.RemoveAll();
     return codewords;
 }
-FX_INT32 CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg, FX_INT32 startpos, FX_INT32 currentMode)
+int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg, int32_t startpos, int32_t currentMode)
 {
     if (startpos >= msg.GetLength()) {
         return currentMode;
@@ -156,7 +156,7 @@ FX_INT32 CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg, FX_INT32 startp
         charCounts.Add(2.25f);
         charCounts[currentMode] = 0;
     }
-    FX_INT32 charsProcessed = 0;
+    int32_t charsProcessed = 0;
     while (TRUE) {
         if ((startpos + charsProcessed) == msg.GetLength()) {
             FX_DWORD min = Integer_MAX_VALUE;
@@ -165,7 +165,7 @@ FX_INT32 CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg, FX_INT32 startp
             CFX_Int32Array intCharCounts;
             intCharCounts.SetSize(6);
             min = findMinimums(charCounts, intCharCounts, min, mins);
-            FX_INT32 minCount = getMinimumCount(mins);
+            int32_t minCount = getMinimumCount(mins);
             if (intCharCounts[ASCII_ENCODATION] == min) {
                 return ASCII_ENCODATION;
             }
@@ -233,7 +233,7 @@ FX_INT32 CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg, FX_INT32 startp
             CFX_ByteArray mins;
             mins.SetSize(6);
             findMinimums(charCounts, intCharCounts, Integer_MAX_VALUE, mins);
-            FX_INT32 minCount = getMinimumCount(mins);
+            int32_t minCount = getMinimumCount(mins);
             if (intCharCounts[ASCII_ENCODATION] < intCharCounts[BASE256_ENCODATION]
                     && intCharCounts[ASCII_ENCODATION] < intCharCounts[C40_ENCODATION]
                     && intCharCounts[ASCII_ENCODATION] < intCharCounts[TEXT_ENCODATION]
@@ -262,7 +262,7 @@ FX_INT32 CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg, FX_INT32 startp
                     return C40_ENCODATION;
                 }
                 if (intCharCounts[C40_ENCODATION] == intCharCounts[X12_ENCODATION]) {
-                    FX_INT32 p = startpos + charsProcessed + 1;
+                    int32_t p = startpos + charsProcessed + 1;
                     while (p < msg.GetLength()) {
                         FX_WCHAR tc = msg.GetAt(p);
                         if (isX12TermSep(tc)) {
@@ -287,11 +287,11 @@ FX_BOOL CBC_HighLevelEncoder::isExtendedASCII(FX_WCHAR ch)
 {
     return ch >= 128 && ch <= 255;
 }
-FX_INT32 CBC_HighLevelEncoder::determineConsecutiveDigitCount(CFX_WideString msg, FX_INT32 startpos)
+int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(CFX_WideString msg, int32_t startpos)
 {
-    FX_INT32 count = 0;
-    FX_INT32 len = msg.GetLength();
-    FX_INT32 idx = startpos;
+    int32_t count = 0;
+    int32_t len = msg.GetLength();
+    int32_t idx = startpos;
     if (idx < len) {
         FX_WCHAR ch = msg.GetAt(idx);
         while (isDigit(ch) && idx < len) {
@@ -304,28 +304,28 @@ FX_INT32 CBC_HighLevelEncoder::determineConsecutiveDigitCount(CFX_WideString msg
     }
     return count;
 }
-void CBC_HighLevelEncoder::illegalCharacter(FX_WCHAR c, FX_INT32 &e)
+void CBC_HighLevelEncoder::illegalCharacter(FX_WCHAR c, int32_t &e)
 {
     e = BCExceptionIllegalArgument;
 }
-FX_WCHAR CBC_HighLevelEncoder::randomize253State(FX_WCHAR ch, FX_INT32 codewordPosition)
+FX_WCHAR CBC_HighLevelEncoder::randomize253State(FX_WCHAR ch, int32_t codewordPosition)
 {
-    FX_INT32 pseudoRandom = ((149 * codewordPosition) % 253) + 1;
-    FX_INT32 tempVariable = ch + pseudoRandom;
+    int32_t pseudoRandom = ((149 * codewordPosition) % 253) + 1;
+    int32_t tempVariable = ch + pseudoRandom;
     return tempVariable <= 254 ? (FX_WCHAR) tempVariable : (FX_WCHAR) (tempVariable - 254);
 }
-FX_INT32 CBC_HighLevelEncoder::findMinimums(CFX_FloatArray &charCounts, CFX_Int32Array &intCharCounts, FX_INT32 min, CFX_ByteArray &mins)
+int32_t CBC_HighLevelEncoder::findMinimums(CFX_FloatArray &charCounts, CFX_Int32Array &intCharCounts, int32_t min, CFX_ByteArray &mins)
 {
-    for (FX_INT32 l = 0; l < mins.GetSize(); l++) {
-        mins[l] = (FX_BYTE)0;
+    for (int32_t l = 0; l < mins.GetSize(); l++) {
+        mins[l] = (uint8_t)0;
     }
-    for (FX_INT32 i = 0; i < 6; i++) {
-        intCharCounts[i] = (FX_INT32)ceil(charCounts[i]);
-        FX_INT32 current = intCharCounts[i];
+    for (int32_t i = 0; i < 6; i++) {
+        intCharCounts[i] = (int32_t)ceil(charCounts[i]);
+        int32_t current = intCharCounts[i];
         if (min > current) {
             min = current;
-            for (FX_INT32 j = 0; j < mins.GetSize(); j++) {
-                mins[j] = (FX_BYTE)0;
+            for (int32_t j = 0; j < mins.GetSize(); j++) {
+                mins[j] = (uint8_t)0;
             }
         }
         if (min == current) {
@@ -334,10 +334,10 @@ FX_INT32 CBC_HighLevelEncoder::findMinimums(CFX_FloatArray &charCounts, CFX_Int3
     }
     return min;
 }
-FX_INT32 CBC_HighLevelEncoder::getMinimumCount(CFX_ByteArray &mins)
+int32_t CBC_HighLevelEncoder::getMinimumCount(CFX_ByteArray &mins)
 {
-    FX_INT32 minCount = 0;
-    for (FX_INT32 i = 0; i < 6; i++) {
+    int32_t minCount = 0;
+    for (int32_t i = 0; i < 6; i++) {
         minCount += mins[i];
     }
     return minCount;

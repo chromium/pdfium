@@ -214,8 +214,8 @@ FX_LPCARBFORMTABLE FX_GetArabicFormTable(FX_WCHAR unicode)
 }
 FX_WCHAR FX_GetArabicFromAlefTable(FX_WCHAR alef)
 {
-    static const FX_INT32 s_iAlefCount = sizeof(gs_FX_AlefTable) / sizeof(FX_ARAALEF);
-    for (FX_INT32 iStart = 0; iStart < s_iAlefCount; iStart ++) {
+    static const int32_t s_iAlefCount = sizeof(gs_FX_AlefTable) / sizeof(FX_ARAALEF);
+    for (int32_t iStart = 0; iStart < s_iAlefCount; iStart ++) {
         const FX_ARAALEF &v = gs_FX_AlefTable[iStart];
         if (v.wAlef == alef) {
             return v.wIsolated;
@@ -225,8 +225,8 @@ FX_WCHAR FX_GetArabicFromAlefTable(FX_WCHAR alef)
 }
 FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda)
 {
-    static const FX_INT32 s_iShaddaCount = sizeof(gs_FX_ShaddaTable) / sizeof(FX_ARASHADDA);
-    for (FX_INT32 iStart = 0; iStart < s_iShaddaCount; iStart ++) {
+    static const int32_t s_iShaddaCount = sizeof(gs_FX_ShaddaTable) / sizeof(FX_ARASHADDA);
+    for (int32_t iStart = 0; iStart < s_iShaddaCount; iStart ++) {
         const FX_ARASHADDA &v = gs_FX_ShaddaTable[iStart];
         if (v.wShadda == shadda) {
             return v.wIsolated;
@@ -307,7 +307,7 @@ FX_LPCARBFORMTABLE CFX_ArabicChar::ParseChar(const CFX_Char *pTC, FX_WCHAR &wCha
     }
     return pFT;
 }
-void FX_BidiReverseString(CFX_WideString &wsText, FX_INT32 iStart, FX_INT32 iCount)
+void FX_BidiReverseString(CFX_WideString &wsText, int32_t iStart, int32_t iCount)
 {
     FXSYS_assert(iStart > -1 && iStart < wsText.GetLength());
     FXSYS_assert(iCount >= 0 && iStart + iCount <= wsText.GetLength());
@@ -321,15 +321,15 @@ void FX_BidiReverseString(CFX_WideString &wsText, FX_INT32 iStart, FX_INT32 iCou
         *pEnd -- = wch;
     }
 }
-void FX_BidiSetDeferredRun(CFX_Int32Array &values, FX_INT32 iStart, FX_INT32 iCount, FX_INT32 iValue)
+void FX_BidiSetDeferredRun(CFX_Int32Array &values, int32_t iStart, int32_t iCount, int32_t iValue)
 {
     FXSYS_assert(iStart > -1 && iStart <= values.GetSize());
     FXSYS_assert(iStart - iCount > -1);
-    for (FX_INT32 i = iStart - 1; i >= iStart - iCount; i --) {
+    for (int32_t i = iStart - 1; i >= iStart - iCount; i --) {
         values.SetAt(i, iValue);
     }
 }
-const FX_INT32 gc_FX_BidiNTypes[] = {
+const int32_t gc_FX_BidiNTypes[] = {
     FX_BIDICLASS_N,
     FX_BIDICLASS_L,
     FX_BIDICLASS_R,
@@ -354,25 +354,25 @@ const FX_INT32 gc_FX_BidiNTypes[] = {
 void FX_BidiClassify(const CFX_WideString &wsText, CFX_Int32Array &classes, FX_BOOL bWS)
 {
     FXSYS_assert(wsText.GetLength() == classes.GetSize());
-    FX_INT32 iCount = wsText.GetLength();
+    int32_t iCount = wsText.GetLength();
     FX_LPCWSTR pwsStart = (FX_LPCWSTR)wsText;
     FX_WCHAR wch;
-    FX_INT32 iCls;
+    int32_t iCls;
     if (bWS) {
-        for (FX_INT32 i = 0; i < iCount; i ++) {
+        for (int32_t i = 0; i < iCount; i ++) {
             wch = *pwsStart ++;
             iCls = ((gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS);
             classes.SetAt(i, iCls);
         }
     } else {
-        for (FX_INT32 i = 0; i < iCount; i ++) {
+        for (int32_t i = 0; i < iCount; i ++) {
             wch = *pwsStart ++;
             iCls = ((gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS);
             classes.SetAt(i, gc_FX_BidiNTypes[iCls]);
         }
     }
 }
-FX_INT32 FX_BidiResolveExplicit(FX_INT32 iBaseLevel, FX_INT32 iDirection, CFX_Int32Array &classes, CFX_Int32Array &levels, FX_INT32 iStart, FX_INT32 iCount, FX_INT32 iNest)
+int32_t FX_BidiResolveExplicit(int32_t iBaseLevel, int32_t iDirection, CFX_Int32Array &classes, CFX_Int32Array &levels, int32_t iStart, int32_t iCount, int32_t iNest)
 {
     FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL && iNest >= 0);
     FXSYS_assert(classes.GetSize() == levels.GetSize());
@@ -382,10 +382,10 @@ FX_INT32 FX_BidiResolveExplicit(FX_INT32 iBaseLevel, FX_INT32 iDirection, CFX_In
         return 0;
     }
 #if 0
-    FX_INT32 iLastNest = iNest;
+    int32_t iLastNest = iNest;
 #endif
-    FX_INT32 iSize = classes.GetSize();
-    FX_INT32 i = iStart, iCur, iCls;
+    int32_t iSize = classes.GetSize();
+    int32_t i = iStart, iCur, iCls;
     for (; i < iSize && iCount > 0; i ++, iCount --) {
         iCur = iCls = classes.GetAt(i);
 #if 0
@@ -396,7 +396,7 @@ FX_INT32 FX_BidiResolveExplicit(FX_INT32 iBaseLevel, FX_INT32 iDirection, CFX_In
                 iCls = FX_BIDICLASS_BN;
                 iNest ++;
                 if (FX_BidiGreaterEven(iBaseLevel) <= MAX_LEVEL) {
-                    FX_INT32 iLevel = FX_BidiGreaterEven(iBaseLevel);
+                    int32_t iLevel = FX_BidiGreaterEven(iBaseLevel);
                     levels.SetAt(i, iLevel);
                     i += FX_BidiResolveExplicit(iLevel,
                                                 (iCls == FX_BIDICLASS_LRE ? FX_BIDICLASS_N : FX_BIDICLASS_L),
@@ -415,7 +415,7 @@ FX_INT32 FX_BidiResolveExplicit(FX_INT32 iBaseLevel, FX_INT32 iDirection, CFX_In
                 iCls = FX_BIDICLASS_BN;
                 iNest ++;
                 if (FX_BidiGreaterOdd(iBaseLevel) <= MAX_LEVEL) {
-                    FX_INT32 iLevel = FX_BidiGreaterOdd(iBaseLevel);
+                    int32_t iLevel = FX_BidiGreaterOdd(iBaseLevel);
                     levels.SetAt(i, iLevel);
                     i += FX_BidiResolveExplicit(iLevel,
                                                 (iCls == FX_BIDICLASS_RLE ? FX_BIDICLASS_N : FX_BIDICLASS_R),
@@ -452,7 +452,7 @@ FX_INT32 FX_BidiResolveExplicit(FX_INT32 iBaseLevel, FX_INT32 iDirection, CFX_In
     }
     return i - iStart;
 }
-const FX_INT32 gc_FX_BidiWeakStates[][10] = {
+const int32_t gc_FX_BidiWeakStates[][10] = {
     {FX_BWSao,	FX_BWSxl,	FX_BWSxr,	FX_BWScn,	FX_BWScn,	FX_BWSxa,	FX_BWSxa,	FX_BWSao,	FX_BWSao,	FX_BWSao},
     {FX_BWSro,	FX_BWSxl,	FX_BWSxr,	FX_BWSra,	FX_BWSre,	FX_BWSxa,	FX_BWSxr,	FX_BWSro,	FX_BWSro,	FX_BWSrt},
     {FX_BWSlo,	FX_BWSxl,	FX_BWSxr,	FX_BWSla,	FX_BWSle,	FX_BWSxa,	FX_BWSxl,	FX_BWSlo,	FX_BWSlo,	FX_BWSlt},
@@ -474,7 +474,7 @@ const FX_INT32 gc_FX_BidiWeakStates[][10] = {
     {FX_BWSro,	FX_BWSxl,	FX_BWSxr,	FX_BWSra,	FX_BWSre,	FX_BWSxa,	FX_BWSret,	FX_BWSro,	FX_BWSro,	FX_BWSret},
     {FX_BWSlo,	FX_BWSxl,	FX_BWSxr,	FX_BWSla,	FX_BWSle,	FX_BWSxa,	FX_BWSlet,	FX_BWSlo,	FX_BWSlo,	FX_BWSlet},
 };
-const FX_INT32 gc_FX_BidiWeakActions[][10] = {
+const int32_t gc_FX_BidiWeakActions[][10] = {
     {FX_BWAxxx,	FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxA, FX_BWAxxR, FX_BWAxxR, FX_BWAxxN, FX_BWAxxN, FX_BWAxxN},
     {FX_BWAxxx,	FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR, FX_BWAxxR, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
     {FX_BWAxxx,	FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR, FX_BWAxxL, FX_BWAxxN, FX_BWAxxN, FX_BWAxIx},
@@ -496,18 +496,18 @@ const FX_INT32 gc_FX_BidiWeakActions[][10] = {
     {FX_BWAxxx,	FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR, FX_BWAxxE, FX_BWAxxN, FX_BWAxxN, FX_BWAxxE},
     {FX_BWAxxx,	FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR, FX_BWAxxL, FX_BWAxxN, FX_BWAxxN, FX_BWAxxL},
 };
-void FX_BidiResolveWeak(FX_INT32 iBaseLevel, CFX_Int32Array &classes, CFX_Int32Array &levels)
+void FX_BidiResolveWeak(int32_t iBaseLevel, CFX_Int32Array &classes, CFX_Int32Array &levels)
 {
     FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     FXSYS_assert(classes.GetSize() == levels.GetSize());
-    FX_INT32 iSize = classes.GetSize();
+    int32_t iSize = classes.GetSize();
     if (iSize < 1) {
         return;
     }
     iSize --;
-    FX_INT32 iLevelCur = iBaseLevel;
-    FX_INT32 iState = FX_IsOdd(iBaseLevel) ? FX_BWSxr : FX_BWSxl;
-    FX_INT32 i = 0, iCount = 0, iClsCur, iClsRun, iClsNew, iAction;
+    int32_t iLevelCur = iBaseLevel;
+    int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BWSxr : FX_BWSxl;
+    int32_t i = 0, iCount = 0, iClsCur, iClsRun, iClsNew, iAction;
     for (; i <= iSize; i ++) {
         iClsCur = classes.GetAt(i);
 #if 0
@@ -517,7 +517,7 @@ void FX_BidiResolveWeak(FX_INT32 iBaseLevel, CFX_Int32Array &classes, CFX_Int32A
                 iClsCur = FX_BidiDirection(iLevelCur);
                 classes.SetAt(i, iClsCur);
             } else if (i < iSize) {
-                FX_INT32 iLevelNext, iLevelNew;
+                int32_t iLevelNext, iLevelNew;
                 iClsNew = classes.GetAt(i + 1);
                 iLevelNext = levels.GetAt(i + 1);
                 if (iClsNew != FX_BIDICLASS_BN && iLevelCur != iLevelNext) {
@@ -565,7 +565,7 @@ void FX_BidiResolveWeak(FX_INT32 iBaseLevel, CFX_Int32Array &classes, CFX_Int32A
         FX_BidiSetDeferredRun(classes, i, iCount, iClsRun);
     }
 }
-const FX_INT32 gc_FX_BidiNeutralStates[][5] = {
+const int32_t gc_FX_BidiNeutralStates[][5] = {
     {FX_BNSrn,	FX_BNSl,	FX_BNSr,	FX_BNSr,	FX_BNSr},
     {FX_BNSln,	FX_BNSl,	FX_BNSr,	FX_BNSa,	FX_BNSl},
     {FX_BNSrn,	FX_BNSl,	FX_BNSr,	FX_BNSr,	FX_BNSr},
@@ -573,7 +573,7 @@ const FX_INT32 gc_FX_BidiNeutralStates[][5] = {
     {FX_BNSna,	FX_BNSl,	FX_BNSr,	FX_BNSa,	FX_BNSl},
     {FX_BNSna,	FX_BNSl,	FX_BNSr,	FX_BNSa,	FX_BNSl},
 };
-const FX_INT32 gc_FX_BidiNeutralActions[][5] = {
+const int32_t gc_FX_BidiNeutralActions[][5] = {
     {FX_BNAIn,  0,			0,			0,			0			},
     {FX_BNAIn,  0,			0,			0,			FX_BCL		},
     {FX_BNAIn,	FX_BNAEn,	FX_BNARn,	FX_BNARn,	FX_BNARn	},
@@ -581,7 +581,7 @@ const FX_INT32 gc_FX_BidiNeutralActions[][5] = {
     {FX_BNAIn,  0,			0,			0,			FX_BCL		},
     {FX_BNAIn,	FX_BNAEn,	FX_BNARn,	FX_BNARn,	FX_BNAEn	},
 };
-FX_INT32 FX_BidiGetDeferredNeutrals(FX_INT32 iAction, FX_INT32 iLevel)
+int32_t FX_BidiGetDeferredNeutrals(int32_t iAction, int32_t iLevel)
 {
     iAction = (iAction >> 4) & 0xF;
     if (iAction == (FX_BIDINEUTRALACTION_En >> 4)) {
@@ -590,7 +590,7 @@ FX_INT32 FX_BidiGetDeferredNeutrals(FX_INT32 iAction, FX_INT32 iLevel)
         return iAction;
     }
 }
-FX_INT32 FX_BidiGetResolvedNeutrals(FX_INT32 iAction)
+int32_t FX_BidiGetResolvedNeutrals(int32_t iAction)
 {
     iAction = (iAction & 0xF);
     if (iAction == FX_BIDINEUTRALACTION_In) {
@@ -599,18 +599,18 @@ FX_INT32 FX_BidiGetResolvedNeutrals(FX_INT32 iAction)
         return iAction;
     }
 }
-void FX_BidiResolveNeutrals(FX_INT32 iBaseLevel, CFX_Int32Array &classes, const CFX_Int32Array &levels)
+void FX_BidiResolveNeutrals(int32_t iBaseLevel, CFX_Int32Array &classes, const CFX_Int32Array &levels)
 {
     FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     FXSYS_assert(classes.GetSize() == levels.GetSize());
-    FX_INT32 iSize = classes.GetSize();
+    int32_t iSize = classes.GetSize();
     if (iSize < 1) {
         return;
     }
     iSize --;
-    FX_INT32 iLevel = iBaseLevel;
-    FX_INT32 iState = FX_IsOdd(iBaseLevel) ? FX_BNSr : FX_BNSl;
-    FX_INT32 i = 0, iCount = 0, iClsCur, iClsRun, iClsNew, iAction;
+    int32_t iLevel = iBaseLevel;
+    int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BNSr : FX_BNSl;
+    int32_t i = 0, iCount = 0, iClsCur, iClsRun, iClsNew, iAction;
     for (; i <= iSize; i ++) {
         iClsCur = classes.GetAt(i);
         if (iClsCur == FX_BIDICLASS_BN) {
@@ -642,20 +642,20 @@ void FX_BidiResolveNeutrals(FX_INT32 iBaseLevel, CFX_Int32Array &classes, const 
         FX_BidiSetDeferredRun(classes, i, iCount, iClsRun);
     }
 }
-const FX_INT32 gc_FX_BidiAddLevel[][4] = {
+const int32_t gc_FX_BidiAddLevel[][4] = {
     {0,  1,  2,  2},
     {1,  0,  1,  1},
 };
 void FX_BidiResolveImplicit(const CFX_Int32Array &classes, CFX_Int32Array &levels)
 {
     FXSYS_assert(classes.GetSize() == levels.GetSize());
-    FX_INT32 iSize = classes.GetSize();
+    int32_t iSize = classes.GetSize();
     if (iSize < 1) {
         return;
     }
     iSize --;
-    FX_INT32 iCls, iLevel;
-    for (FX_INT32 i = 0; i <= iSize; i ++) {
+    int32_t iCls, iLevel;
+    for (int32_t i = 0; i <= iSize; i ++) {
         iCls = classes.GetAt(i);
         if (iCls == FX_BIDICLASS_BN) {
             continue;
@@ -666,17 +666,17 @@ void FX_BidiResolveImplicit(const CFX_Int32Array &classes, CFX_Int32Array &level
         levels.SetAt(i, iLevel);
     }
 }
-void FX_BidiResolveWhitespace(FX_INT32 iBaseLevel, const CFX_Int32Array &classes, CFX_Int32Array &levels)
+void FX_BidiResolveWhitespace(int32_t iBaseLevel, const CFX_Int32Array &classes, CFX_Int32Array &levels)
 {
     FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     FXSYS_assert(classes.GetSize() == levels.GetSize());
-    FX_INT32 iSize = classes.GetSize();
+    int32_t iSize = classes.GetSize();
     if (iSize < 1) {
         return;
     }
     iSize --;
-    FX_INT32 iLevel = iBaseLevel;
-    FX_INT32 i = 0, iCount = 0;
+    int32_t iLevel = iBaseLevel;
+    int32_t i = 0, iCount = 0;
     for (; i <= iSize; i ++) {
         switch(classes.GetAt(i)) {
             case FX_BIDICLASS_WS:
@@ -709,17 +709,17 @@ void FX_BidiResolveWhitespace(FX_INT32 iBaseLevel, const CFX_Int32Array &classes
         FX_BidiSetDeferredRun(levels, i, iCount, iBaseLevel);
     }
 }
-FX_INT32 FX_BidiReorderLevel(FX_INT32 iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels, FX_INT32 iStart, FX_BOOL bReverse)
+int32_t FX_BidiReorderLevel(int32_t iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels, int32_t iStart, FX_BOOL bReverse)
 {
     FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     FXSYS_assert(wsText.GetLength() == levels.GetSize());
     FXSYS_assert(iStart >= 0 && iStart < wsText.GetLength());
-    FX_INT32 iSize = wsText.GetLength();
+    int32_t iSize = wsText.GetLength();
     if (iSize < 1) {
         return 0;
     }
     bReverse = bReverse || FX_IsOdd(iBaseLevel);
-    FX_INT32 i = iStart, iLevel;
+    int32_t i = iStart, iLevel;
     for (; i < iSize; i ++) {
         if ((iLevel = levels.GetAt(i)) == iBaseLevel) {
             continue;
@@ -729,28 +729,28 @@ FX_INT32 FX_BidiReorderLevel(FX_INT32 iBaseLevel, CFX_WideString &wsText, const 
         }
         i += FX_BidiReorderLevel(iBaseLevel + 1, wsText, levels, i, bReverse) - 1;
     }
-    FX_INT32 iCount = i - iStart;
+    int32_t iCount = i - iStart;
     if (bReverse && iCount > 1) {
         FX_BidiReverseString(wsText, iStart, iCount);
     }
     return iCount;
 }
-void FX_BidiReorder(FX_INT32 iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels)
+void FX_BidiReorder(int32_t iBaseLevel, CFX_WideString &wsText, const CFX_Int32Array &levels)
 {
     FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     FXSYS_assert(wsText.GetLength() == levels.GetSize());
-    FX_INT32 iSize = wsText.GetLength();
+    int32_t iSize = wsText.GetLength();
     if (iSize < 1) {
         return;
     }
-    FX_INT32 i = 0;
+    int32_t i = 0;
     while (i < iSize) {
         i += FX_BidiReorderLevel(iBaseLevel, wsText, levels, i, FALSE);
     }
 }
-void FX_BidiLine(CFX_WideString &wsText, FX_INT32 iBaseLevel)
+void FX_BidiLine(CFX_WideString &wsText, int32_t iBaseLevel)
 {
-    FX_INT32 iLength = wsText.GetLength();
+    int32_t iLength = wsText.GetLength();
     if (iLength < 2) {
         return;
     }
@@ -772,12 +772,12 @@ template<class baseType>
 class CFX_BidiLineTemplate
 {
 public:
-    void FX_BidiReverseString(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iStart, FX_INT32 iCount)
+    void FX_BidiReverseString(CFX_ArrayTemplate<baseType> &chars, int32_t iStart, int32_t iCount)
     {
         FXSYS_assert(iStart > -1 && iStart < chars.GetSize());
         FXSYS_assert(iCount >= 0 && iStart + iCount <= chars.GetSize());
         baseType *pStart, *pEnd;
-        FX_INT32 iEnd = iStart + iCount - 1, iTemp;
+        int32_t iEnd = iStart + iCount - 1, iTemp;
         while (iStart < iEnd) {
             pStart = chars.GetDataPtr(iStart ++);
             pEnd = chars.GetDataPtr(iEnd --);
@@ -786,41 +786,41 @@ public:
             pEnd->m_iBidiPos = iTemp;
         }
     }
-    void FX_BidiSetDeferredRun(CFX_ArrayTemplate<baseType> &chars, FX_BOOL bClass, FX_INT32 iStart, FX_INT32 iCount, FX_INT32 iValue)
+    void FX_BidiSetDeferredRun(CFX_ArrayTemplate<baseType> &chars, FX_BOOL bClass, int32_t iStart, int32_t iCount, int32_t iValue)
     {
         FXSYS_assert(iStart > -1 && iStart <= chars.GetSize());
         FXSYS_assert(iStart - iCount > -1);
         baseType *pTC;
-        FX_INT32 iLast = iStart - iCount;
+        int32_t iLast = iStart - iCount;
         if (bClass) {
-            for (FX_INT32 i = iStart - 1; i >= iLast; i --) {
+            for (int32_t i = iStart - 1; i >= iLast; i --) {
                 pTC = chars.GetDataPtr(i);
-                pTC->m_iBidiClass = (FX_INT16)iValue;
+                pTC->m_iBidiClass = (int16_t)iValue;
             }
         } else {
-            for (FX_INT32 i = iStart - 1; i >= iLast; i --) {
+            for (int32_t i = iStart - 1; i >= iLast; i --) {
                 pTC = chars.GetDataPtr(i);
-                pTC->m_iBidiLevel = (FX_INT16)iValue;
+                pTC->m_iBidiLevel = (int16_t)iValue;
             }
         }
     }
-    void FX_BidiClassify(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount, FX_BOOL bWS)
+    void FX_BidiClassify(CFX_ArrayTemplate<baseType> &chars, int32_t iCount, FX_BOOL bWS)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         baseType *pTC;
         if (bWS) {
-            for (FX_INT32 i = 0; i < iCount; i ++) {
+            for (int32_t i = 0; i < iCount; i ++) {
                 pTC = chars.GetDataPtr(i);
-                pTC->m_iBidiClass = (FX_INT16)(pTC->m_dwCharProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
+                pTC->m_iBidiClass = (int16_t)(pTC->m_dwCharProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
             }
         } else {
-            for (FX_INT32 i = 0; i < iCount; i ++) {
+            for (int32_t i = 0; i < iCount; i ++) {
                 pTC = chars.GetDataPtr(i);
-                pTC->m_iBidiClass = (FX_INT16)gc_FX_BidiNTypes[(pTC->m_dwCharProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS];
+                pTC->m_iBidiClass = (int16_t)gc_FX_BidiNTypes[(pTC->m_dwCharProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS];
             }
         }
     }
-    void FX_BidiResolveExplicit(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount, FX_INT32 iBaseLevel)
+    void FX_BidiResolveExplicit(CFX_ArrayTemplate<baseType> &chars, int32_t iCount, int32_t iBaseLevel)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
@@ -828,12 +828,12 @@ public:
             return;
         }
         baseType *pTC;
-        for (FX_INT32 i = 0; i < iCount; i ++) {
+        for (int32_t i = 0; i < iCount; i ++) {
             pTC = chars.GetDataPtr(i);
-            pTC->m_iBidiLevel = (FX_INT16)iBaseLevel;
+            pTC->m_iBidiLevel = (int16_t)iBaseLevel;
         }
     }
-    void FX_BidiResolveWeak(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount, FX_INT32 iBaseLevel)
+    void FX_BidiResolveWeak(CFX_ArrayTemplate<baseType> &chars, int32_t iCount, int32_t iBaseLevel)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         iCount --;
@@ -841,20 +841,20 @@ public:
             return;
         }
         baseType *pTC, *pTCNext;
-        FX_INT32 iLevelCur = iBaseLevel;
-        FX_INT32 iState = FX_IsOdd(iBaseLevel) ? FX_BWSxr : FX_BWSxl;
-        FX_INT32 i = 0, iNum = 0, iClsCur, iClsRun, iClsNew, iAction;
+        int32_t iLevelCur = iBaseLevel;
+        int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BWSxr : FX_BWSxl;
+        int32_t i = 0, iNum = 0, iClsCur, iClsRun, iClsNew, iAction;
         for (; i <= iCount; i ++) {
             pTC = chars.GetDataPtr(i);
             iClsCur = pTC->m_iBidiClass;
             if (iClsCur == FX_BIDICLASS_BN) {
-                pTC->m_iBidiLevel = (FX_INT16)iLevelCur;
+                pTC->m_iBidiLevel = (int16_t)iLevelCur;
                 if (i == iCount && iLevelCur != iBaseLevel) {
                     iClsCur = FX_BidiDirection(iLevelCur);
-                    pTC->m_iBidiClass = (FX_INT16)iClsCur;
+                    pTC->m_iBidiClass = (int16_t)iClsCur;
                 } else if (i < iCount) {
                     pTCNext = chars.GetDataPtr(i + 1);
-                    FX_INT32 iLevelNext, iLevelNew;
+                    int32_t iLevelNext, iLevelNew;
                     iClsNew = pTCNext->m_iBidiClass;
                     iLevelNext = pTCNext->m_iBidiLevel;
                     if (iClsNew != FX_BIDICLASS_BN && iLevelCur != iLevelNext) {
@@ -862,9 +862,9 @@ public:
                         if (iLevelCur > iLevelNew) {
                             iLevelNew = iLevelCur;
                         }
-                        pTC->m_iBidiLevel = (FX_INT16)iLevelNew;
+                        pTC->m_iBidiLevel = (int16_t)iLevelNew;
                         iClsCur = FX_BidiDirection(iLevelNew);
-                        pTC->m_iBidiClass = (FX_INT16)iClsCur;
+                        pTC->m_iBidiClass = (int16_t)iClsCur;
                         iLevelCur = iLevelNext;
                     } else {
                         if (iNum > 0) {
@@ -888,7 +888,7 @@ public:
             }
             iClsNew = FX_BidiGetResolvedType(iAction);
             if (iClsNew != FX_BIDIWEAKACTION_XX) {
-                pTC->m_iBidiClass = (FX_INT16)iClsNew;
+                pTC->m_iBidiClass = (int16_t)iClsNew;
             }
             if (FX_BIDIWEAKACTION_IX & iAction) {
                 iNum ++;
@@ -903,7 +903,7 @@ public:
             }
         }
     }
-    void FX_BidiResolveNeutrals(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount, FX_INT32 iBaseLevel)
+    void FX_BidiResolveNeutrals(CFX_ArrayTemplate<baseType> &chars, int32_t iCount, int32_t iBaseLevel)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
@@ -912,9 +912,9 @@ public:
             return;
         }
         baseType *pTC;
-        FX_INT32 iLevel = iBaseLevel;
-        FX_INT32 iState = FX_IsOdd(iBaseLevel) ? FX_BNSr : FX_BNSl;
-        FX_INT32 i = 0, iNum = 0, iClsCur, iClsRun, iClsNew, iAction;
+        int32_t iLevel = iBaseLevel;
+        int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BNSr : FX_BNSl;
+        int32_t i = 0, iNum = 0, iClsCur, iClsRun, iClsNew, iAction;
         for (; i <= iCount; i ++) {
             pTC = chars.GetDataPtr(i);
             iClsCur = pTC->m_iBidiClass;
@@ -933,7 +933,7 @@ public:
             }
             iClsNew = FX_BidiGetResolvedNeutrals(iAction);
             if (iClsNew != FX_BIDICLASS_N) {
-                pTC->m_iBidiClass = (FX_INT16)iClsNew;
+                pTC->m_iBidiClass = (int16_t)iClsNew;
             }
             if (FX_BIDINEUTRALACTION_In & iAction) {
                 iNum ++;
@@ -949,12 +949,12 @@ public:
             }
         }
     }
-    void FX_BidiResolveImplicit(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount)
+    void FX_BidiResolveImplicit(CFX_ArrayTemplate<baseType> &chars, int32_t iCount)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         baseType *pTC;
-        FX_INT32 iCls, iLevel;
-        for (FX_INT32 i = 0; i < iCount; i ++) {
+        int32_t iCls, iLevel;
+        for (int32_t i = 0; i < iCount; i ++) {
             pTC = chars.GetDataPtr(i);
             iCls = pTC->m_iBidiClass;
             if (iCls == FX_BIDICLASS_BN) {
@@ -963,10 +963,10 @@ public:
             FXSYS_assert(iCls > FX_BIDICLASS_ON && iCls < FX_BIDICLASS_AL);
             iLevel = pTC->m_iBidiLevel;
             iLevel += gc_FX_BidiAddLevel[FX_IsOdd(iLevel)][iCls - 1];
-            pTC->m_iBidiLevel = (FX_INT16)iLevel;
+            pTC->m_iBidiLevel = (int16_t)iLevel;
         }
     }
-    void FX_BidiResolveWhitespace(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount, FX_INT32 iBaseLevel)
+    void FX_BidiResolveWhitespace(CFX_ArrayTemplate<baseType> &chars, int32_t iCount, int32_t iBaseLevel)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
@@ -974,8 +974,8 @@ public:
             return;
         }
         iCount --;
-        FX_INT32 iLevel = iBaseLevel;
-        FX_INT32 i = 0, iNum = 0;
+        int32_t iLevel = iBaseLevel;
+        int32_t i = 0, iNum = 0;
         baseType *pTC;
         for (; i <= iCount; i ++) {
             pTC = chars.GetDataPtr(i);
@@ -989,7 +989,7 @@ public:
                 case FX_BIDICLASS_RLO:
                 case FX_BIDICLASS_PDF:
                 case FX_BIDICLASS_BN:
-                    pTC->m_iBidiLevel = (FX_INT16)iLevel;
+                    pTC->m_iBidiLevel = (int16_t)iLevel;
                     iNum ++;
                     break;
                 case FX_BIDICLASS_S:
@@ -997,7 +997,7 @@ public:
                     if (iNum > 0) {
                         FX_BidiSetDeferredRun(chars, FALSE, i, iNum, iBaseLevel);
                     }
-                    pTC->m_iBidiLevel = (FX_INT16)iBaseLevel;
+                    pTC->m_iBidiLevel = (int16_t)iBaseLevel;
                     iNum = 0;
                     break;
                 default:
@@ -1010,7 +1010,7 @@ public:
             FX_BidiSetDeferredRun(chars, FALSE, i, iNum, iBaseLevel);
         }
     }
-    FX_INT32 FX_BidiReorderLevel(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount, FX_INT32 iBaseLevel, FX_INT32 iStart, FX_BOOL bReverse)
+    int32_t FX_BidiReorderLevel(CFX_ArrayTemplate<baseType> &chars, int32_t iCount, int32_t iBaseLevel, int32_t iStart, FX_BOOL bReverse)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
@@ -1020,7 +1020,7 @@ public:
         }
         baseType *pTC;
         bReverse = bReverse || FX_IsOdd(iBaseLevel);
-        FX_INT32 i = iStart, iLevel;
+        int32_t i = iStart, iLevel;
         for (; i < iCount; i ++) {
             pTC = chars.GetDataPtr(i);
             if ((iLevel = pTC->m_iBidiLevel) == iBaseLevel) {
@@ -1031,26 +1031,26 @@ public:
             }
             i += FX_BidiReorderLevel(chars, iCount, iBaseLevel + 1, i, bReverse) - 1;
         }
-        FX_INT32 iNum = i - iStart;
+        int32_t iNum = i - iStart;
         if (bReverse && iNum > 1) {
             FX_BidiReverseString(chars, iStart, iNum);
         }
         return iNum;
     }
-    void FX_BidiReorder(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount, FX_INT32 iBaseLevel)
+    void FX_BidiReorder(CFX_ArrayTemplate<baseType> &chars, int32_t iCount, int32_t iBaseLevel)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         FXSYS_assert(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
-        FX_INT32 i = 0;
+        int32_t i = 0;
         while (i < iCount) {
             i += FX_BidiReorderLevel(chars, iCount, iBaseLevel, i, FALSE);
         }
     }
-    void FX_BidiPosition(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount)
+    void FX_BidiPosition(CFX_ArrayTemplate<baseType> &chars, int32_t iCount)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         baseType *pTC;
-        FX_INT32 i = 0;
+        int32_t i = 0;
         while (i < iCount) {
             pTC = chars.GetDataPtr(i);
             pTC = chars.GetDataPtr(pTC->m_iBidiPos);
@@ -1058,7 +1058,7 @@ public:
         }
     }
 
-    void FX_BidiLine(CFX_ArrayTemplate<baseType> &chars, FX_INT32 iCount, FX_INT32 iBaseLevel)
+    void FX_BidiLine(CFX_ArrayTemplate<baseType> &chars, int32_t iCount, int32_t iBaseLevel)
     {
         FXSYS_assert(iCount > -1 && iCount <= chars.GetSize());
         if (iCount < 2) {
@@ -1075,12 +1075,12 @@ public:
         FX_BidiPosition(chars, iCount);
     }
 };
-void FX_BidiLine(CFX_TxtCharArray &chars, FX_INT32 iCount, FX_INT32 iBaseLevel)
+void FX_BidiLine(CFX_TxtCharArray &chars, int32_t iCount, int32_t iBaseLevel)
 {
     CFX_BidiLineTemplate<CFX_TxtChar> blt;
     blt.FX_BidiLine(chars, iCount, iBaseLevel);
 }
-void FX_BidiLine(CFX_RTFCharArray &chars, FX_INT32 iCount, FX_INT32 iBaseLevel)
+void FX_BidiLine(CFX_RTFCharArray &chars, int32_t iCount, int32_t iBaseLevel)
 {
     CFX_BidiLineTemplate<CFX_RTFChar> blt;
     blt.FX_BidiLine(chars, iCount, iBaseLevel);
@@ -1102,8 +1102,8 @@ CFX_BidiChar::CFX_BidiChar()
 FX_BOOL CFX_BidiChar::AppendChar(FX_WCHAR wch)
 {
     FX_DWORD dwProps = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch];
-    FX_INT32 iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
-    FX_INT32 iContext = 0;
+    int32_t iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
+    int32_t iContext = 0;
     switch (iBidiCls) {
         case FX_BIDICLASS_L:
         case FX_BIDICLASS_AN:
@@ -1147,7 +1147,7 @@ FX_BOOL CFX_BidiChar::EndChar()
     m_iLastCount = m_iCurCount - m_iLastStart;
     return m_iLastCount > 0;
 }
-FX_INT32 CFX_BidiChar::GetBidiInfo(FX_INT32 &iStart, FX_INT32 &iCount)
+int32_t CFX_BidiChar::GetBidiInfo(int32_t &iStart, int32_t &iCount)
 {
     iStart = m_iLastStart;
     iCount = m_iLastCount;

@@ -112,7 +112,7 @@ void CXFA_SAXReaderHandler::OnTargetData(FX_LPVOID pTag, FX_SAXNODE eType, FX_BS
 }
 void CXFA_SAXReaderHandler::UpdateChecksum(FX_BOOL bCheckSpace)
 {
-    FX_INT32 iLength = m_SAXContext.m_TextBuf.GetLength();
+    int32_t iLength = m_SAXContext.m_TextBuf.GetLength();
     if (iLength < 1) {
         return;
     }
@@ -120,7 +120,7 @@ void CXFA_SAXReaderHandler::UpdateChecksum(FX_BOOL bCheckSpace)
     FX_BOOL bUpdata = TRUE;
     if (bCheckSpace) {
         bUpdata = FALSE;
-        for (FX_INT32 i = 0; i < iLength; i++) {
+        for (int32_t i = 0; i < iLength; i++) {
             bUpdata = (pBuffer[i] > 0x20);
             if (bUpdata) {
                 break;
@@ -148,7 +148,7 @@ CXFA_ChecksumContext::~CXFA_ChecksumContext()
 FX_BOOL CXFA_ChecksumContext::StartChecksum()
 {
     FinishChecksum();
-    m_pByteContext = FX_Alloc(FX_BYTE, 128);
+    m_pByteContext = FX_Alloc(uint8_t, 128);
     FXSYS_assert(m_pByteContext != NULL);
     CRYPT_SHA1Start(m_pByteContext);
     m_bsChecksum.Empty();
@@ -180,10 +180,10 @@ void CXFA_ChecksumContext::FinishChecksum()
         m_pSAXReader = NULL;
     }
     if (m_pByteContext) {
-        FX_BYTE digest[20];
+        uint8_t digest[20];
         FXSYS_memset(digest, 0, 20);
         CRYPT_SHA1Finish(m_pByteContext, digest);
-        FX_INT32 nLen = FX_Base64EncodeA(digest, 20, NULL);
+        int32_t nLen = FX_Base64EncodeA(digest, 20, NULL);
         FX_LPSTR pBuffer = m_bsChecksum.GetBuffer(nLen);
         FX_Base64EncodeA(digest, 20, pBuffer);
         m_bsChecksum.ReleaseBuffer(nLen);

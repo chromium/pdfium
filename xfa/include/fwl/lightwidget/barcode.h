@@ -25,23 +25,23 @@ public:
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CHARENCODING;
         m_barcodeData.m_eCharEncoding = encoding;
     }
-    void		SetModuleHeight(FX_INT32 height)
+    void		SetModuleHeight(int32_t height)
     {
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_MODULEHEIGHT;
         m_barcodeData.m_nModuleHeight = height;
     }
-    void		SetModuleWidth(FX_INT32 width)
+    void		SetModuleWidth(int32_t width)
     {
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_MODULEWIDTH;
         m_barcodeData.m_nModuleWidth = width;
     }
-    void		SetDataLength(FX_INT32 dataLength)
+    void		SetDataLength(int32_t dataLength)
     {
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_DATALENGTH;
         m_barcodeData.m_nDataLength = dataLength;
         ((IFWL_Barcode*)m_pImp)->SetLimit(dataLength);
     }
-    void		SetCalChecksum(FX_INT32 calChecksum)
+    void		SetCalChecksum(int32_t calChecksum)
     {
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CALCHECKSUM;
         m_barcodeData.m_nCalChecksum = calChecksum;
@@ -56,7 +56,7 @@ public:
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_TEXTLOCATION;
         m_barcodeData.m_eTextLocation = location;
     }
-    void		SetWideNarrowRatio(FX_INT32 ratio)
+    void		SetWideNarrowRatio(int32_t ratio)
     {
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_WIDENARROWRATIO;
         m_barcodeData.m_nWideNarrowRatio = ratio;
@@ -71,12 +71,12 @@ public:
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_ENDCHAR;
         m_barcodeData.m_cEndChar = endChar;
     }
-    void		SetVersion(FX_INT32 version)
+    void		SetVersion(int32_t version)
     {
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_VERSION;
         m_barcodeData.m_nVersion = version;
     }
-    void		SetErrorCorrectionLevel(FX_INT32 ecLevel)
+    void		SetErrorCorrectionLevel(int32_t ecLevel)
     {
         m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_ECLEVEL;
         m_barcodeData.m_nECLevel = ecLevel;
@@ -102,22 +102,22 @@ protected:
         {
             return m_eCharEncoding;
         }
-        FX_INT32					m_nModuleHeight, m_nModuleWidth;
-        virtual FX_INT32			GetModuleHeight()
+        int32_t					m_nModuleHeight, m_nModuleWidth;
+        virtual int32_t			GetModuleHeight()
         {
             return m_nModuleHeight;
         }
-        virtual FX_INT32			GetModuleWidth()
+        virtual int32_t			GetModuleWidth()
         {
             return m_nModuleWidth;
         }
-        FX_INT32					m_nDataLength;
-        virtual FX_INT32			GetDataLength()
+        int32_t					m_nDataLength;
+        virtual int32_t			GetDataLength()
         {
             return m_nDataLength;
         }
-        FX_INT32					m_nCalChecksum;
-        virtual FX_INT32			GetCalChecksum()
+        int32_t					m_nCalChecksum;
+        virtual int32_t			GetCalChecksum()
         {
             return m_nCalChecksum;
         }
@@ -132,8 +132,8 @@ protected:
         {
             return m_eTextLocation;
         }
-        FX_INT32					m_nWideNarrowRatio;
-        virtual FX_INT32			GetWideNarrowRatio()
+        int32_t					m_nWideNarrowRatio;
+        virtual int32_t			GetWideNarrowRatio()
         {
             return m_nWideNarrowRatio;
         }
@@ -146,13 +146,13 @@ protected:
         {
             return m_cEndChar;
         }
-        FX_INT32					m_nVersion;
-        virtual FX_INT32			GetVersion()
+        int32_t					m_nVersion;
+        virtual int32_t			GetVersion()
         {
             return m_nVersion;
         }
-        FX_INT32					m_nECLevel;
-        virtual FX_INT32			GetErrorCorrectionLevel()
+        int32_t					m_nECLevel;
+        virtual int32_t			GetErrorCorrectionLevel()
         {
             return m_nECLevel;
         }

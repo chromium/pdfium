@@ -57,7 +57,7 @@ public:
 	virtual FX_BOOL					OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag);
 	virtual void					KillFocus();
 
-	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam = 0, FX_INTPTR lParam = 0);
+	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 	virtual void					RePosChildWnd();
 	virtual void					SetText(FX_LPCWSTR csText,FX_BOOL bRefresh = TRUE);
 	virtual CFX_WideString			GetText() const;	
@@ -68,21 +68,21 @@ public:
 	void							OnNotifySelChanged(FX_BOOL bKeyDown, FX_BOOL & bExit , FX_DWORD nFlag);
 
 	void							AddString(FX_LPCWSTR string);	
-	void							SetTopVisibleIndex(FX_INT32 nItemIndex);
-	void							ScrollToListItem(FX_INT32 nItemIndex);
+	void							SetTopVisibleIndex(int32_t nItemIndex);
+	void							ScrollToListItem(int32_t nItemIndex);
 	void							ResetContent();
 	void							Reset();
-	void							Select(FX_INT32 nItemIndex);
-	void							SetCaret(FX_INT32 nItemIndex);
+	void							Select(int32_t nItemIndex);
+	void							SetCaret(int32_t nItemIndex);
 	void							SetHoverSel(FX_BOOL bHoverSel);
 	
-	FX_INT32						GetCount() const;
+	int32_t						GetCount() const;
 	FX_BOOL							IsMultipleSel() const;
-	FX_INT32						GetCaretIndex() const;
-	FX_INT32						GetCurSel() const;
-	FX_BOOL							IsItemSelected(FX_INT32 nItemIndex) const;
-	FX_INT32						GetTopVisibleIndex() const;
-	FX_INT32						FindNext(FX_INT32 nIndex,FX_WCHAR nChar) const;
+	int32_t						GetCaretIndex() const;
+	int32_t						GetCurSel() const;
+	FX_BOOL							IsItemSelected(int32_t nItemIndex) const;
+	int32_t						GetTopVisibleIndex() const;
+	int32_t						FindNext(int32_t nIndex,FX_WCHAR nChar) const;
 	CPDF_Rect						GetContentRect() const;	
 	FX_FLOAT						GetFirstHeight() const;
 	CPDF_Rect						GetListRect() const;

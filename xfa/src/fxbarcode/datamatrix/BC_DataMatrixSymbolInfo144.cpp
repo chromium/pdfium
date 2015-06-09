@@ -33,11 +33,11 @@ CBC_DataMatrixSymbolInfo144::CBC_DataMatrixSymbolInfo144() : CBC_SymbolInfo(FALS
 CBC_DataMatrixSymbolInfo144::~CBC_DataMatrixSymbolInfo144()
 {
 }
-FX_INT32 CBC_DataMatrixSymbolInfo144::getInterleavedBlockCount()
+int32_t CBC_DataMatrixSymbolInfo144::getInterleavedBlockCount()
 {
     return 10;
 }
-FX_INT32 CBC_DataMatrixSymbolInfo144getDataLengthForInterleavedBlock(FX_INT32 index)
+int32_t CBC_DataMatrixSymbolInfo144getDataLengthForInterleavedBlock(int32_t index)
 {
     return (index <= 8) ? 156 : 155;
 }

@@ -141,13 +141,13 @@ public:
         return m_dwCharProps & FX_CHARTYPEBITSMASK;
     }
     FX_WORD		m_wCharCode;
-    FX_BYTE		m_nBreakType;
-    FX_INT8		m_nRotation;
+    uint8_t		m_nBreakType;
+    int8_t		m_nRotation;
     FX_DWORD	m_dwCharProps;
     FX_DWORD	m_dwCharStyles;
-    FX_INT32	m_iCharWidth;
-    FX_INT32	m_iHorizontalScale;
-    FX_INT32	m_iVertialScale;
+    int32_t	m_iCharWidth;
+    int32_t	m_iHorizontalScale;
+    int32_t	m_iVertialScale;
 };
 typedef CFX_ArrayTemplate<CFX_Char>	CFX_CharArray;
 class CFX_TxtChar : public CFX_Char
@@ -163,10 +163,10 @@ public:
     {
     }
     FX_DWORD			m_dwStatus;
-    FX_INT16			m_iBidiClass;
-    FX_INT16			m_iBidiLevel;
-    FX_INT16			m_iBidiPos;
-    FX_INT16			m_iBidiOrder;
+    int16_t			m_iBidiClass;
+    int16_t			m_iBidiLevel;
+    int16_t			m_iBidiPos;
+    int16_t			m_iBidiOrder;
     FX_LPVOID			m_pUserData;
 };
 typedef CFX_ArrayTemplate<CFX_TxtChar>	CFX_TxtCharArray;
@@ -186,12 +186,12 @@ public:
     {
     }
     FX_DWORD			m_dwStatus;
-    FX_INT32			m_iFontSize;
-    FX_INT32			m_iFontHeight;
-    FX_INT16			m_iBidiClass;
-    FX_INT16			m_iBidiLevel;
-    FX_INT16			m_iBidiPos;
-    FX_INT16			m_iBidiOrder;
+    int32_t			m_iFontSize;
+    int32_t			m_iFontHeight;
+    int16_t			m_iBidiClass;
+    int16_t			m_iBidiLevel;
+    int16_t			m_iBidiPos;
+    int16_t			m_iBidiOrder;
     FX_DWORD			m_dwLayoutStyles;
     FX_DWORD			m_dwIdentity;
     IFX_Unknown			*m_pUserData;

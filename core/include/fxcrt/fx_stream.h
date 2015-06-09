@@ -20,7 +20,7 @@ typedef struct FX_HFILE_ {
     FX_LPVOID pData;
 }* FX_HFILE;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#define FX_FILESIZE			FX_INT32
+#define FX_FILESIZE			int32_t
 #else
 #include <fcntl.h>
 #include <unistd.h>
@@ -37,10 +37,10 @@ typedef struct FX_HFILE_ {
 #define FX_GETBYTEOFFSET40(a)	0
 #define FX_GETBYTEOFFSET48(a)	0
 #define FX_GETBYTEOFFSET56(a)	0
-#define FX_GETBYTEOFFSET24(a)  ((FX_BYTE)(a>>24))
-#define FX_GETBYTEOFFSET16(a)  ((FX_BYTE)(a>>16))
-#define FX_GETBYTEOFFSET8(a)   ((FX_BYTE)(a>>8))
-#define FX_GETBYTEOFFSET0(a)   ((FX_BYTE)(a))
+#define FX_GETBYTEOFFSET24(a)  ((uint8_t)(a>>24))
+#define FX_GETBYTEOFFSET16(a)  ((uint8_t)(a>>16))
+#define FX_GETBYTEOFFSET8(a)   ((uint8_t)(a>>8))
+#define FX_GETBYTEOFFSET0(a)   ((uint8_t)(a))
 #define FX_FILEMODE_Write		0
 #define FX_FILEMODE_ReadOnly	1
 #define FX_FILEMODE_Truncate	2

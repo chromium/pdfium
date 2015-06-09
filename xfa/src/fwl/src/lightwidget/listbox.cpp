@@ -51,13 +51,13 @@ FWL_HLISTITEM CFWL_ListBox::AddString(FX_WSTR wsAdd, FX_BOOL bSelect)
 }
 FX_BOOL CFWL_ListBox::DeleteString(FWL_HLISTITEM hItem)
 {
-    FX_INT32 nIndex = m_ListBoxDP.GetItemIndex(GetWidget(), hItem);
+    int32_t nIndex = m_ListBoxDP.GetItemIndex(GetWidget(), hItem);
     if (nIndex < 0 || nIndex >= m_ListBoxDP.m_arrItem.GetSize()) {
         return FALSE;
     }
     CFWL_ListItem *pDelItem = (CFWL_ListItem*)m_ListBoxDP.GetItem((IFWL_ListBox*)this, nIndex);
-    FX_INT32 iCount = m_ListBoxDP.CountItems((IFWL_ListBox*)this);
-    FX_INT32 iSel = nIndex + 1;
+    int32_t iCount = m_ListBoxDP.CountItems((IFWL_ListBox*)this);
+    int32_t iSel = nIndex + 1;
     if (iSel >= iCount) {
         iSel = nIndex - 1;
         if (iSel < 0) {
@@ -74,25 +74,25 @@ FX_BOOL CFWL_ListBox::DeleteString(FWL_HLISTITEM hItem)
 }
 FX_BOOL	CFWL_ListBox::DeleteAll()
 {
-    FX_INT32 iCount = m_ListBoxDP.CountItems((IFWL_ListBox*)this);
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = m_ListBoxDP.CountItems((IFWL_ListBox*)this);
+    for (int32_t i = 0; i < iCount; i ++) {
         CFWL_ListItem *pItem = (CFWL_ListItem*)m_ListBoxDP.GetItem((IFWL_ListBox*)this, i);
         delete pItem;
     }
     m_ListBoxDP.m_arrItem.RemoveAll();
     return TRUE;
 }
-FX_INT32 CFWL_ListBox::CountSelItems()
+int32_t CFWL_ListBox::CountSelItems()
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
     return ((IFWL_ListBox*)m_pImp)->CountSelItems();
 }
-FWL_HLISTITEM CFWL_ListBox::GetSelItem(FX_INT32 nIndexSel)
+FWL_HLISTITEM CFWL_ListBox::GetSelItem(int32_t nIndexSel)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, NULL);
     return ((IFWL_ListBox*)m_pImp)->GetSelItem(nIndexSel);
 }
-FX_INT32 CFWL_ListBox::GetSelIndex(FX_INT32 nIndex)
+int32_t CFWL_ListBox::GetSelIndex(int32_t nIndex)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
     return ((IFWL_ListBox*)m_pImp)->GetSelIndex(nIndex);
@@ -119,7 +119,7 @@ FWL_ERR CFWL_ListBox::SetItemHeight(FX_FLOAT fItemHeight)
 }
 FWL_HLISTITEM CFWL_ListBox::GetFocusItem()
 {
-    for (FX_INT32 i = 0; i < m_ListBoxDP.m_arrItem.GetSize(); i++) {
+    for (int32_t i = 0; i < m_ListBoxDP.m_arrItem.GetSize(); i++) {
         CFWL_ListItem * hItem = (CFWL_ListItem *)(m_ListBoxDP.m_arrItem[i]);
         if (hItem->m_dwStates & FWL_ITEMSTATE_LTB_Focused) {
             return (FWL_HLISTITEM)hItem;
@@ -129,7 +129,7 @@ FWL_HLISTITEM CFWL_ListBox::GetFocusItem()
 }
 FWL_ERR	CFWL_ListBox::SetFocusItem(FWL_HLISTITEM hItem)
 {
-    FX_INT32 nIndex = m_ListBoxDP.GetItemIndex(GetWidget(), hItem);
+    int32_t nIndex = m_ListBoxDP.GetItemIndex(GetWidget(), hItem);
     ((CFWL_ListItem *)(m_ListBoxDP.m_arrItem[nIndex]))->m_dwStates |= FWL_ITEMSTATE_LTB_Focused;
     return FWL_ERR_Succeeded;
 }
@@ -137,13 +137,13 @@ FWL_ERR* CFWL_ListBox::Sort(IFWL_ListBoxCompare *pCom)
 {
     return ((IFWL_ListBox*)m_pImp)->Sort(pCom);
 }
-FX_INT32 CFWL_ListBox::CountItems()
+int32_t CFWL_ListBox::CountItems()
 {
     return m_ListBoxDP.m_arrItem.GetSize();
 }
-FWL_HLISTITEM CFWL_ListBox::GetItem(FX_INT32 nIndex)
+FWL_HLISTITEM CFWL_ListBox::GetItem(int32_t nIndex)
 {
-    FX_INT32 nCount = m_ListBoxDP.m_arrItem.GetSize();
+    int32_t nCount = m_ListBoxDP.m_arrItem.GetSize();
     if (nIndex > nCount - 1 && nIndex < 0) {
         return NULL;
     }
@@ -186,8 +186,8 @@ FWL_HLISTITEM CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy)
     FX_FLOAT fPosY = 0;
     ((IFWL_ListBox*)m_pImp)->GetScrollPos(fx);
     ((IFWL_ListBox*)m_pImp)->GetScrollPos(fy, FALSE);
-    FX_INT32 nCount = m_ListBoxDP.CountItems(NULL);
-    for (FX_INT32 i = 0; i < nCount; i ++) {
+    int32_t nCount = m_ListBoxDP.CountItems(NULL);
+    for (int32_t i = 0; i < nCount; i ++) {
         FWL_HLISTITEM hItem = m_ListBoxDP.GetItem(NULL, i);
         if (!hItem) {
             continue;
@@ -218,8 +218,8 @@ CFWL_ListBox::CFWL_ListBoxDP::CFWL_ListBoxDP()
 }
 CFWL_ListBox::CFWL_ListBoxDP::~CFWL_ListBoxDP()
 {
-    FX_INT32 nCount = m_arrItem.GetSize();
-    for (FX_INT32 i = 0; i < nCount; i ++) {
+    int32_t nCount = m_arrItem.GetSize();
+    for (int32_t i = 0; i < nCount; i ++) {
         CFWL_ListItem *pItem = (CFWL_ListItem*)m_arrItem[i];
         if (pItem != NULL) {
             delete pItem;
@@ -232,11 +232,11 @@ FWL_ERR CFWL_ListBox::CFWL_ListBoxDP::GetCaption(IFWL_Widget *pWidget, CFX_WideS
     wsCaption = m_wsData;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_ListBox::CFWL_ListBoxDP::CountItems(IFWL_Widget *pWidget)
+int32_t CFWL_ListBox::CFWL_ListBoxDP::CountItems(IFWL_Widget *pWidget)
 {
     return m_arrItem.GetSize();
 }
-FWL_HLISTITEM CFWL_ListBox::CFWL_ListBoxDP::GetItem(IFWL_Widget *pWidget, FX_INT32 nIndex)
+FWL_HLISTITEM CFWL_ListBox::CFWL_ListBoxDP::GetItem(IFWL_Widget *pWidget, int32_t nIndex)
 {
     if (nIndex >= m_arrItem.GetSize() || nIndex < 0) {
         return NULL;
@@ -244,11 +244,11 @@ FWL_HLISTITEM CFWL_ListBox::CFWL_ListBoxDP::GetItem(IFWL_Widget *pWidget, FX_INT
         return (FWL_HLISTITEM)m_arrItem[nIndex];
     }
 }
-FX_INT32 CFWL_ListBox::CFWL_ListBoxDP::GetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem)
+int32_t CFWL_ListBox::CFWL_ListBoxDP::GetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem)
 {
     return m_arrItem.Find(hItem);
 }
-FX_BOOL CFWL_ListBox::CFWL_ListBoxDP::SetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_INT32 nIndex)
+FX_BOOL CFWL_ListBox::CFWL_ListBoxDP::SetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, int32_t nIndex)
 {
     return m_arrItem.SetAt(nIndex, hItem);
 }

@@ -48,14 +48,14 @@ protected:
     void	ProcessTextObject(CPDF_TextObject *pObj, FX_FLOAT reflowWidth, CFX_AffineMatrix objMatrix);
     void	ProcessPathObject(CPDF_PathObject *pObj, FX_FLOAT reflowWidth);
     void	ProcessUnitaryObjs(CPDF_PageObjects *pObjs, FX_FLOAT reflowWidth, CFX_AffineMatrix objMatrix);
-    FX_INT32 LogicPreObj(CPDF_TextObject* pObj);
+    int32_t LogicPreObj(CPDF_TextObject* pObj);
     int ProcessInsertObject(CPDF_TextObject* pObj, CFX_AffineMatrix formMatrix);
     FX_WCHAR GetPreChar();
     FX_BOOL IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
     int GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const;
     FX_BOOL	IsCanBreakAfter(FX_DWORD unicode);
     FX_BOOL	IsCanBreakBefore(FX_DWORD unicode);
-    FX_INT32 GetElementTypes(LayoutType layoutType);
+    int32_t GetElementTypes(LayoutType layoutType);
     void				CreateRFData(CPDF_PageObject* pObj, CFX_AffineMatrix* pMatrix = NULL);
     CRF_CharState*		GetCharState(CPDF_TextObject* pObj, CPDF_Font* pFont, FX_FLOAT fHeight, FX_ARGB color);
     FX_FLOAT		ConverWidth(FX_FLOAT width);
@@ -169,15 +169,15 @@ public:
     {
         return this;
     };
-    void		GetDisplayMatrix(CFX_AffineMatrix& matrix, FX_INT32 xPos, FX_INT32 yPos, FX_INT32 xSize, FX_INT32 ySize, FX_INT32 iRotate, const CFX_AffineMatrix* pPageMatrix);
+    void		GetDisplayMatrix(CFX_AffineMatrix& matrix, int32_t xPos, int32_t yPos, int32_t xSize, int32_t ySize, int32_t iRotate, const CFX_AffineMatrix* pPageMatrix);
 
     FX_FLOAT	GetPageHeight() ;
     FX_FLOAT	GetPageWidth()
     {
         return m_PageWidth;
     };
-    void		FocusGetData(const CFX_AffineMatrix matrix, FX_INT32 x, FX_INT32 y, CFX_ByteString& str);
-    FX_BOOL		FocusGetPosition(const CFX_AffineMatrix matrix, CFX_ByteString str, FX_INT32& x, FX_INT32& y);
+    void		FocusGetData(const CFX_AffineMatrix matrix, int32_t x, int32_t y, CFX_ByteString& str);
+    FX_BOOL		FocusGetPosition(const CFX_AffineMatrix matrix, CFX_ByteString str, int32_t& x, int32_t& y);
     CRF_DataPtrArray*	m_pReflowed;
     FX_FLOAT			m_PageWidth;
     FX_FLOAT			m_PageHeight;

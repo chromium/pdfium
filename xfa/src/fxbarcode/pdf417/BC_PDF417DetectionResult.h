@@ -18,28 +18,28 @@ public:
     CFX_PtrArray& getDetectionResultColumns();
     void setBoundingBox(CBC_BoundingBox* boundingBox);
     CBC_BoundingBox* getBoundingBox();
-    void setDetectionResultColumn(FX_INT32 barcodeColumn, CBC_DetectionResultColumn* detectionResultColumn);
-    CBC_DetectionResultColumn* getDetectionResultColumn(FX_INT32 barcodeColumn);
+    void setDetectionResultColumn(int32_t barcodeColumn, CBC_DetectionResultColumn* detectionResultColumn);
+    CBC_DetectionResultColumn* getDetectionResultColumn(int32_t barcodeColumn);
     CFX_ByteString toString();
 
-    FX_INT32 getBarcodeColumnCount();
-    FX_INT32 getBarcodeRowCount();
-    FX_INT32 getBarcodeECLevel();
+    int32_t getBarcodeColumnCount();
+    int32_t getBarcodeRowCount();
+    int32_t getBarcodeECLevel();
 private:
-    static FX_INT32 ADJUST_ROW_NUMBER_SKIP;
+    static int32_t ADJUST_ROW_NUMBER_SKIP;
     CBC_BarcodeMetadata* m_barcodeMetadata;
     CFX_PtrArray m_detectionResultColumns;
     CBC_BoundingBox* m_boundingBox;
-    FX_INT32 m_barcodeColumnCount;
+    int32_t m_barcodeColumnCount;
 private:
     void adjustIndicatorColumnRowNumbers(CBC_DetectionResultColumn* detectionResultColumn);
-    FX_INT32 adjustRowNumbers();
-    FX_INT32 adjustRowNumbersByRow();
-    FX_INT32 adjustRowNumbersFromBothRI();
-    FX_INT32 adjustRowNumbersFromRRI();
-    FX_INT32 adjustRowNumbersFromLRI();
-    static FX_INT32 adjustRowNumberIfValid(FX_INT32 rowIndicatorRowNumber, FX_INT32 invalidRowCounts, CBC_Codeword* codeword);
-    void adjustRowNumbers(FX_INT32 barcodeColumn, FX_INT32 codewordsRow, CFX_PtrArray* codewords);
+    int32_t adjustRowNumbers();
+    int32_t adjustRowNumbersByRow();
+    int32_t adjustRowNumbersFromBothRI();
+    int32_t adjustRowNumbersFromRRI();
+    int32_t adjustRowNumbersFromLRI();
+    static int32_t adjustRowNumberIfValid(int32_t rowIndicatorRowNumber, int32_t invalidRowCounts, CBC_Codeword* codeword);
+    void adjustRowNumbers(int32_t barcodeColumn, int32_t codewordsRow, CFX_PtrArray* codewords);
     static FX_BOOL adjustRowNumber(CBC_Codeword* codeword, CBC_Codeword* otherCodeword);
 
 

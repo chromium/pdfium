@@ -60,7 +60,7 @@ static IFDE_XMLNode* XFA_FDEExtension_GetDocumentNode(IFDE_XMLDoc *pXMLDoc, FX_B
     }
     return NULL;
 }
-FX_INT32 CXFA_SimpleParser::StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePacketID)
+int32_t CXFA_SimpleParser::StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePacketID)
 {
     CloseParser();
     m_pFileRead = pStream;
@@ -86,12 +86,12 @@ FX_INT32 CXFA_SimpleParser::StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePac
     m_ePacketID = ePacketID;
     return XFA_PARSESTATUS_Ready;
 }
-FX_INT32 CXFA_SimpleParser::DoParse(IFX_Pause *pPause)
+int32_t CXFA_SimpleParser::DoParse(IFX_Pause *pPause)
 {
     if (m_pXMLDoc == NULL || m_ePacketID == XFA_XDPPACKET_UNKNOWN) {
         return XFA_PARSESTATUS_StatusErr;
     }
-    FX_INT32 iRet = m_pXMLDoc->DoLoad(pPause);
+    int32_t iRet = m_pXMLDoc->DoLoad(pPause);
     if (iRet < 0) {
         return XFA_PARSESTATUS_SyntaxErr;
     }
@@ -109,7 +109,7 @@ FX_INT32 CXFA_SimpleParser::DoParse(IFX_Pause *pPause)
     }
     return XFA_PARSESTATUS_Done;
 }
-FX_INT32 CXFA_SimpleParser::ParseXMLData(const CFX_WideString &wsXML, IFDE_XMLNode* &pXMLNode, IFX_Pause *pPause)
+int32_t CXFA_SimpleParser::ParseXMLData(const CFX_WideString &wsXML, IFDE_XMLNode* &pXMLNode, IFX_Pause *pPause)
 {
     CloseParser();
     pXMLNode = NULL;
@@ -132,7 +132,7 @@ FX_INT32 CXFA_SimpleParser::ParseXMLData(const CFX_WideString &wsXML, IFDE_XMLNo
     if (!m_pXMLDoc->LoadXML(pParser)) {
         return XFA_PARSESTATUS_StatusErr;
     }
-    FX_INT32 iRet = m_pXMLDoc->DoLoad(pPause);
+    int32_t iRet = m_pXMLDoc->DoLoad(pPause);
     if (iRet < 0 || iRet >= 100) {
         m_pXMLDoc->CloseXML();
     }
@@ -285,7 +285,7 @@ static FX_BOOL XFA_FDEExtension_FindAttributeWithNS(IFDE_XMLElement *pElement, F
     CFX_WideString wsAttrName;
     CFX_WideString wsAttrValue;
     CFX_WideString wsAttrNS;
-    for(FX_INT32 iAttrCount = pElement->CountAttributes(), i = 0; i < iAttrCount; i ++) {
+    for(int32_t iAttrCount = pElement->CountAttributes(), i = 0; i < iAttrCount; i ++) {
         pElement->GetAttribute(i, wsAttrName, wsAttrValue);
         FX_STRSIZE iFind = wsAttrName.Find(L':', 0);
         CFX_WideString wsNSPrefix;
@@ -354,8 +354,8 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(IFDE_XMLNode* pXMLDocumentNod
     pXFARootNode->SetCData(XFA_ATTRIBUTE_Name, FX_WSTRC(L"xfa"));
     {
         IFDE_XMLElement* pElement = (IFDE_XMLElement*)pXMLDocumentNode;
-        FX_INT32 iAttributeCount = pElement->CountAttributes();
-        for(FX_INT32 i = 0; i < iAttributeCount; i++) {
+        int32_t iAttributeCount = pElement->CountAttributes();
+        for(int32_t i = 0; i < iAttributeCount; i++) {
             CFX_WideString wsAttriName, wsAttriValue;
             pElement->GetAttribute(i, wsAttriName, wsAttriValue);
             if(wsAttriName == FX_WSTRC(L"uuid")) {
@@ -706,7 +706,7 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode, IFDE_XMLNode* pX
                         pXFAChild->SetAttribute(XFA_ATTRIBUTE_Name, wsTagName);
                     }
                     FX_BOOL IsNeedValue = TRUE;
-                    for(FX_INT32 i = 0, count = pXMLElement->CountAttributes(); i < count; i++) {
+                    for(int32_t i = 0, count = pXMLElement->CountAttributes(); i < count; i++) {
                         CFX_WideString wsAttrQualifiedName;
                         CFX_WideString wsAttrName;
                         CFX_WideString wsAttrValue;
@@ -968,7 +968,7 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode, IFDE_XMLNode* pXMLNo
                     pXFAChild->SetCData(XFA_ATTRIBUTE_Name, wsNodeName);
                     FX_BOOL bNeedValue = TRUE;
                     if (1) {
-                        for(FX_INT32 i = 0, count = pXMLElement->CountAttributes(); i < count; i++) {
+                        for(int32_t i = 0, count = pXMLElement->CountAttributes(); i < count; i++) {
                             CFX_WideString wsAttrQualifiedName;
                             CFX_WideString wsAttrValue;
                             CFX_WideString wsAttrName;
@@ -1158,7 +1158,7 @@ void CXFA_SimpleParser::ParseInstruction(CXFA_Node *pXFANode, IFDE_XMLInstructio
     }
     CFX_WideString wsTargetName;
     pXMLInstruction->GetTargetName(wsTargetName);
-    FX_INT32 iDataCount = pXMLInstruction->CountData();
+    int32_t iDataCount = pXMLInstruction->CountData();
     if (wsTargetName == FX_WSTRC(L"originalXFAVersion")) {
         CFX_WideString wsData;
         if(pXMLInstruction->GetData(0, wsData) && (pXFANode->GetDocument()->RecognizeXFAVersionNumber(wsData) != XFA_VERSION_UNKNOWN)) {
@@ -1201,29 +1201,29 @@ CXFA_DocumentParser::~CXFA_DocumentParser()
 {
     CloseParser();
 }
-FX_INT32 CXFA_DocumentParser::StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePacketID )
+int32_t CXFA_DocumentParser::StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePacketID )
 {
     CloseParser();
-    FX_INT32 nRetStatus = m_nodeParser.StartParse(pStream, ePacketID);
+    int32_t nRetStatus = m_nodeParser.StartParse(pStream, ePacketID);
     if(nRetStatus == XFA_PARSESTATUS_Ready) {
         m_pDocument = FX_NEW CXFA_Document(this);
         m_nodeParser.SetFactory(m_pDocument);
     }
     return nRetStatus;
 }
-FX_INT32 CXFA_DocumentParser::DoParse(IFX_Pause *pPause )
+int32_t CXFA_DocumentParser::DoParse(IFX_Pause *pPause )
 {
-    FX_INT32 nRetStatus = m_nodeParser.DoParse(pPause);
+    int32_t nRetStatus = m_nodeParser.DoParse(pPause);
     if (nRetStatus >= XFA_PARSESTATUS_Done) {
         FXSYS_assert(m_pDocument);
         m_pDocument->SetRoot(m_nodeParser.GetRootNode());
     }
     return nRetStatus;
 }
-FX_INT32 CXFA_DocumentParser::ParseXMLData(const CFX_WideString &wsXML, IFDE_XMLNode* &pXMLNode, IFX_Pause *pPause)
+int32_t CXFA_DocumentParser::ParseXMLData(const CFX_WideString &wsXML, IFDE_XMLNode* &pXMLNode, IFX_Pause *pPause)
 {
     CloseParser();
-    FX_INT32 nRetStatus = m_nodeParser.ParseXMLData(wsXML, pXMLNode, NULL);
+    int32_t nRetStatus = m_nodeParser.ParseXMLData(wsXML, pXMLNode, NULL);
     if(nRetStatus == XFA_PARSESTATUS_Done && pXMLNode) {
         m_pDocument = FX_NEW CXFA_Document(this);
         m_nodeParser.SetFactory(m_pDocument);
@@ -1279,7 +1279,7 @@ CXFA_XMLParser::~CXFA_XMLParser()
     m_ws1.Empty();
     m_ws2.Empty();
 }
-FX_INT32 CXFA_XMLParser::DoParser(IFX_Pause *pPause)
+int32_t CXFA_XMLParser::DoParser(IFX_Pause *pPause)
 {
     if (m_dwStatus == FDE_XMLSYNTAXSTATUS_Error) {
         return -1;
@@ -1287,7 +1287,7 @@ FX_INT32 CXFA_XMLParser::DoParser(IFX_Pause *pPause)
     if (m_dwStatus == FDE_XMLSYNTAXSTATUS_EOS) {
         return 100;
     }
-    FX_INT32 iCount = 0;
+    int32_t iCount = 0;
     while (TRUE) {
         m_dwStatus = m_pParser->DoSyntaxParse();
         switch (m_dwStatus) {

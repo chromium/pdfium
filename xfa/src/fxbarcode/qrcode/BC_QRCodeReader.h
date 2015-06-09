@@ -25,11 +25,11 @@ private:
 public:
     CBC_QRCodeReader();
     virtual ~CBC_QRCodeReader();
-    CFX_ByteString Decode(CFX_DIBitmap *pBitmap, FX_INT32 hints, FX_INT32 byteModeDecode, FX_INT32 &e);
-    CFX_ByteString Decode(const CFX_WideString &filename, FX_INT32 hints, FX_INT32 byteModeDecode, FX_INT32 &e);
+    CFX_ByteString Decode(CFX_DIBitmap *pBitmap, int32_t hints, int32_t byteModeDecode, int32_t &e);
+    CFX_ByteString Decode(const CFX_WideString &filename, int32_t hints, int32_t byteModeDecode, int32_t &e);
     static void ReleaseAll();
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e);
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 &e);
+    CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e);
+    CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t &e);
     virtual void Init();
 };
 #endif

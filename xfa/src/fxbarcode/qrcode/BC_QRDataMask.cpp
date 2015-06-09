@@ -23,7 +23,7 @@
 #include "../barcode.h"
 #include "../common/BC_CommonBitMatrix.h"
 #include "BC_QRDataMask.h"
-static FX_INT32 N_DATA_MASKS = 0;
+static int32_t N_DATA_MASKS = 0;
 CFX_PtrArray* CBC_QRDataMask::DATA_MASKS = NULL;
 void CBC_QRDataMask::Initialize()
 {
@@ -37,7 +37,7 @@ void CBC_QRDataMask::Finalize()
 }
 void CBC_QRDataMask::Destroy()
 {
-    FX_INT32 i;
+    int32_t i;
     for(i = 0; i < N_DATA_MASKS; i++) {
         CBC_QRDataMask* p = (CBC_QRDataMask*)(*DATA_MASKS)[i];
         if (p) {
@@ -45,17 +45,17 @@ void CBC_QRDataMask::Destroy()
         }
     }
 }
-void CBC_QRDataMask::UnmaskBitMatirx(CBC_CommonBitMatrix *bits, FX_INT32 dimension)
+void CBC_QRDataMask::UnmaskBitMatirx(CBC_CommonBitMatrix *bits, int32_t dimension)
 {
-    for(FX_INT32 i = 0; i < dimension; i++) {
-        for(FX_INT32 j = 0; j < dimension; j++) {
+    for(int32_t i = 0; i < dimension; i++) {
+        for(int32_t j = 0; j < dimension; j++) {
             if(IsMasked(i, j)) {
                 bits->Flip(j, i);
             }
         }
     }
 }
-CBC_QRDataMask* CBC_QRDataMask::ForReference(FX_INT32 reference, FX_INT32 &e)
+CBC_QRDataMask* CBC_QRDataMask::ForReference(int32_t reference, int32_t &e)
 {
     if(reference < 0 || reference > 7) {
         e = BCExceptionReferenceMustBeBetween0And7;
@@ -66,7 +66,7 @@ CBC_QRDataMask* CBC_QRDataMask::ForReference(FX_INT32 reference, FX_INT32 &e)
 class DataMask000 : public CBC_QRDataMask
 {
 public:
-    FX_BOOL IsMasked(FX_INT32 x, FX_INT32 y)
+    FX_BOOL IsMasked(int32_t x, int32_t y)
     {
         return ((x + y) % 2) == 0;
     }
@@ -74,7 +74,7 @@ public:
 class DataMask001 : public CBC_QRDataMask
 {
 public:
-    FX_BOOL IsMasked(FX_INT32 x, FX_INT32 y)
+    FX_BOOL IsMasked(int32_t x, int32_t y)
     {
         return (x % 2) == 0;
     }
@@ -82,7 +82,7 @@ public:
 class DataMask010 : public CBC_QRDataMask
 {
 public:
-    FX_BOOL IsMasked(FX_INT32 x, FX_INT32 y)
+    FX_BOOL IsMasked(int32_t x, int32_t y)
     {
         return y % 3 == 0;
     }
@@ -90,7 +90,7 @@ public:
 class DataMask011 : public CBC_QRDataMask
 {
 public:
-    FX_BOOL IsMasked(FX_INT32 x, FX_INT32 y)
+    FX_BOOL IsMasked(int32_t x, int32_t y)
     {
         return (x + y) % 3 == 0;
     }
@@ -98,7 +98,7 @@ public:
 class DataMask100 : public CBC_QRDataMask
 {
 public:
-    FX_BOOL IsMasked(FX_INT32 x, FX_INT32 y)
+    FX_BOOL IsMasked(int32_t x, int32_t y)
     {
         return (((x >> 1) + (y / 3)) % 2) == 0;
     }
@@ -106,7 +106,7 @@ public:
 class DataMask101 : public CBC_QRDataMask
 {
 public:
-    FX_BOOL IsMasked(FX_INT32 x, FX_INT32 y)
+    FX_BOOL IsMasked(int32_t x, int32_t y)
     {
         size_t temp = x * y;
         return (temp % 2) + (temp % 3) == 0;
@@ -115,7 +115,7 @@ public:
 class DataMask110 : public CBC_QRDataMask
 {
 public:
-    FX_BOOL IsMasked(FX_INT32 x, FX_INT32 y)
+    FX_BOOL IsMasked(int32_t x, int32_t y)
     {
         size_t temp = x * y;
         return (((temp % 2) + (temp % 3)) % 2) == 0;
@@ -124,12 +124,12 @@ public:
 class DataMask111 : public CBC_QRDataMask
 {
 public:
-    FX_BOOL IsMasked(FX_INT32 x, FX_INT32 y)
+    FX_BOOL IsMasked(int32_t x, int32_t y)
     {
         return ((((x + y) % 2) + ((x * y) % 3)) % 2) == 0;
     }
 };
-FX_INT32 CBC_QRDataMask::BuildDataMasks()
+int32_t CBC_QRDataMask::BuildDataMasks()
 {
     DATA_MASKS->Add(FX_NEW DataMask000);
     DATA_MASKS->Add(FX_NEW DataMask001);

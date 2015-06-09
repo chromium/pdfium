@@ -29,7 +29,7 @@
 #include "BC_QRCoderBitVector.h"
 #include "BC_QRCoderECBlocks.h"
 #include "BC_QRCoderVersion.h"
-const FX_INT32 CBC_QRCoderVersion::VERSION_DECODE_INFO[] = {
+const int32_t CBC_QRCoderVersion::VERSION_DECODE_INFO[] = {
     0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6,
     0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78,
     0x1145D, 0x12A17, 0x13532, 0x149A6, 0x15683,
@@ -45,13 +45,13 @@ void CBC_QRCoderVersion::Initialize()
 }
 void CBC_QRCoderVersion::Finalize()
 {
-    for(FX_INT32 i = 0 ; i < VERSION->GetSize(); i++) {
+    for(int32_t i = 0 ; i < VERSION->GetSize(); i++) {
         CBC_QRCoderVersion* v = (CBC_QRCoderVersion*)(VERSION->GetAt(i));
         delete v;
     }
     delete VERSION;
 }
-CBC_QRCoderVersion::CBC_QRCoderVersion(FX_INT32 versionNumber,
+CBC_QRCoderVersion::CBC_QRCoderVersion(int32_t versionNumber,
                                        CBC_QRCoderECBlocks* ecBlocks1,
                                        CBC_QRCoderECBlocks* ecBlocks2,
                                        CBC_QRCoderECBlocks* ecBlocks3,
@@ -62,10 +62,10 @@ CBC_QRCoderVersion::CBC_QRCoderVersion(FX_INT32 versionNumber,
     m_ecBlocks.Add(ecBlocks2);
     m_ecBlocks.Add(ecBlocks3);
     m_ecBlocks.Add(ecBlocks4);
-    FX_INT32 total = 0;
-    FX_INT32 ecCodeWords = ecBlocks1->GetECCodeWordsPerBlock();
+    int32_t total = 0;
+    int32_t ecCodeWords = ecBlocks1->GetECCodeWordsPerBlock();
     CFX_PtrArray* ecbArray = ecBlocks1->GetECBlocks();
-    for(FX_INT32 i = 0; i < ecbArray->GetSize(); i++) {
+    for(int32_t i = 0; i < ecbArray->GetSize(); i++) {
         CBC_QRCoderECB* ecBlock = (CBC_QRCoderECB*)((*ecbArray)[i]);
         total += ecBlock->GetCount() * (ecBlock->GetDataCodeWords() + ecCodeWords);
     }
@@ -334,15 +334,15 @@ CBC_QRCoderVersion::CBC_QRCoderVersion(FX_INT32 versionNumber,
 CBC_QRCoderVersion::~CBC_QRCoderVersion()
 {
     if(m_ecBlocks.GetSize() != 0) {
-        FX_INT32 itBeg = 0;
-        FX_INT32 itEnd = m_ecBlocks.GetSize();
+        int32_t itBeg = 0;
+        int32_t itEnd = m_ecBlocks.GetSize();
         while(itBeg != itEnd) {
             delete ( (CBC_QRCoderECBlocks*)(m_ecBlocks[itBeg]) );
             itBeg++;
         }
     }
 }
-FX_INT32 CBC_QRCoderVersion::GetVersionNumber()
+int32_t CBC_QRCoderVersion::GetVersionNumber()
 {
     return m_versionNumber;
 }
@@ -350,11 +350,11 @@ CFX_Int32Array* CBC_QRCoderVersion::GetAlignmentPatternCenters()
 {
     return &m_alignmentPatternCenters;
 }
-FX_INT32 CBC_QRCoderVersion::GetTotalCodeWords()
+int32_t CBC_QRCoderVersion::GetTotalCodeWords()
 {
     return m_totalCodeWords;
 }
-FX_INT32 CBC_QRCoderVersion::GetDimensionForVersion()
+int32_t CBC_QRCoderVersion::GetDimensionForVersion()
 {
     return 17 + 4 * m_versionNumber;
 }
@@ -362,7 +362,7 @@ CBC_QRCoderECBlocks* CBC_QRCoderVersion::GetECBlocksForLevel(CBC_QRCoderErrorCor
 {
     return (CBC_QRCoderECBlocks*)m_ecBlocks[ecLevel->Ordinal()];
 }
-CBC_QRCoderVersion* CBC_QRCoderVersion::GetProvisionalVersionForDimension(FX_INT32 dimension, FX_INT32 &e)
+CBC_QRCoderVersion* CBC_QRCoderVersion::GetProvisionalVersionForDimension(int32_t dimension, int32_t &e)
 {
     if((dimension % 4) != 1) {
         e = BCExceptionRead;
@@ -372,18 +372,18 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetProvisionalVersionForDimension(FX_INT
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return qcv;
 }
-CBC_QRCoderVersion* CBC_QRCoderVersion::DecodeVersionInformation(FX_INT32 versionBits, FX_INT32 &e)
+CBC_QRCoderVersion* CBC_QRCoderVersion::DecodeVersionInformation(int32_t versionBits, int32_t &e)
 {
-    FX_INT32 bestDifference = FXSYS_IntMax;
-    FX_INT32 bestVersion = 0;
-    for (FX_INT32 i = 0; i < 34; i++) {
-        FX_INT32 targetVersion = VERSION_DECODE_INFO[i];
+    int32_t bestDifference = FXSYS_IntMax;
+    int32_t bestVersion = 0;
+    for (int32_t i = 0; i < 34; i++) {
+        int32_t targetVersion = VERSION_DECODE_INFO[i];
         if(targetVersion == versionBits) {
             CBC_QRCoderVersion* qcv = GetVersionForNumber(i + 7, e);
             BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
             return qcv;
         }
-        FX_INT32 bitsDifference = CBC_QRCoderFormatInformation::NumBitsDiffering(versionBits, targetVersion);
+        int32_t bitsDifference = CBC_QRCoderFormatInformation::NumBitsDiffering(versionBits, targetVersion);
         if(bitsDifference < bestDifference) {
             bestVersion = i + 7;
             bestDifference = bitsDifference;
@@ -396,9 +396,9 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::DecodeVersionInformation(FX_INT32 versio
     }
     return NULL;
 }
-CBC_CommonBitMatrix* CBC_QRCoderVersion::BuildFunctionPattern(FX_INT32 &e)
+CBC_CommonBitMatrix* CBC_QRCoderVersion::BuildFunctionPattern(int32_t &e)
 {
-    FX_INT32 dimension = GetDimensionForVersion();
+    int32_t dimension = GetDimensionForVersion();
     CBC_CommonBitMatrix* bitMatrix = FX_NEW CBC_CommonBitMatrix();
     bitMatrix->Init(dimension);
     bitMatrix->SetRegion(0, 0 , 9, 9, e);
@@ -407,10 +407,10 @@ CBC_CommonBitMatrix* CBC_QRCoderVersion::BuildFunctionPattern(FX_INT32 &e)
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     bitMatrix->SetRegion(0, dimension - 8, 9, 8, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    FX_INT32 max = m_alignmentPatternCenters.GetSize();
-    for (FX_INT32 x = 0; x < max; x++) {
-        FX_INT32 i = m_alignmentPatternCenters[x] - 2;
-        for (FX_INT32 y = 0; y < max; y++) {
+    int32_t max = m_alignmentPatternCenters.GetSize();
+    for (int32_t x = 0; x < max; x++) {
+        int32_t i = m_alignmentPatternCenters[x] - 2;
+        for (int32_t y = 0; y < max; y++) {
             if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0)) {
                 continue;
             }
@@ -430,7 +430,7 @@ CBC_CommonBitMatrix* CBC_QRCoderVersion::BuildFunctionPattern(FX_INT32 &e)
     }
     return bitMatrix;
 }
-CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(FX_INT32 versionNumber, FX_INT32 &e)
+CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(int32_t versionNumber, int32_t &e)
 {
     if(VERSION->GetSize() == 0) {
         VERSION->Add(FX_NEW CBC_QRCoderVersion(1,
@@ -770,7 +770,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(FX_INT32 versionNumb
 }
 void CBC_QRCoderVersion::Destroy()
 {
-    FX_INT32 i;
+    int32_t i;
     for(i = 0; i < VERSION->GetSize(); i++) {
         delete ( (CBC_QRCoderVersion*)(*VERSION)[i] );
     }

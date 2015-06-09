@@ -69,7 +69,7 @@ FX_BOOL CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode)
     }
     InitPageSetMap();
     CXFA_Node* pPageArea = NULL;
-    FX_INT32 iCount = 0;
+    int32_t iCount = 0;
     for (pPageArea = m_pTemplatePageSetRoot->GetNodeItem(XFA_NODEITEM_FirstChild); pPageArea; pPageArea = pPageArea->GetNodeItem(XFA_NODEITEM_NextSibling)) {
         if (pPageArea->GetClassID() == XFA_ELEMENT_PageArea) {
             iCount++;
@@ -251,11 +251,11 @@ static CXFA_Node* XFA_ResolveBreakTarget(CXFA_Node* pPageSetRoot, FX_BOOL bNewEx
     CFX_WideString wsTargetAll = wsTargetExpr;
     wsTargetAll.TrimLeft();
     wsTargetAll.TrimRight();
-    FX_INT32 iSpliteIndex = 0;
+    int32_t iSpliteIndex = 0;
     FX_BOOL bTargetAllFind = TRUE;
     while(iSpliteIndex != -1) {
         CFX_WideString wsTargetExpr;
-        FX_INT32 iSpliteNextIndex = 0;
+        int32_t iSpliteNextIndex = 0;
         if(!bTargetAllFind) {
             iSpliteNextIndex = wsTargetAll.Find(' ', iSpliteIndex);
             wsTargetExpr = wsTargetAll.Mid(iSpliteIndex, iSpliteNextIndex - iSpliteIndex);
@@ -277,7 +277,7 @@ static CXFA_Node* XFA_ResolveBreakTarget(CXFA_Node* pPageSetRoot, FX_BOOL bNewEx
                 wsProcessedTarget = wsTargetExpr.Mid(4, wsTargetExpr.GetLength() - 5);
             }
             XFA_RESOLVENODE_RS rs;
-            FX_INT32 iCount = pDocument->GetScriptContext()->ResolveObjects(pPageSetRoot, wsProcessedTarget, rs, XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent);
+            int32_t iCount = pDocument->GetScriptContext()->ResolveObjects(pPageSetRoot, wsProcessedTarget, rs, XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent);
             if(iCount > 0 && rs.nodes[0]->IsNode()) {
                 return (CXFA_Node*)rs.nodes[0];
             }
@@ -368,7 +368,7 @@ void CXFA_LayoutPageMgr::AddPageAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
         CXFA_ContainerLayoutItemImpl* pContainerItem = (CXFA_ContainerLayoutItemImpl*)pNotify->OnCreateLayoutItem(pNewPageArea);
         m_PageArray.Add(pContainerItem);
         m_nAvailPages++;
-        pNotify->OnPageEvent((IXFA_LayoutPage*)pContainerItem, XFA_PAGEEVENT_PageAdded, (FX_LPVOID)(FX_UINTPTR)m_nAvailPages);
+        pNotify->OnPageEvent((IXFA_LayoutPage*)pContainerItem, XFA_PAGEEVENT_PageAdded, (FX_LPVOID)(uintptr_t)m_nAvailPages);
         pNewPageAreaLayoutItem = pContainerItem;
     }
     pNewRecord->pCurPageSet->AddChild(pNewPageAreaLayoutItem);
@@ -429,7 +429,7 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets()
                 case XFA_ATTRIBUTEENUM_SimplexPaginated:
                 case XFA_ATTRIBUTEENUM_DuplexPaginated: {
                         CXFA_LayoutItemImpl* pLastPageAreaLayoutItem = NULL;
-                        FX_INT32 nPageAreaCount = 0;
+                        int32_t nPageAreaCount = 0;
                         for(CXFA_LayoutItemImpl* pPageAreaLayoutItem = pPageSetLayoutItem->m_pFirstChild; pPageAreaLayoutItem; pPageAreaLayoutItem = pPageAreaLayoutItem->m_pNextSibling) {
                             if(pPageAreaLayoutItem->m_pFormNode->GetClassID() != XFA_ELEMENT_PageArea) {
                                 continue;
@@ -471,7 +471,7 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets()
                             }
                             rgUsedHeights.Add(fUsedHeight);
                         }
-                        FX_INT32 iCurContentAreaIndex = -1;
+                        int32_t iCurContentAreaIndex = -1;
                         for(CXFA_Node* pContentAreaNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pContentAreaNode; pContentAreaNode = pContentAreaNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
                             if(pContentAreaNode->GetClassID() != XFA_ELEMENT_ContentArea) {
                                 continue;
@@ -509,18 +509,18 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets()
         }
     }
 }
-FX_INT32 CXFA_LayoutPageMgr::GetPageCount() const
+int32_t CXFA_LayoutPageMgr::GetPageCount() const
 {
     return m_PageArray.GetSize();
 }
-IXFA_LayoutPage* CXFA_LayoutPageMgr::GetPage(FX_INT32 index) const
+IXFA_LayoutPage* CXFA_LayoutPageMgr::GetPage(int32_t index) const
 {
     if (m_PageArray.GetSize() > index) {
         return (IXFA_LayoutPage*)m_PageArray[index];
     }
     return NULL;
 }
-FX_INT32 CXFA_LayoutPageMgr::GetPageIndex(IXFA_LayoutPage* pPage) const
+int32_t CXFA_LayoutPageMgr::GetPageIndex(IXFA_LayoutPage* pPage) const
 {
     return m_PageArray.Find((CXFA_ContainerLayoutItemImpl*)pPage);
 }
@@ -807,7 +807,7 @@ FX_BOOL CXFA_LayoutPageMgr::FindPageAreaFromPageSet(CXFA_Node* pPageSet, CXFA_No
     if(pPageSet == NULL && pStartChild == NULL) {
         return FALSE;
     }
-    FX_INT32 iPageSetCount = 0;
+    int32_t iPageSetCount = 0;
     if(IsPageSetRootOrderedOccurrence()) {
         return FindPageAreaFromPageSet_Ordered(pPageSet, pStartChild, pTargetPageArea, pTargetContentArea, bNewPage, bQuery);
     }
@@ -816,10 +816,10 @@ FX_BOOL CXFA_LayoutPageMgr::FindPageAreaFromPageSet(CXFA_Node* pPageSet, CXFA_No
 }
 FX_BOOL CXFA_LayoutPageMgr::FindPageAreaFromPageSet_Ordered(CXFA_Node* pPageSet, CXFA_Node* pStartChild, CXFA_Node* pTargetPageArea, CXFA_Node* pTargetContentArea, FX_BOOL bNewPage, FX_BOOL bQuery)
 {
-    FX_INT32 iPageSetCount = 0;
+    int32_t iPageSetCount = 0;
     if(!pStartChild && !bQuery) {
         m_pPageSetMap.Lookup(pPageSet, iPageSetCount);
-        FX_INT32 iMax = -1;
+        int32_t iMax = -1;
         CXFA_Node* pOccurNode = pPageSet->GetFirstChildByClass(XFA_ELEMENT_Occur);
         if(pOccurNode) {
             pOccurNode->TryInteger(XFA_ATTRIBUTE_Max, iMax, FALSE);
@@ -965,7 +965,7 @@ FX_BOOL CXFA_LayoutPageMgr::MatchPageAreaOddOrEven(CXFA_Node* pPageArea, FX_BOOL
     XFA_ATTRIBUTEENUM eOddOrEven = XFA_ATTRIBUTEENUM_Any;
     pPageArea->TryEnum(XFA_ATTRIBUTE_OddOrEven, eOddOrEven);
     if (eOddOrEven != XFA_ATTRIBUTEENUM_Any) {
-        FX_INT32 iPageCount = GetPageCount();
+        int32_t iPageCount = GetPageCount();
         if (bLastMatch) {
             return eOddOrEven == XFA_ATTRIBUTEENUM_Odd ? iPageCount % 2 == 1 : iPageCount % 2 == 0;
         }
@@ -985,7 +985,7 @@ CXFA_Node* CXFA_LayoutPageMgr::GetNextAvailPageArea(CXFA_Node* pTargetPageArea, 
             return m_pCurPageArea;
         }
         if(IsPageSetRootOrderedOccurrence()) {
-            FX_INT32 iMax = -1;
+            int32_t iMax = -1;
             CXFA_Node* pOccurNode = m_pCurPageArea->GetFirstChildByClass(XFA_ELEMENT_Occur);
             if(pOccurNode) {
                 pOccurNode->TryInteger(XFA_ATTRIBUTE_Max, iMax, FALSE);
@@ -1086,19 +1086,19 @@ void CXFA_LayoutPageMgr::InitPageSetMap()
         }
     }
 }
-FX_INT32 CXFA_LayoutPageMgr::CreateMinPageRecord(CXFA_Node* pPageArea, FX_BOOL bTargetPageArea, FX_BOOL bCreateLast)
+int32_t CXFA_LayoutPageMgr::CreateMinPageRecord(CXFA_Node* pPageArea, FX_BOOL bTargetPageArea, FX_BOOL bCreateLast)
 {
     if(pPageArea == NULL) {
         return 0;
     }
     CXFA_Node* pOccurNode = pPageArea->GetFirstChildByClass(XFA_ELEMENT_Occur);
-    FX_INT32 iMin = 0;
+    int32_t iMin = 0;
     if((pOccurNode && pOccurNode->TryInteger(XFA_ATTRIBUTE_Min, iMin, FALSE)) || bTargetPageArea) {
         CXFA_Node* pContentArea = pPageArea->GetFirstChildByClass(XFA_ELEMENT_ContentArea);
         if (iMin < 1 && bTargetPageArea && !pContentArea) {
             iMin = 1;
         }
-        FX_INT32 i = 0;
+        int32_t i = 0;
         if(bCreateLast) {
             i = m_nCurPageCount;
         }
@@ -1115,7 +1115,7 @@ void CXFA_LayoutPageMgr::CreateMinPageSetRecord(CXFA_Node* pPageSet, FX_BOOL bCr
     if(pPageSet == NULL) {
         return;
     }
-    FX_INT32 iCurSetCount = 0;
+    int32_t iCurSetCount = 0;
     if(!m_pPageSetMap.Lookup(pPageSet, iCurSetCount)) {
         return;
     }
@@ -1123,10 +1123,10 @@ void CXFA_LayoutPageMgr::CreateMinPageSetRecord(CXFA_Node* pPageSet, FX_BOOL bCr
         iCurSetCount = 0;
     }
     CXFA_Node* pOccurNode = pPageSet->GetFirstChildByClass(XFA_ELEMENT_Occur);
-    FX_INT32 iMin = 0;
+    int32_t iMin = 0;
     if(pOccurNode && pOccurNode->TryInteger(XFA_ATTRIBUTE_Min, iMin, FALSE)) {
         if(iCurSetCount < iMin) {
-            for(FX_INT32 i = 0; i < iMin - iCurSetCount; i++) {
+            for(int32_t i = 0; i < iMin - iCurSetCount; i++) {
                 for(CXFA_Node *pCurrentPageNode = pPageSet->GetNodeItem(XFA_NODEITEM_FirstChild); pCurrentPageNode; pCurrentPageNode = pCurrentPageNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
                     if(pCurrentPageNode->GetClassID() == XFA_ELEMENT_PageArea) {
                         CreateMinPageRecord(pCurrentPageNode, FALSE);
@@ -1179,11 +1179,11 @@ FX_BOOL CXFA_LayoutPageMgr::GetNextAvailContentHeight(FX_FLOAT fChildHeight)
     }
     CXFA_Node* pPageNode = GetCurrentContainerRecord()->pCurPageArea->m_pFormNode;
     CXFA_Node* pOccurNode = pPageNode->GetFirstChildByClass(XFA_ELEMENT_Occur);
-    FX_INT32 iMax = 0;
+    int32_t iMax = 0;
     if(pOccurNode && pOccurNode->TryInteger(XFA_ATTRIBUTE_Max, iMax, FALSE)) {
         if(m_nCurPageCount == iMax) {
             CXFA_Node* pSrcPage = m_pCurPageArea;
-            FX_INT32 nSrcPageCount = m_nCurPageCount;
+            int32_t nSrcPageCount = m_nCurPageCount;
             FX_POSITION psSrcRecord = m_rgProposedContainerRecord.GetTailPosition();
             CXFA_Node* pNextPage = GetNextAvailPageArea(NULL, NULL, FALSE, TRUE);
             m_pCurPageArea = pSrcPage;
@@ -1367,7 +1367,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents()
     IXFA_DocLayout* pDocLayout = pDocument->GetDocLayout();
     CXFA_ContainerLayoutItemImpl* pRootLayout = this->GetRootLayoutItem();
     {
-        for(FX_INT32 iIndex = 0; iIndex < pDocument->m_pPendingPageSet.GetSize(); iIndex ++) {
+        for(int32_t iIndex = 0; iIndex < pDocument->m_pPendingPageSet.GetSize(); iIndex ++) {
             CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode> sIterator(pDocument->m_pPendingPageSet.GetAt(iIndex));
             for(CXFA_Node *pNode = sIterator.GetCurrent(); pNode; pNode = sIterator.MoveToNext()) {
                 if(pNode->IsContainerNode()) {
@@ -1381,7 +1381,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents()
             }
         }
     }
-    FX_INT32 iIndex = 0;
+    int32_t iIndex = 0;
     CXFA_Node* pPendingPageSet = NULL;
     for(; pRootLayout; pRootLayout = (CXFA_ContainerLayoutItemImpl* )pRootLayout->m_pNextSibling) {
         pPendingPageSet = NULL;
@@ -1419,7 +1419,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents()
                         CXFA_ContainerLayoutItemImpl* pFormLayout = pContainerItem;
                         CXFA_Node* pParentNode = pContainerItem->m_pParent->m_pFormNode;
                         FX_BOOL bIsExistForm = TRUE;
-                        for(FX_INT32 iLevel = 0; iLevel < 3; iLevel ++) {
+                        for(int32_t iLevel = 0; iLevel < 3; iLevel ++) {
                             pFormLayout = (CXFA_ContainerLayoutItemImpl*)pFormLayout->m_pFirstChild;
                             if(iLevel == 2) {
                                 while(pFormLayout && !XFA_ItemLayoutProcessor_IsTakingSpace(pFormLayout->m_pFormNode)) {
@@ -1535,7 +1535,7 @@ void CXFA_LayoutPageMgr::LayoutPageSetContents()
         }
     }
 }
-void XFA_SyncContainer(IXFA_Notify* pNotify, IXFA_DocLayout* pDocLayout, CXFA_LayoutItemImpl* pContainerItem, FX_DWORD dwRelevant, FX_BOOL bVisible, FX_INT32 nPageIndex)
+void XFA_SyncContainer(IXFA_Notify* pNotify, IXFA_DocLayout* pDocLayout, CXFA_LayoutItemImpl* pContainerItem, FX_DWORD dwRelevant, FX_BOOL bVisible, int32_t nPageIndex)
 {
     FX_BOOL bVisibleItem = FALSE;
     FX_DWORD dwStatus = 0;
@@ -1548,7 +1548,7 @@ void XFA_SyncContainer(IXFA_Notify* pNotify, IXFA_DocLayout* pDocLayout, CXFA_La
         dwRelevantContainer = XFA_GetRelevant(pContainerItem->m_pFormNode, dwRelevant);
         dwStatus = (bVisibleItem ? XFA_LAYOUTSTATUS_Visible : 0) | dwRelevantContainer;
     }
-    pNotify->OnLayoutEvent(pDocLayout, (CXFA_LayoutItem*)pContainerItem, XFA_LAYOUTEVENT_ItemAdded, (FX_LPVOID)(FX_UINTPTR)nPageIndex, (FX_LPVOID)(FX_UINTPTR)dwStatus);
+    pNotify->OnLayoutEvent(pDocLayout, (CXFA_LayoutItem*)pContainerItem, XFA_LAYOUTEVENT_ItemAdded, (FX_LPVOID)(uintptr_t)nPageIndex, (FX_LPVOID)(uintptr_t)dwStatus);
     CXFA_LayoutItemImpl *pChild = pContainerItem->m_pFirstChild;
     while (pChild) {
         if (!pChild->IsContentLayoutItem()) {
@@ -1564,7 +1564,7 @@ void CXFA_LayoutPageMgr::SyncLayoutData()
     MergePageSetContents();
     LayoutPageSetContents();
     IXFA_Notify* pNotify = m_pTemplatePageSetRoot->GetDocument()->GetParser()->GetNotify();
-    FX_INT32 nPageIdx = -1;
+    int32_t nPageIdx = -1;
     CXFA_ContainerLayoutItemImpl* pRootLayoutItem = this->GetRootLayoutItem();
     for(; pRootLayoutItem; pRootLayoutItem = (CXFA_ContainerLayoutItemImpl*)pRootLayoutItem->m_pNextSibling) {
         CXFA_NodeIteratorTemplate<CXFA_ContainerLayoutItemImpl, CXFA_TraverseStrategy_ContentAreaContainerLayoutItem> iteratorParent(pRootLayoutItem);
@@ -1592,8 +1592,8 @@ void CXFA_LayoutPageMgr::SyncLayoutData()
             }
         }
     }
-    FX_INT32 nPage = m_PageArray.GetSize();
-    for (FX_INT32 i = nPage - 1; i >= m_nAvailPages; i--) {
+    int32_t nPage = m_PageArray.GetSize();
+    for (int32_t i = nPage - 1; i >= m_nAvailPages; i--) {
         CXFA_ContainerLayoutItemImpl* pPage = m_PageArray[i];
         m_PageArray.RemoveAt(i);
         pNotify->OnPageEvent((IXFA_LayoutPage*)pPage, XFA_PAGEEVENT_PageRemoved);

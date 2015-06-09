@@ -22,11 +22,11 @@ public:
     virtual CFX_PrivateData*	GetPrivateDataCtrl() = 0;
 
 
-    virtual void		GetDisplayMatrix(CFX_AffineMatrix& matrix, FX_INT32 xPos, FX_INT32 yPos, FX_INT32 xSize, FX_INT32 ySize, FX_INT32 iRotate, const CFX_AffineMatrix* pPageMatrix) = 0;
+    virtual void		GetDisplayMatrix(CFX_AffineMatrix& matrix, int32_t xPos, int32_t yPos, int32_t xSize, int32_t ySize, int32_t iRotate, const CFX_AffineMatrix* pPageMatrix) = 0;
     virtual FX_FLOAT	GetPageHeight() = 0;
     virtual FX_FLOAT	GetPageWidth() = 0;
-    virtual void		FocusGetData(const CFX_AffineMatrix matrix, FX_INT32 x, FX_INT32 y, CFX_ByteString& str) = 0;
-    virtual FX_BOOL		FocusGetPosition(const CFX_AffineMatrix matrix, CFX_ByteString str, FX_INT32& x, FX_INT32& y) = 0;
+    virtual void		FocusGetData(const CFX_AffineMatrix matrix, int32_t x, int32_t y, CFX_ByteString& str) = 0;
+    virtual FX_BOOL		FocusGetPosition(const CFX_AffineMatrix matrix, CFX_ByteString str, int32_t& x, int32_t& y) = 0;
 };
 typedef struct _RF_ParseStyle {
     _RF_ParseStyle()

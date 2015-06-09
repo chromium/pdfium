@@ -12,7 +12,7 @@ class CBC_Encoder
 public:
     CBC_Encoder();
     virtual ~CBC_Encoder();
-    virtual FX_INT32 getEncodingMode() = 0;
-    virtual void Encode(CBC_EncoderContext &context, FX_INT32 &e) = 0;
+    virtual int32_t getEncodingMode() = 0;
+    virtual void Encode(CBC_EncoderContext &context, int32_t &e) = 0;
 };
 #endif

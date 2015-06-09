@@ -84,7 +84,7 @@ void		FXJSE_Value_ToUTF8String	(FXJSE_HVALUE hValue, CFX_ByteString& szStrOutput
     ASSERT(lpValue);
     return lpValue->ToString(szStrOutput);
 }
-FX_INT32	FXJSE_Value_ToInteger		(FXJSE_HVALUE hValue)
+int32_t	FXJSE_Value_ToInteger		(FXJSE_HVALUE hValue)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     ASSERT(lpValue);
@@ -121,7 +121,7 @@ void		FXJSE_Value_SetUTF8String	(FXJSE_HVALUE hValue, FX_BSTR	szString)
     ASSERT(lpValue);
     return lpValue->SetString(szString);
 }
-void		FXJSE_Value_SetInteger		(FXJSE_HVALUE hValue, FX_INT32  nInteger)
+void		FXJSE_Value_SetInteger		(FXJSE_HVALUE hValue, int32_t  nInteger)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     ASSERT(lpValue);
@@ -150,7 +150,7 @@ void		FXJSE_Value_SetObject		(FXJSE_HVALUE hValue, FX_LPVOID lpObject, FXJSE_HCL
         lpValue->SetHostObject(lpObject, lpClass);
     }
 }
-void		FXJSE_Value_SetArray		(FXJSE_HVALUE hValue, FX_UINT32 uValueCount, FXJSE_HVALUE* rgValues)
+void		FXJSE_Value_SetArray		(FXJSE_HVALUE hValue, uint32_t uValueCount, FXJSE_HVALUE* rgValues)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     return lpValue->SetArray(uValueCount, reinterpret_cast<CFXJSE_Value**>(rgValues));
@@ -181,14 +181,14 @@ FX_BOOL		FXJSE_Value_SetObjectProp		(FXJSE_HVALUE hValue, FX_BSTR	szPropName,	FX
     ASSERT(lpValue && lpPropValue);
     return lpValue->SetObjectProperty(szPropName, lpPropValue);
 }
-FX_BOOL		FXJSE_Value_GetObjectPropByIdx	(FXJSE_HVALUE hValue, FX_UINT32	uPropIdx,	FXJSE_HVALUE hPropValue)
+FX_BOOL		FXJSE_Value_GetObjectPropByIdx	(FXJSE_HVALUE hValue, uint32_t	uPropIdx,	FXJSE_HVALUE hPropValue)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
     ASSERT(lpValue && lpPropValue);
     return lpValue->GetObjectProperty(uPropIdx, lpPropValue);
 }
-FX_BOOL		FXJSE_Value_SetObjectPropByIdx	(FXJSE_HVALUE hValue, FX_UINT32	uPropIdx,	FXJSE_HVALUE hPropValue)
+FX_BOOL		FXJSE_Value_SetObjectPropByIdx	(FXJSE_HVALUE hValue, uint32_t	uPropIdx,	FXJSE_HVALUE hPropValue)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
@@ -222,7 +222,7 @@ FX_BOOL		FXJSE_Value_SetFunctionBind	(FXJSE_HVALUE hValue, FXJSE_HVALUE hOldFunc
     ASSERT(lpValue && lpOldFunction && lpNewThis);
     return lpValue->SetFunctionBind(lpOldFunction, lpNewThis);
 }
-FX_BOOL	FXJSE_Value_CallFunction(FXJSE_HVALUE hFunction, FXJSE_HVALUE hThis, FXJSE_HVALUE hRetValue, FX_UINT32 nArgCount, FXJSE_HVALUE* lpArgs)
+FX_BOOL	FXJSE_Value_CallFunction(FXJSE_HVALUE hFunction, FXJSE_HVALUE hThis, FXJSE_HVALUE hRetValue, uint32_t nArgCount, FXJSE_HVALUE* lpArgs)
 {
     CFXJSE_Value* lpFunction = reinterpret_cast<CFXJSE_Value*>(hFunction);
     CFXJSE_Value* lpThis = reinterpret_cast<CFXJSE_Value*>(hThis);
@@ -293,25 +293,25 @@ V8_INLINE static double FXJSE_ftod(FX_FLOAT fNumber)
         ASSERT(FALSE);
         return fNumber;
     }
-    FX_UINT32 nFloatBits = (FX_UINT32&)fNumber;
-    FX_UINT8  nExponent  = (FX_UINT8)(nFloatBits >> 16 >> 7 );
+    uint32_t nFloatBits = (uint32_t&)fNumber;
+    uint8_t  nExponent  = (uint8_t)(nFloatBits >> 16 >> 7 );
     if(nExponent == 0 || nExponent == 255) {
         return fNumber;
     }
-    FX_INT8 nErrExp = nExponent - 127 - 23;
+    int8_t nErrExp = nExponent - 127 - 23;
     if(nErrExp >= 0) {
         return fNumber;
     }
     double dwError = pow(2.0, nErrExp), dwErrorHalf = dwError / 2;
     double dNumber = fNumber,  dNumberAbs = fabs(fNumber);
     double dNumberAbsMin = dNumberAbs - dwErrorHalf, dNumberAbsMax = dNumberAbs + dwErrorHalf;
-    FX_INT32 iErrPos = 0;
+    int32_t iErrPos = 0;
     if(floor(dNumberAbsMin) == floor(dNumberAbsMax)) {
         dNumberAbsMin = fmod(dNumberAbsMin, 1.0);
         dNumberAbsMax = fmod(dNumberAbsMax, 1.0);
-        FX_INT32 iErrPosMin = 1, iErrPosMax = 38;
+        int32_t iErrPosMin = 1, iErrPosMax = 38;
         do {
-            FX_INT32 iMid = (iErrPosMin + iErrPosMax) / 2;
+            int32_t iMid = (iErrPosMin + iErrPosMax) / 2;
             double dPow = pow(10.0, iMid);
             if(floor(dNumberAbsMin * dPow) == floor(dNumberAbsMax * dPow)) {
                 iErrPosMin = iMid + 1;
@@ -339,12 +339,12 @@ void CFXJSE_Value::SetHostObject(FX_LPVOID lpObject, CFXJSE_Class* lpClass)
     FXJSE_UpdateObjectBinding(hObject, lpObject);
     m_hValue.Reset(m_pIsolate, hObject);
 }
-void CFXJSE_Value::SetArray(FX_UINT32 uValueCount, CFXJSE_Value** rgValues)
+void CFXJSE_Value::SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Array> hArrayObject = v8::Array::New(m_pIsolate, uValueCount);
     if (rgValues) {
-        for(FX_UINT32 i = 0; i < uValueCount; i++) {
+        for(uint32_t i = 0; i < uValueCount; i++) {
             if(rgValues[i]) {
                 hArrayObject->Set(i, v8::Local<v8::Value>::New(m_pIsolate, rgValues[i]->DirectGetValue()));
             }
@@ -379,7 +379,7 @@ FX_BOOL CFXJSE_Value::GetObjectProperty(FX_BSTR szPropName, CFXJSE_Value* lpProp
     lpPropValue->ForceSetValue(hPropValue);
     return TRUE;
 }
-FX_BOOL CFXJSE_Value::SetObjectProperty(FX_UINT32 uPropIdx, CFXJSE_Value* lpPropValue)
+FX_BOOL CFXJSE_Value::SetObjectProperty(uint32_t uPropIdx, CFXJSE_Value* lpPropValue)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hObject = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -389,7 +389,7 @@ FX_BOOL CFXJSE_Value::SetObjectProperty(FX_UINT32 uPropIdx, CFXJSE_Value* lpProp
     v8::Local<v8::Value> hPropValue = v8::Local<v8::Value>::New(m_pIsolate, lpPropValue->DirectGetValue());
     return (FX_BOOL)hObject.As<v8::Object>()->Set(uPropIdx, hPropValue);
 }
-FX_BOOL CFXJSE_Value::GetObjectProperty(FX_UINT32 uPropIdx, CFXJSE_Value* lpPropValue)
+FX_BOOL CFXJSE_Value::GetObjectProperty(uint32_t uPropIdx, CFXJSE_Value* lpPropValue)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hObject = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -453,8 +453,8 @@ FX_BOOL CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction, CFXJSE_Value*
     m_hValue.Reset(m_pIsolate, hBoundFunction);
     return TRUE;
 }
-#define FXJSE_INVALID_PTR ((FX_LPVOID)(FX_INTPTR)-1)
-FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, FX_UINT32 nArgCount, FXJSE_HVALUE* lpArgs)
+#define FXJSE_INVALID_PTR ((FX_LPVOID)(intptr_t)-1)
+FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, uint32_t nArgCount, FXJSE_HVALUE* lpArgs)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hFunctionValue = v8::Local<v8::Value>::New(m_pIsolate, DirectGetValue());
@@ -473,7 +473,7 @@ FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, F
         if (!lpLocalArgs) {
             return FALSE;
         }
-        for (FX_UINT32 i = 0; i < nArgCount; i++) {
+        for (uint32_t i = 0; i < nArgCount; i++) {
             new (lpLocalArgs + i) v8::Local<v8::Value>;
             CFXJSE_Value* lpArg = (CFXJSE_Value*)lpArgs[i];
             if(lpArg) {
@@ -505,7 +505,7 @@ FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, F
         lpRetValue->ForceSetValue(hReturnValue);
     }
     if(lpLocalArgs) {
-        for (FX_UINT32 i = 0; i < nArgCount; i++) {
+        for (uint32_t i = 0; i < nArgCount; i++) {
             lpLocalArgs[i].~Local();
         }
         FX_Free(lpLocalArgs);

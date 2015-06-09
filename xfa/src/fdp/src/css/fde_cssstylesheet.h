@@ -10,7 +10,7 @@
 class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target
 {
 public:
-    CFDE_CSSSelector(FDE_CSSSELECTORTYPE eType, FX_LPCWSTR psz, FX_INT32 iLen, FX_BOOL bIgnoreCase)
+    CFDE_CSSSelector(FDE_CSSSELECTORTYPE eType, FX_LPCWSTR psz, int32_t iLen, FX_BOOL bIgnoreCase)
         : m_eType(eType), m_dwHash(FX_HashCode_String_GetW(psz, iLen, bIgnoreCase)), m_pNext(NULL)
     {
     }
@@ -28,13 +28,13 @@ public:
     {
         return m_pNext;
     }
-    static IFDE_CSSSelector*		FromString(IFX_MEMAllocator *pStaticStore, FX_LPCWSTR psz, FX_INT32 iLen);
+    static IFDE_CSSSelector*		FromString(IFX_MEMAllocator *pStaticStore, FX_LPCWSTR psz, int32_t iLen);
     void							SetNext(IFDE_CSSSelector *pNext)
     {
         m_pNext = pNext;
     }
 protected:
-    static CFDE_CSSSelector*		ParseSelector(IFX_MEMAllocator *pStaticStore, FX_LPCWSTR psz, FX_INT32 &iOff, FX_INT32 iLen, FDE_CSSSELECTORTYPE eType);
+    static CFDE_CSSSelector*		ParseSelector(IFX_MEMAllocator *pStaticStore, FX_LPCWSTR psz, int32_t &iOff, int32_t iLen, FDE_CSSSELECTORTYPE eType);
     void							SetType(FDE_CSSSELECTORTYPE eType)
     {
         m_eType =  eType;
@@ -48,11 +48,11 @@ class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target
 {
 public:
     CFDE_CSSStyleRule() : m_ppSelector(NULL), m_iSelectors(0) { }
-    virtual FX_INT32				CountSelectorLists() const
+    virtual int32_t				CountSelectorLists() const
     {
         return m_iSelectors;
     }
-    virtual IFDE_CSSSelector*		GetSelectorList(FX_INT32 index) const
+    virtual IFDE_CSSSelector*		GetSelectorList(int32_t index) const
     {
         return m_ppSelector[index];
     }
@@ -69,7 +69,7 @@ public:
 protected:
     CFDE_CSSDeclaration				m_Declaration;
     IFDE_CSSSelector				**m_ppSelector;
-    FX_INT32						m_iSelectors;
+    int32_t						m_iSelectors;
 };
 class CFDE_CSSMediaRule : public IFDE_CSSMediaRule, public CFX_Target
 {
@@ -82,11 +82,11 @@ public:
         return m_dwMediaList;
     }
 
-    virtual FX_INT32				CountRules() const
+    virtual int32_t				CountRules() const
     {
         return m_RuleArray.GetSize();
     }
-    virtual IFDE_CSSRule*			GetRule(FX_INT32 index)
+    virtual IFDE_CSSRule*			GetRule(int32_t index)
     {
         return m_RuleArray.GetAt(index);
     }
@@ -138,10 +138,10 @@ public:
     {
         return m_wCodePage;
     }
-    virtual FX_INT32				CountRules() const;
-    virtual IFDE_CSSRule*			GetRule(FX_INT32 index);
+    virtual int32_t				CountRules() const;
+    virtual IFDE_CSSRule*			GetRule(int32_t index);
     FX_BOOL							LoadFromStream(const CFX_WideString &szUrl, IFX_Stream *pStream, FX_WORD wCodePage);
-    FX_BOOL							LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, FX_INT32 iBufSize, FX_WORD wCodePage);
+    FX_BOOL							LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, int32_t iBufSize, FX_WORD wCodePage);
 protected:
     void							Reset();
     FX_BOOL							LoadFromSyntax(IFDE_CSSSyntaxParser *pSyntax);

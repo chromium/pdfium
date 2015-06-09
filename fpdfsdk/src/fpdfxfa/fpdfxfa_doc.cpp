@@ -633,7 +633,7 @@ void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidget
 	}
 }
 
-FX_INT32 CPDFXFA_Document::CountPages(IXFA_Doc* hDoc)
+int32_t CPDFXFA_Document::CountPages(IXFA_Doc* hDoc)
 {
 	if (hDoc == m_pXFADoc && m_pSDKDoc)
 	{
@@ -641,7 +641,7 @@ FX_INT32 CPDFXFA_Document::CountPages(IXFA_Doc* hDoc)
 	}
 	return 0;
 }
-FX_INT32 CPDFXFA_Document::GetCurrentPage(IXFA_Doc* hDoc)
+int32_t CPDFXFA_Document::GetCurrentPage(IXFA_Doc* hDoc)
 {
 	if (hDoc != m_pXFADoc || !m_pSDKDoc)
 		return -1;
@@ -655,7 +655,7 @@ FX_INT32 CPDFXFA_Document::GetCurrentPage(IXFA_Doc* hDoc)
 
 	return pEnv->FFI_GetCurrentPageIndex(this);
 }
-void CPDFXFA_Document::SetCurrentPage(IXFA_Doc* hDoc, FX_INT32 iCurPage)
+void CPDFXFA_Document::SetCurrentPage(IXFA_Doc* hDoc, int32_t iCurPage)
 {
 	if (hDoc != m_pXFADoc || !m_pSDKDoc)
 		return;
@@ -896,7 +896,7 @@ void  CPDFXFA_Document::SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget)
 		}
 	}
 }
-void CPDFXFA_Document::Print(IXFA_Doc* hDoc, FX_INT32 nStartPage, FX_INT32 nEndPage, FX_DWORD dwOptions)
+void CPDFXFA_Document::Print(IXFA_Doc* hDoc, int32_t nStartPage, int32_t nEndPage, FX_DWORD dwOptions)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -935,7 +935,7 @@ FX_ARGB	CPDFXFA_Document::GetHighlightColor(IXFA_Doc* hDoc)
 		if(CPDFSDK_InterForm* pInterForm = m_pSDKDoc->GetInterForm())
 		{
 			FX_COLORREF color = pInterForm->GetHighlightColor(FPDF_FORMFIELD_XFA);
-			FX_BYTE alpha = pInterForm->GetHighlightAlpha();
+			uint8_t alpha = pInterForm->GetHighlightAlpha();
 			FX_ARGB argb = ArgbEncode((int)alpha, color);
 			return argb;
 		}	

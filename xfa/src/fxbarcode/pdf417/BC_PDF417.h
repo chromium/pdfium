@@ -16,29 +16,29 @@ public:
     CBC_PDF417(FX_BOOL compact);
     virtual ~CBC_PDF417();
     CBC_BarcodeMatrix* getBarcodeMatrix();
-    void generateBarcodeLogic(CFX_WideString msg, FX_INT32 errorCorrectionLevel, FX_INT32 &e);
-    void setDimensions(FX_INT32 maxCols, FX_INT32 minCols, FX_INT32 maxRows, FX_INT32 minRows);
+    void generateBarcodeLogic(CFX_WideString msg, int32_t errorCorrectionLevel, int32_t &e);
+    void setDimensions(int32_t maxCols, int32_t minCols, int32_t maxRows, int32_t minRows);
     void setCompaction(Compaction compaction);
     void setCompact(FX_BOOL compact);
 private:
-    static FX_INT32 START_PATTERN;
-    static FX_INT32 STOP_PATTERN;
-    static FX_INT32 CODEWORD_TABLE[][1000];
+    static int32_t START_PATTERN;
+    static int32_t STOP_PATTERN;
+    static int32_t CODEWORD_TABLE[][1000];
     static FX_FLOAT PREFERRED_RATIO;
     static FX_FLOAT DEFAULT_MODULE_WIDTH;
     static FX_FLOAT HEIGHT;
     CBC_BarcodeMatrix* m_barcodeMatrix;
     FX_BOOL m_compact;
     Compaction m_compaction;
-    FX_INT32 m_minCols;
-    FX_INT32 m_maxCols;
-    FX_INT32 m_maxRows;
-    FX_INT32 m_minRows;
+    int32_t m_minCols;
+    int32_t m_maxCols;
+    int32_t m_maxRows;
+    int32_t m_minRows;
 private:
-    static FX_INT32 calculateNumberOfRows(FX_INT32 m, FX_INT32 k, FX_INT32 c);
-    static FX_INT32 getNumberOfPadCodewords(FX_INT32 m, FX_INT32 k, FX_INT32 c, FX_INT32 r);
-    static void encodeChar(FX_INT32 pattern, FX_INT32 len, CBC_BarcodeRow* logic);
-    void encodeLowLevel(CFX_WideString fullCodewords, FX_INT32 c, FX_INT32 r, FX_INT32 errorCorrectionLevel, CBC_BarcodeMatrix* logic);
-    CFX_Int32Array* determineDimensions(FX_INT32 sourceCodeWords, FX_INT32 errorCorrectionCodeWords, FX_INT32 &e);
+    static int32_t calculateNumberOfRows(int32_t m, int32_t k, int32_t c);
+    static int32_t getNumberOfPadCodewords(int32_t m, int32_t k, int32_t c, int32_t r);
+    static void encodeChar(int32_t pattern, int32_t len, CBC_BarcodeRow* logic);
+    void encodeLowLevel(CFX_WideString fullCodewords, int32_t c, int32_t r, int32_t errorCorrectionLevel, CBC_BarcodeMatrix* logic);
+    CFX_Int32Array* determineDimensions(int32_t sourceCodeWords, int32_t errorCorrectionCodeWords, int32_t &e);
 };
 #endif

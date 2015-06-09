@@ -36,7 +36,7 @@ CFX_WideString PDF_GetFirstTextLine_Unicode(CPDF_Document* pDoc, CPDF_Dictionary
 typedef struct {
     FX_WCHAR			m_Unicode;
     FX_WCHAR			m_Charcode;
-    FX_INT32			m_Flag;
+    int32_t			m_Flag;
     FX_FLOAT			m_FontSize;
     FX_FLOAT			m_OriginX;
     FX_FLOAT			m_OriginY;

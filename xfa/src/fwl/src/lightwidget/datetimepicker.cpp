@@ -35,18 +35,18 @@ FWL_ERR CFWL_DateTimePicker::Initialize(const CFWL_WidgetProperties *pProperties
     }
     return ret;
 }
-FWL_ERR CFWL_DateTimePicker::SetToday(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay)
+FWL_ERR CFWL_DateTimePicker::SetToday(int32_t iYear, int32_t iMonth, int32_t iDay)
 {
     m_DateTimePickerDP.m_iYear = iYear;
     m_DateTimePickerDP.m_iMonth = iMonth;
     m_DateTimePickerDP.m_iDay = iDay;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_DateTimePicker::CountSelRanges()
+int32_t CFWL_DateTimePicker::CountSelRanges()
 {
     return ((IFWL_DateTimePicker*)m_pImp)->CountSelRanges();
 }
-FX_INT32 CFWL_DateTimePicker::GetSelRange(FX_INT32 nIndex, FX_INT32 &nStart)
+int32_t CFWL_DateTimePicker::GetSelRange(int32_t nIndex, int32_t &nStart)
 {
     return ((IFWL_DateTimePicker*)m_pImp)->GetSelRange(nIndex, nStart);
 }
@@ -58,11 +58,11 @@ FWL_ERR	CFWL_DateTimePicker::SetEditText(FX_WSTR wsText)
 {
     return ((IFWL_DateTimePicker*)m_pImp)->SetEditText(wsText);
 }
-FWL_ERR	CFWL_DateTimePicker::GetCurSel(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay)
+FWL_ERR	CFWL_DateTimePicker::GetCurSel(int32_t &iYear, int32_t &iMonth, int32_t &iDay)
 {
     return ((IFWL_DateTimePicker*)m_pImp)->GetCurSel(iYear, iMonth, iDay);
 }
-FWL_ERR	CFWL_DateTimePicker::SetCurSel(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay)
+FWL_ERR	CFWL_DateTimePicker::SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay)
 {
     return ((IFWL_DateTimePicker*)m_pImp)->SetCurSel(iYear, iMonth, iDay);
 }
@@ -83,7 +83,7 @@ FWL_ERR CFWL_DateTimePicker::CFWL_DateTimePickerDP::GetCaption(IFWL_Widget *pWid
     wsCaption = m_wsData;
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_DateTimePicker::CFWL_DateTimePickerDP::GetToday(IFWL_Widget *pWidget, FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay)
+FWL_ERR CFWL_DateTimePicker::CFWL_DateTimePickerDP::GetToday(IFWL_Widget *pWidget, int32_t &iYear, int32_t &iMonth, int32_t &iDay)
 {
     iYear = m_iYear;
     iMonth = m_iMonth;
@@ -146,7 +146,7 @@ FWL_ERR CFWL_DateTimePicker::GetBBox(CFX_RectF &rect)
 {
     return ((IFWL_DateTimePicker*)m_pImp)->GetBBox(rect);
 }
-FWL_ERR CFWL_DateTimePicker::SetEditLimit(FX_INT32 nLimit)
+FWL_ERR CFWL_DateTimePicker::SetEditLimit(int32_t nLimit)
 {
     return ((IFWL_DateTimePicker*)m_pImp)->SetEditLimit(nLimit);
 }

@@ -50,7 +50,7 @@ void CXFA_FFNotify::OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, 
     if (!pDocView) {
         return;
     }
-    pDocView->OnPageEvent(pSender, eEvent, (FX_INT32)(FX_UINTPTR)pParam);
+    pDocView->OnPageEvent(pSender, eEvent, (int32_t)(uintptr_t)pParam);
 }
 void CXFA_FFNotify::OnNodeEvent(CXFA_Node *pSender, XFA_NODEEVENT eEvent, FX_LPVOID pParam , FX_LPVOID pParam2 , FX_LPVOID pParam3, FX_LPVOID pParam4)
 {
@@ -91,9 +91,9 @@ void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent
                 while (pWidget) {
                     if (pWidget->IsLoaded()) {
                         if (pWidgetAcc->IsListBox()) {
-                            ((CXFA_FFListBox*)pWidget)->InsertItem((FX_WSTR)(FX_LPCWSTR)pParam, (FX_INT32)(FX_UINTPTR)pAdditional2);
+                            ((CXFA_FFListBox*)pWidget)->InsertItem((FX_WSTR)(FX_LPCWSTR)pParam, (int32_t)(uintptr_t)pAdditional2);
                         } else {
-                            ((CXFA_FFComboBox*)pWidget)->InsertItem((FX_WSTR)(FX_LPCWSTR)pParam, (FX_INT32)(FX_UINTPTR)pAdditional2);
+                            ((CXFA_FFComboBox*)pWidget)->InsertItem((FX_WSTR)(FX_LPCWSTR)pParam, (int32_t)(uintptr_t)pAdditional2);
                         }
                     }
                     if (bStaticNotify) {
@@ -118,9 +118,9 @@ void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent
                 while (pWidget) {
                     if (pWidget->IsLoaded()) {
                         if (pWidgetAcc->IsListBox()) {
-                            ((CXFA_FFListBox*)pWidget)->DeleteItem((FX_INT32)(FX_UINTPTR)pParam);
+                            ((CXFA_FFListBox*)pWidget)->DeleteItem((int32_t)(uintptr_t)pParam);
                         } else {
-                            ((CXFA_FFComboBox*)pWidget)->DeleteItem((FX_INT32)(FX_UINTPTR)pParam);
+                            ((CXFA_FFComboBox*)pWidget)->DeleteItem((int32_t)(uintptr_t)pParam);
                         }
                     }
                     if (bStaticNotify) {
@@ -248,7 +248,7 @@ void CXFA_FFNotify::StartFieldDrawLayout(CXFA_Node *pItem, FX_FLOAT &fCalcWidth,
     }
     pAcc->StartWidgetLayout(fCalcWidth, fCalcHeight);
 }
-FX_BOOL CXFA_FFNotify::FindSplitPos(CXFA_Node *pItem, FX_INT32 iBlockIndex, FX_FLOAT &fCalcHeightPos)
+FX_BOOL CXFA_FFNotify::FindSplitPos(CXFA_Node *pItem, int32_t iBlockIndex, FX_FLOAT &fCalcHeightPos)
 {
     CXFA_WidgetAcc *pAcc = (CXFA_WidgetAcc*)pItem->GetWidgetData();
     if (!pAcc) {
@@ -270,14 +270,14 @@ FX_BOOL CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem)
     CXFA_EventParam EventParam;
     EventParam.m_eType = XFA_EVENT_Unknown;
     FXJSE_HVALUE pRetValue = NULL;
-    FX_INT32 iRet = pWidgetAcc->ExecuteScript(CXFA_Script(pScript), &EventParam, &pRetValue);
+    int32_t iRet = pWidgetAcc->ExecuteScript(CXFA_Script(pScript), &EventParam, &pRetValue);
     if (iRet == XFA_EVENTERROR_Sucess && pRetValue) {
         bRet = FXJSE_Value_ToBoolean(pRetValue);
         FXJSE_Value_Release(pRetValue);
     }
     return bRet;
 }
-FX_INT32 CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode, XFA_EVENTTYPE eEventType, FX_BOOL bIsFormReady, FX_BOOL bRecursive, CXFA_WidgetAcc* pExclude)
+int32_t CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode, XFA_EVENTTYPE eEventType, FX_BOOL bIsFormReady, FX_BOOL bRecursive, CXFA_WidgetAcc* pExclude)
 {
     CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
     if (!pDocView) {
@@ -347,7 +347,7 @@ void CXFA_FFNotify::ResetData(CXFA_WidgetData* pWidgetData)
     }
     pDocView->ResetWidgetData((CXFA_WidgetAcc*)pWidgetData);
 }
-FX_INT32 CXFA_FFNotify::GetLayoutStatus()
+int32_t CXFA_FFNotify::GetLayoutStatus()
 {
     CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
     return pDocView ? pDocView->GetLayoutStatus() : 0;
@@ -422,7 +422,7 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPV
     FX_DWORD dwPacket = pSender->GetPacketID();
     if (dwPacket & XFA_XDPPACKET_Datasets) {
     } else if (pSender->IsFormContainer()) {
-        XFA_ATTRIBUTE eAttr = (XFA_ATTRIBUTE)(FX_UINTPTR)pParam;
+        XFA_ATTRIBUTE eAttr = (XFA_ATTRIBUTE)(uintptr_t)pParam;
         if (eAttr == XFA_ATTRIBUTE_Presence) {
             CXFA_WidgetAcc* pWidgetAcc = (CXFA_WidgetAcc*)pSender->GetWidgetData();
             if (!pWidgetAcc) {
@@ -444,7 +444,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVO
         return;
     }
     FX_DWORD dwPacket = pSender->GetPacketID();
-    XFA_ATTRIBUTE eAttr = (XFA_ATTRIBUTE)(FX_UINTPTR)pParam;
+    XFA_ATTRIBUTE eAttr = (XFA_ATTRIBUTE)(uintptr_t)pParam;
     if (dwPacket & XFA_XDPPACKET_Form) {
         CXFA_Node* pParentNode = (CXFA_Node*)pParam3;
         CXFA_Node* pWidgetNode = (CXFA_Node*)pParam4;
@@ -544,9 +544,9 @@ void CXFA_FFNotify::OnChildRemoved(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVO
 void CXFA_FFNotify::OnLayoutItemAdd(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)
 {
     CXFA_FFWidget* pWidget = (CXFA_FFWidget*)(CXFA_ContentLayoutItemImpl*)pSender;
-    FX_INT32 iPageIdx = (FX_INT32)(FX_UINTPTR)pParam;
+    int32_t iPageIdx = (int32_t)(uintptr_t)pParam;
     IXFA_PageView* pNewPageView = pDocView->GetPageView(iPageIdx);
-    FX_DWORD dwStatus = (FX_DWORD)(FX_UINTPTR)pParam2;
+    FX_DWORD dwStatus = (FX_DWORD)(uintptr_t)pParam2;
     FX_DWORD dwFilter = XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable | XFA_WIDGETSTATUS_Printable;
     pWidget->ModifyStatus(dwStatus, dwFilter);
     if (pDocView->GetLayoutStatus() >= XFA_DOCVIEW_LAYOUTSTATUS_End) {
@@ -592,7 +592,7 @@ void CXFA_FFNotify::OnLayoutItemStatustChanged(CXFA_FFDocView* pDocView, IXFA_Do
     if (!pWidget) {
         return;
     }
-    FX_DWORD dwStatus = (FX_DWORD)(FX_UINTPTR)pParam;
+    FX_DWORD dwStatus = (FX_DWORD)(uintptr_t)pParam;
     if (dwStatus == 0) {
         CXFA_LayoutItem* pPreItem = pSender->GetPrev();
         if (pPreItem) {

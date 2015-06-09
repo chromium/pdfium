@@ -56,7 +56,7 @@ static const FX_LPCSTR g_LinuxB5FontList[] = {
 static const FX_LPCSTR g_LinuxHGFontList[] = {
     "UnDotum",
 };
-static FX_INT32 GetJapanesePreference(FX_LPCSTR facearr, int weight, int picth_family)
+static int32_t GetJapanesePreference(FX_LPCSTR facearr, int weight, int picth_family)
 {
     CFX_ByteString face = facearr;
     if (face.Find("Gothic") >= 0 || face.Find("\x83\x53\x83\x56\x83\x62\x83\x4e") >= 0) {
@@ -94,35 +94,35 @@ void* CFX_LinuxFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int p
     FX_BOOL bCJK = TRUE;
     switch (charset) {
         case FXFONT_SHIFTJIS_CHARSET: {
-                FX_INT32 index = GetJapanesePreference(cstr_face, weight, pitch_family);
+                int32_t index = GetJapanesePreference(cstr_face, weight, pitch_family);
                 if (index < 0) {
                     break;
                 }
-                for (FX_INT32 i = 0; i < LINUX_GPNAMESIZE; i++)
+                for (int32_t i = 0; i < LINUX_GPNAMESIZE; i++)
                     if (m_FontList.Lookup(LinuxGpFontList[index].NameArr[i], p)) {
                         return p;
                     }
             }
             break;
         case FXFONT_GB2312_CHARSET: {
-                static FX_INT32 s_gbCount = sizeof(g_LinuxGbFontList) / sizeof(FX_LPCSTR);
-                for (FX_INT32 i = 0; i < s_gbCount; i++)
+                static int32_t s_gbCount = sizeof(g_LinuxGbFontList) / sizeof(FX_LPCSTR);
+                for (int32_t i = 0; i < s_gbCount; i++)
                     if (m_FontList.Lookup(g_LinuxGbFontList[i], p)) {
                         return p;
                     }
             }
             break;
         case FXFONT_CHINESEBIG5_CHARSET: {
-                static FX_INT32 s_b5Count = sizeof(g_LinuxB5FontList) / sizeof(FX_LPCSTR);
-                for (FX_INT32 i = 0; i < s_b5Count; i++)
+                static int32_t s_b5Count = sizeof(g_LinuxB5FontList) / sizeof(FX_LPCSTR);
+                for (int32_t i = 0; i < s_b5Count; i++)
                     if (m_FontList.Lookup(g_LinuxB5FontList[i], p)) {
                         return p;
                     }
             }
             break;
         case FXFONT_HANGEUL_CHARSET: {
-                static FX_INT32 s_hgCount = sizeof(g_LinuxHGFontList) / sizeof(FX_LPCSTR);
-                for (FX_INT32 i = 0; i < s_hgCount; i++)
+                static int32_t s_hgCount = sizeof(g_LinuxHGFontList) / sizeof(FX_LPCSTR);
+                for (int32_t i = 0; i < s_hgCount; i++)
                     if (m_FontList.Lookup(g_LinuxHGFontList[i], p)) {
                         return p;
                     }
@@ -157,9 +157,9 @@ static FX_DWORD _LinuxGetCharset(int charset)
     }
     return 0;
 }
-static FX_INT32 _LinuxGetSimilarValue(int weight, FX_BOOL bItalic, int pitch_family, FX_DWORD style)
+static int32_t _LinuxGetSimilarValue(int weight, FX_BOOL bItalic, int pitch_family, FX_DWORD style)
 {
-    FX_INT32 iSimilarValue = 0;
+    int32_t iSimilarValue = 0;
     if ((style & FXFONT_BOLD) == (weight > 400)) {
         iSimilarValue += 16;
     }
@@ -181,7 +181,7 @@ void* CFX_LinuxFontInfo::FindFont(int weight, FX_BOOL bItalic, int charset, int 
 {
     CFontFaceInfo* pFind = NULL;
     FX_DWORD charset_flag = _LinuxGetCharset(charset);
-    FX_INT32 iBestSimilar = 0;
+    int32_t iBestSimilar = 0;
     FX_POSITION pos = m_FontList.GetStartPosition();
     while (pos) {
         CFX_ByteString bsName;
@@ -190,8 +190,8 @@ void* CFX_LinuxFontInfo::FindFont(int weight, FX_BOOL bItalic, int charset, int 
         if (!(pFont->m_Charsets & charset_flag) && charset != FXFONT_DEFAULT_CHARSET) {
             continue;
         }
-        FX_INT32 iSimilarValue = 0;
-        FX_INT32 index = bsName.Find(family);
+        int32_t iSimilarValue = 0;
+        int32_t index = bsName.Find(family);
         if (bMatchName && index < 0) {
             continue;
         }

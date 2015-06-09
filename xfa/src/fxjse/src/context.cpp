@@ -51,7 +51,7 @@ static FX_LPCSTR szCompatibleModeScripts[] = {
 };
 void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext, FX_DWORD dwCompatibleFlags)
 {
-    for (FX_UINT32 i = 0; i < (FX_UINT32)FXJSE_COMPATIBLEMODEFLAGCOUNT; i++) {
+    for (uint32_t i = 0; i < (uint32_t)FXJSE_COMPATIBLEMODEFLAGCOUNT; i++) {
         if (dwCompatibleFlags & (1 << i)) {
             FXJSE_ExecuteScript(hContext, szCompatibleModeScripts[i], NULL, NULL);
         }
@@ -113,7 +113,7 @@ FX_BOOL	FXJSE_ReturnValue_GetMessage(FXJSE_HVALUE hRetValue, CFX_ByteString& utf
     utf8Message = *hStringVal1;
     return TRUE;
 }
-FX_BOOL FXJSE_ReturnValue_GetLineInfo(FXJSE_HVALUE hRetValue, FX_INT32& nLine, FX_INT32& nCol)
+FX_BOOL FXJSE_ReturnValue_GetLineInfo(FXJSE_HVALUE hRetValue, int32_t& nLine, int32_t& nCol)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hRetValue);
     if(!lpValue) {
@@ -163,7 +163,7 @@ CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate, const FXJSE_CLASS*
 }
 CFXJSE_Context::~CFXJSE_Context()
 {
-    for(FX_INT32 i = 0, count = m_rgClasses.GetSize(); i < count; i++) {
+    for(int32_t i = 0, count = m_rgClasses.GetSize(); i < count; i++) {
         CFXJSE_Class* pClass = m_rgClasses[i];
         if(pClass) {
             delete pClass;

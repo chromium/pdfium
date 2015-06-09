@@ -31,7 +31,7 @@ CXFA_ResolveProcessor::~CXFA_ResolveProcessor(void)
         m_pNodeHelper = NULL;
     }
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData &rnd)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData &rnd)
 {
     if (rnd.m_CurNode == NULL) {
         return -1;
@@ -77,13 +77,13 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData &rnd)
         }
         return rnd.m_Nodes.GetSize();
     }
-    FX_INT32 nRet = XFA_ResolveNodes_Normal(rnd);
+    int32_t nRet = XFA_ResolveNodes_Normal(rnd);
     if (nRet < 1 && rnd.m_uHashName == XFA_HASHCODE_Xfa) {
         rnd.m_Nodes.Add(rnd.m_pSC->GetDocument()->GetRoot());
     }
     return rnd.m_Nodes.GetSize();
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_AnyChild(CXFA_ResolveNodesData &rnd)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_AnyChild(CXFA_ResolveNodesData &rnd)
 {
     CFX_WideString wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
     CFX_WideString wsCondition = rnd.m_wsCondition;
@@ -106,12 +106,12 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_AnyChild(CXFA_ResolveNodesData 
     XFA_ResolveNode_FilterCondition(rnd, wsCondition);
     return rnd.m_Nodes.GetSize();
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Dollar(CXFA_ResolveNodesData &rnd)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Dollar(CXFA_ResolveNodesData &rnd)
 {
     CXFA_ObjArray &nodes = rnd.m_Nodes;
     CFX_WideString wsName = rnd.m_wsName;
     CFX_WideString wsCondition = rnd.m_wsCondition;
-    FX_INT32 iNameLen = wsName.GetLength();
+    int32_t iNameLen = wsName.GetLength();
     if (iNameLen == 1) {
         nodes.Add(rnd.m_CurNode);
         return 1;
@@ -133,7 +133,7 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Dollar(CXFA_ResolveNodesData &r
     }
     return rnd.m_Nodes.GetSize();
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Excalmatory(CXFA_ResolveNodesData &rnd)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Excalmatory(CXFA_ResolveNodesData &rnd)
 {
     if (rnd.m_nLevel > 0) {
         return 0;
@@ -157,7 +157,7 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Excalmatory(CXFA_ResolveNodesDa
     }
     return rnd.m_Nodes.GetSize();
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_NumberSign(CXFA_ResolveNodesData &rnd)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_NumberSign(CXFA_ResolveNodesData &rnd)
 {
     FX_DWORD dwStyles = rnd.m_dwStyles;
     CFX_WideString wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
@@ -187,7 +187,7 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_NumberSign(CXFA_ResolveNodesDat
     }
     return rnd.m_Nodes.GetSize();
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_ForAttributeRs(CXFA_Object* curNode, CXFA_ResolveNodesData &rnd, FX_WSTR strAttr)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_ForAttributeRs(CXFA_Object* curNode, CXFA_ResolveNodesData &rnd, FX_WSTR strAttr)
 {
     XFA_LPCSCRIPTATTRIBUTEINFO lpScriptAttribute = XFA_GetScriptAttributeByName(curNode->GetClassID(), strAttr);
     if(lpScriptAttribute) {
@@ -198,7 +198,7 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_ForAttributeRs(CXFA_Object* cur
     }
     return 0;
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(CXFA_ResolveNodesData &rnd)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(CXFA_ResolveNodesData &rnd)
 {
     if (rnd.m_nLevel > 32) {
         return 0;
@@ -208,10 +208,10 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(CXFA_ResolveNodesData &r
     }
     CXFA_Node* curNode = (CXFA_Node*)rnd.m_CurNode;
     CXFA_ObjArray &nodes = rnd.m_Nodes;
-    FX_INT32 nNum = nodes.GetSize();
+    int32_t nNum = nodes.GetSize();
     FX_DWORD dwStyles = rnd.m_dwStyles;
     CFX_WideString &wsName = rnd.m_wsName;
-    FX_UINT32 uNameHash = rnd.m_uHashName;
+    uint32_t uNameHash = rnd.m_uHashName;
     CFX_WideString &wsCondition = rnd.m_wsCondition;
     CXFA_ResolveNodesData rndFind;
     rndFind.m_wsName = rnd.m_wsName;
@@ -244,7 +244,7 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(CXFA_ResolveNodesData &r
         pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
     if((dwStyles & XFA_RESOLVENODE_Properties) && pVariablesNode) {
-        FX_UINT32 uPropHash = pVariablesNode->GetClassHashCode();
+        uint32_t uPropHash = pVariablesNode->GetClassHashCode();
         if (uPropHash == uNameHash) {
             nodes.Add(pVariablesNode);
         } else {
@@ -272,7 +272,7 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(CXFA_ResolveNodesData &r
         if(pPageSetNode && (dwStyles & XFA_RESOLVENODE_Properties)) {
             children.Add(pPageSetNode);
         }
-        for(FX_INT32 i = 0; i < children.GetSize(); i++) {
+        for(int32_t i = 0; i < children.GetSize(); i++) {
             CXFA_Node* child = children[i];
             if (dwStyles & XFA_RESOLVENODE_TagName) {
                 if (child->GetClassHashCode() == uNameHash) {
@@ -324,10 +324,10 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(CXFA_ResolveNodesData &r
     }
     if (dwStyles & XFA_RESOLVENODE_Properties) {
         FX_BOOL bSetFlag = FALSE;
-        for(FX_INT32 i = 0; i < properties.GetSize(); i++) {
+        for(int32_t i = 0; i < properties.GetSize(); i++) {
             CXFA_Node* childProperty = properties[i];
             if(childProperty->IsUnnamed()) {
-                FX_UINT32 uPropHash = childProperty->GetClassHashCode();
+                uint32_t uPropHash = childProperty->GetClassHashCode();
                 XFA_ELEMENT eName = childProperty->GetClassID();
                 if (uPropHash == uNameHash) {
                     nodes.Add(childProperty);
@@ -362,7 +362,7 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(CXFA_ResolveNodesData &r
         }
     }
     CXFA_Node* parentNode = m_pNodeHelper->XFA_ResolveNodes_GetParent((CXFA_Node *)curNode, XFA_LOGIC_NoTransparent);
-    FX_UINT32 uCurClassHash = curNode->GetClassHashCode();
+    uint32_t uCurClassHash = curNode->GetClassHashCode();
     if (parentNode == NULL) {
         if(uCurClassHash == uNameHash) {
             nodes.Add((CXFA_Node*)curNode);
@@ -477,7 +477,7 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(CXFA_ResolveNodesData &r
     }
     return 0;
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Asterisk(CXFA_ResolveNodesData &rnd)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Asterisk(CXFA_ResolveNodesData &rnd)
 {
     CXFA_Node* curNode = (CXFA_Node*)rnd.m_CurNode;
     CXFA_ObjArray &nodes = rnd.m_Nodes;
@@ -486,20 +486,20 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_Asterisk(CXFA_ResolveNodesData 
     nodes.Append((CXFA_ObjArray &)array);
     return nodes.GetSize();
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_PopStack(CFX_Int32Array &stack)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_PopStack(CFX_Int32Array &stack)
 {
-    FX_INT32 nType = -1;
-    FX_INT32 iSize = stack.GetSize() - 1;
+    int32_t nType = -1;
+    int32_t iSize = stack.GetSize() - 1;
     if (iSize > -1) {
         nType = stack[iSize];
         stack.RemoveAt(iSize, 1);
     }
     return nType;
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(FX_WSTR wsExpression, FX_INT32 nStart, CXFA_ResolveNodesData &rnd)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(FX_WSTR wsExpression, int32_t nStart, CXFA_ResolveNodesData &rnd)
 {
     FXSYS_assert(nStart > -1);
-    FX_INT32 iLength = wsExpression.GetLength();
+    int32_t iLength = wsExpression.GetLength();
     if (nStart >= iLength) {
         return 0;
     }
@@ -507,11 +507,11 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(FX_WSTR wsExpression,
     CFX_WideString& wsCondition = rnd.m_wsCondition;
     FX_LPWSTR pNameBuf = wsName.GetBuffer(iLength - nStart);
     FX_LPWSTR pConditionBuf = wsCondition.GetBuffer(iLength - nStart);
-    FX_INT32 nCount = 0;
-    FX_INT32 nNameCount = 0;
-    FX_INT32 nConditionCount = 0;
+    int32_t nCount = 0;
+    int32_t nNameCount = 0;
+    int32_t nConditionCount = 0;
     CFX_Int32Array stack;
-    FX_INT32 nType = -1;
+    int32_t nType = -1;
     FX_LPCWSTR pSrc = wsExpression.GetPtr();
     FX_WCHAR wPrev = 0, wCur;
     FX_BOOL bIsCondition = FALSE;
@@ -594,13 +594,13 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(FX_WSTR wsExpression,
     rnd.m_uHashName = FX_HashCode_String_GetW(wsName, wsName.GetLength());
     return nStart;
 }
-void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(FX_INT32 iCurIndex, CFX_WideString wsCondition, FX_INT32 iFoundCount, CXFA_ResolveNodesData &rnd)
+void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(int32_t iCurIndex, CFX_WideString wsCondition, int32_t iFoundCount, CXFA_ResolveNodesData &rnd)
 {
     CXFA_NodeArray &findNodes = (CXFA_NodeArray&)rnd.m_Nodes;
-    FX_INT32 iLen = wsCondition.GetLength();
+    int32_t iLen = wsCondition.GetLength();
     FX_BOOL bRelative = FALSE;
     FX_BOOL bAll = FALSE;
-    FX_INT32 i = 1;
+    int32_t i = 1;
     for (; i < iLen; ++i) {
         FX_WCHAR ch = wsCondition[i];
         if (ch == ' ') {
@@ -642,7 +642,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(FX_INT32 iCurIndex, C
     }
     CFX_WideString wsIndex;
     wsIndex = wsCondition.Mid(i, iLen - 1 - i);
-    FX_INT32 iIndex = wsIndex.GetInteger();
+    int32_t iIndex = wsIndex.GetInteger();
     if (bRelative) {
         iIndex += iCurIndex;
     }
@@ -658,7 +658,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(FX_INT32 iCurIndex, C
         findNodes.Add(ret);
     }
 }
-void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(FX_INT32 iCurIndex, CFX_WideString wsCondition, FX_INT32 iFoundCount, CXFA_ResolveNodesData &rnd)
+void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(int32_t iCurIndex, CFX_WideString wsCondition, int32_t iFoundCount, CXFA_ResolveNodesData &rnd)
 {
     CXFA_NodeArray &findNodes = (CXFA_NodeArray&)rnd.m_Nodes;
     FXSYS_assert(iFoundCount == findNodes.GetSize());
@@ -674,7 +674,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(FX_INT32 iCurIndex
     }
     pContext = rnd.m_pSC;
     wsExpression = wsCondition.Mid(2, wsCondition.GetLength() - 3);
-    for(FX_INT32 i = iFoundCount - 1; i >= 0; i--) {
+    for(int32_t i = iFoundCount - 1; i >= 0; i--) {
         CXFA_Object* node = findNodes[i];
         FX_BOOL bRet = FALSE;
         FXJSE_HVALUE pRetValue = FXJSE_Value_Create(rnd.m_pSC->GetRuntime());
@@ -689,9 +689,9 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(FX_INT32 iCurIndex
 void CXFA_ResolveProcessor::XFA_ResolveNode_FilterCondition(CXFA_ResolveNodesData &rnd, CFX_WideString wsCondition)
 {
     CXFA_NodeArray &findNodes = (CXFA_NodeArray&)rnd.m_Nodes;
-    FX_INT32 iCurrIndex = 0;
+    int32_t iCurrIndex = 0;
     const CXFA_NodeArray &array = rnd.m_pSC->GetUpObjectArray();
-    FX_INT32 iSize = array.GetSize();
+    int32_t iSize = array.GetSize();
     if (iSize) {
         CXFA_Node* curNode = array[iSize - 1];
         FX_BOOL bIsProperty =  m_pNodeHelper->XFA_NodeIsProperty(curNode);
@@ -701,10 +701,10 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_FilterCondition(CXFA_ResolveNodesDat
             iCurrIndex = m_pNodeHelper->XFA_GetIndex(curNode, XFA_LOGIC_Transparent, bIsProperty, FALSE);
         }
     }
-    FX_INT32 iFoundCount = findNodes.GetSize();
+    int32_t iFoundCount = findNodes.GetSize();
     wsCondition.TrimLeft();
     wsCondition.TrimRight();
-    FX_INT32 iLen = wsCondition.GetLength();
+    int32_t iLen = wsCondition.GetLength();
     if (!iLen) {
         if (rnd.m_dwStyles & XFA_RESOLVENODE_ALL) {
             return;
@@ -755,7 +755,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNodes_SetStylesForChild(FX_DWORD dwParent
     dwSubStyles |= XFA_RESOLVENODE_ALL;
     rnd.m_dwStyles = dwSubStyles;
 }
-FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNode_SetResultCreateNode(XFA_RESOLVENODE_RS& resolveNodeRS, CFX_WideString &wsLastCondition)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNode_SetResultCreateNode(XFA_RESOLVENODE_RS& resolveNodeRS, CFX_WideString &wsLastCondition)
 {
     if(m_pNodeHelper->m_pCreateParent) {
         resolveNodeRS.nodes.Add(m_pNodeHelper->m_pCreateParent);
@@ -770,7 +770,7 @@ FX_INT32 CXFA_ResolveProcessor::XFA_ResolveNode_SetResultCreateNode(XFA_RESOLVEN
     }
     return resolveNodeRS.nodes.GetSize();
 }
-void CXFA_ResolveProcessor::XFA_ResolveNode_SetIndexDataBind(CFX_WideString &wsNextCondition, FX_INT32 &iIndex, FX_INT32 iCount)
+void CXFA_ResolveProcessor::XFA_ResolveNode_SetIndexDataBind(CFX_WideString &wsNextCondition, int32_t &iIndex, int32_t iCount)
 {
     if(m_pNodeHelper->XFA_CreateNode_ForCondition(wsNextCondition)) {
         if(m_pNodeHelper->m_eLastCreateType == XFA_ELEMENT_DataGroup) {

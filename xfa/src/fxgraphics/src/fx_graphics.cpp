@@ -11,8 +11,8 @@ class CAGG_Graphics
 public:
     CAGG_Graphics();
     FX_ERR Create(CFX_Graphics * owner,
-                  FX_INT32       width,
-                  FX_INT32       height,
+                  int32_t       width,
+                  int32_t       height,
                   FXDIB_Format   format);
     virtual ~CAGG_Graphics();
 private:
@@ -50,8 +50,8 @@ FX_ERR CFX_Graphics::Create(CFX_RenderDevice * renderDevice,
     }
     return FX_ERR_Indefinite;
 }
-FX_ERR CFX_Graphics::Create(FX_INT32	 width,
-                            FX_INT32	 height,
+FX_ERR CFX_Graphics::Create(int32_t	 width,
+                            int32_t	 height,
                             FXDIB_Format format,
                             FX_BOOL      isNative       ,
                             FX_BOOL		 isAntialiasing )
@@ -76,7 +76,7 @@ CFX_Graphics::~CFX_Graphics()
     _info._graphState.SetDashCount(0);
     _type	= FX_CONTEXT_None;
 }
-FX_ERR CFX_Graphics::GetDeviceCap(const FX_INT32 capID, FX_DeviceCap & capVal)
+FX_ERR CFX_Graphics::GetDeviceCap(const int32_t capID, FX_DeviceCap & capVal)
 {
     switch (_type) {
         case FX_CONTEXT_Device: {
@@ -94,7 +94,7 @@ FX_ERR CFX_Graphics::IsPrinterDevice(FX_BOOL & isPrinter)
     switch (_type) {
         case FX_CONTEXT_Device: {
                 _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
-                FX_INT32 deviceClass = _renderDevice->GetDeviceClass();
+                int32_t deviceClass = _renderDevice->GetDeviceClass();
                 if (deviceClass == FXDC_PRINTER) {
                     isPrinter = TRUE;
                 } else {
@@ -152,11 +152,11 @@ FX_ERR CFX_Graphics::RestoreGraphState()
         case FX_CONTEXT_Device: {
                 _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
                 _renderDevice->RestoreState();
-                FX_INT32 size = _infoStack.GetSize();
+                int32_t size = _infoStack.GetSize();
                 if (size <= 0) {
                     return FX_ERR_Intermediate_Value_Invalid;
                 }
-                FX_INT32 topIndex = size - 1;
+                int32_t topIndex = size - 1;
                 TInfo * info = (TInfo *) _infoStack.GetAt(topIndex);
                 _FX_RETURN_VALUE_IF_FAIL(info, FX_ERR_Intermediate_Value_Invalid);
                 _info._graphState.Copy(info->_graphState);
@@ -206,7 +206,7 @@ FX_ERR CFX_Graphics::SetLineCap(CFX_GraphStateData::LineCap lineCap)
             }
     }
 }
-FX_ERR CFX_Graphics::GetDashCount(FX_INT32 & dashCount)
+FX_ERR CFX_Graphics::GetDashCount(int32_t & dashCount)
 {
     switch (_type) {
         case FX_CONTEXT_Device: {
@@ -238,7 +238,7 @@ FX_ERR CFX_Graphics::GetLineDash(FX_FLOAT & dashPhase, FX_FLOAT * dashArray)
 }
 FX_ERR CFX_Graphics::SetLineDash(FX_FLOAT	dashPhase,
                                  FX_FLOAT *	dashArray,
-                                 FX_INT32	dashCount)
+                                 int32_t	dashCount)
 {
     if (dashCount > 0 && !dashArray) {
         return FX_ERR_Parameter_Invalid;
@@ -253,7 +253,7 @@ FX_ERR CFX_Graphics::SetLineDash(FX_FLOAT	dashPhase,
                 }
                 _info._graphState.m_DashPhase = dashPhase;
                 _info._graphState.SetDashCount(dashCount);
-                for (FX_INT32 i = 0; i < dashCount; i++) {
+                for (int32_t i = 0; i < dashCount; i++) {
                     _info._graphState.m_DashArray[i] = dashArray[i] * scale;
                 }
                 return FX_ERR_Succeeded;
@@ -616,7 +616,7 @@ FX_ERR CFX_Graphics::SetCharSpacing(const FX_FLOAT spacing)
             }
     }
 }
-FX_ERR CFX_Graphics::SetTextDrawingMode(const FX_INT32 mode)
+FX_ERR CFX_Graphics::SetTextDrawingMode(const int32_t mode)
 {
     switch (_type) {
         case FX_CONTEXT_Device: {
@@ -650,7 +650,7 @@ FX_ERR CFX_Graphics::CalcTextRect(CFX_RectF &			 rect,
     switch (_type) {
         case FX_CONTEXT_Device: {
                 _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
-                FX_INT32 length = text.GetLength();
+                int32_t length = text.GetLength();
                 FX_DWORD * charCodes = FX_Alloc(FX_DWORD, length);
                 FXTEXT_CHARPOS * charPos = FX_Alloc(FXTEXT_CHARPOS,
                                                     length * sizeof (FXTEXT_CHARPOS));
@@ -709,17 +709,17 @@ FX_ERR CFX_Graphics::Transfer(CFX_Graphics *	graphics,
                     CFX_DIBitmap * bitmap = graphics->_renderDevice->GetBitmap();
                     FX_BOOL result = FX_ERR_Indefinite;
                     CFX_DIBitmap bmp;
-                    result = bmp.Create((FX_INT32) dstRect.width,
-                                        (FX_INT32) dstRect.height,
+                    result = bmp.Create((int32_t) dstRect.width,
+                                        (int32_t) dstRect.height,
                                         bitmap->GetFormat());
                     _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Intermediate_Value_Invalid);
                     result = graphics->_renderDevice->GetDIBits(&bmp,
-                             (FX_INT32) srcLeft,
-                             (FX_INT32) srcTop);
+                             (int32_t) srcLeft,
+                             (int32_t) srcTop);
                     _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Method_Not_Supported);
                     result = _renderDevice->SetDIBits(&bmp,
-                                                      (FX_INT32) dstRect.left,
-                                                      (FX_INT32) dstRect.top);
+                                                      (int32_t) dstRect.left,
+                                                      (int32_t) dstRect.top);
                     _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Method_Not_Supported);
                     return FX_ERR_Succeeded;
                 }
@@ -746,12 +746,12 @@ FX_ERR	CFX_Graphics::InverseRect(const CFX_RectF & rect)
     if (r.IsEmpty()) {
         return FX_ERR_Parameter_Invalid;
     }
-    FX_ARGB* pBuf = (FX_ARGB*)(bitmap->GetBuffer() + FX_INT32(r.top) * bitmap->GetPitch());
-    FX_INT32 bottom = (FX_INT32)r.bottom();
-    FX_INT32 right = (FX_INT32)r.right();
-    for (FX_INT32 i = (FX_INT32)r.top; i < bottom; i ++) {
-        FX_ARGB* pLine = pBuf + (FX_INT32)r.left;
-        for (FX_INT32 j = (FX_INT32)r.left; j < right; j ++) {
+    FX_ARGB* pBuf = (FX_ARGB*)(bitmap->GetBuffer() + int32_t(r.top) * bitmap->GetPitch());
+    int32_t bottom = (int32_t)r.bottom();
+    int32_t right = (int32_t)r.right();
+    for (int32_t i = (int32_t)r.top; i < bottom; i ++) {
+        FX_ARGB* pLine = pBuf + (int32_t)r.left;
+        for (int32_t j = (int32_t)r.left; j < right; j ++) {
             FX_ARGB c = *pLine;
             *pLine ++ = (c & 0xFF000000) | (0xFFFFFF - (c & 0x00FFFFFF));
         }
@@ -772,14 +772,14 @@ FX_ERR CFX_Graphics::XorDIBitmap(const CFX_DIBitmap * srcBitmap, const CFX_RectF
     if (r.IsEmpty()) {
         return FX_ERR_Parameter_Invalid;
     }
-    FX_ARGB* pSrcBuf = (FX_ARGB*)(srcBitmap->GetBuffer() + FX_INT32(r.top) * srcBitmap->GetPitch());
-    FX_ARGB* pDstBuf = (FX_ARGB*)(dst->GetBuffer() + FX_INT32(r.top) * dst->GetPitch());
-    FX_INT32 bottom = (FX_INT32)r.bottom();
-    FX_INT32 right = (FX_INT32)r.right();
-    for (FX_INT32 i = (FX_INT32)r.top; i < bottom; i ++) {
-        FX_ARGB* pSrcLine = pSrcBuf + (FX_INT32)r.left;
-        FX_ARGB* pDstLine = pDstBuf + (FX_INT32)r.left;
-        for (FX_INT32 j = (FX_INT32)r.left; j < right; j ++) {
+    FX_ARGB* pSrcBuf = (FX_ARGB*)(srcBitmap->GetBuffer() + int32_t(r.top) * srcBitmap->GetPitch());
+    FX_ARGB* pDstBuf = (FX_ARGB*)(dst->GetBuffer() + int32_t(r.top) * dst->GetPitch());
+    int32_t bottom = (int32_t)r.bottom();
+    int32_t right = (int32_t)r.right();
+    for (int32_t i = (int32_t)r.top; i < bottom; i ++) {
+        FX_ARGB* pSrcLine = pSrcBuf + (int32_t)r.left;
+        FX_ARGB* pDstLine = pDstBuf + (int32_t)r.left;
+        for (int32_t j = (int32_t)r.left; j < right; j ++) {
             FX_ARGB c = *pDstLine;
             *pDstLine ++ = ArgbEncode(FXARGB_A(c), (c & 0xFFFFFF) ^ (*pSrcLine & 0xFFFFFF));
             pSrcLine ++;
@@ -802,14 +802,14 @@ FX_ERR CFX_Graphics::EqvDIBitmap(const CFX_DIBitmap * srcBitmap, const CFX_RectF
     if (r.IsEmpty()) {
         return FX_ERR_Parameter_Invalid;
     }
-    FX_ARGB* pSrcBuf = (FX_ARGB*)(srcBitmap->GetBuffer() + FX_INT32(r.top) * srcBitmap->GetPitch());
-    FX_ARGB* pDstBuf = (FX_ARGB*)(dst->GetBuffer() + FX_INT32(r.top) * dst->GetPitch());
-    FX_INT32 bottom = (FX_INT32)r.bottom();
-    FX_INT32 right = (FX_INT32)r.right();
-    for (FX_INT32 i = (FX_INT32)r.top; i < bottom; i ++) {
-        FX_ARGB* pSrcLine = pSrcBuf + (FX_INT32)r.left;
-        FX_ARGB* pDstLine = pDstBuf + (FX_INT32)r.left;
-        for (FX_INT32 j = (FX_INT32)r.left; j < right; j ++) {
+    FX_ARGB* pSrcBuf = (FX_ARGB*)(srcBitmap->GetBuffer() + int32_t(r.top) * srcBitmap->GetPitch());
+    FX_ARGB* pDstBuf = (FX_ARGB*)(dst->GetBuffer() + int32_t(r.top) * dst->GetPitch());
+    int32_t bottom = (int32_t)r.bottom();
+    int32_t right = (int32_t)r.right();
+    for (int32_t i = (int32_t)r.top; i < bottom; i ++) {
+        FX_ARGB* pSrcLine = pSrcBuf + (int32_t)r.left;
+        FX_ARGB* pDstLine = pDstBuf + (int32_t)r.left;
+        for (int32_t j = (int32_t)r.left; j < right; j ++) {
             FX_ARGB c = *pDstLine;
             *pDstLine ++ = ArgbEncode(FXARGB_A(c), ~((c & 0xFFFFFF) ^ (*pSrcLine & 0xFFFFFF)));
             pSrcLine ++;
@@ -934,7 +934,7 @@ FX_ERR CFX_Graphics::RenderDeviceDrawImage(CFX_DIBSource *	  source,
            point.x,
            point.y);
     m2.Concat(m1);
-    FX_INT32 left, top;
+    int32_t left, top;
     CFX_DIBitmap * bmp1 = source->FlipImage(FALSE, TRUE);
     CFX_DIBitmap * bmp2 = bmp1->TransformTo((CFX_AffineMatrix *) &m2, left, top);
     CFX_RectF r;
@@ -974,12 +974,12 @@ FX_ERR CFX_Graphics::RenderDeviceStretchImage(CFX_DIBSource *	source,
     if (matrix) {
         m1.Concat(*matrix);
     }
-    CFX_DIBitmap * bmp1 = source->StretchTo((FX_INT32) rect.Width(),
-                                            (FX_INT32) rect.Height());
+    CFX_DIBitmap * bmp1 = source->StretchTo((int32_t) rect.Width(),
+                                            (int32_t) rect.Height());
     CFX_Matrix m2;
     m2.Set(rect.Width(), 0.0, 0.0, rect.Height(), rect.left, rect.top);
     m2.Concat(m1);
-    FX_INT32 left, top;
+    int32_t left, top;
     CFX_DIBitmap * bmp2 = bmp1->FlipImage(FALSE, TRUE);
     CFX_DIBitmap * bmp3 = bmp2->TransformTo((CFX_AffineMatrix *) &m2, left, top);
     CFX_RectF r;
@@ -1014,7 +1014,7 @@ FX_ERR CFX_Graphics::RenderDeviceShowText(const CFX_PointF &	 point,
         const CFX_WideString & text,
         CFX_Matrix *			 matrix)
 {
-    FX_INT32 length = text.GetLength();
+    int32_t length = text.GetLength();
     FX_DWORD * charCodes = FX_Alloc(FX_DWORD, length);
     FXTEXT_CHARPOS * charPos = FX_Alloc(FXTEXT_CHARPOS,
                                         length * sizeof (FXTEXT_CHARPOS));
@@ -1054,19 +1054,19 @@ FX_ERR CFX_Graphics::FillPathWithPattern(CFX_Path *   path,
 {
     CFX_Pattern * pattern = _info._fillColor->_pattern;
     CFX_DIBitmap * bitmap = _renderDevice->GetBitmap();
-    FX_INT32 width	= bitmap->GetWidth();
-    FX_INT32 height	= bitmap->GetHeight();
+    int32_t width	= bitmap->GetWidth();
+    int32_t height	= bitmap->GetHeight();
     CFX_DIBitmap bmp;
     bmp.Create(width, height, FXDIB_Argb);
     _renderDevice->GetDIBits(&bmp, 0, 0);
     switch (pattern->_type) {
         case FX_PATTERN_Bitmap: {
-                FX_INT32 xStep = FXSYS_round(pattern->_x1Step);
-                FX_INT32 yStep = FXSYS_round(pattern->_y1Step);
-                FX_INT32 xCount	= width / xStep + 1;
-                FX_INT32 yCount	= height / yStep + 1;
-                for (FX_INT32 i = 0; i <= yCount; i++) {
-                    for (FX_INT32 j = 0; j <= xCount; j++) {
+                int32_t xStep = FXSYS_round(pattern->_x1Step);
+                int32_t yStep = FXSYS_round(pattern->_y1Step);
+                int32_t xCount	= width / xStep + 1;
+                int32_t yCount	= height / yStep + 1;
+                for (int32_t i = 0; i <= yCount; i++) {
+                    for (int32_t j = 0; j <= xCount; j++) {
                         bmp.TransferBitmap(j * xStep,
                                            i * yStep,
                                            xStep,
@@ -1098,8 +1098,8 @@ FX_ERR CFX_Graphics::FillPathWithPattern(CFX_Path *   path,
                 CFX_FxgeDevice device;
                 device.Attach(&bmp);
                 device.FillRect(&rect, _info._fillColor->_pattern->_backArgb);
-                for (FX_INT32 j = rect.bottom; j < rect.top; j += mask.GetHeight()) {
-                    for (FX_INT32 i = rect.left; i < rect.right; i += mask.GetWidth()) {
+                for (int32_t j = rect.bottom; j < rect.top; j += mask.GetHeight()) {
+                    for (int32_t i = rect.left; i < rect.right; i += mask.GetWidth()) {
                         device.SetBitMask(&mask, i, j, _info._fillColor->_pattern->_foreArgb);
                     }
                 }
@@ -1119,8 +1119,8 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path *   path,
         CFX_Matrix * matrix)
 {
     CFX_DIBitmap * bitmap = _renderDevice->GetBitmap();
-    FX_INT32 width	= bitmap->GetWidth();
-    FX_INT32 height	= bitmap->GetHeight();
+    int32_t width	= bitmap->GetWidth();
+    int32_t height	= bitmap->GetHeight();
     FX_FLOAT start_x = _info._fillColor->_shading->_beginPoint.x;
     FX_FLOAT start_y = _info._fillColor->_shading->_beginPoint.y;
     FX_FLOAT end_x = _info._fillColor->_shading->_endPoint.x;
@@ -1128,16 +1128,16 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path *   path,
     CFX_DIBitmap bmp;
     bmp.Create(width, height, FXDIB_Argb);
     _renderDevice->GetDIBits(&bmp, 0, 0);
-    FX_INT32 pitch	= bmp.GetPitch();
+    int32_t pitch	= bmp.GetPitch();
     FX_BOOL result = FALSE;
     switch (_info._fillColor->_shading->_type) {
         case FX_SHADING_Axial: {
                 FX_FLOAT x_span = end_x - start_x;
                 FX_FLOAT y_span = end_y - start_y;
                 FX_FLOAT axis_len_square = FXSYS_Mul(x_span, x_span) + FXSYS_Mul(y_span, y_span);
-                for (FX_INT32 row = 0; row < height; row++) {
+                for (int32_t row = 0; row < height; row++) {
                     FX_DWORD * dib_buf = (FX_DWORD *) (bmp.GetBuffer() + row * pitch);
-                    for (FX_INT32 column = 0; column < width; column++) {
+                    for (int32_t column = 0; column < width; column++) {
                         FX_FLOAT x = (FX_FLOAT)(column);
                         FX_FLOAT y = (FX_FLOAT)(row);
                         FX_FLOAT scale = FXSYS_Div(FXSYS_Mul(x - start_x, x_span) + FXSYS_Mul(y - start_y, y_span),
@@ -1153,7 +1153,7 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path *   path,
                             }
                             scale = 1.0f;
                         }
-                        FX_INT32 index = (FX_INT32)(scale * (FX_SHADING_Steps - 1));
+                        int32_t index = (int32_t)(scale * (FX_SHADING_Steps - 1));
                         dib_buf[column] = _info._fillColor->_shading->_argbArray[index];
                     }
                 }
@@ -1164,9 +1164,9 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path *   path,
                 FX_FLOAT start_r = _info._fillColor->_shading->_beginRadius;
                 FX_FLOAT end_r = _info._fillColor->_shading->_endRadius;
                 FX_FLOAT a = FXSYS_Mul(start_x - end_x, start_x - end_x) + FXSYS_Mul(start_y - end_y, start_y - end_y) - FXSYS_Mul(start_r - end_r, start_r - end_r);
-                for (FX_INT32 row = 0; row < height; row++) {
+                for (int32_t row = 0; row < height; row++) {
                     FX_DWORD * dib_buf = (FX_DWORD *) (bmp.GetBuffer() + row * pitch);
-                    for (FX_INT32 column = 0; column < width; column++) {
+                    for (int32_t column = 0; column < width; column++) {
                         FX_FLOAT x = (FX_FLOAT)(column);
                         FX_FLOAT y = (FX_FLOAT)(row);
                         FX_FLOAT b = -2 * (FXSYS_Mul(x - start_x, end_x - start_x) + FXSYS_Mul(y - start_y, end_y - start_y) +
@@ -1211,7 +1211,7 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path *   path,
                             }
                             s = 1.0f;
                         }
-                        int index = (FX_INT32)(s * (FX_SHADING_Steps - 1));
+                        int index = (int32_t)(s * (FX_SHADING_Steps - 1));
                         dib_buf[column] = _info._fillColor->_shading->_argbArray[index];
                     }
                 }
@@ -1240,7 +1240,7 @@ FX_ERR CFX_Graphics::SetDIBitsWithMatrix(CFX_DIBSource * source, CFX_Matrix * ma
         CFX_Matrix m;
         m.Set((FX_FLOAT)source->GetWidth(), 0, 0, (FX_FLOAT)source->GetHeight(), 0, 0);
         m.Concat(*matrix);
-        FX_INT32 left, top;
+        int32_t left, top;
         CFX_DIBitmap * bmp1 = source->FlipImage(FALSE, TRUE);
         CFX_DIBitmap * bmp2 = bmp1->TransformTo((CFX_AffineMatrix *) &m, left, top);
         _renderDevice->SetDIBits(bmp2, left, top);
@@ -1258,7 +1258,7 @@ FX_ERR CFX_Graphics::SetDIBitsWithMatrix(CFX_DIBSource * source, CFX_Matrix * ma
 FX_ERR CFX_Graphics::CalcTextInfo(const CFX_WideString & text, FX_DWORD * charCodes, FXTEXT_CHARPOS * charPos, CFX_RectF & rect)
 {
     IFX_FontEncoding * encoding = FXGE_CreateUnicodeEncoding(_info._font);
-    FX_INT32 length = text.GetLength();
+    int32_t length = text.GetLength();
     FX_FLOAT penX = (FX_FLOAT) rect.left;
     FX_FLOAT penY = (FX_FLOAT) rect.top;
     FX_FLOAT left = (FX_FLOAT)(0);
@@ -1274,7 +1274,7 @@ FX_ERR CFX_Graphics::CalcTextInfo(const CFX_WideString & text, FX_DWORD * charCo
     charPos[0].m_AdjustMatrix[2] = 0;
     charPos[0].m_AdjustMatrix[3] = 1;
     penX += (FX_FLOAT)(charPos[0].m_FontCharWidth) * _info._fontSize / 1000 + _info._fontSpacing;
-    for (FX_INT32 i = 1; i < length; i++) {
+    for (int32_t i = 1; i < length; i++) {
         charCodes[i] = text.GetAt(i);
         charPos[i].m_OriginX = penX + left;
         charPos[i].m_OriginY = penY + top;
@@ -1298,8 +1298,8 @@ CAGG_Graphics::CAGG_Graphics()
     _owner = NULL;
 }
 FX_ERR CAGG_Graphics::Create(CFX_Graphics * owner,
-                             FX_INT32       width,
-                             FX_INT32       height,
+                             int32_t       width,
+                             int32_t       height,
                              FXDIB_Format   format)
 {
     if (owner->_renderDevice) {
@@ -1638,21 +1638,21 @@ CFX_Shading::~CFX_Shading()
 }
 FX_ERR CFX_Shading::InitArgbArray()
 {
-    FX_INT32 a1, r1, g1, b1;
+    int32_t a1, r1, g1, b1;
     ArgbDecode(_beginArgb, a1, r1, g1, b1);
-    FX_INT32 a2, r2, g2, b2;
+    int32_t a2, r2, g2, b2;
     ArgbDecode(_endArgb, a2, r2, g2, b2);
     FX_FLOAT f = (FX_FLOAT) (FX_SHADING_Steps - 1);
     FX_FLOAT aScale = (FX_FLOAT) (1.0 * (a2 - a1) / f);
     FX_FLOAT rScale = (FX_FLOAT) (1.0 * (r2 - r1) / f);
     FX_FLOAT gScale = (FX_FLOAT) (1.0 * (g2 - g1) / f);
     FX_FLOAT bScale = (FX_FLOAT) (1.0 * (b2 - b1) / f);
-    FX_INT32 a3, r3, g3, b3;
-    for (FX_INT32 i = 0; i < FX_SHADING_Steps; i++) {
-        a3 = (FX_INT32) (i * aScale);
-        r3 = (FX_INT32) (i * rScale);
-        g3 = (FX_INT32) (i * gScale);
-        b3 = (FX_INT32) (i * bScale);
+    int32_t a3, r3, g3, b3;
+    for (int32_t i = 0; i < FX_SHADING_Steps; i++) {
+        a3 = (int32_t) (i * aScale);
+        r3 = (int32_t) (i * rScale);
+        g3 = (int32_t) (i * gScale);
+        b3 = (int32_t) (i * bScale);
         _argbArray[i] = FXARGB_TODIB(FXARGB_MAKE((a1 + a3),
                                      (r1 + r3),
                                      (g1 + g3),

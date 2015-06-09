@@ -36,15 +36,15 @@ CBC_BinaryBitmap::~CBC_BinaryBitmap()
     }
     m_matrix = NULL;
 }
-FX_INT32 CBC_BinaryBitmap::GetHeight()
+int32_t CBC_BinaryBitmap::GetHeight()
 {
     return m_binarizer->GetLuminanceSource()->GetHeight();
 }
-FX_INT32 CBC_BinaryBitmap::GetWidth()
+int32_t CBC_BinaryBitmap::GetWidth()
 {
     return m_binarizer->GetLuminanceSource()->GetWidth();
 }
-CBC_CommonBitMatrix *CBC_BinaryBitmap::GetMatrix(FX_INT32 &e)
+CBC_CommonBitMatrix *CBC_BinaryBitmap::GetMatrix(int32_t &e)
 {
     if (m_matrix == NULL) {
         m_matrix = m_binarizer->GetBlackMatrix(e);
@@ -60,13 +60,13 @@ FX_BOOL CBC_BinaryBitmap::IsRotateSupported()
 {
     return m_binarizer->GetLuminanceSource()->IsRotateSupported();
 }
-CBC_CommonBitArray *CBC_BinaryBitmap::GetBlackRow(FX_INT32 y, CBC_CommonBitArray *row, FX_INT32 &e)
+CBC_CommonBitArray *CBC_BinaryBitmap::GetBlackRow(int32_t y, CBC_CommonBitArray *row, int32_t &e)
 {
     CBC_CommonBitArray *temp = m_binarizer->GetBlackRow(y, row, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return temp;
 }
-CBC_CommonBitMatrix *CBC_BinaryBitmap::GetBlackMatrix(FX_INT32 &e)
+CBC_CommonBitMatrix *CBC_BinaryBitmap::GetBlackMatrix(int32_t &e)
 {
     if (m_matrix == NULL) {
         m_matrix = m_binarizer->GetBlackMatrix(e);

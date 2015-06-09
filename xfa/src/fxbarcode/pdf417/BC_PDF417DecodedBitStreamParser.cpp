@@ -36,15 +36,15 @@
 #define    MACRO_PDF417_TERMINATOR               922
 #define    MODE_SHIFT_TO_BYTE_COMPACTION_MODE    913
 
-FX_INT32 CBC_DecodedBitStreamPaser::MAX_NUMERIC_CODEWORDS = 15;
-FX_INT32 CBC_DecodedBitStreamPaser::NUMBER_OF_SEQUENCE_CODEWORDS = 2;
-FX_INT32 CBC_DecodedBitStreamPaser::PL = 25;
-FX_INT32 CBC_DecodedBitStreamPaser::LL = 27;
-FX_INT32 CBC_DecodedBitStreamPaser::AS = 27;
-FX_INT32 CBC_DecodedBitStreamPaser::ML = 28;
-FX_INT32 CBC_DecodedBitStreamPaser::AL = 28;
-FX_INT32 CBC_DecodedBitStreamPaser::PS = 29;
-FX_INT32 CBC_DecodedBitStreamPaser::PAL = 29;
+int32_t CBC_DecodedBitStreamPaser::MAX_NUMERIC_CODEWORDS = 15;
+int32_t CBC_DecodedBitStreamPaser::NUMBER_OF_SEQUENCE_CODEWORDS = 2;
+int32_t CBC_DecodedBitStreamPaser::PL = 25;
+int32_t CBC_DecodedBitStreamPaser::LL = 27;
+int32_t CBC_DecodedBitStreamPaser::AS = 27;
+int32_t CBC_DecodedBitStreamPaser::ML = 28;
+int32_t CBC_DecodedBitStreamPaser::AL = 28;
+int32_t CBC_DecodedBitStreamPaser::PS = 29;
+int32_t CBC_DecodedBitStreamPaser::PAL = 29;
 FX_CHAR CBC_DecodedBitStreamPaser::PUNCT_CHARS[29] = {
     ';', '<', '>', '@', '[', '\\', '}', '_', '`', '~', '!',
     '\r', '\t', ',', ':', '\n', '-', '.', '$', '/', '"', '|', '*',
@@ -67,11 +67,11 @@ CBC_DecodedBitStreamPaser::CBC_DecodedBitStreamPaser()
 CBC_DecodedBitStreamPaser::~CBC_DecodedBitStreamPaser()
 {
 }
-CBC_CommonDecoderResult* CBC_DecodedBitStreamPaser::decode(CFX_Int32Array &codewords, CFX_ByteString ecLevel, FX_INT32 &e)
+CBC_CommonDecoderResult* CBC_DecodedBitStreamPaser::decode(CFX_Int32Array &codewords, CFX_ByteString ecLevel, int32_t &e)
 {
     CFX_ByteString result;
-    FX_INT32 codeIndex = 1;
-    FX_INT32 code = codewords.GetAt(codeIndex);
+    int32_t codeIndex = 1;
+    int32_t code = codewords.GetAt(codeIndex);
     codeIndex++;
     CBC_PDF417ResultMetadata* resultMetadata = FX_NEW CBC_PDF417ResultMetadata;
     while (codeIndex < codewords[0]) {
@@ -128,7 +128,7 @@ CBC_CommonDecoderResult* CBC_DecodedBitStreamPaser::decode(CFX_Int32Array &codew
     tempCd->setOther(resultMetadata);
     return tempCd;
 }
-FX_INT32 CBC_DecodedBitStreamPaser::decodeMacroBlock(CFX_Int32Array &codewords, FX_INT32 codeIndex, CBC_PDF417ResultMetadata* resultMetadata, FX_INT32 &e)
+int32_t CBC_DecodedBitStreamPaser::decodeMacroBlock(CFX_Int32Array &codewords, int32_t codeIndex, CBC_PDF417ResultMetadata* resultMetadata, int32_t &e)
 {
     if (codeIndex + NUMBER_OF_SEQUENCE_CODEWORDS > codewords[0]) {
         e = BCExceptionFormatInstance;
@@ -136,7 +136,7 @@ FX_INT32 CBC_DecodedBitStreamPaser::decodeMacroBlock(CFX_Int32Array &codewords, 
     }
     CFX_Int32Array segmentIndexArray;
     segmentIndexArray.SetSize(NUMBER_OF_SEQUENCE_CODEWORDS);
-    for (FX_INT32 i = 0; i < NUMBER_OF_SEQUENCE_CODEWORDS; i++, codeIndex++) {
+    for (int32_t i = 0; i < NUMBER_OF_SEQUENCE_CODEWORDS; i++, codeIndex++) {
         segmentIndexArray.SetAt(i, codewords[codeIndex]);
     }
     CFX_ByteString str = decodeBase900toBase10(segmentIndexArray, NUMBER_OF_SEQUENCE_CODEWORDS, e);
@@ -149,10 +149,10 @@ FX_INT32 CBC_DecodedBitStreamPaser::decodeMacroBlock(CFX_Int32Array &codewords, 
         codeIndex++;
         CFX_Int32Array additionalOptionCodeWords;
         additionalOptionCodeWords.SetSize(codewords[0] - codeIndex);
-        FX_INT32 additionalOptionCodeWordsIndex = 0;
+        int32_t additionalOptionCodeWordsIndex = 0;
         FX_BOOL end = FALSE;
         while ((codeIndex < codewords[0]) && !end) {
-            FX_INT32 code = codewords[codeIndex++];
+            int32_t code = codewords[codeIndex++];
             if (code < TEXT_COMPACTION_MODE_LATCH) {
                 additionalOptionCodeWords[additionalOptionCodeWordsIndex++] = code;
             } else {
@@ -178,16 +178,16 @@ FX_INT32 CBC_DecodedBitStreamPaser::decodeMacroBlock(CFX_Int32Array &codewords, 
     }
     return codeIndex;
 }
-FX_INT32 CBC_DecodedBitStreamPaser::textCompaction(CFX_Int32Array &codewords, FX_INT32 codeIndex, CFX_ByteString &result)
+int32_t CBC_DecodedBitStreamPaser::textCompaction(CFX_Int32Array &codewords, int32_t codeIndex, CFX_ByteString &result)
 {
     CFX_Int32Array textCompactionData;
     textCompactionData.SetSize((codewords[0] - codeIndex) << 1);
     CFX_Int32Array byteCompactionData;
     byteCompactionData.SetSize((codewords[0] - codeIndex) << 1);
-    FX_INT32 index = 0;
+    int32_t index = 0;
     FX_BOOL end = FALSE;
     while ((codeIndex < codewords[0]) && !end) {
-        FX_INT32 code = codewords[codeIndex++];
+        int32_t code = codewords[codeIndex++];
         if (code < TEXT_COMPACTION_MODE_LATCH) {
             textCompactionData[index] = code / 30;
             textCompactionData[index + 1] = code % 30;
@@ -233,13 +233,13 @@ FX_INT32 CBC_DecodedBitStreamPaser::textCompaction(CFX_Int32Array &codewords, FX
     decodeTextCompaction(textCompactionData, byteCompactionData, index, result);
     return codeIndex;
 }
-void CBC_DecodedBitStreamPaser::decodeTextCompaction(CFX_Int32Array &textCompactionData, CFX_Int32Array &byteCompactionData, FX_INT32 length, CFX_ByteString &result)
+void CBC_DecodedBitStreamPaser::decodeTextCompaction(CFX_Int32Array &textCompactionData, CFX_Int32Array &byteCompactionData, int32_t length, CFX_ByteString &result)
 {
     Mode subMode = ALPHA;
     Mode priorToShiftMode = ALPHA;
-    FX_INT32 i = 0;
+    int32_t i = 0;
     while (i < length) {
-        FX_INT32 subModeCh = textCompactionData[i];
+        int32_t subModeCh = textCompactionData[i];
         FX_CHAR ch = 0;
         switch (subMode) {
             case ALPHA:
@@ -351,16 +351,16 @@ void CBC_DecodedBitStreamPaser::decodeTextCompaction(CFX_Int32Array &textCompact
         i++;
     }
 }
-FX_INT32 CBC_DecodedBitStreamPaser::byteCompaction(FX_INT32 mode, CFX_Int32Array &codewords, FX_INT32 codeIndex, CFX_ByteString &result)
+int32_t CBC_DecodedBitStreamPaser::byteCompaction(int32_t mode, CFX_Int32Array &codewords, int32_t codeIndex, CFX_ByteString &result)
 {
     if (mode == BYTE_COMPACTION_MODE_LATCH) {
-        FX_INT32 count = 0;
-        FX_INT64 value = 0;
+        int32_t count = 0;
+        int64_t value = 0;
         FX_WORD* decodedData = FX_Alloc(FX_WORD, 6 * sizeof(FX_WORD));
         CFX_Int32Array byteCompactedCodewords;
         byteCompactedCodewords.SetSize(6);
         FX_BOOL end = FALSE;
-        FX_INT32 nextCode = codewords[codeIndex++];
+        int32_t nextCode = codewords[codeIndex++];
         while ((codeIndex < codewords[0]) && !end) {
             byteCompactedCodewords[count++] = nextCode;
             value = 900 * value + nextCode;
@@ -376,7 +376,7 @@ FX_INT32 CBC_DecodedBitStreamPaser::byteCompaction(FX_INT32 mode, CFX_Int32Array
                 end = TRUE;
             } else {
                 if ((count % 5 == 0) && (count > 0)) {
-                    FX_INT32 j = 0;
+                    int32_t j = 0;
                     for (; j < 6; ++j) {
                         decodedData[5 - j] = (FX_WORD) (value % 256);
                         value >>= 8;
@@ -392,15 +392,15 @@ FX_INT32 CBC_DecodedBitStreamPaser::byteCompaction(FX_INT32 mode, CFX_Int32Array
         if (codeIndex == codewords[0] && nextCode < TEXT_COMPACTION_MODE_LATCH) {
             byteCompactedCodewords[count++] = nextCode;
         }
-        for (FX_INT32 i = 0; i < count; i++) {
+        for (int32_t i = 0; i < count; i++) {
             result += (FX_CHAR)(FX_WORD) byteCompactedCodewords[i];
         }
     } else if (mode == BYTE_COMPACTION_MODE_LATCH_6) {
-        FX_INT32 count = 0;
-        FX_INT64 value = 0;
+        int32_t count = 0;
+        int64_t value = 0;
         FX_BOOL end = FALSE;
         while (codeIndex < codewords[0] && !end) {
-            FX_INT32 code = codewords[codeIndex++];
+            int32_t code = codewords[codeIndex++];
             if (code < TEXT_COMPACTION_MODE_LATCH) {
                 count++;
                 value = 900 * value + code;
@@ -418,7 +418,7 @@ FX_INT32 CBC_DecodedBitStreamPaser::byteCompaction(FX_INT32 mode, CFX_Int32Array
             }
             if ((count % 5 == 0) && (count > 0)) {
                 FX_WORD* decodedData = FX_Alloc(FX_WORD, 6 * sizeof(FX_WORD));
-                FX_INT32 j = 0;
+                int32_t j = 0;
                 for (; j < 6; ++j) {
                     decodedData[5 - j] = (FX_WORD) (value & 0xFF);
                     value >>= 8;
@@ -433,14 +433,14 @@ FX_INT32 CBC_DecodedBitStreamPaser::byteCompaction(FX_INT32 mode, CFX_Int32Array
     }
     return codeIndex;
 }
-FX_INT32 CBC_DecodedBitStreamPaser::numericCompaction(CFX_Int32Array &codewords, FX_INT32 codeIndex, CFX_ByteString &result, FX_INT32 &e)
+int32_t CBC_DecodedBitStreamPaser::numericCompaction(CFX_Int32Array &codewords, int32_t codeIndex, CFX_ByteString &result, int32_t &e)
 {
-    FX_INT32 count = 0;
+    int32_t count = 0;
     FX_BOOL end = FALSE;
     CFX_Int32Array numericCodewords;
     numericCodewords.SetSize(MAX_NUMERIC_CODEWORDS);
     while (codeIndex < codewords[0] && !end) {
-        FX_INT32 code = codewords[codeIndex++];
+        int32_t code = codewords[codeIndex++];
         if (codeIndex == codewords[0]) {
             end = TRUE;
         }
@@ -469,11 +469,11 @@ FX_INT32 CBC_DecodedBitStreamPaser::numericCompaction(CFX_Int32Array &codewords,
     }
     return codeIndex;
 }
-CFX_ByteString CBC_DecodedBitStreamPaser::decodeBase900toBase10(CFX_Int32Array &codewords, FX_INT32 count, FX_INT32 &e)
+CFX_ByteString CBC_DecodedBitStreamPaser::decodeBase900toBase10(CFX_Int32Array &codewords, int32_t count, int32_t &e)
 {
     BigInteger result = 0;
     BigInteger nineHundred(900);
-    for (FX_INT32 i = 0; i < count; i++) {
+    for (int32_t i = 0; i < count; i++) {
         result = result * nineHundred + BigInteger(codewords[i]);
     }
     CFX_ByteString resultString(bigIntegerToString(result).c_str());

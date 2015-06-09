@@ -11,26 +11,26 @@ class CBC_PDF417Common;
 class CBC_PDF417ECModulusGF
 {
 public:
-    CBC_PDF417ECModulusGF(FX_INT32 modulus, FX_INT32 generator, FX_INT32 &e);
+    CBC_PDF417ECModulusGF(int32_t modulus, int32_t generator, int32_t &e);
     virtual ~CBC_PDF417ECModulusGF();
-    static void Initialize(FX_INT32 &e);
+    static void Initialize(int32_t &e);
     static void Finalize();
     CBC_PDF417ECModulusPoly* getZero();
     CBC_PDF417ECModulusPoly* getOne();
-    CBC_PDF417ECModulusPoly* buildMonomial(FX_INT32 degree, FX_INT32 coefficient, FX_INT32 &e);
-    FX_INT32 add(FX_INT32 a, FX_INT32 b);
-    FX_INT32 subtract(FX_INT32 a, FX_INT32 b);
-    FX_INT32 exp(FX_INT32 a);
-    FX_INT32 log(FX_INT32 a, FX_INT32 &e);
-    FX_INT32 inverse(FX_INT32 a, FX_INT32 &e);
-    FX_INT32 multiply(FX_INT32 a, FX_INT32 b);
-    FX_INT32 getSize();
+    CBC_PDF417ECModulusPoly* buildMonomial(int32_t degree, int32_t coefficient, int32_t &e);
+    int32_t add(int32_t a, int32_t b);
+    int32_t subtract(int32_t a, int32_t b);
+    int32_t exp(int32_t a);
+    int32_t log(int32_t a, int32_t &e);
+    int32_t inverse(int32_t a, int32_t &e);
+    int32_t multiply(int32_t a, int32_t b);
+    int32_t getSize();
     static CBC_PDF417ECModulusGF* PDF417_GF;
 private:
     CFX_Int32Array m_expTable;
     CFX_Int32Array m_logTable;
     CBC_PDF417ECModulusPoly* m_zero;
     CBC_PDF417ECModulusPoly* m_one;
-    FX_INT32 m_modulus;
+    int32_t m_modulus;
 };
 #endif

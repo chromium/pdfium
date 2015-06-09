@@ -31,18 +31,18 @@ CBC_CommonBitSource::CBC_CommonBitSource(CFX_ByteArray* bytes)
 CBC_CommonBitSource::~CBC_CommonBitSource()
 {
 }
-FX_INT32 CBC_CommonBitSource::ReadBits(FX_INT32 numBits, FX_INT32 &e)
+int32_t CBC_CommonBitSource::ReadBits(int32_t numBits, int32_t &e)
 {
     if (numBits < 1 || numBits > 32) {
         e = BCExceptionIllegalArgument;
         return 0;
     }
-    FX_INT32 result = 0;
+    int32_t result = 0;
     if (m_bitOffset > 0) {
-        FX_INT32 bitsLeft = 8 - m_bitOffset;
-        FX_INT32 toRead = numBits < bitsLeft ? numBits : bitsLeft;
-        FX_INT32 bitsToNotRead = bitsLeft - toRead;
-        FX_INT32 mask = (0xff >> (8 - toRead)) << bitsToNotRead;
+        int32_t bitsLeft = 8 - m_bitOffset;
+        int32_t toRead = numBits < bitsLeft ? numBits : bitsLeft;
+        int32_t bitsToNotRead = bitsLeft - toRead;
+        int32_t mask = (0xff >> (8 - toRead)) << bitsToNotRead;
         result = (m_bytes[m_byteOffset] & mask) >> bitsToNotRead;
         numBits -= toRead;
         m_bitOffset += toRead;
@@ -58,19 +58,19 @@ FX_INT32 CBC_CommonBitSource::ReadBits(FX_INT32 numBits, FX_INT32 &e)
             numBits -= 8;
         }
         if (numBits > 0) {
-            FX_INT32 bitsToNotRead = 8 - numBits;
-            FX_INT32 mask = (0xff >> bitsToNotRead) << bitsToNotRead;
+            int32_t bitsToNotRead = 8 - numBits;
+            int32_t mask = (0xff >> bitsToNotRead) << bitsToNotRead;
             result = (result << numBits) | ((m_bytes[m_byteOffset] & mask) >> bitsToNotRead);
             m_bitOffset += numBits;
         }
     }
     return result;
 }
-FX_INT32 CBC_CommonBitSource::Available()
+int32_t CBC_CommonBitSource::Available()
 {
     return 8 * (m_bytes.GetSize() - m_byteOffset) - m_bitOffset;
 }
-FX_INT32 CBC_CommonBitSource::getByteOffset()
+int32_t CBC_CommonBitSource::getByteOffset()
 {
     return m_byteOffset;
 }

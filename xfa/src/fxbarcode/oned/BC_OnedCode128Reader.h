@@ -14,27 +14,27 @@ class CBC_OnedCode128Reader : public CBC_OneDReader
 public:
     CBC_OnedCode128Reader();
     virtual ~CBC_OnedCode128Reader();
-    virtual CFX_ByteString DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, FX_INT32 hints, FX_INT32 &e);
-    const static FX_INT32 CODE_PATTERNS[107][7];
-    const static FX_INT32 MAX_AVG_VARIANCE;
-    const static FX_INT32 MAX_INDIVIDUAL_VARIANCE;
+    virtual CFX_ByteString DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, int32_t hints, int32_t &e);
+    const static int32_t CODE_PATTERNS[107][7];
+    const static int32_t MAX_AVG_VARIANCE;
+    const static int32_t MAX_INDIVIDUAL_VARIANCE;
 
-    const static FX_INT32 CODE_SHIFT;
-    const static FX_INT32 CODE_CODE_C;
-    const static FX_INT32 CODE_CODE_B;
-    const static FX_INT32 CODE_CODE_A;
-    const static FX_INT32 CODE_FNC_1;
-    const static FX_INT32 CODE_FNC_2;
-    const static FX_INT32 CODE_FNC_3;
-    const static FX_INT32 CODE_FNC_4_A;
-    const static FX_INT32 CODE_FNC_4_B ;
+    const static int32_t CODE_SHIFT;
+    const static int32_t CODE_CODE_C;
+    const static int32_t CODE_CODE_B;
+    const static int32_t CODE_CODE_A;
+    const static int32_t CODE_FNC_1;
+    const static int32_t CODE_FNC_2;
+    const static int32_t CODE_FNC_3;
+    const static int32_t CODE_FNC_4_A;
+    const static int32_t CODE_FNC_4_B ;
 
-    const static FX_INT32 CODE_START_A;
-    const static FX_INT32 CODE_START_B;
-    const static FX_INT32 CODE_START_C;
-    const static FX_INT32 CODE_STOP;
+    const static int32_t CODE_START_A;
+    const static int32_t CODE_START_B;
+    const static int32_t CODE_START_C;
+    const static int32_t CODE_STOP;
 private:
-    CFX_Int32Array *FindStartPattern(CBC_CommonBitArray *row, FX_INT32 &e);
-    FX_INT32 DecodeCode(CBC_CommonBitArray *row, CFX_Int32Array *counters, FX_INT32 rowOffset, FX_INT32 &e);
+    CFX_Int32Array *FindStartPattern(CBC_CommonBitArray *row, int32_t &e);
+    int32_t DecodeCode(CBC_CommonBitArray *row, CFX_Int32Array *counters, int32_t rowOffset, int32_t &e);
 };
 #endif

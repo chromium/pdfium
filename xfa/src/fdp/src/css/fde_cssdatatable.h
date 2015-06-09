@@ -13,11 +13,11 @@ public:
     {
         FXSYS_assert(pArgList != NULL);
     }
-    FX_INT32				CountArgs() const
+    int32_t				CountArgs() const
     {
         return m_pArgList->CountValues();
     }
-    IFDE_CSSValue*			GetArgs(FX_INT32 index) const
+    IFDE_CSSValue*			GetArgs(int32_t index) const
     {
         return m_pArgList->GetValue(index);
     }
@@ -61,7 +61,7 @@ public:
         FXSYS_assert(m_eType >= FDE_CSSPRIMITIVETYPE_Number && m_eType <= FDE_CSSPRIMITIVETYPE_PC);
         return m_fNumber;
     }
-    virtual FX_LPCWSTR				GetString(FX_INT32 &iLength) const
+    virtual FX_LPCWSTR				GetString(int32_t &iLength) const
     {
         FXSYS_assert(m_eType >= FDE_CSSPRIMITIVETYPE_String && m_eType <= FDE_CSSPRIMITIVETYPE_URI);
         iLength = FXSYS_wcslen(m_pString);
@@ -77,12 +77,12 @@ public:
         FXSYS_assert(m_eType == FDE_CSSPRIMITIVETYPE_Function);
         return m_pFunction->GetFuncName();
     }
-    virtual FX_INT32				CountArgs() const
+    virtual int32_t				CountArgs() const
     {
         FXSYS_assert(m_eType == FDE_CSSPRIMITIVETYPE_Function);
         return m_pFunction->CountArgs();
     }
-    virtual IFDE_CSSValue*			GetArgs(FX_INT32 index) const
+    virtual IFDE_CSSValue*			GetArgs(int32_t index) const
     {
         FXSYS_assert(m_eType == FDE_CSSPRIMITIVETYPE_Function);
         return m_pFunction->GetArgs(index);
@@ -103,30 +103,30 @@ class CFDE_CSSValueList : public IFDE_CSSValueList, public CFX_Target
 {
 public:
     CFDE_CSSValueList(IFX_MEMAllocator *pStaticStore, const CFDE_CSSValueArray &list);
-    virtual FX_INT32				CountValues() const
+    virtual int32_t				CountValues() const
     {
         return m_iCount;
     }
-    virtual IFDE_CSSValue*			GetValue(FX_INT32 index) const
+    virtual IFDE_CSSValue*			GetValue(int32_t index) const
     {
         return m_ppList[index];
     }
 protected:
     IFDE_CSSValue					**m_ppList;
-    FX_INT32						m_iCount;
+    int32_t						m_iCount;
 };
 class CFDE_CSSValueListParser : public CFX_Target
 {
 public:
-    CFDE_CSSValueListParser(FX_LPCWSTR psz, FX_INT32 iLen, FX_WCHAR separator)
+    CFDE_CSSValueListParser(FX_LPCWSTR psz, int32_t iLen, FX_WCHAR separator)
         : m_Separator(separator), m_pCur(psz), m_pEnd(psz + iLen)
     {
         FXSYS_assert(psz != NULL && iLen > 0);
     }
-    FX_BOOL			NextValue(FDE_CSSPRIMITIVETYPE &eType, FX_LPCWSTR &pStart, FX_INT32 &iLength);
+    FX_BOOL			NextValue(FDE_CSSPRIMITIVETYPE &eType, FX_LPCWSTR &pStart, int32_t &iLength);
     FX_WCHAR		m_Separator;
 protected:
-    FX_INT32		SkipTo(FX_WCHAR wch, FX_BOOL bWSSeparator = FALSE, FX_BOOL bBrContinue = FALSE);
+    int32_t		SkipTo(FX_WCHAR wch, FX_BOOL bWSSeparator = FALSE, FX_BOOL bBrContinue = FALSE);
     FX_LPCWSTR		m_pCur;
     FX_LPCWSTR		m_pEnd;
 };
@@ -148,7 +148,7 @@ extern "C" {
     };
     typedef FDE_CSSPROPERTYTABLE const * FDE_LPCCSSPROPERTYTABLE;
 
-    FDE_LPCCSSPROPERTYTABLE		FDE_GetCSSPropertyByName(FX_LPCWSTR pszName, FX_INT32 iLength);
+    FDE_LPCCSSPROPERTYTABLE		FDE_GetCSSPropertyByName(FX_LPCWSTR pszName, int32_t iLength);
     FDE_LPCCSSPROPERTYTABLE		FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY eName);
     struct FDE_CSSPROPERTYVALUETABLE {
         FDE_CSSPROPERTYVALUE	eName;
@@ -157,26 +157,26 @@ extern "C" {
     };
     typedef FDE_CSSPROPERTYVALUETABLE const * FDE_LPCCSSPROPERTYVALUETABLE;
 
-    FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(FX_LPCWSTR pszName, FX_INT32 iLength);
+    FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(FX_LPCWSTR pszName, int32_t iLength);
     FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByEnum(FDE_CSSPROPERTYVALUE eName);
     struct FDE_CSSMEDIATYPETABLE {
         FX_WORD					wHash;
         FX_WORD					wValue;
     };
     typedef FDE_CSSMEDIATYPETABLE const * FDE_LPCCSSMEDIATYPETABLE;
-    FDE_LPCCSSMEDIATYPETABLE	FDE_GetCSSMediaTypeByName(FX_LPCWSTR pszName, FX_INT32 iLength);
+    FDE_LPCCSSMEDIATYPETABLE	FDE_GetCSSMediaTypeByName(FX_LPCWSTR pszName, int32_t iLength);
     struct FDE_CSSLENGTHUNITTABLE {
         FX_WORD					wHash;
         FX_WORD					wValue;
     };
     typedef FDE_CSSLENGTHUNITTABLE const * FDE_LPCCSSLENGTHUNITTABLE;
-    FDE_LPCCSSLENGTHUNITTABLE	FDE_GetCSSLengthUnitByName(FX_LPCWSTR pszName, FX_INT32 iLength);
+    FDE_LPCCSSLENGTHUNITTABLE	FDE_GetCSSLengthUnitByName(FX_LPCWSTR pszName, int32_t iLength);
     struct FDE_CSSCOLORTABLE {
         FX_DWORD				dwHash;
         FX_ARGB					dwValue;
     };
     typedef FDE_CSSCOLORTABLE const * FDE_LPCCSSCOLORTABLE;
-    FDE_LPCCSSCOLORTABLE		FDE_GetCSSColorByName(FX_LPCWSTR pszName, FX_INT32 iLength);
+    FDE_LPCCSSCOLORTABLE		FDE_GetCSSColorByName(FX_LPCWSTR pszName, int32_t iLength);
     struct FDE_CSSPERSUDOTABLE {
         FDE_CSSPERSUDO			eName;
         FX_LPCWSTR				pszName;
@@ -185,10 +185,10 @@ extern "C" {
     typedef FDE_CSSPERSUDOTABLE const * FDE_LPCCSSPERSUDOTABLE;
 
     FDE_LPCCSSPERSUDOTABLE		FDE_GetCSSPersudoByEnum(FDE_CSSPERSUDO ePersudo);
-    FX_BOOL	FDE_ParseCSSNumber(FX_LPCWSTR pszValue, FX_INT32 iValueLen, FX_FLOAT &fValue, FDE_CSSPRIMITIVETYPE &eUnit);
-    FX_BOOL	FDE_ParseCSSString(FX_LPCWSTR pszValue, FX_INT32 iValueLen, FX_INT32 &iOffset, FX_INT32 &iLength);
-    FX_BOOL	FDE_ParseCSSColor(FX_LPCWSTR pszValue, FX_INT32 iValueLen, FX_ARGB &dwColor);
-    FX_BOOL	FDE_ParseCSSURI(FX_LPCWSTR pszValue, FX_INT32 iValueLen, FX_INT32 &iOffset, FX_INT32 &iLength);
+    FX_BOOL	FDE_ParseCSSNumber(FX_LPCWSTR pszValue, int32_t iValueLen, FX_FLOAT &fValue, FDE_CSSPRIMITIVETYPE &eUnit);
+    FX_BOOL	FDE_ParseCSSString(FX_LPCWSTR pszValue, int32_t iValueLen, int32_t &iOffset, int32_t &iLength);
+    FX_BOOL	FDE_ParseCSSColor(FX_LPCWSTR pszValue, int32_t iValueLen, FX_ARGB &dwColor);
+    FX_BOOL	FDE_ParseCSSURI(FX_LPCWSTR pszValue, int32_t iValueLen, int32_t &iOffset, int32_t &iLength);
 #ifdef _cplusplus
 };
 #endif

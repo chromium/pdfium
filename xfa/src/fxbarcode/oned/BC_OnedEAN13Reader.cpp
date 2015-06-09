@@ -26,7 +26,7 @@
 #include "BC_OneDReader.h"
 #include "BC_OneDimReader.h"
 #include "BC_OnedEAN13Reader.h"
-const FX_INT32 CBC_OnedEAN13Reader::FIRST_DIGIT_ENCODINGS[10] = {
+const int32_t CBC_OnedEAN13Reader::FIRST_DIGIT_ENCODINGS[10] = {
     0x00, 0x0B, 0x0D, 0xE, 0x13, 0x19, 0x1C, 0x15, 0x16, 0x1A
 };
 CBC_OnedEAN13Reader::CBC_OnedEAN13Reader()
@@ -35,9 +35,9 @@ CBC_OnedEAN13Reader::CBC_OnedEAN13Reader()
 CBC_OnedEAN13Reader::~CBC_OnedEAN13Reader()
 {
 }
-void CBC_OnedEAN13Reader::DetermineFirstDigit(CFX_ByteString &result, FX_INT32 lgPatternFound, FX_INT32 &e)
+void CBC_OnedEAN13Reader::DetermineFirstDigit(CFX_ByteString &result, int32_t lgPatternFound, int32_t &e)
 {
-    for (FX_INT32 d = 0; d < 10; d++) {
+    for (int32_t d = 0; d < 10; d++) {
         if (lgPatternFound == FIRST_DIGIT_ENCODINGS[d]) {
             result.Insert(0, (FX_CHAR) ('0' + d));
             return;
@@ -46,21 +46,21 @@ void CBC_OnedEAN13Reader::DetermineFirstDigit(CFX_ByteString &result, FX_INT32 l
     e = BCExceptionNotFound;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
 }
-FX_INT32 CBC_OnedEAN13Reader::DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultString, FX_INT32 &e)
+int32_t CBC_OnedEAN13Reader::DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultString, int32_t &e)
 {
     CFX_Int32Array counters;
     counters.Add(0);
     counters.Add(0);
     counters.Add(0);
     counters.Add(0);
-    FX_INT32 end = row->GetSize();
-    FX_INT32 rowOffset = (*startRange)[1];
-    FX_INT32 lgPatternFound = 0;
-    for (FX_INT32 x = 0; x < 6 && rowOffset < end; x++) {
-        FX_INT32 bestMatch = DecodeDigit(row, &counters, rowOffset, &(CBC_OneDimReader::L_AND_G_PATTERNS[0][0]), 20, e);
+    int32_t end = row->GetSize();
+    int32_t rowOffset = (*startRange)[1];
+    int32_t lgPatternFound = 0;
+    for (int32_t x = 0; x < 6 && rowOffset < end; x++) {
+        int32_t bestMatch = DecodeDigit(row, &counters, rowOffset, &(CBC_OneDimReader::L_AND_G_PATTERNS[0][0]), 20, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, 0);
         resultString += (FX_CHAR) ('0' + bestMatch % 10);
-        for (FX_INT32 i = 0; i < counters.GetSize(); i++) {
+        for (int32_t i = 0; i < counters.GetSize(); i++) {
             rowOffset += counters[i];
         }
         if (bestMatch >= 10) {
@@ -82,11 +82,11 @@ FX_INT32 CBC_OnedEAN13Reader::DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Arr
         delete middleRange;
         middleRange = NULL;
     }
-    for (FX_INT32 Y = 0; Y < 6 && rowOffset < end; Y++) {
-        FX_INT32 bestMatch = DecodeDigit(row, &counters, rowOffset, &(CBC_OneDimReader::L_PATTERNS[0][0]), 10, e);
+    for (int32_t Y = 0; Y < 6 && rowOffset < end; Y++) {
+        int32_t bestMatch = DecodeDigit(row, &counters, rowOffset, &(CBC_OneDimReader::L_PATTERNS[0][0]), 10, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, 0);
         resultString += (FX_CHAR) ('0' + bestMatch);
-        for (FX_INT32 k = 0; k < counters.GetSize(); k++) {
+        for (int32_t k = 0; k < counters.GetSize(); k++) {
             rowOffset += counters[k];
         }
     }

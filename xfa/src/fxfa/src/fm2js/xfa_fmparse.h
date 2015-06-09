@@ -11,7 +11,7 @@ class CXFA_FMParse
 public:
     CXFA_FMParse();
     ~CXFA_FMParse();
-    FX_INT32 Init(FX_WSTR wsFormcalc, CXFA_FMErrorInfo *pErrorInfo);
+    int32_t Init(FX_WSTR wsFormcalc, CXFA_FMErrorInfo *pErrorInfo);
     void NextToken();
     void Check(XFA_FM_TOKEN op);
     void Error(FX_DWORD lineNum, XFA_FM_ERRMSG msg, ...);

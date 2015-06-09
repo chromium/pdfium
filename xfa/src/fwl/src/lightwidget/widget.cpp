@@ -302,7 +302,7 @@ void CFWL_Widget::DispatchEvent(CFWL_Event *pEvent)
 #define FWL_WGT_CalcHeight				2048
 #define FWL_WGT_CalcWidth				2048
 #define FWL_WGT_CalcMultiLineDefWidth	120.0f
-CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString &wsText, FX_BOOL bMultiLine , FX_INT32 iLineWidth )
+CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString &wsText, FX_BOOL bMultiLine , int32_t iLineWidth )
 {
     CFX_SizeF sz;
     sz.Set(0, 0);
@@ -330,7 +330,7 @@ CFWL_WidgetDelegate::CFWL_WidgetDelegate()
 CFWL_WidgetDelegate::~CFWL_WidgetDelegate()
 {
 }
-FX_INT32 CFWL_WidgetDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_WidgetDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     return 1;
 }

@@ -40,8 +40,8 @@ FX_BOOL CXFA_FFListBox::LoadWidget()
     m_pNormalWidget->LockUpdate();
     CFX_WideStringArray wsLabelArray;
     m_pDataAcc->GetChoiceListItems(wsLabelArray, FALSE);
-    FX_INT32 iItems = wsLabelArray.GetSize();
-    for (FX_INT32 i = 0; i < iItems; i++) {
+    int32_t iItems = wsLabelArray.GetSize();
+    for (int32_t i = 0; i < iItems; i++) {
         pListBox->AddString(wsLabelArray[i]);
     }
     FX_DWORD dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
@@ -52,8 +52,8 @@ FX_BOOL CXFA_FFListBox::LoadWidget()
     m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
     CFX_Int32Array iSelArray;
     m_pDataAcc->GetSelectedItems(iSelArray);
-    FX_INT32 iSelCount = iSelArray.GetSize();
-    for (FX_INT32 j = 0; j < iSelCount; j++) {
+    int32_t iSelCount = iSelArray.GetSize();
+    for (int32_t j = 0; j < iSelCount; j++) {
         FWL_HLISTITEM item = pListBox->GetItem(iSelArray[j]);
         pListBox->SetSelItem(item, TRUE);
     }
@@ -73,9 +73,9 @@ FX_BOOL CXFA_FFListBox::CommitData()
 {
     FXSYS_assert(m_pNormalWidget != NULL);
     CFWL_ListBox* pListBox = (CFWL_ListBox*)m_pNormalWidget;
-    FX_INT32 iSels = pListBox->CountSelItems();
+    int32_t iSels = pListBox->CountSelItems();
     CFX_Int32Array iSelArray;
-    for (FX_INT32 i = 0; i < iSels; i++) {
+    for (int32_t i = 0; i < iSels; i++) {
         iSelArray.Add(pListBox->GetSelIndex(i));
     }
     m_pDataAcc->SetSelectdItems(iSelArray, TRUE);
@@ -85,11 +85,11 @@ FX_BOOL CXFA_FFListBox::IsDataChanged()
 {
     CFX_Int32Array iSelArray;
     m_pDataAcc->GetSelectedItems(iSelArray);
-    FX_INT32 iOldSels = iSelArray.GetSize();
+    int32_t iOldSels = iSelArray.GetSize();
     CFWL_ListBox* pListBox = (CFWL_ListBox*)m_pNormalWidget;
-    FX_INT32 iSels = pListBox->CountSelItems();
+    int32_t iSels = pListBox->CountSelItems();
     if (iOldSels == iSels) {
-        FX_INT32 iIndex = 0;
+        int32_t iIndex = 0;
         for (; iIndex < iSels; iIndex++) {
             FWL_HLISTITEM hlistItem = pListBox->GetItem(iSelArray[iIndex]);
             if(!(pListBox->GetItemStates(hlistItem) && FWL_ITEMSTATE_LTB_Selected)) {
@@ -106,7 +106,7 @@ FX_DWORD CXFA_FFListBox::GetAlignment()
 {
     FX_DWORD dwExtendedStyle = 0;
     if (CXFA_Para para = m_pDataAcc->GetPara()) {
-        FX_INT32 iHorz = para.GetHorizontalAlign();
+        int32_t iHorz = para.GetHorizontalAlign();
         switch(iHorz) {
             case XFA_ATTRIBUTEENUM_Center:
                 dwExtendedStyle |= FWL_STYLEEXT_LTB_CenterAlign;
@@ -136,13 +136,13 @@ FX_BOOL CXFA_FFListBox::UpdateFWLData()
     CFX_ArrayTemplate<FWL_HLISTITEM> selItemArray;
     CFX_Int32Array iSelArray;
     m_pDataAcc->GetSelectedItems(iSelArray);
-    FX_INT32 iSelCount = iSelArray.GetSize();
-    for (FX_INT32 j = 0; j < iSelCount; j++) {
+    int32_t iSelCount = iSelArray.GetSize();
+    for (int32_t j = 0; j < iSelCount; j++) {
         FWL_HLISTITEM lpItemSel = pListBox->GetSelItem(iSelArray[j]);
         selItemArray.Add(lpItemSel);
     }
     pListBox->SetSelItem(pListBox->GetSelItem(-1), FALSE);
-    for(FX_INT32 i = 0; i < iSelCount; i++) {
+    for(int32_t i = 0; i < iSelCount; i++) {
         ((CFWL_ListBox*)m_pNormalWidget)->SetSelItem(selItemArray[i], TRUE);
     }
     m_pNormalWidget->Update();
@@ -155,27 +155,27 @@ void CXFA_FFListBox::OnSelectChanged(IFWL_Widget *pWidget, const CFX_Int32Array 
     eParam.m_pTarget = m_pDataAcc;
     m_pDataAcc->GetValue(eParam.m_wsPrevText, XFA_VALUEPICTURE_Raw);
     CFWL_ListBox* pListBox = (CFWL_ListBox*)m_pNormalWidget;
-    FX_INT32 iSels = pListBox->CountSelItems();
+    int32_t iSels = pListBox->CountSelItems();
     if (iSels > 0) {
         pListBox->GetItemText(pListBox->GetSelItem(0), eParam.m_wsNewText);
     }
     m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }
-void CXFA_FFListBox::SetItemState(FX_INT32 nIndex, FX_BOOL bSelected)
+void CXFA_FFListBox::SetItemState(int32_t nIndex, FX_BOOL bSelected)
 {
     FWL_HLISTITEM item = ((CFWL_ListBox*)m_pNormalWidget)->GetSelItem(nIndex);
     ((CFWL_ListBox*)m_pNormalWidget)->SetSelItem(item, bSelected);
     m_pNormalWidget->Update();
     AddInvalidateRect();
 }
-void CXFA_FFListBox::InsertItem(FX_WSTR wsLabel, FX_INT32 nIndex )
+void CXFA_FFListBox::InsertItem(FX_WSTR wsLabel, int32_t nIndex )
 {
     CFX_WideString wsTemp(wsLabel);
     ((CFWL_ListBox*)m_pNormalWidget)->AddString(wsTemp);
     m_pNormalWidget->Update();
     AddInvalidateRect();
 }
-void CXFA_FFListBox::DeleteItem(FX_INT32 nIndex)
+void CXFA_FFListBox::DeleteItem(int32_t nIndex)
 {
     if (nIndex < 0) {
         ((CFWL_ListBox*)m_pNormalWidget)->DeleteAll();
@@ -185,7 +185,7 @@ void CXFA_FFListBox::DeleteItem(FX_INT32 nIndex)
     m_pNormalWidget->Update();
     AddInvalidateRect();
 }
-FX_INT32 CXFA_FFListBox::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CXFA_FFListBox::OnProcessMessage(CFWL_Message *pMessage)
 {
     return m_pOldDelegate->OnProcessMessage(pMessage);
 }
@@ -260,13 +260,13 @@ FX_BOOL CXFA_FFComboBox::LoadWidget()
     m_pNormalWidget->LockUpdate();
     CFX_WideStringArray wsLabelArray;
     m_pDataAcc->GetChoiceListItems(wsLabelArray, FALSE);
-    FX_INT32 iItems = wsLabelArray.GetSize();
-    for (FX_INT32 i = 0; i < iItems; i++) {
+    int32_t iItems = wsLabelArray.GetSize();
+    for (int32_t i = 0; i < iItems; i++) {
         pComboBox->AddString(wsLabelArray[i]);
     }
     CFX_Int32Array iSelArray;
     m_pDataAcc->GetSelectedItems(iSelArray);
-    FX_INT32 iSelCount = iSelArray.GetSize();
+    int32_t iSelCount = iSelArray.GetSize();
     if (iSelCount > 0) {
         pComboBox->SetCurSel(iSelArray[0]);
     } else {
@@ -334,7 +334,7 @@ FX_BOOL CXFA_FFComboBox::IsDataChanged()
     CFWL_ComboBox* pFWLcombobox = ((CFWL_ComboBox*)m_pNormalWidget);
     CFX_WideString wsText;
     pFWLcombobox->GetEditText(wsText);
-    FX_INT32 iCursel = pFWLcombobox->GetCurSel();
+    int32_t iCursel = pFWLcombobox->GetCurSel();
     if (iCursel >= 0) {
         CFX_WideString wsSel;
         pFWLcombobox->GetTextByIndex(iCursel, wsSel);
@@ -362,7 +362,7 @@ FX_DWORD CXFA_FFComboBox::GetAlignment()
 {
     FX_DWORD dwExtendedStyle = 0;
     if (CXFA_Para para = m_pDataAcc->GetPara()) {
-        FX_INT32 iHorz = para.GetHorizontalAlign();
+        int32_t iHorz = para.GetHorizontalAlign();
         switch(iHorz) {
             case XFA_ATTRIBUTEENUM_Center:
                 dwExtendedStyle |= FWL_STYLEEXT_CMB_EditHCenter | FWL_STYLEEXT_CMB_ListItemCenterAlign;
@@ -380,7 +380,7 @@ FX_DWORD CXFA_FFComboBox::GetAlignment()
                 dwExtendedStyle |= FWL_STYLEEXT_CMB_EditHNear | FWL_STYLEEXT_CMB_ListItemLeftAlign;
                 break;
         }
-        FX_INT32 iVert = para.GetVerticalAlign();
+        int32_t iVert = para.GetVerticalAlign();
         switch(iVert) {
             case XFA_ATTRIBUTEENUM_Middle:
                 dwExtendedStyle |= FWL_STYLEEXT_CMB_EditVCenter;
@@ -402,7 +402,7 @@ FX_BOOL CXFA_FFComboBox::UpdateFWLData()
     }
     CFX_Int32Array iSelArray;
     m_pDataAcc->GetSelectedItems(iSelArray);
-    FX_INT32 iSelCount = iSelArray.GetSize();
+    int32_t iSelCount = iSelArray.GetSize();
     if (iSelCount > 0) {
         ((CFWL_ComboBox*)m_pNormalWidget)->SetCurSel(iSelArray[0]);
     } else {
@@ -473,7 +473,7 @@ FX_BOOL CXFA_FFComboBox::DeSelect()
 {
     return ((CFWL_ComboBox*)m_pNormalWidget)->EditDeSelect();
 }
-void CXFA_FFComboBox::SetItemState(FX_INT32 nIndex, FX_BOOL bSelected)
+void CXFA_FFComboBox::SetItemState(int32_t nIndex, FX_BOOL bSelected)
 {
     if (bSelected) {
         ((CFWL_ComboBox*)m_pNormalWidget)->SetCurSel(nIndex);
@@ -483,13 +483,13 @@ void CXFA_FFComboBox::SetItemState(FX_INT32 nIndex, FX_BOOL bSelected)
     m_pNormalWidget->Update();
     AddInvalidateRect();
 }
-void CXFA_FFComboBox::InsertItem(FX_WSTR wsLabel, FX_INT32 nIndex )
+void CXFA_FFComboBox::InsertItem(FX_WSTR wsLabel, int32_t nIndex )
 {
     ((CFWL_ComboBox*)m_pNormalWidget)->AddString(wsLabel);
     m_pNormalWidget->Update();
     AddInvalidateRect();
 }
-void CXFA_FFComboBox::DeleteItem(FX_INT32 nIndex)
+void CXFA_FFComboBox::DeleteItem(int32_t nIndex)
 {
     if (nIndex < 0) {
         ((CFWL_ComboBox*)m_pNormalWidget)->RemoveAll();
@@ -533,7 +533,7 @@ void CXFA_FFComboBox::OnAddDoRecord(IFWL_Widget *pWidget)
 {
     GetDoc()->GetDocProvider()->AddDoRecord(this);
 }
-FX_INT32 CXFA_FFComboBox::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CXFA_FFComboBox::OnProcessMessage(CFWL_Message *pMessage)
 {
     return m_pOldDelegate->OnProcessMessage(pMessage);
 }

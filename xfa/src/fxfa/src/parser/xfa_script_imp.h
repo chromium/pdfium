@@ -27,7 +27,7 @@ public:
     }
     virtual FX_BOOL			RunScript(XFA_SCRIPTLANGTYPE eScriptType, FX_WSTR wsScript, FXJSE_HVALUE hRetValue, CXFA_Object* pThisObject = NULL);
 
-    virtual FX_INT32		ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS,  FX_DWORD dwStyles = XFA_RESOLVENODE_Children, CXFA_Node* bindNode = NULL);
+    virtual int32_t		ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS,  FX_DWORD dwStyles = XFA_RESOLVENODE_Children, CXFA_Node* bindNode = NULL);
     virtual FXJSE_HVALUE	GetJSValueFromMap(CXFA_Object* pObject);
     virtual void			CacheList(CXFA_NodeList* pList)
     {
@@ -42,8 +42,8 @@ public:
         return m_hJsRuntime;
     }
 
-    virtual FX_INT32		GetIndexByName(CXFA_Node* refNode);
-    virtual FX_INT32		GetIndexByClassName(CXFA_Node* refNode);
+    virtual int32_t		GetIndexByName(CXFA_Node* refNode);
+    virtual int32_t		GetIndexByClassName(CXFA_Node* refNode);
     virtual void			GetSomExpression(CXFA_Node* refNode, CFX_WideString &wsExpression);
 
     virtual void			SetNodesOfRunScript(CXFA_NodeArray *pArray);
@@ -68,8 +68,8 @@ public:
     static void				NormalPropertyGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue);
     static void				NormalPropertySetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue);
     static void				NormalMethodCall(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args);
-    static FX_INT32			NormalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn);
-    static FX_INT32			GlobalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn);
+    static int32_t			NormalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn);
+    static int32_t			GlobalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn);
     FX_BOOL					RunVariablesScript(CXFA_Node* pScriptNode);
     CXFA_Object*			GetVariablesThis(CXFA_Object* pObject, FX_BOOL bScriptNode = FALSE);
     void					ReleaseVariablesMap();

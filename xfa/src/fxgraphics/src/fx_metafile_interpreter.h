@@ -14,39 +14,39 @@ public:
 
     FX_BOOL SetCurrentElement(CXML_Element * element);
 
-    FX_BOOL ParamOf_SetLineCap(FX_INT32 & lineCap);
+    FX_BOOL ParamOf_SetLineCap(int32_t & lineCap);
     FX_BOOL ParamOf_SetLineDash(FX_FLOAT & dashPhase,
-                                FX_INT32 & dashArray,
-                                FX_INT32 & dashCount);
-    FX_BOOL ParamOf_SetLineDash(FX_INT32 & dashStyle);
-    FX_BOOL ParamOf_SetLineJoin(FX_INT32 & lineJoin);
+                                int32_t & dashArray,
+                                int32_t & dashCount);
+    FX_BOOL ParamOf_SetLineDash(int32_t & dashStyle);
+    FX_BOOL ParamOf_SetLineJoin(int32_t & lineJoin);
     FX_BOOL ParamOf_SetMiterLimit(FX_FLOAT & miterLimit);
-    FX_BOOL ParamOf_SetLineWidth(FX_FLOAT & lineWidth, FX_INT32 & isActOnDash);
+    FX_BOOL ParamOf_SetLineWidth(FX_FLOAT & lineWidth, int32_t & isActOnDash);
 
-    FX_BOOL ParamOf_SetStrokeColor(FX_INT32 & color);
-    FX_BOOL ParamOf_SetFillColor(FX_INT32 & color);
+    FX_BOOL ParamOf_SetStrokeColor(int32_t & color);
+    FX_BOOL ParamOf_SetFillColor(int32_t & color);
 
-    FX_BOOL ParamOf_StrokePath(FX_INT32 & path, FX_INT32 & matrix);
-    FX_BOOL ParamOf_FillPath(FX_INT32 & path, FX_INT32 & fillMode, FX_INT32 & matrix);
-    FX_BOOL ParamOf_ClipPath(FX_INT32 & path, FX_INT32 & fillMode, FX_INT32 & matrix);
+    FX_BOOL ParamOf_StrokePath(int32_t & path, int32_t & matrix);
+    FX_BOOL ParamOf_FillPath(int32_t & path, int32_t & fillMode, int32_t & matrix);
+    FX_BOOL ParamOf_ClipPath(int32_t & path, int32_t & fillMode, int32_t & matrix);
 
-    FX_BOOL ParamOf_DrawImage(FX_INT32 & source, FX_INT32 & point, FX_INT32 & matrix);
-    FX_BOOL ParamOf_StretchImage(FX_INT32 & source, FX_INT32 & rect, FX_INT32 & matrix);
+    FX_BOOL ParamOf_DrawImage(int32_t & source, int32_t & point, int32_t & matrix);
+    FX_BOOL ParamOf_StretchImage(int32_t & source, int32_t & rect, int32_t & matrix);
 
-    FX_BOOL ParamOf_ConcatMatrix(FX_INT32 & matrix);
-    FX_BOOL ParamOf_SetClipRect(FX_INT32 & rect);
-    FX_BOOL ParamOf_SetFont(FX_INT32 & font);
+    FX_BOOL ParamOf_ConcatMatrix(int32_t & matrix);
+    FX_BOOL ParamOf_SetClipRect(int32_t & rect);
+    FX_BOOL ParamOf_SetFont(int32_t & font);
     FX_BOOL ParamOf_SetFontSize(FX_FLOAT & size);
     FX_BOOL ParamOf_SetFontHScale(FX_FLOAT & scale);
     FX_BOOL ParamOf_SetCharSpacing(FX_FLOAT & spacing);
-    FX_BOOL ParamOf_SetTextDrawingMode(FX_INT32 & mode);
-    FX_BOOL ParamOf_SetText(FX_INT32 & point, FX_INT32 & text, FX_INT32 & matrix);
-    FX_BOOL ParamOf_Transfer(FX_INT32 & graphics, FX_INT32 & matrix);
-    FX_BOOL ParamOf_Transfer(FX_INT32 &	graphics,
+    FX_BOOL ParamOf_SetTextDrawingMode(int32_t & mode);
+    FX_BOOL ParamOf_SetText(int32_t & point, int32_t & text, int32_t & matrix);
+    FX_BOOL ParamOf_Transfer(int32_t & graphics, int32_t & matrix);
+    FX_BOOL ParamOf_Transfer(int32_t &	graphics,
                              FX_FLOAT &	srcLeft,
                              FX_FLOAT &	srcTop,
-                             FX_INT32 &	dstRect,
-                             FX_INT32 &	matrix);
+                             int32_t &	dstRect,
+                             int32_t &	matrix);
 
 private:
     CXML_Element *	_element;

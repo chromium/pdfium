@@ -10,10 +10,10 @@ class CBC_QRCoderVersion;
 class CBC_QRCoderMode
 {
 private:
-    FX_INT32* m_characterCountBitsForVersions;
-    FX_INT32 m_bits;
+    int32_t* m_characterCountBitsForVersions;
+    int32_t m_bits;
     CFX_ByteString m_name;
-    CBC_QRCoderMode(FX_INT32 *characterCountBitsForVersions, FX_INT32 x1, FX_INT32 x2, FX_INT32 x3, FX_INT32 bits, CFX_ByteString name);
+    CBC_QRCoderMode(int32_t *characterCountBitsForVersions, int32_t x1, int32_t x2, int32_t x3, int32_t bits, CFX_ByteString name);
     CBC_QRCoderMode();
 public:
     static CBC_QRCoderMode* sBYTE;
@@ -30,9 +30,9 @@ public:
 
     static void Initialize();
     static void Finalize();
-    static CBC_QRCoderMode* ForBits(FX_INT32 bits, FX_INT32 &e);
-    FX_INT32 GetCharacterCountBits(CBC_QRCoderVersion* version, FX_INT32 &e);
-    FX_INT32 GetBits();
+    static CBC_QRCoderMode* ForBits(int32_t bits, int32_t &e);
+    int32_t GetCharacterCountBits(CBC_QRCoderVersion* version, int32_t &e);
+    int32_t GetBits();
     CFX_ByteString GetName();
     static void Destroy();
 };

@@ -37,7 +37,7 @@ protected:
     {
     public:
         CFWL_CaretTimer(CFWL_CaretImp *m_pCaret);
-        virtual FX_INT32 Run(FWL_HTIMER hTimer);
+        virtual int32_t Run(FWL_HTIMER hTimer);
         CFWL_CaretImp *m_pCaret;
 
     };
@@ -54,7 +54,7 @@ class CFWL_CaretImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_CaretImpDelegate(CFWL_CaretImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 
 protected:

@@ -14,17 +14,17 @@ class CBC_OneDimWriter : public CBC_Writer
 public:
     CBC_OneDimWriter();
     virtual ~CBC_OneDimWriter();
-    FX_BYTE			*Encode(const CFX_ByteString &contents, BCFORMAT format,
-                            FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e);
-    FX_BYTE			*Encode(const CFX_ByteString &contents, BCFORMAT format,
-                            FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e);
-    virtual FX_BYTE *Encode(const CFX_ByteString &contents, FX_INT32 &outLength, FX_INT32 &e)
+    uint8_t			*Encode(const CFX_ByteString &contents, BCFORMAT format,
+                            int32_t &outWidth, int32_t &outHeight, int32_t &e);
+    uint8_t			*Encode(const CFX_ByteString &contents, BCFORMAT format,
+                            int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e);
+    virtual uint8_t *Encode(const CFX_ByteString &contents, int32_t &outLength, int32_t &e)
     {
         return NULL;
     };
-    virtual void     RenderResult(FX_WSTR contents, FX_BYTE* code, FX_INT32 codeLength,  FX_BOOL isDevice, FX_INT32 &e);
-    virtual void     RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, FX_WSTR contents, FX_INT32 &e);
-    virtual void     RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix* matrix, FX_WSTR contents, FX_INT32 &e);
+    virtual void     RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength,  FX_BOOL isDevice, int32_t &e);
+    virtual void     RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, FX_WSTR contents, int32_t &e);
+    virtual void     RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix* matrix, FX_WSTR contents, int32_t &e);
     virtual FX_BOOL			CheckContentValidity(FX_WSTR contents)
     {
         return TRUE;
@@ -38,33 +38,33 @@ public:
         return CFX_WideString();
     }
     virtual void			SetPrintChecksum(FX_BOOL checksum);
-    virtual void			SetDataLength(FX_INT32 length);
-    virtual void			SetCalcChecksum(FX_INT32 state);
+    virtual void			SetDataLength(int32_t length);
+    virtual void			SetCalcChecksum(int32_t state);
     virtual void			SetFontSize(FX_FLOAT size);
-    virtual void			SetFontStyle(FX_INT32 style);
+    virtual void			SetFontStyle(int32_t style);
     virtual void			SetFontColor(FX_ARGB color);
     virtual FX_BOOL			SetFont(CFX_Font * cFont);
 protected:
     FX_BOOL			m_bPrintChecksum;
-    FX_INT32		m_iDataLenth;
+    int32_t		m_iDataLenth;
     FX_BOOL			m_bCalcChecksum;
     CFX_Font*		m_pFont;
     FX_FLOAT		m_fFontSize;
-    FX_INT32		m_iFontStyle;
+    int32_t		m_iFontStyle;
     FX_DWORD		m_fontColor;
     BC_TEXT_LOC		m_locTextLoc;
-    FX_INT32		m_iContentLen;
+    int32_t		m_iContentLen;
     FX_BOOL         m_bLeftPadding;
     FX_BOOL         m_bRightPadding;
     CBC_CommonBitMatrix*   m_output;
-    FX_INT32               m_barWidth;
-    FX_INT32               m_multiple;
+    int32_t               m_barWidth;
+    int32_t               m_multiple;
     FX_FLOAT               m_outputHScale;
-    void			CalcTextInfo(const CFX_ByteString &text, FXTEXT_CHARPOS *charPos, CFX_Font *cFont, FX_FLOAT geWidth, FX_INT32 fontSize, FX_FLOAT &charsLen);
-    virtual void	ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice *device, const CFX_Matrix* matrix, FX_INT32 barWidth, FX_INT32 multiple, FX_INT32 &e);
-    virtual void	ShowBitmapChars(CFX_DIBitmap *pOutBitmap, const CFX_ByteString str, FX_FLOAT geWidth, FXTEXT_CHARPOS* pCharPos, FX_FLOAT locX, FX_FLOAT locY, FX_INT32 barWidth);
-    virtual void    ShowDeviceChars(CFX_RenderDevice *device, const CFX_Matrix* matrix, const CFX_ByteString str, FX_FLOAT geWidth, FXTEXT_CHARPOS* pCharPos, FX_FLOAT locX, FX_FLOAT locY,  FX_INT32 barWidth);
-    FX_INT32		AppendPattern(FX_BYTE* target, FX_INT32 pos, const FX_INT32* pattern, FX_INT32 patternLength, FX_INT32 startColor, FX_INT32 &e);
+    void			CalcTextInfo(const CFX_ByteString &text, FXTEXT_CHARPOS *charPos, CFX_Font *cFont, FX_FLOAT geWidth, int32_t fontSize, FX_FLOAT &charsLen);
+    virtual void	ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice *device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e);
+    virtual void	ShowBitmapChars(CFX_DIBitmap *pOutBitmap, const CFX_ByteString str, FX_FLOAT geWidth, FXTEXT_CHARPOS* pCharPos, FX_FLOAT locX, FX_FLOAT locY, int32_t barWidth);
+    virtual void    ShowDeviceChars(CFX_RenderDevice *device, const CFX_Matrix* matrix, const CFX_ByteString str, FX_FLOAT geWidth, FXTEXT_CHARPOS* pCharPos, FX_FLOAT locX, FX_FLOAT locY,  int32_t barWidth);
+    int32_t		AppendPattern(uint8_t* target, int32_t pos, const int32_t* pattern, int32_t patternLength, int32_t startColor, int32_t &e);
     FX_WCHAR		Upper(FX_WCHAR ch);
 };
 #endif

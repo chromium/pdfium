@@ -29,7 +29,7 @@ public:
     CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
     ~CXFA_PDFFontMgr();
     IFX_Font*				GetFont(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, CPDF_Font** pPDFFont, FX_BOOL bStrictMatch = TRUE);
-    FX_BOOL					GetCharWidth(IFX_Font* pFont, FX_WCHAR wUnicode, FX_INT32 &iWidth, FX_BOOL bCharCode);
+    FX_BOOL					GetCharWidth(IFX_Font* pFont, FX_WCHAR wUnicode, int32_t &iWidth, FX_BOOL bCharCode);
     CFX_MapPtrToPtr			m_FDE2PDFFont;
 protected:
     IFX_Font*				FindFont(CFX_ByteString strFamilyName, FX_BOOL bBold, FX_BOOL bItalic, CPDF_Font** pPDFFont, FX_BOOL bStrictMatch = TRUE);

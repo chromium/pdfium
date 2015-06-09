@@ -32,25 +32,25 @@ public:
     virtual FWL_ERR		DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
     virtual FWL_ERR		SetThemeProvider(IFWL_ThemeProvider *pThemeProvider);
     virtual FWL_ERR		SetText(const CFX_WideString &wsText);
-    virtual FX_INT32	GetTextLength() const;
-    virtual FWL_ERR		GetText(CFX_WideString &wsText, FX_INT32 nStart = 0, FX_INT32 nCount = -1) const;
+    virtual int32_t	GetTextLength() const;
+    virtual FWL_ERR		GetText(CFX_WideString &wsText, int32_t nStart = 0, int32_t nCount = -1) const;
     virtual FWL_ERR		ClearText();
-    virtual FX_INT32	GetCaretPos() const;
-    virtual FX_INT32	SetCaretPos(FX_INT32 nIndex, FX_BOOL bBefore = TRUE);
-    virtual FWL_ERR		AddSelRange(FX_INT32 nStart, FX_INT32 nCount = -1);
-    virtual FX_INT32	CountSelRanges();
-    virtual FX_INT32	GetSelRange(FX_INT32 nIndex, FX_INT32 &nStart);
+    virtual int32_t	GetCaretPos() const;
+    virtual int32_t	SetCaretPos(int32_t nIndex, FX_BOOL bBefore = TRUE);
+    virtual FWL_ERR		AddSelRange(int32_t nStart, int32_t nCount = -1);
+    virtual int32_t	CountSelRanges();
+    virtual int32_t	GetSelRange(int32_t nIndex, int32_t &nStart);
     virtual FWL_ERR		ClearSelections();
-    virtual FX_INT32	GetLimit();
-    virtual FWL_ERR		SetLimit(FX_INT32 nLimit);
+    virtual int32_t	GetLimit();
+    virtual FWL_ERR		SetLimit(int32_t nLimit);
     virtual FWL_ERR		SetAliasChar(FX_WCHAR wAlias);
     virtual FWL_ERR		SetFormatString(const CFX_WideString &wsFormat);
-    virtual FWL_ERR		Insert(FX_INT32 nStart, FX_LPCWSTR lpText, FX_INT32 nLen);
+    virtual FWL_ERR		Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLen);
     virtual FWL_ERR		DeleteSelections();
-    virtual FWL_ERR		DeleteRange(FX_INT32 nStart, FX_INT32 nCount = -1);
+    virtual FWL_ERR		DeleteRange(int32_t nStart, int32_t nCount = -1);
     virtual FWL_ERR		ReplaceSelections(const CFX_WideStringC &wsReplace);
-    virtual FWL_ERR		Replace(FX_INT32 nStart, FX_INT32 nLen, const CFX_WideStringC &wsReplace);
-    virtual FWL_ERR		DoClipboard(FX_INT32 iCmd);
+    virtual FWL_ERR		Replace(int32_t nStart, int32_t nLen, const CFX_WideStringC &wsReplace);
+    virtual FWL_ERR		DoClipboard(int32_t iCmd);
     virtual FX_BOOL		Copy(CFX_WideString &wsCopy);
     virtual FX_BOOL		Cut(CFX_WideString &wsCut);
     virtual FX_BOOL		Paste(const CFX_WideString &wsPaste);
@@ -63,22 +63,22 @@ public:
     virtual FX_BOOL		CanRedo();
     virtual FWL_ERR		SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
     virtual FWL_ERR		SetOuter(IFWL_Widget *pOuter);
-    virtual FWL_ERR		SetNumberRange(FX_INT32 iMin, FX_INT32 iMax);
-    virtual void		On_CaretChanged(IFDE_TxtEdtEngine *pEdit, FX_INT32 nPage, FX_BOOL bVisible = TRUE);
+    virtual FWL_ERR		SetNumberRange(int32_t iMin, int32_t iMax);
+    virtual void		On_CaretChanged(IFDE_TxtEdtEngine *pEdit, int32_t nPage, FX_BOOL bVisible = TRUE);
     virtual void		On_TextChanged(IFDE_TxtEdtEngine * pEdit, FDE_TXTEDT_TEXTCHANGE_INFO &ChangeInfo);
     virtual void		On_PageCountChanged(IFDE_TxtEdtEngine *pEdit) {}
     virtual void		On_SelChanged(IFDE_TxtEdtEngine *pEdit);
-    virtual FX_BOOL		On_PageLoad(IFDE_TxtEdtEngine *pEdit, FX_INT32 nPageIndex, FX_INT32 nPurpose);
-    virtual FX_BOOL		On_PageUnload(IFDE_TxtEdtEngine *pEdit, FX_INT32 nPageIndex, FX_INT32 nPurpose);
+    virtual FX_BOOL		On_PageLoad(IFDE_TxtEdtEngine *pEdit, int32_t nPageIndex, int32_t nPurpose);
+    virtual FX_BOOL		On_PageUnload(IFDE_TxtEdtEngine *pEdit, int32_t nPageIndex, int32_t nPurpose);
     virtual FX_BOOL		On_PageChange(IFDE_TxtEdtEngine *pEdit, FX_BOOL bPageUp = TRUE)
     {
         return TRUE;
     }
     virtual void		On_AddDoRecord(IFDE_TxtEdtEngine *pEdit, FX_BSTR bsDoRecord);
-    virtual FX_BOOL		On_ValidateField(IFDE_TxtEdtEngine *pEdit, FX_INT32 nBlockIndex, FX_INT32 nFieldIndex, \
-                                         const CFX_WideString &wsFieldText, FX_INT32 nCharIndex);
-    virtual FX_BOOL		On_ValidateBlock(IFDE_TxtEdtEngine *pEdit, FX_INT32 nBlockIndex);
-    virtual FX_BOOL		On_GetBlockFormatText(IFDE_TxtEdtEngine *pEdit, FX_INT32 nBlockIndex, CFX_WideString &wsBlockText);
+    virtual FX_BOOL		On_ValidateField(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex, int32_t nFieldIndex, \
+                                         const CFX_WideString &wsFieldText, int32_t nCharIndex);
+    virtual FX_BOOL		On_ValidateBlock(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex);
+    virtual FX_BOOL		On_GetBlockFormatText(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex, CFX_WideString &wsBlockText);
     virtual FX_BOOL		On_Validate(IFDE_TxtEdtEngine * pEdit, CFX_WideString &wsText);
     virtual FWL_ERR     SetBackgroundColor(FX_DWORD color);
     virtual FWL_ERR     SetFont(const CFX_WideString &wsFont, FX_FLOAT fSize);
@@ -107,12 +107,12 @@ protected:
     void				ClearRecord();
     FX_BOOL				IsShowScrollBar(FX_BOOL bVert);
     FX_BOOL				IsContentHeightOverflow();
-    FX_INT32			AddDoRecord(FX_BSTR bsDoRecord);
-    void				ProcessInsertError(FX_INT32 iError);
+    int32_t			AddDoRecord(FX_BSTR bsDoRecord);
+    void				ProcessInsertError(int32_t iError);
 
     void				DrawSpellCheck(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
-    void				AddSpellCheckObj(CFX_Path& PathData, FX_INT32 nStart, FX_INT32 nCount, FX_FLOAT fOffSetX, FX_FLOAT fOffSetY);
-    FX_INT32			GetWordAtPoint(CFX_PointF pointf, FX_INT32& nCount);
+    void				AddSpellCheckObj(CFX_Path& PathData, int32_t nStart, int32_t nCount, FX_FLOAT fOffSetX, FX_FLOAT fOffSetY);
+    int32_t			GetWordAtPoint(CFX_PointF pointf, int32_t& nCount);
     CFX_RectF			m_rtClient;
     CFX_RectF			m_rtEngine;
     CFX_RectF			m_rtStatic;
@@ -121,15 +121,15 @@ protected:
     FX_FLOAT			m_fScrollOffsetY;
     IFDE_TxtEdtEngine*	m_pEdtEngine;
     FX_BOOL				m_bLButtonDown;
-    FX_INT32			m_nSelStart;
-    FX_INT32			m_nLimit;
+    int32_t			m_nSelStart;
+    int32_t			m_nLimit;
     FX_FLOAT			m_fSpaceAbove;
     FX_FLOAT			m_fSpaceBelow;
     FX_FLOAT			m_fFontSize;
     FX_ARGB				m_argbSel;
     FX_BOOL             m_bSetRange;
-    FX_INT32			m_iMin;
-    FX_INT32			m_iMax;
+    int32_t			m_iMin;
+    int32_t			m_iMax;
     IFWL_ScrollBar*		m_pVertScrollBar;
     IFWL_ScrollBar*		m_pHorzScrollBar;
     IFWL_Caret*			m_pCaret;
@@ -141,14 +141,14 @@ protected:
     FX_BOOL             m_updateBackColor;
     CFX_WideString      m_wsFont;
     CFX_ByteStringArray m_RecordArr;
-    FX_INT32			m_iCurRecord;
-    FX_INT32			m_iMaxRecord;
+    int32_t			m_iCurRecord;
+    int32_t			m_iMaxRecord;
 };
 class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_EditImpDelegate(CFWL_EditImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:

@@ -44,9 +44,9 @@ static FDE_TXTEDT_CHARTYPE FDE_GetEditSelCharType(FX_WCHAR wChar)
     }
 }
 typedef struct _FDE_TXTEDTPIECE {
-    FX_INT32	nStart;
-    FX_INT32	nCount;
-    FX_INT32	nBidiLevel;
+    int32_t	nStart;
+    int32_t	nCount;
+    int32_t	nBidiLevel;
     CFX_RectF	rtPiece;
     FX_DWORD	dwCharStyles;
 } FDE_TEXTEDITPIECE, * FDE_LPTEXTEDITPIECE;
@@ -62,13 +62,13 @@ public:
     virtual FX_BOOL		GetMatrix(FDE_HVISUALOBJ hVisualObj, CFX_Matrix &matrix);
     virtual FX_BOOL		GetRect(FDE_HVISUALOBJ hVisualObj, CFX_RectF &rt);
     virtual FX_BOOL		GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF &rt);
-    virtual FX_INT32	GetString(FDE_HVISUALOBJ hText, CFX_WideString &wsText);
+    virtual int32_t	GetString(FDE_HVISUALOBJ hText, CFX_WideString &wsText);
     virtual IFX_Font*	GetFont(FDE_HVISUALOBJ hText);
     virtual FX_FLOAT	GetFontSize(FDE_HVISUALOBJ hText);
     virtual FX_ARGB		GetFontColor(FDE_HVISUALOBJ hText);
-    virtual FX_INT32	GetDisplayPos(FDE_HVISUALOBJ hText, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode = FALSE, CFX_WideString *pWSForms = NULL);
-    virtual FX_INT32	GetCharRects(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray);
-    virtual FX_INT32	GetCharRects_Impl(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray, FX_BOOL bBBox = FALSE);
+    virtual int32_t	GetDisplayPos(FDE_HVISUALOBJ hText, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode = FALSE, CFX_WideString *pWSForms = NULL);
+    virtual int32_t	GetCharRects(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray);
+    virtual int32_t	GetCharRects_Impl(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray, FX_BOOL bBBox = FALSE);
 private:
 
     CFDE_TxtEdtPage * m_pPage;
@@ -76,7 +76,7 @@ private:
 class CFDE_TxtEdtPage : public IFDE_TxtEdtPage
 {
 public:
-    CFDE_TxtEdtPage(IFDE_TxtEdtEngine * pEngine, FX_INT32 nLineIndex);
+    CFDE_TxtEdtPage(IFDE_TxtEdtEngine * pEngine, int32_t nLineIndex);
 
     virtual void				Release();
     virtual IFDE_TxtEdtEngine * GetEngine() const;
@@ -86,24 +86,24 @@ public:
     virtual FX_BOOL		GetMatrix(FDE_HVISUALOBJ hVisualObj, CFX_Matrix &matrix);
     virtual FX_BOOL		GetRect(FDE_HVISUALOBJ hVisualObj, CFX_RectF &rt);
     virtual FX_BOOL		GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF &rt);
-    virtual FX_INT32	GetCharRect(FX_INT32 nIndex, CFX_RectF &rect, FX_BOOL bBBox = FALSE) const;
-    virtual FX_INT32	GetCharIndex(const CFX_PointF &fPoint, FX_BOOL &bBefore);
-    virtual FX_INT32	SelectWord(const CFX_PointF &fPoint, FX_INT32 &nCount);
-    virtual FX_INT32	GetCharStart() const;
-    virtual FX_INT32	GetCharCount() const;
-    virtual void		CalcRangeRectArray(FX_INT32 nStart, FX_INT32 nCount, CFX_RectFArray &RectFArr) const;
-    virtual FX_INT32	GetDisplayPos(const CFX_RectF &rtClip, FXTEXT_CHARPOS *&pCharPos, FX_LPRECTF pBBox) const;
+    virtual int32_t	GetCharRect(int32_t nIndex, CFX_RectF &rect, FX_BOOL bBBox = FALSE) const;
+    virtual int32_t	GetCharIndex(const CFX_PointF &fPoint, FX_BOOL &bBefore);
+    virtual int32_t	SelectWord(const CFX_PointF &fPoint, int32_t &nCount);
+    virtual int32_t	GetCharStart() const;
+    virtual int32_t	GetCharCount() const;
+    virtual void		CalcRangeRectArray(int32_t nStart, int32_t nCount, CFX_RectFArray &RectFArr) const;
+    virtual int32_t	GetDisplayPos(const CFX_RectF &rtClip, FXTEXT_CHARPOS *&pCharPos, FX_LPRECTF pBBox) const;
 
     virtual FX_BOOL				IsLoaded(FX_LPCRECTF pClipBox = NULL);
-    virtual FX_INT32			LoadPage(FX_LPCRECTF pClipBox = NULL, IFX_Pause *pPause = NULL);
+    virtual int32_t			LoadPage(FX_LPCRECTF pClipBox = NULL, IFX_Pause *pPause = NULL);
     virtual void				UnloadPage(FX_LPCRECTF pClipBox = NULL);
 
     virtual const CFX_RectF&	GetContentsBox();
     virtual FX_POSITION			GetFirstPosition(FDE_HVISUALOBJ hCanvas);
     virtual FDE_HVISUALOBJ		GetNext(FDE_HVISUALOBJ hCanvas, FX_POSITION &pos, IFDE_VisualSet *&pVisualSet);
     virtual FDE_HVISUALOBJ		GetParentCanvas(FDE_HVISUALOBJ hCanvas, IFDE_VisualSet *&pVisualSet);
-    virtual FX_WCHAR	GetChar(FX_LPVOID pIdentity, FX_INT32 index) const;
-    virtual FX_INT32	GetWidth(FX_LPVOID pIdentity, FX_INT32 index) const;
+    virtual FX_WCHAR	GetChar(FX_LPVOID pIdentity, int32_t index) const;
+    virtual int32_t	GetWidth(FX_LPVOID pIdentity, int32_t index) const;
 protected:
     virtual ~CFDE_TxtEdtPage();
 private:
@@ -115,16 +115,16 @@ private:
     CFDE_TxtEdtParag *			m_pBgnParag;
     CFDE_TxtEdtParag *			m_pEndParag;
 
-    FX_INT32	m_nRefCount;
-    FX_INT32	m_nPageStart;
-    FX_INT32	m_nCharCount;
-    FX_INT32	m_nPageIndex;
+    int32_t	m_nRefCount;
+    int32_t	m_nPageStart;
+    int32_t	m_nCharCount;
+    int32_t	m_nPageIndex;
     FX_BOOL		m_bLoaded;
     FX_BOOL		m_bLastPage;
     CFX_RectF	m_rtPage;
     CFX_RectF	m_rtPageMargin;
     CFX_RectF	m_rtPageContents;
     CFX_RectF	m_rtPageCanvas;
-    FX_INT32*	m_pCharWidth;
+    int32_t*	m_pCharWidth;
 };
 #endif

@@ -15,11 +15,11 @@ class CBC_BinaryBitmap
 public:
     CBC_BinaryBitmap(CBC_Binarizer *binarizer);
     virtual ~CBC_BinaryBitmap();
-    FX_INT32				GetWidth();
-    FX_INT32				GetHeight();
-    CBC_CommonBitMatrix *	GetMatrix(FX_INT32 &e);
-    CBC_CommonBitArray *	GetBlackRow(FX_INT32 y, CBC_CommonBitArray *row, FX_INT32 &e);
-    CBC_CommonBitMatrix *	GetBlackMatrix(FX_INT32 &e);
+    int32_t				GetWidth();
+    int32_t				GetHeight();
+    CBC_CommonBitMatrix *	GetMatrix(int32_t &e);
+    CBC_CommonBitArray *	GetBlackRow(int32_t y, CBC_CommonBitArray *row, int32_t &e);
+    CBC_CommonBitMatrix *	GetBlackMatrix(int32_t &e);
     FX_BOOL					IsCropSupported();
     FX_BOOL					IsRotateSupported();
 private:

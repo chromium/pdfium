@@ -49,19 +49,19 @@ public:
     }
 
     void Beep(FX_DWORD dwType) override;
-    FX_INT32 MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle, FX_DWORD dwIconType, FX_DWORD dwButtonType) override;
+    int32_t MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle, FX_DWORD dwIconType, FX_DWORD dwButtonType) override;
     void Response(CFX_WideString &wsAnswer, FX_WSTR wsQuestion, FX_WSTR wsTitle,
                   FX_WSTR wsDefaultAnswer, FX_BOOL bMark) override;
 
-    FX_INT32 GetDocumentCountInBatch() override;
-    FX_INT32 GetCurDocumentInBatch() override;
+    int32_t GetDocumentCountInBatch() override;
+    int32_t GetCurDocumentInBatch() override;
 
     IFX_FileRead* DownloadURL(FX_WSTR wsURL) override;
     FX_BOOL PostRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsContentType,
                            FX_WSTR wsEncode, FX_WSTR wsHeader, CFX_WideString &wsResponse) override;
     FX_BOOL PutRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsEncode) override;
 
-    void LoadString(FX_INT32 iStringID, CFX_WideString &wsString) override;
+    void LoadString(int32_t iStringID, CFX_WideString &wsString) override;
     FX_BOOL ShowFileDialog(FX_WSTR wsTitle, FX_WSTR wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen) override;
     IFWL_AdapterTimerMgr* GetTimerMgr() override;
 

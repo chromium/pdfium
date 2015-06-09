@@ -9,8 +9,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define FDE_Alloc(size)				FX_Alloc(FX_BYTE, size)
-#define FDE_Realloc(ptr, newSize)	FX_Realloc(FX_BYTE, ptr, newSize)
+#define FDE_Alloc(size)				FX_Alloc(uint8_t, size)
+#define FDE_Realloc(ptr, newSize)	FX_Realloc(uint8_t, ptr, newSize)
 #define FDE_Free(ptr)				FX_Free(ptr)
 #define FDE_New			FXTARGET_New
 #define FDE_Delete		FXTARGET_Delete

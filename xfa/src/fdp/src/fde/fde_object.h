@@ -32,7 +32,7 @@ public:
         FDE_Delete this;
     }
 
-    virtual FX_INT32			GetType() const
+    virtual int32_t			GetType() const
     {
         return m_pBrush ? m_pBrush->GetType() : FDE_PENTYPE_SolidColor;
     }
@@ -57,19 +57,19 @@ public:
             m_Color = ((IFDE_SolidBrush*)m_pBrush)->GetColor();
         }
     }
-    virtual FX_INT32			GetLineCap() const
+    virtual int32_t			GetLineCap() const
     {
         return m_iLineCap;
     }
-    virtual void				SetLineCap(FX_INT32 iLineCap)
+    virtual void				SetLineCap(int32_t iLineCap)
     {
         m_iLineCap = iLineCap;
     }
-    virtual FX_INT32			GetDashStyle() const
+    virtual int32_t			GetDashStyle() const
     {
         return m_iDashStyle;
     }
-    virtual void				SetDashStyle(FX_INT32 iDashStyle)
+    virtual void				SetDashStyle(int32_t iDashStyle)
     {
         m_iDashStyle = iDashStyle;
     }
@@ -81,11 +81,11 @@ public:
     {
         m_fDashPhase = fPhase;
     }
-    virtual FX_INT32			CountDashArray() const
+    virtual int32_t			CountDashArray() const
     {
         return m_DashArray.GetSize();
     }
-    virtual FX_INT32			GetDashArray(CFX_FloatArray &dashArray) const
+    virtual int32_t			GetDashArray(CFX_FloatArray &dashArray) const
     {
         dashArray.Copy(m_DashArray);
         return dashArray.GetSize();
@@ -94,11 +94,11 @@ public:
     {
         m_DashArray.Copy(dashArray);
     }
-    virtual FX_INT32			GetLineJoin() const
+    virtual int32_t			GetLineJoin() const
     {
         return m_iLineJoin;
     }
-    virtual void				SetLineJoin(FX_INT32 iLineJoin)
+    virtual void				SetLineJoin(int32_t iLineJoin)
     {
         m_iLineJoin = iLineJoin;
     }
@@ -110,7 +110,7 @@ public:
     {
         m_fMiterLimit = fMiterLimit;
     }
-    virtual FX_INT32			CountCompoundPatterns() const
+    virtual int32_t			CountCompoundPatterns() const
     {
         return m_CompoundPatterns.GetSize();
     }
@@ -124,9 +124,9 @@ public:
     }
 
     FX_ARGB						m_Color;
-    FX_INT32					m_iLineCap;
-    FX_INT32					m_iLineJoin;
-    FX_INT32					m_iDashStyle;
+    int32_t					m_iLineCap;
+    int32_t					m_iLineJoin;
+    int32_t					m_iDashStyle;
     FX_FLOAT					m_fDashPhase;
     FX_FLOAT					m_fMiterLimit;
     FX_BOOL						m_bAutoRelease;
@@ -146,7 +146,7 @@ public:
     {
         FDE_Delete this;
     }
-    virtual FX_INT32			GetType() const
+    virtual int32_t			GetType() const
     {
         return FDE_BRUSHTYPE_Solid;
     }
@@ -202,7 +202,7 @@ public:
     {
         FDE_Delete this;
     }
-    virtual FX_INT32			GetType() const
+    virtual int32_t			GetType() const
     {
         return FDE_BRUSHTYPE_Hatch;
     }
@@ -247,16 +247,16 @@ public:
         }
     }
 
-    virtual FX_INT32			GetHatchStyle() const
+    virtual int32_t			GetHatchStyle() const
     {
         return m_iStyle;
     };
-    virtual FX_BOOL				SetHatchStyle(FX_INT32 iHatchStyle)
+    virtual FX_BOOL				SetHatchStyle(int32_t iHatchStyle)
     {
         m_iStyle = iHatchStyle;
         return m_iStyle >= FDE_HATCHSTYLE_Min && m_iStyle <= FDE_HATCHSTYLE_Max;
     }
-    FX_INT32					m_iStyle;
+    int32_t					m_iStyle;
     FX_ARGB						m_BackColor;
     FX_ARGB						m_ForeColor;
     CFX_Matrix					m_Matrix;
@@ -276,7 +276,7 @@ public:
     {
         FDE_Delete this;
     }
-    virtual FX_INT32			GetType() const
+    virtual int32_t			GetType() const
     {
         return FDE_BRUSHTYPE_Texture;
     }
@@ -317,15 +317,15 @@ public:
         m_pImage = pImage;
         m_bAutoRelease = bAutoRelease;
     }
-    virtual FX_INT32			GetWrapMode() const
+    virtual int32_t			GetWrapMode() const
     {
         return m_iWrap;
     }
-    virtual void				SetWrapMode(FX_INT32 iWrapMode)
+    virtual void				SetWrapMode(int32_t iWrapMode)
     {
         m_iWrap = iWrapMode;
     }
-    FX_INT32					m_iWrap;
+    int32_t					m_iWrap;
     IFDE_Image					*m_pImage;
     FX_BOOL						m_bAutoRelease;
     CFX_Matrix					m_Matrix;
@@ -343,7 +343,7 @@ public:
     {
         FDE_Delete this;
     }
-    virtual FX_INT32			GetType() const
+    virtual int32_t			GetType() const
     {
         return FDE_BRUSHTYPE_LinearGradient;
     }
@@ -395,7 +395,7 @@ public:
         m_StartColor = startingColor;
         m_EndColor = endingColor;
     }
-    virtual FX_INT32			CountGradientColors() const
+    virtual int32_t			CountGradientColors() const
     {
         return m_GradColors.GetSize();
     }
@@ -408,11 +408,11 @@ public:
         return m_GradColors.Copy(colors), TRUE;
     }
 
-    virtual FX_INT32			GetWrapMode() const
+    virtual int32_t			GetWrapMode() const
     {
         return m_iWrapMode;
     }
-    virtual void				SetWrapMode(FX_INT32 iWrapMode)
+    virtual void				SetWrapMode(int32_t iWrapMode)
     {
         m_iWrapMode = iWrapMode;
     }
@@ -421,7 +421,7 @@ public:
     FX_ARGB						m_EndColor;
     FX_ARGB						m_StartColor;
     CFDE_GradientColors			m_GradColors;
-    FX_INT32					m_iWrapMode;
+    int32_t					m_iWrapMode;
     CFX_Matrix					m_Matrix;
 };
 #endif

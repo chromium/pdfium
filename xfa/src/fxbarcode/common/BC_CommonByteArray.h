@@ -9,21 +9,21 @@
 class CBC_CommonByteArray
 {
 private:
-    FX_INT32 m_size;
-    FX_INT32 m_index;
-    FX_BYTE* m_bytes;
+    int32_t m_size;
+    int32_t m_index;
+    uint8_t* m_bytes;
 public:
     CBC_CommonByteArray();
-    CBC_CommonByteArray(FX_INT32 size);
-    CBC_CommonByteArray(FX_BYTE* byteArray, FX_INT32 size);
+    CBC_CommonByteArray(int32_t size);
+    CBC_CommonByteArray(uint8_t* byteArray, int32_t size);
     virtual ~CBC_CommonByteArray();
-    FX_INT32 At(FX_INT32 index);
-    void Set(FX_INT32 index, FX_INT32 value);
-    FX_INT32 Size();
+    int32_t At(int32_t index);
+    void Set(int32_t index, int32_t value);
+    int32_t Size();
     FX_BOOL IsEmpty();
-    void AppendByte(FX_INT32 value);
-    void Reserve(FX_INT32 capacity);
-    void Set(FX_BYTE* source, FX_INT32 offset, FX_INT32 count);
-    void Set(CFX_ByteArray* source, FX_INT32 offset, FX_INT32 count);
+    void AppendByte(int32_t value);
+    void Reserve(int32_t capacity);
+    void Set(uint8_t* source, int32_t offset, int32_t count);
+    void Set(CFX_ByteArray* source, int32_t offset, int32_t count);
 };
 #endif

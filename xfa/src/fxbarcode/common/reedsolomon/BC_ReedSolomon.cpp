@@ -32,11 +32,11 @@ void CBC_ReedSolomonEncoder::Init()
 {
     m_cachedGenerators.Add(FX_NEW CBC_ReedSolomonGF256Poly(m_field, 1));
 }
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(FX_INT32 degree, FX_INT32 &e)
+CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(int32_t degree, int32_t &e)
 {
     if(degree >= m_cachedGenerators.GetSize()) {
         CBC_ReedSolomonGF256Poly* lastGenerator = (CBC_ReedSolomonGF256Poly*)(m_cachedGenerators[m_cachedGenerators.GetSize() - 1]);
-        for(FX_INT32 d = m_cachedGenerators.GetSize(); d <= degree; d++) {
+        for(int32_t d = m_cachedGenerators.GetSize(); d <= degree; d++) {
             CFX_Int32Array temp;
             temp.Add(1);
             temp.Add(m_field->Exp(d - 1));
@@ -51,13 +51,13 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(FX_INT32 degree
     }
     return (CBC_ReedSolomonGF256Poly*)(m_cachedGenerators[degree]);
 }
-void CBC_ReedSolomonEncoder::Encode(CFX_Int32Array *toEncode, FX_INT32 ecBytes, FX_INT32 &e)
+void CBC_ReedSolomonEncoder::Encode(CFX_Int32Array *toEncode, int32_t ecBytes, int32_t &e)
 {
     if(ecBytes == 0) {
         e = BCExceptionNoCorrectionBytes;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    FX_INT32 dataBytes = toEncode->GetSize() - ecBytes;
+    int32_t dataBytes = toEncode->GetSize() - ecBytes;
     if(dataBytes <= 0) {
         e = BCExceptionNoDataBytesProvided;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -66,7 +66,7 @@ void CBC_ReedSolomonEncoder::Encode(CFX_Int32Array *toEncode, FX_INT32 ecBytes, 
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     CFX_Int32Array infoCoefficients;
     infoCoefficients.SetSize(dataBytes);
-    for(FX_INT32 x = 0; x < dataBytes; x++) {
+    for(int32_t x = 0; x < dataBytes; x++) {
         infoCoefficients[x] = toEncode->operator [](x);
     }
     CBC_ReedSolomonGF256Poly info;
@@ -80,21 +80,21 @@ void CBC_ReedSolomonEncoder::Encode(CFX_Int32Array *toEncode, FX_INT32 ecBytes, 
     CBC_AutoPtr<CFX_PtrArray > temp(pa);
     CBC_ReedSolomonGF256Poly* remainder = (CBC_ReedSolomonGF256Poly*)(temp->operator [](1));
     CFX_Int32Array* coefficients = remainder->GetCoefficients();
-    FX_INT32 numZeroCoefficients = ecBytes - coefficients->GetSize();
-    for(FX_INT32 i = 0; i < numZeroCoefficients; i++) {
+    int32_t numZeroCoefficients = ecBytes - coefficients->GetSize();
+    for(int32_t i = 0; i < numZeroCoefficients; i++) {
         (*toEncode)[dataBytes + i] = 0;
     }
-    for(FX_INT32 y = 0; y < coefficients->GetSize(); y++) {
+    for(int32_t y = 0; y < coefficients->GetSize(); y++) {
         (*toEncode)[dataBytes + numZeroCoefficients + y] =
             coefficients->operator [](y);
     }
-    for (FX_INT32 k = 0; k < temp->GetSize(); k++) {
+    for (int32_t k = 0; k < temp->GetSize(); k++) {
         delete (CBC_ReedSolomonGF256Poly*)(*temp)[k];
     }
 }
 CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder()
 {
-    for (FX_INT32 i = 0; i < m_cachedGenerators.GetSize(); i++) {
+    for (int32_t i = 0; i < m_cachedGenerators.GetSize(); i++) {
         delete (CBC_ReedSolomonGF256Poly*)m_cachedGenerators[i];
     }
 }

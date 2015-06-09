@@ -114,9 +114,9 @@ class ICodec_BasicModule
 public:
 
     virtual ~ICodec_BasicModule() {}
-    virtual FX_BOOL	RunLengthEncode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
+    virtual FX_BOOL	RunLengthEncode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
                                     FX_DWORD& dest_size) = 0;
-    virtual FX_BOOL	A85Encode(const FX_BYTE* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
+    virtual FX_BOOL	A85Encode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
                               FX_DWORD& dest_size) = 0;
     virtual ICodec_ScanlineDecoder*	CreateRunLengthDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc) = 0;
@@ -154,10 +154,10 @@ public:
     virtual ~ICodec_FlateModule() {}
     virtual ICodec_ScanlineDecoder*	CreateDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc, int predictor, int Colors, int BitsPerComponent, int Columns) = 0;
-    virtual FX_DWORD	FlateOrLZWDecode(FX_BOOL bLZW, const FX_BYTE* src_buf, FX_DWORD src_size, FX_BOOL bEarlyChange,
+    virtual FX_DWORD	FlateOrLZWDecode(FX_BOOL bLZW, const uint8_t* src_buf, FX_DWORD src_size, FX_BOOL bEarlyChange,
                                          int predictor, int Colors, int BitsPerComponent, int Columns,
                                          FX_DWORD estimated_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size) = 0;
-    virtual FX_BOOL		Encode(const FX_BYTE* src_buf, FX_DWORD src_size,
+    virtual FX_BOOL		Encode(const uint8_t* src_buf, FX_DWORD src_size,
                                int predictor, int Colors, int BitsPerComponent, int Columns,
                                FX_LPBYTE& dest_buf, FX_DWORD& dest_size) = 0;
     virtual FX_BOOL		Encode(FX_LPCBYTE src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size) = 0;
@@ -258,23 +258,23 @@ public:
 
     virtual void		Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size) = 0;
 
-    virtual FX_INT32	ReadHeader(void* pContext, int* width, int* height,
+    virtual int32_t	ReadHeader(void* pContext, int* width, int* height,
                                    int* pal_num, void** pal_pp, int* bg_index, CFX_DIBAttribute* pAttribute = NULL) = 0;
 
-    virtual FX_INT32	LoadFrameInfo(void* pContext, int* frame_num) = 0;
+    virtual int32_t	LoadFrameInfo(void* pContext, int* frame_num) = 0;
 
     void				(*RecordCurrentPositionCallback)(void* pModule, FX_DWORD& cur_pos);
 
-    FX_LPBYTE			(*AskLocalPaletteBufCallback)(void* pModule, FX_INT32 frame_num, FX_INT32 pal_size);
+    FX_LPBYTE			(*AskLocalPaletteBufCallback)(void* pModule, int32_t frame_num, int32_t pal_size);
 
-    virtual FX_INT32	LoadFrame(void* pContext, int frame_num, CFX_DIBAttribute* pAttribute = NULL) = 0;
+    virtual int32_t	LoadFrame(void* pContext, int frame_num, CFX_DIBAttribute* pAttribute = NULL) = 0;
 
     FX_BOOL				(*InputRecordPositionBufCallback)(void* pModule, FX_DWORD rcd_pos, const FX_RECT& img_rc,
-            FX_INT32 pal_num, void* pal_ptr,
-            FX_INT32 delay_time, FX_BOOL user_input,
-            FX_INT32 trans_index, FX_INT32 disposal_method, FX_BOOL interlace);
+            int32_t pal_num, void* pal_ptr,
+            int32_t delay_time, FX_BOOL user_input,
+            int32_t trans_index, int32_t disposal_method, FX_BOOL interlace);
 
-    void				(*ReadScanlineCallback)(void* pModule, FX_INT32 row_num, FX_LPBYTE row_buf);
+    void				(*ReadScanlineCallback)(void* pModule, int32_t row_num, FX_LPBYTE row_buf);
 };
 class ICodec_BmpModule
 {
@@ -290,14 +290,14 @@ public:
 
     virtual void		Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size) = 0;
 
-    virtual FX_INT32	ReadHeader(void* pContext, FX_INT32* width, FX_INT32* height, FX_BOOL* tb_flag, FX_INT32* components,
+    virtual int32_t	ReadHeader(void* pContext, int32_t* width, int32_t* height, FX_BOOL* tb_flag, int32_t* components,
                                    int* pal_num, FX_DWORD** pal_pp, CFX_DIBAttribute* pAttribute = NULL) = 0;
 
-    virtual FX_INT32	LoadImage(void* pContext) = 0;
+    virtual int32_t	LoadImage(void* pContext) = 0;
 
     FX_BOOL				(*InputImagePositionBufCallback)(void* pModule, FX_DWORD rcd_pos);
 
-    void				(*ReadScanlineCallback)(void* pModule, FX_INT32 row_num, FX_LPBYTE row_buf);
+    void				(*ReadScanlineCallback)(void* pModule, int32_t row_num, FX_LPBYTE row_buf);
 };
 class ICodec_TiffModule
 {
@@ -308,9 +308,9 @@ public:
     virtual FX_LPVOID 	CreateDecoder(IFX_FileRead* file_ptr) = 0;
 
 
-    virtual void		GetFrames(FX_LPVOID ctx, FX_INT32& frames) = 0;
+    virtual void		GetFrames(FX_LPVOID ctx, int32_t& frames) = 0;
 
-    virtual FX_BOOL		LoadFrameInfo(FX_LPVOID ctx, FX_INT32 frame, FX_DWORD& width, FX_DWORD& height, FX_DWORD& comps, FX_DWORD& bpc, CFX_DIBAttribute* pAttribute = NULL) = 0;
+    virtual FX_BOOL		LoadFrameInfo(FX_LPVOID ctx, int32_t frame, FX_DWORD& width, FX_DWORD& height, FX_DWORD& comps, FX_DWORD& bpc, CFX_DIBAttribute* pAttribute = NULL) = 0;
 
 
     virtual FX_BOOL		Decode(FX_LPVOID ctx, class CFX_DIBitmap* pDIBitmap) = 0;
@@ -348,21 +348,21 @@ public:
 
     virtual FXCODEC_IMAGE_TYPE	GetType() = 0;
 
-    virtual FX_INT32			GetWidth() = 0;
+    virtual int32_t			GetWidth() = 0;
 
-    virtual FX_INT32			GetHeight() = 0;
+    virtual int32_t			GetHeight() = 0;
 
-    virtual FX_INT32			GetNumComponents() = 0;
+    virtual int32_t			GetNumComponents() = 0;
 
-    virtual FX_INT32			GetBPC() = 0;
+    virtual int32_t			GetBPC() = 0;
 
     virtual void				SetClipBox(FX_RECT* clip) = 0;
 
-    virtual FXCODEC_STATUS		GetFrames(FX_INT32& frames, IFX_Pause* pPause = NULL) = 0;
+    virtual FXCODEC_STATUS		GetFrames(int32_t& frames, IFX_Pause* pPause = NULL) = 0;
 
     virtual FXCODEC_STATUS		StartDecode(class CFX_DIBitmap* pDIBitmap,
-                                            FX_INT32 start_x, FX_INT32 start_y, FX_INT32 size_x, FX_INT32 size_y,
-                                            FX_INT32 frames = 0, FX_BOOL bInterpol = TRUE) = 0;
+                                            int32_t start_x, int32_t start_y, int32_t size_x, int32_t size_y,
+                                            int32_t frames = 0, FX_BOOL bInterpol = TRUE) = 0;
 
     virtual FXCODEC_STATUS		ContinueDecode(IFX_Pause* pPause = NULL) = 0;
 };
@@ -415,11 +415,11 @@ public:
                                      ) = 0;
 
 
-    virtual FX_LPVOID	CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, FX_INT32& nComponents, FX_INT32 intent = 0,
+    virtual FX_LPVOID	CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, int32_t& nComponents, int32_t intent = 0,
             FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT) = 0;
 
-    virtual FX_LPVOID	CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, FX_INT32& nSrcComponents,
-            FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, FX_INT32 intent = 0,
+    virtual FX_LPVOID	CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, int32_t& nSrcComponents,
+            FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, int32_t intent = 0,
             FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT,
             FX_DWORD dwDstFormat = Icc_FORMAT_DEFAULT
                                           ) = 0;
@@ -431,18 +431,19 @@ public:
     virtual void			TranslateScanline(FX_LPVOID pTransform, FX_LPBYTE pDest, FX_LPCBYTE pSrc, int pixels) = 0;
     virtual void                        SetComponents(FX_DWORD nComponents) = 0;
 };
+
 void AdobeCMYK_to_sRGB(FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B);
-void AdobeCMYK_to_sRGB1(FX_BYTE c, FX_BYTE m, FX_BYTE y, FX_BYTE k, FX_BYTE& R, FX_BYTE& G, FX_BYTE& B);
-FX_BOOL MD5ComputeID(FX_LPCVOID buf, FX_DWORD dwSize, FX_BYTE ID[16]);
+void AdobeCMYK_to_sRGB1(uint8_t c, uint8_t m, uint8_t y, uint8_t k, uint8_t& R, uint8_t& G, uint8_t& B);
+FX_BOOL MD5ComputeID(FX_LPCVOID buf, FX_DWORD dwSize, uint8_t ID[16]);
 class CFX_DIBAttribute
 {
 public:
     CFX_DIBAttribute();
     ~CFX_DIBAttribute();
 
-    FX_INT32		m_nXDPI;
+    int32_t		m_nXDPI;
 
-    FX_INT32		m_nYDPI;
+    int32_t		m_nYDPI;
 
     FX_FLOAT		m_fAspectRatio;
 
@@ -450,16 +451,16 @@ public:
 
     CFX_ByteString	m_strAuthor;
 
-    FX_BYTE			m_strTime[20];
+    uint8_t			m_strTime[20];
 
-    FX_INT32		m_nGifLeft;
-    FX_INT32		m_nGifTop;
+    int32_t		m_nGifLeft;
+    int32_t		m_nGifTop;
 
     FX_DWORD*		m_pGifLocalPalette;
 
     FX_DWORD		m_nGifLocalPalNum;
 
-    FX_INT32		m_nBmpCompressType;
+    int32_t		m_nBmpCompressType;
     class IFX_DIBAttributeExif* m_pExif;
 };
 class IFX_DIBAttributeExif

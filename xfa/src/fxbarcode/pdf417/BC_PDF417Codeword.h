@@ -9,25 +9,25 @@
 class CBC_Codeword
 {
 public:
-    CBC_Codeword(FX_INT32 startX, FX_INT32 endX, FX_INT32 bucket, FX_INT32 value);
+    CBC_Codeword(int32_t startX, int32_t endX, int32_t bucket, int32_t value);
     virtual ~CBC_Codeword();
     FX_BOOL hasValidRowNumber() ;
-    FX_BOOL isValidRowNumber(FX_INT32 rowNumber);
+    FX_BOOL isValidRowNumber(int32_t rowNumber);
     void setRowNumberAsRowIndicatorColumn();
-    FX_INT32 getWidth();
-    FX_INT32 getStartX();
-    FX_INT32 getEndX();
-    FX_INT32 getBucket();
-    FX_INT32 getValue();
-    FX_INT32 getRowNumber();
-    void setRowNumber(FX_INT32 rowNumber);
+    int32_t getWidth();
+    int32_t getStartX();
+    int32_t getEndX();
+    int32_t getBucket();
+    int32_t getValue();
+    int32_t getRowNumber();
+    void setRowNumber(int32_t rowNumber);
     CFX_ByteString toString();
 private:
-    static FX_INT32 BARCODE_ROW_UNKNOWN;
-    FX_INT32 m_startX;
-    FX_INT32 m_endX;
-    FX_INT32 m_bucket;
-    FX_INT32 m_value;
-    FX_INT32 m_rowNumber;
+    static int32_t BARCODE_ROW_UNKNOWN;
+    int32_t m_startX;
+    int32_t m_endX;
+    int32_t m_bucket;
+    int32_t m_value;
+    int32_t m_rowNumber;
 };
 #endif

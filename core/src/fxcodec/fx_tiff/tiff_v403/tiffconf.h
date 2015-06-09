@@ -44,7 +44,7 @@
 /*#define HAVE_SEARCH_H 1 */
 
 /* The size of a `int', as computed by sizeof. */
-/* According typedef int	FX_INT32; in the fx_system.h*/
+/* According typedef int	int32_t; in the fx_system.h*/
 #define SIZEOF_INT 4
 
 /* Sunliang.Liu 20110325. We should config the correct long size for tif 

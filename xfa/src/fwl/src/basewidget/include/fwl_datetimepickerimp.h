@@ -48,9 +48,9 @@ class CFWL_DateTimeEditDelegate : public CFWL_EditImpDelegate
 {
 public:
     CFWL_DateTimeEditDelegate(CFWL_DateTimeEdit *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
 private:
-    FX_INT32	DisForm_OnProcessMessage(CFWL_Message *pMessage);
+    int32_t	DisForm_OnProcessMessage(CFWL_Message *pMessage);
 
 protected:
     CFWL_DateTimeEdit	*m_pOwner;
@@ -68,12 +68,12 @@ class CFWL_DateTimeCalendarDelegate : public CFWL_MonthCalendarImpDelegate
 {
 public:
     CFWL_DateTimeCalendarDelegate(CFWL_DateTimeCalendar *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     void OnLButtonDownEx(CFWL_MsgMouse *pMsg);
     void OnLButtonUpEx(CFWL_MsgMouse *pMsg);
     void OnMouseMoveEx(CFWL_MsgMouse *pMsg);
 private:
-    FX_INT32	DisForm_OnProcessMessage(CFWL_Message *pMessage);
+    int32_t	DisForm_OnProcessMessage(CFWL_Message *pMessage);
     void		DisForm_OnLButtonUpEx(CFWL_MsgMouse *pMsg);
 protected:
     CFWL_DateTimeCalendar	*m_pOwner;
@@ -94,10 +94,10 @@ public:
     virtual FX_DWORD	HitTest(FX_FLOAT fx, FX_FLOAT fy);
     virtual FWL_ERR		DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
     virtual FWL_ERR		SetThemeProvider(IFWL_ThemeProvider *pTP);
-    virtual FWL_ERR		GetCurSel(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay);
-    virtual FWL_ERR		SetCurSel(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    virtual FWL_ERR		GetCurSel(int32_t &iYear, int32_t &iMonth, int32_t &iDay);
+    virtual FWL_ERR		SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
     virtual FWL_ERR		SetEditText(const CFX_WideString &wsText);
-    virtual FWL_ERR		GetEditText(CFX_WideString &wsText, FX_INT32 nStart = 0, FX_INT32 nCount = -1) const;
+    virtual FWL_ERR		GetEditText(CFX_WideString &wsText, int32_t nStart = 0, int32_t nCount = -1) const;
 public:
     virtual FX_BOOL		CanUndo();
     virtual FX_BOOL		CanRedo();
@@ -113,18 +113,18 @@ public:
     virtual FX_BOOL		Delete();
     virtual FX_BOOL		DeSelect();
     virtual FWL_ERR		GetBBox(CFX_RectF &rect);
-    virtual FWL_ERR		SetEditLimit(FX_INT32 nLimit);
+    virtual FWL_ERR		SetEditLimit(int32_t nLimit);
     virtual FWL_ERR		ModifyEditStylesEx(FX_DWORD dwStylesExAdded, FX_DWORD dwStylesExRemoved);
 public:
     IFWL_DateTimeEdit*	GetDataTimeEdit();
 protected:
     void	DrawDropDownButton(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix);
-    void	FormatDateString(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay, CFX_WideString &wsText);
+    void	FormatDateString(int32_t iYear, int32_t iMonth, int32_t iDay, CFX_WideString &wsText);
     void	ShowMonthCalendar(FX_BOOL bActivate);
     FX_BOOL	IsMonthCalendarShowed();
     void	ReSetEditAlignment();
     void	InitProxyForm();
-    void	ProcessSelChanged(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    void	ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
 private:
     FWL_ERR		DisForm_Initialize();
     void		DisForm_InitDateTimeCalendar();
@@ -141,10 +141,10 @@ protected:
 
     CFX_RectF				m_rtBtn;
     CFX_RectF				m_rtClient;
-    FX_INT32				m_iBtnState;
-    FX_INT32				m_iYear;
-    FX_INT32				m_iMonth;
-    FX_INT32				m_iDay;
+    int32_t				m_iBtnState;
+    int32_t				m_iYear;
+    int32_t				m_iMonth;
+    int32_t				m_iDay;
     FX_BOOL					m_bLBtnDown;
     IFWL_DateTimeEdit     	*m_pEdit;
     IFWL_DateTimeCalender	*m_pMonthCal;
@@ -163,21 +163,21 @@ protected:
         {
             return FWL_ERR_Succeeded;
         }
-        virtual FX_INT32    	GetCurDay(IFWL_Widget *pWidget)
+        virtual int32_t    	GetCurDay(IFWL_Widget *pWidget)
         {
             return m_iCurDay;
         }
-        virtual FX_INT32		GetCurMonth(IFWL_Widget *pWidget)
+        virtual int32_t		GetCurMonth(IFWL_Widget *pWidget)
         {
             return m_iCurMonth;
         }
-        virtual FX_INT32		GetCurYear(IFWL_Widget *pWidget)
+        virtual int32_t		GetCurYear(IFWL_Widget *pWidget)
         {
             return m_iCurYear;
         }
-        FX_INT32	m_iCurDay;
-        FX_INT32	m_iCurYear;
-        FX_INT32	m_iCurMonth;
+        int32_t	m_iCurDay;
+        int32_t	m_iCurYear;
+        int32_t	m_iCurMonth;
     };
 
     CFWL_MonthCalendarImpDP m_MonthCalendarDP;
@@ -190,7 +190,7 @@ class CFWL_DateTimePickerImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_DateTimePickerImpDelegate(CFWL_DateTimePickerImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:
     void	OnFocusChanged(CFWL_Message *pMsg, FX_BOOL bSet = TRUE);

@@ -37,7 +37,7 @@ public:
     virtual FX_BOOL IsIdleMessage() = 0;
     virtual FWL_ERR DispatchMessage() = 0;
     virtual FWL_ERR RepaintWidget(IFWL_Widget *pWidget, const CFX_RectF *pRect) = 0;
-    virtual	FWL_ERR Exit(FX_INT32 iExitCode) = 0;
+    virtual	FWL_ERR Exit(int32_t iExitCode) = 0;
     virtual FWL_ERR CreateWidgetWithNativeId(IFWL_Widget *pWidget, FX_LPVOID UserData) = 0;
     virtual FWL_ERR GetWidgetDC(IFWL_Widget *pWidget, FX_LPVOID &pDC) = 0;
     virtual FWL_ERR ReleaseWidgetDC(IFWL_Widget *pWidget, FX_LPVOID pDC, CFX_RectF *pClip = 0) = 0;
@@ -46,8 +46,8 @@ public:
     virtual FWL_ERR  RunLoop(IFWL_Widget *widget) = 0;
     virtual FWL_ERR  EndLoop() = 0;
     virtual FWL_ERR  InitMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData) = 0;
-    virtual FWL_ERR  UpdateMenu(IFWL_Menu *pMenu, FX_LPCVOID hItem, FX_INT32 iType) = 0;
-    virtual FX_INT32 TrackPopupMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData) = 0;
+    virtual FWL_ERR  UpdateMenu(IFWL_Menu *pMenu, FX_LPCVOID hItem, int32_t iType) = 0;
+    virtual int32_t TrackPopupMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData) = 0;
     virtual	FWL_ERR  SetMessageHook(IFWL_AdapterMessageHook *hook) = 0;
     virtual FWL_ERR  GetSystemBorder(FX_FLOAT &l, FX_FLOAT &t, FX_FLOAT &r, FX_FLOAT &b) = 0;
     virtual FX_BOOL	 GetPopupPos(IFWL_Widget* pWidget, FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight, const CFX_RectF &rtAnchor, CFX_RectF &rtPopup) = 0;

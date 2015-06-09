@@ -32,25 +32,25 @@ CBC_OnedEAN8Reader::CBC_OnedEAN8Reader()
 CBC_OnedEAN8Reader::~CBC_OnedEAN8Reader()
 {
 }
-FX_INT32 CBC_OnedEAN8Reader::DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultResult, FX_INT32 &e)
+int32_t CBC_OnedEAN8Reader::DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultResult, int32_t &e)
 {
     CFX_Int32Array counters;
     counters.Add(0);
     counters.Add(0);
     counters.Add(0);
     counters.Add(0);
-    FX_INT32 end = row->GetSize();
-    FX_INT32 rowOffset = (*startRange)[1];
-    FX_INT32 rowOffsetLeft = rowOffset;
-    for (FX_INT32 x = 0; x < 4 && rowOffset < end; x++) {
-        FX_INT32 bestMatch = DecodeDigit(row, &counters, rowOffset, &(CBC_OneDimReader::L_PATTERNS[0][0]), 10, e);
+    int32_t end = row->GetSize();
+    int32_t rowOffset = (*startRange)[1];
+    int32_t rowOffsetLeft = rowOffset;
+    for (int32_t x = 0; x < 4 && rowOffset < end; x++) {
+        int32_t bestMatch = DecodeDigit(row, &counters, rowOffset, &(CBC_OneDimReader::L_PATTERNS[0][0]), 10, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, 0);
         resultResult += (FX_CHAR) ('0' + bestMatch);
-        for (FX_INT32 i = 0; i < counters.GetSize(); i++) {
+        for (int32_t i = 0; i < counters.GetSize(); i++) {
             rowOffset += counters[i];
         }
     }
-    FX_INT32 RowOffsetLen = (rowOffset - rowOffsetLeft) / 4;
+    int32_t RowOffsetLen = (rowOffset - rowOffsetLeft) / 4;
     CFX_Int32Array result;
     result.Add(CBC_OneDimReader::MIDDLE_PATTERN[0]);
     result.Add(CBC_OneDimReader::MIDDLE_PATTERN[1]);
@@ -59,7 +59,7 @@ FX_INT32 CBC_OnedEAN8Reader::DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Arra
     result.Add(CBC_OneDimReader::MIDDLE_PATTERN[4]);
     CFX_Int32Array *middleRange = FindGuardPattern(row, rowOffset, TRUE, &result, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, 0);
-    FX_INT32 rowOffsetMid = rowOffset;
+    int32_t rowOffsetMid = rowOffset;
     rowOffset = (*middleRange)[1];
     if((rowOffset - rowOffsetMid) > RowOffsetLen) {
         e = BCExceptionNotFound;
@@ -69,11 +69,11 @@ FX_INT32 CBC_OnedEAN8Reader::DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Arra
         delete middleRange;
         middleRange = NULL;
     }
-    for (FX_INT32 y = 0; y < 4 && rowOffset < end; y++) {
-        FX_INT32 bestMatch = DecodeDigit(row, & counters, rowOffset, &(CBC_OneDimReader::L_PATTERNS[0][0]), 10, e);
+    for (int32_t y = 0; y < 4 && rowOffset < end; y++) {
+        int32_t bestMatch = DecodeDigit(row, & counters, rowOffset, &(CBC_OneDimReader::L_PATTERNS[0][0]), 10, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, 0);
         resultResult += (FX_CHAR) ('0' + bestMatch);
-        for (FX_INT32 i = 0; i < counters.GetSize(); i++) {
+        for (int32_t i = 0; i < counters.GetSize(); i++) {
             rowOffset += counters[i];
         }
     }

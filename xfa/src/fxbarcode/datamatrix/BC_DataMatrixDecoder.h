@@ -14,10 +14,10 @@ class CBC_DataMatrixDecoder
 public:
     CBC_DataMatrixDecoder();
     virtual ~CBC_DataMatrixDecoder();
-    CBC_CommonDecoderResult *Decode(CBC_CommonBitMatrix *bits, FX_INT32 &e);
+    CBC_CommonDecoderResult *Decode(CBC_CommonBitMatrix *bits, int32_t &e);
     virtual void Init();
 private:
-    void CorrectErrors(CFX_ByteArray &codewordBytes, FX_INT32 numDataCodewords, FX_INT32 &e);
+    void CorrectErrors(CFX_ByteArray &codewordBytes, int32_t numDataCodewords, int32_t &e);
     CBC_ReedSolomonDecoder *m_rsDecoder;
 };
 #endif

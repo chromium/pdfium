@@ -53,7 +53,7 @@ FX_BOOL CXFA_FFField::GetBBox(CFX_RectF &rtBox, FX_DWORD dwStatus, FX_BOOL bDraw
     mt.TransformRect(rtBox);
     return TRUE;
 }
-void CXFA_FFField::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFField::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;
@@ -276,7 +276,7 @@ void CXFA_FFField::CapPlacement()
     }
     m_rtUI.Normalize();
 }
-void CXFA_FFField::CapTopBottomPlacement(CXFA_Caption caption, const CFX_RectF &rtWidget, FX_INT32 iCapPlacement)
+void CXFA_FFField::CapTopBottomPlacement(CXFA_Caption caption, const CFX_RectF &rtWidget, int32_t iCapPlacement)
 {
     CFX_RectF rtUIMargin;
     m_pDataAcc->GetUIMargin(rtUIMargin);
@@ -302,7 +302,7 @@ void CXFA_FFField::CapTopBottomPlacement(CXFA_Caption caption, const CFX_RectF &
         }
     }
 }
-void CXFA_FFField::CapLeftRightPlacement(CXFA_Caption caption, const CFX_RectF &rtWidget, FX_INT32 iCapPlacement)
+void CXFA_FFField::CapLeftRightPlacement(CXFA_Caption caption, const CFX_RectF &rtWidget, int32_t iCapPlacement)
 {
     CFX_RectF rtUIMargin;
     m_pDataAcc->GetUIMargin(rtUIMargin);
@@ -466,7 +466,7 @@ FX_BOOL	CXFA_FFField::OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
     TranslateFWLMessage(&ms);
     return TRUE;
 }
-FX_BOOL	CXFA_FFField::OnMouseWheel(FX_DWORD dwFlags, FX_SHORT zDelta, FX_FLOAT fx, FX_FLOAT fy)
+FX_BOOL	CXFA_FFField::OnMouseWheel(FX_DWORD dwFlags, int16_t zDelta, FX_FLOAT fx, FX_FLOAT fy)
 {
     return FALSE;
     if (!m_pNormalWidget) {
@@ -714,13 +714,13 @@ FX_BOOL CXFA_FFField::ProcessCommittedData()
     m_pDocView->AddValidateWidget(m_pDataAcc);
     return TRUE;
 }
-FX_INT32 CXFA_FFField::CalculateOverride()
+int32_t CXFA_FFField::CalculateOverride()
 {
     CXFA_WidgetAcc* pAcc = m_pDataAcc->GetExclGroup();
     if (!pAcc) {
         return CalculateWidgetAcc(m_pDataAcc);
     }
-    FX_INT32 iOverride = 0;
+    int32_t iOverride = 0;
     if (CalculateWidgetAcc(pAcc) == 0) {
         return 0;
     }
@@ -741,7 +741,7 @@ FX_INT32 CXFA_FFField::CalculateOverride()
     }
     return 1;
 }
-FX_INT32 CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc)
+int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc)
 {
     CXFA_Calculate calc = pAcc->GetCalculate();
     if (!calc) {
@@ -749,7 +749,7 @@ FX_INT32 CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc)
     }
     XFA_VERSION version = pAcc->GetDoc()->GetXFADoc()->GetCurVersionMode();
     if (calc) {
-        FX_INT32 iOverride = calc.GetOverride();
+        int32_t iOverride = calc.GetOverride();
         switch (iOverride) {
             case XFA_ATTRIBUTEENUM_Error: {
                     if (version <= XFA_VERSION_204) {
@@ -823,7 +823,7 @@ void CXFA_FFField::TranslateFWLMessage(CFWL_Message* pMessage)
 {
     GetApp()->GetWidgetMgrDelegate()->OnProcessMessageToForm(pMessage);
 }
-FX_INT32 CXFA_FFField::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CXFA_FFField::OnProcessMessage(CFWL_Message *pMessage)
 {
     return FWL_ERR_Succeeded;
 }

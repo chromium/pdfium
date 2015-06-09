@@ -18,21 +18,21 @@ class IFDE_Image;
 class IFDE_Image
 {
 public:
-    static IFDE_Image*		Create(IFX_Stream *pStream, FX_INT32 iFormat = FDE_IMAGEFORMAT_Unknown);
+    static IFDE_Image*		Create(IFX_Stream *pStream, int32_t iFormat = FDE_IMAGEFORMAT_Unknown);
     virtual void			Release() = 0;
     virtual FX_BOOL			LoadImage() = 0;
     virtual void			FreeImage() = 0;
-    virtual FX_INT32		CountFrames() const = 0;
-    virtual FX_BOOL			LoadFrame(FX_INT32 index) = 0;
+    virtual int32_t		CountFrames() const = 0;
+    virtual FX_BOOL			LoadFrame(int32_t index) = 0;
     virtual CFX_DIBitmap*	GetFrameImage() = 0;
-    virtual FX_INT32		GetImageFormat() const = 0;
-    virtual FX_INT32		GetImageWidth() const = 0;
-    virtual FX_INT32		GetImageHeight() const = 0;
-    virtual FX_INT32		GetDelayTime(FX_INT32 iFrameIndex) const = 0;
-    virtual FX_INT32		GetLoopCount() const = 0;
-    virtual FX_BOOL			StartLoadImage(CFX_DIBitmap *pDIBitmap, FX_INT32 dibX, FX_INT32 dibY, FX_INT32 dibCX, FX_INT32 dibCY,
-                                           FX_INT32 imgX, FX_INT32 imgY, FX_INT32 imgCX, FX_INT32 imgCY, FX_INT32 iFrameIndex = 0) = 0;
-    virtual FX_INT32		DoLoadImage(IFX_Pause *pPause = NULL) = 0;
+    virtual int32_t		GetImageFormat() const = 0;
+    virtual int32_t		GetImageWidth() const = 0;
+    virtual int32_t		GetImageHeight() const = 0;
+    virtual int32_t		GetDelayTime(int32_t iFrameIndex) const = 0;
+    virtual int32_t		GetLoopCount() const = 0;
+    virtual FX_BOOL			StartLoadImage(CFX_DIBitmap *pDIBitmap, int32_t dibX, int32_t dibY, int32_t dibCX, int32_t dibCY,
+                                           int32_t imgX, int32_t imgY, int32_t imgCX, int32_t imgCY, int32_t iFrameIndex = 0) = 0;
+    virtual int32_t		DoLoadImage(IFX_Pause *pPause = NULL) = 0;
     virtual void			StopLoadImage() = 0;
 };
 #define FDE_IMAGEFILTER_Unknown				-1
@@ -45,11 +45,11 @@ public:
 #define FDE_IMAGEFILTER_Brightness			6
 #define FDE_IMAGEFILTER_Contrast			7
 typedef struct _FDE_IMAGEFILTERPARAMS : public CFX_Target {
-    FX_INT32	iFilterType;
+    int32_t	iFilterType;
 } FDE_IMAGEFILTERPARAMS, * FDE_LPIMAGEFILTERPARAMS;
 typedef FDE_IMAGEFILTERPARAMS const * FDE_LPCIMAGEFILTERPARAMS;
 typedef struct _FDE_OPACITYPARAMS : public FDE_IMAGEFILTERPARAMS {
-    FX_INT32	iOpacity;
+    int32_t	iOpacity;
 } FDE_OPACITYPARAMS, * FDE_LPOPACITYPARAMS;
 typedef FDE_OPACITYPARAMS const * FDE_LPCOPACITYPARAMS;
 typedef struct _FDE_BLACKWHITEPARAMS : public FDE_IMAGEFILTERPARAMS {
@@ -66,11 +66,11 @@ typedef struct _FDE_MASKCOLORPARAMS : public FDE_IMAGEFILTERPARAMS {
 } FDE_MASKCOLORPARAMS, * FDE_LPMASKCOLORPARAMS;
 typedef FDE_MASKCOLORPARAMS const * FDE_LPCMASKCOLORPARAMS;
 typedef struct _FDE_BRIGHTNESSPARAMS : public FDE_IMAGEFILTERPARAMS {
-    FX_INT32	iBrightness;
+    int32_t	iBrightness;
 } FDE_BRIGHTNESSPARAMS, * FDE_LPBRIGHTNESSPARAMS;
 typedef FDE_BRIGHTNESSPARAMS const * FDE_LPCBRIGHTNESSPARAMS;
 typedef struct _FDE_CONTRASTPARAMS : public FDE_IMAGEFILTERPARAMS {
-    FX_INT32	iContrast;
+    int32_t	iContrast;
 } FDE_CONTRASTPARAMS, * FDE_LPCONTRASTPARAMS;
 typedef FDE_CONTRASTPARAMS const * FDE_LPCCONTRASTPARAMS;
 #endif

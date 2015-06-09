@@ -26,7 +26,7 @@ CXFA_FFPushButton::~CXFA_FFPushButton()
 {
     CXFA_FFPushButton::UnloadWidget();
 }
-void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;
@@ -208,7 +208,7 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFX_Graphics* pGS, CFX_Matrix* pM
         }
     }
 }
-FX_INT32 CXFA_FFPushButton::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CXFA_FFPushButton::OnProcessMessage(CFWL_Message *pMessage)
 {
     return m_pOldDelegate->OnProcessMessage(pMessage);
 }

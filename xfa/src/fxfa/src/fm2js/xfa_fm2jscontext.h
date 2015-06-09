@@ -33,22 +33,22 @@ public:
     static void Time2Num		(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
     static void TimeFmt			(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
 
-    static FX_BOOL	IsIsoDateFormat			(FX_LPCSTR pData, FX_INT32 iLength, FX_INT32 &iStyle, FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay);
-    static FX_BOOL	IsIsoTimeFormat			(FX_LPCSTR pData, FX_INT32 iLength, FX_INT32 &iHour, FX_INT32 &iMinute, FX_INT32 &iSecond, FX_INT32 &iMilliSecond, FX_INT32 &iZoneHour, FX_INT32 &iZoneMinute);
-    static FX_BOOL	IsIsoDateTimeFormat		(FX_LPCSTR pData, FX_INT32 iLength, FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay, FX_INT32 &iHour, FX_INT32 &iMinute, FX_INT32 &iSecond, FX_INT32 &iMillionSecond, FX_INT32 &iZoneHour, FX_INT32 &iZoneMinute);
+    static FX_BOOL	IsIsoDateFormat			(FX_LPCSTR pData, int32_t iLength, int32_t &iStyle, int32_t &iYear, int32_t &iMonth, int32_t &iDay);
+    static FX_BOOL	IsIsoTimeFormat			(FX_LPCSTR pData, int32_t iLength, int32_t &iHour, int32_t &iMinute, int32_t &iSecond, int32_t &iMilliSecond, int32_t &iZoneHour, int32_t &iZoneMinute);
+    static FX_BOOL	IsIsoDateTimeFormat		(FX_LPCSTR pData, int32_t iLength, int32_t &iYear, int32_t &iMonth, int32_t &iDay, int32_t &iHour, int32_t &iMinute, int32_t &iSecond, int32_t &iMillionSecond, int32_t &iZoneHour, int32_t &iZoneMinute);
     static FX_BOOL	Local2IsoDate			(FXJSE_HOBJECT hThis, FX_BSTR szDate, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strIsoDate);
     static FX_BOOL	Local2IsoTime			(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strIsoTime);
     static FX_BOOL	IsoDate2Local			(FXJSE_HOBJECT hThis, FX_BSTR szDate, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strLocalDate);
     static FX_BOOL	IsoTime2Local			(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strLocalTime);
     static FX_BOOL	GetGMTTime				(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strGMTTime);
-    static FX_INT32 DateString2Num			(FX_BSTR szDateString);
-    static void		GetLocalDateFormat		(FXJSE_HOBJECT hThis, FX_INT32 iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat, FX_BOOL bStandard);
-    static void		GetLocalTimeFormat		(FXJSE_HOBJECT hThis, FX_INT32 iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat, FX_BOOL bStandard);
-    static void		GetStandardDateFormat	(FXJSE_HOBJECT hThis, FX_INT32 iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat);
-    static void		GetStandardTimeFormat	(FXJSE_HOBJECT hThis, FX_INT32 iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat);
+    static int32_t DateString2Num			(FX_BSTR szDateString);
+    static void		GetLocalDateFormat		(FXJSE_HOBJECT hThis, int32_t iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat, FX_BOOL bStandard);
+    static void		GetLocalTimeFormat		(FXJSE_HOBJECT hThis, int32_t iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat, FX_BOOL bStandard);
+    static void		GetStandardDateFormat	(FXJSE_HOBJECT hThis, int32_t iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat);
+    static void		GetStandardTimeFormat	(FXJSE_HOBJECT hThis, int32_t iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat);
 
-    static void		Num2AllTime				(FXJSE_HOBJECT hThis, FX_INT32 iTime, FX_BSTR szFormat, FX_BSTR szLocale, FX_BOOL bGM, CFX_ByteString &strTime);
-    static void		GetLocalTimeZone		(FX_INT32 &iHour, FX_INT32 &iMin, FX_INT32 &iSec);
+    static void		Num2AllTime				(FXJSE_HOBJECT hThis, int32_t iTime, FX_BSTR szFormat, FX_BSTR szLocale, FX_BOOL bGM, CFX_ByteString &strTime);
+    static void		GetLocalTimeZone		(int32_t &iHour, int32_t &iMin, int32_t &iSec);
 
     static void Apr		(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
     static void CTerm	(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
@@ -81,8 +81,8 @@ public:
     static void EncodeURL	(FX_BSTR szURLString,  CFX_ByteTextBuf &szResultBuf);
     static void EncodeHTML	(FX_BSTR szHTMLString, CFX_ByteTextBuf &szResultBuf);
     static void EncodeXML	(FX_BSTR szXMLString,  CFX_ByteTextBuf &szResultBuf);
-    static FX_BOOL HTMLSTR2Code	(FX_WSTR pData, FX_UINT32 &iCode);
-    static FX_BOOL HTMLCode2STR	(FX_UINT32 iCode,	  CFX_WideString &wsHTMLReserve);
+    static FX_BOOL HTMLSTR2Code	(FX_WSTR pData, uint32_t &iCode);
+    static FX_BOOL HTMLCode2STR	(uint32_t iCode,	  CFX_WideString &wsHTMLReserve);
     static void Format		(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
     static void Left		(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
     static void Len			(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
@@ -100,7 +100,7 @@ public:
     static void Upper		(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
     static void WordNum		(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
     static void TrillionUS	(FX_BSTR szData, CFX_ByteTextBuf &strBuf);
-    static void WordUS		(FX_BSTR szData, FX_INT32 iStyle, CFX_ByteTextBuf &strBuf);
+    static void WordUS		(FX_BSTR szData, int32_t iStyle, CFX_ByteTextBuf &strBuf);
 
     static void Get			(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
     static void Post		(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
@@ -132,19 +132,19 @@ public:
     static void		fm_var_filter	(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
     static void		concat_fm_object(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
 
-    static FX_INT32 hvalue_get_array_length	(FXJSE_HOBJECT hThis, FXJSE_HVALUE arg);
+    static int32_t hvalue_get_array_length	(FXJSE_HOBJECT hThis, FXJSE_HVALUE arg);
     static FX_BOOL		simpleValueCompare	(FXJSE_HOBJECT hThis, FXJSE_HVALUE firstValue, FXJSE_HVALUE secondValue);
-    static void			unfoldArgs			(FXJSE_HOBJECT hThis, CFXJSE_Arguments &args, FXJSE_HVALUE *&resultValues, FX_INT32 &iCount, FX_INT32 iStart = 0);
+    static void			unfoldArgs			(FXJSE_HOBJECT hThis, CFXJSE_Arguments &args, FXJSE_HVALUE *&resultValues, int32_t &iCount, int32_t iStart = 0);
     static void			GetObjectDefaultValue(FXJSE_HVALUE hObjectValue, FXJSE_HVALUE hDefaultValue);
     static FX_BOOL		SetObjectDefaultValue(FXJSE_HVALUE hObjectValue, FXJSE_HVALUE hNewValue);
-    static void			GenerateSomExpression(FX_BSTR szName, FX_INT32 iIndexFlags, FX_INT32 iIndexValue, FX_BOOL bIsStar, CFX_ByteString& szSomExp);
+    static void			GenerateSomExpression(FX_BSTR szName, int32_t iIndexFlags, int32_t iIndexValue, FX_BOOL bIsStar, CFX_ByteString& szSomExp);
     static FX_BOOL		GetObjectByName(FXJSE_HOBJECT hThis, FXJSE_HVALUE accessorValue, FX_BSTR szAccessorName);
-    static FX_INT32		ResolveObjects(FXJSE_HOBJECT hThis, FXJSE_HVALUE hParentValue, FX_BSTR bsSomExp, XFA_RESOLVENODE_RS &resoveNodeRS, FX_BOOL bdotAccessor = TRUE, FX_BOOL bHasNoResolveName = FALSE);
-    static void			ParseResolveResult(FXJSE_HOBJECT hThis, const XFA_RESOLVENODE_RS& resoveNodeRS, FXJSE_HVALUE hParentValue, FXJSE_HVALUE *&resultValues, FX_INT32 &iSize, FX_BOOL &bAttribute);
+    static int32_t		ResolveObjects(FXJSE_HOBJECT hThis, FXJSE_HVALUE hParentValue, FX_BSTR bsSomExp, XFA_RESOLVENODE_RS &resoveNodeRS, FX_BOOL bdotAccessor = TRUE, FX_BOOL bHasNoResolveName = FALSE);
+    static void			ParseResolveResult(FXJSE_HOBJECT hThis, const XFA_RESOLVENODE_RS& resoveNodeRS, FXJSE_HVALUE hParentValue, FXJSE_HVALUE *&resultValues, int32_t &iSize, FX_BOOL &bAttribute);
 
-    static FXJSE_HVALUE GetSimpleHValue	(FXJSE_HOBJECT hThis, CFXJSE_Arguments &args, FX_UINT32 index);
+    static FXJSE_HVALUE GetSimpleHValue	(FXJSE_HOBJECT hThis, CFXJSE_Arguments &args, uint32_t index);
     static FX_BOOL		HValueIsNull	(FXJSE_HOBJECT hThis, FXJSE_HVALUE hValue);
-    static FX_INT32		HValueToInteger	(FXJSE_HOBJECT hThis, FXJSE_HVALUE hValue);
+    static int32_t		HValueToInteger	(FXJSE_HOBJECT hThis, FXJSE_HVALUE hValue);
     static FX_DOUBLE	StringToDouble(FX_BSTR szStringVal);
     static FX_FLOAT		HValueToFloat	(FXJSE_HOBJECT hThis, FXJSE_HVALUE hValue);
     static FX_DOUBLE	HValueToDouble	(FXJSE_HOBJECT hThis, FXJSE_HVALUE hValue);
@@ -163,7 +163,7 @@ public:
     {
         return m_pDocument;
     }
-    void ThrowScriptErrorMessage(FX_INT32 iStringID, ...);
+    void ThrowScriptErrorMessage(int32_t iStringID, ...);
 private:
     FXJSE_HRUNTIME			m_hScriptRuntime;
     FXJSE_CLASS				m_fmClass;

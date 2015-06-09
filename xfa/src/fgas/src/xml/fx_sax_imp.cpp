@@ -34,7 +34,7 @@ FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead *pFile, FX_DWORD dwStart, FX_DWORD d
         return FALSE;
     }
     m_dwBufSize = FX_MIN(dwLen, FX_SAXFILE_BUFSIZE);
-    m_pBuf = FX_Alloc(FX_BYTE, m_dwBufSize);
+    m_pBuf = FX_Alloc(uint8_t, m_dwBufSize);
     if (!m_pBuf) {
         return FALSE;
     }
@@ -72,7 +72,7 @@ void CFX_SAXFile::Reset()
 }
 #define FX_SAXCHARTYPE_Normal		0
 #define FX_SAXCHARTYPE_Space		1
-static FX_BYTE g_SAX_CharType[256] = {
+static uint8_t g_SAX_CharType[256] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -102,8 +102,8 @@ CFX_SAXReader::CFX_SAXReader()
     , m_pCommentContext(NULL)
     , m_dwParseMode(0)
 {
-    m_pszData = (FX_LPBYTE)FX_Alloc(FX_BYTE, m_iDataSize);
-    m_pszName = (FX_LPBYTE)FX_Alloc(FX_BYTE, m_iNameSize);
+    m_pszData = (FX_LPBYTE)FX_Alloc(uint8_t, m_iDataSize);
+    m_pszName = (FX_LPBYTE)FX_Alloc(uint8_t, m_iNameSize);
 }
 CFX_SAXReader::~CFX_SAXReader()
 {
@@ -159,12 +159,12 @@ inline void CFX_SAXReader::Pop()
     delete m_pCurItem;
     m_pCurItem = pPrev;
 }
-inline void CFX_SAXReader::AppendData(FX_BYTE ch)
+inline void CFX_SAXReader::AppendData(uint8_t ch)
 {
     ReallocDataBuffer();
     m_pszData[m_iDataPos++] = ch;
 }
-inline void CFX_SAXReader::AppendName(FX_BYTE ch)
+inline void CFX_SAXReader::AppendName(uint8_t ch)
 {
     ReallocNameBuffer();
     m_pszName[m_iDataPos++] = ch;
@@ -179,7 +179,7 @@ void CFX_SAXReader::ReallocDataBuffer()
     } else {
         m_iDataSize += 1024 * 1024;
     }
-    m_pszData = (FX_LPBYTE)FX_Realloc(FX_BYTE, m_pszData, m_iDataSize);
+    m_pszData = (FX_LPBYTE)FX_Realloc(uint8_t, m_pszData, m_iDataSize);
 }
 void CFX_SAXReader::ReallocNameBuffer()
 {
@@ -191,13 +191,13 @@ void CFX_SAXReader::ReallocNameBuffer()
     } else {
         m_iNameSize += 1024 * 1024;
     }
-    m_pszName = (FX_LPBYTE)FX_Realloc(FX_BYTE, m_pszName, m_iNameSize);
+    m_pszName = (FX_LPBYTE)FX_Realloc(uint8_t, m_pszName, m_iNameSize);
 }
-inline FX_BOOL CFX_SAXReader::SkipSpace(FX_BYTE ch)
+inline FX_BOOL CFX_SAXReader::SkipSpace(uint8_t ch)
 {
     return (m_dwParseMode & FX_SAXPARSEMODE_NotSkipSpace) == 0 && ch < 0x21;
 }
-FX_INT32 CFX_SAXReader::StartParse(IFX_FileRead *pFile, FX_DWORD dwStart , FX_DWORD dwLen , FX_DWORD dwParseMode )
+int32_t CFX_SAXReader::StartParse(IFX_FileRead *pFile, FX_DWORD dwStart , FX_DWORD dwLen , FX_DWORD dwParseMode )
 {
     m_iState = -1;
     Reset();
@@ -231,7 +231,7 @@ static const FX_SAXReader_LPFParse g_FX_SAXReader_LPFParse[FX_SAXMODE_MAX] = {
     &CFX_SAXReader::ParseTagEnd,
     &CFX_SAXReader::ParseTargetData,
 };
-FX_INT32 CFX_SAXReader::ContinueParse(IFX_Pause *pPause )
+int32_t CFX_SAXReader::ContinueParse(IFX_Pause *pPause )
 {
     if (m_iState < 0 || m_iState > 99) {
         return m_iState;
@@ -261,21 +261,21 @@ FX_INT32 CFX_SAXReader::ContinueParse(IFX_Pause *pPause )
     }
     return m_iState;
 }
-void CFX_SAXReader::ParseChar(FX_BYTE ch)
+void CFX_SAXReader::ParseChar(uint8_t ch)
 {
     ReallocDataBuffer();
     m_pszData[m_iDataPos] = ch;
     if (m_iEntityStart > -1 && ch == ';') {
-        FX_INT32 iSaveEntityStart = m_iEntityStart;
+        int32_t iSaveEntityStart = m_iEntityStart;
         CFX_ByteString csEntity(m_pszData + m_iEntityStart + 1, m_iDataPos - m_iEntityStart - 1);
-        FX_INT32 iLen = csEntity.GetLength();
+        int32_t iLen = csEntity.GetLength();
         if (iLen > 0) {
             if (csEntity[0] == '#') {
                 if ((m_dwParseMode & FX_SAXPARSEMODE_NotConvert_sharp) == 0) {
                     ch = 0;
-                    FX_BYTE w;
+                    uint8_t w;
                     if (iLen > 1 && csEntity[1] == 'x') {
-                        for (FX_INT32 i = 2; i < iLen; i ++) {
+                        for (int32_t i = 2; i < iLen; i ++) {
                             w = csEntity[i];
                             if (w >= '0' && w <= '9') {
                                 ch = (ch << 4) + w - '0';
@@ -288,7 +288,7 @@ void CFX_SAXReader::ParseChar(FX_BYTE ch)
                             }
                         }
                     } else {
-                        for (FX_INT32 i = 1; i < iLen; i ++) {
+                        for (int32_t i = 1; i < iLen; i ++) {
                             w = csEntity[i];
                             if (w < '0' || w > '9') {
                                 break;
@@ -592,7 +592,7 @@ void CFX_SAXReader::ParseTargetData()
 }
 void CFX_SAXReader::SkipNode()
 {
-    FX_INT32 iLen = m_SkipStack.GetSize();
+    int32_t iLen = m_SkipStack.GetSize();
     if (m_SkipChar == '\'' || m_SkipChar == '\"') {
         if (m_CurByte != m_SkipChar) {
             return;
@@ -633,12 +633,12 @@ void CFX_SAXReader::SkipNode()
                     m_iDataLength = m_iDataPos;
                     m_iDataPos = 0;
                     if (m_iDataLength >= 9
-                            && FXSYS_memcmp(m_pszData, "[CDATA[", 7 * sizeof(FX_BYTE)) == 0
-                            && FXSYS_memcmp(m_pszData + m_iDataLength - 2, "]]", 2 * sizeof(FX_BYTE)) == 0) {
+                            && FXSYS_memcmp(m_pszData, "[CDATA[", 7 * sizeof(uint8_t)) == 0
+                            && FXSYS_memcmp(m_pszData + m_iDataLength - 2, "]]", 2 * sizeof(uint8_t)) == 0) {
                         Pop();
                         m_iDataLength -= 9;
                         m_dwDataOffset += 7;
-                        FXSYS_memmove(m_pszData , m_pszData + 7, m_iDataLength * sizeof(FX_BYTE));
+                        FXSYS_memmove(m_pszData , m_pszData + 7, m_iDataLength * sizeof(uint8_t));
                         m_bCharData = TRUE;
                         if (m_pHandler) {
                             NotifyData();

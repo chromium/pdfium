@@ -13,11 +13,11 @@ class CBC_EdifactEncoder : public CBC_Encoder
 public:
     CBC_EdifactEncoder();
     virtual ~CBC_EdifactEncoder();
-    FX_INT32 getEncodingMode();
-    void Encode(CBC_EncoderContext &context, FX_INT32 &e);
+    int32_t getEncodingMode();
+    void Encode(CBC_EncoderContext &context, int32_t &e);
 private:
-    static void handleEOD(CBC_EncoderContext &context, CFX_WideString buffer, FX_INT32 &e);
-    static void encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e);
-    static CFX_WideString encodeToCodewords(CFX_WideString sb, FX_INT32 startPos, FX_INT32 &e);
+    static void handleEOD(CBC_EncoderContext &context, CFX_WideString buffer, int32_t &e);
+    static void encodeChar(FX_WCHAR c, CFX_WideString &sb, int32_t &e);
+    static CFX_WideString encodeToCodewords(CFX_WideString sb, int32_t startPos, int32_t &e);
 };
 #endif

@@ -71,10 +71,10 @@ public:
         m_Size[FWL_GRIDSIZE_MaxHeight].fLength = 0;
         m_Margin[0] = m_Margin[1] = m_Margin[2] = m_Margin[3] = 0;
     }
-    FX_INT32 m_iColumn;
-    FX_INT32 m_iColumnSpan;
-    FX_INT32 m_iRow;
-    FX_INT32 m_iRowSpan;
+    int32_t m_iColumn;
+    int32_t m_iColumnSpan;
+    int32_t m_iRow;
+    int32_t m_iRowSpan;
     CFWL_GridLength	m_Size[6];
     FX_DWORD		m_dwMarginFlag;
     FX_FLOAT		m_Margin[4];
@@ -96,12 +96,12 @@ public:
     virtual	FWL_ERR		Update();
     virtual FWL_ERR		DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 
-    virtual FWL_ERR			InsertWidget(IFWL_Widget *pChild, FX_INT32 nIndex = -1);
+    virtual FWL_ERR			InsertWidget(IFWL_Widget *pChild, int32_t nIndex = -1);
     virtual FWL_ERR			RemoveWidget(IFWL_Widget *pWidget);
-    virtual FWL_HGRIDCOLROW		InsertColRow(FX_BOOL bColumn, FX_INT32 nIndex = -1);
-    virtual FX_INT32			CountColRows(FX_BOOL bColumn);
-    virtual FWL_HGRIDCOLROW		GetColRow(FX_BOOL bColumn, FX_INT32 nIndex);
-    virtual FX_INT32			GetIndex(FWL_HGRIDCOLROW hColRow);
+    virtual FWL_HGRIDCOLROW		InsertColRow(FX_BOOL bColumn, int32_t nIndex = -1);
+    virtual int32_t			CountColRows(FX_BOOL bColumn);
+    virtual FWL_HGRIDCOLROW		GetColRow(FX_BOOL bColumn, int32_t nIndex);
+    virtual int32_t			GetIndex(FWL_HGRIDCOLROW hColRow);
     virtual FX_FLOAT			GetSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT &eUnit);
     virtual FWL_ERR				SetSize(FWL_HGRIDCOLROW hColRow, FX_FLOAT fSize, FWL_GRIDUNIT eUnit);
     virtual FX_FLOAT			GetMinSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT &eUnit);
@@ -110,10 +110,10 @@ public:
     virtual	FWL_ERR				SetMaxSize(FWL_HGRIDCOLROW hColRow, FX_FLOAT fSize, FWL_GRIDUNIT eUnit);
     virtual FX_BOOL				DeleteColRow(FWL_HGRIDCOLROW hColRow);
     virtual FX_BOOL				IsColumn(FWL_HGRIDCOLROW hColRow);
-    virtual FX_INT32			GetWidgetPos(IFWL_Widget *pWidget, FX_BOOL bColumn);
-    virtual FWL_ERR				SetWidgetPos(IFWL_Widget *pWidget, FX_INT32 iPos, FX_BOOL bColumn);
-    virtual FX_INT32			GetWidgetSpan(IFWL_Widget *pWidget, FX_BOOL bColumn);
-    virtual FWL_ERR				SetWidgetSpan(IFWL_Widget *pWidget, FX_INT32 iSpan, FX_BOOL bColumn);
+    virtual int32_t			GetWidgetPos(IFWL_Widget *pWidget, FX_BOOL bColumn);
+    virtual FWL_ERR				SetWidgetPos(IFWL_Widget *pWidget, int32_t iPos, FX_BOOL bColumn);
+    virtual int32_t			GetWidgetSpan(IFWL_Widget *pWidget, FX_BOOL bColumn);
+    virtual FWL_ERR				SetWidgetSpan(IFWL_Widget *pWidget, int32_t iSpan, FX_BOOL bColumn);
     virtual FX_FLOAT			GetWidgetSize(IFWL_Widget *pWidget, FWL_GRIDSIZE eSize, FWL_GRIDUNIT &eUnit);
     virtual FWL_ERR				SetWidgetSize(IFWL_Widget *pWidget, FWL_GRIDSIZE eSize, FX_FLOAT fSize, FWL_GRIDUNIT eUit);
     virtual FX_BOOL				GetWidgetMargin(IFWL_Widget *pWidget, FWL_GRIDMARGIN eMargin, FX_FLOAT &fMargin);
@@ -123,9 +123,9 @@ public:
     virtual FWL_ERR				SetGridSize(FWL_GRIDSIZE eSize, FX_FLOAT fSize, FWL_GRIDUNIT eUit);
 protected:
     CFWL_GridWidgetInfo*	GetWidgetInfo(IFWL_Widget* pWidget);
-    void			ProcFixedColRow(CFWL_GridColRow *pColRow, FX_INT32 nIndex, FX_FLOAT fColRowSize, FX_BOOL bColumn);
-    void			ProcAutoColRow(CFWL_GridColRow *pColRow, FX_INT32 nIndex, FX_BOOL bColumn);
-    void			ProcScaledColRow(CFWL_GridColRow *pColRow, FX_INT32 nIndex, FX_FLOAT fColRowSize, FX_BOOL bColumn);
+    void			ProcFixedColRow(CFWL_GridColRow *pColRow, int32_t nIndex, FX_FLOAT fColRowSize, FX_BOOL bColumn);
+    void			ProcAutoColRow(CFWL_GridColRow *pColRow, int32_t nIndex, FX_BOOL bColumn);
+    void			ProcScaledColRow(CFWL_GridColRow *pColRow, int32_t nIndex, FX_FLOAT fColRowSize, FX_BOOL bColumn);
     void			CalcWidgetWidth(IFWL_Widget *pWidget, CFWL_GridWidgetInfo *pInfo, FX_FLOAT fColunmWidth);
     void			CalcWidgetHeigt(IFWL_Widget *pWidget, CFWL_GridWidgetInfo *pInfo, FX_FLOAT fRowHeigt);
     FX_FLOAT		CalcAutoColumnWidgetWidth(IFWL_Widget *pWidget, CFWL_GridWidgetInfo* pInfo);
@@ -153,7 +153,7 @@ class CFWL_GridDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_GridDelegate(CFWL_GridImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:
     CFWL_GridImp *m_pOwner;

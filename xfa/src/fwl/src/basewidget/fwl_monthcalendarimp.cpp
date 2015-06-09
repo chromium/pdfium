@@ -44,15 +44,15 @@ FWL_ERR	IFWL_MonthCalendar::Initialize(const CFWL_WidgetImpProperties &propertie
     ((CFWL_MonthCalendarImp*)m_pData)->SetInterface(this);
     return ((CFWL_MonthCalendarImp*)m_pData)->Initialize();
 }
-FX_INT32 IFWL_MonthCalendar::CountSelect()
+int32_t IFWL_MonthCalendar::CountSelect()
 {
     return ((CFWL_MonthCalendarImp*)m_pData)->CountSelect();
 }
-FX_BOOL	IFWL_MonthCalendar::GetSelect(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay, FX_INT32 nIndex)
+FX_BOOL	IFWL_MonthCalendar::GetSelect(int32_t &iYear, int32_t &iMonth, int32_t &iDay, int32_t nIndex)
 {
     return ((CFWL_MonthCalendarImp*)m_pData)->GetSelect(iYear, iMonth, iDay, nIndex);
 }
-FX_BOOL	IFWL_MonthCalendar::SetSelect(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay)
+FX_BOOL	IFWL_MonthCalendar::SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay)
 {
     return ((CFWL_MonthCalendarImp*)m_pData)->SetSelect(iYear, iMonth, iDay);
 }
@@ -204,11 +204,11 @@ FWL_ERR CFWL_MonthCalendarImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Mat
     }
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_MonthCalendarImp::CountSelect()
+int32_t CFWL_MonthCalendarImp::CountSelect()
 {
     return m_arrSelDays.GetSize();
 }
-FX_BOOL CFWL_MonthCalendarImp::GetSelect(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay, FX_INT32 nIndex )
+FX_BOOL CFWL_MonthCalendarImp::GetSelect(int32_t &iYear, int32_t &iMonth, int32_t &iDay, int32_t nIndex )
 {
     if (nIndex >= m_arrSelDays.GetSize()) {
         return FALSE;
@@ -218,7 +218,7 @@ FX_BOOL CFWL_MonthCalendarImp::GetSelect(FX_INT32 &iYear, FX_INT32 &iMonth, FX_I
     iDay = m_arrSelDays[nIndex];
     return TRUE;
 }
-FX_BOOL CFWL_MonthCalendarImp::SetSelect(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay)
+FX_BOOL CFWL_MonthCalendarImp::SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay)
 {
     ChangeToMonth(iYear, iMonth);
     return AddSelDay(iDay);
@@ -282,8 +282,8 @@ void CFWL_MonthCalendarImp::DrawCaption(CFX_Graphics *pGraphics, IFWL_ThemeProvi
     textParam.m_iPart = FWL_PART_MCD_Caption;
     textParam.m_dwStates = FWL_PARTSTATE_MCD_Normal;
     textParam.m_pGraphics = pGraphics;
-    FX_INT32 iYear;
-    FX_INT32 iMonth;
+    int32_t iYear;
+    int32_t iMonth;
     iYear = m_iCurYear;
     iMonth = m_iCurMonth;
     CFX_WideString wsCation;
@@ -321,8 +321,8 @@ void CFWL_MonthCalendarImp::DrawDatesInBK(CFX_Graphics *pGraphics, IFWL_ThemePro
     if (pMatrix) {
         params.m_matrix.Concat(*pMatrix);
     }
-    FX_INT32 iCount = m_arrDates.GetSize();
-    for (FX_INT32 j = 0; j < iCount; j ++) {
+    int32_t iCount = m_arrDates.GetSize();
+    for (int32_t j = 0; j < iCount; j ++) {
         LPDATEINFO pDataInfo = (LPDATEINFO)m_arrDates.GetAt(j);
         if (pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Selected) {
             params.m_dwStates |= FWL_PARTSTATE_MCD_Selected;
@@ -351,7 +351,7 @@ void CFWL_MonthCalendarImp::DrawWeek(CFX_Graphics *pGraphics, IFWL_ThemeProvider
     params.m_pGraphics = pGraphics;
     params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
     params.m_iTTOAlign = FDE_TTOALIGNMENT_Center;
-    FX_INT32 iWeek;
+    int32_t iWeek;
     iWeek = m_pDateTime->GetDayOfWeek();
     CFX_RectF rtDayOfWeek;
     const FX_WCHAR* pWeekDay[] = {
@@ -361,7 +361,7 @@ void CFWL_MonthCalendarImp::DrawWeek(CFX_Graphics *pGraphics, IFWL_ThemeProvider
     if (pMatrix) {
         params.m_matrix.Concat(*pMatrix);
     }
-    for (FX_INT32 i = 0; i < 7; i++) {
+    for (int32_t i = 0; i < 7; i++) {
         rtDayOfWeek.Set(m_rtWeek.left + i * (m_szCell.x + MONTHCAL_HMARGIN * 2),
                         m_rtWeek.top,
                         m_szCell.x,
@@ -388,13 +388,13 @@ void CFWL_MonthCalendarImp::DrawWeekNumber(CFX_Graphics *pGraphics, IFWL_ThemePr
     if (pMatrix) {
         params.m_matrix.Concat(*pMatrix);
     }
-    FX_INT32 iWeekNum = 0;
-    FX_INT32 iMonthNum = m_pDateTime->GetMonth();
-    FX_INT32 iDayNum = FX_DaysInMonth(m_iCurYear, iMonthNum);
-    FX_INT32 iTemp = 0;
+    int32_t iWeekNum = 0;
+    int32_t iMonthNum = m_pDateTime->GetMonth();
+    int32_t iDayNum = FX_DaysInMonth(m_iCurYear, iMonthNum);
+    int32_t iTemp = 0;
     FX_FLOAT fVStartPos = m_rtClient.top + m_fHeadHei + m_fHSepHei;
     FX_FLOAT fHStartPos = m_rtClient.left;
-    for (FX_INT32 i = 1; i <= iDayNum; i += 7) {
+    for (int32_t i = 1; i <= iDayNum; i += 7) {
         iTemp ++;
         iWeekNum = CalWeekNumber(m_iCurYear, iMonthNum, i);
         m_rtWeekNum.Set(fHStartPos, fVStartPos + m_fDateCellHei * iTemp, m_fWeekNumWid, m_fDateCellHei);
@@ -453,8 +453,8 @@ void CFWL_MonthCalendarImp::DrawDatesIn(CFX_Graphics *pGraphics, IFWL_ThemeProvi
     if (pMatrix) {
         params.m_matrix.Concat(*pMatrix);
     }
-    FX_INT32 iCount = m_arrDates.GetSize();
-    for (FX_INT32 j = 0; j < iCount; j ++) {
+    int32_t iCount = m_arrDates.GetSize();
+    for (int32_t j = 0; j < iCount; j ++) {
         LPDATEINFO pDataInfo = (LPDATEINFO)m_arrDates.GetAt(j);
         params.m_wsText = pDataInfo->wsDay;
         params.m_rtPart = pDataInfo->rect;
@@ -634,11 +634,11 @@ void CFWL_MonthCalendarImp::LayOut()
 void CFWL_MonthCalendarImp::CalDateItem()
 {
     FX_BOOL bNewWeek = FALSE;
-    FX_INT32 iWeekOfMonth = 0;
+    int32_t iWeekOfMonth = 0;
     FX_FLOAT fLeft = m_rtDates.left;
     FX_FLOAT fTop = m_rtDates.top;
-    FX_INT32 iCount = m_arrDates.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = m_arrDates.GetSize();
+    for (int32_t i = 0; i < iCount; i ++) {
         LPDATEINFO pDateInfo = (LPDATEINFO)m_arrDates.GetAt(i);
         if (bNewWeek) {
             iWeekOfMonth ++;
@@ -694,30 +694,30 @@ void CFWL_MonthCalendarImp::GetCapValue()
     }
     m_fMCHei = *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEIGHT);
 }
-FX_INT32 CFWL_MonthCalendarImp::CalWeekNumber(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay)
+int32_t CFWL_MonthCalendarImp::CalWeekNumber(int32_t iYear, int32_t iMonth, int32_t iDay)
 {
     return 0;
 }
-FX_BOOL	CFWL_MonthCalendarImp::GetMinDate(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay)
+FX_BOOL	CFWL_MonthCalendarImp::GetMinDate(int32_t &iYear, int32_t &iMonth, int32_t &iDay)
 {
     iYear = m_dtMin.iYear;
     iMonth = m_dtMin.iMonth;
     iDay = m_dtMin.iDay;
     return TRUE;
 }
-FX_BOOL	CFWL_MonthCalendarImp::SetMinDate(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay)
+FX_BOOL	CFWL_MonthCalendarImp::SetMinDate(int32_t iYear, int32_t iMonth, int32_t iDay)
 {
     m_dtMin = DATE(iYear, iMonth, iDay);
     return TRUE;
 }
-FX_BOOL	CFWL_MonthCalendarImp::GetMaxDate(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay)
+FX_BOOL	CFWL_MonthCalendarImp::GetMaxDate(int32_t &iYear, int32_t &iMonth, int32_t &iDay)
 {
     iYear = m_dtMax.iYear;
     iMonth = m_dtMax.iMonth;
     iDay = m_dtMax.iDay;
     return TRUE;
 }
-FX_BOOL	CFWL_MonthCalendarImp::SetMaxDate(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay)
+FX_BOOL	CFWL_MonthCalendarImp::SetMaxDate(int32_t iYear, int32_t iMonth, int32_t iDay)
 {
     m_dtMax = DATE(iYear, iMonth, iDay);
     return TRUE;
@@ -748,8 +748,8 @@ FX_BOOL CFWL_MonthCalendarImp::InitDate()
 }
 void CFWL_MonthCalendarImp::ClearDateItem()
 {
-    FX_INT32 iCount = m_arrDates.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i ++) {
+    int32_t iCount = m_arrDates.GetSize();
+    for (int32_t i = 0; i < iCount; i ++) {
         LPDATEINFO pData = (LPDATEINFO)m_arrDates.GetAt(i);
         delete pData;
     }
@@ -758,9 +758,9 @@ void CFWL_MonthCalendarImp::ClearDateItem()
 void CFWL_MonthCalendarImp::ReSetDateItem()
 {
     m_pDateTime->Set(m_iCurYear, m_iCurMonth, 1);
-    FX_INT32 iDays = FX_DaysInMonth(m_iCurYear, m_iCurMonth);
-    FX_INT32 iDayOfWeek = m_pDateTime->GetDayOfWeek();
-    for (FX_INT32 i = 0; i < iDays; i ++) {
+    int32_t iDays = FX_DaysInMonth(m_iCurYear, m_iCurMonth);
+    int32_t iDayOfWeek = m_pDateTime->GetDayOfWeek();
+    for (int32_t i = 0; i < iDays; i ++) {
         if (iDayOfWeek >= 7) {
             iDayOfWeek = 0;
         }
@@ -782,7 +782,7 @@ void CFWL_MonthCalendarImp::ReSetDateItem()
 }
 FX_BOOL CFWL_MonthCalendarImp::NextMonth()
 {
-    FX_INT32 iYear = m_iCurYear, iMonth = m_iCurMonth;
+    int32_t iYear = m_iCurYear, iMonth = m_iCurMonth;
     if (iMonth >= 12) {
         iMonth = 1;
         iYear++;
@@ -799,7 +799,7 @@ FX_BOOL CFWL_MonthCalendarImp::NextMonth()
 }
 FX_BOOL CFWL_MonthCalendarImp::PrevMonth()
 {
-    FX_INT32 iYear = m_iCurYear, iMonth = m_iCurMonth;
+    int32_t iYear = m_iCurYear, iMonth = m_iCurMonth;
     if (iMonth <= 1) {
         iMonth = 12;
         iYear --;
@@ -814,7 +814,7 @@ FX_BOOL CFWL_MonthCalendarImp::PrevMonth()
     ChangeToMonth(m_iCurYear, m_iCurMonth);
     return TRUE;
 }
-void CFWL_MonthCalendarImp::ChangeToMonth(FX_INT32 iYear, FX_INT32 iMonth)
+void CFWL_MonthCalendarImp::ChangeToMonth(int32_t iYear, int32_t iMonth)
 {
     m_iCurYear = iYear;
     m_iCurMonth = iMonth;
@@ -824,16 +824,16 @@ void CFWL_MonthCalendarImp::ChangeToMonth(FX_INT32 iYear, FX_INT32 iMonth)
     CalDateItem();
     GetHeadText(m_iCurYear, m_iCurMonth, m_wsHead);
 }
-FX_BOOL	CFWL_MonthCalendarImp::RemoveSelDay(FX_INT32 iDay, FX_BOOL bAll)
+FX_BOOL	CFWL_MonthCalendarImp::RemoveSelDay(int32_t iDay, FX_BOOL bAll)
 {
     if (iDay == -1 && !bAll) {
         return FALSE;
     }
     if (bAll) {
-        FX_INT32 iCount = m_arrSelDays.GetSize();
-        FX_INT32 iDatesCount = m_arrDates.GetSize();
-        for (FX_INT32 i = 0; i < iCount; i ++) {
-            FX_INT32 iSelDay = m_arrSelDays.GetAt(i);
+        int32_t iCount = m_arrSelDays.GetSize();
+        int32_t iDatesCount = m_arrDates.GetSize();
+        for (int32_t i = 0; i < iCount; i ++) {
+            int32_t iSelDay = m_arrSelDays.GetAt(i);
             if (iSelDay <= iDatesCount) {
                 LPDATEINFO pDateInfo = (LPDATEINFO)m_arrDates.GetAt(iSelDay - 1);
                 pDateInfo->dwStates &= ~FWL_ITEMSTATE_MCD_Selected;
@@ -841,12 +841,12 @@ FX_BOOL	CFWL_MonthCalendarImp::RemoveSelDay(FX_INT32 iDay, FX_BOOL bAll)
         }
         m_arrSelDays.RemoveAll();
     } else {
-        FX_INT32 index = m_arrSelDays.Find(iDay);
+        int32_t index = m_arrSelDays.Find(iDay);
         if (index == -1) {
             return FALSE;
         }
-        FX_INT32 iSelDay = m_arrSelDays.GetAt(iDay);
-        FX_INT32 iDatesCount = m_arrDates.GetSize();
+        int32_t iSelDay = m_arrSelDays.GetAt(iDay);
+        int32_t iDatesCount = m_arrDates.GetSize();
         if (iSelDay <= iDatesCount) {
             LPDATEINFO pDateInfo = (LPDATEINFO)m_arrDates.GetAt(iSelDay - 1);
             pDateInfo->dwStates &= ~FWL_ITEMSTATE_MCD_Selected;
@@ -855,7 +855,7 @@ FX_BOOL	CFWL_MonthCalendarImp::RemoveSelDay(FX_INT32 iDay, FX_BOOL bAll)
     }
     return TRUE;
 }
-FX_BOOL	CFWL_MonthCalendarImp::AddSelDay(FX_INT32 iDay)
+FX_BOOL	CFWL_MonthCalendarImp::AddSelDay(int32_t iDay)
 {
     FXSYS_assert(iDay > 0);
     if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect) {
@@ -885,7 +885,7 @@ FX_BOOL	CFWL_MonthCalendarImp::JumpToToday()
     }
     return TRUE;
 }
-void CFWL_MonthCalendarImp::GetHeadText(FX_INT32 iYear, FX_INT32 iMonth, CFX_WideString &wsHead)
+void CFWL_MonthCalendarImp::GetHeadText(int32_t iYear, int32_t iMonth, CFX_WideString &wsHead)
 {
     FXSYS_assert(iMonth > 0 && iMonth < 13);
     static FX_LPWSTR pMonth[] = {
@@ -904,14 +904,14 @@ void CFWL_MonthCalendarImp::GetHeadText(FX_INT32 iYear, FX_INT32 iMonth, CFX_Wid
     };
     wsHead.Format(FX_LPCWSTR(L"%s, %d"), pMonth[iMonth - 1], iYear);
 }
-void CFWL_MonthCalendarImp::GetTodayText(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay, CFX_WideString &wsToday)
+void CFWL_MonthCalendarImp::GetTodayText(int32_t iYear, int32_t iMonth, int32_t iDay, CFX_WideString &wsToday)
 {
     wsToday.Format(FX_LPCWSTR(L", %d/%d/%d"), iDay, iMonth, iYear);
 }
-FX_INT32 CFWL_MonthCalendarImp::GetDayAtPoint(FX_FLOAT x, FX_FLOAT y)
+int32_t CFWL_MonthCalendarImp::GetDayAtPoint(FX_FLOAT x, FX_FLOAT y)
 {
-    FX_INT32 iCount = m_arrDates.GetSize();
-    for (FX_INT32 i = 0; i < iCount; i++) {
+    int32_t iCount = m_arrDates.GetSize();
+    for (int32_t i = 0; i < iCount; i++) {
         LPDATEINFO pDateInfo = (LPDATEINFO)m_arrDates.GetAt(i);
         if (pDateInfo->rect.Contains(x, y)) {
             return ++i;
@@ -919,7 +919,7 @@ FX_INT32 CFWL_MonthCalendarImp::GetDayAtPoint(FX_FLOAT x, FX_FLOAT y)
     }
     return -1;
 }
-FX_BOOL	CFWL_MonthCalendarImp::GetDayRect(FX_INT32 iDay, CFX_RectF &rtDay)
+FX_BOOL	CFWL_MonthCalendarImp::GetDayRect(int32_t iDay, CFX_RectF &rtDay)
 {
     if (iDay <= 0 || iDay > m_arrDates.GetSize()) {
         return FALSE;
@@ -933,11 +933,11 @@ CFWL_MonthCalendarImpDelegate::CFWL_MonthCalendarImpDelegate(CFWL_MonthCalendarI
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_MonthCalendarImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
     FX_DWORD dwMsgCode = pMessage->GetClassID();
-    FX_INT32 iRet = 1;
+    int32_t iRet = 1;
     switch (dwMsgCode) {
         case FWL_MSGHASH_SetFocus:
         case FWL_MSGHASH_KillFocus: {
@@ -1016,13 +1016,13 @@ void CFWL_MonthCalendarImpDelegate::OnLButtonDown(CFWL_MsgMouse *pMsg)
     } else {
         if (m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect) {
         } else {
-            FX_INT32 iOldSel = 0;
+            int32_t iOldSel = 0;
             if (m_pOwner->m_arrSelDays.GetSize() > 0) {
                 iOldSel = m_pOwner->m_arrSelDays[0];
             } else {
                 return;
             }
-            FX_INT32 iCurSel = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+            int32_t iCurSel = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
             FX_BOOL bSelChanged = iCurSel > 0 && iCurSel != iOldSel;
             if (bSelChanged) {
                 LPDATEINFO lpDatesInfo = (LPDATEINFO)m_pOwner->m_arrDates.GetAt(iCurSel - 1);
@@ -1056,7 +1056,7 @@ void CFWL_MonthCalendarImpDelegate::OnLButtonUp(CFWL_MsgMouse *pMsg)
         m_pOwner->m_iRBtnPartStates = 0;
         m_pOwner->Repaint(&m_pOwner->m_rtRBtn);
     } else if (m_pOwner->m_rtDates.Contains(pMsg->m_fx, pMsg->m_fy)) {
-        FX_INT32 iDay = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+        int32_t iDay = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
         if (iDay !=	-1) {
             m_pOwner->AddSelDay(iDay);
         }
@@ -1071,7 +1071,7 @@ void CFWL_MonthCalendarImpDelegate::OnMouseMove(CFWL_MsgMouse *pMsg)
     CFX_RectF rtInvalidate;
     rtInvalidate.Set(0, 0, 0, 0);
     if (m_pOwner->m_rtDates.Contains(pMsg->m_fx, pMsg->m_fy)) {
-        FX_INT32 iHover = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+        int32_t iHover = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
         bRepaint = m_pOwner->m_iHovered != iHover;
         if (bRepaint) {
             if (m_pOwner->m_iHovered > 0) {

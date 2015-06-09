@@ -35,14 +35,14 @@ protected:
     CFX_RectF	m_rtCaption;
     FX_BOOL		m_bBtnDown;
     FX_DWORD	m_dwTTOStyles;
-    FX_INT32	m_iTTOAlign;
+    int32_t	m_iTTOAlign;
     friend class CFWL_PushButtonImpDelegate;
 };
 class CFWL_PushButtonImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_PushButtonImpDelegate(CFWL_PushButtonImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:

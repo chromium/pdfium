@@ -97,21 +97,21 @@ class IFWL_MonthCalendar;
 #define FWL_NOTEHASH_MCD_DATASELECTED         1085596932
 #define FWL_EVTHASH_MCD_DateChanged			  54212227
 BEGIN_FWL_EVENT_DEF(CFWL_Event_McdDateSelected, FWL_NOTEHASH_MCD_DATASELECTED)
-FX_INT32 m_iStartDay;
-FX_INT32 m_iEndDay;
+int32_t m_iStartDay;
+int32_t m_iEndDay;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EventMcdDateChanged, FWL_EVTHASH_MCD_DateChanged)
-FX_INT32 m_iOldYear;
-FX_INT32 m_iOldMonth;
-FX_INT32 m_iStartDay;
-FX_INT32 m_iEndDay;
+int32_t m_iOldYear;
+int32_t m_iOldMonth;
+int32_t m_iStartDay;
+int32_t m_iEndDay;
 END_FWL_EVENT_DEF
 class IFWL_MonthCalendarDP : public IFWL_DataProvider
 {
 public:
-    virtual FX_INT32    	GetCurDay(IFWL_Widget *pWidget) = 0;
-    virtual FX_INT32		GetCurMonth(IFWL_Widget *pWidget) = 0;
-    virtual FX_INT32		GetCurYear(IFWL_Widget *pWidget) = 0;
+    virtual int32_t    	GetCurDay(IFWL_Widget *pWidget) = 0;
+    virtual int32_t		GetCurMonth(IFWL_Widget *pWidget) = 0;
+    virtual int32_t		GetCurYear(IFWL_Widget *pWidget) = 0;
 };
 class IFWL_MonthCalendar : public IFWL_Widget
 {
@@ -120,9 +120,9 @@ public:
 
     FWL_ERR		Initialize(IFWL_Widget *pOuter = NULL);
     FWL_ERR		Initialize(const CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
-    FX_INT32	CountSelect();
-    FX_BOOL		GetSelect(FX_INT32 &iYear, FX_INT32 &iMonth, FX_INT32 &iDay, FX_INT32 nIndex = 0);
-    FX_BOOL		SetSelect(FX_INT32 iYear, FX_INT32 iMonth, FX_INT32 iDay);
+    int32_t	CountSelect();
+    FX_BOOL		GetSelect(int32_t &iYear, int32_t &iMonth, int32_t &iDay, int32_t nIndex = 0);
+    FX_BOOL		SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay);
 protected:
     IFWL_MonthCalendar();
     virtual ~IFWL_MonthCalendar();

@@ -13,15 +13,15 @@
 #include "JBig2_Object.h"
 #define JBIG2_OOB			1
 typedef struct {
-    FX_INT32 width,
+    int32_t width,
              height;
-    FX_INT32 x,
+    int32_t x,
              y;
-    FX_BYTE flags;
+    uint8_t flags;
 } JBig2RegionInfo;
 typedef struct {
-    FX_INT32 codelen;
-    FX_INT32 code;
+    int32_t codelen;
+    int32_t code;
 } JBig2HuffmanCode;
 extern "C" {
     void _FaxG4Decode(void *pModule, FX_LPCBYTE src_buf, FX_DWORD src_size, int* pbitpos, FX_LPBYTE dest_buf, int width, int height, int pitch = 0);

@@ -31,9 +31,9 @@ CBC_PDF417DetectorResult::CBC_PDF417DetectorResult(CBC_CommonBitMatrix* bits, CF
 }
 CBC_PDF417DetectorResult::~CBC_PDF417DetectorResult()
 {
-    for (FX_INT32 i = 0; i < m_points->GetSize(); i++) {
+    for (int32_t i = 0; i < m_points->GetSize(); i++) {
         CFX_PtrArray* temp = (CFX_PtrArray*)m_points->GetAt(i);
-        for (FX_INT32 j = 0; j < temp->GetSize(); j++) {
+        for (int32_t j = 0; j < temp->GetSize(); j++) {
             delete (CBC_ResultPoint*)temp->GetAt(j);
         }
         temp->RemoveAll();

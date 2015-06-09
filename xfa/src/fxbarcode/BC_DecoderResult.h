@@ -15,18 +15,18 @@ public:
     CFX_ByteArray* getRawBytes();
     CFX_ByteString getText();
     CFX_ByteString getECLevel();
-    FX_INT32 getErrorsCorrected();
-    void setErrorsCorrected(FX_INT32 errorsCorrected);
-    FX_INT32 getErasures();
-    void setErasures(FX_INT32 erasures);
+    int32_t getErrorsCorrected();
+    void setErrorsCorrected(int32_t errorsCorrected);
+    int32_t getErasures();
+    void setErasures(int32_t erasures);
     void* getOther();
     void setOther(void* other);
 private:
     CFX_ByteArray* m_rawBytes;
     CFX_ByteString m_text;
     CFX_ByteString m_ecLevel;
-    FX_INT32 m_errorsCorrected;
-    FX_INT32 m_erasures;
+    int32_t m_errorsCorrected;
+    int32_t m_erasures;
     void* m_other;
 };
 #endif

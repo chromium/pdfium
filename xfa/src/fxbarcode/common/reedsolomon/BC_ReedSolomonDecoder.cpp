@@ -31,7 +31,7 @@ CBC_ReedSolomonDecoder::CBC_ReedSolomonDecoder(CBC_ReedSolomonGF256* field)
 CBC_ReedSolomonDecoder::~CBC_ReedSolomonDecoder()
 {
 }
-void CBC_ReedSolomonDecoder::Decode(CFX_Int32Array* received, FX_INT32 twoS, FX_INT32 &e)
+void CBC_ReedSolomonDecoder::Decode(CFX_Int32Array* received, int32_t twoS, int32_t &e)
 {
     CBC_ReedSolomonGF256Poly poly;
     poly.Init(m_field, received, e);
@@ -40,8 +40,8 @@ void CBC_ReedSolomonDecoder::Decode(CFX_Int32Array* received, FX_INT32 twoS, FX_
     syndromeCoefficients.SetSize(twoS);
     FX_BOOL dataMatrix = FALSE;
     FX_BOOL noError = TRUE;
-    for (FX_INT32 i = 0; i < twoS; i++) {
-        FX_INT32 eval = poly.EvaluateAt(m_field->Exp(dataMatrix ? i + 1 : i));
+    for (int32_t i = 0; i < twoS; i++) {
+        int32_t eval = poly.EvaluateAt(m_field->Exp(dataMatrix ? i + 1 : i));
         syndromeCoefficients[twoS - 1 - i] = eval;
         if (eval != 0) {
             noError = FALSE;
@@ -67,8 +67,8 @@ void CBC_ReedSolomonDecoder::Decode(CFX_Int32Array* received, FX_INT32 twoS, FX_
     CFX_Int32Array* ia2 = FindErrorMagnitudes(omega.get(), errorLocations.get(), dataMatrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     CBC_AutoPtr<CFX_Int32Array > errorMagnitudes(ia2);
-    for (FX_INT32 k = 0; k < errorLocations->GetSize(); k++) {
-        FX_INT32 position = received->GetSize() - 1 - m_field->Log((*errorLocations)[k], e);
+    for (int32_t k = 0; k < errorLocations->GetSize(); k++) {
+        int32_t position = received->GetSize() - 1 - m_field->Log((*errorLocations)[k], e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
         if(position < 0) {
             e = BCExceptionBadErrorLocation;
@@ -77,7 +77,7 @@ void CBC_ReedSolomonDecoder::Decode(CFX_Int32Array* received, FX_INT32 twoS, FX_
         (*received)[position] = CBC_ReedSolomonGF256::AddOrSubtract((*received)[position], (*errorMagnitudes)[k]);
     }
 }
-CFX_PtrArray *CBC_ReedSolomonDecoder::RunEuclideanAlgorithm(CBC_ReedSolomonGF256Poly* a, CBC_ReedSolomonGF256Poly* b, FX_INT32 R, FX_INT32 &e)
+CFX_PtrArray *CBC_ReedSolomonDecoder::RunEuclideanAlgorithm(CBC_ReedSolomonGF256Poly* a, CBC_ReedSolomonGF256Poly* b, int32_t R, int32_t &e)
 {
     if (a->GetDegree() < b->GetDegree()) {
         CBC_ReedSolomonGF256Poly* temp = a;
@@ -120,12 +120,12 @@ CFX_PtrArray *CBC_ReedSolomonDecoder::RunEuclideanAlgorithm(CBC_ReedSolomonGF256
         CBC_ReedSolomonGF256Poly* rsg8 =  m_field->GetZero()->Clone(e);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         CBC_AutoPtr<CBC_ReedSolomonGF256Poly> q(rsg8);
-        FX_INT32 denominatorLeadingTerm = rLast->GetCoefficients(rLast->GetDegree());
-        FX_INT32 dltInverse = m_field->Inverse(denominatorLeadingTerm, e);
+        int32_t denominatorLeadingTerm = rLast->GetCoefficients(rLast->GetDegree());
+        int32_t dltInverse = m_field->Inverse(denominatorLeadingTerm, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         while (r->GetDegree() >= rLast->GetDegree() && !(r->IsZero())) {
-            FX_INT32 degreeDiff = r->GetDegree() - rLast->GetDegree();
-            FX_INT32 scale = m_field->Multiply(r->GetCoefficients(r->GetDegree()), dltInverse);
+            int32_t degreeDiff = r->GetDegree() - rLast->GetDegree();
+            int32_t scale = m_field->Multiply(r->GetCoefficients(r->GetDegree()), dltInverse);
             CBC_ReedSolomonGF256Poly* rsgp1 = m_field->BuildMonomial(degreeDiff, scale, e);
             BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
             CBC_AutoPtr<CBC_ReedSolomonGF256Poly> build(rsgp1);
@@ -156,12 +156,12 @@ CFX_PtrArray *CBC_ReedSolomonDecoder::RunEuclideanAlgorithm(CBC_ReedSolomonGF256
         CBC_AutoPtr<CBC_ReedSolomonGF256Poly> temp6(rsg12);
         t = temp6;
     }
-    FX_INT32 sigmaTildeAtZero = t->GetCoefficients(0);
+    int32_t sigmaTildeAtZero = t->GetCoefficients(0);
     if (sigmaTildeAtZero == 0) {
         e = BCExceptionIsZero;
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     }
-    FX_INT32 inverse = m_field->Inverse(sigmaTildeAtZero, e);
+    int32_t inverse = m_field->Inverse(sigmaTildeAtZero, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     CBC_ReedSolomonGF256Poly* rsg13 = t->Multiply(inverse, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
@@ -174,9 +174,9 @@ CFX_PtrArray *CBC_ReedSolomonDecoder::RunEuclideanAlgorithm(CBC_ReedSolomonGF256
     temp->Add(omega.release());
     return temp;
 }
-CFX_Int32Array *CBC_ReedSolomonDecoder::FindErrorLocations(CBC_ReedSolomonGF256Poly* errorLocator, FX_INT32 &e)
+CFX_Int32Array *CBC_ReedSolomonDecoder::FindErrorLocations(CBC_ReedSolomonGF256Poly* errorLocator, int32_t &e)
 {
-    FX_INT32 numErrors = errorLocator->GetDegree();
+    int32_t numErrors = errorLocator->GetDegree();
     if (numErrors == 1) {
         CBC_AutoPtr<CFX_Int32Array > temp(FX_NEW CFX_Int32Array);
         temp->Add(errorLocator->GetCoefficients(1));
@@ -185,8 +185,8 @@ CFX_Int32Array *CBC_ReedSolomonDecoder::FindErrorLocations(CBC_ReedSolomonGF256P
     CFX_Int32Array *tempT = FX_NEW CFX_Int32Array;
     tempT->SetSize(numErrors);
     CBC_AutoPtr<CFX_Int32Array > result(tempT);
-    FX_INT32 ie = 0;
-    for (FX_INT32 i = 1; i < 256 && ie < numErrors; i++) {
+    int32_t ie = 0;
+    for (int32_t i = 1; i < 256 && ie < numErrors; i++) {
         if(errorLocator->EvaluateAt(i) == 0) {
             (*result)[ie] = m_field->Inverse(i, ie);
             BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
@@ -199,23 +199,23 @@ CFX_Int32Array *CBC_ReedSolomonDecoder::FindErrorLocations(CBC_ReedSolomonGF256P
     }
     return result.release();
 }
-CFX_Int32Array *CBC_ReedSolomonDecoder::FindErrorMagnitudes(CBC_ReedSolomonGF256Poly* errorEvaluator, CFX_Int32Array* errorLocations, FX_BOOL dataMatrix, FX_INT32 &e)
+CFX_Int32Array *CBC_ReedSolomonDecoder::FindErrorMagnitudes(CBC_ReedSolomonGF256Poly* errorEvaluator, CFX_Int32Array* errorLocations, FX_BOOL dataMatrix, int32_t &e)
 {
-    FX_INT32 s = errorLocations->GetSize();
+    int32_t s = errorLocations->GetSize();
     CFX_Int32Array * temp = FX_NEW CFX_Int32Array;
     temp->SetSize(s);
     CBC_AutoPtr<CFX_Int32Array > result(temp);
-    for (FX_INT32 i = 0; i < s; i++) {
-        FX_INT32 xiInverse = m_field->Inverse(errorLocations->operator [](i), e);
+    for (int32_t i = 0; i < s; i++) {
+        int32_t xiInverse = m_field->Inverse(errorLocations->operator [](i), e);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-        FX_INT32 denominator = 1;
-        for(FX_INT32 j = 0; j < s; j++) {
+        int32_t denominator = 1;
+        for(int32_t j = 0; j < s; j++) {
             if(i != j) {
                 denominator = m_field->Multiply(denominator,
                                                 CBC_ReedSolomonGF256::AddOrSubtract(1, m_field->Multiply(errorLocations->operator [](j), xiInverse)));
             }
         }
-        FX_INT32 temp = m_field->Inverse(denominator, temp);
+        int32_t temp = m_field->Inverse(denominator, temp);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         (*result)[i] = m_field->Multiply(errorEvaluator->EvaluateAt(xiInverse),
                                          temp);

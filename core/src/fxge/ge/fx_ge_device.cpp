@@ -125,7 +125,7 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
                                    FX_DWORD fill_color, FX_DWORD stroke_color, int fill_mode,
                                    int alpha_flag, void* pIccTransform, int blend_type)
 {
-    FX_BYTE fill_alpha, stroke_alpha;
+    uint8_t fill_alpha, stroke_alpha;
     if (FXGETFLAG_COLORTYPE(alpha_flag)) {
         fill_alpha = FXGETFLAG_ALPHA_FILL(alpha_flag);
         stroke_alpha = FXGETFLAG_ALPHA_STROKE(alpha_flag);

@@ -11,8 +11,8 @@ class CBC_PDF417ResultMetadata
 public:
     CBC_PDF417ResultMetadata();
     virtual ~CBC_PDF417ResultMetadata();
-    FX_INT32 getSegmentIndex();
-    void setSegmentIndex(FX_INT32 segmentIndex);
+    int32_t getSegmentIndex();
+    void setSegmentIndex(int32_t segmentIndex);
     CFX_ByteString getFileId();
     void setFileId(CFX_ByteString fileId);
     CFX_Int32Array& getOptionalData();
@@ -20,7 +20,7 @@ public:
     FX_BOOL isLastSegment();
     void setLastSegment(FX_BOOL lastSegment);
 private:
-    FX_INT32 m_segmentIndex;
+    int32_t m_segmentIndex;
     CFX_ByteString m_fileId;
     CFX_Int32Array m_optionalData;
     FX_BOOL m_lastSegment;

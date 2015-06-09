@@ -34,17 +34,17 @@ class IFWL_BarcodeDP : public IFWL_EditDP
 {
 public:
     virtual BC_CHAR_ENCODING	GetCharEncoding() = 0;
-    virtual FX_INT32			GetModuleHeight() = 0;
-    virtual FX_INT32			GetModuleWidth() = 0;
-    virtual FX_INT32			GetDataLength() = 0;
-    virtual FX_INT32			GetCalChecksum() = 0;
+    virtual int32_t			GetModuleHeight() = 0;
+    virtual int32_t			GetModuleWidth() = 0;
+    virtual int32_t			GetDataLength() = 0;
+    virtual int32_t			GetCalChecksum() = 0;
     virtual FX_BOOL				GetPrintChecksum() = 0;
     virtual BC_TEXT_LOC			GetTextLocation() = 0;
-    virtual FX_INT32			GetWideNarrowRatio() = 0;
+    virtual int32_t			GetWideNarrowRatio() = 0;
     virtual FX_CHAR				GetStartChar() = 0;
     virtual FX_CHAR				GetEndChar() = 0;
-    virtual FX_INT32			GetVersion() = 0;
-    virtual FX_INT32			GetErrorCorrectionLevel() = 0;
+    virtual int32_t			GetVersion() = 0;
+    virtual int32_t			GetErrorCorrectionLevel() = 0;
     virtual FX_BOOL				GetTruncated() = 0;
     virtual FX_DWORD			GetBarcodeAttributeMask() = 0;
 };

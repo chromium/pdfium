@@ -326,7 +326,7 @@ FWL_ERR CFWL_FormImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMat
     _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider, FWL_ERR_Indefinite);
     IFWL_ThemeProvider *pTheme = m_pProperties->m_pThemeProvider;
     FX_BOOL bInactive = !IsActive();
-    FX_INT32 iState = bInactive ? FWL_PARTSTATE_FRM_Inactive : FWL_PARTSTATE_FRM_Normal;
+    int32_t iState = bInactive ? FWL_PARTSTATE_FRM_Inactive : FWL_PARTSTATE_FRM_Normal;
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_NoDrawClient) == 0) {
         DrawBackground(pGraphics, pTheme);
     }
@@ -599,7 +599,7 @@ CFWL_SysBtn* CFWL_FormImp::GetSysBtnByState(FX_DWORD dwState)
     }
     return NULL;
 }
-CFWL_SysBtn* CFWL_FormImp::GetSysBtnByIndex(FX_INT32 nIndex)
+CFWL_SysBtn* CFWL_FormImp::GetSysBtnByIndex(int32_t nIndex)
 {
     if (nIndex < 0) {
         return NULL;
@@ -616,7 +616,7 @@ CFWL_SysBtn* CFWL_FormImp::GetSysBtnByIndex(FX_INT32 nIndex)
     }
     return (CFWL_SysBtn*) arrBtn[nIndex];
 }
-FX_INT32 CFWL_FormImp::GetSysBtnIndex(CFWL_SysBtn *pBtn)
+int32_t CFWL_FormImp::GetSysBtnIndex(CFWL_SysBtn *pBtn)
 {
     CFX_PtrArray arrBtn;
     if (m_pMinBox) {
@@ -989,12 +989,12 @@ CFWL_FormDelegate::CFWL_FormDelegate(CFWL_FormImp *pOwner)
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_FormDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_FormDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
 #ifdef FWL_UseMacSystemBorder
     _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
     FX_DWORD dwMsgCode = pMessage->GetClassID();
-    FX_INT32 iRet = 1;
+    int32_t iRet = 1;
     switch (dwMsgCode) {
         case FWL_MSGHASH_Activate: {
                 m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
@@ -1011,7 +1011,7 @@ FX_INT32 CFWL_FormDelegate::OnProcessMessage(CFWL_Message *pMessage)
 #else
     _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
     FX_DWORD dwMsgCode = pMessage->GetClassID();
-    FX_INT32 iRet = 1;
+    int32_t iRet = 1;
     switch (dwMsgCode) {
         case FWL_MSGHASH_Activate: {
                 m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;

@@ -15,9 +15,9 @@ public:
     CBC_DetectionResultRowIndicatorColumn(CBC_BoundingBox* boundingBox, FX_BOOL isLeft);
     virtual ~CBC_DetectionResultRowIndicatorColumn();
     void setRowNumbers();
-    FX_INT32 adjustCompleteIndicatorColumnRowNumbers(CBC_BarcodeMetadata barcodeMetadata);
-    CFX_Int32Array* getRowHeights(FX_INT32 &e);
-    FX_INT32 adjustIncompleteIndicatorColumnRowNumbers(CBC_BarcodeMetadata barcodeMetadata);
+    int32_t adjustCompleteIndicatorColumnRowNumbers(CBC_BarcodeMetadata barcodeMetadata);
+    CFX_Int32Array* getRowHeights(int32_t &e);
+    int32_t adjustIncompleteIndicatorColumnRowNumbers(CBC_BarcodeMetadata barcodeMetadata);
     CBC_BarcodeMetadata* getBarcodeMetadata();
     FX_BOOL isLeft();
     CFX_ByteString toString();

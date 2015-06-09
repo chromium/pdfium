@@ -46,10 +46,10 @@ public:
     FWL_ERR				Initialize();
     FWL_ERR				Initialize(CFWL_WidgetImpProperties &properties);
 
-    FWL_HGRIDCOLROW		InsertColRow(FX_BOOL bColumn, FX_INT32 nIndex = -1);
-    FX_INT32			CountColRows(FX_BOOL bColumn);
-    FWL_HGRIDCOLROW		GetColRow(FX_BOOL bColumn, FX_INT32 nIndex);
-    FX_INT32			GetIndex(FWL_HGRIDCOLROW hColRow);
+    FWL_HGRIDCOLROW		InsertColRow(FX_BOOL bColumn, int32_t nIndex = -1);
+    int32_t			CountColRows(FX_BOOL bColumn);
+    FWL_HGRIDCOLROW		GetColRow(FX_BOOL bColumn, int32_t nIndex);
+    int32_t			GetIndex(FWL_HGRIDCOLROW hColRow);
     FX_FLOAT			GetSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT &eUnit);
     FWL_ERR				SetSize(FWL_HGRIDCOLROW hColRow, FX_FLOAT fSize, FWL_GRIDUNIT eUnit);
     FX_FLOAT			GetMinSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT &eUnit);
@@ -58,10 +58,10 @@ public:
     FWL_ERR				SetMaxSize(FWL_HGRIDCOLROW hColRow, FX_FLOAT fSize, FWL_GRIDUNIT eUnit);
     FX_BOOL				DeleteColRow(FWL_HGRIDCOLROW hColRow);
     FX_BOOL				IsColumn(FWL_HGRIDCOLROW hColRow);
-    FX_INT32			GetWidgetPos(IFWL_Widget *pWidget, FX_BOOL bColumn);
-    FWL_ERR				SetWidgetPos(IFWL_Widget *pWidget, FX_INT32 iPos, FX_BOOL bColumn);
-    FX_INT32			GetWidgetSpan(IFWL_Widget *pWidget, FX_BOOL bColumn);
-    FWL_ERR				SetWidgetSpan(IFWL_Widget *pWidget, FX_INT32 iSpan, FX_BOOL bColumn);
+    int32_t			GetWidgetPos(IFWL_Widget *pWidget, FX_BOOL bColumn);
+    FWL_ERR				SetWidgetPos(IFWL_Widget *pWidget, int32_t iPos, FX_BOOL bColumn);
+    int32_t			GetWidgetSpan(IFWL_Widget *pWidget, FX_BOOL bColumn);
+    FWL_ERR				SetWidgetSpan(IFWL_Widget *pWidget, int32_t iSpan, FX_BOOL bColumn);
     FX_FLOAT			GetWidgetSize(IFWL_Widget *pWidget, FWL_GRIDSIZE eSize, FWL_GRIDUNIT &eUnit);
     FWL_ERR				SetWidgetSize(IFWL_Widget *pWidget, FWL_GRIDSIZE eSize, FX_FLOAT fSize, FWL_GRIDUNIT eUit);
     FX_BOOL				GetWidgetMargin(IFWL_Widget *pWidget, FWL_GRIDMARGIN eMargin, FX_FLOAT &fMargin);

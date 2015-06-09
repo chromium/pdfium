@@ -23,7 +23,7 @@
 
 #include "../barcode.h"
 #include "BC_PDF417Dimensions.h"
-CBC_Dimensions::CBC_Dimensions(FX_INT32 minCols, FX_INT32 maxCols, FX_INT32 minRows, FX_INT32 maxRows)
+CBC_Dimensions::CBC_Dimensions(int32_t minCols, int32_t maxCols, int32_t minRows, int32_t maxRows)
 {
     m_minCols = minCols;
     m_maxCols = maxCols;
@@ -33,19 +33,19 @@ CBC_Dimensions::CBC_Dimensions(FX_INT32 minCols, FX_INT32 maxCols, FX_INT32 minR
 CBC_Dimensions::~CBC_Dimensions()
 {
 }
-FX_INT32 CBC_Dimensions::getMinCols()
+int32_t CBC_Dimensions::getMinCols()
 {
     return m_minCols;
 }
-FX_INT32 CBC_Dimensions::getMaxCols()
+int32_t CBC_Dimensions::getMaxCols()
 {
     return m_maxCols;
 }
-FX_INT32 CBC_Dimensions::getMinRows()
+int32_t CBC_Dimensions::getMinRows()
 {
     return m_minRows;
 }
-FX_INT32 CBC_Dimensions::getMaxRows()
+int32_t CBC_Dimensions::getMaxRows()
 {
     return m_maxRows;
 }

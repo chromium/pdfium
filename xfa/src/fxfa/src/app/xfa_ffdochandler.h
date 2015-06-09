@@ -15,13 +15,13 @@ public:
     virtual void				ReleaseDoc(IXFA_Doc* hDoc);
     virtual IXFA_DocProvider*	GetDocProvider(IXFA_Doc* hDoc);
     virtual FX_DWORD		GetDocType(IXFA_Doc* hDoc);
-    virtual	FX_INT32		StartLoad(IXFA_Doc* hDoc);
-    virtual FX_INT32		DoLoad(IXFA_Doc* hDoc, IFX_Pause *pPause = NULL);
+    virtual	int32_t		StartLoad(IXFA_Doc* hDoc);
+    virtual int32_t		DoLoad(IXFA_Doc* hDoc, IFX_Pause *pPause = NULL);
     virtual void			StopLoad(IXFA_Doc* hDoc);
 
     virtual IXFA_DocView*	CreateDocView(IXFA_Doc* hDoc, FX_DWORD dwView = 0);
-    virtual FX_INT32			CountPackages(IXFA_Doc* hDoc);
-    virtual	void				GetPackageName(IXFA_Doc* hDoc, FX_INT32 iPackage, CFX_WideStringC &wsPackage);
+    virtual int32_t			CountPackages(IXFA_Doc* hDoc);
+    virtual	void				GetPackageName(IXFA_Doc* hDoc, int32_t iPackage, CFX_WideStringC &wsPackage);
     virtual IFDE_XMLElement*	GetPackageData(IXFA_Doc* hDoc, FX_WSTR wsPackage);
     virtual FX_BOOL			SavePackage(IXFA_Doc* hDoc, FX_WSTR wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext = NULL);
     virtual FX_BOOL			CloseDoc(IXFA_Doc* hDoc);

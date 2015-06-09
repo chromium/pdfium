@@ -16,11 +16,11 @@
 
 /* ---------------------------- CPWL_Utils ------------------------------ */
 
-CFX_ByteString CPWL_Utils::GetAppStreamFromArray(const CPWL_PathData* pPathData, FX_INT32 nCount)
+CFX_ByteString CPWL_Utils::GetAppStreamFromArray(const CPWL_PathData* pPathData, int32_t nCount)
 {
 	CFX_ByteTextBuf csAP;
 
-	for (FX_INT32 i=0; i<nCount; i++)
+	for (int32_t i=0; i<nCount; i++)
 	{
 		switch (pPathData[i].type)
 		{
@@ -45,11 +45,11 @@ CFX_ByteString CPWL_Utils::GetAppStreamFromArray(const CPWL_PathData* pPathData,
 	return csAP.GetByteString();
 }
 
-void CPWL_Utils::GetPathDataFromArray(CFX_PathData& path, const CPWL_PathData* pPathData, FX_INT32 nCount)
+void CPWL_Utils::GetPathDataFromArray(CFX_PathData& path, const CPWL_PathData* pPathData, int32_t nCount)
 {
 	path.SetPointCount(nCount);
 
-	for (FX_INT32 i=0; i<nCount; i++)
+	for (int32_t i=0; i<nCount; i++)
 	{
 		switch (pPathData[i].type)
 		{
@@ -143,7 +143,7 @@ CFX_ByteString CPWL_Utils::GetAP_Check(const CPDF_Rect & crBBox)
 	FX_FLOAT fWidth = crBBox.right - crBBox.left;
 	FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
-	const FX_INT32 num = 8;
+	const int32_t num = 8;
 
 	CPWL_Point pts[num*3] = 
 	{
@@ -188,7 +188,7 @@ CFX_ByteString CPWL_Utils::GetAP_Check(const CPDF_Rect & crBBox)
 		CPWL_Point(0.30f, 0.56f)
 	};
 
-	for (FX_INT32 j=0; j<num*3; j++)
+	for (int32_t j=0; j<num*3; j++)
 	{
 		pts[j].x *= fWidth;
 		pts[j].x += crBBox.left;
@@ -199,12 +199,12 @@ CFX_ByteString CPWL_Utils::GetAP_Check(const CPDF_Rect & crBBox)
 
 	csAP << pts[0].x << " " << pts[0].y << " m\n";
 
-	for (FX_INT32 i=0; i<num; i++)
+	for (int32_t i=0; i<num; i++)
 	{
-		FX_INT32 nCur = i*3;
-		FX_INT32 n1 = i*3 + 1;
-		FX_INT32 n2 = i*3 + 2;
-		FX_INT32 nNext = (i < num-1 ? (i+1)*3 : 0);
+		int32_t nCur = i*3;
+		int32_t n1 = i*3 + 1;
+		int32_t n2 = i*3 + 2;
+		int32_t nNext = (i < num-1 ? (i+1)*3 : 0);
 
 		FX_FLOAT px1 = pts[n1].x - pts[nCur].x;
 		FX_FLOAT py1 = pts[n1].y - pts[nCur].y;
@@ -321,7 +321,7 @@ CFX_ByteString CPWL_Utils::GetAP_Star(const CPDF_Rect & crBBox)
 
 	FX_FLOAT fAngel = PWL_PI/10.0f;
 
-	for (FX_INT32 i=0; i<5; i++)
+	for (int32_t i=0; i<5; i++)
 	{
 		px[i] = ptCenter.x + fRadius * (FX_FLOAT)cos(fAngel);
 		py[i] = ptCenter.y + fRadius * (FX_FLOAT)sin(fAngel);
@@ -331,8 +331,8 @@ CFX_ByteString CPWL_Utils::GetAP_Star(const CPDF_Rect & crBBox)
 
 	csAP << px[0] << " " << py[0] << " m\n";
 
-	FX_INT32 nNext = 0;
-	for (FX_INT32 j=0; j<5; j++)
+	int32_t nNext = 0;
+	for (int32_t j=0; j<5; j++)
 	{
 		nNext += 2;
 		if (nNext >= 5) nNext -= 5;
@@ -476,7 +476,7 @@ static CFX_ByteString GetSquigglyAppearanceStream(FX_FLOAT fStartX, FX_FLOAT fEn
 	sRet << "0 w\n" << fStartX << " " << fY << " m\n";
 
 	FX_FLOAT fx;
-	FX_INT32 i;
+	int32_t i;
 
 	for (i=1,fx=fStartX+fStep; fx<fEndX; fx+=fStep,i++)
 	{
@@ -635,7 +635,7 @@ CFX_ByteString CPWL_Utils::GetSpellCheckAppStream(IFX_Edit* pEdit, IPWL_SpellChe
 }
 
 CFX_ByteString CPWL_Utils::GetTextAppStream(const CPDF_Rect & rcBBox,IFX_Edit_FontMap * pFontMap,
-														const CFX_WideString & sText, FX_INT32 nAlignmentH, FX_INT32 nAlignmentV,
+														const CFX_WideString & sText, int32_t nAlignmentH, int32_t nAlignmentV,
 														FX_FLOAT fFontSize, FX_BOOL bMultiLine, FX_BOOL bAutoReturn, const CPWL_Color & crText)
 {
 	CFX_ByteTextBuf sRet;
@@ -674,7 +674,7 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect & rcBBox,
 											const CFX_WideString & sLabel,											
 											const CPWL_Color & crText,
 											FX_FLOAT fFontSize,
-											FX_INT32 nLayOut)
+											int32_t nLayOut)
 {
 	const FX_FLOAT fAutoFontScale = 1.0f / 3.0f;	
 
@@ -947,7 +947,7 @@ CFX_ByteString CPWL_Utils::GetColorAppStream(const CPWL_Color & color,const FX_B
 
 CFX_ByteString CPWL_Utils::GetBorderAppStream(const CPDF_Rect & rect, FX_FLOAT fWidth,
 												const CPWL_Color & color, const CPWL_Color & crLeftTop, const CPWL_Color & crRightBottom,
-												FX_INT32 nStyle, const CPWL_Dash & dash)
+												int32_t nStyle, const CPWL_Dash & dash)
 {
 	CFX_ByteTextBuf sAppStream;
 	CFX_ByteString sColor;
@@ -1045,7 +1045,7 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CPDF_Rect & rect, FX_FLOAT f
 
 CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(const CPDF_Rect & rect, FX_FLOAT fWidth,
 												const CPWL_Color & color, const CPWL_Color & crLeftTop, const CPWL_Color & crRightBottom,
-												FX_INT32 nStyle, const CPWL_Dash & dash)
+												int32_t nStyle, const CPWL_Dash & dash)
 {
 	CFX_ByteTextBuf sAppStream;
 	CFX_ByteString sColor;
@@ -1248,7 +1248,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Star(const CPDF_Rect & rcBBox, const CPW
 }
 
 CFX_ByteString CPWL_Utils::GetCheckBoxAppStream(const CPDF_Rect & rcBBox,
-													FX_INT32 nStyle,
+													int32_t nStyle,
 													const CPWL_Color & crText)
 {
 	CPDF_Rect rcCenter = GetCenterSquare(rcBBox);
@@ -1271,7 +1271,7 @@ CFX_ByteString CPWL_Utils::GetCheckBoxAppStream(const CPDF_Rect & rcBBox,
 }
 
 CFX_ByteString CPWL_Utils::GetRadioButtonAppStream(const CPDF_Rect & rcBBox,
-													FX_INT32 nStyle,
+													int32_t nStyle,
 													const CPWL_Color & crText)
 {
 	CPDF_Rect rcCenter = GetCenterSquare(rcBBox);
@@ -1376,7 +1376,7 @@ void CPWL_Utils::ConvertRGB2CMYK(FX_FLOAT dR,FX_FLOAT dG,FX_FLOAT dB,FX_FLOAT &d
 	dK = FX_MIN(dC, FX_MIN(dM, dY));
 }
 
-void CPWL_Utils::PWLColorToARGB(const CPWL_Color& color, FX_INT32& alpha, FX_FLOAT& red, FX_FLOAT& green, FX_FLOAT& blue)
+void CPWL_Utils::PWLColorToARGB(const CPWL_Color& color, int32_t& alpha, FX_FLOAT& red, FX_FLOAT& green, FX_FLOAT& blue)
 {
 	switch (color.nColorType)
 	{
@@ -1406,16 +1406,16 @@ void CPWL_Utils::PWLColorToARGB(const CPWL_Color& color, FX_INT32& alpha, FX_FLO
 	}
 }
 
-FX_COLORREF CPWL_Utils::PWLColorToFXColor(const CPWL_Color& color, FX_INT32 nTransparancy)
+FX_COLORREF CPWL_Utils::PWLColorToFXColor(const CPWL_Color& color, int32_t nTransparancy)
 {
-	FX_INT32 nAlpha = nTransparancy;
+	int32_t nAlpha = nTransparancy;
 	FX_FLOAT dRed = 0;
 	FX_FLOAT dGreen = 0;
 	FX_FLOAT dBlue = 0;
 
 	PWLColorToARGB(color, nAlpha, dRed, dGreen, dBlue);
 
-	return ArgbEncode(nAlpha, (FX_INT32)(dRed*255), (FX_INT32)(dGreen*255), (FX_INT32)(dBlue*255));
+	return ArgbEncode(nAlpha, (int32_t)(dRed*255), (int32_t)(dGreen*255), (int32_t)(dBlue*255));
 }
 
 void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,const CPDF_Rect & rect,
@@ -1428,13 +1428,13 @@ void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Devi
 }
 
 void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
-							const CPDF_Point* pPts, FX_INT32 nCount, const FX_COLORREF& color)
+							const CPDF_Point* pPts, int32_t nCount, const FX_COLORREF& color)
 {
 	CFX_PathData path;
 	path.SetPointCount(nCount);
 
 	path.SetPoint(0, pPts[0].x, pPts[0].y, FXPT_MOVETO);
-	for (FX_INT32 i=1; i<nCount; i++)
+	for (int32_t i=1; i<nCount; i++)
 		path.SetPoint(i, pPts[i].x, pPts[i].y, FXPT_LINETO);
 
 	pDevice->DrawPath(&path, pUser2Device, NULL, color, 0, FXFILL_ALTERNATE);
@@ -1468,14 +1468,14 @@ void CPWL_Utils::DrawStrokeLine(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2De
 }
 
 void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,const CPDF_Rect & rect,
-							  const CPWL_Color & color, FX_INT32 nTransparancy)
+							  const CPWL_Color & color, int32_t nTransparancy)
 {
 	CPWL_Utils::DrawFillRect(pDevice,pUser2Device,rect,PWLColorToFXColor(color,nTransparancy));
 }
 
 void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 														FX_BOOL bVertical, FX_BOOL bHorizontal, CPDF_Rect rect,
-														FX_INT32 nTransparancy, FX_INT32 nStartGray, FX_INT32 nEndGray)
+														int32_t nTransparancy, int32_t nStartGray, int32_t nEndGray)
 {
 	FX_FLOAT fStepGray = 1.0f;
 
@@ -1485,7 +1485,7 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device
 
 		for (FX_FLOAT fy=rect.bottom+0.5f; fy<=rect.top-0.5f; fy+=1.0f)
 		{			
-			FX_INT32 nGray = nStartGray + (FX_INT32)(fStepGray * (fy-rect.bottom));
+			int32_t nGray = nStartGray + (int32_t)(fStepGray * (fy-rect.bottom));
 			CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, CPDF_Point(rect.left, fy),
 				CPDF_Point(rect.right, fy), ArgbEncode(nTransparancy, nGray, nGray, nGray), 1.5f);
 		}
@@ -1497,7 +1497,7 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device
 
 		for (FX_FLOAT fx=rect.left+0.5f; fx<=rect.right-0.5f; fx+=1.0f)
 		{			
-			FX_INT32 nGray = nStartGray + (FX_INT32)(fStepGray * (fx-rect.left));
+			int32_t nGray = nStartGray + (int32_t)(fStepGray * (fx-rect.left));
 			CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, CPDF_Point(fx, rect.bottom),
 				CPDF_Point(fx, rect.top), ArgbEncode(nTransparancy, nGray, nGray, nGray), 1.5f);
 		}
@@ -1507,7 +1507,7 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device
 void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 												const CPDF_Rect & rect, FX_FLOAT fWidth,
 												const CPWL_Color & color, const CPWL_Color & crLeftTop, const CPWL_Color & crRightBottom,
-												FX_INT32 nStyle, const CPWL_Dash & dash, FX_INT32 nTransparancy)
+												int32_t nStyle, const CPWL_Dash & dash, int32_t nTransparancy)
 {
 	FX_FLOAT fLeft = rect.left;
 	FX_FLOAT fRight = rect.right;
@@ -1622,7 +1622,7 @@ static void AddSquigglyPath(CFX_PathData & PathData, FX_FLOAT fStartX, FX_FLOAT 
 	PathData.SetPoint(PathData.GetPointCount() - 1, fStartX, fY, FXPT_MOVETO);
 
 	FX_FLOAT fx;
-	FX_INT32 i;
+	int32_t i;
 
 	for (i=1,fx=fStartX+fStep; fx<fEndX; fx+=fStep,i++)
 	{
@@ -1713,10 +1713,10 @@ void CPWL_Utils::DrawEditSpellCheck(CFX_RenderDevice* pDevice, CPDF_Matrix* pUse
 		CPDF_Rect rcTemp = rcClip;
 		pUser2Device->TransformRect(rcTemp);
 		FX_RECT rcDevClip;
-		rcDevClip.left = (FX_INT32)rcTemp.left;
-		rcDevClip.right = (FX_INT32)rcTemp.right;
-		rcDevClip.top = (FX_INT32)rcTemp.top;
-		rcDevClip.bottom = (FX_INT32)rcTemp.bottom;
+		rcDevClip.left = (int32_t)rcTemp.left;
+		rcDevClip.right = (int32_t)rcTemp.right;
+		rcDevClip.top = (int32_t)rcTemp.top;
+		rcDevClip.bottom = (int32_t)rcTemp.bottom;
 		pDevice->SetClip_Rect(&rcDevClip);
 	}
 
@@ -1848,7 +1848,7 @@ CPWL_Color CPWL_Utils::GetReverseColor(const CPWL_Color& color)
 	return crRet;
 }
 
-CFX_ByteString CPWL_Utils::GetIconAppStream(FX_INT32 nType, const CPDF_Rect& rect, const CPWL_Color& crFill, 
+CFX_ByteString CPWL_Utils::GetIconAppStream(int32_t nType, const CPDF_Rect& rect, const CPWL_Color& crFill, 
 												const CPWL_Color& crStroke)
 {
 	CFX_ByteString sAppStream = CPWL_Utils::GetColorAppStream(crStroke, FALSE);
@@ -1931,7 +1931,7 @@ CFX_ByteString CPWL_Utils::GetIconAppStream(FX_INT32 nType, const CPDF_Rect& rec
 }
 
 void CPWL_Utils::DrawIconAppStream(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
-						FX_INT32 nType, const CPDF_Rect & rect, const CPWL_Color& crFill, const CPWL_Color& crStroke, const FX_INT32 nTransparancy)
+						int32_t nType, const CPDF_Rect & rect, const CPWL_Color& crFill, const CPWL_Color& crStroke, const int32_t nTransparancy)
 {
 	CFX_GraphStateData gsd;
 	gsd.m_LineWidth = 1.0f;
@@ -2477,7 +2477,7 @@ void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData, CFX_PathData& path,
 
 	FX_FLOAT fAngel = PWL_PI/10.0f;
 
-	for (FX_INT32 i=0; i<5; i++)
+	for (int32_t i=0; i<5; i++)
 	{
 		px1[i] = ptCenter.x + fLongRadius * (FX_FLOAT)cos(fAngel);
 		py1[i] = ptCenter.y + fLongRadius * (FX_FLOAT)sin(fAngel);
@@ -2487,7 +2487,7 @@ void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData, CFX_PathData& path,
 
 	fAngel = PWL_PI/5.0f + PWL_PI/10.0f;
 
-	for (FX_INT32 j=0; j<5; j++)
+	for (int32_t j=0; j<5; j++)
 	{
 		px2[j] = ptCenter.x + fShortRadius * (FX_FLOAT)cos(fAngel);
 		py2[j] = ptCenter.y + fShortRadius * (FX_FLOAT)sin(fAngel);
@@ -2499,7 +2499,7 @@ void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData, CFX_PathData& path,
 	PathArray[0] = CPWL_PathData(CPWL_Point(px1[0], py1[0]), PWLPT_MOVETO);
 	PathArray[1] = CPWL_PathData(CPWL_Point(px2[0], py2[0]), PWLPT_LINETO);
 
-	for(FX_INT32 k = 0; k < 4; k++)
+	for(int32_t k = 0; k < 4; k++)
 	{
 		PathArray[(k+1)*2] = CPWL_PathData(CPWL_Point(px1[k+1], py1[k+1]), PWLPT_LINETO);
 		PathArray[(k+1)*2 + 1] = CPWL_PathData(CPWL_Point(px2[k+1], py2[k+1]), PWLPT_LINETO);
@@ -2795,7 +2795,7 @@ void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData, CFX_PathData& path
 		GetPathDataFromArray(path, PathArray, 23);
 }
 
-void CPWL_Color::ConvertColorType(FX_INT32 nColorType)
+void CPWL_Color::ConvertColorType(int32_t nColorType)
 {
 	switch (this->nColorType)
 	{

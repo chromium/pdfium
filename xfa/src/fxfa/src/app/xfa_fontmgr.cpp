@@ -966,9 +966,9 @@ void XFA_LocalFontNameToEnglishName(FX_WSTR wsLocalName, CFX_WideString &wsEngli
     wsEnglishName = wsLocalName;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ || _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || _FXM_PLATFORM_ ==  _FXM_PLATFORM_ANDROID_
     FX_DWORD dwLocalNameHash = FX_HashCode_String_GetW(wsLocalName.GetPtr(), wsLocalName.GetLength(), TRUE);
-    FX_INT32 iStart = 0;
-    FX_INT32 iEnd = sizeof(g_XFAFontsMap) / sizeof(XFA_FONTINFO) - 1;
-    FX_INT32 iMid = 0;
+    int32_t iStart = 0;
+    int32_t iEnd = sizeof(g_XFAFontsMap) / sizeof(XFA_FONTINFO) - 1;
+    int32_t iMid = 0;
     do {
         iMid = (iStart + iEnd) / 2;
         FX_DWORD dwFontNameHash = g_XFAFontsMap[iMid].dwFontNameHash;
@@ -989,9 +989,9 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(FX_WSTR wsFontName)
     CFX_WideString wsFontNameTemp = wsFontName;
     wsFontNameTemp.Remove(L' ');
     FX_DWORD dwCurFontNameHash = FX_HashCode_String_GetW(wsFontNameTemp, wsFontNameTemp.GetLength(), TRUE);
-    FX_INT32 iStart = 0;
-    FX_INT32 iEnd = sizeof(g_XFAFontsMap) / sizeof(XFA_FONTINFO) - 1;
-    FX_INT32 iMid = 0;
+    int32_t iStart = 0;
+    int32_t iEnd = sizeof(g_XFAFontsMap) / sizeof(XFA_FONTINFO) - 1;
+    int32_t iMid = 0;
     const XFA_FONTINFO *pFontInfo = NULL;
     do {
         iMid = (iStart + iEnd) / 2;
@@ -1021,8 +1021,8 @@ IXFA_FontMgr::~IXFA_FontMgr()
 }
 CXFA_DefFontMgr::~CXFA_DefFontMgr()
 {
-    FX_INT32 iCounts = m_CacheFonts.GetSize();
-    for (FX_INT32 i = 0; i < iCounts; i++) {
+    int32_t iCounts = m_CacheFonts.GetSize();
+    for (int32_t i = 0; i < iCounts; i++) {
         ((IFX_Font*)m_CacheFonts[i])->Release();
     }
     m_CacheFonts.RemoveAll();
@@ -1054,7 +1054,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWOR
                 dwStyle |= FX_FONTSTYLE_Italic;
             }
             FX_LPCWSTR pReplace = pCurFont->pReplaceFont;
-            FX_INT32 iLength = FXSYS_wcslen(pReplace);
+            int32_t iLength = FXSYS_wcslen(pReplace);
             while (iLength > 0) {
                 FX_LPCWSTR pNameText = pReplace;
                 while (*pNameText != L',' && iLength > 0) {
@@ -1204,10 +1204,10 @@ IFX_Font* CXFA_PDFFontMgr::GetFont(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, 
 CFX_ByteString CXFA_PDFFontMgr::PsNameToFontName(const CFX_ByteString& strPsName,
         FX_BOOL bBold, FX_BOOL bItalic)
 {
-    FX_INT32 nCount = sizeof(g_XFAPDFFontName) / sizeof(XFA_PDFFONTNAME);
-    for (FX_INT32 i = 0; i < nCount; i++) {
+    int32_t nCount = sizeof(g_XFAPDFFontName) / sizeof(XFA_PDFFONTNAME);
+    for (int32_t i = 0; i < nCount; i++) {
         if (strPsName == g_XFAPDFFontName[i].lpPsName) {
-            FX_INT32 index = 1 + ((bItalic << 1) | bBold);
+            int32_t index = 1 + ((bItalic << 1) | bBold);
             return *(&g_XFAPDFFontName[i].lpPsName + index);
         }
     }
@@ -1217,17 +1217,17 @@ FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(FX_BSTR bsPsName, FX_BOOL bBold, 
 {
     CFX_ByteString bsDRName = bsDRFontName;
     bsDRName.Remove('-');
-    FX_INT32 iPsLen = bsPsName.GetLength();
-    FX_INT32 nIndex = bsDRName.Find(bsPsName);
+    int32_t iPsLen = bsPsName.GetLength();
+    int32_t nIndex = bsDRName.Find(bsPsName);
     if (nIndex != -1 && !bStrictMatch) {
         return TRUE;
     }
     if (nIndex != 0) {
         return FALSE;
     }
-    FX_INT32 iDifferLength = bsDRName.GetLength() - iPsLen;
+    int32_t iDifferLength = bsDRName.GetLength() - iPsLen;
     if (iDifferLength > 1 || (bBold || bItalic)) {
-        FX_INT32 iBoldIndex = bsDRName.Find(FX_BSTRC("Bold"));
+        int32_t iBoldIndex = bsDRName.Find(FX_BSTRC("Bold"));
         FX_BOOL bBoldFont = iBoldIndex > 0;
         if (bBold ^ bBoldFont) {
             return FALSE;
@@ -1284,7 +1284,7 @@ FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(FX_BSTR bsPsName, FX_BOOL bBold, 
     }
     return TRUE;
 }
-FX_BOOL CXFA_PDFFontMgr::GetCharWidth(IFX_Font* pFont, FX_WCHAR wUnicode, FX_INT32 &iWidth, FX_BOOL bCharCode)
+FX_BOOL CXFA_PDFFontMgr::GetCharWidth(IFX_Font* pFont, FX_WCHAR wUnicode, int32_t &iWidth, FX_BOOL bCharCode)
 {
     if (wUnicode != 0x20 || bCharCode) {
         return FALSE;

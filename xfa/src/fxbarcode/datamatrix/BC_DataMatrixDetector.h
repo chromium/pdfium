@@ -15,7 +15,7 @@ class ResultPointsAndTransitions;
 class CBC_ResultPointsAndTransitions
 {
 public:
-    CBC_ResultPointsAndTransitions(CBC_ResultPoint *from, CBC_ResultPoint *to, FX_INT32 transitions)
+    CBC_ResultPointsAndTransitions(CBC_ResultPoint *from, CBC_ResultPoint *to, int32_t transitions)
     {
         m_from = from;
         m_to = to;
@@ -32,47 +32,47 @@ public:
     {
         return m_to;
     }
-    FX_INT32 GetTransitions()
+    int32_t GetTransitions()
     {
         return m_transitions;
     }
 private:
     CBC_ResultPoint *m_from;
     CBC_ResultPoint *m_to;
-    FX_INT32 m_transitions;
+    int32_t m_transitions;
 };
 class CBC_DataMatrixDetector
 {
 public:
     CBC_DataMatrixDetector(CBC_CommonBitMatrix *image);
     virtual ~CBC_DataMatrixDetector();
-    CBC_QRDetectorResult *Detect(FX_INT32 &e);
+    CBC_QRDetectorResult *Detect(int32_t &e);
     CBC_ResultPoint *CorrectTopRightRectangular(CBC_ResultPoint *bottomLeft,
             CBC_ResultPoint *bottomRight,
             CBC_ResultPoint *topLeft,
             CBC_ResultPoint *topRight,
-            FX_INT32 dimensionTop, FX_INT32 dimensionRight);
+            int32_t dimensionTop, int32_t dimensionRight);
     CBC_ResultPoint *CorrectTopRight(CBC_ResultPoint *bottomLeft,
                                      CBC_ResultPoint *bottomRight,
                                      CBC_ResultPoint *topLeft,
                                      CBC_ResultPoint *topRight,
-                                     FX_INT32 dimension);
+                                     int32_t dimension);
     CBC_CommonBitMatrix *SampleGrid(CBC_CommonBitMatrix *image,
                                     CBC_ResultPoint *topLeft,
                                     CBC_ResultPoint *bottomLeft,
                                     CBC_ResultPoint *bottomRight,
                                     CBC_ResultPoint *topRight,
-                                    FX_INT32 dimensionX, FX_INT32 dimensionY, FX_INT32 &e);
+                                    int32_t dimensionX, int32_t dimensionY, int32_t &e);
     CBC_ResultPointsAndTransitions *TransitionsBetween(CBC_ResultPoint *from, CBC_ResultPoint *to);
     FX_BOOL IsValid(CBC_ResultPoint *p);
-    FX_INT32 Distance(CBC_ResultPoint *a, CBC_ResultPoint *b);
-    void Increment(CFX_MapPtrTemplate<CBC_ResultPoint*, FX_INT32> &table, CBC_ResultPoint *key);
-    FX_INT32 Round(FX_FLOAT d);
+    int32_t Distance(CBC_ResultPoint *a, CBC_ResultPoint *b);
+    void Increment(CFX_MapPtrTemplate<CBC_ResultPoint*, int32_t> &table, CBC_ResultPoint *key);
+    int32_t Round(FX_FLOAT d);
     void OrderBestPatterns(CFX_PtrArray *patterns);
-    virtual void Init(FX_INT32 &e);
+    virtual void Init(int32_t &e);
 private:
     CBC_CommonBitMatrix *m_image;
     CBC_WhiteRectangleDetector *m_rectangleDetector;
-    const static FX_INT32 INTEGERS[5];
+    const static int32_t INTEGERS[5];
 };
 #endif

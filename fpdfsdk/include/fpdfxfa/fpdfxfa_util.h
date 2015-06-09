@@ -23,7 +23,7 @@ public:
 	virtual FWL_ERR		Stop(FWL_HTIMER hTimer);
 
 protected:
-	static void TimerProc(FX_INT32 idEvent);
+	static void TimerProc(int32_t idEvent);
 
 	static CFX_PtrArray	ms_timerArray;
 	CPDFDoc_Environment* m_pEnv;
@@ -37,7 +37,7 @@ public:
 	{
 
 	}
-	FX_UINT32 uIDEvent;
+	uint32_t uIDEvent;
 	IFWL_Timer *pTimer;
 };
 

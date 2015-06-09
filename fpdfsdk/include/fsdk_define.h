@@ -84,13 +84,13 @@ public:
 
 	virtual CFX_ByteString GetFullPath() { return ""; }
 	virtual FX_FILESIZE	GetSize() override { return m_FileAccess.m_FileLen; }
-	virtual FX_BOOL		GetByte(FX_DWORD pos, FX_BYTE& ch);
+	virtual FX_BOOL		GetByte(FX_DWORD pos, uint8_t& ch);
 	virtual FX_BOOL		GetBlock(FX_DWORD pos, FX_LPBYTE pBuf, FX_DWORD size);
 	virtual void		Release() override { delete this; }
 	virtual FX_BOOL		ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
 	FPDF_FILEACCESS		m_FileAccess;
-	FX_BYTE				m_Buffer[512];
+	uint8_t				m_Buffer[512];
 	FX_DWORD			m_BufferOffset;
 };
 

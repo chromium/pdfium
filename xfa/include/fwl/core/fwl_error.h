@@ -6,7 +6,7 @@
 
 #ifndef _FWL_ERROR_H
 #define _FWL_ERROR_H
-typedef FX_INT32	FWL_ERR;
+typedef int32_t	FWL_ERR;
 #define FWL_ERR_Succeeded						0
 #define FWL_ERR_Indefinite						-1
 #define FWL_ERR_Parameter_Invalid				-100

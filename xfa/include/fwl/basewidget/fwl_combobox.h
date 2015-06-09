@@ -74,7 +74,7 @@ END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbCloseUp, FWL_EVTHASH_CMB_CloseUp)
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbEditChanged, FWL_EVTHASH_CMB_EditChanged)
-FX_INT32 nChangeType;
+int32_t nChangeType;
 CFX_WideString wsInsert;
 CFX_WideString wsDelete;
 END_FWL_EVENT_DEF
@@ -83,12 +83,12 @@ CFX_Int32Array iArraySels;
 FX_BOOL	bLButtonUp;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbHoverChanged, FWL_EVTHASH_CMB_HoverChanged)
-FX_INT32 m_iCurHover;
+int32_t m_iCurHover;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbDrawItem, FWL_EVTHASH_CMB_DrawItem)
 CFX_Graphics *m_pGraphics;
 CFX_Matrix m_matrix;
-FX_INT32 m_index;
+int32_t m_index;
 CFX_RectF m_rtItem;
 END_FWL_EVENT_DEF
 class IFWL_ComboBoxDP : public IFWL_ListBoxDP
@@ -102,16 +102,16 @@ public:
     static IFWL_ComboBox* Create();
     FWL_ERR		Initialize(IFWL_Widget *pOuter = NULL);
     FWL_ERR		Initialize(const CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
-    FX_INT32	GetCurSel();
-    FWL_ERR		SetCurSel(FX_INT32 iSel);
+    int32_t	GetCurSel();
+    FWL_ERR		SetCurSel(int32_t iSel);
     FWL_ERR		SetEditText(const CFX_WideString &wsText);
-    FX_INT32	GetEditTextLength() const;
-    FWL_ERR		GetEditText(CFX_WideString &wsText, FX_INT32 nStart = 0, FX_INT32 nCount = -1) const;
-    FWL_ERR		SetEditSelRange(FX_INT32 nStart, FX_INT32 nCount = -1);
-    FX_INT32	GetEditSelRange(FX_INT32 nIndex, FX_INT32 &nStart);
-    FX_INT32	GetEditLimit();
-    FWL_ERR		SetEditLimit(FX_INT32 nLimit);
-    FWL_ERR		EditDoClipboard(FX_INT32 iCmd);
+    int32_t	GetEditTextLength() const;
+    FWL_ERR		GetEditText(CFX_WideString &wsText, int32_t nStart = 0, int32_t nCount = -1) const;
+    FWL_ERR		SetEditSelRange(int32_t nStart, int32_t nCount = -1);
+    int32_t	GetEditSelRange(int32_t nIndex, int32_t &nStart);
+    int32_t	GetEditLimit();
+    FWL_ERR		SetEditLimit(int32_t nLimit);
+    FWL_ERR		EditDoClipboard(int32_t iCmd);
     FX_BOOL		EditRedo(FX_BSTR bsRecord);
     FX_BOOL		EditUndo(FX_BSTR bsRecord);
     IFWL_ListBox*	GetListBoxt();

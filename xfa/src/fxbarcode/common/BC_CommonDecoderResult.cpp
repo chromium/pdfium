@@ -27,7 +27,7 @@
 CBC_CommonDecoderResult::CBC_CommonDecoderResult()
 {
 }
-void CBC_CommonDecoderResult::Init(const CFX_ByteArray &rawBytes, const CFX_ByteString &text, const CFX_Int32Array &byteSegments,  CBC_QRCoderErrorCorrectionLevel* ecLevel, FX_INT32 &e)
+void CBC_CommonDecoderResult::Init(const CFX_ByteArray &rawBytes, const CFX_ByteString &text, const CFX_Int32Array &byteSegments,  CBC_QRCoderErrorCorrectionLevel* ecLevel, int32_t &e)
 {
     if(text.IsEmpty()) {
         e = BCExceptionIllegalArgument;
@@ -39,7 +39,7 @@ void CBC_CommonDecoderResult::Init(const CFX_ByteArray &rawBytes, const CFX_Byte
     m_ecLevel = ecLevel;
     m_other = NULL;
 }
-void CBC_CommonDecoderResult::Init(const CFX_ByteArray &rawBytes, const CFX_ByteString &text, const CFX_PtrArray &byteSegments, const CFX_ByteString &ecLevel, FX_INT32 &e)
+void CBC_CommonDecoderResult::Init(const CFX_ByteArray &rawBytes, const CFX_ByteString &text, const CFX_PtrArray &byteSegments, const CFX_ByteString &ecLevel, int32_t &e)
 {
     if(text.IsEmpty()) {
         e = BCExceptionIllegalArgument;

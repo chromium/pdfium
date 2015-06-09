@@ -61,8 +61,8 @@ public:
 
     virtual void	GetNumbericSymbol(FX_LOCALENUMSYMBOL eType, CFX_WideString& wsNumSymbol) const = 0;
     virtual void	GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const = 0;
-    virtual void	GetMonthName(FX_INT32 nMonth, CFX_WideString& wsMonthName, FX_BOOL bAbbr = TRUE) const = 0;
-    virtual void	GetDayName(FX_INT32 nWeek, CFX_WideString& wsDayName, FX_BOOL bAbbr = TRUE) const = 0;
+    virtual void	GetMonthName(int32_t nMonth, CFX_WideString& wsMonthName, FX_BOOL bAbbr = TRUE) const = 0;
+    virtual void	GetDayName(int32_t nWeek, CFX_WideString& wsDayName, FX_BOOL bAbbr = TRUE) const = 0;
     virtual void	GetMeridiemName(CFX_WideString& wsMeridiemName, FX_BOOL bAM = TRUE) const = 0;
     virtual void	GetTimeZone(FX_TIMEZONE& tz) const = 0;
     virtual void	GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD = TRUE) const = 0;
@@ -112,11 +112,11 @@ class CFX_Decimal
 {
 public:
     CFX_Decimal();
-    CFX_Decimal(FX_UINT32 val);
-    CFX_Decimal(FX_UINT64 val);
-    CFX_Decimal(FX_INT32 val);
-    CFX_Decimal(FX_INT64 val);
-    CFX_Decimal(FX_FLOAT val, FX_UINT8 scale = 3);
+    CFX_Decimal(uint32_t val);
+    CFX_Decimal(uint64_t val);
+    CFX_Decimal(int32_t val);
+    CFX_Decimal(int64_t val);
+    CFX_Decimal(FX_FLOAT val, uint8_t scale = 3);
     CFX_Decimal(FX_WSTR str);
     CFX_Decimal(FX_BSTR str);
     operator CFX_WideString() const;
@@ -132,29 +132,29 @@ public:
     CFX_Decimal operator * (const CFX_Decimal& val) const;
     CFX_Decimal operator / (const CFX_Decimal& val) const;
     CFX_Decimal operator % (const CFX_Decimal& val) const;
-    void		SetScale(FX_UINT8 newScale);
-    FX_UINT8	GetScale();
+    void		SetScale(uint8_t newScale);
+    uint8_t	GetScale();
     void		SetAbs();
     void		SetNegate();
     void		SetFloor();
     void		SetCeiling();
     void		SetTruncate();
 protected:
-    CFX_Decimal(FX_UINT32 hi, FX_UINT32 mid, FX_UINT32 lo, FX_BOOL neg, FX_UINT8 scale);
+    CFX_Decimal(uint32_t hi, uint32_t mid, uint32_t lo, FX_BOOL neg, uint8_t scale);
     inline FX_BOOL	IsNotZero() const
     {
         return m_uHi || m_uMid || m_uLo;
     }
-    inline FX_INT8	Compare (const CFX_Decimal& val) const;
+    inline int8_t	Compare (const CFX_Decimal& val) const;
     inline void		Swap(CFX_Decimal& val);
     inline void		FloorOrCeil(FX_BOOL bFloor);
     CFX_Decimal		AddOrMinus(const CFX_Decimal& val, FX_BOOL isAdding) const;
     CFX_Decimal		Multiply(const CFX_Decimal& val) const;
     CFX_Decimal		Divide(const CFX_Decimal& val) const;
     CFX_Decimal		Modulus(const CFX_Decimal& val) const;
-    FX_UINT32		m_uFlags;
-    FX_UINT32		m_uHi;
-    FX_UINT32		m_uLo;
-    FX_UINT32		m_uMid;
+    uint32_t		m_uFlags;
+    uint32_t		m_uHi;
+    uint32_t		m_uLo;
+    uint32_t		m_uMid;
 };
 #endif

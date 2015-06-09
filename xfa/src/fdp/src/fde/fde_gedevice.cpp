@@ -12,7 +12,7 @@
 #ifdef _cplusplus
 exten "C" {
 #endif
-    FX_BOOL FDE_GetStockHatchMask(FX_INT32 iHatchStyle, CFX_DIBitmap & hatchMask)
+    FX_BOOL FDE_GetStockHatchMask(int32_t iHatchStyle, CFX_DIBitmap & hatchMask)
     {
         FDE_LPCHATCHDATA pData = FDE_DEVGetHatchData(iHatchStyle);
         if (!pData) {
@@ -63,11 +63,11 @@ CFDE_FxgeDevice::~CFDE_FxgeDevice()
         delete m_pDevice;
     }
 }
-FX_INT32 CFDE_FxgeDevice::GetWidth() const
+int32_t CFDE_FxgeDevice::GetWidth() const
 {
     return m_pDevice->GetWidth();
 }
-FX_INT32 CFDE_FxgeDevice::GetHeight() const
+int32_t CFDE_FxgeDevice::GetHeight() const
 {
     return m_pDevice->GetHeight();
 }
@@ -85,8 +85,8 @@ void CFDE_FxgeDevice::RestoreState(FDE_HDEVICESTATE hState)
 FX_BOOL CFDE_FxgeDevice::SetClipRect(const CFX_RectF &rtClip)
 {
     m_rtClip = rtClip;
-    FX_RECT rt((FX_INT32)FXSYS_floor(rtClip.left), (FX_INT32)FXSYS_floor(rtClip.top),
-               (FX_INT32)FXSYS_ceil(rtClip.right()), (FX_INT32)FXSYS_ceil(rtClip.bottom()));
+    FX_RECT rt((int32_t)FXSYS_floor(rtClip.left), (int32_t)FXSYS_floor(rtClip.top),
+               (int32_t)FXSYS_ceil(rtClip.right()), (int32_t)FXSYS_ceil(rtClip.bottom()));
     return m_pDevice->SetClip_Rect(&rt);
 }
 const CFX_RectF& CFDE_FxgeDevice::GetClipRect()
@@ -140,7 +140,7 @@ FX_BOOL CFDE_FxgeDevice::DrawImage(CFX_DIBSource *pDib, const CFX_RectF *pSrcRec
     m_pDevice->CancelDIBits(handle);
     return handle != NULL;
 }
-FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, FX_INT32 iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix)
+FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const FXTEXT_CHARPOS *pCharPos, int32_t iCount, FX_FLOAT fFontSize, const CFX_Matrix *pMatrix)
 {
     FXSYS_assert(pBrush != NULL && pFont != NULL && pCharPos != NULL && iCount > 0);
     CFX_FontCache *pCache = CFX_GEModule::Get()->GetFontCache();
@@ -151,7 +151,7 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const F
                 if ((pFont->GetFontStyles() & FX_FONTSTYLE_Italic) != 0 && !pFxFont->IsItalic()) {
                     FXTEXT_CHARPOS *pCP = (FXTEXT_CHARPOS*)pCharPos;
                     FX_FLOAT *pAM;
-                    for (FX_INT32 i = 0; i < iCount; ++i) {
+                    for (int32_t i = 0; i < iCount; ++i) {
                         static const FX_FLOAT  mc = 0.267949f;
                         pAM = pCP->m_AdjustMatrix;
                         pAM[2] = mc * pAM[0] + pAM[2];
@@ -163,7 +163,7 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const F
                 IFX_Font *pCurFont = NULL;
                 IFX_Font *pSTFont = NULL;
                 FXTEXT_CHARPOS *pCurCP = NULL;
-                FX_INT32 iCurCount = 0;
+                int32_t iCurCount = 0;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
                 FX_DWORD dwFontStyle = pFont->GetFontStyles();
                 CFX_Font FxFont;
@@ -174,8 +174,8 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush *pBrush, IFX_Font *pFont, const F
                 SubstFxFont.m_ItalicAngle = dwFontStyle & FX_FONTSTYLE_Italic ? -12 : 0;
                 SubstFxFont.m_bItlicCJK = dwFontStyle & FX_FONTSTYLE_Italic ? TRUE : FALSE;
 #endif
-                for (FX_INT32 i = 0; i < iCount; ++i) {
-                    pSTFont = pFont->GetSubstFont((FX_INT32)pCP->m_GlyphIndex);
+                for (int32_t i = 0; i < iCount; ++i) {
+                    pSTFont = pFont->GetSubstFont((int32_t)pCP->m_GlyphIndex);
                     pCP->m_GlyphIndex &= 0x00FFFFFF;
                     pCP->m_bFontStyle = FALSE;
                     if (pCurFont != pSTFont) {
@@ -340,10 +340,10 @@ FX_BOOL CFDE_FxgeDevice::CreatePen(IFDE_Pen *pPen, FX_FLOAT fPenWidth, CFX_Graph
             pPen->GetDashArray(dashArray);
             break;
     }
-    FX_INT32 iDashCount = dashArray.GetSize();
+    int32_t iDashCount = dashArray.GetSize();
     if (iDashCount > 0) {
         graphState.SetDashCount(iDashCount);
-        for (FX_INT32 i = 0; i < iDashCount; ++i) {
+        for (int32_t i = 0; i < iDashCount; ++i) {
             graphState.m_DashArray[i] = dashArray[i] * fPenWidth;
         }
     }
@@ -365,7 +365,7 @@ FX_BOOL CFDE_FxgeDevice::FillPath(IFDE_Brush *pBrush, const IFDE_Path *pPath, co
     if (pBrush == NULL) {
         return FALSE;
     }
-    FX_INT32 iType = pBrush->GetType();
+    int32_t iType = pBrush->GetType();
     if (iType < 0 || iType > FDE_BRUSHTYPE_MAX) {
         return FALSE;
     }
@@ -381,7 +381,7 @@ FX_BOOL CFDE_FxgeDevice::FillHatchPath(IFDE_Brush *pBrush, const CFX_PathData *p
 {
     FXSYS_assert(pPath && pBrush && pBrush->GetType() == FDE_BRUSHTYPE_Hatch);
     IFDE_HatchBrush *pHatchBrush = (IFDE_HatchBrush*)pBrush;
-    FX_INT32 iStyle = pHatchBrush->GetHatchStyle();
+    int32_t iStyle = pHatchBrush->GetHatchStyle();
     if (iStyle < FDE_HATCHSTYLE_Min || iStyle > FDE_HATCHSTYLE_Max) {
         return FALSE;
     }
@@ -401,8 +401,8 @@ FX_BOOL CFDE_FxgeDevice::FillHatchPath(IFDE_Brush *pBrush, const CFX_PathData *p
     m_pDevice->StartRendering();
     m_pDevice->SetClip_PathFill(pPath, (const CFX_AffineMatrix*)pMatrix, FXFILL_WINDING);
     m_pDevice->FillRect(&rect, dwBackColor);
-    for (FX_INT32 j = rect.bottom; j < rect.top; j += mask.GetHeight())
-        for (FX_INT32 i = rect.left; i < rect.right; i += mask.GetWidth()) {
+    for (int32_t j = rect.bottom; j < rect.top; j += mask.GetHeight())
+        for (int32_t i = rect.left; i < rect.right; i += mask.GetWidth()) {
             m_pDevice->SetBitMask(&mask, i, j, dwForeColor);
         }
     m_pDevice->EndRendering();
@@ -430,7 +430,7 @@ FX_BOOL CFDE_FxgeDevice::FillTexturePath(IFDE_Brush *pBrush, const CFX_PathData 
     pImage->StopLoadImage();
     return WrapTexture(pTextureBrush->GetWrapMode(), &bmp, pPath, pMatrix);
 }
-FX_BOOL CFDE_FxgeDevice::WrapTexture(FX_INT32 iWrapMode, const CFX_DIBitmap *pBitmap, const CFX_PathData *pPath, const CFX_Matrix *pMatrix)
+FX_BOOL CFDE_FxgeDevice::WrapTexture(int32_t iWrapMode, const CFX_DIBitmap *pBitmap, const CFX_PathData *pPath, const CFX_Matrix *pMatrix)
 {
     CFX_FloatRect rectf = pPath->GetBoundingBox();
     if (pMatrix) {
@@ -457,12 +457,12 @@ FX_BOOL CFDE_FxgeDevice::WrapTexture(FX_INT32 iWrapMode, const CFX_DIBitmap *pBi
                 pFlip[0][1] = bFlipX ? pBitmap->FlipImage(TRUE, FALSE) : pBitmap;
                 pFlip[1][0] = bFlipY ? pBitmap->FlipImage(FALSE, TRUE) : pBitmap;
                 pFlip[1][1] = (bFlipX || bFlipY) ? pBitmap->FlipImage(bFlipX, bFlipY) : pBitmap;
-                FX_INT32 iCounterY = 0;
-                for (FX_INT32 j = rect.top; j < rect.bottom; j += pBitmap->GetHeight()) {
-                    FX_INT32 indexY = iCounterY++ % 2;
-                    FX_INT32 iCounterX = 0;
-                    for (FX_INT32 i = rect.left; i < rect.right; i += pBitmap->GetWidth()) {
-                        FX_INT32 indexX = iCounterX++ % 2;
+                int32_t iCounterY = 0;
+                for (int32_t j = rect.top; j < rect.bottom; j += pBitmap->GetHeight()) {
+                    int32_t indexY = iCounterY++ % 2;
+                    int32_t iCounterX = 0;
+                    for (int32_t i = rect.left; i < rect.right; i += pBitmap->GetWidth()) {
+                        int32_t indexX = iCounterX++ % 2;
                         m_pDevice->SetDIBits(pFlip[indexY][indexX], i, j);
                     }
                 }
@@ -516,7 +516,7 @@ FX_BOOL CFDE_FxgeDevice::FillLinearGradientPath(IFDE_Brush *pBrush, const CFX_Pa
     CFX_FxgeDevice dev;
     dev.Attach(&bmp);
     pt1 = pt0;
-    FX_INT32 iSteps = FXSYS_round(FXSYS_ceil(fSteps));
+    int32_t iSteps = FXSYS_round(FXSYS_ceil(fSteps));
     while (--iSteps >= 0) {
         cr0 = ArgbEncode(FXSYS_round(a0), FXSYS_round(r0), FXSYS_round(g0), FXSYS_round(b0));
         dev.DrawCosmeticLine(pt0.x, pt0.y, pt1.x, pt1.y, cr0);

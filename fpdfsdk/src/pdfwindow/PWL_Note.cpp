@@ -179,7 +179,7 @@ void CPWL_Note_Edit::OnKillFocus()
 	CPWL_Edit::OnKillFocus();
 }
 
-void CPWL_Note_Edit::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTPTR lParam)
+void CPWL_Note_Edit::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t lParam)
 {
 	if (m_bEnableNotify)
 	{
@@ -224,7 +224,7 @@ void CPWL_Note_Edit::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX
 
 				if (CPWL_Wnd * pParent = this->GetParentWindow())
 				{
-					pParent->OnNotify(this, PNM_SETCARETINFO, (FX_INTPTR)&newInfo, 0);
+					pParent->OnNotify(this, PNM_SETCARETINFO, (intptr_t)&newInfo, 0);
 				}
 			}
 			break;
@@ -340,7 +340,7 @@ CPWL_Note_Icon::~CPWL_Note_Icon()
 {
 }
 
-void CPWL_Note_Icon::SetIconType(FX_INT32 nType)
+void CPWL_Note_Icon::SetIconType(int32_t nType)
 {
 	m_nType = nType;
 }
@@ -481,14 +481,14 @@ CPWL_NoteItem* CPWL_Note_Contents::CreateSubItem()
 	return pNoteItem;
 }
 
-FX_INT32 CPWL_Note_Contents::CountSubItems() const
+int32_t CPWL_Note_Contents::CountSubItems() const
 {
 	return m_aChildren.GetSize() - 1;
 }
 
-IPWL_NoteItem* CPWL_Note_Contents::GetSubItems(FX_INT32 index) const
+IPWL_NoteItem* CPWL_Note_Contents::GetSubItems(int32_t index) const
 {
-	FX_INT32 nIndex = index + 1;
+	int32_t nIndex = index + 1;
 
 	if (nIndex > 0 && nIndex < m_aChildren.GetSize())
 		if (CPWL_Wnd* pChild = m_aChildren.GetAt(nIndex))
@@ -502,7 +502,7 @@ IPWL_NoteItem* CPWL_Note_Contents::GetSubItems(FX_INT32 index) const
 
 void CPWL_Note_Contents::DeleteSubItem(IPWL_NoteItem* pNoteItem)
 {
-	FX_INT32 nIndex = this->GetItemIndex((CPWL_NoteItem*)pNoteItem);
+	int32_t nIndex = this->GetItemIndex((CPWL_NoteItem*)pNoteItem);
 
 	if (nIndex > 0)
 	{
@@ -513,7 +513,7 @@ void CPWL_Note_Contents::DeleteSubItem(IPWL_NoteItem* pNoteItem)
 			delete pPWLNoteItem;
 		}
 
-		for (FX_INT32 i=nIndex,sz=m_aChildren.GetSize(); i<sz; i++)
+		for (int32_t i=nIndex,sz=m_aChildren.GetSize(); i<sz; i++)
 		{
 			if (CPWL_Wnd* pChild = m_aChildren.GetAt(i))
 			{
@@ -531,7 +531,7 @@ IPWL_NoteItem* CPWL_Note_Contents::GetHitNoteItem(const CPDF_Point& point)
 {
 	CPDF_Point pt = this->ParentToChild(point);
 
-	for (FX_INT32 i=0,sz=m_aChildren.GetSize(); i<sz; i++)
+	for (int32_t i=0,sz=m_aChildren.GetSize(); i<sz; i++)
 	{
 		if (CPWL_Wnd* pChild = m_aChildren.GetAt(i))
 		{
@@ -546,20 +546,20 @@ IPWL_NoteItem* CPWL_Note_Contents::GetHitNoteItem(const CPDF_Point& point)
 	return NULL;
 }
 
-void CPWL_Note_Contents::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTPTR lParam)
+void CPWL_Note_Contents::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t lParam)
 {
 	switch (msg)
 	{
 	case PNM_NOTEEDITCHANGED:
 		{
-			FX_INT32 nIndex = this->GetItemIndex(pWnd);
+			int32_t nIndex = this->GetItemIndex(pWnd);
 			if (nIndex < 0) nIndex = 0;
 
 			m_pEdit->EnableNotify(FALSE);	
 			this->ResetContent(nIndex);
 			m_pEdit->EnableNotify(TRUE);
 
-			for (FX_INT32 i=nIndex+1, sz=m_aChildren.GetSize(); i<sz; i++)
+			for (int32_t i=nIndex+1, sz=m_aChildren.GetSize(); i<sz; i++)
 			{
 				if (CPWL_Wnd* pChild = m_aChildren.GetAt(i))
 					pChild->OnNotify(this, PNM_NOTERESET, 0, 0);
@@ -586,7 +586,7 @@ void CPWL_Note_Contents::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam
 
 			if (CPWL_Wnd * pParent = this->GetParentWindow())
 			{
-				pParent->OnNotify(this, PNM_SETCARETINFO, (FX_INTPTR)&newInfo, 0);
+				pParent->OnNotify(this, PNM_SETCARETINFO, (intptr_t)&newInfo, 0);
 			}
 		}
 		return;
@@ -596,7 +596,7 @@ void CPWL_Note_Contents::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam
 			this->ResetContent(0);
 			m_pEdit->EnableNotify(TRUE);
 
-			for (FX_INT32 i=1, sz=m_aChildren.GetSize(); i<sz; i++)
+			for (int32_t i=1, sz=m_aChildren.GetSize(); i<sz; i++)
 			{
 				if (CPWL_Wnd* pChild = m_aChildren.GetAt(i))
 					pChild->OnNotify(this, PNM_NOTERESET, 0, 0);
@@ -645,7 +645,7 @@ void CPWL_Note_Contents::EnableModify(FX_BOOL bEnabled)
 	else
 		m_pEdit->RemoveFlag(PWS_READONLY);
 
-	for (FX_INT32 i=0,sz=m_aChildren.GetSize(); i<sz; i++)
+	for (int32_t i=0,sz=m_aChildren.GetSize(); i<sz; i++)
 	{
 		if (CPWL_Wnd* pChild = m_aChildren.GetAt(i))
 		{
@@ -665,7 +665,7 @@ void CPWL_Note_Contents::EnableRead(FX_BOOL bEnabled)
 	else
 		m_pEdit->RemoveFlag(PES_NOREAD);
 
-	for (FX_INT32 i=0,sz=m_aChildren.GetSize(); i<sz; i++)
+	for (int32_t i=0,sz=m_aChildren.GetSize(); i<sz; i++)
 	{
 		if (CPWL_Wnd* pChild = m_aChildren.GetAt(i))
 		{
@@ -831,7 +831,7 @@ void CPWL_NoteItem::SetAuthorName(const CFX_WideString& sName)
 	}
 }
 
-void CPWL_NoteItem::ResetSubjectName(FX_INT32 nItemIndex)
+void CPWL_NoteItem::ResetSubjectName(int32_t nItemIndex)
 {
 	if (nItemIndex < 0)
 	{
@@ -966,7 +966,7 @@ IPWL_NoteItem* CPWL_NoteItem::CreateSubItem()
 	return CreateNoteItem();
 }
 
-FX_INT32 CPWL_NoteItem::CountSubItems() const
+int32_t CPWL_NoteItem::CountSubItems() const
 {
 	if (m_pContents)
 		return m_pContents->CountSubItems();
@@ -974,7 +974,7 @@ FX_INT32 CPWL_NoteItem::CountSubItems() const
 	return 0;
 }
 
-IPWL_NoteItem* CPWL_NoteItem::GetSubItems(FX_INT32 index) const
+IPWL_NoteItem* CPWL_NoteItem::GetSubItems(int32_t index) const
 {
 	if (m_pContents)
 		return m_pContents->GetSubItems(index);
@@ -1095,7 +1095,7 @@ FX_BOOL	CPWL_NoteItem::OnRButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 	return CPWL_Wnd::OnRButtonUp(point,nFlag);
 }
 
-void CPWL_NoteItem::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTPTR lParam)
+void CPWL_NoteItem::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t lParam)
 {
 	switch (msg)
 	{
@@ -1117,7 +1117,7 @@ void CPWL_NoteItem::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_
 
 			if (CPWL_Wnd * pParent = this->GetParentWindow())
 			{
-				pParent->OnNotify(this, PNM_SETCARETINFO, (FX_INTPTR)&newInfo, 0);
+				pParent->OnNotify(this, PNM_SETCARETINFO, (intptr_t)&newInfo, 0);
 			}
 		}
 		return;
@@ -1135,7 +1135,7 @@ void CPWL_NoteItem::PopupNoteItemMenu(const CPDF_Point& point)
 {
 	if (IPWL_NoteNotify* pNotify = GetNoteNotify())
 	{
-		FX_INT32 x,y;
+		int32_t x,y;
 		PWLtoWnd(point, x, y);
 		if (IFX_SystemHandler* pSH = GetSystemHandler())
 			pSH->ClientToScreen(GetAttachedHWnd(), x, y);
@@ -1247,7 +1247,7 @@ void CPWL_Note::RePosChildWnd()
 		}
 	}
 	//CPDF_Point ptNew = m_pContents->GetScrollPos();
-	//m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (FX_INTPTR)&ptNew.y);
+	//m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&ptNew.y);
 }
 
 FX_BOOL CPWL_Note::ResetScrollBar()
@@ -1420,7 +1420,7 @@ void CPWL_Note::RePosNoteChildren()
 }
 
 //0-normal / 1-caption / 2-leftbottom corner / 3-rightbottom corner / 4-close / 5-options 
-FX_INT32 CPWL_Note::NoteHitTest(const CPDF_Point& point) const
+int32_t CPWL_Note::NoteHitTest(const CPDF_Point& point) const
 {
 	ASSERT(m_pSubject != NULL);
 	ASSERT(m_pDateTime != NULL);
@@ -1570,8 +1570,8 @@ FX_BOOL CPWL_Note::OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD
 		if (ptNew.y != ptScroll.y)
 		{
 			m_pContents->OnNotify(this, PNM_NOTERESET, 0, 0);
-			m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL, (FX_INTPTR)&ptNew.y);			
-			m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (FX_INTPTR)&ptNew.y);
+			m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL, (intptr_t)&ptNew.y);			
+			m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&ptNew.y);
 
 			return TRUE;
 		}
@@ -1580,7 +1580,7 @@ FX_BOOL CPWL_Note::OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD
 	return FALSE;
 }
 
-void CPWL_Note::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTPTR lParam)
+void CPWL_Note::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t lParam)
 {
 	switch (msg)
 	{
@@ -1615,7 +1615,7 @@ void CPWL_Note::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTP
 				{
 					if (m_pContentsBar->IsVisible())
 					{
-						m_pContentsBar->OnNotify(pWnd, PNM_SETSCROLLINFO, SBT_VSCROLL, (FX_INTPTR)&sInfo);
+						m_pContentsBar->OnNotify(pWnd, PNM_SETSCROLLINFO, SBT_VSCROLL, (intptr_t)&sInfo);
 						m_OldScrollInfo = sInfo;
 
 						CPDF_Point ptScroll = m_pContents->GetScrollPos();
@@ -1630,9 +1630,9 @@ void CPWL_Note::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTP
 
 						if (ptOld.y != ptScroll.y)
 						{
-							m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (FX_INTPTR)&ptScroll.y);
+							m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&ptScroll.y);
 							m_pContentsBar->InvalidateRect(NULL);
-							m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL, (FX_INTPTR)&ptScroll.y);
+							m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL, (intptr_t)&ptScroll.y);
 						}
 					}
 				}
@@ -1662,10 +1662,10 @@ void CPWL_Note::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTP
 				if (pInfo->ptHead.y > rcClient.top)
 				{
 					CPDF_Point pt = m_pContents->OutToIn(pInfo->ptHead);
-					m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL, (FX_INTPTR)&pt.y);
+					m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL, (intptr_t)&pt.y);
 
 					CPDF_Point ptScroll = m_pContents->GetScrollPos();
-					m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (FX_INTPTR)&ptScroll.y);
+					m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&ptScroll.y);
 
 					return;
 				}
@@ -1674,10 +1674,10 @@ void CPWL_Note::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTP
 				{
 					CPDF_Point pt = m_pContents->OutToIn(pInfo->ptFoot);
 					pt.y += rcClient.Height();
-					m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL, (FX_INTPTR)&pt.y);
+					m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL, (intptr_t)&pt.y);
 
 					CPDF_Point ptScroll = m_pContents->GetScrollPos();
-					m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (FX_INTPTR)&ptScroll.y);
+					m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&ptScroll.y);
 
 					return;
 				}
@@ -1717,7 +1717,7 @@ FX_BOOL	CPWL_Note::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag)
 	{
 		if (IPWL_NoteNotify* pNotify = this->GetNoteNotify())
 		{
-			FX_INT32 x, y;
+			int32_t x, y;
 			PWLtoWnd(point, x, y);
 			if (IFX_SystemHandler* pSH = GetSystemHandler())
 				pSH->ClientToScreen(GetAttachedHWnd(), x, y);
@@ -1749,7 +1749,7 @@ IPWL_NoteNotify* CPWL_Note::GetNoteNotify() const
 	return NULL;
 }
 
-void CPWL_Note::SetIconType(FX_INT32 nType)
+void CPWL_Note::SetIconType(int32_t nType)
 {
 	if (m_pIcon)
 		m_pIcon->SetIconType(nType);

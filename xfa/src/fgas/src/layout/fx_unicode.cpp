@@ -6,16 +6,16 @@
 
 #include "../fgas_base.h"
 #include "fx_unicode.h"
-void FX_TEXTLAYOUT_PieceSort(CFX_TPOArray &tpos, FX_INT32 iStart, FX_INT32 iEnd)
+void FX_TEXTLAYOUT_PieceSort(CFX_TPOArray &tpos, int32_t iStart, int32_t iEnd)
 {
     FXSYS_assert(iStart > -1 && iStart < tpos.GetSize());
     FXSYS_assert(iEnd > -1 && iEnd < tpos.GetSize());
     if (iStart >= iEnd) {
         return;
     }
-    FX_INT32 i = iStart, j = iEnd;
+    int32_t i = iStart, j = iEnd;
     FX_TPO *pCur = tpos.GetPtrAt(iStart), *pSort;
-    FX_INT32 v = pCur->pos;
+    int32_t v = pCur->pos;
     while (i < j) {
         while (j > i) {
             pSort = tpos.GetPtrAt(j);
@@ -95,10 +95,10 @@ static const FX_JAPCHARPROPERTYEX gs_FX_JapCharPropertysEx[] = {
 };
 FX_LPCJAPCHARPROPERTYEX FX_GetJapCharPropertyEx(FX_WCHAR wch)
 {
-    FX_INT32 iStart = 0;
-    FX_INT32 iEnd = sizeof(gs_FX_JapCharPropertysEx) / sizeof(FX_JAPCHARPROPERTYEX);
+    int32_t iStart = 0;
+    int32_t iEnd = sizeof(gs_FX_JapCharPropertysEx) / sizeof(FX_JAPCHARPROPERTYEX);
     while (iStart <= iEnd) {
-        FX_INT32 iMid = (iStart + iEnd) / 2;
+        int32_t iMid = (iStart + iEnd) / 2;
         FX_WCHAR wJapChar = gs_FX_JapCharPropertysEx[iMid].wChar;
         if (wch == wJapChar) {
             return gs_FX_JapCharPropertysEx + iMid;

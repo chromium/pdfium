@@ -11,7 +11,7 @@ void FX_XML_SplitQualifiedName(FX_BSTR bsFullName, CFX_ByteStringC &bsSpace, CFX
     if (bsFullName.IsEmpty()) {
         return;
     }
-    FX_INT32 iStart = 0;
+    int32_t iStart = 0;
     for (; iStart < bsFullName.GetLength(); iStart ++) {
         if (bsFullName.GetAt(iStart) == ':') {
             break;

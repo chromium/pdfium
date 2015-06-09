@@ -30,23 +30,23 @@ CBC_CommonBitMatrix::CBC_CommonBitMatrix()
     m_rowSize = 0;
     m_bits = NULL;
 }
-void CBC_CommonBitMatrix::Init(FX_INT32 dimension)
+void CBC_CommonBitMatrix::Init(int32_t dimension)
 {
     m_width = dimension;
     m_height = dimension;
-    FX_INT32 rowSize = (m_height + 31) >> 5;
+    int32_t rowSize = (m_height + 31) >> 5;
     m_rowSize = rowSize;
-    m_bits = FX_Alloc(FX_INT32, m_rowSize * m_height);
-    FXSYS_memset32(m_bits, 0, m_rowSize * m_height * sizeof(FX_INT32));
+    m_bits = FX_Alloc(int32_t, m_rowSize * m_height);
+    FXSYS_memset32(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
 }
-void CBC_CommonBitMatrix::Init(FX_INT32 width, FX_INT32 height)
+void CBC_CommonBitMatrix::Init(int32_t width, int32_t height)
 {
     m_width = width;
     m_height = height;
-    FX_INT32 rowSize = (width + 31) >> 5;
+    int32_t rowSize = (width + 31) >> 5;
     m_rowSize = rowSize;
-    m_bits = FX_Alloc(FX_INT32, m_rowSize * m_height);
-    FXSYS_memset32(m_bits, 0, m_rowSize * m_height * sizeof(FX_INT32));
+    m_bits = FX_Alloc(int32_t, m_rowSize * m_height);
+    FXSYS_memset32(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
 }
 CBC_CommonBitMatrix::~CBC_CommonBitMatrix()
 {
@@ -56,36 +56,36 @@ CBC_CommonBitMatrix::~CBC_CommonBitMatrix()
     m_bits = NULL;
     m_height = m_width = m_rowSize = 0;
 }
-FX_BOOL CBC_CommonBitMatrix::Get(FX_INT32 x, FX_INT32 y)
+FX_BOOL CBC_CommonBitMatrix::Get(int32_t x, int32_t y)
 {
-    FX_INT32 offset = y * m_rowSize + (x >> 5);
+    int32_t offset = y * m_rowSize + (x >> 5);
     if (offset >= m_rowSize * m_height || offset < 0) {
         return false;
     }
     return ((((FX_DWORD)m_bits[offset]) >> (x & 0x1f)) & 1) != 0;
 }
-FX_INT32* CBC_CommonBitMatrix::GetBits()
+int32_t* CBC_CommonBitMatrix::GetBits()
 {
     return m_bits;
 }
-void CBC_CommonBitMatrix::Set(FX_INT32 x, FX_INT32 y)
+void CBC_CommonBitMatrix::Set(int32_t x, int32_t y)
 {
-    FX_INT32 offset = y * m_rowSize + (x >> 5);
+    int32_t offset = y * m_rowSize + (x >> 5);
     if (offset >= m_rowSize * m_height || offset < 0) {
         return;
     }
     m_bits[offset] |= 1 << (x & 0x1f);
 }
-void CBC_CommonBitMatrix::Flip(FX_INT32 x, FX_INT32 y)
+void CBC_CommonBitMatrix::Flip(int32_t x, int32_t y)
 {
-    FX_INT32 offset = y * m_rowSize + (x >> 5);
+    int32_t offset = y * m_rowSize + (x >> 5);
     m_bits[offset] ^= 1 << (x & 0x1f);
 }
 void CBC_CommonBitMatrix::Clear()
 {
-    FXSYS_memset32(m_bits, 0, m_rowSize * m_height * sizeof(FX_INT32));
+    FXSYS_memset32(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
 }
-void CBC_CommonBitMatrix::SetRegion(FX_INT32 left, FX_INT32 top, FX_INT32 width, FX_INT32 height, FX_INT32 &e)
+void CBC_CommonBitMatrix::SetRegion(int32_t left, int32_t top, int32_t width, int32_t height, int32_t &e)
 {
     if (top < 0 || left < 0) {
         e = BCExceptionLeftAndTopMustBeNonnegative;
@@ -95,22 +95,22 @@ void CBC_CommonBitMatrix::SetRegion(FX_INT32 left, FX_INT32 top, FX_INT32 width,
         e = BCExceptionHeightAndWidthMustBeAtLeast1;
         return;
     }
-    FX_INT32 right = left + width;
-    FX_INT32 bottom = top + height;
+    int32_t right = left + width;
+    int32_t bottom = top + height;
     if (m_height < bottom || m_width < right) {
         e = BCExceptionRegionMustFitInsideMatrix;
         return;
     }
-    FX_INT32 y;
+    int32_t y;
     for (y = top; y < bottom; y++) {
-        FX_INT32 offset = y * m_rowSize;
-        FX_INT32 x;
+        int32_t offset = y * m_rowSize;
+        int32_t x;
         for (x = left; x < right; x++) {
             m_bits[offset + (x >> 5)] |= 1 << (x & 0x1f);
         }
     }
 }
-CBC_CommonBitArray* CBC_CommonBitMatrix::GetRow(FX_INT32 y, CBC_CommonBitArray* row)
+CBC_CommonBitArray* CBC_CommonBitMatrix::GetRow(int32_t y, CBC_CommonBitArray* row)
 {
     CBC_CommonBitArray* rowArray = NULL;
     if (row == NULL || row->GetSize() < m_width) {
@@ -118,40 +118,40 @@ CBC_CommonBitArray* CBC_CommonBitMatrix::GetRow(FX_INT32 y, CBC_CommonBitArray* 
     } else {
         rowArray = FX_NEW CBC_CommonBitArray(row);
     }
-    FX_INT32 offset = y * m_rowSize;
-    FX_INT32 x;
+    int32_t offset = y * m_rowSize;
+    int32_t x;
     for (x = 0; x < m_rowSize; x++) {
         rowArray->SetBulk(x << 5, m_bits[offset + x]);
     }
     return rowArray;
 }
-void CBC_CommonBitMatrix::SetRow(FX_INT32 y, CBC_CommonBitArray* row)
+void CBC_CommonBitMatrix::SetRow(int32_t y, CBC_CommonBitArray* row)
 {
-    FX_INT32 l = y * m_rowSize;
-    for (FX_INT32 i = 0; i < m_rowSize; i++) {
+    int32_t l = y * m_rowSize;
+    for (int32_t i = 0; i < m_rowSize; i++) {
         m_bits[l] = row->GetBitArray()[i];
         l++;
     }
 }
-void CBC_CommonBitMatrix::SetCol(FX_INT32 y, CBC_CommonBitArray* col)
+void CBC_CommonBitMatrix::SetCol(int32_t y, CBC_CommonBitArray* col)
 {
-    for (FX_INT32 i = 0; i < col->GetBits().GetSize(); i++) {
+    for (int32_t i = 0; i < col->GetBits().GetSize(); i++) {
         m_bits[i * m_rowSize + y] = col->GetBitArray()[i];
     }
 }
-FX_INT32 CBC_CommonBitMatrix::GetWidth()
+int32_t CBC_CommonBitMatrix::GetWidth()
 {
     return m_width;
 }
-FX_INT32 CBC_CommonBitMatrix::GetHeight()
+int32_t CBC_CommonBitMatrix::GetHeight()
 {
     return m_height;
 }
-FX_INT32 CBC_CommonBitMatrix::GetRowSize()
+int32_t CBC_CommonBitMatrix::GetRowSize()
 {
     return m_rowSize;
 }
-FX_INT32 CBC_CommonBitMatrix::GetDimension(FX_INT32 &e)
+int32_t CBC_CommonBitMatrix::GetDimension(int32_t &e)
 {
     if (m_width != m_height) {
         e = BCExceptionCanNotCallGetDimensionOnNonSquareMatrix;

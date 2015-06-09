@@ -22,7 +22,7 @@
 
 #include "../barcode.h"
 #include "BC_PDF417ErrorCorrection.h"
-FX_INT32 CBC_PDF417ErrorCorrection::EC_COEFFICIENTS[][2500] = {
+int32_t CBC_PDF417ErrorCorrection::EC_COEFFICIENTS[][2500] = {
     {27, 917},
     {522, 568, 723, 809},
     {237, 308, 436, 284, 646, 653, 428, 379},
@@ -132,7 +132,7 @@ CBC_PDF417ErrorCorrection::CBC_PDF417ErrorCorrection()
 CBC_PDF417ErrorCorrection::~CBC_PDF417ErrorCorrection()
 {
 }
-FX_INT32 CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(FX_INT32 errorCorrectionLevel, FX_INT32 &e)
+int32_t CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(int32_t errorCorrectionLevel, int32_t &e)
 {
     if (errorCorrectionLevel < 0 || errorCorrectionLevel > 8) {
         e = BCExceptionErrorCorrectionLevelMustBeBetween0And8;
@@ -140,7 +140,7 @@ FX_INT32 CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(FX_INT32 err
     }
     return 1 << (errorCorrectionLevel + 1);
 }
-FX_INT32 CBC_PDF417ErrorCorrection::getRecommendedMinimumErrorCorrectionLevel(FX_INT32 n, FX_INT32 &e)
+int32_t CBC_PDF417ErrorCorrection::getRecommendedMinimumErrorCorrectionLevel(int32_t n, int32_t &e)
 {
     if (n <= 0) {
         e = BCExceptionIllegalArgumentnMustBeAbove0;
@@ -161,18 +161,18 @@ FX_INT32 CBC_PDF417ErrorCorrection::getRecommendedMinimumErrorCorrectionLevel(FX
     e = BCExceptionNoRecommendationPossible;
     return -1;
 }
-CFX_WideString CBC_PDF417ErrorCorrection::generateErrorCorrection(CFX_WideString dataCodewords, FX_INT32 errorCorrectionLevel, FX_INT32 &e)
+CFX_WideString CBC_PDF417ErrorCorrection::generateErrorCorrection(CFX_WideString dataCodewords, int32_t errorCorrectionLevel, int32_t &e)
 {
-    FX_INT32 k = getErrorCorrectionCodewordCount(errorCorrectionLevel, e);
+    int32_t k = getErrorCorrectionCodewordCount(errorCorrectionLevel, e);
     BC_EXCEPTION_CHECK_ReturnValue(e,  (FX_WCHAR)' ');
     FX_WCHAR* ech = FX_Alloc(FX_WCHAR, k * sizeof(FX_WCHAR));
     FXSYS_memset32(ech, 0, k * sizeof(FX_WCHAR));
-    FX_INT32 sld = dataCodewords.GetLength();
-    for (FX_INT32 i = 0; i < sld; i++) {
-        FX_INT32 t1 = (dataCodewords.GetAt(i) + ech[k - 1]) % 929;
-        FX_INT32 t2;
-        FX_INT32 t3;
-        for (FX_INT32 j = k - 1; j >= 1; j--) {
+    int32_t sld = dataCodewords.GetLength();
+    for (int32_t i = 0; i < sld; i++) {
+        int32_t t1 = (dataCodewords.GetAt(i) + ech[k - 1]) % 929;
+        int32_t t2;
+        int32_t t3;
+        for (int32_t j = k - 1; j >= 1; j--) {
             t2 = (t1 * EC_COEFFICIENTS[errorCorrectionLevel][j]) % 929;
             t3 = 929 - t2;
             ech[j] = (FX_WCHAR) ((ech[j - 1] + t3) % 929);
@@ -182,7 +182,7 @@ CFX_WideString CBC_PDF417ErrorCorrection::generateErrorCorrection(CFX_WideString
         ech[0] = (FX_WCHAR) (t3 % 929);
     }
     CFX_WideString sb;
-    for (FX_INT32 j = k - 1; j >= 0; j--) {
+    for (int32_t j = k - 1; j >= 0; j--) {
         if (ech[j] != 0) {
             ech[j] = (FX_WCHAR) (929 - ech[j]);
         }

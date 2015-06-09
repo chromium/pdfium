@@ -146,7 +146,7 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData)
     if (!pValueChild) {
         return CXFA_LocaleValue();
     }
-    FX_INT32 iVTType = XFA_VT_NULL;
+    int32_t iVTType = XFA_VT_NULL;
     XFA_ELEMENT eType = pValueChild->GetClassID();
     switch (eType) {
         case XFA_ELEMENT_Decimal:
@@ -189,7 +189,7 @@ void	XFA_GetPlainTextFromRichText(IFDE_XMLNode *pXMLNode, CFX_WideString &wsPlai
                 IFDE_XMLElement *pXMLElement = (IFDE_XMLElement*)pXMLNode;
                 CFX_WideString wsTag;
                 pXMLElement->GetLocalTagName(wsTag);
-                FX_UINT32 uTag = FX_HashCode_String_GetW(wsTag, wsTag.GetLength(), TRUE);
+                uint32_t uTag = FX_HashCode_String_GetW(wsTag, wsTag.GetLength(), TRUE);
                 if (uTag == 0x0001f714) {
                     wsPlainText += L"\n";
                 } else if (uTag == 0x00000070) {
@@ -301,20 +301,20 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString &wsStringVal)
     wsValue.TrimLeft();
     wsValue.TrimRight();
     FX_BOOL bValid = TRUE;
-    FX_INT64 nIntegral = 0;
+    int64_t nIntegral = 0;
     FX_DWORD dwFractional = 0;
-    FX_INT32 nExponent = 0;
-    FX_INT32 cc = 0;
+    int32_t nExponent = 0;
+    int32_t cc = 0;
     FX_BOOL bNegative = FALSE, bExpSign = FALSE;
     FX_LPCWSTR str = (FX_LPCWSTR)wsValue;
-    FX_INT32 len = wsValue.GetLength();
+    int32_t len = wsValue.GetLength();
     if (str[0] == '+') {
         cc++;
     } else if (str[0] == '-') {
         bNegative = TRUE;
         cc++;
     }
-    FX_INT32 nIntegralLen = 0;
+    int32_t nIntegralLen = 0;
     while (cc < len) {
         if (str[cc] == '.' || str[cc] == 'E' || str[cc] == 'e' || nIntegralLen > 17) {
             break;
@@ -327,7 +327,7 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString &wsStringVal)
         nIntegralLen++;
     }
     nIntegral = bNegative ? -nIntegral : nIntegral;
-    FX_INT32 scale = 0;
+    int32_t scale = 0;
     FX_DOUBLE fraction = 0.0;
     if (cc < len && str[cc] == '.') {
         cc ++;
@@ -382,7 +382,7 @@ FX_DOUBLE XFA_ByteStringToDouble(FX_BSTR szStringVal)
     return XFA_WideStringToDouble(wsValue);
 }
 
-FX_INT32 XFA_MapRotation(FX_INT32 nRotation) {
+int32_t XFA_MapRotation(int32_t nRotation) {
     nRotation = nRotation % 360;
     nRotation = nRotation < 0 ? nRotation + 360 : nRotation;
     return nRotation;

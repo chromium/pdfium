@@ -26,40 +26,40 @@
 CBC_DataMatrixDataBlock::~CBC_DataMatrixDataBlock()
 {
 }
-CBC_DataMatrixDataBlock::CBC_DataMatrixDataBlock(FX_INT32 numDataCodewords, CFX_ByteArray *codewords)
+CBC_DataMatrixDataBlock::CBC_DataMatrixDataBlock(int32_t numDataCodewords, CFX_ByteArray *codewords)
 {
     m_codewords.Copy(*codewords);
     m_numDataCodewords = numDataCodewords;
 }
-CFX_PtrArray *CBC_DataMatrixDataBlock::GetDataBlocks(CFX_ByteArray* rawCodewords, CBC_DataMatrixVersion *version, FX_INT32 &e)
+CFX_PtrArray *CBC_DataMatrixDataBlock::GetDataBlocks(CFX_ByteArray* rawCodewords, CBC_DataMatrixVersion *version, int32_t &e)
 {
     ECBlocks *ecBlocks = version->GetECBlocks();
-    FX_INT32 totalBlocks = 0;
+    int32_t totalBlocks = 0;
     const CFX_PtrArray &ecBlockArray = ecBlocks->GetECBlocks();
-    FX_INT32 i;
+    int32_t i;
     for (i = 0; i < ecBlockArray.GetSize(); i++) {
         totalBlocks += ((ECB*)ecBlockArray[i])->GetCount();
     }
     CBC_AutoPtr<CFX_PtrArray>result(FX_NEW CFX_PtrArray());
     result->SetSize(totalBlocks);
-    FX_INT32 numResultBlocks = 0;
-    FX_INT32 j;
+    int32_t numResultBlocks = 0;
+    int32_t j;
     for (j = 0; j < ecBlockArray.GetSize(); j++) {
         for (i = 0; i < ((ECB*)ecBlockArray[j])->GetCount(); i++) {
-            FX_INT32 numDataCodewords = ((ECB*)ecBlockArray[j])->GetDataCodewords();
-            FX_INT32 numBlockCodewords = ecBlocks->GetECCodewords() + numDataCodewords;
+            int32_t numDataCodewords = ((ECB*)ecBlockArray[j])->GetDataCodewords();
+            int32_t numBlockCodewords = ecBlocks->GetECCodewords() + numDataCodewords;
             CFX_ByteArray codewords;
             codewords.SetSize(numBlockCodewords);
             (*result)[numResultBlocks++] = FX_NEW CBC_DataMatrixDataBlock(numDataCodewords, &codewords);
             codewords.SetSize(0);
         }
     }
-    FX_INT32 longerBlocksTotalCodewords = ((CBC_DataMatrixDataBlock*)(*result)[0])->GetCodewords()->GetSize();
-    FX_INT32 longerBlocksNumDataCodewords = longerBlocksTotalCodewords - ecBlocks->GetECCodewords();
-    FX_INT32 shorterBlocksNumDataCodewords = longerBlocksNumDataCodewords - 1;
-    FX_INT32 rawCodewordsOffset = 0;
+    int32_t longerBlocksTotalCodewords = ((CBC_DataMatrixDataBlock*)(*result)[0])->GetCodewords()->GetSize();
+    int32_t longerBlocksNumDataCodewords = longerBlocksTotalCodewords - ecBlocks->GetECCodewords();
+    int32_t shorterBlocksNumDataCodewords = longerBlocksNumDataCodewords - 1;
+    int32_t rawCodewordsOffset = 0;
     for (i = 0; i < shorterBlocksNumDataCodewords; i++) {
-        FX_INT32 j;
+        int32_t j;
         for (j = 0; j < numResultBlocks; j++) {
             if (rawCodewordsOffset < rawCodewords->GetSize()) {
                 ((CBC_DataMatrixDataBlock*)(*result)[j])->GetCodewords()->operator [](i) = (*rawCodewords)[rawCodewordsOffset++];
@@ -67,17 +67,17 @@ CFX_PtrArray *CBC_DataMatrixDataBlock::GetDataBlocks(CFX_ByteArray* rawCodewords
         }
     }
     FX_BOOL specialVersion = version->GetVersionNumber() == 24;
-    FX_INT32 numLongerBlocks = specialVersion ? 8 : numResultBlocks;
+    int32_t numLongerBlocks = specialVersion ? 8 : numResultBlocks;
     for (j = 0; j < numLongerBlocks; j++) {
         if (rawCodewordsOffset < rawCodewords->GetSize()) {
             ((CBC_DataMatrixDataBlock*)(*result)[j])->GetCodewords()->operator [](longerBlocksNumDataCodewords - 1) = (*rawCodewords)[rawCodewordsOffset++];
         }
     }
-    FX_INT32 max = ((CBC_DataMatrixDataBlock*)(*result)[0])->GetCodewords()->GetSize();
+    int32_t max = ((CBC_DataMatrixDataBlock*)(*result)[0])->GetCodewords()->GetSize();
     for (i = longerBlocksNumDataCodewords; i < max; i++) {
-        FX_INT32 j;
+        int32_t j;
         for (j = 0; j < numResultBlocks; j++) {
-            FX_INT32 iOffset = specialVersion && j > 7 ? i - 1 : i;
+            int32_t iOffset = specialVersion && j > 7 ? i - 1 : i;
             if (rawCodewordsOffset < rawCodewords->GetSize()) {
                 ((CBC_DataMatrixDataBlock*)(*result)[j])->GetCodewords()->operator [](iOffset) = (*rawCodewords)[rawCodewordsOffset++];
             }
@@ -89,7 +89,7 @@ CFX_PtrArray *CBC_DataMatrixDataBlock::GetDataBlocks(CFX_ByteArray* rawCodewords
     }
     return result.release();
 }
-FX_INT32 CBC_DataMatrixDataBlock::GetNumDataCodewords()
+int32_t CBC_DataMatrixDataBlock::GetNumDataCodewords()
 {
     return m_numDataCodewords;
 }

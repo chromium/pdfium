@@ -35,11 +35,11 @@ enum XFA_FM_SimpleExpressionType {
 };
 CFX_WideStringC XFA_FM_EXPTypeToString(XFA_FM_SimpleExpressionType simpleExpType);
 struct XFA_FMBuildInFunc {
-    FX_UINT32		m_uHash;
+    uint32_t		m_uHash;
     FX_LPCWSTR		m_buildinfunc;
 };
 struct XFA_FMSOMMethod {
-    FX_UINT32		m_uHash;
+    uint32_t		m_uHash;
     FX_LPCWSTR		m_wsSomMethodName;
     FX_DWORD		m_dParameters;
 };

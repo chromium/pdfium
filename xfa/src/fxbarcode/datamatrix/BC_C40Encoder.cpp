@@ -35,27 +35,27 @@ CBC_C40Encoder::CBC_C40Encoder()
 CBC_C40Encoder::~CBC_C40Encoder()
 {
 }
-FX_INT32 CBC_C40Encoder::getEncodingMode()
+int32_t CBC_C40Encoder::getEncodingMode()
 {
     return C40_ENCODATION;
 }
-void CBC_C40Encoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
+void CBC_C40Encoder::Encode(CBC_EncoderContext &context, int32_t &e)
 {
     CFX_WideString buffer;
     while (context.hasMoreCharacters()) {
         FX_WCHAR c = context.getCurrentChar();
         context.m_pos++;
-        FX_INT32 lastCharSize = encodeChar(c, buffer, e);
+        int32_t lastCharSize = encodeChar(c, buffer, e);
         if (e != BCExceptionNO) {
             return;
         }
-        FX_INT32 unwritten = (buffer.GetLength() / 3) * 2;
-        FX_INT32 curCodewordCount = context.getCodewordCount() + unwritten;
+        int32_t unwritten = (buffer.GetLength() / 3) * 2;
+        int32_t curCodewordCount = context.getCodewordCount() + unwritten;
         context.updateSymbolInfo(curCodewordCount, e);
         if (e != BCExceptionNO) {
             return;
         }
-        FX_INT32 available = context.m_symbolInfo->m_dataCapacity - curCodewordCount;
+        int32_t available = context.m_symbolInfo->m_dataCapacity - curCodewordCount;
         if (!context.hasMoreCharacters()) {
             CFX_WideString removed;
             if ((buffer.GetLength() % 3) == 2) {
@@ -75,9 +75,9 @@ void CBC_C40Encoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
             }
             break;
         }
-        FX_INT32 count = buffer.GetLength();
+        int32_t count = buffer.GetLength();
         if ((count % 3) == 0) {
-            FX_INT32 newMode = CBC_HighLevelEncoder::lookAheadTest(context.m_msg, context.m_pos, getEncodingMode());
+            int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(context.m_msg, context.m_pos, getEncodingMode());
             if (newMode != getEncodingMode()) {
                 context.signalEncoderChange(newMode);
                 break;
@@ -91,16 +91,16 @@ void CBC_C40Encoder::writeNextTriplet(CBC_EncoderContext &context, CFX_WideStrin
     context.writeCodewords(encodeToCodewords(buffer, 0));
     buffer.Delete(0, 3);
 }
-void CBC_C40Encoder::handleEOD(CBC_EncoderContext &context, CFX_WideString &buffer, FX_INT32 &e)
+void CBC_C40Encoder::handleEOD(CBC_EncoderContext &context, CFX_WideString &buffer, int32_t &e)
 {
-    FX_INT32 unwritten = (buffer.GetLength() / 3) * 2;
-    FX_INT32 rest = buffer.GetLength() % 3;
-    FX_INT32 curCodewordCount = context.getCodewordCount() + unwritten;
+    int32_t unwritten = (buffer.GetLength() / 3) * 2;
+    int32_t rest = buffer.GetLength() % 3;
+    int32_t curCodewordCount = context.getCodewordCount() + unwritten;
     context.updateSymbolInfo(curCodewordCount, e);
     if (e != BCExceptionNO) {
         return;
     }
-    FX_INT32 available = context.m_symbolInfo->m_dataCapacity - curCodewordCount;
+    int32_t available = context.m_symbolInfo->m_dataCapacity - curCodewordCount;
     if (rest == 2) {
         buffer += (FX_WCHAR)'\0';
         while (buffer.GetLength() >= 3) {
@@ -130,7 +130,7 @@ void CBC_C40Encoder::handleEOD(CBC_EncoderContext &context, CFX_WideString &buff
     }
     context.signalEncoderChange(ASCII_ENCODATION);
 }
-FX_INT32 CBC_C40Encoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e)
+int32_t CBC_C40Encoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, int32_t &e)
 {
     if (c == ' ') {
         sb += (FX_WCHAR)'\3';
@@ -164,7 +164,7 @@ FX_INT32 CBC_C40Encoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e)
     } else if (c >= 80) {
         sb += (FX_WCHAR)'\1';
         sb += (FX_WCHAR)0x001e;
-        FX_INT32 len = 2;
+        int32_t len = 2;
         len += encodeChar((c - 128), sb, e);
         BC_EXCEPTION_CHECK_ReturnValue(e,  0);
         return len;
@@ -173,9 +173,9 @@ FX_INT32 CBC_C40Encoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e)
         return 0;
     }
 }
-FX_INT32 CBC_C40Encoder::backtrackOneCharacter(CBC_EncoderContext &context, CFX_WideString &buffer, CFX_WideString &removed, FX_INT32 lastCharSize, FX_INT32 &e)
+int32_t CBC_C40Encoder::backtrackOneCharacter(CBC_EncoderContext &context, CFX_WideString &buffer, CFX_WideString &removed, int32_t lastCharSize, int32_t &e)
 {
-    FX_INT32 count = buffer.GetLength();
+    int32_t count = buffer.GetLength();
     buffer.Delete(count - lastCharSize, count);
     context.m_pos--;
     FX_WCHAR c = context.getCurrentChar();
@@ -184,12 +184,12 @@ FX_INT32 CBC_C40Encoder::backtrackOneCharacter(CBC_EncoderContext &context, CFX_
     context.resetSymbolInfo();
     return lastCharSize;
 }
-CFX_WideString CBC_C40Encoder::encodeToCodewords(CFX_WideString sb, FX_INT32 startPos)
+CFX_WideString CBC_C40Encoder::encodeToCodewords(CFX_WideString sb, int32_t startPos)
 {
     FX_WCHAR c1 = sb.GetAt(startPos);
     FX_WCHAR c2 = sb.GetAt(startPos + 1);
     FX_WCHAR c3 = sb.GetAt(startPos + 2);
-    FX_INT32 v = (1600 * c1) + (40 * c2) + c3 + 1;
+    int32_t v = (1600 * c1) + (40 * c2) + c3 + 1;
     FX_WCHAR cw1 = (FX_WCHAR) (v / 256);
     FX_WCHAR cw2 = (FX_WCHAR) (v % 256);
     CFX_WideString b1(cw1);

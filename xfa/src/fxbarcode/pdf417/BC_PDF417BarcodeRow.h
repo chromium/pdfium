@@ -9,16 +9,16 @@
 class CBC_BarcodeRow
 {
 public:
-    CBC_BarcodeRow(FX_INT32 width);
+    CBC_BarcodeRow(int32_t width);
     virtual ~CBC_BarcodeRow();
-    void set(FX_INT32 x, FX_BYTE value);
-    void set(FX_INT32 x, FX_BOOL black);
-    void addBar(FX_BOOL black, FX_INT32 width);
+    void set(int32_t x, uint8_t value);
+    void set(int32_t x, FX_BOOL black);
+    void addBar(FX_BOOL black, int32_t width);
     CFX_ByteArray& getRow();
-    CFX_ByteArray& getScaledRow(FX_INT32 scale);
+    CFX_ByteArray& getScaledRow(int32_t scale);
 private:
     CFX_ByteArray m_row;
     CFX_ByteArray m_output;
-    FX_INT32 m_currentLocation;
+    int32_t m_currentLocation;
 };
 #endif

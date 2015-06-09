@@ -178,7 +178,7 @@ void CPDFXFA_App::Beep(FX_DWORD dwType)
     }
 }
 
-FX_INT32 CPDFXFA_App::MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle, FX_DWORD dwIconType, FX_DWORD dwButtonType)
+int32_t CPDFXFA_App::MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle, FX_DWORD dwIconType, FX_DWORD dwButtonType)
 {
     CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
     if (!pEnv)
@@ -216,7 +216,7 @@ FX_INT32 CPDFXFA_App::MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle, FX_DWORD dwIcon
         iButtonType |= 3;
         break;
     }
-    FX_INT32 iRet = pEnv->JS_appAlert(wsMessage.GetPtr(), wsTitle.GetPtr(), iButtonType, iconType);
+    int32_t iRet = pEnv->JS_appAlert(wsMessage.GetPtr(), wsTitle.GetPtr(), iButtonType, iconType);
     switch (iRet)
     {
     case 1:
@@ -250,7 +250,7 @@ void CPDFXFA_App::Response(CFX_WideString &wsAnswer, FX_WSTR wsQuestion, FX_WSTR
     }
 }
 
-FX_INT32 CPDFXFA_App::GetCurDocumentInBatch()
+int32_t CPDFXFA_App::GetCurDocumentInBatch()
 {
     CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
     if (pEnv)
@@ -260,7 +260,7 @@ FX_INT32 CPDFXFA_App::GetCurDocumentInBatch()
     return 0;
 }
 
-FX_INT32 CPDFXFA_App::GetDocumentCountInBatch()
+int32_t CPDFXFA_App::GetDocumentCountInBatch()
 {
     CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
     if (pEnv)
@@ -303,7 +303,7 @@ FX_BOOL CPDFXFA_App::PutRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsEnco
     return FALSE;
 }
 
-void CPDFXFA_App::LoadString(FX_INT32 iStringID, CFX_WideString &wsString)
+void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString &wsString)
 {
     switch (iStringID)
     {

@@ -23,7 +23,7 @@ typedef int FX_ERR;
 #define _FX_ERR_CHECK_GOTO_POSITION_IF_FAIL(arg, pos) {if ((arg) != FX_ERR_Succeeded) goto pos;}
 
 #define FX_SHADING_Steps	256
-typedef FX_INT32 FX_DashStyle;
+typedef int32_t FX_DashStyle;
 enum {
     FX_DASHSTYLE_Solid						= 0,
     FX_DASHSTYLE_Dash						= 1,
@@ -31,7 +31,7 @@ enum {
     FX_DASHSTYLE_DashDot					= 3,
     FX_DASHSTYLE_DashDotDot					= 4
 };
-typedef FX_INT32 FX_StrokeAlignment;
+typedef int32_t FX_StrokeAlignment;
 enum {
     FX_STROKEALIGNMENT_Center				= 0,
     FX_STROKEALIGNMENT_Inset				= 1,
@@ -39,7 +39,7 @@ enum {
     FX_STROKEALIGNMENT_Left					= 3,
     FX_STROKEALIGNMENT_Right				= 4
 };
-typedef FX_INT32 FX_HatchStyle;
+typedef int32_t FX_HatchStyle;
 enum {
     FX_HATCHSTYLE_Horizontal				= 0,
     FX_HATCHSTYLE_Vertical					= 1,
@@ -95,8 +95,8 @@ enum {
     FX_HATCHSTYLE_OutlinedDiamond			= 51,
     FX_HATCHSTYLE_SolidDiamond				= 52
 };
-typedef FX_INT32 FX_DeviceCap;
-typedef FX_INT32 FX_FillMode;
+typedef int32_t FX_DeviceCap;
+typedef int32_t FX_FillMode;
 class CFX_RenderDevice;
 class CFX_GraphStateData;
 class CFX_Matrix;
@@ -121,8 +121,8 @@ public:
 
     FX_ERR Create(CFX_RenderDevice * renderDevice, FX_BOOL isAntialiasing = TRUE);
 
-    FX_ERR Create(FX_INT32	   width,
-                  FX_INT32	   height,
+    FX_ERR Create(int32_t	   width,
+                  int32_t	   height,
                   FXDIB_Format format,
                   FX_BOOL      isNative       = TRUE,
                   FX_BOOL	   isAntialiasing = TRUE);
@@ -132,7 +132,7 @@ public:
 
 
 
-    FX_ERR GetDeviceCap(const FX_INT32 capID, FX_DeviceCap & capVal);
+    FX_ERR GetDeviceCap(const int32_t capID, FX_DeviceCap & capVal);
     FX_ERR IsPrinterDevice(FX_BOOL & isPrinter);
     FX_ERR EnableAntialiasing(FX_BOOL isAntialiasing);
 
@@ -148,11 +148,11 @@ public:
 
     FX_ERR SetLineCap(CFX_GraphStateData::LineCap lineCap);
 
-    FX_ERR GetDashCount(FX_INT32 & dashCount);
+    FX_ERR GetDashCount(int32_t & dashCount);
 
     FX_ERR GetLineDash(FX_FLOAT & dashPhase, FX_FLOAT * dashArray);
 
-    FX_ERR SetLineDash(FX_FLOAT dashPhase, FX_FLOAT * dashArray, FX_INT32 dashCount);
+    FX_ERR SetLineDash(FX_FLOAT dashPhase, FX_FLOAT * dashArray, int32_t dashCount);
 
     FX_ERR SetLineDash(FX_DashStyle dashStyle);
 
@@ -224,7 +224,7 @@ public:
 
     FX_ERR SetCharSpacing(const FX_FLOAT spacing);
 
-    FX_ERR SetTextDrawingMode(const FX_INT32 mode);
+    FX_ERR SetTextDrawingMode(const int32_t mode);
 
 
     FX_ERR ShowText(const CFX_PointF &	   point,
@@ -295,7 +295,7 @@ private:
 
 
 protected:
-    FX_INT32		_type;
+    int32_t		_type;
 private:
     struct TInfo {
         CFX_GraphStateData	_graphState;
@@ -417,7 +417,7 @@ public:
     FX_ERR Set(CFX_Shading * shading);
 
 private:
-    FX_INT32				_type;
+    int32_t				_type;
     union {
         struct {
             FX_ARGB			_argb;
@@ -448,7 +448,7 @@ public:
     virtual ~CFX_Pattern();
 
 private:
-    FX_INT32				_type;
+    int32_t				_type;
     CFX_Matrix				_matrix;
     union {
         struct {
@@ -498,7 +498,7 @@ public:
 private:
     FX_ERR InitArgbArray();
 private:
-    FX_INT32	_type;
+    int32_t	_type;
     CFX_PointF	_beginPoint;
     CFX_PointF	_endPoint;
     FX_FLOAT	_beginRadius;

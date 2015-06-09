@@ -29,7 +29,7 @@ public:
     virtual FX_BOOL		Flush();
     virtual FX_BOOL		Truncate(FX_FILESIZE szFile);
 protected:
-    FX_INT32	m_nFD;
+    int32_t	m_nFD;
 };
 #endif
 

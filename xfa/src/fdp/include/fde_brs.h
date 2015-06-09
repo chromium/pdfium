@@ -33,9 +33,9 @@ typedef CFX_ArrayTemplate<FDE_GRADIENTCOLOR>	CFDE_GradientColors;
 class IFDE_Brush
 {
 public:
-    static IFDE_Brush*			Create(FX_INT32 iType);
+    static IFDE_Brush*			Create(int32_t iType);
     virtual void				Release() = 0;
-    virtual FX_INT32			GetType() const = 0;
+    virtual int32_t			GetType() const = 0;
 };
 class IFDE_SolidBrush : public IFDE_Brush
 {
@@ -112,16 +112,16 @@ class IFDE_HatchBrush : public IFDE_Brush
 public:
     virtual FX_ARGB			GetColor(FX_BOOL bForegroundColor) const = 0;
     virtual void			SetColor(FX_ARGB color, FX_BOOL bForegroundColor) = 0;
-    virtual FX_INT32		GetHatchStyle() const = 0;
-    virtual FX_BOOL			SetHatchStyle(FX_INT32 iHatchStyle) = 0;
+    virtual int32_t		GetHatchStyle() const = 0;
+    virtual FX_BOOL			SetHatchStyle(int32_t iHatchStyle) = 0;
 };
 class IFDE_TextureBrush : public IFDE_Brush
 {
 public:
     virtual IFDE_Image*			GetImage() const = 0;
     virtual void				SetImage(IFDE_Image *pImage, FX_BOOL bAutoRelease) = 0;
-    virtual FX_INT32			GetWrapMode() const = 0;
-    virtual void				SetWrapMode(FX_INT32 iWrapMode) = 0;
+    virtual int32_t			GetWrapMode() const = 0;
+    virtual void				SetWrapMode(int32_t iWrapMode) = 0;
 };
 #define FDE_LINEARGRADIENTMODE_Horizontal			0
 #define FDE_LINEARGRADIENTMODE_Vertical				1
@@ -134,10 +134,10 @@ public:
     virtual void				SetLinearPoints(const CFX_PointF &startingPoint, const CFX_PointF &endingPoint) = 0;
     virtual void				GetLinearColors(FX_ARGB &startingColor, FX_ARGB &endingColor) const = 0;
     virtual void				SetLinearColors(const FX_ARGB &startingColor, const FX_ARGB &endingColor) = 0;
-    virtual FX_INT32			CountGradientColors() const = 0;
+    virtual int32_t			CountGradientColors() const = 0;
     virtual FX_BOOL				GetGradientColors(CFDE_GradientColors &colors) const = 0;
     virtual FX_BOOL				SetGradientColors(const CFDE_GradientColors &colors) = 0;
-    virtual FX_INT32			GetWrapMode() const = 0;
-    virtual void				SetWrapMode(FX_INT32 iWrapMode) = 0;
+    virtual int32_t			GetWrapMode() const = 0;
+    virtual void				SetWrapMode(int32_t iWrapMode) = 0;
 };
 #endif

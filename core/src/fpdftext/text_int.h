@@ -33,7 +33,7 @@ typedef struct _PAGECHAR_INFO {
     FX_WCHAR			m_Unicode;
     FX_FLOAT			m_OriginX;
     FX_FLOAT			m_OriginY;
-    FX_INT32			m_Flag;
+    int32_t			m_Flag;
     CFX_FloatRect		m_CharBox;
     CPDF_TextObject*	m_pTextObj;
     CFX_AffineMatrix	m_Matrix;
@@ -108,14 +108,14 @@ private:
     int								GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const;
     void							CloseTempLine();
     void							OnPiece(IFX_BidiChar* pBidi, CFX_WideString& str);
-    FX_INT32	PreMarkedContent(PDFTEXT_Obj pObj);
+    int32_t	PreMarkedContent(PDFTEXT_Obj pObj);
     void		ProcessMarkedContent(PDFTEXT_Obj pObj);
-    void		CheckMarkedContentObject(FX_INT32& start, FX_INT32& nCount) const;
+    void		CheckMarkedContentObject(int32_t& start, int32_t& nCount) const;
     void		FindPreviousTextObject(void);
     void		AddCharInfoByLRDirection(CFX_WideString& str, int i);
     void		AddCharInfoByRLDirection(CFX_WideString& str, int i);
-    FX_INT32	GetTextObjectWritingMode(const CPDF_TextObject* pTextObj);
-    FX_INT32	FindTextlineFlowDirection();
+    int32_t	GetTextObjectWritingMode(const CPDF_TextObject* pTextObj);
+    int32_t	FindTextlineFlowDirection();
 protected:
     CPDFText_ParseOptions			m_ParseOptions;
     CFX_WordArray					m_CharIndex;

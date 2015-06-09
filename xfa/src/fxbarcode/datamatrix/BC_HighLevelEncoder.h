@@ -20,13 +20,13 @@ public:
     CBC_HighLevelEncoder();
     virtual ~CBC_HighLevelEncoder();
     CFX_ByteArray& getBytesForMessage(CFX_WideString msg);
-    static CFX_WideString encodeHighLevel(CFX_WideString msg, CFX_WideString ecLevel, FX_INT32 &e);
-    static CFX_WideString encodeHighLevel(CFX_WideString msg, CFX_WideString ecLevel, SymbolShapeHint shape, CBC_Dimension* minSize, CBC_Dimension* maxSize, FX_INT32 &e);
-    static FX_INT32 lookAheadTest(CFX_WideString msg, FX_INT32 startpos, FX_INT32 currentMode);
+    static CFX_WideString encodeHighLevel(CFX_WideString msg, CFX_WideString ecLevel, int32_t &e);
+    static CFX_WideString encodeHighLevel(CFX_WideString msg, CFX_WideString ecLevel, SymbolShapeHint shape, CBC_Dimension* minSize, CBC_Dimension* maxSize, int32_t &e);
+    static int32_t lookAheadTest(CFX_WideString msg, int32_t startpos, int32_t currentMode);
     static FX_BOOL isDigit(FX_WCHAR ch);
     static FX_BOOL isExtendedASCII(FX_WCHAR ch);
-    static FX_INT32 determineConsecutiveDigitCount(CFX_WideString msg, FX_INT32 startpos);
-    static void illegalCharacter(FX_WCHAR c, FX_INT32 &e);
+    static int32_t determineConsecutiveDigitCount(CFX_WideString msg, int32_t startpos);
+    static void illegalCharacter(FX_WCHAR c, int32_t &e);
 
 public:
     static FX_WCHAR LATCH_TO_C40;
@@ -46,9 +46,9 @@ private:
     static const wchar_t MACRO_TRAILER;
     CFX_ByteArray m_bytearray;
 private:
-    static FX_WCHAR randomize253State(FX_WCHAR ch, FX_INT32 codewordPosition);
-    static FX_INT32 findMinimums(CFX_FloatArray &charCounts, CFX_Int32Array &intCharCounts, FX_INT32 min, CFX_ByteArray &mins);
-    static FX_INT32 getMinimumCount(CFX_ByteArray &mins);
+    static FX_WCHAR randomize253State(FX_WCHAR ch, int32_t codewordPosition);
+    static int32_t findMinimums(CFX_FloatArray &charCounts, CFX_Int32Array &intCharCounts, int32_t min, CFX_ByteArray &mins);
+    static int32_t getMinimumCount(CFX_ByteArray &mins);
     static FX_BOOL isNativeC40(FX_WCHAR ch);
     static FX_BOOL isNativeText(FX_WCHAR ch);
     static FX_BOOL isNativeX12(FX_WCHAR ch);

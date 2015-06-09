@@ -18,13 +18,13 @@ private:
 public:
     CBC_OnedUPCAReader();
     virtual ~CBC_OnedUPCAReader();
-    CFX_ByteString DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, FX_INT32 hints, FX_INT32 &e);
-    CFX_ByteString DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, CFX_Int32Array *startGuardRange, FX_INT32 hints, FX_INT32 &e);
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 &e);
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e);
+    CFX_ByteString DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, int32_t hints, int32_t &e);
+    CFX_ByteString DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, CFX_Int32Array *startGuardRange, int32_t hints, int32_t &e);
+    CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t &e);
+    CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e);
     virtual void Init();
 protected:
-    FX_INT32 DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultString, FX_INT32 &e);
-    CFX_ByteString MaybeReturnResult(CFX_ByteString &result, FX_INT32 &e);
+    int32_t DecodeMiddle(CBC_CommonBitArray *row, CFX_Int32Array *startRange, CFX_ByteString &resultString, int32_t &e);
+    CFX_ByteString MaybeReturnResult(CFX_ByteString &result, int32_t &e);
 };
 #endif

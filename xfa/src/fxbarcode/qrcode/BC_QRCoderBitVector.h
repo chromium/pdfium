@@ -9,22 +9,22 @@
 class CBC_QRCoderBitVector
 {
 private:
-    FX_INT32 m_sizeInBits;
-    FX_BYTE *m_array;
-    FX_INT32 m_size;
+    int32_t m_sizeInBits;
+    uint8_t *m_array;
+    int32_t m_size;
 
-    void AppendByte(FX_INT32 value);
+    void AppendByte(int32_t value);
 public:
     CBC_QRCoderBitVector();
     virtual ~CBC_QRCoderBitVector();
-    FX_INT32 At(FX_INT32 index, FX_INT32 &e);
-    FX_INT32 Size();
-    FX_INT32 sizeInBytes();
-    void AppendBit(FX_INT32 bit, FX_INT32 &e);
-    void AppendBits(FX_INT32 value, FX_INT32 numBits, FX_INT32 &e);
-    void AppendBitVector(CBC_QRCoderBitVector *bits, FX_INT32 &e);
-    void XOR(CBC_QRCoderBitVector *other, FX_INT32 &e);
-    FX_BYTE* GetArray();
+    int32_t At(int32_t index, int32_t &e);
+    int32_t Size();
+    int32_t sizeInBytes();
+    void AppendBit(int32_t bit, int32_t &e);
+    void AppendBits(int32_t value, int32_t numBits, int32_t &e);
+    void AppendBitVector(CBC_QRCoderBitVector *bits, int32_t &e);
+    void XOR(CBC_QRCoderBitVector *other, int32_t &e);
+    uint8_t* GetArray();
     void Clear();
     virtual void Init();
 };

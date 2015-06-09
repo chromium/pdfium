@@ -38,10 +38,10 @@ IFX_LocaleMgr*	FX_LocaleMgr_Create(FX_LPCWSTR pszLocalPath, FX_WORD wDefaultLCID
                 CFX_WideString wsLCID = pXmlLocale->GetAttrValue("", "lcid");
                 wchar_t* pEnd = NULL;
                 FX_DWORD dwLCID = wcstol(wsLCID, &pEnd, 16);
-                if (pLocaleMgr->m_lcid2xml.GetValueAt((FX_LPVOID)(FX_UINTPTR)dwLCID)) {
+                if (pLocaleMgr->m_lcid2xml.GetValueAt((FX_LPVOID)(uintptr_t)dwLCID)) {
                     delete pXmlLocale;
                 } else {
-                    pLocaleMgr->m_lcid2xml.SetAt((FX_LPVOID)(FX_UINTPTR)dwLCID, pXmlLocale);
+                    pLocaleMgr->m_lcid2xml.SetAt((FX_LPVOID)(uintptr_t)dwLCID, pXmlLocale);
                 }
             } else {
                 delete pXmlLocale;
@@ -84,12 +84,12 @@ IFX_Locale* CFX_LocaleMgr::GetDefLocale()
 }
 IFX_Locale* CFX_LocaleMgr::GetLocale(FX_WORD lcid)
 {
-    IFX_Locale* pLocale = (IFX_Locale*)m_lcid2locale.GetValueAt((FX_LPVOID)(FX_UINTPTR)lcid);
+    IFX_Locale* pLocale = (IFX_Locale*)m_lcid2locale.GetValueAt((FX_LPVOID)(uintptr_t)lcid);
     if (!pLocale) {
-        CXML_Element* pxml = (CXML_Element*)m_lcid2xml.GetValueAt((FX_LPVOID)(FX_UINTPTR)lcid);
+        CXML_Element* pxml = (CXML_Element*)m_lcid2xml.GetValueAt((FX_LPVOID)(uintptr_t)lcid);
         if (pxml) {
             pLocale = IFX_Locale::Create(pxml);
-            m_lcid2locale.SetAt((FX_LPVOID)(FX_UINTPTR)lcid, pLocale);
+            m_lcid2locale.SetAt((FX_LPVOID)(uintptr_t)lcid, pLocale);
         }
     }
     return pLocale;

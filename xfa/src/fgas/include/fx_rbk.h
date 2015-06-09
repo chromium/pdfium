@@ -69,17 +69,17 @@ typedef struct _FX_RTFTEXTOBJ {
         iVerticalScale = 100;
     }
     FX_LPCWSTR		pStr;
-    FX_INT32		*pWidths;
-    FX_INT32		iLength;
+    int32_t		*pWidths;
+    int32_t		iLength;
     IFX_Font		*pFont;
     FX_FLOAT		fFontSize;
     FX_DWORD		dwLayoutStyles;
-    FX_INT32		iCharRotation;
-    FX_INT32		iBidiLevel;
+    int32_t		iCharRotation;
+    int32_t		iBidiLevel;
     FX_LPCRECTF		pRect;
     FX_WCHAR		wLineBreakChar;
-    FX_INT32		iHorizontalScale;
-    FX_INT32		iVerticalScale;
+    int32_t		iHorizontalScale;
+    int32_t		iVerticalScale;
 } FX_RTFTEXTOBJ, * FX_LPRTFTEXTOBJ;
 typedef FX_RTFTEXTOBJ const * FX_LPCRTFTEXTOBJ;
 class CFX_RTFPiece : public CFX_Target
@@ -117,24 +117,24 @@ public:
         }
         m_iChars ++;
     }
-    FX_INT32 GetEndPos() const
+    int32_t GetEndPos() const
     {
         return m_iWidth < 0 ? m_iStartPos : m_iStartPos + m_iWidth;
     }
-    FX_INT32 GetLength() const
+    int32_t GetLength() const
     {
         return m_iChars;
     }
-    FX_INT32 GetEndChar() const
+    int32_t GetEndChar() const
     {
         return m_iStartChar + m_iChars;
     }
-    CFX_RTFChar& GetChar(FX_INT32 index)
+    CFX_RTFChar& GetChar(int32_t index)
     {
         FXSYS_assert(index > -1 && index < m_iChars && m_pChars != NULL);
         return *m_pChars->GetDataPtr(m_iStartChar + index);
     }
-    CFX_RTFChar* GetCharPtr(FX_INT32 index) const
+    CFX_RTFChar* GetCharPtr(int32_t index) const
     {
         FXSYS_assert(index > -1 && index < m_iChars && m_pChars != NULL);
         return m_pChars->GetDataPtr(m_iStartChar + index);
@@ -142,9 +142,9 @@ public:
     void GetString (FX_LPWSTR pText) const
     {
         FXSYS_assert(pText != NULL);
-        FX_INT32 iEndChar = m_iStartChar + m_iChars;
+        int32_t iEndChar = m_iStartChar + m_iChars;
         CFX_RTFChar *pChar;
-        for (FX_INT32 i = m_iStartChar; i < iEndChar; i ++) {
+        for (int32_t i = m_iStartChar; i < iEndChar; i ++) {
             pChar = m_pChars->GetDataPtr(i);
             *pText ++ = (FX_WCHAR)pChar->m_wCharCode;
         }
@@ -155,12 +155,12 @@ public:
         GetString(pText);
         wsText.ReleaseBuffer(m_iChars);
     }
-    void GetWidths(FX_INT32 *pWidths) const
+    void GetWidths(int32_t *pWidths) const
     {
         FXSYS_assert(pWidths != NULL);
-        FX_INT32 iEndChar = m_iStartChar + m_iChars;
+        int32_t iEndChar = m_iStartChar + m_iChars;
         CFX_RTFChar *pChar;
-        for (FX_INT32 i = m_iStartChar; i < iEndChar; i ++) {
+        for (int32_t i = m_iStartChar; i < iEndChar; i ++) {
             pChar = m_pChars->GetDataPtr(i);
             *pWidths ++ = pChar->m_iCharWidth;
         }
@@ -180,16 +180,16 @@ public:
         m_iVerticalScale = 100;
     }
     FX_DWORD			m_dwStatus;
-    FX_INT32			m_iStartPos;
-    FX_INT32			m_iWidth;
-    FX_INT32			m_iStartChar;
-    FX_INT32			m_iChars;
-    FX_INT32			m_iBidiLevel;
-    FX_INT32			m_iBidiPos;
-    FX_INT32			m_iFontSize;
-    FX_INT32			m_iFontHeight;
-    FX_INT32			m_iHorizontalScale;
-    FX_INT32			m_iVerticalScale;
+    int32_t			m_iStartPos;
+    int32_t			m_iWidth;
+    int32_t			m_iStartChar;
+    int32_t			m_iChars;
+    int32_t			m_iBidiLevel;
+    int32_t			m_iBidiPos;
+    int32_t			m_iFontSize;
+    int32_t			m_iFontHeight;
+    int32_t			m_iHorizontalScale;
+    int32_t			m_iVerticalScale;
     FX_DWORD			m_dwLayoutStyles;
     FX_DWORD			m_dwIdentity;
     CFX_RTFCharArray	*m_pChars;
@@ -214,22 +214,22 @@ public:
     virtual void			SetDefaultChar(FX_WCHAR wch) = 0;
     virtual void			SetLineBreakChar(FX_WCHAR wch) = 0;
     virtual void			SetLineBreakTolerance(FX_FLOAT fTolerance) = 0;
-    virtual void			SetHorizontalScale(FX_INT32 iScale) = 0;
-    virtual void			SetVerticalScale(FX_INT32 iScale) = 0;
-    virtual void			SetCharRotation(FX_INT32 iCharRotation) = 0;
+    virtual void			SetHorizontalScale(int32_t iScale) = 0;
+    virtual void			SetVerticalScale(int32_t iScale) = 0;
+    virtual void			SetCharRotation(int32_t iCharRotation) = 0;
     virtual void			SetCharSpace(FX_FLOAT fCharSpace) = 0;
     virtual void			SetWordSpace(FX_BOOL bDefault, FX_FLOAT fWordSpace) = 0;
     virtual void			SetReadingOrder(FX_BOOL bRTL = FALSE) = 0;
-    virtual void			SetAlignment(FX_INT32 iAlignment = FX_RTFLINEALIGNMENT_Left) = 0;
+    virtual void			SetAlignment(int32_t iAlignment = FX_RTFLINEALIGNMENT_Left) = 0;
     virtual void			SetUserData(IFX_Unknown *pUserData) = 0;
     virtual FX_DWORD					AppendChar(FX_WCHAR wch) = 0;
     virtual FX_DWORD					EndBreak(FX_DWORD dwStatus = FX_RTFBREAK_PieceBreak) = 0;
-    virtual FX_INT32					CountBreakPieces() const = 0;
-    virtual const CFX_RTFPiece*			GetBreakPiece(FX_INT32 index) const = 0;
+    virtual int32_t					CountBreakPieces() const = 0;
+    virtual const CFX_RTFPiece*			GetBreakPiece(int32_t index) const = 0;
     virtual void						GetLineRect(CFX_RectF &rect) const = 0;
     virtual void						ClearBreakPieces() = 0;
     virtual void			Reset() = 0;
-    virtual FX_INT32		GetDisplayPos(FX_LPCRTFTEXTOBJ pText, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode = FALSE, CFX_WideString *pWSForms = NULL, FX_AdjustCharDisplayPos pAdjustPos = NULL) const = 0;
-    virtual FX_INT32		GetCharRects(FX_LPCRTFTEXTOBJ pText, CFX_RectFArray &rtArray, FX_BOOL bCharBBox = FALSE) const = 0;
+    virtual int32_t		GetDisplayPos(FX_LPCRTFTEXTOBJ pText, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode = FALSE, CFX_WideString *pWSForms = NULL, FX_AdjustCharDisplayPos pAdjustPos = NULL) const = 0;
+    virtual int32_t		GetCharRects(FX_LPCRTFTEXTOBJ pText, CFX_RectFArray &rtArray, FX_BOOL bCharBBox = FALSE) const = 0;
 };
 #endif

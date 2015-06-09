@@ -42,7 +42,7 @@ CBC_OnedEAN13Writer::~CBC_OnedEAN13Writer()
 }
 FX_BOOL	CBC_OnedEAN13Writer::CheckContentValidity(FX_WSTR contents)
 {
-    for (FX_INT32 i = 0; i < contents.GetLength(); i++) {
+    for (int32_t i = 0; i < contents.GetLength(); i++) {
         if (contents.GetAt(i) >= '0' && contents.GetAt(i) <= '9') {
             continue;
         } else {
@@ -55,7 +55,7 @@ CFX_WideString	CBC_OnedEAN13Writer::FilterContents(FX_WSTR contents)
 {
     CFX_WideString filtercontents;
     FX_WCHAR ch;
-    for (FX_INT32 i = 0; i < contents.GetLength(); i++) {
+    for (int32_t i = 0; i < contents.GetLength(); i++) {
         ch = contents.GetAt(i);
         if(ch > 175) {
             i++;
@@ -67,12 +67,12 @@ CFX_WideString	CBC_OnedEAN13Writer::FilterContents(FX_WSTR contents)
     }
     return filtercontents;
 }
-FX_INT32 CBC_OnedEAN13Writer::CalcChecksum(const CFX_ByteString &contents)
+int32_t CBC_OnedEAN13Writer::CalcChecksum(const CFX_ByteString &contents)
 {
-    FX_INT32 odd = 0;
-    FX_INT32 even = 0;
-    FX_INT32 j = 1;
-    for(FX_INT32 i = contents.GetLength() - 1; i >= 0; i--) {
+    int32_t odd = 0;
+    int32_t even = 0;
+    int32_t j = 1;
+    for(int32_t i = contents.GetLength() - 1; i >= 0; i--) {
         if(j % 2) {
             odd += FXSYS_atoi(contents.Mid(i, 1));
         } else {
@@ -80,45 +80,45 @@ FX_INT32 CBC_OnedEAN13Writer::CalcChecksum(const CFX_ByteString &contents)
         }
         j++;
     }
-    FX_INT32 checksum = (odd * 3 + even) % 10;
+    int32_t checksum = (odd * 3 + even) % 10;
     checksum = (10 - checksum) % 10;
     return (checksum);
 }
-FX_BYTE *CBC_OnedEAN13Writer::Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e)
+uint8_t *CBC_OnedEAN13Writer::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e)
 {
-    FX_BYTE *ret = Encode(contents, format, outWidth, outHeight, 0, e);
+    uint8_t *ret = Encode(contents, format, outWidth, outHeight, 0, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return ret;
 }
-FX_BYTE *CBC_OnedEAN13Writer::Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e)
+uint8_t *CBC_OnedEAN13Writer::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e)
 {
     if(format != BCFORMAT_EAN_13) {
         e = BCExceptionOnlyEncodeEAN_13;
     }
-    FX_BYTE *ret = CBC_OneDimWriter::Encode(contents, format, outWidth, outHeight, hints, e);
+    uint8_t *ret = CBC_OneDimWriter::Encode(contents, format, outWidth, outHeight, hints, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return ret;
 }
-FX_BYTE *CBC_OnedEAN13Writer::Encode(const CFX_ByteString &contents, FX_INT32 &outLength, FX_INT32 &e)
+uint8_t *CBC_OnedEAN13Writer::Encode(const CFX_ByteString &contents, int32_t &outLength, int32_t &e)
 {
     if (contents.GetLength() != 13) {
         e = BCExceptionDigitLengthShould13;
         return NULL;
     }
     m_iDataLenth = 13;
-    FX_INT32 firstDigit = FXSYS_atoi(contents.Mid(0, 1));
-    FX_INT32 parities = CBC_OnedEAN13Reader::FIRST_DIGIT_ENCODINGS[firstDigit];
+    int32_t firstDigit = FXSYS_atoi(contents.Mid(0, 1));
+    int32_t parities = CBC_OnedEAN13Reader::FIRST_DIGIT_ENCODINGS[firstDigit];
     outLength = m_codeWidth;
-    FX_BYTE *result = FX_Alloc(FX_BYTE, m_codeWidth);
-    FX_INT32 pos = 0;
+    uint8_t *result = FX_Alloc(uint8_t, m_codeWidth);
+    int32_t pos = 0;
     pos += AppendPattern(result, pos, CBC_OneDimReader::START_END_PATTERN, 3, 1, e);
     if (e != BCExceptionNO) {
         FX_Free (result);
         return NULL;
     }
-    FX_INT32 i = 0;
+    int32_t i = 0;
     for ( i = 1; i <= 6; i++) {
-        FX_INT32 digit = FXSYS_atoi(contents.Mid(i, 1));
+        int32_t digit = FXSYS_atoi(contents.Mid(i, 1));
         if ((parities >> (6 - i) & 1) == 1) {
             digit += 10;
         }
@@ -134,7 +134,7 @@ FX_BYTE *CBC_OnedEAN13Writer::Encode(const CFX_ByteString &contents, FX_INT32 &o
         return NULL;
     }
     for (i = 7; i <= 12; i++) {
-        FX_INT32 digit = FXSYS_atoi(contents.Mid(i, 1));
+        int32_t digit = FXSYS_atoi(contents.Mid(i, 1));
         pos += AppendPattern(result, pos, CBC_OneDimReader::L_PATTERNS[digit], 4, 1, e);
         if (e != BCExceptionNO) {
             FX_Free (result);
@@ -148,16 +148,16 @@ FX_BYTE *CBC_OnedEAN13Writer::Encode(const CFX_ByteString &contents, FX_INT32 &o
     }
     return result;
 }
-void CBC_OnedEAN13Writer::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, FX_INT32 barWidth, FX_INT32 multiple, FX_INT32 &e)
+void CBC_OnedEAN13Writer::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e)
 {
     if (device == NULL && pOutBitmap == NULL) {
         e = BCExceptionIllegalArgument;
         return;
     }
-    FX_INT32 leftPadding = 7 * multiple;
-    FX_INT32 leftPosition = 3 * multiple + leftPadding;
+    int32_t leftPadding = 7 * multiple;
+    int32_t leftPosition = 3 * multiple + leftPadding;
     CFX_ByteString str = FX_UTF8Encode(contents);
-    FX_INT32 iLen = str.GetLength();
+    int32_t iLen = str.GetLength();
     FXTEXT_CHARPOS* pCharPos = FX_Alloc(FXTEXT_CHARPOS, iLen);
     if (!pCharPos) {
         return;
@@ -167,10 +167,10 @@ void CBC_OnedEAN13Writer::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, 
     if (pOutBitmap != NULL) {
         geBitmap.Attach(pOutBitmap);
     }
-    FX_INT32 iFontSize = (FX_INT32)fabs(m_fFontSize);
-    FX_INT32 iTextHeight = iFontSize + 1;
+    int32_t iFontSize = (int32_t)fabs(m_fFontSize);
+    int32_t iTextHeight = iFontSize + 1;
     CFX_ByteString tempStr = str.Mid(1, 6);
-    FX_INT32 strWidth = multiple * 42;
+    int32_t strWidth = multiple * 42;
     if (pOutBitmap == NULL) {
         CFX_Matrix matr(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
         CFX_FloatRect rect((FX_FLOAT)leftPosition, (FX_FLOAT)(m_Height - iTextHeight), (FX_FLOAT)(leftPosition + strWidth - 0.5), (FX_FLOAT)m_Height);
@@ -184,7 +184,7 @@ void CBC_OnedEAN13Writer::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, 
         matr1.TransformRect(rect1);
         re = rect1.GetOutterRect();
         device->FillRect(&re, m_backgroundColor);
-        FX_INT32 strWidth1 = multiple * 7;
+        int32_t strWidth1 = multiple * 7;
         CFX_Matrix matr2(m_outputHScale, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
         CFX_FloatRect rect2(0.0f, (FX_FLOAT)(m_Height - iTextHeight), (FX_FLOAT)strWidth1 - 0.5f, (FX_FLOAT)m_Height);
         matr2.Concat(*matrix);
@@ -196,7 +196,7 @@ void CBC_OnedEAN13Writer::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, 
     FX_FLOAT charsWidth = 0;
     iLen = tempStr.GetLength();
     if (pOutBitmap == NULL) {
-        strWidth = (FX_INT32)(strWidth * m_outputHScale);
+        strWidth = (int32_t)(strWidth * m_outputHScale);
     }
     CalcTextInfo(tempStr, pCharPos + 1, m_pFont, (FX_FLOAT)strWidth, iFontSize, blank);
     CFX_AffineMatrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (FX_FLOAT)iFontSize);
@@ -258,7 +258,7 @@ void CBC_OnedEAN13Writer::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, 
     iLen = tempStr.GetLength();
     strWidth = multiple * 7;
     if (pOutBitmap == NULL) {
-        strWidth = (FX_INT32)(strWidth * m_outputHScale);
+        strWidth = (int32_t)(strWidth * m_outputHScale);
     }
     CalcTextInfo(tempStr, pCharPos, m_pFont, (FX_FLOAT)strWidth, iFontSize, blank);
     if(pOutBitmap != NULL) {
@@ -288,7 +288,7 @@ void CBC_OnedEAN13Writer::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, 
     }
     FX_Free(pCharPos);
 }
-void CBC_OnedEAN13Writer::RenderResult(FX_WSTR contents, FX_BYTE* code, FX_INT32 codeLength, FX_BOOL isDevice, FX_INT32 &e)
+void CBC_OnedEAN13Writer::RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
 {
     CBC_OneDimWriter::RenderResult(contents, code, codeLength, isDevice, e);
 }

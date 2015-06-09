@@ -17,15 +17,15 @@ public:
     CBC_OnedUPCAWriter();
     virtual ~CBC_OnedUPCAWriter();
     virtual void Init();
-    FX_BYTE*	Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e);
-    FX_BYTE*	Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e);
-    void		RenderResult(FX_WSTR contents, FX_BYTE* code, FX_INT32 codeLength, FX_BOOL isDevice, FX_INT32 &e);
+    uint8_t*	Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e);
+    uint8_t*	Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e);
+    void		RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			CheckContentValidity(FX_WSTR contents);
     CFX_WideString	FilterContents(FX_WSTR contents);
-    FX_INT32	CalcChecksum(const CFX_ByteString &contents);
+    int32_t	CalcChecksum(const CFX_ByteString &contents);
 
 protected:
 
-    void		ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, FX_INT32 barWidth, FX_INT32 multiple, FX_INT32 &e);
+    void		ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e);
 };
 #endif

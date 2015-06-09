@@ -35,8 +35,8 @@ CXFA_FMFunctionDefinition::~CXFA_FMFunctionDefinition()
         m_pArguments = 0;
     }
     if (m_pExpressions) {
-        FX_INT32 expc = m_pExpressions->GetSize();
-        FX_INT32 index = 0;
+        int32_t expc = m_pExpressions->GetSize();
+        int32_t index = 0;
         CXFA_FMExpression *e = 0;
         while (index < expc) {
             e = (CXFA_FMExpression *)m_pExpressions->GetAt(index);
@@ -66,8 +66,8 @@ void CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript)
     }
     javascript << FX_WSTRC(L"(");
     if (m_pArguments != 0) {
-        FX_INT32 argc = m_pArguments->GetSize();
-        FX_INT32 index = 0;
+        int32_t argc = m_pArguments->GetSize();
+        int32_t index = 0;
         CFX_WideStringC identifier = 0;
         while (index < argc) {
             identifier = m_pArguments->GetAt(index);
@@ -88,8 +88,8 @@ void CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript)
     javascript << RUNTIMEFUNCTIONRETURNVALUE;
     javascript << FX_WSTRC(L" = null;\n");
     if (m_pExpressions) {
-        FX_INT32 expc = m_pExpressions->GetSize();
-        FX_INT32 index = 0;
+        int32_t expc = m_pExpressions->GetSize();
+        int32_t index = 0;
         CXFA_FMExpression *e = 0;
         while (index < expc) {
             e = (CXFA_FMExpression *)m_pExpressions->GetAt(index);
@@ -229,8 +229,8 @@ CXFA_FMBlockExpression::CXFA_FMBlockExpression(FX_DWORD line, CFX_PtrArray *pExp
 CXFA_FMBlockExpression::~CXFA_FMBlockExpression()
 {
     if (m_pExpressionList) {
-        FX_INT32 expc = m_pExpressionList->GetSize();
-        FX_INT32 index = 0;
+        int32_t expc = m_pExpressionList->GetSize();
+        int32_t index = 0;
         CXFA_FMExpression *e = 0;
         while (index < expc) {
             e = (CXFA_FMExpression *)m_pExpressionList->GetAt(index);
@@ -246,8 +246,8 @@ void CXFA_FMBlockExpression::ToJavaScript(CFX_WideTextBuf& javascript)
 {
     javascript << FX_WSTRC(L"{\n");
     if (m_pExpressionList) {
-        FX_INT32 expc = m_pExpressionList->GetSize();
-        FX_INT32 index = 0;
+        int32_t expc = m_pExpressionList->GetSize();
+        int32_t index = 0;
         CXFA_FMExpression *e = 0;
         while (index < expc) {
             e = (CXFA_FMExpression *)m_pExpressionList->GetAt(index);
@@ -261,8 +261,8 @@ void CXFA_FMBlockExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript)
 {
     javascript << FX_WSTRC(L"{\n");
     if (m_pExpressionList) {
-        FX_INT32 expc = m_pExpressionList->GetSize();
-        FX_INT32 index = 0;
+        int32_t expc = m_pExpressionList->GetSize();
+        int32_t index = 0;
         CXFA_FMExpression *e = 0;
         while (index < expc) {
             e = (CXFA_FMExpression *)m_pExpressionList->GetAt(index);
@@ -451,7 +451,7 @@ void CXFA_FMContinueExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript)
     javascript << FX_WSTRC(L" = 0;\n");
     javascript << FX_WSTRC(L"continue;\n");
 }
-CXFA_FMForExpression::CXFA_FMForExpression(FX_DWORD line, FX_WSTR wsVariant, CXFA_FMSimpleExpression *pAssignment, CXFA_FMSimpleExpression *pAccessor, FX_INT32 iDirection, CXFA_FMSimpleExpression *pStep, CXFA_FMExpression *pList)
+CXFA_FMForExpression::CXFA_FMForExpression(FX_DWORD line, FX_WSTR wsVariant, CXFA_FMSimpleExpression *pAssignment, CXFA_FMSimpleExpression *pAccessor, int32_t iDirection, CXFA_FMSimpleExpression *pStep, CXFA_FMExpression *pList)
     : CXFA_FMLoopExpression(line),
       m_wsVariant(wsVariant),
       m_pAssignment(pAssignment),
@@ -594,8 +594,8 @@ CXFA_FMForeachExpression::~CXFA_FMForeachExpression()
         m_pList = 0;
     }
     if (m_pAccessors) {
-        FX_INT32 size = m_pAccessors->GetSize();
-        FX_INT32 index = 0;
+        int32_t size = m_pAccessors->GetSize();
+        int32_t index = 0;
         CXFA_FMSimpleExpression *e = 0;
         while (index < size) {
             e = (CXFA_FMSimpleExpression *)m_pAccessors->GetAt(index);
@@ -623,8 +623,8 @@ void CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript)
     javascript << FX_WSTRC(L" = ");
     javascript << XFA_FM_EXPTypeToString(CONCATFMOBJECT);
     javascript << FX_WSTRC(L"(");
-    FX_INT32 iSize = m_pAccessors->GetSize();
-    FX_INT32 index = 0;
+    int32_t iSize = m_pAccessors->GetSize();
+    int32_t index = 0;
     CXFA_FMSimpleExpression *s = 0;
     while(index < iSize) {
         s = (CXFA_FMSimpleExpression *)m_pAccessors->GetAt(index);
@@ -677,8 +677,8 @@ void CXFA_FMForeachExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript)
     javascript << FX_WSTRC(L" = ");
     javascript << XFA_FM_EXPTypeToString(CONCATFMOBJECT);
     javascript << FX_WSTRC(L"(");
-    FX_INT32 iSize = m_pAccessors->GetSize();
-    FX_INT32 index = 0;
+    int32_t iSize = m_pAccessors->GetSize();
+    int32_t index = 0;
     CXFA_FMSimpleExpression *s = 0;
     while(index < iSize) {
         s = (CXFA_FMSimpleExpression *)m_pAccessors->GetAt(index);

@@ -11,24 +11,24 @@ class CBC_BarcodeMatrix
 {
 public:
     CBC_BarcodeMatrix();
-    CBC_BarcodeMatrix(FX_INT32 height, FX_INT32 width);
+    CBC_BarcodeMatrix(int32_t height, int32_t width);
     virtual ~CBC_BarcodeMatrix();
-    void set(FX_INT32 x, FX_INT32 y, FX_BYTE value);
-    void setMatrix(FX_INT32 x, FX_INT32 y, FX_BOOL black);
+    void set(int32_t x, int32_t y, uint8_t value);
+    void setMatrix(int32_t x, int32_t y, FX_BOOL black);
     void startRow();
     CBC_BarcodeRow* getCurrentRow();
     CFX_ByteArray& getMatrix();
-    CFX_ByteArray& getScaledMatrix(FX_INT32 scale);
-    CFX_ByteArray& getScaledMatrix(FX_INT32 xScale, FX_INT32 yScale);
-    FX_INT32 getWidth();
-    FX_INT32 getHeight();
+    CFX_ByteArray& getScaledMatrix(int32_t scale);
+    CFX_ByteArray& getScaledMatrix(int32_t xScale, int32_t yScale);
+    int32_t getWidth();
+    int32_t getHeight();
 private:
     CFX_PtrArray m_matrix;
     CFX_ByteArray m_matrixOut;
-    FX_INT32 m_currentRow;
-    FX_INT32 m_height;
-    FX_INT32 m_width;
-    FX_INT32 m_outWidth;
-    FX_INT32 m_outHeight;
+    int32_t m_currentRow;
+    int32_t m_height;
+    int32_t m_width;
+    int32_t m_outWidth;
+    int32_t m_outHeight;
 };
 #endif

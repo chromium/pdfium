@@ -12,36 +12,36 @@
 class CBC_PDF417HighLevelEncoder
 {
 public:
-    static CFX_WideString encodeHighLevel(CFX_WideString msg, Compaction compaction, FX_INT32 &e);
+    static CFX_WideString encodeHighLevel(CFX_WideString msg, Compaction compaction, int32_t &e);
     static void Inverse();
     static void Initialize();
     static void Finalize();
 private:
-    static FX_INT32 TEXT_COMPACTION;
-    static FX_INT32 BYTE_COMPACTION;
-    static FX_INT32 NUMERIC_COMPACTION;
-    static FX_INT32 SUBMODE_PUNCTUATION;
-    static FX_INT32 LATCH_TO_TEXT;
-    static FX_INT32 LATCH_TO_BYTE_PADDED;
-    static FX_INT32 LATCH_TO_NUMERIC;
-    static FX_INT32 SHIFT_TO_BYTE;
-    static FX_INT32 LATCH_TO_BYTE;
-    static FX_BYTE TEXT_MIXED_RAW[];
-    static FX_BYTE TEXT_PUNCTUATION_RAW[];
-    static FX_INT32 MIXED[128];
-    static FX_INT32 PUNCTUATION[128];
-    static FX_INT32 encodeText(CFX_WideString msg, FX_INT32 startpos, FX_INT32 count, CFX_WideString &sb, FX_INT32 initialSubmode);
-    static void encodeBinary(CFX_ByteArray* bytes, FX_INT32 startpos, FX_INT32 count, FX_INT32 startmode, CFX_WideString &sb);
-    static void encodeNumeric(CFX_WideString msg, FX_INT32 startpos, FX_INT32 count, CFX_WideString &sb);
+    static int32_t TEXT_COMPACTION;
+    static int32_t BYTE_COMPACTION;
+    static int32_t NUMERIC_COMPACTION;
+    static int32_t SUBMODE_PUNCTUATION;
+    static int32_t LATCH_TO_TEXT;
+    static int32_t LATCH_TO_BYTE_PADDED;
+    static int32_t LATCH_TO_NUMERIC;
+    static int32_t SHIFT_TO_BYTE;
+    static int32_t LATCH_TO_BYTE;
+    static uint8_t TEXT_MIXED_RAW[];
+    static uint8_t TEXT_PUNCTUATION_RAW[];
+    static int32_t MIXED[128];
+    static int32_t PUNCTUATION[128];
+    static int32_t encodeText(CFX_WideString msg, int32_t startpos, int32_t count, CFX_WideString &sb, int32_t initialSubmode);
+    static void encodeBinary(CFX_ByteArray* bytes, int32_t startpos, int32_t count, int32_t startmode, CFX_WideString &sb);
+    static void encodeNumeric(CFX_WideString msg, int32_t startpos, int32_t count, CFX_WideString &sb);
     static FX_BOOL isDigit(FX_WCHAR ch);
     static FX_BOOL isAlphaUpper(FX_WCHAR ch);
     static FX_BOOL isAlphaLower(FX_WCHAR ch);
     static FX_BOOL isMixed(FX_WCHAR ch);
     static FX_BOOL isPunctuation(FX_WCHAR ch);
     static FX_BOOL isText(FX_WCHAR ch);
-    static FX_INT32 determineConsecutiveDigitCount(CFX_WideString msg, FX_INT32 startpos);
-    static FX_INT32 determineConsecutiveTextCount(CFX_WideString msg, FX_INT32 startpos);
-    static FX_INT32 determineConsecutiveBinaryCount(CFX_WideString msg, CFX_ByteArray* bytes, FX_INT32 startpos, FX_INT32 &e);
+    static int32_t determineConsecutiveDigitCount(CFX_WideString msg, int32_t startpos);
+    static int32_t determineConsecutiveTextCount(CFX_WideString msg, int32_t startpos);
+    static int32_t determineConsecutiveBinaryCount(CFX_WideString msg, CFX_ByteArray* bytes, int32_t startpos, int32_t &e);
 
     friend class PDF417HighLevelEncoder_EncodeNumeric_Test;
     friend class PDF417HighLevelEncoder_EncodeBinary_Test;

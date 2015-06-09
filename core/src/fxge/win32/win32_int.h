@@ -29,7 +29,7 @@ public:
                              int fill_mode
                       );
 
-    void*			LoadMemFont(FX_BYTE* pData, FX_DWORD size);
+    void*			LoadMemFont(uint8_t* pData, FX_DWORD size);
     void			DeleteMemFont(void* pFontCollection);
     FX_BOOL         GdipCreateFromImage(void* bitmap, void** graphics);
     void            GdipDeleteGraphics(void* graphics);

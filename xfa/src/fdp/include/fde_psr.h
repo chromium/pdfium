@@ -35,12 +35,12 @@ public:
 class IFDE_TextSet : public IFDE_VisualSet
 {
 public:
-    virtual FX_INT32			GetString(FDE_HVISUALOBJ hText, CFX_WideString &wsText) = 0;
+    virtual int32_t			GetString(FDE_HVISUALOBJ hText, CFX_WideString &wsText) = 0;
     virtual IFX_Font*			GetFont(FDE_HVISUALOBJ hText) = 0;
     virtual FX_FLOAT			GetFontSize(FDE_HVISUALOBJ hText) = 0;
     virtual FX_ARGB				GetFontColor(FDE_HVISUALOBJ hText) = 0;
-    virtual FX_INT32			GetDisplayPos(FDE_HVISUALOBJ hText, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode = FALSE, CFX_WideString *pWSForms = NULL) = 0;
-    virtual FX_INT32			GetCharRects(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray) = 0;
+    virtual int32_t			GetDisplayPos(FDE_HVISUALOBJ hText, FXTEXT_CHARPOS *pCharPos, FX_BOOL bCharCode = FALSE, CFX_WideString *pWSForms = NULL) = 0;
+    virtual int32_t			GetCharRects(FDE_HVISUALOBJ hText, CFX_RectFArray &rtArray) = 0;
 };
 class IFDE_ImageSet : public IFDE_VisualSet
 {
@@ -58,8 +58,8 @@ class IFDE_PathSet : public IFDE_VisualSet
 {
 public:
     virtual IFDE_Path*		GetPath(FDE_HVISUALOBJ hPath) = 0;
-    virtual FX_INT32		GetFillMode(FDE_HVISUALOBJ hPath) = 0;
-    virtual FX_INT32		GetRenderMode(FDE_HVISUALOBJ hPath) = 0;
+    virtual int32_t		GetFillMode(FDE_HVISUALOBJ hPath) = 0;
+    virtual int32_t		GetRenderMode(FDE_HVISUALOBJ hPath) = 0;
     virtual IFDE_Pen*		GetPen(FDE_HVISUALOBJ hPath) = 0;
     virtual FX_FLOAT		GetPenWidth(FDE_HVISUALOBJ hPath) = 0;
     virtual IFDE_Brush*		GetBrush(FDE_HVISUALOBJ hPath) = 0;
@@ -76,10 +76,10 @@ class IFDE_WidgetSet : public IFDE_VisualSet
 {
 public:
     virtual FDE_WIDGETOBJ	GetWidgetType(FDE_HVISUALOBJ hWidget) = 0;
-    virtual FX_FLOAT		GetFloat(FDE_HVISUALOBJ hWidget, FX_INT32 iParameter, FX_FLOAT fDefVal = 0.0f) = 0;
-    virtual FX_INT32		GetInteger(FDE_HVISUALOBJ hWidget, FX_INT32 iParameter, FX_INT32 iDefVal = 0) = 0;
-    virtual FX_BOOL			GetString(FDE_HVISUALOBJ hWidget, FX_INT32 iParameter, CFX_WideString &wsValue) = 0;
-    virtual FX_BOOL			GetRects(FDE_HVISUALOBJ hWidget, FX_INT32 iParameter, CFX_RectFArray &rects) = 0;
+    virtual FX_FLOAT		GetFloat(FDE_HVISUALOBJ hWidget, int32_t iParameter, FX_FLOAT fDefVal = 0.0f) = 0;
+    virtual int32_t		GetInteger(FDE_HVISUALOBJ hWidget, int32_t iParameter, int32_t iDefVal = 0) = 0;
+    virtual FX_BOOL			GetString(FDE_HVISUALOBJ hWidget, int32_t iParameter, CFX_WideString &wsValue) = 0;
+    virtual FX_BOOL			GetRects(FDE_HVISUALOBJ hWidget, int32_t iParameter, CFX_RectFArray &rects) = 0;
 };
 class IFDE_VisualSetIterator
 {

@@ -35,11 +35,11 @@ CBC_EdifactEncoder::CBC_EdifactEncoder()
 CBC_EdifactEncoder::~CBC_EdifactEncoder()
 {
 }
-FX_INT32 CBC_EdifactEncoder::getEncodingMode()
+int32_t CBC_EdifactEncoder::getEncodingMode()
 {
     return EDIFACT_ENCODATION;
 }
-void CBC_EdifactEncoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
+void CBC_EdifactEncoder::Encode(CBC_EncoderContext &context, int32_t &e)
 {
     CFX_WideString buffer;
     while (context.hasMoreCharacters()) {
@@ -49,14 +49,14 @@ void CBC_EdifactEncoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
             return;
         }
         context.m_pos++;
-        FX_INT32 count = buffer.GetLength();
+        int32_t count = buffer.GetLength();
         if (count >= 4) {
             context.writeCodewords(encodeToCodewords(buffer, 0, e));
             if (e != BCExceptionNO) {
                 return;
             }
             buffer.Delete(0, 4);
-            FX_INT32 newMode = CBC_HighLevelEncoder::lookAheadTest(context.m_msg, context.m_pos, getEncodingMode());
+            int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(context.m_msg, context.m_pos, getEncodingMode());
             if (newMode != getEncodingMode()) {
                 context.signalEncoderChange(ASCII_ENCODATION);
                 break;
@@ -66,9 +66,9 @@ void CBC_EdifactEncoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
     buffer += (FX_WCHAR)31;
     handleEOD(context, buffer, e);
 }
-void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext &context, CFX_WideString buffer, FX_INT32 &e)
+void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext &context, CFX_WideString buffer, int32_t &e)
 {
-    FX_INT32 count = buffer.GetLength();
+    int32_t count = buffer.GetLength();
     if (count == 0) {
         return;
     }
@@ -77,8 +77,8 @@ void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext &context, CFX_WideString b
         if (e != BCExceptionNO) {
             return;
         }
-        FX_INT32 available = context.m_symbolInfo->m_dataCapacity - context.getCodewordCount();
-        FX_INT32 remaining = context.getRemainingCharacters();
+        int32_t available = context.m_symbolInfo->m_dataCapacity - context.getCodewordCount();
+        int32_t remaining = context.getRemainingCharacters();
         if (remaining == 0 && available <= 2) {
             return;
         }
@@ -87,7 +87,7 @@ void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext &context, CFX_WideString b
         e = BCExceptionIllegalStateCountMustNotExceed4;
         return;
     }
-    FX_INT32 restChars = count - 1;
+    int32_t restChars = count - 1;
     CFX_WideString encoded = encodeToCodewords(buffer, 0, e);
     if (e != BCExceptionNO) {
         return;
@@ -99,7 +99,7 @@ void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext &context, CFX_WideString b
         if (e != BCExceptionNO) {
             return;
         }
-        FX_INT32 available = context.m_symbolInfo->m_dataCapacity - context.getCodewordCount();
+        int32_t available = context.m_symbolInfo->m_dataCapacity - context.getCodewordCount();
         if (available >= 3) {
             restInAscii = FALSE;
             context.updateSymbolInfo(context.getCodewordCount() + encoded.GetLength(), e);
@@ -116,7 +116,7 @@ void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext &context, CFX_WideString b
     }
     context.signalEncoderChange(ASCII_ENCODATION);
 }
-void CBC_EdifactEncoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e)
+void CBC_EdifactEncoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, int32_t &e)
 {
     if (c >= ' ' && c <= '?') {
         sb += c;
@@ -126,9 +126,9 @@ void CBC_EdifactEncoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e)
         CBC_HighLevelEncoder::illegalCharacter(c, e);
     }
 }
-CFX_WideString CBC_EdifactEncoder::encodeToCodewords(CFX_WideString sb, FX_INT32 startPos, FX_INT32 &e)
+CFX_WideString CBC_EdifactEncoder::encodeToCodewords(CFX_WideString sb, int32_t startPos, int32_t &e)
 {
-    FX_INT32 len = sb.GetLength() - startPos;
+    int32_t len = sb.GetLength() - startPos;
     if (len == 0) {
         e = BCExceptionNoContents;
         return (FX_LPWSTR)"";
@@ -137,7 +137,7 @@ CFX_WideString CBC_EdifactEncoder::encodeToCodewords(CFX_WideString sb, FX_INT32
     FX_WCHAR c2 = len >= 2 ? sb.GetAt(startPos + 1) : 0;
     FX_WCHAR c3 = len >= 3 ? sb.GetAt(startPos + 2) : 0;
     FX_WCHAR c4 = len >= 4 ? sb.GetAt(startPos + 3) : 0;
-    FX_INT32 v = (c1 << 18) + (c2 << 12) + (c3 << 6) + c4;
+    int32_t v = (c1 << 18) + (c2 << 12) + (c3 << 6) + c4;
     FX_WCHAR cw1 = (FX_WCHAR) ((v >> 16) & 255);
     FX_WCHAR cw2 = (FX_WCHAR) ((v >> 8) & 255);
     FX_WCHAR cw3 = (FX_WCHAR) (v & 255);

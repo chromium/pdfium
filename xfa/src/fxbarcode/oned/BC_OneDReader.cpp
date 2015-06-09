@@ -25,44 +25,44 @@
 #include "../BC_BinaryBitmap.h"
 #include "../common/BC_CommonBitArray.h"
 #include "BC_OneDReader.h"
-const FX_INT32 CBC_OneDReader::INTEGER_MATH_SHIFT = 8;
-const FX_INT32 CBC_OneDReader::PATTERN_MATCH_RESULT_SCALE_FACTOR = 1 << 8;
+const int32_t CBC_OneDReader::INTEGER_MATH_SHIFT = 8;
+const int32_t CBC_OneDReader::PATTERN_MATCH_RESULT_SCALE_FACTOR = 1 << 8;
 CBC_OneDReader::CBC_OneDReader()
 {
 }
 CBC_OneDReader::~CBC_OneDReader()
 {
 }
-CFX_ByteString CBC_OneDReader::Decode(CBC_BinaryBitmap *image, FX_INT32 &e)
+CFX_ByteString CBC_OneDReader::Decode(CBC_BinaryBitmap *image, int32_t &e)
 {
     CFX_ByteString strtemp = Decode(image, 0, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     return strtemp;
 }
-CFX_ByteString CBC_OneDReader::Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_OneDReader::Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e)
 {
     CFX_ByteString strtemp = DeDecode(image, hints, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     return strtemp;
 }
-CFX_ByteString CBC_OneDReader::DeDecode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_OneDReader::DeDecode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e)
 {
-    FX_INT32 width = image->GetWidth();
-    FX_INT32 height = image->GetHeight();
+    int32_t width = image->GetWidth();
+    int32_t height = image->GetHeight();
     CBC_CommonBitArray *row = NULL;
-    FX_INT32 middle = height >> 1;
+    int32_t middle = height >> 1;
     FX_BOOL tryHarder = FALSE;
-    FX_INT32 rowStep = FX_MAX(1, height >> (tryHarder ? 8 : 5));
-    FX_INT32 maxLines;
+    int32_t rowStep = FX_MAX(1, height >> (tryHarder ? 8 : 5));
+    int32_t maxLines;
     if (tryHarder) {
         maxLines = height;
     } else {
         maxLines = 15;
     }
-    for (FX_INT32 x = 0; x < maxLines; x++) {
-        FX_INT32 rowStepsAboveOrBelow = (x + 1) >> 1;
+    for (int32_t x = 0; x < maxLines; x++) {
+        int32_t rowStepsAboveOrBelow = (x + 1) >> 1;
         FX_BOOL isAbove = (x & 0x01) == 0;
-        FX_INT32 rowNumber = middle + rowStep * (isAbove ? rowStepsAboveOrBelow : -rowStepsAboveOrBelow);
+        int32_t rowNumber = middle + rowStep * (isAbove ? rowStepsAboveOrBelow : -rowStepsAboveOrBelow);
         if (rowNumber < 0 || rowNumber >= height) {
             break;
         }
@@ -75,7 +75,7 @@ CFX_ByteString CBC_OneDReader::DeDecode(CBC_BinaryBitmap *image, FX_INT32 hints,
             }
             continue;
         }
-        for (FX_INT32 attempt = 0; attempt < 2; attempt++) {
+        for (int32_t attempt = 0; attempt < 2; attempt++) {
             if (attempt == 1) {
                 row->Reverse();
             }
@@ -98,20 +98,20 @@ CFX_ByteString CBC_OneDReader::DeDecode(CBC_BinaryBitmap *image, FX_INT32 hints,
     e = BCExceptionNotFound;
     return "";
 }
-void CBC_OneDReader::RecordPattern(CBC_CommonBitArray *row, FX_INT32 start, CFX_Int32Array *counters, FX_INT32 &e)
+void CBC_OneDReader::RecordPattern(CBC_CommonBitArray *row, int32_t start, CFX_Int32Array *counters, int32_t &e)
 {
-    FX_INT32 numCounters = counters->GetSize();
-    for (FX_INT32 i = 0; i < numCounters; i++) {
+    int32_t numCounters = counters->GetSize();
+    for (int32_t i = 0; i < numCounters; i++) {
         (*counters)[i] = 0;
     }
-    FX_INT32 end = row->GetSize();
+    int32_t end = row->GetSize();
     if (start >= end) {
         e = BCExceptionNotFound;
         return;
     }
     FX_BOOL isWhite = !row->Get(start);
-    FX_INT32 counterPosition = 0;
-    FX_INT32 j = start;
+    int32_t counterPosition = 0;
+    int32_t j = start;
     while (j < end) {
         FX_BOOL pixel = row->Get(j);
         if (pixel ^ isWhite) {
@@ -132,9 +132,9 @@ void CBC_OneDReader::RecordPattern(CBC_CommonBitArray *row, FX_INT32 start, CFX_
         return;
     }
 }
-void CBC_OneDReader::RecordPatternInReverse(CBC_CommonBitArray *row, FX_INT32 start, CFX_Int32Array *counters, FX_INT32 &e)
+void CBC_OneDReader::RecordPatternInReverse(CBC_CommonBitArray *row, int32_t start, CFX_Int32Array *counters, int32_t &e)
 {
-    FX_INT32 numTransitionsLeft = counters->GetSize();
+    int32_t numTransitionsLeft = counters->GetSize();
     FX_BOOL last = row->Get(start);
     while (start > 0 && numTransitionsLeft >= 0) {
         if (row->Get(--start) != last) {
@@ -149,12 +149,12 @@ void CBC_OneDReader::RecordPatternInReverse(CBC_CommonBitArray *row, FX_INT32 st
     RecordPattern(row, start + 1, counters, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
 }
-FX_INT32 CBC_OneDReader::PatternMatchVariance(CFX_Int32Array *counters, const FX_INT32 *pattern, FX_INT32 maxIndividualVariance)
+int32_t CBC_OneDReader::PatternMatchVariance(CFX_Int32Array *counters, const int32_t *pattern, int32_t maxIndividualVariance)
 {
-    FX_INT32 numCounters = counters->GetSize();
-    FX_INT32 total = 0;
-    FX_INT32 patternLength = 0;
-    for (FX_INT32 i = 0; i < numCounters; i++) {
+    int32_t numCounters = counters->GetSize();
+    int32_t total = 0;
+    int32_t patternLength = 0;
+    for (int32_t i = 0; i < numCounters; i++) {
         total += (*counters)[i];
         patternLength += pattern[i];
     }
@@ -162,13 +162,13 @@ FX_INT32 CBC_OneDReader::PatternMatchVariance(CFX_Int32Array *counters, const FX
 #undef max
         return FXSYS_IntMax;
     }
-    FX_INT32 unitBarWidth = (total << INTEGER_MATH_SHIFT) / patternLength;
+    int32_t unitBarWidth = (total << INTEGER_MATH_SHIFT) / patternLength;
     maxIndividualVariance = (maxIndividualVariance * unitBarWidth) >> INTEGER_MATH_SHIFT;
-    FX_INT32 totalVariance = 0;
-    for (FX_INT32 x = 0; x < numCounters; x++) {
-        FX_INT32 counter = (*counters)[x] << INTEGER_MATH_SHIFT;
-        FX_INT32 scaledPattern = pattern[x] * unitBarWidth;
-        FX_INT32 variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
+    int32_t totalVariance = 0;
+    for (int32_t x = 0; x < numCounters; x++) {
+        int32_t counter = (*counters)[x] << INTEGER_MATH_SHIFT;
+        int32_t scaledPattern = pattern[x] * unitBarWidth;
+        int32_t variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
         if (variance > maxIndividualVariance) {
 #undef max
             return FXSYS_IntMax;

@@ -168,7 +168,7 @@ void CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript)
     if (tempStr.GetLength() > 2) {
         javascript.AppendChar(L'\"');
         FX_WCHAR oneChar;
-        for (FX_INT16 i = 1; i < tempStr.GetLength() - 1; i++) {
+        for (int16_t i = 1; i < tempStr.GetLength() - 1; i++) {
             oneChar = tempStr[i];
             switch (oneChar) {
                 case L'\"': {
@@ -489,8 +489,8 @@ CXFA_FMCallExpression::CXFA_FMCallExpression(FX_DWORD line, CXFA_FMSimpleExpress
 CXFA_FMCallExpression::~CXFA_FMCallExpression()
 {
     if (m_pArguments) {
-        FX_INT32 argc = m_pArguments->GetSize();
-        FX_INT32 index = 0;
+        int32_t argc = m_pArguments->GetSize();
+        int32_t index = 0;
         CXFA_FMSimpleExpression *e = 0;
         while (index < argc) {
             e = (CXFA_FMSimpleExpression *)m_pArguments->GetAt(index);
@@ -504,11 +504,11 @@ CXFA_FMCallExpression::~CXFA_FMCallExpression()
 }
 FX_BOOL CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf& funcName)
 {
-    FX_INT32 iLength = funcName.GetLength();
-    FX_UINT32 uHash = FX_HashCode_String_GetW(funcName.GetBuffer(), iLength, TRUE);
+    int32_t iLength = funcName.GetLength();
+    uint32_t uHash = FX_HashCode_String_GetW(funcName.GetBuffer(), iLength, TRUE);
     XFA_FMBuildInFunc buildinfunction;
-    FX_INT32 iStart = 0, iEnd = (sizeof(buildInFuncs) / sizeof(buildInFuncs[0])) - 1;
-    FX_INT32 iMid = (iStart + iEnd) / 2;
+    int32_t iStart = 0, iEnd = (sizeof(buildInFuncs) / sizeof(buildInFuncs[0])) - 1;
+    int32_t iMid = (iStart + iEnd) / 2;
     do {
         iMid = (iStart + iEnd) / 2;
         buildinfunction = buildInFuncs[iMid];
@@ -526,12 +526,12 @@ FX_BOOL CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf& funcName)
 }
 FX_DWORD CXFA_FMCallExpression::IsSomMethodWithObjPara(FX_WSTR methodName)
 {
-    FX_INT32 iLength = methodName.GetLength();
-    FX_UINT32 uHash = FX_HashCode_String_GetW(methodName.GetPtr(), iLength);
+    int32_t iLength = methodName.GetLength();
+    uint32_t uHash = FX_HashCode_String_GetW(methodName.GetPtr(), iLength);
     XFA_FMSOMMethod somMethodWithObjPara;
     FX_DWORD parameters = 0x00;
-    FX_INT32 iStart = 0, iEnd = (sizeof(gs_FMSomMethods) / sizeof(gs_FMSomMethods[0])) - 1;
-    FX_INT32 iMid = (iStart + iEnd) / 2;
+    int32_t iStart = 0, iEnd = (sizeof(gs_FMSomMethods) / sizeof(gs_FMSomMethods[0])) - 1;
+    int32_t iMid = (iStart + iEnd) / 2;
     do {
         iMid = (iStart + iEnd) / 2;
         somMethodWithObjPara = gs_FMSomMethods[iMid];
@@ -554,8 +554,8 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript)
         javascript << funcName;
         javascript << FX_WSTRC(L"(");
         if (m_pArguments) {
-            FX_INT32 argc = m_pArguments->GetSize();
-            FX_INT32 index = 0;
+            int32_t argc = m_pArguments->GetSize();
+            int32_t index = 0;
             FX_DWORD methodPara = IsSomMethodWithObjPara(funcName.GetWideString());
             if (methodPara > 0) {
                 CXFA_FMSimpleExpression *e = 0;
@@ -623,8 +623,8 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript)
             }
             javascript << FX_WSTRC(L"catch(accessExceptions)\n{\nreturn 0;\n}\n}\n).call(this)\n");
         } else if (m_pArguments) {
-            FX_INT32 argc = m_pArguments->GetSize();
-            FX_INT32 index = 0;
+            int32_t argc = m_pArguments->GetSize();
+            int32_t index = 0;
             CXFA_FMSimpleExpression *e = 0;
             while (index < argc) {
                 e = (CXFA_FMSimpleExpression *)m_pArguments->GetAt(index);

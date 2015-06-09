@@ -10,7 +10,7 @@ IFDE_Pen* IFDE_Pen::Create()
 {
     return FDE_New CFDE_Pen();
 }
-IFDE_Brush* IFDE_Brush::Create(FX_INT32 iType)
+IFDE_Brush* IFDE_Brush::Create(int32_t iType)
 {
     switch (iType) {
         case FDE_BRUSHTYPE_Solid:

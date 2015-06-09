@@ -16,11 +16,11 @@ CXFA_FMProgram::~CXFA_FMProgram()
         m_globalFunction = 0;
     }
 }
-FX_INT32 CXFA_FMProgram::Init(FX_WSTR wsFormcalc)
+int32_t CXFA_FMProgram::Init(FX_WSTR wsFormcalc)
 {
     return m_parse.Init(wsFormcalc, &m_pErrorInfo);
 }
-FX_INT32 CXFA_FMProgram::ParseProgram()
+int32_t CXFA_FMProgram::ParseProgram()
 {
     CFX_PtrArray * expressions = 0;
     m_parse.NextToken();
@@ -30,7 +30,7 @@ FX_INT32 CXFA_FMProgram::ParseProgram()
     expressions = m_parse.ParseTopExpression();
     if (!m_pErrorInfo.message.IsEmpty()) {
         CXFA_FMExpression *e = 0;
-        for (FX_INT32 u = 0; u < expressions->GetSize(); ++u) {
+        for (int32_t u = 0; u < expressions->GetSize(); ++u) {
             e = (CXFA_FMExpression *)expressions->GetAt(u);
             if (e) {
                 delete e;
@@ -42,7 +42,7 @@ FX_INT32 CXFA_FMProgram::ParseProgram()
     m_globalFunction = FX_NEW CXFA_FMFunctionDefinition(1, 1, FX_WSTRC(L""), 0, expressions);
     return 0;
 }
-FX_INT32 CXFA_FMProgram::TranslateProgram(CFX_WideTextBuf &wsJavaScript)
+int32_t CXFA_FMProgram::TranslateProgram(CFX_WideTextBuf &wsJavaScript)
 {
     m_globalFunction->ToJavaScript(wsJavaScript);
     wsJavaScript.AppendChar(0);

@@ -19,7 +19,7 @@ CXFA_FFLine::CXFA_FFLine(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
 CXFA_FFLine::~CXFA_FFLine()
 {
 }
-void CXFA_FFLine::GetRectFromHand(CFX_RectF &rect, FX_INT32 iHand, FX_FLOAT fLineWidth)
+void CXFA_FFLine::GetRectFromHand(CFX_RectF &rect, int32_t iHand, FX_FLOAT fLineWidth)
 {
     FX_FLOAT fHalfWidth = fLineWidth / 2.0f;
     if (rect.height < 1.0f) {
@@ -50,7 +50,7 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF &rect, FX_INT32 iHand, FX_FLOAT fLin
         }
     }
 }
-void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;
@@ -61,10 +61,10 @@ void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD
     }
     CXFA_Line lineObj	 = value.GetLine();
     FX_ARGB lineColor	 = 0xFF000000;
-    FX_INT32 iStrokeType = 0;
+    int32_t iStrokeType = 0;
     FX_FLOAT fLineWidth  = 1.0f;
     FX_BOOL bSlope = lineObj.GetSlop();
-    FX_INT32 iCap = 0;
+    int32_t iCap = 0;
     CXFA_Edge edge = lineObj.GetEdge();
     if (edge.IsExistInXML()) {
         if (edge.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
@@ -109,7 +109,7 @@ CXFA_FFArc::CXFA_FFArc(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
 CXFA_FFArc::~CXFA_FFArc()
 {
 }
-void CXFA_FFArc::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFArc::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;
@@ -138,7 +138,7 @@ CXFA_FFRectangle::CXFA_FFRectangle(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* p
 CXFA_FFRectangle::~CXFA_FFRectangle()
 {
 }
-void CXFA_FFRectangle::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFRectangle::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;

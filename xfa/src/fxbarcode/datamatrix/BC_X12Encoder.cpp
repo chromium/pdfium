@@ -36,11 +36,11 @@ CBC_X12Encoder::CBC_X12Encoder()
 CBC_X12Encoder::~CBC_X12Encoder()
 {
 }
-FX_INT32 CBC_X12Encoder::getEncodingMode()
+int32_t CBC_X12Encoder::getEncodingMode()
 {
     return X12_ENCODATION;
 }
-void CBC_X12Encoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
+void CBC_X12Encoder::Encode(CBC_EncoderContext &context, int32_t &e)
 {
     CFX_WideString buffer;
     while (context.hasMoreCharacters()) {
@@ -50,10 +50,10 @@ void CBC_X12Encoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
         if (e != BCExceptionNO) {
             return;
         }
-        FX_INT32 count = buffer.GetLength();
+        int32_t count = buffer.GetLength();
         if ((count % 3) == 0) {
             writeNextTriplet(context, buffer);
-            FX_INT32 newMode = CBC_HighLevelEncoder::lookAheadTest(context.m_msg, context.m_pos, getEncodingMode());
+            int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(context.m_msg, context.m_pos, getEncodingMode());
             if (newMode != getEncodingMode()) {
                 context.signalEncoderChange(newMode);
                 break;
@@ -62,14 +62,14 @@ void CBC_X12Encoder::Encode(CBC_EncoderContext &context, FX_INT32 &e)
     }
     handleEOD(context, buffer, e);
 }
-void CBC_X12Encoder::handleEOD(CBC_EncoderContext &context, CFX_WideString &buffer, FX_INT32 &e)
+void CBC_X12Encoder::handleEOD(CBC_EncoderContext &context, CFX_WideString &buffer, int32_t &e)
 {
     context.updateSymbolInfo(e);
     if (e != BCExceptionNO) {
         return;
     }
-    FX_INT32 available = context.m_symbolInfo->m_dataCapacity - context.getCodewordCount();
-    FX_INT32 count = buffer.GetLength();
+    int32_t available = context.m_symbolInfo->m_dataCapacity - context.getCodewordCount();
+    int32_t count = buffer.GetLength();
     if (count == 2) {
         context.writeCodeword(CBC_HighLevelEncoder::X12_UNLATCH);
         context.m_pos -= 2;
@@ -82,7 +82,7 @@ void CBC_X12Encoder::handleEOD(CBC_EncoderContext &context, CFX_WideString &buff
         context.signalEncoderChange(ASCII_ENCODATION);
     }
 }
-FX_INT32 CBC_X12Encoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e)
+int32_t CBC_X12Encoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, int32_t &e)
 {
     if (c == '\r') {
         sb += (FX_WCHAR)'\0';

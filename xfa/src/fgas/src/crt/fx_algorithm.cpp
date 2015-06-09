@@ -29,7 +29,7 @@ typedef struct _FX_BASE64DATA {
     FX_DWORD	data7 : 8;
 } FX_BASE64DATA, * FX_LPBASE64ENCODEDATA;
 typedef FX_BASE64DATA const * FX_LPCBASE64DATA;
-static void FX_Base64EncodePiece(const FX_BASE64DATA &src, FX_INT32 iBytes, FX_CHAR dst[4])
+static void FX_Base64EncodePiece(const FX_BASE64DATA &src, int32_t iBytes, FX_CHAR dst[4])
 {
     dst[0] = g_FXBase64EncoderMap[src.data2];
     FX_DWORD b = src.data1 << 4;
@@ -52,21 +52,21 @@ static void FX_Base64EncodePiece(const FX_BASE64DATA &src, FX_INT32 iBytes, FX_C
         dst[2] = dst[3] = '=';
     }
 }
-FX_INT32 FX_Base64EncodeA(FX_LPCBYTE pSrc, FX_INT32 iSrcLen, FX_LPSTR pDst)
+int32_t FX_Base64EncodeA(FX_LPCBYTE pSrc, int32_t iSrcLen, FX_LPSTR pDst)
 {
     FXSYS_assert(pSrc != NULL);
     if (iSrcLen < 1) {
         return 0;
     }
     if (pDst == NULL) {
-        FX_INT32 iDstLen = iSrcLen / 3 * 4;
+        int32_t iDstLen = iSrcLen / 3 * 4;
         if ((iSrcLen % 3) != 0) {
             iDstLen += 4;
         }
         return iDstLen;
     }
     FX_BASE64DATA srcData;
-    FX_INT32 iBytes = 3;
+    int32_t iBytes = 3;
     FX_LPSTR pDstEnd = pDst;
     while (iSrcLen > 0) {
         if (iSrcLen > 2) {
@@ -88,7 +88,7 @@ FX_INT32 FX_Base64EncodeA(FX_LPCBYTE pSrc, FX_INT32 iSrcLen, FX_LPSTR pDst)
     }
     return pDstEnd - pDst;
 }
-const static FX_BYTE g_FXBase64DecoderMap[256] = {
+const static uint8_t g_FXBase64DecoderMap[256] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -122,23 +122,23 @@ const static FX_BYTE g_FXBase64DecoderMap[256] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 };
-static void FX_Base64DecodePiece(const FX_CHAR src[4], FX_INT32 iChars, FX_BASE64DATA &dst, FX_INT32 &iBytes)
+static void FX_Base64DecodePiece(const FX_CHAR src[4], int32_t iChars, FX_BASE64DATA &dst, int32_t &iBytes)
 {
     FXSYS_assert(iChars > 0 && iChars < 5);
     iBytes = 1;
-    dst.data2 = g_FXBase64DecoderMap[(FX_BYTE)src[0]];
+    dst.data2 = g_FXBase64DecoderMap[(uint8_t)src[0]];
     if (iChars > 1) {
-        FX_BYTE b = g_FXBase64DecoderMap[(FX_BYTE)src[1]];
+        uint8_t b = g_FXBase64DecoderMap[(uint8_t)src[1]];
         dst.data1 = b >> 4;
         dst.data4 = b;
         if (iChars > 2) {
             iBytes = 2;
-            b = g_FXBase64DecoderMap[(FX_BYTE)src[2]];
+            b = g_FXBase64DecoderMap[(uint8_t)src[2]];
             dst.data3 = b >> 2;
             dst.data6 = b;
             if (iChars > 3) {
                 iBytes = 3;
-                dst.data5 = g_FXBase64DecoderMap[(FX_BYTE)src[3]];
+                dst.data5 = g_FXBase64DecoderMap[(uint8_t)src[3]];
             } else {
                 dst.data5 = 0;
             }
@@ -149,7 +149,7 @@ static void FX_Base64DecodePiece(const FX_CHAR src[4], FX_INT32 iChars, FX_BASE6
         dst.data1 = 0;
     }
 }
-FX_INT32 FX_Base64DecodeA(FX_LPCSTR pSrc, FX_INT32 iSrcLen, FX_LPBYTE pDst)
+int32_t FX_Base64DecodeA(FX_LPCSTR pSrc, int32_t iSrcLen, FX_LPBYTE pDst)
 {
     FXSYS_assert(pSrc != NULL);
     if (iSrcLen < 1) {
@@ -162,7 +162,7 @@ FX_INT32 FX_Base64DecodeA(FX_LPCSTR pSrc, FX_INT32 iSrcLen, FX_LPBYTE pDst)
         return 0;
     }
     if (pDst == NULL) {
-        FX_INT32 iDstLen = iSrcLen / 4 * 3;
+        int32_t iDstLen = iSrcLen / 4 * 3;
         iSrcLen %= 4;
         if (iSrcLen == 1) {
             iDstLen += 1;
@@ -175,7 +175,7 @@ FX_INT32 FX_Base64DecodeA(FX_LPCSTR pSrc, FX_INT32 iSrcLen, FX_LPBYTE pDst)
     }
     FX_CHAR srcData[4];
     FX_BASE64DATA dstData;
-    FX_INT32 iChars = 4, iBytes;
+    int32_t iChars = 4, iBytes;
     FX_LPBYTE pDstEnd = pDst;
     while (iSrcLen > 0) {
         if (iSrcLen > 3) {
@@ -206,7 +206,7 @@ FX_INT32 FX_Base64DecodeA(FX_LPCSTR pSrc, FX_INT32 iSrcLen, FX_LPBYTE pDst)
     }
     return pDstEnd - pDst;
 }
-FX_INT32 FX_Base64DecodeW(FX_LPCWSTR pSrc, FX_INT32 iSrcLen, FX_LPBYTE pDst)
+int32_t FX_Base64DecodeW(FX_LPCWSTR pSrc, int32_t iSrcLen, FX_LPBYTE pDst)
 {
     FXSYS_assert(pSrc != NULL);
     if (iSrcLen < 1) {
@@ -219,7 +219,7 @@ FX_INT32 FX_Base64DecodeW(FX_LPCWSTR pSrc, FX_INT32 iSrcLen, FX_LPBYTE pDst)
         return 0;
     }
     if (pDst == NULL) {
-        FX_INT32 iDstLen = iSrcLen / 4 * 3;
+        int32_t iDstLen = iSrcLen / 4 * 3;
         iSrcLen %= 4;
         if (iSrcLen == 1) {
             iDstLen += 1;
@@ -232,7 +232,7 @@ FX_INT32 FX_Base64DecodeW(FX_LPCWSTR pSrc, FX_INT32 iSrcLen, FX_LPBYTE pDst)
     }
     FX_CHAR srcData[4];
     FX_BASE64DATA dstData;
-    FX_INT32 iChars = 4, iBytes;
+    int32_t iChars = 4, iBytes;
     FX_LPBYTE pDstEnd = pDst;
     while (iSrcLen > 0) {
         if (iSrcLen > 3) {
@@ -265,7 +265,7 @@ FX_INT32 FX_Base64DecodeW(FX_LPCWSTR pSrc, FX_INT32 iSrcLen, FX_LPBYTE pDst)
     }
     return pDstEnd - pDst;
 }
-const static FX_BYTE g_FXHex2DecMap[256] = {
+const static uint8_t g_FXHex2DecMap[256] = {
     0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
     0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
     0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
@@ -283,11 +283,11 @@ const static FX_BYTE g_FXHex2DecMap[256] = {
     0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
     0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 };
-FX_BYTE FX_Hex2Dec(FX_BYTE hexHigh, FX_BYTE hexLow)
+uint8_t FX_Hex2Dec(uint8_t hexHigh, uint8_t hexLow)
 {
     return (g_FXHex2DecMap[hexHigh] << 4) + g_FXHex2DecMap[hexLow];
 }
-FX_INT32 FX_SeparateStringW(FX_LPCWSTR pStr, FX_INT32 iStrLen, FX_WCHAR delimiter, CFX_WideStringArray &pieces)
+int32_t FX_SeparateStringW(FX_LPCWSTR pStr, int32_t iStrLen, FX_WCHAR delimiter, CFX_WideStringArray &pieces)
 {
     if (pStr == NULL) {
         return 0;

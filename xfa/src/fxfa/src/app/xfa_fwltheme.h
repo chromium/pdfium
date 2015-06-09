@@ -81,7 +81,7 @@ public:
     CXFA_FWLCheckBoxTP();
     virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams);
 protected:
-    void	DrawCheckSign(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, const CFX_RectF *pRtBox, FX_INT32 iState, CFX_Matrix* pMatrix);
+    void	DrawCheckSign(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, const CFX_RectF *pRtBox, int32_t iState, CFX_Matrix* pMatrix);
 };
 class CXFA_FWLEditTP : public CFWL_EditTP
 {

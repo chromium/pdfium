@@ -16,7 +16,7 @@ public:
     static void LocaleToUtf8(const CFX_ByteString &source, CFX_ByteString &result);
     static void LocaleToUtf8(const CFX_ByteString &source, CFX_ByteArray &result);
     static void Utf8ToLocale(const CFX_ByteArray &source, CFX_ByteString &result);
-    static void Utf8ToLocale(const FX_BYTE *source, FX_INT32 count, CFX_ByteString &result);
+    static void Utf8ToLocale(const uint8_t *source, int32_t count, CFX_ByteString &result);
     static void UnicodeToUTF8(const CFX_WideString &source, CFX_ByteString &result);
 };
 #endif

@@ -187,22 +187,22 @@ void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap)
 }
 #endif  // _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
 
-static FX_BOOL FX_IsDigit(FX_BYTE ch)
+static FX_BOOL FX_IsDigit(uint8_t ch)
 {
     return (ch >= '0' && ch <= '9') ? TRUE : FALSE;
 }
-static FX_BOOL FX_IsXDigit(FX_BYTE ch)
+static FX_BOOL FX_IsXDigit(uint8_t ch)
 {
     return (FX_IsDigit(ch) || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f')) ? TRUE : FALSE;
 }
-static FX_BYTE FX_MakeUpper(FX_BYTE ch)
+static uint8_t FX_MakeUpper(uint8_t ch)
 {
     if (ch < 'a' || ch > 'z') {
         return ch;
     }
     return ch - 32;
 }
-static int FX_HexToI(FX_BYTE ch)
+static int FX_HexToI(uint8_t ch)
 {
     ch = FX_MakeUpper(ch);
     return FX_IsDigit(ch) ? (ch - '0') : (ch - 55);
@@ -237,7 +237,7 @@ CFX_ByteString FX_UrlEncode(const CFX_WideString& wsUrl)
             int nByte = bsUri.GetLength();
             for (int j = 0; j < nByte; j++) {
                 rUrl += '%';
-                FX_BYTE code = bsUri.GetAt(j);
+                uint8_t code = bsUri.GetAt(j);
                 rUrl += arDigits[code >> 4];
                 rUrl += arDigits[code & 0x0F];
             }
@@ -268,7 +268,7 @@ CFX_ByteString FX_EncodeURI(const CFX_WideString& wsURI)
     CFX_ByteString bsUri = wsURI.UTF8Encode();
     int nLength = bsUri.GetLength();
     for (int i = 0; i < nLength; i++) {
-        FX_BYTE code = bsUri.GetAt(i);
+        uint8_t code = bsUri.GetAt(i);
         if (code > 0x7F || url_encodeTable[code] == 1) {
             rURI += '%';
             rURI += arDigits[code >> 4];

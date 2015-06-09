@@ -25,37 +25,37 @@ public:
     static void Initialize();
     static void Finalize();
     static CBC_CommonDecoderResult* decode(CBC_CommonBitMatrix* image, CBC_ResultPoint* imageTopLeft, CBC_ResultPoint* imageBottomLeft, CBC_ResultPoint* imageTopRight,
-                                           CBC_ResultPoint* imageBottomRight, FX_INT32 minCodewordWidth, FX_INT32 maxCodewordWidth, FX_INT32 &e);
+                                           CBC_ResultPoint* imageBottomRight, int32_t minCodewordWidth, int32_t maxCodewordWidth, int32_t &e);
     static CFX_ByteString toString(CFX_PtrArray* barcodeMatrix);
 private:
-    static FX_INT32 CODEWORD_SKEW_SIZE;
-    static FX_INT32 MAX_ERRORS;
-    static FX_INT32 MAX_EC_CODEWORDS;
+    static int32_t CODEWORD_SKEW_SIZE;
+    static int32_t MAX_ERRORS;
+    static int32_t MAX_EC_CODEWORDS;
     static CBC_PDF417ECErrorCorrection* errorCorrection;
-    static CBC_DetectionResult* merge(CBC_DetectionResultRowIndicatorColumn* leftRowIndicatorColumn, CBC_DetectionResultRowIndicatorColumn* rightRowIndicatorColumn, FX_INT32 &e);
-    static CBC_BoundingBox* adjustBoundingBox(CBC_DetectionResultRowIndicatorColumn* rowIndicatorColumn, FX_INT32 &e);
-    static FX_INT32 getMax(CFX_Int32Array& values);
+    static CBC_DetectionResult* merge(CBC_DetectionResultRowIndicatorColumn* leftRowIndicatorColumn, CBC_DetectionResultRowIndicatorColumn* rightRowIndicatorColumn, int32_t &e);
+    static CBC_BoundingBox* adjustBoundingBox(CBC_DetectionResultRowIndicatorColumn* rowIndicatorColumn, int32_t &e);
+    static int32_t getMax(CFX_Int32Array& values);
     static CBC_BarcodeMetadata* getBarcodeMetadata(CBC_DetectionResultRowIndicatorColumn* leftRowIndicatorColumn, CBC_DetectionResultRowIndicatorColumn* rightRowIndicatorColumn);
     static CBC_DetectionResultRowIndicatorColumn* getRowIndicatorColumn(CBC_CommonBitMatrix* image, CBC_BoundingBox* boundingBox, CBC_ResultPoint startPoint,
-            FX_BOOL leftToRight, FX_INT32 minCodewordWidth, FX_INT32 maxCodewordWidth);
-    static void adjustCodewordCount(CBC_DetectionResult* detectionResult, CFX_PtrArray* barcodeMatrix, FX_INT32 &e);
-    static CBC_CommonDecoderResult* createDecoderResult(CBC_DetectionResult* detectionResult, FX_INT32 &e);
-    static CBC_CommonDecoderResult* createDecoderResultFromAmbiguousValues(FX_INT32 ecLevel, CFX_Int32Array &codewords, CFX_Int32Array &erasureArray, CFX_Int32Array &ambiguousIndexes,
-            CFX_PtrArray& ambiguousIndexValues, FX_INT32 &e);
+            FX_BOOL leftToRight, int32_t minCodewordWidth, int32_t maxCodewordWidth);
+    static void adjustCodewordCount(CBC_DetectionResult* detectionResult, CFX_PtrArray* barcodeMatrix, int32_t &e);
+    static CBC_CommonDecoderResult* createDecoderResult(CBC_DetectionResult* detectionResult, int32_t &e);
+    static CBC_CommonDecoderResult* createDecoderResultFromAmbiguousValues(int32_t ecLevel, CFX_Int32Array &codewords, CFX_Int32Array &erasureArray, CFX_Int32Array &ambiguousIndexes,
+            CFX_PtrArray& ambiguousIndexValues, int32_t &e);
     static CFX_PtrArray* createBarcodeMatrix(CBC_DetectionResult* detectionResult);
-    static FX_BOOL isValidBarcodeColumn(CBC_DetectionResult* detectionResult, FX_INT32 barcodeColumn);
-    static FX_INT32 getStartColumn(CBC_DetectionResult* detectionResult, FX_INT32 barcodeColumn, FX_INT32 imageRow, FX_BOOL leftToRight);
-    static CBC_Codeword* detectCodeword(CBC_CommonBitMatrix* image, FX_INT32 minColumn, FX_INT32 maxColumn, FX_BOOL leftToRight, FX_INT32 startColumn,
-                                        FX_INT32 imageRow, FX_INT32 minCodewordWidth, FX_INT32 maxCodewordWidth);
-    static CFX_Int32Array* getModuleBitCount(CBC_CommonBitMatrix* image, FX_INT32 minColumn, FX_INT32 maxColumn, FX_BOOL leftToRight, FX_INT32 startColumn, FX_INT32 imageRow);
-    static FX_INT32 getNumberOfECCodeWords(FX_INT32 barcodeECLevel);
-    static FX_INT32 adjustCodewordStartColumn(CBC_CommonBitMatrix* image, FX_INT32 minColumn, FX_INT32 maxColumn, FX_BOOL leftToRight, FX_INT32 codewordStartColumn, FX_INT32 imageRow);
-    static FX_BOOL checkCodewordSkew(FX_INT32 codewordSize, FX_INT32 minCodewordWidth, FX_INT32 maxCodewordWidth);
-    static CBC_CommonDecoderResult* decodeCodewords(CFX_Int32Array &codewords, FX_INT32 ecLevel, CFX_Int32Array &erasures, FX_INT32 &e);
-    static FX_INT32 correctErrors(CFX_Int32Array &codewords, CFX_Int32Array &erasures, FX_INT32 numECCodewords, FX_INT32 &e);
-    static void verifyCodewordCount(CFX_Int32Array &codewords, FX_INT32 numECCodewords, FX_INT32 &e);
-    static CFX_Int32Array* getBitCountForCodeword(FX_INT32 codeword);
-    static FX_INT32 getCodewordBucketNumber(FX_INT32 codeword);
-    static FX_INT32 getCodewordBucketNumber(CFX_Int32Array& moduleBitCount);
+    static FX_BOOL isValidBarcodeColumn(CBC_DetectionResult* detectionResult, int32_t barcodeColumn);
+    static int32_t getStartColumn(CBC_DetectionResult* detectionResult, int32_t barcodeColumn, int32_t imageRow, FX_BOOL leftToRight);
+    static CBC_Codeword* detectCodeword(CBC_CommonBitMatrix* image, int32_t minColumn, int32_t maxColumn, FX_BOOL leftToRight, int32_t startColumn,
+                                        int32_t imageRow, int32_t minCodewordWidth, int32_t maxCodewordWidth);
+    static CFX_Int32Array* getModuleBitCount(CBC_CommonBitMatrix* image, int32_t minColumn, int32_t maxColumn, FX_BOOL leftToRight, int32_t startColumn, int32_t imageRow);
+    static int32_t getNumberOfECCodeWords(int32_t barcodeECLevel);
+    static int32_t adjustCodewordStartColumn(CBC_CommonBitMatrix* image, int32_t minColumn, int32_t maxColumn, FX_BOOL leftToRight, int32_t codewordStartColumn, int32_t imageRow);
+    static FX_BOOL checkCodewordSkew(int32_t codewordSize, int32_t minCodewordWidth, int32_t maxCodewordWidth);
+    static CBC_CommonDecoderResult* decodeCodewords(CFX_Int32Array &codewords, int32_t ecLevel, CFX_Int32Array &erasures, int32_t &e);
+    static int32_t correctErrors(CFX_Int32Array &codewords, CFX_Int32Array &erasures, int32_t numECCodewords, int32_t &e);
+    static void verifyCodewordCount(CFX_Int32Array &codewords, int32_t numECCodewords, int32_t &e);
+    static CFX_Int32Array* getBitCountForCodeword(int32_t codeword);
+    static int32_t getCodewordBucketNumber(int32_t codeword);
+    static int32_t getCodewordBucketNumber(CFX_Int32Array& moduleBitCount);
 };
 #endif

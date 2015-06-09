@@ -101,7 +101,7 @@ FWL_ERR	CFWL_CheckBoxTP::Finalize()
 void CFWL_CheckBoxTP::DrawBoxBk(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, const CFX_RectF *pRect, FX_DWORD dwStates, CFX_Matrix *pMatrix )
 {
     dwStates &= 0x03;
-    FX_INT32 fillMode = FXFILL_WINDING;
+    int32_t fillMode = FXFILL_WINDING;
     FX_DWORD dwStyleEx = pWidget->GetStylesEx();
     dwStyleEx &= FWL_STYLEEXT_CKB_ShapeMask;
     CFX_Path path;
@@ -137,7 +137,7 @@ void CFWL_CheckBoxTP::DrawBoxBk(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, c
             path.AddEllipse(rtClip);
         }
     }
-    FX_INT32 iTheme = 1;
+    int32_t iTheme = 1;
     if ((dwStates & FWL_PARTSTATE_CKB_Mask1) == FWL_PARTSTATE_CKB_Hovered) {
         iTheme = 2;
     } else if ((dwStates & FWL_PARTSTATE_CKB_Mask1) == FWL_PARTSTATE_CKB_Pressed) {
@@ -303,14 +303,14 @@ void CFWL_CheckBoxTP::DrawSignStar(CFX_Graphics *pGraphics, const CFX_RectF *pRt
     ptCenter.Set((pRtSign->left + pRtSign->right()) / 2.0f, (pRtSign->top + fBottom) / 2.0f);
     FX_FLOAT px[5], py[5];
     FX_FLOAT fAngel = FX_PI / 10.0f;
-    for (FX_INT32 i = 0; i < 5; i++) {
+    for (int32_t i = 0; i < 5; i++) {
         px[i] = ptCenter.x + fRadius * (FX_FLOAT)cos(fAngel);
         py[i] = ptCenter.y + fRadius * (FX_FLOAT)sin(fAngel);
         fAngel += FX_PI * 2 / 5.0f;
     }
     path.MoveTo(px[0], py[0]);
-    FX_INT32 nNext = 0;
-    for (FX_INT32 j = 0; j < 5; j++) {
+    int32_t nNext = 0;
+    for (int32_t j = 0; j < 5; j++) {
         nNext += 2;
         if (nNext >= 5) {
             nNext -= 5;

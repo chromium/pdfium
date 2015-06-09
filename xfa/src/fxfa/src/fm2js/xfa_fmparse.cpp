@@ -23,7 +23,7 @@ CXFA_FMParse::~CXFA_FMParse()
     m_pScript = 0;
     m_pToken = 0;
 }
-FX_INT32 CXFA_FMParse::Init(FX_WSTR wsFormcalc, CXFA_FMErrorInfo *pErrorInfo)
+int32_t CXFA_FMParse::Init(FX_WSTR wsFormcalc, CXFA_FMErrorInfo *pErrorInfo)
 {
     m_pScript = wsFormcalc.GetPtr();
     m_uLength = wsFormcalc.GetLength();
@@ -153,8 +153,8 @@ CXFA_FMExpression * CXFA_FMParse::ParseFunction()
     if (m_pErrorInfo->message.IsEmpty()) {
         e = FX_NEW CXFA_FMFunctionDefinition(line, 0, ident, pArguments, pExpressions);
     } else {
-        FX_INT32 size = 0;
-        FX_INT32 index = 0;
+        int32_t size = 0;
+        int32_t index = 0;
         if (pArguments) {
             pArguments->RemoveAll();
             delete pArguments;
@@ -622,8 +622,8 @@ CXFA_FMSimpleExpression *CXFA_FMParse::ParsePostExpression(CXFA_FMSimpleExpressi
                             e = 0;
                         }
                     } else {
-                        FX_INT32 iSize = pArray->GetSize();
-                        for (FX_INT32 i = 0; i < iSize; ++i) {
+                        int32_t iSize = pArray->GetSize();
+                        for (int32_t i = 0; i < iSize; ++i) {
                             CXFA_FMSimpleExpression *pTemp = (CXFA_FMSimpleExpression *)pArray->GetAt(i);
                             delete pTemp;
                         }
@@ -677,8 +677,8 @@ CXFA_FMSimpleExpression *CXFA_FMParse::ParsePostExpression(CXFA_FMSimpleExpressi
                                 e = 0;
                             }
                         } else {
-                            FX_INT32 iSize = pArray->GetSize();
-                            for (FX_INT32 i = 0; i < iSize; ++i) {
+                            int32_t iSize = pArray->GetSize();
+                            for (int32_t i = 0; i < iSize; ++i) {
                                 CXFA_FMSimpleExpression *pTemp = (CXFA_FMSimpleExpression *)pArray->GetAt(i);
                                 delete pTemp;
                             }
@@ -882,8 +882,8 @@ CXFA_FMExpression * CXFA_FMParse::ParseBlockExpression()
     if (m_pErrorInfo->message.IsEmpty()) {
         pExp = FX_NEW CXFA_FMBlockExpression(line, expression);
     } else {
-        FX_INT32 size = expression->GetSize();
-        FX_INT32 index = 0;
+        int32_t size = expression->GetSize();
+        int32_t index = 0;
         while(index < size) {
             e = (CXFA_FMExpression *)expression->GetAt(index);
             delete e;
@@ -1033,7 +1033,7 @@ CXFA_FMExpression * CXFA_FMParse::ParseForExpression()
         CFX_WideString ws_TempString = m_pToken->m_wstring;
         Error(m_pToken->m_uLinenum, FMERR_EXPECTED_TOKEN, XFA_FM_KeywordToString(m_pToken->m_type), FX_LPCWSTR(ws_TempString));
     }
-    FX_INT32 iDirection = 0;
+    int32_t iDirection = 0;
     if (m_pToken->m_type == TOKupto) {
         iDirection = 1;
     } else if (m_pToken->m_type == TOKdownto) {
@@ -1112,8 +1112,8 @@ CXFA_FMExpression * CXFA_FMParse::ParseForeachExpression()
     } else {
         if (pAccessors) {
             CXFA_FMSimpleExpression *s = 0;
-            FX_INT32 size = pAccessors->GetSize();
-            FX_INT32 index = 0;
+            int32_t size = pAccessors->GetSize();
+            int32_t index = 0;
             while(index < size) {
                 s = (CXFA_FMSimpleExpression *)pAccessors->GetAt(index);
                 delete s;

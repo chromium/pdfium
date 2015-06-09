@@ -520,7 +520,7 @@ public:
 
     void					SetData(FX_LPCBYTE pData, FX_DWORD size, FX_BOOL bCompressed, FX_BOOL bKeepBuf);
 
-    void					InitStream(FX_BYTE* pData, FX_DWORD size, CPDF_Dictionary* pDict);
+    void					InitStream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
 
     void					InitStream(IFX_FileRead *pFile, CPDF_Dictionary* pDict);
 
@@ -657,7 +657,7 @@ protected:
 
     FX_DWORD			m_SrcOffset;
 
-    FX_BYTE				m_SrcBuffer[FPDF_FILTER_BUFFER_SIZE];
+    uint8_t				m_SrcBuffer[FPDF_FILTER_BUFFER_SIZE];
     friend class CPDF_Stream;
 };
 class CPDF_Null : public CPDF_Object

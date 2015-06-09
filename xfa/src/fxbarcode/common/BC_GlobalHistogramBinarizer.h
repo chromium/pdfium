@@ -17,10 +17,10 @@ public:
     CBC_GlobalHistogramBinarizer(CBC_LuminanceSource *source);
     virtual ~CBC_GlobalHistogramBinarizer();
 
-    void InitArrays(FX_INT32 luminanceSize);
-    CBC_CommonBitMatrix *GetBlackMatrix(FX_INT32 &e);
-    CBC_CommonBitArray *GetBlackRow(FX_INT32 y, CBC_CommonBitArray *row, FX_INT32 &e);
-    static FX_INT32 EstimateBlackPoint(CFX_Int32Array &buckets, FX_INT32 &e);
+    void InitArrays(int32_t luminanceSize);
+    CBC_CommonBitMatrix *GetBlackMatrix(int32_t &e);
+    CBC_CommonBitArray *GetBlackRow(int32_t y, CBC_CommonBitArray *row, int32_t &e);
+    static int32_t EstimateBlackPoint(CFX_Int32Array &buckets, int32_t &e);
 private:
     CFX_ByteArray m_luminance;
     CFX_Int32Array m_buckets;

@@ -49,12 +49,12 @@ CBC_DataMatrixWriter::CBC_DataMatrixWriter()
 CBC_DataMatrixWriter::~CBC_DataMatrixWriter()
 {
 }
-FX_BOOL CBC_DataMatrixWriter::SetErrorCorrectionLevel (FX_INT32 level)
+FX_BOOL CBC_DataMatrixWriter::SetErrorCorrectionLevel (int32_t level)
 {
     m_iCorrectLevel = level;
     return TRUE;
 }
-FX_BYTE* CBC_DataMatrixWriter::Encode(const CFX_WideString &contents, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e)
+uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString &contents, int32_t &outWidth, int32_t &outHeight, int32_t &e)
 {
     if (outWidth < 0 || outHeight < 0) {
         e = BCExceptionHeightAndWidthMustBeAtLeast1;
@@ -77,42 +77,42 @@ FX_BYTE* CBC_DataMatrixWriter::Encode(const CFX_WideString &contents, FX_INT32 &
     BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
     outWidth = bytematrix->GetWidth();
     outHeight = bytematrix->GetHeight();
-    FX_BYTE* result = FX_Alloc(FX_BYTE, outWidth * outHeight);
+    uint8_t* result = FX_Alloc(uint8_t, outWidth * outHeight);
     FXSYS_memcpy32(result, bytematrix->GetArray(), outWidth * outHeight);
     delete bytematrix;
     delete placement;
     return result;
 }
-FX_BYTE *CBC_DataMatrixWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e)
+uint8_t *CBC_DataMatrixWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e)
 {
     return NULL;
 }
-FX_BYTE *CBC_DataMatrixWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e)
+uint8_t *CBC_DataMatrixWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e)
 {
     return NULL;
 }
-CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(CBC_DefaultPlacement* placement, CBC_SymbolInfo* symbolInfo, FX_INT32 &e)
+CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(CBC_DefaultPlacement* placement, CBC_SymbolInfo* symbolInfo, int32_t &e)
 {
-    FX_INT32 symbolWidth = symbolInfo->getSymbolDataWidth(e);
+    int32_t symbolWidth = symbolInfo->getSymbolDataWidth(e);
     BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    FX_INT32 symbolHeight = symbolInfo->getSymbolDataHeight(e);
+    int32_t symbolHeight = symbolInfo->getSymbolDataHeight(e);
     BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
     CBC_CommonByteMatrix* matrix = FX_NEW CBC_CommonByteMatrix(symbolInfo->getSymbolWidth(e), symbolInfo->getSymbolHeight(e));
     BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
     matrix->Init();
-    FX_INT32 matrixY = 0;
-    for (FX_INT32 y = 0; y < symbolHeight; y++) {
-        FX_INT32 matrixX;
+    int32_t matrixY = 0;
+    for (int32_t y = 0; y < symbolHeight; y++) {
+        int32_t matrixX;
         if ((y % symbolInfo->m_matrixHeight) == 0) {
             matrixX = 0;
-            for (FX_INT32 x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
+            for (int32_t x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
                 matrix->Set(matrixX, matrixY, (x % 2) == 0);
                 matrixX++;
             }
             matrixY++;
         }
         matrixX = 0;
-        for (FX_INT32 x = 0; x < symbolWidth; x++) {
+        for (int32_t x = 0; x < symbolWidth; x++) {
             if ((x % symbolInfo->m_matrixWidth) == 0) {
                 matrix->Set(matrixX, matrixY, TRUE);
                 matrixX++;
@@ -127,7 +127,7 @@ CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(CBC_DefaultPlacement*
         matrixY++;
         if ((y % symbolInfo->m_matrixHeight) == symbolInfo->m_matrixHeight - 1) {
             matrixX = 0;
-            for (FX_INT32 x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
+            for (int32_t x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
                 matrix->Set(matrixX, matrixY, TRUE);
                 matrixX++;
             }

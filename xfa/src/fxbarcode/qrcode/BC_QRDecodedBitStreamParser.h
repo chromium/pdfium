@@ -20,15 +20,15 @@ private:
 public:
     virtual ~CBC_QRDecodedBitStreamParser();
     static CBC_CommonDecoderResult* Decode(CFX_ByteArray *bytes, CBC_QRCoderVersion *version,
-                                           CBC_QRCoderErrorCorrectionLevel* ecLevel, FX_INT32 byteModeDecode, FX_INT32 &e);
+                                           CBC_QRCoderErrorCorrectionLevel* ecLevel, int32_t byteModeDecode, int32_t &e);
 
     static const CFX_ByteString GuessEncoding(CFX_ByteArray* bytes);
-    static FX_INT32 ParseECIValue(CBC_CommonBitSource* bits, FX_INT32 &e);
-    static void DecodeGBKSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, FX_INT32 count, FX_INT32 &e);
-    static void DecodeKanjiSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, FX_INT32 count, FX_INT32 &e);
-    static void DecodeNumericSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, FX_INT32 count, FX_INT32 &e);
-    static void DecodeAlphanumericSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, FX_INT32 count, FX_BOOL fac1InEffect, FX_INT32 &e);
-    static void DecodeByteSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, FX_INT32 count, CBC_CommonCharacterSetECI *currentCharacterSetECI,
-                                  CFX_Int32Array *byteSegments, FX_INT32 byteModeDecode, FX_INT32 &e);
+    static int32_t ParseECIValue(CBC_CommonBitSource* bits, int32_t &e);
+    static void DecodeGBKSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, int32_t count, int32_t &e);
+    static void DecodeKanjiSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, int32_t count, int32_t &e);
+    static void DecodeNumericSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, int32_t count, int32_t &e);
+    static void DecodeAlphanumericSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, int32_t count, FX_BOOL fac1InEffect, int32_t &e);
+    static void DecodeByteSegment(CBC_CommonBitSource* bits, CFX_ByteString &result, int32_t count, CBC_CommonCharacterSetECI *currentCharacterSetECI,
+                                  CFX_Int32Array *byteSegments, int32_t byteModeDecode, int32_t &e);
 };
 #endif

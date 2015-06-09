@@ -18,13 +18,13 @@ class CBC_DataMatrixWriter : public CBC_TwoDimWriter
 public:
     CBC_DataMatrixWriter();
     virtual ~CBC_DataMatrixWriter();
-    FX_BYTE*	Encode(const CFX_WideString &contents, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e);
-    FX_BYTE *	Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e);
-    FX_BYTE *	Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e);
-    FX_BOOL		SetErrorCorrectionLevel (FX_INT32 level);
+    uint8_t*	Encode(const CFX_WideString &contents, int32_t &outWidth, int32_t &outHeight, int32_t &e);
+    uint8_t *	Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e);
+    uint8_t *	Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e);
+    FX_BOOL		SetErrorCorrectionLevel (int32_t level);
 
 private:
-    static CBC_CommonByteMatrix* encodeLowLevel(CBC_DefaultPlacement* placement, CBC_SymbolInfo* symbolInfo, FX_INT32 &e);
-    FX_INT32	m_iCorrectLevel;
+    static CBC_CommonByteMatrix* encodeLowLevel(CBC_DefaultPlacement* placement, CBC_SymbolInfo* symbolInfo, int32_t &e);
+    int32_t	m_iCorrectLevel;
 };
 #endif

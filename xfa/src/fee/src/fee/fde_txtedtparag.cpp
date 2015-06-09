@@ -29,7 +29,7 @@ CFDE_TxtEdtParag::~CFDE_TxtEdtParag()
 void CFDE_TxtEdtParag::LoadParag()
 {
     if (m_lpData != NULL) {
-        ((FX_INT32*)m_lpData)[0]++;
+        ((int32_t*)m_lpData)[0]++;
         return;
     }
     IFX_TxtBreak * pTxtBreak	= m_pEngine->GetTextBreak();
@@ -41,11 +41,11 @@ void CFDE_TxtEdtParag::LoadParag()
     }
     IFX_CharIter * pIter	= FX_NEW CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pTxtBuf, wcAlias);
     pIter->SetAt(m_nCharStart);
-    FX_INT32 nEndIndex = m_nCharStart + m_nCharCount;
-    CFX_ArrayTemplate<FX_INT32> LineBaseArr;
+    int32_t nEndIndex = m_nCharStart + m_nCharCount;
+    CFX_ArrayTemplate<int32_t> LineBaseArr;
     FX_BOOL		bReload			= FALSE;
     FX_DWORD	dwBreakStatus	= FX_TXTBREAK_None;
-    FX_INT32 nTextEnd = m_pEngine->GetTextBufLength();
+    int32_t nTextEnd = m_pEngine->GetTextBufLength();
     do	{
         if (bReload) {
             dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
@@ -57,9 +57,9 @@ void CFDE_TxtEdtParag::LoadParag()
             dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
         }
         if (dwBreakStatus > FX_TXTBREAK_PieceBreak) {
-            FX_INT32 nCount = pTxtBreak->CountBreakPieces();
-            FX_INT32 nTotal = 0;
-            for (FX_INT32 j = 0; j < nCount; j ++) {
+            int32_t nCount = pTxtBreak->CountBreakPieces();
+            int32_t nTotal = 0;
+            for (int32_t j = 0; j < nCount; j ++) {
                 const CFX_TxtPiece * Piece = pTxtBreak->GetBreakPiece(j);
                 nTotal += Piece->GetLength();
             }
@@ -74,18 +74,18 @@ void CFDE_TxtEdtParag::LoadParag()
     pIter->Release();
     pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
     pTxtBreak->ClearBreakPieces();
-    FX_INT32 nLineCount = LineBaseArr.GetSize();
+    int32_t nLineCount = LineBaseArr.GetSize();
     m_nLineCount = nLineCount;
     if (m_lpData == NULL) {
-        m_lpData = FX_Alloc(FX_INT32, nLineCount + 1);
+        m_lpData = FX_Alloc(int32_t, nLineCount + 1);
     } else {
-        m_lpData = FX_Realloc(FX_INT32, m_lpData, (nLineCount + 1));
+        m_lpData = FX_Realloc(int32_t, m_lpData, (nLineCount + 1));
     }
-    FX_INT32 * pIntArr = (FX_INT32*)m_lpData;
+    int32_t * pIntArr = (int32_t*)m_lpData;
     pIntArr[0] = 1;
     m_nLineCount = nLineCount;
     pIntArr ++;
-    for (FX_INT32 j = 0; j < nLineCount; j ++, pIntArr ++) {
+    for (int32_t j = 0; j < nLineCount; j ++, pIntArr ++) {
         *pIntArr = LineBaseArr[j];
     }
     LineBaseArr.RemoveAll();
@@ -93,9 +93,9 @@ void CFDE_TxtEdtParag::LoadParag()
 void CFDE_TxtEdtParag::UnloadParag()
 {
     FXSYS_assert(m_lpData != NULL);
-    ((FX_INT32*)m_lpData)[0]--;
-    FXSYS_assert(((FX_INT32*)m_lpData)[0] >= 0);
-    if (((FX_INT32*)m_lpData)[0] == 0) {
+    ((int32_t*)m_lpData)[0]--;
+    FXSYS_assert(((int32_t*)m_lpData)[0] >= 0);
+    if (((int32_t*)m_lpData)[0] == 0) {
         FX_Free(m_lpData);
         m_lpData = NULL;
     }
@@ -105,12 +105,12 @@ void CFDE_TxtEdtParag::CalcLines()
     IFX_TxtBreak * pTxtBreak	= m_pEngine->GetTextBreak();
     IFDE_TxtEdtBuf * pTxtBuf	= m_pEngine->GetTextBuf();
     IFX_CharIter * pIter	= FX_NEW CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pTxtBuf);
-    FX_INT32 nCount = 0;
+    int32_t nCount = 0;
     FX_DWORD dwBreakStatus = FX_TXTBREAK_None;
-    FX_INT32 nEndIndex = m_nCharStart + m_nCharCount;
+    int32_t nEndIndex = m_nCharStart + m_nCharCount;
     pIter->SetAt(m_nCharStart);
     FX_BOOL bReload = FALSE;
-    FX_INT32 nTextEnd = m_pEngine->GetTextBufLength();
+    int32_t nTextEnd = m_pEngine->GetTextBufLength();
     do {
         if (bReload) {
             dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
@@ -135,13 +135,13 @@ void CFDE_TxtEdtParag::CalcLines()
     pTxtBreak->ClearBreakPieces();
     m_nLineCount = nCount;
 }
-void CFDE_TxtEdtParag::GetLineRange(FX_INT32 nLineIndex, FX_INT32& nStart, FX_INT32& nCount) const
+void CFDE_TxtEdtParag::GetLineRange(int32_t nLineIndex, int32_t& nStart, int32_t& nCount) const
 {
-    FX_INT32 * pLineBaseArr = (FX_INT32*)m_lpData;
+    int32_t * pLineBaseArr = (int32_t*)m_lpData;
     FXSYS_assert(nLineIndex < m_nLineCount);
     nStart = m_nCharStart;
     pLineBaseArr ++;
-    for (FX_INT32 i = 0; i < nLineIndex; i ++) {
+    for (int32_t i = 0; i < nLineIndex; i ++) {
         nStart += *pLineBaseArr;
         pLineBaseArr ++;
     }

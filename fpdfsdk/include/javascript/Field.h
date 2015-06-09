@@ -87,7 +87,7 @@ struct CJS_DelayData
 	CFX_WideString			sFieldName;
 	int						nControlIndex;
 	enum FIELD_PROP			eProp;
-	FX_INT32				num;
+	int32_t				num;
 	bool					b;
 	CFX_ByteString			string;
 	CFX_WideString			widestring;
@@ -244,7 +244,7 @@ protected:
 	CPDF_FormControl* 					GetSmartFieldControl(CPDF_FormField* pFormField);
 	FX_BOOL								ValueIsOccur(CPDF_FormField* pFormField, CFX_WideString csOptLabel);
 
-	void								AddDelay_Int(enum FIELD_PROP prop, FX_INT32 n);
+	void								AddDelay_Int(enum FIELD_PROP prop, int32_t n);
 	void								AddDelay_Bool(enum FIELD_PROP prop,bool b);
 	void								AddDelay_String(enum FIELD_PROP prop, const CFX_ByteString& string);
 	void								AddDelay_WideString(enum FIELD_PROP prop, const CFX_WideString& string);

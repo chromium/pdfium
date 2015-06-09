@@ -36,7 +36,7 @@ CBC_PDF417Writer::~CBC_PDF417Writer()
 {
     m_bTruncated = TRUE;
 }
-FX_BOOL	CBC_PDF417Writer:: SetErrorCorrectionLevel(FX_INT32 level)
+FX_BOOL	CBC_PDF417Writer:: SetErrorCorrectionLevel(int32_t level)
 {
     if (level < 0 || level > 8) {
         return FALSE;
@@ -48,7 +48,7 @@ void CBC_PDF417Writer::SetTruncated(FX_BOOL truncated)
 {
     m_bTruncated = truncated;
 }
-FX_BYTE* CBC_PDF417Writer::Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e)
+uint8_t* CBC_PDF417Writer::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e)
 {
     if ( format != BCFORMAT_PDF_417) {
         return NULL;
@@ -56,15 +56,15 @@ FX_BYTE* CBC_PDF417Writer::Encode(const CFX_ByteString &contents, BCFORMAT forma
     CFX_WideString encodeContents = contents.UTF8Decode();
     return Encode(encodeContents, outWidth, outHeight, e );
 }
-FX_BYTE* CBC_PDF417Writer::Encode(const CFX_ByteString &contents, BCFORMAT format, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 hints, FX_INT32 &e)
+uint8_t* CBC_PDF417Writer::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e)
 {
     return NULL;
 }
-FX_BYTE* CBC_PDF417Writer::Encode(const CFX_WideString &contents, FX_INT32 &outWidth, FX_INT32 &outHeight, FX_INT32 &e)
+uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString &contents, int32_t &outWidth, int32_t &outHeight, int32_t &e)
 {
     CBC_PDF417 encoder;
-    FX_INT32 col = (m_Width / m_ModuleWidth - 69) / 17;
-    FX_INT32 row = m_Height / (m_ModuleWidth * 20);
+    int32_t col = (m_Width / m_ModuleWidth - 69) / 17;
+    int32_t row = m_Height / (m_ModuleWidth * 20);
     if (row >= 3 && row <= 90 && col >= 1 && col <= 30) {
         encoder.setDimensions(col, col, row, row);
     } else if (col >= 1 && col <= 30) {
@@ -74,26 +74,26 @@ FX_BYTE* CBC_PDF417Writer::Encode(const CFX_WideString &contents, FX_INT32 &outW
     }
     encoder.generateBarcodeLogic(contents, m_iCorrectLevel, e);
     BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    FX_INT32 lineThickness = 2;
-    FX_INT32 aspectRatio = 4;
+    int32_t lineThickness = 2;
+    int32_t aspectRatio = 4;
     CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();
     CFX_ByteArray originalScale;
     originalScale.Copy(barcodeMatrix->getScaledMatrix(lineThickness, aspectRatio * lineThickness));
-    FX_INT32 width = outWidth;
-    FX_INT32 height = outHeight;
+    int32_t width = outWidth;
+    int32_t height = outHeight;
     outWidth = barcodeMatrix->getWidth();
     outHeight = barcodeMatrix->getHeight();
     FX_BOOL rotated = FALSE;
     if ((height > width) ^ (outWidth < outHeight)) {
         rotateArray(originalScale, outHeight, outWidth);
         rotated = TRUE;
-        FX_INT32 temp = outHeight;
+        int32_t temp = outHeight;
         outHeight = outWidth;
         outWidth = temp;
     }
-    FX_INT32 scaleX = width / outWidth;
-    FX_INT32 scaleY = height / outHeight;
-    FX_INT32 scale;
+    int32_t scaleX = width / outWidth;
+    int32_t scaleY = height / outHeight;
+    int32_t scale;
     if (scaleX < scaleY) {
         scale = scaleX;
     } else {
@@ -104,22 +104,22 @@ FX_BYTE* CBC_PDF417Writer::Encode(const CFX_WideString &contents, FX_INT32 &outW
         originalScale.Copy(barcodeMatrix->getScaledMatrix(scale * lineThickness, scale * aspectRatio * lineThickness));
         if (rotated) {
             rotateArray(originalScale, outHeight, outWidth);
-            FX_INT32 temp = outHeight;
+            int32_t temp = outHeight;
             outHeight = outWidth;
             outWidth = temp;
         }
     }
-    FX_BYTE* result = (FX_BYTE*)FX_Alloc(FX_BYTE, outHeight * outWidth);
+    uint8_t* result = (uint8_t*)FX_Alloc(uint8_t, outHeight * outWidth);
     FXSYS_memcpy32(result, originalScale.GetData(), outHeight * outWidth);
     return result;
 }
-void CBC_PDF417Writer::rotateArray(CFX_ByteArray& bitarray, FX_INT32 height, FX_INT32 width)
+void CBC_PDF417Writer::rotateArray(CFX_ByteArray& bitarray, int32_t height, int32_t width)
 {
     CFX_ByteArray temp;
     temp.Copy(bitarray);
-    for (FX_INT32 ii = 0; ii < height; ii++) {
-        FX_INT32 inverseii = height - ii - 1;
-        for (FX_INT32 jj = 0; jj < width; jj++) {
+    for (int32_t ii = 0; ii < height; ii++) {
+        int32_t inverseii = height - ii - 1;
+        for (int32_t jj = 0; jj < width; jj++) {
             bitarray[jj * height + inverseii] = temp[ii * width + jj];
         }
     }

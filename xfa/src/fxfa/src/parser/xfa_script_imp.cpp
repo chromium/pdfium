@@ -53,7 +53,7 @@ CXFA_ScriptContext::~CXFA_ScriptContext()
         m_pResolveProcessor = NULL;
     }
     m_upObjectArray.RemoveAll();
-    for (FX_INT32 i = 0; i < m_CacheListArray.GetSize(); i++) {
+    for (int32_t i = 0; i < m_CacheListArray.GetSize(); i++) {
         delete ((CXFA_NodeList*)m_CacheListArray[i]);
     }
     m_CacheListArray.RemoveAll();
@@ -93,7 +93,7 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType, FX_WSTR ws
         }
         CFX_WideTextBuf wsJavaScript;
         CFX_WideString wsErrorInfo;
-        FX_INT32 iFlags = XFA_FM2JS_Translate(wsScript, wsJavaScript, wsErrorInfo);
+        int32_t iFlags = XFA_FM2JS_Translate(wsScript, wsJavaScript, wsErrorInfo);
         if(iFlags) {
             FXJSE_Value_SetUndefined(hRetValue);
             return FALSE;
@@ -162,7 +162,7 @@ void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject, FX_BSTR szP
 FX_BOOL	CXFA_ScriptContext::QueryNodeByFlag(CXFA_Node* refNode, FX_WSTR propname, FXJSE_HVALUE hValue, FX_DWORD dwFlag,  FX_BOOL bSetting)
 {
     XFA_RESOLVENODE_RS resolveRs;
-    FX_INT32 iRet = ResolveObjects(refNode, propname, resolveRs, dwFlag);
+    int32_t iRet = ResolveObjects(refNode, propname, resolveRs, dwFlag);
     FX_BOOL bResult = FALSE;
     if (iRet > 0) {
         bResult = TRUE;
@@ -190,7 +190,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject, FX_BSTR szP
             XFA_FM2JS_GlobalPropertyGetter(lpScriptContext->m_hFM2JSContext, hValue);
             return;
         }
-        FX_UINT32 uHashCode = FX_HashCode_String_GetW(wsPropName, wsPropName.GetLength());
+        uint32_t uHashCode = FX_HashCode_String_GetW(wsPropName, wsPropName.GetLength());
         if(uHashCode != XFA_HASHCODE_Layout) {
             CXFA_Object * pObject = lpScriptContext->GetDocument()->GetXFANode(uHashCode);
             if (pObject) {
@@ -299,7 +299,7 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject, FX_BSTR szP
         }
     }
 }
-FX_INT32 CXFA_ScriptContext::NormalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn)
+int32_t CXFA_ScriptContext::NormalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn)
 {
     CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(hObject, NULL);
     if(pObject == NULL) {
@@ -317,7 +317,7 @@ FX_INT32 CXFA_ScriptContext::NormalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR
     }
     return FXJSE_ClassPropType_Property;
 }
-FX_INT32	CXFA_ScriptContext::GlobalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn)
+int32_t	CXFA_ScriptContext::GlobalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn)
 {
     CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(hObject, NULL);
     if(pObject == NULL) {
@@ -524,7 +524,7 @@ void CXFA_ScriptContext::AddJSBuiltinObject(XFA_LPCJSBUILTININFO pBuitinObject)
     }
     m_JSBuiltInObjects.SetAt(pBuitinObject->pName, (void*)pBuitinObject);
 }
-FX_INT32 CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS,  FX_DWORD dwStyles, CXFA_Node* bindNode)
+int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS,  FX_DWORD dwStyles, CXFA_Node* bindNode)
 {
     if (wsExpression.IsEmpty()) {
         return 0;
@@ -542,9 +542,9 @@ FX_INT32 CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpr
     m_pResolveProcessor->GetNodeHelper()->m_pCreateParent = NULL;
     m_pResolveProcessor->GetNodeHelper()->m_iCurAllStart = -1;
     CXFA_ResolveNodesData rndFind;
-    FX_INT32 nStart = 0;
-    FX_INT32 nLevel = 0;
-    FX_INT32 nRet = -1;
+    int32_t nStart = 0;
+    int32_t nLevel = 0;
+    int32_t nRet = -1;
     rndFind.m_pSC = this;
     CXFA_ObjArray findNodes;
     if (refNode != NULL) {
@@ -552,10 +552,10 @@ FX_INT32 CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpr
     } else {
         findNodes.Add(m_pDocument->GetRoot());
     }
-    FX_INT32 nNodes = 0;
+    int32_t nNodes = 0;
     while (TRUE) {
         nNodes = findNodes.GetSize();
-        FX_INT32 i = 0;
+        int32_t i = 0;
         rndFind.m_dwStyles = dwStyles;
         m_pResolveProcessor->m_iCurStart = nStart;
         nStart = m_pResolveProcessor->XFA_ResolveNodes_GetFilter(wsExpression, nStart, rndFind);
@@ -614,7 +614,7 @@ FX_INT32 CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpr
                 rndFind.m_Nodes.SetAt(0, (CXFA_Object*)FXJSE_Value_ToObject(hValue, NULL));
                 FXJSE_Value_Release(hValue);
             }
-            FX_INT32 iSize = m_upObjectArray.GetSize();
+            int32_t iSize = m_upObjectArray.GetSize();
             if (iSize) {
                 m_upObjectArray.RemoveAt(iSize - 1);
             }
@@ -686,12 +686,12 @@ FXJSE_HVALUE CXFA_ScriptContext::GetJSValueFromMap(CXFA_Object* pObject)
     }
     return (FXJSE_HVALUE)pValue;
 }
-FX_INT32	CXFA_ScriptContext::GetIndexByName(CXFA_Node* refNode)
+int32_t	CXFA_ScriptContext::GetIndexByName(CXFA_Node* refNode)
 {
     CXFA_NodeHelper* lpNodeHelper = m_pResolveProcessor->GetNodeHelper();
     return lpNodeHelper->XFA_GetIndex(refNode, XFA_LOGIC_Transparent, lpNodeHelper->XFA_NodeIsProperty(refNode), FALSE);
 }
-FX_INT32	CXFA_ScriptContext::GetIndexByClassName(CXFA_Node* refNode)
+int32_t	CXFA_ScriptContext::GetIndexByClassName(CXFA_Node* refNode)
 {
     CXFA_NodeHelper* lpNodeHelper = m_pResolveProcessor->GetNodeHelper();
     return lpNodeHelper->XFA_GetIndex(refNode, XFA_LOGIC_Transparent, lpNodeHelper->XFA_NodeIsProperty(refNode), TRUE);
@@ -731,10 +731,10 @@ static const XFA_JSBUILTININFO gs_JSBUILTINData[] = {
     {0x8108b9a9, "Number"},
     {0xe07e3fbe, "Date"},
 };
-const FX_INT32 g_iJSBuiltinCount = sizeof(XFA_JSBUILTININFO) / sizeof(XFA_JSBUILTININFO);
-XFA_LPCJSBUILTININFO XFA_GetJSBuiltinByHash(FX_UINT32 uHashCode)
+const int32_t g_iJSBuiltinCount = sizeof(XFA_JSBUILTININFO) / sizeof(XFA_JSBUILTININFO);
+XFA_LPCJSBUILTININFO XFA_GetJSBuiltinByHash(uint32_t uHashCode)
 {
-    FX_INT32 iStart = 0, iEnd = g_iJSBuiltinCount - 1, iMid;
+    int32_t iStart = 0, iEnd = g_iJSBuiltinCount - 1, iMid;
     do {
         iMid = (iStart + iEnd) / 2;
         XFA_LPCJSBUILTININFO pInfo = gs_JSBUILTINData + iMid;

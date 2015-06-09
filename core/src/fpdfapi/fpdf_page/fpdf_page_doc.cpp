@@ -572,7 +572,7 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream)
     }
     CPDF_StreamAcc stream;
     stream.LoadAllData(pIccProfileStream, FALSE);
-    FX_BYTE digest[20];
+    uint8_t digest[20];
     CPDF_Stream* pCopiedStream = NULL;
     CRYPT_SHA1Generate(stream.GetData(), stream.GetSize(), digest);
     if (m_HashProfileMap.Lookup(CFX_ByteStringC(digest, 20), (void*&)pCopiedStream)) {
@@ -621,7 +621,7 @@ CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(CPDF_Stream* pFontStream)
     ftData = new CPDF_CountedObject<CPDF_StreamAcc*>;
     CPDF_StreamAcc* pFontFile = new CPDF_StreamAcc;
     CPDF_Dictionary* pFontDict = pFontStream->GetDict();
-    FX_INT32 org_size = pFontDict->GetInteger(FX_BSTRC("Length1")) + pFontDict->GetInteger(FX_BSTRC("Length2")) + pFontDict->GetInteger(FX_BSTRC("Length3"));
+    int32_t org_size = pFontDict->GetInteger(FX_BSTRC("Length1")) + pFontDict->GetInteger(FX_BSTRC("Length2")) + pFontDict->GetInteger(FX_BSTRC("Length3"));
     if (org_size < 0) {
         org_size = 0;
     }

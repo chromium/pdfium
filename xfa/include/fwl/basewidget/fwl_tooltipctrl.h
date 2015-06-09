@@ -24,8 +24,8 @@ class IFWL_ToolTipDP : public IFWL_DataProvider
 {
 public:
     virtual FWL_ERR GetCaption(IFWL_Widget *pWidget, CFX_WideString &wsCaption) = 0;
-    virtual FX_INT32	 	GetInitialDelay(IFWL_Widget *pWidget) = 0;
-    virtual FX_INT32	 	GetAutoPopDelay(IFWL_Widget *pWidget) = 0;
+    virtual int32_t	 	GetInitialDelay(IFWL_Widget *pWidget) = 0;
+    virtual int32_t	 	GetAutoPopDelay(IFWL_Widget *pWidget) = 0;
     virtual CFX_DIBitmap*	GetToolTipIcon(IFWL_Widget *pWidget) = 0;
     virtual CFX_SizeF		GetToolTipIconSize(IFWL_Widget *pWidget) = 0;
 };

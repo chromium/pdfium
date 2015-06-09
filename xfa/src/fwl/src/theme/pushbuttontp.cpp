@@ -63,7 +63,7 @@ FX_BOOL	CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground *pParams)
                                 PUSHBUTTON_SIZE_Corner,
                                 PUSHBUTTON_SIZE_Corner);
                 fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
-                FX_INT32 iColor = GetColorID(pParams->m_dwStates);
+                int32_t iColor = GetColorID(pParams->m_dwStates);
                 DrawAxialShading(pGraphics,
                                  rect.left + PUSHBUTTON_SIZE_Corner,
                                  rect.top,
@@ -159,7 +159,7 @@ void CFWL_PushButtonTP::SetThemeData(FX_DWORD dwID)
         m_pThemeData->clrFill[4] = ArgbEncode(255, 245, 244, 234);
     }
 }
-FX_INT32 CFWL_PushButtonTP::GetColorID(FX_DWORD dwStates)
+int32_t CFWL_PushButtonTP::GetColorID(FX_DWORD dwStates)
 {
     return dwStates &= FWL_PARTSTATE_PSB_Mask;
 }

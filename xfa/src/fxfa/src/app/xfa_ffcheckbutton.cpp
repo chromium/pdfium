@@ -54,7 +54,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty()
     FX_FLOAT fSize = m_pDataAcc->GetCheckButtonSize();
     pCheckBox->SetBoxSize(fSize);
     FX_DWORD dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCross;
-    FX_INT32 iCheckMark = m_pDataAcc->GetCheckButtonMark();
+    int32_t iCheckMark = m_pDataAcc->GetCheckButtonMark();
     switch(iCheckMark) {
         case XFA_ATTRIBUTEENUM_Check:
             dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCheck;
@@ -74,7 +74,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty()
             dwStyleEx = FWL_STYLEEXT_CKB_SignShapeStar;
             break;
         default: {
-                FX_INT32 iShape = m_pDataAcc->GetCheckButtonShape();
+                int32_t iShape = m_pDataAcc->GetCheckButtonShape();
                 if (iShape == XFA_ATTRIBUTEENUM_Round) {
                     dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCircle;
                 }
@@ -96,7 +96,7 @@ FX_BOOL CXFA_FFCheckButton::LayoutWidget()
     if (mgWidget.IsExistInXML()) {
         XFA_RectWidthoutMargin(rtWidget, mgWidget);
     }
-    FX_INT32 iCapPlacement = -1;
+    int32_t iCapPlacement = -1;
     FX_FLOAT fCapReserve = 0;
     CXFA_Caption caption = m_pDataAcc->GetCaption();
     if (caption.IsExistInXML() && caption.GetPresence()) {
@@ -111,8 +111,8 @@ FX_BOOL CXFA_FFCheckButton::LayoutWidget()
             }
         }
     }
-    FX_INT32 iHorzAlign = XFA_ATTRIBUTEENUM_Left;
-    FX_INT32 iVertAlign = XFA_ATTRIBUTEENUM_Top;
+    int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left;
+    int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top;
     if (CXFA_Para para = m_pDataAcc->GetPara()) {
         iHorzAlign = para.GetHorizontalAlign();
         iVertAlign = para.GetVerticalAlign();
@@ -194,7 +194,7 @@ void CXFA_FFCheckButton::CapLeftRightPlacement(CXFA_Margin mgCap)
         m_rtCaption.width = -m_rtCaption.width;
     }
 }
-void CXFA_FFCheckButton::AddUIMargin(FX_INT32 iCapPlacement)
+void CXFA_FFCheckButton::AddUIMargin(int32_t iCapPlacement)
 {
     CFX_RectF rtUIMargin;
     m_pDataAcc->GetUIMargin(rtUIMargin);
@@ -217,7 +217,7 @@ void CXFA_FFCheckButton::AddUIMargin(FX_INT32 iCapPlacement)
         m_rtUI.height += 2 * (fTopAddBottom - m_rtUI.height);
     }
 }
-void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;
@@ -296,7 +296,7 @@ FX_BOOL CXFA_FFCheckButton::UpdateFWLData()
     m_pNormalWidget->Update();
     return TRUE;
 }
-FX_INT32 CXFA_FFCheckButton::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CXFA_FFCheckButton::OnProcessMessage(CFWL_Message *pMessage)
 {
     return m_pOldDelegate->OnProcessMessage(pMessage);
 }

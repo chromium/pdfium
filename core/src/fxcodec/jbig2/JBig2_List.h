@@ -13,7 +13,7 @@ class CJBig2_List : public CJBig2_Object
 {
 public:
 
-    CJBig2_List(FX_INT32 nSize = 8)
+    CJBig2_List(int32_t nSize = 8)
     {
         m_nSize = nSize;
         m_pArray = (TYPE**)m_pModule->JBig2_Malloc2(sizeof(TYPE*), nSize);
@@ -28,7 +28,7 @@ public:
 
     void clear()
     {
-        FX_INT32 i;
+        int32_t i;
         for(i = 0; i < m_nLength; i++) {
             delete m_pArray[i];
         }
@@ -45,12 +45,12 @@ public:
     }
 
 
-    FX_INT32 getLength()
+    int32_t getLength()
     {
         return m_nLength;
     }
 
-    TYPE *getAt(FX_INT32 nIndex)
+    TYPE *getAt(int32_t nIndex)
     {
         return m_pArray[nIndex];
     }
@@ -60,8 +60,8 @@ public:
         return m_pArray[m_nLength - 1];
     }
 private:
-    FX_INT32 m_nSize;
+    int32_t m_nSize;
     TYPE **m_pArray;
-    FX_INT32 m_nLength;
+    int32_t m_nLength;
 };
 #endif

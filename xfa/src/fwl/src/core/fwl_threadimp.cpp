@@ -35,7 +35,7 @@ FWL_ERR CFWL_Thread::Run(FWL_HTHREAD hThread)
 }
 CFWL_ControlThread *	CFWL_NoteThread::_assistantThreadHandler	= NULL;
 FWL_HTHREAD				CFWL_NoteThread::_assistantThread			= NULL;
-FX_INT32				CFWL_NoteThread::_refCount					= 0;
+int32_t				CFWL_NoteThread::_refCount					= 0;
 IFWL_NoteThread* IFWL_NoteThread::Create()
 {
     return (IFWL_NoteThread*) FX_NEW CFWL_NoteThread;
@@ -92,7 +92,7 @@ FWL_ERR FWL_SuspendThread(FWL_HTHREAD hThread)
     _FWL_RETURN_VALUE_IF_FAIL(ThreadMgr, FWL_ERR_Indefinite);
     return ThreadMgr->Suspend(hThread);
 }
-FWL_ERR FWL_KillThread(FWL_HTHREAD hThread, FX_INT32 iExitCode)
+FWL_ERR FWL_KillThread(FWL_HTHREAD hThread, int32_t iExitCode)
 {
     IFWL_AdapterNative * Native = FWL_GetAdapterNative();
     _FWL_RETURN_VALUE_IF_FAIL(Native, FWL_ERR_Indefinite);
@@ -100,7 +100,7 @@ FWL_ERR FWL_KillThread(FWL_HTHREAD hThread, FX_INT32 iExitCode)
     _FWL_RETURN_VALUE_IF_FAIL(ThreadMgr, FWL_ERR_Indefinite);
     return ThreadMgr->Kill(hThread, iExitCode);
 }
-FWL_ERR FWL_StopThread(FWL_HTHREAD hThread, FX_INT32 iExitCode)
+FWL_ERR FWL_StopThread(FWL_HTHREAD hThread, int32_t iExitCode)
 {
     IFWL_AdapterNative * Native = FWL_GetAdapterNative();
     _FWL_RETURN_VALUE_IF_FAIL(Native, FWL_ERR_Indefinite);
@@ -144,15 +144,15 @@ FWL_ERR	FWL_WaitSemaphore(FWL_HSEMAPHORE hSemaphore)
 {
     return ((IFWL_AdapterSemaphore*)hSemaphore)->Wait();
 }
-FWL_ERR	FWL_PostSemaphore(FWL_HSEMAPHORE hSemaphore, FX_INT32 down )
+FWL_ERR	FWL_PostSemaphore(FWL_HSEMAPHORE hSemaphore, int32_t down )
 {
     return ((IFWL_AdapterSemaphore*)hSemaphore)->Post();
 }
-FWL_ERR	FWL_GetSemaphoreValue(FWL_HSEMAPHORE hSemaphore, FX_INT32 &value)
+FWL_ERR	FWL_GetSemaphoreValue(FWL_HSEMAPHORE hSemaphore, int32_t &value)
 {
     return ((IFWL_AdapterSemaphore*)hSemaphore)->Value((FX_DWORD &)value);
 }
-FWL_ERR	FWL_ResetSemaphore(FWL_HSEMAPHORE hSemaphore, FX_INT32 init)
+FWL_ERR	FWL_ResetSemaphore(FWL_HSEMAPHORE hSemaphore, int32_t init)
 {
     return ((IFWL_AdapterSemaphore*)hSemaphore)->Reset(init);
 }

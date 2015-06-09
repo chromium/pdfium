@@ -51,7 +51,7 @@ CXFA_Document* CXFA_LayoutProcessor::GetDocument() const
 {
     return m_pDocument;
 }
-FX_INT32 CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart)
+int32_t CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart)
 {
     if (!bForceRestart && !IsNeedLayout()) {
         return 100;
@@ -85,7 +85,7 @@ FX_INT32 CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart)
     m_nProgressCounter = 1;
     return 0;
 }
-FX_INT32 CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause )
+int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause )
 {
     if (m_nProgressCounter < 1) {
         return -1;
@@ -120,7 +120,7 @@ FX_BOOL CXFA_LayoutProcessor::IncrementLayout()
         StartLayout(TRUE);
         return DoLayout(NULL) == 100;
     }
-    for (FX_INT32 i = 0, c = m_rgChangedContainers.GetSize(); i < c; i++) {
+    for (int32_t i = 0, c = m_rgChangedContainers.GetSize(); i < c; i++) {
         CXFA_Node *pNode = m_rgChangedContainers[i];
         CXFA_Node *pParentNode = pNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_OBJECTTYPE_ContainerNode);
         if(!pParentNode) {
@@ -133,11 +133,11 @@ FX_BOOL CXFA_LayoutProcessor::IncrementLayout()
     m_rgChangedContainers.RemoveAll();
     return TRUE;
 }
-FX_INT32 CXFA_LayoutProcessor::CountPages() const
+int32_t CXFA_LayoutProcessor::CountPages() const
 {
     return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPageCount() : 0;
 }
-IXFA_LayoutPage* CXFA_LayoutProcessor::GetPage(FX_INT32 index) const
+IXFA_LayoutPage* CXFA_LayoutProcessor::GetPage(int32_t index) const
 {
     return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPage(index) : NULL;
 }

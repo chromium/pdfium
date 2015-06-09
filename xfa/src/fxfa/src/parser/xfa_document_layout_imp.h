@@ -16,11 +16,11 @@ public:
     CXFA_LayoutProcessor(CXFA_Document* pDocument);
     ~CXFA_LayoutProcessor();
     virtual CXFA_Document*		GetDocument() const;
-    virtual	FX_INT32			StartLayout(FX_BOOL bForceRestart = FALSE);
-    virtual FX_INT32			DoLayout(IFX_Pause *pPause = NULL);
+    virtual	int32_t			StartLayout(FX_BOOL bForceRestart = FALSE);
+    virtual int32_t			DoLayout(IFX_Pause *pPause = NULL);
     virtual FX_BOOL				IncrementLayout();
-    virtual FX_INT32			CountPages() const;
-    virtual IXFA_LayoutPage*	GetPage(FX_INT32 index) const;
+    virtual int32_t			CountPages() const;
+    virtual IXFA_LayoutPage*	GetPage(int32_t index) const;
     virtual CXFA_LayoutItem*	GetLayoutItem(CXFA_Node *pFormItem);
 
     void				AddChangedContainer(CXFA_Node* pContainer);
@@ -46,7 +46,7 @@ protected:
     CXFA_ItemLayoutProcessor*   m_pRootItemLayoutProcessor;
     CXFA_LayoutPageMgr*			m_pLayoutPageMgr;
     CXFA_NodeArray				m_rgChangedContainers;
-    FX_UINT32					m_nProgressCounter;
+    uint32_t					m_nProgressCounter;
     FX_BOOL						m_bNeeLayout;
 };
 #endif

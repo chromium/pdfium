@@ -9,7 +9,7 @@
 class IFDE_Page;
 class IFDE_RenderDevice;
 class IFDE_RenderContext;
-void	FDE_GetPageMatrix(CFX_Matrix &pageMatrix, const CFX_RectF &docPageRect, const CFX_Rect &devicePageRect, FX_INT32 iRotate, FX_DWORD dwCoordinatesType = 0);
+void	FDE_GetPageMatrix(CFX_Matrix &pageMatrix, const CFX_RectF &docPageRect, const CFX_Rect &devicePageRect, int32_t iRotate, FX_DWORD dwCoordinatesType = 0);
 enum FDE_RENDERSTATUS {
     FDE_RENDERSTATUS_Reset		=  0,
     FDE_RENDERSTATUS_Paused			,

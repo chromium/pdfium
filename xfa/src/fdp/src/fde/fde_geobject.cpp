@@ -24,12 +24,12 @@ FX_BOOL CFDE_Path::CloseFigure()
     }
     return TRUE;
 }
-FX_PATHPOINT* CFDE_Path::GetLastPoint(FX_INT32 iCount ) const
+FX_PATHPOINT* CFDE_Path::GetLastPoint(int32_t iCount ) const
 {
     if (iCount < 1) {
         return NULL;
     }
-    FX_INT32 iPoints = m_Path.GetPointCount();
+    int32_t iPoints = m_Path.GetPointCount();
     if (iCount > iPoints) {
         return NULL;
     }
@@ -40,12 +40,12 @@ FX_BOOL CFDE_Path::FigureClosed() const
     FX_PATHPOINT *pPoint = GetLastPoint();
     return pPoint ? (pPoint->m_Flag & FXPT_CLOSEFIGURE) : TRUE;
 }
-FX_PATHPOINT* CFDE_Path::AddPoints(FX_INT32 iCount)
+FX_PATHPOINT* CFDE_Path::AddPoints(int32_t iCount)
 {
     if (iCount < 1) {
         return NULL;
     }
-    FX_INT32 iPoints = m_Path.GetPointCount();
+    int32_t iPoints = m_Path.GetPointCount();
     m_Path.AddPointCount(iCount);
     return m_Path.GetPoints() + iPoints;
 }
@@ -121,7 +121,7 @@ void CFDE_Path::AddBezier(const CFX_PointsF &points)
 }
 void CFDE_Path::AddBeziers(const CFX_PointsF &points)
 {
-    FX_INT32 iCount = points.GetSize();
+    int32_t iCount = points.GetSize();
     if (iCount < 4) {
         return;
     }
@@ -134,7 +134,7 @@ void CFDE_Path::AddBeziers(const CFX_PointsF &points)
 }
 void CFDE_Path::GetCurveTangents(const CFX_PointsF &points, CFX_PointsF &tangents, FX_BOOL bClosed, FX_FLOAT fTension) const
 {
-    FX_INT32 iCount = points.GetSize();
+    int32_t iCount = points.GetSize();
     tangents.SetSize(iCount);
     if (iCount < 3) {
         return;
@@ -142,9 +142,9 @@ void CFDE_Path::GetCurveTangents(const CFX_PointsF &points, CFX_PointsF &tangent
     FX_FLOAT fCoefficient = fTension / 3.0f;
     FX_LPCPOINTF pPoints = points.GetData();
     FX_LPPOINTF pTangents = tangents.GetData();
-    for (FX_INT32 i = 0; i < iCount; ++i) {
-        FX_INT32 r = i + 1;
-        FX_INT32 s = i - 1;
+    for (int32_t i = 0; i < iCount; ++i) {
+        int32_t r = i + 1;
+        int32_t s = i - 1;
         if (r >= iCount) {
             r = bClosed ? (r - iCount) : (iCount - 1);
         }
@@ -157,7 +157,7 @@ void CFDE_Path::GetCurveTangents(const CFX_PointsF &points, CFX_PointsF &tangent
 }
 void CFDE_Path::AddCurve(const CFX_PointsF &points, FX_BOOL bClosed, FX_FLOAT fTension)
 {
-    FX_INT32 iLast = points.GetUpperBound();
+    int32_t iLast = points.GetUpperBound();
     if (iLast < 1) {
         return;
     }
@@ -166,8 +166,8 @@ void CFDE_Path::AddCurve(const CFX_PointsF &points, FX_BOOL bClosed, FX_FLOAT fT
     FX_LPCPOINTF pPoints = points.GetData();
     FX_LPPOINTF pTangents = tangents.GetData();
     MoveTo(pPoints[0]);
-    for (FX_INT32 i = 0; i < iLast; ++i) {
-        FX_INT32 j = i + 1;
+    for (int32_t i = 0; i < iLast; ++i) {
+        int32_t j = i + 1;
         CFX_PointF p1;
         p1.Set(pPoints[i].x + pTangents[i].x, pPoints[i].y + pTangents[i].y);
         CFX_PointF p2;
@@ -191,7 +191,7 @@ void CFDE_Path::AddEllipse(const CFX_RectF &rect)
 {
     FX_FLOAT fStartAngle = 0;
     FX_FLOAT fEndAngle = FX_PI / 2;
-    for (FX_INT32 i = 0; i < 4; ++i) {
+    for (int32_t i = 0; i < 4; ++i) {
         ArcTo(i == 0, rect, fStartAngle, fEndAngle);
         fStartAngle += FX_PI / 2;
         fEndAngle += FX_PI / 2;
@@ -212,7 +212,7 @@ void CFDE_Path::AddPath(const IFDE_Path *pSrc, FX_BOOL bConnect)
     if (pPath == NULL) {
         return;
     }
-    FX_INT32 iCount = pPath->m_Path.GetPointCount();
+    int32_t iCount = pPath->m_Path.GetPointCount();
     if (iCount < 1) {
         return;
     }
@@ -223,7 +223,7 @@ void CFDE_Path::AddPath(const IFDE_Path *pSrc, FX_BOOL bConnect)
 }
 void CFDE_Path::AddPolygon(const CFX_PointsF &points)
 {
-    FX_INT32 iCount = points.GetSize();
+    int32_t iCount = points.GetSize();
     if (iCount < 2) {
         return;
     }
@@ -236,7 +236,7 @@ void CFDE_Path::AddPolygon(const CFX_PointsF &points)
 }
 void CFDE_Path::AddLines(const CFX_PointsF &points)
 {
-    FX_INT32 iCount = points.GetSize();
+    int32_t iCount = points.GetSize();
     if (iCount < 2) {
         return;
     }

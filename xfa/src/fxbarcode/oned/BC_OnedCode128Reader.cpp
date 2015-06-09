@@ -25,7 +25,7 @@
 #include "../common/BC_CommonBitArray.h"
 #include "BC_OneDReader.h"
 #include "BC_OnedCode128Reader.h"
-const FX_INT32 CBC_OnedCode128Reader::CODE_PATTERNS[107][7] =  {
+const int32_t CBC_OnedCode128Reader::CODE_PATTERNS[107][7] =  {
     {2, 1, 2, 2, 2, 2, 0},
     {2, 2, 2, 1, 2, 2, 0},
     {2, 2, 2, 2, 2, 1, 0},
@@ -134,53 +134,53 @@ const FX_INT32 CBC_OnedCode128Reader::CODE_PATTERNS[107][7] =  {
     {2, 1, 1, 2, 3, 2, 0},
     {2, 3, 3, 1, 1, 1, 2}
 };
-const FX_INT32 CBC_OnedCode128Reader::MAX_AVG_VARIANCE = (FX_INT32) (256 * 0.25f);
-const FX_INT32 CBC_OnedCode128Reader::MAX_INDIVIDUAL_VARIANCE = (FX_INT32) (256 * 0.7f);
-const FX_INT32 CBC_OnedCode128Reader::CODE_SHIFT = 98;
-const FX_INT32 CBC_OnedCode128Reader::CODE_CODE_C = 99;
-const FX_INT32 CBC_OnedCode128Reader::CODE_CODE_B = 100;
-const FX_INT32 CBC_OnedCode128Reader::CODE_CODE_A = 101;
-const FX_INT32 CBC_OnedCode128Reader::CODE_FNC_1 = 102;
-const FX_INT32 CBC_OnedCode128Reader::CODE_FNC_2 = 97;
-const FX_INT32 CBC_OnedCode128Reader::CODE_FNC_3 = 96;
-const FX_INT32 CBC_OnedCode128Reader::CODE_FNC_4_A = 101;
-const FX_INT32 CBC_OnedCode128Reader::CODE_FNC_4_B = 100;
-const FX_INT32 CBC_OnedCode128Reader::CODE_START_A = 103;
-const FX_INT32 CBC_OnedCode128Reader::CODE_START_B = 104;
-const FX_INT32 CBC_OnedCode128Reader::CODE_START_C = 105;
-const FX_INT32 CBC_OnedCode128Reader::CODE_STOP = 106;
+const int32_t CBC_OnedCode128Reader::MAX_AVG_VARIANCE = (int32_t) (256 * 0.25f);
+const int32_t CBC_OnedCode128Reader::MAX_INDIVIDUAL_VARIANCE = (int32_t) (256 * 0.7f);
+const int32_t CBC_OnedCode128Reader::CODE_SHIFT = 98;
+const int32_t CBC_OnedCode128Reader::CODE_CODE_C = 99;
+const int32_t CBC_OnedCode128Reader::CODE_CODE_B = 100;
+const int32_t CBC_OnedCode128Reader::CODE_CODE_A = 101;
+const int32_t CBC_OnedCode128Reader::CODE_FNC_1 = 102;
+const int32_t CBC_OnedCode128Reader::CODE_FNC_2 = 97;
+const int32_t CBC_OnedCode128Reader::CODE_FNC_3 = 96;
+const int32_t CBC_OnedCode128Reader::CODE_FNC_4_A = 101;
+const int32_t CBC_OnedCode128Reader::CODE_FNC_4_B = 100;
+const int32_t CBC_OnedCode128Reader::CODE_START_A = 103;
+const int32_t CBC_OnedCode128Reader::CODE_START_B = 104;
+const int32_t CBC_OnedCode128Reader::CODE_START_C = 105;
+const int32_t CBC_OnedCode128Reader::CODE_STOP = 106;
 CBC_OnedCode128Reader::CBC_OnedCode128Reader()
 {
 }
 CBC_OnedCode128Reader::~CBC_OnedCode128Reader()
 {
 }
-CFX_Int32Array *CBC_OnedCode128Reader::FindStartPattern(CBC_CommonBitArray *row, FX_INT32 &e)
+CFX_Int32Array *CBC_OnedCode128Reader::FindStartPattern(CBC_CommonBitArray *row, int32_t &e)
 {
-    FX_INT32 width = row->GetSize();
-    FX_INT32 rowOffset = 0;
+    int32_t width = row->GetSize();
+    int32_t rowOffset = 0;
     while (rowOffset < width) {
         if (row->Get(rowOffset)) {
             break;
         }
         rowOffset++;
     }
-    FX_INT32 counterPosition = 0;
+    int32_t counterPosition = 0;
     CFX_Int32Array counters;
     counters.SetSize(6);
-    FX_INT32 patternStart = rowOffset;
+    int32_t patternStart = rowOffset;
     FX_BOOL isWhite = FALSE;
-    FX_INT32 patternLength = counters.GetSize();
-    for (FX_INT32 i = rowOffset; i < width; i++) {
+    int32_t patternLength = counters.GetSize();
+    for (int32_t i = rowOffset; i < width; i++) {
         FX_BOOL pixel = row->Get(i);
         if (pixel ^ isWhite) {
             counters[counterPosition]++;
         } else {
             if (counterPosition == patternLength - 1) {
-                FX_INT32 bestVariance = MAX_AVG_VARIANCE;
-                FX_INT32 bestMatch = -1;
-                for (FX_INT32 startCode = CODE_START_A; startCode <= CODE_START_C; startCode++) {
-                    FX_INT32 variance = PatternMatchVariance(&counters, &CODE_PATTERNS[startCode][0], MAX_INDIVIDUAL_VARIANCE);
+                int32_t bestVariance = MAX_AVG_VARIANCE;
+                int32_t bestMatch = -1;
+                for (int32_t startCode = CODE_START_A; startCode <= CODE_START_C; startCode++) {
+                    int32_t variance = PatternMatchVariance(&counters, &CODE_PATTERNS[startCode][0], MAX_INDIVIDUAL_VARIANCE);
                     if (variance < bestVariance) {
                         bestVariance = variance;
                         bestMatch = startCode;
@@ -199,7 +199,7 @@ CFX_Int32Array *CBC_OnedCode128Reader::FindStartPattern(CBC_CommonBitArray *row,
                     }
                 }
                 patternStart += counters[0] + counters[1];
-                for (FX_INT32 y = 2; y < patternLength; y++) {
+                for (int32_t y = 2; y < patternLength; y++) {
                     counters[y - 2] = counters[y];
                 }
                 counters[patternLength - 2] = 0;
@@ -215,14 +215,14 @@ CFX_Int32Array *CBC_OnedCode128Reader::FindStartPattern(CBC_CommonBitArray *row,
     e = BCExceptionNotFound;
     return NULL;
 }
-FX_INT32 CBC_OnedCode128Reader::DecodeCode(CBC_CommonBitArray *row, CFX_Int32Array *counters, FX_INT32 rowOffset, FX_INT32 &e)
+int32_t CBC_OnedCode128Reader::DecodeCode(CBC_CommonBitArray *row, CFX_Int32Array *counters, int32_t rowOffset, int32_t &e)
 {
     RecordPattern(row, rowOffset, counters, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, 0);
-    FX_INT32 bestVariance = MAX_AVG_VARIANCE;
-    FX_INT32 bestMatch = -1;
-    for (FX_INT32 d = 0; d < 107; d++) {
-        FX_INT32 variance = PatternMatchVariance(counters, &CODE_PATTERNS[d][0], MAX_INDIVIDUAL_VARIANCE);
+    int32_t bestVariance = MAX_AVG_VARIANCE;
+    int32_t bestMatch = -1;
+    for (int32_t d = 0; d < 107; d++) {
+        int32_t variance = PatternMatchVariance(counters, &CODE_PATTERNS[d][0], MAX_INDIVIDUAL_VARIANCE);
         if (variance < bestVariance) {
             bestVariance = variance;
             bestMatch = d;
@@ -236,12 +236,12 @@ FX_INT32 CBC_OnedCode128Reader::DecodeCode(CBC_CommonBitArray *row, CFX_Int32Arr
     }
     return 0;
 }
-CFX_ByteString CBC_OnedCode128Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, FX_INT32 hints, FX_INT32 &e)
+CFX_ByteString CBC_OnedCode128Reader::DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, int32_t hints, int32_t &e)
 {
     CFX_Int32Array *startPatternInfo = FindStartPattern(row, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
-    FX_INT32 startCode = (*startPatternInfo)[2];
-    FX_INT32 codeSet;
+    int32_t startCode = (*startPatternInfo)[2];
+    int32_t codeSet;
     switch (startCode) {
         case 103:
             codeSet = CODE_CODE_A;
@@ -264,8 +264,8 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBi
     FX_BOOL done = FALSE;
     FX_BOOL isNextShifted = FALSE;
     CFX_ByteString result;
-    FX_INT32 lastStart = (*startPatternInfo)[0];
-    FX_INT32 nextStart = (*startPatternInfo)[1];
+    int32_t lastStart = (*startPatternInfo)[0];
+    int32_t nextStart = (*startPatternInfo)[1];
     if(startPatternInfo != NULL) {
         startPatternInfo->RemoveAll();
         delete startPatternInfo;
@@ -273,10 +273,10 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBi
     }
     CFX_Int32Array counters;
     counters.SetSize(6);
-    FX_INT32 lastCode = 0;
-    FX_INT32 code = 0;
-    FX_INT32 checksumTotal = startCode;
-    FX_INT32 multiplier = 0;
+    int32_t lastCode = 0;
+    int32_t code = 0;
+    int32_t checksumTotal = startCode;
+    int32_t multiplier = 0;
     FX_BOOL lastCharacterWasPrintable = TRUE;
     while (!done) {
         FX_BOOL unshift = isNextShifted;
@@ -292,7 +292,7 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBi
             checksumTotal += multiplier * code;
         }
         lastStart = nextStart;
-        for (FX_INT32 i = 0; i < counters.GetSize(); i++) {
+        for (int32_t i = 0; i < counters.GetSize(); i++) {
             nextStart += counters[i];
         }
         switch (code) {
@@ -399,7 +399,7 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBi
             codeSet = codeSet == CODE_CODE_A ? CODE_CODE_B : CODE_CODE_A;
         }
     }
-    FX_INT32 width = row->GetSize();
+    int32_t width = row->GetSize();
     while (nextStart < width && row->Get(nextStart)) {
         nextStart++;
     }
@@ -414,7 +414,7 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(FX_INT32 rowNumber, CBC_CommonBi
         e = BCExceptionChecksumException;
         return "";
     }
-    FX_INT32 resultLength = result.GetLength();
+    int32_t resultLength = result.GetLength();
     if (resultLength > 0 && lastCharacterWasPrintable) {
         if (codeSet == CODE_CODE_C) {
             result = result.Mid(0, result.GetLength() - 2);

@@ -24,8 +24,8 @@
 #include "BC_WhiteRectangleDetector.h"
 #include "BC_CommonBitMatrix.h"
 #include "../BC_ResultPoint.h"
-const FX_INT32 CBC_WhiteRectangleDetector::INIT_SIZE = 30;
-const FX_INT32 CBC_WhiteRectangleDetector::CORR = 1;
+const int32_t CBC_WhiteRectangleDetector::INIT_SIZE = 30;
+const int32_t CBC_WhiteRectangleDetector::CORR = 1;
 CBC_WhiteRectangleDetector::CBC_WhiteRectangleDetector(CBC_CommonBitMatrix *image)
 {
     m_image = image;
@@ -36,19 +36,19 @@ CBC_WhiteRectangleDetector::CBC_WhiteRectangleDetector(CBC_CommonBitMatrix *imag
     m_upInit = (m_height - INIT_SIZE) >> 1;
     m_downInit = (m_height + INIT_SIZE) >> 1;
 }
-void CBC_WhiteRectangleDetector::Init(FX_INT32 &e)
+void CBC_WhiteRectangleDetector::Init(int32_t &e)
 {
     if (m_upInit < 0 || m_leftInit < 0 || m_downInit >= m_height || m_rightInit >= m_width) {
         e = BCExceptionNotFound;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
 }
-CBC_WhiteRectangleDetector::CBC_WhiteRectangleDetector(CBC_CommonBitMatrix *image, FX_INT32 initSize, FX_INT32 x, FX_INT32 y)
+CBC_WhiteRectangleDetector::CBC_WhiteRectangleDetector(CBC_CommonBitMatrix *image, int32_t initSize, int32_t x, int32_t y)
 {
     m_image = image;
     m_height = image->GetHeight();
     m_width = image->GetWidth();
-    FX_INT32 halfsize = initSize >> 1;
+    int32_t halfsize = initSize >> 1;
     m_leftInit = x - halfsize;
     m_rightInit = x + halfsize;
     m_upInit = y - halfsize;
@@ -57,12 +57,12 @@ CBC_WhiteRectangleDetector::CBC_WhiteRectangleDetector(CBC_CommonBitMatrix *imag
 CBC_WhiteRectangleDetector::~CBC_WhiteRectangleDetector()
 {
 }
-CFX_PtrArray *CBC_WhiteRectangleDetector::Detect(FX_INT32 &e)
+CFX_PtrArray *CBC_WhiteRectangleDetector::Detect(int32_t &e)
 {
-    FX_INT32 left = m_leftInit;
-    FX_INT32 right = m_rightInit;
-    FX_INT32 up = m_upInit;
-    FX_INT32 down = m_downInit;
+    int32_t left = m_leftInit;
+    int32_t right = m_rightInit;
+    int32_t up = m_upInit;
+    int32_t down = m_downInit;
     FX_BOOL sizeExceeded = FALSE;
     FX_BOOL aBlackPointFoundOnBorder = TRUE;
     FX_BOOL atLeastOneBlackPointFoundOnBorder = FALSE;
@@ -121,9 +121,9 @@ CFX_PtrArray *CBC_WhiteRectangleDetector::Detect(FX_INT32 &e)
         }
     }
     if (!sizeExceeded && atLeastOneBlackPointFoundOnBorder) {
-        FX_INT32 maxSize = right - left;
+        int32_t maxSize = right - left;
         CBC_AutoPtr<CBC_ResultPoint> z(NULL);
-        for (FX_INT32 i = 1; i < maxSize; i++) {
+        for (int32_t i = 1; i < maxSize; i++) {
             z = CBC_AutoPtr<CBC_ResultPoint>(GetBlackPointOnSegment((FX_FLOAT)left, (FX_FLOAT)(down - i), (FX_FLOAT)(left + i), (FX_FLOAT)(down)) );
             if (z.get() != NULL) {
                 break;
@@ -134,7 +134,7 @@ CFX_PtrArray *CBC_WhiteRectangleDetector::Detect(FX_INT32 &e)
             BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         }
         CBC_AutoPtr<CBC_ResultPoint> t(NULL);
-        for (FX_INT32 j = 1; j < maxSize; j++) {
+        for (int32_t j = 1; j < maxSize; j++) {
             t = CBC_AutoPtr<CBC_ResultPoint>(GetBlackPointOnSegment((FX_FLOAT)left, (FX_FLOAT)(up + j), (FX_FLOAT)(left + j), (FX_FLOAT)up));
             if (t.get() != NULL) {
                 break;
@@ -145,7 +145,7 @@ CFX_PtrArray *CBC_WhiteRectangleDetector::Detect(FX_INT32 &e)
             BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         }
         CBC_AutoPtr<CBC_ResultPoint> x(NULL);
-        for (FX_INT32 k = 1; k < maxSize; k++) {
+        for (int32_t k = 1; k < maxSize; k++) {
             x = CBC_AutoPtr<CBC_ResultPoint>(GetBlackPointOnSegment((FX_FLOAT)right, (FX_FLOAT)(up + k), (FX_FLOAT)(right - k), (FX_FLOAT)up));
             if (x.get() != NULL) {
                 break;
@@ -156,7 +156,7 @@ CFX_PtrArray *CBC_WhiteRectangleDetector::Detect(FX_INT32 &e)
             BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         }
         CBC_AutoPtr<CBC_ResultPoint> y(NULL);
-        for (FX_INT32 m = 1;	m < maxSize; m++) {
+        for (int32_t m = 1;	m < maxSize; m++) {
             y = CBC_AutoPtr<CBC_ResultPoint>(GetBlackPointOnSegment((FX_FLOAT)right, (FX_FLOAT)(down - m), (FX_FLOAT)(right - m), (FX_FLOAT) down));
             if (y.get() != NULL) {
                 break;
@@ -173,25 +173,25 @@ CFX_PtrArray *CBC_WhiteRectangleDetector::Detect(FX_INT32 &e)
     }
     return NULL;
 }
-FX_INT32 CBC_WhiteRectangleDetector::Round(FX_FLOAT d)
+int32_t CBC_WhiteRectangleDetector::Round(FX_FLOAT d)
 {
-    return (FX_INT32) (d + 0.5f);
+    return (int32_t) (d + 0.5f);
 }
 CBC_ResultPoint *CBC_WhiteRectangleDetector::GetBlackPointOnSegment(FX_FLOAT aX, FX_FLOAT aY, FX_FLOAT bX, FX_FLOAT bY)
 {
-    FX_INT32 dist = DistanceL2(aX, aY, bX, bY);
+    int32_t dist = DistanceL2(aX, aY, bX, bY);
     float xStep = (bX - aX) / dist;
     float yStep = (bY - aY) / dist;
-    for (FX_INT32 i = 0; i < dist; i++) {
-        FX_INT32 x = Round(aX + i * xStep);
-        FX_INT32 y = Round(aY + i * yStep);
+    for (int32_t i = 0; i < dist; i++) {
+        int32_t x = Round(aX + i * xStep);
+        int32_t y = Round(aY + i * yStep);
         if (m_image->Get(x, y)) {
             return FX_NEW CBC_ResultPoint((FX_FLOAT)x, (FX_FLOAT) y);
         }
     }
     return NULL;
 }
-FX_INT32 CBC_WhiteRectangleDetector::DistanceL2(FX_FLOAT aX, FX_FLOAT aY, FX_FLOAT bX, FX_FLOAT bY)
+int32_t CBC_WhiteRectangleDetector::DistanceL2(FX_FLOAT aX, FX_FLOAT aY, FX_FLOAT bX, FX_FLOAT bY)
 {
     float xDiff = aX - bX;
     float yDiff = aY - bY;
@@ -225,16 +225,16 @@ CFX_PtrArray *CBC_WhiteRectangleDetector::CenterEdges(CBC_ResultPoint *y, CBC_Re
         return result;
     }
 }
-FX_BOOL CBC_WhiteRectangleDetector::ContainsBlackPoint(FX_INT32 a, FX_INT32 b, FX_INT32 fixed, FX_BOOL horizontal)
+FX_BOOL CBC_WhiteRectangleDetector::ContainsBlackPoint(int32_t a, int32_t b, int32_t fixed, FX_BOOL horizontal)
 {
     if (horizontal) {
-        for (FX_INT32 x = a; x <= b; x++) {
+        for (int32_t x = a; x <= b; x++) {
             if (m_image->Get(x, fixed)) {
                 return TRUE;
             }
         }
     } else {
-        for (FX_INT32 y = a; y <= b; y++) {
+        for (int32_t y = a; y <= b; y++) {
             if (m_image->Get(fixed, y)) {
                 return TRUE;
             }

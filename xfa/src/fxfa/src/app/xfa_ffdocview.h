@@ -38,17 +38,17 @@ public:
     ~CXFA_FFDocView();
 
     virtual IXFA_Doc* GetDoc() { return m_pDoc; }
-    virtual	FX_INT32		StartLayout(FX_INT32 iStartPage = 0);
-    virtual FX_INT32		DoLayout(IFX_Pause *pPause = NULL);
+    virtual	int32_t		StartLayout(int32_t iStartPage = 0);
+    virtual int32_t		DoLayout(IFX_Pause *pPause = NULL);
     virtual void			StopLayout();
-    virtual FX_INT32		GetLayoutStatus();
+    virtual int32_t		GetLayoutStatus();
     virtual	void			UpdateDocView();
-    virtual FX_INT32		CountPageViews();
-    virtual IXFA_PageView*	GetPageView(FX_INT32 nIndex);
+    virtual int32_t		CountPageViews();
+    virtual IXFA_PageView*	GetPageView(int32_t nIndex);
     virtual IXFA_Widget*		GetWidgetByName(FX_WSTR wsName);
     virtual CXFA_WidgetAcc* GetWidgetAccByName(FX_WSTR wsName);
     virtual void			ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = NULL);
-    virtual FX_INT32		ProcessWidgetEvent(CXFA_EventParam* pParam, CXFA_WidgetAcc* pWidgetAcc = NULL);
+    virtual int32_t		ProcessWidgetEvent(CXFA_EventParam* pParam, CXFA_WidgetAcc* pWidgetAcc = NULL);
     virtual IXFA_WidgetHandler*			GetWidgetHandler();
     virtual IXFA_WidgetIterator*		CreateWidgetIterator();
     virtual IXFA_WidgetAccIterator*		CreateWidgetAccIterator(XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder);
@@ -58,7 +58,7 @@ public:
     CXFA_FFWidget*		GetWidgetByName(FX_WSTR wsName, CXFA_FFWidget* pRefWidget = NULL);
     CXFA_WidgetAcc*		GetWidgetAccByName(FX_WSTR wsName, CXFA_WidgetAcc* pRefWidgetAcc = NULL);
     IXFA_DocLayout*		GetXFALayout() const;
-    void				OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, FX_INT32 iPageIndex);
+    void				OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, int32_t iPageIndex);
     void				LockUpdate();
     void				UnlockUpdate();
     FX_BOOL				IsUpdateLocked();
@@ -77,7 +77,7 @@ public:
     void				AddValidateWidget(CXFA_WidgetAcc* pWidget);
     void				AddCalculateNodeNotify(CXFA_Node* pNodeChange);
     void				AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc);
-    FX_INT32			RunCalculateWidgets();
+    int32_t			RunCalculateWidgets();
     FX_BOOL				IsStaticNotify();
     FX_BOOL				RunLayout();
     void				RunSubformIndexChange();
@@ -86,7 +86,7 @@ public:
     CXFA_WidgetAcc*		GetFocusWidgetAcc();
     void				SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc);
     void				DeleteLayoutItem(CXFA_FFWidget* pWidget);
-    FX_INT32			ExecEventActivityByDeepFirst(CXFA_Node* pFormNode, XFA_EVENTTYPE eEventType, FX_BOOL bIsFormReady = FALSE, FX_BOOL bRecursive = TRUE, CXFA_Node* pExclude = NULL);
+    int32_t			ExecEventActivityByDeepFirst(CXFA_Node* pFormNode, XFA_EVENTTYPE eEventType, FX_BOOL bIsFormReady = FALSE, FX_BOOL bRecursive = TRUE, CXFA_Node* pExclude = NULL);
     FX_BOOL				m_bLayoutEvent;
     CFX_WideStringArray	m_arrNullTestMsg;
     CXFA_FFWidget*		m_pListFocusWidget;
@@ -96,7 +96,7 @@ protected:
     void				RunBindItems();
     FX_BOOL				InitCalculate(CXFA_Node* pNode);
     void				InitLayout(CXFA_Node* pNode);
-    void				RunCalculateRecursive(FX_INT32& iIndex);
+    void				RunCalculateRecursive(int32_t& iIndex);
     void				ShowNullTestMsg();
     FX_BOOL				ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
     CXFA_Node*			GetRootSubform();
@@ -114,7 +114,7 @@ protected:
     CFX_PtrArray						m_NewAddedNodes;
     CFX_PtrArray						m_IndexChangedSubforms;
     XFA_DOCVIEW_LAYOUTSTATUS			m_iStatus;
-    FX_INT32							m_iLock;
+    int32_t							m_iLock;
     friend class CXFA_FFNotify;
 };
 class CXFA_FFDocWidgetIterator : public IXFA_WidgetIterator

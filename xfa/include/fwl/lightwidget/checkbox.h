@@ -20,8 +20,8 @@ public:
     FWL_ERR		GetCaption(CFX_WideString &wsCaption);
     FWL_ERR		SetCaption(FX_WSTR wsCaption);
     FWL_ERR		SetBoxSize(FX_FLOAT fHeight);
-    FX_INT32	GetCheckState();
-    FWL_ERR		SetCheckState(FX_INT32 iCheck);
+    int32_t	GetCheckState();
+    FWL_ERR		SetCheckState(int32_t iCheck);
     CFWL_CheckBox();
     virtual ~CFWL_CheckBox();
 protected:

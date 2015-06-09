@@ -26,11 +26,11 @@ FX_DWORD CXFA_FFDocHandler::GetDocType(IXFA_Doc* hDoc)
 {
     return static_cast<CXFA_FFDoc*>(hDoc)->GetDocType();
 }
-FX_INT32 CXFA_FFDocHandler::StartLoad(IXFA_Doc* hDoc)
+int32_t CXFA_FFDocHandler::StartLoad(IXFA_Doc* hDoc)
 {
     return static_cast<CXFA_FFDoc*>(hDoc)->StartLoad();
 }
-FX_INT32 CXFA_FFDocHandler::DoLoad(IXFA_Doc* hDoc, IFX_Pause *pPause )
+int32_t CXFA_FFDocHandler::DoLoad(IXFA_Doc* hDoc, IFX_Pause *pPause )
 {
     return static_cast<CXFA_FFDoc*>(hDoc)->DoLoad(pPause);
 }
@@ -43,11 +43,11 @@ IXFA_DocView* CXFA_FFDocHandler::CreateDocView(IXFA_Doc* hDoc, FX_DWORD dwView )
 {
     return static_cast<CXFA_FFDoc*>(hDoc)->CreateDocView(dwView);
 }
-FX_INT32 CXFA_FFDocHandler::CountPackages(IXFA_Doc* hDoc)
+int32_t CXFA_FFDocHandler::CountPackages(IXFA_Doc* hDoc)
 {
     return 0;
 }
-void CXFA_FFDocHandler::GetPackageName(IXFA_Doc* hDoc, FX_INT32 iPackage, CFX_WideStringC &wsPackage)
+void CXFA_FFDocHandler::GetPackageName(IXFA_Doc* hDoc, int32_t iPackage, CFX_WideStringC &wsPackage)
 {
 }
 IFDE_XMLElement* CXFA_FFDocHandler::GetPackageData(IXFA_Doc* hDoc, FX_WSTR wsPackage)

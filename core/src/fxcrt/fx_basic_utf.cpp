@@ -14,7 +14,7 @@ void CFX_UTF8Decoder::AppendChar(FX_DWORD ch)
 {
     m_Buffer.AppendChar((FX_WCHAR)ch);
 }
-void CFX_UTF8Decoder::Input(FX_BYTE byte)
+void CFX_UTF8Decoder::Input(uint8_t byte)
 {
     if (byte < 0x80) {
         m_PendingBytes = 0;
@@ -65,7 +65,7 @@ void CFX_UTF8Encoder::Input(FX_WCHAR unicode)
         } else {
             nbytes = 6;
         }
-        static FX_BYTE prefix[] = {0xc0, 0xe0, 0xf0, 0xf8, 0xfc};
+        static uint8_t prefix[] = {0xc0, 0xe0, 0xf0, 0xf8, 0xfc};
         int order = 1 << ((nbytes - 1) * 6);
         int code = unicode;
         m_Buffer.AppendChar(prefix[nbytes - 2] | (code / order));

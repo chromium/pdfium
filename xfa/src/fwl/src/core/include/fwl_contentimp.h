@@ -15,7 +15,7 @@ public:
     CFWL_ContentImp();
     CFWL_ContentImp(const CFWL_WidgetImpProperties &properties);
     virtual ~CFWL_ContentImp();
-    virtual FWL_ERR				InsertWidget(IFWL_Widget *pChild, FX_INT32 nIndex = -1);
+    virtual FWL_ERR				InsertWidget(IFWL_Widget *pChild, int32_t nIndex = -1);
     virtual FWL_ERR				RemoveWidget(IFWL_Widget *pWidget);
     virtual	FWL_ERR				RemoveAllWidgets();
     virtual FWL_ERR		GetMinSize(FX_FLOAT &fWidth, FX_FLOAT &fHeight);

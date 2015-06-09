@@ -20,14 +20,14 @@ void CFX_ThreadLock::Unlock()
 {
 }
 typedef struct _FX_BASEARRAYDATA : public CFX_Target {
-    FX_INT32	iGrowSize;
-    FX_INT32	iBlockSize;
-    FX_INT32	iTotalCount;
-    FX_INT32	iBlockCount;
+    int32_t	iGrowSize;
+    int32_t	iBlockSize;
+    int32_t	iTotalCount;
+    int32_t	iBlockCount;
     FX_LPBYTE	pBuffer;
 } FX_BASEARRAYDATA, * FX_LPBASEARRAYDATA;
 typedef FX_BASEARRAYDATA const * FX_LPCBASEARRAYDATA;
-CFX_BaseArray::CFX_BaseArray(FX_INT32 iGrowSize, FX_INT32 iBlockSize)
+CFX_BaseArray::CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize)
 {
     FXSYS_assert(iGrowSize > 0 && iBlockSize > 0);
     m_pData = FXTARGET_New FX_BASEARRAYDATA;
@@ -43,38 +43,38 @@ CFX_BaseArray::~CFX_BaseArray()
     }
     FXTARGET_Delete pData;
 }
-FX_INT32 CFX_BaseArray::GetSize() const
+int32_t CFX_BaseArray::GetSize() const
 {
     return ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
 }
-FX_INT32 CFX_BaseArray::GetBlockSize() const
+int32_t CFX_BaseArray::GetBlockSize() const
 {
     return ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
 }
-FX_LPBYTE CFX_BaseArray::AddSpaceTo(FX_INT32 index)
+FX_LPBYTE CFX_BaseArray::AddSpaceTo(int32_t index)
 {
     FXSYS_assert(index > -1);
     FX_LPBYTE &pBuffer = ((FX_LPBASEARRAYDATA)m_pData)->pBuffer;
-    FX_INT32 &iTotalCount = ((FX_LPBASEARRAYDATA)m_pData)->iTotalCount;
-    FX_INT32 iBlockSize = ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
+    int32_t &iTotalCount = ((FX_LPBASEARRAYDATA)m_pData)->iTotalCount;
+    int32_t iBlockSize = ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
     if (index >= iTotalCount) {
-        FX_INT32 iGrowSize = ((FX_LPBASEARRAYDATA)m_pData)->iGrowSize;
+        int32_t iGrowSize = ((FX_LPBASEARRAYDATA)m_pData)->iGrowSize;
         iTotalCount = (index / iGrowSize + 1) * iGrowSize;
-        FX_INT32 iNewSize = iTotalCount * iBlockSize;
+        int32_t iNewSize = iTotalCount * iBlockSize;
         if (pBuffer == NULL) {
-            pBuffer = (FX_LPBYTE)FX_Alloc(FX_BYTE, iNewSize);
+            pBuffer = (FX_LPBYTE)FX_Alloc(uint8_t, iNewSize);
         } else {
-            pBuffer = (FX_LPBYTE)FX_Realloc(FX_BYTE, pBuffer, iNewSize);
+            pBuffer = (FX_LPBYTE)FX_Realloc(uint8_t, pBuffer, iNewSize);
         }
     }
     FXSYS_assert(pBuffer != NULL);
-    FX_INT32 &iBlockCount = ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
+    int32_t &iBlockCount = ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
     if (index >= iBlockCount) {
         iBlockCount = index + 1;
     }
     return pBuffer + index * iBlockSize;
 }
-FX_LPBYTE CFX_BaseArray::GetAt(FX_INT32 index) const
+FX_LPBYTE CFX_BaseArray::GetAt(int32_t index) const
 {
     FXSYS_assert(index > -1 && index < ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount);
     return ((FX_LPBASEARRAYDATA)m_pData)->pBuffer + index * ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
@@ -83,12 +83,12 @@ FX_LPBYTE CFX_BaseArray::GetBuffer() const
 {
     return ((FX_LPBASEARRAYDATA)m_pData)->pBuffer;
 }
-FX_INT32 CFX_BaseArray::Append(const CFX_BaseArray &src, FX_INT32 iStart, FX_INT32 iCount)
+int32_t CFX_BaseArray::Append(const CFX_BaseArray &src, int32_t iStart, int32_t iCount)
 {
-    FX_INT32 iBlockSize = ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
+    int32_t iBlockSize = ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
     FXSYS_assert(iBlockSize == ((FX_LPBASEARRAYDATA)src.m_pData)->iBlockSize);
-    FX_INT32 &iBlockCount = ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
-    FX_INT32 iAdded = src.GetSize();
+    int32_t &iBlockCount = ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
+    int32_t iAdded = src.GetSize();
     FXSYS_assert(iStart > -1 && iStart < iAdded);
     if (iCount < 0) {
         iCount = iAdded;
@@ -104,11 +104,11 @@ FX_INT32 CFX_BaseArray::Append(const CFX_BaseArray &src, FX_INT32 iStart, FX_INT
     FX_memcpy(pDst, ((FX_LPBASEARRAYDATA)src.m_pData)->pBuffer + iStart * iBlockSize, iCount * iBlockSize);
     return iCount;
 }
-FX_INT32 CFX_BaseArray::Copy(const CFX_BaseArray &src, FX_INT32 iStart, FX_INT32 iCount)
+int32_t CFX_BaseArray::Copy(const CFX_BaseArray &src, int32_t iStart, int32_t iCount)
 {
-    FX_INT32 iBlockSize = ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
+    int32_t iBlockSize = ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
     FXSYS_assert(iBlockSize == ((FX_LPBASEARRAYDATA)src.m_pData)->iBlockSize);
-    FX_INT32 iCopied = src.GetSize();
+    int32_t iCopied = src.GetSize();
     FXSYS_assert(iStart > -1 && iStart < iCopied);
     if (iCount < 0) {
         iCount = iCopied;
@@ -124,9 +124,9 @@ FX_INT32 CFX_BaseArray::Copy(const CFX_BaseArray &src, FX_INT32 iStart, FX_INT32
     FX_memcpy(((FX_LPBASEARRAYDATA)m_pData)->pBuffer, ((FX_LPBASEARRAYDATA)src.m_pData)->pBuffer + iStart * iBlockSize, iCount * iBlockSize);
     return iCount;
 }
-FX_INT32 CFX_BaseArray::RemoveLast(FX_INT32 iCount)
+int32_t CFX_BaseArray::RemoveLast(int32_t iCount)
 {
-    FX_INT32 &iBlockCount = ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
+    int32_t &iBlockCount = ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
     if (iCount < 0 || iCount > iBlockCount) {
         iCount = iBlockCount;
         iBlockCount = 0;
@@ -147,7 +147,7 @@ void CFX_BaseArray::RemoveAll(FX_BOOL bLeaveMemory)
     }
     ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount = 0;
 }
-CFX_BaseMassArrayImp::CFX_BaseMassArrayImp(FX_INT32 iChunkSize, FX_INT32 iBlockSize)
+CFX_BaseMassArrayImp::CFX_BaseMassArrayImp(int32_t iChunkSize, int32_t iBlockSize)
     : m_iChunkSize(iChunkSize)
     , m_iBlockSize(iBlockSize)
     , m_iChunkCount(0)
@@ -162,20 +162,20 @@ CFX_BaseMassArrayImp::~CFX_BaseMassArrayImp()
     RemoveAll();
     delete m_pData;
 }
-FX_LPBYTE CFX_BaseMassArrayImp::AddSpaceTo(FX_INT32 index)
+FX_LPBYTE CFX_BaseMassArrayImp::AddSpaceTo(int32_t index)
 {
     FXSYS_assert(index > -1);
     FX_LPBYTE pChunk;
     if (index < m_iBlockCount) {
         pChunk = (FX_LPBYTE)m_pData->GetAt(index / m_iChunkSize);
     } else {
-        FX_INT32 iMemSize = m_iChunkSize * m_iBlockSize;
+        int32_t iMemSize = m_iChunkSize * m_iBlockSize;
         while (TRUE) {
             if (index < m_iChunkCount * m_iChunkSize) {
                 pChunk = (FX_LPBYTE)m_pData->GetAt(index / m_iChunkSize);
                 break;
             } else {
-                pChunk = (FX_LPBYTE)FX_Alloc(FX_BYTE, iMemSize);
+                pChunk = (FX_LPBYTE)FX_Alloc(uint8_t, iMemSize);
                 if (m_iChunkCount < m_pData->GetSize()) {
                     m_pData->SetAt(m_iChunkCount, pChunk);
                 } else {
@@ -189,17 +189,17 @@ FX_LPBYTE CFX_BaseMassArrayImp::AddSpaceTo(FX_INT32 index)
     m_iBlockCount = index + 1;
     return pChunk + (index % m_iChunkSize) * m_iBlockSize;
 }
-FX_LPBYTE CFX_BaseMassArrayImp::GetAt(FX_INT32 index) const
+FX_LPBYTE CFX_BaseMassArrayImp::GetAt(int32_t index) const
 {
     FXSYS_assert(index > -1 && index < m_iBlockCount);
     FX_LPBYTE pChunk = (FX_LPBYTE)m_pData->GetAt(index / m_iChunkSize);
     FXSYS_assert(pChunk != NULL);
     return pChunk + (index % m_iChunkSize) * m_iBlockSize;
 }
-FX_INT32 CFX_BaseMassArrayImp::Append(const CFX_BaseMassArrayImp &src, FX_INT32 iStart, FX_INT32 iCount)
+int32_t CFX_BaseMassArrayImp::Append(const CFX_BaseMassArrayImp &src, int32_t iStart, int32_t iCount)
 {
     FXSYS_assert(m_iBlockSize == src.m_iBlockSize);
-    FX_INT32 iAdded = src.m_iBlockCount;
+    int32_t iAdded = src.m_iBlockCount;
     FXSYS_assert(iStart > -1 && iStart < iAdded);
     if (iCount < 0) {
         iCount = iAdded;
@@ -210,16 +210,16 @@ FX_INT32 CFX_BaseMassArrayImp::Append(const CFX_BaseMassArrayImp &src, FX_INT32 
     if (iCount < 1) {
         return m_iBlockCount;
     }
-    FX_INT32 iBlockCount = m_iBlockCount;
-    FX_INT32 iTotal = m_iBlockCount + iCount;
+    int32_t iBlockCount = m_iBlockCount;
+    int32_t iTotal = m_iBlockCount + iCount;
     AddSpaceTo(iTotal - 1);
     Append(iBlockCount, src, iStart, iCount);
     return m_iBlockCount;
 }
-FX_INT32 CFX_BaseMassArrayImp::Copy(const CFX_BaseMassArrayImp &src, FX_INT32 iStart, FX_INT32 iCount)
+int32_t CFX_BaseMassArrayImp::Copy(const CFX_BaseMassArrayImp &src, int32_t iStart, int32_t iCount)
 {
     FXSYS_assert(m_iBlockSize == src.m_iBlockSize);
-    FX_INT32 iCopied = src.m_iBlockCount;
+    int32_t iCopied = src.m_iBlockCount;
     FXSYS_assert(iStart > -1);
     if (iStart >= iCopied) {
         return 0;
@@ -240,20 +240,20 @@ FX_INT32 CFX_BaseMassArrayImp::Copy(const CFX_BaseMassArrayImp &src, FX_INT32 iS
     Append(0, src, iStart, iCount);
     return m_iBlockCount;
 }
-void CFX_BaseMassArrayImp::Append(FX_INT32 iDstStart, const CFX_BaseMassArrayImp &src, FX_INT32 iSrcStart, FX_INT32 iSrcCount)
+void CFX_BaseMassArrayImp::Append(int32_t iDstStart, const CFX_BaseMassArrayImp &src, int32_t iSrcStart, int32_t iSrcCount)
 {
     FXSYS_assert(iDstStart > -1 && m_iBlockSize == src.m_iBlockSize);
-    FX_INT32 iSrcTotal = src.m_iBlockCount;
+    int32_t iSrcTotal = src.m_iBlockCount;
     FXSYS_assert(iSrcTotal > 0 && m_iBlockCount >= iDstStart + iSrcCount);
     FXSYS_assert(iSrcStart > -1 && iSrcStart < iSrcTotal && iSrcCount > 0 && iSrcStart + iSrcCount <= iSrcTotal);
-    FX_INT32 iDstChunkIndex = iDstStart / m_iChunkSize;
-    FX_INT32 iSrcChunkIndex = iSrcStart / src.m_iChunkSize;
+    int32_t iDstChunkIndex = iDstStart / m_iChunkSize;
+    int32_t iSrcChunkIndex = iSrcStart / src.m_iChunkSize;
     FX_LPBYTE pDstChunk = (FX_LPBYTE)GetAt(iDstStart);
     FX_LPBYTE pSrcChunk = (FX_LPBYTE)src.GetAt(iSrcStart);
-    FX_INT32 iDstChunkSize = m_iChunkSize - (iDstStart % m_iChunkSize);
-    FX_INT32 iSrcChunkSize = src.m_iChunkSize - (iSrcStart % src.m_iChunkSize);
-    FX_INT32 iCopySize = FX_MIN(iSrcCount, FX_MIN(iSrcChunkSize, iDstChunkSize));
-    FX_INT32 iCopyBytes = iCopySize * m_iBlockSize;
+    int32_t iDstChunkSize = m_iChunkSize - (iDstStart % m_iChunkSize);
+    int32_t iSrcChunkSize = src.m_iChunkSize - (iSrcStart % src.m_iChunkSize);
+    int32_t iCopySize = FX_MIN(iSrcCount, FX_MIN(iSrcChunkSize, iDstChunkSize));
+    int32_t iCopyBytes = iCopySize * m_iBlockSize;
     while (iSrcCount > 0) {
         FXSYS_assert(pDstChunk != NULL && pSrcChunk != NULL);
         FXSYS_memcpy(pDstChunk, pSrcChunk, iCopyBytes);
@@ -278,7 +278,7 @@ void CFX_BaseMassArrayImp::Append(FX_INT32 iDstStart, const CFX_BaseMassArrayImp
         iCopyBytes = iCopySize * m_iBlockSize;
     }
 }
-FX_INT32 CFX_BaseMassArrayImp::RemoveLast(FX_INT32 iCount)
+int32_t CFX_BaseMassArrayImp::RemoveLast(int32_t iCount)
 {
     if (iCount < 0 || iCount >= m_iBlockCount) {
         m_iBlockCount = 0;
@@ -293,7 +293,7 @@ void CFX_BaseMassArrayImp::RemoveAll(FX_BOOL bLeaveMemory)
         m_iBlockCount = 0;
         return;
     }
-    for (FX_INT32 i = 0; i < m_iChunkCount; i ++) {
+    for (int32_t i = 0; i < m_iChunkCount; i ++) {
         FX_LPVOID p = m_pData->GetAt(i);
         if (p == NULL) {
             continue;
@@ -304,7 +304,7 @@ void CFX_BaseMassArrayImp::RemoveAll(FX_BOOL bLeaveMemory)
     m_iChunkCount = 0;
     m_iBlockCount = 0;
 }
-CFX_BaseMassArray::CFX_BaseMassArray(FX_INT32 iChunkSize, FX_INT32 iBlockSize)
+CFX_BaseMassArray::CFX_BaseMassArray(int32_t iChunkSize, int32_t iBlockSize)
 {
     m_pData = FXTARGET_New CFX_BaseMassArrayImp(iChunkSize, iBlockSize);
 }
@@ -312,27 +312,27 @@ CFX_BaseMassArray::~CFX_BaseMassArray()
 {
     FXTARGET_Delete m_pData;
 }
-FX_INT32 CFX_BaseMassArray::GetSize() const
+int32_t CFX_BaseMassArray::GetSize() const
 {
     return m_pData->m_iBlockCount;
 }
-FX_LPBYTE CFX_BaseMassArray::AddSpaceTo(FX_INT32 index)
+FX_LPBYTE CFX_BaseMassArray::AddSpaceTo(int32_t index)
 {
     return m_pData->AddSpaceTo(index);
 }
-FX_LPBYTE CFX_BaseMassArray::GetAt(FX_INT32 index) const
+FX_LPBYTE CFX_BaseMassArray::GetAt(int32_t index) const
 {
     return m_pData->GetAt(index);
 }
-FX_INT32 CFX_BaseMassArray::Append(const CFX_BaseMassArray &src, FX_INT32 iStart, FX_INT32 iCount)
+int32_t CFX_BaseMassArray::Append(const CFX_BaseMassArray &src, int32_t iStart, int32_t iCount)
 {
     return m_pData->Append(*(CFX_BaseMassArrayImp*)src.m_pData, iStart, iCount);
 }
-FX_INT32 CFX_BaseMassArray::Copy(const CFX_BaseMassArray &src, FX_INT32 iStart, FX_INT32 iCount)
+int32_t CFX_BaseMassArray::Copy(const CFX_BaseMassArray &src, int32_t iStart, int32_t iCount)
 {
     return m_pData->Copy(*(CFX_BaseMassArrayImp*)src.m_pData, iStart, iCount);
 }
-FX_INT32 CFX_BaseMassArray::RemoveLast(FX_INT32 iCount)
+int32_t CFX_BaseMassArray::RemoveLast(int32_t iCount)
 {
     return m_pData->RemoveLast(iCount);
 }
@@ -341,13 +341,13 @@ void CFX_BaseMassArray::RemoveAll(FX_BOOL bLeaveMemory)
     m_pData->RemoveAll(bLeaveMemory);
 }
 typedef struct _FX_BASEDISCRETEARRAYDATA {
-    FX_INT32		iBlockSize;
-    FX_INT32		iChunkSize;
-    FX_INT32		iChunkCount;
+    int32_t		iBlockSize;
+    int32_t		iChunkSize;
+    int32_t		iChunkCount;
     CFX_PtrArray	ChunkBuffer;
 } FX_BASEDISCRETEARRAYDATA, * FX_LPBASEDISCRETEARRAYDATA;
 typedef FX_BASEDISCRETEARRAYDATA const * FX_LPCBASEDISCRETEARRAYDATA;
-CFX_BaseDiscreteArray::CFX_BaseDiscreteArray(FX_INT32 iChunkSize, FX_INT32 iBlockSize)
+CFX_BaseDiscreteArray::CFX_BaseDiscreteArray(int32_t iChunkSize, int32_t iBlockSize)
 {
     FXSYS_assert(iChunkSize > 0 && iBlockSize > 0);
     FX_LPBASEDISCRETEARRAYDATA pData;
@@ -362,20 +362,20 @@ CFX_BaseDiscreteArray::~CFX_BaseDiscreteArray()
     RemoveAll();
     delete (FX_LPBASEDISCRETEARRAYDATA)m_pData;
 }
-FX_LPBYTE CFX_BaseDiscreteArray::AddSpaceTo(FX_INT32 index)
+FX_LPBYTE CFX_BaseDiscreteArray::AddSpaceTo(int32_t index)
 {
     FXSYS_assert(index > -1);
     FX_LPBASEDISCRETEARRAYDATA pData = (FX_LPBASEDISCRETEARRAYDATA)m_pData;
-    FX_INT32 &iChunkCount = pData->iChunkCount;
-    FX_INT32 iChunkSize = pData->iChunkSize;
+    int32_t &iChunkCount = pData->iChunkCount;
+    int32_t iChunkSize = pData->iChunkSize;
     FX_LPBYTE pChunk = NULL;
-    FX_INT32 iChunk = index / iChunkSize;
+    int32_t iChunk = index / iChunkSize;
     if (iChunk < iChunkCount) {
         pChunk = (FX_LPBYTE)pData->ChunkBuffer.GetAt(iChunk);
     }
     if (pChunk == NULL) {
-        FX_INT32 iMemSize = iChunkSize * pData->iBlockSize;
-        pChunk = (FX_LPBYTE)FX_Alloc(FX_BYTE, iMemSize);
+        int32_t iMemSize = iChunkSize * pData->iBlockSize;
+        pChunk = (FX_LPBYTE)FX_Alloc(uint8_t, iMemSize);
         FXSYS_memset(pChunk, 0, iMemSize);
         pData->ChunkBuffer.SetAtGrow(iChunk, pChunk);
         if (iChunkCount <= iChunk) {
@@ -384,12 +384,12 @@ FX_LPBYTE CFX_BaseDiscreteArray::AddSpaceTo(FX_INT32 index)
     }
     return pChunk + (index % iChunkSize) * pData->iBlockSize;
 }
-FX_LPBYTE CFX_BaseDiscreteArray::GetAt(FX_INT32 index) const
+FX_LPBYTE CFX_BaseDiscreteArray::GetAt(int32_t index) const
 {
     FXSYS_assert(index > -1);
     FX_LPBASEDISCRETEARRAYDATA pData = (FX_LPBASEDISCRETEARRAYDATA)m_pData;
-    FX_INT32 iChunkSize = pData->iChunkSize;
-    FX_INT32 iChunk = index / iChunkSize;
+    int32_t iChunkSize = pData->iChunkSize;
+    int32_t iChunk = index / iChunkSize;
     if (iChunk >= pData->iChunkCount) {
         return NULL;
     }
@@ -403,8 +403,8 @@ void CFX_BaseDiscreteArray::RemoveAll()
 {
     FX_LPBASEDISCRETEARRAYDATA pData = (FX_LPBASEDISCRETEARRAYDATA)m_pData;
     CFX_PtrArray &ChunkBuffer = pData->ChunkBuffer;
-    FX_INT32 &iChunkCount = pData->iChunkCount;
-    for (FX_INT32 i = 0; i < iChunkCount; i++) {
+    int32_t &iChunkCount = pData->iChunkCount;
+    for (int32_t i = 0; i < iChunkCount; i++) {
         FX_LPVOID p = ChunkBuffer.GetAt(i);
         if (p == NULL) {
             continue;
@@ -414,7 +414,7 @@ void CFX_BaseDiscreteArray::RemoveAll()
     ChunkBuffer.RemoveAll();
     iChunkCount = 0;
 }
-CFX_BaseStack::CFX_BaseStack(FX_INT32 iChunkSize, FX_INT32 iBlockSize)
+CFX_BaseStack::CFX_BaseStack(int32_t iChunkSize, int32_t iBlockSize)
 {
     m_pData = FXTARGET_New CFX_BaseMassArrayImp(iChunkSize, iBlockSize);
 }
@@ -428,7 +428,7 @@ FX_LPBYTE CFX_BaseStack::Push()
 }
 void CFX_BaseStack::Pop()
 {
-    FX_INT32 &iBlockCount = m_pData->m_iBlockCount;
+    int32_t &iBlockCount = m_pData->m_iBlockCount;
     if (iBlockCount < 1) {
         return;
     }
@@ -436,17 +436,17 @@ void CFX_BaseStack::Pop()
 }
 FX_LPBYTE CFX_BaseStack::GetTopElement() const
 {
-    FX_INT32 iSize = m_pData->m_iBlockCount;
+    int32_t iSize = m_pData->m_iBlockCount;
     if (iSize < 1) {
         return NULL;
     }
     return m_pData->GetAt(iSize - 1);
 }
-FX_INT32 CFX_BaseStack::GetSize() const
+int32_t CFX_BaseStack::GetSize() const
 {
     return m_pData->m_iBlockCount;
 }
-FX_LPBYTE CFX_BaseStack::GetAt(FX_INT32 index) const
+FX_LPBYTE CFX_BaseStack::GetAt(int32_t index) const
 {
     return m_pData->GetAt(index);
 }

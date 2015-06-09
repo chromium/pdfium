@@ -165,7 +165,7 @@ CFWL_CaretImp::CFWL_CaretTimer::CFWL_CaretTimer(CFWL_CaretImp *m_pCaret)
 {
     this->m_pCaret = m_pCaret;
 }
-FX_INT32 CFWL_CaretImp::CFWL_CaretTimer::Run(FWL_HTIMER hTimer)
+int32_t CFWL_CaretImp::CFWL_CaretTimer::Run(FWL_HTIMER hTimer)
 {
     if (m_pCaret->GetStates() & FWL_STATE_CAT_HightLight) {
         m_pCaret->SetStates(FWL_STATE_CAT_HightLight, FALSE);
@@ -182,7 +182,7 @@ CFWL_CaretImpDelegate::CFWL_CaretImpDelegate(CFWL_CaretImp *pOwner)
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_CaretImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_CaretImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     return 1;
 }

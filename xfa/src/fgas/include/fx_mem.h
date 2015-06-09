@@ -31,7 +31,7 @@ class CFX_Target
 public:
     void*	operator new(size_t size)
     {
-        return FX_Alloc(FX_BYTE, size);
+        return FX_Alloc(uint8_t, size);
     }
     void	operator delete(void *p)
     {

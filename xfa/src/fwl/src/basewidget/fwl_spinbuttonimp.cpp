@@ -165,7 +165,7 @@ FWL_ERR	CFWL_SpinButtonImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix
     DrawDownButton(pGraphics, pTheme, pMatrix);
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_SpinButtonImp::Run(FWL_HTIMER hTimer)
+int32_t CFWL_SpinButtonImp::Run(FWL_HTIMER hTimer)
 {
     if (m_hTimer) {
         CFWL_EvtSpbClick wmPosChanged;
@@ -229,10 +229,10 @@ CFWL_SpinButtonImpDelegate::CFWL_SpinButtonImpDelegate(CFWL_SpinButtonImp *pOwne
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
-    FX_INT32 iRet = 1;
+    int32_t iRet = 1;
     FX_DWORD dwMsgCode = pMessage->GetClassID();
     switch (dwMsgCode) {
         case FWL_MSGHASH_SetFocus:

@@ -26,10 +26,10 @@
 #include "BC_QRFinderPatternFinder.h"
 #include "BC_FinderPatternInfo.h"
 #include "BC_QRFinderPattern.h"
-const FX_INT32 CBC_QRFinderPatternFinder::CENTER_QUORUM = 2;
-const FX_INT32 CBC_QRFinderPatternFinder::MIN_SKIP = 3;
-const FX_INT32 CBC_QRFinderPatternFinder::MAX_MODULES = 57;
-const FX_INT32 CBC_QRFinderPatternFinder::INTEGER_MATH_SHIFT = 8;
+const int32_t CBC_QRFinderPatternFinder::CENTER_QUORUM = 2;
+const int32_t CBC_QRFinderPatternFinder::MIN_SKIP = 3;
+const int32_t CBC_QRFinderPatternFinder::MAX_MODULES = 57;
+const int32_t CBC_QRFinderPatternFinder::INTEGER_MATH_SHIFT = 8;
 CBC_QRFinderPatternFinder::CBC_QRFinderPatternFinder(CBC_CommonBitMatrix* image)
 {
     m_image = image;
@@ -38,7 +38,7 @@ CBC_QRFinderPatternFinder::CBC_QRFinderPatternFinder(CBC_CommonBitMatrix* image)
 }
 CBC_QRFinderPatternFinder::~CBC_QRFinderPatternFinder()
 {
-    for(FX_INT32 i = 0; i < m_possibleCenters.GetSize(); i++) {
+    for(int32_t i = 0; i < m_possibleCenters.GetSize(); i++) {
         delete (CBC_QRFinderPattern*)m_possibleCenters[i];
     }
     m_possibleCenters.RemoveAll();
@@ -51,7 +51,7 @@ public:
     ClosestToAverageComparator(FX_FLOAT averageModuleSize) : m_averageModuleSize(averageModuleSize)
     {
     }
-    FX_INT32 operator()(FinderPattern *a, FinderPattern *b)
+    int32_t operator()(FinderPattern *a, FinderPattern *b)
     {
         FX_FLOAT dA = (FX_FLOAT)fabs(a->GetEstimatedModuleSize() - m_averageModuleSize);
         FX_FLOAT dB = (FX_FLOAT)fabs(b->GetEstimatedModuleSize() - m_averageModuleSize);
@@ -61,7 +61,7 @@ public:
 class CenterComparator
 {
 public:
-    FX_INT32 operator()(FinderPattern *a, FinderPattern *b)
+    int32_t operator()(FinderPattern *a, FinderPattern *b)
     {
         return b->GetCount() - a->GetCount();
     }
@@ -83,25 +83,25 @@ CFX_PtrArray *CBC_QRFinderPatternFinder::GetPossibleCenters()
 {
     return &m_possibleCenters;
 }
-CBC_QRFinderPatternInfo* CBC_QRFinderPatternFinder::Find(FX_INT32 hint, FX_INT32 &e)
+CBC_QRFinderPatternInfo* CBC_QRFinderPatternFinder::Find(int32_t hint, int32_t &e)
 {
-    FX_INT32 maxI = m_image->GetHeight();
-    FX_INT32 maxJ = m_image->GetWidth();
-    FX_INT32 iSkip = (3 * maxI) / (4 * MAX_MODULES);
+    int32_t maxI = m_image->GetHeight();
+    int32_t maxJ = m_image->GetWidth();
+    int32_t iSkip = (3 * maxI) / (4 * MAX_MODULES);
     if(iSkip < MIN_SKIP || 0) {
         iSkip = MIN_SKIP;
     }
     FX_BOOL done = FALSE;
     CFX_Int32Array stateCount;
     stateCount.SetSize(5);
-    for(FX_INT32 i = iSkip - 1; i < maxI && !done; i += iSkip) {
+    for(int32_t i = iSkip - 1; i < maxI && !done; i += iSkip) {
         stateCount[0] = 0;
         stateCount[1] = 0;
         stateCount[2] = 0;
         stateCount[3] = 0;
         stateCount[4] = 0;
-        FX_INT32 currentState = 0;
-        for(FX_INT32 j = 0; j < maxJ; j++) {
+        int32_t currentState = 0;
+        for(int32_t j = 0; j < maxJ; j++) {
             if(m_image->Get(j, i)) {
                 if((currentState & 1) == 1) {
                     currentState++;
@@ -117,7 +117,7 @@ CBC_QRFinderPatternInfo* CBC_QRFinderPatternFinder::Find(FX_INT32 hint, FX_INT32
                                 if(m_hasSkipped) {
                                     done = HaveMultiplyConfirmedCenters();
                                 } else {
-                                    FX_INT32 rowSkip = FindRowSkip();
+                                    int32_t rowSkip = FindRowSkip();
                                     if(rowSkip > stateCount[2]) {
                                         i += rowSkip - stateCount[2] - iSkip;
                                         j = maxJ - 1;
@@ -202,15 +202,15 @@ FX_FLOAT CBC_QRFinderPatternFinder::Distance(CBC_ResultPoint* point1, CBC_Result
     FX_FLOAT dy = point1->GetY() - point2->GetY();
     return (FX_FLOAT)FXSYS_sqrt(dx * dx + dy * dy);
 }
-FX_FLOAT CBC_QRFinderPatternFinder::CenterFromEnd(const CFX_Int32Array &stateCount, FX_INT32 end)
+FX_FLOAT CBC_QRFinderPatternFinder::CenterFromEnd(const CFX_Int32Array &stateCount, int32_t end)
 {
     return (FX_FLOAT)(end - stateCount[4] - stateCount[3]) - stateCount[2] / 2.0f;
 }
 FX_BOOL CBC_QRFinderPatternFinder::FoundPatternCross(const CFX_Int32Array &stateCount)
 {
-    FX_INT32 totalModuleSize = 0;
-    for (FX_INT32 i = 0; i < 5; i++) {
-        FX_INT32 count = stateCount[i];
+    int32_t totalModuleSize = 0;
+    for (int32_t i = 0; i < 5; i++) {
+        int32_t count = stateCount[i];
         if (count == 0) {
             return FALSE;
         }
@@ -219,21 +219,21 @@ FX_BOOL CBC_QRFinderPatternFinder::FoundPatternCross(const CFX_Int32Array &state
     if (totalModuleSize < 7) {
         return FALSE;
     }
-    FX_INT32 moduleSize = (totalModuleSize << INTEGER_MATH_SHIFT) / 7;
-    FX_INT32 maxVariance = moduleSize / 2;
+    int32_t moduleSize = (totalModuleSize << INTEGER_MATH_SHIFT) / 7;
+    int32_t maxVariance = moduleSize / 2;
     return FXSYS_abs(moduleSize - (stateCount[0] << INTEGER_MATH_SHIFT)) < maxVariance &&
            FXSYS_abs(moduleSize - (stateCount[1] << INTEGER_MATH_SHIFT)) < maxVariance &&
            FXSYS_abs(3 * moduleSize - (stateCount[2] << INTEGER_MATH_SHIFT)) < 3 * maxVariance &&
            FXSYS_abs(moduleSize - (stateCount[3] << INTEGER_MATH_SHIFT)) < maxVariance &&
            FXSYS_abs(moduleSize - (stateCount[4] << INTEGER_MATH_SHIFT)) < maxVariance;
 }
-FX_FLOAT CBC_QRFinderPatternFinder::CrossCheckVertical(FX_INT32 startI, FX_INT32 centerJ, FX_INT32 maxCount,
-        FX_INT32 originalStateCountTotal)
+FX_FLOAT CBC_QRFinderPatternFinder::CrossCheckVertical(int32_t startI, int32_t centerJ, int32_t maxCount,
+        int32_t originalStateCountTotal)
 {
     CBC_CommonBitMatrix *image = m_image;
-    FX_INT32 maxI = image->GetHeight();
+    int32_t maxI = image->GetHeight();
     CFX_Int32Array &stateCount = GetCrossCheckStateCount();
-    FX_INT32 i = startI;
+    int32_t i = startI;
     while(i >= 0 && image->Get(centerJ, i)) {
         stateCount[2]++;
         i--;
@@ -277,18 +277,18 @@ FX_FLOAT CBC_QRFinderPatternFinder::CrossCheckVertical(FX_INT32 startI, FX_INT32
     if (stateCount[4] >= maxCount) {
         return FXSYS_nan();
     }
-    FX_INT32 stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
+    int32_t stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
     if (5 * FXSYS_abs(stateCountTotal - originalStateCountTotal) >= originalStateCountTotal) {
         return FXSYS_nan();
     }
     return FoundPatternCross(stateCount) ? CenterFromEnd(stateCount, i) : FXSYS_nan();
 }
-FX_FLOAT CBC_QRFinderPatternFinder::CrossCheckHorizontal(FX_INT32 startJ, FX_INT32 centerI, FX_INT32 maxCount, FX_INT32 originalStateCountTotal)
+FX_FLOAT CBC_QRFinderPatternFinder::CrossCheckHorizontal(int32_t startJ, int32_t centerI, int32_t maxCount, int32_t originalStateCountTotal)
 {
     CBC_CommonBitMatrix *image = m_image;
-    FX_INT32 maxJ = image->GetWidth();
+    int32_t maxJ = image->GetWidth();
     CFX_Int32Array &stateCount = GetCrossCheckStateCount();
-    FX_INT32 j = startJ;
+    int32_t j = startJ;
     while (j >= 0 && image->Get(j, centerI)) {
         stateCount[2]++;
         j--;
@@ -332,7 +332,7 @@ FX_FLOAT CBC_QRFinderPatternFinder::CrossCheckHorizontal(FX_INT32 startJ, FX_INT
     if (stateCount[4] >= maxCount) {
         return FXSYS_nan();
     }
-    FX_INT32 stateCountTotal = stateCount[0] + stateCount[1] +
+    int32_t stateCountTotal = stateCount[0] + stateCount[1] +
                                stateCount[2] + stateCount[3] +
                                stateCount[4];
     if (5 * FXSYS_abs(stateCountTotal - originalStateCountTotal) >= originalStateCountTotal) {
@@ -340,18 +340,18 @@ FX_FLOAT CBC_QRFinderPatternFinder::CrossCheckHorizontal(FX_INT32 startJ, FX_INT
     }
     return FoundPatternCross(stateCount) ? CenterFromEnd(stateCount, j) : FXSYS_nan();
 }
-FX_BOOL CBC_QRFinderPatternFinder::HandlePossibleCenter(const CFX_Int32Array &stateCount, FX_INT32 i, FX_INT32 j)
+FX_BOOL CBC_QRFinderPatternFinder::HandlePossibleCenter(const CFX_Int32Array &stateCount, int32_t i, int32_t j)
 {
-    FX_INT32 stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
+    int32_t stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
     FX_FLOAT centerJ = CenterFromEnd(stateCount, j);
-    FX_FLOAT centerI = CrossCheckVertical(i, (FX_INT32) centerJ, stateCount[2], stateCountTotal);
+    FX_FLOAT centerI = CrossCheckVertical(i, (int32_t) centerJ, stateCount[2], stateCountTotal);
     if(!FXSYS_isnan(centerI)) {
-        centerJ = CrossCheckHorizontal((FX_INT32) centerJ, (FX_INT32) centerI, stateCount[2], stateCountTotal);
+        centerJ = CrossCheckHorizontal((int32_t) centerJ, (int32_t) centerI, stateCount[2], stateCountTotal);
         if(!FXSYS_isnan(centerJ)) {
             FX_FLOAT estimatedModuleSize = (FX_FLOAT) stateCountTotal / 7.0f;
             FX_BOOL found = FALSE;
-            FX_INT32 max = m_possibleCenters.GetSize();
-            for(FX_INT32 index = 0; index < max; index++) {
+            int32_t max = m_possibleCenters.GetSize();
+            for(int32_t index = 0; index < max; index++) {
                 CBC_QRFinderPattern *center = (CBC_QRFinderPattern*)(m_possibleCenters[index]);
                 if(center->AboutEquals(estimatedModuleSize, centerI, centerJ)) {
                     center->IncrementCount();
@@ -367,21 +367,21 @@ FX_BOOL CBC_QRFinderPatternFinder::HandlePossibleCenter(const CFX_Int32Array &st
     }
     return FALSE;
 }
-FX_INT32 CBC_QRFinderPatternFinder::FindRowSkip()
+int32_t CBC_QRFinderPatternFinder::FindRowSkip()
 {
-    FX_INT32 max = m_possibleCenters.GetSize();
+    int32_t max = m_possibleCenters.GetSize();
     if (max <= 1) {
         return 0;
     }
     FinderPattern *firstConfirmedCenter = NULL;
-    for (FX_INT32 i = 0; i < max; i++) {
+    for (int32_t i = 0; i < max; i++) {
         CBC_QRFinderPattern *center = (CBC_QRFinderPattern*)m_possibleCenters[i];
         if (center->GetCount() >= CENTER_QUORUM) {
             if (firstConfirmedCenter == NULL) {
                 firstConfirmedCenter = center;
             } else {
                 m_hasSkipped = TRUE;
-                return (FX_INT32) ((fabs(firstConfirmedCenter->GetX() - center->GetX()) -
+                return (int32_t) ((fabs(firstConfirmedCenter->GetX() - center->GetX()) -
                                     fabs(firstConfirmedCenter->GetY() - center->GetY())) / 2);
             }
         }
@@ -390,10 +390,10 @@ FX_INT32 CBC_QRFinderPatternFinder::FindRowSkip()
 }
 FX_BOOL CBC_QRFinderPatternFinder::HaveMultiplyConfirmedCenters()
 {
-    FX_INT32 confirmedCount = 0;
+    int32_t confirmedCount = 0;
     FX_FLOAT totalModuleSize = 0.0f;
-    FX_INT32 max = m_possibleCenters.GetSize();
-    FX_INT32 i;
+    int32_t max = m_possibleCenters.GetSize();
+    int32_t i;
     for (i = 0; i < max; i++) {
         CBC_QRFinderPattern *pattern = (CBC_QRFinderPattern*)m_possibleCenters[i];
         if (pattern->GetCount() >= CENTER_QUORUM) {
@@ -416,9 +416,9 @@ inline FX_BOOL centerComparator(FX_LPVOID a, FX_LPVOID b)
 {
     return ((CBC_QRFinderPattern*)b)->GetCount() < ((CBC_QRFinderPattern*)a)->GetCount();
 }
-CFX_PtrArray *CBC_QRFinderPatternFinder::SelectBestpatterns(FX_INT32 &e)
+CFX_PtrArray *CBC_QRFinderPatternFinder::SelectBestpatterns(int32_t &e)
 {
-    FX_INT32 startSize = m_possibleCenters.GetSize();
+    int32_t startSize = m_possibleCenters.GetSize();
     if(m_possibleCenters.GetSize() < 3) {
         e = BCExceptionRead;
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
@@ -426,11 +426,11 @@ CFX_PtrArray *CBC_QRFinderPatternFinder::SelectBestpatterns(FX_INT32 &e)
     FX_FLOAT average = 0.0f;
     if(startSize > 3) {
         FX_FLOAT totalModuleSize = 0.0f;
-        for(FX_INT32 i = 0; i < startSize; i++) {
+        for(int32_t i = 0; i < startSize; i++) {
             totalModuleSize += ((CBC_QRFinderPattern*)m_possibleCenters[i])->GetEstimatedModuleSize();
         }
         average = totalModuleSize / (FX_FLOAT)startSize;
-        for(FX_INT32 j = 0; j < m_possibleCenters.GetSize() && m_possibleCenters.GetSize() > 3; j++) {
+        for(int32_t j = 0; j < m_possibleCenters.GetSize() && m_possibleCenters.GetSize() > 3; j++) {
             CBC_QRFinderPattern *pattern = (CBC_QRFinderPattern*)m_possibleCenters[j];
             if(fabs(pattern->GetEstimatedModuleSize() - average) > 0.2f * average) {
                 delete pattern;

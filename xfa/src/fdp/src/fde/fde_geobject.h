@@ -31,8 +31,8 @@ public:
     virtual void			AddRectangle(const CFX_RectF &rect);
     virtual void			GetBBox(CFX_RectF &bbox) const;
     virtual void			GetBBox(CFX_RectF &bbox, FX_FLOAT fLineWidth, FX_FLOAT fMiterLimit) const;
-    FX_PATHPOINT*			AddPoints(FX_INT32 iCount);
-    FX_PATHPOINT*			GetLastPoint(FX_INT32 iCount = 1) const;
+    FX_PATHPOINT*			AddPoints(int32_t iCount);
+    FX_PATHPOINT*			GetLastPoint(int32_t iCount = 1) const;
     FX_BOOL					FigureClosed() const;
     void					MoveTo(FX_FLOAT fx, FX_FLOAT fy);
     void					LineTo(FX_FLOAT fx, FX_FLOAT fy);

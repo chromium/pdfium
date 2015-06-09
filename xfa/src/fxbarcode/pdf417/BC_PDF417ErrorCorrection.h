@@ -11,10 +11,10 @@ class CBC_PDF417ErrorCorrection
 public:
     CBC_PDF417ErrorCorrection();
     virtual ~CBC_PDF417ErrorCorrection();
-    static FX_INT32 getErrorCorrectionCodewordCount(FX_INT32 errorCorrectionLevel, FX_INT32 &e);
-    static FX_INT32 getRecommendedMinimumErrorCorrectionLevel(FX_INT32 n, FX_INT32 &e);
-    static CFX_WideString generateErrorCorrection(CFX_WideString dataCodewords, FX_INT32 errorCorrectionLevel, FX_INT32 &e);
+    static int32_t getErrorCorrectionCodewordCount(int32_t errorCorrectionLevel, int32_t &e);
+    static int32_t getRecommendedMinimumErrorCorrectionLevel(int32_t n, int32_t &e);
+    static CFX_WideString generateErrorCorrection(CFX_WideString dataCodewords, int32_t errorCorrectionLevel, int32_t &e);
 private:
-    static FX_INT32 EC_COEFFICIENTS[][2500];
+    static int32_t EC_COEFFICIENTS[][2500];
 };
 #endif

@@ -8,7 +8,7 @@
 #define _FX_DATETIME_H_
 class CFX_Unitime;
 class CFX_DateTime;
-typedef FX_INT64	FX_UNITIME;
+typedef int64_t	FX_UNITIME;
 enum FX_WEEKDAY {
     FX_Sunday			=  0,
     FX_Monday				,
@@ -18,9 +18,9 @@ enum FX_WEEKDAY {
     FX_Friday				,
     FX_Saturday				,
 };
-FX_BOOL		FX_IsLeapYear(FX_INT32 iYear);
-FX_INT32	FX_DaysInYear(FX_INT32 iYear);
-FX_BYTE		FX_DaysInMonth(FX_INT32 iYear, FX_BYTE iMonth);
+FX_BOOL		FX_IsLeapYear(int32_t iYear);
+int32_t	FX_DaysInYear(int32_t iYear);
+uint8_t		FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 class CFX_Unitime
 {
 public:
@@ -84,25 +84,25 @@ public:
     }
     void			Now();
     void			SetGMTime();
-    void			Set(FX_INT32 year, FX_BYTE month, FX_BYTE day, FX_BYTE hour = 0, FX_BYTE minute = 0, FX_BYTE second = 0, FX_WORD millisecond = 0);
+    void			Set(int32_t year, uint8_t month, uint8_t day, uint8_t hour = 0, uint8_t minute = 0, uint8_t second = 0, FX_WORD millisecond = 0);
     void			Set(FX_UNITIME t);
-    FX_INT32		GetYear() const;
-    FX_BYTE			GetMonth() const;
-    FX_BYTE			GetDay() const;
+    int32_t		GetYear() const;
+    uint8_t			GetMonth() const;
+    uint8_t			GetDay() const;
     FX_WEEKDAY		GetDayOfWeek() const;
     FX_WORD			GetDayOfYear() const;
-    FX_INT64		GetDayOfAD() const;
-    FX_BYTE			GetHour() const;
-    FX_BYTE			GetMinute() const;
-    FX_BYTE			GetSecond() const;
+    int64_t		GetDayOfAD() const;
+    uint8_t			GetHour() const;
+    uint8_t			GetMinute() const;
+    uint8_t			GetSecond() const;
     FX_WORD			GetMillisecond() const;
-    FX_BOOL			AddYears(FX_INT32 iYears);
-    FX_BOOL			AddMonths(FX_INT32 iMonths);
-    FX_BOOL			AddDays(FX_INT32 iDays);
-    FX_BOOL			AddHours(FX_INT32 iHours);
-    FX_BOOL			AddMinutes(FX_INT32 iMinutes);
-    FX_BOOL			AddSeconds(FX_INT32 iSeconds);
-    FX_BOOL			AddMilliseconds(FX_INT32 iMilliseconds);
+    FX_BOOL			AddYears(int32_t iYears);
+    FX_BOOL			AddMonths(int32_t iMonths);
+    FX_BOOL			AddDays(int32_t iDays);
+    FX_BOOL			AddHours(int32_t iHours);
+    FX_BOOL			AddMinutes(int32_t iMinutes);
+    FX_BOOL			AddSeconds(int32_t iSeconds);
+    FX_BOOL			AddMilliseconds(int32_t iMilliseconds);
     friend CFX_Unitime	operator + (const CFX_Unitime &t1, const CFX_Unitime &t2)
     {
         return CFX_Unitime(t1.m_iUnitime + t2.m_iUnitime);
@@ -206,37 +206,37 @@ private:
 #pragma pack(push, 1)
 #endif
 typedef struct _FX_DATE {
-    FX_INT32	year;
-    FX_BYTE		month;
-    FX_BYTE		day;
+    int32_t	year;
+    uint8_t		month;
+    uint8_t		day;
 } FX_DATE, * FX_LPDATE;
 typedef FX_DATE const * FX_LPCDATE;
 typedef struct _FX_TIME {
-    FX_BYTE		hour;
-    FX_BYTE		minute;
-    FX_BYTE		second;
+    uint8_t		hour;
+    uint8_t		minute;
+    uint8_t		second;
     FX_WORD		millisecond;
 } FX_TIME, * FX_LPTIME;
 typedef FX_TIME const * FX_LPCTIME;
 typedef struct _FX_TIMEZONE {
-    FX_INT8		tzHour;
-    FX_BYTE		tzMinute;
+    int8_t		tzHour;
+    uint8_t		tzMinute;
 } FX_TIMEZONE, * FX_LPTIMEZONE;
 typedef FX_TIMEZONE const * FX_LPCTIMEZONE;
 typedef struct _FX_DATETIME {
     union {
         struct {
-            FX_INT32	year;
-            FX_BYTE		month;
-            FX_BYTE		day;
+            int32_t	year;
+            uint8_t		month;
+            uint8_t		day;
         } sDate;
         FX_DATE aDate;
     } Date;
     union {
         struct {
-            FX_BYTE		hour;
-            FX_BYTE		minute;
-            FX_BYTE		second;
+            uint8_t		hour;
+            uint8_t		minute;
+            uint8_t		second;
             FX_WORD		millisecond;
         } sTime;
         FX_TIME aTime;
@@ -248,17 +248,17 @@ typedef struct _FX_DATETIMEZONE {
         struct {
             union {
                 struct {
-                    FX_INT32	year;
-                    FX_BYTE		month;
-                    FX_BYTE		day;
+                    int32_t	year;
+                    uint8_t		month;
+                    uint8_t		day;
                 };
                 FX_DATE	date;
             };
             union {
                 struct {
-                    FX_BYTE		hour;
-                    FX_BYTE		minute;
-                    FX_BYTE		second;
+                    uint8_t		hour;
+                    uint8_t		minute;
+                    uint8_t		second;
                     FX_WORD		millisecond;
                 };
                 FX_TIME time;
@@ -268,8 +268,8 @@ typedef struct _FX_DATETIMEZONE {
     };
     union {
         struct {
-            FX_INT8	tzHour;
-            FX_BYTE	tzMinute;
+            int8_t	tzHour;
+            uint8_t	tzMinute;
         };
         FX_TIMEZONE tz;
     };
@@ -336,26 +336,26 @@ public:
         FromUnitime(ToUnitime() - ((const CFX_DateTime&)dt).ToUnitime());
         return *this;
     }
-    virtual FX_BOOL			Set(FX_INT32 year, FX_BYTE month, FX_BYTE day, FX_BYTE hour = 0, FX_BYTE minute = 0, FX_BYTE second = 0, FX_WORD millisecond = 0);
+    virtual FX_BOOL			Set(int32_t year, uint8_t month, uint8_t day, uint8_t hour = 0, uint8_t minute = 0, uint8_t second = 0, FX_WORD millisecond = 0);
     virtual FX_BOOL			FromUnitime(FX_UNITIME t);
     virtual FX_UNITIME		ToUnitime() const;
-    virtual FX_INT32		GetYear() const;
-    virtual FX_BYTE			GetMonth() const;
-    virtual FX_BYTE			GetDay() const;
+    virtual int32_t		GetYear() const;
+    virtual uint8_t			GetMonth() const;
+    virtual uint8_t			GetDay() const;
     virtual FX_WEEKDAY		GetDayOfWeek() const;
     virtual FX_WORD			GetDayOfYear() const;
-    virtual FX_INT64		GetDayOfAD() const;
-    virtual FX_BYTE			GetHour() const;
-    virtual FX_BYTE			GetMinute() const;
-    virtual FX_BYTE			GetSecond() const;
+    virtual int64_t		GetDayOfAD() const;
+    virtual uint8_t			GetHour() const;
+    virtual uint8_t			GetMinute() const;
+    virtual uint8_t			GetSecond() const;
     virtual FX_WORD			GetMillisecond() const;
-    virtual FX_BOOL			AddYears(FX_INT32 iYears);
-    virtual FX_BOOL			AddMonths(FX_INT32 iMonths);
-    virtual FX_BOOL			AddDays(FX_INT32 iDays);
-    virtual FX_BOOL			AddHours(FX_INT32 iHours);
-    virtual FX_BOOL			AddMinutes(FX_INT32 iMinutes);
-    virtual FX_BOOL			AddSeconds(FX_INT32 iSeconds);
-    virtual FX_BOOL			AddMilliseconds(FX_INT32 iMilliseconds);
+    virtual FX_BOOL			AddYears(int32_t iYears);
+    virtual FX_BOOL			AddMonths(int32_t iMonths);
+    virtual FX_BOOL			AddDays(int32_t iDays);
+    virtual FX_BOOL			AddHours(int32_t iHours);
+    virtual FX_BOOL			AddMinutes(int32_t iMinutes);
+    virtual FX_BOOL			AddSeconds(int32_t iSeconds);
+    virtual FX_BOOL			AddMilliseconds(int32_t iMilliseconds);
     friend CFX_DateTime	operator + (const CFX_DateTime &dt1, const CFX_DateTime &dt2)
     {
         CFX_DateTime dt;

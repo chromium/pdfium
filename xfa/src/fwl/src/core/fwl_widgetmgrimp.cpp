@@ -59,12 +59,12 @@ CFWL_WidgetMgr::~CFWL_WidgetMgr()
         m_pDelegate = NULL;
     }
 }
-FX_INT32 CFWL_WidgetMgr::CountWidgets(IFWL_Widget *pParent )
+int32_t CFWL_WidgetMgr::CountWidgets(IFWL_Widget *pParent )
 {
     CFWL_WidgetMgrItem *pParentItem = GetWidgetMgrItem(pParent);
     return TravelWidgetMgr(pParentItem, NULL, NULL);
 }
-IFWL_Widget* CFWL_WidgetMgr::GetWidget(FX_INT32 nIndex, IFWL_Widget *pParent )
+IFWL_Widget* CFWL_WidgetMgr::GetWidget(int32_t nIndex, IFWL_Widget *pParent )
 {
     CFWL_WidgetMgrItem *pParentItem = GetWidgetMgrItem(pParent);
     IFWL_Widget *pWidget = NULL;
@@ -138,19 +138,19 @@ IFWL_Widget* CFWL_WidgetMgr::GetWidget(IFWL_Widget *pWidget, FWL_WGTRELATION eRe
     }
     return pRet;
 }
-FX_INT32 CFWL_WidgetMgr::GetWidgetIndex(IFWL_Widget *pWidget)
+int32_t CFWL_WidgetMgr::GetWidgetIndex(IFWL_Widget *pWidget)
 {
     CFWL_WidgetMgrItem *pItem = GetWidgetMgrItem(pWidget);
     _FWL_RETURN_VALUE_IF_FAIL(pItem, -1);
     return TravelWidgetMgr(pItem->pParent, NULL, pItem);
 }
-FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget *pWidget, FX_INT32 nIndex)
+FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget *pWidget, int32_t nIndex)
 {
     CFWL_WidgetMgrItem *pItem = GetWidgetMgrItem(pWidget);
     _FWL_RETURN_VALUE_IF_FAIL(pItem, FALSE);
     _FWL_RETURN_VALUE_IF_FAIL(pItem->pParent, FALSE);
     CFWL_WidgetMgrItem *pChild = pItem->pParent->pChild;
-    FX_INT32 i = 0;
+    int32_t i = 0;
     while (pChild) {
         if (pChild == pItem) {
             if (i == nIndex) {
@@ -264,7 +264,7 @@ void CFWL_WidgetMgr::AddWidget(IFWL_Widget *pWidget)
     pItem->pParent = pParentItem;
     SetWidgetIndex(pWidget, -1);
 }
-void CFWL_WidgetMgr::InsertWidget(IFWL_Widget *pParent, IFWL_Widget *pChild, FX_INT32 nIndex )
+void CFWL_WidgetMgr::InsertWidget(IFWL_Widget *pParent, IFWL_Widget *pChild, int32_t nIndex )
 {
     CFWL_WidgetMgrItem *pParentItem = GetWidgetMgrItem(pParent);
     if (!pParentItem) {
@@ -462,7 +462,7 @@ FX_BOOL	CFWL_WidgetMgr::IsIdleMessage_Native()
 {
     return m_pAdapter->IsIdleMessage();
 }
-FWL_ERR CFWL_WidgetMgr::Exit_Native(FX_INT32 iExitCode)
+FWL_ERR CFWL_WidgetMgr::Exit_Native(int32_t iExitCode)
 {
     return m_pAdapter->Exit(iExitCode);
 }
@@ -527,9 +527,9 @@ IFWL_Widget* CFWL_WidgetMgr::nextTab(IFWL_Widget *parent, IFWL_Widget *focus, FX
     }
     return NULL;
 }
-FX_INT32 CFWL_WidgetMgr::CountRadioButtonGroup(IFWL_Widget *pFirst)
+int32_t CFWL_WidgetMgr::CountRadioButtonGroup(IFWL_Widget *pFirst)
 {
-    FX_INT32 iRet = 0;
+    int32_t iRet = 0;
     IFWL_Widget *pChild = pFirst;
     while (pChild) {
         if ((pChild->GetStyles() & FWL_WGTSTYLE_Group) && pChild->GetClassID() == 3811304691) {
@@ -580,7 +580,7 @@ void CFWL_WidgetMgr::GetSameGroupRadioButton(IFWL_Widget *pRadioButton, CFX_PtrA
     if (!pFirst) {
         pFirst = pRadioButton;
     }
-    FX_INT32 iGroup = CountRadioButtonGroup(pFirst);
+    int32_t iGroup = CountRadioButtonGroup(pFirst);
     if (iGroup < 2) {
         if (pFirst->GetClassID() == 3811304691) {
             group.Add(pFirst);
@@ -636,12 +636,12 @@ CFWL_WidgetMgrItem* CFWL_WidgetMgr::GetWidgetMgrItem(IFWL_Widget *pWidget)
 {
     return (CFWL_WidgetMgrItem*)m_mapWidgetItem.GetValueAt(pWidget);
 }
-FX_INT32 CFWL_WidgetMgr::TravelWidgetMgr(CFWL_WidgetMgrItem *pParent, FX_INT32 *pIndex, CFWL_WidgetMgrItem *pItem, IFWL_Widget **pWidget )
+int32_t CFWL_WidgetMgr::TravelWidgetMgr(CFWL_WidgetMgrItem *pParent, int32_t *pIndex, CFWL_WidgetMgrItem *pItem, IFWL_Widget **pWidget )
 {
     if (!pParent) {
         return 0;
     }
-    FX_INT32 iCount = 0;
+    int32_t iCount = 0;
     CFWL_WidgetMgrItem *pChild = pParent->pChild;
     while (pChild) {
         iCount ++;
@@ -695,7 +695,7 @@ FWL_ERR	CFWL_WidgetMgrDelegate::OnSetCapability(FX_DWORD dwCapability )
     m_pWidgetMgr->m_dwCapability = dwCapability;
     return FWL_ERR_Succeeded;
 }
-FX_INT32 CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message *pMessage)
+int32_t CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message *pMessage)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
     _FWL_RETURN_VALUE_IF_FAIL(pMessage->m_pDstTarget, 0);
@@ -833,7 +833,7 @@ CFX_Graphics* CFWL_WidgetMgrDelegate::DrawWidgetBefore(IFWL_Widget *pWidget, CFX
         pItem->pOffscreen = FX_NEW CFX_Graphics;
         CFX_RectF rect;
         pWidget->GetWidgetRect(rect);
-        pItem->pOffscreen->Create((FX_INT32)rect.width, (FX_INT32)rect.height, FXDIB_Argb);
+        pItem->pOffscreen->Create((int32_t)rect.width, (int32_t)rect.height, FXDIB_Argb);
     }
     CFX_RectF rect;
     pGraphics->GetClipRect(rect);
@@ -893,7 +893,7 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget *pWidget, CFX_Matrix *
     FX_BOOL bOrginPtIntersectWidthChild = FALSE;
     FX_BOOL bOrginPtIntersectWidthDirty = rtDirty.Contains(rtWidget.left, rtWidget.top);
     static FWL_NeedRepaintHitData hitPoint[FWL_NEEDREPAINTHIT_Point];
-    static FX_INT32 iSize = sizeof(FWL_NeedRepaintHitData);
+    static int32_t iSize = sizeof(FWL_NeedRepaintHitData);
     FXSYS_memset(hitPoint, 0, iSize);
     FX_FLOAT fxPiece = rtWidget.width / FWL_NEEDREPAINTHIT_Piece;
     FX_FLOAT fyPiece = rtWidget.height / FWL_NEEDREPAINTHIT_Piece;
@@ -928,7 +928,7 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget *pWidget, CFX_Matrix *
         } else if (!(pChild->GetStates() & FWL_WGTSTATE_Invisible)) {
             rtChilds.Union(rect);
         }
-        for (FX_INT32 i = 0; i < FWL_NEEDREPAINTHIT_Point; i ++) {
+        for (int32_t i = 0; i < FWL_NEEDREPAINTHIT_Point; i ++) {
             if (hitPoint[i].bNotContainByDirty || hitPoint[i].bNotNeedRepaint) {
                 continue;
             }
@@ -950,8 +950,8 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget *pWidget, CFX_Matrix *
     if (rtChilds.IsEmpty()) {
         return TRUE;
     }
-    FX_INT32 repaintPoint = FWL_NEEDREPAINTHIT_Point;
-    for (FX_INT32 i = 0; i < FWL_NEEDREPAINTHIT_Point; i ++) {
+    int32_t repaintPoint = FWL_NEEDREPAINTHIT_Point;
+    for (int32_t i = 0; i < FWL_NEEDREPAINTHIT_Point; i ++) {
         if (hitPoint[i].bNotNeedRepaint) {
             repaintPoint --;
         }
@@ -1027,7 +1027,7 @@ FWL_ERR FWL_WidgetMgrSnapshot(IFWL_Widget *pWidget, const CFX_WideString *saveFi
     CFX_RectF r;
     pWidget->GetWidgetRect(r);
     CFX_Graphics gs;
-    gs.Create((FX_INT32)r.width, (FX_INT32)r.height, FXDIB_Argb);
+    gs.Create((int32_t)r.width, (int32_t)r.height, FXDIB_Argb);
     CFWL_WidgetMgr *widgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
     CFWL_WidgetMgrDelegate *delegate = widgetMgr->GetDelegate();
     delegate->OnDrawWidget(pWidget, &gs, pMatrix);

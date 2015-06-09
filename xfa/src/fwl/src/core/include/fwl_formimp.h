@@ -58,7 +58,7 @@ public:
     {
         bDisabled ? m_dwState |= FWL_SYSBUTTONSTATE_Disabled : m_dwState &= ~FWL_SYSBUTTONSTATE_Disabled;
     }
-    FX_INT32 GetPartState()
+    int32_t GetPartState()
     {
         return (IsDisabled() ? FWL_PARTSTATE_FRM_Disabled : (m_dwState + 1));
     }
@@ -116,8 +116,8 @@ protected:
     void			CalcContentRect(CFX_RectF &rtContent);
     CFWL_SysBtn*	GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy);
     CFWL_SysBtn*	GetSysBtnByState(FX_DWORD dwState);
-    CFWL_SysBtn*	GetSysBtnByIndex(FX_INT32 nIndex);
-    FX_INT32		GetSysBtnIndex(CFWL_SysBtn *pBtn);
+    CFWL_SysBtn*	GetSysBtnByIndex(int32_t nIndex);
+    int32_t		GetSysBtnIndex(CFWL_SysBtn *pBtn);
     FX_FLOAT		GetCaptionHeight();
     void			DrawCaptionText(CFX_Graphics *pGs, IFWL_ThemeProvider *pTheme, const CFX_Matrix* pMatrix = NULL);
     void			DrawIconImage(CFX_Graphics *pGs, IFWL_ThemeProvider *pTheme, const CFX_Matrix* pMatrix = NULL);
@@ -150,9 +150,9 @@ protected:
     RestoreInfo				m_InfoStart;
     FX_FLOAT				m_fCXBorder;
     FX_FLOAT				m_fCYBorder;
-    FX_INT32				m_iCaptureBtn;
-    FX_INT32				m_iSysBox;
-    FX_INT32				m_eResizeType;
+    int32_t				m_iCaptureBtn;
+    int32_t				m_iSysBox;
+    int32_t				m_eResizeType;
     FX_BOOL					m_bLButtonDown;
     FX_BOOL					m_bMaximized;
     FX_BOOL					m_bSetMaximize;
@@ -170,7 +170,7 @@ class CFWL_FormDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_FormDelegate(CFWL_FormImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:

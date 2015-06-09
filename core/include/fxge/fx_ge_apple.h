@@ -13,9 +13,9 @@ class CFX_QuartzDevice : public CFX_RenderDevice
 public:
     CFX_QuartzDevice();
     ~CFX_QuartzDevice();
-    FX_BOOL Attach(CGContextRef context, FX_INT32 nDeviceClass = FXDC_DISPLAY);
+    FX_BOOL Attach(CGContextRef context, int32_t nDeviceClass = FXDC_DISPLAY);
     FX_BOOL Attach(CFX_DIBitmap* pBitmap);
-    FX_BOOL Create(FX_INT32 width, FX_INT32 height, FXDIB_Format format);
+    FX_BOOL Create(int32_t width, int32_t height, FXDIB_Format format);
 
     CGContextRef GetContext();
 

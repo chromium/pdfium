@@ -33,7 +33,7 @@ static void _bmp_error_data(bmp_decompress_struct_p bmp_ptr, FX_LPCSTR err_msg)
     FXSYS_strncpy((char*)bmp_ptr->err_ptr, err_msg, BMP_MAX_ERROR_SIZE - 1);
     longjmp(bmp_ptr->jmpbuf, 1);
 }
-static void _bmp_read_scanline(bmp_decompress_struct_p bmp_ptr, FX_INT32 row_num, FX_LPBYTE row_buf)
+static void _bmp_read_scanline(bmp_decompress_struct_p bmp_ptr, int32_t row_num, FX_LPBYTE row_buf)
 {
     FXBMP_Context* p = (FXBMP_Context*)bmp_ptr->context_ptr;
     CCodec_BmpModule* pModule = (CCodec_BmpModule*)p->parent_ptr;
@@ -47,7 +47,7 @@ static FX_BOOL _bmp_get_data_position(bmp_decompress_struct_p bmp_ptr, FX_DWORD 
 }
 void* CCodec_BmpModule::Start(void* pModule)
 {
-    FXBMP_Context* p = (FXBMP_Context*)FX_Alloc(FX_BYTE, sizeof(FXBMP_Context));
+    FXBMP_Context* p = (FXBMP_Context*)FX_Alloc(uint8_t, sizeof(FXBMP_Context));
     if (p == NULL) {
         return NULL;
     }
@@ -80,13 +80,13 @@ void CCodec_BmpModule::Finish(void* pContext)
         p->m_FreeFunc(p);
     }
 }
-FX_INT32 CCodec_BmpModule::ReadHeader(void* pContext, FX_INT32* width, FX_INT32* height, FX_BOOL* tb_flag, FX_INT32* components, FX_INT32* pal_num, FX_DWORD** pal_pp, CFX_DIBAttribute* pAttribute)
+int32_t CCodec_BmpModule::ReadHeader(void* pContext, int32_t* width, int32_t* height, FX_BOOL* tb_flag, int32_t* components, int32_t* pal_num, FX_DWORD** pal_pp, CFX_DIBAttribute* pAttribute)
 {
     FXBMP_Context* p = (FXBMP_Context*)pContext;
     if(setjmp(p->bmp_ptr->jmpbuf)) {
         return 0;
     }
-    FX_INT32 ret = _bmp_read_header(p->bmp_ptr);
+    int32_t ret = _bmp_read_header(p->bmp_ptr);
     if (ret != 1) {
         return ret;
     }
@@ -104,7 +104,7 @@ FX_INT32 CCodec_BmpModule::ReadHeader(void* pContext, FX_INT32* width, FX_INT32*
     }
     return 1;
 }
-FX_INT32 CCodec_BmpModule::LoadImage(void* pContext)
+int32_t CCodec_BmpModule::LoadImage(void* pContext)
 {
     FXBMP_Context* p = (FXBMP_Context*)pContext;
     if(setjmp(p->bmp_ptr->jmpbuf)) {

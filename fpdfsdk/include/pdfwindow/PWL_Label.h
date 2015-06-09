@@ -23,11 +23,11 @@ public:
 
 	void							SetText(FX_LPCWSTR csText);
 	CFX_WideString					GetText() const;
-	void							SetLimitChar(FX_INT32 nLimitChar);
-	void							SetHorzScale(FX_INT32 nHorzScale);
+	void							SetLimitChar(int32_t nLimitChar);
+	void							SetHorzScale(int32_t nHorzScale);
 	void							SetCharSpace(FX_FLOAT fCharSpace);
 	CPDF_Rect						GetContentRect() const;
-	FX_INT32						GetTotalWords();
+	int32_t						GetTotalWords();
 	CFX_ByteString					GetTextAppearanceStream(const CPDF_Point & ptOffset) const;
 
 protected:

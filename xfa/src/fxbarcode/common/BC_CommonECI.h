@@ -9,12 +9,12 @@
 class CBC_CommonECI
 {
 public:
-    CBC_CommonECI(FX_INT32 value);
+    CBC_CommonECI(int32_t value);
     virtual ~CBC_CommonECI();
 
-    FX_INT32 GetValue();
-    static CBC_CommonECI* GetEICByValue(FX_INT32 value, FX_INT32 &e);
+    int32_t GetValue();
+    static CBC_CommonECI* GetEICByValue(int32_t value, int32_t &e);
 private:
-    FX_INT32 m_value;
+    int32_t m_value;
 };
 #endif

@@ -21,7 +21,7 @@ class CFWL_NoteLoop
 public:
     CFWL_NoteLoop(CFWL_WidgetImp *pForm = NULL);
     virtual FX_BOOL PreProcessMessage(CFWL_Message *pMessage);
-    virtual FWL_ERR	Idle(FX_INT32 count);
+    virtual FWL_ERR	Idle(int32_t count);
     CFWL_WidgetImp*	GetForm();
     FX_BOOL	ContinueModal();
     FWL_ERR	EndModalLoop();
@@ -43,8 +43,8 @@ public:
     virtual FWL_ERR		RegisterEventTarget(IFWL_Widget *pListener, IFWL_Widget *pEventSource = NULL, FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);
     virtual FWL_ERR		UnregisterEventTarget(IFWL_Widget *pListener);
     virtual	void		ClearEventTargets(FX_BOOL bRemoveAll);
-    virtual FX_INT32	GetQueueMaxSize() const;
-    virtual FWL_ERR		SetQueueMaxSize(const FX_INT32 size);
+    virtual int32_t	GetQueueMaxSize() const;
+    virtual FWL_ERR		SetQueueMaxSize(const int32_t size);
     virtual IFWL_NoteThread* GetOwnerThread() const;
     virtual FWL_ERR		PushNoteLoop(IFWL_NoteLoop *pNoteLoop);
     virtual IFWL_NoteLoop* PopNoteLoop();
@@ -62,7 +62,7 @@ public:
     FX_BOOL				QueueMessage(CFWL_Message *pMessage);
     FX_BOOL				UnqueueMessage(CFWL_NoteLoop *pNoteLoop);
     CFWL_NoteLoop*		GetTopLoop();
-    FX_INT32            CountLoop();
+    int32_t            CountLoop();
     void                SetHook(FWLMessageHookCallback callback, FX_LPVOID info);
     FX_BOOL				ProcessMessage(CFWL_Message *pMessage);
 protected:
@@ -86,8 +86,8 @@ protected:
     CFX_PtrArray		m_noteQueue;
     CFX_PtrArray		m_noteLoopQueue;
     CFX_MapPtrToPtr		m_eventTargets;
-    FX_INT32			m_sendEventCalled;
-    FX_INT32			m_maxSize;
+    int32_t			m_sendEventCalled;
+    int32_t			m_maxSize;
     FX_BOOL				m_bFullScreen;
     IFWL_Widget			*m_pHover;
     IFWL_Widget			*m_pFocus;
@@ -107,7 +107,7 @@ public:
     {
     }
     ~CFWL_EventTarget();
-    FX_INT32 SetEventSource(IFWL_Widget *pSource, FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);
+    int32_t SetEventSource(IFWL_Widget *pSource, FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);
     FX_BOOL  ProcessEvent(CFWL_Event *pEvent);
     FX_BOOL  IsFilterEvent(CFWL_Event *pEvent, FX_DWORD dwFilter);
     FX_BOOL	 IsInvalid()
@@ -139,8 +139,8 @@ public:
     FX_BOOL ProcessEnter(CFWL_EvtMouse *pEvt, IFWL_Widget *pOwner);
     FX_BOOL ProcessLeave(CFWL_EvtMouse *pEvt);
 
-    FX_ERR  SetToolTipInitialDelay(FX_INT32 iDelayTime);
-    FX_ERR  SetToolTipAutoPopDelay(FX_INT32 iDelayTime);
+    FX_ERR  SetToolTipInitialDelay(int32_t iDelayTime);
+    FX_ERR  SetToolTipAutoPopDelay(int32_t iDelayTime);
 
 protected:
     CFWL_ToolTipContainer();

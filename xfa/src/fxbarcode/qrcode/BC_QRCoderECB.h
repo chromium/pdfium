@@ -9,12 +9,12 @@
 class CBC_QRCoderECB
 {
 private:
-    FX_INT32 m_count;
-    FX_INT32 m_dataCodeWords;
+    int32_t m_count;
+    int32_t m_dataCodeWords;
 public:
-    CBC_QRCoderECB(FX_INT32 count, FX_INT32 dataCodeWords);
+    CBC_QRCoderECB(int32_t count, int32_t dataCodeWords);
     virtual ~CBC_QRCoderECB();
-    FX_INT32 GetCount();
-    FX_INT32 GetDataCodeWords();
+    int32_t GetCount();
+    int32_t GetDataCodeWords();
 };
 #endif

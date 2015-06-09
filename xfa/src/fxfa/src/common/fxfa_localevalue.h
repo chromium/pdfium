@@ -37,8 +37,8 @@ public:
     FX_BOOL	ValidateCanonicalDate(const CFX_WideString& wsDate, CFX_Unitime& unDate);
     FX_BOOL	ValidateCanonicalTime(const CFX_WideString& wsTime);
     FX_BOOL	ValidateCanonicalDateTime(const CFX_WideString& wsDateTime);
-    void	GetNumbericFormat(CFX_WideString &wsFormat, FX_INT32 nIntLen, FX_INT32 nDecLen, FX_BOOL bSign = TRUE);
-    FX_BOOL	ValidateNumericTemp(CFX_WideString& wsNumeric, CFX_WideString& wsFormat, IFX_Locale* pLocale = NULL, FX_INT32* pos = NULL);
+    void	GetNumbericFormat(CFX_WideString &wsFormat, int32_t nIntLen, int32_t nDecLen, FX_BOOL bSign = TRUE);
+    FX_BOOL	ValidateNumericTemp(CFX_WideString& wsNumeric, CFX_WideString& wsFormat, IFX_Locale* pLocale = NULL, int32_t* pos = NULL);
 
     CFX_WideString		GetValue() const;
     FX_DWORD			GetType() const;

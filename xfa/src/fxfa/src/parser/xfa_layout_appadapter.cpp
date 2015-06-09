@@ -25,7 +25,7 @@ IXFA_DocLayout* IXFA_LayoutPage::GetLayout() const
     CXFA_ContainerLayoutItemImpl* pThis = (CXFA_ContainerLayoutItemImpl*)this;
     return pThis->m_pFormNode->GetDocument()->GetLayoutProcessor();
 }
-FX_INT32 IXFA_LayoutPage::GetPageIndex() const
+int32_t IXFA_LayoutPage::GetPageIndex() const
 {
     CXFA_ContainerLayoutItemImpl* pThis = (CXFA_ContainerLayoutItemImpl*)this;
     return pThis->m_pFormNode->GetDocument()->GetLayoutProcessor()->GetLayoutPageMgr()->GetPageIndex((IXFA_LayoutPage*)this);
@@ -120,10 +120,10 @@ CXFA_LayoutItem* CXFA_LayoutItem::GetLast() const
     }
     return (CXFA_LayoutItem*)pCurNode;
 }
-FX_INT32 CXFA_LayoutItem::GetIndex() const
+int32_t CXFA_LayoutItem::GetIndex() const
 {
     CXFA_ContentLayoutItemImpl* pThis = (CXFA_ContentLayoutItemImpl*)this;
-    FX_INT32 iIndex = 0;
+    int32_t iIndex = 0;
     CXFA_ContentLayoutItemImpl* pCurNode = pThis;
     while(pCurNode->m_pPrev) {
         pCurNode = pCurNode->m_pPrev;
@@ -131,10 +131,10 @@ FX_INT32 CXFA_LayoutItem::GetIndex() const
     }
     return iIndex;
 }
-FX_INT32 CXFA_LayoutItem::GetCount() const
+int32_t CXFA_LayoutItem::GetCount() const
 {
     CXFA_ContentLayoutItemImpl* pThis = (CXFA_ContentLayoutItemImpl*)this;
-    FX_INT32 iCount = 1;
+    int32_t iCount = 1;
     CXFA_ContentLayoutItemImpl* pCurNode = NULL;
     pCurNode = pThis;
     while(pCurNode->m_pPrev) {

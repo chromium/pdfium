@@ -83,7 +83,7 @@ public:
     virtual ~CFWL_Widget();
     void		RegisterEventTarget(CFWL_Widget *pEventSource = NULL, FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);
     void		DispatchEvent(CFWL_Event *pEvent);
-    CFX_SizeF	CalcTextSize(const CFX_WideString &wsText, FX_BOOL bMultiLine = FALSE, FX_INT32 iLineWidth = -1);
+    CFX_SizeF	CalcTextSize(const CFX_WideString &wsText, FX_BOOL bMultiLine = FALSE, int32_t iLineWidth = -1);
     IFWL_Widget			*m_pImp;
     IFWL_WidgetDelegate *m_pDelegate;
     CFWL_WidgetMgr		*m_pWidgetMgr;
@@ -94,7 +94,7 @@ class CFWL_WidgetDelegate
 public:
     CFWL_WidgetDelegate();
     virtual ~CFWL_WidgetDelegate();
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 };

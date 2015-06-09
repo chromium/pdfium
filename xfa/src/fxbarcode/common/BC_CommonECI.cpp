@@ -23,18 +23,18 @@
 #include "../barcode.h"
 #include "BC_CommonECI.h"
 #include "BC_CommonCharacterSetECI.h"
-CBC_CommonECI::CBC_CommonECI(FX_INT32 value)
+CBC_CommonECI::CBC_CommonECI(int32_t value)
 {
     m_value = value;
 }
 CBC_CommonECI::~CBC_CommonECI()
 {
 }
-FX_INT32 CBC_CommonECI::GetValue()
+int32_t CBC_CommonECI::GetValue()
 {
     return m_value;
 }
-CBC_CommonECI* CBC_CommonECI::GetEICByValue(FX_INT32 value, FX_INT32 &e)
+CBC_CommonECI* CBC_CommonECI::GetEICByValue(int32_t value, int32_t &e)
 {
     if(value < 0 || value > 999999) {
         e = BCExceptionBadECI;

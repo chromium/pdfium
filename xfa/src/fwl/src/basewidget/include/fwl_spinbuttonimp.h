@@ -27,7 +27,7 @@ public:
     virtual FWL_ERR	    Update();
     virtual FX_DWORD	HitTest(FX_FLOAT fx, FX_FLOAT fy);
     virtual FWL_ERR		DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
-    virtual FX_INT32	Run(FWL_HTIMER hTimer);
+    virtual int32_t	Run(FWL_HTIMER hTimer);
     FWL_ERR		EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
     FX_BOOL		IsButtonEnable(FX_BOOL bUp = TRUE);
 protected:
@@ -38,7 +38,7 @@ protected:
     CFX_RectF	m_rtDnButton;
     FX_DWORD    m_dwUpState;
     FX_DWORD    m_dwDnState;
-    FX_INT32	m_iButtonIndex;
+    int32_t	m_iButtonIndex;
     FX_BOOL     m_bLButtonDwn;
     FWL_HTIMER	m_hTimer;
     friend class CFWL_SpinButtonImpDelegate;
@@ -47,7 +47,7 @@ class CFWL_SpinButtonImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_SpinButtonImpDelegate(CFWL_SpinButtonImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:

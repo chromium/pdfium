@@ -49,7 +49,7 @@ CPDF_Document* CPWL_FontMap::GetDocument()
 	return m_pPDFDoc;
 }
 
-CPDF_Font* CPWL_FontMap::GetPDFFont(FX_INT32 nFontIndex)
+CPDF_Font* CPWL_FontMap::GetPDFFont(int32_t nFontIndex)
 {
 	if (nFontIndex >=0 && nFontIndex < m_aData.GetSize())
 	{
@@ -62,7 +62,7 @@ CPDF_Font* CPWL_FontMap::GetPDFFont(FX_INT32 nFontIndex)
 	return NULL;
 }
 
-CFX_ByteString CPWL_FontMap::GetPDFFontAlias(FX_INT32 nFontIndex)
+CFX_ByteString CPWL_FontMap::GetPDFFontAlias(int32_t nFontIndex)
 {
 	if (nFontIndex >=0 && nFontIndex < m_aData.GetSize())
 	{
@@ -75,7 +75,7 @@ CFX_ByteString CPWL_FontMap::GetPDFFontAlias(FX_INT32 nFontIndex)
 	return "";
 }
 
-FX_BOOL CPWL_FontMap::KnowWord(FX_INT32 nFontIndex, FX_WORD word)
+FX_BOOL CPWL_FontMap::KnowWord(int32_t nFontIndex, FX_WORD word)
 {
 	if (nFontIndex >=0 && nFontIndex < m_aData.GetSize())
 	{
@@ -88,7 +88,7 @@ FX_BOOL CPWL_FontMap::KnowWord(FX_INT32 nFontIndex, FX_WORD word)
 	return FALSE;
 }
 
-FX_INT32 CPWL_FontMap::GetWordFontIndex(FX_WORD word, FX_INT32 nCharset, FX_INT32 nFontIndex)
+int32_t CPWL_FontMap::GetWordFontIndex(FX_WORD word, int32_t nCharset, int32_t nFontIndex)
 {
 	if (nFontIndex > 0)
 	{
@@ -111,7 +111,7 @@ FX_INT32 CPWL_FontMap::GetWordFontIndex(FX_WORD word, FX_INT32 nCharset, FX_INT3
 		}
 	}
 
-	FX_INT32 nNewFontIndex = -1;
+	int32_t nNewFontIndex = -1;
 
 	nNewFontIndex = this->GetFontIndex(GetNativeFontName(nCharset), nCharset, TRUE);
 	if (nNewFontIndex >= 0)
@@ -130,7 +130,7 @@ FX_INT32 CPWL_FontMap::GetWordFontIndex(FX_WORD word, FX_INT32 nCharset, FX_INT3
 	return -1;
 }
 
-FX_INT32 CPWL_FontMap::CharCodeFromUnicode(FX_INT32 nFontIndex, FX_WORD word)
+int32_t CPWL_FontMap::CharCodeFromUnicode(int32_t nFontIndex, FX_WORD word)
 {
 	if (CPWL_FontMap_Data* pData = m_aData.GetAt(nFontIndex))
 	{
@@ -153,10 +153,10 @@ FX_INT32 CPWL_FontMap::CharCodeFromUnicode(FX_INT32 nFontIndex, FX_WORD word)
 	return -1;
 }
 
-CFX_ByteString CPWL_FontMap::GetNativeFontName(FX_INT32 nCharset)
+CFX_ByteString CPWL_FontMap::GetNativeFontName(int32_t nCharset)
 {
 	//searching native font is slow, so we must save time
-	for (FX_INT32 i=0,sz=m_aNativeFont.GetSize(); i<sz; i++)
+	for (int32_t i=0,sz=m_aNativeFont.GetSize(); i<sz; i++)
 	{
 		if (CPWL_FontMap_Native* pData = m_aNativeFont.GetAt(i))
 		{
@@ -182,13 +182,13 @@ CFX_ByteString CPWL_FontMap::GetNativeFontName(FX_INT32 nCharset)
 void CPWL_FontMap::Empty()
 {
 	{
-		for (FX_INT32 i=0, sz=m_aData.GetSize(); i<sz; i++)
+		for (int32_t i=0, sz=m_aData.GetSize(); i<sz; i++)
 			delete m_aData.GetAt(i);
 
 		m_aData.RemoveAll();
 	}
 	{
-		for (FX_INT32 i=0, sz=m_aNativeFont.GetSize(); i<sz; i++)
+		for (int32_t i=0, sz=m_aNativeFont.GetSize(); i<sz; i++)
 			delete m_aNativeFont.GetAt(i);
 
 		m_aNativeFont.RemoveAll();
@@ -223,7 +223,7 @@ const char* g_sDEStandardFontName[] = {"Courier", "Courier-Bold", "Courier-BoldO
 
 FX_BOOL	CPWL_FontMap::IsStandardFont(const CFX_ByteString& sFontName)
 {
-	for (FX_INT32 i=0; i<14; i++)
+	for (int32_t i=0; i<14; i++)
 	{
 		if (sFontName == g_sDEStandardFontName[i])
 			return TRUE;
@@ -232,9 +232,9 @@ FX_BOOL	CPWL_FontMap::IsStandardFont(const CFX_ByteString& sFontName)
 	return FALSE;
 }
 
-FX_INT32 CPWL_FontMap::FindFont(const CFX_ByteString& sFontName, FX_INT32 nCharset)
+int32_t CPWL_FontMap::FindFont(const CFX_ByteString& sFontName, int32_t nCharset)
 {
-	for (FX_INT32 i=0,sz=m_aData.GetSize(); i<sz; i++)
+	for (int32_t i=0,sz=m_aData.GetSize(); i<sz; i++)
 	{
 		if (CPWL_FontMap_Data* pData = m_aData.GetAt(i))
 		{
@@ -249,9 +249,9 @@ FX_INT32 CPWL_FontMap::FindFont(const CFX_ByteString& sFontName, FX_INT32 nChars
 	return -1;
 }
 
-FX_INT32 CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName, FX_INT32 nCharset, FX_BOOL bFind)
+int32_t CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName, int32_t nCharset, FX_BOOL bFind)
 {
-	FX_INT32 nFontIndex = FindFont(EncodeFontAlias(sFontName, nCharset), nCharset);
+	int32_t nFontIndex = FindFont(EncodeFontAlias(sFontName, nCharset), nCharset);
 	if (nFontIndex >= 0) return nFontIndex;
 
 //	nFontIndex = FindFont("", nCharset);
@@ -285,11 +285,11 @@ FX_INT32 CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName, FX_INT32 nC
 	return AddFontData(pFont, sAlias, nCharset);
 }
 
-FX_INT32 CPWL_FontMap::GetPWLFontIndex(FX_WORD word, FX_INT32 nCharset)
+int32_t CPWL_FontMap::GetPWLFontIndex(FX_WORD word, int32_t nCharset)
 {
-	FX_INT32 nFind = -1;
+	int32_t nFind = -1;
 
-	for (FX_INT32 i=0,sz=m_aData.GetSize(); i<sz; i++)
+	for (int32_t i=0,sz=m_aData.GetSize(); i<sz; i++)
 	{
 		if (CPWL_FontMap_Data* pData = m_aData.GetAt(i))
 		{
@@ -318,12 +318,12 @@ FX_INT32 CPWL_FontMap::GetPWLFontIndex(FX_WORD word, FX_INT32 nCharset)
 	return AddFontData(pNewFont, sAlias, nCharset);
 }
 
-CPDF_Font* CPWL_FontMap::FindFontSameCharset(CFX_ByteString& sFontAlias, FX_INT32 nCharset)
+CPDF_Font* CPWL_FontMap::FindFontSameCharset(CFX_ByteString& sFontAlias, int32_t nCharset)
 {
 	return NULL;
 }
 
-FX_INT32 CPWL_FontMap::AddFontData(CPDF_Font* pFont, const CFX_ByteString& sFontAlias, FX_INT32 nCharset)
+int32_t CPWL_FontMap::AddFontData(CPDF_Font* pFont, const CFX_ByteString& sFontAlias, int32_t nCharset)
 {
 	CPWL_FontMap_Data* pNewData = new CPWL_FontMap_Data;
 	pNewData->pFont = pFont;
@@ -339,7 +339,7 @@ void CPWL_FontMap::AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias)
 {
 }
 
-CFX_ByteString CPWL_FontMap::GetFontName(FX_INT32 nFontIndex)
+CFX_ByteString CPWL_FontMap::GetFontName(int32_t nFontIndex)
 {
 	if (nFontIndex >=0 && nFontIndex < m_aData.GetSize())
 	{
@@ -352,7 +352,7 @@ CFX_ByteString CPWL_FontMap::GetFontName(FX_INT32 nFontIndex)
 	return "";
 }
 
-CFX_ByteString CPWL_FontMap::GetNativeFont(FX_INT32 nCharset)
+CFX_ByteString CPWL_FontMap::GetNativeFont(int32_t nCharset)
 {
 	CFX_ByteString sFontName;
 
@@ -372,7 +372,7 @@ CFX_ByteString CPWL_FontMap::GetNativeFont(FX_INT32 nCharset)
 	return sFontName;
 }
 
-CPDF_Font* CPWL_FontMap::AddFontToDocument(CPDF_Document* pDoc, CFX_ByteString& sFontName, FX_BYTE nCharset)
+CPDF_Font* CPWL_FontMap::AddFontToDocument(CPDF_Document* pDoc, CFX_ByteString& sFontName, uint8_t nCharset)
 {
 	if (IsStandardFont(sFontName))
 		return AddStandardFont(pDoc, sFontName);
@@ -397,7 +397,7 @@ CPDF_Font* CPWL_FontMap::AddStandardFont(CPDF_Document* pDoc, CFX_ByteString& sF
 	return pFont;
 }
 
-CPDF_Font* CPWL_FontMap::AddSystemFont(CPDF_Document* pDoc, CFX_ByteString& sFontName, FX_BYTE nCharset)
+CPDF_Font* CPWL_FontMap::AddSystemFont(CPDF_Document* pDoc, CFX_ByteString& sFontName, uint8_t nCharset)
 {
 	if (!pDoc) return NULL;
 
@@ -410,7 +410,7 @@ CPDF_Font* CPWL_FontMap::AddSystemFont(CPDF_Document* pDoc, CFX_ByteString& sFon
 	return NULL;
 }
 
-CFX_ByteString CPWL_FontMap::EncodeFontAlias(const CFX_ByteString& sFontName, FX_INT32 nCharset)
+CFX_ByteString CPWL_FontMap::EncodeFontAlias(const CFX_ByteString& sFontName, int32_t nCharset)
 {
 	CFX_ByteString sPostfix;
 	sPostfix.Format("_%02X", nCharset);
@@ -424,12 +424,12 @@ CFX_ByteString CPWL_FontMap::EncodeFontAlias(const CFX_ByteString& sFontName)
 	return sRet;
 }
 
-FX_INT32 CPWL_FontMap::GetFontMapCount() const
+int32_t CPWL_FontMap::GetFontMapCount() const
 {
 	return m_aData.GetSize();
 }
 
-const CPWL_FontMap_Data* CPWL_FontMap::GetFontMapData(FX_INT32 nIndex) const
+const CPWL_FontMap_Data* CPWL_FontMap::GetFontMapData(int32_t nIndex) const
 {
 	if (nIndex >=0 && nIndex < m_aData.GetSize())
 	{
@@ -439,10 +439,10 @@ const CPWL_FontMap_Data* CPWL_FontMap::GetFontMapData(FX_INT32 nIndex) const
 	return NULL;
 }
 
-FX_INT32 CPWL_FontMap::GetNativeCharset()
+int32_t CPWL_FontMap::GetNativeCharset()
 {
-	FX_BYTE nCharset = ANSI_CHARSET;
-	FX_INT32 iCodePage = FXSYS_GetACP();
+	uint8_t nCharset = ANSI_CHARSET;
+	int32_t iCodePage = FXSYS_GetACP();
 	switch (iCodePage)
 	{
 	case 932://Japan
@@ -513,7 +513,7 @@ const CPWL_FontMap::CharsetFontMap CPWL_FontMap::defaultTTFMap[] = {
 	{ -1, NULL }
 };
 
-CFX_ByteString CPWL_FontMap::GetDefaultFontByCharset(FX_INT32 nCharset)
+CFX_ByteString CPWL_FontMap::GetDefaultFontByCharset(int32_t nCharset)
 {
 	int i = 0;
 	while (defaultTTFMap[i].charset != -1) {
@@ -524,7 +524,7 @@ CFX_ByteString CPWL_FontMap::GetDefaultFontByCharset(FX_INT32 nCharset)
 	return "";
 }
 
-FX_INT32 CPWL_FontMap::CharSetFromUnicode(FX_WORD word, FX_INT32 nOldCharset)
+int32_t CPWL_FontMap::CharSetFromUnicode(FX_WORD word, int32_t nOldCharset)
 {
 	if(m_pSystemHandler && (-1 != m_pSystemHandler->GetCharSet()))
 		return m_pSystemHandler->GetCharSet();

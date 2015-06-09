@@ -14,17 +14,17 @@ public:
     CBC_DataMatrixBitMatrixParser();
     virtual ~CBC_DataMatrixBitMatrixParser();
     CBC_DataMatrixVersion *GetVersion();
-    CFX_ByteArray *ReadCodewords(FX_INT32 &e);
-    FX_BOOL ReadModule(FX_INT32 row, FX_INT32 column, FX_INT32 numRows, FX_INT32 numColumns);
-    FX_INT32 ReadUtah(FX_INT32 row, FX_INT32 column, FX_INT32 numRows, FX_INT32 numColumns);
-    FX_INT32 ReadCorner1(FX_INT32 numRows, FX_INT32 numColumns);
-    FX_INT32 ReadCorner2(FX_INT32 numRows, FX_INT32 numColumns);
-    FX_INT32 ReadCorner3(FX_INT32 numRows, FX_INT32 numColumns);
-    FX_INT32 ReadCorner4(FX_INT32 numRows, FX_INT32 numColumns);
-    CBC_CommonBitMatrix *ExtractDataRegion(CBC_CommonBitMatrix *bitMatrix, FX_INT32 &e);
-    virtual void Init(CBC_CommonBitMatrix *bitMatrix, FX_INT32 &e);
+    CFX_ByteArray *ReadCodewords(int32_t &e);
+    FX_BOOL ReadModule(int32_t row, int32_t column, int32_t numRows, int32_t numColumns);
+    int32_t ReadUtah(int32_t row, int32_t column, int32_t numRows, int32_t numColumns);
+    int32_t ReadCorner1(int32_t numRows, int32_t numColumns);
+    int32_t ReadCorner2(int32_t numRows, int32_t numColumns);
+    int32_t ReadCorner3(int32_t numRows, int32_t numColumns);
+    int32_t ReadCorner4(int32_t numRows, int32_t numColumns);
+    CBC_CommonBitMatrix *ExtractDataRegion(CBC_CommonBitMatrix *bitMatrix, int32_t &e);
+    virtual void Init(CBC_CommonBitMatrix *bitMatrix, int32_t &e);
 private:
-    static CBC_DataMatrixVersion* ReadVersion(CBC_CommonBitMatrix *bitMatrix, FX_INT32 &e);
+    static CBC_DataMatrixVersion* ReadVersion(CBC_CommonBitMatrix *bitMatrix, int32_t &e);
     CBC_CommonBitMatrix *m_mappingBitMatrix;
     CBC_CommonBitMatrix *m_readMappingMatrix;
     CBC_DataMatrixVersion *m_version;

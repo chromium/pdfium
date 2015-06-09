@@ -36,7 +36,7 @@ protected:
     IFDE_SolidBrush			*m_pSolidBrush;
     CFX_Matrix				m_Transform;
     FXTEXT_CHARPOS			*m_pCharPos;
-    FX_INT32				m_iCharPosCount;
+    int32_t				m_iCharPosCount;
     IFDE_VisualSetIterator	*m_pIterator;
 };
 #endif

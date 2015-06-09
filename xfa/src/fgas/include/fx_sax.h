@@ -39,8 +39,8 @@ class IFX_SAXReader
 {
 public:
     virtual void		Release() = 0;
-    virtual FX_INT32	StartParse(IFX_FileRead *pFile, FX_DWORD dwStart = 0, FX_DWORD dwLen = -1, FX_DWORD dwParseMode = 0) = 0;
-    virtual FX_INT32	ContinueParse(IFX_Pause *pPause = NULL) = 0;
+    virtual int32_t	StartParse(IFX_FileRead *pFile, FX_DWORD dwStart = 0, FX_DWORD dwLen = -1, FX_DWORD dwParseMode = 0) = 0;
+    virtual int32_t	ContinueParse(IFX_Pause *pPause = NULL) = 0;
     virtual void		SkipCurrentNode() = 0;
     virtual void		SetHandler(IFX_SAXReaderHandler *pHandler) = 0;
 };

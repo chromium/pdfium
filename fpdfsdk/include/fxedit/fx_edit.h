@@ -65,15 +65,15 @@ class IFX_Edit_FontMap
 public:
         virtual ~IFX_Edit_FontMap() { }
 	//map a fontindex to pdf font.
-	virtual CPDF_Font *						GetPDFFont(FX_INT32 nFontIndex) = 0;
+	virtual CPDF_Font *						GetPDFFont(int32_t nFontIndex) = 0;
 	//get the alias of a pdf font.
-	virtual CFX_ByteString					GetPDFFontAlias(FX_INT32 nFontIndex) = 0;
+	virtual CFX_ByteString					GetPDFFontAlias(int32_t nFontIndex) = 0;
 	//get the index of a font that can show a word.
-	virtual FX_INT32						GetWordFontIndex(FX_WORD word, FX_INT32 charset, FX_INT32 nFontIndex) = 0;
+	virtual int32_t						GetWordFontIndex(FX_WORD word, int32_t charset, int32_t nFontIndex) = 0;
 	//get the charcode of word from unicode
-	virtual FX_INT32						CharCodeFromUnicode(FX_INT32 nFontIndex, FX_WORD word) = 0;
+	virtual int32_t						CharCodeFromUnicode(int32_t nFontIndex, FX_WORD word) = 0;
 	//get the charset of unicode
-	virtual FX_INT32						CharSetFromUnicode(FX_WORD word, FX_INT32 nOldCharset) = 0;
+	virtual int32_t						CharSetFromUnicode(FX_WORD word, int32_t nOldCharset) = 0;
 };
 
 class IFX_Edit_Notify
@@ -151,7 +151,7 @@ public:
 	//get the information of the current section.
 	virtual FX_BOOL							GetSection(CPVT_Section & section) const = 0;
 	//set the current position.
-	virtual void							SetAt(FX_INT32 nWordIndex) = 0;
+	virtual void							SetAt(int32_t nWordIndex) = 0;
 	//set the current position.
 	virtual void							SetAt(const CPVT_WordPlace & place) = 0;
 	//get the current position.
@@ -200,19 +200,19 @@ public:
 	virtual void							SetScrollPos(const CPDF_Point & point) = 0;
 
 	//set the horizontal text alignment in text box, nFormat (0:left 1:middle 2:right).
-	virtual void							SetAlignmentH(FX_INT32 nFormat = 0, FX_BOOL bPaint = TRUE) = 0;
+	virtual void							SetAlignmentH(int32_t nFormat = 0, FX_BOOL bPaint = TRUE) = 0;
 	//set the vertical text alignment in text box, nFormat (0:top 1:center 2:bottom).
-	virtual void							SetAlignmentV(FX_INT32 nFormat = 0, FX_BOOL bPaint = TRUE) = 0;
+	virtual void							SetAlignmentV(int32_t nFormat = 0, FX_BOOL bPaint = TRUE) = 0;
 	//if the text is shown in secret , set a character for substitute.
 	virtual void							SetPasswordChar(FX_WORD wSubWord = '*', FX_BOOL bPaint = TRUE) = 0;
 	//set the maximal count of words of the text.
-	virtual void							SetLimitChar(FX_INT32 nLimitChar = 0, FX_BOOL bPaint = TRUE) = 0;
+	virtual void							SetLimitChar(int32_t nLimitChar = 0, FX_BOOL bPaint = TRUE) = 0;
 	//if set the count of charArray , then all words is shown in equal space.
-	virtual void							SetCharArray(FX_INT32 nCharArray = 0, FX_BOOL bPaint = TRUE) = 0;
+	virtual void							SetCharArray(int32_t nCharArray = 0, FX_BOOL bPaint = TRUE) = 0;
 	//set the space of two characters.
 	virtual void							SetCharSpace(FX_FLOAT fCharSpace = 0.0f, FX_BOOL bPaint = TRUE) = 0;
 	//set the horizontal scale of all characters.
-	virtual void							SetHorzScale(FX_INT32 nHorzScale = 100, FX_BOOL bPaint = TRUE) = 0;
+	virtual void							SetHorzScale(int32_t nHorzScale = 100, FX_BOOL bPaint = TRUE) = 0;
 	//set the leading of all lines
 	virtual void							SetLineLeading(FX_FLOAT fLineLeading, FX_BOOL bPaint = TRUE) = 0;
 	//if set, CRLF is allowed.
@@ -235,11 +235,11 @@ public:
 	//set the fontsize of selected text.
 	virtual FX_BOOL							SetRichFontSize(FX_FLOAT fFontSize) = 0;	
 	//set the fontindex of selected text, user can change the font of selected text.
-	virtual FX_BOOL							SetRichFontIndex(FX_INT32 nFontIndex) = 0;
+	virtual FX_BOOL							SetRichFontIndex(int32_t nFontIndex) = 0;
 	//set the textcolor of selected text.
 	virtual FX_BOOL							SetRichTextColor(FX_COLORREF dwColor) = 0;
 	//set the text script type of selected text. (0:normal 1:superscript 2:subscript)
-	virtual FX_BOOL							SetRichTextScript(FX_INT32 nScriptType) = 0;	
+	virtual FX_BOOL							SetRichTextScript(int32_t nScriptType) = 0;	
 	//set the bold font style of selected text.
 	virtual FX_BOOL							SetRichTextBold(FX_BOOL bBold = TRUE) = 0;
 	//set the italic font style of selected text.
@@ -251,25 +251,25 @@ public:
 	//set the charspace of selected text, in user coordinate.
 	virtual	FX_BOOL							SetRichTextCharSpace(FX_FLOAT fCharSpace) = 0;
 	//set the horizontal scale of selected text, default value is 100.
-	virtual FX_BOOL							SetRichTextHorzScale(FX_INT32 nHorzScale = 100) = 0;
+	virtual FX_BOOL							SetRichTextHorzScale(int32_t nHorzScale = 100) = 0;
 	//set the leading of selected section, in user coordinate.
 	virtual FX_BOOL							SetRichTextLineLeading(FX_FLOAT fLineLeading) = 0;
 	//set the indent of selected section, in user coordinate.
 	virtual FX_BOOL							SetRichTextLineIndent(FX_FLOAT fLineIndent) = 0;
 	//set the alignment of selected section, nAlignment(0:left 1:middle 2:right)
-	virtual FX_BOOL							SetRichTextAlignment(FX_INT32 nAlignment) = 0;
+	virtual FX_BOOL							SetRichTextAlignment(int32_t nAlignment) = 0;
 
 	//set the selected range of text.
 	//if nStartChar == 0 and nEndChar == -1, select all the text.
-	virtual void							SetSel(FX_INT32 nStartChar,FX_INT32 nEndChar) = 0;
+	virtual void							SetSel(int32_t nStartChar,int32_t nEndChar) = 0;
 	//get the selected range of text.
-	virtual void							GetSel(FX_INT32 & nStartChar, FX_INT32 & nEndChar) const = 0;
+	virtual void							GetSel(int32_t & nStartChar, int32_t & nEndChar) const = 0;
 	//select all the text.
 	virtual	void							SelectAll() = 0;
 	//set text is not selected.
 	virtual void							SelectNone() = 0;		
 	//get the caret position.
-	virtual FX_INT32						GetCaret() const = 0;
+	virtual int32_t						GetCaret() const = 0;
 	virtual CPVT_WordPlace					GetCaretWordPlace() const = 0;
 	//get the string of selected text.
 	virtual CFX_WideString					GetSelText() const = 0;
@@ -309,14 +309,14 @@ public:
 	virtual void							OnVK_END(FX_BOOL bShift,FX_BOOL bCtrl) = 0;
 
 	//put text into edit.
-	virtual void							SetText(FX_LPCWSTR text,FX_INT32 charset = DEFAULT_CHARSET,
+	virtual void							SetText(FX_LPCWSTR text,int32_t charset = DEFAULT_CHARSET,
 													const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL) = 0;	
 	//insert a word into the edit.
-	virtual FX_BOOL							InsertWord(FX_WORD word, FX_INT32 charset = DEFAULT_CHARSET, const CPVT_WordProps * pWordProps = NULL) = 0;
+	virtual FX_BOOL							InsertWord(FX_WORD word, int32_t charset = DEFAULT_CHARSET, const CPVT_WordProps * pWordProps = NULL) = 0;
 	//insert a return into the edit.
 	virtual FX_BOOL							InsertReturn(const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL) = 0;	
 	//insert text into the edit.
-	virtual FX_BOOL							InsertText(FX_LPCWSTR text, FX_INT32 charset = DEFAULT_CHARSET,
+	virtual FX_BOOL							InsertText(FX_LPCWSTR text, int32_t charset = DEFAULT_CHARSET,
 													const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL) = 0;
 	//do backspace operation.
 	virtual FX_BOOL							Backspace() = 0;
@@ -330,7 +330,7 @@ public:
 	//do Undo operation.
 	virtual FX_BOOL							Undo() = 0;
 	//move caret
-	virtual void							SetCaret(FX_INT32 nPos) = 0;
+	virtual void							SetCaret(int32_t nPos) = 0;
 
 	//arrange all words over again
 	virtual void							Paint() = 0;
@@ -350,9 +350,9 @@ public:
 	virtual void							EnableOprNotify(FX_BOOL bNotify) = 0;
 
 	//map word place to word index.
-	virtual FX_INT32						WordPlaceToWordIndex(const CPVT_WordPlace & place) const = 0;
+	virtual int32_t						WordPlaceToWordIndex(const CPVT_WordPlace & place) const = 0;
 	//map word index to word place.
-	virtual CPVT_WordPlace					WordIndexToWordPlace(FX_INT32 index) const = 0;
+	virtual CPVT_WordPlace					WordIndexToWordPlace(int32_t index) const = 0;
 
 	//get the beginning position of a line
 	virtual CPVT_WordPlace					GetLineBeginPlace(const CPVT_WordPlace & place) const = 0;
@@ -374,9 +374,9 @@ public:
 	//get the mask character.
 	virtual FX_WORD							GetPasswordChar() const = 0;
 	//get the count of charArray
-	virtual FX_INT32						GetCharArray() const = 0;
+	virtual int32_t						GetCharArray() const = 0;
 	//get the horizontal scale of all characters
-	virtual FX_INT32						GetHorzScale() const = 0;
+	virtual int32_t						GetHorzScale() const = 0;
 	//get the space of two characters
 	virtual FX_FLOAT						GetCharSpace() const = 0;
 	//get the latin words of specified range
@@ -388,7 +388,7 @@ public:
 	//if the content is changed after settext?
 	virtual FX_BOOL							IsModified() const = 0;
 	//get the total words in edit
-	virtual FX_INT32						GetTotalWords() const = 0;
+	virtual int32_t						GetTotalWords() const = 0;
 
 	virtual void							AddUndoItem(IFX_Edit_UndoItem* pUndoItem) = 0;
 
@@ -449,29 +449,29 @@ public:
 	virtual CPDF_Rect						GetContentRect() const = 0;
 
 	virtual FX_FLOAT						GetFontSize() const = 0;
-	virtual IFX_Edit*						GetItemEdit(FX_INT32 nIndex) const = 0;
-	virtual FX_INT32						GetCount() const = 0;
-	virtual FX_BOOL							IsItemSelected(FX_INT32 nIndex) const = 0;
+	virtual IFX_Edit*						GetItemEdit(int32_t nIndex) const = 0;
+	virtual int32_t						GetCount() const = 0;
+	virtual FX_BOOL							IsItemSelected(int32_t nIndex) const = 0;
 	virtual FX_FLOAT						GetFirstHeight() const = 0;
 	
 	virtual void							SetMultipleSel(FX_BOOL bMultiple) = 0;
 	virtual FX_BOOL							IsMultipleSel() const = 0;	
-	virtual FX_BOOL							IsValid(FX_INT32 nItemIndex) const = 0;
-	virtual FX_INT32						FindNext(FX_INT32 nIndex,FX_WCHAR nChar) const = 0;	
+	virtual FX_BOOL							IsValid(int32_t nItemIndex) const = 0;
+	virtual int32_t						FindNext(int32_t nIndex,FX_WCHAR nChar) const = 0;	
 
 	virtual void							SetScrollPos(const CPDF_Point & point) = 0;
-	virtual void							ScrollToListItem(FX_INT32 nItemIndex) = 0;
-	virtual CPDF_Rect						GetItemRect(FX_INT32 nIndex) const = 0;
-	virtual FX_INT32						GetCaret() const = 0;
-	virtual FX_INT32						GetSelect() const = 0;	
-	virtual FX_INT32						GetTopItem() const = 0;
-	virtual FX_INT32						GetItemIndex(const CPDF_Point & point) const = 0;
-	virtual FX_INT32						GetFirstSelected() const = 0;
+	virtual void							ScrollToListItem(int32_t nItemIndex) = 0;
+	virtual CPDF_Rect						GetItemRect(int32_t nIndex) const = 0;
+	virtual int32_t						GetCaret() const = 0;
+	virtual int32_t						GetSelect() const = 0;	
+	virtual int32_t						GetTopItem() const = 0;
+	virtual int32_t						GetItemIndex(const CPDF_Point & point) const = 0;
+	virtual int32_t						GetFirstSelected() const = 0;
 
 	virtual void							AddString(FX_LPCWSTR string) = 0;
-	virtual void							SetTopItem(FX_INT32 nIndex) = 0;	
-	virtual void							Select(FX_INT32 nItemIndex) = 0;
-	virtual void							SetCaret(FX_INT32 nItemIndex) = 0;
+	virtual void							SetTopItem(int32_t nIndex) = 0;	
+	virtual void							Select(int32_t nItemIndex) = 0;
+	virtual void							SetCaret(int32_t nItemIndex) = 0;
 	virtual void							Empty() = 0;
 	virtual void							Cancel() = 0;
 	virtual CFX_WideString					GetText() const = 0;
@@ -485,7 +485,7 @@ public:
 	virtual void							OnVK_RIGHT(FX_BOOL bShift,FX_BOOL bCtrl) = 0;
 	virtual void							OnVK_HOME(FX_BOOL bShift,FX_BOOL bCtrl) = 0;
 	virtual void							OnVK_END(FX_BOOL bShift,FX_BOOL bCtrl) = 0;
-	virtual void							OnVK(FX_INT32 nItemIndex,FX_BOOL bShift,FX_BOOL bCtrl) = 0;
+	virtual void							OnVK(int32_t nItemIndex,FX_BOOL bShift,FX_BOOL bCtrl) = 0;
 	virtual FX_BOOL							OnChar(FX_WORD nChar,FX_BOOL bShift,FX_BOOL bCtrl) = 0;
 
 protected:

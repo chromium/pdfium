@@ -83,8 +83,8 @@ protected:
     CFX_SizeF	GetOffsetFromAncestor(CFWL_WidgetImp *pAncestor);
     FX_BOOL		TransformToOuter(FX_FLOAT &fx, FX_FLOAT &fy);
     FX_BOOL		TransformFromOuter(FX_FLOAT &fx, FX_FLOAT &fy);
-    CFX_SizeF	CalcTextSize(const CFX_WideString &wsText, IFWL_ThemeProvider *pTheme, FX_BOOL bMultiLine = FALSE, FX_INT32 iLineWidth = -1);
-    void		CalcTextRect(const CFX_WideString &wsText, IFWL_ThemeProvider *pTheme, FX_DWORD dwTTOStyles, FX_INT32 iTTOAlign, CFX_RectF &rect);
+    CFX_SizeF	CalcTextSize(const CFX_WideString &wsText, IFWL_ThemeProvider *pTheme, FX_BOOL bMultiLine = FALSE, int32_t iLineWidth = -1);
+    void		CalcTextRect(const CFX_WideString &wsText, IFWL_ThemeProvider *pTheme, FX_DWORD dwTTOStyles, int32_t iTTOAlign, CFX_RectF &rect);
     void		SetFocus(FX_BOOL bFocus);
     void		SetGrab(FX_BOOL bSet);
     FX_BOOL		GetPopupPos(FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight, const CFX_RectF &rtAnchor, CFX_RectF &rtPopup);
@@ -97,9 +97,9 @@ protected:
     void		DispatchKeyEvent(CFWL_MsgKey *pNote);
     void		DispatchEvent(CFWL_Event *pEvent);
     void		Repaint(const CFX_RectF *pRect = NULL);
-    void		DrawBackground(CFX_Graphics *pGraphics, FX_INT32 iPartBk, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
-    void		DrawBorder(CFX_Graphics *pGraphics, FX_INT32 iPartBorder, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
-    void		DrawEdge(CFX_Graphics *pGraphics, FX_INT32 iPartEdge, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
+    void		DrawBackground(CFX_Graphics *pGraphics, int32_t iPartBk, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
+    void		DrawBorder(CFX_Graphics *pGraphics, int32_t iPartBorder, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
+    void		DrawEdge(CFX_Graphics *pGraphics, int32_t iPartEdge, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
     void		NotifyDriver();
 
     FX_BOOL		IsParent(IFWL_Widget *pParent);
@@ -111,7 +111,7 @@ protected:
     IFWL_WidgetDelegate		   *m_pCurDelegate;
     IFWL_Widget			       *m_pOuter;
     IFWL_Widget				   *m_pInterface;
-    FX_INT32					m_iLock;
+    int32_t					m_iLock;
     friend class CFWL_WidgetImpDelegate;
     friend void FWL_SetWidgetRect(IFWL_Widget *widget, const CFX_RectF &rect);
     friend void FWL_SetWidgetStates(IFWL_Widget *widget, FX_DWORD dwStates);
@@ -121,7 +121,7 @@ class CFWL_WidgetImpDelegate
 {
 public:
     CFWL_WidgetImpDelegate();
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 };

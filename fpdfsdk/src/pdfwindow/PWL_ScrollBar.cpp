@@ -281,7 +281,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* p
 	if (rectWnd.IsEmpty()) return;
 
 	CPDF_Point ptCenter = this->GetCenterPoint();
-	FX_INT32 nTransparancy = this->GetTransparency();
+	int32_t nTransparancy = this->GetTransparency();
 
 	switch (this->m_eScrollBarType)
 	{
@@ -570,7 +570,7 @@ FX_BOOL CPWL_SBButton::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
 	CPWL_Wnd::OnLButtonDown(point,nFlag);
 
 	if (CPWL_Wnd * pParent = GetParentWindow())
-		pParent->OnNotify(this,PNM_LBUTTONDOWN,0,(FX_INTPTR)&point);
+		pParent->OnNotify(this,PNM_LBUTTONDOWN,0,(intptr_t)&point);
 
 	m_bMouseDown = TRUE;
 	SetCapture();
@@ -583,7 +583,7 @@ FX_BOOL CPWL_SBButton::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 	CPWL_Wnd::OnLButtonUp(point,nFlag);
 
 	if (CPWL_Wnd * pParent = GetParentWindow())
-		pParent->OnNotify(this,PNM_LBUTTONUP,0,(FX_INTPTR)&point);
+		pParent->OnNotify(this,PNM_LBUTTONUP,0,(intptr_t)&point);
 
 	m_bMouseDown = FALSE;
 	ReleaseCapture();
@@ -597,12 +597,12 @@ FX_BOOL CPWL_SBButton::OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag)
 
 	if (CPWL_Wnd * pParent = GetParentWindow())
 	{		
-		pParent->OnNotify(this,PNM_MOUSEMOVE,0,(FX_INTPTR)&point);
+		pParent->OnNotify(this,PNM_MOUSEMOVE,0,(intptr_t)&point);
 
 		/*
 		if (m_bMouseDown && (m_eSBButtonType == PSBT_MIN || m_eSBButtonType == PSBT_MAX))
 		{
-			if (!pParent->OnNotify(this,PNM_LBUTTONDOWN,nFlags,(FX_INTPTR)&point))
+			if (!pParent->OnNotify(this,PNM_LBUTTONDOWN,nFlags,(intptr_t)&point))
 				return FALSE;
 		}
 		*/
@@ -840,7 +840,7 @@ FX_BOOL CPWL_ScrollBar::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 	return TRUE;
 }
 
-void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, FX_INTPTR wParam, FX_INTPTR lParam)
+void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t lParam)
 {
 	CPWL_Wnd::OnNotify(pWnd,msg,wParam,lParam);
 
@@ -1214,7 +1214,7 @@ void CPWL_ScrollBar::NotifyScrollWindow()
 			fPos = m_OriginInfo.fContentMax - m_sData.fScrollPos;
 			break;
 		}	
-		pParent->OnNotify(this,PNM_SCROLLWINDOW,(FX_INTPTR)m_sbType,(FX_INTPTR)&fPos);
+		pParent->OnNotify(this,PNM_SCROLLWINDOW,(intptr_t)m_sbType,(intptr_t)&fPos);
 	}
 }
 

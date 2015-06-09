@@ -93,11 +93,11 @@ void CXFA_XMLLocale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const
     }
     wsDtSymbol = pNumberSymbols->GetContent(0);
 }
-void CXFA_XMLLocale::GetMonthName(FX_INT32 nMonth, CFX_WideString& wsMonthName, FX_BOOL bAbbr ) const
+void CXFA_XMLLocale::GetMonthName(int32_t nMonth, CFX_WideString& wsMonthName, FX_BOOL bAbbr ) const
 {
     wsMonthName = GetCalendarSymbol(FX_BSTRC("month"), nMonth, bAbbr);
 }
-void CXFA_XMLLocale::GetDayName(FX_INT32 nWeek, CFX_WideString& wsDayName, FX_BOOL bAbbr ) const
+void CXFA_XMLLocale::GetDayName(int32_t nWeek, CFX_WideString& wsDayName, FX_BOOL bAbbr ) const
 {
     wsDayName = GetCalendarSymbol(FX_BSTRC("day"), nWeek, bAbbr);
 }
@@ -208,8 +208,8 @@ void CXFA_XMLLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType, CFX_WideString
 }
 void CXFA_XMLLocale::GetPattern(CXML_Element* pElement, FX_BSTR bsTag, FX_WSTR wsName, CFX_WideString& wsPattern) const
 {
-    FX_INT32 iCount = pElement->CountElements(FX_BSTRC(""), bsTag);
-    for (FX_INT32 i = 0; i < iCount; i++) {
+    int32_t iCount = pElement->CountElements(FX_BSTRC(""), bsTag);
+    for (int32_t i = 0; i < iCount; i++) {
         CXML_Element* pChild = pElement->GetElement(FX_BSTRC(""), bsTag, i);
         if (pChild->GetAttrValue(FX_BSTRC("name")) == wsName) {
             wsPattern = pChild->GetContent(0);
@@ -263,11 +263,11 @@ void CXFA_NodeLocale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const
     CXFA_Node *pSymbols = m_pLocale ? m_pLocale->GetChild(0, XFA_ELEMENT_DateTimeSymbols) : NULL;
     wsDtSymbol = pSymbols ? pSymbols->GetContent() : CFX_WideString();
 }
-void CXFA_NodeLocale::GetMonthName(FX_INT32 nMonth, CFX_WideString& wsMonthName, FX_BOOL bAbbr ) const
+void CXFA_NodeLocale::GetMonthName(int32_t nMonth, CFX_WideString& wsMonthName, FX_BOOL bAbbr ) const
 {
     wsMonthName = GetCalendarSymbol(XFA_ELEMENT_MonthNames, nMonth, bAbbr);
 }
-void CXFA_NodeLocale::GetDayName(FX_INT32 nWeek, CFX_WideString& wsDayName, FX_BOOL bAbbr ) const
+void CXFA_NodeLocale::GetDayName(int32_t nWeek, CFX_WideString& wsDayName, FX_BOOL bAbbr ) const
 {
     wsDayName = GetCalendarSymbol(XFA_ELEMENT_DayNames, nWeek, bAbbr);
 }

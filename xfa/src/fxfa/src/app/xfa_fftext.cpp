@@ -20,7 +20,7 @@ CXFA_FFText::CXFA_FFText(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
 CXFA_FFText::~CXFA_FFText()
 {
 }
-void CXFA_FFText::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , FX_INT32 iRotate )
+void CXFA_FFText::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
 {
     if (!IsMatchVisibleStatus(dwStatus)) {
         return;
@@ -166,11 +166,11 @@ FX_LPCWSTR CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy)
     FX_FLOAT x(fx), y(fy);
     FWLToClient(x, y);
     const CXFA_PieceLineArray* pPieceLines = pTextLayout->GetPieceLines();
-    FX_INT32 iCount = pPieceLines->GetSize();
-    for (FX_INT32 i = 0; i < iCount; i++) {
+    int32_t iCount = pPieceLines->GetSize();
+    for (int32_t i = 0; i < iCount; i++) {
         CXFA_PieceLine *pPieceLine = pPieceLines->GetAt(i);
-        FX_INT32 iPieces = pPieceLine->m_textPieces.GetSize();
-        for (FX_INT32 j = 0; j < iPieces; j++) {
+        int32_t iPieces = pPieceLine->m_textPieces.GetSize();
+        for (int32_t j = 0; j < iPieces; j++) {
             XFA_LPTEXTPIECE pPiece = pPieceLine->m_textPieces.GetAt(j);
             if (pPiece->pLinkData && pPiece->rtPiece.Contains(x, y)) {
                 return pPiece->pLinkData->GetLinkURL();

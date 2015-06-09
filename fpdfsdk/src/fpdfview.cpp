@@ -104,7 +104,7 @@ CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
 	m_BufferOffset = (FX_DWORD)-1;
 }
 
-FX_BOOL CPDF_CustomAccess::GetByte(FX_DWORD pos, FX_BYTE& ch)
+FX_BOOL CPDF_CustomAccess::GetByte(FX_DWORD pos, uint8_t& ch)
 {
 	if (pos >= m_FileAccess.m_FileLen) return FALSE;
 	if (m_BufferOffset == (FX_DWORD)-1 || pos < m_BufferOffset || pos >= m_BufferOffset + 512) {
@@ -302,7 +302,7 @@ extern void CheckUnSupportError(CPDF_Document * pDoc, FX_DWORD err_code);
 class CMemFile final : public IFX_FileRead
 {
 public:
-	CMemFile(FX_BYTE* pBuf, FX_FILESIZE size):m_pBuf(pBuf),m_size(size) {}
+	CMemFile(uint8_t* pBuf, FX_FILESIZE size):m_pBuf(pBuf),m_size(size) {}
 
 	virtual void			Release() {delete this;}
 	virtual FX_FILESIZE		GetSize() {return m_size;}
@@ -320,14 +320,14 @@ public:
 	    return TRUE;
 	}
 private:
-	FX_BYTE* m_pBuf;
+	uint8_t* m_pBuf;
 	FX_FILESIZE m_size;
 };
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password)
 {
 	CPDF_Parser* pParser = FX_NEW CPDF_Parser;
 	pParser->SetPassword(password);
-	CMemFile* pMemFile = FX_NEW CMemFile((FX_BYTE*)data_buf, size);
+	CMemFile* pMemFile = new CMemFile((uint8_t*)data_buf, size);
 	FX_DWORD err_code = pParser->StartParse(pMemFile);
 	if (err_code) {
 		delete pParser;

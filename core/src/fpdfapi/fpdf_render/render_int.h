@@ -46,7 +46,7 @@ class CPDF_TransferFunc
 {
 public:
     CPDF_Document*	m_pPDFDoc;
-    FX_BYTE			m_Samples[256 * 3];
+    uint8_t			m_Samples[256 * 3];
     FX_BOOL			m_bIdentity;
 
     CFX_DIBSource*	TranslateImage(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc);
@@ -197,7 +197,7 @@ public:
 
     FX_BOOL					Load(const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE, CPDF_RenderStatus* pRenderStatus = NULL);
 
-    FX_BOOL					StartLoadImage(const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, FX_LPVOID& LoadHandle, FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE, CPDF_RenderStatus* pRenderStatus = NULL, FX_INT32 nDownsampleWidth = 0, FX_INT32 nDownsampleHeight = 0);
+    FX_BOOL					StartLoadImage(const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, FX_LPVOID& LoadHandle, FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE, CPDF_RenderStatus* pRenderStatus = NULL, int32_t nDownsampleWidth = 0, int32_t nDownsampleHeight = 0);
     FX_BOOL					Continue(FX_LPVOID LoadHandle, IFX_Pause* pPause);
     ~CPDF_ImageLoader();
     CFX_DIBSource*			m_pBitmap;
@@ -205,8 +205,8 @@ public:
     FX_DWORD				m_MatteColor;
     FX_BOOL					m_bCached;
 protected:
-    FX_INT32                m_nDownsampleWidth;
-    FX_INT32                m_nDownsampleHeight;
+    int32_t                m_nDownsampleWidth;
+    int32_t                m_nDownsampleHeight;
 };
 class CPDF_ProgressiveImageLoaderHandle
 {
@@ -214,14 +214,14 @@ public:
     CPDF_ProgressiveImageLoaderHandle();
     ~CPDF_ProgressiveImageLoaderHandle();
 
-    FX_BOOL			Start(CPDF_ImageLoader* pImageLoader, const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE, CPDF_RenderStatus* pRenderStatus = NULL, FX_INT32 nDownsampleWidth = 0, FX_INT32 nDownsampleHeight = 0);
+    FX_BOOL			Start(CPDF_ImageLoader* pImageLoader, const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE, CPDF_RenderStatus* pRenderStatus = NULL, int32_t nDownsampleWidth = 0, int32_t nDownsampleHeight = 0);
     FX_BOOL			Continue(IFX_Pause* pPause);
 protected:
     CPDF_ImageLoader*	m_pImageLoader;
     CPDF_PageRenderCache* m_pCache;
     CPDF_ImageObject* m_pImage;
-    FX_INT32            m_nDownsampleWidth;
-    FX_INT32            m_nDownsampleHeight;
+    int32_t            m_nDownsampleWidth;
+    int32_t            m_nDownsampleHeight;
 };
 class CFX_ImageTransformer;
 class CPDF_ImageRenderer : public IPDF_ObjectRenderer
@@ -336,7 +336,7 @@ public:
     void				Reset(const CFX_DIBitmap* pBitmap);
     FX_BOOL				GetCachedBitmap(CFX_DIBSource*& pBitmap, CFX_DIBSource*& pMask, FX_DWORD& MatteColor, CPDF_Dictionary* pPageResources,
                                         FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE,
-                                        CPDF_RenderStatus* pRenderStatus = NULL, FX_INT32 downsampleWidth = 0, FX_INT32 downsampleHeight = 0);
+                                        CPDF_RenderStatus* pRenderStatus = NULL, int32_t downsampleWidth = 0, int32_t downsampleHeight = 0);
     FX_DWORD			EstimateSize() const
     {
         return m_dwCacheSize;
@@ -357,7 +357,7 @@ public:
 public:
     int					StartGetCachedBitmap(CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources,
             FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0,
-            FX_BOOL bLoadMask = FALSE, CPDF_RenderStatus* pRenderStatus = NULL, FX_INT32 downsampleWidth = 0, FX_INT32 downsampleHeight = 0);
+            FX_BOOL bLoadMask = FALSE, CPDF_RenderStatus* pRenderStatus = NULL, int32_t downsampleWidth = 0, int32_t downsampleHeight = 0);
     int					Continue(IFX_Pause* pPause);
     int 				ContinueGetCachedBitmap();
     CFX_DIBSource*		DetachBitmap();

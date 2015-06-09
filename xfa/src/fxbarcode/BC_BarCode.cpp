@@ -86,35 +86,35 @@ CBC_CodeBase :: CBC_CodeBase()
 CBC_CodeBase :: ~CBC_CodeBase()
 {
 }
-FX_BOOL CBC_CodeBase::SetCharEncoding(FX_INT32 encoding)
+FX_BOOL CBC_CodeBase::SetCharEncoding(int32_t encoding)
 {
     if (m_pBCWriter) {
         return m_pBCWriter->SetCharEncoding(encoding);
     }
     return FALSE;
 }
-FX_BOOL CBC_CodeBase::SetModuleHeight(FX_INT32 moduleHeight)
+FX_BOOL CBC_CodeBase::SetModuleHeight(int32_t moduleHeight)
 {
     if (m_pBCWriter) {
         return m_pBCWriter->SetModuleHeight(moduleHeight);
     }
     return FALSE;
 }
-FX_BOOL CBC_CodeBase::SetModuleWidth(FX_INT32 moduleWidth)
+FX_BOOL CBC_CodeBase::SetModuleWidth(int32_t moduleWidth)
 {
     if (m_pBCWriter) {
         return m_pBCWriter->SetModuleWidth(moduleWidth);
     }
     return FALSE;
 }
-FX_BOOL CBC_CodeBase::SetHeight(FX_INT32 height)
+FX_BOOL CBC_CodeBase::SetHeight(int32_t height)
 {
     if (m_pBCWriter) {
         return m_pBCWriter->SetHeight(height);
     }
     return FALSE;
 }
-FX_BOOL CBC_CodeBase::SetWidth(FX_INT32 width)
+FX_BOOL CBC_CodeBase::SetWidth(int32_t width)
 {
     if (m_pBCWriter) {
         return m_pBCWriter->SetWidth(width);
@@ -160,7 +160,7 @@ void CBC_OneCode::SetPrintChecksum(FX_BOOL checksum)
         ((CBC_OneDimWriter*)m_pBCWriter)->SetPrintChecksum(checksum);
     }
 }
-void CBC_OneCode::SetDataLength(FX_INT32 length)
+void CBC_OneCode::SetDataLength(int32_t length)
 {
     if (m_pBCWriter) {
         ((CBC_OneDimWriter*)m_pBCWriter)->SetDataLength(length);
@@ -185,7 +185,7 @@ void CBC_OneCode::SetFontSize(FX_FLOAT size)
         ((CBC_OneDimWriter*)m_pBCWriter)->SetFontSize(size);
     }
 }
-void CBC_OneCode::SetFontStyle(FX_INT32 style)
+void CBC_OneCode::SetFontStyle(int32_t style)
 {
     if (m_pBCWriter) {
         ((CBC_OneDimWriter*)m_pBCWriter)->SetFontStyle(style);
@@ -223,46 +223,46 @@ CBC_Code39::~CBC_Code39()
         m_pBCWriter = NULL;
     }
 }
-FX_BOOL CBC_Code39::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
+FX_BOOL CBC_Code39::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
         return FALSE;
     }
     BCFORMAT format	= BCFORMAT_CODE_39;
-    FX_INT32 outWidth = 0;
-    FX_INT32 outHeight = 0;
+    int32_t outWidth = 0;
+    int32_t outHeight = 0;
     CFX_WideString filtercontents = ((CBC_OnedCode39Writer*)m_pBCWriter)->FilterContents(contents);
     CFX_WideString renderContents = ((CBC_OnedCode39Writer*)m_pBCWriter)->RenderTextContents(contents);
     m_renderContents = renderContents;
     CFX_ByteString byteString =  filtercontents.UTF8Encode();
-    FX_BYTE *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+    uint8_t *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderResult(renderContents, data, outWidth, isDevice, e);
     FX_Free(data);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_Code39::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, FX_INT32 &e)
+FX_BOOL	CBC_Code39::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e)
 {
     CFX_WideString renderCon = ((CBC_OnedCode39Writer*)m_pBCWriter)->encodedContents(m_renderContents, e);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx, renderCon, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_Code39::RenderBitmap(CFX_DIBitmap *&pOutBitmap, FX_INT32 &e)
+FX_BOOL	CBC_Code39::RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e)
 {
     CFX_WideString renderCon = ((CBC_OnedCode39Writer*)m_pBCWriter)->encodedContents(m_renderContents, e);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, renderCon, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-CFX_WideString CBC_Code39::Decode(FX_BYTE* buf, FX_INT32 width, FX_INT32 hight, FX_INT32 &e)
+CFX_WideString CBC_Code39::Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e)
 {
     CFX_WideString str;
     return str;
 }
-CFX_WideString CBC_Code39::Decode(CFX_DIBitmap *pBitmap, FX_INT32 &e)
+CFX_WideString CBC_Code39::Decode(CFX_DIBitmap *pBitmap, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);
@@ -278,7 +278,7 @@ FX_BOOL CBC_Code39::SetTextLocation(BC_TEXT_LOC location)
     }
     return FALSE;
 }
-FX_BOOL CBC_Code39::SetWideNarrowRatio(FX_INT32 ratio)
+FX_BOOL CBC_Code39::SetWideNarrowRatio(int32_t ratio)
 {
     if (m_pBCWriter) {
         return ((CBC_OnedCode39Writer*)m_pBCWriter)->SetWideNarrowRatio(ratio);
@@ -319,52 +319,52 @@ FX_BOOL CBC_Codabar::SetTextLocation(BC_TEXT_LOC location)
 {
     return ((CBC_OnedCodaBarWriter*) m_pBCWriter)->SetTextLocation(location);
 }
-FX_BOOL CBC_Codabar::SetWideNarrowRatio(FX_INT32 ratio)
+FX_BOOL CBC_Codabar::SetWideNarrowRatio(int32_t ratio)
 {
     if (m_pBCWriter) {
         return ((CBC_OnedCodaBarWriter*) m_pBCWriter)->SetWideNarrowRatio(ratio);
     }
     return FALSE;
 }
-FX_BOOL CBC_Codabar::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
+FX_BOOL CBC_Codabar::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
         return FALSE;
     }
     BCFORMAT format	= BCFORMAT_CODABAR;
-    FX_INT32 outWidth = 0;
-    FX_INT32 outHeight = 0;
+    int32_t outWidth = 0;
+    int32_t outHeight = 0;
     CFX_WideString filtercontents = ((CBC_OneDimWriter*)m_pBCWriter)->FilterContents(contents);
     CFX_ByteString byteString = filtercontents.UTF8Encode();
     m_renderContents = filtercontents;
-    FX_BYTE *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+    uint8_t *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderResult(filtercontents, data, outWidth, isDevice, e);
     FX_Free(data);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_Codabar::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, FX_INT32 &e)
+FX_BOOL	CBC_Codabar::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e)
 {
     CFX_WideString renderCon = ((CBC_OnedCodaBarWriter*)m_pBCWriter)->encodedContents(m_renderContents);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx, renderCon, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_Codabar::RenderBitmap(CFX_DIBitmap *&pOutBitmap, FX_INT32 &e)
+FX_BOOL	CBC_Codabar::RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e)
 {
     CFX_WideString renderCon = ((CBC_OnedCodaBarWriter*)m_pBCWriter)->encodedContents(m_renderContents);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, renderCon, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-CFX_WideString CBC_Codabar::Decode(FX_BYTE* buf, FX_INT32 width, FX_INT32 hight, FX_INT32 &e)
+CFX_WideString CBC_Codabar::Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e)
 {
     CFX_WideString str;
     return str;
 }
-CFX_WideString CBC_Codabar::Decode(CFX_DIBitmap *pBitmap, FX_INT32 &e)
+CFX_WideString CBC_Codabar::Decode(CFX_DIBitmap *pBitmap, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);
@@ -396,15 +396,15 @@ FX_BOOL CBC_Code128::SetTextLocation(BC_TEXT_LOC location)
     }
     return FALSE;
 }
-FX_BOOL CBC_Code128::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
+FX_BOOL CBC_Code128::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
         return FALSE;
     }
     BCFORMAT format	= BCFORMAT_CODE_128;
-    FX_INT32 outWidth = 0;
-    FX_INT32 outHeight = 0;
+    int32_t outWidth = 0;
+    int32_t outHeight = 0;
     CFX_WideString content = contents;
     if (contents.GetLength() % 2 && ((CBC_OnedCode128Writer *)m_pBCWriter)->GetType() == BC_CODE128_C) {
         content += '0';
@@ -412,31 +412,31 @@ FX_BOOL CBC_Code128::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
     CFX_WideString encodeContents = ((CBC_OnedCode128Writer*)m_pBCWriter)->FilterContents(content);
     m_renderContents = encodeContents;
     CFX_ByteString byteString = encodeContents.UTF8Encode();
-    FX_BYTE *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+    uint8_t *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderResult(encodeContents, data, outWidth, isDevice, e);
     FX_Free(data);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_Code128::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, FX_INT32 &e)
+FX_BOOL	CBC_Code128::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e)
 {
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx, m_renderContents, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_Code128::RenderBitmap(CFX_DIBitmap *&pOutBitmap, FX_INT32 &e)
+FX_BOOL	CBC_Code128::RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e)
 {
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, m_renderContents, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-CFX_WideString CBC_Code128::Decode(FX_BYTE* buf, FX_INT32 width, FX_INT32 hight, FX_INT32 &e)
+CFX_WideString CBC_Code128::Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e)
 {
     CFX_WideString str;
     return str;
 }
-CFX_WideString CBC_Code128::Decode(CFX_DIBitmap *pBitmap, FX_INT32 &e)
+CFX_WideString CBC_Code128::Decode(CFX_DIBitmap *pBitmap, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);
@@ -464,13 +464,13 @@ CBC_EAN8::~CBC_EAN8()
 CFX_WideString	CBC_EAN8::Preprocess(FX_WSTR contents)
 {
     CFX_WideString encodeContents = ((CBC_OnedEAN8Writer*)m_pBCWriter)->FilterContents(contents);
-    FX_INT32 length = encodeContents.GetLength();
+    int32_t length = encodeContents.GetLength();
     if (length <= 7) {
-        for (FX_INT32 i = 0; i < 7 - length; i++) {
+        for (int32_t i = 0; i < 7 - length; i++) {
             encodeContents = FX_WCHAR('0') + encodeContents;
         }
         CFX_ByteString byteString = encodeContents.UTF8Encode();
-        FX_INT32 checksum = ((CBC_OnedEAN8Writer *)m_pBCWriter)->CalcChecksum(byteString);
+        int32_t checksum = ((CBC_OnedEAN8Writer *)m_pBCWriter)->CalcChecksum(byteString);
         encodeContents += FX_WCHAR(checksum - 0 + '0');
     }
     if (length > 8) {
@@ -478,43 +478,43 @@ CFX_WideString	CBC_EAN8::Preprocess(FX_WSTR contents)
     }
     return encodeContents;
 }
-FX_BOOL CBC_EAN8::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
+FX_BOOL CBC_EAN8::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
         return FALSE;
     }
     BCFORMAT format	= BCFORMAT_EAN_8;
-    FX_INT32 outWidth = 0;
-    FX_INT32 outHeight = 0;
+    int32_t outWidth = 0;
+    int32_t outHeight = 0;
     CFX_WideString encodeContents = Preprocess(contents);
     CFX_ByteString byteString = encodeContents.UTF8Encode();
     m_renderContents = encodeContents;
-    FX_BYTE *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+    uint8_t *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderResult(encodeContents, data, outWidth, isDevice, e);
     FX_Free(data);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_EAN8::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, FX_INT32 &e)
+FX_BOOL	CBC_EAN8::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e)
 {
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx, m_renderContents, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_EAN8::RenderBitmap(CFX_DIBitmap *&pOutBitmap, FX_INT32 &e)
+FX_BOOL	CBC_EAN8::RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e)
 {
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, m_renderContents, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-CFX_WideString CBC_EAN8::Decode(FX_BYTE* buf, FX_INT32 width, FX_INT32 hight, FX_INT32 &e)
+CFX_WideString CBC_EAN8::Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e)
 {
     CFX_WideString str;
     return str;
 }
-CFX_WideString CBC_EAN8::Decode(CFX_DIBitmap *pBitmap, FX_INT32 &e)
+CFX_WideString CBC_EAN8::Decode(CFX_DIBitmap *pBitmap, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);
@@ -542,13 +542,13 @@ CBC_EAN13::~CBC_EAN13()
 CFX_WideString CBC_EAN13::Preprocess(FX_WSTR contents)
 {
     CFX_WideString encodeContents = ((CBC_OnedEAN8Writer*)m_pBCWriter)->FilterContents(contents);
-    FX_INT32 length = encodeContents.GetLength();
+    int32_t length = encodeContents.GetLength();
     if (length <= 12) {
-        for (FX_INT32 i = 0; i < 12 - length; i++) {
+        for (int32_t i = 0; i < 12 - length; i++) {
             encodeContents = FX_WCHAR('0') + encodeContents;
         }
         CFX_ByteString byteString = encodeContents.UTF8Encode();
-        FX_INT32 checksum = ((CBC_OnedEAN13Writer *)m_pBCWriter)->CalcChecksum(byteString);
+        int32_t checksum = ((CBC_OnedEAN13Writer *)m_pBCWriter)->CalcChecksum(byteString);
         byteString += checksum - 0 + '0';
         encodeContents = byteString.UTF8Decode();
     }
@@ -557,43 +557,43 @@ CFX_WideString CBC_EAN13::Preprocess(FX_WSTR contents)
     }
     return encodeContents;
 }
-FX_BOOL CBC_EAN13::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
+FX_BOOL CBC_EAN13::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
         return FALSE;
     }
     BCFORMAT format	= BCFORMAT_EAN_13;
-    FX_INT32 outWidth = 0;
-    FX_INT32 outHeight = 0;
+    int32_t outWidth = 0;
+    int32_t outHeight = 0;
     CFX_WideString encodeContents = Preprocess(contents);
     CFX_ByteString byteString = encodeContents.UTF8Encode();
     m_renderContents = encodeContents;
-    FX_BYTE *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+    uint8_t *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderResult(encodeContents, data, outWidth, isDevice, e);
     FX_Free(data);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_EAN13::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, FX_INT32 &e)
+FX_BOOL	CBC_EAN13::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e)
 {
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx, m_renderContents, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_EAN13::RenderBitmap(CFX_DIBitmap *&pOutBitmap, FX_INT32 &e)
+FX_BOOL	CBC_EAN13::RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e)
 {
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, m_renderContents, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-CFX_WideString CBC_EAN13::Decode(FX_BYTE* buf, FX_INT32 width, FX_INT32 hight, FX_INT32 &e)
+CFX_WideString CBC_EAN13::Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e)
 {
     CFX_WideString str;
     return str;
 }
-CFX_WideString CBC_EAN13::Decode(CFX_DIBitmap *pBitmap, FX_INT32 &e)
+CFX_WideString CBC_EAN13::Decode(CFX_DIBitmap *pBitmap, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);
@@ -622,13 +622,13 @@ CBC_UPCA::~CBC_UPCA()
 CFX_WideString	CBC_UPCA::Preprocess(FX_WSTR contents)
 {
     CFX_WideString encodeContents = ((CBC_OnedEAN8Writer*)m_pBCWriter)->FilterContents(contents);
-    FX_INT32 length = encodeContents.GetLength();
+    int32_t length = encodeContents.GetLength();
     if (length <= 11) {
-        for (FX_INT32 i = 0; i < 11 - length; i++) {
+        for (int32_t i = 0; i < 11 - length; i++) {
             encodeContents = FX_WCHAR('0') + encodeContents;
         }
         CFX_ByteString byteString = encodeContents.UTF8Encode();
-        FX_INT32 checksum = ((CBC_OnedUPCAWriter *)m_pBCWriter)->CalcChecksum(byteString);
+        int32_t checksum = ((CBC_OnedUPCAWriter *)m_pBCWriter)->CalcChecksum(byteString);
         byteString += checksum - 0 + '0';
         encodeContents = byteString.UTF8Decode();
     }
@@ -637,44 +637,44 @@ CFX_WideString	CBC_UPCA::Preprocess(FX_WSTR contents)
     }
     return encodeContents;
 }
-FX_BOOL CBC_UPCA::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
+FX_BOOL CBC_UPCA::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
         return FALSE;
     }
     BCFORMAT format	= BCFORMAT_UPC_A;
-    FX_INT32 outWidth = 0;
-    FX_INT32 outHeight = 0;
+    int32_t outWidth = 0;
+    int32_t outHeight = 0;
     CFX_WideString encodeContents = Preprocess(contents);
     CFX_ByteString byteString = encodeContents.UTF8Encode();
     m_renderContents = encodeContents;
     ((CBC_OnedUPCAWriter*)m_pBCWriter)->Init();
-    FX_BYTE *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+    uint8_t *data = m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderResult(encodeContents, data, outWidth, isDevice, e);
     FX_Free(data);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_UPCA::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, FX_INT32 &e)
+FX_BOOL	CBC_UPCA::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e)
 {
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx, m_renderContents, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_UPCA::RenderBitmap(CFX_DIBitmap *&pOutBitmap, FX_INT32 &e)
+FX_BOOL	CBC_UPCA::RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e)
 {
     ((CBC_OneDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, m_renderContents, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-CFX_WideString CBC_UPCA::Decode(FX_BYTE* buf, FX_INT32 width, FX_INT32 hight, FX_INT32 &e)
+CFX_WideString CBC_UPCA::Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e)
 {
     CFX_WideString str;
     return str;
 }
-CFX_WideString CBC_UPCA::Decode(CFX_DIBitmap *pBitmap, FX_INT32 &e)
+CFX_WideString CBC_UPCA::Decode(CFX_DIBitmap *pBitmap, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);
@@ -700,7 +700,7 @@ CBC_QRCode ::~CBC_QRCode()
         m_pBCWriter = NULL;
     }
 }
-FX_BOOL CBC_QRCode::SetVersion(FX_INT32 version)
+FX_BOOL CBC_QRCode::SetVersion(int32_t version)
 {
     if (version < 0 || version > 40) {
         return FALSE;
@@ -710,7 +710,7 @@ FX_BOOL CBC_QRCode::SetVersion(FX_INT32 version)
     }
     return((CBC_QRCodeWriter*)m_pBCWriter)->SetVersion(version);
 }
-FX_BOOL CBC_QRCode::SetErrorCorrectionLevel (FX_INT32 level)
+FX_BOOL CBC_QRCode::SetErrorCorrectionLevel (int32_t level)
 {
     if (level < 0 || level > 3) {
         return FALSE;
@@ -720,34 +720,34 @@ FX_BOOL CBC_QRCode::SetErrorCorrectionLevel (FX_INT32 level)
     }
     return ((CBC_TwoDimWriter*)m_pBCWriter)->SetErrorCorrectionLevel(level);
 }
-FX_BOOL CBC_QRCode::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
+FX_BOOL CBC_QRCode::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
 {
-    FX_INT32 outWidth = 0;
-    FX_INT32 outHeight = 0;
-    FX_BYTE *data = ((CBC_QRCodeWriter*)m_pBCWriter)->Encode(contents, ((CBC_QRCodeWriter*)m_pBCWriter)->GetErrorCorrectionLevel(), outWidth, outHeight, e);
+    int32_t outWidth = 0;
+    int32_t outHeight = 0;
+    uint8_t *data = ((CBC_QRCodeWriter*)m_pBCWriter)->Encode(contents, ((CBC_QRCodeWriter*)m_pBCWriter)->GetErrorCorrectionLevel(), outWidth, outHeight, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     ((CBC_TwoDimWriter*)m_pBCWriter)->RenderResult(data, outWidth, outHeight, e);
     FX_Free(data);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_QRCode::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, FX_INT32 &e)
+FX_BOOL	CBC_QRCode::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e)
 {
     ((CBC_TwoDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx);
     return TRUE;
 }
-FX_BOOL	CBC_QRCode::RenderBitmap(CFX_DIBitmap *&pOutBitmap, FX_INT32 &e)
+FX_BOOL	CBC_QRCode::RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e)
 {
     ((CBC_TwoDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-CFX_WideString CBC_QRCode::Decode(FX_BYTE* buf, FX_INT32 width, FX_INT32 hight, FX_INT32 &e)
+CFX_WideString CBC_QRCode::Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e)
 {
     CFX_WideString str;
     return str;
 }
-CFX_WideString CBC_QRCode::Decode(CFX_DIBitmap *pBitmap, FX_INT32 &e)
+CFX_WideString CBC_QRCode::Decode(CFX_DIBitmap *pBitmap, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);
@@ -772,7 +772,7 @@ CBC_PDF417I::~CBC_PDF417I()
         m_pBCWriter = NULL;
     }
 }
-FX_BOOL CBC_PDF417I::SetErrorCorrectionLevel (FX_INT32 level)
+FX_BOOL CBC_PDF417I::SetErrorCorrectionLevel (int32_t level)
 {
     ((CBC_PDF417Writer*)m_pBCWriter)->SetErrorCorrectionLevel(level);
     return TRUE;
@@ -781,35 +781,35 @@ void CBC_PDF417I::SetTruncated(FX_BOOL truncated)
 {
     ((CBC_PDF417Writer*)m_pBCWriter)->SetTruncated(truncated);
 }
-FX_BOOL CBC_PDF417I::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
+FX_BOOL CBC_PDF417I::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
 {
     BCFORMAT format	= BCFORMAT_PDF_417;
-    FX_INT32 outWidth = 0;
-    FX_INT32 outHeight = 0;
-    FX_BYTE *data = ((CBC_PDF417Writer*)m_pBCWriter)->Encode(contents, outWidth, outHeight, e);
+    int32_t outWidth = 0;
+    int32_t outHeight = 0;
+    uint8_t *data = ((CBC_PDF417Writer*)m_pBCWriter)->Encode(contents, outWidth, outHeight, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     ((CBC_TwoDimWriter*)m_pBCWriter)->RenderResult(data, outWidth, outHeight, e);
     FX_Free(data);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_PDF417I::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, FX_INT32 &e)
+FX_BOOL	CBC_PDF417I::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e)
 {
     ((CBC_TwoDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx);
     return TRUE;
 }
-FX_BOOL	CBC_PDF417I::RenderBitmap(CFX_DIBitmap *&pOutBitmap, FX_INT32 &e)
+FX_BOOL	CBC_PDF417I::RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e)
 {
     ((CBC_TwoDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-CFX_WideString CBC_PDF417I::Decode(FX_BYTE* buf, FX_INT32 width, FX_INT32 hight, FX_INT32 &e)
+CFX_WideString CBC_PDF417I::Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e)
 {
     CFX_WideString str;
     return str;
 }
-CFX_WideString CBC_PDF417I::Decode(CFX_DIBitmap *pBitmap, FX_INT32 &e)
+CFX_WideString CBC_PDF417I::Decode(CFX_DIBitmap *pBitmap, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);
@@ -835,34 +835,34 @@ CBC_DataMatrix::~CBC_DataMatrix()
         m_pBCWriter = NULL;
     }
 }
-FX_BOOL CBC_DataMatrix::Encode(FX_WSTR contents, FX_BOOL isDevice, FX_INT32 &e)
+FX_BOOL CBC_DataMatrix::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
 {
-    FX_INT32 outWidth = 0;
-    FX_INT32 outHeight = 0;
-    FX_BYTE *data = ((CBC_DataMatrixWriter *)m_pBCWriter)->Encode(contents, outWidth, outHeight, e);
+    int32_t outWidth = 0;
+    int32_t outHeight = 0;
+    uint8_t *data = ((CBC_DataMatrixWriter *)m_pBCWriter)->Encode(contents, outWidth, outHeight, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     ((CBC_TwoDimWriter*)m_pBCWriter)->RenderResult(data, outWidth, outHeight, e);
     FX_Free(data);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-FX_BOOL	CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, FX_INT32 &e)
+FX_BOOL	CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e)
 {
     ((CBC_TwoDimWriter*)m_pBCWriter)->RenderDeviceResult(device, matirx);
     return TRUE;
 }
-FX_BOOL	CBC_DataMatrix::RenderBitmap(CFX_DIBitmap *&pOutBitmap, FX_INT32 &e)
+FX_BOOL	CBC_DataMatrix::RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e)
 {
     ((CBC_TwoDimWriter*)m_pBCWriter)->RenderBitmapResult(pOutBitmap, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     return TRUE;
 }
-CFX_WideString CBC_DataMatrix::Decode(FX_BYTE* buf, FX_INT32 width, FX_INT32 hight, FX_INT32 &e)
+CFX_WideString CBC_DataMatrix::Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e)
 {
     CFX_WideString str;
     return str;
 }
-CFX_WideString CBC_DataMatrix::Decode(CFX_DIBitmap *pBitmap, FX_INT32 &e)
+CFX_WideString CBC_DataMatrix::Decode(CFX_DIBitmap *pBitmap, int32_t &e)
 {
     CBC_BufferedImageLuminanceSource source(pBitmap);
     CBC_GlobalHistogramBinarizer binarizer(&source);

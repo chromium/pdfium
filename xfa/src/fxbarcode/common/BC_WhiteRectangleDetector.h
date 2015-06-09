@@ -12,26 +12,26 @@ class CBC_WhiteRectangleDetector
 {
 public:
     CBC_WhiteRectangleDetector(CBC_CommonBitMatrix *image);
-    CBC_WhiteRectangleDetector(CBC_CommonBitMatrix *image, FX_INT32 initSize, FX_INT32 x, FX_INT32 y);
+    CBC_WhiteRectangleDetector(CBC_CommonBitMatrix *image, int32_t initSize, int32_t x, int32_t y);
     virtual ~CBC_WhiteRectangleDetector();
-    CFX_PtrArray *Detect(FX_INT32 &e);
-    virtual void Init(FX_INT32 &e);
+    CFX_PtrArray *Detect(int32_t &e);
+    virtual void Init(int32_t &e);
 private:
-    FX_INT32 Round(float d);
+    int32_t Round(float d);
     CBC_ResultPoint *GetBlackPointOnSegment(FX_FLOAT aX, FX_FLOAT aY, FX_FLOAT bX, FX_FLOAT bY);
-    FX_INT32 DistanceL2(FX_FLOAT aX, FX_FLOAT aY, FX_FLOAT bX, FX_FLOAT bY);
+    int32_t DistanceL2(FX_FLOAT aX, FX_FLOAT aY, FX_FLOAT bX, FX_FLOAT bY);
     CFX_PtrArray *CenterEdges(CBC_ResultPoint *y, CBC_ResultPoint *z,
                               CBC_ResultPoint *x, CBC_ResultPoint *t);
-    FX_BOOL ContainsBlackPoint(FX_INT32 a, FX_INT32 b, FX_INT32 fixed, FX_BOOL horizontal);
-    const static FX_INT32 INIT_SIZE;
-    const static FX_INT32 CORR;
+    FX_BOOL ContainsBlackPoint(int32_t a, int32_t b, int32_t fixed, FX_BOOL horizontal);
+    const static int32_t INIT_SIZE;
+    const static int32_t CORR;
 
     CBC_CommonBitMatrix *m_image;
-    FX_INT32 m_height;
-    FX_INT32 m_width;
-    FX_INT32 m_leftInit;
-    FX_INT32 m_rightInit;
-    FX_INT32 m_downInit;
-    FX_INT32 m_upInit;
+    int32_t m_height;
+    int32_t m_width;
+    int32_t m_leftInit;
+    int32_t m_rightInit;
+    int32_t m_downInit;
+    int32_t m_upInit;
 };
 #endif

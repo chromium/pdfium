@@ -26,7 +26,7 @@ CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::L = NULL;
 CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::M = NULL;
 CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::Q = NULL;
 CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::H = NULL;
-CBC_QRCoderErrorCorrectionLevel::CBC_QRCoderErrorCorrectionLevel(FX_INT32 ordinal, FX_INT32 bits, FX_CHAR* name)
+CBC_QRCoderErrorCorrectionLevel::CBC_QRCoderErrorCorrectionLevel(int32_t ordinal, int32_t bits, FX_CHAR* name)
 {
     m_name += name;
     m_ordinal = ordinal;
@@ -49,11 +49,11 @@ void CBC_QRCoderErrorCorrectionLevel::Finalize()
     delete Q;
     delete H;
 }
-FX_INT32 CBC_QRCoderErrorCorrectionLevel::Ordinal()
+int32_t CBC_QRCoderErrorCorrectionLevel::Ordinal()
 {
     return m_ordinal;
 }
-FX_INT32 CBC_QRCoderErrorCorrectionLevel::GetBits()
+int32_t CBC_QRCoderErrorCorrectionLevel::GetBits()
 {
     return m_bits;
 }
@@ -61,7 +61,7 @@ CFX_ByteString CBC_QRCoderErrorCorrectionLevel::GetName()
 {
     return m_name;
 }
-CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::ForBits(FX_INT32 bits)
+CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::ForBits(int32_t bits)
 {
     switch(bits) {
         case 0x00:

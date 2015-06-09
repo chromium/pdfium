@@ -27,7 +27,7 @@ CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel()
 }
 void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(CFXJSE_Arguments* pArguments)
 {
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 4) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"verify");
         return;
@@ -41,7 +41,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(CFXJSE_Arg
     if (iLength >= 1) {
         pNode = (CXFA_Node*)pArguments->GetObject(0);
     }
-    FX_INT32 bVerify = pNotify->GetDocProvider()->Verify(hDoc, pNode);
+    int32_t bVerify = pNotify->GetDocProvider()->Verify(hDoc, pNode);
     FXJSE_HVALUE hValue = pArguments->GetReturnValue();
     if (hValue) {
         FXJSE_Value_SetInteger(hValue, bVerify);
@@ -49,7 +49,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(CFXJSE_Arg
 }
 void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(CFXJSE_Arguments* pArguments)
 {
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength < 3 || iLength > 7) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sign");
         return;
@@ -81,7 +81,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(CFXJSE_Argum
 }
 void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(CFXJSE_Arguments* pArguments)
 {
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength != 0) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"enumerate");
         return;
@@ -96,7 +96,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(CFXJSE_
 }
 void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Clear(CFXJSE_Arguments* pArguments)
 {
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 2) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"clear");
         return;

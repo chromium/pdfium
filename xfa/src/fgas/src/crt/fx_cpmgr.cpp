@@ -41,10 +41,10 @@ extern const FX_CPCU_MAPINFO g_CP1257_CUMap;
 extern const FX_CPCU_MAPINFO g_CP1258_CUMap;
 FX_LPCCODEPAGE FX_GetCodePage(FX_WORD wCodePage)
 {
-    FX_INT32 iEnd = sizeof(g_FXCodePageMgr) / sizeof(FX_CODEPAGE) - 1;
+    int32_t iEnd = sizeof(g_FXCodePageMgr) / sizeof(FX_CODEPAGE) - 1;
     FXSYS_assert(iEnd >= 0);
-    FX_INT32 iStart = 0, iMid;
-    FX_UINT16 uCPID;
+    int32_t iStart = 0, iMid;
+    uint16_t uCPID;
     do {
         iMid = (iStart + iEnd) / 2;
         const FX_CODEPAGE &cp = g_FXCodePageMgr[iMid];

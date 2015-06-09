@@ -15,20 +15,20 @@ class CBC_OneDReader : public CBC_Reader
 public:
     CBC_OneDReader();
     virtual ~CBC_OneDReader();
-    virtual CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 &e);
-    virtual CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e);
-    virtual CFX_ByteString DecodeRow(FX_INT32 rowNumber, CBC_CommonBitArray *row, FX_INT32 hints, FX_INT32 &e)
+    virtual CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t &e);
+    virtual CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e);
+    virtual CFX_ByteString DecodeRow(int32_t rowNumber, CBC_CommonBitArray *row, int32_t hints, int32_t &e)
     {
         return "";
     }
 private:
-    CFX_ByteString DeDecode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e);
+    CFX_ByteString DeDecode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e);
 
 protected:
-    const static FX_INT32 INTEGER_MATH_SHIFT;
-    const static FX_INT32 PATTERN_MATCH_RESULT_SCALE_FACTOR;
-    void RecordPattern(CBC_CommonBitArray *row, FX_INT32 start, CFX_Int32Array *counters, FX_INT32 &e);
-    void RecordPatternInReverse(CBC_CommonBitArray *row, FX_INT32 start, CFX_Int32Array *counters, FX_INT32 &e);
-    FX_INT32 PatternMatchVariance(CFX_Int32Array *counters, const FX_INT32 *pattern, FX_INT32 maxIndividualVariance);
+    const static int32_t INTEGER_MATH_SHIFT;
+    const static int32_t PATTERN_MATCH_RESULT_SCALE_FACTOR;
+    void RecordPattern(CBC_CommonBitArray *row, int32_t start, CFX_Int32Array *counters, int32_t &e);
+    void RecordPatternInReverse(CBC_CommonBitArray *row, int32_t start, CFX_Int32Array *counters, int32_t &e);
+    int32_t PatternMatchVariance(CFX_Int32Array *counters, const int32_t *pattern, int32_t maxIndividualVariance);
 };
 #endif

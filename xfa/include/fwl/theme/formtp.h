@@ -30,14 +30,14 @@ protected:
     void CalCaption(IFWL_Widget *pWidget, CFX_RectF &rect);
     void CalIcon(IFWL_Widget *pWidget, CFX_RectF &rect);
 
-    void DrawFormBorder(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive = 0);
-    void DrawCaption(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive = 0);
-    void DrawNarrowCaption(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive = 0);
-    void DrawCloseBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive = 0);
-    void DrawMinMaxBoxCommon(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive = 0);
-    void DrawMinimizeBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive = 0);
-    void DrawMaximizeBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, FX_BOOL bMax, CFX_Matrix *pMatrix, FX_INT32 iActive = 0);
-    void DrawIconImage(CFX_Graphics *pGraphics, CFX_DIBitmap *pDIBitmap, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, FX_INT32 iActive = 0);
+    void DrawFormBorder(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive = 0);
+    void DrawCaption(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive = 0);
+    void DrawNarrowCaption(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive = 0);
+    void DrawCloseBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive = 0);
+    void DrawMinMaxBoxCommon(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive = 0);
+    void DrawMinimizeBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive = 0);
+    void DrawMaximizeBox(CFX_Graphics *pGraphics, const CFX_RectF *pRect,  FWLTHEME_STATE eState, FX_BOOL bMax, CFX_Matrix *pMatrix, int32_t iActive = 0);
+    void DrawIconImage(CFX_Graphics *pGraphics, CFX_DIBitmap *pDIBitmap, const CFX_RectF *pRect,  FWLTHEME_STATE eState, CFX_Matrix *pMatrix, int32_t iActive = 0);
     void SetThemeData(FX_DWORD dwID);
     void TransModeColor(FX_ARGB clrFore, FX_ARGB &clrBack);
     void DeactiveForm();

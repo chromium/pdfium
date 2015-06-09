@@ -31,20 +31,20 @@ CBC_QRCoderMaskUtil::CBC_QRCoderMaskUtil()
 CBC_QRCoderMaskUtil::~CBC_QRCoderMaskUtil()
 {
 }
-FX_INT32 CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule1(CBC_CommonByteMatrix* matrix)
+int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule1(CBC_CommonByteMatrix* matrix)
 {
     return ApplyMaskPenaltyRule1Internal(matrix, TRUE) +
            ApplyMaskPenaltyRule1Internal(matrix, FALSE);
 }
-FX_INT32 CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule2(CBC_CommonByteMatrix* matrix)
+int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule2(CBC_CommonByteMatrix* matrix)
 {
-    FX_INT32 penalty = 0;
-    FX_BYTE* array = matrix->GetArray();
-    FX_INT32 width = matrix->GetWidth();
-    FX_INT32 height = matrix->GetHeight();
-    for(FX_INT32 y = 0; y < height - 1; y++) {
-        for(FX_INT32 x = 0; x < width - 1; x++) {
-            FX_INT32 value = array[y * width + x];
+    int32_t penalty = 0;
+    uint8_t* array = matrix->GetArray();
+    int32_t width = matrix->GetWidth();
+    int32_t height = matrix->GetHeight();
+    for(int32_t y = 0; y < height - 1; y++) {
+        for(int32_t x = 0; x < width - 1; x++) {
+            int32_t value = array[y * width + x];
             if(value == array[y * width + x + 1] &&
                     value == array[(y + 1) * width + x] &&
                     value == array[(y + 1) * width + x + 1]) {
@@ -54,14 +54,14 @@ FX_INT32 CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule2(CBC_CommonByteMatrix* matrix
     }
     return 3 * penalty;
 }
-FX_INT32 CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule3(CBC_CommonByteMatrix* matrix)
+int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule3(CBC_CommonByteMatrix* matrix)
 {
-    FX_INT32 penalty = 0;
-    FX_BYTE* array = matrix->GetArray();
-    FX_INT32 width = matrix->GetWidth();
-    FX_INT32 height = matrix->GetHeight();
-    for (FX_INT32 y = 0; y < height; ++y) {
-        for (FX_INT32 x = 0; x < width; ++x) {
+    int32_t penalty = 0;
+    uint8_t* array = matrix->GetArray();
+    int32_t width = matrix->GetWidth();
+    int32_t height = matrix->GetHeight();
+    for (int32_t y = 0; y < height; ++y) {
+        for (int32_t x = 0; x < width; ++x) {
             if (x == 0 && ((y >= 0 && y <= 6) || (y >= height - 7 && y <= height - 1))) {
                 continue;
             }
@@ -118,30 +118,30 @@ FX_INT32 CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule3(CBC_CommonByteMatrix* matrix
     }
     return penalty;
 }
-FX_INT32 CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(CBC_CommonByteMatrix* matrix)
+int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(CBC_CommonByteMatrix* matrix)
 {
-    FX_INT32 numDarkCells = 0;
-    FX_BYTE* array = matrix->GetArray();
-    FX_INT32 width = matrix->GetWidth();
-    FX_INT32 height = matrix->GetHeight();
-    for (FX_INT32 y = 0; y < height; ++y) {
-        for (FX_INT32 x = 0; x < width; ++x) {
+    int32_t numDarkCells = 0;
+    uint8_t* array = matrix->GetArray();
+    int32_t width = matrix->GetWidth();
+    int32_t height = matrix->GetHeight();
+    for (int32_t y = 0; y < height; ++y) {
+        for (int32_t x = 0; x < width; ++x) {
             if (array[y * width + x] == 1) {
                 numDarkCells += 1;
             }
         }
     }
-    FX_INT32 numTotalCells = matrix->GetHeight() * matrix->GetWidth();
+    int32_t numTotalCells = matrix->GetHeight() * matrix->GetWidth();
     double darkRatio = (double) numDarkCells / numTotalCells;
-    return abs( (FX_INT32) (darkRatio * 100 - 50) / 5 ) * 5 * 10;
+    return abs( (int32_t) (darkRatio * 100 - 50) / 5 ) * 5 * 10;
 }
-FX_BOOL CBC_QRCoderMaskUtil::GetDataMaskBit(FX_INT32 maskPattern, FX_INT32 x, FX_INT32 y, FX_INT32 &e)
+FX_BOOL CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern, int32_t x, int32_t y, int32_t &e)
 {
     if(!CBC_QRCoder::IsValidMaskPattern(maskPattern)) {
         e = (BCExceptionInvalidateMaskPattern);
         BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
     }
-    FX_INT32 intermediate = 0, temp = 0;
+    int32_t intermediate = 0, temp = 0;
     switch(maskPattern) {
         case 0:
             intermediate = (y + x) & 0x1;
@@ -177,19 +177,19 @@ FX_BOOL CBC_QRCoderMaskUtil::GetDataMaskBit(FX_INT32 maskPattern, FX_INT32 x, FX
     }
     return intermediate == 0;
 }
-FX_INT32 CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule1Internal(CBC_CommonByteMatrix* matrix, FX_BOOL isHorizontal)
+int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule1Internal(CBC_CommonByteMatrix* matrix, FX_BOOL isHorizontal)
 {
-    FX_INT32 penalty = 0;
-    FX_INT32 numSameBitCells = 0;
-    FX_INT32 prevBit = -1;
-    FX_INT32 width = matrix->GetWidth();
-    FX_INT32 height = matrix->GetHeight();
-    FX_INT32 iLimit = isHorizontal ? height : width;
-    FX_INT32 jLimit = isHorizontal ? width : height;
-    FX_BYTE* array = matrix->GetArray();
-    for (FX_INT32 i = 0; i < iLimit; ++i) {
-        for (FX_INT32 j = 0; j < jLimit; ++j) {
-            FX_INT32 bit = isHorizontal ? array[i * width + j] : array[j * width + i];
+    int32_t penalty = 0;
+    int32_t numSameBitCells = 0;
+    int32_t prevBit = -1;
+    int32_t width = matrix->GetWidth();
+    int32_t height = matrix->GetHeight();
+    int32_t iLimit = isHorizontal ? height : width;
+    int32_t jLimit = isHorizontal ? width : height;
+    uint8_t* array = matrix->GetArray();
+    for (int32_t i = 0; i < iLimit; ++i) {
+        for (int32_t j = 0; j < jLimit; ++j) {
+            int32_t bit = isHorizontal ? array[i * width + j] : array[j * width + i];
             if (bit == prevBit) {
                 numSameBitCells += 1;
                 if (numSameBitCells == 5) {

@@ -218,9 +218,9 @@ static const FGAS_FONTUSB g_FXGdiFontUSBTable[] = {
 };
 FGAS_LPCFONTUSB FGAS_GetUnicodeBitField(FX_WCHAR wUnicode)
 {
-    FX_INT32 iEnd = sizeof(g_FXGdiFontUSBTable) / sizeof(FGAS_FONTUSB) - 1;
+    int32_t iEnd = sizeof(g_FXGdiFontUSBTable) / sizeof(FGAS_FONTUSB) - 1;
     FXSYS_assert(iEnd >= 0);
-    FX_INT32 iStart = 0, iMid;
+    int32_t iStart = 0, iMid;
     do {
         iMid = (iStart + iEnd) / 2;
         const FGAS_FONTUSB &usb = g_FXGdiFontUSBTable[iMid];

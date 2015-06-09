@@ -55,9 +55,9 @@ public:
     virtual FX_WCHAR			GetFormChar(FX_WCHAR wch, FX_WCHAR prev = 0, FX_WCHAR next = 0) const = 0;
     virtual FX_WCHAR			GetFormChar(const CFX_Char *cur, const CFX_Char *prev, const CFX_Char *next) const = 0;
 };
-void FX_BidiLine(CFX_WideString &wsText, FX_INT32 iBaseLevel = 0);
-void FX_BidiLine(CFX_TxtCharArray &chars, FX_INT32 iCount, FX_INT32 iBaseLevel = 0);
-void FX_BidiLine(CFX_RTFCharArray &chars, FX_INT32 iCount, FX_INT32 iBaseLevel = 0);
+void FX_BidiLine(CFX_WideString &wsText, int32_t iBaseLevel = 0);
+void FX_BidiLine(CFX_TxtCharArray &chars, int32_t iCount, int32_t iBaseLevel = 0);
+void FX_BidiLine(CFX_RTFCharArray &chars, int32_t iCount, int32_t iBaseLevel = 0);
 class IFX_BidiChar
 {
 public:
@@ -66,7 +66,7 @@ public:
     virtual void			SetPolicy(FX_BOOL bSeparateNeutral = TRUE) = 0;
     virtual FX_BOOL			AppendChar(FX_WCHAR wch) = 0;
     virtual FX_BOOL			EndChar() = 0;
-    virtual FX_INT32		GetBidiInfo(FX_INT32 &iStart, FX_INT32 &iCount) = 0;
+    virtual int32_t		GetBidiInfo(int32_t &iStart, int32_t &iCount) = 0;
     virtual void			Reset() = 0;
 
 protected:

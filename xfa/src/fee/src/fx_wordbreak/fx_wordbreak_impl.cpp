@@ -44,14 +44,14 @@ FX_WCHAR CFX_CharIter::GetChar()
 {
     return m_wsText.GetAt(m_nIndex);
 }
-void CFX_CharIter::SetAt(FX_INT32 nIndex)
+void CFX_CharIter::SetAt(int32_t nIndex)
 {
     if (nIndex < 0 || nIndex >= m_wsText.GetLength()) {
         return;
     }
     m_nIndex = nIndex;
 }
-FX_INT32 CFX_CharIter::GetAt() const
+int32_t CFX_CharIter::GetAt() const
 {
     return m_nIndex;
 }
@@ -118,7 +118,7 @@ FX_BOOL CFX_WordBreak::Next(FX_BOOL bPrev)
     }
     return TRUE;
 }
-void CFX_WordBreak::SetAt(FX_INT32 nIndex)
+void CFX_WordBreak::SetAt(int32_t nIndex)
 {
     if (m_pPreIter) {
         m_pPreIter->Release();
@@ -130,23 +130,23 @@ void CFX_WordBreak::SetAt(FX_INT32 nIndex)
     m_pCurIter = m_pPreIter->Clone();
     FindNextBreakPos(m_pCurIter, FALSE, FALSE);
 }
-FX_INT32 CFX_WordBreak::GetWordPos() const
+int32_t CFX_WordBreak::GetWordPos() const
 {
     return m_pPreIter->GetAt();
 }
-FX_INT32 CFX_WordBreak::GetWordLength() const
+int32_t CFX_WordBreak::GetWordLength() const
 {
     return m_pCurIter->GetAt() - m_pPreIter->GetAt() + 1;
 }
 void CFX_WordBreak::GetWord(CFX_WideString &wsWord) const
 {
-    FX_INT32 nWordLength = GetWordLength();
+    int32_t nWordLength = GetWordLength();
     if (nWordLength <= 0) {
         return;
     }
     FX_LPWSTR lpBuf = wsWord.GetBuffer(nWordLength);
     IFX_CharIter * pTempIter = m_pPreIter->Clone();
-    FX_INT32 i = 0;
+    int32_t i = 0;
     while (pTempIter->GetAt() <= m_pCurIter->GetAt()) {
         lpBuf[i++] = pTempIter->GetChar();
         FX_BOOL bEnd = pTempIter->Next();
@@ -190,7 +190,7 @@ FX_BOOL CFX_WordBreak::FindNextBreakPos(IFX_CharIter * pIter, FX_BOOL bPrev,
                 return TRUE;
             }
             if (bFirst) {
-                FX_INT32 nFlags = 0;
+                int32_t nFlags = 0;
                 if (eCurType == FX_WordBreakProp_MidLetter) {
                     if (eNextType == FX_WordBreakProp_ALetter) {
                         nFlags = 1;
@@ -219,7 +219,7 @@ FX_BOOL CFX_WordBreak::FindNextBreakPos(IFX_CharIter * pIter, FX_BOOL bPrev,
                 bFirst = FALSE;
             }
             if (wBreak) {
-                FX_INT32 nFlags = 0;
+                int32_t nFlags = 0;
                 if (eNextType == FX_WordBreakProp_MidLetter) {
                     if (eCurType == FX_WordBreakProp_ALetter) {
                         nFlags = 1;

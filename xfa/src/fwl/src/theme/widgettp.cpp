@@ -57,7 +57,7 @@ FX_BOOL	CFWL_WidgetTP::DrawText(CFWL_ThemeText *pParams)
     if (!m_pTextOut) {
         InitTTO();
     }
-    FX_INT32 iLen = pParams->m_wsText.GetLength();
+    int32_t iLen = pParams->m_wsText.GetLength();
     _FWL_RETURN_VALUE_IF_FAIL(iLen > 0, FALSE)
     CFX_Graphics *pGraphics = pParams->m_pGraphics;
     m_pTextOut->SetRenderDevice(pGraphics->GetRenderDevice());
@@ -434,7 +434,7 @@ void CFWL_WidgetTP::FillSoildRect(CFX_Graphics *pGraphics, FX_ARGB fillColor, co
     pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
     pGraphics->RestoreGraphState();
 }
-void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics *pGraphics, FX_FLOAT fx1, FX_FLOAT fy1, FX_FLOAT fx2, FX_FLOAT fy2, FX_ARGB beginColor, FX_ARGB endColor, CFX_Path *path, FX_INT32 fillMode, CFX_Matrix *pMatrix )
+void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics *pGraphics, FX_FLOAT fx1, FX_FLOAT fy1, FX_FLOAT fx2, FX_FLOAT fy2, FX_ARGB beginColor, FX_ARGB endColor, CFX_Path *path, int32_t fillMode, CFX_Matrix *pMatrix )
 {
     _FWL_RETURN_IF_FAIL(pGraphics);
     _FWL_RETURN_IF_FAIL(path);
@@ -636,14 +636,14 @@ void CFWL_WidgetTP::DrawArrowBtn(CFX_Graphics *pGraphics, const CFX_RectF *pRect
     CFWL_ArrowData::CColorData *pColorData = CFWL_ArrowData::GetInstance()->m_pColorData;
     DrawArrow(pGraphics, pRect, eDict, pColorData->clrSign[eState - 1], pMatrix);
 }
-FWLCOLOR CFWL_WidgetTP::BlendColor(FWLCOLOR srcColor, FWLCOLOR renderColor, FX_BYTE scale)
+FWLCOLOR CFWL_WidgetTP::BlendColor(FWLCOLOR srcColor, FWLCOLOR renderColor, uint8_t scale)
 {
     FWLCOLOR dstColor;
-    FX_BYTE n = 255 - scale;
-    dstColor.a = (FX_BYTE)(((FX_WORD)srcColor.a * n + (FX_WORD)renderColor.a * scale) >> 8);
-    dstColor.r = (FX_BYTE)(((FX_WORD)srcColor.r * n + (FX_WORD)renderColor.r * scale) >> 8);
-    dstColor.g = (FX_BYTE)(((FX_WORD)srcColor.g * n + (FX_WORD)renderColor.g * scale) >> 8);
-    dstColor.b = (FX_BYTE)(((FX_WORD)srcColor.b * n + (FX_WORD)renderColor.b * scale) >> 8);
+    uint8_t n = 255 - scale;
+    dstColor.a = (uint8_t)(((FX_WORD)srcColor.a * n + (FX_WORD)renderColor.a * scale) >> 8);
+    dstColor.r = (uint8_t)(((FX_WORD)srcColor.r * n + (FX_WORD)renderColor.r * scale) >> 8);
+    dstColor.g = (uint8_t)(((FX_WORD)srcColor.g * n + (FX_WORD)renderColor.g * scale) >> 8);
+    dstColor.b = (uint8_t)(((FX_WORD)srcColor.b * n + (FX_WORD)renderColor.b * scale) >> 8);
     return dstColor;
 }
 CFWL_ArrowData::CFWL_ArrowData()
@@ -713,8 +713,8 @@ CFWL_FontManager::CFWL_FontManager()
 }
 CFWL_FontManager::~CFWL_FontManager()
 {
-    FX_INT32 count = m_arrFonts.GetSize();
-    for (FX_INT32 i = 0; i < count; i ++) {
+    int32_t count = m_arrFonts.GetSize();
+    for (int32_t i = 0; i < count; i ++) {
         CFWL_FontData *data = (CFWL_FontData*)m_arrFonts[i];
         delete data;
     }
@@ -722,8 +722,8 @@ CFWL_FontManager::~CFWL_FontManager()
 }
 IFX_Font* CFWL_FontManager::FindFont(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
 {
-    FX_INT32 count = m_arrFonts.GetSize();
-    for (FX_INT32 i = 0; i < count; i ++) {
+    int32_t count = m_arrFonts.GetSize();
+    for (int32_t i = 0; i < count; i ++) {
         CFWL_FontData *data = (CFWL_FontData*)m_arrFonts[i];
         if (data->Equal(wsFontFamily, dwFontStyles, wCodePage)) {
             return data->GetFont();

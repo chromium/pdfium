@@ -40,7 +40,7 @@ CXFA_WidgetAcc* CXFA_FFWidgetHandler::GetDataAcc(IXFA_Widget* hWidget)
 {
     return static_cast<CXFA_FFWidget*>(hWidget)->GetDataAcc();
 }
-void CXFA_FFWidgetHandler::GetName(IXFA_Widget* hWidget, CFX_WideString &wsName, FX_INT32 iNameType )
+void CXFA_FFWidgetHandler::GetName(IXFA_Widget* hWidget, CFX_WideString &wsName, int32_t iNameType )
 {
     static_cast<CXFA_FFWidget*>(hWidget)->GetDataAcc()->GetName(wsName, iNameType);
 }
@@ -108,7 +108,7 @@ FX_BOOL	CXFA_FFWidgetHandler::OnMouseMove(IXFA_Widget* hWidget, FX_DWORD dwFlags
     m_pDocView->RunInvalidate();
     return bRet;
 }
-FX_BOOL	CXFA_FFWidgetHandler::OnMouseWheel(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_SHORT zDelta, FX_FLOAT fx, FX_FLOAT fy)
+FX_BOOL	CXFA_FFWidgetHandler::OnMouseWheel(IXFA_Widget* hWidget, FX_DWORD dwFlags, int16_t zDelta, FX_FLOAT fx, FX_FLOAT fy)
 {
     static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
     FX_BOOL bRet = static_cast<CXFA_FFWidget*>(hWidget)->OnMouseWheel(dwFlags, zDelta, fx, fy);
@@ -210,7 +210,7 @@ FX_BOOL CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc, XFA_EVENTTYPE
     CXFA_NodeArray eventArray;
     return pWidgetAcc->GetEventByActivity(gs_EventActivity[eEventType], eventArray);
 }
-FX_INT32 CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc, CXFA_EventParam* pParam)
+int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc, CXFA_EventParam* pParam)
 {
     if (!pParam || pParam->m_eType == XFA_EVENT_Unknown) {
         return XFA_EVENTERROR_NotExist;
@@ -240,7 +240,7 @@ FX_INT32 CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc, CXFA_Eve
         default:
             break;
     }
-    FX_INT32 iRet = pWidgetAcc->ProcessEvent(gs_EventActivity[pParam->m_eType], pParam);
+    int32_t iRet = pWidgetAcc->ProcessEvent(gs_EventActivity[pParam->m_eType], pParam);
     return iRet;
 }
 IXFA_Widget* CXFA_FFWidgetHandler::CreateWidget(IXFA_Widget* hParent, XFA_WIDGETTYPE eType, IXFA_Widget* hBefore )

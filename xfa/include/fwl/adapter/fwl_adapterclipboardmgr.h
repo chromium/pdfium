@@ -22,8 +22,8 @@ public:
     virtual FWL_ERR		Empty() = 0;
     virtual FX_BOOL		IsDataAvailable(FX_DWORD dwFormat) = 0;
     virtual FWL_HCLIPBOARDDATA	GetData(FX_DWORD dwFormat) = 0;
-    virtual FWL_ERR		SetData(FX_DWORD dwFormat, FX_BYTE *pBuf, FX_INT32 iSize) = 0;
-    virtual FX_INT32	GetDataSize(FWL_HCLIPBOARDDATA hData) = 0;
+    virtual FWL_ERR		SetData(FX_DWORD dwFormat, uint8_t *pBuf, int32_t iSize) = 0;
+    virtual int32_t	GetDataSize(FWL_HCLIPBOARDDATA hData) = 0;
     virtual FX_LPVOID	LockDataBuffer(FWL_HCLIPBOARDDATA hData) = 0;
     virtual FX_BOOL		UnLockDataBuffer(FWL_HCLIPBOARDDATA hData) = 0;
     virtual FWL_ERR		SetStringData(FX_WSTR ws) = 0;

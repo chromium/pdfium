@@ -27,24 +27,24 @@ public:
     void							AddRulesFrom(const CFDE_CSSStyleSheetArray &sheets, FX_DWORD dwMediaList, IFX_FontMgr *pFontMgr);
     void							Clear();
 
-    FX_INT32						CountSelectors() const
+    int32_t						CountSelectors() const
     {
         return m_iSelectors;
     }
     FDE_LPCSSRULEDATA				GetIDRuleData(FX_DWORD dwIDHash)
     {
         FX_LPVOID pData;
-        return m_IDRules.Lookup((FX_LPVOID)(FX_UINTPTR)dwIDHash, pData) ? (FDE_LPCSSRULEDATA)pData : NULL;
+        return m_IDRules.Lookup((FX_LPVOID)(uintptr_t)dwIDHash, pData) ? (FDE_LPCSSRULEDATA)pData : NULL;
     }
     FDE_LPCSSRULEDATA				GetTagRuleData(FX_DWORD dwTagHasn)
     {
         FX_LPVOID pData;
-        return m_TagRules.Lookup((FX_LPVOID)(FX_UINTPTR)dwTagHasn, pData) ? (FDE_LPCSSRULEDATA)pData : NULL;
+        return m_TagRules.Lookup((FX_LPVOID)(uintptr_t)dwTagHasn, pData) ? (FDE_LPCSSRULEDATA)pData : NULL;
     }
     FDE_LPCSSRULEDATA				GetClassRuleData(FX_DWORD dwIDHash)
     {
         FX_LPVOID pData;
-        return m_ClassRules.Lookup((FX_LPVOID)(FX_UINTPTR)dwIDHash, pData) ? (FDE_LPCSSRULEDATA)pData : NULL;
+        return m_ClassRules.Lookup((FX_LPVOID)(uintptr_t)dwIDHash, pData) ? (FDE_LPCSSRULEDATA)pData : NULL;
     }
     FDE_LPCSSRULEDATA				GetUniversalRuleData()
     {
@@ -65,7 +65,7 @@ protected:
     CFX_MapPtrToPtr					m_ClassRules;
     FDE_LPCSSRULEDATA				m_pUniversalRules;
     FDE_LPCSSRULEDATA				m_pPersudoRules;
-    FX_INT32						m_iSelectors;
+    int32_t						m_iSelectors;
 };
 class CFDE_CSSAccelerator;
 class CFDE_CSSComputedStyle;
@@ -88,15 +88,15 @@ public:
     virtual void					UpdateStyleIndex(FX_DWORD dwMediaList);
     virtual IFDE_CSSAccelerator*	InitAccelerator();
     virtual IFDE_CSSComputedStyle*	CreateComputedStyle(IFDE_CSSComputedStyle *pParentStyle);
-    virtual FX_INT32				MatchDeclarations(IFDE_CSSTagProvider *pTag, CFDE_CSSDeclarationArray &matchedDecls, FDE_CSSPERSUDO ePersudoType = FDE_CSSPERSUDO_NONE);
-    virtual void					ComputeStyle(IFDE_CSSTagProvider *pTag, const IFDE_CSSDeclaration **ppDeclArray, FX_INT32 iDeclCount, IFDE_CSSComputedStyle *pDestStyle);
+    virtual int32_t				MatchDeclarations(IFDE_CSSTagProvider *pTag, CFDE_CSSDeclarationArray &matchedDecls, FDE_CSSPERSUDO ePersudoType = FDE_CSSPERSUDO_NONE);
+    virtual void					ComputeStyle(IFDE_CSSTagProvider *pTag, const IFDE_CSSDeclaration **ppDeclArray, int32_t iDeclCount, IFDE_CSSComputedStyle *pDestStyle);
 protected:
     void							Reset();
     void							MatchRules(FDE_LPCSSTAGCACHE pCache, FDE_LPCSSRULEDATA pList, FDE_CSSPERSUDO ePersudoType);
     void							SortRulesTo(CFDE_CSSDeclarationArray &matchDecls);
     FX_BOOL							MatchSelector(FDE_LPCSSTAGCACHE pCache, IFDE_CSSSelector *pSel, FDE_CSSPERSUDO ePersudoType);
-    void							AppendInlineStyle(CFDE_CSSDeclaration *pDecl, FX_LPCWSTR psz, FX_INT32 iLen);
-    void							ApplyDeclarations(FX_BOOL bPriority, const IFDE_CSSDeclaration **ppDeclArray, FX_INT32 iDeclCount, IFDE_CSSComputedStyle *pDestStyle);
+    void							AppendInlineStyle(CFDE_CSSDeclaration *pDecl, FX_LPCWSTR psz, int32_t iLen);
+    void							ApplyDeclarations(FX_BOOL bPriority, const IFDE_CSSDeclaration **ppDeclArray, int32_t iDeclCount, IFDE_CSSComputedStyle *pDestStyle);
     void							ApplyProperty(FDE_CSSPROPERTY eProperty, IFDE_CSSValue *pValue, CFDE_CSSComputedStyle *pComputedStyle);
 
     FX_FLOAT						ApplyNumber(FDE_CSSPRIMITIVETYPE eUnit, FX_FLOAT fValue, FX_FLOAT fPercentBase);
@@ -151,12 +151,12 @@ public:
     {
         FX_memset(this, 0, sizeof(_FDE_CSSCOUNTERDATA));
     }
-    FX_BOOL		GetCounterIncrement(FX_INT32 &iValue)
+    FX_BOOL		GetCounterIncrement(int32_t &iValue)
     {
         iValue = m_iIncVal;
         return m_bIncrement;
     }
-    FX_BOOL		GetCounterReset(FX_INT32 &iValue)
+    FX_BOOL		GetCounterReset(int32_t &iValue)
     {
         iValue = m_iResetVal;
         return m_bReset;
@@ -164,8 +164,8 @@ public:
     FX_LPCWSTR	m_pszIdent;
     FX_BOOL		m_bIncrement;
     FX_BOOL		m_bReset;
-    FX_INT32	m_iIncVal;
-    FX_INT32	m_iResetVal;
+    int32_t	m_iIncVal;
+    int32_t	m_iResetVal;
 } FDE_CSSCOUNTERDATA, *FDE_LPCSSCOUNTERDATA;
 class CFDE_CSSCounterStyle
 {
@@ -181,22 +181,22 @@ public:
         m_pCounterReset = pList;
         m_bIndexDirty = TRUE;
     }
-    FX_INT32								CountCounters()
+    int32_t								CountCounters()
     {
         UpdateIndex();
         return m_arrCounterData.GetSize();
     }
-    FX_BOOL									GetCounterIncrement(FX_INT32 index, FX_INT32 &iValue)
+    FX_BOOL									GetCounterIncrement(int32_t index, int32_t &iValue)
     {
         UpdateIndex();
         return m_arrCounterData.ElementAt(index).GetCounterIncrement(iValue);
     }
-    FX_BOOL									GetCounterReset(FX_INT32 index, FX_INT32 &iValue)
+    FX_BOOL									GetCounterReset(int32_t index, int32_t &iValue)
     {
         UpdateIndex();
         return m_arrCounterData.ElementAt(index).GetCounterReset(iValue);
     }
-    FX_LPCWSTR								GetCounterIdentifier(FX_INT32 index)
+    FX_LPCWSTR								GetCounterIdentifier(int32_t index)
     {
         UpdateIndex();
         return m_arrCounterData.ElementAt(index).m_pszIdent;
@@ -204,7 +204,7 @@ public:
 protected:
     void									UpdateIndex();
     void									DoUpdateIndex(IFDE_CSSValueList *pList);
-    FX_INT32								FindIndex(FX_LPCWSTR pszIdentifier);
+    int32_t								FindIndex(FX_LPCWSTR pszIdentifier);
     IFDE_CSSValueList						*m_pCounterInc;
     IFDE_CSSValueList						*m_pCounterReset;
     CFX_ArrayTemplate<FDE_CSSCOUNTERDATA>	m_arrCounterData;
@@ -240,8 +240,8 @@ public:
     FX_ARGB							m_dwFontColor;
     FX_ARGB							m_dwTextEmphasisColor;
     FX_WORD							m_wFontWeight;
-    FX_INT32						m_iWidows;
-    FX_INT32						m_iOrphans;
+    int32_t						m_iWidows;
+    int32_t						m_iOrphans;
     FX_LPCWSTR						m_pszTextEmphasisCustomMark;
     FX_WORD							m_eFontVariant		: 1;
     FX_WORD							m_eFontStyle		: 1;
@@ -413,7 +413,7 @@ public:
     }
     virtual FX_BOOL					GetCustomStyle(FX_WSTR wsName, CFX_WideString &wsValue) const
     {
-        for (FX_INT32 i = m_CustomProperties.GetSize() - 2; i > -1; i -= 2) {
+        for (int32_t i = m_CustomProperties.GetSize() - 2; i > -1; i -= 2) {
             if (wsName == m_CustomProperties[i]) {
                 wsValue = m_CustomProperties[i + 1];
                 return TRUE;
@@ -445,19 +445,19 @@ public:
     {
         return (FDE_CSSCAPTIONSIDE)m_InheritedData.m_eCaptionSide;
     }
-    virtual FX_INT32				CountCounters()
+    virtual int32_t				CountCounters()
     {
         return (m_NonInheritedData.m_pCounterStyle == NULL) ? 0 : m_NonInheritedData.m_pCounterStyle->CountCounters();
     }
-    virtual FX_LPCWSTR				GetCounterIdentifier(FX_INT32 index)
+    virtual FX_LPCWSTR				GetCounterIdentifier(int32_t index)
     {
         return m_NonInheritedData.m_pCounterStyle->GetCounterIdentifier(index);
     }
-    virtual FX_BOOL					GetCounterReset(FX_INT32 index, FX_INT32 &iValue)
+    virtual FX_BOOL					GetCounterReset(int32_t index, int32_t &iValue)
     {
         return m_NonInheritedData.m_pCounterStyle->GetCounterReset(index, iValue);
     }
-    virtual FX_BOOL					GetCounterIncrement(FX_INT32 index, FX_INT32 &iValue)
+    virtual FX_BOOL					GetCounterIncrement(int32_t index, int32_t &iValue)
     {
         return m_NonInheritedData.m_pCounterStyle->GetCounterIncrement(index, iValue);
     }
@@ -465,11 +465,11 @@ public:
     {
         return m_NonInheritedData.m_pContentList;
     }
-    virtual FX_INT32				CountQuotes() const
+    virtual int32_t				CountQuotes() const
     {
         return m_InheritedData.m_pQuotes == NULL ? 0 : m_InheritedData.m_pQuotes->CountValues();
     }
-    virtual FX_LPCWSTR				GetQuotes(FX_INT32 index) const
+    virtual FX_LPCWSTR				GetQuotes(int32_t index) const
     {
         FXSYS_assert(m_InheritedData.m_pQuotes != NULL && m_InheritedData.m_pQuotes->CountValues() > index);
         return ((IFDE_CSSPrimitiveValue*)(m_InheritedData.m_pQuotes->GetValue(index)))->GetString(index);
@@ -522,11 +522,11 @@ public:
     {
         m_NonInheritedData.m_ColumnWidth = columnWidth;
     }
-    virtual FX_INT32				CountFontFamilies() const
+    virtual int32_t				CountFontFamilies() const
     {
         return m_InheritedData.m_pFontFamily ? m_InheritedData.m_pFontFamily->CountValues() : 0;
     }
-    virtual FX_LPCWSTR				GetFontFamily(FX_INT32 index) const
+    virtual FX_LPCWSTR				GetFontFamily(int32_t index) const
     {
         return ((IFDE_CSSPrimitiveValue*)(m_InheritedData.m_pFontFamily->GetValue(index)))->GetString(index);
     }
@@ -782,7 +782,7 @@ public:
     {
         return (FDE_CSSWORDBREAK)m_InheritedData.m_eWordBreak;
     }
-    virtual FX_INT32				GetWidows() const
+    virtual int32_t				GetWidows() const
     {
         return m_InheritedData.m_iWidows;
     }
@@ -802,7 +802,7 @@ public:
     {
         return (FDE_CSSPAGEBREAK)m_NonInheritedData.m_ePageBreakInside;
     }
-    virtual FX_INT32				GetOrphans() const
+    virtual int32_t				GetOrphans() const
     {
         return m_InheritedData.m_iOrphans;
     }
@@ -881,7 +881,7 @@ public:
     {
         m_InheritedData.m_eWordBreak = eWordBreak;
     }
-    virtual void					SetWidows(FX_INT32 iWidows)
+    virtual void					SetWidows(int32_t iWidows)
     {
         m_InheritedData.m_iWidows = iWidows;
     }
@@ -901,7 +901,7 @@ public:
     {
         m_NonInheritedData.m_ePageBreakInside = ePageBreakInside;
     }
-    virtual void					SetOrphans(FX_INT32 iOrphans)
+    virtual void					SetOrphans(int32_t iOrphans)
     {
         m_InheritedData.m_iOrphans = iOrphans;
     }
@@ -949,11 +949,11 @@ public:
     {
         return (FDE_CSSOVERFLOW)m_NonInheritedData.m_eOverflowY;
     }
-    virtual FX_INT32				CountCursorUrls() const
+    virtual int32_t				CountCursorUrls() const
     {
         return m_InheritedData.m_pCursorUris == NULL ? 0 : m_InheritedData.m_pCursorUris->CountValues();
     }
-    virtual FX_LPCWSTR				GetCursorUrl(FX_INT32 index) const
+    virtual FX_LPCWSTR				GetCursorUrl(int32_t index) const
     {
         FXSYS_assert(m_InheritedData.m_pCursorUris != NULL);
         return ((IFDE_CSSPrimitiveValue*)(m_InheritedData.m_pCursorUris->GetValue(index)))->GetString(index);

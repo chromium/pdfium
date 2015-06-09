@@ -142,7 +142,7 @@ void CPDF_PageContentGenerate::TransformContent(CFX_Matrix& matrix)
             size += pContentArray[i]->GetSize() + 1;
         }
         int pos = 0;
-        FX_LPBYTE pBuf = FX_Alloc(FX_BYTE, size);
+        FX_LPBYTE pBuf = FX_Alloc(uint8_t, size);
         for (i = 0; i < iCount; ++i) {
             FXSYS_memcpy32(pBuf + pos, pContentArray[i]->GetData(), pContentArray[i]->GetSize());
             pos += pContentArray[i]->GetSize() + 1;

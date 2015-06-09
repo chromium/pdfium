@@ -35,15 +35,15 @@ CBC_QRGridSampler &CBC_QRGridSampler::GetInstance()
 {
     return m_gridSampler;
 }
-void CBC_QRGridSampler::CheckAndNudgePoints(CBC_CommonBitMatrix *image, CFX_FloatArray *points, FX_INT32 &e)
+void CBC_QRGridSampler::CheckAndNudgePoints(CBC_CommonBitMatrix *image, CFX_FloatArray *points, int32_t &e)
 {
-    FX_INT32 width = image->GetWidth();
-    FX_INT32 height = image->GetHeight();
+    int32_t width = image->GetWidth();
+    int32_t height = image->GetHeight();
     FX_BOOL nudged = TRUE;
-    FX_INT32 offset;
+    int32_t offset;
     for (offset = 0; offset < points->GetSize() && nudged; offset += 2) {
-        FX_INT32 x = (FX_INT32) (*points)[offset];
-        FX_INT32 y = (FX_INT32) (*points)[offset + 1];
+        int32_t x = (int32_t) (*points)[offset];
+        int32_t y = (int32_t) (*points)[offset + 1];
         if (x < -1 || x > width || y < -1 || y > height) {
             e = BCExceptionRead;
             BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -66,8 +66,8 @@ void CBC_QRGridSampler::CheckAndNudgePoints(CBC_CommonBitMatrix *image, CFX_Floa
     }
     nudged = TRUE;
     for (offset = (*points).GetSize() - 2; offset >= 0 && nudged; offset -= 2) {
-        FX_INT32 x = (FX_INT32) (*points)[offset];
-        FX_INT32 y = (FX_INT32) (*points)[offset + 1];
+        int32_t x = (int32_t) (*points)[offset];
+        int32_t y = (int32_t) (*points)[offset + 1];
         if (x < -1 || x > width || y < -1 || y > height) {
             e = BCExceptionRead;
             BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -89,7 +89,7 @@ void CBC_QRGridSampler::CheckAndNudgePoints(CBC_CommonBitMatrix *image, CFX_Floa
         }
     }
 }
-CBC_CommonBitMatrix *CBC_QRGridSampler::SampleGrid(CBC_CommonBitMatrix *image, FX_INT32 dimensionX, FX_INT32 dimensionY,
+CBC_CommonBitMatrix *CBC_QRGridSampler::SampleGrid(CBC_CommonBitMatrix *image, int32_t dimensionX, int32_t dimensionY,
         FX_FLOAT p1ToX, FX_FLOAT p1ToY,
         FX_FLOAT p2ToX, FX_FLOAT p2ToY,
         FX_FLOAT p3ToX, FX_FLOAT p3ToY,
@@ -97,7 +97,7 @@ CBC_CommonBitMatrix *CBC_QRGridSampler::SampleGrid(CBC_CommonBitMatrix *image, F
         FX_FLOAT p1FromX, FX_FLOAT p1FromY,
         FX_FLOAT p2FromX, FX_FLOAT p2FromY,
         FX_FLOAT p3FromX, FX_FLOAT p3FromY,
-        FX_FLOAT p4FromX, FX_FLOAT p4FromY, FX_INT32 &e)
+        FX_FLOAT p4FromX, FX_FLOAT p4FromY, int32_t &e)
 {
     CBC_AutoPtr<CBC_CommonPerspectiveTransform> transform(CBC_CommonPerspectiveTransform::QuadrilateralToQuadrilateral(
                 p1ToX, p1ToY, p2ToX, p2ToY, p3ToX, p3ToY, p4ToX, p4ToY,
@@ -107,10 +107,10 @@ CBC_CommonBitMatrix *CBC_QRGridSampler::SampleGrid(CBC_CommonBitMatrix *image, F
     CBC_AutoPtr<CBC_CommonBitMatrix> bits(tempBitM);
     CFX_FloatArray points;
     points.SetSize(dimensionX << 1);
-    for (FX_INT32 y = 0; y < dimensionY; y++) {
-        FX_INT32 max = points.GetSize();
+    for (int32_t y = 0; y < dimensionY; y++) {
+        int32_t max = points.GetSize();
         FX_FLOAT iValue = (FX_FLOAT) (y + 0.5f);
-        FX_INT32 x;
+        int32_t x;
         for (x = 0; x < max; x += 2) {
             points[x] = (FX_FLOAT) ((x >> 1) + 0.5f);
             points[x + 1] = iValue;
@@ -119,7 +119,7 @@ CBC_CommonBitMatrix *CBC_QRGridSampler::SampleGrid(CBC_CommonBitMatrix *image, F
         CheckAndNudgePoints(image, &points, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
         for (x = 0; x < max; x += 2) {
-            if (image->Get((FX_INT32) points[x], (FX_INT32) points[x + 1])) {
+            if (image->Get((int32_t) points[x], (int32_t) points[x + 1])) {
                 bits->Set(x >> 1, y);
             }
         }

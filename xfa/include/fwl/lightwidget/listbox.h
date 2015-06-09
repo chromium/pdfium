@@ -20,9 +20,9 @@ public:
     FWL_HLISTITEM	AddString(FX_WSTR wsAdd, FX_BOOL bSelect = FALSE);
     FX_BOOL		DeleteString(FWL_HLISTITEM hItem);
     FX_BOOL		DeleteAll();
-    FX_INT32	CountSelItems();
-    FWL_HLISTITEM	GetSelItem(FX_INT32 nIndexSel);
-    FX_INT32	GetSelIndex(FX_INT32 nIndex);
+    int32_t	CountSelItems();
+    FWL_HLISTITEM	GetSelItem(int32_t nIndexSel);
+    int32_t	GetSelIndex(int32_t nIndex);
     FWL_ERR		SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect = TRUE);
     FWL_ERR		GetItemText(FWL_HLISTITEM hItem, CFX_WideString &wsText);
     FWL_ERR		GetScrollPos(FX_FLOAT &fPos, FX_BOOL bVert = TRUE);
@@ -30,8 +30,8 @@ public:
     FWL_HLISTITEM	GetFocusItem();
     FWL_ERR		SetFocusItem(FWL_HLISTITEM hItem);
     FWL_ERR*	Sort(IFWL_ListBoxCompare *pCom);
-    FX_INT32	CountItems();
-    FWL_HLISTITEM	GetItem(FX_INT32 nIndex);
+    int32_t	CountItems();
+    FWL_HLISTITEM	GetItem(int32_t nIndex);
     FWL_ERR		SetItemString(FWL_HLISTITEM hItem, FX_WSTR wsText);
     FWL_ERR		GetItemString(FWL_HLISTITEM hItem, CFX_WideString &wsText);
     FWL_ERR		SetItemData(FWL_HLISTITEM hItem, FX_LPVOID pData);
@@ -48,10 +48,10 @@ protected:
         ~CFWL_ListBoxDP();
         virtual FWL_ERR GetCaption(IFWL_Widget *pWidget, CFX_WideString &wsCaption);
 
-        virtual	FX_INT32		CountItems(IFWL_Widget *pWidget);
-        virtual	FWL_HLISTITEM	GetItem(IFWL_Widget *pWidget, FX_INT32 nIndex);
-        virtual	FX_INT32		GetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
-        virtual FX_BOOL			SetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_INT32 nIndex);
+        virtual	int32_t		CountItems(IFWL_Widget *pWidget);
+        virtual	FWL_HLISTITEM	GetItem(IFWL_Widget *pWidget, int32_t nIndex);
+        virtual	int32_t		GetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
+        virtual FX_BOOL			SetItemIndex(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, int32_t nIndex);
 
         virtual	FX_DWORD		GetItemStyles(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
         virtual	FWL_ERR			GetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, CFX_WideString &wsText);

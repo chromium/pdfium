@@ -13,7 +13,7 @@ public:
     CXFA_FFBarcode(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
     virtual ~CXFA_FFBarcode();
     virtual FX_BOOL	LoadWidget();
-    virtual void	RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_DWORD dwStatus = 0, FX_INT32 iRotate = 0);
+    virtual void	RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_DWORD dwStatus = 0, int32_t iRotate = 0);
     virtual void	UpdateWidgetProperty();
     virtual FX_BOOL	OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
     virtual FX_BOOL	OnRButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
@@ -83,7 +83,7 @@ enum XFA_BARCODETYPEENUM {
     XFA_BARCODETYPE_upsMaxicode
 };
 struct XFA_BARCODETYPEENUMINFO {
-    FX_UINT32					uHash;
+    uint32_t					uHash;
     FX_LPCWSTR					pName;
     XFA_BARCODETYPEENUM			eName;
     BC_TYPE						eBCType;

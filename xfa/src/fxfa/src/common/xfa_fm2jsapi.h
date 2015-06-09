@@ -14,7 +14,7 @@ extern "C"
 typedef struct XFA_HFM2JSCONTEXT_ {
     FX_LPVOID* pData;
 }* XFA_HFM2JSCONTEXT;
-FX_INT32			XFA_FM2JS_Translate(FX_WSTR wsFormcalc, CFX_WideTextBuf& wsJavascript, CFX_WideString& wsError);
+int32_t			XFA_FM2JS_Translate(FX_WSTR wsFormcalc, CFX_WideTextBuf& wsJavascript, CFX_WideString& wsError);
 XFA_HFM2JSCONTEXT	XFA_FM2JS_ContextCreate();
 void				XFA_FM2JS_ContextInitialize(XFA_HFM2JSCONTEXT hFM2JSContext, FXJSE_HRUNTIME hScriptRuntime,
         FXJSE_HCONTEXT hScriptContext,

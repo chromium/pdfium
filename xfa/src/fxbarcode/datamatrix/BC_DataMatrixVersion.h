@@ -11,35 +11,35 @@ class CBC_DataMatrixVersion;
 class ECB
 {
 public:
-    ECB(FX_INT32 count, FX_INT32 dataCodewords)
+    ECB(int32_t count, int32_t dataCodewords)
     {
         m_count = count;
         m_dataCodewords = dataCodewords;
     }
 
-    FX_INT32 GetCount()
+    int32_t GetCount()
     {
         return m_count;
     }
 
-    FX_INT32 GetDataCodewords()
+    int32_t GetDataCodewords()
     {
         return m_dataCodewords;
     }
 private:
-    FX_INT32 m_count;
-    FX_INT32 m_dataCodewords;
+    int32_t m_count;
+    int32_t m_dataCodewords;
 };
 class ECBlocks
 {
 public:
-    ECBlocks(FX_INT32 ecCodewords, ECB *ecBlocks)
+    ECBlocks(int32_t ecCodewords, ECB *ecBlocks)
     {
         m_ecCodewords = ecCodewords;
         m_ecBlocks.Add(ecBlocks);
     }
 
-    ECBlocks(FX_INT32 ecCodewords, ECB *ecBlocks1, ECB *ecBlocks2)
+    ECBlocks(int32_t ecCodewords, ECB *ecBlocks1, ECB *ecBlocks2)
     {
         m_ecCodewords = ecCodewords;
         m_ecBlocks.Add(ecBlocks1);
@@ -47,13 +47,13 @@ public:
     }
     ~ECBlocks()
     {
-        for(FX_INT32 i = 0; i < m_ecBlocks.GetSize(); i++) {
+        for(int32_t i = 0; i < m_ecBlocks.GetSize(); i++) {
             delete (ECB*)m_ecBlocks[i];
         }
         m_ecBlocks.RemoveAll();
     }
 
-    FX_INT32 GetECCodewords()
+    int32_t GetECCodewords()
     {
         return m_ecCodewords;
     }
@@ -63,38 +63,38 @@ public:
         return m_ecBlocks;
     }
 private:
-    FX_INT32 m_ecCodewords;
+    int32_t m_ecCodewords;
     CFX_PtrArray m_ecBlocks;
 };
 class CBC_DataMatrixVersion
 {
 public:
-    CBC_DataMatrixVersion(FX_INT32 versionNumber,
-                          FX_INT32 symbolSizeRows,
-                          FX_INT32 symbolSizeColumns,
-                          FX_INT32 dataRegionSizeRows,
-                          FX_INT32 dataRegionSizeColumns,
+    CBC_DataMatrixVersion(int32_t versionNumber,
+                          int32_t symbolSizeRows,
+                          int32_t symbolSizeColumns,
+                          int32_t dataRegionSizeRows,
+                          int32_t dataRegionSizeColumns,
                           ECBlocks *ecBlocks);
     virtual ~CBC_DataMatrixVersion();
     static void Initialize();
     static void Finalize();
-    FX_INT32 GetVersionNumber();
-    FX_INT32 GetSymbolSizeRows();
-    FX_INT32 GetSymbolSizeColumns();
-    FX_INT32 GetDataRegionSizeRows();
-    FX_INT32 GetDataRegionSizeColumns();
-    FX_INT32 GetTotalCodewords();
+    int32_t GetVersionNumber();
+    int32_t GetSymbolSizeRows();
+    int32_t GetSymbolSizeColumns();
+    int32_t GetDataRegionSizeRows();
+    int32_t GetDataRegionSizeColumns();
+    int32_t GetTotalCodewords();
     ECBlocks *GetECBlocks();
-    static CBC_DataMatrixVersion *GetVersionForDimensions(FX_INT32 numRows, FX_INT32 numColumns, FX_INT32 &e);
+    static CBC_DataMatrixVersion *GetVersionForDimensions(int32_t numRows, int32_t numColumns, int32_t &e);
     static void ReleaseAll();
 private:
-    FX_INT32 m_versionNumber;
-    FX_INT32 m_symbolSizeRows;
-    FX_INT32 m_symbolSizeColumns;
-    FX_INT32 m_dataRegionSizeRows;
-    FX_INT32 m_dataRegionSizeColumns;
+    int32_t m_versionNumber;
+    int32_t m_symbolSizeRows;
+    int32_t m_symbolSizeColumns;
+    int32_t m_dataRegionSizeRows;
+    int32_t m_dataRegionSizeColumns;
     ECBlocks *m_ecBlocks;
-    FX_INT32 m_totalCodewords;
+    int32_t m_totalCodewords;
     static CFX_PtrArray* VERSIONS;
 };
 #endif

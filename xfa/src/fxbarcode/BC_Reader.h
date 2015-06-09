@@ -13,7 +13,7 @@ class CBC_Reader
 public:
     CBC_Reader();
     virtual ~CBC_Reader();
-    virtual CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 &e) = 0;
-    virtual CFX_ByteString Decode(CBC_BinaryBitmap *image, FX_INT32 hints, FX_INT32 &e) = 0;
+    virtual CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t &e) = 0;
+    virtual CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e) = 0;
 };
 #endif

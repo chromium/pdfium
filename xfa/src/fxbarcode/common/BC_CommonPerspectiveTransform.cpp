@@ -48,7 +48,7 @@ CBC_CommonPerspectiveTransform *CBC_CommonPerspectiveTransform::QuadrilateralToQ
 }
 void CBC_CommonPerspectiveTransform::TransformPoints(CFX_FloatArray *points)
 {
-    FX_INT32 max = points->GetSize();
+    int32_t max = points->GetSize();
     FX_FLOAT a11 = m_a11;
     FX_FLOAT a12 = m_a12;
     FX_FLOAT a13 = m_a13;
@@ -58,7 +58,7 @@ void CBC_CommonPerspectiveTransform::TransformPoints(CFX_FloatArray *points)
     FX_FLOAT a31 = m_a31;
     FX_FLOAT a32 = m_a32;
     FX_FLOAT a33 = m_a33;
-    FX_INT32 i;
+    int32_t i;
     for (i = 0; i < max; i += 2) {
         FX_FLOAT x = (*points)[i];
         FX_FLOAT y = (*points)[i + 1];

@@ -92,7 +92,7 @@ FWL_ERR CFWL_PushButtonImp::GetWidgetRect(CFX_RectF &rect, FX_BOOL bAutoSize )
         if (pData) {
             pData->GetCaption(m_pInterface, wsCaption);
         }
-        FX_INT32 iLen = wsCaption.GetLength();
+        int32_t iLen = wsCaption.GetLength();
         if (iLen > 0) {
             CFX_SizeF sz = CalcTextSize(wsCaption, m_pProperties->m_pThemeProvider);
             rect.Set(0, 0, sz.x, sz.y);
@@ -382,13 +382,13 @@ CFWL_PushButtonImpDelegate::CFWL_PushButtonImpDelegate(CFWL_PushButtonImp *pOwne
     : m_pOwner(pOwner)
 {
 }
-FX_INT32 CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
+int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message *pMessage)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
     if (!m_pOwner->IsEnabled()) {
         return 1;
     }
-    FX_INT32 iRet = 1;
+    int32_t iRet = 1;
     FX_DWORD dwMsgCode = pMessage->GetClassID();
     switch (dwMsgCode) {
         case FWL_MSGHASH_SetFocus:

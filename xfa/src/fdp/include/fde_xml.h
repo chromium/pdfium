@@ -32,7 +32,7 @@ enum FDE_XMLNODETYPE {
     FDE_XMLNODE_CharData			,
 };
 typedef struct _FDE_XMLNODE {
-    FX_INT32		iNodeNum;
+    int32_t		iNodeNum;
     FDE_XMLNODETYPE	eNodeType;
 } FDE_XMLNODE, * FDE_LPXMLNODE;
 typedef FDE_XMLNODE const * FDE_LPCXMLNODE;
@@ -48,16 +48,16 @@ class IFDE_XMLNode
 public:
     virtual void			Release() = 0;
     virtual FDE_XMLNODETYPE	GetType() const = 0;
-    virtual FX_INT32		CountChildNodes() const = 0;
-    virtual IFDE_XMLNode*	GetChildNode(FX_INT32 index) const = 0;
-    virtual FX_INT32		GetChildNodeIndex(IFDE_XMLNode *pNode) const = 0;
-    virtual IFDE_XMLNode*	GetPath(FX_LPCWSTR pPath, FX_INT32 iLength = -1, FX_BOOL bQualifiedName = TRUE) const = 0;
-    virtual FX_INT32		InsertChildNode(IFDE_XMLNode *pNode, FX_INT32 index = -1) = 0;
+    virtual int32_t		CountChildNodes() const = 0;
+    virtual IFDE_XMLNode*	GetChildNode(int32_t index) const = 0;
+    virtual int32_t		GetChildNodeIndex(IFDE_XMLNode *pNode) const = 0;
+    virtual IFDE_XMLNode*	GetPath(FX_LPCWSTR pPath, int32_t iLength = -1, FX_BOOL bQualifiedName = TRUE) const = 0;
+    virtual int32_t		InsertChildNode(IFDE_XMLNode *pNode, int32_t index = -1) = 0;
     virtual void			RemoveChildNode(IFDE_XMLNode *pNode) = 0;
     virtual void			DeleteChildren() = 0;
     enum NodeItem {Root = 0, Parent, FirstSibling, PriorSibling, NextSibling, LastSibling, FirstNeighbor, PriorNeighbor, NextNeighbor, LastNeighbor, FirstChild, LastChild};
     virtual IFDE_XMLNode*	GetNodeItem(NodeItem eItem) const = 0;
-    virtual FX_INT32		GetNodeLevel() const = 0;
+    virtual int32_t		GetNodeLevel() const = 0;
     virtual FX_BOOL			InsertNodeItem(IFDE_XMLNode::NodeItem eItem, IFDE_XMLNode *pNode) = 0;
     virtual	IFDE_XMLNode*	RemoveNodeItem(IFDE_XMLNode::NodeItem eItem) = 0;
     virtual IFDE_XMLNode*	Clone(FX_BOOL bRecursive) = 0;
@@ -68,20 +68,20 @@ class IFDE_XMLInstruction : public IFDE_XMLNode
 public:
     static IFDE_XMLInstruction*	Create(const CFX_WideString &wsTarget);
     virtual void				GetTargetName(CFX_WideString &wsTarget) const = 0;
-    virtual FX_INT32		CountAttributes() const = 0;
-    virtual FX_BOOL			GetAttribute(FX_INT32 index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const = 0;
+    virtual int32_t		CountAttributes() const = 0;
+    virtual FX_BOOL			GetAttribute(int32_t index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const = 0;
     virtual FX_BOOL			HasAttribute(FX_LPCWSTR pwsAttriName) const = 0;
     virtual void			GetString(FX_LPCWSTR pwsAttriName, CFX_WideString &wsAttriValue, FX_LPCWSTR pwsDefValue = NULL) const = 0;
     virtual void			SetString(const CFX_WideString &wsAttriName, const CFX_WideString &wsAttriValue) = 0;
-    virtual FX_INT32		GetInteger(FX_LPCWSTR pwsAttriName, FX_INT32 iDefValue = 0) const = 0;
-    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, FX_INT32 iAttriValue) = 0;
+    virtual int32_t		GetInteger(FX_LPCWSTR pwsAttriName, int32_t iDefValue = 0) const = 0;
+    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, int32_t iAttriValue) = 0;
     virtual FX_FLOAT		GetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fDefValue = 0) const = 0;
     virtual void			SetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fAttriValue) = 0;
     virtual void			RemoveAttribute(FX_LPCWSTR pwsAttriName) = 0;
-    virtual FX_INT32		CountData() const = 0;
-    virtual FX_BOOL			GetData(FX_INT32 index, CFX_WideString &wsData) const = 0;
+    virtual int32_t		CountData() const = 0;
+    virtual FX_BOOL			GetData(int32_t index, CFX_WideString &wsData) const = 0;
     virtual void			AppendData(const CFX_WideString &wsData) = 0;
-    virtual void			RemoveData(FX_INT32 index) = 0;
+    virtual void			RemoveData(int32_t index) = 0;
 };
 class IFDE_XMLElement : public IFDE_XMLNode
 {
@@ -91,13 +91,13 @@ public:
     virtual void			GetLocalTagName(CFX_WideString &wsTag) const = 0;
     virtual void			GetNamespacePrefix(CFX_WideString &wsPrefix) const = 0;
     virtual void			GetNamespaceURI(CFX_WideString &wsNamespace) const = 0;
-    virtual FX_INT32		CountAttributes() const = 0;
-    virtual FX_BOOL			GetAttribute(FX_INT32 index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const = 0;
+    virtual int32_t		CountAttributes() const = 0;
+    virtual FX_BOOL			GetAttribute(int32_t index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const = 0;
     virtual FX_BOOL			HasAttribute(FX_LPCWSTR pwsAttriName) const = 0;
     virtual void			GetString(FX_LPCWSTR pwsAttriName, CFX_WideString &wsAttriValue, FX_LPCWSTR pwsDefValue = NULL) const = 0;
     virtual void			SetString(const CFX_WideString &wsAttriName, const CFX_WideString &wsAttriValue) = 0;
-    virtual FX_INT32		GetInteger(FX_LPCWSTR pwsAttriName, FX_INT32 iDefValue = 0) const = 0;
-    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, FX_INT32 iAttriValue) = 0;
+    virtual int32_t		GetInteger(FX_LPCWSTR pwsAttriName, int32_t iDefValue = 0) const = 0;
+    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, int32_t iAttriValue) = 0;
     virtual FX_FLOAT		GetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fDefValue = 0) const = 0;
     virtual void			SetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fAttriValue) = 0;
     virtual void			RemoveAttribute(FX_LPCWSTR pwsAttriName) = 0;
@@ -137,9 +137,9 @@ class IFDE_XMLDoc
 public:
     static IFDE_XMLDoc*		Create();
     virtual void			Release() = 0;
-    virtual FX_BOOL			LoadXML(IFX_Stream *pXMLStream, FX_INT32 iXMLPlaneSize = 8192, FX_INT32 iTextDataSize = 256, FDE_LPXMLREADERHANDLER pHandler = NULL) = 0;
+    virtual FX_BOOL			LoadXML(IFX_Stream *pXMLStream, int32_t iXMLPlaneSize = 8192, int32_t iTextDataSize = 256, FDE_LPXMLREADERHANDLER pHandler = NULL) = 0;
     virtual FX_BOOL			LoadXML(IFDE_XMLParser *pXMLParser) = 0;
-    virtual FX_INT32		DoLoad(IFX_Pause *pPause = NULL) = 0;
+    virtual int32_t		DoLoad(IFX_Pause *pPause = NULL) = 0;
     virtual void			CloseXML() = 0;
     virtual IFDE_XMLNode*	GetRoot() const = 0;
     virtual void			SaveXML(IFX_Stream *pXMLStream = NULL, FX_BOOL bSaveBOM = TRUE) = 0;
@@ -149,7 +149,7 @@ class IFDE_XMLParser
 {
 public:
     virtual	void				Release() = 0;
-    virtual FX_INT32			DoParser(IFX_Pause *pPause) = 0;
+    virtual int32_t			DoParser(IFX_Pause *pPause) = 0;
 };
 #define FDE_XMLSYNTAXSTATUS_None				0x00
 #define FDE_XMLSYNTAXSTATUS_InstructionOpen		0x01
@@ -171,13 +171,13 @@ class IFDE_XMLSyntaxParser
 public:
     static IFDE_XMLSyntaxParser*	Create();
     virtual void			Release() = 0;
-    virtual void			Init(IFX_Stream *pStream, FX_INT32 iXMLPlaneSize, FX_INT32 iTextDataSize = 256) = 0;
+    virtual void			Init(IFX_Stream *pStream, int32_t iXMLPlaneSize, int32_t iTextDataSize = 256) = 0;
     virtual FX_DWORD		DoSyntaxParse() = 0;
-    virtual FX_INT32		GetStatus() const = 0;
-    virtual FX_INT32		GetCurrentPos() const = 0;
+    virtual int32_t		GetStatus() const = 0;
+    virtual int32_t		GetCurrentPos() const = 0;
     virtual FX_FILESIZE		GetCurrentBinaryPos() const = 0;
-    virtual FX_INT32		GetCurrentNodeNumber() const = 0;
-    virtual FX_INT32		GetLastNodeNumber() const = 0;
+    virtual int32_t		GetCurrentNodeNumber() const = 0;
+    virtual int32_t		GetLastNodeNumber() const = 0;
     virtual void			GetTargetName(CFX_WideString &wsTarget) const = 0;
     virtual void			GetTagName(CFX_WideString &wsTag) const = 0;
     virtual void			GetAttributeName(CFX_WideString &wsAttriName) const = 0;

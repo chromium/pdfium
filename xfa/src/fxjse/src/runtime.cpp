@@ -111,7 +111,7 @@ void CFXJSE_RuntimeList::AppendRuntime(v8::Isolate* pIsolate)
 }
 void CFXJSE_RuntimeList::RemoveRuntime(v8::Isolate* pIsolate, CFXJSE_RuntimeList::RuntimeDisposeCallback lpfnDisposeCallback)
 {
-    FX_INT32 iIdx = m_RuntimeList.Find(pIsolate, 0);
+    int32_t iIdx = m_RuntimeList.Find(pIsolate, 0);
     if(iIdx >= 0) {
         m_RuntimeList.RemoveAt(iIdx, 1);
     }
@@ -121,9 +121,9 @@ void CFXJSE_RuntimeList::RemoveRuntime(v8::Isolate* pIsolate, CFXJSE_RuntimeList
 }
 void CFXJSE_RuntimeList::RemoveAllRuntimes(CFXJSE_RuntimeList::RuntimeDisposeCallback lpfnDisposeCallback)
 {
-    FX_INT32 iSize = m_RuntimeList.GetSize();
+    int32_t iSize = m_RuntimeList.GetSize();
     if(lpfnDisposeCallback) {
-        for(FX_INT32 iIdx = 0; iIdx < iSize; iIdx++) {
+        for(int32_t iIdx = 0; iIdx < iSize; iIdx++) {
             lpfnDisposeCallback(m_RuntimeList[iIdx]);
         }
     }

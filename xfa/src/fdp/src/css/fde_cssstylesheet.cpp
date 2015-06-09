@@ -35,7 +35,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString &szU
     }
     return pStyleSheet;
 }
-IFDE_CSSStyleSheet*	IFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, FX_INT32 iBufSize, FX_WORD wCodePage, FX_DWORD dwMediaList )
+IFDE_CSSStyleSheet*	IFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, int32_t iBufSize, FX_WORD wCodePage, FX_DWORD dwMediaList )
 {
     CFDE_CSSStyleSheet *pStyleSheet = FDE_New CFDE_CSSStyleSheet(dwMediaList);
     if (pStyleSheet == NULL) {
@@ -61,7 +61,7 @@ CFDE_CSSStyleSheet::~CFDE_CSSStyleSheet()
 }
 void CFDE_CSSStyleSheet::Reset()
 {
-    for (FX_INT32 i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
+    for (int32_t i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
         IFDE_CSSRule *pRule = m_RuleArray.GetAt(i);
         switch (pRule->GetType()) {
             case  FDE_CSSRULETYPE_Style:
@@ -98,11 +98,11 @@ FX_DWORD CFDE_CSSStyleSheet::Release()
     }
     return dwRefCount;
 }
-FX_INT32 CFDE_CSSStyleSheet::CountRules() const
+int32_t CFDE_CSSStyleSheet::CountRules() const
 {
     return m_RuleArray.GetSize();
 }
-IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(FX_INT32 index)
+IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index)
 {
     return m_RuleArray.GetAt(index);
 }
@@ -122,7 +122,7 @@ FX_BOOL CFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString &szUrl, IFX_Stre
     m_szUrl = szUrl;
     return bRet;
 }
-FX_BOOL CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, FX_INT32 iBufSize, FX_WORD wCodePage)
+FX_BOOL CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, int32_t iBufSize, FX_WORD wCodePage)
 {
     FXSYS_assert(pBuffer != NULL && iBufSize > 0);
     IFDE_CSSSyntaxParser *pSyntax = IFDE_CSSSyntaxParser::Create();
@@ -175,7 +175,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadMediaRule(IFDE_CSSSyntaxParser *pSyn
     for (;;) {
         switch (pSyntax->DoSyntaxParse()) {
             case FDE_CSSSYNTAXSTATUS_MediaType: {
-                    FX_INT32 iLen;
+                    int32_t iLen;
                     FX_LPCWSTR psz = pSyntax->GetCurrentString(iLen);
                     FDE_LPCCSSMEDIATYPETABLE pMediaType = FDE_GetCSSMediaTypeByName(psz, iLen);
                     if (pMediaType != NULL) {
@@ -210,7 +210,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadStyleRule(IFDE_CSSSyntaxParser *pSyn
     m_Selectors.RemoveAt(0, m_Selectors.GetSize());
     CFDE_CSSStyleRule *pStyleRule = NULL;
     FX_LPCWSTR pszValue = NULL;
-    FX_INT32 iValueLen = 0;
+    int32_t iValueLen = 0;
     FDE_CSSPROPERTYARGS propertyArgs;
     propertyArgs.pStaticStore = m_pAllocator;
     propertyArgs.pStringCache = &m_StringCache;
@@ -270,7 +270,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadFontFaceRule(IFDE_CSSSyntaxParser *p
 {
     CFDE_CSSFontFaceRule *pFontFaceRule = NULL;
     FX_LPCWSTR pszValue = NULL;
-    FX_INT32 iValueLen = 0;
+    int32_t iValueLen = 0;
     FDE_CSSPROPERTYARGS propertyArgs;
     propertyArgs.pStaticStore = m_pAllocator;
     propertyArgs.pStringCache = &m_StringCache;
@@ -339,13 +339,13 @@ void CFDE_CSSStyleRule::SetSelector(IFX_MEMAllocator *pStaticStore, const CFDE_C
     FXSYS_assert(m_ppSelector == NULL);
     m_iSelectors = list.GetSize();
     m_ppSelector = (IFDE_CSSSelector**)pStaticStore->Alloc(m_iSelectors * sizeof(IFDE_CSSSelector*));
-    for (FX_INT32 i = 0; i < m_iSelectors; ++i) {
+    for (int32_t i = 0; i < m_iSelectors; ++i) {
         m_ppSelector[i] = list.GetAt(i);
     }
 }
 CFDE_CSSMediaRule::~CFDE_CSSMediaRule()
 {
-    for (FX_INT32 i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
+    for (int32_t i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
         IFDE_CSSRule *pRule = m_RuleArray.GetAt(i);
         switch (pRule->GetType()) {
             case  FDE_CSSRULETYPE_Style:
@@ -361,7 +361,7 @@ inline FX_BOOL FDE_IsCSSChar(FX_WCHAR wch)
 {
     return (wch >= 'a' && wch <= 'z') || (wch >= 'A' && wch <= 'Z');
 }
-FX_INT32 FDE_GetCSSPersudoLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
+int32_t FDE_GetCSSPersudoLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
 {
     FXSYS_assert(*psz == ':');
     FX_LPCWSTR pStart = psz;
@@ -375,7 +375,7 @@ FX_INT32 FDE_GetCSSPersudoLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
     }
     return psz - pStart;
 }
-FX_INT32 FDE_GetCSSNameLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
+int32_t FDE_GetCSSNameLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
 {
     FX_LPCWSTR pStart = psz;
     while (psz < pEnd) {
@@ -390,7 +390,7 @@ FX_INT32 FDE_GetCSSNameLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
     }
     return psz - pStart;
 }
-IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator *pStaticStore, FX_LPCWSTR psz, FX_INT32 iLen)
+IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator *pStaticStore, FX_LPCWSTR psz, int32_t iLen)
 {
     FXSYS_assert(pStaticStore != NULL && psz != NULL && iLen > 0);
     FX_LPCWSTR pStart = psz;
@@ -420,7 +420,7 @@ IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator *pStaticStore, F
                 pFirst = pLast = p;
             }
             FXSYS_assert(pLast != NULL);
-            FX_INT32 iNameLen = FDE_GetCSSNameLen(++psz, pEnd);
+            int32_t iNameLen = FDE_GetCSSNameLen(++psz, pEnd);
             if (iNameLen == 0) {
                 return NULL;
             }
@@ -434,7 +434,7 @@ IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator *pStaticStore, F
             pLast = p;
             psz += iNameLen;
         } else if (FDE_IsCSSChar(wch) || wch == '*') {
-            FX_INT32 iNameLen = wch == '*' ? 1 : FDE_GetCSSNameLen(psz, pEnd);
+            int32_t iNameLen = wch == '*' ? 1 : FDE_GetCSSNameLen(psz, pEnd);
             if (iNameLen == 0) {
                 return NULL;
             }
@@ -451,7 +451,7 @@ IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator *pStaticStore, F
             }
             psz += iNameLen;
         } else if (wch == ':') {
-            FX_INT32 iNameLen = FDE_GetCSSPersudoLen(psz, pEnd);
+            int32_t iNameLen = FDE_GetCSSPersudoLen(psz, pEnd);
             if (iNameLen == 0) {
                 return NULL;
             }

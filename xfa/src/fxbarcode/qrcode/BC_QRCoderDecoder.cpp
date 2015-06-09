@@ -47,12 +47,12 @@ CBC_QRCoderDecoder::~CBC_QRCoderDecoder()
     }
     m_rsDecoder = NULL;
 }
-CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(FX_BOOL* image, FX_INT32 width, FX_INT32 height, FX_INT32 &e)
+CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(FX_BOOL* image, int32_t width, int32_t height, int32_t &e)
 {
     CBC_CommonBitMatrix  bits;
     bits.Init(width);
-    for(FX_INT32 i = 0; i < width; i++) {
-        for(FX_INT32 j = 0; j < height; j++) {
+    for(int32_t i = 0; i < width; i++) {
+        for(int32_t j = 0; j < height; j++) {
             if(image[i * width + j]) {
                 bits.Set(j, i);
             }
@@ -62,7 +62,7 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(FX_BOOL* image, FX_INT32 wid
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return cdr;
 }
-CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits, FX_INT32 byteModeDecode, FX_INT32 &e)
+CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits, int32_t byteModeDecode, int32_t &e)
 {
     CBC_QRBitMatrixParser parser;
     parser.Init(bits, e);
@@ -77,19 +77,19 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits, F
     CBC_AutoPtr<CFX_ByteArray > codewords(ba);
     CFX_PtrArray *dataBlocks = CBC_QRDataBlock::GetDataBlocks(codewords.get(), version, ecLevel, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    FX_INT32 totalBytes = 0;
-    for (FX_INT32 i = 0; i < dataBlocks->GetSize(); i++) {
+    int32_t totalBytes = 0;
+    for (int32_t i = 0; i < dataBlocks->GetSize(); i++) {
         totalBytes += ((CBC_QRDataBlock*) ((*dataBlocks)[i]))->GetNumDataCodewords();
     }
     CFX_ByteArray resultBytes;
-    FX_INT32 resultOffset = 0;
-    for (FX_INT32 j = 0; j < dataBlocks->GetSize(); j++) {
+    int32_t resultOffset = 0;
+    for (int32_t j = 0; j < dataBlocks->GetSize(); j++) {
         CBC_QRDataBlock *dataBlock = (CBC_QRDataBlock *)((*dataBlocks)[j]);
         CFX_ByteArray* codewordBytes = dataBlock->GetCodewords();
-        FX_INT32 numDataCodewords = dataBlock->GetNumDataCodewords();
+        int32_t numDataCodewords = dataBlock->GetNumDataCodewords();
         CorrectErrors(codewordBytes, numDataCodewords, e);
         if (e != BCExceptionNO) {
-            for(FX_INT32 k = 0; k < dataBlocks->GetSize(); k++) {
+            for(int32_t k = 0; k < dataBlocks->GetSize(); k++) {
                 delete (CBC_QRDataBlock*)(*dataBlocks)[k];
             }
             dataBlocks->RemoveAll();
@@ -97,11 +97,11 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits, F
             dataBlocks = NULL;
             return NULL;
         }
-        for(FX_INT32 i = 0; i < numDataCodewords; i++) {
+        for(int32_t i = 0; i < numDataCodewords; i++) {
             resultBytes.Add((*codewordBytes)[i]);
         }
     }
-    for(FX_INT32 k = 0; k < dataBlocks->GetSize(); k++) {
+    for(int32_t k = 0; k < dataBlocks->GetSize(); k++) {
         delete  (CBC_QRDataBlock*)(*dataBlocks)[k] ;
     }
     dataBlocks->RemoveAll();
@@ -111,18 +111,18 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits, F
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return cdr;
 }
-void CBC_QRCoderDecoder::CorrectErrors(CFX_ByteArray* codewordBytes, FX_INT32 numDataCodewords, FX_INT32 &e)
+void CBC_QRCoderDecoder::CorrectErrors(CFX_ByteArray* codewordBytes, int32_t numDataCodewords, int32_t &e)
 {
-    FX_INT32 numCodewords = codewordBytes->GetSize();
+    int32_t numCodewords = codewordBytes->GetSize();
     CFX_Int32Array codewordsInts;
     codewordsInts.SetSize(numCodewords);
-    for(FX_INT32 i = 0; i < numCodewords; i++) {
-        codewordsInts[i] = (FX_INT32)((*codewordBytes)[i] & 0xff);
+    for(int32_t i = 0; i < numCodewords; i++) {
+        codewordsInts[i] = (int32_t)((*codewordBytes)[i] & 0xff);
     }
-    FX_INT32 numECCodewords = codewordBytes->GetSize() - numDataCodewords;
+    int32_t numECCodewords = codewordBytes->GetSize() - numDataCodewords;
     m_rsDecoder->Decode(&codewordsInts, numECCodewords, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    for(FX_INT32 k = 0; k < numDataCodewords; k++) {
-        (*codewordBytes)[k] = (FX_BYTE) codewordsInts[k];
+    for(int32_t k = 0; k < numDataCodewords; k++) {
+        (*codewordBytes)[k] = (uint8_t) codewordsInts[k];
     }
 }

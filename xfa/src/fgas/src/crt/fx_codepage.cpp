@@ -39,11 +39,11 @@ static const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
     { 254,	437	},
     { 255,	850	},
 };
-FX_WORD FX_GetCodePageFromCharset(FX_BYTE charset)
+FX_WORD FX_GetCodePageFromCharset(uint8_t charset)
 {
-    FX_INT32 iEnd = sizeof(g_FXCharset2CodePageTable) / sizeof(FX_CHARSET_MAP) - 1;
+    int32_t iEnd = sizeof(g_FXCharset2CodePageTable) / sizeof(FX_CHARSET_MAP) - 1;
     FXSYS_assert(iEnd >= 0);
-    FX_INT32 iStart = 0, iMid;
+    int32_t iStart = 0, iMid;
     do {
         iMid = (iStart + iEnd) / 2;
         const FX_CHARSET_MAP & cp = g_FXCharset2CodePageTable[iMid];
@@ -92,9 +92,9 @@ static const FX_CHARSET_MAP g_FXCodepage2CharsetTable[] = {
 };
 FX_WORD FX_GetCharsetFromCodePage(FX_WORD codepage)
 {
-    FX_INT32 iEnd = sizeof(g_FXCodepage2CharsetTable) / sizeof(FX_CHARSET_MAP) - 1;
+    int32_t iEnd = sizeof(g_FXCodepage2CharsetTable) / sizeof(FX_CHARSET_MAP) - 1;
     FXSYS_assert(iEnd >= 0);
-    FX_INT32 iStart = 0, iMid;
+    int32_t iStart = 0, iMid;
     do {
         iMid = (iStart + iEnd) / 2;
         const FX_CHARSET_MAP & cp = g_FXCodepage2CharsetTable[iMid];
@@ -247,9 +247,9 @@ const FX_LANG2CPMAP g_FXLang2CodepageTable[] = {
 };
 FX_WORD FX_GetDefCodePageByLanguage(FX_WORD wLanguage)
 {
-    FX_INT32 iEnd = sizeof(g_FXLang2CodepageTable) / sizeof(FX_LANG2CPMAP) - 1;
+    int32_t iEnd = sizeof(g_FXLang2CodepageTable) / sizeof(FX_LANG2CPMAP) - 1;
     FXSYS_assert(iEnd >= 0);
-    FX_INT32 iStart = 0, iMid;
+    int32_t iStart = 0, iMid;
     do {
         iMid = (iStart + iEnd) / 2;
         const FX_LANG2CPMAP &cp = g_FXLang2CodepageTable[iMid];
@@ -329,7 +329,7 @@ static const FX_STR2CPHASH g_FXCPHashTable[] = {
     { 0xf2a9730b,	0x3a8 },	{ 0xf3d463c2,	0x3a4 },	{ 0xf52a70a3,	0xc42e },	{ 0xf5693147,	0x6fb3 },
     { 0xf637e157,	0x478 },	{ 0xfc213f3a,	0x2717 },	{ 0xff654d14,	0x3b5 },
 };
-FX_WORD FX_GetCodePageFromStringA(FX_LPCSTR pStr, FX_INT32 iLength)
+FX_WORD FX_GetCodePageFromStringA(FX_LPCSTR pStr, int32_t iLength)
 {
     FXSYS_assert(pStr != NULL);
     if (iLength < 0) {
@@ -338,9 +338,9 @@ FX_WORD FX_GetCodePageFromStringA(FX_LPCSTR pStr, FX_INT32 iLength)
     if (iLength == 0) {
         return 0xFFFF;
     }
-    FX_UINT32 uHash = FX_HashCode_String_GetA(pStr, iLength, TRUE);
-    FX_INT32 iStart = 0, iMid;
-    FX_INT32 iEnd = sizeof(g_FXCPHashTable) / sizeof(FX_STR2CPHASH) - 1;
+    uint32_t uHash = FX_HashCode_String_GetA(pStr, iLength, TRUE);
+    int32_t iStart = 0, iMid;
+    int32_t iEnd = sizeof(g_FXCPHashTable) / sizeof(FX_STR2CPHASH) - 1;
     FXSYS_assert(iEnd >= 0);
     do {
         iMid = (iStart + iEnd) / 2;
@@ -355,7 +355,7 @@ FX_WORD FX_GetCodePageFromStringA(FX_LPCSTR pStr, FX_INT32 iLength)
     } while (iStart <= iEnd);
     return 0xFFFF;
 }
-FX_WORD FX_GetCodePageFormStringW(FX_LPCWSTR pStr, FX_INT32 iLength)
+FX_WORD FX_GetCodePageFormStringW(FX_LPCWSTR pStr, int32_t iLength)
 {
     if (iLength < 0) {
         iLength = FXSYS_wcslen(pStr);
@@ -365,7 +365,7 @@ FX_WORD FX_GetCodePageFormStringW(FX_LPCWSTR pStr, FX_INT32 iLength)
     }
     CFX_ByteString csStr;
     FX_LPSTR pBuf = csStr.GetBuffer(iLength + 1);
-    for (FX_INT32 i = 0; i < iLength; ++i) {
+    for (int32_t i = 0; i < iLength; ++i) {
         *pBuf ++ = (FX_CHAR) * pStr ++;
     }
     csStr.ReleaseBuffer(iLength);

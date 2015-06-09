@@ -6,7 +6,7 @@
 
 #ifndef _XFA_LAYOUT_ITEMLAYOUT_H_
 #define _XFA_LAYOUT_ITEMLAYOUT_H_
-#define XFA_LAYOUT_INVALIDNODE ((CXFA_Node*)(FX_INTPTR)-1)
+#define XFA_LAYOUT_INVALIDNODE ((CXFA_Node*)(intptr_t)-1)
 #define XFA_LAYOUT_FLOAT_PERCISION (0.0005f)
 #include "float.h"
 #define XFA_LAYOUT_FLOAT_MAX	FLT_MAX

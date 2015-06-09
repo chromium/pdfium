@@ -15,8 +15,8 @@ public:
     IXFA_LayoutPage*	GetPage() const;
     CXFA_Node*			GetFormNode() const;
     void				GetRect(CFX_RectF &rtLayout, FX_BOOL bRelative = FALSE) const;
-    FX_INT32			GetIndex() const;
-    FX_INT32			GetCount() const;
+    int32_t			GetIndex() const;
+    int32_t			GetCount() const;
     CXFA_LayoutItem*	GetParent() const;
     CXFA_LayoutItem*	GetFirst() const;
     CXFA_LayoutItem*	GetPrev() const;
@@ -88,7 +88,7 @@ class IXFA_LayoutPage
 {
 public:
     IXFA_DocLayout*		GetLayout() const;
-    FX_INT32			GetPageIndex() const;
+    int32_t			GetPageIndex() const;
     void				GetPageSize(CFX_SizeF &size);
     CXFA_Node*			GetMasterPage() const;
 };
@@ -96,11 +96,11 @@ class IXFA_DocLayout
 {
 public:
     virtual CXFA_Document*		GetDocument() const = 0;
-    virtual	FX_INT32			StartLayout(FX_BOOL bForceRestart = FALSE) = 0;
-    virtual FX_INT32			DoLayout(IFX_Pause *pPause = NULL) = 0;
+    virtual	int32_t			StartLayout(FX_BOOL bForceRestart = FALSE) = 0;
+    virtual int32_t			DoLayout(IFX_Pause *pPause = NULL) = 0;
     virtual FX_BOOL				IncrementLayout() = 0;
-    virtual FX_INT32			CountPages() const = 0;
-    virtual IXFA_LayoutPage*	GetPage(FX_INT32 index) const = 0;
+    virtual int32_t			CountPages() const = 0;
+    virtual IXFA_LayoutPage*	GetPage(int32_t index) const = 0;
 
     virtual CXFA_LayoutItem*	GetLayoutItem(CXFA_Node *pFormItem) = 0;
 };

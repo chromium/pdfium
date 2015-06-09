@@ -6,9 +6,9 @@
 
 #ifndef _BC_UTILS_H_
 #define _BC_UTILS_H_
-typedef CFX_MapPtrTemplate<FX_LPVOID, FX_INT32> CFX_PtrToInt32;
-FX_BOOL BC_FX_ByteString_Replace(CFX_ByteString &dst, FX_DWORD first, FX_DWORD last, FX_INT32 count, FX_CHAR c);
-void BC_FX_ByteString_Append(CFX_ByteString &dst, FX_INT32 count, FX_CHAR c);
+typedef CFX_MapPtrTemplate<FX_LPVOID, int32_t> CFX_PtrToInt32;
+FX_BOOL BC_FX_ByteString_Replace(CFX_ByteString &dst, FX_DWORD first, FX_DWORD last, int32_t count, FX_CHAR c);
+void BC_FX_ByteString_Append(CFX_ByteString &dst, int32_t count, FX_CHAR c);
 void BC_FX_ByteString_Append(CFX_ByteString &dst, const CFX_ByteArray &ba);
 typedef FX_BOOL (*BC_PtrArrayCompareCallback)(FX_LPVOID l, FX_LPVOID r);
 void BC_FX_PtrArray_Sort(CFX_PtrArray &src, BC_PtrArrayCompareCallback fun);

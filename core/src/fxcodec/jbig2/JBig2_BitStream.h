@@ -11,41 +11,41 @@ class CJBig2_BitStream : public CJBig2_Object
 {
 public:
 
-    CJBig2_BitStream(FX_BYTE *pBuffer, FX_DWORD dwLength);
+    CJBig2_BitStream(uint8_t *pBuffer, FX_DWORD dwLength);
 
     CJBig2_BitStream(CJBig2_BitStream &bs);
 
     ~CJBig2_BitStream();
 
-    FX_INT32 readNBits(FX_DWORD nBits, FX_DWORD *dwResult);
+    int32_t readNBits(FX_DWORD nBits, FX_DWORD *dwResult);
 
-    FX_INT32 readNBits(FX_DWORD nBits, FX_INT32 *nResult);
+    int32_t readNBits(FX_DWORD nBits, int32_t *nResult);
 
-    FX_INT32 read1Bit(FX_DWORD *dwResult);
+    int32_t read1Bit(FX_DWORD *dwResult);
 
-    FX_INT32 read1Bit(FX_BOOL  *bResult);
+    int32_t read1Bit(FX_BOOL  *bResult);
 
-    FX_INT32 read1Byte(FX_BYTE *cResult);
+    int32_t read1Byte(uint8_t *cResult);
 
-    FX_INT32 readInteger(FX_DWORD *dwResult);
+    int32_t readInteger(FX_DWORD *dwResult);
 
-    FX_INT32 readShortInteger(FX_WORD *wResult);
+    int32_t readShortInteger(FX_WORD *wResult);
 
     void alignByte();
 
     void align4Byte();
 
-    FX_BYTE getAt(FX_DWORD dwOffset);
+    uint8_t getAt(FX_DWORD dwOffset);
 
-    FX_BYTE getCurByte();
+    uint8_t getCurByte();
 
-    FX_BYTE getNextByte();
+    uint8_t getNextByte();
 
-    FX_INT32 incByteIdx();
+    int32_t incByteIdx();
 
-    FX_BYTE getCurByte_arith();
+    uint8_t getCurByte_arith();
 
-    FX_BYTE getNextByte_arith();
+    uint8_t getNextByte_arith();
 
     FX_DWORD getOffset();
 
@@ -55,21 +55,21 @@ public:
 
     void setBitPos(FX_DWORD dwBitPos);
 
-    FX_BYTE *getBuf();
+    uint8_t *getBuf();
 
     FX_DWORD getLength()
     {
         return m_dwLength;
     }
 
-    FX_BYTE *getPointer();
+    uint8_t *getPointer();
 
     void offset(FX_DWORD dwOffset);
 
     FX_DWORD getByteLeft();
 private:
 
-    FX_BYTE *m_pBuf;
+    uint8_t *m_pBuf;
 
     FX_DWORD m_dwLength;
 
@@ -77,7 +77,7 @@ private:
 
     FX_DWORD m_dwBitIdx;
 };
-inline CJBig2_BitStream::CJBig2_BitStream(FX_BYTE *pBuffer, FX_DWORD dwLength)
+inline CJBig2_BitStream::CJBig2_BitStream(uint8_t *pBuffer, FX_DWORD dwLength)
 {
     m_pBuf = pBuffer;
     m_dwLength = dwLength;
@@ -98,7 +98,7 @@ inline CJBig2_BitStream::CJBig2_BitStream(CJBig2_BitStream &bs)
 inline CJBig2_BitStream::~CJBig2_BitStream()
 {
 }
-inline FX_INT32 CJBig2_BitStream::readNBits(FX_DWORD dwBits, FX_DWORD *dwResult)
+inline int32_t CJBig2_BitStream::readNBits(FX_DWORD dwBits, FX_DWORD *dwResult)
 {
     FX_DWORD dwTemp = (m_dwByteIdx << 3) + m_dwBitIdx;
     if(dwTemp <= (m_dwLength << 3)) {
@@ -123,7 +123,7 @@ inline FX_INT32 CJBig2_BitStream::readNBits(FX_DWORD dwBits, FX_DWORD *dwResult)
         return -1;
     }
 }
-inline FX_INT32 CJBig2_BitStream::readNBits(FX_DWORD dwBits, FX_INT32 *nResult)
+inline int32_t CJBig2_BitStream::readNBits(FX_DWORD dwBits, int32_t *nResult)
 {
     FX_DWORD dwTemp = (m_dwByteIdx << 3) + m_dwBitIdx;
     if(dwTemp <= (m_dwLength << 3)) {
@@ -149,7 +149,7 @@ inline FX_INT32 CJBig2_BitStream::readNBits(FX_DWORD dwBits, FX_INT32 *nResult)
     }
 }
 
-inline FX_INT32 CJBig2_BitStream::read1Bit(FX_DWORD *dwResult)
+inline int32_t CJBig2_BitStream::read1Bit(FX_DWORD *dwResult)
 {
     if(m_dwByteIdx < m_dwLength) {
         *dwResult = (m_pBuf[m_dwByteIdx] >> (7 - m_dwBitIdx)) & 0x01;
@@ -165,7 +165,7 @@ inline FX_INT32 CJBig2_BitStream::read1Bit(FX_DWORD *dwResult)
     }
 }
 
-inline FX_INT32 CJBig2_BitStream::read1Bit(FX_BOOL *bResult)
+inline int32_t CJBig2_BitStream::read1Bit(FX_BOOL *bResult)
 {
     if(m_dwByteIdx < m_dwLength) {
         *bResult = (m_pBuf[m_dwByteIdx] >> (7 - m_dwBitIdx)) & 0x01;
@@ -180,7 +180,7 @@ inline FX_INT32 CJBig2_BitStream::read1Bit(FX_BOOL *bResult)
         return -1;
     }
 }
-inline FX_INT32 CJBig2_BitStream::read1Byte(FX_BYTE *cResult)
+inline int32_t CJBig2_BitStream::read1Byte(uint8_t *cResult)
 {
     if(m_dwByteIdx < m_dwLength) {
         *cResult = m_pBuf[m_dwByteIdx];
@@ -191,7 +191,7 @@ inline FX_INT32 CJBig2_BitStream::read1Byte(FX_BYTE *cResult)
     }
 }
 
-inline FX_INT32 CJBig2_BitStream::readInteger(FX_DWORD *dwResult)
+inline int32_t CJBig2_BitStream::readInteger(FX_DWORD *dwResult)
 {
     if(m_dwByteIdx + 3 < m_dwLength) {
         *dwResult = (m_pBuf[m_dwByteIdx] << 24) | (m_pBuf[m_dwByteIdx + 1] << 16)
@@ -203,7 +203,7 @@ inline FX_INT32 CJBig2_BitStream::readInteger(FX_DWORD *dwResult)
     }
 }
 
-inline FX_INT32 CJBig2_BitStream::readShortInteger(FX_WORD *dwResult)
+inline int32_t CJBig2_BitStream::readShortInteger(FX_WORD *dwResult)
 {
     if(m_dwByteIdx + 1 < m_dwLength) {
         *dwResult = (m_pBuf[m_dwByteIdx] << 8) | m_pBuf[m_dwByteIdx + 1];
@@ -228,7 +228,7 @@ inline void CJBig2_BitStream::align4Byte()
     }
     m_dwByteIdx = (m_dwByteIdx + 3) & -4;
 }
-inline FX_BYTE CJBig2_BitStream::getAt(FX_DWORD dwOffset)
+inline uint8_t CJBig2_BitStream::getAt(FX_DWORD dwOffset)
 {
     if(dwOffset < m_dwLength) {
         return m_pBuf[dwOffset];
@@ -236,7 +236,7 @@ inline FX_BYTE CJBig2_BitStream::getAt(FX_DWORD dwOffset)
         return 0;
     }
 }
-inline FX_BYTE CJBig2_BitStream::getCurByte()
+inline uint8_t CJBig2_BitStream::getCurByte()
 {
     if(m_dwByteIdx < m_dwLength) {
         return m_pBuf[m_dwByteIdx];
@@ -244,7 +244,7 @@ inline FX_BYTE CJBig2_BitStream::getCurByte()
         return 0;
     }
 }
-inline FX_BYTE CJBig2_BitStream::getNextByte()
+inline uint8_t CJBig2_BitStream::getNextByte()
 {
     if(m_dwByteIdx + 1 < m_dwLength) {
         return m_pBuf[m_dwByteIdx + 1];
@@ -252,7 +252,7 @@ inline FX_BYTE CJBig2_BitStream::getNextByte()
         return 0;
     }
 }
-inline FX_INT32 CJBig2_BitStream::incByteIdx()
+inline int32_t CJBig2_BitStream::incByteIdx()
 {
     if(m_dwByteIdx < m_dwLength) {
         m_dwByteIdx ++;
@@ -261,7 +261,7 @@ inline FX_INT32 CJBig2_BitStream::incByteIdx()
         return -1;
     }
 }
-inline FX_BYTE CJBig2_BitStream::getCurByte_arith()
+inline uint8_t CJBig2_BitStream::getCurByte_arith()
 {
     if(m_dwByteIdx < m_dwLength) {
         return m_pBuf[m_dwByteIdx];
@@ -269,7 +269,7 @@ inline FX_BYTE CJBig2_BitStream::getCurByte_arith()
         return 0xff;
     }
 }
-inline FX_BYTE CJBig2_BitStream::getNextByte_arith()
+inline uint8_t CJBig2_BitStream::getNextByte_arith()
 {
     if(m_dwByteIdx + 1 < m_dwLength) {
         return m_pBuf[m_dwByteIdx + 1];
@@ -297,11 +297,11 @@ inline void CJBig2_BitStream::setBitPos(FX_DWORD dwBitPos)
     m_dwByteIdx = dwBitPos >> 3;
     m_dwBitIdx = dwBitPos & 7;
 }
-inline FX_BYTE *CJBig2_BitStream::getBuf()
+inline uint8_t *CJBig2_BitStream::getBuf()
 {
     return m_pBuf;
 }
-inline FX_BYTE *CJBig2_BitStream::getPointer()
+inline uint8_t *CJBig2_BitStream::getPointer()
 {
     return m_pBuf + m_dwByteIdx;
 }

@@ -27,7 +27,7 @@
 #include "BC_QRCoderMaskUtil.h"
 #include "BC_QRCoderMatrixUtil.h"
 #include "BC_QRCoderBitVector.h"
-const FX_INT32 CBC_QRCoderMatrixUtil::POSITION_DETECTION_PATTERN[7][7] = {
+const int32_t CBC_QRCoderMatrixUtil::POSITION_DETECTION_PATTERN[7][7] = {
     1, 1, 1, 1, 1, 1, 1,
     1, 0, 0, 0, 0, 0, 1,
     1, 0, 1, 1, 1, 0, 1,
@@ -36,20 +36,20 @@ const FX_INT32 CBC_QRCoderMatrixUtil::POSITION_DETECTION_PATTERN[7][7] = {
     1, 0, 0, 0, 0, 0, 1,
     1, 1, 1, 1, 1, 1, 1
 };
-const FX_INT32 CBC_QRCoderMatrixUtil::HORIZONTAL_SEPARATION_PATTERN[1][8] = {
+const int32_t CBC_QRCoderMatrixUtil::HORIZONTAL_SEPARATION_PATTERN[1][8] = {
     0, 0, 0, 0, 0, 0, 0, 0
 };
-const FX_INT32 CBC_QRCoderMatrixUtil::VERTICAL_SEPARATION_PATTERN[7][1] = {
+const int32_t CBC_QRCoderMatrixUtil::VERTICAL_SEPARATION_PATTERN[7][1] = {
     0, 0, 0, 0, 0, 0, 0
 };
-const FX_INT32 CBC_QRCoderMatrixUtil::POSITION_ADJUSTMENT_PATTERN[5][5] = {
+const int32_t CBC_QRCoderMatrixUtil::POSITION_ADJUSTMENT_PATTERN[5][5] = {
     1, 1, 1, 1, 1,
     1, 0, 0, 0, 1,
     1, 0, 1, 0, 1,
     1, 0, 0, 0, 1,
     1, 1, 1, 1, 1
 };
-const FX_INT32 CBC_QRCoderMatrixUtil::POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[40][7] = {
+const int32_t CBC_QRCoderMatrixUtil::POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[40][7] = {
     { -1, -1, -1, -1,  -1,  -1,  -1},
     { 6, 18, -1, -1,  -1,  -1,  -1},
     { 6, 22, -1, -1,  -1,  -1,  -1},
@@ -91,7 +91,7 @@ const FX_INT32 CBC_QRCoderMatrixUtil::POSITION_ADJUSTMENT_PATTERN_COORDINATE_TAB
     { 6, 26, 54, 82, 110, 138, 166},
     { 6, 30, 58, 86, 114, 142, 170},
 };
-const FX_INT32 CBC_QRCoderMatrixUtil::TYPE_INFO_COORDINATES[15][2] = {
+const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_COORDINATES[15][2] = {
     {8, 0},
     {8, 1},
     {8, 2},
@@ -108,21 +108,21 @@ const FX_INT32 CBC_QRCoderMatrixUtil::TYPE_INFO_COORDINATES[15][2] = {
     {1, 8},
     {0, 8},
 };
-const FX_INT32 CBC_QRCoderMatrixUtil::VERSION_INFO_POLY = 0x1f25;
-const FX_INT32 CBC_QRCoderMatrixUtil::TYPE_INFO_POLY = 0x0537;
-const FX_INT32 CBC_QRCoderMatrixUtil::TYPE_INFO_MASK_PATTERN = 0x5412;
-void CBC_QRCoderMatrixUtil::ClearMatrix(CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+const int32_t CBC_QRCoderMatrixUtil::VERSION_INFO_POLY = 0x1f25;
+const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_POLY = 0x0537;
+const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_MASK_PATTERN = 0x5412;
+void CBC_QRCoderMatrixUtil::ClearMatrix(CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    matrix->clear((FX_BYTE) - 1);
+    matrix->clear((uint8_t) - 1);
 }
 void CBC_QRCoderMatrixUtil::BuildMatrix(CBC_QRCoderBitVector* dataBits,
                                         CBC_QRCoderErrorCorrectionLevel* ecLevel,
-                                        FX_INT32 version, FX_INT32 maskPattern,
-                                        CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+                                        int32_t version, int32_t maskPattern,
+                                        CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
@@ -139,7 +139,7 @@ void CBC_QRCoderMatrixUtil::BuildMatrix(CBC_QRCoderBitVector* dataBits,
     EmbedDataBits(dataBits, maskPattern, matrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
 }
-void CBC_QRCoderMatrixUtil::EmbedBasicPatterns(FX_INT32 version, CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::EmbedBasicPatterns(int32_t version, CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
@@ -155,7 +155,7 @@ void CBC_QRCoderMatrixUtil::EmbedBasicPatterns(FX_INT32 version, CBC_CommonByteM
     BC_EXCEPTION_CHECK_ReturnVoid(e);
 }
 void CBC_QRCoderMatrixUtil::EmbedTypeInfo(CBC_QRCoderErrorCorrectionLevel* ecLevel,
-        FX_INT32 maskPattern, CBC_CommonByteMatrix *matrix, FX_INT32 &e)
+        int32_t maskPattern, CBC_CommonByteMatrix *matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
@@ -165,24 +165,24 @@ void CBC_QRCoderMatrixUtil::EmbedTypeInfo(CBC_QRCoderErrorCorrectionLevel* ecLev
     typeInfoBits.Init();
     MakeTypeInfoBits(ecLevel, maskPattern, &typeInfoBits, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    for(FX_INT32 i = 0; i < typeInfoBits.Size(); i++) {
-        FX_INT32 bit = typeInfoBits.At(typeInfoBits.Size() - 1 - i, e);
+    for(int32_t i = 0; i < typeInfoBits.Size(); i++) {
+        int32_t bit = typeInfoBits.At(typeInfoBits.Size() - 1 - i, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);
-        FX_INT32 x1 = TYPE_INFO_COORDINATES[i][0];
-        FX_INT32 y1 = TYPE_INFO_COORDINATES[i][1];
+        int32_t x1 = TYPE_INFO_COORDINATES[i][0];
+        int32_t y1 = TYPE_INFO_COORDINATES[i][1];
         matrix->Set(x1, y1, bit);
         if(i < 8) {
-            FX_INT32 x2 = matrix->GetWidth() - i - 1;
-            FX_INT32 y2 = 8;
+            int32_t x2 = matrix->GetWidth() - i - 1;
+            int32_t y2 = 8;
             matrix->Set(x2, y2, bit);
         } else {
-            FX_INT32 x2 = 8;
-            FX_INT32 y2 = matrix->GetHeight() - 7 + (i - 8);
+            int32_t x2 = 8;
+            int32_t y2 = matrix->GetHeight() - 7 + (i - 8);
             matrix->Set(x2, y2, bit);
         }
     }
 }
-void CBC_QRCoderMatrixUtil::MaybeEmbedVersionInfo(FX_INT32 version, CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::MaybeEmbedVersionInfo(int32_t version, CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
@@ -195,10 +195,10 @@ void CBC_QRCoderMatrixUtil::MaybeEmbedVersionInfo(FX_INT32 version, CBC_CommonBy
     versionInfoBits.Init();
     MakeVersionInfoBits(version, &versionInfoBits, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    FX_INT32 bitIndex = 6 * 3 - 1;
-    for(FX_INT32 i = 0; i < 6; i++) {
-        for(FX_INT32 j = 0; j < 3; j++) {
-            FX_INT32 bit = versionInfoBits.At(bitIndex, e);
+    int32_t bitIndex = 6 * 3 - 1;
+    for(int32_t i = 0; i < 6; i++) {
+        for(int32_t j = 0; j < 3; j++) {
+            int32_t bit = versionInfoBits.At(bitIndex, e);
             BC_EXCEPTION_CHECK_ReturnVoid(e);
             bitIndex--;
             matrix->Set(i, matrix->GetHeight() - 11 + j, bit);
@@ -207,16 +207,16 @@ void CBC_QRCoderMatrixUtil::MaybeEmbedVersionInfo(FX_INT32 version, CBC_CommonBy
     }
 }
 void CBC_QRCoderMatrixUtil::EmbedDataBits(CBC_QRCoderBitVector* dataBits,
-        FX_INT32 maskPattern, CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+        int32_t maskPattern, CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL || dataBits == NULL) {
         e = BCExceptionNullPointer;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    FX_INT32 bitIndex = 0;
-    FX_INT32 direction = -1;
-    FX_INT32 x = matrix->GetWidth() - 1;
-    FX_INT32 y = matrix->GetHeight() - 1;
+    int32_t bitIndex = 0;
+    int32_t direction = -1;
+    int32_t x = matrix->GetWidth() - 1;
+    int32_t y = matrix->GetHeight() - 1;
     while(x > 0) {
         if (x == 6) {
             x -= 1;
@@ -226,12 +226,12 @@ void CBC_QRCoderMatrixUtil::EmbedDataBits(CBC_QRCoderBitVector* dataBits,
                 y += direction;
                 continue;
             }
-            for(FX_INT32 i = 0; i < 2; i++) {
-                FX_INT32 xx = x - i;
+            for(int32_t i = 0; i < 2; i++) {
+                int32_t xx = x - i;
                 if(!IsEmpty(matrix->Get(xx, y))) {
                     continue;
                 }
-                FX_INT32 bit;
+                int32_t bit;
                 if(bitIndex < dataBits->Size()) {
                     bit = dataBits->At(bitIndex, e);
                     BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -258,9 +258,9 @@ void CBC_QRCoderMatrixUtil::EmbedDataBits(CBC_QRCoderBitVector* dataBits,
         return;
     }
 }
-FX_INT32 CBC_QRCoderMatrixUtil::CalculateBCHCode(FX_INT32 value, FX_INT32 poly)
+int32_t CBC_QRCoderMatrixUtil::CalculateBCHCode(int32_t value, int32_t poly)
 {
-    FX_INT32 msbSetInPoly = FindMSBSet(poly);
+    int32_t msbSetInPoly = FindMSBSet(poly);
     value <<= msbSetInPoly - 1;
     while(FindMSBSet(value) >= msbSetInPoly) {
         value ^= poly << (FindMSBSet(value) - msbSetInPoly);
@@ -268,7 +268,7 @@ FX_INT32 CBC_QRCoderMatrixUtil::CalculateBCHCode(FX_INT32 value, FX_INT32 poly)
     return value;
 }
 void CBC_QRCoderMatrixUtil::MakeTypeInfoBits(CBC_QRCoderErrorCorrectionLevel* ecLevel,
-        FX_INT32 maskPattern, CBC_QRCoderBitVector* bits, FX_INT32 &e)
+        int32_t maskPattern, CBC_QRCoderBitVector* bits, int32_t &e)
 {
     if(bits == NULL) {
         e = BCExceptionNullPointer;
@@ -278,10 +278,10 @@ void CBC_QRCoderMatrixUtil::MakeTypeInfoBits(CBC_QRCoderErrorCorrectionLevel* ec
         e = BCExceptionBadMask;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    FX_INT32 typeInfo = (ecLevel->GetBits() << 3) | maskPattern;
+    int32_t typeInfo = (ecLevel->GetBits() << 3) | maskPattern;
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     bits->AppendBits(typeInfo, 5, e);
-    FX_INT32 bchCode = CalculateBCHCode(typeInfo, TYPE_INFO_POLY);
+    int32_t bchCode = CalculateBCHCode(typeInfo, TYPE_INFO_POLY);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     bits->AppendBits(bchCode, 10, e);
     CBC_QRCoderBitVector maskBits;
@@ -295,7 +295,7 @@ void CBC_QRCoderMatrixUtil::MakeTypeInfoBits(CBC_QRCoderErrorCorrectionLevel* ec
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
 }
-void CBC_QRCoderMatrixUtil::MakeVersionInfoBits(FX_INT32 version, CBC_QRCoderBitVector* bits, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::MakeVersionInfoBits(int32_t version, CBC_QRCoderBitVector* bits, int32_t &e)
 {
     if(bits == NULL) {
         e = BCExceptionNullPointer;
@@ -303,7 +303,7 @@ void CBC_QRCoderMatrixUtil::MakeVersionInfoBits(FX_INT32 version, CBC_QRCoderBit
     }
     bits->AppendBits(version, 6, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    FX_INT32 bchCode = CalculateBCHCode(version, VERSION_INFO_POLY);
+    int32_t bchCode = CalculateBCHCode(version, VERSION_INFO_POLY);
     bits->AppendBits(bchCode, 12, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     if(bits->Size() != 18) {
@@ -311,22 +311,22 @@ void CBC_QRCoderMatrixUtil::MakeVersionInfoBits(FX_INT32 version, CBC_QRCoderBit
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
 }
-FX_BOOL CBC_QRCoderMatrixUtil::IsEmpty(FX_INT32 value)
+FX_BOOL CBC_QRCoderMatrixUtil::IsEmpty(int32_t value)
 {
-    return (FX_BYTE)value == 0xff;
+    return (uint8_t)value == 0xff;
 }
-FX_BOOL CBC_QRCoderMatrixUtil::IsValidValue(FX_INT32 value)
+FX_BOOL CBC_QRCoderMatrixUtil::IsValidValue(int32_t value)
 {
-    return ((FX_BYTE)value == 0xff || (FX_BYTE)value == 0x00 || (FX_BYTE)value == 0x01);
+    return ((uint8_t)value == 0xff || (uint8_t)value == 0x00 || (uint8_t)value == 0x01);
 }
-void CBC_QRCoderMatrixUtil::EmbedTimingPatterns(CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::EmbedTimingPatterns(CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    for(FX_INT32 i = 8; i < matrix->GetWidth() - 8; i++) {
-        FX_INT32 bit = (i + 1) % 2;
+    for(int32_t i = 8; i < matrix->GetWidth() - 8; i++) {
+        int32_t bit = (i + 1) % 2;
         if(!IsValidValue(matrix->Get(i, 6))) {
             e = BCExceptionInvalidateImageData;
             BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -343,7 +343,7 @@ void CBC_QRCoderMatrixUtil::EmbedTimingPatterns(CBC_CommonByteMatrix* matrix, FX
         }
     }
 }
-void CBC_QRCoderMatrixUtil::EmbedDarkDotAtLeftBottomCorner(CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::EmbedDarkDotAtLeftBottomCorner(CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
@@ -355,14 +355,14 @@ void CBC_QRCoderMatrixUtil::EmbedDarkDotAtLeftBottomCorner(CBC_CommonByteMatrix*
     }
     matrix->Set(8, matrix->GetHeight() - 8, 1);
 }
-void CBC_QRCoderMatrixUtil::EmbedHorizontalSeparationPattern(FX_INT32 xStart, FX_INT32 yStart,
-        CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::EmbedHorizontalSeparationPattern(int32_t xStart, int32_t yStart,
+        CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    for(FX_INT32 x = 0; x < 8; x++) {
+    for(int32_t x = 0; x < 8; x++) {
         if(!IsEmpty(matrix->Get(xStart + x, yStart))) {
             e = BCExceptionInvalidateData;
             BC_EXCEPTION_CHECK_ReturnVoid(e)
@@ -370,14 +370,14 @@ void CBC_QRCoderMatrixUtil::EmbedHorizontalSeparationPattern(FX_INT32 xStart, FX
         matrix->Set(xStart + x, yStart, HORIZONTAL_SEPARATION_PATTERN[0][x]);
     }
 }
-void CBC_QRCoderMatrixUtil::EmbedVerticalSeparationPattern(FX_INT32 xStart, FX_INT32 yStart,
-        CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::EmbedVerticalSeparationPattern(int32_t xStart, int32_t yStart,
+        CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    for(FX_INT32 y = 0; y < 7; y++) {
+    for(int32_t y = 0; y < 7; y++) {
         if(!IsEmpty(matrix->Get(xStart, yStart + y))) {
             e = BCExceptionInvalidateData;
             BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -385,15 +385,15 @@ void CBC_QRCoderMatrixUtil::EmbedVerticalSeparationPattern(FX_INT32 xStart, FX_I
         matrix->Set(xStart, yStart + y, VERTICAL_SEPARATION_PATTERN[y][0]);
     }
 }
-void CBC_QRCoderMatrixUtil::EmbedPositionAdjustmentPattern(FX_INT32 xStart, FX_INT32 yStart,
-        CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::EmbedPositionAdjustmentPattern(int32_t xStart, int32_t yStart,
+        CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e  = BCExceptionNullPointer;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    for(FX_INT32 y = 0; y < 5; y++) {
-        for(FX_INT32 x = 0; x < 5; x++) {
+    for(int32_t y = 0; y < 5; y++) {
+        for(int32_t x = 0; x < 5; x++) {
             if(!IsEmpty(matrix->Get(xStart + x, y + yStart))) {
                 e = BCExceptionInvalidateData;
                 BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -402,15 +402,15 @@ void CBC_QRCoderMatrixUtil::EmbedPositionAdjustmentPattern(FX_INT32 xStart, FX_I
         }
     }
 }
-void CBC_QRCoderMatrixUtil::EmbedPositionDetectionPattern (FX_INT32 xStart, FX_INT32 yStart,
-        CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::EmbedPositionDetectionPattern (int32_t xStart, int32_t yStart,
+        CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    for(FX_INT32 y = 0; y < 7; y++) {
-        for(FX_INT32 x = 0; x < 7; x++) {
+    for(int32_t y = 0; y < 7; y++) {
+        for(int32_t x = 0; x < 7; x++) {
             if(!IsEmpty(matrix->Get(xStart + x, yStart + y))) {
                 e = BCExceptionInvalidateData;
                 BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -419,27 +419,27 @@ void CBC_QRCoderMatrixUtil::EmbedPositionDetectionPattern (FX_INT32 xStart, FX_I
         }
     }
 }
-void CBC_QRCoderMatrixUtil::EmbedPositionDetectionPatternsAndSeparators(CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::EmbedPositionDetectionPatternsAndSeparators(CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    FX_INT32 pdpWidth = 7;
+    int32_t pdpWidth = 7;
     EmbedPositionDetectionPattern(0, 0, matrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     EmbedPositionDetectionPattern(matrix->GetWidth() - pdpWidth, 0, matrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     EmbedPositionDetectionPattern(0, matrix->GetWidth() - pdpWidth, matrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    FX_INT32 hspWidth = 8;
+    int32_t hspWidth = 8;
     EmbedHorizontalSeparationPattern(0, hspWidth - 1, matrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     EmbedHorizontalSeparationPattern(matrix->GetWidth() - hspWidth, hspWidth - 1, matrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     EmbedHorizontalSeparationPattern(0, matrix->GetWidth() - hspWidth, matrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    FX_INT32 vspSize = 7;
+    int32_t vspSize = 7;
     EmbedVerticalSeparationPattern(vspSize, 0, matrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     EmbedVerticalSeparationPattern(matrix->GetHeight() - vspSize - 1, 0, matrix, e);
@@ -447,7 +447,7 @@ void CBC_QRCoderMatrixUtil::EmbedPositionDetectionPatternsAndSeparators(CBC_Comm
     EmbedVerticalSeparationPattern(vspSize, matrix->GetHeight() - vspSize, matrix, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
 }
-void CBC_QRCoderMatrixUtil::MaybeEmbedPositionAdjustmentPatterns(FX_INT32 version, CBC_CommonByteMatrix* matrix, FX_INT32 &e)
+void CBC_QRCoderMatrixUtil::MaybeEmbedPositionAdjustmentPatterns(int32_t version, CBC_CommonByteMatrix* matrix, int32_t &e)
 {
     if(matrix == NULL) {
         e = BCExceptionNullPointer;
@@ -456,13 +456,13 @@ void CBC_QRCoderMatrixUtil::MaybeEmbedPositionAdjustmentPatterns(FX_INT32 versio
     if(version < 2) {
         return;
     }
-    FX_INT32 index = version - 1;
-    FX_INT32 const* coordinates = &(POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[index][0]);
-    FX_INT32 numCoordinate = 7;
-    for(FX_INT32 i = 0; i < numCoordinate; i++) {
-        for(FX_INT32 j = 0; j < numCoordinate; j++) {
-            FX_INT32 y = coordinates[i];
-            FX_INT32 x = coordinates[j];
+    int32_t index = version - 1;
+    int32_t const* coordinates = &(POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[index][0]);
+    int32_t numCoordinate = 7;
+    for(int32_t i = 0; i < numCoordinate; i++) {
+        for(int32_t j = 0; j < numCoordinate; j++) {
+            int32_t y = coordinates[i];
+            int32_t x = coordinates[j];
             if(x == -1 || y == -1) {
                 continue;
             }
@@ -473,9 +473,9 @@ void CBC_QRCoderMatrixUtil::MaybeEmbedPositionAdjustmentPatterns(FX_INT32 versio
         }
     }
 }
-FX_INT32 CBC_QRCoderMatrixUtil::FindMSBSet(FX_INT32 value)
+int32_t CBC_QRCoderMatrixUtil::FindMSBSet(int32_t value)
 {
-    FX_INT32 numDigits = 0;
+    int32_t numDigits = 0;
     while(value != 0) {
         value >>= 1;
         ++numDigits;

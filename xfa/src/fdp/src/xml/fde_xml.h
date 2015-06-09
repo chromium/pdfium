@@ -31,15 +31,15 @@ public:
     {
         return FDE_XMLNODE_Unknown;
     }
-    virtual FX_INT32		CountChildNodes() const;
-    virtual CFDE_XMLNode*	GetChildNode(FX_INT32 index) const;
-    virtual FX_INT32		GetChildNodeIndex(CFDE_XMLNode *pNode) const;
-    virtual CFDE_XMLNode*	GetPath(FX_LPCWSTR pPath, FX_INT32 iLength = -1, FX_BOOL bQualifiedName = TRUE) const;
-    virtual FX_INT32		InsertChildNode(CFDE_XMLNode *pNode, FX_INT32 index = -1);
+    virtual int32_t		CountChildNodes() const;
+    virtual CFDE_XMLNode*	GetChildNode(int32_t index) const;
+    virtual int32_t		GetChildNodeIndex(CFDE_XMLNode *pNode) const;
+    virtual CFDE_XMLNode*	GetPath(FX_LPCWSTR pPath, int32_t iLength = -1, FX_BOOL bQualifiedName = TRUE) const;
+    virtual int32_t		InsertChildNode(CFDE_XMLNode *pNode, int32_t index = -1);
     virtual void			RemoveChildNode(CFDE_XMLNode *pNode);
     virtual void			DeleteChildren();
     virtual CFDE_XMLNode*	GetNodeItem(IFDE_XMLNode::NodeItem eItem) const;
-    virtual FX_INT32		GetNodeLevel() const;
+    virtual int32_t		GetNodeLevel() const;
     virtual FX_BOOL			InsertNodeItem(IFDE_XMLNode::NodeItem eItem, CFDE_XMLNode *pNode);
     virtual	CFDE_XMLNode*	RemoveNodeItem(IFDE_XMLNode::NodeItem eItem);
     virtual CFDE_XMLNode*	Clone(FX_BOOL bRecursive);
@@ -69,20 +69,20 @@ public:
     {
         wsTarget = m_wsTarget;
     }
-    virtual FX_INT32		CountAttributes() const;
-    virtual FX_BOOL			GetAttribute(FX_INT32 index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const;
+    virtual int32_t		CountAttributes() const;
+    virtual FX_BOOL			GetAttribute(int32_t index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const;
     virtual FX_BOOL			HasAttribute(FX_LPCWSTR pwsAttriName) const;
     virtual void			GetString(FX_LPCWSTR pwsAttriName, CFX_WideString &wsAttriValue, FX_LPCWSTR pwsDefValue = NULL) const;
     virtual void			SetString(const CFX_WideString &wsAttriName, const CFX_WideString &wsAttriValue);
-    virtual FX_INT32		GetInteger(FX_LPCWSTR pwsAttriName, FX_INT32 iDefValue = 0) const;
-    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, FX_INT32 iAttriValue);
+    virtual int32_t		GetInteger(FX_LPCWSTR pwsAttriName, int32_t iDefValue = 0) const;
+    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, int32_t iAttriValue);
     virtual FX_FLOAT		GetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fDefValue = 0) const;
     virtual void			SetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fAttriValue);
     virtual void			RemoveAttribute(FX_LPCWSTR pwsAttriName);
-    virtual FX_INT32		CountData() const;
-    virtual FX_BOOL			GetData(FX_INT32 index, CFX_WideString &wsData) const;
+    virtual int32_t		CountData() const;
+    virtual FX_BOOL			GetData(int32_t index, CFX_WideString &wsData) const;
     virtual void			AppendData(const CFX_WideString &wsData);
-    virtual void			RemoveData(FX_INT32 index);
+    virtual void			RemoveData(int32_t index);
 public:
     ~CFDE_XMLInstruction() {}
     CFX_WideString			m_wsTarget;
@@ -106,13 +106,13 @@ public:
     virtual void			GetLocalTagName(CFX_WideString &wsTag) const;
     virtual void			GetNamespacePrefix(CFX_WideString &wsPrefix) const;
     virtual void			GetNamespaceURI(CFX_WideString &wsNamespace) const;
-    virtual FX_INT32		CountAttributes() const;
-    virtual FX_BOOL			GetAttribute(FX_INT32 index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const;
+    virtual int32_t		CountAttributes() const;
+    virtual FX_BOOL			GetAttribute(int32_t index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const;
     virtual FX_BOOL			HasAttribute(FX_LPCWSTR pwsAttriName) const;
     virtual void			GetString(FX_LPCWSTR pwsAttriName, CFX_WideString &wsAttriValue, FX_LPCWSTR pwsDefValue = NULL) const;
     virtual void			SetString(const CFX_WideString &wsAttriName, const CFX_WideString &wsAttriValue);
-    virtual FX_INT32		GetInteger(FX_LPCWSTR pwsAttriName, FX_INT32 iDefValue = 0) const;
-    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, FX_INT32 iAttriValue);
+    virtual int32_t		GetInteger(FX_LPCWSTR pwsAttriName, int32_t iDefValue = 0) const;
+    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, int32_t iAttriValue);
     virtual FX_FLOAT		GetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fDefValue = 0) const;
     virtual void			SetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fAttriValue);
     virtual void			RemoveAttribute(FX_LPCWSTR pwsAttriName);
@@ -190,9 +190,9 @@ public:
     {
         FDE_Delete this;
     }
-    virtual FX_BOOL			LoadXML(IFX_Stream *pXMLStream, FX_INT32 iXMLPlaneSize = 8192, FX_INT32 iTextDataSize = 256, FDE_LPXMLREADERHANDLER pHandler = NULL);
+    virtual FX_BOOL			LoadXML(IFX_Stream *pXMLStream, int32_t iXMLPlaneSize = 8192, int32_t iTextDataSize = 256, FDE_LPXMLREADERHANDLER pHandler = NULL);
     virtual FX_BOOL			LoadXML(IFDE_XMLParser *pXMLParser);
-    virtual FX_INT32		DoLoad(IFX_Pause *pPause = NULL);
+    virtual int32_t		DoLoad(IFX_Pause *pPause = NULL);
     virtual void			CloseXML();
     virtual CFDE_XMLNode*	GetRoot() const
     {
@@ -202,7 +202,7 @@ public:
     virtual void			SaveXMLNode(IFX_Stream *pXMLStream, IFDE_XMLNode *pNode);
 protected:
     IFX_Stream				*m_pStream;
-    FX_INT32				m_iStatus;
+    int32_t				m_iStatus;
     CFDE_XMLNode			*m_pRoot;
     IFDE_XMLSyntaxParser	*m_pSyntaxParser;
     IFDE_XMLParser			*m_pXMLParser;
@@ -220,7 +220,7 @@ public:
     {
         FDE_Delete this;
     }
-    virtual FX_INT32		DoParser(IFX_Pause *pPause);
+    virtual int32_t		DoParser(IFX_Pause *pPause);
 private:
     CFDE_XMLNode			*m_pRoot;
     IFDE_XMLSyntaxParser	*m_pParser;
@@ -249,7 +249,7 @@ public:
     {
         FDE_Delete this;
     }
-    virtual FX_INT32		DoParser(IFX_Pause *pPause);
+    virtual int32_t		DoParser(IFX_Pause *pPause);
 private:
     void					Push(const CFDE_XMLTAG &xmlTag);
     void					Pop();
@@ -264,10 +264,10 @@ private:
 class CFDE_BlockBuffer : public CFX_Target
 {
 public:
-    CFDE_BlockBuffer(FX_INT32 iAllocStep = 1024 * 1024);
+    CFDE_BlockBuffer(int32_t iAllocStep = 1024 * 1024);
     ~CFDE_BlockBuffer();
 
-    FX_BOOL InitBuffer(FX_INT32 iBufferSize = 1024 * 1024);
+    FX_BOOL InitBuffer(int32_t iBufferSize = 1024 * 1024);
     FX_BOOL IsInitialized()
     {
         return m_iBufferSize / m_iAllocStep >= 1;
@@ -276,12 +276,12 @@ public:
     {
         FDE_Delete this;
     }
-    FX_LPWSTR GetAvailableBlock(FX_INT32& iIndexInBlock);
-    inline FX_INT32 GetAllocStep() const
+    FX_LPWSTR GetAvailableBlock(int32_t& iIndexInBlock);
+    inline int32_t GetAllocStep() const
     {
         return m_iAllocStep;
     }
-    inline FX_INT32& GetDataLengthRef()
+    inline int32_t& GetDataLengthRef()
     {
         return m_iDataLength;
     }
@@ -292,18 +292,18 @@ public:
         }
         m_iDataLength = 0;
     }
-    void SetTextChar(FX_INT32 iIndex, FX_WCHAR ch);
-    FX_INT32 DeleteTextChars(FX_INT32 iCount, FX_BOOL bDirection = TRUE);
-    void  GetTextData(CFX_WideString& wsTextData, FX_INT32 iStart  = 0, FX_INT32 iLength = -1) const;
+    void SetTextChar(int32_t iIndex, FX_WCHAR ch);
+    int32_t DeleteTextChars(int32_t iCount, FX_BOOL bDirection = TRUE);
+    void  GetTextData(CFX_WideString& wsTextData, int32_t iStart  = 0, int32_t iLength = -1) const;
 
 protected:
-    inline void TextDataIndex2BufIndex(const FX_INT32 iIndex, FX_INT32& iBlockIndex, FX_INT32& iInnerIndex) const;
+    inline void TextDataIndex2BufIndex(const int32_t iIndex, int32_t& iBlockIndex, int32_t& iInnerIndex) const;
     void ClearBuffer();
     CFX_PtrArray m_BlockArray;
-    FX_INT32 m_iDataLength;
-    FX_INT32 m_iBufferSize;
-    FX_INT32 m_iAllocStep;
-    FX_INT32 m_iStartPosition;
+    int32_t m_iDataLength;
+    int32_t m_iBufferSize;
+    int32_t m_iAllocStep;
+    int32_t m_iStartPosition;
 };
 #endif
 #define FDE_XMLSYNTAXMODE_Text				0
@@ -334,19 +334,19 @@ public:
     {
         FDE_Delete this;
     }
-    virtual void			Init(IFX_Stream *pStream, FX_INT32 iXMLPlaneSize, FX_INT32 iTextDataSize = 256);
+    virtual void			Init(IFX_Stream *pStream, int32_t iXMLPlaneSize, int32_t iTextDataSize = 256);
     virtual FX_DWORD		DoSyntaxParse();
-    virtual FX_INT32		GetStatus() const;
-    virtual FX_INT32		GetCurrentPos() const
+    virtual int32_t		GetStatus() const;
+    virtual int32_t		GetCurrentPos() const
     {
         return m_iParsedChars + (m_pStart - m_pBuffer);
     }
     virtual FX_FILESIZE		GetCurrentBinaryPos() const;
-    virtual FX_INT32		GetCurrentNodeNumber() const
+    virtual int32_t		GetCurrentNodeNumber() const
     {
         return m_iCurrentNodeNum;
     }
-    virtual FX_INT32		GetLastNodeNumber() const
+    virtual int32_t		GetLastNodeNumber() const
     {
         return m_iLastNodeNum;
     }
@@ -403,14 +403,14 @@ public:
 #endif
 protected:
     IFX_Stream			*m_pStream;
-    FX_INT32			m_iXMLPlaneSize;
-    FX_INT32			m_iCurrentPos;
-    FX_INT32			m_iCurrentNodeNum;
-    FX_INT32			m_iLastNodeNum;
-    FX_INT32			m_iParsedChars;
-    FX_INT32			m_iParsedBytes;
+    int32_t			m_iXMLPlaneSize;
+    int32_t			m_iCurrentPos;
+    int32_t			m_iCurrentNodeNum;
+    int32_t			m_iLastNodeNum;
+    int32_t			m_iParsedChars;
+    int32_t			m_iParsedBytes;
     FX_LPWSTR			m_pBuffer;
-    FX_INT32			m_iBufferChars;
+    int32_t			m_iBufferChars;
     FX_BOOL				m_bEOS;
     FX_LPWSTR			m_pStart;
     FX_LPWSTR			m_pEnd;
@@ -418,20 +418,20 @@ protected:
     CFDE_XMLNodeStack	m_XMLNodeStack;
 #ifdef _FDE_BLOCK_BUFFER
     CFDE_BlockBuffer	m_BlockBuffer;
-    FX_INT32			m_iAllocStep;
-    FX_INT32&			m_iDataLength;
+    int32_t			m_iAllocStep;
+    int32_t&			m_iDataLength;
     FX_LPWSTR			m_pCurrentBlock;
-    FX_INT32			m_iIndexInBlock;
+    int32_t			m_iIndexInBlock;
 #else
-    FX_INT32			m_iTextDataSize;
+    int32_t			m_iTextDataSize;
     FX_LPWSTR			m_pwsTextData;
-    FX_INT32			m_iDataPos;
+    int32_t			m_iDataPos;
 #endif
-    FX_INT32			m_iTextDataLength;
+    int32_t			m_iTextDataLength;
     FX_DWORD			m_dwStatus;
     FX_DWORD			m_dwMode;
     FX_WCHAR			m_wQuotationMark;
-    FX_INT32			m_iEntityStart;
+    int32_t			m_iEntityStart;
     CFX_DWordStack		m_SkipStack;
     FX_WCHAR			m_SkipChar;
     inline void				ParseTextChar(FX_WCHAR ch);

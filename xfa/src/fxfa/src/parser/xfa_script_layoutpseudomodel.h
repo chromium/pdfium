@@ -42,7 +42,7 @@ public:
     void	Script_LayoutPseudoModel_SheetCount(CFXJSE_Arguments* pArguments);
     void	Script_LayoutPseudoModel_AbsPage(CFXJSE_Arguments* pArguments);
 protected:
-    void	Script_LayoutPseudoModel_GetObjArray(IXFA_DocLayout* pDocLayout, FX_INT32 iPageNo, const CFX_WideString &wsType, FX_BOOL bOnPageArea, CXFA_NodeArray &retArray);
+    void	Script_LayoutPseudoModel_GetObjArray(IXFA_DocLayout* pDocLayout, int32_t iPageNo, const CFX_WideString &wsType, FX_BOOL bOnPageArea, CXFA_NodeArray &retArray);
     void	Script_LayoutPseudoModel_PageImp(CFXJSE_Arguments* pArguments, FX_BOOL bAbsPage);
 };
 #endif

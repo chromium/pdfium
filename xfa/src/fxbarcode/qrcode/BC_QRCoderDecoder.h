@@ -20,9 +20,9 @@ public:
     CBC_QRCoderDecoder();
     virtual ~CBC_QRCoderDecoder();
 
-    CBC_CommonDecoderResult* Decode(FX_BOOL* image, FX_INT32 width, FX_INT32 height, FX_INT32 &e);
-    CBC_CommonDecoderResult* Decode(CBC_CommonBitMatrix* bits, FX_INT32 byteModeDecode, FX_INT32 &e);
-    void CorrectErrors(CFX_ByteArray* codewordBytes, FX_INT32 numDataCodewords, FX_INT32 &e);
+    CBC_CommonDecoderResult* Decode(FX_BOOL* image, int32_t width, int32_t height, int32_t &e);
+    CBC_CommonDecoderResult* Decode(CBC_CommonBitMatrix* bits, int32_t byteModeDecode, int32_t &e);
+    void CorrectErrors(CFX_ByteArray* codewordBytes, int32_t numDataCodewords, int32_t &e);
     virtual void Init();
 };
 #endif

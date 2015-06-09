@@ -84,7 +84,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_CurrentPage(FXJSE_HVALUE hV
         pNotify->GetDocProvider()->SetCurrentPage(hDoc, FXJSE_Value_ToInteger(hValue));
         return;
     }
-    FX_INT32 iCurrentPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
+    int32_t iCurrentPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
     FXJSE_Value_SetInteger(hValue, iCurrentPage);
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Language(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute)
@@ -112,7 +112,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_NumPages(FXJSE_HVALUE hValu
         ThrowScriptErrorMessage(XFA_IDS_UNABLE_SET_NUMPAGES);
         return;
     }
-    FX_INT32 iNumPages = pNotify->GetDocProvider()->CountPages(hDoc);
+    int32_t iNumPages = pNotify->GetDocProvider()->CountPages(hDoc);
     FXJSE_Value_SetInteger(hValue, iNumPages);
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Platform(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute)
@@ -241,7 +241,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_GotoURL(CFXJSE_Arguments* p
     if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
         return;
     }
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength != 1) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"gotoURL");
         return;
@@ -263,7 +263,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(CFXJSE_Arguments* 
     if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
         return;
     }
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength != 1) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"openList");
         return;
@@ -293,7 +293,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(CFXJSE_Arguments* 
             }
             FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings;
             XFA_RESOLVENODE_RS resoveNodeRS;
-            FX_INT32 iRet = pScriptContext->ResolveObjects(pObject, wsExpression, resoveNodeRS, dwFlag);
+            int32_t iRet = pScriptContext->ResolveObjects(pObject, wsExpression, resoveNodeRS, dwFlag);
             if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode()) {
                 FXJSE_Value_Release(hValue);
                 return;
@@ -315,7 +315,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(CFXJSE_Arguments* 
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Response(CFXJSE_Arguments* pArguments)
 {
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 4) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"response");
         return;
@@ -356,21 +356,21 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_DocumentInBatch(CFXJSE_Argu
     if (!pNotify) {
         return;
     }
-    FX_INT32 iCur = pNotify->GetAppProvider()->GetCurDocumentInBatch();
+    int32_t iCur = pNotify->GetAppProvider()->GetCurDocumentInBatch();
     FXJSE_HVALUE hValue =  pArguments->GetReturnValue();
     if (hValue) {
         FXJSE_Value_SetInteger(hValue, iCur);
     }
 }
-static FX_INT32 XFA_FilterName(FX_WSTR wsExpression, FX_INT32 nStart, CFX_WideString &wsFilter)
+static int32_t XFA_FilterName(FX_WSTR wsExpression, int32_t nStart, CFX_WideString &wsFilter)
 {
     FXSYS_assert(nStart > -1);
-    FX_INT32 iLength = wsExpression.GetLength();
+    int32_t iLength = wsExpression.GetLength();
     if (nStart >= iLength) {
         return iLength;
     }
     FX_LPWSTR pBuf = wsFilter.GetBuffer(iLength - nStart);
-    FX_INT32 nCount = 0;
+    int32_t nCount = 0;
     FX_LPCWSTR pSrc = wsExpression.GetPtr();
     FX_WCHAR wCur;
     while (nStart < iLength) {
@@ -387,7 +387,7 @@ static FX_INT32 XFA_FilterName(FX_WSTR wsExpression, FX_INT32 nStart, CFX_WideSt
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_ResetData(CFXJSE_Arguments* pArguments)
 {
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength < 0 || iLength > 1) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"resetData");
         return;
@@ -405,10 +405,10 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ResetData(CFXJSE_Arguments*
         pNotify->ResetData();
         return;
     }
-    FX_INT32 iStart = 0;
+    int32_t iStart = 0;
     CFX_WideString wsName;
     CXFA_Node* pNode = NULL;
-    FX_INT32 iExpLength = wsExpression.GetLength();
+    int32_t iExpLength = wsExpression.GetLength();
     while (iStart < iExpLength) {
         iStart = XFA_FilterName(wsExpression, iStart, wsName);
         IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
@@ -421,7 +421,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ResetData(CFXJSE_Arguments*
         }
         FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings;
         XFA_RESOLVENODE_RS resoveNodeRS;
-        FX_INT32 iRet = pScriptContext->ResolveObjects(pObject, wsName, resoveNodeRS, dwFlag);
+        int32_t iRet = pScriptContext->ResolveObjects(pObject, wsName, resoveNodeRS, dwFlag);
         if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode()) {
             continue;
         }
@@ -437,7 +437,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Beep(CFXJSE_Arguments* pArg
     if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
         return;
     }
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength < 0 || iLength > 1) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"beep");
         return;
@@ -457,7 +457,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(CFXJSE_Arguments* 
     if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
         return;
     }
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength != 1) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"setFocus");
         return;
@@ -488,7 +488,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(CFXJSE_Arguments* 
             }
             FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings;
             XFA_RESOLVENODE_RS resoveNodeRS;
-            FX_INT32 iRet = pScriptContext->ResolveObjects(pObject, wsExpression, resoveNodeRS, dwFlag);
+            int32_t iRet = pScriptContext->ResolveObjects(pObject, wsExpression, resoveNodeRS, dwFlag);
             if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode()) {
                 FXJSE_Value_Release(hValue);
                 return;
@@ -516,7 +516,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_MessageBox(CFXJSE_Arguments
     if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
         return;
     }
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength < 1 || iLength > 4) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"messageBox");
         return;
@@ -551,13 +551,13 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_MessageBox(CFXJSE_Arguments
             dwButtonType = XFA_MB_OK;
         }
     }
-    FX_INT32 iValue = pNotify->GetAppProvider()->MsgBox(wsMessage, bsTitle, dwMessageType, dwButtonType);
+    int32_t iValue = pNotify->GetAppProvider()->MsgBox(wsMessage, bsTitle, dwMessageType, dwButtonType);
     FXJSE_HVALUE hValue = pArguments->GetReturnValue();
     if (hValue) {
         FXJSE_Value_SetInteger(hValue, iValue);
     }
 }
-FX_BOOL CScript_HostPseudoModel::Script_HostPseudoModel_ValidateArgsForMsg(CFXJSE_Arguments* pArguments, FX_INT32 iArgIndex, CFX_WideString& wsValue)
+FX_BOOL CScript_HostPseudoModel::Script_HostPseudoModel_ValidateArgsForMsg(CFXJSE_Arguments* pArguments, int32_t iArgIndex, CFX_WideString& wsValue)
 {
     if(pArguments == NULL || iArgIndex < 0)	{
         return FALSE;
@@ -588,7 +588,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_DocumentCountInBatch(CFXJSE
     if (!pNotify) {
         return;
     }
-    FX_INT32 iValue = pNotify->GetAppProvider()->GetDocumentCountInBatch();
+    int32_t iValue = pNotify->GetAppProvider()->GetDocumentCountInBatch();
     FXJSE_HVALUE hValue = pArguments->GetReturnValue();
     if (hValue) {
         FXJSE_Value_SetInteger(hValue, iValue);
@@ -599,7 +599,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Print(CFXJSE_Arguments* pAr
     if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
         return;
     }
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength != 8) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"print");
         return;
@@ -617,11 +617,11 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Print(CFXJSE_Arguments* pAr
     if(bShowDialog) {
         dwOptions |= XFA_PRINTOPT_ShowDialog;
     }
-    FX_INT32 nStartPage = 0;
+    int32_t nStartPage = 0;
     if (iLength >= 2) {
         nStartPage = pArguments->GetInt32(1);
     }
-    FX_INT32 nEndPage = 0;
+    int32_t nEndPage = 0;
     if (iLength >= 3) {
         nEndPage = pArguments->GetInt32(2);
     }
@@ -665,7 +665,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Print(CFXJSE_Arguments* pAr
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_ImportData(CFXJSE_Arguments* pArguments)
 {
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength < 0 || iLength > 1) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"importData");
         return;
@@ -684,7 +684,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ImportData(CFXJSE_Arguments
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_ExportData(CFXJSE_Arguments* pArguments)
 {
-    FX_INT32 iLength = pArguments->GetLength();
+    int32_t iLength = pArguments->GetLength();
     if (iLength < 0 || iLength > 2) {
         ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"exportData");
         return;
@@ -712,8 +712,8 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_PageUp(CFXJSE_Arguments* pA
         return;
     }
     IXFA_Doc* hDoc = pNotify->GetHDOC();
-    FX_INT32 nCurPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
-    FX_INT32 nNewPage = 0;
+    int32_t nCurPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
+    int32_t nNewPage = 0;
     if (nCurPage <= 1) {
         return;
     }
@@ -727,12 +727,12 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_PageDown(CFXJSE_Arguments* 
         return;
     }
     IXFA_Doc* hDoc = pNotify->GetHDOC();
-    FX_INT32 nCurPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
-    FX_INT32 nPageCount = pNotify->GetDocProvider()->CountPages(hDoc);
+    int32_t nCurPage = pNotify->GetDocProvider()->GetCurrentPage(hDoc);
+    int32_t nPageCount = pNotify->GetDocProvider()->CountPages(hDoc);
     if (!nPageCount || nCurPage == nPageCount) {
         return;
     }
-    FX_INT32 nNewPage = 0;
+    int32_t nNewPage = 0;
     if (nCurPage >= nPageCount) {
         nNewPage = nPageCount - 1;
     } else {

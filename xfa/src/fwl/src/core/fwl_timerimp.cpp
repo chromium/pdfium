@@ -18,7 +18,7 @@ FWL_HTIMER FWL_StartTimer(IFWL_Timer *pTimer, FX_DWORD dwElapse, FX_BOOL bImmedi
     pAdapterTimerMgr->Start(pTimer, dwElapse, hTimer, bImmediately);
     return hTimer;
 }
-FX_INT32 FWL_StopTimer(FWL_HTIMER hTimer)
+int32_t FWL_StopTimer(FWL_HTIMER hTimer)
 {
     IFWL_AdapterNative *pAdapterNative = FWL_GetAdapterNative();
     _FWL_RETURN_VALUE_IF_FAIL(pAdapterNative, FWL_ERR_Indefinite);

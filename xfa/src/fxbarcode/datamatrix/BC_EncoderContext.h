@@ -13,36 +13,36 @@ class CBC_EncoderContext;
 class CBC_EncoderContext : public CBC_SymbolShapeHint
 {
 public:
-    CBC_EncoderContext(const CFX_WideString msg, CFX_WideString ecLevel, FX_INT32 &e);
+    CBC_EncoderContext(const CFX_WideString msg, CFX_WideString ecLevel, int32_t &e);
     virtual ~CBC_EncoderContext();
     void setSymbolShape(SymbolShapeHint shape);
     void setSizeConstraints(CBC_Dimension* minSize, CBC_Dimension* maxSize);
     CFX_WideString getMessage();
-    void setSkipAtEnd(FX_INT32 count);
+    void setSkipAtEnd(int32_t count);
     FX_WCHAR getCurrentChar();
     FX_WCHAR getCurrent();
     void writeCodewords(CFX_WideString codewords);
     void writeCodeword(FX_WCHAR codeword);
-    FX_INT32 getCodewordCount();
-    void signalEncoderChange(FX_INT32 encoding);
+    int32_t getCodewordCount();
+    void signalEncoderChange(int32_t encoding);
     void resetEncoderSignal();
     FX_BOOL hasMoreCharacters();
-    FX_INT32 getRemainingCharacters();
-    void updateSymbolInfo(FX_INT32 &e);
-    void updateSymbolInfo(FX_INT32 len, FX_INT32 &e);
+    int32_t getRemainingCharacters();
+    void updateSymbolInfo(int32_t &e);
+    void updateSymbolInfo(int32_t len, int32_t &e);
     void resetSymbolInfo();
 public:
     CFX_WideString m_msg;
     CFX_WideString m_codewords;
-    FX_INT32 m_pos;
-    FX_INT32 m_newEncoding;
+    int32_t m_pos;
+    int32_t m_newEncoding;
     CBC_SymbolInfo* m_symbolInfo;
 private:
-    FX_INT32 getTotalMessageCharCount();
+    int32_t getTotalMessageCharCount();
 private:
     SymbolShapeHint m_shape;
     CBC_Dimension* m_minSize;
     CBC_Dimension* m_maxSize;
-    FX_INT32 m_skipAtEnd;
+    int32_t m_skipAtEnd;
 };
 #endif

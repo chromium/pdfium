@@ -36,11 +36,11 @@ CBC_TextEncoder::CBC_TextEncoder()
 CBC_TextEncoder::~CBC_TextEncoder()
 {
 }
-FX_INT32 CBC_TextEncoder::getEncodingMode()
+int32_t CBC_TextEncoder::getEncodingMode()
 {
     return TEXT_ENCODATION;
 }
-FX_INT32 CBC_TextEncoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e)
+int32_t CBC_TextEncoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, int32_t &e)
 {
     if (c == ' ') {
         sb += (FX_WCHAR)'\3';
@@ -92,7 +92,7 @@ FX_INT32 CBC_TextEncoder::encodeChar(FX_WCHAR c, CFX_WideString &sb, FX_INT32 &e
     if (c >= 0x0080) {
         sb += (FX_WCHAR)'\1';
         sb += (FX_WCHAR)0x001e;
-        FX_INT32 len = 2;
+        int32_t len = 2;
         len += encodeChar((FX_WCHAR) (c - 128), sb, e);
         BC_EXCEPTION_CHECK_ReturnValue(e, -1);
         return len;

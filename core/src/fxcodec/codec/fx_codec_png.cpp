@@ -191,7 +191,7 @@ static void _png_get_row_func(png_structp png_ptr, png_bytep new_row, png_uint_3
 }
 void* CCodec_PngModule::Start(void* pModule)
 {
-    FXPNG_Context* p = (FXPNG_Context*)FX_Alloc(FX_BYTE, sizeof(FXPNG_Context));
+    FXPNG_Context* p = (FXPNG_Context*)FX_Alloc(uint8_t, sizeof(FXPNG_Context));
     if(p == NULL) {
         return NULL;
     }

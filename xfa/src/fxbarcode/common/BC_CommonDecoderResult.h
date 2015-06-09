@@ -17,8 +17,8 @@ public:
     const CFX_ByteString& GetText();
     const CFX_Int32Array& GetByteSegments();
     CBC_QRCoderErrorCorrectionLevel* GetECLevel();
-    virtual void Init(const CFX_ByteArray &rawBytes, const CFX_ByteString &text, const CFX_Int32Array &byteSegments, CBC_QRCoderErrorCorrectionLevel* ecLevel, FX_INT32 &e);
-    virtual void Init(const CFX_ByteArray &rawBytes, const CFX_ByteString &text, const CFX_PtrArray &byteSegments, const CFX_ByteString &ecLevel, FX_INT32 &e);
+    virtual void Init(const CFX_ByteArray &rawBytes, const CFX_ByteString &text, const CFX_Int32Array &byteSegments, CBC_QRCoderErrorCorrectionLevel* ecLevel, int32_t &e);
+    virtual void Init(const CFX_ByteArray &rawBytes, const CFX_ByteString &text, const CFX_PtrArray &byteSegments, const CFX_ByteString &ecLevel, int32_t &e);
     void setOther(CBC_PDF417ResultMetadata* other);
 private:
     CFX_ByteArray m_rawBytes;

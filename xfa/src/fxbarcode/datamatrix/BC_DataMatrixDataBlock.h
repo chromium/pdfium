@@ -12,14 +12,14 @@ class CBC_DataMatrixDataBlock
 public:
     virtual ~CBC_DataMatrixDataBlock();
 
-    FX_INT32 GetNumDataCodewords();
+    int32_t GetNumDataCodewords();
     CFX_ByteArray* GetCodewords();
 
-    static CFX_PtrArray *GetDataBlocks(CFX_ByteArray* rawCodewords, CBC_DataMatrixVersion *version, FX_INT32 &e);
+    static CFX_PtrArray *GetDataBlocks(CFX_ByteArray* rawCodewords, CBC_DataMatrixVersion *version, int32_t &e);
 private:
-    FX_INT32 m_numDataCodewords;
+    int32_t m_numDataCodewords;
     CFX_ByteArray m_codewords;
 
-    CBC_DataMatrixDataBlock(FX_INT32 numDataCodewords, CFX_ByteArray *codewords);
+    CBC_DataMatrixDataBlock(int32_t numDataCodewords, CFX_ByteArray *codewords);
 };
 #endif

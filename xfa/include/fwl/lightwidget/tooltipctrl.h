@@ -18,10 +18,10 @@ public:
     FWL_ERR Initialize(const CFWL_WidgetProperties *pProperties = NULL);
     FWL_ERR			GetCaption(CFX_WideString &wsCaption);
     FWL_ERR			SetCaption(FX_WSTR wsCaption);
-    FX_INT32	 	GetInitialDelay();
-    FX_INT32	 	SetInitialDelay(FX_INT32 nDelayTime);
-    FX_INT32	 	GetAutoPopDelay();
-    FX_INT32	 	SetAutoPopDelay(FX_INT32 nDelayTime);
+    int32_t	 	GetInitialDelay();
+    int32_t	 	SetInitialDelay(int32_t nDelayTime);
+    int32_t	 	GetAutoPopDelay();
+    int32_t	 	SetAutoPopDelay(int32_t nDelayTime);
     CFX_DIBitmap*	GetToolTipIcon();
     FWL_ERR			SetToolTipIcon(CFX_DIBitmap* pBitmap);
     CFX_SizeF		GetToolTipIconSize();
@@ -37,14 +37,14 @@ protected:
     public:
         CFWL_ToolTipDP();
         FWL_ERR GetCaption(IFWL_Widget *pWidget, CFX_WideString &wsCaption);
-        FX_INT32	 	GetInitialDelay(IFWL_Widget *pWidget);
-        FX_INT32	 	GetAutoPopDelay(IFWL_Widget *pWidget);
+        int32_t	 	GetInitialDelay(IFWL_Widget *pWidget);
+        int32_t	 	GetAutoPopDelay(IFWL_Widget *pWidget);
         CFX_DIBitmap*	GetToolTipIcon(IFWL_Widget *pWidget);
         CFX_SizeF		GetToolTipIconSize(IFWL_Widget *pWidget);
         CFX_RectF		GetAnchor();
         CFX_WideString	m_wsCaption;
-        FX_INT32		m_nInitDelayTime;
-        FX_INT32		m_nAutoPopDelayTime;
+        int32_t		m_nInitDelayTime;
+        int32_t		m_nAutoPopDelayTime;
         CFX_DIBitmap*	m_pBitmap;
         CFX_SizeF		m_fIconSize;
         CFX_RectF		m_fAnchor;

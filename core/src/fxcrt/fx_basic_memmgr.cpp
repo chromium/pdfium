@@ -63,7 +63,7 @@ void* CFX_GrowOnlyPool::Alloc(size_t size)
         pTrunk = pTrunk->m_pNext;
     }
     size_t alloc_size = size > m_TrunkSize ? size : m_TrunkSize;
-    pTrunk = (_FX_GrowOnlyTrunk*)FX_Alloc(FX_BYTE, sizeof(_FX_GrowOnlyTrunk) + alloc_size);
+    pTrunk = (_FX_GrowOnlyTrunk*)FX_Alloc(uint8_t, sizeof(_FX_GrowOnlyTrunk) + alloc_size);
     pTrunk->m_Size = alloc_size;
     pTrunk->m_Allocated = size;
     pTrunk->m_pNext = (_FX_GrowOnlyTrunk*)m_pFirstTrunk;

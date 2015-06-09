@@ -13,12 +13,12 @@ class CBC_ReedSolomonEncoder
 private:
     CBC_ReedSolomonGF256* m_field;
     CFX_PtrArray m_cachedGenerators;
-    CBC_ReedSolomonGF256Poly* BuildGenerator(FX_INT32 degree, FX_INT32 &e);
+    CBC_ReedSolomonGF256Poly* BuildGenerator(int32_t degree, int32_t &e);
 public:
     CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256 * field);
     virtual ~CBC_ReedSolomonEncoder();
 
-    void Encode(CFX_Int32Array *toEncode, FX_INT32 ecBytes, FX_INT32 &e);
+    void Encode(CFX_Int32Array *toEncode, int32_t ecBytes, int32_t &e);
     virtual void Init();
 };
 #endif

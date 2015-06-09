@@ -22,8 +22,8 @@
 
 #include "../barcode.h"
 #include "BC_PDF417Codeword.h"
-FX_INT32 CBC_Codeword::BARCODE_ROW_UNKNOWN = -1;
-CBC_Codeword::CBC_Codeword(FX_INT32 startX, FX_INT32 endX, FX_INT32 bucket, FX_INT32 cvalue)
+int32_t CBC_Codeword::BARCODE_ROW_UNKNOWN = -1;
+CBC_Codeword::CBC_Codeword(int32_t startX, int32_t endX, int32_t bucket, int32_t cvalue)
 {
     m_startX = startX;
     m_endX = endX;
@@ -38,7 +38,7 @@ FX_BOOL CBC_Codeword::hasValidRowNumber()
 {
     return isValidRowNumber(m_rowNumber);
 }
-FX_BOOL CBC_Codeword::isValidRowNumber(FX_INT32 rowNumber)
+FX_BOOL CBC_Codeword::isValidRowNumber(int32_t rowNumber)
 {
     return m_rowNumber != BARCODE_ROW_UNKNOWN && m_bucket == (m_rowNumber % 3) * 3;
 }
@@ -46,31 +46,31 @@ void CBC_Codeword::setRowNumberAsRowIndicatorColumn()
 {
     m_rowNumber = (m_value / 30) * 3 + m_bucket / 3;
 }
-FX_INT32 CBC_Codeword::getWidth()
+int32_t CBC_Codeword::getWidth()
 {
     return m_endX - m_startX;
 }
-FX_INT32 CBC_Codeword::getStartX()
+int32_t CBC_Codeword::getStartX()
 {
     return m_startX;
 }
-FX_INT32 CBC_Codeword::getEndX()
+int32_t CBC_Codeword::getEndX()
 {
     return m_endX;
 }
-FX_INT32 CBC_Codeword::getBucket()
+int32_t CBC_Codeword::getBucket()
 {
     return m_bucket;
 }
-FX_INT32 CBC_Codeword::getValue()
+int32_t CBC_Codeword::getValue()
 {
     return m_value;
 }
-FX_INT32 CBC_Codeword::getRowNumber()
+int32_t CBC_Codeword::getRowNumber()
 {
     return m_rowNumber;
 }
-void CBC_Codeword::setRowNumber(FX_INT32 rowNumber)
+void CBC_Codeword::setRowNumber(int32_t rowNumber)
 {
     m_rowNumber = rowNumber;
 }

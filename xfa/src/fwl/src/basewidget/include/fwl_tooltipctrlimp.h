@@ -42,14 +42,14 @@ protected:
         CFWL_ToolTipTimer() {};
         ~CFWL_ToolTipTimer() {};
         CFWL_ToolTipTimer(CFWL_ToolTipImp * pToolTip);
-        virtual FX_INT32 Run(FWL_HTIMER hTimer);
+        virtual int32_t Run(FWL_HTIMER hTimer);
         CFWL_ToolTipImp *m_pToolTip;
     };
     CFX_RectF	m_rtClient;
     CFX_RectF	m_rtCaption;
     FX_BOOL		m_bBtnDown;
     FX_DWORD	m_dwTTOStyles;
-    FX_INT32	m_iTTOAlign;
+    int32_t	m_iTTOAlign;
     CFX_RectF	m_rtAnchor;
     FWL_HTIMER	m_hTimerShow;
     FWL_HTIMER	m_hTimerHide;
@@ -63,7 +63,7 @@ class CFWL_ToolTipImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_ToolTipImpDelegate(CFWL_ToolTipImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 protected:

@@ -15,6 +15,6 @@ public:
     CBC_OnedEAN8Reader();
     virtual ~CBC_OnedEAN8Reader();
 protected:
-    FX_INT32 DecodeMiddle(CBC_CommonBitArray*, CFX_Int32Array *startRange, CFX_ByteString &result, FX_INT32 &e);
+    int32_t DecodeMiddle(CBC_CommonBitArray*, CFX_Int32Array *startRange, CFX_ByteString &result, int32_t &e);
 };
 #endif

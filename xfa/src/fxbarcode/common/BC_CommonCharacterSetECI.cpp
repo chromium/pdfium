@@ -26,7 +26,7 @@
 void CBC_CommonCharacterSetECI::initialize()
 {
 }
-CBC_CommonCharacterSetECI::CBC_CommonCharacterSetECI(FX_INT32 value, CFX_ByteString encodingName):
+CBC_CommonCharacterSetECI::CBC_CommonCharacterSetECI(int32_t value, CFX_ByteString encodingName):
     CBC_CommonECI(value), m_encodingName(encodingName)
 {
 }
@@ -37,10 +37,10 @@ CFX_ByteString CBC_CommonCharacterSetECI::GetEncodingName()
 {
     return m_encodingName;
 }
-void CBC_CommonCharacterSetECI::AddCharacterSet(FX_INT32 value, CFX_ByteString encodingName)
+void CBC_CommonCharacterSetECI::AddCharacterSet(int32_t value, CFX_ByteString encodingName)
 {
 }
-CBC_CommonCharacterSetECI* CBC_CommonCharacterSetECI::GetCharacterSetECIByValue(FX_INT32 value)
+CBC_CommonCharacterSetECI* CBC_CommonCharacterSetECI::GetCharacterSetECIByValue(int32_t value)
 {
     return NULL;
 }

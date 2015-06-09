@@ -50,7 +50,7 @@ private:
 
 	CFFL_FormFiller *						m_pFormFiller;
 	FX_BOOL									m_bDoActioning;
-	FX_INT32								m_nNotifyFlag;
+	int32_t								m_nNotifyFlag;
 };
 
 #endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_NOTIFY_H_

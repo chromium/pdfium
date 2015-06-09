@@ -19,10 +19,10 @@ public:
     CXFA_Node*  XFA_ResolveNodes_GetOneChild(CXFA_Node* parent, FX_LPCWSTR pwsName, FX_BOOL bIsClassName = FALSE);
     CXFA_Node*  XFA_ResolveNodes_GetParent(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
 
-    FX_INT32	XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent, FX_DWORD dNameHash, CXFA_NodeArray* pSiblings, XFA_LOGIC_TYPE eLogicType, FX_BOOL bIsClassName = FALSE, FX_BOOL bIsFindProperty = TRUE);
-    FX_INT32	XFA_NodeAcc_TraverseAnySiblings(CXFA_Node* parent, FX_DWORD dNameHash, CXFA_NodeArray* pSiblings, FX_BOOL bIsClassName = FALSE);
-    FX_INT32	XFA_CountSiblings(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType, CXFA_NodeArray *pSiblings, FX_BOOL bIsClassName = FALSE);
-    FX_INT32    XFA_GetIndex(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent, FX_BOOL bIsProperty = FALSE, FX_BOOL bIsClassIndex = FALSE);
+    int32_t	XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent, FX_DWORD dNameHash, CXFA_NodeArray* pSiblings, XFA_LOGIC_TYPE eLogicType, FX_BOOL bIsClassName = FALSE, FX_BOOL bIsFindProperty = TRUE);
+    int32_t	XFA_NodeAcc_TraverseAnySiblings(CXFA_Node* parent, FX_DWORD dNameHash, CXFA_NodeArray* pSiblings, FX_BOOL bIsClassName = FALSE);
+    int32_t	XFA_CountSiblings(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType, CXFA_NodeArray *pSiblings, FX_BOOL bIsClassName = FALSE);
+    int32_t    XFA_GetIndex(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent, FX_BOOL bIsProperty = FALSE, FX_BOOL bIsClassIndex = FALSE);
     void		XFA_GetNameExpression(CXFA_Node* refNode, CFX_WideString &wsName, FX_BOOL bIsAllPath, XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
     FX_BOOL		XFA_NodeIsTransparent(CXFA_Node* refNode);
     FX_BOOL		XFA_ResolveNodes_CreateNode(CFX_WideString wsName, CFX_WideString wsCondition, FX_BOOL bLastNode, CXFA_ScriptContext* pScriptContext);
@@ -32,9 +32,9 @@ public:
 public:
     XFA_ELEMENT					m_eLastCreateType;
     CXFA_Node*					m_pCreateParent;
-    FX_INT32					m_iCreateCount;
+    int32_t					m_iCreateCount;
     XFA_RESOVENODE_RSTYPE		m_iCreateFlag;
-    FX_INT32					m_iCurAllStart;
+    int32_t					m_iCurAllStart;
     CXFA_Node*					m_pAllStartParent;
 
 };

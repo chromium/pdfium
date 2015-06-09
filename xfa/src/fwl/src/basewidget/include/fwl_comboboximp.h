@@ -41,7 +41,7 @@ class CFWL_ComboEditDelegate : public CFWL_EditImpDelegate
 {
 public:
     CFWL_ComboEditDelegate(CFWL_ComboEdit *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
 protected:
     CFWL_ComboEdit *m_pOwner;
 };
@@ -52,10 +52,10 @@ public:
     CFWL_ComboList(const CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter);
     virtual FWL_ERR Initialize();
     virtual FWL_ERR Finalize();
-    FX_INT32	MatchItem(const CFX_WideString &wsMatch);
-    void		ChangeSelected(FX_INT32 iSel);
-    FX_INT32	CountItems();
-    void		GetItemRect(FX_INT32 nIndex, CFX_RectF &rtItem);
+    int32_t	MatchItem(const CFX_WideString &wsMatch);
+    void		ChangeSelected(int32_t iSel);
+    int32_t	CountItems();
+    void		GetItemRect(int32_t nIndex, CFX_RectF &rtItem);
     void		ClientToOuter(FX_FLOAT &fx, FX_FLOAT &fy);
     void		SetFocus(FX_BOOL bSet);
     FX_BOOL		m_bNotifyOwner;
@@ -66,13 +66,13 @@ class CFWL_ComboListDelegate : public CFWL_ListBoxImpDelegate
 {
 public:
     CFWL_ComboListDelegate(CFWL_ComboList *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
 protected:
     void		OnDropListFocusChanged(CFWL_Message *pMsg, FX_BOOL bSet = TRUE);
-    FX_INT32	OnDropListMouseMove(CFWL_MsgMouse *pMsg);
-    FX_INT32	OnDropListLButtonDown(CFWL_MsgMouse *pMsg);
-    FX_INT32	OnDropListLButtonUp(CFWL_MsgMouse *pMsg);
-    FX_INT32	OnDropListKey(CFWL_MsgKey *pKey);
+    int32_t	OnDropListMouseMove(CFWL_MsgMouse *pMsg);
+    int32_t	OnDropListLButtonDown(CFWL_MsgMouse *pMsg);
+    int32_t	OnDropListLButtonUp(CFWL_MsgMouse *pMsg);
+    int32_t	OnDropListKey(CFWL_MsgKey *pKey);
     void		OnDropListKeyDown(CFWL_MsgKey *pKey);
     CFWL_ComboList *m_pOwner;
 };
@@ -93,16 +93,16 @@ public:
     virtual FX_DWORD	HitTest(FX_FLOAT fx, FX_FLOAT fy);
     virtual FWL_ERR		DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
     virtual FWL_ERR		SetThemeProvider(IFWL_ThemeProvider *pThemeProvider);
-    virtual FX_INT32	GetCurSel();
-    virtual FWL_ERR		SetCurSel(FX_INT32 iSel);
+    virtual int32_t	GetCurSel();
+    virtual FWL_ERR		SetCurSel(int32_t iSel);
     virtual FWL_ERR		SetEditText(const CFX_WideString &wsText);
-    virtual FX_INT32	GetEditTextLength() const;
-    virtual FWL_ERR		GetEditText(CFX_WideString &wsText, FX_INT32 nStart = 0, FX_INT32 nCount = -1) const;
-    virtual FWL_ERR		SetEditSelRange(FX_INT32 nStart, FX_INT32 nCount = -1);
-    virtual FX_INT32	GetEditSelRange(FX_INT32 nIndex, FX_INT32 &nStart);
-    virtual FX_INT32	GetEditLimit();
-    virtual FWL_ERR		SetEditLimit(FX_INT32 nLimit);
-    virtual FWL_ERR		EditDoClipboard(FX_INT32 iCmd);
+    virtual int32_t	GetEditTextLength() const;
+    virtual FWL_ERR		GetEditText(CFX_WideString &wsText, int32_t nStart = 0, int32_t nCount = -1) const;
+    virtual FWL_ERR		SetEditSelRange(int32_t nStart, int32_t nCount = -1);
+    virtual int32_t	GetEditSelRange(int32_t nIndex, int32_t &nStart);
+    virtual int32_t	GetEditLimit();
+    virtual FWL_ERR		SetEditLimit(int32_t nLimit);
+    virtual FWL_ERR		EditDoClipboard(int32_t iCmd);
     virtual FX_BOOL		EditRedo(FX_BSTR bsRecord);
     virtual FX_BOOL		EditUndo(FX_BSTR bsRecord);
     virtual IFWL_ListBox*  GetListBoxt();
@@ -130,7 +130,7 @@ protected:
     FX_BOOL		IsDropListShowed();
     FX_BOOL		IsDropDownStyle() const;
     void		MatchEditText();
-    void		SynchrEditText(FX_INT32 iListItem);
+    void		SynchrEditText(int32_t iListItem);
     void		Layout();
     void		ReSetTheme();
     void		ReSetEditAlignment();
@@ -161,8 +161,8 @@ protected:
     IFWL_Form		*m_pForm;
     FX_BOOL			m_bLButtonDown;
     FX_BOOL			m_bUpFormHandler;
-    FX_INT32		m_iCurSel;
-    FX_INT32		m_iBtnState;
+    int32_t		m_iCurSel;
+    int32_t		m_iBtnState;
     FX_FLOAT        m_fComboFormHandler;
     FX_FLOAT        m_fItemHeight;
     FX_BOOL			m_bNeedShowList;
@@ -180,7 +180,7 @@ class CFWL_ComboBoxImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_ComboBoxImpDelegate(CFWL_ComboBoxImp *pOwner);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
 
@@ -193,7 +193,7 @@ protected:
     void	OnKey(CFWL_MsgKey *pMsg);
     void	DoSubCtrlKey(CFWL_MsgKey *pMsg);
 protected:
-    FX_INT32	DisForm_OnProcessMessage(CFWL_Message *pMessage);
+    int32_t	DisForm_OnProcessMessage(CFWL_Message *pMessage);
     void		DisForm_OnLButtonDown(CFWL_MsgMouse *pMsg);
     void		DisForm_OnFocusChanged(CFWL_Message *pMsg, FX_BOOL bSet = TRUE);
     void		DisForm_OnKey(CFWL_MsgKey *pMsg);
@@ -206,7 +206,7 @@ class CFWL_ComboProxyImpDelegate : public CFWL_WidgetImpDelegate
 {
 public:
     CFWL_ComboProxyImpDelegate(IFWL_Form *pForm, CFWL_ComboBoxImp *pComboBox);
-    virtual FX_INT32	OnProcessMessage(CFWL_Message *pMessage);
+    virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
     void	Reset()
     {

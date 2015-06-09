@@ -48,6 +48,6 @@ protected:
     FWL_HTHREAD			 m_hThread;
     static CFWL_ControlThread	 *	_assistantThreadHandler;
     static FWL_HTHREAD				_assistantThread;
-    static FX_INT32					_refCount;
+    static int32_t					_refCount;
 };
 #endif

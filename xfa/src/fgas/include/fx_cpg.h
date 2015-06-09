@@ -130,28 +130,28 @@ class IFX_CodePage;
 #define FX_CHARSET_MSWin_EasterEuropean			238
 #define FX_CHARSET_US							254
 #define FX_CHARSET_OEM							255
-FX_WORD	FX_GetCodePageFromCharset(FX_BYTE charset);
+FX_WORD	FX_GetCodePageFromCharset(uint8_t charset);
 FX_WORD FX_GetCharsetFromCodePage(FX_WORD codepage);
-FX_WORD	FX_GetCodePageFromStringA(FX_LPCSTR pStr, FX_INT32 iLength);
-FX_WORD FX_GetCodePageFormStringW(FX_LPCWSTR pStr, FX_INT32 iLength);
+FX_WORD	FX_GetCodePageFromStringA(FX_LPCSTR pStr, int32_t iLength);
+FX_WORD FX_GetCodePageFormStringW(FX_LPCWSTR pStr, int32_t iLength);
 FX_WORD	FX_GetDefCodePageByLanguage(FX_WORD wLanguage);
-void	FX_SwapByteOrder(FX_LPWSTR pStr, FX_INT32 iLength);
-void	FX_SwapByteOrderCopy(FX_LPCWSTR pSrc, FX_LPWSTR pDst, FX_INT32 iLength);
-void	FX_UTF16ToWChar(FX_LPVOID pBuffer, FX_INT32 iLength);
-void	FX_UTF16ToWCharCopy(const FX_WORD *pUTF16, FX_LPWSTR pWChar, FX_INT32 iLength);
-void	FX_WCharToUTF16(FX_LPVOID pBuffer, FX_INT32 iLength);
-void	FX_WCharToUTF16Copy(FX_LPCWSTR pWChar, FX_WORD *pUTF16, FX_INT32 iLength);
-FX_INT32	FX_DecodeString(FX_WORD wCodePage, FX_LPCSTR pSrc, FX_INT32 *pSrcLen, FX_LPWSTR pDst, FX_INT32 *pDstLen, FX_BOOL bErrBreak = FALSE);
-FX_INT32	FX_UTF8Decode(FX_LPCSTR pSrc, FX_INT32 *pSrcLen, FX_LPWSTR pDst, FX_INT32 *pDstLen);
+void	FX_SwapByteOrder(FX_LPWSTR pStr, int32_t iLength);
+void	FX_SwapByteOrderCopy(FX_LPCWSTR pSrc, FX_LPWSTR pDst, int32_t iLength);
+void	FX_UTF16ToWChar(FX_LPVOID pBuffer, int32_t iLength);
+void	FX_UTF16ToWCharCopy(const FX_WORD *pUTF16, FX_LPWSTR pWChar, int32_t iLength);
+void	FX_WCharToUTF16(FX_LPVOID pBuffer, int32_t iLength);
+void	FX_WCharToUTF16Copy(FX_LPCWSTR pWChar, FX_WORD *pUTF16, int32_t iLength);
+int32_t	FX_DecodeString(FX_WORD wCodePage, FX_LPCSTR pSrc, int32_t *pSrcLen, FX_LPWSTR pDst, int32_t *pDstLen, FX_BOOL bErrBreak = FALSE);
+int32_t	FX_UTF8Decode(FX_LPCSTR pSrc, int32_t *pSrcLen, FX_LPWSTR pDst, int32_t *pDstLen);
 enum FX_CODESYSTEM {
     FX_MBCS		=  0,
     FX_SBCS			,
     FX_DBCS			,
 };
 typedef struct _FX_CODEPAGE_HEADER {
-    FX_UINT16		uCPID;
-    FX_UINT8		uMinCharBytes;
-    FX_UINT8		uMaxCharBytes;
+    uint16_t		uCPID;
+    uint8_t		uMinCharBytes;
+    uint8_t		uMaxCharBytes;
     FX_CODESYSTEM	eCPType;
     FX_BOOL			bHasLeadByte;
     FX_WCHAR		wMinChar;
@@ -166,13 +166,13 @@ typedef struct _FX_CODEPAGE_HEADER {
 #define FX_CPMAPTYPE_NoMapping		3
 #define FX_CPMAPTYPE_Delta			4
 typedef struct _FX_CPCU_MAPTABLE1 {
-    FX_UINT16  uMapType;
-    FX_UINT16  uUniocde;
+    uint16_t  uMapType;
+    uint16_t  uUniocde;
 } FX_CPCU_MAPTABLE1;
 typedef struct _FX_CPCU_MAPTABLE2 {
-    FX_UINT8	uTrailByte;
-    FX_UINT8	uMapType;
-    FX_UINT16	uOffset;
+    uint8_t	uTrailByte;
+    uint8_t	uMapType;
+    uint16_t	uOffset;
 } FX_CPCU_MAPTABLE2;
 typedef struct _FX_CPCU_MAPINFO {
     FX_CPCU_MAPTABLE1		*pMapTable1;
@@ -180,13 +180,13 @@ typedef struct _FX_CPCU_MAPINFO {
     FX_LPCBYTE				pMapData;
 } FX_CPCU_MAPINFO;
 typedef struct _FX_CPUC_MAPTABLE {
-    FX_UINT16	uStartUnicode;
-    FX_UINT16	uEndUnicode;
-    FX_UINT16	uMapType;
-    FX_UINT16	uOffset;
+    uint16_t	uStartUnicode;
+    uint16_t	uEndUnicode;
+    uint16_t	uMapType;
+    uint16_t	uOffset;
 } FX_CPUC_MAPTABLE;
 typedef struct _FX_CPUC_MAPINFO {
-    FX_UINT32			uMapCount;
+    uint32_t			uMapCount;
     FX_CPUC_MAPTABLE	*pMapTable;
     FX_LPCBYTE			pMapData;
 } FX_CPUC_MAPINFO;
@@ -197,12 +197,12 @@ typedef struct _FX_CODEPAGE {
 } FX_CODEPAGE, * FX_LPCODEPAGE;
 typedef FX_CODEPAGE const * FX_LPCCODEPAGE;
 typedef struct _FX_STR2CPHASH {
-    FX_UINT32  uHash;
-    FX_UINT32  uCodePage;
+    uint32_t  uHash;
+    uint32_t  uCodePage;
 } FX_STR2CPHASH;
 typedef struct _FX_CHARSET_MAP {
-    FX_UINT16 charset;
-    FX_UINT16 codepage;
+    uint16_t charset;
+    uint16_t codepage;
 } FX_CHARSET_MAP;
 typedef struct _FX_LANG2CPMAP {
     FX_WORD	wLanguage;
@@ -216,9 +216,9 @@ public:
     virtual FX_WORD			GetCodePageNumber() const = 0;
     virtual FX_CODESYSTEM	GetCodeSystemType() const = 0;
     virtual FX_BOOL			HasLeadByte() const = 0;
-    virtual FX_BOOL			IsLeadByte(FX_BYTE byte) const = 0;
-    virtual FX_INT32		GetMinBytesPerChar() const = 0;
-    virtual FX_INT32		GetMaxBytesPerChar() const = 0;
+    virtual FX_BOOL			IsLeadByte(uint8_t byte) const = 0;
+    virtual int32_t		GetMinBytesPerChar() const = 0;
+    virtual int32_t		GetMaxBytesPerChar() const = 0;
     virtual FX_WCHAR		GetMinCharcode() const = 0;
     virtual FX_WCHAR		GetMaxCharcode() const = 0;
     virtual FX_WCHAR		GetDefCharcode() const = 0;

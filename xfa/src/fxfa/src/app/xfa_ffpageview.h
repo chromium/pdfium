@@ -14,10 +14,10 @@ public:
     CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea);
     ~CXFA_FFPageView();
     virtual IXFA_DocView*	GetDocView();
-    virtual FX_INT32		GetPageViewIndex();
+    virtual int32_t		GetPageViewIndex();
     virtual void			GetPageViewRect(CFX_RectF &rtPage);
-    virtual void			GetDisplayMatrix(CFX_Matrix &mt, const CFX_Rect &rtDisp, FX_INT32 iRotate);
-    virtual FX_INT32		LoadPageView(IFX_Pause *pPause = NULL);
+    virtual void			GetDisplayMatrix(CFX_Matrix &mt, const CFX_Rect &rtDisp, int32_t iRotate);
+    virtual int32_t		LoadPageView(IFX_Pause *pPause = NULL);
     virtual void			UnloadPageView();
     FX_BOOL					IsPageViewLoaded();
 
@@ -87,7 +87,7 @@ protected:
     CXFA_WidgetArray						m_TabOrderWidgetArray;
     CXFA_FFPageView*					m_pPageView;
     FX_DWORD							m_dwFilter;
-    FX_INT32							m_iCurWidget;
+    int32_t							m_iCurWidget;
     FX_BOOL								m_bIgnorerelevant;
     CXFA_FFWidget*			GetTraverseWidget(CXFA_FFWidget* pWidget);
     CXFA_FFWidget*			FindWidgetByName(FX_WSTR wsWidgetName, CXFA_FFWidget* pRefWidget);

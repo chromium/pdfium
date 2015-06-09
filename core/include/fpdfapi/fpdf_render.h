@@ -241,7 +241,7 @@ public:
     void				ClearImageData();
 
     FX_DWORD			EstimateSize();
-    void				CacheOptimization(FX_INT32 dwLimitCacheSize);
+    void				CacheOptimization(int32_t dwLimitCacheSize);
     FX_DWORD			GetCachedSize(CPDF_Stream* pStream) const;
     FX_DWORD			GetTimeCount() const
     {
@@ -254,7 +254,7 @@ public:
 
     void				GetCachedBitmap(CPDF_Stream* pStream, CFX_DIBSource*& pBitmap, CFX_DIBSource*& pMask, FX_DWORD& MatteColor,
                                         FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE,
-                                        CPDF_RenderStatus* pRenderStatus = NULL, FX_INT32 downsampleWidth = 0, FX_INT32 downsampleHeight = 0);
+                                        CPDF_RenderStatus* pRenderStatus = NULL, int32_t downsampleWidth = 0, int32_t downsampleHeight = 0);
 
     void				ResetBitmap(CPDF_Stream* pStream, const CFX_DIBitmap* pBitmap);
     void				ClearImageCache(CPDF_Stream* pStream);
@@ -266,7 +266,7 @@ public:
 public:
     FX_BOOL				StartGetCachedBitmap(CPDF_Stream* pStream, FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0,
             FX_BOOL bLoadMask = FALSE, CPDF_RenderStatus* pRenderStatus = NULL,
-            FX_INT32 downsampleWidth = 0, FX_INT32 downsampleHeight = 0);
+            int32_t downsampleWidth = 0, int32_t downsampleHeight = 0);
 
     FX_BOOL				Continue(IFX_Pause* pPause);
     CPDF_ImageCache*	m_pCurImageCache;

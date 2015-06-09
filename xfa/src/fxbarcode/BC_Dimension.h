@@ -11,14 +11,14 @@ class CBC_Dimension
 {
 public:
     CBC_Dimension();
-    CBC_Dimension(FX_INT32 width, FX_INT32 height, FX_INT32 &e);
+    CBC_Dimension(int32_t width, int32_t height, int32_t &e);
     virtual ~CBC_Dimension();
-    FX_INT32 getWidth();
-    FX_INT32 getHeight();
-    FX_INT32 hashCode();
+    int32_t getWidth();
+    int32_t getHeight();
+    int32_t hashCode();
     CFX_WideString toString();
 private:
-    FX_INT32 m_width;
-    FX_INT32 m_height;
+    int32_t m_width;
+    int32_t m_height;
 };
 #endif
