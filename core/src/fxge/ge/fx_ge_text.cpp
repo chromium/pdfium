@@ -1622,11 +1622,7 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width)
         }
     }
     FXFT_Set_Transform(m_Face, &ft_matrix, 0);
-    int load_flags = FXFT_LOAD_NO_BITMAP;
-    if (!(m_Face->face_flags & FT_FACE_FLAG_SFNT) || !FT_IS_TRICKY(m_Face)) {
-        load_flags |= FT_LOAD_NO_HINTING;
-    }
-          
+    int load_flags = (m_Face->face_flags & FT_FACE_FLAG_SFNT) ? FXFT_LOAD_NO_BITMAP : FXFT_LOAD_NO_BITMAP | FT_LOAD_NO_HINTING;      
     int error = FXFT_Load_Glyph(m_Face, glyph_index, load_flags);
     if (error) {
         return NULL;
