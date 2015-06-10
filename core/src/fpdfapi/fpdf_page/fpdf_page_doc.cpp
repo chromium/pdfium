@@ -10,6 +10,77 @@
 #include "../fpdf_font/font_int.h"
 #include "pageint.h"
 
+namespace {
+
+template <class KeyType, class ValueType>
+KeyType PDF_DocPageData_FindValue(
+    const CFX_MapPtrTemplate<KeyType, CPDF_CountedObject<ValueType>*>& map,
+    ValueType findValue,
+    CPDF_CountedObject<ValueType>*& findData)
+{
+    FX_POSITION pos = map.GetStartPosition();
+    while (pos) {
+        KeyType findKey;
+        map.GetNextAssoc(pos, findKey, findData);
+        if (findData->m_Obj == findValue) {
+            return findKey;
+        }
+    }
+    findData = nullptr;
+    return (KeyType)nullptr;
+}
+
+template <class KeyType, class ValueType>
+void PDF_DocPageData_Release(
+    CFX_MapPtrTemplate<KeyType, CPDF_CountedObject<ValueType>*>& map,
+    KeyType findKey,
+    ValueType findValue,
+    FX_BOOL bForce)
+{
+    if (!findKey && !findValue)
+        return;
+
+    CPDF_CountedObject<ValueType>* findData = nullptr;
+    if (!findKey) {
+        findKey = PDF_DocPageData_FindValue<KeyType, ValueType>(map, findValue, findData);
+    } else if (!map.Lookup(findKey, findData)) {
+        return;
+    }
+    if (!findData)
+        return;
+
+    if ((-- findData->m_nCount) == 0 || bForce) {
+        delete findData->m_Obj;
+        delete findData;
+        map.RemoveKey(findKey);
+    }
+}
+
+template <class KeyType, class ValueType>
+void PDF_DocPageData_Release_Key(
+    KeyType findKey,
+    FX_BOOL bForce,
+    std::map<KeyType, CPDF_CountedObject<ValueType>*>* map)
+{
+    if (!findKey)
+        return;
+
+    CPDF_CountedObject<ValueType>* findData = nullptr;
+    auto it = map->find(findKey);
+    if (it != map->end())
+        findData = it->second;
+    if (!findData)
+        return;
+
+    if ((--findData->m_nCount) == 0 || bForce) {
+        delete findData->m_Obj;
+        delete findData;
+        map->erase(it);
+    }
+}
+
+}  // namespace
+
 class CPDF_PageModule : public CPDF_PageModuleDef
 {
 public:
@@ -126,12 +197,10 @@ void CPDF_Document::RemoveColorSpaceFromPageData(CPDF_Object* pCSObj)
 }
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document *pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
-      m_ImageMap(),
       m_IccProfileMap(),
       m_FontFileMap(),
       m_bForceClear(FALSE)
 {
-    m_ImageMap.InitHashTable(64);
     m_IccProfileMap.InitHashTable(16);
     m_FontFileMap.InitHashTable(32);
 }
@@ -230,18 +299,17 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
             m_FontFileMap.RemoveKey(ftKey);
         }
     }
-    pos = m_ImageMap.GetStartPosition();
-    while (pos) {
-        FX_DWORD objNum;
-        CPDF_CountedObject<CPDF_Image*>* imageData;
-        m_ImageMap.GetNextAssoc(pos, objNum, imageData);
-        if (!imageData->m_Obj) {
+
+    for (auto it = m_ImageMap.begin(); it != m_ImageMap.end();) {
+        auto curr_it = it++;
+        CPDF_CountedImage* imageData = curr_it->second;
+        if (!imageData->m_Obj)
             continue;
-        }
+
         if (bForceRelease || imageData->m_nCount < 2) {
             delete imageData->m_Obj;
             delete imageData;
-            m_ImageMap.RemoveKey(objNum);
+            m_ImageMap.erase(curr_it);
         }
     }
 }
@@ -517,30 +585,34 @@ void CPDF_DocPageData::ReleasePattern(CPDF_Object* pPatternObj)
 
 CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream)
 {
-    if (!pImageStream) {
-        return NULL;
-    }
-    FX_DWORD dwImageObjNum = pImageStream->GetObjNum();
-    CPDF_CountedObject<CPDF_Image*>* imageData;
-    if (m_ImageMap.Lookup(dwImageObjNum, imageData)) {
-        imageData->m_nCount ++;
+    if (!pImageStream)
+        return nullptr;
+
+    const FX_DWORD dwImageObjNum = pImageStream->GetObjNum();
+    auto it = m_ImageMap.find(dwImageObjNum);
+    if (it != m_ImageMap.end()) {
+        CPDF_CountedImage* imageData = it->second;
+        imageData->m_nCount++;
         return imageData->m_Obj;
     }
-    imageData = new CPDF_CountedObject<CPDF_Image*>;
+    CPDF_CountedImage* imageData = new CPDF_CountedImage;
     CPDF_Image* pImage = new CPDF_Image(m_pPDFDoc);
     pImage->LoadImageF((CPDF_Stream*)pImageStream, FALSE);
     imageData->m_nCount = 2;
     imageData->m_Obj = pImage;
-    m_ImageMap.SetAt(dwImageObjNum, imageData);
+    m_ImageMap[dwImageObjNum] = imageData;
     return pImage;
 }
+
 void CPDF_DocPageData::ReleaseImage(CPDF_Object* pImageStream)
 {
-    if (!pImageStream) {
+    if (!pImageStream)
         return;
-    }
-    PDF_DocPageData_Release<FX_DWORD, CPDF_Image*>(m_ImageMap, pImageStream->GetObjNum(), NULL);
+
+    PDF_DocPageData_Release_Key<FX_DWORD, CPDF_Image*>(
+        pImageStream->GetObjNum(), FALSE, &m_ImageMap);
 }
+
 CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream)
 {
     if (!pIccProfileStream) {
@@ -569,26 +641,14 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream)
     m_HashProfileMap.SetAt(CFX_ByteStringC(digest, 20), pIccProfileStream);
     return pProfile;
 }
-void CPDF_DocPageData::ReleaseIccProfile(CPDF_Stream* pIccProfileStream, CPDF_IccProfile* pIccProfile)
+
+void CPDF_DocPageData::ReleaseIccProfile(CPDF_IccProfile* pIccProfile)
 {
-    if (!pIccProfileStream && !pIccProfile) {
-        return;
-    }
-    CPDF_CountedObject<CPDF_IccProfile*>* ipData = NULL;
-    if (m_IccProfileMap.Lookup(pIccProfileStream, ipData) && ipData->m_nCount < 2) {
-        FX_POSITION pos = m_HashProfileMap.GetStartPosition();
-        while (pos) {
-            CFX_ByteString key;
-            CPDF_Stream* pFindStream = NULL;
-            m_HashProfileMap.GetNextAssoc(pos, key, (void*&)pFindStream);
-            if (pIccProfileStream == pFindStream) {
-                m_HashProfileMap.RemoveKey(key);
-                break;
-            }
-        }
-    }
-    PDF_DocPageData_Release<CPDF_Stream*, CPDF_IccProfile*>(m_IccProfileMap, pIccProfileStream, pIccProfile);
+    ASSERT(pIccProfile);
+    PDF_DocPageData_Release<CPDF_Stream*, CPDF_IccProfile*>(
+        m_IccProfileMap, nullptr, pIccProfile, FALSE);
 }
+
 CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(CPDF_Stream* pFontStream)
 {
     if (!pFontStream) {
