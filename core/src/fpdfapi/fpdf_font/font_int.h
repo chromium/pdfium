@@ -57,7 +57,7 @@ public:
     CPDF_CMapParser();
     ~CPDF_CMapParser() {}
     FX_BOOL	Initialize(CPDF_CMap*);
-    void	ParseWord(FX_BSTR str);
+    void	ParseWord(const CFX_ByteStringC& str);
     CFX_BinaryBuf	m_AddMaps;
 private:
     CPDF_CMap*	m_pCMap;

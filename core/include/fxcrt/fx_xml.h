@@ -27,9 +27,9 @@ public:
     {
         RemoveAll();
     }
-    const CFX_WideString*	Lookup(FX_BSTR space, FX_BSTR name) const;
-    void					SetAt(FX_BSTR space, FX_BSTR name, FX_WSTR value);
-    void					RemoveAt(FX_BSTR space, FX_BSTR name);
+    const CFX_WideString*	Lookup(const CFX_ByteStringC& space, const CFX_ByteStringC& name) const;
+    void					SetAt(const CFX_ByteStringC& space, const CFX_ByteStringC& name, const CFX_WideStringC& value);
+    void					RemoveAt(const CFX_ByteStringC& space, const CFX_ByteStringC& name);
     void					RemoveAll();
     int						GetSize() const;
     CXML_AttrItem&			GetAt(int index) const;
@@ -39,7 +39,7 @@ class CXML_Content
 {
 public:
     CXML_Content() : m_bCDATA(FALSE), m_Content() {}
-    void	Set(FX_BOOL bCDATA, FX_WSTR content)
+    void	Set(FX_BOOL bCDATA, const CFX_WideStringC& content)
     {
         m_bCDATA = bCDATA;
         m_Content = content;
@@ -53,8 +53,8 @@ public:
     static CXML_Element*	Parse(const void* pBuffer, size_t size, FX_BOOL bSaveSpaceChars = FALSE, FX_FILESIZE* pParsedSize = NULL);
     static CXML_Element*	Parse(IFX_FileRead *pFile, FX_BOOL bSaveSpaceChars = FALSE, FX_FILESIZE* pParsedSize = NULL);
     static CXML_Element*	Parse(IFX_BufferRead *pBuffer, FX_BOOL bSaveSpaceChars = FALSE, FX_FILESIZE* pParsedSize = NULL);
-    CXML_Element(FX_BSTR qSpace, FX_BSTR tagName);
-    CXML_Element(FX_BSTR qTagName);
+    CXML_Element(const CFX_ByteStringC& qSpace, const CFX_ByteStringC& tagName);
+    CXML_Element(const CFX_ByteStringC& qTagName);
     CXML_Element();
 
     ~CXML_Element();
@@ -67,7 +67,7 @@ public:
 
     CFX_ByteString			GetNamespace(FX_BOOL bQualified = FALSE) const;
 
-    CFX_ByteString			GetNamespaceURI(FX_BSTR qName) const;
+    CFX_ByteString			GetNamespaceURI(const CFX_ByteStringC& qName) const;
 
     CXML_Element*			GetParent() const
     {
@@ -81,50 +81,50 @@ public:
 
     void					GetAttrByIndex(int index, CFX_ByteString &space, CFX_ByteString &name, CFX_WideString &value) const;
 
-    FX_BOOL					HasAttr(FX_BSTR qName) const;
+    FX_BOOL					HasAttr(const CFX_ByteStringC& qName) const;
 
-    FX_BOOL					GetAttrValue(FX_BSTR name, CFX_WideString& attribute) const;
-    CFX_WideString			GetAttrValue(FX_BSTR name) const
+    FX_BOOL					GetAttrValue(const CFX_ByteStringC& name, CFX_WideString& attribute) const;
+    CFX_WideString			GetAttrValue(const CFX_ByteStringC& name) const
     {
         CFX_WideString attr;
         GetAttrValue(name, attr);
         return attr;
     }
 
-    FX_BOOL					GetAttrValue(FX_BSTR space, FX_BSTR name, CFX_WideString& attribute) const;
-    CFX_WideString			GetAttrValue(FX_BSTR space, FX_BSTR name) const
+    FX_BOOL					GetAttrValue(const CFX_ByteStringC& space, const CFX_ByteStringC& name, CFX_WideString& attribute) const;
+    CFX_WideString			GetAttrValue(const CFX_ByteStringC& space, const CFX_ByteStringC& name) const
     {
         CFX_WideString attr;
         GetAttrValue(space, name, attr);
         return attr;
     }
 
-    FX_BOOL					GetAttrInteger(FX_BSTR name, int& attribute) const;
-    int						GetAttrInteger(FX_BSTR name) const
+    FX_BOOL					GetAttrInteger(const CFX_ByteStringC& name, int& attribute) const;
+    int						GetAttrInteger(const CFX_ByteStringC& name) const
     {
         int attr = 0;
         GetAttrInteger(name, attr);
         return attr;
     }
 
-    FX_BOOL					GetAttrInteger(FX_BSTR space, FX_BSTR name, int& attribute) const;
-    int						GetAttrInteger(FX_BSTR space, FX_BSTR name) const
+    FX_BOOL					GetAttrInteger(const CFX_ByteStringC& space, const CFX_ByteStringC& name, int& attribute) const;
+    int						GetAttrInteger(const CFX_ByteStringC& space, const CFX_ByteStringC& name) const
     {
         int attr = 0;
         GetAttrInteger(space, name, attr);
         return attr;
     }
 
-    FX_BOOL					GetAttrFloat(FX_BSTR name, FX_FLOAT& attribute) const;
-    FX_FLOAT				GetAttrFloat(FX_BSTR name) const
+    FX_BOOL					GetAttrFloat(const CFX_ByteStringC& name, FX_FLOAT& attribute) const;
+    FX_FLOAT				GetAttrFloat(const CFX_ByteStringC& name) const
     {
         FX_FLOAT attr = 0;
         GetAttrFloat(name, attr);
         return attr;
     }
 
-    FX_BOOL					GetAttrFloat(FX_BSTR space, FX_BSTR name, FX_FLOAT& attribute) const;
-    FX_FLOAT				GetAttrFloat(FX_BSTR space, FX_BSTR name) const
+    FX_BOOL					GetAttrFloat(const CFX_ByteStringC& space, const CFX_ByteStringC& name, FX_FLOAT& attribute) const;
+    FX_FLOAT				GetAttrFloat(const CFX_ByteStringC& space, const CFX_ByteStringC& name) const
     {
         FX_FLOAT attr = 0;
         GetAttrFloat(space, name, attr);
@@ -141,23 +141,23 @@ public:
 
     CXML_Element*			GetElement(FX_DWORD index) const;
 
-    CXML_Element*			GetElement(FX_BSTR space, FX_BSTR tag) const
+    CXML_Element*			GetElement(const CFX_ByteStringC& space, const CFX_ByteStringC& tag) const
     {
         return GetElement(space, tag, 0);
     }
 
-    FX_DWORD				CountElements(FX_BSTR space, FX_BSTR tag) const;
+    FX_DWORD				CountElements(const CFX_ByteStringC& space, const CFX_ByteStringC& tag) const;
 
-    CXML_Element*			GetElement(FX_BSTR space, FX_BSTR tag, int index) const;
+    CXML_Element*			GetElement(const CFX_ByteStringC& space, const CFX_ByteStringC& tag, int index) const;
 
     FX_DWORD				FindElement(CXML_Element *pChild) const;
 
 
 
 
-    void					SetTag(FX_BSTR qSpace, FX_BSTR tagname);
+    void					SetTag(const CFX_ByteStringC& qSpace, const CFX_ByteStringC& tagname);
 
-    void					SetTag(FX_BSTR qTagName);
+    void					SetTag(const CFX_ByteStringC& qTagName);
 
     void					RemoveChildren();
 

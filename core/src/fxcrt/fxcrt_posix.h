@@ -15,8 +15,8 @@ class CFXCRT_FileAccess_Posix : public IFXCRT_FileAccess
 public:
     CFXCRT_FileAccess_Posix();
     virtual ~CFXCRT_FileAccess_Posix();
-    virtual FX_BOOL		Open(FX_BSTR fileName, FX_DWORD dwMode);
-    virtual FX_BOOL		Open(FX_WSTR fileName, FX_DWORD dwMode);
+    virtual FX_BOOL		Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode);
+    virtual FX_BOOL		Open(const CFX_WideStringC& fileName, FX_DWORD dwMode);
     virtual void		Close();
     virtual void		Release();
     virtual FX_FILESIZE	GetSize() const;

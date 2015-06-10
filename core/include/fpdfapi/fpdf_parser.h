@@ -204,18 +204,18 @@ public:
 
     CPDF_SimpleParser(const uint8_t* pData, FX_DWORD dwSize);
 
-    CPDF_SimpleParser(FX_BSTR str);
+    CPDF_SimpleParser(const CFX_ByteStringC& str);
 
     CFX_ByteStringC		GetWord();
 
-    FX_BOOL				SearchToken(FX_BSTR token);
+    FX_BOOL				SearchToken(const CFX_ByteStringC& token);
 
-    FX_BOOL				SkipWord(FX_BSTR token);
+    FX_BOOL				SkipWord(const CFX_ByteStringC& token);
 
-    FX_BOOL				FindTagPair(FX_BSTR start_token, FX_BSTR end_token,
+    FX_BOOL				FindTagPair(const CFX_ByteStringC& start_token, const CFX_ByteStringC& end_token,
                                     FX_DWORD& start_pos, FX_DWORD& end_pos);
 
-    FX_BOOL				FindTagParam(FX_BSTR token, int nParams);
+    FX_BOOL				FindTagParam(const CFX_ByteStringC& token, int nParams);
 
     FX_DWORD			GetPos()
     {
@@ -275,11 +275,11 @@ public:
 
     void				ToNextWord();
 
-    FX_BOOL				SearchWord(FX_BSTR word, FX_BOOL bWholeWord, FX_BOOL bForward, FX_FILESIZE limit);
+    FX_BOOL				SearchWord(const CFX_ByteStringC& word, FX_BOOL bWholeWord, FX_BOOL bForward, FX_FILESIZE limit);
 
-    int					SearchMultiWord(FX_BSTR words, FX_BOOL bWholeWord, FX_FILESIZE limit);
+    int					SearchMultiWord(const CFX_ByteStringC& words, FX_BOOL bWholeWord, FX_FILESIZE limit);
 
-    FX_FILESIZE			FindTag(FX_BSTR tag, FX_FILESIZE limit);
+    FX_FILESIZE			FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit);
 
     void				SetEncrypt(CPDF_CryptoHandler* pCryptoHandler)
     {
@@ -756,7 +756,7 @@ public:
 
 #define CPDF_Rect		CFX_FloatRect
 #define CPDF_Matrix		CFX_AffineMatrix
-CFX_ByteString PDF_NameDecode(FX_BSTR orig);
+CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& orig);
 CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig);
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig);
 CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, FX_BOOL bHex = FALSE);

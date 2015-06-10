@@ -49,7 +49,7 @@ FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst)
     }
     return (FX_STRSIZE)wFind;
 }
-FX_STRSIZE FX_WideString_GetNormalization(FX_WSTR wsSrc, FX_WCHAR* pDst)
+FX_STRSIZE FX_WideString_GetNormalization(const CFX_WideStringC& wsSrc, FX_WCHAR* pDst)
 {
     FX_STRSIZE nCount = 0;
     for (FX_STRSIZE len = 0; len < wsSrc.GetLength(); len ++) {
@@ -62,7 +62,7 @@ FX_STRSIZE FX_WideString_GetNormalization(FX_WSTR wsSrc, FX_WCHAR* pDst)
     }
     return nCount;
 }
-FX_STRSIZE FX_WideString_GetNormalization(FX_WSTR wsSrc, CFX_WideString &wsDst)
+FX_STRSIZE FX_WideString_GetNormalization(const CFX_WideStringC& wsSrc, CFX_WideString &wsDst)
 {
     FX_STRSIZE nLen = FX_WideString_GetNormalization(wsSrc, (FX_WCHAR*)NULL);
     if (!nLen) {

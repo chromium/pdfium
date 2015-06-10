@@ -391,7 +391,7 @@ int CPDF_Font::GetCharTypeWidth(FX_DWORD charcode)
     return m_Font.GetGlyphWidth(glyph_index);
 }
 int _PDF_GetStandardFontName(CFX_ByteString& name);
-CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, FX_BSTR name)
+CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, const CFX_ByteStringC& name)
 {
     CFX_ByteString fontname(name);
     int font_id = _PDF_GetStandardFontName(fontname);
@@ -532,7 +532,7 @@ FX_DWORD CPDF_ToUnicodeMap::ReverseLookup(FX_WCHAR unicode)
     }
     return 0;
 }
-static FX_DWORD _StringToCode(FX_BSTR str)
+static FX_DWORD _StringToCode(const CFX_ByteStringC& str)
 {
     const FX_CHAR* buf = str.GetCStr();
     int len = str.GetLength();
@@ -584,7 +584,7 @@ static CFX_WideString _StringDataAdd(CFX_WideString str)
     }
     return ret;
 }
-static CFX_WideString _StringToWideString(FX_BSTR str)
+static CFX_WideString _StringToWideString(const CFX_ByteStringC& str)
 {
     const FX_CHAR* buf = str.GetCStr();
     int len = str.GetLength();

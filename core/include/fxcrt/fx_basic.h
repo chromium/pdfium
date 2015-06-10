@@ -43,7 +43,7 @@ public:
 
     void					AppendFill(uint8_t byte, FX_STRSIZE count);
 
-    void					AppendString(FX_BSTR str)
+    void					AppendString(const CFX_ByteStringC& str)
     {
         AppendBlock(str.GetPtr(), str.GetLength());
     }
@@ -95,7 +95,7 @@ class CFX_ByteTextBuf : public CFX_BinaryBuf
 {
 public:
 
-    void					operator = (FX_BSTR str);
+    void					operator = (const CFX_ByteStringC& str);
 
     void					AppendChar(int ch)
     {
@@ -108,7 +108,7 @@ public:
 
     CFX_ByteTextBuf&		operator << (double f);
 
-    CFX_ByteTextBuf&		operator << (FX_BSTR lpsz);
+    CFX_ByteTextBuf&		operator << (const CFX_ByteStringC& lpsz);
 
     CFX_ByteTextBuf&		operator << (const CFX_ByteTextBuf& buf);
 
@@ -123,7 +123,7 @@ public:
 
     void					operator = (const FX_WCHAR* lpsz);
 
-    void					operator = (FX_WSTR str);
+    void					operator = (const CFX_WideStringC& str);
 
     void					AppendChar(FX_WCHAR wch);
 
@@ -133,7 +133,7 @@ public:
 
     CFX_WideTextBuf&		operator << (const FX_WCHAR* lpsz);
 
-    CFX_WideTextBuf&		operator << (FX_WSTR str);
+    CFX_WideTextBuf&		operator << (const CFX_WideStringC& str);
     CFX_WideTextBuf&		operator << (const CFX_WideString &str);
 
     CFX_WideTextBuf&		operator << (const CFX_WideTextBuf& buf);
@@ -170,7 +170,7 @@ public:
 
     CFX_ArchiveSaver&		operator << (double i);
 
-    CFX_ArchiveSaver&		operator << (FX_BSTR bstr);
+    CFX_ArchiveSaver&		operator << (const CFX_ByteStringC& bstr);
 
     CFX_ArchiveSaver&		operator << (const FX_WCHAR* bstr);
 
@@ -248,7 +248,7 @@ public:
     int32_t				AppendDWord(FX_DWORD i);
 
 
-    int32_t				AppendString(FX_BSTR lpsz);
+    int32_t				AppendString(const CFX_ByteStringC& lpsz);
 
 protected:
 
@@ -332,7 +332,7 @@ public:
 
     void			Input(FX_WCHAR unicode);
 
-    void			AppendStr(FX_BSTR str)
+    void			AppendStr(const CFX_ByteStringC& str)
     {
         m_UTF16First = 0;
         m_Buffer << str;
@@ -934,16 +934,16 @@ public:
         return m_nCount == 0;
     }
 
-    FX_BOOL Lookup(FX_BSTR key, void*& rValue) const;
+    FX_BOOL Lookup(const CFX_ByteStringC& key, void*& rValue) const;
 
-    void*& operator[](FX_BSTR key);
+    void*& operator[](const CFX_ByteStringC& key);
 
-    void SetAt(FX_BSTR key, void* newValue)
+    void SetAt(const CFX_ByteStringC& key, void* newValue)
     {
         (*this)[key] = newValue;
     }
 
-    FX_BOOL RemoveKey(FX_BSTR key);
+    FX_BOOL RemoveKey(const CFX_ByteStringC& key);
 
     void RemoveAll();
 
@@ -963,7 +963,7 @@ public:
 
     void InitHashTable(FX_DWORD hashSize, FX_BOOL bAllocNow = TRUE);
 
-    FX_DWORD HashKey(FX_BSTR key) const;
+    FX_DWORD HashKey(const CFX_ByteStringC& key) const;
 protected:
 
     CAssoc** m_pHashTable;
@@ -982,7 +982,7 @@ protected:
 
     void FreeAssoc(CAssoc* pAssoc);
 
-    CAssoc* GetAssocAt(FX_BSTR key, FX_DWORD& hash) const;
+    CAssoc* GetAssocAt(const CFX_ByteStringC& key, FX_DWORD& hash) const;
 public:
 
     ~CFX_MapByteStringToPtr();
@@ -1002,15 +1002,15 @@ public:
 
     void*		GetNextValue(FX_POSITION& rNextPosition) const;
 
-    FX_BOOL			Lookup(FX_BSTR key, void*& rValue) const;
+    FX_BOOL			Lookup(const CFX_ByteStringC& key, void*& rValue) const;
 
-    void			SetAt(FX_BSTR key, void* value);
+    void			SetAt(const CFX_ByteStringC& key, void* value);
 
-    void			RemoveKey(FX_BSTR key);
+    void			RemoveKey(const CFX_ByteStringC& key);
 
     int				GetCount() const;
 
-    void			AddValue(FX_BSTR key, void* pValue);
+    void			AddValue(const CFX_ByteStringC& key, void* pValue);
 private:
 
     CFX_BaseSegmentedArray			m_Buffer;

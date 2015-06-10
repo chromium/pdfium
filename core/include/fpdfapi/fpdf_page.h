@@ -173,7 +173,7 @@ public:
         return m_PageMatrix;
     }
 
-    CPDF_Object*		GetPageAttr(FX_BSTR name) const;
+    CPDF_Object*		GetPageAttr(const CFX_ByteStringC& name) const;
 
 
 

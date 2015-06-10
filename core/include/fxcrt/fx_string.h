@@ -167,7 +167,6 @@ inline bool operator== (const char* lhs, const CFX_ByteStringC& rhs) {
 inline bool operator!= (const char* lhs, const CFX_ByteStringC& rhs) {
     return rhs != lhs;
 }
-typedef const CFX_ByteStringC& FX_BSTR;
 #define FX_BSTRC(str) CFX_ByteStringC(str, sizeof str-1)
 #define FXBSTR_ID(c1, c2, c3, c4) ((c1 << 24) | (c2 << 16) | (c3 << 8) | (c4))
 
@@ -196,8 +195,8 @@ public:
     CFX_ByteString(const FX_CHAR* ptr, FX_STRSIZE len);
     CFX_ByteString(const uint8_t* ptr, FX_STRSIZE len);
 
-    CFX_ByteString(FX_BSTR bstrc);
-    CFX_ByteString(FX_BSTR bstrc1, FX_BSTR bstrc2);
+    CFX_ByteString(const CFX_ByteStringC& bstrc);
+    CFX_ByteString(const CFX_ByteStringC& bstrc1, const CFX_ByteStringC& bstrc2);
 
     ~CFX_ByteString();
 
@@ -232,14 +231,14 @@ public:
         return !GetLength();
     }
 
-    int						Compare(FX_BSTR str) const;
+    int						Compare(const CFX_ByteStringC& str) const;
 
 
     bool Equal(const char* ptr) const;
     bool Equal(const CFX_ByteStringC& str) const;
     bool Equal(const CFX_ByteString& other) const;
 
-    bool EqualNoCase(FX_BSTR str) const;
+    bool EqualNoCase(const CFX_ByteStringC& str) const;
 
     bool operator== (const char* ptr) const { return Equal(ptr); }
     bool operator== (const CFX_ByteStringC& str) const { return Equal(str); }
@@ -263,7 +262,7 @@ public:
 
     const CFX_ByteString&	operator = (const FX_CHAR* str);
 
-    const CFX_ByteString&	operator = (FX_BSTR bstrc);
+    const CFX_ByteString&	operator = (const CFX_ByteStringC& bstrc);
 
     const CFX_ByteString&	operator = (const CFX_ByteString& stringSrc);
 
@@ -277,7 +276,7 @@ public:
 
     const CFX_ByteString&	operator += (const CFX_ByteString& str);
 
-    const CFX_ByteString&	operator += (FX_BSTR bstrc);
+    const CFX_ByteString&	operator += (const CFX_ByteStringC& bstrc);
 
     uint8_t					GetAt(FX_STRSIZE nIndex) const
     {
@@ -315,7 +314,7 @@ public:
 
     CFX_ByteString			Right(FX_STRSIZE count) const;
 
-    FX_STRSIZE				Find(FX_BSTR lpszSub, FX_STRSIZE start = 0) const;
+    FX_STRSIZE				Find(const CFX_ByteStringC& lpszSub, FX_STRSIZE start = 0) const;
 
     FX_STRSIZE				Find(FX_CHAR ch, FX_STRSIZE start = 0) const;
 
@@ -329,15 +328,15 @@ public:
 
     void					TrimRight(FX_CHAR chTarget);
 
-    void					TrimRight(FX_BSTR lpszTargets);
+    void					TrimRight(const CFX_ByteStringC& lpszTargets);
 
     void					TrimLeft();
 
     void					TrimLeft(FX_CHAR chTarget);
 
-    void					TrimLeft(FX_BSTR lpszTargets);
+    void					TrimLeft(const CFX_ByteStringC& lpszTargets);
 
-    FX_STRSIZE				Replace(FX_BSTR lpszOld, FX_BSTR lpszNew);
+    FX_STRSIZE				Replace(const CFX_ByteStringC& lpszOld, const CFX_ByteStringC& lpszNew);
 
     FX_STRSIZE				Remove(FX_CHAR ch);
 
@@ -418,23 +417,23 @@ inline bool operator!= (const CFX_ByteStringC& lhs, const CFX_ByteString& rhs) {
     return rhs != lhs;
 }
 
-inline CFX_ByteString operator + (FX_BSTR str1, FX_BSTR str2)
+inline CFX_ByteString operator + (const CFX_ByteStringC& str1, const CFX_ByteStringC& str2)
 {
     return CFX_ByteString(str1, str2);
 }
-inline CFX_ByteString operator + (FX_BSTR str1, const FX_CHAR* str2)
+inline CFX_ByteString operator + (const CFX_ByteStringC& str1, const FX_CHAR* str2)
 {
     return CFX_ByteString(str1, str2);
 }
-inline CFX_ByteString operator + (const FX_CHAR* str1, FX_BSTR str2)
+inline CFX_ByteString operator + (const FX_CHAR* str1, const CFX_ByteStringC& str2)
 {
     return CFX_ByteString(str1, str2);
 }
-inline CFX_ByteString operator + (FX_BSTR str1, FX_CHAR ch)
+inline CFX_ByteString operator + (const CFX_ByteStringC& str1, FX_CHAR ch)
 {
     return CFX_ByteString(str1, CFX_ByteStringC(ch));
 }
-inline CFX_ByteString operator + (FX_CHAR ch, FX_BSTR str2)
+inline CFX_ByteString operator + (FX_CHAR ch, const CFX_ByteStringC& str2)
 {
     return CFX_ByteString(ch, str2);
 }
@@ -458,11 +457,11 @@ inline CFX_ByteString operator + (const FX_CHAR* str1, const CFX_ByteString& str
 {
     return CFX_ByteString(str1, str2);
 }
-inline CFX_ByteString operator + (const CFX_ByteString& str1, FX_BSTR str2)
+inline CFX_ByteString operator + (const CFX_ByteString& str1, const CFX_ByteStringC& str2)
 {
     return CFX_ByteString(str1, str2);
 }
-inline CFX_ByteString operator + (FX_BSTR str1, const CFX_ByteString& str2)
+inline CFX_ByteString operator + (const CFX_ByteStringC& str1, const CFX_ByteString& str2)
 {
     return CFX_ByteString(str1, str2);
 }
@@ -615,7 +614,6 @@ inline bool operator== (const wchar_t* lhs, const CFX_WideStringC& rhs) {
 inline bool operator!= (const wchar_t* lhs, const CFX_WideStringC& rhs) {
     return rhs != lhs;
 }
-typedef const CFX_WideStringC&	FX_WSTR;
 #define FX_WSTRC(wstr) CFX_WideStringC(wstr, FX_ArraySize(wstr) - 1)
 
 // A mutable string with shared buffers using copy-on-write semantics that
@@ -896,11 +894,11 @@ inline bool operator!= (const wchar_t* lhs, const CFX_WideString& rhs) {
 inline bool operator!= (const CFX_WideStringC& lhs, const CFX_WideString& rhs) {
     return rhs != lhs;
 }
-FX_FLOAT FX_atof(FX_BSTR str);
-void FX_atonum(FX_BSTR str, FX_BOOL& bInteger, void* pData);
+FX_FLOAT FX_atof(const CFX_ByteStringC& str);
+void FX_atonum(const CFX_ByteStringC& str, FX_BOOL& bInteger, void* pData);
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
 CFX_ByteString	FX_UTF8Encode(const FX_WCHAR* pwsStr, FX_STRSIZE len);
-inline CFX_ByteString	FX_UTF8Encode(FX_WSTR wsStr)
+inline CFX_ByteString	FX_UTF8Encode(const CFX_WideStringC& wsStr)
 {
     return FX_UTF8Encode(wsStr.GetPtr(), wsStr.GetLength());
 }

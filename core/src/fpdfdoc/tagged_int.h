@@ -67,16 +67,16 @@ public:
         return &m_ObjectArray;
     }
 
-    CPDF_Object*			GetAttr(FX_BSTR owner, FX_BSTR name, FX_BOOL bInheritable = FALSE, FX_FLOAT fLevel = 0.0F);
+    CPDF_Object*			GetAttr(const CFX_ByteStringC& owner, const CFX_ByteStringC& name, FX_BOOL bInheritable = FALSE, FX_FLOAT fLevel = 0.0F);
 
-    CFX_ByteString			GetName(FX_BSTR owner, FX_BSTR name, FX_BSTR default_value, FX_BOOL bInheritable = FALSE, int subindex = -1);
-    FX_ARGB					GetColor(FX_BSTR owner, FX_BSTR name, FX_ARGB default_value, FX_BOOL bInheritable = FALSE, int subindex = -1);
-    FX_FLOAT				GetNumber(FX_BSTR owner, FX_BSTR name, FX_FLOAT default_value, FX_BOOL bInheritable = FALSE, int subindex = -1);
-    int						GetInteger(FX_BSTR owner, FX_BSTR name, int default_value, FX_BOOL bInheritable = FALSE, int subindex = -1);
+    CFX_ByteString			GetName(const CFX_ByteStringC& owner, const CFX_ByteStringC& name, const CFX_ByteStringC& default_value, FX_BOOL bInheritable = FALSE, int subindex = -1);
+    FX_ARGB					GetColor(const CFX_ByteStringC& owner, const CFX_ByteStringC& name, FX_ARGB default_value, FX_BOOL bInheritable = FALSE, int subindex = -1);
+    FX_FLOAT				GetNumber(const CFX_ByteStringC& owner, const CFX_ByteStringC& name, FX_FLOAT default_value, FX_BOOL bInheritable = FALSE, int subindex = -1);
+    int						GetInteger(const CFX_ByteStringC& owner, const CFX_ByteStringC& name, int default_value, FX_BOOL bInheritable = FALSE, int subindex = -1);
     CFX_PtrArray			m_ObjectArray;
     void					LoadKids(CPDF_Dictionary* pDict);
     void					LoadKid(FX_DWORD PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
-    CPDF_Object*			GetAttr(FX_BSTR owner, FX_BSTR name, FX_BOOL bInheritable, int subindex);
+    CPDF_Object*			GetAttr(const CFX_ByteStringC& owner, const CFX_ByteStringC& name, FX_BOOL bInheritable, int subindex);
     CPDF_StructElementImpl*	Retain();
     void					Release();
 protected:

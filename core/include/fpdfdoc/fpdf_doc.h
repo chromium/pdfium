@@ -49,13 +49,13 @@ public:
         m_pRoot = pRoot;
     }
 
-    CPDF_NameTree(CPDF_Document* pDoc, FX_BSTR category);
+    CPDF_NameTree(CPDF_Document* pDoc, const CFX_ByteStringC& category);
 
     CPDF_Object*		LookupValue(int nIndex, CFX_ByteString& csName) const;
 
     CPDF_Object*		LookupValue(const CFX_ByteString& csName) const;
 
-    CPDF_Array*			LookupNamedDest(CPDF_Document* pDoc, FX_BSTR sName);
+    CPDF_Array*			LookupNamedDest(CPDF_Document* pDoc, const CFX_ByteStringC& sName);
 
     int					GetIndex(const CFX_ByteString& csName) const;
 
@@ -167,7 +167,7 @@ public:
     void			ResetOCContext();
 protected:
 
-    FX_BOOL			LoadOCGStateFromConfig(FX_BSTR csConfig, const CPDF_Dictionary *pOCGDict, FX_BOOL &bValidConfig) const;
+    FX_BOOL			LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig, const CPDF_Dictionary *pOCGDict, FX_BOOL &bValidConfig) const;
 
     FX_BOOL			LoadOCGState(const CPDF_Dictionary *pOCGDict) const;
 
@@ -459,7 +459,7 @@ public:
 
     CPDF_Stream*	GetFileStream() const;
 
-    void			SetFileName(FX_WSTR wsFileName, FX_BOOL bURL = FALSE);
+    void			SetFileName(const CFX_WideStringC& wsFileName, FX_BOOL bURL = FALSE);
 protected:
 
     CPDF_Object		*m_pObj;
@@ -882,9 +882,9 @@ public:
 
     CPDF_FormField*			CheckRequiredFields(const CFX_PtrArray *fields = NULL, FX_BOOL bIncludeOrExclude = TRUE) const;
 
-    CFDF_Document* 			ExportToFDF(FX_WSTR pdf_path, FX_BOOL bSimpleFileSpec = FALSE) const;
+    CFDF_Document* 			ExportToFDF(const CFX_WideStringC& pdf_path, FX_BOOL bSimpleFileSpec = FALSE) const;
 
-    CFDF_Document*			ExportToFDF(FX_WSTR pdf_path, CFX_PtrArray& fields, FX_BOOL bIncludeOrExclude = TRUE, FX_BOOL bSimpleFileSpec = FALSE) const;
+    CFDF_Document*			ExportToFDF(const CFX_WideStringC& pdf_path, CFX_PtrArray& fields, FX_BOOL bIncludeOrExclude = TRUE, FX_BOOL bSimpleFileSpec = FALSE) const;
 
     FX_BOOL					ImportFromFDF(const CFDF_Document* pFDFDoc, FX_BOOL bNotify = FALSE);
 
@@ -1518,10 +1518,10 @@ public:
 
     CFX_WideString					GetLabel(int nPage) const;
 
-    int32_t						GetPageByLabel(FX_BSTR bsLabel) const;
+    int32_t						GetPageByLabel(const CFX_ByteStringC& bsLabel) const;
 
 
-    int32_t						GetPageByLabel(FX_WSTR wsLabel) const;
+    int32_t						GetPageByLabel(const CFX_WideStringC& wsLabel) const;
 
 protected:
     CPDF_Document*					m_pDocument;
@@ -1538,7 +1538,7 @@ public:
     void				LoadDoc(CPDF_Document *pDoc);
 
 
-    int32_t			GetString(FX_BSTR bsItem, CFX_WideString &wsStr);
+    int32_t			GetString(const CFX_ByteStringC& bsItem, CFX_WideString &wsStr);
 
     CXML_Element*		GetRoot() const;
 
@@ -1584,7 +1584,7 @@ public:
         return m_pDict;
     }
 
-    FX_BOOL					HasMKEntry(FX_BSTR csEntry);
+    FX_BOOL					HasMKEntry(const CFX_ByteStringC& csEntry);
 
 
 
@@ -1687,15 +1687,15 @@ public:
     CPDF_Dictionary*		m_pDict;
 protected:
 
-    FX_ARGB					GetColor(int& iColorType, FX_BSTR csEntry);
+    FX_ARGB					GetColor(int& iColorType, const CFX_ByteStringC& csEntry);
 
-    FX_FLOAT				GetOriginalColor(int index, FX_BSTR csEntry);
+    FX_FLOAT				GetOriginalColor(int index, const CFX_ByteStringC& csEntry);
 
-    void					GetOriginalColor(int& iColorType, FX_FLOAT fc[4], FX_BSTR csEntry);
+    void					GetOriginalColor(int& iColorType, FX_FLOAT fc[4], const CFX_ByteStringC& csEntry);
 
-    CFX_WideString			GetCaption(FX_BSTR csEntry);
+    CFX_WideString			GetCaption(const CFX_ByteStringC& csEntry);
 
-    CPDF_Stream*			GetIcon(FX_BSTR csEntry);
+    CPDF_Stream*			GetIcon(const CFX_ByteStringC& csEntry);
     friend class			CPDF_FormControl;
 };
 

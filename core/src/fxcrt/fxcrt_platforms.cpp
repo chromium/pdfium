@@ -39,7 +39,7 @@ CFXCRT_FileAccess_CRT::~CFXCRT_FileAccess_CRT()
 {
     Close();
 }
-FX_BOOL CFXCRT_FileAccess_CRT::Open(FX_BSTR fileName, FX_DWORD dwMode)
+FX_BOOL CFXCRT_FileAccess_CRT::Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode)
 {
     if (m_hFile) {
         return FALSE;
@@ -49,7 +49,7 @@ FX_BOOL CFXCRT_FileAccess_CRT::Open(FX_BSTR fileName, FX_DWORD dwMode)
     m_hFile = FXSYS_fopen(fileName.GetCStr(), strMode.c_str());
     return m_hFile != NULL;
 }
-FX_BOOL CFXCRT_FileAccess_CRT::Open(FX_WSTR fileName, FX_DWORD dwMode)
+FX_BOOL CFXCRT_FileAccess_CRT::Open(const CFX_WideStringC& fileName, FX_DWORD dwMode)
 {
     if (m_hFile) {
         return FALSE;
@@ -138,23 +138,23 @@ FX_BOOL CFXCRT_FileAccess_CRT::Truncate(FX_FILESIZE szFile)
 {
     return FALSE;
 }
-FX_BOOL FX_File_Exist(FX_BSTR fileName)
+FX_BOOL FX_File_Exist(const CFX_ByteStringC& fileName)
 {
     return access(fileName.GetCStr(), F_OK) > -1;
 }
-FX_BOOL FX_File_Exist(FX_WSTR fileName)
+FX_BOOL FX_File_Exist(const CFX_WideStringC& fileName)
 {
     return FX_File_Exist(FX_UTF8Encode(fileName));
 }
-FX_BOOL FX_File_Delete(FX_BSTR fileName)
+FX_BOOL FX_File_Delete(const CFX_ByteStringC& fileName)
 {
     return remove(fileName.GetCStr()) > -1;
 }
-FX_BOOL FX_File_Delete(FX_WSTR fileName)
+FX_BOOL FX_File_Delete(const CFX_WideStringC& fileName)
 {
     return FX_File_Delete(FX_UTF8Encode(fileName));
 }
-FX_BOOL FX_File_Copy(FX_BSTR fileNameSrc, FX_BSTR fileNameDst)
+FX_BOOL FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
 {
     CFXCRT_FileAccess_CRT src, dst;
     if (!src.Open(fileNameSrc, FX_FILEMODE_ReadOnly)) {
@@ -177,15 +177,15 @@ FX_BOOL FX_File_Copy(FX_BSTR fileNameSrc, FX_BSTR fileNameDst)
     FX_Free(pBuffer);
     return TRUE;
 }
-FX_BOOL FX_File_Copy(FX_WSTR fileNameSrc, FX_WSTR fileNameDst)
+FX_BOOL FX_File_Copy(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
 {
     return FX_File_Copy(FX_UTF8Encode(fileNameSrc), FX_UTF8Encode(fileNameDst));
 }
-FX_BOOL FX_File_Move(FX_BSTR fileNameSrc, FX_BSTR fileNameDst)
+FX_BOOL FX_File_Move(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
 {
     return rename(fileNameSrc.GetCStr(), fileNameDst.GetCStr());
 }
-FX_BOOL FX_File_Move(FX_WSTR fileNameSrc, FX_WSTR fileNameDst)
+FX_BOOL FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
 {
     return FX_File_Move(FX_UTF8Encode(fileNameSrc), FX_UTF8Encode(fileNameDst));
 }

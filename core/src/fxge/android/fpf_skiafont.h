@@ -45,7 +45,7 @@ public:
     virtual int32_t		GetHeight() const;
     virtual int32_t		GetItalicAngle() const;
     virtual FX_DWORD		GetFontData(FX_DWORD dwTable, uint8_t* pBuffer, FX_DWORD dwSize);
-    FX_BOOL					InitFont(CFPF_SkiaFontMgr *pFontMgr, CFPF_SkiaFontDescriptor *pFontDes, FX_BSTR bsFamily, FX_DWORD dwStyle, uint8_t uCharset);
+    FX_BOOL					InitFont(CFPF_SkiaFontMgr *pFontMgr, CFPF_SkiaFontDescriptor *pFontDes, const CFX_ByteStringC& bsFamily, FX_DWORD dwStyle, uint8_t uCharset);
 protected:
     CFPF_SkiaFontMgr		*m_pFontMgr;
     CFPF_SkiaFontDescriptor	*m_pFontDes;

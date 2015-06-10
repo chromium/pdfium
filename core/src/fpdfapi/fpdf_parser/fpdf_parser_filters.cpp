@@ -66,7 +66,7 @@ void CFX_DataFilter::ReportEOF(FX_DWORD left_input)
     m_bEOF = TRUE;
     m_SrcPos -= left_input;
 }
-CFX_DataFilter* FPDF_CreateFilter(FX_BSTR name, const CPDF_Dictionary* pParam, int width, int height)
+CFX_DataFilter* FPDF_CreateFilter(const CFX_ByteStringC& name, const CPDF_Dictionary* pParam, int width, int height)
 {
     FX_DWORD id = name.GetID();
     switch (id) {

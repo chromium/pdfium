@@ -144,7 +144,7 @@ public:
         return new CPDF_Number(value);
     }
 
-    static CPDF_Number*		Create(FX_BSTR str)
+    static CPDF_Number*		Create(const CFX_ByteStringC& str)
     {
         return new CPDF_Number(str);
     }
@@ -162,13 +162,13 @@ public:
 
     CPDF_Number(FX_FLOAT value);
 
-    CPDF_Number(FX_BSTR str);
+    CPDF_Number(const CFX_ByteStringC& str);
 
     FX_BOOL					Identical(CPDF_Number* pOther) const;
 
     CFX_ByteString			GetString() const;
 
-    void					SetString(FX_BSTR str);
+    void					SetString(const CFX_ByteStringC& str);
 
     FX_BOOL					IsInteger() const
     {
@@ -260,7 +260,7 @@ public:
         return new CPDF_Name(str);
     }
 
-    static CPDF_Name*		Create(FX_BSTR str)
+    static CPDF_Name*		Create(const CFX_ByteStringC& str)
     {
         return new CPDF_Name(str);
     }
@@ -271,7 +271,7 @@ public:
     }
 
     CPDF_Name(const CFX_ByteString& str) : CPDF_Object(PDFOBJ_NAME), m_Name(str) { }
-    CPDF_Name(FX_BSTR str) : CPDF_Object(PDFOBJ_NAME), m_Name(str) { }
+    CPDF_Name(const CFX_ByteStringC& str) : CPDF_Object(PDFOBJ_NAME), m_Name(str) { }
     CPDF_Name(const FX_CHAR* str) : CPDF_Object(PDFOBJ_NAME), m_Name(str) { }
 
     CFX_ByteString&			GetString()
@@ -396,95 +396,95 @@ public:
 
     CPDF_Dictionary() : CPDF_Object(PDFOBJ_DICTIONARY) { }
 
-    CPDF_Object*			GetElement(FX_BSTR key) const;
+    CPDF_Object*			GetElement(const CFX_ByteStringC& key) const;
 
-    CPDF_Object*			GetElementValue(FX_BSTR key) const;
-
-
+    CPDF_Object*			GetElementValue(const CFX_ByteStringC& key) const;
 
 
 
-    CFX_ByteString			GetString(FX_BSTR key) const;
 
-    CFX_ByteStringC			GetConstString(FX_BSTR key) const;
 
-    CFX_ByteString			GetString(FX_BSTR key, FX_BSTR default_str) const;
+    CFX_ByteString			GetString(const CFX_ByteStringC& key) const;
 
-    CFX_ByteStringC			GetConstString(FX_BSTR key, FX_BSTR default_str) const;
+    CFX_ByteStringC			GetConstString(const CFX_ByteStringC& key) const;
 
-    CFX_WideString			GetUnicodeText(FX_BSTR key, CFX_CharMap* pCharMap = NULL) const;
+    CFX_ByteString			GetString(const CFX_ByteStringC& key, const CFX_ByteStringC& default_str) const;
 
-    int						GetInteger(FX_BSTR key) const;
+    CFX_ByteStringC			GetConstString(const CFX_ByteStringC& key, const CFX_ByteStringC& default_str) const;
 
-    int						GetInteger(FX_BSTR key, int default_int) const;
+    CFX_WideString			GetUnicodeText(const CFX_ByteStringC& key, CFX_CharMap* pCharMap = NULL) const;
 
-    FX_BOOL					GetBoolean(FX_BSTR key, FX_BOOL bDefault = FALSE) const;
+    int						GetInteger(const CFX_ByteStringC& key) const;
 
-    FX_FLOAT				GetNumber(FX_BSTR key) const;
+    int						GetInteger(const CFX_ByteStringC& key, int default_int) const;
 
-    CPDF_Dictionary*		GetDict(FX_BSTR key) const;
+    FX_BOOL					GetBoolean(const CFX_ByteStringC& key, FX_BOOL bDefault = FALSE) const;
 
-    CPDF_Stream*			GetStream(FX_BSTR key) const;
+    FX_FLOAT				GetNumber(const CFX_ByteStringC& key) const;
 
-    CPDF_Array*				GetArray(FX_BSTR key) const;
+    CPDF_Dictionary*		GetDict(const CFX_ByteStringC& key) const;
 
-    CFX_FloatRect			GetRect(FX_BSTR key) const;
+    CPDF_Stream*			GetStream(const CFX_ByteStringC& key) const;
 
-    CFX_AffineMatrix		GetMatrix(FX_BSTR key) const;
+    CPDF_Array*				GetArray(const CFX_ByteStringC& key) const;
 
-    FX_FLOAT				GetFloat(FX_BSTR key) const
+    CFX_FloatRect			GetRect(const CFX_ByteStringC& key) const;
+
+    CFX_AffineMatrix		GetMatrix(const CFX_ByteStringC& key) const;
+
+    FX_FLOAT				GetFloat(const CFX_ByteStringC& key) const
     {
         return GetNumber(key);
     }
 
 
-    FX_BOOL					KeyExist(FX_BSTR key) const;
+    FX_BOOL					KeyExist(const CFX_ByteStringC& key) const;
 
     FX_POSITION				GetStartPos() const;
 
     CPDF_Object*			GetNextElement(FX_POSITION& pos, CFX_ByteString& key) const;
 
-    void					SetAt(FX_BSTR key, CPDF_Object* pObj, CPDF_IndirectObjects* pObjs = NULL);
+    void					SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj, CPDF_IndirectObjects* pObjs = NULL);
 
 
 
-    void					SetAtName(FX_BSTR key, const CFX_ByteString& name);
+    void					SetAtName(const CFX_ByteStringC& key, const CFX_ByteString& name);
 
 
-    void					SetAtString(FX_BSTR key, const CFX_ByteString& string);
+    void					SetAtString(const CFX_ByteStringC& key, const CFX_ByteString& string);
 
 
-    void					SetAtInteger(FX_BSTR key, int i);
+    void					SetAtInteger(const CFX_ByteStringC& key, int i);
 
 
-    void					SetAtNumber(FX_BSTR key, FX_FLOAT f);
+    void					SetAtNumber(const CFX_ByteStringC& key, FX_FLOAT f);
 
-    void					SetAtReference(FX_BSTR key, CPDF_IndirectObjects* pDoc, FX_DWORD objnum);
+    void					SetAtReference(const CFX_ByteStringC& key, CPDF_IndirectObjects* pDoc, FX_DWORD objnum);
 
-    void					SetAtReference(FX_BSTR key, CPDF_IndirectObjects* pDoc, CPDF_Object* obj)
+    void					SetAtReference(const CFX_ByteStringC& key, CPDF_IndirectObjects* pDoc, CPDF_Object* obj)
     {
         SetAtReference(key, pDoc, obj->GetObjNum());
     }
 
-    void					AddReference(FX_BSTR key, CPDF_IndirectObjects* pDoc, FX_DWORD objnum);
+    void					AddReference(const CFX_ByteStringC& key, CPDF_IndirectObjects* pDoc, FX_DWORD objnum);
 
-    void					AddReference(FX_BSTR key, CPDF_IndirectObjects* pDoc, CPDF_Object* obj)
+    void					AddReference(const CFX_ByteStringC& key, CPDF_IndirectObjects* pDoc, CPDF_Object* obj)
     {
         AddReference(key, pDoc, obj->GetObjNum());
     }
 
-    void					SetAtRect(FX_BSTR key, const CFX_FloatRect& rect);
+    void					SetAtRect(const CFX_ByteStringC& key, const CFX_FloatRect& rect);
 
-    void					SetAtMatrix(FX_BSTR key, const CFX_AffineMatrix& matrix);
+    void					SetAtMatrix(const CFX_ByteStringC& key, const CFX_AffineMatrix& matrix);
 
-    void					SetAtBoolean(FX_BSTR key, FX_BOOL bValue);
-
-
-
-    void					RemoveAt(FX_BSTR key);
+    void					SetAtBoolean(const CFX_ByteStringC& key, FX_BOOL bValue);
 
 
-    void					ReplaceKey(FX_BSTR oldkey, FX_BSTR newkey);
+
+    void					RemoveAt(const CFX_ByteStringC& key);
+
+
+    void					ReplaceKey(const CFX_ByteStringC& oldkey, const CFX_ByteStringC& newkey);
 
     FX_BOOL					Identical(CPDF_Dictionary* pDict) const;
 
@@ -493,7 +493,7 @@ public:
         return m_Map.GetCount();
     }
 
-    void					AddValue(FX_BSTR key, CPDF_Object* pObj);
+    void					AddValue(const CFX_ByteStringC& key, CPDF_Object* pObj);
 protected:
 
     ~CPDF_Dictionary();
@@ -622,7 +622,7 @@ protected:
 
     uint8_t*				m_pSrcData;
 };
-CFX_DataFilter* FPDF_CreateFilter(FX_BSTR name, const CPDF_Dictionary* pParam, int width = 0, int height = 0);
+CFX_DataFilter* FPDF_CreateFilter(const CFX_ByteStringC& name, const CPDF_Dictionary* pParam, int width = 0, int height = 0);
 #define FPDF_FILTER_BUFFER_SIZE		20480
 class CPDF_StreamFilter 
 {

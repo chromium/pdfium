@@ -261,7 +261,7 @@ void* CFX_MapByteStringToPtr::GetNextValue(FX_POSITION& rNextPosition) const
     rNextPosition = (FX_POSITION) pAssocNext;
     return pAssocRet->value;
 }
-void*& CFX_MapByteStringToPtr::operator[](FX_BSTR key)
+void*& CFX_MapByteStringToPtr::operator[](const CFX_ByteStringC& key)
 {
     FX_DWORD nHash;
     CAssoc* pAssoc;
@@ -310,7 +310,7 @@ void CFX_MapByteStringToPtr::FreeAssoc(CFX_MapByteStringToPtr::CAssoc* pAssoc)
     }
 }
 CFX_MapByteStringToPtr::CAssoc*
-CFX_MapByteStringToPtr::GetAssocAt(FX_BSTR key, FX_DWORD& nHash) const
+CFX_MapByteStringToPtr::GetAssocAt(const CFX_ByteStringC& key, FX_DWORD& nHash) const
 {
     nHash = HashKey(key) % m_nHashTableSize;
     if (m_pHashTable == NULL) {
@@ -324,7 +324,7 @@ CFX_MapByteStringToPtr::GetAssocAt(FX_BSTR key, FX_DWORD& nHash) const
     }
     return NULL;
 }
-FX_BOOL CFX_MapByteStringToPtr::Lookup(FX_BSTR key, void*& rValue) const
+FX_BOOL CFX_MapByteStringToPtr::Lookup(const CFX_ByteStringC& key, void*& rValue) const
 {
     FX_DWORD nHash;
     CAssoc* pAssoc = GetAssocAt(key, nHash);
@@ -348,7 +348,7 @@ void CFX_MapByteStringToPtr::InitHashTable(
     }
     m_nHashTableSize = nHashSize;
 }
-inline FX_DWORD CFX_MapByteStringToPtr::HashKey(FX_BSTR key) const
+inline FX_DWORD CFX_MapByteStringToPtr::HashKey(const CFX_ByteStringC& key) const
 {
     FX_DWORD nHash = 0;
     int len = key.GetLength();
@@ -358,7 +358,7 @@ inline FX_DWORD CFX_MapByteStringToPtr::HashKey(FX_BSTR key) const
     }
     return nHash;
 }
-FX_BOOL CFX_MapByteStringToPtr::RemoveKey(FX_BSTR key)
+FX_BOOL CFX_MapByteStringToPtr::RemoveKey(const CFX_ByteStringC& key)
 {
     if (m_pHashTable == NULL) {
         return FALSE;
@@ -500,7 +500,7 @@ FX_BOOL _CMapLookupCallback(void* param, void* pData)
 {
     return !_CompactStringSame((_CompactString*)pData, ((CFX_ByteStringC*)param)->GetPtr(), ((CFX_ByteStringC*)param)->GetLength());
 }
-FX_BOOL CFX_CMapByteStringToPtr::Lookup(FX_BSTR key, void*& rValue) const
+FX_BOOL CFX_CMapByteStringToPtr::Lookup(const CFX_ByteStringC& key, void*& rValue) const
 {
     void* p = m_Buffer.Iterate(_CMapLookupCallback, (void*)&key);
     if (!p) {
@@ -509,7 +509,7 @@ FX_BOOL CFX_CMapByteStringToPtr::Lookup(FX_BSTR key, void*& rValue) const
     rValue = *(void**)((_CompactString*)p + 1);
     return TRUE;
 }
-void CFX_CMapByteStringToPtr::SetAt(FX_BSTR key, void* value)
+void CFX_CMapByteStringToPtr::SetAt(const CFX_ByteStringC& key, void* value)
 {
     ASSERT(value != NULL);
     int index, key_len = key.GetLength();
@@ -535,14 +535,14 @@ void CFX_CMapByteStringToPtr::SetAt(FX_BSTR key, void* value)
     _CompactStringStore(pKey, key.GetPtr(), key_len);
     *(void**)(pKey + 1) = value;
 }
-void CFX_CMapByteStringToPtr::AddValue(FX_BSTR key, void* value)
+void CFX_CMapByteStringToPtr::AddValue(const CFX_ByteStringC& key, void* value)
 {
     ASSERT(value != NULL);
     _CompactString* pKey = (_CompactString*)m_Buffer.Add();
     _CompactStringStore(pKey, key.GetPtr(), key.GetLength());
     *(void**)(pKey + 1) = value;
 }
-void CFX_CMapByteStringToPtr::RemoveKey(FX_BSTR key)
+void CFX_CMapByteStringToPtr::RemoveKey(const CFX_ByteStringC& key)
 {
     int key_len = key.GetLength();
     int size = m_Buffer.GetSize();

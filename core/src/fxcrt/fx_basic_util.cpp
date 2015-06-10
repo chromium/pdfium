@@ -90,7 +90,7 @@ void CFX_PrivateData::ClearAll()
     }
     m_DataList.RemoveAll();
 }
-void FX_atonum(FX_BSTR strc, FX_BOOL& bInteger, void* pData)
+void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData)
 {
     if (FXSYS_memchr(strc.GetPtr(), '.', strc.GetLength()) == NULL) {
         bInteger = TRUE;
@@ -123,7 +123,7 @@ void FX_atonum(FX_BSTR strc, FX_BOOL& bInteger, void* pData)
         *(FX_FLOAT*)pData = FX_atof(strc);
     }
 }
-FX_FLOAT FX_atof(FX_BSTR strc)
+FX_FLOAT FX_atof(const CFX_ByteStringC& strc)
 {
     if (strc.GetLength() == 0) {
         return 0.0;

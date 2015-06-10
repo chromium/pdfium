@@ -206,7 +206,7 @@ public:
     CPDF_Font*			FindFont(const CFX_ByteString& name);
     CPDF_ColorSpace*	FindColorSpace(const CFX_ByteString& name);
     CPDF_Pattern*		FindPattern(const CFX_ByteString& name, FX_BOOL bShading);
-    CPDF_Object*		FindResourceObj(FX_BSTR type, const CFX_ByteString& name);
+    CPDF_Object*		FindResourceObj(const CFX_ByteStringC& type, const CFX_ByteString& name);
     void Handle_CloseFillStrokePath();
     void Handle_FillStrokePath();
     void Handle_CloseEOFillStrokePath();
@@ -335,7 +335,7 @@ class CPDF_DocPageData
 
     void                        Clear(FX_BOOL bRelease = FALSE);
     CPDF_Font*                  GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnly);
-    CPDF_Font*                  GetStandardFont(FX_BSTR fontName, CPDF_FontEncoding* pEncoding);
+    CPDF_Font*                  GetStandardFont(const CFX_ByteStringC& fontName, CPDF_FontEncoding* pEncoding);
     void                        ReleaseFont(CPDF_Dictionary* pFontDict);
     CPDF_ColorSpace*            GetColorSpace(CPDF_Object* pCSObj, CPDF_Dictionary* pResources);
     CPDF_ColorSpace*            GetCopiedColorSpace(CPDF_Object* pCSObj);

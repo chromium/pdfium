@@ -119,7 +119,7 @@ FX_BOOL	CPDF_CMapParser::Initialize(CPDF_CMap* pCMap)
     m_AddMaps.EstimateSize(0, 10240);
     return TRUE;
 }
-static FX_DWORD CMap_GetCode(FX_BSTR word)
+static FX_DWORD CMap_GetCode(const CFX_ByteStringC& word)
 {
     int num = 0;
     if (word.GetAt(0) == '<') {
@@ -146,7 +146,7 @@ static FX_DWORD CMap_GetCode(FX_BSTR word)
     }
     return num;
 }
-static FX_BOOL _CMap_GetCodeRange(_CMap_CodeRange& range, FX_BSTR first, FX_BSTR second)
+static FX_BOOL _CMap_GetCodeRange(_CMap_CodeRange& range, const CFX_ByteStringC& first, const CFX_ByteStringC& second)
 {
     if (first.GetLength() == 0 || first.GetAt(0) != '<') {
         return FALSE;
@@ -177,11 +177,11 @@ static FX_BOOL _CMap_GetCodeRange(_CMap_CodeRange& range, FX_BSTR first, FX_BSTR
     }
     return TRUE;
 }
-static CFX_ByteString CMap_GetString(FX_BSTR word)
+static CFX_ByteString CMap_GetString(const CFX_ByteStringC& word)
 {
     return word.Mid(1, word.GetLength() - 2);
 }
-void CPDF_CMapParser::ParseWord(FX_BSTR word)
+void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word)
 {
     if (word.IsEmpty()) {
         return;

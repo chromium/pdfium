@@ -360,7 +360,7 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnl
     return pFont;
 }
 
-CPDF_Font* CPDF_DocPageData::GetStandardFont(FX_BSTR fontName, CPDF_FontEncoding* pEncoding)
+CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteStringC& fontName, CPDF_FontEncoding* pEncoding)
 {
     if (fontName.IsEmpty())
         return nullptr;

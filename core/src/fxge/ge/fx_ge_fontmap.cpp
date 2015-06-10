@@ -1298,7 +1298,7 @@ CFX_FolderFontInfo::~CFX_FolderFontInfo()
         delete (CFontFaceInfo*)value;
     }
 }
-void CFX_FolderFontInfo::AddPath(FX_BSTR path)
+void CFX_FolderFontInfo::AddPath(const CFX_ByteStringC& path)
 {
     m_PathList.Add(path);
 }
