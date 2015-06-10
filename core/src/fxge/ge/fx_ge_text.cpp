@@ -12,6 +12,37 @@
 #undef FX_GAMMA_INVERSE
 #define FX_GAMMA(value)			(value)
 #define FX_GAMMA_INVERSE(value)	(value)
+
+namespace {
+
+void ResetTransform(FT_Face face) {
+    FXFT_Matrix  matrix;
+    matrix.xx = 0x10000L;
+    matrix.xy = 0;
+    matrix.yx = 0;
+    matrix.yy = 0x10000L;
+    FXFT_Set_Transform(face, &matrix, 0);
+}
+
+// Sets the given transform on the font, and resets it to the identity when it
+// goes out of scope.
+class ScopedFontTransform
+{
+public:
+    ScopedFontTransform(FT_Face face, FXFT_Matrix* matrix) : m_Face(face) {
+        FXFT_Set_Transform(m_Face, matrix, 0);
+    }
+
+    ~ScopedFontTransform() {
+        ResetTransform(m_Face);
+    }
+
+private:
+    FT_Face m_Face;
+};
+
+}
+
 FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos, int nChars, int anti_alias, FX_FLOAT retinaScaleX, FX_FLOAT retinaScaleY)
 {
     FX_RECT rect(0, 0, 0, 0);
@@ -1312,7 +1343,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_inde
             pFont->AdjustMMParams(glyph_index, dest_width, pFont->GetSubstFont()->m_Weight);
         }
     }
-    FXFT_Set_Transform(m_Face, &ft_matrix, 0);
+    ScopedFontTransform scoped_transform(m_Face, &ft_matrix);
     int load_flags = (m_Face->face_flags & FT_FACE_FLAG_SFNT) ? FXFT_LOAD_NO_BITMAP : (FXFT_LOAD_NO_BITMAP | FT_LOAD_NO_HINTING);
     int error = FXFT_Load_Glyph(m_Face, glyph_index, load_flags);
     if (error) {
@@ -1456,6 +1487,8 @@ FX_BOOL OutputText(void* dib, int x, int y, CFX_Font* pFont, double font_size,
                      glyph_index, argb);
         x_pos += (FX_FLOAT)w / em;
     }
+    if (pText_matrix)
+        ResetTransform(face);
     return TRUE;
 }
 FX_BOOL OutputGlyph(void* dib, int x, int y, CFX_Font* pFont, double font_size,
@@ -1472,7 +1505,7 @@ FX_BOOL OutputGlyph(void* dib, int x, int y, CFX_Font* pFont, double font_size,
         ft_matrix.xy = ft_matrix.yx = 0;
         ft_matrix.yy = (signed long)(font_size / 64 * 65536);
     }
-    FXFT_Set_Transform(pFont->m_Face, &ft_matrix, 0);
+    ScopedFontTransform scoped_transform(pFont->m_Face, &ft_matrix);
     FX_BOOL ret = _OutputGlyph(dib, x, y, pFont,
                                glyph_index, argb);
     return ret;
@@ -1621,8 +1654,8 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width)
             AdjustMMParams(glyph_index, dest_width, m_pSubstFont->m_Weight);
         }
     }
-    FXFT_Set_Transform(m_Face, &ft_matrix, 0);
-    int load_flags = (m_Face->face_flags & FT_FACE_FLAG_SFNT) ? FXFT_LOAD_NO_BITMAP : FXFT_LOAD_NO_BITMAP | FT_LOAD_NO_HINTING;      
+    ScopedFontTransform scoped_transform(m_Face, &ft_matrix);
+    int load_flags = (m_Face->face_flags & FT_FACE_FLAG_SFNT) ? FXFT_LOAD_NO_BITMAP : FXFT_LOAD_NO_BITMAP | FT_LOAD_NO_HINTING;
     int error = FXFT_Load_Glyph(m_Face, glyph_index, load_flags);
     if (error) {
         return NULL;
