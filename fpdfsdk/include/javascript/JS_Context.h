@@ -47,8 +47,8 @@ public:
 	virtual void				OnField_Blur(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField* pTarget, const CFX_WideString& Value);
 
 	virtual void				OnField_Calculate(CPDF_FormField* pSource, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL& bRc);
-	virtual void				OnField_Format(int nCommitKey, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit);
-	virtual void				OnField_Keystroke(int nCommitKey, CFX_WideString& strChange, const CFX_WideString& strChangeEx,
+	virtual void				OnField_Format(CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit);
+	virtual void				OnField_Keystroke(CFX_WideString& strChange, const CFX_WideString& strChangeEx,
 									FX_BOOL bKeyDown, FX_BOOL bModifier, int &nSelEnd,int &nSelStart, FX_BOOL bShift,
 									CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit, 
 									FX_BOOL bFieldFull, FX_BOOL &bRc);

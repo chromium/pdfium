@@ -139,7 +139,7 @@ public:
 	void							ResetAppearance(const FX_WCHAR* sValue, FX_BOOL bValueChanged);
 	void							ResetFieldAppearance(FX_BOOL bValueChanged);
 	void							UpdateField();
-	CFX_WideString					OnFormat(int nCommitKey, FX_BOOL& bFormated);
+	CFX_WideString					OnFormat(FX_BOOL& bFormated);
 	
 //Message.
  	FX_BOOL							OnAAction(CPDF_AAction::AActionType type, PDFSDK_FieldAction& data, 
@@ -264,7 +264,7 @@ public:
 	void							OnKeyStrokeCommit(CPDF_FormField* pFormField, CFX_WideString& csValue, FX_BOOL& bRC);
 	void							OnValidate(CPDF_FormField* pFormField, CFX_WideString& csValue, FX_BOOL& bRC);
 	void							OnCalculate(CPDF_FormField* pFormField = NULL);
-	CFX_WideString					OnFormat(CPDF_FormField* pFormField, int nCommitKey, FX_BOOL& bFormated);
+	CFX_WideString					OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormated);
 	
 	void							ResetFieldAppearance(CPDF_FormField* pFormField, const FX_WCHAR* sValue, FX_BOOL bValueChanged);
 	void							UpdateField(CPDF_FormField* pFormField);

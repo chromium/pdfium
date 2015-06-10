@@ -80,8 +80,8 @@ public:
 	void					OnPage_OutView(CPDFSDK_Document* pTarget);
 	
 	void					OnField_Calculate(CPDF_FormField* pSource, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL& bRc);
-	void					OnField_Format(int nCommitKey, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit);
-	void					OnField_Keystroke(int nCommitKey, CFX_WideString& strChange, const CFX_WideString& strChangeEx,
+	void					OnField_Format(CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit);
+	void					OnField_Keystroke(CFX_WideString& strChange, const CFX_WideString& strChangeEx,
 								FX_BOOL KeyDown, FX_BOOL bModifier, int &nSelEnd,int &nSelStart, FX_BOOL bShift,
 								CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit, 
 								FX_BOOL bFieldFull, FX_BOOL &bRc);

@@ -973,7 +973,7 @@ void CPDFSDK_Widget::ResetAppearance(FX_BOOL bValueChanged)
 	case FIELDTYPE_COMBOBOX:
 		{
 			FX_BOOL bFormated = FALSE;
-			CFX_WideString sValue = this->OnFormat(0, bFormated);
+			CFX_WideString sValue = this->OnFormat(bFormated);
 			if (bFormated)
 				this->ResetAppearance(sValue, TRUE);
 			else
@@ -1024,15 +1024,11 @@ void CPDFSDK_Widget::ResetAppearance(const FX_WCHAR* sValue, FX_BOOL bValueChang
 	m_pAnnot->ClearCachedAP();
 }
 
-CFX_WideString CPDFSDK_Widget::OnFormat(int nCommitKey, FX_BOOL& bFormated)
+CFX_WideString CPDFSDK_Widget::OnFormat(FX_BOOL& bFormated)
 {
- 	CPDF_FormField* pFormField = GetFormField();
- 	ASSERT(pFormField != NULL);
- 	
- 	ASSERT(m_pInterForm != NULL);
-	
-	return m_pInterForm->OnFormat(pFormField, nCommitKey, bFormated);
-
+    CPDF_FormField* pFormField = GetFormField();
+    ASSERT(pFormField != NULL);
+    return m_pInterForm->OnFormat(pFormField, bFormated);
 }
 
 void CPDFSDK_Widget::ResetFieldAppearance(FX_BOOL bValueChanged)
@@ -2747,7 +2743,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField)
 	m_bBusy = FALSE;
 }
 
-CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField, int nCommitKey, FX_BOOL& bFormated)
+CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormated)
 {
 	ASSERT(m_pDocument != NULL);
 	ASSERT(pFormField != NULL);
@@ -2792,7 +2788,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField, int nComm
 				IFXJS_Context* pContext = pRuntime->NewContext();
 				ASSERT(pContext != NULL);
 
-				pContext->OnField_Format(nCommitKey, pFormField, Value, TRUE);
+				pContext->OnField_Format(pFormField, Value, TRUE);
 			
 				CFX_WideString sInfo;
  				FX_BOOL bRet = pContext->RunScript(script, sInfo);
@@ -3307,7 +3303,7 @@ int	CPDFSDK_InterForm::AfterValueChange(const CPDF_FormField* pField)
 	{
 		this->OnCalculate(pFormField);
 		FX_BOOL bFormated = FALSE;
-		CFX_WideString sValue = this->OnFormat(pFormField, 0, bFormated);
+		CFX_WideString sValue = this->OnFormat(pFormField, bFormated);
 		if (bFormated)
 			this->ResetFieldAppearance(pFormField, sValue.c_str(), TRUE);
 		else

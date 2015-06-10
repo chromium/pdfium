@@ -256,7 +256,7 @@ void Field::UpdateFormField(CPDFSDK_Document* pDocument, CPDF_FormField* pFormFi
 				ASSERT(pWidget != NULL);
 
 				FX_BOOL bFormated = FALSE;
-				CFX_WideString sValue = pWidget->OnFormat(0, bFormated);
+				CFX_WideString sValue = pWidget->OnFormat(bFormated);
 				if (bFormated)
 					pWidget->ResetAppearance(sValue.c_str(), FALSE);
 				else
@@ -313,7 +313,7 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument, CPDF_FormControl* pFo
 			if (nFieldType == FIELDTYPE_COMBOBOX || nFieldType == FIELDTYPE_TEXTFIELD)
 			{
 				FX_BOOL bFormated = FALSE;
-				CFX_WideString sValue = pWidget->OnFormat(0, bFormated);
+				CFX_WideString sValue = pWidget->OnFormat(bFormated);
 				if (bFormated)
 					pWidget->ResetAppearance(sValue.c_str(), FALSE);
 				else

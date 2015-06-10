@@ -188,7 +188,7 @@ void CJS_EventHandler::OnField_Blur(FX_BOOL bModifier, FX_BOOL bShift, CPDF_Form
 	m_pValue = (CFX_WideString*)&Value;	
 }
 
-void CJS_EventHandler::OnField_Keystroke(int nCommitKey, CFX_WideString &strChange,
+void CJS_EventHandler::OnField_Keystroke(CFX_WideString &strChange,
 										 const CFX_WideString& strChangeEx, FX_BOOL KeyDown,
 										 FX_BOOL bModifier, int& nSelEnd, int& nSelStart,
 										 FX_BOOL bShift, CPDF_FormField* pTarget,
@@ -197,7 +197,7 @@ void CJS_EventHandler::OnField_Keystroke(int nCommitKey, CFX_WideString &strChan
 {
 	Initial(JET_FIELD_KEYSTROKE);
 	
-	m_nCommitKey = nCommitKey;
+	m_nCommitKey = 0;
 	m_pWideStrChange = &strChange;
 	m_WideStrChangeEx = strChangeEx;
 	m_bKeyDown = KeyDown;
@@ -243,12 +243,13 @@ void CJS_EventHandler::OnField_Calculate(CPDF_FormField* pSource, CPDF_FormField
 	m_pbRc = &bRc;
 }
 
-void CJS_EventHandler::OnField_Format(int nCommitKey, CPDF_FormField* pTarget,
-									  CFX_WideString& Value, FX_BOOL bWillCommit)
+void CJS_EventHandler::OnField_Format(CPDF_FormField* pTarget,
+                                      CFX_WideString& Value,
+                                      FX_BOOL bWillCommit)
 {
 	Initial(JET_FIELD_FORMAT);
 	
-	m_nCommitKey = nCommitKey;	  
+	m_nCommitKey = 0;
 	ASSERT(pTarget != NULL);
 	m_strTargetName = pTarget->GetFullName();
 	m_pValue = &Value;
