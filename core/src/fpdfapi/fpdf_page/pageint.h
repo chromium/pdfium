@@ -388,7 +388,6 @@ class CPDF_DocPageData
     CPDF_CountedPattern*        FindPatternPtr(CPDF_Object* pPatternObj) const;
 
     CPDF_Document*              m_pPDFDoc;
-    CPDF_PatternMap             m_PatternMap;
     CPDF_ImageMap               m_ImageMap;
     CPDF_IccProfileMap          m_IccProfileMap;
     CFX_MapByteStringToPtr      m_HashProfileMap;
@@ -400,9 +399,11 @@ class CPDF_DocPageData
 
     using CPDF_ColorSpaceMap = std::map<CPDF_Object*, CPDF_CountedColorSpace*>;
     using CPDF_FontMap = std::map<CPDF_Dictionary*, CPDF_CountedFont*>;
+    using CPDF_PatternMap = std::map<CPDF_Object*, CPDF_CountedPattern*>;
 
     CPDF_ColorSpaceMap          m_ColorSpaceMap;
     CPDF_FontMap                m_FontMap;
+    CPDF_PatternMap             m_PatternMap;
 };
 
 class CPDF_Function
