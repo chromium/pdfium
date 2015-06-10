@@ -135,8 +135,9 @@ int CPDF_AnnotList::GetIndex(CPDF_Annot* pAnnot)
     return -1;
 }
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_AnnotList* pList)
-  : m_pAnnotDict(pDict),
-    m_pList(pList)
+    : m_pAnnotDict(pDict),
+      m_pList(pList),
+      m_sSubtype(m_pAnnotDict->GetConstString(FX_BSTRC("Subtype")))
 {
 }
 CPDF_Annot::~CPDF_Annot()
@@ -156,7 +157,7 @@ void CPDF_Annot::ClearCachedAP()
 }
 CFX_ByteString CPDF_Annot::GetSubType() const
 {
-    return m_pAnnotDict ? m_pAnnotDict->GetConstString(FX_BSTRC("Subtype")) : CFX_ByteStringC();
+    return m_sSubtype;
 }
 
 void CPDF_Annot::GetRect(CPDF_Rect& rect) const

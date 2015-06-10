@@ -565,6 +565,8 @@ class CPDF_Annot : public CFX_PrivateData
 
     CPDF_AnnotList* const m_pList;
 
+    const CFX_ByteString m_sSubtype;
+
     CFX_MapPtrToPtr m_APMap;
 };
 
