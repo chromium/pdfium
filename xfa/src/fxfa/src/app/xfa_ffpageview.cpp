@@ -383,7 +383,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(CXFA_LayoutItemIterator* 
     }
     int32_t iChildren = tabParams.GetSize();
     if (iChildren > 1) {
-        FXSYS_qsort(tabParams.GetData(), iChildren, sizeof(FX_LPVOID), XFA_TabOrderWidgetComparator);
+        FXSYS_qsort(tabParams.GetData(), iChildren, sizeof(void*), XFA_TabOrderWidgetComparator);
     }
     for (int32_t iStart = 0; iStart < iChildren; iStart++) {
         CXFA_TabParam* pParam = (CXFA_TabParam*)tabParams[iStart];

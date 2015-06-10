@@ -74,7 +74,7 @@ void* CFX_StaticStore::Alloc(size_t size)
     FXSYS_assert(size != 0);
     register FX_LPSTATICSTORECHUNK pChunk = FindChunk(size);
     FXSYS_assert(pChunk != NULL && pChunk->iFreeSize >= size);
-    register FX_LPBYTE p = (FX_LPBYTE)pChunk;
+    register uint8_t* p = (uint8_t*)pChunk;
     p += sizeof(FX_STATICSTORECHUNK) + pChunk->iChunkSize - pChunk->iFreeSize;
     pChunk->iFreeSize -= size;
     m_iAllocatedSize += size;
@@ -134,7 +134,7 @@ void* CFX_FixedStore::Alloc(size_t size)
         pChunk = AllocChunk();
     }
     FXSYS_assert(pChunk != NULL);
-    register FX_LPBYTE pFlags = pChunk->FirstFlag();
+    register uint8_t* pFlags = pChunk->FirstFlag();
     register size_t i = 0;
     for (; i < pChunk->iChunkSize; i ++)
         if (pFlags[i] == 0) {
@@ -150,7 +150,8 @@ void CFX_FixedStore::Free(void* pBlock)
     FXSYS_assert(pBlock != NULL);
     register FX_LPFIXEDSTORECHUNK pPrior, pChunk;
     pPrior = NULL, pChunk = m_pChunk;
-    register FX_LPBYTE pStart = NULL, pEnd;
+    uint8_t* pStart = NULL;
+    uint8_t* pEnd;
     while (pChunk != NULL) {
         pStart = pChunk->FirstBlock();
         if (pBlock >= pStart) {
@@ -162,9 +163,9 @@ void CFX_FixedStore::Free(void* pBlock)
         pPrior = pChunk, pChunk = pChunk->pNextChunk;
     }
     FXSYS_assert(pChunk != NULL);
-    register size_t iPos = ((FX_LPBYTE)pBlock - pStart) / m_iBlockSize;
+    register size_t iPos = ((uint8_t*)pBlock - pStart) / m_iBlockSize;
     FXSYS_assert(iPos < pChunk->iChunkSize);
-    register FX_LPBYTE pFlags = pChunk->FirstFlag();
+    register uint8_t* pFlags = pChunk->FirstFlag();
     if (pFlags[iPos] == 0) {
         return;
     }
@@ -279,7 +280,7 @@ void CFX_DynamicStore::Free(void* pBlock)
     register FX_LPDYNAMICSTORECHUNK pPriorChunk, pChunk;
     pPriorChunk = NULL, pChunk = m_pChunk;
     while (pChunk != NULL) {
-        if (pBlock > pChunk && pBlock <= ((FX_LPBYTE)pChunk + sizeof(FX_DYNAMICSTORECHUNK) + pChunk->iChunkSize)) {
+        if (pBlock > pChunk && pBlock <= ((uint8_t*)pChunk + sizeof(FX_DYNAMICSTORECHUNK) + pChunk->iChunkSize)) {
             break;
         }
         pPriorChunk = pChunk, pChunk = pChunk->pNextChunk;

@@ -8,16 +8,16 @@
 #define _FXJSE_H_
 
 typedef struct FXJSE_HRUNTIME_ {
-    FX_LPVOID pData;
+    void* pData;
 }* FXJSE_HRUNTIME;
 typedef struct FXJSE_HCONTEXT_ {
-    FX_LPVOID pData;
+    void* pData;
 }* FXJSE_HCONTEXT;
 typedef struct FXJSE_HCLASS_ {
-    FX_LPVOID pData;
+    void* pData;
 }* FXJSE_HCLASS;
 typedef struct FXJSE_HVALUE_ {
-    FX_LPVOID pData;
+    void* pData;
 }* FXJSE_HVALUE;
 typedef struct FXJSE_HOBJECT_ : public FXJSE_HVALUE_ {
 }* FXJSE_HOBJECT;
@@ -28,7 +28,7 @@ void FXJSE_Finalize();
 FXJSE_HRUNTIME	FXJSE_Runtime_Create();
 void			FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime);
 typedef struct _FXJSE_CLASS FXJSE_CLASS;
-FXJSE_HCONTEXT	FXJSE_Context_Create	(FXJSE_HRUNTIME hRuntime, const FXJSE_CLASS* lpGlobalClass = NULL, FX_LPVOID lpGlobalObject = NULL);
+FXJSE_HCONTEXT	FXJSE_Context_Create	(FXJSE_HRUNTIME hRuntime, const FXJSE_CLASS* lpGlobalClass = NULL, void* lpGlobalObject = NULL);
 void			FXJSE_Context_Release	(FXJSE_HCONTEXT hContext);
 FXJSE_HVALUE	FXJSE_Context_GetGlobalObject(FXJSE_HCONTEXT hContext);
 FXJSE_HRUNTIME  FXJSE_Context_GetRuntime(FXJSE_HCONTEXT hContext);
@@ -47,7 +47,7 @@ public:
     int32_t		GetInt32(int32_t index) const;
     FX_FLOAT		GetFloat(int32_t index) const;
     CFX_ByteString	GetUTF8String(int32_t index) const;
-    FX_LPVOID		GetObject(int32_t index, FXJSE_HCLASS hClass = NULL) const;
+    void*		GetObject(int32_t index, FXJSE_HCLASS hClass = NULL) const;
     FXJSE_HVALUE	GetReturnValue();
 };
 typedef void	(*FXJSE_FuncCallback)	(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
@@ -55,13 +55,13 @@ typedef void	(*FXJSE_PropAccessor)	(FXJSE_HOBJECT hObject, FX_BSTR szPropName, F
 typedef int32_t(*FXJSE_PropTypeGetter)	(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn);
 typedef FX_BOOL (*FXJSE_PropDeleter)	(FXJSE_HOBJECT hObject, FX_BSTR szPropName);
 typedef struct _FXJSE_FUNCTION {
-    FX_LPCSTR				name;
+    const FX_CHAR*				name;
     FXJSE_FuncCallback		callbackProc;
 } FXJSE_FUNCTION;
 #define FXJSE_DEF_FUNCTION(functionName, functionCallback) {functionName, functionCallback}
 void	FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext, const FXJSE_FUNCTION* lpFunctions, int nNum);
 typedef struct _FXJSE_PROPERTY {
-    FX_LPCSTR				name;
+    const FX_CHAR*				name;
     FXJSE_PropAccessor		getProc;
     FXJSE_PropAccessor		setProc;
 } FXJSE_PROPERTY;
@@ -71,7 +71,7 @@ enum FXJSE_ClassPropTypes {
     FXJSE_ClassPropType_Method
 };
 typedef struct _FXJSE_CLASS {
-    FX_LPCSTR				name;
+    const FX_CHAR*				name;
     FXJSE_FuncCallback		constructor;
     FXJSE_PROPERTY*			properties;
     FXJSE_FUNCTION*			methods;
@@ -103,7 +103,7 @@ FX_FLOAT		FXJSE_Value_ToFloat			(FXJSE_HVALUE hValue);
 FXJSE_DOUBLE	FXJSE_Value_ToDouble		(FXJSE_HVALUE hValue);
 int32_t		FXJSE_Value_ToInteger		(FXJSE_HVALUE hValue);
 void			FXJSE_Value_ToUTF8String	(FXJSE_HVALUE hValue, CFX_ByteString& szStrOutput);
-FX_LPVOID		FXJSE_Value_ToObject		(FXJSE_HVALUE hValue, FXJSE_HCLASS hClass);
+void*		FXJSE_Value_ToObject		(FXJSE_HVALUE hValue, FXJSE_HCLASS hClass);
 void			FXJSE_Value_SetUndefined	(FXJSE_HVALUE hValue);
 void			FXJSE_Value_SetNull			(FXJSE_HVALUE hValue);
 void			FXJSE_Value_SetBoolean		(FXJSE_HVALUE hValue, FX_BOOL	   bBoolean);
@@ -111,7 +111,7 @@ void			FXJSE_Value_SetUTF8String	(FXJSE_HVALUE hValue, FX_BSTR	   szString);
 void			FXJSE_Value_SetInteger		(FXJSE_HVALUE hValue, int32_t     nInteger);
 void			FXJSE_Value_SetFloat		(FXJSE_HVALUE hValue, FX_FLOAT     fFloat);
 void			FXJSE_Value_SetDouble		(FXJSE_HVALUE hValue, FXJSE_DOUBLE dDouble);
-void			FXJSE_Value_SetObject		(FXJSE_HVALUE hValue, FX_LPVOID lpObject, FXJSE_HCLASS hClass);
+void			FXJSE_Value_SetObject		(FXJSE_HVALUE hValue, void* lpObject, FXJSE_HCLASS hClass);
 void			FXJSE_Value_SetArray		(FXJSE_HVALUE hValue, uint32_t uValueCount, FXJSE_HVALUE* rgValues);
 void			FXJSE_Value_SetDate			(FXJSE_HVALUE hValue, FXJSE_DOUBLE dDouble);
 void			FXJSE_Value_Set				(FXJSE_HVALUE hValue, FXJSE_HVALUE hOriginalValue);
@@ -124,7 +124,7 @@ FX_BOOL			FXJSE_Value_ObjectHasOwnProp	(FXJSE_HVALUE hValue, FX_BSTR	szPropName,
 FX_BOOL			FXJSE_Value_SetObjectOwnProp	(FXJSE_HVALUE hValue, FX_BSTR	szPropName, FXJSE_HVALUE hPropValue);
 FX_BOOL			FXJSE_Value_CallFunction		(FXJSE_HVALUE hFunction, FXJSE_HVALUE hThis, FXJSE_HVALUE hRetValue, uint32_t nArgCount, FXJSE_HVALUE* lpArgs);
 FX_BOOL			FXJSE_Value_SetFunctionBind	(FXJSE_HVALUE hValue, FXJSE_HVALUE hOldFunction, FXJSE_HVALUE hNewThis);
-FX_BOOL			FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext, FX_LPCSTR szScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hNewThisObject = NULL);
+FX_BOOL			FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext, const FX_CHAR* szScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hNewThisObject = NULL);
 void			FXJSE_ThrowMessage(FX_BSTR utf8Name, FX_BSTR utf8Message);
 FX_BOOL			FXJSE_ReturnValue_GetMessage(FXJSE_HVALUE hRetValue, CFX_ByteString& utf8Name, CFX_ByteString& utf8Message);
 FX_BOOL			FXJSE_ReturnValue_GetLineInfo(FXJSE_HVALUE hRetValue, int32_t& nLine, int32_t& nCol);

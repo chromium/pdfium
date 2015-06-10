@@ -28,12 +28,12 @@ extern "C" {
         }
     }
 };
-static void _bmp_error_data(bmp_decompress_struct_p bmp_ptr, FX_LPCSTR err_msg)
+static void _bmp_error_data(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg)
 {
     FXSYS_strncpy((char*)bmp_ptr->err_ptr, err_msg, BMP_MAX_ERROR_SIZE - 1);
     longjmp(bmp_ptr->jmpbuf, 1);
 }
-static void _bmp_read_scanline(bmp_decompress_struct_p bmp_ptr, int32_t row_num, FX_LPBYTE row_buf)
+static void _bmp_read_scanline(bmp_decompress_struct_p bmp_ptr, int32_t row_num, uint8_t* row_buf)
 {
     FXBMP_Context* p = (FXBMP_Context*)bmp_ptr->context_ptr;
     CCodec_BmpModule* pModule = (CCodec_BmpModule*)p->parent_ptr;
@@ -112,13 +112,13 @@ int32_t CCodec_BmpModule::LoadImage(void* pContext)
     }
     return _bmp_decode_image(p->bmp_ptr);
 }
-FX_DWORD CCodec_BmpModule::GetAvailInput(void* pContext, FX_LPBYTE* avial_buf_ptr)
+FX_DWORD CCodec_BmpModule::GetAvailInput(void* pContext, uint8_t** avial_buf_ptr)
 {
     FXBMP_Context* p = (FXBMP_Context*)pContext;
     return _bmp_get_avail_input(p->bmp_ptr, avial_buf_ptr);
 }
-void CCodec_BmpModule::Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size)
+void CCodec_BmpModule::Input(void* pContext, const uint8_t* src_buf, FX_DWORD src_size)
 {
     FXBMP_Context* p = (FXBMP_Context*)pContext;
-    _bmp_input_buffer(p->bmp_ptr, (FX_LPBYTE)src_buf, src_size);
+    _bmp_input_buffer(p->bmp_ptr, (uint8_t*)src_buf, src_size);
 }

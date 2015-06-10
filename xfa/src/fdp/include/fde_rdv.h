@@ -13,7 +13,7 @@ class CFX_DIBitmap;
 class CFX_DIBSource;
 class IFDE_RenderDevice;
 typedef struct _FDE_HDEVICESTATE {
-    FX_LPVOID pData;
+    void* pData;
 } * FDE_HDEVICESTATE;
 class IFDE_RenderDevice
 {

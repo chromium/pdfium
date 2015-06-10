@@ -15,7 +15,7 @@ public:
     virtual ~CFWL_ComboBoxTP();
     virtual	FX_BOOL		IsValidWidget(IFWL_Widget *pWidget);
     virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams);
-    virtual FX_LPVOID   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity);
+    virtual void*   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity);
 protected:
     void	DrawDropDownButton(CFWL_ThemeBackground *pParams, FX_DWORD dwStates, CFX_Matrix *pMatrix);
     void	DrawStrethHandler(CFWL_ThemeBackground *pParams, FX_DWORD dwStates, CFX_Matrix *pMatrix);

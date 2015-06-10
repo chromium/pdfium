@@ -19,6 +19,6 @@ public:
     virtual FWL_ERR		Initialize();
     virtual FWL_ERR		Finalize();
 protected:
-    void DrawListBoxItem(CFX_Graphics *pGraphics, FX_DWORD dwStates, const CFX_RectF *prtItem, FX_LPVOID pData = NULL, CFX_Matrix *pMatrix = NULL);
+    void DrawListBoxItem(CFX_Graphics *pGraphics, FX_DWORD dwStates, const CFX_RectF *prtItem, void* pData = NULL, CFX_Matrix *pMatrix = NULL);
 };
 #endif

@@ -132,11 +132,11 @@ FX_BOOL CXFA_FFImageEdit::OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT 
         int32_t nDataSize = pFileRead->GetSize();
         if (nDataSize > 0) {
             CFX_ByteString bsBuf;
-            FX_LPSTR pImageBuffer = bsBuf.GetBuffer(nDataSize);
+            FX_CHAR* pImageBuffer = bsBuf.GetBuffer(nDataSize);
             pFileRead->ReadBlock(pImageBuffer, 0, nDataSize);
             bsBuf.ReleaseBuffer();
             if (!bsBuf.IsEmpty()) {
-                FX_LPSTR pData = XFA_Base64Encode(bsBuf, nDataSize);
+                FX_CHAR* pData = XFA_Base64Encode(bsBuf, nDataSize);
                 wsImage = CFX_WideString::FromLocal(pData);
                 if (pData != NULL) {
                     FX_Free(pData);

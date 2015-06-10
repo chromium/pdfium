@@ -72,7 +72,7 @@ public:
 	virtual int32_t							CharSetFromUnicode(FX_WORD word, int32_t nOldCharset);
 
 public:
-	virtual void								Initial(FX_LPCSTR fontname = NULL);
+	virtual void								Initial(const FX_CHAR* fontname = NULL);
 	void										SetSystemHandler(IFX_SystemHandler* pSystemHandler);
 
 	int32_t									GetFontMapCount() const;

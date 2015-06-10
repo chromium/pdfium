@@ -84,7 +84,7 @@ enum XFA_BARCODETYPEENUM {
 };
 struct XFA_BARCODETYPEENUMINFO {
     uint32_t					uHash;
-    FX_LPCWSTR					pName;
+    const FX_WCHAR*					pName;
     XFA_BARCODETYPEENUM			eName;
     BC_TYPE						eBCType;
 };

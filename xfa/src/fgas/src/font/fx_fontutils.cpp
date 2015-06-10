@@ -29,7 +29,7 @@ FX_DWORD FGAS_GetFontHashCode(FX_WORD wCodePage, FX_DWORD dwFontStyles)
     }
     return dwHash;
 }
-FX_DWORD FGAS_GetFontFamilyHash(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
+FX_DWORD FGAS_GetFontFamilyHash(const FX_WCHAR* pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
 {
     CFX_WideString wsFont(pszFontFamily);
     if (dwFontStyles & FX_FONTSTYLE_Bold) {
@@ -39,7 +39,7 @@ FX_DWORD FGAS_GetFontFamilyHash(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles,
         wsFont += L"Italic";
     }
     wsFont += wCodePage;
-    return FX_HashCode_String_GetW((FX_LPCWSTR)wsFont, wsFont.GetLength());
+    return FX_HashCode_String_GetW((const FX_WCHAR*)wsFont, wsFont.GetLength());
 }
 static const FGAS_FONTUSB g_FXGdiFontUSBTable[] = {
     {0x0000  ,	0x007F  ,	0  ,	1252  },

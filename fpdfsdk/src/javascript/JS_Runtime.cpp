@@ -361,7 +361,7 @@ CFX_WideString ChangeObjName(const CFX_WideString& str)
 }
 FX_BOOL	CJS_Runtime::GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue)
 {
-	FX_LPCSTR name = utf8Name.GetCStr();
+	const FX_CHAR* name = utf8Name.GetCStr();
 
 	v8::Locker lock(GetIsolate());
     v8::Isolate::Scope isolate_scope(GetIsolate());
@@ -386,7 +386,7 @@ FX_BOOL	CJS_Runtime::SetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue)
 {
 	if (utf8Name.IsEmpty() || hValue == NULL)
 		return FALSE;
-	FX_LPCSTR name = utf8Name.GetCStr();
+	const FX_CHAR* name = utf8Name.GetCStr();
 	v8::Isolate* pIsolate = GetIsolate();
 	v8::Locker lock(pIsolate);
     v8::Isolate::Scope isolate_scope(pIsolate);

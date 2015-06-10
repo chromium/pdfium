@@ -10,7 +10,7 @@
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || _FX_OS_ == _FX_WIN64_
 typedef struct _FX_GDIGOCACHE {
     GLYPHMETRICS	gm;
-    FX_LPBYTE		pOutline;
+    uint8_t*		pOutline;
 } FX_GDIGOCACHE, * FX_LPGDIGOCACHE;
 typedef FX_GDIGOCACHE const * FX_LPCGDIGOCACHE;
 class CFX_GdiFontCache
@@ -18,7 +18,7 @@ class CFX_GdiFontCache
 public:
     CFX_GdiFontCache();
     ~CFX_GdiFontCache();
-    void				SetCachedGlyphOutline(FX_DWORD dwGlyph, const GLYPHMETRICS &gm, FX_LPBYTE pOutline);
+    void				SetCachedGlyphOutline(FX_DWORD dwGlyph, const GLYPHMETRICS &gm, uint8_t* pOutline);
     FX_LPCGDIGOCACHE	GetCachedGlyphOutline(FX_DWORD dwGlyph) const;
 protected:
     CFX_MapPtrToPtr		m_GlyphMap;
@@ -30,9 +30,9 @@ public:
     ~CFX_GdiFont();
     virtual void			Release();
     virtual IFX_Font*		Retain();
-    FX_BOOL			LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
-    FX_BOOL			LoadFont(FX_LPCBYTE pBuffer, int32_t iLength);
-    FX_BOOL			LoadFont(FX_LPCWSTR pszFileName);
+    FX_BOOL			LoadFont(const FX_WCHAR* pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
+    FX_BOOL			LoadFont(const uint8_t* pBuffer, int32_t iLength);
+    FX_BOOL			LoadFont(const FX_WCHAR* pszFileName);
     FX_BOOL			LoadFont(IFX_Stream *pFontStream);
     FX_BOOL			LoadFont(const LOGFONTW &lf);
     virtual IFX_Font*		Derive(FX_DWORD dwFontStyles, FX_WORD wCodePage = 0)
@@ -56,7 +56,7 @@ public:
     virtual FX_BOOL			GetBBox(CFX_Rect &bbox);
     virtual int32_t		GetItalicAngle() const;
     virtual void			Reset();
-    FX_DWORD		GetGlyphDIBits(int32_t iGlyphIndex, FX_ARGB argb, const MAT2 *pMatrix, GLYPHMETRICS &gm, FX_LPVOID pBuffer, FX_DWORD bufSize);
+    FX_DWORD		GetGlyphDIBits(int32_t iGlyphIndex, FX_ARGB argb, const MAT2 *pMatrix, GLYPHMETRICS &gm, void* pBuffer, FX_DWORD bufSize);
     FX_DWORD		GetHashCode() const;
 protected:
     IFX_FontMgr				*m_pFontMgr;
@@ -81,7 +81,7 @@ protected:
     FX_BOOL			GetCharWidth(FX_WCHAR wUnicode, int32_t &iWidth, FX_BOOL bRecursive, FX_BOOL bCharCode = FALSE);
     int32_t		GetGlyphIndex(FX_WCHAR wUnicode, FX_BOOL bRecursive, IFX_Font **ppFont, FX_BOOL bCharCode = FALSE);
     FX_DWORD		GetMAT2HashCode(const FIXED *pFixed);
-    void			CreateGlyphBitmap(int32_t iWidth, int32_t iHeight, FX_LPBYTE pOutline, FX_LPDWORD pDIB, FX_ARGB argb);
+    void			CreateGlyphBitmap(int32_t iWidth, int32_t iHeight, uint8_t* pOutline, FX_DWORD* pDIB, FX_ARGB argb);
     friend class CFX_GdiFontMgr;
 };
 #endif

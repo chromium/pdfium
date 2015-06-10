@@ -25,5 +25,5 @@ public:
     FX_DWORD linenum;
     CFX_WideString message;
 };
-FX_LPCWSTR XFA_FM_ErrorMsg( XFA_FM_ERRMSG msg);
+const FX_WCHAR* XFA_FM_ErrorMsg( XFA_FM_ERRMSG msg);
 #endif

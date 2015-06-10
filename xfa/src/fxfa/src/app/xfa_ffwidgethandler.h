@@ -20,8 +20,8 @@ public:
     virtual CXFA_WidgetAcc*	GetDataAcc(IXFA_Widget* hWidget);
     virtual void			GetName(IXFA_Widget* hWidget, CFX_WideString &wsName, int32_t iNameType = 0);
     virtual	FX_BOOL			GetToolTip(IXFA_Widget* hWidget, CFX_WideString &wsToolTip);
-    virtual	void			SetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback);
-    virtual	FX_LPVOID		GetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id);
+    virtual	void			SetPrivateData(IXFA_Widget* hWidget, void* module_id, void* pData, PD_CALLBACK_FREEDATA callback);
+    virtual	void*		GetPrivateData(IXFA_Widget* hWidget, void* module_id);
     virtual FX_BOOL		OnMouseEnter(IXFA_Widget* hWidget);
     virtual FX_BOOL		OnMouseExit(IXFA_Widget* hWidget);
     virtual FX_BOOL		OnLButtonDown(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);

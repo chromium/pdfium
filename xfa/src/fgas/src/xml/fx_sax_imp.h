@@ -18,7 +18,7 @@ public:
     FX_DWORD		m_dwStart;
     FX_DWORD		m_dwEnd;
     FX_DWORD		m_dwCur;
-    FX_LPBYTE		m_pBuf;
+    uint8_t*		m_pBuf;
     FX_DWORD		m_dwBufSize;
     FX_DWORD		m_dwBufIndex;
 };
@@ -49,7 +49,7 @@ public:
         , m_pPrev(NULL)
         , m_pNext(NULL)
     {}
-    FX_LPVOID		m_pNode;
+    void*		m_pNode;
     FX_SAXNODE		m_eNode;
     FX_DWORD		m_dwID;
     FX_BOOL			m_bSkip;
@@ -111,12 +111,12 @@ protected:
     CFX_ByteArray			m_SkipStack;
     uint8_t					m_SkipChar;
     FX_DWORD				m_dwNodePos;
-    FX_LPBYTE				m_pszData;
+    uint8_t*				m_pszData;
     int32_t				m_iDataSize;
     int32_t				m_iDataLength;
     int32_t				m_iEntityStart;
     int32_t				m_iDataPos;
-    FX_LPBYTE				m_pszName;
+    uint8_t*				m_pszName;
     int32_t				m_iNameSize;
     int32_t				m_iNameLength;
     FX_DWORD				m_dwParseMode;

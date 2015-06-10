@@ -278,7 +278,7 @@ TEST(fxcrt, ByteStringCNull) {
   EXPECT_EQ(null_string, assigned_null_string);
 
   CFX_ByteStringC assigned_nullptr_string("initially not NULL");
-  assigned_nullptr_string = (FX_LPCSTR)nullptr;
+  assigned_nullptr_string = (const FX_CHAR*)nullptr;
   EXPECT_EQ(assigned_nullptr_string.GetPtr(), nullptr);
   EXPECT_EQ(assigned_nullptr_string.GetLength(), 0);
   EXPECT_TRUE(assigned_nullptr_string.IsEmpty());

@@ -47,7 +47,7 @@ FX_BOOL CFWL_Theme::DrawText(CFWL_ThemeText *pParams)
     FXSYS_assert(pTheme);
     return pTheme->DrawText(pParams);
 }
-FX_LPVOID CFWL_Theme::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
+void* CFWL_Theme::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
 {
     CFWL_WidgetTP *pTheme = GetTheme(pThemePart->m_pWidget);
     FXSYS_assert(pTheme);
@@ -133,7 +133,7 @@ CFWL_Theme::~CFWL_Theme()
     }
     m_arrThemes.RemoveAll();
 }
-FWL_ERR	CFWL_Theme::SetFont(IFWL_Widget *pWidget, FX_LPCWSTR strFont, FX_FLOAT fFontSize, FX_ARGB rgbFont)
+FWL_ERR	CFWL_Theme::SetFont(IFWL_Widget *pWidget, const FX_WCHAR* strFont, FX_FLOAT fFontSize, FX_ARGB rgbFont)
 {
     int32_t iCount = m_arrThemes.GetSize();
     for (int32_t i = 0; i < iCount; i ++) {

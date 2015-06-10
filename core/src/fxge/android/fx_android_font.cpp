@@ -23,7 +23,7 @@ FX_BOOL CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper)
 {
     return FALSE;
 }
-void* CFX_AndroidFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR face, FX_BOOL& bExact)
+void* CFX_AndroidFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, FX_BOOL& bExact)
 {
     if (!m_pFontMgr) {
         return NULL;
@@ -46,11 +46,11 @@ void* CFX_AndroidFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int
     }
     return m_pFontMgr->CreateFont(face, charset, dwStyle, FPF_MATCHFONT_REPLACEANSI);
 }
-void* CFX_AndroidFontInfo::GetFont(FX_LPCSTR face)
+void* CFX_AndroidFontInfo::GetFont(const FX_CHAR* face)
 {
     return NULL;
 }
-FX_DWORD CFX_AndroidFontInfo::GetFontData(void* hFont, FX_DWORD table, FX_LPBYTE buffer, FX_DWORD size)
+FX_DWORD CFX_AndroidFontInfo::GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size)
 {
     if (!hFont) {
         return 0;

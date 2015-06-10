@@ -514,7 +514,7 @@ protected:
     FX_ARGB					m_FillArgb;
     FX_DWORD				m_Flags;
     CFX_ImageTransformer*	m_pTransformer;
-    FX_LPVOID				m_DeviceHandle;
+    void*				m_DeviceHandle;
     int32_t				m_BlendType;
     FX_BOOL					m_Result;
     FX_BOOL					m_bPrint;
@@ -835,14 +835,14 @@ const static uint8_t g_inv_base64[128] = {
     41,   42,  43,  44,  45,  46,  47,  48,
     49,   50,  51, 255, 255, 255, 255, 255,
 };
-static FX_LPBYTE XFA_RemoveBase64Whitespace(FX_LPCBYTE pStr, int32_t iLen)
+static uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen)
 {
-    FX_LPBYTE pCP;
+    uint8_t* pCP;
     int32_t i = 0, j = 0;
     if (iLen == 0) {
         iLen = FXSYS_strlen((FX_CHAR*)pStr);
     }
-    pCP = (FX_LPBYTE)FDE_Alloc(iLen + 1);
+    pCP = (uint8_t*)FDE_Alloc(iLen + 1);
     for (; i < iLen; i++) {
         if ((pStr[i] & 128) == 0) {
             if (g_inv_base64[pStr[i]] != 0xFF || pStr[i] == '=') {
@@ -853,12 +853,12 @@ static FX_LPBYTE XFA_RemoveBase64Whitespace(FX_LPCBYTE pStr, int32_t iLen)
     pCP[j] = '\0';
     return pCP;
 }
-static int32_t XFA_Base64Decode(FX_LPCSTR pStr, FX_LPBYTE pOutBuffer)
+static int32_t XFA_Base64Decode(const FX_CHAR* pStr, uint8_t* pOutBuffer)
 {
     if (pStr == NULL) {
         return 0;
     }
-    FX_LPBYTE pBuffer = XFA_RemoveBase64Whitespace((FX_LPBYTE)pStr, FXSYS_strlen((FX_CHAR*)pStr));
+    uint8_t* pBuffer = XFA_RemoveBase64Whitespace((uint8_t*)pStr, FXSYS_strlen((FX_CHAR*)pStr));
     if (pBuffer == NULL) {
         return 0;
     }
@@ -899,12 +899,12 @@ static int32_t XFA_Base64Decode(FX_LPCSTR pStr, FX_LPBYTE pOutBuffer)
     return j;
 }
 static FX_CHAR g_base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-FX_LPSTR XFA_Base64Encode(FX_LPCBYTE buf, int32_t buf_len)
+FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len)
 {
-    FX_LPSTR out = NULL;
+    FX_CHAR* out = NULL;
     int i, j;
     FX_DWORD limb;
-    out = (FX_LPSTR)FX_Alloc(FX_CHAR, ((buf_len * 8 + 5) / 6) + 5);
+    out = (FX_CHAR*)FX_Alloc(FX_CHAR, ((buf_len * 8 + 5) / 6) + 5);
     for (i = 0, j = 0, limb = 0; i + 2 < buf_len; i += 3, j += 4) {
         limb =
             ((FX_DWORD)buf[i] << 16) |
@@ -972,7 +972,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc *pDoc, CXFA_Image *pImage, FX_BOOL &b
     pImage->GetContentType(wsContentType);
     FXCODEC_IMAGE_TYPE type = XFA_GetImageType(wsContentType);
     CFX_ByteString bsContent;
-    FX_LPBYTE pImageBuffer = NULL;
+    uint8_t* pImageBuffer = NULL;
     IFX_FileRead* pImageFileRead = NULL;
     if (wsImage.GetLength() > 0) {
         XFA_ATTRIBUTEENUM iEncoding = (XFA_ATTRIBUTEENUM)pImage->GetTransferEncoding();
@@ -980,13 +980,13 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc *pDoc, CXFA_Image *pImage, FX_BOOL &b
             CFX_ByteString bsData = wsImage.UTF8Encode();
             int32_t iLength = bsData.GetLength();
             pImageBuffer = FDE_Alloc(iLength);
-            int32_t iRead = XFA_Base64Decode((FX_LPCSTR)bsData, pImageBuffer);
+            int32_t iRead = XFA_Base64Decode((const FX_CHAR*)bsData, pImageBuffer);
             if (iRead > 0) {
                 pImageFileRead = FX_CreateMemoryStream(pImageBuffer, iRead);
             }
         } else {
             bsContent = CFX_ByteString::FromUnicode(wsImage);
-            pImageFileRead = FX_CreateMemoryStream((FX_LPBYTE)(FX_LPCBYTE)bsContent, bsContent.GetLength());
+            pImageFileRead = FX_CreateMemoryStream((uint8_t*)(const uint8_t*)bsContent, bsContent.GetLength());
         }
     } else {
         CFX_WideString wsURL = wsHref;

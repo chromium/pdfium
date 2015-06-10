@@ -27,7 +27,7 @@ CXFA_NodeHelper::CXFA_NodeHelper(void)
 CXFA_NodeHelper::~CXFA_NodeHelper(void)
 {
 }
-CXFA_Node*  CXFA_NodeHelper::XFA_ResolveNodes_GetOneChild(CXFA_Node* parent, FX_LPCWSTR pwsName, FX_BOOL bIsClassName)
+CXFA_Node*  CXFA_NodeHelper::XFA_ResolveNodes_GetOneChild(CXFA_Node* parent, const FX_WCHAR* pwsName, FX_BOOL bIsClassName)
 {
     if(parent == NULL) {
         return NULL;
@@ -252,12 +252,12 @@ void CXFA_NodeHelper::XFA_GetNameExpression(CXFA_Node* refNode, CFX_WideString &
         if (refNode->IsUnnamed() || (bIsProperty && refNode->GetClassID() != XFA_ELEMENT_PageSet)) {
             refNode->GetClassName(wsTagName);
             ws = wsTagName;
-            wsName.Format(L"#%s[%d]", (FX_LPCWSTR)ws, XFA_GetIndex(refNode, eLogicType, bIsProperty, TRUE));
+            wsName.Format(L"#%s[%d]", (const FX_WCHAR*)ws, XFA_GetIndex(refNode, eLogicType, bIsProperty, TRUE));
             return;
         }
         ws = refNode->GetCData(XFA_ATTRIBUTE_Name);
         ws.Replace(L".", L"\\.");
-        wsName.Format(L"%s[%d]", (FX_LPCWSTR)ws, XFA_GetIndex(refNode, eLogicType, bIsProperty, FALSE));
+        wsName.Format(L"%s[%d]", (const FX_WCHAR*)ws, XFA_GetIndex(refNode, eLogicType, bIsProperty, FALSE));
     }
 }
 FX_BOOL	CXFA_NodeHelper::XFA_NodeIsTransparent(CXFA_Node* refNode)

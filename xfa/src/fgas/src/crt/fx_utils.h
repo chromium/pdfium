@@ -11,12 +11,12 @@ class CFX_BaseMassArrayImp : public CFX_Target
 public:
     CFX_BaseMassArrayImp(int32_t iChunkSize, int32_t iBlockSize);
     ~CFX_BaseMassArrayImp();
-    FX_LPBYTE	AddSpace()
+    uint8_t*	AddSpace()
     {
         return AddSpaceTo(m_iBlockCount);
     }
-    FX_LPBYTE	AddSpaceTo(int32_t index);
-    FX_LPBYTE	GetAt(int32_t index) const;
+    uint8_t*	AddSpaceTo(int32_t index);
+    uint8_t*	GetAt(int32_t index) const;
     int32_t	Append(const CFX_BaseMassArrayImp &src, int32_t iStart = 0, int32_t iCount = -1);
     int32_t	Copy(const CFX_BaseMassArrayImp &src, int32_t iStart = 0, int32_t iCount = -1);
     int32_t	RemoveLast(int32_t iCount = -1);

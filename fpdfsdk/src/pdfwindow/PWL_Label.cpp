@@ -43,7 +43,7 @@ void CPWL_Label::OnCreated()
 	}
 }
 
-void CPWL_Label::SetText(FX_LPCWSTR csText)
+void CPWL_Label::SetText(const FX_WCHAR* csText)
 {
 	m_pEdit->SetText(csText);
 }

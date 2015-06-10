@@ -66,7 +66,7 @@ public:
         FXTARGET_Delete this;
     }
     virtual void*			Alloc(size_t size);
-    virtual void			Free(FX_LPVOID pBlock) {}
+    virtual void			Free(void* pBlock) {}
     virtual size_t			GetBlockSize() const
     {
         return 0;
@@ -92,11 +92,11 @@ protected:
 #pragma pack(push, 1)
 #endif
 typedef struct _FX_FIXEDSTORECHUNK {
-    FX_LPBYTE				FirstFlag() const
+    uint8_t*				FirstFlag() const
     {
-        return (FX_LPBYTE)this + sizeof(_FX_FIXEDSTORECHUNK);
+        return (uint8_t*)this + sizeof(_FX_FIXEDSTORECHUNK);
     }
-    FX_LPBYTE				FirstBlock() const
+    uint8_t*				FirstBlock() const
     {
         return FirstFlag() + iChunkSize;
     }
@@ -118,7 +118,7 @@ public:
         FXTARGET_Delete this;
     }
     virtual void*			Alloc(size_t size);
-    virtual void			Free(FX_LPVOID pBlock);
+    virtual void			Free(void* pBlock);
     virtual size_t			GetBlockSize() const
     {
         return m_iBlockSize;
@@ -146,9 +146,9 @@ typedef struct _FX_DYNAMICSTOREBLOCK {
     {
         return (_FX_DYNAMICSTOREBLOCK*)(Data() + iBlockSize);
     }
-    FX_LPBYTE				Data() const
+    uint8_t*				Data() const
     {
-        return (FX_LPBYTE)this + sizeof(_FX_DYNAMICSTOREBLOCK);
+        return (uint8_t*)this + sizeof(_FX_DYNAMICSTOREBLOCK);
     }
     size_t		iBlockSize;
     FX_BOOL		bUsed;
@@ -157,7 +157,7 @@ typedef FX_DYNAMICSTOREBLOCK const * FX_LPCDYNAMICSTOREBLOCK;
 typedef struct _FX_DYNAMICSTORECHUNK {
     FX_LPDYNAMICSTOREBLOCK	FirstBlock() const
     {
-        return (FX_LPDYNAMICSTOREBLOCK)((FX_LPBYTE)this + sizeof(_FX_DYNAMICSTORECHUNK));
+        return (FX_LPDYNAMICSTOREBLOCK)((uint8_t*)this + sizeof(_FX_DYNAMICSTORECHUNK));
     }
     _FX_DYNAMICSTORECHUNK*	pNextChunk;
     size_t					iChunkSize;
@@ -177,7 +177,7 @@ public:
         FXTARGET_Delete this;
     }
     virtual void*		Alloc(size_t size);
-    virtual void		Free(FX_LPVOID pBlock);
+    virtual void		Free(void* pBlock);
     virtual size_t		GetBlockSize() const
     {
         return 0;

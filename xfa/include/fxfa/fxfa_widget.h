@@ -63,7 +63,7 @@ public:
     void				SetImageImage(CFX_DIBitmap* newImage);
     void				SetImageEditImage(CFX_DIBitmap* newImage);
     void			UpdateUIDisplay(CXFA_FFWidget* pExcept = NULL);
-    void			NotifyEvent(FX_DWORD dwEvent, CXFA_FFWidget* pWidget = NULL, FX_LPVOID pParam = NULL, FX_LPVOID pAdditional = NULL);
+    void			NotifyEvent(FX_DWORD dwEvent, CXFA_FFWidget* pWidget = NULL, void* pParam = NULL, void* pAdditional = NULL);
 
 
     CXFA_Node*		GetDatasets();

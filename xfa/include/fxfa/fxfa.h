@@ -337,7 +337,7 @@ public:
                                     const CFX_RectF &rtAnchor, CFX_RectF &rtPopup) = 0;
     virtual FX_BOOL		PopupMenu(IXFA_Widget* hWidget, CFX_PointF ptPopup, const CFX_RectF* pRectExclude = NULL) = 0;
     virtual void		PageViewEvent(IXFA_PageView* pPageView, FX_DWORD dwFlags) = 0;
-    virtual void		WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, FX_LPVOID pParam = NULL, FX_LPVOID pAdditional = NULL) = 0;
+    virtual void		WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, void* pParam = NULL, void* pAdditional = NULL) = 0;
     virtual FX_BOOL		RenderCustomWidget(IXFA_Widget* hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix, const CFX_RectF& rtUI)
     {
         return FALSE;
@@ -640,8 +640,8 @@ public:
 
     virtual void			GetName(IXFA_Widget* hWidget, CFX_WideString &wsName, int32_t iNameType = 0) = 0;
     virtual	FX_BOOL			GetToolTip(IXFA_Widget* hWidget, CFX_WideString &wsToolTip) = 0;
-    virtual	void			SetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback) = 0;
-    virtual	FX_LPVOID		GetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id) = 0;
+    virtual	void			SetPrivateData(IXFA_Widget* hWidget, void* module_id, void* pData, PD_CALLBACK_FREEDATA callback) = 0;
+    virtual	void*		GetPrivateData(IXFA_Widget* hWidget, void* module_id) = 0;
     virtual FX_BOOL			OnMouseEnter(IXFA_Widget* hWidget) = 0;
     virtual FX_BOOL			OnMouseExit(IXFA_Widget* hWidget) = 0;
     virtual FX_BOOL			OnLButtonDown(IXFA_Widget* hWidget, FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) = 0;

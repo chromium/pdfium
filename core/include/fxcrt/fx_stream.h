@@ -10,14 +10,14 @@
 #include "fx_memory.h"
 #include "fx_string.h"
 
-void* FX_OpenFolder(FX_LPCSTR path);
-void* FX_OpenFolder(FX_LPCWSTR path);
+void* FX_OpenFolder(const FX_CHAR* path);
+void* FX_OpenFolder(const FX_WCHAR* path);
 FX_BOOL FX_GetNextFile(void* handle, CFX_ByteString& filename, FX_BOOL& bFolder);
 FX_BOOL FX_GetNextFile(void* handle, CFX_WideString& filename, FX_BOOL& bFolder);
 void FX_CloseFolder(void* handle);
 FX_WCHAR FX_GetFolderSeparator();
 typedef struct FX_HFILE_ {
-    FX_LPVOID pData;
+    void* pData;
 }* FX_HFILE;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define FX_FILESIZE			int32_t
@@ -88,8 +88,8 @@ public:
         return WriteBlock(pData, GetSize(), size);
     }
 };
-IFX_FileWrite* FX_CreateFileWrite(FX_LPCSTR filename);
-IFX_FileWrite* FX_CreateFileWrite(FX_LPCWSTR filename);
+IFX_FileWrite* FX_CreateFileWrite(const FX_CHAR* filename);
+IFX_FileWrite* FX_CreateFileWrite(const FX_WCHAR* filename);
 class IFX_StreamRead
 {
 public:
@@ -134,8 +134,8 @@ public:
         return 0;
     }
 };
-IFX_FileRead* FX_CreateFileRead(FX_LPCSTR filename);
-IFX_FileRead* FX_CreateFileRead(FX_LPCWSTR filename);
+IFX_FileRead* FX_CreateFileRead(const FX_CHAR* filename);
+IFX_FileRead* FX_CreateFileRead(const FX_WCHAR* filename);
 class IFX_FileStream : public IFX_FileRead, public IFX_FileWrite
 {
 public:
@@ -162,8 +162,8 @@ public:
 
     virtual FX_BOOL				Flush() = 0;
 };
-IFX_FileStream*		FX_CreateFileStream(FX_LPCSTR filename, FX_DWORD dwModes);
-IFX_FileStream*		FX_CreateFileStream(FX_LPCWSTR filename, FX_DWORD dwModes);
+IFX_FileStream*		FX_CreateFileStream(const FX_CHAR* filename, FX_DWORD dwModes);
+IFX_FileStream*		FX_CreateFileStream(const FX_WCHAR* filename, FX_DWORD dwModes);
 class IFX_FileAccess
 {
 public:
@@ -181,13 +181,13 @@ public:
 
     virtual void			EstimateSize(size_t nInitSize, size_t nGrowSize) = 0;
 
-    virtual FX_LPBYTE		GetBuffer() const = 0;
+    virtual uint8_t*		GetBuffer() const = 0;
 
-    virtual void			AttachBuffer(FX_LPBYTE pBuffer, size_t nSize, FX_BOOL bTakeOver = FALSE) = 0;
+    virtual void			AttachBuffer(uint8_t* pBuffer, size_t nSize, FX_BOOL bTakeOver = FALSE) = 0;
 
     virtual void			DetachBuffer() = 0;
 };
-IFX_MemoryStream*	FX_CreateMemoryStream(FX_LPBYTE pBuffer, size_t nSize, FX_BOOL bTakeOver = FALSE);
+IFX_MemoryStream*	FX_CreateMemoryStream(uint8_t* pBuffer, size_t nSize, FX_BOOL bTakeOver = FALSE);
 IFX_MemoryStream*	FX_CreateMemoryStream(FX_BOOL bConsecutive = FALSE);
 class IFX_BufferRead : public IFX_StreamRead
 {
@@ -203,7 +203,7 @@ public:
 
     virtual FX_BOOL			ReadNextBlock(FX_BOOL bRestart = FALSE) = 0;
 
-    virtual FX_LPCBYTE		GetBlockBuffer() = 0;
+    virtual const uint8_t*		GetBlockBuffer() = 0;
 
     virtual size_t			GetBlockSize() = 0;
 

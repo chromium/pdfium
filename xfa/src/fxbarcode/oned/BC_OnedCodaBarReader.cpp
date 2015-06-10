@@ -26,7 +26,7 @@
 #include "../oned/BC_OneDReader.h"
 #include "../oned/BC_OnedCode39Reader.h"
 #include "../oned/BC_OnedCodaBarReader.h"
-FX_LPCSTR CBC_OnedCodaBarReader::ALPHABET_STRING = "0123456789-$:/.+ABCDTN";
+const FX_CHAR* CBC_OnedCodaBarReader::ALPHABET_STRING = "0123456789-$:/.+ABCDTN";
 const int32_t CBC_OnedCodaBarReader::CHARACTER_ENCODINGS[22] = {
     0x003, 0x006, 0x009, 0x060, 0x012, 0x042, 0x021, 0x024, 0x030, 0x048,
     0x00c, 0x018, 0x045, 0x051, 0x054, 0x015, 0x01A, 0x029, 0x00B, 0x00E,

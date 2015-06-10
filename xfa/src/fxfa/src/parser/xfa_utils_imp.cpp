@@ -306,7 +306,7 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString &wsStringVal)
     int32_t nExponent = 0;
     int32_t cc = 0;
     FX_BOOL bNegative = FALSE, bExpSign = FALSE;
-    FX_LPCWSTR str = (FX_LPCWSTR)wsValue;
+    const FX_WCHAR* str = (const FX_WCHAR*)wsValue;
     int32_t len = wsValue.GetLength();
     if (str[0] == '+') {
         cc++;

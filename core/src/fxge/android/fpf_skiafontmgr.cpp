@@ -103,7 +103,7 @@ FX_DWORD FPF_SkiaGetSansFont(FX_DWORD dwHash)
     }
     return 0;
 }
-static uint32_t FPF_GetHashCode_StringA(FX_LPCSTR pStr, int32_t iLength, FX_BOOL bIgnoreCase = FALSE)
+static uint32_t FPF_GetHashCode_StringA(const FX_CHAR* pStr, int32_t iLength, FX_BOOL bIgnoreCase = FALSE)
 {
     if (!pStr) {
         return 0;
@@ -111,7 +111,7 @@ static uint32_t FPF_GetHashCode_StringA(FX_LPCSTR pStr, int32_t iLength, FX_BOOL
     if (iLength < 0) {
         iLength = FXSYS_strlen(pStr);
     }
-    FX_LPCSTR pStrEnd = pStr + iLength;
+    const FX_CHAR* pStrEnd = pStr + iLength;
     uint32_t uHashCode = 0;
     if (bIgnoreCase) {
         while (pStr < pStrEnd) {
@@ -185,7 +185,7 @@ static FX_DWORD FPF_SKIANormalizeFontName(FX_BSTR bsfamily)
 {
     FX_DWORD dwHash = 0;
     int32_t iLength = bsfamily.GetLength();
-    FX_LPCSTR pBuffer = bsfamily.GetCStr();
+    const FX_CHAR* pBuffer = bsfamily.GetCStr();
     for (int32_t i = 0; i < iLength; i++) {
         FX_CHAR ch = pBuffer[i];
         if (ch == ' ' || ch == '-' || ch == ',') {
@@ -276,7 +276,7 @@ void CFPF_SkiaFontMgr::LoadPrivateFont(IFX_FileRead* pFontFile)
 void CFPF_SkiaFontMgr::LoadPrivateFont(FX_BSTR bsFileName)
 {
 }
-void CFPF_SkiaFontMgr::LoadPrivateFont(FX_LPVOID pBuffer, size_t szBuffer)
+void CFPF_SkiaFontMgr::LoadPrivateFont(void* pBuffer, size_t szBuffer)
 {
 }
 IFPF_Font* CFPF_SkiaFontMgr::CreateFont(FX_BSTR bsFamilyname, uint8_t uCharset, FX_DWORD dwStyle, FX_DWORD dwMatch)
@@ -417,7 +417,7 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(FX_BSTR bsFile, int32_t iFaceIndex )
     FXFT_Set_Pixel_Sizes(face, 0, 64);
     return face;
 }
-FXFT_Face CFPF_SkiaFontMgr::GetFontFace(FX_LPCBYTE pBuffer, size_t szBuffer, int32_t iFaceIndex )
+FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const uint8_t* pBuffer, size_t szBuffer, int32_t iFaceIndex )
 {
     if (!pBuffer || szBuffer < 1) {
         return NULL;

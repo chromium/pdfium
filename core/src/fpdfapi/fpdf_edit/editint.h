@@ -15,7 +15,7 @@ public:
     FX_BOOL				Start();
 
     int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const CPDF_Object *pObj);
-    int32_t			CompressIndirectObject(FX_DWORD dwObjNum, FX_LPCBYTE pBuffer, FX_DWORD dwSize);
+    int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const uint8_t* pBuffer, FX_DWORD dwSize);
 
     FX_FILESIZE			End(CPDF_Creator* pCreator);
 
@@ -38,7 +38,7 @@ public:
 
     int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const CPDF_Object *pObj, CPDF_Creator *pCreator);
 
-    int32_t			CompressIndirectObject(FX_DWORD dwObjNum, FX_LPCBYTE pBuffer, FX_DWORD dwSize, CPDF_Creator *pCreator);
+    int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const uint8_t* pBuffer, FX_DWORD dwSize, CPDF_Creator *pCreator);
 
     FX_BOOL				End(CPDF_Creator *pCreator, FX_BOOL bEOF = FALSE);
     FX_BOOL				AddObjectNumberToIndexArray(FX_DWORD objnum);

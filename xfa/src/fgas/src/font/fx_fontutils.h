@@ -14,6 +14,6 @@ typedef struct _FGAS_FONTUSB {
 } FGAS_FONTUSB, * FGAS_LPFONTUSB;
 typedef FGAS_FONTUSB const * FGAS_LPCFONTUSB;
 FX_DWORD FGAS_GetFontHashCode(FX_WORD wCodePage, FX_DWORD dwFontStyles);
-FX_DWORD FGAS_GetFontFamilyHash(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
+FX_DWORD FGAS_GetFontFamilyHash(const FX_WCHAR* pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
 FGAS_LPCFONTUSB FGAS_GetUnicodeBitField(FX_WCHAR wUnicode);
 #endif

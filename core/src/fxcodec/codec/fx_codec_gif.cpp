@@ -28,12 +28,12 @@ extern "C" {
         }
     }
 };
-static void _gif_error_data(gif_decompress_struct_p gif_ptr, FX_LPCSTR err_msg)
+static void _gif_error_data(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg)
 {
     FXSYS_strncpy((char*)gif_ptr->err_ptr, err_msg, GIF_MAX_ERROR_SIZE - 1);
     longjmp(gif_ptr->jmpbuf, 1);
 }
-static FX_LPBYTE _gif_ask_buf_for_pal(gif_decompress_struct_p gif_ptr, int32_t pal_size)
+static uint8_t* _gif_ask_buf_for_pal(gif_decompress_struct_p gif_ptr, int32_t pal_size)
 {
     FXGIF_Context* p = (FXGIF_Context*)gif_ptr->context_ptr;
     CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
@@ -47,7 +47,7 @@ static void _gif_record_current_position(gif_decompress_struct_p gif_ptr, FX_DWO
     CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
     pModule->RecordCurrentPositionCallback(p->child_ptr, *cur_pos_ptr);
 }
-static void _gif_read_scanline(gif_decompress_struct_p gif_ptr, int32_t row_num, FX_LPBYTE row_buf)
+static void _gif_read_scanline(gif_decompress_struct_p gif_ptr, int32_t row_num, uint8_t* row_buf)
 {
     FXGIF_Context* p = (FXGIF_Context*)gif_ptr->context_ptr;
     CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
@@ -144,7 +144,7 @@ int32_t CCodec_GifModule::LoadFrame(void* pContext, int frame_num, CFX_DIBAttrib
             pAttribute->m_nGifTop = p->gif_ptr->img_ptr_arr_ptr->GetAt(frame_num)->image_info_ptr->top;
             pAttribute->m_fAspectRatio = p->gif_ptr->pixel_aspect;
             if (p->gif_ptr->cmt_data_ptr) {
-                FX_LPCBYTE buf = (FX_LPCBYTE)p->gif_ptr->cmt_data_ptr->GetBuffer(0);
+                const uint8_t* buf = (const uint8_t*)p->gif_ptr->cmt_data_ptr->GetBuffer(0);
                 FX_DWORD len = p->gif_ptr->cmt_data_ptr->GetLength();
                 if (len > 21) {
                     uint8_t size = *buf++;
@@ -164,13 +164,13 @@ int32_t CCodec_GifModule::LoadFrame(void* pContext, int frame_num, CFX_DIBAttrib
     }
     return ret;
 }
-FX_DWORD CCodec_GifModule::GetAvailInput(void* pContext, FX_LPBYTE* avial_buf_ptr)
+FX_DWORD CCodec_GifModule::GetAvailInput(void* pContext, uint8_t** avial_buf_ptr)
 {
     FXGIF_Context* p = (FXGIF_Context*)pContext;
     return _gif_get_avail_input(p->gif_ptr, avial_buf_ptr);
 }
-void CCodec_GifModule::Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size)
+void CCodec_GifModule::Input(void* pContext, const uint8_t* src_buf, FX_DWORD src_size)
 {
     FXGIF_Context* p = (FXGIF_Context*)pContext;
-    _gif_input_buffer(p->gif_ptr, (FX_LPBYTE)src_buf, src_size);
+    _gif_input_buffer(p->gif_ptr, (uint8_t*)src_buf, src_size);
 }

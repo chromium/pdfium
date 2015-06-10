@@ -48,11 +48,11 @@ FX_BOOL CXFA_FFWidgetHandler::GetToolTip(IXFA_Widget* hWidget, CFX_WideString &w
 {
     return static_cast<CXFA_FFWidget*>(hWidget)->GetToolTip(wsToolTip);
 }
-void CXFA_FFWidgetHandler::SetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback)
+void CXFA_FFWidgetHandler::SetPrivateData(IXFA_Widget* hWidget, void* module_id, void* pData, PD_CALLBACK_FREEDATA callback)
 {
     static_cast<CXFA_FFWidget*>(hWidget)->SetPrivateData(module_id, pData, callback);
 }
-FX_LPVOID CXFA_FFWidgetHandler::GetPrivateData(IXFA_Widget* hWidget, FX_LPVOID module_id)
+void* CXFA_FFWidgetHandler::GetPrivateData(IXFA_Widget* hWidget, void* module_id)
 {
     return static_cast<CXFA_FFWidget*>(hWidget)->GetPrivateData(module_id);
 }

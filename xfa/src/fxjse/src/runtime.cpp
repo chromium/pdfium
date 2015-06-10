@@ -38,7 +38,7 @@ void FXJSE_Initialize()
     }
     bV8Initialized = TRUE;
     atexit(FXJSE_KillV8);
-    FX_LPCSTR szCmdFlags =
+    const FX_CHAR* szCmdFlags =
         "--harmony_proxies "
         "--block_concurrent_recompilation "
         ;

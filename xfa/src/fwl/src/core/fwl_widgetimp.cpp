@@ -71,11 +71,11 @@ FWL_ERR	IFWL_Widget::SetStates(FX_DWORD dwStates, FX_BOOL bSet )
 {
     return ((CFWL_WidgetImp*)m_pData)->SetStates(dwStates, bSet);
 }
-FWL_ERR	IFWL_Widget::SetPrivateData(FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback)
+FWL_ERR	IFWL_Widget::SetPrivateData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback)
 {
     return ((CFWL_WidgetImp*)m_pData)->SetPrivateData(module_id, pData, callback);
 }
-FX_LPVOID IFWL_Widget::GetPrivateData(FX_LPVOID module_id)
+void* IFWL_Widget::GetPrivateData(void* module_id)
 {
     return ((CFWL_WidgetImp*)m_pData)->GetPrivateData(module_id);
 }
@@ -309,7 +309,7 @@ FWL_ERR CFWL_WidgetImp::SetStates(FX_DWORD dwStates, FX_BOOL bSet )
     }
     return ret;
 }
-FWL_ERR CFWL_WidgetImp::SetPrivateData(FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback)
+FWL_ERR CFWL_WidgetImp::SetPrivateData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback)
 {
     if (!m_pPrivateData) {
         m_pPrivateData = new CFX_PrivateData;
@@ -317,7 +317,7 @@ FWL_ERR CFWL_WidgetImp::SetPrivateData(FX_LPVOID module_id, FX_LPVOID pData, PD_
     m_pPrivateData->SetPrivateData(module_id, pData, callback);
     return FWL_ERR_Succeeded;
 }
-FX_LPVOID CFWL_WidgetImp::GetPrivateData(FX_LPVOID module_id)
+void* CFWL_WidgetImp::GetPrivateData(void* module_id)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pPrivateData, NULL);
     return m_pPrivateData->GetPrivateData(module_id);
@@ -657,7 +657,7 @@ void CFWL_WidgetImp::GetRelativeRect(CFX_RectF &rect)
     rect = m_pProperties->m_rtWidget;
     rect.left = rect.top = 0;
 }
-FX_LPVOID CFWL_WidgetImp::GetThemeCapacity(FX_DWORD dwCapacity)
+void* CFWL_WidgetImp::GetThemeCapacity(FX_DWORD dwCapacity)
 {
     IFWL_ThemeProvider *pTheme = GetAvailableTheme();
     _FWL_RETURN_VALUE_IF_FAIL(pTheme, NULL);
@@ -709,7 +709,7 @@ CFWL_WidgetImp* CFWL_WidgetImp::GetSameAncestor(CFWL_WidgetImp *pWidget)
         relation =  pAncestor->IsPopup() ? FWL_WGTRELATION_Owner : FWL_WGTRELATION_Parent;
     } while ((pAncestor = (CFWL_WidgetImp*)m_pWidgetMgr->GetWidget(pAncestor->m_pInterface, relation)) != NULL);
     for (int32_t i = 0; i < arr1.GetSize(); i ++) {
-        FX_LPVOID pVoid = arr1[i];
+        void* pVoid = arr1[i];
         if (arr2.Find(pVoid) < 0) {
             continue;
         } else {

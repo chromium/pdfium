@@ -8,8 +8,8 @@
 #define _FXFA_FORMFILLER_FONTMGR_IMP_H
 struct XFA_FONTINFO {
     FX_DWORD	dwFontNameHash;
-    FX_LPCWSTR	pPsName;
-    FX_LPCWSTR	pReplaceFont;
+    const FX_WCHAR*	pPsName;
+    const FX_WCHAR*	pReplaceFont;
     FX_WORD		dwStyles;
     FX_WORD		wCodePage;
 };

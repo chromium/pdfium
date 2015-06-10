@@ -23,7 +23,7 @@ enum FWL_CURSORTYPE {
     FWL_CURSORTYPE_Help
 };
 typedef struct _FWL_HCURSOR {
-    FX_LPVOID pData;
+    void* pData;
 } *FWL_HCURSOR;
 class IFWL_AdapterCursorMgr
 {

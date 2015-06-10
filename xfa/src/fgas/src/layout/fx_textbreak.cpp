@@ -216,7 +216,7 @@ void CFX_TxtBreak::SetCombWidth(FX_FLOAT fCombWidth)
 {
     m_iCombWidth = FXSYS_round(fCombWidth * 20000.0f);
 }
-void CFX_TxtBreak::SetUserData(FX_LPVOID pUserData)
+void CFX_TxtBreak::SetUserData(void* pUserData)
 {
     if (m_pUserData == pUserData) {
         return;
@@ -1183,8 +1183,8 @@ int32_t CFX_TxtBreak::GetDisplayPos(FX_LPCTXTRUN pTxtRun, FXTEXT_CHARPOS *pCharP
         return 0;
     }
     IFX_TxtAccess *pAccess = pTxtRun->pAccess;
-    FX_LPVOID pIdentity = pTxtRun->pIdentity;
-    FX_LPCWSTR pStr = pTxtRun->pStr;
+    void* pIdentity = pTxtRun->pIdentity;
+    const FX_WCHAR* pStr = pTxtRun->pStr;
     int32_t *pWidths = pTxtRun->pWidths;
     int32_t iLength = pTxtRun->iLength - 1;
     IFX_Font *pFont = pTxtRun->pFont;
@@ -1550,8 +1550,8 @@ int32_t CFX_TxtBreak::GetCharRects(FX_LPCTXTRUN pTxtRun, CFX_RectFArray &rtArray
         return 0;
     }
     IFX_TxtAccess *pAccess = pTxtRun->pAccess;
-    FX_LPVOID pIdentity = pTxtRun->pIdentity;
-    FX_LPCWSTR pStr = pTxtRun->pStr;
+    void* pIdentity = pTxtRun->pIdentity;
+    const FX_WCHAR* pStr = pTxtRun->pStr;
     int32_t *pWidths = pTxtRun->pWidths;
     int32_t iLength = pTxtRun->iLength;
     CFX_RectF rect(*pTxtRun->pRect);

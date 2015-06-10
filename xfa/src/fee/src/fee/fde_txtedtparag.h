@@ -33,7 +33,7 @@ public:
     int32_t	m_nCharCount;
     int32_t	m_nLineCount;
 private:
-    FX_LPVOID			m_lpData;
+    void*			m_lpData;
     CFDE_TxtEdtEngine*	m_pEngine;
 };
 #endif

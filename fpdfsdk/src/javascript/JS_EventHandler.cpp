@@ -461,7 +461,7 @@ FX_BOOL CJS_EventHandler::Modifier()
 	return m_bModifier;
 }
 
-FX_LPCWSTR CJS_EventHandler::Name()
+const FX_WCHAR* CJS_EventHandler::Name()
 {
 	switch (m_eEventType)
 	{
@@ -509,7 +509,7 @@ FX_LPCWSTR CJS_EventHandler::Name()
 	return L"";
 }
 
-FX_LPCWSTR CJS_EventHandler::Type()
+const FX_WCHAR* CJS_EventHandler::Type()
 {
 	switch (m_eEventType)
 	{

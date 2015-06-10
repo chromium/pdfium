@@ -18,7 +18,7 @@ CFDE_TxtEdtBlock::CFDE_TxtEdtBlock(CFDE_TxtEdtEngine * pEngine, const CFX_WideSt
     , m_nIndex(0)
     , m_nPosition(nPosition)
 {
-    FX_LPCWSTR lpBuf = FX_LPCWSTR(wsBlock);
+    const FX_WCHAR* lpBuf = const FX_WCHAR*(wsBlock);
     int32_t nCount	= wsBlock.GetLength();
     int32_t i		= 0;
     CFX_WideString wsFix;
@@ -166,7 +166,7 @@ CFDE_TxtEdtFieldFormatParser::~CFDE_TxtEdtFieldFormatParser()
 FX_BOOL CFDE_TxtEdtFieldFormatParser::Parse(const CFX_WideString &wsFormat)
 {
     m_wsFormat = wsFormat;
-    FX_LPCWSTR	pBuf	= FX_LPCWSTR(m_wsFormat);
+    const FX_WCHAR*	pBuf	= const FX_WCHAR*(m_wsFormat);
     int32_t	nCount	= m_wsFormat.GetLength();
     nCount -= 2;
     int32_t i = 0;
@@ -206,8 +206,8 @@ int32_t CFDE_TxtEdtFieldFormatParser::CountItems() const
 void CFDE_TxtEdtFieldFormatParser::GetItem(int32_t nIndex, CFX_WideString &wsKey, CFX_WideString &wsValue) const
 {
     FDE_LPTXTEDTFORMATITEM lpItem = m_ItemArr[nIndex];
-    FX_LPCWSTR lpSrcBuf = FX_LPCWSTR(m_wsFormat);
-    FX_LPWSTR lpDstBuf = wsKey.GetBuffer(lpItem->nKeyCount);
+    const FX_WCHAR* lpSrcBuf = const FX_WCHAR*(m_wsFormat);
+    FX_WCHAR* lpDstBuf = wsKey.GetBuffer(lpItem->nKeyCount);
     FXSYS_memcpy(lpDstBuf, lpSrcBuf + lpItem->nKeyStart, lpItem->nKeyCount * sizeof(FX_WCHAR));
     wsKey.ReleaseBuffer(lpItem->nKeyCount);
     lpDstBuf = wsValue.GetBuffer(lpItem->nValCount);
@@ -300,8 +300,8 @@ int32_t CFDE_TxtEdtField::Delete(int32_t nIndex, int32_t nCount,
         default:
             break;
     }
-    FX_LPWSTR lpBuf = wsDel.GetBuffer(nCount);
-    FXSYS_memcpy(lpBuf, FX_LPCWSTR(m_wsField) + nInnerIndex, nCount * sizeof(FX_WCHAR));
+    FX_WCHAR* lpBuf = wsDel.GetBuffer(nCount);
+    FXSYS_memcpy(lpBuf, const FX_WCHAR*(m_wsField) + nInnerIndex, nCount * sizeof(FX_WCHAR));
     wsDel.ReleaseBuffer(nCount);
     m_wsField	= wsTemp;
     nCaret		= nIndex + (m_bReserveSpace && !m_bLeftAlignment) ? nCount : 0;
@@ -336,8 +336,8 @@ int32_t CFDE_TxtEdtField::Replace(int32_t nIndex, int32_t nCount, const CFX_Wide
         default:
             break;
     }
-    FX_LPWSTR	lpBuffer = wsDel.GetBuffer(nCount);
-    FX_LPCWSTR	lpSrcBuf = FX_LPCWSTR(m_wsField);
+    FX_WCHAR*	lpBuffer = wsDel.GetBuffer(nCount);
+    const FX_WCHAR*	lpSrcBuf = const FX_WCHAR*(m_wsField);
     FXSYS_memcpy(lpBuffer, lpSrcBuf + nInnerIndexBK, nCount * sizeof(FX_WCHAR));
     wsDel.ReleaseBuffer(nCount);
     m_wsField	= wsTemp;
@@ -349,12 +349,12 @@ void CFDE_TxtEdtField::GetDisplayText(CFX_WideString &wsDisplay)
     CFX_WideString wsField;
     GetNormalizedFieldText(wsField);
     int32_t nLength	= wsField.GetLength() + FDE_FORMAT_EDIT_FIELD_HADERSIZE + FDE_FORMAT_EDIT_FIELD_TAILSIZE;
-    FX_LPWSTR lpBuffer	= wsDisplay.GetBuffer(nLength);
+    FX_WCHAR* lpBuffer	= wsDisplay.GetBuffer(nLength);
     lpBuffer[0]				= FDE_TXTEDT_FORMATBLOCK_BGN;
     lpBuffer[nLength - 1]	= FDE_TXTEDT_FORMATBLOCK_END;
     FX_DWORD nAddress = (FX_DWORD)this;
     FXSYS_memcpy(lpBuffer + 1, &nAddress, sizeof(FX_DWORD));
-    FXSYS_memcpy(lpBuffer + 3, FX_LPCWSTR(wsField), (nLength - 4) * sizeof(FX_WCHAR));
+    FXSYS_memcpy(lpBuffer + 3, const FX_WCHAR*(wsField), (nLength - 4) * sizeof(FX_WCHAR));
     wsDisplay.ReleaseBuffer(nLength);
 }
 int32_t CFDE_TxtEdtField::GetDisplayLength()
@@ -548,7 +548,7 @@ int32_t CFDE_TxtEdtField_Float::Validate(const CFX_WideString & wsText) const
     if (m_nLength != -1 && (nLength > m_nLength)) {
         return FDE_FORMAT_FIELD_VALIDATE_F_FULL;
     }
-    FX_LPCWSTR lpBuf = FX_LPCWSTR(wsText);
+    const FX_WCHAR* lpBuf = const FX_WCHAR*(wsText);
     int32_t i = 0;
     if (m_bSigned) {
         FX_WCHAR wcTemp = lpBuf[0];
@@ -613,7 +613,7 @@ void CFDE_TxtEdtField_Password::GetNormalizedFieldText(CFX_WideString &wsField) 
 {
     int32_t nFiledLength	= m_wsField.GetLength();
     int32_t nLength		= m_bReserveSpace ? m_nLength : nFiledLength;
-    FX_LPWSTR lpBuf			= wsField.GetBuffer(nLength);
+    FX_WCHAR* lpBuf			= wsField.GetBuffer(nLength);
     int32_t nSpaceLength	= nLength - nFiledLength;
     int32_t nFirstPart		= m_bLeftAlignment ? nFiledLength : nSpaceLength;
     FX_WCHAR wFirstChar		= m_bLeftAlignment ? m_wcAlias : L' ';
@@ -655,12 +655,12 @@ CFDE_TxtEdtField_Fixed::CFDE_TxtEdtField_Fixed(const CFX_WideString &wsField, in
 void CFDE_TxtEdtField_Fixed::GetDisplayText(CFX_WideString &wsDisplay)
 {
     int32_t nLength	= m_wsField.GetLength() + FDE_FORMAT_EDIT_FIELD_HADERSIZE + FDE_FORMAT_EDIT_FIELD_TAILSIZE;
-    FX_LPWSTR lpBuffer	= wsDisplay.GetBuffer(nLength);
+    FX_WCHAR* lpBuffer	= wsDisplay.GetBuffer(nLength);
     lpBuffer[0]				= FDE_TXTEDT_FORMATBLOCK_BGN;
     lpBuffer[nLength - 1]	= FDE_TXTEDT_FORMATBLOCK_END;
     FX_DWORD nAddress = (FX_DWORD)this;
     FXSYS_memcpy(lpBuffer + 1, &nAddress, sizeof(FX_DWORD));
-    FXSYS_memcpy(lpBuffer + 3, FX_LPCWSTR(m_wsField), (nLength - 4) * sizeof(FX_WCHAR));
+    FXSYS_memcpy(lpBuffer + 3, const FX_WCHAR*(m_wsField), (nLength - 4) * sizeof(FX_WCHAR));
     wsDisplay.ReleaseBuffer(nLength);
 }
 int32_t CFDE_TxtEdtField_Fixed::NormalizeCaretPos(int32_t nIndex, FDE_FORMAT_CARET_DIRECTION eDirection ) const

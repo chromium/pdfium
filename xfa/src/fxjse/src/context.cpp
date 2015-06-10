@@ -11,7 +11,7 @@
 #include "value.h"
 #include "scope_inline.h"
 #include "util_inline.h"
-FXJSE_HCONTEXT	FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime, const FXJSE_CLASS* lpGlobalClass , FX_LPVOID lpGlobalObject )
+FXJSE_HCONTEXT	FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime, const FXJSE_CLASS* lpGlobalClass , void* lpGlobalObject )
 {
     CFXJSE_Context* pContext = CFXJSE_Context::Create(reinterpret_cast<v8::Isolate*>(hRuntime), lpGlobalClass, lpGlobalObject);
     return reinterpret_cast<FXJSE_HCONTEXT>(pContext);
@@ -39,7 +39,7 @@ FXJSE_HRUNTIME  FXJSE_Context_GetRuntime(FXJSE_HCONTEXT hContext)
     CFXJSE_Context* pContext = reinterpret_cast<CFXJSE_Context*>(hContext);
     return pContext ? reinterpret_cast<FXJSE_HRUNTIME>(pContext->GetRuntime()) : NULL;
 }
-static FX_LPCSTR szCompatibleModeScripts[] = {
+static const FX_CHAR* szCompatibleModeScripts[] = {
     "(function (global, list) { 'use strict'; var objname; for (objname in list) { var globalobj = global[objname];\n\
 			if (globalobj) { list[objname].forEach( function (name) { if (!globalobj[name]) { Object.defineProperty(globalobj, name, {writable: true, enumerable: false, value: \n\
 			(function (obj) {\n\
@@ -57,7 +57,7 @@ void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext, FX_DWORD dwComp
         }
     }
 }
-FX_BOOL	FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext, FX_LPCSTR szScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hNewThisObject )
+FX_BOOL	FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext, const FX_CHAR* szScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hNewThisObject )
 {
     CFXJSE_Context* pContext = reinterpret_cast<CFXJSE_Context*>(hContext);
     ASSERT(pContext);
@@ -129,7 +129,7 @@ FX_BOOL FXJSE_ReturnValue_GetLineInfo(FXJSE_HVALUE hRetValue, int32_t& nLine, in
     nCol = hValue.As<v8::Object>()->Get(5)->ToInt32()->Value();
     return TRUE;
 }
-CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate, const FXJSE_CLASS* lpGlobalClass , FX_LPVOID lpGlobalObject )
+CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate, const FXJSE_CLASS* lpGlobalClass , void* lpGlobalObject )
 {
     CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
     CFXJSE_Context* pContext = FX_NEW CFXJSE_Context(pIsolate);
@@ -179,7 +179,7 @@ void CFXJSE_Context::GetGlobalObject(CFXJSE_Value* pValue)
     v8::Local<v8::Object> hGlobalObject = hContext->Global();
     pValue->ForceSetValue(hGlobalObject);
 }
-FX_BOOL	CFXJSE_Context::ExecuteScript(FX_LPCSTR szScript, CFXJSE_Value* lpRetValue, CFXJSE_Value* lpNewThisObject )
+FX_BOOL	CFXJSE_Context::ExecuteScript(const FX_CHAR* szScript, CFXJSE_Value* lpRetValue, CFXJSE_Value* lpNewThisObject )
 {
     CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
     v8::TryCatch			trycatch;

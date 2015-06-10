@@ -561,7 +561,7 @@ FX_FLOAT CPWL_EditCtrl::GetCaretFontSize() const
 	return fFontSize;
 }
 
-void CPWL_EditCtrl::SetText(FX_LPCWSTR csText)
+void CPWL_EditCtrl::SetText(const FX_WCHAR* csText)
 {
 	m_pEdit->SetText(csText);
 }
@@ -582,7 +582,7 @@ void CPWL_EditCtrl::ShowVScrollBar(FX_BOOL bShow)
 {
 }
 
-void CPWL_EditCtrl::InsertText(FX_LPCWSTR csText)
+void CPWL_EditCtrl::InsertText(const FX_WCHAR* csText)
 {
 	if (!IsReadOnly())
 		m_pEdit->InsertText(csText);

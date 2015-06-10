@@ -179,11 +179,11 @@ FX_BOOL CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary *pOCGDict)
     if (!pOCGDict) {
         return FALSE;
     }
-    FX_LPVOID bState = NULL;
+    void* bState = NULL;
     if (m_OCGStates.Lookup(pOCGDict, bState)) {
         return (uintptr_t)bState != 0;
     }
-    bState = (FX_LPVOID)(uintptr_t)LoadOCGState(pOCGDict);
+    bState = (void*)(uintptr_t)LoadOCGState(pOCGDict);
     m_OCGStates.SetAt(pOCGDict, bState);
     return (uintptr_t)bState != 0;
 }

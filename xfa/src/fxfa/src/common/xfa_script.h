@@ -72,7 +72,7 @@ typedef struct _XFA_RESOLVENODE_RS {
 } XFA_RESOLVENODE_RS, * XFA_LPRESOLVENODE_RS;
 typedef struct _XFA_JSBUILTININFO {
     uint32_t						uUnicodeHash;
-    FX_LPCSTR						pName;
+    const FX_CHAR*						pName;
 } XFA_JSBUILTININFO, * XFA_LPJSBUILTININFO;
 typedef XFA_JSBUILTININFO const * XFA_LPCJSBUILTININFO;
 XFA_LPCJSBUILTININFO XFA_GetJSBuiltinByHash(uint32_t uHashCode);

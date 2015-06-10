@@ -46,7 +46,7 @@ CBC_DataMatrixDetector::~CBC_DataMatrixDetector()
     }
     m_rectangleDetector = NULL;
 }
-inline FX_BOOL ResultPointsAndTransitionsComparator(FX_LPVOID a, FX_LPVOID b)
+inline FX_BOOL ResultPointsAndTransitionsComparator(void* a, void* b)
 {
     return ((CBC_ResultPointsAndTransitions *)b)->GetTransitions() > ((CBC_ResultPointsAndTransitions *)a)->GetTransitions();
 }

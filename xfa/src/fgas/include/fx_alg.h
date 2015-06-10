@@ -10,11 +10,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-int32_t	FX_Base64EncodeA(FX_LPCBYTE pSrc, int32_t iSrcLen, FX_LPSTR pDst);
-int32_t	FX_Base64DecodeA(FX_LPCSTR pSrc, int32_t iSrcLen, FX_LPBYTE pDst);
-int32_t	FX_Base64DecodeW(FX_LPCWSTR pSrc, int32_t iSrcLen, FX_LPBYTE pDst);
+int32_t	FX_Base64EncodeA(const uint8_t* pSrc, int32_t iSrcLen, FX_CHAR* pDst);
+int32_t	FX_Base64DecodeA(const FX_CHAR* pSrc, int32_t iSrcLen, uint8_t* pDst);
+int32_t	FX_Base64DecodeW(const FX_WCHAR* pSrc, int32_t iSrcLen, uint8_t* pDst);
 uint8_t		FX_Hex2Dec(uint8_t hexHigh, uint8_t hexLow);
-int32_t	FX_SeparateStringW(FX_LPCWSTR pStr, int32_t iStrLen, FX_WCHAR delimiter, CFX_WideStringArray &pieces);
+int32_t	FX_SeparateStringW(const FX_WCHAR* pStr, int32_t iStrLen, FX_WCHAR delimiter, CFX_WideStringArray &pieces);
 #ifdef __cplusplus
 };
 #endif

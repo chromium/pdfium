@@ -33,9 +33,9 @@ public:
     static void Time2Num		(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
     static void TimeFmt			(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args);
 
-    static FX_BOOL	IsIsoDateFormat			(FX_LPCSTR pData, int32_t iLength, int32_t &iStyle, int32_t &iYear, int32_t &iMonth, int32_t &iDay);
-    static FX_BOOL	IsIsoTimeFormat			(FX_LPCSTR pData, int32_t iLength, int32_t &iHour, int32_t &iMinute, int32_t &iSecond, int32_t &iMilliSecond, int32_t &iZoneHour, int32_t &iZoneMinute);
-    static FX_BOOL	IsIsoDateTimeFormat		(FX_LPCSTR pData, int32_t iLength, int32_t &iYear, int32_t &iMonth, int32_t &iDay, int32_t &iHour, int32_t &iMinute, int32_t &iSecond, int32_t &iMillionSecond, int32_t &iZoneHour, int32_t &iZoneMinute);
+    static FX_BOOL	IsIsoDateFormat			(const FX_CHAR* pData, int32_t iLength, int32_t &iStyle, int32_t &iYear, int32_t &iMonth, int32_t &iDay);
+    static FX_BOOL	IsIsoTimeFormat			(const FX_CHAR* pData, int32_t iLength, int32_t &iHour, int32_t &iMinute, int32_t &iSecond, int32_t &iMilliSecond, int32_t &iZoneHour, int32_t &iZoneMinute);
+    static FX_BOOL	IsIsoDateTimeFormat		(const FX_CHAR* pData, int32_t iLength, int32_t &iYear, int32_t &iMonth, int32_t &iDay, int32_t &iHour, int32_t &iMinute, int32_t &iSecond, int32_t &iMillionSecond, int32_t &iZoneHour, int32_t &iZoneMinute);
     static FX_BOOL	Local2IsoDate			(FXJSE_HOBJECT hThis, FX_BSTR szDate, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strIsoDate);
     static FX_BOOL	Local2IsoTime			(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strIsoTime);
     static FX_BOOL	IsoDate2Local			(FXJSE_HOBJECT hThis, FX_BSTR szDate, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strLocalDate);

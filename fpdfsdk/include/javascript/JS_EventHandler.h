@@ -126,8 +126,8 @@ public:
 	FX_BOOL					FieldFull();
 	FX_BOOL					KeyDown();
 	FX_BOOL					Modifier();
-	FX_LPCWSTR				Name();
-	FX_LPCWSTR				Type();
+	const FX_WCHAR*				Name();
+	const FX_WCHAR*				Type();
 	FX_BOOL&				Rc();
 	int&					SelEnd();
 	int&					SelStart();

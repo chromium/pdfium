@@ -179,7 +179,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 		FX_DWORD dwOldPageObj = pSrcPageDict->GetObjNum();
 		FX_DWORD dwNewPageObj = pCurPageDict->GetObjNum();
 		
-		pMapPtrToPtr->SetAt((FX_LPVOID)(uintptr_t)dwOldPageObj, (FX_LPVOID)(uintptr_t)dwNewPageObj);
+		pMapPtrToPtr->SetAt((void*)(uintptr_t)dwOldPageObj, (void*)(uintptr_t)dwNewPageObj);
 
 		this->UpdateReference(pCurPageDict, pDestPDFDoc, pMapPtrToPtr);
 		curpage++;
@@ -302,7 +302,7 @@ int	CPDF_PageOrganizer::GetNewObjId(CPDF_Document *pDoc, CFX_MapPtrToPtr* pMapPt
 	
 	size_t dwNewObjNum = 0;
 	
-	pMapPtrToPtr->Lookup((FX_LPVOID)dwObjnum, (FX_LPVOID&)dwNewObjNum);
+	pMapPtrToPtr->Lookup((void*)dwObjnum, (void*&)dwNewObjNum);
 	if(dwNewObjNum)
 	{
 		return (int)dwNewObjNum;
@@ -340,7 +340,7 @@ int	CPDF_PageOrganizer::GetNewObjId(CPDF_Document *pDoc, CFX_MapPtrToPtr* pMapPt
 			}
 		}
 		dwNewObjNum = pDoc->AddIndirectObject(pClone);//, onum, gnum);
-		pMapPtrToPtr->SetAt((FX_LPVOID)dwObjnum, (FX_LPVOID)dwNewObjNum);
+		pMapPtrToPtr->SetAt((void*)dwObjnum, (void*)dwNewObjNum);
 		
 		if(!UpdateReference(pClone, pDoc, pMapPtrToPtr))
 		{

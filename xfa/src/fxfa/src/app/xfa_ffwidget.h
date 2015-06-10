@@ -194,7 +194,7 @@ void			XFA_DrawImage(CFX_Graphics* pGS, const CFX_RectF &rtImage, CFX_Matrix* pM
 CFX_DIBitmap*	XFA_LoadImageData(CXFA_FFDoc *pDoc, CXFA_Image *pImage, FX_BOOL &bNameImage, int32_t &iImageXDpi, int32_t &iImageYDpi);
 CFX_DIBitmap*	XFA_LoadImageFromBuffer(IFX_FileRead* pImageFileRead, FXCODEC_IMAGE_TYPE type, int32_t &iImageXDpi, int32_t &iImageYDpi);
 FXCODEC_IMAGE_TYPE XFA_GetImageType(FX_WSTR wsType);
-FX_LPSTR		XFA_Base64Encode(FX_LPCBYTE buf, int32_t buf_len);
+FX_CHAR*		XFA_Base64Encode(const uint8_t* buf, int32_t buf_len);
 void			XFA_RectWidthoutMargin(CFX_RectF &rt, const CXFA_Margin &mg, FX_BOOL bUI = FALSE);
 FX_FLOAT		XFA_GetEdgeThickness(const CXFA_StrokeArray &strokes, FX_BOOL b3DStyle, int32_t nIndex);
 CXFA_FFWidget*	XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem);

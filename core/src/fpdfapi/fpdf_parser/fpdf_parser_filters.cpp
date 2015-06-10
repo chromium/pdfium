@@ -29,7 +29,7 @@ void CFX_DataFilter::SetDestFilter(CFX_DataFilter* pFilter)
         m_pDestFilter = pFilter;
     }
 }
-void CFX_DataFilter::FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CFX_DataFilter::FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     if (m_bEOF) {
         return;
@@ -199,7 +199,7 @@ CPDF_StreamFilter::~CPDF_StreamFilter()
     }
 }
 #define FPDF_FILTER_BUFFER_IN_SIZE	FPDF_FILTER_BUFFER_SIZE
-FX_DWORD CPDF_StreamFilter::ReadBlock(FX_LPBYTE buffer, FX_DWORD buf_size)
+FX_DWORD CPDF_StreamFilter::ReadBlock(uint8_t* buffer, FX_DWORD buf_size)
 {
     if (m_pFilter == NULL) {
         FX_DWORD read_size = m_pStream->GetRawSize() - m_SrcOffset;
@@ -249,7 +249,7 @@ FX_DWORD CPDF_StreamFilter::ReadBlock(FX_LPBYTE buffer, FX_DWORD buf_size)
     }
     return read_size + ReadLeftOver(buffer, buf_size);
 }
-FX_DWORD CPDF_StreamFilter::ReadLeftOver(FX_LPBYTE buffer, FX_DWORD buf_size)
+FX_DWORD CPDF_StreamFilter::ReadLeftOver(uint8_t* buffer, FX_DWORD buf_size)
 {
     FX_DWORD read_size = m_pBuffer->GetSize() - m_BufOffset;
     if (read_size > buf_size) {
@@ -277,7 +277,7 @@ CPDF_DecryptFilter::~CPDF_DecryptFilter()
         m_pCryptoHandler->DecryptFinish(m_pContext, buf);
     }
 }
-void CPDF_DecryptFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CPDF_DecryptFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     if (m_pContext == NULL) {
         m_pContext = m_pCryptoHandler->DecryptStart(m_ObjNum, m_GenNum);
@@ -320,7 +320,7 @@ CPDF_FlateFilter::~CPDF_FlateFilter()
         FPDFAPI_FlateEnd(m_pContext);
     }
 }
-void CPDF_FlateFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CPDF_FlateFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     if (m_pContext == NULL) {
         m_pContext = FPDFAPI_FlateInit(my_alloc_func, my_free_func);
@@ -348,7 +348,7 @@ CPDF_LzwFilter::CPDF_LzwFilter(FX_BOOL bEarlyChange)
     m_LeftBits = 0;
     m_OldCode = (FX_DWORD) - 1;
 }
-void CPDF_LzwFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CPDF_LzwFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     for (FX_DWORD i = 0; i < src_size; i ++) {
         if (m_nLeftBits + 8 < m_CodeLen) {
@@ -389,7 +389,7 @@ void CPDF_LzwFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_Binar
                 DecodeString(code);
             }
             dest_buf.AppendBlock(NULL, m_StackLen);
-            FX_LPBYTE pOutput = dest_buf.GetBuffer() + dest_buf.GetSize() - m_StackLen;
+            uint8_t* pOutput = dest_buf.GetBuffer() + dest_buf.GetSize() - m_StackLen;
             for (FX_DWORD cc = 0; cc < m_StackLen; cc ++) {
                 pOutput[cc] = m_DecodeStack[m_StackLen - cc - 1];
             }
@@ -475,7 +475,7 @@ static uint8_t PaethPredictor(int a, int b, int c)
     }
     return (uint8_t)c;
 }
-static void PNG_PredictorLine(FX_LPBYTE cur_buf, FX_LPBYTE ref_buf, int pitch, int Bpp)
+static void PNG_PredictorLine(uint8_t* cur_buf, uint8_t* ref_buf, int pitch, int Bpp)
 {
     uint8_t tag = cur_buf[0];
     if (tag == 0) {
@@ -535,7 +535,7 @@ static void PNG_PredictorLine(FX_LPBYTE cur_buf, FX_LPBYTE ref_buf, int pitch, i
         }
     }
 }
-void CPDF_PredictorFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CPDF_PredictorFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     if (m_pCurLine == NULL) {
         m_pCurLine = FX_Alloc(uint8_t, m_Pitch);
@@ -564,7 +564,7 @@ void CPDF_PredictorFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX
             PNG_PredictorLine(m_pCurLine, m_iLine ? m_pRefLine : NULL, m_Pitch - 1, m_Bpp);
             dest_buf.AppendBlock(m_pCurLine + 1, m_Pitch - 1);
             m_iLine ++;
-            FX_LPBYTE temp = m_pCurLine;
+            uint8_t* temp = m_pCurLine;
             m_pCurLine = m_pRefLine;
             m_pRefLine = temp;
         }
@@ -576,7 +576,7 @@ CPDF_Ascii85Filter::CPDF_Ascii85Filter()
     m_State = 0;
     m_CharCount = 0;
 }
-void CPDF_Ascii85Filter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CPDF_Ascii85Filter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     for (FX_DWORD i = 0; i < src_size; i ++) {
         uint8_t byte = src_buf[i];
@@ -635,7 +635,7 @@ CPDF_AsciiHexFilter::CPDF_AsciiHexFilter()
 {
     m_State = 0;
 }
-void CPDF_AsciiHexFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CPDF_AsciiHexFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     for (FX_DWORD i = 0; i < src_size; i ++) {
         uint8_t byte = src_buf[i];
@@ -670,7 +670,7 @@ CPDF_RunLenFilter::CPDF_RunLenFilter()
     m_State = 0;
     m_Count = 0;
 }
-void CPDF_RunLenFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CPDF_RunLenFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     for (FX_DWORD i = 0; i < src_size; i ++) {
         uint8_t byte = src_buf[i];
@@ -719,12 +719,12 @@ CPDF_JpegFilter::~CPDF_JpegFilter()
         CPDF_ModuleMgr::Get()->GetJpegModule()->Finish(m_pContext);
     }
 }
-void CPDF_JpegFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CPDF_JpegFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
     if (m_pContext == NULL) {
         m_pContext = CPDF_ModuleMgr::Get()->GetJpegModule()->Start();
     }
-    FX_LPCBYTE jpeg_src_buf;
+    const uint8_t* jpeg_src_buf;
     FX_DWORD jpeg_src_size;
     CFX_BinaryBuf temp_buf;
     if (m_InputBuf.GetSize()) {
@@ -811,9 +811,9 @@ FX_BOOL CPDF_FaxFilter::Initialize(int Encoding, int bEndOfLine, int bByteAlign,
     m_InputBitPos = 0;
     return TRUE;
 }
-void CPDF_FaxFilter::v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
+void CPDF_FaxFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf)
 {
-    FX_LPCBYTE fax_src_buf;
+    const uint8_t* fax_src_buf;
     FX_DWORD fax_src_size;
     CFX_BinaryBuf temp_buf;
     int bitpos;
@@ -840,9 +840,9 @@ void CPDF_FaxFilter::v_FilterFinish(CFX_BinaryBuf& dest_buf)
     ProcessData(m_InputBuf.GetBuffer(), m_InputBuf.GetSize(), m_InputBitPos, TRUE, dest_buf);
 }
 FX_BOOL _FaxSkipEOL(const uint8_t* src_buf, int bitsize, int& bitpos);
-FX_BOOL _FaxG4GetRow(const uint8_t* src_buf, int bitsize, int& bitpos, FX_LPBYTE dest_buf, const uint8_t* ref_buf, int columns);
-FX_BOOL _FaxGet1DLine(const uint8_t* src_buf, int bitsize, int& bitpos, FX_LPBYTE dest_buf, int columns);
-void CPDF_FaxFilter::ProcessData(FX_LPCBYTE src_buf, FX_DWORD src_size, int& bitpos, FX_BOOL bFinish,
+FX_BOOL _FaxG4GetRow(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* dest_buf, const uint8_t* ref_buf, int columns);
+FX_BOOL _FaxGet1DLine(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* dest_buf, int columns);
+void CPDF_FaxFilter::ProcessData(const uint8_t* src_buf, FX_DWORD src_size, int& bitpos, FX_BOOL bFinish,
                                  CFX_BinaryBuf& dest_buf)
 {
     int bitsize = src_size * 8;
@@ -872,7 +872,7 @@ void CPDF_FaxFilter::ProcessData(FX_LPCBYTE src_buf, FX_DWORD src_size, int& bit
         }
     }
 }
-FX_BOOL CPDF_FaxFilter::ReadLine(FX_LPCBYTE src_buf, int bitsize, int& bitpos)
+FX_BOOL CPDF_FaxFilter::ReadLine(const uint8_t* src_buf, int bitsize, int& bitpos)
 {
     if (!_FaxSkipEOL(src_buf, bitsize, bitpos)) {
         return FALSE;

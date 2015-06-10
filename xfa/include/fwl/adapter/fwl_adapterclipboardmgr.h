@@ -14,7 +14,7 @@ enum FWL_CLIPBOARDFORMAT {
     FWL_CLIPBOARDFORMAT_UncodeText,
 };
 typedef struct _FWL_HCLIPBOARDDATA {
-    FX_LPVOID pData;
+    void* pData;
 } * FWL_HCLIPBOARDDATA;
 class IFWL_AdapterClipboardMgr
 {
@@ -24,7 +24,7 @@ public:
     virtual FWL_HCLIPBOARDDATA	GetData(FX_DWORD dwFormat) = 0;
     virtual FWL_ERR		SetData(FX_DWORD dwFormat, uint8_t *pBuf, int32_t iSize) = 0;
     virtual int32_t	GetDataSize(FWL_HCLIPBOARDDATA hData) = 0;
-    virtual FX_LPVOID	LockDataBuffer(FWL_HCLIPBOARDDATA hData) = 0;
+    virtual void*	LockDataBuffer(FWL_HCLIPBOARDDATA hData) = 0;
     virtual FX_BOOL		UnLockDataBuffer(FWL_HCLIPBOARDDATA hData) = 0;
     virtual FWL_ERR		SetStringData(FX_WSTR ws) = 0;
     virtual FWL_ERR		SetStringData(FX_BSTR bs) = 0;

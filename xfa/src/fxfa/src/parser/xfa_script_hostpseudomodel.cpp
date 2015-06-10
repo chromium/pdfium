@@ -369,9 +369,9 @@ static int32_t XFA_FilterName(FX_WSTR wsExpression, int32_t nStart, CFX_WideStri
     if (nStart >= iLength) {
         return iLength;
     }
-    FX_LPWSTR pBuf = wsFilter.GetBuffer(iLength - nStart);
+    FX_WCHAR* pBuf = wsFilter.GetBuffer(iLength - nStart);
     int32_t nCount = 0;
-    FX_LPCWSTR pSrc = wsExpression.GetPtr();
+    const FX_WCHAR* pSrc = wsExpression.GetPtr();
     FX_WCHAR wCur;
     while (nStart < iLength) {
         wCur = pSrc[nStart ++];

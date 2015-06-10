@@ -6,7 +6,7 @@
 
 #include "../fgas_base.h"
 #include "fx_codepage.h"
-void FX_SwapByteOrder(FX_LPWSTR pStr, int32_t iLength)
+void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength)
 {
     FXSYS_assert(pStr != NULL);
     if (iLength < 0) {
@@ -28,7 +28,7 @@ void FX_SwapByteOrder(FX_LPWSTR pStr, int32_t iLength)
         }
     }
 }
-void FX_SwapByteOrderCopy(FX_LPCWSTR pSrc, FX_LPWSTR pDst, int32_t iLength)
+void FX_SwapByteOrderCopy(const FX_WCHAR* pSrc, FX_WCHAR* pDst, int32_t iLength)
 {
     FXSYS_assert(pSrc != NULL && pDst != NULL);
     if (iLength < 0) {
@@ -50,19 +50,19 @@ void FX_SwapByteOrderCopy(FX_LPCWSTR pSrc, FX_LPWSTR pDst, int32_t iLength)
         }
     }
 }
-void FX_UTF16ToWChar(FX_LPVOID pBuffer, int32_t iLength)
+void FX_UTF16ToWChar(void* pBuffer, int32_t iLength)
 {
     FXSYS_assert(pBuffer != NULL && iLength > 0);
     if (sizeof(FX_WCHAR) == 2) {
         return;
     }
     FX_WORD *pSrc = (FX_WORD*)pBuffer;
-    FX_LPWSTR pDst = (FX_LPWSTR)pBuffer;
+    FX_WCHAR* pDst = (FX_WCHAR*)pBuffer;
     while (--iLength >= 0) {
         pDst[iLength] = (FX_WCHAR)pSrc[iLength];
     }
 }
-void FX_UTF16ToWCharCopy(const FX_WORD *pUTF16, FX_LPWSTR pWChar, int32_t iLength)
+void FX_UTF16ToWCharCopy(const FX_WORD *pUTF16, FX_WCHAR* pWChar, int32_t iLength)
 {
     FXSYS_assert(pUTF16 != NULL && pWChar != NULL && iLength > 0);
     if (sizeof(FX_WCHAR) == 2) {
@@ -73,19 +73,19 @@ void FX_UTF16ToWCharCopy(const FX_WORD *pUTF16, FX_LPWSTR pWChar, int32_t iLengt
         }
     }
 }
-void FX_WCharToUTF16(FX_LPVOID pBuffer, int32_t iLength)
+void FX_WCharToUTF16(void* pBuffer, int32_t iLength)
 {
     FXSYS_assert(pBuffer != NULL && iLength > 0);
     if (sizeof(FX_WCHAR) == 2) {
         return;
     }
-    FX_LPCWSTR pSrc = (FX_LPCWSTR)pBuffer;
+    const FX_WCHAR* pSrc = (const FX_WCHAR*)pBuffer;
     FX_WORD *pDst = (FX_WORD*)pBuffer;
     while (--iLength >= 0) {
         *pDst++ = (FX_WORD) * pSrc++;
     }
 }
-void FX_WCharToUTF16Copy(FX_LPCWSTR pWChar, FX_WORD *pUTF16, int32_t iLength)
+void FX_WCharToUTF16Copy(const FX_WCHAR* pWChar, FX_WORD *pUTF16, int32_t iLength)
 {
     FXSYS_assert(pWChar != NULL && pUTF16 != NULL && iLength > 0);
     if (sizeof(FX_WCHAR) == 2) {
@@ -96,22 +96,22 @@ void FX_WCharToUTF16Copy(FX_LPCWSTR pWChar, FX_WORD *pUTF16, int32_t iLength)
         }
     }
 }
-inline FX_DWORD FX_DWordFromBytes(FX_LPCBYTE pStr)
+inline FX_DWORD FX_DWordFromBytes(const uint8_t* pStr)
 {
     return FXBSTR_ID(pStr[3], pStr[2], pStr[1], pStr[0]);
 }
-inline FX_WORD FX_WordFromBytes(FX_LPCBYTE pStr)
+inline FX_WORD FX_WordFromBytes(const uint8_t* pStr)
 {
     return (pStr[1] << 8 | pStr[0]);
 }
-int32_t FX_DecodeString(FX_WORD wCodePage, FX_LPCSTR pSrc, int32_t *pSrcLen, FX_LPWSTR pDst, int32_t *pDstLen, FX_BOOL bErrBreak)
+int32_t FX_DecodeString(FX_WORD wCodePage, const FX_CHAR* pSrc, int32_t *pSrcLen, FX_WCHAR* pDst, int32_t *pDstLen, FX_BOOL bErrBreak)
 {
     if (wCodePage == FX_CODEPAGE_UTF8) {
         return FX_UTF8Decode(pSrc, pSrcLen, pDst, pDstLen);
     }
     return -1;
 }
-int32_t FX_UTF8Decode(FX_LPCSTR pSrc, int32_t *pSrcLen, FX_LPWSTR pDst, int32_t *pDstLen)
+int32_t FX_UTF8Decode(const FX_CHAR* pSrc, int32_t *pSrcLen, FX_WCHAR* pDst, int32_t *pDstLen)
 {
     if (pSrcLen == NULL || pDstLen == NULL) {
         return -1;

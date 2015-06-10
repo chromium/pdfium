@@ -51,7 +51,7 @@ public:
     virtual int32_t		CountChildNodes() const = 0;
     virtual IFDE_XMLNode*	GetChildNode(int32_t index) const = 0;
     virtual int32_t		GetChildNodeIndex(IFDE_XMLNode *pNode) const = 0;
-    virtual IFDE_XMLNode*	GetPath(FX_LPCWSTR pPath, int32_t iLength = -1, FX_BOOL bQualifiedName = TRUE) const = 0;
+    virtual IFDE_XMLNode*	GetPath(const FX_WCHAR* pPath, int32_t iLength = -1, FX_BOOL bQualifiedName = TRUE) const = 0;
     virtual int32_t		InsertChildNode(IFDE_XMLNode *pNode, int32_t index = -1) = 0;
     virtual void			RemoveChildNode(IFDE_XMLNode *pNode) = 0;
     virtual void			DeleteChildren() = 0;
@@ -70,14 +70,14 @@ public:
     virtual void				GetTargetName(CFX_WideString &wsTarget) const = 0;
     virtual int32_t		CountAttributes() const = 0;
     virtual FX_BOOL			GetAttribute(int32_t index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const = 0;
-    virtual FX_BOOL			HasAttribute(FX_LPCWSTR pwsAttriName) const = 0;
-    virtual void			GetString(FX_LPCWSTR pwsAttriName, CFX_WideString &wsAttriValue, FX_LPCWSTR pwsDefValue = NULL) const = 0;
+    virtual FX_BOOL			HasAttribute(const FX_WCHAR* pwsAttriName) const = 0;
+    virtual void			GetString(const FX_WCHAR* pwsAttriName, CFX_WideString &wsAttriValue, const FX_WCHAR* pwsDefValue = NULL) const = 0;
     virtual void			SetString(const CFX_WideString &wsAttriName, const CFX_WideString &wsAttriValue) = 0;
-    virtual int32_t		GetInteger(FX_LPCWSTR pwsAttriName, int32_t iDefValue = 0) const = 0;
-    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, int32_t iAttriValue) = 0;
-    virtual FX_FLOAT		GetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fDefValue = 0) const = 0;
-    virtual void			SetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fAttriValue) = 0;
-    virtual void			RemoveAttribute(FX_LPCWSTR pwsAttriName) = 0;
+    virtual int32_t		GetInteger(const FX_WCHAR* pwsAttriName, int32_t iDefValue = 0) const = 0;
+    virtual void			SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue) = 0;
+    virtual FX_FLOAT		GetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fDefValue = 0) const = 0;
+    virtual void			SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue) = 0;
+    virtual void			RemoveAttribute(const FX_WCHAR* pwsAttriName) = 0;
     virtual int32_t		CountData() const = 0;
     virtual FX_BOOL			GetData(int32_t index, CFX_WideString &wsData) const = 0;
     virtual void			AppendData(const CFX_WideString &wsData) = 0;
@@ -93,14 +93,14 @@ public:
     virtual void			GetNamespaceURI(CFX_WideString &wsNamespace) const = 0;
     virtual int32_t		CountAttributes() const = 0;
     virtual FX_BOOL			GetAttribute(int32_t index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const = 0;
-    virtual FX_BOOL			HasAttribute(FX_LPCWSTR pwsAttriName) const = 0;
-    virtual void			GetString(FX_LPCWSTR pwsAttriName, CFX_WideString &wsAttriValue, FX_LPCWSTR pwsDefValue = NULL) const = 0;
+    virtual FX_BOOL			HasAttribute(const FX_WCHAR* pwsAttriName) const = 0;
+    virtual void			GetString(const FX_WCHAR* pwsAttriName, CFX_WideString &wsAttriValue, const FX_WCHAR* pwsDefValue = NULL) const = 0;
     virtual void			SetString(const CFX_WideString &wsAttriName, const CFX_WideString &wsAttriValue) = 0;
-    virtual int32_t		GetInteger(FX_LPCWSTR pwsAttriName, int32_t iDefValue = 0) const = 0;
-    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, int32_t iAttriValue) = 0;
-    virtual FX_FLOAT		GetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fDefValue = 0) const = 0;
-    virtual void			SetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fAttriValue) = 0;
-    virtual void			RemoveAttribute(FX_LPCWSTR pwsAttriName) = 0;
+    virtual int32_t		GetInteger(const FX_WCHAR* pwsAttriName, int32_t iDefValue = 0) const = 0;
+    virtual void			SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue) = 0;
+    virtual FX_FLOAT		GetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fDefValue = 0) const = 0;
+    virtual void			SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue) = 0;
+    virtual void			RemoveAttribute(const FX_WCHAR* pwsAttriName) = 0;
     virtual void			GetTextData(CFX_WideString &wsText) const = 0;
     virtual void			SetTextData(const CFX_WideString &wsText) = 0;
 };
@@ -124,7 +124,7 @@ public:
     virtual void				SetCharData(const CFX_WideString &wsCData) = 0;
 };
 typedef struct _FDE_XMLREADERHANDLER {
-    FX_LPVOID pData;
+    void* pData;
 
     void	(*OnTagEnter)(_FDE_XMLREADERHANDLER *pThis, FDE_XMLNODETYPE eType, const CFX_WideString &wsTagName);
     void	(*OnTagBreak)(_FDE_XMLREADERHANDLER *pThis, const CFX_WideString &wsTagName);

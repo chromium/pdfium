@@ -76,7 +76,7 @@ void CFX_UTF8Encoder::Input(FX_WCHAR unicode)
         }
     }
 }
-CFX_ByteString FX_UTF8Encode(FX_LPCWSTR pwsStr, FX_STRSIZE len)
+CFX_ByteString FX_UTF8Encode(const FX_WCHAR* pwsStr, FX_STRSIZE len)
 {
     FXSYS_assert(pwsStr != NULL);
     if (len < 0) {

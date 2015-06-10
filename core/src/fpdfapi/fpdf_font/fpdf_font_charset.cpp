@@ -264,7 +264,7 @@ const FX_WORD ZapfEncoding[256] = {
     0x0000, 0x27B1, 0x27B2, 0x27B3, 0x27B4, 0x27B5, 0x27B6, 0x27B7,
     0x27B8, 0x27B9, 0x27BA, 0x27BB, 0x27BC, 0x27BD, 0x27BE, 0x0000,
 };
-const FX_LPCSTR StandardEncodingNames[224] = {
+const FX_CHAR* const StandardEncodingNames[224] = {
     "space", "exclam", "quotedbl", "numbersign", "dollar", "percent", "ampersand", "quoteright",
     "parenleft", "parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash",
     "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -294,7 +294,7 @@ const FX_LPCSTR StandardEncodingNames[224] = {
     NULL, "ae", NULL, NULL, NULL, "dotlessi", NULL, NULL,
     "lslash", "oslash", "oe", "germandbls", NULL, NULL, NULL, NULL,
 };
-const FX_LPCSTR AdobeWinAnsiEncodingNames[224] = {
+const FX_CHAR* const AdobeWinAnsiEncodingNames[224] = {
     "space", "exclam", "quotedbl", "numbersign", "dollar", "percent", "ampersand", "quotesingle",
     "parenleft", "parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash",
     "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -324,7 +324,7 @@ const FX_LPCSTR AdobeWinAnsiEncodingNames[224] = {
     "eth", "ntilde", "ograve", "oacute", "ocircumflex", "otilde", "odieresis", "divide",
     "oslash", "ugrave", "uacute", "ucircumflex", "udieresis", "yacute", "thorn", "ydieresis",
 };
-const FX_LPCSTR  MacRomanEncodingNames[224] = {
+const FX_CHAR* const MacRomanEncodingNames[224] = {
     "space", "exclam", "quotedbl", "numbersign", "dollar", "percent", "ampersand", "quotesingle",
     "parenleft", "parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash",
     "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -354,7 +354,7 @@ const FX_LPCSTR  MacRomanEncodingNames[224] = {
     "apple", "Ograve", "Uacute", "Ucircumflex", "Ugrave", "dotlessi", "circumflex", "tilde",
     "macron", "breve", "dotaccent", "ring", "cedilla", "hungarumlaut", "ogonek", "caron",
 };
-const FX_LPCSTR  MacExpertEncodingNames[224] = {
+const FX_CHAR* const MacExpertEncodingNames[224] = {
     "space", "exclamsmall", "Hungarumlautsmall", "centoldstyle", "dollaroldstyle", "dollarsuperior", "ampersandsmall", "Acutesmall",
     "parenleftsuperior", "parenrightsuperior", "twodotenleader", "onedotenleader", "comma", "hyphen", "period", "fraction",
     "zerooldstyle", "oneoldstyle", "twooldstyle", "threeoldstyle", "fouroldstyle", "fiveoldstyle", "sixoldstyle", "sevenoldstyle",
@@ -384,7 +384,7 @@ const FX_LPCSTR  MacExpertEncodingNames[224] = {
     NULL, "lsuperior", "Ogoneksmall", "Brevesmall", "Macronsmall", "bsuperior", "nsuperior", "msuperior",
     "commasuperior", "periodsuperior", "Dotaccentsmall", "Ringsmall", NULL, NULL, NULL, NULL,
 };
-const FX_LPCSTR  PDFDocEncodingNames[232] = {
+const FX_CHAR* const PDFDocEncodingNames[232] = {
     "breve", "caron", "circumflex", "dotaccent", "hungarumlaut", "ogonek", "ring", "tilde",
     "space", "exclam", "quotedbl", "numbersign", "dollar", "percent", "ampersand", "quotesingle",
     "parenleft", "parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash",
@@ -415,7 +415,7 @@ const FX_LPCSTR  PDFDocEncodingNames[232] = {
     "eth", "ntilde", "ograve", "oacute", "ocircumflex", "otilde", "odieresis", "divide",
     "oslash", "ugrave", "uacute", "ucircumflex", "udieresis", "yacute", "thorn", "ydieresis",
 };
-const FX_LPCSTR  AdobeSymbolEncodingNames[224] = {
+const FX_CHAR* const AdobeSymbolEncodingNames[224] = {
     "space", "exclam", "universal", "numbersign", "existential", "percent", "ampersand", "suchthat",
     "parenleft", "parenright", "asteriskmath", "plus", "comma", "minus", "period", "slash",
     "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -445,7 +445,7 @@ const FX_LPCSTR  AdobeSymbolEncodingNames[224] = {
     NULL, "angleright", "integral", "integraltp", "integralex", "integralbt", "parenrighttp", "parenrightex",
     "parenrightbt", "bracketrighttp", "bracketrightex", "bracketrightbt", "bracerighttp", "bracerightmid", "bracerightbt", NULL,
 };
-const FX_LPCSTR  ZapfEncodingNames[224] = {
+const FX_CHAR* const ZapfEncodingNames[224] = {
     "space", "a1", "a2", "a202", "a3", "a4", "a5", "a119",
     "a118", "a117", "a11", "a12", "a13", "a14", "a15", "a16",
     "a105", "a17", "a18", "a19", "a20", "a21", "a22", "a23",

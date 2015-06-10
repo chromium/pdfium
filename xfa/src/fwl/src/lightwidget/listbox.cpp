@@ -163,14 +163,14 @@ FWL_ERR CFWL_ListBox::GetItemString(FWL_HLISTITEM hItem, CFX_WideString &wsText)
     wsText = pItem->m_wsText;
     return FWL_ERR_Succeeded;
 }
-FWL_ERR	CFWL_ListBox::SetItemData(FWL_HLISTITEM hItem, FX_LPVOID pData)
+FWL_ERR	CFWL_ListBox::SetItemData(FWL_HLISTITEM hItem, void* pData)
 {
     _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
     CFWL_ListItem *pItem = (CFWL_ListItem*)hItem;
     pItem->m_pData = pData;
     return FWL_ERR_Succeeded;
 }
-FX_LPVOID CFWL_ListBox::GetItemData(FWL_HLISTITEM hItem)
+void* CFWL_ListBox::GetItemData(FWL_HLISTITEM hItem)
 {
     _FWL_RETURN_VALUE_IF_FAIL(hItem, NULL);
     CFWL_ListItem *pItem = (CFWL_ListItem*)hItem;
@@ -270,7 +270,7 @@ FWL_ERR CFWL_ListBox::CFWL_ListBoxDP::GetItemRect(IFWL_Widget *pWidget, FWL_HLIS
     rtItem = pItem->m_rtItem;
     return FWL_ERR_Succeeded;
 }
-FX_LPVOID CFWL_ListBox::CFWL_ListBoxDP::GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem)
+void* CFWL_ListBox::CFWL_ListBoxDP::GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem)
 {
     _FWL_RETURN_VALUE_IF_FAIL(hItem, NULL);
     CFWL_ListItem *pItem = (CFWL_ListItem*)hItem;
@@ -282,7 +282,7 @@ FWL_ERR CFWL_ListBox::CFWL_ListBoxDP::SetItemStyles(IFWL_Widget *pWidget, FWL_HL
     ((CFWL_ListItem*)hItem)->m_dwStates = dwStyle;
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_ListBox::CFWL_ListBoxDP::SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_LPCWSTR pszText)
+FWL_ERR CFWL_ListBox::CFWL_ListBoxDP::SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, const FX_WCHAR* pszText)
 {
     _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
     ((CFWL_ListItem*)hItem)->m_wsText = pszText;

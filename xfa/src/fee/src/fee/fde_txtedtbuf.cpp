@@ -190,7 +190,7 @@ void CFDE_TxtEdtBuf::SetText(const CFX_WideString &wsText)
         m_Chunks.Add(lpChunk);
     }
     int32_t	nTotalCount		= m_Chunks.GetSize();
-    FX_LPCWSTR	lpSrcBuf		= FX_LPCWSTR(wsText);
+    const FX_WCHAR*	lpSrcBuf = wsText.c_str();
     int32_t	nLeave			= nTextLength;
     int32_t	nCopyedLength	= m_nChunkSize;
     for (i = 0; i < nTotalCount && nLeave > 0; i ++) {
@@ -233,11 +233,11 @@ void CFDE_TxtEdtBuf::GetRange(CFX_WideString &wsText, int32_t nBegin, int32_t nL
     Index2CP(nBegin, cp);
     int32_t	nLeave		= nLength;
     int32_t	nCount		= m_Chunks.GetSize();
-    FX_LPWSTR	lpDstBuf	= wsText.GetBuffer(nLength);
+    FX_WCHAR*	lpDstBuf	= wsText.GetBuffer(nLength);
     int32_t	nChunkIndex	= cp.nChunkIndex;
     FDE_LPCHUNKHEADER	lpChunkHeader	= (FDE_LPCHUNKHEADER)m_Chunks[nChunkIndex];
     int32_t			nCopyLength		= lpChunkHeader->nUsed - cp.nCharIndex;
-    FX_LPWSTR			lpSrcBuf		= lpChunkHeader->wChars + cp.nCharIndex;
+    FX_WCHAR*			lpSrcBuf		= lpChunkHeader->wChars + cp.nCharIndex;
     while (nLeave > 0) {
         if (nLeave <= nCopyLength) {
             nCopyLength = nLeave;
@@ -255,7 +255,7 @@ void CFDE_TxtEdtBuf::GetRange(CFX_WideString &wsText, int32_t nBegin, int32_t nL
     }
     wsText.ReleaseBuffer();
 }
-void CFDE_TxtEdtBuf::Insert(int32_t nPos, FX_LPCWSTR lpText, int32_t nLength )
+void CFDE_TxtEdtBuf::Insert(int32_t nPos, const FX_WCHAR* lpText, int32_t nLength )
 {
     FXSYS_assert(nPos >= 0 && nPos <= m_nTotal);
     FDE_CHUNKPLACE cp;

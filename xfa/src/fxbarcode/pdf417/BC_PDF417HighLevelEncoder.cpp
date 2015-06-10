@@ -62,7 +62,7 @@ CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(CFX_WideString wideMs
         FX_WCHAR ch =  (FX_WCHAR)(bytes.GetAt(i) & 0xff);
         if (ch == '?' && bytes.GetAt(i) != '?') {
             e = BCExceptionCharactersOutsideISO88591Encoding;
-            return (FX_LPWSTR)"";
+            return (FX_WCHAR*)"";
         }
         msg += ch;
     }

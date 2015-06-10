@@ -13,7 +13,7 @@ const FX_DWORD N_COMPONENT_RGB = 3;
 const FX_DWORD N_COMPONENT_CMYK = 4;
 const FX_DWORD N_COMPONENT_DEFAULT = 3;
 
-FX_BOOL MD5ComputeID( FX_LPCVOID buf, FX_DWORD dwSize, uint8_t ID[16] )
+FX_BOOL MD5ComputeID( const void* buf, FX_DWORD dwSize, uint8_t ID[16] )
 {
     return cmsMD5computeIDExt(buf, dwSize, ID);
 }
@@ -218,7 +218,7 @@ void IccLib_TranslateImage(void* pTransform, unsigned char* pDest, const unsigne
 {
     cmsDoTransform(((CLcmsCmm*)pTransform)->m_hTransform, (void*)pSrc, pDest, pixels);
 }
-FX_LPVOID CreateProfile_Gray(double gamma)
+void* CreateProfile_Gray(double gamma)
 {
     cmsCIExyY* D50 = (cmsCIExyY*)cmsD50_xyY();
     if (!cmsWhitePointFromTemp(D50, 6504)) {
@@ -228,11 +228,11 @@ FX_LPVOID CreateProfile_Gray(double gamma)
     if (curve == NULL)	{
         return NULL;
     }
-    FX_LPVOID profile = cmsCreateGrayProfile(D50, curve);
+    void* profile = cmsCreateGrayProfile(D50, curve);
     cmsFreeToneCurve(curve);
     return profile;
 }
-ICodec_IccModule::IccCS GetProfileCSFromHandle(FX_LPVOID pProfile)
+ICodec_IccModule::IccCS GetProfileCSFromHandle(void* pProfile)
 {
     if (pProfile == NULL)	{
         return ICodec_IccModule::IccCS_Unknown;
@@ -264,7 +264,7 @@ ICodec_IccModule::IccCS GetProfileCSFromHandle(FX_LPVOID pProfile)
             return ICodec_IccModule::IccCS_Unknown;
     }
 }
-ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize)
+ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(const uint8_t* pProfileData, FX_DWORD dwProfileSize)
 {
     ICodec_IccModule::IccCS cs;
     cmsHPROFILE hProfile = cmsOpenProfileFromMem((void*)pProfileData, dwProfileSize);
@@ -284,13 +284,13 @@ ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(IFX_FileRead* pFile)
     }
     ICodec_IccModule::IccCS cs;
     FX_DWORD dwSize = (FX_DWORD)pFile->GetSize();
-    FX_LPBYTE pBuf = FX_Alloc(uint8_t, dwSize);
+    uint8_t* pBuf = FX_Alloc(uint8_t, dwSize);
     pFile->ReadBlock(pBuf, 0, dwSize);
     cs = GetProfileCS(pBuf, dwSize);
     FX_Free(pBuf);
     return cs;
 }
-FX_DWORD TransferProfileType(FX_LPVOID pProfile, FX_DWORD dwFormat)
+FX_DWORD TransferProfileType(void* pProfile, FX_DWORD dwFormat)
 {
     cmsColorSpaceSignature cs = cmsGetColorSpace(pProfile);
     switch (cs) {
@@ -341,7 +341,7 @@ class CFX_IccProfileCache
 public:
     CFX_IccProfileCache();
     ~CFX_IccProfileCache();
-    FX_LPVOID m_pProfile;
+    void* m_pProfile;
     FX_DWORD	m_dwRate;
 protected:
     void	Purge();
@@ -365,7 +365,7 @@ class CFX_IccTransformCache
 public:
     CFX_IccTransformCache(CLcmsCmm* pCmm = NULL);
     ~CFX_IccTransformCache();
-    FX_LPVOID	m_pIccTransform;
+    void*	m_pIccTransform;
     FX_DWORD		m_dwRate;
     CLcmsCmm*		m_pCmm;
 protected:
@@ -400,7 +400,7 @@ CFX_ByteStringKey& CFX_ByteStringKey::operator << (FX_DWORD i)
     AppendBlock(&i, sizeof(FX_DWORD));
     return *this;
 }
-FX_LPVOID CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam, Icc_CLASS ic, CFX_BinaryBuf* pTransformKey)
+void* CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam, Icc_CLASS ic, CFX_BinaryBuf* pTransformKey)
 {
     CFX_IccProfileCache* pCache = NULL;
     CFX_ByteStringKey key;
@@ -431,7 +431,7 @@ FX_LPVOID CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
     CFX_ByteString ProfileKey(key.GetBuffer(), key.GetSize());
     ASSERT(pTransformKey);
     pTransformKey->AppendBlock(ProfileKey.GetBuffer(0), ProfileKey.GetLength());
-    if (!m_MapProfile.Lookup(ProfileKey, (FX_LPVOID&)pCache)) {
+    if (!m_MapProfile.Lookup(ProfileKey, (void*&)pCache)) {
         pCache = new CFX_IccProfileCache;
         switch (pIccParam->dwProfileType) {
             case Icc_PARAMTYPE_BUFFER:
@@ -458,7 +458,7 @@ FX_LPVOID CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
     }
     return pCache->m_pProfile;
 }
-FX_LPVOID CCodec_IccModule::CreateTransform(ICodec_IccModule::IccParam* pInputParam,
+void* CCodec_IccModule::CreateTransform(ICodec_IccModule::IccParam* pInputParam,
         ICodec_IccModule::IccParam* pOutputParam,
         ICodec_IccModule::IccParam* pProofParam,
         FX_DWORD dwIntent, FX_DWORD dwFlag, FX_DWORD dwPrfIntent, FX_DWORD dwPrfFlag)
@@ -466,11 +466,11 @@ FX_LPVOID CCodec_IccModule::CreateTransform(ICodec_IccModule::IccParam* pInputPa
     CLcmsCmm* pCmm = NULL;
     ASSERT(pInputParam && pOutputParam);
     CFX_ByteStringKey key;
-    FX_LPVOID pInputProfile = CreateProfile(pInputParam, Icc_CLASS_INPUT, &key);
+    void* pInputProfile = CreateProfile(pInputParam, Icc_CLASS_INPUT, &key);
     if (pInputProfile == NULL)	{
         return NULL;
     }
-    FX_LPVOID pOutputProfile = CreateProfile(pOutputParam, Icc_CLASS_OUTPUT, &key);
+    void* pOutputProfile = CreateProfile(pOutputParam, Icc_CLASS_OUTPUT, &key);
     if (pOutputProfile == NULL)	{
         return NULL;
     }
@@ -479,14 +479,14 @@ FX_LPVOID CCodec_IccModule::CreateTransform(ICodec_IccModule::IccParam* pInputPa
     if (dwInputProfileType == 0 || dwOutputProfileType == 0) {
         return NULL;
     }
-    FX_LPVOID pProofProfile = NULL;
+    void* pProofProfile = NULL;
     if (pProofParam) {
         pProofProfile = CreateProfile(pProofParam, Icc_CLASS_PROOF, &key);
     }
     key << dwInputProfileType << dwOutputProfileType << dwIntent << dwFlag << (pProofProfile != NULL) << dwPrfIntent << dwPrfFlag;
     CFX_ByteStringC TransformKey(key.GetBuffer(), key.GetSize());
     CFX_IccTransformCache* pTransformCache;
-    if (!m_MapTranform.Lookup(TransformKey, (FX_LPVOID&)pTransformCache)) {
+    if (!m_MapTranform.Lookup(TransformKey, (void*&)pTransformCache)) {
         pCmm = FX_Alloc(CLcmsCmm, 1);
         pCmm->m_nSrcComponents = T_CHANNELS(dwInputProfileType);
         pCmm->m_nDstComponents = T_CHANNELS(dwOutputProfileType);
@@ -512,7 +512,7 @@ CCodec_IccModule::~CCodec_IccModule()
     CFX_ByteString key;
     CFX_IccProfileCache* pProfileCache;
     while (pos) {
-        m_MapProfile.GetNextAssoc(pos, key, (FX_LPVOID&)pProfileCache);
+        m_MapProfile.GetNextAssoc(pos, key, (void*&)pProfileCache);
         if (pProfileCache) {
             delete pProfileCache;
         }
@@ -520,18 +520,18 @@ CCodec_IccModule::~CCodec_IccModule()
     pos = m_MapTranform.GetStartPosition();
     CFX_IccTransformCache* pTransformCache;
     while (pos) {
-        m_MapTranform.GetNextAssoc(pos, key, (FX_LPVOID&)pTransformCache);
+        m_MapTranform.GetNextAssoc(pos, key, (void*&)pTransformCache);
         if (pTransformCache) {
             delete pTransformCache;
         }
     }
 }
-void* CCodec_IccModule::CreateTransform_sRGB(FX_LPCBYTE pProfileData, FX_DWORD dwProfileSize, int32_t& nComponents, int32_t intent, FX_DWORD dwSrcFormat)
+void* CCodec_IccModule::CreateTransform_sRGB(const uint8_t* pProfileData, FX_DWORD dwProfileSize, int32_t& nComponents, int32_t intent, FX_DWORD dwSrcFormat)
 {
     return IccLib_CreateTransform_sRGB(pProfileData, dwProfileSize, nComponents, intent, dwSrcFormat);
 }
-void* CCodec_IccModule::CreateTransform_CMYK(FX_LPCBYTE pSrcProfileData, FX_DWORD dwSrcProfileSize, int32_t& nSrcComponents,
-    FX_LPCBYTE pDstProfileData, FX_DWORD dwDstProfileSize, int32_t intent,
+void* CCodec_IccModule::CreateTransform_CMYK(const uint8_t* pSrcProfileData, FX_DWORD dwSrcProfileSize, int32_t& nSrcComponents,
+    const uint8_t* pDstProfileData, FX_DWORD dwDstProfileSize, int32_t intent,
         FX_DWORD dwSrcFormat , FX_DWORD dwDstFormat)
 {
     return IccLib_CreateTransform(pSrcProfileData, dwSrcProfileSize, nSrcComponents,
@@ -545,7 +545,7 @@ void CCodec_IccModule::Translate(void* pTransform, FX_FLOAT* pSrcValues, FX_FLOA
 {
     IccLib_Translate(pTransform, m_nComponents, pSrcValues, pDestValues);
 }
-void CCodec_IccModule::TranslateScanline(void* pTransform, FX_LPBYTE pDest, FX_LPCBYTE pSrc, int32_t pixels)
+void CCodec_IccModule::TranslateScanline(void* pTransform, uint8_t* pDest, const uint8_t* pSrc, int32_t pixels)
 {
     IccLib_TranslateImage(pTransform, pDest, pSrc, pixels);
 }

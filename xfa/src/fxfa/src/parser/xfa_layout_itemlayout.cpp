@@ -2388,7 +2388,7 @@ FX_BOOL CXFA_ItemLayoutProcessor::JudgeLeaderOrTrailerForOccur(CXFA_Node* pFormN
             return FALSE;
         }
         iCount++;
-        m_PendingNodesCount.SetAt(pTemplate, (FX_LPVOID)(uintptr_t)(iCount));
+        m_PendingNodesCount.SetAt(pTemplate, (void*)(uintptr_t)(iCount));
         return TRUE;
     }
     return TRUE;

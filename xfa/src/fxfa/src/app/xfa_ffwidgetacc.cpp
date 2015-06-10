@@ -18,7 +18,7 @@
 #include "xfa_ffcheckbutton.h"
 #include "xfa_ffwidgetacc.h"
 #include "xfa_fontmgr.h"
-static void XFA_FFDeleteCalcData(FX_LPVOID pData)
+static void XFA_FFDeleteCalcData(void* pData)
 {
     if (pData) {
         delete ((CXFA_CalcData*)pData);
@@ -546,7 +546,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate, int32_t 
                     GetValidateCaptionName(wsCaptionName, bVersionFlag);
                     CFX_WideString wsError;
                     pAppProvider->LoadString(XFA_IDS_ValidateNullError, wsError);
-                    wsNullMsg.Format(wsError, (FX_LPCWSTR)wsCaptionName);
+                    wsNullMsg.Format(wsError, (const FX_WCHAR*)wsCaptionName);
                 }
                 pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Status, XFA_MB_OK);
                 return XFA_EVENTERROR_Error;
@@ -559,7 +559,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate, int32_t 
                     GetValidateCaptionName(wsCaptionName, bVersionFlag);
                     CFX_WideString wsWarning;
                     pAppProvider->LoadString(XFA_IDS_ValidateNullWarning, wsWarning);
-                    wsNullMsg.Format(wsWarning, (FX_LPCWSTR)wsCaptionName, (FX_LPCWSTR)wsCaptionName);
+                    wsNullMsg.Format(wsWarning, (const FX_WCHAR*)wsCaptionName, (const FX_WCHAR*)wsCaptionName);
                 }
                 if (pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
                     this->GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, TRUE, FALSE);
@@ -597,17 +597,17 @@ void CXFA_WidgetAcc::GetValidateMessage(IXFA_AppProvider* pAppProvider, CFX_Wide
     CFX_WideString wsError;
     if (bVersionFlag) {
         pAppProvider->LoadString(XFA_IDS_ValidateFailed, wsError);
-        wsMessage.Format(wsError, (FX_LPCWSTR)wsCaptionName);
+        wsMessage.Format(wsError, (const FX_WCHAR*)wsCaptionName);
         return;
     }
     if (bError) {
         pAppProvider->LoadString(XFA_IDS_ValidateError, wsError);
-        wsMessage.Format(wsError, (FX_LPCWSTR)wsCaptionName);
+        wsMessage.Format(wsError, (const FX_WCHAR*)wsCaptionName);
         return;
     }
     CFX_WideString wsWarning;
     pAppProvider->LoadString(XFA_IDS_ValidateWarning, wsWarning);
-    wsMessage.Format(wsWarning, (FX_LPCWSTR)wsCaptionName, (FX_LPCWSTR)wsCaptionName);
+    wsMessage.Format(wsWarning, (const FX_WCHAR*)wsCaptionName, (const FX_WCHAR*)wsCaptionName);
 }
 int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags)
 {
@@ -748,7 +748,7 @@ void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept )
         pWidget->AddInvalidateRect();
     }
 }
-void CXFA_WidgetAcc::NotifyEvent(FX_DWORD dwEvent, CXFA_FFWidget* pWidget , FX_LPVOID pParam , FX_LPVOID pAdditional )
+void CXFA_WidgetAcc::NotifyEvent(FX_DWORD dwEvent, CXFA_FFWidget* pWidget , void* pParam , void* pAdditional )
 {
     IXFA_DocProvider* pDocProvider = GetDoc()->GetDocProvider();
     if (pWidget) {

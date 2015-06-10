@@ -54,7 +54,7 @@ public:
         return (PixelWeight*)(m_pWeightTables + (pixel - m_DestMin) * m_ItemSize);
     }
     int				m_DestMin, m_ItemSize;
-    FX_LPBYTE		m_pWeightTables;
+    uint8_t*		m_pWeightTables;
 };
 class CStretchEngine 
 {
@@ -70,8 +70,8 @@ public:
     IFX_ScanlineComposer*	m_pDestBitmap;
     int		m_DestWidth, m_DestHeight;
     FX_RECT	m_DestClip;
-    FX_LPBYTE	m_pDestScanline;
-    FX_LPBYTE   m_pDestMaskScanline;
+    uint8_t*	m_pDestScanline;
+    uint8_t*   m_pDestMaskScanline;
     FX_RECT	m_SrcClip;
     const CFX_DIBSource*	m_pSource;
     FX_DWORD*	m_pSrcPalette;

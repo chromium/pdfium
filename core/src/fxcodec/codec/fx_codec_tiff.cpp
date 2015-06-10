@@ -223,7 +223,7 @@ void CCodec_TiffContext::GetFrames(int32_t& frames)
     (key) = NULL;
 #define TIFF_EXIF_GETSTRINGINFO(key, tag) {\
         FX_DWORD size = 0;\
-        FX_LPBYTE buf = NULL;\
+        uint8_t* buf = NULL;\
         TIFFGetField(tif_ctx,tag,&size, &buf);\
         if (size && buf) {\
             (key) = FX_Alloc(uint8_t,size);\
@@ -234,7 +234,7 @@ void CCodec_TiffContext::GetFrames(int32_t& frames)
 template <class T>
 static FX_BOOL Tiff_Exif_GetInfo(TIFF* tif_ctx, ttag_t tag, CFX_DIBAttributeExif* pExif)
 {
-    FX_LPBYTE key = NULL;
+    uint8_t* key = NULL;
     T val = (T)0;
     TIFFGetField(tif_ctx, tag, &val);
     if (val) {
@@ -251,8 +251,8 @@ static FX_BOOL Tiff_Exif_GetInfo(TIFF* tif_ctx, ttag_t tag, CFX_DIBAttributeExif
 }
 static void Tiff_Exif_GetStringInfo(TIFF* tif_ctx, ttag_t tag, CFX_DIBAttributeExif* pExif)
 {
-    FX_LPSTR buf = NULL;
-    FX_LPBYTE key = NULL;
+    FX_CHAR* buf = NULL;
+    uint8_t* key = NULL;
     TIFFGetField(tif_ctx, tag, &buf);
     if (buf) {
         int32_t size = (int32_t)FXSYS_strlen(buf);
@@ -272,7 +272,7 @@ FX_BOOL CCodec_TiffContext::LoadFrameInfo(int32_t frame, FX_DWORD& width, FX_DWO
     }
     FX_WORD tif_cs;
     FX_DWORD tif_icc_size = 0;
-    FX_LPBYTE tif_icc_buf = NULL;
+    uint8_t* tif_icc_buf = NULL;
     FX_WORD tif_bpc = 0;
     FX_WORD tif_cps;
     FX_DWORD tif_rps;
@@ -313,7 +313,7 @@ FX_BOOL CCodec_TiffContext::LoadFrameInfo(int32_t frame, FX_DWORD& width, FX_DWO
     }
     return TRUE;
 }
-void _TiffBGRA2RGBA(FX_LPBYTE pBuf, int32_t pixel, int32_t spp)
+void _TiffBGRA2RGBA(uint8_t* pBuf, int32_t pixel, int32_t spp)
 {
     register uint8_t tmp;
     for (int32_t n = 0; n < pixel; n++) {
@@ -383,12 +383,12 @@ FX_BOOL CCodec_TiffContext::Decode1bppRGB(CFX_DIBitmap* pDIBitmap, int32_t heigh
     }
     SetPalette(pDIBitmap, bps);
     int32_t size = (int32_t)TIFFScanlineSize(tif_ctx);
-    FX_LPBYTE buf = (FX_LPBYTE)_TIFFmalloc(size);
+    uint8_t* buf = (uint8_t*)_TIFFmalloc(size);
     if (buf == NULL) {
         TIFFError(TIFFFileName(tif_ctx), "No space for scanline buffer");
         return FALSE;
     }
-    FX_LPBYTE bitMapbuffer = (FX_LPBYTE)pDIBitmap->GetBuffer();
+    uint8_t* bitMapbuffer = (uint8_t*)pDIBitmap->GetBuffer();
     FX_DWORD pitch = pDIBitmap->GetPitch();
     for(int32_t row = 0; row < height; row++) {
         TIFFReadScanline(tif_ctx, buf, row, 0);
@@ -406,12 +406,12 @@ FX_BOOL CCodec_TiffContext::Decode8bppRGB(CFX_DIBitmap* pDIBitmap, int32_t heigh
     }
     SetPalette(pDIBitmap, bps);
     int32_t size = (int32_t)TIFFScanlineSize(tif_ctx);
-    FX_LPBYTE buf = (FX_LPBYTE)_TIFFmalloc(size);
+    uint8_t* buf = (uint8_t*)_TIFFmalloc(size);
     if (buf == NULL) {
         TIFFError(TIFFFileName(tif_ctx), "No space for scanline buffer");
         return FALSE;
     }
-    FX_LPBYTE bitMapbuffer = (FX_LPBYTE)pDIBitmap->GetBuffer();
+    uint8_t* bitMapbuffer = (uint8_t*)pDIBitmap->GetBuffer();
     FX_DWORD pitch = pDIBitmap->GetPitch();
     for(int32_t row = 0; row < height; row++) {
         TIFFReadScanline(tif_ctx, buf, row, 0);
@@ -436,12 +436,12 @@ FX_BOOL CCodec_TiffContext::Decode24bppRGB(CFX_DIBitmap* pDIBitmap, int32_t heig
         return FALSE;
     }
     int32_t size = (int32_t)TIFFScanlineSize(tif_ctx);
-    FX_LPBYTE buf = (FX_LPBYTE)_TIFFmalloc(size);
+    uint8_t* buf = (uint8_t*)_TIFFmalloc(size);
     if (buf == NULL) {
         TIFFError(TIFFFileName(tif_ctx), "No space for scanline buffer");
         return FALSE;
     }
-    FX_LPBYTE bitMapbuffer = (FX_LPBYTE)pDIBitmap->GetBuffer();
+    uint8_t* bitMapbuffer = (uint8_t*)pDIBitmap->GetBuffer();
     FX_DWORD pitch = pDIBitmap->GetPitch();
     for(int32_t row = 0; row < height; row++) {
         TIFFReadScanline(tif_ctx, buf, row, 0);
@@ -471,7 +471,7 @@ FX_BOOL CCodec_TiffContext::Decode(CFX_DIBitmap* pDIBitmap)
         if(TIFFReadRGBAImageOriented(tif_ctx, img_wid, img_hei,
                                      (uint32*)pDIBitmap->GetBuffer(), rotation, 1)) {
             for (FX_DWORD row = 0; row < img_hei; row++) {
-                FX_LPBYTE row_buf = (FX_LPBYTE)pDIBitmap->GetScanline(row);
+                uint8_t* row_buf = (uint8_t*)pDIBitmap->GetScanline(row);
                 _TiffBGRA2RGBA(row_buf, img_wid, 4);
             }
             return TRUE;
@@ -490,7 +490,7 @@ FX_BOOL CCodec_TiffContext::Decode(CFX_DIBitmap* pDIBitmap)
     }
     return FALSE;
 }
-FX_LPVOID CCodec_TiffModule::CreateDecoder(IFX_FileRead* file_ptr)
+void* CCodec_TiffModule::CreateDecoder(IFX_FileRead* file_ptr)
 {
     CCodec_TiffContext* pDecoder = new CCodec_TiffContext;
     if (!pDecoder->InitDecoder(file_ptr)) {
@@ -499,12 +499,12 @@ FX_LPVOID CCodec_TiffModule::CreateDecoder(IFX_FileRead* file_ptr)
     }
     return pDecoder;
 }
-void CCodec_TiffModule::GetFrames(FX_LPVOID ctx, int32_t& frames)
+void CCodec_TiffModule::GetFrames(void* ctx, int32_t& frames)
 {
     CCodec_TiffContext* pDecoder = (CCodec_TiffContext*)ctx;
     pDecoder->GetFrames(frames);
 }
-FX_BOOL CCodec_TiffModule::LoadFrameInfo(FX_LPVOID ctx, int32_t frame, FX_DWORD& width, FX_DWORD& height, FX_DWORD& comps, FX_DWORD& bpc, CFX_DIBAttribute* pAttribute)
+FX_BOOL CCodec_TiffModule::LoadFrameInfo(void* ctx, int32_t frame, FX_DWORD& width, FX_DWORD& height, FX_DWORD& comps, FX_DWORD& bpc, CFX_DIBAttribute* pAttribute)
 {
     CCodec_TiffContext* pDecoder = (CCodec_TiffContext*)ctx;
     return pDecoder->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);

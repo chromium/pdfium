@@ -379,19 +379,19 @@ void CXFA_Document::DoProtoMerge()
             if(uSharpPos < 0) {
                 wsURI = wsUseVal;
             } else {
-                wsURI = CFX_WideStringC((FX_LPCWSTR)wsUseVal, uSharpPos);
+                wsURI = CFX_WideStringC((const FX_WCHAR*)wsUseVal, uSharpPos);
                 FX_STRSIZE uLen = wsUseVal.GetLength();
-                if(uLen >= uSharpPos + 5 && CFX_WideStringC((FX_LPCWSTR)wsUseVal + uSharpPos, 5) == FX_WSTRC(L"#som(") && wsUseVal[uLen - 1] == ')') {
-                    wsSOM = CFX_WideStringC((FX_LPCWSTR)wsUseVal + uSharpPos + 5, uLen - 1 - uSharpPos - 5);
+                if(uLen >= uSharpPos + 5 && CFX_WideStringC((const FX_WCHAR*)wsUseVal + uSharpPos, 5) == FX_WSTRC(L"#som(") && wsUseVal[uLen - 1] == ')') {
+                    wsSOM = CFX_WideStringC((const FX_WCHAR*)wsUseVal + uSharpPos + 5, uLen - 1 - uSharpPos - 5);
                 } else {
-                    wsID = CFX_WideStringC((FX_LPCWSTR)wsUseVal + uSharpPos + 1, uLen - uSharpPos - 1);
+                    wsID = CFX_WideStringC((const FX_WCHAR*)wsUseVal + uSharpPos + 1, uLen - uSharpPos - 1);
                 }
             }
         } else if(pUseHrefNode->TryCData(XFA_ATTRIBUTE_Use, wsUseVal) && !wsUseVal.IsEmpty()) {
             if(wsUseVal[0] == '#') {
-                wsID = CFX_WideStringC((FX_LPCWSTR)wsUseVal + 1, wsUseVal.GetLength() - 1);
+                wsID = CFX_WideStringC((const FX_WCHAR*)wsUseVal + 1, wsUseVal.GetLength() - 1);
             } else {
-                wsSOM = CFX_WideStringC((FX_LPCWSTR)wsUseVal, wsUseVal.GetLength());
+                wsSOM = CFX_WideStringC((const FX_WCHAR*)wsUseVal, wsUseVal.GetLength());
             }
         }
         if (!wsURI.IsEmpty() && wsURI != FX_WSTRC(L".")) {

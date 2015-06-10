@@ -29,7 +29,7 @@ public:
     virtual FX_BOOL		Flush();
     virtual FX_BOOL		Truncate(FX_FILESIZE szFile);
 protected:
-    FX_LPVOID	m_hFile;
+    void*	m_hFile;
 };
 #endif
 

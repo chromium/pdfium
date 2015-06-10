@@ -20,7 +20,7 @@ public:
 
 	virtual ~CBA_FontMap();
 
-	virtual void				Initial(FX_LPCSTR fontname = NULL);
+	virtual void				Initial(const FX_CHAR* fontname = NULL);
 
 public:
 	void						SetDefaultFont(CPDF_Font * pFont, const CFX_ByteString & sFontName);

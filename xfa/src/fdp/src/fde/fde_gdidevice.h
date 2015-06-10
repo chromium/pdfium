@@ -66,7 +66,7 @@ protected:
     Gdiplus::GraphicsState		m_GraphicsState;
     Gdiplus::Graphics			*m_pGraphics;
     Gdiplus::Bitmap				*m_pBitmap;
-    FX_LPBYTE					m_pGlyphBuf;
+    uint8_t*					m_pGlyphBuf;
     FX_DWORD					m_dwGlyphLen;
     CFX_RectF					m_rtClipRect;
     CFDE_GdiPath				*m_pClipPath;

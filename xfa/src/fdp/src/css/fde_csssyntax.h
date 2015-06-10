@@ -11,7 +11,7 @@ class CFDE_CSSTextBuf : public CFX_Target
 public:
     CFDE_CSSTextBuf();
     ~CFDE_CSSTextBuf();
-    FX_BOOL							AttachBuffer(FX_LPCWSTR pBuffer, int32_t iBufLen);
+    FX_BOOL							AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen);
     FX_BOOL							EstimateSize(int32_t iAllocSize);
     int32_t						LoadFromStream(IFX_Stream *pTxtStream, int32_t iStreamOffset, int32_t iMaxChars, FX_BOOL &bEOS);
     FX_BOOL							AppendChar(FX_WCHAR wch)
@@ -59,14 +59,14 @@ public:
     {
         return m_iDatLen;
     }
-    FX_LPCWSTR						GetBuffer() const
+    const FX_WCHAR*						GetBuffer() const
     {
         return m_pBuffer;
     }
 protected:
     FX_BOOL							ExpandBuf(int32_t iDesiredSize);
     FX_BOOL							m_bExtBuf;
-    FX_LPWSTR						m_pBuffer;
+    FX_WCHAR*						m_pBuffer;
     int32_t						m_iBufLen;
     int32_t						m_iDatLen;
     int32_t						m_iDatPos;
@@ -97,9 +97,9 @@ public:
         FDE_Delete this;
     }
     virtual FX_BOOL					Init(IFX_Stream *pStream, int32_t iCSSPlaneSize, int32_t iTextDataSize = 32, FX_BOOL bOnlyDeclaration = FALSE);
-    virtual FX_BOOL					Init(FX_LPCWSTR pBuffer, int32_t iBufferSize, int32_t iTextDatSize = 32, FX_BOOL bOnlyDeclaration = FALSE);
+    virtual FX_BOOL					Init(const FX_WCHAR* pBuffer, int32_t iBufferSize, int32_t iTextDatSize = 32, FX_BOOL bOnlyDeclaration = FALSE);
     virtual FDE_CSSSYNTAXSTATUS		DoSyntaxParse();
-    virtual FX_LPCWSTR				GetCurrentString(int32_t &iLength) const;
+    virtual const FX_WCHAR*				GetCurrentString(int32_t &iLength) const;
 protected:
     void							Reset(FX_BOOL bOnlyDeclaration);
     void							SwitchMode(FDE_CSSSYNTAXMODE eMode);

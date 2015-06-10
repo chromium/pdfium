@@ -8,7 +8,7 @@
 #include "fx_gefont.h"
 #include "fx_fontutils.h"
 #ifndef _FXPLUS
-IFX_Font* IFX_Font::LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage, IFX_FontMgr *pFontMgr)
+IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage, IFX_FontMgr *pFontMgr)
 {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
     if (NULL != pFontMgr) {
@@ -24,7 +24,7 @@ IFX_Font* IFX_Font::LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX
     return pFont;
 #endif
 }
-IFX_Font* IFX_Font::LoadFont(FX_LPCBYTE pBuffer, int32_t iLength, IFX_FontMgr *pFontMgr)
+IFX_Font* IFX_Font::LoadFont(const uint8_t* pBuffer, int32_t iLength, IFX_FontMgr *pFontMgr)
 {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
     if (NULL != pFontMgr) {
@@ -40,7 +40,7 @@ IFX_Font* IFX_Font::LoadFont(FX_LPCBYTE pBuffer, int32_t iLength, IFX_FontMgr *p
     return pFont;
 #endif
 }
-IFX_Font* IFX_Font::LoadFont(FX_LPCWSTR pszFileName, IFX_FontMgr *pFontMgr)
+IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFileName, IFX_FontMgr *pFontMgr)
 {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
     if (NULL != pFontMgr) {
@@ -181,7 +181,7 @@ IFX_Font* CFX_GEFont::Retain()
     ++ m_iRefCount;
     return this;
 }
-FX_BOOL CFX_GEFont::LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
+FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
 {
     if (m_pFont != NULL) {
         return FALSE;
@@ -235,7 +235,7 @@ FX_BOOL CFX_GEFont::LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX
     Unlock();
     return bRet;
 }
-FX_BOOL CFX_GEFont::LoadFont(FX_LPCBYTE pBuffer, int32_t length)
+FX_BOOL CFX_GEFont::LoadFont(const uint8_t* pBuffer, int32_t length)
 {
     if (m_pFont != NULL) {
         return FALSE;
@@ -250,7 +250,7 @@ FX_BOOL CFX_GEFont::LoadFont(FX_LPCBYTE pBuffer, int32_t length)
     Unlock();
     return bRet;
 }
-FX_BOOL CFX_GEFont::LoadFont(FX_LPCWSTR pszFileName)
+FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFileName)
 {
     if (m_pFont != NULL) {
         return FALSE;
@@ -446,7 +446,7 @@ FX_BOOL CFX_GEFont::GetCharBBox(FX_WCHAR wUnicode, CFX_Rect &bbox, FX_BOOL bRecu
 {
     FXSYS_assert(m_pRectArray != NULL);
     FXSYS_assert(m_pBBoxMap != NULL);
-    FX_LPVOID pRect = NULL;
+    void* pRect = NULL;
     if (!m_pBBoxMap->Lookup((void*)(uintptr_t)wUnicode, pRect)) {
         IFX_Font *pFont = NULL;
         int32_t iGlyph = GetGlyphIndex(wUnicode, TRUE, &pFont, bCharCode);
@@ -533,9 +533,9 @@ int32_t CFX_GEFont::GetGlyphIndex(FX_WCHAR wUnicode, FX_BOOL bRecursive, IFX_Fon
         CFX_WideString wsFamily;
         GetFamilyName(wsFamily);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-        IFX_Font *pFont = m_pFontMgr->GetDefFontByUnicode(wUnicode, GetFontStyles(), (FX_LPCWSTR)wsFamily);
+        IFX_Font *pFont = m_pFontMgr->GetDefFontByUnicode(wUnicode, GetFontStyles(), (const FX_WCHAR*)wsFamily);
 #else
-        IFX_Font *pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), (FX_LPCWSTR)wsFamily);
+        IFX_Font *pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), (const FX_WCHAR*)wsFamily);
         if (NULL == pFont) {
             pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), NULL);
         }

@@ -69,7 +69,7 @@ FX_BOOL	CFWL_WidgetTP::DrawText(CFWL_ThemeText *pParams)
     m_pTextOut->DrawLogicText(pParams->m_wsText, iLen, pParams->m_rtPart);
     return TRUE;
 }
-FX_LPVOID CFWL_WidgetTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
+void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
 {
     switch(dwCapacity) {
         case FWL_WGTCAPACITY_CXBorder: {
@@ -162,7 +162,7 @@ FWL_ERR	CFWL_WidgetTP::Finalize()
 CFWL_WidgetTP::~CFWL_WidgetTP()
 {
 }
-FWL_ERR CFWL_WidgetTP::SetFont(IFWL_Widget *pWidget, FX_LPCWSTR strFont, FX_FLOAT fFontSize, FX_ARGB rgbFont)
+FWL_ERR CFWL_WidgetTP::SetFont(IFWL_Widget *pWidget, const FX_WCHAR* strFont, FX_FLOAT fFontSize, FX_ARGB rgbFont)
 {
     if (!m_pTextOut) {
         return FWL_ERR_Succeeded;

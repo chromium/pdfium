@@ -34,8 +34,8 @@ public:
     FWL_HLISTITEM	GetItem(int32_t nIndex);
     FWL_ERR		SetItemString(FWL_HLISTITEM hItem, FX_WSTR wsText);
     FWL_ERR		GetItemString(FWL_HLISTITEM hItem, CFX_WideString &wsText);
-    FWL_ERR		SetItemData(FWL_HLISTITEM hItem, FX_LPVOID pData);
-    FX_LPVOID	GetItemData(FWL_HLISTITEM hItem);
+    FWL_ERR		SetItemData(FWL_HLISTITEM hItem, void* pData);
+    void*	GetItemData(FWL_HLISTITEM hItem);
     FWL_HLISTITEM	GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
     FX_DWORD		GetItemStates(FWL_HLISTITEM hItem);
     CFWL_ListBox();
@@ -56,10 +56,10 @@ protected:
         virtual	FX_DWORD		GetItemStyles(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
         virtual	FWL_ERR			GetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, CFX_WideString &wsText);
         virtual FWL_ERR			GetItemRect(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, CFX_RectF &rtItem);
-        virtual FX_LPVOID		GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
+        virtual void*		GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
 
         virtual	FWL_ERR			SetItemStyles(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_DWORD dwStyle);
-        virtual FWL_ERR			SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_LPCWSTR pszText);
+        virtual FWL_ERR			SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, const FX_WCHAR* pszText);
         virtual FWL_ERR			SetItemRect(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, const CFX_RectF &rtItem);
         virtual FX_FLOAT		GetItemHeight(IFWL_Widget *pWidget);
         virtual CFX_DIBitmap*	GetItemIcon(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
@@ -91,7 +91,7 @@ public:
     FX_DWORD		m_dwStates;
     CFX_WideString	m_wsText;
     CFX_DIBitmap	*m_pDIB;
-    FX_LPVOID		m_pData;
+    void*		m_pData;
     FX_DWORD		m_dwCheckState;
     CFX_RectF		m_rtCheckBox;
 };

@@ -60,8 +60,8 @@ class IFX_TxtBreak;
 class IFX_TxtAccess
 {
 public:
-    virtual FX_WCHAR	GetChar(FX_LPVOID pIdentity, int32_t index) const = 0;
-    virtual int32_t	GetWidth(FX_LPVOID pIdentity, int32_t index) const = 0;
+    virtual FX_WCHAR	GetChar(void* pIdentity, int32_t index) const = 0;
+    virtual int32_t	GetWidth(void* pIdentity, int32_t index) const = 0;
 };
 typedef struct _FX_TXTRUN {
     _FX_TXTRUN()
@@ -83,8 +83,8 @@ typedef struct _FX_TXTRUN {
         bSkipSpace		= TRUE;
     }
     IFX_TxtAccess	*pAccess;
-    FX_LPVOID		pIdentity;
-    FX_LPCWSTR		pStr;
+    void*		pIdentity;
+    const FX_WCHAR*		pStr;
     int32_t		*pWidths;
     int32_t		iLength;
     IFX_Font		*pFont;
@@ -133,7 +133,7 @@ public:
         FXSYS_assert(index > -1 && index < m_iChars && m_pChars != NULL);
         return m_pChars->GetDataPtr(m_iStartChar + index);
     }
-    void GetString(FX_LPWSTR pText) const
+    void GetString(FX_WCHAR* pText) const
     {
         FXSYS_assert(pText != NULL);
         int32_t iEndChar = m_iStartChar + m_iChars;
@@ -146,7 +146,7 @@ public:
 
     void GetString(CFX_WideString &wsText) const
     {
-        FX_LPWSTR pText = wsText.GetBuffer(m_iChars);
+        FX_WCHAR* pText = wsText.GetBuffer(m_iChars);
         GetString(pText);
         wsText.ReleaseBuffer(m_iChars);
     }
@@ -171,7 +171,7 @@ public:
     int32_t			m_iVerticalScale;
     FX_DWORD			m_dwCharStyles;
     CFX_TxtCharArray	*m_pChars;
-    FX_LPVOID			m_pUserData;
+    void*			m_pUserData;
 };
 typedef CFX_BaseArrayTemplate<CFX_TxtPiece> CFX_TxtPieceArray;
 class IFX_TxtBreak
@@ -197,7 +197,7 @@ public:
     virtual FX_DWORD		GetContextCharStyles() const = 0;
     virtual void			SetContextCharStyles(FX_DWORD dwCharStyles) = 0;
     virtual void			SetCombWidth(FX_FLOAT fCombWidth) = 0;
-    virtual void			SetUserData(FX_LPVOID pUserData) = 0;
+    virtual void			SetUserData(void* pUserData) = 0;
     virtual FX_DWORD					AppendChar(FX_WCHAR wch) = 0;
     virtual FX_DWORD					EndBreak(FX_DWORD dwStatus = FX_TXTBREAK_PieceBreak) = 0;
     virtual int32_t					CountBreakChars() const = 0;

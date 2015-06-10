@@ -134,7 +134,7 @@ FX_BOOL CFDE_FxgeDevice::DrawImage(CFX_DIBSource *pDib, const CFX_RectF *pSrcRec
     if (pDevMatrix) {
         dib2fxdev.Concat(*pDevMatrix);
     }
-    FX_LPVOID handle = NULL;
+    void* handle = NULL;
     m_pDevice->StartDIBits(pDib, 255, 0, (const CFX_AffineMatrix*)&dib2fxdev, 0, handle);
     while (m_pDevice->ContinueDIBits(handle, NULL)) { }
     m_pDevice->CancelDIBits(handle);

@@ -63,7 +63,7 @@ public:
     FX_BOOL				UnqueueMessage(CFWL_NoteLoop *pNoteLoop);
     CFWL_NoteLoop*		GetTopLoop();
     int32_t            CountLoop();
-    void                SetHook(FWLMessageHookCallback callback, FX_LPVOID info);
+    void                SetHook(FWLMessageHookCallback callback, void* info);
     FX_BOOL				ProcessMessage(CFWL_Message *pMessage);
 protected:
     FX_BOOL				DispatchMessage(CFWL_Message *pMessage, IFWL_Widget *pMessageForm);
@@ -94,9 +94,9 @@ protected:
     IFWL_Widget			*m_pGrab;
     CFWL_NoteLoop		*m_pNoteLoop;
     FWLMessageHookCallback m_hook;
-    FX_LPVOID              m_hookInfo;
+    void*              m_hookInfo;
 };
-typedef CFX_MapPtrTemplate<FX_LPVOID, FX_DWORD> CFWL_EventSource;
+typedef CFX_MapPtrTemplate<void*, FX_DWORD> CFWL_EventSource;
 class CFWL_EventTarget
 {
 public:

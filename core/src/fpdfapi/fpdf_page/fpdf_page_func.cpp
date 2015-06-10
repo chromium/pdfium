@@ -64,10 +64,10 @@ CPDF_PSProc::~CPDF_PSProc()
 {
     int size = m_Operators.GetSize();
     for (int i = 0; i < size; i ++) {
-        if (m_Operators[i] == (FX_LPVOID)PSOP_PROC) {
+        if (m_Operators[i] == (void*)PSOP_PROC) {
             delete (CPDF_PSProc*)m_Operators[i + 1];
             i ++;
-        } else if (m_Operators[i] == (FX_LPVOID)PSOP_CONST) {
+        } else if (m_Operators[i] == (void*)PSOP_CONST) {
             FX_Free((FX_FLOAT*)m_Operators[i + 1]);
             i ++;
         }
@@ -84,15 +84,15 @@ FX_BOOL CPDF_PSProc::Execute(CPDF_PSEngine* pEngine)
             pEngine->Push(*(FX_FLOAT*)m_Operators[i + 1]);
             i ++;
         } else if (op == PSOP_IF) {
-            if (i < 2 || m_Operators[i - 2] != (FX_LPVOID)PSOP_PROC) {
+            if (i < 2 || m_Operators[i - 2] != (void*)PSOP_PROC) {
                 return FALSE;
             }
             if ((int)pEngine->Pop()) {
                 ((CPDF_PSProc*)m_Operators[i - 1])->Execute(pEngine);
             }
         } else if (op == PSOP_IFELSE) {
-            if (i < 4 || m_Operators[i - 2] != (FX_LPVOID)PSOP_PROC ||
-                    m_Operators[i - 4] != (FX_LPVOID)PSOP_PROC) {
+            if (i < 4 || m_Operators[i - 2] != (void*)PSOP_PROC ||
+                    m_Operators[i - 4] != (void*)PSOP_PROC) {
                 return FALSE;
             }
             if ((int)pEngine->Pop()) {
@@ -147,7 +147,7 @@ const struct _PDF_PSOpName {
 };
 FX_BOOL CPDF_PSEngine::Parse(const FX_CHAR* string, int size)
 {
-    CPDF_SimpleParser parser((FX_LPBYTE)string, size);
+    CPDF_SimpleParser parser((uint8_t*)string, size);
     CFX_ByteStringC word = parser.GetWord();
     if (word != FX_BSTRC("{")) {
         return FALSE;
@@ -166,7 +166,7 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser& parser)
         }
         if (word == FX_BSTRC("{")) {
             CPDF_PSProc* pProc = new CPDF_PSProc;
-            m_Operators.Add((FX_LPVOID)PSOP_PROC);
+            m_Operators.Add((void*)PSOP_PROC);
             m_Operators.Add(pProc);
             if (!pProc->Parse(parser)) {
                 return FALSE;
@@ -175,7 +175,7 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser& parser)
             int i = 0;
             while (_PDF_PSOpNames[i].name) {
                 if (word == CFX_ByteStringC(_PDF_PSOpNames[i].name)) {
-                    m_Operators.Add((FX_LPVOID)_PDF_PSOpNames[i].op);
+                    m_Operators.Add((void*)_PDF_PSOpNames[i].op);
                     break;
                 }
                 i ++;
@@ -183,7 +183,7 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser& parser)
             if (_PDF_PSOpNames[i].name == NULL) {
                 FX_FLOAT* pd = FX_Alloc(FX_FLOAT, 1);
                 *pd = FX_atof(word);
-                m_Operators.Add((FX_LPVOID)PSOP_CONST);
+                m_Operators.Add((void*)PSOP_CONST);
                 m_Operators.Add(pd);
             }
         }
@@ -424,7 +424,7 @@ static FX_FLOAT PDF_Interpolate(FX_FLOAT x, FX_FLOAT xmin, FX_FLOAT xmax, FX_FLO
 {
     return ((x - xmin) * (ymax - ymin) / (xmax - xmin)) + ymin;
 }
-static FX_DWORD _GetBits32(FX_LPCBYTE pData, int bitpos, int nbits)
+static FX_DWORD _GetBits32(const uint8_t* pData, int bitpos, int nbits)
 {
     int result = 0;
     for (int i = 0; i < nbits; i ++)
@@ -561,7 +561,7 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const
     if (!bitpos.IsValid()) {
         return FALSE;
     }
-    FX_LPCBYTE pSampleData = m_pSampleStream->GetData();
+    const uint8_t* pSampleData = m_pSampleStream->GetData();
     if (pSampleData == NULL) {
         return FALSE;
     }

@@ -79,7 +79,7 @@ public:
     virtual IFX_Locale* 	GetLocale(FX_WORD lcid) = 0;
     virtual IFX_Locale* 	GetLocaleByName(FX_WSTR wsLocaleName) = 0;
 };
-IFX_LocaleMgr*	FX_LocaleMgr_Create(FX_LPCWSTR pszLocalPath, FX_WORD wDefaultLCID);
+IFX_LocaleMgr*	FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath, FX_WORD wDefaultLCID);
 void			FX_ParseNumString(const CFX_WideString& wsNum, CFX_WideString& wsResult);
 FX_BOOL			FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime);
 FX_BOOL			FX_TimeFromCanonical(FX_WSTR wsTime, CFX_Unitime& datetime, IFX_Locale* pLocale);

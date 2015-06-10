@@ -152,7 +152,7 @@ public:
 protected:
     void							ExtractFindWhat(const CFX_WideString& findwhat);
     FX_BOOL							IsMatchWholeWord(const CFX_WideString& csPageText, int startPos, int endPos);
-    FX_BOOL							ExtractSubString(CFX_WideString& rString, FX_LPCWSTR lpszFullString,
+    FX_BOOL							ExtractSubString(CFX_WideString& rString, const FX_WCHAR* lpszFullString,
             int iSubString, FX_WCHAR chSep);
     CFX_WideString					MakeReverse(const CFX_WideString& str);
     int								ReverseFind(const CFX_WideString& csPageText, const CFX_WideString& csWord, int nStartPos, int& WordLength);
@@ -210,7 +210,7 @@ private:
     CFX_WideString					m_strPageText;
     FX_BOOL							m_IsParserd;
 };
-FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_LPWSTR pDst);
+FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst);
 void NormalizeString(CFX_WideString& str);
 void NormalizeCompositeChar(FX_WCHAR wChar, CFX_WideString& sDest);
 

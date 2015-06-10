@@ -34,7 +34,7 @@ public:
     virtual int32_t		CountChildNodes() const;
     virtual CFDE_XMLNode*	GetChildNode(int32_t index) const;
     virtual int32_t		GetChildNodeIndex(CFDE_XMLNode *pNode) const;
-    virtual CFDE_XMLNode*	GetPath(FX_LPCWSTR pPath, int32_t iLength = -1, FX_BOOL bQualifiedName = TRUE) const;
+    virtual CFDE_XMLNode*	GetPath(const FX_WCHAR* pPath, int32_t iLength = -1, FX_BOOL bQualifiedName = TRUE) const;
     virtual int32_t		InsertChildNode(CFDE_XMLNode *pNode, int32_t index = -1);
     virtual void			RemoveChildNode(CFDE_XMLNode *pNode);
     virtual void			DeleteChildren();
@@ -71,14 +71,14 @@ public:
     }
     virtual int32_t		CountAttributes() const;
     virtual FX_BOOL			GetAttribute(int32_t index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const;
-    virtual FX_BOOL			HasAttribute(FX_LPCWSTR pwsAttriName) const;
-    virtual void			GetString(FX_LPCWSTR pwsAttriName, CFX_WideString &wsAttriValue, FX_LPCWSTR pwsDefValue = NULL) const;
+    virtual FX_BOOL			HasAttribute(const FX_WCHAR* pwsAttriName) const;
+    virtual void			GetString(const FX_WCHAR* pwsAttriName, CFX_WideString &wsAttriValue, const FX_WCHAR* pwsDefValue = NULL) const;
     virtual void			SetString(const CFX_WideString &wsAttriName, const CFX_WideString &wsAttriValue);
-    virtual int32_t		GetInteger(FX_LPCWSTR pwsAttriName, int32_t iDefValue = 0) const;
-    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, int32_t iAttriValue);
-    virtual FX_FLOAT		GetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fDefValue = 0) const;
-    virtual void			SetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fAttriValue);
-    virtual void			RemoveAttribute(FX_LPCWSTR pwsAttriName);
+    virtual int32_t		GetInteger(const FX_WCHAR* pwsAttriName, int32_t iDefValue = 0) const;
+    virtual void			SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue);
+    virtual FX_FLOAT		GetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fDefValue = 0) const;
+    virtual void			SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue);
+    virtual void			RemoveAttribute(const FX_WCHAR* pwsAttriName);
     virtual int32_t		CountData() const;
     virtual FX_BOOL			GetData(int32_t index, CFX_WideString &wsData) const;
     virtual void			AppendData(const CFX_WideString &wsData);
@@ -108,14 +108,14 @@ public:
     virtual void			GetNamespaceURI(CFX_WideString &wsNamespace) const;
     virtual int32_t		CountAttributes() const;
     virtual FX_BOOL			GetAttribute(int32_t index, CFX_WideString &wsAttriName, CFX_WideString &wsAttriValue) const;
-    virtual FX_BOOL			HasAttribute(FX_LPCWSTR pwsAttriName) const;
-    virtual void			GetString(FX_LPCWSTR pwsAttriName, CFX_WideString &wsAttriValue, FX_LPCWSTR pwsDefValue = NULL) const;
+    virtual FX_BOOL			HasAttribute(const FX_WCHAR* pwsAttriName) const;
+    virtual void			GetString(const FX_WCHAR* pwsAttriName, CFX_WideString &wsAttriValue, const FX_WCHAR* pwsDefValue = NULL) const;
     virtual void			SetString(const CFX_WideString &wsAttriName, const CFX_WideString &wsAttriValue);
-    virtual int32_t		GetInteger(FX_LPCWSTR pwsAttriName, int32_t iDefValue = 0) const;
-    virtual void			SetInteger(FX_LPCWSTR pwsAttriName, int32_t iAttriValue);
-    virtual FX_FLOAT		GetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fDefValue = 0) const;
-    virtual void			SetFloat(FX_LPCWSTR pwsAttriName, FX_FLOAT fAttriValue);
-    virtual void			RemoveAttribute(FX_LPCWSTR pwsAttriName);
+    virtual int32_t		GetInteger(const FX_WCHAR* pwsAttriName, int32_t iDefValue = 0) const;
+    virtual void			SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue);
+    virtual FX_FLOAT		GetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fDefValue = 0) const;
+    virtual void			SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue);
+    virtual void			RemoveAttribute(const FX_WCHAR* pwsAttriName);
     virtual void			GetTextData(CFX_WideString &wsText) const;
     virtual void			SetTextData(const CFX_WideString &wsText);
 public:
@@ -276,7 +276,7 @@ public:
     {
         FDE_Delete this;
     }
-    FX_LPWSTR GetAvailableBlock(int32_t& iIndexInBlock);
+    FX_WCHAR* GetAvailableBlock(int32_t& iIndexInBlock);
     inline int32_t GetAllocStep() const
     {
         return m_iAllocStep;
@@ -409,22 +409,22 @@ protected:
     int32_t			m_iLastNodeNum;
     int32_t			m_iParsedChars;
     int32_t			m_iParsedBytes;
-    FX_LPWSTR			m_pBuffer;
+    FX_WCHAR*			m_pBuffer;
     int32_t			m_iBufferChars;
     FX_BOOL				m_bEOS;
-    FX_LPWSTR			m_pStart;
-    FX_LPWSTR			m_pEnd;
+    FX_WCHAR*			m_pStart;
+    FX_WCHAR*			m_pEnd;
     FDE_XMLNODE			m_CurNode;
     CFDE_XMLNodeStack	m_XMLNodeStack;
 #ifdef _FDE_BLOCK_BUFFER
     CFDE_BlockBuffer	m_BlockBuffer;
     int32_t			m_iAllocStep;
     int32_t&			m_iDataLength;
-    FX_LPWSTR			m_pCurrentBlock;
+    FX_WCHAR*			m_pCurrentBlock;
     int32_t			m_iIndexInBlock;
 #else
     int32_t			m_iTextDataSize;
-    FX_LPWSTR			m_pwsTextData;
+    FX_WCHAR*			m_pwsTextData;
     int32_t			m_iDataPos;
 #endif
     int32_t			m_iTextDataLength;

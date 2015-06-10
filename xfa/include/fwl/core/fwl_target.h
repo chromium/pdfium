@@ -20,6 +20,6 @@ public:
     FWL_ERR			Finalize();
 protected:
     virtual ~IFWL_Target();
-    FX_LPVOID	m_pData;
+    void*	m_pData;
 };
 #endif

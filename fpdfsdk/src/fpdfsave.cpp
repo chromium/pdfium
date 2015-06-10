@@ -124,7 +124,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument, CFX_PtrArray& fileList
 		CPDF_Stream *pTemplateStream = pArray->GetStream(iTemplate);
 		CPDF_StreamAcc streamAcc;
 		streamAcc.LoadAllData(pTemplateStream);
-		FX_LPBYTE pData = (FX_LPBYTE)streamAcc.GetData();
+		uint8_t* pData = (uint8_t*)streamAcc.GetData();
 		FX_DWORD dwSize2 = streamAcc.GetSize();
 		IFX_FileStream *pTemplate = FX_CreateMemoryStream(pData, dwSize2);
 		pContext->UpdateChecksum((IFX_FileRead*)pTemplate);

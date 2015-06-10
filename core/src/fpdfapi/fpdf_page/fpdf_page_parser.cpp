@@ -113,7 +113,7 @@ int CPDF_StreamContentParser::GetNextParamPos()
     m_ParamCount ++;
     return index;
 }
-void CPDF_StreamContentParser::AddNameParam(FX_LPCSTR name, int len)
+void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len)
 {
     int index = GetNextParamPos();
     if (len > 32) {
@@ -131,7 +131,7 @@ void CPDF_StreamContentParser::AddNameParam(FX_LPCSTR name, int len)
         }
     }
 }
-void CPDF_StreamContentParser::AddNumberParam(FX_LPCSTR str, int len)
+void CPDF_StreamContentParser::AddNumberParam(const FX_CHAR* str, int len)
 {
     int index = GetNextParamPos();
     m_ParamBuf1[index].m_Type = PDFOBJ_NUMBER;
@@ -321,7 +321,7 @@ const struct _OpCode {
     {FXBSTR_ID('w', 0, 0, 0),		&CPDF_StreamContentParser::Handle_SetLineWidth},
     {FXBSTR_ID('y', 0, 0, 0),		&CPDF_StreamContentParser::Handle_CurveTo_13},
 };
-FX_BOOL CPDF_StreamContentParser::OnOperator(FX_LPCSTR op)
+FX_BOOL CPDF_StreamContentParser::OnOperator(const FX_CHAR* op)
 {
     int i = 0;
     FX_DWORD opid = 0;
@@ -410,7 +410,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent()
     m_CurContentMark.GetModify()->AddMark(tag, NULL, FALSE);
 }
 struct _FX_BSTR {
-    FX_LPCSTR	m_Ptr;
+    const FX_CHAR*	m_Ptr;
     int			m_Size;
 };
 #define _FX_BSTRC(str) {str, sizeof(str)-1}
@@ -1550,7 +1550,7 @@ CFX_ByteString _FPDF_ByteStringFromHex(CFX_BinaryBuf& src_buf)
     CFX_ByteTextBuf buf;
     FX_BOOL bFirst = TRUE;
     int code = 0;
-    FX_LPCBYTE str = src_buf.GetBuffer();
+    const uint8_t* str = src_buf.GetBuffer();
     FX_DWORD size = src_buf.GetSize();
     for (FX_DWORD i = 0; i < size; i ++) {
         uint8_t ch = str[i];

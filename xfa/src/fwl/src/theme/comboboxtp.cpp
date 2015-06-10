@@ -78,7 +78,7 @@ void CFWL_ComboBoxTP::DrawStrethHandler(CFWL_ThemeBackground *pParams, FX_DWORD 
     pParams->m_pGraphics->SetFillColor(&cr);
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, &pParams->m_matrix);
 }
-FX_LPVOID CFWL_ComboBoxTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
+void* CFWL_ComboBoxTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
 {
     if (dwCapacity == FWL_WGTCAPACITY_CMB_ComboFormHandler) {
         m_fValue = FWLTHEME_CAPACITY_ComboFormHandler;

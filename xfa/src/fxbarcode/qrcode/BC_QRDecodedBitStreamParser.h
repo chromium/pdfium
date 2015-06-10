@@ -15,7 +15,7 @@ class CBC_QRDecodedBitStreamParser
 {
 private:
     const static FX_CHAR ALPHANUMERIC_CHARS[45];
-    static FX_LPCSTR UTF_8;
+    static const FX_CHAR* UTF_8;
     CBC_QRDecodedBitStreamParser();
 public:
     virtual ~CBC_QRDecodedBitStreamParser();

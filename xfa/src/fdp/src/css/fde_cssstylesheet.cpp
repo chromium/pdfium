@@ -10,7 +10,7 @@
 #include "fde_cssstylesheet.h"
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet()
 {
-    static const FX_LPCWSTR s_pStyle = L"html,address,blockquote,body,dd,div,dl,dt,fieldset,form,frame,frameset,h1,h2,h3,h4,h5,h6,noframes,ol,p,ul,center,dir,hr,menu,pre{display:block}"
+    static const FX_WCHAR* s_pStyle = L"html,address,blockquote,body,dd,div,dl,dt,fieldset,form,frame,frameset,h1,h2,h3,h4,h5,h6,noframes,ol,p,ul,center,dir,hr,menu,pre{display:block}"
                                        L"li{display:list-item}head{display:none}table{display:table}tr{display:table-row}thead{display:table-header-group}tbody{display:table-row-group}tfoot{display:table-footer-group}"
                                        L"col{display:table-column}colgroup{display:table-column-group}td,th{display:table-cell}caption{display:table-caption}th{font-weight:bolder;text-align:center}caption{text-align:center}"
                                        L"body{margin:0}h1{font-size:2em;margin:.67em 0}h2{font-size:1.5em;margin:.75em 0}h3{font-size:1.17em;margin:.83em 0}h4,p,blockquote,ul,fieldset,form,ol,dl,dir,menu{margin:1.12em 0}"
@@ -35,7 +35,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString &szU
     }
     return pStyleSheet;
 }
-IFDE_CSSStyleSheet*	IFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, int32_t iBufSize, FX_WORD wCodePage, FX_DWORD dwMediaList )
+IFDE_CSSStyleSheet*	IFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString &szUrl, const FX_WCHAR* pBuffer, int32_t iBufSize, FX_WORD wCodePage, FX_DWORD dwMediaList )
 {
     CFDE_CSSStyleSheet *pStyleSheet = FDE_New CFDE_CSSStyleSheet(dwMediaList);
     if (pStyleSheet == NULL) {
@@ -122,7 +122,7 @@ FX_BOOL CFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString &szUrl, IFX_Stre
     m_szUrl = szUrl;
     return bRet;
 }
-FX_BOOL CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, int32_t iBufSize, FX_WORD wCodePage)
+FX_BOOL CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString &szUrl, const FX_WCHAR* pBuffer, int32_t iBufSize, FX_WORD wCodePage)
 {
     FXSYS_assert(pBuffer != NULL && iBufSize > 0);
     IFDE_CSSSyntaxParser *pSyntax = IFDE_CSSSyntaxParser::Create();
@@ -176,7 +176,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadMediaRule(IFDE_CSSSyntaxParser *pSyn
         switch (pSyntax->DoSyntaxParse()) {
             case FDE_CSSSYNTAXSTATUS_MediaType: {
                     int32_t iLen;
-                    FX_LPCWSTR psz = pSyntax->GetCurrentString(iLen);
+                    const FX_WCHAR* psz = pSyntax->GetCurrentString(iLen);
                     FDE_LPCCSSMEDIATYPETABLE pMediaType = FDE_GetCSSMediaTypeByName(psz, iLen);
                     if (pMediaType != NULL) {
                         dwMediaList |= pMediaType->wValue;
@@ -209,7 +209,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadStyleRule(IFDE_CSSSyntaxParser *pSyn
 {
     m_Selectors.RemoveAt(0, m_Selectors.GetSize());
     CFDE_CSSStyleRule *pStyleRule = NULL;
-    FX_LPCWSTR pszValue = NULL;
+    const FX_WCHAR* pszValue = NULL;
     int32_t iValueLen = 0;
     FDE_CSSPROPERTYARGS propertyArgs;
     propertyArgs.pStaticStore = m_pAllocator;
@@ -269,7 +269,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadStyleRule(IFDE_CSSSyntaxParser *pSyn
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadFontFaceRule(IFDE_CSSSyntaxParser *pSyntax, CFDE_CSSRuleArray &ruleArray)
 {
     CFDE_CSSFontFaceRule *pFontFaceRule = NULL;
-    FX_LPCWSTR pszValue = NULL;
+    const FX_WCHAR* pszValue = NULL;
     int32_t iValueLen = 0;
     FDE_CSSPROPERTYARGS propertyArgs;
     propertyArgs.pStaticStore = m_pAllocator;
@@ -361,10 +361,10 @@ inline FX_BOOL FDE_IsCSSChar(FX_WCHAR wch)
 {
     return (wch >= 'a' && wch <= 'z') || (wch >= 'A' && wch <= 'Z');
 }
-int32_t FDE_GetCSSPersudoLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
+int32_t FDE_GetCSSPersudoLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd)
 {
     FXSYS_assert(*psz == ':');
-    FX_LPCWSTR pStart = psz;
+    const FX_WCHAR* pStart = psz;
     while (psz < pEnd) {
         FX_WCHAR wch = *psz;
         if (FDE_IsCSSChar(wch) || wch == ':') {
@@ -375,9 +375,9 @@ int32_t FDE_GetCSSPersudoLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
     }
     return psz - pStart;
 }
-int32_t FDE_GetCSSNameLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
+int32_t FDE_GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd)
 {
-    FX_LPCWSTR pStart = psz;
+    const FX_WCHAR* pStart = psz;
     while (psz < pEnd) {
         FX_WCHAR wch = *psz;
         if (FDE_IsCSSChar(wch)
@@ -390,11 +390,11 @@ int32_t FDE_GetCSSNameLen(FX_LPCWSTR psz, FX_LPCWSTR pEnd)
     }
     return psz - pStart;
 }
-IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator *pStaticStore, FX_LPCWSTR psz, int32_t iLen)
+IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator *pStaticStore, const FX_WCHAR* psz, int32_t iLen)
 {
     FXSYS_assert(pStaticStore != NULL && psz != NULL && iLen > 0);
-    FX_LPCWSTR pStart = psz;
-    FX_LPCWSTR pEnd = psz + iLen;
+    const FX_WCHAR* pStart = psz;
+    const FX_WCHAR* pEnd = psz + iLen;
     for (; psz < pEnd; ++psz) {
         switch (*psz) {
             case '>':

@@ -989,22 +989,22 @@ static void aes_encrypt_cbc(unsigned char *dest, const unsigned char *src, int l
     }
     FXSYS_memcpy32(ctx->iv, iv, sizeof(iv));
 }
-void CRYPT_AESSetKey(FX_LPVOID context, FX_DWORD blocklen, FX_LPCBYTE key, FX_DWORD keylen, FX_BOOL bEncrypt)
+void CRYPT_AESSetKey(void* context, FX_DWORD blocklen, const uint8_t* key, FX_DWORD keylen, FX_BOOL bEncrypt)
 {
     aes_setup((AESContext*)context, blocklen, key, keylen);
 }
-void CRYPT_AESSetIV(FX_LPVOID context, FX_LPCBYTE iv)
+void CRYPT_AESSetIV(void* context, const uint8_t* iv)
 {
     int i;
     for (i = 0; i < ((AESContext*)context)->Nb; i++) {
         ((AESContext*)context)->iv[i] = GET_32BIT_MSB_FIRST(iv + 4 * i);
     }
 }
-void CRYPT_AESDecrypt(FX_LPVOID context, FX_LPBYTE dest, FX_LPCBYTE src, FX_DWORD len)
+void CRYPT_AESDecrypt(void* context, uint8_t* dest, const uint8_t* src, FX_DWORD len)
 {
     aes_decrypt_cbc(dest, src, len, (AESContext*)context);
 }
-void CRYPT_AESEncrypt(FX_LPVOID context, FX_LPBYTE dest, FX_LPCBYTE src, FX_DWORD len)
+void CRYPT_AESEncrypt(void* context, uint8_t* dest, const uint8_t* src, FX_DWORD len)
 {
     aes_encrypt_cbc(dest, src, len, (AESContext*)context);
 }

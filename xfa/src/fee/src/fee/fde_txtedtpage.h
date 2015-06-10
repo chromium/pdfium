@@ -102,8 +102,8 @@ public:
     virtual FX_POSITION			GetFirstPosition(FDE_HVISUALOBJ hCanvas);
     virtual FDE_HVISUALOBJ		GetNext(FDE_HVISUALOBJ hCanvas, FX_POSITION &pos, IFDE_VisualSet *&pVisualSet);
     virtual FDE_HVISUALOBJ		GetParentCanvas(FDE_HVISUALOBJ hCanvas, IFDE_VisualSet *&pVisualSet);
-    virtual FX_WCHAR	GetChar(FX_LPVOID pIdentity, int32_t index) const;
-    virtual int32_t	GetWidth(FX_LPVOID pIdentity, int32_t index) const;
+    virtual FX_WCHAR	GetChar(void* pIdentity, int32_t index) const;
+    virtual int32_t	GetWidth(void* pIdentity, int32_t index) const;
 protected:
     virtual ~CFDE_TxtEdtPage();
 private:

@@ -40,7 +40,7 @@ public:
     CXFA_FMSimpleExpression *ParsePostExpression(CXFA_FMSimpleExpression *e);
     CXFA_FMSimpleExpression *ParseIndexExpression();
 private:
-    FX_LPCWSTR m_pScript;
+    const FX_WCHAR* m_pScript;
     FX_STRSIZE m_uLength;
     CXFA_FMLexer	*m_lexer;
     CXFA_FMToken	*m_pToken;

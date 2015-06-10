@@ -27,7 +27,7 @@ public:
 	void							GetImageSize(FX_FLOAT & fWidth,FX_FLOAT & fHeight);
 	CPDF_Matrix						GetImageMatrix();
 	CFX_ByteString					GetImageAlias();
-	void							SetImageAlias(FX_LPCSTR sImageAlias);
+	void							SetImageAlias(const FX_CHAR* sImageAlias);
 
 protected:
 	CPDF_Stream*					m_pPDFStream;

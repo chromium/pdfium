@@ -31,7 +31,7 @@ CFDE_CSSStyleSheetCache::~CFDE_CSSStyleSheetCache()
     FX_POSITION pos = m_Stylesheets.GetStartPosition();
     if (pos != NULL) {
         CFX_ByteString szKey;
-        FX_LPVOID pValue;
+        void* pValue;
         while (pos != NULL) {
             m_Stylesheets.GetNextAssoc(pos, szKey, pValue);
             FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, (FDE_LPCSSCACHEITEM)pValue);
@@ -49,7 +49,7 @@ void CFDE_CSSStyleSheetCache::AddStyleSheet(FX_BSTR szKey, IFDE_CSSStyleSheet *p
         m_pFixedStore = FX_CreateAllocator(FX_ALLOCTYPE_Fixed, FX_MAX(10, m_iMaxItems), sizeof(FDE_CSSCACHEITEM));
         FXSYS_assert(m_pFixedStore != NULL);
     }
-    FX_LPVOID pValue = NULL;
+    void* pValue = NULL;
     if (m_Stylesheets.Lookup(szKey, pValue)) {
         FDE_LPCSSCACHEITEM pItem = (FDE_LPCSSCACHEITEM)pValue;
         if (pItem->pStylesheet != pStyleSheet) {
@@ -69,7 +69,7 @@ void CFDE_CSSStyleSheetCache::AddStyleSheet(FX_BSTR szKey, IFDE_CSSStyleSheet *p
 }
 IFDE_CSSStyleSheet* CFDE_CSSStyleSheetCache::GetStyleSheet(FX_BSTR szKey) const
 {
-    FX_LPVOID pValue = NULL;
+    void* pValue = NULL;
     if (m_Stylesheets.Lookup(szKey, pValue)) {
         FDE_LPCSSCACHEITEM pItem = (FDE_LPCSSCACHEITEM)pValue;
         pItem->dwActivity++;
@@ -80,7 +80,7 @@ IFDE_CSSStyleSheet* CFDE_CSSStyleSheetCache::GetStyleSheet(FX_BSTR szKey) const
 }
 void CFDE_CSSStyleSheetCache::RemoveStyleSheet(FX_BSTR szKey)
 {
-    FX_LPVOID pValue = NULL;
+    void* pValue = NULL;
     if (!m_Stylesheets.Lookup(szKey, pValue)) {
         return;
     }
@@ -91,7 +91,7 @@ void CFDE_CSSStyleSheetCache::RemoveLowestActivityItem()
 {
     FX_POSITION pos = m_Stylesheets.GetStartPosition();
     CFX_ByteString szKey;
-    FX_LPVOID pValue;
+    void* pValue;
     FDE_LPCSSCACHEITEM pItem = NULL;
     CFX_ByteString szItem;
     while (pos != NULL) {

@@ -106,7 +106,7 @@ class CFX_FontEncodingEX : public IFX_FontEncodingEx
 public:
     CFX_FontEncodingEX();
     FX_BOOL			Init(CFX_Font* pFont, FX_DWORD EncodingID);
-    virtual FX_DWORD		GlyphIndexFromName(FX_LPCSTR pStrName);
+    virtual FX_DWORD		GlyphIndexFromName(const FX_CHAR* pStrName);
     virtual CFX_ByteString	NameFromGlyphIndex(FX_DWORD dwGlyphIndex);
     virtual FX_DWORD		CharCodeFromGlyphIndex(FX_DWORD dwGlyphIndex);
     virtual FX_DWORD		GlyphFromCharCode(FX_DWORD charcode);

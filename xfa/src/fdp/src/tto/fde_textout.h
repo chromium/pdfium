@@ -56,28 +56,28 @@ public:
     virtual void		SetClipRect(const CFX_RectF &rtClip);
     virtual void		SetMatrix(const CFX_Matrix &matrix);
     virtual void		SetLineBreakTolerance(FX_FLOAT fTolerance);
-    virtual void		CalcSize(FX_LPCWSTR pwsStr, int32_t iLength, CFX_Size &size);
-    virtual void		CalcSize(FX_LPCWSTR pwsStr, int32_t iLength, CFX_SizeF &size);
-    virtual void		CalcSize(FX_LPCWSTR pwsStr, int32_t iLength, CFX_Rect &rect);
-    virtual void		CalcSize(FX_LPCWSTR pwsStr, int32_t iLength, CFX_RectF &rect);
+    virtual void		CalcSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_Size &size);
+    virtual void		CalcSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_SizeF &size);
+    virtual void		CalcSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_Rect &rect);
+    virtual void		CalcSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_RectF &rect);
 
-    virtual void		DrawText(FX_LPCWSTR pwsStr, int32_t iLength, int32_t x, int32_t y);
-    virtual void		DrawText(FX_LPCWSTR pwsStr, int32_t iLength, FX_FLOAT x, FX_FLOAT y);
-    virtual void		DrawText(FX_LPCWSTR pwsStr, int32_t iLength, const CFX_Rect &rect);
-    virtual void		DrawText(FX_LPCWSTR pwsStr, int32_t iLength, const CFX_RectF &rect);
+    virtual void		DrawText(const FX_WCHAR* pwsStr, int32_t iLength, int32_t x, int32_t y);
+    virtual void		DrawText(const FX_WCHAR* pwsStr, int32_t iLength, FX_FLOAT x, FX_FLOAT y);
+    virtual void		DrawText(const FX_WCHAR* pwsStr, int32_t iLength, const CFX_Rect &rect);
+    virtual void		DrawText(const FX_WCHAR* pwsStr, int32_t iLength, const CFX_RectF &rect);
 
     virtual void		SetLogicClipRect(const CFX_RectF &rtClip);
-    virtual void		CalcLogicSize(FX_LPCWSTR pwsStr, int32_t iLength, CFX_SizeF &size);
-    virtual void		CalcLogicSize(FX_LPCWSTR pwsStr, int32_t iLength, CFX_RectF &rect);
-    virtual void		DrawLogicText(FX_LPCWSTR pwsStr, int32_t iLength, FX_FLOAT x, FX_FLOAT y);
-    virtual void		DrawLogicText(FX_LPCWSTR pwsStr, int32_t iLength, const CFX_RectF &rect);
+    virtual void		CalcLogicSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_SizeF &size);
+    virtual void		CalcLogicSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_RectF &rect);
+    virtual void		DrawLogicText(const FX_WCHAR* pwsStr, int32_t iLength, FX_FLOAT x, FX_FLOAT y);
+    virtual void		DrawLogicText(const FX_WCHAR* pwsStr, int32_t iLength, const CFX_RectF &rect);
     virtual int32_t	GetTotalLines();
 protected:
-    void				CalcTextSize(FX_LPCWSTR pwsStr, int32_t iLength, CFX_RectF &rect);
+    void				CalcTextSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_RectF &rect);
     FX_BOOL				RetrieveLineWidth(FX_DWORD dwBreakStatus, FX_FLOAT &fStartPos, FX_FLOAT &fWidth, FX_FLOAT &fHeight);
     void				SetLineWidth(CFX_RectF &rect);
-    void				DrawText(FX_LPCWSTR pwsStr, int32_t iLength, const CFX_RectF &rect, const CFX_RectF &rtClip);
-    void				LoadText(FX_LPCWSTR pwsStr, int32_t iLength, const CFX_RectF &rect);
+    void				DrawText(const FX_WCHAR* pwsStr, int32_t iLength, const CFX_RectF &rect, const CFX_RectF &rtClip);
+    void				LoadText(const FX_WCHAR* pwsStr, int32_t iLength, const CFX_RectF &rect);
     void				LoadEllipsis();
     void				ExpandBuffer(int32_t iSize, int32_t iType);
     void				RetrieveEllPieces(int32_t *&pCharWidths);

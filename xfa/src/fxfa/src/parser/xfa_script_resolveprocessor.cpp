@@ -119,7 +119,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Dollar(CXFA_ResolveNodesData &rn
     if (rnd.m_nLevel > 0) {
         return -1;
     }
-    FX_DWORD dwNameHash = FX_HashCode_String_GetW((FX_LPCWSTR)wsName + 1, iNameLen - 1);
+    FX_DWORD dwNameHash = FX_HashCode_String_GetW((const FX_WCHAR*)wsName + 1, iNameLen - 1);
     if (dwNameHash == XFA_HASHCODE_Xfa) {
         nodes.Add(rnd.m_pSC->GetDocument()->GetRoot());
     } else {
@@ -505,14 +505,14 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(FX_WSTR wsExpression, 
     }
     CFX_WideString& wsName = rnd.m_wsName;
     CFX_WideString& wsCondition = rnd.m_wsCondition;
-    FX_LPWSTR pNameBuf = wsName.GetBuffer(iLength - nStart);
-    FX_LPWSTR pConditionBuf = wsCondition.GetBuffer(iLength - nStart);
+    FX_WCHAR* pNameBuf = wsName.GetBuffer(iLength - nStart);
+    FX_WCHAR* pConditionBuf = wsCondition.GetBuffer(iLength - nStart);
     int32_t nCount = 0;
     int32_t nNameCount = 0;
     int32_t nConditionCount = 0;
     CFX_Int32Array stack;
     int32_t nType = -1;
-    FX_LPCWSTR pSrc = wsExpression.GetPtr();
+    const FX_WCHAR* pSrc = wsExpression.GetPtr();
     FX_WCHAR wPrev = 0, wCur;
     FX_BOOL bIsCondition = FALSE;
     while (nStart < iLength) {

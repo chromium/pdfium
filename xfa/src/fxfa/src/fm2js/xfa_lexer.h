@@ -24,9 +24,9 @@ enum XFA_FM_TOKEN {
 struct XFA_FMKeyword {
     XFA_FM_TOKEN	m_type;
     uint32_t		m_uHash;
-    FX_LPCWSTR		m_keword;
+    const FX_WCHAR*		m_keword;
 };
-FX_LPCWSTR XFA_FM_KeywordToString(XFA_FM_TOKEN op);
+const FX_WCHAR* XFA_FM_KeywordToString(XFA_FM_TOKEN op);
 class CXFA_FMToken
 {
 public:
@@ -44,10 +44,10 @@ public:
     CXFA_FMLexer(FX_WSTR wsFormcalc, CXFA_FMErrorInfo *pErrorInfo);
     ~CXFA_FMLexer();
     CXFA_FMToken*	NextToken();
-    FX_DWORD		Number(CXFA_FMToken *t, FX_LPCWSTR p,  FX_LPCWSTR &pEnd);
-    FX_DWORD		String(CXFA_FMToken *t, FX_LPCWSTR p, FX_LPCWSTR &pEnd);
-    FX_DWORD		Identifiers(CXFA_FMToken *t, FX_LPCWSTR p, FX_LPCWSTR &pEnd);
-    void			Comment(FX_LPCWSTR p, FX_LPCWSTR &pEnd);
+    FX_DWORD		Number(CXFA_FMToken *t, const FX_WCHAR* p,  const FX_WCHAR* &pEnd);
+    FX_DWORD		String(CXFA_FMToken *t, const FX_WCHAR* p, const FX_WCHAR* &pEnd);
+    FX_DWORD		Identifiers(CXFA_FMToken *t, const FX_WCHAR* p, const FX_WCHAR* &pEnd);
+    void			Comment(const FX_WCHAR* p, const FX_WCHAR* &pEnd);
     XFA_FM_TOKEN	IsKeyword(FX_WSTR p);
     void			SetCurrentLine(FX_DWORD line)
     {
@@ -60,11 +60,11 @@ public:
         }
         m_pToken = pToken;
     }
-    FX_LPCWSTR		SavePos()
+    const FX_WCHAR*		SavePos()
     {
         return m_ptr;
     }
-    void			RestorePos(FX_LPCWSTR pPos)
+    void			RestorePos(const FX_WCHAR* pPos)
     {
         m_ptr = pPos;
     }
@@ -72,8 +72,8 @@ public:
     FX_BOOL			HasError() const;
 protected:
     CXFA_FMToken*	Scan();
-    FX_LPCWSTR		m_pScript;
-    FX_LPCWSTR		m_ptr;
+    const FX_WCHAR*		m_pScript;
+    const FX_WCHAR*		m_ptr;
     FX_STRSIZE		m_uLength;
     FX_DWORD		m_uCurrentLine;
     CXFA_FMToken*	m_pToken;

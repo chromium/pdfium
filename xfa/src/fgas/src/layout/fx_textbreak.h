@@ -45,7 +45,7 @@ public:
     void GetString(CFX_WideString &wsStr) const
     {
         int32_t iCount = m_pLineChars->GetSize();
-        FX_LPWSTR pBuf = wsStr.GetBuffer(iCount);
+        FX_WCHAR* pBuf = wsStr.GetBuffer(iCount);
         CFX_Char *pChar;
         for (int32_t i = 0; i < iCount; i ++) {
             pChar = m_pLineChars->GetDataPtr(i);
@@ -96,7 +96,7 @@ public:
     virtual FX_DWORD		GetContextCharStyles() const;
     virtual void			SetContextCharStyles(FX_DWORD dwCharStyles);
     virtual void			SetCombWidth(FX_FLOAT fCombWidth);
-    virtual void			SetUserData(FX_LPVOID pUserData);
+    virtual void			SetUserData(void* pUserData);
     virtual FX_DWORD				AppendChar(FX_WCHAR wch);
     virtual FX_DWORD				EndBreak(FX_DWORD dwStatus = FX_TXTBREAK_PieceBreak);
     virtual int32_t				CountBreakChars() const;
@@ -139,7 +139,7 @@ protected:
     int32_t			m_iAlignment;
     FX_DWORD			m_dwContextCharStyles;
     int32_t			m_iCombWidth;
-    FX_LPVOID			m_pUserData;
+    void*			m_pUserData;
     FX_DWORD			m_dwCharType;
     FX_BOOL				m_bCurRTL;
     int32_t			m_iCurAlignment;

@@ -203,7 +203,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(CXFA_Node* pNode, CFX_Wi
 {
     CFX_WideString wsAttrs;
     int32_t iAttrs = 0;
-    FX_LPCBYTE pAttrs = XFA_GetElementAttributes(pNode->GetClassID(), iAttrs);
+    const uint8_t* pAttrs = XFA_GetElementAttributes(pNode->GetClassID(), iAttrs);
     while (iAttrs--) {
         XFA_LPCATTRIBUTEINFO pAttr = XFA_GetAttributeByID((XFA_ATTRIBUTE)pAttrs[iAttrs]);
         if (pAttr->eName == XFA_ATTRIBUTE_Name || (XFA_DataExporter_AttributeSaveInDataModel(pNode, pAttr->eName) && !bSaveXML)) {
@@ -241,7 +241,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(CXFA_Node* pNode, CFX_Wi
                     IFX_Stream *pTempStream = IFX_Stream::CreateStream((IFX_FileWrite*)pMemStream, FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
                     pTempStream->SetCodePage(FX_CODEPAGE_UTF8);
                     pRichTextXML->SaveXMLNode(pTempStream);
-                    wsChildren += CFX_WideString::FromUTF8((FX_LPCSTR)pMemStream->GetBuffer(), pMemStream->GetSize());
+                    wsChildren += CFX_WideString::FromUTF8((const FX_CHAR*)pMemStream->GetBuffer(), pMemStream->GetSize());
                     pTempStream->Release();
                     pMemStream->Release();
                 } else if (pRawValueNode->GetClassID() == XFA_ELEMENT_Sharpxml  && wsContentType.Equal(FX_WSTRC(L"text/xml"))) {
@@ -353,7 +353,7 @@ static void XFA_DataExporter_RegenerateFormFile_Container(CXFA_Node* pNode, IFX_
         XFA_DataExporter_RegenerateFormFile_Changed(pNode, buf, bSaveXML);
         FX_STRSIZE nLen = buf.GetLength();
         if (nLen > 0) {
-            pStream->WriteString((FX_LPCWSTR)buf.GetBuffer(), nLen);
+            pStream->WriteString((const FX_WCHAR*)buf.GetBuffer(), nLen);
         }
         return;
     }
@@ -365,7 +365,7 @@ static void XFA_DataExporter_RegenerateFormFile_Container(CXFA_Node* pNode, IFX_
     XFA_SaveAttribute(pNode, XFA_ATTRIBUTE_Name, FX_WSTRC(L"name"), TRUE, wsOutput);
     CFX_WideString wsAttrs;
     int32_t iAttrs = 0;
-    FX_LPCBYTE pAttrs = XFA_GetElementAttributes(pNode->GetClassID(), iAttrs);
+    const uint8_t* pAttrs = XFA_GetElementAttributes(pNode->GetClassID(), iAttrs);
     while (iAttrs--) {
         XFA_LPCATTRIBUTEINFO pAttr = XFA_GetAttributeByID((XFA_ATTRIBUTE)pAttrs[iAttrs]);
         if (pAttr->eName == XFA_ATTRIBUTE_Name) {
@@ -376,7 +376,7 @@ static void XFA_DataExporter_RegenerateFormFile_Container(CXFA_Node* pNode, IFX_
         wsOutput += wsAttr;
     }
     if (!wsOutput.IsEmpty()) {
-        pStream->WriteString((FX_LPCWSTR)wsOutput, wsOutput.GetLength());
+        pStream->WriteString((const FX_WCHAR*)wsOutput, wsOutput.GetLength());
     }
     CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pChildNode) {
@@ -392,21 +392,21 @@ static void XFA_DataExporter_RegenerateFormFile_Container(CXFA_Node* pNode, IFX_
         pStream->WriteString(L"\n/>", 3);
     }
 }
-void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode, IFX_Stream* pStream, FX_LPCSTR pChecksum , FX_BOOL bSaveXML)
+void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode, IFX_Stream* pStream, const FX_CHAR* pChecksum , FX_BOOL bSaveXML)
 {
     if(pNode->GetObjectType() == XFA_OBJECTTYPE_ModelNode) {
-        static FX_LPCWSTR s_pwsTagName = L"<form";
-        static FX_LPCWSTR s_pwsClose = L"</form\n>";
+        static const FX_WCHAR* s_pwsTagName = L"<form";
+        static const FX_WCHAR* s_pwsClose = L"</form\n>";
         pStream->WriteString(s_pwsTagName, FXSYS_wcslen(s_pwsTagName));
         if (pChecksum != NULL) {
-            static FX_LPCWSTR s_pwChecksum = L" checksum=\"";
+            static const FX_WCHAR* s_pwChecksum = L" checksum=\"";
             CFX_WideString wsChecksum = CFX_WideString::FromUTF8(pChecksum, FXSYS_strlen(pChecksum));
             pStream->WriteString(s_pwChecksum, FXSYS_wcslen(s_pwChecksum));
-            pStream->WriteString((FX_LPCWSTR)wsChecksum, wsChecksum.GetLength());
+            pStream->WriteString((const FX_WCHAR*)wsChecksum, wsChecksum.GetLength());
             pStream->WriteString(L"\"", 1);
         }
         pStream->WriteString(L" xmlns=\"", FXSYS_wcslen(L" xmlns=\""));
-        FX_LPCWSTR pURI = XFA_GetPacketByIndex(XFA_PACKET_Form)->pURI;
+        const FX_WCHAR* pURI = XFA_GetPacketByIndex(XFA_PACKET_Form)->pURI;
         pStream->WriteString(pURI, FXSYS_wcslen(pURI));
         CFX_WideString wsVersionNumber;
         XFA_DataExporter_RecognizeXFAVersionNumber((CXFA_Node*)pNode->GetDocument()->GetXFANode(XFA_XDPPACKET_Template), wsVersionNumber);
@@ -414,7 +414,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode, IFX_Stream* pStream, 
             wsVersionNumber = FX_WSTRC(L"2.8");
         }
         wsVersionNumber += FX_WSTRC(L"/\"\n>");
-        pStream->WriteString((FX_LPCWSTR)wsVersionNumber, wsVersionNumber.GetLength());
+        pStream->WriteString((const FX_WCHAR*)wsVersionNumber, wsVersionNumber.GetLength());
         CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
         while (pChildNode) {
             XFA_DataExporter_RegenerateFormFile_Container(pChildNode, pStream);
@@ -438,7 +438,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite *pWrite)
 {
     return Export(pWrite, m_pDocument->GetRoot());
 }
-FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite *pWrite, CXFA_Node *pNode, FX_DWORD dwFlag , FX_LPCSTR pChecksum )
+FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite *pWrite, CXFA_Node *pNode, FX_DWORD dwFlag , const FX_CHAR* pChecksum )
 {
     ASSERT(pWrite != NULL);
     if (pWrite == NULL) {
@@ -453,18 +453,18 @@ FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite *pWrite, CXFA_Node *pNode, FX_DW
     pStream->Release();
     return bRet;
 }
-FX_BOOL CXFA_DataExporter::Export(IFX_Stream *pStream, CXFA_Node *pNode, FX_DWORD dwFlag, FX_LPCSTR pChecksum)
+FX_BOOL CXFA_DataExporter::Export(IFX_Stream *pStream, CXFA_Node *pNode, FX_DWORD dwFlag, const FX_CHAR* pChecksum)
 {
     IFDE_XMLDoc* pXMLDoc = m_pDocument->GetParser()->GetXMLDoc();
     if(pNode->GetObjectType() == XFA_OBJECTTYPE_ModelNode) {
         switch (pNode->GetPacketID()) {
             case XFA_XDPPACKET_XDP: {
-                    static FX_LPCWSTR s_pwsPreamble = L"<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">";
+                    static const FX_WCHAR* s_pwsPreamble = L"<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">";
                     pStream->WriteString(s_pwsPreamble, FXSYS_wcslen(s_pwsPreamble));
                     for(CXFA_Node *pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
                         Export(pStream, pChild, dwFlag, pChecksum);
                     }
-                    static FX_LPCWSTR s_pwsPostamble = L"</xdp:xdp\n>";
+                    static const FX_WCHAR* s_pwsPostamble = L"</xdp:xdp\n>";
                     pStream->WriteString(s_pwsPostamble, FXSYS_wcslen(s_pwsPostamble));
                 }
                 break;
@@ -509,7 +509,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream *pStream, CXFA_Node *pNode, FX_DWOR
         XFA_DataExporter_DealWithDataGroupNode(pExportNode);
         pElement->SetString(FX_WSTRC(L"xmlns:xfa"), FX_WSTRC(L"http://www.xfa.org/schema/xfa-data/1.0/"));
         pXMLDoc->SaveXMLNode(pStream, pElement);
-        pElement->RemoveAttribute(FX_LPCWSTR(L"xmlns:xfa"));
+        pElement->RemoveAttribute(L"xmlns:xfa");
     }
     return TRUE;
 }

@@ -68,7 +68,7 @@ typedef struct _FX_RTFTEXTOBJ {
         iHorizontalScale = 100;
         iVerticalScale = 100;
     }
-    FX_LPCWSTR		pStr;
+    const FX_WCHAR*		pStr;
     int32_t		*pWidths;
     int32_t		iLength;
     IFX_Font		*pFont;
@@ -139,7 +139,7 @@ public:
         FXSYS_assert(index > -1 && index < m_iChars && m_pChars != NULL);
         return m_pChars->GetDataPtr(m_iStartChar + index);
     }
-    void GetString (FX_LPWSTR pText) const
+    void GetString (FX_WCHAR* pText) const
     {
         FXSYS_assert(pText != NULL);
         int32_t iEndChar = m_iStartChar + m_iChars;
@@ -151,7 +151,7 @@ public:
     }
     void GetString(CFX_WideString &wsText) const
     {
-        FX_LPWSTR pText = wsText.GetBuffer(m_iChars);
+        FX_WCHAR* pText = wsText.GetBuffer(m_iChars);
         GetString(pText);
         wsText.ReleaseBuffer(m_iChars);
     }

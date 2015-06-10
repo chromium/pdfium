@@ -45,7 +45,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(CFXJSE_Arguments* 
 {
     int32_t iLength = pArguments->GetLength();
     if ( iLength < 1 || iLength > 3) {
-        FX_LPCWSTR methodName = NULL;
+        const FX_WCHAR* methodName = NULL;
         switch (layoutModel) {
             case XFA_LAYOUTMODEL_H:
                 methodName = L"h";
@@ -490,7 +490,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageImp(CFXJSE_Argument
 {
     int32_t iLength = pArguments->GetLength();
     if (iLength != 1) {
-        FX_LPCWSTR methodName;
+        const FX_WCHAR* methodName;
         if (bAbsPage) {
             methodName = L"absPage";
         } else {

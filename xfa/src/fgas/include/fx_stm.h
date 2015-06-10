@@ -33,8 +33,8 @@ class IFX_Stream
 public:
     static IFX_Stream*			CreateStream(IFX_FileRead *pFileRead, FX_DWORD dwAccess);
     static IFX_Stream*			CreateStream(IFX_FileWrite *pFileWrite, FX_DWORD dwAccess);
-    static IFX_Stream*			CreateStream(FX_LPCWSTR pszFileName, FX_DWORD dwAccess);
-    static IFX_Stream*			CreateStream(FX_LPBYTE pData, int32_t length, FX_DWORD dwAccess);
+    static IFX_Stream*			CreateStream(const FX_WCHAR* pszFileName, FX_DWORD dwAccess);
+    static IFX_Stream*			CreateStream(uint8_t* pData, int32_t length, FX_DWORD dwAccess);
     static IFX_Stream*			CreateStream(IFX_BufferRead *pBufferRead, FX_DWORD dwAccess, int32_t iFileSize = -1, FX_BOOL bReleaseBufferRead = TRUE);
     static IFX_Stream*			CreateTextStream(IFX_Stream *pBaseStream, FX_BOOL bDeleteOnRelease);
     virtual void				Release() = 0;
@@ -44,10 +44,10 @@ public:
     virtual int32_t			Seek(FX_STREAMSEEK eSeek, int32_t iOffset) = 0;
     virtual int32_t			GetPosition() = 0;
     virtual FX_BOOL				IsEOF() const = 0;
-    virtual int32_t			ReadData(FX_LPBYTE pBuffer, int32_t iBufferSize) = 0;
-    virtual int32_t			ReadString(FX_LPWSTR pStr, int32_t iMaxLength, FX_BOOL &bEOS, int32_t const *pByteSize = NULL) = 0;
-    virtual int32_t			WriteData(FX_LPCBYTE pBuffer, int32_t iBufferSize) = 0;
-    virtual int32_t			WriteString(FX_LPCWSTR pStr, int32_t iLength) = 0;
+    virtual int32_t			ReadData(uint8_t* pBuffer, int32_t iBufferSize) = 0;
+    virtual int32_t			ReadString(FX_WCHAR* pStr, int32_t iMaxLength, FX_BOOL &bEOS, int32_t const *pByteSize = NULL) = 0;
+    virtual int32_t			WriteData(const uint8_t* pBuffer, int32_t iBufferSize) = 0;
+    virtual int32_t			WriteString(const FX_WCHAR* pStr, int32_t iLength) = 0;
     virtual void				Flush() = 0;
     virtual FX_BOOL				SetLength(int32_t iLength) = 0;
     virtual int32_t			GetBOM(uint8_t bom[4]) const = 0;

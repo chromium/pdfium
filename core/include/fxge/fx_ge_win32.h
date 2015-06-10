@@ -21,7 +21,7 @@ typedef struct  WINDIB_Open_Args_ {
 
     size_t    memory_size;
 
-    FX_LPCWSTR  path_name;
+    const FX_WCHAR*  path_name;
 } WINDIB_Open_Args_;
 class CFX_WindowsDIB : public CFX_DIBitmap
 {
@@ -35,9 +35,9 @@ public:
 
     static CFX_DIBitmap* LoadFromDDB(HDC hDC, HBITMAP hBitmap, FX_DWORD* pPalette = NULL, FX_DWORD size = 256);
 
-    static CFX_DIBitmap* LoadFromFile(FX_LPCWSTR filename);
+    static CFX_DIBitmap* LoadFromFile(const FX_WCHAR* filename);
 
-    static CFX_DIBitmap* LoadFromFile(FX_LPCSTR filename)
+    static CFX_DIBitmap* LoadFromFile(const FX_CHAR* filename)
     {
         return LoadFromFile(CFX_WideString::FromLocal(filename).c_str());
     }

@@ -91,11 +91,11 @@ FWL_ERR CFWL_Target::Finalize()
 {
     return FWL_ERR_Succeeded;
 }
-FX_LPVOID IFWL_TargetData::GetData()
+void* IFWL_TargetData::GetData()
 {
     return m_pData;
 }
-void IFWL_TargetData::SetData(FX_LPVOID pData)
+void IFWL_TargetData::SetData(void* pData)
 {
     m_pData = pData;
 }

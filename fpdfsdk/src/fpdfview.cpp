@@ -120,7 +120,7 @@ FX_BOOL CPDF_CustomAccess::GetByte(FX_DWORD pos, uint8_t& ch)
 	return TRUE;
 }
 
-FX_BOOL CPDF_CustomAccess::GetBlock(FX_DWORD pos, FX_LPBYTE pBuf, FX_DWORD size)
+FX_BOOL CPDF_CustomAccess::GetBlock(FX_DWORD pos, uint8_t* pBuf, FX_DWORD size)
 {
 	if (pos + size > m_FileAccess.m_FileLen) return FALSE;
 	return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, pos, pBuf, size);
@@ -136,7 +136,7 @@ FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer, FX_FILESIZE offset, size_t si
     if (!newPos.IsValid() || newPos.ValueOrDie() > m_FileAccess.m_FileLen) {
         return FALSE;
     }
-    return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,(FX_LPBYTE) buffer, size);
+    return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,(uint8_t*) buffer, size);
 }
 
 //0 bit: FPDF_POLICY_MACHINETIME_ACCESS
@@ -245,7 +245,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BY
 	CPDF_Parser* pParser = FX_NEW CPDF_Parser;
 	pParser->SetPassword(password);
 
-	FX_DWORD err_code = pParser->StartParse((FX_LPCSTR)file_path);
+	FX_DWORD err_code = pParser->StartParse((const FX_CHAR*)file_path);
 	if (err_code) {
 		delete pParser;
 		ProcessParseError(err_code);
@@ -560,9 +560,9 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 #endif
 
 	// Create a device with this external buffer
-	pContext->m_pBitmap = FX_NEW CFX_DIBitmap;
-	pContext->m_pBitmap->Create(width, height, FXDIB_Rgb, (FX_LPBYTE)pBuffer);
-	pContext->m_pDevice = FX_NEW CPDF_FxgeDevice;
+	pContext->m_pBitmap = new CFX_DIBitmap;
+	pContext->m_pBitmap->Create(width, height, FXDIB_Rgb, (uint8_t*)pBuffer);
+	pContext->m_pDevice = new CPDF_FxgeDevice;
 	((CPDF_FxgeDevice*)pContext->m_pDevice)->Attach(pContext->m_pBitmap);
 	
 #ifdef DEBUG_TRACE
@@ -649,15 +649,9 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap, FPDF_PAGE page,
 DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page)
 {
 	if (!page) return;
-	CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
-	
-	pPage->Release();
-// 	CPDFXFA_Document* pDoc = pPage->GetDocument();
-// 	if (pDoc) {
-// 		pDoc->RemovePage(pPage);
-// 	}
-// 	delete (CPDFXFA_Page*)page;
 
+	CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
+	pPage->Release();
 }
 
 DLLEXPORT void STDCALL FPDF_CloseDocument(FPDF_DOCUMENT document)
@@ -727,8 +721,8 @@ DLLEXPORT FPDF_BITMAP STDCALL FPDFBitmap_CreateEx(int width, int height, int for
 		default:
 			return NULL;
 	}
-	CFX_DIBitmap* pBitmap = FX_NEW CFX_DIBitmap;
-	pBitmap->Create(width, height, fx_format, (FX_LPBYTE)first_scan, stride);
+	CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
+	pBitmap->Create(width, height, fx_format, (uint8_t*)first_scan, stride);
 	return pBitmap;
 }
 

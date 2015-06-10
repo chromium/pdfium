@@ -412,7 +412,7 @@ FX_BOOL CBC_QRFinderPatternFinder::HaveMultiplyConfirmedCenters()
     }
     return totalDeviation <= 0.05f * totalModuleSize;
 }
-inline FX_BOOL centerComparator(FX_LPVOID a, FX_LPVOID b)
+inline FX_BOOL centerComparator(void* a, void* b)
 {
     return ((CBC_QRFinderPattern*)b)->GetCount() < ((CBC_QRFinderPattern*)a)->GetCount();
 }

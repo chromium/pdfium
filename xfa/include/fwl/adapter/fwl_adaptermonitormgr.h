@@ -8,7 +8,7 @@
 #define _FWL_ADAPTER_MONITORMGR_H
 class IFWL_AdapterMonitorMgr;
 typedef struct _FWL_HMONITOR {
-    FX_LPVOID pData;
+    void* pData;
 } *FWL_HMONITOR;
 class IFWL_AdapterMonitorMgr
 {

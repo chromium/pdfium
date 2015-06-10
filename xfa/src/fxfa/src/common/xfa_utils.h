@@ -176,7 +176,7 @@ public:
 
     FX_BOOL	Lookup(KeyType key) const
     {
-        FX_LPVOID pValue = NULL;
+        void* pValue = NULL;
         return CFX_MapPtrToPtr::Lookup((void*)key, pValue);
     }
 
@@ -235,5 +235,5 @@ FX_BOOL             XFA_IsFlowingLayout(XFA_ATTRIBUTEENUM eLayout);
 FX_BOOL	            XFA_IsHorizontalFlow(XFA_ATTRIBUTEENUM eLayout);
 void                XFA_DataExporter_DealWithDataGroupNode(CXFA_Node *pDataNode);
 void                XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode, IFX_Stream* pStream,
-                                                        FX_LPCSTR pChecksum = NULL, FX_BOOL bSaveXML = FALSE);
+                                                        const FX_CHAR* pChecksum = NULL, FX_BOOL bSaveXML = FALSE);
 #endif

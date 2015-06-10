@@ -40,7 +40,7 @@ public:
         return m_pDWriteFactory != NULL;
     }
 
-    void*			DwCreateFontFaceFromStream(FX_LPBYTE pData, FX_DWORD size, int simulation_style);
+    void*			DwCreateFontFaceFromStream(uint8_t* pData, FX_DWORD size, int simulation_style);
     FX_BOOL         DwCreateRenderingTarget(CFX_DIBitmap* pSrc, void** renderTarget);
     void            DwDeleteRenderingTarget(void* renderTarget);
     FX_BOOL			DwRendingString(void* renderTarget, CFX_ClipRgn* pClipRgn, FX_RECT& stringRect, CFX_AffineMatrix* pMatrix,

@@ -5,27 +5,27 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "fx_bmp.h"
-FX_DWORD _GetDWord_LSBFirst(FX_LPBYTE p)
+FX_DWORD _GetDWord_LSBFirst(uint8_t* p)
 {
     return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 }
-FX_WORD _GetWord_LSBFirst(FX_LPBYTE p)
+FX_WORD _GetWord_LSBFirst(uint8_t* p)
 {
     return p[0] | (p[1] << 8);
 }
-void _SetDWord_LSBFirst(FX_LPBYTE p, FX_DWORD v)
+void _SetDWord_LSBFirst(uint8_t* p, FX_DWORD v)
 {
     p[0] = (uint8_t)v;
     p[1] = (uint8_t)(v >> 8);
     p[2] = (uint8_t)(v >> 16);
     p[3] = (uint8_t)(v >> 24);
 }
-void _SetWord_LSBFirst(FX_LPBYTE p, FX_WORD v)
+void _SetWord_LSBFirst(uint8_t* p, FX_WORD v)
 {
     p[0] = (uint8_t)v;
     p[1] = (uint8_t)(v >> 8);
 }
-void _bmp_error(bmp_decompress_struct_p bmp_ptr, FX_LPCSTR err_msg)
+void _bmp_error(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg)
 {
     if(bmp_ptr != NULL && bmp_ptr->_bmp_error_fn != NULL) {
         bmp_ptr->_bmp_error_fn(bmp_ptr, err_msg);
@@ -69,12 +69,12 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr)
     if(bmp_ptr->decode_status == BMP_D_STATUS_HEADER) {
         ASSERT(sizeof(BmpFileHeader) == 14);
         BmpFileHeader* bmp_header_ptr = NULL;
-        if(_bmp_read_data(bmp_ptr, (FX_LPBYTE*)&bmp_header_ptr, 14) == NULL) {
+        if(_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_header_ptr, 14) == NULL) {
             return 2;
         }
-        bmp_ptr->bmp_header_ptr->bfType = _GetWord_LSBFirst((FX_LPBYTE)&bmp_header_ptr->bfType);
-        bmp_ptr->bmp_header_ptr->bfOffBits = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_header_ptr->bfOffBits);
-        bmp_ptr->data_size = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_header_ptr->bfSize);
+        bmp_ptr->bmp_header_ptr->bfType = _GetWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfType);
+        bmp_ptr->bmp_header_ptr->bfOffBits = _GetDWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfOffBits);
+        bmp_ptr->data_size = _GetDWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfSize);
         if(bmp_ptr->bmp_header_ptr->bfType != BMP_SIGNATURE) {
             _bmp_error(bmp_ptr, "Not A Bmp Image");
             return 0;
@@ -91,30 +91,30 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr)
             case FX_MIN(12, sizeof(BmpCoreHeader)): {
                     bmp_ptr->pal_type = 1;
                     BmpCoreHeaderPtr bmp_core_header_ptr = NULL;
-                    if(_bmp_read_data(bmp_ptr, (FX_LPBYTE*)&bmp_core_header_ptr, bmp_ptr->img_ifh_size) == NULL) {
+                    if(_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_core_header_ptr, bmp_ptr->img_ifh_size) == NULL) {
                         bmp_ptr->skip_size = skip_size_org;
                         return 2;
                     }
-                    bmp_ptr->width = (FX_DWORD)_GetWord_LSBFirst((FX_LPBYTE)&bmp_core_header_ptr->bcWidth);
-                    bmp_ptr->height = (FX_DWORD)_GetWord_LSBFirst((FX_LPBYTE)&bmp_core_header_ptr->bcHeight);
-                    bmp_ptr->bitCounts = _GetWord_LSBFirst((FX_LPBYTE)&bmp_core_header_ptr->bcBitCount);
+                    bmp_ptr->width = (FX_DWORD)_GetWord_LSBFirst((uint8_t*)&bmp_core_header_ptr->bcWidth);
+                    bmp_ptr->height = (FX_DWORD)_GetWord_LSBFirst((uint8_t*)&bmp_core_header_ptr->bcHeight);
+                    bmp_ptr->bitCounts = _GetWord_LSBFirst((uint8_t*)&bmp_core_header_ptr->bcBitCount);
                     bmp_ptr->compress_flag = BMP_RGB;
                     bmp_ptr->imgTB_flag = FALSE;
                 }
                 break;
             case FX_MIN(40, sizeof(BmpInfoHeader)): {
                     BmpInfoHeaderPtr bmp_info_header_ptr = NULL;
-                    if(_bmp_read_data(bmp_ptr, (FX_LPBYTE*)&bmp_info_header_ptr, bmp_ptr->img_ifh_size) == NULL) {
+                    if(_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr, bmp_ptr->img_ifh_size) == NULL) {
                         bmp_ptr->skip_size = skip_size_org;
                         return 2;
                     }
-                    bmp_ptr->width = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biWidth);
-                    bmp_ptr->height = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biHeight);
-                    bmp_ptr->bitCounts = _GetWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biBitCount);
-                    bmp_ptr->compress_flag = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biCompression);
-                    bmp_ptr->color_used = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biClrUsed);
-                    bmp_ptr->dpi_x = (int32_t)_GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biXPelsPerMeter);
-                    bmp_ptr->dpi_y = (int32_t)_GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biYPelsPerMeter);
+                    bmp_ptr->width = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biWidth);
+                    bmp_ptr->height = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
+                    bmp_ptr->bitCounts = _GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biBitCount);
+                    bmp_ptr->compress_flag = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biCompression);
+                    bmp_ptr->color_used = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biClrUsed);
+                    bmp_ptr->dpi_x = (int32_t)_GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biXPelsPerMeter);
+                    bmp_ptr->dpi_y = (int32_t)_GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
                     if(bmp_ptr->height < 0) {
                         bmp_ptr->height = -bmp_ptr->height;
                         bmp_ptr->imgTB_flag = TRUE;
@@ -124,19 +124,19 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr)
             default: {
                     if(bmp_ptr->img_ifh_size > FX_MIN(40, sizeof(BmpInfoHeader))) {
                         BmpInfoHeaderPtr bmp_info_header_ptr = NULL;
-                        if(_bmp_read_data(bmp_ptr, (FX_LPBYTE*)&bmp_info_header_ptr, bmp_ptr->img_ifh_size) == NULL) {
+                        if(_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr, bmp_ptr->img_ifh_size) == NULL) {
                             bmp_ptr->skip_size = skip_size_org;
                             return 2;
                         }
                         FX_WORD biPlanes;
-                        bmp_ptr->width = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biWidth);
-                        bmp_ptr->height = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biHeight);
-                        bmp_ptr->bitCounts = _GetWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biBitCount);
-                        bmp_ptr->compress_flag = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biCompression);
-                        bmp_ptr->color_used = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biClrUsed);
-                        biPlanes = _GetWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biPlanes);
-                        bmp_ptr->dpi_x = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biXPelsPerMeter);
-                        bmp_ptr->dpi_y = _GetDWord_LSBFirst((FX_LPBYTE)&bmp_info_header_ptr->biYPelsPerMeter);
+                        bmp_ptr->width = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biWidth);
+                        bmp_ptr->height = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
+                        bmp_ptr->bitCounts = _GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biBitCount);
+                        bmp_ptr->compress_flag = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biCompression);
+                        bmp_ptr->color_used = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biClrUsed);
+                        biPlanes = _GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biPlanes);
+                        bmp_ptr->dpi_x = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biXPelsPerMeter);
+                        bmp_ptr->dpi_y = _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
                         if(bmp_ptr->height < 0) {
                             bmp_ptr->height = -bmp_ptr->height;
                             bmp_ptr->imgTB_flag = TRUE;
@@ -211,13 +211,13 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr)
                 return 0;
             }
             FX_DWORD* mask;
-            if(_bmp_read_data(bmp_ptr, (FX_LPBYTE*)&mask, 3 * sizeof(FX_DWORD)) == NULL) {
+            if(_bmp_read_data(bmp_ptr, (uint8_t**)&mask, 3 * sizeof(FX_DWORD)) == NULL) {
                 bmp_ptr->skip_size = skip_size_org;
                 return 2;
             }
-            bmp_ptr->mask_red	= _GetDWord_LSBFirst((FX_LPBYTE)&mask[0]);
-            bmp_ptr->mask_green	= _GetDWord_LSBFirst((FX_LPBYTE)&mask[1]);
-            bmp_ptr->mask_blue	= _GetDWord_LSBFirst((FX_LPBYTE)&mask[2]);
+            bmp_ptr->mask_red	= _GetDWord_LSBFirst((uint8_t*)&mask[0]);
+            bmp_ptr->mask_green	= _GetDWord_LSBFirst((uint8_t*)&mask[1]);
+            bmp_ptr->mask_blue	= _GetDWord_LSBFirst((uint8_t*)&mask[2]);
             if(bmp_ptr->mask_red & bmp_ptr->mask_green ||
                     bmp_ptr->mask_red & bmp_ptr->mask_blue ||
                     bmp_ptr->mask_green & bmp_ptr->mask_blue) {
@@ -246,9 +246,9 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr)
             if(bmp_ptr->color_used != 0) {
                 bmp_ptr->pal_num = bmp_ptr->color_used;
             }
-            FX_LPBYTE src_pal_ptr = NULL;
+            uint8_t* src_pal_ptr = NULL;
             FX_DWORD src_pal_size = bmp_ptr->pal_num * (bmp_ptr->pal_type ? 3 : 4);
-            if(_bmp_read_data(bmp_ptr, (FX_LPBYTE*)&src_pal_ptr, src_pal_size) == NULL) {
+            if(_bmp_read_data(bmp_ptr, (uint8_t**)&src_pal_ptr, src_pal_size) == NULL) {
                 bmp_ptr->skip_size = skip_size_org;
                 return 2;
             }
@@ -306,8 +306,8 @@ int32_t _bmp_decode_image(bmp_decompress_struct_p bmp_ptr)
 }
 int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr)
 {
-    FX_LPBYTE row_buf = bmp_ptr->out_row_buffer;
-    FX_LPBYTE des_buf = NULL;
+    uint8_t* row_buf = bmp_ptr->out_row_buffer;
+    uint8_t* des_buf = NULL;
     while (bmp_ptr->row_num < bmp_ptr->height) {
         if(_bmp_read_data(bmp_ptr, &des_buf, bmp_ptr->src_row_bytes) == NULL) {
             return 2;
@@ -351,7 +351,7 @@ int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr)
                     green_bits -= 8;
                     red_bits -= 8;
                     for (int32_t col = 0; col < bmp_ptr->width; col++) {
-                        *buf = _GetWord_LSBFirst((FX_LPBYTE)buf);
+                        *buf = _GetWord_LSBFirst((uint8_t*)buf);
                         *row_buf++ = (uint8_t)((*buf & bmp_ptr->mask_blue) << blue_bits);
                         *row_buf++ = (uint8_t)((*buf & bmp_ptr->mask_green) >> green_bits);
                         *row_buf++ = (uint8_t)((*buf++ & bmp_ptr->mask_red) >> red_bits);
@@ -375,8 +375,8 @@ int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr)
 }
 int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr)
 {
-    FX_LPBYTE first_byte_ptr = NULL;
-    FX_LPBYTE second_byte_ptr = NULL;
+    uint8_t* first_byte_ptr = NULL;
+    uint8_t* second_byte_ptr = NULL;
     bmp_ptr->col_num = 0;
     while(TRUE) {
         FX_DWORD skip_size_org = bmp_ptr->skip_size;
@@ -414,7 +414,7 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr)
                                 return 1;
                             }
                         case RLE_DELTA: {
-                                FX_LPBYTE delta_ptr;
+                                uint8_t* delta_ptr;
                                 if(_bmp_read_data(bmp_ptr, &delta_ptr, 2) == NULL) {
                                     bmp_ptr->skip_size = skip_size_org;
                                     return 2;
@@ -468,8 +468,8 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr)
 }
 int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr)
 {
-    FX_LPBYTE first_byte_ptr = NULL;
-    FX_LPBYTE second_byte_ptr = NULL;
+    uint8_t* first_byte_ptr = NULL;
+    uint8_t* second_byte_ptr = NULL;
     bmp_ptr->col_num = 0;
     while (TRUE) {
         FX_DWORD skip_size_org = bmp_ptr->skip_size;
@@ -507,7 +507,7 @@ int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr)
                                 return 1;
                             }
                         case RLE_DELTA: {
-                                FX_LPBYTE delta_ptr;
+                                uint8_t* delta_ptr;
                                 if(_bmp_read_data(bmp_ptr, &delta_ptr, 2) == NULL) {
                                     bmp_ptr->skip_size = skip_size_org;
                                     return 2;
@@ -576,7 +576,7 @@ int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr)
     _bmp_error(bmp_ptr, "Any Uncontrol Error");
     return 0;
 }
-FX_LPBYTE _bmp_read_data(bmp_decompress_struct_p bmp_ptr, FX_LPBYTE* des_buf_pp, FX_DWORD data_size)
+uint8_t* _bmp_read_data(bmp_decompress_struct_p bmp_ptr, uint8_t** des_buf_pp, FX_DWORD data_size)
 {
     if(bmp_ptr == NULL ||
             bmp_ptr->avail_in < bmp_ptr->skip_size + data_size) {
@@ -593,13 +593,13 @@ void _bmp_save_decoding_status(bmp_decompress_struct_p bmp_ptr, int32_t status)
     bmp_ptr->avail_in -= bmp_ptr->skip_size;
     bmp_ptr->skip_size = 0;
 }
-void _bmp_input_buffer(bmp_decompress_struct_p bmp_ptr, FX_LPBYTE src_buf, FX_DWORD src_size)
+void _bmp_input_buffer(bmp_decompress_struct_p bmp_ptr, uint8_t* src_buf, FX_DWORD src_size)
 {
     bmp_ptr->next_in = src_buf;
     bmp_ptr->avail_in = src_size;
     bmp_ptr->skip_size = 0;
 }
-FX_DWORD _bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr, FX_LPBYTE* avial_buf_ptr)
+FX_DWORD _bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr, uint8_t** avial_buf_ptr)
 {
     if(avial_buf_ptr != NULL) {
         *avial_buf_ptr = NULL;
@@ -627,7 +627,7 @@ void _bmp_destroy_compress(bmp_compress_struct_p bmp_ptr)
         FX_Free(bmp_ptr);
     }
 }
-static void WriteFileHeader(BmpFileHeaderPtr head_ptr, FX_LPBYTE dst_buf)
+static void WriteFileHeader(BmpFileHeaderPtr head_ptr, uint8_t* dst_buf)
 {
     FX_DWORD offset;
     offset = 0;
@@ -642,7 +642,7 @@ static void WriteFileHeader(BmpFileHeaderPtr head_ptr, FX_LPBYTE dst_buf)
     _SetDWord_LSBFirst(&dst_buf[offset], head_ptr->bfOffBits);
     offset += 4;
 }
-static void WriteInfoHeader(BmpInfoHeaderPtr info_head_ptr, FX_LPBYTE dst_buf)
+static void WriteInfoHeader(BmpInfoHeaderPtr info_head_ptr, uint8_t* dst_buf)
 {
     FX_DWORD offset;
     offset = sizeof(BmpFileHeader);
@@ -670,7 +670,7 @@ static void WriteInfoHeader(BmpInfoHeaderPtr info_head_ptr, FX_LPBYTE dst_buf)
     offset += 4;
 }
 #ifdef BMP_SUPPORT_BITFIELD
-static void _bmp_encode_bitfields(bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, FX_DWORD& dst_size)
+static void _bmp_encode_bitfields(bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, FX_DWORD& dst_size)
 {
     if (bmp_ptr->info_header.biBitCount != 16 && bmp_ptr->info_header.biBitCount != 32) {
         return;
@@ -753,7 +753,7 @@ static void _bmp_encode_bitfields(bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_
     dst_size = dst_pos;
 }
 #endif
-static void _bmp_encode_rgb(bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, FX_DWORD& dst_size)
+static void _bmp_encode_rgb(bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, FX_DWORD& dst_size)
 {
     if (bmp_ptr->info_header.biBitCount == 16) {
 #ifdef BMP_SUPPORT_BITFIELD
@@ -777,7 +777,7 @@ static void _bmp_encode_rgb(bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, F
     }
     dst_size = dst_pos;
 }
-static uint8_t _bmp_rle8_search(FX_LPCBYTE buf, int32_t len)
+static uint8_t _bmp_rle8_search(const uint8_t* buf, int32_t len)
 {
     uint8_t num;
     num = 1;
@@ -789,7 +789,7 @@ static uint8_t _bmp_rle8_search(FX_LPCBYTE buf, int32_t len)
     }
     return num;
 }
-static void _bmp_encode_rle8(bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, FX_DWORD& dst_size)
+static void _bmp_encode_rle8(bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, FX_DWORD& dst_size)
 {
     FX_DWORD size, dst_pos, index;
     uint8_t rle[2] = {0};
@@ -825,7 +825,7 @@ static void _bmp_encode_rle8(bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, 
     dst_buf[dst_pos++] = RLE_EOI;
     dst_size = dst_pos;
 }
-static uint8_t _bmp_rle4_search(FX_LPCBYTE buf, int32_t len)
+static uint8_t _bmp_rle4_search(const uint8_t* buf, int32_t len)
 {
     uint8_t num;
     num = 2;
@@ -837,7 +837,7 @@ static uint8_t _bmp_rle4_search(FX_LPCBYTE buf, int32_t len)
     }
     return num;
 }
-static void _bmp_encode_rle4(bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, FX_DWORD& dst_size)
+static void _bmp_encode_rle4(bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, FX_DWORD& dst_size)
 {
     FX_DWORD size, dst_pos, index;
     uint8_t rle[2] = {0};
@@ -874,7 +874,7 @@ static void _bmp_encode_rle4(bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, 
     dst_buf[dst_pos++] = RLE_EOI;
     dst_size = dst_pos;
 }
-FX_BOOL _bmp_encode_image( bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, FX_DWORD& dst_size )
+FX_BOOL _bmp_encode_image( bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, FX_DWORD& dst_size )
 {
     FX_DWORD head_size = sizeof(BmpFileHeader) + sizeof(BmpInfoHeader);
     FX_DWORD pal_size = sizeof(FX_DWORD) * bmp_ptr->pal_num;

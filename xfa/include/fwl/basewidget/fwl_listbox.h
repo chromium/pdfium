@@ -58,7 +58,7 @@ int32_t m_index;
 CFX_RectF m_rect;
 END_FWL_EVENT_DEF
 typedef struct _FWL_HLISTITEM {
-    FX_LPVOID pData;
+    void* pData;
 }* FWL_HLISTITEM;
 typedef struct _FWL_ListBoxItemData {
     IFWL_ListBoxDP *pDataProvider;
@@ -74,9 +74,9 @@ public:
     virtual	FX_DWORD			GetItemStyles(IFWL_Widget *pWidget, FWL_HLISTITEM hItem) = 0;
     virtual	FWL_ERR				GetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, CFX_WideString &wsText) = 0;
     virtual FWL_ERR				GetItemRect(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, CFX_RectF &rtItem) = 0;
-    virtual FX_LPVOID			GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem) = 0;
+    virtual void*			GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem) = 0;
     virtual	FWL_ERR				SetItemStyles(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_DWORD dwStyle) = 0;
-    virtual FWL_ERR				SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_LPCWSTR pszText) = 0;
+    virtual FWL_ERR				SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, const FX_WCHAR* pszText) = 0;
     virtual FWL_ERR				SetItemRect(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, const CFX_RectF &rtItem) = 0;
     virtual FX_FLOAT			GetItemHeight(IFWL_Widget *pWidget) = 0;
     virtual CFX_DIBitmap*		GetItemIcon(IFWL_Widget *pWidget, FWL_HLISTITEM hItem) = 0;

@@ -39,7 +39,7 @@ int32_t CXFA_FFDoc::StartLoad()
     m_pDocument = pDocParser->GetDocument();
     return iStatus;
 }
-FX_BOOL XFA_GetPDFContentsFromPDFXML(IFDE_XMLNode *pPDFElement, FX_LPBYTE &pByteBuffer, int32_t& iBufferSize)
+FX_BOOL XFA_GetPDFContentsFromPDFXML(IFDE_XMLNode *pPDFElement, uint8_t* &pByteBuffer, int32_t& iBufferSize)
 {
     IFDE_XMLElement* pDocumentElement = NULL;
     for (IFDE_XMLNode *pXMLNode = pPDFElement->GetNodeItem(IFDE_XMLNode::FirstChild); pXMLNode; pXMLNode = pXMLNode->GetNodeItem(IFDE_XMLNode::NextSibling)) {
@@ -111,7 +111,7 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause *pPause )
             return XFA_PARSESTATUS_SyntaxErr;
         }
         int32_t iBufferSize = 0;
-        FX_LPBYTE pByteBuffer = NULL;
+        uint8_t* pByteBuffer = NULL;
         IFX_FileRead* pXFAReader = NULL;
         if (XFA_GetPDFContentsFromPDFXML(pPDFXML, pByteBuffer, iBufferSize)) {
             pXFAReader = FX_CreateMemoryStream(pByteBuffer, iBufferSize, TRUE);
@@ -183,10 +183,10 @@ void CXFA_FFDoc::StopLoad()
 }
 IXFA_DocView* CXFA_FFDoc::CreateDocView(FX_DWORD dwView )
 {
-    CXFA_FFDocView* pDocView = (CXFA_FFDocView*)m_mapTypeToDocView.GetValueAt((FX_LPVOID)(uintptr_t)dwView);
+    CXFA_FFDocView* pDocView = (CXFA_FFDocView*)m_mapTypeToDocView.GetValueAt((void*)(uintptr_t)dwView);
     if (!pDocView) {
         pDocView = FX_NEW CXFA_FFDocView(this);
-        m_mapTypeToDocView.SetAt((FX_LPVOID)(uintptr_t)dwView, pDocView);
+        m_mapTypeToDocView.SetAt((void*)(uintptr_t)dwView, pDocView);
     }
     return pDocView;
 }
@@ -194,7 +194,7 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView(IXFA_DocLayout* pLayout)
 {
     FX_POSITION ps = m_mapTypeToDocView.GetStartPosition();
     while (ps) {
-        FX_LPVOID pType;
+        void* pType;
         CXFA_FFDocView* pDocView;
         m_mapTypeToDocView.GetNextAssoc(ps, pType, (void*&)pDocView);
         if (pDocView->GetXFALayout() == pLayout) {
@@ -207,7 +207,7 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView()
 {
     FX_POSITION ps = m_mapTypeToDocView.GetStartPosition();
     if (ps) {
-        FX_LPVOID pType;
+        void* pType;
         CXFA_FFDocView* pDocView;
         m_mapTypeToDocView.GetNextAssoc(ps, pType, (void*&)pDocView);
         return pDocView;
@@ -271,7 +271,7 @@ FX_BOOL CXFA_FFDoc::CloseDoc()
 {
     FX_POSITION psClose = m_mapTypeToDocView.GetStartPosition();
     while (psClose) {
-        FX_LPVOID pType;
+        void* pType;
         CXFA_FFDocView* pDocView;
         m_mapTypeToDocView.GetNextAssoc(psClose, pType, (void*&)pDocView);
         pDocView->RunDocClose();
@@ -281,7 +281,7 @@ FX_BOOL CXFA_FFDoc::CloseDoc()
     }
     FX_POSITION ps = m_mapTypeToDocView.GetStartPosition();
     while (ps) {
-        FX_LPVOID pType;
+        void* pType;
         CXFA_FFDocView* pDocView;
         m_mapTypeToDocView.GetNextAssoc(ps, pType, (void*&)pDocView);
         delete pDocView;
@@ -303,7 +303,7 @@ FX_BOOL CXFA_FFDoc::CloseDoc()
     }
     ps = m_mapNamedImages.GetStartPosition();
     while (ps) {
-        FX_LPVOID pName;
+        void* pName;
         FX_IMAGEDIB_AND_DPI* pImage = NULL;
         m_mapNamedImages.GetNextAssoc(ps, pName, (void*&)pImage);
         if (pImage) {
@@ -390,7 +390,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(FX_WSTR wsName, int32_t &iImageXDpi, 
         imageDIBDpi->iImageYDpi = 0;
         CPDF_StreamAcc streamAcc;
         streamAcc.LoadAllData((CPDF_Stream*)pObject);
-        IFX_FileRead* pImageFileRead = FX_CreateMemoryStream((FX_LPBYTE)streamAcc.GetData(), streamAcc.GetSize());
+        IFX_FileRead* pImageFileRead = FX_CreateMemoryStream((uint8_t*)streamAcc.GetData(), streamAcc.GetSize());
         imageDIBDpi->pDibSource = XFA_LoadImageFromBuffer(pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);
         imageDIBDpi->iImageXDpi = iImageXDpi;
         imageDIBDpi->iImageYDpi = iImageYDpi;
@@ -430,7 +430,7 @@ FX_BOOL CXFA_FFDoc::SavePackage(FX_WSTR wsPackage, IFX_FileWrite* pFile, IXFA_Ch
         if (pCSContext) {
             pCSContext->GetChecksum(bsChecksum);
         }
-        bFlags = pExport->Export(pFile, pNode, 0, bsChecksum.GetLength() ? (FX_LPCSTR)bsChecksum : NULL);
+        bFlags = pExport->Export(pFile, pNode, 0, bsChecksum.GetLength() ? (const FX_CHAR*)bsChecksum : NULL);
     } else {
         bFlags = pExport->Export(pFile);
     }

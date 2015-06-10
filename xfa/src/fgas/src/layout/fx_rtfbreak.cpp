@@ -1190,7 +1190,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(FX_LPCRTFTEXTOBJ pText, FXTEXT_CHARPOS *pCha
         return 0;
     }
     FXSYS_assert(pText->pStr != NULL && pText->pWidths != NULL && pText->pFont != NULL && pText->pRect != NULL);
-    FX_LPCWSTR pStr = pText->pStr;
+    const FX_WCHAR* pStr = pText->pStr;
     int32_t *pWidths = pText->pWidths;
     int32_t iLength = pText->iLength - 1;
     IFX_Font *pFont = pText->pFont;
@@ -1423,7 +1423,7 @@ int32_t CFX_RTFBreak::GetCharRects(FX_LPCRTFTEXTOBJ pText, CFX_RectFArray &rtArr
         return 0;
     }
     FXSYS_assert(pText->pStr != NULL && pText->pWidths != NULL && pText->pFont != NULL && pText->pRect != NULL);
-    FX_LPCWSTR pStr = pText->pStr;
+    const FX_WCHAR* pStr = pText->pStr;
     int32_t *pWidths = pText->pWidths;
     int32_t iLength = pText->iLength;
     CFX_RectF rect(*pText->pRect);

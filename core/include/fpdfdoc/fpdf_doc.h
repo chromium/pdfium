@@ -727,7 +727,7 @@ public:
     static FX_BOOL			UpdatingAPEnabled();
 
 
-    static CFX_ByteString	GenerateNewResourceName(const CPDF_Dictionary* pResDict, FX_LPCSTR csType, int iMinLen = 2, FX_LPCSTR csPrefix = "");
+    static CFX_ByteString	GenerateNewResourceName(const CPDF_Dictionary* pResDict, const FX_CHAR* csType, int iMinLen = 2, const FX_CHAR* csPrefix = "");
 
 
 
@@ -739,9 +739,9 @@ public:
 
     static CPDF_Font*		AddStandardFont(const CPDF_Document* pDocument, CFX_ByteString csFontName);
 
-    static CFX_ByteString	GetNativeFont(uint8_t iCharSet, FX_LPVOID pLogFont = NULL);
+    static CFX_ByteString	GetNativeFont(uint8_t iCharSet, void* pLogFont = NULL);
 
-    static CFX_ByteString	GetNativeFont(FX_LPVOID pLogFont = NULL);
+    static CFX_ByteString	GetNativeFont(void* pLogFont = NULL);
 
     static uint8_t			GetNativeCharSet();
 
@@ -1544,7 +1544,7 @@ public:
     CXML_Element*		GetRDF() const;
 
 protected:
-    FX_LPVOID	m_pData;
+    void*	m_pData;
 };
 class CPDF_ViewerPreferences
 {

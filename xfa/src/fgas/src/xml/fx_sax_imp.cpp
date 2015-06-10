@@ -102,8 +102,8 @@ CFX_SAXReader::CFX_SAXReader()
     , m_pCommentContext(NULL)
     , m_dwParseMode(0)
 {
-    m_pszData = (FX_LPBYTE)FX_Alloc(uint8_t, m_iDataSize);
-    m_pszName = (FX_LPBYTE)FX_Alloc(uint8_t, m_iNameSize);
+    m_pszData = (uint8_t*)FX_Alloc(uint8_t, m_iDataSize);
+    m_pszName = (uint8_t*)FX_Alloc(uint8_t, m_iNameSize);
 }
 CFX_SAXReader::~CFX_SAXReader()
 {
@@ -179,7 +179,7 @@ void CFX_SAXReader::ReallocDataBuffer()
     } else {
         m_iDataSize += 1024 * 1024;
     }
-    m_pszData = (FX_LPBYTE)FX_Realloc(uint8_t, m_pszData, m_iDataSize);
+    m_pszData = (uint8_t*)FX_Realloc(uint8_t, m_pszData, m_iDataSize);
 }
 void CFX_SAXReader::ReallocNameBuffer()
 {
@@ -191,7 +191,7 @@ void CFX_SAXReader::ReallocNameBuffer()
     } else {
         m_iNameSize += 1024 * 1024;
     }
-    m_pszName = (FX_LPBYTE)FX_Realloc(uint8_t, m_pszName, m_iNameSize);
+    m_pszName = (uint8_t*)FX_Realloc(uint8_t, m_pszName, m_iNameSize);
 }
 inline FX_BOOL CFX_SAXReader::SkipSpace(uint8_t ch)
 {
@@ -239,7 +239,7 @@ int32_t CFX_SAXReader::ContinueParse(IFX_Pause *pPause )
     while(m_File.m_dwCur < m_File.m_dwEnd) {
         FX_DWORD &index = m_File.m_dwBufIndex;
         FX_DWORD size = m_File.m_dwBufSize;
-        FX_LPCBYTE pBuf = m_File.m_pBuf;
+        const uint8_t* pBuf = m_File.m_pBuf;
         while (index < size) {
             m_CurByte = pBuf[index];
             (this->*g_FX_SAXReader_LPFParse[m_eMode])();

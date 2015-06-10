@@ -64,8 +64,8 @@ typedef bmp_decompress_struct *bmp_decompress_struct_p;
 typedef bmp_decompress_struct_p *bmp_decompress_struct_pp;
 struct tag_bmp_decompress_struct {
     jmp_buf			jmpbuf;
-    FX_LPSTR		err_ptr;
-    void			(*_bmp_error_fn)(bmp_decompress_struct_p gif_ptr, FX_LPCSTR err_msg);
+    FX_CHAR*		err_ptr;
+    void			(*_bmp_error_fn)(bmp_decompress_struct_p gif_ptr, const FX_CHAR* err_msg);
 
     void*			context_ptr;
 
@@ -77,7 +77,7 @@ struct tag_bmp_decompress_struct {
     int32_t		components;
     int32_t		src_row_bytes;
     int32_t		out_row_bytes;
-    FX_LPBYTE		out_row_buffer;
+    uint8_t*		out_row_buffer;
     FX_WORD			bitCounts;
     FX_DWORD		color_used;
     FX_BOOL			imgTB_flag;
@@ -98,13 +98,13 @@ struct tag_bmp_decompress_struct {
 #endif
 
     FX_BOOL			(*_bmp_get_data_position_fn)(bmp_decompress_struct_p bmp_ptr, FX_DWORD cur_pos);
-    void			(*_bmp_get_row_fn)(bmp_decompress_struct_p bmp_ptr, int32_t row_num, FX_LPBYTE row_buf);
-    FX_LPBYTE		next_in;
+    void			(*_bmp_get_row_fn)(bmp_decompress_struct_p bmp_ptr, int32_t row_num, uint8_t* row_buf);
+    uint8_t*		next_in;
     FX_DWORD		avail_in;
     FX_DWORD		skip_size;
     int32_t		decode_status;
 };
-void _bmp_error(bmp_decompress_struct_p bmp_ptr, FX_LPCSTR err_msg);
+void _bmp_error(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg);
 bmp_decompress_struct_p _bmp_create_decompress();
 void _bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr);
 int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr);
@@ -112,10 +112,10 @@ int32_t _bmp_decode_image(bmp_decompress_struct_p bmp_ptr);
 int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr);
 int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr);
 int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr);
-FX_LPBYTE _bmp_read_data(bmp_decompress_struct_p bmp_ptr, FX_LPBYTE* des_buf_pp, FX_DWORD data_size);
+uint8_t* _bmp_read_data(bmp_decompress_struct_p bmp_ptr, uint8_t** des_buf_pp, FX_DWORD data_size);
 void _bmp_save_decoding_status(bmp_decompress_struct_p bmp_ptr, int32_t status);
-void _bmp_input_buffer(bmp_decompress_struct_p bmp_ptr, FX_LPBYTE src_buf, FX_DWORD src_size);
-FX_DWORD _bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr, FX_LPBYTE* avial_buf_ptr);
+void _bmp_input_buffer(bmp_decompress_struct_p bmp_ptr, uint8_t* src_buf, FX_DWORD src_size);
+FX_DWORD _bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr, uint8_t** avial_buf_ptr);
 #define BMP_PTR_NOT_NULL(ptr,bmp_ptr)	if(ptr == NULL){						\
         _bmp_error(bmp_ptr,"Out Of Memory");\
         return 0;							\
@@ -126,7 +126,7 @@ typedef bmp_compress_struct_p *bmp_compress_struct_pp;
 struct tag_bmp_compress_struct {
     BmpFileHeader	file_header;
     BmpInfoHeader	info_header;
-    FX_LPBYTE		src_buf;
+    uint8_t*		src_buf;
     FX_DWORD		src_pitch;
     FX_DWORD		src_row;
     uint8_t			src_bpp;
@@ -140,4 +140,4 @@ struct tag_bmp_compress_struct {
 };
 bmp_compress_struct_p _bmp_create_compress();
 void _bmp_destroy_compress(bmp_compress_struct_p bmp_ptr);
-FX_BOOL _bmp_encode_image(bmp_compress_struct_p bmp_ptr, FX_LPBYTE& dst_buf, FX_DWORD& dst_size);
+FX_BOOL _bmp_encode_image(bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, FX_DWORD& dst_size);

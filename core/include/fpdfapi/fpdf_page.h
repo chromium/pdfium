@@ -235,7 +235,7 @@ public:
     void TransformContent(CFX_Matrix& matrix);
 protected:
     void            ProcessImage(CFX_ByteTextBuf& buf, CPDF_ImageObject* pImageObj);
-    void            ProcessForm(CFX_ByteTextBuf& buf, FX_LPCBYTE data, FX_DWORD size, CFX_Matrix& matrix);
+    void            ProcessForm(CFX_ByteTextBuf& buf, const uint8_t* data, FX_DWORD size, CFX_Matrix& matrix);
     CFX_ByteString  RealizeResource(CPDF_Object* pResourceObj, const FX_CHAR* szType);
 private:
     CPDF_Page*      m_pPage;

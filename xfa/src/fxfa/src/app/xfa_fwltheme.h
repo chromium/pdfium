@@ -35,7 +35,7 @@ public:
     virtual FX_DWORD	SetThemeID(IFWL_Widget *pWidget, FX_DWORD dwThemeID, FX_BOOL bChildren = TRUE);
     virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams);
     virtual FX_BOOL		DrawText(CFWL_ThemeText *pParams);
-    virtual FX_LPVOID   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity);
+    virtual void*   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity);
     virtual FX_BOOL		IsCustomizedLayout(IFWL_Widget *pWidget);
     virtual FWL_ERR		GetPartRect(CFWL_ThemePart* pThemePart);
     virtual FX_BOOL		IsInPart(CFWL_ThemePart* pThemePart, FX_FLOAT fx, FX_FLOAT fy);

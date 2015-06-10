@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fxcrt/fx_basic.h"
-FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_LPSTR buf);
+FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
 CFX_BinaryBuf::CFX_BinaryBuf()
     : m_AllocStep(0)
     , m_pBuffer(NULL)
@@ -50,7 +50,7 @@ void CFX_BinaryBuf::AttachData(void* buffer, FX_STRSIZE size)
         FX_Free(m_pBuffer);
     }
     m_DataSize = size;
-    m_pBuffer = (FX_LPBYTE)buffer;
+    m_pBuffer = (uint8_t*)buffer;
     m_AllocSize = size;
 }
 void CFX_BinaryBuf::TakeOver(CFX_BinaryBuf& other)
@@ -82,7 +82,7 @@ void CFX_BinaryBuf::ExpandBuf(FX_STRSIZE add_size)
         alloc_step = m_AllocStep;
     }
     new_size = (new_size + alloc_step - 1) / alloc_step * alloc_step;
-    FX_LPBYTE pNewBuffer = m_pBuffer;
+    uint8_t* pNewBuffer = m_pBuffer;
     if (pNewBuffer) {
         pNewBuffer = FX_Realloc(uint8_t, m_pBuffer, new_size);
     } else {
@@ -202,7 +202,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator << (int i)
         ExpandBuf(len * sizeof(FX_WCHAR));
     }
     ASSERT(m_pBuffer != NULL);
-    FX_LPWSTR str = (FX_WCHAR*)(m_pBuffer + m_DataSize);
+    FX_WCHAR* str = (FX_WCHAR*)(m_pBuffer + m_DataSize);
     for (FX_STRSIZE j = 0; j < len; j ++) {
         *str ++ = buf[j];
     }
@@ -217,14 +217,14 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator << (double f)
         ExpandBuf(len * sizeof(FX_WCHAR));
     }
     ASSERT(m_pBuffer != NULL);
-    FX_LPWSTR str = (FX_WCHAR*)(m_pBuffer + m_DataSize);
+    FX_WCHAR* str = (FX_WCHAR*)(m_pBuffer + m_DataSize);
     for (FX_STRSIZE i = 0; i < len; i ++) {
         *str ++ = buf[i];
     }
     m_DataSize += len * sizeof(FX_WCHAR);
     return *this;
 }
-CFX_WideTextBuf& CFX_WideTextBuf::operator << (FX_LPCWSTR lpsz)
+CFX_WideTextBuf& CFX_WideTextBuf::operator << (const FX_WCHAR* lpsz)
 {
     AppendBlock(lpsz, FXSYS_wcslen(lpsz)*sizeof(FX_WCHAR));
     return *this;
@@ -240,7 +240,7 @@ void CFX_WideTextBuf::operator =(FX_WSTR str)
 }
 CFX_WideStringC CFX_WideTextBuf::GetWideString() const
 {
-    return CFX_WideStringC((FX_LPCWSTR)m_pBuffer, m_DataSize / sizeof(FX_WCHAR));
+    return CFX_WideStringC((const FX_WCHAR*)m_pBuffer, m_DataSize / sizeof(FX_WCHAR));
 }
 CFX_ArchiveSaver& CFX_ArchiveSaver::operator << (uint8_t i)
 {
@@ -290,7 +290,7 @@ CFX_ArchiveSaver& CFX_ArchiveSaver::operator << (FX_BSTR bstr)
     }
     return *this;
 }
-CFX_ArchiveSaver& CFX_ArchiveSaver::operator << (FX_LPCWSTR wstr)
+CFX_ArchiveSaver& CFX_ArchiveSaver::operator << (const FX_WCHAR* wstr)
 {
     FX_STRSIZE len = FXSYS_wcslen(wstr);
     if (m_pStream) {
@@ -315,7 +315,7 @@ void CFX_ArchiveSaver::Write(const void* pData, FX_STRSIZE dwSize)
         m_SavingBuf.AppendBlock(pData, dwSize);
     }
 }
-CFX_ArchiveLoader::CFX_ArchiveLoader(FX_LPCBYTE pData, FX_DWORD dwSize)
+CFX_ArchiveLoader::CFX_ArchiveLoader(const uint8_t* pData, FX_DWORD dwSize)
 {
     m_pLoadingBuf = pData;
     m_LoadingPos = 0;
@@ -359,7 +359,7 @@ CFX_ArchiveLoader& CFX_ArchiveLoader::operator >> (CFX_ByteString& str)
     if (len <= 0 || m_LoadingPos + len > m_LoadingSize) {
         return *this;
     }
-    FX_LPSTR buffer = str.GetBuffer(len);
+    FX_CHAR* buffer = str.GetBuffer(len);
     FXSYS_memcpy32(buffer, m_pLoadingBuf + m_LoadingPos, len);
     str.ReleaseBuffer(len);
     m_LoadingPos += len;
@@ -381,7 +381,7 @@ FX_BOOL CFX_ArchiveLoader::Read(void* pBuf, FX_DWORD dwSize)
     m_LoadingPos += dwSize;
     return TRUE;
 }
-void CFX_BitStream::Init(FX_LPCBYTE pData, FX_DWORD dwSize)
+void CFX_BitStream::Init(const uint8_t* pData, FX_DWORD dwSize)
 {
     m_pData = pData;
     m_BitSize = dwSize * 8;
@@ -455,7 +455,7 @@ int32_t IFX_BufferArchive::AppendBlock(const void* pBuf, size_t size)
     if (!m_pBuffer) {
         m_pBuffer = FX_Alloc(uint8_t, m_BufSize);
     }
-    FX_LPBYTE buffer = (FX_LPBYTE)pBuf;
+    uint8_t* buffer = (uint8_t*)pBuf;
     FX_STRSIZE temp_size = (FX_STRSIZE)size;
     while (temp_size > 0) {
         FX_STRSIZE buf_size = FX_MIN(m_BufSize - m_Length, (FX_STRSIZE)temp_size);
@@ -516,7 +516,7 @@ FX_BOOL CFX_FileBufferArchive::AttachFile(IFX_StreamWrite *pFile, FX_BOOL bTakeo
     m_bTakeover = bTakeover;
     return TRUE;
 }
-FX_BOOL CFX_FileBufferArchive::AttachFile(FX_LPCWSTR filename)
+FX_BOOL CFX_FileBufferArchive::AttachFile(const FX_WCHAR* filename)
 {
     if (!filename) {
         return FALSE;
@@ -531,7 +531,7 @@ FX_BOOL CFX_FileBufferArchive::AttachFile(FX_LPCWSTR filename)
     m_bTakeover = TRUE;
     return TRUE;
 }
-FX_BOOL CFX_FileBufferArchive::AttachFile(FX_LPCSTR filename)
+FX_BOOL CFX_FileBufferArchive::AttachFile(const FX_CHAR* filename)
 {
     if (!filename) {
         return FALSE;

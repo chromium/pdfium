@@ -10,7 +10,7 @@ typedef struct _XFA_NOTSUREATTRIBUTE {
     XFA_ELEMENT				eElement;
     XFA_ATTRIBUTE			eAttribute;
     XFA_ATTRIBUTETYPE		eType;
-    FX_LPVOID				pValue;
+    void*				pValue;
 } XFA_NOTSUREATTRIBUTE, * XFA_LPNOTSUREATTRIBUTE;
 typedef XFA_NOTSUREATTRIBUTE const * XFA_LPCNOTSUREATTRIBUTE;
 XFA_LPCNOTSUREATTRIBUTE XFA_GetNotsureAttribute(XFA_ELEMENT eElement, XFA_ATTRIBUTE eAttribute, XFA_ATTRIBUTETYPE eType = XFA_ATTRIBUTETYPE_NOTSURE);
@@ -27,16 +27,16 @@ public:
     virtual int32_t			GetPosition();
     virtual FX_BOOL				IsEOF() const;
 
-    virtual int32_t			ReadData(FX_LPBYTE pBuffer, int32_t iBufferSize)
+    virtual int32_t			ReadData(uint8_t* pBuffer, int32_t iBufferSize)
     {
         return 0;
     }
-    virtual int32_t			ReadString(FX_LPWSTR pStr, int32_t iMaxLength, FX_BOOL &bEOS, int32_t const *pByteSize = NULL);
-    virtual int32_t			WriteData(FX_LPCBYTE pBuffer, int32_t iBufferSize)
+    virtual int32_t			ReadString(FX_WCHAR* pStr, int32_t iMaxLength, FX_BOOL &bEOS, int32_t const *pByteSize = NULL);
+    virtual int32_t			WriteData(const uint8_t* pBuffer, int32_t iBufferSize)
     {
         return 0;
     }
-    virtual int32_t			WriteString(FX_LPCWSTR pStr, int32_t iLength)
+    virtual int32_t			WriteString(const FX_WCHAR* pStr, int32_t iLength)
     {
         return 0;
     }

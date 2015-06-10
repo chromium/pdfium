@@ -204,7 +204,7 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const
         int32_t nExponent = 0;
         int cc = 0;
         FX_BOOL bNegative = FALSE, bExpSign = FALSE;
-        FX_LPCWSTR str = (FX_LPCWSTR)m_wsValue;
+        const FX_WCHAR* str = (const FX_WCHAR*)m_wsValue;
         int len = m_wsValue.GetLength();
         while (XFA_IsSpace(str[cc]) && cc < len) {
             cc++;
@@ -280,7 +280,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const
         int32_t nExponent = 0;
         int32_t cc = 0;
         FX_BOOL bNegative = FALSE, bExpSign = FALSE;
-        FX_LPCWSTR str = (FX_LPCWSTR)m_wsValue;
+        const FX_WCHAR* str = (const FX_WCHAR*)m_wsValue;
         int len = m_wsValue.GetLength();
         while (XFA_IsSpace(str[cc]) && cc < len) {
             cc++;
@@ -581,7 +581,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate, CF
     }
     FX_BOOL bSymbol = (wsDate.Find(0x2D) == -1) ? FALSE : TRUE;
     FX_WORD wYear = 0, wMonth = 0, wDay = 0;
-    FX_LPCWSTR pDate = (FX_LPCWSTR)wsDate;
+    const FX_WCHAR* pDate = (const FX_WCHAR*)wsDate;
     int nIndex = 0, nStart = 0;
     while (pDate[nIndex] != '\0' && nIndex < wCountY) {
         if (!XFA_IsDigit(pDate[nIndex])) {
@@ -663,7 +663,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime)
     const FX_WORD wCountH = 2, wCountM = 2, wCountS = 2, wCountF = 3;
     FX_BOOL bSymbol = (wsTime.Find(':') == -1) ? FALSE : TRUE;
     FX_WORD wHour = 0, wMinute = 0, wSecond = 0, wFraction = 0;
-    FX_LPCWSTR pTime = (FX_LPCWSTR)wsTime;
+    const FX_WCHAR* pTime = (const FX_WCHAR*)wsTime;
     int nIndex = 0, nStart = 0;
     while (pTime[nIndex] != '\0' && nIndex - nStart < wCountH) {
         if (!XFA_IsDigit(pTime[nIndex])) {
@@ -876,7 +876,7 @@ void CXFA_LocaleValue::GetNumbericFormat(CFX_WideString &wsFormat, int32_t nIntL
           + (bSign ? 1 : 0) \
           + (nDecLen >= 0 ? nDecLen : 2) \
           + (nDecLen == 0 ? 0 : 1);
-    FX_LPWSTR lpBuf = wsFormat.GetBuffer(nTotalLen);
+    FX_WCHAR* lpBuf = wsFormat.GetBuffer(nTotalLen);
     int32_t nPos = 0;
     if (bSign) {
         lpBuf[nPos++] = L's';
@@ -909,8 +909,8 @@ FX_BOOL CXFA_LocaleValue::ValidateNumericTemp(CFX_WideString& wsNumeric, CFX_Wid
     if (wsFormat.IsEmpty() || wsNumeric.IsEmpty()) {
         return TRUE;
     }
-    FX_LPCWSTR pNum = FX_LPCWSTR(wsNumeric);
-    FX_LPCWSTR pFmt = FX_LPCWSTR(wsFormat);
+    const FX_WCHAR* pNum = wsNumeric.c_str();
+    const FX_WCHAR* pFmt = wsFormat.c_str();
     int32_t n = 0, nf = 0;
     FX_WCHAR c	= pNum[n];
     FX_WCHAR cf	= pFmt[nf];

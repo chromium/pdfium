@@ -8,7 +8,7 @@
 #include "../../../include/fxge/fx_freetype.h"
 #include "text_int.h"
 #define EM_ADJUST(em, a) (em == 0?(a): (a)*1000/em)
-extern void _FPDFAPI_GetInternalFontData(int id1, FX_LPCBYTE& data, FX_DWORD& size);
+extern void _FPDFAPI_GetInternalFontData(int id1, const uint8_t*& data, FX_DWORD& size);
 CFX_Font::CFX_Font()
 {
     m_pSubstFont = NULL;
@@ -189,7 +189,7 @@ int CFX_Font::GetGlyphWidth(FX_DWORD glyph_index)
     int width = EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face), FXFT_Get_Glyph_HoriAdvance(m_Face));
     return width;
 }
-static FXFT_Face FT_LoadFont(FX_LPBYTE pData, int size)
+static FXFT_Face FT_LoadFont(uint8_t* pData, int size)
 {
     FXFT_Library library;
     if (CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary == NULL) {
@@ -207,12 +207,12 @@ static FXFT_Face FT_LoadFont(FX_LPBYTE pData, int size)
     }
     return face;
 }
-FX_BOOL CFX_Font::LoadEmbedded(FX_LPCBYTE data, FX_DWORD size)
+FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, FX_DWORD size)
 {
     m_pFontDataAllocation = FX_Alloc(uint8_t, size);
     FXSYS_memcpy32(m_pFontDataAllocation, data, size);
-    m_Face = FT_LoadFont((FX_LPBYTE)m_pFontDataAllocation, size);
-    m_pFontData = (FX_LPBYTE)m_pFontDataAllocation;
+    m_Face = FT_LoadFont((uint8_t*)m_pFontDataAllocation, size);
+    m_pFontData = (uint8_t*)m_pFontDataAllocation;
     m_bEmbedded = TRUE;
     m_dwSize = size;
     return m_Face != NULL;
@@ -540,7 +540,7 @@ FX_BOOL CFX_FontEncodingEX::IsUnicodeCompatible() const
 {
     return m_nEncodingID == FXFM_ENCODING_UNICODE;
 }
-FX_DWORD CFX_FontEncodingEX::GlyphIndexFromName(FX_LPCSTR pStrName)
+FX_DWORD CFX_FontEncodingEX::GlyphIndexFromName(const FX_CHAR* pStrName)
 {
     FXFT_Face face = m_pFont->m_Face;
     return FT_Get_Name_Index(face, (FT_String*)pStrName);
@@ -550,7 +550,7 @@ CFX_ByteString CFX_FontEncodingEX::NameFromGlyphIndex(FX_DWORD dwGlyphIndex)
     FXFT_Face face = m_pFont->m_Face;
     CFX_ByteString glyphName("                ");
     if (FT_HAS_GLYPH_NAMES(((FT_Face)face))) {
-        if (FT_Get_Glyph_Name((FT_Face)face, dwGlyphIndex, (FT_Pointer)(FX_LPCSTR)glyphName, 16)) {
+        if (FT_Get_Glyph_Name((FT_Face)face, dwGlyphIndex, (FT_Pointer)(const FX_CHAR*)glyphName, 16)) {
             glyphName.Empty();
             return glyphName;
         }

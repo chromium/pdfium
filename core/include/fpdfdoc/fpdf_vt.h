@@ -375,7 +375,7 @@ public:
 
     virtual void							ResetAll() = 0;
 
-    virtual void							SetText(FX_LPCWSTR text, int32_t charset = 1, const CPVT_SecProps * pSecProps = NULL,
+    virtual void							SetText(const FX_WCHAR* text, int32_t charset = 1, const CPVT_SecProps * pSecProps = NULL,
             const CPVT_WordProps * pWordProps = NULL) = 0;
 
     virtual CPVT_WordPlace					InsertWord(const CPVT_WordPlace & place, FX_WORD word, int32_t charset = 1,
@@ -384,7 +384,7 @@ public:
     virtual CPVT_WordPlace					InsertSection(const CPVT_WordPlace & place, const CPVT_SecProps * pSecProps = NULL,
             const CPVT_WordProps * pWordProps = NULL) = 0;
 
-    virtual CPVT_WordPlace					InsertText(const CPVT_WordPlace & place, FX_LPCWSTR text, int32_t charset = 1,
+    virtual CPVT_WordPlace					InsertText(const CPVT_WordPlace & place, const FX_WCHAR* text, int32_t charset = 1,
             const CPVT_SecProps * pSecProps = NULL,	const CPVT_WordProps * pWordProps = NULL) = 0;
 
     virtual CPVT_WordPlace					DeleteWords(const CPVT_WordRange & PlaceRange) = 0;

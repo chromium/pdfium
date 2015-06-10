@@ -104,26 +104,26 @@ enum XFA_SOM_MESSAGETYPE {
 };
 typedef CFX_StackTemplate<CXFA_Node*> CXFA_NodeStack;
 typedef CXFA_PtrSetTemplate<CXFA_Node*> CXFA_NodeSet;
-typedef void (*PD_CALLBACK_DUPLICATEDATA)(FX_LPVOID& pData);
+typedef void (*PD_CALLBACK_DUPLICATEDATA)(void*& pData);
 typedef struct _XFA_MAPDATABLOCKCALLBACKINFO {
     PD_CALLBACK_FREEDATA		pFree;
     PD_CALLBACK_DUPLICATEDATA	pCopy;
 } XFA_MAPDATABLOCKCALLBACKINFO;
 typedef struct _XFA_MAPDATABLOCK {
-    FX_LPBYTE				GetData() const
+    uint8_t*				GetData() const
     {
-        return (FX_LPBYTE)this + sizeof(_XFA_MAPDATABLOCK);
+        return (uint8_t*)this + sizeof(_XFA_MAPDATABLOCK);
     }
     XFA_MAPDATABLOCKCALLBACKINFO*	pCallbackInfo;
     int32_t						iBytes;
 } XFA_MAPDATABLOCK, * XFA_LPMAPDATABLOCK;
 typedef struct _XFA_MAPMODULEDATA {
     CFX_MapPtrToPtr			m_ValueMap;
-    CFX_MapPtrTemplate<FX_LPVOID, XFA_LPMAPDATABLOCK> m_BufferMap;
+    CFX_MapPtrTemplate<void*, XFA_LPMAPDATABLOCK> m_BufferMap;
 } XFA_MAPMODULEDATA, * XFA_LPMAPMODULEDATA;
-#define XFA_CalcRefCount	(FX_LPVOID)(uintptr_t)FXBSTR_ID('X', 'F', 'A', 'R')
-#define XFA_CalcData		(FX_LPVOID)(uintptr_t)FXBSTR_ID('X', 'F', 'A', 'C')
-#define XFA_LAYOUTITEMKEY	(FX_LPVOID)(uintptr_t)FXBSTR_ID('L', 'Y', 'I', 'M')
+#define XFA_CalcRefCount	(void*)(uintptr_t)FXBSTR_ID('X', 'F', 'A', 'R')
+#define XFA_CalcData		(void*)(uintptr_t)FXBSTR_ID('X', 'F', 'A', 'C')
+#define XFA_LAYOUTITEMKEY	(void*)(uintptr_t)FXBSTR_ID('L', 'Y', 'I', 'M')
 class CXFA_Node : public CXFA_Object
 {
 public:
@@ -176,7 +176,7 @@ public:
 
     FX_BOOL				SetBoolean(XFA_ATTRIBUTE eAttr, FX_BOOL bValue, FX_BOOL bNotify = FALSE)
     {
-        return SetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, (FX_LPVOID)(uintptr_t)bValue, bNotify);
+        return SetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, (void*)(uintptr_t)bValue, bNotify);
     }
     FX_BOOL				TryBoolean(XFA_ATTRIBUTE eAttr, FX_BOOL &bValue, FX_BOOL bUseDefault = TRUE);
     FX_BOOL				GetBoolean(XFA_ATTRIBUTE eAttr)
@@ -186,7 +186,7 @@ public:
     }
     FX_BOOL				SetInteger(XFA_ATTRIBUTE eAttr, int32_t iValue, FX_BOOL bNotify = FALSE)
     {
-        return SetValue(eAttr, XFA_ATTRIBUTETYPE_Integer, (FX_LPVOID)(uintptr_t)iValue, bNotify);
+        return SetValue(eAttr, XFA_ATTRIBUTETYPE_Integer, (void*)(uintptr_t)iValue, bNotify);
     }
     FX_BOOL				TryInteger(XFA_ATTRIBUTE eAttr, int32_t &iValue, FX_BOOL bUseDefault = TRUE);
     int32_t			GetInteger(XFA_ATTRIBUTE eAttr)
@@ -196,7 +196,7 @@ public:
     }
     FX_BOOL				SetEnum(XFA_ATTRIBUTE eAttr, XFA_ATTRIBUTEENUM eValue, FX_BOOL bNotify = FALSE)
     {
-        return SetValue(eAttr, XFA_ATTRIBUTETYPE_Enum, (FX_LPVOID)(uintptr_t)eValue, bNotify);
+        return SetValue(eAttr, XFA_ATTRIBUTETYPE_Enum, (void*)(uintptr_t)eValue, bNotify);
     }
     FX_BOOL				TryEnum(XFA_ATTRIBUTE eAttr, XFA_ATTRIBUTEENUM &eValue, FX_BOOL bUseDefault = TRUE);
     XFA_ATTRIBUTEENUM	GetEnum(XFA_ATTRIBUTE eAttr)
@@ -220,18 +220,18 @@ public:
         CXFA_Measurement mValue;
         return TryMeasure(eAttr, mValue, TRUE) ? mValue : CXFA_Measurement();
     }
-    FX_BOOL				SetObject(XFA_ATTRIBUTE eAttr, FX_LPVOID pData, XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
-    FX_BOOL				TryObject(XFA_ATTRIBUTE eAttr, FX_LPVOID &pData);
-    FX_LPVOID			GetObject(XFA_ATTRIBUTE eAttr)
+    FX_BOOL				SetObject(XFA_ATTRIBUTE eAttr, void* pData, XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
+    FX_BOOL				TryObject(XFA_ATTRIBUTE eAttr, void* &pData);
+    void*			GetObject(XFA_ATTRIBUTE eAttr)
     {
-        FX_LPVOID pData;
+        void* pData;
         return TryObject(eAttr, pData) ? pData : NULL;
     }
-    FX_BOOL				SetUserData(FX_LPVOID pKey, FX_LPVOID pData, XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
-    FX_BOOL				TryUserData(FX_LPVOID pKey, FX_LPVOID &pData, FX_BOOL bProtoAlso = FALSE);
-    FX_LPVOID			GetUserData(FX_LPVOID pKey, FX_BOOL bProtoAlso = FALSE)
+    FX_BOOL				SetUserData(void* pKey, void* pData, XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
+    FX_BOOL				TryUserData(void* pKey, void* &pData, FX_BOOL bProtoAlso = FALSE);
+    void*			GetUserData(void* pKey, FX_BOOL bProtoAlso = FALSE)
     {
-        FX_LPVOID pData;
+        void* pData;
         return TryUserData(pKey, pData, bProtoAlso) ? pData : NULL;
     }
     CXFA_Node*			GetProperty(int32_t index, XFA_ELEMENT eProperty, FX_BOOL bCreateProperty = TRUE);
@@ -310,7 +310,7 @@ public:
     void	Script_Delta_CurrentValue(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
     void	Script_Delta_SavedValue(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
     void	Script_Delta_Target(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
-    void	Script_Attribute_SendAttributeChangeMessage(FX_LPVOID eAttribute, FX_LPVOID eValue, FX_BOOL bScriptModify);
+    void	Script_Attribute_SendAttributeChangeMessage(void* eAttribute, void* eValue, FX_BOOL bScriptModify);
     void	Script_Attribute_Integer(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
     void	Script_Attribute_IntegerRead(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
     void	Script_Attribute_BOOL(FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
@@ -429,26 +429,26 @@ protected:
     ~CXFA_Node();
     friend class CXFA_Document;
     CXFA_Node*			Deprecated_GetPrevSibling();
-    FX_BOOL				SetValue(XFA_ATTRIBUTE eAttr, XFA_ATTRIBUTETYPE eType, FX_LPVOID pValue, FX_BOOL bNotify);
-    FX_BOOL				GetValue(XFA_ATTRIBUTE eAttr, XFA_ATTRIBUTETYPE eType, FX_BOOL bUseDefault, FX_LPVOID &pValue);
+    FX_BOOL				SetValue(XFA_ATTRIBUTE eAttr, XFA_ATTRIBUTETYPE eType, void* pValue, FX_BOOL bNotify);
+    FX_BOOL				GetValue(XFA_ATTRIBUTE eAttr, XFA_ATTRIBUTETYPE eType, FX_BOOL bUseDefault, void* &pValue);
     void				OnRemoved(CXFA_Node *pParent, CXFA_Node *pRemoved, FX_BOOL bNotify);
-    void				OnChanging(XFA_ATTRIBUTE eAttr, FX_LPVOID pNewValue, FX_BOOL bNotify);
-    void				OnChanged(XFA_ATTRIBUTE eAttr, FX_LPVOID pNewValue, FX_BOOL bNotify, FX_BOOL bScriptModify = FALSE);
+    void				OnChanging(XFA_ATTRIBUTE eAttr, void* pNewValue, FX_BOOL bNotify);
+    void				OnChanged(XFA_ATTRIBUTE eAttr, void* pNewValue, FX_BOOL bNotify, FX_BOOL bScriptModify = FALSE);
     int32_t			execSingleEventByName(FX_WSTR wsEventName, XFA_ELEMENT eElementType);
     FX_BOOL				SetScriptContent(const CFX_WideString& wsContent, const CFX_WideString& wsXMLValue, FX_BOOL bNotify = TRUE, FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
     CFX_WideString		GetScriptContent(FX_BOOL bScriptModify = FALSE);
     XFA_LPMAPMODULEDATA	GetMapModuleData(FX_BOOL bCreateNew);
-    void				SetMapModuleValue(FX_LPVOID pKey, FX_LPVOID pValue);
-    FX_BOOL				GetMapModuleValue(FX_LPVOID pKey, FX_LPVOID &pValue);
-    void				SetMapModuleString(FX_LPVOID pKey, FX_WSTR wsValue);
-    FX_BOOL				GetMapModuleString(FX_LPVOID pKey, CFX_WideStringC &wsValue);
-    void				SetMapModuleBuffer(FX_LPVOID pKey, FX_LPVOID pValue, int32_t iBytes, XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
-    FX_BOOL				GetMapModuleBuffer(FX_LPVOID pKey, FX_LPVOID &pValue, int32_t &iBytes, FX_BOOL bProtoAlso = TRUE);
-    FX_BOOL				HasMapModuleKey(FX_LPVOID pKey, FX_BOOL bProtoAlso = FALSE);
-    void				RemoveMapModuleKey(FX_LPVOID pKey = NULL);
-    void				MergeAllData(FX_LPVOID pDstModule, FX_BOOL bUseSrcAttr = TRUE);
-    void				MoveBufferMapData(CXFA_Node* pDstModule, FX_LPVOID pKey);
-    void				MoveBufferMapData(CXFA_Node* pSrcModule, CXFA_Node* pDstModule, FX_LPVOID pKey, FX_BOOL bRecursive = FALSE);
+    void				SetMapModuleValue(void* pKey, void* pValue);
+    FX_BOOL				GetMapModuleValue(void* pKey, void* &pValue);
+    void				SetMapModuleString(void* pKey, FX_WSTR wsValue);
+    FX_BOOL				GetMapModuleString(void* pKey, CFX_WideStringC &wsValue);
+    void				SetMapModuleBuffer(void* pKey, void* pValue, int32_t iBytes, XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
+    FX_BOOL				GetMapModuleBuffer(void* pKey, void* &pValue, int32_t &iBytes, FX_BOOL bProtoAlso = TRUE);
+    FX_BOOL				HasMapModuleKey(void* pKey, FX_BOOL bProtoAlso = FALSE);
+    void				RemoveMapModuleKey(void* pKey = NULL);
+    void				MergeAllData(void* pDstModule, FX_BOOL bUseSrcAttr = TRUE);
+    void				MoveBufferMapData(CXFA_Node* pDstModule, void* pKey);
+    void				MoveBufferMapData(CXFA_Node* pSrcModule, CXFA_Node* pDstModule, void* pKey, FX_BOOL bRecursive = FALSE);
 protected:
     CXFA_Node			*m_pNext;
     CXFA_Node			*m_pChild;
@@ -554,15 +554,15 @@ protected:
 class CXFA_TraverseStrategy_XFAContainerNode
 {
 public:
-    static CXFA_Node* GetFirstChild(CXFA_Node* pTemplateNode, FX_LPVOID pUserData = NULL)
+    static CXFA_Node* GetFirstChild(CXFA_Node* pTemplateNode, void* pUserData = NULL)
     {
         return pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild, XFA_OBJECTTYPE_ContainerNode);
     }
-    static CXFA_Node* GetNextSibling(CXFA_Node* pTemplateNode, FX_LPVOID pUserData = NULL)
+    static CXFA_Node* GetNextSibling(CXFA_Node* pTemplateNode, void* pUserData = NULL)
     {
         return pTemplateNode->GetNodeItem(XFA_NODEITEM_NextSibling, XFA_OBJECTTYPE_ContainerNode);
     }
-    static CXFA_Node* GetParent(CXFA_Node* pTemplateNode, FX_LPVOID pUserData = NULL)
+    static CXFA_Node* GetParent(CXFA_Node* pTemplateNode, void* pUserData = NULL)
     {
         return pTemplateNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_OBJECTTYPE_ContainerNode);
     }

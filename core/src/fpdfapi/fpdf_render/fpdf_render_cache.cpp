@@ -29,7 +29,8 @@ void CPDF_PageRenderCache::ClearAll()
 {
     FX_POSITION pos = m_ImageCaches.GetStartPosition();
     while (pos) {
-        FX_LPVOID key, value;
+        void* key;
+        void* value;
         m_ImageCaches.GetNextAssoc(pos, key, value);
         delete (CPDF_ImageCache*)value;
     }
@@ -47,7 +48,8 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize)
     FX_POSITION pos = m_ImageCaches.GetStartPosition();
     int i = 0;
     while (pos) {
-        FX_LPVOID key, value;
+        void* key;
+        void* value;
         m_ImageCaches.GetNextAssoc(pos, key, value);
         pCACHEINFO[i].time = ((CPDF_ImageCache*)value)->GetTimeCount();
         pCACHEINFO[i++].pStream = ((CPDF_ImageCache*)value)->GetStream();
@@ -72,7 +74,7 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize)
 }
 void CPDF_PageRenderCache::ClearImageCache(CPDF_Stream* pStream)
 {
-    FX_LPVOID value = m_ImageCaches.GetValueAt(pStream);
+    void* value = m_ImageCaches.GetValueAt(pStream);
     if (value == NULL)	{
         m_ImageCaches.RemoveKey(pStream);
         return;
@@ -86,7 +88,8 @@ FX_DWORD CPDF_PageRenderCache::EstimateSize()
     FX_DWORD dwSize = 0;
     FX_POSITION pos = m_ImageCaches.GetStartPosition();
     while (pos) {
-        FX_LPVOID key, value;
+        void* key;
+        void* value;
         m_ImageCaches.GetNextAssoc(pos, key, value);
         dwSize += ((CPDF_ImageCache*)value)->EstimateSize();
     }
@@ -99,7 +102,7 @@ FX_DWORD CPDF_PageRenderCache::GetCachedSize(CPDF_Stream* pStream) const
         return m_nCacheSize;
     }
     CPDF_ImageCache* pImageCache;
-    if (!m_ImageCaches.Lookup(pStream, (FX_LPVOID&)pImageCache)) {
+    if (!m_ImageCaches.Lookup(pStream, (void*&)pImageCache)) {
         return 0;
     }
     return pImageCache->EstimateSize();
@@ -109,7 +112,7 @@ void CPDF_PageRenderCache::GetCachedBitmap(CPDF_Stream* pStream, CFX_DIBSource*&
         int32_t downsampleWidth, int32_t downsampleHeight)
 {
     CPDF_ImageCache* pImageCache;
-    FX_BOOL bFind = m_ImageCaches.Lookup(pStream, (FX_LPVOID&)pImageCache);
+    FX_BOOL bFind = m_ImageCaches.Lookup(pStream, (void*&)pImageCache);
     if (!bFind) {
         pImageCache = new CPDF_ImageCache(m_pPage->m_pDocument, pStream);
     }
@@ -124,7 +127,7 @@ void CPDF_PageRenderCache::GetCachedBitmap(CPDF_Stream* pStream, CFX_DIBSource*&
 }
 FX_BOOL	CPDF_PageRenderCache::StartGetCachedBitmap(CPDF_Stream* pStream, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus, int32_t downsampleWidth, int32_t downsampleHeight)
 {
-    m_bCurFindCache = m_ImageCaches.Lookup(pStream, (FX_LPVOID&)m_pCurImageCache);
+    m_bCurFindCache = m_ImageCaches.Lookup(pStream, (void*&)m_pCurImageCache);
     if (!m_bCurFindCache) {
         m_pCurImageCache = new CPDF_ImageCache(m_pPage->m_pDocument, pStream);
     }
@@ -159,7 +162,7 @@ FX_BOOL	CPDF_PageRenderCache::Continue(IFX_Pause* pPause)
 void CPDF_PageRenderCache::ResetBitmap(CPDF_Stream* pStream, const CFX_DIBitmap* pBitmap)
 {
     CPDF_ImageCache* pImageCache;
-    if (!m_ImageCaches.Lookup(pStream, (FX_LPVOID&)pImageCache)) {
+    if (!m_ImageCaches.Lookup(pStream, (void*&)pImageCache)) {
         if (pBitmap == NULL) {
             return;
         }
@@ -209,7 +212,8 @@ void CPDF_PageRenderCache::ClearImageData()
 {
     FX_POSITION pos = m_ImageCaches.GetStartPosition();
     while (pos) {
-        FX_LPVOID key, value;
+        void* key;
+        void* value;
         m_ImageCaches.GetNextAssoc(pos, key, value);
         ((CPDF_ImageCache*)value)->ClearImageData();
     }

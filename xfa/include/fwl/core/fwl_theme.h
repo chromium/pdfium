@@ -45,7 +45,7 @@ public:
     int32_t				 m_iPart;
     FX_DWORD				 m_dwStates;
     FX_DWORD				 m_dwData;
-    FX_LPVOID				 m_pData;
+    void*				 m_pData;
 };
 class CFWL_ThemeBackground : public CFWL_ThemePart
 {
@@ -82,7 +82,7 @@ public:
     virtual FWL_ERR		SetThemeMatrix(IFWL_Widget *pWidget, const CFX_Matrix &matrix) = 0;
     virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams) = 0;
     virtual FX_BOOL		DrawText(CFWL_ThemeText *pParams) = 0;
-    virtual FX_LPVOID   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity) = 0;
+    virtual void*   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity) = 0;
     virtual FX_BOOL		IsCustomizedLayout(IFWL_Widget *pWidget) = 0;
     virtual FWL_ERR		GetPartRect(CFWL_ThemePart *pThemePart, CFX_RectF &rtPart) = 0;
     virtual FX_BOOL		IsInPart(CFWL_ThemePart *pThemePart, FX_FLOAT fx, FX_FLOAT fy) = 0;

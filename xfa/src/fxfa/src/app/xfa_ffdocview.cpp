@@ -171,7 +171,7 @@ void CXFA_FFDocView::ShowNullTestMsg()
             pAppProvider->LoadString(XFA_IDS_ValidateLimit, wsLimit);
             if (!wsLimit.IsEmpty()) {
                 CFX_WideString wsTemp;
-                wsTemp.Format((FX_LPCWSTR)wsLimit, iRemain);
+                wsTemp.Format((const FX_WCHAR*)wsLimit, iRemain);
                 wsMsg += FX_WSTRC(L"\n") + wsTemp;
             }
         }
@@ -696,7 +696,7 @@ void CXFA_FFDocView::RunCalculateRecursive(int32_t& iIndex)
         AddCalculateNodeNotify(pCurAcc->GetNode());
         int32_t iRefCount = (int32_t)(uintptr_t)pCurAcc->GetNode()->GetUserData(XFA_CalcRefCount);
         iRefCount++;
-        pCurAcc->GetNode()->SetUserData(XFA_CalcRefCount, (FX_LPVOID)(uintptr_t)iRefCount);
+        pCurAcc->GetNode()->SetUserData(XFA_CalcRefCount, (void*)(uintptr_t)iRefCount);
         if (iRefCount > 11) {
             break;
         }
@@ -719,7 +719,7 @@ int32_t CXFA_FFDocView::RunCalculateWidgets()
     }
     for (int32_t i = 0; i < m_CalculateAccs.GetSize(); i++) {
         CXFA_WidgetAcc* pCurAcc = (CXFA_WidgetAcc*)m_CalculateAccs[i];
-        pCurAcc->GetNode()->SetUserData(XFA_CalcRefCount, (FX_LPVOID)(uintptr_t)0);
+        pCurAcc->GetNode()->SetUserData(XFA_CalcRefCount, (void*)(uintptr_t)0);
     }
     m_CalculateAccs.RemoveAll();
     return XFA_EVENTERROR_Sucess;

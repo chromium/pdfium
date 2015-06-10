@@ -67,24 +67,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-typedef void*                   FX_LPVOID;   // Deprecate, use with void*.
-typedef const void*             FX_LPCVOID;  // Deprecate, use with const void*.
 typedef void*                   FX_POSITION; // Keep until fxcrt containers gone
-typedef uint8_t*                FX_LPBYTE;   // Deprecate, use uint8_t*.
-typedef const uint8_t*          FX_LPCBYTE;  // Deprecate, use const uint8_t*.
 typedef unsigned short          FX_WORD;     // Keep - "an efficient small type"
-typedef FX_WORD*                FX_LPWORD;   // Deprecate, use FX_WORD*.
-typedef const FX_WORD*          FX_LPCWORD;  // Deprecate, use const FX_WORD*.
 typedef unsigned int            FX_DWORD;    // Keep - "an efficient type"
-typedef FX_DWORD*               FX_LPDWORD;  // Deprecate, use FX_DWORD*.
 typedef float                   FX_FLOAT;    // Keep, allow upgrade to doubles.
-typedef int                     FX_BOOL;     // Sadly not always 0 or 1.
+typedef int                     FX_BOOL;     // Keep, sadly not always 0 or 1.
 typedef char                    FX_CHAR;     // Keep, questionable signedness.
-typedef FX_CHAR*                FX_LPSTR;    // Deprecate, use FX_CHAR*.
-typedef const FX_CHAR*          FX_LPCSTR;   // Deprecate, use const FX_CHAR*.
 typedef wchar_t                 FX_WCHAR;    // Keep, maybe bad platform wchars.
-typedef FX_WCHAR*               FX_LPWSTR;   // Deprecate, use FX_WCHAR*.
-typedef const FX_WCHAR*         FX_LPCWSTR;  // Deprecate, use const FX_WCHAR*.
 
 // PDFium string sizes are limited to 2^31-1, and the value is signed to
 // allow -1 as a placeholder for "unknown".
@@ -158,7 +147,7 @@ void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap);
 #define FXSYS_wfopen _wfopen
 #endif
 #else
-FXSYS_FILE* FXSYS_wfopen(FX_LPCWSTR filename, FX_LPCWSTR mode);
+FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode);
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 #ifdef __cplusplus
@@ -249,18 +238,18 @@ wchar_t*	FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_abs			abs
 #define FXDWORD_FROM_LSBFIRST(i)	(i)
 #define FXDWORD_FROM_MSBFIRST(i)	(((uint8_t)(i) << 24) | ((uint8_t)((i) >> 8) << 16) | ((uint8_t)((i) >> 16) << 8) | (uint8_t)((i) >> 24))
-#define FXDWORD_GET_LSBFIRST(p)		((((FX_LPBYTE)(p))[3] << 24) | (((FX_LPBYTE)(p))[2] << 16) | (((FX_LPBYTE)(p))[1] << 8) | (((FX_LPBYTE)(p))[0]))
-#define FXDWORD_GET_MSBFIRST(p) ((((FX_LPBYTE)(p))[0] << 24) | (((FX_LPBYTE)(p))[1] << 16) | (((FX_LPBYTE)(p))[2] << 8) | (((FX_LPBYTE)(p))[3]))
+#define FXDWORD_GET_LSBFIRST(p)		((((uint8_t*)(p))[3] << 24) | (((uint8_t*)(p))[2] << 16) | (((uint8_t*)(p))[1] << 8) | (((uint8_t*)(p))[0]))
+#define FXDWORD_GET_MSBFIRST(p) ((((uint8_t*)(p))[0] << 24) | (((uint8_t*)(p))[1] << 16) | (((uint8_t*)(p))[2] << 8) | (((uint8_t*)(p))[3]))
 #define FXSYS_HIBYTE(word)	((uint8_t)((word) >> 8))
 #define FXSYS_LOBYTE(word)	((uint8_t)(word))
 #define FXSYS_HIWORD(dword)	((FX_WORD)((dword) >> 16))
 #define FXSYS_LOWORD(dword)	((FX_WORD)(dword))
-int32_t	FXSYS_atoi(FX_LPCSTR str);
-int32_t	FXSYS_wtoi(FX_LPCWSTR str);
-int64_t	FXSYS_atoi64(FX_LPCSTR str);
-int64_t	FXSYS_wtoi64(FX_LPCWSTR str);
-FX_LPCSTR	FXSYS_i64toa(int64_t value, FX_LPSTR str, int radix);
-FX_LPCWSTR	FXSYS_i64tow(int64_t value, FX_LPWSTR str, int radix);
+int32_t	FXSYS_atoi(const FX_CHAR* str);
+int32_t	FXSYS_wtoi(const FX_WCHAR* str);
+int64_t	FXSYS_atoi64(const FX_CHAR* str);
+int64_t	FXSYS_wtoi64(const FX_WCHAR* str);
+const FX_CHAR*	FXSYS_i64toa(int64_t value, FX_CHAR* str, int radix);
+const FX_WCHAR*	FXSYS_i64tow(int64_t value, FX_WCHAR* str, int radix);
 int			FXSYS_round(FX_FLOAT f);
 #define		FXSYS_Mul(a, b) ((a) * (b))
 #define		FXSYS_Div(a, b) ((a) / (b))

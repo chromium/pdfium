@@ -184,7 +184,7 @@ public:
     {
         m_dwFlags = FX_MEMSTREAM_TakeOver | (bConsecutive ? FX_MEMSTREAM_Consecutive : 0);
     }
-    CFX_MemoryStream(FX_LPBYTE pBuffer, size_t nSize, FX_BOOL bTakeOver)
+    CFX_MemoryStream(uint8_t* pBuffer, size_t nSize, FX_BOOL bTakeOver)
         : m_dwCount(1)
         , m_nTotalSize(nSize)
         , m_nCurSize(nSize)
@@ -199,7 +199,7 @@ public:
     {
         if (m_dwFlags & FX_MEMSTREAM_TakeOver) {
             for (int32_t i = 0; i < m_Blocks.GetSize(); i++) {
-                FX_Free((FX_LPBYTE)m_Blocks[i]);
+                FX_Free((uint8_t*)m_Blocks[i]);
             }
         }
         m_Blocks.RemoveAll();
@@ -278,7 +278,7 @@ public:
 
         m_nCurPos = newPos.ValueOrDie();
         if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
-            FXSYS_memcpy32(buffer, (FX_LPBYTE)m_Blocks[0] + (size_t)offset, size);
+            FXSYS_memcpy32(buffer, (uint8_t*)m_Blocks[0] + (size_t)offset, size);
             return TRUE;
         }
         size_t nStartBlock = (size_t)offset / m_nGrowSize;
@@ -288,8 +288,8 @@ public:
             if (nRead > size) {
                 nRead = size;
             }
-            FXSYS_memcpy32(buffer, (FX_LPBYTE)m_Blocks[(int)nStartBlock] + (size_t)offset, nRead);
-            buffer = ((FX_LPBYTE)buffer) + nRead;
+            FXSYS_memcpy32(buffer, (uint8_t*)m_Blocks[(int)nStartBlock] + (size_t)offset, nRead);
+            buffer = ((uint8_t*)buffer) + nRead;
             size -= nRead;
             nStartBlock ++;
             offset = 0;
@@ -341,7 +341,7 @@ public:
                     return FALSE;
                 }
             }
-            FXSYS_memcpy32((FX_LPBYTE)m_Blocks[0] + (size_t)offset, buffer, size);
+            FXSYS_memcpy32((uint8_t*)m_Blocks[0] + (size_t)offset, buffer, size);
             if (m_nCurSize < m_nCurPos) {
                 m_nCurSize = m_nCurPos;
             }
@@ -365,8 +365,8 @@ public:
             if (nWrite > size) {
                 nWrite = size;
             }
-            FXSYS_memcpy32((FX_LPBYTE)m_Blocks[(int)nStartBlock] + (size_t)offset, buffer, nWrite);
-            buffer = ((FX_LPBYTE)buffer) + nWrite;
+            FXSYS_memcpy32((uint8_t*)m_Blocks[(int)nStartBlock] + (size_t)offset, buffer, nWrite);
+            buffer = ((uint8_t*)buffer) + nWrite;
             size -= nWrite;
             nStartBlock ++;
             offset = 0;
@@ -385,7 +385,7 @@ public:
     {
         if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
             if (m_Blocks.GetSize() < 1) {
-                FX_LPBYTE pBlock = FX_Alloc(uint8_t, FX_MAX(nInitSize, 4096));
+                uint8_t* pBlock = FX_Alloc(uint8_t, FX_MAX(nInitSize, 4096));
                 m_Blocks.Add(pBlock);
             }
             m_nGrowSize = FX_MAX(nGrowSize, 4096);
@@ -393,11 +393,11 @@ public:
             m_nGrowSize = FX_MAX(nGrowSize, 4096);
         }
     }
-    virtual FX_LPBYTE			GetBuffer() const  override
+    virtual uint8_t*			GetBuffer() const  override
     {
-        return m_Blocks.GetSize() ? (FX_LPBYTE)m_Blocks[0] : NULL;
+        return m_Blocks.GetSize() ? (uint8_t*)m_Blocks[0] : NULL;
     }
-    virtual void				AttachBuffer(FX_LPBYTE pBuffer, size_t nSize, FX_BOOL bTakeOver = FALSE)  override
+    virtual void				AttachBuffer(uint8_t* pBuffer, size_t nSize, FX_BOOL bTakeOver = FALSE)  override
     {
         if (!(m_dwFlags & FX_MEMSTREAM_Consecutive)) {
             return;
@@ -442,7 +442,7 @@ protected:
         size = (size - m_nTotalSize + m_nGrowSize - 1) / m_nGrowSize;
         m_Blocks.SetSize(m_Blocks.GetSize() + (int32_t)size);
         while (size --) {
-            FX_LPBYTE pBlock = FX_Alloc(uint8_t, m_nGrowSize);
+            uint8_t* pBlock = FX_Alloc(uint8_t, m_nGrowSize);
             m_Blocks.SetAt(iCount ++, pBlock);
             m_nTotalSize += m_nGrowSize;
         }
@@ -469,7 +469,7 @@ typedef struct _FX_MTRANDOMCONTEXT {
 } FX_MTRANDOMCONTEXT, * FX_LPMTRANDOMCONTEXT;
 typedef FX_MTRANDOMCONTEXT const * FX_LPCMTRANDOMCONTEXT;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-FX_BOOL FX_GenerateCryptoRandom(FX_LPDWORD pBuffer, int32_t iCount);
+FX_BOOL FX_GenerateCryptoRandom(FX_DWORD* pBuffer, int32_t iCount);
 #endif
 #ifdef __cplusplus
 }

@@ -21,7 +21,7 @@ FX_FLOAT FX_log(FX_FLOAT b, FX_FLOAT x)
 {
     return FXSYS_log(x) / FXSYS_log(b);
 }
-FX_LPWSTR FX_wcsncpy(FX_LPWSTR dstStr, FX_LPCWSTR srcStr, size_t count)
+FX_WCHAR* FX_wcsncpy(FX_WCHAR* dstStr, const FX_WCHAR* srcStr, size_t count)
 {
     FXSYS_assert(dstStr != NULL && srcStr != NULL && count > 0);
     for (size_t i = 0; i < count; ++i)
@@ -30,7 +30,7 @@ FX_LPWSTR FX_wcsncpy(FX_LPWSTR dstStr, FX_LPCWSTR srcStr, size_t count)
         }
     return dstStr;
 }
-int32_t FX_wcsnicmp(FX_LPCWSTR s1, FX_LPCWSTR s2, size_t count)
+int32_t FX_wcsnicmp(const FX_WCHAR* s1, const FX_WCHAR* s2, size_t count)
 {
     FXSYS_assert(s1 != NULL && s2 != NULL && count > 0);
     FX_WCHAR wch1 = 0, wch2 = 0;
@@ -43,7 +43,7 @@ int32_t FX_wcsnicmp(FX_LPCWSTR s1, FX_LPCWSTR s2, size_t count)
     }
     return wch1 - wch2;
 }
-int32_t FX_strnicmp(FX_LPCSTR s1, FX_LPCSTR s2, size_t count)
+int32_t FX_strnicmp(const FX_CHAR* s1, const FX_CHAR* s2, size_t count)
 {
     FXSYS_assert(s1 != NULL && s2 != NULL && count > 0);
     FX_CHAR ch1 = 0, ch2 = 0;
@@ -85,7 +85,7 @@ FX_BOOL FX_fsetsize(FXSYS_FILE *file, int32_t size)
     return FALSE;
 #endif
 }
-FX_FLOAT FX_strtof(FX_LPCSTR pcsStr, int32_t iLength , int32_t *pUsedLen )
+FX_FLOAT FX_strtof(const FX_CHAR* pcsStr, int32_t iLength , int32_t *pUsedLen )
 {
     FXSYS_assert(pcsStr != NULL);
     if (iLength < 0) {
@@ -93,7 +93,7 @@ FX_FLOAT FX_strtof(FX_LPCSTR pcsStr, int32_t iLength , int32_t *pUsedLen )
     }
     return FX_wcstof(CFX_WideString::FromLocal(pcsStr, iLength), iLength, pUsedLen);
 }
-FX_FLOAT FX_wcstof(FX_LPCWSTR pwsStr, int32_t iLength , int32_t *pUsedLen )
+FX_FLOAT FX_wcstof(const FX_WCHAR* pwsStr, int32_t iLength , int32_t *pUsedLen )
 {
     FXSYS_assert(pwsStr != NULL);
     if (iLength < 0) {
@@ -138,7 +138,7 @@ FX_FLOAT FX_wcstof(FX_LPCWSTR pwsStr, int32_t iLength , int32_t *pUsedLen )
     }
     return bNegtive ? -fValue : fValue;
 }
-void FX_memset(FX_LPVOID pBuf, int32_t iValue, size_t size)
+void FX_memset(void* pBuf, int32_t iValue, size_t size)
 {
     FXSYS_assert(pBuf != NULL && size > 0 && (size & 0x03) == 0);
     FXSYS_assert((((size_t)pBuf) & 0x03) == 0);
@@ -148,7 +148,7 @@ void FX_memset(FX_LPVOID pBuf, int32_t iValue, size_t size)
         *pStart ++ = iValue;
     }
 }
-void FX_memcpy(FX_LPVOID pDst, FX_LPCVOID pSrc, size_t size)
+void FX_memcpy(void* pDst, const void* pSrc, size_t size)
 {
     FXSYS_assert(pDst != NULL && pSrc != NULL && size > 0 && (size & 0x03) == 0);
     FXSYS_assert((((size_t)pDst) & 0x03) == 0 && (((size_t)pSrc) & 0x03) == 0);
@@ -177,8 +177,8 @@ FX_BOOL FX_JoinPath(const CFX_WideStringC &wsBasePath, const CFX_WideStringC &ws
         wsAbsolutePath = wsRelativePath;
         return TRUE;
     }
-    FX_LPCWSTR pRelStart = wsRelativePath.GetPtr();
-    FX_LPCWSTR pRelEnd   = pRelStart + wsRelativePath.GetLength();
+    const FX_WCHAR* pRelStart = wsRelativePath.GetPtr();
+    const FX_WCHAR* pRelEnd   = pRelStart + wsRelativePath.GetLength();
     if (pRelStart < pRelEnd) {
         switch (*pRelStart) {
             case '#':
@@ -211,8 +211,8 @@ FX_BOOL FX_JoinPath(const CFX_WideStringC &wsBasePath, const CFX_WideStringC &ws
             return FALSE;
         }
     }
-    FX_LPCWSTR pBaseStart = wsBasePath.GetPtr();
-    FX_LPCWSTR pBaseEnd   = pBaseStart + wsBasePath.GetLength();
+    const FX_WCHAR* pBaseStart = wsBasePath.GetPtr();
+    const FX_WCHAR* pBaseEnd   = pBaseStart + wsBasePath.GetLength();
     while(pBaseStart < (--pBaseEnd) && *pBaseEnd != '/' && *pBaseEnd != '\\')
         ;
     if (pBaseStart == pBaseEnd) {

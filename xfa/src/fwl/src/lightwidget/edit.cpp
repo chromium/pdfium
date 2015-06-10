@@ -112,7 +112,7 @@ FWL_ERR CFWL_Edit::SetFormatString(const CFX_WideString &wsFormat)
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_Edit*)m_pImp)->SetFormatString(wsFormat);
 }
-FWL_ERR CFWL_Edit::Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLen)
+FWL_ERR CFWL_Edit::Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLen)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_Edit*)m_pImp)->Insert(nStart, lpText, nLen);

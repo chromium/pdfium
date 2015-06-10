@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa_fm2js.h"
-static FX_LPCWSTR gs_lpStrErrorMsgInfo[] = {
+static const FX_WCHAR* gs_lpStrErrorMsgInfo[] = {
     L"unsupported char '%c'",
     L"bad suffix on number",
     L"invalidate char '%c'",
@@ -15,7 +15,7 @@ static FX_LPCWSTR gs_lpStrErrorMsgInfo[] = {
     L"unexpected expression '%s'",
     L"expected operator '%s' instead of '%s'",
 };
-FX_LPCWSTR XFA_FM_ErrorMsg(XFA_FM_ERRMSG msg)
+const FX_WCHAR* XFA_FM_ErrorMsg(XFA_FM_ERRMSG msg)
 {
     if(msg < FMERR_MAXIMUM) {
         return gs_lpStrErrorMsgInfo[msg];

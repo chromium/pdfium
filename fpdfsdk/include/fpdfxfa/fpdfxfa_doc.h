@@ -56,7 +56,7 @@ public:
 	//dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
 	virtual void		PageViewEvent(IXFA_PageView* pPageView, FX_DWORD dwFlags);
 	//dwEvent refer to XFA_WIDGETEVENT_XXX
-	virtual void		WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, FX_LPVOID pParam = NULL, FX_LPVOID pAdditional = NULL);
+	virtual void		WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, void* pParam = NULL, void* pAdditional = NULL);
 	
 	//return true if render it.
 	virtual FX_BOOL		RenderCustomWidget(IXFA_Widget* hWidget, CFX_Graphics* pGS, CFX_Matrix* pMatrix, const CFX_RectF& rtUI){return FALSE;}

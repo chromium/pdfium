@@ -107,15 +107,15 @@ FWL_ERR		CFWL_SDAdapterWidgetMgr::DispatchMessage()
 {
     return FWL_ERR_Succeeded;
 }
-FWL_ERR		CFWL_SDAdapterWidgetMgr::GetWidgetDC(IFWL_Widget *pWidget, FX_LPVOID &pDC)
+FWL_ERR		CFWL_SDAdapterWidgetMgr::GetWidgetDC(IFWL_Widget *pWidget, void* &pDC)
 {
     return FWL_ERR_Succeeded;
 }
-FWL_ERR		CFWL_SDAdapterWidgetMgr::ReleaseWidgetDC(IFWL_Widget *pWidget, FX_LPVOID pDC, CFX_RectF *pClip)
+FWL_ERR		CFWL_SDAdapterWidgetMgr::ReleaseWidgetDC(IFWL_Widget *pWidget, void* pDC, CFX_RectF *pClip)
 {
     return FWL_ERR_Succeeded;
 }
-FX_LPVOID	CFWL_SDAdapterWidgetMgr::GetWindow(IFWL_Widget *pWidget)
+void*	CFWL_SDAdapterWidgetMgr::GetWindow(IFWL_Widget *pWidget)
 {
     return NULL;
 }
@@ -135,7 +135,7 @@ FWL_ERR		CFWL_SDAdapterWidgetMgr::InitMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuD
 {
     return FWL_ERR_Succeeded;
 }
-FWL_ERR		CFWL_SDAdapterWidgetMgr::UpdateMenu(IFWL_Menu *pMenu, FX_LPCVOID hItem, int32_t iType)
+FWL_ERR		CFWL_SDAdapterWidgetMgr::UpdateMenu(IFWL_Menu *pMenu, const void* hItem, int32_t iType)
 {
     return FWL_ERR_Succeeded;
 }

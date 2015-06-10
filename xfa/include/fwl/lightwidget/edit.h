@@ -28,7 +28,7 @@ public:
     FWL_ERR		SetLimit(int32_t nLimit);
     FWL_ERR		SetAliasChar(FX_WCHAR wAlias);
     FWL_ERR		SetFormatString(const CFX_WideString &wsFormat);
-    FWL_ERR		Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLen);
+    FWL_ERR		Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLen);
     FWL_ERR		DeleteSelections();
     FWL_ERR		DeleteRange(int32_t nStart, int32_t nCount = -1);
     FWL_ERR		ReplaceSelections(const CFX_WideStringC &wsReplace);

@@ -57,7 +57,7 @@ CXFA_FWLTheme::~CXFA_FWLTheme()
     delete m_pCaretTP;
     delete m_pBarcodeTP;
 }
-static FX_LPCWSTR g_FWLTheme_CalFonts[] = {
+static const FX_WCHAR* g_FWLTheme_CalFonts[] = {
     L"Arial",
     L"Courier New",
     L"DejaVu Sans",
@@ -65,7 +65,7 @@ static FX_LPCWSTR g_FWLTheme_CalFonts[] = {
 FWL_ERR CXFA_FWLTheme::Initialize()
 {
     m_pTextOut = IFDE_TextOut::Create();
-    for (int32_t i = 0; NULL == m_pCalendarFont && i < sizeof(g_FWLTheme_CalFonts) / sizeof(FX_LPCWSTR); i++) {
+    for (int32_t i = 0; NULL == m_pCalendarFont && i < sizeof(g_FWLTheme_CalFonts) / sizeof(const FX_WCHAR*); i++) {
         m_pCalendarFont = IFX_Font::LoadFont(g_FWLTheme_CalFonts[i], 0, 0, m_pApp->GetFDEFontMgr());
     }
     if (NULL == m_pCalendarFont)
@@ -169,7 +169,7 @@ FX_BOOL	CXFA_FWLTheme::DrawText(CFWL_ThemeText *pParams)
     m_pTextOut->DrawLogicText(pParams->m_wsText, pParams->m_wsText.GetLength(), pParams->m_rtPart);
     return TRUE;
 }
-FX_LPVOID CXFA_FWLTheme::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
+void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
 {
     switch(dwCapacity) {
         case FWL_WGTCAPACITY_Font: {

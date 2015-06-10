@@ -72,7 +72,7 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg, CFX_Wid
 CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,  CFX_WideString ecLevel, SymbolShapeHint shape, CBC_Dimension* minSize, CBC_Dimension* maxSize, int32_t &e)
 {
     CBC_EncoderContext context(msg, ecLevel, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
+    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
     context.setSymbolShape(shape);
     context.setSizeConstraints(minSize, maxSize);
     if ((msg.Mid(0, 6) == MACRO_05_HEADER) && (msg.Mid(msg.GetLength() - 1, 1) == MACRO_TRAILER)) {
@@ -99,7 +99,7 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,  CFX_Wi
                 delete (CBC_Encoder*)encoders.GetAt(i);
             }
             encoders.RemoveAll();
-            return (FX_LPWSTR)"";
+            return (FX_WCHAR*)"";
         }
         if (context.m_newEncoding >= 0) {
             encodingMode = context.m_newEncoding;
@@ -113,7 +113,7 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,  CFX_Wi
             delete (CBC_Encoder*)encoders.GetAt(i);
         }
         encoders.RemoveAll();
-        return (FX_LPWSTR)"";
+        return (FX_WCHAR*)"";
     }
     int32_t capacity = context.m_symbolInfo->m_dataCapacity;
     if (len < capacity) {

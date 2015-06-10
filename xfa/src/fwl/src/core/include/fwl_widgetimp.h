@@ -36,8 +36,8 @@ public:
     virtual FWL_ERR		ModifyStylesEx(FX_DWORD dwStylesExAdded, FX_DWORD dwStylesExRemoved);
     virtual FX_DWORD	GetStates();
     virtual FWL_ERR		SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE);
-    virtual FWL_ERR		SetPrivateData(FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback);
-    virtual FX_LPVOID	GetPrivateData(FX_LPVOID module_id);
+    virtual FWL_ERR		SetPrivateData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback);
+    virtual void*	GetPrivateData(void* module_id);
     virtual	FWL_ERR		Update();
     virtual FWL_ERR		LockUpdate();
     virtual FWL_ERR		UnlockUpdate();
@@ -76,7 +76,7 @@ protected:
     FX_FLOAT	GetBorderSize(FX_BOOL bCX = TRUE);
     FX_FLOAT	GetEdgeWidth();
     void		GetRelativeRect(CFX_RectF &rect);
-    FX_LPVOID	GetThemeCapacity(FX_DWORD dwCapacity);
+    void*	GetThemeCapacity(FX_DWORD dwCapacity);
     IFWL_ThemeProvider* GetAvailableTheme();
     CFWL_WidgetImp*	GetRootOuter();
     CFWL_WidgetImp*	GetSameAncestor(CFWL_WidgetImp *pWidget);

@@ -19,7 +19,7 @@ JS_TIMER_MAPARRAY& GetTimeMap()
   return *timeMap;
 }
 
-int FXJS_MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, FX_LPCWSTR swMsg, FX_LPCWSTR swTitle, FX_UINT nType, FX_UINT nIcon)
+int FXJS_MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, const FX_WCHAR* swMsg, const FX_WCHAR* swTitle, FX_UINT nType, FX_UINT nIcon)
 {
 	int nRet = 0;
 
@@ -62,12 +62,12 @@ CPDFSDK_PageView* CJS_EmbedObj::JSGetPageView(IFXJS_Context* cc)
 	return FXJS_GetPageView(cc);
 }
 
-int CJS_EmbedObj::MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView,FX_LPCWSTR swMsg,FX_LPCWSTR swTitle,FX_UINT nType,FX_UINT nIcon)
+int CJS_EmbedObj::MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView,const FX_WCHAR* swMsg,const FX_WCHAR* swTitle,FX_UINT nType,FX_UINT nIcon)
 {
 	return FXJS_MsgBox(pApp, pPageView, swMsg, swTitle, nType, nIcon);
 }
 
-void CJS_EmbedObj::Alert(CJS_Context* pContext, FX_LPCWSTR swMsg)
+void CJS_EmbedObj::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg)
 {
 	CJS_Object::Alert(pContext, swMsg);
 }
@@ -134,12 +134,12 @@ CPDFSDK_PageView* CJS_Object::JSGetPageView(IFXJS_Context* cc)
 	return FXJS_GetPageView(cc);
 }
 
-int CJS_Object::MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, FX_LPCWSTR swMsg, FX_LPCWSTR swTitle, FX_UINT nType, FX_UINT nIcon)
+int CJS_Object::MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, const FX_WCHAR* swMsg, const FX_WCHAR* swTitle, FX_UINT nType, FX_UINT nIcon)
 {
 	return FXJS_MsgBox(pApp, pPageView, swMsg, swTitle, nType, nIcon);
 }
 
-void CJS_Object::Alert(CJS_Context* pContext, FX_LPCWSTR swMsg)
+void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg)
 {
 	ASSERT(pContext != NULL);
 

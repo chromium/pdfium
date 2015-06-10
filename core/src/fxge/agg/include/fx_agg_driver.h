@@ -86,10 +86,10 @@ public:
                                       int alpha_flag, void* pIccTransform, int blend_type);
 
     virtual FX_BOOL		StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
-                                    const CFX_AffineMatrix* pMatrix, FX_DWORD flags, FX_LPVOID& handle,
+                                    const CFX_AffineMatrix* pMatrix, FX_DWORD flags, void*& handle,
                                     int alpha_flag, void* pIccTransform, int blend_type);
-    virtual FX_BOOL		ContinueDIBits(FX_LPVOID handle, IFX_Pause* pPause);
-    virtual void		CancelDIBits(FX_LPVOID handle);
+    virtual FX_BOOL		ContinueDIBits(void* handle, IFX_Pause* pPause);
+    virtual void		CancelDIBits(void* handle);
 
     virtual FX_BOOL     DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
                                        CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FLOAT font_size, FX_DWORD color,
@@ -99,7 +99,7 @@ public:
 
     void				SetClipMask(FX_NAMESPACE_DECLARE(agg, rasterizer_scanline_aa)& rasterizer);
 
-    virtual	FX_LPBYTE	GetBuffer() const
+    virtual	uint8_t*	GetBuffer() const
     {
         return m_pBitmap->GetBuffer();
     }

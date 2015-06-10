@@ -132,17 +132,17 @@ class IFX_CodePage;
 #define FX_CHARSET_OEM							255
 FX_WORD	FX_GetCodePageFromCharset(uint8_t charset);
 FX_WORD FX_GetCharsetFromCodePage(FX_WORD codepage);
-FX_WORD	FX_GetCodePageFromStringA(FX_LPCSTR pStr, int32_t iLength);
-FX_WORD FX_GetCodePageFormStringW(FX_LPCWSTR pStr, int32_t iLength);
+FX_WORD	FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength);
+FX_WORD FX_GetCodePageFormStringW(const FX_WCHAR* pStr, int32_t iLength);
 FX_WORD	FX_GetDefCodePageByLanguage(FX_WORD wLanguage);
-void	FX_SwapByteOrder(FX_LPWSTR pStr, int32_t iLength);
-void	FX_SwapByteOrderCopy(FX_LPCWSTR pSrc, FX_LPWSTR pDst, int32_t iLength);
-void	FX_UTF16ToWChar(FX_LPVOID pBuffer, int32_t iLength);
-void	FX_UTF16ToWCharCopy(const FX_WORD *pUTF16, FX_LPWSTR pWChar, int32_t iLength);
-void	FX_WCharToUTF16(FX_LPVOID pBuffer, int32_t iLength);
-void	FX_WCharToUTF16Copy(FX_LPCWSTR pWChar, FX_WORD *pUTF16, int32_t iLength);
-int32_t	FX_DecodeString(FX_WORD wCodePage, FX_LPCSTR pSrc, int32_t *pSrcLen, FX_LPWSTR pDst, int32_t *pDstLen, FX_BOOL bErrBreak = FALSE);
-int32_t	FX_UTF8Decode(FX_LPCSTR pSrc, int32_t *pSrcLen, FX_LPWSTR pDst, int32_t *pDstLen);
+void	FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength);
+void	FX_SwapByteOrderCopy(const FX_WCHAR* pSrc, FX_WCHAR* pDst, int32_t iLength);
+void	FX_UTF16ToWChar(void* pBuffer, int32_t iLength);
+void	FX_UTF16ToWCharCopy(const FX_WORD *pUTF16, FX_WCHAR* pWChar, int32_t iLength);
+void	FX_WCharToUTF16(void* pBuffer, int32_t iLength);
+void	FX_WCharToUTF16Copy(const FX_WCHAR* pWChar, FX_WORD *pUTF16, int32_t iLength);
+int32_t	FX_DecodeString(FX_WORD wCodePage, const FX_CHAR* pSrc, int32_t *pSrcLen, FX_WCHAR* pDst, int32_t *pDstLen, FX_BOOL bErrBreak = FALSE);
+int32_t	FX_UTF8Decode(const FX_CHAR* pSrc, int32_t *pSrcLen, FX_WCHAR* pDst, int32_t *pDstLen);
 enum FX_CODESYSTEM {
     FX_MBCS		=  0,
     FX_SBCS			,
@@ -177,7 +177,7 @@ typedef struct _FX_CPCU_MAPTABLE2 {
 typedef struct _FX_CPCU_MAPINFO {
     FX_CPCU_MAPTABLE1		*pMapTable1;
     FX_CPCU_MAPTABLE2		*pMapTable2;
-    FX_LPCBYTE				pMapData;
+    const uint8_t*				pMapData;
 } FX_CPCU_MAPINFO;
 typedef struct _FX_CPUC_MAPTABLE {
     uint16_t	uStartUnicode;
@@ -188,7 +188,7 @@ typedef struct _FX_CPUC_MAPTABLE {
 typedef struct _FX_CPUC_MAPINFO {
     uint32_t			uMapCount;
     FX_CPUC_MAPTABLE	*pMapTable;
-    FX_LPCBYTE			pMapData;
+    const uint8_t*			pMapData;
 } FX_CPUC_MAPINFO;
 typedef struct _FX_CODEPAGE {
     FX_CODEPAGE_HEADER const	*pCPHeader;

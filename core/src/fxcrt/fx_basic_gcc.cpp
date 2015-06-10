@@ -58,29 +58,29 @@ STR_T FXSYS_IntToStr(T value, STR_T string, int radix)
 #ifdef __cplusplus
 extern "C" {
 #endif
-int32_t FXSYS_atoi(FX_LPCSTR str)
+int32_t FXSYS_atoi(const FX_CHAR* str)
 {
-    return FXSYS_StrToInt<int32_t, FX_LPCSTR>(str);
+    return FXSYS_StrToInt<int32_t, const FX_CHAR*>(str);
 }
-int32_t FXSYS_wtoi(FX_LPCWSTR str)
+int32_t FXSYS_wtoi(const FX_WCHAR* str)
 {
-    return FXSYS_StrToInt<int32_t, FX_LPCWSTR>(str);
+    return FXSYS_StrToInt<int32_t, const FX_WCHAR*>(str);
 }
-int64_t FXSYS_atoi64(FX_LPCSTR str)
+int64_t FXSYS_atoi64(const FX_CHAR* str)
 {
-    return FXSYS_StrToInt<int64_t, FX_LPCSTR>(str);
+    return FXSYS_StrToInt<int64_t, const FX_CHAR*>(str);
 }
-int64_t FXSYS_wtoi64(FX_LPCWSTR str)
+int64_t FXSYS_wtoi64(const FX_WCHAR* str)
 {
-    return FXSYS_StrToInt<int64_t, FX_LPCWSTR>(str);
+    return FXSYS_StrToInt<int64_t, const FX_WCHAR*>(str);
 }
-FX_LPCSTR FXSYS_i64toa(int64_t value, FX_LPSTR str, int radix)
+const FX_CHAR* FXSYS_i64toa(int64_t value, FX_CHAR* str, int radix)
 {
-    return FXSYS_IntToStr<int64_t, FX_LPSTR>(value, str, radix);
+    return FXSYS_IntToStr<int64_t, FX_CHAR*>(value, str, radix);
 }
-FX_LPCWSTR FXSYS_i64tow(int64_t value, FX_LPWSTR str, int radix)
+const FX_WCHAR* FXSYS_i64tow(int64_t value, FX_WCHAR* str, int radix)
 {
-    return FXSYS_IntToStr<int64_t, FX_LPWSTR>(value, str, radix);
+    return FXSYS_IntToStr<int64_t, FX_WCHAR*>(value, str, radix);
 }
 #ifdef __cplusplus
 }
@@ -93,7 +93,7 @@ int FXSYS_GetACP()
 {
     return 0;
 }
-FX_DWORD FXSYS_GetFullPathName(FX_LPCSTR filename, FX_DWORD buflen, FX_LPSTR buf, FX_LPSTR* filepart)
+FX_DWORD FXSYS_GetFullPathName(const FX_CHAR* filename, FX_DWORD buflen, FX_CHAR* buf, FX_CHAR** filepart)
 {
     int srclen = FXSYS_strlen(filename);
     if (buf == NULL || (int)buflen < srclen + 1) {
@@ -102,7 +102,7 @@ FX_DWORD FXSYS_GetFullPathName(FX_LPCSTR filename, FX_DWORD buflen, FX_LPSTR buf
     FXSYS_strcpy(buf, filename);
     return srclen;
 }
-FX_DWORD FXSYS_GetModuleFileName(FX_LPVOID hModule, char* buf, FX_DWORD bufsize)
+FX_DWORD FXSYS_GetModuleFileName(void* hModule, char* buf, FX_DWORD bufsize)
 {
     return (FX_DWORD) - 1;
 }
@@ -114,7 +114,7 @@ FX_DWORD FXSYS_GetModuleFileName(FX_LPVOID hModule, char* buf, FX_DWORD bufsize)
 #ifdef __cplusplus
 extern "C" {
 #endif
-FXSYS_FILE* FXSYS_wfopen(FX_LPCWSTR filename, FX_LPCWSTR mode)
+FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode)
 {
     return FXSYS_fopen(CFX_ByteString::FromUnicode(filename), CFX_ByteString::FromUnicode(mode));
 }
@@ -194,7 +194,7 @@ int FXSYS_wcsicmp(const FX_WCHAR *dst, const FX_WCHAR *src)
 }
 char* FXSYS_itoa(int value, char* string, int radix)
 {
-    return FXSYS_IntToStr<int32_t, FX_LPSTR>(value, string, radix);
+    return FXSYS_IntToStr<int32_t, FX_CHAR*>(value, string, radix);
 }
 #ifdef __cplusplus
 }
@@ -204,8 +204,8 @@ char* FXSYS_itoa(int value, char* string, int radix)
 #ifdef __cplusplus
 extern "C" {
 #endif
-int FXSYS_WideCharToMultiByte(FX_DWORD codepage, FX_DWORD dwFlags, FX_LPCWSTR wstr, int wlen,
-                              FX_LPSTR buf, int buflen, FX_LPCSTR default_str, FX_BOOL* pUseDefault)
+int FXSYS_WideCharToMultiByte(FX_DWORD codepage, FX_DWORD dwFlags, const FX_WCHAR* wstr, int wlen,
+                              FX_CHAR* buf, int buflen, const FX_CHAR* default_str, FX_BOOL* pUseDefault)
 {
     int len = 0;
     for (int i = 0; i < wlen; i ++) {
@@ -218,8 +218,8 @@ int FXSYS_WideCharToMultiByte(FX_DWORD codepage, FX_DWORD dwFlags, FX_LPCWSTR ws
     }
     return len;
 }
-int FXSYS_MultiByteToWideChar(FX_DWORD codepage, FX_DWORD dwFlags, FX_LPCSTR bstr, int blen,
-                              FX_LPWSTR buf, int buflen)
+int FXSYS_MultiByteToWideChar(FX_DWORD codepage, FX_DWORD dwFlags, const FX_CHAR* bstr, int blen,
+                              FX_WCHAR* buf, int buflen)
 {
     int wlen = 0;
     for (int i = 0; i < blen; i ++) {

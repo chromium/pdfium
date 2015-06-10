@@ -12,12 +12,12 @@ public:
     CXFA_FFNotify(CXFA_FFDoc* pDoc);
     ~CXFA_FFNotify();
 
-    virtual void				OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, FX_LPVOID pParam = NULL);
+    virtual void				OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, void* pParam = NULL);
 
-    virtual void				OnNodeEvent(CXFA_Node *pSender, XFA_NODEEVENT eEvent, FX_LPVOID pParam = NULL, FX_LPVOID pParam2 = NULL, FX_LPVOID pParam3 = NULL, FX_LPVOID pParam4 = NULL);
-    virtual void		        OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent, FX_LPVOID pParam = NULL, FX_LPVOID pAdditional = NULL, FX_LPVOID pAdditional2 = NULL);
+    virtual void				OnNodeEvent(CXFA_Node *pSender, XFA_NODEEVENT eEvent, void* pParam = NULL, void* pParam2 = NULL, void* pParam3 = NULL, void* pParam4 = NULL);
+    virtual void		        OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent, void* pParam = NULL, void* pAdditional = NULL, void* pAdditional2 = NULL);
     virtual CXFA_LayoutItem*	OnCreateLayoutItem(CXFA_Node *pNode);
-    virtual void				OnLayoutEvent(IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, XFA_LAYOUTEVENT eEvent, FX_LPVOID pParam = NULL, FX_LPVOID pParam2 = NULL);
+    virtual void				OnLayoutEvent(IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, XFA_LAYOUTEVENT eEvent, void* pParam = NULL, void* pParam2 = NULL);
 
     virtual void				StartFieldDrawLayout(CXFA_Node *pItem, FX_FLOAT &fCalcWidth, FX_FLOAT &fCalcHeight);
     virtual FX_BOOL				FindSplitPos(CXFA_Node *pItem, int32_t iBlockIndex, FX_FLOAT &fCalcHeightPos);
@@ -39,14 +39,14 @@ public:
     virtual void				SetFocusWidgetNode(CXFA_Node* pNode);
 protected:
     void	OnNodeReady(CXFA_Node *pNode);
-    void	OnValueChanging(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID pParam2);
-    void	OnValueChanged(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID pParam2, FX_LPVOID pParam3, FX_LPVOID pParam4);
-    void	OnChildAdded(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID pParam2);
-    void	OnChildRemoved(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID pParam2);
-    void	OnLayoutItemAdd(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2);
-    void	OnLayoutItemRemoving(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2);
-    void	OnLayoutItemRectChanged(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2);
-    void	OnLayoutItemStatustChanged(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2);
+    void	OnValueChanging(CXFA_Node *pSender, void* pParam, void* pParam2);
+    void	OnValueChanged(CXFA_Node *pSender, void* pParam, void* pParam2, void* pParam3, void* pParam4);
+    void	OnChildAdded(CXFA_Node *pSender, void* pParam, void* pParam2);
+    void	OnChildRemoved(CXFA_Node *pSender, void* pParam, void* pParam2);
+    void	OnLayoutItemAdd(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, void* pParam, void* pParam2);
+    void	OnLayoutItemRemoving(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, void* pParam, void* pParam2);
+    void	OnLayoutItemRectChanged(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, void* pParam, void* pParam2);
+    void	OnLayoutItemStatustChanged(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, void* pParam, void* pParam2);
     CXFA_FFDoc*			m_pDoc;
 };
 #endif

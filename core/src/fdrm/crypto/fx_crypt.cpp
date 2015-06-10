@@ -14,7 +14,7 @@ extern "C" {
 struct rc4_state {
     int x, y, m[256];
 };
-void CRYPT_ArcFourSetup(void* context,  FX_LPCBYTE key,  FX_DWORD length )
+void CRYPT_ArcFourSetup(void* context,  const uint8_t* key,  FX_DWORD length )
 {
     rc4_state *s = (rc4_state*)context;
     int i, j, k, *m, a;
@@ -53,7 +53,7 @@ void CRYPT_ArcFourCrypt(void* context, unsigned char *data, FX_DWORD length )
     s->x = x;
     s->y = y;
 }
-void CRYPT_ArcFourCryptBlock(FX_LPBYTE pData, FX_DWORD size, FX_LPCBYTE key, FX_DWORD keylen)
+void CRYPT_ArcFourCryptBlock(uint8_t* pData, FX_DWORD size, const uint8_t* key, FX_DWORD keylen)
 {
     rc4_state s;
     CRYPT_ArcFourSetup(&s, key, keylen);
@@ -193,7 +193,7 @@ void CRYPT_MD5Start(void* context)
     ctx->state[2] = 0x98BADCFE;
     ctx->state[3] = 0x10325476;
 }
-void CRYPT_MD5Update(FX_LPVOID pctx, FX_LPCBYTE input, FX_DWORD length )
+void CRYPT_MD5Update(void* pctx, const uint8_t* input, FX_DWORD length )
 {
     struct md5_context *ctx = (struct md5_context *)pctx;
     FX_DWORD left, fill;
@@ -228,7 +228,7 @@ const uint8_t md5_padding[64] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-void CRYPT_MD5Finish(FX_LPVOID pctx, uint8_t digest[16] )
+void CRYPT_MD5Finish(void* pctx, uint8_t digest[16] )
 {
     struct md5_context *ctx = (struct md5_context *)pctx;
     FX_DWORD last, padn;
@@ -244,15 +244,15 @@ void CRYPT_MD5Finish(FX_LPVOID pctx, uint8_t digest[16] )
     PUT_FX_DWORD( ctx->state[2], digest,  8 );
     PUT_FX_DWORD( ctx->state[3], digest, 12 );
 }
-void CRYPT_MD5Generate(FX_LPCBYTE input, FX_DWORD length, uint8_t digest[16])
+void CRYPT_MD5Generate(const uint8_t* input, FX_DWORD length, uint8_t digest[16])
 {
     md5_context ctx;
     CRYPT_MD5Start(&ctx);
     CRYPT_MD5Update(&ctx, input, length);
     CRYPT_MD5Finish(&ctx, digest);
 }
-static FX_BOOL (*g_PubKeyDecryptor)(FX_LPCBYTE pData, FX_DWORD size, FX_LPBYTE data_buf, FX_DWORD& data_len) = NULL;
-void CRYPT_SetPubKeyDecryptor(FX_BOOL (*func)(FX_LPCBYTE pData, FX_DWORD size, FX_LPBYTE data_buf, FX_DWORD& data_len))
+static FX_BOOL (*g_PubKeyDecryptor)(const uint8_t* pData, FX_DWORD size, uint8_t* data_buf, FX_DWORD& data_len) = NULL;
+void CRYPT_SetPubKeyDecryptor(FX_BOOL (*func)(const uint8_t* pData, FX_DWORD size, uint8_t* data_buf, FX_DWORD& data_len))
 {
     g_PubKeyDecryptor = func;
 }

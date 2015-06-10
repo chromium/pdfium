@@ -135,14 +135,14 @@ FWL_ERR CFWL_ComboBox::SetMaxListHeight(FX_FLOAT fMaxHeight)
     m_comboBoxData.m_fMaxListHeight = fMaxHeight;
     return FWL_ERR_Succeeded;
 }
-FWL_ERR	CFWL_ComboBox::SetItemData(int32_t iIndex, FX_LPVOID pData)
+FWL_ERR	CFWL_ComboBox::SetItemData(int32_t iIndex, void* pData)
 {
     CFWL_ComboBoxItem *pItem = (CFWL_ComboBoxItem*)(m_comboBoxData.GetItem((IFWL_Widget *)this, iIndex));
     _FWL_RETURN_VALUE_IF_FAIL(pItem, FWL_ERR_Indefinite);
     pItem->m_pData = pData;
     return FWL_ERR_Succeeded;
 }
-FX_LPVOID CFWL_ComboBox::GetItemData(int32_t iIndex)
+void* CFWL_ComboBox::GetItemData(int32_t iIndex)
 {
     CFWL_ComboBoxItem *pItem = (CFWL_ComboBoxItem*)(m_comboBoxData.GetItem((IFWL_Widget *)this, iIndex));
     _FWL_RETURN_VALUE_IF_FAIL(pItem, NULL);
@@ -299,7 +299,7 @@ FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::GetItemRect(IFWL_Widget *pWidget, FWL_HL
                pItem->m_rtItem.height);
     return FWL_ERR_Succeeded;
 }
-FX_LPVOID CFWL_ComboBox::CFWL_ComboBoxDP::GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem)
+void* CFWL_ComboBox::CFWL_ComboBoxDP::GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem)
 {
     _FWL_RETURN_VALUE_IF_FAIL(hItem, NULL);
     CFWL_ComboBoxItem *pItem = (CFWL_ComboBoxItem*)hItem;
@@ -311,7 +311,7 @@ FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::SetItemStyles(IFWL_Widget *pWidget, FWL_
     ((CFWL_ComboBoxItem*)hItem)->m_dwStyles = dwStyle;
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_LPCWSTR pszText)
+FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, const FX_WCHAR* pszText)
 {
     _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
     ((CFWL_ComboBoxItem*)hItem)->m_wsText = pszText;

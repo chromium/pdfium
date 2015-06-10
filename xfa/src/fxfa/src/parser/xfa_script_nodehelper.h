@@ -16,7 +16,7 @@ class CXFA_NodeHelper
 public:
     CXFA_NodeHelper(void);
     ~CXFA_NodeHelper(void);
-    CXFA_Node*  XFA_ResolveNodes_GetOneChild(CXFA_Node* parent, FX_LPCWSTR pwsName, FX_BOOL bIsClassName = FALSE);
+    CXFA_Node*  XFA_ResolveNodes_GetOneChild(CXFA_Node* parent, const FX_WCHAR* pwsName, FX_BOOL bIsClassName = FALSE);
     CXFA_Node*  XFA_ResolveNodes_GetParent(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
 
     int32_t	XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent, FX_DWORD dNameHash, CXFA_NodeArray* pSiblings, XFA_LOGIC_TYPE eLogicType, FX_BOOL bIsClassName = FALSE, FX_BOOL bIsFindProperty = TRUE);

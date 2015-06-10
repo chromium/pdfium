@@ -29,7 +29,7 @@ public:
     void	Lock();
     void	Unlock();
 private:
-    FX_LPVOID	m_pData;
+    void*	m_pData;
 };
 class CFX_BaseArray : public CFX_Target
 {
@@ -38,14 +38,14 @@ protected:
     ~CFX_BaseArray();
     int32_t	GetSize() const;
     int32_t	GetBlockSize() const;
-    FX_LPBYTE	AddSpaceTo(int32_t index);
-    FX_LPBYTE	GetAt(int32_t index) const;
-    FX_LPBYTE	GetBuffer() const;
+    uint8_t*	AddSpaceTo(int32_t index);
+    uint8_t*	GetAt(int32_t index) const;
+    uint8_t*	GetBuffer() const;
     int32_t	Append(const CFX_BaseArray &src, int32_t iStart = 0, int32_t iCount = -1);
     int32_t	Copy(const CFX_BaseArray &src, int32_t iStart = 0, int32_t iCount = -1);
     int32_t	RemoveLast(int32_t iCount = -1);
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE);
-    FX_LPVOID	m_pData;
+    void*	m_pData;
 };
 template<class baseType>
 class CFX_BaseArrayTemplate : public CFX_BaseArray
@@ -108,7 +108,7 @@ public:
         CFX_BaseArray::RemoveAll(bLeaveMemory);
     }
 };
-typedef CFX_BaseArrayTemplate<FX_LPVOID>	CFDE_PtrArray;
+typedef CFX_BaseArrayTemplate<void*>	CFDE_PtrArray;
 typedef CFX_BaseArrayTemplate<FX_DWORD>		CFDE_DWordArray;
 typedef CFX_BaseArrayTemplate<FX_WORD>		CFDE_WordArray;
 template<class baseType>
@@ -162,7 +162,7 @@ public:
         }
         iSize = CFX_BaseArray::GetSize();
         CFX_BaseArray::AddSpaceTo(iSize + iCount - 1);
-        FX_LPBYTE *pStart = CFX_BaseArray::GetAt(iSize);
+        uint8_t* *pStart = CFX_BaseArray::GetAt(iSize);
         int32_t iBlockSize = CFX_BaseArray::GetBlockSize();
         iSize = iStart + iCount;
         for (int32_t i = iStart; i < iSize; i ++) {
@@ -190,7 +190,7 @@ public:
         }
         RemoveAll(TRUE);
         CFX_BaseArray::AddSpaceTo(iCount - 1);
-        FX_LPBYTE *pStart = CFX_BaseArray::GetAt(0);
+        uint8_t* *pStart = CFX_BaseArray::GetAt(0);
         int32_t iBlockSize = CFX_BaseArray::GetBlockSize();
         iSize = iStart + iCount;
         for (int32_t i = iStart; i < iSize; i ++) {
@@ -228,8 +228,8 @@ protected:
     CFX_BaseMassArray(int32_t iChunkSize, int32_t iBlockSize);
     ~CFX_BaseMassArray();
     int32_t	GetSize() const;
-    FX_LPBYTE	AddSpaceTo(int32_t index);
-    FX_LPBYTE	GetAt(int32_t index) const;
+    uint8_t*	AddSpaceTo(int32_t index);
+    uint8_t*	GetAt(int32_t index) const;
     int32_t	Append(const CFX_BaseMassArray &src, int32_t iStart = 0, int32_t iCount = -1);
     int32_t	Copy(const CFX_BaseMassArray &src, int32_t iStart = 0, int32_t iCount = -1);
     int32_t	RemoveLast(int32_t iCount = -1);
@@ -289,7 +289,7 @@ public:
         CFX_BaseMassArray::RemoveAll(bLeaveMemory);
     }
 };
-typedef CFX_MassArrayTemplate<FX_LPVOID>	CFX_PtrMassArray;
+typedef CFX_MassArrayTemplate<void*>	CFX_PtrMassArray;
 typedef CFX_MassArrayTemplate<int32_t>		CFX_Int32MassArray;
 typedef CFX_MassArrayTemplate<FX_DWORD>		CFX_DWordMassArray;
 typedef CFX_MassArrayTemplate<FX_WORD>		CFX_WordMassArray;
@@ -390,10 +390,10 @@ class CFX_BaseDiscreteArray : public CFX_Target
 protected:
     CFX_BaseDiscreteArray(int32_t iChunkSize, int32_t iBlockSize);
     ~CFX_BaseDiscreteArray();
-    FX_LPBYTE	AddSpaceTo(int32_t index);
-    FX_LPBYTE	GetAt(int32_t index) const;
+    uint8_t*	AddSpaceTo(int32_t index);
+    uint8_t*	GetAt(int32_t index) const;
     void		RemoveAll();
-    FX_LPVOID	m_pData;
+    void*	m_pData;
 };
 template<class baseType>
 class CFX_DiscreteArrayTemplate : public CFX_BaseDiscreteArray
@@ -418,7 +418,7 @@ public:
         CFX_BaseDiscreteArray::RemoveAll();
     }
 };
-typedef CFX_DiscreteArrayTemplate<FX_LPVOID>	CFX_PtrDiscreteArray;
+typedef CFX_DiscreteArrayTemplate<void*>	CFX_PtrDiscreteArray;
 typedef CFX_DiscreteArrayTemplate<FX_DWORD>		CFX_DWordDiscreteArray;
 typedef CFX_DiscreteArrayTemplate<FX_WORD>		CFX_WordDiscreteArray;
 class CFX_BaseStack : public CFX_Target
@@ -426,11 +426,11 @@ class CFX_BaseStack : public CFX_Target
 protected:
     CFX_BaseStack(int32_t iChunkSize, int32_t iBlockSize);
     ~CFX_BaseStack();
-    FX_LPBYTE	Push();
+    uint8_t*	Push();
     void		Pop();
-    FX_LPBYTE	GetTopElement() const;
+    uint8_t*	GetTopElement() const;
     int32_t	GetSize() const;
-    FX_LPBYTE	GetAt(int32_t index) const;
+    uint8_t*	GetAt(int32_t index) const;
     void		RemoveAll(FX_BOOL bLeaveMemory = FALSE);
     CFX_BaseMassArrayImp* m_pData;
 };
@@ -466,7 +466,7 @@ public:
         CFX_BaseStack::RemoveAll(bLeaveMemory);
     }
 };
-typedef CFX_StackTemplate<FX_LPVOID>	CFX_PtrStack;
+typedef CFX_StackTemplate<void*>	CFX_PtrStack;
 typedef CFX_StackTemplate<FX_DWORD>	CFX_DWordStack;
 typedef CFX_StackTemplate<FX_WORD>		CFX_WordStack;
 typedef CFX_StackTemplate<int32_t>	CFX_Int32Stack;

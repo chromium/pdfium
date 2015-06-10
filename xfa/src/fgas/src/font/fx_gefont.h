@@ -19,9 +19,9 @@ public:
     ~CFX_GEFont();
     virtual void			Release();
     virtual IFX_Font*		Retain();
-    FX_BOOL			LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
-    FX_BOOL			LoadFont(FX_LPCBYTE pBuffer, int32_t length);
-    FX_BOOL			LoadFont(FX_LPCWSTR pszFileName);
+    FX_BOOL			LoadFont(const FX_WCHAR* pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
+    FX_BOOL			LoadFont(const uint8_t* pBuffer, int32_t length);
+    FX_BOOL			LoadFont(const FX_WCHAR* pszFileName);
     FX_BOOL			LoadFont(IFX_Stream *pFontStream, FX_BOOL bSaveStream);
     FX_BOOL			LoadFont(CFX_Font *pExtFont, FX_BOOL bTakeOver = FALSE);
     virtual IFX_Font*		Derive(FX_DWORD dwFontStyles, FX_WORD wCodePage = 0);

@@ -417,7 +417,7 @@ extern "C" {
     {
         return (ePersudo < FDE_CSSPERSUDO_NONE) ? (g_FDE_CSSPersudoType + ePersudo) : NULL;
     }
-    FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByName(FX_LPCWSTR pszName, int32_t iLength)
+    FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByName(const FX_WCHAR* pszName, int32_t iLength)
     {
         FXSYS_assert(pszName != NULL && iLength > 0);
         FX_DWORD dwHash = FX_HashCode_String_GetW(pszName, iLength, TRUE);
@@ -441,7 +441,7 @@ extern "C" {
     {
         return (eName < FDE_CSSPROPERTY_MAX) ? (g_FDE_CSSProperties + eName) : NULL;
     }
-    FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(FX_LPCWSTR pszName, int32_t iLength)
+    FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(const FX_WCHAR* pszName, int32_t iLength)
     {
         FXSYS_assert(pszName != NULL && iLength > 0);
         FX_DWORD dwHash = FX_HashCode_String_GetW(pszName, iLength, TRUE);
@@ -465,7 +465,7 @@ extern "C" {
     {
         return (eName < FDE_CSSPROPERTYVALUE_MAX) ? (g_FDE_CSSPropertyValues + eName) : NULL;
     }
-    FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(FX_LPCWSTR pszName, int32_t iLength)
+    FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(const FX_WCHAR* pszName, int32_t iLength)
     {
         FXSYS_assert(pszName != NULL && iLength > 0);
         FX_WORD wHash = (FX_WORD)FX_HashCode_String_GetW(pszName, iLength, TRUE);
@@ -485,7 +485,7 @@ extern "C" {
         } while (iStart <= iEnd);
         return NULL;
     }
-    FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(FX_LPCWSTR pszName, int32_t iLength)
+    FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(const FX_WCHAR* pszName, int32_t iLength)
     {
         FXSYS_assert(pszName != NULL && iLength > 0);
         FX_WORD wHash = (FX_WORD)FX_HashCode_String_GetW(pszName, iLength, TRUE);
@@ -505,7 +505,7 @@ extern "C" {
         } while (iStart <= iEnd);
         return NULL;
     }
-    FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(FX_LPCWSTR pszName, int32_t iLength)
+    FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const FX_WCHAR* pszName, int32_t iLength)
     {
         FXSYS_assert(pszName != NULL && iLength > 0);
         FX_DWORD dwHash = FX_HashCode_String_GetW(pszName, iLength, TRUE);
@@ -525,7 +525,7 @@ extern "C" {
         } while (iStart <= iEnd);
         return NULL;
     }
-    FX_BOOL FDE_ParseCSSNumber(FX_LPCWSTR pszValue, int32_t iValueLen, FX_FLOAT &fValue, FDE_CSSPRIMITIVETYPE &eUnit)
+    FX_BOOL FDE_ParseCSSNumber(const FX_WCHAR* pszValue, int32_t iValueLen, FX_FLOAT &fValue, FDE_CSSPRIMITIVETYPE &eUnit)
     {
         FXSYS_assert(pszValue != NULL && iValueLen > 0);
         int32_t iUsedLen = 0;
@@ -547,7 +547,7 @@ extern "C" {
         return TRUE;
     }
 
-    FX_BOOL FDE_ParseCSSString(FX_LPCWSTR pszValue, int32_t iValueLen, int32_t &iOffset, int32_t &iLength)
+    FX_BOOL FDE_ParseCSSString(const FX_WCHAR* pszValue, int32_t iValueLen, int32_t &iOffset, int32_t &iLength)
     {
         FXSYS_assert(pszValue != NULL && iValueLen > 0);
         iOffset = 0;
@@ -561,7 +561,7 @@ extern "C" {
         return iValueLen > 0;
     }
 
-    FX_BOOL FDE_ParseCSSURI(FX_LPCWSTR pszValue, int32_t iValueLen, int32_t &iOffset, int32_t &iLength)
+    FX_BOOL FDE_ParseCSSURI(const FX_WCHAR* pszValue, int32_t iValueLen, int32_t &iOffset, int32_t &iLength)
     {
         FXSYS_assert(pszValue != NULL && iValueLen > 0);
         if (iValueLen < 6 || pszValue[iValueLen - 1] != ')' || FX_wcsnicmp(L"url(", pszValue, 4)) {
@@ -574,7 +574,7 @@ extern "C" {
         return FALSE;
     }
 
-    FX_BOOL FDE_ParseCSSColor(FX_LPCWSTR pszValue, int32_t iValueLen, FX_ARGB &dwColor)
+    FX_BOOL FDE_ParseCSSColor(const FX_WCHAR* pszValue, int32_t iValueLen, FX_ARGB &dwColor)
     {
         FXSYS_assert(pszValue != NULL && iValueLen > 0);
         if (*pszValue == '#') {
@@ -635,7 +635,7 @@ CFDE_CSSValueList::CFDE_CSSValueList(IFX_MEMAllocator *pStaticStore, const CFDE_
     m_ppList = (IFDE_CSSValue**)pStaticStore->Alloc(iByteCount);
     FXSYS_memcpy(m_ppList, list.GetData(), iByteCount);
 }
-FX_BOOL CFDE_CSSValueListParser::NextValue(FDE_CSSPRIMITIVETYPE &eType, FX_LPCWSTR &pStart, int32_t &iLength)
+FX_BOOL CFDE_CSSValueListParser::NextValue(FDE_CSSPRIMITIVETYPE &eType, const FX_WCHAR* &pStart, int32_t &iLength)
 {
     while (m_pCur < m_pEnd && (*m_pCur <= ' ' || *m_pCur == m_Separator)) {
         ++m_pCur;
@@ -691,7 +691,7 @@ FX_BOOL CFDE_CSSValueListParser::NextValue(FDE_CSSPRIMITIVETYPE &eType, FX_LPCWS
 }
 int32_t CFDE_CSSValueListParser::SkipTo(FX_WCHAR wch, FX_BOOL bWSSeparator , FX_BOOL bBrContinue )
 {
-    FX_LPCWSTR pStart = m_pCur;
+    const FX_WCHAR* pStart = m_pCur;
     if (!bBrContinue) {
         if (bWSSeparator)
             while (++m_pCur < m_pEnd && *m_pCur != wch && *m_pCur > ' ') ;

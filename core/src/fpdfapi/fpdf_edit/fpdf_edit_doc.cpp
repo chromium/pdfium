@@ -226,7 +226,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont, FX_BOOL bVert, FX_B
     FXSYS_strcpy(lfa.lfFaceName, face.c_str());
     return AddWindowsFont(&lfa, bVert, bTranslateName);
 }
-extern CFX_ByteString _FPDF_GetNameFromTT(FX_LPCBYTE name_table, FX_DWORD name);
+extern CFX_ByteString _FPDF_GetNameFromTT(const uint8_t* name_table, FX_DWORD name);
 CFX_ByteString _FPDF_GetPSNameFromTT(HDC hDC)
 {
     CFX_ByteString result;
@@ -429,11 +429,11 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont, FX_BOOL bVert, FX_B
 }
 #endif
 #if (_FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_)
-uint32_t FX_GetLangHashCode( FX_LPCSTR pStr)
+uint32_t FX_GetLangHashCode( const FX_CHAR* pStr)
 {
     FXSYS_assert( pStr != NULL);
     int32_t iLength = FXSYS_strlen(pStr);
-    FX_LPCSTR pStrEnd = pStr + iLength;
+    const FX_CHAR* pStrEnd = pStr + iLength;
     uint32_t uHashCode = 0;
     while ( pStr < pStrEnd) {
         uHashCode = 31 * uHashCode + tolower(*pStr++);
@@ -529,7 +529,7 @@ static FX_WORD FX_GetCsFromLangCode(uint32_t uCode)
     };
     return 0;
 }
-static FX_WORD FX_GetCharsetFromLang(FX_LPCSTR pLang, int32_t iLength)
+static FX_WORD FX_GetCharsetFromLang(const FX_CHAR* pLang, int32_t iLength)
 {
     FXSYS_assert(pLang);
     if (iLength < 0) {
@@ -545,7 +545,7 @@ static void _CFString2CFXByteString(CFStringRef src, CFX_ByteString &dest)
     CFIndex used = 0;
     UInt8* pBuffer = (UInt8*)calloc(len+1, sizeof(UInt8));
     CFStringGetBytes(src, range, kCFStringEncodingASCII, 0, false, pBuffer, len, &used);
-    dest = (FX_LPSTR)pBuffer;
+    dest = (FX_CHAR*)pBuffer;
     free(pBuffer);
 }
 FX_BOOL IsHasCharSet(CFArrayRef languages, const CFX_DWordArray &charSets)
@@ -1141,7 +1141,7 @@ CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage)
     return pDict;
 }
 int _PDF_GetStandardFontName(CFX_ByteString& name);
-CPDF_Font* CPDF_Document::AddStandardFont(FX_LPCSTR font, CPDF_FontEncoding* pEncoding)
+CPDF_Font* CPDF_Document::AddStandardFont(const FX_CHAR* font, CPDF_FontEncoding* pEncoding)
 {
     CFX_ByteString name(font, -1);
     if (_PDF_GetStandardFontName(name) < 0) {

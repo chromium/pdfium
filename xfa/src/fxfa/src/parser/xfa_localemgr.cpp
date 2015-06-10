@@ -648,7 +648,7 @@ const uint8_t g_ruRU_Locale[] = {
     0xB9, 0xB4, 0x0A, 0x19, 0x89, 0x26, 0xB5, 0x2C, 0xA3, 0xB6, 0x4E, 0x5C, 0xA6, 0x17, 0xA4, 0x7B, 0xB3, 0x85, 0xFA, 0x59,
     0x2A, 0x7A, 0xFF, 0x3D, 0xC4, 0x3F, 0xDE, 0xCB, 0x8B, 0xC4
 };
-static IFX_Locale* XFA_GetLocaleFromBuffer(FX_LPCBYTE pBuf, int nBufLen)
+static IFX_Locale* XFA_GetLocaleFromBuffer(const uint8_t* pBuf, int nBufLen)
 {
     if (pBuf == NULL || nBufLen <= 0) {
         return NULL;
@@ -662,7 +662,7 @@ static IFX_Locale* XFA_GetLocaleFromBuffer(FX_LPCBYTE pBuf, int nBufLen)
         return NULL;
     }
     CXML_Element* pLocale = NULL;
-    FX_LPBYTE pOut = NULL;
+    uint8_t* pOut = NULL;
     FX_DWORD dwSize;
     pCodecMgr->GetFlateModule()->FlateOrLZWDecode(FALSE,
             pBuf, nBufLen, TRUE, 0, 0, 0, 0, 0, pOut, dwSize);

@@ -755,7 +755,7 @@ FX_ERR	CFX_Graphics::InverseRect(const CFX_RectF & rect)
             FX_ARGB c = *pLine;
             *pLine ++ = (c & 0xFF000000) | (0xFFFFFF - (c & 0x00FFFFFF));
         }
-        pBuf = (FX_ARGB*)((FX_LPBYTE)pBuf + bitmap->GetPitch());
+        pBuf = (FX_ARGB*)((uint8_t*)pBuf + bitmap->GetPitch());
     }
     return FX_ERR_Succeeded;
 }
@@ -784,8 +784,8 @@ FX_ERR CFX_Graphics::XorDIBitmap(const CFX_DIBitmap * srcBitmap, const CFX_RectF
             *pDstLine ++ = ArgbEncode(FXARGB_A(c), (c & 0xFFFFFF) ^ (*pSrcLine & 0xFFFFFF));
             pSrcLine ++;
         }
-        pSrcBuf = (FX_ARGB*)((FX_LPBYTE)pSrcBuf + srcBitmap->GetPitch());
-        pDstBuf = (FX_ARGB*)((FX_LPBYTE)pDstBuf + dst->GetPitch());
+        pSrcBuf = (FX_ARGB*)((uint8_t*)pSrcBuf + srcBitmap->GetPitch());
+        pDstBuf = (FX_ARGB*)((uint8_t*)pDstBuf + dst->GetPitch());
     }
     return FX_ERR_Succeeded;
 }
@@ -814,8 +814,8 @@ FX_ERR CFX_Graphics::EqvDIBitmap(const CFX_DIBitmap * srcBitmap, const CFX_RectF
             *pDstLine ++ = ArgbEncode(FXARGB_A(c), ~((c & 0xFFFFFF) ^ (*pSrcLine & 0xFFFFFF)));
             pSrcLine ++;
         }
-        pSrcBuf = (FX_ARGB*)((FX_LPBYTE)pSrcBuf + srcBitmap->GetPitch());
-        pDstBuf = (FX_ARGB*)((FX_LPBYTE)pDstBuf + dst->GetPitch());
+        pSrcBuf = (FX_ARGB*)((uint8_t*)pSrcBuf + srcBitmap->GetPitch());
+        pDstBuf = (FX_ARGB*)((uint8_t*)pDstBuf + dst->GetPitch());
     }
     return FX_ERR_Succeeded;
 }

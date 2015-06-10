@@ -242,9 +242,9 @@ public:
     virtual FDE_CSSPRIMITIVETYPE	GetPrimitiveType() const = 0;
     virtual FX_ARGB					GetRGBColor() const = 0;
     virtual FX_FLOAT				GetFloat() const = 0;
-    virtual FX_LPCWSTR				GetString(int32_t &iLength) const = 0;
+    virtual const FX_WCHAR*				GetString(int32_t &iLength) const = 0;
     virtual FDE_CSSPROPERTYVALUE	GetEnum() const = 0;
-    virtual	FX_LPCWSTR				GetFuncName() const = 0;
+    virtual	const FX_WCHAR*				GetFuncName() const = 0;
     virtual int32_t				CountArgs() const = 0;
     virtual IFDE_CSSValue*			GetArgs(int32_t index) const = 0;
 };
@@ -458,7 +458,7 @@ class IFDE_CSSStyleSheet : public IFX_Unknown
 public:
     static IFDE_CSSStyleSheet*		LoadHTMLStandardStyleSheet();
     static IFDE_CSSStyleSheet*		LoadFromStream(const CFX_WideString &szUrl, IFX_Stream *pStream, FX_WORD wCodePage, FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
-    static IFDE_CSSStyleSheet*		LoadFromBuffer(const CFX_WideString &szUrl, FX_LPCWSTR pBuffer, int32_t iBufSize, FX_WORD wCodePage, FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
+    static IFDE_CSSStyleSheet*		LoadFromBuffer(const CFX_WideString &szUrl, const FX_WCHAR* pBuffer, int32_t iBufSize, FX_WORD wCodePage, FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
     virtual FX_BOOL					GetUrl(CFX_WideString &szUrl) = 0;
     virtual FX_DWORD				GetMediaList() const = 0;
     virtual FX_WORD					GetCodePage() const = 0;
@@ -504,10 +504,10 @@ public:
     static IFDE_CSSSyntaxParser*	Create();
     virtual void					Release() = 0;
     virtual FX_BOOL					Init(IFX_Stream *pStream, int32_t iCSSPlaneSize, int32_t iTextDataSize = 32, FX_BOOL bOnlyDeclaration = FALSE) = 0;
-    virtual FX_BOOL					Init(FX_LPCWSTR pBuffer, int32_t iBufferSize, int32_t iTextDatSize = 32, FX_BOOL bOnlyDeclaration = FALSE) = 0;
+    virtual FX_BOOL					Init(const FX_WCHAR* pBuffer, int32_t iBufferSize, int32_t iTextDatSize = 32, FX_BOOL bOnlyDeclaration = FALSE) = 0;
 
     virtual FDE_CSSSYNTAXSTATUS		DoSyntaxParse() = 0;
-    virtual FX_LPCWSTR				GetCurrentString(int32_t &iLength) const = 0;
+    virtual const FX_WCHAR*				GetCurrentString(int32_t &iLength) const = 0;
 };
 enum FDE_CSSLENGTHUNIT {
     FDE_CSSLENGTHUNIT_Auto,
@@ -868,18 +868,18 @@ class IFDE_CSSGeneratedContentStyle
 {
 public:
     virtual int32_t				CountCounters() = 0;
-    virtual FX_LPCWSTR				GetCounterIdentifier(int32_t index) = 0;
+    virtual const FX_WCHAR*				GetCounterIdentifier(int32_t index) = 0;
     virtual FX_BOOL					GetCounterReset(int32_t index, int32_t &iValue) = 0;
     virtual FX_BOOL					GetCounterIncrement(int32_t index, int32_t &iValue) = 0;
     virtual IFDE_CSSValueList*		GetContent() const = 0;
     virtual int32_t				CountQuotes() const = 0;
-    virtual FX_LPCWSTR				GetQuotes(int32_t index) const = 0;
+    virtual const FX_WCHAR*				GetQuotes(int32_t index) const = 0;
 };
 class IFDE_CSSFontStyle
 {
 public:
     virtual int32_t				CountFontFamilies() const = 0;
-    virtual FX_LPCWSTR				GetFontFamily(int32_t index) const = 0;
+    virtual const FX_WCHAR*				GetFontFamily(int32_t index) const = 0;
     virtual FX_WORD					GetFontWeight() const = 0;
     virtual FDE_CSSFONTVARIANT		GetFontVariant() const = 0;
     virtual FDE_CSSFONTSTYLE		GetFontStyle() const = 0;
@@ -964,7 +964,7 @@ public:
     virtual FDE_CSSLINEBREAK		GetLineBreak() const = 0;
     virtual FDE_CSSTEXTEMPHASISMARK	GetTextEmphasisMark() const = 0;
     virtual FDE_CSSTEXTEMPHASISFILL	GetTextEmphasisFill() const = 0;
-    virtual FX_LPCWSTR				GetTextEmphasisCustom() const = 0;
+    virtual const FX_WCHAR*				GetTextEmphasisCustom() const = 0;
     virtual FDE_CSSTEXTCOMBINE		GetTextCombineType() const = 0;
     virtual FX_BOOL					HasTextCombineNumber() const = 0;
     virtual FX_FLOAT				GetTextCombineNumber() const = 0;
@@ -992,7 +992,7 @@ class IFDE_CSSBackgroundStyle
 {
 public:
     virtual FX_ARGB					GetBKGColor() const = 0;
-    virtual FX_LPCWSTR				GetBKGImage() const = 0;
+    virtual const FX_WCHAR*				GetBKGImage() const = 0;
     virtual FDE_CSSBKGREPEAT		GetBKGRepeat() const = 0;
     virtual FDE_CSSBKGATTACHMENT	GetBKGAttachment() const = 0;
     virtual const FDE_CSSPOINT&		GetBKGPosition() const = 0;
@@ -1004,7 +1004,7 @@ class IFDE_CSSListStyle
 public:
     virtual FDE_CSSLISTSTYLETYPE		GetListStyleType() const = 0;
     virtual FDE_CSSLISTSTYLEPOSITION	GetListStylePosition() const = 0;
-    virtual FX_LPCWSTR					GetListStyleImage() const = 0;
+    virtual const FX_WCHAR*					GetListStyleImage() const = 0;
     virtual void						SetListStyleType(FDE_CSSLISTSTYLETYPE eListStyleType) = 0;
     virtual void						SetListStylePosition(FDE_CSSLISTSTYLEPOSITION eListStylePosition) = 0;
 };

@@ -167,7 +167,7 @@ public:
     int16_t			m_iBidiLevel;
     int16_t			m_iBidiPos;
     int16_t			m_iBidiOrder;
-    FX_LPVOID			m_pUserData;
+    void*			m_pUserData;
 };
 typedef CFX_ArrayTemplate<CFX_TxtChar>	CFX_TxtCharArray;
 class CFX_RTFChar : public CFX_Char

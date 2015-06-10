@@ -23,7 +23,7 @@ static FX_ARGB	XFA_WStringToColor(FX_WSTR wsValue)
         return 0xff000000;
     }
     int cc = 0;
-    FX_LPCWSTR str = wsValue.GetPtr();
+    const FX_WCHAR* str = wsValue.GetPtr();
     int len = wsValue.GetLength();
     while (XFA_IsSpace(str[cc]) && cc < len) {
         cc++;
@@ -287,14 +287,14 @@ FX_FLOAT CXFA_Font::GetHorizontalScale()
 {
     CFX_WideString wsValue;
     m_pNode->TryCData(XFA_ATTRIBUTE_FontHorizontalScale, wsValue);
-    int32_t iScale = FXSYS_wtoi((FX_LPCWSTR)wsValue);
+    int32_t iScale = FXSYS_wtoi((const FX_WCHAR*)wsValue);
     return iScale > 0 ? (FX_FLOAT)iScale : 100.0f;
 }
 FX_FLOAT CXFA_Font::GetVerticalScale()
 {
     CFX_WideString wsValue;
     m_pNode->TryCData(XFA_ATTRIBUTE_FontVerticalScale, wsValue);
-    int32_t iScale = FXSYS_wtoi((FX_LPCWSTR)wsValue);
+    int32_t iScale = FXSYS_wtoi((const FX_WCHAR*)wsValue);
     return iScale > 0 ? (FX_FLOAT)iScale : 100.0f;
 }
 FX_FLOAT CXFA_Font::GetLetterSpacing()
@@ -2689,7 +2689,7 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString &wsLabel, const CFX_WideSt
     if(!bNotify) {
         return;
     }
-    m_pNode->GetDocument()->GetNotify()->OnWidgetDataEvent(this, XFA_WIDGETEVENT_ListItemAdded, (FX_LPVOID)(FX_LPCWSTR)wsLabel, (FX_LPVOID)(FX_LPCWSTR)wsValue, (FX_LPVOID)(uintptr_t)nIndex);
+    m_pNode->GetDocument()->GetNotify()->OnWidgetDataEvent(this, XFA_WIDGETEVENT_ListItemAdded, (void*)(const FX_WCHAR*)wsLabel, (void*)(const FX_WCHAR*)wsValue, (void*)(uintptr_t)nIndex);
 }
 void CXFA_WidgetData::GetItemLabel(FX_WSTR wsValue, CFX_WideString &wsLabel)
 {
@@ -2811,7 +2811,7 @@ FX_BOOL CXFA_WidgetData::DeleteItem(int32_t nIndex, FX_BOOL bNotify, FX_BOOL bSc
     if(!bNotify) {
         return TRUE;
     }
-    m_pNode->GetDocument()->GetNotify()->OnWidgetDataEvent(this, XFA_WIDGETEVENT_ListItemRemoved, (FX_LPVOID)(uintptr_t)nIndex);
+    m_pNode->GetDocument()->GetNotify()->OnWidgetDataEvent(this, XFA_WIDGETEVENT_ListItemRemoved, (void*)(uintptr_t)nIndex);
     return TRUE;
 }
 int32_t CXFA_WidgetData::GetHorizontalScrollPolicy()
@@ -3112,7 +3112,7 @@ static CFX_WideString XFA_NumericNormalize(const CFX_WideString &wsValue, IFX_Lo
     }
     int32_t iIndex = 0;
     CFX_WideString wsRet;
-    FX_LPWSTR pRetBuffer = wsRet.GetBuffer(iCount);
+    FX_WCHAR* pRetBuffer = wsRet.GetBuffer(iCount);
     int32_t iDestCount = 0;
     int32_t i = 0;
     if (wsNewValue[i] == L'-') {
@@ -3126,7 +3126,7 @@ static CFX_WideString XFA_NumericNormalize(const CFX_WideString &wsValue, IFX_Lo
         FX_WCHAR wc = wsNewValue[i];
         if (XFA_IsDigit(wc)) {
             if (nCharStart != -1) {
-                CFX_WideStringC wsChar((FX_LPCWSTR)wsNewValue + nCharStart, i - nCharStart);
+                CFX_WideStringC wsChar((const FX_WCHAR*)wsNewValue + nCharStart, i - nCharStart);
                 if (wsChar == '.' || wsChar == wsDecimalSymbol) {
                     bHasPoint = TRUE;
                     nCharStart = -1;

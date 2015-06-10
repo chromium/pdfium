@@ -23,7 +23,7 @@ FX_BOOL	CFWL_ScrollBarTP::IsValidWidget(IFWL_Widget *pWidget)
     _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
     return pWidget->GetClassID() == FWL_CLASSHASH_ScrollBar;
 }
-FX_LPVOID CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
+void* CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
 {
     if (dwCapacity == FWL_CAPACITY_SCB_Size) {
         m_fValue = 5;

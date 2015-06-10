@@ -15,7 +15,7 @@ CXFA_SAXReaderHandler::CXFA_SAXReaderHandler(CXFA_ChecksumContext *pContext)
 CXFA_SAXReaderHandler::~CXFA_SAXReaderHandler()
 {
 }
-FX_LPVOID CXFA_SAXReaderHandler::OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos)
+void* CXFA_SAXReaderHandler::OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos)
 {
     UpdateChecksum(TRUE);
     if (eType != FX_SAXNODE_Tag && eType != FX_SAXNODE_Instruction) {
@@ -31,7 +31,7 @@ FX_LPVOID CXFA_SAXReaderHandler::OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType,
     m_SAXContext.m_bsTagName = bsTagName;
     return &m_SAXContext;
 }
-void CXFA_SAXReaderHandler::OnTagAttribute(FX_LPVOID pTag, FX_BSTR bsAttri, FX_BSTR bsValue)
+void CXFA_SAXReaderHandler::OnTagAttribute(void* pTag, FX_BSTR bsAttri, FX_BSTR bsValue)
 {
     if (pTag == NULL) {
         return;
@@ -43,7 +43,7 @@ void CXFA_SAXReaderHandler::OnTagAttribute(FX_LPVOID pTag, FX_BSTR bsAttri, FX_B
     textBuf << bsValue;
     textBuf << FX_BSTRC("\"");
 }
-void CXFA_SAXReaderHandler::OnTagBreak(FX_LPVOID pTag)
+void CXFA_SAXReaderHandler::OnTagBreak(void* pTag)
 {
     if (pTag == NULL) {
         return;
@@ -52,7 +52,7 @@ void CXFA_SAXReaderHandler::OnTagBreak(FX_LPVOID pTag)
     textBuf << FX_BSTRC(">");
     UpdateChecksum(FALSE);
 }
-void CXFA_SAXReaderHandler::OnTagData(FX_LPVOID pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos)
+void CXFA_SAXReaderHandler::OnTagData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos)
 {
     if (pTag == NULL) {
         return;
@@ -66,7 +66,7 @@ void CXFA_SAXReaderHandler::OnTagData(FX_LPVOID pTag, FX_SAXNODE eType, FX_BSTR 
         textBuf << FX_BSTRC("]]>");
     }
 }
-void CXFA_SAXReaderHandler::OnTagClose(FX_LPVOID pTag, FX_DWORD dwEndPos)
+void CXFA_SAXReaderHandler::OnTagClose(void* pTag, FX_DWORD dwEndPos)
 {
     if (pTag == NULL) {
         return;
@@ -82,7 +82,7 @@ void CXFA_SAXReaderHandler::OnTagClose(FX_LPVOID pTag, FX_DWORD dwEndPos)
     }
     UpdateChecksum(FALSE);
 }
-void CXFA_SAXReaderHandler::OnTagEnd(FX_LPVOID pTag, FX_BSTR bsTagName, FX_DWORD dwEndPos)
+void CXFA_SAXReaderHandler::OnTagEnd(void* pTag, FX_BSTR bsTagName, FX_DWORD dwEndPos)
 {
     if (pTag == NULL) {
         return;
@@ -93,7 +93,7 @@ void CXFA_SAXReaderHandler::OnTagEnd(FX_LPVOID pTag, FX_BSTR bsTagName, FX_DWORD
     textBuf << FX_BSTRC(">");
     UpdateChecksum(FALSE);
 }
-void CXFA_SAXReaderHandler::OnTargetData(FX_LPVOID pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos)
+void CXFA_SAXReaderHandler::OnTargetData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos)
 {
     if (pTag == NULL && eType != FX_SAXNODE_Comment) {
         return;
@@ -116,7 +116,7 @@ void CXFA_SAXReaderHandler::UpdateChecksum(FX_BOOL bCheckSpace)
     if (iLength < 1) {
         return;
     }
-    FX_LPBYTE pBuffer = m_SAXContext.m_TextBuf.GetBuffer();
+    uint8_t* pBuffer = m_SAXContext.m_TextBuf.GetBuffer();
     FX_BOOL bUpdata = TRUE;
     if (bCheckSpace) {
         bUpdata = FALSE;
@@ -184,7 +184,7 @@ void CXFA_ChecksumContext::FinishChecksum()
         FXSYS_memset(digest, 0, 20);
         CRYPT_SHA1Finish(m_pByteContext, digest);
         int32_t nLen = FX_Base64EncodeA(digest, 20, NULL);
-        FX_LPSTR pBuffer = m_bsChecksum.GetBuffer(nLen);
+        FX_CHAR* pBuffer = m_bsChecksum.GetBuffer(nLen);
         FX_Base64EncodeA(digest, 20, pBuffer);
         m_bsChecksum.ReleaseBuffer(nLen);
         FX_Free(m_pByteContext);

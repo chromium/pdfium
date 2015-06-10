@@ -18,7 +18,7 @@ public:
     CFX_Int32Array *FindAsteriskPattern(CBC_CommonBitArray *row, int32_t &e);
     FX_BOOL ArrayContains(const FX_CHAR array[], FX_CHAR key);
     FX_CHAR ToNarrowWidePattern(CFX_Int32Array *counter);
-    static FX_LPCSTR ALPHABET_STRING;
+    static const FX_CHAR* ALPHABET_STRING;
 
 
     const static int32_t CHARACTER_ENCODINGS[22];

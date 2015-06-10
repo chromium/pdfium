@@ -64,13 +64,13 @@ enum XFA_LAYOUTRESULT {
 class IXFA_Notify
 {
 public:
-    virtual void				OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, FX_LPVOID pParam = NULL) = 0;
+    virtual void				OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, void* pParam = NULL) = 0;
 
-    virtual void				OnNodeEvent(CXFA_Node *pSender, XFA_NODEEVENT eEvent, FX_LPVOID pParam = NULL, FX_LPVOID pParam2 = NULL, FX_LPVOID pParam3 = NULL, FX_LPVOID pParam4 = NULL) = 0;
-    virtual void		        OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent, FX_LPVOID pParam = NULL, FX_LPVOID pAdditional = NULL, FX_LPVOID pAdditional2 = NULL) = 0;
+    virtual void				OnNodeEvent(CXFA_Node *pSender, XFA_NODEEVENT eEvent, void* pParam = NULL, void* pParam2 = NULL, void* pParam3 = NULL, void* pParam4 = NULL) = 0;
+    virtual void		        OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent, void* pParam = NULL, void* pAdditional = NULL, void* pAdditional2 = NULL) = 0;
 
     virtual CXFA_LayoutItem*	OnCreateLayoutItem(CXFA_Node *pNode) = 0;
-    virtual void				OnLayoutEvent(IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, XFA_LAYOUTEVENT eEvent, FX_LPVOID pParam = NULL, FX_LPVOID pParam2 = NULL) = 0;
+    virtual void				OnLayoutEvent(IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, XFA_LAYOUTEVENT eEvent, void* pParam = NULL, void* pParam2 = NULL) = 0;
     virtual void				StartFieldDrawLayout(CXFA_Node *pItem, FX_FLOAT &fCalcWidth, FX_FLOAT &fCalcHeight) = 0;
     virtual FX_BOOL				FindSplitPos(CXFA_Node *pItem, int32_t iBlockIndex, FX_FLOAT &fCalcHeightPos) = 0;
     virtual FX_BOOL				RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) = 0;

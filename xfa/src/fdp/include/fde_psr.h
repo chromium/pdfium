@@ -14,7 +14,7 @@ enum FDE_VISUALOBJTYPE {
     FDE_VISUALOBJ_Widget	=  0x08	,
 };
 typedef struct _FDE_HVISUALOBJ {
-    FX_LPVOID pData;
+    void* pData;
 } const * FDE_HVISUALOBJ;
 class IFDE_VisualSet
 {

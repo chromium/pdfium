@@ -45,7 +45,7 @@ public:
     virtual FWL_ERR		SetLimit(int32_t nLimit);
     virtual FWL_ERR		SetAliasChar(FX_WCHAR wAlias);
     virtual FWL_ERR		SetFormatString(const CFX_WideString &wsFormat);
-    virtual FWL_ERR		Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLen);
+    virtual FWL_ERR		Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLen);
     virtual FWL_ERR		DeleteSelections();
     virtual FWL_ERR		DeleteRange(int32_t nStart, int32_t nCount = -1);
     virtual FWL_ERR		ReplaceSelections(const CFX_WideStringC &wsReplace);

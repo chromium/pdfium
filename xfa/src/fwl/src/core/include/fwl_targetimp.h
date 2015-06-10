@@ -26,7 +26,7 @@ protected:
 class IFWL_TargetData : public IFWL_Target
 {
 public:
-    FX_LPVOID GetData();
-    void	  SetData(FX_LPVOID pData);
+    void* GetData();
+    void	  SetData(void* pData);
 };
 #endif

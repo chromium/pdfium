@@ -83,7 +83,7 @@ public:
     virtual void	Unlock();
     virtual FX_BOOL	IsLocked() const;
 
-    virtual int32_t	Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLength);
+    virtual int32_t	Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength);
     virtual int32_t	Delete(int32_t nStart, FX_BOOL bBackspace = FALSE);
     virtual int32_t	DeleteRange(int32_t nStart, int32_t nCount = -1);
     virtual int32_t	Replace(int32_t nStart, int32_t nLength, const CFX_WideString &wsReplace);
@@ -132,13 +132,13 @@ public:
 protected:
     virtual ~CFDE_TxtEdtEngine();
 private:
-    void	Inner_Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLength);
+    void	Inner_Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength);
 #ifdef FDE_USEFORMATBLOCK
-    void	RawInsert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLength);
+    void	RawInsert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength);
 #endif
     void	GetPreDeleteText(CFX_WideString &wsText, int32_t nIndex, int32_t nLength);
-    void	GetPreInsertText(CFX_WideString &wsText, int32_t nIndex, FX_LPCWSTR lpText, int32_t nLength);
-    void	GetPreReplaceText(CFX_WideString &wsText, int32_t nIndex, int32_t nOriginLength, FX_LPCWSTR lpText, int32_t nLength);
+    void	GetPreInsertText(CFX_WideString &wsText, int32_t nIndex, const FX_WCHAR* lpText, int32_t nLength);
+    void	GetPreReplaceText(CFX_WideString &wsText, int32_t nIndex, int32_t nOriginLength, const FX_WCHAR* lpText, int32_t nLength);
 
     void	Inner_DeleteRange(int32_t nStart, int32_t nCount = -1);
     void	DeleteRange_DoRecord(int32_t nStart, int32_t nCount, FX_BOOL bSel = FALSE);
@@ -150,7 +150,7 @@ private:
     void	UpdatePages();
     void	UpdateTxtBreak();
 
-    FX_BOOL	ReplaceParagEnd(FX_LPWSTR &lpText, int32_t &nLength, FX_BOOL bPreIsCR = FALSE);
+    FX_BOOL	ReplaceParagEnd(FX_WCHAR* &lpText, int32_t &nLength, FX_BOOL bPreIsCR = FALSE);
     void	RecoverParagEnd(CFX_WideString &wsText);
     int32_t	MovePage2Char(int32_t nIndex);
     void		TextPos2ParagPos(int32_t nIndex, FDE_TXTEDTPARAGPOS &ParagPos) const;
@@ -203,7 +203,7 @@ public:
     CFDE_TxtEdtDoRecord_Insert(FX_BSTR bsDoRecord);
     CFDE_TxtEdtDoRecord_Insert(	CFDE_TxtEdtEngine * pEngine,
                                 int32_t nCaret,
-                                FX_LPCWSTR lpText,
+                                const FX_WCHAR* lpText,
                                 int32_t nLength);
     virtual void	Release();
     virtual FX_BOOL Undo();

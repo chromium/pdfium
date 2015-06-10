@@ -224,7 +224,7 @@ public:
 
     static IPDF_LayoutProcessor* Create_LayoutProcessor_Reflow(FX_FLOAT TopIndent, FX_FLOAT fWidth, FX_FLOAT fHeight, void* pReflowedPage, int flags, FX_FLOAT lineSpace = 0);
 
-    static IPDF_LayoutProcessor* Create_LayoutProcessor_2HTML(FX_LPCSTR fileName);
+    static IPDF_LayoutProcessor* Create_LayoutProcessor_2HTML(const FX_CHAR* fileName);
 
     virtual LayoutStatus	StartProcess(IPDF_LayoutElement* pElement, IFX_Pause* pPause, const CFX_AffineMatrix* pPDFMatrix = NULL) = 0;
 

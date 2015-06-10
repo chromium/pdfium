@@ -10,7 +10,7 @@ class IFWL_NoteDriver;
 class IFWL_Thread;
 class IFWL_NoteThread;
 typedef struct _FWL_HTHREAD {
-    FX_LPVOID pData;
+    void* pData;
 } *FWL_HTHREAD;
 class IFWL_Thread
 {
@@ -36,7 +36,7 @@ public:
     virtual IFWL_NoteDriver* GetNoteDriver() = 0;
 };
 typedef struct _FWL_HMUTEX {
-    FX_LPVOID pData;
+    void* pData;
 } *FWL_HMUTEX;
 FWL_HMUTEX	FWL_CreateMutex();
 FWL_ERR		FWL_DestroyMutex(FWL_HMUTEX hMutex);
@@ -45,7 +45,7 @@ FWL_ERR		FWL_TryLockMutex(FWL_HMUTEX hMutex);
 FWL_ERR		FWL_UnlockMutex(FWL_HMUTEX hMutex);
 FWL_ERR		FWL_IsLockedMutex(FWL_HMUTEX hMutex, FX_BOOL &bLocked);
 typedef struct _FWL_HSEMAPHORE {
-    FX_LPVOID pData;
+    void* pData;
 } *FWL_HSEMAPHORE;
 FWL_HSEMAPHORE	FWL_CreateSemaphore();
 FWL_ERR		FWL_DestroySemaphore(FWL_HSEMAPHORE hSemaphore);

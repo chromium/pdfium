@@ -90,7 +90,7 @@ int32_t	FXJSE_Value_ToInteger		(FXJSE_HVALUE hValue)
     ASSERT(lpValue);
     return lpValue->ToInteger();
 }
-FX_LPVOID	FXJSE_Value_ToObject		(FXJSE_HVALUE hValue, FXJSE_HCLASS hClass)
+void*	FXJSE_Value_ToObject		(FXJSE_HVALUE hValue, FXJSE_HCLASS hClass)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     CFXJSE_Class* lpClass = reinterpret_cast<CFXJSE_Class*>(hClass);
@@ -139,7 +139,7 @@ void		FXJSE_Value_SetDouble		(FXJSE_HVALUE hValue, FXJSE_DOUBLE dDouble)
     ASSERT(lpValue);
     return lpValue->SetDouble(dDouble);
 }
-void		FXJSE_Value_SetObject		(FXJSE_HVALUE hValue, FX_LPVOID lpObject, FXJSE_HCLASS hClass)
+void		FXJSE_Value_SetObject		(FXJSE_HVALUE hValue, void* lpObject, FXJSE_HCLASS hClass)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     CFXJSE_Class* lpClass = reinterpret_cast<CFXJSE_Class*>(hClass);
@@ -276,7 +276,7 @@ CFXJSE_Value* CFXJSE_Value::Create(v8::Isolate* pIsolate)
 {
     return FX_NEW CFXJSE_Value(pIsolate);
 }
-FX_LPVOID	CFXJSE_Value::ToObject(CFXJSE_Class* lpClass) const
+void*	CFXJSE_Value::ToObject(CFXJSE_Class* lpClass) const
 {
     ASSERT(!m_hValue.IsEmpty());
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
@@ -330,7 +330,7 @@ void CFXJSE_Value::SetFloat(FX_FLOAT fFloat)
     v8::Local<v8::Value> hValue = v8::Number::New(m_pIsolate, FXJSE_ftod(fFloat));
     m_hValue.Reset(m_pIsolate, hValue);
 }
-void CFXJSE_Value::SetHostObject(FX_LPVOID lpObject, CFXJSE_Class* lpClass)
+void CFXJSE_Value::SetHostObject(void* lpObject, CFXJSE_Class* lpClass)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     ASSERT(lpClass);
@@ -453,7 +453,7 @@ FX_BOOL CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction, CFXJSE_Value*
     m_hValue.Reset(m_pIsolate, hBoundFunction);
     return TRUE;
 }
-#define FXJSE_INVALID_PTR ((FX_LPVOID)(intptr_t)-1)
+#define FXJSE_INVALID_PTR ((void*)(intptr_t)-1)
 FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, uint32_t nArgCount, FXJSE_HVALUE* lpArgs)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);

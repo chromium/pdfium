@@ -27,13 +27,13 @@ enum FX_SAXNODE {
 class IFX_SAXReaderHandler
 {
 public:
-    virtual FX_LPVOID	OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos) = 0;
-    virtual void		OnTagAttribute(FX_LPVOID pTag, FX_BSTR bsAttri, FX_BSTR bsValue) = 0;
-    virtual void		OnTagBreak(FX_LPVOID pTag) = 0;
-    virtual void		OnTagData(FX_LPVOID pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos) = 0;
-    virtual void		OnTagClose(FX_LPVOID pTag, FX_DWORD dwEndPos) = 0;
-    virtual void		OnTagEnd(FX_LPVOID pTag, FX_BSTR bsTagName, FX_DWORD dwEndPos) = 0;
-    virtual void		OnTargetData(FX_LPVOID pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos) = 0;
+    virtual void*	OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos) = 0;
+    virtual void		OnTagAttribute(void* pTag, FX_BSTR bsAttri, FX_BSTR bsValue) = 0;
+    virtual void		OnTagBreak(void* pTag) = 0;
+    virtual void		OnTagData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos) = 0;
+    virtual void		OnTagClose(void* pTag, FX_DWORD dwEndPos) = 0;
+    virtual void		OnTagEnd(void* pTag, FX_BSTR bsTagName, FX_DWORD dwEndPos) = 0;
+    virtual void		OnTargetData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos) = 0;
 };
 class IFX_SAXReader
 {

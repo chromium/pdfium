@@ -144,7 +144,7 @@ void CFX_WordBreak::GetWord(CFX_WideString &wsWord) const
     if (nWordLength <= 0) {
         return;
     }
-    FX_LPWSTR lpBuf = wsWord.GetBuffer(nWordLength);
+    FX_WCHAR* lpBuf = wsWord.GetBuffer(nWordLength);
     IFX_CharIter * pTempIter = m_pPreIter->Clone();
     int32_t i = 0;
     while (pTempIter->GetAt() <= m_pCurIter->GetAt()) {

@@ -20,7 +20,7 @@ public:
     virtual	FX_BOOL	IsLoaded();
     virtual FX_BOOL LayoutWidget();
 private:
-    virtual FX_LPCWSTR GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy);
+    virtual const FX_WCHAR* GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy);
     void FWLToClient(FX_FLOAT &fx, FX_FLOAT &fy);
 };
 #endif

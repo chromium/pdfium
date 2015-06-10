@@ -153,7 +153,7 @@ public:
 class CXFA_LinkUserData : public IFX_Unknown, public CFX_Target
 {
 public:
-    CXFA_LinkUserData(IFX_MEMAllocator *pAllocator, FX_LPWSTR pszText)
+    CXFA_LinkUserData(IFX_MEMAllocator *pAllocator, FX_WCHAR* pszText)
         : m_pAllocator(pAllocator)
         , m_dwRefCount(1)
     {
@@ -173,7 +173,7 @@ public:
         return ++m_dwRefCount;
     }
 public:
-    FX_LPCWSTR GetLinkURL()
+    const FX_WCHAR* GetLinkURL()
     {
         return m_pszURLContent;
     };
@@ -236,7 +236,7 @@ protected:
     FX_DWORD				m_dwRefCount;
 };
 typedef struct _XFA_TEXTPIECE : public CFX_Target {
-    FX_LPWSTR		pszText;
+    FX_WCHAR*		pszText;
     int32_t		iChars;
     int32_t		*pWidths;
     int32_t		iHorScale;

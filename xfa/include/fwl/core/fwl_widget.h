@@ -38,8 +38,8 @@ public:
     FWL_ERR			ModifyStylesEx(FX_DWORD dwStylesExAdded, FX_DWORD dwStylesExRemoved);
     FX_DWORD		GetStates();
     FWL_ERR			SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE);
-    FWL_ERR			SetPrivateData(FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback);
-    FX_LPVOID		GetPrivateData(FX_LPVOID module_id);
+    FWL_ERR			SetPrivateData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback);
+    void*		GetPrivateData(void* module_id);
     FWL_ERR			Update();
     FWL_ERR			LockUpdate();
     FWL_ERR			UnlockUpdate();

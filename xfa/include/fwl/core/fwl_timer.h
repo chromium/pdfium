@@ -8,7 +8,7 @@
 #define _FWL_TIMER_H
 class IFWL_Timer;
 typedef struct _FWL_HTIMER {
-    FX_LPVOID pData;
+    void* pData;
 } *FWL_HTIMER;
 class IFWL_Timer
 {

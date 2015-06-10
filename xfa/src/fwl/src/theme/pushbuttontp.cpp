@@ -94,7 +94,7 @@ FX_BOOL	CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground *pParams)
     }
     return TRUE;
 }
-FX_LPVOID CFWL_PushButtonTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
+void* CFWL_PushButtonTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
 {
     if (dwCapacity == FWL_WGTCAPACITY_PSB_Margin) {
         m_fValue = 0;

@@ -329,7 +329,7 @@ static const FX_STR2CPHASH g_FXCPHashTable[] = {
     { 0xf2a9730b,	0x3a8 },	{ 0xf3d463c2,	0x3a4 },	{ 0xf52a70a3,	0xc42e },	{ 0xf5693147,	0x6fb3 },
     { 0xf637e157,	0x478 },	{ 0xfc213f3a,	0x2717 },	{ 0xff654d14,	0x3b5 },
 };
-FX_WORD FX_GetCodePageFromStringA(FX_LPCSTR pStr, int32_t iLength)
+FX_WORD FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength)
 {
     FXSYS_assert(pStr != NULL);
     if (iLength < 0) {
@@ -355,7 +355,7 @@ FX_WORD FX_GetCodePageFromStringA(FX_LPCSTR pStr, int32_t iLength)
     } while (iStart <= iEnd);
     return 0xFFFF;
 }
-FX_WORD FX_GetCodePageFormStringW(FX_LPCWSTR pStr, int32_t iLength)
+FX_WORD FX_GetCodePageFormStringW(const FX_WCHAR* pStr, int32_t iLength)
 {
     if (iLength < 0) {
         iLength = FXSYS_wcslen(pStr);
@@ -364,7 +364,7 @@ FX_WORD FX_GetCodePageFormStringW(FX_LPCWSTR pStr, int32_t iLength)
         return 0xFFFF;
     }
     CFX_ByteString csStr;
-    FX_LPSTR pBuf = csStr.GetBuffer(iLength + 1);
+    FX_CHAR* pBuf = csStr.GetBuffer(iLength + 1);
     for (int32_t i = 0; i < iLength; ++i) {
         *pBuf ++ = (FX_CHAR) * pStr ++;
     }

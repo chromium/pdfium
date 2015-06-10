@@ -217,24 +217,24 @@ int32_t CBC_SymbolInfo::getErrorLengthForInterleavedBlock(int32_t index)
 CFX_WideString CBC_SymbolInfo::toString(int32_t &e)
 {
     CFX_WideString sb;
-    sb += (FX_LPWSTR)(m_rectangular ? "Rectangular Symbol:" : "Square Symbol:");
-    sb += (FX_LPWSTR)" data region ";
+    sb += (FX_WCHAR*)(m_rectangular ? "Rectangular Symbol:" : "Square Symbol:");
+    sb += (FX_WCHAR*)" data region ";
     sb += m_matrixWidth;
     sb += (FX_WCHAR)'x';
     sb += m_matrixHeight;
-    sb += (FX_LPWSTR)", symbol size ";
+    sb += (FX_WCHAR*)", symbol size ";
     sb += getSymbolWidth(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
+    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
     sb += (FX_WCHAR)'x';
     sb += getSymbolHeight(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
-    sb += (FX_LPWSTR)", symbol data size ";
+    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
+    sb += (FX_WCHAR*)", symbol data size ";
     sb += getSymbolDataWidth(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
+    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
     sb += (FX_WCHAR)'x';
     sb += getSymbolDataHeight(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
-    sb += (FX_LPWSTR)", codewords ";
+    BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
+    sb += (FX_WCHAR*)", codewords ";
     sb += m_dataCapacity;
     sb += (FX_WCHAR)'+';
     sb += m_errorCodewords;

@@ -76,7 +76,7 @@ void CFX_ListItem::SetCaret(FX_BOOL bCaret)
 	m_bCaret = bCaret;
 }
 
-void CFX_ListItem::SetText(FX_LPCWSTR text)
+void CFX_ListItem::SetText(const FX_WCHAR* text)
 {
 	if (m_pEdit)
 		m_pEdit->SetText(text);
@@ -146,7 +146,7 @@ void CFX_List::SetFontSize(FX_FLOAT fFontSize)
 	m_fFontSize = fFontSize;
 }
 
-void CFX_List::AddItem(FX_LPCWSTR str)
+void CFX_List::AddItem(const FX_WCHAR* str)
 {	
 	if (CFX_ListItem * pListItem = new CFX_ListItem())
 	{
@@ -733,7 +733,7 @@ CPDF_Rect CFX_ListCtrl::GetItemRect(int32_t nIndex) const
 	return InToOut(CFX_List::GetItemRect(nIndex));
 }
 
-void CFX_ListCtrl::AddString(FX_LPCWSTR string)
+void CFX_ListCtrl::AddString(const FX_WCHAR* string)
 {
 	AddItem(string);
 	ReArrange(GetCount() - 1);

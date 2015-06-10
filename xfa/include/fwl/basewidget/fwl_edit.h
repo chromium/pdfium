@@ -112,7 +112,7 @@ class IFWL_EditDP : public IFWL_DataProvider
 #define FWL_EDT_FIND_FLAGS_WholeWord	(1L << 1)
 #define FWL_EDT_FIND_FLAGS_NoCase		(1L << 2)
 typedef struct _FWL_HEDTFIND {
-    FX_LPVOID pData;
+    void* pData;
 }* FWL_HEDTFIND;
 class IFWL_Edit : public IFWL_Widget
 {
@@ -134,7 +134,7 @@ public:
     FWL_ERR		SetLimit(int32_t nLimit);
     FWL_ERR		SetAliasChar(FX_WCHAR wAlias);
     FWL_ERR		SetFormatString(const CFX_WideString &wsFormat);
-    FWL_ERR Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLen);
+    FWL_ERR Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLen);
     FWL_ERR DeleteSelections();
     FWL_ERR DeleteRange(int32_t nStart, int32_t nCount = -1);
     FWL_ERR ReplaceSelections(const CFX_WideStringC &wsReplace);

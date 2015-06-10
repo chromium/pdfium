@@ -30,7 +30,7 @@
 #include "xfa_textlayout.h"
 #include "xfa_ffwidgetacc.h"
 #include "xfa_ffnotify.h"
-static void XFA_FFDeleteWidgetAcc(FX_LPVOID pData)
+static void XFA_FFDeleteWidgetAcc(void* pData)
 {
     if (pData) {
         delete (CXFA_WidgetAcc*)pData;
@@ -44,7 +44,7 @@ CXFA_FFNotify::CXFA_FFNotify(CXFA_FFDoc* pDoc)
 CXFA_FFNotify::~CXFA_FFNotify()
 {
 }
-void CXFA_FFNotify::OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, FX_LPVOID pParam)
+void CXFA_FFNotify::OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, void* pParam)
 {
     CXFA_FFDocView* pDocView = m_pDoc->GetDocView(pSender->GetLayout());
     if (!pDocView) {
@@ -52,7 +52,7 @@ void CXFA_FFNotify::OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, 
     }
     pDocView->OnPageEvent(pSender, eEvent, (int32_t)(uintptr_t)pParam);
 }
-void CXFA_FFNotify::OnNodeEvent(CXFA_Node *pSender, XFA_NODEEVENT eEvent, FX_LPVOID pParam , FX_LPVOID pParam2 , FX_LPVOID pParam3, FX_LPVOID pParam4)
+void CXFA_FFNotify::OnNodeEvent(CXFA_Node *pSender, XFA_NODEEVENT eEvent, void* pParam , void* pParam2 , void* pParam3, void* pParam4)
 {
     switch (eEvent) {
         case XFA_NODEEVENT_Ready:
@@ -72,7 +72,7 @@ void CXFA_FFNotify::OnNodeEvent(CXFA_Node *pSender, XFA_NODEEVENT eEvent, FX_LPV
             break;
     }
 }
-void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent, FX_LPVOID pParam , FX_LPVOID pAdditional , FX_LPVOID pAdditional2 )
+void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent, void* pParam , void* pAdditional , void* pAdditional2 )
 {
     CXFA_WidgetAcc* pWidgetAcc = (CXFA_WidgetAcc*)pSender;
     switch (dwEvent) {
@@ -91,9 +91,9 @@ void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent
                 while (pWidget) {
                     if (pWidget->IsLoaded()) {
                         if (pWidgetAcc->IsListBox()) {
-                            ((CXFA_FFListBox*)pWidget)->InsertItem((FX_WSTR)(FX_LPCWSTR)pParam, (int32_t)(uintptr_t)pAdditional2);
+                            ((CXFA_FFListBox*)pWidget)->InsertItem((FX_WSTR)(const FX_WCHAR*)pParam, (int32_t)(uintptr_t)pAdditional2);
                         } else {
-                            ((CXFA_FFComboBox*)pWidget)->InsertItem((FX_WSTR)(FX_LPCWSTR)pParam, (int32_t)(uintptr_t)pAdditional2);
+                            ((CXFA_FFComboBox*)pWidget)->InsertItem((FX_WSTR)(const FX_WCHAR*)pParam, (int32_t)(uintptr_t)pAdditional2);
                         }
                     }
                     if (bStaticNotify) {
@@ -219,7 +219,7 @@ CXFA_LayoutItem* CXFA_FFNotify::OnCreateLayoutItem(CXFA_Node* pNode)
     pWidget->SetDocView(pDocView);
     return pWidget->GetLayoutItem();
 }
-void CXFA_FFNotify::OnLayoutEvent(IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, XFA_LAYOUTEVENT eEvent, FX_LPVOID pParam , FX_LPVOID pParam2 )
+void CXFA_FFNotify::OnLayoutEvent(IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, XFA_LAYOUTEVENT eEvent, void* pParam , void* pParam2 )
 {
     CXFA_FFDocView* pDocView = m_pDoc->GetDocView(pLayout);
     if (!pDocView || !XFA_GetWidgetFromLayoutItem(pSender)) {
@@ -410,7 +410,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node *pNode)
             break;
     }
 }
-void CXFA_FFNotify::OnValueChanging(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)
+void CXFA_FFNotify::OnValueChanging(CXFA_Node *pSender, void* pParam, void* pParam2)
 {
     CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
     if (!pDocView) {
@@ -437,7 +437,7 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPV
         }
     }
 }
-void CXFA_FFNotify::OnValueChanged(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID pParam2, FX_LPVOID pParam3, FX_LPVOID pParam4)
+void CXFA_FFNotify::OnValueChanged(CXFA_Node *pSender, void* pParam, void* pParam2, void* pParam3, void* pParam4)
 {
     CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
     if (!pDocView) {
@@ -518,7 +518,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVO
         }
     }
 }
-void CXFA_FFNotify::OnChildAdded(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)
+void CXFA_FFNotify::OnChildAdded(CXFA_Node *pSender, void* pParam, void* pParam2)
 {
     if (!pSender->IsFormContainer()) {
         return;
@@ -532,7 +532,7 @@ void CXFA_FFNotify::OnChildAdded(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID
         m_pDoc->GetDocProvider()->SetChangeMark(m_pDoc);
     }
 }
-void CXFA_FFNotify::OnChildRemoved(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)
+void CXFA_FFNotify::OnChildRemoved(CXFA_Node *pSender, void* pParam, void* pParam2)
 {
     if (CXFA_FFDocView* pDocView = m_pDoc->GetDocView()) {
         FX_BOOL bLayoutReady = !(pDocView->m_bInLayoutStatus) && (pDocView->GetLayoutStatus() >= XFA_DOCVIEW_LAYOUTSTATUS_End);
@@ -541,7 +541,7 @@ void CXFA_FFNotify::OnChildRemoved(CXFA_Node *pSender, FX_LPVOID pParam, FX_LPVO
         }
     }
 }
-void CXFA_FFNotify::OnLayoutItemAdd(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)
+void CXFA_FFNotify::OnLayoutItemAdd(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, void* pParam, void* pParam2)
 {
     CXFA_FFWidget* pWidget = (CXFA_FFWidget*)(CXFA_ContentLayoutItemImpl*)pSender;
     int32_t iPageIdx = (int32_t)(uintptr_t)pParam;
@@ -573,7 +573,7 @@ void CXFA_FFNotify::OnLayoutItemAdd(CXFA_FFDocView* pDocView, IXFA_DocLayout *pL
         pWidget->SetPageView(pNewPageView);
     }
 }
-void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)
+void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, void* pParam, void* pParam2)
 {
     CXFA_FFWidget* pWidget = (CXFA_FFWidget*)pSender;
     pDocView->DeleteLayoutItem(pWidget);
@@ -583,10 +583,10 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_FFDocView* pDocView, IXFA_DocLayou
     m_pDoc->GetDocProvider()->WidgetEvent(pWidget, pWidget->GetDataAcc(), XFA_WIDGETEVENT_PreRemoved, NULL, NULL);
     pWidget->AddInvalidateRect(NULL);
 }
-void CXFA_FFNotify::OnLayoutItemRectChanged(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)
+void CXFA_FFNotify::OnLayoutItemRectChanged(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, void* pParam, void* pParam2)
 {
 }
-void CXFA_FFNotify::OnLayoutItemStatustChanged(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, FX_LPVOID pParam, FX_LPVOID pParam2)
+void CXFA_FFNotify::OnLayoutItemStatustChanged(CXFA_FFDocView* pDocView, IXFA_DocLayout *pLayout, CXFA_LayoutItem *pSender, void* pParam, void* pParam2)
 {
     CXFA_FFWidget* pWidget = (CXFA_FFWidget*)(CXFA_ContentLayoutItemImpl*)pSender;
     if (!pWidget) {

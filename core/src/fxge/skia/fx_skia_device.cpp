@@ -478,19 +478,19 @@ FX_BOOL	CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWO
 }
 
 FX_BOOL	CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource, int bitmap_alpha, FX_DWORD argb, 
-						const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, FX_LPVOID& handle, 
+						const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, void*& handle, 
 						int alpha_flag, void* pIccTransform)
 {
 	return m_pAggDriver->StartDIBits(pSource, bitmap_alpha, argb, 
 						pMatrix, render_flags, handle, alpha_flag, pIccTransform);
 }
 
-FX_BOOL	CFX_SkiaDeviceDriver::ContinueDIBits(FX_LPVOID pHandle, IFX_Pause* pPause)
+FX_BOOL	CFX_SkiaDeviceDriver::ContinueDIBits(void* pHandle, IFX_Pause* pPause)
 {
 	return m_pAggDriver->ContinueDIBits(pHandle, pPause);
 }
 
-void CFX_SkiaDeviceDriver::CancelDIBits(FX_LPVOID pHandle)
+void CFX_SkiaDeviceDriver::CancelDIBits(void* pHandle)
 {
 	m_pAggDriver->CancelDIBits(pHandle);
 }

@@ -357,7 +357,7 @@ static void _DrawGouraud(CFX_DIBitmap* pBitmap, int alpha, CPDF_MeshVertex trian
         if (end_x > pBitmap->GetWidth()) {
             end_x = pBitmap->GetWidth();
         }
-        FX_LPBYTE dib_buf = pBitmap->GetBuffer() + y * pBitmap->GetPitch() + start_x * 4;
+        uint8_t* dib_buf = pBitmap->GetBuffer() + y * pBitmap->GetPitch() + start_x * 4;
         FX_FLOAT r_unit = (r[end_index] - r[start_index]) / (max_x - min_x);
         FX_FLOAT g_unit = (g[end_index] - g[start_index]) / (max_x - min_x);
         FX_FLOAT b_unit = (b[end_index] - b[start_index]) / (max_x - min_x);
@@ -1066,7 +1066,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern, CPDF_Pag
                 if (pPattern->m_bColored) {
                     *dest_buf = *src_buf;
                 } else {
-                    *dest_buf = (*(FX_LPBYTE)src_buf << 24) | (fill_argb & 0xffffff);
+                    *dest_buf = (*(uint8_t*)src_buf << 24) | (fill_argb & 0xffffff);
                 }
             } else {
                 if (pPattern->m_bColored) {

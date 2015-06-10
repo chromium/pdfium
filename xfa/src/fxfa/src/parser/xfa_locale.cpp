@@ -17,10 +17,10 @@
 #include "../common/xfa_fm2jsapi.h"
 #include "xfa_debug_parser.h"
 #include "xfa_locale.h"
-const static FX_LPCWSTR g_FX_Percent =  L"z,zzz,zzz,zzz,zzz,zzz%";
-const static FX_LPCWSTR g_FX_Currency = L"$z,zzz,zzz,zzz,zzz,zz9.99";
-const static FX_LPCWSTR g_FX_Decimal = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
-const static FX_LPCWSTR g_FX_Integer = L"z,zzz,zzz,zzz,zzz,zzz";
+static const FX_WCHAR* g_FX_Percent =  L"z,zzz,zzz,zzz,zzz,zzz%";
+static const FX_WCHAR* g_FX_Currency = L"$z,zzz,zzz,zzz,zzz,zz9.99";
+static const FX_WCHAR* g_FX_Decimal = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
+static const FX_WCHAR* g_FX_Integer = L"z,zzz,zzz,zzz,zzz,zzz";
 CXFA_XMLLocale::CXFA_XMLLocale(CXML_Element* pLocaleData)
 {
     m_pLocaleData = pLocaleData;
@@ -79,7 +79,7 @@ void CXFA_XMLLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType, CFX_WideString&
     if (!pElement) {
         return;
     }
-    GetPattern(pElement, CFX_ByteStringC((FX_LPCSTR)bsSymbols, bsSymbols.GetLength() - 1), wsName, wsNumSymbol);
+    GetPattern(pElement, CFX_ByteStringC((const FX_CHAR*)bsSymbols, bsSymbols.GetLength() - 1), wsName, wsNumSymbol);
 }
 void CXFA_XMLLocale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const
 {

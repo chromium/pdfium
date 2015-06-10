@@ -54,7 +54,7 @@ FX_BOOL CFWL_Widget::IsInstance(FX_WSTR wsClass) const
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FALSE);
     return m_pImp->IsInstance(wsClass);
 }
-static FX_LPVOID gs_pFWLWidget = (FX_LPVOID)FXBSTR_ID('l', 'i', 'g', 't');
+static void* gs_pFWLWidget = (void*)FXBSTR_ID('l', 'i', 'g', 't');
 FWL_ERR CFWL_Widget::Initialize(const CFWL_WidgetProperties *pProperties )
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
@@ -133,12 +133,12 @@ FWL_ERR	CFWL_Widget::SetStates(FX_DWORD dwStates, FX_BOOL bSet )
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return m_pImp->SetStates(dwStates, bSet);
 }
-FWL_ERR	CFWL_Widget::SetPrivateData(FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback)
+FWL_ERR	CFWL_Widget::SetPrivateData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return m_pImp->SetPrivateData(module_id, pData, callback);
 }
-FX_LPVOID CFWL_Widget::GetPrivateData(FX_LPVOID module_id)
+void* CFWL_Widget::GetPrivateData(void* module_id)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, NULL);
     return m_pImp->GetPrivateData(module_id);

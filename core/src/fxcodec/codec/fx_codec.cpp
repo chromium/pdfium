@@ -51,7 +51,7 @@ CCodec_ScanlineDecoder::~CCodec_ScanlineDecoder()
         FX_Free(m_pDataCache);
     }
 }
-FX_LPBYTE CCodec_ScanlineDecoder::GetScanline(int line)
+uint8_t* CCodec_ScanlineDecoder::GetScanline(int line)
 {
     if (m_pDataCache && line < m_pDataCache->m_nCachedLines) {
         return &m_pDataCache->m_Data + line * m_Pitch;
@@ -95,9 +95,9 @@ FX_BOOL CCodec_ScanlineDecoder::SkipToScanline(int line, IFX_Pause* pPause)
     }
     return FALSE;
 }
-FX_LPBYTE CCodec_ScanlineDecoder::ReadNextLine()
+uint8_t* CCodec_ScanlineDecoder::ReadNextLine()
 {
-    FX_LPBYTE pLine = v_GetNextLine();
+    uint8_t* pLine = v_GetNextLine();
     if (pLine == NULL) {
         return NULL;
     }
@@ -131,7 +131,7 @@ void CCodec_ScanlineDecoder::DownScale(int dest_width, int dest_height)
     m_pDataCache->m_Width = m_OutputWidth;
     m_pDataCache->m_nCachedLines = 0;
 }
-FX_BOOL CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
+FX_BOOL CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf,
         FX_DWORD& dest_size)
 {
     return FALSE;
@@ -240,7 +240,7 @@ extern "C" double FXstrtod(const char* nptr, char** endptr)
     }
     return is_negative ? -ret : ret;
 }
-FX_BOOL CCodec_BasicModule::A85Encode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf,
+FX_BOOL CCodec_BasicModule::A85Encode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf,
                                       FX_DWORD& dest_size)
 {
     return FALSE;
@@ -283,7 +283,7 @@ void CFX_DIBAttributeExif::clear()
     }
     m_pExifData = NULL;
     FX_DWORD key = 0;
-    FX_LPBYTE buf = NULL;
+    uint8_t* buf = NULL;
     FX_POSITION pos = NULL;
     pos = m_TagHead.GetStartPosition();
     while (pos) {
@@ -302,29 +302,29 @@ void CFX_DIBAttributeExif::clear()
     }
     m_TagVal.RemoveAll();
 }
-static FX_WORD _Read2BytesL(FX_LPBYTE data)
+static FX_WORD _Read2BytesL(uint8_t* data)
 {
     ASSERT(data);
     return data[0] | (data[1] << 8);
 }
-static FX_WORD _Read2BytesB(FX_LPBYTE data)
+static FX_WORD _Read2BytesB(uint8_t* data)
 {
     ASSERT(data);
     return data[1] | (data[0] << 8);
 }
-static FX_DWORD _Read4BytesL(FX_LPBYTE data)
+static FX_DWORD _Read4BytesL(uint8_t* data)
 {
     return _Read2BytesL(data) | (_Read2BytesL(data + 2) << 16);
 }
-static FX_DWORD _Read4BytesB(FX_LPBYTE data)
+static FX_DWORD _Read4BytesB(uint8_t* data)
 {
     return _Read2BytesB(data + 2) | (_Read2BytesB(data) << 16);
 }
-typedef FX_WORD (*_Read2Bytes) (FX_LPBYTE data);
-typedef FX_DWORD (*_Read4Bytes) (FX_LPBYTE data);
-typedef void (*_Write2Bytes) (FX_LPBYTE data, FX_WORD val);
-typedef void (*_Write4Bytes) (FX_LPBYTE data, FX_DWORD val);
-FX_LPBYTE CFX_DIBAttributeExif::ParseExifIFH(FX_LPBYTE data, FX_DWORD len, _Read2Bytes* pReadWord, _Read4Bytes* pReadDword)
+typedef FX_WORD (*_Read2Bytes) (uint8_t* data);
+typedef FX_DWORD (*_Read4Bytes) (uint8_t* data);
+typedef void (*_Write2Bytes) (uint8_t* data, FX_WORD val);
+typedef void (*_Write4Bytes) (uint8_t* data, FX_DWORD val);
+uint8_t* CFX_DIBAttributeExif::ParseExifIFH(uint8_t* data, FX_DWORD len, _Read2Bytes* pReadWord, _Read4Bytes* pReadDword)
 {
     if (len > 8) {
         FX_BOOL tag = FALSE;
@@ -356,14 +356,14 @@ FX_LPBYTE CFX_DIBAttributeExif::ParseExifIFH(FX_LPBYTE data, FX_DWORD len, _Read
     }
     return data;
 }
-FX_BOOL CFX_DIBAttributeExif::ParseExifIFD(CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE>* pMap, FX_LPBYTE data, FX_DWORD len)
+FX_BOOL CFX_DIBAttributeExif::ParseExifIFD(CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* pMap, uint8_t* data, FX_DWORD len)
 {
     if (pMap && data) {
         if (len > 8) {
             FX_WORD wTagNum = m_readWord(data);
             data += 2;
             FX_DWORD wTag;
-            FX_LPBYTE buf;
+            uint8_t* buf;
             while (wTagNum--) {
                 wTag = m_readWord(data);
                 data += 2;
@@ -417,11 +417,11 @@ enum FX_ExifDataType {
     FX_SignedFloat,
     FX_DoubleFloat
 };
-FX_BOOL CFX_DIBAttributeExif::ParseExif(CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE>* pHead, FX_LPBYTE data, FX_DWORD len, CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE>* pVal)
+FX_BOOL CFX_DIBAttributeExif::ParseExif(CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* pHead, uint8_t* data, FX_DWORD len, CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* pVal)
 {
     if (pHead && data && pVal) {
         if (len > 8) {
-            FX_LPBYTE old_data = data;
+            uint8_t* old_data = data;
             data = ParseExifIFH(data, len, &m_readWord, &m_readDword);
             if (data == old_data) {
                 return FALSE;
@@ -435,11 +435,13 @@ FX_BOOL CFX_DIBAttributeExif::ParseExif(CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE>*
             FX_WORD type;
             FX_DWORD dwSize;
             FX_DWORD tag;
-            FX_LPBYTE head;
+            uint8_t* head;
             FX_POSITION pos = pHead->GetStartPosition();
             while (pos) {
                 pHead->GetNextAssoc(pos, tag, head);
-                FX_LPBYTE val = NULL, buf = NULL, temp = NULL;
+                uint8_t* val = NULL;
+                uint8_t* buf = NULL;
+                uint8_t* temp = NULL;
                 int i;
                 if (head) {
                     type = m_readWord(head);
@@ -558,14 +560,14 @@ FX_BOOL CFX_DIBAttributeExif::ParseExif(CFX_MapPtrTemplate<FX_DWORD, FX_LPBYTE>*
     return FALSE;
 }
 #define FXEXIF_INFOCONVERT(T) {T* src = (T*)ptr;	T* dst = (T*)val;	*dst = *src;}
-FX_BOOL CFX_DIBAttributeExif::GetInfo( FX_WORD tag, FX_LPVOID val )
+FX_BOOL CFX_DIBAttributeExif::GetInfo( FX_WORD tag, void* val )
 {
     if (m_TagVal.GetCount() == 0) {
         if (!ParseExif(&m_TagHead, m_pExifData, m_dwExifDataLen, &m_TagVal)) {
             return FALSE;
         }
     }
-    FX_LPBYTE ptr = NULL;
+    uint8_t* ptr = NULL;
     if (m_TagVal.Lookup(tag, ptr)) {
         switch (tag) {
             case EXIFTAG_USHORT_RESUNIT:
@@ -583,7 +585,7 @@ FX_BOOL CFX_DIBAttributeExif::GetInfo( FX_WORD tag, FX_LPVOID val )
                 FXEXIF_INFOCONVERT(FX_WORD);
                 break;
             default: {
-                    FX_LPBYTE* dst = (FX_LPBYTE*)val;
+                    uint8_t** dst = (uint8_t**)val;
                     *dst = ptr;
                 }
         }
@@ -595,10 +597,10 @@ class CCodec_RLScanlineDecoder : public CCodec_ScanlineDecoder
 public:
     CCodec_RLScanlineDecoder();
     virtual ~CCodec_RLScanlineDecoder();
-    FX_BOOL				Create(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height, int nComps, int bpc);
+    FX_BOOL				Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height, int nComps, int bpc);
     virtual void		v_DownScale(int dest_width, int dest_height) {}
     virtual FX_BOOL		v_Rewind();
-    virtual FX_LPBYTE	v_GetNextLine();
+    virtual uint8_t*	v_GetNextLine();
     virtual FX_DWORD	GetSrcOffset()
     {
         return m_SrcOffset;
@@ -608,8 +610,8 @@ protected:
     void				GetNextOperator();
     void				UpdateOperator(uint8_t used_bytes);
 
-    FX_LPBYTE			m_pScanline;
-    FX_LPCBYTE			m_pSrcBuf;
+    uint8_t*			m_pScanline;
+    const uint8_t*			m_pSrcBuf;
     FX_DWORD			m_SrcSize;
     FX_DWORD			m_dwLineBytes;
     FX_DWORD			m_SrcOffset;
@@ -661,7 +663,7 @@ FX_BOOL CCodec_RLScanlineDecoder::CheckDestSize()
     }
     return TRUE;
 }
-FX_BOOL CCodec_RLScanlineDecoder::Create(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height, int nComps, int bpc)
+FX_BOOL CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height, int nComps, int bpc)
 {
     m_pSrcBuf = src_buf;
     m_SrcSize = src_size;
@@ -684,7 +686,7 @@ FX_BOOL CCodec_RLScanlineDecoder::v_Rewind()
     m_Operator = 0;
     return TRUE;
 }
-FX_LPBYTE CCodec_RLScanlineDecoder::v_GetNextLine()
+uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine()
 {
     if (m_SrcOffset == 0) {
         GetNextOperator();
@@ -768,7 +770,7 @@ void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes)
     count -= used_bytes;
     m_Operator = 257 - count;
 }
-ICodec_ScanlineDecoder* CCodec_BasicModule::CreateRunLengthDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
+ICodec_ScanlineDecoder* CCodec_BasicModule::CreateRunLengthDecoder(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
         int nComps, int bpc)
 {
     CCodec_RLScanlineDecoder* pRLScanlineDecoder = new CCodec_RLScanlineDecoder;

@@ -12,7 +12,7 @@ CXML_Parser::~CXML_Parser()
         m_pDataAcc->Release();
     }
 }
-FX_BOOL CXML_Parser::Init(FX_LPBYTE pBuffer, size_t size)
+FX_BOOL CXML_Parser::Init(uint8_t* pBuffer, size_t size)
 {
     m_pDataAcc = FX_NEW CXML_DataBufAcc(pBuffer, size);
     if (!m_pDataAcc) {
@@ -485,7 +485,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent, FX_BOOL bStartTag
                             break;
                         }
                         pSubElement->m_pParent = pElement;
-                        pElement->m_Children.Add((FX_LPVOID)CXML_Element::Element);
+                        pElement->m_Children.Add((void*)CXML_Element::Element);
                         pElement->m_Children.Add(pSubElement);
                         SkipWhiteSpaces();
                     }
@@ -535,7 +535,7 @@ void CXML_Parser::InsertContentSegment(FX_BOOL bCDATA, FX_WSTR content, CXML_Ele
         return;
     }
     pContent->Set(bCDATA, content);
-    pElement->m_Children.Add((FX_LPVOID)CXML_Element::Content);
+    pElement->m_Children.Add((void*)CXML_Element::Content);
     pElement->m_Children.Add(pContent);
 }
 static CXML_Element* XML_ContinueParse(CXML_Parser &parser, FX_BOOL bSaveSpaceChars, FX_FILESIZE* pParsedSize)
@@ -550,7 +550,7 @@ static CXML_Element* XML_ContinueParse(CXML_Parser &parser, FX_BOOL bSaveSpaceCh
 CXML_Element* CXML_Element::Parse(const void* pBuffer, size_t size, FX_BOOL bSaveSpaceChars, FX_FILESIZE* pParsedSize)
 {
     CXML_Parser parser;
-    if (!parser.Init((FX_LPBYTE)pBuffer, size)) {
+    if (!parser.Init((uint8_t*)pBuffer, size)) {
         return NULL;
     }
     return XML_ContinueParse(parser, bSaveSpaceChars, pParsedSize);

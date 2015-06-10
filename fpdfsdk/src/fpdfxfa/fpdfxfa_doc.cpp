@@ -573,7 +573,7 @@ void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView, FX_DWORD dwFlags)
 	}
 }
 
-void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, FX_LPVOID pParam, FX_LPVOID pAdditional)
+void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidgetData, FX_DWORD dwEvent, void* pParam, void* pAdditional)
 {
 	if (m_iDocType != DOCTYPE_DYNIMIC_XFA || NULL == hWidget)
 		return;
@@ -745,7 +745,7 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bX
 	if (fileType == FXFA_SAVEAS_XML)
 	{
 		content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-		fileWrite.WriteBlock((FX_LPCSTR)content, fileWrite.GetSize(), content.GetLength());
+		fileWrite.WriteBlock((const FX_CHAR*)content, fileWrite.GetSize(), content.GetLength());
 		CFX_WideStringC data(L"data");
 		if( pXFADocHander->SavePackage(m_pXFADocView->GetDoc(),data, &fileWrite))
 		{
@@ -755,7 +755,7 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bX
 	/*else if (fileType == FXFA_FILE_STATIC_XDP)
 	{
 		content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-		fileWrite.WriteBlock((FX_LPCSTR)content, fileWrite.GetSize(), content.GetLength());
+		fileWrite.WriteBlock((const FX_CHAR*)content, fileWrite.GetSize(), content.GetLength());
 		CFX_WideStringC data(L"data");
 		if( pXFADocHander->SavePackage(m_pXFADocView->GetDoc(), data, &fileWrite))
 		{
@@ -766,8 +766,8 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bX
 // 		wPath.FromUTF16LE(filePath);
 		CFX_ByteString bPath = wPath.UTF8Encode();
 		CFX_ByteString szFormat = "\n<pdf href=\"%s\" xmlns=\"http://ns.adobe.com/xdp/pdf/\"/>";
-		content.Format(szFormat,(char*)(FX_LPCSTR)bPath);
-		fileWrite.WriteBlock((FX_LPCSTR)content,fileWrite.GetSize(), content.GetLength());
+		content.Format(szFormat,(char*)(const FX_CHAR*)bPath);
+		fileWrite.WriteBlock((const FX_CHAR*)content,fileWrite.GetSize(), content.GetLength());
 	}
 	*/
 	else if (fileType == FXFA_SAVEAS_XDP)
@@ -817,11 +817,11 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bX
 				if (i == size-1)
 				{
 					//CFX_WideString wPath = pEnv->FFI_GetFilePath(pFileHandler);
-					CFX_WideString wPath = CFX_WideString::FromUTF16LE((unsigned short*)(FX_LPCSTR)bs, bs.GetLength()/sizeof(unsigned short));
+					CFX_WideString wPath = CFX_WideString::FromUTF16LE((unsigned short*)(const FX_CHAR*)bs, bs.GetLength()/sizeof(unsigned short));
 					CFX_ByteString bPath = wPath.UTF8Encode();
 					CFX_ByteString szFormat = "\n<pdf href=\"%s\" xmlns=\"http://ns.adobe.com/xdp/pdf/\"/>";
-					content.Format(szFormat,(char*)(FX_LPCSTR)bPath);
-					fileWrite.WriteBlock((FX_LPCSTR)content,fileWrite.GetSize(), content.GetLength());
+					content.Format(szFormat,(char*)(const FX_CHAR*)bPath);
+					fileWrite.WriteBlock((const FX_CHAR*)content,fileWrite.GetSize(), content.GetLength());
 				}
 
 				CPDF_Stream* pStream = (CPDF_Stream*)pDirectObj;
@@ -1085,7 +1085,7 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler, int 
 		CFX_WideString ws;
 		ws.FromLocal("data");
 		CFX_ByteString content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-		fileStream.WriteBlock((FX_LPCSTR)content,0,content.GetLength());
+		fileStream.WriteBlock((const FX_CHAR*)content,0,content.GetLength());
 		pDocHandler->SavePackage(m_pXFADoc, ws, &fileStream);
 	}
 	else if (fileType == FXFA_SAVEAS_XDP)

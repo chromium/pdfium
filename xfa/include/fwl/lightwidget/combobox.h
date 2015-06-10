@@ -36,8 +36,8 @@ public:
     FX_BOOL		EditRedo(FX_BSTR bsRecord);
     FX_BOOL		EditUndo(FX_BSTR bsRecord);
     FWL_ERR		SetMaxListHeight(FX_FLOAT fMaxHeight);
-    FWL_ERR		SetItemData(int32_t iIndex, FX_LPVOID pData);
-    FX_LPVOID	GetItemData(int32_t iIndex);
+    FWL_ERR		SetItemData(int32_t iIndex, void* pData);
+    void*	GetItemData(int32_t iIndex);
     FWL_ERR		SetListTheme(IFWL_ThemeProvider *pTheme);
     FX_BOOL		AfterFocusShowDropList();
     FWL_ERR		OpenDropDownList(FX_BOOL bActivate);
@@ -78,9 +78,9 @@ protected:
         virtual	FX_DWORD		GetItemStyles(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
         virtual	FWL_ERR			GetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, CFX_WideString &wsText);
         virtual FWL_ERR			GetItemRect(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, CFX_RectF& rtItem);
-        virtual FX_LPVOID		GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
+        virtual void*		GetItemData(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
         virtual	FWL_ERR			SetItemStyles(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_DWORD dwStyle);
-        virtual FWL_ERR			SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, FX_LPCWSTR pszText);
+        virtual FWL_ERR			SetItemText(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, const FX_WCHAR* pszText);
         virtual FWL_ERR			SetItemRect(IFWL_Widget *pWidget, FWL_HLISTITEM hItem, const CFX_RectF& rtItem);
         virtual FX_FLOAT		GetItemHeight(IFWL_Widget *pWidget);
         virtual CFX_DIBitmap*	GetItemIcon(IFWL_Widget *pWidget, FWL_HLISTITEM hItem);
@@ -110,6 +110,6 @@ public:
     CFX_DIBitmap	*m_pDIB;
     FX_DWORD		m_dwCheckState;
     CFX_RectF		m_rtCheckBox;
-    FX_LPVOID		m_pData;
+    void*		m_pData;
 };
 #endif

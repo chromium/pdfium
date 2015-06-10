@@ -52,7 +52,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
         if (!totalSize.IsValid() || nNewMax < m_nSize) {
             return FALSE;
         }
-        FX_LPBYTE pNewData = FX_Realloc(uint8_t, m_pData, totalSize.ValueOrDie());
+        uint8_t* pNewData = FX_Realloc(uint8_t, m_pData, totalSize.ValueOrDie());
         if (pNewData == NULL) {
             return FALSE;
         }
@@ -83,7 +83,7 @@ FX_BOOL CFX_BasicArray::Copy(const CFX_BasicArray& src)
     FXSYS_memcpy32(m_pData, src.m_pData, src.m_nSize * m_nUnitSize);
     return TRUE;
 }
-FX_LPBYTE CFX_BasicArray::InsertSpaceAt(int nIndex, int nCount)
+uint8_t* CFX_BasicArray::InsertSpaceAt(int nIndex, int nCount)
 {
     if (nIndex < 0 || nCount <= 0) {
         return NULL;
@@ -259,7 +259,7 @@ void** CFX_BaseSegmentedArray::GetIndex(int seg_index) const
     }
     return pSpot;
 }
-void* CFX_BaseSegmentedArray::IterateSegment(FX_LPCBYTE pSegment, int count, FX_BOOL (*callback)(void* param, void* pData), void* param) const
+void* CFX_BaseSegmentedArray::IterateSegment(const uint8_t* pSegment, int count, FX_BOOL (*callback)(void* param, void* pData), void* param) const
 {
     for (int i = 0; i < count; i ++) {
         if (!callback(param, (void*)(pSegment + i * m_UnitSize))) {
@@ -276,7 +276,7 @@ void* CFX_BaseSegmentedArray::IterateIndex(int level, int& start, void** pIndex,
             count = m_SegmentSize;
         }
         start += count;
-        return IterateSegment((FX_LPCBYTE)pIndex, count, callback, param);
+        return IterateSegment((const uint8_t*)pIndex, count, callback, param);
     }
     for (int i = 0; i < m_IndexSize; i ++) {
         if (pIndex[i] == NULL) {
@@ -303,10 +303,10 @@ void* CFX_BaseSegmentedArray::GetAt(int index) const
         return NULL;
     }
     if (m_IndexDepth == 0) {
-        return (FX_LPBYTE)m_pIndex + m_UnitSize * index;
+        return (uint8_t*)m_pIndex + m_UnitSize * index;
     }
     int seg_index = index / m_SegmentSize;
-    return (FX_LPBYTE)GetIndex(seg_index)[seg_index % m_IndexSize] + (index % m_SegmentSize) * m_UnitSize;
+    return (uint8_t*)GetIndex(seg_index)[seg_index % m_IndexSize] + (index % m_SegmentSize) * m_UnitSize;
 }
 void CFX_BaseSegmentedArray::Delete(int index, int count)
 {

@@ -1035,11 +1035,11 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWOR
 #ifdef _FXFA_USEGASFONTMGR_
     const XFA_FONTINFO *pCurFont = NULL;
     FX_BOOL bGetFontInfo = TRUE;
-    IFX_Font* pFont = pFDEFontMgr->LoadFont((FX_LPCWSTR)wsFontName, dwFontStyles, wCodePage);
+    IFX_Font* pFont = pFDEFontMgr->LoadFont((const FX_WCHAR*)wsFontName, dwFontStyles, wCodePage);
 #else
     const XFA_FONTINFO *pCurFont = XFA_GetFontINFOByFontName(wsFontName);
     FX_BOOL bGetFontInfo = FALSE;
-    IFX_Font* pFont = IFX_Font::LoadFont((FX_LPCWSTR)wsFontName, dwFontStyles | FX_FONTSTYLE_ExactMatch, pCurFont ? pCurFont->wCodePage : wCodePage, pFDEFontMgr);
+    IFX_Font* pFont = IFX_Font::LoadFont((const FX_WCHAR*)wsFontName, dwFontStyles | FX_FONTSTYLE_ExactMatch, pCurFont ? pCurFont->wCodePage : wCodePage, pFDEFontMgr);
 #endif
     if (!pFont && hDoc) {
         if (bGetFontInfo) {
@@ -1053,10 +1053,10 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWOR
             if (dwFontStyles & FX_FONTSTYLE_Italic) {
                 dwStyle |= FX_FONTSTYLE_Italic;
             }
-            FX_LPCWSTR pReplace = pCurFont->pReplaceFont;
+            const FX_WCHAR* pReplace = pCurFont->pReplaceFont;
             int32_t iLength = FXSYS_wcslen(pReplace);
             while (iLength > 0) {
-                FX_LPCWSTR pNameText = pReplace;
+                const FX_WCHAR* pNameText = pReplace;
                 while (*pNameText != L',' && iLength > 0) {
                     pNameText++;
                     iLength--;
@@ -1065,7 +1065,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWOR
 #ifdef _FXFA_USEGASFONTMGR_
                 pFont = pFDEFontMgr->LoadFont(wsReplace, dwStyle, wCodePage);
 #else
-                pFont = IFX_Font::LoadFont((FX_LPCWSTR)wsReplace, dwStyle | FX_FONTSTYLE_ExactMatch, pCurFont->wCodePage, pFDEFontMgr);
+                pFont = IFX_Font::LoadFont((const FX_WCHAR*)wsReplace, dwStyle | FX_FONTSTYLE_ExactMatch, pCurFont->wCodePage, pFDEFontMgr);
 #endif
                 if (pFont != NULL) {
                     break;
@@ -1092,9 +1092,9 @@ IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, 
 #endif
     if (!pFont)
 #ifdef _FXFA_USEGASFONTMGR_
-        pFont = pFDEFontMgr->LoadFont((FX_LPCWSTR)NULL, dwFontStyles, wCodePage);
+        pFont = pFDEFontMgr->LoadFont((const FX_WCHAR*)NULL, dwFontStyles, wCodePage);
 #else
-        pFont = IFX_Font::LoadFont((FX_LPCWSTR)NULL, dwFontStyles, pCurFont ? pCurFont->wCodePage : 1252, pFDEFontMgr);
+        pFont = IFX_Font::LoadFont((const FX_WCHAR*)NULL, dwFontStyles, pCurFont ? pCurFont->wCodePage : 1252, pFDEFontMgr);
 #endif
     FXSYS_assert(pFont != NULL);
     if (pFont) {
@@ -1103,11 +1103,11 @@ IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, 
     return pFont;
 }
 struct XFA_PDFFONTNAME {
-    FX_LPCSTR lpPsName;
-    FX_LPCSTR lpNormal;
-    FX_LPCSTR lpBold;
-    FX_LPCSTR lpItalic;
-    FX_LPCSTR lpBoldItalic;
+    const FX_CHAR* lpPsName;
+    const FX_CHAR* lpNormal;
+    const FX_CHAR* lpBold;
+    const FX_CHAR* lpItalic;
+    const FX_CHAR* lpBoldItalic;
 };
 const XFA_PDFFONTNAME g_XFAPDFFontName[] = {
     {"Adobe PI Std", "AdobePIStd", "AdobePIStd", "AdobePIStd", "AdobePIStd"},

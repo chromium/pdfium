@@ -143,7 +143,7 @@ void CPWL_Note_Edit::RePosChildWnd()
 	m_fOldItemHeight = this->GetContentRect().Height();
 }
 
-void CPWL_Note_Edit::SetText(FX_LPCWSTR csText)
+void CPWL_Note_Edit::SetText(const FX_WCHAR* csText)
 {
 	m_bEnableNotify = FALSE;
 	CPWL_Edit::SetText(csText);

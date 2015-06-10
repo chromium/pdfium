@@ -73,10 +73,10 @@
 		blitV(x, y, height, rightAlpha);
 	}
 	/*---------------------------------------------------------------------------------------------------*/
-	void CFX_SkiaRenderer::CompositeSpan1bpp_0(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpan1bpp_0(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_bRgbByteOrder);
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -94,7 +94,7 @@
 				if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color) 
 					index = i;
 		} 
-		FX_LPBYTE dest_scan1 = dest_scan;
+		uint8_t* dest_scan1 = dest_scan;
 		int src_alpha = m_Alpha * cover_scan / 255;
 		for (int col = col_start; col < col_end; col ++) {
 			if (src_alpha) {
@@ -106,10 +106,10 @@
 			dest_scan1 = dest_scan+(span_left%8+col-col_start+1)/8;
 		}
 	}
-	void CFX_SkiaRenderer::CompositeSpan1bpp_4(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpan1bpp_4(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_bRgbByteOrder);
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -128,7 +128,7 @@
 				if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color) 
 					index = i;
 		} 
-		FX_LPBYTE dest_scan1 = dest_scan;
+		uint8_t* dest_scan1 = dest_scan;
 		int src_alpha = m_Alpha * cover_scan / 255;
 		for (int col = col_start; col < col_end; col ++) {
 			int src_alpha1 = src_alpha * clip_scan[col] / 255;
@@ -142,10 +142,10 @@
 		}
 	}
 	/*-----------------------------------------------------------------------------------------------------*/
-	void CFX_SkiaRenderer::CompositeSpanGray_2(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanGray_2(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
 		ASSERT(!m_bRgbByteOrder);
@@ -164,10 +164,10 @@
 			dest_scan++;
 		}
 	}
-	void CFX_SkiaRenderer::CompositeSpanGray_3(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanGray_3(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
 		ASSERT(!m_bRgbByteOrder);
@@ -207,10 +207,10 @@
 		}
 	}
 
-	void CFX_SkiaRenderer::CompositeSpanGray_6(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanGray_6(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_bRgbByteOrder);
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left;
@@ -235,10 +235,10 @@
 		}	
 	}
 
-	void CFX_SkiaRenderer::CompositeSpanGray_7(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanGray_7(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left;
@@ -295,10 +295,10 @@
 	}
 	/*--------------------------------------------------------------------------------------------------*/
 
-	void CFX_SkiaRenderer::CompositeSpanARGB_2(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanARGB_2(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
 		int col_start = span_left < clip_left ? clip_left - span_left : 0;
@@ -343,10 +343,10 @@
 		}
 	}
 
-	void CFX_SkiaRenderer::CompositeSpanARGB_3(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanARGB_3(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
@@ -392,10 +392,10 @@
 			dest_scan += 2;
 		}
 	}
-	void CFX_SkiaRenderer::CompositeSpanARGB_6(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanARGB_6(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
 		clip_scan = (uint8_t*)m_pClipMask->GetScanline(span_top-clip_top) - clip_left + span_left;
@@ -507,10 +507,10 @@
 #endif
 	}
 
-	void CFX_SkiaRenderer::CompositeSpanARGB_7(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanARGB_7(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
@@ -557,10 +557,10 @@
 	}
 	
 	/*-----------------------------------------------------------------------------------------------------------*/
-	void CFX_SkiaRenderer::CompositeSpanRGB32_2(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB32_2(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
 		int col_start = span_left < clip_left ? clip_left - span_left : 0;
@@ -588,10 +588,10 @@
 			dest_scan += 2;
 		}
 	}
-	void CFX_SkiaRenderer::CompositeSpanRGB32_3(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB32_3(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
 		ori_scan  = (uint8_t*)m_pOriDevice->GetScanline(span_top) + (span_left<<2);
@@ -627,10 +627,10 @@
 			dest_scan += 2;
 		}
 	}
-	void CFX_SkiaRenderer::CompositeSpanRGB32_6(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB32_6(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
 		clip_scan = (uint8_t*)m_pClipMask->GetScanline(span_top-clip_top) - clip_left + span_left;
@@ -705,10 +705,10 @@
 		}			
 #endif
 	}
-	void CFX_SkiaRenderer::CompositeSpanRGB32_7(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB32_7(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
@@ -784,10 +784,10 @@
 #endif
 	}
 	/*-----------------------------------------------------------------------------------------------------*/
-	void CFX_SkiaRenderer::CompositeSpanRGB24_2(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB24_2(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left + (span_left<<1);
 		int col_start = span_left < clip_left ? clip_left - span_left : 0;
@@ -818,10 +818,10 @@
 			dest_scan ++;
 		}
 	}
-	void CFX_SkiaRenderer::CompositeSpanRGB24_3(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB24_3(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left + (span_left<<1);
@@ -859,10 +859,10 @@
 			dest_scan ++;
 		}
 	}
-	void CFX_SkiaRenderer::CompositeSpanRGB24_6(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB24_6(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left+(span_left<<1);
 		clip_scan = (uint8_t*)m_pClipMask->GetScanline(span_top-clip_top) - clip_left + span_left;
@@ -939,10 +939,10 @@
 		}
 #endif
 	}
-	void CFX_SkiaRenderer::CompositeSpanRGB24_7(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB24_7(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left+(span_left<<1);
@@ -1017,10 +1017,10 @@
 		}
 #endif
 	}
-	void CFX_SkiaRenderer::CompositeSpanRGB24_10(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB24_10(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left+(span_left<<1);
 		dest_extra_alpha_scan =  (uint8_t*)m_pDevice->m_pAlphaMask->GetScanline(span_top)+span_left;
@@ -1106,10 +1106,10 @@
 		}
 #endif
 	}
-	void CFX_SkiaRenderer::CompositeSpanRGB24_14(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanRGB24_14(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left+(span_left<<1);
 		dest_extra_alpha_scan =  (uint8_t*)m_pDevice->m_pAlphaMask->GetScanline(span_top)+span_left;
@@ -1211,10 +1211,10 @@
 	/*-----------------------------------------------------------------------------------------------------*/
 
 	// A general alpha merge function (with clipping mask). Cmyka/Cmyk device.
-	void CFX_SkiaRenderer::CompositeSpanCMYK(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan,int Bpp,
+	void CFX_SkiaRenderer::CompositeSpanCMYK(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
 			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, FX_LPBYTE clip_scan, 
-			FX_LPBYTE dest_extra_alpha_scan)
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_bRgbByteOrder);
 		// Cmyk(a)
@@ -1353,7 +1353,7 @@
 				if (pIccTransform) {
 					uint8_t gray;
 					color = bObjectCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-					pIccModule->TranslateScanline(pIccTransform, &gray, (FX_LPCBYTE)&color, 1);
+					pIccModule->TranslateScanline(pIccTransform, &gray, (const uint8_t*)&color, 1);
 					m_Gray = gray;
 				} else {
 					if (bObjectCMYK) {
@@ -1374,31 +1374,31 @@
 				if (bObjectCMYK) { 
 					m_Color = FXCMYK_TODIB(color);
 					if (pIccTransform)
-						pIccModule->TranslateScanline(pIccTransform, (FX_LPBYTE)&m_Color, (FX_LPCBYTE)&m_Color, 1);
+						pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&m_Color, 1);
 				} else { // Object RGB
 					if (!pIccTransform)
 						return FALSE;
 					color = FXARGB_TODIB(color);
-					pIccModule->TranslateScanline(pIccTransform, (FX_LPBYTE)&m_Color, (FX_LPCBYTE)&color, 1);
+					pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&color, 1);
 				}
-				m_Red	= ((FX_LPBYTE)&m_Color)[0];
-				m_Green = ((FX_LPBYTE)&m_Color)[1];
-				m_Blue	= ((FX_LPBYTE)&m_Color)[2];
-				m_Gray	= ((FX_LPBYTE)&m_Color)[3];
+				m_Red	= ((uint8_t*)&m_Color)[0];
+				m_Green = ((uint8_t*)&m_Color)[1];
+				m_Blue	= ((uint8_t*)&m_Color)[2];
+				m_Gray	= ((uint8_t*)&m_Color)[3];
 				return TRUE;
 			} else { 
 				if (pIccTransform) {
 					color = bObjectCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-					pIccModule->TranslateScanline(pIccTransform, (FX_LPBYTE)&m_Color, (FX_LPCBYTE)&color, 1);
-					((FX_LPBYTE)&m_Color)[3] = m_Alpha;
-					m_Red = ((FX_LPBYTE)&m_Color)[2];
-					m_Green = ((FX_LPBYTE)&m_Color)[1];
-					m_Blue = ((FX_LPBYTE)&m_Color)[0];
+					pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&color, 1);
+					((uint8_t*)&m_Color)[3] = m_Alpha;
+					m_Red = ((uint8_t*)&m_Color)[2];
+					m_Green = ((uint8_t*)&m_Color)[1];
+					m_Blue = ((uint8_t*)&m_Color)[0];
 					// Need Johnson to improvement it.
 					if (m_bRgbByteOrder) {
 						// swap
-						m_Red = ((FX_LPBYTE)&m_Color)[0];
-						m_Blue = ((FX_LPBYTE)&m_Color)[2];
+						m_Red = ((uint8_t*)&m_Color)[0];
+						m_Blue = ((uint8_t*)&m_Color)[2];
 						m_Color = FXARGB_TODIB(m_Color);
 						m_Color = FXARGB_TOBGRORDERDIB(m_Color);
 					}
@@ -1509,8 +1509,8 @@
 		if (dst_y < 0 || dst_y >=  m_pDevice->GetHeight())
 			return;
 		
-		FX_LPBYTE dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * dst_y;
-		FX_LPBYTE dest_pos = dest_scan;
+		uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * dst_y;
+		uint8_t* dest_pos = dest_scan;
 		while (1)
 		{
 			if (x >= m_dstWidth) 
@@ -1546,7 +1546,7 @@
 			return;
 		if (x >= m_dstWidth) 
 			return;
-		FX_LPBYTE dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * dst_y;
+		uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * dst_y;
 		int col_start = x < m_Left ? 0 : x - m_Left;
 		int col_end = x + width;
 		col_end = col_end < m_dstWidth ? col_end - m_Left: m_pDevice->GetWidth();

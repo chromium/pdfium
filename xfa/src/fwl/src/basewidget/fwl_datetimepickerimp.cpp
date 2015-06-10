@@ -738,9 +738,9 @@ void CFWL_DateTimePickerImp::DrawDropDownButton(CFX_Graphics *pGraphics, IFWL_Th
 void CFWL_DateTimePickerImp::FormatDateString(int32_t iYear, int32_t iMonth, int32_t iDay, CFX_WideString &wsText)
 {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_ShortDateFormat) == FWL_STYLEEXT_DTP_ShortDateFormat) {
-        wsText.Format(FX_LPCWSTR(L"%d-%d-%d"), iYear, iMonth, iDay);
+        wsText.Format(L"%d-%d-%d", iYear, iMonth, iDay);
     } else if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_LongDateFormat) == FWL_STYLEEXT_DTP_LongDateFormat) {
-        wsText.Format(FX_LPCWSTR(L"%d Year %d Month %d Day"), iYear, iMonth, iDay);
+        wsText.Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
     } else if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_TimeFormat) == FWL_STYLEEXT_DTP_TimeFormat) {
     }
 }

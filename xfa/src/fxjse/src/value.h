@@ -144,7 +144,7 @@ public:
         v8::String::Utf8Value hStringVal(hString);
         szStrOutput = *hStringVal;
     }
-    FX_LPVOID				ToObject(CFXJSE_Class*   lpClass) const;
+    void*				ToObject(CFXJSE_Class*   lpClass) const;
 public:
     V8_INLINE void SetUndefined()
     {
@@ -191,7 +191,7 @@ public:
         v8::Local<v8::Value> hValue = v8::Object::New(m_pIsolate);
         m_hValue.Reset(m_pIsolate, hValue);
     }
-    void SetHostObject(FX_LPVOID lpObject, CFXJSE_Class* lpClass);
+    void SetHostObject(void* lpObject, CFXJSE_Class* lpClass);
     void SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues);
     void SetDate(FXJSE_DOUBLE dDouble);
 public:

@@ -37,7 +37,7 @@ enum FWL_GRIDSIZE {
     FWL_GRIDSIZE_MaxHeight,
 };
 typedef struct _FWL_HGRIDCOLROW {
-    FX_LPVOID pData;
+    void* pData;
 } * FWL_HGRIDCOLROW;
 class IFWL_Grid : public IFWL_Content
 {

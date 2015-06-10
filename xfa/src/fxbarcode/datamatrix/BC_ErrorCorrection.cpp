@@ -106,14 +106,14 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords, CBC_S
 {
     if (codewords.GetLength() != symbolInfo->m_dataCapacity) {
         e = BCExceptionIllegalArgument;
-        return (FX_LPWSTR)"";
+        return (FX_WCHAR*)"";
     }
     CFX_WideString sb;
     sb += codewords;
     int32_t blockCount = symbolInfo->getInterleavedBlockCount();
     if (blockCount == 1) {
         CFX_WideString ecc = createECCBlock(codewords, symbolInfo->m_errorCodewords, e);
-        BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
+        BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
         sb += ecc;
     } else {
         CFX_Int32Array dataSizes;
@@ -136,7 +136,7 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords, CBC_S
                 temp += (FX_WCHAR)codewords.GetAt(d);
             }
             CFX_WideString ecc = createECCBlock(temp, errorSizes[block], e);
-            BC_EXCEPTION_CHECK_ReturnValue(e, (FX_LPWSTR)"");
+            BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR*)"");
             int32_t pos = 0;
             for (int32_t l = block; l < errorSizes[block] * blockCount; l += blockCount) {
                 sb.SetAt(symbolInfo->m_dataCapacity + l, ecc.GetAt(pos++));
@@ -160,7 +160,7 @@ CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords, int
     }
     if (table < 0) {
         e = BCExceptionIllegalArgument;
-        return (FX_LPWSTR)"";
+        return (FX_WCHAR*)"";
     }
     FX_WORD* ecc = FX_Alloc(FX_WORD, numECWords);
     FXSYS_memset32(ecc, 0, numECWords * sizeof(FX_WORD));

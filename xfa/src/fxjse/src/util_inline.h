@@ -10,13 +10,13 @@ static V8_INLINE v8::Local<v8::Object>	FXJSE_GetGlobalObjectFromContext(const v8
 {
     return hContext->Global()->GetPrototype().As<v8::Object>();
 }
-static V8_INLINE void					FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject, FX_LPVOID lpNewBinding)
+static V8_INLINE void					FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject, void* lpNewBinding)
 {
     ASSERT(!hObject.IsEmpty());
     ASSERT(hObject->InternalFieldCount() > 0);
     hObject->SetAlignedPointerInInternalField(0, lpNewBinding);
 }
-static V8_INLINE FX_LPVOID				FXJSE_RetrieveObjectBinding(const v8::Local<v8::Object>& hJSObject, CFXJSE_Class* lpClass = NULL)
+static V8_INLINE void*				FXJSE_RetrieveObjectBinding(const v8::Local<v8::Object>& hJSObject, CFXJSE_Class* lpClass = NULL)
 {
     ASSERT(!hJSObject.IsEmpty());
     if(!hJSObject->IsObject()) {

@@ -143,7 +143,7 @@ FX_BOOL CFWL_NoteDriver::SendNote(CFWL_Note *pNote)
         m_sendEventCalled ++;
         FX_POSITION pos = m_eventTargets.GetStartPosition();
         while (pos) {
-            FX_LPVOID key = NULL;
+            void* key = NULL;
             CFWL_EventTarget *pEventTarget;
             m_eventTargets.GetNextAssoc(pos, key, (void*&)pEventTarget);
             if (pEventTarget && !pEventTarget->IsInvalid()) {
@@ -169,15 +169,15 @@ FX_BOOL CFWL_NoteDriver::PostMessage(CFWL_Message *pMessage)
 #define FWL_NoteDriver_EventKey 1100
 FWL_ERR CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget *pListener, IFWL_Widget *pEventSource , FX_DWORD dwFilter )
 {
-    FX_DWORD dwkey = (FX_DWORD)(uintptr_t)pListener->GetPrivateData((FX_LPVOID)(uintptr_t)FWL_NoteDriver_EventKey);
+    FX_DWORD dwkey = (FX_DWORD)(uintptr_t)pListener->GetPrivateData((void*)(uintptr_t)FWL_NoteDriver_EventKey);
     if (dwkey == 0) {
-        FX_LPVOID random = FX_Random_MT_Start(0);
+        void* random = FX_Random_MT_Start(0);
         dwkey =	rand();
         FX_Random_MT_Close(random);
-        pListener->SetPrivateData((FX_LPVOID)(uintptr_t)FWL_NoteDriver_EventKey, (FX_LPVOID)(uintptr_t)dwkey, NULL);
+        pListener->SetPrivateData((void*)(uintptr_t)FWL_NoteDriver_EventKey, (void*)(uintptr_t)dwkey, NULL);
     }
     CFWL_EventTarget *value = NULL;
-    if (!m_eventTargets.Lookup((void*)(uintptr_t)dwkey, (FX_LPVOID&)value)) {
+    if (!m_eventTargets.Lookup((void*)(uintptr_t)dwkey, (void*&)value)) {
         value = FX_NEW CFWL_EventTarget(this, pListener);
         m_eventTargets.SetAt((void*)(uintptr_t)dwkey, value);
     }
@@ -186,12 +186,12 @@ FWL_ERR CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget *pListener, IFWL_Widget
 }
 FWL_ERR CFWL_NoteDriver::UnregisterEventTarget(IFWL_Widget *pListener)
 {
-    FX_DWORD dwkey = (FX_DWORD)(uintptr_t)pListener->GetPrivateData((FX_LPVOID)(uintptr_t)FWL_NoteDriver_EventKey);
+    FX_DWORD dwkey = (FX_DWORD)(uintptr_t)pListener->GetPrivateData((void*)(uintptr_t)FWL_NoteDriver_EventKey);
     if (dwkey == 0) {
         return FWL_ERR_Indefinite;
     }
     CFWL_EventTarget *value = NULL;
-    if (m_eventTargets.Lookup((void*)(uintptr_t)dwkey, (FX_LPVOID&)value)) {
+    if (m_eventTargets.Lookup((void*)(uintptr_t)dwkey, (void*&)value)) {
         value->FlagInvalid();
     }
     return FWL_ERR_Succeeded;
@@ -442,7 +442,7 @@ int32_t CFWL_NoteDriver::CountLoop()
 {
     return m_noteLoopQueue.GetSize();
 }
-void CFWL_NoteDriver::SetHook(FWLMessageHookCallback callback, FX_LPVOID info)
+void CFWL_NoteDriver::SetHook(FWLMessageHookCallback callback, void* info)
 {
     m_hook = callback;
     m_hookInfo = info;
@@ -799,7 +799,7 @@ void CFWL_NoteDriver::ClearInvalidEventTargets(FX_BOOL bRemoveAll)
 {
     FX_POSITION pos = m_eventTargets.GetStartPosition();
     while (pos) {
-        FX_LPVOID key = NULL;
+        void* key = NULL;
         CFWL_EventTarget *pEventTarget = NULL;
         m_eventTargets.GetNextAssoc(pos, key, (void*&)pEventTarget);
         if (pEventTarget && (bRemoveAll || pEventTarget->IsInvalid())) {
@@ -1119,7 +1119,7 @@ IFWL_Widget* FWL_GetCurrentThreadModalWidget(IFWL_NoteThread *pNoteThread)
     _FWL_RETURN_VALUE_IF_FAIL(widget, NULL);
     return widget->GetInterface();
 }
-FWL_ERR FWL_SetHook(IFWL_NoteDriver *driver, FWLMessageHookCallback callback, FX_LPVOID info)
+FWL_ERR FWL_SetHook(IFWL_NoteDriver *driver, FWLMessageHookCallback callback, void* info)
 {
     CFWL_NoteDriver *noteDriver = (CFWL_NoteDriver*)driver;
     noteDriver->SetHook(callback, info);

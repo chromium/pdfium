@@ -29,21 +29,21 @@ public:
 		return FALSE;
 	}
 
-	virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR family, FX_BOOL& bExact)  override
+	virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, FX_BOOL& bExact)  override
 	{
 		if (m_pInfo->MapFont)
 			return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family, family, &bExact);
 		return NULL;
 	}
 
-	virtual void*		GetFont(FX_LPCSTR family)  override
+	virtual void*		GetFont(const FX_CHAR* family)  override
 	{
 		if (m_pInfo->GetFont)
 			return m_pInfo->GetFont(m_pInfo, family);
 		return NULL;
 	}
 
-	virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, FX_LPBYTE buffer, FX_DWORD size)  override
+	virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size)  override
 	{
 		if (m_pInfo->GetFontData)
 			return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer, size);

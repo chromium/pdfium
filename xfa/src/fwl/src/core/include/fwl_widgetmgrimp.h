@@ -59,7 +59,7 @@ public:
     virtual IFWL_Widget*	GetWidget(IFWL_Widget *pWidget, FWL_WGTRELATION eRelation);
     virtual int32_t		GetWidgetIndex(IFWL_Widget *pWidget);
     virtual FX_BOOL			SetWidgetIndex(IFWL_Widget *pWidget, int32_t nIndex);
-    virtual FX_BOOL			IsWidget(FX_LPVOID pObj);
+    virtual FX_BOOL			IsWidget(void* pObj);
     virtual FWL_ERR			RepaintWidget(IFWL_Widget *pWidget, const CFX_RectF *pRect = NULL);
     virtual FX_DWORD		GetCapability()
     {

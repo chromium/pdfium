@@ -27,9 +27,9 @@ public:
         delete this;
     }
     virtual FX_BOOL				Export(IFX_FileWrite *pWrite);
-    virtual FX_BOOL				Export(IFX_FileWrite *pWrite, CXFA_Node *pNode, FX_DWORD dwFlag = 0, FX_LPCSTR pChecksum = NULL);
+    virtual FX_BOOL				Export(IFX_FileWrite *pWrite, CXFA_Node *pNode, FX_DWORD dwFlag = 0, const FX_CHAR* pChecksum = NULL);
 protected:
-    FX_BOOL						Export(IFX_Stream *pStream, CXFA_Node *pNode, FX_DWORD dwFlag, FX_LPCSTR pChecksum);
+    FX_BOOL						Export(IFX_Stream *pStream, CXFA_Node *pNode, FX_DWORD dwFlag, const FX_CHAR* pChecksum);
     CXFA_Document				*m_pDocument;
 };
 #endif

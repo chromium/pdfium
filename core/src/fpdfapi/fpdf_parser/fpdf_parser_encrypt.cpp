@@ -13,8 +13,8 @@ const uint8_t defpasscode[32] = {
     0x2e, 0x2e, 0x00, 0xb6, 0xd0, 0x68, 0x3e, 0x80,
     0x2f, 0x0c, 0xa9, 0xfe, 0x64, 0x53, 0x69, 0x7a
 };
-void CalcEncryptKey(CPDF_Dictionary* pEncrypt, FX_LPCBYTE password, FX_DWORD pass_size,
-                    FX_LPBYTE key, int keylen, FX_BOOL bIgnoreMeta, CPDF_Array* pIdArray)
+void CalcEncryptKey(CPDF_Dictionary* pEncrypt, const uint8_t* password, FX_DWORD pass_size,
+                    uint8_t* key, int keylen, FX_BOOL bIgnoreMeta, CPDF_Array* pIdArray)
 {
     int revision = pEncrypt->GetInteger(FX_BSTRC("R"));
     uint8_t passcode[32];
@@ -25,16 +25,16 @@ void CalcEncryptKey(CPDF_Dictionary* pEncrypt, FX_LPCBYTE password, FX_DWORD pas
     CRYPT_MD5Start(md5);
     CRYPT_MD5Update(md5, passcode, 32);
     CFX_ByteString okey = pEncrypt->GetString(FX_BSTRC("O"));
-    CRYPT_MD5Update(md5, (FX_LPBYTE)okey.c_str(), okey.GetLength());
+    CRYPT_MD5Update(md5, (uint8_t*)okey.c_str(), okey.GetLength());
     FX_DWORD perm = pEncrypt->GetInteger(FX_BSTRC("P"));
-    CRYPT_MD5Update(md5, (FX_LPBYTE)&perm, 4);
+    CRYPT_MD5Update(md5, (uint8_t*)&perm, 4);
     if (pIdArray) {
         CFX_ByteString id = pIdArray->GetString(0);
-        CRYPT_MD5Update(md5, (FX_LPBYTE)id.c_str(), id.GetLength());
+        CRYPT_MD5Update(md5, (uint8_t*)id.c_str(), id.GetLength());
     }
     if (!bIgnoreMeta && revision >= 3 && !pEncrypt->GetInteger(FX_BSTRC("EncryptMetadata"), 1)) {
         FX_DWORD tag = (FX_DWORD) - 1;
-        CRYPT_MD5Update(md5, (FX_LPBYTE)&tag, 4);
+        CRYPT_MD5Update(md5, (uint8_t*)&tag, 4);
     }
     uint8_t digest[16];
     CRYPT_MD5Finish(md5, digest);
@@ -189,7 +189,7 @@ FX_BOOL CPDF_StandardSecurityHandler::LoadDict(CPDF_Dictionary* pEncryptDict, FX
     return TRUE;
     return TRUE;
 }
-FX_BOOL CPDF_StandardSecurityHandler::GetCryptInfo(int& cipher, FX_LPCBYTE& buffer, int& keylen)
+FX_BOOL CPDF_StandardSecurityHandler::GetCryptInfo(int& cipher, const uint8_t*& buffer, int& keylen)
 {
     cipher = m_Cipher;
     buffer = m_EncryptKey;
@@ -203,7 +203,7 @@ FX_BOOL CPDF_StandardSecurityHandler::GetCryptInfo(int& cipher, FX_LPCBYTE& buff
                          | ( (uint64_t) (b)[(i) + 2] <<  8 )					\
                          | ( (uint64_t) (b)[(i) + 3]       ));					\
     }
-int BigOrder64BitsMod3(FX_LPBYTE data)
+int BigOrder64BitsMod3(uint8_t* data)
 {
     uint64_t ret = 0;
     for (int i = 0; i < 4; ++i) {
@@ -215,7 +215,7 @@ int BigOrder64BitsMod3(FX_LPBYTE data)
     }
     return (int)ret;
 }
-void Revision6_Hash(FX_LPCBYTE password, FX_DWORD size, FX_LPCBYTE salt, FX_LPCBYTE vector, FX_LPBYTE hash)
+void Revision6_Hash(const uint8_t* password, FX_DWORD size, const uint8_t* salt, const uint8_t* vector, uint8_t* hash)
 {
     int iBlockSize = 32;
     uint8_t sha[128];
@@ -228,14 +228,14 @@ void Revision6_Hash(FX_LPCBYTE password, FX_DWORD size, FX_LPCBYTE salt, FX_LPCB
     uint8_t digest[32];
     CRYPT_SHA256Finish(sha, digest);
     CFX_ByteTextBuf buf;
-    FX_LPBYTE input = digest;
-    FX_LPBYTE key = input;
-    FX_LPBYTE iv = input + 16;
-    FX_LPBYTE E = buf.GetBuffer();
+    uint8_t* input = digest;
+    uint8_t* key = input;
+    uint8_t* iv = input + 16;
+    uint8_t* E = buf.GetBuffer();
     int iBufLen = buf.GetLength();
     CFX_ByteTextBuf interDigest;
     int i = 0;
-    FX_LPBYTE aes = FX_Alloc(uint8_t, 2048);
+    uint8_t* aes = FX_Alloc(uint8_t, 2048);
     while (i < 64 || i < E[iBufLen - 1]  + 32) {
         int iRoundSize = size + iBlockSize;
         if (vector) {
@@ -288,8 +288,8 @@ void Revision6_Hash(FX_LPCBYTE password, FX_DWORD size, FX_LPCBYTE salt, FX_LPCB
         FXSYS_memcpy32(hash, input, 32);
     }
 }
-FX_BOOL CPDF_StandardSecurityHandler::AES256_CheckPassword(FX_LPCBYTE password, FX_DWORD size,
-        FX_BOOL bOwner, FX_LPBYTE key)
+FX_BOOL CPDF_StandardSecurityHandler::AES256_CheckPassword(const uint8_t* password, FX_DWORD size,
+        FX_BOOL bOwner, uint8_t* key)
 {
     CFX_ByteString okey = m_pEncryptDict ? m_pEncryptDict->GetString(FX_BSTRC("O")) : CFX_ByteString();
     if (okey.GetLength() < 48) {
@@ -299,11 +299,11 @@ FX_BOOL CPDF_StandardSecurityHandler::AES256_CheckPassword(FX_LPCBYTE password, 
     if (ukey.GetLength() < 48) {
         return FALSE;
     }
-    FX_LPCBYTE pkey = bOwner ? (FX_LPCBYTE)okey : (FX_LPCBYTE)ukey;
+    const uint8_t* pkey = bOwner ? (const uint8_t*)okey : (const uint8_t*)ukey;
     uint8_t sha[128];
     uint8_t digest[32];
     if (m_Revision >= 6) {
-        Revision6_Hash(password, size, (FX_LPCBYTE)pkey + 32, (bOwner ? (FX_LPCBYTE)ukey : NULL), digest);
+        Revision6_Hash(password, size, (const uint8_t*)pkey + 32, (bOwner ? (const uint8_t*)ukey : NULL), digest);
     } else {
         CRYPT_SHA256Start(sha);
         CRYPT_SHA256Update(sha, password, size);
@@ -320,7 +320,7 @@ FX_BOOL CPDF_StandardSecurityHandler::AES256_CheckPassword(FX_LPCBYTE password, 
         return TRUE;
     }
     if (m_Revision >= 6) {
-        Revision6_Hash(password, size, (FX_LPCBYTE)pkey + 40, (bOwner ? (FX_LPCBYTE)ukey : NULL), digest);
+        Revision6_Hash(password, size, (const uint8_t*)pkey + 40, (bOwner ? (const uint8_t*)ukey : NULL), digest);
     } else {
         CRYPT_SHA256Start(sha);
         CRYPT_SHA256Update(sha, password, size);
@@ -352,7 +352,7 @@ FX_BOOL CPDF_StandardSecurityHandler::AES256_CheckPassword(FX_LPCBYTE password, 
     if (copy_len > (FX_DWORD)perms.GetLength()) {
         copy_len = perms.GetLength();
     }
-    FXSYS_memcpy32(perms_buf, (FX_LPCBYTE)perms, copy_len);
+    FXSYS_memcpy32(perms_buf, (const uint8_t*)perms, copy_len);
     uint8_t buf[16];
     CRYPT_AESDecrypt(aes, buf, perms_buf, 16);
     FX_Free(aes);
@@ -367,11 +367,11 @@ FX_BOOL CPDF_StandardSecurityHandler::AES256_CheckPassword(FX_LPCBYTE password, 
     }
     return TRUE;
 }
-int CPDF_StandardSecurityHandler::CheckPassword(FX_LPCBYTE password, FX_DWORD pass_size, FX_BOOL bOwner, FX_LPBYTE key)
+int CPDF_StandardSecurityHandler::CheckPassword(const uint8_t* password, FX_DWORD pass_size, FX_BOOL bOwner, uint8_t* key)
 {
     return CheckPassword(password, pass_size, bOwner, key, m_KeyLen);
 }
-int CPDF_StandardSecurityHandler::CheckPassword(FX_LPCBYTE password, FX_DWORD size, FX_BOOL bOwner, FX_LPBYTE key, int32_t key_len)
+int CPDF_StandardSecurityHandler::CheckPassword(const uint8_t* password, FX_DWORD size, FX_BOOL bOwner, uint8_t* key, int32_t key_len)
 {
     if (m_Revision >= 5) {
         return AES256_CheckPassword(password, size, bOwner, key);
@@ -385,8 +385,8 @@ int CPDF_StandardSecurityHandler::CheckPassword(FX_LPCBYTE password, FX_DWORD si
     }
     return CheckUserPassword(password, size, FALSE, key, key_len) || CheckUserPassword(password, size, TRUE, key, key_len);
 }
-FX_BOOL CPDF_StandardSecurityHandler::CheckUserPassword(FX_LPCBYTE password, FX_DWORD pass_size,
-        FX_BOOL bIgnoreEncryptMeta, FX_LPBYTE key, int32_t key_len)
+FX_BOOL CPDF_StandardSecurityHandler::CheckUserPassword(const uint8_t* password, FX_DWORD pass_size,
+        FX_BOOL bIgnoreEncryptMeta, uint8_t* key, int32_t key_len)
 {
     CalcEncryptKey(m_pEncryptDict, password, pass_size, key, key_len, bIgnoreEncryptMeta,
                    m_pParser->GetIDArray());
@@ -419,21 +419,21 @@ FX_BOOL CPDF_StandardSecurityHandler::CheckUserPassword(FX_LPCBYTE password, FX_
         CPDF_Array* pIdArray = m_pParser->GetIDArray();
         if (pIdArray) {
             CFX_ByteString id = pIdArray->GetString(0);
-            CRYPT_MD5Update(md5, (FX_LPBYTE)id.c_str(), id.GetLength());
+            CRYPT_MD5Update(md5, (uint8_t*)id.c_str(), id.GetLength());
         }
         CRYPT_MD5Finish(md5, ukeybuf);
         return FXSYS_memcmp32(test, ukeybuf, 16) == 0;
     }
-    if (FXSYS_memcmp32((FX_LPVOID)ukey.c_str(), ukeybuf, 16) == 0) {
+    if (FXSYS_memcmp32((void*)ukey.c_str(), ukeybuf, 16) == 0) {
         return TRUE;
     }
     return FALSE;
 }
-CFX_ByteString CPDF_StandardSecurityHandler::GetUserPassword(FX_LPCBYTE owner_pass, FX_DWORD pass_size)
+CFX_ByteString CPDF_StandardSecurityHandler::GetUserPassword(const uint8_t* owner_pass, FX_DWORD pass_size)
 {
     return GetUserPassword(owner_pass, pass_size, m_KeyLen);
 }
-CFX_ByteString CPDF_StandardSecurityHandler::GetUserPassword(FX_LPCBYTE owner_pass, FX_DWORD pass_size, int32_t key_len)
+CFX_ByteString CPDF_StandardSecurityHandler::GetUserPassword(const uint8_t* owner_pass, FX_DWORD pass_size, int32_t key_len)
 {
     CFX_ByteString okey = m_pEncryptDict->GetString(FX_BSTRC("O"));
     uint8_t passcode[32];
@@ -480,8 +480,8 @@ CFX_ByteString CPDF_StandardSecurityHandler::GetUserPassword(FX_LPCBYTE owner_pa
     }
     return CFX_ByteString(okeybuf, len);
 }
-FX_BOOL CPDF_StandardSecurityHandler::CheckOwnerPassword(FX_LPCBYTE password, FX_DWORD pass_size,
-        FX_LPBYTE key, int32_t key_len)
+FX_BOOL CPDF_StandardSecurityHandler::CheckOwnerPassword(const uint8_t* password, FX_DWORD pass_size,
+        uint8_t* key, int32_t key_len)
 {
     CFX_ByteString user_pass = GetUserPassword(password, pass_size, key_len);
     if (CheckUserPassword(user_pass, user_pass.GetLength(), FALSE, key, key_len)) {
@@ -498,8 +498,8 @@ CPDF_SecurityHandler* FPDF_CreateStandardSecurityHandler()
     return new CPDF_StandardSecurityHandler;
 }
 void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_Array* pIdArray,
-        FX_LPCBYTE user_pass, FX_DWORD user_size,
-        FX_LPCBYTE owner_pass, FX_DWORD owner_size, FX_BOOL bDefault, FX_DWORD type)
+        const uint8_t* user_pass, FX_DWORD user_size,
+        const uint8_t* owner_pass, FX_DWORD owner_size, FX_BOOL bDefault, FX_DWORD type)
 {
     int cipher = 0, key_len = 0;
     if (!LoadDict(pEncryptDict, type, cipher, key_len)) {
@@ -554,7 +554,7 @@ void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_
         }
         pEncryptDict->SetAtString(FX_BSTRC("O"), CFX_ByteString(passcode, 32));
     }
-    CalcEncryptKey(m_pEncryptDict, (FX_LPBYTE)user_pass, user_size, m_EncryptKey, key_len, FALSE, pIdArray);
+    CalcEncryptKey(m_pEncryptDict, (uint8_t*)user_pass, user_size, m_EncryptKey, key_len, FALSE, pIdArray);
     if (m_Revision < 3) {
         uint8_t tempbuf[32];
         FXSYS_memcpy32(tempbuf, defpasscode, 32);
@@ -566,7 +566,7 @@ void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_
         CRYPT_MD5Update(md5, defpasscode, 32);
         if (pIdArray) {
             CFX_ByteString id = pIdArray->GetString(0);
-            CRYPT_MD5Update(md5, (FX_LPBYTE)id.c_str(), id.GetLength());
+            CRYPT_MD5Update(md5, (uint8_t*)id.c_str(), id.GetLength());
         }
         uint8_t digest[32];
         CRYPT_MD5Finish(md5, digest);
@@ -583,16 +583,16 @@ void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_
     }
 }
 void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_Array* pIdArray,
-        FX_LPCBYTE user_pass, FX_DWORD user_size,
-        FX_LPCBYTE owner_pass, FX_DWORD owner_size, FX_DWORD type)
+        const uint8_t* user_pass, FX_DWORD user_size,
+        const uint8_t* owner_pass, FX_DWORD owner_size, FX_DWORD type)
 {
     OnCreate(pEncryptDict, pIdArray, user_pass, user_size, owner_pass, owner_size, TRUE, type);
 }
-void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_Array* pIdArray, FX_LPCBYTE user_pass, FX_DWORD user_size, FX_DWORD type)
+void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict, CPDF_Array* pIdArray, const uint8_t* user_pass, FX_DWORD user_size, FX_DWORD type)
 {
     OnCreate(pEncryptDict, pIdArray, user_pass, user_size, NULL, 0, FALSE, type);
 }
-void CPDF_StandardSecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict, FX_LPCBYTE password, FX_DWORD size, FX_BOOL bOwner, FX_LPCBYTE key)
+void CPDF_StandardSecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict, const uint8_t* password, FX_DWORD size, FX_BOOL bOwner, const uint8_t* key)
 {
     uint8_t sha[128];
     CRYPT_SHA1Start(sha);
@@ -603,7 +603,7 @@ void CPDF_StandardSecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptD
     CFX_ByteString ukey = pEncryptDict->GetString(FX_BSTRC("U"));
     uint8_t digest1[48];
     if (m_Revision >= 6) {
-        Revision6_Hash(password, size, digest, (bOwner ? (FX_LPCBYTE)ukey : NULL), digest1);
+        Revision6_Hash(password, size, digest, (bOwner ? (const uint8_t*)ukey : NULL), digest1);
     } else {
         CRYPT_SHA256Start(sha);
         CRYPT_SHA256Update(sha, password, size);
@@ -616,7 +616,7 @@ void CPDF_StandardSecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptD
     FXSYS_memcpy32(digest1 + 32, digest, 16);
     pEncryptDict->SetAtString(bOwner ? FX_BSTRC("O") : FX_BSTRC("U"), CFX_ByteString(digest1, 48));
     if (m_Revision >= 6) {
-        Revision6_Hash(password, size, digest + 8, (bOwner ? (FX_LPCBYTE)ukey : NULL), digest1);
+        Revision6_Hash(password, size, digest + 8, (bOwner ? (const uint8_t*)ukey : NULL), digest1);
     } else {
         CRYPT_SHA256Start(sha);
         CRYPT_SHA256Update(sha, password, size);
@@ -636,7 +636,7 @@ void CPDF_StandardSecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptD
     pEncryptDict->SetAtString(bOwner ? FX_BSTRC("OE") : FX_BSTRC("UE"), CFX_ByteString(digest1, 32));
 }
 void CPDF_StandardSecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict, FX_DWORD permissions,
-        FX_BOOL bEncryptMetadata, FX_LPCBYTE key)
+        FX_BOOL bEncryptMetadata, const uint8_t* key)
 {
     uint8_t buf[16];
     buf[0] = (uint8_t)permissions;
@@ -660,8 +660,8 @@ void CPDF_StandardSecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict
     FX_Free(aes);
     pEncryptDict->SetAtString(FX_BSTRC("Perms"), CFX_ByteString(buf1, 16));
 }
-void CPDF_StandardCryptoHandler::CryptBlock(FX_BOOL bEncrypt, FX_DWORD objnum, FX_DWORD gennum, FX_LPCBYTE src_buf, FX_DWORD src_size,
-        FX_LPBYTE dest_buf, FX_DWORD& dest_size)
+void CPDF_StandardCryptoHandler::CryptBlock(FX_BOOL bEncrypt, FX_DWORD objnum, FX_DWORD gennum, const uint8_t* src_buf, FX_DWORD src_size,
+        uint8_t* dest_buf, FX_DWORD& dest_size)
 {
     if (m_Cipher == FXCIPHER_NONE) {
         FXSYS_memcpy32(dest_buf, src_buf, src_size);
@@ -724,7 +724,7 @@ typedef struct _AESCryptContext {
     uint8_t		m_Block[16];
     FX_DWORD	m_BlockOffset;
 } AESCryptContext;
-FX_LPVOID CPDF_StandardCryptoHandler::CryptStart(FX_DWORD objnum, FX_DWORD gennum, FX_BOOL bEncrypt)
+void* CPDF_StandardCryptoHandler::CryptStart(FX_DWORD objnum, FX_DWORD gennum, FX_BOOL bEncrypt)
 {
     if (m_Cipher == FXCIPHER_NONE) {
         return this;
@@ -772,7 +772,7 @@ FX_LPVOID CPDF_StandardCryptoHandler::CryptStart(FX_DWORD objnum, FX_DWORD gennu
     CRYPT_ArcFourSetup(pContext, realkey, realkeylen);
     return pContext;
 }
-FX_BOOL CPDF_StandardCryptoHandler::CryptStream(FX_LPVOID context, FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf, FX_BOOL bEncrypt)
+FX_BOOL CPDF_StandardCryptoHandler::CryptStream(void* context, const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf, FX_BOOL bEncrypt)
 {
     if (!context) {
         return FALSE;
@@ -825,7 +825,7 @@ FX_BOOL CPDF_StandardCryptoHandler::CryptStream(FX_LPVOID context, FX_LPCBYTE sr
     }
     return TRUE;
 }
-FX_BOOL CPDF_StandardCryptoHandler::CryptFinish(FX_LPVOID context, CFX_BinaryBuf& dest_buf, FX_BOOL bEncrypt)
+FX_BOOL CPDF_StandardCryptoHandler::CryptFinish(void* context, CFX_BinaryBuf& dest_buf, FX_BOOL bEncrypt)
 {
     if (!context) {
         return FALSE;
@@ -858,7 +858,7 @@ FX_BOOL CPDF_StandardCryptoHandler::CryptFinish(FX_LPVOID context, CFX_BinaryBuf
     FX_Free(pContext);
     return TRUE;
 }
-FX_LPVOID CPDF_StandardCryptoHandler::DecryptStart(FX_DWORD objnum, FX_DWORD gennum)
+void* CPDF_StandardCryptoHandler::DecryptStart(FX_DWORD objnum, FX_DWORD gennum)
 {
     return CryptStart(objnum, gennum, FALSE);
 }
@@ -868,7 +868,7 @@ FX_DWORD CPDF_StandardCryptoHandler::DecryptGetSize(FX_DWORD src_size)
 }
 FX_BOOL CPDF_StandardCryptoHandler::Init(CPDF_Dictionary* pEncryptDict, CPDF_SecurityHandler* pSecurityHandler)
 {
-    FX_LPCBYTE key;
+    const uint8_t* key;
     if (!pSecurityHandler->GetCryptInfo(m_Cipher, key, m_KeyLen)) {
         return FALSE;
     }
@@ -883,7 +883,7 @@ FX_BOOL CPDF_StandardCryptoHandler::Init(CPDF_Dictionary* pEncryptDict, CPDF_Sec
     }
     return TRUE;
 }
-FX_BOOL CPDF_StandardCryptoHandler::Init(int cipher, FX_LPCBYTE key, int keylen)
+FX_BOOL CPDF_StandardCryptoHandler::Init(int cipher, const uint8_t* key, int keylen)
 {
     if (cipher == FXCIPHER_AES) {
         switch(keylen) {
@@ -915,24 +915,24 @@ FX_BOOL CPDF_StandardCryptoHandler::Init(int cipher, FX_LPCBYTE key, int keylen)
     }
     return TRUE;
 }
-FX_BOOL CPDF_StandardCryptoHandler::DecryptStream(FX_LPVOID context, FX_LPCBYTE src_buf, FX_DWORD src_size,
+FX_BOOL CPDF_StandardCryptoHandler::DecryptStream(void* context, const uint8_t* src_buf, FX_DWORD src_size,
         CFX_BinaryBuf& dest_buf)
 {
     return CryptStream(context, src_buf, src_size, dest_buf, FALSE);
 }
-FX_BOOL CPDF_StandardCryptoHandler::DecryptFinish(FX_LPVOID context, CFX_BinaryBuf& dest_buf)
+FX_BOOL CPDF_StandardCryptoHandler::DecryptFinish(void* context, CFX_BinaryBuf& dest_buf)
 {
     return CryptFinish(context, dest_buf, FALSE);
 }
-FX_DWORD CPDF_StandardCryptoHandler::EncryptGetSize(FX_DWORD objnum, FX_DWORD version, FX_LPCBYTE src_buf, FX_DWORD src_size)
+FX_DWORD CPDF_StandardCryptoHandler::EncryptGetSize(FX_DWORD objnum, FX_DWORD version, const uint8_t* src_buf, FX_DWORD src_size)
 {
     if (m_Cipher == FXCIPHER_AES) {
         return src_size + 32;
     }
     return src_size;
 }
-FX_BOOL CPDF_StandardCryptoHandler::EncryptContent(FX_DWORD objnum, FX_DWORD gennum, FX_LPCBYTE src_buf, FX_DWORD src_size,
-        FX_LPBYTE dest_buf, FX_DWORD& dest_size)
+FX_BOOL CPDF_StandardCryptoHandler::EncryptContent(FX_DWORD objnum, FX_DWORD gennum, const uint8_t* src_buf, FX_DWORD src_size,
+        uint8_t* dest_buf, FX_DWORD& dest_size)
 {
     CryptBlock(TRUE, objnum, gennum, src_buf, src_size, dest_buf, dest_size);
     return TRUE;
@@ -940,8 +940,8 @@ FX_BOOL CPDF_StandardCryptoHandler::EncryptContent(FX_DWORD objnum, FX_DWORD gen
 void CPDF_CryptoHandler::Decrypt(FX_DWORD objnum, FX_DWORD gennum, CFX_ByteString& str)
 {
     CFX_BinaryBuf dest_buf;
-    FX_LPVOID context = DecryptStart(objnum, gennum);
-    DecryptStream(context, (FX_LPCBYTE)str, str.GetLength(), dest_buf);
+    void* context = DecryptStart(objnum, gennum);
+    DecryptStream(context, (const uint8_t*)str, str.GetLength(), dest_buf);
     DecryptFinish(context, dest_buf);
     str = dest_buf;
 }

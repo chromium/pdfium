@@ -118,11 +118,12 @@ void CXFA_TextParser::InitCSSData(IXFA_TextProvider *pTextProvider)
 }
 IFDE_CSSStyleSheet*	CXFA_TextParser::LoadDefaultSheetStyle()
 {
-    static const FX_LPCWSTR s_pStyle = L"html,body,ol,p,ul{display:block}"
-                                       L"li{display:list-item}"
-                                       L"ol,ul{padding-left:33px}ol{list-style-type:decimal}ol,ul{margin-top:0;margin-bottom:0}ul,ol{margin:1.12em 0}"
-                                       L"a{color:#0000ff;text-decoration:underline}b{font-weight:bolder}i{font-style:italic}"
-                                       L"sup{vertical-align:+15em;font-size:.66em}sub{vertical-align:-15em;font-size:.66em}";
+    static const FX_WCHAR s_pStyle[] =
+            L"html,body,ol,p,ul{display:block}"
+            L"li{display:list-item}"
+            L"ol,ul{padding-left:33px}ol{list-style-type:decimal}ol,ul{margin-top:0;margin-bottom:0}ul,ol{margin:1.12em 0}"
+            L"a{color:#0000ff;text-decoration:underline}b{font-weight:bolder}i{font-style:italic}"
+            L"sup{vertical-align:+15em;font-size:.66em}sub{vertical-align:-15em;font-size:.66em}";
     return IFDE_CSSStyleSheet::LoadFromBuffer(CFX_WideString(), s_pStyle, FXSYS_wcslen(s_pStyle), FX_CODEPAGE_UTF8);
 }
 IFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(IXFA_TextProvider *pTextProvider)
@@ -573,7 +574,7 @@ FX_BOOL CXFA_TextParser::GetTabstops(IFDE_CSSComputedStyle *pStyle, CXFA_TextTab
         return FALSE;
     }
     int32_t iLength = wsValue.GetLength();
-    FX_LPCWSTR pTabStops = wsValue;
+    const FX_WCHAR* pTabStops = wsValue;
     int32_t iCur = 0;
     int32_t iLast = 0;
     CFX_WideString wsAlign;
@@ -1408,7 +1409,7 @@ FX_BOOL	 CXFA_TextLayout::LoadRichText(IFDE_XMLNode *pXMLNode, const CFX_SizeF &
                 } else if (wsName == FX_WSTRC(L"li")) {
                     bCurLi = TRUE;
                     if (bIsOl) {
-                        wsText.Format(FX_LPCWSTR(L"%d.  "), iLiCount);
+                        wsText.Format(L"%d.  ", iLiCount);
                     } else {
                         wsText = 0x00B7 + FX_WSTRC(L"  ");
                     }
@@ -1571,7 +1572,7 @@ void CXFA_TextLayout::ProcessText(CFX_WideString &wsText)
     if (iLen == 0) {
         return;
     }
-    FX_LPWSTR psz = wsText.GetBuffer(iLen);
+    FX_WCHAR* psz = wsText.GetBuffer(iLen);
     int32_t iTrimLeft = 0;
     FX_WCHAR wch = 0, wPrev = 0;
     for (int32_t i = 0; i < iLen; i++) {
@@ -1671,7 +1672,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus, FX_FLOAT &fLinePos, FX_B
             }
             FX_FLOAT fVerScale = pPiece->m_iVerticalScale / 100.0f;
             XFA_LPTEXTPIECE pTP = (XFA_LPTEXTPIECE)m_pAllocator->Alloc(sizeof(XFA_TEXTPIECE));
-            pTP->pszText = (FX_LPWSTR)m_pAllocator->Alloc(pPiece->m_iChars * sizeof(FX_WCHAR));
+            pTP->pszText = (FX_WCHAR*)m_pAllocator->Alloc(pPiece->m_iChars * sizeof(FX_WCHAR));
             pTP->pWidths = (int32_t*)m_pAllocator->Alloc(pPiece->m_iChars * sizeof(int32_t));
             pTP->iChars = pPiece->m_iChars;
             pPiece->GetString(pTP->pszText);

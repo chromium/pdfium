@@ -130,7 +130,7 @@ FX_BOOL	CFWL_MonthCalendarTP::DrawText(CFWL_ThemeText *pParams)
     }
     return CFWL_WidgetTP::DrawText(pParams);
 }
-FX_LPVOID CFWL_MonthCalendarTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
+void* CFWL_MonthCalendarTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
 {
     FX_BOOL bDefPro = FALSE;
     FX_BOOL bDwordVal = FALSE;

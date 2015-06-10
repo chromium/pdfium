@@ -28,7 +28,7 @@ CFX_GdiFontCache::~CFX_GdiFontCache()
     }
     m_GlyphMap.RemoveAll();
 }
-void CFX_GdiFontCache::SetCachedGlyphOutline(FX_DWORD dwGlyph, const GLYPHMETRICS &gm, FX_LPBYTE pOutline)
+void CFX_GdiFontCache::SetCachedGlyphOutline(FX_DWORD dwGlyph, const GLYPHMETRICS &gm, uint8_t* pOutline)
 {
     FXSYS_assert(pOutline != NULL);
     FX_LPGDIGOCACHE pGlyph = (FX_LPGDIGOCACHE)FDE_Alloc(sizeof(FX_GDIGOCACHE));
@@ -44,7 +44,7 @@ FX_LPCGDIGOCACHE CFX_GdiFontCache::GetCachedGlyphOutline(FX_DWORD dwGlyph) const
     }
     return pGlyph;
 }
-IFX_Font* IFX_Font::LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage, IFX_FontMgr *pFontMgr)
+IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage, IFX_FontMgr *pFontMgr)
 {
     CFX_GdiFont *pFont = FX_NEW CFX_GdiFont(pFontMgr);
     if (!pFont->LoadFont(pszFontFamily, dwFontStyles, wCodePage)) {
@@ -53,7 +53,7 @@ IFX_Font* IFX_Font::LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX
     }
     return pFont;
 }
-IFX_Font* IFX_Font::LoadFont(FX_LPCBYTE pBuffer, int32_t iLength, IFX_FontMgr *pFontMgr)
+IFX_Font* IFX_Font::LoadFont(const uint8_t* pBuffer, int32_t iLength, IFX_FontMgr *pFontMgr)
 {
     CFX_GdiFont *pFont = FX_NEW CFX_GdiFont(pFontMgr);
     if (!pFont->LoadFont(pBuffer, iLength)) {
@@ -62,7 +62,7 @@ IFX_Font* IFX_Font::LoadFont(FX_LPCBYTE pBuffer, int32_t iLength, IFX_FontMgr *p
     }
     return pFont;
 }
-IFX_Font* IFX_Font::LoadFont(FX_LPCWSTR pszFileName, IFX_FontMgr *pFontMgr)
+IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFileName, IFX_FontMgr *pFontMgr)
 {
     CFX_GdiFont *pFont = FX_NEW CFX_GdiFont(pFontMgr);
     if (!pFont->LoadFont(pszFileName)) {
@@ -121,7 +121,7 @@ CFX_GdiFont::~CFX_GdiFont()
     ::DeleteDC(m_hDC);
     if (m_hRes != NULL) {
         if (m_wsFontFileName.GetLength() > 0) {
-            ::RemoveFontResourceW((FX_LPCWSTR)m_wsFontFileName);
+            ::RemoveFontResourceW((const FX_WCHAR*)m_wsFontFileName);
         } else {
             ::RemoveFontMemResourceEx(m_hRes);
         }
@@ -162,7 +162,7 @@ IFX_Font* CFX_GdiFont::Retain()
     ++ m_iRefCount;
     return this;
 }
-FX_BOOL CFX_GdiFont::LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
+FX_BOOL CFX_GdiFont::LoadFont(const FX_WCHAR* pszFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
 {
     FXSYS_assert(m_hFont == NULL);
     LOGFONTW lf;
@@ -190,7 +190,7 @@ FX_BOOL CFX_GdiFont::LoadFont(FX_LPCWSTR pszFontFamily, FX_DWORD dwFontStyles, F
     }
     return LoadFont(lf);
 }
-FX_BOOL CFX_GdiFont::LoadFont(FX_LPCBYTE pBuffer, int32_t iLength)
+FX_BOOL CFX_GdiFont::LoadFont(const uint8_t* pBuffer, int32_t iLength)
 {
     FXSYS_assert(m_hFont == NULL && pBuffer != NULL && iLength > 0);
     Gdiplus::PrivateFontCollection pfc;
@@ -206,7 +206,7 @@ FX_BOOL CFX_GdiFont::LoadFont(FX_LPCBYTE pBuffer, int32_t iLength)
         return FALSE;
     }
     CFX_WideString wsFamily = m_FontFamilies[0];
-    m_hFont = ::CreateFontW(-1000, 0, 0, 0, FW_NORMAL, FALSE, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, (FX_LPCWSTR)wsFamily);
+    m_hFont = ::CreateFontW(-1000, 0, 0, 0, FW_NORMAL, FALSE, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, (const FX_WCHAR*)wsFamily);
     if (m_hFont == NULL) {
         ::RemoveFontMemResourceEx(m_hRes);
         m_hRes = NULL;
@@ -217,7 +217,7 @@ FX_BOOL CFX_GdiFont::LoadFont(FX_LPCBYTE pBuffer, int32_t iLength)
     ::GetOutlineTextMetricsW(m_hDC, sizeof(m_OutlineTM), &m_OutlineTM);
     return TRUE;
 }
-FX_BOOL CFX_GdiFont::LoadFont(FX_LPCWSTR pszFileName)
+FX_BOOL CFX_GdiFont::LoadFont(const FX_WCHAR* pszFileName)
 {
     FXSYS_assert(m_hFont == NULL && pszFileName != NULL);
     Gdiplus::PrivateFontCollection pfc;
@@ -233,7 +233,7 @@ FX_BOOL CFX_GdiFont::LoadFont(FX_LPCWSTR pszFileName)
         return FALSE;
     }
     CFX_WideString wsFamily = m_FontFamilies[0];
-    m_hFont = ::CreateFontW(-1000, 0, 0, 0, FW_NORMAL, FALSE, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, (FX_LPCWSTR)wsFamily);
+    m_hFont = ::CreateFontW(-1000, 0, 0, 0, FW_NORMAL, FALSE, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, (const FX_WCHAR*)wsFamily);
     if (m_hFont == NULL) {
         ::RemoveFontResourceW(pszFileName);
         m_hRes = NULL;
@@ -251,7 +251,7 @@ FX_BOOL CFX_GdiFont::LoadFont(IFX_Stream *pFontStream)
     if (iLength < 1) {
         return FALSE;
     }
-    FX_LPBYTE pBuf = (FX_LPBYTE)FDE_Alloc(iLength);
+    uint8_t* pBuf = (uint8_t*)FDE_Alloc(iLength);
     if (pBuf == NULL) {
         return FALSE;
     }
@@ -286,7 +286,7 @@ int32_t CFX_GdiFont::GetFontFamilies(Gdiplus::FontCollection &fc)
     fc.GetFamilies(iCount, pFontFamilies, &iFind);
     for (int32_t i = 0; i < iCount; i ++) {
         CFX_WideString wsFamilyName;
-        FX_LPWSTR pName = wsFamilyName.GetBuffer(LF_FACESIZE);
+        FX_WCHAR* pName = wsFamilyName.GetBuffer(LF_FACESIZE);
         pFontFamilies[i].GetFamilyName(pName);
         wsFamilyName.ReleaseBuffer();
         m_FontFamilies.Add(wsFamilyName);
@@ -451,7 +451,7 @@ IFX_Font* CFX_GdiFont::GetSubstFont(int32_t iGlyphIndex) const
     }
     return (IFX_Font*)m_SubstFonts[iHigher - 1];
 }
-FX_DWORD CFX_GdiFont::GetGlyphDIBits(int32_t iGlyphIndex, FX_ARGB argb, const MAT2 *pMatrix, GLYPHMETRICS &gm, FX_LPVOID pBuffer, FX_DWORD bufSize)
+FX_DWORD CFX_GdiFont::GetGlyphDIBits(int32_t iGlyphIndex, FX_ARGB argb, const MAT2 *pMatrix, GLYPHMETRICS &gm, void* pBuffer, FX_DWORD bufSize)
 {
     static const UINT uFormat = GGO_GLYPH_INDEX | GGO_GRAY8_BITMAP;
     IFX_Font *pFont = GetSubstFont(iGlyphIndex);
@@ -461,7 +461,7 @@ FX_DWORD CFX_GdiFont::GetGlyphDIBits(int32_t iGlyphIndex, FX_ARGB argb, const MA
     if (pFont != (IFX_Font*)this) {
         return ((CFX_GdiFont*)pFont)->GetGlyphDIBits(iGlyphIndex & 0x00FFFFFF, argb, pMatrix, gm, pBuffer, bufSize);
     }
-    FX_LPBYTE pGlyphOutline = NULL;
+    uint8_t* pGlyphOutline = NULL;
     FXSYS_assert(pMatrix != NULL);
     FX_DWORD dwMAT2 = GetMAT2HashCode((const FIXED*)pMatrix);
     CFX_GdiFontCache *pCache = NULL;
@@ -477,7 +477,7 @@ FX_DWORD CFX_GdiFont::GetGlyphDIBits(int32_t iGlyphIndex, FX_ARGB argb, const MA
         if (dwGlyphSize == 0 || dwGlyphSize == GDI_ERROR) {
             return 0;
         }
-        pGlyphOutline = (FX_LPBYTE)FX_Alloc(dwGlyphSize);
+        pGlyphOutline = (uint8_t*)FX_Alloc(dwGlyphSize);
         ::GetGlyphOutlineW(m_hDC, iGlyphIndex, uFormat, &gm, dwGlyphSize, pGlyphOutline, pMatrix);
         if (pCache == NULL) {
             pCache = FX_NEW CFX_GdiFontCache;
@@ -492,7 +492,7 @@ FX_DWORD CFX_GdiFont::GetGlyphDIBits(int32_t iGlyphIndex, FX_ARGB argb, const MA
     if (pBuffer == NULL || bufSize < dwDibSize) {
         return dwDibSize;
     }
-    CreateGlyphBitmap(gm.gmBlackBoxX, gm.gmBlackBoxY, pGlyphOutline, (FX_LPDWORD)pBuffer, argb);
+    CreateGlyphBitmap(gm.gmBlackBoxX, gm.gmBlackBoxY, pGlyphOutline, (FX_DWORD*)pBuffer, argb);
     return dwDibSize;
 }
 FX_DWORD CFX_GdiFont::GetHashCode() const
@@ -511,7 +511,7 @@ FX_DWORD CFX_GdiFont::GetMAT2HashCode(const FIXED *pFixed)
     }
     return ((dwHash1 & 0x0000FFFF) << 16) | (dwHash2 & 0x0000FFFF);
 }
-void CFX_GdiFont::CreateGlyphBitmap(int32_t iWidth, int32_t iHeight, FX_LPBYTE pOutline, FX_LPDWORD pDIB, FX_ARGB argb)
+void CFX_GdiFont::CreateGlyphBitmap(int32_t iWidth, int32_t iHeight, uint8_t* pOutline, FX_DWORD* pDIB, FX_ARGB argb)
 {
     int32_t padding = ((iWidth + 3) / 4) * 4 - iWidth;
     FX_DWORD alpha;

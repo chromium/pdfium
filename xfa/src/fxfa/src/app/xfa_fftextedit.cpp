@@ -195,7 +195,7 @@ void CXFA_FFTextEdit::ValidateNumberField(const CFX_WideString& wsText)
             pAppProvider->LoadString(XFA_IDS_ValidateNumberError, wsError);
             CFX_WideString wsSomField;
             pAcc->GetNode()->GetSOMExpression(wsSomField);
-            wsMessage.Format(wsError, (FX_LPCWSTR)wsText, (FX_LPCWSTR)wsSomField);
+            wsMessage.Format(wsError, (const FX_WCHAR*)wsText, (const FX_WCHAR*)wsSomField);
             pAppProvider->MsgBox(wsMessage, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
         }
     }

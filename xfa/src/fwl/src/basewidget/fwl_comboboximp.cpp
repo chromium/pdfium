@@ -288,7 +288,7 @@ int32_t CFWL_ComboList::MatchItem(const CFX_WideString &wsMatch)
         FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
         CFX_WideString wsText;
         pData->GetItemText(m_pInterface, hItem, wsText);
-        FX_STRSIZE pos = wsText.Find((FX_LPCWSTR)wsMatch);
+        FX_STRSIZE pos = wsText.Find((const FX_WCHAR*)wsMatch);
         if (!pos) {
             return i;
         }
@@ -726,7 +726,7 @@ FWL_ERR CFWL_ComboBoxImp::DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *
         param.m_rtPart = rtTextBk;
         if (m_iCurSel >= 0) {
             IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)((CFWL_ComboList*)((IFWL_TargetData*)m_pListBox)->GetData())->m_pProperties->m_pDataProvider;
-            FX_LPVOID p = pData->GetItemData(m_pListBox, pData->GetItem(m_pListBox, m_iCurSel));
+            void* p = pData->GetItemData(m_pListBox, pData->GetItem(m_pListBox, m_iCurSel));
             if (p != NULL) {
                 param.m_pData = p;
             }

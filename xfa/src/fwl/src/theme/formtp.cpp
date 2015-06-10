@@ -144,7 +144,7 @@ FX_BOOL	CFWL_FormTP::DrawText(CFWL_ThemeText *pParams)
     }
     return CFWL_WidgetTP::DrawText(pParams);
 }
-FX_LPVOID CFWL_FormTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
+void* CFWL_FormTP::GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity)
 {
     FX_BOOL bDefPro = FALSE;
     FX_BOOL bDwordVal = FALSE;

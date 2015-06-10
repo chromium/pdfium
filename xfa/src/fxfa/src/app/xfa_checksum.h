@@ -23,14 +23,14 @@ class CXFA_SAXReaderHandler : public IFX_SAXReaderHandler
 public:
     CXFA_SAXReaderHandler(CXFA_ChecksumContext *pContext);
     virtual ~CXFA_SAXReaderHandler();
-    virtual FX_LPVOID	OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos);
-    virtual void		OnTagAttribute(FX_LPVOID pTag, FX_BSTR bsAttri, FX_BSTR bsValue);
-    virtual void		OnTagBreak(FX_LPVOID pTag);
-    virtual void		OnTagData(FX_LPVOID pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos);
-    virtual void		OnTagClose(FX_LPVOID pTag, FX_DWORD dwEndPos);
-    virtual void		OnTagEnd(FX_LPVOID pTag, FX_BSTR bsTagName, FX_DWORD dwEndPos);
+    virtual void*	OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos);
+    virtual void		OnTagAttribute(void* pTag, FX_BSTR bsAttri, FX_BSTR bsValue);
+    virtual void		OnTagBreak(void* pTag);
+    virtual void		OnTagData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos);
+    virtual void		OnTagClose(void* pTag, FX_DWORD dwEndPos);
+    virtual void		OnTagEnd(void* pTag, FX_BSTR bsTagName, FX_DWORD dwEndPos);
 
-    virtual void		OnTargetData(FX_LPVOID pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos);
+    virtual void		OnTargetData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos);
 protected:
     void				UpdateChecksum(FX_BOOL bCheckSpace);
     CXFA_ChecksumContext	*m_pContext;
@@ -52,7 +52,7 @@ public:
     void				Update(FX_BSTR bsText);
 protected:
     IFX_SAXReader		*m_pSAXReader;
-    FX_LPBYTE			m_pByteContext;
+    uint8_t*			m_pByteContext;
     CFX_ByteString		m_bsChecksum;
 };
 #endif

@@ -33,17 +33,17 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(FX_DWORD charcode, const CFX_AffineM
         m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
     }
     CFX_GlyphBitmap* pGlyphBitmap;
-    if(pSizeCache->m_GlyphMap.Lookup((FX_LPVOID)(uintptr_t)charcode, (void*&)pGlyphBitmap)) {
+    if(pSizeCache->m_GlyphMap.Lookup((void*)(uintptr_t)charcode, (void*&)pGlyphBitmap)) {
         return pGlyphBitmap;
     }
     pGlyphBitmap = RenderGlyph(pSizeCache, charcode, pMatrix, retinaScaleX, retinaScaleY);
-    pSizeCache->m_GlyphMap.SetAt((FX_LPVOID)(uintptr_t)charcode, pGlyphBitmap);
+    pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)charcode, pGlyphBitmap);
     return pGlyphBitmap;
 }
 CPDF_Type3Glyphs::~CPDF_Type3Glyphs()
 {
     FX_POSITION pos = m_GlyphMap.GetStartPosition();
-    FX_LPVOID Key;
+    void* Key;
     CFX_GlyphBitmap* pGlyphBitmap;
     while(pos) {
         m_GlyphMap.GetNextAssoc(pos, Key, (void*&)pGlyphBitmap);
@@ -76,7 +76,7 @@ void CPDF_Type3Glyphs::AdjustBlue(FX_FLOAT top, FX_FLOAT bottom, int& top_line, 
     top_line = _AdjustBlue(top, m_TopBlueCount, m_TopBlue);
     bottom_line = _AdjustBlue(bottom, m_BottomBlueCount, m_BottomBlue);
 }
-static FX_BOOL _IsScanLine1bpp(FX_LPBYTE pBuf, int width)
+static FX_BOOL _IsScanLine1bpp(uint8_t* pBuf, int width)
 {
     int size = width / 8;
     for (int i = 0; i < size; i ++)
@@ -89,7 +89,7 @@ static FX_BOOL _IsScanLine1bpp(FX_LPBYTE pBuf, int width)
         }
     return FALSE;
 }
-static FX_BOOL _IsScanLine8bpp(FX_LPBYTE pBuf, int width)
+static FX_BOOL _IsScanLine8bpp(uint8_t* pBuf, int width)
 {
     for (int i = 0; i < width; i ++)
         if (pBuf[i] > 0x40) {
@@ -104,7 +104,7 @@ static int _DetectFirstLastScan(const CFX_DIBitmap* pBitmap, FX_BOOL bFirst)
     if (bpp > 8) {
         width *= bpp / 8;
     }
-    FX_LPBYTE pBuf = pBitmap->GetBuffer();
+    uint8_t* pBuf = pBitmap->GetBuffer();
     int line = bFirst ? 0 : height - 1;
     int line_step = bFirst ? 1 : -1;
     int line_end = bFirst ? height : -1;
@@ -564,7 +564,7 @@ void CPDF_CharPosList::Load(int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos
             charpos.m_OriginX -= FontSize * vx / 1000;
             charpos.m_OriginY -= FontSize * vy / 1000;
         }
-        FX_LPCBYTE pTransform = pCIDFont->GetCIDTransform(CID);
+        const uint8_t* pTransform = pCIDFont->GetCIDTransform(CID);
         if (pTransform && !bVert) {
             charpos.m_AdjustMatrix[0] = _CIDTransformToFloat(pTransform[0]);
             charpos.m_AdjustMatrix[2] = _CIDTransformToFloat(pTransform[2]);

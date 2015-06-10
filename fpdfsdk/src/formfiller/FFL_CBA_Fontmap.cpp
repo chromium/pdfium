@@ -43,7 +43,7 @@ void CBA_FontMap::Reset()
 	m_sDefaultFontName = "";
 }
 
-void CBA_FontMap::Initial(FX_LPCSTR fontname)
+void CBA_FontMap::Initial(const FX_CHAR* fontname)
 {
 	int32_t nCharset = DEFAULT_CHARSET;
 

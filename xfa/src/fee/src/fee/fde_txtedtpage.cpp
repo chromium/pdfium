@@ -49,9 +49,9 @@ FX_BOOL CFDE_TxtEdtTextSet::GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF &rt)
 int32_t CFDE_TxtEdtTextSet::GetString(FDE_HVISUALOBJ hText, CFX_WideString &wsText)
 {
     FDE_LPTEXTEDITPIECE pPiece = (FDE_LPTEXTEDITPIECE)hText;
-    FX_LPWSTR pBuffer = wsText.GetBuffer(pPiece->nCount);
+    FX_WCHAR* pBuffer = wsText.GetBuffer(pPiece->nCount);
     for (int32_t i = 0; i < pPiece->nCount; i++) {
-        pBuffer[i] = m_pPage->GetChar((FX_LPVOID)hText, i);
+        pBuffer[i] = m_pPage->GetChar((void*)hText, i);
     }
     wsText.ReleaseBuffer(pPiece->nCount);
     return pPiece->nCount;
@@ -84,7 +84,7 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText, FXTEXT_CHARPOS *
     FX_DWORD dwLayoutStyle = pBreak->GetLayoutStyles();
     FX_TXTRUN tr;
     tr.pAccess			= m_pPage;
-    tr.pIdentity		= (FX_LPVOID)hText;
+    tr.pIdentity		= (void*)hText;
     tr.pStr				= NULL;
     tr.pWidths			= NULL;
     tr.iLength			= nLength;
@@ -116,7 +116,7 @@ int32_t CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText, CFX_RectFArr
     FX_DWORD dwLayoutStyle = pEngine->GetTextBreak()->GetLayoutStyles();
     FX_TXTRUN tr;
     tr.pAccess			= m_pPage;
-    tr.pIdentity		= (FX_LPVOID)hText;
+    tr.pIdentity		= (void*)hText;
     tr.pStr				= NULL;
     tr.pWidths			= NULL;
     tr.iLength			= nLength;
@@ -614,7 +614,7 @@ FDE_HVISUALOBJ CFDE_TxtEdtPage::GetParentCanvas(FDE_HVISUALOBJ hCanvas, IFDE_Vis
 {
     return NULL;
 }
-FX_WCHAR CFDE_TxtEdtPage::GetChar(FX_LPVOID pIdentity, int32_t index) const
+FX_WCHAR CFDE_TxtEdtPage::GetChar(void* pIdentity, int32_t index) const
 {
     int32_t nIndex = m_nPageStart + ((FDE_LPTEXTEDITPIECE)pIdentity)->nStart + index;
     if (nIndex != m_pIter->GetAt()) {
@@ -624,7 +624,7 @@ FX_WCHAR CFDE_TxtEdtPage::GetChar(FX_LPVOID pIdentity, int32_t index) const
     m_pIter->Next();
     return wChar;
 }
-int32_t CFDE_TxtEdtPage::GetWidth(FX_LPVOID pIdentity, int32_t index) const
+int32_t CFDE_TxtEdtPage::GetWidth(void* pIdentity, int32_t index) const
 {
     int32_t nWidth = m_pCharWidth[((FDE_LPTEXTEDITPIECE)pIdentity)->nStart + index];
     return nWidth;

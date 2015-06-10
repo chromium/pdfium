@@ -16,7 +16,7 @@ class IFDE_TxtEdtParag;
 #define FDE_TXTEDT_FIND_FLAGS_WholeWord (1L << 1)
 #define FDE_TXTEDT_FIND_FLAGS_NoCase	(1L << 2)
 typedef struct _FDE_HTXTEDTFIND {
-    FX_LPVOID pData;
+    void* pData;
 } * FDE_HTXTEDTFIND;
 #define FDE_TEXTEDITMODE_MultiLines		(1L << 0)
 #define FDE_TEXTEDITMODE_AutoLineWrap	(1L << 1)
@@ -192,7 +192,7 @@ public:
     virtual void					Unlock() = 0;
     virtual FX_BOOL					IsLocked() const = 0;
 
-    virtual int32_t				Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLength) = 0;
+    virtual int32_t				Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength) = 0;
     virtual int32_t				Delete(int32_t nStart, FX_BOOL bBackspace = FALSE) = 0;
     virtual int32_t				DeleteRange(int32_t nStart, int32_t nCount = -1) = 0;
     virtual int32_t				Replace(int32_t nStart, int32_t nLength, const CFX_WideString &wsReplace) = 0;

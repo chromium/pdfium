@@ -125,7 +125,7 @@ FX_BOOL CPDF_DeviceCS::v_SetCMYK(FX_FLOAT* pBuf, FX_FLOAT c, FX_FLOAT m, FX_FLOA
     }
     return FALSE;
 }
-static void ReverseRGB(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels)
+static void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels)
 {
     if (pDestBuf == pSrcBuf)
         for (int i = 0; i < pixels; i ++) {
@@ -142,7 +142,7 @@ static void ReverseRGB(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels)
             pSrcBuf += 3;
         }
 }
-void CPDF_DeviceCS::TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
+void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
 {
     if (bTransMask && m_Family == PDFCS_DEVICECMYK) {
         for (int i = 0; i < pixels; i ++) {
@@ -267,7 +267,7 @@ public:
     CPDF_CalGray();
     virtual FX_BOOL		v_Load(CPDF_Document* pDoc, CPDF_Array* pArray);
     virtual FX_BOOL		GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const;
-    virtual void		TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
+    virtual void		TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
     FX_BOOL				SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const;
     FX_FLOAT			m_WhitePoint[3];
     FX_FLOAT			m_BlackPoint[3];
@@ -310,7 +310,7 @@ FX_BOOL CPDF_CalGray::SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B)
         return FALSE;
     }
 }
-void CPDF_CalGray::TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
+void CPDF_CalGray::TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
 {
     for (int i = 0; i < pixels; i ++) {
         *pDestBuf ++ = pSrcBuf[i];
@@ -324,7 +324,7 @@ public:
     CPDF_CalRGB();
     virtual FX_BOOL		v_Load(CPDF_Document* pDoc, CPDF_Array* pArray);
     virtual FX_BOOL		GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const;
-    virtual void		TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
+    virtual void		TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
     FX_BOOL				SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const;
     FX_FLOAT			m_WhitePoint[3];
     FX_FLOAT			m_BlackPoint[3];
@@ -399,7 +399,7 @@ FX_BOOL CPDF_CalRGB::SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) 
     pBuf[2] = B;
     return TRUE;
 }
-void CPDF_CalRGB::TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
+void CPDF_CalRGB::TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
 {
     if (bTransMask) {
         FX_FLOAT Cal[3];
@@ -430,7 +430,7 @@ public:
     virtual void		GetDefaultValue(int iComponent, FX_FLOAT& value, FX_FLOAT& min, FX_FLOAT& max) const;
     virtual FX_BOOL		GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const;
     FX_BOOL		SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const;
-    virtual void		TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
+    virtual void		TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
     FX_FLOAT	m_WhitePoint[3];
     FX_FLOAT	m_BlackPoint[3];
     FX_FLOAT	m_Ranges[4];
@@ -505,7 +505,7 @@ FX_BOOL CPDF_LabCS::SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) c
 {
     return FALSE;
 }
-void CPDF_LabCS::TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
+void CPDF_LabCS::TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
 {
     for (int i = 0; i < pixels; i ++) {
         FX_FLOAT lab[3];
@@ -521,7 +521,7 @@ void CPDF_LabCS::TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int 
         pSrcBuf += 3;
     }
 }
-CPDF_IccProfile::CPDF_IccProfile(FX_LPCBYTE pData, FX_DWORD dwSize):
+CPDF_IccProfile::CPDF_IccProfile(const uint8_t* pData, FX_DWORD dwSize):
     m_bsRGB(FALSE),
     m_pTransform(NULL),
     m_nSrcComponents(0)
@@ -555,11 +555,11 @@ public:
     FX_BOOL				v_GetCMYK(FX_FLOAT* pBuf, FX_FLOAT& c, FX_FLOAT& m, FX_FLOAT& y, FX_FLOAT& k) const;
     FX_BOOL				SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const;
     virtual void		EnableStdConversion(FX_BOOL bEnabled);
-    virtual void		TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
+    virtual void		TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
     FX_FLOAT*		m_pRanges;
     CPDF_IccProfile*	m_pProfile;
     CPDF_ColorSpace*	m_pAlterCS;
-    FX_LPBYTE			m_pCache;
+    uint8_t*			m_pCache;
     FX_BOOL				m_bOwn;
 };
 CPDF_ICCBasedCS::CPDF_ICCBasedCS()
@@ -702,7 +702,7 @@ void CPDF_ICCBasedCS::EnableStdConversion(FX_BOOL bEnabled)
         m_pAlterCS->EnableStdConversion(bEnabled);
     }
 }
-void CPDF_ICCBasedCS::TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
+void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
 {
     if (m_pProfile->m_bsRGB) {
         ReverseRGB(pDestBuf, pSrcBuf, pixels);
@@ -716,8 +716,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf,
         } else {
             if (m_pCache == NULL) {
                 ((CPDF_ICCBasedCS*)this)->m_pCache = FX_Alloc2D(uint8_t, nMaxColors, 3);
-                FX_LPBYTE temp_src = FX_Alloc2D(uint8_t, nMaxColors, m_nComponents);
-                FX_LPBYTE pSrc = temp_src;
+                uint8_t* temp_src = FX_Alloc2D(uint8_t, nMaxColors, m_nComponents);
+                uint8_t* pSrc = temp_src;
                 for (int i = 0; i < nMaxColors; i ++) {
                     FX_DWORD color = i;
                     FX_DWORD order = nMaxColors / 52;
@@ -839,7 +839,7 @@ FX_BOOL CPDF_IndexedCS::GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOA
     }
     CFX_FixedBufGrow<FX_FLOAT, 16> Comps(m_nBaseComponents);
     FX_FLOAT* comps = Comps;
-    FX_LPCBYTE pTable = m_Table;
+    const uint8_t* pTable = m_Table;
     for (int i = 0; i < m_nBaseComponents; i ++) {
         comps[i] = m_pCompMinMax[i * 2] + m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
     }
@@ -1257,7 +1257,7 @@ int CPDF_ColorSpace::GetMaxIndex() const
     CPDF_IndexedCS* pCS = (CPDF_IndexedCS*)this;
     return pCS->m_MaxIndex;
 }
-void CPDF_ColorSpace::TranslateImageLine(FX_LPBYTE dest_buf, FX_LPCBYTE src_buf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
+void CPDF_ColorSpace::TranslateImageLine(uint8_t* dest_buf, const uint8_t* src_buf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
 {
     CFX_FixedBufGrow<FX_FLOAT, 16> srcbuf(m_nComponents);
     FX_FLOAT* src = srcbuf;

@@ -67,7 +67,7 @@ public:
     virtual FX_WCHAR	GetCharByIndex(int32_t nIndex) const;
     virtual void		GetRange(CFX_WideString &wsText, int32_t nBegine, int32_t nCount = -1) const;
 
-    virtual void		Insert(int32_t nPos, FX_LPCWSTR lpText, int32_t nLength = 1);
+    virtual void		Insert(int32_t nPos, const FX_WCHAR* lpText, int32_t nLength = 1);
     virtual void		Delete(int32_t nIndex, int32_t nLength = 1);
     virtual void		Clear(FX_BOOL bRelease = TRUE);
 

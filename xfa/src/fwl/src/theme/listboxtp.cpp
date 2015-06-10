@@ -67,7 +67,7 @@ FWL_ERR	CFWL_ListBoxTP::Finalize()
     FinalizeTTO();
     return CFWL_WidgetTP::Finalize();
 }
-void CFWL_ListBoxTP::DrawListBoxItem(CFX_Graphics *pGraphics, FX_DWORD dwStates, const CFX_RectF *prtItem, FX_LPVOID pData , CFX_Matrix *pMatrix )
+void CFWL_ListBoxTP::DrawListBoxItem(CFX_Graphics *pGraphics, FX_DWORD dwStates, const CFX_RectF *prtItem, void* pData , CFX_Matrix *pMatrix )
 {
     if (dwStates & FWL_PARTSTATE_LTB_Selected) {
         pGraphics->SaveGraphState();

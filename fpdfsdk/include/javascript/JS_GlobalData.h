@@ -66,14 +66,14 @@ public:
 	virtual ~CJS_GlobalData();
 
 public:
-	void								SetGlobalVariableNumber(FX_LPCSTR propname, double dData);
-	void								SetGlobalVariableBoolean(FX_LPCSTR propname, bool bData);
-	void								SetGlobalVariableString(FX_LPCSTR propname, const CFX_ByteString& sData);
-	void								SetGlobalVariableObject(FX_LPCSTR propname, const CJS_GlobalVariableArray& array);
-	void								SetGlobalVariableNull(FX_LPCSTR propname);
+	void								SetGlobalVariableNumber(const FX_CHAR* propname, double dData);
+	void								SetGlobalVariableBoolean(const FX_CHAR* propname, bool bData);
+	void								SetGlobalVariableString(const FX_CHAR* propname, const CFX_ByteString& sData);
+	void								SetGlobalVariableObject(const FX_CHAR* propname, const CJS_GlobalVariableArray& array);
+	void								SetGlobalVariableNull(const FX_CHAR* propname);
 
-	FX_BOOL								SetGlobalVariablePersistent(FX_LPCSTR propname, FX_BOOL bPersistent);
-	FX_BOOL								DeleteGlobalVariable(FX_LPCSTR propname);
+	FX_BOOL								SetGlobalVariablePersistent(const FX_CHAR* propname, FX_BOOL bPersistent);
+	FX_BOOL								DeleteGlobalVariable(const FX_CHAR* propname);
 	
 	int32_t							GetSize() const;
 	CJS_GlobalData_Element*				GetAt(int index) const;
@@ -82,11 +82,11 @@ private:
 	void								LoadGlobalPersistentVariables();
 	void								SaveGlobalPersisitentVariables();
 	
-	CJS_GlobalData_Element*				GetGlobalVariable(FX_LPCSTR propname);	
-	int									FindGlobalVariable(FX_LPCSTR propname);
+	CJS_GlobalData_Element*				GetGlobalVariable(const FX_CHAR* propname);	
+	int									FindGlobalVariable(const FX_CHAR* propname);
 
-	void								LoadFileBuffer(FX_LPCWSTR sFilePath, FX_LPBYTE& pBuffer, int32_t& nLength);
-	void								WriteFileBuffer(FX_LPCWSTR sFilePath, FX_LPCSTR pBuffer, int32_t nLength);
+	void								LoadFileBuffer(const FX_WCHAR* sFilePath, uint8_t*& pBuffer, int32_t& nLength);
+	void								WriteFileBuffer(const FX_WCHAR* sFilePath, const FX_CHAR* pBuffer, int32_t nLength);
 	void								MakeByteString(const CFX_ByteString& name, CJS_KeyValue* pData, CFX_BinaryBuf& sData);
 
 private:

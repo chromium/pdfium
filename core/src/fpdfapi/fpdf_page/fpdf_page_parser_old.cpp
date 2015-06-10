@@ -9,7 +9,7 @@
 #include "../../../include/fxcodec/fx_codec.h"
 #include "pageint.h"
 #include <limits.h>
-extern const FX_LPCSTR _PDF_OpCharType =
+const FX_CHAR* const _PDF_OpCharType =
     "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
     "IIVIIIIVIIVIIIIIVVIIIIIIIIIIIIII"
     "IIVVVVVVIVVVVVVIVVVVVIIVVIIIIIII"
@@ -18,7 +18,7 @@ extern const FX_LPCSTR _PDF_OpCharType =
     "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
     "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
     "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII";
-FX_BOOL _PDF_HasInvalidOpChar(FX_LPCSTR op)
+FX_BOOL _PDF_HasInvalidOpChar(const FX_CHAR* op)
 {
     if(!op) {
         return FALSE;
@@ -41,7 +41,7 @@ class CPDF_StreamParserAutoClearer {
   private:
     CPDF_StreamParser** scoped_variable_;
 };
-FX_DWORD CPDF_StreamContentParser::Parse(FX_LPCBYTE pData, FX_DWORD dwSize, FX_DWORD max_cost)
+FX_DWORD CPDF_StreamContentParser::Parse(const uint8_t* pData, FX_DWORD dwSize, FX_DWORD max_cost)
 {
     if (m_Level > _FPDF_MAX_FORM_LEVEL_) {
         return dwSize;
@@ -71,7 +71,7 @@ FX_DWORD CPDF_StreamContentParser::Parse(FX_LPCBYTE pData, FX_DWORD dwSize, FX_D
                 AddNumberParam((char*)syntax.GetWordBuf(), syntax.GetWordSize());
                 break;
             case CPDF_StreamParser::Name:
-                AddNameParam((FX_LPCSTR)syntax.GetWordBuf() + 1, syntax.GetWordSize() - 1);
+                AddNameParam((const FX_CHAR*)syntax.GetWordBuf() + 1, syntax.GetWordSize() - 1);
                 break;
             default:
                 AddObjectParam(syntax.GetObject());
@@ -97,7 +97,7 @@ void CPDF_StreamContentParser::Handle_BeginImage()
         if (type != CPDF_StreamParser::Name) {
             break;
         }
-        CFX_ByteString key((FX_LPCSTR)m_pSyntax->GetWordBuf() + 1, m_pSyntax->GetWordSize() - 1);
+        CFX_ByteString key((const FX_CHAR*)m_pSyntax->GetWordBuf() + 1, m_pSyntax->GetWordSize() - 1);
         CPDF_Object* pObj = m_pSyntax->ReadNextObject();
         if (!key.IsEmpty()) {
             pDict->SetAt(key, pObj, m_pDocument);
@@ -248,7 +248,7 @@ CPDF_StreamParser::~CPDF_StreamParser()
         m_pLastObj->Release();
     }
 }
-FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
+FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder, uint8_t*& dest_buf, FX_DWORD& dest_size)
 {
     if (pDecoder == NULL) {
         return (FX_DWORD) - 1;
@@ -265,7 +265,7 @@ FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder, FX_LPBYTE& dest_b
     dest_buf = FX_Alloc2D(uint8_t, pitch, height);
     dest_size = pitch * height;  // Safe since checked alloc returned.
     for (int row = 0; row < height; row ++) {
-        FX_LPBYTE pLine = pDecoder->GetScanline(row);
+        uint8_t* pLine = pDecoder->GetScanline(row);
         if (pLine == NULL) {
             break;
         }
@@ -275,15 +275,15 @@ FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder, FX_LPBYTE& dest_b
     delete pDecoder;
     return srcoff;
 }
-ICodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(FX_LPCBYTE src_buf, FX_DWORD src_size, int width, int height,
+ICodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
         const CPDF_Dictionary* pParams);
-FX_DWORD _A85Decode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
-FX_DWORD _HexDecode(const uint8_t* src_buf, FX_DWORD src_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
+FX_DWORD _A85Decode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf, FX_DWORD& dest_size);
+FX_DWORD _HexDecode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf, FX_DWORD& dest_size);
 FX_DWORD FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW, const uint8_t* src_buf, FX_DWORD src_size, CPDF_Dictionary* pParams,
-                                  FX_DWORD estimated_size, FX_LPBYTE& dest_buf, FX_DWORD& dest_size);
+                                  FX_DWORD estimated_size, uint8_t*& dest_buf, FX_DWORD& dest_size);
 FX_DWORD PDF_DecodeInlineStream(const uint8_t* src_buf, FX_DWORD limit,
                                 int width, int height, CFX_ByteString& decoder,
-                                CPDF_Dictionary* pParam, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
+                                CPDF_Dictionary* pParam, uint8_t*& dest_buf, FX_DWORD& dest_size)
 {
     if (decoder == FX_BSTRC("CCITTFaxDecode") || decoder == FX_BSTRC("CCF")) {
         ICodec_ScanlineDecoder* pDecoder = FPDFAPI_CreateFaxDecoder(src_buf, limit, width, height, pParam);
@@ -367,7 +367,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc, CPDF_Dicti
         return NULL;
     }
     OrigSize *= height;
-    FX_LPBYTE pData = NULL;
+    uint8_t* pData = NULL;
     FX_DWORD dwStreamSize;
     if (Decoder.IsEmpty()) {
         if (OrigSize > m_Size - m_Pos) {
@@ -1026,7 +1026,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm, CPDF_AllStates* pGraphicStates,
     } else {
         m_pSingleStream->LoadAllData(pForm->m_pFormStream, FALSE);
     }
-    m_pData = (FX_LPBYTE)m_pSingleStream->GetData();
+    m_pData = (uint8_t*)m_pSingleStream->GetData();
     m_Size = m_pSingleStream->GetSize();
     m_Status = ToBeContinued;
     m_InternalStage = PAGEPARSE_STAGE_PARSE;
@@ -1060,7 +1060,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause)
                     FX_Free(m_pStreamArray);
                     m_pStreamArray = NULL;
                 } else {
-                    m_pData = (FX_LPBYTE)m_pSingleStream->GetData();
+                    m_pData = (uint8_t*)m_pSingleStream->GetData();
                     m_Size = m_pSingleStream->GetSize();
                 }
                 m_InternalStage = PAGEPARSE_STAGE_PARSE;

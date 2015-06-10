@@ -398,7 +398,7 @@ void CFWL_MonthCalendarImp::DrawWeekNumber(CFX_Graphics *pGraphics, IFWL_ThemePr
         iTemp ++;
         iWeekNum = CalWeekNumber(m_iCurYear, iMonthNum, i);
         m_rtWeekNum.Set(fHStartPos, fVStartPos + m_fDateCellHei * iTemp, m_fWeekNumWid, m_fDateCellHei);
-        wsWeekNum.Format(FX_LPCWSTR(L"%d"), iWeekNum);
+        wsWeekNum.Format(L"%d", iWeekNum);
         params.m_wsText = wsWeekNum;
         params.m_rtPart = m_rtWeekNum;
         pTheme->DrawText(&params);
@@ -765,7 +765,7 @@ void CFWL_MonthCalendarImp::ReSetDateItem()
             iDayOfWeek = 0;
         }
         CFX_WideString wsDay;
-        wsDay.Format(FX_LPCWSTR(L"%d"), i + 1);
+        wsDay.Format(L"%d", i + 1);
         FX_DWORD dwStates = 0;
         if (m_iYear == m_iCurYear && m_iMonth == m_iCurMonth && m_iDay == (i + 1)) {
             dwStates |= FWL_ITEMSTATE_MCD_Flag;
@@ -888,25 +888,25 @@ FX_BOOL	CFWL_MonthCalendarImp::JumpToToday()
 void CFWL_MonthCalendarImp::GetHeadText(int32_t iYear, int32_t iMonth, CFX_WideString &wsHead)
 {
     FXSYS_assert(iMonth > 0 && iMonth < 13);
-    static FX_LPWSTR pMonth[] = {
-        FX_LPWSTR(L"January"),
-        FX_LPWSTR(L"February"),
-        FX_LPWSTR(L"March"),
-        FX_LPWSTR(L"April"),
-        FX_LPWSTR(L"May"),
-        FX_LPWSTR(L"June"),
-        FX_LPWSTR(L"July"),
-        FX_LPWSTR(L"August"),
-        FX_LPWSTR(L"September"),
-        FX_LPWSTR(L"October"),
-        FX_LPWSTR(L"November"),
-        FX_LPWSTR(L"December")
+    static const FX_WCHAR* const pMonth[] = {
+        L"January",
+        L"February",
+        L"March",
+        L"April",
+        L"May",
+        L"June",
+        L"July",
+        L"August",
+        L"September",
+        L"October",
+        L"November",
+        L"December"
     };
-    wsHead.Format(FX_LPCWSTR(L"%s, %d"), pMonth[iMonth - 1], iYear);
+    wsHead.Format(L"%s, %d", pMonth[iMonth - 1], iYear);
 }
 void CFWL_MonthCalendarImp::GetTodayText(int32_t iYear, int32_t iMonth, int32_t iDay, CFX_WideString &wsToday)
 {
-    wsToday.Format(FX_LPCWSTR(L", %d/%d/%d"), iDay, iMonth, iYear);
+    wsToday.Format(L", %d/%d/%d", iDay, iMonth, iYear);
 }
 int32_t CFWL_MonthCalendarImp::GetDayAtPoint(FX_FLOAT x, FX_FLOAT y)
 {

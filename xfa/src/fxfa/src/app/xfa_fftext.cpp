@@ -110,7 +110,7 @@ FX_BOOL CXFA_FFText::OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
     if (!rtBox.Contains(fx, fy)) {
         return FALSE;
     }
-    FX_LPCWSTR wsURLContent = GetLinkURLAtPoint(fx, fy);
+    const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
     if (NULL == wsURLContent) {
         return FALSE;
     }
@@ -124,7 +124,7 @@ FX_BOOL	CXFA_FFText::OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
     if (!rtBox.Contains(fx, fy)) {
         return FALSE;
     }
-    FX_LPCWSTR wsURLContent = GetLinkURLAtPoint(fx, fy);
+    const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
     if (NULL == wsURLContent) {
         return FALSE;
     }
@@ -136,7 +136,7 @@ FX_BOOL CXFA_FFText::OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy)
         return FALSE;
     }
     SetButtonDown(FALSE);
-    FX_LPCWSTR wsURLContent = GetLinkURLAtPoint(fx, fy);
+    const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
     if (NULL == wsURLContent) {
         return FALSE;
     }
@@ -151,13 +151,13 @@ FX_DWORD CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy)
     if (!rtBox.Contains(fx, fy)) {
         return FWL_WGTHITTEST_Unknown;
     }
-    FX_LPCWSTR wsURLContent = GetLinkURLAtPoint(fx, fy);
+    const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
     if (NULL == wsURLContent) {
         return FWL_WGTHITTEST_Unknown;
     }
     return FWL_WGTHITTEST_Transparent;
 }
-FX_LPCWSTR CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy)
+const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy)
 {
     CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
     if ( NULL == pTextLayout) {

@@ -41,7 +41,7 @@ public:
         return m_pFontMgr;
     }
     void					SetTextGamma(FX_FLOAT gammaValue);
-    FX_LPCBYTE				GetTextGammaTable();
+    const uint8_t*				GetTextGammaTable();
     void					SetExtFontMapper(IFX_FontMapper* pFontMapper);
 
     void					SetCodecModule(CCodec_ModuleMgr* pCodecModule)
@@ -423,12 +423,12 @@ public:
                                    FX_DWORD color, FX_DWORD flags = 0, int alpha_flag = 0, void* pIccTransform = NULL);
 
     FX_BOOL			StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
-                                const CFX_AffineMatrix* pMatrix, FX_DWORD flags, FX_LPVOID& handle,
+                                const CFX_AffineMatrix* pMatrix, FX_DWORD flags, void*& handle,
                                 int alpha_flag = 0, void* pIccTransform = NULL, int blend_type = FXDIB_BLEND_NORMAL);
 
-    FX_BOOL			ContinueDIBits(FX_LPVOID handle, IFX_Pause* pPause);
+    FX_BOOL			ContinueDIBits(void* handle, IFX_Pause* pPause);
 
-    void			CancelDIBits(FX_LPVOID handle);
+    void			CancelDIBits(void* handle);
 
     FX_BOOL			DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos,
                                    CFX_Font* pFont, CFX_FontCache* pCache,
@@ -601,15 +601,15 @@ public:
                                   int alpha_flag = 0, void* pIccTransform = NULL, int blend_type = FXDIB_BLEND_NORMAL) = 0;
 
     virtual FX_BOOL	StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
-                                const CFX_AffineMatrix* pMatrix, FX_DWORD flags, FX_LPVOID& handle,
+                                const CFX_AffineMatrix* pMatrix, FX_DWORD flags, void*& handle,
                                 int alpha_flag = 0, void* pIccTransform = NULL, int blend_type = FXDIB_BLEND_NORMAL) = 0;
 
-    virtual FX_BOOL	ContinueDIBits(FX_LPVOID handle, IFX_Pause* pPause)
+    virtual FX_BOOL	ContinueDIBits(void* handle, IFX_Pause* pPause)
     {
         return FALSE;
     }
 
-    virtual void	CancelDIBits(FX_LPVOID handle) {}
+    virtual void	CancelDIBits(void* handle) {}
 
     virtual FX_BOOL DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
                                    CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FLOAT font_size, FX_DWORD color,
@@ -634,7 +634,7 @@ class IFX_PSOutput
 {
 public:
     virtual void  Release() = 0;
-    virtual void	OutputPS(FX_LPCSTR string, int len) = 0;
+    virtual void	OutputPS(const FX_CHAR* string, int len) = 0;
 
 protected:
     ~IFX_PSOutput() { }
@@ -726,7 +726,7 @@ private:
 
     void			FindPSFontGlyph(CFX_FaceCache* pFaceCache, CFX_Font* pFont, const FXTEXT_CHARPOS& charpos, int& ps_fontnum, int &ps_glyphindex);
 
-    void			WritePSBinary(FX_LPCBYTE data, int len);
+    void			WritePSBinary(const uint8_t* data, int len);
 };
 
 #endif  // CORE_INCLUDE_FXGE_FX_GE_H_

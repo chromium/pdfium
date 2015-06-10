@@ -51,7 +51,7 @@ FX_BOOL CFDE_CSSSyntaxParser::Init(IFX_Stream *pStream, int32_t iCSSPlaneSize, i
     m_iPlaneSize = iCSSPlaneSize;
     return TRUE;
 }
-FX_BOOL CFDE_CSSSyntaxParser::Init(FX_LPCWSTR pBuffer, int32_t iBufferSize, int32_t iTextDatSize , FX_BOOL bOnlyDeclaration )
+FX_BOOL CFDE_CSSSyntaxParser::Init(const FX_WCHAR* pBuffer, int32_t iBufferSize, int32_t iTextDatSize , FX_BOOL bOnlyDeclaration )
 {
     FXSYS_assert(pBuffer != NULL && iBufferSize > 0 && iTextDatSize > 0);
     Reset(bOnlyDeclaration);
@@ -299,7 +299,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse()
                         AppendChar(wch);
                     } else {
                         int32_t iLen = m_TextData.GetLength();
-                        FX_LPCWSTR psz = m_TextData.GetBuffer();
+                        const FX_WCHAR* psz = m_TextData.GetBuffer();
                         if (FXSYS_wcsncmp(L"charset", psz, iLen) == 0) {
                             SwitchMode(FDE_CSSSYNTAXMODE_Charset);
                         } else if (FXSYS_wcsncmp(L"import", psz, iLen) == 0) {
@@ -406,7 +406,7 @@ inline FX_BOOL CFDE_CSSSyntaxParser::RestoreMode()
     m_ModeStack.Pop();
     return TRUE;
 }
-FX_LPCWSTR CFDE_CSSSyntaxParser::GetCurrentString(int32_t &iLength) const
+const FX_WCHAR* CFDE_CSSSyntaxParser::GetCurrentString(int32_t &iLength) const
 {
     iLength = m_iTextDatLen;
     return m_TextData.GetBuffer();
@@ -431,10 +431,10 @@ void CFDE_CSSTextBuf::Reset()
     }
     m_iDatPos = m_iDatLen = m_iBufLen;
 }
-FX_BOOL CFDE_CSSTextBuf::AttachBuffer(FX_LPCWSTR pBuffer, int32_t iBufLen)
+FX_BOOL CFDE_CSSTextBuf::AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen)
 {
     Reset();
-    m_pBuffer = (FX_LPWSTR)pBuffer;
+    m_pBuffer = (FX_WCHAR*)pBuffer;
     m_iDatLen = m_iBufLen = iBufLen;
     return m_bExtBuf = TRUE;
 }
@@ -466,9 +466,9 @@ FX_BOOL CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize)
     if (m_bExtBuf) {
         return FALSE;
     } else if (m_pBuffer == NULL) {
-        m_pBuffer = (FX_LPWSTR)FDE_Alloc(iDesiredSize * sizeof(FX_WCHAR));
+        m_pBuffer = (FX_WCHAR*)FDE_Alloc(iDesiredSize * sizeof(FX_WCHAR));
     } else if (m_iBufLen != iDesiredSize) {
-        m_pBuffer = (FX_LPWSTR)FDE_Realloc(m_pBuffer, iDesiredSize * sizeof(FX_WCHAR));
+        m_pBuffer = (FX_WCHAR*)FDE_Realloc(m_pBuffer, iDesiredSize * sizeof(FX_WCHAR));
     } else {
         return TRUE;
     }

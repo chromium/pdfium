@@ -12,7 +12,7 @@ extern "C"
 {
 #endif
 typedef struct XFA_HFM2JSCONTEXT_ {
-    FX_LPVOID* pData;
+    void** pData;
 }* XFA_HFM2JSCONTEXT;
 int32_t			XFA_FM2JS_Translate(FX_WSTR wsFormcalc, CFX_WideTextBuf& wsJavascript, CFX_WideString& wsError);
 XFA_HFM2JSCONTEXT	XFA_FM2JS_ContextCreate();

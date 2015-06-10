@@ -51,7 +51,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr, png_infop info_ptr, CFX
         png_get_tIME(png_ptr, info_ptr, &t);
         if (t) {
             FXSYS_memset32(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
-            FXSYS_snprintf((FX_LPSTR)pAttribute->m_strTime, sizeof(pAttribute->m_strTime), "%4d:%2d:%2d %2d:%2d:%2d",
+            FXSYS_snprintf((FX_CHAR*)pAttribute->m_strTime, sizeof(pAttribute->m_strTime), "%4d:%2d:%2d %2d:%2d:%2d",
                            t->year, t->month, t->day, t->hour, t->minute, t->second);
             pAttribute->m_strTime[sizeof(pAttribute->m_strTime) - 1] = 0;
             bTime = 1;
@@ -60,7 +60,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr, png_infop info_ptr, CFX
 #if defined(PNG_TEXT_SUPPORTED)
         int i;
         FX_DWORD len;
-        FX_LPCSTR buf;
+        const FX_CHAR* buf;
         int num_text;
         png_textp text = NULL;
         png_get_text(png_ptr, info_ptr, &text, &num_text);
@@ -77,7 +77,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr, png_infop info_ptr, CFX
                 buf = "Author";
                 if (!FXSYS_memcmp32(buf, text[i].key, FX_MIN(len, FXSYS_strlen(buf)))) {
                     pAttribute->m_strAuthor.Empty();
-                    pAttribute->m_strAuthor.Load((FX_LPBYTE)text[i].text, (FX_STRSIZE)text[i].text_length);
+                    pAttribute->m_strAuthor.Load((uint8_t*)text[i].text, (FX_STRSIZE)text[i].text_length);
                 }
             }
         }
@@ -180,7 +180,7 @@ static void _png_get_row_func(png_structp png_ptr, png_bytep new_row, png_uint_3
         return;
     }
     CCodec_PngModule* pModule = (CCodec_PngModule*)p->parent_ptr;
-    FX_LPBYTE src_buf = NULL;
+    uint8_t* src_buf = NULL;
     if(!pModule->AskScanlineBufCallback(p->child_ptr, row_num, src_buf)) {
         png_error(png_ptr, "Ask Scanline buffer Callback Error");
     }
@@ -234,7 +234,7 @@ void CCodec_PngModule::Finish(void* pContext)
         p->m_FreeFunc(p);
     }
 }
-FX_BOOL CCodec_PngModule::Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_DIBAttribute* pAttribute)
+FX_BOOL CCodec_PngModule::Input(void* pContext, const uint8_t* src_buf, FX_DWORD src_size, CFX_DIBAttribute* pAttribute)
 {
     FXPNG_Context* p = (FXPNG_Context*)pContext;
     if(setjmp(png_jmpbuf(p->png_ptr))) {
@@ -243,6 +243,6 @@ FX_BOOL CCodec_PngModule::Input(void* pContext, FX_LPCBYTE src_buf, FX_DWORD src
         }
         return FALSE;
     }
-    png_process_data(p->png_ptr, p->info_ptr, (FX_LPBYTE)src_buf, src_size);
+    png_process_data(p->png_ptr, p->info_ptr, (uint8_t*)src_buf, src_size);
     return TRUE;
 }

@@ -97,7 +97,7 @@ FWL_ERR	IFWL_Edit::SetFormatString(const CFX_WideString &wsFormat)
 {
     return ((CFWL_EditImp*)m_pData)->SetFormatString(wsFormat);
 }
-FWL_ERR IFWL_Edit::Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLen)
+FWL_ERR IFWL_Edit::Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLen)
 {
     return ((CFWL_EditImp*)m_pData)->Insert(nStart, lpText, nLen);
 }
@@ -480,7 +480,7 @@ FX_BOOL CFWL_EditImp::ReplaceSpellCheckWord(CFX_PointF pointf, FX_BSTR bsReplace
     }
     int32_t nDestLen = bsReplace.GetLength();
     CFX_WideString wsDest;
-    FX_LPWSTR pBuffer = wsDest.GetBuffer(nDestLen);
+    FX_WCHAR* pBuffer = wsDest.GetBuffer(nDestLen);
     for (int32_t i = 0; i < nDestLen; i++) {
         pBuffer[i] = bsReplace[i];
     }
@@ -663,7 +663,7 @@ FWL_ERR CFWL_EditImp::SetFormatString(const CFX_WideString &wsFormat)
     m_pEdtEngine->SetFormatBlock(0, wsFormat);
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_EditImp::Insert(int32_t nStart, FX_LPCWSTR lpText, int32_t nLen)
+FWL_ERR CFWL_EditImp::Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLen)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
     if (	(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly)
@@ -803,7 +803,7 @@ FX_BOOL	CFWL_EditImp::Paste(const CFX_WideString &wsPaste)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
     int32_t nCaret = m_pEdtEngine->GetCaretPos();
-    int32_t iError = m_pEdtEngine->Insert(nCaret, FX_LPCWSTR(wsPaste), wsPaste.GetLength());
+    int32_t iError = m_pEdtEngine->Insert(nCaret, wsPaste.c_str(), wsPaste.GetLength());
     if (iError < 0) {
         ProcessInsertError(iError);
         return FALSE;
@@ -2126,12 +2126,12 @@ void CFWL_EditImpDelegate::OnChar(CFWL_MsgKey *pMsg)
                 break;
             }
         case FWL_VKEY_Tab: {
-                iError = m_pOwner->m_pEdtEngine->Insert(nCaret, FX_LPCWSTR(L"\t"), 1);
+                iError = m_pOwner->m_pEdtEngine->Insert(nCaret, L"\t", 1);
                 break;
             }
         case FWL_VKEY_Return: {
                 if (m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_WantReturn) {
-                    iError = m_pOwner->m_pEdtEngine->Insert(nCaret, FX_LPCWSTR(L"\n"), 1);
+                    iError = m_pOwner->m_pEdtEngine->Insert(nCaret, L"\n", 1);
                 }
                 break;
             }

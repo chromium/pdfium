@@ -312,9 +312,9 @@ void FX_BidiReverseString(CFX_WideString &wsText, int32_t iStart, int32_t iCount
     FXSYS_assert(iStart > -1 && iStart < wsText.GetLength());
     FXSYS_assert(iCount >= 0 && iStart + iCount <= wsText.GetLength());
     FX_WCHAR wch;
-    FX_LPWSTR pStart = (FX_LPWSTR)(FX_LPCWSTR)wsText;
+    FX_WCHAR* pStart = (FX_WCHAR*)(const FX_WCHAR*)wsText;
     pStart += iStart;
-    FX_LPWSTR pEnd = pStart + iCount - 1;
+    FX_WCHAR* pEnd = pStart + iCount - 1;
     while (pStart < pEnd) {
         wch = *pStart;
         *pStart ++ = *pEnd;
@@ -355,7 +355,7 @@ void FX_BidiClassify(const CFX_WideString &wsText, CFX_Int32Array &classes, FX_B
 {
     FXSYS_assert(wsText.GetLength() == classes.GetSize());
     int32_t iCount = wsText.GetLength();
-    FX_LPCWSTR pwsStart = (FX_LPCWSTR)wsText;
+    const FX_WCHAR* pwsStart = (const FX_WCHAR*)wsText;
     FX_WCHAR wch;
     int32_t iCls;
     if (bWS) {

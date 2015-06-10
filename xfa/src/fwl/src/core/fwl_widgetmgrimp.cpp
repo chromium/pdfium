@@ -48,7 +48,7 @@ CFWL_WidgetMgr::~CFWL_WidgetMgr()
 {
     FX_POSITION ps = m_mapWidgetItem.GetStartPosition();
     while (ps) {
-        FX_LPVOID pWidget;
+        void* pWidget;
         CFWL_WidgetMgrItem *pItem;
         m_mapWidgetItem.GetNextAssoc(ps, pWidget, (void*&)pItem);
         delete pItem;
@@ -213,7 +213,7 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget *pWidget, int32_t nIndex)
     }
     return TRUE;
 }
-FX_BOOL CFWL_WidgetMgr::IsWidget(FX_LPVOID pObj)
+FX_BOOL CFWL_WidgetMgr::IsWidget(void* pObj)
 {
     _FWL_RETURN_VALUE_IF_FAIL(pObj, FALSE);
     return GetWidgetMgrItem((IFWL_Widget*)pObj) != NULL;
@@ -985,7 +985,7 @@ FX_BOOL CFWL_WidgetMgrDelegate::bUseOffscreenDirect(IFWL_Widget *pWidget)
 #endif
     return pItem->iRedrawCounter == 0;
 }
-static void FWL_WriteBMP(CFX_DIBitmap* pBitmap, FX_LPCSTR filename)
+static void FWL_WriteBMP(CFX_DIBitmap* pBitmap, const FX_CHAR* filename)
 {
     FILE* file = fopen(filename, "wb");
     if (file == NULL) {
@@ -1017,7 +1017,7 @@ static void FWL_WriteBMP(CFX_DIBitmap* pBitmap, FX_LPCSTR filename)
     buffer[14] = pBitmap->GetBPP();
     fwrite(buffer, 40, 1, file);
     for (int row = 0; row < pBitmap->GetHeight(); row ++) {
-        FX_LPBYTE scan_line = pBitmap->GetBuffer() + row * pBitmap->GetPitch();
+        uint8_t* scan_line = pBitmap->GetBuffer() + row * pBitmap->GetPitch();
         fwrite(scan_line, pBitmap->GetPitch(), 1, file);
     }
     fclose(file);

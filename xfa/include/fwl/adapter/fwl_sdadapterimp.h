@@ -44,14 +44,14 @@ public:
     virtual FX_BOOL CheckMessage();
     virtual FX_BOOL IsIdleMessage();
     virtual FWL_ERR DispatchMessage();
-    virtual FWL_ERR GetWidgetDC(IFWL_Widget *pWidget, FX_LPVOID &pDC);
-    virtual FWL_ERR ReleaseWidgetDC(IFWL_Widget *pWidget, FX_LPVOID pDC, CFX_RectF *pClip = 0);
-    virtual FX_LPVOID GetWindow(IFWL_Widget *pWidget);
+    virtual FWL_ERR GetWidgetDC(IFWL_Widget *pWidget, void* &pDC);
+    virtual FWL_ERR ReleaseWidgetDC(IFWL_Widget *pWidget, void* pDC, CFX_RectF *pClip = 0);
+    virtual void* GetWindow(IFWL_Widget *pWidget);
     virtual	FX_DWORD GetKeyState(FX_DWORD dwVirtKey);
     virtual FWL_ERR  RunLoop(IFWL_Widget *widget);
     virtual FWL_ERR  EndLoop();
     virtual FWL_ERR  InitMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData);
-    virtual FWL_ERR  UpdateMenu(IFWL_Menu *pMenu, FX_LPCVOID hItem, int32_t iType);
+    virtual FWL_ERR  UpdateMenu(IFWL_Menu *pMenu, const void* hItem, int32_t iType);
     virtual int32_t TrackPopupMenu(IFWL_Menu *pMenu, IFWL_MenuDP *pMenuData);
     virtual	FWL_ERR  SetMessageHook(IFWL_AdapterMessageHook *hook);
     virtual FWL_ERR  GetSystemBorder(FX_FLOAT &l, FX_FLOAT &t, FX_FLOAT &r, FX_FLOAT &b);

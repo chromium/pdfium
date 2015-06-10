@@ -156,7 +156,7 @@ int32_t CFPF_SkiaFont::GetItalicAngle() const
     }
     return 0;
 }
-FX_DWORD CFPF_SkiaFont::GetFontData(FX_DWORD dwTable, FX_LPBYTE pBuffer, FX_DWORD dwSize)
+FX_DWORD CFPF_SkiaFont::GetFontData(FX_DWORD dwTable, uint8_t* pBuffer, FX_DWORD dwSize)
 {
     if (!m_Face) {
         return FALSE;
@@ -184,7 +184,7 @@ FX_BOOL CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr *pFontMgr, CFPF_SkiaFontDescrip
             break;
         case FPF_SKIAFONTTYPE_Buffer: {
                 CFPF_SkiaBufferFont *pFont = (CFPF_SkiaBufferFont*)pFontDes;
-                m_Face = pFontMgr->GetFontFace((FX_LPCBYTE)pFont->m_pBuffer, pFont->m_szBuffer, pFont->m_iFaceIndex);
+                m_Face = pFontMgr->GetFontFace((const uint8_t*)pFont->m_pBuffer, pFont->m_szBuffer, pFont->m_iFaceIndex);
             }
             break;
         default:

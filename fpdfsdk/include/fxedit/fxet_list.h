@@ -163,7 +163,7 @@ public:
 	void							SetRect(const CLST_Rect & rect);
 	void							SetSelect(FX_BOOL bSelected);
 	void							SetCaret(FX_BOOL bCaret);
-	void							SetText(FX_LPCWSTR text);
+	void							SetText(const FX_WCHAR* text);
 	void							SetFontSize(FX_FLOAT fFontSize);
 	CFX_WideString					GetText() const;
 
@@ -240,7 +240,7 @@ public:
 protected:
 	virtual void					Empty();
 
-	void							AddItem(FX_LPCWSTR str);
+	void							AddItem(const FX_WCHAR* str);
 	virtual void					ReArrange(int32_t nItemIndex);
 
 	virtual CPDF_Rect				GetItemRect(int32_t nIndex) const;
@@ -331,7 +331,7 @@ public:
 	virtual CPDF_Rect				GetContentRect() const;
 	virtual int32_t				GetItemIndex(const CPDF_Point & point) const;
 
-	void							AddString(FX_LPCWSTR string);
+	void							AddString(const FX_WCHAR* string);
 	void							SetTopItem(int32_t nIndex);
 	void							Select(int32_t nItemIndex);
 	virtual void					SetCaret(int32_t nItemIndex);

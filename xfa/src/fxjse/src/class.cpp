@@ -168,7 +168,7 @@ CFX_ByteString	CFXJSE_Arguments::GetUTF8String(int32_t index) const
     v8::String::Utf8Value  szStringVal(hString);
     return CFX_ByteString(*szStringVal);
 }
-FX_LPVOID		CFXJSE_Arguments::GetObject(int32_t index, FXJSE_HCLASS hClass ) const
+void*		CFXJSE_Arguments::GetObject(int32_t index, FXJSE_HCLASS hClass ) const
 {
     const CFXJSE_ArgumentsImpl* lpArguments = reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
     v8::Local<v8::Value> hValue = (*lpArguments->m_pInfo)[index];
@@ -193,7 +193,7 @@ static void FXJSE_Context_GlobalObjToString(const v8::FunctionCallbackInfo<v8::V
     if(info.This() == info.Holder() && lpClass->name) {
         CFX_ByteString szStringVal;
         szStringVal.Format("[object %s]", lpClass->name);
-        info.GetReturnValue().Set(v8::String::NewFromUtf8(info.GetIsolate(), (FX_LPCSTR)szStringVal, v8::String::kNormalString, szStringVal.GetLength()));
+        info.GetReturnValue().Set(v8::String::NewFromUtf8(info.GetIsolate(), (const FX_CHAR*)szStringVal, v8::String::kNormalString, szStringVal.GetLength()));
     } else {
         info.GetReturnValue().Set(info.This()->ObjectProtoToString());
     }

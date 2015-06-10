@@ -26,7 +26,7 @@ public:
     virtual FWL_ERR		SetThemeMatrix(IFWL_Widget *pWidget, const CFX_Matrix &matrix);
     virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams);
     virtual FX_BOOL		DrawText(CFWL_ThemeText *pParams);
-    virtual FX_LPVOID   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity);
+    virtual void*   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity);
     virtual FX_BOOL		IsCustomizedLayout(IFWL_Widget *pWidget);
     virtual FWL_ERR		GetPartRect(CFWL_ThemePart *pThemePart, CFX_RectF &rtPart);
     virtual FX_BOOL		IsInPart(CFWL_ThemePart *pThemePart, FX_FLOAT fx, FX_FLOAT fy);
@@ -34,7 +34,7 @@ public:
     virtual FWL_ERR		Initialize();
     virtual FWL_ERR		Finalize();
     virtual ~CFWL_WidgetTP();
-    FWL_ERR		SetFont(IFWL_Widget *pWidget, FX_LPCWSTR strFont, FX_FLOAT fFontSize, FX_ARGB rgbFont);
+    FWL_ERR		SetFont(IFWL_Widget *pWidget, const FX_WCHAR* strFont, FX_FLOAT fFontSize, FX_ARGB rgbFont);
     FWL_ERR		SetFont(IFWL_Widget *pWidget, IFX_Font *pFont, FX_FLOAT fFontSize, FX_ARGB rgbFont);
     IFX_Font*	GetFont(IFWL_Widget *pWidget);
 protected:

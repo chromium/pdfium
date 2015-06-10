@@ -59,7 +59,7 @@ public:
 
 	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 	virtual void					RePosChildWnd();
-	virtual void					SetText(FX_LPCWSTR csText,FX_BOOL bRefresh = TRUE);
+	virtual void					SetText(const FX_WCHAR* csText,FX_BOOL bRefresh = TRUE);
 	virtual CFX_WideString			GetText() const;	
 	virtual CPDF_Rect				GetFocusRect() const;
 	virtual void					SetFontSize(FX_FLOAT fFontSize);
@@ -67,7 +67,7 @@ public:
 
 	void							OnNotifySelChanged(FX_BOOL bKeyDown, FX_BOOL & bExit , FX_DWORD nFlag);
 
-	void							AddString(FX_LPCWSTR string);	
+	void							AddString(const FX_WCHAR* string);	
 	void							SetTopVisibleIndex(int32_t nItemIndex);
 	void							ScrollToListItem(int32_t nItemIndex);
 	void							ResetContent();

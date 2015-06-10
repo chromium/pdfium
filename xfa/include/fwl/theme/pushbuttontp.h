@@ -16,7 +16,7 @@ public:
     virtual FX_BOOL		IsValidWidget(IFWL_Widget *pWidget);
     virtual FX_DWORD	SetThemeID(IFWL_Widget *pWidget, FX_DWORD dwThemeID, FX_BOOL bChildren = TRUE);
     virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams);
-    virtual FX_LPVOID   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity);
+    virtual void*   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity);
     virtual FWL_ERR		Initialize();
     virtual FWL_ERR		Finalize();
 protected:

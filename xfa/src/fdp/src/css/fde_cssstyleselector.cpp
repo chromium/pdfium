@@ -8,7 +8,7 @@
 #include "fde_csscache.h"
 #include "fde_cssdeclaration.h"
 #include "fde_cssstyleselector.h"
-int32_t CFDE_CSSCounterStyle::FindIndex(FX_LPCWSTR pszIdentifier)
+int32_t CFDE_CSSCounterStyle::FindIndex(const FX_WCHAR* pszIdentifier)
 {
     int32_t iCount = m_arrCounterData.GetSize();
     for (int32_t i = 0; i < iCount; i++) {
@@ -33,7 +33,7 @@ void CFDE_CSSCounterStyle::DoUpdateIndex(IFDE_CSSValueList *pList)
     for (int32_t i = 0; i < iCount; i++) {
         IFDE_CSSValueList *pCounter = (IFDE_CSSValueList*)pList->GetValue(i);
         int32_t iLen;
-        FX_LPCWSTR pszIdentifier = ((IFDE_CSSPrimitiveValue*)(pCounter->GetValue(0)))->GetString(iLen);
+        const FX_WCHAR* pszIdentifier = ((IFDE_CSSPrimitiveValue*)(pCounter->GetValue(0)))->GetString(iLen);
         FX_FLOAT fValue = fDefValue;
         if (pCounter->CountValues() > 1) {
             fValue = ((IFDE_CSSPrimitiveValue*)(pCounter->GetValue(1)))->GetFloat();
@@ -176,10 +176,10 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet *pStyleSheet, IFDE_
 }
 void CFDE_CSSRuleCollection::AddRuleTo(CFX_MapPtrToPtr &map, FX_DWORD dwKey, IFDE_CSSSelector *pSel, IFDE_CSSDeclaration *pDecl)
 {
-    FX_LPVOID pKey = (FX_LPVOID)(uintptr_t)dwKey;
+    void* pKey = (void*)(uintptr_t)dwKey;
     FDE_LPCSSRULEDATA pData = NewRuleData(pSel, pDecl);
     FDE_LPCSSRULEDATA pList = NULL;
-    if (!map.Lookup(pKey, (FX_LPVOID&)pList)) {
+    if (!map.Lookup(pKey, (void*&)pList)) {
         map.SetAt(pKey, pData);
     } else if (AddRuleTo(pList, pData)) {
         map.SetAt(pKey, pList);
@@ -525,7 +525,7 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(FX_BOOL bPriority, const IFDE_CSSD
         }
     }
 }
-void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration *pDecl, FX_LPCWSTR psz, int32_t iLen)
+void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration *pDecl, const FX_WCHAR* psz, int32_t iLen)
 {
     FXSYS_assert(pDecl != NULL && psz != NULL && iLen > 0);
     IFDE_CSSSyntaxParser *pSyntax = IFDE_CSSSyntaxParser::Create();
@@ -534,7 +534,7 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration *pDecl, FX_LPC
     }
     if (pSyntax->Init(psz, iLen, 32, TRUE)) {
         int32_t iLen;
-        FX_LPCWSTR psz;
+        const FX_WCHAR* psz;
         FDE_CSSPROPERTYARGS args;
         args.pStringCache = NULL;
         args.pStaticStore = m_pInlineStyleStore;

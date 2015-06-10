@@ -173,8 +173,8 @@ class IPWL_SpellCheck
 {
 public:
         virtual ~IPWL_SpellCheck() { }
-	virtual FX_BOOL							CheckWord(FX_LPCSTR sWord) = 0;
-	virtual void							SuggestWords(FX_LPCSTR sWord, CFX_ByteStringArray & sSuggest) = 0;	
+	virtual FX_BOOL							CheckWord(const FX_CHAR* sWord) = 0;
+	virtual void							SuggestWords(const FX_CHAR* sWord, CFX_ByteStringArray & sSuggest) = 0;	
 };
 
 class IPWL_Provider

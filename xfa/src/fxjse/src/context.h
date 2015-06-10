@@ -13,14 +13,14 @@ class CFXJSE_Context
 protected:
     CFXJSE_Context(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
 public:
-    static CFXJSE_Context* Create(v8::Isolate* pIsolate, const FXJSE_CLASS* lpGlobalClass = NULL, FX_LPVOID lpGlobalObject = NULL);
+    static CFXJSE_Context* Create(v8::Isolate* pIsolate, const FXJSE_CLASS* lpGlobalClass = NULL, void* lpGlobalObject = NULL);
     ~CFXJSE_Context();
     V8_INLINE v8::Isolate* GetRuntime(void)
     {
         return m_pIsolate;
     }
     void GetGlobalObject(CFXJSE_Value* pValue);
-    FX_BOOL	ExecuteScript(FX_LPCSTR szScript, CFXJSE_Value* lpRetValue, CFXJSE_Value* lpNewThisObject = NULL);
+    FX_BOOL	ExecuteScript(const FX_CHAR* szScript, CFXJSE_Value* lpRetValue, CFXJSE_Value* lpNewThisObject = NULL);
 protected:
     CFXJSE_Context();
     CFXJSE_Context(const CFXJSE_Context&);

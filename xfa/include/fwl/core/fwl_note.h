@@ -322,7 +322,7 @@ IFWL_Widget *m_pOwner;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtMenuCommand, FWL_EVTHASH_MenuCommand)
 int32_t m_iCommand;
-FX_LPVOID m_pData;
+void* m_pData;
 END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtSizeChanged, FWL_EVTHASH_SizeChanged)
 IFWL_Widget *m_pWidget;
@@ -384,6 +384,6 @@ FWL_ERR FWL_AddToolTipTarget(IFWL_ToolTipTarget *pTarget);
 FWL_ERR FWL_RemoveToolTipTarget(IFWL_ToolTipTarget *pTarget);
 FWL_ERR	FWL_SetToolTipInitialDelay(int32_t iDelayTime);
 FWL_ERR	FWL_SetToolTipAutoPopDelay(int32_t iDelayTime);
-typedef FX_BOOL (*FWLMessageHookCallback)(CFWL_Message *msg, FX_LPVOID info);
-FWL_ERR FWL_SetHook(IFWL_NoteDriver *driver, FWLMessageHookCallback callback, FX_LPVOID info);
+typedef FX_BOOL (*FWLMessageHookCallback)(CFWL_Message *msg, void* info);
+FWL_ERR FWL_SetHook(IFWL_NoteDriver *driver, FWLMessageHookCallback callback, void* info);
 #endif
