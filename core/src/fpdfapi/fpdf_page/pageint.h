@@ -1,18 +1,20 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_SRC_FPDFAPI_FPDF_PAGE_PAGEINT_H_
 #define CORE_SRC_FPDFAPI_FPDF_PAGE_PAGEINT_H_
 
+#include <map>
+
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 
 #define PARSE_STEP_LIMIT		100
 #define STREAM_PARSE_BUFSIZE	20480
-class CPDF_QuickFontCache;
-class CPDF_StreamParser 
+
+class CPDF_StreamParser
 {
 public:
 
@@ -119,7 +121,7 @@ typedef struct {
 #define _FPDF_MAX_FORM_LEVEL_		30
 #define _FPDF_MAX_TYPE3_FORM_LEVEL_	4
 #define _FPDF_MAX_OBJECT_STACK_SIZE_ 512
-class CPDF_StreamContentParser 
+class CPDF_StreamContentParser
 {
 public:
     CPDF_StreamContentParser();
@@ -281,7 +283,7 @@ public:
     void Handle_NextLineShowText_Space();
     void Handle_Invalid();
 };
-class CPDF_ContentParser 
+class CPDF_ContentParser
 {
 public:
     CPDF_ContentParser();
@@ -360,11 +362,12 @@ FX_BOOL PDF_DocPageData_Release(CFX_MapPtrTemplate<KeyType, CPDF_CountedObject<V
     }
     return FALSE;
 }
-class CPDF_DocPageData 
+class CPDF_DocPageData
 {
-public:
-    CPDF_DocPageData(CPDF_Document *pPDFDoc);
+  public:
+    explicit CPDF_DocPageData(CPDF_Document *pPDFDoc);
     ~CPDF_DocPageData();
+
     void                        Clear(FX_BOOL bRelease = FALSE);
     CPDF_Font*                  GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnly);
     CPDF_Font*                  GetStandardFont(FX_BSTR fontName, CPDF_FontEncoding* pEncoding);
@@ -385,7 +388,6 @@ public:
     CPDF_CountedPattern*        FindPatternPtr(CPDF_Object* pPatternObj) const;
 
     CPDF_Document*              m_pPDFDoc;
-    CPDF_FontMap                m_FontMap;
     CPDF_ColorSpaceMap          m_ColorSpaceMap;
     CPDF_PatternMap             m_PatternMap;
     CPDF_ImageMap               m_ImageMap;
@@ -393,8 +395,15 @@ public:
     CFX_MapByteStringToPtr      m_HashProfileMap;
     CPDF_FontFileMap            m_FontFileMap;
     FX_BOOL                     m_bForceClear;
+
+  private:
+    using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font*>;
+    using CPDF_FontMap = std::map<CPDF_Dictionary*, CPDF_CountedFont*>;
+
+    CPDF_FontMap                m_FontMap;
 };
-class CPDF_Function 
+
+class CPDF_Function
 {
 public:
     static CPDF_Function*	Load(CPDF_Object* pFuncObj);
@@ -417,7 +426,7 @@ protected:
     virtual FX_BOOL	v_Init(CPDF_Object* pObj) = 0;
     virtual FX_BOOL	v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const = 0;
 };
-class CPDF_IccProfile 
+class CPDF_IccProfile
 {
 public:
     CPDF_IccProfile(FX_LPCBYTE pData, FX_DWORD dwSize);
@@ -453,7 +462,7 @@ public:
     CPDF_CountedColorSpace*	m_pCountedBaseCS;
 };
 #define	MAX_PAGE_OBJECTS_UNIFY_NAMING				4096
-class CPDF_ResourceNaming 
+class CPDF_ResourceNaming
 {
 public:
     struct _NamingState  {

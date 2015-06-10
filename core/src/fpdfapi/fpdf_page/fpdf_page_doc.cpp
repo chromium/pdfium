@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_page.h"
@@ -9,6 +9,7 @@
 #include "../../../include/fdrm/fx_crypt.h"
 #include "../fpdf_font/font_int.h"
 #include "pageint.h"
+
 class CPDF_PageModule : public CPDF_PageModuleDef
 {
 public:
@@ -124,22 +125,21 @@ void CPDF_Document::RemoveColorSpaceFromPageData(CPDF_Object* pCSObj)
     GetPageData()->ReleaseColorSpace(pCSObj);
 }
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document *pPDFDoc)
-    : m_pPDFDoc(pPDFDoc)
-    , m_FontMap()
-    , m_ColorSpaceMap()
-    , m_PatternMap()
-    , m_ImageMap()
-    , m_IccProfileMap()
-    , m_FontFileMap()
-    , m_bForceClear(FALSE)
+    : m_pPDFDoc(pPDFDoc),
+      m_ColorSpaceMap(),
+      m_PatternMap(),
+      m_ImageMap(),
+      m_IccProfileMap(),
+      m_FontFileMap(),
+      m_bForceClear(FALSE)
 {
-    m_FontMap.InitHashTable(64);
     m_ColorSpaceMap.InitHashTable(32);
     m_PatternMap.InitHashTable(16);
     m_ImageMap.InitHashTable(64);
     m_IccProfileMap.InitHashTable(16);
     m_FontFileMap.InitHashTable(32);
 }
+
 CPDF_DocPageData::~CPDF_DocPageData()
 {
     Clear(FALSE);
@@ -153,15 +153,11 @@ CPDF_DocPageData::~CPDF_DocPageData()
         delete ptData;
     }
     m_PatternMap.RemoveAll();
-    pos = m_FontMap.GetStartPosition();
-    while (pos)
-    {
-        CPDF_Dictionary* fontDict;
-        CPDF_CountedObject<CPDF_Font*>* fontData;
-        m_FontMap.GetNextAssoc(pos, fontDict, fontData);
-        delete fontData;
-    }
-    m_FontMap.RemoveAll();
+
+    for (auto& it : m_FontMap)
+        delete it.second;
+    m_FontMap.clear();
+
     pos = m_ColorSpaceMap.GetStartPosition();
     while (pos)
     {
@@ -172,6 +168,7 @@ CPDF_DocPageData::~CPDF_DocPageData()
     }
     m_ColorSpaceMap.RemoveAll();
 }
+
 void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
 {
     FX_POSITION pos;
@@ -190,19 +187,18 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
             ptData->m_Obj = NULL;
         }
     }
-    pos = m_FontMap.GetStartPosition();
-    while (pos) {
-        CPDF_Dictionary* fontDict;
-        CPDF_CountedObject<CPDF_Font*>* fontData;
-        m_FontMap.GetNextAssoc(pos, fontDict, fontData);
-        if (!fontData->m_Obj) {
+
+    for (auto& it : m_FontMap) {
+        CPDF_CountedFont* fontData = it.second;
+        if (!fontData->m_Obj)
             continue;
-        }
+
         if (bForceRelease || fontData->m_nCount < 2) {
             delete fontData->m_Obj;
-            fontData->m_Obj = NULL;
+            fontData->m_Obj = nullptr;
         }
     }
+
     pos = m_ColorSpaceMap.GetStartPosition();
     while (pos) {
         CPDF_Object* csKey;
@@ -270,79 +266,80 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         }
     }
 }
+
 CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnly)
 {
     if (!pFontDict) {
         return NULL;
     }
     if (findOnly) {
-        CPDF_CountedObject<CPDF_Font*>* fontData;
-        if (m_FontMap.Lookup(pFontDict, fontData)) {
-            if (!fontData->m_Obj) {
-                return NULL;
-            }
-            fontData->m_nCount ++;
+        auto it = m_FontMap.find(pFontDict);
+        if (it != m_FontMap.end()) {
+            CPDF_CountedFont* fontData = it->second;
+            if (!fontData->m_Obj)
+                return nullptr;
+
+            fontData->m_nCount++;
             return fontData->m_Obj;
         }
-        return NULL;
+        return nullptr;
     }
-    CPDF_CountedObject<CPDF_Font*>* fontData = NULL;
-    if (m_FontMap.Lookup(pFontDict, fontData)) {
+
+    CPDF_CountedFont* fontData = nullptr;
+    auto it = m_FontMap.find(pFontDict);
+    if (it != m_FontMap.end()) {
+        fontData = it->second;
         if (fontData->m_Obj) {
-            fontData->m_nCount ++;
+            fontData->m_nCount++;
             return fontData->m_Obj;
         }
     }
+
     FX_BOOL bNew = FALSE;
     if (!fontData) {
-        fontData = new CPDF_CountedObject<CPDF_Font*>;
+        fontData = new CPDF_CountedFont;
         bNew = TRUE;
     }
     CPDF_Font* pFont = CPDF_Font::CreateFontF(m_pPDFDoc, pFontDict);
     if (!pFont) {
-        if (bNew) {
+        if (bNew)
             delete fontData;
-        }
-        return NULL;
+        return nullptr;
     }
     fontData->m_nCount = 2;
     fontData->m_Obj = pFont;
-    m_FontMap.SetAt(pFontDict, fontData);
+    if (bNew)
+        m_FontMap[pFontDict] = fontData;
     return pFont;
 }
+
 CPDF_Font* CPDF_DocPageData::GetStandardFont(FX_BSTR fontName, CPDF_FontEncoding* pEncoding)
 {
-    if (fontName.IsEmpty()) {
-        return NULL;
-    }
-    FX_POSITION pos = m_FontMap.GetStartPosition();
-    while (pos) {
-        CPDF_Dictionary* fontDict;
-        CPDF_CountedObject<CPDF_Font*>* fontData;
-        m_FontMap.GetNextAssoc(pos, fontDict, fontData);
+    if (fontName.IsEmpty())
+        return nullptr;
+
+    for (auto& it : m_FontMap) {
+        CPDF_CountedFont* fontData = it.second;
         CPDF_Font* pFont = fontData->m_Obj;
-        if (!pFont) {
+        if (!pFont)
             continue;
-        }
-        if (pFont->GetBaseFont() != fontName) {
+        if (pFont->GetBaseFont() != fontName)
             continue;
-        }
-        if (pFont->IsEmbedded()) {
+        if (pFont->IsEmbedded())
             continue;
-        }
-        if (pFont->GetFontType() != PDFFONT_TYPE1) {
+        if (pFont->GetFontType() != PDFFONT_TYPE1)
             continue;
-        }
-        if (pFont->GetFontDict()->KeyExist(FX_BSTRC("Widths"))) {
+        if (pFont->GetFontDict()->KeyExist(FX_BSTRC("Widths")))
             continue;
-        }
+
         CPDF_Type1Font* pT1Font = pFont->GetType1Font();
-        if (pEncoding && !pT1Font->GetEncoding()->IsIdentical(pEncoding)) {
+        if (pEncoding && !pT1Font->GetEncoding()->IsIdentical(pEncoding))
             continue;
-        }
-        fontData->m_nCount ++;
+
+        fontData->m_nCount++;
         return pFont;
     }
+
     CPDF_Dictionary* pDict = new CPDF_Dictionary;
     pDict->SetAtName(FX_BSTRC("Type"), FX_BSTRC("Font"));
     pDict->SetAtName(FX_BSTRC("Subtype"), FX_BSTRC("Type1"));
@@ -351,31 +348,34 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(FX_BSTR fontName, CPDF_FontEncoding
         pDict->SetAt(FX_BSTRC("Encoding"), pEncoding->Realize());
     }
     m_pPDFDoc->AddIndirectObject(pDict);
-    CPDF_CountedObject<CPDF_Font*>* fontData = new CPDF_CountedObject<CPDF_Font*>;
+    CPDF_CountedFont* fontData = new CPDF_CountedFont;
     CPDF_Font* pFont = CPDF_Font::CreateFontF(m_pPDFDoc, pDict);
     if (!pFont) {
         delete fontData;
-        return NULL;
+        return nullptr;
     }
     fontData->m_nCount = 2;
     fontData->m_Obj = pFont;
-    m_FontMap.SetAt(pDict, fontData);
+    m_FontMap[pDict] = fontData;
     return pFont;
 }
+
 void CPDF_DocPageData::ReleaseFont(CPDF_Dictionary* pFontDict)
 {
-    if (!pFontDict) {
+    if (!pFontDict)
         return;
-    }
-    CPDF_CountedObject<CPDF_Font*>* fontData;
-    if (!m_FontMap.Lookup(pFontDict, fontData)) {
+
+    auto it = m_FontMap.find(pFontDict);
+    if (it == m_FontMap.end())
         return;
-    }
+
+    CPDF_CountedFont* fontData = it->second;
     if (fontData->m_Obj && --fontData->m_nCount == 0) {
         delete fontData->m_Obj;
-        fontData->m_Obj = NULL;
+        fontData->m_Obj = nullptr;
     }
 }
+
 CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(CPDF_Object* pCSObj, CPDF_Dictionary* pResources)
 {
     if (!pCSObj) {
