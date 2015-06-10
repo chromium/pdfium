@@ -41,7 +41,7 @@ public:
     void            GdipDeleteBrush(void* pBrush);
     void            GdipCreateMatrix(FX_FLOAT a, FX_FLOAT b, FX_FLOAT c, FX_FLOAT d, FX_FLOAT e, FX_FLOAT f, void** matrix);
     void            GdipDeleteMatrix(void* matrix);
-    FX_BOOL         GdipCreateFontFamilyFromName(FX_LPCWSTR name, void* pFontCollection, void**pFamily);
+    FX_BOOL         GdipCreateFontFamilyFromName(const FX_WCHAR* name, void* pFontCollection, void**pFamily);
     void            GdipDeleteFontFamily(void* pFamily);
     FX_BOOL         GdipCreateFontFromFamily(void* pFamily, FX_FLOAT font_size, int fontstyle, int flag, void** pFont);
     void*           GdipCreateFontFromCollection(void* pFontCollection, FX_FLOAT font_size, int fontstyle);
@@ -105,10 +105,10 @@ protected:
                              int alpha_flag, void* pIccTransform, int blend_type);
     virtual FX_BOOL	DrawCosmeticLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2, FX_DWORD color,
                                      int alpha_flag, void* pIccTransform, int blend_type);
-    virtual FX_LPVOID GetClipRgn() ;
-    virtual FX_BOOL SetClipRgn(FX_LPVOID pRgn) ;
+    virtual void* GetClipRgn() ;
+    virtual FX_BOOL SetClipRgn(void* pRgn) ;
     virtual FX_BOOL GetClipBox(FX_RECT* pRect);
-    virtual FX_BOOL DeleteDeviceRgn(FX_LPVOID pRgn);
+    virtual FX_BOOL DeleteDeviceRgn(void* pRgn);
     virtual void	DrawLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
     virtual void*	GetPlatformSurface()
     {
@@ -140,7 +140,7 @@ protected:
                                   int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags,
                                   int alpha_flag, void* pIccTransform, int blend_type);
     virtual FX_BOOL	StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
-                                const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, FX_LPVOID& handle,
+                                const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, void*& handle,
                                 int alpha_flag, void* pIccTransform, int blend_type)
     {
         return FALSE;
@@ -161,7 +161,7 @@ protected:
                                   int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags,
                                   int alpha_flag, void* pIccTransform, int blend_type);
     virtual FX_BOOL	StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
-                                const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, FX_LPVOID& handle,
+                                const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, void*& handle,
                                 int alpha_flag, void* pIccTransform, int blend_type);
     int				m_HorzSize, m_VertSize;
     FX_BOOL			m_bSupportROP;
@@ -176,9 +176,9 @@ public:
         delete this;
     }
     void Init();
-    virtual void	OutputPS(FX_LPCSTR string, int len);
+    virtual void	OutputPS(const FX_CHAR* string, int len);
     HDC				m_hDC;
-    FX_LPSTR        m_pBuf;
+    FX_CHAR*        m_pBuf;
 };
 class CPSPrinterDriver : public IFX_RenderDeviceDriver
 {
@@ -221,7 +221,7 @@ protected:
                                   int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags,
                                   int alpha_flag, void* pIccTransform, int blend_type);
     virtual FX_BOOL	StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
-                                const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, FX_LPVOID& handle,
+                                const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, void*& handle,
                                 int alpha_flag, void* pIccTransform, int blend_type);
     virtual FX_BOOL DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
                                    CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FLOAT font_size, FX_DWORD color,

@@ -77,9 +77,9 @@ public:
 	void						SetFillerNotify(IPWL_Filler_Notify* pNotify);
 
 	CFX_WideString				GetText() const;
-	void						SetText(FX_LPCWSTR text);
+	void						SetText(const FX_WCHAR* text);
 
-	void						AddString(FX_LPCWSTR string);
+	void						AddString(const FX_WCHAR* string);
 	int32_t					GetSelect() const;
 	void						SetSelect(int32_t nItemIndex);
 

@@ -25,7 +25,7 @@ public:
     typedef enum { EndOfData, Number, Keyword, Name, Others } SyntaxType;
 
     SyntaxType			ParseNextElement();
-    FX_LPBYTE			GetWordBuf()
+    uint8_t*			GetWordBuf()
     {
         return m_WordBuffer;
     }
@@ -144,9 +144,9 @@ public:
     _ContentParam		m_ParamBuf1[PARAM_BUF_SIZE];
     FX_DWORD			m_ParamStartPos;
     FX_DWORD			m_ParamCount;
-    void				AddNumberParam(FX_LPCSTR str, int len);
+    void				AddNumberParam(const FX_CHAR* str, int len);
     void				AddObjectParam(CPDF_Object* pObj);
-    void				AddNameParam(FX_LPCSTR name, int size);
+    void				AddNameParam(const FX_CHAR* name, int size);
     int					GetNextParamPos();
     void				ClearAllParams();
     CPDF_Object*		GetObject(FX_DWORD index);
@@ -157,7 +157,7 @@ public:
     {
         return (int32_t)(GetNumber(index));
     }
-    FX_BOOL				OnOperator(FX_LPCSTR op);
+    FX_BOOL				OnOperator(const FX_CHAR* op);
     void				BigCaseCaller(int index);
     FX_BOOL				m_bAbort;
     CPDF_StreamParser*	m_pSyntax;
@@ -175,7 +175,7 @@ public:
     void				ConvertUserSpace(FX_FLOAT& x, FX_FLOAT& y);
     void				ConvertTextSpace(FX_FLOAT& x, FX_FLOAT& y);
     void				OnChangeTextMatrix();
-    FX_DWORD			Parse(FX_LPCBYTE pData, FX_DWORD dwSize, FX_DWORD max_cost);
+    FX_DWORD			Parse(const uint8_t* pData, FX_DWORD dwSize, FX_DWORD max_cost);
     void				ParsePathObject();
     int					m_CompatCount;
     FX_PATHPOINT*		m_pPathPoints;
@@ -309,7 +309,7 @@ protected:
     CPDF_StreamAcc*		m_pSingleStream;
     CPDF_StreamAcc**	m_pStreamArray;
     FX_DWORD			m_nStreams;
-    FX_LPBYTE			m_pData;
+    uint8_t*			m_pData;
     FX_DWORD			m_Size;
     class CPDF_StreamContentParser*	m_pParser;
     FX_DWORD			m_CurrentOffset;
@@ -429,11 +429,11 @@ protected:
 class CPDF_IccProfile
 {
 public:
-    CPDF_IccProfile(FX_LPCBYTE pData, FX_DWORD dwSize);
+    CPDF_IccProfile(const uint8_t* pData, FX_DWORD dwSize);
     ~CPDF_IccProfile();
     int32_t GetComponents() const { return m_nSrcComponents; }
     FX_BOOL					m_bsRGB;
-    FX_LPVOID				m_pTransform;
+    void*				m_pTransform;
 private:
     int32_t                m_nSrcComponents;
 };
@@ -445,7 +445,7 @@ public:
     FX_BOOL	SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const;
     FX_BOOL	v_GetCMYK(FX_FLOAT* pBuf, FX_FLOAT& c, FX_FLOAT& m, FX_FLOAT& y, FX_FLOAT& k) const;
     FX_BOOL	v_SetCMYK(FX_FLOAT* pBuf, FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k) const;
-    virtual void	TranslateImageLine(FX_LPBYTE pDestBuf, FX_LPCBYTE pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
+    virtual void	TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
 };
 class CPDF_PatternCS : public CPDF_ColorSpace
 {
@@ -470,7 +470,7 @@ public:
         int				m_nIndex;
     };
     ~CPDF_ResourceNaming();
-    CFX_ByteString		GetName(const CPDF_Dictionary* pResList, FX_LPCSTR szType);
+    CFX_ByteString		GetName(const CPDF_Dictionary* pResList, const FX_CHAR* szType);
 protected:
     CFX_MapByteStringToPtr	m_NamingCache;
 };

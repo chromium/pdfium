@@ -111,7 +111,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page, FS_MATRIX
 
 	pDic = new CPDF_Dictionary;
 	CPDF_Stream* pEndStream = new CPDF_Stream(NULL,0, pDic);
-	pEndStream->SetData((FX_LPCBYTE)" Q", 2, FALSE, FALSE);
+	pEndStream->SetData((const uint8_t*)" Q", 2, FALSE, FALSE);
 	pDoc->AddIndirectObject(pEndStream);
 	
 	CPDF_Array* pContentArray = NULL;

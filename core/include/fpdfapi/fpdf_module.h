@@ -66,11 +66,11 @@ public:
 
     void		InitRenderModule();
 
-    void		SetDownloadCallback(FX_BOOL (*callback)(FX_LPCSTR module_name));
+    void		SetDownloadCallback(FX_BOOL (*callback)(const FX_CHAR* module_name));
 
-    FX_BOOL		DownloadModule(FX_LPCSTR module_name);
+    FX_BOOL		DownloadModule(const FX_CHAR* module_name);
 
-    void		NotifyModuleAvailable(FX_LPCSTR module_name);
+    void		NotifyModuleAvailable(const FX_CHAR* module_name);
 
 
 
@@ -102,13 +102,13 @@ public:
     ICodec_IccModule*		GetIccModule();
     ICodec_FlateModule*		GetFlateModule();
 
-    void					RegisterSecurityHandler(FX_LPCSTR name, CPDF_SecurityHandler * (*CreateHandler)(void* param), void* param);
+    void					RegisterSecurityHandler(const FX_CHAR* name, CPDF_SecurityHandler * (*CreateHandler)(void* param), void* param);
 
-    CPDF_SecurityHandler*	CreateSecurityHandler(FX_LPCSTR name);
+    CPDF_SecurityHandler*	CreateSecurityHandler(const FX_CHAR* name);
 
-    void					SetPrivateData(FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback);
+    void					SetPrivateData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback);
 
-    FX_LPVOID				GetPrivateData(FX_LPVOID module_id);
+    void*				GetPrivateData(void* module_id);
 
     int						m_FileBufSize;
 protected:
@@ -129,7 +129,7 @@ protected:
     CPDF_PageModuleDef*		m_pPageModule;
 
 
-    FX_BOOL (*m_pDownloadCallback)(FX_LPCSTR module_name);
+    FX_BOOL (*m_pDownloadCallback)(const FX_CHAR* module_name);
 
     CFX_MapByteStringToPtr	m_SecurityHandlerMap;
 

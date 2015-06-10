@@ -81,7 +81,7 @@ public:
 	virtual FX_FLOAT				GetFontSize() const;
 	
 public:
-	virtual void					SetText(FX_LPCWSTR csText);
+	virtual void					SetText(const FX_WCHAR* csText);
 
 	virtual void					CopyText();
 	virtual void					PasteText();
@@ -131,7 +131,7 @@ protected:
 
 	virtual void					InsertWord(FX_WORD word, int32_t nCharset);
 	virtual void					InsertReturn();
-	virtual void					InsertText(FX_LPCWSTR csText);
+	virtual void					InsertText(const FX_WCHAR* csText);
 
 	virtual void					SetCursor();
 	FX_BOOL							IsWndHorV();

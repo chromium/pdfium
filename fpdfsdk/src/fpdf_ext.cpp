@@ -28,7 +28,7 @@ void CFSDK_UnsupportInfo_Adapter::ReportError(int nErrorType)
 	}
 }
 
-void FreeUnsupportInfo(FX_LPVOID pData)
+void FreeUnsupportInfo(void* pData)
 {
 	CFSDK_UnsupportInfo_Adapter * pAdapter = (CFSDK_UnsupportInfo_Adapter *)pData;
 	delete pAdapter;

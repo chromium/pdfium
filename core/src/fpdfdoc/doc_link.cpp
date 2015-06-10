@@ -11,7 +11,8 @@ CPDF_LinkList::~CPDF_LinkList()
 {
     FX_POSITION pos = m_PageMap.GetStartPosition();
     while (pos) {
-        FX_LPVOID key, value;
+        void* key;
+        void* value;
         m_PageMap.GetNextAssoc(pos, key, value);
         delete (CFX_PtrArray*)value;
     }
@@ -23,9 +24,9 @@ CFX_PtrArray* CPDF_LinkList::GetPageLinks(CPDF_Page* pPage)
         return NULL;
     }
     CFX_PtrArray* pPageLinkList = NULL;
-    if (!m_PageMap.Lookup((FX_LPVOID)(uintptr_t)objnum, (FX_LPVOID&)pPageLinkList)) {
+    if (!m_PageMap.Lookup((void*)(uintptr_t)objnum, (void*&)pPageLinkList)) {
         pPageLinkList = new CFX_PtrArray;
-        m_PageMap.SetAt((FX_LPVOID)(uintptr_t)objnum, pPageLinkList);
+        m_PageMap.SetAt((void*)(uintptr_t)objnum, pPageLinkList);
         LoadPageLinks(pPage, pPageLinkList);
     }
     return pPageLinkList;

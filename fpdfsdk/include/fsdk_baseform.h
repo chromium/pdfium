@@ -108,7 +108,7 @@ public:
 	void							ClearSelection(FX_BOOL bNotify);
 	void							SetTopVisibleIndex(int index);
 
-	void							ResetAppearance(FX_LPCWSTR sValue, FX_BOOL bValueChanged);
+	void							ResetAppearance(const FX_WCHAR* sValue, FX_BOOL bValueChanged);
 	void							ResetFieldAppearance(FX_BOOL bValueChanged);
 	void							UpdateField();
 	CFX_WideString					OnFormat(int nCommitKey, FX_BOOL& bFormated);
@@ -135,9 +135,9 @@ private:
 	void							ResetAppearance_PushButton();
 	void							ResetAppearance_CheckBox();
 	void							ResetAppearance_RadioButton();
-	void							ResetAppearance_ComboBox(FX_LPCWSTR sValue);
+	void							ResetAppearance_ComboBox(const FX_WCHAR* sValue);
 	void							ResetAppearance_ListBox();
-	void							ResetAppearance_TextField(FX_LPCWSTR sValue);
+	void							ResetAppearance_TextField(const FX_WCHAR* sValue);
 	
 	CPDF_Rect						GetClientRect() const;
 	CPDF_Rect						GetRotatedRect() const;
@@ -200,7 +200,7 @@ public:
 	void							OnCalculate(CPDF_FormField* pFormField = NULL);
 	CFX_WideString					OnFormat(CPDF_FormField* pFormField, int nCommitKey, FX_BOOL& bFormated);
 	
-	void							ResetFieldAppearance(CPDF_FormField* pFormField, FX_LPCWSTR sValue, FX_BOOL bValueChanged);
+	void							ResetFieldAppearance(CPDF_FormField* pFormField, const FX_WCHAR* sValue, FX_BOOL bValueChanged);
 	void							UpdateField(CPDF_FormField* pFormField);
 	
 public:
@@ -231,7 +231,7 @@ private:
 	
 private:
 	FX_BOOL							FDFToURLEncodedData(CFX_WideString csFDFFile, CFX_WideString csTxtFile);
-	FX_BOOL							FDFToURLEncodedData(FX_LPBYTE& pBuf, FX_STRSIZE& nBufSize);
+	FX_BOOL							FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufSize);
 	int								GetPageIndexByAnnotDict(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict) const;
 	void							DoFDFBuffer(CFX_ByteString sBuffer);
 	

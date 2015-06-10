@@ -138,17 +138,17 @@ void global_alternate::Initial(CPDFDoc_Environment* pApp)
 	UpdateGlobalPersistentVariables();
 }
 
-FX_BOOL	global_alternate::QueryProperty(FX_LPCWSTR propname)
+FX_BOOL	global_alternate::QueryProperty(const FX_WCHAR* propname)
 {
 	return CFX_WideString(propname) != L"setPersistent";
 }
 
-FX_BOOL	global_alternate::DelProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CFX_WideString& sError)
+FX_BOOL	global_alternate::DelProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CFX_WideString& sError)
 {
 	js_global_data* pData = NULL;
 	CFX_ByteString sPropName = CFX_ByteString::FromUnicode(propname);
 
-	if (m_mapGlobal.Lookup(sPropName, (FX_LPVOID&)pData))
+	if (m_mapGlobal.Lookup(sPropName, (void*&)pData))
 	{
 		pData->bDeleted = TRUE;
 		return TRUE;
@@ -157,7 +157,7 @@ FX_BOOL	global_alternate::DelProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CF
 	return FALSE;
 }
 
-FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS_PropValue& vp, CFX_WideString& sError)
+FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	if (vp.IsSetting())
 	{
@@ -206,7 +206,7 @@ FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, FX_LPCWSTR propname, CJS
 		js_global_data* pData = NULL;
 		CFX_ByteString sPropName = CFX_ByteString::FromUnicode(propname);
 
-		if (m_mapGlobal.Lookup(sPropName, (FX_LPVOID&)pData))
+		if (m_mapGlobal.Lookup(sPropName, (void*&)pData))
 		{
 			if (pData)
 			{
@@ -270,7 +270,7 @@ FX_BOOL global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters&
 	CFX_ByteString sName = params[0].ToCFXByteString();
 
 	js_global_data* pData = NULL;
-	if (m_mapGlobal.Lookup(sName, (FX_LPVOID&)pData))
+	if (m_mapGlobal.Lookup(sName, (void*&)pData))
 	{
 		if (pData && !pData->bDeleted)
 		{
@@ -341,7 +341,7 @@ void global_alternate::CommitGlobalPersisitentVariables()
 	{
 		CFX_ByteString name; 
 		js_global_data* pData = NULL;
-		m_mapGlobal.GetNextAssoc(pos, name, (FX_LPVOID&)pData);
+		m_mapGlobal.GetNextAssoc(pos, name, (void*&)pData);
 		
 		if (pData)
 		{
@@ -495,7 +495,7 @@ void global_alternate::DestroyGlobalPersisitentVariables()
 	{
 		CFX_ByteString name; 
 		js_global_data* pData = NULL;
-		m_mapGlobal.GetNextAssoc(pos, name, (FX_LPVOID&)pData);
+		m_mapGlobal.GetNextAssoc(pos, name, (void*&)pData);
 		delete pData;
 	}
 
@@ -503,13 +503,13 @@ void global_alternate::DestroyGlobalPersisitentVariables()
 }
 
 
-FX_BOOL global_alternate::SetGlobalVariables(FX_LPCSTR propname, int nType, 
+FX_BOOL global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType, 
 				double dData, bool bData, const CFX_ByteString& sData, JSObject pData, bool bDefaultPersistent)
 {
 	if (propname == NULL) return FALSE;
 
 	js_global_data* pTemp = NULL;
-	m_mapGlobal.Lookup(propname, (FX_LPVOID&)pTemp);
+	m_mapGlobal.Lookup(propname, (void*&)pTemp);
 
 	if (pTemp)
 	{
@@ -601,7 +601,7 @@ FX_BOOL global_alternate::SetGlobalVariables(FX_LPCSTR propname, int nType,
 		return FALSE;
 	}	
 
-	m_mapGlobal.SetAt(propname, (FX_LPVOID)pNewData);
+	m_mapGlobal.SetAt(propname, (void*)pNewData);
 
 	return TRUE;
 }

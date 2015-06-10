@@ -12,7 +12,7 @@ class CPDF_CMapManager
 public:
     CPDF_CMapManager();
     ~CPDF_CMapManager();
-    FX_LPVOID				GetPackage(FX_BOOL bPrompt);
+    void*				GetPackage(FX_BOOL bPrompt);
     CPDF_CMap*				GetPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPrompt);
     CPDF_CID2UnicodeMap*	GetCID2UnicodeMap(int charset, FX_BOOL bPrompt);
     void					ReloadAll();
@@ -44,7 +44,7 @@ public:
     } m_EmbeddedToUnicodes[NUMBER_OF_CIDSETS];
 private:
     CFX_MapPtrToPtr		m_pStockMap;
-    FX_LPBYTE			m_pContrastRamps;
+    uint8_t*			m_pContrastRamps;
 };
 struct _CMap_CodeRange {
     int			m_CharSize;
@@ -81,7 +81,7 @@ class CPDF_CMap
 public:
     CPDF_CMap();
     FX_BOOL					LoadPredefined(CPDF_CMapManager* pMgr, const FX_CHAR* name, FX_BOOL bPromptCJK);
-    FX_BOOL					LoadEmbedded(FX_LPCBYTE pData, FX_DWORD dwSize);
+    FX_BOOL					LoadEmbedded(const uint8_t* pData, FX_DWORD dwSize);
     void					Release();
     FX_BOOL					IsLoaded() const
     {
@@ -98,9 +98,9 @@ public:
     FX_WORD					CIDFromCharCode(FX_DWORD charcode) const;
     FX_DWORD				CharCodeFromCID(FX_WORD CID) const;
     int						GetCharSize(FX_DWORD charcode) const;
-    FX_DWORD				GetNextChar(FX_LPCSTR pString, int nStrLen, int& offset) const;
-    int						CountChar(FX_LPCSTR pString, int size) const;
-    int						AppendChar(FX_LPSTR str, FX_DWORD charcode) const;
+    FX_DWORD				GetNextChar(const FX_CHAR* pString, int nStrLen, int& offset) const;
+    int						CountChar(const FX_CHAR* pString, int size) const;
+    int						AppendChar(FX_CHAR* str, FX_DWORD charcode) const;
     typedef enum {OneByte, TwoBytes, MixedTwoBytes, MixedFourBytes} CodingScheme;
 protected:
     ~CPDF_CMap();
@@ -115,7 +115,7 @@ protected:
     int						m_nCodeRanges;
     uint8_t*				m_pLeadingBytes;
     FX_WORD*				m_pMapping;
-    FX_LPBYTE				m_pAddMapping;
+    uint8_t*				m_pAddMapping;
     FX_BOOL					m_bLoaded;
     const FXCMAP_CMap*		m_pEmbedMap;
     CPDF_CMap*				m_pUseMap;
@@ -123,7 +123,7 @@ protected:
 class CPDF_PredefinedCMap
 {
 public:
-    FX_LPCSTR	m_pName;
+    const FX_CHAR*	m_pName;
     int			m_Charset;
     int			m_Coding;
     CPDF_CMap::CodingScheme	m_CodingScheme;

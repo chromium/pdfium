@@ -13,7 +13,7 @@ typedef struct _PDFDOC_METADATA {
     CFX_CMapByteStringToPtr *m_pStringMap;
 } PDFDOC_METADATA, * PDFDOC_LPMETADATA;
 typedef PDFDOC_METADATA const * PDFDOC_LPCMETADATA;
-const FX_LPCSTR gs_FPDFDOC_Metadata_Titles[] = {
+const FX_CHAR* const gs_FPDFDOC_Metadata_Titles[] = {
     "Title", "title",
     "Subject", "description",
     "Author", "creator",
@@ -60,7 +60,7 @@ void CPDF_Metadata::LoadDoc(CPDF_Document *pDoc)
     CPDF_StreamAcc acc;
     acc.LoadAllData(pStream, FALSE);
     int size = acc.GetSize();
-    FX_LPCBYTE pBuf = acc.GetData();
+    const uint8_t* pBuf = acc.GetData();
     CXML_Element *&pXmlElmnt = ((PDFDOC_LPMETADATA)m_pData)->m_pXmlElmnt;
     pXmlElmnt = CXML_Element::Parse(pBuf, size);
     if (!pXmlElmnt) {
@@ -85,7 +85,7 @@ int32_t CPDF_Metadata::GetString(FX_BSTR bsItem, CFX_WideString &wsStr)
     if (!((PDFDOC_LPMETADATA)m_pData)->m_pStringMap->Lookup(bsItem, szTag)) {
         return -1;
     }
-    CFX_ByteString bsTag = (FX_LPCSTR)szTag;
+    CFX_ByteString bsTag = (const FX_CHAR*)szTag;
     wsStr = L"";
     CXML_Element *pElmntRdf = ((PDFDOC_LPMETADATA)m_pData)->m_pElmntRdf;
     if (!pElmntRdf) {

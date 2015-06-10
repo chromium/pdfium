@@ -50,18 +50,18 @@ CPDF_ModuleMgr::~CPDF_ModuleMgr()
         delete m_pRenderModule;
     }
 }
-void CPDF_ModuleMgr::SetDownloadCallback(FX_BOOL (*callback)(FX_LPCSTR module_name))
+void CPDF_ModuleMgr::SetDownloadCallback(FX_BOOL (*callback)(const FX_CHAR* module_name))
 {
     m_pDownloadCallback = callback;
 }
-FX_BOOL CPDF_ModuleMgr::DownloadModule(FX_LPCSTR module_name)
+FX_BOOL CPDF_ModuleMgr::DownloadModule(const FX_CHAR* module_name)
 {
     if (m_pDownloadCallback == NULL) {
         return FALSE;
     }
     return m_pDownloadCallback(module_name);
 }
-void CPDF_ModuleMgr::NotifyModuleAvailable(FX_LPCSTR module_name)
+void CPDF_ModuleMgr::NotifyModuleAvailable(const FX_CHAR* module_name)
 {
     if (FXSYS_strcmp(module_name, ADDIN_NAME_CJK) == 0) {
         m_pPageModule->NotifyCJKAvailable();
@@ -69,7 +69,7 @@ void CPDF_ModuleMgr::NotifyModuleAvailable(FX_LPCSTR module_name)
         m_pRenderModule->NotifyDecoderAvailable();
     }
 }
-void CPDF_ModuleMgr::RegisterSecurityHandler(FX_LPCSTR filter, CPDF_SecurityHandler * (*CreateHandler)(void* param), void* param)
+void CPDF_ModuleMgr::RegisterSecurityHandler(const FX_CHAR* filter, CPDF_SecurityHandler * (*CreateHandler)(void* param), void* param)
 {
     if (CreateHandler == NULL) {
         m_SecurityHandlerMap.RemoveKey(filter);
@@ -80,15 +80,15 @@ void CPDF_ModuleMgr::RegisterSecurityHandler(FX_LPCSTR filter, CPDF_SecurityHand
         m_SecurityHandlerMap.SetAt(FX_BSTRC("_param_") + filter, param);
     }
 }
-void CPDF_ModuleMgr::SetPrivateData(FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback)
+void CPDF_ModuleMgr::SetPrivateData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback)
 {
     m_privateData.SetPrivateData(module_id, pData, callback);
 }
-FX_LPVOID CPDF_ModuleMgr::GetPrivateData(FX_LPVOID module_id)
+void* CPDF_ModuleMgr::GetPrivateData(void* module_id)
 {
     return m_privateData.GetPrivateData(module_id);
 }
-CPDF_SecurityHandler* CPDF_ModuleMgr::CreateSecurityHandler(FX_LPCSTR filter)
+CPDF_SecurityHandler* CPDF_ModuleMgr::CreateSecurityHandler(const FX_CHAR* filter)
 {
     CPDF_SecurityHandler* (*CreateHandler)(void*) = NULL;
     if (!m_SecurityHandlerMap.Lookup(filter, (void*&)CreateHandler)) {

@@ -10,14 +10,14 @@ extern const FX_WCHAR g_UnicodeData_Normalization_Map1[];
 extern const FX_WCHAR g_UnicodeData_Normalization_Map2[];
 extern const FX_WCHAR g_UnicodeData_Normalization_Map3[];
 extern const FX_WCHAR g_UnicodeData_Normalization_Map4[];
-FX_LPCWSTR g_UnicodeData_Normalization_Maps[5] = {
+const FX_WCHAR* g_UnicodeData_Normalization_Maps[5] = {
     NULL,
     g_UnicodeData_Normalization_Map1,
     g_UnicodeData_Normalization_Map2,
     g_UnicodeData_Normalization_Map3,
     g_UnicodeData_Normalization_Map4
 };
-FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_LPWSTR pDst)
+FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst)
 {
     wch = wch & 0xFFFF;
     FX_WCHAR wFind = g_UnicodeData_Normalization[wch];
@@ -34,7 +34,7 @@ FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_LPWSTR pDst)
         wch = wFind & 0x0FFF;
         wFind >>= 12;
     }
-    FX_LPCWSTR pMap = g_UnicodeData_Normalization_Maps[wFind];
+    const FX_WCHAR* pMap = g_UnicodeData_Normalization_Maps[wFind];
     if (pMap == g_UnicodeData_Normalization_Map4) {
         pMap = g_UnicodeData_Normalization_Map4 + wch;
         wFind = (FX_WCHAR)(*pMap ++);
@@ -49,7 +49,7 @@ FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_LPWSTR pDst)
     }
     return (FX_STRSIZE)wFind;
 }
-FX_STRSIZE FX_WideString_GetNormalization(FX_WSTR wsSrc, FX_LPWSTR pDst)
+FX_STRSIZE FX_WideString_GetNormalization(FX_WSTR wsSrc, FX_WCHAR* pDst)
 {
     FX_STRSIZE nCount = 0;
     for (FX_STRSIZE len = 0; len < wsSrc.GetLength(); len ++) {
@@ -64,11 +64,11 @@ FX_STRSIZE FX_WideString_GetNormalization(FX_WSTR wsSrc, FX_LPWSTR pDst)
 }
 FX_STRSIZE FX_WideString_GetNormalization(FX_WSTR wsSrc, CFX_WideString &wsDst)
 {
-    FX_STRSIZE nLen = FX_WideString_GetNormalization(wsSrc, (FX_LPWSTR)NULL);
+    FX_STRSIZE nLen = FX_WideString_GetNormalization(wsSrc, (FX_WCHAR*)NULL);
     if (!nLen) {
         return 0;
     }
-    FX_LPWSTR pBuf = wsDst.GetBuffer(nLen);
+    FX_WCHAR* pBuf = wsDst.GetBuffer(nLen);
     FX_WideString_GetNormalization(wsSrc, pBuf);
     wsDst.ReleaseBuffer(nLen);
     return nLen;

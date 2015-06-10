@@ -618,7 +618,7 @@ public:
 	void									OnVK_HOME(FX_BOOL bShift,FX_BOOL bCtrl);
 	void									OnVK_END(FX_BOOL bShift,FX_BOOL bCtrl);
 
-	void									SetText(FX_LPCWSTR text,int32_t charset = DEFAULT_CHARSET,
+	void									SetText(const FX_WCHAR* text,int32_t charset = DEFAULT_CHARSET,
 													const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL);	
 	FX_BOOL									InsertWord(FX_WORD word, int32_t charset = DEFAULT_CHARSET, const CPVT_WordProps * pWordProps = NULL);
 	FX_BOOL									InsertReturn(const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL);
@@ -626,11 +626,11 @@ public:
 	FX_BOOL									Delete();		
 	FX_BOOL									Clear();
 	FX_BOOL									Empty();
-	FX_BOOL									InsertText(FX_LPCWSTR text, int32_t charset = DEFAULT_CHARSET,
+	FX_BOOL									InsertText(const FX_WCHAR* text, int32_t charset = DEFAULT_CHARSET,
 													const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL);
 	FX_BOOL									Redo();
 	FX_BOOL									Undo();	
-	CPVT_WordPlace							DoInsertText(const CPVT_WordPlace& place, FX_LPCWSTR text, int32_t charset, 
+	CPVT_WordPlace							DoInsertText(const CPVT_WordPlace& place, const FX_WCHAR* text, int32_t charset, 
 												const CPVT_SecProps * pSecProps, const CPVT_WordProps * pWordProps);
 	int32_t								GetCharSetFromUnicode(FX_WORD word, int32_t nOldCharset);
 
@@ -679,14 +679,14 @@ private:
 	void									SetContentChanged();
 	void									EnableNotify(FX_BOOL bNotify);
 
-	void									SetText(FX_LPCWSTR text,int32_t charset,
+	void									SetText(const FX_WCHAR* text,int32_t charset,
 													const CPVT_SecProps * pSecProps,const CPVT_WordProps * pWordProps,FX_BOOL bAddUndo, FX_BOOL bPaint);	
 	FX_BOOL									InsertWord(FX_WORD word, int32_t charset, const CPVT_WordProps * pWordProps,FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									InsertReturn(const CPVT_SecProps * pSecProps,const CPVT_WordProps * pWordProps,FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									Backspace(FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									Delete(FX_BOOL bAddUndo, FX_BOOL bPaint);		
 	FX_BOOL									Clear(FX_BOOL bAddUndo, FX_BOOL bPaint);
-	FX_BOOL									InsertText(FX_LPCWSTR text, int32_t charset,
+	FX_BOOL									InsertText(const FX_WCHAR* text, int32_t charset,
 												const CPVT_SecProps * pSecProps,const CPVT_WordProps * pWordProps,FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									SetRichTextProps(EDIT_PROPS_E eProps,
 												const CPVT_SecProps * pSecProps, const CPVT_WordProps * pWordProps);

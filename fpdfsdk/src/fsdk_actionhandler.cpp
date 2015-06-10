@@ -600,7 +600,7 @@ void CPDFSDK_ActionHandler::DoAction_URI(CPDFSDK_Document* pDocument, const CPDF
  	ASSERT(pApp != NULL);
 
  	CFX_ByteString sURI = action.GetURI(pDocument->GetDocument());
- 	pApp->FFI_DoURIAction(FX_LPCSTR(sURI));
+ 	pApp->FFI_DoURIAction(sURI.c_str());
 }
 
 void CPDFSDK_ActionHandler::DoAction_Named(CPDFSDK_Document* pDocument, const CPDF_Action& action)

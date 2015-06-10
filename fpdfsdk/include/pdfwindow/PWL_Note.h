@@ -145,7 +145,7 @@ public:
 	FX_FLOAT							GetItemLeftMargin();
 	FX_FLOAT							GetItemRightMargin();
 
-	virtual void						SetText(FX_LPCWSTR csText);
+	virtual void						SetText(const FX_WCHAR* csText);
 
 protected:
 	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);

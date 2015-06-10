@@ -129,7 +129,7 @@ void CPDF_AnnotList::DisplayAnnots(const CPDF_Page* pPage, CFX_RenderDevice* pDe
 int CPDF_AnnotList::GetIndex(CPDF_Annot* pAnnot)
 {
     for (int i = 0; i < m_AnnotList.GetSize(); ++i)
-        if (m_AnnotList[i] == (FX_LPVOID)pAnnot) {
+        if (m_AnnotList[i] == (void*)pAnnot) {
             return i;
         }
     return -1;

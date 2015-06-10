@@ -48,7 +48,7 @@ public:
     void*	createGraphics(CFX_DIBitmap* bitmap);
     void	destroyGraphics(void* graphics);
 
-    void*	CreateFont(FX_LPCBYTE pFontData, FX_DWORD dwFontSize);
+    void*	CreateFont(const uint8_t* pFontData, FX_DWORD dwFontSize);
     void	DestroyFont(void* pFont);
     void	setGraphicsTextMatrix(void* graphics, CFX_AffineMatrix* matrix);
     FX_BOOL	drawGraphicsString(void*                graphics,
@@ -141,17 +141,17 @@ public:
                                   int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags,
                                   int alpha_flag = 0, void* pIccTransform = NULL, int blend_type = FXDIB_BLEND_NORMAL);
     virtual FX_BOOL	StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
-                                const CFX_AffineMatrix* pMatrix, FX_DWORD flags, FX_LPVOID& handle,
+                                const CFX_AffineMatrix* pMatrix, FX_DWORD flags, void*& handle,
                                 int alpha_flag = 0, void* pIccTransform = NULL,
                                 int blend_type = FXDIB_BLEND_NORMAL)
     {
         return FALSE;
     }
-    virtual FX_BOOL	ContinueDIBits(FX_LPVOID handle, IFX_Pause* pPause)
+    virtual FX_BOOL	ContinueDIBits(void* handle, IFX_Pause* pPause)
     {
         return FALSE;
     }
-    virtual void	CancelDIBits(FX_LPVOID handle) {}
+    virtual void	CancelDIBits(void* handle) {}
     virtual FX_BOOL DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
                                    CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FLOAT font_size, FX_DWORD color,
                                    int alpha_flag = 0, void* pIccTransform = NULL);
@@ -239,10 +239,10 @@ private:
     int _tableCount;
     int _totalSize;
 };
-uint32_t FX_GetHashCode( FX_LPCSTR pStr);
-FX_DWORD  FX_IOSGetMatchFamilyNameHashcode(FX_LPCSTR pFontName);
+uint32_t FX_GetHashCode( const FX_CHAR* pStr);
+FX_DWORD  FX_IOSGetMatchFamilyNameHashcode(const FX_CHAR* pFontName);
 uint32_t FX_IOSGetFamilyNamesCount();
-FX_LPCSTR FX_IOSGetFamilyName( uint32_t uIndex);
+const FX_CHAR* FX_IOSGetFamilyName( uint32_t uIndex);
 #endif
 
 #endif  // CORE_SRC_FXGE_APPLE_APPLE_INT_H_

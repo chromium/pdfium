@@ -48,7 +48,7 @@ void CQuartz2D::destroyGraphics(void* graphics)
         CGContextRelease((CGContextRef) graphics);
     }
 }
-void* CQuartz2D::CreateFont(FX_LPCBYTE pFontData, FX_DWORD dwFontSize)
+void* CQuartz2D::CreateFont(const uint8_t* pFontData, FX_DWORD dwFontSize)
 {
     CGDataProviderRef pDataProvider = CGDataProviderCreateWithData(NULL, pFontData, (size_t)dwFontSize, NULL);
     if (NULL == pDataProvider) {
@@ -541,7 +541,7 @@ FX_BOOL CFX_QuartzDeviceDriver::GetDIBits(CFX_DIBitmap*     bitmap,
     CGImageRelease(image);
     if (bitmap->HasAlpha()) {
         for (int row = 0; row < bitmap->GetHeight(); row ++) {
-            FX_LPBYTE pScanline = (FX_LPBYTE)bitmap->GetScanline(row);
+            uint8_t* pScanline = (uint8_t*)bitmap->GetScanline(row);
             for (int col = 0; col < bitmap->GetWidth(); col ++) {
                 if (pScanline[3] > 0) {
                     pScanline[0] = (pScanline[0] * 255.f / pScanline[3] + .5f);
@@ -654,7 +654,7 @@ FX_BOOL CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource*      pBitmap,
             }
         }
         for (int row = 0; row < pBitmap1->GetHeight(); row ++) {
-            FX_LPBYTE pScanline = (FX_LPBYTE)pBitmap1->GetScanline(row);
+            uint8_t* pScanline = (uint8_t*)pBitmap1->GetScanline(row);
             for (int col = 0; col < pBitmap1->GetWidth(); col ++) {
                 pScanline[0] = (uint8_t)(pScanline[0] * pScanline[3] / 255.f + .5f);
                 pScanline[1] = (uint8_t)(pScanline[1] * pScanline[3] / 255.f + .5f);
@@ -779,7 +779,7 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource*      pBitmap,
             }
         }
         for (int row = 0; row < pBitmap1->GetHeight(); row ++) {
-            FX_LPBYTE pScanline = (FX_LPBYTE)pBitmap1->GetScanline(row);
+            uint8_t* pScanline = (uint8_t*)pBitmap1->GetScanline(row);
             for (int col = 0; col < pBitmap1->GetWidth(); col ++) {
                 pScanline[0] = (uint8_t)(pScanline[0] * pScanline[3] / 255.f + .5f);
                 pScanline[1] = (uint8_t)(pScanline[1] * pScanline[3] / 255.f + .5f);

@@ -66,7 +66,7 @@ public:
 
     void					Delete(int start_index, int count);
 
-    FX_LPBYTE				GetBuffer() const
+    uint8_t*				GetBuffer() const
     {
         return m_pBuffer;
     }
@@ -83,7 +83,7 @@ protected:
 
     FX_STRSIZE				m_AllocStep;
 
-    FX_LPBYTE				m_pBuffer;
+    uint8_t*				m_pBuffer;
 
     FX_STRSIZE				m_DataSize;
 
@@ -121,7 +121,7 @@ class CFX_WideTextBuf : public CFX_BinaryBuf
 {
 public:
 
-    void					operator = (FX_LPCWSTR lpsz);
+    void					operator = (const FX_WCHAR* lpsz);
 
     void					operator = (FX_WSTR str);
 
@@ -131,7 +131,7 @@ public:
 
     CFX_WideTextBuf&		operator << (double f);
 
-    CFX_WideTextBuf&		operator << (FX_LPCWSTR lpsz);
+    CFX_WideTextBuf&		operator << (const FX_WCHAR* lpsz);
 
     CFX_WideTextBuf&		operator << (FX_WSTR str);
     CFX_WideTextBuf&		operator << (const CFX_WideString &str);
@@ -143,9 +143,9 @@ public:
         return m_DataSize / sizeof(FX_WCHAR);
     }
 
-    FX_LPWSTR				GetBuffer() const
+    FX_WCHAR*				GetBuffer() const
     {
-        return (FX_LPWSTR)m_pBuffer;
+        return (FX_WCHAR*)m_pBuffer;
     }
 
     void					Delete(int start_index, int count)
@@ -172,7 +172,7 @@ public:
 
     CFX_ArchiveSaver&		operator << (FX_BSTR bstr);
 
-    CFX_ArchiveSaver&		operator << (FX_LPCWSTR bstr);
+    CFX_ArchiveSaver&		operator << (const FX_WCHAR* bstr);
 
     CFX_ArchiveSaver&		operator << (const CFX_WideString& wstr);
 
@@ -183,7 +183,7 @@ public:
         return m_SavingBuf.GetSize();
     }
 
-    FX_LPCBYTE				GetBuffer()
+    const uint8_t*				GetBuffer()
     {
         return m_SavingBuf.GetBuffer();
     }
@@ -202,7 +202,7 @@ class CFX_ArchiveLoader
 {
 public:
 
-    CFX_ArchiveLoader(FX_LPCBYTE pData, FX_DWORD dwSize);
+    CFX_ArchiveLoader(const uint8_t* pData, FX_DWORD dwSize);
 
     CFX_ArchiveLoader&		operator >> (uint8_t& i);
 
@@ -225,7 +225,7 @@ protected:
 
     FX_DWORD				m_LoadingPos;
 
-    FX_LPCBYTE				m_pLoadingBuf;
+    const uint8_t*				m_pLoadingBuf;
 
     FX_DWORD				m_LoadingSize;
 };
@@ -256,7 +256,7 @@ protected:
 
     FX_STRSIZE				m_BufSize;
 
-    FX_LPBYTE				m_pBuffer;
+    uint8_t*				m_pBuffer;
 
     FX_STRSIZE				m_Length;
 };
@@ -269,9 +269,9 @@ public:
 
     FX_BOOL					AttachFile(IFX_StreamWrite *pFile, FX_BOOL bTakeover = FALSE);
 
-    FX_BOOL					AttachFile(FX_LPCWSTR filename);
+    FX_BOOL					AttachFile(const FX_WCHAR* filename);
 
-    FX_BOOL					AttachFile(FX_LPCSTR filename);
+    FX_BOOL					AttachFile(const FX_CHAR* filename);
 private:
 
     virtual FX_BOOL			DoWork(const void* pBuf, size_t size);
@@ -365,7 +365,7 @@ protected:
 
     FX_BOOL			Copy(const CFX_BasicArray& src);
 
-    FX_LPBYTE		InsertSpaceAt(int nIndex, int nCount);
+    uint8_t*		InsertSpaceAt(int nIndex, int nCount);
 
     FX_BOOL			RemoveAt(int nIndex, int nCount);
 
@@ -374,7 +374,7 @@ protected:
     const void*		GetDataPtr(int index) const;
 protected:
 
-    FX_LPBYTE		m_pData;
+    uint8_t*		m_pData;
 
     int				m_nSize;
 
@@ -713,7 +713,7 @@ private:
     void*			m_pIndex;
     void**	GetIndex(int seg_index) const;
     void*	IterateIndex(int level, int& start, void** pIndex, FX_BOOL (*callback)(void* param, void* pData), void* param) const;
-    void*	IterateSegment(FX_LPCBYTE pSegment, int count, FX_BOOL (*callback)(void* param, void* pData), void* param) const;
+    void*	IterateSegment(const uint8_t* pSegment, int count, FX_BOOL (*callback)(void* param, void* pData), void* param) const;
 };
 template <class ElementType>
 class CFX_SegmentedArray : public CFX_BaseSegmentedArray
@@ -858,7 +858,7 @@ public:
 
     FX_BOOL	Lookup(KeyType key, ValueType& rValue) const
     {
-        FX_LPVOID pValue = NULL;
+        void* pValue = NULL;
         if (!CFX_MapPtrToPtr::Lookup((void*)(uintptr_t)key, pValue)) {
             return FALSE;
         }
@@ -954,7 +954,7 @@ public:
 
     void GetNextAssoc(FX_POSITION& rNextPosition, CFX_ByteString& rKey, void*& rValue) const;
 
-    FX_LPVOID		GetNextValue(FX_POSITION& rNextPosition) const;
+    void*		GetNextValue(FX_POSITION& rNextPosition) const;
 
     FX_DWORD GetHashTableSize() const
     {
@@ -1000,7 +1000,7 @@ public:
 
     void			GetNextAssoc(FX_POSITION& rNextPosition, CFX_ByteString& rKey, void*& rValue) const;
 
-    FX_LPVOID		GetNextValue(FX_POSITION& rNextPosition) const;
+    void*		GetNextValue(FX_POSITION& rNextPosition) const;
 
     FX_BOOL			Lookup(FX_BSTR key, void*& rValue) const;
 
@@ -1115,14 +1115,14 @@ public:
 
     ~CFX_PtrList();
 };
-typedef void (*PD_CALLBACK_FREEDATA)(FX_LPVOID pData);
+typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
 struct FX_PRIVATEDATA {
 
     void					FreeData();
 
-    FX_LPVOID				m_pModuleId;
+    void*				m_pModuleId;
 
-    FX_LPVOID				m_pData;
+    void*				m_pData;
 
     PD_CALLBACK_FREEDATA	m_pCallback;
 
@@ -1136,13 +1136,13 @@ public:
 
     void					ClearAll();
 
-    void					SetPrivateData(FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback);
+    void					SetPrivateData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback);
 
-    void					SetPrivateObj(FX_LPVOID module_id, CFX_DestructObject* pObj);
+    void					SetPrivateObj(void* module_id, CFX_DestructObject* pObj);
 
-    FX_LPVOID				GetPrivateData(FX_LPVOID module_id);
+    void*				GetPrivateData(void* module_id);
 
-    FX_BOOL					LookupPrivateData(FX_LPVOID module_id, FX_LPVOID &pData) const
+    FX_BOOL					LookupPrivateData(void* module_id, void* &pData) const
     {
         if (!module_id) {
             return FALSE;
@@ -1157,18 +1157,18 @@ public:
         return FALSE;
     }
 
-    FX_BOOL					RemovePrivateData(FX_LPVOID module_id);
+    FX_BOOL					RemovePrivateData(void* module_id);
 protected:
 
     CFX_ArrayTemplate<FX_PRIVATEDATA>	m_DataList;
 
-    void					AddData(FX_LPVOID module_id, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback, FX_BOOL bSelfDestruct);
+    void					AddData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback, FX_BOOL bSelfDestruct);
 };
 class CFX_BitStream 
 {
 public:
 
-    void				Init(FX_LPCBYTE pData, FX_DWORD dwSize);
+    void				Init(const uint8_t* pData, FX_DWORD dwSize);
 
 
     FX_DWORD			GetBits(FX_DWORD nBits);
@@ -1195,7 +1195,7 @@ protected:
 
     FX_DWORD			m_BitSize;
 
-    FX_LPCBYTE			m_pData;
+    const uint8_t*			m_pData;
 };
 template <class ObjClass> class CFX_CountRef 
 {
@@ -1356,13 +1356,13 @@ public:
         return m_SrcPos;
     }
 
-    void			FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf);
+    void			FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf);
 
     void			FilterFinish(CFX_BinaryBuf& dest_buf);
 protected:
 
     CFX_DataFilter();
-    virtual void	v_FilterIn(FX_LPCBYTE src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf) = 0;
+    virtual void	v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf) = 0;
     virtual void	v_FilterFinish(CFX_BinaryBuf& dest_buf) = 0;
     void			ReportEOF(FX_DWORD left_input);
 
@@ -1422,7 +1422,7 @@ protected:
         int32_t	start;
 
         int32_t	count;
-        FX_LPBYTE	data;
+        uint8_t*	data;
     };
 public:
 
@@ -1463,7 +1463,7 @@ public:
         }
     }
 
-    FX_LPBYTE		GetAt(int32_t nIndex)
+    uint8_t*		GetAt(int32_t nIndex)
     {
         if (nIndex < 0) {
             return NULL;
@@ -1540,7 +1540,7 @@ public:
 
     T2&				operator [] (int32_t nIndex)
     {
-        FX_LPBYTE data = m_Data.GetAt(nIndex);
+        uint8_t* data = m_Data.GetAt(nIndex);
         FXSYS_assert(data != NULL);
         return (T2&)(*(volatile T2*)data);
     }

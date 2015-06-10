@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FX_SYSTEMHANDLER_H_
 #define FPDFSDK_INCLUDE_FX_SYSTEMHANDLER_H_
 
-typedef FX_LPVOID				FX_HWND;
-typedef FX_LPVOID				FX_HMENU;
+typedef void*				FX_HWND;
+typedef void*				FX_HMENU;
 typedef void					(*TimerCallback)(int32_t idEvent);
 
 typedef struct _FX_SYSTEMTIME 

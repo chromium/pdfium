@@ -164,7 +164,7 @@ FX_BOOL FX_File_Copy(FX_BSTR fileNameSrc, FX_BSTR fileNameDst)
         return FALSE;
     }
     size_t num = 0;
-    FX_LPBYTE pBuffer = FX_Alloc(uint8_t, 32768);
+    uint8_t* pBuffer = FX_Alloc(uint8_t, 32768);
     num = src.Read(pBuffer, 32768);
     while (num) {
         if (dst.Write(pBuffer, num) != num) {

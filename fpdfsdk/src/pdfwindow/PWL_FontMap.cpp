@@ -195,7 +195,7 @@ void CPWL_FontMap::Empty()
 	}
 }
 
-void CPWL_FontMap::Initial(FX_LPCSTR fontname)
+void CPWL_FontMap::Initial(const FX_CHAR* fontname)
 {
 	CFX_ByteString sFontName = fontname;
 

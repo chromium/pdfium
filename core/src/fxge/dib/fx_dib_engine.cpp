@@ -350,10 +350,10 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause)
                 rows_to_go = FX_STRECH_PAUSE_ROWS;
             }
         }
-        FX_LPCBYTE src_scan = m_pSource->GetScanline(m_CurRow);
-        FX_LPBYTE dest_scan = m_pInterBuf + (m_CurRow - m_SrcClip.top) * m_InterPitch;
-        FX_LPCBYTE src_scan_mask = NULL;
-        FX_LPBYTE dest_scan_mask = NULL;
+        const uint8_t* src_scan = m_pSource->GetScanline(m_CurRow);
+        uint8_t* dest_scan = m_pInterBuf + (m_CurRow - m_SrcClip.top) * m_InterPitch;
+        const uint8_t* src_scan_mask = NULL;
+        uint8_t* dest_scan_mask = NULL;
         if (m_pExtraAlphaBuf) {
             src_scan_mask = m_pSource->m_pAlphaMask->GetScanline(m_CurRow);
             dest_scan_mask = m_pExtraAlphaBuf + (m_CurRow - m_SrcClip.top) * m_ExtraMaskPitch;
@@ -477,7 +477,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause)
                         int dest_r_y = 0, dest_g_m = 0, dest_b_c = 0;
                         for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd; j ++) {
                             int pixel_weight = pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-                            FX_LPCBYTE src_pixel = src_scan + j * Bpp;
+                            const uint8_t* src_pixel = src_scan + j * Bpp;
                             dest_b_c += pixel_weight * (*src_pixel++);
                             dest_g_m += pixel_weight * (*src_pixel++);
                             dest_r_y += pixel_weight * (*src_pixel);
@@ -500,7 +500,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause)
                         int dest_a = 0, dest_r_y = 0, dest_g_m = 0, dest_b_c = 0;
                         for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd; j ++) {
                             int pixel_weight = pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-                            FX_LPCBYTE src_pixel = src_scan + j * Bpp;
+                            const uint8_t* src_pixel = src_scan + j * Bpp;
                             if (m_DestFormat == FXDIB_Argb) {
                                 pixel_weight = pixel_weight * src_pixel[3] / 255;
                             } else {
@@ -596,7 +596,7 @@ void CStretchEngine::StretchVert()
                         int dest_r_y = 0, dest_g_m = 0, dest_b_c = 0;
                         for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd; j ++) {
                             int pixel_weight = pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-                            FX_LPCBYTE src_pixel = src_scan + (j - m_SrcClip.top) * m_InterPitch;
+                            const uint8_t* src_pixel = src_scan + (j - m_SrcClip.top) * m_InterPitch;
                             dest_b_c += pixel_weight * (*src_pixel++);
                             dest_g_m += pixel_weight * (*src_pixel++);
                             dest_r_y += pixel_weight * (*src_pixel);
@@ -624,7 +624,7 @@ void CStretchEngine::StretchVert()
                         int dest_a = 0, dest_r_y = 0, dest_g_m = 0, dest_b_c = 0;
                         for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd; j ++) {
                             int pixel_weight = pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-                            FX_LPCBYTE src_pixel = src_scan + (j - m_SrcClip.top) * m_InterPitch;
+                            const uint8_t* src_pixel = src_scan + (j - m_SrcClip.top) * m_InterPitch;
                             int mask_v = 255;
                             if (src_scan_mask) {
                                 mask_v = src_scan_mask[(j - m_SrcClip.top) * m_ExtraMaskPitch];

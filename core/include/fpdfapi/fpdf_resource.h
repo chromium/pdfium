@@ -153,7 +153,7 @@ public:
         return m_Font.GetFace();
     }
 
-    virtual FX_DWORD		GetNextChar(FX_LPCSTR pString, int nStrLen, int& offset) const
+    virtual FX_DWORD		GetNextChar(const FX_CHAR* pString, int nStrLen, int& offset) const
     {
         if (offset < 0 || nStrLen < 1) {
             return 0;
@@ -162,14 +162,14 @@ public:
         return static_cast<FX_DWORD>(ch);
     }
 
-    virtual int				CountChar(FX_LPCSTR pString, int size) const
+    virtual int				CountChar(const FX_CHAR* pString, int size) const
     {
         return size;
     }
 
     void					AppendChar(CFX_ByteString& str, FX_DWORD charcode) const;
 
-    virtual int				AppendChar(FX_LPSTR buf, FX_DWORD charcode) const
+    virtual int				AppendChar(FX_CHAR* buf, FX_DWORD charcode) const
     {
         *buf = (FX_CHAR)charcode;
         return 1;
@@ -512,9 +512,9 @@ public:
         return !m_bType1;
     }
 
-    virtual FX_DWORD        GetNextChar(FX_LPCSTR pString, int nStrLen, int& offset) const override;
-    virtual int             CountChar(FX_LPCSTR pString, int size) const;
-    virtual int             AppendChar(FX_LPSTR str, FX_DWORD charcode) const;
+    virtual FX_DWORD        GetNextChar(const FX_CHAR* pString, int nStrLen, int& offset) const override;
+    virtual int             CountChar(const FX_CHAR* pString, int size) const;
+    virtual int             AppendChar(FX_CHAR* str, FX_DWORD charcode) const;
     virtual int             GetCharSize(FX_DWORD charcode) const;
 
     int                     GetCharset() const
@@ -522,7 +522,7 @@ public:
         return m_Charset;
     }
 
-    FX_LPCBYTE              GetCIDTransform(FX_WORD CID) const;
+    const uint8_t*              GetCIDTransform(FX_WORD CID) const;
     virtual FX_BOOL         IsVertWriting() const;
     short                   GetVertWidth(FX_WORD CID) const;
     void                    GetVertOrigin(FX_WORD CID, short& vx, short& vy) const;
@@ -622,7 +622,7 @@ public:
     FX_BOOL					SetCMYK(FX_FLOAT* pBuf, FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k) const;
 
 
-    virtual void			TranslateImageLine(FX_LPBYTE dest_buf, FX_LPCBYTE src_buf, int pixels,
+    virtual void			TranslateImageLine(uint8_t* dest_buf, const uint8_t* src_buf, int pixels,
             int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
 
     CPDF_Array*&			GetArray()
@@ -940,7 +940,7 @@ private:
     CPDF_Document*			m_pDocument;
 
     CPDF_Dictionary*		m_pOC;
-    CPDF_Dictionary*	InitJPEG(FX_LPBYTE pData, FX_DWORD size);
+    CPDF_Dictionary*	InitJPEG(uint8_t* pData, FX_DWORD size);
 };
 
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_RESOURCE_H_

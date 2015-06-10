@@ -917,7 +917,7 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(const CPVT_WordPlace & place, co
     }
     return newplace;
 }
-CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace & place, FX_LPCWSTR text, int32_t charset,
+CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace & place, const FX_WCHAR* text, int32_t charset,
         const CPVT_SecProps * pSecProps, const CPVT_WordProps * pProps)
 {
     CFX_WideString swText = text;
@@ -977,7 +977,7 @@ CPVT_WordPlace CPDF_VariableText::BackSpaceWord(const CPVT_WordPlace & place)
 {
     return ClearLeftWord(AjustLineHeader(place, TRUE));
 }
-void CPDF_VariableText::SetText(FX_LPCWSTR text, int32_t charset, const CPVT_SecProps * pSecProps,
+void CPDF_VariableText::SetText(const FX_WCHAR* text, int32_t charset, const CPVT_SecProps * pSecProps,
                                 const CPVT_WordProps * pWordProps)
 {
     DeleteWords(CPVT_WordRange(GetBeginWordPlace(), GetEndWordPlace()));

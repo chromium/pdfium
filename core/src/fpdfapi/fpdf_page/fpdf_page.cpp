@@ -242,7 +242,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs, FX_FLOAT* pKernin
         m_pCharPos = FX_Alloc(FX_FLOAT, m_nChars - 1);
         int index = 0;
         for (int i = 0; i < nsegs; i ++) {
-            FX_LPCSTR segment = pStrs[i];
+            const FX_CHAR* segment = pStrs[i];
             int offset = 0, len = pStrs[i].GetLength();
             while (offset < len) {
                 m_pCharCodes[index++] = pFont->GetNextChar(segment, len, offset);

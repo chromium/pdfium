@@ -125,7 +125,7 @@ CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(CPDF_Dictionary* pDict,
         return NULL;
     }
     CPDF_StructElementImpl* pElement = NULL;
-    if (map.Lookup(pDict, (FX_LPVOID&)pElement)) {
+    if (map.Lookup(pDict, (void*&)pElement)) {
         return pElement;
     }
     pElement = new CPDF_StructElementImpl(this, NULL, pDict);

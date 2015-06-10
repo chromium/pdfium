@@ -138,7 +138,7 @@ CJS_GlobalData::~CJS_GlobalData()
 	m_arrayGlobalData.RemoveAll();
 }
 
-int	CJS_GlobalData::FindGlobalVariable(FX_LPCSTR propname)
+int	CJS_GlobalData::FindGlobalVariable(const FX_CHAR* propname)
 {
 	ASSERT(propname != NULL);
 
@@ -157,7 +157,7 @@ int	CJS_GlobalData::FindGlobalVariable(FX_LPCSTR propname)
 	return nRet;
 }
 
-CJS_GlobalData_Element* CJS_GlobalData::GetGlobalVariable(FX_LPCSTR propname)
+CJS_GlobalData_Element* CJS_GlobalData::GetGlobalVariable(const FX_CHAR* propname)
 {
 	ASSERT(propname != NULL);
 
@@ -169,7 +169,7 @@ CJS_GlobalData_Element* CJS_GlobalData::GetGlobalVariable(FX_LPCSTR propname)
 		return NULL;
 }
 
-void CJS_GlobalData::SetGlobalVariableNumber(FX_LPCSTR propname, double dData)
+void CJS_GlobalData::SetGlobalVariableNumber(const FX_CHAR* propname, double dData)
 {
 	ASSERT(propname != NULL);
 	CFX_ByteString sPropName = propname;
@@ -195,7 +195,7 @@ void CJS_GlobalData::SetGlobalVariableNumber(FX_LPCSTR propname, double dData)
 	}
 }
 
-void CJS_GlobalData::SetGlobalVariableBoolean(FX_LPCSTR propname, bool bData)
+void CJS_GlobalData::SetGlobalVariableBoolean(const FX_CHAR* propname, bool bData)
 {
 	ASSERT(propname != NULL);
 	CFX_ByteString sPropName = propname;
@@ -221,7 +221,7 @@ void CJS_GlobalData::SetGlobalVariableBoolean(FX_LPCSTR propname, bool bData)
 	}
 }
 
-void CJS_GlobalData::SetGlobalVariableString(FX_LPCSTR propname, const CFX_ByteString& sData)
+void CJS_GlobalData::SetGlobalVariableString(const FX_CHAR* propname, const CFX_ByteString& sData)
 {
 	ASSERT(propname != NULL);
 	CFX_ByteString sPropName = propname;
@@ -247,7 +247,7 @@ void CJS_GlobalData::SetGlobalVariableString(FX_LPCSTR propname, const CFX_ByteS
 	}
 }
 
-void CJS_GlobalData::SetGlobalVariableObject(FX_LPCSTR propname, const CJS_GlobalVariableArray& array)
+void CJS_GlobalData::SetGlobalVariableObject(const FX_CHAR* propname, const CJS_GlobalVariableArray& array)
 {
 	ASSERT(propname != NULL);
 	CFX_ByteString sPropName = propname;
@@ -273,7 +273,7 @@ void CJS_GlobalData::SetGlobalVariableObject(FX_LPCSTR propname, const CJS_Globa
 	}
 }
 
-void CJS_GlobalData::SetGlobalVariableNull(FX_LPCSTR propname)
+void CJS_GlobalData::SetGlobalVariableNull(const FX_CHAR* propname)
 {
 	ASSERT(propname != NULL);
 	CFX_ByteString sPropName = propname;
@@ -297,7 +297,7 @@ void CJS_GlobalData::SetGlobalVariableNull(FX_LPCSTR propname)
 	}
 }
 
-FX_BOOL CJS_GlobalData::SetGlobalVariablePersistent(FX_LPCSTR propname, FX_BOOL bPersistent)
+FX_BOOL CJS_GlobalData::SetGlobalVariablePersistent(const FX_CHAR* propname, FX_BOOL bPersistent)
 {
 	ASSERT(propname != NULL);
 	CFX_ByteString sPropName = propname;
@@ -316,7 +316,7 @@ FX_BOOL CJS_GlobalData::SetGlobalVariablePersistent(FX_LPCSTR propname, FX_BOOL 
 	return FALSE;
 }
 
-FX_BOOL CJS_GlobalData::DeleteGlobalVariable(FX_LPCSTR propname)
+FX_BOOL CJS_GlobalData::DeleteGlobalVariable(const FX_CHAR* propname)
 {
 	ASSERT(propname != NULL);
 	CFX_ByteString sPropName = propname;
@@ -350,7 +350,7 @@ CJS_GlobalData_Element* CJS_GlobalData::GetAt(int index) const
 
 void CJS_GlobalData::LoadGlobalPersistentVariables()
 {
-	FX_LPBYTE pBuffer = NULL;
+	uint8_t* pBuffer = NULL;
 	int32_t nLength = 0;
 
 	LoadFileBuffer(m_sFilePath.c_str(), pBuffer, nLength);
@@ -358,7 +358,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables()
 
 	if (pBuffer)
 	{
-		FX_LPBYTE p = pBuffer;
+		uint8_t* p = pBuffer;
 		FX_WORD wType = *((FX_WORD*)p);
 		p += sizeof(FX_WORD);
 
@@ -508,15 +508,15 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables()
 	sFile.AppendBlock(sData.GetBuffer(), sData.GetSize());
 
 	CRYPT_ArcFourCryptBlock(sFile.GetBuffer(), sFile.GetSize(), JS_RC4KEY, sizeof(JS_RC4KEY));
-	WriteFileBuffer(m_sFilePath.c_str(), (FX_LPCSTR)sFile.GetBuffer(), sFile.GetSize());
+	WriteFileBuffer(m_sFilePath.c_str(), (const FX_CHAR*)sFile.GetBuffer(), sFile.GetSize());
 }
 
-void CJS_GlobalData::LoadFileBuffer(FX_LPCWSTR sFilePath, FX_LPBYTE& pBuffer, int32_t& nLength)
+void CJS_GlobalData::LoadFileBuffer(const FX_WCHAR* sFilePath, uint8_t*& pBuffer, int32_t& nLength)
 {
 //UnSupport.
 }
 
-void CJS_GlobalData::WriteFileBuffer(FX_LPCWSTR sFilePath, FX_LPCSTR pBuffer, int32_t nLength)
+void CJS_GlobalData::WriteFileBuffer(const FX_WCHAR* sFilePath, const FX_CHAR* pBuffer, int32_t nLength)
 {
 //UnSupport.
 }

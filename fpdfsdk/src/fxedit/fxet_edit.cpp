@@ -1921,7 +1921,7 @@ FX_BOOL CFX_Edit::SetWordProps(EDIT_PROPS_E eProps, const CPVT_WordPlace & place
 	return FALSE;
 }
 
-void CFX_Edit::SetText(FX_LPCWSTR text,int32_t charset /*= DEFAULT_CHARSET*/,
+void CFX_Edit::SetText(const FX_WCHAR* text,int32_t charset /*= DEFAULT_CHARSET*/,
 						const CPVT_SecProps * pSecProps /*= NULL*/,const CPVT_WordProps * pWordProps /*= NULL*/)
 {
 	SetText(text,charset,pSecProps,pWordProps,TRUE,TRUE);
@@ -1952,7 +1952,7 @@ FX_BOOL CFX_Edit::Clear()
 	return Clear(TRUE,TRUE);
 }
 
-FX_BOOL CFX_Edit::InsertText(FX_LPCWSTR text, int32_t charset /*= DEFAULT_CHARSET*/,
+FX_BOOL CFX_Edit::InsertText(const FX_WCHAR* text, int32_t charset /*= DEFAULT_CHARSET*/,
 								const CPVT_SecProps * pSecProps /*= NULL*/,const CPVT_WordProps * pWordProps /*= NULL*/)
 {
 	return InsertText(text,charset,pSecProps,pWordProps,TRUE,TRUE);
@@ -2962,7 +2962,7 @@ void CFX_Edit::OnVK_END(FX_BOOL bShift,FX_BOOL bCtrl)
 	}
 }
 
-void CFX_Edit::SetText(FX_LPCWSTR text,int32_t charset,
+void CFX_Edit::SetText(const FX_WCHAR* text,int32_t charset,
 						const CPVT_SecProps * pSecProps,const CPVT_WordProps * pWordProps, FX_BOOL bAddUndo, FX_BOOL bPaint)
 {
 	Empty();
@@ -3264,7 +3264,7 @@ FX_BOOL CFX_Edit::Clear(FX_BOOL bAddUndo, FX_BOOL bPaint)
 	return FALSE;
 }
 
-FX_BOOL CFX_Edit::InsertText(FX_LPCWSTR text, int32_t charset,
+FX_BOOL CFX_Edit::InsertText(const FX_WCHAR* text, int32_t charset,
 					const CPVT_SecProps * pSecProps, const CPVT_WordProps * pWordProps, FX_BOOL bAddUndo, FX_BOOL bPaint)
 {
 	if (IsTextOverflow()) return FALSE;
@@ -3510,7 +3510,7 @@ FX_FLOAT CFX_Edit::GetLineBottom(const CPVT_WordPlace& place) const
 	return 0.0f;
 }
 
-CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place, FX_LPCWSTR text, int32_t charset, 
+CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place, const FX_WCHAR* text, int32_t charset, 
 									  const CPVT_SecProps * pSecProps, const CPVT_WordProps * pWordProps)
 {
 	CPVT_WordPlace wp = place;

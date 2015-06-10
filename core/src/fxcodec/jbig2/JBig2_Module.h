@@ -18,16 +18,16 @@ public:
 
     virtual void *JBig2_Malloc3(FX_DWORD num, FX_DWORD dwSize, FX_DWORD dwSize2) = 0;
 
-    virtual void *JBig2_Realloc(FX_LPVOID pMem, FX_DWORD dwSize) = 0;
+    virtual void *JBig2_Realloc(void* pMem, FX_DWORD dwSize) = 0;
 
-    virtual void JBig2_Free(FX_LPVOID pMem) = 0;
+    virtual void JBig2_Free(void* pMem) = 0;
 
     virtual void JBig2_Assert(int32_t nExpression) {};
 
-    virtual	void JBig2_Error(FX_LPCSTR format, ...) {};
+    virtual	void JBig2_Error(const FX_CHAR* format, ...) {};
 
-    virtual void JBig2_Warn(FX_LPCSTR format, ...) {};
+    virtual void JBig2_Warn(const FX_CHAR* format, ...) {};
 
-    virtual void JBig2_Log(FX_LPCSTR format, ...) {};
+    virtual void JBig2_Log(const FX_CHAR* format, ...) {};
 };
 #endif

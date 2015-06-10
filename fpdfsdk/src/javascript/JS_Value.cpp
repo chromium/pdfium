@@ -57,12 +57,12 @@ CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Document* pJsDoc):m_isolate(isola
 		m_pValue = (JSFXObject)*pJsDoc;
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, FX_LPCWSTR pWstr):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_WCHAR* pWstr):m_isolate(isolate) 
 {
 	operator =(pWstr);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, FX_LPCSTR pStr):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_CHAR* pStr):m_isolate(isolate) 
 {
 	operator = (pStr);
 }
@@ -200,7 +200,7 @@ void CJS_Value::operator = (CJS_Document* pJsDoc)
 	}
 }
 
-void CJS_Value::operator =(FX_LPCWSTR pWstr)
+void CJS_Value::operator =(const FX_WCHAR* pWstr)
 {
 	m_pValue = JS_NewString(m_isolate,(wchar_t *)pWstr);
 
@@ -214,7 +214,7 @@ void CJS_Value::SetNull()
 	m_eType = VT_null;
 }
 
-void CJS_Value::operator = (FX_LPCSTR pStr)
+void CJS_Value::operator = (const FX_CHAR* pStr)
 {	
 	operator = (CFX_WideString::FromLocal(pStr).c_str());
 }
@@ -419,7 +419,7 @@ void CJS_PropValue::operator >>(CFX_ByteString &string) const
 	string = CJS_Value::ToCFXByteString();
 }
 
-void CJS_PropValue::operator <<(FX_LPCWSTR c_string)
+void CJS_PropValue::operator <<(const FX_WCHAR* c_string)
 {
 	ASSERT(!m_bIsSetting);
 	CJS_Value::operator =(c_string);

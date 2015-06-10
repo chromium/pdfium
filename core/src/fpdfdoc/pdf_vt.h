@@ -469,13 +469,13 @@ public:
     void									RearrangeAll();
     void									RearrangePart(const CPVT_WordRange & PlaceRange);
     void									ResetAll();
-    void									SetText(FX_LPCWSTR text, int32_t charset = 1, const CPVT_SecProps * pSecProps = NULL,
+    void									SetText(const FX_WCHAR* text, int32_t charset = 1, const CPVT_SecProps * pSecProps = NULL,
             const CPVT_WordProps * pWordProps = NULL);
     CPVT_WordPlace							InsertWord(const CPVT_WordPlace & place, FX_WORD word, int32_t charset = 1,
             const CPVT_WordProps * pWordProps = NULL);
     CPVT_WordPlace							InsertSection(const CPVT_WordPlace & place, const CPVT_SecProps * pSecProps = NULL,
             const CPVT_WordProps * pWordProps = NULL);
-    CPVT_WordPlace							InsertText(const CPVT_WordPlace & place, FX_LPCWSTR text, int32_t charset = 1,
+    CPVT_WordPlace							InsertText(const CPVT_WordPlace & place, const FX_WCHAR* text, int32_t charset = 1,
             const CPVT_SecProps * pSecProps = NULL,	const CPVT_WordProps * pWordProps = NULL);
     CPVT_WordPlace							DeleteWords(const CPVT_WordRange & PlaceRange);
     CPVT_WordPlace							DeleteWord(const CPVT_WordPlace & place);

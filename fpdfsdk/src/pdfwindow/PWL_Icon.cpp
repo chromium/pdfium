@@ -109,7 +109,7 @@ CFX_ByteString CPWL_Image::GetImageAlias()
 	return CFX_ByteString();
 }
 
-void CPWL_Image::SetImageAlias(FX_LPCSTR sImageAlias)
+void CPWL_Image::SetImageAlias(const FX_CHAR* sImageAlias)
 {
 	m_sImageAlias = sImageAlias;
 }

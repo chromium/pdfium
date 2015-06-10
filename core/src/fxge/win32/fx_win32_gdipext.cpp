@@ -349,7 +349,7 @@ static void OutputImageMask(GpGraphics* pGraphics, BOOL bMonoDevice, const CFX_D
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     int src_width = pBitmap->GetWidth(), src_height = pBitmap->GetHeight();
     int src_pitch = pBitmap->GetPitch();
-    FX_LPBYTE scan0 = pBitmap->GetBuffer();
+    uint8_t* scan0 = pBitmap->GetBuffer();
     if (src_width == 1 && src_height == 1) {
         if ((scan0[0] & 0x80) == 0) {
             return;
@@ -430,7 +430,7 @@ static void OutputImage(GpGraphics* pGraphics, const CFX_DIBitmap* pBitmap, cons
         return;
     }
     int src_pitch = pBitmap->GetPitch();
-    FX_LPBYTE scan0 = pBitmap->GetBuffer() + pSrcRect->top * src_pitch + pBitmap->GetBPP() * pSrcRect->left / 8;
+    uint8_t* scan0 = pBitmap->GetBuffer() + pSrcRect->top * src_pitch + pBitmap->GetBPP() * pSrcRect->left / 8;
     GpBitmap* bitmap = NULL;
     switch (pBitmap->GetFormat()) {
         case FXDIB_Argb:
@@ -569,7 +569,7 @@ FX_BOOL CGdiplusExt::GdipCreateFromImage(void* bitmap, void** graphics)
     }
     return FALSE;
 }
-FX_BOOL CGdiplusExt::GdipCreateFontFamilyFromName(FX_LPCWSTR name, void* pFontCollection, void**pFamily)
+FX_BOOL CGdiplusExt::GdipCreateFontFamilyFromName(const FX_WCHAR* name, void* pFontCollection, void**pFamily)
 {
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     GpStatus status = CallFunc(GdipCreateFontFamilyFromName)((GDIPCONST WCHAR *)name, (GpFontCollection*)pFontCollection, (GpFontFamily**)pFamily);

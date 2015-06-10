@@ -38,10 +38,10 @@ public:
 	CPWL_Signature();
 	virtual ~CPWL_Signature();
 
-	void								SetText(FX_LPCWSTR sText);
-	void								SetDescription(FX_LPCWSTR string);
+	void								SetText(const FX_WCHAR* sText);
+	void								SetDescription(const FX_WCHAR* string);
 	void								SetImage(CFX_DIBSource* pImage);
-	void								SetImageStream(CPDF_Stream * pStream, FX_LPCSTR sImageAlias);
+	void								SetImageStream(CPDF_Stream * pStream, const FX_CHAR* sImageAlias);
 
 	void								SetTextFlag(FX_BOOL bTextExist);
 	void								SetImageFlag(FX_BOOL bImageExist);

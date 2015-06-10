@@ -62,7 +62,7 @@ public:
         CJBig2_PatternDict	*pd;
         CJBig2_Image		*im;
         CJBig2_HuffmanTable	*ht;
-        FX_LPVOID			 vd;
+        void*			 vd;
     } m_Result;
 };
 #endif

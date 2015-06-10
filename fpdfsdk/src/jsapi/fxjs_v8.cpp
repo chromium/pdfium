@@ -33,7 +33,7 @@ class CJS_PrivateData
 public:
 	CJS_PrivateData():ObjDefID(-1), pPrivate(NULL) {}
 	int ObjDefID;
-	FX_LPVOID	pPrivate;
+	void*	pPrivate;
 };
 
 
@@ -105,7 +105,7 @@ int JS_DefineObjMethod(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t* s
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
 	CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
 	v8::Local<v8::ObjectTemplate> objTemp = v8::Local<v8::ObjectTemplate>::New(isolate, pObjDef->m_objTemplate);
-	objTemp->Set(v8::String::NewFromUtf8(isolate, FX_LPCSTR(bsMethodName), v8::NewStringType::kNormal).ToLocalChecked(), v8::FunctionTemplate::New(isolate, pMethodCall), v8::ReadOnly);
+	objTemp->Set(v8::String::NewFromUtf8(isolate, bsMethodName.c_str(), v8::NewStringType::kNormal).ToLocalChecked(), v8::FunctionTemplate::New(isolate, pMethodCall), v8::ReadOnly);
 	pObjDef->m_objTemplate.Reset(isolate,objTemp);
 	return 0;
 }
@@ -125,7 +125,7 @@ int JS_DefineObjProperty(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t*
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
 	CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
 	v8::Local<v8::ObjectTemplate> objTemp = v8::Local<v8::ObjectTemplate>::New(isolate, pObjDef->m_objTemplate);
-	objTemp->SetAccessor(v8::String::NewFromUtf8(isolate, FX_LPCSTR(bsPropertyName), v8::NewStringType::kNormal).ToLocalChecked(), pPropGet, pPropPut);
+	objTemp->SetAccessor(v8::String::NewFromUtf8(isolate, bsPropertyName.c_str(), v8::NewStringType::kNormal).ToLocalChecked(), pPropGet, pPropPut);
 	pObjDef->m_objTemplate.Reset(isolate,objTemp);
 	return 0;
 }
@@ -162,7 +162,7 @@ int JS_DefineObjConst(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t* sC
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
 	CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
 	v8::Local<v8::ObjectTemplate> objTemp = v8::Local<v8::ObjectTemplate>::New(isolate, pObjDef->m_objTemplate);
-	objTemp->Set(isolate, FX_LPCSTR(bsConstName), pDefault);
+	objTemp->Set(isolate, bsConstName.c_str(), pDefault);
 	pObjDef->m_objTemplate.Reset(isolate,objTemp);
 	return 0;
 }
@@ -202,7 +202,7 @@ int JS_DefineGlobalMethod(IJS_Runtime* pJSRuntime, const wchar_t* sMethodName, v
 		objTemp = v8::ObjectTemplate::New(isolate);
 	else
 		objTemp = v8::Local<v8::ObjectTemplate>::New(isolate, globalObjTemp);
-	objTemp->Set(v8::String::NewFromUtf8(isolate, FX_LPCSTR(bsMethodName), v8::NewStringType::kNormal).ToLocalChecked(), funTempl, v8::ReadOnly);
+	objTemp->Set(v8::String::NewFromUtf8(isolate, bsMethodName.c_str(), v8::NewStringType::kNormal).ToLocalChecked(), funTempl, v8::ReadOnly);
 
 	globalObjTemp.Reset(isolate,objTemp);
 
@@ -225,7 +225,7 @@ int JS_DefineGlobalConst(IJS_Runtime* pJSRuntime, const wchar_t* sConstName, v8:
 		objTemp = v8::ObjectTemplate::New(isolate);
 	else
 		objTemp = v8::Local<v8::ObjectTemplate>::New(isolate, globalObjTemp);
-	objTemp->Set(v8::String::NewFromUtf8(isolate, FX_LPCSTR(bsConst), v8::NewStringType::kNormal).ToLocalChecked(), pDefault, v8::ReadOnly);
+	objTemp->Set(v8::String::NewFromUtf8(isolate, bsConst.c_str(), v8::NewStringType::kNormal).ToLocalChecked(), pDefault, v8::ReadOnly);
 
 	globalObjTemp.Reset(isolate,objTemp);
 

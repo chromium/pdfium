@@ -24,7 +24,7 @@ typedef struct {
     int32_t code;
 } JBig2HuffmanCode;
 extern "C" {
-    void _FaxG4Decode(void *pModule, FX_LPCBYTE src_buf, FX_DWORD src_size, int* pbitpos, FX_LPBYTE dest_buf, int width, int height, int pitch = 0);
+    void _FaxG4Decode(void *pModule, const uint8_t* src_buf, FX_DWORD src_size, int* pbitpos, uint8_t* dest_buf, int width, int height, int pitch = 0);
 };
 #define JBIG2_MAX_REFERRED_SEGMENT_COUNT		64
 #define JBIG2_MAX_EXPORT_SYSMBOLS				65535

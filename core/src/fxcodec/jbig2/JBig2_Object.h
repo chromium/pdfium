@@ -13,9 +13,9 @@ class CJBig2_Object
 {
 public:
 
-    void *operator new(size_t size, CJBig2_Module *pModule, FX_LPCSTR filename, int line);
+    void *operator new(size_t size, CJBig2_Module *pModule, const FX_CHAR* filename, int line);
 
-    void operator delete(void *p, CJBig2_Module *pModule, FX_LPCSTR filename, int line);
+    void operator delete(void *p, CJBig2_Module *pModule, const FX_CHAR* filename, int line);
 
     void *operator new(size_t size, CJBig2_Module *pModule);
 
@@ -24,10 +24,10 @@ public:
     void operator delete(void *p, CJBig2_Module *pModule);
 
     void *operator new[](size_t size, CJBig2_Module *pModule, size_t unit_size,
-                         FX_LPCSTR filename, int line);
+                         const FX_CHAR* filename, int line);
 
     void operator delete[](void *p, CJBig2_Module *pModule, size_t unit_size,
-                           FX_LPCSTR filename, int line);
+                           const FX_CHAR* filename, int line);
 
     void *operator new[](size_t size, CJBig2_Module *pModule, size_t unit_size);
 

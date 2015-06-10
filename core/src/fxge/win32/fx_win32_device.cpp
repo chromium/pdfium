@@ -23,12 +23,12 @@ public:
     ~CWin32FontInfo();
     virtual void		Release();
     virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper);
-    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR face, FX_BOOL& bExact);
-    virtual void*		GetFont(FX_LPCSTR face)
+    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, FX_BOOL& bExact);
+    virtual void*		GetFont(const FX_CHAR* face)
     {
         return NULL;
     }
-    virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, FX_LPBYTE buffer, FX_DWORD size);
+    virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size);
     virtual void		DeleteFont(void* hFont);
     virtual	FX_BOOL		GetFaceName(void* hFont, CFX_ByteString& name);
     virtual FX_BOOL		GetFontCharset(void* hFont, int& charset);
@@ -152,15 +152,15 @@ FX_BOOL CWin32FontInfo::EnumFontList(CFX_FontMapper* pMapper)
     return TRUE;
 }
 static const struct {
-    FX_LPCSTR	m_pFaceName;
-    FX_LPCSTR	m_pVariantName;
+    const FX_CHAR*	m_pFaceName;
+    const FX_CHAR*	m_pVariantName;
 }
 VariantNames[] = {
     {"DFKai-SB", "\x19\x6A\x77\x69\xD4\x9A"},
 };
 static const struct {
-    FX_LPCSTR	m_pName;
-    FX_LPCSTR	m_pWinName;
+    const FX_CHAR*	m_pName;
+    const FX_CHAR*	m_pWinName;
     FX_BOOL		m_bBold;
     FX_BOOL		m_bItalic;
 }
@@ -197,8 +197,8 @@ CFX_ByteString CWin32FontInfo::FindFont(const CFX_ByteString& name)
     return CFX_ByteString();
 }
 struct _FontNameMap {
-    FX_LPCSTR	m_pSubFontName;
-    FX_LPCSTR	m_pSrcFontName;
+    const FX_CHAR*	m_pSubFontName;
+    const FX_CHAR*	m_pSrcFontName;
 };
 const _FontNameMap g_JpFontNameMap[] = {
     {"MS Mincho", "Heiseimin-W3"},
@@ -207,7 +207,7 @@ const _FontNameMap g_JpFontNameMap[] = {
 extern "C" {
     static int compareString(const void* key, const void* element)
     {
-        return FXSYS_stricmp((FX_LPCSTR)key, ((_FontNameMap*)element)->m_pSrcFontName);
+        return FXSYS_stricmp((const FX_CHAR*)key, ((_FontNameMap*)element)->m_pSrcFontName);
     }
 }
 FX_BOOL _GetSubFontName(CFX_ByteString& name)
@@ -282,7 +282,7 @@ void CWin32FontInfo::GetJapanesePreference(CFX_ByteString& face, int weight, int
         face = "MS PMincho";
     }
 }
-void* CWin32FontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR cstr_face, FX_BOOL& bExact)
+void* CWin32FontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, FX_BOOL& bExact)
 {
     CFX_ByteString face = cstr_face;
     int iBaseFont;
@@ -359,7 +359,7 @@ void CWin32FontInfo::DeleteFont(void* hFont)
 {
     ::DeleteObject(hFont);
 }
-FX_DWORD CWin32FontInfo::GetFontData(void* hFont, FX_DWORD table, FX_LPBYTE buffer, FX_DWORD size)
+FX_DWORD CWin32FontInfo::GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size)
 {
     HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
     table = FXDWORD_FROM_MSBFIRST(table);
@@ -456,14 +456,14 @@ int CGdiDeviceDriver::GetDeviceCaps(int caps_id)
     }
     return 0;
 }
-FX_LPVOID CGdiDeviceDriver::GetClipRgn()
+void* CGdiDeviceDriver::GetClipRgn()
 {
     HRGN hClipRgn = CreateRectRgn(0, 0, 1, 1);
     if (::GetClipRgn(m_hDC, hClipRgn) == 0) {
         DeleteObject(hClipRgn);
         hClipRgn = NULL;
     }
-    return (FX_LPVOID)hClipRgn;
+    return (void*)hClipRgn;
 }
 FX_BOOL CGdiDeviceDriver::GDI_SetDIBits(const CFX_DIBitmap* pBitmap1, const FX_RECT* pSrcRect, int left, int top, void* pIccTransform)
 {
@@ -597,7 +597,7 @@ BOOL CGdiDeviceDriver::GetClipBox(FX_RECT* pRect)
 {
     return ::GetClipBox(m_hDC, (RECT*)pRect);
 }
-FX_BOOL CGdiDeviceDriver::SetClipRgn(FX_LPVOID hRgn)
+FX_BOOL CGdiDeviceDriver::SetClipRgn(void* hRgn)
 {
     ::SelectClipRgn(m_hDC, (HRGN)hRgn);
     return TRUE;
@@ -927,7 +927,7 @@ FX_BOOL CGdiDeviceDriver::DrawCosmeticLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2
     DeleteObject(hPen);
     return TRUE;
 }
-FX_BOOL CGdiDeviceDriver::DeleteDeviceRgn(FX_LPVOID pRgn)
+FX_BOOL CGdiDeviceDriver::DeleteDeviceRgn(void* pRgn)
 {
     DeleteObject((HGDIOBJ)pRgn);
     return TRUE;
@@ -1176,8 +1176,8 @@ CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width, int height, FXDIB_Format for
     bmih.biHeight = -height;
     bmih.biPlanes = 1;
     bmih.biWidth = width;
-    FX_LPBYTE pBuffer;
-    m_hBitmap = CreateDIBSection(NULL, (BITMAPINFO*)&bmih, DIB_RGB_COLORS, (FX_LPVOID*)&pBuffer, NULL, 0);
+    uint8_t* pBuffer;
+    m_hBitmap = CreateDIBSection(NULL, (BITMAPINFO*)&bmih, DIB_RGB_COLORS, (void**)&pBuffer, NULL, 0);
     if (m_hBitmap == NULL) {
         return;
     }

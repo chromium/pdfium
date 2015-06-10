@@ -78,8 +78,8 @@ public:
 	virtual void					PasteText();
 	virtual void 					CutText();
 
-	virtual void					SetText(FX_LPCWSTR csText);
-	void							ReplaceSel(FX_LPCWSTR csText);
+	virtual void					SetText(const FX_WCHAR* csText);
+	void							ReplaceSel(const FX_WCHAR* csText);
 
 	CFX_ByteString					GetTextAppearanceStream(const CPDF_Point & ptOffset) const;
 	CFX_ByteString					GetCaretAppearanceStream(const CPDF_Point & ptOffset) const;	

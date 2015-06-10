@@ -128,7 +128,7 @@ CDWriteExt::~CDWriteExt()
 {
     Unload();
 }
-LPVOID	CDWriteExt::DwCreateFontFaceFromStream(FX_LPBYTE pData, FX_DWORD size, int simulation_style)
+LPVOID	CDWriteExt::DwCreateFontFaceFromStream(uint8_t* pData, FX_DWORD size, int simulation_style)
 {
     IDWriteFactory* pDwFactory = (IDWriteFactory*)m_pDWriteFactory;
     IDWriteFontFile* pDwFontFile = NULL;
@@ -433,7 +433,7 @@ STDMETHODIMP CDwGdiTextRenderer::DrawGlyphRun(
         bitmap.bmWidth,
         bitmap.bmHeight,
         bitmap.bmBitsPixel == 24 ? FXDIB_Rgb : FXDIB_Rgb32,
-        (FX_LPBYTE)bitmap.bmBits
+        (uint8_t*)bitmap.bmBits
     );
     dib.CompositeBitmap(
         text_bbox.left,

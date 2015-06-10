@@ -43,7 +43,7 @@ const char PDF_CharType[256] = {
 #ifndef MAX_PATH
 #define MAX_PATH 4096
 #endif
-CPDF_SimpleParser::CPDF_SimpleParser(FX_LPCBYTE pData, FX_DWORD dwSize)
+CPDF_SimpleParser::CPDF_SimpleParser(const uint8_t* pData, FX_DWORD dwSize)
 {
     m_pData = pData;
     m_dwSize = dwSize;
@@ -55,7 +55,7 @@ CPDF_SimpleParser::CPDF_SimpleParser(FX_BSTR str)
     m_dwSize = str.GetLength();
     m_dwCurPos = 0;
 }
-void CPDF_SimpleParser::ParseWord(FX_LPCBYTE& pStart, FX_DWORD& dwSize, int& type)
+void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, FX_DWORD& dwSize, int& type)
 {
     pStart = NULL;
     dwSize = 0;
@@ -153,7 +153,7 @@ void CPDF_SimpleParser::ParseWord(FX_LPCBYTE& pStart, FX_DWORD& dwSize, int& typ
 }
 CFX_ByteStringC CPDF_SimpleParser::GetWord()
 {
-    FX_LPCBYTE pStart;
+    const uint8_t* pStart;
     FX_DWORD dwSize;
     int type;
     ParseWord(pStart, dwSize, type);
@@ -290,13 +290,13 @@ static int _hex2dec(char ch)
 CFX_ByteString PDF_NameDecode(FX_BSTR bstr)
 {
     int size = bstr.GetLength();
-    FX_LPCSTR pSrc = bstr.GetCStr();
+    const FX_CHAR* pSrc = bstr.GetCStr();
     if (FXSYS_memchr(pSrc, '#', size) == NULL) {
         return bstr;
     }
     CFX_ByteString result;
-    FX_LPSTR pDestStart = result.GetBuffer(size);
-    FX_LPSTR pDest = pDestStart;
+    FX_CHAR* pDestStart = result.GetBuffer(size);
+    FX_CHAR* pDest = pDestStart;
     for (int i = 0; i < size; i ++) {
         if (pSrc[i] == '#' && i < size - 2) {
             *pDest ++ = _hex2dec(pSrc[i + 1]) * 16 + _hex2dec(pSrc[i + 2]);
@@ -317,7 +317,7 @@ CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig)
 }
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig)
 {
-    FX_LPBYTE src_buf = (FX_LPBYTE)orig.c_str();
+    uint8_t* src_buf = (uint8_t*)orig.c_str();
     int src_len = orig.GetLength();
     int dest_len = 0;
     int i;
@@ -334,7 +334,7 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig)
         return orig;
     }
     CFX_ByteString res;
-    FX_LPSTR dest_buf = res.GetBuffer(dest_len);
+    FX_CHAR* dest_buf = res.GetBuffer(dest_len);
     dest_len = 0;
     for (i = 0; i < src_len; i ++) {
         uint8_t ch = src_buf[i];

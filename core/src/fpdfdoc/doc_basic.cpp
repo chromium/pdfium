@@ -251,7 +251,7 @@ CPDF_Array*	CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc, FX_BSTR sName)
     return NULL;
 }
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_ || _FXM_PLATFORM_  == _FXM_PLATFORM_WINDOWS_
-static CFX_WideString ChangeSlashToPlatform(FX_LPCWSTR str)
+static CFX_WideString ChangeSlashToPlatform(const FX_WCHAR* str)
 {
     CFX_WideString result;
     while (*str) {
@@ -268,7 +268,7 @@ static CFX_WideString ChangeSlashToPlatform(FX_LPCWSTR str)
     }
     return result;
 }
-static CFX_WideString ChangeSlashToPDF(FX_LPCWSTR str)
+static CFX_WideString ChangeSlashToPDF(const FX_WCHAR* str)
 {
     CFX_WideString result;
     while (*str) {

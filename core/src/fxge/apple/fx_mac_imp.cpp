@@ -8,8 +8,8 @@
 #include "apple_int.h"
 #if _FX_OS_ == _FX_MACOSX_
 static const struct {
-    FX_LPCSTR	m_pName;
-    FX_LPCSTR	m_pSubstName;
+    const FX_CHAR*	m_pName;
+    const FX_CHAR*	m_pSubstName;
 }
 Base14Substs[] = {
     {"Courier", "Courier New"},
@@ -28,7 +28,7 @@ Base14Substs[] = {
 class CFX_MacFontInfo : public CFX_FolderFontInfo
 {
 public:
-    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR family, FX_BOOL& bExact);
+    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, FX_BOOL& bExact);
 };
 #define JAPAN_GOTHIC "Hiragino Kaku Gothic Pro W6"
 #define JAPAN_MINCHO "Hiragino Mincho Pro W6"
@@ -44,7 +44,7 @@ static void GetJapanesePreference(CFX_ByteString& face, int weight, int picth_fa
         face = JAPAN_MINCHO;
     }
 }
-void* CFX_MacFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, FX_LPCSTR cstr_face, FX_BOOL& bExact)
+void* CFX_MacFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, FX_BOOL& bExact)
 {
     CFX_ByteString face = cstr_face;
     int iBaseFont;
@@ -57,7 +57,7 @@ void* CFX_MacFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pit
     if (iBaseFont < 12) {
         return GetFont(face);
     }
-    FX_LPVOID p;
+    void* p;
     if (m_FontList.Lookup(face, p)) {
         return p;
     }

@@ -67,10 +67,10 @@ public:
 				int alpha_flag = 0, void* pIccTransform = NULL);
 	
 	virtual FX_BOOL		StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color, 
-				const CFX_AffineMatrix* pMatrix, FX_DWORD flags, FX_LPVOID& handle, 
+				const CFX_AffineMatrix* pMatrix, FX_DWORD flags, void*& handle, 
 				int alpha_flag = 0, void* pIccTransform = NULL);
-	virtual FX_BOOL		ContinueDIBits(FX_LPVOID handle, IFX_Pause* pPause);
-	virtual void		CancelDIBits(FX_LPVOID handle);
+	virtual FX_BOOL		ContinueDIBits(void* handle, IFX_Pause* pPause);
+	virtual void		CancelDIBits(void* handle);
 	
 	virtual FX_BOOL     DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
 						CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FIXFLOAT font_size, FX_DWORD color, 
@@ -82,7 +82,7 @@ public:
 							int alpha_flag, void* pIccTransform, FX_BOOL bFill = TRUE);
 	void				SetClipMask(rasterizer_scanline_aa& rasterizer);
 	void				SetClipMask(SkPath& skPath, SkPaint* spaint);
-	virtual	FX_LPBYTE	GetBuffer() const {return m_pAggDriver->GetBuffer();}
+	virtual	uint8_t*	GetBuffer() const {return m_pAggDriver->GetBuffer();}
 
 	CFX_AggDeviceDriver* m_pAggDriver;
 };

@@ -36,7 +36,7 @@ class IFX_FileRead;
 #define PDFOBJ_NULL			8
 #define PDFOBJ_REFERENCE	9
 
-typedef IFX_FileStream* (*FPDF_LPFCloneStreamCallback)(CPDF_Stream *pStream, FX_LPVOID pUserData);
+typedef IFX_FileStream* (*FPDF_LPFCloneStreamCallback)(CPDF_Stream *pStream, void* pUserData);
 class CPDF_Object 
 {
 public:
@@ -83,7 +83,7 @@ public:
 
     void                                SetString(const CFX_ByteString& str);
 
-    void                                SetUnicodeText(FX_LPCWSTR pUnicodes, int len = -1);
+    void                                SetUnicodeText(const FX_WCHAR* pUnicodes, int len = -1);
 
     int                                 GetDirectType() const;
 
@@ -265,14 +265,14 @@ public:
         return new CPDF_Name(str);
     }
 
-    static CPDF_Name*		Create(FX_LPCSTR str)
+    static CPDF_Name*		Create(const FX_CHAR* str)
     {
         return new CPDF_Name(str);
     }
 
     CPDF_Name(const CFX_ByteString& str) : CPDF_Object(PDFOBJ_NAME), m_Name(str) { }
     CPDF_Name(FX_BSTR str) : CPDF_Object(PDFOBJ_NAME), m_Name(str) { }
-    CPDF_Name(FX_LPCSTR str) : CPDF_Object(PDFOBJ_NAME), m_Name(str) { }
+    CPDF_Name(const FX_CHAR* str) : CPDF_Object(PDFOBJ_NAME), m_Name(str) { }
 
     CFX_ByteString&			GetString()
     {
@@ -506,19 +506,19 @@ class CPDF_Stream : public CPDF_Object
 {
 public:
 
-    static CPDF_Stream*		Create(FX_LPBYTE pData, FX_DWORD size, CPDF_Dictionary* pDict)
+    static CPDF_Stream*		Create(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict)
     {
         return new CPDF_Stream(pData, size, pDict);
     }
 
-    CPDF_Stream(FX_LPBYTE pData, FX_DWORD size, CPDF_Dictionary* pDict);
+    CPDF_Stream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
 
     CPDF_Dictionary*		GetDict() const
     {
         return m_pDict;
     }
 
-    void					SetData(FX_LPCBYTE pData, FX_DWORD size, FX_BOOL bCompressed, FX_BOOL bKeepBuf);
+    void					SetData(const uint8_t* pData, FX_DWORD size, FX_BOOL bCompressed, FX_BOOL bKeepBuf);
 
     void					InitStream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
 
@@ -535,7 +535,7 @@ public:
         return m_dwSize;
     }
 
-    FX_BOOL					ReadRawData(FX_FILESIZE start_pos, FX_LPBYTE pBuf, FX_DWORD buf_size) const;
+    FX_BOOL					ReadRawData(FX_FILESIZE start_pos, uint8_t* pBuf, FX_DWORD buf_size) const;
 
 
     FX_BOOL					IsMemoryBased() const
@@ -543,7 +543,7 @@ public:
         return m_GenNum == (FX_DWORD) - 1;
     }
 
-    CPDF_Stream*			Clone(FX_BOOL bDirect, FPDF_LPFCloneStreamCallback lpfCallback, FX_LPVOID pUserData) const;
+    CPDF_Stream*			Clone(FX_BOOL bDirect, FPDF_LPFCloneStreamCallback lpfCallback, void* pUserData) const;
 protected:
 
     ~CPDF_Stream();
@@ -556,7 +556,7 @@ protected:
 
     union {
 
-        FX_LPBYTE			m_pDataBuf;
+        uint8_t*			m_pDataBuf;
 
         IFX_FileRead*		m_pFile;
     };
@@ -591,11 +591,11 @@ public:
         return m_pStream? m_pStream->GetDict() : NULL;
     }
 
-    FX_LPCBYTE				GetData() const;
+    const uint8_t*				GetData() const;
 
     FX_DWORD				GetSize() const;
 
-    FX_LPBYTE				DetachData();
+    uint8_t*				DetachData();
 
     const CFX_ByteString&	GetImageDecoder()
     {
@@ -608,7 +608,7 @@ public:
     }
 protected:
 
-    FX_LPBYTE				m_pData;
+    uint8_t*				m_pData;
 
     FX_DWORD				m_dwSize;
 
@@ -620,7 +620,7 @@ protected:
 
     const CPDF_Stream*		m_pStream;
 
-    FX_LPBYTE				m_pSrcData;
+    uint8_t*				m_pSrcData;
 };
 CFX_DataFilter* FPDF_CreateFilter(FX_BSTR name, const CPDF_Dictionary* pParam, int width = 0, int height = 0);
 #define FPDF_FILTER_BUFFER_SIZE		20480
@@ -630,7 +630,7 @@ public:
 
     ~CPDF_StreamFilter();
 
-    FX_DWORD			ReadBlock(FX_LPBYTE buffer, FX_DWORD size);
+    FX_DWORD			ReadBlock(uint8_t* buffer, FX_DWORD size);
 
     FX_DWORD			GetSrcPos()
     {
@@ -645,7 +645,7 @@ protected:
 
     CPDF_StreamFilter() {}
 
-    FX_DWORD			ReadLeftOver(FX_LPBYTE buffer, FX_DWORD buf_size);
+    FX_DWORD			ReadLeftOver(uint8_t* buffer, FX_DWORD buf_size);
 
     const CPDF_Stream*	m_pStream;
 

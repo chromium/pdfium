@@ -121,7 +121,7 @@ public:
 		return FALSE;
 	}
 
-	int JS_appAlert(FX_LPCWSTR Msg, FX_LPCWSTR Title, FX_UINT Type, FX_UINT Icon)
+	int JS_appAlert(const FX_WCHAR* Msg, const FX_WCHAR* Title, FX_UINT Type, FX_UINT Icon)
 	{
 		if(m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->app_alert)
 		{
@@ -137,7 +137,7 @@ public:
 		return -1;
 	}
 
-	int JS_appResponse(FX_LPCWSTR Question, FX_LPCWSTR Title, FX_LPCWSTR Default, FX_LPCWSTR cLabel, FPDF_BOOL bPassword, void* response, int length)
+	int JS_appResponse(const FX_WCHAR* Question, const FX_WCHAR* Title, const FX_WCHAR* Default, const FX_WCHAR* cLabel, FPDF_BOOL bPassword, void* response, int length)
 	{
 		if (m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->app_response)
 		{
@@ -222,7 +222,7 @@ public:
 		return L"";
 	}
 
-	void JS_docSubmitForm(void* formData, int length, FX_LPCWSTR URL)
+	void JS_docSubmitForm(void* formData, int length, const FX_WCHAR* URL)
 	{
 		if(m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->Doc_submitForm)
 		{
@@ -233,7 +233,7 @@ public:
 		}
 	}
 
-	void JS_docmailForm(void* mailData, int length, FPDF_BOOL bUI,FX_LPCWSTR To, FX_LPCWSTR Subject, FX_LPCWSTR CC, FX_LPCWSTR BCC, FX_LPCWSTR Msg)
+	void JS_docmailForm(void* mailData, int length, FPDF_BOOL bUI,const FX_WCHAR* To, const FX_WCHAR* Subject, const FX_WCHAR* CC, const FX_WCHAR* BCC, const FX_WCHAR* Msg)
 	{
 		if(m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->Doc_mail)
 		{
@@ -298,7 +298,7 @@ public:
 		}
 		return 0;
 	}
-	void	FFI_ExecuteNamedAction(FX_LPCSTR namedAction)
+	void	FFI_ExecuteNamedAction(const FX_CHAR* namedAction)
 	{
 		if(m_pInfo && m_pInfo->FFI_ExecuteNamedAction)
 		{
@@ -313,7 +313,7 @@ public:
 		}
 	}
 
-	void	FFI_DoURIAction(FX_LPCSTR bsURI)
+	void	FFI_DoURIAction(const FX_CHAR* bsURI)
 	{
 		if(m_pInfo && m_pInfo->FFI_DoURIAction)
 		{
@@ -430,7 +430,7 @@ public:
 	FX_BOOL							Annot_HasAppearance(CPDF_Annot* pAnnot);
 
 	CPDFSDK_Annot*					AddAnnot(CPDF_Dictionary * pDict);
-	CPDFSDK_Annot*					AddAnnot(FX_LPCSTR lpSubType,CPDF_Dictionary * pDict);
+	CPDFSDK_Annot*					AddAnnot(const FX_CHAR* lpSubType,CPDF_Dictionary * pDict);
 	CPDFSDK_Annot*					AddAnnot(CPDF_Annot * pPDFAnnot);
         FX_BOOL						DeleteAnnot(CPDFSDK_Annot* pAnnot);
 	int								CountAnnots();
@@ -447,7 +447,7 @@ public:
 
 	FX_BOOL					OnMouseMove(const CPDF_Point & point, int nFlag);
 	FX_BOOL					OnMouseWheel(double deltaX, double deltaY,const CPDF_Point& point, int nFlag);
-	FX_BOOL					IsValidAnnot(FX_LPVOID p);
+	FX_BOOL					IsValidAnnot(void* p);
 	void					GetCurrentMatrix(CPDF_Matrix& matrix) {matrix = m_curMatrix;}
 	void					UpdateRects(CFX_RectArray& rects);
 	void							UpdateView(CPDFSDK_Annot* pAnnot);

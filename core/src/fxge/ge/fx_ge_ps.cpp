@@ -131,7 +131,7 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData, const CFX_AffineM
                 }
         }
     }
-    m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+    m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
 }
 void CFX_PSRenderer::SetClip_PathFill(const CFX_PathData* pPathData,
                                       const CFX_AffineMatrix* pObject2Device,
@@ -163,7 +163,7 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
         buf << FX_BSTRC("mx Cm [") << pObject2Device->a << FX_BSTRC(" ") << pObject2Device->b << FX_BSTRC(" ") <<
             pObject2Device->c << FX_BSTRC(" ") << pObject2Device->d << FX_BSTRC(" ") << pObject2Device->e <<
             FX_BSTRC(" ") << pObject2Device->f << FX_BSTRC("]cm ");
-        m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+        m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
     }
     OutputPath(pPathData, NULL);
     CFX_FloatRect rect = pPathData->GetBoundingBox(pGraphState->m_LineWidth, pGraphState->m_MiterLimit);
@@ -204,7 +204,7 @@ FX_BOOL CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
             buf << FX_BSTRC("mx Cm [") << pObject2Device->a << FX_BSTRC(" ") << pObject2Device->b << FX_BSTRC(" ") <<
                 pObject2Device->c << FX_BSTRC(" ") << pObject2Device->d << FX_BSTRC(" ") << pObject2Device->e <<
                 FX_BSTRC(" ") << pObject2Device->f << FX_BSTRC("]cm ");
-            m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+            m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
         }
     }
     OutputPath(pPathData, stroke_alpha ? NULL : pObject2Device);
@@ -261,10 +261,10 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState)
     m_CurGraphState.Copy(*pGraphState);
     m_bGraphStateSet = TRUE;
     if (buf.GetSize()) {
-        m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+        m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
     }
 }
-static void FaxCompressData(FX_LPBYTE src_buf, int width, int height, FX_LPBYTE& dest_buf, FX_DWORD& dest_size)
+static void FaxCompressData(uint8_t* src_buf, int width, int height, uint8_t*& dest_buf, FX_DWORD& dest_size)
 {
     CCodec_ModuleMgr* pEncoders = CFX_GEModule::Get()->GetCodecModule();
     if (width * height > 128 && pEncoders && pEncoders->GetFaxModule()->Encode(src_buf, width, height, (width + 7) / 8, dest_buf, dest_size)) {
@@ -274,8 +274,8 @@ static void FaxCompressData(FX_LPBYTE src_buf, int width, int height, FX_LPBYTE&
         dest_size = (width + 7) / 8 * height;
     }
 }
-static void PSCompressData(int PSLevel, FX_LPBYTE src_buf, FX_DWORD src_size,
-                           FX_LPBYTE& output_buf, FX_DWORD& output_size, FX_LPCSTR& filter)
+static void PSCompressData(int PSLevel, uint8_t* src_buf, FX_DWORD src_size,
+                           uint8_t*& output_buf, FX_DWORD& output_size, const FX_CHAR*& filter)
 {
     output_buf = src_buf;
     output_size = src_size;
@@ -284,7 +284,7 @@ static void PSCompressData(int PSLevel, FX_LPBYTE src_buf, FX_DWORD src_size,
         return;
     }
     CCodec_ModuleMgr* pEncoders = CFX_GEModule::Get()->GetCodecModule();
-    FX_LPBYTE dest_buf = NULL;
+    uint8_t* dest_buf = NULL;
     FX_DWORD dest_size = src_size;
     if (PSLevel >= 3) {
         if (pEncoders && pEncoders->GetFlateModule()->Encode(src_buf, src_size, dest_buf, dest_size)) {
@@ -348,12 +348,12 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
     if (pSource->GetBPP() == 1 && pSource->GetPalette() == NULL) {
         int pitch = (width + 7) / 8;
         FX_DWORD src_size = height * pitch;
-        FX_LPBYTE src_buf = FX_Alloc(uint8_t, src_size);
+        uint8_t* src_buf = FX_Alloc(uint8_t, src_size);
         for (int row = 0; row < height; row ++) {
-            FX_LPCBYTE src_scan = pSource->GetScanline(row);
+            const uint8_t* src_scan = pSource->GetScanline(row);
             FXSYS_memcpy32(src_buf + row * pitch, src_scan, pitch);
         }
-        FX_LPBYTE output_buf;
+        uint8_t* output_buf;
         FX_DWORD output_size;
         FaxCompressData(src_buf, width, height, output_buf, output_size);
         if (pSource->IsAlphaMask()) {
@@ -373,7 +373,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
         } else {
             buf << FX_BSTRC("false 1 colorimage\n");
         }
-        m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+        m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
         WritePSBinary(output_buf, output_size);
         FX_Free(output_buf);
     } else {
@@ -409,9 +409,9 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
             return FALSE;
         }
         int Bpp = pConverted->GetBPP() / 8;
-        FX_LPBYTE output_buf = NULL;
+        uint8_t* output_buf = NULL;
         FX_STRSIZE output_size = 0;
-        FX_LPCSTR filter = NULL;
+        const FX_CHAR* filter = NULL;
         if (flags & FXRENDER_IMAGE_LOSSY) {
             CCodec_ModuleMgr* pEncoders = CFX_GEModule::Get()->GetCodecModule();
             if (pEncoders && pEncoders->GetJpegModule()->Encode(pConverted, output_buf, output_size)) {
@@ -423,8 +423,8 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
             output_size = height * src_pitch;
             output_buf = FX_Alloc(uint8_t, output_size);
             for (int row = 0; row < height; row ++) {
-                FX_LPCBYTE src_scan = pConverted->GetScanline(row);
-                FX_LPBYTE dest_scan = output_buf + row * src_pitch;
+                const uint8_t* src_scan = pConverted->GetScanline(row);
+                uint8_t* dest_scan = output_buf + row * src_pitch;
                 if (Bpp == 3) {
                     for (int col = 0; col < width; col ++) {
                         *dest_scan++ = src_scan[2];
@@ -436,7 +436,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
                     FXSYS_memcpy32(dest_scan, src_scan, src_pitch);
                 }
             }
-            FX_LPBYTE compressed_buf;
+            uint8_t* compressed_buf;
             FX_DWORD compressed_size;
             PSCompressData(m_PSLevel, output_buf, output_size, compressed_buf, compressed_size, filter);
             if (output_buf != compressed_buf) {
@@ -457,7 +457,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
         }
         buf << FX_BSTRC("false ") << Bpp;
         buf << FX_BSTRC(" colorimage\n");
-        m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+        m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
         WritePSBinary(output_buf, output_size);
         FX_Free(output_buf);
     }
@@ -473,7 +473,7 @@ void CFX_PSRenderer::SetColor(FX_DWORD color, int alpha_flag, void* pIccTransfor
     if (pIccTransform) {
         ICodec_IccModule* pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
         color = FXGETFLAG_COLORTYPE(alpha_flag) ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-        FX_LPBYTE pColor = (FX_LPBYTE)&color;
+        uint8_t* pColor = (uint8_t*)&color;
         pIccModule->TranslateScanline(pIccTransform, pColor, pColor, 1);
         color = m_bCmykOutput ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
         bCMYK = m_bCmykOutput;
@@ -493,7 +493,7 @@ void CFX_PSRenderer::SetColor(FX_DWORD color, int alpha_flag, void* pIccTransfor
             m_bColorSet = TRUE;
             m_LastColor = color;
         }
-        m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+        m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
     }
 }
 void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache, CFX_Font* pFont, const FXTEXT_CHARPOS& charpos,
@@ -527,7 +527,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache, CFX_Font* pFont,
                         "/BuildChar{1 index/Encoding get exch get 1 index/BuildGlyph get exec}bind def\n"
                         "currentdict end\n");
         buf << FX_BSTRC("/X") << m_PSFontList.GetSize() - 1 << FX_BSTRC(" exch definefont pop\n");
-        m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+        m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
         buf.Clear();
     }
     ps_fontnum = m_PSFontList.GetSize() - 1;
@@ -586,7 +586,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache, CFX_Font* pFont,
     buf << FX_BSTRC("}bind def end\n");
     buf << FX_BSTRC("/X") << ps_fontnum << FX_BSTRC(" Ff/Encoding get ") << ps_glyphindex
         << FX_BSTRC("/") << ps_glyphindex << FX_BSTRC(" put\n");
-    m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+    m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
 }
 FX_BOOL CFX_PSRenderer::DrawText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
                                  CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device,
@@ -627,18 +627,18 @@ FX_BOOL CFX_PSRenderer::DrawText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX
         buf << hex << FX_BSTRC("Tj\n");
     }
     buf << FX_BSTRC("Q\n");
-    m_pOutput->OutputPS((FX_LPCSTR)buf.GetBuffer(), buf.GetSize());
+    m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
     return TRUE;
 }
-void CFX_PSRenderer::WritePSBinary(FX_LPCBYTE data, int len)
+void CFX_PSRenderer::WritePSBinary(const uint8_t* data, int len)
 {
-    FX_LPBYTE dest_buf;
+    uint8_t* dest_buf;
     FX_DWORD dest_size;
     CCodec_ModuleMgr* pEncoders = CFX_GEModule::Get()->GetCodecModule();
     if (pEncoders && pEncoders->GetBasicModule()->A85Encode(data, len, dest_buf, dest_size)) {
-        m_pOutput->OutputPS((FX_LPCSTR)dest_buf, dest_size);
+        m_pOutput->OutputPS((const FX_CHAR*)dest_buf, dest_size);
         FX_Free(dest_buf);
     } else {
-        m_pOutput->OutputPS((FX_LPCSTR)data, len);
+        m_pOutput->OutputPS((const FX_CHAR*)data, len);
     }
 }

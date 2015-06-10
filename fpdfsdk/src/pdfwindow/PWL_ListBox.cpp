@@ -462,7 +462,7 @@ CPDF_Rect CPWL_ListBox::GetFocusRect() const
 	return CPWL_Wnd::GetFocusRect();
 }
 
-void CPWL_ListBox::AddString(FX_LPCWSTR string)
+void CPWL_ListBox::AddString(const FX_WCHAR* string)
 {
 	if (m_pList)
 	{		
@@ -470,7 +470,7 @@ void CPWL_ListBox::AddString(FX_LPCWSTR string)
 	}
 }
 
-void CPWL_ListBox::SetText(FX_LPCWSTR csText,FX_BOOL bRefresh)
+void CPWL_ListBox::SetText(const FX_WCHAR* csText,FX_BOOL bRefresh)
 {
 	//return CPDF_List::SetText(csText,bRefresh);
 }

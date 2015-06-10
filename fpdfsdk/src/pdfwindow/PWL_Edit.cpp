@@ -37,7 +37,7 @@ void CPWL_Edit::OnDestroy()
 {
 }
 
-void CPWL_Edit::SetText(FX_LPCWSTR csText)
+void CPWL_Edit::SetText(const FX_WCHAR* csText)
 {
 	CFX_WideString swText = csText;
 
@@ -865,7 +865,7 @@ void CPWL_Edit::SetLimitChar(int32_t nLimitChar)
 	m_pEdit->SetLimitChar(nLimitChar);
 }
 
-void CPWL_Edit::ReplaceSel(FX_LPCWSTR csText)
+void CPWL_Edit::ReplaceSel(const FX_WCHAR* csText)
 {
 	m_pEdit->Clear();
 	m_pEdit->InsertText(csText);

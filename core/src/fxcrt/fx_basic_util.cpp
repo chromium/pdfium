@@ -26,7 +26,7 @@ void FX_PRIVATEDATA::FreeData()
         m_pCallback(m_pData);
     }
 }
-void CFX_PrivateData::AddData(FX_LPVOID pModuleId, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback, FX_BOOL bSelfDestruct)
+void CFX_PrivateData::AddData(void* pModuleId, void* pData, PD_CALLBACK_FREEDATA callback, FX_BOOL bSelfDestruct)
 {
     if (pModuleId == NULL) {
         return;
@@ -44,15 +44,15 @@ void CFX_PrivateData::AddData(FX_LPVOID pModuleId, FX_LPVOID pData, PD_CALLBACK_
     FX_PRIVATEDATA data = {pModuleId, pData, callback, bSelfDestruct};
     m_DataList.Add(data);
 }
-void CFX_PrivateData::SetPrivateData(FX_LPVOID pModuleId, FX_LPVOID pData, PD_CALLBACK_FREEDATA callback)
+void CFX_PrivateData::SetPrivateData(void* pModuleId, void* pData, PD_CALLBACK_FREEDATA callback)
 {
     AddData(pModuleId, pData, callback, FALSE);
 }
-void CFX_PrivateData::SetPrivateObj(FX_LPVOID pModuleId, CFX_DestructObject* pObj)
+void CFX_PrivateData::SetPrivateObj(void* pModuleId, CFX_DestructObject* pObj)
 {
     AddData(pModuleId, pObj, NULL, TRUE);
 }
-FX_BOOL CFX_PrivateData::RemovePrivateData(FX_LPVOID pModuleId)
+FX_BOOL CFX_PrivateData::RemovePrivateData(void* pModuleId)
 {
     if (pModuleId == NULL) {
         return FALSE;
@@ -67,7 +67,7 @@ FX_BOOL CFX_PrivateData::RemovePrivateData(FX_LPVOID pModuleId)
     }
     return FALSE;
 }
-FX_LPVOID CFX_PrivateData::GetPrivateData(FX_LPVOID pModuleId)
+void* CFX_PrivateData::GetPrivateData(void* pModuleId)
 {
     if (pModuleId == NULL) {
         return NULL;
@@ -95,7 +95,7 @@ void FX_atonum(FX_BSTR strc, FX_BOOL& bInteger, void* pData)
     if (FXSYS_memchr(strc.GetPtr(), '.', strc.GetLength()) == NULL) {
         bInteger = TRUE;
         int cc = 0, integer = 0;
-        FX_LPCSTR str = strc.GetCStr();
+        const FX_CHAR* str = strc.GetCStr();
         int len = strc.GetLength();
         FX_BOOL bNegative = FALSE;
         if (str[0] == '+') {
@@ -130,7 +130,7 @@ FX_FLOAT FX_atof(FX_BSTR strc)
     }
     int cc = 0;
     FX_BOOL bNegative = FALSE;
-    FX_LPCSTR str = strc.GetCStr();
+    const FX_CHAR* str = strc.GetCStr();
     int len = strc.GetLength();
     if (str[0] == '+') {
         cc++;
@@ -314,7 +314,7 @@ public:
     WIN32_FIND_DATAW	m_FindData;
 };
 #endif
-void* FX_OpenFolder(FX_LPCSTR path)
+void* FX_OpenFolder(const FX_CHAR* path)
 {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #ifndef _WIN32_WCE
@@ -339,7 +339,7 @@ void* FX_OpenFolder(FX_LPCSTR path)
     return dir;
 #endif
 }
-void* FX_OpenFolder(FX_LPCWSTR path)
+void* FX_OpenFolder(const FX_WCHAR* path)
 {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     CFindFileDataW* pData = new CFindFileDataW;

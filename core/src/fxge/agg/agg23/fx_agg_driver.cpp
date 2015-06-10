@@ -376,12 +376,12 @@ private:
     const CFX_DIBitmap*	m_pClipMask;
     CFX_DIBitmap*	m_pDevice;
     const CFX_ClipRgn* m_pClipRgn;
-    void (CFX_Renderer::*composite_span)(FX_LPBYTE, int, int, int, FX_LPBYTE, int, int, FX_LPBYTE, FX_LPBYTE);
+    void (CFX_Renderer::*composite_span)(uint8_t*, int, int, int, uint8_t*, int, int, uint8_t*, uint8_t*);
 public:
     void prepare(unsigned) {}
-    void CompositeSpan(FX_LPBYTE dest_scan, FX_LPBYTE ori_scan, int Bpp, FX_BOOL bDestAlpha,
-                       int span_left, int span_len, FX_LPBYTE cover_scan,
-                       int clip_left, int clip_right, FX_LPBYTE clip_scan)
+    void CompositeSpan(uint8_t* dest_scan, uint8_t* ori_scan, int Bpp, FX_BOOL bDestAlpha,
+                       int span_left, int span_len, uint8_t* cover_scan,
+                       int clip_left, int clip_right, uint8_t* clip_scan)
     {
         ASSERT(!m_pDevice->IsCmykImage());
         int col_start = span_left < clip_left ? clip_left - span_left : 0;
@@ -542,7 +542,7 @@ public:
                         index = i;
                     }
             }
-            FX_LPBYTE dest_scan1 = dest_scan;
+            uint8_t* dest_scan1 = dest_scan;
             for (int col = col_start; col < col_end; col ++) {
                 int src_alpha;
                 if (clip_scan) {
@@ -561,10 +561,10 @@ public:
             }
         }
     }
-    void CompositeSpan1bpp(FX_LPBYTE dest_scan, int Bpp,
-                           int span_left, int span_len, FX_LPBYTE cover_scan,
-                           int clip_left, int clip_right, FX_LPBYTE clip_scan,
-                           FX_LPBYTE dest_extra_alpha_scan)
+    void CompositeSpan1bpp(uint8_t* dest_scan, int Bpp,
+                           int span_left, int span_len, uint8_t* cover_scan,
+                           int clip_left, int clip_right, uint8_t* clip_scan,
+                           uint8_t* dest_extra_alpha_scan)
     {
         ASSERT(!m_bRgbByteOrder);
         ASSERT(!m_pDevice->IsCmykImage());
@@ -580,7 +580,7 @@ public:
                     index = i;
                 }
         }
-        FX_LPBYTE dest_scan1 = dest_scan;
+        uint8_t* dest_scan1 = dest_scan;
         for (int col = col_start; col < col_end; col ++) {
             int src_alpha;
             if (clip_scan) {
@@ -598,10 +598,10 @@ public:
             dest_scan1 = dest_scan + (span_left % 8 + col - col_start + 1) / 8;
         }
     }
-    void CompositeSpanGray(FX_LPBYTE dest_scan, int Bpp,
-                           int span_left, int span_len, FX_LPBYTE cover_scan,
-                           int clip_left, int clip_right, FX_LPBYTE clip_scan,
-                           FX_LPBYTE dest_extra_alpha_scan)
+    void CompositeSpanGray(uint8_t* dest_scan, int Bpp,
+                           int span_left, int span_len, uint8_t* cover_scan,
+                           int clip_left, int clip_right, uint8_t* clip_scan,
+                           uint8_t* dest_extra_alpha_scan)
     {
         ASSERT(!m_bRgbByteOrder);
         int col_start = span_left < clip_left ? clip_left - span_left : 0;
@@ -659,10 +659,10 @@ public:
             }
         }
     }
-    void CompositeSpanARGB(FX_LPBYTE dest_scan, int Bpp,
-                           int span_left, int span_len, FX_LPBYTE cover_scan,
-                           int clip_left, int clip_right, FX_LPBYTE clip_scan,
-                           FX_LPBYTE dest_extra_alpha_scan)
+    void CompositeSpanARGB(uint8_t* dest_scan, int Bpp,
+                           int span_left, int span_len, uint8_t* cover_scan,
+                           int clip_left, int clip_right, uint8_t* clip_scan,
+                           uint8_t* dest_extra_alpha_scan)
     {
         int col_start = span_left < clip_left ? clip_left - span_left : 0;
         int col_end = (span_left + span_len) < clip_right ? span_len : (clip_right - span_left);
@@ -745,10 +745,10 @@ public:
             dest_scan += Bpp;
         }
     }
-    void CompositeSpanRGB(FX_LPBYTE dest_scan, int Bpp,
-                          int span_left, int span_len, FX_LPBYTE cover_scan,
-                          int clip_left, int clip_right, FX_LPBYTE clip_scan,
-                          FX_LPBYTE dest_extra_alpha_scan)
+    void CompositeSpanRGB(uint8_t* dest_scan, int Bpp,
+                          int span_left, int span_len, uint8_t* cover_scan,
+                          int clip_left, int clip_right, uint8_t* clip_scan,
+                          uint8_t* dest_extra_alpha_scan)
     {
         int col_start = span_left < clip_left ? clip_left - span_left : 0;
         int col_end = (span_left + span_len) < clip_right ? span_len : (clip_right - span_left);
@@ -865,10 +865,10 @@ public:
             }
         }
     }
-    void CompositeSpanCMYK(FX_LPBYTE dest_scan, int Bpp,
-                           int span_left, int span_len, FX_LPBYTE cover_scan,
-                           int clip_left, int clip_right, FX_LPBYTE clip_scan,
-                           FX_LPBYTE dest_extra_alpha_scan)
+    void CompositeSpanCMYK(uint8_t* dest_scan, int Bpp,
+                           int span_left, int span_len, uint8_t* cover_scan,
+                           int clip_left, int clip_right, uint8_t* clip_scan,
+                           uint8_t* dest_extra_alpha_scan)
     {
         ASSERT(!m_bRgbByteOrder);
         int col_start = span_left < clip_left ? clip_left - span_left : 0;
@@ -949,13 +949,13 @@ public:
         if (y < m_ClipBox.top || y >= m_ClipBox.bottom) {
             return;
         }
-        FX_LPBYTE dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * y;
-        FX_LPBYTE dest_scan_extra_alpha = NULL;
+        uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * y;
+        uint8_t* dest_scan_extra_alpha = NULL;
         CFX_DIBitmap* pAlphaMask = m_pDevice->m_pAlphaMask;
         if (pAlphaMask) {
             dest_scan_extra_alpha = pAlphaMask->GetBuffer() + pAlphaMask->GetPitch() * y;
         }
-        FX_LPBYTE ori_scan = NULL;
+        uint8_t* ori_scan = NULL;
         if (m_pOriDevice) {
             ori_scan = m_pOriDevice->GetBuffer() + m_pOriDevice->GetPitch() * y;
         }
@@ -966,9 +966,9 @@ public:
         while (1) {
             int x = span->x;
             ASSERT(span->len > 0);
-            FX_LPBYTE dest_pos = NULL;
-            FX_LPBYTE dest_extra_alpha_pos = NULL;
-            FX_LPBYTE ori_pos = NULL;
+            uint8_t* dest_pos = NULL;
+            uint8_t* dest_extra_alpha_pos = NULL;
+            uint8_t* ori_pos = NULL;
             if (Bpp) {
                 ori_pos = ori_scan ? ori_scan + x * Bpp : NULL;
                 dest_pos = dest_scan + x * Bpp;
@@ -977,7 +977,7 @@ public:
                 dest_pos = dest_scan + x / 8;
                 ori_pos = ori_scan ? ori_scan + x / 8 : NULL;
             }
-            FX_LPBYTE clip_pos = NULL;
+            uint8_t* clip_pos = NULL;
             if (m_pClipMask) {
                 clip_pos = m_pClipMask->GetBuffer() + (y - m_ClipBox.top) * m_pClipMask->GetPitch() + x - m_ClipBox.left;
             }
@@ -1031,7 +1031,7 @@ public:
                 if (pIccTransform) {
                     uint8_t gray;
                     color = bObjectCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-                    pIccModule->TranslateScanline(pIccTransform, &gray, (FX_LPCBYTE)&color, 1);
+                    pIccModule->TranslateScanline(pIccTransform, &gray, (const uint8_t*)&color, 1);
                     m_Gray = gray;
                 } else {
                     if (bObjectCMYK) {
@@ -1052,28 +1052,28 @@ public:
             if (bObjectCMYK) {
                 m_Color = FXCMYK_TODIB(color);
                 if (pIccTransform) {
-                    pIccModule->TranslateScanline(pIccTransform, (FX_LPBYTE)&m_Color, (FX_LPCBYTE)&m_Color, 1);
+                    pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&m_Color, 1);
                 }
             } else {
                 if (!pIccTransform) {
                     return FALSE;
                 }
                 color = FXARGB_TODIB(color);
-                pIccModule->TranslateScanline(pIccTransform, (FX_LPBYTE)&m_Color, (FX_LPCBYTE)&color, 1);
+                pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&color, 1);
             }
-            m_Red = ((FX_LPBYTE)&m_Color)[0];
-            m_Green = ((FX_LPBYTE)&m_Color)[1];
-            m_Blue = ((FX_LPBYTE)&m_Color)[2];
-            m_Gray = ((FX_LPBYTE)&m_Color)[3];
+            m_Red = ((uint8_t*)&m_Color)[0];
+            m_Green = ((uint8_t*)&m_Color)[1];
+            m_Blue = ((uint8_t*)&m_Color)[2];
+            m_Gray = ((uint8_t*)&m_Color)[3];
         } else {
             composite_span = (pDevice->GetFormat() == FXDIB_Argb) ? &CFX_Renderer::CompositeSpanARGB : &CFX_Renderer::CompositeSpanRGB;
             if (pIccTransform) {
                 color = bObjectCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-                pIccModule->TranslateScanline(pIccTransform, (FX_LPBYTE)&m_Color, (FX_LPCBYTE)&color, 1);
-                ((FX_LPBYTE)&m_Color)[3] = m_Alpha;
-                m_Red = ((FX_LPBYTE)&m_Color)[2];
-                m_Green = ((FX_LPBYTE)&m_Color)[1];
-                m_Blue = ((FX_LPBYTE)&m_Color)[0];
+                pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&color, 1);
+                ((uint8_t*)&m_Color)[3] = m_Alpha;
+                m_Red = ((uint8_t*)&m_Color)[2];
+                m_Green = ((uint8_t*)&m_Color)[1];
+                m_Blue = ((uint8_t*)&m_Color)[0];
                 if (m_bRgbByteOrder) {
                     m_Color = FXARGB_TODIB(m_Color);
                     m_Color = FXARGB_TOBGRORDERDIB(m_Color);
@@ -1192,7 +1192,7 @@ void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, FX_DWORD argb)
     if (x < 0 || x >= pBitmap->GetWidth() || y < 0 || y >= pBitmap->GetHeight()) {
         return;
     }
-    FX_LPBYTE pos = (uint8_t*)pBitmap->GetBuffer() + y * pBitmap->GetPitch() + x * pBitmap->GetBPP() / 8;
+    uint8_t* pos = (uint8_t*)pBitmap->GetBuffer() + y * pBitmap->GetPitch() + x * pBitmap->GetBPP() / 8;
     if (pBitmap->GetFormat() == FXDIB_Argb) {
         FXARGB_SETRGBORDERDIB(pos, ArgbGamma(argb));
     } else {
@@ -1218,7 +1218,7 @@ void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap, int left, int top, int wid
     uint8_t* pBuffer = pBitmap->GetBuffer();
     if (src_alpha == 255) {
         for (int row = rect.top; row < rect.bottom; row ++) {
-            FX_LPBYTE dest_scan = pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
+            uint8_t* dest_scan = pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
             if (Bpp == 4) {
                 FX_DWORD* scan = (FX_DWORD*)dest_scan;
                 for (int col = 0; col < width; col ++) {
@@ -1238,7 +1238,7 @@ void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap, int left, int top, int wid
     src_g = FX_GAMMA(src_g);
     src_b = FX_GAMMA(src_b);
     for (int row = rect.top; row < rect.bottom; row ++) {
-        FX_LPBYTE dest_scan = pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
+        uint8_t* dest_scan = pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
         if (bAlpha) {
             for (int col = 0; col < width; col ++) {
                 uint8_t back_alpha = dest_scan[3];
@@ -1289,8 +1289,8 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap, int dest_left, int dest_t
     uint8_t* buffer = pBitmap->GetBuffer();
     if (dest_format == src_format) {
         for (int row = 0; row < height; row ++) {
-            FX_LPBYTE dest_scan = buffer + (dest_top + row) * pitch + dest_left * Bpp;
-            FX_LPBYTE src_scan = (FX_LPBYTE)pSrcBitmap->GetScanline(src_top + row) + src_left * Bpp;
+            uint8_t* dest_scan = buffer + (dest_top + row) * pitch + dest_left * Bpp;
+            uint8_t* src_scan = (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * Bpp;
             if (Bpp == 4) {
                 for (int col = 0; col < width; col ++) {
                     FXARGB_SETDIB(dest_scan, FXARGB_MAKE(src_scan[3], src_scan[0], src_scan[1], src_scan[2]));
@@ -1308,12 +1308,12 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap, int dest_left, int dest_t
         }
         return;
     }
-    FX_LPBYTE dest_buf = buffer + dest_top * pitch + dest_left * Bpp;
+    uint8_t* dest_buf = buffer + dest_top * pitch + dest_left * Bpp;
     if (dest_format == FXDIB_Rgb) {
         if (src_format == FXDIB_Rgb32) {
             for (int row = 0; row < height; row ++) {
-                FX_LPBYTE dest_scan = dest_buf + row * pitch;
-                FX_LPBYTE src_scan = (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
+                uint8_t* dest_scan = dest_buf + row * pitch;
+                uint8_t* src_scan = (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
                 for (int col = 0; col < width; col ++) {
                     *dest_scan++ = src_scan[2];
                     *dest_scan++ = src_scan[1];
@@ -1328,7 +1328,7 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap, int dest_left, int dest_t
         if (src_format == FXDIB_Rgb) {
             for (int row = 0; row < height; row ++) {
                 uint8_t* dest_scan = (uint8_t*)(dest_buf + row * pitch);
-                FX_LPBYTE src_scan = (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 3;
+                uint8_t* src_scan = (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 3;
                 if (src_format == FXDIB_Argb) {
                     for (int col = 0; col < width; col ++) {
                         FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, FX_GAMMA(src_scan[0]), FX_GAMMA(src_scan[1]), FX_GAMMA(src_scan[2])));
@@ -1346,8 +1346,8 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap, int dest_left, int dest_t
         } else if (src_format == FXDIB_Rgb32) {
             ASSERT(dest_format == FXDIB_Argb);
             for (int row = 0; row < height; row ++) {
-                FX_LPBYTE dest_scan = dest_buf + row * pitch;
-                FX_LPBYTE src_scan = (FX_LPBYTE)(pSrcBitmap->GetScanline(src_top + row) + src_left * 4);
+                uint8_t* dest_scan = dest_buf + row * pitch;
+                uint8_t* src_scan = (uint8_t*)(pSrcBitmap->GetScanline(src_top + row) + src_left * 4);
                 for (int col = 0; col < width; col++) {
                     FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[0], src_scan[1], src_scan[2]));
                     src_scan  += 4;
@@ -1373,7 +1373,7 @@ FX_BOOL _DibSetPixel(CFX_DIBitmap* pDevice, int x, int y, FX_DWORD color, int al
     if (pIccTransform) {
         ICodec_IccModule* pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
         color = bObjCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-        pIccModule->TranslateScanline(pIccTransform, (FX_LPBYTE)&color, (FX_LPBYTE)&color, 1);
+        pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&color, (uint8_t*)&color, 1);
         color = bObjCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
         if (!pDevice->IsCmykImage()) {
             color = (color & 0xffffff) | (alpha << 24);
@@ -1550,7 +1550,7 @@ FX_BOOL	CFX_AggDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWOR
     return TRUE;
 }
 FX_BOOL	CFX_AggDeviceDriver::StartDIBits(const CFX_DIBSource* pSource, int bitmap_alpha, FX_DWORD argb,
-        const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, FX_LPVOID& handle,
+        const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, void*& handle,
         int alpha_flag, void* pIccTransform, int blend_type)
 {
     if (m_pBitmap->GetBuffer() == NULL) {
@@ -1561,14 +1561,14 @@ FX_BOOL	CFX_AggDeviceDriver::StartDIBits(const CFX_DIBSource* pSource, int bitma
     handle = pRenderer;
     return TRUE;
 }
-FX_BOOL	CFX_AggDeviceDriver::ContinueDIBits(FX_LPVOID pHandle, IFX_Pause* pPause)
+FX_BOOL	CFX_AggDeviceDriver::ContinueDIBits(void* pHandle, IFX_Pause* pPause)
 {
     if (m_pBitmap->GetBuffer() == NULL) {
         return TRUE;
     }
     return ((CFX_ImageRenderer*)pHandle)->Continue(pPause);
 }
-void CFX_AggDeviceDriver::CancelDIBits(FX_LPVOID pHandle)
+void CFX_AggDeviceDriver::CancelDIBits(void* pHandle)
 {
     if (m_pBitmap->GetBuffer() == NULL) {
         return;

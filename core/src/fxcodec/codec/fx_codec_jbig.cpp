@@ -25,12 +25,12 @@ void CCodec_Jbig2Module::DestroyJbig2Context(void* pJbig2Content)
     }
     pJbig2Content = NULL;
 }
-FX_BOOL CCodec_Jbig2Module::Decode(FX_DWORD width, FX_DWORD height, FX_LPCBYTE src_buf, FX_DWORD src_size,
-                                   FX_LPCBYTE global_data, FX_DWORD global_size, FX_LPBYTE dest_buf, FX_DWORD dest_pitch)
+FX_BOOL CCodec_Jbig2Module::Decode(FX_DWORD width, FX_DWORD height, const uint8_t* src_buf, FX_DWORD src_size,
+                                   const uint8_t* global_data, FX_DWORD global_size, uint8_t* dest_buf, FX_DWORD dest_pitch)
 {
     FXSYS_memset32(dest_buf, 0, height * dest_pitch);
     CJBig2_Context* pContext = CJBig2_Context::CreateContext(&m_Module,
-                               (FX_LPBYTE)global_data, global_size, (FX_LPBYTE)src_buf, src_size, JBIG2_EMBED_STREAM, &m_SymbolDictCache);
+                               (uint8_t*)global_data, global_size, (uint8_t*)src_buf, src_size, JBIG2_EMBED_STREAM, &m_SymbolDictCache);
     if (pContext == NULL) {
         return FALSE;
     }
@@ -47,12 +47,12 @@ FX_BOOL CCodec_Jbig2Module::Decode(FX_DWORD width, FX_DWORD height, FX_LPCBYTE s
     return TRUE;
 }
 FX_BOOL CCodec_Jbig2Module::Decode(IFX_FileRead* file_ptr,
-                                   FX_DWORD& width, FX_DWORD& height, FX_DWORD& pitch, FX_LPBYTE& dest_buf)
+                                   FX_DWORD& width, FX_DWORD& height, FX_DWORD& pitch, uint8_t*& dest_buf)
 {
     CJBig2_Context* pContext = NULL;
     CJBig2_Image* dest_image = NULL;
     FX_DWORD src_size = (FX_DWORD)file_ptr->GetSize();
-    FX_LPBYTE src_buf = FX_Alloc(uint8_t, src_size);
+    uint8_t* src_buf = FX_Alloc(uint8_t, src_size);
     int ret = 0;
     if(!file_ptr->ReadBlock(src_buf, 0, src_size)) {
         goto failed;
@@ -80,8 +80,8 @@ failed:
     }
     return FALSE;
 }
-FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context, FX_DWORD width, FX_DWORD height, FX_LPCBYTE src_buf, FX_DWORD src_size,
-        FX_LPCBYTE global_data, FX_DWORD global_size, FX_LPBYTE dest_buf, FX_DWORD dest_pitch, IFX_Pause* pPause)
+FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context, FX_DWORD width, FX_DWORD height, const uint8_t* src_buf, FX_DWORD src_size,
+        const uint8_t* global_data, FX_DWORD global_size, uint8_t* dest_buf, FX_DWORD dest_pitch, IFX_Pause* pPause)
 {
     if(!pJbig2Context) {
         return FXCODEC_STATUS_ERR_PARAMS;
@@ -99,7 +99,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context, FX_DWORD wid
     m_pJbig2Context->m_bFileReader = FALSE;
     FXSYS_memset32(dest_buf, 0, height * dest_pitch);
     m_pJbig2Context->m_pContext = CJBig2_Context::CreateContext(&m_Module,
-                                  (FX_LPBYTE)global_data, global_size, (FX_LPBYTE)src_buf, src_size, JBIG2_EMBED_STREAM, &m_SymbolDictCache, pPause);
+                                  (uint8_t*)global_data, global_size, (uint8_t*)src_buf, src_size, JBIG2_EMBED_STREAM, &m_SymbolDictCache, pPause);
     if(!m_pJbig2Context->m_pContext) {
         return FXCODEC_STATUS_ERROR;
     }
@@ -120,7 +120,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context, FX_DWORD wid
     return m_pJbig2Context->m_pContext->GetProcessiveStatus();
 }
 FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context, IFX_FileRead* file_ptr,
-        FX_DWORD& width, FX_DWORD& height, FX_DWORD& pitch, FX_LPBYTE& dest_buf, IFX_Pause* pPause)
+        FX_DWORD& width, FX_DWORD& height, FX_DWORD& pitch, uint8_t*& dest_buf, IFX_Pause* pPause)
 {
     if(!pJbig2Context) {
         return FXCODEC_STATUS_ERR_PARAMS;

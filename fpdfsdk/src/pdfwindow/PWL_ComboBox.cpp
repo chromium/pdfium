@@ -244,13 +244,13 @@ CFX_WideString CPWL_ComboBox::GetText() const
 	return CFX_WideString();
 }
 
-void CPWL_ComboBox::SetText(FX_LPCWSTR text)
+void CPWL_ComboBox::SetText(const FX_WCHAR* text)
 {
 	if (m_pEdit)
 		m_pEdit->SetText(text);
 }
 
-void CPWL_ComboBox::AddString(FX_LPCWSTR string)
+void CPWL_ComboBox::AddString(const FX_WCHAR* string)
 {
 	if (m_pList)
 		m_pList->AddString(string);

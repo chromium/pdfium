@@ -9,14 +9,14 @@
 #include "../../include/fpdftext/fpdf_text.h"
 #include "txtproc.h"
 #include "text_int.h"
-extern FX_LPCSTR FCS_GetAltStr(FX_WCHAR);
-CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode, int destcp, FX_LPCSTR defchar)
+extern const FX_CHAR* FCS_GetAltStr(FX_WCHAR);
+CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode, int destcp, const FX_CHAR* defchar)
 {
     if (destcp == 0) {
         if (unicode < 0x80) {
             return CFX_ByteString((char)unicode);
         }
-        FX_LPCSTR altstr = FCS_GetAltStr(unicode);
+        const FX_CHAR* altstr = FCS_GetAltStr(unicode);
         if (altstr) {
             return CFX_ByteString(altstr, -1);
         }
@@ -28,7 +28,7 @@ CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode, int destcp, FX_LPCSTR defcha
     if (ret && !bDef) {
         return CFX_ByteString(buf, ret);
     }
-    FX_LPCSTR altstr = FCS_GetAltStr(unicode);
+    const FX_CHAR* altstr = FCS_GetAltStr(unicode);
     if (altstr) {
         return CFX_ByteString(altstr, -1);
     }
@@ -173,7 +173,7 @@ CTextBaseLine* CTextPage::InsertTextBox(CTextBaseLine* pBaseLine, FX_FLOAT basey
         }
     }
     CFX_WideString text;
-    FX_LPCSTR pStr = str;
+    const FX_CHAR* pStr = str;
     int len = str.GetLength(), offset = 0;
     while (offset < len) {
         FX_DWORD ch = pFont->GetNextChar(pStr, len, offset);
@@ -286,7 +286,7 @@ void CTextPage::WriteOutput(CFX_WideStringArray& lines, int iMinWidth)
 void NormalizeCompositeChar(FX_WCHAR wChar, CFX_WideString& sDest)
 {
     wChar = FX_GetMirrorChar(wChar, TRUE, FALSE);
-    FX_LPWSTR pDst = NULL;
+    FX_WCHAR* pDst = NULL;
     FX_STRSIZE nCount = FX_Unicode_GetNormalization(wChar, pDst);
     if (nCount < 1 ) {
         sDest += wChar;

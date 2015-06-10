@@ -89,14 +89,14 @@ public:
         m_TrunkSize = trunk_size;
     }
 
-    void*	AllocDebug(size_t size, FX_LPCSTR file, int line)
+    void*	AllocDebug(size_t size, const FX_CHAR* file, int line)
     {
         return Alloc(size);
     }
 
     void*	Alloc(size_t size);
 
-    void*	ReallocDebug(void* p, size_t new_size, FX_LPCSTR file, int line)
+    void*	ReallocDebug(void* p, size_t new_size, const FX_CHAR* file, int line)
     {
         return NULL;
     }

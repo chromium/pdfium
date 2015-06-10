@@ -65,7 +65,7 @@ void CFX_GEModule::SetTextGamma(FX_FLOAT gammaValue)
         i++;
     }
 }
-FX_LPCBYTE CFX_GEModule::GetTextGammaTable()
+const uint8_t* CFX_GEModule::GetTextGammaTable()
 {
     return m_GammaValue;
 }

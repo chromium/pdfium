@@ -26,7 +26,7 @@ class CPDF_ObjArchiveLoader : public CFX_ArchiveLoader
 {
 public:
 
-    CPDF_ObjArchiveLoader(FX_LPCBYTE pData, FX_DWORD dwSize) : CFX_ArchiveLoader(pData, dwSize),
+    CPDF_ObjArchiveLoader(const uint8_t* pData, FX_DWORD dwSize) : CFX_ArchiveLoader(pData, dwSize),
         m_IndirectObjects(NULL) {}
 
     friend CPDF_ObjArchiveLoader&	operator >> (CPDF_ObjArchiveLoader& ar, CPDF_Object*& pObj);
@@ -72,7 +72,7 @@ class CPDF_PageArchiveLoader : public CPDF_ObjArchiveLoader
 {
 public:
 
-    CPDF_PageArchiveLoader(CPDF_PageObjects* pPageObjs, FX_LPCBYTE pData, FX_DWORD dwSize);
+    CPDF_PageArchiveLoader(CPDF_PageObjects* pPageObjs, const uint8_t* pData, FX_DWORD dwSize);
 
     friend CPDF_PageArchiveLoader&	operator >> (CPDF_PageArchiveLoader& ar, CPDF_PageObject*& pObj);
 
@@ -91,7 +91,7 @@ public:
 protected:
     void				PostProcColor(CPDF_Color& color);
 
-    CPDF_Object*		AddResource(CPDF_Object* pSrcObj, FX_LPCSTR type);
+    CPDF_Object*		AddResource(CPDF_Object* pSrcObj, const FX_CHAR* type);
 
     CPDF_ClipPath		m_LastClipPath;
 
@@ -121,9 +121,9 @@ public:
 
     void				RemoveSecurity();
 
-    FX_BOOL				Create(FX_LPCWSTR filename, FX_DWORD flags = 0);
+    FX_BOOL				Create(const FX_WCHAR* filename, FX_DWORD flags = 0);
 
-    FX_BOOL				Create(FX_LPCSTR filename, FX_DWORD flags = 0);
+    FX_BOOL				Create(const FX_CHAR* filename, FX_DWORD flags = 0);
 
     FX_BOOL				Create(IFX_StreamWrite* pFile, FX_DWORD flags = 0);
 
@@ -179,7 +179,7 @@ protected:
     int32_t			WriteDirectObj(FX_DWORD objnum, const CPDF_Object* pObj, FX_BOOL bEncrypt = TRUE);
     int32_t			WriteIndirectObjectToStream(const CPDF_Object* pObj);
     int32_t			WriteIndirectObj(FX_DWORD objnum, const CPDF_Object* pObj);
-    int32_t			WriteIndirectObjectToStream(FX_DWORD objnum, FX_LPCBYTE pBuffer, FX_DWORD dwSize);
+    int32_t			WriteIndirectObjectToStream(FX_DWORD objnum, const uint8_t* pBuffer, FX_DWORD dwSize);
     int32_t			AppendObjectNumberToXRef(FX_DWORD objnum);
     void				InitID(FX_BOOL bDefault = TRUE);
     int32_t			WriteStream(const CPDF_Object* pStream, FX_DWORD objnum, CPDF_CryptoHandler* pCrypto);

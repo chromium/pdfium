@@ -48,7 +48,7 @@ void CFX_GlyphMap::SetAt(int key, int value)
 }
 FX_BOOL CFX_GlyphMap::Lookup(int key, int &value)
 {
-    FX_LPVOID pResult = FXSYS_bsearch(&key, m_Buffer.GetBuffer(), m_Buffer.GetSize() / sizeof(_IntPair),
+    void* pResult = FXSYS_bsearch(&key, m_Buffer.GetBuffer(), m_Buffer.GetSize() / sizeof(_IntPair),
                                       sizeof(_IntPair), _CompareInt);
     if (pResult == NULL) {
         return FALSE;

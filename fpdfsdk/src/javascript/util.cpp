@@ -58,8 +58,8 @@ util::~util(void)
 
 struct stru_TbConvert
 {
-	FX_LPCWSTR lpszJSMark;
-	FX_LPCWSTR lpszCppMark;
+	const FX_WCHAR* lpszJSMark;
+	const FX_WCHAR* lpszCppMark;
 };
 
 const stru_TbConvert fcTable[] = {
@@ -315,7 +315,7 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 
 		struct stru_TbConvertAd
 		{
-			FX_LPCWSTR lpszJSMark;
+			const FX_WCHAR* lpszJSMark;
 			int     iValue;
 		};
 
@@ -411,7 +411,7 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 
 	struct stru_TbConvertAd
 	{
-		FX_LPCWSTR lpszJSMark;
+		const FX_WCHAR* lpszJSMark;
 		int     iValue;
 	};
 

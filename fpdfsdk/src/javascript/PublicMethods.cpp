@@ -64,8 +64,8 @@ IMPLEMENT_JS_STATIC_GLOBAL_FUN(CJS_PublicMethods)
 
 struct stru_TbConvert
 {
-	FX_LPCSTR lpszJSMark;
-	FX_LPCSTR lpszCppMark;
+	const FX_CHAR* lpszJSMark;
+	const FX_CHAR* lpszCppMark;
 };
 
 static const stru_TbConvert fcTable[] = {
@@ -91,21 +91,21 @@ static const stru_TbConvert fcTable[] = {
 	//"t"
 };
 
-static FX_LPCWSTR months[] =
+static const FX_WCHAR* months[] =
 {
 	L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec"
 };
 
-static FX_LPCWSTR fullmonths[] =
+static const FX_WCHAR* fullmonths[] =
 {
 	L"January", L"February", L"March", L"April", L"May", L"June", L"July", L"August", L"September", L"October", L"November", L"December"
 };
 
-FX_BOOL CJS_PublicMethods::IsNumber(FX_LPCWSTR string)
+FX_BOOL CJS_PublicMethods::IsNumber(const FX_WCHAR* string)
 {
 	CFX_WideString sTrim = StrTrim(string);
-	FX_LPCWSTR pTrim = sTrim.c_str();
-	FX_LPCWSTR p = pTrim;
+	const FX_WCHAR* pTrim = sTrim.c_str();
+	const FX_WCHAR* p = pTrim;
 
 
 	FX_BOOL bDot = FALSE;
@@ -191,7 +191,7 @@ FX_BOOL CJS_PublicMethods::isReservedMaskChar(wchar_t ch)
 	return ch == L'9' || ch == L'A' || ch == L'O' || ch == L'X';
 }
 
-double CJS_PublicMethods::AF_Simple(FX_LPCWSTR sFuction, double dValue1, double dValue2)
+double CJS_PublicMethods::AF_Simple(const FX_WCHAR* sFuction, double dValue1, double dValue2)
 {
 	if (FXSYS_wcsicmp(sFuction,L"AVG") == 0 || FXSYS_wcsicmp(sFuction,L"SUM") == 0)
 	{
@@ -213,49 +213,49 @@ double CJS_PublicMethods::AF_Simple(FX_LPCWSTR sFuction, double dValue1, double 
 	return dValue1;
 }
 
-CFX_WideString CJS_PublicMethods::StrLTrim(FX_LPCWSTR pStr)
+CFX_WideString CJS_PublicMethods::StrLTrim(const FX_WCHAR* pStr)
 {
 	while (*pStr && *pStr == L' ') pStr++;
 
 	return pStr;
 }
 
-CFX_WideString CJS_PublicMethods::StrRTrim(FX_LPCWSTR pStr)
+CFX_WideString CJS_PublicMethods::StrRTrim(const FX_WCHAR* pStr)
 {
-	FX_LPCWSTR p = pStr;
+	const FX_WCHAR* p = pStr;
 	while (*p) p++;
 	while (p > pStr && *(p - 1) == L' ') p--;
 
 	return CFX_WideString(pStr, p - pStr);
 }
 
-CFX_WideString CJS_PublicMethods::StrTrim(FX_LPCWSTR pStr)
+CFX_WideString CJS_PublicMethods::StrTrim(const FX_WCHAR* pStr)
 {
 	return StrRTrim(StrLTrim(pStr).c_str());
 }
 
-CFX_ByteString CJS_PublicMethods::StrLTrim(FX_LPCSTR pStr)
+CFX_ByteString CJS_PublicMethods::StrLTrim(const FX_CHAR* pStr)
 {
 	while (*pStr && *pStr == ' ') pStr++;
 
         return pStr;
 }
 
-CFX_ByteString CJS_PublicMethods::StrRTrim(FX_LPCSTR pStr)
+CFX_ByteString CJS_PublicMethods::StrRTrim(const FX_CHAR* pStr)
 {
-	FX_LPCSTR p = pStr;
+	const FX_CHAR* p = pStr;
 	while (*p) p++;
 	while (p > pStr && *(p - 1) == L' ') p--;
 
 	return CFX_ByteString(pStr,p-pStr);
 }
 
-CFX_ByteString CJS_PublicMethods::StrTrim(FX_LPCSTR pStr)
+CFX_ByteString CJS_PublicMethods::StrTrim(const FX_CHAR* pStr)
 {
 	return StrRTrim(StrLTrim(pStr));
 }
 
-double CJS_PublicMethods::ParseNumber(FX_LPCWSTR swSource, FX_BOOL& bAllDigits, FX_BOOL& bDot, FX_BOOL& bSign, FX_BOOL& bKXJS)
+double CJS_PublicMethods::ParseNumber(const FX_WCHAR* swSource, FX_BOOL& bAllDigits, FX_BOOL& bDot, FX_BOOL& bSign, FX_BOOL& bKXJS)
 {
 	bDot = FALSE;
 	bSign = FALSE;
@@ -263,11 +263,11 @@ double CJS_PublicMethods::ParseNumber(FX_LPCWSTR swSource, FX_BOOL& bAllDigits, 
 
 	FX_BOOL bDigitExist = FALSE;
 
-	FX_LPCWSTR p = swSource;
+	const FX_WCHAR* p = swSource;
 	wchar_t c;
 
-	FX_LPCWSTR pStart = NULL;
-	FX_LPCWSTR pEnd = NULL;
+	const FX_WCHAR* pStart = NULL;
+	const FX_WCHAR* pEnd = NULL;
 
 	while ((c = *p))
 	{
@@ -401,7 +401,7 @@ double CJS_PublicMethods::ParseNumber(FX_LPCWSTR swSource, FX_BOOL& bAllDigits, 
 	return dRet;
 }
 
-double CJS_PublicMethods::ParseStringToNumber(FX_LPCWSTR swSource)
+double CJS_PublicMethods::ParseStringToNumber(const FX_WCHAR* swSource)
 {
 	FX_BOOL bAllDigits = FALSE;
 	FX_BOOL bDot = FALSE;
@@ -411,7 +411,7 @@ double CJS_PublicMethods::ParseStringToNumber(FX_LPCWSTR swSource)
 	return ParseNumber(swSource, bAllDigits, bDot, bSign, bKXJS);
 }
 
-FX_BOOL	CJS_PublicMethods::ConvertStringToNumber(FX_LPCWSTR swSource, double & dRet, FX_BOOL & bDot)
+FX_BOOL	CJS_PublicMethods::ConvertStringToNumber(const FX_WCHAR* swSource, double & dRet, FX_BOOL & bDot)
 {
 	FX_BOOL bAllDigits = FALSE;
 	FX_BOOL bSign = FALSE;
@@ -1660,7 +1660,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Format(IFXJS_Context* cc, const CJS_Parameters
 	}
 
 	int iIndex = params[0].ToInt();
-	FX_LPCWSTR cFormats[] =  {L"m/d", L"m/d/yy", L"mm/dd/yy", L"mm/yy", L"d-mmm", L"d-mmm-yy", L"dd-mmm-yy",
+	const FX_WCHAR* cFormats[] =  {L"m/d", L"m/d/yy", L"mm/dd/yy", L"mm/yy", L"d-mmm", L"d-mmm-yy", L"dd-mmm-yy",
 		L"yy-mm-dd", L"mmm-yy", L"mmmm-yy", L"mmm d, yyyy", L"mmmm d, yyyy",
 		L"m/d/yy h:MM tt", L"m/d/yy HH:MM" };
 
@@ -1691,7 +1691,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Keystroke(IFXJS_Context* cc, const CJS_Paramet
 	}
 
 	int iIndex = params[0].ToInt();
-	FX_LPCWSTR cFormats[] =  {L"m/d", L"m/d/yy", L"mm/dd/yy", L"mm/yy", L"d-mmm", L"d-mmm-yy", L"dd-mmm-yy",
+	const FX_WCHAR* cFormats[] =  {L"m/d", L"m/d/yy", L"mm/dd/yy", L"mm/yy", L"d-mmm", L"d-mmm-yy", L"dd-mmm-yy",
 		L"yy-mm-dd", L"mmm-yy", L"mmmm-yy", L"mmm d, yyyy", L"mmmm d, yyyy",
 		L"m/d/yy h:MM tt", L"m/d/yy HH:MM" };
 
@@ -1721,7 +1721,7 @@ FX_BOOL CJS_PublicMethods::AFTime_Format(IFXJS_Context* cc, const CJS_Parameters
 	}
 
 	int iIndex = params[0].ToInt();
-	FX_LPCWSTR cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss", L"h:MM:ss tt"};
+	const FX_WCHAR* cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss", L"h:MM:ss tt"};
 
 	ASSERT(iIndex<FX_ArraySize(cFormats));
 
@@ -1747,7 +1747,7 @@ FX_BOOL CJS_PublicMethods::AFTime_Keystroke(IFXJS_Context* cc, const CJS_Paramet
 	}
 
 	int iIndex = params[0].ToInt();
-	FX_LPCWSTR cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss", L"h:MM:ss tt"};
+	const FX_WCHAR* cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss", L"h:MM:ss tt"};
 
 	ASSERT(iIndex<FX_ArraySize(cFormats));
 

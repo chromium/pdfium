@@ -309,14 +309,14 @@ public:
 	virtual void							OnVK_END(FX_BOOL bShift,FX_BOOL bCtrl) = 0;
 
 	//put text into edit.
-	virtual void							SetText(FX_LPCWSTR text,int32_t charset = DEFAULT_CHARSET,
+	virtual void							SetText(const FX_WCHAR* text,int32_t charset = DEFAULT_CHARSET,
 													const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL) = 0;	
 	//insert a word into the edit.
 	virtual FX_BOOL							InsertWord(FX_WORD word, int32_t charset = DEFAULT_CHARSET, const CPVT_WordProps * pWordProps = NULL) = 0;
 	//insert a return into the edit.
 	virtual FX_BOOL							InsertReturn(const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL) = 0;	
 	//insert text into the edit.
-	virtual FX_BOOL							InsertText(FX_LPCWSTR text, int32_t charset = DEFAULT_CHARSET,
+	virtual FX_BOOL							InsertText(const FX_WCHAR* text, int32_t charset = DEFAULT_CHARSET,
 													const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL) = 0;
 	//do backspace operation.
 	virtual FX_BOOL							Backspace() = 0;
@@ -468,7 +468,7 @@ public:
 	virtual int32_t						GetItemIndex(const CPDF_Point & point) const = 0;
 	virtual int32_t						GetFirstSelected() const = 0;
 
-	virtual void							AddString(FX_LPCWSTR string) = 0;
+	virtual void							AddString(const FX_WCHAR* string) = 0;
 	virtual void							SetTopItem(int32_t nIndex) = 0;	
 	virtual void							Select(int32_t nItemIndex) = 0;
 	virtual void							SetCaret(int32_t nItemIndex) = 0;

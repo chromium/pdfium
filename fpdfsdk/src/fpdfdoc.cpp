@@ -159,7 +159,7 @@ DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FP
 	return dest.GetPageIndex(pDoc);
 }
 
-static void ReleaseLinkList(FX_LPVOID data)
+static void ReleaseLinkList(void* data)
 {
 	delete (CPDF_LinkList*)data;
 }

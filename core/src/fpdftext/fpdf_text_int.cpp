@@ -1160,7 +1160,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(CFX_WideString& str, int i)
     if(!IsControlChar(&Info)) {
         Info.m_Index = m_TextBuf.GetLength();
         if (wChar >= 0xFB00 && wChar <= 0xFB06) {
-            FX_LPWSTR pDst = NULL;
+            FX_WCHAR* pDst = NULL;
             FX_STRSIZE nCount = FX_Unicode_GetNormalization(wChar, pDst);
             if (nCount >= 1) {
                 pDst = FX_Alloc(FX_WCHAR, nCount);
@@ -1192,7 +1192,7 @@ void CPDF_TextPage::AddCharInfoByRLDirection(CFX_WideString& str, int i)
     if(!IsControlChar(&Info)) {
         Info.m_Index = m_TextBuf.GetLength();
         FX_WCHAR wChar = FX_GetMirrorChar(str.GetAt(i), TRUE, FALSE);
-        FX_LPWSTR pDst = NULL;
+        FX_WCHAR* pDst = NULL;
         FX_STRSIZE nCount = FX_Unicode_GetNormalization(wChar, pDst);
         if (nCount >= 1) {
             pDst = FX_Alloc(FX_WCHAR, nCount);
@@ -2564,7 +2564,7 @@ FX_BOOL CPDF_TextPageFind::IsMatchWholeWord(const CFX_WideString& csPageText, in
     }
     return TRUE;
 }
-FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString, FX_LPCWSTR lpszFullString,
+FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString, const FX_WCHAR* lpszFullString,
         int iSubString, FX_WCHAR chSep)
 {
     if (lpszFullString == NULL) {
@@ -2581,7 +2581,7 @@ FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString, FX_LPCWSTR 
             lpszFullString++;
         }
     }
-    FX_LPCWSTR lpchEnd = FXSYS_wcschr(lpszFullString, chSep);
+    const FX_WCHAR* lpchEnd = FXSYS_wcschr(lpszFullString, chSep);
     int nLen = (lpchEnd == NULL) ?
                (int)FXSYS_wcslen(lpszFullString) : (int)(lpchEnd - lpszFullString);
     ASSERT(nLen >= 0);

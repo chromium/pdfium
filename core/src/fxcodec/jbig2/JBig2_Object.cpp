@@ -6,14 +6,14 @@
 
 #include "JBig2_Object.h"
 #include "JBig2_Module.h"
-void *CJBig2_Object::operator new(size_t size, CJBig2_Module *pModule, FX_LPCSTR filename, int line)
+void *CJBig2_Object::operator new(size_t size, CJBig2_Module *pModule, const FX_CHAR* filename, int line)
 {
     CJBig2_Object *p;
     p = (CJBig2_Object *)pModule->JBig2_Malloc((FX_DWORD)size);
     p->m_pModule = pModule;
     return p;
 }
-void CJBig2_Object::operator delete(void *p, CJBig2_Module *pModule, FX_LPCSTR filename, int line)
+void CJBig2_Object::operator delete(void *p, CJBig2_Module *pModule, const FX_CHAR* filename, int line)
 {
     pModule->JBig2_Free(p);
 }
@@ -33,7 +33,7 @@ void CJBig2_Object::operator delete(void *p, CJBig2_Module *pModule)
     pModule->JBig2_Free(p);
 }
 void *CJBig2_Object::operator new[](size_t size, CJBig2_Module *pModule, size_t unit_size,
-                                    FX_LPCSTR filename, int line)
+                                    const FX_CHAR* filename, int line)
 {
     void *p;
     uint8_t *pCur, *pEnd;
@@ -46,7 +46,7 @@ void *CJBig2_Object::operator new[](size_t size, CJBig2_Module *pModule, size_t 
     return p;
 }
 void CJBig2_Object::operator delete[](void *p, CJBig2_Module *pModule, size_t unit_size,
-                                      FX_LPCSTR filename, int line)
+                                      const FX_CHAR* filename, int line)
 {
     pModule->JBig2_Free(p);
 }

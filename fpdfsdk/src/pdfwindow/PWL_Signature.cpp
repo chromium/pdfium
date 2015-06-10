@@ -99,14 +99,14 @@ void CPWL_Signature::SetFoxitFlag(FX_BOOL bFlagExist)
 	m_bFlagExist = bFlagExist;
 }
 
-void CPWL_Signature::SetText(FX_LPCWSTR sText)
+void CPWL_Signature::SetText(const FX_WCHAR* sText)
 {
 	m_pText->SetText(sText);
 
 	RePosChildWnd();
 }
 
-void CPWL_Signature::SetDescription(FX_LPCWSTR string)
+void CPWL_Signature::SetDescription(const FX_WCHAR* string)
 {
 	m_pDescription->SetText(string);
 
@@ -120,7 +120,7 @@ void CPWL_Signature::SetImage(CFX_DIBSource* pImage)
 	RePosChildWnd();
 }
 
-void CPWL_Signature::SetImageStream(CPDF_Stream * pStream, FX_LPCSTR sImageAlias)
+void CPWL_Signature::SetImageStream(CPDF_Stream * pStream, const FX_CHAR* sImageAlias)
 {
 	m_pImage->SetPDFStream(pStream);
 	m_pImage->SetImageAlias(sImageAlias);

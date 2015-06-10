@@ -390,16 +390,16 @@ FX_BOOL CFX_RenderDevice::StretchBitMask(const CFX_DIBSource* pBitmap, int left,
     return m_pDeviceDriver->StretchDIBits(pBitmap, argb, left, top, dest_width, dest_height, &clip_box, flags, alpha_flag, pIccTransform);
 }
 FX_BOOL CFX_RenderDevice::StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD argb,
-                                      const CFX_AffineMatrix* pMatrix, FX_DWORD flags, FX_LPVOID& handle,
+                                      const CFX_AffineMatrix* pMatrix, FX_DWORD flags, void*& handle,
                                       int alpha_flag, void* pIccTransform, int blend_mode)
 {
     return m_pDeviceDriver->StartDIBits(pBitmap, bitmap_alpha, argb, pMatrix, flags, handle, alpha_flag, pIccTransform, blend_mode);
 }
-FX_BOOL CFX_RenderDevice::ContinueDIBits(FX_LPVOID handle, IFX_Pause* pPause)
+FX_BOOL CFX_RenderDevice::ContinueDIBits(void* handle, IFX_Pause* pPause)
 {
     return m_pDeviceDriver->ContinueDIBits(handle, pPause);
 }
-void CFX_RenderDevice::CancelDIBits(FX_LPVOID handle)
+void CFX_RenderDevice::CancelDIBits(void* handle)
 {
     m_pDeviceDriver->CancelDIBits(handle);
 }

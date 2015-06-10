@@ -217,7 +217,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 
 			CFX_ByteString sStream;
 			sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-			pNewContents->SetData((FX_LPCBYTE)sStream, sStream.GetLength(), FALSE, FALSE);
+			pNewContents->SetData((const uint8_t*)sStream, sStream.GetLength(), FALSE, FALSE);
 		}
 		return;
 	}
@@ -235,9 +235,9 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 			CPDF_StreamAcc acc;
 			acc.LoadAllData(pContents);
 			CFX_ByteString sStream = "q\n";
-			CFX_ByteString sBody = CFX_ByteString((FX_LPCSTR)acc.GetData(), acc.GetSize());
+			CFX_ByteString sBody = CFX_ByteString((const FX_CHAR*)acc.GetData(), acc.GetSize());
 			sStream = sStream + sBody + "\nQ";
-			pContents->SetData((FX_LPCBYTE)sStream, sStream.GetLength(), FALSE, FALSE);
+			pContents->SetData((const uint8_t*)sStream, sStream.GetLength(), FALSE, FALSE);
 			pContentsArray->AddReference(pDocument, dwObjNum);
 			break;
 		}
@@ -264,7 +264,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 
 		CFX_ByteString sStream;
 		sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-		pNewContents->SetData((FX_LPCBYTE)sStream, sStream.GetLength(), FALSE, FALSE);
+		pNewContents->SetData((const uint8_t*)sStream, sStream.GetLength(), FALSE, FALSE);
 	}
 }
  
@@ -520,7 +520,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 		CPDF_StreamAcc acc;
 		acc.LoadAllData(pNewXObject);
 
-		FX_LPCBYTE pData = acc.GetData();
+		const uint8_t* pData = acc.GetData();
 		CFX_ByteString sStream(pData, acc.GetSize());
 		CFX_ByteString sTemp;
 
@@ -538,7 +538,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 		sTemp.Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d, m.e, m.f, sFormName.c_str());
 		sStream += sTemp;
 
-		pNewXObject->SetData((FX_LPCBYTE)sStream, sStream.GetLength(), FALSE, FALSE);
+		pNewXObject->SetData((const uint8_t*)sStream, sStream.GetLength(), FALSE, FALSE);
 	}
 	pPageDict->RemoveAt( "Annots" );
 

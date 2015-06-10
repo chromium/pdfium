@@ -50,7 +50,7 @@ public:
 
 	virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
 	{
-		return m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset, (FX_LPBYTE)buffer, size);
+		return m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset, (uint8_t*)buffer, size);
 	}
 
 	virtual void			Release()

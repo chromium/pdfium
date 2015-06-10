@@ -39,9 +39,9 @@ CFDF_Document* CFDF_Document::ParseFile(IFX_FileRead *pFile, FX_BOOL bOwnFile)
   }
   return pDoc;
 }
-CFDF_Document* CFDF_Document::ParseMemory(FX_LPCBYTE pData, FX_DWORD size)
+CFDF_Document* CFDF_Document::ParseMemory(const uint8_t* pData, FX_DWORD size)
 {
-    return CFDF_Document::ParseFile(FX_CreateMemoryStream((FX_LPBYTE)pData, size), TRUE);
+    return CFDF_Document::ParseFile(FX_CreateMemoryStream((uint8_t*)pData, size), TRUE);
 }
 void CFDF_Document::ParseStream(IFX_FileRead *pFile, FX_BOOL bOwnFile)
 {
@@ -95,7 +95,7 @@ FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const
     while(pos) {
         size_t objnum;
         CPDF_Object* pObj;
-        m_IndirectObjs.GetNextAssoc(pos, (FX_LPVOID&)objnum, (FX_LPVOID&)pObj);
+        m_IndirectObjs.GetNextAssoc(pos, (void*&)objnum, (void*&)pObj);
         buf << (FX_DWORD)objnum << FX_BSTRC(" 0 obj\r\n") << pObj << FX_BSTRC("\r\nendobj\r\n\r\n");
     }
     buf << FX_BSTRC("trailer\r\n<</Root ") << m_pRootDict->GetObjNum() << FX_BSTRC(" 0 R>>\r\n%%EOF\r\n");
@@ -113,7 +113,7 @@ CFX_WideString CFDF_Document::GetWin32Path() const
     }
     return FPDF_FileSpec_GetWin32Path(pFileSpec);
 }
-static CFX_WideString ChangeSlash(FX_LPCWSTR str)
+static CFX_WideString ChangeSlash(const FX_WCHAR* str)
 {
     CFX_WideString result;
     while (*str) {

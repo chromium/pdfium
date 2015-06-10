@@ -21,7 +21,7 @@ public:
 	virtual void					SetFontSize(FX_FLOAT fFontSize);
 	virtual FX_FLOAT				GetFontSize() const;
 
-	void							SetText(FX_LPCWSTR csText);
+	void							SetText(const FX_WCHAR* csText);
 	CFX_WideString					GetText() const;
 	void							SetLimitChar(int32_t nLimitChar);
 	void							SetHorzScale(int32_t nHorzScale);

@@ -56,7 +56,7 @@ void* CFX_GrowOnlyPool::Alloc(size_t size)
     _FX_GrowOnlyTrunk* pTrunk = (_FX_GrowOnlyTrunk*)m_pFirstTrunk;
     while (pTrunk) {
         if (pTrunk->m_Size - pTrunk->m_Allocated >= size) {
-            void* p = (FX_LPBYTE)(pTrunk + 1) + pTrunk->m_Allocated;
+            void* p = (uint8_t*)(pTrunk + 1) + pTrunk->m_Allocated;
             pTrunk->m_Allocated += size;
             return p;
         }

@@ -27,8 +27,8 @@ public:
 	CJS_Value(v8::Isolate* isolate, JSFXObject);
 	CJS_Value(v8::Isolate* isolate, CJS_Object*);
    	CJS_Value(v8::Isolate* isolate, CJS_Document*);
-	CJS_Value(v8::Isolate* isolate, FX_LPCSTR pStr);
-	CJS_Value(v8::Isolate* isolate, FX_LPCWSTR pWstr);
+	CJS_Value(v8::Isolate* isolate, const FX_CHAR* pStr);
+	CJS_Value(v8::Isolate* isolate, const FX_WCHAR* pWstr);
 	CJS_Value(v8::Isolate* isolate, CJS_Array& array);
 
 	~CJS_Value();
@@ -59,8 +59,8 @@ public:
 	void operator = (v8::Local<v8::Object>);
 	void operator = (CJS_Array &);
 	void operator = (CJS_Date &);
-	void operator = (FX_LPCWSTR pWstr);
-	void operator = (FX_LPCSTR pStr);
+	void operator = (const FX_WCHAR* pWstr);
+	void operator = (const FX_CHAR* pStr);
 	void operator = (CJS_Value value);
 
 	FX_BOOL IsArrayObject() const;
@@ -111,7 +111,7 @@ public:
 	void operator>>(CFX_ByteString&) const;
 	void operator<<(CFX_WideString);
 	void operator>>(CFX_WideString&) const;
-	void operator<<(FX_LPCWSTR c_string);
+	void operator<<(const FX_WCHAR* c_string);
 	void operator<<(JSFXObject);
 	void operator>>(JSFXObject&) const;
 	void operator>>(CJS_Array& array) const;
