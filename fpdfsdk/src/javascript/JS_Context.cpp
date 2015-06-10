@@ -232,21 +232,20 @@ void CJS_Context::OnField_Calculate(CPDF_FormField* pSource, CPDF_FormField* pTa
 	m_pEventHandler->OnField_Calculate(pSource, pTarget, Value, bRc);
 }
 
-void CJS_Context::OnField_Format(int nCommitKey, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit)
+void CJS_Context::OnField_Format(CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit)
 {
-	ASSERT(m_pEventHandler != NULL);
-	m_pEventHandler->OnField_Format(nCommitKey, pTarget, Value, bWillCommit);
+    m_pEventHandler->OnField_Format(pTarget, Value, bWillCommit);
 }
 
 
-void CJS_Context::OnField_Keystroke(int nCommitKey, CFX_WideString& strChange, const CFX_WideString& strChangeEx,
+void CJS_Context::OnField_Keystroke(CFX_WideString& strChange, const CFX_WideString& strChangeEx,
 									FX_BOOL bKeyDown, FX_BOOL bModifier, int &nSelEnd,int &nSelStart,
 									FX_BOOL bShift, CPDF_FormField* pTarget, CFX_WideString& Value,
 									FX_BOOL bWillCommit, FX_BOOL bFieldFull, FX_BOOL& bRc)
 {
-	ASSERT(m_pEventHandler != NULL);
-	m_pEventHandler->OnField_Keystroke(nCommitKey, strChange, strChangeEx, bKeyDown,
-		bModifier, nSelEnd, nSelStart, bShift, pTarget, Value, bWillCommit, bFieldFull, bRc);
+    m_pEventHandler->OnField_Keystroke(
+        strChange, strChangeEx, bKeyDown, bModifier, nSelEnd, nSelStart,
+        bShift, pTarget, Value, bWillCommit, bFieldFull, bRc);
 }
 
 void CJS_Context::OnField_Validate(CFX_WideString& strChange,const CFX_WideString& strChangeEx,

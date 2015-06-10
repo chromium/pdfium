@@ -673,7 +673,7 @@ void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot)
 		if (nFieldType == FIELDTYPE_TEXTFIELD || nFieldType == FIELDTYPE_COMBOBOX)
 		{
 			FX_BOOL bFormated = FALSE;
-			CFX_WideString sValue = pWidget->OnFormat(0, bFormated);
+			CFX_WideString sValue = pWidget->OnFormat(bFormated);
 			if (bFormated && nFieldType == FIELDTYPE_COMBOBOX)
 			{
 				pWidget->ResetAppearance(sValue.c_str(), FALSE);

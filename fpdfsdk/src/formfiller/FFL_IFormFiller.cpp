@@ -868,8 +868,7 @@ void CFFL_IFormFiller::OnKeyStrokeCommit(CPDFSDK_Widget* pWidget, CPDFSDK_PageVi
 			fa.bModifier = m_pApp->FFI_IsCTRLKeyDown(nFlag);
  			fa.bShift = m_pApp->FFI_IsSHIFTKeyDown(nFlag);
 			fa.bWillCommit = TRUE;
-			fa.nCommitKey = GetCommitKey();
-			fa.bKeyDown = GetKeyDown();
+			fa.bKeyDown = TRUE;
 			fa.bRC = TRUE;
 
 			CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, FALSE);
@@ -908,7 +907,7 @@ void CFFL_IFormFiller::OnValidate(CPDFSDK_Widget* pWidget, CPDFSDK_PageView* pPa
 			PDFSDK_FieldAction fa;
 			fa.bModifier = m_pApp->FFI_IsCTRLKeyDown(nFlag);
  			fa.bShift = m_pApp->FFI_IsSHIFTKeyDown(nFlag);
-			fa.bKeyDown = GetKeyDown();
+			fa.bKeyDown = TRUE;
 			fa.bRC = TRUE;
 
 			CFFL_FormFiller* pFormFiller = GetFormFiller(pWidget, FALSE);
@@ -965,7 +964,7 @@ void CFFL_IFormFiller::OnFormat(CPDFSDK_Widget* pWidget, CPDFSDK_PageView* pPage
 		ASSERT(pInterForm != NULL);
 
 		FX_BOOL bFormated = FALSE;
-		CFX_WideString sValue = pInterForm->OnFormat(pWidget->GetFormField(), GetCommitKey(), bFormated);
+		CFX_WideString sValue = pInterForm->OnFormat(pWidget->GetFormField(), bFormated);
 
 //		bExit = !IsValidAnnot(m_pApp, pDocument, pDocView, pPageView, pWidget);
 
@@ -979,62 +978,6 @@ void CFFL_IFormFiller::OnFormat(CPDFSDK_Widget* pWidget, CPDFSDK_PageView* pPage
 
 		m_bNotifying = FALSE;
 	}
-}
-
-// LRESULT CALLBACK CFFL_IFormFiller::FFL_WndProc(
-// 									  int code,       // hook code
-// 									  WPARAM wParam,  // virtual-key code
-// 									  LPARAM lParam   // keystroke-message information
-// 										)
-// {
-// 	if (code != HC_ACTION)
-// 	{
-// 		return CallNextHookEx (m_hookSheet, code, wParam, lParam);
-// 	}
-// 
-// 	FXSYS_memcpy(&g_Msg, (void*)lParam, sizeof(MSG));	
-// 
-// 	return 0;
-// }
-
-// MSG	CFFL_IFormFiller::GetLastMessage()
-// {
-// 	return g_Msg;
-// }
-
-int CFFL_IFormFiller::GetCommitKey()
-{
-//	MSG msg = CFFL_IFormFiller::GetLastMessage();
-
-	int nCommitKey = 0;
-// 	switch (msg.message)
-// 	{
-// 	case WM_LBUTTONDOWN:
-// 	case WM_LBUTTONUP:
-// 		nCommitKey = 1;
-// 		break;
-// 	case WM_KEYDOWN:
-// 		switch (msg.wParam)
-// 		{
-// 		case VK_RETURN:
-// 			nCommitKey = 2;
-// 			break;
-// 		case VK_TAB:
-// 			nCommitKey = 3;
-// 			break;
-// 		}
-// 		break;
-// 	}
-
-	return nCommitKey;
-}
-
-FX_BOOL CFFL_IFormFiller::GetKeyDown()
-{
-	return TRUE;
-// 	MSG msg = CFFL_IFormFiller::GetLastMessage();
-// 
-// 	return msg.message == WM_KEYDOWN || msg.message == WM_CHAR;
 }
 
 FX_BOOL	CFFL_IFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot)

@@ -653,7 +653,7 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(CPDFSDK_Document* pDocument, CPDF
 		pContext->OnField_Blur(data.bModifier, data.bShift, pFormField, data.sValue);
 		break;
 	case CPDF_AAction::KeyStroke:
-		pContext->OnField_Keystroke(data.nCommitKey, data.sChange, data.sChangeEx, data.bKeyDown,
+		pContext->OnField_Keystroke(data.sChange, data.sChangeEx, data.bKeyDown,
 			data.bModifier, data.nSelEnd, data.nSelStart, data.bShift, pFormField, data.sValue,
 			data.bWillCommit, data.bFieldFull, data.bRC);
 		break;
