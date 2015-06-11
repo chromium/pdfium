@@ -223,7 +223,7 @@ void CPDF_ReflowedPage::FocusGetData(const CFX_AffineMatrix matrix, int32_t x, i
         if(FXSYS_fabs(tempdy - dy) < 1) {
             continue;
         }
-        CFX_FloatRect rect (0, pData->m_PosY + pData->m_Height, this->m_PageWidth, pData->m_PosY);
+        CFX_FloatRect rect (0, pData->m_PosY + pData->m_Height, m_PageWidth, pData->m_PosY);
         if(rect.Contains(x1, y1)) {
             pos = i;
             dx = 0;
@@ -318,7 +318,7 @@ void CPDF_ProgressiveReflowPageParser::Continue(IFX_Pause* pPause)
 }
 void CPDF_ProgressiveReflowPageParser::Clear()
 {
-    this->Init();
+    Init();
     return;
 }
 FX_BOOL IPDF_ProgressiveReflowPageParser::IsTaggedPage(CPDF_PageObjects*pPage)

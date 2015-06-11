@@ -22,7 +22,7 @@
 				return;
 			unsigned aa = antialias[0];
 			if (aa)
-				(this->*composite_span)(m_pDestScan, m_pOriScan, 0, x, width, y, aa, m_ClipBox.top, m_ClipBox.left, m_ClipBox.right, m_pClipScan, m_pDestExtraAlphaScan);
+				(*composite_span)(m_pDestScan, m_pOriScan, 0, x, width, y, aa, m_ClipBox.top, m_ClipBox.left, m_ClipBox.right, m_pClipScan, m_pDestExtraAlphaScan);
 			runs += width;
 			antialias += width;
 			x += width;
@@ -33,14 +33,14 @@
 	{
 		FXSYS_assert(m_Alpha && width);
 		if (y < m_ClipBox.top || y >= m_ClipBox.bottom) return;
-		(this->*composite_span)(m_pDestScan, m_pOriScan, 0, x, width, y, 255, m_ClipBox.top, m_ClipBox.left, m_ClipBox.right, m_pClipScan, m_pDestExtraAlphaScan);
+		(*composite_span)(m_pDestScan, m_pOriScan, 0, x, width, y, 255, m_ClipBox.top, m_ClipBox.left, m_ClipBox.right, m_pClipScan, m_pDestExtraAlphaScan);
 	}
 
 	void CFX_SkiaRenderer::blitV(int x, int y, int height, SkAlpha alpha)
 	{
 		FXSYS_assert(m_Alpha && alpha);
 		if (alpha == 255) {
-			this->blitRect(x, y, 1, height);
+			blitRect(x, y, 1, height);
 		} else {
 			int16_t runs[2];
 			runs[0] = 1;
@@ -48,7 +48,7 @@
 			while (--height >= 0) {
 				if (y >= m_ClipBox.bottom)
 					return;
-				this->blitAntiH(x, y ++, &alpha, runs);
+				blitAntiH(x, y ++, &alpha, runs);
 			}
 		}
 	}
@@ -1563,7 +1563,7 @@
 	{
 		FXSYS_assert(alpha);
 		if (alpha == 255) {
-			this->blitRect(x, y, 1, height);
+			blitRect(x, y, 1, height);
 		} else {
 			int16_t runs[2];
 			runs[0] = 1;
@@ -1571,7 +1571,7 @@
 			while (--height >= 0) {
 				if (y >= m_dstHeight)
 					return;
-				this->blitAntiH(x, y ++, &alpha, runs);
+				blitAntiH(x, y ++, &alpha, runs);
 			}
 		}
 	}

@@ -78,7 +78,7 @@ void CSection::ResetLinePlace()
 CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace & place, const CPVT_WordInfo & wordinfo)
 {
     CPVT_WordInfo * pWord = new CPVT_WordInfo(wordinfo);
-    int32_t nWordIndex = FPDF_MAX(FPDF_MIN(place.nWordIndex, this->m_WordArray.GetSize()), 0);
+    int32_t nWordIndex = FPDF_MAX(FPDF_MIN(place.nWordIndex, m_WordArray.GetSize()), 0);
     if (nWordIndex == m_WordArray.GetSize()) {
         m_WordArray.Add(pWord);
     } else {
@@ -116,7 +116,7 @@ CPVT_WordPlace CSection::GetEndWordPlace() const
     if (CLine * pLine = m_LineArray.GetAt(m_LineArray.GetSize() - 1)) {
         return pLine->GetEndWordPlace();
     } else {
-        return this->SecPlace;
+        return SecPlace;
     }
 }
 CPVT_WordPlace CSection::GetPrevWordPlace(const CPVT_WordPlace & place) const
@@ -857,7 +857,7 @@ void CPDF_VariableText::ResetAll()
 CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace & place, FX_WORD word, int32_t charset,
         const CPVT_WordProps * pWordProps)
 {
-    int32_t nTotlaWords = this->GetTotalWords();
+    int32_t nTotlaWords = GetTotalWords();
     if (m_nLimitChar > 0 && nTotlaWords >= m_nLimitChar) {
         return place;
     }
@@ -879,7 +879,7 @@ CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace & place, FX_WO
 CPVT_WordPlace CPDF_VariableText::InsertSection(const CPVT_WordPlace & place, const CPVT_SecProps * pSecProps,
         const CPVT_WordProps * pWordProps)
 {
-    int32_t nTotlaWords = this->GetTotalWords();
+    int32_t nTotlaWords = GetTotalWords();
     if (m_nLimitChar > 0 && nTotlaWords >= m_nLimitChar) {
         return place;
     }
@@ -1415,7 +1415,7 @@ FX_FLOAT CPDF_VariableText::GetLineIndent(const CPVT_SectionInfo & SecInfo)
 }
 int32_t CPDF_VariableText::GetAlignment(const CPVT_SectionInfo& SecInfo)
 {
-    return m_bRichText && SecInfo.pSecProps ? SecInfo.pSecProps->nAlignment : this->m_nAlignment;
+    return m_bRichText && SecInfo.pSecProps ? SecInfo.pSecProps->nAlignment : m_nAlignment;
 }
 FX_FLOAT CPDF_VariableText::GetCharSpace(const CPVT_WordInfo & WordInfo)
 {
@@ -1498,13 +1498,13 @@ void CPDF_VariableText::ClearWords(const CPVT_WordRange & PlaceRange)
 CPVT_WordPlace CPDF_VariableText::ClearLeftWord(const CPVT_WordPlace & place)
 {
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
-        CPVT_WordPlace leftplace = this->GetPrevWordPlace(place);
+        CPVT_WordPlace leftplace = GetPrevWordPlace(place);
         if (leftplace != place) {
             if (leftplace.nSecIndex != place.nSecIndex) {
                 if (pSection->m_WordArray.GetSize() == 0) {
-                    this->ClearEmptySection(place);
+                    ClearEmptySection(place);
                 } else {
-                    this->LinkLatterSection(leftplace);
+                    LinkLatterSection(leftplace);
                 }
             } else {
                 pSection->ClearWord(place);
@@ -1517,7 +1517,7 @@ CPVT_WordPlace CPDF_VariableText::ClearLeftWord(const CPVT_WordPlace & place)
 CPVT_WordPlace CPDF_VariableText::ClearRightWord(const CPVT_WordPlace & place)
 {
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
-        CPVT_WordPlace rightplace = AjustLineHeader(this->GetNextWordPlace(place), FALSE);
+        CPVT_WordPlace rightplace = AjustLineHeader(GetNextWordPlace(place), FALSE);
         if (rightplace != place) {
             if(rightplace.nSecIndex != place.nSecIndex) {
                 LinkLatterSection(place);

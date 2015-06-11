@@ -36,10 +36,10 @@ public:
     CPVT_Size() : x(0.0f), y(0.0f)
     {
     }
-    CPVT_Size(FX_FLOAT x, FX_FLOAT y)
+    CPVT_Size(FX_FLOAT other_x, FX_FLOAT other_y)
     {
-        this->x = x;
-        this->y = y;
+        x = other_x;
+        y = other_y;
     }
     FX_FLOAT x, y;
 };
@@ -50,20 +50,22 @@ public:
     {
         left = top = right = bottom = 0.0f;
     }
-    CPVT_FloatRect(FX_FLOAT left, FX_FLOAT top,
-                   FX_FLOAT right, FX_FLOAT bottom)
+    CPVT_FloatRect(FX_FLOAT other_left,
+                   FX_FLOAT other_top,
+                   FX_FLOAT other_right,
+                   FX_FLOAT other_bottom)
     {
-        this->left = left;
-        this->top = top;
-        this->right = right;
-        this->bottom = bottom;
+        left = other_left;
+        top = other_top;
+        right = other_right;
+        bottom = other_bottom;
     }
     CPVT_FloatRect(const CPDF_Rect & rect)
     {
-        this->left = rect.left;
-        this->top = rect.top;
-        this->right = rect.right;
-        this->bottom = rect.bottom;
+        left = rect.left;
+        top = rect.top;
+        right = rect.right;
+        bottom = rect.bottom;
     }
     void Default()
     {
@@ -71,11 +73,9 @@ public:
     }
     FX_FLOAT Height() const
     {
-        if(this->top > this->bottom) {
-            return this->top - this->bottom;
-        } else {
-            return this->bottom - this->top;
-        }
+        if (top > bottom)
+            return top - bottom;
+        return bottom - top;
     }
 };
 struct CPVT_SectionInfo {
@@ -100,8 +100,8 @@ struct CPVT_SectionInfo {
         if (this == &other) {
             return;
         }
-        this->rcSection = other.rcSection;
-        this->nTotalLine = other.nTotalLine;
+        rcSection = other.rcSection;
+        nTotalLine = other.nTotalLine;
         if (other.pSecProps) {
             if (pSecProps) {
                 *pSecProps = *other.pSecProps;
@@ -162,9 +162,9 @@ struct CPVT_WordInfo  {
         if (this == &word) {
             return;
         }
-        this->Word = word.Word;
-        this->nCharset = word.nCharset;
-        this->nFontIndex = word.nFontIndex;
+        Word = word.Word;
+        nCharset = word.nCharset;
+        nFontIndex = word.nFontIndex;
         if (word.pWordProps) {
             if (pWordProps) {
                 *pWordProps = *word.pWordProps;
