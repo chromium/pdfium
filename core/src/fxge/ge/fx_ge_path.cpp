@@ -139,7 +139,7 @@ void CFX_PathData::AllocPointCount(int nPoints)
     if (m_AllocCount < nPoints) {
         FX_PATHPOINT* pNewBuf = FX_Alloc(FX_PATHPOINT, nPoints);
         if (m_PointCount) {
-            FXSYS_memcpy32(pNewBuf, m_pPoints, m_PointCount * sizeof(FX_PATHPOINT));
+            FXSYS_memcpy(pNewBuf, m_pPoints, m_PointCount * sizeof(FX_PATHPOINT));
         }
         if (m_pPoints) {
             FX_Free(m_pPoints);
@@ -152,7 +152,7 @@ CFX_PathData::CFX_PathData(const CFX_PathData& src)
 {
     m_PointCount = m_AllocCount = src.m_PointCount;
     m_pPoints = FX_Alloc(FX_PATHPOINT, src.m_PointCount);
-    FXSYS_memcpy32(m_pPoints, src.m_pPoints, sizeof(FX_PATHPOINT) * m_PointCount);
+    FXSYS_memcpy(m_pPoints, src.m_pPoints, sizeof(FX_PATHPOINT) * m_PointCount);
 }
 void CFX_PathData::TrimPoints(int nPoints)
 {
@@ -173,7 +173,7 @@ void CFX_PathData::Append(const CFX_PathData* pSrc, const CFX_AffineMatrix* pMat
 {
     int old_count = m_PointCount;
     AddPointCount(pSrc->m_PointCount);
-    FXSYS_memcpy32(m_pPoints + old_count, pSrc->m_pPoints, pSrc->m_PointCount * sizeof(FX_PATHPOINT));
+    FXSYS_memcpy(m_pPoints + old_count, pSrc->m_pPoints, pSrc->m_PointCount * sizeof(FX_PATHPOINT));
     if (pMatrix) {
         for (int i = 0; i < pSrc->m_PointCount; i ++) {
             pMatrix->Transform(m_pPoints[old_count + i].m_PointX, m_pPoints[old_count + i].m_PointY);
@@ -575,7 +575,7 @@ FX_BOOL CFX_PathData::IsRect(const CFX_AffineMatrix* pMatrix, CFX_FloatRect* pRe
 void CFX_PathData::Copy(const CFX_PathData &src)
 {
     SetPointCount(src.m_PointCount);
-    FXSYS_memcpy32(m_pPoints, src.m_pPoints, sizeof(FX_PATHPOINT) * m_PointCount);
+    FXSYS_memcpy(m_pPoints, src.m_pPoints, sizeof(FX_PATHPOINT) * m_PointCount);
 }
 CFX_GraphStateData::CFX_GraphStateData()
 {
@@ -606,7 +606,7 @@ void CFX_GraphStateData::Copy(const CFX_GraphStateData& src)
     m_LineWidth = src.m_LineWidth;
     if (m_DashCount) {
         m_DashArray = FX_Alloc(FX_FLOAT, m_DashCount);
-        FXSYS_memcpy32(m_DashArray, src.m_DashArray, m_DashCount * sizeof(FX_FLOAT));
+        FXSYS_memcpy(m_DashArray, src.m_DashArray, m_DashCount * sizeof(FX_FLOAT));
     }
 }
 CFX_GraphStateData::~CFX_GraphStateData()

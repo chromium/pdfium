@@ -67,7 +67,7 @@ CFX_FontMgr::CFX_FontMgr()
     m_pBuiltinMapper->m_pFontMgr = this;
     m_pExtMapper = NULL;
     m_FTLibrary = NULL;
-    FXSYS_memset32(m_ExternalFonts, 0, sizeof m_ExternalFonts);
+    FXSYS_memset(m_ExternalFonts, 0, sizeof m_ExternalFonts);
 }
 CFX_FontMgr::~CFX_FontMgr()
 {
@@ -458,7 +458,7 @@ FX_BOOL CFX_FontMgr::GetStandardFont(const uint8_t*& pFontData, FX_DWORD& size, 
 }
 CFX_FontMapper::CFX_FontMapper()
 {
-    FXSYS_memset32(m_FoxitFaces, 0, sizeof m_FoxitFaces);
+    FXSYS_memset(m_FoxitFaces, 0, sizeof m_FoxitFaces);
     m_MMFaces[0] = m_MMFaces[1] = NULL;
     m_pFontInfo = NULL;
     m_bListLoaded = FALSE;

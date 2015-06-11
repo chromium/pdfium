@@ -395,25 +395,25 @@ static FX_BOOL _CompactStringSame(_CompactString* pCompact, const uint8_t* pStr,
         if (pCompact->m_CompactLen != len) {
             return FALSE;
         }
-        return FXSYS_memcmp32(&pCompact->m_LenHigh, pStr, len) == 0;
+        return FXSYS_memcmp(&pCompact->m_LenHigh, pStr, len) == 0;
     }
     if (pCompact->m_CompactLen != 0xff || pCompact->m_LenHigh * 256 + pCompact->m_LenLow != len) {
         return FALSE;
     }
-    return FXSYS_memcmp32(pCompact->m_pBuffer, pStr, len) == 0;
+    return FXSYS_memcmp(pCompact->m_pBuffer, pStr, len) == 0;
 }
 static void _CompactStringStore(_CompactString* pCompact, const uint8_t* pStr, int len)
 {
     if (len < (int)sizeof(_CompactString)) {
         pCompact->m_CompactLen = (uint8_t)len;
-        FXSYS_memcpy32(&pCompact->m_LenHigh, pStr, len);
+        FXSYS_memcpy(&pCompact->m_LenHigh, pStr, len);
         return;
     }
     pCompact->m_CompactLen = 0xff;
     pCompact->m_LenHigh = len / 256;
     pCompact->m_LenLow = len % 256;
     pCompact->m_pBuffer = FX_Alloc(uint8_t, len);
-    FXSYS_memcpy32(pCompact->m_pBuffer, pStr, len);
+    FXSYS_memcpy(pCompact->m_pBuffer, pStr, len);
 }
 static CFX_ByteStringC _CompactStringGet(_CompactString* pCompact)
 {

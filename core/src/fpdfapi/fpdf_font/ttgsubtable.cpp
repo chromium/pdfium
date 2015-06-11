@@ -254,7 +254,7 @@ void CFX_CTTGSUBTable::ParseLangSys(FT_Bytes raw, struct TLangSys *rec)
         return;
     }
     rec->FeatureIndex = new TT_uint16_t[rec->FeatureCount];
-    FXSYS_memset32(rec->FeatureIndex, 0, sizeof(TT_uint16_t) * rec->FeatureCount);
+    FXSYS_memset(rec->FeatureIndex, 0, sizeof(TT_uint16_t) * rec->FeatureCount);
     for (int i = 0; i < rec->FeatureCount; ++i) {
         rec->FeatureIndex[i] = GetUInt16(sp);
     }

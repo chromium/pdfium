@@ -744,7 +744,7 @@ public:
         if (data_size > FixedSize) {
             m_pData = FX_Alloc(DataType, data_size);
         } else {
-            FXSYS_memset32(m_Data, 0, sizeof(DataType)*FixedSize);
+            FXSYS_memset(m_Data, 0, sizeof(DataType)*FixedSize);
         }
     }
     void SetDataSize(int data_size)
@@ -756,7 +756,7 @@ public:
         if (data_size > FixedSize) {
             m_pData = FX_Alloc(DataType, data_size);
         } else {
-            FXSYS_memset32(m_Data, 0, sizeof(DataType)*FixedSize);
+            FXSYS_memset(m_Data, 0, sizeof(DataType)*FixedSize);
         }
     }
     ~CFX_FixedBufGrow()

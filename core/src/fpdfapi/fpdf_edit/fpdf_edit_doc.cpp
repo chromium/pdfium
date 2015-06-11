@@ -218,7 +218,7 @@ static void _InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArr
 CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont, FX_BOOL bVert, FX_BOOL bTranslateName)
 {
     LOGFONTA lfa;
-    FXSYS_memcpy32(&lfa, pLogFont, (char*)lfa.lfFaceName - (char*)&lfa);
+    FXSYS_memcpy(&lfa, pLogFont, (char*)lfa.lfFaceName - (char*)&lfa);
     CFX_ByteString face = CFX_ByteString::FromUnicode(pLogFont->lfFaceName);
     if (face.GetLength() >= LF_FACESIZE) {
         return NULL;
@@ -608,7 +608,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
     CFX_ByteString basefont;
     FX_BOOL bCJK = FALSE;
     int flags = 0, italicangle = 0, ascend = 0, descend = 0, capheight = 0, bbox[4];
-    FXSYS_memset32(bbox, 0, sizeof(int) * 4);
+    FXSYS_memset(bbox, 0, sizeof(int) * 4);
     CFArrayRef languages = (CFArrayRef)CTFontDescriptorCopyAttribute(descriptor, kCTFontLanguagesAttribute);
     if (languages == NULL) {
         CFRelease(descriptor);

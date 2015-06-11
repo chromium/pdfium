@@ -1020,7 +1020,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                 if (!num_floats.IsValid()) {
                     return NULL;  
                 } 
-                FXSYS_memset32(pFloats, 0, num_floats.ValueOrDie());
+                FXSYS_memset(pFloats, 0, num_floats.ValueOrDie());
                 int count = pBC->GetCount() > 8 ? 8 : pBC->GetCount();
                 for (int i = 0; i < count; i ++) {
                     pFloats[i] = pBC->GetNumber(i);
@@ -1083,7 +1083,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
             dest_buf[i] = pTransfer[src_buf[i]];
         }
     } else {
-        FXSYS_memcpy32(dest_buf, src_buf, dest_pitch * height);
+        FXSYS_memcpy(dest_buf, src_buf, dest_pitch * height);
     }
     if (pFunc) {
         delete pFunc;

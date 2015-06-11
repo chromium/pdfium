@@ -26,8 +26,8 @@ extern const FX_WORD* PDF_UnicodesForPredefinedCharSet(int);
 CPDF_FontGlobals::CPDF_FontGlobals()
     : m_pContrastRamps(NULL)
 {
-    FXSYS_memset32(m_EmbeddedCharsets, 0, sizeof(m_EmbeddedCharsets));
-    FXSYS_memset32(m_EmbeddedToUnicodes, 0, sizeof(m_EmbeddedToUnicodes));
+    FXSYS_memset(m_EmbeddedCharsets, 0, sizeof(m_EmbeddedCharsets));
+    FXSYS_memset(m_EmbeddedToUnicodes, 0, sizeof(m_EmbeddedToUnicodes));
 }
 CPDF_FontGlobals::~CPDF_FontGlobals()
 {
@@ -41,7 +41,7 @@ class CFX_StockFontArray
 public:
     CFX_StockFontArray()
     {
-        FXSYS_memset32(m_pStockFonts, 0, sizeof(m_pStockFonts));
+        FXSYS_memset(m_pStockFonts, 0, sizeof(m_pStockFonts));
     }
     ~CFX_StockFontArray()
     {
@@ -819,10 +819,10 @@ FX_BOOL CPDF_Font::IsStandardFont() const
 extern const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode);
 CPDF_SimpleFont::CPDF_SimpleFont(int fonttype) : CPDF_Font(fonttype)
 {
-    FXSYS_memset8(m_CharBBox, 0xff, sizeof m_CharBBox);
-    FXSYS_memset8(m_CharWidth, 0xff, sizeof m_CharWidth);
-    FXSYS_memset8(m_GlyphIndex, 0xff, sizeof m_GlyphIndex);
-    FXSYS_memset8(m_ExtGID, 0xff, sizeof m_ExtGID);
+    FXSYS_memset(m_CharBBox, 0xff, sizeof m_CharBBox);
+    FXSYS_memset(m_CharWidth, 0xff, sizeof m_CharWidth);
+    FXSYS_memset(m_GlyphIndex, 0xff, sizeof m_GlyphIndex);
+    FXSYS_memset(m_ExtGID, 0xff, sizeof m_ExtGID);
     m_pCharNames = NULL;
     m_BaseEncoding = PDFFONT_ENCODING_BUILTIN;
 }
@@ -1153,7 +1153,7 @@ void CPDF_Type1Font::LoadGlyphMap()
             if (bGotOne) {
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
                 if (!bCoreText) {
-                    FXSYS_memcpy32(m_ExtGID, m_GlyphIndex, 256);
+                    FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
                 }
 #endif
                 return;
@@ -1197,7 +1197,7 @@ void CPDF_Type1Font::LoadGlyphMap()
         }
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
         if (!bCoreText) {
-            FXSYS_memcpy32(m_ExtGID, m_GlyphIndex, 256);
+            FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
         }
 #endif
         return;
@@ -1223,7 +1223,7 @@ void CPDF_Type1Font::LoadGlyphMap()
                         unicode = FT_UnicodeFromCharCode(PDFFONT_ENCODING_STANDARD, charcode);
                     }
                     FX_CHAR name_glyph[256];
-                    FXSYS_memset32(name_glyph, 0, sizeof(name_glyph));
+                    FXSYS_memset(name_glyph, 0, sizeof(name_glyph));
                     FXFT_Get_Glyph_Name(m_Font.m_Face, m_GlyphIndex[charcode], name_glyph, 256);
                     name_glyph[255] = 0;
                     if (unicode == 0 && name_glyph[0] != 0) {
@@ -1299,7 +1299,7 @@ void CPDF_Type1Font::LoadGlyphMap()
                     FX_WCHAR unicode = FT_UnicodeFromCharCode(PDFFONT_ENCODING_STANDARD, charcode);
                     if (unicode == 0) {
                         FX_CHAR name_glyph[256];
-                        FXSYS_memset32(name_glyph, 0, sizeof(name_glyph));
+                        FXSYS_memset(name_glyph, 0, sizeof(name_glyph));
                         FXFT_Get_Glyph_Name(m_Font.m_Face, m_GlyphIndex[charcode], name_glyph, 256);
                         name_glyph[255] = 0;
                         if (name_glyph[0] != 0) {
@@ -1312,7 +1312,7 @@ void CPDF_Type1Font::LoadGlyphMap()
         }
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
         if (!bCoreText) {
-            FXSYS_memcpy32(m_ExtGID, m_GlyphIndex, 256);
+            FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
         }
 #endif
         return;
@@ -1339,13 +1339,13 @@ void CPDF_Type1Font::LoadGlyphMap()
     }
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
     if (!bCoreText) {
-        FXSYS_memcpy32(m_ExtGID, m_GlyphIndex, 256);
+        FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
     }
 #endif
 }
 CPDF_FontEncoding::CPDF_FontEncoding()
 {
-    FXSYS_memset32(m_Unicodes, 0, sizeof(m_Unicodes));
+    FXSYS_memset(m_Unicodes, 0, sizeof(m_Unicodes));
 }
 int CPDF_FontEncoding::CharCodeFromUnicode(FX_WCHAR unicode) const
 {
@@ -1359,7 +1359,7 @@ CPDF_FontEncoding::CPDF_FontEncoding(int PredefinedEncoding)
 {
     const FX_WORD* pSrc = PDF_UnicodesForPredefinedCharSet(PredefinedEncoding);
     if (!pSrc) {
-        FXSYS_memset32(m_Unicodes, 0, sizeof(m_Unicodes));
+        FXSYS_memset(m_Unicodes, 0, sizeof(m_Unicodes));
     } else
         for (int i = 0; i < 256; i++) {
             m_Unicodes[i] = pSrc[i];
@@ -1367,7 +1367,7 @@ CPDF_FontEncoding::CPDF_FontEncoding(int PredefinedEncoding)
 }
 FX_BOOL CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const
 {
-    return FXSYS_memcmp32(m_Unicodes, pAnother->m_Unicodes, sizeof(m_Unicodes)) == 0;
+    return FXSYS_memcmp(m_Unicodes, pAnother->m_Unicodes, sizeof(m_Unicodes)) == 0;
 }
 CPDF_Object* CPDF_FontEncoding::Realize()
 {
@@ -1597,7 +1597,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap()
 CPDF_Type3Font::CPDF_Type3Font() : CPDF_SimpleFont(PDFFONT_TYPE3)
 {
     m_pPageResources = NULL;
-    FXSYS_memset32(m_CharWidthL, 0, sizeof m_CharWidthL);
+    FXSYS_memset(m_CharWidthL, 0, sizeof m_CharWidthL);
 }
 CPDF_Type3Font::~CPDF_Type3Font()
 {

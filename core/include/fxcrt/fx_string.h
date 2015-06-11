@@ -88,11 +88,11 @@ public:
 
     bool operator== (const char* ptr) const {
         return FXSYS_strlen(ptr) == m_Length &&
-                FXSYS_memcmp32(ptr, m_Ptr, m_Length) == 0;
+                FXSYS_memcmp(ptr, m_Ptr, m_Length) == 0;
     }
     bool operator== (const CFX_ByteStringC& other) const {
         return other.m_Length == m_Length &&
-                FXSYS_memcmp32(other.m_Ptr, m_Ptr, m_Length) == 0;
+                FXSYS_memcmp(other.m_Ptr, m_Ptr, m_Length) == 0;
     }
     bool operator!= (const char* ptr) const { return !(*this == ptr); }
     bool operator!= (const CFX_ByteStringC& other) const {
@@ -254,7 +254,7 @@ public:
 
     bool operator< (const CFX_ByteString& str) const
     {
-        int result = FXSYS_memcmp32(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
+        int result = FXSYS_memcmp(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
         return result < 0 || (result == 0 && GetLength() < str.GetLength());
     }
 

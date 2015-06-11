@@ -53,7 +53,7 @@ static void _DrawAxialShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2B
     }
     CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
     FX_FLOAT* pResults = result_array;
-    FXSYS_memset32(pResults, 0, total_results * sizeof(FX_FLOAT));
+    FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
     FX_DWORD rgb_array[SHADING_STEPS];
     for (int i = 0; i < SHADING_STEPS; i ++) {
         FX_FLOAT input = (t_max - t_min) * i / SHADING_STEPS + t_min;
@@ -133,7 +133,7 @@ static void _DrawRadialShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2
     }
     CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
     FX_FLOAT* pResults = result_array;
-    FXSYS_memset32(pResults, 0, total_results * sizeof(FX_FLOAT));
+    FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
     FX_DWORD rgb_array[SHADING_STEPS];
     for (int i = 0; i < SHADING_STEPS; i ++) {
         FX_FLOAT input = (t_max - t_min) * i / SHADING_STEPS + t_min;
@@ -254,7 +254,7 @@ static void _DrawFuncShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2Bi
     }
     CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
     FX_FLOAT* pResults = result_array;
-    FXSYS_memset32(pResults, 0, total_results * sizeof(FX_FLOAT));
+    FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
     for (int row = 0; row < height; row ++) {
         FX_DWORD* dib_buf = (FX_DWORD*)(pBitmap->GetBuffer() + row * pitch);
         for (int column = 0; column < width; column ++) {
@@ -386,7 +386,7 @@ static void _DrawFreeGouraudShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pOb
         return;
     }
     CPDF_MeshVertex triangle[3];
-    FXSYS_memset32(triangle, 0, sizeof(triangle));
+    FXSYS_memset(triangle, 0, sizeof(triangle));
 
     while (!stream.m_BitStream.IsEOF()) {
         CPDF_MeshVertex vertex;
@@ -568,7 +568,7 @@ static int _BiInterpol(int c0, int c1, int c2, int c3, int x, int y, int x_scale
 struct Coon_Color {
     Coon_Color()
     {
-        FXSYS_memset32(comp, 0, sizeof(int) * 3);
+        FXSYS_memset(comp, 0, sizeof(int) * 3);
     }
     int		comp[3];
     void	BiInterpol(Coon_Color colors[4], int x, int y, int x_scale, int y_scale)
@@ -733,11 +733,11 @@ static void _DrawCoonPatchMeshes(FX_BOOL bTensor, CFX_DIBitmap* pBitmap, CFX_Aff
             for (i = 0; i < 4; i ++) {
                 tempCoords[i] = coords[(flag * 3 + i) % 12];
             }
-            FXSYS_memcpy32(coords, tempCoords, sizeof(CFX_FloatPoint) * 4);
+            FXSYS_memcpy(coords, tempCoords, sizeof(CFX_FloatPoint) * 4);
             Coon_Color tempColors[2];
             tempColors[0] = patch.patch_colors[flag];
             tempColors[1] = patch.patch_colors[(flag + 1) % 4];
-            FXSYS_memcpy32(patch.patch_colors, tempColors, sizeof(Coon_Color) * 2);
+            FXSYS_memcpy(patch.patch_colors, tempColors, sizeof(Coon_Color) * 2);
         }
         for (i = iStartPoint; i < point_count; i ++) {
             stream.GetCoords(coords[i].x, coords[i].y);

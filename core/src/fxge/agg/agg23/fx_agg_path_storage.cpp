@@ -55,10 +55,10 @@ void path_storage::allocate_block(unsigned nb)
         unsigned char** new_cmds =
             (unsigned char**)(new_coords + m_max_blocks + block_pool);
         if(m_coord_blocks) {
-            FXSYS_memcpy32(new_coords,
+            FXSYS_memcpy(new_coords,
                            m_coord_blocks,
                            m_max_blocks * sizeof(FX_FLOAT*));
-            FXSYS_memcpy32(new_cmds,
+            FXSYS_memcpy(new_cmds,
                            m_cmd_blocks,
                            m_max_blocks * sizeof(unsigned char*));
             FX_Free(m_coord_blocks);

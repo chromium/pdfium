@@ -122,7 +122,7 @@ int CPDF_Object::GetInteger() const
         case PDFOBJ_REFERENCE: {
                 CPDF_Reference* pRef = (CPDF_Reference*)(void*)this;
                 PARSE_CONTEXT context;
-                FXSYS_memset32(&context, 0, sizeof(PARSE_CONTEXT));
+                FXSYS_memset(&context, 0, sizeof(PARSE_CONTEXT));
                 if (pRef->m_pObjList == NULL) {
                     return 0;
                 }
@@ -898,7 +898,7 @@ void CPDF_Stream::InitStream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDi
     m_GenNum = (FX_DWORD) - 1;
     m_pDataBuf = FX_Alloc(uint8_t, size);
     if (pData) {
-        FXSYS_memcpy32(m_pDataBuf, pData, size);
+        FXSYS_memcpy(m_pDataBuf, pData, size);
     }
     m_dwSize = size;
     if (m_pDict) {
@@ -920,7 +920,7 @@ void CPDF_Stream::SetData(const uint8_t* pData, FX_DWORD size, FX_BOOL bCompress
     } else {
         m_pDataBuf = FX_Alloc(uint8_t, size);
         if (pData) {
-            FXSYS_memcpy32(m_pDataBuf, pData, size);
+            FXSYS_memcpy(m_pDataBuf, pData, size);
         }
     }
     m_dwSize = size;
@@ -939,7 +939,7 @@ FX_BOOL CPDF_Stream::ReadRawData(FX_FILESIZE offset, uint8_t* buf, FX_DWORD size
         return m_pFile->ReadBlock(buf, m_FileOffset + offset, size);
     }
     if (m_pDataBuf) {
-        FXSYS_memcpy32(buf, m_pDataBuf + offset, size);
+        FXSYS_memcpy(buf, m_pDataBuf + offset, size);
     }
     return TRUE;
 }
@@ -982,7 +982,7 @@ FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const
             FX_DWORD actualSize = size > 1024 ? 1024 : size;
             m_pFile->ReadBlock(srcBuf, srcOffset, actualSize);
             pOther->m_pFile->ReadBlock(destBuf, destOffset, actualSize);
-            if (FXSYS_memcmp32(srcBuf, destBuf, actualSize) != 0) {
+            if (FXSYS_memcmp(srcBuf, destBuf, actualSize) != 0) {
                 return FALSE;
             }
             size -= actualSize;
@@ -1012,7 +1012,7 @@ FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const
         while (size > 0) {
             FX_DWORD actualSize = std::min(size, 1024U);
             pFile->ReadBlock(srcBuf, offset, actualSize);
-            if (FXSYS_memcmp32(srcBuf, pBuf, actualSize) != 0) {
+            if (FXSYS_memcmp(srcBuf, pBuf, actualSize) != 0) {
                 return FALSE;
             }
             pBuf += actualSize;
@@ -1021,7 +1021,7 @@ FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const
         }
         return TRUE;
     }
-    return FXSYS_memcmp32(m_pDataBuf, pOther->m_pDataBuf, m_dwSize) == 0;
+    return FXSYS_memcmp(m_pDataBuf, pOther->m_pDataBuf, m_dwSize) == 0;
 }
 CPDF_Stream* CPDF_Stream::Clone(FX_BOOL bDirect, FPDF_LPFCloneStreamCallback lpfCallback, void* pUserData) const
 {
@@ -1165,7 +1165,7 @@ uint8_t* CPDF_StreamAcc::DetachData()
         return p;
     }
     uint8_t* p = FX_Alloc(uint8_t, m_dwSize);
-    FXSYS_memcpy32(p, m_pData, m_dwSize);
+    FXSYS_memcpy(p, m_pData, m_dwSize);
     return p;
 }
 void CPDF_Reference::SetRef(CPDF_IndirectObjects* pDoc, FX_DWORD objnum)
@@ -1234,7 +1234,7 @@ int CPDF_IndirectObjects::GetIndirectType(FX_DWORD objnum)
     }
     if (m_pParser) {
         PARSE_CONTEXT context;
-        FXSYS_memset32(&context, 0, sizeof(PARSE_CONTEXT));
+        FXSYS_memset(&context, 0, sizeof(PARSE_CONTEXT));
         context.m_Flags = PDFPARSE_TYPEONLY;
         return (int)(uintptr_t)m_pParser->ParseIndirectObject(this, objnum, &context);
     }

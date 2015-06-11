@@ -344,7 +344,7 @@ void FX_Random_GenerateBase(FX_DWORD* pBuffer, int32_t iCount)
     ::GetSystemTime(&st1);
     do {
         ::GetSystemTime(&st2);
-    } while (FXSYS_memcmp32(&st1, &st2, sizeof(SYSTEMTIME)) == 0);
+    } while (FXSYS_memcmp(&st1, &st2, sizeof(SYSTEMTIME)) == 0);
     FX_DWORD dwHash1 = FX_HashCode_String_GetA((const FX_CHAR*)&st1, sizeof(st1), TRUE);
     FX_DWORD dwHash2 = FX_HashCode_String_GetA((const FX_CHAR*)&st2, sizeof(st2), TRUE);
     ::srand((dwHash1 << 16) | (FX_DWORD)dwHash2);

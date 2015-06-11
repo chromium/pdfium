@@ -198,7 +198,7 @@ FX_BOOL CPDF_SimpleParser::SearchToken(const CFX_ByteStringC& token)
 {
     int token_len = token.GetLength();
     while (m_dwCurPos < m_dwSize - token_len) {
-        if (FXSYS_memcmp32(m_pData + m_dwCurPos, token.GetPtr(), token_len) == 0) {
+        if (FXSYS_memcmp(m_pData + m_dwCurPos, token.GetPtr(), token_len) == 0) {
             break;
         }
         m_dwCurPos ++;

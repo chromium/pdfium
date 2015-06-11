@@ -8,7 +8,7 @@
 #include "codec_int.h"
 CCodec_Jbig2Context::CCodec_Jbig2Context()
 {
-    FXSYS_memset32(this, 0, sizeof(CCodec_Jbig2Context));
+    FXSYS_memset(this, 0, sizeof(CCodec_Jbig2Context));
 }
 CCodec_Jbig2Module::~CCodec_Jbig2Module()
 {
@@ -28,7 +28,7 @@ void CCodec_Jbig2Module::DestroyJbig2Context(void* pJbig2Content)
 FX_BOOL CCodec_Jbig2Module::Decode(FX_DWORD width, FX_DWORD height, const uint8_t* src_buf, FX_DWORD src_size,
                                    const uint8_t* global_data, FX_DWORD global_size, uint8_t* dest_buf, FX_DWORD dest_pitch)
 {
-    FXSYS_memset32(dest_buf, 0, height * dest_pitch);
+    FXSYS_memset(dest_buf, 0, height * dest_pitch);
     CJBig2_Context* pContext = CJBig2_Context::CreateContext(&m_Module,
                                (uint8_t*)global_data, global_size, (uint8_t*)src_buf, src_size, JBIG2_EMBED_STREAM, &m_SymbolDictCache);
     if (pContext == NULL) {
@@ -97,7 +97,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context, FX_DWORD wid
     m_pJbig2Context->m_dest_pitch = dest_pitch;
     m_pJbig2Context->m_pPause = pPause;
     m_pJbig2Context->m_bFileReader = FALSE;
-    FXSYS_memset32(dest_buf, 0, height * dest_pitch);
+    FXSYS_memset(dest_buf, 0, height * dest_pitch);
     m_pJbig2Context->m_pContext = CJBig2_Context::CreateContext(&m_Module,
                                   (uint8_t*)global_data, global_size, (uint8_t*)src_buf, src_size, JBIG2_EMBED_STREAM, &m_SymbolDictCache, pPause);
     if(!m_pJbig2Context->m_pContext) {

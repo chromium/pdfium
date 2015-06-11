@@ -949,7 +949,7 @@ static void aes_decrypt_cbc(unsigned char *dest, const unsigned char *src, int l
     unsigned int iv[4], x[4], ct[4];
     int i;
     ASSERT((len & 15) == 0);
-    FXSYS_memcpy32(iv, ctx->iv, sizeof(iv));
+    FXSYS_memcpy(iv, ctx->iv, sizeof(iv));
     while (len > 0) {
         for (i = 0; i < 4; i++) {
             x[i] = ct[i] = GET_32BIT_MSB_FIRST(src + 4 * i);
@@ -963,7 +963,7 @@ static void aes_decrypt_cbc(unsigned char *dest, const unsigned char *src, int l
         src += 16;
         len -= 16;
     }
-    FXSYS_memcpy32(ctx->iv, iv, sizeof(iv));
+    FXSYS_memcpy(ctx->iv, iv, sizeof(iv));
 }
 static void aes_encrypt(AESContext * ctx, unsigned int * block)
 {
@@ -974,7 +974,7 @@ static void aes_encrypt_cbc(unsigned char *dest, const unsigned char *src, int l
     unsigned int iv[4];
     int i;
     ASSERT((len & 15) == 0);
-    FXSYS_memcpy32(iv, ctx->iv, sizeof(iv));
+    FXSYS_memcpy(iv, ctx->iv, sizeof(iv));
     while (len > 0) {
         for (i = 0; i < 4; i++) {
             iv[i] ^= GET_32BIT_MSB_FIRST(src + 4 * i);
@@ -987,7 +987,7 @@ static void aes_encrypt_cbc(unsigned char *dest, const unsigned char *src, int l
         src += 16;
         len -= 16;
     }
-    FXSYS_memcpy32(ctx->iv, iv, sizeof(iv));
+    FXSYS_memcpy(ctx->iv, iv, sizeof(iv));
 }
 void CRYPT_AESSetKey(void* context, FX_DWORD blocklen, const uint8_t* key, FX_DWORD keylen, FX_BOOL bEncrypt)
 {

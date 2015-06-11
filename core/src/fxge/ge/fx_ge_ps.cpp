@@ -242,7 +242,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState)
         buf << pGraphState->m_LineCap << FX_BSTRC(" J\n");
     }
     if (!m_bGraphStateSet || m_CurGraphState.m_DashCount != pGraphState->m_DashCount ||
-            FXSYS_memcmp32(m_CurGraphState.m_DashArray, pGraphState->m_DashArray, sizeof(FX_FLOAT)*m_CurGraphState.m_DashCount)) {
+            FXSYS_memcmp(m_CurGraphState.m_DashArray, pGraphState->m_DashArray, sizeof(FX_FLOAT)*m_CurGraphState.m_DashCount)) {
         buf << FX_BSTRC("[");
         for (int i = 0; i < pGraphState->m_DashCount; i ++) {
             buf << pGraphState->m_DashArray[i] << FX_BSTRC(" ");
@@ -351,7 +351,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
         uint8_t* src_buf = FX_Alloc(uint8_t, src_size);
         for (int row = 0; row < height; row ++) {
             const uint8_t* src_scan = pSource->GetScanline(row);
-            FXSYS_memcpy32(src_buf + row * pitch, src_scan, pitch);
+            FXSYS_memcpy(src_buf + row * pitch, src_scan, pitch);
         }
         uint8_t* output_buf;
         FX_DWORD output_size;
@@ -433,7 +433,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
                         src_scan += 3;
                     }
                 } else {
-                    FXSYS_memcpy32(dest_scan, src_scan, src_pitch);
+                    FXSYS_memcpy(dest_scan, src_scan, src_pitch);
                 }
             }
             uint8_t* compressed_buf;

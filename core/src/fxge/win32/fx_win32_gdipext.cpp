@@ -1043,7 +1043,7 @@ public:
         }
         bytes_left = m_InterStream.GetLength() - m_ReadPos;
         bytes_out = FX_MIN(cb, bytes_left);
-        FXSYS_memcpy32(Output, m_InterStream.GetBuffer() + m_ReadPos, bytes_out);
+        FXSYS_memcpy(Output, m_InterStream.GetBuffer() + m_ReadPos, bytes_out);
         m_ReadPos += (int32_t)bytes_out;
         if (pcbRead != NULL) {
             *pcbRead = (ULONG)bytes_out;
@@ -1240,10 +1240,10 @@ CFX_DIBitmap* CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args)
     int dest_pitch = (width * pInfo->pbmi->bmiHeader.biBitCount + 31) / 32 * 4;
     LPBYTE pData = FX_Alloc2D(BYTE, dest_pitch, height);
     if (dest_pitch == pInfo->Stride) {
-        FXSYS_memcpy32(pData, pInfo->pScan0, dest_pitch * height);
+        FXSYS_memcpy(pData, pInfo->pScan0, dest_pitch * height);
     } else {
         for (int i = 0; i < height; i ++) {
-            FXSYS_memcpy32(pData + dest_pitch * i, pInfo->pScan0 + pInfo->Stride * i, dest_pitch);
+            FXSYS_memcpy(pData + dest_pitch * i, pInfo->pScan0 + pInfo->Stride * i, dest_pitch);
         }
     }
     CFX_DIBitmap* pDIBitmap = _FX_WindowsDIB_LoadFromBuf(pInfo->pbmi, pData, pInfo->pbmi->bmiHeader.biBitCount == 32);

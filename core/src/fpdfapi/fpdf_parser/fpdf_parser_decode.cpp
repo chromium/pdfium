@@ -49,7 +49,7 @@ FX_DWORD _A85Decode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_bu
             continue;
         }
         if (ch == 'z') {
-            FXSYS_memset32(dest_buf + dest_size, 0, 4);
+            FXSYS_memset(dest_buf + dest_size, 0, 4);
             state = 0;
             res = 0;
             dest_size += 4;
@@ -159,9 +159,9 @@ FX_DWORD RunLengthDecode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& de
             if (buf_left < copy_len) {
                 FX_DWORD delta = copy_len - buf_left;
                 copy_len = buf_left;
-                FXSYS_memset8(dest_buf + dest_count + copy_len, '\0', delta);
+                FXSYS_memset(dest_buf + dest_count + copy_len, '\0', delta);
             }
-            FXSYS_memcpy32(dest_buf + dest_count, src_buf + i + 1, copy_len);
+            FXSYS_memcpy(dest_buf + dest_count, src_buf + i + 1, copy_len);
             dest_count += src_buf[i] + 1;
             i += src_buf[i] + 2;
         } else if (src_buf[i] > 128) {
@@ -169,7 +169,7 @@ FX_DWORD RunLengthDecode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& de
             if (i < src_size - 1) {
                 fill = src_buf[i + 1];
             }
-            FXSYS_memset8(dest_buf + dest_count, fill, 257 - src_buf[i]);
+            FXSYS_memset(dest_buf + dest_count, fill, 257 - src_buf[i]);
             dest_count += 257 - src_buf[i];
             i += 2;
         } else {

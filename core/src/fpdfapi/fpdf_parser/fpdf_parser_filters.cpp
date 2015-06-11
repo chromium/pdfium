@@ -255,7 +255,7 @@ FX_DWORD CPDF_StreamFilter::ReadLeftOver(uint8_t* buffer, FX_DWORD buf_size)
     if (read_size > buf_size) {
         read_size = buf_size;
     }
-    FXSYS_memcpy32(buffer, m_pBuffer->GetBuffer() + m_BufOffset, read_size);
+    FXSYS_memcpy(buffer, m_pBuffer->GetBuffer() + m_BufOffset, read_size);
     m_BufOffset += read_size;
     if (m_BufOffset == (FX_DWORD)m_pBuffer->GetSize()) {
         delete m_pBuffer;
@@ -548,7 +548,7 @@ void CPDF_PredictorFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size,
         if (read_size > src_size) {
             read_size = src_size;
         }
-        FXSYS_memcpy32(m_pCurLine + m_LineInSize, src_buf, read_size);
+        FXSYS_memcpy(m_pCurLine + m_LineInSize, src_buf, read_size);
         m_LineInSize += read_size;
         if (m_LineInSize < m_Pitch) {
             break;
@@ -696,7 +696,7 @@ void CPDF_RunLenFilter::v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CF
                 break;
             case 2:	{
                     dest_buf.AppendBlock(NULL, m_Count);
-                    FXSYS_memset8(dest_buf.GetBuffer() + dest_buf.GetSize() - m_Count, byte, m_Count);
+                    FXSYS_memset(dest_buf.GetBuffer() + dest_buf.GetSize() - m_Count, byte, m_Count);
                     m_State = 0;
                     break;
                 }
@@ -805,8 +805,8 @@ FX_BOOL CPDF_FaxFilter::Initialize(int Encoding, int bEndOfLine, int bByteAlign,
     m_Pitch = (m_nColumns + 7) / 8;
     m_pScanlineBuf = FX_Alloc(uint8_t, m_Pitch);
     m_pRefBuf = FX_Alloc(uint8_t, m_Pitch);
-    FXSYS_memset8(m_pScanlineBuf, 0xff, m_Pitch);
-    FXSYS_memset8(m_pRefBuf, 0xff, m_Pitch);
+    FXSYS_memset(m_pScanlineBuf, 0xff, m_Pitch);
+    FXSYS_memset(m_pRefBuf, 0xff, m_Pitch);
     m_iRow = 0;
     m_InputBitPos = 0;
     return TRUE;
@@ -851,13 +851,13 @@ void CPDF_FaxFilter::ProcessData(const uint8_t* src_buf, FX_DWORD src_size, int&
             return;
         }
         int start_bitpos = bitpos;
-        FXSYS_memset8(m_pScanlineBuf, 0xff, m_Pitch);
+        FXSYS_memset(m_pScanlineBuf, 0xff, m_Pitch);
         if (!ReadLine(src_buf, bitsize, bitpos)) {
             bitpos = start_bitpos;
             return;
         }
         if (m_Encoding) {
-            FXSYS_memcpy32(m_pRefBuf, m_pScanlineBuf, m_Pitch);
+            FXSYS_memcpy(m_pRefBuf, m_pScanlineBuf, m_Pitch);
         }
         if (m_bBlack) {
             for (int i = 0; i < m_Pitch; i ++) {

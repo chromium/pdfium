@@ -1024,7 +1024,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL 
         m_pTrailer = (CPDF_Dictionary*)pStream->GetDict()->Clone();
         m_CrossRef.SetSize(size);
         if (m_V5Type.SetSize(size)) {
-            FXSYS_memset32(m_V5Type.GetData(), 0, size);
+            FXSYS_memset(m_V5Type.GetData(), 0, size);
         }
     } else {
         m_Trailers.Add((CPDF_Dictionary*)pStream->GetDict()->Clone());
@@ -1298,7 +1298,7 @@ void CPDF_Parser::GetIndirectBinary(FX_DWORD objnum, uint8_t*& pBuffer, FX_DWORD
                     size = nextoff - thisoff;
                 }
                 pBuffer = FX_Alloc(uint8_t, size);
-                FXSYS_memcpy32(pBuffer, pData + thisoff + offset, size);
+                FXSYS_memcpy(pBuffer, pData + thisoff + offset, size);
                 return;
             }
             n --;
@@ -2445,7 +2445,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict, PARSE_CONTEXT
             m_Pos = pos.ValueOrDie();
         }
         GetNextWord();
-        if (m_WordSize < 9 || FXSYS_memcmp32(m_WordBuffer, "endstream", 9)) {
+        if (m_WordSize < 9 || FXSYS_memcmp(m_WordBuffer, "endstream", 9)) {
             m_Pos = StreamStartPos;
             FX_FILESIZE offset = FindTag(FX_BSTRC("endstream"), 0);
             if (offset >= 0) {
@@ -2496,7 +2496,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict, PARSE_CONTEXT
     }
     StreamStartPos = m_Pos;
     GetNextWord();
-    if (m_WordSize == 6 && 0 == FXSYS_memcmp32(m_WordBuffer, "endobj", 6)) {
+    if (m_WordSize == 6 && 0 == FXSYS_memcmp(m_WordBuffer, "endobj", 6)) {
         m_Pos = StreamStartPos;
     }
     return pStream;

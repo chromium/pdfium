@@ -2376,7 +2376,7 @@ CJBig2_SymbolDict *CJBig2_SDDProc::decode_Arith(CJBig2_ArithDecoder *pArithDecod
     }
     JBIG2_ALLOC(IAID, CJBig2_ArithIaidDecoder((uint8_t)nTmp));
     SDNEWSYMS = (CJBig2_Image**)m_pModule->JBig2_Malloc2(SDNUMNEWSYMS, sizeof(CJBig2_Image*));
-    FXSYS_memset32(SDNEWSYMS, 0 , SDNUMNEWSYMS * sizeof(CJBig2_Image*));
+    FXSYS_memset(SDNEWSYMS, 0 , SDNUMNEWSYMS * sizeof(CJBig2_Image*));
     HCHEIGHT = 0;
     NSYMSDECODED = 0;
     while(NSYMSDECODED < SDNUMNEWSYMS) {
@@ -2699,12 +2699,12 @@ CJBig2_SymbolDict *CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream *pStream,
     CJBig2_SymbolDict *pDict;
     JBIG2_ALLOC(pHuffmanDecoder, CJBig2_HuffmanDecoder(pStream));
     SDNEWSYMS = (CJBig2_Image**)m_pModule->JBig2_Malloc2(SDNUMNEWSYMS, sizeof(CJBig2_Image*));
-    FXSYS_memset32(SDNEWSYMS, 0 , SDNUMNEWSYMS * sizeof(CJBig2_Image*));
+    FXSYS_memset(SDNEWSYMS, 0 , SDNUMNEWSYMS * sizeof(CJBig2_Image*));
     SDNEWSYMWIDTHS = NULL;
     BHC = NULL;
     if(SDREFAGG == 0) {
         SDNEWSYMWIDTHS = (FX_DWORD *)m_pModule->JBig2_Malloc2(SDNUMNEWSYMS, sizeof(FX_DWORD));
-        FXSYS_memset32(SDNEWSYMWIDTHS, 0 , SDNUMNEWSYMS * sizeof(FX_DWORD));
+        FXSYS_memset(SDNEWSYMWIDTHS, 0 , SDNUMNEWSYMS * sizeof(FX_DWORD));
     }
     HCHEIGHT = 0;
     NSYMSDECODED = 0;

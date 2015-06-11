@@ -873,7 +873,7 @@ FX_BOOL CPDF_Function::Init(CPDF_Object* pObj)
     if (m_pRanges && m_nOutputs > (int)old_outputs) {
         m_pRanges = FX_Realloc(FX_FLOAT, m_pRanges, m_nOutputs * 2);
         if (m_pRanges) {
-            FXSYS_memset32(m_pRanges + (old_outputs * 2), 0, sizeof(FX_FLOAT) * (m_nOutputs - old_outputs) * 2);
+            FXSYS_memset(m_pRanges + (old_outputs * 2), 0, sizeof(FX_FLOAT) * (m_nOutputs - old_outputs) * 2);
         }
     }
     return ret;

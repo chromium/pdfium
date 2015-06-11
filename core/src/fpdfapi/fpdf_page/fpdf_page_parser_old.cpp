@@ -269,7 +269,7 @@ FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder, uint8_t*& dest_bu
         if (pLine == NULL) {
             break;
         }
-        FXSYS_memcpy32(dest_buf + row * pitch, pLine, pitch);
+        FXSYS_memcpy(dest_buf + row * pitch, pLine, pitch);
     }
     FX_DWORD srcoff = pDecoder->GetSrcOffset();
     delete pDecoder;
@@ -374,7 +374,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc, CPDF_Dicti
             OrigSize = m_Size - m_Pos;
         }
         pData = FX_Alloc(uint8_t, OrigSize);
-        FXSYS_memcpy32(pData, m_pBuf + m_Pos, OrigSize);
+        FXSYS_memcpy(pData, m_pBuf + m_Pos, OrigSize);
         dwStreamSize = OrigSize;
         m_Pos += OrigSize;
     } else {
@@ -422,7 +422,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc, CPDF_Dicti
             }
             m_Pos = dwSavePos;
             pData = FX_Alloc(uint8_t, dwStreamSize);
-            FXSYS_memcpy32(pData, m_pBuf + m_Pos, dwStreamSize);
+            FXSYS_memcpy(pData, m_pBuf + m_Pos, dwStreamSize);
             m_Pos += dwStreamSize;
         }
     }
@@ -1052,7 +1052,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause)
                     m_pData = FX_Alloc(uint8_t, m_Size);
                     FX_DWORD pos = 0;
                     for (i = 0; i < m_nStreams; i ++) {
-                        FXSYS_memcpy32(m_pData + pos, m_pStreamArray[i]->GetData(), m_pStreamArray[i]->GetSize());
+                        FXSYS_memcpy(m_pData + pos, m_pStreamArray[i]->GetData(), m_pStreamArray[i]->GetSize());
                         pos += m_pStreamArray[i]->GetSize() + 1;
                         m_pData[pos - 1] = ' ';
                         delete m_pStreamArray[i];

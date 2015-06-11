@@ -214,11 +214,6 @@ wchar_t*	FXSYS_wcslwr(wchar_t* str);
 wchar_t*	FXSYS_wcsupr(wchar_t* str);
 #endif  // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
 
-#define FXSYS_memcpy32		FXSYS_memcpy
-#define FXSYS_memcmp32		FXSYS_memcmp
-#define FXSYS_memset32		FXSYS_memset
-#define FXSYS_memset8		FXSYS_memset
-#define FXSYS_memmove32		FXSYS_memmove
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define FXSYS_pow(a, b)		(FX_FLOAT)powf(a, b)
 #else

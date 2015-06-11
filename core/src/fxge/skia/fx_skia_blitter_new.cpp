@@ -155,7 +155,7 @@
 		if (col_end < col_start) return; // do nothing.
 		dest_scan += col_start;
 		if (cover_scan == 255 && m_Alpha == 255) {
-			FXSYS_memset32(dest_scan, FXARGB_MAKE(m_Gray, m_Gray, m_Gray, m_Gray), col_end - col_start);
+			FXSYS_memset(dest_scan, FXARGB_MAKE(m_Gray, m_Gray, m_Gray, m_Gray), col_end - col_start);
 			return;
 		}
 		int src_alpha = m_Alpha * cover_scan / 255;
@@ -179,7 +179,7 @@
 		dest_scan += col_start;
 		ori_scan += col_start;
 		if (m_Alpha == 255 && cover_scan == 255) {
-			FXSYS_memset32(dest_scan, FXARGB_MAKE(m_Gray, m_Gray, m_Gray, m_Gray), col_end - col_start);
+			FXSYS_memset(dest_scan, FXARGB_MAKE(m_Gray, m_Gray, m_Gray, m_Gray), col_end - col_start);
 		} else {
 			int src_alpha = m_Alpha;
 #if 1
@@ -306,14 +306,14 @@
 		if (col_end < col_start) return; // do nothing.
 		dest_scan += col_start<<2;
 		if (m_Alpha == 255 && cover_scan == 255) {
-			FXSYS_memset32(dest_scan, m_Color, (col_end - col_start)<<2);
+			FXSYS_memset(dest_scan, m_Color, (col_end - col_start)<<2);
 			return;
 		}
 		int src_alpha;
 #if 0
 		if (m_bFullCover) {
 			if (m_Alpha == 255) {
-				FXSYS_memset32(dest_scan, m_Color, (col_end - col_start)<<2);
+				FXSYS_memset(dest_scan, m_Color, (col_end - col_start)<<2);
 				return;
 			}
 		}
@@ -358,12 +358,12 @@
 		//ori_scan += col_start << 2;
 
 		if (m_Alpha == 255 && cover_scan == 255){
-			FXSYS_memset32(dest_scan, m_Color, (col_end - col_start)<<2);
+			FXSYS_memset(dest_scan, m_Color, (col_end - col_start)<<2);
 			return;
 		}		
 		if (cover_scan == 255) {
 			int dst_color = (0x00ffffff&m_Color)|(m_Alpha<<24);
-			FXSYS_memset32(dest_scan, dst_color, (col_end - col_start)<<2);
+			FXSYS_memset(dest_scan, dst_color, (col_end - col_start)<<2);
 			return;
 		}
 		// Do not need origin bitmap, because of merge in pure transparent background
@@ -568,7 +568,7 @@
 		if (col_end < col_start) return; // do nothing.
 		dest_scan += (col_start << 2);
 		if (m_Alpha == 255 && cover_scan == 255) {
-			FXSYS_memset32(dest_scan, m_Color, (col_end - col_start)<<2);
+			FXSYS_memset(dest_scan, m_Color, (col_end - col_start)<<2);
 			return;
 		}
 		int src_alpha;
@@ -601,7 +601,7 @@
 		dest_scan += col_start << 2;
 		ori_scan += col_start << 2;
 		if (m_Alpha == 255 && cover_scan == 255) {
-			FXSYS_memset32(dest_scan, m_Color, (col_end - col_start)<<2);
+			FXSYS_memset(dest_scan, m_Color, (col_end - col_start)<<2);
 			return;
 		}
 		int src_alpha = m_Alpha;
@@ -1528,7 +1528,7 @@
 				if (result > 0) {
 					dest_pos = dest_scan + col_start;
 					if (result >= 4)
-						FXSYS_memset32(dest_pos, FXARGB_MAKE(aa, aa, aa, aa),result);
+						FXSYS_memset(dest_pos, FXARGB_MAKE(aa, aa, aa, aa),result);
 					else
 						FXSYS_memset(dest_pos,aa,result);
 				}				
@@ -1554,7 +1554,7 @@
 		if (result > 0) {
 			uint8_t* dest_pos = dest_scan + col_start;
 			if (result >= 4)
-				FXSYS_memset32(dest_pos, 0xffffffff,result);
+				FXSYS_memset(dest_pos, 0xffffffff,result);
 			else
 				FXSYS_memset(dest_pos,255,result);
 		}

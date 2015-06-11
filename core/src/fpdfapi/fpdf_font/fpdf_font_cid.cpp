@@ -17,7 +17,7 @@ extern const FX_CHAR* GetAdobeCharName(int iBaseEncoding, const CFX_ByteString* 
 CPDF_CMapManager::CPDF_CMapManager()
 {
     m_bPrompted = FALSE;
-    FXSYS_memset32(m_CID2UnicodeMaps, 0, sizeof m_CID2UnicodeMaps);
+    FXSYS_memset(m_CID2UnicodeMaps, 0, sizeof m_CID2UnicodeMaps);
 }
 CPDF_CMapManager::~CPDF_CMapManager()
 {
@@ -255,7 +255,7 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word)
                 m_pCMap->m_CodingScheme = CPDF_CMap::MixedFourBytes;
                 m_pCMap->m_nCodeRanges = nSegs;
                 m_pCMap->m_pLeadingBytes = FX_Alloc2D(uint8_t, nSegs, sizeof(_CMap_CodeRange));
-                FXSYS_memcpy32(m_pCMap->m_pLeadingBytes, m_CodeRanges.GetData(), nSegs * sizeof(_CMap_CodeRange));
+                FXSYS_memcpy(m_pCMap->m_pLeadingBytes, m_CodeRanges.GetData(), nSegs * sizeof(_CMap_CodeRange));
             } else if (nSegs == 1) {
                 m_pCMap->m_CodingScheme = (m_CodeRanges[0].m_CharSize == 2) ? CPDF_CMap::TwoBytes : CPDF_CMap::OneByte;
             }
@@ -412,7 +412,7 @@ FX_BOOL CPDF_CMap::LoadEmbedded(const uint8_t* pData, FX_DWORD size)
     if (m_CodingScheme == MixedFourBytes && parser.m_AddMaps.GetSize()) {
         m_pAddMapping = FX_Alloc(uint8_t, parser.m_AddMaps.GetSize() + 4);
         *(FX_DWORD*)m_pAddMapping = parser.m_AddMaps.GetSize() / 8;
-        FXSYS_memcpy32(m_pAddMapping + 4, parser.m_AddMaps.GetBuffer(), parser.m_AddMaps.GetSize());
+        FXSYS_memcpy(m_pAddMapping + 4, parser.m_AddMaps.GetBuffer(), parser.m_AddMaps.GetSize());
         FXSYS_qsort(m_pAddMapping + 4, parser.m_AddMaps.GetSize() / 8, 8, compare_dword);
     }
     return TRUE;
@@ -638,7 +638,7 @@ int CPDF_CMap::AppendChar(FX_CHAR* str, FX_DWORD charcode) const
                     iSize = 1;
                 }
                 if (iSize > 1) {
-                    FXSYS_memset32(str, 0, sizeof(uint8_t) * iSize);
+                    FXSYS_memset(str, 0, sizeof(uint8_t) * iSize);
                 }
                 str[iSize - 1] = (uint8_t)charcode;
                 return iSize;
@@ -703,7 +703,7 @@ CPDF_CIDFont::CPDF_CIDFont() : CPDF_Font(PDFFONT_CIDFONT)
     m_bCIDIsGID = FALSE;
     m_bAdobeCourierStd = FALSE;
     m_pTTGSUBTable = NULL;
-    FXSYS_memset8(m_CharBBox, 0xff, 256 * sizeof(FX_SMALL_RECT));
+    FXSYS_memset(m_CharBBox, 0xff, 256 * sizeof(FX_SMALL_RECT));
 }
 CPDF_CIDFont::~CPDF_CIDFont()
 {

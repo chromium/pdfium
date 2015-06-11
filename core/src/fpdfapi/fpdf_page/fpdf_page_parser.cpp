@@ -20,7 +20,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser()
     m_PathCurrentX = m_PathCurrentY = 0.0f;
     m_bResourceMissing = FALSE;
     m_bColored = FALSE;
-    FXSYS_memset32(m_Type3Data, 0, sizeof(FX_FLOAT) * 6);
+    FXSYS_memset(m_Type3Data, 0, sizeof(FX_FLOAT) * 6);
     m_ParamCount = 0;
     m_ParamStartPos = 0;
     m_bAbort = FALSE;
@@ -122,11 +122,11 @@ void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len)
     } else {
         m_ParamBuf1[index].m_Type = PDFOBJ_NAME;
         if (FXSYS_memchr(name, '#', len) == NULL) {
-            FXSYS_memcpy32(m_ParamBuf1[index].m_Name.m_Buffer, name, len);
+            FXSYS_memcpy(m_ParamBuf1[index].m_Name.m_Buffer, name, len);
             m_ParamBuf1[index].m_Name.m_Len = len;
         } else {
             CFX_ByteString str = PDF_NameDecode(CFX_ByteStringC(name, len));
-            FXSYS_memcpy32(m_ParamBuf1[index].m_Name.m_Buffer, str.c_str(), str.GetLength());
+            FXSYS_memcpy(m_ParamBuf1[index].m_Name.m_Buffer, str.c_str(), str.GetLength());
             m_ParamBuf1[index].m_Name.m_Len = str.GetLength();
         }
     }
@@ -442,7 +442,7 @@ static CFX_ByteStringC _PDF_FindFullName(const _FX_BSTR* table, int count, const
 {
     int i = 0;
     while (i < count) {
-        if (abbr.GetLength() == table[i + 1].m_Size && FXSYS_memcmp32(abbr.GetPtr(), table[i + 1].m_Ptr, abbr.GetLength()) == 0) {
+        if (abbr.GetLength() == table[i + 1].m_Size && FXSYS_memcmp(abbr.GetPtr(), table[i + 1].m_Ptr, abbr.GetLength()) == 0) {
             return CFX_ByteStringC(table[i].m_Ptr, table[i].m_Size);
         }
         i += 2;
@@ -500,7 +500,7 @@ static CFX_ByteStringC _PDF_FindAbbrName(const _FX_BSTR* table, int count, const
 {
     int i = 0;
     while (i < count) {
-        if (fullName.GetLength() == table[i].m_Size && FXSYS_memcmp32(fullName.GetPtr(), table[i].m_Ptr, fullName.GetLength()) == 0) {
+        if (fullName.GetLength() == table[i].m_Size && FXSYS_memcmp(fullName.GetPtr(), table[i].m_Ptr, fullName.GetLength()) == 0) {
             return CFX_ByteStringC(table[i + 1].m_Ptr, table[i + 1].m_Size);
         }
         i += 2;
@@ -1495,7 +1495,7 @@ void CPDF_StreamContentParser::AddPathPoint(FX_FLOAT x, FX_FLOAT y, int flag)
         int newsize = m_PathPointCount + 256;
         FX_PATHPOINT* pNewPoints = FX_Alloc(FX_PATHPOINT, newsize);
         if (m_PathAllocSize) {
-            FXSYS_memcpy32(pNewPoints, m_pPathPoints, m_PathAllocSize * sizeof(FX_PATHPOINT));
+            FXSYS_memcpy(pNewPoints, m_pPathPoints, m_PathAllocSize * sizeof(FX_PATHPOINT));
             FX_Free(m_pPathPoints);
         }
         m_pPathPoints = pNewPoints;
@@ -1524,7 +1524,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke)
     CPDF_Path Path;
     CFX_PathData* pPathData = Path.New();
     pPathData->SetPointCount(PathPointCount);
-    FXSYS_memcpy32(pPathData->GetPoints(), m_pPathPoints, sizeof(FX_PATHPOINT) * PathPointCount);
+    FXSYS_memcpy(pPathData->GetPoints(), m_pPathPoints, sizeof(FX_PATHPOINT) * PathPointCount);
     CFX_AffineMatrix matrix = m_pCurStates->m_CTM;
     matrix.Concat(m_mtContentToUser);
     if (bStroke || FillType) {
