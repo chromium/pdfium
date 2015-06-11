@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 // #include "../../include/formfiller/FormFiller.h"
@@ -14,7 +14,7 @@
 
 //#pragma warning(disable: 4800)
 
-CFFL_Notify::CFFL_Notify(CFFL_FormFiller * pFormFiller) : 
+CFFL_Notify::CFFL_Notify(CFFL_FormFiller * pFormFiller) :
 	m_bDoActioning(FALSE),
 	m_nNotifyFlag(0)
 {
@@ -94,15 +94,15 @@ FX_BOOL CFFL_Notify::OnFormat(int iCommitKey)
 	return TRUE;
 }
 
-FX_BOOL CFFL_Notify::OnKeyStroke(CPDF_FormField* pFormField, int nCommitKey, CFX_WideString& strValue, CFX_WideString& strChange, 
+FX_BOOL CFFL_Notify::OnKeyStroke(CPDF_FormField* pFormField, int nCommitKey, CFX_WideString& strValue, CFX_WideString& strChange,
 							   const CFX_WideString& strChangeEx, FX_BOOL bKeyDown, FX_BOOL bModifier,
-							   FX_BOOL bShift, FX_BOOL bWillCommit, FX_BOOL bFieldFull, 
+							   FX_BOOL bShift, FX_BOOL bWillCommit, FX_BOOL bFieldFull,
 							   int& nSelStart, int& nSelEnd, FX_BOOL& bRC)
 {
 	return TRUE;
 }
 
-FX_BOOL CFFL_Notify::OnValidate(CPDF_FormField* pFormField, CFX_WideString& strValue, CFX_WideString & strChange, 
+FX_BOOL CFFL_Notify::OnValidate(CPDF_FormField* pFormField, CFX_WideString& strValue, CFX_WideString & strChange,
 									   const CFX_WideString& strChangeEx, FX_BOOL bKeyDown, FX_BOOL bModifier,
 									   FX_BOOL bShift, FX_BOOL & bRC)
 {

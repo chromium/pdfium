@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_CONSOLE_H_
@@ -22,7 +22,7 @@ public:
 	FX_BOOL show(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 };
 
-class CJS_Console : public CJS_Object  
+class CJS_Console : public CJS_Object
 {
 public:
 	CJS_Console(JSFXObject pObject) : CJS_Object(pObject) {};

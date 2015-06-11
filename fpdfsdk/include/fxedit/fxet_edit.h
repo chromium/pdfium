@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
@@ -313,10 +313,10 @@ private:
 
 private:
 	CFX_ArrayTemplate<IFX_Edit_UndoItem*>	m_UndoItemStack;
-	
+
 	int32_t								m_nCurUndoPos;
 	int32_t								m_nBufSize;
-	FX_BOOL									m_bModified; 
+	FX_BOOL									m_bModified;
 	FX_BOOL									m_bVirgin;
 	FX_BOOL									m_bWorking;
 };
@@ -507,8 +507,8 @@ private:
 class CFXEU_SetSecProps : public CFX_Edit_UndoItem
 {
 public:
-	CFXEU_SetSecProps(CFX_Edit * pEdit, const CPVT_WordPlace & place, EDIT_PROPS_E ep, 
-		const CPVT_SecProps & oldsecprops, const CPVT_WordProps & oldwordprops, 
+	CFXEU_SetSecProps(CFX_Edit * pEdit, const CPVT_WordPlace & place, EDIT_PROPS_E ep,
+		const CPVT_SecProps & oldsecprops, const CPVT_WordProps & oldwordprops,
 		const CPVT_SecProps & newsecprops, const CPVT_WordProps & newwordprops, const CPVT_WordRange & range);
 	virtual ~CFXEU_SetSecProps();
 
@@ -524,13 +524,13 @@ private:
 	CPVT_SecProps				m_OldSecProps;
 	CPVT_SecProps				m_NewSecProps;
 	CPVT_WordProps				m_OldWordProps;
-	CPVT_WordProps				m_NewWordProps;	
+	CPVT_WordProps				m_NewWordProps;
 };
 
 class CFXEU_SetWordProps : public CFX_Edit_UndoItem
 {
 public:
-	CFXEU_SetWordProps(CFX_Edit * pEdit, const CPVT_WordPlace & place, EDIT_PROPS_E ep, 
+	CFXEU_SetWordProps(CFX_Edit * pEdit, const CPVT_WordPlace & place, EDIT_PROPS_E ep,
 		const CPVT_WordProps & oldprops, const CPVT_WordProps & newprops, const CPVT_WordRange & range);
 	virtual ~CFXEU_SetWordProps();
 
@@ -542,9 +542,9 @@ private:
 	CPVT_WordPlace				m_wpPlace;
 	CPVT_WordRange				m_wrPlace;
 	EDIT_PROPS_E				m_eProps;
-	
+
 	CPVT_WordProps				m_OldWordProps;
-	CPVT_WordProps				m_NewWordProps;	
+	CPVT_WordProps				m_NewWordProps;
 };
 
 /* ------------------------- CFX_Edit ---------------------------- */
@@ -559,14 +559,14 @@ class CFX_Edit : public IFX_Edit
 	friend class CFXEU_Clear;
 	friend class CFXEU_ClearRich;
 	friend class CFXEU_SetSecProps;
-	friend class CFXEU_SetWordProps;	
+	friend class CFXEU_SetWordProps;
 	friend class CFXEU_InsertText;
 
 public:
 	CFX_Edit(IPDF_VariableText * pVT);
 	virtual ~CFX_Edit();
 
-	void									SetFontMap(IFX_Edit_FontMap * pFontMap);	
+	void									SetFontMap(IFX_Edit_FontMap * pFontMap);
 	void									SetVTProvider(IPDF_VariableText_Provider* pProvider);
 	void									SetNotify(IFX_Edit_Notify * pNotify);
 	void									SetOprNotify(IFX_Edit_OprNotify* pOprNotify);
@@ -588,18 +588,18 @@ public:
 	void									SetLineLeading(FX_FLOAT fLineLeading, FX_BOOL bPaint = TRUE);
 	void									SetMultiLine(FX_BOOL bMultiLine = TRUE, FX_BOOL bPaint = TRUE);
 	void									SetAutoReturn(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);
-	void									SetAutoFontSize(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);	
-	void									SetAutoScroll(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);	
+	void									SetAutoFontSize(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);
+	void									SetAutoScroll(FX_BOOL bAuto = TRUE, FX_BOOL bPaint = TRUE);
 	void									SetFontSize(FX_FLOAT fFontSize, FX_BOOL bPaint = TRUE);
 	void									SetTextOverflow(FX_BOOL bAllowed = FALSE, FX_BOOL bPaint = TRUE);
 
 	FX_BOOL									IsRichText() const;
 	void									SetRichText(FX_BOOL bRichText = TRUE, FX_BOOL bPaint = TRUE);
-	FX_BOOL									SetRichFontSize(FX_FLOAT fFontSize);	
+	FX_BOOL									SetRichFontSize(FX_FLOAT fFontSize);
 	FX_BOOL									SetRichFontIndex(int32_t nFontIndex);
 	FX_BOOL									SetRichTextColor(FX_COLORREF dwColor);
 	FX_BOOL									SetRichTextScript(int32_t nScriptType);
-	FX_BOOL									SetRichTextBold(FX_BOOL bBold = TRUE);	
+	FX_BOOL									SetRichTextBold(FX_BOOL bBold = TRUE);
 	FX_BOOL									SetRichTextItalic(FX_BOOL bItalic = TRUE);
 	FX_BOOL									SetRichTextUnderline(FX_BOOL bUnderline = TRUE);
 	FX_BOOL									SetRichTextCrossout(FX_BOOL bCrossout = TRUE);
@@ -619,23 +619,23 @@ public:
 	void									OnVK_END(FX_BOOL bShift,FX_BOOL bCtrl);
 
 	void									SetText(const FX_WCHAR* text,int32_t charset = DEFAULT_CHARSET,
-													const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL);	
+													const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL);
 	FX_BOOL									InsertWord(FX_WORD word, int32_t charset = DEFAULT_CHARSET, const CPVT_WordProps * pWordProps = NULL);
 	FX_BOOL									InsertReturn(const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL);
 	FX_BOOL									Backspace();
-	FX_BOOL									Delete();		
+	FX_BOOL									Delete();
 	FX_BOOL									Clear();
 	FX_BOOL									Empty();
 	FX_BOOL									InsertText(const FX_WCHAR* text, int32_t charset = DEFAULT_CHARSET,
 													const CPVT_SecProps * pSecProps = NULL,const CPVT_WordProps * pWordProps = NULL);
 	FX_BOOL									Redo();
-	FX_BOOL									Undo();	
-	CPVT_WordPlace							DoInsertText(const CPVT_WordPlace& place, const FX_WCHAR* text, int32_t charset, 
+	FX_BOOL									Undo();
+	CPVT_WordPlace							DoInsertText(const CPVT_WordPlace& place, const FX_WCHAR* text, int32_t charset,
 												const CPVT_SecProps * pSecProps, const CPVT_WordProps * pWordProps);
 	int32_t								GetCharSetFromUnicode(FX_WORD word, int32_t nOldCharset);
 
 	int32_t								WordPlaceToWordIndex(const CPVT_WordPlace & place) const;
-	CPVT_WordPlace							WordIndexToWordPlace(int32_t index) const;	
+	CPVT_WordPlace							WordIndexToWordPlace(int32_t index) const;
 
 	CPVT_WordPlace							GetLineBeginPlace(const CPVT_WordPlace & place) const;
 	CPVT_WordPlace							GetLineEndPlace(const CPVT_WordPlace & place) const;
@@ -680,19 +680,19 @@ private:
 	void									EnableNotify(FX_BOOL bNotify);
 
 	void									SetText(const FX_WCHAR* text,int32_t charset,
-													const CPVT_SecProps * pSecProps,const CPVT_WordProps * pWordProps,FX_BOOL bAddUndo, FX_BOOL bPaint);	
+													const CPVT_SecProps * pSecProps,const CPVT_WordProps * pWordProps,FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									InsertWord(FX_WORD word, int32_t charset, const CPVT_WordProps * pWordProps,FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									InsertReturn(const CPVT_SecProps * pSecProps,const CPVT_WordProps * pWordProps,FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									Backspace(FX_BOOL bAddUndo, FX_BOOL bPaint);
-	FX_BOOL									Delete(FX_BOOL bAddUndo, FX_BOOL bPaint);		
+	FX_BOOL									Delete(FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									Clear(FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									InsertText(const FX_WCHAR* text, int32_t charset,
 												const CPVT_SecProps * pSecProps,const CPVT_WordProps * pWordProps,FX_BOOL bAddUndo, FX_BOOL bPaint);
 	FX_BOOL									SetRichTextProps(EDIT_PROPS_E eProps,
 												const CPVT_SecProps * pSecProps, const CPVT_WordProps * pWordProps);
-	FX_BOOL									SetSecProps(EDIT_PROPS_E eProps, const CPVT_WordPlace & place, 
+	FX_BOOL									SetSecProps(EDIT_PROPS_E eProps, const CPVT_WordPlace & place,
 												const CPVT_SecProps * pSecProps, const CPVT_WordProps * pWordProps, const CPVT_WordRange & wr, FX_BOOL bAddUndo);
-	FX_BOOL									SetWordProps(EDIT_PROPS_E eProps, const CPVT_WordPlace & place, 
+	FX_BOOL									SetWordProps(EDIT_PROPS_E eProps, const CPVT_WordPlace & place,
 												const CPVT_WordProps * pWordProps, const CPVT_WordRange & wr, FX_BOOL bAddUndo);
 	void									PaintSetProps(EDIT_PROPS_E eProps, const CPVT_WordRange & wr);
 	void									PaintInsertText(const CPVT_WordPlace & wpOld, const CPVT_WordPlace & wpNew);
@@ -739,7 +739,7 @@ private:
 	FX_FLOAT								GetLineTop(const CPVT_WordPlace& place) const;
 	FX_FLOAT								GetLineBottom(const CPVT_WordPlace& place) const;
 
-private:	
+private:
 	IPDF_VariableText*						m_pVT;
 	IFX_Edit_Notify*						m_pNotify;
 	IFX_Edit_OprNotify*						m_pOprNotify;
@@ -751,8 +751,8 @@ private:
 
 	CPDF_Point								m_ptScrollPos;
 	CPDF_Point								m_ptRefreshScrollPos;
-	FX_BOOL									m_bEnableScroll;	
-	IFX_Edit_Iterator *						m_pIterator;	
+	FX_BOOL									m_bEnableScroll;
+	IFX_Edit_Iterator *						m_pIterator;
 	CFX_Edit_Refresh						m_Refresh;
 	CPDF_Point								m_ptCaret;
 	CFX_Edit_Undo							m_Undo;

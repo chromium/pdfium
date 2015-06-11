@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -64,7 +64,7 @@ FX_FLOAT CPWL_Label::GetFontSize() const
 }
 
 void CPWL_Label::SetParamByFlag()
-{	
+{
 	if (HasFlag(PES_LEFT))
 	{
 		m_pEdit->SetAlignmentH(0);
@@ -158,7 +158,7 @@ CFX_ByteString CPWL_Label::GetTextAppearanceStream(const CPDF_Point & ptOffset) 
 {
 	CFX_ByteTextBuf sRet;
 	CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(m_pEdit,ptOffset);
-	
+
 	if (sEdit.GetLength() > 0)
 	{
 		sRet << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor()) << sEdit << "ET\n";

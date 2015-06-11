@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_dataavail.h"
@@ -28,7 +28,7 @@ public:
 
 private:
 	FX_FILEAVAIL* m_pfileAvail;
-};  
+};
 
 class CFPDF_FileAccessWrap : public IFX_FileRead
 {
@@ -45,7 +45,7 @@ public:
 
 	virtual FX_FILESIZE		GetSize()
 	{
-		return m_pFileAccess->m_FileLen; 
+		return m_pFileAccess->m_FileLen;
 	}
 
 	virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
@@ -69,15 +69,15 @@ public:
 		m_pDownloadHints = pDownloadHints;
 	}
 public:
-	virtual void			AddSegment(FX_FILESIZE offset, FX_DWORD size) 
+	virtual void			AddSegment(FX_FILESIZE offset, FX_DWORD size)
 	{
 		m_pDownloadHints->AddSegment(m_pDownloadHints, offset, size);
-	}	
+	}
 private:
 	FX_DOWNLOADHINTS* m_pDownloadHints;
 };
 
-class CFPDF_DataAvail 
+class CFPDF_DataAvail
 {
 public:
 	CFPDF_DataAvail()

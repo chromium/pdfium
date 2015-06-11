@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_progressive.h"
@@ -14,7 +14,7 @@ extern void (*Func_RenderPage)( CRenderContext*, FPDF_PAGE page, int start_x, in
 
 extern void DropContext(void* data);
 
-DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start( FPDF_BITMAP bitmap, FPDF_PAGE page, 
+DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start( FPDF_BITMAP bitmap, FPDF_PAGE page,
 													int start_x, int start_y, int size_x,
 												    int size_y, int rotate, int flags,
 													IFSDK_PAUSE * pause )
@@ -45,7 +45,7 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start( FPDF_BITMAP bitmap, FPDF_PAGE
 		((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap);
 #endif
 	IFSDK_PAUSE_Adapter IPauseAdapter(pause);
-	
+
 	Func_RenderPage(pContext, page, start_x, start_y, size_x, size_y, rotate, flags,FALSE, &IPauseAdapter);
 
 	if ( pContext->m_pRenderer )
@@ -64,7 +64,7 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,IFSDK_PAUSE * paus
 
  	if (!pause)
 		return FPDF_RENDER_FAILED;
-	
+
 	if (pause->version !=1)
 		return FPDF_RENDER_FAILED;
 

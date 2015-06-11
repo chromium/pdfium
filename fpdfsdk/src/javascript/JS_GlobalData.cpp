@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -121,7 +121,7 @@ CJS_GlobalData::CJS_GlobalData(CPDFDoc_Environment* pApp)
 {
 // 	IBaseAnnot* pBaseAnnot = IBaseAnnot::GetBaseAnnot(m_pApp);
 // 	ASSERT(pBaseAnnot != NULL);
-// 
+//
 // 	m_sFilePath = pBaseAnnot->GetUserPath();
 	m_sFilePath += SDK_JS_GLOBALDATA_FILENAME;
 
@@ -268,7 +268,7 @@ void CJS_GlobalData::SetGlobalVariableObject(const FX_CHAR* propname, const CJS_
 		pNewData->data.sKey = sPropName;
 		pNewData->data.nType = JS_GLOBALDATA_TYPE_OBJECT;
 		pNewData->data.objData.Copy(array);
-		
+
 		m_arrayGlobalData.Add(pNewData);
 	}
 }
@@ -277,12 +277,12 @@ void CJS_GlobalData::SetGlobalVariableNull(const FX_CHAR* propname)
 {
 	ASSERT(propname != NULL);
 	CFX_ByteString sPropName = propname;
-	
+
 	sPropName.TrimLeft();
 	sPropName.TrimRight();
-	
+
 	if (sPropName.GetLength() == 0) return;
-	
+
 	if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName))
 	{
 		pData->data.nType = JS_GLOBALDATA_TYPE_NULL;
@@ -292,7 +292,7 @@ void CJS_GlobalData::SetGlobalVariableNull(const FX_CHAR* propname)
 		CJS_GlobalData_Element* pNewData = new CJS_GlobalData_Element;
 		pNewData->data.sKey = sPropName;
 		pNewData->data.nType = JS_GLOBALDATA_TYPE_NULL;
-		
+
 		m_arrayGlobalData.Add(pNewData);
 	}
 }

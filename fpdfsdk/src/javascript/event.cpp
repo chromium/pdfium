@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -43,12 +43,12 @@ BEGIN_JS_STATIC_PROP(CJS_Event)
 	JS_STATIC_PROP_ENTRY(willCommit)
 END_JS_STATIC_PROP()
 
-BEGIN_JS_STATIC_METHOD(CJS_Event)  
+BEGIN_JS_STATIC_METHOD(CJS_Event)
 END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_Event,event)
 
-event::event(CJS_Object * pJsObject) : CJS_EmbedObj(pJsObject)                           
+event::event(CJS_Object * pJsObject) : CJS_EmbedObj(pJsObject)
 {
 }
 
@@ -86,7 +86,7 @@ FX_BOOL event::changeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 	ASSERT(pEvent != NULL);
 
 	vp << pEvent->ChangeEx();
-	return TRUE;	
+	return TRUE;
 }
 
 FX_BOOL event::commitKey(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
@@ -103,7 +103,7 @@ FX_BOOL event::commitKey(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 }
 
 FX_BOOL event::fieldFull(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
-{	
+{
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
 	CJS_EventHandler* pEvent = pContext->GetEventHandler();
@@ -248,7 +248,7 @@ FX_BOOL event::selEnd(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErr
 }
 
 FX_BOOL event::selStart(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
-{	
+{
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
 	CJS_EventHandler* pEvent = pContext->GetEventHandler();
@@ -288,7 +288,7 @@ FX_BOOL event::shift(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 
 FX_BOOL event::source(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;	
+	if (!vp.IsGetting())return FALSE;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);

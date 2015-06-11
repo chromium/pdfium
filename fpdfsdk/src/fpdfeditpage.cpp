@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_edit.h"
@@ -34,7 +34,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument()
 			}
 		}
 	}
-	
+
 	CPDF_Dictionary* pInfoDict = NULL;
 	pInfoDict = pDoc->GetInfo();
 	if (pInfoDict)
@@ -50,9 +50,9 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument()
 DLLEXPORT void STDCALL FPDFPage_Delete(FPDF_DOCUMENT document, int page_index)
 {
 	CPDF_Document* pDoc = (CPDF_Document*)document;
-	if (pDoc == NULL) 
+	if (pDoc == NULL)
 		return;
-	if (page_index < 0 || page_index >= pDoc->GetPageCount()) 
+	if (page_index < 0 || page_index >= pDoc->GetPageCount())
 		return;
 
 	pDoc->DeletePage(page_index);
@@ -69,7 +69,7 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document, int page_index,
 		page_index = 0;
 	if(pDoc->GetPageCount()<page_index)
 		page_index = pDoc->GetPageCount();
-//	if (page_index < 0 || page_index >= pDoc->GetPageCount()) 
+//	if (page_index < 0 || page_index >= pDoc->GetPageCount())
 //		return NULL;
 
 	CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(page_index);
@@ -130,7 +130,7 @@ DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page)
 	{
 		return -1;
 	}
-	
+
 	return rotate;
 }
 
@@ -268,7 +268,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page)
 }
 
 DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
-			 double a, double b, double c, double d, double e, double f)  
+			 double a, double b, double c, double d, double e, double f)
 {
 	CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_object;
 	if(pPageObj == NULL)

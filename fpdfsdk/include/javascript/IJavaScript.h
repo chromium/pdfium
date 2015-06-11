@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
@@ -46,7 +46,7 @@ public:
 	virtual void				OnField_Format(CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit) = 0;
 	virtual void				OnField_Keystroke(CFX_WideString& strChange, const CFX_WideString& strChangeEx,
 									FX_BOOL KeyDown, FX_BOOL bModifier, int &nSelEnd,int &nSelStart, FX_BOOL bShift,
-									CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit, 
+									CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit,
 									FX_BOOL bFieldFull, FX_BOOL &bRc) = 0;
 	virtual void				OnField_Validate(CFX_WideString& strChange, const CFX_WideString& strChangeEx, FX_BOOL bKeyDown,
 									FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL& bRc) = 0;

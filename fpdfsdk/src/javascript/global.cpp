@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/IJavaScript.h"
@@ -103,9 +103,9 @@ FX_BOOL	CJS_Global::InitInstance(IFXJS_Context* cc)
 
 	global_alternate* pGlobal = (global_alternate*)GetEmbedObject();
 	ASSERT(pGlobal != NULL);
-	
+
 	pGlobal->Initial(pContext->GetReaderApp());
-	
+
 	return TRUE;
 };
 
@@ -127,7 +127,7 @@ global_alternate::~global_alternate(void)
 
 	pFactory->ReleaseGlobalData();
 }
-  
+
 void global_alternate::Initial(CPDFDoc_Environment* pApp)
 {
 	m_pApp = pApp;
@@ -339,10 +339,10 @@ void global_alternate::CommitGlobalPersisitentVariables()
 	FX_POSITION	 pos = m_mapGlobal.GetStartPosition();
 	while (pos)
 	{
-		CFX_ByteString name; 
+		CFX_ByteString name;
 		js_global_data* pData = NULL;
 		m_mapGlobal.GetNextAssoc(pos, name, (void*&)pData);
-		
+
 		if (pData)
 		{
 			if (pData->bDeleted)
@@ -394,7 +394,7 @@ void global_alternate::ObjectToArray(v8::Local<v8::Object> pObj, CJS_GlobalVaria
 
 	for (int i=0; i<nObjElements; i++)
 	{
-		
+
 		CFX_WideString ws = JS_ToString(isolate, JS_GetArrayElement(isolate, pKeyList, i));
 		CFX_ByteString sKey = ws.UTF8Encode();
 
@@ -493,7 +493,7 @@ void global_alternate::DestroyGlobalPersisitentVariables()
 	FX_POSITION	 pos = m_mapGlobal.GetStartPosition();
 	while (pos)
 	{
-		CFX_ByteString name; 
+		CFX_ByteString name;
 		js_global_data* pData = NULL;
 		m_mapGlobal.GetNextAssoc(pos, name, (void*&)pData);
 		delete pData;
@@ -503,7 +503,7 @@ void global_alternate::DestroyGlobalPersisitentVariables()
 }
 
 
-FX_BOOL global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType, 
+FX_BOOL global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType,
 				double dData, bool bData, const CFX_ByteString& sData, JSObject pData, bool bDefaultPersistent)
 {
 	if (propname == NULL) return FALSE;
@@ -549,7 +549,7 @@ FX_BOOL global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType,
 			break;
 		default:
 			return FALSE;
-		}	
+		}
 
 		return TRUE;
 	}
@@ -599,7 +599,7 @@ FX_BOOL global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType,
 		break;
 	default:
 		return FALSE;
-	}	
+	}
 
 	m_mapGlobal.SetAt(propname, (void*)pNewData);
 

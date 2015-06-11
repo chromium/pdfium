@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -20,7 +20,7 @@ BEGIN_JS_STATIC_PROP(CJS_Icon)
 	JS_STATIC_PROP_ENTRY(name)
 END_JS_STATIC_PROP()
 
-BEGIN_JS_STATIC_METHOD(CJS_Icon) 
+BEGIN_JS_STATIC_METHOD(CJS_Icon)
 END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_Icon,Icon)

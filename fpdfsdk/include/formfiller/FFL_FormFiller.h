@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
@@ -38,10 +38,10 @@ public:
 	virtual ~CFFL_FormFiller();
 
 	virtual FX_RECT				GetViewBBox(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot);
-	virtual void				OnDraw(CPDFSDK_PageView *pPageView, /*HDC hDC,*/ CPDFSDK_Annot* pAnnot, 
+	virtual void				OnDraw(CPDFSDK_PageView *pPageView, /*HDC hDC,*/ CPDFSDK_Annot* pAnnot,
 									CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 									/*const CRect& rcWindow, */FX_DWORD dwFlags);
-	virtual void				OnDrawDeactive(CPDFSDK_PageView *pPageView, /*HDC hDC,*/ CPDFSDK_Annot* pAnnot, 
+	virtual void				OnDrawDeactive(CPDFSDK_PageView *pPageView, /*HDC hDC,*/ CPDFSDK_Annot* pAnnot,
 								CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 								/*const CRect& rcWindow, */FX_DWORD dwFlags);
 
@@ -70,13 +70,13 @@ public:
 	virtual FX_BOOL				OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 	virtual FX_BOOL				OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 
-	virtual FX_BOOL				CanCopy(CPDFSDK_Document* pDocument); 
-	virtual FX_BOOL				CanCut(CPDFSDK_Document* pDocument); 
-	virtual FX_BOOL				CanPaste(CPDFSDK_Document* pDocument); 
+	virtual FX_BOOL				CanCopy(CPDFSDK_Document* pDocument);
+	virtual FX_BOOL				CanCut(CPDFSDK_Document* pDocument);
+	virtual FX_BOOL				CanPaste(CPDFSDK_Document* pDocument);
 
-	virtual void				DoCopy(CPDFSDK_Document* pDocument); 
-	virtual void				DoCut(CPDFSDK_Document* pDocument); 
-	virtual void				DoPaste(CPDFSDK_Document* pDocument); 
+	virtual void				DoCopy(CPDFSDK_Document* pDocument);
+	virtual void				DoCut(CPDFSDK_Document* pDocument);
+	virtual void				DoPaste(CPDFSDK_Document* pDocument);
 
 public: //CPWL_TimerHandler
 	virtual void				TimerProc();
@@ -88,9 +88,9 @@ public:
 
  	virtual void				GetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AActionType type,
  									PDFSDK_FieldAction& fa);
- 	virtual void				SetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AActionType type, 
+ 	virtual void				SetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AActionType type,
  									const PDFSDK_FieldAction& fa);
- 	virtual FX_BOOL				IsActionDataChanged(CPDF_AAction::AActionType type, const PDFSDK_FieldAction& faOld, 
+ 	virtual FX_BOOL				IsActionDataChanged(CPDF_AAction::AActionType type, const PDFSDK_FieldAction& faOld,
  									const PDFSDK_FieldAction& faNew);
 
 	virtual void				SaveState(CPDFSDK_PageView* pPageView);
@@ -139,7 +139,7 @@ public:
 
 	virtual void				InvalidateRect(double left, double top, double right, double bottom);
 	CPDFDoc_Environment*		GetApp(){return m_pApp;}
-	CPDFSDK_Annot*				GetSDKAnnot() {return m_pAnnot;}	
+	CPDFSDK_Annot*				GetSDKAnnot() {return m_pAnnot;}
 protected:
 	CPDFDoc_Environment*		m_pApp;
 	CPDFSDK_Widget*				m_pWidget;
@@ -161,11 +161,11 @@ public:
 	virtual FX_BOOL				OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
 	virtual FX_BOOL				OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
 	virtual FX_BOOL				OnMouseMove(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
-	virtual void				OnDraw(CPDFSDK_PageView *pPageView/*, HDC hDC*/, CPDFSDK_Annot* pAnnot, 
+	virtual void				OnDraw(CPDFSDK_PageView *pPageView/*, HDC hDC*/, CPDFSDK_Annot* pAnnot,
 								CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 								/*const CRect& rcWindow,*/ FX_DWORD dwFlags);
 
-	virtual	void				OnDrawDeactive(CPDFSDK_PageView *pPageView, /*HDC hDC,*/ CPDFSDK_Annot* pAnnot, 
+	virtual	void				OnDrawDeactive(CPDFSDK_PageView *pPageView, /*HDC hDC,*/ CPDFSDK_Annot* pAnnot,
 								CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 								/*const CRect& rcWindow, */FX_DWORD dwFlags);
 protected:

@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_GLOBAL_H_
@@ -58,7 +58,7 @@ private:
 	void						UpdateGlobalPersistentVariables();
 	void						CommitGlobalPersisitentVariables();
 	void						DestroyGlobalPersisitentVariables();
-	FX_BOOL						SetGlobalVariables(const FX_CHAR* propname, int nType, 
+	FX_BOOL						SetGlobalVariables(const FX_CHAR* propname, int nType,
 									double dData, bool bData, const CFX_ByteString& sData, JSObject pData, bool bDefaultPersistent);
 
 	void						ObjectToArray(v8::Local<v8::Object> pObj, CJS_GlobalVariableArray& array);
@@ -78,7 +78,7 @@ public:
 	CJS_Global(JSFXObject pObject) : CJS_Object(pObject) {};
 	virtual ~CJS_Global(void){};
 
-	virtual FX_BOOL	InitInstance(IFXJS_Context* cc);	
+	virtual FX_BOOL	InitInstance(IFXJS_Context* cc);
 
 	DECLARE_SPECIAL_JS_CLASS(CJS_Global);
 

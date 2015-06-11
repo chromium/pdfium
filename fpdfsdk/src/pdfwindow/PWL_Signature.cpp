@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -42,7 +42,7 @@ void CPWL_Signature_Image::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Ma
 		FX_FLOAT x, y;
 		pUser2Device->Transform(rcClient.left, rcClient.top, x, y);
 
-		pDevice->StretchDIBits(m_pImage, (int32_t)x, (int32_t)y, 
+		pDevice->StretchDIBits(m_pImage, (int32_t)x, (int32_t)y,
 			(int32_t)rcClient.Width(), (int32_t)rcClient.Height());
 	}
 }
@@ -61,12 +61,12 @@ void CPWL_Signature_Image::GetScale(FX_FLOAT & fHScale,FX_FLOAT & fVScale)
 	CPDF_Rect rcClient = GetClientRect();
 
 	fHScale = rcClient.Width() / fImageW;
-	fVScale = rcClient.Height() / fImageH;	
+	fVScale = rcClient.Height() / fImageH;
 }
 
 /* --------------------------------- CPWL_Signature --------------------------------- */
 
-CPWL_Signature::CPWL_Signature() : 
+CPWL_Signature::CPWL_Signature() :
 	m_pText(NULL),
 	m_pDescription(NULL),
 	m_pImage(NULL),
@@ -136,7 +136,7 @@ void CPWL_Signature::RePosChildWnd()
 	CPDF_Rect rcDescription = rcClient;
 
 	FX_BOOL bTextVisible = m_bTextExist && m_pText->GetText().GetLength() > 0;
-	
+
 	if ((bTextVisible || m_bImageExist) &&
 		m_pDescription->GetText().GetLength() > 0)
 	{
@@ -202,11 +202,11 @@ void CPWL_Signature::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* 
 	path.SetPoint(1, rcClient.right, (rcClient.top + rcClient.bottom) * 0.5f, FXPT_LINETO);
 
 	CFX_GraphStateData gsd;
-	gsd.SetDashCount(2);				
+	gsd.SetDashCount(2);
 	gsd.m_DashArray[0] = 6.0f;
 	gsd.m_DashArray[1] = 6.0f;
-	gsd.m_DashPhase = 0;	
-	
+	gsd.m_DashPhase = 0;
+
 	gsd.m_LineWidth = 10.0f;
 	pDevice->DrawPath(&path, pUser2Device, &gsd, 0, ArgbEncode(255,255,0,0), FXFILL_ALTERNATE);
 	*/

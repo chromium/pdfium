@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -46,7 +46,7 @@ void							CJS_RuntimeFactory::AddRef()
 	m_nRef++;
 }
 void							CJS_RuntimeFactory::Release()
-{	
+{
 	if(m_bInit)
 	{
 		//to do.Should be implemented as atom manipulation.
@@ -83,7 +83,7 @@ CJS_GlobalData*	CJS_RuntimeFactory::NewGlobalData(CPDFDoc_Environment* pApp)
 void CJS_RuntimeFactory::ReleaseGlobalData()
 {
 	m_nGlobalDataCount--;
-	
+
 	if (m_nGlobalDataCount <= 0)
 	{
  		delete m_pGlobalData;
@@ -105,7 +105,7 @@ void CJS_ArrayBufferAllocator::Free(void* data, size_t length) {
 
 /* ------------------------------ CJS_Runtime ------------------------------ */
 
-CJS_Runtime::CJS_Runtime(CPDFDoc_Environment * pApp) : 
+CJS_Runtime::CJS_Runtime(CPDFDoc_Environment * pApp) :
 	m_pApp(pApp),
 	m_pDocument(NULL),
 	m_bBlocking(FALSE),
@@ -159,21 +159,21 @@ FX_BOOL CJS_Runtime::InitJSObjects()
 	if (CJS_Position::Init(*this, JS_STATIC) < 0) return FALSE;
 	if (CJS_ScaleHow::Init(*this, JS_STATIC) < 0) return FALSE;
 	if (CJS_ScaleWhen::Init(*this, JS_STATIC) < 0) return FALSE;
-	if (CJS_Style::Init(*this, JS_STATIC) < 0) return FALSE;	
-	if (CJS_Zoomtype::Init(*this, JS_STATIC) < 0) return FALSE;	
+	if (CJS_Style::Init(*this, JS_STATIC) < 0) return FALSE;
+	if (CJS_Zoomtype::Init(*this, JS_STATIC) < 0) return FALSE;
 
 	//9 - 11
 	if (CJS_App::Init(*this, JS_STATIC) < 0) return FALSE;
-	if (CJS_Color::Init(*this, JS_STATIC) < 0) return FALSE;   
+	if (CJS_Color::Init(*this, JS_STATIC) < 0) return FALSE;
 	if (CJS_Console::Init(*this, JS_STATIC) < 0) return FALSE;
 
 	//12 - 14
-	if (CJS_Document::Init(*this, JS_DYNAMIC) < 0) return FALSE;  
-	if (CJS_Event::Init(*this, JS_STATIC) < 0) return FALSE;		
-	if (CJS_Field::Init(*this, JS_DYNAMIC) < 0) return FALSE;    
+	if (CJS_Document::Init(*this, JS_DYNAMIC) < 0) return FALSE;
+	if (CJS_Event::Init(*this, JS_STATIC) < 0) return FALSE;
+	if (CJS_Field::Init(*this, JS_DYNAMIC) < 0) return FALSE;
 
 	//15 - 17
-	if (CJS_Global::Init(*this, JS_STATIC) < 0) return FALSE;		
+	if (CJS_Global::Init(*this, JS_STATIC) < 0) return FALSE;
 	if (CJS_Icon::Init(*this, JS_DYNAMIC) < 0) return FALSE;
 	if (CJS_Util::Init(*this, JS_STATIC) < 0) return FALSE;
 

@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -14,7 +14,7 @@
 
 /* -------------------------- CJS_Context -------------------------- */
 
-CJS_Context::CJS_Context(CJS_Runtime* pRuntime) : 	
+CJS_Context::CJS_Context(CJS_Runtime* pRuntime) :
 	m_pRuntime(pRuntime),
 	m_bBusy(FALSE),
 	m_bMsgBoxEnable(TRUE)
@@ -41,17 +41,17 @@ CPDFSDK_Document* CJS_Context::GetReaderDocument()
 CPDFDoc_Environment* CJS_Context::GetReaderApp()
 {
 	ASSERT(m_pRuntime != NULL);
-	
+
 	return m_pRuntime->GetReaderApp();
 }
 
 FX_BOOL CJS_Context::DoJob(int nMode, const CFX_WideString& script, CFX_WideString& info)
 {
 	if (m_bBusy)
-	{		
+	{
 		info = JSGetStringFromID(this, IDS_STRING_JSBUSY);
 		return FALSE;
-	}	
+	}
 
 	m_bBusy = TRUE;
 
@@ -66,7 +66,7 @@ FX_BOOL CJS_Context::DoJob(int nMode, const CFX_WideString& script, CFX_WideStri
 	}
 
 	FXJSErr error ={NULL,NULL, 0};
-	int nRet = 0;	
+	int nRet = 0;
 
 	if (script.GetLength() > 0)
 	{
@@ -99,7 +99,7 @@ FX_BOOL CJS_Context::DoJob(int nMode, const CFX_WideString& script, CFX_WideStri
 	m_pRuntime->RemoveEventInLoop(m_pEventHandler->TargetName(), m_pEventHandler->EventType());
 
 	m_pEventHandler->Destroy();
-	m_bBusy = FALSE;	
+	m_bBusy = FALSE;
 
 	return nRet >= 0;
 }
@@ -342,7 +342,7 @@ void CJS_Context::OnExternal_Exec()
 
 void CJS_Context::OnBatchExec(CPDFSDK_Document* pTarget)
 {
-	ASSERT(m_pEventHandler != NULL);	
+	ASSERT(m_pEventHandler != NULL);
 	m_pEventHandler->OnBatchExec(pTarget);
 }
 

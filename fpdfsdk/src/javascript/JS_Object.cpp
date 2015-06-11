@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -46,7 +46,7 @@ CPDFSDK_PageView* FXJS_GetPageView(IFXJS_Context* cc)
 
 /* ---------------------------------  CJS_EmbedObj --------------------------------- */
 
-CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : 
+CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) :
 	m_pJSObject(pJSObject)
 {
 }
@@ -76,7 +76,7 @@ CJS_Timer* CJS_EmbedObj::BeginTimer(CPDFDoc_Environment * pApp,FX_UINT nElapse)
 {
 	CJS_Timer* pTimer = new CJS_Timer(this,pApp);
 	pTimer->SetJSTimer(nElapse);
-	
+
 	return pTimer;
 }
 

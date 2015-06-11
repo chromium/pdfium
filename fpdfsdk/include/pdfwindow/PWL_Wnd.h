@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_WND_H_
@@ -24,7 +24,7 @@ class IPWL_SpellCheck;
 #ifdef FX_READER_DLL
 	#ifdef PWL_EXPORT
 			#define PWL_CLASS		__declspec(dllexport)
-			#define PWL_FUNCTION	PWL_CLASS	
+			#define PWL_FUNCTION	PWL_CLASS
 		#else
 			#define PWL_CLASS
 			#define PWL_FUNCTION
@@ -124,7 +124,7 @@ struct PWL_CLASS CPWL_Color
 	CPWL_Color(int32_t r, int32_t g, int32_t b) :
 		nColorType(COLORTYPE_RGB), fColor1(r/255.0f), fColor2(g/255.0f), fColor3(b/255.0f), fColor4(0)
 	{}
-	
+
 	void ConvertColorType(int32_t other_nColorType);
 
 	/*
@@ -133,13 +133,13 @@ struct PWL_CLASS CPWL_Color
 	COLORTYPE_CMYK
 	COLORTYPE_GRAY
 	*/
-	int32_t					nColorType; 
+	int32_t					nColorType;
 	FX_FLOAT					fColor1,fColor2,fColor3,fColor4;
 };
 
 inline FX_BOOL operator == (const CPWL_Color &c1, const CPWL_Color &c2)
 {
-	return c1.nColorType == c2.nColorType && 
+	return c1.nColorType == c2.nColorType &&
 		c1.fColor1 - c2.fColor1 < 0.0001 && c1.fColor1 - c2.fColor1 > -0.0001 &&
 		c1.fColor2 - c2.fColor2 < 0.0001 && c1.fColor2 - c2.fColor2 > -0.0001 &&
 		c1.fColor3 - c2.fColor3 < 0.0001 && c1.fColor3 - c2.fColor3 > -0.0001 &&
@@ -174,7 +174,7 @@ class IPWL_SpellCheck
 public:
         virtual ~IPWL_SpellCheck() { }
 	virtual FX_BOOL							CheckWord(const FX_CHAR* sWord) = 0;
-	virtual void							SuggestWords(const FX_CHAR* sWord, CFX_ByteStringArray & sSuggest) = 0;	
+	virtual void							SuggestWords(const FX_CHAR* sWord, CFX_ByteStringArray & sSuggest) = 0;
 };
 
 class IPWL_Provider
@@ -224,7 +224,7 @@ public:
 		sTextStrokeColor(),
 		nTransparency(255),
 		fFontSize(PWL_DEFAULT_FONTSIZE),
-		sDash(3,0,0),	
+		sDash(3,0,0),
 		pAttachedData(NULL),
 		pParentWnd(NULL),
 		pMsgControl(NULL),
@@ -233,7 +233,7 @@ public:
 	{
 	}
 
-	CPDF_Rect				rcRectWnd;				//required	
+	CPDF_Rect				rcRectWnd;				//required
 	IFX_SystemHandler*		pSystemHandler;			//required
 	IFX_Edit_FontMap*		pFontMap;				//required for text window
 	IPWL_Provider*			pProvider;				//required for self coordinate
@@ -268,7 +268,7 @@ public:
 	static void 						TimerProc(int32_t idEvent);
 
 private:
-	int32_t							m_nTimerID;	
+	int32_t							m_nTimerID;
 	CPWL_TimerHandler*					m_pAttached;
 	IFX_SystemHandler*					m_pSystemHandler;
 };
@@ -296,7 +296,7 @@ public:
 	virtual ~CPWL_Wnd();
 
 	void							Create(const PWL_CREATEPARAM & cp);
-	virtual CFX_ByteString			GetClassName() const;	
+	virtual CFX_ByteString			GetClassName() const;
 	void							Destroy();
 	void							Move(const CPDF_Rect & rcNew,FX_BOOL bReset,FX_BOOL bRefresh);
 	virtual void					InvalidateRect(CPDF_Rect* pRect = NULL);
@@ -341,13 +341,13 @@ public:
 
 	virtual FX_BOOL					IsModified() const {return FALSE;}
 
-	virtual void					SetFontSize(FX_FLOAT fFontSize);	
+	virtual void					SetFontSize(FX_FLOAT fFontSize);
 
-	void							SetBackgroundColor(const CPWL_Color & color);		
+	void							SetBackgroundColor(const CPWL_Color & color);
 	void							SetBorderColor(const CPWL_Color & color);
 	void							SetBorderWidth(int32_t nBorderWidth);
 	void							SetClipRect(const CPDF_Rect & rect);
-	void							SetBorderStyle(int32_t eBorderStyle);	
+	void							SetBorderStyle(int32_t eBorderStyle);
 	void							SetBorderDash(const CPWL_Dash & sDash);
 
 	CPDF_Rect						GetOriginWindowRect() const;
@@ -355,18 +355,18 @@ public:
 	virtual CPDF_Rect				GetClientRect() const;
 	CPDF_Point						GetCenterPoint() const;
 	CPDF_Rect						GetClientCenterSquare() const;
-	CPDF_Rect						GetWindowCenterSquare() const;		
-	int32_t						GetBorderWidth() const;		
-	FX_BOOL							IsVisible() const {return m_bVisible;}	
+	CPDF_Rect						GetWindowCenterSquare() const;
+	int32_t						GetBorderWidth() const;
+	FX_BOOL							IsVisible() const {return m_bVisible;}
 	FX_BOOL							HasFlag(FX_DWORD dwFlags) const;
 	void							AddFlag(FX_DWORD dwFlags);
 	void							RemoveFlag(FX_DWORD dwFlags);
-	CPDF_Rect						GetClipRect() const;		
-	CPWL_Wnd*						GetParentWindow() const;		
-	int32_t						GetBorderStyle() const;	
+	CPDF_Rect						GetClipRect() const;
+	CPWL_Wnd*						GetParentWindow() const;
+	int32_t						GetBorderStyle() const;
 	CPWL_Dash						GetBorderDash() const;
 	void*							GetAttachedData() const;
-	
+
 	FX_BOOL							WndHitTest(const CPDF_Point & point) const;
 	FX_BOOL							ClientHitTest(const CPDF_Point & point) const;
 	FX_BOOL							IsCaptureMouse() const;
@@ -380,7 +380,7 @@ public:
 	IPWL_Provider*					GetProvider() const;
 	virtual IFX_SystemHandler*		GetSystemHandler() const;
 	IPWL_FocusHandler*				GetFocusHandler() const;
-	
+
 	int32_t						GetTransparency();
 	void							SetTransparency(int32_t nTransparency);
 
@@ -395,15 +395,15 @@ public:
 	virtual CPDF_Rect				ParentToChild(const CPDF_Rect& rect) const;
 
 	//those methods only implemented by listctrl item
-	virtual FX_FLOAT				GetItemHeight(FX_FLOAT fLimitWidth) {return 0;} 
-	virtual FX_FLOAT				GetItemLeftMargin() {return 0;} 
-	virtual FX_FLOAT				GetItemRightMargin() {return 0;} 
+	virtual FX_FLOAT				GetItemHeight(FX_FLOAT fLimitWidth) {return 0;}
+	virtual FX_FLOAT				GetItemLeftMargin() {return 0;}
+	virtual FX_FLOAT				GetItemRightMargin() {return 0;}
 
 	void							EnableWindow(FX_BOOL bEnable);
 	FX_BOOL							IsEnabled();
 	virtual void					SetCursor();
 
-protected:	
+protected:
 	virtual void					CreateChildWnd(const PWL_CREATEPARAM & cp);
 	virtual void					RePosChildWnd();
 	void							GetAppearanceStream(CFX_ByteTextBuf & sAppStream);
@@ -424,20 +424,20 @@ protected:
 	virtual void					OnDisabled();
 
 	void							SetNotifyFlag(FX_BOOL bNotifying = TRUE){m_bNotifying = bNotifying;};
- 
+
 	FX_BOOL							IsValid() const;
-	PWL_CREATEPARAM					GetCreationParam() const;		
-	FX_BOOL							IsNotifying() const {return m_bNotifying;}	
-	
+	PWL_CREATEPARAM					GetCreationParam() const;
+	FX_BOOL							IsNotifying() const {return m_bNotifying;}
+
 	void							InvalidateRectMove(const CPDF_Rect & rcOld, const CPDF_Rect & rcNew);
 
 	void							PWLtoWnd(const CPDF_Point & point, int32_t& x, int32_t& y) const;
-	FX_RECT							PWLtoWnd(const CPDF_Rect & rect) const;	
+	FX_RECT							PWLtoWnd(const CPDF_Rect & rect) const;
 	FX_HWND							GetAttachedHWnd() const;
-	
+
 	FX_BOOL							IsWndCaptureMouse(const CPWL_Wnd * pWnd) const;
-	FX_BOOL							IsWndCaptureKeyboard(const CPWL_Wnd * pWnd) const;	
-	const CPWL_Wnd*					GetRootWnd() const;	
+	FX_BOOL							IsWndCaptureKeyboard(const CPWL_Wnd * pWnd) const;
+	const CPWL_Wnd*					GetRootWnd() const;
 
 	FX_BOOL							IsCTRLpressed(FX_DWORD nFlag) const;
 	FX_BOOL							IsSHIFTpressed(FX_DWORD nFlag) const;
@@ -449,28 +449,28 @@ private:
 	void							RemoveChild(CPWL_Wnd * pWnd);
 
 	void							CreateScrollBar(const PWL_CREATEPARAM & cp);
-	void							CreateVScrollBar(const PWL_CREATEPARAM & cp);	
+	void							CreateVScrollBar(const PWL_CREATEPARAM & cp);
 
-	void							AjustStyle();	
+	void							AjustStyle();
 	void							CreateMsgControl();
 	void							DestroyMsgControl();
-	
-	CPWL_MsgControl*				GetMsgControl() const;	
-	
+
+	CPWL_MsgControl*				GetMsgControl() const;
+
 protected:
 	CFX_ArrayTemplate<CPWL_Wnd*>	m_aChildren;
 
 private:
 	PWL_CREATEPARAM					m_sPrivateParam;
-	
+
 	CPWL_ScrollBar*					m_pVScrollBar;
 
 	CPDF_Rect						m_rcWindow;
 	CPDF_Rect						m_rcClip;
 
-	FX_BOOL							m_bCreated;			
+	FX_BOOL							m_bCreated;
 	FX_BOOL							m_bVisible;
-	FX_BOOL							m_bNotifying;	
+	FX_BOOL							m_bNotifying;
 	FX_BOOL							m_bEnabled;
 };
 

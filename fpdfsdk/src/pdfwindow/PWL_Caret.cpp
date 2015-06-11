@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -48,7 +48,7 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUse
 		CFX_PathData path;
 
 		path.SetPointCount(2);
-		
+
 		FX_FLOAT fCaretX = rcRect.left + m_fWidth * 0.5f;
 		FX_FLOAT fCaretTop = rcRect.top;
 		FX_FLOAT fCaretBottom = rcRect.bottom;
@@ -84,7 +84,7 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUse
 void CPWL_Caret::GetCaretApp(CFX_ByteTextBuf & sAppStream,const CPDF_Point & ptOffset)
 {
 	if (IsVisible() && m_bFlash)
-	{	
+	{
 		CFX_ByteTextBuf sCaret;
 
 		CPDF_Rect rcRect = GetCaretRect();
@@ -96,14 +96,14 @@ void CPWL_Caret::GetCaretApp(CFX_ByteTextBuf & sAppStream,const CPDF_Point & ptO
 		sCaret << "q\n";
 		if (!rcClip.IsEmpty())
 		{
-			sCaret << rcClip.left << " " << rcClip.bottom + 2.5f << " " 
+			sCaret << rcClip.left << " " << rcClip.bottom + 2.5f << " "
 				<< rcClip.right - rcClip.left << " " << rcClip.top - rcClip.bottom - 4.5f << " re W n\n";
 		}
 		sCaret << m_fWidth << " w\n0 G\n";
 		sCaret << rcRect.left + m_fWidth/2 << " " << rcRect.bottom << " m\n";
-		sCaret << rcRect.left + m_fWidth/2 << " " << rcRect.top << " l S\nQ\n";	
+		sCaret << rcRect.left + m_fWidth/2 << " " << rcRect.top << " l S\nQ\n";
 
-		sAppStream << sCaret;	
+		sAppStream << sCaret;
 	}
 }
 
@@ -118,7 +118,7 @@ void CPWL_Caret::TimerProc()
 {
 	if (m_nDelay > 0)
 	{
-		m_nDelay--;	
+		m_nDelay--;
 	}
 	else
 	{
@@ -138,10 +138,10 @@ CPDF_Rect CPWL_Caret::GetCaretRect() const
 void CPWL_Caret::SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot)
 {
 	if (bVisible)
-	{	
+	{
 		if (IsVisible())
 		{
-			if (m_ptHead.x != ptHead.x || m_ptHead.y != ptHead.y || 
+			if (m_ptHead.x != ptHead.x || m_ptHead.y != ptHead.y ||
 					m_ptFoot.x != ptFoot.x || m_ptFoot.y != ptFoot.y)
 			{
 				m_ptHead = ptHead;
@@ -159,13 +159,13 @@ void CPWL_Caret::SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPD
 
 			EndTimer();
 			BeginTimer(PWL_CARET_FLASHINTERVAL);
-			
+
 			CPWL_Wnd::SetVisible(TRUE);
 			m_bFlash = TRUE;
 
-			//Move(GetCaretRect(),FALSE,TRUE);	
+			//Move(GetCaretRect(),FALSE,TRUE);
 			Move(m_rcInvalid, FALSE, TRUE);
-		}		
+		}
 	}
 	else
 	{
@@ -177,7 +177,7 @@ void CPWL_Caret::SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPD
 		{
 			EndTimer();
 			CPWL_Wnd::SetVisible(FALSE);
-		}		
+		}
 	}
 }
 
@@ -187,8 +187,8 @@ void CPWL_Caret::InvalidateRect(CPDF_Rect * pRect)
 	{
 		CPDF_Rect rcRefresh = CPWL_Utils::InflateRect(*pRect,0.5f);
 		rcRefresh.top += 1;
-		rcRefresh.bottom -= 1;	
-		
+		rcRefresh.bottom -= 1;
+
 		CPWL_Wnd::InvalidateRect(&rcRefresh);
 	}
 	else

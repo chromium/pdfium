@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -168,7 +168,7 @@ int	CJS_GlobalArrays::Init(IJS_Runtime* pRuntime)
 	{
 		const FX_WCHAR* ArrayName = L"RE_NUMBER_ENTRY_COMMA_SEP";
 		const FX_WCHAR* ArrayContent[] = {L"[+-]?\\d*,?\\d*"};
-		
+
 		DEFINE_GLOBAL_ARRAY(pRuntime);
 	}
 

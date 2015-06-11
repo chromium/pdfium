@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_
@@ -86,7 +86,7 @@ private:
 	CPWL_IconList_Item*					GetListItem(int32_t nItemIndex) const;
 	void								SelectItem(int32_t nItemIndex, FX_BOOL bSelect);
 	int32_t							FindItemIndex(const CPDF_Point& point);
-	
+
 	FX_BOOL								m_nSelectIndex;
 	IPWL_IconList_Notify*				m_pNotify;
 	FX_BOOL								m_bEnableNotify;
@@ -117,7 +117,7 @@ protected:
 	virtual void						OnCreated();
 	virtual void						RePosChildWnd();
 	virtual void						CreateChildWnd(const PWL_CREATEPARAM & cp);
-	
+
 	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
 private:

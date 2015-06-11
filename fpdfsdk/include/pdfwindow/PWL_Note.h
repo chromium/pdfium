@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_NOTE_H_
@@ -70,7 +70,7 @@ public:
 	virtual IPWL_NoteItem*				GetSubItems(int32_t index) const = 0;
 	virtual void						DeleteSubItem(IPWL_NoteItem* pNoteItem) = 0;
 	virtual void						SetFocus() = 0;
-	
+
 	virtual IPWL_NoteItem*				GetParentItem() const = 0;
 	virtual void*						GetPrivateData() const = 0;
 	virtual CFX_WideString				GetAuthorName() const = 0;
@@ -151,7 +151,7 @@ protected:
 	virtual void						OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 	virtual void						RePosChildWnd();
 	virtual void						OnSetFocus();
-	virtual void						OnKillFocus();	
+	virtual void						OnKillFocus();
 
 private:
 	FX_BOOL								m_bEnableNotify;
@@ -213,7 +213,7 @@ private:
 	CPWL_Note_Edit*						m_pEdit;
 };
 
-class PWL_CLASS CPWL_NoteItem : public CPWL_Wnd, public IPWL_NoteItem 
+class PWL_CLASS CPWL_NoteItem : public CPWL_Wnd, public IPWL_NoteItem
 {
 public:
 	CPWL_NoteItem();
@@ -269,7 +269,7 @@ public:
 
 	void								SetNoteFocus(FX_BOOL bLast);
 	void								OnContentsValidate();
-	
+
 	void								OnCreateNoteItem();
 
 protected:
@@ -320,7 +320,7 @@ public:
 	CFX_WideString						GetReplyString() const;
 	void								SetReplyString(const CFX_WideString& string);
 
-	//0-normal / 1-caption / 2-leftbottom corner / 3-rightbottom corner / 4-close / 5-options 
+	//0-normal / 1-caption / 2-leftbottom corner / 3-rightbottom corner / 4-close / 5-options
 	int32_t							NoteHitTest(const CPDF_Point& point) const;
 	CPDF_Rect							GetCaptionRect() const {return m_rcCaption;}
 	IPopup_Note*						GetPopupNote() const {return m_pPopupNote;}
@@ -346,7 +346,7 @@ private:
 	CPWL_Note_CloseBox*					m_pCloseBox;
 	CPWL_Note_LBBox*					m_pLBBox;
 	CPWL_Note_RBBox*					m_pRBBox;
-	CPWL_ScrollBar*						m_pContentsBar;	
+	CPWL_ScrollBar*						m_pContentsBar;
 	CPWL_Note_Options*					m_pOptions;
 	IPWL_NoteNotify*					m_pNoteNotify;
 	FX_BOOL								m_bResizing;

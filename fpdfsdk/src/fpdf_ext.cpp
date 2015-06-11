@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_ext.h"
@@ -42,7 +42,7 @@ FX_BOOL FPDF_UnSupportError(int nError)
 		return FALSE;
 	pAdapter->ReportError(nError);
 	return TRUE;
-}	
+}
 
 DLLEXPORT FPDF_BOOL STDCALL FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info)
 {
@@ -94,22 +94,22 @@ void CheckUnSupportAnnot(CPDF_Document * pDoc, CPDF_Annot* pPDFAnnot)
 		if(pAnnotDict->KeyExist("FT"))
 		{
 			cbString = pAnnotDict->GetString("FT");
-		}	
+		}
 		if(cbString.Compare("Sig") == 0)
 		{
 			FPDF_UnSupportError(FPDF_UNSP_ANNOT_SIG);
 		}
 	}
-	
+
 }
 
 FX_BOOL CheckSharedForm(CXML_Element * pElement, CFX_ByteString cbName)
 {
 	int count = pElement->CountAttrs();
 	int i=0;
-	for (i = 0; i < count; i++) 
+	for (i = 0; i < count; i++)
 	{
-		CFX_ByteString space, name; 
+		CFX_ByteString space, name;
 		CFX_WideString value;
 		pElement->GetAttrByIndex(i, space, name, value);
 		if (space == FX_BSTRC("xmlns") && name == FX_BSTRC("adhocwf") && value ==  L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/")
@@ -159,7 +159,7 @@ void CheckUnSupportError(CPDF_Document * pDoc, FX_DWORD err_code)
 	if(!pDoc)
 		return ;
 
-	// Portfolios and Packages 
+	// Portfolios and Packages
 	CPDF_Dictionary * pRootDict = pDoc->GetRoot();
 	if(pRootDict)
 	{

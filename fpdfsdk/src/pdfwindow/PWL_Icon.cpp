@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -97,7 +97,7 @@ CFX_ByteString CPWL_Image::GetImageAlias()
 	{
 		if (m_pPDFStream)
 		{
-			if (CPDF_Dictionary * pDict = m_pPDFStream->GetDict())		
+			if (CPDF_Dictionary * pDict = m_pPDFStream->GetDict())
 			{
 				return pDict->GetString("Name");
 			}
@@ -187,7 +187,7 @@ void CPWL_Icon::GetScale(FX_FLOAT & fHScale,FX_FLOAT & fVScale)
 {
 	fHScale = 1.0f;
 	fVScale = 1.0f;
-	
+
 	if (m_pPDFStream)
 	{
 		FX_FLOAT fImageWidth,fImageHeight;

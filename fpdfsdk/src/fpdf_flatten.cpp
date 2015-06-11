@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_flatten.h"
@@ -15,16 +15,16 @@ enum FPDF_VALUE { TOP, LEFT, RIGHT, BOTTOM };
 
 FX_BOOL IsValiableRect(CPDF_Rect rect, CPDF_Rect rcPage)
 {
-	if ( rect.left - rect.right > 0.000001f || 
+	if ( rect.left - rect.right > 0.000001f ||
 		 rect.bottom - rect.top > 0.000001f)
 		return FALSE;
-	
+
 	if (rect.left == 0.0f &&
 		rect.top == 0.0f &&
 		rect.right == 0.0f &&
 		rect.bottom == 0.0f)
 		return FALSE;
-	
+
 	if (!rcPage.IsEmpty())
 	{
 		if (rect.left - rcPage.left < -10.000001f ||
@@ -33,7 +33,7 @@ FX_BOOL IsValiableRect(CPDF_Rect rect, CPDF_Rect rcPage)
 			rect.bottom - rcPage.bottom < -10.000001f)
 			return FALSE;
 	}
-	
+
 	return TRUE;
 }
 
@@ -45,24 +45,24 @@ FX_BOOL GetContentsRect( CPDF_Document * pDoc, CPDF_Dictionary* pDict, CPDF_Rect
 	pPDFPage->ParseContent();
 
 	FX_POSITION pos = pPDFPage->GetFirstObjectPosition();
-	
+
 	while (pos)
 	{
 		CPDF_PageObject* pPageObject = pPDFPage->GetNextObject(pos);
 		if (!pPageObject)continue;
-		
+
 		CPDF_Rect rc;
 		rc.left = pPageObject->m_Left;
 		rc.right = pPageObject->m_Right;
 		rc.bottom = pPageObject->m_Bottom;
 		rc.top = pPageObject->m_Top;
-		
+
 		if (IsValiableRect(rc, pDict->GetRect("MediaBox")))
 		{
 			pRectArray->Add(rc);
 		}
 	}
-	
+
 	delete pPDFPage;
 	return TRUE;
 }
@@ -76,10 +76,10 @@ void ParserStream( CPDF_Dictionary * pPageDic, CPDF_Dictionary* pStream, CPDF_Re
 		rect = pStream->GetRect("Rect");
 	else if (pStream->KeyExist("BBox"))
 		rect = pStream->GetRect("BBox");
-	
+
 	if (IsValiableRect(rect, pPageDic->GetRect("MediaBox")))
 		pRectArray->Add(rect);
-	
+
 	pObjectArray->Add(pStream);
 }
 
@@ -131,9 +131,9 @@ FX_FLOAT GetMinMaxValue( CPDF_RectArray& array, FPDF_TYPE type, FPDF_VALUE value
 {
 	int nRects = array.GetSize();
 	FX_FLOAT fRet = 0.0f;
-	
+
 	if (nRects <= 0)return 0.0f;
-	
+
 	FX_FLOAT* pArray = new FX_FLOAT[nRects];
 	switch(value)
 	{
@@ -141,28 +141,28 @@ FX_FLOAT GetMinMaxValue( CPDF_RectArray& array, FPDF_TYPE type, FPDF_VALUE value
 		{
 			for (int i = 0; i < nRects; i++)
 				pArray[i] = CPDF_Rect(array.GetAt(i)).left;
-			
+
 			break;
 		}
 	case TOP:
 		{
 			for (int i = 0; i < nRects; i++)
 				pArray[i] = CPDF_Rect(array.GetAt(i)).top;
-			
+
 			break;
 		}
 	case RIGHT:
 		{
 			for (int i = 0; i < nRects; i++)
 				pArray[i] = CPDF_Rect(array.GetAt(i)).right;
-			
+
 			break;
 		}
 	case BOTTOM:
 		{
 			for (int i = 0; i < nRects; i++)
 				pArray[i] = CPDF_Rect(array.GetAt(i)).bottom;
-			
+
 			break;
 		}
 	default:
@@ -189,12 +189,12 @@ CPDF_Rect CalculateRect( CPDF_RectArray * pRectArray )
 {
 
 	CPDF_Rect rcRet;
-	
+
 	rcRet.left = GetMinMaxValue(*pRectArray, MIN, LEFT);
 	rcRet.top = GetMinMaxValue(*pRectArray, MAX, TOP);
 	rcRet.right = GetMinMaxValue(*pRectArray, MAX, RIGHT);
 	rcRet.bottom = GetMinMaxValue(*pRectArray, MIN, BOTTOM);
-	
+
 	return rcRet;
 }
 
@@ -206,7 +206,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 	{
 		pContentsObj = pPage->GetArray("Contents");
 	}
-	
+
 	if (!pContentsObj)
 	{
 		//Create a new contents dictionary
@@ -224,7 +224,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 
 	int iType = pContentsObj->GetType();
 	CPDF_Array* pContentsArray = NULL;
-	
+
 	switch(iType)
 	{
 	case PDFOBJ_STREAM:
@@ -241,7 +241,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 			pContentsArray->AddReference(pDocument, dwObjNum);
 			break;
 		}
-		
+
 	case PDFOBJ_ARRAY:
 		{
 			pContentsArray = (CPDF_Array*)pContentsObj;
@@ -249,13 +249,13 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 		}
 	default:
 		break;
-	}	
-	
+	}
+
 	if (!pContentsArray)return;
-	
+
 	FX_DWORD dwObjNum = pDocument->AddIndirectObject(pContentsArray);
 	pPage->SetAtReference("Contents", pDocument, dwObjNum);
-	
+
 	if (!key.IsEmpty())
 	{
 		CPDF_Stream* pNewContents = new CPDF_Stream(NULL, 0, new CPDF_Dictionary);
@@ -267,18 +267,18 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 		pNewContents->SetData((const uint8_t*)sStream, sStream.GetLength(), FALSE, FALSE);
 	}
 }
- 
+
 CFX_AffineMatrix GetMatrix(CPDF_Rect rcAnnot, CPDF_Rect rcStream, CFX_AffineMatrix matrix)
 {
 	if(rcStream.IsEmpty())
 		return CFX_AffineMatrix();
-	
+
 	matrix.TransformRect(rcStream);
 	rcStream.Normalize();
-	
+
 	FX_FLOAT a = rcAnnot.Width()/rcStream.Width();
 	FX_FLOAT d = rcAnnot.Height()/rcStream.Height();
-	
+
 	FX_FLOAT e = rcAnnot.left - rcStream.left * a;
 	FX_FLOAT f = rcAnnot.bottom - rcStream.bottom * d;
 	return CFX_AffineMatrix(a, 0, 0, d, e, f);
@@ -290,7 +290,7 @@ void GetOffset(FX_FLOAT& fa, FX_FLOAT& fd, FX_FLOAT& fe, FX_FLOAT& ff, CPDF_Rect
 	FX_FLOAT fStreamHeight = 0.0f;
 
 
-	
+
 	if (matrix.a != 0 && matrix.d != 0)
 	{
 		fStreamWidth = rcStream.right - rcStream.left;
@@ -301,7 +301,7 @@ void GetOffset(FX_FLOAT& fa, FX_FLOAT& fd, FX_FLOAT& fe, FX_FLOAT& ff, CPDF_Rect
 		fStreamWidth = rcStream.top - rcStream.bottom;
 		fStreamHeight = rcStream.right - rcStream.left;
 	}
-	
+
 	FX_FLOAT x1 = matrix.a * rcStream.left + matrix.c * rcStream.bottom + matrix.e;
 	FX_FLOAT y1 = matrix.b * rcStream.left + matrix.d * rcStream.bottom + matrix.f;
 	FX_FLOAT x2 = matrix.a * rcStream.left + matrix.c * rcStream.top + matrix.e;
@@ -310,10 +310,10 @@ void GetOffset(FX_FLOAT& fa, FX_FLOAT& fd, FX_FLOAT& fe, FX_FLOAT& ff, CPDF_Rect
 	FX_FLOAT y3 = matrix.b * rcStream.right + matrix.d * rcStream.bottom + matrix.f;
 	FX_FLOAT x4 = matrix.a * rcStream.right + matrix.c * rcStream.top + matrix.e;
 	FX_FLOAT y4 = matrix.b * rcStream.right + matrix.d * rcStream.top + matrix.f;
-	
+
 	FX_FLOAT left = FX_MIN(FX_MIN(x1, x2), FX_MIN(x3, x4));
 	FX_FLOAT bottom = FX_MIN(FX_MIN(y1, y2), FX_MIN(y3, y4));
-	
+
 	fa = (rcAnnot.right - rcAnnot.left)/fStreamWidth;
 	fd = (rcAnnot.top - rcAnnot.bottom)/fStreamHeight;
 	fe = rcAnnot.left - left * fa;
@@ -331,7 +331,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 	CPDF_Page * pPage = (CPDF_Page*)( page );
 	CPDF_Document * pDocument = pPage->m_pDocument;
 	CPDF_Dictionary * pPageDict = pPage->m_pFormDict;
-	
+
 	if ( !pDocument || !pPageDict )
 	{
 		return FLATTEN_FAIL;
@@ -351,17 +351,17 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 
 	if (pPageDict->KeyExist("CropBox"))
 		rcOriginalMB = pPageDict->GetRect("CropBox");
-	
-	if (rcOriginalMB.IsEmpty()) 	
+
+	if (rcOriginalMB.IsEmpty())
 	{
 		rcOriginalMB = CPDF_Rect(0.0f, 0.0f, 612.0f, 792.0f);
 	}
-	
+
 	rcMerger.left = rcMerger.left < rcOriginalMB.left? rcOriginalMB.left : rcMerger.left;
 	rcMerger.right = rcMerger.right > rcOriginalMB.right? rcOriginalMB.right : rcMerger.right;
 	rcMerger.top = rcMerger.top > rcOriginalMB.top? rcOriginalMB.top : rcMerger.top;
 	rcMerger.bottom = rcMerger.bottom < rcOriginalMB.bottom? rcOriginalMB.bottom : rcMerger.bottom;
-	
+
 	if (pPageDict->KeyExist("ArtBox"))
 		rcOriginalCB = pPageDict->GetRect("ArtBox");
 	else
@@ -470,7 +470,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 					{
 						if (pFirstObj->GetType() == PDFOBJ_REFERENCE)
 							pFirstObj = pFirstObj->GetDirect();
-						
+
 						if (pFirstObj->GetType() != PDFOBJ_STREAM)
 							continue;
 
@@ -496,7 +496,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 		CPDF_Object* pObj = pAPStream;
 
 		if (pObj)
-		{		
+		{
 			CPDF_Dictionary* pObjDic = pObj->GetDict();
 			if (pObjDic)
 			{

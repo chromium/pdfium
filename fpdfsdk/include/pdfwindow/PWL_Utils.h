@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
@@ -21,7 +21,7 @@ template<class T> T PWL_MAX (const T & i, const T & j) { return ((i > j) ? i : j
 #define PWL_PDF2WIN(color)					(uint8_t(color*255))
 #define PWL_WIN2PDF(color)					((FX_FLOAT)((FX_FLOAT)color/255.0f))
 
-#define PWL_MAKEDWORD(low,high)				((FX_DWORD)((FX_WORD)(low) | (FX_DWORD)(((FX_WORD)(high))<<16))) 
+#define PWL_MAKEDWORD(low,high)				((FX_DWORD)((FX_WORD)(low) | (FX_DWORD)(((FX_WORD)(high))<<16)))
 #define PWL_GETLOWWORD(dword)				((FX_WORD)(dword))
 #define PWL_GETHIGHWORD(dword)				((FX_WORD)(dword>>16))
 
@@ -137,7 +137,7 @@ public:
 														IFX_Edit_FontMap * pFontMap,
 														CPDF_Stream * pIconStream,
 														CPDF_IconFit & IconFit,
-														const CFX_WideString & sLabel,														
+														const CFX_WideString & sLabel,
 														const CPWL_Color & crText,
 														FX_FLOAT fFontSize,
 														int32_t nLayOut);
@@ -148,7 +148,7 @@ public:
 														int32_t nStyle,
 														const CPWL_Color & crText);
 
-	static CFX_ByteString					GetEditAppStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset, const CPVT_WordRange * pRange = NULL, 
+	static CFX_ByteString					GetEditAppStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset, const CPVT_WordRange * pRange = NULL,
 														FX_BOOL bContinuous = TRUE, FX_WORD SubWord = 0);
 	static CFX_ByteString					GetEditSelAppStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset,
 														const CPVT_WordRange * pRange = NULL);
@@ -177,13 +177,13 @@ public:
 	static void								DrawShadow(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 														FX_BOOL bVertical, FX_BOOL bHorizontal, CPDF_Rect rect,
 														int32_t nTransparancy, int32_t nStartGray, int32_t nEndGray);
-	static void								DrawEditSpellCheck(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, IFX_Edit* pEdit, 
-														const CPDF_Rect& rcClip, const CPDF_Point& ptOffset, const CPVT_WordRange* pRange, 
+	static void								DrawEditSpellCheck(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, IFX_Edit* pEdit,
+														const CPDF_Rect& rcClip, const CPDF_Point& ptOffset, const CPVT_WordRange* pRange,
 														IPWL_SpellCheck* pSpellCheck);
 public:
 	static void								ConvertCMYK2RGB(FX_FLOAT dC,FX_FLOAT dM,FX_FLOAT dY,FX_FLOAT dK,FX_FLOAT &dR,FX_FLOAT &dG,FX_FLOAT &dB);
 	static void								ConvertRGB2CMYK(FX_FLOAT dR,FX_FLOAT dG,FX_FLOAT dB,FX_FLOAT &dC,FX_FLOAT &dM,FX_FLOAT &dY,FX_FLOAT &dK);
-	
+
 	static void								ConvertRGB2GRAY(FX_FLOAT dR,FX_FLOAT dG,FX_FLOAT dB,FX_FLOAT &dGray);
 	static void								ConvertGRAY2RGB(FX_FLOAT dGray,FX_FLOAT &dR,FX_FLOAT &dG,FX_FLOAT &dB);
 
@@ -193,10 +193,10 @@ public:
 	static void								PWLColorToARGB(const CPWL_Color& color, int32_t& alpha, FX_FLOAT& red, FX_FLOAT& green, FX_FLOAT& blue);
 
 public:
-	static CFX_ByteString					GetIconAppStream(int32_t nType, const CPDF_Rect& rect, const CPWL_Color& crFill, 
+	static CFX_ByteString					GetIconAppStream(int32_t nType, const CPDF_Rect& rect, const CPWL_Color& crFill,
 												const CPWL_Color& crStroke = PWL_DEFAULT_BLACKCOLOR);
 	static void								DrawIconAppStream(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
-												int32_t nType, const CPDF_Rect & rect, const CPWL_Color& crFill, 
+												int32_t nType, const CPDF_Rect & rect, const CPWL_Color& crFill,
 												const CPWL_Color& crStroke, const int32_t nTransparancy);
 
 private:

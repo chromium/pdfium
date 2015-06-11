@@ -1,11 +1,11 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../core/include/fxcrt/fx_basic.h"
-#include "../../../core/include/fxcrt/fx_ext.h" 
+#include "../../../core/include/fxcrt/fx_ext.h"
 #include "../../include/jsapi/fxjs_v8.h"
 #include "../../include/fsdk_define.h"
 #include "time.h"
@@ -309,7 +309,7 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime, v8::Global<v8::Context>& v8Persi
 	isolate->SetData(0,NULL);
 }
 
-void JS_Initial() 
+void JS_Initial()
 {
 }
 void JS_Release()
@@ -625,7 +625,7 @@ v8::Local<v8::Array> JS_NewArray(IJS_Runtime* pJSRuntime)
 }
 
 unsigned JS_PutArrayElement(IJS_Runtime* pJSRuntime, v8::Local<v8::Array> pArray,unsigned index,v8::Local<v8::Value> pValue,FXJSVALUETYPE eType)
-{	
+{
 	if(pArray.IsEmpty()) return 0;
 	if (pArray->Set(pJSRuntime->GetCurrentContext(), index, pValue).IsNothing()) return 0;
 	return 1;
@@ -802,7 +802,7 @@ int _getDaylightSavingTA(double d)
 }
 
 double _Mod(double x, double y)
-{   
+{
 	double r = fmod(x, y);
 	if (r < 0) r += y;
 	return r;
@@ -912,29 +912,29 @@ int _DateFromTime(double t)
 	int month = _MonthFromTime(t);
 	switch (month)
 	{
-	case 0:	 
+	case 0:
 		return day+1;
-	case 1:	 
+	case 1:
 		return day-30;
-	case 2:	 
+	case 2:
 		return day-58-leap;
-	case 3:	 
+	case 3:
 		return day-89-leap;
-	case 4:	 
+	case 4:
 		return day-119-leap;
-	case 5:	 
+	case 5:
 		return day-150-leap;
-	case 6:	 
+	case 6:
 		return day-180-leap;
-	case 7:	 
+	case 7:
 		return day-211-leap;
-	case 8:	 
+	case 8:
 		return day-242-leap;
-	case 9:	 
+	case 9:
 		return day-272-leap;
-	case 10: 
+	case 10:
 		return day-303-leap;
-	case 11: 
+	case 11:
 		return day-333-leap;
 	default:
 		return 0;
@@ -991,7 +991,7 @@ double JS_DateParse(const wchar_t* string)
 	v8::HandleScope scope(pIsolate);
 
 	v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
-	
+
 	//Use the built-in object method.
 	v8::Local<v8::Value> v = context->Global()->Get(context, v8::String::NewFromUtf8(pIsolate, "Date", v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
 	if(v->IsObject())

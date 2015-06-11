@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_FSDK_ANNOTHANDLER_H_
@@ -30,30 +30,30 @@ public:
 	virtual CFX_ByteString		GetName() = 0;
 
 	virtual FX_BOOL				CanAnswer(CPDFSDK_Annot* pAnnot) = 0;
-	
+
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) = 0;
 
 	virtual void				ReleaseAnnot(CPDFSDK_Annot* pAnnot) = 0;
 
 	virtual void				DeleteAnnot(CPDFSDK_Annot* pAnnot) = 0;
-	
+
 
 	virtual CPDF_Rect				GetViewBBox(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot) = 0;
-	
-	virtual FX_BOOL				HitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point) = 0;
-	
 
-	virtual void				OnDraw(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, 
+	virtual FX_BOOL				HitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point) = 0;
+
+
+	virtual void				OnDraw(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot,
 		CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 		FX_DWORD dwFlags) = 0;
-	
-	virtual void				OnDrawSleep(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, 
+
+	virtual void				OnDrawSleep(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot,
 		CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 		const CPDF_Rect& rcWindow, FX_DWORD dwFlags) = 0;
-	
 
-	
+
+
 
 	virtual void				OnCreate(CPDFSDK_Annot* pAnnot) = 0;
 
@@ -62,11 +62,11 @@ public:
 	virtual void				OnDelete(CPDFSDK_Annot* pAnnot) = 0;
 
 	virtual void				OnRelease(CPDFSDK_Annot* pAnnot) = 0;
-	
+
 
 	virtual void				OnMouseEnter(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) = 0;
 	virtual void				OnMouseExit(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) = 0;
-	
+
 
 	virtual FX_BOOL				OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) = 0;
 	virtual FX_BOOL				OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) = 0;
@@ -100,7 +100,7 @@ public:
 	virtual CFX_ByteString		GetType()  {return CFX_ByteString("Widget");}
 
 	virtual CFX_ByteString		GetName()  {return CFX_ByteString("WidgetHandler");}
-	
+
 	virtual FX_BOOL				CanAnswer(CPDFSDK_Annot* pAnnot);
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage);
@@ -108,21 +108,21 @@ public:
 	virtual void				ReleaseAnnot(CPDFSDK_Annot* pAnnot)  ;
 
 	virtual void				DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
-	
+
 
 	virtual CPDF_Rect				GetViewBBox(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot) ;
-	
-	virtual FX_BOOL				HitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point);
-	
 
-	virtual void				OnDraw(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, 
+	virtual FX_BOOL				HitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point);
+
+
+	virtual void				OnDraw(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot,
 		CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 		 FX_DWORD dwFlags) ;
-	
-	virtual void				OnDrawSleep(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, 
+
+	virtual void				OnDrawSleep(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot,
 		CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 		const CPDF_Rect& rcWindow, FX_DWORD dwFlags) {}
-	
+
 
 	virtual void				OnCreate(CPDFSDK_Annot* pAnnot) ;
 
@@ -131,11 +131,11 @@ public:
 	virtual void				OnDelete(CPDFSDK_Annot* pAnnot) {}
 
 	virtual void				OnRelease(CPDFSDK_Annot* pAnnot) {}
-	
+
 
 	virtual void				OnMouseEnter(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) ;
 	virtual void				OnMouseExit(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) ;
-	
+
 
 	virtual FX_BOOL				OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) ;
 	virtual FX_BOOL				OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) ;
@@ -145,7 +145,7 @@ public:
 	virtual FX_BOOL				OnRButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) ;
 	virtual FX_BOOL				OnRButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) ;
 	virtual FX_BOOL				OnRButtonDblClk(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point) {return FALSE;}
-	
+
 //by wjm.
 	virtual FX_BOOL				OnChar(CPDFSDK_Annot* pAnnot, FX_DWORD nChar, FX_DWORD nFlags);
 	virtual FX_BOOL				OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
@@ -179,7 +179,7 @@ public:
 
 	virtual CPDFSDK_Annot*		NewAnnot(CPDF_Annot * pAnnot, CPDFSDK_PageView *pPageView);
 	virtual void				ReleaseAnnot(CPDFSDK_Annot * pAnnot);
-	
+
 	virtual void				Annot_OnCreate(CPDFSDK_Annot* pAnnot);
 	virtual void				Annot_OnLoad(CPDFSDK_Annot* pAnnot);
 public:
@@ -193,7 +193,7 @@ public:
 	virtual FX_BOOL				Annot_OnLButtonDown(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point);
 	virtual FX_BOOL				Annot_OnLButtonUp(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point);
 	virtual FX_BOOL				Annot_OnLButtonDblClk(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point);
-	
+
 	virtual FX_BOOL				Annot_OnMouseMove(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point);
 	virtual FX_BOOL				Annot_OnMouseWheel(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, short zDelta, const CPDF_Point& point);
 	virtual FX_BOOL				Annot_OnRButtonDown(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point);
@@ -231,7 +231,7 @@ public:
     virtual ~CPDFSDK_AnnotIterator() { }
 
 	virtual CPDFSDK_Annot*	Next (const CPDFSDK_Annot* pCurrent) ;
-	virtual CPDFSDK_Annot*	Prev (const CPDFSDK_Annot* pCurrent) ;	
+	virtual CPDFSDK_Annot*	Prev (const CPDFSDK_Annot* pCurrent) ;
 	virtual CPDFSDK_Annot*	Next(int& index ) ;
 	virtual CPDFSDK_Annot*	Prev(int& index ) ;
 	virtual int             Count(){return m_pIteratorAnnotList.GetSize();}

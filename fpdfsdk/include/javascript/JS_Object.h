@@ -17,7 +17,7 @@ class CJS_Object;
 class CJS_Timer;
 class CJS_Context;
 
-class CJS_EmbedObj 
+class CJS_EmbedObj
 {
 public:
 	CJS_EmbedObj(CJS_Object* pJSObject);
@@ -39,7 +39,7 @@ protected:
 	CJS_Object*					m_pJSObject;
 };
 
-class CJS_Object 
+class CJS_Object
 {
 public:
 	CJS_Object(JSFXObject pObject);

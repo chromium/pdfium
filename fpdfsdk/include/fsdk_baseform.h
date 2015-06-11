@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_FSDK_BASEFORM_H_
@@ -42,7 +42,7 @@ typedef struct _PDFSDK_FieldAction
 		bFieldFull = FALSE;
 		bRC = TRUE;
 	}
-	
+
 	FX_BOOL					bModifier;		//in
 	FX_BOOL					bShift;			//in
 	int						nCommitKey;		//in
@@ -63,7 +63,7 @@ public:
 	virtual ~CPDFSDK_Widget();
 
 	virtual CFX_ByteString			GetSubType() const;
-	
+
 	virtual CPDF_Action				GetAAction(CPDF_AAction::AActionType eAAT);
 
 	int								GetFieldType() const;
@@ -74,7 +74,7 @@ public:
 	FIELDFLAG_REQUIRED
 	FIELDFLAG_NOEXPORT
 	*/
-	
+
 	int								GetFieldFlags() const;
 	int								GetRotate() const;
 
@@ -112,9 +112,9 @@ public:
 	void							ResetFieldAppearance(FX_BOOL bValueChanged);
 	void							UpdateField();
 	CFX_WideString					OnFormat(FX_BOOL& bFormated);
-	
+
 //Message.
- 	FX_BOOL							OnAAction(CPDF_AAction::AActionType type, PDFSDK_FieldAction& data, 
+ 	FX_BOOL							OnAAction(CPDF_AAction::AActionType type, PDFSDK_FieldAction& data,
 												CPDFSDK_PageView* pPageView);
 
 	CPDFSDK_InterForm*				GetInterForm() const {return m_pInterForm;}
@@ -123,14 +123,14 @@ public:
 	static CPDF_FormControl*		GetFormControl(CPDF_InterForm* pInterForm, CPDF_Dictionary* pAnnotDict);
 
 	void							DrawShadow(CFX_RenderDevice* pDevice, CPDFSDK_PageView* pPageView);
-	
+
 	void							SetAppModified();
 	void							ClearAppModified();
 	FX_BOOL							IsAppModified() const;
-	
+
 	int32_t						GetAppearanceAge() const;
 	int32_t						GetValueAge() const;
-	
+
 private:
 	void							ResetAppearance_PushButton();
 	void							ResetAppearance_CheckBox();
@@ -138,18 +138,18 @@ private:
 	void							ResetAppearance_ComboBox(const FX_WCHAR* sValue);
 	void							ResetAppearance_ListBox();
 	void							ResetAppearance_TextField(const FX_WCHAR* sValue);
-	
+
 	CPDF_Rect						GetClientRect() const;
 	CPDF_Rect						GetRotatedRect() const;
-	
+
 	CFX_ByteString					GetBackgroundAppStream() const;
 	CFX_ByteString					GetBorderAppStream() const;
 	CPDF_Matrix						GetMatrix() const;
-	
+
 	CPWL_Color						GetTextPWLColor() const;
 	CPWL_Color						GetBorderPWLColor() const;
 	CPWL_Color						GetFillPWLColor() const;
-	
+
 	void							AddImageToAppearance(const CFX_ByteString& sAPType, CPDF_Stream* pImage);
 	void							RemoveAppearance(const CFX_ByteString& sAPType);
 public:
@@ -172,22 +172,22 @@ class CPDFSDK_InterForm : public CPDF_FormNotify
 public:
 	CPDFSDK_InterForm(CPDFSDK_Document* pDocument);
 	virtual ~CPDFSDK_InterForm();
-	
+
 public:
 	virtual void					Destroy();
 	virtual CPDF_InterForm*			GetInterForm();
-	
+
 	CPDFSDK_Document*				GetDocument();
 	FX_BOOL							HighlightWidgets();
-	
+
 	CPDFSDK_Widget*					GetSibling(CPDFSDK_Widget* pWidget, FX_BOOL bNext) const;
 	CPDFSDK_Widget*					GetWidget(CPDF_FormControl* pControl) const;
 	void							GetWidgets(const CFX_WideString& sFieldName, CFX_PtrArray& widgets);
 	void							GetWidgets(CPDF_FormField* pField, CFX_PtrArray& widgets);
-	
+
 	void							AddMap(CPDF_FormControl* pControl, CPDFSDK_Widget* pWidget);
 	void							RemoveMap(CPDF_FormControl* pControl);
-	
+
 	void							EnableCalculate(FX_BOOL bEnabled);
 	FX_BOOL							IsCalculateEnabled() const;
 
@@ -199,25 +199,25 @@ public:
 	void							OnValidate(CPDF_FormField* pFormField, CFX_WideString& csValue, FX_BOOL& bRC);
 	void							OnCalculate(CPDF_FormField* pFormField = NULL);
 	CFX_WideString					OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormated);
-	
+
 	void							ResetFieldAppearance(CPDF_FormField* pFormField, const FX_WCHAR* sValue, FX_BOOL bValueChanged);
 	void							UpdateField(CPDF_FormField* pFormField);
-	
+
 public:
 	FX_BOOL							DoAction_Hide(const CPDF_Action& action);
 	FX_BOOL							DoAction_SubmitForm(const CPDF_Action& action);
 	FX_BOOL							DoAction_ResetForm(const CPDF_Action& action);
 	FX_BOOL							DoAction_ImportData(const CPDF_Action& action);
-	
+
 	void							GetFieldFromObjects(const CFX_PtrArray& objects, CFX_PtrArray& fields);
 	FX_BOOL							IsValidField(CPDF_Dictionary* pFieldDict);
-	FX_BOOL							SubmitFields(const CFX_WideString& csDestination, const CFX_PtrArray& fields, 
+	FX_BOOL							SubmitFields(const CFX_WideString& csDestination, const CFX_PtrArray& fields,
 		FX_BOOL bIncludeOrExclude, FX_BOOL bUrlEncoded);
 	FX_BOOL							SubmitForm(const CFX_WideString& sDestination, FX_BOOL bUrlEncoded);
 	FX_BOOL							ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf);
 	FX_BOOL							ExportFieldsToFDFTextBuf(const CFX_PtrArray& fields,FX_BOOL bIncludeOrExclude, CFX_ByteTextBuf& textBuf);
 	CFX_WideString					GetTemporaryFileName(const CFX_WideString& sFileExt);
-	
+
 private:
 	virtual int						BeforeValueChange(const CPDF_FormField* pField, CFX_WideString& csValue);
 	virtual int						AfterValueChange(const CPDF_FormField* pField);
@@ -228,13 +228,13 @@ private:
 	virtual int						AfterFormReset(const CPDF_InterForm* pForm);
 	virtual int						BeforeFormImportData(const CPDF_InterForm* pForm);
 	virtual int						AfterFormImportData(const CPDF_InterForm* pForm);
-	
+
 private:
 	FX_BOOL							FDFToURLEncodedData(CFX_WideString csFDFFile, CFX_WideString csTxtFile);
 	FX_BOOL							FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufSize);
 	int								GetPageIndexByAnnotDict(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict) const;
 	void							DoFDFBuffer(CFX_ByteString sBuffer);
-	
+
 private:
 	CPDFSDK_Document*				m_pDocument;
 	CPDF_InterForm*					m_pInterForm;

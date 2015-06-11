@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_
@@ -70,16 +70,16 @@ public:
 
 	virtual FX_BOOL					OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
 	virtual FX_BOOL					OnChar(FX_WORD nChar, FX_DWORD nFlag);
-	virtual FX_BOOL					OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);	
-	virtual FX_BOOL					OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);	
+	virtual FX_BOOL					OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
 	virtual FX_BOOL					OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
 	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
 	virtual void					CreateChildWnd(const PWL_CREATEPARAM & cp);
-	virtual void					RePosChildWnd();	
+	virtual void					RePosChildWnd();
 	virtual void					SetFontSize(FX_FLOAT fFontSize);
 	virtual FX_FLOAT				GetFontSize() const;
-	
+
 public:
 	virtual void					SetText(const FX_WCHAR* csText);
 
@@ -105,11 +105,11 @@ public:
 
 	void							Paint();
 
-	void							EnableRefresh(FX_BOOL bRefresh);	
+	void							EnableRefresh(FX_BOOL bRefresh);
 	CPDF_Point						GetScrollPos() const;
 	void							SetScrollPos(const CPDF_Point& point);
 
-	void							SetEditNotify(IPWL_Edit_Notify* pNotify) {m_pEditNotify = pNotify;}	
+	void							SetEditNotify(IPWL_Edit_Notify* pNotify) {m_pEditNotify = pNotify;}
 
 	void							SetCharSet(uint8_t nCharSet){m_nCharSet = nCharSet;}
 	int32_t						GetCharSet() const;
@@ -142,15 +142,15 @@ protected:
 protected:
 	void							GetCaretInfo(CPDF_Point & ptHead, CPDF_Point & ptFoot) const;
 	void							SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot);
-	
+
 	void							SetEditCaret(FX_BOOL bVisible);
 
 protected:
-	virtual void					IOnSetScrollInfoX(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax, 
-												FX_FLOAT fContentMin, FX_FLOAT fContentMax, 
+	virtual void					IOnSetScrollInfoX(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
+												FX_FLOAT fContentMin, FX_FLOAT fContentMax,
 												FX_FLOAT fSmallStep, FX_FLOAT fBigStep){}
-	virtual void					IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax, 
-												FX_FLOAT fContentMin, FX_FLOAT fContentMax, 
+	virtual void					IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
+												FX_FLOAT fContentMin, FX_FLOAT fContentMax,
 												FX_FLOAT fSmallStep, FX_FLOAT fBigStep);
 	virtual void					IOnSetScrollPosX(FX_FLOAT fx){}
 	virtual void					IOnSetScrollPosY(FX_FLOAT fy);
@@ -166,7 +166,7 @@ protected:
 	IFX_Edit*						m_pEdit;
 	CPWL_Caret*						m_pEditCaret;
 	FX_BOOL							m_bMouseDown;
-	IPWL_Edit_Notify*				m_pEditNotify;	
+	IPWL_Edit_Notify*				m_pEditNotify;
 
 private:
 	int32_t						m_nCharSet;

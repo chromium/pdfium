@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../include/fsdk_define.h"
@@ -221,7 +221,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page, int* startPos, FP
 			continue;
 		if(pDict->GetString(FX_BSTRC("Subtype")).Equal(FX_BSTRC("Link"))) {
 			*startPos = i + 1;
-			*linkAnnot = (FPDF_LINK)pDict; 
+			*linkAnnot = (FPDF_LINK)pDict;
 			return TRUE;
 		}
 	}
@@ -271,7 +271,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetQuadPoints(FPDF_LINK linkAnnot, int quad
 		quadPoints->x4 = pArray->GetNumber(quadIndex*8+6);
 		quadPoints->y4 = pArray->GetNumber(quadIndex*8+7);
 		return TRUE;
-	} 
+	}
 	return FALSE;
 }
 

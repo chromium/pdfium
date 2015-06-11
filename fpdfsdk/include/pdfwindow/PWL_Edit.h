@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDIT_H_
@@ -19,10 +19,10 @@ class IPWL_Filler_Notify
 {
 public:
         virtual ~IPWL_Filler_Notify() { }
-	virtual void					QueryWherePopup(void* pPrivateData, FX_FLOAT fPopupMin,FX_FLOAT fPopupMax, 
+	virtual void					QueryWherePopup(void* pPrivateData, FX_FLOAT fPopupMin,FX_FLOAT fPopupMax,
 										int32_t & nRet, FX_FLOAT & fPopupRet) = 0; //nRet: (0:bottom 1:top)
 	virtual void					OnBeforeKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, int32_t nKeyCode,
-										CFX_WideString & strChange, const CFX_WideString& strChangeEx, 
+										CFX_WideString & strChange, const CFX_WideString& strChangeEx,
 										int nSelStart, int nSelEnd,
 										FX_BOOL bKeyDown, FX_BOOL & bRC, FX_BOOL & bExit, FX_DWORD nFlag) = 0;
 	virtual void					OnAfterKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_BOOL & bExit, FX_DWORD nFlag) = 0;
@@ -54,8 +54,8 @@ public:
 
 	virtual CPDF_Rect				GetFocusRect() const;
 
-public:		
-	void							SetAlignFormatH(PWL_EDIT_ALIGNFORMAT_H nFormat = PEAH_LEFT, FX_BOOL bPaint = TRUE);	//0:left 1:right 2:middle 
+public:
+	void							SetAlignFormatH(PWL_EDIT_ALIGNFORMAT_H nFormat = PEAH_LEFT, FX_BOOL bPaint = TRUE);	//0:left 1:right 2:middle
 	void							SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat = PEAV_TOP, FX_BOOL bPaint = TRUE);	//0:top 1:bottom 2:center
 
 	void							SetCharArray(int32_t nCharArray);
@@ -82,18 +82,18 @@ public:
 	void							ReplaceSel(const FX_WCHAR* csText);
 
 	CFX_ByteString					GetTextAppearanceStream(const CPDF_Point & ptOffset) const;
-	CFX_ByteString					GetCaretAppearanceStream(const CPDF_Point & ptOffset) const;	
+	CFX_ByteString					GetCaretAppearanceStream(const CPDF_Point & ptOffset) const;
 	CFX_ByteString					GetSelectAppearanceStream(const CPDF_Point & ptOffset) const;
 
-	FX_BOOL							IsTextFull() const;	
+	FX_BOOL							IsTextFull() const;
 
 	static FX_FLOAT					GetCharArrayAutoFontSize(CPDF_Font* pFont, const CPDF_Rect& rcPlate, int32_t nCharArray);
 
 	void							SetFillerNotify(IPWL_Filler_Notify* pNotify) {m_pFillerNotify = pNotify;}
 
-	void							GeneratePageObjects(CPDF_PageObjects* pPageObjects, 
+	void							GeneratePageObjects(CPDF_PageObjects* pPageObjects,
 										const CPDF_Point& ptOffset, CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
-	void							GeneratePageObjects(CPDF_PageObjects* pPageObjects, 
+	void							GeneratePageObjects(CPDF_PageObjects* pPageObjects,
 										const CPDF_Point& ptOffset);
 
 protected:
@@ -110,7 +110,7 @@ protected:
 	virtual void					OnInsertText(const CPVT_WordPlace& place, const CPVT_WordPlace& oldplace);
 	virtual void					OnAddUndo(IFX_Edit_UndoItem* pUndoItem);
 
-private:	
+private:
 	CPVT_WordRange					GetSelectWordRange() const;
 	virtual void					ShowVScrollBar(FX_BOOL bShow);
 	FX_BOOL							IsVScrollBarVisible() const;

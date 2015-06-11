@@ -1,14 +1,14 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fxedit/fxet_stub.h"
 #include "../../include/fxedit/fx_edit.h"
 #include "../../include/fxedit/fxet_edit.h"
 
-CFX_ByteString GetPDFWordString(IFX_Edit_FontMap * pFontMap, int32_t nFontIndex, FX_WORD Word, FX_WORD SubWord) 
+CFX_ByteString GetPDFWordString(IFX_Edit_FontMap * pFontMap, int32_t nFontIndex, FX_WORD Word, FX_WORD SubWord)
 {
 	ASSERT (pFontMap != NULL);
 
@@ -18,7 +18,7 @@ CFX_ByteString GetPDFWordString(IFX_Edit_FontMap * pFontMap, int32_t nFontIndex,
 	{
 		if (SubWord > 0)
 		{
-			Word = SubWord;		
+			Word = SubWord;
 		}
 		else
 		{
@@ -65,7 +65,7 @@ static CFX_ByteString GetFontSetString(IFX_Edit_FontMap * pFontMap, int32_t nFon
 	return sRet.GetByteString();
 }
 
-CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset, 
+CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset,
 												 const CPVT_WordRange * pRange /* = NULL*/, FX_BOOL bContinuous/* = TRUE*/, FX_WORD SubWord/* = 0*/)
 {
 	CFX_ByteTextBuf sEditStream, sWords;
@@ -88,7 +88,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Poi
 
 			if (pRange && place.WordCmp(pRange->EndPos) > 0) break;
 
-			if (bContinuous)			
+			if (bContinuous)
 			{
 				if (place.LineCmp(oldplace) != 0)
 				{
@@ -120,7 +120,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Poi
 
 				CPVT_Word word;
 				if (pIterator->GetWord(word))
-				{	
+				{
 					if (word.nFontIndex != nCurFontIndex)
 					{
 						if (sWords.GetSize() > 0)
@@ -148,7 +148,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Poi
 					{
 						sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y << " Td\n";
 						ptOld = ptNew;
-					}	
+					}
 
 					if (word.nFontIndex != nCurFontIndex)
 					{
@@ -184,12 +184,12 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Poi
 		}
 
 		sAppStream << sEditStream;
-	}	
+	}
 
 	return sAppStream.GetByteString();
 }
 
-CFX_ByteString IFX_Edit::GetSelectAppearanceStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset, 
+CFX_ByteString IFX_Edit::GetSelectAppearanceStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset,
 							const CPVT_WordRange * pRange /*= NULL*/)
 {
 	CFX_ByteTextBuf sRet;
@@ -199,22 +199,22 @@ CFX_ByteString IFX_Edit::GetSelectAppearanceStream(IFX_Edit* pEdit, const CPDF_P
 		if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator())
 		{
 			pIterator->SetAt(pRange->BeginPos);
-			
+
 			while (pIterator->NextWord())
 			{
 				CPVT_WordPlace place = pIterator->GetAt();
 
-				if (pRange && place.WordCmp(pRange->EndPos) > 0) break;				
+				if (pRange && place.WordCmp(pRange->EndPos) > 0) break;
 
 				CPVT_Word word;
 				CPVT_Line line;
 				if (pIterator->GetWord(word) && pIterator->GetLine(line))
-				{			
+				{
 					//CPDF_Rect rcWordSel = CPDF_Rect(word.ptWord.x,line.ptLine.y + line.fLineDescent,
 					//		word.ptWord.x+word.fWidth,line.ptLine.y + line.fLineAscent);
 
 					sRet << word.ptWord.x + ptOffset.x << " " << line.ptLine.y + line.fLineDescent
-						<< " " << word.fWidth << " " << line.fLineAscent - line.fLineDescent << " re\nf\n";				
+						<< " " << word.fWidth << " " << line.fLineAscent - line.fLineDescent << " re\nf\n";
 				}
 			}
 		}
