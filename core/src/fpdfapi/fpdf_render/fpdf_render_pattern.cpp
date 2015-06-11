@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_render.h"
@@ -674,7 +674,7 @@ FX_BOOL _CheckCoonTensorPara(const CPDF_MeshStream &stream)
                           stream.m_nCoordBits == 24 ||
                           stream.m_nCoordBits == 32   );
 
-    FX_BOOL bCompBits = ( stream.m_nCompBits == 1  || 
+    FX_BOOL bCompBits = ( stream.m_nCompBits == 1  ||
                           stream.m_nCompBits == 2  ||
                           stream.m_nCompBits == 4  ||
                           stream.m_nCompBits == 8  ||
@@ -685,7 +685,7 @@ FX_BOOL _CheckCoonTensorPara(const CPDF_MeshStream &stream)
                           stream.m_nFlagBits == 4  ||
                           stream.m_nFlagBits == 8    );
 
-    return bCoorBits && bCompBits && bFlagBits; 
+    return bCoorBits && bCompBits && bFlagBits;
 }
 
 static void _DrawCoonPatchMeshes(FX_BOOL bTensor, CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2Bitmap,
@@ -706,7 +706,7 @@ static void _DrawCoonPatchMeshes(FX_BOOL bTensor, CFX_DIBitmap* pBitmap, CFX_Aff
     if (!_CheckCoonTensorPara(stream)) {
         return;
     }
- 
+
     CPDF_PatchDrawer patch;
     patch.alpha = alpha;
     patch.pDevice = &device;

@@ -71,7 +71,7 @@ public:
         if (offset < 0 || size < 0) {
             return FALSE;
         }
-     
+
         FX_SAFE_FILESIZE pos = size;
         pos += offset;
 
@@ -205,7 +205,7 @@ public:
         if (!range.IsValid() || range.ValueOrDie() > m_nCurSize) {
             return FALSE;
         }
-        
+
         m_nOffset = (size_t)offset, m_nSize = (size_t)size;
         m_bUseRange = TRUE;
         m_nCurPos = m_nOffset;
@@ -225,7 +225,7 @@ public:
         if (m_bUseRange) {
             safeOffset += m_nOffset;
         }
-         
+
         if (!safeOffset.IsValid()) {
             return FALSE;
         }
@@ -284,7 +284,7 @@ public:
             offset += (FX_FILESIZE)m_nOffset;
         }
         if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
-            FX_SAFE_SIZE_T newPos = size; 
+            FX_SAFE_SIZE_T newPos = size;
             newPos += offset;
             if (!newPos.IsValid())
                 return FALSE;

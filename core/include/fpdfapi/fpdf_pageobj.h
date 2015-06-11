@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGEOBJ_H_
@@ -97,7 +97,7 @@ public:
         return m_pObject->IsRect();
     }
 };
-class CPDF_ClipPathData 
+class CPDF_ClipPathData
 {
 public:
 
@@ -159,7 +159,7 @@ public:
 
     void				Transform(const CFX_AffineMatrix& matrix);
 };
-class CPDF_ColorStateData 
+class CPDF_ColorStateData
 {
 public:
 
@@ -206,7 +206,7 @@ class CPDF_GraphState : public CFX_CountRef<CFX_GraphStateData>
 {
 public:
 };
-class CPDF_TextStateData 
+class CPDF_TextStateData
 {
 public:
 
@@ -265,7 +265,7 @@ public:
 
 };
 class CPDF_TransferFunc;
-class CPDF_GeneralStateData 
+class CPDF_GeneralStateData
 {
 public:
 
@@ -334,7 +334,7 @@ public:
         return m_pObject ? FXSYS_round((bStroke ? m_pObject->m_StrokeAlpha : m_pObject->m_FillAlpha) * 255) : 255;
     }
 };
-class CPDF_ContentMarkItem 
+class CPDF_ContentMarkItem
 {
 public:
 
@@ -386,7 +386,7 @@ private:
 
     void*				m_pParam;
 };
-class CPDF_ContentMarkData 
+class CPDF_ContentMarkData
 {
 public:
 
@@ -432,7 +432,7 @@ public:
 #define PDFPAGE_SHADING		4
 #define PDFPAGE_FORM		5
 #define PDFPAGE_INLINES		6
-class CPDF_GraphicStates 
+class CPDF_GraphicStates
 {
 public:
 

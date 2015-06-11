@@ -1,13 +1,13 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../include/fpdftext/fpdf_text.h"
 #include "../../include/fpdfapi/fpdf_page.h"
-class CPDF_TextStream 
+class CPDF_TextStream
 {
 public:
     CPDF_TextStream(CFX_WideTextBuf& buffer, FX_BOOL bUseLF, CFX_PtrArray* pObjArray);

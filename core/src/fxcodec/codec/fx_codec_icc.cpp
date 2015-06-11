@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxcodec/fx_codec.h"
@@ -336,7 +336,7 @@ FX_DWORD TransferProfileType(void* pProfile, FX_DWORD dwFormat)
             return 0;
     }
 }
-class CFX_IccProfileCache 
+class CFX_IccProfileCache
 {
 public:
     CFX_IccProfileCache();
@@ -360,7 +360,7 @@ CFX_IccProfileCache::~CFX_IccProfileCache()
 void CFX_IccProfileCache::Purge()
 {
 }
-class CFX_IccTransformCache 
+class CFX_IccTransformCache
 {
 public:
     CFX_IccTransformCache(CLcmsCmm* pCmm = NULL);

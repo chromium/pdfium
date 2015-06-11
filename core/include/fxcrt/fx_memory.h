@@ -70,13 +70,13 @@ inline void* FX_ReallocOrDie(void* ptr, size_t num_members, size_t member_size) 
 
 #define FX_Free(ptr) free(ptr)
 
-class CFX_DestructObject 
+class CFX_DestructObject
 {
 public:
 
     virtual ~CFX_DestructObject() {}
 };
-class CFX_GrowOnlyPool 
+class CFX_GrowOnlyPool
 {
 public:
 

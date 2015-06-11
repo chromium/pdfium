@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
@@ -198,7 +198,7 @@ protected:
 #define PDFWORD_TEXT		2
 #define PDFWORD_DELIMITER	3
 #define PDFWORD_NAME		4
-class CPDF_SimpleParser 
+class CPDF_SimpleParser
 {
 public:
 
@@ -237,7 +237,7 @@ private:
 
     FX_DWORD			m_dwCurPos;
 };
-class CPDF_SyntaxParser 
+class CPDF_SyntaxParser
 {
 public:
 
@@ -434,7 +434,7 @@ public:
     FX_DWORD	GetInfoObjNum() ;
     CPDF_Array*	GetIDArray() ;
 
-    CPDF_Dictionary*	GetEncryptDict() 
+    CPDF_Dictionary*	GetEncryptDict()
     {
         return m_pEncryptDict;
     }
@@ -580,7 +580,7 @@ protected:
 #define FXCIPHER_RC4	1
 #define FXCIPHER_AES	2
 #define FXCIPHER_AES2   3
-class CPDF_SecurityHandler 
+class CPDF_SecurityHandler
 {
 public:
 
@@ -682,7 +682,7 @@ private:
 
     int					m_KeyLen;
 };
-class CPDF_CryptoHandler 
+class CPDF_CryptoHandler
 {
 public:
 
@@ -739,7 +739,7 @@ protected:
 
     uint8_t*			m_pAESContext;
 };
-class CPDF_Point 
+class CPDF_Point
 {
 public:
 
@@ -801,7 +801,7 @@ void			FPDF_FileSpec_SetWin32Path(CPDF_Object* pFileSpec, const CFX_WideString& 
 void FlateEncode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf, FX_DWORD& dest_size);
 FX_DWORD FlateDecode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf, FX_DWORD& dest_size);
 FX_DWORD RunLengthDecode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf, FX_DWORD& dest_size);
-class CPDF_NumberTree 
+class CPDF_NumberTree
 {
 public:
 
@@ -857,7 +857,7 @@ protected:
     IFX_FileAvail* m_pFileAvail;
     IFX_FileRead* m_pFileRead;
 };
-class CPDF_SortObjNumArray 
+class CPDF_SortObjNumArray
 {
 public:
 
@@ -882,7 +882,7 @@ enum PDF_PAGENODE_TYPE {
     PDF_PAGENODE_PAGES,
     PDF_PAGENODE_ARRAY,
 };
-class CPDF_PageNode 
+class CPDF_PageNode
 {
 public:
     CPDF_PageNode() : m_type(PDF_PAGENODE_UNKOWN) {}

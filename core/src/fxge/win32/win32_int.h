@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 #ifndef CORE_SRC_FXGE_WIN32_WIN32_INT_H_
 #define CORE_SRC_FXGE_WIN32_WIN32_INT_H_
@@ -60,7 +60,7 @@ protected:
     HMODULE         m_GdiModule;
 };
 #include "dwrite_int.h"
-class CWin32Platform 
+class CWin32Platform
 {
 public:
     FX_BOOL			m_bHalfTone;

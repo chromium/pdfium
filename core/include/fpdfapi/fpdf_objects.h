@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_
@@ -37,7 +37,7 @@ class IFX_FileRead;
 #define PDFOBJ_REFERENCE	9
 
 typedef IFX_FileStream* (*FPDF_LPFCloneStreamCallback)(CPDF_Stream *pStream, void* pUserData);
-class CPDF_Object 
+class CPDF_Object
 {
 public:
 
@@ -70,7 +70,7 @@ public:
 
     CFX_ByteStringC                     GetConstString() const;
 
-    CFX_WideString                      GetUnicodeText(CFX_CharMap* pCharMap = NULL) const; 
+    CFX_WideString                      GetUnicodeText(CFX_CharMap* pCharMap = NULL) const;
     FX_FLOAT                            GetNumber() const;
 
     FX_FLOAT                            GetNumber16() const;
@@ -570,7 +570,7 @@ protected:
     friend class			CPDF_StreamAcc;
     friend class			CPDF_AttachmentAcc;
 };
-class CPDF_StreamAcc 
+class CPDF_StreamAcc
 {
 public:
 
@@ -624,7 +624,7 @@ protected:
 };
 CFX_DataFilter* FPDF_CreateFilter(const CFX_ByteStringC& name, const CPDF_Dictionary* pParam, int width = 0, int height = 0);
 #define FPDF_FILTER_BUFFER_SIZE		20480
-class CPDF_StreamFilter 
+class CPDF_StreamFilter
 {
 public:
 
@@ -707,7 +707,7 @@ protected:
     FX_DWORD				m_RefObjNum;
     friend class			CPDF_Object;
 };
-class CPDF_IndirectObjects 
+class CPDF_IndirectObjects
 {
 public:
 

@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FXGE_FX_GE_H_
@@ -22,7 +22,7 @@ class IFX_RenderDeviceDriver;
 class CCodec_ModuleMgr;
 class IFXG_PaintModuleMgr;
 
-class CFX_GEModule 
+class CFX_GEModule
 {
 public:
 
@@ -86,7 +86,7 @@ typedef struct {
 #define FXPT_TYPE				0x06
 #define FXFILL_ALTERNATE		1
 #define FXFILL_WINDING			2
-class CFX_ClipRgn 
+class CFX_ClipRgn
 {
 public:
 
@@ -145,7 +145,7 @@ inline FX_ARGB ArgbGammaInverse(FX_ARGB argb)
 {
     return argb;
 }
-class CFX_PathData 
+class CFX_PathData
 {
 public:
 
@@ -218,7 +218,7 @@ protected:
 
     int					m_AllocCount;
 };
-class CFX_GraphStateData 
+class CFX_GraphStateData
 {
 public:
 
@@ -301,7 +301,7 @@ typedef struct {
     FX_DWORD			m_ExtGID;
     FX_BOOL				m_bFontStyle;
 } FXTEXT_CHARPOS;
-class CFX_RenderDevice 
+class CFX_RenderDevice
 {
 public:
     CFX_RenderDevice();
@@ -501,7 +501,7 @@ protected:
 
     FX_BOOL			m_bOwnedBitmap;
 };
-class IFX_RenderDeviceDriver 
+class IFX_RenderDeviceDriver
 {
 public:
 
@@ -640,7 +640,7 @@ protected:
     ~IFX_PSOutput() { }
 };
 class CPSFont;
-class CFX_PSRenderer 
+class CFX_PSRenderer
 {
 public:
 

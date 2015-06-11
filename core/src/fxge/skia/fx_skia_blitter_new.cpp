@@ -18,7 +18,7 @@
 		{
 			int width = runs[0];
 			SkASSERT(width >= 0);
-			if (width <= 0) 
+			if (width <= 0)
 				return;
 			unsigned aa = antialias[0];
 			if (aa)
@@ -63,7 +63,7 @@
 	}
 
 	void CFX_SkiaRenderer::blitAntiRect(int x, int y, int width, int height,
-                             SkAlpha leftAlpha, SkAlpha rightAlpha) 
+                             SkAlpha leftAlpha, SkAlpha rightAlpha)
 	{
 		blitV(x++, y, height, leftAlpha);
 		if (width > 0) {
@@ -74,8 +74,8 @@
 	}
 	/*---------------------------------------------------------------------------------------------------*/
 	void CFX_SkiaRenderer::CompositeSpan1bpp_0(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_bRgbByteOrder);
@@ -87,13 +87,13 @@
 		dest_scan += col_start/8;
 
 		int index = 0;
-		if (m_pDevice->GetPalette() == NULL) 
+		if (m_pDevice->GetPalette() == NULL)
 			index = ((uint8_t)m_Color == 0xff) ? 1 : 0;
 		else {
 			for (int i = 0; i < 2; i ++)
-				if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color) 
+				if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color)
 					index = i;
-		} 
+		}
 		uint8_t* dest_scan1 = dest_scan;
 		int src_alpha = m_Alpha * cover_scan / 255;
 		for (int col = col_start; col < col_end; col ++) {
@@ -102,13 +102,13 @@
 					*dest_scan1 &= ~(1 << (7 - (col+span_left)%8));
 				else
 					*dest_scan1|= 1 << (7 - (col+span_left)%8);
-			} 
+			}
 			dest_scan1 = dest_scan+(span_left%8+col-col_start+1)/8;
 		}
 	}
 	void CFX_SkiaRenderer::CompositeSpan1bpp_4(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_bRgbByteOrder);
@@ -121,13 +121,13 @@
 		dest_scan += col_start/8;
 
 		int index = 0;
-		if (m_pDevice->GetPalette() == NULL) 
+		if (m_pDevice->GetPalette() == NULL)
 			index = ((uint8_t)m_Color == 0xff) ? 1 : 0;
 		else {
 			for (int i = 0; i < 2; i ++)
-				if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color) 
+				if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color)
 					index = i;
-		} 
+		}
 		uint8_t* dest_scan1 = dest_scan;
 		int src_alpha = m_Alpha * cover_scan / 255;
 		for (int col = col_start; col < col_end; col ++) {
@@ -137,14 +137,14 @@
 					*dest_scan1 &= ~(1 << (7 - (col+span_left)%8));
 				else
 					*dest_scan1|= 1 << (7 - (col+span_left)%8);
-			} 
+			}
 			dest_scan1 = dest_scan+(span_left%8+col-col_start+1)/8;
 		}
 	}
 	/*-----------------------------------------------------------------------------------------------------*/
 	void CFX_SkiaRenderer::CompositeSpanGray_2(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -165,8 +165,8 @@
 		}
 	}
 	void CFX_SkiaRenderer::CompositeSpanGray_3(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -208,8 +208,8 @@
 	}
 
 	void CFX_SkiaRenderer::CompositeSpanGray_6(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_bRgbByteOrder);
@@ -232,12 +232,12 @@
 				*dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Gray, src_alpha1);
 				dest_scan ++;
 			}
-		}	
+		}
 	}
 
 	void CFX_SkiaRenderer::CompositeSpanGray_7(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -296,8 +296,8 @@
 	/*--------------------------------------------------------------------------------------------------*/
 
 	void CFX_SkiaRenderer::CompositeSpanARGB_2(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
@@ -317,7 +317,7 @@
 				return;
 			}
 		}
-		else 
+		else
 #endif
 			src_alpha = m_Alpha * cover_scan / 255;
 		for (int col = col_start; col < col_end; col ++) {
@@ -328,7 +328,7 @@
 				*dest_scan++ = m_Blue;
 				*dest_scan++ = m_Green;
 				*dest_scan = m_Red;
-				dest_scan += 2; 
+				dest_scan += 2;
 				continue;
 			}
 			uint8_t dest_alpha = dest_scan[3] + src_alpha - dest_scan[3] * src_alpha / 255;
@@ -344,8 +344,8 @@
 	}
 
 	void CFX_SkiaRenderer::CompositeSpanARGB_3(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -360,7 +360,7 @@
 		if (m_Alpha == 255 && cover_scan == 255){
 			FXSYS_memset(dest_scan, m_Color, (col_end - col_start)<<2);
 			return;
-		}		
+		}
 		if (cover_scan == 255) {
 			int dst_color = (0x00ffffff&m_Color)|(m_Alpha<<24);
 			FXSYS_memset(dest_scan, dst_color, (col_end - col_start)<<2);
@@ -368,7 +368,7 @@
 		}
 		// Do not need origin bitmap, because of merge in pure transparent background
 		int src_alpha_covered = m_Alpha * cover_scan / 255;
-		for (int col = col_start; col < col_end; col ++) 
+		for (int col = col_start; col < col_end; col ++)
 		{
 			// shortcut
 			if (dest_scan[3] == 0) {
@@ -376,7 +376,7 @@
 				*dest_scan ++ = m_Blue;
 				*dest_scan ++ = m_Green;
 				*dest_scan = m_Red;
-				dest_scan += 2; 
+				dest_scan += 2;
 				continue;
 			}
 			// We should do alpha transition and color transition
@@ -393,8 +393,8 @@
 		}
 	}
 	void CFX_SkiaRenderer::CompositeSpanARGB_6(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
@@ -404,7 +404,7 @@
 		if (col_end < col_start) return; // do nothing.
 		dest_scan += col_start << 2;
 #if 1
-		int src_alpha = m_Alpha * cover_scan / 255; 
+		int src_alpha = m_Alpha * cover_scan / 255;
 		for (int col = col_start; col < col_end; col ++) {
 			int src_alpha1 = src_alpha* clip_scan[col] / 255;
 			if (!src_alpha1) {
@@ -422,7 +422,7 @@
 					*dest_scan++ = m_Blue;
 					*dest_scan++ = m_Green;
 					*dest_scan = m_Red;
-					dest_scan += 2; 
+					dest_scan += 2;
 					continue;
 				}
 				uint8_t dest_alpha = dest_scan[3] + src_alpha1 - dest_scan[3] * src_alpha1 / 255;
@@ -456,7 +456,7 @@
 						*dest_scan++ = m_Blue;
 						*dest_scan++ = m_Green;
 						*dest_scan = m_Red;
-						dest_scan += 2; 
+						dest_scan += 2;
 						continue;
 					}
 					uint8_t dest_alpha = dest_scan[3] + src_alpha - dest_scan[3] * src_alpha / 255;
@@ -471,7 +471,7 @@
 				}
 			}
 		} else {
-			int src_alpha = m_Alpha * cover_scan / 255; 
+			int src_alpha = m_Alpha * cover_scan / 255;
 			for (int col = col_start; col < col_end; col ++) {
 				int src_alpha1 = src_alpha* clip_scan[col] / 255;
 				if (!src_alpha1) {
@@ -489,7 +489,7 @@
 						*dest_scan++ = m_Blue;
 						*dest_scan++ = m_Green;
 						*dest_scan = m_Red;
-						dest_scan += 2; 
+						dest_scan += 2;
 						continue;
 					}
 					uint8_t dest_alpha = dest_scan[3] + src_alpha1 - dest_scan[3] * src_alpha1 / 255;
@@ -508,8 +508,8 @@
 	}
 
 	void CFX_SkiaRenderer::CompositeSpanARGB_7(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -522,7 +522,7 @@
 		dest_scan += col_start << 2;
 		//ori_scan += col_start << 2;
 		// Do not need origin bitmap, because of merge in pure transparent background
-		for (int col = col_start; col < col_end; col ++) 
+		for (int col = col_start; col < col_end; col ++)
 		{
 			int src_alpha = m_Alpha * clip_scan[col] / 255;
 			int src_alpha_covered = src_alpha * cover_scan / 255;
@@ -539,7 +539,7 @@
 				*dest_scan ++ = m_Blue;
 				*dest_scan ++ = m_Green;
 				*dest_scan = m_Red;
-				dest_scan += 2; 
+				dest_scan += 2;
 				continue;
 			}
 			// We should do alpha transition and color transition
@@ -555,11 +555,11 @@
 			dest_scan += 2;
 		}
 	}
-	
+
 	/*-----------------------------------------------------------------------------------------------------------*/
 	void CFX_SkiaRenderer::CompositeSpanRGB32_2(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
@@ -575,7 +575,7 @@
 #if 0
 		if (m_bFullCover)
 			src_alpha = m_Alpha;
-		else 
+		else
 #endif
 			src_alpha = m_Alpha * cover_scan / 255;
 		for (int col = col_start; col < col_end; col ++) {
@@ -589,8 +589,8 @@
 		}
 	}
 	void CFX_SkiaRenderer::CompositeSpanRGB32_3(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
@@ -628,8 +628,8 @@
 		}
 	}
 	void CFX_SkiaRenderer::CompositeSpanRGB32_6(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + (span_left<<2);
@@ -657,7 +657,7 @@
 				dest_scan ++;
 				*dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Red, src_alpha1);
 				dest_scan += 2;
-			}				
+			}
 		}
 #else
 		if (m_bFullCover) {
@@ -700,14 +700,14 @@
 					dest_scan ++;
 					*dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Red, src_alpha1);
 					dest_scan += 2;
-				}				
+				}
 			}
-		}			
+		}
 #endif
 	}
 	void CFX_SkiaRenderer::CompositeSpanRGB32_7(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -759,7 +759,7 @@
 				*dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, src_alpha);
 				*dest_scan = FXDIB_ALPHA_MERGE(*ori_scan, m_Red, src_alpha);
 				dest_scan += 2; ori_scan += 2;
-			}			
+			}
 		} else {
 			for (int col = col_start; col < col_end; col ++) {
 				int src_alpha = m_Alpha * clip_scan[col] / 255;
@@ -785,8 +785,8 @@
 	}
 	/*-----------------------------------------------------------------------------------------------------*/
 	void CFX_SkiaRenderer::CompositeSpanRGB24_2(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left + (span_left<<1);
@@ -798,7 +798,7 @@
 #if 0
 		if (m_bFullCover)
 			src_alpha = m_Alpha;
-		else 
+		else
 #endif
 			src_alpha = m_Alpha * cover_scan / 255;
 		if (src_alpha == 255) {
@@ -819,8 +819,8 @@
 		}
 	}
 	void CFX_SkiaRenderer::CompositeSpanRGB24_3(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -860,8 +860,8 @@
 		}
 	}
 	void CFX_SkiaRenderer::CompositeSpanRGB24_6(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left+(span_left<<1);
@@ -873,7 +873,7 @@
 #if 1
 		int src_alpha = m_Alpha * cover_scan /255;
 		for (int col = col_start; col < col_end; col ++) {
-			int src_alpha1 = src_alpha * clip_scan[col] / 255;	
+			int src_alpha1 = src_alpha * clip_scan[col] / 255;
 			if (!src_alpha1) {
 				dest_scan += 3;
 				continue;
@@ -895,7 +895,7 @@
 #else
 		if (m_bFullCover) {
 			for (int col = col_start; col < col_end; col ++) {
-				int src_alpha = m_Alpha * clip_scan[col] / 255;	
+				int src_alpha = m_Alpha * clip_scan[col] / 255;
 				if (!src_alpha) {
 					dest_scan += 3;
 					continue;
@@ -917,7 +917,7 @@
 		} else {
 			int src_alpha = m_Alpha * cover_scan /255;
 			for (int col = col_start; col < col_end; col ++) {
-				int src_alpha1 = src_alpha * clip_scan[col] / 255;	
+				int src_alpha1 = src_alpha * clip_scan[col] / 255;
 				if (!src_alpha1) {
 					dest_scan += 3;
 					continue;
@@ -940,8 +940,8 @@
 #endif
 	}
 	void CFX_SkiaRenderer::CompositeSpanRGB24_7(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_pDevice->IsCmykImage());
@@ -974,7 +974,7 @@
 			dest_scan ++;
 		}
 #else
-		if (m_bFullCover) { 
+		if (m_bFullCover) {
 			for (int col = col_start; col < col_end; col ++) {
 				int src_alpha = m_Alpha * clip_scan[col] / 255;
 				if (!src_alpha){
@@ -1018,8 +1018,8 @@
 #endif
 	}
 	void CFX_SkiaRenderer::CompositeSpanRGB24_10(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left+(span_left<<1);
@@ -1042,7 +1042,7 @@
 		for (int col = col_start; col < col_end; col ++) {
 			// Dest format: Rgba
 			// calculate destination alpha (it's union of source and dest alpha)
-			uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha - 
+			uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
 								(*dest_extra_alpha_scan) * src_alpha / 255;
 			*dest_extra_alpha_scan++ = dest_alpha;
 			int alpha_ratio = src_alpha*255/dest_alpha;
@@ -1051,7 +1051,7 @@
 			*dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Green, alpha_ratio);
 			dest_scan ++;
 			*dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Red, alpha_ratio);
-			dest_scan ++;			
+			dest_scan ++;
 		}
 #else
 		if (m_bFullCover) {
@@ -1067,7 +1067,7 @@
 			for (int col = col_start; col < col_end; col ++) {
 				// Dest format: Rgba
 				// calculate destination alpha (it's union of source and dest alpha)
-				uint8_t dest_alpha = (*dest_extra_alpha_scan) + m_Alpha - 
+				uint8_t dest_alpha = (*dest_extra_alpha_scan) + m_Alpha -
 									(*dest_extra_alpha_scan) * m_Alpha / 255;
 				*dest_extra_alpha_scan++ = dest_alpha;
 				int alpha_ratio = m_Alpha*255/dest_alpha;
@@ -1092,7 +1092,7 @@
 			for (int col = col_start; col < col_end; col ++) {
 				// Dest format: Rgba
 				// calculate destination alpha (it's union of source and dest alpha)
-				uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha - 
+				uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
 									(*dest_extra_alpha_scan) * src_alpha / 255;
 				*dest_extra_alpha_scan++ = dest_alpha;
 				int alpha_ratio = src_alpha*255/dest_alpha;
@@ -1101,14 +1101,14 @@
 				*dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Green, alpha_ratio);
 				dest_scan ++;
 				*dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Red, alpha_ratio);
-				dest_scan ++;			
+				dest_scan ++;
 			}
 		}
 #endif
 	}
 	void CFX_SkiaRenderer::CompositeSpanRGB24_14(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		dest_scan = (uint8_t*)m_pDevice->GetScanline(span_top) + span_left+(span_left<<1);
@@ -1126,7 +1126,7 @@
 				dest_extra_alpha_scan++;
 				dest_scan += 3;
 				continue;
-			}				
+			}
 			if (src_alpha1 == 255) {
 				*dest_scan++ = (uint8_t)m_Blue;
 				*dest_scan++ = (uint8_t)m_Green;
@@ -1135,7 +1135,7 @@
 			} else {
 				// Dest format: Rgba
 				// calculate destination alpha (it's union of source and dest alpha)
-				uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha1 - 
+				uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha1 -
 									(*dest_extra_alpha_scan) * src_alpha1 / 255;
 				*dest_extra_alpha_scan++ = dest_alpha;
 				int alpha_ratio = src_alpha1*255/dest_alpha;
@@ -1164,7 +1164,7 @@
 				} else {
 					// Dest format: Rgba
 					// calculate destination alpha (it's union of source and dest alpha)
-					uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha - 
+					uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
 										(*dest_extra_alpha_scan) * src_alpha / 255;
 					*dest_extra_alpha_scan++ = dest_alpha;
 					int alpha_ratio = src_alpha*255/dest_alpha;
@@ -1184,7 +1184,7 @@
 					dest_extra_alpha_scan++;
 					dest_scan += 3;
 					continue;
-				}				
+				}
 				if (src_alpha1 == 255) {
 					*dest_scan++ = (uint8_t)m_Blue;
 					*dest_scan++ = (uint8_t)m_Green;
@@ -1193,7 +1193,7 @@
 				} else {
 					// Dest format: Rgba
 					// calculate destination alpha (it's union of source and dest alpha)
-					uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha1 - 
+					uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha1 -
 										(*dest_extra_alpha_scan) * src_alpha1 / 255;
 					*dest_extra_alpha_scan++ = dest_alpha;
 					int alpha_ratio = src_alpha1*255/dest_alpha;
@@ -1212,8 +1212,8 @@
 
 	// A general alpha merge function (with clipping mask). Cmyka/Cmyk device.
 	void CFX_SkiaRenderer::CompositeSpanCMYK(uint8_t* dest_scan, uint8_t* ori_scan,int Bpp,
-			int span_left, int span_len, int span_top, uint8_t cover_scan, 
-			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan, 
+			int span_left, int span_len, int span_top, uint8_t cover_scan,
+			int clip_top, int clip_left, int clip_right, uint8_t* clip_scan,
 			uint8_t* dest_extra_alpha_scan)
 	{
 		ASSERT(!m_bRgbByteOrder);
@@ -1223,7 +1223,7 @@
 		if (col_end < col_start) return; // do nothing.
 		dest_scan += col_start * 4;
 		Bpp; // for avoid compile warning.
-		
+
 		if (dest_extra_alpha_scan) {
 			// CMYKa
 			for (int col = col_start; col < col_end; col ++) {
@@ -1239,7 +1239,7 @@
 					else
 						src_alpha = m_Alpha * cover_scan / 255;
 				}
-				
+
 				if (src_alpha) {
 					if (src_alpha == 255) {
 						*(FX_CMYK*)dest_scan = m_Color;
@@ -1247,7 +1247,7 @@
 					} else {
 						// Dest format: Cmyka
 						// calculate destination alpha (it's union of source and dest alpha)
-						uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha - 
+						uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
 							(*dest_extra_alpha_scan) * src_alpha / 255;
 						*dest_extra_alpha_scan++ = dest_alpha;
 						int alpha_ratio = src_alpha*255/dest_alpha;
@@ -1273,7 +1273,7 @@
 					src_alpha = m_Alpha * cover_scan * clip_scan[col] / 255 / 255;
 				else
 					src_alpha = m_Alpha * cover_scan / 255;
-				
+
 				if (src_alpha) {
 					if (src_alpha == 255) {
 						*(FX_CMYK*)dest_scan = m_Color;
@@ -1295,10 +1295,10 @@
 		}
 	}
 
-   
-	
+
+
 	//--------------------------------------------------------------------
-	FX_BOOL CFX_SkiaRenderer::Init(CFX_DIBitmap* pDevice, CFX_DIBitmap* pOriDevice, const CFX_ClipRgn* pClipRgn, FX_DWORD color, FX_BOOL bFullCover, FX_BOOL bRgbByteOrder, 
+	FX_BOOL CFX_SkiaRenderer::Init(CFX_DIBitmap* pDevice, CFX_DIBitmap* pOriDevice, const CFX_ClipRgn* pClipRgn, FX_DWORD color, FX_BOOL bFullCover, FX_BOOL bRgbByteOrder,
 		int alpha_flag, void* pIccTransform) //The alpha flag must be fill_flag if exist.
 	{
 		m_pDevice = pDevice;
@@ -1328,9 +1328,9 @@
 		if (m_pOriDevice)
 			m_pOriScan = m_pOriDevice->GetBuffer();
 		m_pDestScan = m_pDevice->GetBuffer();
-		
+
 		m_bFullCover = bFullCover;
-		
+
 		FX_BOOL bObjectCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
 		FX_BOOL bDeviceCMYK = pDevice->IsCmykImage();
 
@@ -1338,11 +1338,11 @@
 
 		ICodec_IccModule* pIccModule = NULL;
 		// No lcms engine, we skip the transform
-		if (!CFX_GEModule::Get()->GetCodecModule() || !CFX_GEModule::Get()->GetCodecModule()->GetIccModule()) 
+		if (!CFX_GEModule::Get()->GetCodecModule() || !CFX_GEModule::Get()->GetCodecModule()->GetIccModule())
 			pIccTransform = NULL;
 		else
 			pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
-		
+
 		if (m_pDevice->GetBPP() == 8) { // Gray(a) device
 			ASSERT(!m_bRgbByteOrder);
 			if (m_pDevice->IsAlphaMask()) {
@@ -1358,7 +1358,7 @@
 				} else {
 					if (bObjectCMYK) {
 						uint8_t r, g, b;
-						AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color), FXSYS_GetYValue(color), FXSYS_GetKValue(color), 
+						AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color), FXSYS_GetYValue(color), FXSYS_GetKValue(color),
 							r, g, b);
 						m_Gray = FXRGB2GRAY(r, g, b);
 					} else {
@@ -1371,7 +1371,7 @@
 				ASSERT(!m_bRgbByteOrder);
 				//TODO... opt for cmyk
 				composite_span = &CFX_SkiaRenderer::CompositeSpanCMYK;
-				if (bObjectCMYK) { 
+				if (bObjectCMYK) {
 					m_Color = FXCMYK_TODIB(color);
 					if (pIccTransform)
 						pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&m_Color, 1);
@@ -1386,7 +1386,7 @@
 				m_Blue	= ((uint8_t*)&m_Color)[2];
 				m_Gray	= ((uint8_t*)&m_Color)[3];
 				return TRUE;
-			} else { 
+			} else {
 				if (pIccTransform) {
 					color = bObjectCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
 					pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&color, 1);
@@ -1405,7 +1405,7 @@
 				} else {
 					if (bObjectCMYK) {
 						uint8_t r, g, b;
-						AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color), FXSYS_GetYValue(color), FXSYS_GetKValue(color), 
+						AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color), FXSYS_GetYValue(color), FXSYS_GetKValue(color),
 							r, g, b);
 						m_Color = FXARGB_MAKE(m_Alpha, r, g, b);
 						if (m_bRgbByteOrder){
@@ -1421,15 +1421,15 @@
 							ArgbDecode(color, m_Alpha, m_Blue, m_Green, m_Red); //
 						}else {
 							m_Color = FXARGB_TODIB(color);
-							ArgbDecode(color, m_Alpha, m_Red, m_Green, m_Blue); 
-						}					
+							ArgbDecode(color, m_Alpha, m_Red, m_Green, m_Blue);
+						}
 					}
-				}	
+				}
 			}
 		}
 		// Get palette transparency selector
 		m_ProcessFilter = (m_pOriDevice? 1 : 0)	/* has Ori Device flag */
-						+ (m_pDevice->GetBPP() >= 8 ? 2 : 0)	/* bpp flag */			
+						+ (m_pDevice->GetBPP() >= 8 ? 2 : 0)	/* bpp flag */
 						+ (m_pClipMask? 4 : 0)					/* has clip region flag */
 						+ (m_pDevice->m_pAlphaMask? 8 : 0);		/* has Alpha Mask chanel flag */
 		switch(m_ProcessFilter) {
@@ -1452,7 +1452,7 @@
 						composite_span = &CFX_SkiaRenderer::CompositeSpanGray_3;
 					else if (m_pDevice->GetBPP() == 24)
 						composite_span = &CFX_SkiaRenderer::CompositeSpanRGB24_3;
-					else 
+					else
 						composite_span = m_pDevice->HasAlpha()?&CFX_SkiaRenderer::CompositeSpanARGB_3 : &CFX_SkiaRenderer::CompositeSpanRGB32_3;
 				}
 				break;
@@ -1465,7 +1465,7 @@
 						composite_span = &CFX_SkiaRenderer::CompositeSpanGray_6;
 					else if (m_pDevice->GetBPP() == 24)
 						composite_span = &CFX_SkiaRenderer::CompositeSpanRGB24_6;
-					else 
+					else
 						composite_span = m_pDevice->HasAlpha()?&CFX_SkiaRenderer::CompositeSpanARGB_6 : &CFX_SkiaRenderer::CompositeSpanRGB32_6;
 				}
 				break;
@@ -1475,7 +1475,7 @@
 						composite_span = &CFX_SkiaRenderer::CompositeSpanGray_7;
 					else if (m_pDevice->GetBPP() == 24)
 						composite_span = &CFX_SkiaRenderer::CompositeSpanRGB24_7;
-					else 
+					else
 						composite_span = m_pDevice->HasAlpha()?&CFX_SkiaRenderer::CompositeSpanARGB_7 : &CFX_SkiaRenderer::CompositeSpanRGB32_7;
 				}
 				break;
@@ -1508,16 +1508,16 @@
 		int dst_y = y - m_Top;
 		if (dst_y < 0 || dst_y >=  m_pDevice->GetHeight())
 			return;
-		
+
 		uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * dst_y;
 		uint8_t* dest_pos = dest_scan;
 		while (1)
 		{
-			if (x >= m_dstWidth) 
+			if (x >= m_dstWidth)
 				return;
 			int width = runs[0];
 			SkASSERT(width >= 0);
-			if (width <= 0) 
+			if (width <= 0)
 				return;
 			unsigned aa = antialias[0];
 			if (aa) {
@@ -1531,8 +1531,8 @@
 						FXSYS_memset(dest_pos, FXARGB_MAKE(aa, aa, aa, aa),result);
 					else
 						FXSYS_memset(dest_pos,aa,result);
-				}				
-			}	
+				}
+			}
 			runs += width;
 			antialias += width;
 			x += width;
@@ -1544,7 +1544,7 @@
 		int dst_y = y - m_Top;
 		if (dst_y < 0 || dst_y >=  m_pDevice->GetHeight())
 			return;
-		if (x >= m_dstWidth) 
+		if (x >= m_dstWidth)
 			return;
 		uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * dst_y;
 		int col_start = x < m_Left ? 0 : x - m_Left;
@@ -1586,7 +1586,7 @@
 	}
 
 	void CFX_SkiaA8Renderer::blitAntiRect(int x, int y, int width, int height,
-                             SkAlpha leftAlpha, SkAlpha rightAlpha) 
+                             SkAlpha leftAlpha, SkAlpha rightAlpha)
 	{
 		blitV(x++, y, height, leftAlpha);
 		if (width > 0) {

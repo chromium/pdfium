@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_SRC_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_
@@ -21,7 +21,7 @@ public:
 protected:
     CFX_BinaryBuf	m_Buffer;
 };
-class CFX_CTTGSUBTable 
+class CFX_CTTGSUBTable
 {
 public:
     CFX_CTTGSUBTable(void): m_bFeautureMapLoad(FALSE), loaded(false) {};

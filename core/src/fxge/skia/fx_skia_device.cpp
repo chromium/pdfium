@@ -66,7 +66,7 @@ FX_BOOL FxSkDrawTreatAsHairline(const SkPaint& paint, SkScalar* coverage) {
 	return FALSE;
 }
 
-void SuperBlitter_skia::DrawPath(const SkPath& srcPath, SkBlitter* blitter, const SkRasterClip& rect, const SkPaint& origPaint) 
+void SuperBlitter_skia::DrawPath(const SkPath& srcPath, SkBlitter* blitter, const SkRasterClip& rect, const SkPaint& origPaint)
 {
 	SkPath*		pathPtr = (SkPath*)&srcPath;
 	bool		doFill = true;
@@ -117,7 +117,7 @@ void SuperBlitter_skia::DrawPath(const SkPath& srcPath, SkBlitter* blitter, cons
 	proc(*devPathPtr, rect, blitter);
 }
 
-class CSkia_PathData 
+class CSkia_PathData
 {
 public:
 	CSkia_PathData() {}
@@ -144,9 +144,9 @@ void CSkia_PathData::BuildPath(const CFX_PathData* pPathData, const CFX_AffineMa
 				// PDF line includes the destination point, unlike Windows line.
 				// We received some PDF which actually draws zero length lines. TESTDOC: summer cha show.pdf
 				// Therefore, we have to extend the line by 0.4 pixel here.
-				// But only for standalone segment. TESTDOC: bug #1434 - maze.pdf; TESTDOC: bug#1508 di704P_QIG_111.pdf 
+				// But only for standalone segment. TESTDOC: bug #1434 - maze.pdf; TESTDOC: bug#1508 di704P_QIG_111.pdf
 				x += 0.4;
-			// TODO: we should actually tell skia vertex generator to process zero length stroked line 
+			// TODO: we should actually tell skia vertex generator to process zero length stroked line
 			// (only butts are drawn)
 			m_PathData.lineTo(x, y);
 		} else if (point_type == FXPT_BEZIERTO) {
@@ -164,9 +164,9 @@ void CSkia_PathData::BuildPath(const CFX_PathData* pPathData, const CFX_AffineMa
 }
 
 // convert a stroking path to scanlines
-static void SkRasterizeStroke(SkPaint& spaint, SkPath* dstPathData, SkPath& path_data, 
+static void SkRasterizeStroke(SkPaint& spaint, SkPath* dstPathData, SkPath& path_data,
 					 const CFX_AffineMatrix* pObject2Device,
-					 const CFX_GraphStateData* pGraphState, FX_FIXFLOAT scale = FIX8_ONE, 
+					 const CFX_GraphStateData* pGraphState, FX_FIXFLOAT scale = FIX8_ONE,
 					 FX_BOOL bStrokeAdjust = FALSE, FX_BOOL bTextMode = FALSE)
 {
 	SkPaint::Cap cap;
@@ -205,7 +205,7 @@ static void SkRasterizeStroke(SkPaint& spaint, SkPath* dstPathData, SkPath& path
 		stroker.setWidth(width);
 		stroker.setDoFill(FALSE);
 		stroker.strokePath(path_data, dstPathData);
-		SkMatrix smatrix; 
+		SkMatrix smatrix;
 		smatrix.setAll(pObject2Device->a, pObject2Device->c, pObject2Device->e, pObject2Device->b, pObject2Device->d, pObject2Device->f, 0, 0, 1);
 		dstPathData->transform(smatrix);
 	} else {
@@ -217,7 +217,7 @@ static void SkRasterizeStroke(SkPaint& spaint, SkPath* dstPathData, SkPath& path
 			if (on <= 0.000001f) on = FIX8_ONE/10;
 			FX_FIXFLOAT off = i*2+1 == pGraphState->m_DashCount ? on :
 					pGraphState->m_DashArray[i*2+1];
-			if (off < 0) off = 0;		
+			if (off < 0) off = 0;
 			intervals[i*2]=on*scale;
 			intervals[i*2+1]=off*scale;
 		}
@@ -228,7 +228,7 @@ static void SkRasterizeStroke(SkPaint& spaint, SkPath* dstPathData, SkPath& path
 		spaint.setStrokeCap(cap);
 		spaint.setStrokeJoin(join);
 		spaint.getFillPath(path_data, dstPathData);
-		SkMatrix smatrix; 
+		SkMatrix smatrix;
 		smatrix.setAll(pObject2Device->a, pObject2Device->c, pObject2Device->e, pObject2Device->b, pObject2Device->d, pObject2Device->f, 0, 0, 1);
 		dstPathData->transform(smatrix);
 		FX_Free(intervals);
@@ -244,10 +244,10 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver()
 	if (m_pAggDriver) delete m_pAggDriver;
 }
 FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
-		CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FIXFLOAT font_size, FX_DWORD color, 
+		CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FIXFLOAT font_size, FX_DWORD color,
 		int alpha_flag, void* pIccTransform)
 {
-	return m_pAggDriver->DrawDeviceText(nChars, pCharPos, pFont,pCache, pObject2Device, font_size, color, 
+	return m_pAggDriver->DrawDeviceText(nChars, pCharPos, pFont,pCache, pObject2Device, font_size, color,
 		alpha_flag, pIccTransform);
 }
 int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id)
@@ -256,7 +256,7 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id)
 }
 void CFX_SkiaDeviceDriver::SaveState()
 {
-	m_pAggDriver->SaveState();	
+	m_pAggDriver->SaveState();
 }
 
 void CFX_SkiaDeviceDriver::RestoreState(FX_BOOL bKeepSaved)
@@ -268,7 +268,7 @@ void CFX_SkiaDeviceDriver::SetClipMask(rasterizer_scanline_aa& rasterizer)
 	m_pAggDriver->SetClipMask(rasterizer);
 }
 void CFX_SkiaDeviceDriver::SetClipMask(SkPath& skPath, SkPaint* spaint)
-{	
+{
 	SkIRect clip_box;
 	clip_box.set(0, 0, fix0_to_8(GetDeviceCaps(FXDC_PIXEL_WIDTH)), fix0_to_8(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
 	clip_box.intersect(m_pAggDriver->m_pClipRgn->GetBox().left, m_pAggDriver->m_pClipRgn->GetBox().top,
@@ -289,7 +289,7 @@ void CFX_SkiaDeviceDriver::SetClipMask(SkPath& skPath, SkPaint* spaint)
 
 	SkRasterClip rasterClip(clip_box);
 	SuperBlitter_skia::DrawPath(skPath, (SkBlitter*)&render, rasterClip, *spaint);
-	
+
 	// Finally, we have got the mask that we need, intersect with current clip region
 	m_pAggDriver->m_pClipRgn->IntersectMaskF(clip_box.fLeft, clip_box.fTop, mask);
 
@@ -348,7 +348,7 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathStroke(const CFX_PathData* pPathData,	
 	SkRasterizeStroke(spaint, &dst_path, path_data.m_PathData, pObject2Device, pGraphState, 1, FALSE, 0);
 	spaint.setStyle(SkPaint::kFill_Style);
 	SetClipMask(dst_path, &spaint);
-	
+
 	return TRUE;
 }
 FX_BOOL CFX_SkiaDeviceDriver::RenderRasterizer(rasterizer_scanline_aa& rasterizer, FX_DWORD color, FX_BOOL bFullCover, FX_BOOL bGroupKnockout,
@@ -356,19 +356,19 @@ FX_BOOL CFX_SkiaDeviceDriver::RenderRasterizer(rasterizer_scanline_aa& rasterize
 {
 	return m_pAggDriver->RenderRasterizer(rasterizer, color, bFullCover, bGroupKnockout,alpha_flag, pIccTransform);
 }
-FX_BOOL	CFX_SkiaDeviceDriver::RenderRasterizerSkia(SkPath& skPath, const SkPaint& origPaint, SkIRect& rect, FX_DWORD color, FX_BOOL bFullCover, FX_BOOL bGroupKnockout, 
+FX_BOOL	CFX_SkiaDeviceDriver::RenderRasterizerSkia(SkPath& skPath, const SkPaint& origPaint, SkIRect& rect, FX_DWORD color, FX_BOOL bFullCover, FX_BOOL bGroupKnockout,
 							int alpha_flag, void* pIccTransform, FX_BOOL bFill)
 {
 	CFX_DIBitmap* pt = bGroupKnockout?m_pAggDriver->GetBackDrop():NULL;
 	CFX_SkiaRenderer render;
 	if (!render.Init(m_pAggDriver->m_pBitmap, pt, m_pAggDriver->m_pClipRgn, color, bFullCover, m_pAggDriver->m_bRgbByteOrder, alpha_flag, pIccTransform))
 		return FALSE;
-	
+
 	SkRasterClip rasterClip(rect);
 	SuperBlitter_skia::DrawPath(skPath, (SkBlitter*)&render,  rasterClip, origPaint);
 
 	return TRUE;
-	
+
 }
 
 FX_BOOL	CFX_SkiaDeviceDriver::DrawPath(const CFX_PathData* pPathData,	// path info
@@ -377,7 +377,7 @@ FX_BOOL	CFX_SkiaDeviceDriver::DrawPath(const CFX_PathData* pPathData,	// path in
 						FX_DWORD fill_color,			// fill color
 						FX_DWORD stroke_color,			// stroke color
 						int fill_mode,					// fill mode, WINDING or ALTERNATE. 0 for not filled
-						int alpha_flag, 
+						int alpha_flag,
 						void* pIccTransform
 						)
 {
@@ -388,7 +388,7 @@ FX_BOOL	CFX_SkiaDeviceDriver::DrawPath(const CFX_PathData* pPathData,	// path in
 	if ((fill_mode & 3) && fill_color) {
 		// We have to transform before building path data, otherwise we'll have flatting problem
 		// when we enlarge a small path (flatten before transformed)
-		// TESTDOC: Bug #5115 - DS_S1Dimpact_lr.pdf 
+		// TESTDOC: Bug #5115 - DS_S1Dimpact_lr.pdf
 		// build path data
 		CSkia_PathData path_data;
 		path_data.BuildPath(pPathData, pObject2Device);
@@ -400,7 +400,7 @@ FX_BOOL	CFX_SkiaDeviceDriver::DrawPath(const CFX_PathData* pPathData,	// path in
 		spaint.setStyle(SkPaint::kFill_Style);
 		spaint.setColor(fill_color);
 		if (!RenderRasterizerSkia(path_data.m_PathData, spaint, rect, fill_color, fill_mode & FXFILL_FULLCOVER, FALSE, alpha_flag, pIccTransform))
-			return FALSE;	
+			return FALSE;
 	}
 
 	int stroke_alpha = FXGETFLAG_COLORTYPE(alpha_flag) ? FXGETFLAG_ALPHA_STROKE(alpha_flag) : FXARGB_A(stroke_color);
@@ -408,15 +408,15 @@ FX_BOOL	CFX_SkiaDeviceDriver::DrawPath(const CFX_PathData* pPathData,	// path in
 	if (pGraphState && stroke_alpha) {
 		// We split the matrix into two parts: first part doing the scaling, so we won't have the
 		// flatness problem, second part doing the transformation, so we don't have stroking geo problem.
-		// TESTDOC: Bug #5253 - test[1].pdf 
+		// TESTDOC: Bug #5253 - test[1].pdf
 		CFX_AffineMatrix matrix1, matrix2;
 		if (pObject2Device) {
 			matrix1.a = FXSYS_fabs(pObject2Device->a) > FXSYS_fabs(pObject2Device->b) ?
 					FXSYS_fabs(pObject2Device->a) : FXSYS_fabs(pObject2Device->b);
 			matrix1.d = matrix1.a;//FXSYS_fabs(pObject2Device->c) > FXSYS_fabs(pObject2Device->d) ?
 					//pObject2Device->c : pObject2Device->d;
-			matrix2.Set(pObject2Device->a/matrix1.a, pObject2Device->b/matrix1.a, 
-					pObject2Device->c/matrix1.d, pObject2Device->d/matrix1.d, 
+			matrix2.Set(pObject2Device->a/matrix1.a, pObject2Device->b/matrix1.a,
+					pObject2Device->c/matrix1.d, pObject2Device->d/matrix1.d,
 					pObject2Device->e, pObject2Device->f);
 		}
 		// build path data
@@ -432,12 +432,12 @@ FX_BOOL	CFX_SkiaDeviceDriver::DrawPath(const CFX_PathData* pPathData,	// path in
 		SkRasterizeStroke(spaint, &dst_path, path_data.m_PathData, &matrix2, pGraphState, matrix1.a, FALSE, 0);
 		spaint.setStyle(SkPaint::kFill_Style);
 		int fill_flag = FXGETFLAG_COLORTYPE(alpha_flag)<<8 | FXGETFLAG_ALPHA_STROKE(alpha_flag);
-		
+
 		if (!RenderRasterizerSkia(dst_path, spaint, rect, stroke_color, fill_mode & FXFILL_FULLCOVER, FALSE, fill_flag, pIccTransform, FALSE))
 			return FALSE;
-			
+
 	}
-	
+
 	return TRUE;
 }
 
@@ -462,26 +462,26 @@ FX_BOOL	CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top
 	return m_pAggDriver->GetDIBits(pBitmap, left, top, pIccTransform, bDEdge);
 }
 
-FX_BOOL	CFX_SkiaDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap, FX_DWORD argb, const FX_RECT* pSrcRect, int left, int top, int blend_type, 
+FX_BOOL	CFX_SkiaDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap, FX_DWORD argb, const FX_RECT* pSrcRect, int left, int top, int blend_type,
 									   int alpha_flag, void* pIccTransform)
 {
 	return m_pAggDriver->SetDIBits(pBitmap, argb, pSrcRect, left, top, blend_type, alpha_flag, pIccTransform);
 }
 
-FX_BOOL	CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD argb, int dest_left, int dest_top, 
-							int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags, 
+FX_BOOL	CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD argb, int dest_left, int dest_top,
+							int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags,
 							int alpha_flag, void* pIccTransform)
 {
-	return m_pAggDriver->StretchDIBits(pSource, argb, dest_left, dest_top, 
-							dest_width, dest_height, pClipRect, flags, 
+	return m_pAggDriver->StretchDIBits(pSource, argb, dest_left, dest_top,
+							dest_width, dest_height, pClipRect, flags,
 							alpha_flag, pIccTransform);
 }
 
-FX_BOOL	CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource, int bitmap_alpha, FX_DWORD argb, 
-						const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, void*& handle, 
+FX_BOOL	CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource, int bitmap_alpha, FX_DWORD argb,
+						const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, void*& handle,
 						int alpha_flag, void* pIccTransform)
 {
-	return m_pAggDriver->StartDIBits(pSource, bitmap_alpha, argb, 
+	return m_pAggDriver->StartDIBits(pSource, bitmap_alpha, argb,
 						pMatrix, render_flags, handle, alpha_flag, pIccTransform);
 }
 
@@ -502,7 +502,7 @@ CFX_SkiaDevice::CFX_SkiaDevice()
 
 FX_BOOL CFX_SkiaDevice::Attach(CFX_DIBitmap* pBitmap, int dither_bits, FX_BOOL bRgbByteOrder, CFX_DIBitmap* pOriDevice, FX_BOOL bGroupKnockout)
 {
-	if (pBitmap == NULL) 
+	if (pBitmap == NULL)
 		return FALSE;
 	SetBitmap(pBitmap);
 	CFX_SkiaDeviceDriver* pDriver = new CFX_SkiaDeviceDriver(pBitmap, dither_bits, bRgbByteOrder, pOriDevice, bGroupKnockout);
@@ -517,7 +517,7 @@ FX_BOOL CFX_SkiaDevice::Create(int width, int height, FXDIB_Format format, int d
 	if (!pBitmap->Create(width, height, format)) {
 		delete pBitmap;
 		return FALSE;
-	} 
+	}
 	SetBitmap(pBitmap);
 	CFX_SkiaDeviceDriver* pDriver =  new CFX_SkiaDeviceDriver(pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
 	SetDeviceDriver(pDriver);

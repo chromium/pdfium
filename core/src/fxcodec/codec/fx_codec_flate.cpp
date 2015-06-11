@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
@@ -76,7 +76,7 @@ extern "C"
         compress(dest_buf, dest_size, src_buf, src_size);
     }
 }
-class CLZWDecoder 
+class CLZWDecoder
 {
 public:
     FX_BOOL Decode(uint8_t* output, FX_DWORD& outlen, const uint8_t* input, FX_DWORD& size, FX_BOOL bEarlyChange);

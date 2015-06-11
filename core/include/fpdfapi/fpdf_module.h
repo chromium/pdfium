@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
@@ -41,7 +41,7 @@ class IPDF_FontMapper;
 #define ADDIN_NAME_CJK			"Eastern Asian Language Support"
 #define ADDIN_NAME_DECODER		"JPEG2000 and JBIG2 Image Decoders"
 
-class CPDF_ModuleMgr 
+class CPDF_ModuleMgr
 {
 public:
 
@@ -135,7 +135,7 @@ protected:
 
     CFX_PrivateData			m_privateData;
 };
-class CPDF_PageModuleDef 
+class CPDF_PageModuleDef
 {
 public:
     virtual ~CPDF_PageModuleDef() {}
@@ -162,7 +162,7 @@ public:
         return NULL;
     }
 };
-class CPDF_RenderModuleDef 
+class CPDF_RenderModuleDef
 {
 public:
     virtual ~CPDF_RenderModuleDef() {}

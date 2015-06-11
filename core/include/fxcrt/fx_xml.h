@@ -9,14 +9,14 @@
 
 #include "fx_basic.h"
 
-class CXML_AttrItem 
+class CXML_AttrItem
 {
 public:
     CFX_ByteString	m_QSpaceName;
     CFX_ByteString	m_AttrName;
     CFX_WideString	m_Value;
 };
-class CXML_AttrMap 
+class CXML_AttrMap
 {
 public:
     CXML_AttrMap()
@@ -35,7 +35,7 @@ public:
     CXML_AttrItem&			GetAt(int index) const;
     CFX_ObjectArray<CXML_AttrItem>*	m_pMap;
 };
-class CXML_Content 
+class CXML_Content
 {
 public:
     CXML_Content() : m_bCDATA(FALSE), m_Content() {}
@@ -47,7 +47,7 @@ public:
     FX_BOOL			m_bCDATA;
     CFX_WideString	m_Content;
 };
-class CXML_Element 
+class CXML_Element
 {
 public:
     static CXML_Element*	Parse(const void* pBuffer, size_t size, FX_BOOL bSaveSpaceChars = FALSE, FX_FILESIZE* pParsedSize = NULL);

@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
@@ -28,7 +28,7 @@ class CPDF_ResourceNaming;
 #define PDF_CONTENT_NOT_PARSED	0
 #define PDF_CONTENT_PARSING		1
 #define PDF_CONTENT_PARSED		2
-class CPDF_PageObjects 
+class CPDF_PageObjects
 {
 public:
 
@@ -195,7 +195,7 @@ protected:
 
     CPDF_PageRenderCache*	m_pPageRender;
 };
-class CPDF_ParseOptions 
+class CPDF_ParseOptions
 {
 public:
 
@@ -225,7 +225,7 @@ public:
 
     CPDF_Form*			Clone() const;
 };
-class CPDF_PageContentGenerate 
+class CPDF_PageContentGenerate
 {
 public:
     CPDF_PageContentGenerate(CPDF_Page* pPage);

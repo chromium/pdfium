@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxcodec/fx_codec.h"
@@ -918,7 +918,7 @@ static void _FaxEncode2DLine(uint8_t* dest_buf, int& dest_bitpos, const uint8_t*
         }
     }
 }
-class CCodec_FaxEncoder 
+class CCodec_FaxEncoder
 {
 public:
     CCodec_FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch);

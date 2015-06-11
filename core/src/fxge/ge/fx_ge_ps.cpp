@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxge/fx_ge.h"
@@ -13,7 +13,7 @@ struct PSGlyph {
     FX_BOOL			m_bGlyphAdjust;
     FX_FLOAT		m_AdjustMatrix[4];
 };
-class CPSFont 
+class CPSFont
 {
 public:
     PSGlyph			m_Glyphs[256];

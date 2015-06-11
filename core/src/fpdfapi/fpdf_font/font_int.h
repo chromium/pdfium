@@ -1,13 +1,13 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 #ifndef CORE_SRC_FPDFAPI_FPDF_FONT_FONT_INT_H_
 #define CORE_SRC_FPDFAPI_FPDF_FONT_FONT_INT_H_
 
 typedef void* FXFT_Library;
-class CPDF_CMapManager 
+class CPDF_CMapManager
 {
 public:
     CPDF_CMapManager();
@@ -24,7 +24,7 @@ private:
     CFX_MapByteStringToPtr	m_CMaps;
     CPDF_CID2UnicodeMap*	m_CID2UnicodeMaps[6];
 };
-class CPDF_FontGlobals 
+class CPDF_FontGlobals
 {
 public:
     CPDF_FontGlobals();
@@ -51,7 +51,7 @@ struct _CMap_CodeRange {
     uint8_t		m_Lower[4];
     uint8_t		m_Upper[4];
 };
-class CPDF_CMapParser 
+class CPDF_CMapParser
 {
 public:
     CPDF_CMapParser();
@@ -76,7 +76,7 @@ private:
 #define CIDCODING_UCS2		5
 #define CIDCODING_CID		6
 #define CIDCODING_UTF16		7
-class CPDF_CMap 
+class CPDF_CMap
 {
 public:
     CPDF_CMap();
@@ -141,7 +141,7 @@ typedef struct _FileHeader {
     FX_DWORD	dwDataOffset;
     FX_DWORD	dwRecordSize;
 } FXMP_FILEHEADER;
-class CPDF_CID2UnicodeMap 
+class CPDF_CID2UnicodeMap
 {
 public:
     CPDF_CID2UnicodeMap();
@@ -155,7 +155,7 @@ protected:
     const FX_WORD*	m_pEmbeddedMap;
     FX_DWORD	m_EmbeddedCount;
 };
-class CPDF_ToUnicodeMap 
+class CPDF_ToUnicodeMap
 {
 public:
     void					Load(CPDF_Stream* pStream);

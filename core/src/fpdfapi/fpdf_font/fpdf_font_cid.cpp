@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_module.h"
@@ -830,7 +830,7 @@ FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const
                 break;
             }
     }
-	
+
     if (unicode < 0x80) {
         return static_cast<FX_DWORD>(unicode);
     } else if (m_pCMap->m_Coding == CIDCODING_CID) {

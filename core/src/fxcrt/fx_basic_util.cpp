@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fxcrt/fx_basic.h"
@@ -294,7 +294,7 @@ CFX_WideString FX_DecodeURI(const CFX_ByteString& bsURI)
     return CFX_WideString::FromUTF8(rURI, rURI.GetLength());
 }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-class CFindFileData 
+class CFindFileData
 {
 public:
     virtual ~CFindFileData() {}

@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_SRC_FXGE_ANDROID_FPF_SKIAFONTMGR_H_
@@ -12,7 +12,7 @@
 #define	FPF_SKIAFONTTYPE_Path		1
 #define FPF_SKIAFONTTYPE_File		2
 #define FPF_SKIAFONTTYPE_Buffer		3
-class CFPF_SkiaFontDescriptor 
+class CFPF_SkiaFontDescriptor
 {
 public:
     CFPF_SkiaFontDescriptor() : m_pFamily(NULL), m_dwStyle(0), m_iFaceIndex(0), m_dwCharsets(0), m_iGlyphNum(0) {}

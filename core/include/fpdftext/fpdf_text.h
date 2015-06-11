@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
@@ -56,7 +56,7 @@ typedef	CFX_ArrayTemplate<CFX_FloatRect> CFX_RectArray;
 #define FPDFTEXT_WRITINGMODE_LRTB	1
 #define FPDFTEXT_WRITINGMODE_RLTB	2
 #define FPDFTEXT_WRITINGMODE_TBRL	3
-class CPDFText_ParseOptions 
+class CPDFText_ParseOptions
 {
 public:
 
@@ -65,7 +65,7 @@ public:
     FX_BOOL			m_bNormalizeObjs;
     FX_BOOL			m_bOutputHyphen;
 };
-class IPDF_TextPage 
+class IPDF_TextPage
 {
 public:
 
@@ -127,7 +127,7 @@ public:
 #define FPDFTEXT_MATCHCASE      0x00000001
 #define FPDFTEXT_MATCHWHOLEWORD 0x00000002
 #define FPDFTEXT_CONSECUTIVE	0x00000004
-class IPDF_TextPageFind 
+class IPDF_TextPageFind
 {
 public:
 
@@ -148,7 +148,7 @@ public:
 
     virtual int					GetMatchedCount() const = 0;
 };
-class IPDF_LinkExtract 
+class IPDF_LinkExtract
 {
 public:
 

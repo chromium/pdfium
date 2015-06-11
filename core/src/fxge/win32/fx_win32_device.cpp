@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxge/fx_ge.h"
@@ -569,7 +569,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1, int d
     HBRUSH hPattern = CreateSolidBrush(bitmap_color & 0xffffff);
     HBRUSH hOld = (HBRUSH)SelectObject(m_hDC, hPattern);
 
-    
+
     // In PDF, when image mask is 1, use device bitmap; when mask is 0, use brush bitmap.
     // A complete list of the boolen operations is as follows:
 

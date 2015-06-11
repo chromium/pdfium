@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFDOC_FPDF_TAGGED_H_
@@ -14,7 +14,7 @@ class CPDF_StructTree;
 class IPDF_ReflowedPage;
 struct CPDF_StructKid;
 
-class CPDF_StructTree 
+class CPDF_StructTree
 {
 public:
 
@@ -66,7 +66,7 @@ struct CPDF_StructKid {
         } m_Object;
     };
 };
-class CPDF_StructElement 
+class CPDF_StructElement
 {
 public:
     virtual ~CPDF_StructElement() { }
