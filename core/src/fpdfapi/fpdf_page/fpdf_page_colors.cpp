@@ -583,7 +583,7 @@ CPDF_ICCBasedCS::~CPDF_ICCBasedCS()
         m_pAlterCS->ReleaseCS();
     }
     if (m_pProfile && m_pDocument) {
-        m_pDocument->GetPageData()->ReleaseIccProfile(NULL, m_pProfile);
+        m_pDocument->GetPageData()->ReleaseIccProfile(m_pProfile);
     }
 }
 FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
