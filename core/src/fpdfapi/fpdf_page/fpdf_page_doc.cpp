@@ -10,108 +10,37 @@
 #include "../fpdf_font/font_int.h"
 #include "pageint.h"
 
-namespace {
-
-template <class KeyType, class ValueType>
-KeyType PDF_DocPageData_FindValue(
-    const CFX_MapPtrTemplate<KeyType, CPDF_CountedObject<ValueType>*>& map,
-    ValueType findValue,
-    CPDF_CountedObject<ValueType>*& findData)
-{
-    FX_POSITION pos = map.GetStartPosition();
-    while (pos) {
-        KeyType findKey;
-        map.GetNextAssoc(pos, findKey, findData);
-        if (findData->m_Obj == findValue) {
-            return findKey;
-        }
-    }
-    findData = nullptr;
-    return (KeyType)nullptr;
-}
-
-template <class KeyType, class ValueType>
-void PDF_DocPageData_Release(
-    CFX_MapPtrTemplate<KeyType, CPDF_CountedObject<ValueType>*>& map,
-    KeyType findKey,
-    ValueType findValue,
-    FX_BOOL bForce)
-{
-    if (!findKey && !findValue)
-        return;
-
-    CPDF_CountedObject<ValueType>* findData = nullptr;
-    if (!findKey) {
-        findKey = PDF_DocPageData_FindValue<KeyType, ValueType>(map, findValue, findData);
-    } else if (!map.Lookup(findKey, findData)) {
-        return;
-    }
-    if (!findData)
-        return;
-
-    if ((-- findData->m_nCount) == 0 || bForce) {
-        delete findData->m_Obj;
-        delete findData;
-        map.RemoveKey(findKey);
-    }
-}
-
-template <class KeyType, class ValueType>
-void PDF_DocPageData_Release_Key(
-    KeyType findKey,
-    FX_BOOL bForce,
-    std::map<KeyType, CPDF_CountedObject<ValueType>*>* map)
-{
-    if (!findKey)
-        return;
-
-    CPDF_CountedObject<ValueType>* findData = nullptr;
-    auto it = map->find(findKey);
-    if (it != map->end())
-        findData = it->second;
-    if (!findData)
-        return;
-
-    if ((--findData->m_nCount) == 0 || bForce) {
-        delete findData->m_Obj;
-        delete findData;
-        map->erase(it);
-    }
-}
-
-}  // namespace
-
 class CPDF_PageModule : public CPDF_PageModuleDef
 {
 public:
     CPDF_PageModule() : m_StockGrayCS(PDFCS_DEVICEGRAY), m_StockRGBCS(PDFCS_DEVICERGB),
         m_StockCMYKCS(PDFCS_DEVICECMYK) {}
     virtual ~CPDF_PageModule() {}
-    virtual FX_BOOL		Installed()
+    virtual FX_BOOL Installed()
     {
         return TRUE;
     }
-    virtual CPDF_DocPageData*	CreateDocData(CPDF_Document* pDoc)
+    virtual CPDF_DocPageData* CreateDocData(CPDF_Document* pDoc)
     {
         return new CPDF_DocPageData(pDoc);
     }
-    virtual void		ReleaseDoc(CPDF_Document* pDoc);
-    virtual void		ClearDoc(CPDF_Document* pDoc);
-    virtual CPDF_FontGlobals*	GetFontGlobals()
+    virtual void ReleaseDoc(CPDF_Document* pDoc);
+    virtual void ClearDoc(CPDF_Document* pDoc);
+    virtual CPDF_FontGlobals* GetFontGlobals()
     {
         return &m_FontGlobals;
     }
-    virtual void				ClearStockFont(CPDF_Document* pDoc)
+    virtual void ClearStockFont(CPDF_Document* pDoc)
     {
         m_FontGlobals.Clear(pDoc);
     }
-    virtual CPDF_ColorSpace*	GetStockCS(int family);
-    virtual void		NotifyCJKAvailable();
-    CPDF_FontGlobals	m_FontGlobals;
-    CPDF_DeviceCS		m_StockGrayCS;
-    CPDF_DeviceCS		m_StockRGBCS;
-    CPDF_DeviceCS		m_StockCMYKCS;
-    CPDF_PatternCS		m_StockPatternCS;
+    virtual CPDF_ColorSpace* GetStockCS(int family);
+    virtual void NotifyCJKAvailable();
+    CPDF_FontGlobals m_FontGlobals;
+    CPDF_DeviceCS m_StockGrayCS;
+    CPDF_DeviceCS m_StockRGBCS;
+    CPDF_DeviceCS m_StockCMYKCS;
+    CPDF_PatternCS m_StockPatternCS;
 };
 CPDF_ColorSpace* CPDF_PageModule::GetStockCS(int family)
 {
@@ -197,11 +126,9 @@ void CPDF_Document::RemoveColorSpaceFromPageData(CPDF_Object* pCSObj)
 }
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document *pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
-      m_IccProfileMap(),
       m_FontFileMap(),
       m_bForceClear(FALSE)
 {
-    m_IccProfileMap.InitHashTable(16);
     m_FontFileMap.InitHashTable(32);
 }
 
@@ -261,19 +188,18 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         }
     }
 
-    FX_POSITION pos = m_IccProfileMap.GetStartPosition();
-    while (pos) {
-        CPDF_Stream* ipKey;
-        CPDF_CountedObject<CPDF_IccProfile*>* ipData;
-        m_IccProfileMap.GetNextAssoc(pos, ipKey, ipData);
-        if (!ipData->m_Obj) {
+    for (auto it = m_IccProfileMap.begin(); it != m_IccProfileMap.end();) {
+        auto curr_it = it++;
+        CPDF_CountedIccProfile* ipData = curr_it->second;
+        if (!ipData->m_Obj)
             continue;
-        }
+
         if (bForceRelease || ipData->m_nCount < 2) {
+            CPDF_Stream* ipKey = curr_it->first;
             FX_POSITION pos2 = m_HashProfileMap.GetStartPosition();
             while (pos2) {
                 CFX_ByteString bsKey;
-                CPDF_Stream* pFindStream = NULL;
+                CPDF_Stream* pFindStream = nullptr;
                 m_HashProfileMap.GetNextAssoc(pos2, bsKey, (void*&)pFindStream);
                 if (ipKey == pFindStream) {
                     m_HashProfileMap.RemoveKey(bsKey);
@@ -282,10 +208,11 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
             }
             delete ipData->m_Obj;
             delete ipData;
-            m_IccProfileMap.RemoveKey(ipKey);
+            m_IccProfileMap.erase(curr_it);
         }
     }
-    pos = m_FontFileMap.GetStartPosition();
+
+    FX_POSITION pos = m_FontFileMap.GetStartPosition();
     while (pos) {
         CPDF_Stream* ftKey;
         CPDF_CountedObject<CPDF_StreamAcc*>* ftData;
@@ -606,38 +533,52 @@ CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream)
 
 void CPDF_DocPageData::ReleaseImage(CPDF_Object* pImageStream)
 {
-    if (!pImageStream)
+    if (!pImageStream || !pImageStream->GetObjNum())
         return;
 
-    PDF_DocPageData_Release_Key<FX_DWORD, CPDF_Image*>(
-        pImageStream->GetObjNum(), FALSE, &m_ImageMap);
+    auto it = m_ImageMap.find(pImageStream->GetObjNum());
+    if (it == m_ImageMap.end())
+        return;
+
+    CPDF_CountedImage* image = it->second;
+    if (!image)
+        return;
+
+    if ((--image->m_nCount) == 0) {
+        delete image->m_Obj;
+        delete image;
+        m_ImageMap.erase(it);
+    }
 }
 
 CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream)
 {
-    if (!pIccProfileStream) {
+    if (!pIccProfileStream)
         return NULL;
-    }
-    CPDF_CountedObject<CPDF_IccProfile*>* ipData = NULL;
-    if (m_IccProfileMap.Lookup(pIccProfileStream, ipData)) {
+
+    auto it = m_IccProfileMap.find(pIccProfileStream);
+    if (it != m_IccProfileMap.end()) {
+        CPDF_CountedIccProfile* ipData = it->second;
         ipData->m_nCount++;
         return ipData->m_Obj;
     }
+
     CPDF_StreamAcc stream;
     stream.LoadAllData(pIccProfileStream, FALSE);
     uint8_t digest[20];
-    CPDF_Stream* pCopiedStream = NULL;
+    CPDF_Stream* pCopiedStream = nullptr;
     CRYPT_SHA1Generate(stream.GetData(), stream.GetSize(), digest);
     if (m_HashProfileMap.Lookup(CFX_ByteStringC(digest, 20), (void*&)pCopiedStream)) {
-        m_IccProfileMap.Lookup(pCopiedStream, ipData);
+        auto it_copied_stream = m_IccProfileMap.find(pCopiedStream);
+        CPDF_CountedIccProfile* ipData = it_copied_stream->second;
         ipData->m_nCount++;
         return ipData->m_Obj;
     }
     CPDF_IccProfile* pProfile = new CPDF_IccProfile(stream.GetData(), stream.GetSize());
-    ipData = new CPDF_CountedObject<CPDF_IccProfile*>;
+    CPDF_CountedIccProfile* ipData = new CPDF_CountedIccProfile;
     ipData->m_nCount = 2;
     ipData->m_Obj = pProfile;
-    m_IccProfileMap.SetAt(pIccProfileStream, ipData);
+    m_IccProfileMap[pIccProfileStream] = ipData;
     m_HashProfileMap.SetAt(CFX_ByteStringC(digest, 20), pIccProfileStream);
     return pProfile;
 }
@@ -645,8 +586,19 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream)
 void CPDF_DocPageData::ReleaseIccProfile(CPDF_IccProfile* pIccProfile)
 {
     ASSERT(pIccProfile);
-    PDF_DocPageData_Release<CPDF_Stream*, CPDF_IccProfile*>(
-        m_IccProfileMap, nullptr, pIccProfile, FALSE);
+
+    for (auto it = m_IccProfileMap.begin(); it != m_IccProfileMap.end(); ++it) {
+        CPDF_CountedIccProfile* profile = it->second;
+        if (profile->m_Obj != pIccProfile)
+            continue;
+
+        if ((--profile->m_nCount) == 0) {
+            delete profile->m_Obj;
+            delete profile;
+            m_IccProfileMap.erase(it);
+            return;
+        }
+    }
 }
 
 CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(CPDF_Stream* pFontStream)
@@ -674,10 +626,20 @@ CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(CPDF_Stream* pFontStream)
 }
 void CPDF_DocPageData::ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOOL bForce)
 {
-    if (!pFontStream) {
+    if (!pFontStream)
         return;
+
+    CPDF_CountedObject<CPDF_StreamAcc*>* findData = nullptr;
+    if (!m_FontFileMap.Lookup(pFontStream, findData))
+        return;
+    if (!findData)
+        return;
+
+    if ((--findData->m_nCount) == 0 || bForce) {
+        delete findData->m_Obj;
+        delete findData;
+        m_FontFileMap.RemoveKey(pFontStream);
     }
-    PDF_DocPageData_Release<CPDF_Stream*, CPDF_StreamAcc*>(m_FontFileMap, pFontStream, NULL, bForce);
 }
 
 CPDF_CountedColorSpace* CPDF_DocPageData::FindColorSpacePtr(CPDF_Object* pCSObj) const
