@@ -126,13 +126,11 @@ void CPDF_Document::RemoveColorSpaceFromPageData(CPDF_Object* pCSObj)
 }
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document *pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
-      m_PatternMap(),
       m_ImageMap(),
       m_IccProfileMap(),
       m_FontFileMap(),
       m_bForceClear(FALSE)
 {
-    m_PatternMap.InitHashTable(16);
     m_ImageMap.InitHashTable(64);
     m_IccProfileMap.InitHashTable(16);
     m_FontFileMap.InitHashTable(32);
@@ -142,15 +140,10 @@ CPDF_DocPageData::~CPDF_DocPageData()
 {
     Clear(FALSE);
     Clear(TRUE);
-    FX_POSITION pos = m_PatternMap.GetStartPosition();
-    while (pos)
-    {
-        CPDF_Object* ptObj;
-        CPDF_CountedObject<CPDF_Pattern*>* ptData;
-        m_PatternMap.GetNextAssoc(pos, ptObj, ptData);
-        delete ptData;
-    }
-    m_PatternMap.RemoveAll();
+
+    for (auto& it : m_PatternMap)
+        delete it.second;
+    m_PatternMap.clear();
 
     for (auto& it : m_FontMap)
         delete it.second;
@@ -163,20 +156,17 @@ CPDF_DocPageData::~CPDF_DocPageData()
 
 void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
 {
-    FX_POSITION pos;
     m_bForceClear = bForceRelease;
-    pos = m_PatternMap.GetStartPosition();
-    while (pos) {
-        CPDF_Object* ptObj;
-        CPDF_CountedObject<CPDF_Pattern*>* ptData;
-        m_PatternMap.GetNextAssoc(pos, ptObj, ptData);
-        if (!ptData->m_Obj) {
+
+    for (auto& it : m_PatternMap) {
+        CPDF_CountedPattern* ptData = it.second;
+        if (!ptData->m_Obj)
             continue;
-        }
+
         if (bForceRelease || ptData->m_nCount < 2) {
             ptData->m_Obj->SetForceClear(bForceRelease);
             delete ptData->m_Obj;
-            ptData->m_Obj = NULL;
+            ptData->m_Obj = nullptr;
         }
     }
 
@@ -202,7 +192,7 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         }
     }
 
-    pos = m_IccProfileMap.GetStartPosition();
+    FX_POSITION pos = m_IccProfileMap.GetStartPosition();
     while (pos) {
         CPDF_Stream* ipKey;
         CPDF_CountedObject<CPDF_IccProfile*>* ipData;
@@ -471,26 +461,23 @@ void CPDF_DocPageData::ReleaseColorSpace(CPDF_Object* pColorSpace)
 
 CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj, FX_BOOL bShading, const CFX_AffineMatrix* matrix)
 {
-    if (!pPatternObj) {
-        return NULL;
-    }
-    CPDF_CountedObject<CPDF_Pattern*>* ptData = NULL;
-    if (m_PatternMap.Lookup(pPatternObj, ptData)) {
+    if (!pPatternObj)
+        return nullptr;
+
+    CPDF_CountedPattern* ptData = nullptr;
+    auto it = m_PatternMap.find(pPatternObj);
+    if (it != m_PatternMap.end()) {
+        ptData = it->second;
         if (ptData->m_Obj) {
             ptData->m_nCount++;
             return ptData->m_Obj;
         }
     }
-    FX_BOOL bNew = FALSE;
-    if (!ptData) {
-        ptData = new CPDF_CountedObject<CPDF_Pattern*>;
-        bNew = TRUE;
-    }
-    CPDF_Pattern* pPattern = NULL;
+    CPDF_Pattern* pPattern = nullptr;
     if (bShading) {
         pPattern = new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, bShading, matrix);
     } else {
-        CPDF_Dictionary* pDict = pPatternObj ? pPatternObj->GetDict() : NULL;
+        CPDF_Dictionary* pDict = pPatternObj ? pPatternObj->GetDict() : nullptr;
         if (pDict) {
             int type = pDict->GetInteger(FX_BSTRC("PatternType"));
             if (type == 1) {
@@ -500,31 +487,34 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj, FX_BOOL bSh
             }
         }
     }
-    if (!pPattern) {
-        if (bNew) {
-            delete ptData;
-        }
-        return NULL;
+    if (!pPattern)
+        return nullptr;
+
+    if (!ptData) {
+        ptData = new CPDF_CountedPattern;
+        m_PatternMap[pPatternObj] = ptData;
     }
     ptData->m_nCount = 2;
     ptData->m_Obj = pPattern;
-    m_PatternMap.SetAt(pPatternObj, ptData);
     return pPattern;
 }
+
 void CPDF_DocPageData::ReleasePattern(CPDF_Object* pPatternObj)
 {
-    if (!pPatternObj) {
+    if (!pPatternObj)
         return;
-    }
-    CPDF_CountedObject<CPDF_Pattern*>* ptData;
-    if (!m_PatternMap.Lookup(pPatternObj, ptData)) {
+
+    auto it = m_PatternMap.find(pPatternObj);
+    if (it == m_PatternMap.end())
         return;
-    }
+
+    CPDF_CountedPattern* ptData = it->second;
     if (ptData->m_Obj && --ptData->m_nCount == 0) {
         delete ptData->m_Obj;
-        ptData->m_Obj = NULL;
+        ptData->m_Obj = nullptr;
     }
 }
+
 CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream)
 {
     if (!pImageStream) {
@@ -641,11 +631,9 @@ CPDF_CountedColorSpace* CPDF_DocPageData::FindColorSpacePtr(CPDF_Object* pCSObj)
 
 CPDF_CountedPattern* CPDF_DocPageData::FindPatternPtr(CPDF_Object* pPatternObj) const
 {
-    if (!pPatternObj) return NULL;
-    CPDF_CountedObject<CPDF_Pattern*>* ptData;
-    if (m_PatternMap.Lookup(pPatternObj, ptData))
-    {
-        return ptData;
-    }
-    return NULL;
+    if (!pPatternObj)
+        return nullptr;
+
+    auto it = m_PatternMap.find(pPatternObj);
+    return it != m_PatternMap.end() ? it->second : nullptr;
 }
