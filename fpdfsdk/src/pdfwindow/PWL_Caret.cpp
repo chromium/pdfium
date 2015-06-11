@@ -131,7 +131,7 @@ CPDF_Rect CPWL_Caret::GetCaretRect() const
 {
 	return CPDF_Rect(m_ptFoot.x,
 			m_ptFoot.y,
-			m_ptHead.x + this->m_fWidth,
+			m_ptHead.x + m_fWidth,
 			m_ptHead.y);
 }
 
@@ -144,8 +144,8 @@ void CPWL_Caret::SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPD
 			if (m_ptHead.x != ptHead.x || m_ptHead.y != ptHead.y || 
 					m_ptFoot.x != ptFoot.x || m_ptFoot.y != ptFoot.y)
 			{
-				this->m_ptHead = ptHead;
-				this->m_ptFoot = ptFoot;
+				m_ptHead = ptHead;
+				m_ptFoot = ptFoot;
 
 				m_bFlash = TRUE;
 				//Move(GetCaretRect(),FALSE,TRUE);
@@ -154,8 +154,8 @@ void CPWL_Caret::SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPD
 		}
 		else
 		{
-			this->m_ptHead = ptHead;
-			this->m_ptFoot = ptFoot;
+			m_ptHead = ptHead;
+			m_ptFoot = ptFoot;
 
 			EndTimer();
 			BeginTimer(PWL_CARET_FLASHINTERVAL);
@@ -169,8 +169,8 @@ void CPWL_Caret::SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPD
 	}
 	else
 	{
-		this->m_ptHead = CPDF_Point(0,0);
-		this->m_ptFoot = CPDF_Point(0,0);
+		m_ptHead = CPDF_Point(0, 0);
+		m_ptFoot = CPDF_Point(0, 0);
 
 		m_bFlash = FALSE;
 		if (IsVisible())

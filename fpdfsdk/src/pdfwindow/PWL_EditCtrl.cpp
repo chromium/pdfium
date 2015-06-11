@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -43,9 +43,9 @@ void CPWL_EditCtrl::OnCreate(PWL_CREATEPARAM & cp)
 
 void CPWL_EditCtrl::OnCreated()
 {
-	SetFontSize(this->GetCreationParam().fFontSize);
+	SetFontSize(GetCreationParam().fFontSize);
 
-	m_pEdit->SetFontMap(this->GetFontMap());
+	m_pEdit->SetFontMap(GetFontMap());
 	m_pEdit->SetNotify(this);
 	m_pEdit->Initialize();
 }
@@ -64,7 +64,7 @@ FX_BOOL CPWL_EditCtrl::IsWndHorV()
 
 void CPWL_EditCtrl::SetCursor()
 {
-	if (IsValid()) 
+	if (IsValid())
 	{
 		if (IFX_SystemHandler* pSH = GetSystemHandler())
 		{
@@ -98,7 +98,7 @@ void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intp
 					break;
 			}
 			break;
-		case PNM_SETSCROLLPOS:			
+		case PNM_SETSCROLLPOS:
 			switch (wParam)
 			{
 				case SBT_VSCROLL:
@@ -124,9 +124,9 @@ void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intp
 			{
 				if (PWL_CARET_INFO * pCaretInfo = (PWL_CARET_INFO *)wParam)
 				{
-					this->SetCaret(pCaretInfo->bVisible,
+					SetCaret(pCaretInfo->bVisible,
 						pCaretInfo->ptHead,
-						pCaretInfo->ptFoot);					
+						pCaretInfo->ptFoot);
 				}
 			}
 			break;
@@ -143,7 +143,7 @@ void CPWL_EditCtrl::CreateEditCaret(const PWL_CREATEPARAM & cp)
 {
 	if (!m_pEditCaret)
 	{
-		m_pEditCaret = new CPWL_Caret;	
+		m_pEditCaret = new CPWL_Caret;
 		m_pEditCaret->SetInvalidRect(GetClientRect());
 
 		PWL_CREATEPARAM	ecp = cp;
@@ -207,7 +207,7 @@ FX_BOOL CPWL_EditCtrl::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
 
 	switch (nChar)
 	{
-		case FWL_VKEY_Delete:	
+		case FWL_VKEY_Delete:
 			Delete();
 			return TRUE;
 		case FWL_VKEY_Insert:
@@ -241,7 +241,7 @@ FX_BOOL CPWL_EditCtrl::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
 		default:
 			break;
 	}
-	
+
 	return bRet;
 }
 
@@ -256,7 +256,7 @@ FX_BOOL CPWL_EditCtrl::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 	{
 		case 0x0A:
 		case 0x1B:
-			return FALSE;		
+			return FALSE;
 		default:
 			break;
 	}
@@ -272,16 +272,16 @@ FX_BOOL CPWL_EditCtrl::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 		switch (nChar)
 		{
 			case 'C' - 'A' + 1:
-				this->CopyText();
+				CopyText();
 				return TRUE;
 			case 'V' - 'A' + 1:
-				this->PasteText();
+				PasteText();
 				return TRUE;
 			case 'X' - 'A' + 1:
-				this->CutText();
+				CutText();
 				return TRUE;
 			case 'A' - 'A' + 1:
-				this->SelectAll();
+				SelectAll();
 				return TRUE;
 			case 'Z' - 'A' + 1:
 				if (bShift)
@@ -307,7 +307,7 @@ FX_BOOL CPWL_EditCtrl::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 	case FWL_VKEY_Back:
 		Backspace();
 		break;
-	case FWL_VKEY_Return:	
+	case FWL_VKEY_Return:
 		InsertReturn();
 		break;
 	case FWL_VKEY_Unknown:
@@ -315,7 +315,7 @@ FX_BOOL CPWL_EditCtrl::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 	default:
 		if (IsINSERTpressed(nFlag))
 			Delete();
-		InsertWord(word, this->GetCharSet());
+		InsertWord(word, GetCharSet());
 		break;
 	}
 
@@ -327,11 +327,11 @@ FX_BOOL CPWL_EditCtrl::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
 	CPWL_Wnd::OnLButtonDown(point,nFlag);
 
 	if (ClientHitTest(point))
-	{		
+	{
 		if (m_bMouseDown)
-			this->InvalidateRect();
+			InvalidateRect();
 
-		m_bMouseDown = TRUE;		
+		m_bMouseDown = TRUE;
 		SetCapture();
 
 		m_pEdit->OnMouseDown(point,IsSHIFTpressed(nFlag),IsCTRLpressed(nFlag));
@@ -347,8 +347,8 @@ FX_BOOL CPWL_EditCtrl::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 	if (m_bMouseDown)
 	{
 		//can receive keybord message
-		if (ClientHitTest(point) && !this->IsFocused())
-			SetFocus();	
+		if (ClientHitTest(point) && !IsFocused())
+			SetFocus();
 
 		ReleaseCapture();
 		m_bMouseDown = FALSE;
@@ -382,7 +382,7 @@ void CPWL_EditCtrl::SetEditCaret(FX_BOOL bVisible)
 	}
 
 	CPVT_WordPlace wpTemp = m_pEdit->GetCaretWordPlace();
-	this->IOnSetCaret(bVisible,ptHead,ptFoot,wpTemp);
+	IOnSetCaret(bVisible,ptHead,ptFoot,wpTemp);
 }
 
 void CPWL_EditCtrl::GetCaretInfo(CPDF_Point & ptHead, CPDF_Point & ptFoot) const
@@ -400,7 +400,7 @@ void CPWL_EditCtrl::GetCaretInfo(CPDF_Point & ptHead, CPDF_Point & ptFoot) const
 			ptFoot.y = word.ptWord.y + word.fDescent;
 		}
 		else if (pIterator->GetLine(line))
-		{				
+		{
 			ptHead.x = line.ptLine.x;
 			ptHead.y = line.ptLine.y + line.fLineAscent;
 			ptFoot.x = line.ptLine.x;
@@ -524,7 +524,7 @@ CPDF_Font * CPWL_EditCtrl::GetCaretFont() const
 		else if (HasFlag(PES_RICH))
 		{
 			if (pIterator->GetSection(section))
-			{				
+			{
 				nFontIndex = section.WordProps.nFontIndex;
 			}
 		}
@@ -552,7 +552,7 @@ FX_FLOAT CPWL_EditCtrl::GetCaretFontSize() const
 		else if (HasFlag(PES_RICH))
 		{
 			if (pIterator->GetSection(section))
-			{				
+			{
 				fFontSize = section.WordProps.fFontSize;
 			}
 		}
@@ -634,8 +634,8 @@ void CPWL_EditCtrl::Undo()
 		m_pEdit->Undo();
 }
 
-void CPWL_EditCtrl::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax, 
-												FX_FLOAT fContentMin, FX_FLOAT fContentMax, 
+void CPWL_EditCtrl::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
+												FX_FLOAT fContentMin, FX_FLOAT fContentMax,
 												FX_FLOAT fSmallStep, FX_FLOAT fBigStep)
 {
 	PWL_SCROLL_INFO Info;
@@ -646,25 +646,22 @@ void CPWL_EditCtrl::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
 	Info.fSmallStep = fSmallStep;
 	Info.fBigStep = fBigStep;
 
-	this->OnNotify(this,PNM_SETSCROLLINFO,SBT_VSCROLL,(intptr_t)&Info);
-
-//	PWL_TRACE("set scroll info:%f\n",fContentMax - fContentMin);
+	OnNotify(this,PNM_SETSCROLLINFO,SBT_VSCROLL,(intptr_t)&Info);
 
 	if (IsFloatBigger(Info.fPlateWidth,Info.fContentMax-Info.fContentMin)
 		|| IsFloatEqual(Info.fPlateWidth,Info.fContentMax-Info.fContentMin))
 	{
-		this->ShowVScrollBar(FALSE);		
+		ShowVScrollBar(FALSE);
 	}
 	else
 	{
-		this->ShowVScrollBar(TRUE);
+		ShowVScrollBar(TRUE);
 	}
 }
 
 void CPWL_EditCtrl::IOnSetScrollPosY(FX_FLOAT fy)
 {
-//	PWL_TRACE("set scroll position:%f\n",fy);
-	this->OnNotify(this,PNM_SETSCROLLPOS,SBT_VSCROLL,(intptr_t)&fy);
+    OnNotify(this, PNM_SETSCROLLPOS,SBT_VSCROLL, (intptr_t)&fy);
 }
 
 void CPWL_EditCtrl::IOnSetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot, const CPVT_WordPlace& place)
@@ -674,7 +671,7 @@ void CPWL_EditCtrl::IOnSetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, con
 	cInfo.ptHead = ptHead;
 	cInfo.ptFoot = ptFoot;
 
-	this->OnNotify(this,PNM_SETCARETINFO,(intptr_t)&cInfo,(intptr_t)NULL);
+	OnNotify(this, PNM_SETCARETINFO, (intptr_t)&cInfo, (intptr_t)NULL);
 }
 
 void CPWL_EditCtrl::IOnCaretChange(const CPVT_SecProps & secProps, const CPVT_WordProps & wordProps)
@@ -683,7 +680,7 @@ void CPWL_EditCtrl::IOnCaretChange(const CPVT_SecProps & secProps, const CPVT_Wo
 
 void CPWL_EditCtrl::IOnContentChange(const CPDF_Rect& rcContent)
 {
-	if (this->IsValid())
+	if (IsValid())
 	{
 		if (m_pEditNotify)
 		{
@@ -694,15 +691,12 @@ void CPWL_EditCtrl::IOnContentChange(const CPDF_Rect& rcContent)
 
 void CPWL_EditCtrl::IOnInvalidateRect(CPDF_Rect * pRect)
 {
-	this->InvalidateRect(pRect);
+    InvalidateRect(pRect);
 }
 
 int32_t CPWL_EditCtrl::GetCharSet() const
 {
-	if (m_nCharSet < 0)
-		return DEFAULT_CHARSET; 
-	else
-		return m_nCharSet;
+    return m_nCharSet < 0 ? DEFAULT_CHARSET : m_nCharSet;
 }
 
 void CPWL_EditCtrl::GetTextRange(const CPDF_Rect& rect, int32_t & nStartChar, int32_t & nEndChar) const

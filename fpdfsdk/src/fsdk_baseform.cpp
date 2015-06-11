@@ -70,7 +70,7 @@ FX_BOOL		CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode
 		{
 			CPDF_Dictionary* pSubDict = (CPDF_Dictionary*)psub;
 			
-			return pSubDict->GetStream(this->GetAppState()) != NULL;
+			return pSubDict->GetStream(GetAppState()) != NULL;
 		}
 		else
 			return FALSE;
@@ -152,7 +152,7 @@ CPDF_FormControl* CPDFSDK_Widget::GetFormControl(CPDF_InterForm* pInterForm, CPD
 
 int CPDFSDK_Widget::GetRotate() const
 {
-	CPDF_FormControl* pCtrl = this->GetFormControl();
+	CPDF_FormControl* pCtrl = GetFormControl();
 	ASSERT(pCtrl != NULL);
 	
 	return pCtrl->GetRotation() % 360;
@@ -411,11 +411,11 @@ void	CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice, const CPDF_Matrix
 	
 	if ((nFieldType == FIELDTYPE_CHECKBOX || nFieldType == FIELDTYPE_RADIOBUTTON) &&
 		mode == CPDF_Annot::Normal && 
-		!this->IsWidgetAppearanceValid(CPDF_Annot::Normal))
+		!IsWidgetAppearanceValid(CPDF_Annot::Normal))
 	{
 		CFX_PathData pathData;
 		
-		CPDF_Rect rcAnnot = this->GetRect();
+		CPDF_Rect rcAnnot = GetRect();
 		
 		pathData.AppendRect(rcAnnot.left, rcAnnot.bottom,
 			rcAnnot.right, rcAnnot.top);
@@ -634,8 +634,6 @@ void CPDFSDK_Widget::ResetAppearance_PushButton()
 
 	CPDF_IconFit iconFit = pControl->GetIconFit();
 
-// 	ASSERT(this->m_pBaseForm != NULL);
-	ASSERT(this->m_pInterForm != NULL);
 	CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
 	ASSERT(pDoc != NULL);
 	CPDFDoc_Environment* pEnv = pDoc->GetEnv();
@@ -1038,7 +1036,6 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue)
 	{
 		pEdit->EnableRefresh(FALSE);
 
-		ASSERT(this->m_pInterForm != NULL);
 		CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
 		ASSERT(pDoc != NULL);
 		CPDFDoc_Environment* pEnv = pDoc->GetEnv();
@@ -1053,7 +1050,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue)
 		pEdit->SetPlateRect(rcEdit);
 		pEdit->SetAlignmentV(1);
 
-		FX_FLOAT fFontSize = this->GetFontSize();
+		FX_FLOAT fFontSize = GetFontSize();
 		if (IsFloatZero(fFontSize))
 			pEdit->SetAutoFontSize(TRUE);
 		else
@@ -1115,8 +1112,6 @@ void CPDFSDK_Widget::ResetAppearance_ListBox()
 	{
 		pEdit->EnableRefresh(FALSE);
 
-//		ASSERT(this->m_pBaseForm != NULL);
-		ASSERT(this->m_pInterForm != NULL);
 		CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
 		ASSERT(pDoc != NULL);
 		CPDFDoc_Environment* pEnv = pDoc->GetEnv();
@@ -1207,8 +1202,6 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue)
 	{
 		pEdit->EnableRefresh(FALSE);
 
-//		ASSERT(this->m_pBaseForm != NULL);
-		ASSERT(this->m_pInterForm != NULL);
 		CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
 		ASSERT(pDoc != NULL);
 		CPDFDoc_Environment* pEnv = pDoc->GetEnv();
@@ -1617,7 +1610,7 @@ CPDF_Action	CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT)
 	case CPDF_AAction::Validate:
 	case CPDF_AAction::Calculate:
 		{
-			CPDF_FormField* pField = this->GetFormField();
+			CPDF_FormField* pField = GetFormField();
 			if (CPDF_AAction aa = pField->GetAdditionalAction())
 				return aa.GetAction(eAAT);
 
@@ -1917,7 +1910,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField)
 
 	m_bBusy = TRUE;
 
-	if (this->IsCalculateEnabled())
+	if (IsCalculateEnabled())
 	{
 		IFXJS_Runtime* pRuntime = m_pDocument->GetJsRuntime();
 		ASSERT(pRuntime != NULL);
@@ -2509,14 +2502,14 @@ int	CPDFSDK_InterForm::AfterValueChange(const CPDF_FormField* pField)
 
 	if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD)
 	{
-		this->OnCalculate(pFormField);
+		OnCalculate(pFormField);
 		FX_BOOL bFormated = FALSE;
-		CFX_WideString sValue = this->OnFormat(pFormField, bFormated);
+		CFX_WideString sValue = OnFormat(pFormField, bFormated);
 		if (bFormated)
-			this->ResetFieldAppearance(pFormField, sValue.c_str(), TRUE);
+			ResetFieldAppearance(pFormField, sValue.c_str(), TRUE);
 		else
-			this->ResetFieldAppearance(pFormField, NULL, TRUE);
-		this->UpdateField(pFormField);
+			ResetFieldAppearance(pFormField, NULL, TRUE);
+		UpdateField(pFormField);
 	}
 
 	return 0;
@@ -2557,9 +2550,9 @@ int	CPDFSDK_InterForm::AfterSelectionChange(const CPDF_FormField* pField)
 
 	if (nType == FIELDTYPE_LISTBOX)
 	{
-		this->OnCalculate(pFormField);
-		this->ResetFieldAppearance(pFormField, NULL, TRUE);
-		this->UpdateField(pFormField);
+		OnCalculate(pFormField);
+		ResetFieldAppearance(pFormField, NULL, TRUE);
+		UpdateField(pFormField);
 	}
 
 	return 0;
@@ -2574,9 +2567,8 @@ int	CPDFSDK_InterForm::AfterCheckedStatusChange(const CPDF_FormField* pField, co
 
 	if (nType == FIELDTYPE_CHECKBOX || nType == FIELDTYPE_RADIOBUTTON)
 	{
-		this->OnCalculate(pFormField);
-		//this->ResetFieldAppearance(pFormField, NULL);
-		this->UpdateField(pFormField);
+		OnCalculate(pFormField);
+		UpdateField(pFormField);
 	}
 
 	return 0;
@@ -2589,9 +2581,8 @@ int	CPDFSDK_InterForm::BeforeFormReset(const CPDF_InterForm* pForm)
 
 int	CPDFSDK_InterForm::AfterFormReset(const CPDF_InterForm* pForm)
 {
-	this->OnCalculate(NULL);
-
-	return 0;
+    OnCalculate(nullptr);
+    return 0;
 }
 
 int	CPDFSDK_InterForm::BeforeFormImportData(const CPDF_InterForm* pForm)
@@ -2601,9 +2592,8 @@ int	CPDFSDK_InterForm::BeforeFormImportData(const CPDF_InterForm* pForm)
 
 int	CPDFSDK_InterForm::AfterFormImportData(const CPDF_InterForm* pForm)
 {
-	this->OnCalculate(NULL);
-
-	return 0;
+    OnCalculate(nullptr);
+    return 0;
 }
 
 FX_BOOL CPDFSDK_InterForm::IsNeedHighLight(int nFieldType)

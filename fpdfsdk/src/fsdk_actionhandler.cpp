@@ -106,14 +106,14 @@ FX_BOOL	CPDFSDK_ActionHandler::DoAction_BookMark(CPDF_Bookmark *pBookMark, const
 							CPDFSDK_Document* pDocument)
 {
 	CFX_PtrList list;
-	return this->ExecuteBookMark(action, pDocument, pBookMark, list);
+	return ExecuteBookMark(action, pDocument, pBookMark, list);
 }
 
 FX_BOOL	CPDFSDK_ActionHandler::DoAction_Screen(const CPDF_Action& action, CPDF_AAction::AActionType type,
 										CPDFSDK_Document* pDocument, CPDFSDK_Annot* pScreen)
 {
 	CFX_PtrList list;
-	return this->ExecuteScreenAction(action, type, pDocument, pScreen, list);
+	return ExecuteScreenAction(action, type, pDocument, pScreen, list);
 }
 
 FX_BOOL	CPDFSDK_ActionHandler::DoAction_Link(const CPDF_Action& action,

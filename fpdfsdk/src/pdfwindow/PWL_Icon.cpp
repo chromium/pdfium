@@ -23,7 +23,7 @@ CFX_ByteString CPWL_Image::GetImageAppStream()
 {
 	CFX_ByteTextBuf sAppStream;
 
-	CFX_ByteString sAlias = this->GetImageAlias();
+	CFX_ByteString sAlias = GetImageAlias();
 	CPDF_Rect rcPlate = GetClientRect();
 	CPDF_Matrix mt;
 	mt.SetReverse(GetImageMatrix());
@@ -58,7 +58,7 @@ void CPWL_Image::SetPDFStream(CPDF_Stream * pStream)
 
 CPDF_Stream * CPWL_Image::GetPDFStream()
 {
-	return this->m_pPDFStream;
+	return m_pPDFStream;
 }
 
 void CPWL_Image::GetImageSize(FX_FLOAT & fWidth,FX_FLOAT & fHeight)
@@ -193,23 +193,13 @@ void CPWL_Icon::GetScale(FX_FLOAT & fHScale,FX_FLOAT & fVScale)
 		FX_FLOAT fImageWidth,fImageHeight;
 		FX_FLOAT fPlateWidth,fPlateHeight;
 
-		CPDF_Rect rcPlate = this->GetClientRect();	
+		CPDF_Rect rcPlate = GetClientRect();
 		fPlateWidth = rcPlate.right - rcPlate.left;
 		fPlateHeight = rcPlate.top - rcPlate.bottom;
 
 		GetImageSize(fImageWidth,fImageHeight);
 
-		int32_t nScaleMethod = this->GetScaleMethod();
-
-		/*
-		enum ScaleMethod
-		{
-			Always = 0,	//A, Always scale
-			Bigger,		//B, Scale only when the icon is bigger than the annotation rectangle
-			Smaller,	//S, Scale only when the icon is smaller then the annotation rectangle
-			Never		//N, Never scale
-		};
-		*/
+		int32_t nScaleMethod = GetScaleMethod();
 
 		switch (nScaleMethod)
 		{
@@ -248,7 +238,7 @@ void CPWL_Icon::GetImageOffset(FX_FLOAT & x,FX_FLOAT & y)
 {
 	FX_FLOAT fLeft,fBottom;
 
-	this->GetIconPosition(fLeft,fBottom);
+	GetIconPosition(fLeft, fBottom);
 	x = 0.0f;
 	y = 0.0f;
 
@@ -262,7 +252,7 @@ void CPWL_Icon::GetImageOffset(FX_FLOAT & x,FX_FLOAT & y)
 	FX_FLOAT fImageFactHeight = fImageHeight * fVScale;
 
 	FX_FLOAT fPlateWidth,fPlateHeight;
-	CPDF_Rect rcPlate = this->GetClientRect();	
+	CPDF_Rect rcPlate = GetClientRect();
 	fPlateWidth = rcPlate.right - rcPlate.left;
 	fPlateHeight = rcPlate.top - rcPlate.bottom;
 

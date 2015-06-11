@@ -2773,20 +2773,6 @@ void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData, CFX_PathData& path
 		CPWL_PathData(CPWL_Point(crInBox.right, crInBox.bottom), PWLPT_LINETO),
 		CPWL_PathData(CPWL_Point(crInBox.right, crInBox.top), PWLPT_LINETO),
 		CPWL_PathData(CPWL_Point(crInBox.left + fWidth*0.90f, crInBox.top), PWLPT_LINETO),
-
-		/*
-		CPWL_PathData(CPWL_Point(crBBox.left, crBBox.top), PWLPT_MOVETO),
-		CPWL_PathData(CPWL_Point(crBBox.right, crBBox.top), PWLPT_LINETO),
-		CPWL_PathData(CPWL_Point(crBBox.right, crBBox.bottom), PWLPT_LINETO),
-		CPWL_PathData(CPWL_Point(crBBox.left, crBBox.bottom), PWLPT_LINETO),
-		CPWL_PathData(CPWL_Point(crBBox.left, crBBox.top), PWLPT_LINETO),
-
-		CPWL_PathData(CPWL_Point(crBBox.left+fOutWidth*0.04f, crBBox.top-fOutHeight*0.04f), PWLPT_MOVETO),
-		CPWL_PathData(CPWL_Point(crBBox.right-fOutWidth*0.04f, crBBox.top-fOutHeight*0.04f), PWLPT_LINETO),
-		CPWL_PathData(CPWL_Point(crBBox.right-fOutWidth*0.04f, crBBox.bottom+fOutHeight*0.04f), PWLPT_LINETO),
-		CPWL_PathData(CPWL_Point(crBBox.left+fOutWidth*0.04f, crBBox.bottom+fOutHeight*0.04f), PWLPT_LINETO),
-		CPWL_PathData(CPWL_Point(crBBox.left+fOutWidth*0.04f, crBBox.top-fOutHeight*0.04f), PWLPT_LINETO),
-		*/
 	};
 
 	if(type == PWLPT_STREAM)
@@ -2795,47 +2781,47 @@ void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData, CFX_PathData& path
 		GetPathDataFromArray(path, PathArray, 23);
 }
 
-void CPWL_Color::ConvertColorType(int32_t nColorType)
+void CPWL_Color::ConvertColorType(int32_t other_nColorType)
 {
-	switch (this->nColorType)
+	switch (other_nColorType)
 	{
 	case COLORTYPE_TRANSPARENT:
 		break;
 	case COLORTYPE_GRAY:
-		switch (nColorType)
+		switch (other_nColorType)
 		{
 		case COLORTYPE_RGB:
-			CPWL_Utils::ConvertGRAY2RGB(this->fColor1, this->fColor1, this->fColor2, this->fColor3);
+			CPWL_Utils::ConvertGRAY2RGB(fColor1, fColor1, fColor2, fColor3);
 			break;
 		case COLORTYPE_CMYK:
-			CPWL_Utils::ConvertGRAY2CMYK(this->fColor1, this->fColor1, this->fColor2, this->fColor3, this->fColor4);
+			CPWL_Utils::ConvertGRAY2CMYK(fColor1, fColor1, fColor2, fColor3, fColor4);
 			break;
 		}
 		break;
 	case COLORTYPE_RGB:
-		switch (nColorType)
+		switch (other_nColorType)
 		{
 		case COLORTYPE_GRAY:
-			CPWL_Utils::ConvertRGB2GRAY(this->fColor1, this->fColor2, this->fColor3, this->fColor1);
+			CPWL_Utils::ConvertRGB2GRAY(fColor1, fColor2, fColor3, fColor1);
 			break;
 		case COLORTYPE_CMYK:
-			CPWL_Utils::ConvertRGB2CMYK(this->fColor1, this->fColor2, this->fColor3, this->fColor1, this->fColor2, this->fColor3, this->fColor4);
+			CPWL_Utils::ConvertRGB2CMYK(fColor1, fColor2, fColor3, fColor1, fColor2, fColor3, fColor4);
 			break;
 		}
 		break;
 	case COLORTYPE_CMYK:
-		switch (nColorType)
+		switch (other_nColorType)
 		{
 		case COLORTYPE_GRAY:
-			CPWL_Utils::ConvertCMYK2GRAY(this->fColor1, this->fColor2, this->fColor3, this->fColor4, this->fColor1);
+			CPWL_Utils::ConvertCMYK2GRAY(fColor1, fColor2, fColor3, fColor4, fColor1);
 			break;
 		case COLORTYPE_RGB:
-			CPWL_Utils::ConvertCMYK2RGB(this->fColor1, this->fColor2, this->fColor3, this->fColor4, this->fColor1, this->fColor2, this->fColor3);
+			CPWL_Utils::ConvertCMYK2RGB(fColor1, fColor2, fColor3, fColor4, fColor1, fColor2, fColor3);
 			break;
 		}
 		break;
 	}
-	this->nColorType = nColorType;
+	nColorType = other_nColorType;
 }
 
 

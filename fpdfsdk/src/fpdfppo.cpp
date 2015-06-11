@@ -180,7 +180,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 		
 		pMapPtrToPtr->SetAt((void*)(uintptr_t)dwOldPageObj, (void*)(uintptr_t)dwNewPageObj);
 
-		this->UpdateReference(pCurPageDict, pDestPDFDoc, pMapPtrToPtr);
+		UpdateReference(pCurPageDict, pDestPDFDoc, pMapPtrToPtr);
 		curpage++;
 	}
 

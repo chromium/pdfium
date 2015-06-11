@@ -1140,7 +1140,7 @@ void CFX_Edit::SetSel(int32_t nStartChar,int32_t nEndChar)
 		}
 		else if (nStartChar < 0)
 		{	
-			this->SelectNone();
+			SelectNone();
 		}
 		else
 		{		
@@ -1782,7 +1782,7 @@ FX_BOOL CFX_Edit::SetWordProps(EDIT_PROPS_E eProps, const CPVT_WordPlace & place
 					case EP_FONTINDEX:				
 						if (wordinfo.WordProps.nFontIndex != pWordProps->nFontIndex)
 						{
-							if (IFX_Edit_FontMap* pFontMap = this->GetFontMap())
+							if (IFX_Edit_FontMap* pFontMap = GetFontMap())
 							{
 								wordinfo.WordProps.nFontIndex = pFontMap->GetWordFontIndex(wordinfo.Word,wordinfo.nCharset,pWordProps->nFontIndex);
 							}
@@ -2613,7 +2613,7 @@ void CFX_Edit::SetCaretInfo()
 
 void CFX_Edit::SetCaretChange()
 {
-	if (this->m_wpCaret == this->m_wpOldCaret) return;
+	if (m_wpCaret == m_wpOldCaret) return;
 
 	if (m_bNotify && m_pVT->IsRichText() && m_pNotify)
 	{
@@ -3461,17 +3461,17 @@ void CFX_Edit::EnableRefresh(FX_BOOL bRefresh)
 
 void CFX_Edit::EnableUndo(FX_BOOL bUndo)
 {
-	this->m_bEnableUndo = bUndo;
+    m_bEnableUndo = bUndo;
 }
 
 void CFX_Edit::EnableNotify(FX_BOOL bNotify)
 {
-	this->m_bNotify = bNotify;
+    m_bNotify = bNotify;
 }
 
 void CFX_Edit::EnableOprNotify(FX_BOOL bNotify)
 {
-	this->m_bOprNotify = bNotify;
+    m_bOprNotify = bNotify;
 }
 
 FX_FLOAT CFX_Edit::GetLineTop(const CPVT_WordPlace& place) const
@@ -3548,10 +3548,9 @@ CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place, const FX_WCHA
 
 int32_t CFX_Edit::GetCharSetFromUnicode(FX_WORD word, int32_t nOldCharset)
 {
-	if (IFX_Edit_FontMap* pFontMap = this->GetFontMap())
-		return pFontMap->CharSetFromUnicode(word, nOldCharset);
-	else
-		return nOldCharset;
+    if (IFX_Edit_FontMap* pFontMap = GetFontMap())
+        return pFontMap->CharSetFromUnicode(word, nOldCharset);
+    return nOldCharset;
 }
 
 void CFX_Edit::BeginGroupUndo(const CFX_WideString& sTitle)

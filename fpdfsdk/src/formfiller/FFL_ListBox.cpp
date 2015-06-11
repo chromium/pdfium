@@ -45,11 +45,6 @@ PWL_CREATEPARAM	CFFL_ListBox::GetCreateParam()
 		cp.dwFlags |= PLBS_MULTIPLESEL;
 	}
 
-	if (dwFieldFlag & FIELDFLAG_COMMITONSELCHANGE)
-	{
-		//cp.dwFlags |= PLBS_COMMITSELECTEDVALUE;
-	}
-
 	cp.dwFlags |= PWS_VSCROLL;
 
 	if (cp.dwFlags & PWS_AUTOFONTSIZE)
@@ -57,8 +52,7 @@ PWL_CREATEPARAM	CFFL_ListBox::GetCreateParam()
 
 	if (!m_pFontMap)
 	{
-		ASSERT(this->m_pApp != NULL);
-		m_pFontMap = new CBA_FontMap(m_pWidget,m_pApp->GetSysHandler());//, ISystemHandle::GetSystemHandler(m_pApp));
+		m_pFontMap = new CBA_FontMap(m_pWidget, m_pApp->GetSysHandler());
 		m_pFontMap->Initial();
 	}
 	cp.pFontMap = m_pFontMap;
@@ -283,10 +277,10 @@ CPWL_Wnd* CFFL_ListBox::ResetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bRes
 	if (bRestoreValue)
 	{
 		RestoreState(pPageView);
-		pRet = this->GetPDFWindow(pPageView, FALSE);
+		pRet = GetPDFWindow(pPageView, FALSE);
 	}
 	else
-		pRet = this->GetPDFWindow(pPageView, TRUE);
+		pRet = GetPDFWindow(pPageView, TRUE);
 	
 	m_pWidget->UpdateField();
 	
@@ -303,7 +297,7 @@ void CFFL_ListBox::OnKeyStroke(FX_BOOL bKeyDown, FX_DWORD nFlag)
 	{
 		if (m_bValid)
 		{
-			CPDFSDK_PageView* pPageView = this->GetCurPageView();
+			CPDFSDK_PageView* pPageView = GetCurPageView();
 			ASSERT(pPageView != NULL);
 
 			if (CommitData(pPageView, nFlag))

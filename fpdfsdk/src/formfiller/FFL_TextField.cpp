@@ -91,8 +91,7 @@ PWL_CREATEPARAM CFFL_TextField::GetCreateParam()
 
 	if (!m_pFontMap)
 	{
-		ASSERT(this->m_pApp != NULL);
-		m_pFontMap = new CBA_FontMap(m_pWidget, /*ISystemHandle::GetSystemHandler(m_pApp)*/m_pApp->GetSysHandler());
+		m_pFontMap = new CBA_FontMap(m_pWidget, m_pApp->GetSysHandler());
 		m_pFontMap->Initial();
 	}
 	cp.pFontMap = m_pFontMap;
@@ -142,7 +141,7 @@ FX_BOOL	CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFl
 	case FWL_VKEY_Return:
  		if (!(m_pWidget->GetFieldFlags() & FIELDFLAG_MULTILINE))
  		{
- 			CPDFSDK_PageView* pPageView = this->GetCurPageView();
+ 			CPDFSDK_PageView* pPageView = GetCurPageView();
  			ASSERT(pPageView != NULL);
  			m_bValid = !m_bValid;
 			CPDF_Rect rcAnnot = pAnnot->GetRect();
@@ -169,7 +168,7 @@ FX_BOOL	CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFl
 		break;
 	case FWL_VKEY_Escape:
 		{
-			CPDFSDK_PageView* pPageView = this->GetCurPageView();
+			CPDFSDK_PageView* pPageView = GetCurPageView();
 			ASSERT(pPageView != NULL);
 			EscapeFiller(pPageView,TRUE);
 			return TRUE;
@@ -308,10 +307,10 @@ CPWL_Wnd* CFFL_TextField::ResetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bR
 	if (bRestoreValue)
 	{
 		RestoreState(pPageView);
-		pRet = this->GetPDFWindow(pPageView, FALSE);
+		pRet = GetPDFWindow(pPageView, FALSE);
 	}
 	else
-		pRet = this->GetPDFWindow(pPageView, TRUE);
+		pRet = GetPDFWindow(pPageView, TRUE);
 
 	m_pWidget->UpdateField();
 	

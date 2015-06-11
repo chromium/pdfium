@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -19,8 +19,8 @@
 
 /* ------------------ CPWL_IconList_Item ------------------- */
 
-CPWL_IconList_Item::CPWL_IconList_Item() : 
-	m_nIconIndex(-1), 
+CPWL_IconList_Item::CPWL_IconList_Item() :
+	m_nIconIndex(-1),
 	m_pData(NULL),
 	m_bSelected(FALSE),
 	m_pText(NULL)
@@ -47,15 +47,15 @@ void CPWL_IconList_Item::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matr
 
 	if (m_bSelected)
 	{
-		if (this->IsEnabled())
+		if (IsEnabled())
 		{
-			CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcClient, 
-				CPWL_Utils::PWLColorToFXColor(PWL_DEFAULT_SELBACKCOLOR,this->GetTransparency()));
+			CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcClient,
+				CPWL_Utils::PWLColorToFXColor(PWL_DEFAULT_SELBACKCOLOR, GetTransparency()));
 		}
 		else
 		{
-			CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcClient, 
-				CPWL_Utils::PWLColorToFXColor(PWL_DEFAULT_LIGHTGRAYCOLOR,this->GetTransparency()));
+			CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcClient,
+				CPWL_Utils::PWLColorToFXColor(PWL_DEFAULT_LIGHTGRAYCOLOR, GetTransparency()));
 		}
 	}
 
@@ -63,8 +63,8 @@ void CPWL_IconList_Item::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matr
 	rcIcon.left += PWL_IconList_ITEM_ICON_LEFTMARGIN;
 	rcIcon.right = rcIcon.left + PWL_IconList_ITEM_WIDTH;
 
-	CPWL_Utils::DrawIconAppStream(pDevice, pUser2Device, m_nIconIndex, rcIcon, 
-		m_crIcon, m_pText->GetTextColor(), this->GetTransparency());
+	CPWL_Utils::DrawIconAppStream(pDevice, pUser2Device, m_nIconIndex, rcIcon,
+		m_crIcon, m_pText->GetTextColor(), GetTransparency());
 }
 
 void CPWL_IconList_Item::SetSelect(FX_BOOL bSelected)
@@ -136,19 +136,19 @@ void CPWL_IconList_Item::OnEnabled()
 	else
 		m_pText->SetTextColor(PWL_DEFAULT_BLACKCOLOR);
 
-	this->InvalidateRect();
+	InvalidateRect();
 }
 
 void CPWL_IconList_Item::OnDisabled()
 {
 	m_pText->SetTextColor(PWL_DEFAULT_HEAVYGRAYCOLOR);
 
-	this->InvalidateRect();
+	InvalidateRect();
 }
 
 /* ----------------- CPWL_IconList_Content ----------------- */
 
-CPWL_IconList_Content::CPWL_IconList_Content(int32_t nListCount) : 
+CPWL_IconList_Content::CPWL_IconList_Content(int32_t nListCount) :
 	m_nSelectIndex(-1),
 	m_pNotify(NULL),
 	m_bEnableNotify(TRUE),
@@ -173,13 +173,13 @@ void CPWL_IconList_Content::CreateChildWnd(const PWL_CREATEPARAM & cp)
 		pNewItem->Create(icp);
 	}
 
-	this->SetItemSpace(PWL_IconList_ITEM_SPACE);
-	this->ResetContent(0);
+	SetItemSpace(PWL_IconList_ITEM_SPACE);
+	ResetContent(0);
 
-	if (CPWL_Wnd * pParent = this->GetParentWindow())
+	if (CPWL_Wnd * pParent = GetParentWindow())
 	{
-		CPDF_Rect rcScroll = this->GetScrollArea();
-		this->GetScrollPos();
+		CPDF_Rect rcScroll = GetScrollArea();
+		GetScrollPos();
 
 		PWL_SCROLL_INFO sInfo;
 		sInfo.fContentMin = rcScroll.bottom;
@@ -289,13 +289,13 @@ void CPWL_IconList_Content::ScrollToItem(int32_t nItemIndex)
 			}
 			else if (rcWnd.bottom < rcClient.bottom)
 			{
-				ptScroll.y = rcOrigin.bottom + rcClient.Height();					
+				ptScroll.y = rcOrigin.bottom + rcClient.Height();
 			}
 
-			this->SetScrollPos(ptScroll);
-			this->ResetFace();
-			this->InvalidateRect();
-			if (CPWL_Wnd* pParent = this->GetParentWindow())
+			SetScrollPos(ptScroll);
+			ResetFace();
+			InvalidateRect();
+			if (CPWL_Wnd* pParent = GetParentWindow())
 			{
 				pParent->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&ptScroll.y);
 			}
@@ -343,7 +343,7 @@ void CPWL_IconList_Content::SelectItem(int32_t nItemIndex, FX_BOOL bSelect)
 	if (CPWL_IconList_Item* pItem = GetListItem(nItemIndex))
 	{
 		pItem->SetSelect(bSelect);
-		pItem->InvalidateRect();		
+		pItem->InvalidateRect();
 	}
 }
 
@@ -408,7 +408,7 @@ void CPWL_IconList_Content::SetIconFillColor(const CPWL_Color& color)
 
 /* -------------------- CPWL_IconList --------------------- */
 
-CPWL_IconList::CPWL_IconList(int32_t nListCount) : 
+CPWL_IconList::CPWL_IconList(int32_t nListCount) :
 	m_pListContent(NULL),
 	m_nListCount(nListCount)
 {
@@ -438,7 +438,7 @@ void CPWL_IconList::CreateChildWnd(const PWL_CREATEPARAM & cp)
 
 void CPWL_IconList::OnCreated()
 {
-	if (CPWL_ScrollBar* pScrollBar = this->GetVScrollBar())
+	if (CPWL_ScrollBar* pScrollBar = GetVScrollBar())
 	{
 		pScrollBar->RemoveFlag(PWS_AUTOTRANSPARENT);
 		pScrollBar->SetTransparency(255);
@@ -451,20 +451,20 @@ void CPWL_IconList::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intp
 	CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
 
 	if (wParam == SBT_VSCROLL)
-	{		
+	{
 		switch (msg)
 		{
 		case PNM_SETSCROLLINFO:
 			if (PWL_SCROLL_INFO* pInfo = (PWL_SCROLL_INFO*)lParam)
 			{
-				if (CPWL_ScrollBar* pScrollBar = this->GetVScrollBar())
+				if (CPWL_ScrollBar* pScrollBar = GetVScrollBar())
 				{
 					if (pInfo->fContentMax - pInfo->fContentMin > pInfo->fPlateWidth)
 					{
 						if (!pScrollBar->IsVisible())
 						{
 							pScrollBar->SetVisible(TRUE);
-							RePosChildWnd();			
+							RePosChildWnd();
 						}
 						else
 						{
@@ -481,7 +481,7 @@ void CPWL_IconList::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intp
 						if (m_pListContent)
 							m_pListContent->SetScrollPos(CPDF_Point(0.0f,0.0f));
 					}
-					
+
 					pScrollBar->OnNotify(pWnd,PNM_SETSCROLLINFO,wParam,lParam);
 				}
 			}
@@ -495,7 +495,7 @@ void CPWL_IconList::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intp
 			}
 			return;
 		case PNM_SETSCROLLPOS:
-			if (CPWL_ScrollBar* pScrollBar = this->GetVScrollBar())
+			if (CPWL_ScrollBar* pScrollBar = GetVScrollBar())
 				pScrollBar->OnNotify(pWnd,PNM_SETSCROLLPOS,wParam,lParam);
 			return;
 		}
@@ -579,8 +579,8 @@ FX_BOOL	CPWL_IconList::OnMouseWheel(short zDelta, const CPDF_Point & point, FX_D
 			m_pListContent->SetScrollPos(ptNew);
 			m_pListContent->ResetFace();
 			m_pListContent->InvalidateRect(NULL);
-			
-			if (CPWL_ScrollBar* pScrollBar = this->GetVScrollBar())
+
+			if (CPWL_ScrollBar* pScrollBar = GetVScrollBar())
 				pScrollBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&ptNew.y);
 
 			return TRUE;
