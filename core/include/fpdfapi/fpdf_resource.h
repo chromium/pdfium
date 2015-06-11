@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_RESOURCE_H_
@@ -10,40 +10,39 @@
 #include "../fxge/fx_font.h"
 #include "fpdf_parser.h"
 
-class CPDF_Font;
-class CPDF_Type1Font;
-class CPDF_TrueTypeFont;
-class CPDF_CIDFont;
-class CPDF_Type3Font;
-class CPDF_FontEncoding;
-class CPDF_CMap;
-class CPDF_CID2UnicodeMap;
-class CPDF_ColorSpace;
-class CPDF_Color;
-class CPDF_Function;
-class CPDF_Pattern;
-class CPDF_TilingPattern;
-class CPDF_ShadingPattern;
-class CPDF_Image;
-class CPDF_Face;
-class CPDF_ToUnicodeMap;
-class CFX_SubstFont;
-class CFX_Font;
-class CPDF_RenderContext;
-class CPDF_Form;
-class CPDF_ImageObject;
-class CFX_DIBitmap;
-typedef struct FT_FaceRec_* FXFT_Face;
 class CFX_CTTGSUBTable;
+class CFX_DIBitmap;
+class CFX_Font;
+class CFX_SubstFont;
+class CPDF_CID2UnicodeMap;
+class CPDF_CIDFont;
+class CPDF_CMap;
+class CPDF_Color;
+class CPDF_ColorSpace;
+class CPDF_Face;
+class CPDF_Font;
+class CPDF_FontEncoding;
+class CPDF_Form;
+class CPDF_Function;
+class CPDF_Image;
+class CPDF_ImageObject;
 class CPDF_Page;
+class CPDF_Pattern;
+class CPDF_RenderContext;
+class CPDF_ShadingPattern;
+class CPDF_TilingPattern;
+class CPDF_ToUnicodeMap;
+class CPDF_TrueTypeFont;
+class CPDF_Type1Font;
+class CPDF_Type3Font;
+typedef struct FT_FaceRec_* FXFT_Face;
 
-template <class ObjClass> class CPDF_CountedObject 
+template <class ObjClass> class CPDF_CountedObject
 {
 public:
     ObjClass	m_Obj;
     FX_DWORD	m_nCount;
 };
-typedef CPDF_CountedObject<CPDF_Font*>          CPDF_CountedFont;
 typedef CPDF_CountedObject<CPDF_ColorSpace*>    CPDF_CountedColorSpace;
 typedef CPDF_CountedObject<CPDF_Pattern*>       CPDF_CountedPattern;
 typedef CPDF_CountedObject<CPDF_Image*>         CPDF_CountedImage;
@@ -51,7 +50,6 @@ typedef CPDF_CountedObject<CPDF_IccProfile*>    CPDF_CountedICCProfile;
 typedef CPDF_CountedObject<CPDF_StreamAcc*>     CPDF_CountedStreamAcc;
 
 
-typedef CFX_MapPtrTemplate<CPDF_Dictionary*, CPDF_CountedFont*>     CPDF_FontMap;
 typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedColorSpace*>   CPDF_ColorSpaceMap;
 typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedPattern*>      CPDF_PatternMap;
 typedef CFX_MapPtrTemplate<FX_DWORD, CPDF_CountedImage*>            CPDF_ImageMap;
@@ -314,7 +312,7 @@ private:
 #define PDFFONT_ENCODING_PDFDOC			7
 #define PDFFONT_ENCODING_MS_SYMBOL		8
 #define PDFFONT_ENCODING_UNICODE		9
-class CPDF_FontEncoding 
+class CPDF_FontEncoding
 {
 public:
 
@@ -427,7 +425,7 @@ protected:
     virtual FX_BOOL			_Load();
     virtual void			LoadGlyphMap();
 };
-class CPDF_Type3Char 
+class CPDF_Type3Char
 {
 public:
 
@@ -667,7 +665,7 @@ protected:
 
     FX_DWORD				m_dwStdConversion;
 };
-class CPDF_Color 
+class CPDF_Color
 {
 public:
 
@@ -716,10 +714,10 @@ protected:
 };
 #define PATTERN_TILING		1
 #define PATTERN_SHADING		2
-class CPDF_Pattern 
+class CPDF_Pattern
 {
 public:
-   
+
     virtual ~CPDF_Pattern();
     void    SetForceClear(FX_BOOL bForceClear) { m_bForceClear = bForceClear; }
 
@@ -793,7 +791,7 @@ struct CPDF_MeshVertex {
     FX_FLOAT x, y;
     FX_FLOAT r, g, b;
 };
-class CPDF_MeshStream 
+class CPDF_MeshStream
 {
 public:
 
@@ -833,7 +831,7 @@ public:
     FX_ARGB* pMatteColor;
     int32_t nQuality;
 };
-class CPDF_Image 
+class CPDF_Image
 {
 public:
 
