@@ -126,14 +126,12 @@ void CPDF_Document::RemoveColorSpaceFromPageData(CPDF_Object* pCSObj)
 }
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document *pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
-      m_ColorSpaceMap(),
       m_PatternMap(),
       m_ImageMap(),
       m_IccProfileMap(),
       m_FontFileMap(),
       m_bForceClear(FALSE)
 {
-    m_ColorSpaceMap.InitHashTable(32);
     m_PatternMap.InitHashTable(16);
     m_ImageMap.InitHashTable(64);
     m_IccProfileMap.InitHashTable(16);
@@ -158,15 +156,9 @@ CPDF_DocPageData::~CPDF_DocPageData()
         delete it.second;
     m_FontMap.clear();
 
-    pos = m_ColorSpaceMap.GetStartPosition();
-    while (pos)
-    {
-        CPDF_Object* csKey;
-        CPDF_CountedObject<CPDF_ColorSpace*>* csData;
-        m_ColorSpaceMap.GetNextAssoc(pos, csKey, csData);
-        delete csData;
-    }
-    m_ColorSpaceMap.RemoveAll();
+    for (auto& it : m_ColorSpaceMap)
+        delete it.second;
+    m_ColorSpaceMap.clear();
 }
 
 void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
@@ -199,20 +191,17 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         }
     }
 
-    pos = m_ColorSpaceMap.GetStartPosition();
-    while (pos) {
-        CPDF_Object* csKey;
-        CPDF_CountedObject<CPDF_ColorSpace*>* csData;
-        m_ColorSpaceMap.GetNextAssoc(pos, csKey, csData);
-        if (!csData->m_Obj) {
+    for (auto& it : m_ColorSpaceMap) {
+        CPDF_CountedColorSpace* csData = it.second;
+        if (!csData->m_Obj)
             continue;
-        }
+
         if (bForceRelease || csData->m_nCount < 2) {
-            // csData->m_Obj is deleted in the function of ReleaseCS().
             csData->m_Obj->ReleaseCS();
-            csData->m_Obj = NULL;
+            csData->m_Obj = nullptr;
         }
     }
+
     pos = m_IccProfileMap.GetStartPosition();
     while (pos) {
         CPDF_Stream* ipKey;
@@ -415,69 +404,71 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(CPDF_Object* pCSObj, CPDF_Dicti
         }
         return GetColorSpace(pDefaultCS, NULL);
     }
-    if (pCSObj->GetType() != PDFOBJ_ARRAY) {
-        return NULL;
-    }
+
+    if (pCSObj->GetType() != PDFOBJ_ARRAY)
+        return nullptr;
     CPDF_Array* pArray = (CPDF_Array*)pCSObj;
-    if (pArray->GetCount() == 0) {
-        return NULL;
-    }
-    if (pArray->GetCount() == 1) {
+    if (pArray->GetCount() == 0)
+        return nullptr;
+    if (pArray->GetCount() == 1)
         return GetColorSpace(pArray->GetElementValue(0), pResources);
-    }
-    CPDF_CountedObject<CPDF_ColorSpace*>* csData = NULL;
-    if (m_ColorSpaceMap.Lookup(pCSObj, csData)) {
+
+    CPDF_CountedColorSpace* csData = nullptr;
+    auto it = m_ColorSpaceMap.find(pCSObj);
+    if (it != m_ColorSpaceMap.end()) {
+        csData = it->second;
         if (csData->m_Obj) {
             csData->m_nCount++;
             return csData->m_Obj;
         }
     }
-    FX_BOOL bNew = FALSE;
-    if (!csData) {
-        csData = new CPDF_CountedObject<CPDF_ColorSpace*>;
-        bNew = TRUE;
-    }
+
     CPDF_ColorSpace* pCS = CPDF_ColorSpace::Load(m_pPDFDoc, pArray);
-    if (!pCS) {
-        if (bNew) {
-            delete csData;
-        }
-        return NULL;
+    if (!pCS)
+        return nullptr;
+
+    if (!csData) {
+        csData = new CPDF_CountedColorSpace;
+        m_ColorSpaceMap[pCSObj] = csData;
     }
     csData->m_nCount = 2;
     csData->m_Obj = pCS;
-    m_ColorSpaceMap.SetAt(pCSObj, csData);
     return pCS;
 }
+
 CPDF_ColorSpace* CPDF_DocPageData::GetCopiedColorSpace(CPDF_Object* pCSObj)
 {
-    if (!pCSObj) {
-        return NULL;
-    }
-    CPDF_CountedObject<CPDF_ColorSpace*>* csData;
-    if (!m_ColorSpaceMap.Lookup(pCSObj, csData)) {
-        return NULL;
-    }
-    if (!csData->m_Obj) {
-        return NULL;
-    }
-    csData->m_nCount ++;
+    if (!pCSObj)
+        return nullptr;
+
+    auto it = m_ColorSpaceMap.find(pCSObj);
+    if (it == m_ColorSpaceMap.end())
+        return nullptr;
+
+    CPDF_CountedColorSpace* csData = it->second;
+    if (!csData->m_Obj)
+        return nullptr;
+
+    csData->m_nCount++;
     return csData->m_Obj;
 }
+
 void CPDF_DocPageData::ReleaseColorSpace(CPDF_Object* pColorSpace)
 {
-    if (!pColorSpace) {
+    if (!pColorSpace)
         return;
-    }
-    CPDF_CountedObject<CPDF_ColorSpace*>* csData;
-    if (!m_ColorSpaceMap.Lookup(pColorSpace, csData)) {
+
+    auto it = m_ColorSpaceMap.find(pColorSpace);
+    if (it == m_ColorSpaceMap.end())
         return;
-    }
+
+    CPDF_CountedColorSpace* csData = it->second;
     if (csData->m_Obj && --csData->m_nCount == 0) {
         csData->m_Obj->ReleaseCS();
-        csData->m_Obj = NULL;
+        csData->m_Obj = nullptr;
     }
 }
+
 CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj, FX_BOOL bShading, const CFX_AffineMatrix* matrix)
 {
     if (!pPatternObj) {
@@ -638,16 +629,16 @@ void CPDF_DocPageData::ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOO
     }
     PDF_DocPageData_Release<CPDF_Stream*, CPDF_StreamAcc*>(m_FontFileMap, pFontStream, NULL, bForce);
 }
+
 CPDF_CountedColorSpace* CPDF_DocPageData::FindColorSpacePtr(CPDF_Object* pCSObj) const
 {
-    if (!pCSObj) return NULL;
-    CPDF_CountedObject<CPDF_ColorSpace*>* csData;
-    if (m_ColorSpaceMap.Lookup(pCSObj, csData))
-    {
-        return csData;
-    }
-    return NULL;
+    if (!pCSObj)
+        return nullptr;
+
+    auto it = m_ColorSpaceMap.find(pCSObj);
+    return it != m_ColorSpaceMap.end() ? it->second : nullptr;
 }
+
 CPDF_CountedPattern* CPDF_DocPageData::FindPatternPtr(CPDF_Object* pPatternObj) const
 {
     if (!pPatternObj) return NULL;

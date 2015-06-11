@@ -43,14 +43,13 @@ public:
     ObjClass	m_Obj;
     FX_DWORD	m_nCount;
 };
-typedef CPDF_CountedObject<CPDF_ColorSpace*>    CPDF_CountedColorSpace;
 typedef CPDF_CountedObject<CPDF_Pattern*>       CPDF_CountedPattern;
 typedef CPDF_CountedObject<CPDF_Image*>         CPDF_CountedImage;
 typedef CPDF_CountedObject<CPDF_IccProfile*>    CPDF_CountedICCProfile;
 typedef CPDF_CountedObject<CPDF_StreamAcc*>     CPDF_CountedStreamAcc;
+using CPDF_CountedColorSpace = CPDF_CountedObject<CPDF_ColorSpace*>;
 
 
-typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedColorSpace*>   CPDF_ColorSpaceMap;
 typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedPattern*>      CPDF_PatternMap;
 typedef CFX_MapPtrTemplate<FX_DWORD, CPDF_CountedImage*>            CPDF_ImageMap;
 typedef CFX_MapPtrTemplate<CPDF_Stream*, CPDF_CountedICCProfile*>   CPDF_IccProfileMap;
