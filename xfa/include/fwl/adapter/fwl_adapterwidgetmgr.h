@@ -24,7 +24,7 @@ public:
     virtual FWL_ERR SetWidgetPosition(IFWL_Widget *pWidget, FX_FLOAT fx, FX_FLOAT fy) = 0;
     virtual FWL_ERR SetParentWidget(IFWL_Widget *pWidget, IFWL_Widget *pParent) = 0;
     virtual FWL_ERR SetWidgetIcon(IFWL_Widget *pWidget, const CFX_DIBitmap *pIcon, FX_BOOL bBig) = 0;
-    virtual FWL_ERR SetWidgetCaption(IFWL_Widget *pWidget, FX_WSTR wsCaption) = 0;
+    virtual FWL_ERR SetWidgetCaption(IFWL_Widget *pWidget, const CFX_WideStringC& wsCaption) = 0;
     virtual	FWL_ERR	SetBorderRegion(IFWL_Widget *pWidget, CFX_Path *pPath) = 0;
     virtual FWL_ERR SetTransparent(IFWL_Widget *pWidget, FX_DWORD dwAlpha) = 0;
     virtual FWL_ERR ShowWidget(IFWL_Widget *pWidget) = 0;

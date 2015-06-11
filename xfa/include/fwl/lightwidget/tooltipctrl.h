@@ -17,7 +17,7 @@ public:
     static CFWL_ToolTip* Create();
     FWL_ERR Initialize(const CFWL_WidgetProperties *pProperties = NULL);
     FWL_ERR			GetCaption(CFX_WideString &wsCaption);
-    FWL_ERR			SetCaption(FX_WSTR wsCaption);
+    FWL_ERR			SetCaption(const CFX_WideStringC& wsCaption);
     int32_t	 	GetInitialDelay();
     int32_t	 	SetInitialDelay(int32_t nDelayTime);
     int32_t	 	GetAutoPopDelay();

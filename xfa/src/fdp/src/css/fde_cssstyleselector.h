@@ -411,7 +411,7 @@ public:
     {
         return (IFDE_CSSRubyStyle * const)this;
     }
-    virtual FX_BOOL					GetCustomStyle(FX_WSTR wsName, CFX_WideString &wsValue) const
+    virtual FX_BOOL					GetCustomStyle(const CFX_WideStringC& wsName, CFX_WideString &wsValue) const
     {
         for (int32_t i = m_CustomProperties.GetSize() - 2; i > -1; i -= 2) {
             if (wsName == m_CustomProperties[i]) {

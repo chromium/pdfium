@@ -19,8 +19,8 @@ public:
     uint8_t *					Encode(const CFX_ByteString &contents, BCFORMAT format,
                                        int32_t &outWidth, int32_t &outHeight, int32_t &e);
     uint8_t *					Encode(const CFX_ByteString &contents, int32_t &outLength , int32_t &e);
-    FX_BOOL						CheckContentValidity(FX_WSTR contents);
-    CFX_WideString				FilterContents(FX_WSTR contents);
+    FX_BOOL						CheckContentValidity(const CFX_WideStringC& contents);
+    CFX_WideString				FilterContents(const CFX_WideStringC& contents);
     FX_BOOL						SetTextLocation(BC_TEXT_LOC location);
     BC_TYPE						GetType();
 private:

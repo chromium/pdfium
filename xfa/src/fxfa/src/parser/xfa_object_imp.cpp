@@ -1677,7 +1677,7 @@ static const XFA_ExecEventParaInfo gs_eventParaInfos[] = {
     {0xfc82d695, L"postSave",	XFA_EVENT_PostSave,		0},
     {0xfd54fbb7, L"postSign",	XFA_EVENT_PostSign,		6},
 };
-const XFA_ExecEventParaInfo* GetEventParaInfoByName(FX_WSTR wsEventName)
+const XFA_ExecEventParaInfo* GetEventParaInfoByName(const CFX_WideStringC& wsEventName)
 {
     int32_t iLength = wsEventName.GetLength();
     uint32_t uHash = FX_HashCode_String_GetW(wsEventName.GetPtr(), iLength);
@@ -3504,7 +3504,7 @@ enum XFA_KEYTYPE {
     XFA_KEYTYPE_Custom,
     XFA_KEYTYPE_Element,
 };
-void* XFA_GetMapKey_Custom(FX_WSTR wsKey)
+void* XFA_GetMapKey_Custom(const CFX_WideStringC& wsKey)
 {
     FX_DWORD dwKey = FX_HashCode_String_GetW(wsKey.GetPtr(), wsKey.GetLength());
     return (void*)(uintptr_t)((dwKey << 1) | XFA_KEYTYPE_Custom);
@@ -3526,7 +3526,7 @@ FX_BOOL	CXFA_Node::HasAttribute(XFA_ATTRIBUTE eAttr, FX_BOOL bCanInherit )
     }
     return HasMapModuleKey(pKey, bCanInherit);
 }
-FX_BOOL CXFA_Node::SetAttribute(XFA_ATTRIBUTE eAttr, FX_WSTR wsValue, FX_BOOL bNotify  )
+FX_BOOL CXFA_Node::SetAttribute(XFA_ATTRIBUTE eAttr, const CFX_WideStringC& wsValue, FX_BOOL bNotify  )
 {
     XFA_LPCATTRIBUTEINFO pAttr = XFA_GetAttributeByID(eAttr);
     if (pAttr == NULL) {
@@ -3618,7 +3618,7 @@ FX_BOOL CXFA_Node::GetAttribute(XFA_ATTRIBUTE eAttr, CFX_WideString &wsValue, FX
     }
     return FALSE;
 }
-FX_BOOL CXFA_Node::SetAttribute(FX_WSTR wsAttr, FX_WSTR wsValue, FX_BOOL bNotify)
+FX_BOOL CXFA_Node::SetAttribute(const CFX_WideStringC& wsAttr, const CFX_WideStringC& wsValue, FX_BOOL bNotify)
 {
     XFA_LPCATTRIBUTEINFO pAttributeInfo = XFA_GetAttributeByName(wsValue);
     if (pAttributeInfo) {
@@ -3628,7 +3628,7 @@ FX_BOOL CXFA_Node::SetAttribute(FX_WSTR wsAttr, FX_WSTR wsValue, FX_BOOL bNotify
     SetMapModuleString(pKey, wsValue);
     return TRUE;
 }
-FX_BOOL CXFA_Node::GetAttribute(FX_WSTR wsAttr, CFX_WideString &wsValue, FX_BOOL bUseDefault)
+FX_BOOL CXFA_Node::GetAttribute(const CFX_WideStringC& wsAttr, CFX_WideString &wsValue, FX_BOOL bUseDefault)
 {
     XFA_LPCATTRIBUTEINFO pAttributeInfo = XFA_GetAttributeByName(wsAttr);
     if (pAttributeInfo) {
@@ -3641,7 +3641,7 @@ FX_BOOL CXFA_Node::GetAttribute(FX_WSTR wsAttr, CFX_WideString &wsValue, FX_BOOL
     }
     return TRUE;
 }
-FX_BOOL CXFA_Node::RemoveAttribute(FX_WSTR wsAttr)
+FX_BOOL CXFA_Node::RemoveAttribute(const CFX_WideStringC& wsAttr)
 {
     void* pKey = XFA_GetMapKey_Custom(wsAttr);
     RemoveMapModuleKey(pKey);
@@ -4464,7 +4464,7 @@ FX_BOOL CXFA_Node::RemoveChild(CXFA_Node *pNode, FX_BOOL bNotify)
     }
     return TRUE;
 }
-CXFA_Node* CXFA_Node::GetFirstChildByName(FX_WSTR wsName) const
+CXFA_Node* CXFA_Node::GetFirstChildByName(const CFX_WideStringC& wsName) const
 {
     return GetFirstChildByName(wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength()));
 }
@@ -4495,7 +4495,7 @@ CXFA_Node* CXFA_Node::GetNextSameNameSibling(FX_DWORD dwNameHash) const
     }
     return NULL;
 }
-CXFA_Node* CXFA_Node::GetNextSameNameSibling(FX_WSTR wsNodeName) const
+CXFA_Node* CXFA_Node::GetNextSameNameSibling(const CFX_WideStringC& wsNodeName) const
 {
     return GetNextSameNameSibling(wsNodeName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsNodeName.GetPtr(), wsNodeName.GetLength()));
 }
@@ -4622,7 +4622,7 @@ void CXFA_Node::OnChanged(XFA_ATTRIBUTE eAttr, void* pNewValue, FX_BOOL bNotify,
         Script_Attribute_SendAttributeChangeMessage((void*)(uintptr_t)eAttr, pNewValue, bScriptModify);
     }
 }
-int32_t CXFA_Node::execSingleEventByName(FX_WSTR wsEventName, XFA_ELEMENT eElementType)
+int32_t CXFA_Node::execSingleEventByName(const CFX_WideStringC& wsEventName, XFA_ELEMENT eElementType)
 {
     int32_t iRet = XFA_EVENTERROR_NotExist;
     const XFA_ExecEventParaInfo* eventParaInfo = GetEventParaInfoByName(wsEventName);
@@ -4723,7 +4723,7 @@ FX_BOOL CXFA_Node::GetMapModuleValue(void* pKey, void* &pValue)
     }
     return FALSE;
 }
-void CXFA_Node::SetMapModuleString(void* pKey, FX_WSTR wsValue)
+void CXFA_Node::SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue)
 {
     SetMapModuleBuffer(pKey, (void*)wsValue.GetPtr(), wsValue.GetLength() * sizeof(FX_WCHAR));
 }
@@ -4946,7 +4946,7 @@ CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
 {
     m_pDocument->GetScriptContext()->CacheList(this);
 }
-CXFA_Node* CXFA_NodeList::NamedItem(FX_WSTR wsName)
+CXFA_Node* CXFA_NodeList::NamedItem(const CFX_WideStringC& wsName)
 {
     int32_t iCount = GetLength();
     FX_DWORD dwHashCode = FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength());

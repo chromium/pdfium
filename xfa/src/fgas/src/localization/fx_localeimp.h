@@ -62,12 +62,12 @@ public:
     virtual FX_BOOL FormatNull(const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
 protected:
     virtual ~CFX_FormatString();
-    IFX_Locale* GetTextFormat(const CFX_WideString &wsPattern, FX_WSTR wsCategory, CFX_WideString& wsPurgePattern);
+    IFX_Locale* GetTextFormat(const CFX_WideString &wsPattern, const CFX_WideStringC& wsCategory, CFX_WideString& wsPurgePattern);
     IFX_Locale* GetNumericFormat(const CFX_WideString& wsPattern, int32_t& iDotIndex, FX_DWORD& dwStyle, CFX_WideString& wsPurgePattern);
-    FX_BOOL 	FormatStrNum(FX_WSTR wsInputNum, const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
+    FX_BOOL 	FormatStrNum(const CFX_WideStringC& wsInputNum, const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
     FX_BOOL		FormatLCNumeric(CFX_LCNumeric& lcNum, const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
     FX_DATETIMETYPE GetDateTimeFormat(const CFX_WideString& wsPattern, IFX_Locale*& pLocale, CFX_WideString &wsDatePattern, CFX_WideString &wsTimePattern);
-    IFX_Locale*		GetPatternLocale(FX_WSTR wsLocale);
+    IFX_Locale*		GetPatternLocale(const CFX_WideStringC& wsLocale);
     IFX_LocaleMgr*	m_pLocaleMgr;
     FX_BOOL			m_bUseLCID;
 };

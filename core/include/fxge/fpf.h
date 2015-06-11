@@ -55,10 +55,10 @@ public:
     virtual ~IFPF_FontMgr() { }
     virtual void			LoadSystemFonts() = 0;
     virtual void			LoadPrivateFont(IFX_FileRead* pFontFile) = 0;
-    virtual void			LoadPrivateFont(FX_BSTR bsFileName) = 0;
+    virtual void			LoadPrivateFont(const CFX_ByteStringC& bsFileName) = 0;
     virtual void			LoadPrivateFont(void* pBuffer, size_t szBuffer) = 0;
 
-    virtual IFPF_Font*		CreateFont(FX_BSTR bsFamilyname, uint8_t charset, FX_DWORD dwStyle, FX_DWORD dwMatch = 0) = 0;
+    virtual IFPF_Font*		CreateFont(const CFX_ByteStringC& bsFamilyname, uint8_t charset, FX_DWORD dwStyle, FX_DWORD dwMatch = 0) = 0;
 };
 
 #endif  // CORE_INCLUDE_FXGE_FPF_H_

@@ -33,7 +33,7 @@ public:
     virtual FX_WORD			GetDefLocaleID();
     virtual IFX_Locale*		GetDefLocale();
     virtual IFX_Locale*		GetLocale(FX_WORD lcid);
-    virtual IFX_Locale* 	GetLocaleByName(FX_WSTR wsLocaleName);
+    virtual IFX_Locale* 	GetLocaleByName(const CFX_WideStringC& wsLocaleName);
     ~CXFA_LocaleMgr();
     void					SetDefLocale(IFX_Locale* pLocale);
     CFX_WideStringC			GetConfigLocaleName(CXFA_Node* pConfig);

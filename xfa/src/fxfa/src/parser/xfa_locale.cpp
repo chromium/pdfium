@@ -114,7 +114,7 @@ void CXFA_XMLLocale::GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD ) const
 {
     wsEraName = GetCalendarSymbol(FX_BSTRC("era"), bAD ? 1 : 0, FALSE);
 }
-CFX_WideString CXFA_XMLLocale::GetCalendarSymbol(FX_BSTR symbol, int index, FX_BOOL bAbbr) const
+CFX_WideString CXFA_XMLLocale::GetCalendarSymbol(const CFX_ByteStringC& symbol, int index, FX_BOOL bAbbr) const
 {
     CFX_ByteString pstrSymbolNames = symbol + "Names";
     CFX_WideString wsSymbolName = L"";
@@ -206,7 +206,7 @@ void CXFA_XMLLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType, CFX_WideString
             break;
     }
 }
-void CXFA_XMLLocale::GetPattern(CXML_Element* pElement, FX_BSTR bsTag, FX_WSTR wsName, CFX_WideString& wsPattern) const
+void CXFA_XMLLocale::GetPattern(CXML_Element* pElement, const CFX_ByteStringC& bsTag, const CFX_WideStringC& wsName, CFX_WideString& wsPattern) const
 {
     int32_t iCount = pElement->CountElements(FX_BSTRC(""), bsTag);
     for (int32_t i = 0; i < iCount; i++) {
@@ -337,7 +337,7 @@ void CXFA_NodeLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType, CFX_WideStrin
             break;
     }
 }
-CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node *pParent, FX_WSTR wsName) const
+CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node *pParent, const CFX_WideStringC& wsName) const
 {
     CXFA_Node *pChild = pParent ? pParent->GetNodeItem(XFA_NODEITEM_FirstChild) : NULL;
     while (pChild) {
@@ -351,7 +351,7 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node *pParent, FX_WSTR wsName) co
     }
     return NULL;
 }
-CFX_WideString CXFA_NodeLocale::GetSymbol(XFA_ELEMENT eElement, FX_WSTR symbol_type) const
+CFX_WideString CXFA_NodeLocale::GetSymbol(XFA_ELEMENT eElement, const CFX_WideStringC& symbol_type) const
 {
     CXFA_Node *pSymbols = m_pLocale ? m_pLocale->GetChild(0, eElement) : NULL;
     CXFA_Node *pSymbol = GetNodeByName(pSymbols, symbol_type);

@@ -290,7 +290,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(CXFA_FFWidge
     }
     return NULL;
 }
-CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::FindWidgetByName(FX_WSTR wsWidgetName, CXFA_FFWidget* pRefWidget)
+CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::FindWidgetByName(const CFX_WideStringC& wsWidgetName, CXFA_FFWidget* pRefWidget)
 {
     return pRefWidget->GetDocView()->GetWidgetByName(wsWidgetName, pRefWidget);
 }

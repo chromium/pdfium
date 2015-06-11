@@ -274,7 +274,7 @@ public:
     CPDF_GeneralStateData(const CPDF_GeneralStateData& src);
     ~CPDF_GeneralStateData();
 
-    void				SetBlendMode(FX_BSTR blend_mode);
+    void				SetBlendMode(const CFX_ByteStringC& blend_mode);
 
     char				m_BlendMode[16];
 
@@ -422,9 +422,9 @@ public:
         return m_pObject ? m_pObject->GetMCID() : -1;
     }
 
-    FX_BOOL				HasMark(FX_BSTR mark) const;
+    FX_BOOL				HasMark(const CFX_ByteStringC& mark) const;
 
-    FX_BOOL				LookupMark(FX_BSTR mark, CPDF_Dictionary*& pDict) const;
+    FX_BOOL				LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const;
 };
 #define PDFPAGE_TEXT		1
 #define PDFPAGE_PATH		2

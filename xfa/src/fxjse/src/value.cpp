@@ -115,7 +115,7 @@ void		FXJSE_Value_SetBoolean		(FXJSE_HVALUE hValue, FX_BOOL	bBoolean)
     ASSERT(lpValue);
     return lpValue->SetBoolean(bBoolean);
 }
-void		FXJSE_Value_SetUTF8String	(FXJSE_HVALUE hValue, FX_BSTR	szString)
+void		FXJSE_Value_SetUTF8String	(FXJSE_HVALUE hValue, const CFX_ByteStringC&	szString)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     ASSERT(lpValue);
@@ -167,14 +167,14 @@ void		FXJSE_Value_Set				(FXJSE_HVALUE hValue, FXJSE_HVALUE hOriginalValue)
     ASSERT(lpValue && lpOriginalValue);
     return lpValue->Assign(lpOriginalValue);
 }
-FX_BOOL		FXJSE_Value_GetObjectProp		(FXJSE_HVALUE hValue, FX_BSTR	szPropName,	FXJSE_HVALUE hPropValue)
+FX_BOOL		FXJSE_Value_GetObjectProp		(FXJSE_HVALUE hValue, const CFX_ByteStringC&	szPropName,	FXJSE_HVALUE hPropValue)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
     ASSERT(lpValue && lpPropValue);
     return lpValue->GetObjectProperty(szPropName, lpPropValue);
 }
-FX_BOOL		FXJSE_Value_SetObjectProp		(FXJSE_HVALUE hValue, FX_BSTR	szPropName,	FXJSE_HVALUE hPropValue)
+FX_BOOL		FXJSE_Value_SetObjectProp		(FXJSE_HVALUE hValue, const CFX_ByteStringC&	szPropName,	FXJSE_HVALUE hPropValue)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
@@ -195,19 +195,19 @@ FX_BOOL		FXJSE_Value_SetObjectPropByIdx	(FXJSE_HVALUE hValue, uint32_t	uPropIdx,
     ASSERT(lpValue && lpPropValue);
     return lpValue->SetObjectProperty(uPropIdx, lpPropValue);
 }
-FX_BOOL		FXJSE_Value_DeleteObjectProp	(FXJSE_HVALUE hValue, FX_BSTR szPropName)
+FX_BOOL		FXJSE_Value_DeleteObjectProp	(FXJSE_HVALUE hValue, const CFX_ByteStringC& szPropName)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     ASSERT(lpValue);
     return lpValue->DeleteObjectProperty(szPropName);
 }
-FX_BOOL			FXJSE_Value_ObjectHasOwnProp	(FXJSE_HVALUE hValue, FX_BSTR	szPropName, FX_BOOL	bUseTypeGetter)
+FX_BOOL			FXJSE_Value_ObjectHasOwnProp	(FXJSE_HVALUE hValue, const CFX_ByteStringC&	szPropName, FX_BOOL	bUseTypeGetter)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     ASSERT(lpValue);
     return lpValue->HasObjectOwnProperty(szPropName, bUseTypeGetter);
 }
-FX_BOOL			FXJSE_Value_SetObjectOwnProp	(FXJSE_HVALUE hValue, FX_BSTR	szPropName, FXJSE_HVALUE hPropValue)
+FX_BOOL			FXJSE_Value_SetObjectOwnProp	(FXJSE_HVALUE hValue, const CFX_ByteStringC&	szPropName, FXJSE_HVALUE hPropValue)
 {
     CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
     CFXJSE_Value* lpPropValue = reinterpret_cast<CFXJSE_Value*>(hPropValue);
@@ -249,7 +249,7 @@ FXJSE_HRUNTIME	FXJSE_Value_GetRuntime(FXJSE_HVALUE hValue)
     ASSERT(lpValue);
     return reinterpret_cast<FXJSE_HRUNTIME>(lpValue->GetIsolate());
 }
-void FXJSE_ThrowMessage(FX_BSTR utf8Name, FX_BSTR utf8Message)
+void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name, const CFX_ByteStringC& utf8Message)
 {
     v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
     ASSERT(pIsolate);
@@ -358,7 +358,7 @@ void CFXJSE_Value::SetDate(FXJSE_DOUBLE dDouble)
     v8::Local<v8::Value> hDate = v8::Date::New(m_pIsolate, dDouble);
     m_hValue.Reset(m_pIsolate, hDate);
 }
-FX_BOOL CFXJSE_Value::SetObjectProperty(FX_BSTR szPropName, CFXJSE_Value* lpPropValue)
+FX_BOOL CFXJSE_Value::SetObjectProperty(const CFX_ByteStringC& szPropName, CFXJSE_Value* lpPropValue)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hObject = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -368,7 +368,7 @@ FX_BOOL CFXJSE_Value::SetObjectProperty(FX_BSTR szPropName, CFXJSE_Value* lpProp
     v8::Local<v8::Value> hPropValue = v8::Local<v8::Value>::New(m_pIsolate, lpPropValue->DirectGetValue());
     return (FX_BOOL)hObject.As<v8::Object>()->Set(v8::String::NewFromUtf8(m_pIsolate, szPropName.GetCStr(), v8::String::kNormalString, szPropName.GetLength()), hPropValue);
 }
-FX_BOOL CFXJSE_Value::GetObjectProperty(FX_BSTR szPropName, CFXJSE_Value* lpPropValue)
+FX_BOOL CFXJSE_Value::GetObjectProperty(const CFX_ByteStringC& szPropName, CFXJSE_Value* lpPropValue)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hObject = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -400,7 +400,7 @@ FX_BOOL CFXJSE_Value::GetObjectProperty(uint32_t uPropIdx, CFXJSE_Value* lpPropV
     lpPropValue->ForceSetValue(hPropValue);
     return TRUE;
 }
-FX_BOOL CFXJSE_Value::DeleteObjectProperty(FX_BSTR szPropName)
+FX_BOOL CFXJSE_Value::DeleteObjectProperty(const CFX_ByteStringC& szPropName)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hObject = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -410,7 +410,7 @@ FX_BOOL CFXJSE_Value::DeleteObjectProperty(FX_BSTR szPropName)
     hObject.As<v8::Object>()->Delete(v8::String::NewFromUtf8(m_pIsolate, szPropName.GetCStr(), v8::String::kNormalString, szPropName.GetLength()));
     return TRUE;
 }
-FX_BOOL CFXJSE_Value::HasObjectOwnProperty(FX_BSTR   szPropName, FX_BOOL	bUseTypeGetter)
+FX_BOOL CFXJSE_Value::HasObjectOwnProperty(const CFX_ByteStringC&   szPropName, FX_BOOL	bUseTypeGetter)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hObject = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
@@ -420,7 +420,7 @@ FX_BOOL CFXJSE_Value::HasObjectOwnProperty(FX_BSTR   szPropName, FX_BOOL	bUseTyp
     v8::Local<v8::String> hKey   = v8::String::NewFromUtf8(m_pIsolate, szPropName.GetCStr(), v8::String::kNormalString, szPropName.GetLength());
     return hObject.As<v8::Object>()->HasRealNamedProperty(hKey) || (bUseTypeGetter && hObject.As<v8::Object>()->HasOwnProperty(hKey));
 }
-FX_BOOL CFXJSE_Value::SetObjectOwnProperty(FX_BSTR szPropName, CFXJSE_Value* lpPropValue)
+FX_BOOL CFXJSE_Value::SetObjectOwnProperty(const CFX_ByteStringC& szPropName, CFXJSE_Value* lpPropValue)
 {
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hObject = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);

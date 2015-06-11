@@ -21,11 +21,11 @@ public:
     uint8_t*	Encode(const CFX_ByteString &contents, BCFORMAT format,
                        int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e);
     uint8_t*	Encode(const CFX_ByteString &contents, int32_t &outLength, int32_t &e);
-    void		RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e);
-    FX_BOOL			CheckContentValidity(FX_WSTR contents);
-    CFX_WideString	FilterContents(FX_WSTR contents);
+    void		RenderResult(const CFX_WideStringC& contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL			CheckContentValidity(const CFX_WideStringC& contents);
+    CFX_WideString	FilterContents(const CFX_WideStringC& contents);
     int32_t		CalcChecksum(const CFX_ByteString &contents);
 protected:
-    void		ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e);
+    void		ShowChars(const CFX_WideStringC& contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e);
 };
 #endif

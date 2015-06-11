@@ -31,7 +31,7 @@ FX_DWORD IFWL_Target::GetClassID() const
 {
     return ((CFWL_Target*)m_pData)->GetClassID();
 }
-FX_BOOL	IFWL_Target::IsInstance(FX_WSTR wsClass) const
+FX_BOOL	IFWL_Target::IsInstance(const CFX_WideStringC& wsClass) const
 {
     return ((CFWL_Target*)m_pData)->IsInstance(wsClass);
 }
@@ -79,7 +79,7 @@ FX_DWORD CFWL_Target::GetClassID() const
 {
     return 0;
 }
-FX_BOOL	CFWL_Target::IsInstance(FX_WSTR wsClass) const
+FX_BOOL	CFWL_Target::IsInstance(const CFX_WideStringC& wsClass) const
 {
     return FALSE;
 }

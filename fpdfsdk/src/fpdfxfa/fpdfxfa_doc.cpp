@@ -701,7 +701,7 @@ void CPDFXFA_Document::GetTitle(IXFA_Doc* hDoc, CFX_WideString &wsTitle)
     wsTitle = wsTitle.FromLocal(csTitle.GetBuffer(csTitle.GetLength()));
 	csTitle.ReleaseBuffer(csTitle.GetLength());
 }
-void CPDFXFA_Document::SetTitle(IXFA_Doc* hDoc, FX_WSTR wsTitle)
+void CPDFXFA_Document::SetTitle(IXFA_Doc* hDoc, const CFX_WideStringC& wsTitle)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -713,7 +713,7 @@ void CPDFXFA_Document::SetTitle(IXFA_Doc* hDoc, FX_WSTR wsTitle)
 		return;
 	pInfoDict->SetAt("Title", FX_NEW CPDF_String(wsTitle));
 }
-void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bXDP)
+void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc, const CFX_WideStringC& wsFilePath, FX_BOOL bXDP)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -834,12 +834,12 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bX
 	}
 	FX_BOOL bError= fileWrite.Flush();
 }
-void CPDFXFA_Document::ImportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath)
+void CPDFXFA_Document::ImportData(IXFA_Doc* hDoc, const CFX_WideStringC& wsFilePath)
 {
 	//TODO...
 }
 
-void CPDFXFA_Document::GotoURL(IXFA_Doc* hDoc, FX_WSTR bsURL, FX_BOOL bAppend)
+void CPDFXFA_Document::GotoURL(IXFA_Doc* hDoc, const CFX_WideStringC& bsURL, FX_BOOL bAppend)
 {
 	if (hDoc != m_pXFADoc)
 		return;
@@ -1392,7 +1392,7 @@ FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit)
 	return bRet;
 }
 
-FX_BOOL	CPDFXFA_Document::SetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+FX_BOOL	CPDFXFA_Document::SetGlobalProperty(IXFA_Doc* hDoc, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue)
 {
 	if (hDoc != m_pXFADoc)
 		return FALSE;
@@ -1401,7 +1401,7 @@ FX_BOOL	CPDFXFA_Document::SetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, 
 		return m_pSDKDoc->GetEnv()->GetJSRuntime()->SetHValueByName(szPropName, hValue);
 	return FALSE;
 }
-FX_BOOL	CPDFXFA_Document::GetPDFScriptObject(IXFA_Doc* hDoc, FX_BSTR utf8Name, FXJSE_HVALUE hValue)
+FX_BOOL	CPDFXFA_Document::GetPDFScriptObject(IXFA_Doc* hDoc, const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue)
 {
 	if (hDoc != m_pXFADoc)
 		return FALSE;
@@ -1418,7 +1418,7 @@ FX_BOOL	CPDFXFA_Document::GetPDFScriptObject(IXFA_Doc* hDoc, FX_BSTR utf8Name, F
 	return _GetHValueByName(utf8Name, hValue, m_pSDKDoc->GetEnv()->GetJSRuntime());
 
 }
-FX_BOOL CPDFXFA_Document::GetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+FX_BOOL CPDFXFA_Document::GetGlobalProperty(IXFA_Doc* hDoc, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue)
 {
 	if (hDoc != m_pXFADoc)
 		return FALSE;
@@ -1434,7 +1434,7 @@ FX_BOOL CPDFXFA_Document::GetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, 
 	return _GetHValueByName(szPropName, hValue, m_pSDKDoc->GetEnv()->GetJSRuntime());
 
 }
-FX_BOOL CPDFXFA_Document::_GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue, IFXJS_Runtime* runTime)
+FX_BOOL CPDFXFA_Document::_GetHValueByName(const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue, IFXJS_Runtime* runTime)
 {
 	return runTime->GetHValueByName(utf8Name, hValue);
 }

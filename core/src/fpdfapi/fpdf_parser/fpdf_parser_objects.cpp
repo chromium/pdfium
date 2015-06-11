@@ -353,11 +353,11 @@ CPDF_Number::CPDF_Number(FX_BOOL bInteger, void* pData)
     : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(bInteger), m_Integer(*(int*)pData) {
 }
 
-CPDF_Number::CPDF_Number(FX_BSTR str) : CPDF_Object(PDFOBJ_NUMBER) {
+CPDF_Number::CPDF_Number(const CFX_ByteStringC& str) : CPDF_Object(PDFOBJ_NUMBER) {
     FX_atonum(str, m_bInteger, &m_Integer);
 }
 
-void CPDF_Number::SetString(FX_BSTR str)
+void CPDF_Number::SetString(const CFX_ByteStringC& str)
 {
     FX_atonum(str, m_bInteger, &m_Integer);
 }
@@ -588,19 +588,19 @@ CPDF_Object* CPDF_Dictionary::GetNextElement(FX_POSITION& pos, CFX_ByteString& k
     m_Map.GetNextAssoc(pos, key, (void*&)p);
     return p;
 }
-CPDF_Object* CPDF_Dictionary::GetElement(FX_BSTR key) const
+CPDF_Object* CPDF_Dictionary::GetElement(const CFX_ByteStringC& key) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
     return p;
 }
-CPDF_Object* CPDF_Dictionary::GetElementValue(FX_BSTR key) const
+CPDF_Object* CPDF_Dictionary::GetElementValue(const CFX_ByteStringC& key) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
     return p ? p->GetDirect() : NULL;
 }
-CFX_ByteString CPDF_Dictionary::GetString(FX_BSTR key) const
+CFX_ByteString CPDF_Dictionary::GetString(const CFX_ByteStringC& key) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
@@ -609,7 +609,7 @@ CFX_ByteString CPDF_Dictionary::GetString(FX_BSTR key) const
     else
         return CFX_ByteString();
 }
-CFX_ByteStringC CPDF_Dictionary::GetConstString(FX_BSTR key) const
+CFX_ByteStringC CPDF_Dictionary::GetConstString(const CFX_ByteStringC& key) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
@@ -618,7 +618,7 @@ CFX_ByteStringC CPDF_Dictionary::GetConstString(FX_BSTR key) const
     else
         return CFX_ByteStringC();
 }
-CFX_WideString CPDF_Dictionary::GetUnicodeText(FX_BSTR key, CFX_CharMap* pCharMap) const
+CFX_WideString CPDF_Dictionary::GetUnicodeText(const CFX_ByteStringC& key, CFX_CharMap* pCharMap) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
@@ -634,7 +634,7 @@ CFX_WideString CPDF_Dictionary::GetUnicodeText(FX_BSTR key, CFX_CharMap* pCharMa
     }
     return CFX_WideString();
 }
-CFX_ByteString CPDF_Dictionary::GetString(FX_BSTR key, FX_BSTR def) const
+CFX_ByteString CPDF_Dictionary::GetString(const CFX_ByteStringC& key, const CFX_ByteStringC& def) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
@@ -643,7 +643,7 @@ CFX_ByteString CPDF_Dictionary::GetString(FX_BSTR key, FX_BSTR def) const
     }
     return CFX_ByteString(def);
 }
-CFX_ByteStringC CPDF_Dictionary::GetConstString(FX_BSTR key, FX_BSTR def) const
+CFX_ByteStringC CPDF_Dictionary::GetConstString(const CFX_ByteStringC& key, const CFX_ByteStringC& def) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
@@ -652,7 +652,7 @@ CFX_ByteStringC CPDF_Dictionary::GetConstString(FX_BSTR key, FX_BSTR def) const
     else
         return CFX_ByteStringC(def);
 }
-int CPDF_Dictionary::GetInteger(FX_BSTR key) const
+int CPDF_Dictionary::GetInteger(const CFX_ByteStringC& key) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
@@ -661,7 +661,7 @@ int CPDF_Dictionary::GetInteger(FX_BSTR key) const
     }
     return 0;
 }
-int CPDF_Dictionary::GetInteger(FX_BSTR key, int def) const
+int CPDF_Dictionary::GetInteger(const CFX_ByteStringC& key, int def) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
@@ -670,7 +670,7 @@ int CPDF_Dictionary::GetInteger(FX_BSTR key, int def) const
     }
     return def;
 }
-FX_FLOAT CPDF_Dictionary::GetNumber(FX_BSTR key) const
+FX_FLOAT CPDF_Dictionary::GetNumber(const CFX_ByteStringC& key) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
@@ -679,7 +679,7 @@ FX_FLOAT CPDF_Dictionary::GetNumber(FX_BSTR key) const
     }
     return 0;
 }
-FX_BOOL CPDF_Dictionary::GetBoolean(FX_BSTR key, FX_BOOL bDefault) const
+FX_BOOL CPDF_Dictionary::GetBoolean(const CFX_ByteStringC& key, FX_BOOL bDefault) const
 {
     CPDF_Object* p = NULL;
     m_Map.Lookup(key, (void*&)p);
@@ -688,7 +688,7 @@ FX_BOOL CPDF_Dictionary::GetBoolean(FX_BSTR key, FX_BOOL bDefault) const
     }
     return bDefault;
 }
-CPDF_Dictionary* CPDF_Dictionary::GetDict(FX_BSTR key) const
+CPDF_Dictionary* CPDF_Dictionary::GetDict(const CFX_ByteStringC& key) const
 {
     CPDF_Object* p = GetElementValue(key);
     if (p == NULL) {
@@ -700,7 +700,7 @@ CPDF_Dictionary* CPDF_Dictionary::GetDict(FX_BSTR key) const
     }
     return NULL;
 }
-CPDF_Array* CPDF_Dictionary::GetArray(FX_BSTR key) const
+CPDF_Array* CPDF_Dictionary::GetArray(const CFX_ByteStringC& key) const
 {
     CPDF_Object* p = GetElementValue(key);
     if (p == NULL || p->GetType() != PDFOBJ_ARRAY) {
@@ -708,7 +708,7 @@ CPDF_Array* CPDF_Dictionary::GetArray(FX_BSTR key) const
     }
     return (CPDF_Array*)p;
 }
-CPDF_Stream* CPDF_Dictionary::GetStream(FX_BSTR key) const
+CPDF_Stream* CPDF_Dictionary::GetStream(const CFX_ByteStringC& key) const
 {
     CPDF_Object* p = GetElementValue(key);
     if (p == NULL || p->GetType() != PDFOBJ_STREAM) {
@@ -716,7 +716,7 @@ CPDF_Stream* CPDF_Dictionary::GetStream(FX_BSTR key) const
     }
     return (CPDF_Stream*)p;
 }
-CFX_FloatRect CPDF_Dictionary::GetRect(FX_BSTR key) const
+CFX_FloatRect CPDF_Dictionary::GetRect(const CFX_ByteStringC& key) const
 {
     CFX_FloatRect rect;
     CPDF_Array* pArray = GetArray(key);
@@ -725,7 +725,7 @@ CFX_FloatRect CPDF_Dictionary::GetRect(FX_BSTR key) const
     }
     return rect;
 }
-CFX_AffineMatrix CPDF_Dictionary::GetMatrix(FX_BSTR key) const
+CFX_AffineMatrix CPDF_Dictionary::GetMatrix(const CFX_ByteStringC& key) const
 {
     CFX_AffineMatrix matrix;
     CPDF_Array* pArray = GetArray(key);
@@ -734,12 +734,12 @@ CFX_AffineMatrix CPDF_Dictionary::GetMatrix(FX_BSTR key) const
     }
     return matrix;
 }
-FX_BOOL CPDF_Dictionary::KeyExist(FX_BSTR key) const
+FX_BOOL CPDF_Dictionary::KeyExist(const CFX_ByteStringC& key) const
 {
     void* value;
     return m_Map.Lookup(key, value);
 }
-void CPDF_Dictionary::SetAt(FX_BSTR key, CPDF_Object* pObj, CPDF_IndirectObjects* pObjs)
+void CPDF_Dictionary::SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj, CPDF_IndirectObjects* pObjs)
 {
     ASSERT(m_Type == PDFOBJ_DICTIONARY);
     CPDF_Object* p = NULL;
@@ -759,12 +759,12 @@ void CPDF_Dictionary::SetAt(FX_BSTR key, CPDF_Object* pObj, CPDF_IndirectObjects
         m_Map.RemoveKey(key);
     }
 }
-void CPDF_Dictionary::AddValue(FX_BSTR key, CPDF_Object* pObj)
+void CPDF_Dictionary::AddValue(const CFX_ByteStringC& key, CPDF_Object* pObj)
 {
     ASSERT(m_Type == PDFOBJ_DICTIONARY);
     m_Map.AddValue(key, pObj);
 }
-void CPDF_Dictionary::RemoveAt(FX_BSTR key)
+void CPDF_Dictionary::RemoveAt(const CFX_ByteStringC& key)
 {
     ASSERT(m_Type == PDFOBJ_DICTIONARY);
     CPDF_Object* p = NULL;
@@ -775,7 +775,7 @@ void CPDF_Dictionary::RemoveAt(FX_BSTR key)
     p->Release();
     m_Map.RemoveKey(key);
 }
-void CPDF_Dictionary::ReplaceKey(FX_BSTR oldkey, FX_BSTR newkey)
+void CPDF_Dictionary::ReplaceKey(const CFX_ByteStringC& oldkey, const CFX_ByteStringC& newkey)
 {
     ASSERT(m_Type == PDFOBJ_DICTIONARY);
     CPDF_Object* p = NULL;
@@ -807,37 +807,37 @@ FX_BOOL CPDF_Dictionary::Identical(CPDF_Dictionary* pOther) const
     }
     return TRUE;
 }
-void CPDF_Dictionary::SetAtInteger(FX_BSTR key, int i)
+void CPDF_Dictionary::SetAtInteger(const CFX_ByteStringC& key, int i)
 {
     SetAt(key, new CPDF_Number(i));
 }
-void CPDF_Dictionary::SetAtName(FX_BSTR key, const CFX_ByteString& name)
+void CPDF_Dictionary::SetAtName(const CFX_ByteStringC& key, const CFX_ByteString& name)
 {
     SetAt(key, new CPDF_Name(name));
 }
-void CPDF_Dictionary::SetAtString(FX_BSTR key, const CFX_ByteString& str)
+void CPDF_Dictionary::SetAtString(const CFX_ByteStringC& key, const CFX_ByteString& str)
 {
     SetAt(key, new CPDF_String(str));
 }
-void CPDF_Dictionary::SetAtReference(FX_BSTR key, CPDF_IndirectObjects* pDoc, FX_DWORD objnum)
+void CPDF_Dictionary::SetAtReference(const CFX_ByteStringC& key, CPDF_IndirectObjects* pDoc, FX_DWORD objnum)
 {
     SetAt(key, new CPDF_Reference(pDoc, objnum));
 }
-void CPDF_Dictionary::AddReference(FX_BSTR key, CPDF_IndirectObjects* pDoc, FX_DWORD objnum)
+void CPDF_Dictionary::AddReference(const CFX_ByteStringC& key, CPDF_IndirectObjects* pDoc, FX_DWORD objnum)
 {
     AddValue(key, new CPDF_Reference(pDoc, objnum));
 }
-void CPDF_Dictionary::SetAtNumber(FX_BSTR key, FX_FLOAT f)
+void CPDF_Dictionary::SetAtNumber(const CFX_ByteStringC& key, FX_FLOAT f)
 {
     CPDF_Number* pNumber = new CPDF_Number;
     pNumber->SetNumber(f);
     SetAt(key, pNumber);
 }
-void CPDF_Dictionary::SetAtBoolean(FX_BSTR key, FX_BOOL bValue)
+void CPDF_Dictionary::SetAtBoolean(const CFX_ByteStringC& key, FX_BOOL bValue)
 {
     SetAt(key, new CPDF_Boolean(bValue));
 }
-void CPDF_Dictionary::SetAtRect(FX_BSTR key, const CFX_FloatRect& rect)
+void CPDF_Dictionary::SetAtRect(const CFX_ByteStringC& key, const CFX_FloatRect& rect)
 {
     CPDF_Array* pArray = new CPDF_Array;
     pArray->AddNumber(rect.left);
@@ -846,7 +846,7 @@ void CPDF_Dictionary::SetAtRect(FX_BSTR key, const CFX_FloatRect& rect)
     pArray->AddNumber(rect.top);
     SetAt(key, pArray);
 }
-void CPDF_Dictionary::SetAtMatrix(FX_BSTR key, const CFX_AffineMatrix& matrix)
+void CPDF_Dictionary::SetAtMatrix(const CFX_ByteStringC& key, const CFX_AffineMatrix& matrix)
 {
     CPDF_Array* pArray = new CPDF_Array;
     pArray->AddNumber16(matrix.a);

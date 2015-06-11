@@ -72,7 +72,7 @@ CFX_ByteString CPDF_Dest::GetRemoteName()
     }
     return m_pObj->GetString();
 }
-CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc, FX_BSTR category)
+CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc, const CFX_ByteStringC& category)
 {
     if (pDoc->GetRoot() && pDoc->GetRoot()->GetDict(FX_BSTRC("Names")))
         m_pRoot = pDoc->GetRoot()->GetDict(FX_BSTRC("Names"))->GetDict(category);
@@ -229,7 +229,7 @@ CPDF_Object* CPDF_NameTree::LookupValue(const CFX_ByteString& csName) const
     int nIndex = 0;
     return SearchNameNode(m_pRoot, csName, nIndex, NULL);
 }
-CPDF_Array*	CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc, FX_BSTR sName)
+CPDF_Array*	CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc, const CFX_ByteStringC& sName)
 {
     CPDF_Object* pValue = LookupValue(sName);
     if (pValue == NULL) {
@@ -282,7 +282,7 @@ static CFX_WideString ChangeSlashToPDF(const FX_WCHAR* str)
     return result;
 }
 #endif
-static CFX_WideString FILESPEC_DecodeFileName(FX_WSTR filepath)
+static CFX_WideString FILESPEC_DecodeFileName(const CFX_WideStringC& filepath)
 {
     if (filepath.GetLength() <= 1) {
         return CFX_WideString();
@@ -362,7 +362,7 @@ FX_BOOL CPDF_FileSpec::IsURL() const
     }
     return ((CPDF_Dictionary*)m_pObj)->GetString(FX_BSTRC("FS")) == FX_BSTRC("URL");
 }
-CFX_WideString FILESPEC_EncodeFileName(FX_WSTR filepath)
+CFX_WideString FILESPEC_EncodeFileName(const CFX_WideStringC& filepath)
 {
     if (filepath.GetLength() <= 1) {
         return CFX_WideString();
@@ -417,7 +417,7 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() const
     }
     return NULL;
 }
-static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object *pObj, FX_WSTR wsFileName, FX_BOOL bURL)
+static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object *pObj, const CFX_WideStringC& wsFileName, FX_BOOL bURL)
 {
     ASSERT(pObj != NULL);
     CFX_WideString wsStr;
@@ -435,7 +435,7 @@ static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object *pObj, FX_WSTR wsFileName, 
         pDict->SetAtString(FX_BSTRC("UF"), PDF_EncodeText(wsStr));
     }
 }
-void CPDF_FileSpec::SetFileName(FX_WSTR wsFileName, FX_BOOL bURL)
+void CPDF_FileSpec::SetFileName(const CFX_WideStringC& wsFileName, FX_BOOL bURL)
 {
     ASSERT(m_pObj != NULL);
     if (m_pObj->GetType() == PDFOBJ_DICTIONARY && bURL) {
@@ -540,7 +540,7 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const
     wsLabel.Format(L"%d", nPage + 1);
     return wsLabel;
 }
-int32_t CPDF_PageLabel::GetPageByLabel(FX_BSTR bsLabel) const
+int32_t CPDF_PageLabel::GetPageByLabel(const CFX_ByteStringC& bsLabel) const
 {
     if (m_pDocument == NULL) {
         return -1;
@@ -565,7 +565,7 @@ int32_t CPDF_PageLabel::GetPageByLabel(FX_BSTR bsLabel) const
     }
     return -1;
 }
-int32_t CPDF_PageLabel::GetPageByLabel(FX_WSTR wsLabel) const
+int32_t CPDF_PageLabel::GetPageByLabel(const CFX_WideStringC& wsLabel) const
 {
     CFX_ByteString bsLabel = PDF_EncodeText(wsLabel.GetPtr());
     return GetPageByLabel(bsLabel);

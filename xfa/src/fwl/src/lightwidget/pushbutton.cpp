@@ -40,7 +40,7 @@ FWL_ERR CFWL_PushButton::GetCaption(CFX_WideString &wsCaption)
     wsCaption = m_buttonData.m_wsCaption;
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_PushButton::SetCaption(FX_WSTR wsCaption)
+FWL_ERR CFWL_PushButton::SetCaption(const CFX_WideStringC& wsCaption)
 {
     m_buttonData.m_wsCaption = wsCaption;
     return FWL_ERR_Succeeded;

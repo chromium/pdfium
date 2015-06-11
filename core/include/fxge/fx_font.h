@@ -360,7 +360,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo
 public:
     CFX_FolderFontInfo();
     virtual ~CFX_FolderFontInfo();
-    void				AddPath(FX_BSTR path);
+    void				AddPath(const CFX_ByteStringC& path);
     virtual void		Release();
     virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper);
     virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, FX_BOOL& bExact);

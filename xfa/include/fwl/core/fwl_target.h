@@ -15,7 +15,7 @@ public:
     FX_DWORD		GetRefCount() const;
     FWL_ERR			GetClassName(CFX_WideString &wsClass) const;
     FX_DWORD		GetClassID() const;
-    FX_BOOL			IsInstance(FX_WSTR wsClass) const;
+    FX_BOOL			IsInstance(const CFX_WideStringC& wsClass) const;
     FWL_ERR			Initialize();
     FWL_ERR			Finalize();
 protected:

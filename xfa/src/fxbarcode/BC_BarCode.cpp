@@ -139,14 +139,14 @@ CBC_OneCode::CBC_OneCode()
 CBC_OneCode::~CBC_OneCode()
 {
 }
-FX_BOOL CBC_OneCode::CheckContentValidity(FX_WSTR contents)
+FX_BOOL CBC_OneCode::CheckContentValidity(const CFX_WideStringC& contents)
 {
     if (m_pBCWriter) {
         return ((CBC_OneDimWriter*)m_pBCWriter)->CheckContentValidity(contents);
     }
     return FALSE;
 }
-CFX_WideString CBC_OneCode::FilterContents(FX_WSTR contents)
+CFX_WideString CBC_OneCode::FilterContents(const CFX_WideStringC& contents)
 {
     CFX_WideString tmp;
     if (m_pBCWriter == NULL) {
@@ -223,7 +223,7 @@ CBC_Code39::~CBC_Code39()
         m_pBCWriter = NULL;
     }
 }
-FX_BOOL CBC_Code39::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CBC_Code39::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
@@ -326,7 +326,7 @@ FX_BOOL CBC_Codabar::SetWideNarrowRatio(int32_t ratio)
     }
     return FALSE;
 }
-FX_BOOL CBC_Codabar::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CBC_Codabar::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
@@ -396,7 +396,7 @@ FX_BOOL CBC_Code128::SetTextLocation(BC_TEXT_LOC location)
     }
     return FALSE;
 }
-FX_BOOL CBC_Code128::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CBC_Code128::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
@@ -461,7 +461,7 @@ CBC_EAN8::~CBC_EAN8()
         m_pBCWriter = NULL;
     }
 }
-CFX_WideString	CBC_EAN8::Preprocess(FX_WSTR contents)
+CFX_WideString	CBC_EAN8::Preprocess(const CFX_WideStringC& contents)
 {
     CFX_WideString encodeContents = ((CBC_OnedEAN8Writer*)m_pBCWriter)->FilterContents(contents);
     int32_t length = encodeContents.GetLength();
@@ -478,7 +478,7 @@ CFX_WideString	CBC_EAN8::Preprocess(FX_WSTR contents)
     }
     return encodeContents;
 }
-FX_BOOL CBC_EAN8::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CBC_EAN8::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
@@ -539,7 +539,7 @@ CBC_EAN13::~CBC_EAN13()
         m_pBCWriter = NULL;
     }
 }
-CFX_WideString CBC_EAN13::Preprocess(FX_WSTR contents)
+CFX_WideString CBC_EAN13::Preprocess(const CFX_WideStringC& contents)
 {
     CFX_WideString encodeContents = ((CBC_OnedEAN8Writer*)m_pBCWriter)->FilterContents(contents);
     int32_t length = encodeContents.GetLength();
@@ -557,7 +557,7 @@ CFX_WideString CBC_EAN13::Preprocess(FX_WSTR contents)
     }
     return encodeContents;
 }
-FX_BOOL CBC_EAN13::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CBC_EAN13::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
@@ -619,7 +619,7 @@ CBC_UPCA::~CBC_UPCA()
         m_pBCWriter = NULL;
     }
 }
-CFX_WideString	CBC_UPCA::Preprocess(FX_WSTR contents)
+CFX_WideString	CBC_UPCA::Preprocess(const CFX_WideStringC& contents)
 {
     CFX_WideString encodeContents = ((CBC_OnedEAN8Writer*)m_pBCWriter)->FilterContents(contents);
     int32_t length = encodeContents.GetLength();
@@ -637,7 +637,7 @@ CFX_WideString	CBC_UPCA::Preprocess(FX_WSTR contents)
     }
     return encodeContents;
 }
-FX_BOOL CBC_UPCA::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CBC_UPCA::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     if(contents.IsEmpty()) {
         e = BCExceptionNoContents;
@@ -720,7 +720,7 @@ FX_BOOL CBC_QRCode::SetErrorCorrectionLevel (int32_t level)
     }
     return ((CBC_TwoDimWriter*)m_pBCWriter)->SetErrorCorrectionLevel(level);
 }
-FX_BOOL CBC_QRCode::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CBC_QRCode::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     int32_t outWidth = 0;
     int32_t outHeight = 0;
@@ -781,7 +781,7 @@ void CBC_PDF417I::SetTruncated(FX_BOOL truncated)
 {
     ((CBC_PDF417Writer*)m_pBCWriter)->SetTruncated(truncated);
 }
-FX_BOOL CBC_PDF417I::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CBC_PDF417I::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     BCFORMAT format	= BCFORMAT_PDF_417;
     int32_t outWidth = 0;
@@ -835,7 +835,7 @@ CBC_DataMatrix::~CBC_DataMatrix()
         m_pBCWriter = NULL;
     }
 }
-FX_BOOL CBC_DataMatrix::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CBC_DataMatrix::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     int32_t outWidth = 0;
     int32_t outHeight = 0;

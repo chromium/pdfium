@@ -46,7 +46,7 @@ FWL_ERR CFWL_ToolTip::GetCaption(CFX_WideString &wsCaption)
     wsCaption = m_tooltipData.m_wsCaption;
     return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_ToolTip::SetCaption(FX_WSTR wsCaption)
+FWL_ERR CFWL_ToolTip::SetCaption(const CFX_WideStringC& wsCaption)
 {
     m_tooltipData.m_wsCaption = wsCaption;
     return FWL_ERR_Succeeded;

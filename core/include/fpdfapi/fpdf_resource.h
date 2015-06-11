@@ -78,7 +78,7 @@ class CPDF_Font
 {
 public:
     static CPDF_Font*		CreateFontF(CPDF_Document* pDoc, CPDF_Dictionary* pFontDict);
-    static CPDF_Font*		GetStockFont(CPDF_Document* pDoc, FX_BSTR fontname);
+    static CPDF_Font*		GetStockFont(CPDF_Document* pDoc, const CFX_ByteStringC& fontname);
 
     virtual ~CPDF_Font();
 

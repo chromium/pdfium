@@ -25,7 +25,7 @@ static int32_t FPDFDOC_OCG_FindGroup(const CPDF_Object *pObject, const CPDF_Dict
     }
     return -1;
 }
-static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary *pDict, FX_BSTR csElement, FX_BSTR csDef = FX_BSTRC(""))
+static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary *pDict, const CFX_ByteStringC& csElement, const CFX_ByteStringC& csDef = FX_BSTRC(""))
 {
     FXSYS_assert(pDict != NULL);
     CPDF_Object *pIntent = pDict->GetElementValue(FX_BSTRC("Intent"));
@@ -46,7 +46,7 @@ static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary *pDict, FX_BSTR csEle
     bsIntent = pIntent->GetString();
     return bsIntent == FX_BSTRC("All") || bsIntent == csElement;
 }
-static CPDF_Dictionary* FPDFDOC_OCG_GetConfig(CPDF_Document *pDoc, const CPDF_Dictionary *pOCGDict, FX_BSTR bsState)
+static CPDF_Dictionary* FPDFDOC_OCG_GetConfig(CPDF_Document *pDoc, const CPDF_Dictionary *pOCGDict, const CFX_ByteStringC& bsState)
 {
     FXSYS_assert(pDoc && pOCGDict);
     CPDF_Dictionary *pOCProperties = pDoc->GetRoot()->GetDict(FX_BSTRC("OCProperties"));
@@ -101,7 +101,7 @@ CPDF_OCContext::~CPDF_OCContext()
 {
     m_OCGStates.RemoveAll();
 }
-FX_BOOL CPDF_OCContext::LoadOCGStateFromConfig(FX_BSTR csConfig, const CPDF_Dictionary *pOCGDict, FX_BOOL &bValidConfig) const
+FX_BOOL CPDF_OCContext::LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig, const CPDF_Dictionary *pOCGDict, FX_BOOL &bValidConfig) const
 {
     CPDF_Dictionary *pConfig = FPDFDOC_OCG_GetConfig(m_pDocument, pOCGDict, csConfig);
     if (!pConfig) {

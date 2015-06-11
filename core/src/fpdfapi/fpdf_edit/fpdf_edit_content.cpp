@@ -106,11 +106,11 @@ void CPDF_PageContentGenerate::ProcessForm(CFX_ByteTextBuf& buf, const uint8_t* 
     }
     CPDF_Stream* pStream = new CPDF_Stream(NULL, 0, NULL);
     CPDF_Dictionary* pFormDict = CPDF_Dictionary::Create();
-    pFormDict->SetAtName(FX_BSTR("Type"), FX_BSTR("XObject"));
-    pFormDict->SetAtName(FX_BSTR("Subtype"), FX_BSTR("Form"));
+    pFormDict->SetAtName("Type", "XObject");
+    pFormDict->SetAtName("Subtype", "Form");
     CFX_FloatRect bbox = m_pPage->GetPageBBox();
     matrix.TransformRect(bbox);
-    pFormDict->SetAtRect(FX_BSTR("BBox"), bbox);
+    pFormDict->SetAtRect("BBox", bbox);
     pStream->InitStream((uint8_t*)data, size, pFormDict);
     buf << "q " << matrix << " cm ";
     CFX_ByteString name = RealizeResource(pStream, "XObject");

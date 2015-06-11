@@ -16,7 +16,7 @@ CXFA_FMProgram::~CXFA_FMProgram()
         m_globalFunction = 0;
     }
 }
-int32_t CXFA_FMProgram::Init(FX_WSTR wsFormcalc)
+int32_t CXFA_FMProgram::Init(const CFX_WideStringC& wsFormcalc)
 {
     return m_parse.Init(wsFormcalc, &m_pErrorInfo);
 }

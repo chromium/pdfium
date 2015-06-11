@@ -39,7 +39,7 @@ protected:
 class CXFA_FMFunctionDefinition : public CXFA_FMExpression
 {
 public:
-    CXFA_FMFunctionDefinition(FX_DWORD line, FX_BOOL isGlobal, FX_WSTR wsName, CFX_WideStringCArray *pArguments, CFX_PtrArray *pExpressions);
+    CXFA_FMFunctionDefinition(FX_DWORD line, FX_BOOL isGlobal, const CFX_WideStringC& wsName, CFX_WideStringCArray *pArguments, CFX_PtrArray *pExpressions);
     virtual ~CXFA_FMFunctionDefinition();
     virtual void ToJavaScript(CFX_WideTextBuf& javascript);
     virtual void ToImpliedReturnJS(CFX_WideTextBuf&);
@@ -52,7 +52,7 @@ private:
 class CXFA_FMVarExpression : public CXFA_FMExpression
 {
 public:
-    CXFA_FMVarExpression(FX_DWORD line, FX_WSTR wsName, CXFA_FMExpression *pInit);
+    CXFA_FMVarExpression(FX_DWORD line, const CFX_WideStringC& wsName, CXFA_FMExpression *pInit);
     virtual ~CXFA_FMVarExpression();
     virtual void ToJavaScript(CFX_WideTextBuf& javascript);
     virtual void ToImpliedReturnJS(CFX_WideTextBuf&);
@@ -144,7 +144,7 @@ private:
 class CXFA_FMForExpression : public CXFA_FMLoopExpression
 {
 public:
-    CXFA_FMForExpression(FX_DWORD line, FX_WSTR wsVariant, CXFA_FMSimpleExpression *pAssignment,
+    CXFA_FMForExpression(FX_DWORD line, const CFX_WideStringC& wsVariant, CXFA_FMSimpleExpression *pAssignment,
                          CXFA_FMSimpleExpression *pAccessor, int32_t iDirection, CXFA_FMSimpleExpression *pStep, CXFA_FMExpression *pList);
     virtual ~CXFA_FMForExpression();
     virtual void ToJavaScript(CFX_WideTextBuf& javascript);
@@ -160,7 +160,7 @@ private:
 class CXFA_FMForeachExpression : public CXFA_FMLoopExpression
 {
 public:
-    CXFA_FMForeachExpression(FX_DWORD line, FX_WSTR wsIdentifier, CFX_PtrArray *pAccessors, CXFA_FMExpression *pList);
+    CXFA_FMForeachExpression(FX_DWORD line, const CFX_WideStringC& wsIdentifier, CFX_PtrArray *pAccessors, CXFA_FMExpression *pList);
     virtual ~CXFA_FMForeachExpression();
     virtual void ToJavaScript(CFX_WideTextBuf& javascript);
     virtual void ToImpliedReturnJS(CFX_WideTextBuf&);

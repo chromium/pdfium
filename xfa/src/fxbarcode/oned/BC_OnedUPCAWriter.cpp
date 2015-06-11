@@ -42,7 +42,7 @@ CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter()
     }
     m_subWriter = NULL;
 }
-FX_BOOL	CBC_OnedUPCAWriter::CheckContentValidity(FX_WSTR contents)
+FX_BOOL	CBC_OnedUPCAWriter::CheckContentValidity(const CFX_WideStringC& contents)
 {
     int32_t i = 0;
     for (i = 0; i < contents.GetLength(); i++) {
@@ -54,7 +54,7 @@ FX_BOOL	CBC_OnedUPCAWriter::CheckContentValidity(FX_WSTR contents)
     }
     return TRUE;
 }
-CFX_WideString	CBC_OnedUPCAWriter::FilterContents(FX_WSTR contents)
+CFX_WideString	CBC_OnedUPCAWriter::FilterContents(const CFX_WideStringC& contents)
 {
     CFX_WideString filtercontents;
     FX_WCHAR ch;
@@ -105,7 +105,7 @@ uint8_t *CBC_OnedUPCAWriter::Encode(const CFX_ByteString &contents, BCFORMAT for
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return ret;
 }
-void CBC_OnedUPCAWriter::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e)
+void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e)
 {
     if (device == NULL && pOutBitmap == NULL) {
         e = BCExceptionIllegalArgument;
@@ -278,7 +278,7 @@ void CBC_OnedUPCAWriter::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, C
     }
     FX_Free(pCharPos);
 }
-void CBC_OnedUPCAWriter::RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
+void CBC_OnedUPCAWriter::RenderResult(const CFX_WideStringC& contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
 {
     CBC_OneDimWriter::RenderResult(contents, code, codeLength, isDevice, e);
 }

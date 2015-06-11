@@ -49,9 +49,9 @@ public:
     CXFA_FFDocView*			GetDocView(IXFA_DocLayout* pLayout);
     CXFA_FFDocView*			GetDocView();
     CPDF_Document*			GetPDFDoc();
-    CFX_DIBitmap*			GetPDFNamedImage(FX_WSTR wsName, int32_t &iImageXDpi, int32_t &iImageYDpi);
-    IFDE_XMLElement*		GetPackageData(FX_WSTR wsPackage);
-    FX_BOOL					SavePackage(FX_WSTR wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext = NULL);
+    CFX_DIBitmap*			GetPDFNamedImage(const CFX_WideStringC& wsName, int32_t &iImageXDpi, int32_t &iImageYDpi);
+    IFDE_XMLElement*		GetPackageData(const CFX_WideStringC& wsPackage);
+    FX_BOOL					SavePackage(const CFX_WideStringC& wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext = NULL);
     FX_BOOL					ImportData(IFX_FileRead* pStream, FX_BOOL bXDP = TRUE);
 protected:
     IXFA_DocProvider*		m_pDocProvider;

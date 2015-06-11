@@ -25,9 +25,9 @@ public:
     {
         return m_pEventParam;
     }
-    virtual FX_BOOL			RunScript(XFA_SCRIPTLANGTYPE eScriptType, FX_WSTR wsScript, FXJSE_HVALUE hRetValue, CXFA_Object* pThisObject = NULL);
+    virtual FX_BOOL			RunScript(XFA_SCRIPTLANGTYPE eScriptType, const CFX_WideStringC& wsScript, FXJSE_HVALUE hRetValue, CXFA_Object* pThisObject = NULL);
 
-    virtual int32_t		ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS,  FX_DWORD dwStyles = XFA_RESOLVENODE_Children, CXFA_Node* bindNode = NULL);
+    virtual int32_t		ResolveObjects(CXFA_Object* refNode, const CFX_WideStringC& wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS,  FX_DWORD dwStyles = XFA_RESOLVENODE_Children, CXFA_Node* bindNode = NULL);
     virtual FXJSE_HVALUE	GetJSValueFromMap(CXFA_Object* pObject);
     virtual void			CacheList(CXFA_NodeList* pList)
     {
@@ -60,16 +60,16 @@ public:
     {
         return m_eRunAtType != XFA_ATTRIBUTEENUM_Server;
     }
-    FX_BOOL					QueryNodeByFlag(CXFA_Node* refNode, FX_WSTR propname, FXJSE_HVALUE hValue, FX_DWORD dwFlag, FX_BOOL bSetting);
-    FX_BOOL					QueryVariableHValue(CXFA_Node* pScriptNode, FX_BSTR szPropName, FXJSE_HVALUE hValue, FX_BOOL bGetter);
-    FX_BOOL					QueryBuiltinHValue(FX_BSTR szPropName, FXJSE_HVALUE hValue);
-    static void				GlobalPropertyGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue);
-    static void				GlobalPropertySetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue);
-    static void				NormalPropertyGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue);
-    static void				NormalPropertySetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue);
-    static void				NormalMethodCall(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args);
-    static int32_t			NormalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn);
-    static int32_t			GlobalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn);
+    FX_BOOL					QueryNodeByFlag(CXFA_Node* refNode, const CFX_WideStringC& propname, FXJSE_HVALUE hValue, FX_DWORD dwFlag, FX_BOOL bSetting);
+    FX_BOOL					QueryVariableHValue(CXFA_Node* pScriptNode, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue, FX_BOOL bGetter);
+    FX_BOOL					QueryBuiltinHValue(const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue);
+    static void				GlobalPropertyGetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue);
+    static void				GlobalPropertySetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue);
+    static void				NormalPropertyGetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue);
+    static void				NormalPropertySetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue);
+    static void				NormalMethodCall(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args);
+    static int32_t			NormalPropTypeGetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FX_BOOL bQueryIn);
+    static int32_t			GlobalPropTypeGetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FX_BOOL bQueryIn);
     FX_BOOL					RunVariablesScript(CXFA_Node* pScriptNode);
     CXFA_Object*			GetVariablesThis(CXFA_Object* pObject, FX_BOOL bScriptNode = FALSE);
     void					ReleaseVariablesMap();

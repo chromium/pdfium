@@ -45,8 +45,8 @@ public:
     virtual	void			UpdateDocView();
     virtual int32_t		CountPageViews();
     virtual IXFA_PageView*	GetPageView(int32_t nIndex);
-    virtual IXFA_Widget*		GetWidgetByName(FX_WSTR wsName);
-    virtual CXFA_WidgetAcc* GetWidgetAccByName(FX_WSTR wsName);
+    virtual IXFA_Widget*		GetWidgetByName(const CFX_WideStringC& wsName);
+    virtual CXFA_WidgetAcc* GetWidgetAccByName(const CFX_WideStringC& wsName);
     virtual void			ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = NULL);
     virtual int32_t		ProcessWidgetEvent(CXFA_EventParam* pParam, CXFA_WidgetAcc* pWidgetAcc = NULL);
     virtual IXFA_WidgetHandler*			GetWidgetHandler();
@@ -55,8 +55,8 @@ public:
     virtual IXFA_Widget*		GetFocusWidget();
     virtual void			KillFocus();
     virtual FX_BOOL			SetFocus(IXFA_Widget* hWidget);
-    CXFA_FFWidget*		GetWidgetByName(FX_WSTR wsName, CXFA_FFWidget* pRefWidget = NULL);
-    CXFA_WidgetAcc*		GetWidgetAccByName(FX_WSTR wsName, CXFA_WidgetAcc* pRefWidgetAcc = NULL);
+    CXFA_FFWidget*		GetWidgetByName(const CFX_WideStringC& wsName, CXFA_FFWidget* pRefWidget = NULL);
+    CXFA_WidgetAcc*		GetWidgetAccByName(const CFX_WideStringC& wsName, CXFA_WidgetAcc* pRefWidgetAcc = NULL);
     IXFA_DocLayout*		GetXFALayout() const;
     void				OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, int32_t iPageIndex);
     void				LockUpdate();

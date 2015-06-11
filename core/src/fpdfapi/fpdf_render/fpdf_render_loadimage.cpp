@@ -603,8 +603,9 @@ int CPDF_DIBSource::CreateDecoder()
     if (decoder == FX_BSTRC("CCITTFaxDecode")) {
         m_pDecoder = FPDFAPI_CreateFaxDecoder(src_data, src_size, m_Width, m_Height, pParams);
     } else if (decoder == FX_BSTRC("DCTDecode")) {
-        m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(src_data, src_size, m_Width, m_Height,
-                     m_nComponents, pParams ? pParams->GetInteger(FX_BSTR("ColorTransform"), 1) : 1);
+        m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
+            src_data, src_size, m_Width, m_Height, m_nComponents,
+            pParams ? pParams->GetInteger("ColorTransform", 1) : 1);
         if (!m_pDecoder) {
             FX_BOOL bTransform = FALSE;
             int comps, bpc;

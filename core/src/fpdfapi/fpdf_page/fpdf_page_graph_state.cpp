@@ -376,7 +376,7 @@ CPDF_GeneralStateData::~CPDF_GeneralStateData()
         pDocCache->ReleaseTransferFunc(m_pTR);
     }
 }
-static int GetBlendType(FX_BSTR mode)
+static int GetBlendType(const CFX_ByteStringC& mode)
 {
     switch (mode.GetID()) {
         case FXBSTR_ID('N', 'o', 'r', 'm'):
@@ -417,7 +417,7 @@ static int GetBlendType(FX_BSTR mode)
     }
     return FXDIB_BLEND_NORMAL;
 }
-void CPDF_GeneralStateData::SetBlendMode(FX_BSTR blend_mode)
+void CPDF_GeneralStateData::SetBlendMode(const CFX_ByteStringC& blend_mode)
 {
     if (blend_mode.GetLength() > 15) {
         return;
@@ -677,7 +677,7 @@ void CPDF_ContentMarkData::DeleteLastMark()
     }
     m_Marks.RemoveAt(size - 1);
 }
-FX_BOOL CPDF_ContentMark::HasMark(FX_BSTR mark) const
+FX_BOOL CPDF_ContentMark::HasMark(const CFX_ByteStringC& mark) const
 {
     if (m_pObject == NULL) {
         return FALSE;
@@ -690,7 +690,7 @@ FX_BOOL CPDF_ContentMark::HasMark(FX_BSTR mark) const
     }
     return FALSE;
 }
-FX_BOOL CPDF_ContentMark::LookupMark(FX_BSTR mark, CPDF_Dictionary*& pDict) const
+FX_BOOL CPDF_ContentMark::LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const
 {
     if (m_pObject == NULL) {
         return FALSE;

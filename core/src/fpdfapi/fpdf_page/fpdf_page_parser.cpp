@@ -438,7 +438,7 @@ const _FX_BSTR _PDF_InlineValueAbbr[] = {
     _FX_BSTRC("CCITTFaxDecode"), _FX_BSTRC("CCF"),
     _FX_BSTRC("DCTDecode"), _FX_BSTRC("DCT"),
 };
-static CFX_ByteStringC _PDF_FindFullName(const _FX_BSTR* table, int count, FX_BSTR abbr)
+static CFX_ByteStringC _PDF_FindFullName(const _FX_BSTR* table, int count, const CFX_ByteStringC& abbr)
 {
     int i = 0;
     while (i < count) {
@@ -496,7 +496,7 @@ void _PDF_ReplaceAbbr(CPDF_Object* pObj)
             }
     }
 }
-static CFX_ByteStringC _PDF_FindAbbrName(const _FX_BSTR* table, int count, FX_BSTR fullName)
+static CFX_ByteStringC _PDF_FindAbbrName(const _FX_BSTR* table, int count, const CFX_ByteStringC& fullName)
 {
     int i = 0;
     while (i < count) {
@@ -1178,7 +1178,7 @@ void CPDF_StreamContentParser::Handle_SetFont()
         m_pCurStates->m_TextState.SetFont(pFont);
     }
 }
-CPDF_Object* CPDF_StreamContentParser::FindResourceObj(FX_BSTR type, const CFX_ByteString& name)
+CPDF_Object* CPDF_StreamContentParser::FindResourceObj(const CFX_ByteStringC& type, const CFX_ByteString& name)
 {
     if (m_pResources == NULL) {
         return NULL;

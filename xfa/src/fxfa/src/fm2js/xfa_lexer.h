@@ -41,14 +41,14 @@ public:
 class CXFA_FMLexer
 {
 public:
-    CXFA_FMLexer(FX_WSTR wsFormcalc, CXFA_FMErrorInfo *pErrorInfo);
+    CXFA_FMLexer(const CFX_WideStringC& wsFormcalc, CXFA_FMErrorInfo *pErrorInfo);
     ~CXFA_FMLexer();
     CXFA_FMToken*	NextToken();
     FX_DWORD		Number(CXFA_FMToken *t, const FX_WCHAR* p,  const FX_WCHAR* &pEnd);
     FX_DWORD		String(CXFA_FMToken *t, const FX_WCHAR* p, const FX_WCHAR* &pEnd);
     FX_DWORD		Identifiers(CXFA_FMToken *t, const FX_WCHAR* p, const FX_WCHAR* &pEnd);
     void			Comment(const FX_WCHAR* p, const FX_WCHAR* &pEnd);
-    XFA_FM_TOKEN	IsKeyword(FX_WSTR p);
+    XFA_FM_TOKEN	IsKeyword(const CFX_WideStringC& p);
     void			SetCurrentLine(FX_DWORD line)
     {
         m_uCurrentLine = line;

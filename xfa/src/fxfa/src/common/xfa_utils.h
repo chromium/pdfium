@@ -6,7 +6,7 @@
 
 #ifndef _XFA_UTILS_H_
 #define _XFA_UTILS_H_
-FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(IFDE_XMLElement* pNode, FX_WSTR wsQualifier, CFX_WideString& wsNamespaceURI);
+FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(IFDE_XMLElement* pNode, const CFX_WideStringC& wsQualifier, CFX_WideString& wsNamespaceURI);
 template <class NodeType, class TraverseStrategy>
 class CXFA_NodeIteratorTemplate
 {
@@ -220,7 +220,7 @@ CXFA_Node*          XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType
 CXFA_LocaleValue    XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
 CFX_WideString	    XFA_NumericLimit(const CFX_WideString &wsValue, int32_t iLead, int32_t iTread);
 FX_DOUBLE           XFA_WideStringToDouble(const CFX_WideString &wsStringVal);
-FX_DOUBLE           XFA_ByteStringToDouble(FX_BSTR szStringVal);
+FX_DOUBLE           XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal);
 int32_t            XFA_MapRotation(int32_t nRotation); 
 #ifndef XFA_PARSE_HAS_LINEIDENTIFIER
 #define XFA_PARSE_HAS_LINEIDENTIFIER

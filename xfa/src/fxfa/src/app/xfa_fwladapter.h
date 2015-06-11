@@ -36,11 +36,11 @@ public:
         return CXFA_Edge(NULL);
     }
     virtual void		GetUIMargin(CFX_RectF &rtMargin) {}
-    virtual FX_BOOL		CheckWord(FX_BSTR sWord)
+    virtual FX_BOOL		CheckWord(const CFX_ByteStringC& sWord)
     {
         return TRUE;
     }
-    virtual FX_BOOL		GetSuggestWords(FX_BSTR sWord, CFX_ByteStringArray &sSuggest)
+    virtual FX_BOOL		GetSuggestWords(const CFX_ByteStringC& sWord, CFX_ByteStringArray &sSuggest)
     {
         return FALSE;
     }

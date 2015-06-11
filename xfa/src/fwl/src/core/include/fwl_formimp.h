@@ -90,7 +90,7 @@ public:
     virtual ~CFWL_FormImp();
     virtual FWL_ERR			GetClassName(CFX_WideString &wsClass) const;
     virtual FX_DWORD		GetClassID() const;
-    virtual FX_BOOL			IsInstance(FX_WSTR wsClass) const;
+    virtual FX_BOOL			IsInstance(const CFX_WideStringC& wsClass) const;
     virtual FWL_ERR			Initialize();
     virtual FWL_ERR			Finalize();
 

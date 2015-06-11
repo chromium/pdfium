@@ -21,7 +21,7 @@ CPDF_LayoutElement::~CPDF_LayoutElement()
     }
     m_ChildArray.RemoveAll();
 }
-LayoutType CPDF_LayoutElement::ConvertLayoutType(FX_BSTR name)
+LayoutType CPDF_LayoutElement::ConvertLayoutType(const CFX_ByteStringC& name)
 {
     if(name == (const char*)("Document")) {
         return LayoutDocument;
@@ -127,7 +127,7 @@ LayoutType CPDF_LayoutElement::ConvertLayoutType(FX_BSTR name)
 }
 CFX_ByteStringC CPDF_LayoutElement::ConvertLayoutType(LayoutType type)
 {
-    FX_BSTR name = "";
+    const CFX_ByteStringC& name = "";
     if(type == LayoutArifact) {
         return "Arifact";
     } else if( type == LayoutDocument) {

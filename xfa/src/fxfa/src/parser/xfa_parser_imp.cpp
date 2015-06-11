@@ -195,7 +195,7 @@ void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode, IFDE_XMLNode* pXML
         }
     }
 }
-FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(IFDE_XMLElement* pNode, FX_WSTR wsQualifier, CFX_WideString& wsNamespaceURI)
+FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(IFDE_XMLElement* pNode, const CFX_WideStringC& wsQualifier, CFX_WideString& wsNamespaceURI)
 {
     if(!pNode) {
         return FALSE;
@@ -229,7 +229,7 @@ static inline void XFA_FDEExtension_GetElementTagNamespaceURI(IFDE_XMLElement* p
         wsNamespaceURI.Empty();
     }
 }
-static FX_BOOL XFA_FDEExtension_MatchNodeName(IFDE_XMLNode* pNode, FX_WSTR wsLocalTagName, FX_WSTR wsNamespaceURIPrefix, FX_DWORD eMatchFlags = XFA_XDPPACKET_FLAGS_NOMATCH)
+static FX_BOOL XFA_FDEExtension_MatchNodeName(IFDE_XMLNode* pNode, const CFX_WideStringC& wsLocalTagName, const CFX_WideStringC& wsNamespaceURIPrefix, FX_DWORD eMatchFlags = XFA_XDPPACKET_FLAGS_NOMATCH)
 {
     if(!pNode || pNode->GetType() != FDE_XMLNODE_Element) {
         return FALSE;
@@ -249,7 +249,7 @@ static FX_BOOL XFA_FDEExtension_MatchNodeName(IFDE_XMLNode* pNode, FX_WSTR wsLoc
     }
     return wsNodeStr == wsNamespaceURIPrefix;
 }
-static FX_BOOL XFA_FDEExtension_GetAttributeLocalName(FX_WSTR wsAttributeName, CFX_WideString& wsLocalAttrName)
+static FX_BOOL XFA_FDEExtension_GetAttributeLocalName(const CFX_WideStringC& wsAttributeName, CFX_WideString& wsLocalAttrName)
 {
     CFX_WideString wsAttrName(wsAttributeName);
     FX_STRSIZE iFind = wsAttrName.Find(L':', 0);
@@ -261,7 +261,7 @@ static FX_BOOL XFA_FDEExtension_GetAttributeLocalName(FX_WSTR wsAttributeName, C
         return TRUE;
     }
 }
-static FX_BOOL XFA_FDEExtension_ResolveAttribute(IFDE_XMLElement *pElement, FX_WSTR wsAttributeName, CFX_WideString& wsLocalAttrName, CFX_WideString& wsNamespaceURI)
+static FX_BOOL XFA_FDEExtension_ResolveAttribute(IFDE_XMLElement *pElement, const CFX_WideStringC& wsAttributeName, CFX_WideString& wsLocalAttrName, CFX_WideString& wsNamespaceURI)
 {
     CFX_WideString wsAttrName(wsAttributeName);
     CFX_WideString wsNSPrefix;
@@ -277,7 +277,7 @@ static FX_BOOL XFA_FDEExtension_ResolveAttribute(IFDE_XMLElement *pElement, FX_W
     }
     return TRUE;
 }
-static FX_BOOL XFA_FDEExtension_FindAttributeWithNS(IFDE_XMLElement *pElement, FX_WSTR wsLocalAttributeName, FX_WSTR wsNamespaceURIPrefix, CFX_WideString& wsValue, FX_BOOL bMatchNSAsPrefix = FALSE)
+static FX_BOOL XFA_FDEExtension_FindAttributeWithNS(IFDE_XMLElement *pElement, const CFX_WideStringC& wsLocalAttributeName, const CFX_WideStringC& wsNamespaceURIPrefix, CFX_WideString& wsValue, FX_BOOL bMatchNSAsPrefix = FALSE)
 {
     if(!pElement) {
         return FALSE;

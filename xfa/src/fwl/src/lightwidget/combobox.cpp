@@ -35,14 +35,14 @@ FWL_ERR	CFWL_ComboBox::Initialize(const CFWL_WidgetProperties *pProperties )
     }
     return ret;
 }
-int32_t CFWL_ComboBox::AddString(FX_WSTR wsText)
+int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText)
 {
     CFWL_ComboBoxItem *pItem = FX_NEW CFWL_ComboBoxItem;
     pItem->m_wsText = wsText;
     pItem->m_dwStyles = 0;
     return m_comboBoxData.m_arrItem.Add(pItem);
 }
-int32_t CFWL_ComboBox::AddString(FX_WSTR wsText, CFX_DIBitmap *pIcon)
+int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText, CFX_DIBitmap *pIcon)
 {
     CFWL_ComboBoxItem *pItem = FX_NEW CFWL_ComboBoxItem;
     pItem->m_wsText = wsText;
@@ -80,7 +80,7 @@ FWL_ERR CFWL_ComboBox::SetCurSel(int32_t iSel)
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_ComboBox*)m_pImp)->SetCurSel(iSel);
 }
-FWL_ERR CFWL_ComboBox::SetEditText(FX_WSTR wsText)
+FWL_ERR CFWL_ComboBox::SetEditText(const CFX_WideStringC& wsText)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_ComboBox*)m_pImp)->SetEditText(wsText);
@@ -120,12 +120,12 @@ FWL_ERR CFWL_ComboBox::EditDoClipboard(int32_t iCmd)
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_ComboBox*)m_pImp)->EditDoClipboard(iCmd);
 }
-FX_BOOL CFWL_ComboBox::EditRedo(FX_BSTR bsRecord)
+FX_BOOL CFWL_ComboBox::EditRedo(const CFX_ByteStringC& bsRecord)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FALSE);
     return ((IFWL_ComboBox*)m_pImp)->EditRedo(bsRecord);
 }
-FX_BOOL CFWL_ComboBox::EditUndo(FX_BSTR bsRecord)
+FX_BOOL CFWL_ComboBox::EditUndo(const CFX_ByteStringC& bsRecord)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FALSE);
     return ((IFWL_ComboBox*)m_pImp)->EditUndo(bsRecord);

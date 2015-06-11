@@ -17,7 +17,7 @@ public:
     static CFWL_PushButton* Create();
     FWL_ERR Initialize(const CFWL_WidgetProperties *pProperties = NULL);
     FWL_ERR	GetCaption(CFX_WideString &wsCaption);
-    FWL_ERR SetCaption(FX_WSTR wsCaption);
+    FWL_ERR SetCaption(const CFX_WideStringC& wsCaption);
     CFX_DIBitmap*	GetPicture();
     FWL_ERR			SetPicture(CFX_DIBitmap *pBitmap);
     CFWL_PushButton();

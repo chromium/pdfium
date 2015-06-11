@@ -85,8 +85,8 @@ public:
 
 	virtual	CPDFSDK_Document*	GetReaderDocument() = 0;
 
-	virtual	FX_BOOL				GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue) = 0;
-	virtual	FX_BOOL				SetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue) = 0;
+	virtual	FX_BOOL				GetHValueByName(const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue) = 0;
+	virtual	FX_BOOL				SetHValueByName(const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue) = 0;
 
 protected:
          ~IFXJS_Runtime() { }

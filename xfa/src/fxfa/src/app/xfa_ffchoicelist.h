@@ -21,7 +21,7 @@ protected:
 public:
     void		OnSelectChanged(IFWL_Widget *pWidget, const CFX_Int32Array &arrSels);
     void			SetItemState(int32_t nIndex, FX_BOOL bSelected);
-    void			InsertItem(FX_WSTR wsLabel, int32_t nIndex = -1);
+    void			InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
     void			DeleteItem(int32_t nIndex);
     virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
@@ -71,7 +71,7 @@ public:
     void	OnPostOpen(IFWL_Widget *pWidget);
     void	OnAddDoRecord(IFWL_Widget *pWidget);
     void			SetItemState(int32_t nIndex, FX_BOOL bSelected);
-    void			InsertItem(FX_WSTR wsLabel, int32_t nIndex = -1);
+    void			InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
     void			DeleteItem(int32_t nIndex);
     virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);

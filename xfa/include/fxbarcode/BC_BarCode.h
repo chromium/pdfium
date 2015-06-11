@@ -42,7 +42,7 @@ public:
     CBC_CodeBase();
     virtual ~CBC_CodeBase();
     virtual BC_TYPE	 GetType() = 0;
-    virtual FX_BOOL  Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e) = 0;
+    virtual FX_BOOL  Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e) = 0;
     virtual FX_BOOL	 RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e) = 0;
     virtual FX_BOOL	 RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e) = 0;
     virtual CFX_WideString Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e) = 0;
@@ -66,13 +66,13 @@ public:
     CBC_OneCode();
     virtual ~CBC_OneCode();
     virtual BC_TYPE	 GetType() = 0;
-    virtual FX_BOOL  Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e) = 0;
+    virtual FX_BOOL  Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e) = 0;
     virtual FX_BOOL	 RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e) = 0;
     virtual FX_BOOL	 RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e) = 0;
     virtual CFX_WideString Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e) = 0;
     virtual CFX_WideString Decode(CFX_DIBitmap *pBitmap, int32_t &e) = 0;
-    virtual FX_BOOL			CheckContentValidity(FX_WSTR contents);
-    virtual CFX_WideString	FilterContents(FX_WSTR contents);
+    virtual FX_BOOL			CheckContentValidity(const CFX_WideStringC& contents);
+    virtual CFX_WideString	FilterContents(const CFX_WideStringC& contents);
     virtual void			SetPrintChecksum(FX_BOOL checksum);
     virtual void			SetDataLength(int32_t length);
     virtual void			SetCalChecksum(FX_BOOL calc);
@@ -88,7 +88,7 @@ public:
     CBC_Code39(FX_BOOL usingCheckDigit);
     CBC_Code39(FX_BOOL usingCheckDigit, FX_BOOL extendedMode);
     virtual ~CBC_Code39();
-    FX_BOOL 		Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL 		Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e);
@@ -107,7 +107,7 @@ class CBC_Codabar : public CBC_OneCode
 public:
     CBC_Codabar();
     virtual ~CBC_Codabar();
-    FX_BOOL		    Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL		    Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e);
@@ -130,7 +130,7 @@ private:
 public:
     CBC_Code128(BC_TYPE type);
     virtual ~CBC_Code128();
-    FX_BOOL			Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL			Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e);
@@ -148,7 +148,7 @@ class CBC_EAN8 : public CBC_OneCode
 public:
     CBC_EAN8();
     virtual ~CBC_EAN8();
-    FX_BOOL			Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL			Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e);
@@ -158,7 +158,7 @@ public:
         return BC_EAN8;
     }
 private:
-    CFX_WideString	Preprocess(FX_WSTR contents);
+    CFX_WideString	Preprocess(const CFX_WideStringC& contents);
     CFX_WideString  m_renderContents;
 };
 class CBC_EAN13 : public CBC_OneCode
@@ -166,7 +166,7 @@ class CBC_EAN13 : public CBC_OneCode
 public:
     CBC_EAN13();
     virtual ~CBC_EAN13();
-    FX_BOOL 		Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL 		Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e);
@@ -176,7 +176,7 @@ public:
         return BC_EAN13;
     }
 private:
-    CFX_WideString	Preprocess(FX_WSTR contents);
+    CFX_WideString	Preprocess(const CFX_WideStringC& contents);
     CFX_WideString  m_renderContents;
 };
 class CBC_UPCA : public CBC_OneCode
@@ -184,7 +184,7 @@ class CBC_UPCA : public CBC_OneCode
 public:
     CBC_UPCA();
     virtual ~CBC_UPCA();
-    FX_BOOL 		Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL 		Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e);
@@ -194,7 +194,7 @@ public:
         return BC_UPCA;
     }
 private:
-    CFX_WideString	Preprocess(FX_WSTR contents);
+    CFX_WideString	Preprocess(const CFX_WideStringC& contents);
     CFX_WideString  m_renderContents;
 };
 class CBC_QRCode : public CBC_CodeBase
@@ -202,7 +202,7 @@ class CBC_QRCode : public CBC_CodeBase
 public:
     CBC_QRCode();
     virtual ~CBC_QRCode();
-    FX_BOOL 		Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL 		Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e);
@@ -219,7 +219,7 @@ class CBC_PDF417I : public CBC_CodeBase
 public:
     CBC_PDF417I();
     virtual ~CBC_PDF417I();
-    FX_BOOL			Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL			Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e);
@@ -236,7 +236,7 @@ class CBC_DataMatrix : public CBC_CodeBase
 public:
     CBC_DataMatrix();
     virtual ~CBC_DataMatrix();
-    FX_BOOL 		Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    FX_BOOL 		Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t hight, int32_t &e);

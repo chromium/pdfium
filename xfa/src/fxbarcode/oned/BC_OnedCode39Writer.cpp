@@ -41,7 +41,7 @@ CBC_OnedCode39Writer::CBC_OnedCode39Writer(FX_BOOL extendedMode)
 CBC_OnedCode39Writer::~CBC_OnedCode39Writer()
 {
 }
-FX_BOOL	CBC_OnedCode39Writer::CheckContentValidity(FX_WSTR contents)
+FX_BOOL	CBC_OnedCode39Writer::CheckContentValidity(const CFX_WideStringC& contents)
 {
     if (m_extendedMode) {
         return CheckExtendedContentValidity(contents);
@@ -57,7 +57,7 @@ FX_BOOL	CBC_OnedCode39Writer::CheckContentValidity(FX_WSTR contents)
     }
     return TRUE;
 }
-FX_BOOL	CBC_OnedCode39Writer::CheckExtendedContentValidity(FX_WSTR contents)
+FX_BOOL	CBC_OnedCode39Writer::CheckExtendedContentValidity(const CFX_WideStringC& contents)
 {
     for(int32_t i = 0; i < contents.GetLength(); i++) {
         FX_WCHAR ch = contents.GetAt(i);
@@ -67,7 +67,7 @@ FX_BOOL	CBC_OnedCode39Writer::CheckExtendedContentValidity(FX_WSTR contents)
     }
     return TRUE;
 }
-CFX_WideString CBC_OnedCode39Writer::FilterContents(FX_WSTR contents)
+CFX_WideString CBC_OnedCode39Writer::FilterContents(const CFX_WideStringC& contents)
 {
     if (m_extendedMode) {
         return FilterExtendedContents(contents);
@@ -92,7 +92,7 @@ CFX_WideString CBC_OnedCode39Writer::FilterContents(FX_WSTR contents)
     }
     return filtercontents;
 }
-CFX_WideString CBC_OnedCode39Writer::FilterExtendedContents(FX_WSTR contents)
+CFX_WideString CBC_OnedCode39Writer::FilterExtendedContents(const CFX_WideStringC& contents)
 {
     CFX_WideString filtercontents;
     for(int32_t i = 0; i < contents.GetLength(); i++) {
@@ -149,7 +149,7 @@ CFX_WideString CBC_OnedCode39Writer::FilterExtendedContents(FX_WSTR contents)
     }
     return filtercontents;
 }
-CFX_WideString CBC_OnedCode39Writer::RenderTextContents(FX_WSTR contents)
+CFX_WideString CBC_OnedCode39Writer::RenderTextContents(const CFX_WideStringC& contents)
 {
     if (m_extendedMode) {
         return RenderExtendedTextContents(contents);
@@ -173,7 +173,7 @@ CFX_WideString CBC_OnedCode39Writer::RenderTextContents(FX_WSTR contents)
     }
     return renderContents;
 }
-CFX_WideString CBC_OnedCode39Writer::RenderExtendedTextContents(FX_WSTR contents)
+CFX_WideString CBC_OnedCode39Writer::RenderExtendedTextContents(const CFX_WideStringC& contents)
 {
     CFX_WideString renderContents;
     for(int32_t i = 0; i < contents.GetLength(); i++) {
@@ -329,7 +329,7 @@ uint8_t *CBC_OnedCode39Writer::Encode(const CFX_ByteString &contents, int32_t &o
     }
     return result;
 }
-CFX_WideString CBC_OnedCode39Writer::encodedContents(FX_WSTR contents, int32_t &e)
+CFX_WideString CBC_OnedCode39Writer::encodedContents(const CFX_WideStringC& contents, int32_t &e)
 {
     CFX_WideString encodedContents = contents;
     if (m_bCalcChecksum && m_bPrintChecksum) {
@@ -343,7 +343,7 @@ CFX_WideString CBC_OnedCode39Writer::encodedContents(FX_WSTR contents, int32_t &
     }
     return encodedContents;
 }
-void CBC_OnedCode39Writer::RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
+void CBC_OnedCode39Writer::RenderResult(const CFX_WideStringC& contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
 {
     CFX_WideString encodedCon = encodedContents(contents, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);

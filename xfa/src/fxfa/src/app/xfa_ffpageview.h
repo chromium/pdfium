@@ -90,7 +90,7 @@ protected:
     int32_t							m_iCurWidget;
     FX_BOOL								m_bIgnorerelevant;
     CXFA_FFWidget*			GetTraverseWidget(CXFA_FFWidget* pWidget);
-    CXFA_FFWidget*			FindWidgetByName(FX_WSTR wsWidgetName, CXFA_FFWidget* pRefWidget);
+    CXFA_FFWidget*			FindWidgetByName(const CFX_WideStringC& wsWidgetName, CXFA_FFWidget* pRefWidget);
     void					CreateTabOrderWidgetArray();
     void					CreateSpaceOrderWidgetArray(CXFA_WidgetArray& WidgetArray);
     CXFA_FFWidget*			GetWidget(CXFA_LayoutItem* pLayoutItem);

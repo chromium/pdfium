@@ -147,7 +147,7 @@ public:
     virtual FX_BOOL	On_PageLoad(IFDE_TxtEdtEngine * pEdit, int32_t nPageIndex, int32_t nPurpose) = 0;
     virtual FX_BOOL	On_PageUnload(IFDE_TxtEdtEngine * pEdit, int32_t nPageIndex, int32_t nPurpose) = 0;
     virtual FX_BOOL	On_PageChange(IFDE_TxtEdtEngine * pEdit, int32_t nPageIndex) = 0;
-    virtual void	On_AddDoRecord(IFDE_TxtEdtEngine * pEdit, FX_BSTR bsDoRecord) = 0;
+    virtual void	On_AddDoRecord(IFDE_TxtEdtEngine * pEdit, const CFX_ByteStringC& bsDoRecord) = 0;
     virtual FX_BOOL On_ValidateField(IFDE_TxtEdtEngine * pEdit, int32_t nBlockIndex, int32_t nFieldIndex, \
                                      const CFX_WideString &wsFieldText, int32_t nCharIndex) = 0;
     virtual FX_BOOL On_ValidateBlock(IFDE_TxtEdtEngine * pEdit, int32_t nBlockIndex) = 0;
@@ -210,8 +210,8 @@ public:
     virtual int32_t				GetSelRange(int32_t nIndex, int32_t &nStart) = 0;
     virtual void					ClearSelection() = 0;
 
-    virtual FX_BOOL					Redo(FX_BSTR bsRedo) = 0;
-    virtual FX_BOOL					Undo(FX_BSTR bsUndo) = 0;
+    virtual FX_BOOL					Redo(const CFX_ByteStringC& bsRedo) = 0;
+    virtual FX_BOOL					Undo(const CFX_ByteStringC& bsUndo) = 0;
 
     virtual int32_t				StartLayout() = 0;
     virtual int32_t				DoLayout(IFX_Pause *pPause) = 0;

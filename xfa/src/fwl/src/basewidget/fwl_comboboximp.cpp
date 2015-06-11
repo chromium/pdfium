@@ -85,11 +85,11 @@ FWL_ERR IFWL_ComboBox::EditDoClipboard(int32_t iCmd)
 {
     return ((CFWL_ComboBoxImp*)m_pData)->EditDoClipboard(iCmd);
 }
-FX_BOOL IFWL_ComboBox::EditRedo(FX_BSTR bsRecord)
+FX_BOOL IFWL_ComboBox::EditRedo(const CFX_ByteStringC& bsRecord)
 {
     return ((CFWL_ComboBoxImp*)m_pData)->EditRedo(bsRecord);
 }
-FX_BOOL IFWL_ComboBox::EditUndo(FX_BSTR bsRecord)
+FX_BOOL IFWL_ComboBox::EditUndo(const CFX_ByteStringC& bsRecord)
 {
     return ((CFWL_ComboBoxImp*)m_pData)->EditUndo(bsRecord);
 }
@@ -867,12 +867,12 @@ FWL_ERR CFWL_ComboBoxImp::EditDoClipboard(int32_t iCmd)
     _FWL_RETURN_VALUE_IF_FAIL(m_pEdit, FWL_ERR_Indefinite);
     return m_pEdit->DoClipboard(iCmd);
 }
-FX_BOOL	CFWL_ComboBoxImp::EditRedo(FX_BSTR bsRecord)
+FX_BOOL	CFWL_ComboBoxImp::EditRedo(const CFX_ByteStringC& bsRecord)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pEdit, FALSE);
     return m_pEdit->Redo(bsRecord);
 }
-FX_BOOL CFWL_ComboBoxImp::EditUndo(FX_BSTR bsRecord)
+FX_BOOL CFWL_ComboBoxImp::EditUndo(const CFX_ByteStringC& bsRecord)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pEdit, FALSE);
     return m_pEdit->Undo(bsRecord);

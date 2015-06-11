@@ -103,7 +103,7 @@ FX_BOOL CBC_OnedCodaBarWriter::FindChar(FX_WCHAR ch, FX_BOOL isContent)
         return FALSE;
     }
 }
-FX_BOOL CBC_OnedCodaBarWriter::CheckContentValidity(FX_WSTR contents)
+FX_BOOL CBC_OnedCodaBarWriter::CheckContentValidity(const CFX_WideStringC& contents)
 {
     FX_WCHAR ch;
     int32_t index = 0;
@@ -117,7 +117,7 @@ FX_BOOL CBC_OnedCodaBarWriter::CheckContentValidity(FX_WSTR contents)
     }
     return TRUE;
 }
-CFX_WideString CBC_OnedCodaBarWriter::FilterContents(FX_WSTR contents)
+CFX_WideString CBC_OnedCodaBarWriter::FilterContents(const CFX_WideStringC& contents)
 {
     CFX_WideString filtercontents;
     FX_WCHAR ch;
@@ -210,13 +210,13 @@ uint8_t* CBC_OnedCodaBarWriter::Encode(const CFX_ByteString &contents, int32_t &
     outLength = position;
     return result;
 }
-CFX_WideString CBC_OnedCodaBarWriter::encodedContents(FX_WSTR contents)
+CFX_WideString CBC_OnedCodaBarWriter::encodedContents(const CFX_WideStringC& contents)
 {
     CFX_WideString strStart(m_chStart);
     CFX_WideString strEnd(m_chEnd);
     return strStart + contents + strEnd;
 }
-void CBC_OnedCodaBarWriter::RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
+void CBC_OnedCodaBarWriter::RenderResult(const CFX_WideStringC& contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
 {
     CBC_OneDimWriter::RenderResult(encodedContents(contents), code, codeLength, isDevice, e);
 }

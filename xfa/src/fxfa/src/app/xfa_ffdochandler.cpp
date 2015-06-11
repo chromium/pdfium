@@ -50,11 +50,11 @@ int32_t CXFA_FFDocHandler::CountPackages(IXFA_Doc* hDoc)
 void CXFA_FFDocHandler::GetPackageName(IXFA_Doc* hDoc, int32_t iPackage, CFX_WideStringC &wsPackage)
 {
 }
-IFDE_XMLElement* CXFA_FFDocHandler::GetPackageData(IXFA_Doc* hDoc, FX_WSTR wsPackage)
+IFDE_XMLElement* CXFA_FFDocHandler::GetPackageData(IXFA_Doc* hDoc, const CFX_WideStringC& wsPackage)
 {
     return static_cast<CXFA_FFDoc*>(hDoc)->GetPackageData(wsPackage);
 }
-FX_BOOL CXFA_FFDocHandler::SavePackage(IXFA_Doc* hDoc, FX_WSTR wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext )
+FX_BOOL CXFA_FFDocHandler::SavePackage(IXFA_Doc* hDoc, const CFX_WideStringC& wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext )
 {
     return static_cast<CXFA_FFDoc*>(hDoc)->SavePackage(wsPackage, pFile, pCSContext);
 }
@@ -99,7 +99,7 @@ XFA_ATTRIBUTEENUM CXFA_FFDocHandler::GetRestoreState(IXFA_Doc* hDoc)
     }
     return pSubForm->GetEnum(XFA_ATTRIBUTE_RestoreState);
 }
-FX_BOOL	CXFA_FFDocHandler::RunDocScript(IXFA_Doc* hDoc, XFA_SCRIPTTYPE eScriptType, FX_WSTR wsScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hThisObject)
+FX_BOOL	CXFA_FFDocHandler::RunDocScript(IXFA_Doc* hDoc, XFA_SCRIPTTYPE eScriptType, const CFX_WideStringC& wsScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hThisObject)
 {
     CXFA_Document* pXFADoc = static_cast<CXFA_FFDoc*>(hDoc)->GetXFADoc();
     if (!pXFADoc) {

@@ -9,7 +9,7 @@
 extern "C"
 {
 #endif
-int32_t XFA_FM2JS_Translate(FX_WSTR wsFormcalc, CFX_WideTextBuf& wsJavascript, CFX_WideString& wsError)
+int32_t XFA_FM2JS_Translate(const CFX_WideStringC& wsFormcalc, CFX_WideTextBuf& wsJavascript, CFX_WideString& wsError)
 {
     if (wsFormcalc.IsEmpty()) {
         wsJavascript.Clear();

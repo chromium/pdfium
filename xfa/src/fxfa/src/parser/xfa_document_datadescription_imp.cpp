@@ -66,7 +66,7 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode, CXFA_Node* pDa
         }
     }
 }
-CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(CXFA_Document* pDocument, CXFA_Node* pDataParent, XFA_ELEMENT eNodeType, FX_WSTR wsName)
+CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(CXFA_Document* pDocument, CXFA_Node* pDataParent, XFA_ELEMENT eNodeType, const CFX_WideStringC& wsName)
 {
     if(!pDataParent) {
         return NULL;

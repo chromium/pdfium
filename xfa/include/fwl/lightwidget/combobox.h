@@ -17,15 +17,15 @@ class CFWL_ComboBox : public CFWL_Widget
 public:
     static CFWL_ComboBox* Create();
     FWL_ERR		Initialize(const CFWL_WidgetProperties *pProperties = NULL);
-    int32_t	AddString(FX_WSTR wsText);
-    int32_t	AddString(FX_WSTR wsText, CFX_DIBitmap *pIcon);
+    int32_t	AddString(const CFX_WideStringC& wsText);
+    int32_t	AddString(const CFX_WideStringC& wsText, CFX_DIBitmap *pIcon);
     int32_t	RemoveAt(int32_t iIndex);
     int32_t    RemoveAll();
     int32_t	CountItems();
     FWL_ERR		GetTextByIndex(int32_t iIndex, CFX_WideString &wsText);
     int32_t	GetCurSel();
     FWL_ERR		SetCurSel(int32_t iSel);
-    FWL_ERR		SetEditText(FX_WSTR wsText);
+    FWL_ERR		SetEditText(const CFX_WideStringC& wsText);
     int32_t	GetEditTextLength() const;
     FWL_ERR		GetEditText(CFX_WideString &wsText, int32_t nStart = 0, int32_t nCount = -1) const ;
     FWL_ERR		SetEditSelRange(int32_t nStart, int32_t nCount = -1);
@@ -33,8 +33,8 @@ public:
     int32_t	GetEditLimit();
     FWL_ERR		SetEditLimit(int32_t nLimit);
     FWL_ERR		EditDoClipboard(int32_t iCmd);
-    FX_BOOL		EditRedo(FX_BSTR bsRecord);
-    FX_BOOL		EditUndo(FX_BSTR bsRecord);
+    FX_BOOL		EditRedo(const CFX_ByteStringC& bsRecord);
+    FX_BOOL		EditUndo(const CFX_ByteStringC& bsRecord);
     FWL_ERR		SetMaxListHeight(FX_FLOAT fMaxHeight);
     FWL_ERR		SetItemData(int32_t iIndex, void* pData);
     void*	GetItemData(int32_t iIndex);

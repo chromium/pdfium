@@ -35,7 +35,7 @@ FWL_ERR	CFWL_CheckBox::Initialize(const CFWL_WidgetProperties *pProperties )
     }
     return ret;
 }
-FWL_ERR CFWL_CheckBox::SetCaption(FX_WSTR wsCaption)
+FWL_ERR CFWL_CheckBox::SetCaption(const CFX_WideStringC& wsCaption)
 {
     m_checkboxData.m_wsCaption = wsCaption;
     return FWL_ERR_Succeeded;

@@ -13,8 +13,8 @@ class IFXCRT_FileAccess
 {
 public:
     virtual ~IFXCRT_FileAccess() {}
-    virtual FX_BOOL		Open(FX_BSTR fileName, FX_DWORD dwMode) = 0;
-    virtual FX_BOOL		Open(FX_WSTR fileName, FX_DWORD dwMode) = 0;
+    virtual FX_BOOL		Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode) = 0;
+    virtual FX_BOOL		Open(const CFX_WideStringC& fileName, FX_DWORD dwMode) = 0;
     virtual void		Close() = 0;
     virtual void		Release() = 0;
     virtual FX_FILESIZE	GetSize() const = 0;
@@ -45,7 +45,7 @@ public:
 		return (IFX_FileAccess*)this;
 	}
 
-	virtual FX_BOOL				Init(FX_WSTR wsPath) 
+	virtual FX_BOOL				Init(const CFX_WideStringC& wsPath) 
 	{
 		m_path = wsPath;
 		m_RefCount = 1;

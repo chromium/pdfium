@@ -838,7 +838,7 @@ IFX_Locale* CXFA_LocaleMgr::GetLocale(FX_WORD lcid)
     }
     return pLocal;
 }
-IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(FX_WSTR wsLocaleName)
+IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(const CFX_WideStringC& wsLocaleName)
 {
     int32_t iCount = m_LocaleArray.GetSize();
     int32_t i = 0;

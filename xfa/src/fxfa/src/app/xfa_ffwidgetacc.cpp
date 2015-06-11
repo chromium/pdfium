@@ -296,7 +296,7 @@ void CXFA_WidgetAcc::ResetData()
             break;
     }
 }
-void CXFA_WidgetAcc::SetImageEdit(FX_WSTR wsContentType, FX_WSTR wsHref, FX_WSTR wsData)
+void CXFA_WidgetAcc::SetImageEdit(const CFX_WideStringC& wsContentType, const CFX_WideStringC& wsHref, const CFX_WideStringC& wsData)
 {
     CXFA_Image image = GetFormValue().GetImage();
     if (image) {

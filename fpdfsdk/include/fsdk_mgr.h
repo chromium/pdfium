@@ -412,7 +412,7 @@ public:
 		return L"";
 	}
 
-	void FFI_GotoURL(FPDF_DOCUMENT document, FX_WSTR wsURL, FX_BOOL bAppend)
+	void FFI_GotoURL(FPDF_DOCUMENT document, const CFX_WideStringC& wsURL, FX_BOOL bAppend)
 	{
 		if (m_pInfo && m_pInfo->FFI_GotoURL)
 		{

@@ -52,7 +52,7 @@ FX_BOOL CBC_OnedEAN8Writer::SetTextLocation(BC_TEXT_LOC location)
     }
     return FALSE;
 }
-FX_BOOL	CBC_OnedEAN8Writer::CheckContentValidity(FX_WSTR contents)
+FX_BOOL	CBC_OnedEAN8Writer::CheckContentValidity(const CFX_WideStringC& contents)
 {
     for (int32_t i = 0; i < contents.GetLength(); i++) {
         if (contents.GetAt(i) >= '0' && contents.GetAt(i) <= '9') {
@@ -63,7 +63,7 @@ FX_BOOL	CBC_OnedEAN8Writer::CheckContentValidity(FX_WSTR contents)
     }
     return TRUE;
 }
-CFX_WideString	CBC_OnedEAN8Writer::FilterContents(FX_WSTR contents)
+CFX_WideString	CBC_OnedEAN8Writer::FilterContents(const CFX_WideStringC& contents)
 {
     CFX_WideString filtercontents;
     FX_WCHAR ch;
@@ -156,7 +156,7 @@ uint8_t *CBC_OnedEAN8Writer::Encode(const CFX_ByteString &contents, int32_t &out
     }
     return result;
 }
-void CBC_OnedEAN8Writer::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e)
+void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice* device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e)
 {
     if (device == NULL && pOutBitmap == NULL) {
         e = BCExceptionIllegalArgument;
@@ -255,7 +255,7 @@ void CBC_OnedEAN8Writer::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, C
     }
     FX_Free(pCharPos);
 }
-void CBC_OnedEAN8Writer::RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
+void CBC_OnedEAN8Writer::RenderResult(const CFX_WideStringC& contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e)
 {
     CBC_OneDimWriter::RenderResult(contents, code, codeLength, isDevice, e);
 }

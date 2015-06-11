@@ -6,7 +6,7 @@
 
 #include "../../include/fxcrt/fx_xml.h"
 #include "xml_int.h"
-void FX_XML_SplitQualifiedName(FX_BSTR bsFullName, CFX_ByteStringC &bsSpace, CFX_ByteStringC &bsName)
+void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName, CFX_ByteStringC &bsSpace, CFX_ByteStringC &bsName)
 {
     if (bsFullName.IsEmpty()) {
         return;
@@ -25,12 +25,12 @@ void FX_XML_SplitQualifiedName(FX_BSTR bsFullName, CFX_ByteStringC &bsSpace, CFX
         bsName = CFX_ByteStringC(bsFullName.GetCStr() + iStart, bsFullName.GetLength() - iStart);
     }
 }
-void CXML_Element::SetTag(FX_BSTR qSpace, FX_BSTR tagname)
+void CXML_Element::SetTag(const CFX_ByteStringC& qSpace, const CFX_ByteStringC& tagname)
 {
     m_QSpaceName = qSpace;
     m_TagName = tagname;
 }
-void CXML_Element::SetTag(FX_BSTR qTagName)
+void CXML_Element::SetTag(const CFX_ByteStringC& qTagName)
 {
     ASSERT(!qTagName.IsEmpty());
     CFX_ByteStringC bsSpace, bsName;

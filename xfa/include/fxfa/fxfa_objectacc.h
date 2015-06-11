@@ -421,8 +421,8 @@ public:
     void			GetPicture(CFX_WideString &wsPicture);
     CXFA_Script		GetScript();
 protected:
-    void		GetMessageText(CFX_WideString &wsMessage, FX_WSTR wsMessageType);
-    void		SetMessageText(CFX_WideString &wsMessage, FX_WSTR wsMessageType);
+    void		GetMessageText(CFX_WideString &wsMessage, const CFX_WideStringC& wsMessageType);
+    void		SetMessageText(CFX_WideString &wsMessage, const CFX_WideStringC& wsMessageType);
     FX_BOOL		SetTestValue(int32_t iType, CFX_WideString &wsValue, XFA_ATTRIBUTEENUM eName);
 };
 class CXFA_Variables : public CXFA_Data
@@ -696,8 +696,8 @@ public:
     void                SetCheckState(XFA_CHECKSTATE eCheckState, FX_BOOL bNotify = TRUE);
     CXFA_Node*          GetExclGroupNode();
     CXFA_Node*          GetSelectedMember();
-    CXFA_Node*          SetSelectedMember(FX_WSTR wsName, FX_BOOL bNotify = TRUE);
-    void                SetSelectedMemberByValue(FX_WSTR wsValue, 
+    CXFA_Node*          SetSelectedMember(const CFX_WideStringC& wsName, FX_BOOL bNotify = TRUE);
+    void                SetSelectedMemberByValue(const CFX_WideStringC& wsValue, 
                                                  FX_BOOL bNotify = TRUE,
                                                  FX_BOOL bScriptModify = FALSE,
                                                  FX_BOOL bSyncData = TRUE);
@@ -723,8 +723,8 @@ public:
     void                ClearAllSelections();
     void                InsertItem(const CFX_WideString &wsLabel, const CFX_WideString &wsValue,
                                    int32_t nIndex = -1, FX_BOOL bNotify = FALSE);
-    void                GetItemLabel(FX_WSTR wsValue, CFX_WideString &wsLabel);
-    void                GetItemValue(FX_WSTR wsLabel, CFX_WideString &wsValue);
+    void                GetItemLabel(const CFX_WideStringC& wsValue, CFX_WideString &wsLabel);
+    void                GetItemValue(const CFX_WideStringC& wsLabel, CFX_WideString &wsValue);
     FX_BOOL             DeleteItem(int32_t nIndex, FX_BOOL bNotify = FALSE,
                                    FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
     int32_t            GetHorizontalScrollPolicy();
@@ -734,8 +734,8 @@ public:
     FX_BOOL             GetPictureContent(CFX_WideString &wsPicture, XFA_VALUEPICTURE ePicture);
     IFX_Locale*         GetLocal();
     FX_BOOL             GetValue(CFX_WideString &wsValue, XFA_VALUEPICTURE eValueType);
-    FX_BOOL             GetNormalizeDataValue(FX_WSTR wsValue, CFX_WideString &wsNormalizeValue);
-    FX_BOOL             GetFormatDataValue(FX_WSTR wsValue, CFX_WideString &wsFormatedValue);
+    FX_BOOL             GetNormalizeDataValue(const CFX_WideStringC& wsValue, CFX_WideString &wsNormalizeValue);
+    FX_BOOL             GetFormatDataValue(const CFX_WideStringC& wsValue, CFX_WideString &wsFormatedValue);
     void                NormalizeNumStr(const CFX_WideString& wsValue, CFX_WideString& wsOutput);
     CFX_WideString      GetBarcodeType();
     FX_BOOL             GetBarcodeAttribute_CharEncoding(int32_t& val);
@@ -764,7 +764,7 @@ public:
     FX_BOOL             m_bPreNull;
 protected:
     void                SyncValue(const CFX_WideString& wsValue, FX_BOOL bNotify);
-    void                InsertListTextItem(CXFA_Node* pItems, FX_WSTR wsText, int32_t nIndex = -1);
+    void                InsertListTextItem(CXFA_Node* pItems, const CFX_WideStringC& wsText, int32_t nIndex = -1);
     void                FormatNumStr(const CFX_WideString& wsValue, IFX_Locale* pLocale, CFX_WideString& wsOutput);
 
     CXFA_Node*          m_pUiChildNode;

@@ -938,7 +938,7 @@ FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len)
     out[j] = '\0';
     return out;
 }
-FXCODEC_IMAGE_TYPE XFA_GetImageType(FX_WSTR wsType)
+FXCODEC_IMAGE_TYPE XFA_GetImageType(const CFX_WideStringC& wsType)
 {
     CFX_WideString wsContentType(wsType);
     wsContentType.MakeLower();

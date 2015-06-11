@@ -217,15 +217,15 @@ public:
      * @param[in] dwButtonType  Button type, refer to XFA_MESSAGEBUTTON.
      * @return A valid integer representing the value of the button pressed by the user, refer to XFA_ID.
      */
-    virtual int32_t MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle = FX_WSTRC(L""),
+    virtual int32_t MsgBox(const CFX_WideStringC& wsMessage, const CFX_WideStringC& wsTitle = FX_WSTRC(L""),
                             FX_DWORD dwIconType = 0, FX_DWORD dwButtonType = 0) = 0;
 
     /**
      * Get a response from the user.
      * @param[in] bMark - Mask the user input with * (asterisks) when true,
      */
-    virtual void Response(CFX_WideString &wsAnswer, FX_WSTR wsQuestion, FX_WSTR wsTitle = FX_WSTRC(L""),
-                          FX_WSTR wsDefaultAnswer = FX_WSTRC(L""), FX_BOOL bMark = TRUE) = 0;
+    virtual void Response(CFX_WideString &wsAnswer, const CFX_WideStringC& wsQuestion, const CFX_WideStringC& wsTitle = FX_WSTRC(L""),
+                          const CFX_WideStringC& wsDefaultAnswer = FX_WSTRC(L""), FX_BOOL bMark = TRUE) = 0;
 
     virtual int32_t GetDocumentCountInBatch() = 0;
     virtual int32_t GetCurDocumentInBatch() = 0;
@@ -234,7 +234,7 @@ public:
      * Download something from somewhere.
      * @param[in] wsURL - http, ftp, such as "http://www.w3.org/TR/REC-xml-names/".
      */
-    virtual IFX_FileRead* DownloadURL(FX_WSTR wsURL) = 0;
+    virtual IFX_FileRead* DownloadURL(const CFX_WideStringC& wsURL) = 0;
 
     /**
      * POST data to the given url.
@@ -247,8 +247,8 @@ public:
      * @param[out] wsResponse   decoded response from server.
      * @return TRUE Server permitted the post request, FALSE otherwise.
      */
-    virtual FX_BOOL PostRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsContentType,
-                                   FX_WSTR wsEncode, FX_WSTR wsHeader, CFX_WideString &wsResponse) = 0;
+    virtual FX_BOOL PostRequestURL(const CFX_WideStringC& wsURL, const CFX_WideStringC& wsData, const CFX_WideStringC& wsContentType,
+                                   const CFX_WideStringC& wsEncode, const CFX_WideStringC& wsHeader, CFX_WideString &wsResponse) = 0;
 
     /**
      * PUT data to the given url.
@@ -257,10 +257,10 @@ public:
      * @param[in] wsEncode      the encode of data including UTF-8, UTF-16, ISO8859-1, any recognized [IANA]character encoding
      * @return TRUE Server permitted the post request, FALSE otherwise.
      */
-    virtual FX_BOOL     PutRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsEncode) = 0;
+    virtual FX_BOOL     PutRequestURL(const CFX_WideStringC& wsURL, const CFX_WideStringC& wsData, const CFX_WideStringC& wsEncode) = 0;
 
     virtual void LoadString(int32_t iStringID, CFX_WideString &wsString) = 0;
-    virtual FX_BOOL ShowFileDialog(FX_WSTR wsTitle, FX_WSTR wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen = TRUE) = 0;
+    virtual FX_BOOL ShowFileDialog(const CFX_WideStringC& wsTitle, const CFX_WideStringC& wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen = TRUE) = 0;
     virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
 class IXFA_FontMgr
@@ -269,8 +269,8 @@ public:
     static IXFA_FontMgr* CreateDefault();
     virtual ~IXFA_FontMgr();
 
-    virtual IFX_Font*	GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
-    virtual IFX_Font*	GetDefaultFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
+    virtual IFX_Font*	GetFont(IXFA_Doc* hDoc, const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
+    virtual IFX_Font*	GetDefaultFont(IXFA_Doc* hDoc, const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage = 0xFFFF) = 0;
 };
 class IXFA_App
 {
@@ -307,7 +307,7 @@ public:
     virtual FX_BOOL		Undo(IXFA_Widget* hWidget) = 0;
     virtual FX_BOOL		Redo(IXFA_Widget* hWidget) = 0;
     virtual FX_BOOL		GetSuggestWords(IXFA_Widget* hWidget, CFX_PointF pointf, CFX_ByteStringArray &sSuggest) = 0;
-    virtual FX_BOOL		ReplaceSpellCheckWord(IXFA_Widget* hWidget, CFX_PointF pointf, FX_BSTR bsReplace) = 0;
+    virtual FX_BOOL		ReplaceSpellCheckWord(IXFA_Widget* hWidget, CFX_PointF pointf, const CFX_ByteStringC& bsReplace) = 0;
 };
 #define XFA_INVALIDATE_AllPages		0x00000000
 #define XFA_INVALIDATE_CurrentPage	0x00000001
@@ -348,10 +348,10 @@ public:
     virtual FX_BOOL		IsCalculationsEnabled(IXFA_Doc* hDoc) = 0;
     virtual void		SetCalculationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled) = 0;
     virtual void		GetTitle(IXFA_Doc* hDoc, CFX_WideString &wsTitle) = 0;
-    virtual void		SetTitle(IXFA_Doc* hDoc, FX_WSTR wsTitle) = 0;
-    virtual void		ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bXDP = TRUE) = 0;
-    virtual void		ImportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath) = 0;
-    virtual void		GotoURL(IXFA_Doc* hDoc, FX_WSTR bsURL, FX_BOOL bAppend = TRUE) = 0;
+    virtual void		SetTitle(IXFA_Doc* hDoc, const CFX_WideStringC& wsTitle) = 0;
+    virtual void		ExportData(IXFA_Doc* hDoc, const CFX_WideStringC& wsFilePath, FX_BOOL bXDP = TRUE) = 0;
+    virtual void		ImportData(IXFA_Doc* hDoc, const CFX_WideStringC& wsFilePath) = 0;
+    virtual void		GotoURL(IXFA_Doc* hDoc, const CFX_WideStringC& bsURL, FX_BOOL bAppend = TRUE) = 0;
     virtual FX_BOOL		IsValidationsEnabled(IXFA_Doc* hDoc) = 0;
     virtual void		SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled) = 0;
     virtual void		SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget) = 0;
@@ -364,7 +364,7 @@ public:
     {
         return 0;
     }
-    virtual FX_BOOL				Sign(IXFA_Doc* hDoc, CXFA_NodeList* pNodeList, FX_WSTR wsExpression, FX_WSTR wsXMLIdent, FX_WSTR wsValue = FX_WSTRC(L"open"), FX_BOOL bUsed = TRUE)
+    virtual FX_BOOL				Sign(IXFA_Doc* hDoc, CXFA_NodeList* pNodeList, const CFX_WideStringC& wsExpression, const CFX_WideStringC& wsXMLIdent, const CFX_WideStringC& wsValue = FX_WSTRC(L"open"), FX_BOOL bUsed = TRUE)
     {
         return 0;
     }
@@ -381,11 +381,11 @@ public:
     virtual void		AddDoRecord(IXFA_Widget* hWidget) = 0;
 
     virtual FX_BOOL		SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) = 0;
-    virtual FX_BOOL		CheckWord(IXFA_Doc* hDoc, FX_BSTR sWord) = 0;
-    virtual FX_BOOL		GetSuggestWords(IXFA_Doc* hDoc, FX_BSTR sWord, CFX_ByteStringArray& sSuggest) = 0;
-    virtual FX_BOOL		GetPDFScriptObject(IXFA_Doc* hDoc, FX_BSTR utf8Name, FXJSE_HVALUE hValue) = 0;
-    virtual FX_BOOL		GetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue) = 0;
-    virtual FX_BOOL		SetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue) = 0;
+    virtual FX_BOOL		CheckWord(IXFA_Doc* hDoc, const CFX_ByteStringC& sWord) = 0;
+    virtual FX_BOOL		GetSuggestWords(IXFA_Doc* hDoc, const CFX_ByteStringC& sWord, CFX_ByteStringArray& sSuggest) = 0;
+    virtual FX_BOOL		GetPDFScriptObject(IXFA_Doc* hDoc, const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue) = 0;
+    virtual FX_BOOL		GetGlobalProperty(IXFA_Doc* hDoc, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue) = 0;
+    virtual FX_BOOL		SetGlobalProperty(IXFA_Doc* hDoc, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue) = 0;
     virtual CPDF_Document*  OpenPDF(IXFA_Doc* hDoc, IFX_FileRead* pFile, FX_BOOL bTakeOverFile) = 0;
     virtual IFX_FileRead*	OpenLinkedFile(IXFA_Doc* hDoc, const CFX_WideString& wsLink) = 0;
 };
@@ -418,14 +418,14 @@ public:
     virtual int32_t			CountPackages(IXFA_Doc* hDoc) = 0;
     virtual	void				GetPackageName(IXFA_Doc* hDoc, int32_t iPackage, CFX_WideStringC &wsPackage) = 0;
 
-    virtual FX_BOOL				SavePackage(IXFA_Doc* hDoc, FX_WSTR wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext = NULL) = 0;
+    virtual FX_BOOL				SavePackage(IXFA_Doc* hDoc, const CFX_WideStringC& wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext = NULL) = 0;
     virtual FX_BOOL				CloseDoc(IXFA_Doc* hDoc) = 0;
 
     virtual FX_BOOL				ImportData(IXFA_Doc* hDoc, IFX_FileRead* pStream, FX_BOOL bXDP = TRUE) = 0;
     virtual	void				SetJSERuntime(IXFA_Doc* hDoc, FXJSE_HRUNTIME hRuntime) = 0;
     virtual FXJSE_HVALUE		GetXFAScriptObject(IXFA_Doc* hDoc) = 0;
     virtual XFA_ATTRIBUTEENUM	GetRestoreState(IXFA_Doc* hDoc) = 0;
-    virtual FX_BOOL				RunDocScript(IXFA_Doc* hDoc, XFA_SCRIPTTYPE eScriptType, FX_WSTR wsScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hThisObject) = 0;
+    virtual FX_BOOL				RunDocScript(IXFA_Doc* hDoc, XFA_SCRIPTTYPE eScriptType, const CFX_WideStringC& wsScript, FXJSE_HVALUE hRetValue, FXJSE_HVALUE hThisObject) = 0;
 };
 enum XFA_EVENTTYPE {
     XFA_EVENT_Click,
@@ -537,8 +537,8 @@ public:
     virtual	void				UpdateDocView() = 0;
     virtual int32_t			CountPageViews() = 0;
     virtual IXFA_PageView*		GetPageView(int32_t nIndex) = 0;
-    virtual IXFA_Widget*			GetWidgetByName(FX_WSTR wsName) = 0;
-    virtual CXFA_WidgetAcc*		GetWidgetAccByName(FX_WSTR wsName) = 0;
+    virtual IXFA_Widget*			GetWidgetByName(const CFX_WideStringC& wsName) = 0;
+    virtual CXFA_WidgetAcc*		GetWidgetAccByName(const CFX_WideStringC& wsName) = 0;
     virtual void				ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = NULL) = 0;
     virtual int32_t			ProcessWidgetEvent(CXFA_EventParam* pParam, CXFA_WidgetAcc* pWidgetAcc = NULL) = 0;
     virtual IXFA_WidgetHandler*	GetWidgetHandler() = 0;

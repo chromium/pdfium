@@ -18,14 +18,14 @@ public:
     uint8_t			*Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e);
     uint8_t			*Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e);
     uint8_t			*Encode(const CFX_ByteString &contents, int32_t &outLength, int32_t &e);
-    void			RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e);
-    CFX_WideString  encodedContents(FX_WSTR contents, int32_t &e);
-    FX_BOOL			CheckContentValidity(FX_WSTR contents);
-    FX_BOOL         CheckExtendedContentValidity(FX_WSTR contents);
-    CFX_WideString	FilterContents(FX_WSTR contents);
-    CFX_WideString  FilterExtendedContents(FX_WSTR contents);
-    CFX_WideString  RenderTextContents(FX_WSTR contents);
-    CFX_WideString  RenderExtendedTextContents(FX_WSTR contents);
+    void			RenderResult(const CFX_WideStringC& contents, uint8_t* code, int32_t codeLength, FX_BOOL isDevice, int32_t &e);
+    CFX_WideString  encodedContents(const CFX_WideStringC& contents, int32_t &e);
+    FX_BOOL			CheckContentValidity(const CFX_WideStringC& contents);
+    FX_BOOL         CheckExtendedContentValidity(const CFX_WideStringC& contents);
+    CFX_WideString	FilterContents(const CFX_WideStringC& contents);
+    CFX_WideString  FilterExtendedContents(const CFX_WideStringC& contents);
+    CFX_WideString  RenderTextContents(const CFX_WideStringC& contents);
+    CFX_WideString  RenderExtendedTextContents(const CFX_WideStringC& contents);
     FX_BOOL			SetTextLocation(BC_TEXT_LOC loction);
     FX_BOOL			SetWideNarrowRatio(int32_t ratio);
 private:

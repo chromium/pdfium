@@ -168,7 +168,7 @@ void CXFA_FFListBox::SetItemState(int32_t nIndex, FX_BOOL bSelected)
     m_pNormalWidget->Update();
     AddInvalidateRect();
 }
-void CXFA_FFListBox::InsertItem(FX_WSTR wsLabel, int32_t nIndex )
+void CXFA_FFListBox::InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex )
 {
     CFX_WideString wsTemp(wsLabel);
     ((CFWL_ListBox*)m_pNormalWidget)->AddString(wsTemp);
@@ -483,7 +483,7 @@ void CXFA_FFComboBox::SetItemState(int32_t nIndex, FX_BOOL bSelected)
     m_pNormalWidget->Update();
     AddInvalidateRect();
 }
-void CXFA_FFComboBox::InsertItem(FX_WSTR wsLabel, int32_t nIndex )
+void CXFA_FFComboBox::InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex )
 {
     ((CFWL_ComboBox*)m_pNormalWidget)->AddString(wsLabel);
     m_pNormalWidget->Update();

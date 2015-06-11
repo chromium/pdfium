@@ -902,7 +902,7 @@ CPDF_Page::~CPDF_Page()
         pModule->DestroyPageCache(m_pPageRender);
     }
 }
-CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict, FX_BSTR name)
+CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict, const CFX_ByteStringC& name)
 {
     int level = 0;
     while (1) {
@@ -921,7 +921,7 @@ CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict, FX_BSTR name)
         }
     }
 }
-CPDF_Object* CPDF_Page::GetPageAttr(FX_BSTR name) const
+CPDF_Object* CPDF_Page::GetPageAttr(const CFX_ByteStringC& name) const
 {
     return FPDFAPI_GetPageAttr(m_pFormDict, name);
 }

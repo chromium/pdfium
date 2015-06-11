@@ -91,9 +91,9 @@ void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender, FX_DWORD dwEvent
                 while (pWidget) {
                     if (pWidget->IsLoaded()) {
                         if (pWidgetAcc->IsListBox()) {
-                            ((CXFA_FFListBox*)pWidget)->InsertItem((FX_WSTR)(const FX_WCHAR*)pParam, (int32_t)(uintptr_t)pAdditional2);
+                            ((CXFA_FFListBox*)pWidget)->InsertItem((const CFX_WideStringC&)(const FX_WCHAR*)pParam, (int32_t)(uintptr_t)pAdditional2);
                         } else {
-                            ((CXFA_FFComboBox*)pWidget)->InsertItem((FX_WSTR)(const FX_WCHAR*)pParam, (int32_t)(uintptr_t)pAdditional2);
+                            ((CXFA_FFComboBox*)pWidget)->InsertItem((const CFX_WideStringC&)(const FX_WCHAR*)pParam, (int32_t)(uintptr_t)pAdditional2);
                         }
                     }
                     if (bStaticNotify) {

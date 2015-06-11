@@ -1033,7 +1033,7 @@ void CFDE_TxtEdtEngine::ClearSelection()
         m_Param.pEventSink->On_SelChanged(this);
     }
 }
-FX_BOOL CFDE_TxtEdtEngine::Redo(FX_BSTR bsRedo)
+FX_BOOL CFDE_TxtEdtEngine::Redo(const CFX_ByteStringC& bsRedo)
 {
     if (IsLocked()) {
         return FALSE;
@@ -1050,7 +1050,7 @@ FX_BOOL CFDE_TxtEdtEngine::Redo(FX_BSTR bsRedo)
     pDoRecord->Release();
     return bOK;
 }
-FX_BOOL CFDE_TxtEdtEngine::Undo(FX_BSTR bsUndo)
+FX_BOOL CFDE_TxtEdtEngine::Undo(const CFX_ByteStringC& bsUndo)
 {
     if (IsLocked()) {
         return FALSE;
@@ -2396,7 +2396,7 @@ void CFDE_TxtEdtEngine::DeleteSelect()
         return;
     }
 }
-IFDE_TxtEdtDoRecord * IFDE_TxtEdtDoRecord::Create(FX_BSTR bsDoRecord)
+IFDE_TxtEdtDoRecord * IFDE_TxtEdtDoRecord::Create(const CFX_ByteStringC& bsDoRecord)
 {
     const FX_CHAR*	lpBuf	=	bsDoRecord.GetCStr();
     int32_t	nType	=	*((int32_t*)lpBuf);
@@ -2418,7 +2418,7 @@ IFDE_TxtEdtDoRecord * IFDE_TxtEdtDoRecord::Create(FX_BSTR bsDoRecord)
     }
     return NULL;
 }
-CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(FX_BSTR bsDoRecord)
+CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(const CFX_ByteStringC& bsDoRecord)
 {
     Deserialize(bsDoRecord);
 }
@@ -2477,7 +2477,7 @@ void CFDE_TxtEdtDoRecord_Insert::Serialize(CFX_ByteString &bsDoRecord) const
     FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
     bsDoRecord.ReleaseBuffer(nLength);
 }
-void CFDE_TxtEdtDoRecord_Insert::Deserialize(FX_BSTR bsDoRecord)
+void CFDE_TxtEdtDoRecord_Insert::Deserialize(const CFX_ByteStringC& bsDoRecord)
 {
     CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(), bsDoRecord.GetLength());
     int32_t nType = 0;
@@ -2489,7 +2489,7 @@ void CFDE_TxtEdtDoRecord_Insert::Deserialize(FX_BSTR bsDoRecord)
     ArchiveLoader >> m_nCaret;
     ArchiveLoader >> m_wsInsert;
 }
-CFDE_TxtEdtDoRecord_DeleteRange::CFDE_TxtEdtDoRecord_DeleteRange(FX_BSTR bsDoRecord)
+CFDE_TxtEdtDoRecord_DeleteRange::CFDE_TxtEdtDoRecord_DeleteRange(const CFX_ByteStringC& bsDoRecord)
 {
     Deserialize(bsDoRecord);
 }
@@ -2557,7 +2557,7 @@ void CFDE_TxtEdtDoRecord_DeleteRange::Serialize(CFX_ByteString &bsDoRecord) cons
     FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
     bsDoRecord.ReleaseBuffer(nLength);
 }
-void CFDE_TxtEdtDoRecord_DeleteRange::Deserialize(FX_BSTR bsDoRecord)
+void CFDE_TxtEdtDoRecord_DeleteRange::Deserialize(const CFX_ByteStringC& bsDoRecord)
 {
     CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(), bsDoRecord.GetLength());
     int32_t nType = 0;
@@ -2572,7 +2572,7 @@ void CFDE_TxtEdtDoRecord_DeleteRange::Deserialize(FX_BSTR bsDoRecord)
     ArchiveLoader >> m_wsRange;
 }
 #ifdef FDE_USEFORMATBLOCK
-CFDE_TxtEdtDoRecord_FieldInsert::CFDE_TxtEdtDoRecord_FieldInsert(FX_BSTR bsDoRecord)
+CFDE_TxtEdtDoRecord_FieldInsert::CFDE_TxtEdtDoRecord_FieldInsert(const CFX_ByteStringC& bsDoRecord)
 {
     Deserialize(bsDoRecord);
 }
@@ -2649,7 +2649,7 @@ void CFDE_TxtEdtDoRecord_FieldInsert::Serialize(CFX_ByteString &bsDoRecord) cons
     FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
     bsDoRecord.ReleaseBuffer(nLength);
 }
-void CFDE_TxtEdtDoRecord_FieldInsert::Deserialize(FX_BSTR bsDoRecord)
+void CFDE_TxtEdtDoRecord_FieldInsert::Deserialize(const CFX_ByteStringC& bsDoRecord)
 {
     CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(), bsDoRecord.GetLength());
     int32_t nType = 0;
@@ -2669,7 +2669,7 @@ void CFDE_TxtEdtDoRecord_FieldInsert::Deserialize(FX_BSTR bsDoRecord)
     ArchiveLoader >> m_wsIns;
     ArchiveLoader >> m_bSel;
 }
-CFDE_TxtEdtDoRecord_FieldDelete::CFDE_TxtEdtDoRecord_FieldDelete(FX_BSTR bsDoRecord)
+CFDE_TxtEdtDoRecord_FieldDelete::CFDE_TxtEdtDoRecord_FieldDelete(const CFX_ByteStringC& bsDoRecord)
 {
     Deserialize(bsDoRecord);
 }
@@ -2746,7 +2746,7 @@ void CFDE_TxtEdtDoRecord_FieldDelete::Serialize(CFX_ByteString &bsDoRecord) cons
     FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
     bsDoRecord.ReleaseBuffer(nLength);
 }
-void CFDE_TxtEdtDoRecord_FieldDelete::Deserialize(FX_BSTR bsDoRecord)
+void CFDE_TxtEdtDoRecord_FieldDelete::Deserialize(const CFX_ByteStringC& bsDoRecord)
 {
     CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(), bsDoRecord.GetLength());
     int32_t nType = 0;
@@ -2766,7 +2766,7 @@ void CFDE_TxtEdtDoRecord_FieldDelete::Deserialize(FX_BSTR bsDoRecord)
     ArchiveLoader >> m_wsDel;
     ArchiveLoader >> m_bSel;
 }
-CFDE_TxtEdtDoRecord_FieldReplace::CFDE_TxtEdtDoRecord_FieldReplace(FX_BSTR bsDoRecord)
+CFDE_TxtEdtDoRecord_FieldReplace::CFDE_TxtEdtDoRecord_FieldReplace(const CFX_ByteStringC& bsDoRecord)
 {
     Deserialize(bsDoRecord);
 }
@@ -2847,7 +2847,7 @@ void CFDE_TxtEdtDoRecord_FieldReplace::Serialize(CFX_ByteString &bsDoRecord) con
     FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
     bsDoRecord.ReleaseBuffer(nLength);
 }
-void CFDE_TxtEdtDoRecord_FieldReplace::Deserialize(FX_BSTR bsDoRecord)
+void CFDE_TxtEdtDoRecord_FieldReplace::Deserialize(const CFX_ByteStringC& bsDoRecord)
 {
     CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(), bsDoRecord.GetLength());
     int32_t nType = 0;

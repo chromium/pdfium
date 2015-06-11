@@ -47,7 +47,7 @@ BC_TYPE CBC_OnedCode128Writer::GetType()
 {
     return m_codeFormat;
 }
-FX_BOOL	CBC_OnedCode128Writer::CheckContentValidity(FX_WSTR contents)
+FX_BOOL	CBC_OnedCode128Writer::CheckContentValidity(const CFX_WideStringC& contents)
 {
     FX_BOOL ret = TRUE;
     int32_t position = 0;
@@ -69,7 +69,7 @@ FX_BOOL	CBC_OnedCode128Writer::CheckContentValidity(FX_WSTR contents)
     }
     return ret;
 }
-CFX_WideString CBC_OnedCode128Writer::FilterContents(FX_WSTR contents)
+CFX_WideString CBC_OnedCode128Writer::FilterContents(const CFX_WideStringC& contents)
 {
     CFX_WideString filterChineseChar;
     FX_WCHAR ch;

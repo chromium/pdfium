@@ -40,7 +40,7 @@ FWL_ERR CFWL_ListBox::AddDIBitmap(CFX_DIBitmap *pDIB, FWL_HLISTITEM hItem)
     ((CFWL_ListItem*)hItem)->m_pDIB = pDIB;
     return FWL_ERR_Succeeded;
 }
-FWL_HLISTITEM CFWL_ListBox::AddString(FX_WSTR wsAdd, FX_BOOL bSelect)
+FWL_HLISTITEM CFWL_ListBox::AddString(const CFX_WideStringC& wsAdd, FX_BOOL bSelect)
 {
     CFWL_ListItem * pItem = FX_NEW CFWL_ListItem;
     pItem->m_dwStates = 0;
@@ -149,7 +149,7 @@ FWL_HLISTITEM CFWL_ListBox::GetItem(int32_t nIndex)
     }
     return (FWL_HLISTITEM)m_ListBoxDP.m_arrItem[nIndex];
 }
-FWL_ERR	CFWL_ListBox::SetItemString(FWL_HLISTITEM hItem, FX_WSTR wsText)
+FWL_ERR	CFWL_ListBox::SetItemString(FWL_HLISTITEM hItem, const CFX_WideStringC& wsText)
 {
     _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
     CFWL_ListItem *pItem = (CFWL_ListItem*)hItem;

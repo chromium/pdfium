@@ -37,7 +37,7 @@ public:
 public:
     virtual FWL_ERR GetWidgetRect(IFWL_Widget *pWidget, CFX_RectF &rect);
     virtual FWL_ERR SetWidgetIcon(IFWL_Widget *pWidget, const CFX_DIBitmap *pIcon, FX_BOOL bBig);
-    virtual FWL_ERR SetWidgetCaption(IFWL_Widget *pWidget, FX_WSTR wsCaption);
+    virtual FWL_ERR SetWidgetCaption(IFWL_Widget *pWidget, const CFX_WideStringC& wsCaption);
     virtual	FWL_ERR	SetBorderRegion(IFWL_Widget *pWidget, CFX_Path *pPath);
     virtual FWL_ERR SetTransparent(IFWL_Widget *pWidget, FX_DWORD dwAlpha);
     virtual FWL_ERR SetFullScreen(IFWL_Widget *pWidget, FX_BOOL bFullScreen);

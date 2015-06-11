@@ -19,7 +19,7 @@ void CXFA_FMExpression::ToJavaScript(CFX_WideTextBuf& javascript)
 {}
 void CXFA_FMExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript)
 {}
-CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition( FX_DWORD line, FX_BOOL isGlobal, FX_WSTR wsName, CFX_WideStringCArray *pArguments, CFX_PtrArray *pExpressions )
+CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition( FX_DWORD line, FX_BOOL isGlobal, const CFX_WideStringC& wsName, CFX_WideStringCArray *pArguments, CFX_PtrArray *pExpressions )
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_FUNC),
       m_isGlobal(isGlobal),
       m_wsName(wsName),
@@ -117,7 +117,7 @@ void CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript)
 }
 void CXFA_FMFunctionDefinition::ToImpliedReturnJS(CFX_WideTextBuf&)
 {}
-CXFA_FMVarExpression::CXFA_FMVarExpression( FX_DWORD line, FX_WSTR wsName, CXFA_FMExpression *pInit )
+CXFA_FMVarExpression::CXFA_FMVarExpression( FX_DWORD line, const CFX_WideStringC& wsName, CXFA_FMExpression *pInit )
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_VAR),
       m_wsName(wsName),
       m_pInit(pInit)
@@ -451,7 +451,7 @@ void CXFA_FMContinueExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript)
     javascript << FX_WSTRC(L" = 0;\n");
     javascript << FX_WSTRC(L"continue;\n");
 }
-CXFA_FMForExpression::CXFA_FMForExpression(FX_DWORD line, FX_WSTR wsVariant, CXFA_FMSimpleExpression *pAssignment, CXFA_FMSimpleExpression *pAccessor, int32_t iDirection, CXFA_FMSimpleExpression *pStep, CXFA_FMExpression *pList)
+CXFA_FMForExpression::CXFA_FMForExpression(FX_DWORD line, const CFX_WideStringC& wsVariant, CXFA_FMSimpleExpression *pAssignment, CXFA_FMSimpleExpression *pAccessor, int32_t iDirection, CXFA_FMSimpleExpression *pStep, CXFA_FMExpression *pList)
     : CXFA_FMLoopExpression(line),
       m_wsVariant(wsVariant),
       m_pAssignment(pAssignment),
@@ -580,7 +580,7 @@ void CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript)
     m_pList->ToImpliedReturnJS(javascript);
     javascript << FX_WSTRC(L"}\n");
 }
-CXFA_FMForeachExpression::CXFA_FMForeachExpression( FX_DWORD line, FX_WSTR wsIdentifier, CFX_PtrArray *pAccessors, CXFA_FMExpression *pList )
+CXFA_FMForeachExpression::CXFA_FMForeachExpression( FX_DWORD line, const CFX_WideStringC& wsIdentifier, CFX_PtrArray *pAccessors, CXFA_FMExpression *pList )
     : CXFA_FMLoopExpression(line),
       m_wsIdentifier(wsIdentifier),
       m_pAccessors(pAccessors),

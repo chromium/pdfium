@@ -11,7 +11,7 @@ class IFX_Barcode
 public:
     virtual void			Release() = 0;
     virtual BC_TYPE			GetType() = 0;
-    virtual FX_BOOL			Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e) = 0;
+    virtual FX_BOOL			Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e) = 0;
     virtual FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e) = 0;
     virtual FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e) = 0;
     virtual CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t height, int32_t &errorCode) = 0;
@@ -21,7 +21,7 @@ public:
     virtual FX_BOOL			SetModuleWidth(int32_t moduleWidth) = 0;
     virtual FX_BOOL			SetHeight(int32_t height) = 0;
     virtual FX_BOOL			SetWidth(int32_t width) = 0;
-    virtual FX_BOOL			CheckContentValidity(FX_WSTR contents) = 0;
+    virtual FX_BOOL			CheckContentValidity(const CFX_WideStringC& contents) = 0;
     virtual FX_BOOL			SetPrintChecksum(FX_BOOL checksum) = 0;
     virtual FX_BOOL			SetDataLength(int32_t length) = 0;
     virtual FX_BOOL			SetCalChecksum(int32_t state) = 0;

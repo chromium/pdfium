@@ -16,7 +16,7 @@
 #include "../common/xfa_localemgr.h"
 #include "../common/xfa_fm2jsapi.h"
 #include "xfa_debug_parser.h"
-static FX_ARGB	XFA_WStringToColor(FX_WSTR wsValue)
+static FX_ARGB	XFA_WStringToColor(const CFX_WideStringC& wsValue)
 {
     uint8_t r = 0, g = 0, b = 0;
     if (wsValue.GetLength() == 0) {
@@ -1226,7 +1226,7 @@ int32_t CXFA_Validate::GetScriptTest()
 {
     return m_pNode->GetEnum(XFA_ATTRIBUTE_ScriptTest);
 }
-void CXFA_Validate::GetMessageText(CFX_WideString &wsMessage, FX_WSTR wsMessageType)
+void CXFA_Validate::GetMessageText(CFX_WideString &wsMessage, const CFX_WideStringC& wsMessageType)
 {
     if (CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Message, FALSE)) {
         CXFA_Node *pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -1259,7 +1259,7 @@ void CXFA_Validate::GetNullMessageText(CFX_WideString &wsMessage)
 {
     GetMessageText(wsMessage, FX_WSTRC(L"nullTest"));
 }
-void CXFA_Validate::SetMessageText(CFX_WideString &wsMessage, FX_WSTR wsMessageType)
+void CXFA_Validate::SetMessageText(CFX_WideString &wsMessage, const CFX_WideStringC& wsMessageType)
 {
     if (CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Message, TRUE)) {
         CXFA_Node *pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -2241,7 +2241,7 @@ CXFA_Node* CXFA_WidgetData::GetSelectedMember()
     }
     return pSelectedMember;
 }
-CXFA_Node* CXFA_WidgetData::SetSelectedMember(FX_WSTR wsName, FX_BOOL bNotify)
+CXFA_Node* CXFA_WidgetData::SetSelectedMember(const CFX_WideStringC& wsName, FX_BOOL bNotify)
 {
     CXFA_Node *pSelectedMember = NULL;
     FX_DWORD nameHash = FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength());
@@ -2255,7 +2255,7 @@ CXFA_Node* CXFA_WidgetData::SetSelectedMember(FX_WSTR wsName, FX_BOOL bNotify)
     }
     return pSelectedMember;
 }
-void CXFA_WidgetData::SetSelectedMemberByValue(FX_WSTR wsValue, FX_BOOL bNotify, FX_BOOL bScriptModify, FX_BOOL bSyncData)
+void CXFA_WidgetData::SetSelectedMemberByValue(const CFX_WideStringC& wsValue, FX_BOOL bNotify, FX_BOOL bScriptModify, FX_BOOL bSyncData)
 {
     CFX_WideString wsExclGroup;
     for (CXFA_Node *pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
@@ -2691,7 +2691,7 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString &wsLabel, const CFX_WideSt
     }
     m_pNode->GetDocument()->GetNotify()->OnWidgetDataEvent(this, XFA_WIDGETEVENT_ListItemAdded, (void*)(const FX_WCHAR*)wsLabel, (void*)(const FX_WCHAR*)wsValue, (void*)(uintptr_t)nIndex);
 }
-void CXFA_WidgetData::GetItemLabel(FX_WSTR wsValue, CFX_WideString &wsLabel)
+void CXFA_WidgetData::GetItemLabel(const CFX_WideStringC& wsValue, CFX_WideString &wsLabel)
 {
     int32_t iCount = 0;
     CXFA_NodeArray listitems;
@@ -2735,7 +2735,7 @@ void CXFA_WidgetData::GetItemLabel(FX_WSTR wsValue, CFX_WideString &wsLabel)
         }
     }
 }
-void CXFA_WidgetData::GetItemValue(FX_WSTR wsLabel, CFX_WideString &wsValue)
+void CXFA_WidgetData::GetItemValue(const CFX_WideStringC& wsLabel, CFX_WideString &wsValue)
 {
     int32_t iCount = 0;
     CXFA_NodeArray listitems;
@@ -3516,7 +3516,7 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString &wsValue, XFA_VALUEPICTURE eVal
     }
     return TRUE;
 }
-FX_BOOL CXFA_WidgetData::GetNormalizeDataValue(FX_WSTR wsValue, CFX_WideString &wsNormalizeValue)
+FX_BOOL CXFA_WidgetData::GetNormalizeDataValue(const CFX_WideStringC& wsValue, CFX_WideString &wsNormalizeValue)
 {
     wsNormalizeValue = wsValue;
     if (wsValue.IsEmpty()) {
@@ -3538,7 +3538,7 @@ FX_BOOL CXFA_WidgetData::GetNormalizeDataValue(FX_WSTR wsValue, CFX_WideString &
     }
     return FALSE;
 }
-FX_BOOL CXFA_WidgetData::GetFormatDataValue(FX_WSTR wsValue, CFX_WideString &wsFormatedValue)
+FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideStringC& wsValue, CFX_WideString &wsFormatedValue)
 {
     wsFormatedValue = wsValue;
     if (wsValue.IsEmpty()) {
@@ -3690,7 +3690,7 @@ void CXFA_WidgetData::SyncValue(const CFX_WideString& wsValue, FX_BOOL bNotify)
     }
     m_pNode->SetContent(wsValue, wsFormatValue, bNotify);
 }
-void CXFA_WidgetData::InsertListTextItem(CXFA_Node* pItems, FX_WSTR wsText, int32_t nIndex )
+void CXFA_WidgetData::InsertListTextItem(CXFA_Node* pItems, const CFX_WideStringC& wsText, int32_t nIndex )
 {
     CXFA_Node* pText = pItems->CreateSamePacketNode(XFA_ELEMENT_Text);
     pItems->InsertChild(nIndex, pText);

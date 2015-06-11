@@ -23,7 +23,7 @@ CXFA_FMParse::~CXFA_FMParse()
     m_pScript = 0;
     m_pToken = 0;
 }
-int32_t CXFA_FMParse::Init(FX_WSTR wsFormcalc, CXFA_FMErrorInfo *pErrorInfo)
+int32_t CXFA_FMParse::Init(const CFX_WideStringC& wsFormcalc, CXFA_FMErrorInfo *pErrorInfo)
 {
     m_pScript = wsFormcalc.GetPtr();
     m_uLength = wsFormcalc.GetLength();

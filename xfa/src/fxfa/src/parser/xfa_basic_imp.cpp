@@ -38,7 +38,7 @@ extern const XFA_METHODINFO g_SomMethodData[];
 extern const int32_t g_iSomMethodCount;
 extern const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[];
 extern const int32_t g_iSomAttributeCount;
-XFA_LPCPACKETINFO XFA_GetPacketByName(FX_WSTR wsName)
+XFA_LPCPACKETINFO XFA_GetPacketByName(const CFX_WideStringC& wsName)
 {
     int32_t iLength = wsName.GetLength();
     if (iLength == 0) {
@@ -75,7 +75,7 @@ XFA_LPCPACKETINFO XFA_GetPacketByID(FX_DWORD dwPacket)
     } while (iStart <= iEnd);
     return NULL;
 }
-XFA_LPCATTRIBUTEENUMINFO XFA_GetAttributeEnumByName(FX_WSTR wsName)
+XFA_LPCATTRIBUTEENUMINFO XFA_GetAttributeEnumByName(const CFX_WideStringC& wsName)
 {
     int32_t iLength = wsName.GetLength();
     if (iLength == 0) {
@@ -104,7 +104,7 @@ int32_t XFA_GetAttributeCount()
 {
     return g_iXFAAttributeCount;
 }
-XFA_LPCATTRIBUTEINFO XFA_GetAttributeByName(FX_WSTR wsName)
+XFA_LPCATTRIBUTEINFO XFA_GetAttributeByName(const CFX_WideStringC& wsName)
 {
     int32_t iLength = wsName.GetLength();
     if (iLength == 0) {
@@ -194,7 +194,7 @@ int32_t XFA_GetElementCount()
 {
     return g_iXFAElementCount;
 }
-XFA_LPCELEMENTINFO XFA_GetElementByName(FX_WSTR wsName)
+XFA_LPCELEMENTINFO XFA_GetElementByName(const CFX_WideStringC& wsName)
 {
     int32_t iLength = wsName.GetLength();
     if (iLength == 0) {
@@ -374,7 +374,7 @@ int32_t XFA_GetMethodCount()
 {
     return g_iSomMethodCount;
 }
-XFA_LPCMETHODINFO XFA_GetMethodByName(XFA_ELEMENT eElement, FX_WSTR wsMethodName)
+XFA_LPCMETHODINFO XFA_GetMethodByName(XFA_ELEMENT eElement, const CFX_WideStringC& wsMethodName)
 {
     int32_t iLength = wsMethodName.GetLength();
     if (iLength == 0) {
@@ -405,7 +405,7 @@ XFA_LPCMETHODINFO XFA_GetMethodByName(XFA_ELEMENT eElement, FX_WSTR wsMethodName
     }
     return NULL;
 }
-XFA_LPCSCRIPTATTRIBUTEINFO XFA_GetScriptAttributeByName(XFA_ELEMENT eElement,	FX_WSTR wsAttributeName)
+XFA_LPCSCRIPTATTRIBUTEINFO XFA_GetScriptAttributeByName(XFA_ELEMENT eElement,	const CFX_WideStringC& wsAttributeName)
 {
     int32_t iLength = wsAttributeName.GetLength();
     if (iLength == 0) {
@@ -436,7 +436,7 @@ XFA_LPCSCRIPTATTRIBUTEINFO XFA_GetScriptAttributeByName(XFA_ELEMENT eElement,	FX
     }
     return NULL;
 }
-void CXFA_Measurement::Set(FX_WSTR wsMeasure)
+void CXFA_Measurement::Set(const CFX_WideStringC& wsMeasure)
 {
     if (wsMeasure.IsEmpty()) {
         m_fValue = 0;
@@ -534,7 +534,7 @@ FX_BOOL CXFA_Measurement::ToUnit(XFA_UNIT eUnit, FX_FLOAT &fValue) const
     }
     return FALSE;
 }
-XFA_UNIT CXFA_Measurement::GetUnit(FX_WSTR wsUnit)
+XFA_UNIT CXFA_Measurement::GetUnit(const CFX_WideStringC& wsUnit)
 {
     if (wsUnit == FX_WSTRC(L"mm")) {
         return XFA_UNIT_Mm;

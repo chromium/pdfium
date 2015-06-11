@@ -28,9 +28,9 @@ public:
         m_iMaxItems = iMaxCount;
     }
 
-    virtual void					AddStyleSheet(FX_BSTR szKey, IFDE_CSSStyleSheet *pStyleSheet);
-    virtual IFDE_CSSStyleSheet*		GetStyleSheet(FX_BSTR szKey) const;
-    virtual void					RemoveStyleSheet(FX_BSTR szKey);
+    virtual void					AddStyleSheet(const CFX_ByteStringC& szKey, IFDE_CSSStyleSheet *pStyleSheet);
+    virtual IFDE_CSSStyleSheet*		GetStyleSheet(const CFX_ByteStringC& szKey) const;
+    virtual void					RemoveStyleSheet(const CFX_ByteStringC& szKey);
 protected:
     void							RemoveLowestActivityItem();
     CFX_MapByteStringToPtr			m_Stylesheets;

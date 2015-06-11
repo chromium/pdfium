@@ -144,8 +144,8 @@ public:
     FX_BOOL	Cut(CFX_WideString &wsCut);
     FX_BOOL	Paste(const CFX_WideString &wsPaste);
     FX_BOOL	Delete();
-    FX_BOOL	Redo(FX_BSTR bsRecord);
-    FX_BOOL	Undo(FX_BSTR bsRecord);
+    FX_BOOL	Redo(const CFX_ByteStringC& bsRecord);
+    FX_BOOL	Undo(const CFX_ByteStringC& bsRecord);
     FX_BOOL	Undo();
     FX_BOOL	Redo();
     FX_BOOL	CanUndo();
@@ -157,7 +157,7 @@ public:
     FWL_ERR SetFont(const CFX_WideString &wsFont, FX_FLOAT fSize);
     void	SetScrollOffset(FX_FLOAT fScrollOffset);
     FX_BOOL GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray &sSuggest);
-    FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf, FX_BSTR bsReplace);
+    FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf, const CFX_ByteStringC& bsReplace);
 protected:
     IFWL_Edit();
     virtual ~IFWL_Edit();

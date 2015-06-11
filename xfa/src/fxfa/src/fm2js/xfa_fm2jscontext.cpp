@@ -524,7 +524,7 @@ static XFA_FMHtmlReserveCode reservesForEncode [] = {
     {9829,	L"hearts"},
     {9830,	L"diams"},
 };
-void CXFA_FM2JSContext::Abs(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Abs(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if(args.GetLength() == 1) {
         FXJSE_HVALUE argOne = args.GetValue(0);
@@ -543,7 +543,7 @@ void CXFA_FM2JSContext::Abs(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Abs");
     }
 }
-void CXFA_FM2JSContext::Avg(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Avg(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -608,7 +608,7 @@ void CXFA_FM2JSContext::Avg(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         FXJSE_Value_SetDouble(args.GetReturnValue(), dSum / uCount);
     }
 }
-void CXFA_FM2JSContext::Ceil(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Ceil(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -624,7 +624,7 @@ void CXFA_FM2JSContext::Ceil(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ceil");
     }
 }
-void CXFA_FM2JSContext::Count(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Count(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -685,7 +685,7 @@ void CXFA_FM2JSContext::Count(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
     argValue = 0;
     FXJSE_Value_SetInteger(args.GetReturnValue(), (int32_t)uCount);
 }
-void CXFA_FM2JSContext::Floor(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Floor(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -701,7 +701,7 @@ void CXFA_FM2JSContext::Floor(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Floor");
     }
 }
-void CXFA_FM2JSContext::Max(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Max(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -801,7 +801,7 @@ void CXFA_FM2JSContext::Max(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         FXJSE_Value_SetNull(args.GetReturnValue());
     }
 }
-void CXFA_FM2JSContext::Min(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Min(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -901,7 +901,7 @@ void CXFA_FM2JSContext::Min(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         FXJSE_Value_SetNull(args.GetReturnValue());
     }
 }
-void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -981,7 +981,7 @@ void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Mod");
     }
 }
-void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -1083,7 +1083,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Round");
     }
 }
-void CXFA_FM2JSContext::Sum(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Sum(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -1156,7 +1156,7 @@ void CXFA_FM2JSContext::Sum(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         FXJSE_Value_SetDouble(args.GetReturnValue(), dSum);
     }
 }
-void CXFA_FM2JSContext::Date(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Date(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 0) {
         struct tm *pTmStruct = 0;
@@ -1177,7 +1177,7 @@ void CXFA_FM2JSContext::Date(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date");
     }
 }
-void CXFA_FM2JSContext::Date2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Date2Num(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc > 0) && (argc < 4)) {
@@ -1232,7 +1232,7 @@ void CXFA_FM2JSContext::Date2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date2Num");
     }
 }
-void CXFA_FM2JSContext::DateFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::DateFmt(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if (argc < 3) {
@@ -1280,7 +1280,7 @@ void CXFA_FM2JSContext::DateFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Date2Num");
     }
 }
-void CXFA_FM2JSContext::IsoDate2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::IsoDate2Num(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if(args.GetLength() == 1) {
         FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
@@ -1298,7 +1298,7 @@ void CXFA_FM2JSContext::IsoDate2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFX
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"IsoDate2Num");
     }
 }
-void CXFA_FM2JSContext::IsoTime2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::IsoTime2Num(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 1) {
@@ -1349,7 +1349,7 @@ void CXFA_FM2JSContext::IsoTime2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFX
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"IsoTime2Num");
     }
 }
-void CXFA_FM2JSContext::LocalDateFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::LocalDateFmt(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if (argc < 3) {
@@ -1397,7 +1397,7 @@ void CXFA_FM2JSContext::LocalDateFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CF
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"LocalDateFmt");
     }
 }
-void CXFA_FM2JSContext::LocalTimeFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::LocalTimeFmt(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if (argc < 3) {
@@ -1445,7 +1445,7 @@ void CXFA_FM2JSContext::LocalTimeFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CF
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"LocalTimeFmt");
     }
 }
-void CXFA_FM2JSContext::Num2Date(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Num2Date(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc > 0) && (argc < 4)) {
@@ -1593,7 +1593,7 @@ void CXFA_FM2JSContext::Num2Date(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2Date");
     }
 }
-void CXFA_FM2JSContext::Num2GMTime(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Num2GMTime(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc > 0) && (argc < 4)) {
@@ -1650,7 +1650,7 @@ void CXFA_FM2JSContext::Num2GMTime(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJ
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2GMTime");
     }
 }
-void CXFA_FM2JSContext::Num2Time(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Num2Time(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc > 0) && (argc < 4)) {
@@ -1707,7 +1707,7 @@ void CXFA_FM2JSContext::Num2Time(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Num2Time");
     }
 }
-void CXFA_FM2JSContext::Time(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Time(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 0) {
         time_t now;
@@ -1722,7 +1722,7 @@ void CXFA_FM2JSContext::Time(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Time");
     }
 }
-void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc > 0) && (argc < 4)) {
@@ -1818,7 +1818,7 @@ void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Time2Num");
     }
 }
-void CXFA_FM2JSContext::TimeFmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::TimeFmt(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if (argc < 3) {
@@ -2162,7 +2162,7 @@ FX_BOOL CXFA_FM2JSContext::IsIsoDateTimeFormat(const FX_CHAR* pData, int32_t iLe
     iRet = TRUE;
     return iRet;
 }
-FX_BOOL CXFA_FM2JSContext::Local2IsoDate(FXJSE_HOBJECT hThis, FX_BSTR szDate, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strIsoDate)
+FX_BOOL CXFA_FM2JSContext::Local2IsoDate(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szDate, const CFX_ByteStringC& szFormat, const CFX_ByteStringC& szLocale, CFX_ByteString &strIsoDate)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     CXFA_Document *pDoc = pContext->GetDocument();
@@ -2194,7 +2194,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(FXJSE_HOBJECT hThis, FX_BSTR szDate, FX
     strIsoDate.Format("%4d-%02d-%02d", dt.GetYear(), dt.GetMonth(), dt.GetDay());
     return TRUE;
 }
-FX_BOOL CXFA_FM2JSContext::Local2IsoTime(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strIsoTime)
+FX_BOOL CXFA_FM2JSContext::Local2IsoTime(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szTime, const CFX_ByteStringC& szFormat, const CFX_ByteStringC& szLocale, CFX_ByteString &strIsoTime)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     CXFA_Document *pDoc = pContext->GetDocument();
@@ -2228,7 +2228,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX
     strIsoTime.Format("%02d:%02d:%02d.%03d", utime.GetHour(), utime.GetMinute(), utime.GetSecond(), utime.GetMillisecond());
     return TRUE;
 }
-FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis, FX_BSTR szDate, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strLocalDate)
+FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szDate, const CFX_ByteStringC& szFormat, const CFX_ByteStringC& szLocale, CFX_ByteString &strLocalDate)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     CXFA_Document *pDoc = pContext->GetDocument();
@@ -2260,7 +2260,7 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis, FX_BSTR szDate, FX
     strLocalDate = FX_UTF8Encode(wsRet, wsRet.GetLength());
     return TRUE;
 }
-FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strLocalTime)
+FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szTime, const CFX_ByteStringC& szFormat, const CFX_ByteStringC& szLocale, CFX_ByteString &strLocalTime)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     CXFA_Document *pDoc = pContext->GetDocument();
@@ -2294,7 +2294,7 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX
     strLocalTime = FX_UTF8Encode(wsRet, wsRet.GetLength());
     return TRUE;
 }
-FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX_BSTR szFormat, FX_BSTR szLocale, CFX_ByteString &strGMTTime)
+FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szTime, const CFX_ByteStringC& szFormat, const CFX_ByteStringC& szLocale, CFX_ByteString &strGMTTime)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     CXFA_Document *pDoc = pContext->GetDocument();
@@ -2328,7 +2328,7 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis, FX_BSTR szTime, FX_BS
     strGMTTime = FX_UTF8Encode(wsRet, wsRet.GetLength());
     return TRUE;
 }
-int32_t  CXFA_FM2JSContext::DateString2Num(FX_BSTR szDateString)
+int32_t  CXFA_FM2JSContext::DateString2Num(const CFX_ByteStringC& szDateString)
 {
     FX_BOOL bFlags = FALSE;
     int32_t iLength = szDateString.GetLength();
@@ -2449,7 +2449,7 @@ static void XFA_FM_AlternateDateTimeSymbols(CFX_WideString &wsPattern, const CFX
     }
 }
 #undef XFA_N
-void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis, int32_t iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat, FX_BOOL bStandard)
+void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis, int32_t iStyle, const CFX_ByteStringC& szLocalStr, CFX_ByteString &strFormat, FX_BOOL bStandard)
 {
     FX_LOCALEDATETIMESUBCATEGORY strStyle;
     switch (iStyle) {
@@ -2499,7 +2499,7 @@ void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis, int32_t iStyle, 
     }
     strFormat = FX_UTF8Encode(strRet, strRet.GetLength());
 }
-void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis, int32_t iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat, FX_BOOL bStandard)
+void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis, int32_t iStyle, const CFX_ByteStringC& szLocalStr, CFX_ByteString &strFormat, FX_BOOL bStandard)
 {
     FX_LOCALEDATETIMESUBCATEGORY strStyle;
     switch (iStyle) {
@@ -2550,15 +2550,15 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis, int32_t iStyle, 
     }
     strFormat = FX_UTF8Encode(strRet, strRet.GetLength());
 }
-void CXFA_FM2JSContext::GetStandardDateFormat(FXJSE_HOBJECT hThis, int32_t iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat)
+void CXFA_FM2JSContext::GetStandardDateFormat(FXJSE_HOBJECT hThis, int32_t iStyle, const CFX_ByteStringC& szLocalStr, CFX_ByteString &strFormat)
 {
     GetLocalDateFormat(hThis, iStyle, szLocalStr, strFormat, TRUE);
 }
-void CXFA_FM2JSContext::GetStandardTimeFormat(FXJSE_HOBJECT hThis, int32_t iStyle, FX_BSTR szLocalStr, CFX_ByteString &strFormat)
+void CXFA_FM2JSContext::GetStandardTimeFormat(FXJSE_HOBJECT hThis, int32_t iStyle, const CFX_ByteStringC& szLocalStr, CFX_ByteString &strFormat)
 {
     GetLocalTimeFormat(hThis, iStyle, szLocalStr, strFormat, TRUE);
 }
-void CXFA_FM2JSContext::Num2AllTime(FXJSE_HOBJECT hThis, int32_t iTime, FX_BSTR szFormat, FX_BSTR szLocale, FX_BOOL bGM, CFX_ByteString &strTime)
+void CXFA_FM2JSContext::Num2AllTime(FXJSE_HOBJECT hThis, int32_t iTime, const CFX_ByteStringC& szFormat, const CFX_ByteStringC& szLocale, FX_BOOL bGM, CFX_ByteString &strTime)
 {
     int32_t iHour = 0;
     int32_t iMin = 0;
@@ -2604,7 +2604,7 @@ void CXFA_FM2JSContext::GetLocalTimeZone(int32_t &iHour, int32_t &iMin, int32_t 
     iMin = iLocalMin - iGMMin;
     iSec = iLocalSec - iGMSec;
 }
-void CXFA_FM2JSContext::Apr(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Apr(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 3) {
@@ -2661,7 +2661,7 @@ void CXFA_FM2JSContext::Apr(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Apr");
     }
 }
-void CXFA_FM2JSContext::CTerm(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::CTerm(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 3) {
@@ -2693,7 +2693,7 @@ void CXFA_FM2JSContext::CTerm(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"CTerm");
     }
 }
-void CXFA_FM2JSContext::FV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::FV(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 3) {
@@ -2735,7 +2735,7 @@ void CXFA_FM2JSContext::FV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argum
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"FV");
     }
 }
-void CXFA_FM2JSContext::IPmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::IPmt(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 5) {
@@ -2799,7 +2799,7 @@ void CXFA_FM2JSContext::IPmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"IPmt");
     }
 }
-void CXFA_FM2JSContext::NPV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::NPV(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     int32_t argc = args.GetLength();
@@ -2847,7 +2847,7 @@ void CXFA_FM2JSContext::NPV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"NPV");
     }
 }
-void CXFA_FM2JSContext::Pmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Pmt(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 3) {
@@ -2885,7 +2885,7 @@ void CXFA_FM2JSContext::Pmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Pmt");
     }
 }
-void CXFA_FM2JSContext::PPmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::PPmt(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 5) {
@@ -2950,7 +2950,7 @@ void CXFA_FM2JSContext::PPmt(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"PPmt");
     }
 }
-void CXFA_FM2JSContext::PV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::PV(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 3) {
@@ -2987,7 +2987,7 @@ void CXFA_FM2JSContext::PV(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argum
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"PV");
     }
 }
-void CXFA_FM2JSContext::Rate(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Rate(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 3) {
@@ -3019,7 +3019,7 @@ void CXFA_FM2JSContext::Rate(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Rate");
     }
 }
-void CXFA_FM2JSContext::Term(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Term(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if(args.GetLength() == 3) {
@@ -3051,7 +3051,7 @@ void CXFA_FM2JSContext::Term(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Term");
     }
 }
-void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -3127,7 +3127,7 @@ void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Choose");
     }
 }
-void CXFA_FM2JSContext::Exists(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Exists(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 1) {
         FXJSE_HVALUE argOne = args.GetValue(0);
@@ -3138,7 +3138,7 @@ void CXFA_FM2JSContext::Exists(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Exists");
     }
 }
-void CXFA_FM2JSContext::HasValue(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::HasValue(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 1) {
         FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
@@ -3158,7 +3158,7 @@ void CXFA_FM2JSContext::HasValue(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"HasValue");
     }
 }
-void CXFA_FM2JSContext::Oneof(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Oneof(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if(argc > 1) {
@@ -3185,7 +3185,7 @@ void CXFA_FM2JSContext::Oneof(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Oneof");
     }
 }
-void CXFA_FM2JSContext::Within(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Within(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if(argc == 3) {
@@ -3218,7 +3218,7 @@ void CXFA_FM2JSContext::Within(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Within");
     }
 }
-void CXFA_FM2JSContext::If(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::If(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if (args.GetLength() == 3) {
@@ -3235,7 +3235,7 @@ void CXFA_FM2JSContext::If(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argum
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"If");
     }
 }
-void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -3263,7 +3263,7 @@ void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Eval");
     }
 }
-void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -3332,7 +3332,7 @@ void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ref");
     }
 }
-void CXFA_FM2JSContext::UnitType(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::UnitType(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 1) {
         FXJSE_HVALUE unitspanValue = GetSimpleHValue(hThis, args, 0);
@@ -3433,7 +3433,7 @@ void CXFA_FM2JSContext::UnitType(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitType");
     }
 }
-void CXFA_FM2JSContext::UnitValue(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::UnitValue(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc == 1) || (argc == 2)) {
@@ -3581,7 +3581,7 @@ void CXFA_FM2JSContext::UnitValue(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJS
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"UnitValue");
     }
 }
-void CXFA_FM2JSContext::At(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::At(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -3608,7 +3608,7 @@ void CXFA_FM2JSContext::At(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argum
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"At");
     }
 }
-void CXFA_FM2JSContext::Concat(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Concat(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -3639,7 +3639,7 @@ void CXFA_FM2JSContext::Concat(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Concat");
     }
 }
-void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -3682,7 +3682,7 @@ void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Decode");
     }
 }
-void CXFA_FM2JSContext::DecodeURL (FX_BSTR szURLString,  CFX_ByteTextBuf &szResultString)
+void CXFA_FM2JSContext::DecodeURL (const CFX_ByteStringC& szURLString,  CFX_ByteTextBuf &szResultString)
 {
     CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString.GetCStr(), szURLString.GetLength());
     const FX_WCHAR* pData = wsURLString;
@@ -3734,7 +3734,7 @@ void CXFA_FM2JSContext::DecodeURL (FX_BSTR szURLString,  CFX_ByteTextBuf &szResu
     wsResultBuf.AppendChar(0);
     szResultString  = FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
 }
-void CXFA_FM2JSContext::DecodeHTML(FX_BSTR szHTMLString, CFX_ByteTextBuf &szResultString)
+void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString, CFX_ByteTextBuf &szResultString)
 {
     CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(szHTMLString.GetCStr(), szHTMLString.GetLength());
     FX_WCHAR strString[9];
@@ -3804,7 +3804,7 @@ void CXFA_FM2JSContext::DecodeHTML(FX_BSTR szHTMLString, CFX_ByteTextBuf &szResu
     wsResultBuf.AppendChar(0);
     szResultString  = FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
 }
-void CXFA_FM2JSContext::DecodeXML (FX_BSTR szXMLString,  CFX_ByteTextBuf &szResultString)
+void CXFA_FM2JSContext::DecodeXML (const CFX_ByteStringC& szXMLString,  CFX_ByteTextBuf &szResultString)
 {
     CFX_WideString wsXMLString = CFX_WideString::FromUTF8(szXMLString.GetCStr(), szXMLString.GetLength());
     FX_WCHAR strString[9];
@@ -3903,7 +3903,7 @@ void CXFA_FM2JSContext::DecodeXML (FX_BSTR szXMLString,  CFX_ByteTextBuf &szResu
     wsXMLBuf.AppendChar(0);
     szResultString  = FX_UTF8Encode(wsXMLBuf.GetBuffer(), wsXMLBuf.GetLength());
 }
-void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -3946,7 +3946,7 @@ void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Encode");
     }
 }
-void CXFA_FM2JSContext::EncodeURL (FX_BSTR szURLString,  CFX_ByteTextBuf &szResultBuf)
+void CXFA_FM2JSContext::EncodeURL (const CFX_ByteStringC& szURLString,  CFX_ByteTextBuf &szResultBuf)
 {
     CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString.GetCStr(), szURLString.GetLength());
     CFX_WideTextBuf wsResultBuf;
@@ -4050,7 +4050,7 @@ void CXFA_FM2JSContext::EncodeURL (FX_BSTR szURLString,  CFX_ByteTextBuf &szResu
     wsResultBuf.AppendChar(0);
     szResultBuf = FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
 }
-void CXFA_FM2JSContext::EncodeHTML(FX_BSTR szHTMLString, CFX_ByteTextBuf &szResultBuf)
+void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString, CFX_ByteTextBuf &szResultBuf)
 {
     CFX_ByteString str = szHTMLString.GetCStr();
     CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str, str.GetLength());
@@ -4102,7 +4102,7 @@ void CXFA_FM2JSContext::EncodeHTML(FX_BSTR szHTMLString, CFX_ByteTextBuf &szResu
     wsResultBuf.AppendChar(0);
     szResultBuf  = FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
 }
-void CXFA_FM2JSContext::EncodeXML (FX_BSTR szXMLString,  CFX_ByteTextBuf &szResultBuf)
+void CXFA_FM2JSContext::EncodeXML (const CFX_ByteStringC& szXMLString,  CFX_ByteTextBuf &szResultBuf)
 {
     CFX_WideString wsXMLString = CFX_WideString::FromUTF8(szXMLString.GetCStr(), szXMLString.GetLength());
     CFX_WideTextBuf wsResultBuf;
@@ -4188,7 +4188,7 @@ void CXFA_FM2JSContext::EncodeXML (FX_BSTR szXMLString,  CFX_ByteTextBuf &szResu
     wsResultBuf.AppendChar(0);
     szResultBuf = FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
 }
-FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(FX_WSTR pData, uint32_t &iCode)
+FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData, uint32_t &iCode)
 {
     int32_t iLength = pData.GetLength();
     uint32_t uHash = FX_HashCode_String_GetW(pData.GetPtr(), iLength);
@@ -4228,7 +4228,7 @@ FX_BOOL CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode, CFX_WideString &wsHTMLRe
     } while (iStart <= iEnd);
     return FALSE;
 }
-static FX_BOOL XFA_PATTERN_STRING_Type(FX_BSTR szPattern, FX_DWORD& patternType)
+static FX_BOOL XFA_PATTERN_STRING_Type(const CFX_ByteStringC& szPattern, FX_DWORD& patternType)
 {
     CFX_WideString wsPattern = CFX_WideString::FromUTF8(szPattern.GetCStr(), szPattern.GetLength());
     if (FX_WSTRC(L"datetime") == wsPattern.Left(8)) {
@@ -4305,7 +4305,7 @@ static FX_BOOL XFA_PATTERN_STRING_Type(FX_BSTR szPattern, FX_DWORD& patternType)
     }
     return FALSE;
 }
-void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     int32_t argc = args.GetLength();
@@ -4390,7 +4390,7 @@ void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Format");
     }
 }
-void CXFA_FM2JSContext::Left(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Left(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -4418,7 +4418,7 @@ void CXFA_FM2JSContext::Left(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Left");
     }
 }
-void CXFA_FM2JSContext::Len(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Len(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -4436,7 +4436,7 @@ void CXFA_FM2JSContext::Len(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Len");
     }
 }
-void CXFA_FM2JSContext::Lower(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Lower(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc > 0) && (argc < 3)) {
@@ -4480,7 +4480,7 @@ void CXFA_FM2JSContext::Lower(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Lower");
     }
 }
-void CXFA_FM2JSContext::Ltrim(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Ltrim(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -4499,7 +4499,7 @@ void CXFA_FM2JSContext::Ltrim(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Ltrim");
     }
 }
-void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if (args.GetLength() == 2) {
@@ -4627,7 +4627,7 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Parse");
     }
 }
-void CXFA_FM2JSContext::Replace(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Replace(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc == 2) || (argc == 3)) {
@@ -4692,7 +4692,7 @@ void CXFA_FM2JSContext::Replace(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Replace");
     }
 }
-void CXFA_FM2JSContext::Right(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Right(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -4720,7 +4720,7 @@ void CXFA_FM2JSContext::Right(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Right");
     }
 }
-void CXFA_FM2JSContext::Rtrim(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Rtrim(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -4739,7 +4739,7 @@ void CXFA_FM2JSContext::Rtrim(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Rtrim");
     }
 }
-void CXFA_FM2JSContext::Space(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Space(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -4765,7 +4765,7 @@ void CXFA_FM2JSContext::Space(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Space");
     }
 }
-void CXFA_FM2JSContext::Str(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Str(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc > 0) && (argc < 4)) {
@@ -4888,7 +4888,7 @@ void CXFA_FM2JSContext::Str(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Str");
     }
 }
-void CXFA_FM2JSContext::Stuff(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Stuff(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc == 3) || (argc == 4)) {
@@ -4949,7 +4949,7 @@ void CXFA_FM2JSContext::Stuff(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Stuff");
     }
 }
-void CXFA_FM2JSContext::Substr(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Substr(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if(argc == 3) {
@@ -4990,7 +4990,7 @@ void CXFA_FM2JSContext::Substr(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_A
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Substr");
     }
 }
-void CXFA_FM2JSContext::Uuid(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Uuid(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if((argc == 0) || (argc == 1)) {
@@ -5013,7 +5013,7 @@ void CXFA_FM2JSContext::Uuid(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Uuid");
     }
 }
-void CXFA_FM2JSContext::Upper(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Upper(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc > 0) && (argc < 3)) {
@@ -5057,7 +5057,7 @@ void CXFA_FM2JSContext::Upper(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Ar
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Upper");
     }
 }
-void CXFA_FM2JSContext::WordNum(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::WordNum(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t argc = args.GetLength();
     if ((argc > 0) && (argc < 4)) {
@@ -5114,7 +5114,7 @@ void CXFA_FM2JSContext::WordNum(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"WordNum");
     }
 }
-void CXFA_FM2JSContext::TrillionUS(FX_BSTR szData, CFX_ByteTextBuf &strBuf)
+void CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData, CFX_ByteTextBuf &strBuf)
 {
     CFX_ByteStringC pUnits[] =    { "zero", "one", "two", "three",	"four", "five", "six", "seven", "eight", "nine"};
     CFX_ByteStringC pCapUnits[]	= { "Zero", "One", "Two", "Three",	"Four", "Five", "Six", "Seven", "Eight", "Nine"};
@@ -5205,7 +5205,7 @@ void CXFA_FM2JSContext::TrillionUS(FX_BSTR szData, CFX_ByteTextBuf &strBuf)
         iIndex += 3;
     }
 }
-void CXFA_FM2JSContext::WordUS(FX_BSTR szData, int32_t iStyle, CFX_ByteTextBuf &strBuf)
+void CXFA_FM2JSContext::WordUS(const CFX_ByteStringC& szData, int32_t iStyle, CFX_ByteTextBuf &strBuf)
 {
     const FX_CHAR* pData = szData.GetCStr();
     int32_t iLength = szData.GetLength();
@@ -5305,7 +5305,7 @@ void CXFA_FM2JSContext::WordUS(FX_BSTR szData, int32_t iStyle, CFX_ByteTextBuf &
             break;
     }
 }
-void CXFA_FM2JSContext::Get(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Get(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     int32_t argc = args.GetLength();
@@ -5337,7 +5337,7 @@ void CXFA_FM2JSContext::Get(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Get");
     }
 }
-void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     int32_t argc = args.GetLength();
@@ -5400,7 +5400,7 @@ void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arg
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Post");
     }
 }
-void CXFA_FM2JSContext::Put(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::Put(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     int32_t argc = args.GetLength();
@@ -5443,7 +5443,7 @@ void CXFA_FM2JSContext::Put(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Argu
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Put");
     }
 }
-void CXFA_FM2JSContext::assign_value_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::assign_value_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -5491,7 +5491,7 @@ void CXFA_FM2JSContext::assign_value_operator(FXJSE_HOBJECT hThis, FX_BSTR szFun
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::logical_or_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::logical_or_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         FXJSE_HVALUE argFirst = GetSimpleHValue(hThis, args, 0);
@@ -5510,7 +5510,7 @@ void CXFA_FM2JSContext::logical_or_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncN
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::logical_and_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::logical_and_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         FXJSE_HVALUE argFirst = GetSimpleHValue(hThis, args, 0);
@@ -5529,7 +5529,7 @@ void CXFA_FM2JSContext::logical_and_operator(FXJSE_HOBJECT hThis, FX_BSTR szFunc
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::equality_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::equality_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         if (fm_ref_equal(hThis, args)) {
@@ -5558,7 +5558,7 @@ void CXFA_FM2JSContext::equality_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncNam
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::notequality_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::notequality_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         if (fm_ref_equal(hThis, args)) {
@@ -5617,7 +5617,7 @@ FX_BOOL CXFA_FM2JSContext::fm_ref_equal(FXJSE_HOBJECT hThis, CFXJSE_Arguments &a
     FXJSE_Value_Release(argSecond);
     return bRet;
 }
-void CXFA_FM2JSContext::less_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::less_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         FXJSE_HVALUE argFirst = GetSimpleHValue(hThis, args, 0);
@@ -5642,7 +5642,7 @@ void CXFA_FM2JSContext::less_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, C
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::lessequal_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::lessequal_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         FXJSE_HVALUE argFirst = GetSimpleHValue(hThis, args, 0);
@@ -5667,7 +5667,7 @@ void CXFA_FM2JSContext::lessequal_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncNa
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::greater_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::greater_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         FXJSE_HVALUE argFirst = GetSimpleHValue(hThis, args, 0);
@@ -5692,7 +5692,7 @@ void CXFA_FM2JSContext::greater_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::greaterequal_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::greaterequal_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         FXJSE_HVALUE argFirst = GetSimpleHValue(hThis, args, 0);
@@ -5717,7 +5717,7 @@ void CXFA_FM2JSContext::greaterequal_operator(FXJSE_HOBJECT hThis, FX_BSTR szFun
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::plus_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::plus_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         FXJSE_HVALUE argFirst = args.GetValue(0);
@@ -5736,7 +5736,7 @@ void CXFA_FM2JSContext::plus_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, C
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::minus_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::minus_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         FXJSE_HVALUE argFirst = GetSimpleHValue(hThis, args, 0);
@@ -5755,7 +5755,7 @@ void CXFA_FM2JSContext::minus_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, 
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::multiple_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::multiple_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     if (args.GetLength() == 2) {
         FXJSE_HVALUE argFirst = GetSimpleHValue(hThis, args, 0);
@@ -5774,7 +5774,7 @@ void CXFA_FM2JSContext::multiple_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncNam
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::divide_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::divide_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     if (args.GetLength() == 2) {
@@ -5797,7 +5797,7 @@ void CXFA_FM2JSContext::divide_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName,
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::positive_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::positive_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t iLength = args.GetLength();
     if (iLength == 1) {
@@ -5813,7 +5813,7 @@ void CXFA_FM2JSContext::positive_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncNam
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::negative_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::negative_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t iLength = args.GetLength();
     if (iLength == 1) {
@@ -5829,7 +5829,7 @@ void CXFA_FM2JSContext::negative_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncNam
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::logical_not_operator(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::logical_not_operator(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t iLength = args.GetLength();
     if (iLength == 1) {
@@ -5846,7 +5846,7 @@ void CXFA_FM2JSContext::logical_not_operator(FXJSE_HOBJECT hThis, FX_BSTR szFunc
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -5979,7 +5979,7 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CF
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -6107,7 +6107,7 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName,
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::eval_translation (FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::eval_translation (FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -6135,7 +6135,7 @@ void CXFA_FM2JSContext::eval_translation (FXJSE_HOBJECT hThis,	FX_BSTR szFuncNam
         pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"Eval");
     }
 }
-void CXFA_FM2JSContext::is_fm_object(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::is_fm_object(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t iLength = args.GetLength();
     if (iLength == 1) {
@@ -6146,7 +6146,7 @@ void CXFA_FM2JSContext::is_fm_object(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CF
         FXJSE_Value_SetBoolean(args.GetReturnValue(), FALSE);
     }
 }
-void CXFA_FM2JSContext::is_fm_array(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::is_fm_array(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     int32_t iLength = args.GetLength();
     if (iLength == 1) {
@@ -6158,7 +6158,7 @@ void CXFA_FM2JSContext::is_fm_array(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFX
         FXJSE_Value_SetBoolean(args.GetReturnValue(), FALSE);
     }
 }
-void CXFA_FM2JSContext::get_fm_value(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::get_fm_value(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -6189,7 +6189,7 @@ void CXFA_FM2JSContext::get_fm_value(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CF
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::get_fm_jsobj(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::get_fm_jsobj(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -6211,7 +6211,7 @@ void CXFA_FM2JSContext::get_fm_jsobj(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CF
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::fm_var_filter(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::fm_var_filter(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -6264,7 +6264,7 @@ void CXFA_FM2JSContext::fm_var_filter(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, C
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
     }
 }
-void CXFA_FM2JSContext::concat_fm_object(FXJSE_HOBJECT hThis,	FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_FM2JSContext::concat_fm_object(FXJSE_HOBJECT hThis,	const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
     FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
@@ -6513,7 +6513,7 @@ FX_BOOL CXFA_FM2JSContext::SetObjectDefaultValue(FXJSE_HVALUE hObjectValue, FXJS
     }
     return bSuccess;
 }
-void CXFA_FM2JSContext::GenerateSomExpression(FX_BSTR szName, int32_t iIndexFlags, int32_t iIndexValue, FX_BOOL bIsStar, CFX_ByteString& szSomExp)
+void CXFA_FM2JSContext::GenerateSomExpression(const CFX_ByteStringC& szName, int32_t iIndexFlags, int32_t iIndexValue, FX_BOOL bIsStar, CFX_ByteString& szSomExp)
 {
     if(bIsStar) {
         szSomExp = szName + FX_BSTRC("[*]");
@@ -6537,7 +6537,7 @@ void CXFA_FM2JSContext::GenerateSomExpression(FX_BSTR szName, int32_t iIndexFlag
         szSomExp += FX_BSTRC("]");
     }
 }
-FX_BOOL CXFA_FM2JSContext::GetObjectByName(FXJSE_HOBJECT hThis, FXJSE_HVALUE accessorValue, FX_BSTR szAccessorName)
+FX_BOOL CXFA_FM2JSContext::GetObjectByName(FXJSE_HOBJECT hThis, FXJSE_HVALUE accessorValue, const CFX_ByteStringC& szAccessorName)
 {
     FX_BOOL bFlags = FALSE;
     CXFA_FM2JSContext*	pContext = (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
@@ -6555,7 +6555,7 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(FXJSE_HOBJECT hThis, FXJSE_HVALUE acc
     }
     return bFlags;
 }
-int32_t CXFA_FM2JSContext::ResolveObjects(FXJSE_HOBJECT hThis, FXJSE_HVALUE hRefValue, FX_BSTR bsSomExp, XFA_RESOLVENODE_RS &resoveNodeRS, FX_BOOL bdotAccessor , FX_BOOL bHasNoResolveName )
+int32_t CXFA_FM2JSContext::ResolveObjects(FXJSE_HOBJECT hThis, FXJSE_HVALUE hRefValue, const CFX_ByteStringC& bsSomExp, XFA_RESOLVENODE_RS &resoveNodeRS, FX_BOOL bdotAccessor , FX_BOOL bHasNoResolveName )
 {
     CFX_WideString wsSomExpression = CFX_WideString::FromUTF8(bsSomExp.GetCStr(), bsSomExp.GetLength());
     int32_t iRet = -1;
@@ -6671,7 +6671,7 @@ int32_t CXFA_FM2JSContext::HValueToInteger(FXJSE_HOBJECT hThis, FXJSE_HVALUE hVa
     }
     return iValue;
 }
-FX_DOUBLE CXFA_FM2JSContext::StringToDouble(FX_BSTR szStringVal)
+FX_DOUBLE CXFA_FM2JSContext::StringToDouble(const CFX_ByteStringC& szStringVal)
 {
     return XFA_ByteStringToDouble(szStringVal);
 }

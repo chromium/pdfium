@@ -214,7 +214,7 @@ void CBC_OneDimWriter::ShowBitmapChars(CFX_DIBitmap *pOutBitmap, const CFX_ByteS
     geBitmap.Attach(pOutBitmap);
     geBitmap.SetDIBits(ge.GetBitmap(), (int)locX, (int)locY);
 }
-void CBC_OneDimWriter::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice *device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e)
+void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice *device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e)
 {
     if (device == NULL && pOutBitmap == NULL) {
         e = BCExceptionIllegalArgument;
@@ -278,7 +278,7 @@ void CBC_OneDimWriter::ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX
     }
     FX_Free(pCharPos);
 }
-void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, FX_WSTR contents, int32_t &e)
+void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, const CFX_WideStringC& contents, int32_t &e)
 {
     if (m_output == NULL) {
         BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -311,7 +311,7 @@ void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, FX_WSTR con
     }
     pOutBitmap = pStretchBitmap;
 }
-void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix* matrix, FX_WSTR contents, int32_t &e)
+void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix* matrix, const CFX_WideStringC& contents, int32_t &e)
 {
     if (m_output == NULL) {
         BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -342,7 +342,7 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device, const CFX_Ma
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
 }
-void CBC_OneDimWriter::RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength,  FX_BOOL isDevice, int32_t &e)
+void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents, uint8_t* code, int32_t codeLength,  FX_BOOL isDevice, int32_t &e)
 {
     if (codeLength < 1) {
         BC_EXCEPTION_CHECK_ReturnVoid(e);

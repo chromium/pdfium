@@ -94,7 +94,7 @@ IFX_Locale* CFX_LocaleMgr::GetLocale(FX_WORD lcid)
     }
     return pLocale;
 }
-IFX_Locale* CFX_LocaleMgr::GetLocaleByName(FX_WSTR wsLocaleName)
+IFX_Locale* CFX_LocaleMgr::GetLocaleByName(const CFX_WideStringC& wsLocaleName)
 {
     return NULL;
 }

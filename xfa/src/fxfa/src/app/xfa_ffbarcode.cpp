@@ -12,7 +12,7 @@
 #include "xfa_ffpageview.h"
 #include "xfa_fftextedit.h"
 #include "xfa_ffbarcode.h"
-static XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(FX_WSTR wsName);
+static XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(const CFX_WideStringC& wsName);
 CXFA_FFBarcode::CXFA_FFBarcode(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFTextEdit(pPageView, pDataAcc)
 {
@@ -200,7 +200,7 @@ extern const XFA_BARCODETYPEENUMINFO g_XFABarCodeTypeEnumData[] = {
     {0xfb48155c, L"code3Of9", XFA_BARCODETYPE_code3Of9, BC_CODE39},
 };
 extern const int32_t g_iXFABarcodeTypeCount = sizeof(g_XFABarCodeTypeEnumData) / sizeof(XFA_BARCODETYPEENUMINFO);
-static XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(FX_WSTR wsName)
+static XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(const CFX_WideStringC& wsName)
 {
     int32_t iLength = wsName.GetLength();
     if (iLength == 0) {

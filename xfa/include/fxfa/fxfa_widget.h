@@ -33,7 +33,7 @@ public:
     void			ResetData();
 
 
-    void			SetImageEdit(FX_WSTR wsContentType, FX_WSTR wsHref, FX_WSTR wsData);
+    void			SetImageEdit(const CFX_WideStringC& wsContentType, const CFX_WideStringC& wsHref, const CFX_WideStringC& wsData);
 
     CXFA_WidgetAcc*	GetExclGroup();
     CXFA_FFDocView*		GetDocView();

@@ -142,12 +142,12 @@ FWL_ERR CFWL_Edit::DoClipboard(int32_t iCmd)
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
     return ((IFWL_Edit*)m_pImp)->DoClipboard(iCmd);
 }
-FX_BOOL CFWL_Edit::Redo(FX_BSTR bsRecord)
+FX_BOOL CFWL_Edit::Redo(const CFX_ByteStringC& bsRecord)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FALSE);
     return ((IFWL_Edit*)m_pImp)->Redo(bsRecord);
 }
-FX_BOOL CFWL_Edit::Undo(FX_BSTR bsRecord)
+FX_BOOL CFWL_Edit::Undo(const CFX_ByteStringC& bsRecord)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FALSE);
     return ((IFWL_Edit*)m_pImp)->Undo(bsRecord);
@@ -214,7 +214,7 @@ FX_BOOL CFWL_Edit::GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray &sSugg
 {
     return ((IFWL_Edit*)m_pImp)->GetSuggestWords(pointf, sSuggest);
 }
-FX_BOOL CFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf, FX_BSTR bsReplace)
+FX_BOOL CFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf, const CFX_ByteStringC& bsReplace)
 {
     return ((IFWL_Edit*)m_pImp)->ReplaceSpellCheckWord(pointf, bsReplace);
 }

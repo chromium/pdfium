@@ -136,7 +136,7 @@ void CPDFXFA_App::GetAppName(CFX_WideString& wsName)
     }
 }
 
-void CPDFXFA_App::SetAppType(FX_WSTR wsAppType)
+void CPDFXFA_App::SetAppType(const CFX_WideStringC& wsAppType)
 {
     m_csAppType = wsAppType;
 }
@@ -178,7 +178,7 @@ void CPDFXFA_App::Beep(FX_DWORD dwType)
     }
 }
 
-int32_t CPDFXFA_App::MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle, FX_DWORD dwIconType, FX_DWORD dwButtonType)
+int32_t CPDFXFA_App::MsgBox(const CFX_WideStringC& wsMessage, const CFX_WideStringC& wsTitle, FX_DWORD dwIconType, FX_DWORD dwButtonType)
 {
     CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
     if (!pEnv)
@@ -231,7 +231,7 @@ int32_t CPDFXFA_App::MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle, FX_DWORD dwIconT
     return XFA_IDYes;
 }
 
-void CPDFXFA_App::Response(CFX_WideString &wsAnswer, FX_WSTR wsQuestion, FX_WSTR wsTitle, FX_WSTR wsDefaultAnswer, FX_BOOL bMark)
+void CPDFXFA_App::Response(CFX_WideString &wsAnswer, const CFX_WideStringC& wsQuestion, const CFX_WideStringC& wsTitle, const CFX_WideStringC& wsDefaultAnswer, FX_BOOL bMark)
 {
     CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
     if (pEnv)
@@ -271,7 +271,7 @@ int32_t CPDFXFA_App::GetDocumentCountInBatch()
     return 0;
 }
 
-IFX_FileRead* CPDFXFA_App::DownloadURL(FX_WSTR wsURL)
+IFX_FileRead* CPDFXFA_App::DownloadURL(const CFX_WideStringC& wsURL)
 {
     CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
     if (pEnv)
@@ -281,8 +281,8 @@ IFX_FileRead* CPDFXFA_App::DownloadURL(FX_WSTR wsURL)
     return NULL;
 }
 
-FX_BOOL CPDFXFA_App::PostRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsContentType,
-                                            FX_WSTR wsEncode, FX_WSTR wsHeader, CFX_WideString &wsResponse)
+FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideStringC& wsURL, const CFX_WideStringC& wsData, const CFX_WideStringC& wsContentType,
+                                            const CFX_WideStringC& wsEncode, const CFX_WideStringC& wsHeader, CFX_WideString &wsResponse)
 {
     CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
     if (pEnv)
@@ -293,7 +293,7 @@ FX_BOOL CPDFXFA_App::PostRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsCon
     return FALSE;
 }
 
-FX_BOOL CPDFXFA_App::PutRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsEncode)
+FX_BOOL CPDFXFA_App::PutRequestURL(const CFX_WideStringC& wsURL, const CFX_WideStringC& wsData, const CFX_WideStringC& wsEncode)
 {
     CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
     if (pEnv)
@@ -545,7 +545,7 @@ void CPDFXFA_App::LoadString(int32_t iStringID, CFX_WideString &wsString)
 
 }
 
-FX_BOOL CPDFXFA_App::ShowFileDialog(FX_WSTR wsTitle, FX_WSTR wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen)
+FX_BOOL CPDFXFA_App::ShowFileDialog(const CFX_WideStringC& wsTitle, const CFX_WideStringC& wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen)
 {
     return FALSE;
 }

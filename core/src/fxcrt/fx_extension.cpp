@@ -11,7 +11,7 @@
 #else
 #include <ctime>
 #endif
-FX_HFILE FX_File_Open(FX_BSTR fileName, FX_DWORD dwMode)
+FX_HFILE FX_File_Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode)
 {
     IFXCRT_FileAccess* pFA = FXCRT_FileAccess_Create();
     if (pFA && !pFA->Open(fileName, dwMode)) {
@@ -20,7 +20,7 @@ FX_HFILE FX_File_Open(FX_BSTR fileName, FX_DWORD dwMode)
     }
     return (FX_HFILE)pFA;
 }
-FX_HFILE FX_File_Open(FX_WSTR fileName, FX_DWORD dwMode)
+FX_HFILE FX_File_Open(const CFX_WideStringC& fileName, FX_DWORD dwMode)
 {
     IFXCRT_FileAccess* pFA = FXCRT_FileAccess_Create();
     if (pFA && !pFA->Open(fileName, dwMode)) {
@@ -80,7 +80,7 @@ FX_BOOL FX_File_Truncate(FX_HFILE hFile, FX_FILESIZE szFile)
     FXSYS_assert(hFile != NULL);
     return ((IFXCRT_FileAccess*)hFile)->Truncate(szFile);
 }
-IFX_FileAccess* FX_CreateDefaultFileAccess(FX_WSTR wsPath)
+IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath)
 {
 	if (wsPath.GetLength() == 0)
 		return NULL;

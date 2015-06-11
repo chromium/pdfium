@@ -327,7 +327,7 @@ CPDF_Document* CXFA_FFDoc::GetPDFDoc()
     return m_pPDFDoc;
 }
 #define _FXLIB_NEW_VERSION_
-CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(FX_WSTR wsName, int32_t &iImageXDpi, int32_t &iImageYDpi)
+CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName, int32_t &iImageXDpi, int32_t &iImageYDpi)
 {
     if (!m_pPDFDoc) {
         return NULL;
@@ -399,7 +399,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(FX_WSTR wsName, int32_t &iImageXDpi, 
     m_mapNamedImages.SetAt((void*)(uintptr_t)dwHash, imageDIBDpi);
     return (CFX_DIBitmap*)imageDIBDpi->pDibSource;
 }
-IFDE_XMLElement* CXFA_FFDoc::GetPackageData(FX_WSTR wsPackage)
+IFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage)
 {
     FX_DWORD packetHash = FX_HashCode_String_GetW(wsPackage.GetPtr(), wsPackage.GetLength());
     CXFA_Object* pObject = m_pDocument->GetXFANode(packetHash);
@@ -410,7 +410,7 @@ IFDE_XMLElement* CXFA_FFDoc::GetPackageData(FX_WSTR wsPackage)
     IFDE_XMLNode *pXMLNode = pNode->GetXMLMappingNode();
     return (pXMLNode && pXMLNode->GetType() == FDE_XMLNODE_Element) ? (IFDE_XMLElement *)pXMLNode : NULL;
 }
-FX_BOOL CXFA_FFDoc::SavePackage(FX_WSTR wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext )
+FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage, IFX_FileWrite* pFile, IXFA_ChecksumContext *pCSContext )
 {
     IXFA_PacketExport *pExport = IXFA_PacketExport::Create(m_pDocument);
     if (!pExport) {

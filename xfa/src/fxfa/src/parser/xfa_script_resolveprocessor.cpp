@@ -187,7 +187,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_NumberSign(CXFA_ResolveNodesData
     }
     return rnd.m_Nodes.GetSize();
 }
-int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_ForAttributeRs(CXFA_Object* curNode, CXFA_ResolveNodesData &rnd, FX_WSTR strAttr)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_ForAttributeRs(CXFA_Object* curNode, CXFA_ResolveNodesData &rnd, const CFX_WideStringC& strAttr)
 {
     XFA_LPCSCRIPTATTRIBUTEINFO lpScriptAttribute = XFA_GetScriptAttributeByName(curNode->GetClassID(), strAttr);
     if(lpScriptAttribute) {
@@ -496,7 +496,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_PopStack(CFX_Int32Array &stack)
     }
     return nType;
 }
-int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(FX_WSTR wsExpression, int32_t nStart, CXFA_ResolveNodesData &rnd)
+int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(const CFX_WideStringC& wsExpression, int32_t nStart, CXFA_ResolveNodesData &rnd)
 {
     FXSYS_assert(nStart > -1);
     int32_t iLength = wsExpression.GetLength();

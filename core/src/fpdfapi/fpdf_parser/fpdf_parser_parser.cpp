@@ -335,7 +335,7 @@ FX_FILESIZE CPDF_Parser::GetObjectOffset(FX_DWORD objnum)
     }
     return 0;
 }
-static int32_t GetDirectInteger(CPDF_Dictionary* pDict, FX_BSTR key)
+static int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteStringC& key)
 {
     CPDF_Object* pObj = pDict->GetElement(key);
     if (pObj == NULL) {
@@ -346,7 +346,7 @@ static int32_t GetDirectInteger(CPDF_Dictionary* pDict, FX_BSTR key)
     }
     return 0;
 }
-static FX_BOOL CheckDirectType(CPDF_Dictionary* pDict, FX_BSTR key, int32_t iType)
+static FX_BOOL CheckDirectType(CPDF_Dictionary* pDict, const CFX_ByteStringC& key, int32_t iType)
 {
     CPDF_Object* pObj = pDict->GetElement(key);
     if (!pObj) {
@@ -2549,7 +2549,7 @@ FX_BOOL CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos, FX_FILESIZE limit, 
     }
     return TRUE;
 }
-FX_BOOL CPDF_SyntaxParser::SearchWord(FX_BSTR tag, FX_BOOL bWholeWord, FX_BOOL bForward, FX_FILESIZE limit)
+FX_BOOL CPDF_SyntaxParser::SearchWord(const CFX_ByteStringC& tag, FX_BOOL bWholeWord, FX_BOOL bForward, FX_FILESIZE limit)
 {
     int32_t taglen = tag.GetLength();
     if (taglen == 0) {
@@ -2620,7 +2620,7 @@ struct _SearchTagRecord {
     FX_DWORD	m_Len;
     FX_DWORD	m_Offset;
 };
-int32_t CPDF_SyntaxParser::SearchMultiWord(FX_BSTR tags, FX_BOOL bWholeWord, FX_FILESIZE limit)
+int32_t CPDF_SyntaxParser::SearchMultiWord(const CFX_ByteStringC& tags, FX_BOOL bWholeWord, FX_FILESIZE limit)
 {
     int32_t ntags = 1, i;
     for (i = 0; i < tags.GetLength(); i ++)
@@ -2682,7 +2682,7 @@ end:
     FX_Free(pPatterns);
     return found;
 }
-FX_FILESIZE CPDF_SyntaxParser::FindTag(FX_BSTR tag, FX_FILESIZE limit)
+FX_FILESIZE CPDF_SyntaxParser::FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit)
 {
     int32_t taglen = tag.GetLength();
     int32_t match = 0;

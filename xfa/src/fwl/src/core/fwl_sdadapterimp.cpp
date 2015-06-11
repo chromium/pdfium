@@ -79,7 +79,7 @@ FWL_ERR		CFWL_SDAdapterWidgetMgr::SetWidgetIcon(IFWL_Widget *pWidget, const CFX_
 {
     return FWL_ERR_Succeeded;
 }
-FWL_ERR		CFWL_SDAdapterWidgetMgr::SetWidgetCaption(IFWL_Widget *pWidget, FX_WSTR wsCaption)
+FWL_ERR		CFWL_SDAdapterWidgetMgr::SetWidgetCaption(IFWL_Widget *pWidget, const CFX_WideStringC& wsCaption)
 {
     return FWL_ERR_Succeeded;
 }

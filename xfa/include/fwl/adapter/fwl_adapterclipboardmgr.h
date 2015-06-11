@@ -26,11 +26,11 @@ public:
     virtual int32_t	GetDataSize(FWL_HCLIPBOARDDATA hData) = 0;
     virtual void*	LockDataBuffer(FWL_HCLIPBOARDDATA hData) = 0;
     virtual FX_BOOL		UnLockDataBuffer(FWL_HCLIPBOARDDATA hData) = 0;
-    virtual FWL_ERR		SetStringData(FX_WSTR ws) = 0;
-    virtual FWL_ERR		SetStringData(FX_BSTR bs) = 0;
+    virtual FWL_ERR		SetStringData(const CFX_WideStringC& ws) = 0;
+    virtual FWL_ERR		SetStringData(const CFX_ByteStringC& bs) = 0;
     virtual FWL_ERR		GetStringData(CFX_WideString &ws) = 0;
     virtual FWL_ERR		GetStringData(CFX_ByteString &bs) = 0;
     virtual FWL_ERR		EnumFormats(CFX_DWordArray &formats) = 0;
-    virtual FX_DWORD	RegisterFormat(FX_WSTR wsFormat) = 0;
+    virtual FX_DWORD	RegisterFormat(const CFX_WideStringC& wsFormat) = 0;
 };
 #endif

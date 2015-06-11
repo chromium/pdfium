@@ -36,7 +36,7 @@ public:
     CPDF_StructElement* m_pTaggedElement;
     CPDF_LayoutElement* m_pParentElement;
     CFX_PtrArray	m_ChildArray;
-    LayoutType ConvertLayoutType(FX_BSTR name);
+    LayoutType ConvertLayoutType(const CFX_ByteStringC& name);
     CFX_ByteStringC ConvertLayoutType(LayoutType type);
     CFX_ByteStringC ConvertLayoutAttr(LayoutAttr attr);
     LayoutEnum ConvertLayoutEnum(CFX_ByteStringC Enum);

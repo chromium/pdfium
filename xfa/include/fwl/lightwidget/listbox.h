@@ -17,7 +17,7 @@ public:
     static CFWL_ListBox* Create();
     FWL_ERR		Initialize(const CFWL_WidgetProperties *pProperties = NULL);
     FWL_ERR		AddDIBitmap(CFX_DIBitmap * pDIB, FWL_HLISTITEM hItem);
-    FWL_HLISTITEM	AddString(FX_WSTR wsAdd, FX_BOOL bSelect = FALSE);
+    FWL_HLISTITEM	AddString(const CFX_WideStringC& wsAdd, FX_BOOL bSelect = FALSE);
     FX_BOOL		DeleteString(FWL_HLISTITEM hItem);
     FX_BOOL		DeleteAll();
     int32_t	CountSelItems();
@@ -32,7 +32,7 @@ public:
     FWL_ERR*	Sort(IFWL_ListBoxCompare *pCom);
     int32_t	CountItems();
     FWL_HLISTITEM	GetItem(int32_t nIndex);
-    FWL_ERR		SetItemString(FWL_HLISTITEM hItem, FX_WSTR wsText);
+    FWL_ERR		SetItemString(FWL_HLISTITEM hItem, const CFX_WideStringC& wsText);
     FWL_ERR		GetItemString(FWL_HLISTITEM hItem, CFX_WideString &wsText);
     FWL_ERR		SetItemData(FWL_HLISTITEM hItem, void* pData);
     void*	GetItemData(FWL_HLISTITEM hItem);

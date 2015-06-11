@@ -192,7 +192,7 @@ public:
     CXFA_FMCallExpression(FX_DWORD line, CXFA_FMSimpleExpression *pExp, CFX_PtrArray *pArguments, FX_BOOL bIsSomMethod);
     virtual ~CXFA_FMCallExpression();
     virtual FX_BOOL IsBuildInFunc(CFX_WideTextBuf& funcName);
-    virtual FX_DWORD IsSomMethodWithObjPara(FX_WSTR methodName);
+    virtual FX_DWORD IsSomMethodWithObjPara(const CFX_WideStringC& methodName);
     virtual void ToJavaScript(CFX_WideTextBuf& javascript);
 private:
     FX_BOOL m_bIsSomMethod;

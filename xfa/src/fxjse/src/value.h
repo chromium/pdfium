@@ -176,7 +176,7 @@ public:
         v8::Local<v8::Value> hValue = v8::Number::New(m_pIsolate, dDouble);
         m_hValue.Reset(m_pIsolate, hValue);
     }
-    V8_INLINE void SetString(FX_BSTR szString)
+    V8_INLINE void SetString(const CFX_ByteStringC& szString)
     {
         CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
         v8::Local<v8::Value> hValue = v8::String::NewFromUtf8(m_pIsolate,
@@ -195,13 +195,13 @@ public:
     void SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues);
     void SetDate(FXJSE_DOUBLE dDouble);
 public:
-    FX_BOOL GetObjectProperty(FX_BSTR	szPropName,	CFXJSE_Value* lpPropValue);
-    FX_BOOL SetObjectProperty(FX_BSTR	szPropName,	CFXJSE_Value* lpPropValue);
+    FX_BOOL GetObjectProperty(const CFX_ByteStringC&	szPropName,	CFXJSE_Value* lpPropValue);
+    FX_BOOL SetObjectProperty(const CFX_ByteStringC&	szPropName,	CFXJSE_Value* lpPropValue);
     FX_BOOL GetObjectProperty(uint32_t	uPropIdx,	CFXJSE_Value* lpPropValue);
     FX_BOOL SetObjectProperty(uint32_t	uPropIdx,	CFXJSE_Value* lpPropValue);
-    FX_BOOL DeleteObjectProperty(FX_BSTR szPropName);
-    FX_BOOL HasObjectOwnProperty(FX_BSTR   szPropName, FX_BOOL	bUseTypeGetter);
-    FX_BOOL SetObjectOwnProperty(FX_BSTR   szPropName, CFXJSE_Value* lpPropValue);
+    FX_BOOL DeleteObjectProperty(const CFX_ByteStringC& szPropName);
+    FX_BOOL HasObjectOwnProperty(const CFX_ByteStringC&   szPropName, FX_BOOL	bUseTypeGetter);
+    FX_BOOL SetObjectOwnProperty(const CFX_ByteStringC&   szPropName, CFXJSE_Value* lpPropValue);
     FX_BOOL	SetFunctionBind(CFXJSE_Value* lpOldFunction, CFXJSE_Value* lpNewThis);
     FX_BOOL Call(CFXJSE_Value* lpReceiver, CFXJSE_Value* lpRetValue, uint32_t nArgCount, FXJSE_HVALUE* lpArgs);
 public:

@@ -166,7 +166,7 @@ CXFA_FMToken::CXFA_FMToken( FX_DWORD uLineNum )
 CXFA_FMToken::~CXFA_FMToken()
 {
 }
-CXFA_FMLexer::CXFA_FMLexer(FX_WSTR wsFormCalc, CXFA_FMErrorInfo *pErrorInfo)
+CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc, CXFA_FMErrorInfo *pErrorInfo)
 {
     m_pScript = wsFormCalc.GetPtr();
     m_uLength = wsFormCalc.GetLength();
@@ -534,7 +534,7 @@ void CXFA_FMLexer::Comment( const FX_WCHAR* p, const FX_WCHAR* &pEnd )
     }
     pEnd = p;
 }
-XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(FX_WSTR str)
+XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str)
 {
     int32_t iLength = str.GetLength();
     uint32_t uHash = FX_HashCode_String_GetW(str.GetPtr(), iLength, TRUE);

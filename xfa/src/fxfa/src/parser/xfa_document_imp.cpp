@@ -99,7 +99,7 @@ IXFA_Notify* CXFA_Document::GetNotify() const
 {
     return m_pParser->GetNotify();
 }
-CXFA_Object* CXFA_Document::GetXFANode(FX_WSTR wsNodeName)
+CXFA_Object* CXFA_Document::GetXFANode(const CFX_WideStringC& wsNodeName)
 {
     return GetXFANode(FX_HashCode_String_GetW(wsNodeName.GetPtr(), wsNodeName.GetLength()));
 }
@@ -291,7 +291,7 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(CFX_WideString& wsTemplateN
     m_eCurVersionMode = eVersion;
     return eVersion;
 }
-CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot, FX_WSTR wsID)
+CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot, const CFX_WideStringC& wsID)
 {
     if(!pRoot || wsID.IsEmpty()) {
         return NULL;

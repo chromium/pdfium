@@ -18,7 +18,7 @@ public:
 
     FWL_ERR		Initialize(const CFWL_WidgetProperties *pProperties = NULL);
     FWL_ERR		GetCaption(CFX_WideString &wsCaption);
-    FWL_ERR		SetCaption(FX_WSTR wsCaption);
+    FWL_ERR		SetCaption(const CFX_WideStringC& wsCaption);
     FWL_ERR		SetBoxSize(FX_FLOAT fHeight);
     int32_t	GetCheckState();
     FWL_ERR		SetCheckState(int32_t iCheck);

@@ -81,7 +81,7 @@ void CXFA_ScriptContext::Release()
 {
     delete this;
 }
-FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType, FX_WSTR wsScript, FXJSE_HVALUE hRetValue, CXFA_Object* pThisObject )
+FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType, const CFX_WideStringC& wsScript, FXJSE_HVALUE hRetValue, CXFA_Object* pThisObject )
 {
     CFX_ByteString btScript;
     XFA_SCRIPTLANGTYPE eSaveType = m_eScriptType;
@@ -132,7 +132,7 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType, FX_WSTR ws
     m_eScriptType = eSaveType;
     return bRet;
 }
-void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue)
 {
     CXFA_Object* lpOrginalNode = (CXFA_Object*)FXJSE_Value_ToObject(hObject, NULL);
     CXFA_Document* pDoc = lpOrginalNode->GetDocument();
@@ -159,7 +159,7 @@ void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject, FX_BSTR szP
     }
     pNotify->GetDocProvider()->SetGlobalProperty(pNotify->GetHDOC(), szPropName, hValue);
 }
-FX_BOOL	CXFA_ScriptContext::QueryNodeByFlag(CXFA_Node* refNode, FX_WSTR propname, FXJSE_HVALUE hValue, FX_DWORD dwFlag,  FX_BOOL bSetting)
+FX_BOOL	CXFA_ScriptContext::QueryNodeByFlag(CXFA_Node* refNode, const CFX_WideStringC& propname, FXJSE_HVALUE hValue, FX_DWORD dwFlag,  FX_BOOL bSetting)
 {
     XFA_RESOLVENODE_RS resolveRs;
     int32_t iRet = ResolveObjects(refNode, propname, resolveRs, dwFlag);
@@ -178,7 +178,7 @@ FX_BOOL	CXFA_ScriptContext::QueryNodeByFlag(CXFA_Node* refNode, FX_WSTR propname
     }
     return bResult;
 }
-void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue)
 {
     CXFA_Object* pOrginalObject = (CXFA_Object*)FXJSE_Value_ToObject(hObject, NULL);
     CXFA_Document* pDoc = pOrginalObject->GetDocument();
@@ -224,7 +224,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject, FX_BSTR szP
     }
     pNotify->GetDocProvider()->GetGlobalProperty(pNotify->GetHDOC(), szPropName, hValue);
 }
-void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue)
 {
     CXFA_Object* pOrginalObject = (CXFA_Object*)FXJSE_Value_ToObject(hObject, NULL);
     if(pOrginalObject == NULL) {
@@ -259,7 +259,7 @@ void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject, FX_BSTR szP
         FXJSE_Value_SetUndefined(hValue);
     }
 }
-void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue)
 {
     CXFA_Object* pOrginalObject = (CXFA_Object*)FXJSE_Value_ToObject(hObject, NULL);
     if(pOrginalObject == NULL) {
@@ -299,7 +299,7 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject, FX_BSTR szP
         }
     }
 }
-int32_t CXFA_ScriptContext::NormalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn)
+int32_t CXFA_ScriptContext::NormalPropTypeGetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FX_BOOL bQueryIn)
 {
     CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(hObject, NULL);
     if(pObject == NULL) {
@@ -317,7 +317,7 @@ int32_t CXFA_ScriptContext::NormalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR 
     }
     return FXJSE_ClassPropType_Property;
 }
-int32_t	CXFA_ScriptContext::GlobalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR szPropName, FX_BOOL bQueryIn)
+int32_t	CXFA_ScriptContext::GlobalPropTypeGetter(FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FX_BOOL bQueryIn)
 {
     CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(hObject, NULL);
     if(pObject == NULL) {
@@ -332,7 +332,7 @@ int32_t	CXFA_ScriptContext::GlobalPropTypeGetter(FXJSE_HOBJECT hObject, FX_BSTR 
     }
     return FXJSE_ClassPropType_Property;
 }
-void CXFA_ScriptContext::NormalMethodCall(FXJSE_HOBJECT hThis, FX_BSTR szFuncName, CFXJSE_Arguments &args)
+void CXFA_ScriptContext::NormalMethodCall(FXJSE_HOBJECT hThis, const CFX_ByteStringC& szFuncName, CFXJSE_Arguments &args)
 {
     CXFA_Object* pObject = (CXFA_Object*)FXJSE_Value_ToObject(hThis, NULL);
     if(pObject == NULL) {
@@ -436,7 +436,7 @@ FX_BOOL CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode)
     }
     return TRUE;
 }
-FX_BOOL CXFA_ScriptContext::QueryVariableHValue(CXFA_Node* pScriptNode, FX_BSTR szPropName, FXJSE_HVALUE hValue, FX_BOOL bGetter)
+FX_BOOL CXFA_ScriptContext::QueryVariableHValue(CXFA_Node* pScriptNode, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue, FX_BOOL bGetter)
 {
     if(pScriptNode->GetClassID() != XFA_ELEMENT_Script) {
         return FALSE;
@@ -470,7 +470,7 @@ FX_BOOL CXFA_ScriptContext::QueryVariableHValue(CXFA_Node* pScriptNode, FX_BSTR 
     }
     return bRes;
 }
-FX_BOOL CXFA_ScriptContext::QueryBuiltinHValue(FX_BSTR szPropName, FXJSE_HVALUE hValue)
+FX_BOOL CXFA_ScriptContext::QueryBuiltinHValue(const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue)
 {
     void* pBuiltin = NULL;
     if ((m_dwBuiltInInFlags & XFA_JSBUILTIN_HasCount) && m_JSBuiltInObjects.Lookup(szPropName, pBuiltin)) {
@@ -524,7 +524,7 @@ void CXFA_ScriptContext::AddJSBuiltinObject(XFA_LPCJSBUILTININFO pBuitinObject)
     }
     m_JSBuiltInObjects.SetAt(pBuitinObject->pName, (void*)pBuitinObject);
 }
-int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS,  FX_DWORD dwStyles, CXFA_Node* bindNode)
+int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode, const CFX_WideStringC& wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS,  FX_DWORD dwStyles, CXFA_Node* bindNode)
 {
     if (wsExpression.IsEmpty()) {
         return 0;

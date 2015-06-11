@@ -49,7 +49,7 @@ FX_DWORD CFWL_Widget::GetClassID() const
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
     return m_pImp->GetClassID();
 }
-FX_BOOL CFWL_Widget::IsInstance(FX_WSTR wsClass) const
+FX_BOOL CFWL_Widget::IsInstance(const CFX_WideStringC& wsClass) const
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FALSE);
     return m_pImp->IsInstance(wsClass);

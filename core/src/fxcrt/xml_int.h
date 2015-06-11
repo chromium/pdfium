@@ -153,11 +153,11 @@ public:
     void			GetAttrValue(CFX_WideString &value);
     FX_DWORD		GetCharRef();
     void			GetTagName(CFX_ByteString &space, CFX_ByteString &name, FX_BOOL &bEndTag, FX_BOOL bStartTag = FALSE);
-    void			SkipLiterals(FX_BSTR str);
+    void			SkipLiterals(const CFX_ByteStringC& str);
     CXML_Element*	ParseElement(CXML_Element* pParent, FX_BOOL bStartTag = FALSE);
-    void			InsertContentSegment(FX_BOOL bCDATA, FX_WSTR content, CXML_Element* pElement);
+    void			InsertContentSegment(FX_BOOL bCDATA, const CFX_WideStringC& content, CXML_Element* pElement);
     void			InsertCDATASegment(CFX_UTF8Decoder& decoder, CXML_Element* pElement);
 };
-void FX_XML_SplitQualifiedName(FX_BSTR bsFullName, CFX_ByteStringC &bsSpace, CFX_ByteStringC &bsName);
+void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName, CFX_ByteStringC &bsSpace, CFX_ByteStringC &bsName);
 
 #endif  // CORE_SRC_FXCRT_XML_INT_H_

@@ -524,7 +524,7 @@ FX_BOOL CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf& funcName)
     } while (iStart <= iEnd);
     return FALSE;
 }
-FX_DWORD CXFA_FMCallExpression::IsSomMethodWithObjPara(FX_WSTR methodName)
+FX_DWORD CXFA_FMCallExpression::IsSomMethodWithObjPara(const CFX_WideStringC& methodName)
 {
     int32_t iLength = methodName.GetLength();
     uint32_t uHash = FX_HashCode_String_GetW(methodName.GetPtr(), iLength);

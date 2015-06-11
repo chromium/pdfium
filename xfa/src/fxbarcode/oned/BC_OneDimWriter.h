@@ -22,18 +22,18 @@ public:
     {
         return NULL;
     };
-    virtual void     RenderResult(FX_WSTR contents, uint8_t* code, int32_t codeLength,  FX_BOOL isDevice, int32_t &e);
-    virtual void     RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, FX_WSTR contents, int32_t &e);
-    virtual void     RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix* matrix, FX_WSTR contents, int32_t &e);
-    virtual FX_BOOL			CheckContentValidity(FX_WSTR contents)
+    virtual void     RenderResult(const CFX_WideStringC& contents, uint8_t* code, int32_t codeLength,  FX_BOOL isDevice, int32_t &e);
+    virtual void     RenderBitmapResult(CFX_DIBitmap *&pOutBitmap, const CFX_WideStringC& contents, int32_t &e);
+    virtual void     RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix* matrix, const CFX_WideStringC& contents, int32_t &e);
+    virtual FX_BOOL			CheckContentValidity(const CFX_WideStringC& contents)
     {
         return TRUE;
     };
-    virtual CFX_WideString	FilterContents(FX_WSTR contents)
+    virtual CFX_WideString	FilterContents(const CFX_WideStringC& contents)
     {
         return CFX_WideString();
     }
-    virtual CFX_WideString	RenderTextContents(FX_WSTR contents)
+    virtual CFX_WideString	RenderTextContents(const CFX_WideStringC& contents)
     {
         return CFX_WideString();
     }
@@ -61,7 +61,7 @@ protected:
     int32_t               m_multiple;
     FX_FLOAT               m_outputHScale;
     void			CalcTextInfo(const CFX_ByteString &text, FXTEXT_CHARPOS *charPos, CFX_Font *cFont, FX_FLOAT geWidth, int32_t fontSize, FX_FLOAT &charsLen);
-    virtual void	ShowChars(FX_WSTR contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice *device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e);
+    virtual void	ShowChars(const CFX_WideStringC& contents, CFX_DIBitmap *pOutBitmap, CFX_RenderDevice *device, const CFX_Matrix* matrix, int32_t barWidth, int32_t multiple, int32_t &e);
     virtual void	ShowBitmapChars(CFX_DIBitmap *pOutBitmap, const CFX_ByteString str, FX_FLOAT geWidth, FXTEXT_CHARPOS* pCharPos, FX_FLOAT locX, FX_FLOAT locY, int32_t barWidth);
     virtual void    ShowDeviceChars(CFX_RenderDevice *device, const CFX_Matrix* matrix, const CFX_ByteString str, FX_FLOAT geWidth, FXTEXT_CHARPOS* pCharPos, FX_FLOAT locX, FX_FLOAT locY,  int32_t barWidth);
     int32_t		AppendPattern(uint8_t* target, int32_t pos, const int32_t* pattern, int32_t patternLength, int32_t startColor, int32_t &e);

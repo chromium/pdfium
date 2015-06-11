@@ -44,8 +44,8 @@ typedef struct FX_HFILE_ {
 #define FX_FILEMODE_Write		0
 #define FX_FILEMODE_ReadOnly	1
 #define FX_FILEMODE_Truncate	2
-FX_HFILE	FX_File_Open(FX_BSTR fileName, FX_DWORD dwMode);
-FX_HFILE	FX_File_Open(FX_WSTR fileName, FX_DWORD dwMode);
+FX_HFILE	FX_File_Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode);
+FX_HFILE	FX_File_Open(const CFX_WideStringC& fileName, FX_DWORD dwMode);
 void		FX_File_Close(FX_HFILE hFile);
 FX_FILESIZE	FX_File_GetSize(FX_HFILE hFile);
 FX_FILESIZE	FX_File_GetPosition(FX_HFILE hFile);
@@ -56,14 +56,14 @@ size_t		FX_File_Write(FX_HFILE hFile, const void* pBuffer, size_t szBuffer);
 size_t		FX_File_WritePos(FX_HFILE hFile, const void* pBuffer, size_t szBuffer, FX_FILESIZE pos);
 FX_BOOL		FX_File_Flush(FX_HFILE hFile);
 FX_BOOL		FX_File_Truncate(FX_HFILE hFile, FX_FILESIZE szFile);
-FX_BOOL		FX_File_Exist(FX_BSTR fileName);
-FX_BOOL		FX_File_Exist(FX_WSTR fileName);
-FX_BOOL		FX_File_Delete(FX_BSTR fileName);
-FX_BOOL		FX_File_Delete(FX_WSTR fileName);
-FX_BOOL		FX_File_Copy(FX_BSTR fileNameSrc, FX_BSTR fileNameDst);
-FX_BOOL		FX_File_Copy(FX_WSTR fileNameSrc, FX_WSTR fileNameDst);
-FX_BOOL		FX_File_Move(FX_BSTR fileNameSrc, FX_BSTR fileNameDst);
-FX_BOOL		FX_File_Move(FX_WSTR fileNameSrc, FX_WSTR fileNameDst);
+FX_BOOL		FX_File_Exist(const CFX_ByteStringC& fileName);
+FX_BOOL		FX_File_Exist(const CFX_WideStringC& fileName);
+FX_BOOL		FX_File_Delete(const CFX_ByteStringC& fileName);
+FX_BOOL		FX_File_Delete(const CFX_WideStringC& fileName);
+FX_BOOL		FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst);
+FX_BOOL		FX_File_Copy(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst);
+FX_BOOL		FX_File_Move(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst);
+FX_BOOL		FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst);
 class IFX_StreamWrite
 {
 public:
@@ -172,7 +172,7 @@ public:
 	virtual void				GetPath(CFX_WideString& wsPath) = 0;
 	virtual IFX_FileStream*		CreateFileStream(FX_DWORD dwModes) = 0;
 };
-IFX_FileAccess* FX_CreateDefaultFileAccess(FX_WSTR wsPath);
+IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath);
 class IFX_MemoryStream : public IFX_FileStream
 {
 public:

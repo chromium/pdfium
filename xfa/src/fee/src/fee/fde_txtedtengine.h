@@ -29,7 +29,7 @@ class CFDE_TxtEdtDoRecord_FieldReplace;
 class IFDE_TxtEdtDoRecord
 {
 public:
-    static IFDE_TxtEdtDoRecord * Create(FX_BSTR bsDoRecord);
+    static IFDE_TxtEdtDoRecord * Create(const CFX_ByteStringC& bsDoRecord);
     virtual void	Release() = 0;
     virtual FX_BOOL Redo() = 0;
     virtual FX_BOOL Undo() = 0;
@@ -105,8 +105,8 @@ public:
     virtual int32_t	GetSelRange(int32_t nIndex, int32_t &nStart);
     virtual void		ClearSelection();
 
-    virtual FX_BOOL		Redo(FX_BSTR bsRedo);
-    virtual FX_BOOL		Undo(FX_BSTR bsUndo);
+    virtual FX_BOOL		Redo(const CFX_ByteStringC& bsRedo);
+    virtual FX_BOOL		Undo(const CFX_ByteStringC& bsUndo);
 
     virtual int32_t	StartLayout();
     virtual int32_t	DoLayout(IFX_Pause *pPause);
@@ -200,7 +200,7 @@ private:
 class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord
 {
 public:
-    CFDE_TxtEdtDoRecord_Insert(FX_BSTR bsDoRecord);
+    CFDE_TxtEdtDoRecord_Insert(const CFX_ByteStringC& bsDoRecord);
     CFDE_TxtEdtDoRecord_Insert(	CFDE_TxtEdtEngine * pEngine,
                                 int32_t nCaret,
                                 const FX_WCHAR* lpText,
@@ -211,7 +211,7 @@ public:
     virtual void	Serialize(CFX_ByteString &bsDoRecord) const;
 protected:
     ~CFDE_TxtEdtDoRecord_Insert();
-    void			Deserialize(FX_BSTR bsDoRecord);
+    void			Deserialize(const CFX_ByteStringC& bsDoRecord);
 private:
     CFDE_TxtEdtEngine *	m_pEngine;
     int32_t			m_nCaret;
@@ -220,7 +220,7 @@ private:
 class CFDE_TxtEdtDoRecord_DeleteRange : public IFDE_TxtEdtDoRecord
 {
 public:
-    CFDE_TxtEdtDoRecord_DeleteRange(FX_BSTR bsDoRecord);
+    CFDE_TxtEdtDoRecord_DeleteRange(const CFX_ByteStringC& bsDoRecord);
     CFDE_TxtEdtDoRecord_DeleteRange(CFDE_TxtEdtEngine * pEngine,
                                     int32_t nIndex,
                                     int32_t nCaret,
@@ -232,7 +232,7 @@ public:
     virtual void	Serialize(CFX_ByteString &bsDoRecord) const;
 protected:
     ~CFDE_TxtEdtDoRecord_DeleteRange();
-    void			Deserialize(FX_BSTR bsDoRecord);
+    void			Deserialize(const CFX_ByteStringC& bsDoRecord);
 private:
     CFDE_TxtEdtEngine *	m_pEngine;
     FX_BOOL				m_bSel;
@@ -244,7 +244,7 @@ private:
 class CFDE_TxtEdtDoRecord_FieldInsert : public IFDE_TxtEdtDoRecord
 {
 public:
-    CFDE_TxtEdtDoRecord_FieldInsert(FX_BSTR bsDoRecord);
+    CFDE_TxtEdtDoRecord_FieldInsert(const CFX_ByteStringC& bsDoRecord);
     CFDE_TxtEdtDoRecord_FieldInsert(CFDE_TxtEdtEngine * pEngine,
                                     int32_t nCaret,
                                     CFDE_TxtEdtField * pField,
@@ -260,7 +260,7 @@ public:
     virtual void	Serialize(CFX_ByteString &bsDoRecord) const;
 protected:
     ~CFDE_TxtEdtDoRecord_FieldInsert();
-    void	Deserialize(FX_BSTR bsDoRecord);
+    void	Deserialize(const CFX_ByteStringC& bsDoRecord);
 
 private:
     CFDE_TxtEdtEngine *	m_pEngine;
@@ -276,7 +276,7 @@ private:
 class CFDE_TxtEdtDoRecord_FieldDelete : public IFDE_TxtEdtDoRecord
 {
 public:
-    CFDE_TxtEdtDoRecord_FieldDelete(FX_BSTR bsDoRecord);
+    CFDE_TxtEdtDoRecord_FieldDelete(const CFX_ByteStringC& bsDoRecord);
     CFDE_TxtEdtDoRecord_FieldDelete(CFDE_TxtEdtEngine * pEngine,
                                     int32_t nCaret,
                                     CFDE_TxtEdtField * pField,
@@ -292,7 +292,7 @@ public:
     virtual void	Serialize(CFX_ByteString &bsDoRecord) const;
 protected:
     ~CFDE_TxtEdtDoRecord_FieldDelete();
-    void	Deserialize(FX_BSTR bsDoRecord);
+    void	Deserialize(const CFX_ByteStringC& bsDoRecord);
 private:
     CFDE_TxtEdtEngine * m_pEngine;
     int32_t			m_nCaret;
@@ -307,7 +307,7 @@ private:
 class CFDE_TxtEdtDoRecord_FieldReplace : public IFDE_TxtEdtDoRecord
 {
 public:
-    CFDE_TxtEdtDoRecord_FieldReplace(FX_BSTR bsDoRecord);
+    CFDE_TxtEdtDoRecord_FieldReplace(const CFX_ByteStringC& bsDoRecord);
     CFDE_TxtEdtDoRecord_FieldReplace(	CFDE_TxtEdtEngine * pEngine,
                                         int32_t nCaret,
                                         int32_t nNewCaret,
@@ -324,7 +324,7 @@ public:
     virtual void	Serialize(CFX_ByteString &bsDoRecord) const;
 protected:
     ~CFDE_TxtEdtDoRecord_FieldReplace();
-    void	Deserialize(FX_BSTR bsDoRecord);
+    void	Deserialize(const CFX_ByteStringC& bsDoRecord);
 private:
     CFDE_TxtEdtEngine * m_pEngine;
     int32_t			m_nCaret;

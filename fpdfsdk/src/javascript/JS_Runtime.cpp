@@ -359,7 +359,7 @@ CFX_WideString ChangeObjName(const CFX_WideString& str)
 	sRet.Replace(L"_", L".");
 	return sRet;
 }
-FX_BOOL	CJS_Runtime::GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue)
+FX_BOOL	CJS_Runtime::GetHValueByName(const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue)
 {
 	const FX_CHAR* name = utf8Name.GetCStr();
 
@@ -382,7 +382,7 @@ FX_BOOL	CJS_Runtime::GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue)
 
 	return TRUE;
 }
-FX_BOOL	CJS_Runtime::SetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue)
+FX_BOOL	CJS_Runtime::SetHValueByName(const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue)
 {
 	if (utf8Name.IsEmpty() || hValue == NULL)
 		return FALSE;

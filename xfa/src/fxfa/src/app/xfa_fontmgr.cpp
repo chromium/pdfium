@@ -961,7 +961,7 @@ static const XFA_FONTINFO g_XFAFontsMap[] = {
     {0xfef135f8,	L"AdobeHeitiStd-Regular",	L"Droid Sans Fallback",	0,	936},
 };
 #endif
-void XFA_LocalFontNameToEnglishName(FX_WSTR wsLocalName, CFX_WideString &wsEnglishName)
+void XFA_LocalFontNameToEnglishName(const CFX_WideStringC& wsLocalName, CFX_WideString &wsEnglishName)
 {
     wsEnglishName = wsLocalName;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ || _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || _FXM_PLATFORM_ ==  _FXM_PLATFORM_ANDROID_
@@ -983,7 +983,7 @@ void XFA_LocalFontNameToEnglishName(FX_WSTR wsLocalName, CFX_WideString &wsEngli
     } while (iEnd >= iStart);
 #endif
 }
-const XFA_FONTINFO* XFA_GetFontINFOByFontName(FX_WSTR wsFontName)
+const XFA_FONTINFO* XFA_GetFontINFOByFontName(const CFX_WideStringC& wsFontName)
 {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ || _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || _FXM_PLATFORM_ ==  _FXM_PLATFORM_ANDROID_
     CFX_WideString wsFontNameTemp = wsFontName;
@@ -1028,7 +1028,7 @@ CXFA_DefFontMgr::~CXFA_DefFontMgr()
     m_CacheFonts.RemoveAll();
 }
 #define _FXFA_USEGASFONTMGR_
-IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage )
+IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc, const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage )
 {
     CFX_WideString wsFontName = wsFontFamily;
     IFX_FontMgr* pFDEFontMgr = ((CXFA_FFDoc*)hDoc)->GetApp()->GetFDEFontMgr();
@@ -1081,7 +1081,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWOR
     }
     return pFont;
 }
-IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
+IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc, const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
 {
     IFX_FontMgr* pFDEFontMgr = ((CXFA_FFDoc*)hDoc)->GetApp()->GetFDEFontMgr();
 #ifdef _FXFA_USEGASFONTMGR_
@@ -1181,7 +1181,7 @@ IFX_Font* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName, FX_BOOL bBold, FX_
     }
     return NULL;
 }
-IFX_Font* CXFA_PDFFontMgr::GetFont(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, CPDF_Font** pPDFFont, FX_BOOL bStrictMatch )
+IFX_Font* CXFA_PDFFontMgr::GetFont(const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, CPDF_Font** pPDFFont, FX_BOOL bStrictMatch )
 {
     FX_DWORD dwHashCode = FX_HashCode_String_GetW(wsFontFamily.GetPtr(), wsFontFamily.GetLength());
     CFX_ByteString strKey;
@@ -1213,7 +1213,7 @@ CFX_ByteString CXFA_PDFFontMgr::PsNameToFontName(const CFX_ByteString& strPsName
     }
     return strPsName;
 }
-FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(FX_BSTR bsPsName, FX_BOOL bBold, FX_BOOL bItalic, const CFX_ByteString& bsDRFontName, FX_BOOL bStrictMatch)
+FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(const CFX_ByteStringC& bsPsName, FX_BOOL bBold, FX_BOOL bItalic, const CFX_ByteString& bsDRFontName, FX_BOOL bStrictMatch)
 {
     CFX_ByteString bsDRName = bsDRFontName;
     bsDRName.Remove('-');
@@ -1305,7 +1305,7 @@ CXFA_FontMgr::~CXFA_FontMgr()
 {
     DelAllMgrMap();
 }
-IFX_Font* CXFA_FontMgr::GetFont(IXFA_Doc* hDoc, FX_WSTR wsFontFamily, FX_DWORD dwFontStyles,
+IFX_Font* CXFA_FontMgr::GetFont(IXFA_Doc* hDoc, const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles,
                                 FX_WORD wCodePage )
 {
     FX_DWORD dwHash = FX_HashCode_String_GetW(wsFontFamily.GetPtr(), wsFontFamily.GetLength(), FALSE);

@@ -137,11 +137,11 @@ FX_BOOL	IFWL_Edit::Delete()
 {
     return ((CFWL_EditImp*)m_pData)->Delete();
 }
-FX_BOOL	IFWL_Edit::Redo(FX_BSTR bsRecord)
+FX_BOOL	IFWL_Edit::Redo(const CFX_ByteStringC& bsRecord)
 {
     return ((CFWL_EditImp*)m_pData)->Redo(bsRecord);
 }
-FX_BOOL	IFWL_Edit::Undo(FX_BSTR bsRecord)
+FX_BOOL	IFWL_Edit::Undo(const CFX_ByteStringC& bsRecord)
 {
     return ((CFWL_EditImp*)m_pData)->Undo(bsRecord);
 }
@@ -189,7 +189,7 @@ FX_BOOL IFWL_Edit::GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray &sSugg
 {
     return ((CFWL_EditImp*)m_pData)->GetSuggestWords(pointf, sSuggest);
 }
-FX_BOOL IFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf, FX_BSTR bsReplace)
+FX_BOOL IFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf, const CFX_ByteStringC& bsReplace)
 {
     return ((CFWL_EditImp*)m_pData)->ReplaceSpellCheckWord(pointf, bsReplace);
 }
@@ -463,7 +463,7 @@ FX_BOOL CFWL_EditImp::GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray &sS
     DispatchEvent(&checkWordEvent);
     return suggestWordsEvent.bSuggestWords;
 }
-FX_BOOL CFWL_EditImp::ReplaceSpellCheckWord(CFX_PointF pointf, FX_BSTR bsReplace)
+FX_BOOL CFWL_EditImp::ReplaceSpellCheckWord(CFX_PointF pointf, const CFX_ByteStringC& bsReplace)
 {
     int32_t nWordCount = 0;
     int32_t nWordStart = GetWordAtPoint(pointf, nWordCount);
@@ -820,7 +820,7 @@ FX_BOOL CFWL_EditImp::Delete()
     m_pEdtEngine->Delete(0);
     return TRUE;
 }
-FX_BOOL CFWL_EditImp::Redo(FX_BSTR bsRecord)
+FX_BOOL CFWL_EditImp::Redo(const CFX_ByteStringC& bsRecord)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
     if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoRedoUndo) {
@@ -828,7 +828,7 @@ FX_BOOL CFWL_EditImp::Redo(FX_BSTR bsRecord)
     }
     return m_pEdtEngine->Redo(bsRecord);
 }
-FX_BOOL CFWL_EditImp::Undo(FX_BSTR bsRecord)
+FX_BOOL CFWL_EditImp::Undo(const CFX_ByteStringC& bsRecord)
 {
     _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
     if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoRedoUndo) {
@@ -989,7 +989,7 @@ FX_BOOL CFWL_EditImp::On_PageUnload(IFDE_TxtEdtEngine *pEdit, int32_t nPageIndex
     pPage->UnloadPage();
     return TRUE;
 }
-void CFWL_EditImp::On_AddDoRecord(IFDE_TxtEdtEngine *pEdit, FX_BSTR bsDoRecord)
+void CFWL_EditImp::On_AddDoRecord(IFDE_TxtEdtEngine *pEdit, const CFX_ByteStringC& bsDoRecord)
 {
     AddDoRecord(bsDoRecord);
     CFWL_WidgetImp *pSrcTarget = GetRootOuter();
@@ -1533,7 +1533,7 @@ FX_BOOL	CFWL_EditImp::IsContentHeightOverflow()
     _FWL_RETURN_VALUE_IF_FAIL(pPage, FALSE);
     return pPage->GetContentsBox().height > m_rtEngine.height + 1.0f;
 }
-int32_t CFWL_EditImp::AddDoRecord(FX_BSTR bsDoRecord)
+int32_t CFWL_EditImp::AddDoRecord(const CFX_ByteStringC& bsDoRecord)
 {
     int32_t nCount = m_RecordArr.GetSize();
     if (m_iCurRecord == nCount - 1) {

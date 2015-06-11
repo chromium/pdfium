@@ -339,7 +339,7 @@ int CPDF_FormControl::GetControlAlignment()
         return pObj->GetInteger();
     }
 }
-FX_BOOL CPDF_ApSettings::HasMKEntry(FX_BSTR csEntry)
+FX_BOOL CPDF_ApSettings::HasMKEntry(const CFX_ByteStringC& csEntry)
 {
     if (m_pDict == NULL) {
         return FALSE;
@@ -353,7 +353,7 @@ int CPDF_ApSettings::GetRotation()
     }
     return m_pDict->GetInteger(FX_BSTRC("R"));
 }
-FX_ARGB CPDF_ApSettings::GetColor(int& iColorType, FX_BSTR csEntry)
+FX_ARGB CPDF_ApSettings::GetColor(int& iColorType, const CFX_ByteStringC& csEntry)
 {
     iColorType = COLORTYPE_TRANSPARENT;
     if (m_pDict == NULL) {
@@ -388,7 +388,7 @@ FX_ARGB CPDF_ApSettings::GetColor(int& iColorType, FX_BSTR csEntry)
     }
     return color;
 }
-FX_FLOAT CPDF_ApSettings::GetOriginalColor(int index, FX_BSTR csEntry)
+FX_FLOAT CPDF_ApSettings::GetOriginalColor(int index, const CFX_ByteStringC& csEntry)
 {
     if (m_pDict == NULL) {
         return 0;
@@ -399,7 +399,7 @@ FX_FLOAT CPDF_ApSettings::GetOriginalColor(int index, FX_BSTR csEntry)
     }
     return 0;
 }
-void CPDF_ApSettings::GetOriginalColor(int& iColorType, FX_FLOAT fc[4], FX_BSTR csEntry)
+void CPDF_ApSettings::GetOriginalColor(int& iColorType, FX_FLOAT fc[4], const CFX_ByteStringC& csEntry)
 {
     iColorType = COLORTYPE_TRANSPARENT;
     for (int i = 0; i < 4; i ++) {
@@ -429,7 +429,7 @@ void CPDF_ApSettings::GetOriginalColor(int& iColorType, FX_FLOAT fc[4], FX_BSTR 
         fc[3] = pEntry->GetNumber(3);
     }
 }
-CFX_WideString CPDF_ApSettings::GetCaption(FX_BSTR csEntry)
+CFX_WideString CPDF_ApSettings::GetCaption(const CFX_ByteStringC& csEntry)
 {
     CFX_WideString csCaption;
     if (m_pDict == NULL) {
@@ -437,7 +437,7 @@ CFX_WideString CPDF_ApSettings::GetCaption(FX_BSTR csEntry)
     }
     return m_pDict->GetUnicodeText(csEntry);
 }
-CPDF_Stream* CPDF_ApSettings::GetIcon(FX_BSTR csEntry)
+CPDF_Stream* CPDF_ApSettings::GetIcon(const CFX_ByteStringC& csEntry)
 {
     if (m_pDict == NULL) {
         return NULL;

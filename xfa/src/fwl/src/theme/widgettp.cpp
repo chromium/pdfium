@@ -688,11 +688,11 @@ CFWL_FontData::~CFWL_FontData()
     }
 #endif
 }
-FX_BOOL CFWL_FontData::Equal(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
+FX_BOOL CFWL_FontData::Equal(const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
 {
     return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles && m_dwCodePage == wCodePage;
 }
-FX_BOOL CFWL_FontData::LoadFont(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD dwCodePage)
+FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD dwCodePage)
 {
     m_wsFamily = wsFontFamily;
     m_dwStyles = dwFontStyles;
@@ -720,7 +720,7 @@ CFWL_FontManager::~CFWL_FontManager()
     }
     m_arrFonts.RemoveAll();
 }
-IFX_Font* CFWL_FontManager::FindFont(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
+IFX_Font* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage)
 {
     int32_t count = m_arrFonts.GetSize();
     for (int32_t i = 0; i < count; i ++) {

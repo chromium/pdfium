@@ -33,7 +33,7 @@ public:
 
     // IFXA_AppProvider:
     void GetAppType(CFX_WideString &wsAppType) override;
-    void SetAppType(FX_WSTR wsAppType) override;
+    void SetAppType(const CFX_WideStringC& wsAppType) override;
 
     void GetLanguage(CFX_WideString &wsLanguage) override;
     void GetPlatform(CFX_WideString &wsPlatform) override;
@@ -49,20 +49,20 @@ public:
     }
 
     void Beep(FX_DWORD dwType) override;
-    int32_t MsgBox(FX_WSTR wsMessage, FX_WSTR wsTitle, FX_DWORD dwIconType, FX_DWORD dwButtonType) override;
-    void Response(CFX_WideString &wsAnswer, FX_WSTR wsQuestion, FX_WSTR wsTitle,
-                  FX_WSTR wsDefaultAnswer, FX_BOOL bMark) override;
+    int32_t MsgBox(const CFX_WideStringC& wsMessage, const CFX_WideStringC& wsTitle, FX_DWORD dwIconType, FX_DWORD dwButtonType) override;
+    void Response(CFX_WideString &wsAnswer, const CFX_WideStringC& wsQuestion, const CFX_WideStringC& wsTitle,
+                  const CFX_WideStringC& wsDefaultAnswer, FX_BOOL bMark) override;
 
     int32_t GetDocumentCountInBatch() override;
     int32_t GetCurDocumentInBatch() override;
 
-    IFX_FileRead* DownloadURL(FX_WSTR wsURL) override;
-    FX_BOOL PostRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsContentType,
-                           FX_WSTR wsEncode, FX_WSTR wsHeader, CFX_WideString &wsResponse) override;
-    FX_BOOL PutRequestURL(FX_WSTR wsURL, FX_WSTR wsData, FX_WSTR wsEncode) override;
+    IFX_FileRead* DownloadURL(const CFX_WideStringC& wsURL) override;
+    FX_BOOL PostRequestURL(const CFX_WideStringC& wsURL, const CFX_WideStringC& wsData, const CFX_WideStringC& wsContentType,
+                           const CFX_WideStringC& wsEncode, const CFX_WideStringC& wsHeader, CFX_WideString &wsResponse) override;
+    FX_BOOL PutRequestURL(const CFX_WideStringC& wsURL, const CFX_WideStringC& wsData, const CFX_WideStringC& wsEncode) override;
 
     void LoadString(int32_t iStringID, CFX_WideString &wsString) override;
-    FX_BOOL ShowFileDialog(FX_WSTR wsTitle, FX_WSTR wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen) override;
+    FX_BOOL ShowFileDialog(const CFX_WideStringC& wsTitle, const CFX_WideStringC& wsFilter, CFX_WideStringArray &wsPathArr, FX_BOOL bOpen) override;
     IFWL_AdapterTimerMgr* GetTimerMgr() override;
 
     CFX_ArrayTemplate<CPDFDoc_Environment*> m_pEnvList;

@@ -112,8 +112,8 @@ public:
     int32_t	GetEditLimit();
     FWL_ERR		SetEditLimit(int32_t nLimit);
     FWL_ERR		EditDoClipboard(int32_t iCmd);
-    FX_BOOL		EditRedo(FX_BSTR bsRecord);
-    FX_BOOL		EditUndo(FX_BSTR bsRecord);
+    FX_BOOL		EditRedo(const CFX_ByteStringC& bsRecord);
+    FX_BOOL		EditUndo(const CFX_ByteStringC& bsRecord);
     IFWL_ListBox*	GetListBoxt();
     FX_BOOL		AfterFocusShowDropList();
     FX_ERR		OpenDropDownList(FX_BOOL bActivate);

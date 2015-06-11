@@ -55,8 +55,8 @@ public:
     virtual FX_BOOL		Cut(CFX_WideString &wsCut);
     virtual FX_BOOL		Paste(const CFX_WideString &wsPaste);
     virtual FX_BOOL		Delete();
-    virtual FX_BOOL		Redo(FX_BSTR bsRecord);
-    virtual FX_BOOL		Undo(FX_BSTR bsRecord);
+    virtual FX_BOOL		Redo(const CFX_ByteStringC& bsRecord);
+    virtual FX_BOOL		Undo(const CFX_ByteStringC& bsRecord);
     virtual FX_BOOL		Undo();
     virtual FX_BOOL		Redo();
     virtual FX_BOOL		CanUndo();
@@ -74,7 +74,7 @@ public:
     {
         return TRUE;
     }
-    virtual void		On_AddDoRecord(IFDE_TxtEdtEngine *pEdit, FX_BSTR bsDoRecord);
+    virtual void		On_AddDoRecord(IFDE_TxtEdtEngine *pEdit, const CFX_ByteStringC& bsDoRecord);
     virtual FX_BOOL		On_ValidateField(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex, int32_t nFieldIndex, \
                                          const CFX_WideString &wsFieldText, int32_t nCharIndex);
     virtual FX_BOOL		On_ValidateBlock(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex);
@@ -84,7 +84,7 @@ public:
     virtual FWL_ERR     SetFont(const CFX_WideString &wsFont, FX_FLOAT fSize);
     void				SetScrollOffset(FX_FLOAT fScrollOffset);
     FX_BOOL				GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray &sSuggest);
-    FX_BOOL				ReplaceSpellCheckWord(CFX_PointF pointf, FX_BSTR bsReplace);
+    FX_BOOL				ReplaceSpellCheckWord(CFX_PointF pointf, const CFX_ByteStringC& bsReplace);
 protected:
     void				DrawTextBk(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
     void				DrawContent(CFX_Graphics *pGraphics, IFWL_ThemeProvider *pTheme, const CFX_Matrix *pMatrix = NULL);
@@ -107,7 +107,7 @@ protected:
     void				ClearRecord();
     FX_BOOL				IsShowScrollBar(FX_BOOL bVert);
     FX_BOOL				IsContentHeightOverflow();
-    int32_t			AddDoRecord(FX_BSTR bsDoRecord);
+    int32_t			AddDoRecord(const CFX_ByteStringC& bsDoRecord);
     void				ProcessInsertError(int32_t iError);
 
     void				DrawSpellCheck(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);

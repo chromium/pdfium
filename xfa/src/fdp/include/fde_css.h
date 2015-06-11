@@ -475,9 +475,9 @@ public:
     static IFDE_CSSStyleSheetCache*	Create();
     virtual void					Release() = 0;
     virtual void					SetMaxItems(int32_t iMaxCount = 5) = 0;
-    virtual void					AddStyleSheet(FX_BSTR szKey, IFDE_CSSStyleSheet *pStyleSheet) = 0;
-    virtual IFDE_CSSStyleSheet*		GetStyleSheet(FX_BSTR szKey) const = 0;
-    virtual void					RemoveStyleSheet(FX_BSTR szKey) = 0;
+    virtual void					AddStyleSheet(const CFX_ByteStringC& szKey, IFDE_CSSStyleSheet *pStyleSheet) = 0;
+    virtual IFDE_CSSStyleSheet*		GetStyleSheet(const CFX_ByteStringC& szKey) const = 0;
+    virtual void					RemoveStyleSheet(const CFX_ByteStringC& szKey) = 0;
 };
 enum FDE_CSSSYNTAXSTATUS {
     FDE_CSSSYNTAXSTATUS_Error,
@@ -1036,7 +1036,7 @@ public:
     virtual IFDE_CSSTableStyle*				GetTableStyle() const = 0;
     virtual IFDE_CSSGeneratedContentStyle*	GetGeneratedContentStyle() const = 0;
     virtual IFDE_CSSRubyStyle*				GetRubyStyle() const = 0;
-    virtual FX_BOOL							GetCustomStyle(FX_WSTR wsName, CFX_WideString &wsValue) const = 0;
+    virtual FX_BOOL							GetCustomStyle(const CFX_WideStringC& wsName, CFX_WideString &wsValue) const = 0;
 };
 enum FDE_CSSSTYLESHEETGROUP {
     FDE_CSSSTYLESHEETGROUP_UserAgent,

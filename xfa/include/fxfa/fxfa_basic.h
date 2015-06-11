@@ -83,7 +83,7 @@ typedef struct _XFA_PACKETINFO {
     FX_DWORD					eFlags;
 } XFA_PACKETINFO, * XFA_LPPACKETINFO;
 typedef XFA_PACKETINFO const * XFA_LPCPACKETINFO;
-XFA_LPCPACKETINFO XFA_GetPacketByName(FX_WSTR wsName);
+XFA_LPCPACKETINFO XFA_GetPacketByName(const CFX_WideStringC& wsName);
 XFA_LPCPACKETINFO XFA_GetPacketByID(FX_DWORD dwPacket);
 extern const XFA_PACKETINFO g_XFAPacketData[];
 inline XFA_LPCPACKETINFO XFA_GetPacketByIndex(XFA_PACKET ePacket)
@@ -927,7 +927,7 @@ typedef struct _XFA_ELEMENTINFO {
 } XFA_ELEMENTINFO, * XFA_LPELEMENTINFO;
 typedef XFA_ELEMENTINFO const * XFA_LPCELEMENTINFO;
 int32_t XFA_GetElementCount();
-XFA_LPCELEMENTINFO XFA_GetElementByName(FX_WSTR wsName);
+XFA_LPCELEMENTINFO XFA_GetElementByName(const CFX_WideStringC& wsName);
 XFA_LPCELEMENTINFO XFA_GetElementByID(XFA_ELEMENT eName);
 enum XFA_ATTRIBUTETYPE {
     XFA_ATTRIBUTETYPE_NOTSURE,
@@ -947,7 +947,7 @@ typedef struct _XFA_ATTRIBUTEINFO {
 } XFA_ATTRIBUTEINFO, * XFA_LPATTRIBUTEINFO;
 typedef XFA_ATTRIBUTEINFO const * XFA_LPCATTRIBUTEINFO;
 int32_t XFA_GetAttributeCount();
-XFA_LPCATTRIBUTEINFO XFA_GetAttributeByName(FX_WSTR wsName);
+XFA_LPCATTRIBUTEINFO XFA_GetAttributeByName(const CFX_WideStringC& wsName);
 XFA_LPCATTRIBUTEINFO XFA_GetAttributeByID(XFA_ATTRIBUTE eName);
 FX_BOOL XFA_GetAttributeDefaultValue(void* &pValue, XFA_ELEMENT eElement, XFA_ATTRIBUTE eAttribute, XFA_ATTRIBUTETYPE eType, FX_DWORD dwPacket);
 XFA_ATTRIBUTEENUM	XFA_GetAttributeDefaultValue_Enum(XFA_ELEMENT eElement, XFA_ATTRIBUTE eAttribute, FX_DWORD dwPacket);
@@ -989,7 +989,7 @@ typedef struct _XFA_ATTRIBUTEENUMINFO {
     XFA_ATTRIBUTEENUM			eName;
 } XFA_ATTRIBUTEENUMINFO, * XFA_LPATTRIBUTEENUMINFO;
 typedef XFA_ATTRIBUTEENUMINFO const * XFA_LPCATTRIBUTEENUMINFO;
-XFA_LPCATTRIBUTEENUMINFO XFA_GetAttributeEnumByName(FX_WSTR wsName);
+XFA_LPCATTRIBUTEENUMINFO XFA_GetAttributeEnumByName(const CFX_WideStringC& wsName);
 XFA_LPCATTRIBUTEENUMINFO XFA_GetAttributeEnumByID(XFA_ATTRIBUTEENUM eName);
 enum XFA_UNIT {
     XFA_UNIT_Unknown,
@@ -1006,7 +1006,7 @@ enum XFA_UNIT {
 class CXFA_Measurement
 {
 public:
-    void						Set(FX_WSTR wsMeasure);
+    void						Set(const CFX_WideStringC& wsMeasure);
     void						Set(FX_FLOAT fValue, XFA_UNIT eUnit)
     {
         m_fValue = fValue;
@@ -1032,7 +1032,7 @@ public:
     {
         Set(-1, XFA_UNIT_Unknown);
     }
-    CXFA_Measurement(FX_WSTR wsMeasure)
+    CXFA_Measurement(const CFX_WideStringC& wsMeasure)
     {
         Set(wsMeasure);
     }
@@ -1040,7 +1040,7 @@ public:
     {
         Set(fValue, eUnit);
     }
-    static XFA_UNIT				GetUnit(FX_WSTR wsUnit);
+    static XFA_UNIT				GetUnit(const CFX_WideStringC& wsUnit);
 protected:
     FX_FLOAT					m_fValue;
     XFA_UNIT					m_eUnit;
@@ -1055,7 +1055,7 @@ typedef struct _XFA_METHODINFO {
 } XFA_METHODINFO, * XFA_LPMETHODINFO;
 typedef XFA_METHODINFO const * XFA_LPCMETHODINFO;
 int32_t XFA_GetMethodCount();
-XFA_LPCMETHODINFO XFA_GetMethodByName(XFA_ELEMENT eElement,	FX_WSTR wsMethodName);
+XFA_LPCMETHODINFO XFA_GetMethodByName(XFA_ELEMENT eElement,	const CFX_WideStringC& wsMethodName);
 typedef void (CXFA_Object::*XFA_ATTRIBUTE_CALLBACK) (FXJSE_HVALUE hValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
 enum XFA_SCRIPT_TYPE {
     XFA_SCRIPT_Basic,
@@ -1069,5 +1069,5 @@ typedef struct _XFA_SCRIPTATTRIBUTEINFO {
     FX_WORD							eValueType;
 } XFA_SCRIPTATTRIBUTEINFO, * XFA_LPSCRIPTATTRIBUTEINFO;
 typedef XFA_SCRIPTATTRIBUTEINFO const * XFA_LPCSCRIPTATTRIBUTEINFO;
-XFA_LPCSCRIPTATTRIBUTEINFO XFA_GetScriptAttributeByName(XFA_ELEMENT eElement, FX_WSTR wsAttributeName);
+XFA_LPCSCRIPTATTRIBUTEINFO XFA_GetScriptAttributeByName(XFA_ELEMENT eElement, const CFX_WideStringC& wsAttributeName);
 #endif

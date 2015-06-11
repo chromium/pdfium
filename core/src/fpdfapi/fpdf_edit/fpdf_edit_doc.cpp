@@ -1170,8 +1170,8 @@ void CPDF_Document::DeletePage(int iPage)
     }
     m_PageList.RemoveAt(iPage);
 }
-CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict, FX_BSTR name);
-void FPDFAPI_FlatPageAttr(CPDF_Dictionary* pPageDict, FX_BSTR name)
+CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict, const CFX_ByteStringC& name);
+void FPDFAPI_FlatPageAttr(CPDF_Dictionary* pPageDict, const CFX_ByteStringC& name)
 {
     if (pPageDict->KeyExist(name)) {
         return;

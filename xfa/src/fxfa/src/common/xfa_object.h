@@ -163,11 +163,11 @@ public:
     CXFA_Node*			GetModelNode();
     void				UpdateNameHash();
     FX_BOOL				HasAttribute(XFA_ATTRIBUTE eAttr, FX_BOOL bCanInherit = FALSE);
-    FX_BOOL				SetAttribute(XFA_ATTRIBUTE eAttr, FX_WSTR wsValue, FX_BOOL bNotify = FALSE);
+    FX_BOOL				SetAttribute(XFA_ATTRIBUTE eAttr, const CFX_WideStringC& wsValue, FX_BOOL bNotify = FALSE);
     FX_BOOL				GetAttribute(XFA_ATTRIBUTE eAttr, CFX_WideString &wsValue, FX_BOOL bUseDefault = TRUE);
-    FX_BOOL				SetAttribute(FX_WSTR wsAttr, FX_WSTR wsValue, FX_BOOL bNotify = FALSE);
-    FX_BOOL				GetAttribute(FX_WSTR wsAttr, CFX_WideString &wsValue, FX_BOOL bUseDefault = TRUE);
-    FX_BOOL				RemoveAttribute(FX_WSTR wsAttr);
+    FX_BOOL				SetAttribute(const CFX_WideStringC& wsAttr, const CFX_WideStringC& wsValue, FX_BOOL bNotify = FALSE);
+    FX_BOOL				GetAttribute(const CFX_WideStringC& wsAttr, CFX_WideString &wsValue, FX_BOOL bUseDefault = TRUE);
+    FX_BOOL				RemoveAttribute(const CFX_WideStringC& wsAttr);
     FX_BOOL				SetContent(const CFX_WideString& wsContent, const CFX_WideString& wsXMLValue, FX_BOOL bNotify = FALSE,  FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
     FX_BOOL				TryContent(CFX_WideString& wsContent, FX_BOOL bScriptModify = FALSE, FX_BOOL bProto = TRUE);
     CFX_WideString		GetContent();
@@ -259,11 +259,11 @@ public:
     CXFA_WidgetData*	GetContainerWidgetData();
     FX_BOOL				GetLocaleName(CFX_WideString& wsLocaleName);
     XFA_ATTRIBUTEENUM	GetIntact();
-    CXFA_Node*			GetFirstChildByName(FX_WSTR wsNodeName) const;
+    CXFA_Node*			GetFirstChildByName(const CFX_WideStringC& wsNodeName) const;
     CXFA_Node*			GetFirstChildByName(FX_DWORD dwNodeNameHash) const;
     CXFA_Node*			GetFirstChildByClass(XFA_ELEMENT eNodeClass) const;
     CXFA_Node*			GetNextSameNameSibling(FX_DWORD dwNodeNameHash) const;
-    CXFA_Node*			GetNextSameNameSibling(FX_WSTR wsNodeName) const;
+    CXFA_Node*			GetNextSameNameSibling(const CFX_WideStringC& wsNodeName) const;
     CXFA_Node*			GetNextSameClassSibling(XFA_ELEMENT eNodeClass) const;
     int32_t			GetNodeSameNameIndex() const;
     int32_t			GetNodeSameClassIndex() const;
@@ -434,13 +434,13 @@ protected:
     void				OnRemoved(CXFA_Node *pParent, CXFA_Node *pRemoved, FX_BOOL bNotify);
     void				OnChanging(XFA_ATTRIBUTE eAttr, void* pNewValue, FX_BOOL bNotify);
     void				OnChanged(XFA_ATTRIBUTE eAttr, void* pNewValue, FX_BOOL bNotify, FX_BOOL bScriptModify = FALSE);
-    int32_t			execSingleEventByName(FX_WSTR wsEventName, XFA_ELEMENT eElementType);
+    int32_t			execSingleEventByName(const CFX_WideStringC& wsEventName, XFA_ELEMENT eElementType);
     FX_BOOL				SetScriptContent(const CFX_WideString& wsContent, const CFX_WideString& wsXMLValue, FX_BOOL bNotify = TRUE, FX_BOOL bScriptModify = FALSE, FX_BOOL bSyncData = TRUE);
     CFX_WideString		GetScriptContent(FX_BOOL bScriptModify = FALSE);
     XFA_LPMAPMODULEDATA	GetMapModuleData(FX_BOOL bCreateNew);
     void				SetMapModuleValue(void* pKey, void* pValue);
     FX_BOOL				GetMapModuleValue(void* pKey, void* &pValue);
-    void				SetMapModuleString(void* pKey, FX_WSTR wsValue);
+    void				SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue);
     FX_BOOL				GetMapModuleString(void* pKey, CFX_WideStringC &wsValue);
     void				SetMapModuleBuffer(void* pKey, void* pValue, int32_t iBytes, XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
     FX_BOOL				GetMapModuleBuffer(void* pKey, void* &pValue, int32_t &iBytes, FX_BOOL bProtoAlso = TRUE);
@@ -510,7 +510,7 @@ public:
     {
         return XFA_ELEMENT_NodeList;
     }
-    CXFA_Node*			NamedItem(FX_WSTR wsName);
+    CXFA_Node*			NamedItem(const CFX_WideStringC& wsName);
     virtual int32_t	GetLength() = 0;
     virtual FX_BOOL		Append(CXFA_Node* pNode) = 0;
     virtual FX_BOOL		Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;

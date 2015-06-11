@@ -29,7 +29,7 @@ static void FXJSE_DynPropGetterAdapter_MethodCallback	(const v8::FunctionCallbac
     delete lpThisValue;
     lpThisValue = NULL;
 }
-static void FXJSE_DynPropGetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+static void FXJSE_DynPropGetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue)
 {
     ASSERT(lpClass);
     int32_t nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
@@ -51,7 +51,7 @@ static void FXJSE_DynPropGetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HO
         }
     }
 }
-static void FXJSE_DynPropSetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, FX_BSTR szPropName, FXJSE_HVALUE hValue)
+static void FXJSE_DynPropSetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue)
 {
     ASSERT(lpClass);
     int32_t nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
@@ -61,13 +61,13 @@ static void FXJSE_DynPropSetterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HO
         }
     }
 }
-static FX_BOOL FXJSE_DynPropQueryAdapter				(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, FX_BSTR szPropName)
+static FX_BOOL FXJSE_DynPropQueryAdapter				(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName)
 {
     ASSERT(lpClass);
     int32_t nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, TRUE);
     return nPropType != FXJSE_ClassPropType_None;
 }
-static FX_BOOL FXJSE_DynPropDeleterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, FX_BSTR szPropName)
+static FX_BOOL FXJSE_DynPropDeleterAdapter					(const FXJSE_CLASS* lpClass, FXJSE_HOBJECT hObject, const CFX_ByteStringC& szPropName)
 {
     ASSERT(lpClass);
     int32_t nPropType = lpClass->dynPropTypeGetter == NULL ? FXJSE_ClassPropType_Property : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);

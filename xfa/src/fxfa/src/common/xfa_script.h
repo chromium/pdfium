@@ -84,8 +84,8 @@ public:
 
     virtual void				SetEventParam(CXFA_EventParam* pEventParam) = 0;
     virtual CXFA_EventParam*	GetEventParam() = 0;
-    virtual FX_BOOL		RunScript(XFA_SCRIPTLANGTYPE eScriptType, FX_WSTR wsScript, FXJSE_HVALUE hRetValue, CXFA_Object* pThisObject = NULL) = 0;
-    virtual int32_t	ResolveObjects(CXFA_Object* refNode, FX_WSTR wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS, FX_DWORD dwStyles = XFA_RESOLVENODE_Children, CXFA_Node* bindNode = NULL) = 0;
+    virtual FX_BOOL		RunScript(XFA_SCRIPTLANGTYPE eScriptType, const CFX_WideStringC& wsScript, FXJSE_HVALUE hRetValue, CXFA_Object* pThisObject = NULL) = 0;
+    virtual int32_t	ResolveObjects(CXFA_Object* refNode, const CFX_WideStringC& wsExpression, XFA_RESOLVENODE_RS& resolveNodeRS, FX_DWORD dwStyles = XFA_RESOLVENODE_Children, CXFA_Node* bindNode = NULL) = 0;
     virtual FXJSE_HVALUE		GetJSValueFromMap(CXFA_Object* pObject) = 0;
     virtual void				CacheList(CXFA_NodeList* pList) = 0;
     virtual CXFA_Object*		GetThisObject() const = 0;

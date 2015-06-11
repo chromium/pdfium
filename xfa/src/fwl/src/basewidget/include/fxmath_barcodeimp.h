@@ -14,7 +14,7 @@ public:
     FX_BOOL					Crreate(BC_TYPE type);
     virtual void			Release();
     virtual BC_TYPE			GetType();
-    virtual FX_BOOL			Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e);
+    virtual FX_BOOL			Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e);
     virtual FX_BOOL			RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matirx, int32_t &e);
     virtual FX_BOOL			RenderBitmap(CFX_DIBitmap *&pOutBitmap, int32_t &e);
     virtual CFX_WideString	Decode(uint8_t* buf, int32_t width, int32_t height, int32_t &errorCode);
@@ -24,7 +24,7 @@ public:
     virtual FX_BOOL			SetModuleWidth(int32_t moduleWidth);
     virtual FX_BOOL			SetHeight(int32_t height);
     virtual FX_BOOL			SetWidth(int32_t width);
-    virtual FX_BOOL			CheckContentValidity(FX_WSTR contents);
+    virtual FX_BOOL			CheckContentValidity(const CFX_WideStringC& contents);
     virtual FX_BOOL			SetPrintChecksum(FX_BOOL checksum);
     virtual FX_BOOL			SetDataLength(int32_t length);
     virtual FX_BOOL			SetCalChecksum(int32_t state);

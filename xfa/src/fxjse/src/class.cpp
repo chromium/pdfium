@@ -34,7 +34,7 @@ FXJSE_HCLASS FXJSE_DefineClass(FXJSE_HCONTEXT hContext, const FXJSE_CLASS* lpCla
     ASSERT(lpContext);
     return reinterpret_cast<FXJSE_HCLASS>(CFXJSE_Class::Create(lpContext, lpClass, FALSE));
 }
-FXJSE_HCLASS FXJSE_GetClass(FXJSE_HCONTEXT hContext, FX_BSTR szName)
+FXJSE_HCLASS FXJSE_GetClass(FXJSE_HCONTEXT hContext, const CFX_ByteStringC& szName)
 {
     return reinterpret_cast<FXJSE_HCLASS>(CFXJSE_Class::GetClassFromContext(reinterpret_cast<CFXJSE_Context*>(hContext), szName));
 }
@@ -256,7 +256,7 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext, const FXJSE_CLASS*
     lpContext->m_rgClasses.Add(pClass);
     return pClass;
 }
-CFXJSE_Class* CFXJSE_Class::GetClassFromContext(CFXJSE_Context* pContext, FX_BSTR szName)
+CFXJSE_Class* CFXJSE_Class::GetClassFromContext(CFXJSE_Context* pContext, const CFX_ByteStringC& szName)
 {
     for(int count = pContext->m_rgClasses.GetSize(), i = 0; i < count; i++) {
         CFXJSE_Class* pClass = pContext->m_rgClasses[i];

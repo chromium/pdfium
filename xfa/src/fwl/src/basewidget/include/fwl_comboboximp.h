@@ -103,8 +103,8 @@ public:
     virtual int32_t	GetEditLimit();
     virtual FWL_ERR		SetEditLimit(int32_t nLimit);
     virtual FWL_ERR		EditDoClipboard(int32_t iCmd);
-    virtual FX_BOOL		EditRedo(FX_BSTR bsRecord);
-    virtual FX_BOOL		EditUndo(FX_BSTR bsRecord);
+    virtual FX_BOOL		EditRedo(const CFX_ByteStringC& bsRecord);
+    virtual FX_BOOL		EditUndo(const CFX_ByteStringC& bsRecord);
     virtual IFWL_ListBox*  GetListBoxt();
     virtual FX_BOOL AfterFocusShowDropList();
     virtual FX_ERR	OpenDropDownList(FX_BOOL bActivate);

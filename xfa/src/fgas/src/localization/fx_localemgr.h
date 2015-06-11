@@ -17,7 +17,7 @@ public:
     virtual FX_WORD			GetDefLocaleID();
     virtual IFX_Locale* 	GetDefLocale();
     virtual IFX_Locale* 	GetLocale(FX_WORD lcid);
-    virtual IFX_Locale* 	GetLocaleByName(FX_WSTR wsLocaleName);
+    virtual IFX_Locale* 	GetLocaleByName(const CFX_WideStringC& wsLocaleName);
     CFX_MapPtrToPtr m_lcid2xml;
 protected:
     ~CFX_LocaleMgr();

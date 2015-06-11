@@ -15,7 +15,7 @@ CXFA_SAXReaderHandler::CXFA_SAXReaderHandler(CXFA_ChecksumContext *pContext)
 CXFA_SAXReaderHandler::~CXFA_SAXReaderHandler()
 {
 }
-void* CXFA_SAXReaderHandler::OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos)
+void* CXFA_SAXReaderHandler::OnTagEnter(const CFX_ByteStringC& bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos)
 {
     UpdateChecksum(TRUE);
     if (eType != FX_SAXNODE_Tag && eType != FX_SAXNODE_Instruction) {
@@ -31,7 +31,7 @@ void* CXFA_SAXReaderHandler::OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType, FX_
     m_SAXContext.m_bsTagName = bsTagName;
     return &m_SAXContext;
 }
-void CXFA_SAXReaderHandler::OnTagAttribute(void* pTag, FX_BSTR bsAttri, FX_BSTR bsValue)
+void CXFA_SAXReaderHandler::OnTagAttribute(void* pTag, const CFX_ByteStringC& bsAttri, const CFX_ByteStringC& bsValue)
 {
     if (pTag == NULL) {
         return;
@@ -52,7 +52,7 @@ void CXFA_SAXReaderHandler::OnTagBreak(void* pTag)
     textBuf << FX_BSTRC(">");
     UpdateChecksum(FALSE);
 }
-void CXFA_SAXReaderHandler::OnTagData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos)
+void CXFA_SAXReaderHandler::OnTagData(void* pTag, FX_SAXNODE eType, const CFX_ByteStringC& bsData, FX_DWORD dwStartPos)
 {
     if (pTag == NULL) {
         return;
@@ -82,7 +82,7 @@ void CXFA_SAXReaderHandler::OnTagClose(void* pTag, FX_DWORD dwEndPos)
     }
     UpdateChecksum(FALSE);
 }
-void CXFA_SAXReaderHandler::OnTagEnd(void* pTag, FX_BSTR bsTagName, FX_DWORD dwEndPos)
+void CXFA_SAXReaderHandler::OnTagEnd(void* pTag, const CFX_ByteStringC& bsTagName, FX_DWORD dwEndPos)
 {
     if (pTag == NULL) {
         return;
@@ -93,7 +93,7 @@ void CXFA_SAXReaderHandler::OnTagEnd(void* pTag, FX_BSTR bsTagName, FX_DWORD dwE
     textBuf << FX_BSTRC(">");
     UpdateChecksum(FALSE);
 }
-void CXFA_SAXReaderHandler::OnTargetData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos)
+void CXFA_SAXReaderHandler::OnTargetData(void* pTag, FX_SAXNODE eType, const CFX_ByteStringC& bsData, FX_DWORD dwStartPos)
 {
     if (pTag == NULL && eType != FX_SAXNODE_Comment) {
         return;
@@ -195,7 +195,7 @@ void CXFA_ChecksumContext::GetChecksum(CFX_ByteString &bsChecksum)
 {
     bsChecksum = m_bsChecksum;
 }
-void CXFA_ChecksumContext::Update(FX_BSTR bsText)
+void CXFA_ChecksumContext::Update(const CFX_ByteStringC& bsText)
 {
     if (m_pByteContext != NULL) {
         CRYPT_SHA1Update(m_pByteContext, bsText.GetPtr(), bsText.GetLength());

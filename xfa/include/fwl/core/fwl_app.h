@@ -29,7 +29,7 @@ void FWL_SetApp(IFWL_App *pApp);
 IFWL_AdapterNative*	FWL_GetAdapterNative();
 IFWL_AdapterWidgetMgr* FWL_GetAdapterWidgetMgr();
 IFWL_ThemeProvider*	FWL_GetThemeProvider();
-extern FWL_ERR FWL_Execute(FX_WSTR wsExecutable, FX_WSTR wsParameters);
+extern FWL_ERR FWL_Execute(const CFX_WideStringC& wsExecutable, const CFX_WideStringC& wsParameters);
 FWL_ERR FWL_SetFullScreen(IFWL_Widget *pWidget, FX_BOOL bFullScreen);
 FX_BOOL FWL_AppIsActived();
 #endif

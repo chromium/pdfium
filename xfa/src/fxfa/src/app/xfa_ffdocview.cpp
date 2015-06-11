@@ -222,11 +222,11 @@ IXFA_PageView* CXFA_FFDocView::GetPageView(int32_t nIndex)
     }
     return (CXFA_FFPageView*)m_pXFADocLayout->GetPage(nIndex);
 }
-IXFA_Widget* CXFA_FFDocView::GetWidgetByName(FX_WSTR wsName)
+IXFA_Widget* CXFA_FFDocView::GetWidgetByName(const CFX_WideStringC& wsName)
 {
     return GetWidgetByName(wsName, NULL);
 }
-CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(FX_WSTR wsName)
+CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(const CFX_WideStringC& wsName)
 {
     return GetWidgetAccByName(wsName, NULL);
 }
@@ -504,7 +504,7 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode, XFA_E
     iRet |= XFA_ProcessEvent(this, pWidgetAcc, &eParam);
     return iRet;
 }
-CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(FX_WSTR wsName, CXFA_FFWidget* pRefWidget )
+CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const CFX_WideStringC& wsName, CXFA_FFWidget* pRefWidget )
 {
     CXFA_WidgetAcc* pRefAcc = pRefWidget ? pRefWidget->GetDataAcc() : NULL;
     if (CXFA_WidgetAcc* pAcc = GetWidgetAccByName(wsName, pRefAcc)) {
@@ -512,7 +512,7 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(FX_WSTR wsName, CXFA_FFWidget* pR
     }
     return NULL;
 }
-CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(FX_WSTR wsName, CXFA_WidgetAcc* pRefWidgetAcc )
+CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(const CFX_WideStringC& wsName, CXFA_WidgetAcc* pRefWidgetAcc )
 {
     CFX_WideString wsExpression;
     FX_DWORD dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;

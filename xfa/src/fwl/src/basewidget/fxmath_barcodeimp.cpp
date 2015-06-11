@@ -79,7 +79,7 @@ FX_BOOL CFX_Barcode::SetWidth(int32_t width)
 {
     return m_pBCEngine ? m_pBCEngine->SetWidth(width) : FALSE;
 }
-FX_BOOL	CFX_Barcode::CheckContentValidity(FX_WSTR contents)
+FX_BOOL	CFX_Barcode::CheckContentValidity(const CFX_WideStringC& contents)
 {
     switch(GetType()) {
         case BC_CODE39:
@@ -336,7 +336,7 @@ FX_BOOL	CFX_Barcode::SetTruncated(FX_BOOL truncated)
 #ifndef BCExceptionUnSupportedBarcode
 #define	BCExceptionUnSupportedBarcode							          18
 #endif
-FX_BOOL CFX_Barcode::Encode(FX_WSTR contents, FX_BOOL isDevice, int32_t &e)
+FX_BOOL CFX_Barcode::Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e)
 {
     if(!m_pBCEngine) {
         return FALSE;

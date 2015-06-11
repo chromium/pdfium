@@ -51,10 +51,10 @@ public:
     int32_t	XFA_ResolveNodes_NumberSign(CXFA_ResolveNodesData &rnd);
     int32_t	XFA_ResolveNodes_Asterisk(CXFA_ResolveNodesData &rnd);
     int32_t	XFA_ResolveNodes_Normal(CXFA_ResolveNodesData &rnd);
-    int32_t	XFA_ResolveNodes_ForAttributeRs(CXFA_Object* curNode, CXFA_ResolveNodesData &rnd, FX_WSTR strAttr);
+    int32_t	XFA_ResolveNodes_ForAttributeRs(CXFA_Object* curNode, CXFA_ResolveNodesData &rnd, const CFX_WideStringC& strAttr);
     void		XFA_ResolveNode_ConditionArray(int32_t iCurIndex, CFX_WideString wsCondition, int32_t iFoundCount, CXFA_ResolveNodesData &rnd);
     void		XFA_ResolveNode_DoPredicateFilter(int32_t iCurIndex, CFX_WideString wsCondition, int32_t iFoundCount, CXFA_ResolveNodesData &rnd);
-    int32_t	XFA_ResolveNodes_GetFilter(FX_WSTR wsExpression, int32_t nStart, CXFA_ResolveNodesData &rnd);
+    int32_t	XFA_ResolveNodes_GetFilter(const CFX_WideStringC& wsExpression, int32_t nStart, CXFA_ResolveNodesData &rnd);
     void		XFA_ResolveNode_FilterCondition(CXFA_ResolveNodesData &rnd, CFX_WideString wsCondition);
     int32_t	XFA_ResolveNodes_PopStack(CFX_Int32Array &stack);
     void		XFA_ResolveNodes_SetStylesForChild(FX_DWORD dwParentStyles, CXFA_ResolveNodesData &rnd);

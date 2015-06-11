@@ -31,7 +31,7 @@ FX_DWORD CFWL_FormProxyImp::GetClassID() const
 {
     return FWL_CLASSHASH_FormProxy;
 }
-FX_BOOL CFWL_FormProxyImp::IsInstance(FX_WSTR wsClass) const
+FX_BOOL CFWL_FormProxyImp::IsInstance(const CFX_WideStringC& wsClass) const
 {
     if (wsClass == CFX_WideStringC(FWL_CLASS_FormProxy)) {
         return TRUE;

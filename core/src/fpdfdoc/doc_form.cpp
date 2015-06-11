@@ -1297,8 +1297,8 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(const CPDF_Dictionary* pFieldDi
     pField = m_pFieldTree->GetField(csWName);
     if (pField == NULL) {
         CPDF_Dictionary *pParent = (CPDF_Dictionary*)pFieldDict;
-        if (!pFieldDict->KeyExist(FX_BSTR("T")) &&
-                pFieldDict->GetString(FX_BSTRC("Subtype")) == FX_BSTRC("Widget")) {
+        if (!pFieldDict->KeyExist(FX_BSTRC("T")) &&
+            pFieldDict->GetString(FX_BSTRC("Subtype")) == FX_BSTRC("Widget")) {
             pParent = pFieldDict->GetDict(FX_BSTRC("Parent"));
             if (!pParent) {
                 pParent = (CPDF_Dictionary*)pFieldDict;
@@ -1392,7 +1392,7 @@ CPDF_FormField* CPDF_InterForm::CheckRequiredFields(const CFX_PtrArray *fields, 
     }
     return NULL;
 }
-CFDF_Document* CPDF_InterForm::ExportToFDF(FX_WSTR pdf_path, FX_BOOL bSimpleFileSpec) const
+CFDF_Document* CPDF_InterForm::ExportToFDF(const CFX_WideStringC& pdf_path, FX_BOOL bSimpleFileSpec) const
 {
     CFX_PtrArray fields;
     int nCount = m_pFieldTree->m_Root.CountFields();
@@ -1402,8 +1402,8 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(FX_WSTR pdf_path, FX_BOOL bSimpleFile
     }
     return ExportToFDF(pdf_path, fields, TRUE, bSimpleFileSpec);
 }
-CFX_WideString FILESPEC_EncodeFileName(FX_WSTR filepath);
-CFDF_Document* CPDF_InterForm::ExportToFDF(FX_WSTR pdf_path, CFX_PtrArray& fields, FX_BOOL bIncludeOrExclude, FX_BOOL bSimpleFileSpec) const
+CFX_WideString FILESPEC_EncodeFileName(const CFX_WideStringC& filepath);
+CFDF_Document* CPDF_InterForm::ExportToFDF(const CFX_WideStringC& pdf_path, CFX_PtrArray& fields, FX_BOOL bIncludeOrExclude, FX_BOOL bSimpleFileSpec) const
 {
     CFDF_Document* pDoc = CFDF_Document::CreateNewDoc();
     if (pDoc == NULL) {

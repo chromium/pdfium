@@ -585,7 +585,7 @@ FX_BOOL CXFA_FFMenuHandler::GetSuggestWords(IXFA_Widget* hWidget, CFX_PointF poi
 {
     return static_cast<CXFA_FFWidget*>(hWidget)->GetSuggestWords(pointf, sSuggest);
 }
-FX_BOOL CXFA_FFMenuHandler::ReplaceSpellCheckWord(IXFA_Widget* hWidget, CFX_PointF pointf, FX_BSTR bsReplace)
+FX_BOOL CXFA_FFMenuHandler::ReplaceSpellCheckWord(IXFA_Widget* hWidget, CFX_PointF pointf, const CFX_ByteStringC& bsReplace)
 {
     return static_cast<CXFA_FFWidget*>(hWidget)->ReplaceSpellCheckWord(pointf, bsReplace);
 }

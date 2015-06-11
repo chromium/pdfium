@@ -98,7 +98,7 @@ CFX_WideString XFA_ExportEncodeAttribute(const CFX_WideString& str)
     }
     return textBuf.GetWideString();
 }
-CFX_WideString XFA_ExportEncodeContent(FX_WSTR str)
+CFX_WideString XFA_ExportEncodeContent(const CFX_WideStringC& str)
 {
     CFX_WideTextBuf textBuf;
     int32_t iLen = str.GetLength();
@@ -129,7 +129,7 @@ CFX_WideString XFA_ExportEncodeContent(FX_WSTR str)
     }
     return textBuf.GetWideString();
 }
-static void XFA_SaveAttribute(CXFA_Node* pNode, XFA_ATTRIBUTE eName, FX_WSTR wsName, FX_BOOL bProto, CFX_WideString &wsOutput)
+static void XFA_SaveAttribute(CXFA_Node* pNode, XFA_ATTRIBUTE eName, const CFX_WideStringC& wsName, FX_BOOL bProto, CFX_WideString &wsOutput)
 {
     CFX_WideString wsValue;
     if ((!bProto && !pNode->HasAttribute((XFA_ATTRIBUTE)eName, bProto)) || !pNode->GetAttribute((XFA_ATTRIBUTE)eName, wsValue, FALSE)) {

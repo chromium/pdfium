@@ -44,7 +44,7 @@ public:
     FX_DWORD		GetRefCount() const;
     FWL_ERR			GetClassName(CFX_WideString &wsClass) const;
     FX_DWORD		GetClassID() const;
-    virtual FX_BOOL	IsInstance(FX_WSTR wsClass) const;
+    virtual FX_BOOL	IsInstance(const CFX_WideStringC& wsClass) const;
 protected:
     FWL_ERR			Initialize(const CFWL_WidgetProperties *pProperties = NULL);
 public:

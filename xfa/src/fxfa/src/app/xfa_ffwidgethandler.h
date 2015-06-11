@@ -99,6 +99,6 @@ public:
     virtual FX_BOOL		Undo(IXFA_Widget* hWidget);
     virtual FX_BOOL		Redo(IXFA_Widget* hWidget);
     virtual FX_BOOL		GetSuggestWords(IXFA_Widget* hWidget, CFX_PointF pointf, CFX_ByteStringArray &sSuggest);
-    virtual FX_BOOL		ReplaceSpellCheckWord(IXFA_Widget* hWidget, CFX_PointF pointf, FX_BSTR bsReplace);
+    virtual FX_BOOL		ReplaceSpellCheckWord(IXFA_Widget* hWidget, CFX_PointF pointf, const CFX_ByteStringC& bsReplace);
 };
 #endif

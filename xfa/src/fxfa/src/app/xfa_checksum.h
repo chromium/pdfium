@@ -23,14 +23,14 @@ class CXFA_SAXReaderHandler : public IFX_SAXReaderHandler
 public:
     CXFA_SAXReaderHandler(CXFA_ChecksumContext *pContext);
     virtual ~CXFA_SAXReaderHandler();
-    virtual void*	OnTagEnter(FX_BSTR bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos);
-    virtual void		OnTagAttribute(void* pTag, FX_BSTR bsAttri, FX_BSTR bsValue);
+    virtual void*	OnTagEnter(const CFX_ByteStringC& bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos);
+    virtual void		OnTagAttribute(void* pTag, const CFX_ByteStringC& bsAttri, const CFX_ByteStringC& bsValue);
     virtual void		OnTagBreak(void* pTag);
-    virtual void		OnTagData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos);
+    virtual void		OnTagData(void* pTag, FX_SAXNODE eType, const CFX_ByteStringC& bsData, FX_DWORD dwStartPos);
     virtual void		OnTagClose(void* pTag, FX_DWORD dwEndPos);
-    virtual void		OnTagEnd(void* pTag, FX_BSTR bsTagName, FX_DWORD dwEndPos);
+    virtual void		OnTagEnd(void* pTag, const CFX_ByteStringC& bsTagName, FX_DWORD dwEndPos);
 
-    virtual void		OnTargetData(void* pTag, FX_SAXNODE eType, FX_BSTR bsData, FX_DWORD dwStartPos);
+    virtual void		OnTargetData(void* pTag, FX_SAXNODE eType, const CFX_ByteStringC& bsData, FX_DWORD dwStartPos);
 protected:
     void				UpdateChecksum(FX_BOOL bCheckSpace);
     CXFA_ChecksumContext	*m_pContext;
@@ -49,7 +49,7 @@ public:
     virtual FX_BOOL		UpdateChecksum(IFX_FileRead *pSrcFile, FX_FILESIZE offset = 0, size_t size = 0);
     virtual void		FinishChecksum();
     virtual void		GetChecksum(CFX_ByteString &bsChecksum);
-    void				Update(FX_BSTR bsText);
+    void				Update(const CFX_ByteStringC& bsText);
 protected:
     IFX_SAXReader		*m_pSAXReader;
     uint8_t*			m_pByteContext;

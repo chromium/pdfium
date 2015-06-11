@@ -96,8 +96,8 @@ class CFWL_FontData
 public:
     CFWL_FontData();
     virtual ~CFWL_FontData();
-    FX_BOOL Equal(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
-    FX_BOOL LoadFont(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
+    FX_BOOL Equal(const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
+    FX_BOOL LoadFont(const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD wCodePage);
     IFX_Font*  GetFont() const
     {
         return m_pFont;
@@ -117,7 +117,7 @@ class CFWL_FontManager
 public:
     CFWL_FontManager();
     virtual ~CFWL_FontManager();
-    IFX_Font* FindFont(FX_WSTR wsFontFamily, FX_DWORD dwFontStyles, FX_WORD dwCodePage);
+    IFX_Font* FindFont(const CFX_WideStringC& wsFontFamily, FX_DWORD dwFontStyles, FX_WORD dwCodePage);
 protected:
     CFX_PtrArray    m_arrFonts;
 };

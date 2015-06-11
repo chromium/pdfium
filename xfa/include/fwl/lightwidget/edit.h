@@ -34,8 +34,8 @@ public:
     FWL_ERR		ReplaceSelections(const CFX_WideStringC &wsReplace);
     FWL_ERR		Replace(int32_t nStart, int32_t nLen, const CFX_WideStringC &wsReplace);
     FWL_ERR		DoClipboard(int32_t iCmd);
-    FX_BOOL		Redo(FX_BSTR bsRecord);
-    FX_BOOL		Undo(FX_BSTR bsRecord);
+    FX_BOOL		Redo(const CFX_ByteStringC& bsRecord);
+    FX_BOOL		Undo(const CFX_ByteStringC& bsRecord);
     FWL_ERR		SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
     FWL_ERR		SetNumberRange(int32_t iMin, int32_t iMax);
     FWL_ERR     SetBackColor(FX_DWORD dwColor);
@@ -50,7 +50,7 @@ public:
     FX_BOOL		Delete();
     void		SetScrollOffset(FX_FLOAT fScrollOffset);
     FX_BOOL		GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray &sSuggest);
-    FX_BOOL		ReplaceSpellCheckWord(CFX_PointF pointf, FX_BSTR bsReplace);
+    FX_BOOL		ReplaceSpellCheckWord(CFX_PointF pointf, const CFX_ByteStringC& bsReplace);
     CFWL_Edit();
     virtual ~CFWL_Edit();
 };

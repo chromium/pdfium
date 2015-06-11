@@ -376,7 +376,7 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString &wsStringVal)
     return dValue;
 }
 
-FX_DOUBLE XFA_ByteStringToDouble(FX_BSTR szStringVal)
+FX_DOUBLE XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal)
 {
     CFX_WideString wsValue = CFX_WideString::FromUTF8(szStringVal.GetCStr(), szStringVal.GetLength());
     return XFA_WideStringToDouble(wsValue);

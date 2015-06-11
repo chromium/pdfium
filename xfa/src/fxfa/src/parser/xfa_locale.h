@@ -27,8 +27,8 @@ public:
 
 protected:
     ~CXFA_XMLLocale();
-    void			GetPattern(CXML_Element* pElement, FX_BSTR bsTag, FX_WSTR wsName, CFX_WideString& wsPattern) const;
-    CFX_WideString	GetCalendarSymbol(FX_BSTR symbol, int index, FX_BOOL bAbbr) const;
+    void			GetPattern(CXML_Element* pElement, const CFX_ByteStringC& bsTag, const CFX_WideStringC& wsName, CFX_WideString& wsPattern) const;
+    CFX_WideString	GetCalendarSymbol(const CFX_ByteStringC& symbol, int index, FX_BOOL bAbbr) const;
 private:
     CXML_Element*	m_pLocaleData;
 };
@@ -52,8 +52,8 @@ public:
     virtual void	GetNumPattern(FX_LOCALENUMSUBCATEGORY eType, CFX_WideString& wsPattern) const;
 protected:
     ~CXFA_NodeLocale();
-    CXFA_Node*		GetNodeByName(CXFA_Node *pParent, FX_WSTR wsName) const;
-    CFX_WideString	GetSymbol(XFA_ELEMENT eElement, FX_WSTR symbol_type) const;
+    CXFA_Node*		GetNodeByName(CXFA_Node *pParent, const CFX_WideStringC& wsName) const;
+    CFX_WideString	GetSymbol(XFA_ELEMENT eElement, const CFX_WideStringC& symbol_type) const;
     CFX_WideString	GetCalendarSymbol(XFA_ELEMENT eElement, int index, FX_BOOL bAbbr) const;
 
     CXFA_Node*		m_pLocale;

@@ -146,7 +146,7 @@ public:
     {
         return 0;
     }
-    virtual FX_BOOL			IsInstance(FX_WSTR wsClass) const
+    virtual FX_BOOL			IsInstance(const CFX_WideStringC& wsClass) const
     {
         return TRUE;
     }

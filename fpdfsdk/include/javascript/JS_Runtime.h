@@ -61,8 +61,8 @@ public:
 	v8::Local<v8::Context>					NewJSContext();
 
 
-	virtual	FX_BOOL							GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue);
-	virtual	FX_BOOL							SetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue);
+	virtual	FX_BOOL							GetHValueByName(const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue);
+	virtual	FX_BOOL							SetHValueByName(const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue);
 protected:
 	CFX_ArrayTemplate<CJS_Context*>		m_ContextArray;
 	CPDFDoc_Environment*							m_pApp;

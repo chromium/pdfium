@@ -362,7 +362,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_DocumentInBatch(CFXJSE_Argu
         FXJSE_Value_SetInteger(hValue, iCur);
     }
 }
-static int32_t XFA_FilterName(FX_WSTR wsExpression, int32_t nStart, CFX_WideString &wsFilter)
+static int32_t XFA_FilterName(const CFX_WideStringC& wsExpression, int32_t nStart, CFX_WideString &wsFilter)
 {
     FXSYS_assert(nStart > -1);
     int32_t iLength = wsExpression.GetLength();

@@ -68,10 +68,10 @@ public:
 	virtual FX_BOOL		IsCalculationsEnabled(IXFA_Doc* hDoc);
 	virtual void		SetCalculationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled);
 	virtual void		GetTitle(IXFA_Doc* hDoc, CFX_WideString &wsTitle);
-	virtual void		SetTitle(IXFA_Doc* hDoc, FX_WSTR wsTitle);
-	virtual void		ExportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath, FX_BOOL bXDP = TRUE);
-	virtual void		ImportData(IXFA_Doc* hDoc, FX_WSTR wsFilePath);
-	virtual void		GotoURL(IXFA_Doc* hDoc, FX_WSTR bsURL, FX_BOOL bAppend = TRUE);
+	virtual void		SetTitle(IXFA_Doc* hDoc, const CFX_WideStringC& wsTitle);
+	virtual void		ExportData(IXFA_Doc* hDoc, const CFX_WideStringC& wsFilePath, FX_BOOL bXDP = TRUE);
+	virtual void		ImportData(IXFA_Doc* hDoc, const CFX_WideStringC& wsFilePath);
+	virtual void		GotoURL(IXFA_Doc* hDoc, const CFX_WideStringC& bsURL, FX_BOOL bAppend = TRUE);
 	virtual FX_BOOL		IsValidationsEnabled(IXFA_Doc* hDoc);
 	virtual void		SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled);
 	virtual void		SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget);
@@ -86,7 +86,7 @@ public:
 	//SignaturePseudoModel method
 	//TODO:
 	virtual int32_t			Verify(IXFA_Doc* hDoc, CXFA_Node* pSigNode, FX_BOOL bUsed = TRUE/*, SecurityHandler* pHandler, SignatureInfo &info*/) {return 0;}
-	virtual FX_BOOL				Sign(IXFA_Doc* hDoc, CXFA_NodeList* pNodeList, FX_WSTR wsExpression, FX_WSTR wsXMLIdent, FX_WSTR wsValue = FX_WSTRC(L"open"), FX_BOOL bUsed = TRUE/*, SecurityHandler* pHandler = NULL, SignatureInfo &info*/) {return 0;}
+	virtual FX_BOOL				Sign(IXFA_Doc* hDoc, CXFA_NodeList* pNodeList, const CFX_WideStringC& wsExpression, const CFX_WideStringC& wsXMLIdent, const CFX_WideStringC& wsValue = FX_WSTRC(L"open"), FX_BOOL bUsed = TRUE/*, SecurityHandler* pHandler = NULL, SignatureInfo &info*/) {return 0;}
 	virtual CXFA_NodeList*		Enumerate(IXFA_Doc* hDoc) {return 0;}
 	virtual FX_BOOL				Clear(IXFA_Doc* hDoc, CXFA_Node* pSigNode, FX_BOOL bCleared = TRUE) {return 0;}
 
@@ -105,19 +105,19 @@ public:
 	 */
 	virtual FX_BOOL		SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit);
 
-	virtual FX_BOOL		CheckWord(IXFA_Doc* hDoc, FX_BSTR sWord){return FALSE;}
-	virtual FX_BOOL		GetSuggestWords(IXFA_Doc* hDoc, FX_BSTR sWord, CFX_ByteStringArray& sSuggest){return FALSE;}
+	virtual FX_BOOL		CheckWord(IXFA_Doc* hDoc, const CFX_ByteStringC& sWord){return FALSE;}
+	virtual FX_BOOL		GetSuggestWords(IXFA_Doc* hDoc, const CFX_ByteStringC& sWord, CFX_ByteStringArray& sSuggest){return FALSE;}
 
 	//Get PDF javascript object, set the object to hValue.
-	virtual FX_BOOL		GetPDFScriptObject(IXFA_Doc* hDoc, FX_BSTR utf8Name, FXJSE_HVALUE hValue);
+	virtual FX_BOOL		GetPDFScriptObject(IXFA_Doc* hDoc, const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue);
 
-	virtual FX_BOOL		GetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue);
-	virtual FX_BOOL		SetGlobalProperty(IXFA_Doc* hDoc, FX_BSTR szPropName, FXJSE_HVALUE hValue);
+	virtual FX_BOOL		GetGlobalProperty(IXFA_Doc* hDoc, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue);
+	virtual FX_BOOL		SetGlobalProperty(IXFA_Doc* hDoc, const CFX_ByteStringC& szPropName, FXJSE_HVALUE hValue);
 	virtual CPDF_Document*  OpenPDF(IXFA_Doc* hDoc, IFX_FileRead* pFile, FX_BOOL bTakeOverFile){return NULL;}
 
 	virtual IFX_FileRead*	OpenLinkedFile(IXFA_Doc* hDoc, const CFX_WideString& wsLink);
 
-	FX_BOOL		_GetHValueByName(FX_BSTR utf8Name, FXJSE_HVALUE hValue, IFXJS_Runtime* runTime);
+	FX_BOOL		_GetHValueByName(const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue, IFXJS_Runtime* runTime);
 	FX_BOOL		_OnBeforeNotifySumbit();
 	void		_OnAfterNotifySumbit();
 	FX_BOOL		_NotifySubmit(FX_BOOL bPrevOrPost);

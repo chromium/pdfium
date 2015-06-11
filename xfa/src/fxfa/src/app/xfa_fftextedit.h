@@ -33,7 +33,7 @@ public:
     virtual FX_BOOL		Delete();
     virtual FX_BOOL		DeSelect();
     FX_BOOL		GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray &sSuggest);
-    FX_BOOL		ReplaceSpellCheckWord(CFX_PointF pointf, FX_BSTR bsReplace);
+    FX_BOOL		ReplaceSpellCheckWord(CFX_PointF pointf, const CFX_ByteStringC& bsReplace);
 protected:
     FX_DWORD	GetAlignment();
     virtual FX_BOOL	CommitData();
@@ -45,8 +45,8 @@ public:
     void	OnTextChanged(IFWL_Widget *pWidget, const CFX_WideString &wsChanged, const CFX_WideString &wsPrevText);
     void	OnTextFull(IFWL_Widget *pWidget);
     void	OnAddDoRecord(IFWL_Widget *pWidget);
-    FX_BOOL		CheckWord(FX_BSTR sWord);
-    FX_BOOL		GetSuggestWords(FX_BSTR sWord, CFX_ByteStringArray &sSuggest);
+    FX_BOOL		CheckWord(const CFX_ByteStringC& sWord);
+    FX_BOOL		GetSuggestWords(const CFX_ByteStringC& sWord, CFX_ByteStringArray &sSuggest);
     virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);

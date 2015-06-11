@@ -42,7 +42,7 @@ CFDE_CSSStyleSheetCache::~CFDE_CSSStyleSheetCache()
         m_pFixedStore->Release();
     }
 }
-void CFDE_CSSStyleSheetCache::AddStyleSheet(FX_BSTR szKey, IFDE_CSSStyleSheet *pStyleSheet)
+void CFDE_CSSStyleSheetCache::AddStyleSheet(const CFX_ByteStringC& szKey, IFDE_CSSStyleSheet *pStyleSheet)
 {
     FXSYS_assert(pStyleSheet != NULL);
     if (m_pFixedStore == NULL) {
@@ -67,7 +67,7 @@ void CFDE_CSSStyleSheetCache::AddStyleSheet(FX_BSTR szKey, IFDE_CSSStyleSheet *p
         m_Stylesheets.SetAt(szKey, pItem);
     }
 }
-IFDE_CSSStyleSheet* CFDE_CSSStyleSheetCache::GetStyleSheet(FX_BSTR szKey) const
+IFDE_CSSStyleSheet* CFDE_CSSStyleSheetCache::GetStyleSheet(const CFX_ByteStringC& szKey) const
 {
     void* pValue = NULL;
     if (m_Stylesheets.Lookup(szKey, pValue)) {
@@ -78,7 +78,7 @@ IFDE_CSSStyleSheet* CFDE_CSSStyleSheetCache::GetStyleSheet(FX_BSTR szKey) const
     }
     return NULL;
 }
-void CFDE_CSSStyleSheetCache::RemoveStyleSheet(FX_BSTR szKey)
+void CFDE_CSSStyleSheetCache::RemoveStyleSheet(const CFX_ByteStringC& szKey)
 {
     void* pValue = NULL;
     if (!m_Stylesheets.Lookup(szKey, pValue)) {

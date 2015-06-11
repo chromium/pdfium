@@ -166,7 +166,7 @@ FX_DWORD CFPF_SkiaFont::GetFontData(FX_DWORD dwTable, uint8_t* pBuffer, FX_DWORD
     }
     return dwSize;
 }
-FX_BOOL CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr *pFontMgr, CFPF_SkiaFontDescriptor *pFontDes, FX_BSTR bsFamily, FX_DWORD dwStyle, uint8_t uCharset)
+FX_BOOL CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr *pFontMgr, CFPF_SkiaFontDescriptor *pFontDes, const CFX_ByteStringC& bsFamily, FX_DWORD dwStyle, uint8_t uCharset)
 {
     if (!pFontMgr || !pFontDes) {
         return FALSE;

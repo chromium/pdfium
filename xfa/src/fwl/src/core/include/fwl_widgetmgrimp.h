@@ -77,7 +77,7 @@ public:
     FWL_ERR			SetWidgetRect_Native(IFWL_Widget *pWidget, const CFX_RectF &rect);
     FWL_ERR			SetWidgetPosition_Native(IFWL_Widget *pWidget, FX_FLOAT fx, FX_FLOAT fy);
     FWL_ERR			SetWidgetIcon_Native(IFWL_Widget *pWidget, const CFX_DIBitmap *pIcon, FX_BOOL bBig);
-    FWL_ERR			SetWidgetCaption_Native(IFWL_Widget *pWidget, FX_WSTR wsCaption);
+    FWL_ERR			SetWidgetCaption_Native(IFWL_Widget *pWidget, const CFX_WideStringC& wsCaption);
     FWL_ERR			SetBorderRegion_Native(IFWL_Widget *pWidget, CFX_Path *pPath);
     FWL_ERR			ShowWidget_Native(IFWL_Widget *pWidget);
     FWL_ERR			HideWidget_Native(IFWL_Widget *pWidget);

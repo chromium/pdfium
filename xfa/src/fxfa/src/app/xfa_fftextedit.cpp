@@ -346,7 +346,7 @@ FX_BOOL CXFA_FFTextEdit::GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray 
     FWLToClient(pointf.x, pointf.y);
     return ((CFWL_Edit*)m_pNormalWidget)->GetSuggestWords(pointf, sSuggest);
 }
-FX_BOOL CXFA_FFTextEdit::ReplaceSpellCheckWord(CFX_PointF pointf, FX_BSTR bsReplace)
+FX_BOOL CXFA_FFTextEdit::ReplaceSpellCheckWord(CFX_PointF pointf, const CFX_ByteStringC& bsReplace)
 {
     if (m_pDataAcc->GetUIType() != XFA_ELEMENT_TextEdit) {
         return FALSE;
@@ -390,14 +390,14 @@ void CXFA_FFTextEdit::OnAddDoRecord(IFWL_Widget *pWidget)
 {
     GetDoc()->GetDocProvider()->AddDoRecord(this);
 }
-FX_BOOL CXFA_FFTextEdit::CheckWord(FX_BSTR sWord)
+FX_BOOL CXFA_FFTextEdit::CheckWord(const CFX_ByteStringC& sWord)
 {
     if (sWord.IsEmpty() || m_pDataAcc->GetUIType() != XFA_ELEMENT_TextEdit) {
         return TRUE;
     }
     return GetDoc()->GetDocProvider()->CheckWord(GetDoc(), sWord);
 }
-FX_BOOL CXFA_FFTextEdit::GetSuggestWords(FX_BSTR sWord, CFX_ByteStringArray &sSuggest)
+FX_BOOL CXFA_FFTextEdit::GetSuggestWords(const CFX_ByteStringC& sWord, CFX_ByteStringArray &sSuggest)
 {
     if (m_pDataAcc->GetUIType() != XFA_ELEMENT_TextEdit) {
         return FALSE;

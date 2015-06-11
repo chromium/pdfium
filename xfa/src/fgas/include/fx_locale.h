@@ -77,12 +77,12 @@ public:
     virtual FX_WORD			GetDefLocaleID() = 0;
     virtual IFX_Locale* 	GetDefLocale() = 0;
     virtual IFX_Locale* 	GetLocale(FX_WORD lcid) = 0;
-    virtual IFX_Locale* 	GetLocaleByName(FX_WSTR wsLocaleName) = 0;
+    virtual IFX_Locale* 	GetLocaleByName(const CFX_WideStringC& wsLocaleName) = 0;
 };
 IFX_LocaleMgr*	FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath, FX_WORD wDefaultLCID);
 void			FX_ParseNumString(const CFX_WideString& wsNum, CFX_WideString& wsResult);
 FX_BOOL			FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime);
-FX_BOOL			FX_TimeFromCanonical(FX_WSTR wsTime, CFX_Unitime& datetime, IFX_Locale* pLocale);
+FX_BOOL			FX_TimeFromCanonical(const CFX_WideStringC& wsTime, CFX_Unitime& datetime, IFX_Locale* pLocale);
 class IFX_FormatString
 {
 public:
@@ -117,8 +117,8 @@ public:
     CFX_Decimal(int32_t val);
     CFX_Decimal(int64_t val);
     CFX_Decimal(FX_FLOAT val, uint8_t scale = 3);
-    CFX_Decimal(FX_WSTR str);
-    CFX_Decimal(FX_BSTR str);
+    CFX_Decimal(const CFX_WideStringC& str);
+    CFX_Decimal(const CFX_ByteStringC& str);
     operator CFX_WideString() const;
     operator double() const;
     FX_BOOL operator == (const CFX_Decimal& val) const;

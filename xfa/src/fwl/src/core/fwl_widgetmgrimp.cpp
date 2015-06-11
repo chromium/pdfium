@@ -422,7 +422,7 @@ FWL_ERR	CFWL_WidgetMgr::SetWidgetIcon_Native(IFWL_Widget *pWidget, const CFX_DIB
 {
     return m_pAdapter->SetWidgetIcon(pWidget, pIcon, bBig);
 }
-FWL_ERR	CFWL_WidgetMgr::SetWidgetCaption_Native(IFWL_Widget *pWidget, FX_WSTR wsCaption)
+FWL_ERR	CFWL_WidgetMgr::SetWidgetCaption_Native(IFWL_Widget *pWidget, const CFX_WideStringC& wsCaption)
 {
     return m_pAdapter->SetWidgetCaption(pWidget, wsCaption);
 }

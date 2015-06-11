@@ -154,7 +154,7 @@ FX_DWORD CFWL_FormImp::GetClassID() const
 {
     return FWL_CLASSHASH_Form;
 }
-FX_BOOL	CFWL_FormImp::IsInstance(FX_WSTR wsClass) const
+FX_BOOL	CFWL_FormImp::IsInstance(const CFX_WideStringC& wsClass) const
 {
     if (wsClass == CFX_WideStringC(FWL_CLASS_Form)) {
         return TRUE;

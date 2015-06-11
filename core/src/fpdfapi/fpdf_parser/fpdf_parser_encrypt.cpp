@@ -103,7 +103,7 @@ FX_DWORD CPDF_StandardSecurityHandler::GetPermissions()
 {
     return m_Permissions;
 }
-static FX_BOOL _LoadCryptInfo(CPDF_Dictionary* pEncryptDict, FX_BSTR name, int& cipher, int& keylen)
+static FX_BOOL _LoadCryptInfo(CPDF_Dictionary* pEncryptDict, const CFX_ByteStringC& name, int& cipher, int& keylen)
 {
     int Version = pEncryptDict->GetInteger(FX_BSTRC("V"));
     cipher = FXCIPHER_RC4;
