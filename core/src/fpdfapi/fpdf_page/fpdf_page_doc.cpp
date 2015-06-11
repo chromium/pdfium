@@ -124,12 +124,10 @@ void CPDF_Document::RemoveColorSpaceFromPageData(CPDF_Object* pCSObj)
     }
     GetPageData()->ReleaseColorSpace(pCSObj);
 }
-CPDF_DocPageData::CPDF_DocPageData(CPDF_Document *pPDFDoc)
+CPDF_DocPageData::CPDF_DocPageData(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
-      m_FontFileMap(),
       m_bForceClear(FALSE)
 {
-    m_FontFileMap.InitHashTable(32);
 }
 
 CPDF_DocPageData::~CPDF_DocPageData()
@@ -212,18 +210,16 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
         }
     }
 
-    FX_POSITION pos = m_FontFileMap.GetStartPosition();
-    while (pos) {
-        CPDF_Stream* ftKey;
-        CPDF_CountedObject<CPDF_StreamAcc*>* ftData;
-        m_FontFileMap.GetNextAssoc(pos, ftKey, ftData);
-        if (!ftData->m_Obj) {
+    for (auto it = m_FontFileMap.begin(); it != m_FontFileMap.end();) {
+        auto curr_it = it++;
+        CPDF_CountedStreamAcc* ftData = curr_it->second;
+        if (!ftData->m_Obj)
             continue;
-        }
+
         if (bForceRelease || ftData->m_nCount < 2) {
             delete ftData->m_Obj;
             delete ftData;
-            m_FontFileMap.RemoveKey(ftKey);
+            m_FontFileMap.erase(curr_it);
         }
     }
 
@@ -603,42 +599,49 @@ void CPDF_DocPageData::ReleaseIccProfile(CPDF_IccProfile* pIccProfile)
 
 CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(CPDF_Stream* pFontStream)
 {
-    if (!pFontStream) {
-        return NULL;
-    }
-    CPDF_CountedObject<CPDF_StreamAcc*>* ftData;
-    if (m_FontFileMap.Lookup(pFontStream, ftData)) {
-        ftData->m_nCount ++;
+    if (!pFontStream)
+        return nullptr;
+
+    auto it = m_FontFileMap.find(pFontStream);
+    if (it != m_FontFileMap.end()) {
+        CPDF_CountedStreamAcc* ftData = it->second;
+        ftData->m_nCount++;
         return ftData->m_Obj;
     }
-    ftData = new CPDF_CountedObject<CPDF_StreamAcc*>;
+
+    CPDF_CountedStreamAcc* ftData = new CPDF_CountedStreamAcc;
     CPDF_StreamAcc* pFontFile = new CPDF_StreamAcc;
     CPDF_Dictionary* pFontDict = pFontStream->GetDict();
-    int32_t org_size = pFontDict->GetInteger(FX_BSTRC("Length1")) + pFontDict->GetInteger(FX_BSTRC("Length2")) + pFontDict->GetInteger(FX_BSTRC("Length3"));
-    if (org_size < 0) {
+    int32_t org_size = pFontDict->GetInteger(FX_BSTRC("Length1")) +
+                       pFontDict->GetInteger(FX_BSTRC("Length2")) +
+                       pFontDict->GetInteger(FX_BSTRC("Length3"));
+    if (org_size < 0)
         org_size = 0;
-    }
+
     pFontFile->LoadAllData(pFontStream, FALSE, org_size);
     ftData->m_nCount = 2;
     ftData->m_Obj = pFontFile;
-    m_FontFileMap.SetAt(pFontStream, ftData);
+    m_FontFileMap[pFontStream] = ftData;
     return pFontFile;
 }
+
 void CPDF_DocPageData::ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOOL bForce)
 {
     if (!pFontStream)
         return;
 
-    CPDF_CountedObject<CPDF_StreamAcc*>* findData = nullptr;
-    if (!m_FontFileMap.Lookup(pFontStream, findData))
+    auto it = m_FontFileMap.find(pFontStream);
+    if (it == m_FontFileMap.end())
         return;
+
+    CPDF_CountedStreamAcc* findData = it->second;
     if (!findData)
         return;
 
     if ((--findData->m_nCount) == 0 || bForce) {
         delete findData->m_Obj;
         delete findData;
-        m_FontFileMap.RemoveKey(pFontStream);
+        m_FontFileMap.erase(it);
     }
 }
 

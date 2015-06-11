@@ -352,27 +352,29 @@ class CPDF_DocPageData
     CPDF_CountedColorSpace*     FindColorSpacePtr(CPDF_Object* pCSObj) const;
     CPDF_CountedPattern*        FindPatternPtr(CPDF_Object* pPatternObj) const;
 
-    CPDF_Document*              m_pPDFDoc;
-    CFX_MapByteStringToPtr      m_HashProfileMap;
-    CPDF_FontFileMap            m_FontFileMap;
-    FX_BOOL                     m_bForceClear;
-
   private:
     using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font*>;
     using CPDF_CountedIccProfile = CPDF_CountedObject<CPDF_IccProfile*>;
     using CPDF_CountedImage = CPDF_CountedObject<CPDF_Image*>;
+    using CPDF_CountedStreamAcc = CPDF_CountedObject<CPDF_StreamAcc*>;
 
     using CPDF_ColorSpaceMap = std::map<CPDF_Object*, CPDF_CountedColorSpace*>;
+    using CPDF_FontFileMap = std::map<CPDF_Stream*, CPDF_CountedStreamAcc*>;
     using CPDF_FontMap = std::map<CPDF_Dictionary*, CPDF_CountedFont*>;
     using CPDF_IccProfileMap = std::map<CPDF_Stream*, CPDF_CountedIccProfile*>;
     using CPDF_ImageMap = std::map<FX_DWORD, CPDF_CountedImage*>;
     using CPDF_PatternMap = std::map<CPDF_Object*, CPDF_CountedPattern*>;
 
-    CPDF_ColorSpaceMap          m_ColorSpaceMap;
-    CPDF_FontMap                m_FontMap;
-    CPDF_IccProfileMap          m_IccProfileMap;
-    CPDF_ImageMap               m_ImageMap;
-    CPDF_PatternMap             m_PatternMap;
+    CPDF_Document* const m_pPDFDoc;
+    CFX_MapByteStringToPtr m_HashProfileMap;
+    FX_BOOL m_bForceClear;
+
+    CPDF_ColorSpaceMap m_ColorSpaceMap;
+    CPDF_FontFileMap m_FontFileMap;
+    CPDF_FontMap m_FontMap;
+    CPDF_IccProfileMap m_IccProfileMap;
+    CPDF_ImageMap m_ImageMap;
+    CPDF_PatternMap m_PatternMap;
 };
 
 class CPDF_Function
