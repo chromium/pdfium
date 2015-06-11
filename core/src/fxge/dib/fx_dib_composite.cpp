@@ -297,7 +297,7 @@ void _CompositeRow_Rgb2Mask(uint8_t* dest_scan, const uint8_t* src_scan, int wid
             clip_scan ++;
         }
     } else {
-        FXSYS_memset8(dest_scan, 0xff, width);
+        FXSYS_memset(dest_scan, 0xff, width);
     }
 }
 void _CompositeRow_Argb2Graya(uint8_t* dest_scan, const uint8_t* src_scan, int pixel_count, int blend_type, const uint8_t* clip_scan,
@@ -1331,7 +1331,7 @@ inline void _CompositeRow_Rgb2Rgb_Blend_Clip(uint8_t* dest_scan, const uint8_t* 
 inline void _CompositeRow_Rgb2Rgb_NoBlend_NoClip(uint8_t* dest_scan, const uint8_t* src_scan, int width, int dest_Bpp, int src_Bpp)
 {
     if (dest_Bpp == src_Bpp) {
-        FXSYS_memcpy32(dest_scan, src_scan, width * dest_Bpp);
+        FXSYS_memcpy(dest_scan, src_scan, width * dest_Bpp);
         return;
     }
     for (int col = 0; col < width; col ++) {
@@ -3662,7 +3662,7 @@ inline void _ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format, FXDIB
                 int palsize = 1 << (src_format & 0xff);
                 pDestPalette = FX_Alloc(FX_DWORD, palsize);
                 if (isDstCmyk == isSrcCmyk) {
-                    FXSYS_memcpy32(pDestPalette, pSrcPalette, palsize * sizeof(FX_DWORD));
+                    FXSYS_memcpy(pDestPalette, pSrcPalette, palsize * sizeof(FX_DWORD));
                 } else {
                     for (int i = 0; i < palsize; i ++) {
                         FX_CMYK cmyk = pSrcPalette[i];
@@ -4236,7 +4236,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left, int top, int width, int height, FX
         for (int row = rect.top; row < rect.bottom; row ++) {
             uint8_t* dest_scan = m_pBuffer + row * m_Pitch + rect.left;
             if (src_alpha == 255) {
-                FXSYS_memset8(dest_scan, gray, width);
+                FXSYS_memset(dest_scan, gray, width);
             } else
                 for (int col = 0; col < width; col ++) {
                     *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, src_alpha);
@@ -4264,7 +4264,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left, int top, int width, int height, FX
             uint8_t left_flag =  *dest_scan_top & (255 << (8 - left_shift));
             uint8_t right_flag = *dest_scan_top_r & (255 >> right_shift);
             if (width) {
-                FXSYS_memset8(dest_scan_top + 1, index ? 255 : 0, width - 1);
+                FXSYS_memset(dest_scan_top + 1, index ? 255 : 0, width - 1);
                 if (!index) {
                     *dest_scan_top &= left_flag;
                     *dest_scan_top_r &= right_flag;
@@ -4308,7 +4308,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left, int top, int width, int height, FX
             uint8_t* dest_scan = m_pBuffer + row * m_Pitch + rect.left * Bpp;
             uint8_t* dest_scan_alpha = m_pAlphaMask ? (uint8_t*)m_pAlphaMask->GetScanline(row) + rect.left : NULL;
             if (dest_scan_alpha) {
-                FXSYS_memset8(dest_scan_alpha, 0xff, width);
+                FXSYS_memset(dest_scan_alpha, 0xff, width);
             }
             if (Bpp == 4) {
                 FX_DWORD* scan = (FX_DWORD*)dest_scan;
@@ -4352,7 +4352,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left, int top, int width, int height, FX
                     uint8_t back_alpha = *dest_scan_alpha;
                     if (back_alpha == 0) {
                         *dest_scan_alpha++ = src_alpha;
-                        FXSYS_memcpy32(dest_scan, color_p, Bpp);
+                        FXSYS_memcpy(dest_scan, color_p, Bpp);
                         dest_scan += Bpp;
                         continue;
                     }
@@ -4457,7 +4457,7 @@ void CFX_BitmapComposer::DoCompose(uint8_t* dest_scan, const uint8_t* src_scan, 
                 m_pAddClipScan[i] = clip_scan[i] * m_BitmapAlpha / 255;
             }
         } else {
-            FXSYS_memset8(m_pAddClipScan, m_BitmapAlpha, dest_width);
+            FXSYS_memset(m_pAddClipScan, m_BitmapAlpha, dest_width);
         }
         clip_scan = m_pAddClipScan;
     }

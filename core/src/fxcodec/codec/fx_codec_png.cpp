@@ -50,7 +50,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr, png_infop info_ptr, CFX
         png_timep t = NULL;
         png_get_tIME(png_ptr, info_ptr, &t);
         if (t) {
-            FXSYS_memset32(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
+            FXSYS_memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
             FXSYS_snprintf((FX_CHAR*)pAttribute->m_strTime, sizeof(pAttribute->m_strTime), "%4d:%2d:%2d %2d:%2d:%2d",
                            t->year, t->month, t->day, t->hour, t->minute, t->second);
             pAttribute->m_strTime[sizeof(pAttribute->m_strTime) - 1] = 0;
@@ -67,15 +67,15 @@ static void _png_load_bmp_attribute(png_structp png_ptr, png_infop info_ptr, CFX
         for (i = 0; i < num_text; i++) {
             len = (FX_DWORD)FXSYS_strlen(text[i].key);
             buf = "Time";
-            if (!FXSYS_memcmp32(buf, text[i].key, FX_MIN(len, FXSYS_strlen(buf)))) {
+            if (!FXSYS_memcmp(buf, text[i].key, FX_MIN(len, FXSYS_strlen(buf)))) {
                 if (!bTime) {
-                    FXSYS_memset32(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
-                    FXSYS_memcpy32(pAttribute->m_strTime, text[i].text,
+                    FXSYS_memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
+                    FXSYS_memcpy(pAttribute->m_strTime, text[i].text,
                                    FX_MIN(sizeof(pAttribute->m_strTime) - 1, text[i].text_length));
                 }
             } else {
                 buf = "Author";
-                if (!FXSYS_memcmp32(buf, text[i].key, FX_MIN(len, FXSYS_strlen(buf)))) {
+                if (!FXSYS_memcmp(buf, text[i].key, FX_MIN(len, FXSYS_strlen(buf)))) {
                     pAttribute->m_strAuthor.Empty();
                     pAttribute->m_strAuthor.Load((uint8_t*)text[i].text, (FX_STRSIZE)text[i].text_length);
                 }

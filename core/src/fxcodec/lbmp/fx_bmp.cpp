@@ -37,7 +37,7 @@ bmp_decompress_struct_p _bmp_create_decompress()
     if(bmp_ptr == NULL) {
         return NULL;
     }
-    FXSYS_memset32(bmp_ptr, 0, sizeof(bmp_decompress_struct));
+    FXSYS_memset(bmp_ptr, 0, sizeof(bmp_decompress_struct));
     bmp_ptr->decode_status = BMP_D_STATUS_HEADER;
     bmp_ptr->bmp_header_ptr = FX_Alloc(BmpFileHeader, 1);
     return bmp_ptr;
@@ -199,7 +199,7 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr)
         }
         bmp_ptr->out_row_buffer = FX_Alloc(uint8_t, bmp_ptr->out_row_bytes);
         BMP_PTR_NOT_NULL(bmp_ptr->out_row_buffer, bmp_ptr);
-        FXSYS_memset32(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
+        FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
         _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_PAL);
     }
     if (bmp_ptr->decode_status == BMP_D_STATUS_PAL) {
@@ -362,7 +362,7 @@ int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr)
             case 8:
             case 24:
             case 32:
-                FXSYS_memcpy32(bmp_ptr->out_row_buffer, des_buf, bmp_ptr->src_row_bytes);
+                FXSYS_memcpy(bmp_ptr->out_row_buffer, des_buf, bmp_ptr->src_row_bytes);
                 break;
         }
         row_buf = bmp_ptr->out_row_buffer;
@@ -400,7 +400,7 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr)
                                                          bmp_ptr->imgTB_flag ? bmp_ptr->row_num++ : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
                                                          bmp_ptr->out_row_buffer);
                                 bmp_ptr->col_num = 0;
-                                FXSYS_memset32(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
+                                FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
                                 _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
                                 continue;
                             }
@@ -426,7 +426,7 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr)
                                     return 0;
                                 }
                                 while(bmp_ptr->row_num < bmp_row_num_next) {
-                                    FXSYS_memset32(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
+                                    FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
                                     bmp_ptr->_bmp_get_row_fn(bmp_ptr,
                                                              bmp_ptr->imgTB_flag ? bmp_ptr->row_num++ : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
                                                              bmp_ptr->out_row_buffer);
@@ -443,7 +443,7 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr)
                                     bmp_ptr->skip_size = skip_size_org;
                                     return 2;
                                 }
-                                FXSYS_memcpy32(bmp_ptr->out_row_buffer + bmp_ptr->col_num, second_byte_ptr, *first_byte_ptr);
+                                FXSYS_memcpy(bmp_ptr->out_row_buffer + bmp_ptr->col_num, second_byte_ptr, *first_byte_ptr);
                                 bmp_ptr->col_num += (int32_t)(*first_byte_ptr);
                             }
                     }
@@ -458,7 +458,7 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr)
                         _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
                         return 0;
                     }
-                    FXSYS_memset8(bmp_ptr->out_row_buffer + bmp_ptr->col_num, *second_byte_ptr, *first_byte_ptr);
+                    FXSYS_memset(bmp_ptr->out_row_buffer + bmp_ptr->col_num, *second_byte_ptr, *first_byte_ptr);
                     bmp_ptr->col_num += (int32_t)(*first_byte_ptr);
                 }
         }
@@ -493,7 +493,7 @@ int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr)
                                                          bmp_ptr->imgTB_flag ? bmp_ptr->row_num++ : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
                                                          bmp_ptr->out_row_buffer);
                                 bmp_ptr->col_num = 0;
-                                FXSYS_memset32(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
+                                FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
                                 _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
                                 continue;
                             }
@@ -519,7 +519,7 @@ int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr)
                                     return 0;
                                 }
                                 while(bmp_ptr->row_num < bmp_row_num_next) {
-                                    FXSYS_memset32(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
+                                    FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
                                     bmp_ptr->_bmp_get_row_fn(bmp_ptr,
                                                              bmp_ptr->imgTB_flag ? bmp_ptr->row_num++ : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
                                                              bmp_ptr->out_row_buffer);
@@ -614,7 +614,7 @@ bmp_compress_struct_p _bmp_create_compress()
     bmp_compress_struct_p bmp_ptr;
     bmp_ptr = FX_Alloc(bmp_compress_struct, 1);
     if (bmp_ptr) {
-        FXSYS_memset32(bmp_ptr, 0, sizeof(bmp_compress_struct));
+        FXSYS_memset(bmp_ptr, 0, sizeof(bmp_compress_struct));
     }
     return bmp_ptr;
 }
@@ -683,7 +683,7 @@ static void _bmp_encode_bitfields(bmp_compress_struct_p bmp_ptr, uint8_t*& dst_b
     if (dst_buf == NULL) {
         return;
     }
-    FXSYS_memset32(&dst_buf[dst_pos], 0, size);
+    FXSYS_memset(&dst_buf[dst_pos], 0, size);
     FX_DWORD		mask_red;
     FX_DWORD		mask_green;
     FX_DWORD		mask_blue;
@@ -770,9 +770,9 @@ static void _bmp_encode_rgb(bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, FX
     if (dst_buf == NULL) {
         return;
     }
-    FXSYS_memset32(&dst_buf[dst_pos], 0, size);
+    FXSYS_memset(&dst_buf[dst_pos], 0, size);
     for (int32_t row_num = bmp_ptr->src_row - 1; row_num > -1; row_num--) {
-        FXSYS_memcpy32(&dst_buf[dst_pos], &bmp_ptr->src_buf[row_num * bmp_ptr->src_pitch], bmp_ptr->src_pitch);
+        FXSYS_memcpy(&dst_buf[dst_pos], &bmp_ptr->src_buf[row_num * bmp_ptr->src_pitch], bmp_ptr->src_pitch);
         dst_pos += dst_pitch;
     }
     dst_size = dst_pos;
@@ -800,7 +800,7 @@ static void _bmp_encode_rle8(bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, F
     if (dst_buf == NULL) {
         return;
     }
-    FXSYS_memset32(&dst_buf[dst_pos], 0, size);
+    FXSYS_memset(&dst_buf[dst_pos], 0, size);
     for (int32_t row_num = bmp_ptr->src_row - 1, i = 0; row_num > -1; ) {
         index = row_num * bmp_ptr->src_pitch;
         rle[0] = _bmp_rle8_search(&bmp_ptr->src_buf[index + i], size - index - i);
@@ -848,7 +848,7 @@ static void _bmp_encode_rle4(bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, F
     if (dst_buf == NULL) {
         return;
     }
-    FXSYS_memset32(&dst_buf[dst_pos], 0, size);
+    FXSYS_memset(&dst_buf[dst_pos], 0, size);
     for (int32_t row_num = bmp_ptr->src_row - 1, i = 0; row_num > -1; rle[1] = 0) {
         index = row_num * bmp_ptr->src_pitch;
         rle[0] = _bmp_rle4_search(&bmp_ptr->src_buf[index + i], size - index - i);
@@ -886,10 +886,10 @@ FX_BOOL _bmp_encode_image( bmp_compress_struct_p bmp_ptr, uint8_t*& dst_buf, FX_
     if (dst_buf == NULL) {
         return FALSE;
     }
-    FXSYS_memset32(dst_buf, 0, dst_size);
+    FXSYS_memset(dst_buf, 0, dst_size);
     bmp_ptr->file_header.bfOffBits = head_size;
     if (bmp_ptr->pal_ptr && pal_size) {
-        FXSYS_memcpy32(&dst_buf[head_size], bmp_ptr->pal_ptr, pal_size);
+        FXSYS_memcpy(&dst_buf[head_size], bmp_ptr->pal_ptr, pal_size);
         bmp_ptr->file_header.bfOffBits += pal_size;
     }
     WriteInfoHeader(&bmp_ptr->info_header, dst_buf);

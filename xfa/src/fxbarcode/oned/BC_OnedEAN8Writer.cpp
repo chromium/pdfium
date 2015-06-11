@@ -169,7 +169,7 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents, CFX_DIBitmap
     if (!pCharPos) {
         return;
     }
-    FXSYS_memset32(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLength);
+    FXSYS_memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLength);
     CFX_ByteString tempStr = str.Mid(0, 4);
     int32_t iLen = tempStr.GetLength();
     int32_t strWidth = 7 * multiple * 4;

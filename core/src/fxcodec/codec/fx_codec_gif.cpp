@@ -70,7 +70,7 @@ void* CCodec_GifModule::Start(void* pModule)
     if (p == NULL) {
         return NULL;
     }
-    FXSYS_memset32(p, 0, sizeof(FXGIF_Context));
+    FXSYS_memset(p, 0, sizeof(FXGIF_Context));
     p->m_AllocFunc = _gif_alloc_func;
     p->m_FreeFunc = _gif_free_func;
     p->gif_ptr = NULL;
@@ -156,7 +156,7 @@ int32_t CCodec_GifModule::LoadFrame(void* pContext, int frame_num, CFX_DIBAttrib
                     buf += size;
                     size = *buf++;
                     if (size == 20) {
-                        FXSYS_memcpy32(pAttribute->m_strTime, buf, size);
+                        FXSYS_memcpy(pAttribute->m_strTime, buf, size);
                     }
                 }
             }

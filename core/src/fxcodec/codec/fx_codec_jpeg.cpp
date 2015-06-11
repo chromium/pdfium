@@ -81,7 +81,7 @@ static FX_BOOL _JpegIsIccMarker(jpeg_saved_marker_ptr marker)
 {
     if (marker->marker == JPEG_MARKER_ICC &&
             marker->data_length >= JPEG_OVERHEAD_LEN &&
-            (FXSYS_memcmp32(marker->data, "\x49\x43\x43\x5f\x50\x52\x4f\x46\x49\x4c\x45\x00", 12) == 0)) {
+            (FXSYS_memcmp(marker->data, "\x49\x43\x43\x5f\x50\x52\x4f\x46\x49\x4c\x45\x00", 12) == 0)) {
         return TRUE;
     }
     return FALSE;
@@ -134,7 +134,7 @@ static	FX_BOOL _JpegLoadIccProfile(j_decompress_ptr cinfo, uint8_t** icc_buf_ptr
     *icc_length = icc_data_len;
     for (int idx = 0; idx < num_icc_marker; idx++) {
         icc_data_len = marker_list[idx]->data_length - JPEG_OVERHEAD_LEN;
-        FXSYS_memcpy32(icc_data_ptr, marker_list[idx]->data + JPEG_OVERHEAD_LEN, icc_data_len);
+        FXSYS_memcpy(icc_data_ptr, marker_list[idx]->data + JPEG_OVERHEAD_LEN, icc_data_len);
         icc_data_ptr += icc_data_len;
     }
     return TRUE;
@@ -151,16 +151,16 @@ static	FX_BOOL _JpegEmbedIccProfile(j_compress_ptr cinfo, const uint8_t* icc_buf
     }
     FX_DWORD icc_data_length = JPEG_OVERHEAD_LEN + (icc_segment_num > 1 ? icc_segment_size : icc_length);
     uint8_t* icc_data = FX_Alloc(uint8_t, icc_data_length);
-    FXSYS_memcpy32(icc_data, "\x49\x43\x43\x5f\x50\x52\x4f\x46\x49\x4c\x45\x00", 12);
+    FXSYS_memcpy(icc_data, "\x49\x43\x43\x5f\x50\x52\x4f\x46\x49\x4c\x45\x00", 12);
     icc_data[13] = (uint8_t)icc_segment_num;
     for (uint8_t i = 0; i < (icc_segment_num - 1); i++) {
         icc_data[12] = i + 1;
-        FXSYS_memcpy32(icc_data + JPEG_OVERHEAD_LEN, icc_buf_ptr + i * icc_segment_size, icc_segment_size);
+        FXSYS_memcpy(icc_data + JPEG_OVERHEAD_LEN, icc_buf_ptr + i * icc_segment_size, icc_segment_size);
         jpeg_write_marker(cinfo, JPEG_MARKER_ICC, icc_data, icc_data_length);
     }
     icc_data[12] = (uint8_t)icc_segment_num;
     FX_DWORD icc_size = (icc_segment_num - 1) * icc_segment_size;
-    FXSYS_memcpy32(icc_data + JPEG_OVERHEAD_LEN, icc_buf_ptr + icc_size, icc_length - icc_size);
+    FXSYS_memcpy(icc_data + JPEG_OVERHEAD_LEN, icc_buf_ptr + icc_size, icc_length - icc_size);
     jpeg_write_marker(cinfo, JPEG_MARKER_ICC, icc_data, JPEG_OVERHEAD_LEN + icc_length - icc_size);
     FX_Free(icc_data);
     return TRUE;
@@ -385,9 +385,9 @@ CCodec_JpegDecoder::CCodec_JpegDecoder()
     m_bInited = FALSE;
     m_pExtProvider = NULL;
     m_pExtContext = NULL;
-    FXSYS_memset32(&cinfo, 0, sizeof(cinfo));
-    FXSYS_memset32(&jerr, 0, sizeof(jerr));
-    FXSYS_memset32(&src, 0, sizeof(src));
+    FXSYS_memset(&cinfo, 0, sizeof(cinfo));
+    FXSYS_memset(&jerr, 0, sizeof(jerr));
+    FXSYS_memset(&src, 0, sizeof(src));
     m_nDefaultScaleDenom = 1;
 }
 CCodec_JpegDecoder::~CCodec_JpegDecoder()
@@ -461,7 +461,7 @@ FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf, FX_DWORD src_size, in
     src.fill_input_buffer = _src_fill_buffer;
     src.resync_to_restart = _src_resync;
     m_bJpegTransform = ColorTransform;
-    if(src_size > 1 && FXSYS_memcmp32(src_buf + src_size - 2, "\xFF\xD9", 2) != 0) {
+    if(src_size > 1 && FXSYS_memcmp(src_buf + src_size - 2, "\xFF\xD9", 2) != 0) {
         ((uint8_t*)src_buf)[src_size - 2] = 0xFF;
         ((uint8_t*)src_buf)[src_size - 1] = 0xD9;
     }

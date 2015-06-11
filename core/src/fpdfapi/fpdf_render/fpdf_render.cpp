@@ -843,7 +843,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj, 
     m_bStopped = bitmap_render.m_bStopped;
     if (pSMaskDict) {
         CFX_AffineMatrix smask_matrix;
-        FXSYS_memcpy32(&smask_matrix, pGeneralState->m_SMaskMatrix, sizeof smask_matrix);
+        FXSYS_memcpy(&smask_matrix, pGeneralState->m_SMaskMatrix, sizeof smask_matrix);
         smask_matrix.Concat(*pObj2Device);
         CFX_DIBSource* pSMaskSource = LoadSMask(pSMaskDict, &rect, &smask_matrix);
         if (pSMaskSource) {
@@ -1217,7 +1217,7 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj)
         m_TransferFuncMap.SetAt(pObj, pTransferCounter);
         static const int kMaxOutputs = 16;
         FX_FLOAT output[kMaxOutputs];
-        FXSYS_memset32(output, 0, sizeof(output));
+        FXSYS_memset(output, 0, sizeof(output));
         FX_FLOAT input;
         int noutput;
         for (int v = 0; v < 256; v ++) {

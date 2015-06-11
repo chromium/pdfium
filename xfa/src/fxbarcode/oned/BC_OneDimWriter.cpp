@@ -230,7 +230,7 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents, CFX_DIBitmap *
     if (!pCharPos) {
         return;
     }
-    FXSYS_memset32(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
+    FXSYS_memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
     FX_FLOAT charsLen = 0;
     FX_FLOAT geWidth = 0;
     if ( m_locTextLoc == BC_TEXT_LOC_ABOVEEMBED ||

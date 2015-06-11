@@ -526,7 +526,7 @@ CPDF_IccProfile::CPDF_IccProfile(const uint8_t* pData, FX_DWORD dwSize):
     m_pTransform(NULL),
     m_nSrcComponents(0)
 {
-    if (dwSize == 3144 && FXSYS_memcmp32(pData + 0x190, "sRGB IEC61966-2.1", 17) == 0) {
+    if (dwSize == 3144 && FXSYS_memcmp(pData + 0x190, "sRGB IEC61966-2.1", 17) == 0) {
         m_bsRGB = TRUE;
         m_nSrcComponents = 3;
     }
@@ -1351,7 +1351,7 @@ void CPDF_Color::SetValue(FX_FLOAT* comps)
         return;
     }
     if (m_pCS->GetFamily() != PDFCS_PATTERN) {
-        FXSYS_memcpy32(m_pBuffer, comps, m_pCS->CountComponents() * sizeof(FX_FLOAT));
+        FXSYS_memcpy(m_pBuffer, comps, m_pCS->CountComponents() * sizeof(FX_FLOAT));
     }
 }
 void CPDF_Color::SetValue(CPDF_Pattern* pPattern, FX_FLOAT* comps, int ncomps)
@@ -1377,7 +1377,7 @@ void CPDF_Color::SetValue(CPDF_Pattern* pPattern, FX_FLOAT* comps, int ncomps)
     pvalue->m_nComps = ncomps;
     pvalue->m_pPattern = pPattern;
     if (ncomps) {
-        FXSYS_memcpy32(pvalue->m_Comps, comps, ncomps * sizeof(FX_FLOAT));
+        FXSYS_memcpy(pvalue->m_Comps, comps, ncomps * sizeof(FX_FLOAT));
     }
     pvalue->m_pCountedPattern = NULL;
     if (pPattern && pPattern->m_pDocument)
@@ -1403,7 +1403,7 @@ void CPDF_Color::Copy(const CPDF_Color* pSrc)
         return;
     }
     m_pBuffer = m_pCS->CreateBuf();
-    FXSYS_memcpy32(m_pBuffer, pSrc->m_pBuffer, m_pCS->GetBufSize());
+    FXSYS_memcpy(m_pBuffer, pSrc->m_pBuffer, m_pCS->GetBufSize());
     if (m_pCS->GetFamily() == PDFCS_PATTERN) {
         PatternValue* pvalue = (PatternValue*)m_pBuffer;
         if (pvalue->m_pPattern && pvalue->m_pPattern->m_pDocument) {
@@ -1453,5 +1453,5 @@ FX_BOOL CPDF_Color::IsEqual(const CPDF_Color& other) const
     if (m_pCS != other.m_pCS || m_pCS == NULL) {
         return FALSE;
     }
-    return FXSYS_memcmp32(m_pBuffer, other.m_pBuffer, m_pCS->GetBufSize()) == 0;
+    return FXSYS_memcmp(m_pBuffer, other.m_pBuffer, m_pCS->GetBufSize()) == 0;
 }

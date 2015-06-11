@@ -159,7 +159,7 @@ void CBC_QRDecodedBitStreamParser::DecodeByteSegment(CBC_CommonBitSource* bits, 
         BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
     uint8_t *readBytes = FX_Alloc(uint8_t, count);
-    FXSYS_memset32(readBytes, 0x00, count);
+    FXSYS_memset(readBytes, 0x00, count);
     for(int32_t i = 0; i < count; i++) {
         readBytes[i] = (uint8_t) bits->ReadBits(8, e);
         BC_EXCEPTION_CHECK_ReturnVoid(e);

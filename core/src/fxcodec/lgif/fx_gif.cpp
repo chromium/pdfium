@@ -32,8 +32,8 @@ void CGifLZWDecoder::ClearTable()
     code_size_cur = code_size + 1;
     code_next = code_end + 1;
     code_old = (FX_WORD) - 1;
-    FXSYS_memset32(code_table, 0, sizeof(tag_Table)*GIF_MAX_LZW_CODE);
-    FXSYS_memset32(stack, 0, GIF_MAX_LZW_CODE);
+    FXSYS_memset(code_table, 0, sizeof(tag_Table)*GIF_MAX_LZW_CODE);
+    FXSYS_memset(stack, 0, GIF_MAX_LZW_CODE);
     for (FX_WORD i = 0; i < code_clear; i++) {
         code_table[i].suffix = (uint8_t)i;
     }
@@ -73,11 +73,11 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, FX_DWORD& des_size)
     FX_DWORD i = 0;
     if(stack_size != 0) {
         if(des_size < stack_size) {
-            FXSYS_memcpy32(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], des_size);
+            FXSYS_memcpy(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], des_size);
             stack_size -= (FX_WORD)des_size;
             return 3;
         }
-        FXSYS_memcpy32(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], stack_size);
+        FXSYS_memcpy(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], stack_size);
         des_buf += stack_size;
         i += stack_size;
         stack_size = 0;
@@ -127,11 +127,11 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, FX_DWORD& des_size)
                 }
                 code_old = code;
                 if(i + stack_size > des_size) {
-                    FXSYS_memcpy32(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], des_size - i);
+                    FXSYS_memcpy(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], des_size - i);
                     stack_size -= (FX_WORD)(des_size - i);
                     return 3;
                 }
-                FXSYS_memcpy32(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], stack_size);
+                FXSYS_memcpy(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], stack_size);
                 des_buf += stack_size;
                 i += stack_size;
                 stack_size = 0;
@@ -159,7 +159,7 @@ static FX_BOOL _gif_grow_buf(uint8_t*& dst_buf, FX_DWORD& dst_len, FX_DWORD size
                 return FALSE;
             }
         }
-        FXSYS_memset32(dst_buf + len_org, 0, dst_len - len_org);
+        FXSYS_memset(dst_buf + len_org, 0, dst_len - len_org);
         return dst_buf != NULL;
     }
     return TRUE;
@@ -191,7 +191,7 @@ static inline uint8_t _gif_cut_buf(const uint8_t* buf, FX_DWORD& offset, uint8_t
 }
 CGifLZWEncoder::CGifLZWEncoder()
 {
-    FXSYS_memset32(this, 0, sizeof(CGifLZWEncoder));
+    FXSYS_memset(this, 0, sizeof(CGifLZWEncoder));
 }
 CGifLZWEncoder::~CGifLZWEncoder()
 {
@@ -231,9 +231,9 @@ void CGifLZWEncoder::WriteBlock(uint8_t*& dst_buf, FX_DWORD& dst_len, FX_DWORD& 
         longjmp(jmp, 1);
     }
     dst_buf[offset++] = index_buf_len;
-    FXSYS_memcpy32(&dst_buf[offset], index_buf, index_buf_len);
+    FXSYS_memcpy(&dst_buf[offset], index_buf, index_buf_len);
     offset += index_buf_len;
-    FXSYS_memset32(index_buf, 0, GIF_DATA_BLOCK);
+    FXSYS_memset(index_buf, 0, GIF_DATA_BLOCK);
     index_buf_len = 0;
 }
 void CGifLZWEncoder::EncodeString( FX_DWORD index, uint8_t*& dst_buf, FX_DWORD& dst_len, FX_DWORD& offset )
@@ -340,7 +340,7 @@ gif_decompress_struct_p _gif_create_decompress()
     if(gif_ptr == NULL) {
         return NULL;
     }
-    FXSYS_memset32(gif_ptr, 0, sizeof(gif_decompress_struct));
+    FXSYS_memset(gif_ptr, 0, sizeof(gif_decompress_struct));
     gif_ptr->decode_status = GIF_D_STATUS_SIG;
     gif_ptr->img_ptr_arr_ptr = new CFX_ArrayTemplate<GifImage*>;
 #ifdef GIF_SUPPORT_COMMENT_EXTENSION
@@ -427,7 +427,7 @@ gif_compress_struct_p _gif_create_compress()
     if (gif_ptr == NULL) {
         return NULL;
     }
-    FXSYS_memset32(gif_ptr, 0, sizeof(gif_compress_struct));
+    FXSYS_memset(gif_ptr, 0, sizeof(gif_compress_struct));
     gif_ptr->img_encoder_ptr = new CGifLZWEncoder;
     gif_ptr->header_ptr = (GifHeader*)FX_Alloc(uint8_t, sizeof(GifHeader));
     if (gif_ptr->header_ptr == NULL) {
@@ -435,8 +435,8 @@ gif_compress_struct_p _gif_create_compress()
         FX_Free(gif_ptr);
         return NULL;
     }
-    FXSYS_memcpy32(gif_ptr->header_ptr->signature, GIF_SIGNATURE, 3);
-    FXSYS_memcpy32(gif_ptr->header_ptr->version, "89a", 3);
+    FXSYS_memcpy(gif_ptr->header_ptr->signature, GIF_SIGNATURE, 3);
+    FXSYS_memcpy(gif_ptr->header_ptr->version, "89a", 3);
     gif_ptr->lsd_ptr = (GifLSD*)FX_Alloc(uint8_t, sizeof(GifLSD));
     if (gif_ptr->lsd_ptr == NULL) {
         FX_Free(gif_ptr->header_ptr);
@@ -444,7 +444,7 @@ gif_compress_struct_p _gif_create_compress()
         FX_Free(gif_ptr);
         return NULL;
     }
-    FXSYS_memset32(gif_ptr->lsd_ptr, 0, sizeof(GifLSD));
+    FXSYS_memset(gif_ptr->lsd_ptr, 0, sizeof(GifLSD));
     gif_ptr->image_info_ptr = (GifImageInfo*)FX_Alloc(uint8_t, sizeof(GifImageInfo));
     if (gif_ptr->image_info_ptr == NULL) {
         FX_Free(gif_ptr->lsd_ptr);
@@ -453,10 +453,10 @@ gif_compress_struct_p _gif_create_compress()
         FX_Free(gif_ptr);
         return NULL;
     }
-    FXSYS_memset32(gif_ptr->image_info_ptr, 0, sizeof(GifImageInfo));
+    FXSYS_memset(gif_ptr->image_info_ptr, 0, sizeof(GifImageInfo));
 #ifdef GIF_SUPPORT_APPLICATION_EXTENSION
-    FXSYS_memcpy32(gif_ptr->app_identify, "netscape", 8);
-    FXSYS_memcpy32(gif_ptr->app_authentication, "2.0", 3);
+    FXSYS_memcpy(gif_ptr->app_identify, "netscape", 8);
+    FXSYS_memcpy(gif_ptr->app_authentication, "2.0", 3);
 #endif
 #ifdef GIF_SUPPORT_GRAPHIC_CONTROL_EXTENSION
     gif_ptr->gce_ptr = (GifGCE*)FX_Alloc(uint8_t, sizeof(GifGCE));
@@ -480,7 +480,7 @@ gif_compress_struct_p _gif_create_compress()
         FX_Free(gif_ptr);
         return NULL;
     }
-    FXSYS_memset32(gif_ptr->pte_ptr, 0, sizeof(GifPTE));
+    FXSYS_memset(gif_ptr->pte_ptr, 0, sizeof(GifPTE));
     gif_ptr->pte_ptr->block_size = 12;
 #endif
     return gif_ptr;
@@ -579,7 +579,7 @@ int32_t _gif_read_header(gif_decompress_struct_p gif_ptr)
         gif_ptr->global_pal_ptr = NULL;
         gif_ptr->global_pal_ptr = (GifPalette*)FX_Alloc(uint8_t, global_pal_size);
         GIF_PTR_NOT_NULL(gif_ptr->global_pal_ptr, gif_ptr);
-        FXSYS_memcpy32(gif_ptr->global_pal_ptr, global_pal_ptr, global_pal_size);
+        FXSYS_memcpy(gif_ptr->global_pal_ptr, global_pal_ptr, global_pal_size);
     }
     gif_ptr->width = (int)_GetWord_LSBFirst((uint8_t*)&gif_lsd_ptr->width);
     gif_ptr->height = (int)_GetWord_LSBFirst((uint8_t*)&gif_lsd_ptr->height);
@@ -736,8 +736,8 @@ int32_t _gif_decode_extension(gif_decompress_struct_p gif_ptr)
                     }
                     gif_ae_data_str += CFX_ByteString((const uint8_t*)data_ptr, data_size);
                 }
-                FXSYS_memcpy32(gif_ptr->app_identify, gif_ae_ptr->app_identify, 8);
-                FXSYS_memcpy32(gif_ptr->app_authentication, gif_ae_ptr->app_authentication, 3);
+                FXSYS_memcpy(gif_ptr->app_identify, gif_ae_ptr->app_identify, 8);
+                FXSYS_memcpy(gif_ptr->app_authentication, gif_ae_ptr->app_authentication, 3);
                 gif_ptr->app_data_size = gif_ae_data_str.GetLength();
                 if(gif_ptr->app_data != NULL) {
                     FX_Free(gif_ptr->app_data);
@@ -745,7 +745,7 @@ int32_t _gif_decode_extension(gif_decompress_struct_p gif_ptr)
                 }
                 gif_ptr->app_data = FX_Alloc(uint8_t, gif_ptr->app_data_size);
                 GIF_PTR_NOT_NULL(gif_ptr->app_data, gif_ptr);
-                FXSYS_memcpy32(gif_ptr->app_data, const uint8_t*(gif_ae_data_str), gif_ptr->app_data_size);
+                FXSYS_memcpy(gif_ptr->app_data, const uint8_t*(gif_ae_data_str), gif_ptr->app_data_size);
             }
             break;
 #endif
@@ -777,7 +777,7 @@ int32_t _gif_decode_extension(gif_decompress_struct_p gif_ptr)
                 }
                 GifPlainText* gif_pt_ptr = FX_Alloc(GifPlainText, 1);
                 GIF_PTR_NOT_NULL(gif_pt_ptr, gif_ptr);
-                FXSYS_memset32(gif_pt_ptr, 0, sizeof(GifPlainText));
+                FXSYS_memset(gif_pt_ptr, 0, sizeof(GifPlainText));
                 _gif_takeover_gce_ptr(gif_ptr, &gif_pt_ptr->gce_ptr);
                 gif_pt_ptr->pte_ptr = (GifPTE*)FX_Alloc(uint8_t, sizeof(GifPTE));
                 GIF_PTR_NOT_NULL(gif_pt_ptr->pte_ptr, gif_ptr);
@@ -891,7 +891,7 @@ int32_t _gif_decode_image_info(gif_decompress_struct_p gif_ptr)
     }
     GifImage* gif_image_ptr = (GifImage*)FX_Alloc(uint8_t, sizeof(GifImage));
     GIF_PTR_NOT_NULL(gif_image_ptr, gif_ptr);
-    FXSYS_memset32(gif_image_ptr, 0, sizeof(GifImage));
+    FXSYS_memset(gif_image_ptr, 0, sizeof(GifImage));
     gif_image_ptr->image_info_ptr = (GifImageInfo*)FX_Alloc(uint8_t, sizeof(GifImageInfo));
     GIF_PTR_NOT_NULL(gif_image_ptr->image_info_ptr, gif_ptr);
     gif_image_ptr->image_info_ptr->left = _GetWord_LSBFirst((uint8_t*)&gif_img_info_ptr->left);
@@ -929,7 +929,7 @@ int32_t _gif_decode_image_info(gif_decompress_struct_p gif_ptr)
         }
         gif_image_ptr->local_pal_ptr = (GifPalette*)gif_ptr->_gif_ask_buf_for_pal_fn(gif_ptr, loc_pal_size);
         if(gif_image_ptr->local_pal_ptr != NULL) {
-            FXSYS_memcpy32((uint8_t*)gif_image_ptr->local_pal_ptr, loc_pal_ptr, loc_pal_size);
+            FXSYS_memcpy((uint8_t*)gif_image_ptr->local_pal_ptr, loc_pal_ptr, loc_pal_size);
         }
     }
     uint8_t* code_size_ptr = NULL;
@@ -1151,8 +1151,8 @@ static FX_BOOL _gif_write_header( gif_compress_struct_p gif_ptr, uint8_t*& dst_b
     if (dst_buf == NULL)	{
         return FALSE;
     }
-    FXSYS_memset32(dst_buf, 0, dst_len);
-    FXSYS_memcpy32(dst_buf, gif_ptr->header_ptr, sizeof(GifHeader));
+    FXSYS_memset(dst_buf, 0, dst_len);
+    FXSYS_memcpy(dst_buf, gif_ptr->header_ptr, sizeof(GifHeader));
     gif_ptr->cur_offset += sizeof(GifHeader);
     _SetWord_LSBFirst(dst_buf + gif_ptr->cur_offset, gif_ptr->lsd_ptr->width);
     gif_ptr->cur_offset += 2;
@@ -1166,7 +1166,7 @@ static FX_BOOL _gif_write_header( gif_compress_struct_p gif_ptr, uint8_t*& dst_b
         if (!_gif_grow_buf(dst_buf, dst_len, gif_ptr->cur_offset + size)) {
             return FALSE;
         }
-        FXSYS_memcpy32(&dst_buf[gif_ptr->cur_offset], gif_ptr->global_pal, size);
+        FXSYS_memcpy(&dst_buf[gif_ptr->cur_offset], gif_ptr->global_pal, size);
         gif_ptr->cur_offset += size;
     }
     return TRUE;
@@ -1192,13 +1192,13 @@ void interlace_buf(const uint8_t* buf, FX_DWORD pitch, FX_DWORD height)
         if (temp == NULL) {
             return;
         }
-        FXSYS_memcpy32(temp, &buf[pitch * row], pitch);
+        FXSYS_memcpy(temp, &buf[pitch * row], pitch);
         pass[j].Add(temp);
         row ++;
     }
     for (i = 0, row = 0; i < 4; i++) {
         for (j = 0; j < pass[i].GetSize(); j++, row++) {
-            FXSYS_memcpy32((uint8_t*)&buf[pitch * row], pass[i].GetAt(j), pitch);
+            FXSYS_memcpy((uint8_t*)&buf[pitch * row], pass[i].GetAt(j), pitch);
             FX_Free(pass[i].GetAt(j));
         }
     }
@@ -1208,13 +1208,13 @@ static void _gif_write_block_data(const uint8_t* src_buf, FX_DWORD src_len, uint
     FX_DWORD src_offset = 0;
     while (src_len > GIF_DATA_BLOCK) {
         dst_buf[dst_offset++] = GIF_DATA_BLOCK;
-        FXSYS_memcpy32(&dst_buf[dst_offset], &src_buf[src_offset], GIF_DATA_BLOCK);
+        FXSYS_memcpy(&dst_buf[dst_offset], &src_buf[src_offset], GIF_DATA_BLOCK);
         dst_offset += GIF_DATA_BLOCK;
         src_offset += GIF_DATA_BLOCK;
         src_len -= GIF_DATA_BLOCK;
     }
     dst_buf[dst_offset++] = (uint8_t)src_len;
-    FXSYS_memcpy32(&dst_buf[dst_offset], &src_buf[src_offset], src_len);
+    FXSYS_memcpy(&dst_buf[dst_offset], &src_buf[src_offset], src_len);
     dst_offset += src_len;
 }
 static FX_BOOL _gif_write_data( gif_compress_struct_p gif_ptr, uint8_t*& dst_buf, FX_DWORD& dst_len )
@@ -1223,7 +1223,7 @@ static FX_BOOL _gif_write_data( gif_compress_struct_p gif_ptr, uint8_t*& dst_buf
         return FALSE;
     }
 #ifdef GIF_SUPPORT_GRAPHIC_CONTROL_EXTENSION
-    if (FXSYS_memcmp32(gif_ptr->header_ptr->version, "89a", 3) == 0) {
+    if (FXSYS_memcmp(gif_ptr->header_ptr->version, "89a", 3) == 0) {
         dst_buf[gif_ptr->cur_offset++] = GIF_SIG_EXTENSION;
         dst_buf[gif_ptr->cur_offset++] = GIF_BLOCK_GCE;
         gif_ptr->gce_ptr->block_size = 4;
@@ -1254,7 +1254,7 @@ static FX_BOOL _gif_write_data( gif_compress_struct_p gif_ptr, uint8_t*& dst_buf
         if (!_gif_grow_buf(dst_buf, dst_len, pal_size + gif_ptr->cur_offset)) {
             return FALSE;
         }
-        FXSYS_memcpy32(&dst_buf[gif_ptr->cur_offset], gif_ptr->local_pal, pal_size);
+        FXSYS_memcpy(&dst_buf[gif_ptr->cur_offset], gif_ptr->local_pal, pal_size);
         gif_ptr->cur_offset += pal_size;
     }
     if (lf.interlace) {
@@ -1276,7 +1276,7 @@ static FX_BOOL _gif_write_data( gif_compress_struct_p gif_ptr, uint8_t*& dst_buf
     gif_ptr->img_encoder_ptr->Finish(dst_buf, dst_len, gif_ptr->cur_offset);
     dst_buf[gif_ptr->cur_offset++] = 0;
 #ifdef GIF_SUPPORT_COMMENT_EXTENSION
-    if (FXSYS_memcmp32(gif_ptr->header_ptr->version, "89a", 3) == 0 && gif_ptr->cmt_data_ptr) {
+    if (FXSYS_memcmp(gif_ptr->header_ptr->version, "89a", 3) == 0 && gif_ptr->cmt_data_ptr) {
         dst_buf[gif_ptr->cur_offset++] = GIF_SIG_EXTENSION;
         dst_buf[gif_ptr->cur_offset++] = GIF_BLOCK_CE;
         _gif_write_block_data(gif_ptr->cmt_data_ptr, gif_ptr->cmt_data_len, dst_buf, dst_len, gif_ptr->cur_offset);
@@ -1284,7 +1284,7 @@ static FX_BOOL _gif_write_data( gif_compress_struct_p gif_ptr, uint8_t*& dst_buf
     }
 #endif
 #ifdef GIF_SUPPORT_PLAIN_TEXT_EXTENSION
-    if (FXSYS_memcmp32(gif_ptr->header_ptr->version, "89a", 3) == 0 && gif_ptr->pte_data_ptr) {
+    if (FXSYS_memcmp(gif_ptr->header_ptr->version, "89a", 3) == 0 && gif_ptr->pte_data_ptr) {
         dst_buf[gif_ptr->cur_offset++] = GIF_SIG_EXTENSION;
         dst_buf[gif_ptr->cur_offset++] = GIF_BLOCK_PTE;
         dst_buf[gif_ptr->cur_offset++] = gif_ptr->pte_ptr->block_size;
@@ -1310,15 +1310,15 @@ static FX_BOOL _gif_write_data( gif_compress_struct_p gif_ptr, uint8_t*& dst_buf
     }
 #endif
 #ifdef GIF_SUPPORT_APPLICATION_EXTENSION
-    if (FXSYS_memcmp32(gif_ptr->header_ptr->version, "89a", 3) == 0 && gif_ptr->app_data) {
+    if (FXSYS_memcmp(gif_ptr->header_ptr->version, "89a", 3) == 0 && gif_ptr->app_data) {
         dst_buf[gif_ptr->cur_offset++] = GIF_SIG_EXTENSION;
         dst_buf[gif_ptr->cur_offset++] = GIF_BLOCK_AE;
         dst_buf[gif_ptr->cur_offset++] = 11;
-        FXSYS_memcpy32(&dst_buf[gif_ptr->cur_offset], gif_ptr->app_identify, 8);
+        FXSYS_memcpy(&dst_buf[gif_ptr->cur_offset], gif_ptr->app_identify, 8);
         gif_ptr->cur_offset += 8;
-        FXSYS_memcpy32(&dst_buf[gif_ptr->cur_offset], gif_ptr->app_authentication, 8);
+        FXSYS_memcpy(&dst_buf[gif_ptr->cur_offset], gif_ptr->app_authentication, 8);
         gif_ptr->cur_offset += 3;
-        FXSYS_memcpy32(&dst_buf[gif_ptr->cur_offset], gif_ptr->app_data, gif_ptr->app_data_size);
+        FXSYS_memcpy(&dst_buf[gif_ptr->cur_offset], gif_ptr->app_data, gif_ptr->app_data_size);
         gif_ptr->cur_offset += gif_ptr->app_data_size;
         dst_buf[gif_ptr->cur_offset++] = 0;
     }

@@ -71,7 +71,7 @@ void CBC_CommonBitArray::SetBulk(int32_t i, int32_t newBits)
 }
 void CBC_CommonBitArray::Clear()
 {
-    FXSYS_memset32(&m_bits[0], 0x00, m_bits.GetSize() * sizeof(int32_t));
+    FXSYS_memset(&m_bits[0], 0x00, m_bits.GetSize() * sizeof(int32_t));
 }
 FX_BOOL CBC_CommonBitArray::IsRange(int32_t start, int32_t end, FX_BOOL value, int32_t &e)
 {
@@ -111,7 +111,7 @@ int32_t* CBC_CommonBitArray::GetBitArray()
 void CBC_CommonBitArray::Reverse()
 {
     int32_t* newBits = FX_Alloc(int32_t, m_bits.GetSize());
-    FXSYS_memset32(newBits, 0x00, m_bits.GetSize() * sizeof(int32_t));
+    FXSYS_memset(newBits, 0x00, m_bits.GetSize() * sizeof(int32_t));
     int32_t size = m_size;
     int32_t i;
     for (i = 0; i < size; i++) {
@@ -119,6 +119,6 @@ void CBC_CommonBitArray::Reverse()
             newBits[i >> 5] |= 1 << (i & 0x1F);
         }
     }
-    FXSYS_memcpy32(&m_bits[0], newBits, m_bits.GetSize() * sizeof(int32_t));
+    FXSYS_memcpy(&m_bits[0], newBits, m_bits.GetSize() * sizeof(int32_t));
     FX_Free(newBits);
 }

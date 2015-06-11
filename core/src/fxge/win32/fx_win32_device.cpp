@@ -141,7 +141,7 @@ FX_BOOL CWin32FontInfo::EnumFontList(CFX_FontMapper* pMapper)
 {
     m_pMapper = pMapper;
     LOGFONTA lf;
-    FXSYS_memset32(&lf, 0, sizeof(LOGFONTA));
+    FXSYS_memset(&lf, 0, sizeof(LOGFONTA));
     lf.lfCharSet = DEFAULT_CHARSET;
     lf.lfFaceName[0] = 0;
     lf.lfPitchAndFamily = 0;
@@ -556,7 +556,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1, int d
         BITMAPINFOHEADER	bmiHeader;
         FX_DWORD			bmiColors[2];
     } bmi;
-    FXSYS_memset32(&bmi.bmiHeader, 0, sizeof (BITMAPINFOHEADER));
+    FXSYS_memset(&bmi.bmiHeader, 0, sizeof (BITMAPINFOHEADER));
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmi.bmiHeader.biBitCount = 1;
     bmi.bmiHeader.biCompression = BI_RGB;
@@ -953,7 +953,7 @@ FX_BOOL CGdiDisplayDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top, v
     BitBlt(hDCMemory, 0, 0, width, height, m_hDC, left, top, SRCCOPY);
     SelectObject(hDCMemory, holdbmp);
     BITMAPINFO bmi;
-    FXSYS_memset32(&bmi, 0, sizeof bmi);
+    FXSYS_memset(&bmi, 0, sizeof bmi);
     bmi.bmiHeader.biSize = sizeof bmi.bmiHeader;
     bmi.bmiHeader.biBitCount = pBitmap->GetBPP();
     bmi.bmiHeader.biHeight = -height;
@@ -1176,7 +1176,7 @@ IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC, FX_BOOL bCmykOu
 CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width, int height, FXDIB_Format format)
 {
     BITMAPINFOHEADER bmih;
-    FXSYS_memset32(&bmih, 0, sizeof (BITMAPINFOHEADER));
+    FXSYS_memset(&bmih, 0, sizeof (BITMAPINFOHEADER));
     bmih.biSize = sizeof(BITMAPINFOHEADER);
     bmih.biBitCount = format & 0xff;
     bmih.biHeight = -height;

@@ -32,14 +32,14 @@ CBC_CommonByteArray::CBC_CommonByteArray(int32_t size)
 {
     m_size = size;
     m_bytes = FX_Alloc(uint8_t, size);
-    FXSYS_memset32(m_bytes, 0, size);
+    FXSYS_memset(m_bytes, 0, size);
     m_index = 0;
 }
 CBC_CommonByteArray::CBC_CommonByteArray(uint8_t* byteArray, int32_t size)
 {
     m_size = size;
     m_bytes = FX_Alloc(uint8_t, size);
-    FXSYS_memcpy32(m_bytes, byteArray, size);
+    FXSYS_memcpy(m_bytes, byteArray, size);
     m_index = size;
 }
 CBC_CommonByteArray::~CBC_CommonByteArray()
@@ -80,9 +80,9 @@ void CBC_CommonByteArray::Reserve(int32_t capacity)
 {
     if (m_bytes == NULL || m_size < capacity) {
         uint8_t *newArray = FX_Alloc(uint8_t, capacity);
-        FXSYS_memset32(newArray, 0, capacity);
+        FXSYS_memset(newArray, 0, capacity);
         if (m_bytes != NULL) {
-            FXSYS_memcpy32(newArray, m_bytes, m_size);
+            FXSYS_memcpy(newArray, m_bytes, m_size);
             FX_Free( m_bytes );
         }
         m_bytes = newArray;
@@ -96,7 +96,7 @@ void CBC_CommonByteArray::Set(uint8_t* source, int32_t offset, int32_t count)
     }
     m_bytes = FX_Alloc(uint8_t, count);
     m_size = count;
-    FXSYS_memcpy32(m_bytes, source + offset, count);
+    FXSYS_memcpy(m_bytes, source + offset, count);
     m_index = count;
 }
 void CBC_CommonByteArray::Set(CFX_ByteArray* source, int32_t offset, int32_t count)

@@ -943,7 +943,7 @@ FPDF_RESULT	FPDF_BStr_Init(FPDF_BSTR* str)
 	if (!str)
 		return -1;
 
-	FXSYS_memset32(str, 0, sizeof(FPDF_BSTR));
+	FXSYS_memset(str, 0, sizeof(FPDF_BSTR));
 	return 0;
 }
 

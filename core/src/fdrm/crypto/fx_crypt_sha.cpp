@@ -100,11 +100,11 @@ void CRYPT_SHA1Update(void* context, const uint8_t* data, FX_DWORD size)
     s->lenlo += lenw;
     s->lenhi += (s->lenlo < lenw);
     if (s->blkused && s->blkused + len < 64) {
-        FXSYS_memcpy32(s->block + s->blkused, q, len);
+        FXSYS_memcpy(s->block + s->blkused, q, len);
         s->blkused += len;
     } else {
         while (s->blkused + len >= 64) {
-            FXSYS_memcpy32(s->block + s->blkused, q, 64 - s->blkused);
+            FXSYS_memcpy(s->block + s->blkused, q, 64 - s->blkused);
             q += 64 - s->blkused;
             len -= 64 - s->blkused;
             for (i = 0; i < 16; i++) {
@@ -117,7 +117,7 @@ void CRYPT_SHA1Update(void* context, const uint8_t* data, FX_DWORD size)
             SHATransform(s->h, wordblock);
             s->blkused = 0;
         }
-        FXSYS_memcpy32(s->block, q, len);
+        FXSYS_memcpy(s->block, q, len);
         s->blkused = len;
     }
 }
@@ -135,7 +135,7 @@ void CRYPT_SHA1Finish(void* context, uint8_t digest[20])
     }
     lenhi = (s->lenhi << 3) | (s->lenlo >> (32 - 3));
     lenlo = (s->lenlo << 3);
-    FXSYS_memset32(c, 0, pad);
+    FXSYS_memset(c, 0, pad);
     c[0] = 0x80;
     CRYPT_SHA1Update(s, c, pad);
     c[0] = (lenhi >> 24) & 0xFF;
@@ -330,7 +330,7 @@ void CRYPT_SHA256Update( void* context, const uint8_t* input, FX_DWORD length )
         ctx->total[1]++;
     }
     if( left && length >= fill ) {
-        FXSYS_memcpy32( (void *) (ctx->buffer + left),
+        FXSYS_memcpy( (void *) (ctx->buffer + left),
                         (void *) input, fill );
         sha256_process( ctx, ctx->buffer );
         length -= fill;
@@ -343,7 +343,7 @@ void CRYPT_SHA256Update( void* context, const uint8_t* input, FX_DWORD length )
         input  += 64;
     }
     if( length ) {
-        FXSYS_memcpy32( (void *) (ctx->buffer + left),
+        FXSYS_memcpy( (void *) (ctx->buffer + left),
                         (void *) input, length );
     }
 }
@@ -417,7 +417,7 @@ void CRYPT_SHA384Start(void* context)
         return;
     }
     sha384_context *ctx = (sha384_context *)context;
-    FXSYS_memset32(ctx, 0, sizeof(sha384_context));
+    FXSYS_memset(ctx, 0, sizeof(sha384_context));
     ctx->state[0] = FX_ato64i("cbbb9d5dc1059ed8");
     ctx->state[1] = FX_ato64i("629a292a367cd507");
     ctx->state[2] = FX_ato64i("9159015a3070dd17");
@@ -638,7 +638,7 @@ void CRYPT_SHA384Update(void* context, const uint8_t* input, FX_DWORD length)
         ctx->total[1]++;
     }
     if( left && length >= fill ) {
-        FXSYS_memcpy32( (void *) (ctx->buffer + left),
+        FXSYS_memcpy( (void *) (ctx->buffer + left),
                         (void *) input, fill );
         sha384_process( ctx, ctx->buffer );
         length -= fill;
@@ -651,7 +651,7 @@ void CRYPT_SHA384Update(void* context, const uint8_t* input, FX_DWORD length)
         input  += 128;
     }
     if( length ) {
-        FXSYS_memcpy32( (void *) (ctx->buffer + left),
+        FXSYS_memcpy( (void *) (ctx->buffer + left),
                         (void *) input, length );
     }
 }
@@ -660,7 +660,7 @@ void CRYPT_SHA384Finish(void* context, uint8_t digest[48])
     sha384_context *ctx = (sha384_context *)context;
     FX_DWORD last, padn;
     uint8_t msglen[16];
-    FXSYS_memset32(msglen, 0, 16);
+    FXSYS_memset(msglen, 0, 16);
     uint64_t high, low;
     high = ( ctx->total[0] >> 29 )
            | ( ctx->total[1] <<  3 );
@@ -691,7 +691,7 @@ void CRYPT_SHA512Start(void* context)
         return;
     }
     sha384_context *ctx = (sha384_context *)context;
-    FXSYS_memset32(ctx, 0, sizeof(sha384_context));
+    FXSYS_memset(ctx, 0, sizeof(sha384_context));
     ctx->state[0] = FX_ato64i("6a09e667f3bcc908");
     ctx->state[1] = FX_ato64i("bb67ae8584caa73b");
     ctx->state[2] = FX_ato64i("3c6ef372fe94f82b");
@@ -710,7 +710,7 @@ void CRYPT_SHA512Finish(void* context, uint8_t digest[64])
     sha384_context *ctx = (sha384_context *)context;
     FX_DWORD last, padn;
     uint8_t msglen[16];
-    FXSYS_memset32(msglen, 0, 16);
+    FXSYS_memset(msglen, 0, 16);
     uint64_t high, low;
     high = ( ctx->total[0] >> 29 )
            | ( ctx->total[1] <<  3 );

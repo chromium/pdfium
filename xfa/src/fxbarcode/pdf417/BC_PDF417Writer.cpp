@@ -110,7 +110,7 @@ uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString &contents, int32_t &outWi
         }
     }
     uint8_t* result = (uint8_t*)FX_Alloc(uint8_t, outHeight * outWidth);
-    FXSYS_memcpy32(result, originalScale.GetData(), outHeight * outWidth);
+    FXSYS_memcpy(result, originalScale.GetData(), outHeight * outWidth);
     return result;
 }
 void CBC_PDF417Writer::rotateArray(CFX_ByteArray& bitarray, int32_t height, int32_t width)

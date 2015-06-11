@@ -160,15 +160,15 @@ void* _TIFFrealloc(void* ptr, tmsize_t size)
 }
 void _TIFFmemset(void* ptr, int val, tmsize_t size)
 {
-    FXSYS_memset8(ptr, val, (size_t)size);
+    FXSYS_memset(ptr, val, (size_t)size);
 }
 void _TIFFmemcpy(void* des, const void* src, tmsize_t size)
 {
-    FXSYS_memcpy32(des, src, (size_t)size);
+    FXSYS_memcpy(des, src, (size_t)size);
 }
 int _TIFFmemcmp(const void* ptr1, const void* ptr2, tmsize_t size)
 {
-    return FXSYS_memcmp32(ptr1, ptr2, (size_t)size);
+    return FXSYS_memcmp(ptr1, ptr2, (size_t)size);
 }
 static void _tiff_warning_ext(thandle_t context, const char* module, const char* fmt, va_list ap)
 {
@@ -228,7 +228,7 @@ void CCodec_TiffContext::GetFrames(int32_t& frames)
         if (size && buf) {\
             (key) = FX_Alloc(uint8_t,size);\
             if ((key)) {\
-                FXSYS_memcpy32((key),buf,size);\
+                FXSYS_memcpy((key),buf,size);\
                 pExif->m_TagVal.SetAt(tag,(key));}}}\
     (key) = NULL;
 template <class T>
@@ -260,7 +260,7 @@ static void Tiff_Exif_GetStringInfo(TIFF* tif_ctx, ttag_t tag, CFX_DIBAttributeE
         if ((key) == NULL) {
             return;
         }
-        FXSYS_memcpy32((key), buf, size);
+        FXSYS_memcpy((key), buf, size);
         key[size] = 0;
         pExif->m_TagVal.SetAt(tag, (key));
     }

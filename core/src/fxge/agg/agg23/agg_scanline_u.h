@@ -97,7 +97,7 @@ public:
     void add_span(int x, unsigned len, unsigned cover)
     {
         x -= m_min_x;
-        FXSYS_memset8(m_covers + x, cover, len);
+        FXSYS_memset(m_covers + x, cover, len);
         if(x == m_last_x + 1) {
             m_cur_span->len += (coord_type)len;
         } else {

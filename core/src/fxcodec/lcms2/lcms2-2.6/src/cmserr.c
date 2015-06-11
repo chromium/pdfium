@@ -269,7 +269,7 @@ void* CMSEXPORT _cmsMalloc(cmsContext ContextID, cmsUInt32Number size)
 void* CMSEXPORT _cmsMallocZero(cmsContext ContextID, cmsUInt32Number size)
 {
 	void* p = FXMEM_DefaultAlloc(size, 1);
-	if (p) FXSYS_memset32(p, 0, size);
+	if (p) FXSYS_memset(p, 0, size);
 	return p;
 }
 
@@ -299,7 +299,7 @@ void CMSEXPORT _cmsFree(cmsContext ContextID, void* Ptr)
 void* CMSEXPORT _cmsDupMem(cmsContext ContextID, const void* Org, cmsUInt32Number size)
 {
 	void* p = FXMEM_DefaultAlloc(size, 1);
-	FXSYS_memmove32(p, Org, size);
+	FXSYS_memmove(p, Org, size);
 	return p;
 }
 

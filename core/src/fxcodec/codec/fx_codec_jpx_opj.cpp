@@ -472,9 +472,9 @@ void color_apply_icc_profile(opj_image_t *image)
         image->comps[1] = image->comps[0];
         image->comps[2] = image->comps[0];
         image->comps[1].data = FX_Alloc(int, (size_t)max);
-        FXSYS_memset8(image->comps[1].data, 0, sizeof(int) * (size_t)max);
+        FXSYS_memset(image->comps[1].data, 0, sizeof(int) * (size_t)max);
         image->comps[2].data = FX_Alloc(int, (size_t)max);
-        FXSYS_memset8(image->comps[2].data, 0, sizeof(int) * (size_t)max);
+        FXSYS_memset(image->comps[2].data, 0, sizeof(int) * (size_t)max);
         image->numcomps += 2;
         r = image->comps[0].data;
         for(int i = 0; i < max; ++i) {
@@ -630,7 +630,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size)
     opj_set_default_decoder_parameters(&parameters);
     parameters.decod_format = 0;
     parameters.cod_format = 3;
-    if(FXSYS_memcmp32(m_SrcData, szJP2Header, sizeof(szJP2Header)) == 0) {
+    if(FXSYS_memcmp(m_SrcData, szJP2Header, sizeof(szJP2Header)) == 0) {
         l_codec = opj_create_decompress(OPJ_CODEC_JP2);
         parameters.decod_format = 1;
     } else {
@@ -715,7 +715,7 @@ FX_BOOL CJPX_Decoder::Decode(uint8_t* dest_buf, int pitch, FX_BOOL bTranslateCol
     if(pitch < (int)(image->comps[0].w * 8 * image->numcomps + 31) >> 5 << 2) {
         return FALSE;
     }
-    FXSYS_memset8(dest_buf, 0xff, image->y1 * pitch);
+    FXSYS_memset(dest_buf, 0xff, image->y1 * pitch);
     uint8_t** channel_bufs = FX_Alloc(uint8_t*, image->numcomps);
     FX_BOOL result = FALSE;
     int* adjust_comps = FX_Alloc(int, image->numcomps);

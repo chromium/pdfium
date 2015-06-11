@@ -163,7 +163,7 @@ CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords, int
         return (FX_WCHAR*)"";
     }
     FX_WORD* ecc = FX_Alloc(FX_WORD, numECWords);
-    FXSYS_memset32(ecc, 0, numECWords * sizeof(FX_WORD));
+    FXSYS_memset(ecc, 0, numECWords * sizeof(FX_WORD));
     for (int32_t l = start; l < start + len; l++) {
         uint8_t A = (uint8_t)codewords.GetAt(l);
         FX_WORD B = ecc[numECWords - 1];

@@ -102,7 +102,7 @@ uint8_t* CCodec_ScanlineDecoder::ReadNextLine()
         return NULL;
     }
     if (m_pDataCache && m_NextLine == m_pDataCache->m_nCachedLines) {
-        FXSYS_memcpy32(&m_pDataCache->m_Data + m_NextLine * m_Pitch, pLine, m_Pitch);
+        FXSYS_memcpy(&m_pDataCache->m_Data + m_NextLine * m_Pitch, pLine, m_Pitch);
         m_pDataCache->m_nCachedLines ++;
     }
     return pLine;
@@ -255,7 +255,7 @@ void CCodec_ModuleMgr::Destroy()
 }
 CFX_DIBAttribute::CFX_DIBAttribute()
 {
-    FXSYS_memset32(this, 0, sizeof(CFX_DIBAttribute));
+    FXSYS_memset(this, 0, sizeof(CFX_DIBAttribute));
     m_nXDPI = -1;
     m_nYDPI = -1;
     m_fAspectRatio = -1.0f;
@@ -328,7 +328,7 @@ uint8_t* CFX_DIBAttributeExif::ParseExifIFH(uint8_t* data, FX_DWORD len, _Read2B
 {
     if (len > 8) {
         FX_BOOL tag = FALSE;
-        if (FXSYS_memcmp32(data, "\x49\x49\x2a\x00", 4) == 0) {
+        if (FXSYS_memcmp(data, "\x49\x49\x2a\x00", 4) == 0) {
             if (pReadWord) {
                 *pReadWord = _Read2BytesL;
             }
@@ -336,7 +336,7 @@ uint8_t* CFX_DIBAttributeExif::ParseExifIFH(uint8_t* data, FX_DWORD len, _Read2B
                 *pReadDword = _Read4BytesL;
             }
             tag = TRUE;
-        } else if (FXSYS_memcmp32(data, "\x4d\x4d\x00\x2a", 4) == 0) {
+        } else if (FXSYS_memcmp(data, "\x4d\x4d\x00\x2a", 4) == 0) {
             if (pReadWord) {
                 *pReadWord = _Read2BytesB;
             }
@@ -372,7 +372,7 @@ FX_BOOL CFX_DIBAttributeExif::ParseExifIFD(CFX_MapPtrTemplate<FX_DWORD, uint8_t*
                     if (buf == NULL) {
                         return FALSE;
                     }
-                    FXSYS_memcpy32(buf, data, 10);
+                    FXSYS_memcpy(buf, data, 10);
                     pMap->SetAt(wTag, buf);
                 }
                 data += 10;
@@ -391,7 +391,7 @@ FX_BOOL CFX_DIBAttributeExif::ParseExifIFD(CFX_MapPtrTemplate<FX_DWORD, uint8_t*
                         if (buf == NULL) {
                             return FALSE;
                         }
-                        FXSYS_memcpy32(buf, data, 10);
+                        FXSYS_memcpy(buf, data, 10);
                         pMap->SetAt(wTag, buf);
                     }
                     data += 10;
@@ -459,9 +459,9 @@ FX_BOOL CFX_DIBAttributeExif::ParseExif(CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* 
                                 return FALSE;
                             }
                             if (dwSize > 4) {
-                                FXSYS_memcpy32(val, old_data + m_readDword(head), dwSize);
+                                FXSYS_memcpy(val, old_data + m_readDword(head), dwSize);
                             } else {
-                                FXSYS_memcpy32(val, head, dwSize);
+                                FXSYS_memcpy(val, head, dwSize);
                             }
                             break;
                         case FX_UnsignedShort:
@@ -472,9 +472,9 @@ FX_BOOL CFX_DIBAttributeExif::ParseExif(CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* 
                                 return FALSE;
                             }
                             if (dwSize > 4) {
-                                FXSYS_memcpy32(val, old_data + m_readDword(head), dwSize);
+                                FXSYS_memcpy(val, old_data + m_readDword(head), dwSize);
                             } else {
-                                FXSYS_memcpy32(val, head, dwSize);
+                                FXSYS_memcpy(val, head, dwSize);
                             }
                             buf = val;
                             for(i = 0; i < (int)dwModuleNum; i ++) {
@@ -491,9 +491,9 @@ FX_BOOL CFX_DIBAttributeExif::ParseExif(CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* 
                                 return FALSE;
                             }
                             if (dwSize > 4) {
-                                FXSYS_memcpy32(val, old_data + m_readDword(head), dwSize);
+                                FXSYS_memcpy(val, old_data + m_readDword(head), dwSize);
                             } else {
-                                FXSYS_memcpy32(val, head, dwSize);
+                                FXSYS_memcpy(val, head, dwSize);
                             }
                             buf = val;
                             for(i = 0; i < (int)dwModuleNum; i ++) {
@@ -509,9 +509,9 @@ FX_BOOL CFX_DIBAttributeExif::ParseExif(CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* 
                                     return FALSE;
                                 }
                                 if (dwSize > 4) {
-                                    FXSYS_memcpy32(buf, old_data + m_readDword(head), dwSize);
+                                    FXSYS_memcpy(buf, old_data + m_readDword(head), dwSize);
                                 } else {
-                                    FXSYS_memcpy32(buf, head, dwSize);
+                                    FXSYS_memcpy(buf, head, dwSize);
                                 }
                                 temp = buf;
                                 val = FX_Alloc(uint8_t, dwSize / 2);
@@ -537,9 +537,9 @@ FX_BOOL CFX_DIBAttributeExif::ParseExif(CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* 
                                 return FALSE;
                             }
                             if (dwSize > 4) {
-                                FXSYS_memcpy32(val, old_data + m_readDword(head), dwSize);
+                                FXSYS_memcpy(val, old_data + m_readDword(head), dwSize);
                             } else {
-                                FXSYS_memcpy32(val, head, dwSize);
+                                FXSYS_memcpy(val, head, dwSize);
                             }
                             buf = val;
                             for(i = 0; i < (int)dwModuleNum; i ++) {
@@ -680,7 +680,7 @@ FX_BOOL CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf, FX_DWORD src_si
 }
 FX_BOOL CCodec_RLScanlineDecoder::v_Rewind()
 {
-    FXSYS_memset32(m_pScanline, 0, m_Pitch);
+    FXSYS_memset(m_pScanline, 0, m_Pitch);
     m_SrcOffset = 0;
     m_bEOD = FALSE;
     m_Operator = 0;
@@ -695,7 +695,7 @@ uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine()
             return NULL;
         }
     }
-    FXSYS_memset32(m_pScanline, 0, m_Pitch);
+    FXSYS_memset(m_pScanline, 0, m_Pitch);
     FX_DWORD col_pos = 0;
     FX_BOOL	eol = FALSE;
     while (m_SrcOffset < m_SrcSize && !eol) {
@@ -709,7 +709,7 @@ uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine()
                 copy_len = m_SrcSize - m_SrcOffset;
                 m_bEOD = TRUE;
             }
-            FXSYS_memcpy32(m_pScanline + col_pos, m_pSrcBuf + m_SrcOffset, copy_len);
+            FXSYS_memcpy(m_pScanline + col_pos, m_pSrcBuf + m_SrcOffset, copy_len);
             col_pos += copy_len;
             UpdateOperator((uint8_t)copy_len);
         } else if (m_Operator > 128) {
@@ -722,7 +722,7 @@ uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine()
                 duplicate_len = m_dwLineBytes - col_pos;
                 eol = TRUE;
             }
-            FXSYS_memset8(m_pScanline + col_pos, fill, duplicate_len);
+            FXSYS_memset(m_pScanline + col_pos, fill, duplicate_len);
             col_pos += duplicate_len;
             UpdateOperator((uint8_t)duplicate_len);
         } else {

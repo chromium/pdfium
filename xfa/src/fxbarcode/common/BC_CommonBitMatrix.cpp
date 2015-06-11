@@ -37,7 +37,7 @@ void CBC_CommonBitMatrix::Init(int32_t dimension)
     int32_t rowSize = (m_height + 31) >> 5;
     m_rowSize = rowSize;
     m_bits = FX_Alloc(int32_t, m_rowSize * m_height);
-    FXSYS_memset32(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
+    FXSYS_memset(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
 }
 void CBC_CommonBitMatrix::Init(int32_t width, int32_t height)
 {
@@ -46,7 +46,7 @@ void CBC_CommonBitMatrix::Init(int32_t width, int32_t height)
     int32_t rowSize = (width + 31) >> 5;
     m_rowSize = rowSize;
     m_bits = FX_Alloc(int32_t, m_rowSize * m_height);
-    FXSYS_memset32(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
+    FXSYS_memset(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
 }
 CBC_CommonBitMatrix::~CBC_CommonBitMatrix()
 {
@@ -83,7 +83,7 @@ void CBC_CommonBitMatrix::Flip(int32_t x, int32_t y)
 }
 void CBC_CommonBitMatrix::Clear()
 {
-    FXSYS_memset32(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
+    FXSYS_memset(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
 }
 void CBC_CommonBitMatrix::SetRegion(int32_t left, int32_t top, int32_t width, int32_t height, int32_t &e)
 {

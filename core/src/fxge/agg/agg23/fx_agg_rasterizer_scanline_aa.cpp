@@ -118,7 +118,7 @@ void outline_aa::allocate_block()
         if(m_num_blocks >= m_max_blocks) {
             cell_aa** new_cells = FX_Alloc( cell_aa*, m_max_blocks + cell_block_pool);
             if(m_cells) {
-                FXSYS_memcpy32(new_cells, m_cells, m_max_blocks * sizeof(cell_aa*));
+                FXSYS_memcpy(new_cells, m_cells, m_max_blocks * sizeof(cell_aa*));
                 FX_Free(m_cells);
             }
             m_cells = new_cells;

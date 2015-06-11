@@ -162,7 +162,7 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents, CFX_DIBitma
     if (!pCharPos) {
         return;
     }
-    FXSYS_memset32(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
+    FXSYS_memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
     CFX_FxgeDevice geBitmap;
     if (pOutBitmap != NULL) {
         geBitmap.Attach(pOutBitmap);

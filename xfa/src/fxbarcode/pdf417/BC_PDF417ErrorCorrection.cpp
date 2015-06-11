@@ -166,7 +166,7 @@ CFX_WideString CBC_PDF417ErrorCorrection::generateErrorCorrection(CFX_WideString
     int32_t k = getErrorCorrectionCodewordCount(errorCorrectionLevel, e);
     BC_EXCEPTION_CHECK_ReturnValue(e,  (FX_WCHAR)' ');
     FX_WCHAR* ech = FX_Alloc(FX_WCHAR, k * sizeof(FX_WCHAR));
-    FXSYS_memset32(ech, 0, k * sizeof(FX_WCHAR));
+    FXSYS_memset(ech, 0, k * sizeof(FX_WCHAR));
     int32_t sld = dataCodewords.GetLength();
     for (int32_t i = 0; i < sld; i++) {
         int32_t t1 = (dataCodewords.GetAt(i) + ech[k - 1]) % 929;

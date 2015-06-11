@@ -119,7 +119,7 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents, CFX_DIBitmap
     if (!pCharPos) {
         return;
     }
-    FXSYS_memset32(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
+    FXSYS_memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
     CFX_ByteString tempStr = str.Mid(1, 5);
     FX_FLOAT strWidth = (FX_FLOAT)35 * multiple;
     FX_FLOAT blank = 0.0;

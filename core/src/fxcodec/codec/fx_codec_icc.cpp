@@ -414,7 +414,7 @@ void* CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam, Icc
             MD5ComputeID(pIccParam->pProfileData, pIccParam->dwProfileSize, ID);
             break;
         case Icc_PARAMTYPE_PARAM:
-            FXSYS_memset32(ID, 0, 16);
+            FXSYS_memset(ID, 0, 16);
             switch (pIccParam->ColorSpace) {
                 case IccCS_Gray:
                     text.Format("%lf", pIccParam->Gamma);

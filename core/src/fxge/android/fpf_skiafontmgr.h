@@ -33,7 +33,7 @@ public:
         }
         int32_t iSize = FXSYS_strlen(pFamily);
         m_pFamily = FX_Alloc(FX_CHAR, iSize + 1);
-        FXSYS_memcpy32(m_pFamily, pFamily, iSize * sizeof(FX_CHAR));
+        FXSYS_memcpy(m_pFamily, pFamily, iSize * sizeof(FX_CHAR));
         m_pFamily[iSize] = 0;
     }
     FX_CHAR*		m_pFamily;
@@ -63,7 +63,7 @@ public:
         }
         int32_t iSize = FXSYS_strlen(pPath);
         m_pPath = FX_Alloc(FX_CHAR, iSize + 1);
-        FXSYS_memcpy32(m_pPath, pPath, iSize * sizeof(FX_CHAR));
+        FXSYS_memcpy(m_pPath, pPath, iSize * sizeof(FX_CHAR));
         m_pPath[iSize] = 0;
     }
     FX_CHAR*		m_pPath;

@@ -31,7 +31,7 @@ void CFX_BinaryBuf::Delete(int start_index, int count)
     if (!m_pBuffer || start_index < 0 || start_index + count > m_DataSize) {
         return;
     }
-    FXSYS_memmove32(m_pBuffer + start_index, m_pBuffer + start_index + count, m_DataSize - start_index - count);
+    FXSYS_memmove(m_pBuffer + start_index, m_pBuffer + start_index + count, m_DataSize - start_index - count);
     m_DataSize -= count;
 }
 void CFX_BinaryBuf::Clear()
@@ -103,14 +103,14 @@ void CFX_BinaryBuf::CopyData(const void* pStr, FX_STRSIZE size)
     if (!m_pBuffer) {
         return;
     }
-    FXSYS_memcpy32(m_pBuffer, pStr, size);
+    FXSYS_memcpy(m_pBuffer, pStr, size);
     m_DataSize = size;
 }
 void CFX_BinaryBuf::AppendBlock(const void* pBuf, FX_STRSIZE size)
 {
     ExpandBuf(size);
     if (pBuf && m_pBuffer) {
-        FXSYS_memcpy32(m_pBuffer + m_DataSize, pBuf, size);
+        FXSYS_memcpy(m_pBuffer + m_DataSize, pBuf, size);
     }
     m_DataSize += size;
 }
@@ -120,9 +120,9 @@ void CFX_BinaryBuf::InsertBlock(FX_STRSIZE pos, const void* pBuf, FX_STRSIZE siz
     if (!m_pBuffer) {
         return;
     }
-    FXSYS_memmove32(m_pBuffer + pos + size, m_pBuffer + pos, m_DataSize - pos);
+    FXSYS_memmove(m_pBuffer + pos + size, m_pBuffer + pos, m_DataSize - pos);
     if (pBuf) {
-        FXSYS_memcpy32(m_pBuffer + pos, pBuf, size);
+        FXSYS_memcpy(m_pBuffer + pos, pBuf, size);
     }
     m_DataSize += size;
 }
@@ -132,7 +132,7 @@ void CFX_BinaryBuf::AppendFill(uint8_t byte, FX_STRSIZE count)
     if (!m_pBuffer) {
         return;
     }
-    FXSYS_memset8(m_pBuffer + m_DataSize, byte, count);
+    FXSYS_memset(m_pBuffer + m_DataSize, byte, count);
     m_DataSize += count;
 }
 CFX_ByteStringC CFX_BinaryBuf::GetByteString() const
@@ -360,7 +360,7 @@ CFX_ArchiveLoader& CFX_ArchiveLoader::operator >> (CFX_ByteString& str)
         return *this;
     }
     FX_CHAR* buffer = str.GetBuffer(len);
-    FXSYS_memcpy32(buffer, m_pLoadingBuf + m_LoadingPos, len);
+    FXSYS_memcpy(buffer, m_pLoadingBuf + m_LoadingPos, len);
     str.ReleaseBuffer(len);
     m_LoadingPos += len;
     return *this;
@@ -377,7 +377,7 @@ FX_BOOL CFX_ArchiveLoader::Read(void* pBuf, FX_DWORD dwSize)
     if (m_LoadingPos + dwSize > m_LoadingSize) {
         return FALSE;
     }
-    FXSYS_memcpy32(pBuf, m_pLoadingBuf + m_LoadingPos, dwSize);
+    FXSYS_memcpy(pBuf, m_pLoadingBuf + m_LoadingPos, dwSize);
     m_LoadingPos += dwSize;
     return TRUE;
 }
@@ -459,7 +459,7 @@ int32_t IFX_BufferArchive::AppendBlock(const void* pBuf, size_t size)
     FX_STRSIZE temp_size = (FX_STRSIZE)size;
     while (temp_size > 0) {
         FX_STRSIZE buf_size = FX_MIN(m_BufSize - m_Length, (FX_STRSIZE)temp_size);
-        FXSYS_memcpy32(m_pBuffer + m_Length, buffer, buf_size);
+        FXSYS_memcpy(m_pBuffer + m_Length, buffer, buf_size);
         m_Length += buf_size;
         if (m_Length == m_BufSize) {
             if (!Flush()) {

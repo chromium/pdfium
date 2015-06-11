@@ -207,9 +207,9 @@ extern z_const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 #    define zmemcmp _fmemcmp
 #    define zmemzero(dest, len) _fmemset(dest, 0, len)
 #  else
-#    define zmemcpy FXSYS_memcpy32
-#    define zmemcmp FXSYS_memcmp32
-#    define zmemzero(dest, len) FXSYS_memset32(dest, 0, len)
+#    define zmemcpy FXSYS_memcpy
+#    define zmemcmp FXSYS_memcmp
+#    define zmemzero(dest, len) FXSYS_memset(dest, 0, len)
 #  endif
 #else
    void ZLIB_INTERNAL zmemcpy OF((Bytef* dest, const Bytef* source, uInt len));

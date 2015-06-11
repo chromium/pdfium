@@ -129,7 +129,7 @@ void CBC_QRCoderBitVector::AppendByte(int32_t value)
 {
     if((m_sizeInBits >> 3) == m_size) {
         uint8_t* newArray = FX_Alloc(uint8_t, m_size << 1);
-        FXSYS_memcpy32(newArray, m_array, m_size);
+        FXSYS_memcpy(newArray, m_array, m_size);
         if(m_array != NULL) {
             FX_Free(m_array);
         }

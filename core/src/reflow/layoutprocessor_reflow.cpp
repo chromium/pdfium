@@ -216,7 +216,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessTable(FX_FLOAT dx)
     int rowCount = pTable->m_nCell.GetSize();
     int n = 0;
     FX_FLOAT* dyRow = FX_Alloc(FX_FLOAT, rowCount + 1);
-    FXSYS_memset32(dyRow, 0, sizeof(FX_FLOAT) * (rowCount + 1));
+    FXSYS_memset(dyRow, 0, sizeof(FX_FLOAT) * (rowCount + 1));
     dyRow[0] = 0 ;
     dyRow[0] = - pTable->m_ReflowPageHeight;
     int tableColCount = 0;
@@ -229,7 +229,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessTable(FX_FLOAT dx)
     }
     int cellCount = tableColCount * rowCount;
     RF_TableCell** pVirtualTable = FX_Alloc(RF_TableCell*, cellCount);
-    FXSYS_memset32(pVirtualTable, 0, sizeof(RF_TableCell*) * cellCount);
+    FXSYS_memset(pVirtualTable, 0, sizeof(RF_TableCell*) * cellCount);
     for(i = 0; i < rowCount; i++) {
         int colCount = pTable->m_nCell.GetAt(i);
         FX_FLOAT rowWidth = 0;
@@ -589,7 +589,7 @@ void CPDF_LayoutProcessor_Reflow::ProcessElement(IPDF_LayoutElement* pElement, F
                         break;
                     }
                     RF_TableCell* pCell = FX_Alloc(RF_TableCell, 1);
-                    FXSYS_memset32(pCell, 0 , sizeof(RF_TableCell));
+                    FXSYS_memset(pCell, 0 , sizeof(RF_TableCell));
                     CRF_Table* pTable = m_TableArray.GetAt(m_TableArray.GetSize() - 1);
                     int pos = pTable->m_nCell.GetSize() - 1;
                     pCell->m_BeginPos = m_pReflowedPage->m_pReflowed->GetSize();

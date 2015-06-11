@@ -80,7 +80,7 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip, FX_BOOL bYFlip, const FX_REC
     int col_start = bYFlip ? m_Width - dest_clip.bottom : dest_clip.top;
     int col_end = bYFlip ? m_Width - dest_clip.top : dest_clip.bottom;
     if (GetBPP() == 1) {
-        FXSYS_memset8(dest_buf, 0xff, dest_pitch * result_height);
+        FXSYS_memset(dest_buf, 0xff, dest_pitch * result_height);
         for (int row = row_start; row < row_end; row ++) {
             const uint8_t* src_scan = GetScanline(row);
             int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) - dest_clip.left;

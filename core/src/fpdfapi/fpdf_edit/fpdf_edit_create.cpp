@@ -752,7 +752,7 @@ FX_BOOL CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator, FX_BOOL bEOF
             return -1;
         }
         FX_CHAR offset_buf[20];
-        FXSYS_memset32(offset_buf, 0, sizeof(offset_buf));
+        FXSYS_memset(offset_buf, 0, sizeof(offset_buf));
         FXSYS_i64toa(m_PrevOffset, offset_buf, 10);
         int32_t len = (int32_t)FXSYS_strlen(offset_buf);
         if (pFile->AppendBlock(offset_buf, len) < 0) {
@@ -1863,7 +1863,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause *pPause)
                     return -1;
                 }
                 FX_CHAR offset_buf[20];
-                FXSYS_memset32(offset_buf, 0, sizeof(offset_buf));
+                FXSYS_memset(offset_buf, 0, sizeof(offset_buf));
                 FXSYS_i64toa(prev, offset_buf, 10);
                 if (m_File.AppendBlock(offset_buf, FXSYS_strlen(offset_buf)) < 0) {
                     return -1;
@@ -1952,7 +1952,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause *pPause)
         return -1;
     }
     FX_CHAR offset_buf[20];
-    FXSYS_memset32(offset_buf, 0, sizeof(offset_buf));
+    FXSYS_memset(offset_buf, 0, sizeof(offset_buf));
     FXSYS_i64toa(m_XrefStart, offset_buf, 10);
     if (m_File.AppendBlock(offset_buf, FXSYS_strlen(offset_buf)) < 0) {
         return -1;

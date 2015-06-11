@@ -164,7 +164,7 @@ class CCodec_PngModule : public ICodec_PngModule
 public:
     CCodec_PngModule()
     {
-        FXSYS_memset8(m_szLastError, '\0', PNG_ERROR_SIZE);
+        FXSYS_memset(m_szLastError, '\0', PNG_ERROR_SIZE);
     }
 
     virtual void*		Start(void* pModule);
@@ -178,7 +178,7 @@ class CCodec_GifModule : public ICodec_GifModule
 public:
     CCodec_GifModule()
     {
-        FXSYS_memset8(m_szLastError, '\0', 256);
+        FXSYS_memset(m_szLastError, '\0', 256);
     }
     virtual void*		Start(void* pModule);
     virtual void		Finish(void* pContext);
@@ -200,7 +200,7 @@ class CCodec_BmpModule : public ICodec_BmpModule
 public:
     CCodec_BmpModule()
     {
-        FXSYS_memset8(m_szLastError, '\0', 256);
+        FXSYS_memset(m_szLastError, '\0', 256);
     }
     virtual void*		Start(void* pModule);
     virtual void		Finish(void* pContext);

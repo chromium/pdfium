@@ -42,7 +42,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
         m_nSize = m_nMaxSize = nNewSize;
     } else if (nNewSize <= m_nMaxSize) {
         if (nNewSize > m_nSize) {
-            FXSYS_memset32(m_pData + m_nSize * m_nUnitSize, 0, (nNewSize - m_nSize) * m_nUnitSize);
+            FXSYS_memset(m_pData + m_nSize * m_nUnitSize, 0, (nNewSize - m_nSize) * m_nUnitSize);
         }
         m_nSize = nNewSize;
     } else {
@@ -56,7 +56,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
         if (pNewData == NULL) {
             return FALSE;
         }
-        FXSYS_memset32(pNewData + m_nSize * m_nUnitSize, 0, (nNewMax - m_nSize) * m_nUnitSize);
+        FXSYS_memset(pNewData + m_nSize * m_nUnitSize, 0, (nNewMax - m_nSize) * m_nUnitSize);
         m_pData = pNewData;
         m_nSize = nNewSize;
         m_nMaxSize = nNewMax;
@@ -72,7 +72,7 @@ FX_BOOL CFX_BasicArray::Append(const CFX_BasicArray& src)
         return FALSE;
     }
 
-    FXSYS_memcpy32(m_pData + nOldSize * m_nUnitSize, src.m_pData, src.m_nSize * m_nUnitSize);
+    FXSYS_memcpy(m_pData + nOldSize * m_nUnitSize, src.m_pData, src.m_nSize * m_nUnitSize);
     return TRUE;
 }
 FX_BOOL CFX_BasicArray::Copy(const CFX_BasicArray& src)
@@ -80,7 +80,7 @@ FX_BOOL CFX_BasicArray::Copy(const CFX_BasicArray& src)
     if (!SetSize(src.m_nSize)) {
         return FALSE;
     }
-    FXSYS_memcpy32(m_pData, src.m_pData, src.m_nSize * m_nUnitSize);
+    FXSYS_memcpy(m_pData, src.m_pData, src.m_nSize * m_nUnitSize);
     return TRUE;
 }
 uint8_t* CFX_BasicArray::InsertSpaceAt(int nIndex, int nCount)
@@ -97,9 +97,9 @@ uint8_t* CFX_BasicArray::InsertSpaceAt(int nIndex, int nCount)
         if (!SetSize(m_nSize + nCount)) {
             return NULL;
         }
-        FXSYS_memmove32(m_pData + (nIndex + nCount)*m_nUnitSize, m_pData + nIndex * m_nUnitSize,
+        FXSYS_memmove(m_pData + (nIndex + nCount)*m_nUnitSize, m_pData + nIndex * m_nUnitSize,
                         (nOldSize - nIndex) * m_nUnitSize);
-        FXSYS_memset32(m_pData + nIndex * m_nUnitSize, 0, nCount * m_nUnitSize);
+        FXSYS_memset(m_pData + nIndex * m_nUnitSize, 0, nCount * m_nUnitSize);
     }
     return m_pData + nIndex * m_nUnitSize;
 }
@@ -110,7 +110,7 @@ FX_BOOL CFX_BasicArray::RemoveAt(int nIndex, int nCount)
     }
     int nMoveCount = m_nSize - (nIndex + nCount);
     if (nMoveCount) {
-        FXSYS_memmove32(m_pData + nIndex * m_nUnitSize, m_pData + (nIndex + nCount) * m_nUnitSize, nMoveCount * m_nUnitSize);
+        FXSYS_memmove(m_pData + nIndex * m_nUnitSize, m_pData + (nIndex + nCount) * m_nUnitSize, nMoveCount * m_nUnitSize);
     }
     m_nSize -= nCount;
     return TRUE;
@@ -126,7 +126,7 @@ FX_BOOL CFX_BasicArray::InsertAt(int nStartIndex, const CFX_BasicArray* pNewArra
     if (!InsertSpaceAt(nStartIndex, pNewArray->m_nSize)) {
         return FALSE;
     }
-    FXSYS_memcpy32(m_pData + nStartIndex * m_nUnitSize, pNewArray->m_pData, pNewArray->m_nSize * m_nUnitSize);
+    FXSYS_memcpy(m_pData + nStartIndex * m_nUnitSize, pNewArray->m_pData, pNewArray->m_nSize * m_nUnitSize);
     return TRUE;
 }
 const void* CFX_BasicArray::GetDataPtr(int index) const

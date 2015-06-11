@@ -221,7 +221,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress, IFX_Fi
             mask_buf = FX_Alloc2D(uint8_t, maskHeight, maskWidth);
             mask_size = maskHeight * maskWidth;  // Safe since checked alloc returned.
             for (int32_t a = 0; a < maskHeight; a ++) {
-                FXSYS_memcpy32(mask_buf + a * maskWidth, pMaskBitmap->GetScanline(a), maskWidth);
+                FXSYS_memcpy(mask_buf + a * maskWidth, pMaskBitmap->GetScanline(a), maskWidth);
             }
         }
         pMaskDict->SetAtInteger(FX_BSTRC("Length"), mask_size);
@@ -303,7 +303,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress, IFX_Fi
         uint8_t* pDest = dest_buf;
         for (int32_t i = 0; i < BitmapHeight; i ++) {
             if (!bStream) {
-                FXSYS_memcpy32(pDest, src_buf, dest_pitch);
+                FXSYS_memcpy(pDest, src_buf, dest_pitch);
                 pDest += dest_pitch;
             } else {
                 pFileWrite->WriteBlock(src_buf, dest_pitch);

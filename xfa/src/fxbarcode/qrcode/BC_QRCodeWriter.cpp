@@ -90,7 +90,7 @@ uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents, int32_t ecLeve
     outWidth = qr.GetMatrixWidth();
     outHeight = qr.GetMatrixWidth();
     uint8_t* result = FX_Alloc(uint8_t, outWidth * outWidth);
-    FXSYS_memcpy32(result, qr.GetMatrix()->GetArray(), outWidth * outHeight);
+    FXSYS_memcpy(result, qr.GetMatrix()->GetArray(), outWidth * outHeight);
     return result;
 }
 uint8_t *CBC_QRCodeWriter::Encode(const CFX_ByteString& contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e)

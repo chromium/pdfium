@@ -51,7 +51,7 @@ void* CCodec_BmpModule::Start(void* pModule)
     if (p == NULL) {
         return NULL;
     }
-    FXSYS_memset32(p, 0, sizeof(FXBMP_Context));
+    FXSYS_memset(p, 0, sizeof(FXBMP_Context));
     if(p == NULL) {
         return NULL;
     }

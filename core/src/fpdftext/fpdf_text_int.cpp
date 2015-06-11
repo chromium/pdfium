@@ -1003,8 +1003,8 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection()
         if (minH >= maxH || minV >= maxV) {
             continue;
         }
-        FXSYS_memset8(pDataH + minH, 1, maxH - minH);
-        FXSYS_memset8(pDataV + minV, 1, maxV - minV);
+        FXSYS_memset(pDataH + minH, 1, maxH - minH);
+        FXSYS_memset(pDataV + minV, 1, maxV - minV);
         if (fLineHeight <= 0.0f) {
             fLineHeight = pPageObj->m_Top - pPageObj->m_Bottom;
         }
@@ -2578,7 +2578,7 @@ FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString, const FX_WC
     int nLen = (lpchEnd == NULL) ?
                (int)FXSYS_wcslen(lpszFullString) : (int)(lpchEnd - lpszFullString);
     ASSERT(nLen >= 0);
-    FXSYS_memcpy32(rString.GetBuffer(nLen), lpszFullString, nLen * sizeof(FX_WCHAR));
+    FXSYS_memcpy(rString.GetBuffer(nLen), lpszFullString, nLen * sizeof(FX_WCHAR));
     rString.ReleaseBuffer();
     return TRUE;
 }
