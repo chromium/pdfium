@@ -24,11 +24,11 @@ class Suppressor:
 
   def IsSuppressed(self, input_filename):
     if input_filename in self.suppression_list:
-      print ("Not running %s, found in %s file" %
+      print ("%s is suppressed, found in %s file" %
              (input_filename, self.SUPPRESSIONS_FILENAME))
       return True
     if input_filename in self.platform_suppression_list:
-      print ("Not running %s, found in %s file" %
+      print ("%s is suppressed, found in %s file" %
              (input_filename, self.PLATFORM_SUPPRESSIONS_FILENAME))
       return True
     return False
