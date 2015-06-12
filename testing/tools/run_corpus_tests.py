@@ -55,6 +55,7 @@ def main():
 
   # test files are under .../pdfium/testing/corpus.
   failures = []
+  surprises = []
   walk_from_dir = finder.TestingDir('corpus');
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]pdf$')
   for source_dir, _, filename_list in os.walk(walk_from_dir):
@@ -62,11 +63,19 @@ def main():
       if input_file_re.match(input_filename):
          input_path = os.path.join(source_dir, input_filename)
          if os.path.isfile(input_path):
+           result = test_one_file(input_filename, source_dir, working_dir,
+                                  pdfium_test_path, image_differ)
            if test_suppressor.IsSuppressed(input_filename):
-             continue
-         if not test_one_file(input_filename, source_dir, working_dir,
-                              pdfium_test_path, image_differ):
-             failures.append(input_path)
+             if result:
+               surprises.append(input_path)
+           else:
+             if not result:
+               failures.append(input_path)
+
+  if surprises:
+    print '\n\nUnexpected Successes:'
+    for surprise in surprises:
+      print surprise;
 
   if failures:
     print '\n\nSummary of Failures:'
