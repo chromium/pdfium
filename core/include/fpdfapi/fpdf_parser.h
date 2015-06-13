@@ -114,12 +114,8 @@ public:
 
     FX_BOOL					IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const;
 
-
-
-
-    CPDF_Font*				LoadFont(CPDF_Dictionary* pFontDict);
-
-    CPDF_Font*				FindFont(CPDF_Dictionary* pFontDict);
+    // |pFontDict| must not be null.
+    CPDF_Font* LoadFont(CPDF_Dictionary* pFontDict);
 
     CPDF_ColorSpace*		LoadColorSpace(CPDF_Object* pCSObj, CPDF_Dictionary* pResources = NULL);
 

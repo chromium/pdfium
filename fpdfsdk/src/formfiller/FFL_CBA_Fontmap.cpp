@@ -286,10 +286,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString &sAlias)
 		}
 	}
 
-	if (pFontDict)
-		return m_pDocument->LoadFont(pFontDict);
-	else
-		return NULL;
+    return pFontDict ? m_pDocument->LoadFont(pFontDict) : nullptr;
 }
 
 void CBA_FontMap::SetAPType(const CFX_ByteString& sAPType)
