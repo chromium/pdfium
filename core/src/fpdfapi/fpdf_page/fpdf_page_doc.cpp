@@ -75,27 +75,18 @@ void CPDF_PageModule::NotifyCJKAvailable()
 {
     m_FontGlobals.m_CMapManager.ReloadAll();
 }
+
 CPDF_Font* CPDF_Document::LoadFont(CPDF_Dictionary* pFontDict)
 {
-    if (!pFontDict) {
-        return NULL;
-    }
+    ASSERT(pFontDict);
     return GetValidatePageData()->GetFont(pFontDict, FALSE);
 }
-CPDF_Font* CPDF_Document::FindFont(CPDF_Dictionary* pFontDict)
-{
-    if (!pFontDict) {
-        return NULL;
-    }
-    return GetValidatePageData()->GetFont(pFontDict, TRUE);
-}
+
 CPDF_StreamAcc* CPDF_Document::LoadFontFile(CPDF_Stream* pStream)
 {
-    if (pStream == NULL) {
-        return NULL;
-    }
     return GetValidatePageData()->GetFontFileStreamAcc(pStream);
 }
+
 CPDF_ColorSpace* _CSFromName(const CFX_ByteString& name);
 CPDF_ColorSpace* CPDF_Document::LoadColorSpace(CPDF_Object* pCSObj, CPDF_Dictionary* pResources)
 {
@@ -599,8 +590,7 @@ void CPDF_DocPageData::ReleaseIccProfile(CPDF_IccProfile* pIccProfile)
 
 CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(CPDF_Stream* pFontStream)
 {
-    if (!pFontStream)
-        return nullptr;
+    ASSERT(pFontStream);
 
     auto it = m_FontFileMap.find(pFontStream);
     if (it != m_FontFileMap.end()) {

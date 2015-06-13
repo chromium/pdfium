@@ -286,44 +286,51 @@ CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance()
         return pObj->GetString();
     }
 }
+
 CPDF_Font* CPDF_FormControl::GetDefaultControlFont()
 {
     CPDF_DefaultAppearance cDA = GetDefaultAppearance();
     CFX_ByteString csFontNameTag;
     FX_FLOAT fFontSize;
     cDA.GetFont(csFontNameTag, fFontSize);
-    if (csFontNameTag.IsEmpty()) {
-        return NULL;
-    }
+    if (csFontNameTag.IsEmpty())
+        return nullptr;
+
     CPDF_Object* pObj = FPDF_GetFieldAttr(m_pWidgetDict, "DR");
-    if (pObj != NULL && pObj->GetType() == PDFOBJ_DICTIONARY) {
+    if (pObj && pObj->GetType() == PDFOBJ_DICTIONARY) {
         CPDF_Dictionary* pFonts = ((CPDF_Dictionary*)pObj)->GetDict("Font");
-        if (pFonts != NULL) {
-            CPDF_Dictionary *pElement = pFonts->GetDict(csFontNameTag);
-            CPDF_Font *pFont = m_pField->m_pForm->m_pDocument->LoadFont(pElement);
-            if (pFont != NULL) {
-                return pFont;
+        if (pFonts) {
+            CPDF_Dictionary* pElement = pFonts->GetDict(csFontNameTag);
+            if (pElement) {
+                CPDF_Font* pFont =
+                    m_pField->m_pForm->m_pDocument->LoadFont(pElement);
+                if (pFont) {
+                    return pFont;
+                }
             }
         }
     }
-    CPDF_Font *pFont = m_pField->m_pForm->GetFormFont(csFontNameTag);
-    if (pFont != NULL) {
-        return pFont;
-    }
+    if (CPDF_Font* pFormFont = m_pField->m_pForm->GetFormFont(csFontNameTag))
+      return pFormFont;
+
     CPDF_Dictionary *pPageDict = m_pWidgetDict->GetDict("P");
     pObj = FPDF_GetFieldAttr(pPageDict, "Resources");
-    if (pObj != NULL && pObj->GetType() == PDFOBJ_DICTIONARY) {
+    if (pObj && pObj->GetType() == PDFOBJ_DICTIONARY) {
         CPDF_Dictionary* pFonts = ((CPDF_Dictionary*)pObj)->GetDict("Font");
-        if (pFonts != NULL) {
-            CPDF_Dictionary *pElement = pFonts->GetDict(csFontNameTag);
-            CPDF_Font *pFont = m_pField->m_pForm->m_pDocument->LoadFont(pElement);
-            if (pFont != NULL) {
-                return pFont;
+        if (pFonts) {
+            CPDF_Dictionary* pElement = pFonts->GetDict(csFontNameTag);
+            if (pElement) {
+                CPDF_Font* pFont =
+                    m_pField->m_pForm->m_pDocument->LoadFont(pElement);
+                if (pFont) {
+                    return pFont;
+                }
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
+
 int CPDF_FormControl::GetControlAlignment()
 {
     if (m_pWidgetDict == NULL) {
