@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -28,8 +28,8 @@ CPWL_List_Notify::~CPWL_List_Notify()
 {
 }
 
-void CPWL_List_Notify::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax, 
-												FX_FLOAT fContentMin, FX_FLOAT fContentMax, 
+void CPWL_List_Notify::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
+												FX_FLOAT fContentMin, FX_FLOAT fContentMax,
 												FX_FLOAT fSmallStep, FX_FLOAT fBigStep)
 {
 	PWL_SCROLL_INFO Info;
@@ -51,17 +51,17 @@ void CPWL_List_Notify::IOnSetScrollInfoY(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
 			{
 				pScroll->SetVisible(FALSE);
 				m_pList->RePosChildWnd();
-			}			
+			}
 		}
 		else
 		{
 			if (!pScroll->IsVisible())
 			{
-				pScroll->SetVisible(TRUE);	
+				pScroll->SetVisible(TRUE);
 				m_pList->RePosChildWnd();
 			}
 		}
-	}	
+	}
 }
 
 void CPWL_List_Notify::IOnSetScrollPosY(FX_FLOAT fy)
@@ -91,7 +91,7 @@ CPWL_ListBox::CPWL_ListBox() :
 CPWL_ListBox::~CPWL_ListBox()
 {
 	IFX_List::DelList(m_pList);
-	
+
 	if (m_pListNotify)
 	{
 		delete m_pListNotify;
@@ -100,7 +100,7 @@ CPWL_ListBox::~CPWL_ListBox()
 }
 
 CFX_ByteString CPWL_ListBox::GetClassName() const
-{	
+{
 	return "CPWL_ListBox";
 }
 
@@ -112,10 +112,10 @@ void CPWL_ListBox::OnCreated()
 
 		m_pList->SetFontMap(GetFontMap());
 		m_pList->SetNotify(m_pListNotify = new CPWL_List_Notify(this));
-	
-		SetHoverSel(HasFlag(PLBS_HOVERSEL));	
+
+		SetHoverSel(HasFlag(PLBS_HOVERSEL));
 		m_pList->SetMultipleSel(HasFlag(PLBS_MULTIPLESEL));
-		m_pList->SetFontSize(this->GetCreationParam().fFontSize);	
+		m_pList->SetFontSize(GetCreationParam().fFontSize);
 
 		m_bHoverSel = HasFlag(PLBS_HOVERSEL);
 	}
@@ -144,7 +144,7 @@ void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream)
 			CPDF_Rect rcItem = m_pList->GetItemRect(i);
 
 			if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom) continue;
-			
+
 			CPDF_Point ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
 			if (m_pList->IsItemSelected(i))
 			{
@@ -168,8 +168,8 @@ void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream)
 
 	if (sListItems.GetLength() > 0)
 	{
-		CFX_ByteTextBuf sClip;			
-		CPDF_Rect rcClient = this->GetClientRect();
+		CFX_ByteTextBuf sClip;
+		CPDF_Rect rcClient = GetClientRect();
 
 		sClip << "q\n";
 		sClip << rcClient.left << " " << rcClient.bottom << " "
@@ -195,7 +195,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pU
 		{
 			CPDF_Rect rcItem = m_pList->GetItemRect(i);
 			if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom) continue;
-			
+
 			CPDF_Point ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
 			if (IFX_Edit* pEdit = m_pList->GetItemEdit(i))
 			{
@@ -226,7 +226,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pU
 			else
 			{
 				IFX_SystemHandler* pSysHandler = GetSystemHandler();
-				IFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i), 
+				IFX_Edit::DrawEdit(pDevice, pUser2Device, m_pList->GetItemEdit(i),
 						CPWL_Utils::PWLColorToFXColor(GetTextColor()),
 						CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor()),
 						rcList, ptOffset, NULL,pSysHandler, NULL);
@@ -252,7 +252,7 @@ FX_BOOL CPWL_ListBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
 	case FWL_VKEY_Left:
 	case FWL_VKEY_End:
 	case FWL_VKEY_Right:
-		break;	
+		break;
 	}
 
 	switch (nChar)
@@ -351,7 +351,7 @@ FX_BOOL CPWL_ListBox::OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag)
 	{
 		if (m_pList)
 			m_pList->OnMouseMove(point,IsSHIFTpressed(nFlag),IsCTRLpressed(nFlag));
-	}	
+	}
 
 	return TRUE;
 }
@@ -360,8 +360,8 @@ void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intpt
 {
 	CPWL_Wnd::OnNotify(pWnd,msg,wParam,lParam);
 
-	FX_FLOAT fPos;	
-	
+	FX_FLOAT fPos;
+
 	switch (msg)
 	{
 	case PNM_SETSCROLLINFO:
@@ -375,7 +375,7 @@ void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intpt
 			break;
 		}
 		break;
-	case PNM_SETSCROLLPOS:			
+	case PNM_SETSCROLLPOS:
 		switch (wParam)
 		{
 		case SBT_VSCROLL:
@@ -401,29 +401,7 @@ void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intpt
 
 void CPWL_ListBox::KillFocus()
 {
-	CPWL_Wnd::KillFocus();
-
-	/*
-	if (this->IsMultipleSel())
-	{
-		for(int32_t i=0;i<this->GetCount();i++)
-		{
-			if (this->IsListItemSelected(i))
-			{
-				if (!IsListItemVisible(i))
-					this->ScrollToListItem(i);
-				break;
-			}
-		}
-	}
-	else
-	{
-		if (!IsListItemVisible(this->GetCurSel()))
-			this->ScrollToListItem(this->GetCurSel());
-	}
-
-	SetListItemCaret(m_nCaretIndex,FALSE);
-	*/
+    CPWL_Wnd::KillFocus();
 }
 
 void CPWL_ListBox::RePosChildWnd()
@@ -437,7 +415,7 @@ void CPWL_ListBox::RePosChildWnd()
 void CPWL_ListBox::OnNotifySelChanged(FX_BOOL bKeyDown, FX_BOOL & bExit,  FX_DWORD nFlag)
 {
 	if (m_pFillerNotify)
-	{		
+	{
 		FX_BOOL bRC = TRUE;
 		CFX_WideString swChange = GetText();
 		CFX_WideString strChangeEx;
@@ -458,21 +436,16 @@ CPDF_Rect CPWL_ListBox::GetFocusRect() const
 		rcCaret.Intersect(GetClientRect());
 		return rcCaret;
 	}
-	
+
 	return CPWL_Wnd::GetFocusRect();
 }
 
 void CPWL_ListBox::AddString(const FX_WCHAR* string)
 {
 	if (m_pList)
-	{		
+	{
 		m_pList->AddString(string);
 	}
-}
-
-void CPWL_ListBox::SetText(const FX_WCHAR* csText,FX_BOOL bRefresh)
-{
-	//return CPDF_List::SetText(csText,bRefresh);
 }
 
 CFX_WideString CPWL_ListBox::GetText() const

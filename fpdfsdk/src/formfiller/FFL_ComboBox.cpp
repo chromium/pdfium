@@ -16,7 +16,6 @@
 CFFL_ComboBox::CFFL_ComboBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot) :
 	CFFL_FormFiller(pApp, pAnnot), m_pFontMap( NULL )
 {
-	//m_pFontMap = new CBA_FontMap( pAnnot, GetSystemHandler() );
         m_State.nIndex = 0;
         m_State.nStart = 0;
         m_State.nEnd   = 0;
@@ -29,13 +28,6 @@ CFFL_ComboBox::~CFFL_ComboBox()
 		delete m_pFontMap;
 		m_pFontMap = NULL;
 	}
-
-// 	for (int i=0,sz=m_IMBox.GetSize(); i<sz; i++)
-// 	{
-// 		delete m_IMBox.GetAt(i);
-// 	}
-// 
-// 	m_IMBox.RemoveAll();
 }
 
 PWL_CREATEPARAM CFFL_ComboBox::GetCreateParam()
@@ -51,16 +43,8 @@ PWL_CREATEPARAM CFFL_ComboBox::GetCreateParam()
 		cp.dwFlags |= PCBS_ALLOWCUSTOMTEXT;
 	}
 
-	/*
-	if (nFlags & FIELDFLAG_COMMITONSELCHANGE)
-	{		
-		m_bCommitOnSelectChange = TRUE;
-	}
-	*/
-
 	if (!m_pFontMap)
 	{
-		ASSERT(this->m_pApp != NULL);
 		m_pFontMap = new CBA_FontMap(m_pWidget, GetSystemHandler());
 		m_pFontMap->Initial();
 	}
@@ -311,10 +295,10 @@ CPWL_Wnd* CFFL_ComboBox::ResetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bRe
 	if (bRestoreValue)
 	{
 		RestoreState(pPageView);
-		pRet = this->GetPDFWindow(pPageView, FALSE);
+		pRet = GetPDFWindow(pPageView, FALSE);
 	}
 	else
-		pRet = this->GetPDFWindow(pPageView, TRUE);
+		pRet = GetPDFWindow(pPageView, TRUE);
 	
 	m_pWidget->UpdateField();
 	
@@ -331,7 +315,7 @@ void CFFL_ComboBox::OnKeyStroke(FX_BOOL bKeyDown, FX_UINT nFlag)
 	{
 		if (m_bValid)
 		{
-			CPDFSDK_PageView* pPageView = this->GetCurPageView();
+			CPDFSDK_PageView* pPageView = GetCurPageView();
 			ASSERT(pPageView != NULL);
 
 			if (CommitData(pPageView, nFlag))

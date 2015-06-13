@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -12,7 +12,7 @@
 
 /* ------------------------------ CPWL_FontMap ------------------------------ */
 
-CPWL_FontMap::CPWL_FontMap(IFX_SystemHandler* pSystemHandler) : 	
+CPWL_FontMap::CPWL_FontMap(IFX_SystemHandler* pSystemHandler) :
 	m_pPDFDoc(NULL),
 	m_pSystemHandler(pSystemHandler)
 {
@@ -80,7 +80,7 @@ FX_BOOL CPWL_FontMap::KnowWord(int32_t nFontIndex, FX_WORD word)
 	if (nFontIndex >=0 && nFontIndex < m_aData.GetSize())
 	{
 		if (m_aData.GetAt(nFontIndex))
-		{	
+		{
 			return CharCodeFromUnicode(nFontIndex, word) >= 0;
 		}
 	}
@@ -99,8 +99,8 @@ int32_t CPWL_FontMap::GetWordFontIndex(FX_WORD word, int32_t nCharset, int32_t n
 	{
 		if (const CPWL_FontMap_Data* pData = GetFontMapData(0))
 		{
-			if (nCharset == DEFAULT_CHARSET || 
-				pData->nCharset == SYMBOL_CHARSET || 
+			if (nCharset == DEFAULT_CHARSET ||
+				pData->nCharset == SYMBOL_CHARSET ||
 				nCharset == pData->nCharset)
 			{
 				if (KnowWord(0, word))
@@ -113,14 +113,14 @@ int32_t CPWL_FontMap::GetWordFontIndex(FX_WORD word, int32_t nCharset, int32_t n
 
 	int32_t nNewFontIndex = -1;
 
-	nNewFontIndex = this->GetFontIndex(GetNativeFontName(nCharset), nCharset, TRUE);
+	nNewFontIndex = GetFontIndex(GetNativeFontName(nCharset), nCharset, TRUE);
 	if (nNewFontIndex >= 0)
 	{
 		if (KnowWord(nNewFontIndex, word))
 			return nNewFontIndex;
 	}
 
-	nNewFontIndex = this->GetFontIndex("Arial Unicode MS", DEFAULT_CHARSET, FALSE);
+	nNewFontIndex = GetFontIndex("Arial Unicode MS", DEFAULT_CHARSET, FALSE);
 	if (nNewFontIndex >= 0)
 	{
 		if (KnowWord(nNewFontIndex, word))
@@ -203,10 +203,8 @@ void CPWL_FontMap::Initial(const FX_CHAR* fontname)
 		sFontName = DEFAULT_FONT_NAME;
 
 	GetFontIndex(sFontName, ANSI_CHARSET, FALSE);
-
-	//GetFontIndex(this->GetNativeFontName(nCharset), nCharset);
 }
-	
+
 
 /*
 List of currently supported standard fonts:
@@ -277,7 +275,7 @@ int32_t CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName, int32_t nCha
 		*/
 		{
 			sAlias = EncodeFontAlias(sTemp, nCharset);
-		}		
+		}
 	}
 
 	AddedFont(pFont, sAlias);
@@ -406,7 +404,7 @@ CPDF_Font* CPWL_FontMap::AddSystemFont(CPDF_Document* pDoc, CFX_ByteString& sFon
 
 	if (m_pSystemHandler)
 		return m_pSystemHandler->AddNativeTrueTypeFontToPDF(pDoc, sFontName, nCharset);
-	
+
 	return NULL;
 }
 
@@ -534,9 +532,9 @@ int32_t CPWL_FontMap::CharSetFromUnicode(FX_WORD word, int32_t nOldCharset)
 	if (nOldCharset != DEFAULT_CHARSET) return nOldCharset;
 
 	//find new charset
-	if ((word >= 0x4E00 && word <= 0x9FA5) || 
+	if ((word >= 0x4E00 && word <= 0x9FA5) ||
 		(word >= 0xE7C7 && word <= 0xE7F3) ||
-		(word >= 0x3000 && word <= 0x303F) || //£©"¡¶" "¡·" "¡£" "¡¢" 
+		(word >= 0x3000 && word <= 0x303F) ||
 		(word >= 0x2000 && word <= 0x206F))
 	{
 		return GB2312_CHARSET;
@@ -585,7 +583,7 @@ int32_t CPWL_FontMap::CharSetFromUnicode(FX_WORD word, int32_t nOldCharset)
 
 /* ------------------------ CPWL_DocFontMap ------------------------ */
 
-CPWL_DocFontMap::CPWL_DocFontMap(IFX_SystemHandler* pSystemHandler, CPDF_Document* pAttachedDoc) 
+CPWL_DocFontMap::CPWL_DocFontMap(IFX_SystemHandler* pSystemHandler, CPDF_Document* pAttachedDoc)
 	: CPWL_FontMap(pSystemHandler),
 	m_pAttachedDoc(pAttachedDoc)
 {

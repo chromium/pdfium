@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -18,7 +18,7 @@ static CFX_MapPtrTemplate<int32_t, CPWL_Timer*>& GetPWLTimeMap()
   return *timeMap;
 }
 
-CPWL_Timer::CPWL_Timer(CPWL_TimerHandler* pAttached, IFX_SystemHandler* pSystemHandler) : 
+CPWL_Timer::CPWL_Timer(CPWL_TimerHandler* pAttached, IFX_SystemHandler* pSystemHandler) :
 	m_nTimerID(0),
 	m_pAttached(pAttached),
 	m_pSystemHandler(pSystemHandler)
@@ -33,7 +33,7 @@ CPWL_Timer::~CPWL_Timer()
 }
 
 int32_t CPWL_Timer::SetPWLTimer(int32_t nElapse)
-{	
+{
 	if (m_nTimerID != 0) KillPWLTimer();
 	m_nTimerID = m_pSystemHandler->SetTimer(nElapse, TimerProc);
 	GetPWLTimeMap().SetAt(m_nTimerID, this);
@@ -56,8 +56,8 @@ void CPWL_Timer::TimerProc(int32_t idEvent)
 	if (GetPWLTimeMap().Lookup(idEvent, pTimer))
 	{
 		if (pTimer)
-		{			
-			if (pTimer->m_pAttached) 
+		{
+			if (pTimer->m_pAttached)
 				pTimer->m_pAttached->TimerProc();
 		}
 	}
@@ -153,7 +153,7 @@ public:
 			for( int32_t i=0,sz=m_aKeyboardPath.GetSize(); i<sz; i++)
 				if (m_aKeyboardPath.GetAt(i) == pWnd)
 					return TRUE;
-		
+
 		return FALSE;
 	}
 
@@ -223,7 +223,7 @@ CPWL_Wnd::CPWL_Wnd() :
 	m_pVScrollBar(NULL),
 	m_rcWindow(),
 	m_rcClip(),
-	m_bCreated(FALSE),			
+	m_bCreated(FALSE),
 	m_bVisible(FALSE),
 	m_bNotifying(FALSE),
 	m_bEnabled(TRUE)
@@ -261,9 +261,9 @@ void CPWL_Wnd::Create(const PWL_CREATEPARAM & cp)
 
 		ccp.dwFlags &= 0xFFFF0000L; //remove sub styles
 		ccp.mtChild = CPDF_Matrix(1,0,0,1,0,0);
-		
+
 		CreateScrollBar(ccp);
-		CreateChildWnd(ccp); 
+		CreateChildWnd(ccp);
 
 		m_bVisible = HasFlag(PWS_VISIBLE);
 
@@ -312,7 +312,7 @@ void CPWL_Wnd::Destroy()
 	DestroyMsgControl();
 
 	FXSYS_memset(&m_sPrivateParam, 0, sizeof(PWL_CREATEPARAM));
-	m_aChildren.RemoveAll();	
+	m_aChildren.RemoveAll();
 	m_pVScrollBar = NULL;
 }
 
@@ -320,23 +320,22 @@ void CPWL_Wnd::Move(const CPDF_Rect & rcNew, FX_BOOL bReset,FX_BOOL bRefresh)
 {
 	if (IsValid())
 	{
-		CPDF_Rect rcOld = this->GetWindowRect();
+		CPDF_Rect rcOld = GetWindowRect();
 
 		m_rcWindow = rcNew;
 		m_rcWindow.Normalize();
-		//m_rcClip = CPWL_Utils::InflateRect(m_rcWindow,1.0f); //for special caret 
 
 		if (rcOld.left != rcNew.left || rcOld.right != rcNew.right ||
 			rcOld.top != rcNew.top || rcOld.bottom != rcNew.bottom)
 		{
 			if (bReset)
 			{
-				RePosChildWnd();	
-			}	
+				RePosChildWnd();
+			}
 
 		}
 		if (bRefresh)
-		{	
+		{
 			InvalidateRectMove(rcOld,rcNew);
 		}
 
@@ -350,32 +349,6 @@ void  CPWL_Wnd::InvalidateRectMove(const CPDF_Rect & rcOld, const CPDF_Rect & rc
 	rcUnion.Union(rcNew);
 
 	InvalidateRect(&rcUnion);
-
-	/*
-	CPDF_Rect SubArray[4]; 
-
-	rcOld.Substract4(rcNew,SubArray);
-	for (int32_t i=0;i<4;i++)
-	{
-		if (SubArray[i].left == 0 &&
-			SubArray[i].right == 0 &&
-			SubArray[i].top == 0 &&
-			SubArray[i].bottom == 0)continue;
-
-		InvalidateRect(&CPWL_Utils::InflateRect(SubArray[i],2));
-	}
-
-	rcNew.Substract4(rcOld,SubArray);
-	for (int32_t j=0;j<4;j++)
-	{
-		if (SubArray[j].left == 0 &&
-			SubArray[j].right == 0 &&
-			SubArray[j].top == 0 &&
-			SubArray[j].bottom == 0)continue;
-
-		InvalidateRect(&CPWL_Utils::InflateRect(SubArray[j],2));
-	}
-	*/
 }
 
 void CPWL_Wnd::GetAppearanceStream(CFX_ByteString & sAppStream)
@@ -400,25 +373,26 @@ void CPWL_Wnd::GetAppearanceStream(CFX_ByteTextBuf & sAppStream)
 //if don't set,Get default apperance stream
 void CPWL_Wnd::GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream)
 {
-	CPDF_Rect rectWnd = GetWindowRect();
-	if (!rectWnd.IsEmpty())
-	{
-		CFX_ByteTextBuf sThis;
+    CPDF_Rect rectWnd = GetWindowRect();
+    if (!rectWnd.IsEmpty()) {
+        CFX_ByteTextBuf sThis;
 
-		if (HasFlag(PWS_BACKGROUND))
-			sThis << CPWL_Utils::GetRectFillAppStream(rectWnd,this->GetBackgroundColor());
+        if (HasFlag(PWS_BACKGROUND))
+            sThis << CPWL_Utils::GetRectFillAppStream(rectWnd, GetBackgroundColor());
 
-		if (HasFlag(PWS_BORDER))
-			sThis << CPWL_Utils::GetBorderAppStream(rectWnd,
-									(FX_FLOAT)GetBorderWidth(),
-									GetBorderColor(),
-									this->GetBorderLeftTopColor(this->GetBorderStyle()),
-									this->GetBorderRightBottomColor(this->GetBorderStyle()),
-									this->GetBorderStyle(),
-									this->GetBorderDash());
+        if (HasFlag(PWS_BORDER)) {
+            sThis << CPWL_Utils::GetBorderAppStream(
+                rectWnd,
+                (FX_FLOAT)GetBorderWidth(),
+                GetBorderColor(),
+                GetBorderLeftTopColor(GetBorderStyle()),
+                GetBorderRightBottomColor(GetBorderStyle()),
+                GetBorderStyle(),
+                GetBorderDash());
+        }
 
-		sAppStream << sThis;
-	}
+        sAppStream << sThis;
+    }
 }
 
 void CPWL_Wnd::GetChildAppearanceStream(CFX_ByteTextBuf & sAppStream)
@@ -445,11 +419,11 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2
 {
 	CPDF_Rect rectWnd = GetWindowRect();
 	if (!rectWnd.IsEmpty())
-	{		
+	{
 		if (HasFlag(PWS_BACKGROUND))
 		{
 			CPDF_Rect rcClient = CPWL_Utils::DeflateRect(rectWnd,(FX_FLOAT)(GetBorderWidth()+GetInnerBorderWidth()));
-			CPWL_Utils::DrawFillRect(pDevice,pUser2Device,rcClient,this->GetBackgroundColor(),GetTransparency());
+			CPWL_Utils::DrawFillRect(pDevice,pUser2Device,rcClient, GetBackgroundColor(), GetTransparency());
 		}
 
 		if (HasFlag(PWS_BORDER))
@@ -458,11 +432,11 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2
 								rectWnd,
 								(FX_FLOAT)GetBorderWidth(),
 								GetBorderColor(),
-								this->GetBorderLeftTopColor(this->GetBorderStyle()),
-								this->GetBorderRightBottomColor(this->GetBorderStyle()),
-								this->GetBorderStyle(),
-								this->GetBorderDash(),
-								GetTransparency());								
+								GetBorderLeftTopColor(GetBorderStyle()),
+								GetBorderRightBottomColor(GetBorderStyle()),
+								GetBorderStyle(),
+								GetBorderDash(),
+								GetTransparency());
 	}
 }
 
@@ -494,7 +468,7 @@ void CPWL_Wnd::InvalidateRect(CPDF_Rect* pRect)
 
 		if (!HasFlag(PWS_NOREFRESHCLIP))
 		{
-			CPDF_Rect rcClip = GetClipRect();		
+			CPDF_Rect rcClip = GetClipRect();
 			if (!rcClip.IsEmpty())
 			{
 				rcRefresh.Intersect(rcClip);
@@ -570,7 +544,7 @@ FX_BOOL CPWL_Wnd::mouse_method_name(const CPDF_Point & point, FX_DWORD nFlag)\
 					}\
 				}\
 			}\
-			if (this->WndHitTest(point))\
+			if (WndHitTest(point))\
 				SetCursor();\
 		}\
 	}\
@@ -639,10 +613,10 @@ void CPWL_Wnd::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t 
 	switch (msg)
 	{
 	case PNM_ADDCHILD:
-		this->AddChild(pWnd);
+		AddChild(pWnd);
 		break;
 	case PNM_REMOVECHILD:
-		this->RemoveChild(pWnd);
+		RemoveChild(pWnd);
 		break;
 	default:
 		break;
@@ -679,7 +653,7 @@ CPDF_Rect CPWL_Wnd::GetClientRect() const
 	CPDF_Rect rcWindow = GetWindowRect();
 	CPDF_Rect rcClient = CPWL_Utils::DeflateRect(rcWindow,(FX_FLOAT)(GetBorderWidth()+GetInnerBorderWidth()));
 
-	if (CPWL_ScrollBar * pVSB = this->GetVScrollBar())
+	if (CPWL_ScrollBar * pVSB = GetVScrollBar())
 		rcClient.right -= pVSB->GetScrollBarWidth();
 
 	rcClient.Normalize();
@@ -842,7 +816,7 @@ void CPWL_Wnd::CreateVScrollBar(const PWL_CREATEPARAM & cp)
 
 		//flags
 		scp.dwFlags = PWS_CHILD| PWS_BACKGROUND | PWS_AUTOTRANSPARENT | PWS_NOREFRESHCLIP;
-		
+
 		scp.pParentWnd = this;
 		scp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
 		scp.eCursorType = FXCT_ARROW;
@@ -929,9 +903,9 @@ void CPWL_Wnd::SetVisible(FX_BOOL bVisible)
 		if (bVisible != m_bVisible)
 		{
 			m_bVisible = bVisible;
-			RePosChildWnd();		
+			RePosChildWnd();
 			InvalidateRect();
-		}	
+		}
 	}
 }
 
@@ -955,7 +929,7 @@ void CPWL_Wnd::RePosChildWnd()
 {
 	CPDF_Rect rcContent = CPWL_Utils::DeflateRect(GetWindowRect(),(FX_FLOAT)(GetBorderWidth()+GetInnerBorderWidth()));
 
-	CPWL_ScrollBar * pVSB = this->GetVScrollBar();
+	CPWL_ScrollBar * pVSB = GetVScrollBar();
 
 	CPDF_Rect rcVScroll = CPDF_Rect(rcContent.right - PWL_SCROLLBAR_WIDTH,
 							rcContent.bottom,
@@ -971,11 +945,11 @@ void CPWL_Wnd::CreateChildWnd(const PWL_CREATEPARAM & cp)
 
 void CPWL_Wnd::SetCursor()
 {
-	if (IsValid()) 
+	if (IsValid())
 	{
 		if (IFX_SystemHandler* pSH = GetSystemHandler())
 		{
-			int32_t nCursorType = this->GetCreationParam().eCursorType;
+			int32_t nCursorType = GetCreationParam().eCursorType;
 			pSH->SetCursor(nCursorType);
 		}
 	}
@@ -1030,17 +1004,17 @@ FX_BOOL CPWL_Wnd::IsFocused() const
 
 CPDF_Rect CPWL_Wnd::GetFocusRect() const
 {
-	return CPWL_Utils::InflateRect(this->GetWindowRect(),1);
+	return CPWL_Utils::InflateRect(GetWindowRect(),1);
 }
 
 FX_FLOAT CPWL_Wnd::GetFontSize() const
 {
-	return this->m_sPrivateParam.fFontSize;
+	return m_sPrivateParam.fFontSize;
 }
 
 void CPWL_Wnd::SetFontSize(FX_FLOAT fFontSize)
 {
-	this->m_sPrivateParam.fFontSize = fFontSize;
+	m_sPrivateParam.fFontSize = fFontSize;
 }
 
 IFX_SystemHandler* CPWL_Wnd::GetSystemHandler() const
@@ -1131,26 +1105,13 @@ void CPWL_Wnd::SetTransparency(int32_t nTransparency)
 
 CPDF_Matrix	CPWL_Wnd::GetWindowMatrix() const
 {
-	CPDF_Matrix mt = this->GetChildToRoot();
+	CPDF_Matrix mt = GetChildToRoot();
 
 	if (IPWL_Provider* pProvider = GetProvider())
 	{
 		mt.Concat(pProvider->GetWindowMatrix(GetAttachedData()));
 		return mt;
 	}
-
-/*
-	if (CReader_App* pApp = CPWL_Module::GetReaderApp())
-		if (CReader_Document* pDocument = pApp->GetCurrentDocument())
-			if (CReader_DocView* pDocView = pDocument->GetCurrentDocView())
-			{
-				CPDF_Matrix mtPageView;
-				pDocView->GetCurrentMatrix(mtPageView);
-				mt.Concat(mtPageView);
-				return mt;
-			}		
-			
-*/
 
 	return mt;
 }
@@ -1168,7 +1129,7 @@ FX_RECT CPWL_Wnd::PWLtoWnd(const CPDF_Rect & rect) const
 {
 	CPDF_Rect rcTemp = rect;
 	CPDF_Matrix mt = GetWindowMatrix();
-	mt.TransformRect(rcTemp);	
+	mt.TransformRect(rcTemp);
 	return FX_RECT((int32_t)(rcTemp.left+0.5), (int32_t)(rcTemp.bottom+0.5), (int32_t)(rcTemp.right+0.5), (int32_t)(rcTemp.top+0.5));
 }
 
@@ -1234,7 +1195,7 @@ CPDF_Rect CPWL_Wnd::ParentToChild(const CPDF_Rect& rect) const
 CPDF_Matrix CPWL_Wnd::GetChildToRoot() const
 {
 	CPDF_Matrix mt(1,0,0,1,0,0);
-	
+
 	if (HasFlag(PWS_CHILD))
 	{
 		const CPWL_Wnd* pParent = this;
@@ -1283,12 +1244,12 @@ void CPWL_Wnd::EnableWindow(FX_BOOL bEnable)
 			}
 		}
 
-		this->m_bEnabled = bEnable;
+		m_bEnabled = bEnable;
 
 		if (bEnable)
-			this->OnEnabled();
+			OnEnabled();
 		else
-			this->OnDisabled();
+			OnDisabled();
 	}
 }
 

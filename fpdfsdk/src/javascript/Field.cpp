@@ -3640,7 +3640,7 @@ FX_BOOL Field::getArray(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 		Field* pField = (Field*)pJSField->GetEmbedObject(); 
 		ASSERT(pField != NULL);
 
-		pField->AttachField(this->m_pJSDoc, *pStr);
+		pField->AttachField(m_pJSDoc, *pStr);
 	
 		CJS_Value FormFieldValue(m_isolate);
 		FormFieldValue = pJSField;

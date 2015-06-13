@@ -19,10 +19,10 @@ public:
 	{
 	}
 
-	CLST_Size(FX_FLOAT x,FX_FLOAT y)
+	CLST_Size(FX_FLOAT other_x, FX_FLOAT other_y)
 	{
-		this->x = x;
-		this->y = y;
+		x = other_x;
+		y = other_y;
 	}
 
 	void Default()
@@ -47,22 +47,24 @@ public:
 		left = top = right = bottom = 0.0f;
 	}
 
-	CLST_Rect(FX_FLOAT left,FX_FLOAT top,
-						FX_FLOAT right,FX_FLOAT bottom)
-	{
-		this->left = left;
-		this->top = top;
-		this->right = right;
-		this->bottom = bottom;
-	}
+    CLST_Rect(FX_FLOAT other_left,
+              FX_FLOAT other_top,
+              FX_FLOAT other_right,
+              FX_FLOAT other_bottom)
+    {
+        left = other_left;
+        top = other_top;
+        right = other_right;
+        bottom = other_bottom;
+    }
 
-	CLST_Rect(const CPDF_Rect & rect)
-	{
-		this->left = rect.left;
-		this->top = rect.top;
-		this->right = rect.right;
-		this->bottom = rect.bottom;
-	}
+    CLST_Rect(const CPDF_Rect & rect)
+    {
+        left = rect.left;
+        top = rect.top;
+        right = rect.right;
+        bottom = rect.bottom;
+    }
 
 	void Default()
 	{
@@ -71,10 +73,10 @@ public:
 
 	const CLST_Rect operator = (const CPDF_Rect & rect)
 	{
-		this->left = rect.left;
-		this->top = rect.top;
-		this->right = rect.right;
-		this->bottom = rect.bottom;
+		left = rect.left;
+		top = rect.top;
+		right = rect.right;
+		bottom = rect.bottom;
 
 		return *this;
 	}
@@ -91,15 +93,14 @@ public:
 
 	FX_FLOAT Width() const
 	{
-		return this->right - this->left;
+		return right - left;
 	}
 
 	FX_FLOAT Height() const
 	{
-		if (this->top > this->bottom)
-			return this->top - this->bottom;
-		else
-			return this->bottom - this->top;
+		if (top > bottom)
+			return top - bottom;
+		return bottom - top;
 	}
 
 	CPDF_Point LeftTop() const
@@ -114,20 +115,20 @@ public:
 
 	const CLST_Rect operator += (const CPDF_Point & point)
 	{
-		this->left += point.x;
-		this->right += point.x;
-		this->top += point.y;
-		this->bottom += point.y;
+		left += point.x;
+		right += point.x;
+		top += point.y;
+		bottom += point.y;
 
 		return *this;
 	}
 
 	const CLST_Rect operator -= (const CPDF_Point & point)
 	{
-		this->left -= point.x;
-		this->right -= point.x;
-		this->top -= point.y;
-		this->bottom -= point.y;
+		left -= point.x;
+		right -= point.x;
+		top -= point.y;
+		bottom -= point.y;
 
 		return *this;
 	}
@@ -263,10 +264,10 @@ private:
 
 struct CPLST_Select_Item
 {
-	CPLST_Select_Item(int32_t nItemIndex,int32_t nState)
+	CPLST_Select_Item(int32_t other_nItemIndex, int32_t other_nState)
 	{
-		this->nItemIndex = nItemIndex;
-		this->nState = nState;
+		nItemIndex = other_nItemIndex;
+		nState = other_nState;
 	}
 
 	int32_t		nItemIndex;

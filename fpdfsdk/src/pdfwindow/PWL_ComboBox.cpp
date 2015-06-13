@@ -31,7 +31,7 @@ FX_BOOL	CPWL_CBListBox::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 		ReleaseCapture();
 		m_bMouseDown = FALSE;	
 
-		if (this->ClientHitTest(point))
+		if (ClientHitTest(point))
 		{
 			if (CPWL_Wnd * pParent = GetParentWindow())
 			{
@@ -121,7 +121,7 @@ void CPWL_CBButton::GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream)
 	{
 		CFX_ByteTextBuf sButton;	
 
-		CPDF_Point ptCenter = this->GetCenterPoint();
+		CPDF_Point ptCenter = GetCenterPoint();
 
 		CPDF_Point pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
 		CPDF_Point pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
@@ -151,7 +151,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* p
 	
 	if (IsVisible() && !rectWnd.IsEmpty())
 	{
-		CPDF_Point ptCenter = this->GetCenterPoint();
+		CPDF_Point ptCenter = GetCenterPoint();
 
 		CPDF_Point pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
 		CPDF_Point pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);

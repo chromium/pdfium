@@ -162,7 +162,7 @@ public:
 
 	virtual ~CFX_Edit_RectArray()
 	{
-		this->Empty();
+		Empty();
 	}
 
 	void Empty()
@@ -170,7 +170,7 @@ public:
 		for (int32_t i = 0, sz = m_Rects.GetSize(); i < sz; i++)
 			delete m_Rects.GetAt(i);
 
-		this->m_Rects.RemoveAll();
+		m_Rects.RemoveAll();
 	}
 
 	void Add(const CPDF_Rect & rect)
@@ -242,7 +242,7 @@ public:
 
 	CPVT_WordRange ConvertToWordRange() const
 	{
-		return CPVT_WordRange(this->BeginPos,this->EndPos);
+		return CPVT_WordRange(BeginPos, EndPos);
 	}
 
 	void Default()
@@ -253,28 +253,28 @@ public:
 
 	void Set(const CPVT_WordPlace & begin,const CPVT_WordPlace & end)
 	{
-		this->BeginPos = begin;
-		this->EndPos = end;
+		BeginPos = begin;
+		EndPos = end;
 	}
 
 	void SetBeginPos(const CPVT_WordPlace & begin)
 	{
-		this->BeginPos = begin;
+		BeginPos = begin;
 	}
 
 	void SetEndPos(const CPVT_WordPlace & end)
 	{
-		this->EndPos = end;
+		EndPos = end;
 	}
 
 	FX_BOOL IsExist() const
 	{
-		return this->BeginPos != this->EndPos;
+		return BeginPos != EndPos;
 	}
 
 	FX_BOOL operator != (const CPVT_WordRange & wr) const
 	{
-		return wr.BeginPos != this->BeginPos || wr.EndPos != this->EndPos;
+		return wr.BeginPos != BeginPos || wr.EndPos != EndPos;
 	}
 
 	CPVT_WordPlace BeginPos,EndPos;

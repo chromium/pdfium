@@ -111,15 +111,17 @@ FX_BOOL CFFL_Notify::OnValidate(CPDF_FormField* pFormField, CFX_WideString& strV
 
 FX_BOOL	CFFL_Notify::DoAAction(CPDF_AAction::AActionType eAAT, FX_BOOL & bExit)
 {
-	if (this->m_bDoActioning) return FALSE;
-	
-	CPDF_Action action;
-	if (!FindAAction(eAAT,action)) return FALSE;
+    if (m_bDoActioning)
+        return FALSE;
 
-	this->m_bDoActioning = TRUE;	
-	ExecuteActionTree(eAAT,action,bExit);	
-	this->m_bDoActioning = FALSE;
-	return TRUE;
+    CPDF_Action action;
+    if (!FindAAction(eAAT, action))
+        return FALSE;
+
+    m_bDoActioning = TRUE;
+    ExecuteActionTree(eAAT,action,bExit);
+    m_bDoActioning = FALSE;
+    return TRUE;
 }
 
 FX_BOOL	CFFL_Notify::ExecuteActionTree(CPDF_AAction::AActionType eAAT,CPDF_Action & action, FX_BOOL& bExit)

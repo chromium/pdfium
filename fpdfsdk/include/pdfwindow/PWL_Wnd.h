@@ -125,7 +125,7 @@ struct PWL_CLASS CPWL_Color
 		nColorType(COLORTYPE_RGB), fColor1(r/255.0f), fColor2(g/255.0f), fColor3(b/255.0f), fColor4(0)
 	{}
 	
-	void ConvertColorType(int32_t nColorType);
+	void ConvertColorType(int32_t other_nColorType);
 
 	/*
 	COLORTYPE_TRANSPARENT
