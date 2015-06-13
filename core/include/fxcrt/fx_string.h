@@ -184,7 +184,7 @@ public:
 
     // Move constructor.
     inline CFX_ByteString(CFX_ByteString&& other) {
-        this->m_pData = other.m_pData;
+        m_pData = other.m_pData;
         other.m_pData = nullptr;
     }
 
@@ -630,7 +630,7 @@ public:
 
     // Move constructor.
     inline CFX_WideString(CFX_WideString&& other) {
-        this->m_pData = other.m_pData;
+        m_pData = other.m_pData;
         other.m_pData = nullptr;
     }
 

@@ -26,11 +26,13 @@ struct CPVT_WordPlace {
     {
     }
 
-    CPVT_WordPlace(int32_t nSecIndex, int32_t nLineIndex, int32_t nWordIndex)
+    CPVT_WordPlace(int32_t other_nSecIndex,
+                   int32_t other_nLineIndex,
+                   int32_t other_nWordIndex)
     {
-        this->nSecIndex = nSecIndex;
-        this->nLineIndex = nLineIndex;
-        this->nWordIndex = nWordIndex;
+        nSecIndex = other_nSecIndex;
+        nLineIndex = other_nLineIndex;
+        nWordIndex = other_nWordIndex;
     }
 
     void Default()
@@ -40,32 +42,32 @@ struct CPVT_WordPlace {
 
     FX_BOOL operator == (const CPVT_WordPlace & wp) const
     {
-        return wp.nSecIndex == this->nSecIndex && wp.nLineIndex == this->nLineIndex && wp.nWordIndex == this->nWordIndex;
+        return wp.nSecIndex == nSecIndex && wp.nLineIndex == nLineIndex && wp.nWordIndex == nWordIndex;
     }
 
     FX_BOOL operator != (const CPVT_WordPlace & wp) const
     {
-        return wp.nSecIndex != this->nSecIndex || wp.nLineIndex != this->nLineIndex || wp.nWordIndex != this->nWordIndex;
+        return wp.nSecIndex != nSecIndex || wp.nLineIndex != nLineIndex || wp.nWordIndex != nWordIndex;
     }
 
     inline int32_t WordCmp(const CPVT_WordPlace & wp) const
     {
-        if (this->nSecIndex > wp.nSecIndex) {
+        if (nSecIndex > wp.nSecIndex) {
             return 1;
         }
-        if (this->nSecIndex < wp.nSecIndex) {
+        if (nSecIndex < wp.nSecIndex) {
             return -1;
         }
-        if (this->nLineIndex > wp.nLineIndex) {
+        if (nLineIndex > wp.nLineIndex) {
             return 1;
         }
-        if (this->nLineIndex < wp.nLineIndex) {
+        if (nLineIndex < wp.nLineIndex) {
             return -1;
         }
-        if (this->nWordIndex > wp.nWordIndex) {
+        if (nWordIndex > wp.nWordIndex) {
             return 1;
         }
-        if (this->nWordIndex < wp.nWordIndex) {
+        if (nWordIndex < wp.nWordIndex) {
             return -1;
         }
         return 0;
@@ -73,16 +75,16 @@ struct CPVT_WordPlace {
 
     inline int32_t LineCmp(const CPVT_WordPlace & wp) const
     {
-        if (this->nSecIndex > wp.nSecIndex) {
+        if (nSecIndex > wp.nSecIndex) {
             return 1;
         }
-        if (this->nSecIndex < wp.nSecIndex) {
+        if (nSecIndex < wp.nSecIndex) {
             return -1;
         }
-        if (this->nLineIndex > wp.nLineIndex) {
+        if (nLineIndex > wp.nLineIndex) {
             return 1;
         }
-        if (this->nLineIndex < wp.nLineIndex) {
+        if (nLineIndex < wp.nLineIndex) {
             return -1;
         }
         return 0;
@@ -90,10 +92,10 @@ struct CPVT_WordPlace {
 
     inline int32_t SecCmp(const CPVT_WordPlace & wp) const
     {
-        if (this->nSecIndex > wp.nSecIndex) {
+        if (nSecIndex > wp.nSecIndex) {
             return 1;
         }
-        if (this->nSecIndex < wp.nSecIndex) {
+        if (nSecIndex < wp.nSecIndex) {
             return -1;
         }
         return 0;
@@ -124,31 +126,31 @@ struct CPVT_WordRange {
 
     void Set(const CPVT_WordPlace & begin, const CPVT_WordPlace & end)
     {
-        this->BeginPos = begin;
-        this->EndPos = end;
+        BeginPos = begin;
+        EndPos = end;
         SwapWordPlace();
     }
 
     void SetBeginPos(const CPVT_WordPlace & begin)
     {
-        this->BeginPos = begin;
+        BeginPos = begin;
         SwapWordPlace();
     }
 
     void SetEndPos(const CPVT_WordPlace & end)
     {
-        this->EndPos = end;
+        EndPos = end;
         SwapWordPlace();
     }
 
     FX_BOOL IsExist() const
     {
-        return this->BeginPos != this->EndPos;
+        return BeginPos != EndPos;
     }
 
     FX_BOOL operator != (const CPVT_WordRange & wr) const
     {
-        return wr.BeginPos != this->BeginPos || wr.EndPos != this->EndPos;
+        return wr.BeginPos != BeginPos || wr.EndPos != EndPos;
     }
 
     void SwapWordPlace()

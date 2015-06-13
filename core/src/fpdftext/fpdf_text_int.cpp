@@ -1279,7 +1279,7 @@ void CPDF_TextPage::CloseTempLine()
     if(nR2L > 0 && nR2L >= nL2R) {
         bR2L = TRUE;
     }
-    if(this->m_parserflag == FPDFTEXT_RLTB || bR2L) {
+    if (m_parserflag == FPDFTEXT_RLTB || bR2L) {
         int count = order.GetSize();
         for(int i = count - 1; i > 0; i -= 3) {
             int ret = order.GetAt(i);

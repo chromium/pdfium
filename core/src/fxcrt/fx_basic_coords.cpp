@@ -249,23 +249,28 @@ CFX_FloatRect CFX_FloatRect::GetBBox(const CFX_FloatPoint* pPoints, int nPoints)
     }
     return CFX_FloatRect(min_x, min_y, max_x, max_y);
 }
-void CFX_Matrix::Set(FX_FLOAT a, FX_FLOAT b, FX_FLOAT c, FX_FLOAT d, FX_FLOAT e, FX_FLOAT f)
+void CFX_Matrix::Set(FX_FLOAT other_a,
+                     FX_FLOAT other_b,
+                     FX_FLOAT other_c,
+                     FX_FLOAT other_d,
+                     FX_FLOAT other_e,
+                     FX_FLOAT other_f)
 {
-    this->a = a;
-    this->b = b;
-    this->c = c;
-    this->d = d;
-    this->e = e;
-    this->f = f;
+    a = other_a;
+    b = other_b;
+    c = other_c;
+    d = other_d;
+    e = other_e;
+    f = other_f;
 }
 void CFX_Matrix::Set(const FX_FLOAT n[6])
 {
-    this->a = n[0];
-    this->b = n[1];
-    this->c = n[2];
-    this->d = n[3];
-    this->e = n[4];
-    this->f = n[5];
+    a = n[0];
+    b = n[1];
+    c = n[2];
+    d = n[3];
+    e = n[4];
+    f = n[5];
 }
 void CFX_Matrix::SetReverse(const CFX_Matrix &m)
 {

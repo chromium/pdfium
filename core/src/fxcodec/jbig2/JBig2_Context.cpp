@@ -1621,7 +1621,7 @@ FX_BOOL CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment *pSegment)
     pSeg = NULL;
     if(pSegment->m_nReferred_to_segment_count > 0) {
         for(i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
-            pSeg = this->findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[0]);
+            pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[0]);
             if(pSeg == NULL) {
                 m_pModule->JBig2_Error("generic refinement region segment : can't find refered to segments");
                 nRet = JBIG2_ERROR_FETAL;

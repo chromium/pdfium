@@ -450,7 +450,7 @@ LayoutType CPDF_LayoutElement::GetType()
         return LayoutUnknown;
     }
     CFX_ByteString name = m_pTaggedElement->GetType();
-    return this->ConvertLayoutType(name);
+    return ConvertLayoutType(name);
 }
 int	CPDF_LayoutElement::CountAttrValues(LayoutAttr attr_type)
 {
