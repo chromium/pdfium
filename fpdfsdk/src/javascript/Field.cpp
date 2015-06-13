@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -165,7 +165,7 @@ void Field::ParseFieldName(const std::wstring &strFieldNameParsed,std::wstring &
 		}
 
 	}
-	strFieldName = strFieldNameParsed.substr(0,iStart);    
+	strFieldName = strFieldNameParsed.substr(0,iStart);
 }
 
 FX_BOOL Field::AttachField(Document* pDocument, const CFX_WideString& csFieldName)
@@ -176,8 +176,8 @@ FX_BOOL Field::AttachField(Document* pDocument, const CFX_WideString& csFieldNam
 	m_pDocument = pDocument->GetReaderDoc();
 	ASSERT(m_pDocument != NULL);
 
-	m_bCanSet = m_pDocument->GetPermissions(FPDFPERM_FILL_FORM) || 
-		m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) || 
+	m_bCanSet = m_pDocument->GetPermissions(FPDFPERM_FILL_FORM) ||
+		m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
 		m_pDocument->GetPermissions(FPDFPERM_MODIFY);
 
 	CPDFSDK_InterForm* pRDInterForm = m_pDocument->GetInterForm();
@@ -195,7 +195,7 @@ FX_BOOL Field::AttachField(Document* pDocument, const CFX_WideString& csFieldNam
 		int iControlNo = -1;
 		ParseFieldName(swFieldNameTemp.c_str(), strFieldName, iControlNo);
 		if (iControlNo == -1) return FALSE;
-		
+
 		m_FieldName = strFieldName.c_str();
 		m_nFormControlIndex = iControlNo;
 		return TRUE;
@@ -233,7 +233,7 @@ void Field::GetFormFields(const CFX_WideString& csFieldName, CFX_PtrArray& Field
 	Field::GetFormFields(m_pDocument, csFieldName, FieldArray);
 }
 
-void Field::UpdateFormField(CPDFSDK_Document* pDocument, CPDF_FormField* pFormField, 
+void Field::UpdateFormField(CPDFSDK_Document* pDocument, CPDF_FormField* pFormField,
 							FX_BOOL bChangeMark, FX_BOOL bResetAP, FX_BOOL bRefresh)
 {
 	ASSERT(pDocument != NULL);
@@ -281,20 +281,20 @@ void Field::UpdateFormField(CPDFSDK_Document* pDocument, CPDF_FormField* pFormFi
 		{
 			CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)widgets.GetAt(i);
 			ASSERT(pWidget != NULL);
-			
+
 			CPDFSDK_InterForm * pInterForm = pWidget->GetInterForm();
 			CPDFSDK_Document* pDoc = pInterForm->GetDocument();
 // 			CReader_Page* pPage = pWidget->GetPage();
  			ASSERT(pDoc != NULL);
 			pDoc->UpdateAllViews(NULL, pWidget);
 		}
-	}		
-	
+	}
+
 	if (bChangeMark)
 		pDocument->SetChangeMark();
 }
 
-void Field::UpdateFormControl(CPDFSDK_Document* pDocument, CPDF_FormControl* pFormControl, 
+void Field::UpdateFormControl(CPDFSDK_Document* pDocument, CPDF_FormControl* pFormControl,
 							FX_BOOL bChangeMark, FX_BOOL bResetAP, FX_BOOL bRefresh)
 {
 	ASSERT(pDocument != NULL);
@@ -304,7 +304,7 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument, CPDF_FormControl* pFo
 	ASSERT(pInterForm != NULL);
 
 	CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl);
-	
+
 	if (pWidget)
 	{
 		if (bResetAP)
@@ -430,14 +430,14 @@ FX_BOOL Field::alignment(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 	return TRUE;
 }
 
-void Field::SetAlignment(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex, 
+void Field::SetAlignment(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex,
 						 const CFX_ByteString& string)
 {
 	//Not supported.
 }
 
 FX_BOOL Field::borderStyle(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
-{	
+{
 	ASSERT(m_pDocument != NULL);
 
 	if (vp.IsSetting())
@@ -496,7 +496,7 @@ FX_BOOL Field::borderStyle(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString&
 	return TRUE;
 }
 
-void Field::SetBorderStyle(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex, 
+void Field::SetBorderStyle(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex,
 						   const CFX_ByteString& string)
 {
 	ASSERT(pDocument != NULL);
@@ -578,7 +578,7 @@ FX_BOOL Field::buttonAlignX(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString
 		}
 	}
 	else
-	{		
+	{
 		CFX_PtrArray FieldArray;
 		GetFormFields(m_FieldName,FieldArray);
 		if (FieldArray.GetSize() <= 0) return FALSE;
@@ -695,7 +695,7 @@ FX_BOOL Field::buttonFitBounds(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideStr
 		if (!pFormControl)return FALSE;
 
 		CPDF_IconFit IconFit = pFormControl->GetIconFit();
-		vp << IconFit.GetFittingBounds();		
+		vp << IconFit.GetFittingBounds();
 	}
 
 	return TRUE;
@@ -868,7 +868,7 @@ FX_BOOL Field::calcOrderIndex(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideStri
 	ASSERT(m_pDocument != NULL);
 
 	if (vp.IsSetting())
-	{	
+	{
 		if (!m_bCanSet) return FALSE;
 
 		int nVP;
@@ -975,7 +975,7 @@ FX_BOOL Field::comb(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError
 		}
 	}
 	else
-	{	
+	{
 		CFX_PtrArray FieldArray;
 		GetFormFields(m_FieldName,FieldArray);
 		if (FieldArray.GetSize() <= 0) return FALSE;
@@ -1075,7 +1075,7 @@ FX_BOOL Field::currentValueIndices(IFXJS_Context* cc, CJS_PropValue& vp, CFX_Wid
 				array.Add(iSelecting);
 			}
 		}
-		
+
 		if (m_bDelay)
 		{
 			AddDelay_WordArray(FP_CURRENTVALUEINDICES, array);
@@ -1115,7 +1115,7 @@ FX_BOOL Field::currentValueIndices(IFXJS_Context* cc, CJS_PropValue& vp, CFX_Wid
 	return TRUE;
 }
 
-void Field::SetCurrentValueIndices(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex, 
+void Field::SetCurrentValueIndices(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex,
 								   const CFX_DWordArray& array)
 {
 	ASSERT(pDocument != NULL);
@@ -1160,7 +1160,7 @@ FX_BOOL Field::defaultStyle(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString
 	{
 		if (!m_bCanSet) return FALSE;
 
-		;		
+		;
 	}
 	else
 	{
@@ -1183,7 +1183,7 @@ FX_BOOL Field::defaultValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString
 		if (!m_bCanSet) return FALSE;
 
 		CFX_WideString WideStr;
-		vp >> WideStr; 
+		vp >> WideStr;
 
 		if (m_bDelay)
 		{
@@ -1203,7 +1203,7 @@ FX_BOOL Field::defaultValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString
 		CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
 		ASSERT(pFormField != NULL);
 
-		if (pFormField->GetFieldType() == FIELDTYPE_PUSHBUTTON || 
+		if (pFormField->GetFieldType() == FIELDTYPE_PUSHBUTTON ||
 			pFormField->GetFieldType() == FIELDTYPE_SIGNATURE)
 			return FALSE;
 
@@ -1284,7 +1284,7 @@ FX_BOOL Field::doNotSpellCheck(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideStr
 		CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
 		ASSERT(pFormField != NULL);
 
-		if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD && 
+		if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD &&
 			pFormField->GetFieldType() != FIELDTYPE_COMBOBOX)
 			return FALSE;
 
@@ -1313,7 +1313,7 @@ FX_BOOL Field::delay(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 	if (vp.IsSetting())
 	{
 		if (!m_bCanSet) return FALSE;
-		
+
 		bool bVP;
 		vp >> bVP;
 
@@ -1335,7 +1335,7 @@ FX_BOOL Field::display(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sEr
 		if (!m_bCanSet) return FALSE;
 
 		int nVP;
-		vp >> nVP;	
+		vp >> nVP;
 
 		if (m_bDelay)
 		{
@@ -1363,11 +1363,11 @@ FX_BOOL Field::display(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sEr
 
 		FX_DWORD dwFlag = pWidget->GetFlags();
 
-		if (ANNOTFLAG_INVISIBLE & dwFlag || ANNOTFLAG_HIDDEN & dwFlag) 
+		if (ANNOTFLAG_INVISIBLE & dwFlag || ANNOTFLAG_HIDDEN & dwFlag)
 		{
 			vp << (int32_t)1;
 		}
-		else 
+		else
 		{
 			if (ANNOTFLAG_PRINT & dwFlag)
 			{
@@ -1383,7 +1383,7 @@ FX_BOOL Field::display(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sEr
 			else
 			{
 				vp << (int32_t)2;
-			}				
+			}
 		}
 	}
 
@@ -1422,7 +1422,7 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument, const CFX_WideString& swFiel
 						dwFlag &= (~ANNOTFLAG_INVISIBLE);
 						dwFlag &= (~ANNOTFLAG_HIDDEN);
 						dwFlag &= (~ANNOTFLAG_NOVIEW);
-						dwFlag |= ANNOTFLAG_PRINT;							
+						dwFlag |= ANNOTFLAG_PRINT;
 						break;
 					case 1:
 						dwFlag &= (~ANNOTFLAG_INVISIBLE);
@@ -1440,7 +1440,7 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument, const CFX_WideString& swFiel
 						dwFlag |= ANNOTFLAG_PRINT;
 						dwFlag &= (~ANNOTFLAG_HIDDEN);
 						break;
-					}	
+					}
 
 					if (dwFlag != pWidget->GetFlags())
 					{
@@ -1448,8 +1448,8 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument, const CFX_WideString& swFiel
 						bSet = TRUE;
 					}
 				}
-			}		
-			
+			}
+
 			if (bSet) UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);
 		}
 		else
@@ -1467,7 +1467,7 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument, const CFX_WideString& swFiel
 						dwFlag &= (~ANNOTFLAG_INVISIBLE);
 						dwFlag &= (~ANNOTFLAG_HIDDEN);
 						dwFlag &= (~ANNOTFLAG_NOVIEW);
-						dwFlag |= ANNOTFLAG_PRINT;							
+						dwFlag |= ANNOTFLAG_PRINT;
 						break;
 					case 1:
 						dwFlag &= (~ANNOTFLAG_INVISIBLE);
@@ -1485,7 +1485,7 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument, const CFX_WideString& swFiel
 						dwFlag |= ANNOTFLAG_PRINT;
 						dwFlag &= (~ANNOTFLAG_HIDDEN);
 						break;
-					}	
+					}
 					if (dwFlag != pWidget->GetFlags())
 					{
 						pWidget->SetFlags(dwFlag);
@@ -1548,12 +1548,12 @@ FX_BOOL Field::exportValues(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString
 	CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
 	ASSERT(pFormField != NULL);
 
-	if (pFormField->GetFieldType() != FIELDTYPE_CHECKBOX && 
+	if (pFormField->GetFieldType() != FIELDTYPE_CHECKBOX &&
 		pFormField->GetFieldType() != FIELDTYPE_RADIOBUTTON)
 		return FALSE;
 
 	if (vp.IsSetting())
-	{	
+	{
 		if (!m_bCanSet) return FALSE;
 		if (!vp.IsArrayObject())return FALSE;
 	}
@@ -1734,11 +1734,11 @@ FX_BOOL Field::hidden(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErr
 
 		FX_DWORD dwFlags = pWidget->GetFlags();
 
-		if (ANNOTFLAG_INVISIBLE & dwFlags || ANNOTFLAG_HIDDEN & dwFlags) 
+		if (ANNOTFLAG_INVISIBLE & dwFlags || ANNOTFLAG_HIDDEN & dwFlags)
 		{
 			vp << true;
 		}
-		else 
+		else
 			vp << false;
 	}
 
@@ -1766,9 +1766,9 @@ void Field::SetHidden(CPDFSDK_Document* pDocument, const CFX_WideString& swField
 			for (int j=0,jsz = pFormField->CountControls(); j<jsz; j++)
 			{
 				if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormField->GetControl(j)))
-				{					
+				{
 					FX_DWORD dwFlags = pWidget->GetFlags();
-					
+
 					if (b)
 					{
 						dwFlags &= (~ANNOTFLAG_INVISIBLE);
@@ -1780,19 +1780,19 @@ void Field::SetHidden(CPDFSDK_Document* pDocument, const CFX_WideString& swField
 						dwFlags &= (~ANNOTFLAG_INVISIBLE);
 						dwFlags &= (~ANNOTFLAG_HIDDEN);
 						dwFlags &= (~ANNOTFLAG_NOVIEW);
-						dwFlags |= ANNOTFLAG_PRINT;	
+						dwFlags |= ANNOTFLAG_PRINT;
 					}
 
 					if (dwFlags != pWidget->GetFlags())
 					{
-						pWidget->SetFlags(dwFlags);	
+						pWidget->SetFlags(dwFlags);
 						bSet = TRUE;
 					}
 				}
 			}
 
 			if (bSet)
-				UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);	
+				UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);
 		}
 		else
 		{
@@ -1802,7 +1802,7 @@ void Field::SetHidden(CPDFSDK_Document* pDocument, const CFX_WideString& swField
 				if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl))
 				{
 					FX_DWORD dwFlags = pWidget->GetFlags();
-					
+
 					if (b)
 					{
 						dwFlags &= (~ANNOTFLAG_INVISIBLE);
@@ -1814,13 +1814,13 @@ void Field::SetHidden(CPDFSDK_Document* pDocument, const CFX_WideString& swField
 						dwFlags &= (~ANNOTFLAG_INVISIBLE);
 						dwFlags &= (~ANNOTFLAG_HIDDEN);
 						dwFlags &= (~ANNOTFLAG_NOVIEW);
-						dwFlags |= ANNOTFLAG_PRINT;	
+						dwFlags |= ANNOTFLAG_PRINT;
 					}
 
 					if (dwFlags != pWidget->GetFlags())
 					{
-						pWidget->SetFlags(dwFlags);	
-						UpdateFormControl(pDocument, pFormControl, TRUE, FALSE, TRUE);	
+						pWidget->SetFlags(dwFlags);
+						UpdateFormControl(pDocument, pFormControl, TRUE, FALSE, TRUE);
 					}
 				}
 			}
@@ -1960,7 +1960,7 @@ void Field::SetLineWidth(CPDFSDK_Document* pDocument, const CFX_WideString& swFi
 			{
 				CPDF_FormControl* pFormControl = pFormField->GetControl(j);
 				ASSERT(pFormControl != NULL);
-				
+
 				if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl))
 				{
 					if (number != pWidget->GetBorderWidth())
@@ -2096,7 +2096,7 @@ FX_BOOL Field::name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError
 }
 
 FX_BOOL Field::numItems(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
-{	
+{
 	CFX_PtrArray FieldArray;
 	GetFormFields(m_FieldName, FieldArray);
 	if (FieldArray.GetSize() <= 0) return FALSE;
@@ -2178,7 +2178,7 @@ FX_BOOL Field::password(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 		else
 		{
 			Field::SetPassword(m_pDocument, m_FieldName, m_nFormControlIndex, bVP);
-		}	
+		}
 	}
 	else
 	{
@@ -2280,7 +2280,7 @@ FX_BOOL Field::print(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 	{
 		CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
 		ASSERT(pFormField != NULL);
-		
+
 		CPDFSDK_Widget* pWidget = pInterForm->GetWidget(GetSmartFieldControl(pFormField));
 		if (!pWidget) return FALSE;
 
@@ -2388,7 +2388,7 @@ FX_BOOL Field::rect(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError
 		else
 		{
 			Field::SetRect(m_pDocument, m_FieldName, m_nFormControlIndex, crRect);
-		}	
+		}
 	}
 	else
 	{
@@ -2418,7 +2418,7 @@ FX_BOOL Field::rect(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError
 		rcArray.SetElement(2,Lower_Rightx);
 		rcArray.SetElement(3,Lower_Righty);
 
-		vp  <<  rcArray;			
+		vp  <<  rcArray;
 	}
 
 	return TRUE;
@@ -2484,7 +2484,7 @@ void Field::SetRect(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldNa
 				if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl))
 				{
 					CPDF_Rect crRect = rect;
-					
+
 					CPDF_Page* pPDFPage = pWidget->GetPDFPage();
 					ASSERT(pPDFPage != NULL);
 
@@ -2563,7 +2563,7 @@ FX_BOOL Field::richText(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 		else
 		{
 			Field::SetRichText(m_pDocument, m_FieldName, m_nFormControlIndex, bVP);
-		}	
+		}
 	}
 	else
 	{
@@ -2629,7 +2629,7 @@ FX_BOOL Field::rotation(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 		else
 		{
 			Field::SetRotation(m_pDocument, m_FieldName, m_nFormControlIndex, nVP);
-		}	
+		}
 	}
 	else
 	{
@@ -2677,7 +2677,7 @@ FX_BOOL Field::strokeColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString&
 		else
 		{
 			Field::SetStrokeColor(m_pDocument, m_FieldName, m_nFormControlIndex, color);
-		}	
+		}
 	}
 	else
 	{
@@ -2751,7 +2751,7 @@ FX_BOOL Field::style(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 		else
 		{
 			Field::SetStyle(m_pDocument, m_FieldName, m_nFormControlIndex, csBCaption);
-		}	
+		}
 	}
 	else
 	{
@@ -2762,7 +2762,7 @@ FX_BOOL Field::style(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 		CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
 		ASSERT(pFormField != NULL);
 
-		if (pFormField->GetFieldType() != FIELDTYPE_RADIOBUTTON && 
+		if (pFormField->GetFieldType() != FIELDTYPE_RADIOBUTTON &&
 			pFormField->GetFieldType() != FIELDTYPE_CHECKBOX)
 			return FALSE;
 
@@ -2799,7 +2799,7 @@ FX_BOOL Field::style(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 	return TRUE;
 }
 
-void Field::SetStyle(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex, 
+void Field::SetStyle(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex,
 					 const CFX_ByteString& string)
 {
 	//Not supported.
@@ -2832,7 +2832,7 @@ FX_BOOL Field::textColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 		else
 		{
 			Field::SetTextColor(m_pDocument, m_FieldName, m_nFormControlIndex, color);
-		}	
+		}
 	}
 	else
 	{
@@ -2845,7 +2845,7 @@ FX_BOOL Field::textColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 
 		CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
 		if (!pFormControl)return FALSE;
-		
+
 		int iColorType;
 		FX_ARGB color;
 		CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
@@ -2862,7 +2862,7 @@ FX_BOOL Field::textColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 
 		CJS_Array crArray(m_isolate);
 		color::ConvertPWLColorToArray(crRet, crArray);
-        vp  <<  crArray;		
+        vp  <<  crArray;
 	}
 
 	return TRUE;
@@ -2892,7 +2892,7 @@ FX_BOOL Field::textFont(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 		else
 		{
 			Field::SetTextFont(m_pDocument, m_FieldName, m_nFormControlIndex, csFontName);
-		}	
+		}
 	}
 	else
 	{
@@ -2908,8 +2908,8 @@ FX_BOOL Field::textFont(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 
 		int nFieldType = pFormField->GetFieldType();
 
-		if (nFieldType == FIELDTYPE_PUSHBUTTON || 
-			nFieldType == FIELDTYPE_COMBOBOX || 
+		if (nFieldType == FIELDTYPE_PUSHBUTTON ||
+			nFieldType == FIELDTYPE_COMBOBOX ||
 			nFieldType == FIELDTYPE_LISTBOX ||
 			nFieldType == FIELDTYPE_TEXTFIELD)
 		{
@@ -2948,7 +2948,7 @@ FX_BOOL Field::textSize(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 		else
 		{
 			Field::SetTextSize(m_pDocument, m_FieldName, m_nFormControlIndex, nVP);
-		}	
+		}
 	}
 	else
 	{
@@ -3044,7 +3044,7 @@ FX_BOOL Field::userName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 		else
 		{
 			Field::SetUserName(m_pDocument, m_FieldName, m_nFormControlIndex, swName);
-		}	
+		}
 	}
 	else
 	{
@@ -3071,7 +3071,7 @@ FX_BOOL Field::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 	ASSERT(m_pDocument != NULL);
 
 	if (vp.IsSetting())
-	{		
+	{
 		if (!m_bCanSet) return FALSE;
 
 		CJS_WideStringArray strArray;
@@ -3157,7 +3157,7 @@ FX_BOOL Field::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 				else
 				{
 					CFX_WideString swValue = pFormField->GetValue();
-				
+
 					double dRet;
 					FX_BOOL bDot;
 					if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet, bDot))
@@ -3168,7 +3168,7 @@ FX_BOOL Field::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 							vp << dRet;
 					}
 					else
-						vp << swValue;	
+						vp << swValue;
 				}
 			}
 			break;
@@ -3200,7 +3200,7 @@ FX_BOOL Field::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 						continue;
 				}
 				if (!bFind)
-					vp << L"Off";					
+					vp << L"Off";
 			}
 			break;
 		default:
@@ -3212,7 +3212,7 @@ FX_BOOL Field::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 	return TRUE;
 }
 
-void Field::SetValue(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, 
+void Field::SetValue(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName,
 					 int nControlIndex, const CJS_WideStringArray& strArray)
 {
 	ASSERT(pDocument != NULL);
@@ -3237,7 +3237,7 @@ void Field::SetValue(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldN
 			if (pFormField->GetValue() != strArray.GetAt(0))
 			{
 				CFX_WideString WideString = strArray.GetAt(0);
-				pFormField->SetValue(strArray.GetAt(0), TRUE);	
+				pFormField->SetValue(strArray.GetAt(0), TRUE);
 				UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);
 			}
 			break;
@@ -3246,7 +3246,7 @@ void Field::SetValue(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldN
 			{
 				if (pFormField->GetValue() != strArray.GetAt(0))
 				{
-					pFormField->SetValue(strArray.GetAt(0), TRUE);	
+					pFormField->SetValue(strArray.GetAt(0), TRUE);
 					UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);
 				}
 			}
@@ -3279,7 +3279,7 @@ void Field::SetValue(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldN
 				}
 			}
 			break;
-		default:				
+		default:
 			break;
 		}
 	}
@@ -3349,9 +3349,9 @@ FX_BOOL Field::browseForFileToSubmit(IFXJS_Context* cc, const CJS_Parameters& pa
  	CPDFDoc_Environment* pApp = m_pDocument->GetEnv();
  	ASSERT(pApp != NULL);
 
-	if ((pFormField->GetFieldFlags() & FIELDFLAG_FILESELECT) && 
+	if ((pFormField->GetFieldFlags() & FIELDFLAG_FILESELECT) &&
 		(pFormField->GetFieldType() == FIELDTYPE_TEXTFIELD))
-	{		
+	{
 		CFX_WideString wsFileName = pApp->JS_fieldBrowse();
 		if(!wsFileName.IsEmpty())
 		{
@@ -3359,7 +3359,7 @@ FX_BOOL Field::browseForFileToSubmit(IFXJS_Context* cc, const CJS_Parameters& pa
  			UpdateFormField(m_pDocument, pFormField, TRUE, TRUE, TRUE);
          }
 	}
-	else 
+	else
 		return FALSE;
 
 	return TRUE;
@@ -3381,13 +3381,13 @@ FX_BOOL Field::buttonGetCaption(IFXJS_Context* cc, const CJS_Parameters& params,
 
 	CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
 	ASSERT(pFormField != NULL);
-	
+
 	if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
 		return FALSE;
 
 	CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
 	if (!pFormControl)return FALSE;
-	
+
 	if (nface == 0)
 		vRet = pFormControl->GetNormalCaption().c_str();
 	else if (nface == 1)
@@ -3410,14 +3410,14 @@ FX_BOOL Field::buttonGetIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJ
 	int iSize = params.size();
 	if (iSize >= 1)
 		nface = params[0].ToInt();
-	
+
 	CFX_PtrArray FieldArray;
 	GetFormFields(m_FieldName,FieldArray);
 	if (FieldArray.GetSize() <= 0) return FALSE;
 
 	CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
 	ASSERT(pFormField != NULL);
-	
+
 	if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
 		return FALSE;
 
@@ -3429,10 +3429,10 @@ FX_BOOL Field::buttonGetIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJ
 
 	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 	ASSERT(pRuntime != NULL);
-	
+
 	JSFXObject pObj = JS_NewFxDynamicObj(*pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"Icon"));
 	ASSERT(pObj.IsEmpty() == FALSE);
-	
+
 	CJS_Icon* pJS_Icon = (CJS_Icon*)JS_GetPrivate(pObj);
 	ASSERT(pJS_Icon != NULL);
 
@@ -3459,7 +3459,7 @@ FX_BOOL Field::buttonGetIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJ
 
 FX_BOOL Field::buttonImportIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
-#if 0  
+#if 0
 	ASSERT(m_pDocument != NULL);
 
 	CFX_PtrArray FieldArray;
@@ -3473,7 +3473,7 @@ FX_BOOL Field::buttonImportIcon(IFXJS_Context* cc, const CJS_Parameters& params,
 	ASSERT(pEnv);
 
 	CFX_WideString sIconFileName = pEnv->JS_fieldBrowse();
-	if (sIconFileName.IsEmpty()) 
+	if (sIconFileName.IsEmpty())
 	{
 		vRet = 1;
 		return TRUE;
@@ -3483,7 +3483,7 @@ FX_BOOL Field::buttonImportIcon(IFXJS_Context* cc, const CJS_Parameters& params,
 	ASSERT(pInterForm != NULL);
 
 	CPDF_Stream* pStream = pInterForm->LoadImageFromFile(sIconFileName);
-	if (!pStream) 
+	if (!pStream)
 	{
 		vRet = -1;
 		return TRUE;
@@ -3617,7 +3617,7 @@ FX_BOOL Field::getArray(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 		ASSERT(pFormField != NULL);
 
 		swSort.Add(new CFX_WideString(pFormField->GetFullName()));
-		
+
 	}
 	swSort.Sort(JS_COMPARESTRING);
 
@@ -3637,11 +3637,11 @@ FX_BOOL Field::getArray(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 		CJS_Field* pJSField = (CJS_Field*)JS_GetPrivate(pObj);
 		ASSERT(pJSField != NULL);
 
-		Field* pField = (Field*)pJSField->GetEmbedObject(); 
+		Field* pField = (Field*)pJSField->GetEmbedObject();
 		ASSERT(pField != NULL);
 
 		pField->AttachField(m_pJSDoc, *pStr);
-	
+
 		CJS_Value FormFieldValue(m_isolate);
 		FormFieldValue = pJSField;
 		FormFieldArray.SetElement(j, FormFieldValue);
@@ -3653,7 +3653,7 @@ FX_BOOL Field::getArray(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 	swSort.RemoveAll();
 	return TRUE;
 }
-	
+
 FX_BOOL Field::getItemAt(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	ASSERT(m_pDocument != NULL);
@@ -3800,7 +3800,7 @@ FX_BOOL Field::setFocus(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 
 	CPDFSDK_Widget* pWidget = NULL;
 	if (nCount == 1)
-	{	
+	{
 		pWidget = pInterForm->GetWidget(pFormField->GetControl(0));
 	}
 	else
@@ -3815,7 +3815,7 @@ FX_BOOL Field::setFocus(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Val
 			for (int32_t i=0; i<nCount; i++)
 			{
 				if (CPDFSDK_Widget* pTempWidget =  pInterForm->GetWidget(pFormField->GetControl(i)))
-				{				
+				{
 					if (pTempWidget->GetPDFPage() == pCurPageView->GetPDFPage())
 					{
 						pWidget = pTempWidget;

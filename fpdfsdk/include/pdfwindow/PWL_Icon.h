@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICON_H_
@@ -23,7 +23,7 @@ public:
 	virtual CPDF_Stream *			GetPDFStream();
 
 public:
-	void							SetPDFStream(CPDF_Stream* pStream);	
+	void							SetPDFStream(CPDF_Stream* pStream);
 	void							GetImageSize(FX_FLOAT & fWidth,FX_FLOAT & fHeight);
 	CPDF_Matrix						GetImageMatrix();
 	CFX_ByteString					GetImageAlias();
@@ -34,7 +34,7 @@ protected:
 	CFX_ByteString					m_sImageAlias;
 };
 
-class PWL_CLASS CPWL_Icon : public CPWL_Image 
+class PWL_CLASS CPWL_Icon : public CPWL_Image
 {
 public:
 	CPWL_Icon();

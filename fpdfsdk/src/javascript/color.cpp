@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -32,13 +32,13 @@ END_JS_STATIC_CONST()
 BEGIN_JS_STATIC_PROP(CJS_Color)
 	JS_STATIC_PROP_ENTRY(black)
 	JS_STATIC_PROP_ENTRY(blue)
-	JS_STATIC_PROP_ENTRY(cyan)	
+	JS_STATIC_PROP_ENTRY(cyan)
 	JS_STATIC_PROP_ENTRY(dkGray)
 	JS_STATIC_PROP_ENTRY(gray)
 	JS_STATIC_PROP_ENTRY(green)
 	JS_STATIC_PROP_ENTRY(ltGray)
 	JS_STATIC_PROP_ENTRY(magenta)
-	JS_STATIC_PROP_ENTRY(red)	
+	JS_STATIC_PROP_ENTRY(red)
 	JS_STATIC_PROP_ENTRY(transparent)
 	JS_STATIC_PROP_ENTRY(white)
 	JS_STATIC_PROP_ENTRY(yellow)

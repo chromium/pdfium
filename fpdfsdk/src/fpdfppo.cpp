@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_ppo.h"
@@ -13,14 +13,14 @@ class CPDF_PageOrganizer
 public:
 	CPDF_PageOrganizer();
 	~CPDF_PageOrganizer();
-	
+
 public:
 	FX_BOOL				PDFDocInit(CPDF_Document *pDestPDFDoc, CPDF_Document *pSrcPDFDoc);
 	FX_BOOL				ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray* nPageNum, CPDF_Document *pDestPDFDoc, int nIndex);
 	CPDF_Object*		PageDictGetInheritableTag(CPDF_Dictionary *pDict, CFX_ByteString nSrctag);
 	FX_BOOL				UpdateReference(CPDF_Object *pObj, CPDF_Document *pDoc, CFX_MapPtrToPtr* pMapPtrToPtr);
 	int					GetNewObjId(CPDF_Document *pDoc, CFX_MapPtrToPtr* pMapPtrToPtr, CPDF_Reference *pRef);
-	
+
 };
 
 
@@ -38,17 +38,17 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document *pDestPDFDoc, CPDF_Document
 {
 	if(!pDestPDFDoc || !pSrcPDFDoc)
 		return false;
-	
+
 	CPDF_Dictionary* pNewRoot = pDestPDFDoc->GetRoot();
 	if(!pNewRoot)	return FALSE;
-	
+
 	//Set the document information////////////////////////////////////////////
-	
+
 	CPDF_Dictionary* DInfoDict = pDestPDFDoc->GetInfo();
-	
+
 	if(!DInfoDict)
 		return FALSE;
-	
+
 	CFX_ByteString producerstr;
 	producerstr.Format("PDFium");
 	DInfoDict->SetAt("Producer", new CPDF_String(producerstr));
@@ -59,7 +59,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document *pDestPDFDoc, CPDF_Document
 	{
 		pNewRoot->SetAt("Type", new CPDF_Name("Catalog"));
 	}
-	
+
 	CPDF_Dictionary* pNewPages = (CPDF_Dictionary*)(pNewRoot->GetElement("Pages")? pNewRoot->GetElement("Pages")->GetDirect() : NULL);
 	if(!pNewPages)
 	{
@@ -67,7 +67,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document *pDestPDFDoc, CPDF_Document
 		FX_DWORD NewPagesON = pDestPDFDoc->AddIndirectObject(pNewPages);
 		pNewRoot->SetAt("Pages", new CPDF_Reference(pDestPDFDoc, NewPagesON));
 	}
-	
+
 	CFX_ByteString cbPageType = pNewPages->GetString("Type","");
 	if(cbPageType.Equal(""))
 	{
@@ -80,15 +80,15 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document *pDestPDFDoc, CPDF_Document
 		CPDF_Array* pNewKids = new CPDF_Array;
 		FX_DWORD Kidsobjnum = -1;
 		Kidsobjnum = pDestPDFDoc->AddIndirectObject(pNewKids);//, Kidsobjnum, Kidsgennum);
-		
+
 		pNewPages->SetAt("Kids", new CPDF_Reference(pDestPDFDoc, Kidsobjnum));//, Kidsgennum));
-		pNewPages->SetAt("Count", new CPDF_Number(0));		
+		pNewPages->SetAt("Count", new CPDF_Number(0));
 	}
 
 	return true;
 }
 
-FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray* nPageNum, 
+FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray* nPageNum,
 												CPDF_Document *pDestPDFDoc,int nIndex)
 {
 	int curpage =nIndex;
@@ -98,7 +98,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 
 	for(int i=0; i<nPageNum->GetSize(); i++)
 	{
-		
+
 		CPDF_Dictionary* pCurPageDict = pDestPDFDoc->CreateNewPage(curpage);
 		CPDF_Dictionary* pSrcPageDict = pSrcPDFDoc->GetPage(nPageNum->GetAt(i)-1);
 		if(!pSrcPageDict || !pCurPageDict)
@@ -106,7 +106,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 			delete pMapPtrToPtr;
 			return FALSE;
 		}
-		
+
 		// Clone the page dictionary///////////
 		FX_POSITION	SrcPos = pSrcPageDict->GetStartPos();
 		while (SrcPos)
@@ -120,15 +120,15 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 				pCurPageDict->SetAt(cbSrcKeyStr, pObj->Clone());
 			}
 		}
-		
+
 		//inheritable item///////////////////////
 		CPDF_Object* pInheritable = NULL;
 		//1	MediaBox  //required
 		if(!pCurPageDict->KeyExist("MediaBox"))
 		{
-			
+
 			pInheritable = PageDictGetInheritableTag(pSrcPageDict, "MediaBox");
-			if(!pInheritable) 
+			if(!pInheritable)
 			{
 				//Search the "CropBox" from source page dictionary, if not exists,we take the letter size.
 				pInheritable = PageDictGetInheritableTag(pSrcPageDict, "CropBox");
@@ -152,7 +152,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 		if(!pCurPageDict->KeyExist("Resources"))
 		{
 			pInheritable = PageDictGetInheritableTag(pSrcPageDict, "Resources");
-			if(!pInheritable) 
+			if(!pInheritable)
 			{
 				delete pMapPtrToPtr;
 				return FALSE;
@@ -163,14 +163,14 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 		if(!pCurPageDict->KeyExist("CropBox"))
 		{
 			pInheritable = PageDictGetInheritableTag(pSrcPageDict, "CropBox");
-			if(pInheritable) 
+			if(pInheritable)
 				pCurPageDict->SetAt("CropBox", pInheritable->Clone());
 		}
 		//4 Rotate  //Optional
 		if(!pCurPageDict->KeyExist("Rotate"))
 		{
 			pInheritable = PageDictGetInheritableTag(pSrcPageDict, "Rotate");
-			if(pInheritable) 
+			if(pInheritable)
 				pCurPageDict->SetAt("Rotate", pInheritable->Clone());
 		}
 
@@ -178,7 +178,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 		//Update the reference
 		FX_DWORD dwOldPageObj = pSrcPageDict->GetObjNum();
 		FX_DWORD dwNewPageObj = pCurPageDict->GetObjNum();
-		
+
 		pMapPtrToPtr->SetAt((void*)(uintptr_t)dwOldPageObj, (void*)(uintptr_t)dwNewPageObj);
 
 		UpdateReference(pCurPageDict, pDestPDFDoc, pMapPtrToPtr);
@@ -191,7 +191,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document *pSrcPDFDoc, CFX_WordArray*
 
 CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(CPDF_Dictionary *pDict, CFX_ByteString nSrctag)
 {
-	if(!pDict || !pDict->KeyExist("Type") || nSrctag.IsEmpty())	
+	if(!pDict || !pDict->KeyExist("Type") || nSrctag.IsEmpty())
 		return NULL;
 
 	CPDF_Object* pType = pDict->GetElement("Type")->GetDirect();
@@ -202,14 +202,14 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(CPDF_Dictionary *pDic
 	if(!pDict->KeyExist("Parent"))	return NULL;
 	CPDF_Object* pParent = pDict->GetElement("Parent")->GetDirect();
 	if(!pParent || pParent->GetType() != PDFOBJ_DICTIONARY)	return NULL;
-	
+
 	CPDF_Dictionary* pp = (CPDF_Dictionary*)pParent;
-	
-	if(pDict->KeyExist((const char*)nSrctag))	
+
+	if(pDict->KeyExist((const char*)nSrctag))
 		return pDict->GetElement((const char*)nSrctag);
 	while (pp)
 	{
-		if(pp->KeyExist((const char*)nSrctag))	
+		if(pp->KeyExist((const char*)nSrctag))
 			return pp->GetElement((const char*)nSrctag);
 		else if (pp->KeyExist("Parent"))
 		{
@@ -218,11 +218,11 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(CPDF_Dictionary *pDic
 		}
 		else break;
 	}
-	
+
 	return NULL;
 }
 
-FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object *pObj, CPDF_Document *pDoc, 
+FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object *pObj, CPDF_Document *pDoc,
 										 CFX_MapPtrToPtr* pMapPtrToPtr)
 {
 	switch (pObj->GetType())
@@ -238,7 +238,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object *pObj, CPDF_Document *pD
 	case PDFOBJ_DICTIONARY:
 		{
 			CPDF_Dictionary* pDict = (CPDF_Dictionary*)pObj;
-			
+
 			FX_POSITION pos = pDict->GetStartPos();
 			while(pos)
 			{
@@ -299,9 +299,9 @@ int	CPDF_PageOrganizer::GetNewObjId(CPDF_Document *pDoc, CFX_MapPtrToPtr* pMapPt
 	if(!pRef)
 		return 0;
 	dwObjnum = pRef->GetRefObjNum();
-	
+
 	size_t dwNewObjNum = 0;
-	
+
 	pMapPtrToPtr->Lookup((void*)dwObjnum, (void*&)dwNewObjNum);
 	if(dwNewObjNum)
 	{
@@ -320,7 +320,7 @@ int	CPDF_PageOrganizer::GetNewObjId(CPDF_Document *pDoc, CFX_MapPtrToPtr* pMapPt
 		{
 			return 0;
 		}
-		
+
 		if(pClone->GetType() == PDFOBJ_DICTIONARY)
 		{
 			CPDF_Dictionary* pDictClone = (CPDF_Dictionary*)pClone;
@@ -341,7 +341,7 @@ int	CPDF_PageOrganizer::GetNewObjId(CPDF_Document *pDoc, CFX_MapPtrToPtr* pMapPt
 		}
 		dwNewObjNum = pDoc->AddIndirectObject(pClone);//, onum, gnum);
 		pMapPtrToPtr->SetAt((void*)dwObjnum, (void*)dwNewObjNum);
-		
+
 		if(!UpdateReference(pClone, pDoc, pMapPtrToPtr))
 		{
 			pClone->Release();
@@ -376,7 +376,7 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring, CFX_WordArray* pageAr
 				nStringTo = nLength;
 			}
 			cbMidRange = rangstring.Mid(nStringFrom,nStringTo-nStringFrom);
-			
+
 			int nMid = cbMidRange.Find('-');
 			if(nMid == -1)
 			{
@@ -398,10 +398,10 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring, CFX_WordArray* pageAr
 				int nEnd = cbMidRange.GetLength()-nMid;
 
 				if(nEnd ==0)return FALSE;
-				
+
 				//				int nEndPageNum = (nEnd == 0)?nCount:atol(cbMidRange.Mid(nMid,nEnd));
 				int nEndPageNum = atol(cbMidRange.Mid(nMid,nEnd));
-				
+
 				if(nStartPageNum < 0 ||nStartPageNum >nEndPageNum|| nEndPageNum > nCount)
 				{
 					return FALSE;
@@ -418,7 +418,7 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring, CFX_WordArray* pageAr
 	return TRUE;
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,FPDF_DOCUMENT src_doc, 
+DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,FPDF_DOCUMENT src_doc,
 											 FPDF_BYTESTRING pagerange, int index)
 {
 	if(dest_doc == NULL || src_doc == NULL )
@@ -439,7 +439,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,FPDF_DOCUMEN
 			pageArray.Add(i);
 		}
 	}
-	
+
 	CPDFXFA_Document* pDestDoc = (CPDFXFA_Document*)dest_doc;
 	CPDF_Document* pDestPDFDoc = pDestDoc->GetPDFDoc();
 	CPDF_PageOrganizer pageOrg;

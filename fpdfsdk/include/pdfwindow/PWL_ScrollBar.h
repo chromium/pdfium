@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_SCROLLBAR_H_
@@ -19,8 +19,8 @@ public:
 	{
 	}
 	FX_FLOAT					fContentMin;
-	FX_FLOAT					fContentMax;	
-	FX_FLOAT					fPlateWidth;	
+	FX_FLOAT					fContentMax;
+	FX_FLOAT					fPlateWidth;
 	FX_FLOAT					fBigStep;
 	FX_FLOAT					fSmallStep;
 };
@@ -38,7 +38,7 @@ enum PWL_SBBUTTON_TYPE
 	PSBT_POS
 };
 
-class CPWL_SBButton : public CPWL_Wnd  
+class CPWL_SBButton : public CPWL_Wnd
 {
 public:
 	CPWL_SBButton(PWL_SCROLLBAR_TYPE eScrollBarType,PWL_SBBUTTON_TYPE eButtonType);
@@ -97,7 +97,7 @@ public:
 	FX_FLOAT					fSmallStep;
 };
 
-class CPWL_ScrollBar : public CPWL_Wnd  
+class CPWL_ScrollBar : public CPWL_Wnd
 {
 public:
 	CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType = SBT_HSCROLL);
@@ -115,13 +115,13 @@ public:
 	virtual void				OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
 	virtual void				CreateChildWnd(const PWL_CREATEPARAM & cp);
-	
-	FX_FLOAT					GetScrollBarWidth() const;	
+
+	FX_FLOAT					GetScrollBarWidth() const;
 	PWL_SCROLLBAR_TYPE			GetScrollBarType() const {return m_sbType;};
 
 	void						SetNotifyForever(FX_BOOL bForever) {m_bNotifyForever = bForever;}
 
-protected:			
+protected:
 	void						SetScrollRange(FX_FLOAT fMin,FX_FLOAT fMax,FX_FLOAT fClientWidth);
 	void						SetScrollPos(FX_FLOAT fPos);
 	void						MovePosButton(FX_BOOL bRefresh);
@@ -156,7 +156,7 @@ private:
 	CPWL_SBButton*				m_pMaxButton;
 	CPWL_SBButton*				m_pPosButton;
 	PWL_SCROLL_PRIVATEDATA		m_sData;
-	FX_BOOL						m_bMouseDown;	
+	FX_BOOL						m_bMouseDown;
 	FX_BOOL						m_bMinOrMax;
 	FX_BOOL						m_bNotifyForever;
 	FX_FLOAT					m_nOldPos;

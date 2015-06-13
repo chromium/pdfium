@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_edit.h"
@@ -30,7 +30,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages, int nCou
 	pImgObj->m_GeneralState.GetModify();
 	for (int index=0;index<nCount;index++)
 	{
-		CPDF_Page* pPage = ((CPDFXFA_Page*)pages[index])->GetPDFPage(); 
+		CPDF_Page* pPage = ((CPDFXFA_Page*)pages[index])->GetPDFPage();
 		if (!pPage)
 			continue;
 		pImgObj->m_pImage->ResetCache(pPage,NULL);

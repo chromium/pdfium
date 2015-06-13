@@ -70,7 +70,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CPDF_Annot * pAnnot, CPDFSDK_Pa
 	{
 		return pAnnotHandler->NewAnnot(pAnnot, pPageView);
 	}
-	
+
 	return new CPDFSDK_BAAnnot(pAnnot, pPageView);
 }
 
@@ -381,12 +381,12 @@ CPDFSDK_Annot*	CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,FX
 {
 	CPDFSDK_PageView* pPageView =  pSDKAnnot->GetPageView();
 	CPDFXFA_Page* pPage = pPageView->GetPDFXFAPage();
-	if (pPage == NULL) 
+	if (pPage == NULL)
 		return NULL;
-	if (pPage->GetPDFPage()) { // for pdf annots. 
+	if (pPage->GetPDFPage()) { // for pdf annots.
 		CBA_AnnotIterator ai(pSDKAnnot->GetPageView(), pSDKAnnot->GetType(), "");
-		CPDFSDK_Annot* pNext = bNext ? 
-		ai.GetNextAnnot(pSDKAnnot) : 
+		CPDFSDK_Annot* pNext = bNext ?
+		ai.GetNextAnnot(pSDKAnnot) :
 		ai.GetPrevAnnot(pSDKAnnot);
 		return pNext;
 	}
@@ -394,7 +394,7 @@ CPDFSDK_Annot*	CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,FX
 	IXFA_WidgetIterator* pWidgetIterator = pPage->GetXFAPageView()->CreateWidgetIterator(XFA_TRAVERSEWAY_Tranvalse, XFA_WIDGETFILTER_Visible | XFA_WIDGETFILTER_Viewable | XFA_WIDGETFILTER_Field);
 	if (pWidgetIterator == NULL)
 		return  NULL;
-	if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())	
+	if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
 		pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
 	IXFA_Widget* hNextFocus = NULL;
 	hNextFocus = bNext?pWidgetIterator->MoveToNext():pWidgetIterator->MoveToPrevious();
@@ -714,7 +714,7 @@ void	CPDFSDK_BFAnnotHandler::OnCreate(CPDFSDK_Annot* pAnnot)
 void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot)
 {
 	ASSERT(pAnnot != NULL);
-	
+
 	CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
 	ASSERT(pPageView != NULL);
 
@@ -723,7 +723,7 @@ void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot)
 
 	CPDFXFA_Document* pDoc = pSDKDoc->GetDocument();
 	ASSERT(pDoc != NULL);
-	
+
 	CFX_ByteString sSubType = pAnnot->GetSubType();
 
 	if (sSubType == BFFT_SIGNATURE)
@@ -745,13 +745,13 @@ void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot)
 				pWidget->ResetAppearance(sValue.c_str(), FALSE);
 			}
 		}
-		
-		if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA) 
+
+		if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA)
 		{
 			if (!pWidget->IsAppearanceValid() && !pWidget->GetValue().IsEmpty())
 				pWidget->ResetAppearance(FALSE);
 		}
-		
+
 
 		if (m_pFormFiller)
 			m_pFormFiller->OnLoad(pAnnot);
@@ -914,7 +914,7 @@ CPDF_Rect CPDFSDK_XFAAnnotHandler::GetViewBBox(CPDFSDK_PageView *pPageView, CPDF
 	CFX_RectF rcBBox;
 	if (eType == XFA_ELEMENT_Signature)
 		pWidgetHandler->GetBBox (pAnnot->GetXFAWidget(), rcBBox, XFA_WIDGETSTATUS_Visible, TRUE);
-	else 
+	else
 		pWidgetHandler->GetBBox (pAnnot->GetXFAWidget(), rcBBox, 0);
 
 	CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width, rcBBox.top+rcBBox.height);
@@ -953,7 +953,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::HitTest(CPDFSDK_PageView *pPageView, CPDFSDK_An
 
 void CPDFSDK_XFAAnnotHandler::OnMouseEnter(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
 {
-	if (!pPageView || !pAnnot) 
+	if (!pPageView || !pAnnot)
 		return;
 	IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
 	ASSERT(pWidgetHandler != NULL);

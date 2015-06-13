@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_FX_SYSTEMHANDLER_H_
@@ -11,7 +11,7 @@ typedef void*				FX_HWND;
 typedef void*				FX_HMENU;
 typedef void					(*TimerCallback)(int32_t idEvent);
 
-typedef struct _FX_SYSTEMTIME 
+typedef struct _FX_SYSTEMTIME
 {
     _FX_SYSTEMTIME()
       : wYear(0),
@@ -51,16 +51,16 @@ public:
 
 	virtual CFX_WideString		GetClipboardText(FX_HWND hWnd) = 0;
 	virtual FX_BOOL				SetClipboardText(FX_HWND hWnd, CFX_WideString string) = 0;
-	
+
 	virtual void				ClientToScreen(FX_HWND hWnd, int32_t& x, int32_t& y) = 0;
 	virtual void				ScreenToClient(FX_HWND hWnd, int32_t& x, int32_t& y) = 0;
 
 	/*cursor style
-	FXCT_ARROW	
-	FXCT_NESW		
-	FXCT_NWSE		
-	FXCT_VBEAM		
-	FXCT_HBEAM		
+	FXCT_ARROW
+	FXCT_NESW
+	FXCT_NWSE
+	FXCT_VBEAM
+	FXCT_HBEAM
 	FXCT_HAND
 	*/
 	virtual void				SetCursor(int32_t nCursorType) = 0;
@@ -86,7 +86,7 @@ public:
 
 	virtual	FX_SYSTEMTIME		GetLocalTime() = 0;
 
-	virtual int32_t			GetCharSet() = 0;	
+	virtual int32_t			GetCharSet() = 0;
 	virtual void 				SetCharSet(int32_t nCharSet) = 0;
 };
 

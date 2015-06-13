@@ -493,9 +493,9 @@ FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot* pAnnot,FX_UINT nFlag)
 {
 
 	if(m_pFocusAnnot==pAnnot) return TRUE;
-	
+
 	CPDFSDK_Annot* pLastFocusAnnot = m_pFocusAnnot;
-	
+
 	if(m_pFocusAnnot)
 	{
 		if(!KillFocusAnnot(nFlag) ) return FALSE;
@@ -664,9 +664,9 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice, CPDF_Matrix* p
 				static_cast<FX_FLOAT>(pClip->Width()),
 				static_cast<FX_FLOAT>(pClip->Height()));
 			gs.SetClipRect(rectClip);
-		}	
+		}
 		IXFA_RenderContext* pRenderContext = XFA_RenderContext_Create();
-		if (!pRenderContext) 
+		if (!pRenderContext)
 			return;
 		CXFA_RenderOptions renderOptions;
 		renderOptions.m_bHighlight = TRUE;
@@ -754,7 +754,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pag
 	while(pSDKAnnot)
 	{
 		if(pSDKAnnot->GetType() == "Widget" || pSDKAnnot->GetType() == FSDK_XFAWIDGET_TYPENAME)
-		{	
+		{
 			pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
 			CPDF_Point point(pageX, pageY);
 			if (pAnnotMgr->Annot_OnHitTest(this, pSDKAnnot, point))
@@ -811,7 +811,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(IXFA_Widget* pPDFAnnot)
 
 	CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
 	ASSERT(pEnv);
-	CPDFSDK_AnnotHandlerMgr * pAnnotHandler= pEnv->GetAnnotHandlerMgr();	
+	CPDFSDK_AnnotHandlerMgr * pAnnotHandler= pEnv->GetAnnotHandlerMgr();
 
 	pSDKAnnot =NULL;
 
@@ -819,10 +819,10 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(IXFA_Widget* pPDFAnnot)
 	{
 		pSDKAnnot = pAnnotHandler->NewAnnot(pPDFAnnot, this);
 	}
-	if(!pSDKAnnot)	 
+	if(!pSDKAnnot)
 		return NULL;
 
-	m_fxAnnotArray.Add(pSDKAnnot);	
+	m_fxAnnotArray.Add(pSDKAnnot);
 
 	return pSDKAnnot;
 }
@@ -850,7 +850,7 @@ FX_BOOL  CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot)
 	if (m_CaptureWidget == pAnnot)
 		m_CaptureWidget = NULL;
 
-	return TRUE;	
+	return TRUE;
 }
 
 CPDF_Document* CPDFSDK_PageView::GetPDFDocument()
@@ -1128,7 +1128,7 @@ void CPDFSDK_PageView::LoadFXAnnots()
 				continue;
 			}
 			m_fxAnnotArray.Add(pAnnot);
-		
+
 			pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
 
 			pXFAAnnot = pWidgetHander->MoveToNext();
@@ -1136,8 +1136,8 @@ void CPDFSDK_PageView::LoadFXAnnots()
 		}
 
 		pWidgetHander->Release();
-	} 
-	else 
+	}
+	else
 	{
 		CPDF_Page* pPage = m_page->GetPDFPage();
 		ASSERT(pPage != NULL);

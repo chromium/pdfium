@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_text.h"
@@ -71,7 +71,7 @@ DLLEXPORT void STDCALL FPDFText_GetCharBox(FPDF_TEXTPAGE text_page, int index,do
 {
 	if (!text_page) return;
 	IPDF_TextPage* textpage=(IPDF_TextPage*)text_page;
-	
+
 	if (index<0 || index>=textpage->CountChars()) return ;
 	FPDF_CHAR_INFO	charinfo;
 	textpage->GetCharInfo(index,charinfo);
@@ -93,7 +93,7 @@ DLLEXPORT int STDCALL FPDFText_GetText(FPDF_TEXTPAGE text_page,int start,int cou
 {
 	if (!text_page) return 0;
 	IPDF_TextPage* textpage=(IPDF_TextPage*)text_page;
-	
+
 	if (start>=textpage->CountChars()) return 0;
 
 	CFX_WideString str=textpage->GetPageText(start,count);
@@ -127,7 +127,7 @@ DLLEXPORT void STDCALL FPDFText_GetRect(FPDF_TEXTPAGE text_page,int rect_index, 
 	*bottom=rect.bottom;
 }
 
-DLLEXPORT int STDCALL FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,double left, double top, 
+DLLEXPORT int STDCALL FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,double left, double top,
 											  double right, double bottom,unsigned short* buffer,int buflen)
 {
 	if (!text_page) return 0;
@@ -147,7 +147,7 @@ DLLEXPORT int STDCALL FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,double lef
 	cbUTF16Str.ReleaseBuffer(size*sizeof(unsigned short));
 
 	return size;
-		
+
 }
 
 //Search

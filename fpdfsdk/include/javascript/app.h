@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_APP_H_
@@ -20,11 +20,11 @@ class TimerObj : public CJS_EmbedObj
 public:
 	TimerObj(CJS_Object* pJSObject);
 	virtual ~TimerObj();
-	
+
 public:
 	void			SetTimer(CJS_Timer* pTimer);
 	CJS_Timer*		GetTimer() const;
-	
+
 private:
 	CJS_Timer*		m_pTimer;
 };
@@ -34,13 +34,13 @@ class CJS_TimerObj : public CJS_Object
 public:
 	CJS_TimerObj(JSFXObject pObject) : CJS_Object(pObject) {}
 	virtual ~CJS_TimerObj(){}
-	
+
 	DECLARE_JS_CLASS(CJS_TimerObj);
 };
 
 
 // struct APP_MENUITEM_ARRAY;
-// 
+//
 // struct APP_MENUITEM
 // {
 // 	APP_MENUITEM() : oSubMenu(NULL), cName(L""), cReturn(L""), bMarked(false), bEnabled(true)
@@ -57,7 +57,7 @@ public:
 // {
 // 	APP_MENUITEM_ARRAY() : m_hMenu(NULL), pContents(NULL), nSize(0)
 // 	{
-// 
+//
 // 	}
 // 	APP_MENUITEM * pContents;
 // 	HMENU m_hMenu;
@@ -71,21 +71,21 @@ public:
 //     pContent(NULL)
 // 	{
 // 	}
-// 
+//
 // 	APP_MENU* pContent;
 // };
 
 // struct APP_MENU
 // {
-// 	APP_MENU():bSubMenu(false), 
+// 	APP_MENU():bSubMenu(false),
 // 	SubMenuItems(NULL),
 // 	cwMenuItemName(L""),
 // 	hMenu(NULL),
 // 	iSize(0)
 // 	{
-// 
+//
 // 	}
-// 
+//
 // 	APP_MENU(CFX_WideString &cwName):
 // 	cwMenuItemName(cwName),
 // 	bSubMenu(false),
@@ -93,11 +93,11 @@ public:
 // 	hMenu(NULL),
 // 	iSize(0)
 // 	{
-// 
+//
 // 	}
-// 	
+//
 // 	CFX_WideString cwMenuItemName;
-// 	bool bSubMenu;	
+// 	bool bSubMenu;
 // 	APP_MENU_ARRAY* SubMenuItems;
 // 	int iSize;
 // 	HMENU hMenu;
@@ -121,7 +121,7 @@ public:
 	FX_BOOL						runtimeHighlight(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 	FX_BOOL						viewerType(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 	FX_BOOL						viewerVariation(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	FX_BOOL						viewerVersion(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);	
+	FX_BOOL						viewerVersion(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
 
 	FX_BOOL						alert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
@@ -147,7 +147,7 @@ public:
 	FX_BOOL						setTimeOut(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 
 private:
-//	FX_DWORD					AppGetTickCount(); 
+//	FX_DWORD					AppGetTickCount();
 	void						TimerProc(CJS_Timer* pTimer);
 	void						RunJsScript(CJS_Runtime * pRuntime,const CFX_WideString & wsScript);
 //	void						ParsePopupMenuObj(APP_MENUITEM * ppMenuItem,JSObject * pObj);
@@ -165,12 +165,12 @@ public:
 
 private:
 
-	bool						m_bCalculate;	
+	bool						m_bCalculate;
 	bool						m_bRuntimeHighLight;
 
 	CFX_ArrayTemplate<CJS_Timer*>	m_aTimer;
 //	APP_MENU*					m_pMenuHead;
-	
+
 public:
 //	static CReader_App* s_App;
 };
@@ -194,7 +194,7 @@ public:
 	JS_STATIC_PROP(runtimeHighlight, app);
 	JS_STATIC_PROP(viewerType, app);
 	JS_STATIC_PROP(viewerVariation, app);
-	JS_STATIC_PROP(viewerVersion, app);	
+	JS_STATIC_PROP(viewerVersion, app);
 
 	JS_STATIC_METHOD(alert, app);
 	JS_STATIC_METHOD(beep, app);

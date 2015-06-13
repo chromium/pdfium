@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_EVENTHANDLER_H_
@@ -78,12 +78,12 @@ public:
 	void					OnPage_Close(CPDFSDK_Document* pDoc);
 	void					OnPage_InView(CPDFSDK_Document* pTarget);
 	void					OnPage_OutView(CPDFSDK_Document* pTarget);
-	
+
 	void					OnField_Calculate(CPDF_FormField* pSource, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL& bRc);
 	void					OnField_Format(CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit);
 	void					OnField_Keystroke(CFX_WideString& strChange, const CFX_WideString& strChangeEx,
 								FX_BOOL KeyDown, FX_BOOL bModifier, int &nSelEnd,int &nSelStart, FX_BOOL bShift,
-								CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit, 
+								CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit,
 								FX_BOOL bFieldFull, FX_BOOL &bRc);
 	void					OnField_Validate(CFX_WideString& strChange, const CFX_WideString& strChangeEx, FX_BOOL bKeyDown,
 								FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL& bRc);
@@ -119,7 +119,7 @@ public:
 	void					Destroy();
 	FX_BOOL					IsValid();
 
-	
+
 	CFX_WideString&			Change();
 	CFX_WideString			ChangeEx();
 	int						CommitKey();
@@ -138,7 +138,7 @@ public:
 	FX_BOOL					WillCommit();
 	CFX_WideString			TargetName();
 
-	JS_EVENT_T				EventType() {return m_eEventType;};	
+	JS_EVENT_T				EventType() {return m_eEventType;};
 
 public:
 	CJS_Context*			m_pJSContext;

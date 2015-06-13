@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/formfiller/FormFiller.h"
@@ -39,9 +39,9 @@ PWL_CREATEPARAM	CFFL_ListBox::GetCreateParam()
 
 	ASSERT(m_pWidget != NULL);
 	FX_DWORD dwFieldFlag = m_pWidget->GetFieldFlags();
-		
+
 	if (dwFieldFlag & FIELDFLAG_MULTISELECT)
-	{		
+	{
 		cp.dwFlags |= PLBS_MULTIPLESEL;
 	}
 
@@ -76,7 +76,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView
 	if (pWnd->HasFlag(PLBS_MULTIPLESEL))
 	{
 		m_OriginSelections.RemoveAll();
-		
+
 		FX_BOOL bSetCaret = FALSE;
 		for (int32_t i=0,sz=m_pWidget->CountOptions(); i<sz; i++)
 		{
@@ -103,9 +103,9 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView
 			}
 		}
 	}
-	
+
 	pWnd->SetTopVisibleIndex(m_pWidget->GetTopVisibleIndex());
-	
+
 	return pWnd;
 }
 
@@ -143,7 +143,7 @@ FX_BOOL	CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView)
 			return pListBox->GetCurSel() != m_pWidget->GetSelectedIndex(0);
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -165,10 +165,10 @@ void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView)
 			}
 		}
 
-		
+
 		int32_t nNewTopIndex = pListBox->GetTopVisibleIndex();
 
-		m_pWidget->ClearSelection(FALSE);	
+		m_pWidget->ClearSelection(FALSE);
 
 		if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT)
 		{
@@ -235,7 +235,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AAct
 }
 
 
-void CFFL_ListBox::SetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AActionType type, 
+void CFFL_ListBox::SetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AActionType type,
 								const PDFSDK_FieldAction& fa)
 {
 }
@@ -269,11 +269,11 @@ CPWL_Wnd* CFFL_ListBox::ResetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bRes
 {
 	if (bRestoreValue)
 		SaveState(pPageView);
-	
+
 	DestroyPDFWindow(pPageView);
-	
+
 	CPWL_Wnd* pRet = NULL;
-	
+
 	if (bRestoreValue)
 	{
 		RestoreState(pPageView);
@@ -281,9 +281,9 @@ CPWL_Wnd* CFFL_ListBox::ResetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bRes
 	}
 	else
 		pRet = GetPDFWindow(pPageView, TRUE);
-	
+
 	m_pWidget->UpdateField();
-	
+
 	return pRet;
 }
 
@@ -292,7 +292,7 @@ void CFFL_ListBox::OnKeyStroke(FX_BOOL bKeyDown, FX_DWORD nFlag)
 	ASSERT(m_pWidget != NULL);
 
 	int nFlags = m_pWidget->GetFieldFlags();
-	
+
 	if (nFlags & FIELDFLAG_COMMITONSELCHANGE)
 	{
 		if (m_bValid)

@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -152,7 +152,7 @@ FX_BOOL util::printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 		iOffend = c_ConvChar.find(L"%",iOffset+1);
 		std::wstring strSub;
 		if (iOffend == -1)
-			strSub = c_ConvChar.substr(iOffset);			
+			strSub = c_ConvChar.substr(iOffset);
 		else
 			strSub = c_ConvChar.substr(iOffset ,iOffend - iOffset);
 		c_strConvers.push_back(strSub);
@@ -235,7 +235,7 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 		switch (nFormat)
 		{
 		case 0:
-			swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", 
+			swResult.Format(L"D:%04d%02d%02d%02d%02d%02d",
 				jsDate.GetYear(),
 				jsDate.GetMonth() + 1,
 				jsDate.GetDay(),
@@ -244,7 +244,7 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 				jsDate.GetSeconds());
 			break;
 		case 1:
-			swResult.Format(L"%04d.%02d.%02d %02d:%02d:%02d", 
+			swResult.Format(L"%04d.%02d.%02d %02d:%02d:%02d",
 				jsDate.GetYear(),
 				jsDate.GetMonth() + 1,
 				jsDate.GetDay(),
@@ -253,7 +253,7 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 				jsDate.GetSeconds());
 			break;
 		case 2:
-			swResult.Format(L"%04d/%02d/%02d %02d:%02d:%02d", 
+			swResult.Format(L"%04d/%02d/%02d %02d:%02d:%02d",
 				jsDate.GetYear(),
 				jsDate.GetMonth() + 1,
 				jsDate.GetDay(),
@@ -373,7 +373,7 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPicture, std::wstring &cPurpose)
 {
 	std::wstring cFormat = cFormat2;
-	    
+
 	if (bXFAPicture)
 	{
 		return ; //currently, it doesn't support XFAPicture.
@@ -588,8 +588,8 @@ FX_BOOL util::scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& 
 	{
 		FX_BOOL bWrongFormat = FALSE;
 		dDate = CJS_PublicMethods::MakeRegularDate(sDate,sFormat,bWrongFormat);
-	}	
-	
+	}
+
 	if (!JS_PortIsNan(dDate))
 	{
 		CJS_Date date(isolate,dDate);

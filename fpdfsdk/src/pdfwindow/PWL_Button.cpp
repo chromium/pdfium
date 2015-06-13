@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/pdfwindow/PDFWindow.h"
@@ -37,7 +37,7 @@ FX_BOOL CPWL_Button::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
 
 	m_bMouseDown = TRUE;
 	SetCapture();
-	
+
 	return TRUE;
 }
 

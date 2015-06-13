@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_FIELD_H_
@@ -100,7 +100,7 @@ struct CJS_DelayData
 class Field : public CJS_EmbedObj
 {
 public:
-	Field(CJS_Object* pJSObject);	
+	Field(CJS_Object* pJSObject);
 	virtual ~Field(void);
 
     FX_BOOL alignment(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
@@ -221,12 +221,12 @@ public:
 	static void SetValue(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex, const CJS_WideStringArray& strArray);
 
 public:
-	static void							AddField(CPDFSDK_Document* pDocument, int nPageIndex, int nFieldType, 
+	static void							AddField(CPDFSDK_Document* pDocument, int nPageIndex, int nFieldType,
 											const CFX_WideString& sName, const CPDF_Rect& rcCoords);
 public:
-	static void							UpdateFormField(CPDFSDK_Document* pDocument, CPDF_FormField* pFormField, 
+	static void							UpdateFormField(CPDFSDK_Document* pDocument, CPDF_FormField* pFormField,
 											FX_BOOL bChangeMark, FX_BOOL bResetAP, FX_BOOL bRefresh);
-	static void							UpdateFormControl(CPDFSDK_Document* pDocument, CPDF_FormControl* pFormControl, 
+	static void							UpdateFormControl(CPDFSDK_Document* pDocument, CPDF_FormControl* pFormControl,
 											FX_BOOL bChangeMark, FX_BOOL bResetAP, FX_BOOL bRefresh);
 
 	static CPDFSDK_Widget*					GetWidget(CPDFSDK_Document* pDocument, CPDF_FormControl* pFormControl);

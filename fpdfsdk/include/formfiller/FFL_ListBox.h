@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_LISTBOX_H_
@@ -27,7 +27,7 @@ public:
 
  	virtual void				GetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AActionType type,
  									PDFSDK_FieldAction& fa);
- 	virtual void				SetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AActionType type, 
+ 	virtual void				SetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AActionType type,
  									const PDFSDK_FieldAction& fa);
 
 	virtual void				SaveState(CPDFSDK_PageView* pPageView);

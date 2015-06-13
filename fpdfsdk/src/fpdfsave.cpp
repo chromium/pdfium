@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_edit.h"
@@ -20,13 +20,13 @@
 
 class CFX_IFileWrite final : public IFX_StreamWrite
 {
-	
+
 public:
 	CFX_IFileWrite();
 	FX_BOOL				Init( FPDF_FILEWRITE * pFileWriteStruct );
 	virtual	FX_BOOL		WriteBlock(const void* pData, size_t size) override;
 	virtual void		Release() override {}
-	
+
 protected:
 	FPDF_FILEWRITE*		m_pFileWriteStruct;
 };
@@ -54,7 +54,7 @@ FX_BOOL CFX_IFileWrite::WriteBlock(const void* pData, size_t size)
 		m_pFileWriteStruct->WriteBlock( m_pFileWriteStruct, pData, size );
 		return TRUE;
 	}
-	else 
+	else
 		return FALSE;
 }
 
@@ -86,7 +86,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument, CFX_PtrArray& fileList
 	if (NULL == pAcroForm)
 		return FALSE;
 	CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
-	if (pXFA == NULL) 
+	if (pXFA == NULL)
 		return TRUE;
 	if(pXFA->GetType() != PDFOBJ_ARRAY)
 		return FALSE;
@@ -117,7 +117,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument, CFX_PtrArray& fileList
 	pContext = XFA_Checksum_Create();
 	FXSYS_assert(pContext);
 	pContext->StartChecksum();
-		
+
 	//template
 	if (iTemplate > -1)
 	{
@@ -134,11 +134,11 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument, CFX_PtrArray& fileList
 	CPDF_Stream* pFormStream = NULL;
 	CPDF_Stream* pDataSetsStream = NULL;
 	if (iFormIndex != -1)
-	{	
+	{
 		//Get form CPDF_Stream
 		CPDF_Object* pFormPDFObj = pArray->GetElement(iFormIndex);
 		if (pFormPDFObj->GetType() == PDFOBJ_REFERENCE)
-		{			 
+		{
 			CPDF_Reference* pFormRefObj = (CPDF_Reference*)pFormPDFObj;
 			CPDF_Object* pFormDircetObj = pFormPDFObj->GetDirect();
 			if (NULL != pFormDircetObj && pFormDircetObj->GetType() == PDFOBJ_STREAM)
@@ -151,13 +151,13 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument, CFX_PtrArray& fileList
 			pFormStream = (CPDF_Stream*)pFormPDFObj;
 		}
 	}
-	
+
 	if (iDataSetsIndex != -1)
 	{
 		//Get datasets CPDF_Stream
 		CPDF_Object* pDataSetsPDFObj = pArray->GetElement(iDataSetsIndex);
 		if (pDataSetsPDFObj->GetType() == PDFOBJ_REFERENCE)
-		{			 
+		{
 			CPDF_Reference* pDataSetsRefObj = (CPDF_Reference*)pDataSetsPDFObj;
 			CPDF_Object* pDataSetsDircetObj = pDataSetsRefObj->GetDirect();
 			if (NULL != pDataSetsDircetObj && pDataSetsDircetObj->GetType() == PDFOBJ_STREAM)
@@ -169,7 +169,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument, CFX_PtrArray& fileList
 		{
 			pDataSetsStream = (CPDF_Stream*)pDataSetsPDFObj;
 		}
-	} 
+	}
 	//end
 	//L"datasets"
 	{
@@ -208,11 +208,11 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument, CFX_PtrArray& fileList
 			fileList.Add(pDsfileWrite);
 		}
 	}
- 
+
 
 	//L"form"
 	{
-	
+
 		IFX_FileStream* pfileWrite = FX_CreateMemoryStream();
 		if (NULL == pfileWrite)
 		{
@@ -254,7 +254,7 @@ FX_BOOL _SendPostSaveToXFADoc(CPDFXFA_Document* pDocument)
 
 	if (pDocument->GetDocType() != DOCTYPE_DYNIMIC_XFA && pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
 		return TRUE;
-	
+
 	IXFA_DocView* pXFADocView = pDocument->GetXFADocView();
 	if (NULL == pXFADocView)
 		return FALSE;
@@ -266,7 +266,7 @@ FX_BOOL _SendPostSaveToXFADoc(CPDFXFA_Document* pDocument)
 	while(pWidgetAcc)
 	{
 		CXFA_EventParam preParam;
-		preParam.m_eType =  XFA_EVENT_PostSave;	
+		preParam.m_eType =  XFA_EVENT_PostSave;
 		pWidgetHander->ProcessEvent(pWidgetAcc,&preParam);
 		pWidgetAcc = pWidgetAccIterator->MoveToNext();
 	}
@@ -291,11 +291,11 @@ FX_BOOL _SendPreSaveToXFADoc(CPDFXFA_Document* pDocument, CFX_PtrArray& fileList
 	while(pWidgetAcc)
 	{
 		CXFA_EventParam preParam;
-		preParam.m_eType =  XFA_EVENT_PreSave;	
+		preParam.m_eType =  XFA_EVENT_PreSave;
 		pWidgetHander->ProcessEvent(pWidgetAcc, &preParam);
 		pWidgetAcc = pWidgetAccIterator->MoveToNext();
 	}
-	pWidgetAccIterator->Release();	
+	pWidgetAccIterator->Release();
 	pXFADocView->UpdateDocView();
 	return _SaveXFADocumentData(pDocument, fileList);
 }
@@ -310,14 +310,14 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document, FPDF_FILEWRITE * pFileWrite,FPD
 	_SendPreSaveToXFADoc(pDoc, fileList);
 
 	CPDF_Document* pPDFDoc = pDoc->GetPDFDoc();
-	if (!pPDFDoc) 
+	if (!pPDFDoc)
 		return 0;
-	
+
 	if ( flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY )
 	{
 		flags = 0;
 	}
-	
+
 	CPDF_Creator FileMaker(pPDFDoc);
 	if (bSetVersion)
 		FileMaker.SetFileVersion(fileVerion);

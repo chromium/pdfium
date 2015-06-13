@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/JavaScript.h"
@@ -35,39 +35,39 @@ CJS_Value::CJS_Value(v8::Isolate* isolate, const float &fValue):m_isolate(isolat
 	operator =(fValue);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, const double &dValue):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, const double &dValue):m_isolate(isolate)
 {
 	operator =(dValue);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, JSFXObject  pJsObj):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, JSFXObject  pJsObj):m_isolate(isolate)
 {
 	operator =(pJsObj);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Object* pJsObj):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Object* pJsObj):m_isolate(isolate)
 {
 	operator =(pJsObj);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Document* pJsDoc):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Document* pJsDoc):m_isolate(isolate)
 {
 	m_eType = VT_object;
 	if (pJsDoc)
 		m_pValue = (JSFXObject)*pJsDoc;
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_WCHAR* pWstr):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_WCHAR* pWstr):m_isolate(isolate)
 {
 	operator =(pWstr);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_CHAR* pStr):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_CHAR* pStr):m_isolate(isolate)
 {
 	operator = (pStr);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Array& array):m_isolate(isolate) 
+CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Array& array):m_isolate(isolate)
 {
 	operator = (array);
 }
@@ -215,7 +215,7 @@ void CJS_Value::SetNull()
 }
 
 void CJS_Value::operator = (const FX_CHAR* pStr)
-{	
+{
 	operator = (CFX_WideString::FromLocal(pStr).c_str());
 }
 
@@ -256,7 +256,7 @@ FXJSVALUETYPE CJS_Value::GetType() const
 	return VT_unknown;
 }
 
-FX_BOOL CJS_Value::IsArrayObject() const 
+FX_BOOL CJS_Value::IsArrayObject() const
 {
 	if(m_pValue.IsEmpty()) return FALSE;
 	return m_pValue->IsArray();
@@ -294,12 +294,12 @@ FX_BOOL CJS_Value::ConvertToDate(CJS_Date &date) const
 		return TRUE;
 	}
 
-	return FALSE;	
+	return FALSE;
 }
 
 /* ---------------------------- CJS_PropValue ---------------------------- */
 
-CJS_PropValue::CJS_PropValue(const CJS_Value &value) : 
+CJS_PropValue::CJS_PropValue(const CJS_Value &value) :
 	CJS_Value(value),
 	m_bIsSetting(0)
 {
@@ -472,7 +472,7 @@ CJS_Array::CJS_Array(v8::Isolate* isolate):m_isolate(isolate)
 }
 
 CJS_Array::~CJS_Array()
-{		
+{
 }
 
 void CJS_Array::Attach(v8::Local<v8::Array> pArray)
@@ -522,16 +522,16 @@ CJS_Date::CJS_Date(v8::Isolate* isolate) :m_isolate(isolate)
 {
 }
 
-CJS_Date::CJS_Date(v8::Isolate* isolate,double dMsec_time) 
+CJS_Date::CJS_Date(v8::Isolate* isolate,double dMsec_time)
 {
 	m_isolate = isolate;
-	m_pDate = JS_NewDate(isolate,dMsec_time);		
+	m_pDate = JS_NewDate(isolate,dMsec_time);
 }
 
-CJS_Date::CJS_Date(v8::Isolate* isolate,int year, int mon, int day,int hour, int min, int sec) 
+CJS_Date::CJS_Date(v8::Isolate* isolate,int year, int mon, int day,int hour, int min, int sec)
 {
 	m_isolate = isolate;
-	m_pDate = JS_NewDate(isolate,MakeDate(year,mon,day,hour,min,sec,0));	
+	m_pDate = JS_NewDate(isolate,MakeDate(year,mon,day,hour,min,sec,0));
 }
 
 double CJS_Date::MakeDate(int year, int mon, int day,int hour, int min, int sec,int ms)

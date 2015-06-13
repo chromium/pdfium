@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <algorithm>
@@ -53,7 +53,7 @@ FX_BOOL CFFL_Utils::TraceObject(CPDF_Object* pObj)
 			CPDF_Array* pArray = (CPDF_Array*)pObj;
 			for (FX_DWORD i = 0; i < pArray->GetCount(); i ++)
 			{
-				CPDF_Object* pElement = pArray->GetElementValue(i);				
+				CPDF_Object* pElement = pArray->GetElementValue(i);
 				TraceObject(pElement);
 			}
 		}

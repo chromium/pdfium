@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_FONTMAP_H_
@@ -85,9 +85,9 @@ public:
 	static CFX_ByteString						GetDefaultFontByCharset(int32_t nCharset);
 
 	CPDF_Font*									AddFontToDocument(CPDF_Document* pDoc, CFX_ByteString& sFontName, uint8_t nCharset);
-	static FX_BOOL								IsStandardFont(const CFX_ByteString& sFontName);							
+	static FX_BOOL								IsStandardFont(const CFX_ByteString& sFontName);
 	CPDF_Font*									AddStandardFont(CPDF_Document* pDoc, CFX_ByteString& sFontName);
-	CPDF_Font*									AddSystemFont(CPDF_Document* pDoc, CFX_ByteString& sFontName, 
+	CPDF_Font*									AddSystemFont(CPDF_Document* pDoc, CFX_ByteString& sFontName,
 													uint8_t nCharset);
 
 protected:

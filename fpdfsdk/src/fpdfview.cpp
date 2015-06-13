@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 
@@ -65,7 +65,7 @@ FX_BOOL CFPDF_FileStream::ReadBlock(void* buffer, FX_FILESIZE offset, size_t siz
 size_t CFPDF_FileStream::ReadBlock(void* buffer, size_t size)
 {
 	if (!buffer || !size || !m_pFS->ReadBlock) return 0;
-	
+
 	FX_FILESIZE nSize = GetSize();
 	if (m_nCurPos >= nSize) return 0;
 	FX_FILESIZE dwAvail = nSize - m_nCurPos;
@@ -306,7 +306,7 @@ public:
 
 	virtual void			Release() {delete this;}
 	virtual FX_FILESIZE		GetSize() {return m_size;}
-	virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) 
+	virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
 	{
             if (offset < 0) {
                 return FALSE;
@@ -472,7 +472,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 	bBackgroundAlphaNeeded = pPage->BackgroundAlphaNeeded();
 	if (bBackgroundAlphaNeeded)
 	{
-		
+
 		pBitmap = FX_NEW CFX_DIBitmap;
 		pBitmap->Create(size_x, size_y, FXDIB_Argb);
 		pBitmap->Clear(0x00ffffff);
@@ -489,12 +489,12 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 
 	Func_RenderPage(pContext, page, start_x, start_y, size_x, size_y, rotate, flags,TRUE,NULL);
 
-	if (bBackgroundAlphaNeeded) 
+	if (bBackgroundAlphaNeeded)
 	{
 		if (pBitmap)
 		{
 			CFX_WindowsDevice WinDC(dc);
-			
+
  			if (WinDC.GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER)
  			{
 				CFX_DIBitmap* pDst = FX_NEW CFX_DIBitmap;
@@ -564,7 +564,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 	pContext->m_pBitmap->Create(width, height, FXDIB_Rgb, (uint8_t*)pBuffer);
 	pContext->m_pDevice = new CPDF_FxgeDevice;
 	((CPDF_FxgeDevice*)pContext->m_pDevice)->Attach(pContext->m_pBitmap);
-	
+
 #ifdef DEBUG_TRACE
 	CPDF_ModuleMgr::Get()->ReportError(999, "Ready for PDF rendering");
 #endif
@@ -615,7 +615,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 }
 #endif
 
-DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap, FPDF_PAGE page, int start_x, int start_y, 
+DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap, FPDF_PAGE page, int start_x, int start_y,
 						int size_x, int size_y, int rotate, int flags)
 {
 	if (bitmap == NULL || page == NULL) return;
@@ -658,11 +658,11 @@ DLLEXPORT void STDCALL FPDF_CloseDocument(FPDF_DOCUMENT document)
 {
 	if (!document)
 		return;
-	CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;	
+	CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
 	delete pDoc;
 
 // 	CPDF_Parser* pParser = (CPDF_Parser*)pDoc->GetParser();
-// 	if (pParser == NULL) 
+// 	if (pParser == NULL)
 // 	{
 // 		delete pDoc;
 // 		return;
@@ -804,7 +804,7 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_
 
 
 	CFX_AffineMatrix matrix;
-	pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate); 
+	pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
 
 	FX_RECT clip;
 	clip.left = start_x;
@@ -830,7 +830,7 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_
 	{
 	  pContext->m_pDevice->RestoreState();
 	}
-	
+
 //#endif
 }
 
@@ -839,10 +839,10 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document, int page_i
 // 	CPDF_Document* pDoc = (CPDF_Document*)document;
 // 	if(pDoc == NULL)
 // 		return FALSE;
-// 
+//
 // 	CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
 // 	if (pDict == NULL) return FALSE;
-// 
+//
 // 	CPDF_Page page;
 // 	page.Load(pDoc, pDict);
 // 	*width = page.GetPageWidth();
@@ -927,12 +927,12 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,FPDF_
 {
 	if (!document)
 		return NULL;
-	if (!name || name[0] == 0) 
+	if (!name || name[0] == 0)
 		return NULL;
 
 	CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
 	CPDF_Document* pPDFDoc = pDoc->GetPDFDoc();
-	if (!pPDFDoc) 
+	if (!pPDFDoc)
 		return NULL;
 	CPDF_NameTree name_tree(pPDFDoc, FX_BSTRC("Dests"));
 	return name_tree.LookupNamedDest(pPDFDoc, name);

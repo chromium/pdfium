@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_COMBOBOX_H_
@@ -48,7 +48,7 @@ public:
 
 };
 
-class PWL_CLASS CPWL_ComboBox : public CPWL_Wnd  
+class PWL_CLASS CPWL_ComboBox : public CPWL_Wnd
 {
 public:
 	CPWL_ComboBox();
@@ -58,7 +58,7 @@ public:
 	virtual CFX_ByteString		GetClassName() const;
 	virtual void				OnCreate(PWL_CREATEPARAM & cp);
 
-	virtual FX_BOOL				OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);	
+	virtual FX_BOOL				OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
 	virtual FX_BOOL				OnChar(FX_WORD nChar, FX_DWORD nFlag);
 
 	virtual void				OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
@@ -67,13 +67,13 @@ public:
 	virtual void				RePosChildWnd();
 
 	virtual CPDF_Rect			GetFocusRect() const;
-	
+
 	virtual void				SetFocus();
 	virtual void				KillFocus();
 
 	FX_BOOL						IsModified() const;
 
-public:	
+public:
 	void						SetFillerNotify(IPWL_Filler_Notify* pNotify);
 
 	CFX_WideString				GetText() const;
@@ -91,13 +91,13 @@ public:
 
 	void						SetSelectText();
 
-private:	
+private:
 	void						CreateEdit(const PWL_CREATEPARAM & cp);
 	void						CreateButton(const PWL_CREATEPARAM & cp);
 	void						CreateListBox(const PWL_CREATEPARAM & cp);
 
 	void						SetPopup(FX_BOOL bPopup);
-	
+
 private:
 	CPWL_CBEdit*				m_pEdit;
 	CPWL_CBButton*				m_pButton;

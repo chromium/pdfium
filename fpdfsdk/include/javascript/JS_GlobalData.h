@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_GLOBALDATA_H_
@@ -74,15 +74,15 @@ public:
 
 	FX_BOOL								SetGlobalVariablePersistent(const FX_CHAR* propname, FX_BOOL bPersistent);
 	FX_BOOL								DeleteGlobalVariable(const FX_CHAR* propname);
-	
+
 	int32_t							GetSize() const;
 	CJS_GlobalData_Element*				GetAt(int index) const;
 
 private:
 	void								LoadGlobalPersistentVariables();
 	void								SaveGlobalPersisitentVariables();
-	
-	CJS_GlobalData_Element*				GetGlobalVariable(const FX_CHAR* propname);	
+
+	CJS_GlobalData_Element*				GetGlobalVariable(const FX_CHAR* propname);
 	int									FindGlobalVariable(const FX_CHAR* propname);
 
 	void								LoadFileBuffer(const FX_WCHAR* sFilePath, uint8_t*& pBuffer, int32_t& nLength);

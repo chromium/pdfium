@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/formfiller/FormFiller.h"
@@ -27,7 +27,7 @@ CPWL_Wnd* CFFL_CheckBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageVie
 
 	ASSERT(m_pWidget != NULL);
 	pWnd->SetCheck(m_pWidget->IsChecked());
-	
+
 	return pWnd;
 }
 
@@ -46,7 +46,7 @@ FX_BOOL	CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFla
 {
 	switch (nChar)
 	{
-	case FWL_VKEY_Return:	
+	case FWL_VKEY_Return:
 	case FWL_VKEY_Space:
 		{
 			CFFL_IFormFiller* pIFormFiller = m_pApp->GetIFormFiller();
@@ -115,9 +115,9 @@ void CFFL_CheckBox::SaveData(CPDFSDK_PageView* pPageView)
 
 	if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, FALSE))
 	{
-		
+
 		FX_BOOL bNewChecked = pWnd->IsChecked();
-		
+
 
 		if (bNewChecked)
 		{

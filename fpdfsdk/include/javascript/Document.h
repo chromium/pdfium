@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_DOCUMENT_H_
@@ -14,7 +14,7 @@ class PrintParamsObj : public CJS_EmbedObj
 public:
 	PrintParamsObj(CJS_Object* pJSObject);
 	virtual ~PrintParamsObj(){}
-	
+
 public:
 	FX_BOOL bUI;
 	int nStart;
@@ -31,7 +31,7 @@ class CJS_PrintParamsObj : public CJS_Object
 public:
 	CJS_PrintParamsObj(JSFXObject pObject) : CJS_Object(pObject) {}
 	virtual ~CJS_PrintParamsObj(){}
-	
+
 	DECLARE_JS_CLASS(CJS_PrintParamsObj);
 };
 
@@ -158,7 +158,7 @@ public:
 	FX_BOOL	submitForm(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 	FX_BOOL	mailDoc(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 	FX_BOOL	removeIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	
+
 public:
 	void                                    AttachDoc(CPDFSDK_Document* pDoc);
 	CPDFSDK_Document*                       GetReaderDoc();
@@ -169,7 +169,7 @@ public:
 	void                                    AddDelayAnnotData(CJS_AnnotObj *pData);
 	void                                    DoAnnotDelay();
 	void                                    SetIsolate(v8::Isolate* isolate) {m_isolate = isolate;}
-	CJS_Document*                           GetCJSDoc() const; 
+	CJS_Document*                           GetCJSDoc() const;
 
 private:
 	CFX_WideString                          ReversalStr(CFX_WideString cbFrom);
@@ -194,7 +194,7 @@ public:
 	CJS_Document(JSFXObject pObject) : CJS_Object(pObject) {};
 	virtual ~CJS_Document(){};
 
-	virtual FX_BOOL	InitInstance(IFXJS_Context* cc);	
+	virtual FX_BOOL	InitInstance(IFXJS_Context* cc);
 
 	DECLARE_JS_CLASS(CJS_Document);
 

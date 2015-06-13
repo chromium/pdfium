@@ -1963,7 +1963,7 @@ void Document::DoAnnotDelay()
 	}
 }
 
-CJS_Document* Document::GetCJSDoc() const 
+CJS_Document* Document::GetCJSDoc() const
 {
 	return static_cast<CJS_Document*>(m_pJSObject);
 }

@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_PUBLICMETHODS_H_
@@ -35,7 +35,7 @@ public:
 	static FX_BOOL AFMakeNumber(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 	static FX_BOOL AFSimple_Calculate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 	static FX_BOOL AFRange_Validate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFMergeChange(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError); 
+	static FX_BOOL AFMergeChange(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 	static FX_BOOL AFParseDateEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 	static FX_BOOL AFExtractNums(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 
@@ -56,7 +56,7 @@ public:
 	JS_STATIC_GLOBAL_FUN(AFSpecial_Keystroke);
 	JS_STATIC_GLOBAL_FUN(AFSpecial_KeystrokeEx);
 	JS_STATIC_GLOBAL_FUN(AFSimple);
-	JS_STATIC_GLOBAL_FUN(AFMakeNumber);	
+	JS_STATIC_GLOBAL_FUN(AFMakeNumber);
 	JS_STATIC_GLOBAL_FUN(AFSimple_Calculate);
 	JS_STATIC_GLOBAL_FUN(AFRange_Validate);
 	JS_STATIC_GLOBAL_FUN(AFMergeChange);
@@ -64,7 +64,7 @@ public:
 	JS_STATIC_GLOBAL_FUN(AFExtractNums);
 
 	JS_STATIC_DECLARE_GLOBAL_FUN();
-	
+
 public:
 	static int				ParseStringInteger(const CFX_WideString & string,int nStart,int & nSkip, int nMaxStep);
 	static CFX_WideString	ParseStringString(const CFX_WideString& string, int nStart, int& nSkip);

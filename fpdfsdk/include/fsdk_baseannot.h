@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef FPDFSDK_INCLUDE_FSDK_BASEANNOT_H_
@@ -27,15 +27,15 @@ class CFX_RenderDevice;
 
 #define CFX_IntArray				CFX_ArrayTemplate<int>
 
-class  CPDFSDK_DateTime 
+class  CPDFSDK_DateTime
 {
 public:
 	CPDFSDK_DateTime();
 	CPDFSDK_DateTime(const CFX_ByteString& dtStr);
 	CPDFSDK_DateTime(const CPDFSDK_DateTime& datetime);
 	CPDFSDK_DateTime(const FX_SYSTEMTIME& st);
-	
-	
+
+
 	CPDFSDK_DateTime&	operator = (const CPDFSDK_DateTime& datetime);
 	CPDFSDK_DateTime&	operator = (const FX_SYSTEMTIME& st);
 	FX_BOOL				operator == (CPDFSDK_DateTime& datetime);
@@ -43,9 +43,9 @@ public:
 	FX_BOOL				operator > (CPDFSDK_DateTime& datetime);
 	FX_BOOL				operator >= (CPDFSDK_DateTime& datetime);
 	FX_BOOL				operator < (CPDFSDK_DateTime& datetime);
-	FX_BOOL				operator <= (CPDFSDK_DateTime& datetime);	
+	FX_BOOL				operator <= (CPDFSDK_DateTime& datetime);
 						operator time_t();
-	
+
 	CPDFSDK_DateTime&	FromPDFDateTimeString(const CFX_ByteString& dtStr);
 	CFX_ByteString		ToCommonDateTimeString();
 	CFX_ByteString		ToPDFDateTimeString();
@@ -53,9 +53,9 @@ public:
 	CPDFSDK_DateTime	ToGMT();
 	CPDFSDK_DateTime&	AddDays(short days);
 	CPDFSDK_DateTime&	AddSeconds(int seconds);
-	
+
 	void				ResetDateTime();
-	
+
 	struct FX_DATETIME
 	{
 		int16_t	year;
@@ -84,7 +84,7 @@ public:
 
 	virtual CPDF_Annot*			GetPDFAnnot() { return NULL; }
 	virtual IXFA_Widget*		GetXFAWidget() { return NULL; }
-	
+
 	virtual CFX_ByteString		GetType() const { return ""; }
 	virtual CFX_ByteString		GetSubType() const { return ""; }
 
@@ -96,24 +96,24 @@ public:
 public:
 	CPDF_Page*					GetPDFPage();
 	CPDFXFA_Page*				GetPDFXFAPage();
-	
+
 	void						SetPage(CPDFSDK_PageView* pPageView) { m_pPageView = pPageView; }
 	CPDFSDK_PageView*			GetPageView() { return m_pPageView; }
-	
-	// Tab Order	
+
+	// Tab Order
 	int							GetTabOrder();
 	void						SetTabOrder(int iTabOrder);
-	
+
 	// Selection
 	FX_BOOL						IsSelected();
 	void						SetSelected(FX_BOOL bSelected);
-	
+
 protected:
 	CPDF_Annot*			m_pAnnot;
 	CPDFSDK_PageView*	m_pPageView;
 	FX_BOOL				m_bSelected;
 	int					m_nTabOrder;
-	
+
 };
 
 class CPDFSDK_BAAnnot : public CPDFSDK_Annot
@@ -136,13 +136,13 @@ public:
 	virtual void				Annot_OnDraw(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,CPDF_RenderOptions* pOptions);
 public:
 	CPDF_Dictionary*			GetAnnotDict() const;
-	
+
 	void						SetContents(const CFX_WideString& sContents);
 	CFX_WideString				GetContents() const;
-	
+
 	void						SetAnnotName(const CFX_WideString& sName);
 	CFX_WideString				GetAnnotName() const;
-	
+
 	void						SetModifiedDate(const FX_SYSTEMTIME& st);
 	FX_SYSTEMTIME				GetModifiedDate() const;
 
@@ -151,47 +151,47 @@ public:
 
 	void						SetAppState(const CFX_ByteString& str);
 	CFX_ByteString				GetAppState() const;
-	
+
 	void						SetStructParent(int key);
 	int							GetStructParent() const;
-	
+
 	//border
 	void						SetBorderWidth(int nWidth);
 	int							GetBorderWidth() const;
-	
+
 	//BBS_SOLID
 	//BBS_DASH
 	//BBS_BEVELED
 	//BBS_INSET
 	//BBS_UNDERLINE
-	
+
 	void						SetBorderStyle(int nStyle);
 	int							GetBorderStyle() const;
-	
+
 	void						SetBorderDash(const CFX_IntArray& array);
 	void						GetBorderDash(CFX_IntArray& array) const;
-	
+
 	//The background of the annotation's icon when closed
 	//The title bar of the annotation's pop-up window
 	//The border of a link annotation
-	
+
 	void						SetColor(FX_COLORREF color);
 	void						RemoveColor();
 	FX_BOOL						GetColor(FX_COLORREF& color) const;
-	
+
 	FX_BOOL						IsVisible() const;
 	//action
 
 	CPDF_Action					GetAction() const;
 	void						SetAction(const CPDF_Action& a);
 	void						RemoveAction();
-	
+
 	CPDF_AAction				GetAAction() const;
 	void						SetAAction(const CPDF_AAction& aa);
 	void						RemoveAAction();
-	
+
 	virtual CPDF_Action			GetAAction(CPDF_AAction::AActionType eAAT);
-	
+
 public:
 	virtual FX_BOOL				IsAppearanceValid();
 	virtual FX_BOOL				IsAppearanceValid(CPDF_Annot::AppearanceMode mode);
@@ -199,11 +199,11 @@ public:
 		CPDF_Annot::AppearanceMode mode, const CPDF_RenderOptions* pOptions);
 	void						DrawBorder(CFX_RenderDevice* pDevice, const CPDF_Matrix* pUser2Device,
 		const CPDF_RenderOptions* pOptions);
-	
+
 	void						ClearCachedAP();
-	
+
 	virtual void				ResetAppearance();
-	void						WriteAppearance(const CFX_ByteString& sAPType, const CPDF_Rect& rcBBox, 
+	void						WriteAppearance(const CFX_ByteString& sAPType, const CPDF_Rect& rcBBox,
 		const CPDF_Matrix& matrix, const CFX_ByteString& sContents,
 		const CFX_ByteString& sAPState = "");
 
