@@ -111,7 +111,7 @@ protected:
 #define FPDFCREATE_NO_ORIGINAL		2
 #define FPDFCREATE_PROGRESSIVE		4
 #define FPDFCREATE_OBJECTSTREAM		8
-class CPDF_Creator 
+class CPDF_Creator
 {
 public:
 

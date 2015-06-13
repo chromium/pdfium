@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
@@ -28,7 +28,7 @@ class ICodec_BmpModule;
 class ICodec_TiffModule;
 class CFX_DIBAttribute;
 class ICodec_ScanlineDecoder;
-class CCodec_ModuleMgr 
+class CCodec_ModuleMgr
 {
 public:
 
@@ -109,7 +109,7 @@ protected:
     ICodec_TiffModule*	m_pTiffModule;
 
 };
-class ICodec_BasicModule 
+class ICodec_BasicModule
 {
 public:
 
@@ -121,7 +121,7 @@ public:
     virtual ICodec_ScanlineDecoder*	CreateRunLengthDecoder(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc) = 0;
 };
-class ICodec_ScanlineDecoder 
+class ICodec_ScanlineDecoder
 {
 public:
 
@@ -147,7 +147,7 @@ public:
 
     virtual void		ClearImageData() = 0;
 };
-class ICodec_FlateModule 
+class ICodec_FlateModule
 {
 public:
 
@@ -162,7 +162,7 @@ public:
                                uint8_t*& dest_buf, FX_DWORD& dest_size) = 0;
     virtual FX_BOOL		Encode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf, FX_DWORD& dest_size) = 0;
 };
-class ICodec_FaxModule 
+class ICodec_FaxModule
 {
 public:
 
@@ -175,7 +175,7 @@ public:
     virtual FX_BOOL		Encode(const uint8_t* src_buf, int width, int height, int pitch,
                                uint8_t*& dest_buf, FX_DWORD& dest_size) = 0;
 };
-class ICodec_JpegModule 
+class ICodec_JpegModule
 {
 public:
 
@@ -210,7 +210,7 @@ public:
 
     virtual FX_DWORD	GetAvailInput(void* pContext, uint8_t** avail_buf_ptr = NULL) = 0;
 };
-class ICodec_JpxModule 
+class ICodec_JpxModule
 {
 public:
 
@@ -317,7 +317,7 @@ public:
 
     virtual void		DestroyDecoder(void* ctx) = 0;
 };
-class ICodec_Jbig2Module 
+class ICodec_Jbig2Module
 {
 public:
 
@@ -366,13 +366,13 @@ public:
 
     virtual FXCODEC_STATUS		ContinueDecode(IFX_Pause* pPause = NULL) = 0;
 };
-class ICodec_Jbig2Encoder 
+class ICodec_Jbig2Encoder
 {
 public:
 
     virtual ~ICodec_Jbig2Encoder() {}
 };
-class ICodec_IccModule 
+class ICodec_IccModule
 {
 public:
     typedef enum {

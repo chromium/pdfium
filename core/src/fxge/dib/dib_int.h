@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FXGE_DIB_DIB_INT_H_
 #define CORE_SRC_FXGE_DIB_DIB_INT_H_
 
-class CPDF_FixedMatrix 
+class CPDF_FixedMatrix
 {
 public:
     CPDF_FixedMatrix(const CFX_AffineMatrix& src, int bits)
@@ -34,7 +34,7 @@ struct PixelWeight {
     int		m_SrcEnd;
     int		m_Weights[1];
 };
-class CWeightTable 
+class CWeightTable
 {
 public:
     CWeightTable()
@@ -56,7 +56,7 @@ public:
     int				m_DestMin, m_ItemSize;
     uint8_t*		m_pWeightTables;
 };
-class CStretchEngine 
+class CStretchEngine
 {
 public:
     CStretchEngine(IFX_ScanlineComposer* pDestBitmap, FXDIB_Format dest_format,

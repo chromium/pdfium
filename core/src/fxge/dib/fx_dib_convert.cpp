@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxge/fx_dib.h"
@@ -97,7 +97,7 @@ const FX_DWORD g_dwMacPalette[256] = {
     0xffEEEEEE, 0xffDDDDDD, 0xffBBBBBB, 0xffAAAAAA, 0xff888888, 0xff777777,
     0xff555555, 0xff444444, 0xff222222, 0xff111111, 0xff000000
 };
-class CFX_Palette 
+class CFX_Palette
 {
 public:
     CFX_Palette();

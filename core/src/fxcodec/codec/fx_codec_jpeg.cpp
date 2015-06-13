@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <setjmp.h>
@@ -214,7 +214,7 @@ static void _JpegEncode(const CFX_DIBSource* pSource, uint8_t*& dest_buf, FX_STR
         }
     }
     if (!dest_buf) {
-        FX_OutOfMemoryTerminate(); 
+        FX_OutOfMemoryTerminate();
     }
     struct jpeg_destination_mgr dest;
     dest.init_destination = _dest_do_nothing;

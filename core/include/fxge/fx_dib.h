@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FXGE_FX_DIB_H_
@@ -136,7 +136,7 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
 #define FXSETFLAG_COLORTYPE(flag, val)		flag = (((val)<<8)|(flag&0xffff00ff))
 #define FXSETFLAG_ALPHA_FILL(flag, val)		flag = ((val)|(flag&0xffffff00))
 #define FXSETFLAG_ALPHA_STROKE(flag, val)	flag = (((val)<<16)|(flag&0xff00ffff))
-class CFX_DIBSource 
+class CFX_DIBSource
 {
 public:
 
@@ -353,7 +353,7 @@ protected:
 
     FX_BOOL			GetGrayData(void* pIccTransform = NULL);
 };
-class CFX_DIBExtractor 
+class CFX_DIBExtractor
 {
 public:
 
@@ -408,7 +408,7 @@ public:
 
     virtual FX_BOOL		SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette) = 0;
 };
-class CFX_ScanlineCompositor 
+class CFX_ScanlineCompositor
 {
 public:
     CFX_ScanlineCompositor();
@@ -514,7 +514,7 @@ private:
     CFX_DIBitmap*		m_pBitmap;
 };
 class CStretchEngine;
-class CFX_ImageStretcher 
+class CFX_ImageStretcher
 {
 public:
 
@@ -551,7 +551,7 @@ public:
 
     int32_t		ContinueStretch(IFX_Pause* pPause);
 };
-class CFX_ImageTransformer 
+class CFX_ImageTransformer
 {
 public:
 
@@ -572,7 +572,7 @@ public:
     FX_DWORD	m_Flags;
     int			m_Status;
 };
-class CFX_ImageRenderer 
+class CFX_ImageRenderer
 {
 public:
 

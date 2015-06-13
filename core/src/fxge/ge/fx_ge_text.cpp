@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxge/fx_ge.h"
@@ -1337,7 +1337,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_inde
         load_flags |= FT_LOAD_NO_HINTING;
         error = FXFT_Load_Glyph(m_Face, glyph_index, load_flags);
 
-        if (error) { 
+        if (error) {
             return NULL;
         }
     }

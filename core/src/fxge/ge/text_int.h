@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_SRC_FXGE_GE_TEXT_INT_H_
@@ -12,7 +12,7 @@ struct _CFX_UniqueKeyGen {
     FX_CHAR		m_Key[128];
     int			m_KeyLen;
 };
-class CFX_SizeGlyphCache 
+class CFX_SizeGlyphCache
 {
 public:
     CFX_SizeGlyphCache()
@@ -22,7 +22,7 @@ public:
     ~CFX_SizeGlyphCache();
     CFX_MapPtrToPtr			m_GlyphMap;
 };
-class CTTFontDesc 
+class CTTFontDesc
 {
 public:
     CTTFontDesc()
@@ -74,7 +74,7 @@ private:
 #define CHARSET_FLAG_BIG5		8
 #define CHARSET_FLAG_GB			16
 #define CHARSET_FLAG_KOREAN		32
-class CFontFaceInfo 
+class CFontFaceInfo
 {
 public:
     CFX_ByteString		m_FilePath;
@@ -85,7 +85,7 @@ public:
     FX_DWORD			m_FileSize;
     CFX_ByteString		m_FontTables;
 };
-class CFontFileFaceInfo 
+class CFontFileFaceInfo
 {
 public:
     CFontFileFaceInfo();

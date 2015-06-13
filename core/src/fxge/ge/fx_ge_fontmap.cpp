@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits>
@@ -1351,7 +1351,7 @@ FX_BOOL CFX_FontMapper::IsBuiltinFace(const FXFT_Face face) const
         }
     }
     return FALSE;
-} 
+}
 extern "C" {
     unsigned long _FTStreamRead(FXFT_Stream stream, unsigned long offset,
                                 unsigned char* buffer, unsigned long count);

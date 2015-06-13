@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_SRC_FPDFDOC_PDF_VT_H_
@@ -215,7 +215,7 @@ public:
         }
     }
 };
-class CLine 
+class CLine
 {
 public:
     CLine();
@@ -282,7 +282,7 @@ private:
     CPVT_ArrayTemplate<CLine*>				m_Lines;
     int32_t								m_nTotal;
 };
-class CSection 
+class CSection
 {
     friend class CTypeset;
 public:

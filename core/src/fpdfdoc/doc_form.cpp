@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fpdfdoc/fpdf_doc.h"
@@ -10,7 +10,7 @@
 
 const int nMaxRecursion = 32;
 
-class _CFieldNameExtractor 
+class _CFieldNameExtractor
 {
 public:
     _CFieldNameExtractor(const CFX_WideString& full_name)
@@ -35,7 +35,7 @@ protected:
     const FX_WCHAR* m_pEnd;
     const FX_WCHAR* m_pCur;
 };
-class CFieldTree 
+class CFieldTree
 {
 public:
     struct _Node  {

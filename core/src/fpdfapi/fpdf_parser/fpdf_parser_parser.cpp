@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <utility>
@@ -1084,7 +1084,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL 
         FX_SAFE_DWORD dwCaculatedSize = segindex;
         dwCaculatedSize += count;
         dwCaculatedSize *= totalWidth;
-        if (!dwCaculatedSize.IsValid() || dwCaculatedSize.ValueOrDie() > dwTotalSize) { 
+        if (!dwCaculatedSize.IsValid() || dwCaculatedSize.ValueOrDie() > dwTotalSize) {
             continue;
         }
         const uint8_t* segstart = pData + segindex * totalWidth;
@@ -2390,7 +2390,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(CPDF_IndirectObjects* pObjList
             }
             if (key.GetLength() > 1) {
                 pDict->AddValue(CFX_ByteStringC(key.c_str() + 1, key.GetLength() - 1), pObj);
-            } 
+            }
         }
         if (pContext) {
             pContext->m_DictEnd = m_Pos;
@@ -3081,7 +3081,7 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(CFX_PtrArray& obj_array, FX_BOOL bParsePa
                     if (size.ValueOrDefault(0) == 0 || offset < 0 || offset >= m_dwFileLen) {
                         break;
                     }
-                    
+
                     size += offset;
                     size += 512;
                     if (!size.IsValid()) {
@@ -3291,14 +3291,14 @@ CPDF_Object* CPDF_DataAvail::GetObject(FX_DWORD objnum, IFX_DownloadHints* pHint
     FX_FILESIZE offset        = 0;
     CPDF_Parser *pParser      = NULL;
 
-    if (pExistInFile) { 
+    if (pExistInFile) {
         *pExistInFile = TRUE;
     }
 
     if (m_pDocument == NULL) {
         original_size = (FX_DWORD)m_parser.GetObjectSize(objnum);
         offset        = m_parser.GetObjectOffset(objnum);
-        pParser       = &m_parser; 
+        pParser       = &m_parser;
     } else {
         original_size = GetObjectSize(objnum, offset);
         pParser       = (CPDF_Parser *)(m_pDocument->GetParser());
@@ -3311,7 +3311,7 @@ CPDF_Object* CPDF_DataAvail::GetObject(FX_DWORD objnum, IFX_DownloadHints* pHint
 
         return NULL;
     }
- 
+
     size += offset;
     size += 512;
     if (!size.IsValid()) {
@@ -3340,7 +3340,7 @@ CPDF_Object* CPDF_DataAvail::GetObject(FX_DWORD objnum, IFX_DownloadHints* pHint
     if (!pRet && pExistInFile) {
         *pExistInFile = FALSE;
     }
- 
+
     return pRet;
 }
 

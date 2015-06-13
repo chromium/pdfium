@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits.h>
@@ -21,7 +21,7 @@ typedef enum {PSOP_ADD, PSOP_SUB, PSOP_MUL, PSOP_DIV, PSOP_IDIV, PSOP_MOD,
               PSOP_IF, PSOP_IFELSE, PSOP_POP, PSOP_EXCH, PSOP_DUP, PSOP_COPY,
               PSOP_INDEX, PSOP_ROLL, PSOP_PROC, PSOP_CONST
              } PDF_PSOP;
-class CPDF_PSProc 
+class CPDF_PSProc
 {
 public:
     ~CPDF_PSProc();
@@ -30,7 +30,7 @@ public:
     CFX_PtrArray		m_Operators;
 };
 #define PSENGINE_STACKSIZE 100
-class CPDF_PSEngine 
+class CPDF_PSEngine
 {
 public:
     CPDF_PSEngine();
@@ -565,7 +565,7 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const
     if (pSampleData == NULL) {
         return FALSE;
     }
-    FX_SAFE_INT32 bitpos1 = m_nOutputs - 1 > 0 ? m_nOutputs - 1 : 0; 
+    FX_SAFE_INT32 bitpos1 = m_nOutputs - 1 > 0 ? m_nOutputs - 1 : 0;
     bitpos1 *= m_nBitsPerSample;
     bitpos1 += bitpos.ValueOrDie();
     if (!bitpos1.IsValid()) {
@@ -584,7 +584,7 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const
                 bitpos2 += pos;
                 bitpos2 *= m_nOutputs;
                 bitpos2 += j;
-                bitpos2 *= m_nBitsPerSample; 
+                bitpos2 *= m_nBitsPerSample;
                 if (!bitpos2.IsValid()) {
                     return FALSE;
                 }

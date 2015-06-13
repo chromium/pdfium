@@ -167,7 +167,7 @@ IFX_FileStream*		FX_CreateFileStream(const FX_WCHAR* filename, FX_DWORD dwModes)
 class IFX_FileAccess
 {
 public:
-	virtual void				Release() = 0;	
+	virtual void				Release() = 0;
 	virtual IFX_FileAccess*		Retain() = 0;
 	virtual void				GetPath(CFX_WideString& wsPath) = 0;
 	virtual IFX_FileStream*		CreateFileStream(FX_DWORD dwModes) = 0;

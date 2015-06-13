@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_parser.h"
@@ -158,7 +158,7 @@ CPDF_Dictionary* CPDF_Object::GetDict() const
 }
 CPDF_Array* CPDF_Object::GetArray() const
 {
-    if (m_Type == PDFOBJ_ARRAY) 
+    if (m_Type == PDFOBJ_ARRAY)
         return (CPDF_Array*)this;
     else
         return NULL;
@@ -1274,9 +1274,9 @@ void CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum, CPDF_Object* pO
         {
             if (pObj->GetGenNum() <= ((CPDF_Object*)value)->GetGenNum())
                 return;
-            else 
+            else
                 ((CPDF_Object*)value)->Destroy();
-         }         
+         }
     }
     pObj->m_ObjNum = objnum;
     m_IndirectObjs.SetAt((void*)(uintptr_t)objnum, pObj);

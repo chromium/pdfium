@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <algorithm>
@@ -582,7 +582,7 @@ void color_apply_conversion(opj_image_t *image)
         return;
     }
 }
-class CJPX_Decoder 
+class CJPX_Decoder
 {
 public:
     CJPX_Decoder();

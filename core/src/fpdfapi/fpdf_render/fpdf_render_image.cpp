@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_module.h"
@@ -1018,8 +1018,8 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                 FX_SAFE_DWORD num_floats = comps;
                 num_floats *= sizeof(FX_FLOAT);
                 if (!num_floats.IsValid()) {
-                    return NULL;  
-                } 
+                    return NULL;
+                }
                 FXSYS_memset(pFloats, 0, num_floats.ValueOrDie());
                 int count = pBC->GetCount() > 8 ? 8 : pBC->GetCount();
                 for (int i = 0; i < count; i ++) {

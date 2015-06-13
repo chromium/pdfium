@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_
@@ -53,7 +53,7 @@ public:
 #define RENDER_NOPATHSMOOTH			0x20000000
 #define RENDER_NOIMAGESMOOTH		0x40000000
 #define RENDER_LIMITEDIMAGECACHE	0x80000000
-class CPDF_RenderOptions 
+class CPDF_RenderOptions
 {
 public:
 
@@ -79,7 +79,7 @@ public:
 
     FX_ARGB			TranslateColor(FX_ARGB argb) const;
 };
-class CPDF_RenderContext 
+class CPDF_RenderContext
 {
 public:
 
@@ -129,7 +129,7 @@ protected:
     friend class CPDF_RenderStatus;
     friend class CPDF_ProgressiveRenderer;
 };
-class CPDF_ProgressiveRenderer 
+class CPDF_ProgressiveRenderer
 {
 public:
 
@@ -186,7 +186,7 @@ protected:
 
     void				RenderStep();
 };
-class CPDF_TextRenderer 
+class CPDF_TextRenderer
 {
 public:
 
@@ -221,7 +221,7 @@ public:
                                   CPDF_Font* pFont, FX_FLOAT font_size, const CFX_AffineMatrix* pText2Device,
                                   FX_ARGB fill_argb);
 };
-class CPDF_PageRenderCache 
+class CPDF_PageRenderCache
 {
 public:
     CPDF_PageRenderCache(CPDF_Page* pPage)
@@ -279,7 +279,7 @@ protected:
     FX_DWORD			m_nCacheSize;
     FX_BOOL				m_bCurFindCache;
 };
-class CPDF_RenderConfig 
+class CPDF_RenderConfig
 {
 public:
     CPDF_RenderConfig();

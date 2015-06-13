@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef CORE_INCLUDE_FXCRT_FX_COORDINATES_H_
@@ -18,7 +18,7 @@ template<class baseType> class CFX_ATemplate;
 template<class baseType> class CFX_RRTemplate;
 class CFX_Matrix;
 template<class baseType>
-class CFX_PSVTemplate 
+class CFX_PSVTemplate
 {
 public:
     typedef CFX_PSVTemplate<baseType>	FXT_PSV;
@@ -610,7 +610,7 @@ struct FX_SMALL_RECT {
 
     int16_t	Bottom;
 };
-class CFX_FloatRect 
+class CFX_FloatRect
 {
 public:
 
@@ -755,7 +755,7 @@ public:
 
     FX_FLOAT			top;
 };
-class CFX_Matrix 
+class CFX_Matrix
 {
 public:
 
