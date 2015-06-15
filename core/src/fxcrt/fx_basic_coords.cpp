@@ -5,7 +5,10 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits.h>
+
+#include "../../include/fxcrt/fx_coordinates.h"
 #include "../../include/fxcrt/fx_ext.h"
+
 void FX_RECT::Normalize()
 {
     if (left > right) {

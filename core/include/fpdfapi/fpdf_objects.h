@@ -7,7 +7,8 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_
 
-#include "../fxcrt/fx_ext.h"
+#include "../fxcrt/fx_coordinates.h"
+#include "../fxcrt/fx_system.h"
 
 class CPDF_Array;
 class CPDF_Boolean;

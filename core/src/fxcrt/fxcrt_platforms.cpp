@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_ext.h"
+#include "../../include/fxcrt/fx_basic.h"
 #include "fxcrt_platforms.h"
+
 #if (_FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_ && _FXM_PLATFORM_ != _FXM_PLATFORM_LINUX_ && _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_ && _FXM_PLATFORM_ != _FXM_PLATFORM_ANDROID_)
 IFXCRT_FileAccess* FXCRT_FileAccess_Create()
 {

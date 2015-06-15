@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FXGE_FPF_H_
 #define CORE_INCLUDE_FXGE_FPF_H_
 
+#include "../fxcrt/fx_coordinates.h"
+
 class IFPF_DeviceModule;
 class IFPF_FontMgr;
 class IFPF_Font;

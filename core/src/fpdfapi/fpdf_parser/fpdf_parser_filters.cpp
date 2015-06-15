@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../fx_zlib.h"
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
+#include "../../fx_zlib.h"
 #include "filters_int.h"
+
 CFX_DataFilter::CFX_DataFilter()
 {
     m_bEOF = FALSE;

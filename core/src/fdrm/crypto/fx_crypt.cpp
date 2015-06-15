@@ -5,8 +5,6 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fdrm/fx_crypt.h"
-#include "../../../include/fxcrt/fx_basic.h"
-#include "../../../include/fxcrt/fx_safe_types.h"
 
 #ifdef __cplusplus
 extern "C" {

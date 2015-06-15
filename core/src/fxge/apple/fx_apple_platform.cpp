@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxcrt/fx_ext.h"
+#include "../../../include/fxcrt/fx_system.h"
 #include "../../../include/fxge/fx_ge.h"
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
 #include "apple_int.h"

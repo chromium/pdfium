@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 
-#include "../fxcrt/fx_ext.h"
+#include "../fxcrt/fx_system.h"
 #include "fpdf_objects.h"
 
 class CPDF_Document;

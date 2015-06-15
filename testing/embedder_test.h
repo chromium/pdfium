@@ -7,7 +7,6 @@
 
 #include <string>
 
-#include "../core/include/fxcrt/fx_system.h"
 #include "../public/fpdf_dataavail.h"
 #include "../public/fpdf_ext.h"
 #include "../public/fpdf_formfill.h"

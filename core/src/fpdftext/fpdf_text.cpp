@@ -7,8 +7,11 @@
 #include "../../include/fpdfapi/fpdf_page.h"
 #include "../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../include/fpdftext/fpdf_text.h"
-#include "txtproc.h"
+#include "../../include/fxcrt/fx_arb.h"
+#include "../../include/fxcrt/fx_ucd.h"
 #include "text_int.h"
+#include "txtproc.h"
+
 extern const FX_CHAR* FCS_GetAltStr(FX_WCHAR);
 CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode, int destcp, const FX_CHAR* defchar)
 {

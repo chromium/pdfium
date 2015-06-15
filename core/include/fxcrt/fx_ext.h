@@ -7,11 +7,7 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_EXT_H_
 #define CORE_INCLUDE_FXCRT_FX_EXT_H_
 
-#include "fx_arb.h"
-#include "fx_basic.h"
-#include "fx_coordinates.h"
-#include "fx_ucd.h"
-#include "fx_xml.h"
+#include "fx_system.h"
 
 #ifdef __cplusplus
 extern "C" {

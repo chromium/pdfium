@@ -1,18 +1,19 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef _JBIG2_GENERAL_DECODER_H_
 #define _JBIG2_GENERAL_DECODER_H_
+
 #include "../../../include/fxcodec/fx_codec_def.h"
-#include "../../../include/fxcrt/fx_basic.h"
-#include "JBig2_Define.h"
-#include "JBig2_SymbolDict.h"
+#include "../../../include/fxcrt/fx_coordinates.h"
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_ArithIntDecoder.h"
-#include "../../../include/fxcrt/fx_coordinates.h"
+#include "JBig2_Define.h"
+#include "JBig2_SymbolDict.h"
+
 class CJBig2_HuffmanTable;
 class CJBig2_Image;
 class CJBig2_PatternDict;

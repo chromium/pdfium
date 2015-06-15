@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 #define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 
-#include "../fxcrt/fx_ext.h"
+#include "../fxcrt/fx_basic.h"
 #include "fx_codec_def.h"
 #include "fx_codec_provider.h"
 

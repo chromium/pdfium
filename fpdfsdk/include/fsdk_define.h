@@ -12,25 +12,17 @@
 #include <math.h>
 #endif
 
-#include "../../core/include/fpdfapi/fpdf_parser.h"
-#include "../../core/include/fpdfapi/fpdfapi.h"
-#include "../../core/include/fpdfapi/fpdf_parser.h"
 #include "../../core/include/fpdfapi/fpdf_module.h"
-#include "../../core/include/fpdfapi/fpdf_render.h"
 #include "../../core/include/fpdfapi/fpdf_pageobj.h"
+#include "../../core/include/fpdfapi/fpdf_parser.h"
+#include "../../core/include/fpdfapi/fpdf_parser.h"
+#include "../../core/include/fpdfapi/fpdf_render.h"
 #include "../../core/include/fpdfapi/fpdf_serial.h"
-
-#include "../../core/include/fpdftext/fpdf_text.h"
-
-#include "../../core/include/fxge/fx_ge_win32.h"
-#include "../../core/include/fxge/fx_ge.h"
-
-#include "../../core/include/fxcodec/fx_codec.h"
-
+#include "../../core/include/fpdfapi/fpdfapi.h"
 #include "../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../core/include/fpdfdoc/fpdf_vt.h"
-
-#include "../../core/include/fxcrt/fx_xml.h"
+#include "../../core/include/fxge/fx_ge.h"
+#include "../../core/include/fxge/fx_ge_win32.h"
 
 
 #ifndef FX_GetAValue

@@ -7,11 +7,11 @@
 #ifndef CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
 #define CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
 
-#include "../fpdfapi/fpdf_page.h"
-#include "../fpdfapi/fpdf_pageobj.h"
 #include "../fpdfapi/fpdf_parser.h"
 
+class CPDF_Page;
 class CPDF_PageObjects;
+class CPDF_TextObject;
 class IPDF_LinkExtract;
 class IPDF_ReflowedPage;
 class IPDF_TextPage;

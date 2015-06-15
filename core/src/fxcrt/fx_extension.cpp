@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../include/fxcrt/fx_basic.h"
 #include "../../include/fxcrt/fx_ext.h"
 #include "extension.h"
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -11,6 +12,7 @@
 #else
 #include <ctime>
 #endif
+
 FX_HFILE FX_File_Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode)
 {
     IFXCRT_FileAccess* pFA = FXCRT_FileAccess_Create();

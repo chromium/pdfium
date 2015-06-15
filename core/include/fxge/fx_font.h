@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FXGE_FX_FONT_H_
 #define CORE_INCLUDE_FXGE_FX_FONT_H_
 
-#include "../fxcrt/fx_ext.h"
+#include "../fxcrt/fx_system.h"
 #include "fx_dib.h"
 
 typedef struct FT_FaceRec_* FXFT_Face;

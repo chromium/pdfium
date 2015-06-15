@@ -7,7 +7,6 @@
 #ifndef CORE_INCLUDE_FPDFDOC_FPDF_AP_H_
 #define CORE_INCLUDE_FPDFDOC_FPDF_AP_H_
 
-#include "../fxcrt/fx_basic.h"
 #include "../fpdfapi/fpdf_parser.h"
 #include "fpdf_vt.h"
 

@@ -6,7 +6,6 @@
 
 #include <limits.h>
 
-#include "../../../include/fxcrt/fx_basic.h"
 #include "../../../include/fxcrt/fx_coordinates.h"
 #include "../../../include/fxcrt/fx_safe_types.h"
 #include "JBig2_Image.h"

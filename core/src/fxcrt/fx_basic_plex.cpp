@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_basic.h"
+#include "../../include/fxcrt/fx_memory.h"
 #include "plex.h"
+
 CFX_Plex* CFX_Plex::Create(CFX_Plex*& pHead, FX_DWORD nMax, FX_DWORD cbElement)
 {
     CFX_Plex* p = (CFX_Plex*)FX_Alloc(uint8_t, sizeof(CFX_Plex) + nMax * cbElement);

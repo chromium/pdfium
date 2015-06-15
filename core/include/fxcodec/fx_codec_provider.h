@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_PROVIDER_H_
 #define CORE_INCLUDE_FXCODEC_FX_CODEC_PROVIDER_H_
 
+#include "../fxcrt/fx_system.h"
+
 class IFX_JpegProvider
 {
 public:

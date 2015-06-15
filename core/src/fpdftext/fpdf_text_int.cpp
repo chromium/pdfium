@@ -4,13 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfapi/fpdf_resource.h"
-#include "../../include/fpdfapi/fpdf_pageobj.h"
-#include "../../include/fpdftext/fpdf_text.h"
-#include "../../include/fpdfapi/fpdf_page.h"
-#include "../../include/fpdfapi/fpdf_module.h"
 #include <ctype.h>
 #include <algorithm>
+
+#include "../../include/fpdfapi/fpdf_module.h"
+#include "../../include/fpdfapi/fpdf_page.h"
+#include "../../include/fpdfapi/fpdf_pageobj.h"
+#include "../../include/fpdfapi/fpdf_resource.h"
+#include "../../include/fpdftext/fpdf_text.h"
+#include "../../include/fxcrt/fx_arb.h"
+#include "../../include/fxcrt/fx_ucd.h"
 #include "text_int.h"
 
 namespace {

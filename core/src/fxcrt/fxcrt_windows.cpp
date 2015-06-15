@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_ext.h"
+#include "../../include/fxcrt/fx_string.h"
 #include "fxcrt_windows.h"
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 FX_BOOL FX_File_Exist(const CFX_ByteStringC& fileName)
 {

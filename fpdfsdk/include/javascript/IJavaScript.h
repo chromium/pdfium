@@ -7,7 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
 #define FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
 
-#include "../../../core/include/fxcrt/fx_basic.h"
+#include "../../../core/include/fxcrt/fx_string.h"
+#include "../../../core/include/fxcrt/fx_system.h"
 
 class CPDF_Bookmark;
 class CPDF_FormField;

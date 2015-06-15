@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_ext.h"
+#include "../../include/fxcrt/fx_basic.h"
 #include "plex.h"
+
 static void ConstructElement(CFX_ByteString* pNewData)
 {
     new (pNewData) CFX_ByteString();

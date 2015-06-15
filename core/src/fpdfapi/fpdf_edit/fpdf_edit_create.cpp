@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../include/fxcrt/fx_ext.h"
 #include "../../../include/fpdfapi/fpdf_serial.h"
 #include "editint.h"
+
 #define PDF_OBJECTSTREAM_MAXLENGTH	(256 * 1024)
 #define PDF_XREFSTREAM_MAXSIZE		10000
 extern void FlateEncode(const uint8_t* src_buf, FX_DWORD src_data, uint8_t*& dest_buf, FX_DWORD& dest_size);

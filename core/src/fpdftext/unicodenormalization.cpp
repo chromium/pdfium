@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdftext/fpdf_text.h"
+#include "../../include/fxcrt/fx_string.h"
+
 extern const FX_WCHAR g_UnicodeData_Normalization[];
 extern const FX_WCHAR g_UnicodeData_Normalization_Map1[];
 extern const FX_WCHAR g_UnicodeData_Normalization_Map2[];

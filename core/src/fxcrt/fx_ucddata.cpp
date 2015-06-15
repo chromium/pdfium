@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_ext.h"
+#include "../../include/fxcrt/fx_system.h"
+
 extern const FX_DWORD gs_FX_TextLayout_CodeProperties[65536] = {
     0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe8ae5, 0xfffe9b5c, 0xfffe9ada, 0xfffe9b1a, 0xfffe9b5b, 0xfffe9a93, 0xfffe9a93,
     0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9b53, 0xfffe9b53, 0xfffe9b53, 0xfffe9ad3,

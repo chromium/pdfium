@@ -8,7 +8,6 @@
 #define CORE_INCLUDE_FPDFDOC_FPDF_VT_H_
 
 #include "../fpdfapi/fpdf_parser.h"
-#include "../fxcrt/fx_basic.h"
 #include "../fxge/fx_dib.h"
 
 class IPDF_VariableText;

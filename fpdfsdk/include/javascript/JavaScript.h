@@ -10,13 +10,11 @@
 #include <string>
 #include <vector>
 
-#include "../../../core/include/fdrm/fx_crypt.h"
 #include "../../../core/include/fpdfapi/fpdf_module.h"
 #include "../../../core/include/fpdfapi/fpdf_pageobj.h"
 #include "../../../core/include/fpdfapi/fpdf_serial.h"
 #include "../../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../../core/include/fpdfdoc/fpdf_vt.h"
-#include "../../../core/include/fxcrt/fx_xml.h"
 #include "../fsdk_mgr.h"
 #include "../fx_systemhandler.h"
 #include "../fxedit/fx_edit.h"
