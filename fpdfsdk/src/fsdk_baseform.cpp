@@ -126,19 +126,6 @@ CPDF_FormControl* CPDFSDK_Widget::GetFormControl() const
 
 	return pPDFInterForm->GetControlByDict(GetAnnotDict());
 }
-static CPDF_Dictionary* BF_GetField(CPDF_Dictionary* pFieldDict, const FX_CHAR* name)
-{
-	if (pFieldDict == NULL) return NULL;
-	// First check the dictionary itself
-	CPDF_Object* pAttr = pFieldDict->GetElementValue(name);
-	if (pAttr) return pFieldDict;
-
-	// Now we need to search from parents
-	CPDF_Dictionary* pParent = pFieldDict->GetDict("Parent");
-	if (pParent == NULL) return NULL;
-
-	return BF_GetField(pParent, name);
-}
 
 CPDF_FormControl* CPDFSDK_Widget::GetFormControl(CPDF_InterForm* pInterForm, CPDF_Dictionary* pAnnotDict)
 {
