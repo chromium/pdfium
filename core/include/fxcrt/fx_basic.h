@@ -228,58 +228,61 @@ protected:
     const uint8_t*				m_pLoadingBuf;
 
     FX_DWORD				m_LoadingSize;
+
 };
+
 class IFX_BufferArchive
 {
 public:
     IFX_BufferArchive(FX_STRSIZE size);
-    virtual ~IFX_BufferArchive() { }
+    virtual ~IFX_BufferArchive() {}
 
-    virtual void			Clear();
+    virtual void Clear();
 
+    FX_BOOL Flush();
 
-    FX_BOOL					Flush();
+    int32_t AppendBlock(const void* pBuf, size_t size);
 
+    int32_t AppendByte(uint8_t byte);
 
-    int32_t				AppendBlock(const void* pBuf, size_t size);
-
-    int32_t				AppendByte(uint8_t byte);
-
-    int32_t				AppendDWord(FX_DWORD i);
+    int32_t AppendDWord(FX_DWORD i);
 
 
-    int32_t				AppendString(const CFX_ByteStringC& lpsz);
+    int32_t AppendString(const CFX_ByteStringC& lpsz);
 
 protected:
 
-    virtual	FX_BOOL			DoWork(const void* pBuf, size_t size) = 0;
+    virtual FX_BOOL DoWork(const void* pBuf, size_t size) = 0;
 
-    FX_STRSIZE				m_BufSize;
+    FX_STRSIZE m_BufSize;
 
-    uint8_t*				m_pBuffer;
+    uint8_t* m_pBuffer;
 
-    FX_STRSIZE				m_Length;
+    FX_STRSIZE m_Length;
 };
+
 class CFX_FileBufferArchive : public IFX_BufferArchive
 {
 public:
     CFX_FileBufferArchive(FX_STRSIZE size = 32768);
     ~CFX_FileBufferArchive() override;
-    virtual void			Clear();
 
-    FX_BOOL					AttachFile(IFX_StreamWrite *pFile, FX_BOOL bTakeover = FALSE);
+    void Clear() override;
 
-    FX_BOOL					AttachFile(const FX_WCHAR* filename);
+    FX_BOOL AttachFile(IFX_StreamWrite *pFile, FX_BOOL bTakeover = FALSE);
 
-    FX_BOOL					AttachFile(const FX_CHAR* filename);
+    FX_BOOL AttachFile(const FX_WCHAR* filename);
+
+    FX_BOOL AttachFile(const FX_CHAR* filename);
+
 private:
+    FX_BOOL DoWork(const void* pBuf, size_t size) override;
 
-    virtual FX_BOOL			DoWork(const void* pBuf, size_t size);
+    IFX_StreamWrite* m_pFile;
 
-    IFX_StreamWrite			*m_pFile;
-
-    FX_BOOL					m_bTakeover;
+    FX_BOOL m_bTakeover;
 };
+
 struct CFX_CharMap {
 
     static CFX_CharMap*		GetDefaultMapper(int32_t codepage = 0);
