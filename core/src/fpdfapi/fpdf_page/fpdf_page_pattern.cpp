@@ -97,7 +97,7 @@ void CPDF_ShadingPattern::Clear()
         }
         m_pFunctions[i] = NULL;
     }
-    CPDF_ColorSpace* pCS = m_pCountedCS ? m_pCountedCS->m_Obj : NULL;
+    CPDF_ColorSpace* pCS = m_pCountedCS ? m_pCountedCS->get() : NULL;
     if (pCS && m_pDocument) {
         m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
     }
