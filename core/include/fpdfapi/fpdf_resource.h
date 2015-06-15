@@ -7,6 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_RESOURCE_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_RESOURCE_H_
 
+#include "../fxcrt/fx_system.h"
 #include "../fxge/fx_font.h"
 #include "fpdf_parser.h"
 
@@ -37,14 +38,29 @@ class CPDF_Type1Font;
 class CPDF_Type3Font;
 typedef struct FT_FaceRec_* FXFT_Face;
 
-template <class ObjClass> class CPDF_CountedObject
+template <class T> class CPDF_CountedObject
 {
 public:
-    ObjClass	m_Obj;
-    FX_DWORD	m_nCount;
+    explicit CPDF_CountedObject(T* ptr) : m_nCount(1), m_pObj(ptr) { }
+    void reset(T* ptr) {  // CAUTION: tosses prior ref counts.
+        m_nCount = 1;
+        m_pObj = ptr;
+    }
+    void clear() {  // Now you're all weak ptrs ...
+        delete m_pObj;
+        m_pObj = nullptr;
+    }
+    T* get() const { return m_pObj; }
+    T* AddRef() { FXSYS_assert(m_pObj); ++m_nCount; return m_pObj; }
+    void RemoveRef() { if (m_nCount) --m_nCount; }
+    size_t use_count() const { return m_nCount; }
+
+protected:
+    size_t m_nCount;
+    T* m_pObj;
 };
-using CPDF_CountedColorSpace = CPDF_CountedObject<CPDF_ColorSpace*>;
-using CPDF_CountedPattern = CPDF_CountedObject<CPDF_Pattern*>;
+using CPDF_CountedColorSpace = CPDF_CountedObject<CPDF_ColorSpace>;
+using CPDF_CountedPattern = CPDF_CountedObject<CPDF_Pattern>;
 
 #define PDFFONT_TYPE1			1
 #define PDFFONT_TRUETYPE		2

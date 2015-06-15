@@ -52,8 +52,8 @@ public:
     CFX_DIBSource*	TranslateImage(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc);
     FX_COLORREF		TranslateColor(FX_COLORREF src);
 };
-typedef CFX_MapPtrTemplate<CPDF_Font*, CPDF_CountedObject<CPDF_Type3Cache*>*> CPDF_Type3CacheMap;
-typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedObject<CPDF_TransferFunc*>*> CPDF_TransferFuncMap;
+typedef CFX_MapPtrTemplate<CPDF_Font*, CPDF_CountedObject<CPDF_Type3Cache>*> CPDF_Type3CacheMap;
+typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedObject<CPDF_TransferFunc>*> CPDF_TransferFuncMap;
 class CPDF_DocRenderData
 {
 public:

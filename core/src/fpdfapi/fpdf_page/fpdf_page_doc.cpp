@@ -145,45 +145,43 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
 
     for (auto& it : m_PatternMap) {
         CPDF_CountedPattern* ptData = it.second;
-        if (!ptData->m_Obj)
+        if (!ptData->get())
             continue;
 
-        if (bForceRelease || ptData->m_nCount < 2) {
-            ptData->m_Obj->SetForceClear(bForceRelease);
-            delete ptData->m_Obj;
-            ptData->m_Obj = nullptr;
+        if (bForceRelease || ptData->use_count() < 2) {
+            ptData->get()->SetForceClear(bForceRelease);
+            ptData->clear();
         }
     }
 
     for (auto& it : m_FontMap) {
         CPDF_CountedFont* fontData = it.second;
-        if (!fontData->m_Obj)
+        if (!fontData->get())
             continue;
 
-        if (bForceRelease || fontData->m_nCount < 2) {
-            delete fontData->m_Obj;
-            fontData->m_Obj = nullptr;
+        if (bForceRelease || fontData->use_count() < 2) {
+            fontData->clear();
         }
     }
 
     for (auto& it : m_ColorSpaceMap) {
         CPDF_CountedColorSpace* csData = it.second;
-        if (!csData->m_Obj)
+        if (!csData->get())
             continue;
 
-        if (bForceRelease || csData->m_nCount < 2) {
-            csData->m_Obj->ReleaseCS();
-            csData->m_Obj = nullptr;
+        if (bForceRelease || csData->use_count() < 2) {
+            csData->get()->ReleaseCS();
+            csData->reset(nullptr);
         }
     }
 
     for (auto it = m_IccProfileMap.begin(); it != m_IccProfileMap.end();) {
         auto curr_it = it++;
         CPDF_CountedIccProfile* ipData = curr_it->second;
-        if (!ipData->m_Obj)
+        if (!ipData->get())
             continue;
 
-        if (bForceRelease || ipData->m_nCount < 2) {
+        if (bForceRelease || ipData->use_count() < 2) {
             CPDF_Stream* ipKey = curr_it->first;
             FX_POSITION pos2 = m_HashProfileMap.GetStartPosition();
             while (pos2) {
@@ -195,7 +193,7 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
                     break;
                 }
             }
-            delete ipData->m_Obj;
+            delete ipData->get();
             delete ipData;
             m_IccProfileMap.erase(curr_it);
         }
@@ -204,11 +202,11 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
     for (auto it = m_FontFileMap.begin(); it != m_FontFileMap.end();) {
         auto curr_it = it++;
         CPDF_CountedStreamAcc* ftData = curr_it->second;
-        if (!ftData->m_Obj)
+        if (!ftData->get())
             continue;
 
-        if (bForceRelease || ftData->m_nCount < 2) {
-            delete ftData->m_Obj;
+        if (bForceRelease || ftData->use_count() < 2) {
+            delete ftData->get();
             delete ftData;
             m_FontFileMap.erase(curr_it);
         }
@@ -217,11 +215,11 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
     for (auto it = m_ImageMap.begin(); it != m_ImageMap.end();) {
         auto curr_it = it++;
         CPDF_CountedImage* imageData = curr_it->second;
-        if (!imageData->m_Obj)
+        if (!imageData->get())
             continue;
 
-        if (bForceRelease || imageData->m_nCount < 2) {
-            delete imageData->m_Obj;
+        if (bForceRelease || imageData->use_count() < 2) {
+            delete imageData->get();
             delete imageData;
             m_ImageMap.erase(curr_it);
         }
@@ -235,13 +233,8 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnl
     }
     if (findOnly) {
         auto it = m_FontMap.find(pFontDict);
-        if (it != m_FontMap.end()) {
-            CPDF_CountedFont* fontData = it->second;
-            if (!fontData->m_Obj)
-                return nullptr;
-
-            fontData->m_nCount++;
-            return fontData->m_Obj;
+        if (it != m_FontMap.end() && it->second->get()) {
+            return it->second->AddRef();
         }
         return nullptr;
     }
@@ -250,28 +243,22 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnl
     auto it = m_FontMap.find(pFontDict);
     if (it != m_FontMap.end()) {
         fontData = it->second;
-        if (fontData->m_Obj) {
-            fontData->m_nCount++;
-            return fontData->m_Obj;
+        if (fontData->get()) {
+            return fontData->AddRef();
         }
     }
 
-    FX_BOOL bNew = FALSE;
-    if (!fontData) {
-        fontData = new CPDF_CountedFont;
-        bNew = TRUE;
-    }
     CPDF_Font* pFont = CPDF_Font::CreateFontF(m_pPDFDoc, pFontDict);
     if (!pFont) {
-        if (bNew)
-            delete fontData;
         return nullptr;
     }
-    fontData->m_nCount = 2;
-    fontData->m_Obj = pFont;
-    if (bNew)
+    if (!fontData) {
+        fontData = new CPDF_CountedFont(pFont);
         m_FontMap[pFontDict] = fontData;
-    return pFont;
+    } else {
+        fontData->reset(pFont);
+    }
+    return fontData->AddRef();
 }
 
 CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteStringC& fontName, CPDF_FontEncoding* pEncoding)
@@ -281,7 +268,7 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteStringC& fontName, CP
 
     for (auto& it : m_FontMap) {
         CPDF_CountedFont* fontData = it.second;
-        CPDF_Font* pFont = fontData->m_Obj;
+        CPDF_Font* pFont = fontData->get();
         if (!pFont)
             continue;
         if (pFont->GetBaseFont() != fontName)
@@ -297,8 +284,7 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteStringC& fontName, CP
         if (pEncoding && !pT1Font->GetEncoding()->IsIdentical(pEncoding))
             continue;
 
-        fontData->m_nCount++;
-        return pFont;
+        return fontData->AddRef();
     }
 
     CPDF_Dictionary* pDict = new CPDF_Dictionary;
@@ -309,16 +295,13 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteStringC& fontName, CP
         pDict->SetAt(FX_BSTRC("Encoding"), pEncoding->Realize());
     }
     m_pPDFDoc->AddIndirectObject(pDict);
-    CPDF_CountedFont* fontData = new CPDF_CountedFont;
     CPDF_Font* pFont = CPDF_Font::CreateFontF(m_pPDFDoc, pDict);
     if (!pFont) {
-        delete fontData;
         return nullptr;
     }
-    fontData->m_nCount = 2;
-    fontData->m_Obj = pFont;
+    CPDF_CountedFont* fontData = new CPDF_CountedFont(pFont);
     m_FontMap[pDict] = fontData;
-    return pFont;
+    return fontData->AddRef();
 }
 
 void CPDF_DocPageData::ReleaseFont(CPDF_Dictionary* pFontDict)
@@ -331,9 +314,11 @@ void CPDF_DocPageData::ReleaseFont(CPDF_Dictionary* pFontDict)
         return;
 
     CPDF_CountedFont* fontData = it->second;
-    if (fontData->m_Obj && --fontData->m_nCount == 0) {
-        delete fontData->m_Obj;
-        fontData->m_Obj = nullptr;
+    if (fontData->get()) {
+        fontData->RemoveRef();
+        if (fontData->use_count() == 0) {
+            fontData->clear();
+        }
     }
 }
 
@@ -389,9 +374,8 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(CPDF_Object* pCSObj, CPDF_Dicti
     auto it = m_ColorSpaceMap.find(pCSObj);
     if (it != m_ColorSpaceMap.end()) {
         csData = it->second;
-        if (csData->m_Obj) {
-            csData->m_nCount++;
-            return csData->m_Obj;
+        if (csData->get()) {
+            return csData->AddRef();
         }
     }
 
@@ -400,12 +384,12 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(CPDF_Object* pCSObj, CPDF_Dicti
         return nullptr;
 
     if (!csData) {
-        csData = new CPDF_CountedColorSpace;
+        csData = new CPDF_CountedColorSpace(pCS);
         m_ColorSpaceMap[pCSObj] = csData;
+    } else {
+        csData->reset(pCS);
     }
-    csData->m_nCount = 2;
-    csData->m_Obj = pCS;
-    return pCS;
+    return csData->AddRef();
 }
 
 CPDF_ColorSpace* CPDF_DocPageData::GetCopiedColorSpace(CPDF_Object* pCSObj)
@@ -414,15 +398,10 @@ CPDF_ColorSpace* CPDF_DocPageData::GetCopiedColorSpace(CPDF_Object* pCSObj)
         return nullptr;
 
     auto it = m_ColorSpaceMap.find(pCSObj);
-    if (it == m_ColorSpaceMap.end())
-        return nullptr;
+    if (it != m_ColorSpaceMap.end())
+        return it->second->AddRef();
 
-    CPDF_CountedColorSpace* csData = it->second;
-    if (!csData->m_Obj)
-        return nullptr;
-
-    csData->m_nCount++;
-    return csData->m_Obj;
+    return nullptr;
 }
 
 void CPDF_DocPageData::ReleaseColorSpace(CPDF_Object* pColorSpace)
@@ -435,9 +414,12 @@ void CPDF_DocPageData::ReleaseColorSpace(CPDF_Object* pColorSpace)
         return;
 
     CPDF_CountedColorSpace* csData = it->second;
-    if (csData->m_Obj && --csData->m_nCount == 0) {
-        csData->m_Obj->ReleaseCS();
-        csData->m_Obj = nullptr;
+    if (csData->get()) {
+        csData->RemoveRef();
+        if (csData->use_count() == 0) {
+            csData->get()->ReleaseCS();
+            csData->reset(nullptr);
+        }
     }
 }
 
@@ -450,9 +432,8 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj, FX_BOOL bSh
     auto it = m_PatternMap.find(pPatternObj);
     if (it != m_PatternMap.end()) {
         ptData = it->second;
-        if (ptData->m_Obj) {
-            ptData->m_nCount++;
-            return ptData->m_Obj;
+        if (ptData->get()) {
+            return ptData->AddRef();
         }
     }
     CPDF_Pattern* pPattern = nullptr;
@@ -473,12 +454,12 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj, FX_BOOL bSh
         return nullptr;
 
     if (!ptData) {
-        ptData = new CPDF_CountedPattern;
+        ptData = new CPDF_CountedPattern(pPattern);
         m_PatternMap[pPatternObj] = ptData;
+    } else {
+        ptData->reset(pPattern);
     }
-    ptData->m_nCount = 2;
-    ptData->m_Obj = pPattern;
-    return pPattern;
+    return ptData->AddRef();
 }
 
 void CPDF_DocPageData::ReleasePattern(CPDF_Object* pPatternObj)
@@ -491,9 +472,11 @@ void CPDF_DocPageData::ReleasePattern(CPDF_Object* pPatternObj)
         return;
 
     CPDF_CountedPattern* ptData = it->second;
-    if (ptData->m_Obj && --ptData->m_nCount == 0) {
-        delete ptData->m_Obj;
-        ptData->m_Obj = nullptr;
+    if (ptData->get()) {
+        ptData->RemoveRef();
+        if (ptData->use_count() == 0) {
+            ptData->clear();
+        }
     }
 }
 
@@ -505,17 +488,15 @@ CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream)
     const FX_DWORD dwImageObjNum = pImageStream->GetObjNum();
     auto it = m_ImageMap.find(dwImageObjNum);
     if (it != m_ImageMap.end()) {
-        CPDF_CountedImage* imageData = it->second;
-        imageData->m_nCount++;
-        return imageData->m_Obj;
+        return it->second->AddRef();
     }
-    CPDF_CountedImage* imageData = new CPDF_CountedImage;
+
     CPDF_Image* pImage = new CPDF_Image(m_pPDFDoc);
     pImage->LoadImageF((CPDF_Stream*)pImageStream, FALSE);
-    imageData->m_nCount = 2;
-    imageData->m_Obj = pImage;
+
+    CPDF_CountedImage* imageData = new CPDF_CountedImage(pImage);
     m_ImageMap[dwImageObjNum] = imageData;
-    return pImage;
+    return imageData->AddRef();
 }
 
 void CPDF_DocPageData::ReleaseImage(CPDF_Object* pImageStream)
@@ -531,8 +512,9 @@ void CPDF_DocPageData::ReleaseImage(CPDF_Object* pImageStream)
     if (!image)
         return;
 
-    if ((--image->m_nCount) == 0) {
-        delete image->m_Obj;
+    image->RemoveRef();
+    if (image->use_count() == 0) {
+        delete image->get();
         delete image;
         m_ImageMap.erase(it);
     }
@@ -545,9 +527,7 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream)
 
     auto it = m_IccProfileMap.find(pIccProfileStream);
     if (it != m_IccProfileMap.end()) {
-        CPDF_CountedIccProfile* ipData = it->second;
-        ipData->m_nCount++;
-        return ipData->m_Obj;
+        return it->second->AddRef();
     }
 
     CPDF_StreamAcc stream;
@@ -557,17 +537,13 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream)
     CRYPT_SHA1Generate(stream.GetData(), stream.GetSize(), digest);
     if (m_HashProfileMap.Lookup(CFX_ByteStringC(digest, 20), (void*&)pCopiedStream)) {
         auto it_copied_stream = m_IccProfileMap.find(pCopiedStream);
-        CPDF_CountedIccProfile* ipData = it_copied_stream->second;
-        ipData->m_nCount++;
-        return ipData->m_Obj;
+        return it_copied_stream->second->AddRef();
     }
     CPDF_IccProfile* pProfile = new CPDF_IccProfile(stream.GetData(), stream.GetSize());
-    CPDF_CountedIccProfile* ipData = new CPDF_CountedIccProfile;
-    ipData->m_nCount = 2;
-    ipData->m_Obj = pProfile;
+    CPDF_CountedIccProfile* ipData = new CPDF_CountedIccProfile(pProfile);
     m_IccProfileMap[pIccProfileStream] = ipData;
     m_HashProfileMap.SetAt(CFX_ByteStringC(digest, 20), pIccProfileStream);
-    return pProfile;
+    return ipData->AddRef();
 }
 
 void CPDF_DocPageData::ReleaseIccProfile(CPDF_IccProfile* pIccProfile)
@@ -576,11 +552,12 @@ void CPDF_DocPageData::ReleaseIccProfile(CPDF_IccProfile* pIccProfile)
 
     for (auto it = m_IccProfileMap.begin(); it != m_IccProfileMap.end(); ++it) {
         CPDF_CountedIccProfile* profile = it->second;
-        if (profile->m_Obj != pIccProfile)
+        if (profile->get() != pIccProfile)
             continue;
 
-        if ((--profile->m_nCount) == 0) {
-            delete profile->m_Obj;
+        profile->RemoveRef();
+        if (profile->use_count() == 0) {
+            delete profile->get();
             delete profile;
             m_IccProfileMap.erase(it);
             return;
@@ -593,14 +570,9 @@ CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(CPDF_Stream* pFontStream)
     ASSERT(pFontStream);
 
     auto it = m_FontFileMap.find(pFontStream);
-    if (it != m_FontFileMap.end()) {
-        CPDF_CountedStreamAcc* ftData = it->second;
-        ftData->m_nCount++;
-        return ftData->m_Obj;
-    }
+    if (it != m_FontFileMap.end())
+        return it->second->AddRef();
 
-    CPDF_CountedStreamAcc* ftData = new CPDF_CountedStreamAcc;
-    CPDF_StreamAcc* pFontFile = new CPDF_StreamAcc;
     CPDF_Dictionary* pFontDict = pFontStream->GetDict();
     int32_t org_size = pFontDict->GetInteger(FX_BSTRC("Length1")) +
                        pFontDict->GetInteger(FX_BSTRC("Length2")) +
@@ -608,11 +580,12 @@ CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(CPDF_Stream* pFontStream)
     if (org_size < 0)
         org_size = 0;
 
+    CPDF_StreamAcc* pFontFile = new CPDF_StreamAcc;
     pFontFile->LoadAllData(pFontStream, FALSE, org_size);
-    ftData->m_nCount = 2;
-    ftData->m_Obj = pFontFile;
+
+    CPDF_CountedStreamAcc* ftData = new CPDF_CountedStreamAcc(pFontFile);
     m_FontFileMap[pFontStream] = ftData;
-    return pFontFile;
+    return ftData->AddRef();
 }
 
 void CPDF_DocPageData::ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOOL bForce)
@@ -628,8 +601,9 @@ void CPDF_DocPageData::ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOO
     if (!findData)
         return;
 
-    if ((--findData->m_nCount) == 0 || bForce) {
-        delete findData->m_Obj;
+    findData->RemoveRef();
+    if (findData->use_count() == 0 || bForce) {
+        delete findData->get();
         delete findData;
         m_FontFileMap.erase(it);
     }
