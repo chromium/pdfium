@@ -13,14 +13,16 @@
 class CPDF_PageModule : public CPDF_PageModuleDef
 {
 public:
-    CPDF_PageModule() : m_StockGrayCS(PDFCS_DEVICEGRAY), m_StockRGBCS(PDFCS_DEVICERGB),
-        m_StockCMYKCS(PDFCS_DEVICECMYK) {}
-    virtual ~CPDF_PageModule() {}
-    virtual FX_BOOL Installed()
-    {
-        return TRUE;
-    }
-    virtual CPDF_DocPageData* CreateDocData(CPDF_Document* pDoc)
+    CPDF_PageModule()
+        : m_StockGrayCS(nullptr, PDFCS_DEVICEGRAY),
+          m_StockRGBCS(nullptr, PDFCS_DEVICERGB),
+          m_StockCMYKCS(nullptr, PDFCS_DEVICECMYK),
+          m_StockPatternCS(nullptr) {}
+
+private:
+    ~CPDF_PageModule() override {}
+
+    CPDF_DocPageData* CreateDocData(CPDF_Document* pDoc) override
     {
         return new CPDF_DocPageData(pDoc);
     }
