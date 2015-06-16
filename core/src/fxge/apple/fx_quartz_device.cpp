@@ -5,12 +5,12 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxcrt/fx_ext.h"
-#include "../../../include/fxge/fx_ge.h"
-#include "../agg/include/fxfx_agg_clip_liang_barsky.h"
-#include "../ge/text_int.h"
-#include "../dib/dib_int.h"
-#include "../agg/include/fx_agg_driver.h"
 #include "../../../include/fxge/fx_freetype.h"
+#include "../../../include/fxge/fx_ge.h"
+#include "../agg/include/fx_agg_driver.h"
+#include "../dib/dib_int.h"
+#include "../ge/text_int.h"
+
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
 #include "apple_int.h"
 #include "../../../include/fxge/fx_ge_apple.h"
@@ -1125,4 +1125,4 @@ FX_BOOL CFX_QuartzDevice::Create(int32_t width, int32_t height, FXDIB_Format for
     m_bOwnedBitmap = TRUE;
     return Attach(pBitmap);
 }
-#endif
+#endif  // _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_

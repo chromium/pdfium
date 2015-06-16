@@ -6,15 +6,16 @@
 
 #include "../../../include/fxcrt/fx_system.h"
 #include "../../../include/fxge/fx_ge.h"
+
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
-#include "apple_int.h"
-#include "../../../include/fxge/fx_ge_apple.h"
-#include "../agg/include/fxfx_agg_clip_liang_barsky.h"
-#include "../ge/text_int.h"
-#include "../dib/dib_int.h"
-#include "../agg/include/fx_agg_driver.h"
+
 #include "../../../include/fxge/fx_freetype.h"
-#if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
+#include "../../../include/fxge/fx_ge_apple.h"
+#include "../agg/include/fx_agg_driver.h"
+#include "../dib/dib_int.h"
+#include "../ge/text_int.h"
+#include "apple_int.h"
+
 void CFX_AggDeviceDriver::InitPlatform()
 {
     CQuartz2D & quartz2d = ((CApplePlatform *) CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
@@ -169,5 +170,5 @@ void CFX_Font::ReleasePlatformResource()
         m_pPlatformFont = NULL;
     }
 }
-#endif
-#endif
+
+#endif  // _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_

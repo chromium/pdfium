@@ -18,7 +18,7 @@
 //          mcseemagg@yahoo.com
 //          http://www.antigrain.com
 //----------------------------------------------------------------------------
-#include "../../../../include/fxcrt/fx_basic.h"
+#include "../../core/include/fxcrt/fx_basic.h"
 #include "agg_curves.h"
 #include "agg_math.h"
 namespace agg

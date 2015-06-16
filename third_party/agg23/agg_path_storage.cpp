@@ -22,7 +22,7 @@
 // Class path_storage
 //
 //----------------------------------------------------------------------------
-#include "../../../../include/fxcrt/fx_basic.h"
+#include "../../core/include/fxcrt/fx_basic.h"
 #include "agg_path_storage.h"
 #include "agg_math.h"
 namespace agg

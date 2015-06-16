@@ -7,6 +7,7 @@
 #include "../../../include/fxge/fx_ge.h"
 #include "../agg/include/fx_agg_driver.h"
 #include "text_int.h"
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
 static const struct {
     const FX_CHAR*	m_pName;
@@ -228,4 +229,4 @@ void CFX_GEModule::InitPlatform()
 void CFX_GEModule::DestroyPlatform()
 {
 }
-#endif
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_

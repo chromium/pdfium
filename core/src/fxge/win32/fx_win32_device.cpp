@@ -5,17 +5,19 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxge/fx_ge.h"
+
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
-#include "../../../include/fxge/fx_ge_win32.h"
 #include <crtdbg.h>
-#include "../agg/include/fxfx_agg_clip_liang_barsky.h"
+
+#include "../../../include/fxcodec/fx_codec.h"
+#include "../../../include/fxge/fx_freetype.h"
+#include "../../../include/fxge/fx_ge_win32.h"
+#include "../agg/include/fx_agg_driver.h"
+#include "../dib/dib_int.h"
+#include "../ge/text_int.h"
 #include "dwrite_int.h"
 #include "win32_int.h"
-#include "../ge/text_int.h"
-#include "../dib/dib_int.h"
-#include "../agg/include/fx_agg_driver.h"
-#include "../../../include/fxge/fx_freetype.h"
-#include "../../../include/fxcodec/fx_codec.h"
+
 class CWin32FontInfo final : public IFX_SystemFontInfo
 {
 public:
@@ -1200,4 +1202,5 @@ CFX_WinBitmapDevice::~CFX_WinBitmapDevice()
     }
     delete GetBitmap();
 }
-#endif
+
+#endif  // _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
