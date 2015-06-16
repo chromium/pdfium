@@ -78,34 +78,40 @@ void CPDF_DocRenderData::ReleaseCachedType3(CPDF_Type3Font* pFont)
     if (m_Type3FaceMap.Lookup(pFont, pCache))
         pCache->RemoveRef();
 }
-class CPDF_RenderModule : public CPDF_RenderModuleDef
+
+class CPDF_RenderModule : public IPDF_RenderModule
 {
 public:
-    virtual ~CPDF_RenderModule() {}
-    virtual FX_BOOL	Installed()
-    {
-        return TRUE;
-    }
-    virtual CPDF_DocRenderData*	CreateDocData(CPDF_Document* pDoc);
-    virtual void	DestroyDocData(CPDF_DocRenderData* p);
-    virtual void	ClearDocData(CPDF_DocRenderData* p);
-    virtual CPDF_DocRenderData* GetRenderData()
+   CPDF_RenderModule() {}
+
+private:
+    ~CPDF_RenderModule() override {}
+
+    CPDF_DocRenderData* CreateDocData(CPDF_Document* pDoc) override;
+    void DestroyDocData(CPDF_DocRenderData* p) override;
+    void ClearDocData(CPDF_DocRenderData* p) override;
+
+    CPDF_DocRenderData* GetRenderData() override
     {
         return &m_RenderData;
     }
-    virtual CPDF_PageRenderCache*	CreatePageCache(CPDF_Page* pPage)
+
+    CPDF_PageRenderCache* CreatePageCache(CPDF_Page* pPage) override
     {
         return new CPDF_PageRenderCache(pPage);
     }
-    virtual void	DestroyPageCache(CPDF_PageRenderCache* pCache);
-    virtual CPDF_RenderConfig*	GetConfig()
+
+    void DestroyPageCache(CPDF_PageRenderCache* pCache) override;
+
+    CPDF_RenderConfig* GetConfig() override
     {
         return &m_RenderConfig;
     }
-private:
-    CPDF_DocRenderData	m_RenderData;
-    CPDF_RenderConfig	m_RenderConfig;
+
+    CPDF_DocRenderData m_RenderData;
+    CPDF_RenderConfig m_RenderConfig;
 };
+
 CPDF_DocRenderData*	CPDF_RenderModule::CreateDocData(CPDF_Document* pDoc)
 {
     CPDF_DocRenderData* pData = new CPDF_DocRenderData(pDoc);
@@ -126,11 +132,12 @@ void CPDF_RenderModule::DestroyPageCache(CPDF_PageRenderCache* pCache)
 {
     delete pCache;
 }
+
 void CPDF_ModuleMgr::InitRenderModule()
 {
-    delete m_pRenderModule;
-    m_pRenderModule = new CPDF_RenderModule;
+    m_pRenderModule.reset(new CPDF_RenderModule);
 }
+
 CPDF_RenderOptions::CPDF_RenderOptions()
     : m_ColorMode(RENDER_COLOR_NORMAL)
     , m_Flags(RENDER_CLEARTYPE)

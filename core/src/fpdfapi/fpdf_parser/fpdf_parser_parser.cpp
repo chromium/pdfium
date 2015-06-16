@@ -1686,7 +1686,7 @@ CPDF_SyntaxParser::CPDF_SyntaxParser()
     m_pFileAccess = NULL;
     m_pCryptoHandler = NULL;
     m_pFileBuf = NULL;
-    m_BufSize = CPDF_ModuleMgr::Get()->m_FileBufSize;
+    m_BufSize = CPDF_ModuleMgr::kFileBufSize;
     m_pFileBuf = NULL;
     m_MetadataObjnum = 0;
     m_dwWordPos = 0;

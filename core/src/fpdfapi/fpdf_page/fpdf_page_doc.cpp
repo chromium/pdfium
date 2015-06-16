@@ -10,38 +10,45 @@
 #include "../fpdf_font/font_int.h"
 #include "pageint.h"
 
-class CPDF_PageModule : public CPDF_PageModuleDef
+class CPDF_PageModule : public IPDF_PageModule
 {
 public:
-    CPDF_PageModule() : m_StockGrayCS(PDFCS_DEVICEGRAY), m_StockRGBCS(PDFCS_DEVICERGB),
-        m_StockCMYKCS(PDFCS_DEVICECMYK) {}
-    virtual ~CPDF_PageModule() {}
-    virtual FX_BOOL Installed()
-    {
-        return TRUE;
-    }
-    virtual CPDF_DocPageData* CreateDocData(CPDF_Document* pDoc)
+    CPDF_PageModule()
+        : m_StockGrayCS(PDFCS_DEVICEGRAY),
+          m_StockRGBCS(PDFCS_DEVICERGB),
+          m_StockCMYKCS(PDFCS_DEVICECMYK) {}
+
+private:
+    ~CPDF_PageModule() override {}
+
+    CPDF_DocPageData* CreateDocData(CPDF_Document* pDoc) override
     {
         return new CPDF_DocPageData(pDoc);
     }
-    virtual void ReleaseDoc(CPDF_Document* pDoc);
-    virtual void ClearDoc(CPDF_Document* pDoc);
-    virtual CPDF_FontGlobals* GetFontGlobals()
+
+    void ReleaseDoc(CPDF_Document* pDoc) override;
+    void ClearDoc(CPDF_Document* pDoc) override;
+
+    CPDF_FontGlobals* GetFontGlobals() override
     {
         return &m_FontGlobals;
     }
-    virtual void ClearStockFont(CPDF_Document* pDoc)
+
+    void ClearStockFont(CPDF_Document* pDoc) override
     {
         m_FontGlobals.Clear(pDoc);
     }
-    virtual CPDF_ColorSpace* GetStockCS(int family);
-    virtual void NotifyCJKAvailable();
+
+    CPDF_ColorSpace* GetStockCS(int family) override;
+    void NotifyCJKAvailable() override;
+
     CPDF_FontGlobals m_FontGlobals;
     CPDF_DeviceCS m_StockGrayCS;
     CPDF_DeviceCS m_StockRGBCS;
     CPDF_DeviceCS m_StockCMYKCS;
     CPDF_PatternCS m_StockPatternCS;
 };
+
 CPDF_ColorSpace* CPDF_PageModule::GetStockCS(int family)
 {
     if (family == PDFCS_DEVICEGRAY) {
@@ -58,11 +65,12 @@ CPDF_ColorSpace* CPDF_PageModule::GetStockCS(int family)
     }
     return NULL;
 }
+
 void CPDF_ModuleMgr::InitPageModule()
 {
-    delete m_pPageModule;
-    m_pPageModule = new CPDF_PageModule;
+    m_pPageModule.reset(new CPDF_PageModule);
 }
+
 void CPDF_PageModule::ReleaseDoc(CPDF_Document* pDoc)
 {
     delete pDoc->GetPageData();
