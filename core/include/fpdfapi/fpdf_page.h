@@ -21,7 +21,6 @@ class CPDF_StreamFilter;
 class CPDF_AllStates;
 class CPDF_ContentParser;
 class CPDF_StreamContentParser;
-class CPDF_ResourceNaming;
 #define PDFTRANS_GROUP			0x0100
 #define PDFTRANS_ISOLATED		0x0200
 #define PDFTRANS_KNOCKOUT		0x0400

@@ -411,42 +411,57 @@ public:
 private:
     int32_t                m_nSrcComponents;
 };
+
 class CPDF_DeviceCS : public CPDF_ColorSpace
 {
 public:
-    CPDF_DeviceCS(int family);
-    virtual FX_BOOL	GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const;
-    FX_BOOL	SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const;
-    FX_BOOL	v_GetCMYK(FX_FLOAT* pBuf, FX_FLOAT& c, FX_FLOAT& m, FX_FLOAT& y, FX_FLOAT& k) const;
-    FX_BOOL	v_SetCMYK(FX_FLOAT* pBuf, FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k) const;
-    virtual void	TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
+    CPDF_DeviceCS(CPDF_Document* pDoc, int family);
+
+    FX_BOOL GetRGB(FX_FLOAT* pBuf,
+                   FX_FLOAT& R,
+                   FX_FLOAT& G,
+                   FX_FLOAT& B) const override;
+    FX_BOOL SetRGB(FX_FLOAT* pBuf,
+                   FX_FLOAT R,
+                   FX_FLOAT G,
+                   FX_FLOAT B) const override;
+    FX_BOOL v_GetCMYK(FX_FLOAT* pBuf,
+                      FX_FLOAT& c,
+                      FX_FLOAT& m,
+                      FX_FLOAT& y,
+                      FX_FLOAT& k) const override;
+    FX_BOOL v_SetCMYK(FX_FLOAT* pBuf,
+                      FX_FLOAT c,
+                      FX_FLOAT m,
+                      FX_FLOAT y,
+                      FX_FLOAT k) const override;
+    void TranslateImageLine(uint8_t* pDestBuf,
+                            const uint8_t* pSrcBuf,
+                            int pixels,
+                            int image_width,
+                            int image_height,
+                            FX_BOOL bTransMask = FALSE) const override;
 };
+
 class CPDF_PatternCS : public CPDF_ColorSpace
 {
 public:
-    CPDF_PatternCS();
-    ~CPDF_PatternCS();
-    virtual FX_BOOL		v_Load(CPDF_Document* pDoc, CPDF_Array* pArray);
-    virtual FX_BOOL		GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const;
-    virtual CPDF_ColorSpace*	GetBaseCS() const
-    {
-        return m_pBaseCS;
+    explicit CPDF_PatternCS(CPDF_Document* pDoc)
+        : CPDF_ColorSpace(pDoc, PDFCS_PATTERN, 1),
+          m_pBaseCS(nullptr),
+          m_pCountedBaseCS(nullptr) {
     }
-    CPDF_ColorSpace*	m_pBaseCS;
-    CPDF_CountedColorSpace*	m_pCountedBaseCS;
-};
-#define	MAX_PAGE_OBJECTS_UNIFY_NAMING				4096
-class CPDF_ResourceNaming
-{
-public:
-    struct _NamingState  {
-        CFX_ByteString	m_Prefix;
-        int				m_nIndex;
-    };
-    ~CPDF_ResourceNaming();
-    CFX_ByteString		GetName(const CPDF_Dictionary* pResList, const FX_CHAR* szType);
-protected:
-    CFX_MapByteStringToPtr	m_NamingCache;
+    ~CPDF_PatternCS() override;
+    FX_BOOL v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
+    FX_BOOL GetRGB(FX_FLOAT* pBuf,
+                   FX_FLOAT& R,
+                   FX_FLOAT& G,
+                   FX_FLOAT& B) const override;
+    CPDF_ColorSpace* GetBaseCS() const override;
+
+private:
+    CPDF_ColorSpace* m_pBaseCS;
+    CPDF_CountedColorSpace* m_pCountedBaseCS;
 };
 
 #endif  // CORE_SRC_FPDFAPI_FPDF_PAGE_PAGEINT_H_

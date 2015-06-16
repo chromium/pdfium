@@ -637,11 +637,17 @@ public:
     }
 
     virtual void			EnableStdConversion(FX_BOOL bEnabled);
-    CPDF_Document*			m_pDocument;
+
+    CPDF_Document* const m_pDocument;
+
 protected:
-
-    CPDF_ColorSpace();
-
+    CPDF_ColorSpace(CPDF_Document* pDoc, int family, int nComponents)
+        : m_pDocument(pDoc),
+          m_Family(family),
+          m_nComponents(nComponents),
+          m_pArray(nullptr),
+          m_dwStdConversion(0) {
+    }
     virtual ~CPDF_ColorSpace() {}
     virtual FX_BOOL			v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
     {
