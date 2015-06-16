@@ -16,13 +16,13 @@ public:
         , m_iArabicChars(0)
     {
         m_pLineChars = FX_NEW CFX_TxtCharArray;
-        m_pLinePieces = FXTARGET_New CFX_TxtPieceArray(16);
+        m_pLinePieces = new CFX_TxtPieceArray(16);
     }
     ~CFX_TxtLine()
     {
         RemoveAll();
         delete m_pLineChars;
-        FXTARGET_Delete m_pLinePieces;
+        delete m_pLinePieces;
     }
     int32_t CountChars() const
     {

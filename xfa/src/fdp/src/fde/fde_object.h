@@ -29,7 +29,7 @@ public:
     }
     virtual void				Release()
     {
-        FDE_Delete this;
+        delete this;
     }
 
     virtual int32_t			GetType() const
@@ -144,7 +144,7 @@ public:
 
     virtual void				Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual int32_t			GetType() const
     {
@@ -200,7 +200,7 @@ public:
 
     virtual void				Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual int32_t			GetType() const
     {
@@ -274,7 +274,7 @@ public:
 
     virtual void				Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual int32_t			GetType() const
     {
@@ -341,7 +341,7 @@ public:
 
     virtual void				Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual int32_t			GetType() const
     {

@@ -39,7 +39,7 @@ public:
     ~CFDE_TextOut();
     virtual	void		Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual void		SetFont(IFX_Font *pFont);
     virtual void		SetFontSize(FX_FLOAT fFontSize);

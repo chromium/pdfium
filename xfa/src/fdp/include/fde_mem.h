@@ -6,18 +6,18 @@
 
 #ifndef _FDE_MEM
 #define _FDE_MEM
+
+#include "../../../../core/include/fxcrt/fx_memory.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define FDE_Alloc(size)				FX_Alloc(uint8_t, size)
-#define FDE_Realloc(ptr, newSize)	FX_Realloc(uint8_t, ptr, newSize)
-#define FDE_Free(ptr)				FX_Free(ptr)
-#define FDE_New			FXTARGET_New
-#define FDE_Delete		FXTARGET_Delete
-#define FDE_NewWith		FXTARGET_NewWith
-#define FDE_DeleteWith	FXTARGET_DeleteWith
-
+#define FDE_Alloc(size)             FX_Alloc(uint8_t, size)
+#define FDE_Realloc(ptr, newSize)   FX_Realloc(uint8_t, ptr, newSize)
+#define FDE_Free(ptr)               FX_Free(ptr)
 #ifdef __cplusplus
-};
+}
+#define FDE_NewWith     FXTARGET_NewWith
+#define FDE_DeleteWith  FXTARGET_DeleteWith
 #endif
 #endif

@@ -10,7 +10,7 @@
 #ifndef _FDEPLUS
 IFDE_Path* IFDE_Path::Create()
 {
-    return FDE_New CFDE_Path;
+    return new CFDE_Path;
 }
 FX_BOOL CFDE_Path::StartFigure()
 {

@@ -14,7 +14,7 @@ class CFDE_Path : public IFDE_Path, public CFX_Target
 public:
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
 
     virtual FX_BOOL			StartFigure();

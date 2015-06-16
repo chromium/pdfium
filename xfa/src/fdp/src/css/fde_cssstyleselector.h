@@ -76,7 +76,7 @@ public:
     ~CFDE_CSSStyleSelector();
     virtual void					Release()
     {
-        FDE_Delete this;
+        delete this;
     }
 
     virtual void					SetFontMgr(IFX_FontMgr *pFontMgr);
@@ -355,7 +355,7 @@ public:
         FX_DWORD dwRefCount = --m_dwRefCount;
         if (dwRefCount == 0) {
             if (m_NonInheritedData.m_pCounterStyle != NULL) {
-                FDE_Delete m_NonInheritedData.m_pCounterStyle;
+                delete m_NonInheritedData.m_pCounterStyle;
             }
             FDE_DeleteWith(CFDE_CSSComputedStyle, m_pAllocator, this);
         }

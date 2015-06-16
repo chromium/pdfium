@@ -21,7 +21,7 @@ extern "C" {
 #endif
 IFDE_CSSSyntaxParser* IFDE_CSSSyntaxParser::Create()
 {
-    return FDE_New CFDE_CSSSyntaxParser;
+    return new CFDE_CSSSyntaxParser;
 }
 CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser()
     : m_pStream(NULL)

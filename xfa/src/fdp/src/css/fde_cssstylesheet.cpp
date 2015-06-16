@@ -25,7 +25,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet()
 }
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString &szUrl, IFX_Stream *pStream, FX_WORD wCodePage, FX_DWORD dwMediaList )
 {
-    CFDE_CSSStyleSheet *pStyleSheet = FDE_New CFDE_CSSStyleSheet(dwMediaList);
+    CFDE_CSSStyleSheet *pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
     if (pStyleSheet == NULL) {
         return NULL;
     }
@@ -37,7 +37,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString &szU
 }
 IFDE_CSSStyleSheet*	IFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString &szUrl, const FX_WCHAR* pBuffer, int32_t iBufSize, FX_WORD wCodePage, FX_DWORD dwMediaList )
 {
-    CFDE_CSSStyleSheet *pStyleSheet = FDE_New CFDE_CSSStyleSheet(dwMediaList);
+    CFDE_CSSStyleSheet *pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
     if (pStyleSheet == NULL) {
         return NULL;
     }
@@ -94,7 +94,7 @@ FX_DWORD CFDE_CSSStyleSheet::Release()
 {
     FX_DWORD dwRefCount = --m_wRefCount;
     if (dwRefCount == 0) {
-        FDE_Delete this;
+        delete this;
     }
     return dwRefCount;
 }

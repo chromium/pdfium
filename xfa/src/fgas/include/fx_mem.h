@@ -51,8 +51,6 @@ public:
     }
     void	operator delete(void *p, void *place)	{}
 };
-#define FXTARGET_New											new
 #define FXTARGET_NewWith(__allocator__)							new(__allocator__)
-#define FXTARGET_Delete											delete
 #define FXTARGET_DeleteWith(__class__, __allocator__, pointer)	{(pointer)->~__class__(); (pointer)->operator delete((pointer), (__allocator__));}
 #endif

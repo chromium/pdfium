@@ -17,7 +17,7 @@ public:
 
     virtual void				Release()
     {
-        FDE_Delete this;
+        delete this;
     }
 
     virtual int32_t			GetWidth() const;

@@ -14,7 +14,7 @@ public:
     virtual ~CFDE_RenderContext();
     virtual void				Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual FX_BOOL				StartRender(IFDE_RenderDevice *pRenderDevice,
                                             IFDE_CanvasSet *pCanvasSet,

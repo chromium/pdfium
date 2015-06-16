@@ -18,7 +18,7 @@ public:
     ~CFDE_VisualSetIterator();
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
 
     virtual FX_BOOL			AttachCanvas(IFDE_CanvasSet *pCanvas);

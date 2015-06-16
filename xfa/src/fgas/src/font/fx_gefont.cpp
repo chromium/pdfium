@@ -155,10 +155,10 @@ CFX_GEFont::~CFX_GEFont()
         delete m_pFontEncoding;
     }
     if (m_pCharWidthMap != NULL) {
-        FXTARGET_Delete m_pCharWidthMap;
+        delete m_pCharWidthMap;
     }
     if (m_pRectArray != NULL) {
-        FXTARGET_Delete m_pRectArray;
+        delete m_pRectArray;
     }
     if (m_pBBoxMap != NULL) {
         delete m_pBBoxMap;
@@ -339,10 +339,10 @@ void CFX_GEFont::InitFont()
 #endif
     }
     if (m_pCharWidthMap == NULL) {
-        m_pCharWidthMap = FXTARGET_New CFX_WordDiscreteArray(1024);
+        m_pCharWidthMap = new CFX_WordDiscreteArray(1024);
     }
     if (m_pRectArray == NULL) {
-        m_pRectArray = FXTARGET_New CFX_RectMassArray(16);
+        m_pRectArray = new CFX_RectMassArray(16);
     }
     if (m_pBBoxMap == NULL) {
         m_pBBoxMap = FX_NEW CFX_MapPtrToPtr(16);

@@ -25,7 +25,7 @@ public:
     CFDE_XMLNode();
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual FDE_XMLNODETYPE	GetType() const
     {
@@ -58,7 +58,7 @@ public:
     CFDE_XMLInstruction(const CFX_WideString &wsTarget);
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual FDE_XMLNODETYPE	GetType() const
     {
@@ -95,7 +95,7 @@ public:
     CFDE_XMLElement(const CFX_WideString &wsTag);
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual FDE_XMLNODETYPE	GetType() const
     {
@@ -129,7 +129,7 @@ public:
     CFDE_XMLText(const CFX_WideString &wsText);
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual FDE_XMLNODETYPE	GetType() const
     {
@@ -160,7 +160,7 @@ public:
 
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual FDE_XMLNODETYPE	GetType() const
     {
@@ -188,7 +188,7 @@ public:
     ~CFDE_XMLDoc();
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual FX_BOOL			LoadXML(IFX_Stream *pXMLStream, int32_t iXMLPlaneSize = 8192, int32_t iTextDataSize = 256, FDE_LPXMLREADERHANDLER pHandler = NULL);
     virtual FX_BOOL			LoadXML(IFDE_XMLParser *pXMLParser);
@@ -218,7 +218,7 @@ public:
 
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual int32_t		DoParser(IFX_Pause *pPause);
 private:
@@ -247,7 +247,7 @@ public:
 
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual int32_t		DoParser(IFX_Pause *pPause);
 private:
@@ -274,7 +274,7 @@ public:
     }
     void ReleaseBuffer()
     {
-        FDE_Delete this;
+        delete this;
     }
     FX_WCHAR* GetAvailableBlock(int32_t& iIndexInBlock);
     inline int32_t GetAllocStep() const
@@ -332,7 +332,7 @@ public:
     ~CFDE_XMLSyntaxParser();
     virtual void			Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual void			Init(IFX_Stream *pStream, int32_t iXMLPlaneSize, int32_t iTextDataSize = 256);
     virtual FX_DWORD		DoSyntaxParse();

@@ -30,7 +30,7 @@ typedef FX_BASEARRAYDATA const * FX_LPCBASEARRAYDATA;
 CFX_BaseArray::CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize)
 {
     FXSYS_assert(iGrowSize > 0 && iBlockSize > 0);
-    m_pData = FXTARGET_New FX_BASEARRAYDATA;
+    m_pData = new FX_BASEARRAYDATA;
     FX_memset(m_pData, 0, sizeof(FX_BASEARRAYDATA));
     ((FX_LPBASEARRAYDATA)m_pData)->iGrowSize = iGrowSize;
     ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize = iBlockSize;
@@ -41,7 +41,7 @@ CFX_BaseArray::~CFX_BaseArray()
     if (pData->pBuffer != NULL) {
         FX_Free(pData->pBuffer);
     }
-    FXTARGET_Delete pData;
+    delete pData;
 }
 int32_t CFX_BaseArray::GetSize() const
 {
@@ -306,11 +306,11 @@ void CFX_BaseMassArrayImp::RemoveAll(FX_BOOL bLeaveMemory)
 }
 CFX_BaseMassArray::CFX_BaseMassArray(int32_t iChunkSize, int32_t iBlockSize)
 {
-    m_pData = FXTARGET_New CFX_BaseMassArrayImp(iChunkSize, iBlockSize);
+    m_pData = new CFX_BaseMassArrayImp(iChunkSize, iBlockSize);
 }
 CFX_BaseMassArray::~CFX_BaseMassArray()
 {
-    FXTARGET_Delete m_pData;
+    delete m_pData;
 }
 int32_t CFX_BaseMassArray::GetSize() const
 {
@@ -416,11 +416,11 @@ void CFX_BaseDiscreteArray::RemoveAll()
 }
 CFX_BaseStack::CFX_BaseStack(int32_t iChunkSize, int32_t iBlockSize)
 {
-    m_pData = FXTARGET_New CFX_BaseMassArrayImp(iChunkSize, iBlockSize);
+    m_pData = new CFX_BaseMassArrayImp(iChunkSize, iBlockSize);
 }
 CFX_BaseStack::~CFX_BaseStack()
 {
-    FXTARGET_Delete (CFX_BaseMassArrayImp*)m_pData;
+    delete (CFX_BaseMassArrayImp*)m_pData;
 }
 uint8_t* CFX_BaseStack::Push()
 {

@@ -11,7 +11,7 @@
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || _FX_OS_ == _FX_WIN64_
 IFDE_RenderDevice*	IFDE_RenderDevice::Create(CFX_DIBitmap *pBitmap, FX_BOOL bRgbByteOrder )
 {
-    return FDE_New CFDE_GdiDevice(pBitmap);
+    return new CFDE_GdiDevice(pBitmap);
 }
 IFDE_RenderDevice*	IFDE_RenderDevice::Create(CFX_RenderDevice *pDevice)
 {

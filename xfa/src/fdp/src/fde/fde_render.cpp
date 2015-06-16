@@ -45,7 +45,7 @@ void FDE_GetPageMatrix(CFX_Matrix &pageMatrix, const CFX_RectF &docPageRect, con
 }
 IFDE_RenderContext* IFDE_RenderContext::Create()
 {
-    return FDE_New CFDE_RenderContext;
+    return new CFDE_RenderContext;
 }
 CFDE_RenderContext::CFDE_RenderContext()
     : CFX_ThreadLock()

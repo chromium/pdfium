@@ -8,7 +8,7 @@
 #include "fde_textout.h"
 IFDE_TextOut* IFDE_TextOut::Create()
 {
-    return FDE_New CFDE_TextOut;
+    return new CFDE_TextOut;
 }
 CFDE_TextOut::CFDE_TextOut()
     : m_pFont(NULL)

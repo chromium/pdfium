@@ -17,7 +17,7 @@ public:
     ~CFX_DefStore() {}
     virtual void			Release()
     {
-        FXTARGET_Delete this;
+        delete this;
     }
     virtual void*			Alloc(size_t size)
     {
@@ -63,7 +63,7 @@ public:
     ~CFX_StaticStore();
     virtual void			Release()
     {
-        FXTARGET_Delete this;
+        delete this;
     }
     virtual void*			Alloc(size_t size);
     virtual void			Free(void* pBlock) {}
@@ -115,7 +115,7 @@ public:
     virtual ~CFX_FixedStore();
     virtual void			Release()
     {
-        FXTARGET_Delete this;
+        delete this;
     }
     virtual void*			Alloc(size_t size);
     virtual void			Free(void* pBlock);
@@ -174,7 +174,7 @@ public:
     virtual ~CFX_DynamicStore();
     virtual void		Release()
     {
-        FXTARGET_Delete this;
+        delete this;
     }
     virtual void*		Alloc(size_t size);
     virtual void		Free(void* pBlock);

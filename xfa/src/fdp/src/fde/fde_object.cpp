@@ -8,19 +8,19 @@
 #include "fde_object.h"
 IFDE_Pen* IFDE_Pen::Create()
 {
-    return FDE_New CFDE_Pen();
+    return new CFDE_Pen();
 }
 IFDE_Brush* IFDE_Brush::Create(int32_t iType)
 {
     switch (iType) {
         case FDE_BRUSHTYPE_Solid:
-            return FDE_New CFDE_SolidBrush;
+            return new CFDE_SolidBrush;
         case FDE_BRUSHTYPE_Hatch:
-            return FDE_New CFDE_HatchBrush;
+            return new CFDE_HatchBrush;
         case FDE_BRUSHTYPE_Texture:
-            return FDE_New CFDE_TextureBrush;
+            return new CFDE_TextureBrush;
         case FDE_BRUSHTYPE_LinearGradient:
-            return FDE_New CFDE_LinearBrush;
+            return new CFDE_LinearBrush;
         default:
             return NULL;
     }

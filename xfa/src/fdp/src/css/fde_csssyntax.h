@@ -94,7 +94,7 @@ public:
     ~CFDE_CSSSyntaxParser();
     virtual void					Release()
     {
-        FDE_Delete this;
+        delete this;
     }
     virtual FX_BOOL					Init(IFX_Stream *pStream, int32_t iCSSPlaneSize, int32_t iTextDataSize = 32, FX_BOOL bOnlyDeclaration = FALSE);
     virtual FX_BOOL					Init(const FX_WCHAR* pBuffer, int32_t iBufferSize, int32_t iTextDatSize = 32, FX_BOOL bOnlyDeclaration = FALSE);

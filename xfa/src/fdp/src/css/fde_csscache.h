@@ -19,7 +19,7 @@ public:
     ~CFDE_CSSStyleSheetCache();
     virtual void					Release()
     {
-        FDE_Delete this;
+        delete this;
     }
 
     virtual void					SetMaxItems(int32_t iMaxCount = 5)

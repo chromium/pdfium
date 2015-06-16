@@ -8,7 +8,7 @@
 #include "fde_iterator.h"
 IFDE_VisualSetIterator* IFDE_VisualSetIterator::Create()
 {
-    return FDE_New CFDE_VisualSetIterator;
+    return new CFDE_VisualSetIterator;
 }
 CFDE_VisualSetIterator::CFDE_VisualSetIterator()
     : m_dwFilter(0)

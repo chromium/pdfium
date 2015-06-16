@@ -202,7 +202,7 @@ inline FDE_LPCSSRULEDATA CFDE_CSSRuleCollection::NewRuleData(IFDE_CSSSelector *p
 }
 IFDE_CSSStyleSelector* IFDE_CSSStyleSelector::Create()
 {
-    return FDE_New CFDE_CSSStyleSelector;
+    return new CFDE_CSSStyleSelector;
 }
 CFDE_CSSStyleSelector::CFDE_CSSStyleSelector()
     : m_pFontMgr(NULL)
@@ -226,7 +226,7 @@ CFDE_CSSStyleSelector::~CFDE_CSSStyleSelector()
         m_pFixedStyleStore->Release();
     }
     if (m_pAccelerator != NULL) {
-        FDE_Delete m_pAccelerator;
+        delete m_pAccelerator;
     }
 }
 void CFDE_CSSStyleSelector::SetFontMgr(IFX_FontMgr *pFontMgr)
@@ -241,7 +241,7 @@ void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize)
 IFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator()
 {
     if (m_pAccelerator == NULL) {
-        m_pAccelerator = FDE_New CFDE_CSSAccelerator;
+        m_pAccelerator = new CFDE_CSSAccelerator;
         FXSYS_assert(m_pAccelerator != NULL);
     }
     m_pAccelerator->Clear();
@@ -972,14 +972,14 @@ void CFDE_CSSStyleSelector::ApplyProperty(FDE_CSSPROPERTY eProperty, IFDE_CSSVal
                     break;
                 case FDE_CSSPROPERTY_CounterIncrement: {
                         if (FDE_CSSNONINHERITS.m_pCounterStyle == NULL) {
-                            FDE_CSSNONINHERITS.m_pCounterStyle = FDE_New CFDE_CSSCounterStyle;
+                            FDE_CSSNONINHERITS.m_pCounterStyle = new CFDE_CSSCounterStyle;
                         }
                         FDE_CSSNONINHERITS.m_pCounterStyle->SetCounterIncrementList(pList);
                     }
                     break;
                 case FDE_CSSPROPERTY_CounterReset: {
                         if (FDE_CSSNONINHERITS.m_pCounterStyle == NULL) {
-                            FDE_CSSNONINHERITS.m_pCounterStyle = FDE_New CFDE_CSSCounterStyle;
+                            FDE_CSSNONINHERITS.m_pCounterStyle = new CFDE_CSSCounterStyle;
                         }
                         FDE_CSSNONINHERITS.m_pCounterStyle->SetCounterResetList(pList);
                     }

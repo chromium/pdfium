@@ -19,7 +19,7 @@ _FDE_CSSCACHEITEM::~_FDE_CSSCACHEITEM()
 }
 IFDE_CSSStyleSheetCache* IFDE_CSSStyleSheetCache::Create()
 {
-    return FDE_New CFDE_CSSStyleSheetCache;
+    return new CFDE_CSSStyleSheetCache;
 }
 CFDE_CSSStyleSheetCache::CFDE_CSSStyleSheetCache()
     : m_pFixedStore(NULL)

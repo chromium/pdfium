@@ -132,7 +132,7 @@ public:
     {
         int32_t index = CFX_BaseArray::GetSize();
         baseType *p = (baseType*)CFX_BaseArray::AddSpaceTo(index);
-        FXTARGET_New ((void*)p)baseType(element);
+        new ((void*)p) baseType(element);
         return index;
     }
     baseType&	GetAt(int32_t index) const
@@ -194,7 +194,7 @@ public:
         int32_t iBlockSize = CFX_BaseArray::GetBlockSize();
         iSize = iStart + iCount;
         for (int32_t i = iStart; i < iSize; i ++) {
-            FXTARGET_New ((void*)pStart)baseType(src.GetAt(i));
+            new ((void*)pStart)baseType(src.GetAt(i));
             pStart += iBlockSize;
         }
         return iCount;
@@ -312,7 +312,7 @@ public:
     {
         int32_t index = CFX_BaseMassArray::GetSize();
         baseType *p = (baseType*)CFX_BaseMassArray::AddSpaceTo(index);
-        FXTARGET_New ((void*)p)baseType(element);
+        new ((void*)p)baseType(element);
         return index;
     }
     baseType&	GetAt(int32_t index) const
@@ -483,7 +483,7 @@ public:
     {
         int32_t index = CFX_BaseStack::GetSize();
         baseType *p = (baseType*)CFX_BaseStack::Push();
-        FXTARGET_New ((void*)p)baseType(element);
+        new ((void*)p)baseType(element);
         return index;
     }
     void		Pop()
@@ -780,7 +780,7 @@ public:
         if (pParent == NULL) {
             pParent = &m_Root;
         }
-        CPLTreeNode *pChild = FXTARGET_New CPLTreeNode;
+        CPLTreeNode *pChild = new CPLTreeNode;
         pChild->SetParentNode(pParent);
         pChild->SetData(data);
         if (pParent->m_pChildNode == NULL) {
