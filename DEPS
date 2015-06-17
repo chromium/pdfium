@@ -31,9 +31,18 @@ deps_os = {
 }
 
 include_rules = [
- '+core/include',
- '+fpdfsdk/include',
- '+public',
- '+testing',
- '+third_party/base',
+  '+core/include',
+  '+fpdfsdk/include',
+  '+public',
+  '+testing',
+  '+third_party/base',
+]
+
+hooks = [
+  {
+    # A change to a .gyp, .gypi, or to GYP itself should run the generator.
+    'name': 'gyp',
+    'pattern': '.',
+    'action': ['python', 'build/gyp_pdfium'],
+  },
 ]
