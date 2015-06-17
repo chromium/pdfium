@@ -30,31 +30,6 @@ source_set("bigint") {
   ]
 }
 
-source_set("fx_agg") {
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    "//third_party/pdfium:pdfium_config",
-  ]
-  sources = [
-    "agg23/agg_basics.h",
-    "agg23/agg_clip_liang_barsky.h",
-    "agg23/agg_conv_dash.h",
-    "agg23/agg_conv_stroke.h",
-    "agg23/agg_curves.cpp",
-    "agg23/agg_curves.h",
-    "agg23/agg_path_storage.cpp",
-    "agg23/agg_path_storage.h",
-    "agg23/agg_rasterizer_scanline_aa.cpp",
-    "agg23/agg_rasterizer_scanline_aa.h",
-    "agg23/agg_renderer_scanline.h",
-    "agg23/agg_rendering_buffer.h",
-    "agg23/agg_scanline_u.h",
-    "agg23/agg_vcgen_dash.cpp",
-    "agg23/agg_vcgen_stroke.cpp",
-  ]
-}
-
 source_set("freetype") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
@@ -91,6 +66,68 @@ source_set("freetype") {
     "freetype/src/smooth/smooth.c",
     "freetype/src/truetype/truetype.c",
     "freetype/src/type1/type1.c",
+  ]
+}
+
+source_set("fx_agg") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
+  ]
+  sources = [
+    "agg23/agg_basics.h",
+    "agg23/agg_clip_liang_barsky.h",
+    "agg23/agg_conv_dash.h",
+    "agg23/agg_conv_stroke.h",
+    "agg23/agg_curves.cpp",
+    "agg23/agg_curves.h",
+    "agg23/agg_path_storage.cpp",
+    "agg23/agg_path_storage.h",
+    "agg23/agg_rasterizer_scanline_aa.cpp",
+    "agg23/agg_rasterizer_scanline_aa.h",
+    "agg23/agg_renderer_scanline.h",
+    "agg23/agg_rendering_buffer.h",
+    "agg23/agg_scanline_u.h",
+    "agg23/agg_vcgen_dash.cpp",
+    "agg23/agg_vcgen_stroke.cpp",
+  ]
+}
+
+source_set("fx_lcms2") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
+  ]
+  sources = [
+    "lcms2-2.6/include/lcms2.h",
+    "lcms2-2.6/include/lcms2_plugin.h",
+    "lcms2-2.6/src/cmscam02.c",
+    "lcms2-2.6/src/cmscgats.c",
+    "lcms2-2.6/src/cmscnvrt.c",
+    "lcms2-2.6/src/cmserr.c",
+    "lcms2-2.6/src/cmsgamma.c",
+    "lcms2-2.6/src/cmsgmt.c",
+    "lcms2-2.6/src/cmshalf.c",
+    "lcms2-2.6/src/cmsintrp.c",
+    "lcms2-2.6/src/cmsio0.c",
+    "lcms2-2.6/src/cmsio1.c",
+    "lcms2-2.6/src/cmslut.c",
+    "lcms2-2.6/src/cmsmd5.c",
+    "lcms2-2.6/src/cmsmtrx.c",
+    "lcms2-2.6/src/cmsnamed.c",
+    "lcms2-2.6/src/cmsopt.c",
+    "lcms2-2.6/src/cmspack.c",
+    "lcms2-2.6/src/cmspcs.c",
+    "lcms2-2.6/src/cmsplugin.c",
+    "lcms2-2.6/src/cmsps2.c",
+    "lcms2-2.6/src/cmssamp.c",
+    "lcms2-2.6/src/cmssm.c",
+    "lcms2-2.6/src/cmstypes.c",
+    "lcms2-2.6/src/cmsvirt.c",
+    "lcms2-2.6/src/cmswtpnt.c",
+    "lcms2-2.6/src/cmsxform.c",
   ]
 }
 

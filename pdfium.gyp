@@ -324,16 +324,10 @@
     {
       'target_name': 'fxcodec',
       'type': 'static_library',
-      'include_dirs': [
+      'dependencies': [
+        'third_party/third_party.gyp:fx_lcms2',
       ],
       'ldflags': [ '-L<(PRODUCT_DIR)',],
-      'msvs_settings': {
-        'VCCLCompilerTool': {
-          # Unresolved warnings in fx_codec_jpx_opj.cpp
-          # https://code.google.com/p/pdfium/issues/detail?id=100
-          'WarnAsError': 'false',
-        },
-      },
       'sources': [
         'core/include/fxcodec/fx_codec.h',
         'core/include/fxcodec/fx_codec_def.h',
@@ -413,31 +407,8 @@
         'core/src/fxcodec/jbig2/JBig2_Segment.h',
         'core/src/fxcodec/jbig2/JBig2_SymbolDict.cpp',
         'core/src/fxcodec/jbig2/JBig2_SymbolDict.h',
-        'core/src/fxcodec/lcms2/src/fx_cmscam02.c',
-        'core/src/fxcodec/lcms2/src/fx_cmscgats.c',
-        'core/src/fxcodec/lcms2/src/fx_cmscnvrt.c',
-        'core/src/fxcodec/lcms2/src/fx_cmserr.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsgamma.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsgmt.c',
-        'core/src/fxcodec/lcms2/src/fx_cmshalf.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsintrp.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsio0.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsio1.c',
-        'core/src/fxcodec/lcms2/src/fx_cmslut.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsmd5.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsmtrx.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsnamed.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsopt.c',
-        'core/src/fxcodec/lcms2/src/fx_cmspack.c',
-        'core/src/fxcodec/lcms2/src/fx_cmspcs.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsplugin.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsps2.c',
-        'core/src/fxcodec/lcms2/src/fx_cmssamp.c',
-        'core/src/fxcodec/lcms2/src/fx_cmssm.c',
-        'core/src/fxcodec/lcms2/src/fx_cmstypes.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsvirt.c',
-        'core/src/fxcodec/lcms2/src/fx_cmswtpnt.c',
-        'core/src/fxcodec/lcms2/src/fx_cmsxform.c',
+        'core/src/fxcodec/lcms2/fx_lcms2.h',
+        'core/src/fxcodec/lcms2/fx_lcms2_plugin.h',
         'core/src/fxcodec/libjpeg/cderror.h',
         'core/src/fxcodec/libjpeg/cdjpeg.h',
         'core/src/fxcodec/libjpeg/fpdfapi_jcapimin.c',
@@ -494,6 +465,13 @@
         'core/src/fxcodec/libjpeg/makefile',
         'core/src/fxcodec/libjpeg/transupp.h',
       ],
+      'msvs_settings': {
+        'VCCLCompilerTool': {
+          # Unresolved warnings in fx_codec_jpx_opj.cpp
+          # https://code.google.com/p/pdfium/issues/detail?id=100
+          'WarnAsError': 'false',
+        },
+      },
       'conditions': [
         ['os_posix==1', {
           # core/src/fxcodec/fx_libopenjpeg/src/fx_mct.c does an pointer-to-int
