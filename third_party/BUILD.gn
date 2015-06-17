@@ -131,6 +131,71 @@ source_set("fx_lcms2") {
   ]
 }
 
+source_set("fx_libjpeg") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
+  ]
+  sources = [
+    "libjpeg/cderror.h",
+    "libjpeg/cdjpeg.h",
+    "libjpeg/fpdfapi_jcapimin.c",
+    "libjpeg/fpdfapi_jcapistd.c",
+    "libjpeg/fpdfapi_jccoefct.c",
+    "libjpeg/fpdfapi_jccolor.c",
+    "libjpeg/fpdfapi_jcdctmgr.c",
+    "libjpeg/fpdfapi_jchuff.c",
+    "libjpeg/fpdfapi_jcinit.c",
+    "libjpeg/fpdfapi_jcmainct.c",
+    "libjpeg/fpdfapi_jcmarker.c",
+    "libjpeg/fpdfapi_jcmaster.c",
+    "libjpeg/fpdfapi_jcomapi.c",
+    "libjpeg/fpdfapi_jcparam.c",
+    "libjpeg/fpdfapi_jcphuff.c",
+    "libjpeg/fpdfapi_jcprepct.c",
+    "libjpeg/fpdfapi_jcsample.c",
+    "libjpeg/fpdfapi_jctrans.c",
+    "libjpeg/fpdfapi_jdapimin.c",
+    "libjpeg/fpdfapi_jdapistd.c",
+    "libjpeg/fpdfapi_jdcoefct.c",
+    "libjpeg/fpdfapi_jdcolor.c",
+    "libjpeg/fpdfapi_jddctmgr.c",
+    "libjpeg/fpdfapi_jdhuff.c",
+    "libjpeg/fpdfapi_jdinput.c",
+    "libjpeg/fpdfapi_jdmainct.c",
+    "libjpeg/fpdfapi_jdmarker.c",
+    "libjpeg/fpdfapi_jdmaster.c",
+    "libjpeg/fpdfapi_jdmerge.c",
+    "libjpeg/fpdfapi_jdphuff.c",
+    "libjpeg/fpdfapi_jdpostct.c",
+    "libjpeg/fpdfapi_jdsample.c",
+    "libjpeg/fpdfapi_jdtrans.c",
+    "libjpeg/fpdfapi_jerror.c",
+    "libjpeg/fpdfapi_jfdctfst.c",
+    "libjpeg/fpdfapi_jfdctint.c",
+    "libjpeg/fpdfapi_jidctfst.c",
+    "libjpeg/fpdfapi_jidctint.c",
+    "libjpeg/fpdfapi_jidctred.c",
+    "libjpeg/fpdfapi_jmemmgr.c",
+    "libjpeg/fpdfapi_jmemnobs.c",
+    "libjpeg/fpdfapi_jutils.c",
+    "libjpeg/jchuff.h",
+    "libjpeg/jconfig.h",
+    "libjpeg/jdct.h",
+    "libjpeg/jdhuff.h",
+    "libjpeg/jerror.h",
+    "libjpeg/jinclude.h",
+    "libjpeg/jmemsys.h",
+    "libjpeg/jmorecfg.h",
+    "libjpeg/jpegint.h",
+    "libjpeg/jpeglib.h",
+    "libjpeg/jversion.h",
+    "libjpeg/makefile",
+    "libjpeg/transupp.h",
+  ]
+}
+
 component("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
