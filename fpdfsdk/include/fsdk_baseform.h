@@ -56,7 +56,7 @@ typedef struct _PDFSDK_FieldAction
 	FX_BOOL					bFieldFull;		//in
 	FX_BOOL					bRC;			//in[out]
 }PDFSDK_FieldAction;
-class CPDFSDK_Widget:public CPDFSDK_Annot
+class CPDFSDK_Widget : public CPDFSDK_Annot
 {
 public:
 	CPDFSDK_Widget(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView, CPDFSDK_InterForm* pInterForm);
@@ -170,14 +170,12 @@ private:
 class CPDFSDK_InterForm : public CPDF_FormNotify
 {
 public:
-	CPDFSDK_InterForm(CPDFSDK_Document* pDocument);
-	virtual ~CPDFSDK_InterForm();
+	explicit CPDFSDK_InterForm(CPDFSDK_Document* pDocument);
+	~CPDFSDK_InterForm() override;
 
-public:
-	virtual void					Destroy();
-	virtual CPDF_InterForm*			GetInterForm();
+	CPDF_InterForm* GetInterForm() const { return m_pInterForm; }
+	CPDFSDK_Document* GetDocument() const { return m_pDocument; }
 
-	CPDFSDK_Document*				GetDocument();
 	FX_BOOL							HighlightWidgets();
 
 	CPDFSDK_Widget*					GetSibling(CPDFSDK_Widget* pWidget, FX_BOOL bNext) const;

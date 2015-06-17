@@ -22,6 +22,11 @@ CFX_BidiChar::CFX_BidiChar()
     , m_iLastCount(0)
 {
 }
+void CFX_BidiChar::SetPolicy(FX_BOOL bSeparateNeutral)
+{
+    m_bSeparateNeutral = bSeparateNeutral;
+}
+
 FX_BOOL CFX_BidiChar::AppendChar(FX_WCHAR wch)
 {
     FX_DWORD dwProps = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch];

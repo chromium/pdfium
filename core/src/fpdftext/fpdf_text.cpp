@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../include/fpdfapi/fpdf_page.h"
 #include "../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../include/fpdftext/fpdf_text.h"
@@ -308,17 +309,14 @@ void NormalizeString(CFX_WideString& str)
         return;
     }
     CFX_WideString sBuffer;
-    IFX_BidiChar* BidiChar = IFX_BidiChar::Create();
-    if (NULL == BidiChar)	{
-        return;
-    }
+    nonstd::unique_ptr<IFX_BidiChar> pBidiChar(IFX_BidiChar::Create());
     CFX_WordArray order;
     FX_BOOL bR2L = FALSE;
     int32_t start = 0, count = 0, i = 0;
     int nR2L = 0, nL2R = 0;
     for (i = 0; i < str.GetLength(); i++) {
-        if(BidiChar->AppendChar(str.GetAt(i))) {
-            int32_t ret = BidiChar->GetBidiInfo(start, count);
+        if(pBidiChar->AppendChar(str.GetAt(i))) {
+            int32_t ret = pBidiChar->GetBidiInfo(start, count);
             order.Add(start);
             order.Add(count);
             order.Add(ret);
@@ -331,8 +329,8 @@ void NormalizeString(CFX_WideString& str)
             }
         }
     }
-    if(BidiChar->EndChar()) {
-        int32_t ret = BidiChar->GetBidiInfo(start, count);
+    if(pBidiChar->EndChar()) {
+        int32_t ret = pBidiChar->GetBidiInfo(start, count);
         order.Add(start);
         order.Add(count);
         order.Add(ret);
@@ -428,7 +426,6 @@ void NormalizeString(CFX_WideString& str)
     }
     str.Empty();
     str += sBuffer;
-    BidiChar->Release();
 }
 static FX_BOOL IsNumber(CFX_WideString& str)
 {

@@ -11,27 +11,9 @@
 
 /* -------------------------- CBA_ActionHandler -------------------------- */
 
-CPDFSDK_ActionHandler::CPDFSDK_ActionHandler(CPDFDoc_Environment* pEvi) :
-	m_pFormActionHandler(NULL),
-	m_pMediaActionHandler(NULL)
-{
-		m_pFormActionHandler = new CPDFSDK_FormActionHandler;
-}
-
-CPDFSDK_ActionHandler::~CPDFSDK_ActionHandler()
-{
-	if(m_pFormActionHandler)
-	{
-		delete m_pFormActionHandler;
-		m_pFormActionHandler = NULL;
-	}
-}
-
-void CPDFSDK_ActionHandler::SetFormActionHandler(CPDFSDK_FormActionHandler* pHandler)
-{
-	ASSERT(pHandler != NULL);
-	ASSERT(m_pFormActionHandler == NULL);
-	m_pFormActionHandler = pHandler;
+CPDFSDK_ActionHandler::CPDFSDK_ActionHandler(CPDFDoc_Environment* pEvi)
+    : m_pFormActionHandler(new CPDFSDK_FormActionHandler),
+      m_pMediaActionHandler(NULL) {
 }
 
 void CPDFSDK_ActionHandler::SetMediaActionHandler(CPDFSDK_MediaActionHandler* pHandler)
@@ -39,11 +21,6 @@ void CPDFSDK_ActionHandler::SetMediaActionHandler(CPDFSDK_MediaActionHandler* pH
 	ASSERT(pHandler != NULL);
 	ASSERT(m_pMediaActionHandler == NULL);
 	m_pMediaActionHandler = pHandler;
-}
-
-void CPDFSDK_ActionHandler::Destroy()
-{
-	delete this;
 }
 
 //document open

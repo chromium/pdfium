@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fxge/fx_ge.h"
 #include "../../../include/fxge/fx_freetype.h"
 #include "ttgsubtable.h"
+
 CFX_GlyphMap::CFX_GlyphMap()
 {
 }
@@ -422,7 +424,8 @@ FX_BOOL CFX_GSUBTable::GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum)
 {
     return m_GsubImp.GetVerticalGlyph(glyphnum, vglyphnum);
 }
-IFX_GSUBTable* FXGE_CreateGSUBTable(CFX_Font* pFont)
+// static
+IFX_GSUBTable* IFX_GSUBTable::Create(CFX_Font* pFont)
 {
     if (!pFont) {
         return NULL;
@@ -439,11 +442,10 @@ IFX_GSUBTable* FXGE_CreateGSUBTable(CFX_Font* pFont)
     }
     int error = FXFT_Load_Sfnt_Table(pFont->m_Face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, pFont->m_pGsubData, NULL);
     if (!error && pFont->m_pGsubData) {
-        CFX_GSUBTable* pGsubTable = new CFX_GSUBTable;
+        nonstd::unique_ptr<CFX_GSUBTable> pGsubTable(new CFX_GSUBTable);
         if (pGsubTable->m_GsubImp.LoadGSUBTable((FT_Bytes)pFont->m_pGsubData)) {
-            return pGsubTable;
+            return pGsubTable.release();
         }
-        pGsubTable->Release();
     }
     return NULL;
 }

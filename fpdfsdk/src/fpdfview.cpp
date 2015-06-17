@@ -77,13 +77,7 @@ FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy)
 #define _T(x) x
 #endif
 
-#ifdef API5
-	CPDF_ModuleMgr*	g_pModuleMgr = NULL;
-#else
-	CCodec_ModuleMgr*	g_pCodecModule = NULL;
-#endif
-
-//extern CPDFSDK_FormFillApp* g_pFormFillApp;
+CCodec_ModuleMgr* g_pCodecModule = nullptr;
 
 #if _FX_OS_ == _FX_LINUX_EMBEDDED_
 class CFontMapper : public IPDF_FontMapper
@@ -111,7 +105,7 @@ CFontMapper* g_pFontMapper = NULL;
 
 DLLEXPORT void STDCALL FPDF_InitLibrary()
 {
-	g_pCodecModule = CCodec_ModuleMgr::Create();
+	g_pCodecModule = new CCodec_ModuleMgr();
 
 	CFX_GEModule::Create();
 	CFX_GEModule::Get()->SetCodecModule(g_pCodecModule);
@@ -135,15 +129,13 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary()
 {
 
 #if _FX_OS_ == _FX_LINUX_EMBEDDED_
-	if (g_pFontMapper) delete g_pFontMapper;
+	delete g_pFontMapper;
+	g_pFontMapper = nullptr;
 #endif
-#ifdef API5
-	g_pModuleMgr->Destroy();
-#else
 	CPDF_ModuleMgr::Destroy();
 	CFX_GEModule::Destroy();
-	g_pCodecModule->Destroy();
-#endif
+	delete g_pCodecModule;
+	g_pCodecModule = nullptr;
 }
 
 #ifndef _WIN32

@@ -1666,26 +1666,10 @@ CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
 
 CPDFSDK_InterForm::~CPDFSDK_InterForm()
 {
-	ASSERT(m_pInterForm != NULL);
 	delete m_pInterForm;
 	m_pInterForm = NULL;
 
 	m_Map.RemoveAll();
-}
-
-void CPDFSDK_InterForm::Destroy()
-{
-	delete this;
-}
-
-CPDF_InterForm* CPDFSDK_InterForm::GetInterForm()
-{
-	return m_pInterForm;
-}
-
-CPDFSDK_Document* CPDFSDK_InterForm::GetDocument()
-{
-	return m_pDocument;
 }
 
 FX_BOOL CPDFSDK_InterForm::HighlightWidgets()

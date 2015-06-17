@@ -424,12 +424,9 @@ FX_BOOL	OutputText(void* dib, int x, int y, CFX_Font* pFont, double font_size,
 class IFX_GSUBTable
 {
 public:
-    virtual void	Release() = 0;
+    static IFX_GSUBTable* Create(CFX_Font* pFont);
+    virtual ~IFX_GSUBTable() { }
     virtual FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) = 0;
-
-protected:
-     ~IFX_GSUBTable() { }
 };
-IFX_GSUBTable* FXGE_CreateGSUBTable(CFX_Font* pFont);
 
 #endif  // CORE_INCLUDE_FXGE_FX_FONT_H_

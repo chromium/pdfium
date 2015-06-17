@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <algorithm>
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../include/fpdfapi/fpdf_module.h"
 #include "../../include/fpdfapi/fpdf_page.h"
 #include "../../include/fpdfapi/fpdf_pageobj.h"
@@ -1228,7 +1229,7 @@ void CPDF_TextPage::CloseTempLine()
     if (count1 <= 0) {
         return;
     }
-    IFX_BidiChar* BidiChar = IFX_BidiChar::Create();
+    nonstd::unique_ptr<IFX_BidiChar> pBidiChar(IFX_BidiChar::Create());
     CFX_WideString str = m_TempTextBuf.GetWideString();
     CFX_WordArray order;
     FX_BOOL bR2L = FALSE;
@@ -1249,8 +1250,8 @@ void CPDF_TextPage::CloseTempLine()
         } else {
             bPrevSpace = FALSE;
         }
-        if(BidiChar && BidiChar->AppendChar(str.GetAt(i))) {
-            int32_t ret = BidiChar->GetBidiInfo(start, count);
+        if(pBidiChar->AppendChar(str.GetAt(i))) {
+            int32_t ret = pBidiChar->GetBidiInfo(start, count);
             order.Add(start);
             order.Add(count);
             order.Add(ret);
@@ -1263,8 +1264,8 @@ void CPDF_TextPage::CloseTempLine()
             }
         }
     }
-    if(BidiChar && BidiChar->EndChar()) {
-        int32_t ret = BidiChar->GetBidiInfo(start, count);
+    if(pBidiChar->EndChar()) {
+        int32_t ret = pBidiChar->GetBidiInfo(start, count);
         order.Add(start);
         order.Add(count);
         order.Add(ret);
@@ -1361,7 +1362,6 @@ void CPDF_TextPage::CloseTempLine()
     order.RemoveAll();
     m_TempCharList.RemoveAll();
     m_TempTextBuf.Delete(0, m_TempTextBuf.GetLength());
-    BidiChar->Release();
 }
 void CPDF_TextPage::ProcessTextObject(CPDF_TextObject*	pTextObj, const CFX_AffineMatrix& formMatrix, FX_POSITION ObjPos)
 {
@@ -1854,7 +1854,7 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
                                      const CPDF_Font* pFont,
                                      int nItems) const
 {
-    IFX_BidiChar* BidiChar = IFX_BidiChar::Create();
+    nonstd::unique_ptr<IFX_BidiChar> pBidiChar(IFX_BidiChar::Create());
     int32_t nR2L = 0;
     int32_t nL2R = 0;
     int32_t start = 0, count = 0;
@@ -1872,8 +1872,8 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
         if (!wChar) {
             continue;
         }
-        if (BidiChar && BidiChar->AppendChar(wChar)) {
-            int32_t ret = BidiChar->GetBidiInfo(start, count);
+        if (pBidiChar->AppendChar(wChar)) {
+            int32_t ret = pBidiChar->GetBidiInfo(start, count);
             if (ret == 2) {
                 nR2L++;
             }
@@ -1882,8 +1882,8 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
             }
         }
     }
-    if (BidiChar && BidiChar->EndChar()) {
-        int32_t ret = BidiChar->GetBidiInfo(start, count);
+    if (pBidiChar->EndChar()) {
+        int32_t ret = pBidiChar->GetBidiInfo(start, count);
         if (ret == 2) {
             nR2L++;
         }
@@ -1891,8 +1891,6 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
             nL2R++;
         }
     }
-    if (BidiChar)
-      BidiChar->Release();
     return (nR2L > 0 && nR2L >= nL2R);
 }
 int32_t CPDF_TextPage::GetTextObjectWritingMode(const CPDF_TextObject* pTextObj)

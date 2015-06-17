@@ -13,21 +13,15 @@ class CFX_BidiChar final : public IFX_BidiChar
 {
 public:
     CFX_BidiChar();
-    virtual void		Release() override
-    {
-        delete this;
-    }
-    virtual void		SetPolicy(FX_BOOL bSeparateNeutral = TRUE) override
-    {
-        m_bSeparateNeutral = bSeparateNeutral;
-    }
-    virtual FX_BOOL		AppendChar(FX_WCHAR wch) override;
-    virtual FX_BOOL		EndChar() override;
-    virtual int32_t 	GetBidiInfo(int32_t &iStart, int32_t &iCount) override;
-    virtual void		Reset() override;
+    ~CFX_BidiChar() override {}
+
+    void SetPolicy(FX_BOOL bSeparateNeutral = TRUE) override;
+    FX_BOOL AppendChar(FX_WCHAR wch) override;
+    FX_BOOL EndChar() override;
+    int32_t GetBidiInfo(int32_t &iStart, int32_t &iCount) override;
+    void Reset() override;
 
 private:
-    ~CFX_BidiChar() { }
     FX_BOOL	m_bSeparateNeutral;
     int32_t	m_iCurStart;
     int32_t	m_iCurCount;
