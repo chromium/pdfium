@@ -5,8 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxcodec/fx_codec.h"
+#include "../lcms2/fx_lcms2.h"
 #include "codec_int.h"
-#include "../lcms2/include/fx_lcms2.h"
+
 const FX_DWORD N_COMPONENT_LAB = 3;
 const FX_DWORD N_COMPONENT_GRAY = 1;
 const FX_DWORD N_COMPONENT_RGB = 3;

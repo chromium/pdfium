@@ -7,6 +7,6 @@
 #ifndef CORE_SRC_FXCODEC_LCMS2_INCLUDE_FX_LCMS2_PLUGIN_H_
 #define CORE_SRC_FXCODEC_LCMS2_INCLUDE_FX_LCMS2_PLUGIN_H_
 
-#include "../lcms2-2.6/include/lcms2_plugin.h"
+#include "../../../../third_party/lcms2-2.6/include/lcms2_plugin.h"
 
 #endif  // CORE_SRC_FXCODEC_LCMS2_INCLUDE_FX_LCMS2_PLUGIN_H_
