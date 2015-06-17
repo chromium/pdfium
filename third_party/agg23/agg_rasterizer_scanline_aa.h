@@ -29,7 +29,7 @@
 //----------------------------------------------------------------------------
 #ifndef AGG_RASTERIZER_SCANLINE_AA_INCLUDED
 #define AGG_RASTERIZER_SCANLINE_AA_INCLUDED
-#include "../../../../include/fxge/fx_ge.h"
+#include "../../core/include/fxge/fx_ge.h"
 #include "agg_basics.h"
 #include "agg_math.h"
 #include "agg_array.h"
