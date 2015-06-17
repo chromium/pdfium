@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_SRC_FX_JPEGLIB_H_
-#define CORE_SRC_FX_JPEGLIB_H_
+#ifndef CORE_SRC_FXCODEC_LIBJPEG_FX_LIBJPEG_H_
+#define CORE_SRC_FXCODEC_LIBJPEG_FX_LIBJPEG_H_
 
-#include "fxcodec/libjpeg/jpeglib.h"
+#include "../../../../third_party/libjpeg/jpeglib.h"
 
-#endif  // CORE_SRC_FX_JPEGLIB_H_
+#endif  // CORE_SRC_FXCODEC_LIBJPEG_FX_LIBJPEG_H_

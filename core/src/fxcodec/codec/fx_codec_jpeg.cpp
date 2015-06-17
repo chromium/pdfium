@@ -30,7 +30,7 @@ extern "C" {
 };
 extern "C" {
 #undef FAR
-#include "../../fx_jpeglib.h"
+#include "../libjpeg/fx_libjpeg.h"
 }
 extern "C" {
     static void _src_do_nothing(struct jpeg_decompress_struct* cinfo) {}
