@@ -4,13 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfapi/fpdf_resource.h"
-#include "../../include/fpdfapi/fpdf_pageobj.h"
-#include "../../include/fpdftext/fpdf_text.h"
-#include "../../include/fpdfapi/fpdf_page.h"
-#include "../../include/fpdfapi/fpdf_module.h"
 #include <ctype.h>
 #include <algorithm>
+
+#include "../../../third_party/base/nonstd_unique_ptr.h"
+#include "../../include/fpdfapi/fpdf_module.h"
+#include "../../include/fpdfapi/fpdf_page.h"
+#include "../../include/fpdfapi/fpdf_pageobj.h"
+#include "../../include/fpdfapi/fpdf_resource.h"
+#include "../../include/fpdftext/fpdf_text.h"
 #include "text_int.h"
 
 namespace {
@@ -1228,7 +1230,7 @@ void CPDF_TextPage::CloseTempLine()
     if (count1 <= 0) {
         return;
     }
-    IFX_BidiChar* BidiChar = IFX_BidiChar::Create();
+    nonstd::unique_ptr<IFX_BidiChar> pBidiChar(IFX_BidiChar::Create());
     CFX_WideString str = m_TempTextBuf.GetWideString();
     CFX_WordArray order;
     FX_BOOL bR2L = FALSE;
@@ -1249,8 +1251,8 @@ void CPDF_TextPage::CloseTempLine()
         } else {
             bPrevSpace = FALSE;
         }
-        if(BidiChar && BidiChar->AppendChar(str.GetAt(i))) {
-            int32_t ret = BidiChar->GetBidiInfo(start, count);
+        if(pBidiChar->AppendChar(str.GetAt(i))) {
+            int32_t ret = pBidiChar->GetBidiInfo(start, count);
             order.Add(start);
             order.Add(count);
             order.Add(ret);
@@ -1263,8 +1265,8 @@ void CPDF_TextPage::CloseTempLine()
             }
         }
     }
-    if(BidiChar && BidiChar->EndChar()) {
-        int32_t ret = BidiChar->GetBidiInfo(start, count);
+    if(pBidiChar->EndChar()) {
+        int32_t ret = pBidiChar->GetBidiInfo(start, count);
         order.Add(start);
         order.Add(count);
         order.Add(ret);
@@ -1361,7 +1363,6 @@ void CPDF_TextPage::CloseTempLine()
     order.RemoveAll();
     m_TempCharList.RemoveAll();
     m_TempTextBuf.Delete(0, m_TempTextBuf.GetLength());
-    BidiChar->Release();
 }
 void CPDF_TextPage::ProcessTextObject(CPDF_TextObject*	pTextObj, const CFX_AffineMatrix& formMatrix, FX_POSITION ObjPos)
 {

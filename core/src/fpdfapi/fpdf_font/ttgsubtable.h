@@ -411,16 +411,10 @@ private:
 class CFX_GSUBTable final : public IFX_GSUBTable
 {
 public:
-    virtual void	Release() override
-    {
-        delete this;
-    }
+    ~CFX_GSUBTable() override {}
     virtual FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) override;
 
     CFX_CTTGSUBTable m_GsubImp;
-
-private:
-    ~CFX_GSUBTable() { }
 };
 
 #endif  // CORE_SRC_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_

@@ -316,25 +316,21 @@ CPDFSDK_Document::CPDFSDK_Document(CPDFXFA_Document* pDoc,CPDFDoc_Environment* p
 
 CPDFSDK_Document::~CPDFSDK_Document()
 {
-	FX_POSITION pos = m_pageMap.GetStartPosition();
-	while(pos)
-	{
-		CPDFXFA_Page* pPage = NULL;
-		CPDFSDK_PageView* pPageView = NULL;
-		m_pageMap.GetNextAssoc(pos, pPage, pPageView);
-		delete pPageView;
-	}
-	m_pageMap.RemoveAll();
-	if(m_pInterForm)
-	{
-		m_pInterForm->Destroy();
-		m_pInterForm = NULL;
-	}
-	if(m_pOccontent)
-	{
-		delete m_pOccontent;
-		m_pOccontent = NULL;
-	}
+    FX_POSITION pos = m_pageMap.GetStartPosition();
+    while(pos)
+    {
+        CPDFXFA_Page* pPage = NULL;
+        CPDFSDK_PageView* pPageView = NULL;
+        m_pageMap.GetNextAssoc(pos, pPage, pPageView);
+        delete pPageView;
+    }
+    m_pageMap.RemoveAll();
+
+    delete m_pInterForm;
+    m_pInterForm = nullptr;
+
+    delete m_pOccontent;
+    m_pOccontent = nullptr;
 }
 
 void CPDFSDK_Document::InitPageView()

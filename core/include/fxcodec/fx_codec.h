@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 #define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
+#include "../fxcrt/fx_basic.h"
 #include "../fxcrt/fx_ext.h"
 #include "fx_codec_def.h"
 #include "fx_codec_provider.h"
@@ -28,86 +30,37 @@ class ICodec_BmpModule;
 class ICodec_TiffModule;
 class CFX_DIBAttribute;
 class ICodec_ScanlineDecoder;
+
 class CCodec_ModuleMgr
 {
 public:
-
-    static CCodec_ModuleMgr*	Create();
-
-    void				Destroy();
-
-    void				InitJbig2Decoder();
-
-    void				InitJpxDecoder();
-
-
-    void				InitIccDecoder();
-
-
-    ICodec_ProgressiveDecoder*	CreateProgressiveDecoder();
-
-    ICodec_Jbig2Encoder*		CreateJbig2Encoder();
-protected:
     CCodec_ModuleMgr();
-    ~CCodec_ModuleMgr();
-public:
-    ICodec_BasicModule*	GetBasicModule()
-    {
-        return m_pBasicModule;
-    }
-    ICodec_FaxModule*	GetFaxModule()
-    {
-        return m_pFaxModule;
-    }
-    ICodec_JpegModule*	GetJpegModule()
-    {
-        return m_pJpegModule;
-    }
-    ICodec_JpxModule*	GetJpxModule()
-    {
-        return m_pJpxModule;
-    }
-    ICodec_Jbig2Module*	GetJbig2Module()
-    {
-        return m_pJbig2Module;
-    }
-    ICodec_IccModule*	GetIccModule()
-    {
-        return m_pIccModule;
-    }
-    ICodec_FlateModule*	GetFlateModule()
-    {
-        return m_pFlateModule;
-    }
-    ICodec_PngModule*	GetPngModule()
-    {
-        return m_pPngModule;
-    }
-    ICodec_GifModule*	GetGifModule()
-    {
-        return m_pGifModule;
-    }
-    ICodec_BmpModule*	GetBmpModule()
-    {
-        return m_pBmpModule;
-    }
-    ICodec_TiffModule*	GetTiffModule()
-    {
-        return m_pTiffModule;
-    }
-protected:
-    ICodec_BasicModule*	m_pBasicModule;
-    ICodec_FaxModule*	m_pFaxModule;
-    ICodec_JpegModule*	m_pJpegModule;
-    ICodec_JpxModule*	m_pJpxModule;
-    ICodec_Jbig2Module*	m_pJbig2Module;
-    ICodec_IccModule*	m_pIccModule;
-    ICodec_FlateModule*	m_pFlateModule;
-    ICodec_PngModule*	m_pPngModule;
-    ICodec_GifModule*	m_pGifModule;
-    ICodec_BmpModule*	m_pBmpModule;
-    ICodec_TiffModule*	m_pTiffModule;
+    ICodec_ProgressiveDecoder* CreateProgressiveDecoder();
+    ICodec_Jbig2Encoder* CreateJbig2Encoder();
+    ICodec_BasicModule* GetBasicModule() const { return m_pBasicModule.get(); }
+    ICodec_FaxModule* GetFaxModule() const { return m_pFaxModule.get(); }
+    ICodec_JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
+    ICodec_JpxModule* GetJpxModule() const { return m_pJpxModule.get(); }
+    ICodec_Jbig2Module* GetJbig2Module() const { return m_pJbig2Module.get(); }
+    ICodec_IccModule* GetIccModule() const { return m_pIccModule.get(); }
+    ICodec_FlateModule* GetFlateModule() const { return m_pFlateModule.get(); }
+    ICodec_PngModule* GetPngModule() const { return m_pPngModule.get(); }
+    ICodec_GifModule* GetGifModule() const { return m_pGifModule.get(); }
+    ICodec_BmpModule* GetBmpModule() const { return m_pBmpModule.get(); }
+    ICodec_TiffModule* GetTiffModule() const { return m_pTiffModule.get(); }
 
+protected:
+    nonstd::unique_ptr<ICodec_BasicModule> m_pBasicModule;
+    nonstd::unique_ptr<ICodec_FaxModule> m_pFaxModule;
+    nonstd::unique_ptr<ICodec_JpegModule> m_pJpegModule;
+    nonstd::unique_ptr<ICodec_JpxModule> m_pJpxModule;
+    nonstd::unique_ptr<ICodec_Jbig2Module> m_pJbig2Module;
+    nonstd::unique_ptr<ICodec_IccModule> m_pIccModule;
+    nonstd::unique_ptr<ICodec_FlateModule> m_pFlateModule;
+    nonstd::unique_ptr<ICodec_PngModule> m_pPngModule;
+    nonstd::unique_ptr<ICodec_GifModule> m_pGifModule;
+    nonstd::unique_ptr<ICodec_BmpModule> m_pBmpModule;
+    nonstd::unique_ptr<ICodec_TiffModule> m_pTiffModule;
 };
 class ICodec_BasicModule
 {

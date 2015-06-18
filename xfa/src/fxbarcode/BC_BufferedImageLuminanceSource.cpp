@@ -36,7 +36,7 @@ static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread)
     CFX_DIBitmap* bitmap = NULL;
     CCodec_ModuleMgr* pCodecMgr	= NULL;
     ICodec_ProgressiveDecoder* pImageCodec = NULL;
-    pCodecMgr = CCodec_ModuleMgr::Create();
+    pCodecMgr = new CCodec_ModuleMgr();
     pImageCodec = pCodecMgr->CreateProgressiveDecoder();
     FXCODEC_STATUS status = FXCODEC_STATUS_DECODE_FINISH;
     status = pImageCodec->LoadImageInfo(fileread, FXCODEC_IMAGE_UNKNOWN);
@@ -78,20 +78,16 @@ static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread)
         delete pImageCodec;
         pImageCodec = NULL;
     }
-    if (pCodecMgr) {
-        pCodecMgr->Destroy();
-        pCodecMgr = NULL;
-    }
+    delete pCodecMgr;
+    pCodecMgr = NULL;
     return bitmap;
 except:
     if (pImageCodec) {
         delete pImageCodec;
         pImageCodec = NULL;
     }
-    if (pCodecMgr) {
-        pCodecMgr->Destroy();
-        pCodecMgr = NULL;
-    }
+    delete pCodecMgr;
+    pCodecMgr = NULL;
     if (bitmap) {
         delete bitmap;
     }

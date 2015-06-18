@@ -177,11 +177,11 @@ FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy)
 	return FALSE;
 }
 
-CCodec_ModuleMgr*	g_pCodecModule = NULL;
+CCodec_ModuleMgr* g_pCodecModule = nullptr;
 
 DLLEXPORT void STDCALL FPDF_InitLibrary()
 {
-    g_pCodecModule = CCodec_ModuleMgr::Create();
+    g_pCodecModule = new CCodec_ModuleMgr();
 
     CFX_GEModule::Create();
     CFX_GEModule::Get()->SetCodecModule(g_pCodecModule);
@@ -199,7 +199,9 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary()
     CPDFXFA_App::ReleaseInstance();
     CPDF_ModuleMgr::Destroy();
     CFX_GEModule::Destroy();
-    g_pCodecModule->Destroy();
+
+    delete g_pCodecModule;
+    g_pCodecModule = nullptr;
 }
 
 #ifndef _WIN32

@@ -61,16 +61,14 @@ void FX_BidiLine(CFX_RTFCharArray &chars, int32_t iCount, int32_t iBaseLevel = 0
 class IFX_BidiChar
 {
 public:
-    static IFX_BidiChar*	Create();
-    virtual void			Release() = 0;
-    virtual void			SetPolicy(FX_BOOL bSeparateNeutral = TRUE) = 0;
-    virtual FX_BOOL			AppendChar(FX_WCHAR wch) = 0;
-    virtual FX_BOOL			EndChar() = 0;
-    virtual int32_t		GetBidiInfo(int32_t &iStart, int32_t &iCount) = 0;
-    virtual void			Reset() = 0;
+    static IFX_BidiChar* Create();
+    virtual ~IFX_BidiChar() {}
 
-protected:
-    ~IFX_BidiChar() { }
+    virtual void SetPolicy(FX_BOOL bSeparateNeutral = TRUE) = 0;
+    virtual FX_BOOL AppendChar(FX_WCHAR wch) = 0;
+    virtual FX_BOOL EndChar() = 0;
+    virtual int32_t GetBidiInfo(int32_t &iStart, int32_t &iCount) = 0;
+    virtual void Reset() = 0;
 };
 
 #endif  // CORE_INCLUDE_FXCRT_FX_ARB_H_

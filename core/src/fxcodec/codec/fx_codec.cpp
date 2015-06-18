@@ -6,38 +6,19 @@
 
 #include "../../../include/fxcodec/fx_codec.h"
 #include "codec_int.h"
+
 CCodec_ModuleMgr::CCodec_ModuleMgr()
-{
-    m_pBasicModule = new CCodec_BasicModule;
-    m_pFaxModule = new CCodec_FaxModule;
-    m_pJpegModule = new CCodec_JpegModule;
-    m_pJpxModule = new CCodec_JpxModule;
-    m_pJbig2Module = new CCodec_Jbig2Module;
-    m_pIccModule = new CCodec_IccModule;
-    m_pPngModule = new CCodec_PngModule;
-    m_pGifModule = new CCodec_GifModule;
-    m_pBmpModule = new CCodec_BmpModule;
-    m_pTiffModule = new CCodec_TiffModule;
-    m_pFlateModule = new CCodec_FlateModule;
-}
-CCodec_ModuleMgr::~CCodec_ModuleMgr()
-{
-    delete m_pBasicModule;
-    delete m_pFaxModule;
-    delete m_pJpegModule;
-    delete m_pFlateModule;
-    delete m_pJpxModule;
-    delete m_pJbig2Module;
-    delete m_pIccModule;
-}
-void CCodec_ModuleMgr::InitJbig2Decoder()
-{
-}
-void CCodec_ModuleMgr::InitJpxDecoder()
-{
-}
-void CCodec_ModuleMgr::InitIccDecoder()
-{
+  : m_pBasicModule(new CCodec_BasicModule),
+    m_pFaxModule(new CCodec_FaxModule),
+    m_pJpegModule(new CCodec_JpegModule),
+    m_pJpxModule(new CCodec_JpxModule),
+    m_pJbig2Module(new CCodec_Jbig2Module),
+    m_pIccModule(new CCodec_IccModule),
+    m_pFlateModule(new CCodec_FlateModule),
+    m_pPngModule(new CCodec_PngModule),
+    m_pGifModule(new CCodec_GifModule),
+    m_pBmpModule(new CCodec_BmpModule),
+    m_pTiffModule(new CCodec_TiffModule) {
 }
 CCodec_ScanlineDecoder::CCodec_ScanlineDecoder()
 {
@@ -244,14 +225,6 @@ FX_BOOL CCodec_BasicModule::A85Encode(const uint8_t* src_buf, FX_DWORD src_size,
                                       FX_DWORD& dest_size)
 {
     return FALSE;
-}
-CCodec_ModuleMgr* CCodec_ModuleMgr::Create()
-{
-    return new CCodec_ModuleMgr;
-}
-void CCodec_ModuleMgr::Destroy()
-{
-    delete this;
 }
 CFX_DIBAttribute::CFX_DIBAttribute()
 {
