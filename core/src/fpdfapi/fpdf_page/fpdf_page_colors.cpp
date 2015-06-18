@@ -561,7 +561,6 @@ public:
     }
     ~CPDF_ICCBasedCS() override;
 
-    void GetDefaultValue(int i, FX_FLOAT& value, FX_FLOAT& min, FX_FLOAT& max) const override;
     FX_BOOL	v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
     FX_BOOL GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const override;
     FX_BOOL	SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const override;
@@ -591,13 +590,6 @@ CPDF_ICCBasedCS::~CPDF_ICCBasedCS()
     if (m_pProfile && m_pDocument) {
         m_pDocument->GetPageData()->ReleaseIccProfile(m_pProfile);
     }
-}
-
-void CPDF_ICCBasedCS::GetDefaultValue(int i, FX_FLOAT& value, FX_FLOAT& min, FX_FLOAT& max) const
-{
-    min = m_pRanges[i * 2];
-    max = m_pRanges[i * 2 + 1];
-    value = min;
 }
 
 FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
@@ -772,7 +764,6 @@ public:
     ~CPDF_IndexedCS() override;
 
     FX_BOOL v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
-    void GetDefaultValue(int iComponent, FX_FLOAT& value, FX_FLOAT& min, FX_FLOAT& max) const override;
     FX_BOOL	GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const override;
     CPDF_ColorSpace* GetBaseCS() const override;
     void EnableStdConversion(FX_BOOL bEnabled) override;
@@ -829,12 +820,6 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
         m_Table = CFX_ByteStringC(acc.GetData(), acc.GetSize());
     }
     return TRUE;
-}
-void CPDF_IndexedCS::GetDefaultValue(int iComponent, FX_FLOAT& value, FX_FLOAT& min, FX_FLOAT& max) const
-{
-    value = 0.0;
-    min = 0.0;
-    max = (FX_FLOAT)m_MaxIndex;
 }
 
 FX_BOOL CPDF_IndexedCS::GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const
