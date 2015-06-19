@@ -234,6 +234,27 @@
       ],
     },
     {
+      'target_name': 'fx_zlib',
+      'type': 'static_library',
+      'sources': [
+        'zlib_v128/adler32.c',
+        'zlib_v128/compress.c',
+        'zlib_v128/crc32.c',
+        'zlib_v128/deflate.c',
+        'zlib_v128/gzclose.c',
+        'zlib_v128/gzlib.c',
+        'zlib_v128/gzread.c',
+        'zlib_v128/gzwrite.c',
+        'zlib_v128/infback.c',
+        'zlib_v128/inffast.c',
+        'zlib_v128/inflate.c',
+        'zlib_v128/inftrees.c',
+        'zlib_v128/trees.c',
+        'zlib_v128/uncompr.c',
+        'zlib_v128/zutil.c',
+      ],
+    },
+    {
       'target_name': 'pdfium_base',
       'type': 'none',
       'sources': [

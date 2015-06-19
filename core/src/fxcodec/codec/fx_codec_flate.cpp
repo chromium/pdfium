@@ -6,7 +6,7 @@
 
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fxcodec/fx_codec.h"
-#include "../../fx_zlib.h"
+#include "../fx_zlib/include/fx_zlib.h"
 #include "codec_int.h"
 
 extern "C"
