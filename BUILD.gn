@@ -30,10 +30,10 @@ config("pdfium_config") {
   }
 
   if (is_linux) {
-    if (cpu_arch == "x64") {
+    if (current_cpu == "x64") {
       defines += [ "_FX_CPU_=_FX_X64_" ]
       cflags += [ "-fPIC" ]
-    } else if (cpu_arch == "x86") {
+    } else if (current_cpu == "x86") {
       defines += [ "_FX_CPU_=_FX_X86_" ]
     }
   }
@@ -55,27 +55,28 @@ static_library("pdfium") {
     "fpdfsdk/include/fsdk_annothandler.h",
     "fpdfsdk/include/fsdk_baseannot.h",
     "fpdfsdk/include/fsdk_baseform.h",
-    "fpdfsdk/src/fpdfdoc.cpp",
-    "fpdfsdk/src/fpdfeditimg.cpp",
-    "fpdfsdk/src/fpdfeditpage.cpp",
-    "fpdfsdk/src/fpdfformfill.cpp",
-    "fpdfsdk/src/fpdfppo.cpp",
-    "fpdfsdk/src/fpdfsave.cpp",
-    "fpdfsdk/src/fpdftext.cpp",
-    "fpdfsdk/src/fpdfview.cpp",
     "fpdfsdk/src/fpdf_dataavail.cpp",
     "fpdfsdk/src/fpdf_ext.cpp",
     "fpdfsdk/src/fpdf_flatten.cpp",
     "fpdfsdk/src/fpdf_progressive.cpp",
     "fpdfsdk/src/fpdf_searchex.cpp",
     "fpdfsdk/src/fpdf_sysfontinfo.cpp",
+    "fpdfsdk/src/fpdf_transformpage.cpp",
+    "fpdfsdk/src/fpdfdoc.cpp",
+    "fpdfsdk/src/fpdfeditimg.cpp",
+    "fpdfsdk/src/fpdfeditpage.cpp",
+    "fpdfsdk/src/fpdfformfill.cpp",
+    "fpdfsdk/src/fpdfppo.cpp",
+    "fpdfsdk/src/fpdfsave.cpp",
+    "fpdfsdk/src/fpdfsdkdll.rc",
+    "fpdfsdk/src/fpdftext.cpp",
+    "fpdfsdk/src/fpdfview.cpp",
     "fpdfsdk/src/fsdk_actionhandler.cpp",
     "fpdfsdk/src/fsdk_annothandler.cpp",
     "fpdfsdk/src/fsdk_baseannot.cpp",
     "fpdfsdk/src/fsdk_baseform.cpp",
     "fpdfsdk/src/fsdk_mgr.cpp",
     "fpdfsdk/src/fsdk_rendercontext.cpp",
-    "fpdfsdk/src/fpdfsdkdll.rc",
     "fpdfsdk/src/resource.h",
     "public/fpdf_dataavail.h",
     "public/fpdf_doc.h",
