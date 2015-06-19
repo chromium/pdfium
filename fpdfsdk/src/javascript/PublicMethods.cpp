@@ -62,35 +62,6 @@ END_JS_STATIC_GLOBAL_FUN()
 
 IMPLEMENT_JS_STATIC_GLOBAL_FUN(CJS_PublicMethods)
 
-struct stru_TbConvert
-{
-	const FX_CHAR* lpszJSMark;
-	const FX_CHAR* lpszCppMark;
-};
-
-static const stru_TbConvert fcTable[] = {
-	{ "mmmm","%B" },
-	{ "mmm", "%b" },
-	{ "mm",  "%m" },
-	//"m"
-	{ "dddd","%A" },
-	{ "ddd", "%a" },
-	{ "dd",  "%d" },
-	//"d",   "%w",
-	{ "yyyy","%Y" },
-	{ "yy",  "%y" },
-	{ "HH",  "%H" },
-	//"H"
-	{ "hh",  "%I" },
-	//"h"
-	{ "MM",  "%M" },
-	//"M"
-	{ "ss",  "%S" },
-	//"s
-	{ "tt",  "%p" },
-	//"t"
-};
-
 static const FX_WCHAR* months[] =
 {
 	L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec"
