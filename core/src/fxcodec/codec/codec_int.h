@@ -10,9 +10,9 @@
 #include <limits.h>
 #include <list>
 
+#include "../../../../third_party/libopenjpeg20/openjpeg.h"  // For OPJ_SIZE_T.
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../jbig2/JBig2_Context.h"
-#include "../fx_libopenjpeg/libopenjpeg20/openjpeg.h"  // For OPJ_SIZE_T.
 
 class CCodec_BasicModule : public ICodec_BasicModule
 {

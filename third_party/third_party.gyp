@@ -3,6 +3,15 @@
 # found in the LICENSE file.
 
 {
+  'target_defaults': {
+    'defines': [
+      'OPJ_STATIC',
+      '_CRT_SECURE_NO_WARNINGS',
+    ],
+    'msvs_disabled_warnings': [
+      4005, 4018, 4146, 4333, 4345, 4267
+    ],
+  },
   'targets': [
     {
       'target_name': 'bigint',
@@ -197,6 +206,31 @@
             '-Wno-unused',
           ],
         }],
+      ],
+    },
+    {
+      'target_name': 'fx_libopenjpeg',
+      'type': 'static_library',
+      'sources': [
+        'libopenjpeg20/bio.c',
+        'libopenjpeg20/cio.c',
+        'libopenjpeg20/dwt.c',
+        'libopenjpeg20/event.c',
+        'libopenjpeg20/function_list.c',
+        'libopenjpeg20/image.c',
+        'libopenjpeg20/invert.c',
+        'libopenjpeg20/j2k.c',
+        'libopenjpeg20/jp2.c',
+        'libopenjpeg20/mct.c',
+        'libopenjpeg20/mqc.c',
+        'libopenjpeg20/openjpeg.c',
+        'libopenjpeg20/opj_clock.c',
+        'libopenjpeg20/pi.c',
+        'libopenjpeg20/raw.c',
+        'libopenjpeg20/t1.c',
+        'libopenjpeg20/t2.c',
+        'libopenjpeg20/tcd.c',
+        'libopenjpeg20/tgt.c',
       ],
     },
     {
