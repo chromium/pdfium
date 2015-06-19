@@ -29,7 +29,6 @@ class CPDF_PathObject;
 class CPDF_ImageObject;
 class CPDF_ShadingObject;
 class CPDF_FormObject;
-class CPDF_InlineImages;
 typedef CFX_PathData CPDF_PathData;
 
 class CPDF_Path : public CFX_CountRef<CFX_PathData>
@@ -423,12 +422,13 @@ public:
 
     FX_BOOL				LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const;
 };
-#define PDFPAGE_TEXT		1
-#define PDFPAGE_PATH		2
-#define PDFPAGE_IMAGE		3
-#define PDFPAGE_SHADING		4
-#define PDFPAGE_FORM		5
-#define PDFPAGE_INLINES		6
+
+#define PDFPAGE_TEXT     1
+#define PDFPAGE_PATH     2
+#define PDFPAGE_IMAGE    3
+#define PDFPAGE_SHADING  4
+#define PDFPAGE_FORM     5
+
 class CPDF_GraphicStates
 {
 public:
@@ -698,25 +698,6 @@ public:
 
 protected:
     void CopyData(const CPDF_PageObject* pSrcObject) override;
-};
-
-class CPDF_InlineImages : public CPDF_PageObject
-{
-public:
-
-    CPDF_InlineImages();
-
-    virtual ~CPDF_InlineImages();
-
-    CPDF_Stream*		m_pStream;
-
-    CFX_DIBitmap*		m_pBitmap;
-
-    CFX_ArrayTemplate<CFX_AffineMatrix>	m_Matrices;
-
-    void				AddMatrix(CFX_AffineMatrix& matrix);
-protected:
-    void Transform(const CFX_AffineMatrix& matrix) override {}
 };
 
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_PAGEOBJ_H_
