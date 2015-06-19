@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../../third_party/zlib_v128/zlib.h"
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../fxcodec/fx_zlib/include/fx_zlib.h"
 #include "filters_int.h"
 
 CFX_DataFilter::CFX_DataFilter()

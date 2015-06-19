@@ -7,9 +7,9 @@
 #include <algorithm>
 #include <limits>
 
+#include "../../../../third_party/lcms2-2.6/include/lcms2.h"
 #include "../../../../third_party/libopenjpeg20/openjpeg.h"
 #include "../../../include/fxcodec/fx_codec.h"
-#include "../lcms2/fx_lcms2.h"
 #include "codec_int.h"
 
 static void fx_error_callback(const char *msg, void *client_data)
