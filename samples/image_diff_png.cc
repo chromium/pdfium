@@ -17,8 +17,8 @@
 #include <string>
 
 #include "../third_party/base/logging.h"
+#include "../third_party/zlib_v128/zlib.h"
 #include "../core/src/fxcodec/fx_lpng/include/fx_png.h"
-#include "../core/src/fxcodec/fx_zlib/include/fx_zlib.h"
 
 namespace image_diff_png {
 

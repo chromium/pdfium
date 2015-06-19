@@ -12,6 +12,11 @@
 #include "codec_int.h"
 
 extern "C" {
+#undef FAR
+#include "../../../../third_party/libjpeg/jpeglib.h"
+}
+
+extern "C" {
     static void _JpegScanSOI(const uint8_t*& src_buf, FX_DWORD& src_size)
     {
         if (src_size == 0) {
@@ -28,10 +33,6 @@ extern "C" {
         }
     }
 };
-extern "C" {
-#undef FAR
-#include "../libjpeg/fx_libjpeg.h"
-}
 extern "C" {
     static void _src_do_nothing(struct jpeg_decompress_struct* cinfo) {}
 };

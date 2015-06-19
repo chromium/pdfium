@@ -406,7 +406,6 @@
         'core/src/fxcodec/fx_tiff/src/fx_tif_warning.c',
         'core/src/fxcodec/fx_tiff/src/fx_tif_write.c',
         'core/src/fxcodec/fx_tiff/src/fx_tif_zip.c',
-        'core/src/fxcodec/fx_zlib/include/fx_zlib.h',
         'core/src/fxcodec/jbig2/JBig2_ArithDecoder.h',
         'core/src/fxcodec/jbig2/JBig2_ArithIntDecoder.cpp',
         'core/src/fxcodec/jbig2/JBig2_ArithIntDecoder.h',
@@ -437,11 +436,8 @@
         'core/src/fxcodec/jbig2/JBig2_SymbolDict.h',
         'core/src/fxcodec/lbmp/fx_bmp.cpp',
         'core/src/fxcodec/lbmp/fx_bmp.h',
-        'core/src/fxcodec/lcms2/fx_lcms2.h',
-        'core/src/fxcodec/lcms2/fx_lcms2_plugin.h',
         'core/src/fxcodec/lgif/fx_gif.cpp',
         'core/src/fxcodec/lgif/fx_gif.h',
-        'core/src/fxcodec/libjpeg/fx_libjpeg.h',
       ],
       'msvs_settings': {
         'VCCLCompilerTool': {

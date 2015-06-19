@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
+#include "../../../../third_party/zlib_v128/zlib.h"
 #include "../../../include/fxcodec/fx_codec.h"
-#include "../fx_zlib/include/fx_zlib.h"
 #include "codec_int.h"
 
 extern "C"
