@@ -28,10 +28,8 @@ CFX_Font::CFX_Font()
 }
 CFX_Font::~CFX_Font()
 {
-    if (m_pSubstFont) {
-        delete m_pSubstFont;
-        m_pSubstFont = NULL;
-    }
+    delete m_pSubstFont;
+    m_pSubstFont = NULL;
     if (m_pFontDataAllocation) {
         FX_Free(m_pFontDataAllocation);
         m_pFontDataAllocation = NULL;

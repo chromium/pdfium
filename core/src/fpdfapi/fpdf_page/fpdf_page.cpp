@@ -697,9 +697,7 @@ void CPDF_ShadingObject::CalcBoundingBox()
 }
 CPDF_FormObject::~CPDF_FormObject()
 {
-    if (m_pForm) {
-        delete m_pForm;
-    }
+    delete m_pForm;
 }
 void CPDF_FormObject::Transform(const CFX_AffineMatrix& matrix)
 {
@@ -709,9 +707,7 @@ void CPDF_FormObject::Transform(const CFX_AffineMatrix& matrix)
 void CPDF_FormObject::CopyData(const CPDF_PageObject* pSrc)
 {
     const CPDF_FormObject* pSrcObj = (const CPDF_FormObject*)pSrc;
-    if (m_pForm) {
-        delete m_pForm;
-    }
+    delete m_pForm;
     m_pForm = pSrcObj->m_pForm->Clone();
     m_FormMatrix = pSrcObj->m_FormMatrix;
 }
@@ -735,9 +731,7 @@ CPDF_PageObjects::CPDF_PageObjects(FX_BOOL bReleaseMembers) : m_ObjectList(128)
 }
 CPDF_PageObjects::~CPDF_PageObjects()
 {
-    if (m_pParser) {
-        delete m_pParser;
-    }
+    delete m_pParser;
     if (!m_bReleaseMembers) {
         return;
     }
@@ -851,9 +845,7 @@ void CPDF_PageObjects::LoadTransInfo()
 void CPDF_PageObjects::ClearCacheObjects()
 {
     m_ParseState = PDF_CONTENT_NOT_PARSED;
-    if (m_pParser) {
-        delete m_pParser;
-    }
+    delete m_pParser;
     m_pParser = NULL;
     if (m_bReleaseMembers) {
         FX_POSITION pos = m_ObjectList.GetHeadPosition();

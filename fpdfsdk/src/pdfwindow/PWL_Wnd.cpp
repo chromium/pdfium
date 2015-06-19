@@ -71,7 +71,7 @@ CPWL_TimerHandler::CPWL_TimerHandler() : m_pTimer(NULL)
 
 CPWL_TimerHandler::~CPWL_TimerHandler()
 {
-	if (m_pTimer) delete m_pTimer;
+    delete m_pTimer;
 }
 
 void CPWL_TimerHandler::BeginTimer(int32_t nElapse)

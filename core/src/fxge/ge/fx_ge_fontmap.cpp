@@ -71,9 +71,7 @@ CFX_FontMgr::CFX_FontMgr()
 }
 CFX_FontMgr::~CFX_FontMgr()
 {
-    if (m_pBuiltinMapper) {
-        delete m_pBuiltinMapper;
-    }
+    delete m_pBuiltinMapper;
     FreeCache();
     if (m_FTLibrary) {
         FXFT_Done_FreeType(m_FTLibrary);

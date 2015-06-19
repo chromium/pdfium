@@ -282,9 +282,7 @@ private:
         }
         ~TSingleSubstFormat1()
         {
-            if(Coverage) {
-                delete Coverage;
-            }
+            delete Coverage;
         }
     private:
         TSingleSubstFormat1(const TSingleSubstFormat1&);
@@ -300,12 +298,8 @@ private:
         }
         ~TSingleSubstFormat2()
         {
-            if(Coverage) {
-                delete Coverage;
-            }
-            if(Substitute) {
-                delete[] Substitute;
-            }
+            delete Coverage;
+            delete[] Substitute;
         }
     private:
         TSingleSubstFormat2(const TSingleSubstFormat2&);

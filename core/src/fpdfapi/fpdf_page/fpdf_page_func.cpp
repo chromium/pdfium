@@ -460,9 +460,7 @@ CPDF_SampledFunc::CPDF_SampledFunc()
 }
 CPDF_SampledFunc::~CPDF_SampledFunc()
 {
-    if (m_pSampleStream) {
-        delete m_pSampleStream;
-    }
+    delete m_pSampleStream;
     if (m_pEncodeInfo) {
         FX_Free(m_pEncodeInfo);
     }
@@ -713,9 +711,7 @@ CPDF_StitchFunc::CPDF_StitchFunc()
 CPDF_StitchFunc::~CPDF_StitchFunc()
 {
     for (int i = 0; i < m_nSubs; i ++)
-        if (m_pSubFunctions[i]) {
-            delete m_pSubFunctions[i];
-        }
+        delete m_pSubFunctions[i];
     if (m_pSubFunctions) {
         FX_Free(m_pSubFunctions);
     }

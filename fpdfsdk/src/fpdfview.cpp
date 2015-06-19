@@ -481,14 +481,12 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 #endif
 
 #endif
-	if (bBackgroundAlphaNeeded)
-	{
-		if (pBitmap)
-			delete pBitmap;
-		pBitmap = NULL;
-	}
-	delete pContext;
-	pPage->RemovePrivateData((void*)1);
+    if (bBackgroundAlphaNeeded) {
+        delete pBitmap;
+        pBitmap = NULL;
+    }
+    delete pContext;
+    pPage->RemovePrivateData((void*)1);
 }
 #endif
 
@@ -662,8 +660,7 @@ DLLEXPORT int STDCALL FPDFBitmap_GetStride(FPDF_BITMAP bitmap)
 
 DLLEXPORT void STDCALL FPDFBitmap_Destroy(FPDF_BITMAP bitmap)
 {
-	if (bitmap == NULL) return;
-	delete (CFX_DIBitmap*)bitmap;
+    delete (CFX_DIBitmap*)bitmap;
 }
 
 void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_x, int start_y, int size_x, int size_y,

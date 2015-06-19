@@ -71,9 +71,7 @@ public:
     }
     ~CApplePlatform()
     {
-        if (m_pFontMapper) {
-            delete m_pFontMapper;
-        }
+        delete m_pFontMapper;
     }
     CQuartz2D	_quartz2d;
     IFX_FontMapper* m_pFontMapper;

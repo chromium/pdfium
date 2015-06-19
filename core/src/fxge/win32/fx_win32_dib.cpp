@@ -135,9 +135,7 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadFromFile(const FX_WCHAR* filename)
     CFX_ByteString info = GetBitmapInfo(pDIBitmap);
     int ret = GetDIBits(hDC, hBitmap, 0, height, pDIBitmap->GetBuffer(), (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
     if (!ret) {
-        if (pDIBitmap) {
-            delete pDIBitmap;
-        }
+        delete pDIBitmap;
         pDIBitmap = NULL;
     }
     DeleteDC(hDC);
@@ -167,9 +165,7 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args)
     CFX_ByteString info = GetBitmapInfo(pDIBitmap);
     int ret = GetDIBits(hDC, hBitmap, 0, height, pDIBitmap->GetBuffer(), (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
     if (!ret) {
-        if (pDIBitmap) {
-            delete pDIBitmap;
-        }
+        delete pDIBitmap;
         pDIBitmap = NULL;
     }
     DeleteDC(hDC);
@@ -241,9 +237,7 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadFromDDB(HDC hDC, HBITMAP hBitmap, FX_DWORD* pP
         }
     }
     if (ret == 0) {
-        if (pDIBitmap) {
-            delete pDIBitmap;
-        }
+        delete pDIBitmap;
         pDIBitmap = NULL;
     }
     if (bCreatedDC) {

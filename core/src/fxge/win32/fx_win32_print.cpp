@@ -273,9 +273,7 @@ CPSPrinterDriver::CPSPrinterDriver()
 CPSPrinterDriver::~CPSPrinterDriver()
 {
     EndRendering();
-    if (m_pPSOutput) {
-        delete m_pPSOutput;
-    }
+    delete m_pPSOutput;
 }
 FX_BOOL CPSPrinterDriver::Init(HDC hDC, int pslevel, FX_BOOL bCmykOutput)
 {

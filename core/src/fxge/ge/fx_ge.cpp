@@ -17,13 +17,9 @@ CFX_GEModule::CFX_GEModule()
 }
 CFX_GEModule::~CFX_GEModule()
 {
-    if (m_pFontCache) {
-        delete m_pFontCache;
-    }
+    delete m_pFontCache;
     m_pFontCache = NULL;
-    if (m_pFontMgr) {
-        delete m_pFontMgr;
-    }
+    delete m_pFontMgr;
     m_pFontMgr = NULL;
     DestroyPlatform();
 }
@@ -44,9 +40,7 @@ void CFX_GEModule::Use(CFX_GEModule* pModule)
 }
 void CFX_GEModule::Destroy()
 {
-    if (g_pGEModule) {
-        delete g_pGEModule;
-    }
+    delete g_pGEModule;
     g_pGEModule = NULL;
 }
 CFX_FontCache* CFX_GEModule::GetFontCache()

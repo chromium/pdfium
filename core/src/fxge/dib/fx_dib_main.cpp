@@ -48,9 +48,7 @@ CFX_DIBSource::~CFX_DIBSource()
     if (m_pPalette) {
         FX_Free(m_pPalette);
     }
-    if (m_pAlphaMask) {
-        delete m_pAlphaMask;
-    }
+    delete m_pAlphaMask;
 }
 CFX_DIBitmap::CFX_DIBitmap()
 {
@@ -139,9 +137,7 @@ void CFX_DIBitmap::TakeOver(CFX_DIBitmap* pSrcBitmap)
     if (m_pPalette) {
         FX_Free(m_pPalette);
     }
-    if (m_pAlphaMask) {
-        delete m_pAlphaMask;
-    }
+    delete m_pAlphaMask;
     m_pBuffer = pSrcBitmap->m_pBuffer;
     m_pPalette = pSrcBitmap->m_pPalette;
     m_pAlphaMask = pSrcBitmap->m_pAlphaMask;
@@ -1470,9 +1466,7 @@ CFX_DIBExtractor::CFX_DIBExtractor(const CFX_DIBSource* pSrc)
 }
 CFX_DIBExtractor::~CFX_DIBExtractor()
 {
-    if (m_pBitmap) {
-        delete m_pBitmap;
-    }
+    delete m_pBitmap;
 }
 CFX_FilteredDIB::CFX_FilteredDIB()
 {
@@ -1481,7 +1475,7 @@ CFX_FilteredDIB::CFX_FilteredDIB()
 }
 CFX_FilteredDIB::~CFX_FilteredDIB()
 {
-    if (m_pSrc && m_bAutoDropSrc) {
+    if (m_bAutoDropSrc) {
         delete m_pSrc;
     }
     if (m_pScanline) {
@@ -1521,9 +1515,7 @@ CFX_ImageRenderer::CFX_ImageRenderer()
 }
 CFX_ImageRenderer::~CFX_ImageRenderer()
 {
-    if (m_pTransformer) {
-        delete m_pTransformer;
-    }
+    delete m_pTransformer;
 }
 extern FX_RECT _FXDIB_SwapClipBox(FX_RECT& clip, int width, int height, FX_BOOL bFlipX, FX_BOOL bFlipY);
 FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice, const CFX_ClipRgn* pClipRgn,
@@ -1637,9 +1629,7 @@ CFX_BitmapStorer::CFX_BitmapStorer()
 }
 CFX_BitmapStorer::~CFX_BitmapStorer()
 {
-    if (m_pBitmap) {
-        delete m_pBitmap;
-    }
+    delete m_pBitmap;
 }
 CFX_DIBitmap* CFX_BitmapStorer::Detach()
 {
@@ -1649,9 +1639,7 @@ CFX_DIBitmap* CFX_BitmapStorer::Detach()
 }
 void CFX_BitmapStorer::Replace(CFX_DIBitmap* pBitmap)
 {
-    if (m_pBitmap) {
-        delete m_pBitmap;
-    }
+    delete m_pBitmap;
     m_pBitmap = pBitmap;
 }
 void CFX_BitmapStorer::ComposeScanline(int line, const uint8_t* scanline, const uint8_t* scan_extra_alpha)

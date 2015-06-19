@@ -679,9 +679,7 @@ CFX_ImageStretcher::~CFX_ImageStretcher()
     if (m_pScanline) {
         FX_Free(m_pScanline);
     }
-    if (m_pStretchEngine) {
-        delete m_pStretchEngine;
-    }
+    delete m_pStretchEngine;
     if (m_pMaskScanline) {
         FX_Free(m_pMaskScanline);
     }

@@ -205,9 +205,7 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap, int dither_bits,
 }
 CFX_AggDeviceDriver::~CFX_AggDeviceDriver()
 {
-    if (m_pClipRgn) {
-        delete m_pClipRgn;
-    }
+    delete m_pClipRgn;
     for (int i = 0; i < m_StateStack.GetSize(); i ++)
         if (m_StateStack[i]) {
             delete (CFX_ClipRgn*)m_StateStack[i];
@@ -274,17 +272,13 @@ void CFX_AggDeviceDriver::SaveState()
 void CFX_AggDeviceDriver::RestoreState(FX_BOOL bKeepSaved)
 {
     if (m_StateStack.GetSize() == 0) {
-        if (m_pClipRgn) {
-            delete m_pClipRgn;
-            m_pClipRgn = NULL;
-        }
+        delete m_pClipRgn;
+        m_pClipRgn = NULL;
         return;
     }
     CFX_ClipRgn* pSavedClip = (CFX_ClipRgn*)m_StateStack[m_StateStack.GetSize() - 1];
-    if (m_pClipRgn) {
-        delete m_pClipRgn;
-        m_pClipRgn = NULL;
-    }
+    delete m_pClipRgn;
+    m_pClipRgn = NULL;
     if (bKeepSaved) {
         if (pSavedClip) {
             m_pClipRgn = new CFX_ClipRgn(*pSavedClip);
@@ -1604,7 +1598,7 @@ FX_BOOL CFX_FxgeDevice::Create(int width, int height, FXDIB_Format format, int d
 }
 CFX_FxgeDevice::~CFX_FxgeDevice()
 {
-    if (m_bOwnedBitmap && GetBitmap()) {
+    if (m_bOwnedBitmap) {
         delete GetBitmap();
     }
 }

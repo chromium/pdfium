@@ -68,7 +68,7 @@ void CPDF_Parser::SetEncryptDictionary(CPDF_Dictionary* pDict)
 void CPDF_Parser::CloseParser(FX_BOOL bReParse)
 {
     m_bVersionUpdated = FALSE;
-    if (m_pDocument && !bReParse) {
+    if (!bReParse) {
         delete m_pDocument;
         m_pDocument = NULL;
     }
@@ -309,11 +309,9 @@ FX_DWORD CPDF_Parser::SetEncryptHandler()
 }
 void CPDF_Parser::ReleaseEncryptHandler()
 {
-    if (m_Syntax.m_pCryptoHandler) {
-        delete m_Syntax.m_pCryptoHandler;
-        m_Syntax.m_pCryptoHandler = NULL;
-    }
-    if (m_pSecurityHandler && !m_bForceUseSecurityHandler) {
+    delete m_Syntax.m_pCryptoHandler;
+    m_Syntax.m_pCryptoHandler = NULL;
+    if (!m_bForceUseSecurityHandler) {
         delete m_pSecurityHandler;
         m_pSecurityHandler = NULL;
     }
@@ -1482,7 +1480,7 @@ FX_BOOL CPDF_Parser::IsOwner()
 void CPDF_Parser::SetSecurityHandler(CPDF_SecurityHandler* pSecurityHandler, FX_BOOL bForced)
 {
     ASSERT(m_pSecurityHandler == NULL);
-    if (m_pSecurityHandler && !m_bForceUseSecurityHandler) {
+    if (!m_bForceUseSecurityHandler) {
         delete m_pSecurityHandler;
         m_pSecurityHandler = NULL;
     }
@@ -2984,12 +2982,8 @@ CPDF_DataAvail::~CPDF_DataAvail()
     if (m_pTrailer) {
         m_pTrailer->Release();
     }
-    if (m_pageMapCheckState) {
-        delete m_pageMapCheckState;
-    }
-    if (m_pagesLoadState) {
-        delete m_pagesLoadState;
-    }
+    delete m_pageMapCheckState;
+    delete m_pagesLoadState;
     int32_t i = 0;
     int32_t iSize = m_arrayAcroforms.GetSize();
     for (i = 0; i < iSize; ++i) {
@@ -4640,10 +4634,8 @@ CPDF_PageNode::~CPDF_PageNode()
 {
     int32_t iSize = m_childNode.GetSize();
     for (int32_t i = 0; i < iSize; ++i) {
-        CPDF_PageNode *pNode = (CPDF_PageNode*)m_childNode[i];
-        if (pNode) {
-            delete pNode;
-        }
+        CPDF_PageNode* pNode = (CPDF_PageNode*)m_childNode[i];
+        delete pNode;
     }
     m_childNode.RemoveAll();
 }

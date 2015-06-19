@@ -34,10 +34,8 @@ CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc, CPDF_Object* pPatter
 }
 CPDF_TilingPattern::~CPDF_TilingPattern()
 {
-    if (m_pForm) {
-        delete m_pForm;
-        m_pForm = NULL;
-    }
+    delete m_pForm;
+    m_pForm = NULL;
 }
 FX_BOOL CPDF_TilingPattern::Load()
 {
@@ -92,9 +90,7 @@ CPDF_ShadingPattern::~CPDF_ShadingPattern()
 void CPDF_ShadingPattern::Clear()
 {
     for (int i = 0; i < m_nFuncs; i ++) {
-        if (m_pFunctions[i]) {
-            delete m_pFunctions[i];
-        }
+        delete m_pFunctions[i];
         m_pFunctions[i] = NULL;
     }
     CPDF_ColorSpace* pCS = m_pCountedCS ? m_pCountedCS->get() : NULL;
@@ -117,9 +113,7 @@ FX_BOOL CPDF_ShadingPattern::Load()
     }
     if (m_nFuncs) {
         for (int i = 0; i < m_nFuncs; i ++)
-            if (m_pFunctions[i]) {
-                delete m_pFunctions[i];
-            }
+            delete m_pFunctions[i];
         m_nFuncs = 0;
     }
     CPDF_Object* pFunc = pShadingDict->GetElementValue(FX_BSTRC("Function"));

@@ -239,34 +239,19 @@ CPDFDoc_Environment::CPDFDoc_Environment(CPDF_Document* pDoc) :
 
 CPDFDoc_Environment::~CPDFDoc_Environment()
 {
+    delete m_pIFormFiller;
+    m_pIFormFiller = NULL;
+    if (m_pJSRuntime && m_pJSRuntimeFactory)
+        m_pJSRuntimeFactory->DeleteJSRuntime(m_pJSRuntime);
+    m_pJSRuntimeFactory->Release();
 
-	if ( m_pIFormFiller )
-	{
-		delete m_pIFormFiller;
-		m_pIFormFiller = NULL;
-	}
-	if(m_pJSRuntime && m_pJSRuntimeFactory)
-		m_pJSRuntimeFactory->DeleteJSRuntime(m_pJSRuntime);
-	m_pJSRuntimeFactory->Release();
+    delete m_pSysHandler;
+    m_pSysHandler = NULL;
 
-	if(m_pSysHandler)
-	{
-		delete m_pSysHandler;
-		m_pSysHandler = NULL;
-	}
-
-	if(m_pAnnotHandlerMgr)
-	{
-		delete m_pAnnotHandlerMgr;
-		m_pAnnotHandlerMgr = NULL;
-	}
-	if(m_pActionHandler)
-	{
-		delete m_pActionHandler;
-		m_pActionHandler = NULL;
-	}
-
-
+    delete m_pAnnotHandlerMgr;
+    m_pAnnotHandlerMgr = NULL;
+    delete m_pActionHandler;
+    m_pActionHandler = NULL;
 }
 
 
@@ -639,11 +624,10 @@ CPDFSDK_PageView::~CPDFSDK_PageView()
 		pAnnotHandlerMgr->ReleaseAnnot(pAnnot);
 	}
 	m_fxAnnotArray.RemoveAll();
-	if(m_pAnnotList)
-	{
-		delete m_pAnnotList;
-		m_pAnnotList = NULL;
-	}
+
+        delete m_pAnnotList;
+        m_pAnnotList = NULL;
+
         m_page->RemovePrivateData((void*)m_page);
         if(m_bTakeOverPage) {
             delete m_page;

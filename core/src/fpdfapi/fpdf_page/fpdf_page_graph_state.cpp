@@ -38,9 +38,7 @@ CPDF_ClipPathData::~CPDF_ClipPathData()
         FX_Free(m_pTypeList);
     }
     for (i = m_TextCount - 1; i > -1; i --)
-        if (m_pTextList[i]) {
-            delete m_pTextList[i];
-        }
+        delete m_pTextList[i];
     if (m_pTextList) {
         FX_Free(m_pTextList);
     }

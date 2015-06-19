@@ -30,9 +30,7 @@ CJBig2_Context *CJBig2_Context::CreateContext(CJBig2_Module *pModule, uint8_t *p
 }
 void CJBig2_Context::DestroyContext(CJBig2_Context *pContext)
 {
-    if(pContext) {
-        delete pContext;
-    }
+    delete pContext;
 }
 CJBig2_Context::CJBig2_Context(uint8_t *pGlobalData, FX_DWORD dwGlobalLength,
                                uint8_t *pData, FX_DWORD dwLength, int32_t nStreamType, std::list<CJBig2_CachePair>* pSymbolDictCache, IFX_Pause* pPause)
@@ -63,37 +61,25 @@ CJBig2_Context::CJBig2_Context(uint8_t *pGlobalData, FX_DWORD dwGlobalLength,
 }
 CJBig2_Context::~CJBig2_Context()
 {
-    if(m_pArithDecoder) {
-        delete m_pArithDecoder;
-    }
+    delete m_pArithDecoder;
     m_pArithDecoder = NULL;
-    if(m_pGRD) {
-        delete m_pGRD;
-    }
+    delete m_pGRD;
     m_pGRD = NULL;
     if(m_gbContext) {
         m_pModule->JBig2_Free(m_gbContext);
     }
     m_gbContext = NULL;
-    if(m_pGlobalContext) {
-        delete m_pGlobalContext;
-    }
+    delete m_pGlobalContext;
     m_pGlobalContext = NULL;
-    if(m_pPageInfoList) {
-        delete m_pPageInfoList;
-    }
+    delete m_pPageInfoList;
     m_pPageInfoList = NULL;
-    if(m_bBufSpecified && m_pPage) {
+    if(m_bBufSpecified) {
         delete m_pPage;
     }
     m_pPage = NULL;
-    if(m_pStream) {
-        delete m_pStream;
-    }
+    delete m_pStream;
     m_pStream = NULL;
-    if(m_pSegmentList) {
-        delete m_pSegmentList;
-    }
+    delete m_pSegmentList;
     m_pSegmentList = NULL;
 }
 int32_t CJBig2_Context::decodeFile(IFX_Pause* pPause)
@@ -247,9 +233,7 @@ int32_t CJBig2_Context::getFirstPage(uint8_t *pBuf, int32_t width, int32_t heigh
     }
     m_bFirstPage = TRUE;
     m_PauseStep = 0;
-    if(m_pPage) {
-        delete m_pPage;
-    }
+    delete m_pPage;
     JBIG2_ALLOC(m_pPage, CJBig2_Image(width, height, stride, pBuf));
     m_bBufSpecified = TRUE;
     if(m_pPage && pPause && pPause->NeedToPauseNow()) {
@@ -316,9 +300,7 @@ int32_t CJBig2_Context::getNextPage(uint8_t *pBuf, int32_t width, int32_t height
     int32_t nRet = JBIG2_ERROR_STREAM_TYPE;
     m_bFirstPage = FALSE;
     m_PauseStep = 0;
-    if(m_pPage) {
-        delete m_pPage;
-    }
+    delete m_pPage;
     JBIG2_ALLOC(m_pPage, CJBig2_Image(width, height, stride, pBuf));
     m_bBufSpecified = TRUE;
     if(m_pPage && pPause && pPause->NeedToPauseNow()) {
@@ -571,9 +553,7 @@ int32_t CJBig2_Context::ProcessiveParseSegmentData(CJBig2_Segment *pSegment, IFX
                     pPageInfo->m_bIsStriped = 1;
                 }
                 if(!m_bBufSpecified) {
-                    if(m_pPage) {
-                        delete m_pPage;
-                    }
+                    delete m_pPage;
                     if(pPageInfo->m_dwHeight == 0xffffffff) {
                         JBIG2_ALLOC(m_pPage, CJBig2_Image(pPageInfo->m_dwWidth, pPageInfo->m_wMaxStripeSize));
                     } else {
@@ -860,21 +840,11 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
     if(SDINSYMS) {
         m_pModule->JBig2_Free(SDINSYMS);
     }
-    if(Table_B1) {
-        delete Table_B1;
-    }
-    if(Table_B2) {
-        delete Table_B2;
-    }
-    if(Table_B3) {
-        delete Table_B3;
-    }
-    if(Table_B4) {
-        delete Table_B4;
-    }
-    if(Table_B5) {
-        delete Table_B5;
-    }
+    delete Table_B1;
+    delete Table_B2;
+    delete Table_B3;
+    delete Table_B4;
+    delete Table_B5;
     if(bUsed == FALSE) {
         if(gbContext) {
             m_pModule->JBig2_Free(gbContext);
@@ -889,21 +859,11 @@ failed:
     if(SDINSYMS) {
         m_pModule->JBig2_Free(SDINSYMS);
     }
-    if(Table_B1) {
-        delete Table_B1;
-    }
-    if(Table_B2) {
-        delete Table_B2;
-    }
-    if(Table_B3) {
-        delete Table_B3;
-    }
-    if(Table_B4) {
-        delete Table_B4;
-    }
-    if(Table_B5) {
-        delete Table_B5;
-    }
+    delete Table_B1;
+    delete Table_B2;
+    delete Table_B3;
+    delete Table_B4;
+    delete Table_B5;
     if(gbContext) {
         m_pModule->JBig2_Free(gbContext);
     }
@@ -1242,39 +1202,17 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
     if(grContext) {
         m_pModule->JBig2_Free(grContext);
     }
-    if(Table_B1) {
-        delete Table_B1;
-    }
-    if(Table_B6) {
-        delete Table_B6;
-    }
-    if(Table_B7) {
-        delete Table_B7;
-    }
-    if(Table_B8) {
-        delete Table_B8;
-    }
-    if(Table_B9) {
-        delete Table_B9;
-    }
-    if(Table_B10) {
-        delete Table_B10;
-    }
-    if(Table_B11) {
-        delete Table_B11;
-    }
-    if(Table_B12) {
-        delete Table_B12;
-    }
-    if(Table_B13) {
-        delete Table_B13;
-    }
-    if(Table_B14) {
-        delete Table_B14;
-    }
-    if(Table_B15) {
-        delete Table_B15;
-    }
+    delete Table_B1;
+    delete Table_B6;
+    delete Table_B7;
+    delete Table_B8;
+    delete Table_B9;
+    delete Table_B10;
+    delete Table_B11;
+    delete Table_B12;
+    delete Table_B13;
+    delete Table_B14;
+    delete Table_B15;
     return JBIG2_SUCCESS;
 failed:
     delete pTRD;
@@ -1287,39 +1225,17 @@ failed:
     if(grContext) {
         m_pModule->JBig2_Free(grContext);
     }
-    if(Table_B1) {
-        delete Table_B1;
-    }
-    if(Table_B6) {
-        delete Table_B6;
-    }
-    if(Table_B7) {
-        delete Table_B7;
-    }
-    if(Table_B8) {
-        delete Table_B8;
-    }
-    if(Table_B9) {
-        delete Table_B9;
-    }
-    if(Table_B10) {
-        delete Table_B10;
-    }
-    if(Table_B11) {
-        delete Table_B11;
-    }
-    if(Table_B12) {
-        delete Table_B12;
-    }
-    if(Table_B13) {
-        delete Table_B13;
-    }
-    if(Table_B14) {
-        delete Table_B14;
-    }
-    if(Table_B15) {
-        delete Table_B15;
-    }
+    delete Table_B1;
+    delete Table_B6;
+    delete Table_B7;
+    delete Table_B8;
+    delete Table_B9;
+    delete Table_B10;
+    delete Table_B11;
+    delete Table_B12;
+    delete Table_B13;
+    delete Table_B14;
+    delete Table_B15;
     return nRet;
 }
 

@@ -41,9 +41,7 @@ CJBig2_SymbolDict::~CJBig2_SymbolDict()
 {
     if(SDEXSYMS) {
         for(FX_DWORD i = 0; i < SDNUMEXSYMS; i++) {
-            if(SDEXSYMS[i]) {
-                delete SDEXSYMS[i];
-            }
+            delete SDEXSYMS[i];
         }
         m_pModule->JBig2_Free(SDEXSYMS);
     }
