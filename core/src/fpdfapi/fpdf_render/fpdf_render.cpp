@@ -11,43 +11,38 @@
 #include "render_int.h"
 
 CPDF_DocRenderData::CPDF_DocRenderData(CPDF_Document* pPDFDoc)
-    : m_pPDFDoc(pPDFDoc)
-    , m_pFontCache(NULL)
+    : m_pPDFDoc(pPDFDoc),
+      m_pFontCache(new CFX_FontCache)
 {
 }
+
 CPDF_DocRenderData::~CPDF_DocRenderData()
 {
     Clear(TRUE);
 }
+
 void CPDF_DocRenderData::Clear(FX_BOOL bRelease)
 {
-    FX_POSITION pos;
-    {
-        pos = m_Type3FaceMap.GetStartPosition();
-        while (pos) {
-            CPDF_Font* pFont;
-            CPDF_CountedObject<CPDF_Type3Cache>* cache;
-            m_Type3FaceMap.GetNextAssoc(pos, pFont, cache);
-            if (bRelease || cache->use_count() < 2) {
-                delete cache->get();
-                delete cache;
-                m_Type3FaceMap.RemoveKey(pFont);
-            }
+    for (auto it = m_Type3FaceMap.begin(); it != m_Type3FaceMap.end();) {
+        auto curr_it = it++;
+        CPDF_CountedObject<CPDF_Type3Cache>* cache = curr_it->second;
+        if (bRelease || cache->use_count() < 2) {
+            delete cache->get();
+            delete cache;
+            m_Type3FaceMap.erase(curr_it);
         }
     }
-    {
-        pos = m_TransferFuncMap.GetStartPosition();
-        while (pos) {
-            CPDF_Object* key;
-            CPDF_CountedObject<CPDF_TransferFunc>* value;
-            m_TransferFuncMap.GetNextAssoc(pos, key, value);
-            if (bRelease || value->use_count() < 2) {
-                delete value->get();
-                delete value;
-                m_TransferFuncMap.RemoveKey(key);
-            }
+
+    for (auto it = m_TransferFuncMap.begin(); it != m_TransferFuncMap.end();) {
+        auto curr_it = it++;
+        CPDF_CountedObject<CPDF_TransferFunc>* value = curr_it->second;
+        if (bRelease || value->use_count() < 2) {
+            delete value->get();
+            delete value;
+            m_TransferFuncMap.erase(curr_it);
         }
     }
+
     if (m_pFontCache) {
         if (bRelease) {
             delete m_pFontCache;
@@ -57,26 +52,26 @@ void CPDF_DocRenderData::Clear(FX_BOOL bRelease)
         }
     }
 }
-FX_BOOL CPDF_DocRenderData::Initialize()
-{
-    m_pFontCache = new CFX_FontCache;
-    return TRUE;
-}
+
 CPDF_Type3Cache* CPDF_DocRenderData::GetCachedType3(CPDF_Type3Font* pFont)
 {
     CPDF_CountedObject<CPDF_Type3Cache>* pCache;
-    if (!m_Type3FaceMap.Lookup(pFont, pCache)) {
+    auto it = m_Type3FaceMap.find(pFont);
+    if (it == m_Type3FaceMap.end()) {
         CPDF_Type3Cache* pType3 = new CPDF_Type3Cache(pFont);
         pCache = new CPDF_CountedObject<CPDF_Type3Cache>(pType3);
-        m_Type3FaceMap.SetAt(pFont, pCache);
+        m_Type3FaceMap[pFont] = pCache;
+    } else {
+        pCache = it->second;
     }
     return pCache->AddRef();
 }
+
 void CPDF_DocRenderData::ReleaseCachedType3(CPDF_Type3Font* pFont)
 {
-    CPDF_CountedObject<CPDF_Type3Cache>* pCache;
-    if (m_Type3FaceMap.Lookup(pFont, pCache))
-        pCache->RemoveRef();
+    auto it = m_Type3FaceMap.find(pFont);
+    if (it != m_Type3FaceMap.end())
+        it->second->RemoveRef();
 }
 
 class CPDF_RenderModule : public IPDF_RenderModule
@@ -114,9 +109,7 @@ private:
 
 CPDF_DocRenderData*	CPDF_RenderModule::CreateDocData(CPDF_Document* pDoc)
 {
-    CPDF_DocRenderData* pData = new CPDF_DocRenderData(pDoc);
-    pData->Initialize();
-    return pData;
+    return new CPDF_DocRenderData(pDoc);
 }
 void CPDF_RenderModule::DestroyDocData(CPDF_DocRenderData* pDocData)
 {
@@ -1183,85 +1176,83 @@ int CPDF_ProgressiveRenderer::EstimateProgress()
 }
 CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj)
 {
-    if (pObj == NULL) {
-        return NULL;
+    if (!pObj)
+        return nullptr;
+
+    auto it = m_TransferFuncMap.find(pObj);
+    if (it != m_TransferFuncMap.end()) {
+        CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter = it->second;
+        return pTransferCounter->AddRef();
     }
-    CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter;
-    if (!m_TransferFuncMap.Lookup(pObj, pTransferCounter)) {
-        CPDF_TransferFunc* pTransfer = NULL;
-        CPDF_Function* pFuncs[3] = {NULL, NULL, NULL};
-        FX_BOOL bUniTransfer = TRUE;
-        int i;
-        FX_BOOL bIdentity = TRUE;
-        if (pObj->GetType() == PDFOBJ_ARRAY) {
-            bUniTransfer = FALSE;
-            CPDF_Array* pArray = (CPDF_Array*)pObj;
-            if (pArray->GetCount() < 3) {
-                return NULL;
+
+    CPDF_Function* pFuncs[3] = { nullptr, nullptr, nullptr };
+    FX_BOOL bUniTransfer = TRUE;
+    FX_BOOL bIdentity = TRUE;
+    if (pObj->GetType() == PDFOBJ_ARRAY) {
+        bUniTransfer = FALSE;
+        CPDF_Array* pArray = (CPDF_Array*)pObj;
+        if (pArray->GetCount() < 3)
+            return nullptr;
+
+        for (FX_DWORD i = 0; i < 3; ++i) {
+            pFuncs[2 - i] = CPDF_Function::Load(pArray->GetElementValue(i));
+            if (!pFuncs[2 - i]) {
+                return nullptr;
             }
-            for (FX_DWORD i = 0; i < 3; i ++) {
-                pFuncs[2 - i] = CPDF_Function::Load(pArray->GetElementValue(i));
-                if (pFuncs[2 - i] == NULL) {
-                    return NULL;
-                }
+        }
+    } else {
+        pFuncs[0] = CPDF_Function::Load(pObj);
+        if (!pFuncs[0]) {
+            return nullptr;
+        }
+    }
+    CPDF_TransferFunc* pTransfer = new CPDF_TransferFunc;
+    pTransfer->m_pPDFDoc = m_pPDFDoc;
+    CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter =
+        new CPDF_CountedObject<CPDF_TransferFunc>(pTransfer);
+    m_TransferFuncMap[pObj] = pTransferCounter;
+    static const int kMaxOutputs = 16;
+    FX_FLOAT output[kMaxOutputs];
+    FXSYS_memset(output, 0, sizeof(output));
+    FX_FLOAT input;
+    int noutput;
+    for (int v = 0; v < 256; ++v) {
+        input = (FX_FLOAT)v / 255.0f;
+        if (bUniTransfer) {
+            if (pFuncs[0] && pFuncs[0]->CountOutputs() <= kMaxOutputs)
+                pFuncs[0]->Call(&input, 1, output, noutput);
+            int o = FXSYS_round(output[0] * 255);
+            if (o != v)
+                bIdentity = FALSE;
+            for (int i = 0; i < 3; ++i) {
+                pTransfer->m_Samples[i * 256 + v] = o;
             }
         } else {
-            pFuncs[0] = CPDF_Function::Load(pObj);
-            if (pFuncs[0] == NULL) {
-                return NULL;
-            }
-        }
-        pTransfer = new CPDF_TransferFunc;
-        pTransfer->m_pPDFDoc = m_pPDFDoc;
-        pTransferCounter = new CPDF_CountedObject<CPDF_TransferFunc>(pTransfer);
-        m_TransferFuncMap.SetAt(pObj, pTransferCounter);
-        static const int kMaxOutputs = 16;
-        FX_FLOAT output[kMaxOutputs];
-        FXSYS_memset(output, 0, sizeof(output));
-        FX_FLOAT input;
-        int noutput;
-        for (int v = 0; v < 256; v ++) {
-            input = (FX_FLOAT)v / 255.0f;
-            if (bUniTransfer) {
-                if (pFuncs[0] && pFuncs[0]->CountOutputs() <= kMaxOutputs) {
-                    pFuncs[0]->Call(&input, 1, output, noutput);
-                }
-                int o = FXSYS_round(output[0] * 255);
-                if (o != v) {
-                    bIdentity = FALSE;
-                }
-                for (i = 0; i < 3; i ++) {
+            for (int i = 0; i < 3; ++i) {
+                if (pFuncs[i] && pFuncs[i]->CountOutputs() <= kMaxOutputs) {
+                    pFuncs[i]->Call(&input, 1, output, noutput);
+                    int o = FXSYS_round(output[0] * 255);
+                    if (o != v)
+                        bIdentity = FALSE;
                     pTransfer->m_Samples[i * 256 + v] = o;
+                } else {
+                    pTransfer->m_Samples[i * 256 + v] = v;
                 }
-            } else
-                for (i = 0; i < 3; i ++) {
-                    if (pFuncs[i] && pFuncs[i]->CountOutputs() <= kMaxOutputs) {
-                        pFuncs[i]->Call(&input, 1, output, noutput);
-                        int o = FXSYS_round(output[0] * 255);
-                        if (o != v) {
-                            bIdentity = FALSE;
-                        }
-                        pTransfer->m_Samples[i * 256 + v] = o;
-                    } else {
-                        pTransfer->m_Samples[i * 256 + v] = v;
-                    }
-                }
-        }
-        for (i = 0; i < 3; i ++)
-            if (pFuncs[i]) {
-                delete pFuncs[i];
             }
-        pTransfer->m_bIdentity = bIdentity;
+        }
     }
+    for (int i = 0; i < 3; ++i)
+        delete pFuncs[i];
+
+    pTransfer->m_bIdentity = bIdentity;
     return pTransferCounter->AddRef();
 }
+
 void CPDF_DocRenderData::ReleaseTransferFunc(CPDF_Object* pObj)
 {
-    CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter;
-    if (!m_TransferFuncMap.Lookup(pObj, pTransferCounter)) {
-        return;
-    }
-    pTransferCounter->RemoveRef();
+    auto it = m_TransferFuncMap.find(pObj);
+    if (it != m_TransferFuncMap.end())
+        it->second->RemoveRef();
 }
 CPDF_RenderConfig::CPDF_RenderConfig()
 {

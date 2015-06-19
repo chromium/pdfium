@@ -75,7 +75,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView
 
 	if (pWnd->HasFlag(PLBS_MULTIPLESEL))
 	{
-		m_OriginSelections.RemoveAll();
+		m_OriginSelections.clear();
 
 		FX_BOOL bSetCaret = FALSE;
 		for (int32_t i=0,sz=m_pWidget->CountOptions(); i<sz; i++)
@@ -88,7 +88,7 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView
 					bSetCaret = TRUE;
 				}
 				pWnd->Select(i);
-				m_OriginSelections.SetAt(i, NULL);
+				m_OriginSelections.insert(i);
 			}
 		}
 	}
@@ -115,36 +115,26 @@ FX_BOOL	CFFL_ListBox::OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlag
 	return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
 }
 
-FX_BOOL	CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView)
+FX_BOOL CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView)
 {
-	ASSERT(m_pWidget != NULL);
+    CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, FALSE);
+    if (!pListBox)
+        return FALSE;
 
-	if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, FALSE))
-	{
-		if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT)
-		{
-			int nSelCount = 0;
-			for (int32_t i=0,sz=pListBox->GetCount(); i<sz; i++)
-			{
-				if (pListBox->IsItemSelected(i))
-				{
-					void* p = NULL;
-					if (!m_OriginSelections.Lookup(i, p))
-						return TRUE;
+    if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
+        int nSelCount = 0;
+        for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; ++i) {
+            if (pListBox->IsItemSelected(i)) {
+                if (m_OriginSelections.count(i) == 0)
+                    return TRUE;
 
-					nSelCount++;
-				}
-			}
+                nSelCount++;
+            }
+        }
 
-			return nSelCount != m_OriginSelections.GetCount();
-		}
-		else
-		{
-			return pListBox->GetCurSel() != m_pWidget->GetSelectedIndex(0);
-		}
-	}
-
-	return FALSE;
+        return nSelCount != m_OriginSelections.size();
+    }
+    return pListBox->GetCurSel() != m_pWidget->GetSelectedIndex(0);
 }
 
 void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView)

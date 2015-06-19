@@ -99,7 +99,7 @@ CPDF_OCContext::CPDF_OCContext(CPDF_Document *pDoc, UsageType eUsageType)
 }
 CPDF_OCContext::~CPDF_OCContext()
 {
-    m_OCGStates.RemoveAll();
+    m_OCGStates.clear();
 }
 FX_BOOL CPDF_OCContext::LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig, const CPDF_Dictionary *pOCGDict, FX_BOOL &bValidConfig) const
 {
@@ -174,19 +174,21 @@ FX_BOOL CPDF_OCContext::LoadOCGState(const CPDF_Dictionary *pOCGDict) const
     FX_BOOL bDefValid = FALSE;
     return LoadOCGStateFromConfig(csState, pOCGDict, bDefValid);
 }
-FX_BOOL CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary *pOCGDict)
+
+FX_BOOL CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict)
 {
-    if (!pOCGDict) {
+    if (!pOCGDict)
         return FALSE;
-    }
-    void* bState = NULL;
-    if (m_OCGStates.Lookup(pOCGDict, bState)) {
-        return (uintptr_t)bState != 0;
-    }
-    bState = (void*)(uintptr_t)LoadOCGState(pOCGDict);
-    m_OCGStates.SetAt(pOCGDict, bState);
-    return (uintptr_t)bState != 0;
+
+    const auto it = m_OCGStates.find(pOCGDict);
+    if (it != m_OCGStates.end())
+        return it->second;
+
+    FX_BOOL bState = LoadOCGState(pOCGDict);
+    m_OCGStates[pOCGDict] = bState;
+    return bState;
 }
+
 FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array *pExpression, FX_BOOL bFromConfig, int nLevel)
 {
     if (nLevel > 32) {
@@ -296,5 +298,5 @@ FX_BOOL CPDF_OCContext::CheckOCGVisible(const CPDF_Dictionary *pOCGDict)
 }
 void CPDF_OCContext::ResetOCContext()
 {
-    m_OCGStates.RemoveAll();
+    m_OCGStates.clear();
 }

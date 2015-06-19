@@ -853,46 +853,7 @@ protected:
 
     CAssoc* GetAssocAt(void* key, FX_DWORD& hash) const;
 };
-template <class KeyType, class ValueType>
-class CFX_MapPtrTemplate : public CFX_MapPtrToPtr
-{
-public:
-    CFX_MapPtrTemplate() : CFX_MapPtrToPtr(10) {}
 
-    FX_BOOL	Lookup(KeyType key, ValueType& rValue) const
-    {
-        void* pValue = NULL;
-        if (!CFX_MapPtrToPtr::Lookup((void*)(uintptr_t)key, pValue)) {
-            return FALSE;
-        }
-        rValue = (ValueType)(uintptr_t)pValue;
-        return TRUE;
-    }
-
-    ValueType& operator[](KeyType key)
-    {
-        return (ValueType&)CFX_MapPtrToPtr::operator []((void*)(uintptr_t)key);
-    }
-
-    void SetAt(KeyType key, ValueType newValue)
-    {
-        CFX_MapPtrToPtr::SetAt((void*)(uintptr_t)key, (void*)(uintptr_t)newValue);
-    }
-
-    FX_BOOL	RemoveKey(KeyType key)
-    {
-        return CFX_MapPtrToPtr::RemoveKey((void*)(uintptr_t)key);
-    }
-
-    void GetNextAssoc(FX_POSITION& rNextPosition, KeyType& rKey, ValueType& rValue) const
-    {
-        void* pKey = NULL;
-        void* pValue = NULL;
-        CFX_MapPtrToPtr::GetNextAssoc(rNextPosition, pKey, pValue);
-        rKey = (KeyType)(uintptr_t)pKey;
-        rValue = (ValueType)(uintptr_t)pValue;
-    }
-};
 class CFX_CMapDWordToDWord
 {
 public:

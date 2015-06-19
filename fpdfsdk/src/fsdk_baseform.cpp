@@ -1666,10 +1666,9 @@ CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
 
 CPDFSDK_InterForm::~CPDFSDK_InterForm()
 {
-	delete m_pInterForm;
-	m_pInterForm = NULL;
-
-	m_Map.RemoveAll();
+    delete m_pInterForm;
+    m_pInterForm = nullptr;
+    m_Map.clear();
 }
 
 FX_BOOL CPDFSDK_InterForm::HighlightWidgets()
@@ -1688,45 +1687,40 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget, FX_BOOL b
     return (CPDFSDK_Widget*)pIterator->GetPrevAnnot(pWidget);
 }
 
-CPDFSDK_Widget*	CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const
+CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const
 {
-	if(!pControl || !m_pInterForm) return NULL;
+    if (!pControl || !m_pInterForm)
+        return nullptr;
 
-	CPDFSDK_Widget* pWidget = NULL;
-	m_Map.Lookup(pControl, pWidget);
+    CPDFSDK_Widget* pWidget = nullptr;
+    const auto it = m_Map.find(pControl);
+    if (it != m_Map.end())
+        pWidget = it->second;
 
-	if (pWidget) return pWidget;
+    if (pWidget)
+        return pWidget;
 
-	CPDF_Dictionary* pControlDict = pControl->GetWidget();
-	ASSERT(pControlDict != NULL);
+    CPDF_Dictionary* pControlDict = pControl->GetWidget();
+    CPDF_Document* pDocument = m_pDocument->GetDocument();
+    CPDFSDK_PageView* pPage = nullptr;
 
-	ASSERT(m_pDocument != NULL);
-	CPDF_Document* pDocument = m_pDocument->GetDocument();
+    if (CPDF_Dictionary* pPageDict = pControlDict->GetDict("P")) {
+        int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
+        if (nPageIndex >= 0) {
+            pPage = m_pDocument->GetPageView(nPageIndex);
+      }
+    }
 
-	CPDFSDK_PageView* pPage = NULL;
+    if (!pPage) {
+        int nPageIndex = GetPageIndexByAnnotDict(pDocument, pControlDict);
+        if (nPageIndex >= 0) {
+            pPage = m_pDocument->GetPageView(nPageIndex);
+        }
+    }
 
-	if (CPDF_Dictionary* pPageDict = pControlDict->GetDict("P"))
-	{
-		int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
-		if (nPageIndex >= 0)
-		{
-			pPage = m_pDocument->GetPageView(nPageIndex);
-		}
-	}
-
-	if (!pPage)
-	{
-		int nPageIndex = GetPageIndexByAnnotDict(pDocument, pControlDict);
-		if (nPageIndex >= 0)
-		{
-			pPage = m_pDocument->GetPageView(nPageIndex);
-		}
-	}
-
-	if (pPage)
-		return (CPDFSDK_Widget*)pPage->GetAnnotByDict(pControlDict);
-
-	return NULL;
+    if (!pPage)
+        return nullptr;
+    return (CPDFSDK_Widget*)pPage->GetAnnotByDict(pControlDict);
 }
 
 void CPDFSDK_InterForm::GetWidgets(const CFX_WideString& sFieldName, CFX_PtrArray& widgets)
@@ -1786,12 +1780,12 @@ int CPDFSDK_InterForm::GetPageIndexByAnnotDict(CPDF_Document* pDocument, CPDF_Di
 
 void CPDFSDK_InterForm::AddMap(CPDF_FormControl* pControl, CPDFSDK_Widget* pWidget)
 {
-	m_Map.SetAt(pControl, pWidget);
+    m_Map[pControl] = pWidget;
 }
 
 void CPDFSDK_InterForm::RemoveMap(CPDF_FormControl* pControl)
 {
-	m_Map.RemoveKey(pControl);
+    m_Map.erase(pControl);
 }
 
 void CPDFSDK_InterForm::EnableCalculate(FX_BOOL bEnabled)

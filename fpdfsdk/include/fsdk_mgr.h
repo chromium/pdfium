@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_MGR_H_
 #define FPDFSDK_INCLUDE_FSDK_MGR_H_
 
+#include <map>
+
 #include "../../core/include/fpdftext/fpdf_text.h"
 #include "../../public/fpdf_formfill.h"
 #include "../../public/fpdf_fwlevent.h" // cross platform keycode and events define.
@@ -372,8 +374,6 @@ public:
 	CPDFSDK_InterForm*		GetInterForm() ;
 	CPDF_Document*			GetDocument() {return m_pDoc;}
 
-	void					InitPageView();
-	void					AddPageView(CPDF_Page* pPDFPage, CPDFSDK_PageView* pPageView);
 	CPDFSDK_PageView*		GetPageView(CPDF_Page* pPDFPage, FX_BOOL ReNew = TRUE);
 	CPDFSDK_PageView*		GetPageView(int nIndex);
 	CPDFSDK_PageView*		GetCurrentView();
@@ -406,13 +406,13 @@ public:
 	FX_BOOL					ProcOpenAction();
 	CPDF_OCContext*			GetOCContext();
 private:
-	CFX_MapPtrTemplate<CPDF_Page*, CPDFSDK_PageView*> m_pageMap;
-	CPDF_Document*			m_pDoc;
-	CPDFSDK_InterForm*		m_pInterForm;
-	CPDFSDK_Annot*			m_pFocusAnnot;
-	CPDFDoc_Environment *	m_pEnv;
-	CPDF_OCContext *		m_pOccontent;
-	FX_BOOL					m_bChangeMask;
+    std::map<CPDF_Page*, CPDFSDK_PageView*> m_pageMap;
+    CPDF_Document* m_pDoc;
+    CPDFSDK_InterForm* m_pInterForm;
+    CPDFSDK_Annot* m_pFocusAnnot;
+    CPDFDoc_Environment* m_pEnv;
+    CPDF_OCContext* m_pOccontent;
+    FX_BOOL m_bChangeMask;
 };
 class CPDFSDK_PageView final
 {

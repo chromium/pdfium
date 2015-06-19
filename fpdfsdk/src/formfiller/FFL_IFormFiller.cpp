@@ -28,15 +28,9 @@ CFFL_IFormFiller::CFFL_IFormFiller(CPDFDoc_Environment* pApp) :
 
 CFFL_IFormFiller::~CFFL_IFormFiller()
 {
-	FX_POSITION pos = m_Maps.GetStartPosition();
-	while (pos)
-	{
-		CPDFSDK_Annot * pAnnot = NULL;
-		CFFL_FormFiller * pFormFiller = NULL;
-		m_Maps.GetNextAssoc(pos,pAnnot,pFormFiller);
-		delete pFormFiller;
-	}
-	m_Maps.RemoveAll();
+    for (auto& it : m_Maps)
+        delete it.second;
+    m_Maps.clear();
 }
 
 FX_BOOL	CFFL_IFormFiller::Annot_HitTest(CPDFSDK_PageView* pPageView,CPDFSDK_Annot* pAnnot, CPDF_Point point)
@@ -645,53 +639,46 @@ FX_BOOL	CFFL_IFormFiller::IsFillingAllowed(CPDFSDK_Widget* pWidget)
 
 CFFL_FormFiller* CFFL_IFormFiller::GetFormFiller(CPDFSDK_Annot* pAnnot, FX_BOOL bRegister)
 {
-// 	ASSERT(pAnnot != NULL);
-// 	ASSERT(pAnnot->GetPDFAnnot()->GetSubType() == "Widget");
+    auto it = m_Maps.find(pAnnot);
+    if (it != m_Maps.end())
+        return it->second;
 
-	CFFL_FormFiller * pFormFiller = NULL;
-	m_Maps.Lookup(pAnnot, pFormFiller);
+    if (!bRegister)
+        return nullptr;
 
-	if (pFormFiller)
-		return pFormFiller;
+    CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+    int nFieldType = pWidget->GetFieldType();
+    CFFL_FormFiller* pFormFiller;
+    switch (nFieldType) {
+        case FIELDTYPE_PUSHBUTTON:
+            pFormFiller = new CFFL_PushButton(m_pApp, pWidget);
+            break;
+        case FIELDTYPE_CHECKBOX:
+            pFormFiller = new CFFL_CheckBox(m_pApp, pWidget);
+            break;
+      case FIELDTYPE_RADIOBUTTON:
+            pFormFiller = new CFFL_RadioButton(m_pApp, pWidget);
+            break;
+      case FIELDTYPE_TEXTFIELD:
+            pFormFiller = new CFFL_TextField(m_pApp, pWidget);
+            break;
+      case FIELDTYPE_LISTBOX:
+            pFormFiller = new CFFL_ListBox(m_pApp, pWidget);
+            break;
+      case FIELDTYPE_COMBOBOX:
+            pFormFiller = new CFFL_ComboBox(m_pApp, pWidget);
+            break;
+      case FIELDTYPE_UNKNOWN:
+      default:
+            pFormFiller = nullptr;
+            break;
+    }
 
-	if (bRegister)
-	{
-		CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+    if (!pFormFiller)
+        return nullptr;
 
-		int nFieldType = pWidget->GetFieldType();
-		switch(nFieldType)
-		{
- 		case FIELDTYPE_PUSHBUTTON:
- 			pFormFiller = new CFFL_PushButton(m_pApp, pWidget);
- 			break;
-		case FIELDTYPE_CHECKBOX:
-			pFormFiller = new CFFL_CheckBox(m_pApp, pWidget);
-			break;
- 		case FIELDTYPE_RADIOBUTTON:
- 			pFormFiller = new CFFL_RadioButton(m_pApp, pWidget);
- 			break;
- 		case FIELDTYPE_TEXTFIELD:
-			pFormFiller = new CFFL_TextField(m_pApp, pWidget);
-			break;
-		case FIELDTYPE_LISTBOX:
-			pFormFiller = new CFFL_ListBox(m_pApp, pWidget);
-			break;
-		case FIELDTYPE_COMBOBOX:
-			pFormFiller = new CFFL_ComboBox(m_pApp, pWidget);
-			break;
-		case FIELDTYPE_UNKNOWN:
-		default:
-			pFormFiller = NULL;
-			break;
-		}
-
-		if (pFormFiller)
-		{
-			m_Maps.SetAt(pAnnot, pFormFiller);
-		}
-	}
-
-	return pFormFiller;
+    m_Maps[pAnnot] = pFormFiller;
+    return pFormFiller;
 }
 
 void CFFL_IFormFiller::RemoveFormFiller(CPDFSDK_Annot* pAnnot)
@@ -704,11 +691,12 @@ void CFFL_IFormFiller::RemoveFormFiller(CPDFSDK_Annot* pAnnot)
 
 void CFFL_IFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot)
 {
-    CFFL_FormFiller* pFormFiller = nullptr;
-    if (m_Maps.Lookup(pAnnot,pFormFiller)) {
-        delete pFormFiller;
-        m_Maps.RemoveKey(pAnnot);
-    }
+    auto it = m_Maps.find(pAnnot);
+    if (it == m_Maps.end())
+        return;
+
+    delete it->second;
+    m_Maps.erase(it);
 }
 
 void CFFL_IFormFiller::SetFocusAnnotTab(CPDFSDK_Annot* pWidget, FX_BOOL bSameField, FX_BOOL bNext)

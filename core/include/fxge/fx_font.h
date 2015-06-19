@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FXGE_FX_FONT_H_
 #define CORE_INCLUDE_FXGE_FX_FONT_H_
 
+#include <map>
+
 #include "../fxcrt/fx_system.h"
 #include "fx_dib.h"
 
@@ -343,7 +345,7 @@ public:
     CFX_FaceCache*	m_Obj;
     FX_DWORD		m_nCount;
 };
-typedef CFX_MapPtrTemplate<FXFT_Face, CFX_CountedFaceCache*> CFX_FTCacheMap;
+
 class CFX_FontCache
 {
 public:
@@ -353,8 +355,9 @@ public:
     void					FreeCache(FX_BOOL bRelease = FALSE);
 
 private:
-    CFX_FTCacheMap			m_FTFaceMap;
-    CFX_FTCacheMap			m_ExtFaceMap;
+    using CFX_FTCacheMap = std::map<FXFT_Face, CFX_CountedFaceCache*>;
+    CFX_FTCacheMap m_FTFaceMap;
+    CFX_FTCacheMap m_ExtFaceMap;
 };
 class CFX_AutoFontCache
 {

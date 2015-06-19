@@ -339,7 +339,6 @@ DLLEXPORT void STDCALL FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle)
 		return;
 	if( CPDFSDK_Document* pSDKDoc = ((CPDFDoc_Environment*)hHandle)->GetCurrentDoc())
 	{
-		pSDKDoc->InitPageView();
 		if(((CPDFDoc_Environment*)hHandle)->IsJSInitiated())
 			pSDKDoc->ProcJavascriptFun();
 	}

@@ -219,8 +219,6 @@ private:
 	CPDFDoc_Environment*		m_pApp;
 };
 
-//#define CBF_Page2Accessible	 CFX_MapPtrTemplate<CPDFSDK_PageView*, IAccessible*>
-
 typedef int (*AI_COMPARE) (CPDFSDK_Annot* p1, CPDFSDK_Annot* p2);
 
 class CPDFSDK_AnnotIterator
