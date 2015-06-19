@@ -10,6 +10,6 @@
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
 #endif
-#include "../zlib_v128/zlib.h"
+#include "../../../../../third_party/zlib_v128/zlib.h"
 
 #endif  // CORE_SRC_FXCODEC_FX_ZLIB_INCLUDE_FX_ZLIB_H_
