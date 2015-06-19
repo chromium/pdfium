@@ -6,8 +6,7 @@
 
 #ifndef _FWL_ADAPTER_CLIPBOARDMGR_H
 #define _FWL_ADAPTER_CLIPBOARDMGR_H
-class IFWL_Widget;
-class IFWL_AdapterClipboardMgr;
+
 enum FWL_CLIPBOARDFORMAT {
     FWL_CLIPBOARDFORMAT_Dib,
     FWL_CLIPBOARDFORMAT_Text,
@@ -16,9 +15,11 @@ enum FWL_CLIPBOARDFORMAT {
 typedef struct _FWL_HCLIPBOARDDATA {
     void* pData;
 } * FWL_HCLIPBOARDDATA;
+
 class IFWL_AdapterClipboardMgr
 {
 public:
+    virtual ~IFWL_AdapterClipboardMgr() {}
     virtual FWL_ERR		Empty() = 0;
     virtual FX_BOOL		IsDataAvailable(FX_DWORD dwFormat) = 0;
     virtual FWL_HCLIPBOARDDATA	GetData(FX_DWORD dwFormat) = 0;

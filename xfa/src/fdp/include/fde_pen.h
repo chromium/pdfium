@@ -31,10 +31,12 @@ typedef struct _FDE_COMPOUNDPATTERN {
 } FDE_COMPOUNDPATTERN, * FDE_LPCOMPOUNDPATTERN;
 typedef FDE_COMPOUNDPATTERN const *				FDE_LPCCOMPOUNDPATTERN;
 typedef CFX_ArrayTemplate<FDE_COMPOUNDPATTERN>	CFDE_CompoundPatterns;
+
 class IFDE_Pen
 {
 public:
     static IFDE_Pen*			Create();
+    virtual ~IFDE_Pen() {}
     virtual void				Release() = 0;
     virtual int32_t			GetType() const = 0;
     virtual FX_ARGB				GetColor() const = 0;

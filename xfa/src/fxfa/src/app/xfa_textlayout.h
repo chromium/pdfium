@@ -11,6 +11,7 @@ class CXFA_TextTabstopsContext;
 class IXFA_TextProvider
 {
 public:
+    virtual ~IXFA_TextProvider() {}
     virtual CXFA_Node*			GetTextNode(FX_BOOL &bRichText) = 0;
     virtual CXFA_Para			GetParaNode() = 0;
     virtual CXFA_Font			GetFontNode() = 0;

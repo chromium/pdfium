@@ -121,7 +121,7 @@ class CXFA_FFDocWidgetIterator : public IXFA_WidgetIterator
 {
 public:
     CXFA_FFDocWidgetIterator(CXFA_FFDocView* pDocView, CXFA_Node* pTravelRoot);
-    ~CXFA_FFDocWidgetIterator();
+    virtual ~CXFA_FFDocWidgetIterator();
 
     virtual void				Release()
     {
@@ -144,7 +144,7 @@ class CXFA_WidgetAccIterator : public IXFA_WidgetAccIterator
 {
 public:
     CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView, CXFA_Node* pTravelRoot);
-    ~CXFA_WidgetAccIterator();
+    virtual ~CXFA_WidgetAccIterator();
     virtual void				Release()
     {
         delete this;

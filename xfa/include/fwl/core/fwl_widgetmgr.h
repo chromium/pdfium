@@ -23,6 +23,7 @@ enum FWL_WGTRELATION {
 class IFWL_WidgetMgr
 {
 public:
+    virtual ~IFWL_WidgetMgr() {}
     virtual int32_t		CountWidgets(IFWL_Widget *pParent = NULL) = 0;
     virtual IFWL_Widget*	GetWidget(int32_t nIndex, IFWL_Widget *pParent = NULL) = 0;
     virtual IFWL_Widget*	GetWidget(IFWL_Widget *pWidget, FWL_WGTRELATION eRelation) = 0;
@@ -39,6 +40,7 @@ FX_BOOL FWL_WidgetIsChild(IFWL_Widget *parent, IFWL_Widget *find);
 class IFWL_WidgetMgrDelegate
 {
 public:
+    virtual ~IFWL_WidgetMgrDelegate() {}
     virtual FWL_ERR		OnSetCapability(FX_DWORD dwCapability = FWL_WGTMGR_DisableThread) = 0;
     virtual int32_t OnProcessMessageToForm(CFWL_Message *pMessage) = 0;
     virtual	FWL_ERR  OnDrawWidget(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL) = 0;

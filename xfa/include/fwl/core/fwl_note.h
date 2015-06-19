@@ -346,6 +346,7 @@ typedef enum {
 class IFWL_NoteDriver
 {
 public:
+    virtual ~IFWL_NoteDriver() {}
     virtual FX_BOOL		SendNote(CFWL_Note *pNote) = 0;
     virtual FX_BOOL		PostMessage(CFWL_Message *pMessage) = 0;
     virtual FWL_ERR		RegisterEventTarget(IFWL_Widget *pListener, IFWL_Widget *pEventSource = NULL, FX_DWORD dwFilter = FWL_EVENT_ALL_MASK) = 0;
@@ -363,12 +364,14 @@ IFWL_Widget* FWL_GetCurrentThreadModalWidget(IFWL_NoteThread *pNoteThread);
 class IFWL_NoteLoop
 {
 public:
+    virtual ~IFWL_NoteLoop() {}
     virtual FX_BOOL PreProcessMessage(CFWL_Message *pMessage) = 0;
     virtual FWL_ERR	Idle(int32_t count) = 0;
 };
 class IFWL_ToolTipTarget
 {
 public:
+    virtual ~IFWL_ToolTipTarget() {}
     virtual IFWL_Widget*	GetWidget() = 0;
     virtual FX_BOOL			IsShowed() = 0;
     virtual	FWL_ERR			DrawToolTip(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix, IFWL_Widget *pToolTip) = 0;

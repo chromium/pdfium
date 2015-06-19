@@ -42,6 +42,7 @@ class IFWL_Form;
 #define FWL_PARTSTATE_FRM_Pressed		3
 #define FWL_PARTSTATE_FRM_Inactive		4
 #define FWL_PARTSTATE_FRM_Disabled		5
+
 class IFWL_FormDP : public IFWL_DataProvider
 {
 public:

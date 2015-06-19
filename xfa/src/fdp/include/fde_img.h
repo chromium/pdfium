@@ -19,6 +19,7 @@ class IFDE_Image
 {
 public:
     static IFDE_Image*		Create(IFX_Stream *pStream, int32_t iFormat = FDE_IMAGEFORMAT_Unknown);
+    virtual ~IFDE_Image() {}
     virtual void			Release() = 0;
     virtual FX_BOOL			LoadImage() = 0;
     virtual void			FreeImage() = 0;

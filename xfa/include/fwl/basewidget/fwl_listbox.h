@@ -88,6 +88,7 @@ public:
 class IFWL_ListBoxCompare
 {
 public:
+    virtual ~IFWL_ListBoxCompare() {}
     virtual int32_t Compare(FWL_HLISTITEM hLeft, FWL_HLISTITEM hRight) = 0;
 };
 class IFWL_ListBox : public IFWL_Widget

@@ -140,6 +140,7 @@ typedef _FDE_TXTEDT_TEXTCHANGE_INFO*	FDE_LPTXTEDT_TEXTCHANGE_INFO;
 class IFDE_TxtEdtEventSink
 {
 public:
+    virtual ~IFDE_TxtEdtEventSink() {}
     virtual void	On_CaretChanged(IFDE_TxtEdtEngine * pEdit, int32_t nPage, FX_BOOL bVisible = TRUE) = 0;
     virtual void	On_TextChanged(IFDE_TxtEdtEngine * pEdit, FDE_TXTEDT_TEXTCHANGE_INFO &ChangeInfo) = 0;
     virtual void	On_PageCountChanged(IFDE_TxtEdtEngine * pEdit) = 0;
@@ -157,6 +158,7 @@ public:
 class IFX_CharIter
 {
 public:
+    virtual ~IFX_CharIter() {}
     virtual void		Release() = 0;
     virtual FX_BOOL		Next(FX_BOOL bPrev = FALSE) = 0;
     virtual FX_WCHAR	GetChar() = 0;
@@ -170,6 +172,7 @@ class IFDE_TxtEdtEngine
 public:
     static IFDE_TxtEdtEngine*		Create();
 
+    virtual ~IFDE_TxtEdtEngine() {}
     virtual void					Release() = 0;
     virtual void					SetEditParams(const FDE_TXTEDTPARAMS &params) = 0;
     virtual const FDE_TXTEDTPARAMS* GetEditParams() const = 0;
@@ -225,6 +228,7 @@ public:
 class IFDE_TxtEdtParag
 {
 public:
+    virtual ~IFDE_TxtEdtParag() {}
     virtual int32_t			GetTextLength() const = 0;
     virtual	int32_t			GetStartIndex() const = 0;
     virtual int32_t			CountLines() const = 0;

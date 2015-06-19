@@ -34,7 +34,7 @@ class CPDFDoc_Environment final
 {
 public:
 	CPDFDoc_Environment(CPDFXFA_Document * pDoc);
-	~CPDFDoc_Environment();
+	virtual ~CPDFDoc_Environment();
 
 	int RegAppHandle(FPDF_FORMFILLINFO* pFFinfo);
 

@@ -37,6 +37,7 @@ public:
     static IFX_Stream*			CreateStream(uint8_t* pData, int32_t length, FX_DWORD dwAccess);
     static IFX_Stream*			CreateStream(IFX_BufferRead *pBufferRead, FX_DWORD dwAccess, int32_t iFileSize = -1, FX_BOOL bReleaseBufferRead = TRUE);
     static IFX_Stream*			CreateTextStream(IFX_Stream *pBaseStream, FX_BOOL bDeleteOnRelease);
+    virtual ~IFX_Stream() {}
     virtual void				Release() = 0;
     virtual IFX_Stream*			Retain() = 0;
     virtual FX_DWORD			GetAccessModes() const = 0;

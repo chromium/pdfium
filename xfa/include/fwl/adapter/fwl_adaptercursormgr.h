@@ -25,9 +25,11 @@ enum FWL_CURSORTYPE {
 typedef struct _FWL_HCURSOR {
     void* pData;
 } *FWL_HCURSOR;
+
 class IFWL_AdapterCursorMgr
 {
 public:
+    virtual ~IFWL_AdapterCursorMgr() {}
     virtual	FWL_HCURSOR	GetSystemCursor(FWL_CURSORTYPE eCursorType) = 0;
     virtual	FWL_HCURSOR	GetCustomCursor(const CFX_DIBitmap *pBitmap, FX_FLOAT xHotspot = 0, FX_FLOAT yHotspot = 0) = 0;
     virtual	FWL_ERR		SetCursor(FWL_HCURSOR hCursor) = 0;

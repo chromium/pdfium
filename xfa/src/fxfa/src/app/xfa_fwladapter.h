@@ -15,6 +15,7 @@ public:
 class IXFA_FWLEventHandler
 {
 public:
+    virtual ~IXFA_FWLEventHandler() {}
     virtual FX_BOOL		GetPopupPos(IFWL_Widget *pWidget, FX_FLOAT fMinPopup, FX_FLOAT fMaxPopup,
                                     const CFX_RectF &rtAnchor, CFX_RectF& rtPopup)
     {

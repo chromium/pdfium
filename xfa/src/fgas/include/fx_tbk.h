@@ -57,9 +57,11 @@ class IFX_TxtBreak;
 #define FX_TXTLINEALIGNMENT_LowerMask			0x03
 #define FX_TXTLINEALIGNMENT_HigherMask			0x0C
 #define FX_TXTBREAK_MinimumTabWidth				160000
+
 class IFX_TxtAccess
 {
 public:
+    virtual ~IFX_TxtAccess() {}
     virtual FX_WCHAR	GetChar(void* pIdentity, int32_t index) const = 0;
     virtual int32_t	GetWidth(void* pIdentity, int32_t index) const = 0;
 };
@@ -178,6 +180,7 @@ class IFX_TxtBreak
 {
 public:
     static IFX_TxtBreak*	Create(FX_DWORD dwPolicies);
+    virtual ~IFX_TxtBreak() {}
     virtual void			Release() = 0;
     virtual void			SetLineWidth(FX_FLOAT fLineWidth) = 0;
     virtual void			SetLinePos(FX_FLOAT fLinePos) = 0;

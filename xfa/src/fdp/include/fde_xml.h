@@ -43,9 +43,11 @@ FX_BOOL		FDE_IsXMLNameChar(FX_WCHAR ch, FX_BOOL bFirstChar);
 #ifdef __cplusplus
 }
 #endif
+
 class IFDE_XMLNode
 {
 public:
+    virtual ~IFDE_XMLNode() {}
     virtual void			Release() = 0;
     virtual FDE_XMLNODETYPE	GetType() const = 0;
     virtual int32_t		CountChildNodes() const = 0;
@@ -119,6 +121,7 @@ class IFDE_XMLCharData : public IFDE_XMLDeclaration
 {
 public:
     static IFDE_XMLCharData*	Create(const CFX_WideString &wsCData);
+    virtual ~IFDE_XMLCharData() {}
 
     virtual void				GetCharData(CFX_WideString &wsCData) const = 0;
     virtual void				SetCharData(const CFX_WideString &wsCData) = 0;
@@ -136,6 +139,7 @@ class IFDE_XMLDoc
 {
 public:
     static IFDE_XMLDoc*		Create();
+    virtual ~IFDE_XMLDoc() {}
     virtual void			Release() = 0;
     virtual FX_BOOL			LoadXML(IFX_Stream *pXMLStream, int32_t iXMLPlaneSize = 8192, int32_t iTextDataSize = 256, FDE_LPXMLREADERHANDLER pHandler = NULL) = 0;
     virtual FX_BOOL			LoadXML(IFDE_XMLParser *pXMLParser) = 0;
@@ -148,6 +152,7 @@ public:
 class IFDE_XMLParser
 {
 public:
+    virtual ~IFDE_XMLParser() {}
     virtual	void				Release() = 0;
     virtual int32_t			DoParser(IFX_Pause *pPause) = 0;
 };
@@ -170,6 +175,7 @@ class IFDE_XMLSyntaxParser
 {
 public:
     static IFDE_XMLSyntaxParser*	Create();
+    virtual ~IFDE_XMLSyntaxParser() {}
     virtual void			Release() = 0;
     virtual void			Init(IFX_Stream *pStream, int32_t iXMLPlaneSize, int32_t iTextDataSize = 256) = 0;
     virtual FX_DWORD		DoSyntaxParse() = 0;

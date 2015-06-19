@@ -64,6 +64,7 @@ enum XFA_LAYOUTRESULT {
 class IXFA_Notify
 {
 public:
+    virtual ~IXFA_Notify() {}
     virtual void				OnPageEvent(IXFA_LayoutPage *pSender, XFA_PAGEEVENT eEvent, void* pParam = NULL) = 0;
 
     virtual void				OnNodeEvent(CXFA_Node *pSender, XFA_NODEEVENT eEvent, void* pParam = NULL, void* pParam2 = NULL, void* pParam3 = NULL, void* pParam4 = NULL) = 0;
@@ -93,6 +94,7 @@ public:
 class IXFA_ObjFactory
 {
 public:
+    virtual ~IXFA_ObjFactory() {}
     virtual CXFA_Node*			CreateNode(FX_DWORD dwPacket, XFA_ELEMENT eElement) = 0;
     virtual CXFA_Node*			CreateNode(XFA_LPCPACKETINFO pPacket, XFA_ELEMENT eElement) = 0;
 };

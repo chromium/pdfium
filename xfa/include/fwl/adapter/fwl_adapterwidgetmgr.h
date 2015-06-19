@@ -11,12 +11,13 @@ class IFWL_Menu;
 class IFWL_MenuDP;
 class CFX_Path;
 class CFX_DIBitmap;
-class IFWL_AdapterWidgetMgr;
 class IFWL_AdapterMessageHook;
 class IFWL_AppDelegate;
+
 class IFWL_AdapterWidgetMgr
 {
 public:
+    virtual ~IFWL_AdapterWidgetMgr() {}
     virtual FWL_ERR CreateWidget(IFWL_Widget *pWidget, IFWL_Widget *pParent = NULL) = 0;
     virtual FWL_ERR DestroyWidget(IFWL_Widget *pWidget) = 0;
     virtual FWL_ERR GetWidgetRect(IFWL_Widget *pWidget, CFX_RectF &rect) = 0;

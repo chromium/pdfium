@@ -52,6 +52,8 @@ public:
     static IXFA_TimeZoneProvider* Get();
     static void Destroy();
 
+    virtual ~IXFA_TimeZoneProvider() {}
+
     virtual void		SetTimeZone(FX_TIMEZONE& tz) = 0;
 
     virtual void		GetTimeZone(FX_TIMEZONE& tz) = 0;
@@ -60,7 +62,7 @@ class CXFA_TimeZoneProvider : public IXFA_TimeZoneProvider
 {
 public:
     CXFA_TimeZoneProvider();
-    ~CXFA_TimeZoneProvider();
+    virtual ~CXFA_TimeZoneProvider();
     virtual void		SetTimeZone(FX_TIMEZONE& tz);
     virtual void		GetTimeZone(FX_TIMEZONE& tz);
 private:

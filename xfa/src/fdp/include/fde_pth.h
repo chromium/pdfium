@@ -11,6 +11,7 @@ class IFDE_Path
 {
 public:
     static IFDE_Path*		Create();
+    virtual ~IFDE_Path() {}
     virtual void			Release() = 0;
     virtual FX_BOOL			StartFigure() = 0;
     virtual FX_BOOL			CloseFigure() = 0;

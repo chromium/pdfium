@@ -16,10 +16,12 @@ class CFWL_NoteLoop;
 class CFWL_NoteDriver;
 class CFWL_EventTarget;
 class CFWL_ToolTipContainer;
+
 class CFWL_NoteLoop
 {
 public:
     CFWL_NoteLoop(CFWL_WidgetImp *pForm = NULL);
+    virtual ~CFWL_NoteLoop() {}
     virtual FX_BOOL PreProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR	Idle(int32_t count);
     CFWL_WidgetImp*	GetForm();
@@ -37,7 +39,7 @@ class CFWL_NoteDriver
 {
 public:
     CFWL_NoteDriver();
-    ~CFWL_NoteDriver();
+    virtual ~CFWL_NoteDriver();
     virtual FX_BOOL		SendNote(CFWL_Note *pNote);
     virtual FX_BOOL		PostMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		RegisterEventTarget(IFWL_Widget *pListener, IFWL_Widget *pEventSource = NULL, FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);

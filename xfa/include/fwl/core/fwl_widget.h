@@ -15,9 +15,11 @@ class IFWL_WidgetDelegate;
 class IFWL_Custom;
 class IFWL_Proxy;
 class IFWL_Form;
+
 class IFWL_DataProvider
 {
 public:
+    virtual ~IFWL_DataProvider() {}
     virtual FWL_ERR		GetCaption(IFWL_Widget *pWidget, CFX_WideString &wsCaption) = 0;
 };
 class IFWL_Widget : public IFWL_Target
@@ -59,6 +61,7 @@ public:
 class IFWL_WidgetDelegate
 {
 public:
+    virtual ~IFWL_WidgetDelegate() {}
     virtual int32_t	OnProcessMessage(CFWL_Message *pMessage) = 0;
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent) = 0;
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL) = 0;
@@ -103,6 +106,7 @@ protected:
 class IFWL_Proxy
 {
 public:
+    virtual ~IFWL_Proxy() {}
     virtual	FWL_ERR		GetWidgetRect(CFX_RectF &rect, FX_BOOL bAutoSize = FALSE) = 0;
     virtual	FWL_ERR		Update() = 0;
 };

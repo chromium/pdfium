@@ -208,10 +208,12 @@ typedef struct _FX_LANG2CPMAP {
     FX_WORD	wLanguage;
     FX_WORD	wCodepage;
 } FX_LANG2CPMAP;
+
 class IFX_CodePage
 {
 public:
     static IFX_CodePage*	Create(FX_WORD wCodePage);
+    virtual ~IFX_CodePage() {}
     virtual void			Release() = 0;
     virtual FX_WORD			GetCodePageNumber() const = 0;
     virtual FX_CODESYSTEM	GetCodeSystemType() const = 0;

@@ -200,6 +200,7 @@ class IFX_RTFBreak
 {
 public:
     static IFX_RTFBreak*	Create(FX_DWORD dwPolicies);
+    virtual ~IFX_RTFBreak() {}
     virtual void			Release() = 0;
     virtual void			SetLineWidth(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) = 0;
     virtual void			SetLinePos(FX_FLOAT fLinePos) = 0;

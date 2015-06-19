@@ -49,13 +49,14 @@ enum FX_DATETIMETYPE {
     FX_DATETIMETYPE_DateTime,
     FX_DATETIMETYPE_TimeDate,
 };
+
 class IFX_Locale
 {
 public:
     static IFX_Locale* Create(CXML_Element* pLocaleData);
 
+    virtual ~IFX_Locale() {}
     virtual void	Release() = 0;
-
 
     virtual CFX_WideString GetName() = 0;
 
@@ -70,9 +71,11 @@ public:
     virtual void	GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType, CFX_WideString& wsPattern) const = 0;
     virtual void	GetNumPattern(FX_LOCALENUMSUBCATEGORY eType, CFX_WideString& wsPattern) const = 0;
 };
+
 class IFX_LocaleMgr
 {
 public:
+    virtual ~IFX_LocaleMgr() {}
     virtual void			Release() = 0;
     virtual FX_WORD			GetDefLocaleID() = 0;
     virtual IFX_Locale* 	GetDefLocale() = 0;
@@ -88,6 +91,7 @@ class IFX_FormatString
 public:
     static IFX_FormatString* Create(IFX_LocaleMgr* pLocaleMgr, FX_BOOL bUseLCID);
 
+    virtual ~IFX_FormatString() {}
     virtual void Release() = 0;
     virtual void SplitFormatString(const CFX_WideString& wsFormatString, CFX_WideStringArray& wsPatterns) = 0;
     virtual FX_LOCALECATEGORY	GetCategory(const CFX_WideString& wsPattern) = 0;

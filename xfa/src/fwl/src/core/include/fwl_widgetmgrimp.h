@@ -49,11 +49,12 @@ public:
     FX_BOOL				bOutsideChanged;
 #endif
 };
+
 class CFWL_WidgetMgr
 {
 public:
     CFWL_WidgetMgr(IFWL_AdapterNative *pAdapterNative);
-    ~CFWL_WidgetMgr();
+    virtual ~CFWL_WidgetMgr();
     virtual int32_t		CountWidgets(IFWL_Widget *pParent = NULL);
     virtual IFWL_Widget*	GetWidget(int32_t nIndex, IFWL_Widget *pParent = NULL);
     virtual IFWL_Widget*	GetWidget(IFWL_Widget *pWidget, FWL_WGTRELATION eRelation);
@@ -127,6 +128,7 @@ class CFWL_WidgetMgrDelegate
 {
 public:
     CFWL_WidgetMgrDelegate(CFWL_WidgetMgr *pWidgetMgr);
+    virtual ~CFWL_WidgetMgrDelegate() {}
     virtual FWL_ERR		OnSetCapability(FX_DWORD dwCapability = FWL_WGTMGR_DisableThread);
     virtual int32_t	OnProcessMessageToForm(CFWL_Message *pMessage);
     virtual	FWL_ERR		OnDrawWidget(IFWL_Widget *pWidget, CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix );

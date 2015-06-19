@@ -27,6 +27,7 @@ enum FX_SAXNODE {
 class IFX_SAXReaderHandler
 {
 public:
+    virtual ~IFX_SAXReaderHandler() {}
     virtual void*	OnTagEnter(const CFX_ByteStringC& bsTagName, FX_SAXNODE eType, FX_DWORD dwStartPos) = 0;
     virtual void		OnTagAttribute(void* pTag, const CFX_ByteStringC& bsAttri, const CFX_ByteStringC& bsValue) = 0;
     virtual void		OnTagBreak(void* pTag) = 0;
@@ -38,6 +39,7 @@ public:
 class IFX_SAXReader
 {
 public:
+    virtual ~IFX_SAXReader() {}
     virtual void		Release() = 0;
     virtual int32_t	StartParse(IFX_FileRead *pFile, FX_DWORD dwStart = 0, FX_DWORD dwLen = -1, FX_DWORD dwParseMode = 0) = 0;
     virtual int32_t	ContinueParse(IFX_Pause *pPause = NULL) = 0;

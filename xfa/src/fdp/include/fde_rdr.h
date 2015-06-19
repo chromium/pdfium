@@ -8,7 +8,7 @@
 #define _FDE_RENDERCONTEXT
 class IFDE_Page;
 class IFDE_RenderDevice;
-class IFDE_RenderContext;
+
 void	FDE_GetPageMatrix(CFX_Matrix &pageMatrix, const CFX_RectF &docPageRect, const CFX_Rect &devicePageRect, int32_t iRotate, FX_DWORD dwCoordinatesType = 0);
 enum FDE_RENDERSTATUS {
     FDE_RENDERSTATUS_Reset		=  0,
@@ -16,10 +16,12 @@ enum FDE_RENDERSTATUS {
     FDE_RENDERSTATUS_Done			,
     FDE_RENDERSTATUS_Failed			,
 };
+
 class IFDE_RenderContext
 {
 public:
     static IFDE_RenderContext*	Create();
+    virtual ~IFDE_RenderContext() {}
     virtual void				Release() = 0;
     virtual FX_BOOL				StartRender(IFDE_RenderDevice *pRenderDevice,
                                             IFDE_CanvasSet *pCanvasSet,

@@ -30,6 +30,7 @@ class IFDE_TxtEdtDoRecord
 {
 public:
     static IFDE_TxtEdtDoRecord * Create(const CFX_ByteStringC& bsDoRecord);
+    virtual ~IFDE_TxtEdtDoRecord() {}
     virtual void	Release() = 0;
     virtual FX_BOOL Redo() = 0;
     virtual FX_BOOL Undo() = 0;

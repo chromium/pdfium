@@ -40,7 +40,7 @@ class CXFA_ChecksumContext : public IXFA_ChecksumContext
 {
 public:
     CXFA_ChecksumContext();
-    ~CXFA_ChecksumContext();
+    virtual ~CXFA_ChecksumContext();
     virtual	void		Release()
     {
         delete this;

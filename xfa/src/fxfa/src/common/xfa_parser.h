@@ -11,6 +11,7 @@ class IXFA_Parser
 {
 public:
     static IXFA_Parser*				Create(IXFA_ObjFactory *pFactory, FX_BOOL bDocumentParser = FALSE);
+    virtual ~IXFA_Parser() {}
     virtual void					Release() = 0;
     virtual int32_t				StartParse(IFX_FileRead *pStream, XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) = 0;
     virtual int32_t				DoParse(IFX_Pause *pPause = NULL) = 0;
@@ -32,6 +33,7 @@ class IXFA_DataLoaderOptionsProvider
 {
 public:
     static IXFA_DataLoaderOptionsProvider*	Create(CXFA_Node* pConfigurationDOM);
+    virtual ~IXFA_DataLoaderOptionsProvider() {}
     virtual void							Release() = 0;
 };
 #endif

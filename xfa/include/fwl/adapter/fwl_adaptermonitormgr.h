@@ -6,13 +6,15 @@
 
 #ifndef _FWL_ADAPTER_MONITORMGR_H
 #define _FWL_ADAPTER_MONITORMGR_H
-class IFWL_AdapterMonitorMgr;
+
 typedef struct _FWL_HMONITOR {
     void* pData;
 } *FWL_HMONITOR;
+
 class IFWL_AdapterMonitorMgr
 {
 public:
+    virtual ~IFWL_AdapterMonitorMgr() {}
     virtual int32_t		CountMonitors() = 0;
     virtual FWL_HMONITOR	GetMonitor(int32_t nIndex) = 0;
     virtual FWL_HMONITOR	GetCurrentMonitor() = 0;

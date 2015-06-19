@@ -7,9 +7,11 @@
 #ifndef _FX_WORDBREAK_H
 #define _FX_WORDBREAK_H
 class IFX_CharIter;
+
 class IFX_WordBreak
 {
 public:
+    virtual ~IFX_WordBreak() {}
     virtual void		Release() = 0;
     virtual void		Attach(IFX_CharIter * pIter) = 0;
     virtual void		Attach(const CFX_WideString & wsText) = 0;

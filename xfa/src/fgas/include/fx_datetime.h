@@ -290,6 +290,7 @@ public:
     {
         m_DateTime = dt.m_DateTime;
     }
+    virtual ~CFX_DateTime() {}
     operator FX_DATETIME * ()
     {
         return &m_DateTime;

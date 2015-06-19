@@ -13,10 +13,11 @@ class IFWL_AdapterTimerMgr;
 class IFWL_AdapterCursorMgr;
 class IFWL_AdapterMonitorMgr;
 class IFWL_AdapterClipboardMgr;
-class IFWL_AdapterNative;
+
 class IFWL_AdapterNative
 {
 public:
+    virtual ~IFWL_AdapterNative() {}
     virtual IFWL_AdapterWidgetMgr*	GetWidgetMgr(IFWL_WidgetMgrDelegate *pDelegate) = 0;
     virtual IFWL_AdapterThreadMgr*	GetThreadMgr() = 0;
     virtual IFWL_AdapterTimerMgr*	GetTimerMgr() = 0;

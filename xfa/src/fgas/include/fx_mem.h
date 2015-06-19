@@ -14,9 +14,11 @@ enum FX_ALLOCTYPE {
     FX_ALLOCTYPE_Fixed				,
     FX_ALLOCTYPE_Dynamic			,
 };
+
 class IFX_MEMAllocator
 {
 public:
+    virtual ~IFX_MEMAllocator() {}
     virtual void			Release() = 0;
     virtual void*			Alloc(size_t size) = 0;
     virtual void			Free(void *pBlock) = 0;
@@ -25,10 +27,12 @@ public:
     virtual size_t			SetDefChunkSize(size_t size) = 0;
     virtual size_t			GetCurrentDataSize() const = 0;
 };
+
 IFX_MEMAllocator*	FX_CreateAllocator(FX_ALLOCTYPE eType, size_t chunkSize, size_t blockSize);
 class CFX_Target
 {
 public:
+    virtual ~CFX_Target() {}
     void*	operator new(size_t size)
     {
         return FX_Alloc(uint8_t, size);

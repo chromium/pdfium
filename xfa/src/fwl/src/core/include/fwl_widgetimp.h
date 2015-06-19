@@ -121,6 +121,7 @@ class CFWL_WidgetImpDelegate
 {
 public:
     CFWL_WidgetImpDelegate();
+    virtual ~CFWL_WidgetImpDelegate() {}
     virtual int32_t	OnProcessMessage(CFWL_Message *pMessage);
     virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
     virtual FWL_ERR		OnDrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);

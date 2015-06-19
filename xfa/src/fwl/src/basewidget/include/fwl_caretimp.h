@@ -37,6 +37,7 @@ protected:
     {
     public:
         CFWL_CaretTimer(CFWL_CaretImp *m_pCaret);
+        virtual ~CFWL_CaretTimer() {}
         virtual int32_t Run(FWL_HTIMER hTimer);
         CFWL_CaretImp *m_pCaret;
 

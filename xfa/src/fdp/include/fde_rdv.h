@@ -11,15 +11,17 @@ class IFDE_Brush;
 class IFDE_Image;
 class CFX_DIBitmap;
 class CFX_DIBSource;
-class IFDE_RenderDevice;
+
 typedef struct _FDE_HDEVICESTATE {
     void* pData;
 } * FDE_HDEVICESTATE;
+
 class IFDE_RenderDevice
 {
 public:
     static IFDE_RenderDevice*	Create(CFX_DIBitmap *pBitmap, FX_BOOL bRgbByteOrder = FALSE);
     static IFDE_RenderDevice*	Create(CFX_RenderDevice *pDevice);
+    virtual ~IFDE_RenderDevice() {}
     virtual void				Release() = 0;
 
     virtual int32_t			GetWidth() const = 0;

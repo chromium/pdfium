@@ -31,10 +31,12 @@ class IFDE_TextOut;
 #define FDE_TTOALIGNMENT_BottomCenter	9
 #define FDE_TTOALIGNMENT_BottomRight	10
 #define FDE_TTOALIGNMENT_BottomAuto		11
+
 class IFDE_TextOut
 {
 public:
     static IFDE_TextOut*	Create();
+    virtual ~IFDE_TextOut() {}
     virtual void		Release() = 0;
     virtual void		SetFont(IFX_Font *pFont) = 0;
     virtual void		SetFontSize(FX_FLOAT fFontSize) = 0;

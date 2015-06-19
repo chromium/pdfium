@@ -7,12 +7,13 @@
 #ifndef _FWL_ADAPTER_THREAD_H
 #define _FWL_ADAPTER_THREAD_H
 class IFWL_Thread;
-class IFWL_AdapterThreadMgr;
 class IFWL_AdapterMutex;
 class IFWL_AdapterSemaphore;
+
 class IFWL_AdapterThreadMgr
 {
 public:
+    virtual ~IFWL_AdapterThreadMgr() {}
     virtual FWL_ERR		Start(IFWL_Thread *pThread, FWL_HTHREAD &hThread, FX_BOOL bSuspended = FALSE) = 0;
     virtual FWL_ERR		Resume(FWL_HTHREAD hThread) = 0;
     virtual FWL_ERR		Suspend(FWL_HTHREAD hThread) = 0;
@@ -23,6 +24,7 @@ public:
 class IFWL_AdapterSemaphore
 {
 public:
+    virtual ~IFWL_AdapterSemaphore() {}
     static IFWL_AdapterSemaphore * Create();
     virtual FWL_ERR Destroy() = 0;
     virtual FWL_ERR Wait() const = 0;

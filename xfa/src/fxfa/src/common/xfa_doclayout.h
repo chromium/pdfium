@@ -95,6 +95,7 @@ public:
 class IXFA_DocLayout
 {
 public:
+    virtual ~IXFA_DocLayout() {}
     virtual CXFA_Document*		GetDocument() const = 0;
     virtual	int32_t			StartLayout(FX_BOOL bForceRestart = FALSE) = 0;
     virtual int32_t			DoLayout(IFX_Pause *pPause = NULL) = 0;

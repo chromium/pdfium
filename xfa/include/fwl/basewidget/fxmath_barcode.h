@@ -9,6 +9,7 @@
 class IFX_Barcode
 {
 public:
+    virtual ~IFX_Barcode() {}
     virtual void			Release() = 0;
     virtual BC_TYPE			GetType() = 0;
     virtual FX_BOOL			Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t &e) = 0;

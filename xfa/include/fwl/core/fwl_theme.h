@@ -75,6 +75,7 @@ public:
 class IFWL_ThemeProvider
 {
 public:
+    virtual ~IFWL_ThemeProvider() {}
     virtual FX_BOOL		IsValidWidget(IFWL_Widget *pWidget) = 0;
     virtual FX_DWORD	GetThemeID(IFWL_Widget *pWidget) = 0;
     virtual FX_DWORD	SetThemeID(IFWL_Widget *pWidget, FX_DWORD dwThemeID, FX_BOOL bChildren = TRUE) = 0;

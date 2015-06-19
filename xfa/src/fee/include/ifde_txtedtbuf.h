@@ -7,10 +7,11 @@
 #ifndef _IFDE_TXTEDTBUF_H
 #define _IFDE_TXTEDTBUF_H
 #define FDE_DEFCHUNKLENGTH	(1024)
-class IFDE_TxtEdtBuf;
+
 class IFDE_TxtEdtBuf
 {
 public:
+    virtual ~IFDE_TxtEdtBuf() {}
     virtual void		Release() = 0;
 
     virtual FX_BOOL		SetChunkSize(int32_t nChunkSize) = 0;

@@ -34,6 +34,7 @@ class IFDE_Brush
 {
 public:
     static IFDE_Brush*			Create(int32_t iType);
+    virtual ~IFDE_Brush() {}
     virtual void				Release() = 0;
     virtual int32_t			GetType() const = 0;
 };

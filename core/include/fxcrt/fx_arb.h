@@ -49,6 +49,7 @@ class IFX_ArabicChar
 {
 public:
     static IFX_ArabicChar*		Create();
+    virtual ~IFX_ArabicChar() {}
     virtual void				Release() = 0;
     virtual FX_BOOL				IsArabicChar(FX_WCHAR wch) const = 0;
     virtual FX_BOOL				IsArabicFormChar(FX_WCHAR wch) const = 0;

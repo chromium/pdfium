@@ -37,11 +37,14 @@ class IFX_FontMgr;
 #define FX_BOUNDINGSHAPE_Square			2
 #define FX_BOUNDINGSHAPE_Triangle		3
 #define FX_BOUNDINGSHAPE_Diamond		4
+
 class IFX_FontProvider
 {
 public:
+    virtual ~IFX_FontProvider() {}
     virtual FX_BOOL		GetCharWidth(IFX_Font* pFont, FX_WCHAR wUnicode, int32_t &iWidth, FX_BOOL bCharCode = FALSE) = 0;
 };
+
 class IFX_Font
 {
 public:
@@ -50,6 +53,7 @@ public:
     static IFX_Font*		LoadFont(const FX_WCHAR* pszFileName, IFX_FontMgr *pFontMgr);
     static IFX_Font*		LoadFont(IFX_Stream *pFontStream, IFX_FontMgr *pFontMgr, FX_BOOL bSaveStream = FALSE);
     static IFX_Font*		LoadFont(CFX_Font *pExtFont, IFX_FontMgr *pFontMgr, FX_BOOL bTakeOver = FALSE);
+    virtual ~IFX_Font() {}
     virtual void			Release() = 0;
     virtual IFX_Font*		Retain() = 0;
     virtual IFX_Font*		Derive(FX_DWORD dwFontStyles, FX_WORD wCodePage = 0) = 0;
@@ -112,6 +116,7 @@ class IFX_FontMgr
 {
 public:
     static IFX_FontMgr*	Create(FX_LPEnumAllFonts pEnumerator, FX_LPMatchFont pMatcher = NULL, void* pUserData = NULL);
+    ~virtual ~IFX_FontMgr() {}
     virtual void			Release() = 0;
     virtual IFX_Font*		GetDefFontByCodePage(FX_WORD wCodePage, FX_DWORD dwFontStyles, const FX_WCHAR* pszFontFamily = NULL) = 0;
     virtual IFX_Font*		GetDefFontByCharset(uint8_t nCharset, FX_DWORD dwFontStyles, const FX_WCHAR* pszFontFamily = NULL) = 0;
@@ -129,6 +134,7 @@ public:
 class IFX_FontMgrDelegate
 {
 public:
+    virtual ~IFX_FontMgrDelegate() {}
     virtual IFX_Font*		GetDefFontByCodePage(IFX_FontMgr* pFontMgr, FX_WORD wCodePage, FX_DWORD dwFontStyles, const FX_WCHAR* pszFontFamily = NULL) = 0;
     virtual IFX_Font*		GetDefFontByCharset(IFX_FontMgr* pFontMgr, uint8_t nCharset, FX_DWORD dwFontStyles, const FX_WCHAR* pszFontFamily = NULL) = 0;
     virtual IFX_Font*		GetDefFontByUnicode(IFX_FontMgr* pFontMgr, FX_WCHAR wUnicode, FX_DWORD dwFontStyles, const FX_WCHAR* pszFontFamily = NULL) = 0;
@@ -137,6 +143,7 @@ public:
 class IFX_FontSourceEnum
 {
 public:
+    virtual ~IFX_FontSourceEnum() {}
     virtual	void			Release() = 0;
     virtual FX_POSITION		GetStartPosition(void* pUserData = NULL) = 0;
     virtual IFX_FileAccess*	GetNext(FX_POSITION& pos, void* pUserData = NULL) = 0;
@@ -146,6 +153,7 @@ class IFX_FontMgr
 {
 public:
     static IFX_FontMgr* Create(IFX_FontSourceEnum* pFontEnum, IFX_FontMgrDelegate* pDelegate = NULL, void* pUserData = NULL);
+    virtual ~IFX_FontMgr() {}
     virtual void		Release() = 0;
     virtual IFX_Font*		GetDefFontByCodePage(FX_WORD wCodePage, FX_DWORD dwFontStyles, const FX_WCHAR* pszFontFamily = NULL) = 0;
     virtual IFX_Font*		GetDefFontByCharset(uint8_t nCharset, FX_DWORD dwFontStyles, const FX_WCHAR* pszFontFamily = NULL) = 0;

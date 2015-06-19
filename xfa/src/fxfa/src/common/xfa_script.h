@@ -67,8 +67,8 @@ typedef struct _XFA_RESOLVENODE_RS {
         return hValueArray.GetSize();
     }
     CXFA_ObjArray				nodes;
-    XFA_LPCSCRIPTATTRIBUTEINFO	pScriptAttribute;
     XFA_RESOVENODE_RSTYPE		dwFlags;
+    XFA_LPCSCRIPTATTRIBUTEINFO	pScriptAttribute;
 } XFA_RESOLVENODE_RS, * XFA_LPRESOLVENODE_RS;
 typedef struct _XFA_JSBUILTININFO {
     uint32_t						uUnicodeHash;
@@ -79,6 +79,7 @@ XFA_LPCJSBUILTININFO XFA_GetJSBuiltinByHash(uint32_t uHashCode);
 class IXFA_ScriptContext
 {
 public:
+    virtual ~IXFA_ScriptContext() {}
     virtual void	Release() = 0;
     virtual void	Initialize(FXJSE_HRUNTIME hRuntime) = 0;
 

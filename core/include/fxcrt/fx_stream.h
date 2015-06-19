@@ -67,9 +67,8 @@ FX_BOOL		FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC&
 class IFX_StreamWrite
 {
 public:
-    virtual ~IFX_StreamWrite() { }
+    virtual ~IFX_StreamWrite() {}
     virtual void		Release() = 0;
-
     virtual	FX_BOOL		WriteBlock(const void* pData, size_t size) = 0;
 };
 class IFX_FileWrite : public IFX_StreamWrite
@@ -167,10 +166,11 @@ IFX_FileStream*		FX_CreateFileStream(const FX_WCHAR* filename, FX_DWORD dwModes)
 class IFX_FileAccess
 {
 public:
-	virtual void				Release() = 0;
-	virtual IFX_FileAccess*		Retain() = 0;
-	virtual void				GetPath(CFX_WideString& wsPath) = 0;
-	virtual IFX_FileStream*		CreateFileStream(FX_DWORD dwModes) = 0;
+    virtual ~IFX_FileAccess() {}
+    virtual void Release() = 0;
+    virtual IFX_FileAccess* Retain() = 0;
+    virtual void GetPath(CFX_WideString& wsPath) = 0;
+    virtual IFX_FileStream* CreateFileStream(FX_DWORD dwModes) = 0;
 };
 IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath);
 class IFX_MemoryStream : public IFX_FileStream

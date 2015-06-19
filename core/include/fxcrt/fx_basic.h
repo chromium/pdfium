@@ -1576,6 +1576,7 @@ typedef enum {
 class IFX_Unknown
 {
 public:
+    virtual ~IFX_Unknown() {}
     virtual FX_DWORD	Release() = 0;
     virtual FX_DWORD	AddRef() = 0;
 };

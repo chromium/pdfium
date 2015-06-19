@@ -19,6 +19,7 @@ typedef struct _FDE_HVISUALOBJ {
 class IFDE_VisualSet
 {
 public:
+    virtual ~IFDE_VisualSet() {}
     virtual FDE_VISUALOBJTYPE	GetType() = 0;
     virtual FX_BOOL		GetBBox(FDE_HVISUALOBJ hVisualObj, CFX_RectF &bbox) = 0;
     virtual FX_BOOL		GetMatrix(FDE_HVISUALOBJ hVisualObj, CFX_Matrix &matrix) = 0;
@@ -85,6 +86,7 @@ class IFDE_VisualSetIterator
 {
 public:
     static IFDE_VisualSetIterator*	Create();
+    virtual ~IFDE_VisualSetIterator() {}
     virtual void					Release() = 0;
     virtual FX_BOOL					AttachCanvas(IFDE_CanvasSet *pCanvas) = 0;
     virtual FX_BOOL					FilterObjects(FX_DWORD dwObjects = 0xFFFFFFFF) = 0;
