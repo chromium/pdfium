@@ -7,14 +7,14 @@
       }, {  # On Android there's no system FreeType. On Windows and Mac, only a
             # few methods are used from it.
         'bundle_freetype%': 1,
-      }],    
+      }],
     ],
   },
   'target_defaults': {
     'defines' : [
-      '_FPDFSDK_LIB',
-      '_NO_GDIPLUS_',  # workaround text rendering issues on Windows
       'OPJ_STATIC',
+      'V8_DEPRECATION_WARNINGS',
+      '_CRT_SECURE_NO_WARNINGS',
     ],
     'include_dirs': [
       'third_party/freetype/include',
@@ -327,6 +327,7 @@
       'dependencies': [
         'third_party/third_party.gyp:fx_lcms2',
         'third_party/third_party.gyp:fx_libjpeg',
+        'third_party/third_party.gyp:fx_libopenjpeg',
       ],
       'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
@@ -342,28 +343,6 @@
         'core/src/fxcodec/codec/fx_codec_jbig_enc.cpp',
         'core/src/fxcodec/codec/fx_codec_jpeg.cpp',
         'core/src/fxcodec/codec/fx_codec_jpx_opj.cpp',
-        'core/src/fxcodec/fx_libopenjpeg/include/fx_openjpeg.h',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_bio.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_cio.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_dwt.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_event.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_function_list.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_image.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_invert.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_j2k.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_j2k_lib.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_jpt.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_mct.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_mqc.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_openjpeg.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_openjpeg_jp2.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_opj_clock.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_pi.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_raw.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_t1.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_t2.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_tcd.c',
-        'core/src/fxcodec/fx_libopenjpeg/src/fx_tgt.c',
         'core/src/fxcodec/fx_zlib/include/fx_zlib.h',
         'core/src/fxcodec/fx_zlib/src/fx_zlib_adler32.c',
         'core/src/fxcodec/fx_zlib/src/fx_zlib_compress.c',

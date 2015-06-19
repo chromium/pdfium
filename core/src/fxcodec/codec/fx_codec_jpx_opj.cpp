@@ -7,8 +7,8 @@
 #include <algorithm>
 #include <limits>
 
+#include "../../../../third_party/libopenjpeg20/openjpeg.h"
 #include "../../../include/fxcodec/fx_codec.h"
-#include "../fx_libopenjpeg/libopenjpeg20/openjpeg.h"
 #include "../lcms2/fx_lcms2.h"
 #include "codec_int.h"
 

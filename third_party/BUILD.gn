@@ -13,8 +13,8 @@ group("third_party") {
 source_set("bigint") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
-    "//third_party/pdfium:pdfium_config",
     "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
   ]
   sources = [
     "bigint/BigInteger.cc",
@@ -33,8 +33,8 @@ source_set("bigint") {
 source_set("freetype") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
-    "//third_party/pdfium:pdfium_config",
     "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
   ]
   defines = [ "FT2_BUILD_LIBRARY" ]
   sources = [
@@ -196,11 +196,40 @@ source_set("fx_libjpeg") {
   ]
 }
 
+source_set("fx_libopenjpeg") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
+  ]
+  sources = [
+    "libopenjpeg20/bio.c",
+    "libopenjpeg20/cio.c",
+    "libopenjpeg20/dwt.c",
+    "libopenjpeg20/event.c",
+    "libopenjpeg20/function_list.c",
+    "libopenjpeg20/image.c",
+    "libopenjpeg20/invert.c",
+    "libopenjpeg20/j2k.c",
+    "libopenjpeg20/jp2.c",
+    "libopenjpeg20/mct.c",
+    "libopenjpeg20/mqc.c",
+    "libopenjpeg20/openjpeg.c",
+    "libopenjpeg20/opj_clock.c",
+    "libopenjpeg20/pi.c",
+    "libopenjpeg20/raw.c",
+    "libopenjpeg20/t1.c",
+    "libopenjpeg20/t2.c",
+    "libopenjpeg20/tcd.c",
+    "libopenjpeg20/tgt.c",
+  ]
+}
+
 source_set("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
-    "//third_party/pdfium:pdfium_config",
     "//build/config/compiler:no_chromium_code",
+    "//third_party/pdfium:pdfium_config",
   ]
   sources = [
     "base/logging.h",
