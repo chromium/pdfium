@@ -134,7 +134,6 @@ protected:
                                     const CFX_AffineMatrix* pImage2Device, CPDF_ImageCache* pImageCache, FX_DWORD flags);
     void			CompositeDIBitmap(CFX_DIBitmap* pDIBitmap, int left, int top, FX_ARGB mask_argb,
                                       int bitmap_alpha, int blend_mode, int bIsolated);
-    FX_BOOL			ProcessInlines(CPDF_InlineImages* pInlines, const CFX_AffineMatrix* pObj2Device);
     FX_BOOL			ProcessShading(CPDF_ShadingObject* pShadingObj, const CFX_AffineMatrix* pObj2Device);
     void			DrawShading(CPDF_ShadingPattern* pPattern, CFX_AffineMatrix* pMatrix, FX_RECT& clip_rect,
                                 int alpha, FX_BOOL bAlphaMode);

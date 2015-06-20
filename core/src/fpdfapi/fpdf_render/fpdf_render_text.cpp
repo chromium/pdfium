@@ -323,20 +323,6 @@ FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext)
             m_pForm = NULL;
             return TRUE;
         }
-        if (pPageObj->m_Type == PDFPAGE_INLINES) {
-            CPDF_InlineImages *pInlines = (CPDF_InlineImages *)pPageObj;
-            if (pInlines->m_pStream) {
-                m_ImageMatrix = pInlines->m_Matrices[0];
-                CPDF_DIBSource dibsrc;
-                if (!dibsrc.Load(pContext->m_pDocument, pInlines->m_pStream, NULL, NULL, NULL, NULL)) {
-                    return FALSE;
-                }
-                m_pBitmap = dibsrc.Clone();
-                delete m_pForm;
-                m_pForm = NULL;
-                return TRUE;
-            }
-        }
     }
     return FALSE;
 }
