@@ -6,50 +6,44 @@
 
 #include "../../include/fxcodec/fx_codec.h"
 #include "../../include/fpdfapi/fpdf_module.h"
-static CPDF_ModuleMgr*	g_FPDFAPI_pDefaultMgr = NULL;
+
+namespace {
+
+CPDF_ModuleMgr* g_FPDFAPI_pDefaultMgr = nullptr;
+
+const char kAddinNameCJK[] = "Eastern Asian Language Support";
+
+}  // namespace
+
+// static
 CPDF_ModuleMgr* CPDF_ModuleMgr::Get()
 {
     return g_FPDFAPI_pDefaultMgr;
 }
+
+// static
 void CPDF_ModuleMgr::Create()
 {
+    ASSERT(!g_FPDFAPI_pDefaultMgr);
     g_FPDFAPI_pDefaultMgr = new CPDF_ModuleMgr;
-    g_FPDFAPI_pDefaultMgr->Initialize();
 }
+
+// static
 void CPDF_ModuleMgr::Destroy()
 {
-    if (g_FPDFAPI_pDefaultMgr) {
-        delete g_FPDFAPI_pDefaultMgr;
-    }
-    g_FPDFAPI_pDefaultMgr = NULL;
+    delete g_FPDFAPI_pDefaultMgr;
+    g_FPDFAPI_pDefaultMgr = nullptr;
 }
+
 CPDF_ModuleMgr::CPDF_ModuleMgr()
+    : m_pCodecModule(nullptr)
 {
-    m_pCodecModule = NULL;
-    m_pPageModule = NULL;
-    m_pRenderModule = NULL;
-    m_FileBufSize = 512;
 }
-void CPDF_ModuleMgr::Initialize()
-{
-    InitModules();
-    m_FileBufSize = 512;
-}
-void CPDF_ModuleMgr::InitModules()
-{
-    m_pCodecModule = NULL;
-    m_pPageModule = new CPDF_PageModuleDef;
-    m_pRenderModule = new CPDF_RenderModuleDef;
-}
+
 CPDF_ModuleMgr::~CPDF_ModuleMgr()
 {
-    if (m_pPageModule) {
-        delete m_pPageModule;
-    }
-    if (m_pRenderModule) {
-        delete m_pRenderModule;
-    }
 }
+
 void CPDF_ModuleMgr::SetDownloadCallback(FX_BOOL (*callback)(const FX_CHAR* module_name))
 {
     m_pDownloadCallback = callback;
@@ -63,10 +57,8 @@ FX_BOOL CPDF_ModuleMgr::DownloadModule(const FX_CHAR* module_name)
 }
 void CPDF_ModuleMgr::NotifyModuleAvailable(const FX_CHAR* module_name)
 {
-    if (FXSYS_strcmp(module_name, ADDIN_NAME_CJK) == 0) {
+    if (FXSYS_strcmp(module_name, kAddinNameCJK) == 0) {
         m_pPageModule->NotifyCJKAvailable();
-    } else if (FXSYS_strcmp(module_name, ADDIN_NAME_DECODER) == 0) {
-        m_pRenderModule->NotifyDecoderAvailable();
     }
 }
 void CPDF_ModuleMgr::RegisterSecurityHandler(const FX_CHAR* filter, CPDF_SecurityHandler * (*CreateHandler)(void* param), void* param)

@@ -7,6 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fxcrt/fx_coordinates.h"
 #include "../fxcrt/fx_system.h"
 
@@ -21,13 +22,10 @@ class CPDF_DocRenderData;
 class CPDF_Document;
 class CPDF_FontGlobals;
 class CPDF_Image;
-class CPDF_ModuleMgr;
 class CPDF_Page;
-class CPDF_PageModuleDef;
 class CPDF_PageObjects;
 class CPDF_PageRenderCache;
 class CPDF_RenderConfig;
-class CPDF_RenderModuleDef;
 class CPDF_RenderOptions;
 class CPDF_SecurityHandler;
 class CPDF_Stream;
@@ -38,162 +36,113 @@ class ICodec_Jbig2Module;
 class ICodec_JpegModule;
 class ICodec_JpxModule;
 class IPDF_FontMapper;
-
-#define ADDIN_NAME_CJK			"Eastern Asian Language Support"
-#define ADDIN_NAME_DECODER		"JPEG2000 and JBIG2 Image Decoders"
+class IPDF_PageModule;
+class IPDF_RenderModule;
 
 class CPDF_ModuleMgr
 {
 public:
+    static CPDF_ModuleMgr* Get();
+    static void Create();
+    static void Destroy();
+    static const int kFileBufSize = 512;
 
-    static void	Create();
-
-    static CPDF_ModuleMgr*	Get();
-
-    static void	Destroy();
-
-
-
-    void		SetCodecModule(CCodec_ModuleMgr* pModule)
+    void SetCodecModule(CCodec_ModuleMgr* pModule)
     {
         m_pCodecModule = pModule;
     }
-    CCodec_ModuleMgr*		GetCodecModule()
+    CCodec_ModuleMgr* GetCodecModule()
     {
         return m_pCodecModule;
     }
 
-    void		InitPageModule();
+    void InitPageModule();
 
-    void		InitRenderModule();
+    void InitRenderModule();
 
-    void		SetDownloadCallback(FX_BOOL (*callback)(const FX_CHAR* module_name));
+    void SetDownloadCallback(FX_BOOL (*callback)(const FX_CHAR* module_name));
 
-    FX_BOOL		DownloadModule(const FX_CHAR* module_name);
+    FX_BOOL DownloadModule(const FX_CHAR* module_name);
 
-    void		NotifyModuleAvailable(const FX_CHAR* module_name);
+    void NotifyModuleAvailable(const FX_CHAR* module_name);
 
-
-
-    CPDF_RenderModuleDef*	GetRenderModule() const
+    IPDF_RenderModule* GetRenderModule() const
     {
-        return m_pRenderModule;
+        return m_pRenderModule.get();
     }
 
-    CPDF_PageModuleDef*		GetPageModule() const
+    IPDF_PageModule* GetPageModule() const
     {
-        return m_pPageModule;
+        return m_pPageModule.get();
     }
 
+    void LoadEmbeddedGB1CMaps();
+    void LoadEmbeddedCNS1CMaps();
+    void LoadEmbeddedJapan1CMaps();
+    void LoadEmbeddedKorea1CMaps();
 
+    ICodec_FaxModule* GetFaxModule();
+    ICodec_JpegModule* GetJpegModule();
+    ICodec_JpxModule* GetJpxModule();
+    ICodec_Jbig2Module* GetJbig2Module();
+    ICodec_IccModule* GetIccModule();
+    ICodec_FlateModule* GetFlateModule();
 
+    void RegisterSecurityHandler(
+        const FX_CHAR* name,
+        CPDF_SecurityHandler* (*CreateHandler)(void* param),
+        void* param);
 
-    void					LoadEmbeddedGB1CMaps();
+    CPDF_SecurityHandler* CreateSecurityHandler(const FX_CHAR* name);
 
-    void					LoadEmbeddedCNS1CMaps();
+    void SetPrivateData(void* module_id,
+                        void* pData,
+                        PD_CALLBACK_FREEDATA callback);
 
-    void					LoadEmbeddedJapan1CMaps();
+    void* GetPrivateData(void* module_id);
 
-    void					LoadEmbeddedKorea1CMaps();
-
-    ICodec_FaxModule*		GetFaxModule();
-    ICodec_JpegModule*		GetJpegModule();
-    ICodec_JpxModule*		GetJpxModule();
-    ICodec_Jbig2Module*		GetJbig2Module();
-    ICodec_IccModule*		GetIccModule();
-    ICodec_FlateModule*		GetFlateModule();
-
-    void					RegisterSecurityHandler(const FX_CHAR* name, CPDF_SecurityHandler * (*CreateHandler)(void* param), void* param);
-
-    CPDF_SecurityHandler*	CreateSecurityHandler(const FX_CHAR* name);
-
-    void					SetPrivateData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback);
-
-    void*				GetPrivateData(void* module_id);
-
-    int						m_FileBufSize;
-protected:
-
+private:
     CPDF_ModuleMgr();
-
     ~CPDF_ModuleMgr();
-    void					Initialize();
 
-    void					InitModules();
+    CCodec_ModuleMgr* m_pCodecModule;
 
-
-
-    CCodec_ModuleMgr*		m_pCodecModule;
-
-    CPDF_RenderModuleDef*	m_pRenderModule;
-
-    CPDF_PageModuleDef*		m_pPageModule;
-
+    nonstd::unique_ptr<IPDF_RenderModule> m_pRenderModule;
+    nonstd::unique_ptr<IPDF_PageModule> m_pPageModule;
 
     FX_BOOL (*m_pDownloadCallback)(const FX_CHAR* module_name);
 
-    CFX_MapByteStringToPtr	m_SecurityHandlerMap;
+    CFX_MapByteStringToPtr m_SecurityHandlerMap;
 
-    CFX_PrivateData			m_privateData;
+    CFX_PrivateData m_privateData;
 };
-class CPDF_PageModuleDef
+
+class IPDF_PageModule
 {
 public:
-    virtual ~CPDF_PageModuleDef() {}
+    virtual ~IPDF_PageModule() {}
 
-    virtual CPDF_DocPageData*	CreateDocData(CPDF_Document* pDoc)
-    {
-        return NULL;
-    }
-
-    virtual void				ReleaseDoc(CPDF_Document*) {}
-    virtual void				ClearDoc(CPDF_Document*) {}
-
-    virtual CPDF_FontGlobals*	GetFontGlobals()
-    {
-        return NULL;
-    }
-
-    virtual void				ClearStockFont(CPDF_Document* pDoc) {}
-
-    virtual void				NotifyCJKAvailable() {}
-
-    virtual CPDF_ColorSpace*	GetStockCS(int family)
-    {
-        return NULL;
-    }
+    virtual CPDF_DocPageData* CreateDocData(CPDF_Document* pDoc) = 0;
+    virtual void ReleaseDoc(CPDF_Document*) = 0;
+    virtual void ClearDoc(CPDF_Document*) = 0;
+    virtual CPDF_FontGlobals* GetFontGlobals() = 0;
+    virtual void ClearStockFont(CPDF_Document* pDoc) = 0;
+    virtual void NotifyCJKAvailable() = 0;
+    virtual CPDF_ColorSpace* GetStockCS(int family) = 0;
 };
-class CPDF_RenderModuleDef
+
+class IPDF_RenderModule
 {
 public:
-    virtual ~CPDF_RenderModuleDef() {}
+    virtual ~IPDF_RenderModule() {}
 
-    virtual CPDF_DocRenderData*	CreateDocData(CPDF_Document* pDoc)
-    {
-        return NULL;
-    }
-
-    virtual void	DestroyDocData(CPDF_DocRenderData*) {}
-    virtual void	ClearDocData(CPDF_DocRenderData*) {}
-
-    virtual CPDF_DocRenderData* GetRenderData()
-    {
-        return NULL;
-    }
-
-    virtual CPDF_PageRenderCache*	CreatePageCache(CPDF_Page* pPage)
-    {
-        return NULL;
-    }
-
-    virtual void	DestroyPageCache(CPDF_PageRenderCache*) {}
-
-    virtual void	NotifyDecoderAvailable() {}
-
-    virtual CPDF_RenderConfig* GetConfig()
-    {
-        return NULL;
-    }
+    virtual CPDF_DocRenderData* CreateDocData(CPDF_Document* pDoc) = 0;
+    virtual void DestroyDocData(CPDF_DocRenderData*) = 0;
+    virtual void ClearDocData(CPDF_DocRenderData*) = 0;
+    virtual CPDF_DocRenderData* GetRenderData() = 0;
+    virtual CPDF_PageRenderCache* CreatePageCache(CPDF_Page* pPage) = 0;
+    virtual void DestroyPageCache(CPDF_PageRenderCache*)  = 0;
+    virtual CPDF_RenderConfig* GetConfig() = 0;
 };
 
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_

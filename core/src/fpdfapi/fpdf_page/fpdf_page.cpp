@@ -898,7 +898,7 @@ void CPDF_Page::ParseContent(CPDF_ParseOptions* pOptions, FX_BOOL bReParse)
 CPDF_Page::~CPDF_Page()
 {
     if (m_pPageRender) {
-        CPDF_RenderModuleDef* pModule = CPDF_ModuleMgr::Get()->GetRenderModule();
+        IPDF_RenderModule* pModule = CPDF_ModuleMgr::Get()->GetRenderModule();
         pModule->DestroyPageCache(m_pPageRender);
     }
 }
