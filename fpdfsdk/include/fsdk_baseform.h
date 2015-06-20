@@ -13,6 +13,8 @@
 #include <ctime>
 #endif
 
+#include <map>
+
 #include "../../core/include/fpdfapi/fpdf_parser.h"
 #include "../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../core/include/fxcrt/fx_basic.h"
@@ -219,9 +221,8 @@ private:
 	IXFA_Widget*						m_hXFAWidget;
 };
 
-#define CPDFSDK_WidgetMap				CFX_MapPtrTemplate<CPDF_FormControl*, CPDFSDK_Widget*>
-#define CPDFSDK_XFAWidgetMap			CFX_MapPtrTemplate<IXFA_Widget*, CPDFSDK_XFAWidget*>
-#define CPDFSDK_FieldSynchronizeMap		CFX_MapPtrTemplate<CPDF_FormField*, int>
+#define CPDFSDK_XFAWidgetMap CFX_MapPtrTemplate<IXFA_Widget*, CPDFSDK_XFAWidget*>
+#define CPDFSDK_FieldSynchronizeMap CFX_MapPtrTemplate<CPDF_FormField*, int>
 
 class CPDFSDK_InterForm : public CPDF_FormNotify
 {
@@ -267,7 +268,6 @@ public:
 	void							ResetFieldAppearance(CPDF_FormField* pFormField, const FX_WCHAR* sValue, FX_BOOL bValueChanged);
 	void							UpdateField(CPDF_FormField* pFormField);
 
-public:
 	FX_BOOL							DoAction_Hide(const CPDF_Action& action);
 	FX_BOOL							DoAction_SubmitForm(const CPDF_Action& action);
 	FX_BOOL							DoAction_ResetForm(const CPDF_Action& action);
@@ -295,22 +295,22 @@ private:
 	virtual int						BeforeFormImportData(const CPDF_InterForm* pForm);
 	virtual int						AfterFormImportData(const CPDF_InterForm* pForm);
 
-private:
 	FX_BOOL							FDFToURLEncodedData(CFX_WideString csFDFFile, CFX_WideString csTxtFile);
 	FX_BOOL							FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufSize);
 	int								GetPageIndexByAnnotDict(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict) const;
 	void							DoFDFBuffer(CFX_ByteString sBuffer);
 
-private:
-	CPDFSDK_Document*				m_pDocument;
-	CPDF_InterForm*					m_pInterForm;
-	CPDFSDK_WidgetMap				m_Map;
-	CPDFSDK_XFAWidgetMap			m_XFAMap;
-	CPDFSDK_FieldSynchronizeMap		m_FieldSynchronizeMap;
-	FX_BOOL							m_bCalculate;
-	FX_BOOL							m_bXfaCalculate;
-	FX_BOOL							m_bXfaValidationsEnabled;
-	FX_BOOL							m_bBusy;
+    using CPDFSDK_WidgetMap = std::map<CPDF_FormControl*, CPDFSDK_Widget*>;
+
+    CPDFSDK_Document* m_pDocument;
+    CPDF_InterForm* m_pInterForm;
+    CPDFSDK_WidgetMap m_Map;
+    CPDFSDK_XFAWidgetMap m_XFAMap;
+    CPDFSDK_FieldSynchronizeMap m_FieldSynchronizeMap;
+    FX_BOOL m_bCalculate;
+    FX_BOOL m_bXfaCalculate;
+    FX_BOOL m_bXfaValidationsEnabled;
+    FX_BOOL m_bBusy;
 
 public:
 	FX_BOOL IsNeedHighLight(int nFieldType);

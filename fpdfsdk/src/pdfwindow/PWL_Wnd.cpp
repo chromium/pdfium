@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <map>
+
 #include "../../include/pdfwindow/PDFWindow.h"
 #include "../../include/pdfwindow/PWL_Wnd.h"
 #include "../../include/pdfwindow/PWL_Utils.h"
@@ -11,10 +13,10 @@
 
 /* -------------------------- CPWL_Timer -------------------------- */
 
-static CFX_MapPtrTemplate<int32_t, CPWL_Timer*>& GetPWLTimeMap()
+static std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap()
 {
   // Leak the object at shutdown.
-  static auto timeMap = new CFX_MapPtrTemplate<int32_t, CPWL_Timer*>;
+  static auto timeMap = new std::map<int32_t, CPWL_Timer*>;
   return *timeMap;
 }
 
@@ -34,33 +36,33 @@ CPWL_Timer::~CPWL_Timer()
 
 int32_t CPWL_Timer::SetPWLTimer(int32_t nElapse)
 {
-	if (m_nTimerID != 0) KillPWLTimer();
-	m_nTimerID = m_pSystemHandler->SetTimer(nElapse, TimerProc);
-	GetPWLTimeMap().SetAt(m_nTimerID, this);
-	return m_nTimerID;
+    if (m_nTimerID != 0)
+        KillPWLTimer();
+    m_nTimerID = m_pSystemHandler->SetTimer(nElapse, TimerProc);
+
+    GetPWLTimeMap()[m_nTimerID] = this;
+    return m_nTimerID;
 }
 
 void CPWL_Timer::KillPWLTimer()
 {
-	if (m_nTimerID != 0)
-	{
-		m_pSystemHandler->KillTimer(m_nTimerID);
-		GetPWLTimeMap().RemoveKey(m_nTimerID);
-		m_nTimerID = 0;
-	}
+    if (m_nTimerID == 0)
+        return;
+
+    m_pSystemHandler->KillTimer(m_nTimerID);
+    GetPWLTimeMap().erase(m_nTimerID);
+    m_nTimerID = 0;
 }
 
 void CPWL_Timer::TimerProc(int32_t idEvent)
 {
-	CPWL_Timer* pTimer = NULL;
-	if (GetPWLTimeMap().Lookup(idEvent, pTimer))
-	{
-		if (pTimer)
-		{
-			if (pTimer->m_pAttached)
-				pTimer->m_pAttached->TimerProc();
-		}
-	}
+    auto it = GetPWLTimeMap().find(idEvent);
+    if (it == GetPWLTimeMap().end())
+        return;
+
+    CPWL_Timer* pTimer = it->second;
+    if (pTimer->m_pAttached)
+        pTimer->m_pAttached->TimerProc();
 }
 
 /* -------------------------- CPWL_TimerHandler -------------------------- */

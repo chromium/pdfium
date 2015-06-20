@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
 #define CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
 
+#include <map>
+
 #include "../fpdfapi/fpdf_parser.h"
 #include "../fpdfapi/fpdf_render.h"
 
@@ -181,7 +183,7 @@ protected:
 
     UsageType			m_eUsageType;
 
-    CFX_MapPtrTemplate<const CPDF_Dictionary*, void*>	m_OCGStates;
+    std::map<const CPDF_Dictionary*, FX_BOOL> m_OCGStates;
 };
 class CPDF_LWinParam
 {

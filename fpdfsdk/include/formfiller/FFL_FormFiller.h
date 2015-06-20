@@ -19,8 +19,6 @@ class CPDFSDK_Document;
 class CPDFSDK_Widget;
 
 
-#define CFFL_PageView2PDFWindow		CFX_MapPtrTemplate<CPDFSDK_PageView*, CPWL_Wnd*>
-
 struct FFL_KeyStrokeData
 {
 	CFX_WideString		swValue;
@@ -78,11 +76,10 @@ public:
 	virtual void				DoCut(CPDFSDK_Document* pDocument);
 	virtual void				DoPaste(CPDFSDK_Document* pDocument);
 
-public: //CPWL_TimerHandler
+        // CPWL_TimerHandler
 	virtual void				TimerProc();
 	virtual IFX_SystemHandler*	GetSystemHandler() const;
 
-public:
 	virtual CPDF_Matrix			GetWindowMatrix(void* pAttachedData);
 	virtual CFX_WideString		LoadPopupMenuString(int nIndex);
 
@@ -122,7 +119,6 @@ public:
 	virtual void				GetKeyStrokeData(CPDFSDK_PageView* pPageView, FFL_KeyStrokeData& data);
 	virtual FX_BOOL				IsFieldFull(CPDFSDK_PageView* pPageView);
 
-public:
 	CPWL_Wnd*					GetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bNew);
 	void						DestroyPDFWindow(CPDFSDK_PageView* pPageView);
 	void						EscapeFiller(CPDFSDK_PageView* pPageView, FX_BOOL bDestroyPDFWindow);
@@ -131,7 +127,6 @@ public:
 	virtual CPWL_Wnd*			NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView* pPageView) = 0;
 	virtual CPDF_Rect			GetFocusBox(CPDFSDK_PageView* pPageView);
 
-public:
 	FX_BOOL						IsValid() const;
 	CPDF_Rect					GetPDFWindowRect() const;
 
@@ -141,14 +136,17 @@ public:
 	virtual void				InvalidateRect(double left, double top, double right, double bottom);
 	CPDFDoc_Environment*		GetApp(){return m_pApp;}
 	CPDFSDK_Annot*				GetSDKAnnot() {return m_pAnnot;}
-protected:
-	CPDFDoc_Environment*		m_pApp;
-	CPDFSDK_Widget*				m_pWidget;
-	CPDFSDK_Annot*				m_pAnnot;
 
-	FX_BOOL						m_bValid;
-	CFFL_PageView2PDFWindow		m_Maps;
-	CPDF_Point					m_ptOldPos;
+protected:
+    using CFFL_PageView2PDFWindow = std::map<CPDFSDK_PageView*, CPWL_Wnd*>;
+
+    CPDFDoc_Environment* m_pApp;
+    CPDFSDK_Widget* m_pWidget;
+    CPDFSDK_Annot* m_pAnnot;
+
+    FX_BOOL m_bValid;
+    CFFL_PageView2PDFWindow m_Maps;
+    CPDF_Point m_ptOldPos;
 };
 
 class CFFL_Button : public CFFL_FormFiller

@@ -7,12 +7,12 @@
 #ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_IFORMFILLER_H_
 #define FPDFSDK_INCLUDE_FORMFILLER_FFL_IFORMFILLER_H_
 
+#include <map>
+
 #include "FormFiller.h"
 
 class CFFL_FormFiller;
 class CFFL_PrivateData;
-
-#define CFFL_Widget2Filler		CFX_MapPtrTemplate<CPDFSDK_Annot*, CFFL_FormFiller*>
 
 class CFFL_IFormFiller : public IPWL_Filler_Notify
 {
@@ -52,7 +52,6 @@ public:
 	virtual FX_BOOL				OnSetFocus(CPDFSDK_Annot* pAnnot,FX_UINT nFlag);
 	virtual FX_BOOL				OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 
-public:
 	virtual void				QueryWherePopup(void* pPrivateData, FX_FLOAT fPopupMin,FX_FLOAT fPopupMax, int32_t & nRet, FX_FLOAT & fPopupRet);
 	virtual void				OnBeforeKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, int32_t nKeyCode,
 										CFX_WideString & strChange, const CFX_WideString& strChangeEx,
@@ -66,13 +65,11 @@ public:
 	virtual void				OnPopupPreOpen(void* pPrivateData, FX_BOOL& bExit, FX_DWORD nFlag);
 	virtual void				OnPopupPostOpen(void* pPrivateData, FX_BOOL& bExit, FX_DWORD nFlag);
 
-public:
 	virtual void				BeforeUndo(CPDFSDK_Document* pDocument);
 	virtual void				BeforeRedo(CPDFSDK_Document* pDocument);
 	virtual void				AfterUndo(CPDFSDK_Document* pDocument);
 	virtual void				AfterRedo(CPDFSDK_Document* pDocument);
 
-public:
 	virtual FX_BOOL				CanCopy(CPDFSDK_Document* pDocument);
 	virtual FX_BOOL				CanCut(CPDFSDK_Document* pDocument);
 	virtual FX_BOOL				CanPaste(CPDFSDK_Document* pDocument);
@@ -81,7 +78,6 @@ public:
 	virtual void				DoCut(CPDFSDK_Document* pDocument);
 	virtual void				DoPaste(CPDFSDK_Document* pDocument);
 
-public:
 	CFFL_FormFiller*			GetFormFiller(CPDFSDK_Annot* pAnnot, FX_BOOL bRegister);
 	void						RemoveFormFiller(CPDFSDK_Annot* pAnnot);
 
@@ -102,12 +98,15 @@ public:
 	void						OnPostOpen(CPDFSDK_Widget* pWidget, CPDFSDK_PageView* pPageView, FX_BOOL& bReset, FX_BOOL& bExit, FX_UINT nFlag);
 
 private:
-	void						UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
-	void						SetFocusAnnotTab(CPDFSDK_Annot* pWidget, FX_BOOL bSameField, FX_BOOL bNext);
+    using CFFL_Widget2Filler = std::map<CPDFSDK_Annot*, CFFL_FormFiller*>;
 
-	CPDFDoc_Environment*				m_pApp;
-	CFFL_Widget2Filler			m_Maps;
-	FX_BOOL						m_bNotifying;
+    void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
+    void SetFocusAnnotTab(CPDFSDK_Annot* pWidget, FX_BOOL bSameField,
+                          FX_BOOL bNext);
+
+    CPDFDoc_Environment* m_pApp;
+    CFFL_Widget2Filler m_Maps;
+    FX_BOOL m_bNotifying;
 };
 
 class CFFL_PrivateData

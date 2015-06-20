@@ -967,75 +967,69 @@ CFX_FontCache::~CFX_FontCache()
 {
     FreeCache(TRUE);
 }
+
 CFX_FaceCache* CFX_FontCache::GetCachedFace(CFX_Font* pFont)
 {
-    FX_BOOL bExternal = pFont->GetFace() == NULL;
-    void* face = bExternal ? pFont->GetSubstFont()->m_ExtHandle : pFont->GetFace();
-    CFX_FTCacheMap& map =  bExternal ? m_ExtFaceMap : m_FTFaceMap;
-    CFX_CountedFaceCache* counted_face_cache = NULL;
-    if (map.Lookup((FXFT_Face)face, counted_face_cache)) {
+    FXFT_Face internal_face = pFont->GetFace();
+    const FX_BOOL bExternal = internal_face == nullptr;
+    FXFT_Face face = bExternal ?
+        (FXFT_Face)pFont->GetSubstFont()->m_ExtHandle : internal_face;
+    CFX_FTCacheMap& map = bExternal ? m_ExtFaceMap : m_FTFaceMap;
+    auto it = map.find(face);
+    if (it != map.end()) {
+        CFX_CountedFaceCache* counted_face_cache = it->second;
         counted_face_cache->m_nCount++;
         return counted_face_cache->m_Obj;
     }
-    CFX_FaceCache* face_cache = NULL;
-    face_cache = FX_NEW CFX_FaceCache(bExternal ? NULL : (FXFT_Face)face);
-    if (face_cache == NULL)	{
-        return NULL;
-    }
-    counted_face_cache = FX_NEW CFX_CountedFaceCache;
-    if (!counted_face_cache) {
-        if (face_cache) {
-            delete face_cache;
-            face_cache = NULL;
-        }
-        return NULL;
-    }
+    CFX_FaceCache* face_cache = new CFX_FaceCache(bExternal ? nullptr : face);
+    CFX_CountedFaceCache* counted_face_cache = new CFX_CountedFaceCache;
     counted_face_cache->m_nCount = 2;
     counted_face_cache->m_Obj = face_cache;
-    map.SetAt((FXFT_Face)face, counted_face_cache);
+    map[face] = counted_face_cache;
     return face_cache;
 }
+
 void CFX_FontCache::ReleaseCachedFace(CFX_Font* pFont)
 {
-    FX_BOOL bExternal = pFont->GetFace() == NULL;
-    void* face = bExternal ? pFont->GetSubstFont()->m_ExtHandle : pFont->GetFace();
+    FXFT_Face internal_face = pFont->GetFace();
+    const FX_BOOL bExternal = internal_face == nullptr;
+    FXFT_Face face = bExternal ?
+        (FXFT_Face)pFont->GetSubstFont()->m_ExtHandle : internal_face;
     CFX_FTCacheMap& map =  bExternal ? m_ExtFaceMap : m_FTFaceMap;
-    CFX_CountedFaceCache* counted_face_cache = NULL;
-    if (!map.Lookup((FXFT_Face)face, counted_face_cache)) {
+
+    auto it = map.find(face);
+    if (it == map.end())
         return;
-    }
+
+    CFX_CountedFaceCache* counted_face_cache = it->second;
     if (counted_face_cache->m_nCount > 1) {
         counted_face_cache->m_nCount--;
     }
 }
+
 void CFX_FontCache::FreeCache(FX_BOOL bRelease)
 {
-    {
-        FX_POSITION pos;
-        pos = m_FTFaceMap.GetStartPosition();
-        while (pos) {
-            FXFT_Face face;
-            CFX_CountedFaceCache* cache;
-            m_FTFaceMap.GetNextAssoc(pos, face, cache);
-            if (bRelease || cache->m_nCount < 2) {
-                delete cache->m_Obj;
-                delete cache;
-                m_FTFaceMap.RemoveKey(face);
-            }
+    for (auto it = m_FTFaceMap.begin(); it != m_FTFaceMap.end();) {
+        auto curr_it = it++;
+        CFX_CountedFaceCache* cache = curr_it->second;
+        if (bRelease || cache->m_nCount < 2) {
+            delete cache->m_Obj;
+            delete cache;
+            m_FTFaceMap.erase(curr_it);
         }
-        pos = m_ExtFaceMap.GetStartPosition();
-        while (pos) {
-            FXFT_Face face;
-            CFX_CountedFaceCache* cache;
-            m_ExtFaceMap.GetNextAssoc(pos, face, cache);
-            if (bRelease || cache->m_nCount < 2) {
-                delete cache->m_Obj;
-                delete cache;
-                m_ExtFaceMap.RemoveKey(face);
-            }
+    }
+
+    for (auto it = m_ExtFaceMap.begin(); it != m_ExtFaceMap.end();) {
+        auto curr_it = it++;
+        CFX_CountedFaceCache* cache = curr_it->second;
+        if (bRelease || cache->m_nCount < 2) {
+            delete cache->m_Obj;
+            delete cache;
+            m_ExtFaceMap.erase(curr_it);
         }
     }
 }
+
 CFX_FaceCache::CFX_FaceCache(FXFT_Face face)
 {
     m_Face = face;

@@ -28,23 +28,14 @@ CFFL_FormFiller::CFFL_FormFiller(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnno
 
 CFFL_FormFiller::~CFFL_FormFiller()
 {
-	FX_POSITION pos = m_Maps.GetStartPosition();
-	while (pos)
-	{
-		CPDFSDK_PageView * pPageView = NULL;
-		CPWL_Wnd* pWnd = NULL;
-		m_Maps.GetNextAssoc(pos, pPageView, pWnd);
-
-		if (pWnd)
-		{
-			CFFL_PrivateData* pData = (CFFL_PrivateData*)pWnd->GetAttachedData();
-			pWnd->Destroy();
-			delete pWnd;
-			delete pData;
-		}
-	}
-	m_Maps.RemoveAll();
-
+    for (auto& it : m_Maps) {
+        CPWL_Wnd* pWnd = it.second;
+        CFFL_PrivateData* pData = (CFFL_PrivateData*)pWnd->GetAttachedData();
+        pWnd->Destroy();
+        delete pWnd;
+        delete pData;
+    }
+    m_Maps.clear();
 }
 
 void CFFL_FormFiller::SetWindowRect(CPDFSDK_PageView* pPageView, const CPDF_Rect& rcWindow)
@@ -430,64 +421,53 @@ PWL_CREATEPARAM	CFFL_FormFiller::GetCreateParam()
 
 CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bNew)
 {
-	ASSERT(pPageView != NULL);
-	ASSERT(m_pWidget != NULL);
+    ASSERT(pPageView);
 
-	CPWL_Wnd* pWnd = NULL;
-	m_Maps.Lookup(pPageView, pWnd);
+    auto it = m_Maps.find(pPageView);
+    const bool found = it != m_Maps.end();
+    CPWL_Wnd* pWnd = found ? it->second : nullptr;
+    if (!bNew)
+        return pWnd;
 
-	if (bNew)
-	{
-		if (pWnd)
-		{
-			CFFL_PrivateData* pPrivateData = (CFFL_PrivateData*)pWnd->GetAttachedData();
-			ASSERT(pPrivateData != NULL);
+    if (found) {
+        CFFL_PrivateData* pPrivateData =
+            (CFFL_PrivateData*)pWnd->GetAttachedData();
+        if (pPrivateData->nWidgetAge != m_pWidget->GetAppearanceAge()) {
+            return ResetPDFWindow(
+                pPageView, m_pWidget->GetValueAge() == pPrivateData->nValueAge);
+      }
+    } else {
+      PWL_CREATEPARAM cp = GetCreateParam();
+      cp.hAttachedWnd = (FX_HWND)m_pWidget;
 
-			if (pPrivateData->nWidgetAge != m_pWidget->GetAppearanceAge())
-			{
-				return ResetPDFWindow(pPageView, m_pWidget->GetValueAge() == pPrivateData->nValueAge);
-			}
-		}
-		else
-		{
-			PWL_CREATEPARAM cp = GetCreateParam();
-			cp.hAttachedWnd = (FX_HWND)m_pWidget;
+      CFFL_PrivateData* pPrivateData = new CFFL_PrivateData;
+      pPrivateData->pWidget = m_pWidget;
+      pPrivateData->pPageView = pPageView;
+      pPrivateData->nWidgetAge = m_pWidget->GetAppearanceAge();
+      pPrivateData->nValueAge = 0;
 
-			CFFL_PrivateData* pPrivateData = new CFFL_PrivateData;
-			pPrivateData->pWidget = m_pWidget;
-			pPrivateData->pPageView = pPageView;
-			pPrivateData->nWidgetAge = m_pWidget->GetAppearanceAge();
-                        pPrivateData->nValueAge = 0;
+      cp.pAttachedData = pPrivateData;
 
-			cp.pAttachedData = pPrivateData;
+      pWnd = NewPDFWindow(cp, pPageView);
+      m_Maps[pPageView] = pWnd;
+    }
 
-			pWnd = NewPDFWindow(cp, pPageView);
-
-			if (pWnd)
-			{
-				m_Maps.SetAt(pPageView, pWnd);
-			}
-		}
-	}
-
-	return pWnd;
+    return pWnd;
 }
 
 void CFFL_FormFiller::DestroyPDFWindow(CPDFSDK_PageView* pPageView)
 {
-	CPWL_Wnd* pWnd = NULL;
-	m_Maps.Lookup(pPageView, pWnd);
+    auto it = m_Maps.find(pPageView);
+    if (it == m_Maps.end())
+        return;
 
-	if (pWnd)
-	{
-		CFFL_PrivateData* pData = (CFFL_PrivateData*)pWnd->GetAttachedData();
-		pData->pPageView = NULL;
-		pWnd->Destroy();
-		delete pWnd;
-		delete pData;
-	}
+    CPWL_Wnd* pWnd = it->second;
+    CFFL_PrivateData* pData = (CFFL_PrivateData*)pWnd->GetAttachedData();
+    pWnd->Destroy();
+    delete pWnd;
+    delete pData;
 
-	m_Maps.RemoveKey(pPageView);
+    m_Maps.erase(it);
 }
 
 CPDF_Matrix	CFFL_FormFiller::GetWindowMatrix(void* pAttachedData)

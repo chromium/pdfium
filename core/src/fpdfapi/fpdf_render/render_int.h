@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_RENDER_RENDER_INT_H_
 #define CORE_SRC_FPDFAPI_FPDF_RENDER_RENDER_INT_H_
 
+#include <map>
+
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 
@@ -52,14 +54,12 @@ public:
     CFX_DIBSource*	TranslateImage(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc);
     FX_COLORREF		TranslateColor(FX_COLORREF src);
 };
-typedef CFX_MapPtrTemplate<CPDF_Font*, CPDF_CountedObject<CPDF_Type3Cache>*> CPDF_Type3CacheMap;
-typedef CFX_MapPtrTemplate<CPDF_Object*, CPDF_CountedObject<CPDF_TransferFunc>*> CPDF_TransferFuncMap;
+
 class CPDF_DocRenderData
 {
 public:
     CPDF_DocRenderData(CPDF_Document* pPDFDoc = NULL);
     ~CPDF_DocRenderData();
-    FX_BOOL				Initialize();
     CPDF_Type3Cache*	GetCachedType3(CPDF_Type3Font* pFont);
     CPDF_TransferFunc*	GetTransferFunc(CPDF_Object* pObj);
     CFX_FontCache*		GetFontCache()
@@ -70,10 +70,15 @@ public:
     void				ReleaseCachedType3(CPDF_Type3Font* pFont);
     void				ReleaseTransferFunc(CPDF_Object* pObj);
 private:
-    CPDF_Document*		m_pPDFDoc;
-    CFX_FontCache*		m_pFontCache;
-    CPDF_Type3CacheMap	m_Type3FaceMap;
-    CPDF_TransferFuncMap	m_TransferFuncMap;
+    using CPDF_Type3CacheMap =
+        std::map<CPDF_Font*, CPDF_CountedObject<CPDF_Type3Cache>*>;
+    using CPDF_TransferFuncMap =
+        std::map<CPDF_Object*, CPDF_CountedObject<CPDF_TransferFunc>*> ;
+
+    CPDF_Document* m_pPDFDoc;
+    CFX_FontCache* m_pFontCache;
+    CPDF_Type3CacheMap m_Type3FaceMap;
+    CPDF_TransferFuncMap m_TransferFuncMap;
 };
 struct _PDF_RenderItem {
 public:

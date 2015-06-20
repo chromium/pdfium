@@ -578,8 +578,6 @@ void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget, CXFA_WidgetAcc* pWidget
 	if (m_iDocType != DOCTYPE_DYNIMIC_XFA || NULL == hWidget)
 		return;
 	
-	int pageViewCount = m_pSDKDoc->GetPageViewCount();
-
 	CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
 	if (pEnv == NULL)
 		return;
