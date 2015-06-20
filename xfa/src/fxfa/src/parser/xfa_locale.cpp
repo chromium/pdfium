@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../../../core/include/fxcrt/fx_xml.h"
 #include "../../../foxitlib.h"
 #include "../common/xfa_utils.h"
 #include "../common/xfa_object.h"
@@ -17,6 +18,7 @@
 #include "../common/xfa_fm2jsapi.h"
 #include "xfa_debug_parser.h"
 #include "xfa_locale.h"
+
 static const FX_WCHAR* g_FX_Percent =  L"z,zzz,zzz,zzz,zzz,zzz%";
 static const FX_WCHAR* g_FX_Currency = L"$z,zzz,zzz,zzz,zzz,zz9.99";
 static const FX_WCHAR* g_FX_Decimal = L"z,zzz,zzz,zzz,zzz,zz9.zzz";

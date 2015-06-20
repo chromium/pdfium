@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../../../core/include/fxcrt/fx_xml.h"
 #include "../fgas_base.h"
 #include "fx_localeimp.h"
+
 #define FX_LOCALECATEGORY_DateHash			0xbde9abde
 #define FX_LOCALECATEGORY_TimeHash			0x2d71b00f
 #define FX_LOCALECATEGORY_DateTimeHash		0x158c72ed

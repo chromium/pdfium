@@ -12,30 +12,19 @@
 #include <math.h>
 #endif
 
-#include "../../core/include/fpdfapi/fpdf_parser.h"
-#include "../../core/include/fpdfapi/fpdfapi.h"
-#include "../../core/include/fpdfapi/fpdf_parser.h"
 #include "../../core/include/fpdfapi/fpdf_module.h"
-#include "../../core/include/fpdfapi/fpdf_render.h"
 #include "../../core/include/fpdfapi/fpdf_pageobj.h"
+#include "../../core/include/fpdfapi/fpdf_parser.h"
+#include "../../core/include/fpdfapi/fpdf_parser.h"
+#include "../../core/include/fpdfapi/fpdf_render.h"
 #include "../../core/include/fpdfapi/fpdf_serial.h"
-
-#include "../../core/include/fpdftext/fpdf_text.h"
-
-#include "../../core/include/fxge/fx_ge_win32.h"
-#include "../../core/include/fxge/fx_ge.h"
-
-#include "../../core/include/fxcodec/fx_codec.h"
-
+#include "../../core/include/fpdfapi/fpdfapi.h"
 #include "../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../core/include/fpdfdoc/fpdf_vt.h"
-
-#include "../../core/include/fxcrt/fx_xml.h"
 #include "../../xfa/include/fxbarcode/BC_BarCode.h"
 #include "../../xfa/include/fxjse/fxjse.h"
 #include "../../xfa/include/fxgraphics/fx_graphics.h"
 #include "../../xfa/include/fxfa/fxfa.h"
-
 #include "../../xfa/include/fwl/core/fwl_error.h"
 #include "../../xfa/include/fwl/core/fwl_timer.h"
 #include "../../xfa/include/fwl/adapter/fwl_adaptertimermgr.h"

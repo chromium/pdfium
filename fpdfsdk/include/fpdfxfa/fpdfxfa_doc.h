@@ -7,6 +7,8 @@
 #ifndef FPDFXFA_DOC_H_
 #define FPDFXFA_DOC_H_
 
+#include "../../../xfa/include/fxfa/fxfa.h"
+
 class CPDFXFA_App;
 class CPDFXFA_Document;
 class CPDFXFA_Page;

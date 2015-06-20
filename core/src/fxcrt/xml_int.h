@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FXCRT_XML_INT_H_
 #define CORE_SRC_FXCRT_XML_INT_H_
 
+#include "../../include/fxcrt/fx_stream.h"
+
 class CXML_DataBufAcc : public IFX_BufferRead
 {
 public:

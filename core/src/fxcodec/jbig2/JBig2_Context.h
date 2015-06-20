@@ -1,19 +1,22 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #ifndef _JBIG2_CONTEXT_H_
 #define _JBIG2_CONTEXT_H_
+
+#include <list>
+#include <utility>
+
 #include "JBig2_Module.h"
 #include "JBig2_List.h"
 #include "JBig2_Segment.h"
 #include "JBig2_Page.h"
 #include "JBig2_GeneralDecoder.h"
 #include "../../../include/fxcodec/fx_codec_def.h"
-#include "../../../include/fxcrt/fx_basic.h"
-#include <utility>
+
 typedef std::pair<uint8_t*, CJBig2_SymbolDict*> CJBig2_CachePair;
 typedef enum {
     JBIG2_OUT_OF_PAGE = 0,

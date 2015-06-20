@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_ext.h"
+#include "../../include/fxcrt/fx_ucd.h"
+
 extern const FX_DWORD gs_FX_TextLayout_CodeProperties[65536];
 extern const FX_WCHAR gs_FX_TextLayout_VerticalMirror[64];
 extern const FX_WCHAR gs_FX_TextLayout_BidiMirror[512];

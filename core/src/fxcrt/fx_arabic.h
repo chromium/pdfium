@@ -7,10 +7,8 @@
 #ifndef CORE_SRC_FXCRT_FX_ARABIC_H_
 #define CORE_SRC_FXCRT_FX_ARABIC_H_
 
-typedef struct _FX_ARABICCHARRANGE {
-    FX_WCHAR wStart;
-    FX_WCHAR wEnd;
-} FX_ARABICCHARRANGE;
+#include "../../include/fxcrt/fx_arb.h"
+
 class CFX_ArabicChar : public IFX_ArabicChar
 {
 public:

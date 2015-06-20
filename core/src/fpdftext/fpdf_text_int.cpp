@@ -13,6 +13,8 @@
 #include "../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../include/fpdfapi/fpdf_resource.h"
 #include "../../include/fpdftext/fpdf_text.h"
+#include "../../include/fxcrt/fx_arb.h"
+#include "../../include/fxcrt/fx_ucd.h"
 #include "text_int.h"
 
 namespace {

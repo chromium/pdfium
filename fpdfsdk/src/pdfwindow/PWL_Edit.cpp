@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../core/include/fxcrt/fx_safe_types.h"
+#include "../../../core/include/fxcrt/fx_xml.h"
 #include "../../include/pdfwindow/PDFWindow.h"
 #include "../../include/pdfwindow/PWL_Caret.h"
 #include "../../include/pdfwindow/PWL_Edit.h"

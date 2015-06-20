@@ -14,7 +14,6 @@
 #include <utility>
 #include <vector>
 
-#include "../core/include/fxcrt/fx_system.h"
 #include "../public/fpdf_text.h"
 #include "../public/fpdfview.h"
 #include "testing/gmock/include/gmock/gmock.h"

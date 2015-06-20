@@ -9,7 +9,7 @@
 
 #include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fxcrt/fx_basic.h"
-#include "../fxcrt/fx_ext.h"
+#include "../fxcrt/fx_coordinates.h"
 #include "fx_codec_def.h"
 #include "fx_codec_provider.h"
 

@@ -6,6 +6,7 @@
 
 #include "../../../include/fxcodec/fx_codec.h"
 #include "codec_int.h"
+
 CCodec_Jbig2Context::CCodec_Jbig2Context()
 {
     FXSYS_memset(this, 0, sizeof(CCodec_Jbig2Context));

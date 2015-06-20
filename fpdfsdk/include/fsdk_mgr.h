@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_MGR_H_
 #define FPDFSDK_INCLUDE_FSDK_MGR_H_
 
+#include "../../core/include/fpdftext/fpdf_text.h"
 #include "../../public/fpdf_formfill.h"
 #include "../../public/fpdf_fwlevent.h" // cross platform keycode and events define.
 #include "fsdk_common.h"
@@ -18,6 +19,7 @@
 #include "fsdk_baseform.h"
 #include "fsdk_annothandler.h"
 #include "fsdk_actionhandler.h"
+#include "javascript/IJavaScript.h"
 
 class CPDFSDK_Document;
 class CPDFSDK_PageView;
@@ -27,8 +29,6 @@ class CPDFSDK_Widget;
 class IFX_SystemHandler;
 class CPDFSDK_ActionHandler;
 class CJS_RuntimeFactory;
-
-#include "javascript/IJavaScript.h"
 
 class CPDFDoc_Environment final
 {

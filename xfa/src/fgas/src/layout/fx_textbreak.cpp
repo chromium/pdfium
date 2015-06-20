@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../../../core/include/fxcrt/fx_arb.h"
 #include "../fgas_base.h"
 #include "fx_unicode.h"
 #include "fx_textbreak.h"
+
 extern const FX_DWORD gs_FX_TextLayout_CodeProperties[65536];
 extern const FX_WCHAR gs_FX_TextLayout_VerticalMirror[64];
 extern const FX_WCHAR gs_FX_TextLayout_BidiMirror[512];
