@@ -241,7 +241,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap, int dither_bit
 }
 CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver()
 {
-	if (m_pAggDriver) delete m_pAggDriver;
+    delete m_pAggDriver;
 }
 FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
 		CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FIXFLOAT font_size, FX_DWORD color,

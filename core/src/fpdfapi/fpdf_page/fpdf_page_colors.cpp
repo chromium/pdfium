@@ -930,9 +930,7 @@ CPDF_SeparationCS::~CPDF_SeparationCS()
     if (m_pAltCS) {
         m_pAltCS->ReleaseCS();
     }
-    if (m_pFunc) {
-        delete m_pFunc;
-    }
+    delete m_pFunc;
 }
 void CPDF_SeparationCS::GetDefaultValue(int iComponent, FX_FLOAT& value, FX_FLOAT& min, FX_FLOAT& max) const
 {
@@ -1020,9 +1018,7 @@ public:
 };
 CPDF_DeviceNCS::~CPDF_DeviceNCS()
 {
-    if (m_pFunc) {
-        delete m_pFunc;
-    }
+    delete m_pFunc;
     if (m_pAltCS) {
         m_pAltCS->ReleaseCS();
     }

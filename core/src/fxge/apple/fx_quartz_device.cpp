@@ -1082,7 +1082,7 @@ CFX_QuartzDevice::~CFX_QuartzDevice()
     if (m_pContext) {
         CGContextRelease(m_pContext);
     }
-    if (GetBitmap() && m_bOwnedBitmap) {
+    if (m_bOwnedBitmap) {
         delete GetBitmap();
     }
 }

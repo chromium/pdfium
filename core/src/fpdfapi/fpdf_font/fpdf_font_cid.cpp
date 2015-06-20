@@ -300,9 +300,7 @@ CPDF_CMap::~CPDF_CMap()
     if (m_pLeadingBytes) {
         FX_Free(m_pLeadingBytes);
     }
-    if (m_pUseMap) {
-        delete m_pUseMap;
-    }
+    delete m_pUseMap;
 }
 void CPDF_CMap::Release()
 {
@@ -710,15 +708,9 @@ CPDF_CIDFont::~CPDF_CIDFont()
     if (m_pAnsiWidths) {
         FX_Free(m_pAnsiWidths);
     }
-    if (m_pAllocatedCMap) {
-        delete m_pAllocatedCMap;
-    }
-    if (m_pCIDToGIDMap) {
-        delete m_pCIDToGIDMap;
-    }
-    if (m_pTTGSUBTable) {
-        delete m_pTTGSUBTable;
-    }
+    delete m_pAllocatedCMap;
+    delete m_pCIDToGIDMap;
+    delete m_pTTGSUBTable;
 }
 FX_WORD CPDF_CIDFont::CIDFromCharCode(FX_DWORD charcode) const
 {

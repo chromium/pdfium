@@ -18,9 +18,7 @@ CFX_DataFilter::CFX_DataFilter()
 }
 CFX_DataFilter::~CFX_DataFilter()
 {
-    if (m_pDestFilter) {
-        delete m_pDestFilter;
-    }
+    delete m_pDestFilter;
 }
 void CFX_DataFilter::SetDestFilter(CFX_DataFilter* pFilter)
 {
@@ -192,12 +190,8 @@ CPDF_StreamFilter* CPDF_Stream::GetStreamFilter(FX_BOOL bRaw) const
 }
 CPDF_StreamFilter::~CPDF_StreamFilter()
 {
-    if (m_pFilter) {
-        delete m_pFilter;
-    }
-    if (m_pBuffer) {
-        delete m_pBuffer;
-    }
+    delete m_pFilter;
+    delete m_pBuffer;
 }
 #define FPDF_FILTER_BUFFER_IN_SIZE	FPDF_FILTER_BUFFER_SIZE
 FX_DWORD CPDF_StreamFilter::ReadBlock(uint8_t* buffer, FX_DWORD buf_size)

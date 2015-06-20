@@ -21,15 +21,15 @@ void CRenderContext::Clear()
 
 CRenderContext::~CRenderContext()
 {
-	if (m_pRenderer) delete m_pRenderer;
-	if (m_pContext) delete m_pContext;
-	if (m_pDevice) delete m_pDevice;
-	if (m_pAnnots) delete m_pAnnots;
-	if (m_pOptions->m_pOCContext) delete m_pOptions->m_pOCContext;
-	if (m_pOptions) delete m_pOptions;
+    delete m_pRenderer;
+    delete m_pContext;
+    delete m_pDevice;
+    delete m_pAnnots;
+    delete m_pOptions->m_pOCContext;
+    delete m_pOptions;
 #ifdef _WIN32_WCE
-	if (m_pBitmap) delete m_pBitmap;
-	if (m_hBitmap) DeleteObject(m_hBitmap);
+    delete m_pBitmap;
+    if (m_hBitmap) DeleteObject(m_hBitmap);
 #endif
 }
 

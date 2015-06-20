@@ -90,7 +90,7 @@ public:
 
 	~CFPDF_DataAvail()
 	{
-		if (m_pDataAvail) delete m_pDataAvail;
+            delete m_pDataAvail;
 	}
 
 	IPDF_DataAvail*			m_pDataAvail;
@@ -109,8 +109,7 @@ DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail, FPDF_FIL
 
 DLLEXPORT void STDCALL FPDFAvail_Destroy(FPDF_AVAIL avail)
 {
-	if (avail == NULL) return;
-	delete (CFPDF_DataAvail*)avail;
+    delete (CFPDF_DataAvail*)avail;
 }
 
 DLLEXPORT int STDCALL FPDFAvail_IsDocAvail(FPDF_AVAIL avail, FX_DOWNLOADHINTS* hints)

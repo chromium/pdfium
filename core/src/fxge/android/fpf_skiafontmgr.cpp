@@ -245,9 +245,7 @@ CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr()
     m_FamilyFonts.RemoveAll();
     for (int32_t i = m_FontFaces.GetUpperBound(); i >= 0; i--) {
         CFPF_SkiaFontDescriptor *pFont = (CFPF_SkiaFontDescriptor*)m_FontFaces.ElementAt(i);
-        if (pFont) {
-            delete pFont;
-        }
+        delete pFont;
     }
     m_FontFaces.RemoveAll();
     if (m_FTLibrary) {

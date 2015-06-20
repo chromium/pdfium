@@ -1744,10 +1744,6 @@ CPDF_Type3Char::CPDF_Type3Char()
 }
 CPDF_Type3Char::~CPDF_Type3Char()
 {
-    if (m_pForm) {
-        delete m_pForm;
-    }
-    if (m_pBitmap) {
-        delete m_pBitmap;
-    }
+    delete m_pForm;
+    delete m_pBitmap;
 }

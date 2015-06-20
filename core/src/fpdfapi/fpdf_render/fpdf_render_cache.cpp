@@ -188,20 +188,14 @@ CPDF_ImageCache::CPDF_ImageCache(CPDF_Document* pDoc, CPDF_Stream* pStream)
 }
 CPDF_ImageCache::~CPDF_ImageCache()
 {
-    if (m_pCachedBitmap) {
-        delete m_pCachedBitmap;
-        m_pCachedBitmap = NULL;
-    }
-    if (m_pCachedMask) {
-        delete m_pCachedMask;
-        m_pCachedMask = NULL;
-    }
+    delete m_pCachedBitmap;
+    m_pCachedBitmap = NULL;
+    delete m_pCachedMask;
+    m_pCachedMask = NULL;
 }
 void CPDF_ImageCache::Reset(const CFX_DIBitmap* pBitmap)
 {
-    if (m_pCachedBitmap) {
-        delete m_pCachedBitmap;
-    }
+    delete m_pCachedBitmap;
     m_pCachedBitmap = NULL;
     if (pBitmap) {
         m_pCachedBitmap = pBitmap->Clone();

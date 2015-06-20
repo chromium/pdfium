@@ -707,14 +707,11 @@ void CFFL_IFormFiller::RemoveFormFiller(CPDFSDK_Annot* pAnnot)
 
 void CFFL_IFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot)
 {
-	CFFL_FormFiller * pFormFiller = NULL;
-
-	if (m_Maps.Lookup(pAnnot,pFormFiller))
-	{
-		if (pFormFiller)
-			delete pFormFiller;
-		m_Maps.RemoveKey(pAnnot);
-	}
+    CFFL_FormFiller* pFormFiller = nullptr;
+    if (m_Maps.Lookup(pAnnot,pFormFiller)) {
+        delete pFormFiller;
+        m_Maps.RemoveKey(pAnnot);
+    }
 }
 
 void CFFL_IFormFiller::SetFocusAnnotTab(CPDFSDK_Annot* pWidget, FX_BOOL bSameField, FX_BOOL bNext)

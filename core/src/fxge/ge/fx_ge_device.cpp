@@ -12,15 +12,11 @@ CFX_RenderDevice::CFX_RenderDevice()
 }
 CFX_RenderDevice::~CFX_RenderDevice()
 {
-    if (m_pDeviceDriver) {
-        delete m_pDeviceDriver;
-    }
+    delete m_pDeviceDriver;
 }
 void CFX_RenderDevice::SetDeviceDriver(IFX_RenderDeviceDriver* pDriver)
 {
-    if (m_pDeviceDriver) {
-        delete m_pDeviceDriver;
-    }
+    delete m_pDeviceDriver;
     m_pDeviceDriver = pDriver;
     InitDeviceInfo();
 }

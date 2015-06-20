@@ -373,7 +373,7 @@ FX_BOOL app::alert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& v
 							swMsg += L",  ";
 					}
 
-					if(pValue) delete pValue;
+                                        delete pValue;
 				}
 			}
 

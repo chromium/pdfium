@@ -44,9 +44,7 @@ CPDF_StreamContentParser::~CPDF_StreamContentParser()
     if (m_pPathPoints) {
         FX_Free(m_pPathPoints);
     }
-    if (m_pCurStates) {
-        delete m_pCurStates;
-    }
+    delete m_pCurStates;
     if (m_pLastImageDict) {
         m_pLastImageDict->Release();
     }
@@ -801,9 +799,7 @@ void CPDF_StreamContentParser::Handle_EndText()
     if (m_pCurStates->m_TextState.GetObject()->m_TextMode < 4) {
         for (int i = 0; i < count; i ++) {
             CPDF_TextObject* pText = (CPDF_TextObject*)m_ClipTextList.GetAt(i);
-            if (pText) {
-                delete pText;
-            }
+            delete pText;
         }
     } else {
         m_pCurStates->m_ClipPath.AppendTexts((CPDF_TextObject**)m_ClipTextList.GetData(), count);

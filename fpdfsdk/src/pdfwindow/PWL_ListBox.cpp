@@ -90,13 +90,9 @@ CPWL_ListBox::CPWL_ListBox() :
 
 CPWL_ListBox::~CPWL_ListBox()
 {
-	IFX_List::DelList(m_pList);
-
-	if (m_pListNotify)
-	{
-		delete m_pListNotify;
-		m_pListNotify = NULL;
-	}
+    IFX_List::DelList(m_pList);
+    delete m_pListNotify;
+    m_pListNotify = NULL;
 }
 
 CFX_ByteString CPWL_ListBox::GetClassName() const
@@ -108,7 +104,7 @@ void CPWL_ListBox::OnCreated()
 {
 	if (m_pList)
 	{
-		if (m_pListNotify) delete m_pListNotify;
+		delete m_pListNotify;
 
 		m_pList->SetFontMap(GetFontMap());
 		m_pList->SetNotify(m_pListNotify = new CPWL_List_Notify(this));
@@ -123,11 +119,8 @@ void CPWL_ListBox::OnCreated()
 
 void CPWL_ListBox::OnDestroy()
 {
-	if (m_pListNotify)
-	{
-		delete m_pListNotify;
-		m_pListNotify = NULL;
-	}
+    delete m_pListNotify;
+    m_pListNotify = NULL;
 }
 
 void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream)

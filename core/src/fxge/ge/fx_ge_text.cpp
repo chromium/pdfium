@@ -1058,9 +1058,7 @@ CFX_FaceCache::~CFX_FaceCache()
         m_PathMap.GetNextAssoc(pos, key1, (void*&)pPath);
         delete pPath;
     }
-    if (m_pBitmap) {
-        delete m_pBitmap;
-    }
+    delete m_pBitmap;
     m_PathMap.RemoveAll();
 }
 #if _FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_

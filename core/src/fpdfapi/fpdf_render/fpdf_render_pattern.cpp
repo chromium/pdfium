@@ -994,9 +994,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern, CPDF_Pag
                 m_pDevice->RestoreState();
             }
         m_pDevice->RestoreState();
-        if (pStates) {
-            delete pStates;
-        }
+        delete pStates;
         return;
     }
     if (bAligned) {

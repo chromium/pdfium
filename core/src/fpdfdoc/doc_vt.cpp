@@ -823,10 +823,8 @@ CPDF_VariableText::CPDF_VariableText() :
 }
 CPDF_VariableText::~CPDF_VariableText()
 {
-    if (m_pVTIterator) {
-        delete m_pVTIterator;
-        m_pVTIterator = NULL;
-    }
+    delete m_pVTIterator;
+    m_pVTIterator = NULL;
     ResetAll();
 }
 void CPDF_VariableText::Initialize()

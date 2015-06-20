@@ -1044,9 +1044,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert)
             }
         }
     }
-    if (pEncoding) {
-        delete pEncoding;
-    }
+    delete pEncoding;
     pFontDesc->SetAtInteger("StemV", nStemV);
     AddIndirectObject(pFontDesc);
     pFontDict->SetAtReference("FontDescriptor", this, pFontDesc);

@@ -1967,10 +1967,8 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause *pPause)
 }
 void CPDF_Creator::Clear()
 {
-    if (m_pXRefStream) {
-        delete m_pXRefStream;
-        m_pXRefStream = NULL;
-    }
+    delete m_pXRefStream;
+    m_pXRefStream = NULL;
     m_File.Clear();
     m_NewObjNumArray.RemoveAll();
     if (m_pIDArray) {
@@ -2068,7 +2066,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault )
             CFX_ByteString user_pass = m_pParser->GetPassword();
             FX_DWORD flag = PDF_ENCRYPT_CONTENT;
             handler.OnCreate(m_pEncryptDict, m_pIDArray, (const uint8_t*)user_pass, user_pass.GetLength(), flag);
-            if (m_pCryptoHandler && m_bNewCrypto) {
+            if (m_bNewCrypto) {
                 delete m_pCryptoHandler;
             }
             m_pCryptoHandler = new CPDF_StandardCryptoHandler;
@@ -2122,7 +2120,7 @@ void CPDF_Creator::RemoveSecurity()
 }
 void CPDF_Creator::ResetStandardSecurity()
 {
-    if ((m_bStandardSecurity || m_bNewCrypto) && m_pCryptoHandler) {
+    if (m_bStandardSecurity || m_bNewCrypto) {
         delete m_pCryptoHandler;
         m_pCryptoHandler = NULL;
     }

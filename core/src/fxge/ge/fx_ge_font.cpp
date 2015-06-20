@@ -64,10 +64,8 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont)
 }
 CFX_Font::~CFX_Font()
 {
-    if (m_pSubstFont) {
-        delete m_pSubstFont;
-        m_pSubstFont = NULL;
-    }
+    delete m_pSubstFont;
+    m_pSubstFont = NULL;
     if (m_bLogic) {
         m_OtfFontData.DetachBuffer();
         return;

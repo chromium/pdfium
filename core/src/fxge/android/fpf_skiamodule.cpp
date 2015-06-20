@@ -18,9 +18,7 @@ IFPF_DeviceModule* FPF_GetDeviceModule()
 }
 CFPF_SkiaDeviceModule::~CFPF_SkiaDeviceModule()
 {
-    if (m_pFontMgr) {
-        delete m_pFontMgr;
-    }
+    delete m_pFontMgr;
 }
 void CFPF_SkiaDeviceModule::Destroy()
 {

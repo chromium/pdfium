@@ -84,12 +84,8 @@ struct CPVT_SectionInfo {
     }
     virtual ~CPVT_SectionInfo()
     {
-        if (pSecProps) {
-            delete pSecProps;
-        }
-        if (pWordProps) {
-            delete pWordProps;
-        }
+        delete pSecProps;
+        delete pWordProps;
     }
     CPVT_SectionInfo(const CPVT_SectionInfo & other): rcSection(), nTotalLine(0), pSecProps(NULL), pWordProps(NULL)
     {
@@ -148,9 +144,7 @@ struct CPVT_WordInfo  {
     }
     virtual ~CPVT_WordInfo()
     {
-        if (pWordProps) {
-            delete pWordProps;
-        }
+        delete pWordProps;
     }
     CPVT_WordInfo(const CPVT_WordInfo & word): Word(0), nCharset(0),
         fWordX(0.0f), fWordY(0.0f), fWordTail(0.0f), nFontIndex(-1), pWordProps(NULL)

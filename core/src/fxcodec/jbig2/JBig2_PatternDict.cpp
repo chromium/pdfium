@@ -15,9 +15,7 @@ CJBig2_PatternDict::~CJBig2_PatternDict()
 {
     if(HDPATS) {
         for(FX_DWORD i = 0; i < NUMPATS; i++) {
-            if(HDPATS[i]) {
-                delete HDPATS[i];
-            }
+            delete HDPATS[i];
         }
         m_pModule->JBig2_Free(HDPATS);
     }

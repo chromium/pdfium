@@ -230,7 +230,6 @@ CPDFDoc_Environment::CPDFDoc_Environment(CPDFXFA_Document* pDoc) :
 
 CPDFDoc_Environment::~CPDFDoc_Environment()
 {
-
     delete m_pIFormFiller;
     m_pIFormFiller = NULL;
 
@@ -634,11 +633,9 @@ CPDFSDK_PageView::~CPDFSDK_PageView()
 		pAnnotHandlerMgr->ReleaseAnnot(pAnnot);
 	}
 	m_fxAnnotArray.RemoveAll();
-	if(m_pAnnotList)
-	{
-		delete m_pAnnotList;
-		m_pAnnotList = NULL;
-	}
+
+        delete m_pAnnotList;
+        m_pAnnotList = NULL;
 }
 
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,CPDF_RenderOptions* pOptions, FX_RECT* pClip)

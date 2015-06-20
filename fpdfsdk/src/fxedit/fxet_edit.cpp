@@ -971,19 +971,11 @@ CFX_Edit::CFX_Edit(IPDF_VariableText * pVT) :
 
 CFX_Edit::~CFX_Edit()
 {
-	if (m_pVTProvide)
-	{
-		delete m_pVTProvide;
-		m_pVTProvide = NULL;
-	}
-
-	if (m_pIterator)
-	{
-		delete m_pIterator;
-		m_pIterator = NULL;
-	}
-
-	ASSERT(m_pGroupUndoItem == NULL);
+    delete m_pVTProvide;
+    m_pVTProvide = NULL;
+    delete m_pIterator;
+    m_pIterator = NULL;
+    ASSERT(m_pGroupUndoItem == NULL);
 }
 
 // public methods
@@ -997,10 +989,8 @@ void CFX_Edit::Initialize()
 
 void CFX_Edit::SetFontMap(IFX_Edit_FontMap * pFontMap)
 {
-	if (m_pVTProvide)
-		delete m_pVTProvide;
-
-	m_pVT->SetProvider(m_pVTProvide = new CFX_Edit_Provider(pFontMap));
+    delete m_pVTProvide;
+    m_pVT->SetProvider(m_pVTProvide = new CFX_Edit_Provider(pFontMap));
 }
 
 void CFX_Edit::SetVTProvider(IPDF_VariableText_Provider* pProvider)

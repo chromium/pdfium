@@ -918,17 +918,11 @@ CPDF_ContentParser::~CPDF_ContentParser()
 }
 void CPDF_ContentParser::Clear()
 {
-    if (m_pParser) {
-        delete m_pParser;
-    }
-    if (m_pSingleStream) {
-        delete m_pSingleStream;
-    }
+    delete m_pParser;
+    delete m_pSingleStream;
     if (m_pStreamArray) {
         for (FX_DWORD i = 0; i < m_nStreams; i ++)
-            if (m_pStreamArray[i]) {
-                delete m_pStreamArray[i];
-            }
+            delete m_pStreamArray[i];
         FX_Free(m_pStreamArray);
     }
     if (m_pData && m_pSingleStream == NULL) {
