@@ -6,59 +6,43 @@
 
 #include "../../public/fpdf_formfill.h"
 #include "../../public/fpdfview.h"
+#include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_mgr.h"
-
-
 #include "../include/javascript/IJavaScript.h"
 
-
-DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle, FPDF_PAGE page,double page_x, double page_y)
+DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(
+    FPDF_FORMHANDLE hHandle, FPDF_PAGE page, double page_x, double page_y)
 {
-	if(!page || !hHandle)
-		return -1;
-	CPDF_Page * pPage = (CPDF_Page*) page;
+    if (!page || !hHandle)
+        return -1;
+    CPDF_Page* pPage = (CPDF_Page*) page;
 
-	CPDF_InterForm * pInterForm = NULL;
-	pInterForm = new CPDF_InterForm(pPage->m_pDocument,FALSE);
-	if (!pInterForm)
-		return -1;
-	CPDF_FormControl* pFormCtrl = pInterForm->GetControlAtPoint(pPage, (FX_FLOAT)page_x, (FX_FLOAT)page_y);
-	if(!pFormCtrl)
-	{
-		delete pInterForm;
-		return -1;
-	}
-	CPDF_FormField* pFormField = pFormCtrl->GetField();
-	if(!pFormField)
-	{
-		delete pInterForm;
-		return -1;
-	}
+    nonstd::unique_ptr<CPDF_InterForm> pInterForm(
+        new CPDF_InterForm(pPage->m_pDocument, FALSE));
+    CPDF_FormControl* pFormCtrl = pInterForm->GetControlAtPoint(
+        pPage, (FX_FLOAT)page_x, (FX_FLOAT)page_y);
+    if (!pFormCtrl)
+        return -1;
 
-	int nType = pFormField->GetFieldType();
-	delete pInterForm;
-	return nType;
+    CPDF_FormField* pFormField = pFormCtrl->GetField();
+    if(!pFormField)
+        return -1;
+
+    return pFormField->GetFieldType();
 }
 
-DLLEXPORT FPDF_FORMHANDLE STDCALL FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document, FPDF_FORMFILLINFO* formInfo)
+DLLEXPORT FPDF_FORMHANDLE STDCALL FPDFDOC_InitFormFillEnvironment(
+    FPDF_DOCUMENT document, FPDF_FORMFILLINFO* formInfo)
 {
-	if(!document || !formInfo || formInfo->version!=1)
-		return NULL;
-	CPDF_Document * pDocument = (CPDF_Document*) document;
- 	CPDFDoc_Environment * pEnv = NULL;
-	pEnv = new CPDFDoc_Environment(pDocument);
-	if (!pEnv)
-		return NULL;
-	pEnv->RegAppHandle(formInfo);
-
-	if(pEnv->GetPDFDocument())
-	{
-		CPDFSDK_Document* pSDKDoc = new CPDFSDK_Document(pEnv->GetPDFDocument(), pEnv);
-		if(pSDKDoc)
-			pEnv->SetCurrentDoc(pSDKDoc);
-	}
-	return pEnv;
+    if (!document || !formInfo || formInfo->version != 1)
+        return nullptr;
+    CPDF_Document * pDocument = (CPDF_Document*) document;
+    CPDFDoc_Environment * pEnv = new CPDFDoc_Environment(pDocument);
+    pEnv->RegAppHandle(formInfo);
+    if (CPDF_Document* pEnvDocument = pEnv->GetPDFDocument())
+        pEnv->SetCurrentDoc(new CPDFSDK_Document(pEnvDocument, pEnv));
+    return pEnv;
 }
 
 DLLEXPORT void STDCALL FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle)

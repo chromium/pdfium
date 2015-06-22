@@ -170,59 +170,9 @@ public:
 		}
 	}
 
-	CFX_WideString JS_fieldBrowse()
-	{
-		if (m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->Field_browse)
-		{
-			int nRequiredLen = m_pInfo->m_pJsPlatform->Field_browse(m_pInfo->m_pJsPlatform, NULL, 0);
-			if (nRequiredLen <= 0)
-				return L"";
+    CFX_WideString JS_fieldBrowse();
 
-			char* pbuff = new char[nRequiredLen];
-			if (!pbuff)
-				return L"";
-
-			memset(pbuff, 0, nRequiredLen);
-			int nActualLen = m_pInfo->m_pJsPlatform->Field_browse(m_pInfo->m_pJsPlatform, pbuff, nRequiredLen);
-			if (nActualLen <= 0 || nActualLen > nRequiredLen)
-			{
-				delete[] pbuff;
-				return L"";
-			}
-			CFX_ByteString bsRet = CFX_ByteString(pbuff, nActualLen);
-			CFX_WideString wsRet = CFX_WideString::FromLocal(bsRet);
-			delete[] pbuff;
-			return wsRet;
-		}
-		return L"";
-	}
-
-	CFX_WideString JS_docGetFilePath()
-	{
-		if (m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->Doc_getFilePath)
-		{
-			int nRequiredLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(m_pInfo->m_pJsPlatform, NULL, 0);
-			if (nRequiredLen <= 0)
-				return L"";
-
-			char* pbuff = new char[nRequiredLen];
-			if (!pbuff)
-				return L"";
-
-			memset(pbuff, 0, nRequiredLen);
-			int nActualLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(m_pInfo->m_pJsPlatform, pbuff, nRequiredLen);
-			if (nActualLen <= 0 || nActualLen > nRequiredLen)
-			{
-				delete[] pbuff;
-				return L"";
-			}
-			CFX_ByteString bsRet = CFX_ByteString(pbuff, nActualLen);
-			CFX_WideString wsRet = CFX_WideString::FromLocal(bsRet);
-			delete[] pbuff;
-			return wsRet;
-		}
-		return L"";
-	}
+    CFX_WideString JS_docGetFilePath();
 
 	void JS_docSubmitForm(void* formData, int length, const FX_WCHAR* URL)
 	{

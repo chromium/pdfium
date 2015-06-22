@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_ext.h"
+#include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_mgr.h"
 #include "../include/formfiller/FFL_FormFiller.h"
@@ -254,6 +255,55 @@ CPDFDoc_Environment::~CPDFDoc_Environment()
     m_pActionHandler = NULL;
 }
 
+CFX_WideString CPDFDoc_Environment::JS_fieldBrowse()
+{
+    if (!m_pInfo ||
+        !m_pInfo->m_pJsPlatform ||
+        !m_pInfo->m_pJsPlatform->Field_browse) {
+        return L"";
+    }
+
+    const int nRequiredLen = m_pInfo->m_pJsPlatform->Field_browse(
+            m_pInfo->m_pJsPlatform, nullptr, 0);
+    if (nRequiredLen <= 0)
+        return L"";
+
+    nonstd::unique_ptr<char[]> pBuff(new char[nRequiredLen]);
+    memset(pBuff.get(), 0, nRequiredLen);
+    const int nActualLen = m_pInfo->m_pJsPlatform->Field_browse(
+            m_pInfo->m_pJsPlatform, pBuff.get(), nRequiredLen);
+    if (nActualLen <= 0 || nActualLen > nRequiredLen)
+        return L"";
+
+    CFX_ByteString bsRet = CFX_ByteString(pBuff.get(), nActualLen);
+    CFX_WideString wsRet = CFX_WideString::FromLocal(bsRet);
+    return wsRet;
+}
+
+CFX_WideString CPDFDoc_Environment::JS_docGetFilePath()
+{
+    if (!m_pInfo ||
+        !m_pInfo->m_pJsPlatform ||
+        !m_pInfo->m_pJsPlatform->Doc_getFilePath) {
+        return L"";
+    }
+
+    const int nRequiredLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
+            m_pInfo->m_pJsPlatform, nullptr, 0);
+    if (nRequiredLen <= 0)
+        return L"";
+
+    nonstd::unique_ptr<char[]> pBuff(new char[nRequiredLen]);
+    memset(pBuff.get(), 0, nRequiredLen);
+    const int nActualLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
+            m_pInfo->m_pJsPlatform, pBuff.get(), nRequiredLen);
+    if (nActualLen <= 0 || nActualLen > nRequiredLen)
+        return L"";
+
+    CFX_ByteString bsRet = CFX_ByteString(pBuff.get(), nActualLen);
+    CFX_WideString wsRet = CFX_WideString::FromLocal(bsRet);
+    return wsRet;
+}
 
 IFXJS_Runtime* CPDFDoc_Environment::GetJSRuntime()
 {
