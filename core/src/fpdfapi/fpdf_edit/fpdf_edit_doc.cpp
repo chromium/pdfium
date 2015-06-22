@@ -1063,7 +1063,8 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc, CPDF_Dictionary* pPages,
         if (pKid->GetString("Type") == FX_BSTRC("Page")) {
             if (nPagesToGo == 0) {
                 if (bInsert) {
-                    pKidList->InsertAt(i, CPDF_Reference::Create(pDoc, pPage->GetObjNum()));
+                    pKidList->InsertAt(
+                        i, new CPDF_Reference(pDoc, pPage->GetObjNum()));
                     pPage->SetAtReference("Parent", pDoc, pPages->GetObjNum());
                 } else {
                     pKidList->RemoveAt(i);

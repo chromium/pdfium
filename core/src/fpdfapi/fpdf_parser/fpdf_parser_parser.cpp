@@ -2062,7 +2062,6 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
     FX_BOOL bTypeOnly = pContext && (pContext->m_Flags & PDFPARSE_TYPEONLY);
     FX_BOOL bIsNumber;
     CFX_ByteString word = GetNextWord(bIsNumber);
-    CPDF_Object* pRet = NULL;
     if (word.GetLength() == 0) {
         if (bTypeOnly) {
             return (CPDF_Object*)PDFOBJ_INVALID;
@@ -2079,38 +2078,33 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
                 if (bTypeOnly) {
                     return (CPDF_Object*)PDFOBJ_REFERENCE;
                 }
-                pRet = CPDF_Reference::Create(pObjList, objnum);
-                return pRet;
+                return new CPDF_Reference(pObjList, objnum);
             } else {
                 m_Pos = SavedPos;
                 if (bTypeOnly) {
                     return (CPDF_Object*)PDFOBJ_NUMBER;
                 }
-                pRet = CPDF_Number::Create(word);
-                return pRet;
+                return CPDF_Number::Create(word);
             }
         } else {
             m_Pos = SavedPos;
             if (bTypeOnly) {
                 return (CPDF_Object*)PDFOBJ_NUMBER;
             }
-            pRet = CPDF_Number::Create(word);
-            return pRet;
+            return CPDF_Number::Create(word);
         }
     }
     if (word == FX_BSTRC("true") || word == FX_BSTRC("false")) {
         if (bTypeOnly) {
             return (CPDF_Object*)PDFOBJ_BOOLEAN;
         }
-        pRet = CPDF_Boolean::Create(word == FX_BSTRC("true"));
-        return pRet;
+        return CPDF_Boolean::Create(word == FX_BSTRC("true"));
     }
     if (word == FX_BSTRC("null")) {
         if (bTypeOnly) {
             return (CPDF_Object*)PDFOBJ_NULL;
         }
-        pRet = CPDF_Null::Create();
-        return pRet;
+        return CPDF_Null::Create();
     }
     if (word == FX_BSTRC("(")) {
         if (bTypeOnly) {
@@ -2120,8 +2114,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
         if (m_pCryptoHandler && bDecrypt) {
             m_pCryptoHandler->Decrypt(objnum, gennum, str);
         }
-        pRet = CPDF_String::Create(str, FALSE);
-        return pRet;
+        return CPDF_String::Create(str, FALSE);
     }
     if (word == FX_BSTRC("<")) {
         if (bTypeOnly) {
@@ -2131,8 +2124,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
         if (m_pCryptoHandler && bDecrypt) {
             m_pCryptoHandler->Decrypt(objnum, gennum, str);
         }
-        pRet = CPDF_String::Create(str, TRUE);
-        return pRet;
+        return CPDF_String::Create(str, TRUE);
     }
     if (word == FX_BSTRC("[")) {
         if (bTypeOnly) {
@@ -2151,8 +2143,8 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList, FX_DWO
         if (bTypeOnly) {
             return (CPDF_Object*)PDFOBJ_NAME;
         }
-        pRet = CPDF_Name::Create(PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
-        return pRet;
+        return CPDF_Name::Create(
+            PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
     }
     if (word == FX_BSTRC("<<")) {
         if (bTypeOnly) {
@@ -2264,7 +2256,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(CPDF_IndirectObjects* pObjList
                 if (bTypeOnly) {
                     return (CPDF_Object*)PDFOBJ_REFERENCE;
                 }
-                return CPDF_Reference::Create(pObjList, objnum);
+                return new CPDF_Reference(pObjList, objnum);
             } else {
                 m_Pos = SavedPos;
                 if (bTypeOnly) {

@@ -506,7 +506,7 @@ void CPDF_Array::SetAt(FX_DWORD i, CPDF_Object* pObj, CPDF_IndirectObjects* pObj
         pOld->Release();
     if (pObj->GetObjNum()) {
         ASSERT(pObjs != NULL);
-        pObj = CPDF_Reference::Create(pObjs, pObj->GetObjNum());
+        pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
     }
     m_Objects.SetAt(i, pObj);
 }
@@ -515,7 +515,7 @@ void CPDF_Array::InsertAt(FX_DWORD index, CPDF_Object* pObj, CPDF_IndirectObject
     ASSERT(pObj != NULL);
     if (pObj->GetObjNum()) {
         ASSERT(pObjs != NULL);
-        pObj = CPDF_Reference::Create(pObjs, pObj->GetObjNum());
+        pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
     }
     m_Objects.InsertAt(index, pObj);
 }
@@ -524,7 +524,7 @@ void CPDF_Array::Add(CPDF_Object* pObj, CPDF_IndirectObjects* pObjs)
     ASSERT(pObj != NULL);
     if (pObj->GetObjNum()) {
         ASSERT(pObjs != NULL);
-        pObj = CPDF_Reference::Create(pObjs, pObj->GetObjNum());
+        pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
     }
     m_Objects.Add(pObj);
 }
@@ -752,7 +752,7 @@ void CPDF_Dictionary::SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj, CPDF_
     if (pObj) {
         if (pObj->GetObjNum()) {
             ASSERT(pObjs != NULL);
-            pObj = CPDF_Reference::Create(pObjs, pObj->GetObjNum());
+            pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
         }
         m_Map.SetAt(key, pObj);
     } else {
