@@ -57,13 +57,9 @@ public:
 	virtual FX_BOOL				OnMouseWheel(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, short zDelta, const CPDF_Point& point);
 	virtual FX_BOOL				OnRButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
 	virtual FX_BOOL				OnRButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
-	virtual FX_BOOL				OnRButtonDblClk(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
 
 	virtual FX_BOOL				OnKeyDown(CPDFSDK_Annot* pAnnot, FX_UINT nKeyCode, FX_UINT nFlags);
 	virtual FX_BOOL				OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
-
-	virtual	void				OnDeSelected(CPDFSDK_Annot* pAnnot);
-	virtual	void				OnSelected(CPDFSDK_Annot* pAnnot);
 
 	virtual FX_BOOL				OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 	virtual FX_BOOL				OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);

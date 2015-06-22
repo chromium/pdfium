@@ -225,17 +225,6 @@ FX_BOOL	CFFL_FormFiller::OnRButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot*
 	return FALSE;
 }
 
-FX_BOOL	CFFL_FormFiller::OnRButtonDblClk(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point)
-{
-	if (CPWL_Wnd * pWnd = GetPDFWindow(pPageView, FALSE))
-	{
-		pWnd->OnRButtonDblClk(WndtoPWL(pPageView, point),nFlags);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 FX_BOOL CFFL_FormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot, FX_UINT nKeyCode, FX_UINT nFlags)
 {
 	if (IsValid())
@@ -268,16 +257,6 @@ FX_BOOL	CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nF
 	return FALSE;
 }
 
-void CFFL_FormFiller::OnDeSelected(CPDFSDK_Annot* pAnnot)
-{
-	ASSERT(FALSE);
-}
-
-void CFFL_FormFiller::OnSelected(CPDFSDK_Annot* pAnnot)
-{
-	ASSERT(FALSE);
-}
-
 FX_BOOL	CFFL_FormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag)
 {
 	CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
@@ -287,18 +266,11 @@ FX_BOOL	CFFL_FormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag)
 	CPDFSDK_PageView* pPageView = pDoc->GetPageView(pPage);
  	ASSERT(pPageView != NULL);
 
-
-
 	CPWL_Wnd * pWnd = NULL;
 	if ( (pWnd = GetPDFWindow(pPageView, TRUE)))
 	{
 		pWnd->SetFocus();
 	}
-
-	m_bValid = TRUE;
-
-
-
 
 	m_bValid = TRUE;
 	FX_RECT rcRect = GetViewBBox(pPageView,pAnnot);

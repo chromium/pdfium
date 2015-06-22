@@ -313,7 +313,6 @@ public:
 	virtual FX_BOOL					OnMButtonDblClk(const CPDF_Point & point, FX_DWORD nFlag);
 	virtual FX_BOOL					OnMButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
 	virtual FX_BOOL					OnMButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual FX_BOOL					OnRButtonDblClk(const CPDF_Point & point, FX_DWORD nFlag);
 	virtual FX_BOOL					OnRButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
 	virtual FX_BOOL					OnRButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
 	virtual FX_BOOL					OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);

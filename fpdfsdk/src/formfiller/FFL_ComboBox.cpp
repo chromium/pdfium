@@ -376,21 +376,6 @@ FX_BOOL	CFFL_ComboBox::CanPaste(CPDFSDK_Document* pDocument)
 	return FALSE;
 }
 
-void CFFL_ComboBox::DoCopy(CPDFSDK_Document* pDocument)
-{
-	ASSERT(pDocument != NULL);
-}
-
-void CFFL_ComboBox::DoCut(CPDFSDK_Document* pDocument)
-{
-	ASSERT(pDocument != NULL);
-}
-
-void CFFL_ComboBox::DoPaste(CPDFSDK_Document* pDocument)
-{
-	ASSERT(pDocument != NULL);
-}
-
 void CFFL_ComboBox::OnAddUndo(CPWL_Edit* pEdit)
 {
 	ASSERT(pEdit != NULL);

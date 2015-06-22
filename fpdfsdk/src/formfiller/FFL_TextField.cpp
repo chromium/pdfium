@@ -361,20 +361,6 @@ FX_BOOL	CFFL_TextField::CanPaste(CPDFSDK_Document* pDocument)
 	return FALSE;
 }
 
-void CFFL_TextField::DoCopy(CPDFSDK_Document* pDocument)
-{
-
-}
-
-void CFFL_TextField::DoCut(CPDFSDK_Document* pDocument)
-{
-}
-
-void CFFL_TextField::DoPaste(CPDFSDK_Document* pDocument)
-{
-
-}
-
 void CFFL_TextField::OnAddUndo(CPWL_Edit* pEdit)
 {
 }

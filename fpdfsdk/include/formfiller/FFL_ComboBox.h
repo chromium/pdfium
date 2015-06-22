@@ -57,10 +57,6 @@ public:
 	virtual FX_BOOL				CanCut(CPDFSDK_Document* pDocument);
 	virtual FX_BOOL				CanPaste(CPDFSDK_Document* pDocument);
 
-	virtual void				DoCopy(CPDFSDK_Document* pDocument);
-	virtual void				DoCut(CPDFSDK_Document* pDocument);
-	virtual void				DoPaste(CPDFSDK_Document* pDocument);
-
 private:
 	CFX_WideString				GetSelectExportText();
 
