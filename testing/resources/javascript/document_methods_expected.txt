@@ -14,6 +14,9 @@ Alert: PASS: this.closeDoc(1, 2, "clams", [1, 2, 3]) = undefined
 Alert: PASS: typeof this.createDataObject = function
 Alert: PASS: this.createDataObject() = undefined
 Alert: PASS: this.createDataObject(1, 2, "clams", [1, 2, 3]) = undefined
+Alert: PASS: typeof this.deletePages = function
+Alert: PASS: this.deletePages() = undefined
+Alert: PASS: this.deletePages(1, 2, "clams", [1, 2, 3]) = undefined
 Alert: PASS: typeof this.exportAsFDF = function
 Alert: PASS: this.exportAsFDF() = undefined
 Alert: PASS: this.exportAsFDF(1, 2, "clams", [1, 2, 3]) = undefined
@@ -59,6 +62,9 @@ Alert: PASS: this.importTextData(1, 2, "clams", [1, 2, 3]) = undefined
 Alert: PASS: typeof this.insertPages = function
 Alert: PASS: this.insertPages() = undefined
 Alert: PASS: this.insertPages(1, 2, "clams", [1, 2, 3]) = undefined
+Alert: PASS: typeof this.removeIcon = function
+Alert: PASS: this.removeIcon() = undefined
+Alert: PASS: this.removeIcon(1, 2, "clams", [1, 2, 3]) = undefined
 Alert: PASS: typeof this.replacePages = function
 Alert: PASS: this.replacePages() = undefined
 Alert: PASS: this.replacePages(1, 2, "clams", [1, 2, 3]) = undefined
@@ -72,7 +78,6 @@ Alert: PASS: this.addIcon(1) threw error Document.addIcon: Incorrect number of p
 Alert: PASS: this.addIcon(1, 2, 3) threw error Document.addIcon: Incorrect number of parameters passed to function.
 Alert: PASS: this.addIcon("myicon", 3) threw error Document.addIcon: Incorrect parameter type.
 Alert: PASS: typeof this.calculateNow = function
-Alert: PASS: typeof this.deletePages = function
 Alert: PASS: typeof this.getField = function
 Alert: PASS: this.getField() threw error Document.getField: Incorrect number of parameters passed to function.
 Alert: PASS: typeof this.getIcon = function
@@ -96,8 +101,6 @@ Alert: PASS: typeof this.mailForm = function
 Alert: PASS: typeof this.print = function
 Alert: PASS: typeof this.removeField = function
 Alert: PASS: this.removeField() threw error Document.removeField: Incorrect number of parameters passed to function.
-Alert: PASS: typeof this.removeIcon = function
-Alert: PASS: this.removeIcon() threw error Document.removeIcon: Incorrect number of parameters passed to function.
 Alert: PASS: typeof this.resetForm = function
 Alert: PASS: typeof this.submitForm = function
 Alert: PASS: this.submitForm() threw error Document.submitForm: Incorrect number of parameters passed to function.

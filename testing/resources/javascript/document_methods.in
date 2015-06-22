@@ -134,14 +134,6 @@ function testCalculateNow() {
    // TODO(tsepez): test success cases.
 }
 
-function testDeletePages() {
-   // Method is present.
-   expect('typeof this.deletePages', 'function');
-
-   // TODO(tsepez): test with no permissions.
-   // TODO(tsepez): test success cases.
-}
-
 function testGetField() {
    // Method is present.
    expect('typeof this.getField', 'function');
@@ -255,16 +247,6 @@ function testRemoveField() {
   // TODO(tsepez): test success cases.
 }
 
-function testRemoveIcon() {
-   // Method is present.
-   expect('typeof this.removeIcon', 'function');
-
-  // Method requires at least one argument.
-  expectError('this.removeIcon()');
-
-  // TODO(tsepez): test success cases.
-}
-
 function testResetForm() {
    // Method is present.
    expect('typeof this.resetForm', 'function');
@@ -290,6 +272,7 @@ try {
   testUnsupported('this.addLink');
   testUnsupported('this.closeDoc');
   testUnsupported('this.createDataObject');
+  testUnsupported('this.deletePages');
   testUnsupported('this.exportAsFDF');
   testUnsupported('this.exportAsText');
   testUnsupported('this.exportAsXFDF');
@@ -305,13 +288,13 @@ try {
   testUnsupported('this.importAnXFDF');
   testUnsupported('this.importTextData');
   testUnsupported('this.insertPages');
+  testUnsupported('this.removeIcon');
   testUnsupported('this.replacePages');
   testUnsupported('this.saveAs');
 
   app.alert('*** Testing Supported Methods ***');
   testAddIcon();
   testCalculateNow();
-  testDeletePages();
   testGetField();
   testGetIcon();
   testGetNthFieldName();
@@ -323,7 +306,6 @@ try {
   testMailForm();
   testPrint();
   testRemoveField();
-  testRemoveIcon();
   testResetForm();
   testSubmitForm();
 } catch (e) {
