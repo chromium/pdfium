@@ -389,7 +389,6 @@ public:
 
 	FX_BOOL					ExtractPages(const CFX_WordArray &arrExtraPages, CPDF_Document* pDstDoc);
 	FX_BOOL					InsertPages(int nInsertAt, const CPDF_Document* pSrcDoc, const CFX_WordArray &arrSrcPages);
-	FX_BOOL					DeletePages(int nStart, int nCount);
 	FX_BOOL					ReplacePages(int nPage, const CPDF_Document* pSrcDoc, const CFX_WordArray &arrSrcPages);
 
 	void					OnCloseDocument();

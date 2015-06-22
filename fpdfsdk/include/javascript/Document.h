@@ -64,7 +64,6 @@ public:
 
 public:
 	void			InsertIconElement(IconElement* pNewIcon);
-	void			DeleteIconElement(CFX_WideString swIconName);
 	void			DeleteIconTree();
 	int				GetLength();
 	IconElement*	operator[](int iIndex);

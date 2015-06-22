@@ -517,25 +517,6 @@ FX_BOOL CPDFSDK_Document::KillFocusAnnot(FX_UINT nFlag)
 	return FALSE;
 }
 
-FX_BOOL	CPDFSDK_Document::DeletePages(int nStart, int  nCount)
-{
-	if ( nStart < 0 || nStart >= GetPageCount() || nCount <= 0 )
-	{
-		return FALSE;
-	}
-
-	CPDF_Page * pTempPage = NULL;
-	for ( int i = nCount-1; i >= 0; i-- )
-	{
-		pTempPage = GetPage(nStart+i);
-		if ( pTempPage != NULL )
-		{
-			ReMovePageView(pTempPage);
-		}
-	}
-	return TRUE;
-}
-
 void CPDFSDK_Document::OnCloseDocument()
 {
 	KillFocusAnnot();
