@@ -197,6 +197,13 @@ TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFViewEmbeddertest, Crasher3) {
+TEST_F(FPDFViewEmbeddertest, Crasher_454695) {
   EXPECT_TRUE(OpenDocument("testing/resources/bug_454695.pdf"));
+}
+
+TEST_F(FPDFViewEmbeddertest, Crasher_471990) {
+  EXPECT_TRUE(OpenDocument("testing/resources/bug_471990.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+  UnloadPage(page);
 }

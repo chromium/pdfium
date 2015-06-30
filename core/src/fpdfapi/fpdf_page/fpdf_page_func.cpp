@@ -449,7 +449,8 @@ public:
     virtual FX_BOOL		v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const;
     SampleEncodeInfo*	m_pEncodeInfo;
     SampleDecodeInfo*	m_pDecodeInfo;
-    FX_DWORD	m_nBitsPerSample, m_SampleMax;
+    FX_DWORD	m_nBitsPerSample;
+    FX_DWORD	m_SampleMax;
     CPDF_StreamAcc*	m_pSampleStream;
 };
 CPDF_SampledFunc::CPDF_SampledFunc()
@@ -479,6 +480,9 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj)
     CPDF_Array* pEncode = pDict->GetArray(FX_BSTRC("Encode"));
     CPDF_Array* pDecode = pDict->GetArray(FX_BSTRC("Decode"));
     m_nBitsPerSample = pDict->GetInteger(FX_BSTRC("BitsPerSample"));
+    if (m_nBitsPerSample > 32) {
+        return FALSE;
+    }
     m_SampleMax = 0xffffffff >> (32 - m_nBitsPerSample);
     m_pSampleStream = new CPDF_StreamAcc;
     m_pSampleStream->LoadAllData(pStream, FALSE);
@@ -553,20 +557,23 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const
         }
         pos += index[i] * blocksize[i];
     }
+    FX_SAFE_INT32 bits_to_output = m_nOutputs;
+    bits_to_output *= m_nBitsPerSample;
+    if (!bits_to_output.IsValid()) {
+        return FALSE;
+    }
     FX_SAFE_INT32 bitpos = pos;
-    bitpos *= m_nBitsPerSample;
-    bitpos *= m_nOutputs;
+    bitpos *= bits_to_output.ValueOrDie();
     if (!bitpos.IsValid()) {
         return FALSE;
     }
-    const uint8_t* pSampleData = m_pSampleStream->GetData();
-    if (pSampleData == NULL) {
+    FX_SAFE_INT32 range_check = bitpos;
+    range_check += bits_to_output.ValueOrDie();
+    if (!range_check.IsValid()) {
         return FALSE;
     }
-    FX_SAFE_INT32 bitpos1 = m_nOutputs - 1 > 0 ? m_nOutputs - 1 : 0;
-    bitpos1 *= m_nBitsPerSample;
-    bitpos1 += bitpos.ValueOrDie();
-    if (!bitpos1.IsValid()) {
+    const uint8_t* pSampleData = m_pSampleStream->GetData();
+    if (!pSampleData) {
         return FALSE;
     }
     for (int j = 0; j < m_nOutputs; j ++) {
