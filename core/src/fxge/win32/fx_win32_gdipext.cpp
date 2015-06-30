@@ -807,12 +807,13 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState, const CFX_Af
         }
         CallFunc(GdipSetPenDashArray)(pPen, pDashArray, nCount);
         FX_FLOAT phase = pGraphState->m_DashPhase;
-        if (bDashExtend)
+        if (bDashExtend) {
             if (phase < 0.5f) {
                 phase = 0;
             } else {
                 phase -= 0.5f;
             }
+        }
         CallFunc(GdipSetPenDashOffset)(pPen, phase);
         FX_Free(pDashArray);
         pDashArray = NULL;
