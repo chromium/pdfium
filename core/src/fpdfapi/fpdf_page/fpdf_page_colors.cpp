@@ -950,11 +950,14 @@ FX_BOOL CPDF_SeparationCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
             return FALSE;
         }
         m_pAltCS = Load(pDoc, pAltCS);
+        if (!m_pAltCS) {
+            return FALSE;
+        }
         CPDF_Object* pFuncObj = pArray->GetElementValue(3);
         if (pFuncObj && pFuncObj->GetType() != PDFOBJ_NAME) {
             m_pFunc = CPDF_Function::Load(pFuncObj);
         }
-        if (m_pFunc && m_pAltCS && m_pFunc->CountOutputs() < m_pAltCS->CountComponents()) {
+        if (m_pFunc && m_pFunc->CountOutputs() < m_pAltCS->CountComponents()) {
             delete m_pFunc;
             m_pFunc = NULL;
         }
