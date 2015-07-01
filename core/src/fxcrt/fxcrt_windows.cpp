@@ -98,7 +98,7 @@ FX_FILESIZE CFXCRT_FileAccess_Win64::GetSize() const
     if (!m_hFile) {
         return 0;
     }
-    LARGE_INTEGER size = {0, 0};
+    LARGE_INTEGER size = {};
     if (!::GetFileSizeEx(m_hFile, &size)) {
         return 0;
     }
@@ -109,8 +109,8 @@ FX_FILESIZE CFXCRT_FileAccess_Win64::GetPosition() const
     if (!m_hFile) {
         return (FX_FILESIZE) - 1;
     }
-    LARGE_INTEGER dist = {0, 0};
-    LARGE_INTEGER newPos = {0, 0};
+    LARGE_INTEGER dist = {};
+    LARGE_INTEGER newPos = {};
     if (!::SetFilePointerEx(m_hFile, dist, &newPos, FILE_CURRENT)) {
         return (FX_FILESIZE) - 1;
     }
@@ -123,7 +123,7 @@ FX_FILESIZE CFXCRT_FileAccess_Win64::SetPosition(FX_FILESIZE pos)
     }
     LARGE_INTEGER dist;
     dist.QuadPart = pos;
-    LARGE_INTEGER newPos = {0, 0};
+    LARGE_INTEGER newPos = {};
     if (!::SetFilePointerEx(m_hFile, dist, &newPos, FILE_BEGIN)) {
         return (FX_FILESIZE) - 1;
     }

@@ -95,10 +95,18 @@ source_set("fx_agg") {
 }
 
 source_set("fx_lcms2") {
+  config("fx_lcms2_warnings") {
+    if (is_clang) {
+      # cmslut.cc is sloppy with aggregate initialization. Version 2.7 of this
+      # library doesn't appear to have this problem.
+      cflags = [ "-Wno-missing-braces" ]
+    }
+  }
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+    ":fx_lcms2_warnings",
   ]
   sources = [
     "lcms2-2.6/include/lcms2.h",

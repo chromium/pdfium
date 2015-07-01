@@ -154,7 +154,7 @@ void CPDF_StreamContentParser::Handle_BeginImage()
 }
 void CPDF_StreamContentParser::ParsePathObject()
 {
-    FX_FLOAT params[6] = {0};
+    FX_FLOAT params[6] = {};
     int nParams = 0;
     int last_pos = m_pSyntax->GetPos();
     while (1) {
