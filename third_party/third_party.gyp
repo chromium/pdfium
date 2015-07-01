@@ -137,6 +137,11 @@
           ],
         }],
       ],
+      'variables': {
+        'clang_warning_flags': [
+          '-Wno-missing-braces',
+        ],
+      },
     },
     {
       'target_name': 'fx_libjpeg',

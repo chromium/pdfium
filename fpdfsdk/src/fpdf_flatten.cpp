@@ -410,7 +410,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 	{
 		for (int iKey = 0; /*iKey < 100*/; iKey++)
 		{
-			char sExtend[5] = {0};
+			char sExtend[5] = {};
 			FXSYS_itoa(iKey, sExtend, 10);
 			key = CFX_ByteString("FFT") + CFX_ByteString(sExtend);
 

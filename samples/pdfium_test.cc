@@ -215,7 +215,7 @@ static void WriteBmp(const char* pdf_name, int num, const void* buffer,
   if (!fp)
     return;
 
-  BITMAPINFO bmi = {0};
+  BITMAPINFO bmi = {};
   bmi.bmiHeader.biSize = sizeof(bmi) - sizeof(RGBQUAD);
   bmi.bmiHeader.biWidth = width;
   bmi.bmiHeader.biHeight = -height;  // top-down image
@@ -224,7 +224,7 @@ static void WriteBmp(const char* pdf_name, int num, const void* buffer,
   bmi.bmiHeader.biCompression = BI_RGB;
   bmi.bmiHeader.biSizeImage = 0;
 
-  BITMAPFILEHEADER file_header = {0};
+  BITMAPFILEHEADER file_header = {};
   file_header.bfType = 0x4d42;
   file_header.bfSize = sizeof(file_header) + bmi.bmiHeader.biSize + out_len;
   file_header.bfOffBits = file_header.bfSize - out_len;

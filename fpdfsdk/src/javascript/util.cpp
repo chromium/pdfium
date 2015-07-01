@@ -303,7 +303,7 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 		iMin = jsDate.GetMinutes();
 		iSec = jsDate.GetSeconds();
 
-		struct tm time = {0};
+		struct tm time = {};
 		time.tm_year = iYear-1900;
 		time.tm_mon = iMonth;
 		time.tm_mday = iDay;
@@ -360,7 +360,7 @@ FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value&
 		CFX_WideString strFormat;
 //		strFormat.Format(L"%d,%d,%d,%d,%d,%d",iYear, iMonth, iDay, iHour, iMin, iSec);
 //		CString strFormat = cppTm.Format(cFormat.c_str());
-		wchar_t buf[64] = {0};
+		wchar_t buf[64] = {};
 		strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
 		cFormat = buf;
 		vRet = cFormat.c_str();
@@ -399,7 +399,7 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 	iMin = jsDate.GetMinutes();
 	iSec = jsDate.GetSeconds();
 
-	struct tm time = {0};
+	struct tm time = {};
 	time.tm_year = iYear-1900;
 	time.tm_mon = iMonth;
 	time.tm_mday = iDay;
@@ -454,7 +454,7 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
 	}
 
 	CFX_WideString strFormat;
-	wchar_t buf[64] = {0};
+	wchar_t buf[64] = {};
 	strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
 	cFormat = buf;
 	cPurpose = cFormat;
