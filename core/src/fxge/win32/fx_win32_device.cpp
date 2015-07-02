@@ -792,7 +792,7 @@ FX_BOOL CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
         return FALSE;
     }
     if (pPlatform->m_GdiplusExt.IsAvailable()) {
-        if (bDrawAlpha || ((m_DeviceClass != FXDC_PRINTER && !(fill_mode & FXFILL_FULLCOVER)) || pGraphState && pGraphState->m_DashCount)) {
+        if (bDrawAlpha || ((m_DeviceClass != FXDC_PRINTER && !(fill_mode & FXFILL_FULLCOVER)) || (pGraphState && pGraphState->m_DashCount))) {
             if ( !((NULL == pMatrix || _MatrixNoScaled(pMatrix)) &&
                     pGraphState && pGraphState->m_LineWidth == 1.f &&
                     (pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) &&
