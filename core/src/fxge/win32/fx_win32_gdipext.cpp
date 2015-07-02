@@ -939,7 +939,7 @@ BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
         if (!bSmooth && (fill_mode & 3)) {
             bSmooth = TRUE;
         }
-        if (bSmooth || pGraphState && pGraphState->m_LineWidth > 2) {
+        if (bSmooth || (pGraphState && pGraphState->m_LineWidth > 2)) {
             CallFunc(GdipSetSmoothingMode)(pGraphics, SmoothingModeAntiAlias);
         }
     }
