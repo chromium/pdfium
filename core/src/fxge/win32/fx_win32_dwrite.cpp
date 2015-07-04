@@ -90,7 +90,7 @@ public:
         IDWriteBitmapRenderTarget* bitmapRenderTarget,
         IDWriteRenderingParams* renderingParams
     );
-    CDwGdiTextRenderer::~CDwGdiTextRenderer();
+    ~CDwGdiTextRenderer();
     HRESULT STDMETHODCALLTYPE DrawGlyphRun(
         const FX_RECT& text_bbox,
         __in_opt CFX_ClipRgn* pClipRgn,
