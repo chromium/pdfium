@@ -1,7 +1,7 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "JBig2_Object.h"
@@ -26,7 +26,9 @@ void *CJBig2_Object::operator new(size_t size, CJBig2_Module *pModule)
 }
 void CJBig2_Object::operator delete(void *p)
 {
-    ((CJBig2_Object *)p)->m_pModule->JBig2_Free(p);
+    if (p) {
+        ((CJBig2_Object *)p)->m_pModule->JBig2_Free(p);
+    }
 }
 void CJBig2_Object::operator delete(void *p, CJBig2_Module *pModule)
 {
@@ -64,7 +66,9 @@ void *CJBig2_Object::operator new[](size_t size, CJBig2_Module *pModule, size_t 
 }
 void CJBig2_Object::operator delete[](void* p)
 {
-    ((CJBig2_Object *)p)->m_pModule->JBig2_Free(p);
+    if (p) {
+        ((CJBig2_Object *)p)->m_pModule->JBig2_Free(p);
+    }
 }
 void CJBig2_Object::operator delete[](void *p, CJBig2_Module *pModule, size_t unit_size)
 {
