@@ -28,7 +28,7 @@ void CWeightTable::Calc(int dest_len, int dest_min, int dest_max, int src_len, i
     if ((dest_max - dest_min) > (int)((1U << 30) - 4) / m_ItemSize) {
         return;
     }
-    m_pWeightTables = FX_AllocNL(FX_BYTE, (dest_max - dest_min) * m_ItemSize + 4);
+    m_pWeightTables = FX_TryAlloc(FX_BYTE, (dest_max - dest_min) * m_ItemSize + 4);
     if (m_pWeightTables == NULL) {
         return;
     }
@@ -202,7 +202,7 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap, FXDIB_Format d
     }
     size += 31;
     size = size / 32 * 4;
-    m_pDestScanline = FX_AllocNL(FX_BYTE, size);
+    m_pDestScanline = FX_TryAlloc(FX_BYTE, size);
     if (m_pDestScanline == NULL) {
         return;
     }
@@ -311,7 +311,7 @@ FX_BOOL CStretchEngine::StartStretchHorz()
     if (m_DestWidth == 0 || m_pDestScanline == NULL || m_SrcClip.Height() > (int)((1U << 29) / m_InterPitch) || m_SrcClip.Height() == 0) {
         return FALSE;
     }
-    m_pInterBuf = FX_AllocNL(unsigned char, m_SrcClip.Height() * m_InterPitch);
+    m_pInterBuf = FX_TryAlloc(unsigned char, m_SrcClip.Height() * m_InterPitch);
     if (m_pInterBuf == NULL) {
         return FALSE;
     }
@@ -321,7 +321,7 @@ FX_BOOL CStretchEngine::StartStretchHorz()
             return FALSE;
         }
         FX_DWORD size = (m_DestClip.Width() * 8 + 31) / 32 * 4;
-        m_pDestMaskScanline = FX_AllocNL(unsigned char, size);
+        m_pDestMaskScanline = FX_TryAlloc(unsigned char, size);
         if (!m_pDestMaskScanline) {
             return FALSE;
         }
