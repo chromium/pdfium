@@ -767,18 +767,25 @@ CJBig2_Image *CJBig2_Image::subImage(FX_INT32 x, FX_INT32 y, FX_INT32 w, FX_INT3
 }
 void CJBig2_Image::expand(FX_INT32 h, FX_BOOL v)
 {
-    if (!m_pData) {
+    if (!m_pData || h <= m_nHeight) {
         return;
     }
-    FX_SAFE_DWORD safeMemSize = pdfium::base::checked_cast<FX_DWORD>(h); 
-    safeMemSize *= pdfium::base::checked_cast<FX_DWORD>(m_nStride);
+    FX_DWORD dwH = pdfium::base::checked_cast<FX_DWORD>(h);
+    FX_DWORD dwStride = pdfium::base::checked_cast<FX_DWORD>(m_nStride);
+    FX_DWORD dwHeight = pdfium::base::checked_cast<FX_DWORD>(m_nHeight);
+    FX_SAFE_DWORD safeMemSize = dwH; 
+    safeMemSize *= dwStride;
     if (!safeMemSize.IsValid()) {
         return;
     }
+    //The guaranteed reallocated memory is to be < 4GB (unsigned int). 
     m_pData = (FX_BYTE*)m_pModule->JBig2_Realloc(m_pData, safeMemSize.ValueOrDie());
-    if(h > m_nHeight) {
-        JBIG2_memset(m_pData + m_nHeight * m_nStride, v ? 0xff : 0, (h - m_nHeight)*m_nStride);
-    }
+    //The result of dwHeight * dwStride doesn't overflow after the 
+    //checking of safeMemSize.
+    //The same as the result of (dwH - dwHeight) * dwStride) because
+    //dwH - dwHeight is always less than dwH(h) which is checked in
+    //the calculation of dwH * dwStride. 
+    JBIG2_memset(m_pData + dwHeight * dwStride, v ? 0xff : 0, (dwH - dwHeight) * dwStride);
     m_nHeight = h;
 }
 FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, FX_INT32 x, FX_INT32 y, JBig2ComposeOp op)
