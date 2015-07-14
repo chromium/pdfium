@@ -1,5 +1,4 @@
 include_rules = [
   '+core/include',
-  '+javascript',
-  '+xfa/include',
+  '+third_party/bigint'
 ]
