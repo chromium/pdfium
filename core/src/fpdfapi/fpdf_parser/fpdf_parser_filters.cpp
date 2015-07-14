@@ -4,11 +4,24 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../../third_party/zlib_v128/zlib.h"
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fxcodec/fx_codec.h"
+#include "../../../include/fxcodec/fx_codec_flate.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "filters_int.h"
+
+extern "C" {
+
+static void* my_alloc_func(void* opaque, unsigned int items, unsigned int size)
+{
+    return FX_Alloc2D(uint8_t, items, size);
+}
+static void my_free_func(void* opaque, void* address)
+{
+    FX_Free(address);
+}
+
+}  // extern "C"
 
 CFX_DataFilter::CFX_DataFilter()
 {
@@ -287,23 +300,6 @@ void CPDF_DecryptFilter::v_FilterFinish(CFX_BinaryBuf& dest_buf)
     }
     m_pCryptoHandler->DecryptFinish(m_pContext, dest_buf);
     m_pContext = NULL;
-}
-extern "C" {
-    static void* my_alloc_func (void* opaque, unsigned int items, unsigned int size)
-    {
-        return FX_Alloc2D(uint8_t, items, size);
-    }
-    static void   my_free_func  (void* opaque, void* address)
-    {
-        FX_Free(address);
-    }
-    void* FPDFAPI_FlateInit(void* (*alloc_func)(void*, unsigned int, unsigned int),
-                            void (*free_func)(void*, void*));
-    void FPDFAPI_FlateInput(void* context, const unsigned char* src_buf, unsigned int src_size);
-    int FPDFAPI_FlateOutput(void* context, unsigned char* dest_buf, unsigned int dest_size);
-    int FPDFAPI_FlateGetAvailIn(void* context);
-    int FPDFAPI_FlateGetAvailOut(void* context);
-    void FPDFAPI_FlateEnd(void* context);
 }
 CPDF_FlateFilter::CPDF_FlateFilter()
 {
