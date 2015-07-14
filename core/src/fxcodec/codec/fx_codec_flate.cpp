@@ -7,17 +7,33 @@
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../../third_party/zlib_v128/zlib.h"
 #include "../../../include/fxcodec/fx_codec.h"
+#include "../../../include/fxcodec/fx_codec_flate.h"
 #include "codec_int.h"
 
 extern "C"
 {
-    static void* my_alloc_func (void* opaque, unsigned int items, unsigned int size)
+    static void* my_alloc_func(void* opaque, unsigned int items, unsigned int size)
     {
         return FX_Alloc2D(uint8_t, items, size);
     }
-    static void   my_free_func  (void* opaque, void* address)
+    static void my_free_func(void* opaque, void* address)
     {
         FX_Free(address);
+    }
+    static int FPDFAPI_FlateGetTotalOut(void* context)
+    {
+        return ((z_stream*)context)->total_out;
+    }
+    static int FPDFAPI_FlateGetTotalIn(void* context)
+    {
+        return ((z_stream*)context)->total_in;
+    }
+    static void FPDFAPI_FlateCompress(unsigned char* dest_buf,
+                                      unsigned long* dest_size,
+                                      const unsigned char* src_buf,
+                                      unsigned long src_size)
+    {
+        compress(dest_buf, dest_size, src_buf, src_size);
     }
     void* FPDFAPI_FlateInit(void* (*alloc_func)(void*, unsigned int, unsigned int),
                             void (*free_func)(void*, void*))
@@ -37,10 +53,6 @@ extern "C"
         ((z_stream*)context)->next_in = (unsigned char*)src_buf;
         ((z_stream*)context)->avail_in = src_size;
     }
-    int FPDFAPI_FlateGetTotalOut(void* context)
-    {
-        return ((z_stream*)context)->total_out;
-    }
     int FPDFAPI_FlateOutput(void* context, unsigned char* dest_buf, unsigned int dest_size)
     {
         ((z_stream*)context)->next_out = dest_buf;
@@ -54,28 +66,21 @@ extern "C"
         }
         return ret;
     }
-    int FPDFAPI_FlateGetTotalIn(void* context)
+    int FPDFAPI_FlateGetAvailIn(void* context)
     {
-        return ((z_stream*)context)->total_in;
+        return ((z_stream*)context)->avail_in;
     }
     int FPDFAPI_FlateGetAvailOut(void* context)
     {
         return ((z_stream*)context)->avail_out;
-    }
-    int FPDFAPI_FlateGetAvailIn(void* context)
-    {
-        return ((z_stream*)context)->avail_in;
     }
     void FPDFAPI_FlateEnd(void* context)
     {
         inflateEnd((z_stream*)context);
         ((z_stream*)context)->zfree(0, context);
     }
-    void FPDFAPI_FlateCompress(unsigned char* dest_buf, unsigned long* dest_size, const unsigned char* src_buf, unsigned long src_size)
-    {
-        compress(dest_buf, dest_size, src_buf, src_size);
-    }
-}
+}  // extern "C"
+
 class CLZWDecoder
 {
 public:
