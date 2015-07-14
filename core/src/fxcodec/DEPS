@@ -1,0 +1,6 @@
+include_rules = [
+  '+third_party/lcms2-2.6',
+  '+third_party/libjpeg',
+  '+third_party/libopenjpeg20',
+  '+third_party/zlib_v128',
+]

@@ -31,11 +31,10 @@ deps_os = {
 }
 
 include_rules = [
-  '+core/include',
-  '+fpdfsdk/include',
   '+public',
   '+testing',
   '+third_party/base',
+  '+v8',
 ]
 
 hooks = [
