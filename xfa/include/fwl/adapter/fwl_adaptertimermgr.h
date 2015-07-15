@@ -7,6 +7,9 @@
 #ifndef _FWL_ADAPTER_TIMERMGR_H
 #define _FWL_ADAPTER_TIMERMGR_H
 
+#include "../core/fwl_error.h"
+#include "../core/fwl_timer.h"
+
 class IFWL_Timer;
 
 class IFWL_AdapterTimerMgr

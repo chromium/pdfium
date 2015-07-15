@@ -7,47 +7,26 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 #define FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 
-#ifdef _WIN32
-#include <tchar.h>
-#include <math.h>
-#endif
-
 #include "../../core/include/fpdfapi/fpdf_module.h"
 #include "../../core/include/fpdfapi/fpdf_pageobj.h"
-#include "../../core/include/fpdfapi/fpdf_parser.h"
 #include "../../core/include/fpdfapi/fpdf_parser.h"
 #include "../../core/include/fpdfapi/fpdf_render.h"
 #include "../../core/include/fpdfapi/fpdf_serial.h"
 #include "../../core/include/fpdfapi/fpdfapi.h"
 #include "../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../core/include/fpdfdoc/fpdf_vt.h"
-#include "../../xfa/include/fxbarcode/BC_BarCode.h"
-#include "../../xfa/include/fxjse/fxjse.h"
-#include "../../xfa/include/fxgraphics/fx_graphics.h"
-#include "../../xfa/include/fxfa/fxfa.h"
-#include "../../xfa/include/fwl/core/fwl_error.h"
-#include "../../xfa/include/fwl/core/fwl_timer.h"
+#include "../../core/include/fxge/fx_ge.h"
+#include "../../core/include/fxge/fx_ge_win32.h"
+#include "../../public/fpdfview.h"
 #include "../../xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
+#include "../../xfa/include/fxbarcode/BC_BarCode.h"
+#include "../../xfa/include/fxfa/fxfa.h"
+#include "../../xfa/include/fxgraphics/fx_graphics.h"
+#include "../../xfa/include/fxjse/fxjse.h"
 
-
-#ifndef FX_GetAValue
-/** @brief It retrieves an intensity value for the alpha component of a #FX_ARGB value. */
-#define FX_GetAValue(argb)			((argb & 0xFF000000) >> 24)
-#endif
-
-#ifndef FX_GetRValue
-/** @brief It retrieves an intensity value for the red component of a #FX_ARGB value. */
-#define FX_GetRValue(argb)			((argb & 0x00FF0000) >> 16)
-#endif
-
-#ifndef FX_GetGValue
-/** @brief It retrieves an intensity value for the green component of a #FX_ARGB value. */
-#define FX_GetGValue(argb)			((argb & 0x0000FF00) >> 8)
-#endif
-
-#ifndef FX_GetBValue
-/** @brief It retrieves an intensity value for the blue component of a #FX_ARGB value. */
-#define FX_GetBValue(argb)			(argb & 0x000000FF)
+#ifdef _WIN32
+#include <tchar.h>
+#include <math.h>
 #endif
 
 #ifndef FX_ARGBTOCOLORREF
@@ -61,8 +40,8 @@
 #endif
 
 typedef unsigned int FX_UINT;
-
-#include "../../public/fpdfview.h"
+class CRenderContext;
+class IFSDK_PAUSE_Adapter;
 
 class CPDF_CustomAccess final : public IFX_FileRead
 {
@@ -106,8 +85,12 @@ protected:
 	FX_FILESIZE		m_nCurPos;
 };
 
-void		FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
-FPDF_BOOL	FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy);
-
+void DropContext(void* data);
+void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
+FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy);
+void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page,
+                            int start_x, int start_y, int size_x, int size_y,
+                            int rotate, int flags, FX_BOOL bNeedToRestore,
+                            IFSDK_PAUSE_Adapter* pause);
 
 #endif  // FPDFSDK_INCLUDE_FSDK_DEFINE_H_

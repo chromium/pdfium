@@ -449,11 +449,6 @@ void DropContext(void* data)
 	delete (CRenderContext*)data;
 }
 
-void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_x, int start_y, int size_x, int size_y,
-						int rotate, int flags,FX_BOOL bNeedToRestore, IFSDK_PAUSE_Adapter * pause  );
-void (*Func_RenderPage)(CRenderContext*, FPDF_PAGE page, int start_x, int start_y, int size_x, int size_y,
-						int rotate, int flags,FX_BOOL bNeedToRestore, IFSDK_PAUSE_Adapter * pause  ) = FPDF_RenderPage_Retail;
-
 #if defined(_DEBUG) || defined(DEBUG)
 #define DEBUG_TRACE
 #endif
@@ -490,7 +485,8 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 	else
 	    pContext->m_pDevice = FX_NEW CFX_WindowsDevice(dc);
 
-	Func_RenderPage(pContext, page, start_x, start_y, size_x, size_y, rotate, flags,TRUE,NULL);
+	FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
+                           rotate, flags, TRUE, NULL);
 
 	if (bBackgroundAlphaNeeded)
 	{
@@ -573,7 +569,8 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 #endif
 
 	// output to bitmap device
-	Func_RenderPage(pContext, page, start_x - rect.left, start_y - rect.top, size_x, size_y, rotate, flags);
+	FPDF_RenderPage_Retail(pContext, page, start_x - rect.left,
+                           start_y - rect.top, size_x, size_y, rotate, flags);
 
 #ifdef DEBUG_TRACE
 	CPDF_ModuleMgr::Get()->ReportError(999, "Finished PDF rendering");
@@ -641,7 +638,8 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap, FPDF_PAGE page,
 		((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap);
 #endif
 
-	Func_RenderPage(pContext, page, start_x, start_y, size_x, size_y, rotate, flags,TRUE,NULL);
+	FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
+                           rotate, flags, TRUE, NULL);
 
 	delete pContext;
 	pPage->RemovePrivateData((void*)1);
@@ -659,17 +657,9 @@ DLLEXPORT void STDCALL FPDF_CloseDocument(FPDF_DOCUMENT document)
 {
 	if (!document)
 		return;
+
 	CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
 	delete pDoc;
-
-// 	CPDF_Parser* pParser = (CPDF_Parser*)pDoc->GetParser();
-// 	if (pParser == NULL)
-// 	{
-// 		delete pDoc;
-// 		return;
-// 	}
-// 	delete pParser;
-//	delete pDoc;
 }
 
 DLLEXPORT unsigned long STDCALL FPDF_GetLastError()
@@ -771,14 +761,14 @@ DLLEXPORT void STDCALL FPDFBitmap_Destroy(FPDF_BITMAP bitmap)
 }
 
 void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_x, int start_y, int size_x, int size_y,
-						int rotate, int flags,FX_BOOL bNeedToRestore, IFSDK_PAUSE_Adapter * pause )
+                            int rotate, int flags,FX_BOOL bNeedToRestore, IFSDK_PAUSE_Adapter * pause )
 {
 	CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
 	if (pPage == NULL) return;
 
 	if (!pContext->m_pOptions)
 		pContext->m_pOptions = new CPDF_RenderOptions;
-//	CPDF_RenderOptions options;
+
 	if (flags & FPDF_LCD_TEXT)
 		pContext->m_pOptions->m_Flags |= RENDER_CLEARTYPE;
 	else
@@ -797,11 +787,8 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_
 		pContext->m_pOptions->m_BackColor = 0xffffff;
 	}
 	const CPDF_OCContext::UsageType usage = (flags & FPDF_PRINTING) ? CPDF_OCContext::Print : CPDF_OCContext::View;
-
 	pContext->m_pOptions->m_AddFlags = flags >> 8;
-
 	pContext->m_pOptions->m_pOCContext = new CPDF_OCContext(pPage->m_pDocument, usage);
-
 
 	CFX_AffineMatrix matrix;
 	pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
@@ -828,7 +815,7 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_
 	pContext->m_pRenderer->Start(pContext->m_pContext, pContext->m_pDevice, pContext->m_pOptions, pause);
 	if (bNeedToRestore)
 	{
-	  pContext->m_pDevice->RestoreState();
+		pContext->m_pDevice->RestoreState();
 	}
 
 //#endif
