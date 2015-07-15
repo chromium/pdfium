@@ -114,7 +114,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment * pApp) :
         m_isolate(NULL)
 {
 	if (m_pApp->GetFormFillInfo()->m_pJsPlatform->version >= 2) {
-		m_isolate = m_pApp->GetFormFillInfo()->m_pJsPlatform->m_isolate;
+		m_isolate = reinterpret_cast<v8::Isolate*>(m_pApp->GetFormFillInfo()->m_pJsPlatform->m_isolate);
 	}
 	if (!m_isolate) {
 		m_pArrayBufferAllocator.reset(new CJS_ArrayBufferAllocator());
