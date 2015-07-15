@@ -200,7 +200,6 @@
         'libjpeg/jpegint.h',
         'libjpeg/jpeglib.h',
         'libjpeg/jversion.h',
-        'libjpeg/makefile',
         'libjpeg/transupp.h',
       ],
       'conditions': [
