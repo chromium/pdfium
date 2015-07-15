@@ -8,8 +8,9 @@
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_render.h"
-#include "pageint.h"
 #include "../fpdf_render/render_int.h"
+#include "pageint.h"
+
 void CPDF_GraphicStates::DefaultStates()
 {
     m_ColorState.New()->Default();
@@ -544,14 +545,14 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS, CPDF_StreamContentParser
                     }
                     pGeneralState->SetBlendMode(mode);
                     if (pGeneralState->m_BlendType > FXDIB_BLEND_MULTIPLY) {
-                        pParser->m_pObjectList->m_bBackgroundAlphaNeeded = TRUE;
+                        pParser->GetObjectList()->m_bBackgroundAlphaNeeded = TRUE;
                     }
                     break;
                 }
             case FXBSTR_ID('S', 'M', 'a', 's'):
                 if (pObject && pObject->GetType() == PDFOBJ_DICTIONARY) {
                     pGeneralState->m_pSoftMask = pObject;
-                    FXSYS_memcpy(pGeneralState->m_SMaskMatrix, &pParser->m_pCurStates->m_CTM, sizeof(CPDF_Matrix));
+                    FXSYS_memcpy(pGeneralState->m_SMaskMatrix, &pParser->GetCurStates()->m_CTM, sizeof(CPDF_Matrix));
                 } else {
                     pGeneralState->m_pSoftMask = NULL;
                 }

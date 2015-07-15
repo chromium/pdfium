@@ -9,6 +9,7 @@
 
 #include <map>
 
+#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 
 #define PARSE_STEP_LIMIT		100
@@ -123,26 +124,25 @@ typedef struct {
 class CPDF_StreamContentParser
 {
 public:
-    CPDF_StreamContentParser();
+    CPDF_StreamContentParser(
+        CPDF_Document* pDoc,
+        CPDF_Dictionary* pPageResources,
+        CPDF_Dictionary* pParentResources,
+        CFX_AffineMatrix* pmtContentToUser,
+        CPDF_PageObjects* pObjList,
+        CPDF_Dictionary* pResources,
+        CFX_FloatRect* pBBox,
+        CPDF_ParseOptions* pOptions,
+        CPDF_AllStates* pAllStates,
+        int level);
     ~CPDF_StreamContentParser();
-    FX_BOOL Initialize();
-    void	PrepareParse(CPDF_Document* pDoc, CPDF_Dictionary* pPageResources, CPDF_Dictionary* pParentResources,
-                         CFX_AffineMatrix* pmtContentToUser,
-                         CPDF_PageObjects* pObjList, CPDF_Dictionary* pResources,
-                         CFX_FloatRect* pBBox, CPDF_ParseOptions* pOptions,
-                         CPDF_AllStates* pAllStates, int level);
-    CPDF_Document*		m_pDocument;
-    CPDF_Dictionary*	m_pPageResources;
-    CPDF_Dictionary*	m_pParentResources;
-    CPDF_PageObjects*	m_pObjectList;
-    CPDF_Dictionary*	m_pResources;
-    int					m_Level;
-    CFX_AffineMatrix	m_mtContentToUser;
-    CFX_FloatRect		m_BBox;
-    CPDF_ParseOptions	m_Options;
-    _ContentParam		m_ParamBuf1[PARAM_BUF_SIZE];
-    FX_DWORD			m_ParamStartPos;
-    FX_DWORD			m_ParamCount;
+
+    FX_BOOL ShouldAbort() const { return m_bAbort; }
+    CPDF_PageObjects* GetObjectList() const { return m_pObjectList; }
+    CPDF_AllStates* GetCurStates() const { return m_pCurStates.get(); }
+    FX_BOOL IsColored() const { return m_bColored; }
+    const FX_FLOAT* GetType3Data() const { return m_Type3Data; }
+
     void				AddNumberParam(const FX_CHAR* str, int len);
     void				AddObjectParam(CPDF_Object* pObj);
     void				AddNameParam(const FX_CHAR* name, int size);
@@ -158,17 +158,10 @@ public:
     }
     FX_BOOL				OnOperator(const FX_CHAR* op);
     void				BigCaseCaller(int index);
-    FX_BOOL				m_bAbort;
-    CPDF_StreamParser*	m_pSyntax;
     FX_DWORD			GetParsePos()
     {
         return m_pSyntax->GetPos();
     }
-    CPDF_AllStates*		m_pCurStates;
-    CPDF_ContentMark	m_CurContentMark;
-    CFX_PtrArray		m_ClipTextList;
-    CPDF_TextObject*	m_pLastTextObject;
-    FX_FLOAT			m_DefFontSize;
     void				AddTextObject(CFX_ByteString* pText, FX_FLOAT fInitKerning, FX_FLOAT* pKerning, int count);
 
     void				ConvertUserSpace(FX_FLOAT& x, FX_FLOAT& y);
@@ -176,37 +169,27 @@ public:
     void				OnChangeTextMatrix();
     FX_DWORD			Parse(const uint8_t* pData, FX_DWORD dwSize, FX_DWORD max_cost);
     void				ParsePathObject();
-    int					m_CompatCount;
-    FX_PATHPOINT*		m_pPathPoints;
-    int					m_PathPointCount;
-    int					m_PathAllocSize;
-    FX_FLOAT			m_PathStartX, m_PathStartY;
-    FX_FLOAT			m_PathCurrentX, m_PathCurrentY;
-    int					m_PathClipType;
     void				AddPathPoint(FX_FLOAT x, FX_FLOAT y, int flag);
     void				AddPathRect(FX_FLOAT x, FX_FLOAT y, FX_FLOAT w, FX_FLOAT h);
     void				AddPathObject(int FillType, FX_BOOL bStroke);
     CPDF_ImageObject*	AddImage(CPDF_Stream* pStream, CPDF_Image* pImage, FX_BOOL bInline);
     void				AddDuplicateImage();
     void				AddForm(CPDF_Stream*);
-    CFX_ByteString		m_LastImageName;
-    CPDF_Image*			m_pLastImage;
-    CFX_BinaryBuf		m_LastImageDict, m_LastImageData;
-    CPDF_Dictionary*	m_pLastImageDict;
-    CPDF_Dictionary*    m_pLastCloneImageDict;
-    FX_BOOL				m_bReleaseLastDict;
-    FX_BOOL				m_bSameLastDict;
     void				SetGraphicStates(CPDF_PageObject* pObj, FX_BOOL bColor, FX_BOOL bText, FX_BOOL bGraph);
-    FX_BOOL				m_bColored;
-    FX_FLOAT			m_Type3Data[6];
-    FX_BOOL				m_bResourceMissing;
-    CFX_PtrArray		m_StateStack;
     void				SaveStates(CPDF_AllStates*);
     void				RestoreStates(CPDF_AllStates*);
     CPDF_Font*			FindFont(const CFX_ByteString& name);
     CPDF_ColorSpace*	FindColorSpace(const CFX_ByteString& name);
     CPDF_Pattern*		FindPattern(const CFX_ByteString& name, FX_BOOL bShading);
     CPDF_Object*		FindResourceObj(const CFX_ByteStringC& type, const CFX_ByteString& name);
+
+protected:
+    struct OpCode {
+        FX_DWORD m_OpId;
+        void (CPDF_StreamContentParser::*m_OpHandler)();
+    };
+    static const OpCode g_OpCodes[];
+
     void Handle_CloseFillStrokePath();
     void Handle_FillStrokePath();
     void Handle_CloseEOFillStrokePath();
@@ -281,6 +264,47 @@ public:
     void Handle_NextLineShowText();
     void Handle_NextLineShowText_Space();
     void Handle_Invalid();
+
+    CPDF_Document* const m_pDocument;
+    CPDF_Dictionary* m_pPageResources;
+    CPDF_Dictionary* m_pParentResources;
+    CPDF_Dictionary* m_pResources;
+    CPDF_PageObjects* m_pObjectList;
+    int m_Level;
+    CFX_AffineMatrix m_mtContentToUser;
+    CFX_FloatRect m_BBox;
+    CPDF_ParseOptions m_Options;
+    _ContentParam m_ParamBuf1[PARAM_BUF_SIZE];
+    FX_DWORD m_ParamStartPos;
+    FX_DWORD m_ParamCount;
+    FX_BOOL m_bAbort;
+    CPDF_StreamParser* m_pSyntax;
+    nonstd::unique_ptr<CPDF_AllStates> m_pCurStates;
+    CPDF_ContentMark m_CurContentMark;
+    CFX_PtrArray m_ClipTextList;
+    CPDF_TextObject* m_pLastTextObject;
+    FX_FLOAT m_DefFontSize;
+    int m_CompatCount;
+    FX_PATHPOINT* m_pPathPoints;
+    int m_PathPointCount;
+    int m_PathAllocSize;
+    FX_FLOAT m_PathStartX;
+    FX_FLOAT m_PathStartY;
+    FX_FLOAT m_PathCurrentX;
+    FX_FLOAT m_PathCurrentY;
+    int m_PathClipType;
+    CFX_ByteString m_LastImageName;
+    CPDF_Image* m_pLastImage;
+    CFX_BinaryBuf m_LastImageDict;
+    CFX_BinaryBuf m_LastImageData;
+    CPDF_Dictionary* m_pLastImageDict;
+    CPDF_Dictionary* m_pLastCloneImageDict;
+    FX_BOOL m_bReleaseLastDict;
+    FX_BOOL m_bSameLastDict;
+    FX_BOOL m_bColored;
+    FX_FLOAT m_Type3Data[6];
+    FX_BOOL m_bResourceMissing;
+    CFX_PtrArray m_StateStack;
 };
 class CPDF_ContentParser
 {

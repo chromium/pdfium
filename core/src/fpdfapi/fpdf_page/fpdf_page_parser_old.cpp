@@ -997,17 +997,18 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm, CPDF_AllStates* pGraphicStates,
         }
     }
     CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDict(FX_BSTRC("Resources"));
-    m_pParser = new CPDF_StreamContentParser;
-    m_pParser->Initialize();
-    m_pParser->PrepareParse(pForm->m_pDocument, pForm->m_pPageResources, pForm->m_pResources, pParentMatrix, pForm,
-                            pResources, &form_bbox, pOptions, pGraphicStates, level);
-    m_pParser->m_pCurStates->m_CTM = form_matrix;
-    m_pParser->m_pCurStates->m_ParentMatrix = form_matrix;
+    m_pParser = new CPDF_StreamContentParser(
+        pForm->m_pDocument, pForm->m_pPageResources, pForm->m_pResources,
+        pParentMatrix, pForm, pResources, &form_bbox, pOptions, pGraphicStates,
+        level);
+    
+    m_pParser->GetCurStates()->m_CTM = form_matrix;
+    m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
     if (ClipPath.NotNull()) {
-        m_pParser->m_pCurStates->m_ClipPath.AppendPath(ClipPath, FXFILL_WINDING, TRUE);
+        m_pParser->GetCurStates()->m_ClipPath.AppendPath(ClipPath, FXFILL_WINDING, TRUE);
     }
     if (pForm->m_Transparency & PDFTRANS_GROUP) {
-        CPDF_GeneralStateData* pData = m_pParser->m_pCurStates->m_GeneralState.GetModify();
+        CPDF_GeneralStateData* pData = m_pParser->GetCurStates()->m_GeneralState.GetModify();
         pData->m_BlendType = FXDIB_BLEND_NORMAL;
         pData->m_StrokeAlpha = 1.0f;
         pData->m_FillAlpha = 1.0f;
@@ -1068,18 +1069,18 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause)
             }
         }
         if (m_InternalStage == PAGEPARSE_STAGE_PARSE) {
-            if (m_pParser == NULL) {
-                m_pParser = new CPDF_StreamContentParser;
-                m_pParser->Initialize();
-                m_pParser->PrepareParse(m_pObjects->m_pDocument, m_pObjects->m_pPageResources, NULL, NULL, m_pObjects,
-                                        m_pObjects->m_pResources, &m_pObjects->m_BBox, &m_Options, NULL, 0);
-                m_pParser->m_pCurStates->m_ColorState.GetModify()->Default();
+            if (!m_pParser) {
+                m_pParser = new CPDF_StreamContentParser(
+                    m_pObjects->m_pDocument, m_pObjects->m_pPageResources,
+                    nullptr, nullptr, m_pObjects, m_pObjects->m_pResources,
+                    &m_pObjects->m_BBox, &m_Options, nullptr, 0);
+                m_pParser->GetCurStates()->m_ColorState.GetModify()->Default();
             }
             if (m_CurrentOffset >= m_Size) {
                 m_InternalStage = PAGEPARSE_STAGE_CHECKCLIP;
             } else {
                 m_CurrentOffset += m_pParser->Parse(m_pData + m_CurrentOffset, m_Size - m_CurrentOffset, PARSE_STEP_LIMIT);
-                if (m_pParser->m_bAbort) {
+                if (m_pParser->ShouldAbort()) {
                     m_InternalStage = PAGEPARSE_STAGE_CHECKCLIP;
                     continue;
                 }
@@ -1087,12 +1088,12 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause)
         }
         if (m_InternalStage == PAGEPARSE_STAGE_CHECKCLIP) {
             if (m_pType3Char) {
-                m_pType3Char->m_bColored = m_pParser->m_bColored;
-                m_pType3Char->m_Width = FXSYS_round(m_pParser->m_Type3Data[0] * 1000);
-                m_pType3Char->m_BBox.left = FXSYS_round(m_pParser->m_Type3Data[2] * 1000);
-                m_pType3Char->m_BBox.bottom = FXSYS_round(m_pParser->m_Type3Data[3] * 1000);
-                m_pType3Char->m_BBox.right = FXSYS_round(m_pParser->m_Type3Data[4] * 1000);
-                m_pType3Char->m_BBox.top = FXSYS_round(m_pParser->m_Type3Data[5] * 1000);
+                m_pType3Char->m_bColored = m_pParser->IsColored();
+                m_pType3Char->m_Width = FXSYS_round(m_pParser->GetType3Data()[0] * 1000);
+                m_pType3Char->m_BBox.left = FXSYS_round(m_pParser->GetType3Data()[2] * 1000);
+                m_pType3Char->m_BBox.bottom = FXSYS_round(m_pParser->GetType3Data()[3] * 1000);
+                m_pType3Char->m_BBox.right = FXSYS_round(m_pParser->GetType3Data()[4] * 1000);
+                m_pType3Char->m_BBox.top = FXSYS_round(m_pParser->GetType3Data()[5] * 1000);
             }
             FX_POSITION pos = m_pObjects->m_ObjectList.GetHeadPosition();
             while (pos) {
