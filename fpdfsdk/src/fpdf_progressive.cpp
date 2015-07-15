@@ -9,11 +9,6 @@
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_rendercontext.h"
 
-extern void (*Func_RenderPage)( CRenderContext*, FPDF_PAGE page, int start_x, int start_y, int size_x, int size_y,
-						int rotate, int flags,FX_BOOL bNeedToRestore, IFSDK_PAUSE_Adapter * pause );
-
-extern void DropContext(void* data);
-
 DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start( FPDF_BITMAP bitmap, FPDF_PAGE page,
 													int start_x, int start_y, int size_x,
 												    int size_y, int rotate, int flags,
@@ -46,7 +41,8 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start( FPDF_BITMAP bitmap, FPDF_PAGE
 #endif
 	IFSDK_PAUSE_Adapter IPauseAdapter(pause);
 
-	Func_RenderPage(pContext, page, start_x, start_y, size_x, size_y, rotate, flags,FALSE, &IPauseAdapter);
+    FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
+                           rotate, flags,FALSE, &IPauseAdapter);
 
 	if ( pContext->m_pRenderer )
 	{
