@@ -8,80 +8,60 @@
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_serial.h"
 #include "pageint.h"
+
 #define REQUIRE_PARAMS(count) if (m_ParamCount != count) { m_bAbort = TRUE; return; }
-CPDF_StreamContentParser::CPDF_StreamContentParser()
+
+CPDF_StreamContentParser::CPDF_StreamContentParser(
+    CPDF_Document* pDocument,
+    CPDF_Dictionary* pPageResources,
+    CPDF_Dictionary* pParentResources,
+    CFX_AffineMatrix* pmtContentToUser,
+    CPDF_PageObjects* pObjList,
+    CPDF_Dictionary* pResources,
+    CPDF_Rect* pBBox,
+    CPDF_ParseOptions* pOptions,
+    CPDF_AllStates* pStates,
+    int level)
+    : m_pDocument(pDocument),
+      m_pPageResources(pPageResources),
+      m_pParentResources(pParentResources),
+      m_pResources(pResources),
+      m_pObjectList(pObjList),
+      m_Level(level),
+      m_ParamStartPos(0),
+      m_ParamCount(0),
+      m_bAbort(FALSE),
+      m_pCurStates(new CPDF_AllStates),
+      m_pLastTextObject(nullptr),
+      m_DefFontSize(0),
+      m_pPathPoints(nullptr),
+      m_PathPointCount(0),
+      m_PathAllocSize(0),
+      m_PathCurrentX(0.0f),
+      m_PathCurrentY(0.0f),
+      m_PathClipType(0),
+      m_pLastImage(nullptr),
+      m_pLastImageDict(nullptr),
+      m_pLastCloneImageDict(nullptr),
+      m_bReleaseLastDict(TRUE),
+      m_bColored(FALSE),
+      m_bResourceMissing(FALSE)
 {
-    m_DefFontSize = 0;
-    m_pCurStates = NULL;
-    m_pLastTextObject = NULL;
-    m_pPathPoints = NULL;
-    m_PathClipType = 0;
-    m_PathPointCount = m_PathAllocSize = 0;
-    m_PathCurrentX = m_PathCurrentY = 0.0f;
-    m_bResourceMissing = FALSE;
-    m_bColored = FALSE;
-    FXSYS_memset(m_Type3Data, 0, sizeof(FX_FLOAT) * 6);
-    m_ParamCount = 0;
-    m_ParamStartPos = 0;
-    m_bAbort = FALSE;
-    m_pLastImageDict = NULL;
-    m_pLastCloneImageDict = NULL;
-    m_pLastImage = NULL;
-    m_bReleaseLastDict = TRUE;
-    m_pParentResources = NULL;
-}
-FX_BOOL CPDF_StreamContentParser::Initialize()
-{
-    return TRUE;
-}
-CPDF_StreamContentParser::~CPDF_StreamContentParser()
-{
-    ClearAllParams();
-    int i = 0;
-    for (i = 0; i < m_StateStack.GetSize(); i ++) {
-        delete (CPDF_AllStates*)m_StateStack[i];
-    }
-    if (m_pPathPoints) {
-        FX_Free(m_pPathPoints);
-    }
-    delete m_pCurStates;
-    if (m_pLastImageDict) {
-        m_pLastImageDict->Release();
-    }
-    if (m_pLastCloneImageDict) {
-        m_pLastCloneImageDict->Release();
-    }
-}
-void CPDF_StreamContentParser::PrepareParse(CPDF_Document* pDocument,
-        CPDF_Dictionary* pPageResources, CPDF_Dictionary* pParentResources, CFX_AffineMatrix* pmtContentToUser, CPDF_PageObjects* pObjList,
-        CPDF_Dictionary* pResources, CPDF_Rect* pBBox, CPDF_ParseOptions* pOptions,
-        CPDF_AllStates* pStates, int level)
-{
-    for (int i = 0; i < 6; i ++) {
-        m_Type3Data[i] = 0;
-    }
-    m_pDocument = pDocument;
-    m_pPageResources = pPageResources;
-    m_pParentResources = pParentResources;
     if (pmtContentToUser) {
         m_mtContentToUser = *pmtContentToUser;
     }
     if (pOptions) {
         m_Options = *pOptions;
     }
-    m_pObjectList = pObjList;
-    m_pResources = pResources;
-    if (pResources == NULL) {
+    if (!m_pResources) {
         m_pResources = m_pParentResources;
     }
-    if (m_pResources == NULL) {
-        m_pResources = pPageResources;
+    if (!m_pResources) {
+        m_pResources = m_pPageResources;
     }
     if (pBBox) {
         m_BBox = *pBBox;
     }
-    m_Level = level;
-    m_pCurStates = new CPDF_AllStates;
     if (pStates) {
         m_pCurStates->Copy(*pStates);
     } else {
@@ -89,6 +69,26 @@ void CPDF_StreamContentParser::PrepareParse(CPDF_Document* pDocument,
         m_pCurStates->m_GraphState.New();
         m_pCurStates->m_TextState.New();
         m_pCurStates->m_ColorState.New();
+    }
+    for (int i = 0; i < FX_ArraySize(m_Type3Data); ++i) {
+        m_Type3Data[i] = 0.0;
+    }
+}
+
+CPDF_StreamContentParser::~CPDF_StreamContentParser()
+{
+    ClearAllParams();
+    for (int i = 0; i < m_StateStack.GetSize(); ++i) {
+        delete (CPDF_AllStates*)m_StateStack[i];
+    }
+    if (m_pPathPoints) {
+        FX_Free(m_pPathPoints);
+    }
+    if (m_pLastImageDict) {
+        m_pLastImageDict->Release();
+    }
+    if (m_pLastCloneImageDict) {
+        m_pLastCloneImageDict->Release();
     }
 }
 int CPDF_StreamContentParser::GetNextParamPos()
@@ -241,10 +241,9 @@ void CPDF_StreamContentParser::SetGraphicStates(CPDF_PageObject* pObj, FX_BOOL b
         pObj->m_TextState = m_pCurStates->m_TextState;
     }
 }
-const struct _OpCode {
-    FX_DWORD	m_OpId;
-    void (CPDF_StreamContentParser::*m_OpHandler)();
-} g_OpCodes[] = {
+
+const CPDF_StreamContentParser::OpCode CPDF_StreamContentParser::g_OpCodes[] =
+{
     {FXBSTR_ID('"', 0, 0, 0),		&CPDF_StreamContentParser::Handle_NextLineShowText_Space},
     {FXBSTR_ID('\'', 0, 0, 0),		&CPDF_StreamContentParser::Handle_NextLineShowText},
     {FXBSTR_ID('B', 0, 0, 0),		&CPDF_StreamContentParser::Handle_FillStrokePath},
@@ -331,7 +330,7 @@ FX_BOOL CPDF_StreamContentParser::OnOperator(const FX_CHAR* op)
         opid <<= 8;
         i ++;
     };
-    int low = 0, high = sizeof g_OpCodes / sizeof(struct _OpCode) - 1;
+    int low = 0, high = sizeof g_OpCodes / sizeof(OpCode) - 1;
     while (low <= high) {
         int middle = (low + high) / 2;
         int compare = opid - g_OpCodes[middle].m_OpId;
@@ -713,10 +712,10 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream)
             ClipPath.Transform(&form_matrix);
             form_bbox.Transform(&form_matrix);
         }
-        CPDF_StreamContentParser parser;
-        parser.Initialize();
-        parser.PrepareParse(m_pDocument, m_pPageResources, m_pResources, &m_mtContentToUser,
-                            m_pObjectList, pResources, &form_bbox, &m_Options, m_pCurStates, m_Level + 1);
+        CPDF_StreamContentParser parser(
+            m_pDocument, m_pPageResources, m_pResources, &m_mtContentToUser,
+            m_pObjectList, pResources, &form_bbox, &m_Options,
+            m_pCurStates.get(), m_Level + 1);
         parser.m_pCurStates->m_CTM = form_matrix;
         if (ClipPath.NotNull()) {
             parser.m_pCurStates->m_ClipPath.AppendPath(ClipPath, FXFILL_WINDING, TRUE);
