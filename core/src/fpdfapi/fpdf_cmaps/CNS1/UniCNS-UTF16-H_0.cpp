@@ -4,7 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-extern const unsigned short g_FXCMAP_UniCNS_UTF16_H_0[14557 * 2] = {
+#include "cmaps_cns1.h"
+
+const FX_WORD g_FXCMAP_UniCNS_UTF16_H_0[14557 * 2] = {
     0x0020, 0x0001, 0x0021, 0x0002, 0x0022, 0x0003, 0x0023, 0x0004,
     0x0024, 0x0005, 0x0025, 0x0006, 0x0026, 0x0007, 0x0027, 0x0008,
     0x0028, 0x0009, 0x0029, 0x000A, 0x002A, 0x000B, 0x002B, 0x000C,
@@ -3646,6 +3648,7 @@ extern const unsigned short g_FXCMAP_UniCNS_UTF16_H_0[14557 * 2] = {
     0xFFE1, 0x0107, 0xFFE2, 0x36E1, 0xFFE3, 0x00C4, 0xFFE4, 0x36E2,
     0xFFE5, 0x0104,
 };
-extern const unsigned short g_FXCMAP_UniCNS_UTF16_H_0_DWord[3 * 3] = {
+
+const FX_WORD g_FXCMAP_UniCNS_UTF16_H_0_DWord[3 * 3] = {
     0xD840, 0xDC8A, 0x36B2, 0xD840, 0xDCCC, 0x36B0, 0xD85D, 0xDE07, 0x36B8,
 };

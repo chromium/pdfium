@@ -6,22 +6,11 @@
 
 #include "../../../../include/fpdfapi/fpdf_resource.h"
 #include "../../../../include/fpdfapi/fpdf_module.h"
+#include "../../../../include/fxcrt/fx_basic.h"  // For FX_ArraySize().
 #include "../../fpdf_font/font_int.h"
 #include "../cmap_int.h"
-extern const FX_WORD g_FXCMAP_GB_EUC_H_0[];
-extern const FX_WORD g_FXCMAP_GB_EUC_V_0[];
-extern const FX_WORD g_FXCMAP_GBpc_EUC_H_0[];
-extern const FX_WORD g_FXCMAP_GBpc_EUC_V_0[];
-extern const FX_WORD g_FXCMAP_GBK_EUC_H_2[];
-extern const FX_WORD g_FXCMAP_GBK_EUC_V_2[];
-extern const FX_WORD g_FXCMAP_GBKp_EUC_H_2[];
-extern const FX_WORD g_FXCMAP_GBKp_EUC_V_2[];
-extern const FX_WORD g_FXCMAP_GBK2K_H_5[];
-extern const FX_WORD g_FXCMAP_GBK2K_H_5_DWord[];
-extern const FX_WORD g_FXCMAP_GBK2K_V_5[];
-extern const FX_WORD g_FXCMAP_UniGB_UCS2_H_4[];
-extern const FX_WORD g_FXCMAP_UniGB_UCS2_V_4[];
-extern const FX_WORD g_FXCMAP_GB1CID2Unicode_5[];
+#include "cmaps_gb1.h"
+
 static const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
     { "GB-EUC-H", FXCMAP_CMap::Range, g_FXCMAP_GB_EUC_H_0, 90, FXCMAP_CMap::None, NULL, 0, 0 },
     { "GB-EUC-V", FXCMAP_CMap::Range, g_FXCMAP_GB_EUC_V_0, 20, FXCMAP_CMap::None, NULL, 0, -1 },
@@ -38,11 +27,12 @@ static const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
     { "UniGB-UTF16-H", FXCMAP_CMap::Range, g_FXCMAP_UniGB_UCS2_H_4, 13825, FXCMAP_CMap::None, NULL, 0, 0 },
     { "UniGB-UTF16-V", FXCMAP_CMap::Range, g_FXCMAP_UniGB_UCS2_V_4, 24, FXCMAP_CMap::None, NULL, 0, -1 },
 };
+
 void CPDF_ModuleMgr::LoadEmbeddedGB1CMaps()
 {
     CPDF_FontGlobals* pFontGlobals = CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
     pFontGlobals->m_EmbeddedCharsets[CIDSET_GB1].m_pMapList = g_FXCMAP_GB1_cmaps;
-    pFontGlobals->m_EmbeddedCharsets[CIDSET_GB1].m_Count = sizeof g_FXCMAP_GB1_cmaps / sizeof (FXCMAP_CMap);
+    pFontGlobals->m_EmbeddedCharsets[CIDSET_GB1].m_Count = FX_ArraySize(g_FXCMAP_GB1_cmaps);
     pFontGlobals->m_EmbeddedToUnicodes[CIDSET_GB1].m_pMap = g_FXCMAP_GB1CID2Unicode_5;
     pFontGlobals->m_EmbeddedToUnicodes[CIDSET_GB1].m_Count = 30284;
 }

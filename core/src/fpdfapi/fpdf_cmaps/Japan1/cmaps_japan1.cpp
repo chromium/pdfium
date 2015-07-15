@@ -6,30 +6,11 @@
 
 #include "../../../../include/fpdfapi/fpdf_resource.h"
 #include "../../../../include/fpdfapi/fpdf_module.h"
+#include "../../../../include/fxcrt/fx_basic.h"  // For FX_ArraySize().
 #include "../../fpdf_font/font_int.h"
 #include "../cmap_int.h"
-extern const FX_WORD g_FXCMAP_83pv_RKSJ_H_1[];
-extern const FX_WORD g_FXCMAP_90ms_RKSJ_H_2[];
-extern const FX_WORD g_FXCMAP_90ms_RKSJ_V_2[];
-extern const FX_WORD g_FXCMAP_90msp_RKSJ_H_2[];
-extern const FX_WORD g_FXCMAP_90msp_RKSJ_V_2[];
-extern const FX_WORD g_FXCMAP_90pv_RKSJ_H_1[];
-extern const FX_WORD g_FXCMAP_Add_RKSJ_H_1[];
-extern const FX_WORD g_FXCMAP_Add_RKSJ_V_1[];
-extern const FX_WORD g_FXCMAP_EUC_H_1[];
-extern const FX_WORD g_FXCMAP_EUC_V_1[];
-extern const FX_WORD g_FXCMAP_Ext_RKSJ_H_2[];
-extern const FX_WORD g_FXCMAP_Ext_RKSJ_V_2[];
-extern const FX_WORD g_FXCMAP_H_1[];
-extern const FX_WORD g_FXCMAP_V_1[];
-extern const FX_WORD g_FXCMAP_UniJIS_UCS2_H_4[];
-extern const FX_WORD g_FXCMAP_UniJIS_UCS2_V_4[];
-extern const FX_WORD g_FXCMAP_UniJIS_UCS2_HW_H_4[];
-extern const FX_WORD g_FXCMAP_UniJIS_UCS2_HW_V_4[];
-extern const FX_WORD g_FXCMAP_UniJIS_UTF16_H_0[];
-extern const FX_WORD g_FXCMAP_UniJIS_UTF16_H_0_DWord[];
-extern const FX_WORD g_FXCMAP_UniJIS_UTF16_V_0[];
-extern const FX_WORD g_FXCMAP_Japan1CID2Unicode_4[];
+#include "cmaps_japan1.h"
+
 static const FXCMAP_CMap g_FXCMAP_Japan1_cmaps[] = {
     { "83pv-RKSJ-H", FXCMAP_CMap::Range, g_FXCMAP_83pv_RKSJ_H_1, 222, FXCMAP_CMap::None, NULL, 0, 0 },
     { "90ms-RKSJ-H", FXCMAP_CMap::Range, g_FXCMAP_90ms_RKSJ_H_2, 171, FXCMAP_CMap::None, NULL, 0, 0 },
@@ -52,11 +33,12 @@ static const FXCMAP_CMap g_FXCMAP_Japan1_cmaps[] = {
     { "UniJIS-UTF16-H", FXCMAP_CMap::Single, g_FXCMAP_UniJIS_UCS2_H_4, 9772, FXCMAP_CMap::None, NULL, 0, 0 },
     { "UniJIS-UTF16-V", FXCMAP_CMap::Single, g_FXCMAP_UniJIS_UCS2_V_4, 251, FXCMAP_CMap::None, NULL, 0, -1 },
 };
+
 void CPDF_ModuleMgr::LoadEmbeddedJapan1CMaps()
 {
     CPDF_FontGlobals* pFontGlobals = CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
     pFontGlobals->m_EmbeddedCharsets[CIDSET_JAPAN1].m_pMapList = g_FXCMAP_Japan1_cmaps;
-    pFontGlobals->m_EmbeddedCharsets[CIDSET_JAPAN1].m_Count = sizeof g_FXCMAP_Japan1_cmaps / sizeof (FXCMAP_CMap);
+    pFontGlobals->m_EmbeddedCharsets[CIDSET_JAPAN1].m_Count = FX_ArraySize(g_FXCMAP_Japan1_cmaps);
     pFontGlobals->m_EmbeddedToUnicodes[CIDSET_JAPAN1].m_pMap = g_FXCMAP_Japan1CID2Unicode_4;
     pFontGlobals->m_EmbeddedToUnicodes[CIDSET_JAPAN1].m_Count = 15444;
 }
