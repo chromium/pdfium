@@ -616,6 +616,8 @@ int main(int argc, const char* argv[]) {
     if (!file_contents)
       continue;
     RenderPdf(filename, file_contents, file_length, options);
+    while (v8::platform::PumpMessageLoop(platform, v8::Isolate::GetCurrent()))
+      continue;
     free(file_contents);
   }
 
