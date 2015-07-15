@@ -173,8 +173,6 @@ void EmbedderTest::TearDown() {
     FPDF_CloseDocument(document_);
     FPDFDOC_ExitFormFillEnvironment(form_handle_);
   }
-  while (v8::platform::PumpMessageLoop(platform_, v8::Isolate::GetCurrent()))
-    continue;
   FPDFAvail_Destroy(avail_);
   FPDF_DestroyLibrary();
   v8::V8::ShutdownPlatform();
