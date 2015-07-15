@@ -110,13 +110,19 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment * pApp) :
 	m_pDocument(NULL),
 	m_bBlocking(FALSE),
 	m_bRegistered(FALSE),
-	m_pFieldEventPath(NULL)
+	m_pFieldEventPath(NULL),
+        m_isolate(NULL)
 {
-	m_pArrayBufferAllocator.reset(new CJS_ArrayBufferAllocator());
+	if (m_pApp->GetFormFillInfo()->m_pJsPlatform->version >= 2) {
+		m_isolate = m_pApp->GetFormFillInfo()->m_pJsPlatform->m_isolate;
+	}
+	if (!m_isolate) {
+		m_pArrayBufferAllocator.reset(new CJS_ArrayBufferAllocator());
 
-	v8::Isolate::CreateParams params;
-	params.array_buffer_allocator = m_pArrayBufferAllocator.get();
-	m_isolate = v8::Isolate::New(params);
+		v8::Isolate::CreateParams params;
+		params.array_buffer_allocator = m_pArrayBufferAllocator.get();
+		m_isolate = v8::Isolate::New(params);
+        }
 
 	InitJSObjects();
 

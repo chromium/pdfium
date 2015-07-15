@@ -18,10 +18,12 @@ extern "C" {
 
 typedef struct _IPDF_JsPlatform
 {
-/**
-* Version number of the interface. Currently must be 1.
+    /**
+    * Version number of the interface. Currently must be 2.
     **/
     int version;
+
+    /* Version 1. */
 
     /**
     * Method: app_alert
@@ -222,6 +224,13 @@ typedef struct _IPDF_JsPlatform
     *   pointer to FPDF_FORMFILLINFO interface.
     **/
     void*   m_pFormfillinfo;
+
+    /* Version 2. */
+
+    /**
+    *   pointer to the v8::Isolate to use, or NULL to force PDFium to create one.
+    **/
+    void*   m_isolate;
 } IPDF_JSPLATFORM;
 
 // Flags for Cursor type
