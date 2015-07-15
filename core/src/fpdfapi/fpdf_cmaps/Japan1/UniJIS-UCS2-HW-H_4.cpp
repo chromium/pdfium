@@ -4,7 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-extern const unsigned short g_FXCMAP_UniJIS_UCS2_HW_H_4[4 * 3] = {
+#include "cmaps_japan1.h"
+
+const FX_WORD g_FXCMAP_UniJIS_UCS2_HW_H_4[4 * 3] = {
     0x0020, 0x005B, 0x00E7, 0x005C, 0x005C, 0x220F, 0x005D, 0x007E, 0x0124,
     0x00A5, 0x00A5, 0x0123,
 };
