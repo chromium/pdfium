@@ -73,7 +73,7 @@ def main():
                failures.append(input_path)
 
   if surprises:
-    surprise.sort()
+    surprises.sort()
     print '\n\nUnexpected Successes:'
     for surprise in surprises:
       print surprise;
