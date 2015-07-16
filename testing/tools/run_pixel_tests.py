@@ -70,6 +70,7 @@ def main():
           failures.append(input_path)
 
   if failures:
+    failures.sort()
     print '\n\nSummary of Failures:'
     for failure in failures:
       print failure
