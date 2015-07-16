@@ -170,6 +170,10 @@ void EmbedderTest::SetUp() {
 void EmbedderTest::TearDown() {
   if (document_) {
     FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
+
+    // Note: The shut down order here is the reverse of the non-XFA branch
+    // order. Need to work out if this is required, and if it is, the lifetimes
+    // of objects owned by |doc| that |form| reference.
     FPDF_CloseDocument(document_);
     FPDFDOC_ExitFormFillEnvironment(form_handle_);
   }
