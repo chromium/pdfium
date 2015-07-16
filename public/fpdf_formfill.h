@@ -231,6 +231,13 @@ typedef struct _IPDF_JsPlatform
     *   pointer to the v8::Isolate to use, or NULL to force PDFium to create one.
     **/
     void*   m_isolate;
+
+    /**
+     *   The embedder data slot to use in the v8::Isolate to store PDFium's
+     *   per-isolate data. The value needs to be between 0 and
+     *   v8::Internals::kNumIsolateDataLots (exclusive).
+     */
+    unsigned int m_v8EmbedderSlot;
 } IPDF_JSPLATFORM;
 
 // Flags for Cursor type

@@ -35,7 +35,11 @@ IFXJS_Runtime*					CJS_RuntimeFactory::NewJSRuntime(CPDFDoc_Environment* pApp)
 {
 	if (!m_bInit)
 	{
-		JS_Initial();
+		unsigned int embedderDataSlot = 0;
+		if (pApp->GetFormFillInfo()->m_pJsPlatform->version >= 2) {
+			embedderDataSlot = pApp->GetFormFillInfo()->m_pJsPlatform->m_v8EmbedderSlot;
+                }
+		JS_Initial(embedderDataSlot);
 		m_bInit = TRUE;
 	}
 	return new CJS_Runtime(pApp);
