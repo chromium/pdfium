@@ -170,8 +170,8 @@ void EmbedderTest::SetUp() {
 void EmbedderTest::TearDown() {
   if (document_) {
     FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
-    FPDF_CloseDocument(document_);
     FPDFDOC_ExitFormFillEnvironment(form_handle_);
+    FPDF_CloseDocument(document_);
   }
   FPDFAvail_Destroy(avail_);
   FPDF_DestroyLibrary();
