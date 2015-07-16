@@ -81,20 +81,15 @@ void CFFL_IFormFiller::OnDraw(CPDFSDK_PageView* pPageView, /*HDC hDC,*/ CPDFSDK_
  			if (pFormFiller->IsValid())
  			{
 				pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device, dwFlags);
-
 				pAnnot->GetPDFPage();
 
-
-				CPDFSDK_Document* pDocument = m_pApp->GetCurrentDoc();
-				ASSERT(pDocument != NULL);
-
+				CPDFSDK_Document* pDocument = m_pApp->GetSDKDocument();
 				if (pDocument->GetFocusAnnot() == pAnnot)
 				{
 					CPDF_Rect rcFocus = pFormFiller->GetFocusBox(pPageView);
 					if (!rcFocus.IsEmpty())
 					{
 						CFX_PathData path;
-
 						path.SetPointCount(5);
 						path.SetPoint(0, rcFocus.left,  rcFocus.top, FXPT_MOVETO);
 						path.SetPoint(1, rcFocus.left,  rcFocus.bottom, FXPT_LINETO);
@@ -106,14 +101,10 @@ void CFFL_IFormFiller::OnDraw(CPDFSDK_PageView* pPageView, /*HDC hDC,*/ CPDFSDK_
 						gsd.SetDashCount(1);
 						gsd.m_DashArray[0] = 1.0f;
 						gsd.m_DashPhase = 0;
-
 						gsd.m_LineWidth = 1.0f;
 						pDevice->DrawPath(&path, pUser2Device, &gsd, 0, ArgbEncode(255,0,0,0), FXFILL_ALTERNATE);
-
-					//	::DrawFocusRect(hDC, &rcFocus);
 					}
 				}
-
 				return;
 			}
 		}
@@ -124,10 +115,7 @@ void CFFL_IFormFiller::OnDraw(CPDFSDK_PageView* pPageView, /*HDC hDC,*/ CPDFSDK_
 			pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, NULL);
 
 		if (!IsReadOnly(pWidget) && IsFillingAllowed(pWidget))
-		{
 			pWidget->DrawShadow(pDevice, pPageView);
-		}
-
 	}
 }
 
@@ -292,14 +280,9 @@ FX_BOOL	CFFL_IFormFiller::OnLButtonDown(CPDFSDK_PageView* pPageView, CPDFSDK_Ann
 
 FX_BOOL	CFFL_IFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point)
 {
-	ASSERT(pAnnot != NULL);
 	ASSERT(pAnnot->GetPDFAnnot()->GetSubType() == "Widget");
-
 	CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
-	// 	CReader_Page* pPage = pAnnot->GetPage();
-	// 	ASSERT(pPage != NULL);
-	CPDFSDK_Document* pDocument = m_pApp->GetCurrentDoc();
-	ASSERT(pDocument != NULL);
+	CPDFSDK_Document* pDocument = m_pApp->GetSDKDocument();
 
 	switch (pWidget->GetFieldType())
 	{
@@ -307,9 +290,7 @@ FX_BOOL	CFFL_IFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView, CPDFSDK_Annot
 	case FIELDTYPE_CHECKBOX:
 	case FIELDTYPE_RADIOBUTTON:
 		if (GetViewBBox(pPageView, pAnnot).Contains((int)point.x, (int)point.y))
-		{
 			pDocument->SetFocusAnnot(pAnnot);
-		}
 		break;
 	default:
 		pDocument->SetFocusAnnot(pAnnot);

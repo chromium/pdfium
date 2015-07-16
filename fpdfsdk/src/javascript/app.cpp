@@ -119,10 +119,10 @@ END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_App,app)
 
-app::app(CJS_Object * pJSObject) : CJS_EmbedObj(pJSObject) ,
-	m_bCalculate(true),
-	m_bRuntimeHighLight(false)
-//	m_pMenuHead(NULL)
+app::app(CJS_Object * pJSObject)
+   : CJS_EmbedObj(pJSObject),
+     m_bCalculate(true),
+     m_bRuntimeHighLight(false)
 {
 }
 
@@ -136,60 +136,37 @@ app::~app(void)
 
 FX_BOOL app::activeDocs(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (vp.IsGetting())
-	{
+    if (!vp.IsGetting())
+        return FALSE;
 
-		CJS_Context* pContext = (CJS_Context *)cc;
-		ASSERT(pContext != NULL);
+    CJS_Context* pContext = (CJS_Context *)cc;
+    CPDFDoc_Environment* pApp = pContext->GetReaderApp();
+    CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+    CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
+    CJS_Array aDocs(pRuntime->GetIsolate());
+    if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
+    {
+        CJS_Document* pJSDocument = NULL;
+        if (pDoc == pCurDoc)
+        {
+            JSFXObject pObj = JS_GetThisObj(*pRuntime);
+            if (JS_GetObjDefnID(pObj) == JS_GetObjDefnID(*pRuntime, L"Document"))
+                pJSDocument = (CJS_Document*)JS_GetPrivate(pRuntime->GetIsolate(),pObj);
+        }
+        else
+        {
+            JSFXObject pObj = JS_NewFxDynamicObj(*pRuntime, pContext, JS_GetObjDefnID(*pRuntime,L"Document"));
+            pJSDocument = (CJS_Document*)JS_GetPrivate(pRuntime->GetIsolate(),pObj);
+            ASSERT(pJSDocument != NULL);
+        }
+        aDocs.SetElement(0,CJS_Value(pRuntime->GetIsolate(),pJSDocument));
+    }
+    if (aDocs.GetLength() > 0)
+        vp << aDocs;
+    else
+        vp.SetNull();
 
-		CPDFDoc_Environment* pApp = pContext->GetReaderApp();
-		ASSERT(pApp != NULL);
-
-		CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-		ASSERT(pRuntime != NULL);
-
-		CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
-
-		CJS_Array aDocs(pRuntime->GetIsolate());
-//		int iNumDocs = pApp->CountDocuments();
-
-// 		for(int iIndex = 0; iIndex<iNumDocs; iIndex++)
-// 		{
-			CPDFSDK_Document* pDoc = pApp->GetCurrentDoc();
-			if (pDoc)
-			{
-				CJS_Document * pJSDocument = NULL;
-
-				if (pDoc == pCurDoc)
-				{
-					JSFXObject pObj = JS_GetThisObj(*pRuntime);
-
-					if (JS_GetObjDefnID(pObj) == JS_GetObjDefnID(*pRuntime, L"Document"))
-					{
-						pJSDocument = (CJS_Document*)JS_GetPrivate(pRuntime->GetIsolate(),pObj);
-					}
-				}
-				else
-				{
-					JSFXObject pObj = JS_NewFxDynamicObj(*pRuntime, pContext, JS_GetObjDefnID(*pRuntime,L"Document"));
-					pJSDocument = (CJS_Document*)JS_GetPrivate(pRuntime->GetIsolate(),pObj);
-					ASSERT(pJSDocument != NULL);
-
-
-					//			pDocument->AttachDoc(pDoc);
-				}
-
-				aDocs.SetElement(0,CJS_Value(pRuntime->GetIsolate(),pJSDocument));
-			}
-	//		}
-
-		if (aDocs.GetLength() > 0)
-			vp << aDocs;
-		else
-			vp.SetNull();
-		return TRUE;
-	}
-	return FALSE;
+    return TRUE;
 }
 
 FX_BOOL app::calculate(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
@@ -201,27 +178,16 @@ FX_BOOL app::calculate(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sEr
 		m_bCalculate = (FX_BOOL)bVP;
 
 		CJS_Context* pContext = (CJS_Context*)cc;
-		ASSERT(pContext != NULL);
-
 		CPDFDoc_Environment* pApp = pContext->GetReaderApp();
-		ASSERT(pApp != NULL);
-
 		CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-		ASSERT(pRuntime != NULL);
-
 		CJS_Array aDocs(pRuntime->GetIsolate());
-		if (CPDFSDK_Document* pDoc = pApp->GetCurrentDoc())
-		{
-			CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDoc->GetInterForm();
-			ASSERT(pInterForm != NULL);
-			pInterForm->EnableCalculate((FX_BOOL)m_bCalculate);
-		}
+		if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
+			pDoc->GetInterForm()->EnableCalculate((FX_BOOL)m_bCalculate);
 	}
 	else
 	{
 		vp << (bool)m_bCalculate;
 	}
-
 	return TRUE;
 }
 
