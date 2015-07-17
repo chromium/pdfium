@@ -410,9 +410,7 @@ void CFX_GEModule::InitPlatform()
 }
 void CFX_GEModule::DestroyPlatform()
 {
-    if (m_pPlatformData) {
-        delete (CWin32Platform*)m_pPlatformData;
-    }
+    delete (CWin32Platform*)m_pPlatformData;
     m_pPlatformData = NULL;
 }
 CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class)

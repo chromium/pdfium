@@ -26,11 +26,7 @@ DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page)
 }
 DLLEXPORT void STDCALL FPDFText_ClosePage(FPDF_TEXTPAGE text_page)
 {
-	if (text_page){
-		IPDF_TextPage* textpage=(IPDF_TextPage*)text_page;
-		delete textpage;
-		text_page=NULL;
-	}
+    delete (IPDF_TextPage*)text_page;
 }
 DLLEXPORT int STDCALL FPDFText_CountChars(FPDF_TEXTPAGE text_page)
 {
@@ -246,9 +242,6 @@ DLLEXPORT void STDCALL FPDFLink_GetRect(FPDF_PAGELINK link_page,int link_index, 
 }
 DLLEXPORT void	STDCALL	FPDFLink_CloseWebLinks(FPDF_PAGELINK link_page)
 {
-	if (!link_page) return;
-	IPDF_LinkExtract* pageLink=(IPDF_LinkExtract*)link_page;
-	delete pageLink;
-	pageLink =NULL;
+    delete (IPDF_LinkExtract*)link_page;
 }
 

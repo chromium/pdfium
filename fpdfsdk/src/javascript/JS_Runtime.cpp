@@ -65,8 +65,7 @@ void							CJS_RuntimeFactory::Release()
 
 void							CJS_RuntimeFactory::DeleteJSRuntime(IFXJS_Runtime* pRuntime)
 {
-	if(pRuntime)
-		delete (CJS_Runtime*)pRuntime;
+    delete (CJS_Runtime*)pRuntime;
 }
 
 CJS_GlobalData*	CJS_RuntimeFactory::NewGlobalData(CPDFDoc_Environment* pApp)

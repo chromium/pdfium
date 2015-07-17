@@ -211,8 +211,7 @@ DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left, float bottom, fl
 
 DLLEXPORT void STDCALL FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath)
 {
-	if(clipPath)
-		delete (CPDF_ClipPath*)clipPath;
+    delete (CPDF_ClipPath*)clipPath;
 }
 
 void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path)

@@ -24,11 +24,7 @@ CJS_Context::CJS_Context(CJS_Runtime* pRuntime) :
 
 CJS_Context::~CJS_Context(void)
 {
-	if (m_pEventHandler)
-	{
-		delete m_pEventHandler;
-		m_pEventHandler = NULL;
-	}
+    delete m_pEventHandler;
 }
 
 CPDFSDK_Document* CJS_Context::GetReaderDocument()

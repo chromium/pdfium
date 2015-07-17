@@ -262,9 +262,7 @@ FX_BOOL	CDWriteExt::DwRendingString(void* renderTarget, CFX_ClipRgn* pClipRgn, F
 }
 void CDWriteExt::DwDeleteRenderingTarget(void* renderTarget)
 {
-    if (renderTarget) {
-        delete (CDwGdiTextRenderer*)renderTarget;
-    }
+    delete (CDwGdiTextRenderer*)renderTarget;
 }
 void CDWriteExt::DwDeleteFont(void* pFont)
 {

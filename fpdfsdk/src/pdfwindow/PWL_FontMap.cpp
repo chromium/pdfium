@@ -21,13 +21,10 @@ CPWL_FontMap::CPWL_FontMap(IFX_SystemHandler* pSystemHandler) :
 
 CPWL_FontMap::~CPWL_FontMap()
 {
-	if (m_pPDFDoc)
-	{
-		delete m_pPDFDoc;
-		m_pPDFDoc = NULL;
-	}
+    delete m_pPDFDoc;
+    m_pPDFDoc = NULL;
 
-	Empty();
+    Empty();
 }
 
 void CPWL_FontMap::SetSystemHandler(IFX_SystemHandler* pSystemHandler)
