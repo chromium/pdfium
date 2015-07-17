@@ -207,9 +207,7 @@ CFX_AggDeviceDriver::~CFX_AggDeviceDriver()
 {
     delete m_pClipRgn;
     for (int i = 0; i < m_StateStack.GetSize(); i ++)
-        if (m_StateStack[i]) {
-            delete (CFX_ClipRgn*)m_StateStack[i];
-        }
+        delete (CFX_ClipRgn*)m_StateStack[i];
     DestroyPlatform();
 }
 #if _FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_

@@ -26,11 +26,7 @@ CFFL_ListBox::CFFL_ListBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget) :
 
 CFFL_ListBox::~CFFL_ListBox()
 {
-	if (m_pFontMap)
-	{
-		delete m_pFontMap;
-		m_pFontMap = NULL;
-	}
+    delete m_pFontMap;
 }
 
 PWL_CREATEPARAM	CFFL_ListBox::GetCreateParam()

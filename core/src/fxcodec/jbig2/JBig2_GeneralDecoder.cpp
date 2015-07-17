@@ -3027,9 +3027,7 @@ CJBig2_SymbolDict *CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream *pStream,
     return pDict;
 failed:
     for(I = 0; I < NSYMSDECODED; I++) {
-        if (SDNEWSYMS[I]) {
-            delete SDNEWSYMS[I];
-        }
+        delete SDNEWSYMS[I];
     }
     m_pModule->JBig2_Free(SDNEWSYMS);
     if(SDREFAGG == 0) {
@@ -3094,15 +3092,11 @@ CJBig2_Image *CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder *pArithDecoder,
         }
     }
     m_pModule->JBig2_Free(GI);
-    if(HSKIP) {
-        delete HSKIP;
-    }
+    delete HSKIP;
     delete pGID;
     return HTREG;
 failed:
-    if(HSKIP) {
-        delete HSKIP;
-    }
+    delete HSKIP;
     delete pGID;
     delete HTREG;
     return NULL;

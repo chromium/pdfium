@@ -103,9 +103,7 @@ void CFX_GEModule::InitPlatform()
 }
 void CFX_GEModule::DestroyPlatform()
 {
-    if (m_pPlatformData) {
-        delete (CApplePlatform *) m_pPlatformData;
-    }
+    delete (CApplePlatform *)m_pPlatformData;
     m_pPlatformData = NULL;
 }
 #endif

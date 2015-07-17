@@ -23,11 +23,7 @@ CFFL_ComboBox::CFFL_ComboBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot) :
 
 CFFL_ComboBox::~CFFL_ComboBox()
 {
-	if (m_pFontMap)
-	{
-		delete m_pFontMap;
-		m_pFontMap = NULL;
-	}
+    delete m_pFontMap;
 }
 
 PWL_CREATEPARAM CFFL_ComboBox::GetCreateParam()

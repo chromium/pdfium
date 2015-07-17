@@ -202,9 +202,7 @@ CPDF_RenderStatus::CPDF_RenderStatus()
 
 CPDF_RenderStatus::~CPDF_RenderStatus()
 {
-    if (m_pObjectRenderer) {
-        delete m_pObjectRenderer;
-    }
+    delete m_pObjectRenderer;
 }
 
 FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext, CFX_RenderDevice* pDevice,
@@ -665,9 +663,7 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath, const CFX_Affine
             ProcessText(pText, pObj2Device, pTextClippingPath);
         }
     }
-    if (pTextClippingPath) {
-        delete pTextClippingPath;
-    }
+    delete pTextClippingPath;
 }
 void CPDF_RenderStatus::DrawClipPath(CPDF_ClipPath ClipPath, const CFX_AffineMatrix* pObj2Device)
 {
@@ -859,9 +855,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj, 
         Transparency |= PDFTRANS_GROUP;
     }
     CompositeDIBitmap(bitmap, rect.left, rect.top, 0, 255, blend_type, Transparency);
-    if (oriDevice) {
-        delete oriDevice;
-    }
+    delete oriDevice;
     return TRUE;
 }
 CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj, const FX_RECT& rect, int& left, int& top,
@@ -1271,9 +1265,7 @@ CPDF_DeviceBuffer::CPDF_DeviceBuffer()
 }
 CPDF_DeviceBuffer::~CPDF_DeviceBuffer()
 {
-    if (m_pBitmap) {
-        delete m_pBitmap;
-    }
+    delete m_pBitmap;
 }
 FX_BOOL CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext, CFX_RenderDevice* pDevice, FX_RECT* pRect,
                                       const CPDF_PageObject* pObj, int max_dpi)
@@ -1330,9 +1322,7 @@ CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer()
 }
 CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer()
 {
-    if (m_pBitmapDevice) {
-        delete m_pBitmapDevice;
-    }
+    delete m_pBitmapDevice;
 }
 #define _FPDFAPI_IMAGESIZE_LIMIT_	(30 * 1024 * 1024)
 FX_BOOL CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext, CFX_RenderDevice* pDevice, FX_RECT* pRect,

@@ -19,12 +19,7 @@ CFFL_TextField::CFFL_TextField(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot)
 
 CFFL_TextField::~CFFL_TextField()
 {
-	if (m_pFontMap)
-	{
-		delete m_pFontMap;
-		m_pFontMap = NULL;
-	}
-
+    delete m_pFontMap;
 }
 
 PWL_CREATEPARAM CFFL_TextField::GetCreateParam()

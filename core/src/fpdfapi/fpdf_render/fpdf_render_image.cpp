@@ -297,21 +297,13 @@ CPDF_ImageRenderer::CPDF_ImageRenderer()
 }
 CPDF_ImageRenderer::~CPDF_ImageRenderer()
 {
-    if (m_pQuickStretcher) {
-        delete m_pQuickStretcher;
-    }
-    if (m_pTransformer) {
-        delete m_pTransformer;
-    }
+    delete m_pQuickStretcher;
+    delete m_pTransformer;
     if (m_DeviceHandle) {
         m_pRenderStatus->m_pDevice->CancelDIBits(m_DeviceHandle);
     }
-    if (m_LoadHandle) {
-        delete (CPDF_ProgressiveImageLoaderHandle*)m_LoadHandle;
-    }
-    if (m_pClone) {
-        delete m_pClone;
-    }
+    delete (CPDF_ProgressiveImageLoaderHandle*)m_LoadHandle;
+    delete m_pClone;
 }
 FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource()
 {
@@ -813,15 +805,11 @@ CPDF_QuickStretcher::CPDF_QuickStretcher()
 }
 CPDF_QuickStretcher::~CPDF_QuickStretcher()
 {
-    if (m_pBitmap) {
-        delete m_pBitmap;
-    }
+    delete m_pBitmap;
     if (m_pCS) {
         m_pCS->ReleaseCS();
     }
-    if (m_pDecoder) {
-        delete m_pDecoder;
-    }
+    delete m_pDecoder;
 }
 ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
         int nComps, int bpc, const CPDF_Dictionary* pParams);
@@ -1085,9 +1073,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
     } else {
         FXSYS_memcpy(dest_buf, src_buf, dest_pitch * height);
     }
-    if (pFunc) {
-        delete pFunc;
-    }
+    delete pFunc;
     FX_Free(pTransfer);
     return pMask;
 }
