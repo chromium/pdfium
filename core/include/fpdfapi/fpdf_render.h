@@ -7,22 +7,26 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
+#include "../../../public/fpdf_progressive.h"
 #include "../fxge/fx_ge.h"
 #include "fpdf_page.h"
 
+class CFX_GraphStateData;
+class CFX_PathData;
+class CFX_RenderDevice;
+class CPDF_FormObject;
+class CPDF_ImageCache;
+class CPDF_ImageObject;
+class CPDF_PathObject;
+class CPDF_QuickStretcher;
 class CPDF_RenderContext;
 class CPDF_RenderOptions;
-class CPDF_ImageCache;
-class IPDF_OCContext;
-class CPDF_QuickStretcher;
-class CFX_PathData;
-class CFX_GraphStateData;
-class CFX_RenderDevice;
-class CPDF_TextObject;
-class CPDF_PathObject;
-class CPDF_ImageObject;
+class CPDF_RenderStatus;
 class CPDF_ShadingObject;
-class CPDF_FormObject;
+class CPDF_TextObject;
+class IFX_Pause;
+
 class IPDF_OCContext
 {
 public:
@@ -129,63 +133,44 @@ protected:
     friend class CPDF_RenderStatus;
     friend class CPDF_ProgressiveRenderer;
 };
+
 class CPDF_ProgressiveRenderer
 {
 public:
+    // Must match FDF_RENDER_* definitions in fpdf_progressive.h.
+    enum Status {
+        Ready = FPDF_RENDER_READER,
+        ToBeContinued = FPDF_RENDER_TOBECOUNTINUED,
+        Done = FPDF_RENDER_DONE,
+        Failed = FPDF_RENDER_FAILED
+    };
+    static int ToFPDFStatus(Status status) { return static_cast<int>(status); }
 
-    CPDF_ProgressiveRenderer();
-
+    CPDF_ProgressiveRenderer(CPDF_RenderContext* pContext,
+                             CFX_RenderDevice* pDevice,
+                             const CPDF_RenderOptions* pOptions);
     ~CPDF_ProgressiveRenderer();
 
-    typedef enum {
-        Ready,
-        ToBeContinued,
-        Done,
-        Failed
-    } RenderStatus;
+    Status GetStatus() const { return m_Status; }
+    void Start(IFX_Pause* pPause);
+    void Continue(IFX_Pause* pPause);
+    int EstimateProgress();
 
-    RenderStatus		GetStatus()
-    {
-        return m_Status;
-    }
+private:
+    void RenderStep();
 
-
-
-    void				Start(CPDF_RenderContext* pContext, CFX_RenderDevice* pDevice,
-                              const CPDF_RenderOptions* pOptions, class IFX_Pause* pPause, FX_BOOL bDropObjects = FALSE);
-
-    void				Continue(class IFX_Pause* pPause);
-
-
-    int					EstimateProgress();
-
-    void				Clear();
-protected:
-
-    RenderStatus		m_Status;
-
-    CPDF_RenderContext*	m_pContext;
-
-    CFX_RenderDevice*	m_pDevice;
-
-    const CPDF_RenderOptions*	m_pOptions;
-
-    FX_BOOL				m_bDropObjects;
-
-    class CPDF_RenderStatus*	m_pRenderer;
-
-    CFX_FloatRect		m_ClipRect;
-
-    FX_DWORD			m_LayerIndex;
-
-    FX_DWORD			m_ObjectIndex;
-
-    FX_POSITION			m_ObjectPos;
-
-    FX_POSITION			m_PrevLastPos;
-
-    void				RenderStep();
+    Status m_Status;
+    CPDF_RenderContext* const m_pContext;
+    CFX_RenderDevice* const m_pDevice;
+    const CPDF_RenderOptions* const m_pOptions;
+    nonstd::unique_ptr<CPDF_RenderStatus> m_pRenderStatus;
+    CFX_FloatRect m_ClipRect;
+    FX_DWORD m_LayerIndex;
+    FX_DWORD m_ObjectIndex;
+    FX_POSITION m_ObjectPos;
+    FX_POSITION m_PrevLastPos;
 };
+
 class CPDF_TextRenderer
 {
 public:
