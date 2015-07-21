@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
+#include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
-#include "font_int.h"
-#include "../fpdf_page/pageint.h"
+#include "../../../include/fpdfapi/fpdf_resource.h"
 #include "../../../include/fxge/fx_freetype.h"
+#include "../fpdf_page/pageint.h"
+#include "font_int.h"
 
 FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id)
 {
@@ -22,7 +23,6 @@ FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id)
     }
     return FALSE;
 }
-extern const FX_WORD* PDF_UnicodesForPredefinedCharSet(int);
 CPDF_FontGlobals::CPDF_FontGlobals()
     : m_pContrastRamps(NULL)
 {
@@ -816,7 +816,6 @@ FX_BOOL CPDF_Font::IsStandardFont() const
     }
     return TRUE;
 }
-extern const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode);
 CPDF_SimpleFont::CPDF_SimpleFont(int fonttype) : CPDF_Font(fonttype)
 {
     FXSYS_memset(m_CharBBox, 0xff, sizeof m_CharBBox);
@@ -1419,7 +1418,6 @@ FX_BOOL CPDF_TrueTypeFont::_Load()
 {
     return LoadCommon();
 }
-extern FX_DWORD FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode);
 void CPDF_TrueTypeFont::LoadGlyphMap()
 {
     if (m_Font.m_Face == NULL) {

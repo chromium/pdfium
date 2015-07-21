@@ -5,13 +5,16 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_page.h"
+#include "../../../include/fpdfapi/fpdf_resource.h"
 #include "../../../include/fxge/fx_freetype.h"
-extern FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR*);
-const struct _UnicodeAlt {
+
+// TODO(tsepez): These belong in headers, too.
+extern const FX_WORD PDFDocEncoding[256];
+
+static const struct _UnicodeAlt {
     FX_WORD	m_Unicode;
     const FX_CHAR* m_Alter;
-}
-UnicodeAlts[] = {
+} UnicodeAlts[] = {
     {0x00a0, " "}, {0x00a1, "!"}, {0x00a2, "c"}, {0x00a3, "P"}, {0x00a4, "o"},
     {0x00a5, "Y"}, {0x00a6, "|"}, {0x00a7, "S"}, {0x00a9, "(C)"}, {0x00aa, "a"},
     {0x00ab, "<<"}, {0x00ac, "-|"}, {0x00ae, "(R)"}, {0x00af, "-"},
@@ -57,7 +60,6 @@ UnicodeAlts[] = {
     {0x266f, "#"},
     {0XF6D9, "(C)"}, {0XF6DA, "(C)"}, {0XF6DB, "(TM)"},
     {0XF8E8, "(C)"}, {0xf8e9, "(C)"}, {0XF8EA, "(TM)"},
-
     {0xfb01, "fi"}, {0xfb02, "fl"}
 };
 const FX_CHAR* FCS_GetAltStr(FX_WCHAR unicode)
@@ -77,7 +79,7 @@ const FX_CHAR* FCS_GetAltStr(FX_WCHAR unicode)
     }
     return NULL;
 }
-const FX_WORD StandardEncoding[256] = {
+static const FX_WORD StandardEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -105,7 +107,7 @@ const FX_WORD StandardEncoding[256] = {
     0x0000, 0x00e6, 0x0000, 0x0000, 0x0000, 0x0131, 0x0000, 0x0000, 0x0142, 0x00f8,
     0x0153, 0x00df, 0x0000, 0x0000, 0x0000, 0x0000
 };
-const FX_WORD MacRomanEncoding[256] = {
+static const FX_WORD MacRomanEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -133,7 +135,7 @@ const FX_WORD MacRomanEncoding[256] = {
     0x0000, 0x00d2, 0x00da, 0x00db, 0x00d9, 0x0131, 0x02c6, 0x02dc, 0x00af, 0x02d8,
     0x02d9, 0x02da, 0x00b8, 0x02dd, 0x02db, 0x02c7
 };
-const FX_WORD AdobeWinAnsiEncoding[256] = {
+static const FX_WORD AdobeWinAnsiEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -167,8 +169,7 @@ const FX_WORD AdobeWinAnsiEncoding[256] = {
     0x00f0, 0x00f1, 0x00f2, 0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7,
     0x00f8, 0x00f9, 0x00fa, 0x00fb, 0x00fc, 0x00fd, 0x00fe, 0x00ff
 };
-extern const FX_WORD PDFDocEncoding[256];
-const FX_WORD MacExpertEncoding[256] = {
+static const FX_WORD MacExpertEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -196,7 +197,7 @@ const FX_WORD MacExpertEncoding[256] = {
     0x0000, 0xf6ee, 0xf6fb, 0xf6f4, 0xf7af, 0xf6ea, 0x207f, 0xf6ef, 0xf6e2, 0xf6e8,
     0xf6f7, 0xf6fc, 0x0000, 0x0000, 0x0000, 0x0000
 };
-const FX_WORD AdobeSymbolEncoding[256] = {
+static const FX_WORD AdobeSymbolEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -230,7 +231,7 @@ const FX_WORD AdobeSymbolEncoding[256] = {
     0x0000, 0x232A, 0x222B, 0x2320, 0xF8F5, 0x2321, 0xF8F6, 0xF8F7,
     0xF8F8, 0xF8F9, 0xF8FA, 0xF8FB, 0xF8FC, 0xF8FD, 0xF8FE, 0x0000,
 };
-const FX_WORD ZapfEncoding[256] = {
+static const FX_WORD ZapfEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -264,7 +265,7 @@ const FX_WORD ZapfEncoding[256] = {
     0x0000, 0x27B1, 0x27B2, 0x27B3, 0x27B4, 0x27B5, 0x27B6, 0x27B7,
     0x27B8, 0x27B9, 0x27BA, 0x27BB, 0x27BC, 0x27BD, 0x27BE, 0x0000,
 };
-const FX_CHAR* const StandardEncodingNames[224] = {
+static const FX_CHAR* const StandardEncodingNames[224] = {
     "space", "exclam", "quotedbl", "numbersign", "dollar", "percent", "ampersand", "quoteright",
     "parenleft", "parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash",
     "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -294,7 +295,7 @@ const FX_CHAR* const StandardEncodingNames[224] = {
     NULL, "ae", NULL, NULL, NULL, "dotlessi", NULL, NULL,
     "lslash", "oslash", "oe", "germandbls", NULL, NULL, NULL, NULL,
 };
-const FX_CHAR* const AdobeWinAnsiEncodingNames[224] = {
+static const FX_CHAR* const AdobeWinAnsiEncodingNames[224] = {
     "space", "exclam", "quotedbl", "numbersign", "dollar", "percent", "ampersand", "quotesingle",
     "parenleft", "parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash",
     "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -324,7 +325,7 @@ const FX_CHAR* const AdobeWinAnsiEncodingNames[224] = {
     "eth", "ntilde", "ograve", "oacute", "ocircumflex", "otilde", "odieresis", "divide",
     "oslash", "ugrave", "uacute", "ucircumflex", "udieresis", "yacute", "thorn", "ydieresis",
 };
-const FX_CHAR* const MacRomanEncodingNames[224] = {
+static const FX_CHAR* const MacRomanEncodingNames[224] = {
     "space", "exclam", "quotedbl", "numbersign", "dollar", "percent", "ampersand", "quotesingle",
     "parenleft", "parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash",
     "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -354,7 +355,7 @@ const FX_CHAR* const MacRomanEncodingNames[224] = {
     "apple", "Ograve", "Uacute", "Ucircumflex", "Ugrave", "dotlessi", "circumflex", "tilde",
     "macron", "breve", "dotaccent", "ring", "cedilla", "hungarumlaut", "ogonek", "caron",
 };
-const FX_CHAR* const MacExpertEncodingNames[224] = {
+static const FX_CHAR* const MacExpertEncodingNames[224] = {
     "space", "exclamsmall", "Hungarumlautsmall", "centoldstyle", "dollaroldstyle", "dollarsuperior", "ampersandsmall", "Acutesmall",
     "parenleftsuperior", "parenrightsuperior", "twodotenleader", "onedotenleader", "comma", "hyphen", "period", "fraction",
     "zerooldstyle", "oneoldstyle", "twooldstyle", "threeoldstyle", "fouroldstyle", "fiveoldstyle", "sixoldstyle", "sevenoldstyle",
@@ -384,7 +385,7 @@ const FX_CHAR* const MacExpertEncodingNames[224] = {
     NULL, "lsuperior", "Ogoneksmall", "Brevesmall", "Macronsmall", "bsuperior", "nsuperior", "msuperior",
     "commasuperior", "periodsuperior", "Dotaccentsmall", "Ringsmall", NULL, NULL, NULL, NULL,
 };
-const FX_CHAR* const PDFDocEncodingNames[232] = {
+static const FX_CHAR* const PDFDocEncodingNames[232] = {
     "breve", "caron", "circumflex", "dotaccent", "hungarumlaut", "ogonek", "ring", "tilde",
     "space", "exclam", "quotedbl", "numbersign", "dollar", "percent", "ampersand", "quotesingle",
     "parenleft", "parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash",
@@ -415,7 +416,7 @@ const FX_CHAR* const PDFDocEncodingNames[232] = {
     "eth", "ntilde", "ograve", "oacute", "ocircumflex", "otilde", "odieresis", "divide",
     "oslash", "ugrave", "uacute", "ucircumflex", "udieresis", "yacute", "thorn", "ydieresis",
 };
-const FX_CHAR* const AdobeSymbolEncodingNames[224] = {
+static const FX_CHAR* const AdobeSymbolEncodingNames[224] = {
     "space", "exclam", "universal", "numbersign", "existential", "percent", "ampersand", "suchthat",
     "parenleft", "parenright", "asteriskmath", "plus", "comma", "minus", "period", "slash",
     "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -445,7 +446,7 @@ const FX_CHAR* const AdobeSymbolEncodingNames[224] = {
     NULL, "angleright", "integral", "integraltp", "integralex", "integralbt", "parenrighttp", "parenrightex",
     "parenrightbt", "bracketrighttp", "bracketrightex", "bracketrightbt", "bracerighttp", "bracerightmid", "bracerightbt", NULL,
 };
-const FX_CHAR* const ZapfEncodingNames[224] = {
+static const FX_CHAR* const ZapfEncodingNames[224] = {
     "space", "a1", "a2", "a202", "a3", "a4", "a5", "a119",
     "a118", "a117", "a11", "a12", "a13", "a14", "a15", "a16",
     "a105", "a17", "a18", "a19", "a20", "a21", "a22", "a23",
@@ -532,7 +533,7 @@ static FX_DWORD PDF_FindCode(const FX_WORD* pCodes, FX_WORD unicode)
         }
     return 0;
 }
-const FX_WORD MSSymbolEncoding[256] = {
+static const FX_WORD MSSymbolEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
