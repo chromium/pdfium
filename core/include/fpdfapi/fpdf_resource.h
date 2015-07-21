@@ -38,6 +38,19 @@ class CPDF_Type1Font;
 class CPDF_Type3Font;
 typedef struct FT_FaceRec_* FXFT_Face;
 
+FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name);
+CFX_ByteString PDF_AdobeNameFromUnicode(FX_WCHAR unicode);
+const FX_CHAR* FCS_GetAltStr(FX_WCHAR unicode);
+const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding,
+                                                 uint8_t charcode);
+
+FX_WCHAR FT_UnicodeFromCharCode(int encoding, FX_DWORD charcode);
+FX_DWORD FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode);
+const FX_WORD* PDF_UnicodesForPredefinedCharSet(int encoding);
+const FX_CHAR* GetAdobeCharName(int iBaseEncoding,
+                                const CFX_ByteString* pCharNames,
+                                int charcode);
+
 template <class T> class CPDF_CountedObject
 {
 public:
@@ -61,7 +74,6 @@ protected:
 };
 using CPDF_CountedColorSpace = CPDF_CountedObject<CPDF_ColorSpace>;
 using CPDF_CountedPattern = CPDF_CountedObject<CPDF_Pattern>;
-
 #define PDFFONT_TYPE1			1
 #define PDFFONT_TRUETYPE		2
 #define PDFFONT_TYPE3			3
@@ -76,8 +88,6 @@ using CPDF_CountedPattern = CPDF_CountedObject<CPDF_Pattern>;
 #define PDFFONT_SMALLCAP		0x20000
 #define PDFFONT_FORCEBOLD		0x40000
 #define PDFFONT_USEEXTERNATTR	0x80000
-FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name);
-CFX_ByteString PDF_AdobeNameFromUnicode(FX_WCHAR unicode);
 class CPDF_Font
 {
 public:

@@ -6,14 +6,15 @@
 
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_page.h"
-#include "font_int.h"
-#include "../fpdf_cmaps/cmap_int.h"
-#include "../../../include/fxge/fx_ge.h"
+#include "../../../include/fpdfapi/fpdf_resource.h"
 #include "../../../include/fxge/fx_freetype.h"
-extern FX_DWORD FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode);
+#include "../../../include/fxge/fx_ge.h"
+#include "../fpdf_cmaps/cmap_int.h"
+#include "font_int.h"
+
 extern short TT2PDF(int m, FXFT_Face face);
 extern FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
-extern const FX_CHAR* GetAdobeCharName(int iBaseEncoding, const CFX_ByteString* pCharNames, int charcode);
+
 CPDF_CMapManager::CPDF_CMapManager()
 {
     m_bPrompted = FALSE;
