@@ -112,7 +112,8 @@ int32_t CPDF_Metadata::GetString(const CFX_ByteStringC& bsItem, CFX_WideString &
             }
             wsStr = pElmnt->GetContent(0);
             return wsStr.GetLength();
-        } else if (bsItem == FX_BSTRC("Author")) {
+        }
+        if (bsItem == FX_BSTRC("Author")) {
             CXML_Element *pElmnt = pTag->GetElement(NULL, bsTag);
             if (!pElmnt) {
                 continue;
@@ -127,14 +128,13 @@ int32_t CPDF_Metadata::GetString(const CFX_ByteStringC& bsItem, CFX_WideString &
             }
             wsStr = pElmnt->GetContent(0);
             return wsStr.GetLength();
-        } else {
-            CXML_Element *pElmnt = pTag->GetElement(NULL, bsTag);
-            if (!pElmnt) {
-                continue;
-            }
-            wsStr = pElmnt->GetContent(0);
-            return wsStr.GetLength();
         }
+        CXML_Element *pElmnt = pTag->GetElement(NULL, bsTag);
+        if (!pElmnt) {
+            continue;
+        }
+        wsStr = pElmnt->GetContent(0);
+        return wsStr.GetLength();
     }
     return -1;
 }

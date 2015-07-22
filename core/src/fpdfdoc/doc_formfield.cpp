@@ -472,14 +472,15 @@ int CPDF_FormField::GetSelectedIndex(int index)
             return -1;
         }
     }
+    if (pValue->GetType() == PDFOBJ_NUMBER) {
+        return pValue->GetInteger();
+    }
     CFX_WideString sel_value;
     if (pValue->GetType() == PDFOBJ_STRING) {
         if (index != 0) {
             return -1;
         }
         sel_value = pValue->GetUnicodeText();
-    } else if (pValue->GetType() == PDFOBJ_NUMBER) {
-        return pValue->GetInteger();
     } else {
         if (pValue->GetType() != PDFOBJ_ARRAY) {
             return -1;

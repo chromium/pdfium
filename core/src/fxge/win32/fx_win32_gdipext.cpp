@@ -1010,14 +1010,14 @@ public:
     virtual HRESULT STDMETHODCALLTYPE
     QueryInterface(REFIID iid, void ** ppvObject)
     {
-        if (iid == __uuidof(IUnknown) || iid == __uuidof(IStream) ||
-                iid == __uuidof(ISequentialStream))	{
+        if (iid == __uuidof(IUnknown) ||
+            iid == __uuidof(IStream) ||
+            iid == __uuidof(ISequentialStream))	{
             *ppvObject = static_cast<IStream*>(this);
             AddRef();
             return S_OK;
-        } else {
-            return E_NOINTERFACE;
         }
+        return E_NOINTERFACE;
     }
     virtual ULONG STDMETHODCALLTYPE AddRef(void)
     {

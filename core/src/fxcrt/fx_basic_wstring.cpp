@@ -485,7 +485,8 @@ int CFX_WideString::Compare(const CFX_WideString& str) const
             return 0;
         }
         return -1;
-    } else if (str.m_pData == NULL) {
+    }
+    if (str.m_pData == NULL) {
         return 1;
     }
     int this_len = m_pData->m_nDataLength;
@@ -494,13 +495,15 @@ int CFX_WideString::Compare(const CFX_WideString& str) const
     for (int i = 0; i < min_len; i ++) {
         if (m_pData->m_String[i] < str.m_pData->m_String[i]) {
             return -1;
-        } else if (m_pData->m_String[i] > str.m_pData->m_String[i]) {
+        }
+        if (m_pData->m_String[i] > str.m_pData->m_String[i]) {
             return 1;
         }
     }
     if (this_len < that_len) {
         return -1;
-    } else if (this_len > that_len) {
+    }
+    if (this_len > that_len) {
         return 1;
     }
     return 0;

@@ -346,9 +346,8 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause)
         if (rows_to_go == 0) {
             if (pPause && pPause->NeedToPauseNow()) {
                 return TRUE;
-            } else {
-                rows_to_go = FX_STRECH_PAUSE_ROWS;
             }
+            rows_to_go = FX_STRECH_PAUSE_ROWS;
         }
         const uint8_t* src_scan = m_pSource->GetScanline(m_CurRow);
         uint8_t* dest_scan = m_pInterBuf + (m_CurRow - m_SrcClip.top) * m_InterPitch;
@@ -745,17 +744,15 @@ FX_BOOL CFX_ImageStretcher::Start(IFX_ScanlineComposer* pDest,
     }
     if (flags & FXDIB_DOWNSAMPLE) {
         return StartQuickStretch();
-    } else {
-        return StartStretch();
     }
+    return StartStretch();
 }
 FX_BOOL CFX_ImageStretcher::Continue(IFX_Pause* pPause)
 {
     if (m_Flags & FXDIB_DOWNSAMPLE) {
         return ContinueQuickStretch(pPause);
-    } else {
-        return ContinueStretch(pPause);
     }
+    return ContinueStretch(pPause);
 }
 #define MAX_PROGRESSIVE_STRETCH_PIXELS	1000000
 FX_BOOL CFX_ImageStretcher::StartStretch()

@@ -64,13 +64,14 @@ FX_BOOL CFX_RenderDevice::CreateCompatibleBitmap(CFX_DIBitmap* pDIB, int width, 
 {
     if (m_RenderCaps & FXRC_CMYK_OUTPUT) {
         return pDIB->Create(width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Cmyka : FXDIB_Cmyk);
-    } else if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT) {
+    }
+    if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT) {
         return pDIB->Create(width, height, FXDIB_8bppMask);
-    } else
+    }
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
-        return pDIB->Create(width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : FXDIB_Rgb32);
+    return pDIB->Create(width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : FXDIB_Rgb32);
 #else
-        return pDIB->Create(width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : FXDIB_Rgb);
+    return pDIB->Create(width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : FXDIB_Rgb);
 #endif
 }
 FX_BOOL CFX_RenderDevice::SetClip_PathFill(const CFX_PathData* pPathData,

@@ -21,13 +21,17 @@ unsigned int _GetBits8(const uint8_t* pData, int bitpos, int nbits)
     unsigned int byte = pData[bitpos / 8];
     if (nbits == 8) {
         return byte;
-    } else if (nbits == 4) {
+    }
+    if (nbits == 4) {
         return (bitpos % 8) ? (byte & 0x0f) : (byte >> 4);
-    } else if (nbits == 2) {
+    }
+    if (nbits == 2) {
         return (byte >> (6 - bitpos % 8)) & 0x03;
-    } else if (nbits == 1) {
+    }
+    if (nbits == 1) {
         return (byte >> (7 - bitpos % 8)) & 0x01;
-    } else if (nbits == 16) {
+    }
+    if (nbits == 16) {
         return byte * 256 + pData[bitpos / 8 + 1];
     }
     return 0;
@@ -462,7 +466,8 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
             m_pColorSpace->EnableStdConversion(FALSE);
         }
         return ret1;
-    } else if (m_Status == 2) {
+    }
+    if (m_Status == 2) {
         return ContinueLoadMaskDIB(pPause);
     }
     return 0;
@@ -1008,7 +1013,8 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan, const uint8_t* s
                     break;
             }
             return;
-        } else if (m_bpc == 8) {
+        }
+        if (m_bpc == 8) {
             if (m_nComponents == m_pColorSpace->CountComponents())
                 m_pColorSpace->TranslateImageLine(dest_scan, src_scan, m_Width, m_Width, m_Height,
                                                   m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK && m_Family == PDFCS_DEVICECMYK);

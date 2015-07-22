@@ -337,7 +337,8 @@ FX_BOOL CPDF_StreamContentParser::OnOperator(const FX_CHAR* op)
         if (compare == 0) {
             (this->*g_OpCodes[middle].m_OpHandler)();
             return TRUE;
-        } else if (compare < 0) {
+        }
+        if (compare < 0) {
             high = middle - 1;
         } else {
             low = middle + 1;

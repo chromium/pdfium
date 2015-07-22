@@ -42,9 +42,11 @@ FX_FLOAT _NormalizeThreshold(FX_FLOAT threshold)
 {
     if (threshold < 300) {
         return threshold / 2.0f;
-    } else if (threshold < 500) {
+    }
+    if (threshold < 500) {
         return threshold / 4.0f;
-    } else if (threshold < 700) {
+    }
+    if (threshold < 700) {
         return threshold / 5.0f;
     }
     return threshold / 6.0f;
@@ -159,12 +161,9 @@ void CPDF_TextPage::NormalizeObjects(FX_BOOL bNormalize)
 {
     m_ParseOptions.m_bNormalizeObjs = bNormalize;
 }
-FX_BOOL CPDF_TextPage::IsControlChar(PAGECHAR_INFO* pCharInfo)
+bool CPDF_TextPage::IsControlChar(const PAGECHAR_INFO& charInfo)
 {
-    if(!pCharInfo) {
-        return FALSE;
-    }
-    switch(pCharInfo->m_Unicode) {
+    switch (charInfo.m_Unicode) {
         case 0x2:
         case 0x3:
         case 0x93:
@@ -173,13 +172,9 @@ FX_BOOL CPDF_TextPage::IsControlChar(PAGECHAR_INFO* pCharInfo)
         case 0x97:
         case 0x98:
         case 0xfffe:
-            if(pCharInfo->m_Flag == FPDFTEXT_CHAR_HYPHEN) {
-                return FALSE;
-            } else {
-                return TRUE;
-            }
+            return charInfo.m_Flag != FPDFTEXT_CHAR_HYPHEN;
         default:
-            return FALSE;
+            return false;
     }
 }
 FX_BOOL CPDF_TextPage::ParseTextPage()
@@ -207,7 +202,7 @@ FX_BOOL CPDF_TextPage::ParseTextPage()
             if(charinfo.m_Flag == FPDFTEXT_CHAR_GENERATED) {
                 bNormal = TRUE;
             }
-            else if(charinfo.m_Unicode == 0 || IsControlChar(&charinfo))
+            else if(charinfo.m_Unicode == 0 || IsControlChar(charinfo))
                 bNormal = FALSE;
             else {
                 bNormal = TRUE;
@@ -491,141 +486,6 @@ int	CPDF_TextPage::GetIndexAtPos(FX_FLOAT x, FX_FLOAT y, FX_FLOAT xTorelance, FX
     }
     CPDF_Point point(x, y);
     return GetIndexAtPos(point, xTorelance, yTorelance);
-}
-int CPDF_TextPage::GetOrderByDirection(int order, int direction) const
-{
-    if(m_ParseOptions.m_bGetCharCodeOnly) {
-        return -3;
-    }
-    if (!m_IsParsered) {
-        return -3;
-    }
-    if (direction == FPDFTEXT_RIGHT || direction == FPDFTEXT_LEFT) {
-        order += direction;
-        while(order >= 0 && order < m_charList.GetSize()) {
-            PAGECHAR_INFO cinfo = *(PAGECHAR_INFO*)m_charList.GetAt(order);
-            if (cinfo.m_Flag != FPDFTEXT_CHAR_GENERATED) {
-                break;
-            } else {
-                if (cinfo.m_Unicode == TEXT_LINEFEED_CHAR || cinfo.m_Unicode == TEXT_RETURN_CHAR) {
-                    order += direction;
-                } else {
-                    break;
-                }
-            }
-        }
-        if (order >= m_charList.GetSize()) {
-            order = -2;
-        }
-        return order;
-    }
-    PAGECHAR_INFO charinfo;
-    charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(order);
-    CPDF_Point curPos(charinfo.m_OriginX, charinfo.m_OriginY);
-    FX_FLOAT difPosY = 0.0, minXdif = 1000;
-    int	minIndex = -2;
-    int index = order;
-    FX_FLOAT height = charinfo.m_CharBox.Height();
-    if (direction == FPDFTEXT_UP) {
-        minIndex = -1;
-        while (1) {
-            if (--index < 0)	{
-                return -1;
-            }
-            charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(index);
-            if (FXSYS_fabs(charinfo.m_OriginY - curPos.y) > FX_MAX(height, charinfo.m_CharBox.Height()) / 2) {
-                difPosY = charinfo.m_OriginY;
-                minIndex = index;
-                break;
-            }
-        }
-        FX_FLOAT PreXdif = charinfo.m_OriginX - curPos.x;
-        minXdif = PreXdif;
-        if (PreXdif == 0)	{
-            return index;
-        }
-        FX_FLOAT curXdif = 0;
-        while (--index >= 0) {
-            charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(index);
-            if (difPosY != charinfo.m_OriginY) {
-                break;
-            }
-            curXdif = charinfo.m_OriginX - curPos.x;
-            if (curXdif == 0) {
-                return index;
-            }
-            int signflag = 0;
-            if (curXdif > 0) {
-                signflag = 1;
-            } else {
-                signflag = -1;
-            }
-            if (signflag * PreXdif < 0) {
-                if (FXSYS_fabs(PreXdif) < FXSYS_fabs(curXdif)) {
-                    return index + 1;
-                } else {
-                    return index;
-                }
-            }
-            if (FXSYS_fabs(curXdif) < FXSYS_fabs(minXdif)) {
-                minIndex = index;
-                minXdif = curXdif;
-            }
-            PreXdif = curXdif;
-            if (difPosY != charinfo.m_OriginY) {
-                break;
-            }
-        }
-        return minIndex;
-    } else if(FPDFTEXT_DOWN) {
-        minIndex = -2;
-        while (1) {
-            if (++index > m_charList.GetSize() - 1)	{
-                return minIndex;
-            }
-            charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(index);
-            if (FXSYS_fabs(charinfo.m_OriginY - curPos.y) > FX_MAX(height, charinfo.m_CharBox.Height()) / 2) {
-                difPosY = charinfo.m_OriginY;
-                minIndex = index;
-                break;
-            }
-        }
-        FX_FLOAT PreXdif = charinfo.m_OriginX - curPos.x;
-        minXdif = PreXdif;
-        if (PreXdif == 0)	{
-            return index;
-        }
-        FX_FLOAT curXdif = 0;
-        while (++index < m_charList.GetSize()) {
-            charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(index);
-            if (difPosY != charinfo.m_OriginY) {
-                break;
-            }
-            curXdif = charinfo.m_OriginX - curPos.x;
-            if (curXdif == 0) {
-                return index;
-            }
-            int signflag = 0;
-            if (curXdif > 0) {
-                signflag = 1;
-            } else {
-                signflag = -1;
-            }
-            if (signflag * PreXdif < 0) {
-                if (FXSYS_fabs(PreXdif) < FXSYS_fabs(curXdif)) {
-                    return index - 1;
-                } else {
-                    return index;
-                }
-            }
-            if (FXSYS_fabs(curXdif) < FXSYS_fabs(minXdif)) {
-                minXdif = curXdif;
-                minIndex = index;
-            }
-            PreXdif = curXdif;
-        }
-        return minIndex;
-    }
 }
 void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO & info) const
 {
@@ -952,7 +812,6 @@ int CPDF_TextPage::GetWordBreak(int index, int direction) const
                 return breakPos;
             }
         }
-        return breakPos;
     } else if (direction == FPDFTEXT_RIGHT) {
         while (++breakPos < m_charList.GetSize()) {
             charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(breakPos);
@@ -960,7 +819,6 @@ int CPDF_TextPage::GetWordBreak(int index, int direction) const
                 return breakPos;
             }
         }
-        return breakPos;
     }
     return breakPos;
 }
@@ -1161,7 +1019,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(CFX_WideString& str, int i)
 {
     PAGECHAR_INFO Info = *(PAGECHAR_INFO*)m_TempCharList.GetAt(i);
     FX_WCHAR wChar = str.GetAt(i);
-    if(!IsControlChar(&Info)) {
+    if(!IsControlChar(Info)) {
         Info.m_Index = m_TextBuf.GetLength();
         if (wChar >= 0xFB00 && wChar <= 0xFB06) {
             FX_WCHAR* pDst = NULL;
@@ -1193,7 +1051,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(CFX_WideString& str, int i)
 void CPDF_TextPage::AddCharInfoByRLDirection(CFX_WideString& str, int i)
 {
     PAGECHAR_INFO Info = *(PAGECHAR_INFO*)m_TempCharList.GetAt(i);
-    if(!IsControlChar(&Info)) {
+    if(!IsControlChar(Info)) {
         Info.m_Index = m_TextBuf.GetLength();
         FX_WCHAR wChar = FX_GetMirrorChar(str.GetAt(i), TRUE, FALSE);
         FX_WCHAR* pDst = NULL;
@@ -1212,9 +1070,8 @@ void CPDF_TextPage::AddCharInfoByRLDirection(CFX_WideString& str, int i)
             }
             FX_Free(pDst);
             return;
-        } else {
-            Info.m_Unicode = wChar;
         }
+        Info.m_Unicode = wChar;
         m_TextBuf.AppendChar(Info.m_Unicode);
     } else {
         Info.m_Index = -1;
@@ -1915,11 +1772,9 @@ int32_t CPDF_TextPage::GetTextObjectWritingMode(const CPDF_TextObject* pTextObj)
     v.Set(dX, dY);
     v.Normalize();
     if (v.y <= 0.0872f) {
-        if (v.x <= 0.0872f) {
-            return m_TextlineDir;
-        }
-        return 0;
-    } else if (v.x <= 0.0872f) {
+        return v.x <= 0.0872f ? m_TextlineDir : 0;
+    }
+    if (v.x <= 0.0872f) {
         return 1;
     }
     return m_TextlineDir;
@@ -2698,22 +2553,25 @@ FX_BOOL CPDF_LinkExtract::CheckWebLink(CFX_WideString& strBeCheck)
     if (str.Find(L"http://www.") != -1) {
         strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"http://www."));
         return TRUE;
-    } else if (str.Find(L"http://") != -1) {
+    }
+    if (str.Find(L"http://") != -1) {
         strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"http://"));
         return TRUE;
-    } else if (str.Find(L"https://www.") != -1) {
+    }
+    if (str.Find(L"https://www.") != -1) {
         strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"https://www."));
         return TRUE;
-    } else if (str.Find(L"https://") != -1) {
+    }
+    if (str.Find(L"https://") != -1) {
         strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"https://"));
         return TRUE;
-    } else if (str.Find(L"www.") != -1) {
+    }
+    if (str.Find(L"www.") != -1) {
         strBeCheck = strBeCheck.Right(str.GetLength() - str.Find(L"www."));
         strBeCheck = L"http://" + strBeCheck;
         return TRUE;
-    } else {
-        return FALSE;
     }
+    return FALSE;
 }
 FX_BOOL CPDF_LinkExtract::CheckMailLink(CFX_WideString& str)
 {

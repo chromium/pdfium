@@ -1154,38 +1154,37 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont, FX_DWORD 
 #else
     if (text_flags & FXTEXT_NO_NATIVETEXT) {
         return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index, bFontStyle, dest_width, anti_alias);
-    } else {
-        CFX_GlyphBitmap* pGlyphBitmap;
-        CFX_SizeGlyphCache* pSizeCache = NULL;
-        if (m_SizeMap.Lookup(FaceGlyphsKey, (void*&)pSizeCache)) {
-            if (pSizeCache->m_GlyphMap.Lookup((void*)(uintptr_t)glyph_index, (void*&)pGlyphBitmap)) {
-                return pGlyphBitmap;
-            }
-            pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix, dest_width, anti_alias);
-            if (pGlyphBitmap) {
-                pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
-                return pGlyphBitmap;
-            }
-        } else {
-            pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix, dest_width, anti_alias);
-            if (pGlyphBitmap) {
-                pSizeCache = new CFX_SizeGlyphCache;
-                m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
-                pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
-                return pGlyphBitmap;
-            }
-        }
-        if (pFont->GetSubstFont())
-            keygen.Generate(9, (int)(pMatrix->a * 10000), (int)(pMatrix->b * 10000),
-                            (int)(pMatrix->c * 10000), (int)(pMatrix->d * 10000), dest_width, anti_alias,
-                            pFont->GetSubstFont()->m_Weight, pFont->GetSubstFont()->m_ItalicAngle, pFont->IsVertical());
-        else
-            keygen.Generate(6, (int)(pMatrix->a * 10000), (int)(pMatrix->b * 10000),
-                            (int)(pMatrix->c * 10000), (int)(pMatrix->d * 10000), dest_width, anti_alias);
-        CFX_ByteStringC FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
-        text_flags |= FXTEXT_NO_NATIVETEXT;
-        return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index, bFontStyle, dest_width, anti_alias);
     }
+    CFX_GlyphBitmap* pGlyphBitmap;
+    CFX_SizeGlyphCache* pSizeCache = NULL;
+    if (m_SizeMap.Lookup(FaceGlyphsKey, (void*&)pSizeCache)) {
+        if (pSizeCache->m_GlyphMap.Lookup((void*)(uintptr_t)glyph_index, (void*&)pGlyphBitmap)) {
+            return pGlyphBitmap;
+        }
+        pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix, dest_width, anti_alias);
+        if (pGlyphBitmap) {
+            pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
+            return pGlyphBitmap;
+        }
+    } else {
+        pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix, dest_width, anti_alias);
+        if (pGlyphBitmap) {
+            pSizeCache = new CFX_SizeGlyphCache;
+            m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
+            pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
+            return pGlyphBitmap;
+        }
+    }
+    if (pFont->GetSubstFont())
+        keygen.Generate(9, (int)(pMatrix->a * 10000), (int)(pMatrix->b * 10000),
+                        (int)(pMatrix->c * 10000), (int)(pMatrix->d * 10000), dest_width, anti_alias,
+                        pFont->GetSubstFont()->m_Weight, pFont->GetSubstFont()->m_ItalicAngle, pFont->IsVertical());
+    else
+        keygen.Generate(6, (int)(pMatrix->a * 10000), (int)(pMatrix->b * 10000),
+                        (int)(pMatrix->c * 10000), (int)(pMatrix->d * 10000), dest_width, anti_alias);
+    CFX_ByteStringC FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
+    text_flags |= FXTEXT_NO_NATIVETEXT;
+    return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index, bFontStyle, dest_width, anti_alias);
 #endif
 }
 CFX_SizeGlyphCache::~CFX_SizeGlyphCache()

@@ -141,9 +141,6 @@ CFX_ByteString CFX_SystemHandler::GetNativeTrueTypeFont(int32_t nCharset)
 FX_BOOL CFX_SystemHandler::FindNativeTrueTypeFont(int32_t nCharset, CFX_ByteString sFontFaceName)
 {
     CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
-//  FXFT_Face nFace = pFontMgr->FindSubstFont(sFontFaceName,TRUE,0,0,0,0,NULL);
-//  FXFT_Face nFace  = pFontMgr->m_pBuiltinMapper->FindSubstFont(sFontFaceName,TRUE,0,0,0,0,NULL);
-
     if(pFontMgr)
     {
         CFX_FontMapper* pFontMapper = pFontMgr->m_pBuiltinMapper;
@@ -166,19 +163,17 @@ FX_BOOL CFX_SystemHandler::FindNativeTrueTypeFont(int32_t nCharset, CFX_ByteStri
     }
 
     return FALSE;
-//  pFontMgr->m_FaceMap.Lookup(sFontFaceName,pFont);
-//  return (pFont!=NULL);
 }
 
 static int CharSet2CP(int charset)
 {
-    if(charset == 128)
+    if (charset == 128)
         return 932;
-    else if(charset == 134)
+    if (charset == 134)
         return 936;
-    else if(charset == 129)
+    if (charset == 129)
         return 949;
-    else if(charset == 136)
+    if (charset == 136)
         return 950;
     return 0;
 }
@@ -938,23 +933,18 @@ FX_BOOL CPDFSDK_PageView::OnMouseMove(const CPDF_Point & point, int nFlag)
         pAnnotHandlerMgr->Annot_OnMouseMove(this, pFXAnnot, nFlag, point);
         return TRUE;
     }
-    else
+    if(m_bOnWidget)
     {
-        if(m_bOnWidget)
+        m_bOnWidget = FALSE;
+        m_bExitWidget = TRUE;
+        m_bEnterWidget = FALSE;
+        if(m_CaptureWidget)
         {
-            m_bOnWidget = FALSE;
-            m_bExitWidget = TRUE;
-            m_bEnterWidget = FALSE;
-            if(m_CaptureWidget)
-            {
-                pAnnotHandlerMgr->Annot_OnMouseExit(this, m_CaptureWidget, nFlag);
-                m_CaptureWidget = NULL;
-            }
+            pAnnotHandlerMgr->Annot_OnMouseExit(this, m_CaptureWidget, nFlag);
+            m_CaptureWidget = NULL;
         }
-        return FALSE;
     }
-
-    return FALSE;;
+    return FALSE;
 }
 
 FX_BOOL CPDFSDK_PageView::OnMouseWheel(double deltaX, double deltaY,const CPDF_Point& point, int nFlag)

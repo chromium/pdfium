@@ -103,14 +103,15 @@ FX_BOOL CPDF_DeviceCS::SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B
         pBuf[1] = G;
         pBuf[2] = B;
         return TRUE;
-    } else if (m_Family == PDFCS_DEVICEGRAY) {
+    }
+    if (m_Family == PDFCS_DEVICEGRAY) {
         if (R == G && R == B) {
             *pBuf = R;
             return TRUE;
-        } else {
-            return FALSE;
         }
-    } else if (m_Family == PDFCS_DEVICECMYK) {
+        return FALSE;
+    }
+    if (m_Family == PDFCS_DEVICECMYK) {
         sRGB_to_AdobeCMYK(R, G, B, pBuf[0], pBuf[1], pBuf[2], pBuf[3]);
         return TRUE;
     }
@@ -121,9 +122,8 @@ FX_BOOL CPDF_DeviceCS::v_SetCMYK(FX_FLOAT* pBuf, FX_FLOAT c, FX_FLOAT m, FX_FLOA
     if (m_Family == PDFCS_DEVICERGB) {
         AdobeCMYK_to_sRGB(c, m, y, k, pBuf[0], pBuf[1], pBuf[2]);
         return TRUE;
-    } else if (m_Family == PDFCS_DEVICEGRAY) {
-        return FALSE;
-    } else if (m_Family == PDFCS_DEVICECMYK) {
+    }
+    if (m_Family == PDFCS_DEVICECMYK) {
         pBuf[0] = c;
         pBuf[1] = m;
         pBuf[2] = y;
@@ -314,9 +314,8 @@ FX_BOOL CPDF_CalGray::SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B)
     if (R == G && R == B) {
         *pBuf = R;
         return TRUE;
-    } else {
-        return FALSE;
     }
+    return FALSE;
 }
 void CPDF_CalGray::TranslateImageLine(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels, int image_width, int image_height, FX_BOOL bTransMask) const
 {
@@ -993,10 +992,9 @@ FX_BOOL CPDF_SeparationCS::GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_F
     if (m_pAltCS) {
         m_pAltCS->GetRGB(results, R, G, B);
         return TRUE;
-    } else {
-        R = G = B = 0;
-        return FALSE;
     }
+    R = G = B = 0;
+    return FALSE;
 }
 void CPDF_SeparationCS::EnableStdConversion(FX_BOOL bEnabled)
 {
