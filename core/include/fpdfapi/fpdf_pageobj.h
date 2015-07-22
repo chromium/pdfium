@@ -669,7 +669,6 @@ public:
 
     CFX_AffineMatrix	m_Matrix;
 
-    CPDF_Page*			m_pPage;
     void Transform(const CFX_AffineMatrix& matrix) override;
 
     void				CalcBoundingBox();

@@ -110,7 +110,6 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp) :
 	m_pApp(pApp),
 	m_pDocument(NULL),
 	m_bBlocking(FALSE),
-	m_bRegistered(FALSE),
 	m_pFieldEventPath(NULL)
 {
 	if (CPDFXFA_App::GetInstance()->GetJSERuntime()) {

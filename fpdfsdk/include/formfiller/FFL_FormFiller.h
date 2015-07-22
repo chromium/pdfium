@@ -18,14 +18,6 @@ class CPDFSDK_PageView;
 class CPDFSDK_Document;
 class CPDFSDK_Widget;
 
-struct FFL_KeyStrokeData
-{
-	CFX_WideString		swValue;
-	FX_BOOL				bFull;
-	int					nSelStart;
-	int					nSelEnd;
-};
-
 class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler
 {
 public:
@@ -111,7 +103,6 @@ public:
 	virtual FX_BOOL				IsDataChanged(CPDFSDK_PageView* pPageView);
 	virtual void				SaveData(CPDFSDK_PageView* pPageView);
 
-	virtual void				GetKeyStrokeData(CPDFSDK_PageView* pPageView, FFL_KeyStrokeData& data);
 	virtual FX_BOOL				IsFieldFull(CPDFSDK_PageView* pPageView);
 
 	CPWL_Wnd*					GetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bNew);

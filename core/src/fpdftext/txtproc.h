@@ -60,7 +60,7 @@ public:
     FX_BOOL	m_bAutoWidth;
     FX_BOOL	m_bKeepColumn;
     FX_BOOL	m_bBreakSpace;
-    FX_BOOL	m_bOCR;
+
 private:
     CFX_PtrArray	m_BaseLines;
     CFX_PtrArray	m_TextColumns;

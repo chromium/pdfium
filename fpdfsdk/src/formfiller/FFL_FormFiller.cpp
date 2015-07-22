@@ -628,10 +628,6 @@ void CFFL_FormFiller::SaveData(CPDFSDK_PageView* pPageView)
 {
 }
 
-void CFFL_FormFiller::GetKeyStrokeData(CPDFSDK_PageView* pPageView, FFL_KeyStrokeData& data)
-{
-}
-
 FX_BOOL CFFL_FormFiller::IsFieldFull(CPDFSDK_PageView* pPageView)
 {
     return FALSE;

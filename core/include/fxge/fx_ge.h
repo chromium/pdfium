@@ -133,8 +133,6 @@ protected:
 
     void			IntersectMaskRect(FX_RECT rect, FX_RECT mask_box, CFX_DIBitmapRef Mask);
 };
-extern const uint8_t g_GammaRamp[256];
-extern const uint8_t g_GammaInverse[256];
 #define FX_GAMMA(value)			(value)
 #define FX_GAMMA_INVERSE(value)	(value)
 inline FX_ARGB ArgbGamma(FX_ARGB argb)

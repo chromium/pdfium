@@ -444,13 +444,6 @@ private:
     CFX_MapByteStringToPtr	m_SizeMap;
     CFX_MapPtrToPtr			m_PathMap;
     CFX_DIBitmap*           m_pBitmap;
-    void*                   m_pPlatformGraphics;
-    void*                   m_pPlatformBitmap;
-    void*                   m_hDC;
-    void*                   m_hBitmap;
-    void*                   m_hOldBitmap;
-    void*                   m_hGdiFont;
-    void*                   m_hOldGdiFont;
 
     void				    InitPlatform();
     void				    DestroyPlatform();

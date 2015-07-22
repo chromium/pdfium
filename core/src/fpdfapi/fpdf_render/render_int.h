@@ -253,7 +253,6 @@ protected:
     FX_DWORD			m_Flags;
     CPDF_QuickStretcher*	m_pQuickStretcher;
     CFX_ImageTransformer*	m_pTransformer;
-    CPDF_ImageRenderer*	m_pRenderer2;
     void*			m_DeviceHandle;
     void*           m_LoadHandle;
     FX_BOOL				m_bStdCS;

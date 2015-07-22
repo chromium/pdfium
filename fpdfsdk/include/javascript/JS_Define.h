@@ -174,7 +174,7 @@ void js_class_name::JSDestructor(JSFXObject obj) \
 \
 int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 {\
-	int nObjDefnID = JS_DefineObj(pRuntime, js_class_name::m_pClassName, eObjType, JSConstructor, JSDestructor, 0);\
+	int nObjDefnID = JS_DefineObj(pRuntime, js_class_name::m_pClassName, eObjType, JSConstructor, JSDestructor);\
 	if (nObjDefnID >= 0)\
 	{\
 		for (int j=0, szj=sizeof(JS_Class_Properties)/sizeof(JSPropertySpec)-1; j<szj; j++)\
@@ -203,7 +203,7 @@ int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 const wchar_t* js_class_name::m_pClassName = JS_WIDESTRING(class_name);\
 int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 {\
-	int nObjDefnID = JS_DefineObj(pRuntime, js_class_name::m_pClassName, eObjType, NULL, NULL, 0);\
+	int nObjDefnID = JS_DefineObj(pRuntime, js_class_name::m_pClassName, eObjType, NULL, NULL);\
 	if (nObjDefnID >=0)\
 	{\
 		for (int i=0, sz=sizeof(JS_Class_Consts)/sizeof(JSConstSpec)-1; i<sz; i++)\
@@ -344,7 +344,7 @@ void js_class_name::JSDestructor(JSFXObject obj) \
 int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 {\
 \
-	int nObjDefnID = JS_DefineObj(pRuntime, js_class_name::m_pClassName, eObjType, JSConstructor, JSDestructor, 0);\
+	int nObjDefnID = JS_DefineObj(pRuntime, js_class_name::m_pClassName, eObjType, JSConstructor, JSDestructor);\
 \
 	if (nObjDefnID >= 0)\
 	{\
