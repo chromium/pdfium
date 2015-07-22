@@ -63,15 +63,14 @@ static int32_t GetJapanesePreference(const FX_CHAR* facearr, int weight, int pic
     if (face.Find("Gothic") >= 0 || face.Find("\x83\x53\x83\x56\x83\x62\x83\x4e") >= 0) {
         if (face.Find("PGothic") >= 0 || face.Find("\x82\x6f\x83\x53\x83\x56\x83\x62\x83\x4e") >= 0) {
             return 0;
-        } else {
-            return 1;
         }
-    } else if (face.Find("Mincho") >= 0 || face.Find("\x96\xbe\x92\xa9") >= 0) {
+        return 1;
+    }
+    if (face.Find("Mincho") >= 0 || face.Find("\x96\xbe\x92\xa9") >= 0) {
         if (face.Find("PMincho") >= 0 || face.Find("\x82\x6f\x96\xbe\x92\xa9") >= 0) {
             return 2;
-        } else {
-            return 3;
         }
+        return 3;
     }
     if (!(picth_family & FXFONT_FF_ROMAN) && weight > 400) {
         return 0;

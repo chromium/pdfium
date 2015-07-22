@@ -100,8 +100,6 @@ public:
 
     virtual int				GetIndexAtPos(FX_FLOAT x, FX_FLOAT y, FX_FLOAT xTorelance, FX_FLOAT yTorelance) const = 0;
 
-    virtual	int				GetOrderByDirection(int index, int direction) const = 0;
-
     virtual CFX_WideString	GetTextByRect(const CFX_FloatRect& rect) const = 0;
 
     virtual void			GetRectsArrayByRect(const CFX_FloatRect& rect, CFX_RectArray& resRectArray) const = 0;

@@ -641,22 +641,23 @@ int CPDF_CMap::AppendChar(FX_CHAR* str, FX_DWORD charcode) const
                 }
                 str[iSize - 1] = (uint8_t)charcode;
                 return iSize;
-            } else if (charcode < 0x10000) {
+            }
+            if (charcode < 0x10000) {
                 str[0] = (uint8_t)(charcode >> 8);
                 str[1] = (uint8_t)charcode;
                 return 2;
-            } else if (charcode < 0x1000000) {
+            }
+            if (charcode < 0x1000000) {
                 str[0] = (uint8_t)(charcode >> 16);
                 str[1] = (uint8_t)(charcode >> 8);
                 str[2] = (uint8_t)charcode;
                 return 3;
-            } else {
-                str[0] = (uint8_t)(charcode >> 24);
-                str[1] = (uint8_t)(charcode >> 16);
-                str[2] = (uint8_t)(charcode >> 8);
-                str[3] = (uint8_t)charcode;
-                return 4;
             }
+            str[0] = (uint8_t)(charcode >> 24);
+            str[1] = (uint8_t)(charcode >> 16);
+            str[2] = (uint8_t)(charcode >> 8);
+            str[3] = (uint8_t)charcode;
+            return 4;
     }
     return 0;
 }
@@ -794,9 +795,8 @@ FX_WCHAR CPDF_CIDFont::_UnicodeFromCharCode(FX_DWORD charcode) const
 #endif
         if (m_pCMap->m_pEmbedMap) {
             return _EmbeddedUnicodeFromCharcode(m_pCMap->m_pEmbedMap, m_pCMap->m_Charset, charcode);
-        } else {
-            return 0;
         }
+        return 0;
     }
     return m_pCID2UnicodeMap->UnicodeFromCID(CIDFromCharCode(charcode));
 }
@@ -826,7 +826,8 @@ FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const
 
     if (unicode < 0x80) {
         return static_cast<FX_DWORD>(unicode);
-    } else if (m_pCMap->m_Coding == CIDCODING_CID) {
+    }
+    if (m_pCMap->m_Coding == CIDCODING_CID) {
         return 0;
     }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -834,14 +835,15 @@ FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const
     int ret = FXSYS_WideCharToMultiByte(g_CharsetCPs[m_pCMap->m_Coding], 0, &unicode, 1, (char*)buffer, 4, NULL, NULL);
     if (ret == 1) {
         return buffer[0];
-    } else if (ret == 2) {
+    }
+    if (ret == 2) {
         return buffer[0] * 256 + buffer[1];
     }
-    return 0;
-#endif
+#else
     if (m_pCMap->m_pEmbedMap) {
         return _EmbeddedCharcodeFromUnicode(m_pCMap->m_pEmbedMap, m_pCMap->m_Charset, unicode);
     }
+#endif
     return 0;
 }
 static void FT_UseCIDCharmap(FXFT_Face face, int coding)
@@ -1234,9 +1236,8 @@ int CPDF_CIDFont::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL *pVertGlyph)
             }
             if (index == 0 || index == 0xffff) {
                 return charcode == 0 ? -1 : (int)charcode;
-            } else {
-                return index;
             }
+            return index;
         }
         if (m_Charset == CIDSET_JAPAN1) {
             if (unicode == '\\') {

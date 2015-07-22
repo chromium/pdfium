@@ -655,15 +655,17 @@ CPDF_Font* GetDefaultInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pD
 }
 CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod()
 {
-    if (m_pDict == NULL) {
+    if (!m_pDict) {
         return Always;
     }
     CFX_ByteString csSW = m_pDict->GetString("SW", "A");
     if (csSW == "B") {
         return Bigger;
-    } else if (csSW == "S") {
+    }
+    if (csSW == "S") {
         return Smaller;
-    } else if (csSW == "N") {
+    }
+    if (csSW == "N") {
         return Never;
     }
     return Always;

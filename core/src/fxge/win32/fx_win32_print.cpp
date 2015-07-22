@@ -80,33 +80,31 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD 
             return FALSE;
         }
         return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width, dest_height, color, flags, alpha_flag, pIccTransform);
-    } else {
-        ASSERT(pSource != NULL);
-        if (pSource->HasAlpha()) {
-            return FALSE;
-        }
-        if (dest_width < 0 || dest_height < 0) {
-            CFX_DIBitmap* pFlipped = pSource->FlipImage(dest_width < 0, dest_height < 0);
-            if (pFlipped == NULL) {
-                return FALSE;
-            }
-            if (dest_width < 0) {
-                dest_left += dest_width;
-            }
-            if (dest_height < 0) {
-                dest_top += dest_height;
-            }
-            FX_BOOL ret = GDI_StretchDIBits(pFlipped, dest_left, dest_top, abs(dest_width), abs(dest_height), flags, pIccTransform);
-            delete pFlipped;
-            return ret;
-        }
-        CFX_DIBExtractor temp(pSource);
-        CFX_DIBitmap* pBitmap = temp;
-        if (pBitmap == NULL) {
-            return FALSE;
-        }
-        return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width, dest_height, flags, pIccTransform);
     }
+    if (pSource->HasAlpha()) {
+        return FALSE;
+    }
+    if (dest_width < 0 || dest_height < 0) {
+        CFX_DIBitmap* pFlipped = pSource->FlipImage(dest_width < 0, dest_height < 0);
+        if (pFlipped == NULL) {
+            return FALSE;
+        }
+        if (dest_width < 0) {
+            dest_left += dest_width;
+        }
+        if (dest_height < 0) {
+            dest_top += dest_height;
+        }
+        FX_BOOL ret = GDI_StretchDIBits(pFlipped, dest_left, dest_top, abs(dest_width), abs(dest_height), flags, pIccTransform);
+        delete pFlipped;
+        return ret;
+    }
+    CFX_DIBExtractor temp(pSource);
+    CFX_DIBitmap* pBitmap = temp;
+    if (pBitmap == NULL) {
+        return FALSE;
+    }
+    return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width, dest_height, flags, pIccTransform);
 }
 static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc, const CFX_AffineMatrix* pDestMatrix)
 {

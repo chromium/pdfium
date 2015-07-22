@@ -288,35 +288,18 @@ FX_BOOL         CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(CPDFSDK_Annot* pAnnot,
         if (pAnnotHandler->OnSetFocus(pAnnot, nFlag))
         {
             CPDFSDK_PageView* pPage = pAnnot->GetPageView();
-            ASSERT(pPage != NULL);
-
             pPage->GetSDKDocument();
-    //      pDocument->SetTopmostAnnot(pAnnot);
-
             return TRUE;
         }
-        else
-        {
-            return FALSE;
-        }
     }
-
     return FALSE;
 }
 
 FX_BOOL         CPDFSDK_AnnotHandlerMgr::Annot_OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
 {
-    ASSERT(pAnnot != NULL);
-
+    ASSERT(pAnnot);
     if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot))
-    {
-        if (pAnnotHandler->OnKillFocus(pAnnot, nFlag))
-        {
-            return TRUE;
-        }
-        else
-            return FALSE;
-    }
+        return pAnnotHandler->OnKillFocus(pAnnot, nFlag);
 
     return FALSE;
 }
@@ -325,9 +308,8 @@ CPDF_Rect   CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(CPDFSDK_PageView *pPage
 {
     ASSERT(pAnnot);
     if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot))
-    {
         return pAnnotHandler->GetViewBBox(pPageView, pAnnot);
-    }
+
     return pAnnot->GetRect();
 }
 
@@ -336,7 +318,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView *pPageView, CP
     ASSERT(pAnnot);
     if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot))
     {
-        if(pAnnotHandler->CanAnswer(pAnnot))
+        if (pAnnotHandler->CanAnswer(pAnnot))
             return pAnnotHandler->HitTest(pPageView, pAnnot, point);
     }
     return FALSE;
@@ -350,38 +332,26 @@ CPDFSDK_Annot*  CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,F
 
 FX_BOOL CPDFSDK_BFAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot)
 {
-    ASSERT(pAnnot);
     ASSERT(pAnnot->GetType() == "Widget");
-    CFX_ByteString sSubType = pAnnot->GetSubType();
+    if (pAnnot->GetSubType() == BFFT_SIGNATURE)
+        return FALSE;
 
-    if (sSubType == BFFT_SIGNATURE)
-    {
-    }
-    else
-    {
-        CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
-        if (!pWidget->IsVisible()) return FALSE;
+    CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+    if (!pWidget->IsVisible())
+            return FALSE;
 
-        int nFieldFlags = pWidget->GetFieldFlags();
-        if ((nFieldFlags & FIELDFLAG_READONLY) == FIELDFLAG_READONLY) return FALSE;
-        if (pWidget->GetFieldType() == FIELDTYPE_PUSHBUTTON)
-            return TRUE;
-        else
-        {
-            CPDF_Page* pPage = pWidget->GetPDFPage();
-            ASSERT(pPage != NULL);
+    int nFieldFlags = pWidget->GetFieldFlags();
+    if ((nFieldFlags & FIELDFLAG_READONLY) == FIELDFLAG_READONLY)
+        return FALSE;
 
-            CPDF_Document* pDocument = pPage->m_pDocument;
-            ASSERT(pDocument != NULL);
+    if (pWidget->GetFieldType() == FIELDTYPE_PUSHBUTTON)
+        return TRUE;
 
-            FX_DWORD dwPermissions = pDocument->GetUserPermissions();
-            return (dwPermissions&FPDFPERM_FILL_FORM) ||
-                (dwPermissions&FPDFPERM_ANNOT_FORM) ||
-            (dwPermissions&FPDFPERM_ANNOT_FORM);
-        }
-    }
-
-    return FALSE;
+    CPDF_Page* pPage = pWidget->GetPDFPage();
+    CPDF_Document* pDocument = pPage->m_pDocument;
+    FX_DWORD dwPermissions = pDocument->GetUserPermissions();
+    return (dwPermissions & FPDFPERM_FILL_FORM) ||
+            (dwPermissions & FPDFPERM_ANNOT_FORM);
 }
 
 CPDFSDK_Annot* CPDFSDK_BFAnnotHandler::NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage)
@@ -873,12 +843,11 @@ void CPDFSDK_AnnotIterator::InsertSort(CFX_PtrArray &arrayList, AI_COMPARE pComp
 
 int LyOrderCompare(CPDFSDK_Annot* p1, CPDFSDK_Annot* p2)
 {
-    if(p1->GetLayoutOrder() < p2->GetLayoutOrder())
+    if (p1->GetLayoutOrder() < p2->GetLayoutOrder())
         return -1;
-    else if (p1->GetLayoutOrder() == p2->GetLayoutOrder())
-        return 0;
-    else
+    if (p1->GetLayoutOrder() > p2->GetLayoutOrder())
         return 1;
+    return 0;
 }
 
 FX_BOOL CPDFSDK_AnnotIterator::InitIteratorAnnotList(CPDFSDK_PageView* pPageView,CFX_PtrArray * pAnnotList)

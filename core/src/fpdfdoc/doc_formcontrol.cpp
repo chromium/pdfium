@@ -262,29 +262,27 @@ CPDF_Action CPDF_FormControl::GetAction()
 }
 CPDF_AAction CPDF_FormControl::GetAdditionalAction()
 {
-    if (m_pWidgetDict == NULL) {
-        return NULL;
+    if (!m_pWidgetDict) {
+        return nullptr;
     }
     if (m_pWidgetDict->KeyExist("AA")) {
         return m_pWidgetDict->GetDict("AA");
-    } else {
-        return m_pField->GetAdditionalAction();
     }
+    return m_pField->GetAdditionalAction();
 }
 CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance()
 {
-    if (m_pWidgetDict == NULL) {
+    if (!m_pWidgetDict) {
         return CFX_ByteString();
     }
     if (m_pWidgetDict->KeyExist("DA")) {
         return m_pWidgetDict->GetString("DA");
-    } else {
-        CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "DA");
-        if (pObj == NULL) {
-            return m_pField->m_pForm->GetDefaultAppearance();
-        }
-        return pObj->GetString();
     }
+    CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "DA");
+    if (!pObj) {
+        return m_pField->m_pForm->GetDefaultAppearance();
+    }
+    return pObj->GetString();
 }
 
 CPDF_Font* CPDF_FormControl::GetDefaultControlFont()
@@ -333,18 +331,17 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont()
 
 int CPDF_FormControl::GetControlAlignment()
 {
-    if (m_pWidgetDict == NULL) {
+    if (!m_pWidgetDict) {
         return 0;
     }
     if (m_pWidgetDict->KeyExist("Q")) {
         return m_pWidgetDict->GetInteger("Q", 0);
-    } else {
-        CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "Q");
-        if (pObj == NULL) {
-            return m_pField->m_pForm->GetFormAlignment();
-        }
-        return pObj->GetInteger();
     }
+    CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "Q");
+    if (pObj == NULL) {
+        return m_pField->m_pForm->GetFormAlignment();
+    }
+    return pObj->GetInteger();
 }
 FX_BOOL CPDF_ApSettings::HasMKEntry(const CFX_ByteStringC& csEntry)
 {

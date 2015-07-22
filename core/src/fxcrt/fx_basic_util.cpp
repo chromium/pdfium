@@ -457,18 +457,18 @@ CFX_Matrix_3by3 CFX_Matrix_3by3::Inverse()
     FX_FLOAT det = a*(e*i - f*h) - b*(i*d - f*g) + c*(d*h - e*g);
     if (FXSYS_fabs(det) < 0.0000001)
         return CFX_Matrix_3by3();
-    else
-        return CFX_Matrix_3by3(
-            (e*i - f*h) / det,
-            -(b*i - c*h) / det,
-            (b*f - c*e) / det,
-            -(d*i - f*g) / det,
-            (a*i - c*g) / det,
-            -(a*f - c*d) / det,
-            (d*h - e*g) / det,
-            -(a*h - b*g) / det,
-            (a*e - b*d) / det
-        );
+
+    return CFX_Matrix_3by3(
+        (e*i - f*h) / det,
+        -(b*i - c*h) / det,
+        (b*f - c*e) / det,
+        -(d*i - f*g) / det,
+        (a*i - c*g) / det,
+        -(a*f - c*d) / det,
+        (d*h - e*g) / det,
+        -(a*h - b*g) / det,
+        (a*e - b*d) / det
+    );
 }
 
 CFX_Matrix_3by3 CFX_Matrix_3by3::Multiply(const CFX_Matrix_3by3 &m)

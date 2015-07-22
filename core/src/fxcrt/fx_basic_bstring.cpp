@@ -132,10 +132,9 @@ CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& stringSrc)
     if (stringSrc.IsEmpty()) {
         m_pData = NULL;
         return;
-    } else {
-        m_pData = NULL;
-        *this = stringSrc;
     }
+    m_pData = NULL;
+    *this = stringSrc;
 }
 CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& str1, const CFX_ByteStringC& str2)
 {
@@ -971,13 +970,15 @@ int CFX_ByteString::Compare(const CFX_ByteStringC& str) const
     for (int i = 0; i < min_len; i ++) {
         if ((uint8_t)m_pData->m_String[i] < str.GetAt(i)) {
             return -1;
-        } else if ((uint8_t)m_pData->m_String[i] > str.GetAt(i)) {
+        }
+        if ((uint8_t)m_pData->m_String[i] > str.GetAt(i)) {
             return 1;
         }
     }
     if (this_len < that_len) {
         return -1;
-    } else if (this_len > that_len) {
+    }
+    if (this_len > that_len) {
         return 1;
     }
     return 0;

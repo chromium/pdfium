@@ -311,9 +311,8 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf, FX_DWORD src_size, const CPDF_Dic
                 dest_size = last_size;
                 pImageParms = pParam;
                 return TRUE;
-            } else {
-                offset = FPDFAPI_FlateOrLZWDecode(FALSE, last_buf, last_size, pParam, estimated_size, new_buf, new_size);
             }
+            offset = FPDFAPI_FlateOrLZWDecode(FALSE, last_buf, last_size, pParam, estimated_size, new_buf, new_size);
         } else if (decoder == FX_BSTRC("LZWDecode") || decoder == FX_BSTRC("LZW")) {
             offset = FPDFAPI_FlateOrLZWDecode(TRUE, last_buf, last_size, pParam, estimated_size, new_buf, new_size);
         } else if (decoder == FX_BSTRC("ASCII85Decode") || decoder == FX_BSTRC("A85")) {
