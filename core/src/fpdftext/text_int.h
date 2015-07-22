@@ -7,14 +7,6 @@
 #ifndef CORE_SRC_FPDFTEXT_TEXT_INT_H_
 #define CORE_SRC_FPDFTEXT_TEXT_INT_H_
 
-class CPDF_TextParseOptions
-{
-public:
-    CPDF_TextParseOptions();
-    FX_BOOL			m_bCheckObjectOrder;
-    FX_BOOL			m_bCheckDirection;
-    int				m_nCheckSameObject;
-};
 class CPDF_TextPage;
 class CPDF_LinkExtract;
 class CPDF_TextPageFind;

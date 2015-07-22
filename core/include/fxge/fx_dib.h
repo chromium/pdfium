@@ -542,7 +542,6 @@ public:
     uint8_t*		m_pScanline;
     uint8_t*       m_pMaskScanline;
     FXDIB_Format	m_DestFormat;
-    int32_t		m_Status;
 
     int32_t		StartQuickStretch();
 
@@ -598,7 +597,6 @@ protected:
     CFX_ImageStretcher	m_Stretcher;
     CFX_BitmapComposer	m_Composer;
     int					m_Status;
-    int					m_DestLeft, m_DestTop;
     FX_RECT				m_ClipBox;
     FX_DWORD			m_Flags;
     int					m_AlphaFlag;

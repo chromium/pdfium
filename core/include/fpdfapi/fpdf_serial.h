@@ -65,8 +65,6 @@ protected:
     CPDF_TextState		m_LastTextState;
 
     CPDF_GeneralState	m_LastGeneralState;
-
-    CPDF_PageObjects*	m_pCurPage;
 };
 class CPDF_PageArchiveLoader : public CPDF_ObjArchiveLoader
 {
@@ -102,8 +100,6 @@ protected:
     CPDF_TextState		m_LastTextState;
 
     CPDF_GeneralState	m_LastGeneralState;
-
-    CPDF_PageObjects*	m_pCurPage;
 
     CFX_MapPtrToPtr		m_ObjectMap;
 };

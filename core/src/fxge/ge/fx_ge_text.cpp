@@ -1069,7 +1069,6 @@ void CFX_FontCache::FreeCache(FX_BOOL bRelease)
 CFX_FaceCache::CFX_FaceCache(FXFT_Face face)
 {
     m_Face = face;
-    m_pBitmap = NULL;
 }
 CFX_FaceCache::~CFX_FaceCache()
 {
@@ -1088,7 +1087,6 @@ CFX_FaceCache::~CFX_FaceCache()
         m_PathMap.GetNextAssoc(pos, key1, (void*&)pPath);
         delete pPath;
     }
-    delete m_pBitmap;
     m_PathMap.RemoveAll();
 }
 #if _FXM_PLATFORM_  != _FXM_PLATFORM_APPLE_

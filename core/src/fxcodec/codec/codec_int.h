@@ -244,7 +244,7 @@ class CCodec_Jbig2Context
 public:
     CCodec_Jbig2Context();
     ~CCodec_Jbig2Context() {};
-    IFX_FileRead* m_file_ptr;
+
     FX_DWORD m_width;
     FX_DWORD m_height;
     uint8_t* m_src_buf;

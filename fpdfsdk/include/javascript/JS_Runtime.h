@@ -64,7 +64,6 @@ protected:
 	CPDFDoc_Environment*							m_pApp;
 	CPDFSDK_Document*						m_pDocument;
 	FX_BOOL									m_bBlocking;
-	FX_BOOL									m_bRegistered;
 	CJS_FieldEvent*							m_pFieldEventPath;
 
 	v8::Isolate* m_isolate;

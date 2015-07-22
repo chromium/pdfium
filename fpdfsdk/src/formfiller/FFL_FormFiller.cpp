@@ -605,10 +605,6 @@ void CFFL_FormFiller::SaveData(CPDFSDK_PageView* pPageView)
 {
 }
 
-void CFFL_FormFiller::GetKeyStrokeData(CPDFSDK_PageView* pPageView, FFL_KeyStrokeData& data)
-{
-}
-
 void CFFL_FormFiller::SetChangeMark()
 {
     m_pApp->FFI_OnChange();
