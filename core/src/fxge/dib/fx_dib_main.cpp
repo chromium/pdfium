@@ -1033,8 +1033,10 @@ FX_DWORD CFX_DIBitmap::GetPixel(int x, int y) const
         case FXDIB_1bppRgb: {
                 if ((*pos) & (1 << (7 - x % 8))) {
                     return m_pPalette ? m_pPalette[1] : 0xffffffff;
+                } else {
+                    return m_pPalette ? m_pPalette[0] : 0xff000000;
                 }
-                return m_pPalette ? m_pPalette[0] : 0xff000000;
+                break;
             }
         case FXDIB_8bppMask:
             return (*pos) << 24;
@@ -1586,8 +1588,7 @@ FX_BOOL CFX_ImageRenderer::Continue(IFX_Pause* pPause)
 {
     if (m_Status == 1) {
         return m_Stretcher.Continue(pPause);
-    }
-    if (m_Status == 2) {
+    } else if (m_Status == 2) {
         if (m_pTransformer->Continue(pPause)) {
             return TRUE;
         }

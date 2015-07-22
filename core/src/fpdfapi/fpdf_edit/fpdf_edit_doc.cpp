@@ -521,8 +521,7 @@ static FX_WORD FX_GetCsFromLangCode(uint32_t uCode)
         const FX_LANG2CS &charset = gs_FXLang2CharsetTable[iMid];
         if (uCode == charset.uLang) {
             return charset.uCharset;
-        }
-        if (uCode < charset.uLang) {
+        } else if (uCode < charset.uLang) {
             iEnd = iMid - 1;
         } else {
             iStart = iMid + 1;

@@ -3938,8 +3938,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(uint8_t* dest_scan, const ui
         if (m_SrcFormat == FXDIB_1bppRgb) {
             if (m_DestFormat == FXDIB_8bppRgb) {
                 return;
-            }
-            if(m_DestFormat == FXDIB_Argb) {
+            } else if(m_DestFormat == FXDIB_Argb) {
                 _CompositeRow_1bppRgb2Argb_NoBlend_RgbByteOrder(dest_scan, src_scan, src_left, width, m_pSrcPalette, clip_scan);
             } else {
                 _CompositeRow_1bppRgb2Rgb_NoBlend_RgbByteOrder(dest_scan, src_scan, src_left, m_pSrcPalette, width, (m_DestFormat & 0xff) >> 3, clip_scan);
@@ -3947,8 +3946,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(uint8_t* dest_scan, const ui
         } else {
             if (m_DestFormat == FXDIB_8bppRgb) {
                 return;
-            }
-            if (m_DestFormat == FXDIB_Argb) {
+            } else if (m_DestFormat == FXDIB_Argb) {
                 _CompositeRow_8bppRgb2Argb_NoBlend_RgbByteOrder(dest_scan, src_scan, width, m_pSrcPalette, clip_scan);
             } else {
                 _CompositeRow_8bppRgb2Rgb_NoBlend_RgbByteOrder(dest_scan, src_scan, m_pSrcPalette, width, (m_DestFormat & 0xff) >> 3, clip_scan);
@@ -3959,8 +3957,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(uint8_t* dest_scan, const ui
     if (m_DestFormat == FXDIB_8bppMask) {
         _CompositeRow_Rgb2Mask(dest_scan, src_scan, width, clip_scan);
         return;
-    }
-    if ((m_DestFormat & 0xff) == 8) {
+    } else if ((m_DestFormat & 0xff) == 8) {
         if (m_Transparency & 8) {
             if (m_DestFormat & 0x0200) {
                 _CompositeRow_1bppPal2Graya(dest_scan, src_scan, src_left, (const uint8_t*)m_pSrcPalette, width, m_BlendType, clip_scan, dst_extra_alpha);
@@ -4211,8 +4208,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left, int top, int width, int height, FX
                 }
         }
         return TRUE;
-    }
-    if (m_bpp == 1) {
+    } else if (m_bpp == 1) {
         ASSERT(!IsCmykImage() && (uint8_t)(alpha_flag >> 8) == 0);
         int left_shift = rect.left % 8;
         int right_shift = rect.right % 8;

@@ -44,8 +44,7 @@ FX_BOOL CheckComponents(cmsColorSpaceSignature cs, int nComponents, FX_BOOL bDst
         case cmsSigGrayData:
             if (bDst && nComponents != 1) {
                 return FALSE;
-            }
-            if (!bDst && nComponents > 2) {
+            } else if (!bDst && nComponents > 2) {
                 return FALSE;
             }
             break;

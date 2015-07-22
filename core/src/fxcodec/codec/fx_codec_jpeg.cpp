@@ -420,11 +420,9 @@ extern "C" {
         int ratio = (iratio_w > iratio_h) ? iratio_h : iratio_w;
         if (ratio >= 8) {
             return 8;
-        }
-        if (ratio >= 4) {
+        } else if (ratio >= 4) {
             return 4;
-        }
-        if (ratio >= 2) {
+        } else if (ratio >= 2) {
             return 2;
         }
         return 1;

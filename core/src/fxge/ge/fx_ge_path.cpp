@@ -55,8 +55,7 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect, FX_RECT mask_rect, CFX_DIBitma
     if (m_Box.IsEmpty()) {
         m_Type = RectI;
         return;
-    }
-    if (m_Box == mask_rect) {
+    } else if (m_Box == mask_rect) {
         m_Mask = Mask;
         return;
     }
@@ -230,8 +229,7 @@ static void _UpdateLineEndPoints(CFX_FloatRect& rect, FX_FLOAT start_x, FX_FLOAT
         rect.UpdateRect(end_x + hw, point_y);
         rect.UpdateRect(end_x - hw, point_y);
         return;
-    }
-    if (start_y == end_y) {
+    } else if (start_y == end_y) {
         FX_FLOAT point_x;
         if (end_x < start_x) {
             point_x = end_x - hw;

@@ -243,8 +243,7 @@ void** CFX_BaseSegmentedArray::GetIndex(int seg_index) const
     ASSERT(m_IndexDepth != 0);
     if (m_IndexDepth == 1) {
         return (void**)m_pIndex;
-    }
-    if (m_IndexDepth == 2) {
+    } else if (m_IndexDepth == 2) {
         return (void**)((void**)m_pIndex)[seg_index / m_IndexSize];
     }
     int tree_size = 1;

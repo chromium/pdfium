@@ -754,17 +754,18 @@ void CPDF_PageObjects::ContinueParse(IFX_Pause* pPause)
 }
 int CPDF_PageObjects::EstimateParseProgress() const
 {
-    if (!m_pParser) {
+    if (m_pParser == NULL) {
         return m_ParseState == PDF_CONTENT_PARSED ? 100 : 0;
     }
     return m_pParser->EstimateProgress();
 }
 FX_POSITION CPDF_PageObjects::InsertObject(FX_POSITION posInsertAfter, CPDF_PageObject* pNewObject)
 {
-    if (!posInsertAfter) {
+    if (posInsertAfter == NULL) {
         return m_ObjectList.AddHead(pNewObject);
+    } else {
+        return m_ObjectList.InsertAfter(posInsertAfter, pNewObject);
     }
-    return m_ObjectList.InsertAfter(posInsertAfter, pNewObject);
 }
 int CPDF_PageObjects::GetObjectIndex(CPDF_PageObject* pObj) const
 {

@@ -345,11 +345,9 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
             m_Storer.Replace(m_Storer.GetBitmap()->SwapXY(m_pMatrix->c > 0, m_pMatrix->b < 0));
         }
         return FALSE;
-    }
-    if (m_Status == 2) {
+    } else if (m_Status == 2) {
         return m_Stretcher.Continue(pPause);
-    }
-    if (m_Status != 3) {
+    } else if (m_Status != 3) {
         return FALSE;
     }
     if (m_Stretcher.Continue(pPause)) {

@@ -688,8 +688,7 @@ uint8_t _GetCharsetFromCodePage(FX_WORD codepage)
         const CHARSET_MAP & cp = g_Codepage2CharsetTable[iMid];
         if (codepage == cp.codepage) {
             return cp.charset;
-        }
-        if (codepage < cp.codepage) {
+        } else if (codepage < cp.codepage) {
             iEnd = iMid - 1;
         } else {
             iStart = iMid + 1;
@@ -1160,10 +1159,14 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
                     m_pFontMgr->GetStandardFont(pFontData, size, 12);
                     m_FoxitFaces[12] = m_pFontMgr->GetFixedFace(pFontData, size, 0);
                     return m_FoxitFaces[12];
+                } else {
+                    pSubstFont->m_SubstFlags |= FXFONT_SUBST_NONSYMBOL;
+                    return FindSubstFont(family, bTrueType, flags & ~FXFONT_SYMBOLIC, weight, italic_angle, 0, pSubstFont);
                 }
-#endif
+#else
                 pSubstFont->m_SubstFlags |= FXFONT_SUBST_NONSYMBOL;
                 return FindSubstFont(family, bTrueType, flags & ~FXFONT_SYMBOLIC, weight, italic_angle, 0, pSubstFont);
+#endif
             }
             if (Charset == FXFONT_ANSI_CHARSET) {
                 pSubstFont->m_SubstFlags |= FXFONT_SUBST_STANDARD;
@@ -1172,8 +1175,9 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name, FX_BOOL bTru
             int index = m_CharsetArray.Find(Charset);
             if (index < 0) {
                 return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight, PitchFamily);
+            } else {
+                hFont = m_pFontInfo->GetFont(m_FaceArray[index]);
             }
-            hFont = m_pFontInfo->GetFont(m_FaceArray[index]);
         }
     }
     pSubstFont->m_ExtHandle = m_pFontInfo->RetainFont(hFont);

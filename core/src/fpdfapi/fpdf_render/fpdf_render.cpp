@@ -551,8 +551,7 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj, FX_BOOL bTyp
     CPDF_ColorStateData* pColorData = (CPDF_ColorStateData*)(const CPDF_ColorStateData*)pObj->m_ColorState;
     if (m_pType3Char && !bType3 && (!m_pType3Char->m_bColored || (m_pType3Char->m_bColored && (!pColorData || pColorData->m_FillColor.IsNull())))) {
         return m_T3FillColor;
-    }
-    if (!pColorData || pColorData->m_FillColor.IsNull()) {
+    } else if (!pColorData || pColorData->m_FillColor.IsNull()) {
         pColorData = (CPDF_ColorStateData*)(const CPDF_ColorStateData*)m_InitialStates.m_ColorState;
     }
     FX_COLORREF rgb = pColorData->m_FillRGB;
@@ -581,8 +580,7 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const
     CPDF_ColorStateData* pColorData = (CPDF_ColorStateData*)(const CPDF_ColorStateData*)pObj->m_ColorState;
     if (m_pType3Char && (!m_pType3Char->m_bColored || (m_pType3Char->m_bColored && (!pColorData || pColorData->m_StrokeColor.IsNull())))) {
         return m_T3FillColor;
-    }
-    if (!pColorData || pColorData->m_StrokeColor.IsNull()) {
+    } else if (!pColorData || pColorData->m_StrokeColor.IsNull()) {
         pColorData = (CPDF_ColorStateData*)(const CPDF_ColorStateData*)m_InitialStates.m_ColorState;
     }
     FX_COLORREF rgb = pColorData->m_StrokeRGB;

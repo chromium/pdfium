@@ -354,11 +354,12 @@ static int CALLBACK EnumFontFamExProc(	ENUMLOGFONTEXA *lpelfe,
 {
     if (FontType != 0x004 || strchr(lpelfe->elfLogFont.lfFaceName, '@') != NULL) {
         return 1;
+    } else {
+        LPDF_FONTDATA pData = (LPDF_FONTDATA)lParam;
+        memcpy(&pData->lf, &lpelfe->elfLogFont, sizeof(LOGFONTA));
+        pData->bFind = TRUE;
+        return 0;
     }
-    LPDF_FONTDATA pData = (LPDF_FONTDATA)lParam;
-    memcpy(&pData->lf, &lpelfe->elfLogFont, sizeof(LOGFONTA));
-    pData->bFind = TRUE;
-    return 0;
 }
 static FX_BOOL RetrieveSpecificFont(LOGFONTA& lf)
 {
@@ -696,39 +697,41 @@ int CPDF_InterForm::CompareFieldName(const CFX_ByteString& name1, const CFX_Byte
 {
     const FX_CHAR* ptr1 = name1;
     const FX_CHAR* ptr2 = name2;
-    if (name1.GetLength() == name2.GetLength()) {
+    if (name1.GetLength() != name2.GetLength()) {
+        int i = 0;
+        while (ptr1[i] == ptr2[i]) {
+            i ++;
+        }
+        if (i == name1.GetLength()) {
+            return 2;
+        }
+        if (i == name2.GetLength()) {
+            return 3;
+        }
+        return 0;
+    } else {
         return name1 == name2 ? 1 : 0;
     }
-    int i = 0;
-    while (ptr1[i] == ptr2[i]) {
-        i ++;
-    }
-    if (i == name1.GetLength()) {
-        return 2;
-    }
-    if (i == name2.GetLength()) {
-        return 3;
-    }
-    return 0;
 }
 int CPDF_InterForm::CompareFieldName(const CFX_WideString& name1, const CFX_WideString& name2)
 {
     const FX_WCHAR* ptr1 = name1.c_str();
     const FX_WCHAR* ptr2 = name2.c_str();
-    if (name1.GetLength() == name2.GetLength()) {
+    if (name1.GetLength() != name2.GetLength()) {
+        int i = 0;
+        while (ptr1[i] == ptr2[i]) {
+            i ++;
+        }
+        if (i == name1.GetLength()) {
+            return 2;
+        }
+        if (i == name2.GetLength()) {
+            return 3;
+        }
+        return 0;
+    } else {
         return name1 == name2 ? 1 : 0;
     }
-    int i = 0;
-    while (ptr1[i] == ptr2[i]) {
-        i ++;
-    }
-    if (i == name1.GetLength()) {
-        return 2;
-    }
-    if (i == name2.GetLength()) {
-        return 3;
-    }
-    return 0;
 }
 FX_DWORD CPDF_InterForm::CountFields(const CFX_WideString &csFieldName)
 {
@@ -897,104 +900,115 @@ CPDF_FormControl* CPDF_InterForm::GetControlByDict(CPDF_Dictionary* pWidgetDict)
 }
 FX_DWORD CPDF_InterForm::CountInternalFields(const CFX_WideString& csFieldName) const
 {
-    if (!m_pFormDict) {
+    if (m_pFormDict == NULL) {
         return 0;
     }
     CPDF_Array* pArray = m_pFormDict->GetArray("Fields");
-    if (!pArray) {
+    if (pArray == NULL) {
         return 0;
     }
     if (csFieldName.IsEmpty()) {
         return pArray->GetCount();
-    }
-    int iLength = csFieldName.GetLength();
-    int iPos = 0;
-    CPDF_Dictionary* pDict = NULL;
-    while (pArray != NULL) {
-        CFX_WideString csSub;
-        if (iPos < iLength && csFieldName[iPos] == L'.') {
-            iPos ++;
-        }
-        while (iPos < iLength && csFieldName[iPos] != L'.') {
-            csSub += csFieldName[iPos ++];
-        }
-        int iCount = pArray->GetCount();
-        FX_BOOL bFind = FALSE;
-        for (int i = 0; i < iCount; i ++) {
-            pDict = pArray->GetDict(i);
-            if (pDict == NULL) {
-                continue;
+    } else {
+        int iLength = csFieldName.GetLength();
+        int iPos = 0;
+        CPDF_Dictionary* pDict = NULL;
+        while (pArray != NULL) {
+            CFX_WideString csSub;
+            if (iPos < iLength && csFieldName[iPos] == L'.') {
+                iPos ++;
             }
-            CFX_WideString csT = pDict->GetUnicodeText("T");
-            if (csT == csSub) {
-                bFind = TRUE;
+            while (iPos < iLength && csFieldName[iPos] != L'.') {
+                csSub += csFieldName[iPos ++];
+            }
+            int iCount = pArray->GetCount();
+            FX_BOOL bFind = FALSE;
+            for (int i = 0; i < iCount; i ++) {
+                pDict = pArray->GetDict(i);
+                if (pDict == NULL) {
+                    continue;
+                }
+                CFX_WideString csT = pDict->GetUnicodeText("T");
+                if (csT == csSub) {
+                    bFind = TRUE;
+                    break;
+                }
+            }
+            if (!bFind) {
+                return 0;
+            }
+            if (iPos >= iLength) {
                 break;
             }
+            pArray = pDict->GetArray("Kids");
         }
-        if (!bFind) {
+        if (pDict == NULL) {
             return 0;
+        } else {
+            pArray = pDict->GetArray("Kids");
+            if (pArray == NULL) {
+                return 1;
+            } else {
+                return pArray->GetCount();
+            }
         }
-        if (iPos >= iLength) {
-            break;
-        }
-        pArray = pDict->GetArray("Kids");
     }
-    if (!pDict) {
-        return 0;
-    }
-    pArray = pDict->GetArray("Kids");
-    return pArray ? pArray->GetCount() : 1;
 }
-
 CPDF_Dictionary* CPDF_InterForm::GetInternalField(FX_DWORD index, const CFX_WideString& csFieldName) const
 {
-    if (!m_pFormDict) {
-        return nullptr;
+    if (m_pFormDict == NULL) {
+        return NULL;
     }
     CPDF_Array* pArray = m_pFormDict->GetArray("Fields");
-    if (!pArray) {
-        return nullptr;
+    if (pArray == NULL) {
+        return 0;
     }
     if (csFieldName.IsEmpty()) {
         return pArray->GetDict(index);
-    }
-    int iLength = csFieldName.GetLength();
-    int iPos = 0;
-    CPDF_Dictionary* pDict = NULL;
-    while (pArray != NULL) {
-        CFX_WideString csSub;
-        if (iPos < iLength && csFieldName[iPos] == L'.') {
-            iPos ++;
-        }
-        while (iPos < iLength && csFieldName[iPos] != L'.') {
-            csSub += csFieldName[iPos ++];
-        }
-        int iCount = pArray->GetCount();
-        FX_BOOL bFind = FALSE;
-        for (int i = 0; i < iCount; i ++) {
-            pDict = pArray->GetDict(i);
-            if (pDict == NULL) {
-                continue;
+    } else {
+        int iLength = csFieldName.GetLength();
+        int iPos = 0;
+        CPDF_Dictionary* pDict = NULL;
+        while (pArray != NULL) {
+            CFX_WideString csSub;
+            if (iPos < iLength && csFieldName[iPos] == L'.') {
+                iPos ++;
             }
-            CFX_WideString csT = pDict->GetUnicodeText("T");
-            if (csT == csSub) {
-                bFind = TRUE;
+            while (iPos < iLength && csFieldName[iPos] != L'.') {
+                csSub += csFieldName[iPos ++];
+            }
+            int iCount = pArray->GetCount();
+            FX_BOOL bFind = FALSE;
+            for (int i = 0; i < iCount; i ++) {
+                pDict = pArray->GetDict(i);
+                if (pDict == NULL) {
+                    continue;
+                }
+                CFX_WideString csT = pDict->GetUnicodeText("T");
+                if (csT == csSub) {
+                    bFind = TRUE;
+                    break;
+                }
+            }
+            if (!bFind) {
+                return NULL;
+            }
+            if (iPos >= iLength) {
                 break;
             }
+            pArray = pDict->GetArray("Kids");
         }
-        if (!bFind) {
+        if (pDict == NULL) {
             return NULL;
+        } else {
+            pArray = pDict->GetArray("Kids");
+            if (pArray == NULL) {
+                return pDict;
+            } else {
+                return pArray->GetDict(index);
+            }
         }
-        if (iPos >= iLength) {
-            break;
-        }
-        pArray = pDict->GetArray("Kids");
     }
-    if (!pDict) {
-        return nullptr;
-    }
-    pArray = pDict->GetArray("Kids");
-    return pArray ? pArray->GetDict(index) : pDict;
 }
 FX_BOOL CPDF_InterForm::NeedConstructAP()
 {

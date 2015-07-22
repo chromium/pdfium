@@ -165,8 +165,7 @@ CFX_ByteStringC CPDF_SimpleParser::GetWord()
             m_dwCurPos ++;
         }
         return CFX_ByteStringC(pStart, (FX_STRSIZE)(m_dwCurPos - (pStart - m_pData)));
-    }
-    if (dwSize == 1 && pStart[0] == '(') {
+    } else if (dwSize == 1 && pStart[0] == '(') {
         int level = 1;
         while (m_dwCurPos < m_dwSize) {
             if (m_pData[m_dwCurPos] == ')') {

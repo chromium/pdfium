@@ -555,12 +555,13 @@ static FX_DWORD _StringToCode(const CFX_ByteStringC& str)
             result = result * 16 + digit;
         }
         return result;
-    }
-    for (int i = 0; i < len; i ++) {
-        if (buf[i] < '0' || buf[i] > '9') {
-            break;
+    } else {
+        for (int i = 0; i < len; i ++) {
+            if (buf[i] < '0' || buf[i] > '9') {
+                break;
+            }
+            result = result * 10 + buf[i] - '0';
         }
-        result = result * 10 + buf[i] - '0';
     }
     return result;
 }

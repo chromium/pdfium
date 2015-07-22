@@ -66,6 +66,7 @@ public:
             FX_FLOAT yTorelance) const;
     virtual CFX_WideString			GetTextByRect(const CFX_FloatRect& rect) const;
     virtual void					GetRectsArrayByRect(const CFX_FloatRect& rect, CFX_RectArray& resRectArray) const;
+    virtual	int						GetOrderByDirection(int order, int direction) const;
     virtual	CFX_WideString			GetPageText(int start = 0, int nCount = -1) const;
 
     virtual int						CountRects(int start, int nCount);
@@ -86,7 +87,7 @@ public:
     static	FX_BOOL					IsLetter(FX_WCHAR unicode);
 private:
     FX_BOOL							IsHyphen(FX_WCHAR curChar);
-    bool							IsControlChar(const PAGECHAR_INFO& charInfo);
+    FX_BOOL							IsControlChar(PAGECHAR_INFO* pCharInfo);
     FX_BOOL							GetBaselineRotate(int start, int end, int& Rotate);
     void							ProcessObject();
     void							ProcessFormObject(CPDF_FormObject*	pFormObj, const CFX_AffineMatrix& formMatrix);

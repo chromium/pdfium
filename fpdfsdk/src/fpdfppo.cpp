@@ -185,9 +185,9 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
     CPDF_Dictionary* pDict,
     CFX_ByteString nSrctag)
 {
-    if (!pDict || nSrctag.IsEmpty())
+    if (!pDict || !pDict->KeyExist("Type") || nSrctag.IsEmpty())
         return nullptr;
-    if (!pDict->KeyExist("Parent") || !pDict->KeyExist("Type"))
+    if (!pDict->KeyExist("Parent"))
         return nullptr;
 
     CPDF_Object* pType = pDict->GetElement("Type")->GetDirect();
@@ -200,19 +200,19 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
     if (!pParent || pParent->GetType() != PDFOBJ_DICTIONARY)
         return nullptr;
 
+    CPDF_Dictionary* pp = (CPDF_Dictionary*)pParent;
+
     if (pDict->KeyExist((const char*)nSrctag))
         return pDict->GetElement((const char*)nSrctag);
 
-    CPDF_Dictionary* pp = (CPDF_Dictionary*)pParent;
     while (pp) {
         if (pp->KeyExist((const char*)nSrctag)) {
             return pp->GetElement((const char*)nSrctag);
-        }
-        if (!pp->KeyExist("Parent")) {
-            break;
-        }
-        pp = (CPDF_Dictionary*)pp->GetElement("Parent")->GetDirect();
-        if (pp->GetType() == PDFOBJ_NULL) {
+        } else if (pp->KeyExist("Parent")) {
+            pp = (CPDF_Dictionary*)pp->GetElement("Parent")->GetDirect();
+            if (pp->GetType() == PDFOBJ_NULL)
+                break;
+        } else {
             break;
         }
     }
@@ -259,10 +259,12 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
             FX_DWORD count = pArray->GetCount();
             for (FX_DWORD i = 0; i < count; ++i) {
                 CPDF_Object* pNextObj = pArray->GetElement(i);
-                if (!pNextObj)
+                if (pNextObj) {
+                    if (!UpdateReference(pNextObj, pDoc, pObjNumberMap))
+                        return FALSE;
+                } else {
                     return FALSE;
-                if (!UpdateReference(pNextObj, pDoc, pObjNumberMap))
-                    return FALSE;
+                }
             }
             break;
         }
@@ -314,8 +316,7 @@ FX_DWORD CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
             if (!FXSYS_stricmp(strType, "Pages")) {
                 pDictClone->Release();
                 return 4;
-            }
-            if (!FXSYS_stricmp(strType, "Page")) {
+            } else if (!FXSYS_stricmp(strType, "Page")) {
                 pDictClone->Release();
                 return  0;
             }
@@ -372,9 +373,10 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
                     nStartPageNum >nEndPageNum ||
                     nEndPageNum > nCount) {
                     return FALSE;
-                }
-                for (int i = nStartPageNum; i <= nEndPageNum; ++i) {
-                    pageArray->Add(i);
+                } else {
+                    for (int i = nStartPageNum; i <= nEndPageNum; ++i) {
+                        pageArray->Add(i);
+                    }
                 }
             }
             nStringFrom = nStringTo + 1;
