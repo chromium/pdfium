@@ -591,7 +591,7 @@ failed1:
     return JBIG2_ERROR_TOO_SHORT;
 failed2:
     m_pModule->JBig2_Error("segment syntax error.");
-    return JBIG2_ERROR_FETAL;
+    return JBIG2_ERROR_FATAL;
 }
 int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPause)
 {
@@ -660,7 +660,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
     for(i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
         if(!findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i])) {
             m_pModule->JBig2_Error("symbol dictionary segment : can't find refered to segments");
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
     }
@@ -691,7 +691,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
     if(pSymbolDictDecoder->SDHUFF == 1) {
         if((cSDHUFFDH == 2) || (cSDHUFFDW == 2)) {
             m_pModule->JBig2_Error("symbol dictionary segment : SDHUFFDH=2 or SDHUFFDW=2 is not permitted.");
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         nIndex = 0;
@@ -707,7 +707,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("symbol dictionary segment : SDHUFFDH can't find user supplied table.");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pSymbolDictDecoder->SDHUFFDH = pSeg->m_Result.ht;
@@ -724,7 +724,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("symbol dictionary segment : SDHUFFDW can't find user supplied table.");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pSymbolDictDecoder->SDHUFFDW = pSeg->m_Result.ht;
@@ -737,7 +737,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("symbol dictionary segment : SDHUFFBMSIZE can't find user supplied table.");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pSymbolDictDecoder->SDHUFFBMSIZE = pSeg->m_Result.ht;
@@ -753,7 +753,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
                 pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
                 if(!pSeg) {
                     m_pModule->JBig2_Error("symbol dictionary segment : SDHUFFAGGINST can't find user supplied table.");
-                    nRet = JBIG2_ERROR_FETAL;
+                    nRet = JBIG2_ERROR_FATAL;
                     goto failed;
                 }
                 pSymbolDictDecoder->SDHUFFAGGINST = pSeg->m_Result.ht;
@@ -802,7 +802,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
             pSegment->m_Result.sd = pSymbolDictDecoder->decode_Arith(pArithDecoder, gbContext, grContext);
             delete pArithDecoder;
             if(pSegment->m_Result.sd == NULL) {
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             m_pStream->alignByte();
@@ -810,7 +810,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
         } else {
             pSegment->m_Result.sd = pSymbolDictDecoder->decode_Huffman(m_pStream, gbContext, grContext, pPause);
             if(pSegment->m_Result.sd == NULL) {
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             m_pStream->alignByte();
@@ -951,7 +951,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
     for(i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
         if(!findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i])) {
             m_pModule->JBig2_Error("text region segment : can't find refered to segments");
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
     }
@@ -982,7 +982,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
         SBSYMCODES = decodeSymbolIDHuffmanTable(m_pStream, pTRD->SBNUMSYMS);
         if(SBSYMCODES == NULL) {
             m_pModule->JBig2_Error("text region segment: symbol ID huffman table decode failure!");
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         m_pStream->alignByte();
@@ -999,7 +999,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
                 || (cSBHUFFRDX == 2) || (cSBHUFFRDY == 2)) {
             m_pModule->JBig2_Error("text region segment : SBHUFFFS=2 or SBHUFFRDW=2 or "
                                    "SBHUFFRDH=2 or SBHUFFRDX=2 or SBHUFFRDY=2 is not permitted");
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         nIndex = 0;
@@ -1015,7 +1015,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("text region segment : SBHUFFFS can't find user supplied table");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pTRD->SBHUFFFS = pSeg->m_Result.ht;
@@ -1036,7 +1036,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("text region segment : SBHUFFDS can't find user supplied table");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pTRD->SBHUFFDS = pSeg->m_Result.ht;
@@ -1057,7 +1057,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("text region segment : SBHUFFDT can't find user supplied table");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pTRD->SBHUFFDT = pSeg->m_Result.ht;
@@ -1074,7 +1074,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("text region segment : SBHUFFRDW can't find user supplied table");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pTRD->SBHUFFRDW = pSeg->m_Result.ht;
@@ -1095,7 +1095,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("text region segment : SBHUFFRDH can't find user supplied table");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pTRD->SBHUFFRDH = pSeg->m_Result.ht;
@@ -1116,7 +1116,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("text region segment : SBHUFFRDX can't find user supplied table");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pTRD->SBHUFFRDX = pSeg->m_Result.ht;
@@ -1137,7 +1137,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("text region segment : SBHUFFRDY can't find user supplied table");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pTRD->SBHUFFRDY = pSeg->m_Result.ht;
@@ -1150,7 +1150,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
             pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
             if(!pSeg) {
                 m_pModule->JBig2_Error("text region segment : SBHUFFRSIZE can't find user supplied table");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             pTRD->SBHUFFRSIZE = pSeg->m_Result.ht;
@@ -1167,7 +1167,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
         pSegment->m_Result.im = pTRD->decode_Arith(pArithDecoder, grContext);
         delete pArithDecoder;
         if(pSegment->m_Result.im == NULL) {
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         m_pStream->alignByte();
@@ -1176,7 +1176,7 @@ FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
         pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
         pSegment->m_Result.im = pTRD->decode_Huffman(m_pStream, grContext);
         if(pSegment->m_Result.im == NULL) {
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         m_pStream->alignByte();
@@ -1273,7 +1273,7 @@ FX_BOOL CJBig2_Context::parsePatternDict(CJBig2_Segment *pSegment, IFX_Pause* pP
         delete pArithDecoder;
         if(pSegment->m_Result.pd == NULL) {
             m_pModule->JBig2_Free(gbContext);
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         m_pModule->JBig2_Free(gbContext);
@@ -1282,7 +1282,7 @@ FX_BOOL CJBig2_Context::parsePatternDict(CJBig2_Segment *pSegment, IFX_Pause* pP
     } else {
         pSegment->m_Result.pd = pPDD->decode_MMR(m_pStream, pPause);
         if(pSegment->m_Result.pd == NULL) {
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         m_pStream->alignByte();
@@ -1326,19 +1326,19 @@ FX_BOOL CJBig2_Context::parseHalftoneRegion(CJBig2_Segment *pSegment, IFX_Pause*
     pHRD->HDEFPIXEL = (cFlags >> 7) & 0x01;
     if(pSegment->m_nReferred_to_segment_count != 1) {
         m_pModule->JBig2_Error("halftone region segment : refered to segment count not equals 1");
-        nRet = JBIG2_ERROR_FETAL;
+        nRet = JBIG2_ERROR_FATAL;
         goto failed;
     }
     pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[0]);
     if( (pSeg == NULL) || (pSeg->m_cFlags.s.type != 16)) {
         m_pModule->JBig2_Error("halftone region segment : refered to segment is not pattern dict");
-        nRet = JBIG2_ERROR_FETAL;
+        nRet = JBIG2_ERROR_FATAL;
         goto failed;
     }
     pPatternDict = pSeg->m_Result.pd;
     if((pPatternDict == NULL) || (pPatternDict->NUMPATS == 0)) {
         m_pModule->JBig2_Error("halftone region segment : has no patterns input");
-        nRet = JBIG2_ERROR_FETAL;
+        nRet = JBIG2_ERROR_FATAL;
         goto failed;
     }
     pHRD->HNUMPATS = pPatternDict->NUMPATS;
@@ -1355,7 +1355,7 @@ FX_BOOL CJBig2_Context::parseHalftoneRegion(CJBig2_Segment *pSegment, IFX_Pause*
         delete pArithDecoder;
         if(pSegment->m_Result.im == NULL) {
             m_pModule->JBig2_Free(gbContext);
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         m_pModule->JBig2_Free(gbContext);
@@ -1364,7 +1364,7 @@ FX_BOOL CJBig2_Context::parseHalftoneRegion(CJBig2_Segment *pSegment, IFX_Pause*
     } else {
         pSegment->m_Result.im = pHRD->decode_MMR(m_pStream, pPause);
         if(pSegment->m_Result.im == NULL) {
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         m_pStream->alignByte();
@@ -1462,7 +1462,7 @@ FX_BOOL CJBig2_Context::parseGenericRegion(CJBig2_Segment *pSegment, IFX_Pause* 
             m_pArithDecoder = NULL;
             if(pSegment->m_Result.im == NULL) {
                 m_pModule->JBig2_Free(m_gbContext);
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 m_gbContext = NULL;
                 m_ProcessiveStatus = FXCODEC_STATUS_ERROR;
                 goto failed;
@@ -1478,7 +1478,7 @@ FX_BOOL CJBig2_Context::parseGenericRegion(CJBig2_Segment *pSegment, IFX_Pause* 
             m_pGRD->Continue_decode(pPause);
         }
         if(pSegment->m_Result.im == NULL) {
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         m_pStream->alignByte();
@@ -1540,7 +1540,7 @@ FX_BOOL CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment *pSegment)
             pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[0]);
             if(pSeg == NULL) {
                 m_pModule->JBig2_Error("generic refinement region segment : can't find refered to segments");
-                nRet = JBIG2_ERROR_FETAL;
+                nRet = JBIG2_ERROR_FATAL;
                 goto failed;
             }
             if((pSeg->m_cFlags.s.type == 4) || (pSeg->m_cFlags.s.type == 20)
@@ -1550,7 +1550,7 @@ FX_BOOL CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment *pSegment)
         }
         if(i >= pSegment->m_nReferred_to_segment_count) {
             m_pModule->JBig2_Error("generic refinement region segment : can't find refered to intermediate region");
-            nRet = JBIG2_ERROR_FETAL;
+            nRet = JBIG2_ERROR_FATAL;
             goto failed;
         }
         pGRRD->GRREFERENCE = pSeg->m_Result.im;
@@ -1568,7 +1568,7 @@ FX_BOOL CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment *pSegment)
     delete pArithDecoder;
     if(pSegment->m_Result.im == NULL) {
         m_pModule->JBig2_Free(grContext);
-        nRet = JBIG2_ERROR_FETAL;
+        nRet = JBIG2_ERROR_FATAL;
         goto failed;
     }
     m_pModule->JBig2_Free(grContext);
@@ -1598,7 +1598,7 @@ FX_BOOL CJBig2_Context::parseTable(CJBig2_Segment *pSegment)
     if(!pSegment->m_Result.ht->isOK()) {
         delete pSegment->m_Result.ht;
         pSegment->m_Result.ht = NULL;
-        return JBIG2_ERROR_FETAL;
+        return JBIG2_ERROR_FATAL;
     }
     m_pStream->alignByte();
     return JBIG2_SUCCESS;

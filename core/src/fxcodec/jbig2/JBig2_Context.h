@@ -25,7 +25,7 @@ typedef enum {
 #define JBIG2_SUCCESS			 0
 #define JBIG2_FAILED			-1
 #define JBIG2_ERROR_TOO_SHORT	-2
-#define JBIG2_ERROR_FETAL		-3
+#define JBIG2_ERROR_FATAL		-3
 #define JBIG2_END_OF_PAGE		 2
 #define JBIG2_END_OF_FILE		 3
 #define JBIG2_ERROR_FILE_FORMAT -4
