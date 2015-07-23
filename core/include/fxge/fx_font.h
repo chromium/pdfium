@@ -56,12 +56,12 @@ public:
     CFX_Font();
     ~CFX_Font();
 
-    FX_BOOL					LoadSubst(const CFX_ByteString& face_name, FX_BOOL bTrueType, FX_DWORD flags,
-                                      int weight, int italic_angle, int CharsetCP, FX_BOOL bVertical = FALSE);
+    bool					LoadSubst(const CFX_ByteString& face_name, bool bTrueType, FX_DWORD flags,
+                                      int weight, int italic_angle, int CharsetCP, bool bVertical = false);
 
-    FX_BOOL					LoadEmbedded(const uint8_t* data, FX_DWORD size);
+    bool					LoadEmbedded(const uint8_t* data, FX_DWORD size);
 
-    FX_BOOL					LoadFile(IFX_FileRead* pFile);
+    bool					LoadFile(IFX_FileRead* pFile);
 
     FXFT_Face				GetFace() const
     {
@@ -82,15 +82,15 @@ public:
 
     int						GetDescent() const;
 
-    FX_BOOL                 GetGlyphBBox(FX_DWORD glyph_index, FX_RECT &bbox);
+    bool                 GetGlyphBBox(FX_DWORD glyph_index, FX_RECT &bbox);
 
-    FX_BOOL                 IsItalic();
+    bool                 IsItalic();
 
-    FX_BOOL                 IsBold();
+    bool                 IsBold();
 
-    FX_BOOL                 IsFixedWidth();
+    bool                 IsFixedWidth();
 
-    FX_BOOL					IsVertical() const
+    bool					IsVertical() const
     {
         return m_bVertical;
     }
@@ -103,9 +103,9 @@ public:
     CFX_ByteString          GetFaceName() const;
 
 
-    FX_BOOL                 IsTTFont();
+    bool                 IsTTFont();
 
-    FX_BOOL                 GetBBox(FX_RECT &bbox);
+    bool                 GetBBox(FX_RECT &bbox);
 
     int                     GetHeight();
 
@@ -118,7 +118,7 @@ public:
     FXFT_Face				m_Face;
 
     CFX_SubstFont*			m_pSubstFont;
-    FX_BOOL					IsEmbedded()
+    bool					IsEmbedded()
     {
         return m_bEmbedded;
     }
@@ -133,14 +133,14 @@ public:
     void*                   m_pPlatformFont;
     void*                   m_pPlatformFontCollection;
     void*                   m_pDwFont;
-    FX_BOOL                 m_bDwLoaded;
+    bool                 m_bDwLoaded;
     void                    ReleasePlatformResource();
 
     void					DeleteFace();
 protected:
 
-    FX_BOOL					m_bEmbedded;
-    FX_BOOL					m_bVertical;
+    bool					m_bEmbedded;
+    bool					m_bVertical;
     void*					m_pOwnedStream;
 };
 #define ENCODING_INTERNAL		0
@@ -182,11 +182,11 @@ public:
 
     int						m_ItalicAngle;
 
-    FX_BOOL					m_bSubstOfCJK;
+    bool					m_bSubstOfCJK;
 
     int						m_WeightCJK;
 
-    FX_BOOL					m_bItlicCJK;
+    bool					m_bItlicCJK;
 };
 #define FX_FONT_FLAG_SERIF              0x01
 #define FX_FONT_FLAG_FIXEDPITCH			0x02
@@ -206,9 +206,9 @@ public:
     ~CFX_FontMgr();
     void			InitFTLibrary();
     FXFT_Face		GetCachedFace(const CFX_ByteString& face_name,
-                                  int weight, FX_BOOL bItalic, uint8_t*& pFontData);
+                                  int weight, bool bItalic, uint8_t*& pFontData);
     FXFT_Face		AddCachedFace(const CFX_ByteString& face_name,
-                                  int weight, FX_BOOL bItalic, uint8_t* pData, FX_DWORD size, int face_index);
+                                  int weight, bool bItalic, uint8_t* pData, FX_DWORD size, int face_index);
     FXFT_Face		GetCachedTTCFace(int ttc_size, FX_DWORD checksum,
                                      int font_offset, uint8_t*& pFontData);
     FXFT_Face		AddCachedTTCFace(int ttc_size, FX_DWORD checksum,
@@ -217,12 +217,12 @@ public:
     FXFT_Face		GetFixedFace(const uint8_t* pData, FX_DWORD size, int face_index);
     void			ReleaseFace(FXFT_Face face);
     void			SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo);
-    FXFT_Face		FindSubstFont(const CFX_ByteString& face_name, FX_BOOL bTrueType, FX_DWORD flags,
+    FXFT_Face		FindSubstFont(const CFX_ByteString& face_name, bool bTrueType, FX_DWORD flags,
                                   int weight, int italic_angle, int CharsetCP, CFX_SubstFont* pSubstFont);
 
     void			FreeCache();
 
-    FX_BOOL			GetStandardFont(const uint8_t*& pFontData, FX_DWORD& size, int index);
+    bool			GetStandardFont(const uint8_t*& pFontData, FX_DWORD& size, int index);
     CFX_FontMapper*	m_pBuiltinMapper;
     IFX_FontMapper*	m_pExtMapper;
     CFX_MapByteStringToPtr	m_FaceMap;
@@ -235,7 +235,7 @@ public:
 
     virtual ~IFX_FontMapper() {}
 
-    virtual FXFT_Face	FindSubstFont(const CFX_ByteString& face_name, FX_BOOL bTrueType, FX_DWORD flags,
+    virtual FXFT_Face	FindSubstFont(const CFX_ByteString& face_name, bool bTrueType, FX_DWORD flags,
                                       int weight, int italic_angle, int CharsetCP, CFX_SubstFont* pSubstFont) = 0;
 
     CFX_FontMgr*		m_pFontMgr;
@@ -277,14 +277,14 @@ public:
     {
         return m_pFontEnumerator;
     }
-    virtual FXFT_Face	FindSubstFont(const CFX_ByteString& face_name, FX_BOOL bTrueType, FX_DWORD flags,
+    virtual FXFT_Face	FindSubstFont(const CFX_ByteString& face_name, bool bTrueType, FX_DWORD flags,
                                       int weight, int italic_angle, int CharsetCP, CFX_SubstFont* pSubstFont);
 private:
     CFX_ByteString		GetPSNameFromTT(void* hFont);
     CFX_ByteString		MatchInstalledFonts(const CFX_ByteString& norm_name);
     FXFT_Face			UseInternalSubst(CFX_SubstFont* pSubstFont, int iBaseFont, int italic_angle, int weight, int picthfamily);
 
-    FX_BOOL				m_bListLoaded;
+    bool				m_bListLoaded;
     FXFT_Face			m_MMFaces[2];
     CFX_ByteString		m_LastFamily;
     CFX_DWordArray		m_CharsetArray;
@@ -299,12 +299,12 @@ public:
     static IFX_SystemFontInfo*	CreateDefault();
     virtual void		Release() = 0;
 
-    virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper) = 0;
-    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, int& iExact) = 0;
+    virtual	bool		EnumFontList(CFX_FontMapper* pMapper) = 0;
+    virtual void*		MapFont(int weight, bool bItalic, int charset, int pitch_family, const FX_CHAR* face, int& iExact) = 0;
     virtual void*		GetFont(const FX_CHAR* face) = 0;
     virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size) = 0;
-    virtual FX_BOOL		GetFaceName(void* hFont, CFX_ByteString& name) = 0;
-    virtual FX_BOOL		GetFontCharset(void* hFont, int& charset) = 0;
+    virtual bool		GetFaceName(void* hFont, CFX_ByteString& name) = 0;
+    virtual bool		GetFontCharset(void* hFont, int& charset) = 0;
     virtual int			GetFaceIndex(void* hFont)
     {
         return 0;
@@ -326,15 +326,15 @@ public:
 
     // IFX_SytemFontInfo:
     void Release() override;
-    FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override;
-    void* MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family,
+    bool EnumFontList(CFX_FontMapper* pMapper) override;
+    void* MapFont(int weight, bool bItalic, int charset, int pitch_family,
                   const FX_CHAR* face, int& bExact) override;
     void* GetFont(const FX_CHAR* face) override;
     FX_DWORD GetFontData(void* hFont, FX_DWORD table,
                          uint8_t* buffer, FX_DWORD size) override;
     void DeleteFont(void* hFont) override;
-    FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override;
-    FX_BOOL GetFontCharset(void* hFont, int& charset) override;
+    bool GetFaceName(void* hFont, CFX_ByteString& name) override;
+    bool GetFontCharset(void* hFont, int& charset) override;
 
 protected:
     CFX_MapByteStringToPtr	m_FontList;
@@ -357,7 +357,7 @@ public:
     ~CFX_FontCache();
     CFX_FaceCache*			GetCachedFace(CFX_Font* pFont);
     void					ReleaseCachedFace(CFX_Font* pFont);
-    void					FreeCache(FX_BOOL bRelease = FALSE);
+    void					FreeCache(bool bRelease = false);
 
 private:
     using CFX_FTCacheMap = std::map<FXFT_Face, CFX_CountedFaceCache*>;
@@ -391,7 +391,7 @@ class CFX_FaceCache
 {
 public:
     ~CFX_FaceCache();
-    const CFX_GlyphBitmap*	LoadGlyphBitmap(CFX_Font* pFont, FX_DWORD glyph_index, FX_BOOL bFontStyle, const CFX_AffineMatrix* pMatrix,
+    const CFX_GlyphBitmap*	LoadGlyphBitmap(CFX_Font* pFont, FX_DWORD glyph_index, bool bFontStyle, const CFX_AffineMatrix* pMatrix,
                                             int dest_width, int anti_alias, int& text_flags);
     const CFX_PathData*		LoadGlyphPath(CFX_Font* pFont, FX_DWORD glyph_index, int dest_width);
 
@@ -399,12 +399,12 @@ public:
     CFX_FaceCache(FXFT_Face face);
 private:
     FXFT_Face				m_Face;
-    CFX_GlyphBitmap*		RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_index, FX_BOOL bFontStyle,
+    CFX_GlyphBitmap*		RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_index, bool bFontStyle,
                                         const CFX_AffineMatrix* pMatrix, int dest_width, int anti_alias);
     CFX_GlyphBitmap*		RenderGlyph_Nativetext(CFX_Font* pFont, FX_DWORD glyph_index,
             const CFX_AffineMatrix* pMatrix, int dest_width, int anti_alias);
     CFX_GlyphBitmap*        LookUpGlyphBitmap(CFX_Font* pFont, const CFX_AffineMatrix* pMatrix, CFX_ByteStringC& FaceGlyphsKey,
-            FX_DWORD glyph_index, FX_BOOL bFontStyle, int dest_width, int anti_alias);
+            FX_DWORD glyph_index, bool bFontStyle, int dest_width, int anti_alias);
     CFX_MapByteStringToPtr	m_SizeMap;
     CFX_MapPtrToPtr			m_PathMap;
     CFX_DIBitmap*           m_pBitmap;
@@ -418,16 +418,16 @@ typedef struct {
     FX_FLOAT			m_fOriginX, m_fOriginY;
 } FXTEXT_GLYPHPOS;
 FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos, int nChars, int anti_alias, FX_FLOAT retinaScaleX = 1.0f, FX_FLOAT retinaScaleY = 1.0f);
-FX_BOOL	OutputGlyph(void* dib, int x, int y, CFX_Font* pFont, double font_size,
+bool	OutputGlyph(void* dib, int x, int y, CFX_Font* pFont, double font_size,
                     CFX_AffineMatrix* pMatrix, unsigned long glyph_index, unsigned long argb);
-FX_BOOL	OutputText(void* dib, int x, int y, CFX_Font* pFont, double font_size,
+bool	OutputText(void* dib, int x, int y, CFX_Font* pFont, double font_size,
                    CFX_AffineMatrix* pText_matrix, unsigned short const* text, unsigned long argb);
 class IFX_GSUBTable
 {
 public:
     static IFX_GSUBTable* Create(CFX_Font* pFont);
     virtual ~IFX_GSUBTable() { }
-    virtual FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) = 0;
+    virtual bool GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) = 0;
 };
 
 #endif  // CORE_INCLUDE_FXGE_FX_FONT_H_

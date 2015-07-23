@@ -12,7 +12,7 @@ class CPDF_ObjectStream
 public:
     CPDF_ObjectStream();
 
-    FX_BOOL				Start();
+    bool				Start();
 
     int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const CPDF_Object *pObj);
     int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const uint8_t* pBuffer, FX_DWORD dwSize);
@@ -34,15 +34,15 @@ public:
 
     CPDF_XRefStream();
 
-    FX_BOOL				Start();
+    bool				Start();
 
     int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const CPDF_Object *pObj, CPDF_Creator *pCreator);
 
     int32_t			CompressIndirectObject(FX_DWORD dwObjNum, const uint8_t* pBuffer, FX_DWORD dwSize, CPDF_Creator *pCreator);
 
-    FX_BOOL				End(CPDF_Creator *pCreator, FX_BOOL bEOF = FALSE);
-    FX_BOOL				AddObjectNumberToIndexArray(FX_DWORD objnum);
-    FX_BOOL				EndXRefStream(CPDF_Creator* pCreator);
+    bool				End(CPDF_Creator *pCreator, bool bEOF = false);
+    bool				AddObjectNumberToIndexArray(FX_DWORD objnum);
+    bool				EndXRefStream(CPDF_Creator* pCreator);
 
 
     CFX_DWordArray		m_IndexArray;
@@ -51,8 +51,8 @@ public:
     FX_DWORD			m_dwTempObjNum;
 
 protected:
-    int32_t			EndObjectStream(CPDF_Creator *pCreator, FX_BOOL bEOF = TRUE);
-    FX_BOOL				GenerateXRefStream(CPDF_Creator* pCreator, FX_BOOL bEOF);
+    int32_t			EndObjectStream(CPDF_Creator *pCreator, bool bEOF = true);
+    bool				GenerateXRefStream(CPDF_Creator* pCreator, bool bEOF);
     int32_t			m_iSeg;
     CPDF_ObjectStream	m_ObjStream;
     CFX_ByteTextBuf		m_Buffer;

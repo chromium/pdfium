@@ -13,17 +13,17 @@ typedef CFX_ArrayTemplate<CPDF_Rect> CPDF_RectArray;
 enum FPDF_TYPE { MAX, MIN };
 enum FPDF_VALUE { TOP, LEFT, RIGHT, BOTTOM };
 
-FX_BOOL IsValiableRect(CPDF_Rect rect, CPDF_Rect rcPage)
+bool IsValiableRect(CPDF_Rect rect, CPDF_Rect rcPage)
 {
 	if ( rect.left - rect.right > 0.000001f ||
 		 rect.bottom - rect.top > 0.000001f)
-		return FALSE;
+		return false;
 
 	if (rect.left == 0.0f &&
 		rect.top == 0.0f &&
 		rect.right == 0.0f &&
 		rect.bottom == 0.0f)
-		return FALSE;
+		return false;
 
 	if (!rcPage.IsEmpty())
 	{
@@ -31,17 +31,17 @@ FX_BOOL IsValiableRect(CPDF_Rect rect, CPDF_Rect rcPage)
 			rect.right - rcPage.right > 10.000001f ||
 			rect.top - rcPage.top > 10.000001f ||
 			rect.bottom - rcPage.bottom < -10.000001f)
-			return FALSE;
+			return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 
-FX_BOOL GetContentsRect( CPDF_Document * pDoc, CPDF_Dictionary* pDict, CPDF_RectArray * pRectArray )
+bool GetContentsRect( CPDF_Document * pDoc, CPDF_Dictionary* pDict, CPDF_RectArray * pRectArray )
 {
 	CPDF_Page* pPDFPage = new CPDF_Page;
-	pPDFPage->Load( pDoc, pDict, FALSE );
+	pPDFPage->Load( pDoc, pDict, false );
 	pPDFPage->ParseContent();
 
 	FX_POSITION pos = pPDFPage->GetFirstObjectPosition();
@@ -64,7 +64,7 @@ FX_BOOL GetContentsRect( CPDF_Document * pDoc, CPDF_Dictionary* pDict, CPDF_Rect
 	}
 
 	delete pPDFPage;
-	return TRUE;
+	return true;
 }
 
 
@@ -217,7 +217,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 
 			CFX_ByteString sStream;
 			sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-			pNewContents->SetData((const uint8_t*)sStream, sStream.GetLength(), FALSE, FALSE);
+			pNewContents->SetData((const uint8_t*)sStream, sStream.GetLength(), false, false);
 		}
 		return;
 	}
@@ -237,7 +237,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 			CFX_ByteString sStream = "q\n";
 			CFX_ByteString sBody = CFX_ByteString((const FX_CHAR*)acc.GetData(), acc.GetSize());
 			sStream = sStream + sBody + "\nQ";
-			pContents->SetData((const uint8_t*)sStream, sStream.GetLength(), FALSE, FALSE);
+			pContents->SetData((const uint8_t*)sStream, sStream.GetLength(), false, false);
 			pContentsArray->AddReference(pDocument, dwObjNum);
 			break;
 		}
@@ -264,7 +264,7 @@ void SetPageContents(CFX_ByteString key, CPDF_Dictionary* pPage, CPDF_Document* 
 
 		CFX_ByteString sStream;
 		sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-		pNewContents->SetData((const uint8_t*)sStream, sStream.GetLength(), FALSE, FALSE);
+		pNewContents->SetData((const uint8_t*)sStream, sStream.GetLength(), false, false);
 	}
 }
 
@@ -538,7 +538,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten( FPDF_PAGE page, int nFlag)
 		sTemp.Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d, m.e, m.f, sFormName.c_str());
 		sStream += sTemp;
 
-		pNewXObject->SetData((const uint8_t*)sStream, sStream.GetLength(), FALSE, FALSE);
+		pNewXObject->SetData((const uint8_t*)sStream, sStream.GetLength(), false, false);
 	}
 	pPageDict->RemoveAt( "Annots" );
 

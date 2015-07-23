@@ -39,12 +39,12 @@ struct CPVT_WordPlace {
         nSecIndex = nLineIndex = nWordIndex = -1;
     }
 
-    FX_BOOL operator == (const CPVT_WordPlace & wp) const
+    bool operator == (const CPVT_WordPlace & wp) const
     {
         return wp.nSecIndex == nSecIndex && wp.nLineIndex == nLineIndex && wp.nWordIndex == nWordIndex;
     }
 
-    FX_BOOL operator != (const CPVT_WordPlace & wp) const
+    bool operator != (const CPVT_WordPlace & wp) const
     {
         return wp.nSecIndex != nSecIndex || wp.nLineIndex != nLineIndex || wp.nWordIndex != nWordIndex;
     }
@@ -142,12 +142,12 @@ struct CPVT_WordRange {
         SwapWordPlace();
     }
 
-    FX_BOOL IsExist() const
+    bool IsExist() const
     {
         return BeginPos != EndPos;
     }
 
-    FX_BOOL operator != (const CPVT_WordRange & wr) const
+    bool operator != (const CPVT_WordRange & wr) const
     {
         return wr.BeginPos != BeginPos || wr.EndPos != EndPos;
     }
@@ -290,7 +290,7 @@ public:
 
     virtual int32_t						GetWordFontIndex(FX_WORD word, int32_t charset, int32_t nFontIndex) = 0;
 
-    virtual FX_BOOL							IsLatinWord(FX_WORD word) = 0;
+    virtual bool							IsLatinWord(FX_WORD word) = 0;
 
     virtual int32_t						GetDefaultFontIndex() = 0;
 };
@@ -299,27 +299,27 @@ class IPDF_VariableText_Iterator
 public:
     virtual ~IPDF_VariableText_Iterator() { }
 
-    virtual FX_BOOL							NextWord() = 0;
+    virtual bool							NextWord() = 0;
 
-    virtual FX_BOOL							PrevWord() = 0;
+    virtual bool							PrevWord() = 0;
 
-    virtual FX_BOOL							NextLine() = 0;
+    virtual bool							NextLine() = 0;
 
-    virtual FX_BOOL							PrevLine() = 0;
+    virtual bool							PrevLine() = 0;
 
-    virtual FX_BOOL							NextSection() = 0;
+    virtual bool							NextSection() = 0;
 
-    virtual FX_BOOL							PrevSection() = 0;
+    virtual bool							PrevSection() = 0;
 
-    virtual FX_BOOL							GetWord(CPVT_Word & word) const = 0;
+    virtual bool							GetWord(CPVT_Word & word) const = 0;
 
-    virtual FX_BOOL							SetWord(const CPVT_Word & word) = 0;
+    virtual bool							SetWord(const CPVT_Word & word) = 0;
 
-    virtual FX_BOOL							GetLine(CPVT_Line & line) const = 0;
+    virtual bool							GetLine(CPVT_Line & line) const = 0;
 
-    virtual FX_BOOL							GetSection(CPVT_Section & section) const = 0;
+    virtual bool							GetSection(CPVT_Section & section) const = 0;
 
-    virtual	FX_BOOL							SetSection(const CPVT_Section & section) = 0;
+    virtual	bool							SetSection(const CPVT_Section & section) = 0;
 
     virtual void							SetAt(int32_t nWordIndex) = 0;
 
@@ -352,23 +352,23 @@ public:
 
     virtual void							SetHorzScale(int32_t nHorzScale = 100) = 0;
 
-    virtual void							SetMultiLine(FX_BOOL bMultiLine = TRUE) = 0;
+    virtual void							SetMultiLine(bool bMultiLine = true) = 0;
 
-    virtual void							SetAutoReturn(FX_BOOL bAuto = TRUE) = 0;
+    virtual void							SetAutoReturn(bool bAuto = true) = 0;
 
-    virtual void							SetAutoFontSize(FX_BOOL bAuto = TRUE) = 0;
+    virtual void							SetAutoFontSize(bool bAuto = true) = 0;
 
     virtual void							SetFontSize(FX_FLOAT fFontSize) = 0;
 
     virtual void							SetLineLeading(FX_FLOAT fLineLeading) = 0;
 
-    virtual void							SetRichText(FX_BOOL bRichText) = 0;
+    virtual void							SetRichText(bool bRichText) = 0;
 
     virtual void							Initialize() = 0;
 
-    virtual FX_BOOL							IsValid() const = 0;
+    virtual bool							IsValid() const = 0;
 
-    virtual FX_BOOL							IsRichText() const = 0;
+    virtual bool							IsRichText() const = 0;
 
     virtual void							RearrangeAll() = 0;
 
@@ -410,7 +410,7 @@ public:
 
     virtual int32_t						GetLimitChar() const = 0;
 
-    virtual FX_BOOL							IsMultiLine() const = 0;
+    virtual bool							IsMultiLine() const = 0;
 
     virtual int32_t						GetHorzScale() const = 0;
 
@@ -440,7 +440,7 @@ public:
 
     virtual void							UpdateWordPlace(CPVT_WordPlace & place) const = 0;
 
-    virtual CPVT_WordPlace					AjustLineHeader(const CPVT_WordPlace & place, FX_BOOL bPrevOrNext) const = 0;
+    virtual CPVT_WordPlace					AjustLineHeader(const CPVT_WordPlace & place, bool bPrevOrNext) const = 0;
 
     virtual int32_t						WordPlaceToWordIndex(const CPVT_WordPlace & place) const = 0;
 

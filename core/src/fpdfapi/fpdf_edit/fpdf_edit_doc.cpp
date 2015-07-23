@@ -12,7 +12,7 @@ CPDF_Document::CPDF_Document() : CPDF_IndirectObjects(NULL)
 {
     m_pRootDict = NULL;
     m_pInfoDict = NULL;
-    m_bLinearized = FALSE;
+    m_bLinearized = false;
     m_dwFirstPageNo = 0;
     m_dwFirstPageObjNum = 0;
     m_pDocPage = CPDF_ModuleMgr::Get()->GetPageModule()->CreateDocData(this);
@@ -215,7 +215,7 @@ static void _InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArr
     }
     FX_Free(widths);
 }
-CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont, FX_BOOL bVert, FX_BOOL bTranslateName)
+CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont, bool bVert, bool bTranslateName)
 {
     LOGFONTA lfa;
     FXSYS_memcpy(&lfa, pLogFont, (char*)lfa.lfFaceName - (char*)&lfa);
@@ -239,7 +239,7 @@ CFX_ByteString _FPDF_GetPSNameFromTT(HDC hDC)
     }
     return result;
 }
-CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont, FX_BOOL bVert, FX_BOOL bTranslateName)
+CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont, bool bVert, bool bTranslateName)
 {
     pLogFont->lfHeight = -1000;
     pLogFont->lfWidth = 0;
@@ -269,7 +269,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont, FX_BOOL bVert, FX_B
     if ((pLogFont->lfPitchAndFamily & 0xf8) == FF_SCRIPT) {
         flags |= PDFFONT_SCRIPT;
     }
-    FX_BOOL bCJK = pLogFont->lfCharSet == CHINESEBIG5_CHARSET || pLogFont->lfCharSet == GB2312_CHARSET ||
+    bool bCJK = pLogFont->lfCharSet == CHINESEBIG5_CHARSET || pLogFont->lfCharSet == GB2312_CHARSET ||
                    pLogFont->lfCharSet == HANGEUL_CHARSET || pLogFont->lfCharSet == SHIFTJIS_CHARSET;
     CFX_ByteString basefont;
     if (bTranslateName && bCJK) {
@@ -549,7 +549,7 @@ static void _CFString2CFXByteString(CFStringRef src, CFX_ByteString &dest)
     dest = (FX_CHAR*)pBuffer;
     free(pBuffer);
 }
-FX_BOOL IsHasCharSet(CFArrayRef languages, const CFX_DWordArray &charSets)
+bool IsHasCharSet(CFArrayRef languages, const CFX_DWordArray &charSets)
 {
     int iCount = charSets.GetSize();
     for (int i = 0; i < CFArrayGetCount(languages); ++i) {
@@ -557,11 +557,11 @@ FX_BOOL IsHasCharSet(CFArrayRef languages, const CFX_DWordArray &charSets)
         FX_DWORD CharSet = FX_GetCharsetFromLang(CFStringGetCStringPtr(language, kCFStringEncodingMacRoman), -1);
         for (int j = 0; j < iCount; ++j) {
             if (CharSet == charSets[j]) {
-                return TRUE;
+                return true;
             }
         }
     }
-    return FALSE;
+    return false;
 }
 void FX_GetCharWidth(CTFontRef font, UniChar start, UniChar end, int* width)
 {
@@ -599,7 +599,7 @@ static void _InsertWidthArray(CTFontRef font, int start, int end, CPDF_Array* pW
     }
     FX_Free(widths);
 }
-CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTranslateName)
+CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, bool bVert, bool bTranslateName)
 {
     CTFontRef font = (CTFontRef)pFont;
     CTFontDescriptorRef descriptor = CTFontCopyFontDescriptor(font);
@@ -607,7 +607,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
         return NULL;
     }
     CFX_ByteString basefont;
-    FX_BOOL bCJK = FALSE;
+    bool bCJK = false;
     int flags = 0, italicangle = 0, ascend = 0, descend = 0, capheight = 0, bbox[4];
     FXSYS_memset(bbox, 0, sizeof(int) * 4);
     CFArrayRef languages = (CFArrayRef)CTFontDescriptorCopyAttribute(descriptor, kCTFontLanguagesAttribute);
@@ -621,7 +621,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
     charSets.Add(FXFONT_HANGEUL_CHARSET);
     charSets.Add(FXFONT_SHIFTJIS_CHARSET);
     if (IsHasCharSet(languages, charSets)) {
-        bCJK = TRUE;
+        bCJK = true;
     }
     CFRelease(descriptor);
     CFDictionaryRef traits = (CFDictionaryRef)CTFontCopyTraits(font);
@@ -737,7 +737,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
         CFX_ByteString cmap;
         CFX_ByteString ordering;
         int supplement;
-        FX_BOOL bFound = FALSE;
+        bool bFound = false;
         CPDF_Array* pWidthArray = new CPDF_Array;
         charSets.RemoveAll();
         charSets.Add(FXFONT_CHINESEBIG5_CHARSET);
@@ -747,7 +747,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
             supplement = 4;
             pWidthArray->AddInteger(1);
             _InsertWidthArray(font, 0x20, 0x7e, pWidthArray);
-            bFound = TRUE;
+            bFound = true;
         }
         charSets.RemoveAll();
         charSets.Add(FXFONT_GB2312_CHARSET);
@@ -758,7 +758,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
             _InsertWidthArray(font, 0x20, 0x20, pWidthArray);
             pWidthArray->AddInteger(814);
             _InsertWidthArray(font, 0x21, 0x7e, pWidthArray);
-            bFound = TRUE;
+            bFound = true;
         }
         charSets.RemoveAll();
         charSets.Add(FXFONT_HANGEUL_CHARSET);
@@ -768,7 +768,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont, FX_BOOL bVert, FX_BOOL bTr
             supplement = 2;
             pWidthArray->AddInteger(1);
             _InsertWidthArray(font, 0x20, 0x7e, pWidthArray);
-            bFound = TRUE;
+            bFound = true;
         }
         charSets.RemoveAll();
         charSets.Add(FXFONT_SHIFTJIS_CHARSET);
@@ -867,12 +867,12 @@ static void _InsertWidthArray1(CFX_Font* pFont, IFX_FontEncoding* pEncoding, FX_
     }
     FX_Free(widths);
 }
-CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert)
+CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert)
 {
     if (pFont == NULL) {
         return NULL;
     }
-    FX_BOOL bCJK = charset == FXFONT_CHINESEBIG5_CHARSET || charset == FXFONT_GB2312_CHARSET ||
+    bool bCJK = charset == FXFONT_CHINESEBIG5_CHARSET || charset == FXFONT_GB2312_CHARSET ||
                    charset == FXFONT_HANGEUL_CHARSET || charset == FXFONT_SHIFTJIS_CHARSET;
     CFX_ByteString basefont = pFont->GetFamilyName();
     basefont.Replace(" ", "");
@@ -1052,7 +1052,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert)
     return LoadFont(pBaseDict);
 }
 static int InsertDeletePDFPage(CPDF_Document* pDoc, CPDF_Dictionary* pPages,
-                               int nPagesToGo, CPDF_Dictionary* pPage, FX_BOOL bInsert, CFX_PtrArray& stackList)
+                               int nPagesToGo, CPDF_Dictionary* pPage, bool bInsert, CFX_PtrArray& stackList)
 {
     CPDF_Array* pKidList = pPages->GetArray("Kids");
     if (!pKidList) {
@@ -1122,7 +1122,7 @@ static int InsertNewPage(CPDF_Document* pDoc, int iPage, CPDF_Dictionary* pPageD
     } else {
         CFX_PtrArray stack;
         stack.Add(pPages);
-        if (InsertDeletePDFPage(pDoc, pPages, iPage, pPageDict, TRUE, stack) < 0) {
+        if (InsertDeletePDFPage(pDoc, pPages, iPage, pPageDict, true, stack) < 0) {
             return -1;
         }
     }
@@ -1165,7 +1165,7 @@ void CPDF_Document::DeletePage(int iPage)
     }
     CFX_PtrArray stack;
     stack.Add(pPages);
-    if (InsertDeletePDFPage(this, pPages, iPage, NULL, FALSE, stack) < 0) {
+    if (InsertDeletePDFPage(this, pPages, iPage, NULL, false, stack) < 0) {
         return;
     }
     m_PageList.RemoveAt(iPage);

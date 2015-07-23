@@ -109,8 +109,8 @@ class PWL_CLASS CPWL_Utils
 public:
 	static CPDF_Rect						InflateRect(const CPDF_Rect& rcRect, FX_FLOAT fSize);
 	static CPDF_Rect						DeflateRect(const CPDF_Rect& rcRect, FX_FLOAT fSize);
-	static FX_BOOL							IntersectRect(const CPDF_Rect& rect1, const CPDF_Rect& rect2);
-	static FX_BOOL							ContainsRect(const CPDF_Rect& rcParent, const CPDF_Rect& rcChild);
+	static bool							IntersectRect(const CPDF_Rect& rect1, const CPDF_Rect& rect2);
+	static bool							ContainsRect(const CPDF_Rect& rcParent, const CPDF_Rect& rcChild);
 	static CPDF_Rect						ScaleRect(const CPDF_Rect& rcRect,FX_FLOAT fScale);
 	static CPVT_WordRange					OverlapWordRange(const CPVT_WordRange& wr1, const CPVT_WordRange& wr2);
 	static CPDF_Rect						GetCenterSquare(const CPDF_Rect & rect);
@@ -120,10 +120,10 @@ public:
 	static CPDF_Rect						OffsetRect(const CPDF_Rect & rect,FX_FLOAT x,FX_FLOAT y);
 	static CPDF_Point						OffsetPoint(const  CPDF_Point & point,FX_FLOAT x,FX_FLOAT y);
 	static FX_COLORREF						PWLColorToFXColor(const CPWL_Color& color, int32_t nTransparancy = 255);
-	static FX_BOOL							IsBlackOrWhite(const CPWL_Color& color);
+	static bool							IsBlackOrWhite(const CPWL_Color& color);
 	static CPWL_Color						GetReverseColor(const CPWL_Color& color);
 
-	static CFX_ByteString					GetColorAppStream(const CPWL_Color & color,const FX_BOOL & bFillOrStroke = TRUE);
+	static CFX_ByteString					GetColorAppStream(const CPWL_Color & color,const bool & bFillOrStroke = true);
 	static CFX_ByteString					GetBorderAppStream(const CPDF_Rect & rect, FX_FLOAT fWidth,
 												const CPWL_Color & color, const CPWL_Color & crLeftTop, const CPWL_Color & crRightBottom,
 												int32_t nStyle, const CPWL_Dash & dash);
@@ -149,7 +149,7 @@ public:
 														const CPWL_Color & crText);
 
 	static CFX_ByteString					GetEditAppStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset, const CPVT_WordRange * pRange = NULL,
-														FX_BOOL bContinuous = TRUE, FX_WORD SubWord = 0);
+														bool bContinuous = true, FX_WORD SubWord = 0);
 	static CFX_ByteString					GetEditSelAppStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset,
 														const CPVT_WordRange * pRange = NULL);
 	static CFX_ByteString					GetSpellCheckAppStream(IFX_Edit* pEdit, IPWL_SpellCheck* pSpellCheck,
@@ -157,7 +157,7 @@ public:
 														const CPVT_WordRange * pRange = NULL);
 	static CFX_ByteString					GetTextAppStream(const CPDF_Rect & rcBBox,IFX_Edit_FontMap * pFontMap,
 														const CFX_WideString & sText, int32_t nAlignmentH, int32_t nAlignmentV,
-														FX_FLOAT fFontSize, FX_BOOL bMultiLine, FX_BOOL bAutoReturn, const CPWL_Color & crText);
+														FX_FLOAT fFontSize, bool bMultiLine, bool bAutoReturn, const CPWL_Color & crText);
 	static CFX_ByteString					GetDropButtonAppStream(const CPDF_Rect & rcBBox);
 
 	static void								DrawFillRect(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,const CPDF_Rect & rect,
@@ -175,7 +175,7 @@ public:
 	static void								DrawFillArea(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 														const CPDF_Point* pPts, int32_t nCount, const FX_COLORREF& color);
 	static void								DrawShadow(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
-														FX_BOOL bVertical, FX_BOOL bHorizontal, CPDF_Rect rect,
+														bool bVertical, bool bHorizontal, CPDF_Rect rect,
 														int32_t nTransparancy, int32_t nStartGray, int32_t nEndGray);
 	static void								DrawEditSpellCheck(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, IFX_Edit* pEdit,
 														const CPDF_Rect& rcClip, const CPDF_Point& ptOffset, const CPVT_WordRange* pRange,

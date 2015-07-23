@@ -154,13 +154,13 @@ DLLEXPORT FPDF_SCHHANDLE STDCALL FPDFText_FindStart(FPDF_TEXTPAGE text_page,FPDF
 }
 DLLEXPORT FPDF_BOOL	STDCALL FPDFText_FindNext(FPDF_SCHHANDLE handle)
 {
-	if (!handle) return FALSE;
+	if (!handle) return false;
 	IPDF_TextPageFind* textpageFind=(IPDF_TextPageFind*)handle;
 	return	textpageFind->FindNext();
 }
 DLLEXPORT FPDF_BOOL STDCALL FPDFText_FindPrev(FPDF_SCHHANDLE handle)
 {
-	if (!handle) return FALSE;
+	if (!handle) return false;
 	IPDF_TextPageFind* textpageFind=(IPDF_TextPageFind*)handle;
 	return	textpageFind->FindPrev();
 }

@@ -164,26 +164,26 @@ public:
         return m_eUsageType;
     }
 
-    FX_BOOL			CheckOCGVisible(const CPDF_Dictionary *pOCGDict);
+    bool			CheckOCGVisible(const CPDF_Dictionary *pOCGDict);
 
     void			ResetOCContext();
 protected:
 
-    FX_BOOL			LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig, const CPDF_Dictionary *pOCGDict, FX_BOOL &bValidConfig) const;
+    bool			LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig, const CPDF_Dictionary *pOCGDict, bool &bValidConfig) const;
 
-    FX_BOOL			LoadOCGState(const CPDF_Dictionary *pOCGDict) const;
+    bool			LoadOCGState(const CPDF_Dictionary *pOCGDict) const;
 
-    FX_BOOL			GetOCGVisible(const CPDF_Dictionary *pOCGDict);
+    bool			GetOCGVisible(const CPDF_Dictionary *pOCGDict);
 
-    FX_BOOL			GetOCGVE(CPDF_Array *pExpression, FX_BOOL bFromConfig, int nLevel = 0);
+    bool			GetOCGVE(CPDF_Array *pExpression, bool bFromConfig, int nLevel = 0);
 
-    FX_BOOL			LoadOCMDState(const CPDF_Dictionary *pOCMDDict, FX_BOOL bFromConfig);
+    bool			LoadOCMDState(const CPDF_Dictionary *pOCMDDict, bool bFromConfig);
 
     CPDF_Document		*m_pDocument;
 
     UsageType			m_eUsageType;
 
-    std::map<const CPDF_Dictionary*, FX_BOOL> m_OCGStates;
+    std::map<const CPDF_Dictionary*, bool> m_OCGStates;
 };
 class CPDF_LWinParam
 {
@@ -295,7 +295,7 @@ public:
 
     CFX_WideString		GetFilePath() const;
 
-    FX_BOOL				GetNewWindow() const
+    bool				GetNewWindow() const
     {
         return m_pDict->GetBoolean("NewWindow");
     }
@@ -304,7 +304,7 @@ public:
 
     CFX_ByteString		GetURI(CPDF_Document* pDoc) const;
 
-    FX_BOOL				GetMouseMap() const
+    bool				GetMouseMap() const
     {
         return m_pDict->GetBoolean("IsMap");
     }
@@ -314,9 +314,9 @@ public:
         return this;
     }
 
-    FX_BOOL				GetHideStatus() const
+    bool				GetHideStatus() const
     {
-        return m_pDict->GetBoolean("H", TRUE);
+        return m_pDict->GetBoolean("H", true);
     }
 
     CFX_ByteString		GetNamedAction() const
@@ -345,17 +345,17 @@ public:
         return m_pDict->GetNumber("Volume");
     }
 
-    FX_BOOL				IsSynchronous() const
+    bool				IsSynchronous() const
     {
         return m_pDict->GetBoolean("Synchronous");
     }
 
-    FX_BOOL				IsRepeat() const
+    bool				IsRepeat() const
     {
         return m_pDict->GetBoolean("Repeat");
     }
 
-    FX_BOOL				IsMixPlay() const
+    bool				IsMixPlay() const
     {
         return m_pDict->GetBoolean("Mix");
     }
@@ -405,7 +405,7 @@ public:
         DocumentPrinted
     };
 
-    FX_BOOL				ActionExist(AActionType eType) const;
+    bool				ActionExist(AActionType eType) const;
 
     CPDF_Action			GetAction(AActionType eType) const;
 
@@ -455,13 +455,13 @@ public:
         return m_pObj;
     }
 
-    FX_BOOL			IsURL() const;
+    bool			IsURL() const;
 
-    FX_BOOL			GetFileName(CFX_WideString &wsFileName) const;
+    bool			GetFileName(CFX_WideString &wsFileName) const;
 
     CPDF_Stream*	GetFileStream() const;
 
-    void			SetFileName(const CFX_WideStringC& wsFileName, FX_BOOL bURL = FALSE);
+    void			SetFileName(const CFX_WideStringC& wsFileName, bool bURL = false);
 protected:
 
     CPDF_Object		*m_pObj;
@@ -543,13 +543,13 @@ class CPDF_Annot : public CFX_PrivateData
 
     CPDF_Dictionary* GetAnnotDict();
 
-    FX_BOOL DrawAppearance(const CPDF_Page* pPage,
+    bool DrawAppearance(const CPDF_Page* pPage,
                            CFX_RenderDevice* pDevice,
                            const CFX_AffineMatrix* pUser2Device,
                            AppearanceMode mode,
                            const CPDF_RenderOptions* pOptions);
 
-    FX_BOOL DrawInContext(const CPDF_Page* pPage,
+    bool DrawInContext(const CPDF_Page* pPage,
                           const CPDF_RenderContext* pContext,
                           const CFX_AffineMatrix* pUser2Device,
                           AppearanceMode mode);
@@ -585,25 +585,25 @@ public:
     void	GetAnnotRect(const CPDF_Dictionary* pAnnotDict, const CFX_Matrix* pUser2Device, CPDF_Rect &rtAnnot) const;
 
     void				DisplayAnnots(const CPDF_Page* pPage, CFX_RenderDevice* pDevice,
-                                      CFX_AffineMatrix* pMatrix, FX_BOOL bShowWidget,
+                                      CFX_AffineMatrix* pMatrix, bool bShowWidget,
                                       CPDF_RenderOptions* pOptions);
 
     void				DisplayAnnots(const CPDF_Page* pPage, CPDF_RenderContext* pContext,
-                                      FX_BOOL bPrinting, CFX_AffineMatrix* pMatrix, FX_BOOL bShowWidget,
+                                      bool bPrinting, CFX_AffineMatrix* pMatrix, bool bShowWidget,
                                       CPDF_RenderOptions* pOptions)
     {
         DisplayAnnots(pPage, NULL, pContext, bPrinting, pMatrix, bShowWidget ? 3 : 1, pOptions, NULL);
     }
 
     void				DisplayAnnots(const CPDF_Page* pPage, CPDF_RenderContext* pContext,
-                                      FX_BOOL bPrinting, CFX_AffineMatrix* pMatrix, FX_BOOL bShowWidget,
+                                      bool bPrinting, CFX_AffineMatrix* pMatrix, bool bShowWidget,
                                       CPDF_RenderOptions* pOptions, FX_RECT *pClipRect)
     {
         DisplayAnnots(pPage, NULL, pContext, bPrinting, pMatrix, bShowWidget ? 3 : 1, pOptions, pClipRect);
     }
 
     void				DisplayAnnots(const CPDF_Page* pPage, CFX_RenderDevice* pDevice, CPDF_RenderContext* pContext,
-                                      FX_BOOL bPrinting, CFX_AffineMatrix* pMatrix, FX_DWORD dwAnnotFlags,
+                                      bool bPrinting, CFX_AffineMatrix* pMatrix, FX_DWORD dwAnnotFlags,
                                       CPDF_RenderOptions* pOptions, FX_RECT* pClipRect);
 
 
@@ -636,8 +636,8 @@ protected:
     CFX_PtrArray		m_Borders;
 
     void				DisplayPass(const CPDF_Page* pPage, CFX_RenderDevice* pDevice,
-                                    CPDF_RenderContext* pContext, FX_BOOL bPrinting, CFX_AffineMatrix* pMatrix,
-                                    FX_BOOL bWidget, CPDF_RenderOptions* pOptions, FX_RECT* clip_rect);
+                                    CPDF_RenderContext* pContext, bool bPrinting, CFX_AffineMatrix* pMatrix,
+                                    bool bWidget, CPDF_RenderOptions* pOptions, FX_RECT* clip_rect);
     friend class		CPDF_Annot;
 };
 #define COLORTYPE_TRANSPARENT	0
@@ -678,7 +678,7 @@ public:
 
 
 
-    FX_BOOL				HasFont();
+    bool				HasFont();
 
     CFX_ByteString		GetFontString();
 
@@ -687,18 +687,18 @@ public:
 
 
 
-    FX_BOOL				HasColor(FX_BOOL bStrokingOperation = FALSE);
+    bool				HasColor(bool bStrokingOperation = false);
 
-    CFX_ByteString		GetColorString(FX_BOOL bStrokingOperation = FALSE);
+    CFX_ByteString		GetColorString(bool bStrokingOperation = false);
 
-    void				GetColor(int& iColorType, FX_FLOAT fc[4], FX_BOOL bStrokingOperation = FALSE);
+    void				GetColor(int& iColorType, FX_FLOAT fc[4], bool bStrokingOperation = false);
 
-    void				GetColor(FX_ARGB& color, int& iColorType, FX_BOOL bStrokingOperation = FALSE);
-
-
+    void				GetColor(FX_ARGB& color, int& iColorType, bool bStrokingOperation = false);
 
 
-    FX_BOOL				HasTextMatrix();
+
+
+    bool				HasTextMatrix();
 
     CFX_ByteString		GetTextMatrixString();
 
@@ -720,15 +720,15 @@ class CPDF_InterForm : public CFX_PrivateData
 {
 public:
 
-    CPDF_InterForm(CPDF_Document* pDocument, FX_BOOL bUpdateAP);
+    CPDF_InterForm(CPDF_Document* pDocument, bool bUpdateAP);
 
     ~CPDF_InterForm();
 
 
 
-    static void				EnableUpdateAP(FX_BOOL bUpdateAP);
+    static void				EnableUpdateAP(bool bUpdateAP);
 
-    static FX_BOOL			UpdatingAPEnabled();
+    static bool			UpdatingAPEnabled();
 
 
     static CFX_ByteString	GenerateNewResourceName(const CPDF_Dictionary* pResDict, const FX_CHAR* csType, int iMinLen = 2, const FX_CHAR* csPrefix = "");
@@ -756,11 +756,11 @@ public:
 
 
 
-    FX_BOOL					ValidateFieldName(CFX_WideString& csNewFieldName, int iType);
+    bool					ValidateFieldName(CFX_WideString& csNewFieldName, int iType);
 
-    FX_BOOL					ValidateFieldName(const CPDF_FormField* pField, CFX_WideString& csNewFieldName);
+    bool					ValidateFieldName(const CPDF_FormField* pField, CFX_WideString& csNewFieldName);
 
-    FX_BOOL					ValidateFieldName(const CPDF_FormControl* pControl, CFX_WideString& csNewFieldName);
+    bool					ValidateFieldName(const CPDF_FormControl* pControl, CFX_WideString& csNewFieldName);
 
 
 
@@ -771,7 +771,7 @@ public:
 
     void					GetAllFieldNames(CFX_WideStringArray& allFieldNames);
 
-    FX_BOOL					IsValidFormField(const void* pField);
+    bool					IsValidFormField(const void* pField);
 
     CPDF_FormField*			GetFieldByDict(CPDF_Dictionary* pFieldDict) const;
 
@@ -782,7 +782,7 @@ public:
 
     CPDF_FormControl*		GetControl(FX_DWORD index, CFX_WideString csFieldName = L"");
 
-    FX_BOOL					IsValidFormControl(const void* pControl);
+    bool					IsValidFormControl(const void* pControl);
 
     int						CountPageControls(CPDF_Page* pPage) const;
 
@@ -817,9 +817,9 @@ public:
 
 
 
-    FX_BOOL					NeedConstructAP();
+    bool					NeedConstructAP();
 
-    void					NeedConstructAP(FX_BOOL bNeedAP);
+    void					NeedConstructAP(bool bNeedAP);
 
 
 
@@ -845,11 +845,11 @@ public:
 
     CPDF_Font*				GetNativeFormFont(CFX_ByteString& csNameTag);
 
-    FX_BOOL					FindFormFont(const CPDF_Font* pFont, CFX_ByteString& csNameTag);
+    bool					FindFormFont(const CPDF_Font* pFont, CFX_ByteString& csNameTag);
 
-    FX_BOOL					FindFormFont(CFX_ByteString csFontName, CPDF_Font*& pFont, CFX_ByteString& csNameTag);
+    bool					FindFormFont(CFX_ByteString csFontName, CPDF_Font*& pFont, CFX_ByteString& csNameTag);
 
-    inline FX_BOOL			FindFormFont(CFX_WideString csFontName, CPDF_Font*& pFont, CFX_ByteString& csNameTag)
+    inline bool			FindFormFont(CFX_WideString csFontName, CPDF_Font*& pFont, CFX_ByteString& csNameTag)
     {
         return FindFormFont(PDF_EncodeText(csFontName), pFont, csNameTag);
     }
@@ -882,20 +882,20 @@ public:
 
 
 
-    CPDF_FormField*			CheckRequiredFields(const CFX_PtrArray *fields = NULL, FX_BOOL bIncludeOrExclude = TRUE) const;
+    CPDF_FormField*			CheckRequiredFields(const CFX_PtrArray *fields = NULL, bool bIncludeOrExclude = true) const;
 
-    CFDF_Document* 			ExportToFDF(const CFX_WideStringC& pdf_path, FX_BOOL bSimpleFileSpec = FALSE) const;
+    CFDF_Document* 			ExportToFDF(const CFX_WideStringC& pdf_path, bool bSimpleFileSpec = false) const;
 
-    CFDF_Document*			ExportToFDF(const CFX_WideStringC& pdf_path, CFX_PtrArray& fields, FX_BOOL bIncludeOrExclude = TRUE, FX_BOOL bSimpleFileSpec = FALSE) const;
+    CFDF_Document*			ExportToFDF(const CFX_WideStringC& pdf_path, CFX_PtrArray& fields, bool bIncludeOrExclude = true, bool bSimpleFileSpec = false) const;
 
-    FX_BOOL					ImportFromFDF(const CFDF_Document* pFDFDoc, FX_BOOL bNotify = FALSE);
-
-
+    bool					ImportFromFDF(const CFDF_Document* pFDFDoc, bool bNotify = false);
 
 
-    FX_BOOL					ResetForm(const CFX_PtrArray& fields, FX_BOOL bIncludeOrExclude = TRUE, FX_BOOL bNotify = FALSE);
 
-    FX_BOOL					ResetForm(FX_BOOL bNotify = FALSE);
+
+    bool					ResetForm(const CFX_PtrArray& fields, bool bIncludeOrExclude = true, bool bNotify = false);
+
+    bool					ResetForm(bool bNotify = false);
 
     void					ReloadForm();
 
@@ -907,27 +907,27 @@ public:
     void					SetFormNotify(const CPDF_FormNotify* pNotify);
 
 
-    int						GetPageWithWidget(int iCurPage, FX_BOOL bNext);
+    int						GetPageWithWidget(int iCurPage, bool bNext);
 
 
 
-    FX_BOOL					IsUpdated()
+    bool					IsUpdated()
     {
         return m_bUpdated;
     }
 
     void					ClearUpdatedFlag()
     {
-        m_bUpdated = FALSE;
+        m_bUpdated = false;
     }
 
 
-    FX_BOOL					HasXFAForm() const;
+    bool					HasXFAForm() const;
 
     void					FixPageFields(const CPDF_Page* pPage);
 protected:
 
-    static FX_BOOL			m_bUpdateAP;
+    static bool			m_bUpdateAP;
 
     void					LoadField(CPDF_Dictionary* pFieldDict, int nLevel = 0);
 
@@ -937,9 +937,9 @@ protected:
 
     CPDF_FormControl*		AddControl(const CPDF_FormField* pField, const CPDF_Dictionary* pWidgetDict);
 
-    void					FDF_ImportField(CPDF_Dictionary* pField, const CFX_WideString& parent_name, FX_BOOL bNotify = FALSE, int nLevel = 0);
+    void					FDF_ImportField(CPDF_Dictionary* pField, const CFX_WideString& parent_name, bool bNotify = false, int nLevel = 0);
 
-    FX_BOOL					ValidateFieldName(CFX_WideString& csNewFieldName, int iType, const CPDF_FormField* pExcludedField, const CPDF_FormControl* pExcludedControl);
+    bool					ValidateFieldName(CFX_WideString& csNewFieldName, int iType, const CPDF_FormField* pExcludedField, const CPDF_FormControl* pExcludedControl);
 
     int						CompareFieldName(const CFX_WideString& name1, const CFX_WideString& name2);
 
@@ -947,7 +947,7 @@ protected:
 
     CPDF_Document*			m_pDocument;
 
-    FX_BOOL					m_bGenerateAP;
+    bool					m_bGenerateAP;
 
     CPDF_Dictionary*		m_pFormDict;
 
@@ -959,7 +959,7 @@ protected:
 
     CPDF_FormNotify*		m_pFormNotify;
 
-    FX_BOOL					m_bUpdated;
+    bool					m_bUpdated;
     friend class CPDF_FormControl;
     friend class CPDF_FormField;
 };
@@ -1018,7 +1018,7 @@ public:
         m_pDict = pDict;
     }
 
-    FX_BOOL					ResetField(FX_BOOL bNotify = FALSE);
+    bool					ResetField(bool bNotify = false);
 
 
 
@@ -1075,7 +1075,7 @@ public:
 
     CFX_WideString			GetDefaultValue();
 
-    FX_BOOL					SetValue(const CFX_WideString& value, FX_BOOL bNotify = FALSE);
+    bool					SetValue(const CFX_WideString& value, bool bNotify = false);
 
 
 
@@ -1090,13 +1090,13 @@ public:
 
     int						GetSelectedIndex(int index);
 
-    FX_BOOL					ClearSelection(FX_BOOL bNotify = FALSE);
+    bool					ClearSelection(bool bNotify = false);
 
-    FX_BOOL					IsItemSelected(int index);
+    bool					IsItemSelected(int index);
 
-    FX_BOOL					SetItemSelection(int index, FX_BOOL bSelected, FX_BOOL bNotify = FALSE);
+    bool					SetItemSelection(int index, bool bSelected, bool bNotify = false);
 
-    FX_BOOL					IsItemDefaultSelected(int index);
+    bool					IsItemDefaultSelected(int index);
 
     int						GetDefaultSelectedItem();
 
@@ -1116,7 +1116,7 @@ public:
 
 
 
-    FX_BOOL					CheckControl(int iControlIndex, FX_BOOL bChecked, FX_BOOL bNotify = FALSE);
+    bool					CheckControl(int iControlIndex, bool bChecked, bool bNotify = false);
 
 
 
@@ -1130,11 +1130,11 @@ public:
 
     int						GetSelectedOptionIndex(int index);
 
-    FX_BOOL					IsOptionSelected(int iOptIndex);
+    bool					IsOptionSelected(int iOptIndex);
 
-    FX_BOOL					SelectOption(int iOptIndex, FX_BOOL bSelected, FX_BOOL bNotify = FALSE);
+    bool					SelectOption(int iOptIndex, bool bSelected, bool bNotify = false);
 
-    FX_BOOL					ClearSelectedOptions(FX_BOOL bNotify = FALSE);
+    bool					ClearSelectedOptions(bool bNotify = false);
 
 
 
@@ -1169,9 +1169,9 @@ protected:
 
 
 
-    CFX_WideString			GetValue(FX_BOOL bDefault);
+    CFX_WideString			GetValue(bool bDefault);
 
-    FX_BOOL					SetValue(const CFX_WideString& value, FX_BOOL bDefault, FX_BOOL bNotify);
+    bool					SetValue(const CFX_WideString& value, bool bDefault, bool bNotify);
 
 
     void					SyncFieldFlags();
@@ -1186,9 +1186,9 @@ protected:
 
 
 
-    CFX_WideString			GetCheckValue(FX_BOOL bDefault);
+    CFX_WideString			GetCheckValue(bool bDefault);
 
-    FX_BOOL					SetCheckValue(const CFX_WideString& value, FX_BOOL bDefault, FX_BOOL bNotify);
+    bool					SetCheckValue(const CFX_WideString& value, bool bDefault, bool bNotify);
 
 
     FX_FLOAT				m_FontSize;
@@ -1225,7 +1225,7 @@ public:
 
 
 
-    FX_BOOL					IsProportionalScale();
+    bool					IsProportionalScale();
 
 
 
@@ -1235,7 +1235,7 @@ public:
 
 
 
-    FX_BOOL					GetFittingBounds();
+    bool					GetFittingBounds();
 
 
     CPDF_Dictionary*		m_pDict;
@@ -1283,9 +1283,9 @@ public:
 
     CFX_WideString			GetExportValue();
 
-    FX_BOOL					IsChecked();
+    bool					IsChecked();
 
-    FX_BOOL					IsDefaultChecked();
+    bool					IsDefaultChecked();
 
 
 
@@ -1303,7 +1303,7 @@ public:
 
 
 
-    FX_BOOL					HasMKEntry(CFX_ByteString csEntry);
+    bool					HasMKEntry(CFX_ByteString csEntry);
 
 
 
@@ -1434,7 +1434,7 @@ protected:
 
     void					SetOnStateName(const CFX_ByteString& csOn);
 
-    void					CheckControl(FX_BOOL bChecked);
+    void					CheckControl(bool bChecked);
 
     FX_ARGB					GetColor(int& iColorType, CFX_ByteString csEntry);
 
@@ -1446,7 +1446,7 @@ protected:
 
     CPDF_Stream*			GetIcon(CFX_ByteString csEntry);
 
-    CPDF_ApSettings			GetMK(FX_BOOL bCreate);
+    CPDF_ApSettings			GetMK(bool bCreate);
 
     CPDF_InterForm*			m_pForm;
 
@@ -1507,7 +1507,7 @@ public:
         return 0;
     }
 };
-FX_BOOL		FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
+bool		FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
 class CPDF_PageLabel
 {
 public:
@@ -1559,9 +1559,9 @@ public:
     ~CPDF_ViewerPreferences();
 
 
-    FX_BOOL IsDirectionR2L() const;
+    bool IsDirectionR2L() const;
 
-    FX_BOOL PrintScaling() const;
+    bool PrintScaling() const;
 
     int32_t NumCopies() const;
 
@@ -1586,7 +1586,7 @@ public:
         return m_pDict;
     }
 
-    FX_BOOL					HasMKEntry(const CFX_ByteStringC& csEntry);
+    bool					HasMKEntry(const CFX_ByteStringC& csEntry);
 
 
 

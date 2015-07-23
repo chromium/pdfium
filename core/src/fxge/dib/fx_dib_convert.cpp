@@ -103,7 +103,7 @@ public:
     CFX_Palette();
     ~CFX_Palette();
 public:
-    FX_BOOL      BuildPalette(const CFX_DIBSource* pBitmap, int dwPaletteType);
+    bool      BuildPalette(const CFX_DIBSource* pBitmap, int dwPaletteType);
     FX_DWORD*    GetPalette() const
     {
         return m_pPalette;
@@ -227,10 +227,10 @@ CFX_Palette::~CFX_Palette()
     }
     m_lut = 0;
 }
-FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap, int pal_type)
+bool CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap, int pal_type)
 {
     if (pBitmap == NULL) {
-        return FALSE;
+        return false;
     }
     if (m_pPalette != NULL) {
         FX_Free(m_pPalette);
@@ -277,9 +277,9 @@ FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap, int pal_type)
         win_mac_pal = (FX_DWORD*)g_dwMacPalette;
     }
     _Obtain_Pal(m_aLut, m_cLut, m_pPalette, pal_type, win_mac_pal, m_lut);
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                      const CFX_DIBSource* pSrcBitmap, int src_left, int src_top)
 {
     uint8_t set_gray, reset_gray;
@@ -296,9 +296,9 @@ FX_BOOL _ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf, int dest_pitch, int widt
             dest_scan ++;
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_8bppMask2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_8bppMask2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                      const CFX_DIBSource* pSrcBitmap, int src_left, int src_top)
 {
     for (int row = 0; row < height; row ++) {
@@ -306,9 +306,9 @@ FX_BOOL _ConvertBuffer_8bppMask2Gray(uint8_t* dest_buf, int dest_pitch, int widt
         const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row) + src_left;
         FXSYS_memcpy(dest_scan, src_scan, width);
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                     const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform)
 {
     FX_DWORD* src_plt = pSrcBitmap->GetPalette();
@@ -359,9 +359,9 @@ FX_BOOL _ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf, int dest_pitch, int width
             dest_scan ++;
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                     const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform)
 {
     FX_DWORD* src_plt = pSrcBitmap->GetPalette();
@@ -402,9 +402,9 @@ FX_BOOL _ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf, int dest_pitch, int width
             *dest_scan++ = gray[*src_scan++];
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_RgbOrCmyk2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_RgbOrCmyk2Gray(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                       const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform)
 {
     int Bpp = pSrcBitmap->GetBPP() / 8;
@@ -451,7 +451,7 @@ FX_BOOL _ConvertBuffer_RgbOrCmyk2Gray(uint8_t* dest_buf, int dest_pitch, int wid
             }
         }
     }
-    return TRUE;
+    return true;
 }
 inline void _ConvertBuffer_IndexCopy(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                      const CFX_DIBSource* pSrcBitmap, int src_left, int src_top)
@@ -476,7 +476,7 @@ inline void _ConvertBuffer_IndexCopy(uint8_t* dest_buf, int dest_pitch, int widt
         }
     }
 }
-FX_BOOL _ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                    const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, FX_DWORD* dst_plt, void* pIccTransform)
 {
     _ConvertBuffer_IndexCopy(dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top);
@@ -515,9 +515,9 @@ FX_BOOL _ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf, int dest_pitch, int width,
             FXSYS_memcpy(dst_plt, src_plt, plt_size * 4);
         }
     }
-    return TRUE;
+    return true;
 }
-inline FX_BOOL _ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf, int dest_pitch, int width, int height,
+inline bool _ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf, int dest_pitch, int width, int height,
         const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, FX_DWORD* dst_plt)
 {
     int bpp = pSrcBitmap->GetBPP() / 8;
@@ -527,7 +527,7 @@ inline FX_BOOL _ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf, int des
     FX_DWORD* cLut = palette.GetColorLut();
     FX_DWORD* aLut = palette.GetAmountLut();
     if (cLut == NULL || aLut == NULL) {
-        return FALSE;
+        return false;
     }
     int lut = palette.Getlut();
     FX_DWORD* pPalette = palette.GetPalette();
@@ -571,12 +571,12 @@ inline FX_BOOL _ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf, int des
         }
     }
     FXSYS_memcpy(dst_plt, pPalette, sizeof(FX_DWORD) * 256);
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                    const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, FX_DWORD* dst_plt, void* pIccTransform)
 {
-    FX_BOOL ret = _ConvertBuffer_Rgb2PltRgb8_NoTransform(dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top, dst_plt);
+    bool ret = _ConvertBuffer_Rgb2PltRgb8_NoTransform(dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top, dst_plt);
     if (ret && pIccTransform) {
         ICodec_IccModule* pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
         for (int i = 0; i < 256; i++) {
@@ -588,7 +588,7 @@ FX_BOOL _ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf, int dest_pitch, int width,
     }
     return ret;
 }
-FX_BOOL _ConvertBuffer_1bppMask2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_1bppMask2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
                                     const CFX_DIBSource* pSrcBitmap, int src_left, int src_top)
 {
     int comps = (dst_format & 0xff) / 8;
@@ -611,9 +611,9 @@ FX_BOOL _ConvertBuffer_1bppMask2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, 
             dest_scan += comps;
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_8bppMask2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_8bppMask2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
                                     const CFX_DIBSource* pSrcBitmap, int src_left, int src_top)
 {
     int comps = (dst_format & 0xff) / 8;
@@ -629,9 +629,9 @@ FX_BOOL _ConvertBuffer_8bppMask2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, 
             dest_scan += comps - 2;
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
                                    const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform)
 {
     int comps = (dst_format & 0xff) / 8;
@@ -676,9 +676,9 @@ FX_BOOL _ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, i
             dest_scan += comps - 2;
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
                                    const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform)
 {
     int comps = (dst_format & 0xff) / 8;
@@ -722,9 +722,9 @@ FX_BOOL _ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dst_format, uint8_t* dest_buf, i
             dest_scan += comps - 2;
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_24bppRgb2Rgb24(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_24bppRgb2Rgb24(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                       const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform)
 {
     if (pIccTransform) {
@@ -741,9 +741,9 @@ FX_BOOL _ConvertBuffer_24bppRgb2Rgb24(uint8_t* dest_buf, int dest_pitch, int wid
             FXSYS_memcpy(dest_scan, src_scan, width * 3);
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_32bppRgb2Rgb24(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_32bppRgb2Rgb24(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                       const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform)
 {
     for (int row = 0; row < height; row ++) {
@@ -763,9 +763,9 @@ FX_BOOL _ConvertBuffer_32bppRgb2Rgb24(uint8_t* dest_buf, int dest_pitch, int wid
             pIccModule->TranslateScanline(pIccTransform, dest_scan, dest_scan, width);
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_Rgb2Rgb32(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_Rgb2Rgb32(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                  const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform)
 {
     int comps = pSrcBitmap->GetBPP() / 8;
@@ -793,9 +793,9 @@ FX_BOOL _ConvertBuffer_Rgb2Rgb32(uint8_t* dest_buf, int dest_pitch, int width, i
             }
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL _ConvertBuffer_32bppCmyk2Rgb32(uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool _ConvertBuffer_32bppCmyk2Rgb32(uint8_t* dest_buf, int dest_pitch, int width, int height,
                                        const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform)
 {
     if (pIccTransform) {
@@ -821,9 +821,9 @@ FX_BOOL _ConvertBuffer_32bppCmyk2Rgb32(uint8_t* dest_buf, int dest_pitch, int wi
             }
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL ConvertBuffer(FXDIB_Format dest_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
+bool ConvertBuffer(FXDIB_Format dest_format, uint8_t* dest_buf, int dest_pitch, int width, int height,
                       const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, FX_DWORD*& d_pal, void* pIccTransform)
 {
     FXDIB_Format src_format = pSrcBitmap->GetFormat();
@@ -835,8 +835,8 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format, uint8_t* dest_buf, int dest_pitc
         case FXDIB_1bppCmyk:
         case FXDIB_1bppMask:
         case FXDIB_1bppRgb:
-            ASSERT(FALSE);
-            return FALSE;
+            ASSERT(false);
+            return false;
         case FXDIB_8bppMask: {
                 if ((src_format & 0xff) == 1) {
                     if (pSrcBitmap->GetPalette()) {
@@ -853,7 +853,7 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format, uint8_t* dest_buf, int dest_pitc
                 if ((src_format & 0xff) >= 24) {
                     return _ConvertBuffer_RgbOrCmyk2Gray(dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top, pIccTransform);
                 }
-                return FALSE;
+                return false;
             }
         case FXDIB_8bppRgb:
         case FXDIB_8bppRgba: {
@@ -867,7 +867,7 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format, uint8_t* dest_buf, int dest_pitc
                 if ((src_format & 0xff) >= 24) {
                     return _ConvertBuffer_Rgb2PltRgb8(dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top, d_pal, pIccTransform);
                 }
-                return FALSE;
+                return false;
             }
         case FXDIB_Rgb:
         case FXDIB_Rgba: {
@@ -889,7 +889,7 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format, uint8_t* dest_buf, int dest_pitc
                 if ((src_format & 0xff) == 32) {
                     return _ConvertBuffer_32bppRgb2Rgb24(dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top, pIccTransform);
                 }
-                return FALSE;
+                return false;
             }
         case FXDIB_Argb:
         case FXDIB_Rgb32: {
@@ -911,12 +911,12 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format, uint8_t* dest_buf, int dest_pitc
                     }
                     return _ConvertBuffer_Rgb2Rgb32(dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top, pIccTransform);
                 }
-                return FALSE;
+                return false;
             }
         default:
-            return FALSE;
+            return false;
     }
-    return FALSE;
+    return false;
 }
 CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format, const FX_RECT* pClip, void* pIccTransform) const
 {
@@ -939,7 +939,7 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format, const FX_REC
         delete pClone;
         return NULL;
     }
-    FX_BOOL ret = TRUE;
+    bool ret = true;
     CFX_DIBitmap* pSrcAlpha = NULL;
     if (m_AlphaFlag & 2) {
         pSrcAlpha = (GetFormat() == FXDIB_Argb) ? GetAlphaMask() : m_pAlphaMask;
@@ -981,15 +981,15 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format, const FX_REC
     }
     return pClone;
 }
-FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format, void* pIccTransform)
+bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format, void* pIccTransform)
 {
     FXDIB_Format src_format = GetFormat();
     if (dest_format == src_format && pIccTransform == NULL) {
-        return TRUE;
+        return true;
     }
     if (dest_format == FXDIB_8bppMask && src_format == FXDIB_8bppRgb && m_pPalette == NULL) {
         m_AlphaFlag = 1;
-        return TRUE;
+        return true;
     }
     if (dest_format == FXDIB_Argb && src_format == FXDIB_Rgb32 && pIccTransform == NULL) {
         m_AlphaFlag = 2;
@@ -1000,13 +1000,13 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format, void* pIccTransfor
                 scanline += 4;
             }
         }
-        return TRUE;
+        return true;
     }
     int dest_bpp = dest_format & 0xff;
     int dest_pitch = (dest_bpp * m_Width + 31) / 32 * 4;
     uint8_t* dest_buf = FX_TryAlloc(uint8_t, dest_pitch * m_Height + 4);
     if (dest_buf == NULL) {
-        return FALSE;
+        return false;
     }
     CFX_DIBitmap* pAlphaMask = NULL;
     if (dest_format == FXDIB_Argb) {
@@ -1026,13 +1026,13 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format, void* pIccTransfor
             pAlphaMask = GetAlphaMask();
             if (pAlphaMask == NULL) {
                 FX_Free(dest_buf);
-                return FALSE;
+                return false;
             }
         } else {
             if (m_pAlphaMask == NULL) {
                 if (!BuildAlphaMask()) {
                     FX_Free(dest_buf);
-                    return FALSE;
+                    return false;
                 }
                 pAlphaMask = m_pAlphaMask;
                 m_pAlphaMask = NULL;
@@ -1041,7 +1041,7 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format, void* pIccTransfor
             }
         }
     }
-    FX_BOOL ret = FALSE;
+    bool ret = false;
     FX_DWORD* pal_8bpp = NULL;
     ret = ConvertBuffer(dest_format, dest_buf, dest_pitch, m_Width, m_Height, this, 0, 0, pal_8bpp, pIccTransform);
     if (!ret) {
@@ -1054,7 +1054,7 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format, void* pIccTransfor
         if (dest_buf) {
             FX_Free(dest_buf);
         }
-        return FALSE;
+        return false;
     }
     if (m_pAlphaMask && pAlphaMask != m_pAlphaMask) {
         delete m_pAlphaMask;
@@ -1067,10 +1067,10 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format, void* pIccTransfor
     if (!m_bExtBuf) {
         FX_Free(m_pBuffer);
     }
-    m_bExtBuf = FALSE;
+    m_bExtBuf = false;
     m_pBuffer = dest_buf;
     m_bpp = (uint8_t)dest_format;
     m_AlphaFlag = (uint8_t)(dest_format >> 8);
     m_Pitch = dest_pitch;
-    return TRUE;
+    return true;
 }

@@ -66,7 +66,7 @@ static CFX_ByteString GetFontSetString(IFX_Edit_FontMap * pFontMap, int32_t nFon
 }
 
 CFX_ByteString IFX_Edit::GetEditAppearanceStream(IFX_Edit* pEdit, const CPDF_Point & ptOffset,
-												 const CPVT_WordRange * pRange /* = NULL*/, FX_BOOL bContinuous/* = TRUE*/, FX_WORD SubWord/* = 0*/)
+												 const CPVT_WordRange * pRange /* = NULL*/, bool bContinuous/* = true*/, FX_WORD SubWord/* = 0*/)
 {
 	CFX_ByteTextBuf sEditStream, sWords;
 

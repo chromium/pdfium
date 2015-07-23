@@ -60,9 +60,9 @@ public:
 
     void InitRenderModule();
 
-    void SetDownloadCallback(FX_BOOL (*callback)(const FX_CHAR* module_name));
+    void SetDownloadCallback(bool (*callback)(const FX_CHAR* module_name));
 
-    FX_BOOL DownloadModule(const FX_CHAR* module_name);
+    bool DownloadModule(const FX_CHAR* module_name);
 
     void NotifyModuleAvailable(const FX_CHAR* module_name);
 
@@ -110,7 +110,7 @@ private:
     nonstd::unique_ptr<IPDF_RenderModule> m_pRenderModule;
     nonstd::unique_ptr<IPDF_PageModule> m_pPageModule;
 
-    FX_BOOL (*m_pDownloadCallback)(const FX_CHAR* module_name);
+    bool (*m_pDownloadCallback)(const FX_CHAR* module_name);
 
     CFX_MapByteStringToPtr m_SecurityHandlerMap;
 

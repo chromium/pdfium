@@ -15,9 +15,9 @@ public:
     static IFX_BidiChar* Create();
     virtual ~IFX_BidiChar() {}
 
-    virtual void SetPolicy(FX_BOOL bSeparateNeutral = TRUE) = 0;
-    virtual FX_BOOL AppendChar(FX_WCHAR wch) = 0;
-    virtual FX_BOOL EndChar() = 0;
+    virtual void SetPolicy(bool bSeparateNeutral = true) = 0;
+    virtual bool AppendChar(FX_WCHAR wch) = 0;
+    virtual bool EndChar() = 0;
     virtual int32_t GetBidiInfo(int32_t &iStart, int32_t &iCount) = 0;
     virtual void Reset() = 0;
 };

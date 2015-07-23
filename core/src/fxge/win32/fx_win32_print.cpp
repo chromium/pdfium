@@ -18,7 +18,7 @@ CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC) : CGdiDeviceDriver(hDC, FXDC_PRINT
 {
     m_HorzSize = ::GetDeviceCaps(m_hDC, HORZSIZE);
     m_VertSize = ::GetDeviceCaps(m_hDC, VERTSIZE);
-    m_bSupportROP = TRUE;
+    m_bSupportROP = true;
 }
 int CGdiPrinterDriver::GetDeviceCaps(int caps_id)
 {
@@ -30,7 +30,7 @@ int CGdiPrinterDriver::GetDeviceCaps(int caps_id)
     }
     return CGdiDeviceDriver::GetDeviceCaps(caps_id);
 }
-FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD color, const FX_RECT* pSrcRect, int left, int top, int blend_type,
+bool CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD color, const FX_RECT* pSrcRect, int left, int top, int blend_type,
                                      int alpha_flag, void* pIccTransform)
 {
     if (pSource->IsAlphaMask()) {
@@ -41,28 +41,28 @@ FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD colo
     ASSERT(pSource != NULL && !pSource->IsAlphaMask() && pSrcRect != NULL);
     ASSERT(blend_type == FXDIB_BLEND_NORMAL);
     if (pSource->HasAlpha()) {
-        return FALSE;
+        return false;
     }
     CFX_DIBExtractor temp(pSource);
     CFX_DIBitmap* pBitmap = temp;
     if (pBitmap == NULL) {
-        return FALSE;
+        return false;
     }
     return GDI_SetDIBits(pBitmap, pSrcRect, left, top, pIccTransform);
 }
-FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD color, int dest_left, int dest_top,
+bool CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD color, int dest_left, int dest_top,
         int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags,
         int alpha_flag, void* pIccTransform, int blend_type)
 {
     if (pSource->IsAlphaMask()) {
         int alpha = FXGETFLAG_COLORTYPE(alpha_flag) ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
         if (pSource->GetBPP() != 1 || alpha != 255 || !m_bSupportROP) {
-            return FALSE;
+            return false;
         }
         if (dest_width < 0 || dest_height < 0) {
             CFX_DIBitmap* pFlipped = pSource->FlipImage(dest_width < 0, dest_height < 0);
             if (pFlipped == NULL) {
-                return FALSE;
+                return false;
             }
             if (dest_width < 0) {
                 dest_left += dest_width;
@@ -70,24 +70,24 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD 
             if (dest_height < 0) {
                 dest_top += dest_height;
             }
-            FX_BOOL ret = GDI_StretchBitMask(pFlipped, dest_left, dest_top, abs(dest_width), abs(dest_height), color, flags, alpha_flag, pIccTransform);
+            bool ret = GDI_StretchBitMask(pFlipped, dest_left, dest_top, abs(dest_width), abs(dest_height), color, flags, alpha_flag, pIccTransform);
             delete pFlipped;
             return ret;
         }
         CFX_DIBExtractor temp(pSource);
         CFX_DIBitmap* pBitmap = temp;
         if (pBitmap == NULL) {
-            return FALSE;
+            return false;
         }
         return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width, dest_height, color, flags, alpha_flag, pIccTransform);
     }
     if (pSource->HasAlpha()) {
-        return FALSE;
+        return false;
     }
     if (dest_width < 0 || dest_height < 0) {
         CFX_DIBitmap* pFlipped = pSource->FlipImage(dest_width < 0, dest_height < 0);
         if (pFlipped == NULL) {
-            return FALSE;
+            return false;
         }
         if (dest_width < 0) {
             dest_left += dest_width;
@@ -95,14 +95,14 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD 
         if (dest_height < 0) {
             dest_top += dest_height;
         }
-        FX_BOOL ret = GDI_StretchDIBits(pFlipped, dest_left, dest_top, abs(dest_width), abs(dest_height), flags, pIccTransform);
+        bool ret = GDI_StretchDIBits(pFlipped, dest_left, dest_top, abs(dest_width), abs(dest_height), flags, pIccTransform);
         delete pFlipped;
         return ret;
     }
     CFX_DIBExtractor temp(pSource);
     CFX_DIBitmap* pBitmap = temp;
     if (pBitmap == NULL) {
-        return FALSE;
+        return false;
     }
     return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width, dest_height, flags, pIccTransform);
 }
@@ -189,18 +189,18 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc, const CFX_Af
     }
     return pTempBitmap;
 }
-FX_BOOL	CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource, int bitmap_alpha, FX_DWORD color,
+bool	CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource, int bitmap_alpha, FX_DWORD color,
                                        const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, void*& handle,
                                        int alpha_flag, void* pIccTransform, int blend_type)
 {
     if (bitmap_alpha < 255 || pSource->HasAlpha() || (pSource->IsAlphaMask() && (pSource->GetBPP() != 1 || !m_bSupportROP))) {
-        return FALSE;
+        return false;
     }
     CFX_FloatRect unit_rect = pMatrix->GetUnitRect();
     FX_RECT full_rect = unit_rect.GetOutterRect();
     if (FXSYS_fabs(pMatrix->b) < 0.5f && pMatrix->a != 0 && FXSYS_fabs(pMatrix->c) < 0.5f && pMatrix->d != 0) {
-        FX_BOOL bFlipX = pMatrix->a < 0;
-        FX_BOOL bFlipY = pMatrix->d > 0;
+        bool bFlipX = pMatrix->a < 0;
+        bool bFlipY = pMatrix->d > 0;
         return StretchDIBits(pSource, color, bFlipX ? full_rect.right : full_rect.left, bFlipY ? full_rect.bottom : full_rect.top,
                              bFlipX ? -full_rect.Width() : full_rect.Width(), bFlipY ? -full_rect.Height() : full_rect.Height(), NULL, 0,
                              alpha_flag, pIccTransform, blend_type);
@@ -208,9 +208,9 @@ FX_BOOL	CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource, int bitmap_
     if (FXSYS_fabs(pMatrix->a) < 0.5f && FXSYS_fabs(pMatrix->d) < 0.5f) {
         CFX_DIBitmap* pTransformed = pSource->SwapXY(pMatrix->c > 0, pMatrix->b < 0);
         if (pTransformed == NULL) {
-            return FALSE;
+            return false;
         }
-        FX_BOOL ret = StretchDIBits(pTransformed, color, full_rect.left, full_rect.top, full_rect.Width(), full_rect.Height(), NULL, 0,
+        bool ret = StretchDIBits(pTransformed, color, full_rect.left, full_rect.top, full_rect.Width(), full_rect.Height(), NULL, 0,
                                     alpha_flag, pIccTransform, blend_type);
         delete pTransformed;
         return ret;
@@ -218,20 +218,20 @@ FX_BOOL	CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource, int bitmap_
     if (pSource->GetBPP() == 1) {
         CFX_DIBitmap* pTransformed = Transform1bppBitmap(pSource, pMatrix);
         if (pIccTransform == NULL) {
-            return FALSE;
+            return false;
         }
         SaveState();
         CFX_PathData path;
         path.AppendRect(0, 0, 1.0f, 1.0f);
         SetClip_PathFill(&path, pMatrix, WINDING);
-        FX_BOOL ret = StretchDIBits(pTransformed, color, full_rect.left, full_rect.top, full_rect.Width(), full_rect.Height(), NULL, 0,
+        bool ret = StretchDIBits(pTransformed, color, full_rect.left, full_rect.top, full_rect.Width(), full_rect.Height(), NULL, 0,
                                     alpha_flag, pIccTransform, blend_type);
         RestoreState();
         delete pTransformed;
         handle = NULL;
         return ret;
     }
-    return FALSE;
+    return false;
 }
 CPSOutput::CPSOutput(HDC hDC)
 {
@@ -266,14 +266,14 @@ void CPSOutput::OutputPS(const FX_CHAR* string, int len)
 CPSPrinterDriver::CPSPrinterDriver()
 {
     m_pPSOutput = NULL;
-    m_bCmykOutput = FALSE;
+    m_bCmykOutput = false;
 }
 CPSPrinterDriver::~CPSPrinterDriver()
 {
     EndRendering();
     delete m_pPSOutput;
 }
-FX_BOOL CPSPrinterDriver::Init(HDC hDC, int pslevel, FX_BOOL bCmykOutput)
+bool CPSPrinterDriver::Init(HDC hDC, int pslevel, bool bCmykOutput)
 {
     m_hDC = hDC;
     m_HorzSize = ::GetDeviceCaps(m_hDC, HORZSIZE);
@@ -305,7 +305,7 @@ FX_BOOL CPSPrinterDriver::Init(HDC hDC, int pslevel, FX_BOOL bCmykOutput)
         }
     }
     ::DeleteObject(hRgn);
-    return TRUE;
+    return true;
 }
 int CPSPrinterDriver::GetDeviceCaps(int caps_id)
 {
@@ -327,7 +327,7 @@ int CPSPrinterDriver::GetDeviceCaps(int caps_id)
     }
     return 0;
 }
-FX_BOOL CPSPrinterDriver::StartRendering()
+bool CPSPrinterDriver::StartRendering()
 {
     return m_PSRenderer.StartRendering();
 }
@@ -339,69 +339,69 @@ void CPSPrinterDriver::SaveState()
 {
     m_PSRenderer.SaveState();
 }
-void CPSPrinterDriver::RestoreState(FX_BOOL bKeepSaved)
+void CPSPrinterDriver::RestoreState(bool bKeepSaved)
 {
     m_PSRenderer.RestoreState(bKeepSaved);
 }
-FX_BOOL	CPSPrinterDriver::SetClip_PathFill(const CFX_PathData* pPathData, const CFX_AffineMatrix* pObject2Device,
+bool	CPSPrinterDriver::SetClip_PathFill(const CFX_PathData* pPathData, const CFX_AffineMatrix* pObject2Device,
         int fill_mode)
 {
     m_PSRenderer.SetClip_PathFill(pPathData, pObject2Device, fill_mode);
-    return TRUE;
+    return true;
 }
-FX_BOOL	CPSPrinterDriver::SetClip_PathStroke(const CFX_PathData* pPathData,
+bool	CPSPrinterDriver::SetClip_PathStroke(const CFX_PathData* pPathData,
         const CFX_AffineMatrix* pObject2Device,
         const CFX_GraphStateData* pGraphState)
 {
     m_PSRenderer.SetClip_PathStroke(pPathData, pObject2Device, pGraphState);
-    return TRUE;
+    return true;
 }
-FX_BOOL	CPSPrinterDriver::DrawPath(const CFX_PathData* pPathData,
+bool	CPSPrinterDriver::DrawPath(const CFX_PathData* pPathData,
                                    const CFX_AffineMatrix* pObject2Device,
                                    const CFX_GraphStateData* pGraphState, FX_ARGB fill_color, FX_ARGB stroke_color,
                                    int fill_mode, int alpha_flag, void* pIccTransform, int blend_type)
 {
     if (blend_type != FXDIB_BLEND_NORMAL) {
-        return FALSE;
+        return false;
     }
     return m_PSRenderer.DrawPath(pPathData, pObject2Device, pGraphState, fill_color, stroke_color, fill_mode & 3, alpha_flag, pIccTransform);
 }
-FX_BOOL CPSPrinterDriver::GetClipBox(FX_RECT* pRect)
+bool CPSPrinterDriver::GetClipBox(FX_RECT* pRect)
 {
     *pRect = m_PSRenderer.GetClipBox();
-    return TRUE;
+    return true;
 }
-FX_BOOL CPSPrinterDriver::SetDIBits(const CFX_DIBSource* pBitmap, FX_DWORD color, const FX_RECT* pSrcRect, int left, int top, int blend_type,
+bool CPSPrinterDriver::SetDIBits(const CFX_DIBSource* pBitmap, FX_DWORD color, const FX_RECT* pSrcRect, int left, int top, int blend_type,
                                     int alpha_flag, void* pIccTransform)
 {
     if (blend_type != FXDIB_BLEND_NORMAL) {
-        return FALSE;
+        return false;
     }
     return m_PSRenderer.SetDIBits(pBitmap, color, left, top, alpha_flag, pIccTransform);
 }
-FX_BOOL CPSPrinterDriver::StretchDIBits(const CFX_DIBSource* pBitmap, FX_DWORD color, int dest_left, int dest_top,
+bool CPSPrinterDriver::StretchDIBits(const CFX_DIBSource* pBitmap, FX_DWORD color, int dest_left, int dest_top,
                                         int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags,
                                         int alpha_flag, void* pIccTransform, int blend_type)
 {
     if (blend_type != FXDIB_BLEND_NORMAL) {
-        return FALSE;
+        return false;
     }
     return m_PSRenderer.StretchDIBits(pBitmap, color, dest_left, dest_top, dest_width, dest_height, flags, alpha_flag, pIccTransform);
 }
-FX_BOOL	CPSPrinterDriver::StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
+bool	CPSPrinterDriver::StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
                                       const CFX_AffineMatrix* pMatrix, FX_DWORD render_flags, void*& handle,
                                       int alpha_flag, void* pIccTransform, int blend_type)
 {
     if (blend_type != FXDIB_BLEND_NORMAL) {
-        return FALSE;
+        return false;
     }
     if (bitmap_alpha < 255) {
-        return FALSE;
+        return false;
     }
     handle = NULL;
     return m_PSRenderer.DrawDIBits(pBitmap, color, pMatrix, render_flags, alpha_flag, pIccTransform);
 }
-FX_BOOL	CPSPrinterDriver::DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
+bool	CPSPrinterDriver::DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
         CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FLOAT font_size, FX_DWORD color,
         int alpha_flag, void* pIccTransform)
 {

@@ -49,7 +49,7 @@ public:
 
 	virtual void		Release() override { delete this; }
 
-	virtual FX_BOOL		ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+	virtual bool		ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
 private:
 	FPDF_FILEACCESS		m_FileAccess;
@@ -60,7 +60,7 @@ void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy);
 void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page,
                             int start_x, int start_y, int size_x, int size_y,
-                            int rotate, int flags, FX_BOOL bNeedToRestore,
+                            int rotate, int flags, bool bNeedToRestore,
                             IFSDK_PAUSE_Adapter* pause);
 
 #endif  // FPDFSDK_INCLUDE_FSDK_DEFINE_H_

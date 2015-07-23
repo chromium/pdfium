@@ -183,8 +183,8 @@ CPVT_WordPlace CSection::SearchWordPlace(const CPDF_Point & point) const
 {
     ASSERT(m_pVT != NULL);
     CPVT_WordPlace place = GetBeginWordPlace();
-    FX_BOOL bUp = TRUE;
-    FX_BOOL bDown = TRUE;
+    bool bUp = true;
+    bool bDown = true;
     int32_t nLeft = 0;
     int32_t nRight = m_LineArray.GetSize() - 1;
     int32_t nMid = m_LineArray.GetSize() / 2;
@@ -195,10 +195,10 @@ CPVT_WordPlace CSection::SearchWordPlace(const CPDF_Point & point) const
             fTop = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineAscent - m_pVT->GetLineLeading(m_SecInfo);
             fBottom = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineDescent;
             if (IsFloatBigger(point.y, fTop)) {
-                bUp = FALSE;
+                bUp = false;
             }
             if (IsFloatSmaller(point.y, fBottom)) {
-                bDown = FALSE;
+                bDown = false;
             }
             if (IsFloatSmaller(point.y, fTop)) {
                 nRight = nMid - 1;
@@ -394,7 +394,7 @@ CPVT_Size CTypeset::GetEditSize(FX_FLOAT fFontSize)
 {
     ASSERT(m_pSection != NULL);
     ASSERT(m_pVT != NULL);
-    SplitLines(FALSE, fFontSize);
+    SplitLines(false, fFontSize);
     return CPVT_Size(m_rcRet.Width(), m_rcRet.Height());
 }
 CPVT_FloatRect CTypeset::Typeset()
@@ -402,7 +402,7 @@ CPVT_FloatRect CTypeset::Typeset()
     ASSERT(m_pSection != NULL);
     ASSERT(m_pVT != NULL);
     m_pSection->m_LineArray.Empty();
-    SplitLines(TRUE, 0.0f);
+    SplitLines(true, 0.0f);
     m_pSection->m_LineArray.Clear();
     OutputLines();
     return m_rcRet;
@@ -425,11 +425,11 @@ static int special_chars[128] = {
     0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001,
     0x0001, 0x0001, 0x0001, 0x000C, 0x0000, 0x0008, 0x0000, 0x0000,
 };
-static FX_BOOL IsLatin(FX_WORD word)
+static bool IsLatin(FX_WORD word)
 {
     if (word <= 0x007F) {
         if (special_chars[word] & 0x0001) {
-            return TRUE;
+            return true;
         }
     }
     if ((word >= 0x00C0 && word <= 0x00FF) ||
@@ -439,15 +439,15 @@ static FX_BOOL IsLatin(FX_WORD word)
             (word >= 0xA720 && word <= 0xA7FF) ||
             (word >= 0xFF21 && word <= 0xFF3A) ||
             (word >= 0xFF41 && word <= 0xFF5A)) {
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
-static FX_BOOL IsDigit(FX_DWORD word)
+static bool IsDigit(FX_DWORD word)
 {
-    return (word >= 0x0030 && word <= 0x0039) ? TRUE : FALSE;
+    return (word >= 0x0030 && word <= 0x0039) ? true : false;
 }
-static FX_BOOL IsCJK(FX_DWORD word)
+static bool IsCJK(FX_DWORD word)
 {
     if ((word >= 0x1100 && word <= 0x11FF) ||
             (word >= 0x2E80 && word <= 0x2FFF) ||
@@ -457,33 +457,33 @@ static FX_BOOL IsCJK(FX_DWORD word)
             (word >= 0xFE30 && word <= 0xFE4F) ||
             (word >= 0x20000 && word <= 0x2A6DF) ||
             (word >= 0x2F800 && word <= 0x2FA1F)) {
-        return TRUE;
+        return true;
     }
     if (word >= 0x3000 && word <= 0x303F) {
         if (word == 0x3005 || word == 0x3006 || word == 0x3021 || word == 0x3022 ||
                 word == 0x3023 || word == 0x3024 || word == 0x3025 || word == 0x3026 ||
                 word == 0x3027 || word == 0x3028 || word == 0x3029 || word == 0x3031 ||
                 word == 0x3032 || word == 0x3033 || word == 0x3034 || word == 0x3035) {
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
     if (word >= 0xFF66 && word <= 0xFF9D) {
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
-static FX_BOOL IsPunctuation(FX_DWORD word)
+static bool IsPunctuation(FX_DWORD word)
 {
     if (word <= 0x007F) {
         if ((special_chars[word] >> 3) & 1) {
-            return TRUE;
+            return true;
         }
     } else if (word >= 0x0080 && word <= 0x00FF) {
         if (word == 0x0082 || word == 0x0084 || word == 0x0085 || word == 0x0091 ||
                 word == 0x0092 || word == 0x0093 || word <= 0x0094 || word == 0x0096 ||
                 word == 0x00B4 || word == 0x00B8) {
-            return TRUE;
+            return true;
         }
     } else if (word >= 0x2000 && word <= 0x206F) {
         if (word == 0x2010 || word == 0x2011 || word == 0x2012 || word == 0x2013 ||
@@ -492,7 +492,7 @@ static FX_BOOL IsPunctuation(FX_DWORD word)
                 word == 0x2032 || word == 0x2033 || word == 0x2034 || word == 0x2035 ||
                 word == 0x2036 || word == 0x2037 || word == 0x203C || word == 0x203D ||
                 word == 0x203E || word == 0x2044) {
-            return TRUE;
+            return true;
         }
     } else if (word >= 0x3000 && word <= 0x303F) {
         if (word == 0x3001 || word == 0x3002 || word == 0x3003 || word == 0x3005 ||
@@ -501,11 +501,11 @@ static FX_BOOL IsPunctuation(FX_DWORD word)
                 word == 0x3011 || word == 0x3014 || word == 0x3015 || word == 0x3016 ||
                 word == 0x3017 || word == 0x3018 || word == 0x3019 || word == 0x301A ||
                 word == 0x301B || word == 0x301D || word == 0x301E || word == 0x301F) {
-            return TRUE;
+            return true;
         }
     } else if (word >= 0xFE50 && word <= 0xFE6F) {
         if ((word >= 0xFE50 && word <= 0xFE5E) || word == 0xFE63) {
-            return TRUE;
+            return true;
         }
     } else if (word >= 0xFF00 && word <= 0xFFEF) {
         if (word == 0xFF01 || word == 0xFF02 || word == 0xFF07 || word == 0xFF08 ||
@@ -514,83 +514,83 @@ static FX_BOOL IsPunctuation(FX_DWORD word)
                 word == 0xFF3D || word == 0xFF40 || word == 0xFF5B || word == 0xFF5C ||
                 word == 0xFF5D || word == 0xFF61 || word == 0xFF62 || word == 0xFF63 ||
                 word == 0xFF64 || word == 0xFF65 || word == 0xFF9E || word == 0xFF9F) {
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
-static FX_BOOL IsConnectiveSymbol(FX_DWORD word)
+static bool IsConnectiveSymbol(FX_DWORD word)
 {
     if (word <= 0x007F) {
         if ((special_chars[word] >> 5) & 1) {
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
-static FX_BOOL IsOpenStylePunctuation(FX_DWORD word)
+static bool IsOpenStylePunctuation(FX_DWORD word)
 {
     if (word <= 0x007F) {
         if ((special_chars[word] >> 2) & 1) {
-            return TRUE;
+            return true;
         }
     } else if (word == 0x300A || word == 0x300C || word == 0x300E || word == 0x3010 ||
                word == 0x3014 || word == 0x3016 || word == 0x3018 || word == 0x301A ||
                word == 0xFF08 || word == 0xFF3B || word == 0xFF5B || word == 0xFF62) {
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
-static FX_BOOL IsCurrencySymbol(FX_WORD word)
+static bool IsCurrencySymbol(FX_WORD word)
 {
     if (word == 0x0024 || word == 0x0080 || word == 0x00A2 || word == 0x00A3 ||
             word == 0x00A4 || word == 0x00A5 || (word >= 0x20A0 && word <= 0x20CF) ||
             word == 0xFE69 || word == 0xFF04 || word == 0xFFE0 || word == 0xFFE1 ||
             word == 0xFFE5 || word == 0xFFE6) {
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
-static FX_BOOL IsPrefixSymbol(FX_WORD word)
+static bool IsPrefixSymbol(FX_WORD word)
 {
     if (IsCurrencySymbol(word)) {
-        return TRUE;
+        return true;
     }
     if (word == 0x2116) {
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
-static FX_BOOL IsSpace(FX_WORD word)
+static bool IsSpace(FX_WORD word)
 {
-    return (word == 0x0020 || word == 0x3000) ? TRUE : FALSE;
+    return (word == 0x0020 || word == 0x3000) ? true : false;
 }
-static FX_BOOL NeedDivision(FX_WORD prevWord, FX_WORD curWord)
+static bool NeedDivision(FX_WORD prevWord, FX_WORD curWord)
 {
     if ((IsLatin(prevWord) || IsDigit(prevWord)) && (IsLatin(curWord) || IsDigit(curWord))) {
-        return FALSE;
+        return false;
     }
     if (IsSpace(curWord) || IsPunctuation(curWord)) {
-        return FALSE;
+        return false;
     }
     if (IsConnectiveSymbol(prevWord) || IsConnectiveSymbol(curWord)) {
-        return FALSE;
+        return false;
     }
     if (IsSpace(prevWord) || IsPunctuation(prevWord)) {
-        return TRUE;
+        return true;
     }
     if (IsPrefixSymbol(prevWord)) {
-        return FALSE;
+        return false;
     }
     if (IsPrefixSymbol(curWord) || IsCJK(curWord)) {
-        return TRUE;
+        return true;
     }
     if (IsCJK(prevWord)) {
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
-void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize)
+void CTypeset::SplitLines(bool bTypeset, FX_FLOAT fFontSize)
 {
     ASSERT(m_pVT != NULL);
     ASSERT(m_pSection != NULL);
@@ -601,14 +601,14 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize)
     FX_FLOAT fLineAscent = 0.0f, fBackupLineAscent = 0.0f;
     FX_FLOAT fLineDescent = 0.0f, fBackupLineDescent = 0.0f;
     int32_t nWordStartPos = 0;
-    FX_BOOL bFullWord = FALSE;
+    bool bFullWord = false;
     int32_t nLineFullWordIndex = 0;
     int32_t nCharIndex = 0;
     CPVT_LineInfo line;
     FX_FLOAT fWordWidth = 0;
     FX_FLOAT fTypesetWidth = FPDF_MAX(m_pVT->GetPlateWidth() - m_pVT->GetLineIndent(m_pSection->m_SecInfo), 0.0f);
     int32_t nTotalWords = m_pSection->m_WordArray.GetSize();
-    FX_BOOL bOpened = FALSE;
+    bool bOpened = false;
     if (nTotalWords > 0) {
         int32_t i = 0;
         while (i < nTotalWords) {
@@ -619,8 +619,8 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize)
             }
             if (pWord) {
                 if (bTypeset) {
-                    fLineAscent = FPDF_MAX(fLineAscent, m_pVT->GetWordAscent(*pWord, TRUE));
-                    fLineDescent = FPDF_MIN(fLineDescent, m_pVT->GetWordDescent(*pWord, TRUE));
+                    fLineAscent = FPDF_MAX(fLineAscent, m_pVT->GetWordAscent(*pWord, true));
+                    fLineDescent = FPDF_MIN(fLineDescent, m_pVT->GetWordDescent(*pWord, true));
                     fWordWidth = m_pVT->GetWordWidth(*pWord);
                 } else {
                     fLineAscent = FPDF_MAX(fLineAscent, m_pVT->GetWordAscent(*pWord, fFontSize));
@@ -636,20 +636,20 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize)
                 }
                 if (!bOpened) {
                     if (IsOpenStylePunctuation(pWord->Word)) {
-                        bOpened = TRUE;
-                        bFullWord = TRUE;
+                        bOpened = true;
+                        bFullWord = true;
                     } else if (pOldWord != NULL) {
                         if (NeedDivision(pOldWord->Word, pWord->Word)) {
-                            bFullWord = TRUE;
+                            bFullWord = true;
                         }
                     }
                 } else {
                     if (!IsSpace(pWord->Word) && !IsOpenStylePunctuation(pWord->Word)) {
-                        bOpened = FALSE;
+                        bOpened = false;
                     }
                 }
                 if (bFullWord) {
-                    bFullWord = FALSE;
+                    bFullWord = false;
                     if (nCharIndex > 0) {
                         nLineFullWordIndex ++;
                     }
@@ -691,7 +691,7 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize)
                 fLineDescent = 0.0f;
                 nCharIndex = 0;
                 nLineFullWordIndex = 0;
-                bFullWord = FALSE;
+                bFullWord = false;
             } else {
                 fLineWidth += fWordWidth;
                 i++;
@@ -809,17 +809,17 @@ void CTypeset::OutputLines()
 CPDF_VariableText::CPDF_VariableText() :
     m_nLimitChar(0),
     m_nCharArray(0),
-    m_bMultiLine(FALSE),
-    m_bLimitWidth(FALSE),
-    m_bAutoFontSize(FALSE),
+    m_bMultiLine(false),
+    m_bLimitWidth(false),
+    m_bAutoFontSize(false),
     m_nAlignment(0),
     m_fLineLeading(0.0f),
     m_fCharSpace(0.0f),
     m_nHorzScale(100),
     m_wSubWord(0),
     m_fFontSize(0.0f),
-    m_bInitial(FALSE),
-    m_bRichText(FALSE),
+    m_bInitial(false),
+    m_bRichText(false),
     m_pVTProvider(NULL),
     m_pVTIterator(NULL)
 {
@@ -848,12 +848,12 @@ void CPDF_VariableText::Initialize()
         if (CSection * pSection = m_SectionArray.GetAt(0)) {
             pSection->ResetLinePlace();
         }
-        m_bInitial = TRUE;
+        m_bInitial = true;
     }
 }
 void CPDF_VariableText::ResetAll()
 {
-    m_bInitial = FALSE;
+    m_bInitial = false;
     ResetSectionArray();
 }
 CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace & place, FX_WORD word, int32_t charset,
@@ -956,7 +956,7 @@ CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace & place, const
 }
 CPVT_WordPlace CPDF_VariableText::DeleteWords(const CPVT_WordRange & PlaceRange)
 {
-    FX_BOOL bLastSecPos = FALSE;
+    bool bLastSecPos = false;
     if (CSection * pSection = m_SectionArray.GetAt(PlaceRange.EndPos.nSecIndex)) {
         bLastSecPos = (PlaceRange.EndPos == pSection->GetEndWordPlace());
     }
@@ -971,11 +971,11 @@ CPVT_WordPlace CPDF_VariableText::DeleteWords(const CPVT_WordRange & PlaceRange)
 }
 CPVT_WordPlace CPDF_VariableText::DeleteWord(const CPVT_WordPlace & place)
 {
-    return ClearRightWord(AjustLineHeader(place, TRUE));
+    return ClearRightWord(AjustLineHeader(place, true));
 }
 CPVT_WordPlace CPDF_VariableText::BackSpaceWord(const CPVT_WordPlace & place)
 {
-    return ClearLeftWord(AjustLineHeader(place, TRUE));
+    return ClearLeftWord(AjustLineHeader(place, true));
 }
 void CPDF_VariableText::SetText(const FX_WCHAR* text, int32_t charset, const CPVT_SecProps * pSecProps,
                                 const CPVT_WordProps * pWordProps)
@@ -1044,7 +1044,7 @@ void CPDF_VariableText::UpdateWordPlace(CPVT_WordPlace & place) const
     if (place.nSecIndex >= m_SectionArray.GetSize()) {
         place = GetEndWordPlace();
     }
-    place = AjustLineHeader(place, TRUE);
+    place = AjustLineHeader(place, true);
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
         pSection->UpdateWordPlace(place);
     }
@@ -1073,19 +1073,19 @@ CPVT_WordPlace CPDF_VariableText::WordIndexToWordPlace(int32_t index) const
 {
     CPVT_WordPlace place = GetBeginWordPlace();
     int32_t nOldIndex = 0 , nIndex = 0;
-    FX_BOOL bFind = FALSE;
+    bool bFind = false;
     for (int32_t i = 0, sz = m_SectionArray.GetSize(); i < sz; i++) {
         if (CSection * pSection = m_SectionArray.GetAt(i)) {
             nIndex += pSection->m_WordArray.GetSize();
             if (nIndex == index) {
                 place = pSection->GetEndWordPlace();
-                bFind = TRUE;
+                bFind = true;
                 break;
             } else if (nIndex > index) {
                 place.nSecIndex = i;
                 place.nWordIndex = index - nOldIndex - 1;
                 pSection->UpdateWordPlace(place);
-                bFind = TRUE;
+                bFind = true;
                 break;
             }
             if (i != m_SectionArray.GetSize() - 1) {
@@ -1155,15 +1155,15 @@ CPVT_WordPlace CPDF_VariableText::SearchWordPlace(const CPDF_Point & point) cons
     int32_t nLeft = 0;
     int32_t nRight = m_SectionArray.GetSize() - 1;
     int32_t nMid = m_SectionArray.GetSize() / 2;
-    FX_BOOL bUp = TRUE;
-    FX_BOOL bDown = TRUE;
+    bool bUp = true;
+    bool bDown = true;
     while (nLeft <= nRight) {
         if (CSection * pSection = m_SectionArray.GetAt(nMid)) {
             if (IsFloatBigger(pt.y, pSection->m_SecInfo.rcSection.top)) {
-                bUp = FALSE;
+                bUp = false;
             }
             if (IsFloatBigger(pSection->m_SecInfo.rcSection.bottom, pt.y)) {
-                bDown = FALSE;
+                bDown = false;
             }
             if (IsFloatSmaller(pt.y, pSection->m_SecInfo.rcSection.top)) {
                 nRight = nMid - 1;
@@ -1303,49 +1303,49 @@ CPVT_WordPlace CPDF_VariableText::AddWord(const CPVT_WordPlace & place, const CP
     }
     return place;
 }
-FX_BOOL CPDF_VariableText::GetWordInfo(const CPVT_WordPlace & place, CPVT_WordInfo & wordinfo)
+bool CPDF_VariableText::GetWordInfo(const CPVT_WordPlace & place, CPVT_WordInfo & wordinfo)
 {
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
         if (CPVT_WordInfo * pWord = pSection->m_WordArray.GetAt(place.nWordIndex)) {
             wordinfo = *pWord;
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDF_VariableText::SetWordInfo(const CPVT_WordPlace & place, const CPVT_WordInfo & wordinfo)
+bool CPDF_VariableText::SetWordInfo(const CPVT_WordPlace & place, const CPVT_WordInfo & wordinfo)
 {
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
         if (CPVT_WordInfo * pWord = pSection->m_WordArray.GetAt(place.nWordIndex)) {
             *pWord = wordinfo;
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDF_VariableText::GetLineInfo(const CPVT_WordPlace & place, CPVT_LineInfo & lineinfo)
+bool CPDF_VariableText::GetLineInfo(const CPVT_WordPlace & place, CPVT_LineInfo & lineinfo)
 {
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
         if (CLine * pLine = pSection->m_LineArray.GetAt(place.nLineIndex)) {
             lineinfo = pLine->m_LineInfo;
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDF_VariableText::GetSectionInfo(const CPVT_WordPlace & place, CPVT_SectionInfo & secinfo)
+bool CPDF_VariableText::GetSectionInfo(const CPVT_WordPlace & place, CPVT_SectionInfo & secinfo)
 {
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
         secinfo = pSection->m_SecInfo;
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
 CPDF_Rect CPDF_VariableText::GetContentRect() const
 {
     return InToOut(CPDF_EditContainer::GetContentRect());
 }
-FX_FLOAT CPDF_VariableText::GetWordFontSize(const CPVT_WordInfo & WordInfo, FX_BOOL bFactFontSize)
+FX_FLOAT CPDF_VariableText::GetWordFontSize(const CPVT_WordInfo & WordInfo, bool bFactFontSize)
 {
     return m_bRichText && WordInfo.pWordProps ? (WordInfo.pWordProps->nScriptType == PVTWORD_SCRIPT_NORMAL || bFactFontSize ? WordInfo.pWordProps->fFontSize : WordInfo.pWordProps->fFontSize * PVT_HALF) : GetFontSize();
 }
@@ -1391,11 +1391,11 @@ FX_FLOAT CPDF_VariableText::GetWordDescent(const CPVT_WordInfo & WordInfo, FX_FL
 {
     return GetFontDescent(GetWordFontIndex(WordInfo), fFontSize);
 }
-FX_FLOAT CPDF_VariableText::GetWordAscent(const CPVT_WordInfo & WordInfo, FX_BOOL bFactFontSize)
+FX_FLOAT CPDF_VariableText::GetWordAscent(const CPVT_WordInfo & WordInfo, bool bFactFontSize)
 {
     return GetFontAscent(GetWordFontIndex(WordInfo), GetWordFontSize(WordInfo, bFactFontSize));
 }
-FX_FLOAT CPDF_VariableText::GetWordDescent(const CPVT_WordInfo & WordInfo, FX_BOOL bFactFontSize)
+FX_FLOAT CPDF_VariableText::GetWordDescent(const CPVT_WordInfo & WordInfo, bool bFactFontSize)
 {
     return GetFontDescent(GetWordFontIndex(WordInfo), GetWordFontSize(WordInfo, bFactFontSize));
 }
@@ -1421,7 +1421,7 @@ int32_t CPDF_VariableText::GetHorzScale(const CPVT_WordInfo & WordInfo)
 }
 void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace & place)
 {
-    CPVT_WordPlace wordplace = AjustLineHeader(place, TRUE);
+    CPVT_WordPlace wordplace = AjustLineHeader(place, true);
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
         for (int32_t w = pSection->m_WordArray.GetSize() - 1; w > wordplace.nWordIndex; w--) {
             delete pSection->m_WordArray.GetAt(w);
@@ -1429,26 +1429,26 @@ void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace & place)
         }
     }
 }
-CPVT_WordPlace CPDF_VariableText::AjustLineHeader(const CPVT_WordPlace & place, FX_BOOL bPrevOrNext) const
+CPVT_WordPlace CPDF_VariableText::AjustLineHeader(const CPVT_WordPlace & place, bool bPrevOrNext) const
 {
     if (place.nWordIndex < 0 && place.nLineIndex > 0) {
         return bPrevOrNext ? GetPrevWordPlace(place) : GetNextWordPlace(place);
     }
     return place;
 }
-FX_BOOL CPDF_VariableText::ClearEmptySection(const CPVT_WordPlace & place)
+bool CPDF_VariableText::ClearEmptySection(const CPVT_WordPlace & place)
 {
     if (place.nSecIndex == 0 && m_SectionArray.GetSize() == 1) {
-        return FALSE;
+        return false;
     }
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
         if (pSection->m_WordArray.GetSize() == 0) {
             delete pSection;
             m_SectionArray.RemoveAt(place.nSecIndex);
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
 void CPDF_VariableText::ClearEmptySections(const CPVT_WordRange & PlaceRange)
 {
@@ -1460,7 +1460,7 @@ void CPDF_VariableText::ClearEmptySections(const CPVT_WordRange & PlaceRange)
 }
 void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace & place)
 {
-    CPVT_WordPlace oldplace = AjustLineHeader(place, TRUE);
+    CPVT_WordPlace oldplace = AjustLineHeader(place, true);
     if (CSection * pNextSection = m_SectionArray.GetAt(place.nSecIndex + 1)) {
         if (CSection * pSection = m_SectionArray.GetAt(oldplace.nSecIndex)) {
             for (int32_t w = 0, sz = pNextSection->m_WordArray.GetSize(); w < sz; w++) {
@@ -1477,8 +1477,8 @@ void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace & place)
 void CPDF_VariableText::ClearWords(const CPVT_WordRange & PlaceRange)
 {
     CPVT_WordRange NewRange;
-    NewRange.BeginPos = AjustLineHeader(PlaceRange.BeginPos, TRUE);
-    NewRange.EndPos = AjustLineHeader(PlaceRange.EndPos, TRUE);
+    NewRange.BeginPos = AjustLineHeader(PlaceRange.BeginPos, true);
+    NewRange.EndPos = AjustLineHeader(PlaceRange.EndPos, true);
     for (int32_t s = NewRange.EndPos.nSecIndex; s >= NewRange.BeginPos.nSecIndex; s--) {
         if (CSection * pSection = m_SectionArray.GetAt(s)) {
             pSection->ClearWords(NewRange);
@@ -1507,7 +1507,7 @@ CPVT_WordPlace CPDF_VariableText::ClearLeftWord(const CPVT_WordPlace & place)
 CPVT_WordPlace CPDF_VariableText::ClearRightWord(const CPVT_WordPlace & place)
 {
     if (CSection * pSection = m_SectionArray.GetAt(place.nSecIndex)) {
-        CPVT_WordPlace rightplace = AjustLineHeader(GetNextWordPlace(place), FALSE);
+        CPVT_WordPlace rightplace = AjustLineHeader(GetNextWordPlace(place), false);
         if (rightplace != place) {
             if(rightplace.nSecIndex != place.nSecIndex) {
                 LinkLatterSection(place);
@@ -1568,9 +1568,9 @@ FX_FLOAT CPDF_VariableText::GetAutoFontSize()
     }
     return (FX_FLOAT)gFontSizeSteps[nMid];
 }
-FX_BOOL	CPDF_VariableText::IsBigger(FX_FLOAT fFontSize)
+bool	CPDF_VariableText::IsBigger(FX_FLOAT fFontSize)
 {
-    FX_BOOL bBigger =  FALSE;
+    bool bBigger =  false;
     CPVT_Size szTotal;
     for (int32_t s = 0, sz = m_SectionArray.GetSize(); s < sz; s++) {
         if (CSection * pSection = m_SectionArray.GetAt(s)) {
@@ -1580,7 +1580,7 @@ FX_BOOL	CPDF_VariableText::IsBigger(FX_FLOAT fFontSize)
             if (IsFloatBigger(szTotal.x, GetPlateWidth())
                     || IsFloatBigger(szTotal.y, GetPlateHeight())
                ) {
-                bBigger = TRUE;
+                bBigger = true;
                 break;
             }
         }
@@ -1652,9 +1652,9 @@ int32_t CPDF_VariableText::GetDefaultFontIndex()
 {
     return m_pVTProvider ? m_pVTProvider->GetDefaultFontIndex() : -1;
 }
-FX_BOOL	CPDF_VariableText::IsLatinWord(FX_WORD word)
+bool	CPDF_VariableText::IsLatinWord(FX_WORD word)
 {
-    return m_pVTProvider ? m_pVTProvider->IsLatinWord(word) : FALSE;
+    return m_pVTProvider ? m_pVTProvider->IsLatinWord(word) : false;
 }
 IPDF_VariableText_Iterator * CPDF_VariableText::GetIterator()
 {
@@ -1687,70 +1687,70 @@ void CPDF_VariableText_Iterator::SetAt(const CPVT_WordPlace & place)
     ASSERT(m_pVT != NULL);
     m_CurPos = place;
 }
-FX_BOOL	CPDF_VariableText_Iterator::NextWord()
+bool	CPDF_VariableText_Iterator::NextWord()
 {
     if (m_CurPos == m_pVT->GetEndWordPlace()) {
-        return FALSE;
+        return false;
     }
     m_CurPos = m_pVT->GetNextWordPlace(m_CurPos);
-    return TRUE;
+    return true;
 }
-FX_BOOL	CPDF_VariableText_Iterator::PrevWord()
+bool	CPDF_VariableText_Iterator::PrevWord()
 {
     if (m_CurPos == m_pVT->GetBeginWordPlace()) {
-        return FALSE;
+        return false;
     }
     m_CurPos = m_pVT->GetPrevWordPlace(m_CurPos);
-    return TRUE;
+    return true;
 }
-FX_BOOL	CPDF_VariableText_Iterator::NextLine()
+bool	CPDF_VariableText_Iterator::NextLine()
 {
     if (CSection * pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
         if (m_CurPos.nLineIndex < pSection->m_LineArray.GetSize() - 1) {
             m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex + 1, -1);
-            return TRUE;
+            return true;
         }
         if (m_CurPos.nSecIndex < m_pVT->m_SectionArray.GetSize() - 1) {
             m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex + 1, 0, -1);
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL	CPDF_VariableText_Iterator::PrevLine()
+bool	CPDF_VariableText_Iterator::PrevLine()
 {
     if (m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
         if (m_CurPos.nLineIndex > 0) {
             m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex - 1, -1);
-            return TRUE;
+            return true;
         }
         if (m_CurPos.nSecIndex > 0) {
             if (CSection * pLastSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex - 1)) {
                 m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex - 1, pLastSection->m_LineArray.GetSize() - 1, -1);
-                return TRUE;
+                return true;
             }
         }
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL	CPDF_VariableText_Iterator::NextSection()
+bool	CPDF_VariableText_Iterator::NextSection()
 {
     if (m_CurPos.nSecIndex < m_pVT->m_SectionArray.GetSize() - 1) {
         m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex + 1, 0, -1);
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL	CPDF_VariableText_Iterator::PrevSection()
+bool	CPDF_VariableText_Iterator::PrevSection()
 {
     ASSERT(m_pVT != NULL);
     if (m_CurPos.nSecIndex > 0) {
         m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex - 1, 0, -1);
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL	CPDF_VariableText_Iterator::GetWord(CPVT_Word & word) const
+bool	CPDF_VariableText_Iterator::GetWord(CPVT_Word & word) const
 {
     ASSERT(m_pVT != NULL);
     word.WordPlace = m_CurPos;
@@ -1770,13 +1770,13 @@ FX_BOOL	CPDF_VariableText_Iterator::GetWord(CPVT_Word & word) const
                 }
                 word.nFontIndex = m_pVT->GetWordFontIndex(*pWord);
                 word.fFontSize = m_pVT->GetWordFontSize(*pWord);
-                return TRUE;
+                return true;
             }
         }
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL	CPDF_VariableText_Iterator::SetWord(const CPVT_Word & word)
+bool	CPDF_VariableText_Iterator::SetWord(const CPVT_Word & word)
 {
     ASSERT(m_pVT != NULL);
     if (CSection * pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
@@ -1784,12 +1784,12 @@ FX_BOOL	CPDF_VariableText_Iterator::SetWord(const CPVT_Word & word)
             if (pWord->pWordProps) {
                 *pWord->pWordProps = word.WordProps;
             }
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL	CPDF_VariableText_Iterator::GetLine(CPVT_Line & line) const
+bool	CPDF_VariableText_Iterator::GetLine(CPVT_Line & line) const
 {
     ASSERT(m_pVT != NULL);
     line.lineplace = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex, -1);
@@ -1802,12 +1802,12 @@ FX_BOOL	CPDF_VariableText_Iterator::GetLine(CPVT_Line & line) const
             line.fLineAscent = pLine->m_LineInfo.fLineAscent;
             line.fLineDescent = pLine->m_LineInfo.fLineDescent;
             line.lineEnd = pLine->GetEndWordPlace();
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL	CPDF_VariableText_Iterator::GetSection(CPVT_Section & section) const
+bool	CPDF_VariableText_Iterator::GetSection(CPVT_Section & section) const
 {
     ASSERT(m_pVT != NULL);
     section.secplace = CPVT_WordPlace(m_CurPos.nSecIndex, 0, -1);
@@ -1819,11 +1819,11 @@ FX_BOOL	CPDF_VariableText_Iterator::GetSection(CPVT_Section & section) const
         if (pSection->m_SecInfo.pWordProps) {
             section.WordProps = *pSection->m_SecInfo.pWordProps;
         }
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL	CPDF_VariableText_Iterator::SetSection(const CPVT_Section & section)
+bool	CPDF_VariableText_Iterator::SetSection(const CPVT_Section & section)
 {
     ASSERT(m_pVT != NULL);
     if (CSection * pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
@@ -1833,7 +1833,7 @@ FX_BOOL	CPDF_VariableText_Iterator::SetSection(const CPVT_Section & section)
         if (pSection->m_SecInfo.pWordProps) {
             *pSection->m_SecInfo.pWordProps = section.WordProps;
         }
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }

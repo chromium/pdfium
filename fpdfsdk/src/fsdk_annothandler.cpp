@@ -144,7 +144,7 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnDraw(CPDFSDK_PageView* pPageView, CPDFSDK_
 }
 
 
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
 
@@ -152,9 +152,9 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(CPDFSDK_PageView * pPageVie
     {
         return pAnnotHandler->OnLButtonDown(pPageView, pAnnot, nFlags, point);
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
  {
     ASSERT(pAnnot != NULL);
 
@@ -162,9 +162,9 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(CPDFSDK_PageView * pPageView,
     {
         return pAnnotHandler->OnLButtonUp(pPageView, pAnnot, nFlags, point);
     }
-    return FALSE;
+    return false;
  }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
 
@@ -172,9 +172,9 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(CPDFSDK_PageView * pPageV
     {
         return pAnnotHandler->OnLButtonDblClk(pPageView, pAnnot, nFlags, point);
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
 
@@ -182,9 +182,9 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(CPDFSDK_PageView * pPageView,
     {
         return pAnnotHandler->OnMouseMove(pPageView, pAnnot, nFlags, point);
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, short zDelta, const CPDF_Point& point)
+bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, short zDelta, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
 
@@ -192,9 +192,9 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(CPDFSDK_PageView * pPageView
     {
         return pAnnotHandler->OnMouseWheel(pPageView, pAnnot,nFlags,zDelta, point);
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
 
@@ -202,9 +202,9 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(CPDFSDK_PageView * pPageVie
     {
         return pAnnotHandler->OnRButtonDown(pPageView, pAnnot, nFlags, point);
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
 
@@ -212,7 +212,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(CPDFSDK_PageView * pPageView,
     {
         return pAnnotHandler->OnRButtonUp(pPageView, pAnnot, nFlags, point);
     }
-    return FALSE;
+    return false;
 }
 
 void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseEnter(CPDFSDK_PageView * pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
@@ -237,18 +237,18 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseExit(CPDFSDK_PageView * pPageView, CP
     return;
 }
 
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot, FX_DWORD nChar, FX_DWORD nFlags)
+bool CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot, FX_DWORD nChar, FX_DWORD nFlags)
 {
 
     if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot))
     {
         return pAnnotHandler->OnChar(pAnnot,nChar, nFlags);
     }
-    return FALSE;
+    return false;
 
 }
 
-FX_BOOL         CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag)
+bool         CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag)
 {
 
     if (!m_pApp->FFI_IsCTRLKeyDown(nFlag) && !m_pApp->FFI_IsALTKeyDown(nFlag))
@@ -263,7 +263,7 @@ FX_BOOL         CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot, 
             {
                 CPDFSDK_Document* pDocument = pPage->GetSDKDocument();
                 pDocument->SetFocusAnnot(pNext);
-                return TRUE;
+                return true;
             }
         }
     }
@@ -272,14 +272,14 @@ FX_BOOL         CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot, 
     {
         return pAnnotHandler->OnKeyDown(pAnnot,nKeyCode, nFlag);
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL         CPDFSDK_AnnotHandlerMgr::Annot_OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag)
+bool         CPDFSDK_AnnotHandlerMgr::Annot_OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag)
 {
-    return FALSE;
+    return false;
 }
 
-FX_BOOL         CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
+bool         CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
 {
     ASSERT(pAnnot != NULL);
 
@@ -289,19 +289,19 @@ FX_BOOL         CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(CPDFSDK_Annot* pAnnot,
         {
             CPDFSDK_PageView* pPage = pAnnot->GetPageView();
             pPage->GetSDKDocument();
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
 
-FX_BOOL         CPDFSDK_AnnotHandlerMgr::Annot_OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
+bool         CPDFSDK_AnnotHandlerMgr::Annot_OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
 {
     ASSERT(pAnnot);
     if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot))
         return pAnnotHandler->OnKillFocus(pAnnot, nFlag);
 
-    return FALSE;
+    return false;
 }
 
 CPDF_Rect   CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot)
@@ -313,7 +313,7 @@ CPDF_Rect   CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(CPDFSDK_PageView *pPage
     return pAnnot->GetRect();
 }
 
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point)
+bool CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point)
 {
     ASSERT(pAnnot);
     if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot))
@@ -321,31 +321,31 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView *pPageView, CP
         if (pAnnotHandler->CanAnswer(pAnnot))
             return pAnnotHandler->HitTest(pPageView, pAnnot, point);
     }
-    return FALSE;
+    return false;
 }
 
-CPDFSDK_Annot*  CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,FX_BOOL bNext)
+CPDFSDK_Annot*  CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,bool bNext)
 {
     CBA_AnnotIterator ai(pSDKAnnot->GetPageView(), "Widget", "");
     return bNext ? ai.GetNextAnnot(pSDKAnnot) : ai.GetPrevAnnot(pSDKAnnot);
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot)
+bool CPDFSDK_BFAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot)
 {
     ASSERT(pAnnot->GetType() == "Widget");
     if (pAnnot->GetSubType() == BFFT_SIGNATURE)
-        return FALSE;
+        return false;
 
     CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
     if (!pWidget->IsVisible())
-            return FALSE;
+            return false;
 
     int nFieldFlags = pWidget->GetFieldFlags();
     if ((nFieldFlags & FIELDFLAG_READONLY) == FIELDFLAG_READONLY)
-        return FALSE;
+        return false;
 
     if (pWidget->GetFieldType() == FIELDTYPE_PUSHBUTTON)
-        return TRUE;
+        return true;
 
     CPDF_Page* pPage = pWidget->GetPDFPage();
     CPDF_Document* pDocument = pPage->m_pDocument;
@@ -366,7 +366,7 @@ CPDFSDK_Annot* CPDFSDK_BFAnnotHandler::NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_Page
     pInterForm->AddMap(pCtrl, pWidget);
     CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
     if (pPDFInterForm && pPDFInterForm->NeedConstructAP())
-        pWidget->ResetAppearance(nullptr, FALSE);
+        pWidget->ResetAppearance(nullptr, false);
 
     return pWidget;
 }
@@ -439,7 +439,7 @@ void CPDFSDK_BFAnnotHandler::OnMouseExit(CPDFSDK_PageView *pPageView, CPDFSDK_An
     }
 
 }
-FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_BFAnnotHandler::OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -453,10 +453,10 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFS
             return m_pFormFiller->OnLButtonDown(pPageView, pAnnot, nFlags, point);
     }
 
-    return FALSE;
+    return false;
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_BFAnnotHandler::OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -470,10 +470,10 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK
             return m_pFormFiller->OnLButtonUp(pPageView, pAnnot, nFlags, point);
     }
 
-    return FALSE;
+    return false;
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_BFAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -487,10 +487,10 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView *pPageView, CPD
             return m_pFormFiller->OnLButtonDblClk(pPageView, pAnnot, nFlags, point);
     }
 
-    return FALSE;
+    return false;
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseMove(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_BFAnnotHandler::OnMouseMove(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -504,12 +504,12 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseMove(CPDFSDK_PageView *pPageView, CPDFSDK
             return m_pFormFiller->OnMouseMove(pPageView, pAnnot, nFlags, point);
     }
 
-    return FALSE;
+    return false;
 
 }
 
 
-FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseWheel(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, short zDelta, const CPDF_Point& point)
+bool CPDFSDK_BFAnnotHandler::OnMouseWheel(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, short zDelta, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -523,10 +523,10 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseWheel(CPDFSDK_PageView *pPageView, CPDFSD
             return m_pFormFiller->OnMouseWheel(pPageView, pAnnot, nFlags, zDelta,point);
     }
 
-    return FALSE;
+    return false;
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_BFAnnotHandler::OnRButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -540,9 +540,9 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonDown(CPDFSDK_PageView *pPageView, CPDFS
             return m_pFormFiller->OnRButtonDown(pPageView, pAnnot, nFlags, point);
     }
 
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
+bool CPDFSDK_BFAnnotHandler::OnRButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_DWORD nFlags, const CPDF_Point& point)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -556,10 +556,10 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK
             return m_pFormFiller->OnRButtonUp(pPageView, pAnnot, nFlags, point);
     }
 
-    return FALSE;
+    return false;
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot, FX_DWORD nChar, FX_DWORD nFlags)
+bool CPDFSDK_BFAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot, FX_DWORD nChar, FX_DWORD nFlags)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -573,10 +573,10 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot, FX_DWORD nChar, FX
             return m_pFormFiller->OnChar(pAnnot,nChar, nFlags);
     }
 
-    return FALSE;
+    return false;
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag)
+bool CPDFSDK_BFAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -590,13 +590,13 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, i
             return m_pFormFiller->OnKeyDown(pAnnot,nKeyCode, nFlag);
     }
 
-    return FALSE;
+    return false;
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag)
+bool CPDFSDK_BFAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag)
 {
 
-    return FALSE;
+    return false;
 }
 void    CPDFSDK_BFAnnotHandler::OnCreate(CPDFSDK_Annot* pAnnot)
 {
@@ -626,16 +626,16 @@ void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot)
     {
         CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
         if (!pWidget->IsAppearanceValid())
-            pWidget->ResetAppearance(NULL, FALSE);
+            pWidget->ResetAppearance(NULL, false);
 
         int nFieldType = pWidget->GetFieldType();
         if (nFieldType == FIELDTYPE_TEXTFIELD || nFieldType == FIELDTYPE_COMBOBOX)
         {
-            FX_BOOL bFormated = FALSE;
+            bool bFormated = false;
             CFX_WideString sValue = pWidget->OnFormat(bFormated);
             if (bFormated && nFieldType == FIELDTYPE_COMBOBOX)
             {
-                pWidget->ResetAppearance(sValue.c_str(), FALSE);
+                pWidget->ResetAppearance(sValue.c_str(), false);
             }
         }
 
@@ -644,7 +644,7 @@ void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot)
     }
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
+bool CPDFSDK_BFAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -658,9 +658,9 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag
             return m_pFormFiller->OnSetFocus(pAnnot,nFlag);
     }
 
-    return TRUE;
+    return true;
 }
-FX_BOOL CPDFSDK_BFAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
+bool CPDFSDK_BFAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag)
 {
     ASSERT(pAnnot != NULL);
     CFX_ByteString sSubType = pAnnot->GetSubType();
@@ -674,7 +674,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFla
             return m_pFormFiller->OnKillFocus(pAnnot,nFlag);
     }
 
-    return TRUE;
+    return true;
 }
 
 CPDF_Rect CPDFSDK_BFAnnotHandler::GetViewBBox(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot)
@@ -695,7 +695,7 @@ CPDF_Rect CPDFSDK_BFAnnotHandler::GetViewBBox(CPDFSDK_PageView *pPageView, CPDFS
     return CPDF_Rect(0,0,0,0);
 }
 
-FX_BOOL CPDFSDK_BFAnnotHandler::HitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point)
+bool CPDFSDK_BFAnnotHandler::HitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, const CPDF_Point& point)
 {
     ASSERT(pPageView);
     ASSERT(pAnnot);
@@ -706,9 +706,9 @@ FX_BOOL CPDFSDK_BFAnnotHandler::HitTest(CPDFSDK_PageView *pPageView, CPDFSDK_Ann
 
 //CReader_AnnotIteratorEx
 
-CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(CPDFSDK_PageView * pPageView,FX_BOOL bReverse,
-                                                 FX_BOOL bIgnoreTopmost/*=FALSE*/,
-                                                 FX_BOOL bCircle/*=FALSE*/,
+CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(CPDFSDK_PageView * pPageView,bool bReverse,
+                                                 bool bIgnoreTopmost/*=false*/,
+                                                 bool bCircle/*=false*/,
                                                  CFX_PtrArray *pList/*=NULL*/)
 {
     ASSERT(pPageView);
@@ -850,7 +850,7 @@ int LyOrderCompare(CPDFSDK_Annot* p1, CPDFSDK_Annot* p2)
     return 0;
 }
 
-FX_BOOL CPDFSDK_AnnotIterator::InitIteratorAnnotList(CPDFSDK_PageView* pPageView,CFX_PtrArray * pAnnotList)
+bool CPDFSDK_AnnotIterator::InitIteratorAnnotList(CPDFSDK_PageView* pPageView,CFX_PtrArray * pAnnotList)
 {
     ASSERT(pPageView);
 
@@ -859,7 +859,7 @@ FX_BOOL CPDFSDK_AnnotIterator::InitIteratorAnnotList(CPDFSDK_PageView* pPageView
     }
 
     m_pIteratorAnnotList.RemoveAll();
-    if(!pAnnotList) return FALSE;
+    if(!pAnnotList) return false;
 
     CPDFSDK_Annot * pTopMostAnnot= (m_bIgnoreTopmost) ? NULL : pPageView->GetFocusAnnot();
 
@@ -888,5 +888,5 @@ FX_BOOL CPDFSDK_AnnotIterator::InitIteratorAnnotList(CPDFSDK_PageView* pPageView
         }
     }
 
-    return TRUE;
+    return true;
 }

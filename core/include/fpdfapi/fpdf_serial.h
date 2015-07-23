@@ -117,35 +117,35 @@ public:
 
     void				RemoveSecurity();
 
-    FX_BOOL				Create(const FX_WCHAR* filename, FX_DWORD flags = 0);
+    bool				Create(const FX_WCHAR* filename, FX_DWORD flags = 0);
 
-    FX_BOOL				Create(const FX_CHAR* filename, FX_DWORD flags = 0);
+    bool				Create(const FX_CHAR* filename, FX_DWORD flags = 0);
 
-    FX_BOOL				Create(IFX_StreamWrite* pFile, FX_DWORD flags = 0);
+    bool				Create(IFX_StreamWrite* pFile, FX_DWORD flags = 0);
 
     int32_t			Continue(IFX_Pause *pPause = NULL);
 
-    FX_BOOL				SetFileVersion(int32_t fileVersion = 17);
+    bool				SetFileVersion(int32_t fileVersion = 17);
 protected:
 
     CPDF_Document*		m_pDocument;
 
     CPDF_Parser*		m_pParser;
 
-    FX_BOOL				m_bCompress;
+    bool				m_bCompress;
 
-    FX_BOOL				m_bSecurityChanged;
+    bool				m_bSecurityChanged;
 
     CPDF_Dictionary*	m_pEncryptDict;
     FX_DWORD			m_dwEnryptObjNum;
-    FX_BOOL				m_bEncryptCloned;
+    bool				m_bEncryptCloned;
 
-    FX_BOOL				m_bStandardSecurity;
+    bool				m_bStandardSecurity;
 
     CPDF_CryptoHandler*	m_pCryptoHandler;
-    FX_BOOL				m_bNewCrypto;
+    bool				m_bNewCrypto;
 
-    FX_BOOL				m_bEncryptMetadata;
+    bool				m_bEncryptMetadata;
 
     CPDF_Object*		m_pMetadata;
 
@@ -154,7 +154,7 @@ protected:
     int32_t			m_ObjectStreamSize;
 
     FX_DWORD			m_dwLastObjNum;
-    FX_BOOL				Create(FX_DWORD flags);
+    bool				Create(FX_DWORD flags);
     void				ResetStandardSecurity();
     void				Clear();
     int32_t			WriteDoc_Stage1(IFX_Pause *pPause);
@@ -170,14 +170,14 @@ protected:
     void				AppendNewObjNum(FX_DWORD objbum);
     int32_t			WriteOldIndirectObject(FX_DWORD objnum);
     int32_t			WriteOldObjs(IFX_Pause *pPause);
-    int32_t			WriteNewObjs(FX_BOOL bIncremental, IFX_Pause *pPause);
+    int32_t			WriteNewObjs(bool bIncremental, IFX_Pause *pPause);
     int32_t			WriteIndirectObj(const CPDF_Object* pObj);
-    int32_t			WriteDirectObj(FX_DWORD objnum, const CPDF_Object* pObj, FX_BOOL bEncrypt = TRUE);
+    int32_t			WriteDirectObj(FX_DWORD objnum, const CPDF_Object* pObj, bool bEncrypt = true);
     int32_t			WriteIndirectObjectToStream(const CPDF_Object* pObj);
     int32_t			WriteIndirectObj(FX_DWORD objnum, const CPDF_Object* pObj);
     int32_t			WriteIndirectObjectToStream(FX_DWORD objnum, const uint8_t* pBuffer, FX_DWORD dwSize);
     int32_t			AppendObjectNumberToXRef(FX_DWORD objnum);
-    void				InitID(FX_BOOL bDefault = TRUE);
+    void				InitID(bool bDefault = true);
     int32_t			WriteStream(const CPDF_Object* pStream, FX_DWORD objnum, CPDF_CryptoHandler* pCrypto);
 
     int32_t			m_iStage;

@@ -256,45 +256,45 @@ FXJSVALUETYPE CJS_Value::GetType() const
 	return VT_unknown;
 }
 
-FX_BOOL CJS_Value::IsArrayObject() const
+bool CJS_Value::IsArrayObject() const
 {
-	if(m_pValue.IsEmpty()) return FALSE;
+	if(m_pValue.IsEmpty()) return false;
 	return m_pValue->IsArray();
 }
 
-FX_BOOL CJS_Value::IsDateObject() const
+bool CJS_Value::IsDateObject() const
 {
-	if(m_pValue.IsEmpty()) return FALSE;
+	if(m_pValue.IsEmpty()) return false;
 	return m_pValue->IsDate();
 }
 
 //CJS_Value::operator CJS_Array()
-FX_BOOL CJS_Value::ConvertToArray(CJS_Array &array) const
+bool CJS_Value::ConvertToArray(CJS_Array &array) const
 {
 	if (IsArrayObject())
 	{
 		array.Attach(JS_ToArray(m_isolate, m_pValue));
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
-FX_BOOL CJS_Value::ConvertToDate(CJS_Date &date) const
+bool CJS_Value::ConvertToDate(CJS_Date &date) const
 {
 // 	if (GetType() == VT_date)
 // 	{
 // 		date = (double)(*this);
-// 		return TRUE;
+// 		return true;
 // 	}
 
 	if (IsDateObject())
 	{
 		date.Attach(m_pValue);
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 /* ---------------------------- CJS_PropValue ---------------------------- */
@@ -314,12 +314,12 @@ CJS_PropValue::~CJS_PropValue()
 {
 }
 
-FX_BOOL CJS_PropValue::IsSetting()
+bool CJS_PropValue::IsSetting()
 {
 	return m_bIsSetting;
 }
 
-FX_BOOL CJS_PropValue::IsGetting()
+bool CJS_PropValue::IsGetting()
 {
 	return !m_bIsSetting;
 }
@@ -480,9 +480,9 @@ void CJS_Array::Attach(v8::Local<v8::Array> pArray)
 	m_pArray = pArray;
 }
 
-FX_BOOL CJS_Array::IsAttached()
+bool CJS_Array::IsAttached()
 {
-	return FALSE;
+	return false;
 }
 
 void CJS_Array::GetElement(unsigned index,CJS_Value &value)
@@ -543,9 +543,9 @@ CJS_Date::~CJS_Date()
 {
 }
 
-FX_BOOL	CJS_Date::IsValidDate()
+bool	CJS_Date::IsValidDate()
 {
-	if(m_pDate.IsEmpty()) return FALSE;
+	if(m_pDate.IsEmpty()) return false;
 	return !JS_PortIsNan(JS_ToNumber(m_isolate, m_pDate));
 }
 

@@ -44,15 +44,15 @@ public:
 
 	CPDFDoc_Environment *							GetReaderApp(){return m_pApp;}
 
-	FX_BOOL									InitJSObjects();
+	bool									InitJSObjects();
 
-	FX_BOOL									AddEventToLoop(const CFX_WideString& sTargetName, JS_EVENT_T eEventType);
+	bool									AddEventToLoop(const CFX_WideString& sTargetName, JS_EVENT_T eEventType);
 	void									RemoveEventInLoop(const CFX_WideString& sTargetName, JS_EVENT_T eEventType);
 	void									RemoveEventsInLoop(CJS_FieldEvent* pStart);
 
-	void									BeginBlock(){m_bBlocking = TRUE;}
-	void									EndBlock(){m_bBlocking = FALSE;}
-	FX_BOOL									IsBlocking(){return m_bBlocking;}
+	void									BeginBlock(){m_bBlocking = true;}
+	void									EndBlock(){m_bBlocking = false;}
+	bool									IsBlocking(){return m_bBlocking;}
 
 	operator								IJS_Runtime*() {return (IJS_Runtime*)m_isolate;}
 	v8::Isolate*								GetIsolate(){return m_isolate;};
@@ -63,7 +63,7 @@ protected:
 	CFX_ArrayTemplate<CJS_Context*>		m_ContextArray;
 	CPDFDoc_Environment*							m_pApp;
 	CPDFSDK_Document*						m_pDocument;
-	FX_BOOL									m_bBlocking;
+	bool									m_bBlocking;
 	CJS_FieldEvent*							m_pFieldEventPath;
 
 	v8::Isolate* m_isolate;

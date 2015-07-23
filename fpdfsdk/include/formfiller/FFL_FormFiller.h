@@ -39,23 +39,23 @@ public:
 	virtual void				OnMouseEnter(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot);
 	virtual void				OnMouseExit(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot);
 
-	virtual FX_BOOL				OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
-	virtual FX_BOOL				OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
-	virtual FX_BOOL				OnLButtonDblClk(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
-	virtual FX_BOOL				OnMouseMove(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
-	virtual FX_BOOL				OnMouseWheel(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, short zDelta, const CPDF_Point& point);
-	virtual FX_BOOL				OnRButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
-	virtual FX_BOOL				OnRButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
+	virtual bool				OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
+	virtual bool				OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
+	virtual bool				OnLButtonDblClk(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
+	virtual bool				OnMouseMove(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
+	virtual bool				OnMouseWheel(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, short zDelta, const CPDF_Point& point);
+	virtual bool				OnRButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
+	virtual bool				OnRButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
 
-	virtual FX_BOOL				OnKeyDown(CPDFSDK_Annot* pAnnot, FX_UINT nKeyCode, FX_UINT nFlags);
-	virtual FX_BOOL				OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
+	virtual bool				OnKeyDown(CPDFSDK_Annot* pAnnot, FX_UINT nKeyCode, FX_UINT nFlags);
+	virtual bool				OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
 
-	virtual FX_BOOL				OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
-	virtual FX_BOOL				OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
+	virtual bool				OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
+	virtual bool				OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 
-	virtual FX_BOOL				CanCopy(CPDFSDK_Document* pDocument);
-	virtual FX_BOOL				CanCut(CPDFSDK_Document* pDocument);
-	virtual FX_BOOL				CanPaste(CPDFSDK_Document* pDocument);
+	virtual bool				CanCopy(CPDFSDK_Document* pDocument);
+	virtual bool				CanCut(CPDFSDK_Document* pDocument);
+	virtual bool				CanPaste(CPDFSDK_Document* pDocument);
 
 	virtual void				DoCopy(CPDFSDK_Document* pDocument);
 	virtual void				DoCut(CPDFSDK_Document* pDocument);
@@ -72,15 +72,15 @@ public:
  									PDFSDK_FieldAction& fa);
  	virtual void				SetActionData(CPDFSDK_PageView* pPageView, CPDF_AAction::AActionType type,
  									const PDFSDK_FieldAction& fa);
- 	virtual FX_BOOL				IsActionDataChanged(CPDF_AAction::AActionType type, const PDFSDK_FieldAction& faOld,
+ 	virtual bool				IsActionDataChanged(CPDF_AAction::AActionType type, const PDFSDK_FieldAction& faOld,
  									const PDFSDK_FieldAction& faNew);
 
 	virtual void				SaveState(CPDFSDK_PageView* pPageView);
 	virtual void				RestoreState(CPDFSDK_PageView* pPageView);
 
-	virtual CPWL_Wnd* 			ResetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bRestoreValue);
+	virtual CPWL_Wnd* 			ResetPDFWindow(CPDFSDK_PageView* pPageView, bool bRestoreValue);
 
-	virtual void				OnKeyStroke(FX_BOOL bKeyDown);
+	virtual void				OnKeyStroke(bool bKeyDown);
 
 	CPDF_Matrix					GetCurMatrix();
 
@@ -95,19 +95,19 @@ public:
 	void						SetWindowRect(CPDFSDK_PageView* pPageView, const CPDF_Rect& rcWindow);
 	CPDF_Rect					GetWindowRect(CPDFSDK_PageView* pPageView);
 
-	FX_BOOL						CommitData(CPDFSDK_PageView* pPageView, FX_UINT nFlag);
-	virtual FX_BOOL				IsDataChanged(CPDFSDK_PageView* pPageView);
+	bool						CommitData(CPDFSDK_PageView* pPageView, FX_UINT nFlag);
+	virtual bool				IsDataChanged(CPDFSDK_PageView* pPageView);
 	virtual void				SaveData(CPDFSDK_PageView* pPageView);
 
-	CPWL_Wnd*					GetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bNew);
+	CPWL_Wnd*					GetPDFWindow(CPDFSDK_PageView* pPageView, bool bNew);
 	void						DestroyPDFWindow(CPDFSDK_PageView* pPageView);
-	void						EscapeFiller(CPDFSDK_PageView* pPageView, FX_BOOL bDestroyPDFWindow);
+	void						EscapeFiller(CPDFSDK_PageView* pPageView, bool bDestroyPDFWindow);
 
 	virtual	PWL_CREATEPARAM		GetCreateParam();
 	virtual CPWL_Wnd*			NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView* pPageView) = 0;
 	virtual CPDF_Rect			GetFocusBox(CPDFSDK_PageView* pPageView);
 
-	FX_BOOL						IsValid() const;
+	bool						IsValid() const;
 	CPDF_Rect					GetPDFWindowRect() const;
 
 	CPDFSDK_PageView*			GetCurPageView();
@@ -124,7 +124,7 @@ protected:
     CPDFSDK_Widget* m_pWidget;
     CPDFSDK_Annot* m_pAnnot;
 
-    FX_BOOL m_bValid;
+    bool m_bValid;
     CFFL_PageView2PDFWindow m_Maps;
     CPDF_Point m_ptOldPos;
 };
@@ -137,9 +137,9 @@ public:
 
 	virtual void				OnMouseEnter(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot);
 	virtual void				OnMouseExit(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot);
-	virtual FX_BOOL				OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
-	virtual FX_BOOL				OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
-	virtual FX_BOOL				OnMouseMove(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
+	virtual bool				OnLButtonDown(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
+	virtual bool				OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
+	virtual bool				OnMouseMove(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point);
 	virtual void				OnDraw(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot,
 									CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 									FX_DWORD dwFlags);
@@ -148,8 +148,8 @@ public:
 									CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 									FX_DWORD dwFlags);
 protected:
-	FX_BOOL						m_bMouseIn;
-	FX_BOOL						m_bMouseDown;
+	bool						m_bMouseIn;
+	bool						m_bMouseDown;
 };
 
 #endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_

@@ -37,10 +37,10 @@ CPDFSDK_Widget::~CPDFSDK_Widget()
 
 }
 
-FX_BOOL     CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode)
+bool     CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode)
 {
     CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDict("AP");
-    if (pAP == NULL) return FALSE;
+    if (pAP == NULL) return false;
 
     // Choose the right sub-ap
     const FX_CHAR* ap_entry = "N";
@@ -53,7 +53,7 @@ FX_BOOL     CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode m
 
     // Get the AP stream or subdirectory
     CPDF_Object* psub = pAP->GetElementValue(ap_entry);
-    if (psub == NULL) return FALSE;
+    if (psub == NULL) return false;
 
     int nFieldType = GetFieldType();
     switch (nFieldType)
@@ -70,10 +70,10 @@ FX_BOOL     CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode m
             CPDF_Dictionary* pSubDict = (CPDF_Dictionary*)psub;
             return pSubDict->GetStream(GetAppState()) != NULL;
         }
-        return FALSE;
+        return false;
     }
 
-    return TRUE;
+    return true;
 }
 
 int CPDFSDK_Widget::GetFieldType() const
@@ -141,7 +141,7 @@ int CPDFSDK_Widget::GetRotate() const
     return pCtrl->GetRotation() % 360;
 }
 
-FX_BOOL CPDFSDK_Widget::GetFillColor(FX_COLORREF& color) const
+bool CPDFSDK_Widget::GetFillColor(FX_COLORREF& color) const
 {
     CPDF_FormControl* pFormCtrl = GetFormControl();
     ASSERT(pFormCtrl != NULL);
@@ -152,7 +152,7 @@ FX_BOOL CPDFSDK_Widget::GetFillColor(FX_COLORREF& color) const
     return iColorType != COLORTYPE_TRANSPARENT;
 }
 
-FX_BOOL CPDFSDK_Widget::GetBorderColor(FX_COLORREF& color) const
+bool CPDFSDK_Widget::GetBorderColor(FX_COLORREF& color) const
 {
     CPDF_FormControl* pFormCtrl = GetFormControl();
     ASSERT(pFormCtrl != NULL);
@@ -163,7 +163,7 @@ FX_BOOL CPDFSDK_Widget::GetBorderColor(FX_COLORREF& color) const
     return iColorType != COLORTYPE_TRANSPARENT;
 }
 
-FX_BOOL CPDFSDK_Widget::GetTextColor(FX_COLORREF& color) const
+bool CPDFSDK_Widget::GetTextColor(FX_COLORREF& color) const
 {
     CPDF_FormControl* pFormCtrl = GetFormControl();
     ASSERT(pFormCtrl != NULL);
@@ -179,7 +179,7 @@ FX_BOOL CPDFSDK_Widget::GetTextColor(FX_COLORREF& color) const
         return iColorType != COLORTYPE_TRANSPARENT;
     }
 
-    return FALSE;
+    return false;
 }
 
 FX_FLOAT CPDFSDK_Widget::GetFontSize() const
@@ -235,7 +235,7 @@ int CPDFSDK_Widget::CountOptions() const
     return pFormField->CountOptions();
 }
 
-FX_BOOL CPDFSDK_Widget::IsOptionSelected(int nIndex) const
+bool CPDFSDK_Widget::IsOptionSelected(int nIndex) const
 {
     CPDF_FormField* pFormField = GetFormField();
     ASSERT(pFormField != NULL);
@@ -251,7 +251,7 @@ int CPDFSDK_Widget::GetTopVisibleIndex() const
     return pFormField->GetTopVisibleIndex();
 }
 
-FX_BOOL CPDFSDK_Widget::IsChecked() const
+bool CPDFSDK_Widget::IsChecked() const
 {
     CPDF_FormControl* pFormCtrl = GetFormControl();
     ASSERT(pFormCtrl != NULL);
@@ -275,7 +275,7 @@ int CPDFSDK_Widget::GetMaxLen() const
     return pFormField->GetMaxLen();
 }
 
-void CPDFSDK_Widget::SetCheck(FX_BOOL bChecked, FX_BOOL bNotify)
+void CPDFSDK_Widget::SetCheck(bool bChecked, bool bNotify)
 {
     CPDF_FormControl* pFormCtrl = GetFormControl();
     ASSERT(pFormCtrl != NULL);
@@ -286,7 +286,7 @@ void CPDFSDK_Widget::SetCheck(FX_BOOL bChecked, FX_BOOL bNotify)
     pFormField->CheckControl(pFormField->GetControlIndex(pFormCtrl), bChecked, bNotify);
 }
 
-void CPDFSDK_Widget::SetValue(const CFX_WideString& sValue, FX_BOOL bNotify)
+void CPDFSDK_Widget::SetValue(const CFX_WideString& sValue, bool bNotify)
 {
     CPDF_FormField* pFormField = GetFormField();
     ASSERT(pFormField != NULL);
@@ -297,7 +297,7 @@ void CPDFSDK_Widget::SetValue(const CFX_WideString& sValue, FX_BOOL bNotify)
 void CPDFSDK_Widget::SetDefaultValue(const CFX_WideString& sValue)
 {
 }
-void CPDFSDK_Widget::SetOptionSelection(int index, FX_BOOL bSelected, FX_BOOL bNotify)
+void CPDFSDK_Widget::SetOptionSelection(int index, bool bSelected, bool bNotify)
 {
     CPDF_FormField* pFormField = GetFormField();
     ASSERT(pFormField != NULL);
@@ -305,7 +305,7 @@ void CPDFSDK_Widget::SetOptionSelection(int index, FX_BOOL bSelected, FX_BOOL bN
     pFormField->SetItemSelection(index, bSelected, bNotify);
 }
 
-void CPDFSDK_Widget::ClearSelection(FX_BOOL bNotify)
+void CPDFSDK_Widget::ClearSelection(bool bNotify)
 {
     CPDF_FormField* pFormField = GetFormField();
     ASSERT(pFormField != NULL);
@@ -319,20 +319,20 @@ void CPDFSDK_Widget::SetTopVisibleIndex(int index)
 
 void CPDFSDK_Widget::SetAppModified()
 {
-    m_bAppModified = TRUE;
+    m_bAppModified = true;
 }
 
 void CPDFSDK_Widget::ClearAppModified()
 {
-    m_bAppModified = FALSE;
+    m_bAppModified = false;
 }
 
-FX_BOOL CPDFSDK_Widget::IsAppModified() const
+bool CPDFSDK_Widget::IsAppModified() const
 {
     return m_bAppModified;
 }
 
-void CPDFSDK_Widget::ResetAppearance(const FX_WCHAR* sValue, FX_BOOL bValueChanged)
+void CPDFSDK_Widget::ResetAppearance(const FX_WCHAR* sValue, bool bValueChanged)
 {
     SetAppModified();
 
@@ -370,14 +370,14 @@ void CPDFSDK_Widget::ResetAppearance(const FX_WCHAR* sValue, FX_BOOL bValueChang
     m_pAnnot->ClearCachedAP();
 }
 
-CFX_WideString CPDFSDK_Widget::OnFormat(FX_BOOL& bFormated)
+CFX_WideString CPDFSDK_Widget::OnFormat(bool& bFormated)
 {
     CPDF_FormField* pFormField = GetFormField();
     ASSERT(pFormField != NULL);
     return m_pInterForm->OnFormat(pFormField, bFormated);
 }
 
-void CPDFSDK_Widget::ResetFieldAppearance(FX_BOOL bValueChanged)
+void CPDFSDK_Widget::ResetFieldAppearance(bool bValueChanged)
 {
     CPDF_FormField* pFormField = GetFormField();
     ASSERT(pFormField != NULL);
@@ -1017,7 +1017,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue)
 
     if (IFX_Edit * pEdit = IFX_Edit::NewEdit())
     {
-        pEdit->EnableRefresh(FALSE);
+        pEdit->EnableRefresh(false);
 
         CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
         ASSERT(pDoc != NULL);
@@ -1035,7 +1035,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue)
 
         FX_FLOAT fFontSize = GetFontSize();
         if (IsFloatZero(fFontSize))
-            pEdit->SetAutoFontSize(TRUE);
+            pEdit->SetAutoFontSize(true);
         else
             pEdit->SetFontSize(fFontSize);
 
@@ -1093,7 +1093,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox()
 
     if (IFX_Edit * pEdit = IFX_Edit::NewEdit())
     {
-        pEdit->EnableRefresh(FALSE);
+        pEdit->EnableRefresh(false);
 
         CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
         ASSERT(pDoc != NULL);
@@ -1123,12 +1123,12 @@ void CPDFSDK_Widget::ResetAppearance_ListBox()
 
         for (int32_t i=nTop; i<nCount; i++)
         {
-            FX_BOOL bSelected = FALSE;
+            bool bSelected = false;
             for (int32_t j=0; j<nSelCount; j++)
             {
                 if (pField->GetSelectedIndex(j) == i)
                 {
-                    bSelected = TRUE;
+                    bSelected = true;
                     break;
                 }
             }
@@ -1141,16 +1141,16 @@ void CPDFSDK_Widget::ResetAppearance_ListBox()
             if (bSelected)
             {
                 CPDF_Rect rcItem = CPDF_Rect(rcClient.left,fy-fItemHeight,rcClient.right,fy);
-                sList << "q\n" << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_RGB,0,51.0f/255.0f,113.0f/255.0f),TRUE)
+                sList << "q\n" << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_RGB,0,51.0f/255.0f,113.0f/255.0f),true)
                     << rcItem.left << " " << rcItem.bottom << " " << rcItem.Width() << " " << rcItem.Height() << " re f\n" << "Q\n";
 
-                sList << "BT\n" << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_GRAY,1),TRUE) <<
+                sList << "BT\n" << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_GRAY,1),true) <<
                     CPWL_Utils::GetEditAppStream(pEdit,CPDF_Point(0.0f,fy)) << "ET\n";
             }
             else
             {
                 CPWL_Color crText = GetTextPWLColor();
-                sList << "BT\n" << CPWL_Utils::GetColorAppStream(crText,TRUE) <<
+                sList << "BT\n" << CPWL_Utils::GetColorAppStream(crText,true) <<
                 CPWL_Utils::GetEditAppStream(pEdit,CPDF_Point(0.0f,fy)) << "ET\n";
             }
 
@@ -1183,7 +1183,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue)
 
     if (IFX_Edit * pEdit = IFX_Edit::NewEdit())
     {
-        pEdit->EnableRefresh(FALSE);
+        pEdit->EnableRefresh(false);
 
         CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
         ASSERT(pDoc != NULL);
@@ -1198,12 +1198,12 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue)
         pEdit->SetAlignmentH(pControl->GetControlAlignment());
 
         FX_DWORD dwFieldFlags = pField->GetFieldFlags();
-        FX_BOOL bMultiLine = (dwFieldFlags >> 12) & 1;
+        bool bMultiLine = (dwFieldFlags >> 12) & 1;
 
         if (bMultiLine)
         {
-            pEdit->SetMultiLine(TRUE);
-            pEdit->SetAutoReturn(TRUE);
+            pEdit->SetMultiLine(true);
+            pEdit->SetAutoReturn(true);
         }
         else
         {
@@ -1218,7 +1218,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue)
         }
 
         int nMaxLen = pField->GetMaxLen();
-        FX_BOOL bCharArray = (dwFieldFlags >> 24) & 1;
+        bool bCharArray = (dwFieldFlags >> 24) & 1;
         FX_FLOAT fFontSize = GetFontSize();
 
         if (nMaxLen > 0)
@@ -1241,7 +1241,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue)
         }
 
         if (IsFloatZero(fFontSize))
-            pEdit->SetAutoFontSize(TRUE);
+            pEdit->SetAutoFontSize(true);
         else
             pEdit->SetFontSize(fFontSize);
 
@@ -1276,11 +1276,11 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue)
             {
             case BBS_SOLID:
                 {
-                    CFX_ByteString sColor = CPWL_Utils::GetColorAppStream(GetBorderPWLColor(),FALSE);
+                    CFX_ByteString sColor = CPWL_Utils::GetColorAppStream(GetBorderPWLColor(),false);
                     if (sColor.GetLength() > 0)
                     {
                         sLines << "q\n" << GetBorderWidth() << " w\n"
-                            << CPWL_Utils::GetColorAppStream(GetBorderPWLColor(),FALSE) << " 2 J 0 j\n";
+                            << CPWL_Utils::GetColorAppStream(GetBorderPWLColor(),false) << " 2 J 0 j\n";
 
                         for (int32_t i=1;i<nMaxLen;i++)
                         {
@@ -1296,13 +1296,13 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue)
                 break;
             case BBS_DASH:
                 {
-                    CFX_ByteString sColor = CPWL_Utils::GetColorAppStream(GetBorderPWLColor(),FALSE);
+                    CFX_ByteString sColor = CPWL_Utils::GetColorAppStream(GetBorderPWLColor(),false);
                     if (sColor.GetLength() > 0)
                     {
                         CPWL_Dash dsBorder = CPWL_Dash(3, 3, 0);
 
                         sLines << "q\n" << GetBorderWidth() << " w\n"
-                            << CPWL_Utils::GetColorAppStream(GetBorderPWLColor(),FALSE)
+                            << CPWL_Utils::GetColorAppStream(GetBorderPWLColor(),false)
                             << "[" << dsBorder.nDash << " "
                             << dsBorder.nGap << "] "
                             << dsBorder.nPhase << " d\n";
@@ -1549,7 +1549,7 @@ void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType)
     }
 }
 
-FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type, PDFSDK_FieldAction& data, CPDFSDK_PageView* pPageView)
+bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type, PDFSDK_FieldAction& data, CPDFSDK_PageView* pPageView)
 {
     CPDF_Action action = GetAAction(type);
 
@@ -1567,7 +1567,7 @@ FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type, PDFSDK_FieldAc
         return pActionHandler->DoAction_Field(action, type, pDocument, GetFormField(), data);
     }
 
-    return FALSE;
+    return false;
 }
 
 CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT)
@@ -1624,37 +1624,37 @@ int32_t CPDFSDK_Widget::GetValueAge() const
 }
 
 
-FX_BOOL CPDFSDK_Widget::HitTest(FX_FLOAT pageX, FX_FLOAT pageY)
+bool CPDFSDK_Widget::HitTest(FX_FLOAT pageX, FX_FLOAT pageY)
 {
     CPDF_Annot* pAnnot = GetPDFAnnot();
     CFX_FloatRect annotRect;
     pAnnot->GetRect(annotRect);
     if(annotRect.Contains(pageX, pageY))
     {
-        if (!IsVisible()) return FALSE;
+        if (!IsVisible()) return false;
 
         int nFieldFlags = GetFieldFlags();
         if ((nFieldFlags & FIELDFLAG_READONLY) == FIELDFLAG_READONLY)
-            return FALSE;
+            return false;
 
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
 
 CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
     :m_pDocument(pDocument),
     m_pInterForm(NULL),
-    m_bCalculate(TRUE),
-    m_bBusy(FALSE)
+    m_bCalculate(true),
+    m_bBusy(false)
 {
     ASSERT(m_pDocument != NULL);
-    m_pInterForm = new CPDF_InterForm(m_pDocument->GetDocument(), FALSE);
+    m_pInterForm = new CPDF_InterForm(m_pDocument->GetDocument(), false);
     ASSERT(m_pInterForm != NULL);
     m_pInterForm->SetFormNotify(this);
 
     for(int i=0; i<6; i++)
-        m_bNeedHightlight[i] = FALSE;
+        m_bNeedHightlight[i] = false;
     m_iHighlightAlpha = 0;
 }
 
@@ -1665,12 +1665,12 @@ CPDFSDK_InterForm::~CPDFSDK_InterForm()
     m_Map.clear();
 }
 
-FX_BOOL CPDFSDK_InterForm::HighlightWidgets()
+bool CPDFSDK_InterForm::HighlightWidgets()
 {
-    return FALSE;
+    return false;
 }
 
-CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget, FX_BOOL bNext) const
+CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget, bool bNext) const
 {
     nonstd::unique_ptr<CBA_AnnotIterator> pIterator(
         new CBA_AnnotIterator(pWidget->GetPageView(), "Widget", ""));
@@ -1782,12 +1782,12 @@ void CPDFSDK_InterForm::RemoveMap(CPDF_FormControl* pControl)
     m_Map.erase(pControl);
 }
 
-void CPDFSDK_InterForm::EnableCalculate(FX_BOOL bEnabled)
+void CPDFSDK_InterForm::EnableCalculate(bool bEnabled)
 {
     m_bCalculate = bEnabled;
 }
 
-FX_BOOL CPDFSDK_InterForm::IsCalculateEnabled() const
+bool CPDFSDK_InterForm::IsCalculateEnabled() const
 {
     return m_bCalculate;
 }
@@ -1807,7 +1807,7 @@ CPDF_Stream* CPDFSDK_InterForm::LoadImageFromFile(const CFX_WideString& sFile)
         int nHeight = pBmp->GetHeight();
 
         CPDF_Image Image(pDocument);
-        Image.SetImage(pBmp, FALSE);
+        Image.SetImage(pBmp, false);
         CPDF_Stream* pImageStream = Image.GetStream();
         if (pImageStream)
         {
@@ -1867,7 +1867,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField)
 
     if (m_bBusy) return;
 
-    m_bBusy = TRUE;
+    m_bBusy = true;
 
     if (IsCalculateEnabled())
     {
@@ -1899,11 +1899,11 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField)
 
                                 CFX_WideString sOldValue = pField->GetValue();
                                 CFX_WideString sValue = sOldValue;
-                                FX_BOOL bRC = TRUE;
+                                bool bRC = true;
                                 pContext->OnField_Calculate(pFormField, pField, sValue, bRC);
 
                                 CFX_WideString sInfo;
-                                FX_BOOL bRet = pContext->RunScript(csJS, sInfo);
+                                bool bRet = pContext->RunScript(csJS, sInfo);
                                 pRuntime->ReleaseContext(pContext);
 
                                 if (bRet)
@@ -1911,7 +1911,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField)
                                     if (bRC)
                                     {
                                         if (sValue.Compare(sOldValue) != 0)
-                                            pField->SetValue(sValue, TRUE);
+                                            pField->SetValue(sValue, true);
                                     }
                                 }
                             }
@@ -1924,10 +1924,10 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField)
 
     }
 
-    m_bBusy = FALSE;
+    m_bBusy = false;
 }
 
-CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormated)
+CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField, bool& bFormated)
 {
     ASSERT(m_pDocument != NULL);
     ASSERT(pFormField != NULL);
@@ -1937,7 +1937,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField, FX_BOOL& 
     ASSERT(pEnv);
     if(!pEnv->IsJSInitiated())
     {
-        bFormated = FALSE;
+        bFormated = false;
         return sValue;
     }
 
@@ -1956,7 +1956,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField, FX_BOOL& 
         }
     }
 
-    bFormated = FALSE;
+    bFormated = false;
 
     CPDF_AAction aAction = pFormField->GetAdditionalAction();
     if (aAction != NULL && aAction.ActionExist(CPDF_AAction::Format))
@@ -1972,16 +1972,16 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField, FX_BOOL& 
                 IFXJS_Context* pContext = pRuntime->NewContext();
                 ASSERT(pContext != NULL);
 
-                pContext->OnField_Format(pFormField, Value, TRUE);
+                pContext->OnField_Format(pFormField, Value, true);
 
                 CFX_WideString sInfo;
-                FX_BOOL bRet = pContext->RunScript(script, sInfo);
+                bool bRet = pContext->RunScript(script, sInfo);
                 pRuntime->ReleaseContext(pContext);
 
                 if (bRet)
                 {
                     sValue = Value;
-                    bFormated = TRUE;
+                    bFormated = true;
                 }
             }
         }
@@ -1990,7 +1990,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField, FX_BOOL& 
     return sValue;
 }
 
-void CPDFSDK_InterForm::ResetFieldAppearance(CPDF_FormField* pFormField, const FX_WCHAR* sValue, FX_BOOL bValueChanged)
+void CPDFSDK_InterForm::ResetFieldAppearance(CPDF_FormField* pFormField, const FX_WCHAR* sValue, bool bValueChanged)
 {
     ASSERT(pFormField != NULL);
 
@@ -2020,7 +2020,7 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField)
             CFFL_IFormFiller* pIFormFiller = pEnv->GetIFormFiller();
 
             CPDF_Page * pPage = pWidget->GetPDFPage();
-            CPDFSDK_PageView * pPageView = m_pDocument->GetPageView(pPage,FALSE);
+            CPDFSDK_PageView * pPageView = m_pDocument->GetPageView(pPage,false);
 
             FX_RECT rcBBox = pIFormFiller->GetViewBBox(pPageView, pWidget);
 
@@ -2029,7 +2029,7 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField)
     }
 }
 
-void CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField, CFX_WideString& csValue, FX_BOOL& bRC)
+void CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField, CFX_WideString& csValue, bool& bRC)
 {
     ASSERT(pFormField != NULL);
 
@@ -2058,7 +2058,7 @@ void CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField, CFX_WideSt
     }
 }
 
-void CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField, CFX_WideString& csValue, FX_BOOL& bRC)
+void CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField, CFX_WideString& csValue, bool& bRC)
 {
     ASSERT(pFormField != NULL);
 
@@ -2089,7 +2089,7 @@ void CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField, CFX_WideString& c
 
 /* ----------------------------- action ----------------------------- */
 
-FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action)
+bool CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action)
 {
     ASSERT(action);
 
@@ -2100,9 +2100,9 @@ FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action)
     CFX_PtrArray fields;
     GetFieldFromObjects(fieldObjects, fields);
 
-    FX_BOOL bHide = action.GetHideStatus();
+    bool bHide = action.GetHideStatus();
 
-    FX_BOOL bChanged = FALSE;
+    bool bChanged = false;
 
     for (int i=0, sz=fields.GetSize(); i<sz; i++)
     {
@@ -2137,7 +2137,7 @@ FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action)
 
                 pPageView->UpdateView(pWidget);
 
-                bChanged = TRUE;
+                bChanged = true;
             }
         }
     }
@@ -2145,12 +2145,12 @@ FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action)
     return bChanged;
 }
 
-FX_BOOL CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action)
+bool CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action)
 {
     ASSERT(m_pInterForm != NULL);
     CFX_WideString sDestination = action.GetFilePath();
     if (sDestination.IsEmpty())
-        return FALSE;
+        return false;
 
     CPDF_Dictionary* pActionDict = action.GetDict();
     if (pActionDict->KeyExist("Fields"))
@@ -2164,21 +2164,21 @@ FX_BOOL CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action)
         GetFieldFromObjects(fieldObjects, fields);
         if (fields.GetSize() != 0)
         {
-            FX_BOOL bIncludeOrExclude = !(dwFlags & 0x01);
+            bool bIncludeOrExclude = !(dwFlags & 0x01);
             if (m_pInterForm->CheckRequiredFields(&fields, bIncludeOrExclude))
-                return FALSE;
+                return false;
 
-            return SubmitFields(sDestination, fields, bIncludeOrExclude, FALSE);
+            return SubmitFields(sDestination, fields, bIncludeOrExclude, false);
         }
     }
     if (m_pInterForm->CheckRequiredFields())
-        return FALSE;
+        return false;
 
-    return SubmitForm(sDestination, FALSE);
+    return SubmitForm(sDestination, false);
 }
 
-FX_BOOL CPDFSDK_InterForm::SubmitFields(const CFX_WideString& csDestination, const CFX_PtrArray& fields,
-                                    FX_BOOL bIncludeOrExclude, FX_BOOL bUrlEncoded)
+bool CPDFSDK_InterForm::SubmitFields(const CFX_WideString& csDestination, const CFX_PtrArray& fields,
+                                    bool bIncludeOrExclude, bool bUrlEncoded)
 {
     CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
     ASSERT(pEnv != NULL);
@@ -2192,12 +2192,12 @@ FX_BOOL CPDFSDK_InterForm::SubmitFields(const CFX_WideString& csDestination, con
     if (bUrlEncoded)
     {
         if(!FDFToURLEncodedData(pBuffer, nBufSize))
-            return FALSE;
+            return false;
     }
 
     pEnv->JS_docSubmitForm(pBuffer, nBufSize, csDestination.c_str());
 
-    return TRUE;
+    return true;
 }
 
 void CPDFSDK_InterForm::DoFDFBuffer(CFX_ByteString sBuffer)
@@ -2236,22 +2236,22 @@ void CPDFSDK_InterForm::DoFDFBuffer(CFX_ByteString sBuffer)
     sBuffer.ReleaseBuffer();
 }
 
-FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(CFX_WideString csFDFFile, CFX_WideString csTxtFile)
+bool CPDFSDK_InterForm::FDFToURLEncodedData(CFX_WideString csFDFFile, CFX_WideString csTxtFile)
 {
-    return TRUE;
+    return true;
 }
 
-FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufSize)
+bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufSize)
 {
     CFDF_Document* pFDF = CFDF_Document::ParseMemory(pBuf, nBufSize);
     if (pFDF)
     {
         CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDict("FDF");
-        if (pMainDict == NULL) return FALSE;
+        if (pMainDict == NULL) return false;
 
         // Get fields
         CPDF_Array* pFields = pMainDict->GetArray("Fields");
-        if (pFields == NULL) return FALSE;
+        if (pFields == NULL) return false;
 
         CFX_ByteTextBuf fdfEncodedData;
 
@@ -2279,17 +2279,17 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufS
         pBuf = FX_Alloc(uint8_t, nBufSize);
         FXSYS_memcpy(pBuf, fdfEncodedData.GetBuffer(), nBufSize);
     }
-    return TRUE;
+    return true;
 }
 
-FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(const CFX_PtrArray& fields,FX_BOOL bIncludeOrExclude, CFX_ByteTextBuf& textBuf)
+bool CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(const CFX_PtrArray& fields,bool bIncludeOrExclude, CFX_ByteTextBuf& textBuf)
 {
     ASSERT(m_pDocument != NULL);
     ASSERT(m_pInterForm != NULL);
 
     CFDF_Document* pFDF = m_pInterForm->ExportToFDF(m_pDocument->GetPath(),(CFX_PtrArray&)fields, bIncludeOrExclude);
-    if (!pFDF) return FALSE;
-    FX_BOOL bRet = pFDF->WriteBuf(textBuf); // = FALSE;//
+    if (!pFDF) return false;
+    bool bRet = pFDF->WriteBuf(textBuf); // = false;//
     delete pFDF;
 
     return bRet;
@@ -2301,24 +2301,24 @@ CFX_WideString CPDFSDK_InterForm::GetTemporaryFileName(const CFX_WideString& sFi
     return L"";
 }
 
-FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination, FX_BOOL bUrlEncoded)
+bool CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination, bool bUrlEncoded)
 {
-    if (sDestination.IsEmpty()) return FALSE;
+    if (sDestination.IsEmpty()) return false;
 
     CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
     ASSERT(pEnv != NULL);
 
-    if(NULL == m_pDocument) return FALSE;
+    if(NULL == m_pDocument) return false;
     CFX_WideString wsPDFFilePath = m_pDocument->GetPath();
 
-    if(NULL == m_pInterForm) return FALSE;
+    if(NULL == m_pInterForm) return false;
     CFDF_Document* pFDFDoc = m_pInterForm->ExportToFDF(wsPDFFilePath);
-    if (NULL == pFDFDoc) return FALSE;
+    if (NULL == pFDFDoc) return false;
 
     CFX_ByteTextBuf FdfBuffer;
-    FX_BOOL bRet = pFDFDoc->WriteBuf(FdfBuffer);
+    bool bRet = pFDFDoc->WriteBuf(FdfBuffer);
     delete pFDFDoc;
-    if (!bRet) return FALSE;
+    if (!bRet) return false;
 
     uint8_t* pBuffer = FdfBuffer.GetBuffer();
     FX_STRSIZE nBufSize = FdfBuffer.GetLength();
@@ -2326,7 +2326,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination, FX_BOO
     if (bUrlEncoded)
     {
         if(!FDFToURLEncodedData(pBuffer, nBufSize))
-            return FALSE;
+            return false;
     }
 
     pEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination.c_str());
@@ -2337,26 +2337,26 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination, FX_BOO
         pBuffer = NULL;
     }
 
-    return TRUE;
+    return true;
 }
 
-FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf)
+bool CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf)
 {
 
     ASSERT(m_pInterForm != NULL);
     ASSERT(m_pDocument != NULL);
 
     CFDF_Document* pFDF = m_pInterForm->ExportToFDF(m_pDocument->GetPath());
-    if (!pFDF) return FALSE;
+    if (!pFDF) return false;
 
-    FX_BOOL bRet = pFDF->WriteBuf(textBuf);
+    bool bRet = pFDF->WriteBuf(textBuf);
     delete pFDF;
 
     return bRet;
 }
 
 
-FX_BOOL CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action)
+bool CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action)
 {
     ASSERT(action);
 
@@ -2370,15 +2370,15 @@ FX_BOOL CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action)
         af.GetAllFields(fieldObjects);
         CFX_PtrArray fields;
         GetFieldFromObjects(fieldObjects, fields);
-        return m_pInterForm->ResetForm(fields, !(dwFlags & 0x01), TRUE);
+        return m_pInterForm->ResetForm(fields, !(dwFlags & 0x01), true);
     }
 
-    return m_pInterForm->ResetForm(TRUE);
+    return m_pInterForm->ResetForm(true);
 }
 
-FX_BOOL CPDFSDK_InterForm::DoAction_ImportData(const CPDF_Action& action)
+bool CPDFSDK_InterForm::DoAction_ImportData(const CPDF_Action& action)
 {
-    return FALSE;
+    return false;
 }
 
 void CPDFSDK_InterForm::GetFieldFromObjects(const CFX_PtrArray& objects, CFX_PtrArray& fields)
@@ -2415,7 +2415,7 @@ int CPDFSDK_InterForm::BeforeValueChange(const CPDF_FormField* pField, CFX_WideS
     int nType = pFormField->GetFieldType();
     if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD)
     {
-        FX_BOOL bRC = TRUE;
+        bool bRC = true;
         OnKeyStrokeCommit(pFormField, csValue, bRC);
         if (bRC)
         {
@@ -2434,12 +2434,12 @@ int CPDFSDK_InterForm::AfterValueChange(const CPDF_FormField* pField)
     if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD)
     {
         OnCalculate(pFormField);
-        FX_BOOL bFormated = FALSE;
+        bool bFormated = false;
         CFX_WideString sValue = OnFormat(pFormField, bFormated);
         if (bFormated)
-            ResetFieldAppearance(pFormField, sValue.c_str(), TRUE);
+            ResetFieldAppearance(pFormField, sValue.c_str(), true);
         else
-            ResetFieldAppearance(pFormField, NULL, TRUE);
+            ResetFieldAppearance(pFormField, NULL, true);
         UpdateField(pFormField);
     }
     return 0;
@@ -2451,7 +2451,7 @@ int CPDFSDK_InterForm::BeforeSelectionChange(const CPDF_FormField* pField, CFX_W
     if (pFormField->GetFieldType() != FIELDTYPE_LISTBOX)
         return 0;
 
-    FX_BOOL bRC = TRUE;
+    bool bRC = true;
     OnKeyStrokeCommit(pFormField, csValue, bRC);
     if (!bRC)
         return -1;
@@ -2469,7 +2469,7 @@ int CPDFSDK_InterForm::AfterSelectionChange(const CPDF_FormField* pField)
     if (pFormField->GetFieldType() == FIELDTYPE_LISTBOX)
     {
         OnCalculate(pFormField);
-        ResetFieldAppearance(pFormField, NULL, TRUE);
+        ResetFieldAppearance(pFormField, NULL, true);
         UpdateField(pFormField);
     }
     return 0;
@@ -2509,16 +2509,16 @@ int CPDFSDK_InterForm::AfterFormImportData(const CPDF_InterForm* pForm)
     return 0;
 }
 
-FX_BOOL CPDFSDK_InterForm::IsNeedHighLight(int nFieldType)
+bool CPDFSDK_InterForm::IsNeedHighLight(int nFieldType)
 {
     if(nFieldType <1 || nFieldType > 6)
-        return FALSE;
+        return false;
     return m_bNeedHightlight[nFieldType-1];
 }
 
 void CPDFSDK_InterForm::RemoveAllHighLight()
 {
-    memset((void*)m_bNeedHightlight, 0, 6*sizeof(FX_BOOL));
+    memset((void*)m_bNeedHightlight, 0, 6*sizeof(bool));
 }
 void   CPDFSDK_InterForm::SetHighlightColor(FX_COLORREF clr, int nFieldType)
 {
@@ -2530,14 +2530,14 @@ void   CPDFSDK_InterForm::SetHighlightColor(FX_COLORREF clr, int nFieldType)
             for(int i=0; i<6; i++)
             {
                 m_aHighlightColor[i] = clr;
-                m_bNeedHightlight[i] = TRUE;
+                m_bNeedHightlight[i] = true;
             }
             break;
         }
     default:
         {
             m_aHighlightColor[nFieldType-1] = clr;
-            m_bNeedHightlight[nFieldType-1] = TRUE;
+            m_bNeedHightlight[nFieldType-1] = true;
             break;
         }
     }
@@ -2783,7 +2783,7 @@ void CBA_AnnotIterator::GenerateResults()
 
             if (sa.GetSize() > 0)
             {
-                sa.Sort(CBA_AnnotIterator::CompareByTop, FALSE);
+                sa.Sort(CBA_AnnotIterator::CompareByTop, false);
             }
 
             while (sa.GetSize() > 0)

@@ -110,7 +110,7 @@ void CFX_ClipRgn::IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask)
         m_Mask = new_mask;
         return;
     }
-    ASSERT(FALSE);
+    ASSERT(false);
 }
 CFX_PathData::CFX_PathData()
 {
@@ -257,8 +257,8 @@ static void _UpdateLineJoinPoints(CFX_FloatRect& rect, FX_FLOAT start_x, FX_FLOA
                                   FX_FLOAT half_width, FX_FLOAT miter_limit)
 {
     FX_FLOAT start_k = 0, start_c = 0, end_k = 0, end_c = 0, start_len = 0, start_dc = 0, end_len = 0, end_dc = 0;
-    FX_BOOL bStartVert = FXSYS_fabs(start_x - middle_x) < 1.0f / 20;
-    FX_BOOL bEndVert = FXSYS_fabs(middle_x - end_x) < 1.0f / 20;
+    bool bStartVert = FXSYS_fabs(start_x - middle_x) < 1.0f / 20;
+    bool bEndVert = FXSYS_fabs(middle_x - end_x) < 1.0f / 20;
     if (bStartVert && bEndVert) {
         int start_dir = middle_y > start_y ? 1 : -1;
         FX_FLOAT point_y = middle_y + half_width * start_dir;
@@ -342,12 +342,12 @@ CFX_FloatRect CFX_PathData::GetBoundingBox(FX_FLOAT line_width, FX_FLOAT miter_l
     int iPoint = 0;
     FX_FLOAT half_width = line_width;
     int iStartPoint, iEndPoint, iMiddlePoint;
-    FX_BOOL bJoin;
+    bool bJoin;
     while (iPoint < m_PointCount) {
         if (m_pPoints[iPoint].m_Flag == FXPT_MOVETO) {
             iStartPoint = iPoint + 1;
             iEndPoint = iPoint;
-            bJoin = FALSE;
+            bJoin = false;
         } else {
             if (m_pPoints[iPoint].m_Flag == FXPT_BEZIERTO) {
                 rect.UpdateRect(m_pPoints[iPoint].m_PointX, m_pPoints[iPoint].m_PointY);
@@ -357,12 +357,12 @@ CFX_FloatRect CFX_PathData::GetBoundingBox(FX_FLOAT line_width, FX_FLOAT miter_l
             if (iPoint == m_PointCount - 1 || m_pPoints[iPoint + 1].m_Flag == FXPT_MOVETO) {
                 iStartPoint = iPoint - 1;
                 iEndPoint = iPoint;
-                bJoin = FALSE;
+                bJoin = false;
             } else {
                 iStartPoint = iPoint - 1;
                 iMiddlePoint = iPoint;
                 iEndPoint = iPoint + 1;
-                bJoin = TRUE;
+                bJoin = true;
             }
         }
         FX_FLOAT start_x = m_pPoints[iStartPoint].m_PointX;
@@ -389,10 +389,10 @@ void CFX_PathData::Transform(const CFX_AffineMatrix* pMatrix)
         pMatrix->Transform(m_pPoints[i].m_PointX, m_pPoints[i].m_PointY);
     }
 }
-FX_BOOL CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath, CFX_AffineMatrix* pMatrix, FX_BOOL&bThin, FX_BOOL bAdjust) const
+bool CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath, CFX_AffineMatrix* pMatrix, bool&bThin, bool bAdjust) const
 {
     if (m_PointCount < 3) {
-        return FALSE;
+        return false;
     }
     if (m_PointCount == 3 && (m_pPoints[0].m_Flag & FXPT_TYPE) == FXPT_MOVETO &&
             (m_pPoints[1].m_Flag & FXPT_TYPE) == FXPT_LINETO && (m_pPoints[2].m_Flag & FXPT_TYPE) == FXPT_LINETO
@@ -422,19 +422,19 @@ FX_BOOL CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath, CFX_AffineMatrix* p
             NewPath.SetPoint(1, m_pPoints[1].m_PointX, m_pPoints[1].m_PointY, FXPT_LINETO);
         }
         if (m_pPoints[0].m_PointX != m_pPoints[1].m_PointX && m_pPoints[0].m_PointY != m_pPoints[1].m_PointY) {
-            bThin = TRUE;
+            bThin = true;
         }
-        return TRUE;
+        return true;
     }
     if (((m_PointCount > 3) && (m_PointCount % 2))) {
         int mid = m_PointCount / 2;
-        FX_BOOL bZeroArea = FALSE;
+        bool bZeroArea = false;
         CFX_PathData t_path;
         for (int i = 0; i < mid; i++) {
             if (!(m_pPoints[mid - i - 1].m_PointX == m_pPoints[mid + i + 1].m_PointX
                     && m_pPoints[mid - i - 1].m_PointY == m_pPoints[mid + i + 1].m_PointY &&
                     ((m_pPoints[mid - i - 1].m_Flag & FXPT_TYPE) != FXPT_BEZIERTO && (m_pPoints[mid + i + 1].m_Flag & FXPT_TYPE) != FXPT_BEZIERTO))) {
-                bZeroArea = TRUE;
+                bZeroArea = true;
                 break;
             }
             int new_count = t_path.GetPointCount();
@@ -444,8 +444,8 @@ FX_BOOL CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath, CFX_AffineMatrix* p
         }
         if (!bZeroArea) {
             NewPath.Append(&t_path, NULL);
-            bThin = TRUE;
-            return TRUE;
+            bThin = true;
+            return true;
         }
     }
     int stratPoint = 0;
@@ -488,7 +488,7 @@ FX_BOOL CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath, CFX_AffineMatrix* p
                     NewPath.AddPointCount(2);
                     NewPath.SetPoint(new_count, m_pPoints[i - 1].m_PointX, m_pPoints[i - 1].m_PointY, FXPT_MOVETO);
                     NewPath.SetPoint(new_count + 1, m_pPoints[i].m_PointX, m_pPoints[i].m_PointY, FXPT_LINETO);
-                    bThin = TRUE;
+                    bThin = true;
                 }
             }
         } else if (point_type == FXPT_BEZIERTO) {
@@ -497,42 +497,42 @@ FX_BOOL CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath, CFX_AffineMatrix* p
         }
     }
     if (m_PointCount > 3 && NewPath.GetPointCount()) {
-        bThin = TRUE;
+        bThin = true;
     }
     if (NewPath.GetPointCount() == 0) {
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL CFX_PathData::IsRect() const
+bool CFX_PathData::IsRect() const
 {
     if (m_PointCount != 5 && m_PointCount != 4) {
-        return FALSE;
+        return false;
     }
     if ((m_PointCount == 5 && (m_pPoints[0].m_PointX != m_pPoints[4].m_PointX ||
                                m_pPoints[0].m_PointY != m_pPoints[4].m_PointY)) ||
             (m_pPoints[0].m_PointX == m_pPoints[2].m_PointX && m_pPoints[0].m_PointY == m_pPoints[2].m_PointY) ||
             (m_pPoints[1].m_PointX == m_pPoints[3].m_PointX && m_pPoints[1].m_PointY == m_pPoints[3].m_PointY)) {
-        return FALSE;
+        return false;
     }
     if (m_pPoints[0].m_PointX != m_pPoints[3].m_PointX && m_pPoints[0].m_PointY != m_pPoints[3].m_PointY) {
-        return FALSE;
+        return false;
     }
     for (int i = 1; i < 4; i ++) {
         if ((m_pPoints[i].m_Flag & FXPT_TYPE) != FXPT_LINETO) {
-            return FALSE;
+            return false;
         }
         if (m_pPoints[i].m_PointX != m_pPoints[i - 1].m_PointX && m_pPoints[i].m_PointY != m_pPoints[i - 1].m_PointY) {
-            return FALSE;
+            return false;
         }
     }
     return m_PointCount == 5 || (m_pPoints[3].m_Flag & FXPT_CLOSEFIGURE);
 }
-FX_BOOL CFX_PathData::IsRect(const CFX_AffineMatrix* pMatrix, CFX_FloatRect* pRect) const
+bool CFX_PathData::IsRect(const CFX_AffineMatrix* pMatrix, CFX_FloatRect* pRect) const
 {
     if (pMatrix == NULL) {
         if (!IsRect()) {
-            return FALSE;
+            return false;
         }
         if (pRect) {
             pRect->left = m_pPoints[0].m_PointX;
@@ -541,27 +541,27 @@ FX_BOOL CFX_PathData::IsRect(const CFX_AffineMatrix* pMatrix, CFX_FloatRect* pRe
             pRect->top = m_pPoints[2].m_PointY;
             pRect->Normalize();
         }
-        return TRUE;
+        return true;
     }
     if (m_PointCount != 5 && m_PointCount != 4) {
-        return FALSE;
+        return false;
     }
     if ((m_PointCount == 5 && (m_pPoints[0].m_PointX != m_pPoints[4].m_PointX || m_pPoints[0].m_PointY != m_pPoints[4].m_PointY)) ||
             (m_pPoints[1].m_PointX == m_pPoints[3].m_PointX && m_pPoints[1].m_PointY == m_pPoints[3].m_PointY)) {
-        return FALSE;
+        return false;
     }
     if (m_PointCount == 4 && m_pPoints[0].m_PointX != m_pPoints[3].m_PointX && m_pPoints[0].m_PointY != m_pPoints[3].m_PointY) {
-        return FALSE;
+        return false;
     }
     FX_FLOAT x[5], y[5];
     for (int i = 0; i < m_PointCount; i ++) {
         pMatrix->Transform(m_pPoints[i].m_PointX, m_pPoints[i].m_PointY, x[i], y[i]);
         if (i) {
             if ((m_pPoints[i].m_Flag & FXPT_TYPE) != FXPT_LINETO) {
-                return FALSE;
+                return false;
             }
             if (x[i] != x[i - 1] && y[i] != y[i - 1]) {
-                return FALSE;
+                return false;
             }
         }
     }
@@ -572,7 +572,7 @@ FX_BOOL CFX_PathData::IsRect(const CFX_AffineMatrix* pMatrix, CFX_FloatRect* pRe
         pRect->top = y[2];
         pRect->Normalize();
     }
-    return TRUE;
+    return true;
 }
 void CFX_PathData::Copy(const CFX_PathData &src)
 {

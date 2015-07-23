@@ -19,10 +19,10 @@ struct js_global_data
 	{
 		nType = 0;
 		dData = 0;
-		bData = FALSE;
+		bData = false;
 		sData = "";
-		bPersistent = FALSE;
-		bDeleted = FALSE;
+		bPersistent = false;
+		bDeleted = false;
 	}
 
 	~js_global_data()
@@ -45,12 +45,12 @@ public:
 	virtual ~global_alternate();
 
 public:
-	FX_BOOL						setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	bool						setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 
 public:
-	FX_BOOL						QueryProperty(const FX_WCHAR* propname);
-	FX_BOOL						DoProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CJS_PropValue & vp, CFX_WideString & sError);
-	FX_BOOL						DelProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CFX_WideString & sError);
+	bool						QueryProperty(const FX_WCHAR* propname);
+	bool						DoProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CJS_PropValue & vp, CFX_WideString & sError);
+	bool						DelProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CFX_WideString & sError);
 
 	void						Initial(CPDFDoc_Environment* pApp);
 
@@ -58,7 +58,7 @@ private:
 	void						UpdateGlobalPersistentVariables();
 	void						CommitGlobalPersisitentVariables();
 	void						DestroyGlobalPersisitentVariables();
-	FX_BOOL						SetGlobalVariables(const FX_CHAR* propname, int nType,
+	bool						SetGlobalVariables(const FX_CHAR* propname, int nType,
 									double dData, bool bData, const CFX_ByteString& sData, JSObject pData, bool bDefaultPersistent);
 
 	void						ObjectToArray(v8::Local<v8::Object> pObj, CJS_GlobalVariableArray& array);
@@ -78,7 +78,7 @@ public:
 	CJS_Global(JSFXObject pObject) : CJS_Object(pObject) {};
 	virtual ~CJS_Global(void){};
 
-	virtual FX_BOOL	InitInstance(IFXJS_Context* cc);
+	virtual bool	InitInstance(IFXJS_Context* cc);
 
 	DECLARE_SPECIAL_JS_CLASS(CJS_Global);
 

@@ -16,28 +16,28 @@ public:
 	virtual ~CJS_PublicMethods(void){};
 
 public:
-	static FX_BOOL AFNumber_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFNumber_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFPercent_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFPercent_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFDate_FormatEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFDate_KeystrokeEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFDate_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFDate_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFTime_FormatEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError); //
-	static FX_BOOL AFTime_KeystrokeEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFTime_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFTime_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFSpecial_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFSpecial_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFSpecial_KeystrokeEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);//
-	static FX_BOOL AFSimple(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFMakeNumber(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFSimple_Calculate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFRange_Validate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFMergeChange(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFParseDateEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	static FX_BOOL AFExtractNums(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFNumber_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFNumber_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFPercent_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFPercent_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFDate_FormatEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFDate_KeystrokeEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFDate_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFDate_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFTime_FormatEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError); //
+	static bool AFTime_KeystrokeEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFTime_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFTime_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFSpecial_Format(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFSpecial_Keystroke(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFSpecial_KeystrokeEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);//
+	static bool AFSimple(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFMakeNumber(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFSimple_Calculate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFRange_Validate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFMergeChange(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFParseDateEx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	static bool AFExtractNums(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 
 public:
 	JS_STATIC_GLOBAL_FUN(AFNumber_Format);
@@ -68,13 +68,13 @@ public:
 public:
 	static int				ParseStringInteger(const CFX_WideString & string,int nStart,int & nSkip, int nMaxStep);
 	static CFX_WideString	ParseStringString(const CFX_WideString& string, int nStart, int& nSkip);
-	static double			MakeRegularDate(const CFX_WideString & value,const CFX_WideString & format, FX_BOOL& bWrongFormat);
+	static double			MakeRegularDate(const CFX_WideString & value,const CFX_WideString & format, bool& bWrongFormat);
 	static CFX_WideString	MakeFormatDate(double dDate,const CFX_WideString & format);
-	static FX_BOOL			ConvertStringToNumber(const FX_WCHAR* swSource, double & dRet, FX_BOOL & bDot);
+	static bool			ConvertStringToNumber(const FX_WCHAR* swSource, double & dRet, bool & bDot);
 	static double			ParseStringToNumber(const FX_WCHAR* swSource);
-	static double			ParseNormalDate(const CFX_WideString & value, FX_BOOL& bWrongFormat);
+	static double			ParseNormalDate(const CFX_WideString & value, bool& bWrongFormat);
 	static double           MakeInterDate(CFX_WideString strValue);
-	static double			ParseNumber(const FX_WCHAR* swSource, FX_BOOL& bAllDigits, FX_BOOL& bDot, FX_BOOL& bSign, FX_BOOL& bKXJS);
+	static double			ParseNumber(const FX_WCHAR* swSource, bool& bAllDigits, bool& bDot, bool& bSign, bool& bKXJS);
 
 public:
 	static CFX_WideString	StrLTrim(const FX_WCHAR* pStr);
@@ -85,16 +85,16 @@ public:
 	static CFX_ByteString	StrRTrim(const FX_CHAR* pStr);
 	static CFX_ByteString	StrTrim(const FX_CHAR* pStr);
 
-	static FX_BOOL			IsNumber(const FX_CHAR* string);
-	static FX_BOOL			IsNumber(const FX_WCHAR* string);
+	static bool			IsNumber(const FX_CHAR* string);
+	static bool			IsNumber(const FX_WCHAR* string);
 
-	static FX_BOOL			IsDigit(char ch);
-	static FX_BOOL			IsDigit(wchar_t ch);
-	static FX_BOOL			IsAlphabetic(wchar_t ch);
-	static FX_BOOL			IsAlphaNumeric(wchar_t ch);
+	static bool			IsDigit(char ch);
+	static bool			IsDigit(wchar_t ch);
+	static bool			IsAlphabetic(wchar_t ch);
+	static bool			IsAlphaNumeric(wchar_t ch);
 
-	static FX_BOOL			maskSatisfied(wchar_t c_Change,wchar_t c_Mask);
-	static FX_BOOL			isReservedMaskChar(wchar_t ch);
+	static bool			maskSatisfied(wchar_t c_Change,wchar_t c_Mask);
+	static bool			isReservedMaskChar(wchar_t ch);
 
 	static double			AF_Simple(const FX_WCHAR* sFuction, double dValue1, double dValue2);
 	static CJS_Array		AF_MakeArrayFromList(v8::Isolate* isolate, CJS_Value val);

@@ -42,7 +42,7 @@ class CJS_ObjDefintion
 {
 public:
 	CJS_ObjDefintion(v8::Isolate* isolate, const wchar_t* sObjName, FXJSOBJTYPE eObjType, LP_CONSTRUCTOR pConstructor, LP_DESTRUCTOR pDestructor):
-	  objName(sObjName), objType(eObjType), m_pConstructor(pConstructor), m_pDestructor(pDestructor),m_bSetAsGlobalObject(FALSE)
+	  objName(sObjName), objType(eObjType), m_pConstructor(pConstructor), m_pDestructor(pDestructor),m_bSetAsGlobalObject(false)
 	  {
 		  v8::Isolate::Scope isolate_scope(isolate);
 		  v8::HandleScope handle_scope(isolate);
@@ -54,7 +54,7 @@ public:
 		 //Document as the global object.
 		  if(FXSYS_wcscmp(sObjName, L"Document") == 0)
 		  {
-			 m_bSetAsGlobalObject = TRUE;
+			 m_bSetAsGlobalObject = true;
 		  }
 
 	  }
@@ -68,7 +68,7 @@ public:
 	FXJSOBJTYPE objType;
 	LP_CONSTRUCTOR m_pConstructor;
 	LP_DESTRUCTOR m_pDestructor;
-	FX_BOOL	m_bSetAsGlobalObject;
+	bool	m_bSetAsGlobalObject;
 
 	v8::Global<v8::ObjectTemplate> m_objTemplate;
 	v8::Global<v8::Object> m_StaticObj;

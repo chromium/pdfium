@@ -11,21 +11,21 @@ CPDF_ViewerPreferences::CPDF_ViewerPreferences(CPDF_Document *pDoc): m_pDoc(pDoc
 CPDF_ViewerPreferences::~CPDF_ViewerPreferences()
 {
 }
-FX_BOOL CPDF_ViewerPreferences::IsDirectionR2L() const
+bool CPDF_ViewerPreferences::IsDirectionR2L() const
 {
     CPDF_Dictionary *pDict = m_pDoc->GetRoot();
     pDict = pDict->GetDict(FX_BSTRC("ViewerPreferences"));
     if (!pDict)	{
-        return FALSE;
+        return false;
     }
     return FX_BSTRC("R2L") == pDict->GetString(FX_BSTRC("Direction"));
 }
-FX_BOOL CPDF_ViewerPreferences::PrintScaling() const
+bool CPDF_ViewerPreferences::PrintScaling() const
 {
     CPDF_Dictionary *pDict = m_pDoc->GetRoot();
     pDict = pDict->GetDict(FX_BSTRC("ViewerPreferences"));
     if (!pDict)	{
-        return TRUE;
+        return true;
     }
     return FX_BSTRC("None") != pDict->GetString(FX_BSTRC("PrintScaling"));
 }

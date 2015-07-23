@@ -31,18 +31,18 @@ CPWL_Wnd* CFFL_CheckBox::NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageVie
 	return pWnd;
 }
 
-FX_BOOL	CFFL_CheckBox::OnKeyDown(CPDFSDK_Annot* pAnnot, FX_UINT nKeyCode, FX_UINT nFlags)
+bool	CFFL_CheckBox::OnKeyDown(CPDFSDK_Annot* pAnnot, FX_UINT nKeyCode, FX_UINT nFlags)
 {
 	switch (nKeyCode)
 	{
 	case FWL_VKEY_Return:
 	case FWL_VKEY_Space:
-		return TRUE;
+		return true;
 	default:
 		return CFFL_FormFiller::OnKeyDown(pAnnot, nKeyCode, nFlags);
 	}
 }
-FX_BOOL	CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags)
+bool	CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags)
 {
 	switch (nChar)
 	{
@@ -55,57 +55,57 @@ FX_BOOL	CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFla
 			CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
 			ASSERT(pPageView != NULL);
 
-			FX_BOOL bReset = FALSE;
-			FX_BOOL bExit = FALSE;
+			bool bReset = false;
+			bool bExit = false;
 
 			pIFormFiller->OnButtonUp(m_pWidget, pPageView, bReset, bExit,nFlags);
 
-			if (bReset) return TRUE;
-			if (bExit) return TRUE;
+			if (bReset) return true;
+			if (bExit) return true;
 
 			CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
 
-			if (CPWL_CheckBox * pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, TRUE))
+			if (CPWL_CheckBox * pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, true))
 				pWnd->SetCheck(!pWnd->IsChecked());
 
 			CommitData(pPageView,nFlags);
-			return TRUE;
+			return true;
 		}
 	default:
 		return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
 	}
 }
 
-FX_BOOL CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point)
+bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView *pPageView, CPDFSDK_Annot* pAnnot, FX_UINT nFlags, const CPDF_Point& point)
 {
 	CFFL_Button::OnLButtonUp(pPageView, pAnnot, nFlags, point);
 
 	if (IsValid())
 	{
-		if (CPWL_CheckBox * pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, TRUE))
+		if (CPWL_CheckBox * pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, true))
 		{
 			CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
 			pWnd->SetCheck(!pWidget->IsChecked());
 		//	pWnd->SetCheck(!pWnd->IsChecked());
 		}
 
-		if (!CommitData(pPageView, nFlags)) return FALSE;
+		if (!CommitData(pPageView, nFlags)) return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
-FX_BOOL	CFFL_CheckBox::IsDataChanged(CPDFSDK_PageView* pPageView)
+bool	CFFL_CheckBox::IsDataChanged(CPDFSDK_PageView* pPageView)
 {
 
 	ASSERT(m_pWidget != NULL);
 
-	if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, FALSE))
+	if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, false))
 	{
 		return pWnd->IsChecked() != m_pWidget->IsChecked();
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CFFL_CheckBox::SaveData(CPDFSDK_PageView* pPageView)
@@ -113,10 +113,10 @@ void CFFL_CheckBox::SaveData(CPDFSDK_PageView* pPageView)
 
 	ASSERT(m_pWidget != NULL);
 
-	if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, FALSE))
+	if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, false))
 	{
 
-		FX_BOOL bNewChecked = pWnd->IsChecked();
+		bool bNewChecked = pWnd->IsChecked();
 
 
 		if (bNewChecked)
@@ -136,7 +136,7 @@ void CFFL_CheckBox::SaveData(CPDFSDK_PageView* pPageView)
 			}
 		}
 
-		m_pWidget->SetCheck(bNewChecked, FALSE);
+		m_pWidget->SetCheck(bNewChecked, false);
 		m_pWidget->UpdateField();
 		SetChangeMark();
 	}

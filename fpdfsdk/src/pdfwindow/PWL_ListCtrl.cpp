@@ -52,7 +52,7 @@ CPDF_Rect CPWL_ListCtrl::GetScrollArea() const
 
 void CPWL_ListCtrl::ResetFace()
 {
-	ResetAll(FALSE, 0);
+	ResetAll(false, 0);
 }
 
 void CPWL_ListCtrl::ResetContent(int32_t nStart)
@@ -60,7 +60,7 @@ void CPWL_ListCtrl::ResetContent(int32_t nStart)
 	if (nStart < 0)
 		nStart = 0;
 	if (nStart >= 0 && nStart < m_aChildren.GetSize())
-		ResetAll(TRUE, nStart);
+		ResetAll(true, nStart);
 }
 
 FX_FLOAT CPWL_ListCtrl::GetContentsHeight(FX_FLOAT fLimitWidth)
@@ -91,7 +91,7 @@ FX_FLOAT CPWL_ListCtrl::GetContentsHeight(FX_FLOAT fLimitWidth)
 	return fRet;
 }
 
-void CPWL_ListCtrl::ResetAll(FX_BOOL bMove, int32_t nStart)
+void CPWL_ListCtrl::ResetAll(bool bMove, int32_t nStart)
 {
 	CPDF_Rect rcClient = GetClientRect();
 
@@ -119,7 +119,7 @@ void CPWL_ListCtrl::ResetAll(FX_BOOL bMove, int32_t nStart)
 			if (bMove)
 			{
 				FX_FLOAT fItemHeight = pChild->GetItemHeight(fWidth - fLeft - fRight);
-				pChild->Move(CPDF_Rect(fLeft, fy-fItemHeight, fWidth - fRight, fy), TRUE, FALSE);
+				pChild->Move(CPDF_Rect(fLeft, fy-fItemHeight, fWidth - fRight, fy), true, false);
 				fy -= fItemHeight;
 				fy -= m_fItemSpace;
 			}

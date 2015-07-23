@@ -8,19 +8,19 @@
 #include "fxcrt_windows.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-FX_BOOL FX_File_Exist(const CFX_ByteStringC& fileName)
+bool FX_File_Exist(const CFX_ByteStringC& fileName)
 {
     FX_DWORD dwAttri = ::GetFileAttributesA(fileName.GetCStr());
     if (dwAttri == -1) {
-        return FALSE;
+        return false;
     }
     return (dwAttri & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
-FX_BOOL FX_File_Exist(const CFX_WideStringC& fileName)
+bool FX_File_Exist(const CFX_WideStringC& fileName)
 {
     FX_DWORD dwAttri = ::GetFileAttributesW((LPCWSTR)fileName.GetPtr());
     if (dwAttri == -1) {
-        return FALSE;
+        return false;
     }
     return (dwAttri & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
@@ -55,10 +55,10 @@ CFXCRT_FileAccess_Win64::~CFXCRT_FileAccess_Win64()
 {
     Close();
 }
-FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode)
+bool CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode)
 {
     if (m_hFile) {
-        return FALSE;
+        return false;
     }
     FX_DWORD dwAccess, dwShare, dwCreation;
     FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
@@ -68,10 +68,10 @@ FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName, FX_DWORD 
     }
     return m_hFile != NULL;
 }
-FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName, FX_DWORD dwMode)
+bool CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName, FX_DWORD dwMode)
 {
     if (m_hFile) {
-        return FALSE;
+        return false;
     }
     FX_DWORD dwAccess, dwShare, dwCreation;
     FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
@@ -174,41 +174,41 @@ size_t CFXCRT_FileAccess_Win64::WritePos(const void* pBuffer, size_t szBuffer, F
     }
     return Write(pBuffer, szBuffer);
 }
-FX_BOOL CFXCRT_FileAccess_Win64::Flush()
+bool CFXCRT_FileAccess_Win64::Flush()
 {
     if (!m_hFile) {
-        return FALSE;
+        return false;
     }
     return ::FlushFileBuffers(m_hFile);
 }
-FX_BOOL CFXCRT_FileAccess_Win64::Truncate(FX_FILESIZE szFile)
+bool CFXCRT_FileAccess_Win64::Truncate(FX_FILESIZE szFile)
 {
     if (SetPosition(szFile) == (FX_FILESIZE) - 1) {
-        return FALSE;
+        return false;
     }
     return ::SetEndOfFile(m_hFile);
 }
-FX_BOOL FX_File_Delete(const CFX_ByteStringC& fileName)
+bool FX_File_Delete(const CFX_ByteStringC& fileName)
 {
     return ::DeleteFileA(fileName.GetCStr());
 }
-FX_BOOL FX_File_Delete(const CFX_WideStringC& fileName)
+bool FX_File_Delete(const CFX_WideStringC& fileName)
 {
     return ::DeleteFileW((LPCWSTR)fileName.GetPtr());
 }
-FX_BOOL FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
+bool FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
 {
-    return ::CopyFileA(fileNameSrc.GetCStr(), fileNameDst.GetCStr(), FALSE);
+    return ::CopyFileA(fileNameSrc.GetCStr(), fileNameDst.GetCStr(), false);
 }
-FX_BOOL FX_File_Copy(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
+bool FX_File_Copy(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
 {
-    return ::CopyFileW((LPCWSTR)fileNameSrc.GetPtr(), (LPCWSTR)fileNameDst.GetPtr(), FALSE);
+    return ::CopyFileW((LPCWSTR)fileNameSrc.GetPtr(), (LPCWSTR)fileNameDst.GetPtr(), false);
 }
-FX_BOOL FX_File_Move(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
+bool FX_File_Move(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
 {
     return ::MoveFileA(fileNameSrc.GetCStr(), fileNameDst.GetCStr());
 }
-FX_BOOL FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
+bool FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
 {
     return ::MoveFileW((LPCWSTR)fileNameSrc.GetPtr(), (LPCWSTR)fileNameDst.GetPtr());
 }

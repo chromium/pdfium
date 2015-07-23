@@ -670,7 +670,7 @@ public:
     void					Empty();
 
 
-    FX_BOOL					IsEmpty() const
+    bool					IsEmpty() const
     {
         return !GetLength();
     }
@@ -895,7 +895,7 @@ inline bool operator!= (const CFX_WideStringC& lhs, const CFX_WideString& rhs) {
     return rhs != lhs;
 }
 FX_FLOAT FX_atof(const CFX_ByteStringC& str);
-void FX_atonum(const CFX_ByteStringC& str, FX_BOOL& bInteger, void* pData);
+void FX_atonum(const CFX_ByteStringC& str, bool& bInteger, void* pData);
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
 CFX_ByteString	FX_UTF8Encode(const FX_WCHAR* pwsStr, FX_STRSIZE len);
 inline CFX_ByteString	FX_UTF8Encode(const CFX_WideStringC& wsStr)

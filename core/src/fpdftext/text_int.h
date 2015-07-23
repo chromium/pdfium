@@ -48,9 +48,9 @@ public:
     CPDF_TextPage(const CPDF_Page* pPage, int flags = 0);
     CPDF_TextPage(const CPDF_PageObjects* pPage, int flags = 0);
     CPDF_TextPage(const CPDF_Page* pPage, CPDFText_ParseOptions ParserOptions);
-    virtual FX_BOOL					ParseTextPage();
-    virtual void					NormalizeObjects(FX_BOOL bNormalize);
-    virtual	FX_BOOL					IsParsered() const
+    virtual bool					ParseTextPage();
+    virtual void					NormalizeObjects(bool bNormalize);
+    virtual	bool					IsParsered() const
     {
         return m_IsParsered;
     }
@@ -71,10 +71,10 @@ public:
     virtual int						CountRects(int start, int nCount);
     virtual	void					GetRect(int rectIndex, FX_FLOAT& left, FX_FLOAT& top
                                             , FX_FLOAT& right, FX_FLOAT &bottom) const;
-    virtual FX_BOOL					GetBaselineRotate(int rectIndex, int& Rotate);
-    virtual FX_BOOL					GetBaselineRotate(const CFX_FloatRect& rect, int& Rotate);
+    virtual bool					GetBaselineRotate(int rectIndex, int& Rotate);
+    virtual bool					GetBaselineRotate(const CFX_FloatRect& rect, int& Rotate);
     virtual	int						CountBoundedSegments(FX_FLOAT left, FX_FLOAT top,
-            FX_FLOAT right, FX_FLOAT bottom, FX_BOOL bContains = FALSE);
+            FX_FLOAT right, FX_FLOAT bottom, bool bContains = false);
     virtual	void					GetBoundedSegment(int index, int& start, int& count) const;
     virtual int						GetWordBreak(int index, int direction) const;
 public:
@@ -82,20 +82,20 @@ public:
     {
         return &m_charList;
     }
-    static	FX_BOOL					IsRectIntersect(const CFX_FloatRect& rect1, const CFX_FloatRect& rect2);
-    static	FX_BOOL					IsLetter(FX_WCHAR unicode);
+    static	bool					IsRectIntersect(const CFX_FloatRect& rect1, const CFX_FloatRect& rect2);
+    static	bool					IsLetter(FX_WCHAR unicode);
 private:
-    FX_BOOL							IsHyphen(FX_WCHAR curChar);
+    bool							IsHyphen(FX_WCHAR curChar);
     bool							IsControlChar(const PAGECHAR_INFO& charInfo);
-    FX_BOOL							GetBaselineRotate(int start, int end, int& Rotate);
+    bool							GetBaselineRotate(int start, int end, int& Rotate);
     void							ProcessObject();
     void							ProcessFormObject(CPDF_FormObject*	pFormObj, const CFX_AffineMatrix& formMatrix);
     void							ProcessTextObject(PDFTEXT_Obj pObj);
     void							ProcessTextObject(CPDF_TextObject*	pTextObj, const CFX_AffineMatrix& formMatrix, FX_POSITION ObjPos);
     int								ProcessInsertObject(const CPDF_TextObject* pObj, const CFX_AffineMatrix& formMatrix);
-    FX_BOOL							GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info);
-    FX_BOOL							IsSameAsPreTextObject(CPDF_TextObject* pTextObj, FX_POSITION ObjPos);
-    FX_BOOL							IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
+    bool							GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info);
+    bool							IsSameAsPreTextObject(CPDF_TextObject* pTextObj, FX_POSITION ObjPos);
+    bool							IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
     int								GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const;
     void							CloseTempLine();
     void							OnPiece(IFX_BidiChar* pBidi, CFX_WideString& str);
@@ -109,7 +109,7 @@ private:
     int32_t	FindTextlineFlowDirection();
     void SwapTempTextBuf(int32_t iCharListStartAppend,
                          int32_t iBufStartAppend);
-    FX_BOOL IsRightToLeft(const CPDF_TextObject* pTextObj,
+    bool IsRightToLeft(const CPDF_TextObject* pTextObj,
                           const CPDF_Font* pFont,
                           int nItems) const;
 protected:
@@ -123,13 +123,13 @@ protected:
     int								m_parserflag;
     CPDF_TextObject*				m_pPreTextObj;
     CFX_AffineMatrix				m_perMatrix;
-    FX_BOOL							m_IsParsered;
+    bool							m_IsParsered;
     CFX_AffineMatrix				m_DisplayMatrix;
 
     SEGMENT_Array					m_Segment;
     CFX_RectArray					m_SelRects;
     LINEOBJ							m_LineObj;
-    FX_BOOL							m_TextlineDir;
+    bool							m_TextlineDir;
     CFX_FloatRect					m_CurlineRect;
 };
 class CPDF_TextPageFind: public IPDF_TextPageFind
@@ -138,17 +138,17 @@ public:
     CPDF_TextPageFind(const IPDF_TextPage* pTextPage);
     virtual							~CPDF_TextPageFind() {};
 public:
-    virtual	FX_BOOL					FindFirst(const CFX_WideString& findwhat, int flags, int startPos = 0);
-    virtual	FX_BOOL					FindNext();
-    virtual	FX_BOOL					FindPrev();
+    virtual	bool					FindFirst(const CFX_WideString& findwhat, int flags, int startPos = 0);
+    virtual	bool					FindNext();
+    virtual	bool					FindPrev();
 
     virtual void					GetRectArray(CFX_RectArray& rects) const;
     virtual int						GetCurOrder() const;
     virtual int						GetMatchedCount()const;
 protected:
     void							ExtractFindWhat(const CFX_WideString& findwhat);
-    FX_BOOL							IsMatchWholeWord(const CFX_WideString& csPageText, int startPos, int endPos);
-    FX_BOOL							ExtractSubString(CFX_WideString& rString, const FX_WCHAR* lpszFullString,
+    bool							IsMatchWholeWord(const CFX_WideString& csPageText, int startPos, int endPos);
+    bool							ExtractSubString(CFX_WideString& rString, const FX_WCHAR* lpszFullString,
             int iSubString, FX_WCHAR chSep);
     CFX_WideString					MakeReverse(const CFX_WideString& str);
     int								ReverseFind(const CFX_WideString& csPageText, const CFX_WideString& csWord, int nStartPos, int& WordLength);
@@ -162,12 +162,12 @@ private:
     CFX_WideStringArray				m_csFindWhatArray;
     int								m_findNextStart;
     int								m_findPreStart;
-    FX_BOOL							m_bMatchCase;
-    FX_BOOL							m_bMatchWholeWord;
+    bool							m_bMatchCase;
+    bool							m_bMatchWholeWord;
     int								m_resStart;
     int								m_resEnd;
     CFX_RectArray					m_resArray;
-    FX_BOOL							m_IsFind;
+    bool							m_IsFind;
 };
 class CPDF_LinkExt
 {
@@ -184,8 +184,8 @@ class CPDF_LinkExtract: public IPDF_LinkExtract
 public:
     CPDF_LinkExtract();
     virtual							~CPDF_LinkExtract();
-    virtual FX_BOOL					ExtractLinks(const IPDF_TextPage* pTextPage);
-    virtual	FX_BOOL					IsExtract() const
+    virtual bool					ExtractLinks(const IPDF_TextPage* pTextPage);
+    virtual	bool					IsExtract() const
     {
         return m_IsParserd;
     }
@@ -197,14 +197,14 @@ public:
 protected:
     void							parserLink();
     void							DeleteLinkList();
-    FX_BOOL							CheckWebLink(CFX_WideString& strBeCheck);
-    FX_BOOL							CheckMailLink(CFX_WideString& str);
-    FX_BOOL							AppendToLinkList(int start, int count, const CFX_WideString& strUrl);
+    bool							CheckWebLink(CFX_WideString& strBeCheck);
+    bool							CheckMailLink(CFX_WideString& str);
+    bool							AppendToLinkList(int start, int count, const CFX_WideString& strUrl);
 private:
     LINK_InfoArray					m_LinkList;
     const CPDF_TextPage*			m_pTextPage;
     CFX_WideString					m_strPageText;
-    FX_BOOL							m_IsParserd;
+    bool							m_IsParserd;
 };
 FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst);
 void NormalizeString(CFX_WideString& str);

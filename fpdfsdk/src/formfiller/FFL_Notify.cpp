@@ -15,7 +15,7 @@
 //#pragma warning(disable: 4800)
 
 CFFL_Notify::CFFL_Notify(CFFL_FormFiller * pFormFiller) :
-	m_bDoActioning(FALSE),
+	m_bDoActioning(false),
 	m_nNotifyFlag(0)
 {
 	ASSERT(pFormFiller != NULL);
@@ -36,116 +36,116 @@ void CFFL_Notify::AfterNotify()
 	m_nNotifyFlag --;
 }
 
-FX_BOOL CFFL_Notify::OnMouseUp(FX_BOOL & bExit)
+bool CFFL_Notify::OnMouseUp(bool & bExit)
 {
 	BeforeNotify();
-	FX_BOOL bRet = FALSE;//DoAAction(CPDF_AAction::AActionType::ButtonUp, bExit);
+	bool bRet = false;//DoAAction(CPDF_AAction::AActionType::ButtonUp, bExit);
 	AfterNotify();
 	return bRet;
 }
 
-FX_BOOL CFFL_Notify::OnMouseDown(FX_BOOL & bExit)
+bool CFFL_Notify::OnMouseDown(bool & bExit)
 {
 	BeforeNotify();
-	FX_BOOL bRet = FALSE;//DoAAction(CPDF_AAction::AActionType::ButtonDown, bExit);
+	bool bRet = false;//DoAAction(CPDF_AAction::AActionType::ButtonDown, bExit);
 	AfterNotify();
 	return bRet;
 }
 
-FX_BOOL CFFL_Notify::OnMouseEnter(FX_BOOL & bExit)
+bool CFFL_Notify::OnMouseEnter(bool & bExit)
 {
 	BeforeNotify();
-	FX_BOOL bRet = FALSE;//DoAAction(CPDF_AAction::AActionType::CursorEnter, bExit);
+	bool bRet = false;//DoAAction(CPDF_AAction::AActionType::CursorEnter, bExit);
 	AfterNotify();
 	return bRet;
 }
 
-FX_BOOL CFFL_Notify::OnMouseExit(FX_BOOL & bExit)
+bool CFFL_Notify::OnMouseExit(bool & bExit)
 {
 	BeforeNotify();
-	FX_BOOL bRet = FALSE;//DoAAction(CPDF_AAction::AActionType::CursorExit, bExit);
+	bool bRet = false;//DoAAction(CPDF_AAction::AActionType::CursorExit, bExit);
 	AfterNotify();
 	return bRet;
 }
 
-FX_BOOL CFFL_Notify::OnSetFocus(FX_BOOL & bExit)
+bool CFFL_Notify::OnSetFocus(bool & bExit)
 {
 	BeforeNotify();
-	FX_BOOL bRet = FALSE;//DoAAction(CPDF_AAction::AActionType::GetFocus, bExit);
+	bool bRet = false;//DoAAction(CPDF_AAction::AActionType::GetFocus, bExit);
 	AfterNotify();
 	return bRet;
 }
 
-FX_BOOL CFFL_Notify::OnKillFocus(FX_BOOL & bExit)
+bool CFFL_Notify::OnKillFocus(bool & bExit)
 {
 	BeforeNotify();
-	FX_BOOL bRet = FALSE;//DoAAction(CPDF_AAction::AActionType::LoseFocus, bExit);
+	bool bRet = false;//DoAAction(CPDF_AAction::AActionType::LoseFocus, bExit);
 	AfterNotify();
 	return bRet;
 }
 
-FX_BOOL CFFL_Notify::OnCalculate()
+bool CFFL_Notify::OnCalculate()
 {
-	return TRUE;
+	return true;
 }
 
-FX_BOOL CFFL_Notify::OnFormat(int iCommitKey)
+bool CFFL_Notify::OnFormat(int iCommitKey)
 {
-	return TRUE;
+	return true;
 }
 
-FX_BOOL CFFL_Notify::OnKeyStroke(CPDF_FormField* pFormField, int nCommitKey, CFX_WideString& strValue, CFX_WideString& strChange,
-							   const CFX_WideString& strChangeEx, FX_BOOL bKeyDown, FX_BOOL bModifier,
-							   FX_BOOL bShift, FX_BOOL bWillCommit, FX_BOOL bFieldFull,
-							   int& nSelStart, int& nSelEnd, FX_BOOL& bRC)
+bool CFFL_Notify::OnKeyStroke(CPDF_FormField* pFormField, int nCommitKey, CFX_WideString& strValue, CFX_WideString& strChange,
+							   const CFX_WideString& strChangeEx, bool bKeyDown, bool bModifier,
+							   bool bShift, bool bWillCommit, bool bFieldFull,
+							   int& nSelStart, int& nSelEnd, bool& bRC)
 {
-	return TRUE;
+	return true;
 }
 
-FX_BOOL CFFL_Notify::OnValidate(CPDF_FormField* pFormField, CFX_WideString& strValue, CFX_WideString & strChange,
-									   const CFX_WideString& strChangeEx, FX_BOOL bKeyDown, FX_BOOL bModifier,
-									   FX_BOOL bShift, FX_BOOL & bRC)
+bool CFFL_Notify::OnValidate(CPDF_FormField* pFormField, CFX_WideString& strValue, CFX_WideString & strChange,
+									   const CFX_WideString& strChangeEx, bool bKeyDown, bool bModifier,
+									   bool bShift, bool & bRC)
 {
-	return TRUE;
+	return true;
 }
 
-FX_BOOL	CFFL_Notify::DoAAction(CPDF_AAction::AActionType eAAT, FX_BOOL & bExit)
+bool	CFFL_Notify::DoAAction(CPDF_AAction::AActionType eAAT, bool & bExit)
 {
     if (m_bDoActioning)
-        return FALSE;
+        return false;
 
     CPDF_Action action;
     if (!FindAAction(eAAT, action))
-        return FALSE;
+        return false;
 
-    m_bDoActioning = TRUE;
+    m_bDoActioning = true;
     ExecuteActionTree(eAAT,action,bExit);
-    m_bDoActioning = FALSE;
-    return TRUE;
+    m_bDoActioning = false;
+    return true;
 }
 
-FX_BOOL	CFFL_Notify::ExecuteActionTree(CPDF_AAction::AActionType eAAT,CPDF_Action & action, FX_BOOL& bExit)
+bool	CFFL_Notify::ExecuteActionTree(CPDF_AAction::AActionType eAAT,CPDF_Action & action, bool& bExit)
 {
-	if (!ExecuteAction(eAAT,action,bExit)) return FALSE;
-	if (bExit) return TRUE;
+	if (!ExecuteAction(eAAT,action,bExit)) return false;
+	if (bExit) return true;
 
 	for (int32_t i=0,sz=action.GetSubActionsCount(); i<sz; i++)
 	{
 		CPDF_Action subaction = action.GetSubAction(i);
-		if (!ExecuteActionTree(eAAT,subaction,bExit)) return FALSE;
+		if (!ExecuteActionTree(eAAT,subaction,bExit)) return false;
 		if (bExit) break;
 	}
 
-	return TRUE;
+	return true;
 }
 
 
-FX_BOOL	CFFL_Notify::FindAAction(CPDF_AAction::AActionType eAAT,CPDF_Action & action)
+bool	CFFL_Notify::FindAAction(CPDF_AAction::AActionType eAAT,CPDF_Action & action)
 {
-	return FALSE;
+	return false;
 }
 
-FX_BOOL CFFL_Notify::FindAAction(CPDF_AAction aaction,CPDF_AAction::AActionType eAAT,CPDF_Action & action)
+bool CFFL_Notify::FindAAction(CPDF_AAction aaction,CPDF_AAction::AActionType eAAT,CPDF_Action & action)
 {
 	CPDF_Action MyAction;
 
@@ -154,20 +154,20 @@ FX_BOOL CFFL_Notify::FindAAction(CPDF_AAction aaction,CPDF_AAction::AActionType 
 		MyAction = aaction.GetAction(eAAT);
 	}
 	else
-		return FALSE;
+		return false;
 
 
 	if (MyAction.GetType() == CPDF_Action::Unknown)
-		return FALSE;
+		return false;
 
 	action = MyAction;
 
-	return TRUE;
+	return true;
 }
 
-FX_BOOL	CFFL_Notify::ExecuteAction(CPDF_AAction::AActionType eAAT,CPDF_Action & action,FX_BOOL& bExit)
+bool	CFFL_Notify::ExecuteAction(CPDF_AAction::AActionType eAAT,CPDF_Action & action,bool& bExit)
 {
-	return FALSE;
+	return false;
 }
 //#pragma warning(default: 4800)
 

@@ -22,14 +22,14 @@
 
 /* ---------------------------- CPWL_CBListBox ---------------------------- */
 
-FX_BOOL CPWL_CBListBox::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
+bool CPWL_CBListBox::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 {
     CPWL_Wnd::OnLButtonUp(point,nFlag);
 
     if (m_bMouseDown)
     {
         ReleaseCapture();
-        m_bMouseDown = FALSE;
+        m_bMouseDown = false;
 
         if (ClientHitTest(point))
         {
@@ -38,23 +38,23 @@ FX_BOOL CPWL_CBListBox::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
                 pParent->OnNotify(this,PNM_LBUTTONUP,0,PWL_MAKEDWORD(point.x,point.y));
             }
 
-            FX_BOOL bExit = FALSE;
-            OnNotifySelChanged(FALSE,bExit, nFlag);
-            if (bExit) return FALSE;
+            bool bExit = false;
+            OnNotifySelChanged(false,bExit, nFlag);
+            if (bExit) return false;
         }
     }
 
-    return TRUE;
+    return true;
 }
 
-FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(FX_WORD nChar, FX_BOOL & bExit, FX_DWORD nFlag)
+bool CPWL_CBListBox::OnKeyDownWithExit(FX_WORD nChar, bool & bExit, FX_DWORD nFlag)
 {
-    if (!m_pList) return FALSE;
+    if (!m_pList) return false;
 
     switch (nChar)
     {
     default:
-        return FALSE;
+        return false;
     case FWL_VKEY_Up:
     case FWL_VKEY_Down:
     case FWL_VKEY_Home:
@@ -88,25 +88,25 @@ FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(FX_WORD nChar, FX_BOOL & bExit, FX_DWO
         break;
     }
 
-    OnNotifySelChanged(TRUE,bExit, nFlag);
+    OnNotifySelChanged(true,bExit, nFlag);
 
-    return TRUE;
+    return true;
 }
 
-FX_BOOL CPWL_CBListBox::OnCharWithExit(FX_WORD nChar, FX_BOOL & bExit, FX_DWORD nFlag)
+bool CPWL_CBListBox::OnCharWithExit(FX_WORD nChar, bool & bExit, FX_DWORD nFlag)
 {
-    if (!m_pList) return FALSE;
+    if (!m_pList) return false;
 
-    if (!m_pList->OnChar(nChar,IsSHIFTpressed(nFlag),IsCTRLpressed(nFlag))) return FALSE;
+    if (!m_pList->OnChar(nChar,IsSHIFTpressed(nFlag),IsCTRLpressed(nFlag))) return false;
 
     if (CPWL_ComboBox* pComboBox = (CPWL_ComboBox*)GetParentWindow())
     {
         pComboBox->SetSelectText();
     }
 
-    OnNotifySelChanged(TRUE,bExit,nFlag);
+    OnNotifySelChanged(true,bExit,nFlag);
 
-    return TRUE;
+    return true;
 }
 
 /* ---------------------------- CPWL_CBButton ---------------------------- */
@@ -177,7 +177,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* p
     }
 }
 
-FX_BOOL CPWL_CBButton::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
+bool CPWL_CBButton::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
 {
     CPWL_Wnd::OnLButtonDown(point,nFlag);
 
@@ -188,16 +188,16 @@ FX_BOOL CPWL_CBButton::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
         pParent->OnNotify(this,PNM_LBUTTONDOWN,0,PWL_MAKEDWORD(point.x,point.y));
     }
 
-    return TRUE;
+    return true;
 }
 
-FX_BOOL CPWL_CBButton::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
+bool CPWL_CBButton::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 {
     CPWL_Wnd::OnLButtonUp(point, nFlag);
 
     ReleaseCapture();
 
-    return TRUE;
+    return true;
 }
 
 /* ---------------------------- CPWL_ComboBox ---------------------------- */
@@ -205,7 +205,7 @@ FX_BOOL CPWL_CBButton::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 CPWL_ComboBox::CPWL_ComboBox() : m_pEdit(NULL),
     m_pButton(NULL),
     m_pList(NULL),
-    m_bPopup(FALSE),
+    m_bPopup(false),
     m_nPopupWhere(0),
     m_nSelectItem(-1),
     m_pFillerNotify(NULL)
@@ -231,7 +231,7 @@ void CPWL_ComboBox::SetFocus()
 
 void CPWL_ComboBox::KillFocus()
 {
-    SetPopup(FALSE);
+    SetPopup(false);
     CPWL_Wnd::KillFocus();
 }
 
@@ -439,15 +439,15 @@ void CPWL_ComboBox::RePosChildWnd()
         }
 
         if (m_pButton)
-            m_pButton->Move(rcButton,TRUE,FALSE);
+            m_pButton->Move(rcButton,true,false);
 
         if (m_pEdit)
-            m_pEdit->Move(rcEdit,TRUE,FALSE);
+            m_pEdit->Move(rcEdit,true,false);
 
         if (m_pList)
         {
-            m_pList->SetVisible(TRUE);
-            m_pList->Move(rcList,TRUE,FALSE);
+            m_pList->SetVisible(true);
+            m_pList->Move(rcList,true,false);
             m_pList->ScrollToListItem(m_nSelectItem);
         }
     }
@@ -461,7 +461,7 @@ void CPWL_ComboBox::RePosChildWnd()
             rcButton.left = rcClient.left;
 
         if (m_pButton)
-            m_pButton->Move(rcButton,TRUE,FALSE);
+            m_pButton->Move(rcButton,true,false);
 
         CPDF_Rect rcEdit = rcClient;
         rcEdit.right = rcButton.left - 1.0f;
@@ -473,10 +473,10 @@ void CPWL_ComboBox::RePosChildWnd()
             rcEdit.right = rcEdit.left;
 
         if (m_pEdit)
-            m_pEdit->Move(rcEdit,TRUE,FALSE);
+            m_pEdit->Move(rcEdit,true,false);
 
         if (m_pList)
-            m_pList->SetVisible(FALSE);
+            m_pList->SetVisible(false);
     }
 }
 
@@ -491,7 +491,7 @@ CPDF_Rect CPWL_ComboBox::GetFocusRect() const
     return CPDF_Rect();
 }
 
-void CPWL_ComboBox::SetPopup(FX_BOOL bPopup)
+void CPWL_ComboBox::SetPopup(bool bPopup)
 {
     if (!m_pList) return;
     if (bPopup == m_bPopup) return;
@@ -528,21 +528,21 @@ void CPWL_ComboBox::SetPopup(FX_BOOL bPopup)
                 }
 
                 m_nPopupWhere = nWhere;
-                Move(rcWindow, TRUE, TRUE);
+                Move(rcWindow, true, true);
             }
         }
     }
     else
     {
         m_bPopup = bPopup;
-        Move(m_rcOldWindow, TRUE, TRUE);
+        Move(m_rcOldWindow, true, true);
     }
 }
 
-FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
+bool CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
 {
-    if (!m_pList) return FALSE;
-    if (!m_pEdit) return FALSE;
+    if (!m_pList) return false;
+    if (!m_pEdit) return false;
 
     m_nSelectItem = -1;
 
@@ -551,47 +551,47 @@ FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
     case FWL_VKEY_Up:
         if (m_pList->GetCurSel() > 0)
         {
-            FX_BOOL bExit = FALSE;
+            bool bExit = false;
             if (m_pList->OnKeyDownWithExit(nChar,bExit,nFlag))
             {
-                if (bExit) return FALSE;
+                if (bExit) return false;
                 SetSelectText();
             }
         }
-        return TRUE;
+        return true;
     case FWL_VKEY_Down:
         if (m_pList->GetCurSel() < m_pList->GetCount() - 1)
         {
-            FX_BOOL bExit = FALSE;
+            bool bExit = false;
             if (m_pList->OnKeyDownWithExit(nChar,bExit,nFlag))
             {
-                if (bExit) return FALSE;
+                if (bExit) return false;
                 SetSelectText();
             }
         }
-        return TRUE;
+        return true;
     }
 
     if (HasFlag(PCBS_ALLOWCUSTOMTEXT))
         return m_pEdit->OnKeyDown(nChar,nFlag);
 
-    return FALSE;
+    return false;
 }
 
-FX_BOOL CPWL_ComboBox::OnChar(FX_WORD nChar, FX_DWORD nFlag)
+bool CPWL_ComboBox::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 {
     if (!m_pList)
-        return FALSE;
+        return false;
 
     if (!m_pEdit)
-        return FALSE;
+        return false;
 
     m_nSelectItem = -1;
     if (HasFlag(PCBS_ALLOWCUSTOMTEXT))
         return m_pEdit->OnChar(nChar,nFlag);
 
-    FX_BOOL bExit = FALSE;
-    return m_pList->OnCharWithExit(nChar,bExit,nFlag) ? bExit : FALSE;
+    bool bExit = false;
+    return m_pList->OnCharWithExit(nChar,bExit,nFlag) ? bExit : false;
 }
 
 void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t lParam)
@@ -613,7 +613,7 @@ void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intp
                 SetSelectText();
                 SelectAll();
                 m_pEdit->SetFocus();
-                SetPopup(FALSE);
+                SetPopup(false);
                 return;
             }
         }
@@ -622,7 +622,7 @@ void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intp
     CPWL_Wnd::OnNotify(pWnd,msg,wParam,lParam);
 }
 
-FX_BOOL CPWL_ComboBox::IsPopup() const
+bool CPWL_ComboBox::IsPopup() const
 {
     return m_bPopup;
 }
@@ -637,7 +637,7 @@ void CPWL_ComboBox::SetSelectText()
     m_nSelectItem = m_pList->GetCurSel();
 }
 
-FX_BOOL CPWL_ComboBox::IsModified() const
+bool CPWL_ComboBox::IsModified() const
 {
     return m_pEdit->IsModified();
 }

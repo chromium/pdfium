@@ -8,10 +8,10 @@
 #include "../../include/fpdfdoc/fpdf_vt.h"
 #include "pdf_vt.h"
 #include "../../include/fpdfdoc/fpdf_ap.h"
-FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
+bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
 {
     if (!pAnnotDict || pAnnotDict->GetConstString("Subtype") != FX_BSTRC("Widget")) {
-        return FALSE;
+        return false;
     }
     CFX_ByteString field_type = FPDF_GetFieldAttr(pAnnotDict, "FT")->GetString();
     FX_DWORD flags = FPDF_GetFieldAttr(pAnnotDict, "Ff")? FPDF_GetFieldAttr(pAnnotDict, "Ff")->GetInteger() : 0;
@@ -34,7 +34,7 @@ FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
             }
         }
     }
-    return FALSE;
+    return false;
 }
 class CPVT_FontMap : public IPVT_FontMap
 {
@@ -154,12 +154,12 @@ int32_t CPVT_Provider::GetWordFontIndex(FX_WORD word, int32_t charset, int32_t n
         }
     return -1;
 }
-FX_BOOL CPVT_Provider::IsLatinWord(FX_WORD word)
+bool CPVT_Provider::IsLatinWord(FX_WORD word)
 {
     if ((word >= 0x61 && word <= 0x7A) || (word >= 0x41 && word <= 0x5A) || word == 0x2D || word == 0x27) {
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
 int32_t CPVT_Provider::GetDefaultFontIndex()
 {
@@ -244,14 +244,14 @@ static CPVT_Color ParseColor(const CPDF_Array & array)
     }
     return rt;
 }
-static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict, const int32_t & nWidgetType)
+static bool GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict, const int32_t & nWidgetType)
 {
     CPDF_Dictionary* pFormDict = NULL;
     if (CPDF_Dictionary * pRootDict = pDoc->GetRoot()) {
         pFormDict = pRootDict->GetDict("AcroForm");
     }
     if (!pFormDict) {
-        return FALSE;
+        return false;
     }
     CFX_ByteString DA;
     if (CPDF_Object* pDAObj = FPDF_GetFieldAttr(pAnnotDict, "DA")) {
@@ -261,23 +261,23 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
         DA = pFormDict->GetString("DA");
     }
     if (DA.IsEmpty()) {
-        return FALSE;
+        return false;
     }
     CPDF_SimpleParser syntax(DA);
     syntax.FindTagParam("Tf", 2);
     CFX_ByteString sFontName = syntax.GetWord();
     sFontName = PDF_NameDecode(sFontName);
     if (sFontName.IsEmpty()) {
-        return FALSE;
+        return false;
     }
     FX_FLOAT fFontSize = FX_atof(syntax.GetWord());
     CPVT_Color crText = ParseColor(DA);
-    FX_BOOL bUseFormRes = FALSE;
+    bool bUseFormRes = false;
     CPDF_Dictionary * pFontDict = NULL;
     CPDF_Dictionary* pDRDict = pAnnotDict->GetDict(FX_BSTRC("DR"));
     if (pDRDict == NULL) {
         pDRDict = pFormDict->GetDict(FX_BSTRC("DR"));
-        bUseFormRes = TRUE;
+        bUseFormRes = true;
     }
     CPDF_Dictionary * pDRFontDict = NULL;
     if (pDRDict && (pDRFontDict = pDRDict->GetDict("Font"))) {
@@ -291,12 +291,12 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
         }
     }
     if (!pDRFontDict) {
-        return FALSE;
+        return false;
     }
     if (!pFontDict) {
         pFontDict = CPDF_Dictionary::Create();
         if (pFontDict == NULL) {
-            return FALSE;
+            return false;
         }
         pFontDict->SetAtName(FX_BSTRC("Type"), "Font");
         pFontDict->SetAtName(FX_BSTRC("Subtype"), "Type1");
@@ -307,7 +307,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
     }
     CPDF_Font* pDefFont = pDoc->LoadFont(pFontDict);
     if (!pDefFont) {
-        return FALSE;
+        return false;
     }
     CPDF_Rect rcAnnot = pAnnotDict->GetRect("Rect");
     int32_t nRotate = 0;
@@ -378,7 +378,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
         }
     }
     CFX_ByteTextBuf sAppStream;
-    CFX_ByteString sBG = CPVT_GenerateAP::GenerateColorAP(crBG, TRUE);
+    CFX_ByteString sBG = CPVT_GenerateAP::GenerateColorAP(crBG, true);
     if (sBG.GetLength() > 0) {
         sAppStream << "q\n" << sBG << rcBBox.left << " " << rcBBox.bottom << " "
                    << rcBBox.Width() << " " << rcBBox.Height() << " re f\n" << "Q\n";
@@ -395,7 +395,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
     if (pAPDict == NULL) {
         pAPDict = CPDF_Dictionary::Create();
         if (pAPDict == NULL) {
-            return FALSE;
+            return false;
         }
         pAnnotDict->SetAt("AP", pAPDict);
     }
@@ -403,7 +403,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
     if (pNormalStream == NULL) {
         pNormalStream = CPDF_Stream::Create(NULL, 0, NULL);
         if (pNormalStream == NULL) {
-            return FALSE;
+            return false;
         }
         int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
         pAnnotDict->GetDict("AP")->SetAtReference("N", pDoc, objnum);
@@ -418,7 +418,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
             if (!pStreamResFontList) {
                 pStreamResFontList = CPDF_Dictionary::Create();
                 if (pStreamResFontList == NULL) {
-                    return FALSE;
+                    return false;
                 }
                 pStreamResList->SetAt("Font", pStreamResFontList);
             }
@@ -443,21 +443,21 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                 vt.SetPlateRect(rcBody);
                 vt.SetAlignment(nAlign);
                 if (IsFloatZero(fFontSize)) {
-                    vt.SetAutoFontSize(TRUE);
+                    vt.SetAutoFontSize(true);
                 } else {
                     vt.SetFontSize(fFontSize);
                 }
-                FX_BOOL bMultiLine = (dwFlags >> 12) & 1;
+                bool bMultiLine = (dwFlags >> 12) & 1;
                 if (bMultiLine) {
-                    vt.SetMultiLine(TRUE);
-                    vt.SetAutoReturn(TRUE);
+                    vt.SetMultiLine(true);
+                    vt.SetAutoReturn(true);
                 }
                 FX_WORD subWord = 0;
                 if ((dwFlags >> 13) & 1) {
                     subWord = '*';
                     vt.SetPasswordChar(subWord);
                 }
-                FX_BOOL bCharArray = (dwFlags >> 24) & 1;
+                bool bCharArray = (dwFlags >> 24) & 1;
                 if (bCharArray) {
                     vt.SetCharArray(dwMaxLen);
                 } else {
@@ -479,7 +479,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                         sAppStream << rcBody.left << " " << rcBody.bottom << " "
                                    << rcBody.Width() << " " << rcBody.Height() << " re\nW\nn\n";
                     }
-                    sAppStream << "BT\n" << CPVT_GenerateAP::GenerateColorAP(crText, TRUE) << sBody << "ET\n" << "Q\nEMC\n";
+                    sAppStream << "BT\n" << CPVT_GenerateAP::GenerateColorAP(crText, true) << sBody << "ET\n" << "Q\nEMC\n";
                 }
             }
             break;
@@ -497,7 +497,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                 rcEdit.Normalize();
                 vt.SetPlateRect(rcEdit);
                 if (IsFloatZero(fFontSize)) {
-                    vt.SetAutoFontSize(TRUE);
+                    vt.SetAutoFontSize(true);
                 } else {
                     vt.SetFontSize(fFontSize);
                 }
@@ -506,14 +506,14 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                 vt.RearrangeAll();
                 CPDF_Rect rcContent = vt.GetContentRect();
                 CPDF_Point ptOffset = CPDF_Point(0.0f, (rcContent.Height() - rcEdit.Height()) / 2.0f);
-                CFX_ByteString sEdit = CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(), ptOffset, TRUE, 0);
+                CFX_ByteString sEdit = CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(), ptOffset, true, 0);
                 if (sEdit.GetLength() > 0) {
                     sAppStream << "/Tx BMC\n" << "q\n";
                     sAppStream << rcEdit.left << " " << rcEdit.bottom << " "
                                << rcEdit.Width() << " " << rcEdit.Height() << " re\nW\nn\n";
-                    sAppStream << "BT\n" << CPVT_GenerateAP::GenerateColorAP(crText, TRUE) << sEdit << "ET\n" << "Q\nEMC\n";
+                    sAppStream << "BT\n" << CPVT_GenerateAP::GenerateColorAP(crText, true) << sEdit << "ET\n" << "Q\nEMC\n";
                 }
-                CFX_ByteString sButton = CPVT_GenerateAP::GenerateColorAP(CPVT_Color(CT_RGB, 220.0f / 255.0f, 220.0f / 255.0f, 220.0f / 255.0f), TRUE);
+                CFX_ByteString sButton = CPVT_GenerateAP::GenerateColorAP(CPVT_Color(CT_RGB, 220.0f / 255.0f, 220.0f / 255.0f, 220.0f / 255.0f), true);
                 if (sButton.GetLength() > 0 && !rcButton.IsEmpty()) {
                     sAppStream << "q\n" << sButton;
                     sAppStream << rcButton.left << " " << rcButton.bottom << " "
@@ -555,11 +555,11 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                             } else if (pOpt->GetType() == PDFOBJ_ARRAY) {
                                 swItem = ((CPDF_Array*)pOpt)->GetElementValue(1)->GetUnicodeText();
                             }
-                            FX_BOOL bSelected = FALSE;
+                            bool bSelected = false;
                             if (pSels) {
                                 for (FX_DWORD s = 0, ssz = pSels->GetCount(); s < ssz; s++) {
                                     if (i == pSels->GetInteger(s)) {
-                                        bSelected = TRUE;
+                                        bSelected = true;
                                         break;
                                     }
                                 }
@@ -578,11 +578,11 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                             FX_FLOAT fItemHeight = vt.GetContentRect().Height();
                             if (bSelected) {
                                 CPDF_Rect rcItem = CPDF_Rect(rcBody.left, fy - fItemHeight, rcBody.right, fy);
-                                sBody << "q\n" << CPVT_GenerateAP::GenerateColorAP(CPVT_Color(CT_RGB, 0, 51.0f / 255.0f, 113.0f / 255.0f), TRUE)
+                                sBody << "q\n" << CPVT_GenerateAP::GenerateColorAP(CPVT_Color(CT_RGB, 0, 51.0f / 255.0f, 113.0f / 255.0f), true)
                                       << rcItem.left << " " << rcItem.bottom << " " << rcItem.Width() << " " << rcItem.Height() << " re f\n" << "Q\n";
-                                sBody << "BT\n" << CPVT_GenerateAP::GenerateColorAP(CPVT_Color(CT_GRAY, 1), TRUE) << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(), CPDF_Point(0.0f, fy), TRUE, 0) << "ET\n";
+                                sBody << "BT\n" << CPVT_GenerateAP::GenerateColorAP(CPVT_Color(CT_GRAY, 1), true) << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(), CPDF_Point(0.0f, fy), true, 0) << "ET\n";
                             } else {
-                                sBody << "BT\n" << CPVT_GenerateAP::GenerateColorAP(crText, TRUE) << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(), CPDF_Point(0.0f, fy), TRUE, 0) << "ET\n";
+                                sBody << "BT\n" << CPVT_GenerateAP::GenerateColorAP(crText, true) << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(), CPDF_Point(0.0f, fy), true, 0) << "ET\n";
                             }
                             fy -= fItemHeight;
                         }
@@ -598,7 +598,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
             break;
     }
     if (pNormalStream) {
-        pNormalStream->SetData((uint8_t*)sAppStream.GetBuffer(), sAppStream.GetSize(), FALSE, FALSE);
+        pNormalStream->SetData((uint8_t*)sAppStream.GetBuffer(), sAppStream.GetSize(), false, false);
         pStreamDict = pNormalStream->GetDict();
         if (pStreamDict) {
             pStreamDict->SetAtMatrix("Matrix", matrix);
@@ -609,7 +609,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
                 if (!pStreamResFontList) {
                     pStreamResFontList = CPDF_Dictionary::Create();
                     if (pStreamResFontList == NULL) {
-                        return FALSE;
+                        return false;
                     }
                     pStreamResList->SetAt("Font", pStreamResFontList);
                 }
@@ -622,21 +622,21 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict
             }
         }
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
+bool CPVT_GenerateAP::GenerateTextFieldAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
 {
     return GenerateWidgetAP(pDoc, pAnnotDict, 0);
 }
-FX_BOOL CPVT_GenerateAP::GenerateComboBoxAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
+bool CPVT_GenerateAP::GenerateComboBoxAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
 {
     return GenerateWidgetAP(pDoc, pAnnotDict, 1);
 }
-FX_BOOL CPVT_GenerateAP::GenerateListBoxAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
+bool CPVT_GenerateAP::GenerateListBoxAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
 {
     return GenerateWidgetAP(pDoc, pAnnotDict, 2);
 }
-CFX_ByteString CPVT_GenerateAP::GenerateEditAP(IPVT_FontMap * pFontMap, IPDF_VariableText_Iterator* pIterator, const CPDF_Point & ptOffset, FX_BOOL bContinuous, FX_WORD SubWord, const CPVT_WordRange * pVisible)
+CFX_ByteString CPVT_GenerateAP::GenerateEditAP(IPVT_FontMap * pFontMap, IPDF_VariableText_Iterator* pIterator, const CPDF_Point & ptOffset, bool bContinuous, FX_WORD SubWord, const CPVT_WordRange * pVisible)
 {
     CFX_ByteTextBuf sEditStream, sLineStream, sWords;
     CPDF_Point ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);
@@ -726,7 +726,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(const CPDF_Rect & rect, FX_FLOA
         switch (nStyle) {
             default:
             case PBS_SOLID:
-                sColor = GenerateColorAP(color, TRUE);
+                sColor = GenerateColorAP(color, true);
                 if (sColor.GetLength() > 0) {
                     sAppStream << sColor;
                     sAppStream << fLeft << " " << fBottom << " " << fRight - fLeft << " " << fTop - fBottom << " re\n";
@@ -736,7 +736,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(const CPDF_Rect & rect, FX_FLOA
                 }
                 break;
             case PBS_DASH:
-                sColor = GenerateColorAP(color, FALSE);
+                sColor = GenerateColorAP(color, false);
                 if (sColor.GetLength() > 0) {
                     sAppStream << sColor;
                     sAppStream << fWidth << " w" << " [" << dash.nDash << " " << dash.nGap << "] " << dash.nPhase << " d\n";
@@ -749,7 +749,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(const CPDF_Rect & rect, FX_FLOA
                 break;
             case PBS_BEVELED:
             case PBS_INSET:
-                sColor = GenerateColorAP(crLeftTop, TRUE);
+                sColor = GenerateColorAP(crLeftTop, true);
                 if (sColor.GetLength() > 0) {
                     sAppStream << sColor;
                     sAppStream << fLeft + fHalfWidth << " " << fBottom + fHalfWidth << " m\n";
@@ -759,7 +759,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(const CPDF_Rect & rect, FX_FLOA
                     sAppStream << fLeft + fHalfWidth * 2 << " " << fTop - fHalfWidth * 2 << " l\n";
                     sAppStream << fLeft + fHalfWidth * 2 << " " << fBottom + fHalfWidth * 2 << " l f\n";
                 }
-                sColor = GenerateColorAP(crRightBottom, TRUE);
+                sColor = GenerateColorAP(crRightBottom, true);
                 if (sColor.GetLength() > 0) {
                     sAppStream << sColor;
                     sAppStream << fRight - fHalfWidth << " " <<	fTop - fHalfWidth << " m\n";
@@ -769,7 +769,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(const CPDF_Rect & rect, FX_FLOA
                     sAppStream << fRight - fHalfWidth * 2 << " " << fBottom + fHalfWidth * 2 << " l\n";
                     sAppStream << fRight - fHalfWidth * 2 << " " << fTop - fHalfWidth * 2 << " l f\n";
                 }
-                sColor = GenerateColorAP(color, TRUE);
+                sColor = GenerateColorAP(color, true);
                 if (sColor.GetLength() > 0) {
                     sAppStream << sColor;
                     sAppStream << fLeft << " " << fBottom << " " <<	fRight - fLeft << " " << fTop - fBottom << " re\n";
@@ -778,7 +778,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(const CPDF_Rect & rect, FX_FLOA
                 }
                 break;
             case PBS_UNDERLINED:
-                sColor = GenerateColorAP(color, FALSE);
+                sColor = GenerateColorAP(color, false);
                 if (sColor.GetLength() > 0) {
                     sAppStream << sColor;
                     sAppStream << fWidth << " w\n";
@@ -790,7 +790,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(const CPDF_Rect & rect, FX_FLOA
     }
     return sAppStream.GetByteString();
 }
-CFX_ByteString CPVT_GenerateAP::GenerateColorAP(const CPVT_Color & color, const FX_BOOL & bFillOrStroke)
+CFX_ByteString CPVT_GenerateAP::GenerateColorAP(const CPVT_Color & color, const bool & bFillOrStroke)
 {
     CFX_ByteTextBuf sColorStream;
     switch (color.nColorType) {

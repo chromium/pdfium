@@ -32,12 +32,12 @@ public:
         m_RefCount = 0;
     }
     ~CTTFontDesc();
-    FX_BOOL			ReleaseFace(FXFT_Face face);
+    bool			ReleaseFace(FXFT_Face face);
     int				m_Type;
     union {
         struct {
-            FX_BOOL		m_bItalic;
-            FX_BOOL		m_bBold;
+            bool		m_bItalic;
+            bool		m_bBold;
             FXFT_Face	m_pFace;
         } m_SingleFace;
         struct {
@@ -63,9 +63,9 @@ private:
     {
         return Unicode;
     }
-    virtual FX_BOOL			IsUnicodeCompatible() const
+    virtual bool			IsUnicodeCompatible() const
     {
-        return TRUE;
+        return true;
     }
 };
 #define CHARSET_FLAG_ANSI		1
@@ -97,7 +97,7 @@ public:
     FX_DWORD			m_FileSize;
     FX_DWORD			m_FontOffset;
     int					m_Weight;
-    FX_BOOL				m_bItalic;
+    bool				m_bItalic;
     int					m_PitchFamily;
     CFX_ByteString		m_FontTables;
 };

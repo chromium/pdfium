@@ -22,7 +22,7 @@
 CPWL_IconList_Item::CPWL_IconList_Item() :
 	m_nIconIndex(-1),
 	m_pData(NULL),
-	m_bSelected(FALSE),
+	m_bSelected(false),
 	m_pText(NULL)
 {
 }
@@ -67,7 +67,7 @@ void CPWL_IconList_Item::DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matr
 		m_crIcon, m_pText->GetTextColor(), GetTransparency());
 }
 
-void CPWL_IconList_Item::SetSelect(FX_BOOL bSelected)
+void CPWL_IconList_Item::SetSelect(bool bSelected)
 {
 	m_bSelected = bSelected;
 
@@ -78,7 +78,7 @@ void CPWL_IconList_Item::SetSelect(FX_BOOL bSelected)
 
 }
 
-FX_BOOL	CPWL_IconList_Item::IsSelected() const
+bool	CPWL_IconList_Item::IsSelected() const
 {
 	return m_bSelected;
 }
@@ -121,7 +121,7 @@ void CPWL_IconList_Item::RePosChildWnd()
 
 	rcClient.left += (PWL_IconList_ITEM_ICON_LEFTMARGIN + PWL_IconList_ITEM_WIDTH + PWL_IconList_ITEM_ICON_LEFTMARGIN);
 
-	m_pText->Move(rcClient, TRUE, FALSE);
+	m_pText->Move(rcClient, true, false);
 }
 
 void CPWL_IconList_Item::SetIconFillColor(const CPWL_Color& color)
@@ -151,8 +151,8 @@ void CPWL_IconList_Item::OnDisabled()
 CPWL_IconList_Content::CPWL_IconList_Content(int32_t nListCount) :
 	m_nSelectIndex(-1),
 	m_pNotify(NULL),
-	m_bEnableNotify(TRUE),
-	m_bMouseDown(FALSE),
+	m_bEnableNotify(true),
+	m_bMouseDown(false),
 	m_nListCount(nListCount)
 {
 }
@@ -192,29 +192,29 @@ void CPWL_IconList_Content::CreateChildWnd(const PWL_CREATEPARAM & cp)
 	}
 }
 
-FX_BOOL	CPWL_IconList_Content::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
+bool	CPWL_IconList_Content::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
 {
 	SetFocus();
 
 	SetCapture();
-	m_bMouseDown = TRUE;
+	m_bMouseDown = true;
 
 	int32_t nItemIndex = FindItemIndex(point);
 	SetSelect(nItemIndex);
 	ScrollToItem(nItemIndex);
 
-	return TRUE;
+	return true;
 }
 
-FX_BOOL	CPWL_IconList_Content::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
+bool	CPWL_IconList_Content::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 {
-	m_bMouseDown = FALSE;
+	m_bMouseDown = false;
 	ReleaseCapture();
 
-	return TRUE;
+	return true;
 }
 
-FX_BOOL CPWL_IconList_Content::OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag)
+bool CPWL_IconList_Content::OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag)
 {
 	if (m_bMouseDown)
 	{
@@ -223,10 +223,10 @@ FX_BOOL CPWL_IconList_Content::OnMouseMove(const CPDF_Point & point, FX_DWORD nF
 		ScrollToItem(nItemIndex);
 	}
 
-	return TRUE;
+	return true;
 }
 
-FX_BOOL	CPWL_IconList_Content::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
+bool	CPWL_IconList_Content::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
 {
 	switch (nChar)
 	{
@@ -237,7 +237,7 @@ FX_BOOL	CPWL_IconList_Content::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
 			SetSelect(nItemIndex);
 			ScrollToItem(nItemIndex);
 		}
-		return TRUE;
+		return true;
 	case FWL_VKEY_Down:
 		if (m_nSelectIndex < m_nListCount-1)
 		{
@@ -245,10 +245,10 @@ FX_BOOL	CPWL_IconList_Content::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag)
 			SetSelect(nItemIndex);
 			ScrollToItem(nItemIndex);
 		}
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 int32_t CPWL_IconList_Content::FindItemIndex(const CPDF_Point& point)
@@ -307,8 +307,8 @@ void CPWL_IconList_Content::SetSelect(int32_t nIndex)
 {
 	if (m_nSelectIndex != nIndex)
 	{
-		SelectItem(m_nSelectIndex, FALSE);
-		SelectItem(nIndex, TRUE);
+		SelectItem(m_nSelectIndex, false);
+		SelectItem(nIndex, true);
 		m_nSelectIndex = nIndex;
 
 		if (IPWL_IconList_Notify* pNotify = GetNotify())
@@ -333,12 +333,12 @@ void CPWL_IconList_Content::SetNotify(IPWL_IconList_Notify* pNotify)
 	m_pNotify = pNotify;
 }
 
-void CPWL_IconList_Content::EnableNotify(FX_BOOL bNotify)
+void CPWL_IconList_Content::EnableNotify(bool bNotify)
 {
 	m_bEnableNotify = bNotify;
 }
 
-void CPWL_IconList_Content::SelectItem(int32_t nItemIndex, FX_BOOL bSelect)
+void CPWL_IconList_Content::SelectItem(int32_t nItemIndex, bool bSelect)
 {
 	if (CPWL_IconList_Item* pItem = GetListItem(nItemIndex))
 	{
@@ -423,7 +423,7 @@ void CPWL_IconList::RePosChildWnd()
 	CPWL_Wnd::RePosChildWnd();
 
 	if (m_pListContent)
-		m_pListContent->Move(GetClientRect(), TRUE, FALSE);
+		m_pListContent->Move(GetClientRect(), true, false);
 }
 
 void CPWL_IconList::CreateChildWnd(const PWL_CREATEPARAM & cp)
@@ -442,7 +442,7 @@ void CPWL_IconList::OnCreated()
 	{
 		pScrollBar->RemoveFlag(PWS_AUTOTRANSPARENT);
 		pScrollBar->SetTransparency(255);
-		pScrollBar->SetNotifyForever(TRUE);
+		pScrollBar->SetNotifyForever(true);
 	}
 }
 
@@ -463,7 +463,7 @@ void CPWL_IconList::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intp
 					{
 						if (!pScrollBar->IsVisible())
 						{
-							pScrollBar->SetVisible(TRUE);
+							pScrollBar->SetVisible(true);
 							RePosChildWnd();
 						}
 						else
@@ -474,7 +474,7 @@ void CPWL_IconList::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intp
 					{
 						if (pScrollBar->IsVisible())
 						{
-							pScrollBar->SetVisible(FALSE);
+							pScrollBar->SetVisible(false);
 							RePosChildWnd();
 						}
 
@@ -522,7 +522,7 @@ void CPWL_IconList::SetNotify(IPWL_IconList_Notify* pNotify)
 	m_pListContent->SetNotify(pNotify);
 }
 
-void CPWL_IconList::EnableNotify(FX_BOOL bNotify)
+void CPWL_IconList::EnableNotify(bool bNotify)
 {
 	m_pListContent->EnableNotify(bNotify);
 }
@@ -552,7 +552,7 @@ void CPWL_IconList::SetIconFillColor(const CPWL_Color& color)
 	m_pListContent->SetIconFillColor(color);
 }
 
-FX_BOOL	CPWL_IconList::OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag)
+bool	CPWL_IconList::OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag)
 {
 	CPDF_Point ptScroll = m_pListContent->GetScrollPos();
 	CPDF_Rect rcScroll = m_pListContent->GetScrollArea();
@@ -583,10 +583,10 @@ FX_BOOL	CPWL_IconList::OnMouseWheel(short zDelta, const CPDF_Point & point, FX_D
 			if (CPWL_ScrollBar* pScrollBar = GetVScrollBar())
 				pScrollBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&ptNew.y);
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 

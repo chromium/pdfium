@@ -20,16 +20,16 @@ public:
 		delete this;
 	}
 
-	virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper) override
+	virtual	bool		EnumFontList(CFX_FontMapper* pMapper) override
 	{
 		if (m_pInfo->EnumFonts) {
 			m_pInfo->EnumFonts(m_pInfo, pMapper);
-			return TRUE;
+			return true;
 		}
-		return FALSE;
+		return false;
 	}
 
-	virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, int& iExact)  override
+	virtual void*		MapFont(int weight, bool bItalic, int charset, int pitch_family, const FX_CHAR* family, int& iExact)  override
 	{
 		if (m_pInfo->MapFont)
 			return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family, family, &iExact);
@@ -50,25 +50,25 @@ public:
 		return 0;
 	}
 
-	virtual FX_BOOL		GetFaceName(void* hFont, CFX_ByteString& name)  override
+	virtual bool		GetFaceName(void* hFont, CFX_ByteString& name)  override
 	{
-		if (m_pInfo->GetFaceName == NULL) return FALSE;
+		if (m_pInfo->GetFaceName == NULL) return false;
 		FX_DWORD size = m_pInfo->GetFaceName(m_pInfo, hFont, NULL, 0);
-		if (size == 0) return FALSE;
+		if (size == 0) return false;
 		char* buffer = FX_Alloc(char, size);
 		size = m_pInfo->GetFaceName(m_pInfo, hFont, buffer, size);
 		name = CFX_ByteString(buffer, size);
 		FX_Free(buffer);
-		return TRUE;
+		return true;
 	}
 
-	virtual FX_BOOL		GetFontCharset(void* hFont, int& charset)  override
+	virtual bool		GetFontCharset(void* hFont, int& charset)  override
 	{
 		if (m_pInfo->GetFontCharset) {
 			charset = m_pInfo->GetFontCharset(m_pInfo, hFont);
-			return TRUE;
+			return true;
 		}
-		return FALSE;
+		return false;
 	}
 
 	virtual void		DeleteFont(void* hFont)  override

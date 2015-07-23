@@ -71,7 +71,6 @@ typedef void*                   FX_POSITION; // Keep until fxcrt containers gone
 typedef unsigned short          FX_WORD;     // Keep - "an efficient small type"
 typedef unsigned int            FX_DWORD;    // Keep - "an efficient type"
 typedef float                   FX_FLOAT;    // Keep, allow upgrade to doubles.
-typedef int                     FX_BOOL;     // Keep, sadly not always 0 or 1.
 typedef char                    FX_CHAR;     // Keep, questionable signedness.
 typedef wchar_t                 FX_WCHAR;    // Keep, maybe bad platform wchars.
 
@@ -82,14 +81,6 @@ typedef int FX_STRSIZE;
 
 #if defined(DEBUG) && !defined(_DEBUG)
 #define _DEBUG
-#endif
-
-#ifndef TRUE
-#define TRUE	1
-#endif
-
-#ifndef FALSE
-#define FALSE	0
 #endif
 
 #ifndef NULL

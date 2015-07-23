@@ -23,7 +23,7 @@ public:
 
     int32_t read1Bit(FX_DWORD *dwResult);
 
-    int32_t read1Bit(FX_BOOL  *bResult);
+    int32_t read1Bit(bool  *bResult);
 
     int32_t read1Byte(uint8_t *cResult);
 
@@ -165,7 +165,7 @@ inline int32_t CJBig2_BitStream::read1Bit(FX_DWORD *dwResult)
     }
 }
 
-inline int32_t CJBig2_BitStream::read1Bit(FX_BOOL *bResult)
+inline int32_t CJBig2_BitStream::read1Bit(bool *bResult)
 {
     if(m_dwByteIdx < m_dwLength) {
         *bResult = (m_pBuf[m_dwByteIdx] >> (7 - m_dwBitIdx)) & 0x01;

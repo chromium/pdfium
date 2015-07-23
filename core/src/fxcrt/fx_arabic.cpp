@@ -13,7 +13,7 @@ IFX_BidiChar* IFX_BidiChar::Create()
     return new CFX_BidiChar;
 }
 CFX_BidiChar::CFX_BidiChar()
-    : m_bSeparateNeutral(TRUE)
+    : m_bSeparateNeutral(true)
     , m_iCurStart(0)
     , m_iCurCount(0)
     , m_iCurBidi(0)
@@ -22,12 +22,12 @@ CFX_BidiChar::CFX_BidiChar()
     , m_iLastCount(0)
 {
 }
-void CFX_BidiChar::SetPolicy(FX_BOOL bSeparateNeutral)
+void CFX_BidiChar::SetPolicy(bool bSeparateNeutral)
 {
     m_bSeparateNeutral = bSeparateNeutral;
 }
 
-FX_BOOL CFX_BidiChar::AppendChar(FX_WCHAR wch)
+bool CFX_BidiChar::AppendChar(FX_WCHAR wch)
 {
     FX_DWORD dwProps = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch];
     int32_t iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
@@ -43,10 +43,10 @@ FX_BOOL CFX_BidiChar::AppendChar(FX_WCHAR wch)
             iContext = 2;
             break;
     }
-    FX_BOOL bRet = FALSE;
+    bool bRet = false;
     if (iContext != m_iCurBidi) {
         if (m_bSeparateNeutral) {
-            bRet = TRUE;
+            bRet = true;
         } else {
             if (m_iCurBidi == 0) {
                 bRet = (m_iCurCount > 0);
@@ -67,7 +67,7 @@ FX_BOOL CFX_BidiChar::AppendChar(FX_WCHAR wch)
     m_iCurCount ++;
     return bRet;
 }
-FX_BOOL CFX_BidiChar::EndChar()
+bool CFX_BidiChar::EndChar()
 {
     m_iLastBidi = m_iCurBidi;
     m_iLastStart = m_iCurStart;

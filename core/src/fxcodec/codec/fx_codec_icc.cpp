@@ -14,7 +14,7 @@ const FX_DWORD N_COMPONENT_RGB = 3;
 const FX_DWORD N_COMPONENT_CMYK = 4;
 const FX_DWORD N_COMPONENT_DEFAULT = 3;
 
-FX_BOOL MD5ComputeID( const void* buf, FX_DWORD dwSize, uint8_t ID[16] )
+bool MD5ComputeID( const void* buf, FX_DWORD dwSize, uint8_t ID[16] )
 {
     return cmsMD5computeIDExt(buf, dwSize, ID);
 }
@@ -22,50 +22,50 @@ struct CLcmsCmm  {
     cmsHTRANSFORM m_hTransform;
     int			m_nSrcComponents;
     int			m_nDstComponents;
-    FX_BOOL		m_bLab;
+    bool		m_bLab;
 };
 extern "C" {
     int ourHandler(int ErrorCode, const char *ErrorText)
     {
-        return TRUE;
+        return true;
     }
 };
-FX_BOOL CheckComponents(cmsColorSpaceSignature cs, int nComponents, FX_BOOL bDst)
+bool CheckComponents(cmsColorSpaceSignature cs, int nComponents, bool bDst)
 {
     if (nComponents <= 0 || nComponents > 15) {
-        return FALSE;
+        return false;
     }
     switch(cs) {
         case cmsSigLabData:
             if (nComponents < 3) {
-                return FALSE;
+                return false;
             }
             break;
         case cmsSigGrayData:
             if (bDst && nComponents != 1) {
-                return FALSE;
+                return false;
             }
             if (!bDst && nComponents > 2) {
-                return FALSE;
+                return false;
             }
             break;
         case cmsSigRgbData:
             if (bDst && nComponents != 3) {
-                return FALSE;
+                return false;
             }
             break;
         case cmsSigCmykData:
             if (bDst && nComponents != 4) {
-                return FALSE;
+                return false;
             }
             break;
         default:
             if (nComponents != 3) {
-                return FALSE;
+                return false;
             }
             break;
     }
-    return TRUE;
+    return true;
 }
 int32_t GetCSComponents(cmsColorSpaceSignature cs)
 {
@@ -112,12 +112,12 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData, FX_DWORD dwSr
         return NULL;
     }
     int srcFormat;
-    FX_BOOL bLab = FALSE;
+    bool bLab = false;
     cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile);
     nSrcComponents = GetCSComponents(srcCS);
     if (srcCS == cmsSigLabData) {
         srcFormat = COLORSPACE_SH(PT_Lab) | CHANNELS_SH(nSrcComponents) | BYTES_SH(0);
-        bLab = TRUE;
+        bLab = true;
     } else {
         srcFormat = COLORSPACE_SH(PT_ANY) | CHANNELS_SH(nSrcComponents) | BYTES_SH(1);
         if (srcCS == cmsSigRgbData && T_DOSWAP(dwSrcFormat)) {
@@ -125,7 +125,7 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData, FX_DWORD dwSr
         }
     }
     cmsColorSpaceSignature dstCS = cmsGetColorSpace(dstProfile);
-    if (!CheckComponents(dstCS, nDstComponents, TRUE)) {
+    if (!CheckComponents(dstCS, nDstComponents, true)) {
         cmsCloseProfile(srcProfile);
         cmsCloseProfile(dstProfile);
         return NULL;

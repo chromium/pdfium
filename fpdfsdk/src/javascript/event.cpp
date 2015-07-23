@@ -56,7 +56,7 @@ event::~event(void)
 {
 }
 
-FX_BOOL event::change(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::change(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -73,12 +73,12 @@ FX_BOOL event::change(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErr
 	{
 		vp << wChange;
 	}
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::changeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::changeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -86,12 +86,12 @@ FX_BOOL event::changeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 	ASSERT(pEvent != NULL);
 
 	vp << pEvent->ChangeEx();
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::commitKey(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::commitKey(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -99,10 +99,10 @@ FX_BOOL event::commitKey(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 	ASSERT(pEvent != NULL);
 
 	vp << pEvent->CommitKey();
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::fieldFull(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::fieldFull(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -110,18 +110,18 @@ FX_BOOL event::fieldFull(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 	ASSERT(pEvent != NULL);
 
 	if (!vp.IsGetting() && wcscmp((const wchar_t*)pEvent->Name(),L"Keystroke") != 0)
-		return FALSE;
+		return false;
 
 	if (pEvent->FieldFull())
-		vp << TRUE;
+		vp << true;
 	else
-		vp << FALSE;
-	return TRUE;
+		vp << false;
+	return true;
 }
 
-FX_BOOL event::keyDown(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::keyDown(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -129,15 +129,15 @@ FX_BOOL event::keyDown(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sEr
 	ASSERT(pEvent != NULL);
 
 	if (pEvent->KeyDown())
-		vp << TRUE;
+		vp << true;
 	else
-		vp << FALSE;
-	return TRUE;
+		vp << false;
+	return true;
 }
 
-FX_BOOL event::modifier(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::modifier(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -145,15 +145,15 @@ FX_BOOL event::modifier(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 	ASSERT(pEvent != NULL);
 
 	if (pEvent->Modifier())
-		vp << TRUE;
+		vp << true;
 	else
-		vp << FALSE;
-	return TRUE;
+		vp << false;
+	return true;
 }
 
-FX_BOOL event::name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -161,17 +161,17 @@ FX_BOOL event::name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError
 	ASSERT(pEvent != NULL);
 
 	vp << pEvent->Name();
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::rc(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::rc(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
 	CJS_EventHandler* pEvent = pContext->GetEventHandler();
 	ASSERT(pEvent != NULL);
 
-    FX_BOOL &bRc = pEvent->Rc();
+    bool &bRc = pEvent->Rc();
 	if (vp.IsSetting())
 	{
 		vp>>bRc;
@@ -180,12 +180,12 @@ FX_BOOL event::rc(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 	{
 		vp<<bRc;
 	}
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::richChange(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::richChange(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	return TRUE;
+	return true;
 	if (vp.IsSetting())
 	{
 	}
@@ -193,12 +193,12 @@ FX_BOOL event::richChange(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& 
 	{
 		;
 	}
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::richChangeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::richChangeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	return TRUE;
+	return true;
 	if (vp.IsSetting())
 	{
 	}
@@ -206,13 +206,13 @@ FX_BOOL event::richChangeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString
 	{
 		;
 	}
-	return TRUE;
+	return true;
 }
 
 
-FX_BOOL event::richValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::richValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	return TRUE;
+	return true;
 	if (vp.IsSetting())
 	{
 	}
@@ -220,10 +220,10 @@ FX_BOOL event::richValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& s
 	{
 		;
 	}
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::selEnd(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::selEnd(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -232,7 +232,7 @@ FX_BOOL event::selEnd(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErr
 
 	if (wcscmp((const wchar_t*)pEvent->Name(),L"Keystroke") != 0)
 	{
-		return TRUE;
+		return true;
 	}
 
 	int &iSelEnd = pEvent->SelEnd();
@@ -244,10 +244,10 @@ FX_BOOL event::selEnd(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErr
 	{
 		vp << iSelEnd;
 	}
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::selStart(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::selStart(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -256,7 +256,7 @@ FX_BOOL event::selStart(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 
 	if (wcscmp((const wchar_t*)pEvent->Name(),L"Keystroke") != 0)
 	{
-		return TRUE;
+		return true;
 	}
 	int &iSelStart = pEvent->SelStart();
 	if (vp.IsSetting())
@@ -267,12 +267,12 @@ FX_BOOL event::selStart(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 	{
 		vp << iSelStart;
 	}
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::shift(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::shift(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -280,15 +280,15 @@ FX_BOOL event::shift(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 	ASSERT(pEvent != NULL);
 
 	if (pEvent->Shift())
-		vp << TRUE;
+		vp << true;
 	else
-		vp << FALSE;
-	return TRUE;
+		vp << false;
+	return true;
 }
 
-FX_BOOL event::source(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::source(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -296,12 +296,12 @@ FX_BOOL event::source(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErr
 	ASSERT(pEvent != NULL);
 
 	vp << pEvent->Source()->GetJSObject();
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::target(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::target(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -309,12 +309,12 @@ FX_BOOL event::target(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErr
 	ASSERT(pEvent != NULL);
 
 	vp<<pEvent->Target_Field()->GetJSObject();
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::targetName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::targetName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -322,12 +322,12 @@ FX_BOOL event::targetName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& 
 	ASSERT(pEvent != NULL);
 
 	vp << pEvent->TargetName();
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::type(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::type(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -335,10 +335,10 @@ FX_BOOL event::type(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError
 	ASSERT(pEvent != NULL);
 
 	vp << pEvent->Type();
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -346,9 +346,9 @@ FX_BOOL event::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 	ASSERT(pEvent != NULL);
 
 	if (wcscmp((const wchar_t*)pEvent->Type(),L"Field") != 0)
-		return FALSE;
+		return false;
 	if(!pEvent->m_pValue)
-		return FALSE;
+		return false;
 	CFX_WideString & val = pEvent->Value();
 	if (vp.IsSetting())
 	{
@@ -358,12 +358,12 @@ FX_BOOL event::value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sErro
 	{
 		vp << val;
 	}
-	return TRUE;
+	return true;
 }
 
-FX_BOOL event::willCommit(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool event::willCommit(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if (!vp.IsGetting())return FALSE;
+	if (!vp.IsGetting())return false;
 
 	CJS_Context* pContext = (CJS_Context*)cc;
 	ASSERT(pContext != NULL);
@@ -371,9 +371,9 @@ FX_BOOL event::willCommit(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& 
 	ASSERT(pEvent != NULL);
 
 	if (pEvent->WillCommit())
-		vp << TRUE;
+		vp << true;
 	else
-		vp << FALSE;
-	return TRUE;
+		vp << false;
+	return true;
 }
 

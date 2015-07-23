@@ -34,8 +34,8 @@ public:
 	virtual void						CreateChildWnd(const PWL_CREATEPARAM & cp);
 	virtual void						RePosChildWnd();
 
-	void								SetSelect(FX_BOOL bSelected);
-	FX_BOOL								IsSelected() const;
+	void								SetSelect(bool bSelected);
+	bool								IsSelected() const;
 	void								SetData(void* pData);
 	void								SetIcon(int32_t nIconIndex);
 	void								SetText(const CFX_WideString& str);
@@ -52,7 +52,7 @@ protected:
 private:
 	int32_t							m_nIconIndex;
 	void*								m_pData;
-	FX_BOOL								m_bSelected;
+	bool								m_bSelected;
 	CPWL_Label*							m_pText;
 	CPWL_Color							m_crIcon;
 };
@@ -66,7 +66,7 @@ public:
 	void								SetSelect(int32_t nIndex);
 	int32_t							GetSelect() const;
 	void								SetNotify(IPWL_IconList_Notify* pNotify);
-	void								EnableNotify(FX_BOOL bNotify);
+	void								EnableNotify(bool bNotify);
 	void								SetListData(int32_t nItemIndex, void* pData);
 	void								SetListIcon(int32_t nItemIndex, int32_t nIconIndex);
 	void								SetListString(int32_t nItemIndex, const CFX_WideString& str);
@@ -77,20 +77,20 @@ public:
 
 protected:
 	virtual void						CreateChildWnd(const PWL_CREATEPARAM & cp);
-	virtual FX_BOOL						OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual FX_BOOL						OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual FX_BOOL						OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual FX_BOOL						OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
+	virtual bool						OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual bool						OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual bool						OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual bool						OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
 
 private:
 	CPWL_IconList_Item*					GetListItem(int32_t nItemIndex) const;
-	void								SelectItem(int32_t nItemIndex, FX_BOOL bSelect);
+	void								SelectItem(int32_t nItemIndex, bool bSelect);
 	int32_t							FindItemIndex(const CPDF_Point& point);
 
-	FX_BOOL								m_nSelectIndex;
+	bool								m_nSelectIndex;
 	IPWL_IconList_Notify*				m_pNotify;
-	FX_BOOL								m_bEnableNotify;
-	FX_BOOL								m_bMouseDown;
+	bool								m_bEnableNotify;
+	bool								m_bMouseDown;
 	int32_t							m_nListCount;
 };
 
@@ -100,13 +100,13 @@ public:
 	CPWL_IconList(int32_t nListCount);
 	virtual ~CPWL_IconList();
 
-	virtual FX_BOOL						OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag);
+	virtual bool						OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag);
 
 	void								SetSelect(int32_t nIndex);
 	void								SetTopItem(int32_t nIndex);
 	int32_t							GetSelect() const;
 	void								SetNotify(IPWL_IconList_Notify* pNotify);
-	void								EnableNotify(FX_BOOL bNotify);
+	void								EnableNotify(bool bNotify);
 	void								SetListData(int32_t nItemIndex, void* pData);
 	void								SetListIcon(int32_t nItemIndex, int32_t nIconIndex);
 	void								SetListString(int32_t nItemIndex, const CFX_WideString& str);
