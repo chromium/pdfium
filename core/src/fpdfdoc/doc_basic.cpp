@@ -148,13 +148,12 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode, int nIndex, int& nCur
         if (nIndex >= nCurIndex + nCount) {
             nCurIndex += nCount;
             return NULL;
-        } else {
-            if (ppFind != NULL) {
-                *ppFind = pNames;
-            }
-            csName = pNames->GetString((nIndex - nCurIndex) * 2);
-            return pNames->GetElementValue((nIndex - nCurIndex) * 2 + 1);
         }
+        if (ppFind != NULL) {
+            *ppFind = pNames;
+        }
+        csName = pNames->GetString((nIndex - nCurIndex) * 2);
+        return pNames->GetElementValue((nIndex - nCurIndex) * 2 + 1);
     }
     CPDF_Array* pKids = pNode->GetArray(FX_BSTRC("Kids"));
     if (pKids == NULL) {

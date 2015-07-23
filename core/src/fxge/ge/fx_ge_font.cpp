@@ -345,9 +345,8 @@ CFX_ByteString CFX_Font::GetFamilyName() const
     }
     if (m_Face) {
         return CFX_ByteString(FXFT_Get_Face_Family_Name(m_Face));
-    } else {
-        return m_pSubstFont->m_Family;
     }
+    return m_pSubstFont->m_Family;
 }
 CFX_ByteString CFX_Font::GetFaceName() const
 {
@@ -365,9 +364,8 @@ CFX_ByteString CFX_Font::GetFaceName() const
             facename += " " + style;
         }
         return facename;
-    } else {
-        return m_pSubstFont->m_Family;
     }
+    return m_pSubstFont->m_Family;
 }
 FX_BOOL CFX_Font::GetBBox(FX_RECT &bbox)
 {
@@ -446,21 +444,20 @@ FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCode(FX_DWORD charcode)
 }
 FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCodeEx(FX_DWORD charcode, int encoding)
 {
-    FXFT_Face face =  m_pFont->GetFace();
+    FXFT_Face face = m_pFont->GetFace();
     if (!face) {
         return charcode;
     }
     if (encoding == ENCODING_UNICODE) {
-        return	GlyphFromCharCode(charcode);
-    } else {
-        int nmaps = FXFT_Get_Face_CharmapCount(m_pFont->m_Face);
-        int i = 0;
-        while (i < nmaps) {
-            int encoding = FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[i++]);
-            if (encoding != FXFT_ENCODING_UNICODE) {
-                FXFT_Select_Charmap(face, encoding);
-                break;
-            }
+        return GlyphFromCharCode(charcode);
+    }
+    int nmaps = FXFT_Get_Face_CharmapCount(m_pFont->m_Face);
+    int i = 0;
+    while (i < nmaps) {
+        int encoding = FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[i++]);
+        if (encoding != FXFT_ENCODING_UNICODE) {
+            FXFT_Select_Charmap(face, encoding);
+            break;
         }
     }
     return FXFT_Get_Char_Index(face, charcode);

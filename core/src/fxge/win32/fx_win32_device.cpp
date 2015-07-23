@@ -267,7 +267,8 @@ void CWin32FontInfo::GetJapanesePreference(CFX_ByteString& face, int weight, int
             }
         }
         return;
-    } else if (face.Find("Mincho") >= 0 || face.Find("\x96\xbe\x92\xa9") >= 0) {
+    }
+    if (face.Find("Mincho") >= 0 || face.Find("\x96\xbe\x92\xa9") >= 0) {
         if (face.Find("PMincho") >= 0 || face.Find("\x82\x6f\x96\xbe\x92\xa9") >= 0) {
             face = "MS PMincho";
         } else {
@@ -992,8 +993,10 @@ FX_BOOL CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD colo
         if (!bGDI) {
             CFX_DIBitmap background;
             if (!background.Create(width, height, FXDIB_Rgb32) ||
-                    !GetDIBits(&background, left, top, NULL) ||
-                    !background.CompositeMask(0, 0, width, height, pSource, color, 0, 0, FXDIB_BLEND_NORMAL, NULL, FALSE, alpha_flag, pIccTransform)) {
+                !GetDIBits(&background, left, top, NULL) ||
+                !background.CompositeMask(0, 0, width, height, pSource, color,
+                                          0, 0, FXDIB_BLEND_NORMAL, NULL, FALSE,
+                                          alpha_flag, pIccTransform)) {
                 return FALSE;
             }
             FX_RECT src_rect(0, 0, width, height);
@@ -1002,23 +1005,22 @@ FX_BOOL CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD colo
         FX_RECT clip_rect(left, top, left + pSrcRect->Width(), top + pSrcRect->Height());
         return StretchDIBits(pSource, color, left - pSrcRect->left, top - pSrcRect->top, width, height,
                              &clip_rect, 0, alpha_flag, pIccTransform, FXDIB_BLEND_NORMAL);
-    } else {
-        int width = pSrcRect->Width(), height = pSrcRect->Height();
-        if (pSource->HasAlpha()) {
-            CFX_DIBitmap bitmap;
-            if (!bitmap.Create(width, height, FXDIB_Rgb) ||
-                    !GetDIBits(&bitmap, left, top, NULL) ||
-                    !bitmap.CompositeBitmap(0, 0, width, height, pSource, pSrcRect->left, pSrcRect->top, FXDIB_BLEND_NORMAL, NULL, FALSE, pIccTransform)) {
-                return FALSE;
-            }
-            FX_RECT src_rect(0, 0, width, height);
-            return SetDIBits(&bitmap, 0, &src_rect, left, top, FXDIB_BLEND_NORMAL, 0, NULL);
+    }
+    int width = pSrcRect->Width(), height = pSrcRect->Height();
+    if (pSource->HasAlpha()) {
+        CFX_DIBitmap bitmap;
+        if (!bitmap.Create(width, height, FXDIB_Rgb) ||
+            !GetDIBits(&bitmap, left, top, NULL) ||
+            !bitmap.CompositeBitmap(0, 0, width, height, pSource, pSrcRect->left, pSrcRect->top, FXDIB_BLEND_NORMAL, NULL, FALSE, pIccTransform)) {
+            return FALSE;
         }
-        CFX_DIBExtractor temp(pSource);
-        CFX_DIBitmap* pBitmap = temp;
-        if (pBitmap) {
-            return GDI_SetDIBits(pBitmap, pSrcRect, left, top, pIccTransform);
-        }
+        FX_RECT src_rect(0, 0, width, height);
+        return SetDIBits(&bitmap, 0, &src_rect, left, top, FXDIB_BLEND_NORMAL, 0, NULL);
+    }
+    CFX_DIBExtractor temp(pSource);
+    CFX_DIBitmap* pBitmap = temp;
+    if (pBitmap) {
+        return GDI_SetDIBits(pBitmap, pSrcRect, left, top, pIccTransform);
     }
     return FALSE;
 }
@@ -1048,9 +1050,10 @@ FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD 
         int alpha_flag, void* pIccTransform, int blend_type)
 {
     ASSERT(pSource != NULL && pClipRect != NULL);
-    if (flags || dest_width > 10000 || dest_width < -10000 || dest_height > 10000 || dest_height < -10000)
+    if (flags || dest_width > 10000 || dest_width < -10000 || dest_height > 10000 || dest_height < -10000) {
         return UseFoxitStretchEngine(pSource, color, dest_left, dest_top, dest_width, dest_height,
                                      pClipRect, flags, alpha_flag, pIccTransform, blend_type);
+    }
     if (pSource->IsAlphaMask()) {
         FX_RECT image_rect;
         image_rect.left = dest_width > 0 ? dest_left : dest_left + dest_width;
@@ -1067,8 +1070,8 @@ FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD 
         }
         CFX_DIBitmap background;
         if (!background.Create(clip_width, clip_height, FXDIB_Rgb32) ||
-                !GetDIBits(&background, image_rect.left + clip_rect.left, image_rect.top + clip_rect.top, NULL) ||
-                !background.CompositeMask(0, 0, clip_width, clip_height, pStretched, color, 0, 0, FXDIB_BLEND_NORMAL, NULL, FALSE, alpha_flag, pIccTransform)) {
+            !GetDIBits(&background, image_rect.left + clip_rect.left, image_rect.top + clip_rect.top, NULL) ||
+            !background.CompositeMask(0, 0, clip_width, clip_height, pStretched, color, 0, 0, FXDIB_BLEND_NORMAL, NULL, FALSE, alpha_flag, pIccTransform)) {
             delete pStretched;
             return FALSE;
         }
@@ -1076,25 +1079,24 @@ FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD 
         FX_BOOL ret = SetDIBits(&background, 0, &src_rect, image_rect.left + clip_rect.left, image_rect.top + clip_rect.top, FXDIB_BLEND_NORMAL, 0, NULL);
         delete pStretched;
         return ret;
-    } else {
-        if (pSource->HasAlpha()) {
-            CWin32Platform* pPlatform = (CWin32Platform*)CFX_GEModule::Get()->GetPlatformData();
-            if (pPlatform->m_GdiplusExt.IsAvailable() && pIccTransform == NULL && !pSource->IsCmykImage()) {
-                CFX_DIBExtractor temp(pSource);
-                CFX_DIBitmap* pBitmap = temp;
-                if (pBitmap == NULL) {
-                    return FALSE;
-                }
-                return pPlatform->m_GdiplusExt.StretchDIBits(m_hDC, pBitmap, dest_left, dest_top, dest_width, dest_height, pClipRect, flags);
+    }
+    if (pSource->HasAlpha()) {
+        CWin32Platform* pPlatform = (CWin32Platform*)CFX_GEModule::Get()->GetPlatformData();
+        if (pPlatform->m_GdiplusExt.IsAvailable() && pIccTransform == NULL && !pSource->IsCmykImage()) {
+            CFX_DIBExtractor temp(pSource);
+            CFX_DIBitmap* pBitmap = temp;
+            if (pBitmap == NULL) {
+                return FALSE;
             }
-            return UseFoxitStretchEngine(pSource, color, dest_left, dest_top, dest_width, dest_height,
-                                         pClipRect, flags, alpha_flag, pIccTransform, blend_type);
+            return pPlatform->m_GdiplusExt.StretchDIBits(m_hDC, pBitmap, dest_left, dest_top, dest_width, dest_height, pClipRect, flags);
         }
-        CFX_DIBExtractor temp(pSource);
-        CFX_DIBitmap* pBitmap = temp;
-        if (pBitmap) {
-            return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width, dest_height, flags, pIccTransform);
-        }
+        return UseFoxitStretchEngine(pSource, color, dest_left, dest_top, dest_width, dest_height,
+                                     pClipRect, flags, alpha_flag, pIccTransform, blend_type);
+    }
+    CFX_DIBExtractor temp(pSource);
+    CFX_DIBitmap* pBitmap = temp;
+    if (pBitmap) {
+        return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width, dest_height, flags, pIccTransform);
     }
     return FALSE;
 }

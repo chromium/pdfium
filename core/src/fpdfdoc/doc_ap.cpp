@@ -17,13 +17,13 @@ FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict)
     FX_DWORD flags = FPDF_GetFieldAttr(pAnnotDict, "Ff")? FPDF_GetFieldAttr(pAnnotDict, "Ff")->GetInteger() : 0;
     if (field_type == "Tx") {
         return CPVT_GenerateAP::GenerateTextFieldAP(pDoc, pAnnotDict);
-    } else if (field_type == "Ch") {
-        if (flags & (1 << 17)) {
-            return CPVT_GenerateAP::GenerateComboBoxAP(pDoc, pAnnotDict);
-        } else {
-            return CPVT_GenerateAP::GenerateListBoxAP(pDoc, pAnnotDict);
-        }
-    } else if (field_type == "Btn") {
+    }
+    if (field_type == "Ch") {
+        return (flags & (1 << 17)) ?
+                CPVT_GenerateAP::GenerateComboBoxAP(pDoc, pAnnotDict) :
+                CPVT_GenerateAP::GenerateListBoxAP(pDoc, pAnnotDict);
+    }
+    if (field_type == "Btn") {
         if (!(flags & (1 << 16))) {
             if (!pAnnotDict->KeyExist("AS")) {
                 if (CPDF_Dictionary* pParentDict = pAnnotDict->GetDict("Parent")) {

@@ -761,7 +761,8 @@ FX_BOOL CPDF_ImageRenderer::Continue(IFX_Pause* pPause)
             m_pRenderStatus->m_pDevice->SetDIBits(m_pQuickStretcher->m_pBitmap, m_pQuickStretcher->m_ResultLeft,
                                                   m_pQuickStretcher->m_ResultTop, m_BlendType);
         return FALSE;
-    } else if (m_Status == 2) {
+    }
+    if (m_Status == 2) {
         if (m_pTransformer->Continue(pPause)) {
             return TRUE;
         }
@@ -784,16 +785,17 @@ FX_BOOL CPDF_ImageRenderer::Continue(IFX_Pause* pPause)
         }
         delete pBitmap;
         return FALSE;
-    } else if (m_Status == 3) {
+    }
+    if (m_Status == 3) {
         return m_pRenderStatus->m_pDevice->ContinueDIBits(m_DeviceHandle, pPause);
-    } else if (m_Status == 4) {
+    }
+    if (m_Status == 4) {
         if (m_Loader.Continue(m_LoadHandle, pPause)) {
             return TRUE;
         }
         if (StartRenderDIBSource()) {
             return Continue(pPause);
         }
-        return FALSE;
     }
     return FALSE;
 }

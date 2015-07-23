@@ -8,14 +8,14 @@
 
 void CRenderContext::Clear()
 {
-	m_pDevice = NULL;
-	m_pContext = NULL;
-	m_pRenderer = NULL;
-	m_pAnnots = NULL;
-	m_pOptions	= NULL;
+    m_pDevice = NULL;
+    m_pContext = NULL;
+    m_pRenderer = NULL;
+    m_pAnnots = NULL;
+    m_pOptions  = NULL;
 #ifdef _WIN32_WCE
-	m_pBitmap = NULL;
-	m_hBitmap = NULL;
+    m_pBitmap = NULL;
+    m_hBitmap = NULL;
 #endif
 }
 
@@ -35,15 +35,13 @@ CRenderContext::~CRenderContext()
 
 IFSDK_PAUSE_Adapter::IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause )
 {
-	m_IPause = IPause;
+    m_IPause = IPause;
 }
 
 FX_BOOL IFSDK_PAUSE_Adapter::NeedToPauseNow()
 {
-	if (m_IPause->NeedToPauseNow)
-	{
-		return m_IPause->NeedToPauseNow(m_IPause);
-	}else{
-		return FALSE;
-	}
+    if (m_IPause->NeedToPauseNow) {
+        return m_IPause->NeedToPauseNow(m_IPause);
+    }
+    return FALSE;
 }

@@ -33,7 +33,7 @@ CJS_RuntimeFactory::~CJS_RuntimeFactory()
 {
 }
 
-IFXJS_Runtime*					CJS_RuntimeFactory::NewJSRuntime(CPDFDoc_Environment* pApp)
+IFXJS_Runtime*                  CJS_RuntimeFactory::NewJSRuntime(CPDFDoc_Environment* pApp)
 {
 	if (!m_bInit)
 	{
@@ -42,54 +42,51 @@ IFXJS_Runtime*					CJS_RuntimeFactory::NewJSRuntime(CPDFDoc_Environment* pApp)
 	}
 	return new CJS_Runtime(pApp);
 }
-void							CJS_RuntimeFactory::AddRef()
+void                            CJS_RuntimeFactory::AddRef()
 {
-	//to do.Should be implemented as atom manipulation.
-	m_nRef++;
+    //to do.Should be implemented as atom manipulation.
+    m_nRef++;
 }
-void							CJS_RuntimeFactory::Release()
+void                            CJS_RuntimeFactory::Release()
 {
-	if(m_bInit)
-	{
-		//to do.Should be implemented as atom manipulation.
-		if (--m_nRef == 0)
-		{
-			JS_Release();
-			ReleaseGlobalData();
-			m_bInit = FALSE;
-		}
-	}
+    if(m_bInit)
+    {
+        //to do.Should be implemented as atom manipulation.
+        if (--m_nRef == 0)
+        {
+            JS_Release();
+            ReleaseGlobalData();
+            m_bInit = FALSE;
+        }
+    }
 }
 
-void							CJS_RuntimeFactory::DeleteJSRuntime(IFXJS_Runtime* pRuntime)
+void                            CJS_RuntimeFactory::DeleteJSRuntime(IFXJS_Runtime* pRuntime)
 {
     delete (CJS_Runtime*)pRuntime;
 }
 
-CJS_GlobalData*	CJS_RuntimeFactory::NewGlobalData(CPDFDoc_Environment* pApp)
+CJS_GlobalData* CJS_RuntimeFactory::NewGlobalData(CPDFDoc_Environment* pApp)
 {
-	if (m_pGlobalData)
-	{
-		m_nGlobalDataCount++;
-		return m_pGlobalData;
-	}
-	else
-	{
-		m_nGlobalDataCount = 1;
-		m_pGlobalData = new CJS_GlobalData(pApp);
-		return m_pGlobalData;
-	}
+    if (m_pGlobalData)
+    {
+        m_nGlobalDataCount++;
+        return m_pGlobalData;
+    }
+    m_nGlobalDataCount = 1;
+    m_pGlobalData = new CJS_GlobalData(pApp);
+    return m_pGlobalData;
 }
 
 void CJS_RuntimeFactory::ReleaseGlobalData()
 {
-	m_nGlobalDataCount--;
+    m_nGlobalDataCount--;
 
-	if (m_nGlobalDataCount <= 0)
-	{
- 		delete m_pGlobalData;
- 		m_pGlobalData = NULL;
-	}
+    if (m_nGlobalDataCount <= 0)
+    {
+        delete m_pGlobalData;
+        m_pGlobalData = NULL;
+    }
 }
 
 void* CJS_ArrayBufferAllocator::Allocate(size_t length) {
@@ -132,11 +129,11 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp) :
 		return;
 	}
 
-	InitJSObjects();
+    InitJSObjects();
 
-	CJS_Context * pContext = (CJS_Context*)NewContext();
-	JS_InitialRuntime(*this, this, pContext, m_context);
-	ReleaseContext(pContext);
+    CJS_Context * pContext = (CJS_Context*)NewContext();
+    JS_InitialRuntime(*this, this, pContext, m_context);
+    ReleaseContext(pContext);
 }
 
 CJS_Runtime::~CJS_Runtime()
@@ -145,19 +142,15 @@ CJS_Runtime::~CJS_Runtime()
 	for (int i=0;i < size; i++)
 		delete m_ContextArray.GetAt(i);
 
-	m_ContextArray.RemoveAll();
+    m_ContextArray.RemoveAll();
 
-	//JS_ReleaseRuntime(*this, m_context);
+    RemoveEventsInLoop(m_pFieldEventPath);
 
-	RemoveEventsInLoop(m_pFieldEventPath);
+    m_pApp = NULL;
+    m_pDocument = NULL;
+    m_pFieldEventPath = NULL;
+    m_context.Reset();
 
-	m_pApp = NULL;
-	m_pDocument = NULL;
-	m_pFieldEventPath = NULL;
-	m_context.Reset();
-
-	//m_isolate->Exit();
-	//m_isolate->Dispose();
 	m_isolate = NULL;
 }
 
@@ -206,31 +199,31 @@ FX_BOOL CJS_Runtime::InitJSObjects()
 
 IFXJS_Context* CJS_Runtime::NewContext()
 {
-	CJS_Context * p = new CJS_Context(this);
-	m_ContextArray.Add(p);
-	return p;
+    CJS_Context * p = new CJS_Context(this);
+    m_ContextArray.Add(p);
+    return p;
 }
 
 void CJS_Runtime::ReleaseContext(IFXJS_Context * pContext)
 {
-	CJS_Context* pJSContext = (CJS_Context*)pContext;
+    CJS_Context* pJSContext = (CJS_Context*)pContext;
 
-	for (int i=0, sz=m_ContextArray.GetSize(); i<sz; i++)
-	{
-		if (pJSContext == m_ContextArray.GetAt(i))
-		{
-			delete pJSContext;
-			m_ContextArray.RemoveAt(i);
-			break;
-		}
-	}
+    for (int i=0, sz=m_ContextArray.GetSize(); i<sz; i++)
+    {
+        if (pJSContext == m_ContextArray.GetAt(i))
+        {
+            delete pJSContext;
+            m_ContextArray.RemoveAt(i);
+            break;
+        }
+    }
 }
 
-IFXJS_Context*	CJS_Runtime::GetCurrentContext()
+IFXJS_Context*  CJS_Runtime::GetCurrentContext()
 {
-	if(!m_ContextArray.GetSize())
-		return NULL;
-	return m_ContextArray.GetAt(m_ContextArray.GetSize()-1);
+    if(!m_ContextArray.GetSize())
+        return NULL;
+    return m_ContextArray.GetAt(m_ContextArray.GetSize()-1);
 }
 
 void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc)
@@ -268,94 +261,94 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc)
 	}
 }
 
-FX_BOOL	CJS_Runtime::AddEventToLoop(const CFX_WideString& sTargetName, JS_EVENT_T eEventType)
+FX_BOOL CJS_Runtime::AddEventToLoop(const CFX_WideString& sTargetName, JS_EVENT_T eEventType)
 {
-	if (m_pFieldEventPath == NULL)
-	{
-		m_pFieldEventPath = new CJS_FieldEvent;
-		m_pFieldEventPath->sTargetName = sTargetName;
-		m_pFieldEventPath->eEventType = eEventType;
-		m_pFieldEventPath->pNext = NULL;
+    if (m_pFieldEventPath == NULL)
+    {
+        m_pFieldEventPath = new CJS_FieldEvent;
+        m_pFieldEventPath->sTargetName = sTargetName;
+        m_pFieldEventPath->eEventType = eEventType;
+        m_pFieldEventPath->pNext = NULL;
 
-		return TRUE;
-	}
+        return TRUE;
+    }
 
-	//to search
-	CJS_FieldEvent* p = m_pFieldEventPath;
-	CJS_FieldEvent* pLast = m_pFieldEventPath;
-	while (p)
-	{
-		if (p->eEventType == eEventType && p->sTargetName == sTargetName)
-			return FALSE;
+    //to search
+    CJS_FieldEvent* p = m_pFieldEventPath;
+    CJS_FieldEvent* pLast = m_pFieldEventPath;
+    while (p)
+    {
+        if (p->eEventType == eEventType && p->sTargetName == sTargetName)
+            return FALSE;
 
-		pLast = p;
-		p = p->pNext;
-	}
+        pLast = p;
+        p = p->pNext;
+    }
 
-	//to add
-	CJS_FieldEvent* pNew = new CJS_FieldEvent;
-	pNew->sTargetName = sTargetName;
-	pNew->eEventType = eEventType;
-	pNew->pNext = NULL;
+    //to add
+    CJS_FieldEvent* pNew = new CJS_FieldEvent;
+    pNew->sTargetName = sTargetName;
+    pNew->eEventType = eEventType;
+    pNew->pNext = NULL;
 
-	pLast->pNext = pNew;
+    pLast->pNext = pNew;
 
-	return TRUE;
+    return TRUE;
 }
 
 void CJS_Runtime::RemoveEventInLoop(const CFX_WideString& sTargetName, JS_EVENT_T eEventType)
 {
-	FX_BOOL bFind = FALSE;
+    FX_BOOL bFind = FALSE;
 
-	CJS_FieldEvent* p = m_pFieldEventPath;
-	CJS_FieldEvent* pLast = NULL;
-	while (p)
-	{
-		if (p->eEventType == eEventType && p->sTargetName == sTargetName)
-		{
-			bFind = TRUE;
-			break;
-		}
+    CJS_FieldEvent* p = m_pFieldEventPath;
+    CJS_FieldEvent* pLast = NULL;
+    while (p)
+    {
+        if (p->eEventType == eEventType && p->sTargetName == sTargetName)
+        {
+            bFind = TRUE;
+            break;
+        }
 
-		pLast = p;
-		p = p->pNext;
-	}
+        pLast = p;
+        p = p->pNext;
+    }
 
-	if (bFind)
-	{
-		RemoveEventsInLoop(p);
+    if (bFind)
+    {
+        RemoveEventsInLoop(p);
 
-		if (p == m_pFieldEventPath)
-			m_pFieldEventPath = NULL;
+        if (p == m_pFieldEventPath)
+            m_pFieldEventPath = NULL;
 
-		if (pLast)
-			pLast->pNext = NULL;
-	}
+        if (pLast)
+            pLast->pNext = NULL;
+    }
 }
 
 void CJS_Runtime::RemoveEventsInLoop(CJS_FieldEvent* pStart)
 {
-	CJS_FieldEvent* p = pStart;
+    CJS_FieldEvent* p = pStart;
 
-	while (p)
-	{
-		CJS_FieldEvent* pOld = p;
-		p = pOld->pNext;
+    while (p)
+    {
+        CJS_FieldEvent* pOld = p;
+        p = pOld->pNext;
 
-		delete pOld;
-	}
+        delete pOld;
+    }
 }
 
-v8::Local<v8::Context>	CJS_Runtime::NewJSContext()
+v8::Local<v8::Context>  CJS_Runtime::NewJSContext()
 {
-	return v8::Local<v8::Context>::New(m_isolate, m_context);
+    return v8::Local<v8::Context>::New(m_isolate, m_context);
 }
 
 CFX_WideString ChangeObjName(const CFX_WideString& str)
 {
-	CFX_WideString sRet = str;
-	sRet.Replace(L"_", L".");
-	return sRet;
+    CFX_WideString sRet = str;
+    sRet.Replace(L"_", L".");
+    return sRet;
 }
 FX_BOOL	CJS_Runtime::GetHValueByName(const CFX_ByteStringC& utf8Name, FXJSE_HVALUE hValue)
 {

@@ -288,19 +288,25 @@ FX_DWORD PDF_DecodeInlineStream(const uint8_t* src_buf, FX_DWORD limit,
     if (decoder == FX_BSTRC("CCITTFaxDecode") || decoder == FX_BSTRC("CCF")) {
         ICodec_ScanlineDecoder* pDecoder = FPDFAPI_CreateFaxDecoder(src_buf, limit, width, height, pParam);
         return _DecodeAllScanlines(pDecoder, dest_buf, dest_size);
-    } else if (decoder == FX_BSTRC("ASCII85Decode") || decoder == FX_BSTRC("A85")) {
+    }
+    if (decoder == FX_BSTRC("ASCII85Decode") || decoder == FX_BSTRC("A85")) {
         return _A85Decode(src_buf, limit, dest_buf, dest_size);
-    } else if (decoder == FX_BSTRC("ASCIIHexDecode") || decoder == FX_BSTRC("AHx")) {
+    }
+    if (decoder == FX_BSTRC("ASCIIHexDecode") || decoder == FX_BSTRC("AHx")) {
         return _HexDecode(src_buf, limit, dest_buf, dest_size);
-    } else if (decoder == FX_BSTRC("FlateDecode") || decoder == FX_BSTRC("Fl")) {
+    }
+    if (decoder == FX_BSTRC("FlateDecode") || decoder == FX_BSTRC("Fl")) {
         return FPDFAPI_FlateOrLZWDecode(FALSE, src_buf, limit, pParam, dest_size, dest_buf, dest_size);
-    } else if (decoder == FX_BSTRC("LZWDecode") || decoder == FX_BSTRC("LZW")) {
+    }
+    if (decoder == FX_BSTRC("LZWDecode") || decoder == FX_BSTRC("LZW")) {
         return FPDFAPI_FlateOrLZWDecode(TRUE, src_buf, limit, pParam, 0, dest_buf, dest_size);
-    } else if (decoder == FX_BSTRC("DCTDecode") || decoder == FX_BSTRC("DCT")) {
+    }
+    if (decoder == FX_BSTRC("DCTDecode") || decoder == FX_BSTRC("DCT")) {
         ICodec_ScanlineDecoder* pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
-                                               src_buf, limit, width, height, 0, pParam ? pParam->GetInteger(FX_BSTRC("ColorTransform"), 1) : 1);
+            src_buf, limit, width, height, 0, pParam ? pParam->GetInteger(FX_BSTRC("ColorTransform"), 1) : 1);
         return _DecodeAllScanlines(pDecoder, dest_buf, dest_size);
-    } else if (decoder == FX_BSTRC("RunLengthDecode") || decoder == FX_BSTRC("RL")) {
+    }
+    if (decoder == FX_BSTRC("RunLengthDecode") || decoder == FX_BSTRC("RL")) {
         return RunLengthDecode(src_buf, limit, dest_buf, dest_size);
     }
     dest_size = 0;

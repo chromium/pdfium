@@ -207,11 +207,11 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array *pExpression, FX_BOOL bFromConfig, i
         }
         if (pOCGObj->GetType() == PDFOBJ_DICTIONARY) {
             return !(bFromConfig ? LoadOCGState((CPDF_Dictionary*)pOCGObj) : GetOCGVisible((CPDF_Dictionary*)pOCGObj));
-        } else if (pOCGObj->GetType() == PDFOBJ_ARRAY) {
-            return !GetOCGVE((CPDF_Array*)pOCGObj, bFromConfig, nLevel + 1);
-        } else {
-            return FALSE;
         }
+        if (pOCGObj->GetType() == PDFOBJ_ARRAY) {
+            return !GetOCGVE((CPDF_Array*)pOCGObj, bFromConfig, nLevel + 1);
+        }
+        return FALSE;
     }
     if (csOperator == FX_BSTRC("Or") || csOperator == FX_BSTRC("And")) {
         FX_BOOL bValue = FALSE;
@@ -286,15 +286,14 @@ FX_BOOL CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary *pOCMDDict, FX_BOOL 
 }
 FX_BOOL CPDF_OCContext::CheckOCGVisible(const CPDF_Dictionary *pOCGDict)
 {
-    if (pOCGDict == NULL) {
+    if (!pOCGDict) {
         return TRUE;
     }
     CFX_ByteString csType = pOCGDict->GetString(FX_BSTRC("Type"), FX_BSTRC("OCG"));
     if (csType == FX_BSTRC("OCG")) {
         return GetOCGVisible(pOCGDict);
-    } else {
-        return LoadOCMDState(pOCGDict, FALSE);
     }
+    return LoadOCMDState(pOCGDict, FALSE);
 }
 void CPDF_OCContext::ResetOCContext()
 {

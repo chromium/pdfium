@@ -426,7 +426,8 @@ public:
                     }
                 }
                 return;
-            } else if (Bpp == 3 || Bpp == 4) {
+            }
+            if (Bpp == 3 || Bpp == 4) {
                 for (int col = col_start; col < col_end; col ++) {
                     int src_alpha;
                     if (clip_scan) {
@@ -488,7 +489,8 @@ public:
                 }
             }
             return;
-        } else if (Bpp == 3 || Bpp == 4) {
+        }
+        if (Bpp == 3 || Bpp == 4) {
             for (int col = col_start; col < col_end; col ++) {
                 int src_alpha;
                 if (clip_scan) {
@@ -517,7 +519,8 @@ public:
                 continue;
             }
             return;
-        } else if (Bpp == 1) {
+        }
+        if (Bpp == 1) {
             for (int col = col_start; col < col_end; col ++) {
                 int src_alpha;
                 if (clip_scan) {

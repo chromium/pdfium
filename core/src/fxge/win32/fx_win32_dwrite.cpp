@@ -286,10 +286,9 @@ HRESULT STDMETHODCALLTYPE CDwFontFileStream::QueryInterface(REFIID iid, void** p
         *ppvObject = this;
         AddRef();
         return S_OK;
-    } else {
-        *ppvObject = NULL;
-        return E_NOINTERFACE;
     }
+    *ppvObject = NULL;
+    return E_NOINTERFACE;
 }
 ULONG STDMETHODCALLTYPE CDwFontFileStream::AddRef()
 {
@@ -310,16 +309,14 @@ HRESULT STDMETHODCALLTYPE CDwFontFileStream::ReadFileFragment(
     OUT void** fragmentContext
 )
 {
-    if (fileOffset <= resourceSize_ &&
-            fragmentSize <= resourceSize_ - fileOffset) {
+    if (fileOffset <= resourceSize_ && fragmentSize <= resourceSize_ - fileOffset) {
         *fragmentStart = static_cast<uint8_t const*>(resourcePtr_) + static_cast<size_t>(fileOffset);
         *fragmentContext = NULL;
         return S_OK;
-    } else {
-        *fragmentStart = NULL;
-        *fragmentContext = NULL;
-        return E_FAIL;
     }
+    *fragmentStart = NULL;
+    *fragmentContext = NULL;
+    return E_FAIL;
 }
 void STDMETHODCALLTYPE CDwFontFileStream::ReleaseFileFragment(void* fragmentContext)
 {
@@ -345,10 +342,9 @@ HRESULT STDMETHODCALLTYPE CDwFontFileLoader::QueryInterface(REFIID iid, void** p
         *ppvObject = this;
         AddRef();
         return S_OK;
-    } else {
-        *ppvObject = NULL;
-        return E_NOINTERFACE;
     }
+    *ppvObject = NULL;
+    return E_NOINTERFACE;
 }
 ULONG STDMETHODCALLTYPE CDwFontFileLoader::AddRef()
 {
