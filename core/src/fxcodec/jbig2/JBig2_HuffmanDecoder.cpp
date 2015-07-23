@@ -14,9 +14,10 @@ CJBig2_HuffmanDecoder::~CJBig2_HuffmanDecoder()
 }
 int CJBig2_HuffmanDecoder::decodeAValue(CJBig2_HuffmanTable *pTable, int *nResult)
 {
-    int nVal, nTmp, i, nBits;
-    nVal = 0;
-    nBits = 0;
+    int i;
+    int nVal = 0;
+    int nBits = 0;
+    FX_DWORD nTmp;
     while(1) {
         if(m_pStream->read1Bit(&nTmp) == -1) {
             return -1;

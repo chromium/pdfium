@@ -152,7 +152,7 @@ public:
     virtual void		Finish(void* pContext);
     virtual void		Input(void* pContext, const uint8_t* src_buf, FX_DWORD src_size);
     virtual int			ReadHeader(void* pContext, int* width, int* height, int* nComps);
-    virtual FX_BOOL		StartScanline(void* pContext, int down_scale);
+    virtual int			StartScanline(void* pContext, int down_scale);
     virtual FX_BOOL		ReadScanline(void* pContext, uint8_t* dest_buf);
     virtual FX_DWORD	GetAvailInput(void* pContext, uint8_t** avail_buf_ptr);
 protected:

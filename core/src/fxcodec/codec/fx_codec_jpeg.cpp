@@ -641,14 +641,14 @@ int CCodec_JpegModule::ReadHeader(void* pContext, int* width, int* height, int* 
     *nComps = p->m_Info.num_components;
     return 0;
 }
-FX_BOOL CCodec_JpegModule::StartScanline(void* pContext, int down_scale)
+int CCodec_JpegModule::StartScanline(void* pContext, int down_scale)
 {
     if (m_pExtProvider) {
         return m_pExtProvider->StartScanline(pContext, down_scale);
     }
     FXJPEG_Context* p = (FXJPEG_Context*)pContext;
     if (setjmp(p->m_JumpMark) == -1) {
-        return FALSE;
+        return 0;
     }
     p->m_Info.scale_denom = down_scale;
     return jpeg_start_decompress(&p->m_Info);

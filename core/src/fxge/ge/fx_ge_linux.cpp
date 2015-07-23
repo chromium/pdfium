@@ -30,7 +30,7 @@ Base14Substs[] = {
 class CFX_LinuxFontInfo : public CFX_FolderFontInfo
 {
 public:
-    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, FX_BOOL& bExact);
+    void* MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, int& iExact) override;
     FX_BOOL				ParseFontCfg();
     void*				FindFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, FX_BOOL bMatchName);
 };
@@ -77,14 +77,14 @@ static int32_t GetJapanesePreference(const FX_CHAR* facearr, int weight, int pic
     }
     return 2;
 }
-void* CFX_LinuxFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, FX_BOOL& bExact)
+void* CFX_LinuxFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, int& iExact)
 {
     CFX_ByteString face = cstr_face;
     int iBaseFont;
     for (iBaseFont = 0; iBaseFont < 12; iBaseFont ++)
         if (face == CFX_ByteStringC(Base14Substs[iBaseFont].m_pName)) {
             face = Base14Substs[iBaseFont].m_pSubstName;
-            bExact = TRUE;
+            iExact = 1;
             break;
         }
     if (iBaseFont < 12) {

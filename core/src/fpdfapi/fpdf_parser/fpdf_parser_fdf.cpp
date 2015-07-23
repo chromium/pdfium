@@ -62,7 +62,7 @@ void CFDF_Document::ParseStream(IFX_FileRead *pFile, FX_BOOL bOwnFile)
             if (word != FX_BSTRC("obj")) {
                 break;
             }
-            CPDF_Object* pObj = parser.GetObject(this, objnum, 0, FALSE);
+            CPDF_Object* pObj = parser.GetObject(this, objnum, 0, 0);
             if (pObj == NULL) {
                 break;
             }

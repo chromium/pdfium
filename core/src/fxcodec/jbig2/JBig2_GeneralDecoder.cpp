@@ -2101,7 +2101,7 @@ CJBig2_Image *CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder *pArithDecoder, J
     CJBig2_Image *IBI;
     FX_DWORD WI, HI;
     int32_t IDS;
-    FX_BOOL RI;
+    int RI;
     int32_t RDWI, RDHI, RDXI, RDYI;
     CJBig2_Image *IBOI;
     FX_DWORD WOI, HOI;

@@ -1066,13 +1066,13 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
         dValue += DOUBLE_CORRECT;
 
     int iDec2;
-    FX_BOOL bNegative = FALSE;
+    int iNegative = 0;
 
-    strValue = fcvt(dValue,iDec,&iDec2,&bNegative);
+    strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
     if (strValue.IsEmpty())
     {
         dValue = 0;
-        strValue = fcvt(dValue,iDec,&iDec2,&bNegative);
+        strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
         if (strValue.IsEmpty())
         {
             strValue = "0";
@@ -1150,7 +1150,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 
     /////////////////////////////////////////////////////////////////////////
     //for processing negative style
-    if (bNegative)
+    if (iNegative)
     {
         if (iNegStyle == 0)
         {
@@ -1393,12 +1393,12 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
         dValue += DOUBLE_CORRECT;//Ð£Õý
 
     int iDec2;
-    FX_BOOL bNegative = FALSE;
-    strValue = fcvt(dValue,iDec,&iDec2,&bNegative);
+    int iNegative = 0;
+    strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
     if (strValue.IsEmpty())
     {
         dValue = 0;
-        strValue = fcvt(dValue,iDec,&iDec2,&bNegative);
+        strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
     }
 
     if (iDec2 < 0)
@@ -1456,7 +1456,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
     }
     ////////////////////////////////////////////////////////////////////
     //negative mark
-    if(bNegative)
+    if (iNegative)
         strValue = "-" + strValue;
     strValue += "%";
     Value = CFX_WideString::FromLocal(strValue);

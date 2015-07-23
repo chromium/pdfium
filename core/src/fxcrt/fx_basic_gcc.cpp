@@ -208,7 +208,7 @@ char* FXSYS_itoa(int value, char* string, int radix)
 extern "C" {
 #endif
 int FXSYS_WideCharToMultiByte(FX_DWORD codepage, FX_DWORD dwFlags, const FX_WCHAR* wstr, int wlen,
-                              FX_CHAR* buf, int buflen, const FX_CHAR* default_str, FX_BOOL* pUseDefault)
+                              FX_CHAR* buf, int buflen, const FX_CHAR* default_str, int* pUseDefault)
 {
     int len = 0;
     for (int i = 0; i < wlen; i ++) {

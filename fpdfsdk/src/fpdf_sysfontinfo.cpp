@@ -29,10 +29,10 @@ public:
 		return FALSE;
 	}
 
-	virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, FX_BOOL& bExact)  override
+	virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, int& iExact)  override
 	{
 		if (m_pInfo->MapFont)
-			return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family, family, &bExact);
+			return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family, family, &iExact);
 		return NULL;
 	}
 

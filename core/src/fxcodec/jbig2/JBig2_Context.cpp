@@ -873,7 +873,7 @@ failed:
     return nRet;
 }
 
-FX_BOOL CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
+int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment *pSegment)
 {
     FX_DWORD dwTemp;
     FX_WORD wFlags;
@@ -1239,7 +1239,7 @@ failed:
     return nRet;
 }
 
-FX_BOOL CJBig2_Context::parsePatternDict(CJBig2_Segment *pSegment, IFX_Pause* pPause)
+int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment *pSegment, IFX_Pause* pPause)
 {
     FX_DWORD dwTemp;
     uint8_t cFlags;
@@ -1293,7 +1293,7 @@ failed:
     delete pPDD;
     return nRet;
 }
-FX_BOOL CJBig2_Context::parseHalftoneRegion(CJBig2_Segment *pSegment, IFX_Pause* pPause)
+int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment *pSegment, IFX_Pause* pPause)
 {
     FX_DWORD dwTemp;
     uint8_t cFlags;
@@ -1387,7 +1387,7 @@ failed:
     return nRet;
 }
 
-FX_BOOL CJBig2_Context::parseGenericRegion(CJBig2_Segment *pSegment, IFX_Pause* pPause)
+int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment *pSegment, IFX_Pause* pPause)
 {
     FX_DWORD dwTemp;
     uint8_t cFlags;
@@ -1504,7 +1504,7 @@ failed:
     return nRet;
 }
 
-FX_BOOL CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment *pSegment)
+int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment *pSegment)
 {
     FX_DWORD dwTemp;
     JBig2RegionInfo ri;
@@ -1591,7 +1591,7 @@ failed:
     delete pGRRD;
     return nRet;
 }
-FX_BOOL CJBig2_Context::parseTable(CJBig2_Segment *pSegment)
+int32_t CJBig2_Context::parseTable(CJBig2_Segment *pSegment)
 {
     pSegment->m_nResultType = JBIG2_HUFFMAN_TABLE_POINTER;
     JBIG2_ALLOC(pSegment->m_Result.ht, CJBig2_HuffmanTable(m_pStream));
@@ -1618,9 +1618,15 @@ JBig2HuffmanCode *CJBig2_Context::decodeSymbolIDHuffmanTable(CJBig2_BitStream *p
         FX_DWORD SBNUMSYMS)
 {
     JBig2HuffmanCode *SBSYMCODES;
-    int32_t runcodes[35], runcodes_len[35], runcode;
-    int32_t i, j, nTemp, nVal, nBits;
+    int32_t runcodes[35];
+    int32_t runcodes_len[35];
+    int32_t runcode;
+    int32_t i;
+    int32_t j;
+    int32_t nVal;
+    int32_t nBits;
     int32_t run;
+    FX_DWORD nTemp;
     SBSYMCODES = (JBig2HuffmanCode*)m_pModule->JBig2_Malloc2(sizeof(JBig2HuffmanCode), SBNUMSYMS);
     for (i = 0; i < 35; i ++) {
         if(pStream->readNBits(4, &runcodes_len[i]) != 0) {
