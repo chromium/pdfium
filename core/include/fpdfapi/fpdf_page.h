@@ -24,36 +24,19 @@ class CPDF_StreamContentParser;
 #define PDFTRANS_GROUP			0x0100
 #define PDFTRANS_ISOLATED		0x0200
 #define PDFTRANS_KNOCKOUT		0x0400
-#define PDF_CONTENT_NOT_PARSED	0
-#define PDF_CONTENT_PARSING		1
-#define PDF_CONTENT_PARSED		2
+
 class CPDF_PageObjects
 {
 public:
-
     CPDF_PageObjects(FX_BOOL bReleaseMembers = TRUE);
-
     ~CPDF_PageObjects();
-
-
-
 
     void				ContinueParse(IFX_Pause* pPause);
 
-    int					GetParseState() const
-    {
-        return m_ParseState;
-    }
-
     FX_BOOL				IsParsed() const
     {
-        return m_ParseState == PDF_CONTENT_PARSED;
+        return m_ParseState == CONTENT_PARSED;
     }
-
-    int					EstimateParseProgress() const;
-
-
-
 
     FX_POSITION			GetFirstObjectPosition() const
     {
@@ -89,10 +72,6 @@ public:
 
     CPDF_PageObject*	GetObjectByIndex(int index) const;
 
-
-
-
-
     FX_POSITION			InsertObject(FX_POSITION posInsertAfter, CPDF_PageObject* pNewObject);
 
     void				Transform(const CFX_AffineMatrix& matrix);
@@ -105,17 +84,11 @@ public:
     CFX_FloatRect		CalcBoundingBox() const;
 
     CPDF_Dictionary*	m_pFormDict;
-
     CPDF_Stream*		m_pFormStream;
-
     CPDF_Document*		m_pDocument;
-
     CPDF_Dictionary*	m_pPageResources;
-
     CPDF_Dictionary*	m_pResources;
-
     CFX_FloatRect		m_BBox;
-
     int					m_Transparency;
 
 protected:
@@ -123,18 +96,22 @@ protected:
     friend class		CPDF_StreamContentParser;
     friend class		CPDF_AllStates;
 
-    CFX_PtrList			m_ObjectList;
+    enum ParseState {
+        CONTENT_NOT_PARSED,
+        CONTENT_PARSING,
+        CONTENT_PARSED
+    };
 
-    FX_BOOL				m_bBackgroundAlphaNeeded;
-
-    FX_BOOL				m_bReleaseMembers;
     void				LoadTransInfo();
     void                ClearCacheObjects();
 
+    CFX_PtrList			m_ObjectList;
+    FX_BOOL				m_bBackgroundAlphaNeeded;
+    FX_BOOL				m_bReleaseMembers;
     CPDF_ContentParser*	m_pParser;
-
-    FX_BOOL				m_ParseState;
+    ParseState			m_ParseState;
 };
+
 class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData
 {
 public:

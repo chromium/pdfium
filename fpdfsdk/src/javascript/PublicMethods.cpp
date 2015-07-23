@@ -1066,13 +1066,13 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 		dValue += DOUBLE_CORRECT;//
 
 	int iDec2;
-	FX_BOOL bNagative = FALSE;
+	int iNegative = 0;
 
-	strValue = fcvt(dValue,iDec,&iDec2,&bNagative);
+	strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
 	if (strValue.IsEmpty())
 	{
 		dValue = 0;
-		strValue = fcvt(dValue,iDec,&iDec2,&bNagative);
+		strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
 		if (strValue.IsEmpty())
 		{
 			strValue = "0";
@@ -1125,9 +1125,9 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 		else
 			cSeperator = '.';
 
-		int iDecPositive,iDecNagative;
+		int iDecPositive,iDecNegative;
 		iDecPositive = iDec2;
-		iDecNagative = iDec2;
+		iDecNegative = iDec2;
 
 		for (iDecPositive = iDec2 -3; iDecPositive > 0;iDecPositive -= 3)
 		{
@@ -1151,7 +1151,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc, const CJS_Paramete
 
 	/////////////////////////////////////////////////////////////////////////
 	//for processing negative style
-	if (bNagative)
+	if (iNegative)
 	{
 		if (iNegStyle == 0)
 		{
@@ -1394,12 +1394,12 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
 		dValue += DOUBLE_CORRECT;//Ð£Õý
 
 	int iDec2;
-	FX_BOOL bNagative = FALSE;
-	strValue = fcvt(dValue,iDec,&iDec2,&bNagative);
+	int iNegative = 0;
+	strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
     if (strValue.IsEmpty())
 	{
 		dValue = 0;
-		strValue = fcvt(dValue,iDec,&iDec2,&bNagative);
+		strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
 	}
 
 	if (iDec2 < 0)
@@ -1446,9 +1446,9 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
 		else
 			cSeperator = '.';
 
-		int iDecPositive,iDecNagative;
+		int iDecPositive,iDecNegative;
 		iDecPositive = iDec2;
-		iDecNagative = iDec2;
+		iDecNegative = iDec2;
 
 		for (iDecPositive = iDec2 -3; iDecPositive > 0; iDecPositive -= 3)
 		{
@@ -1457,8 +1457,8 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc, const CJS_Paramet
 		}
 	}
 	////////////////////////////////////////////////////////////////////
-	//nagative mark
-	if(bNagative)
+	//negative mark
+	if (iNegative)
 		strValue = "-" + strValue;
 	strValue += "%";
 	Value = CFX_WideString::FromLocal(strValue);

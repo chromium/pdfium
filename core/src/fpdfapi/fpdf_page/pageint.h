@@ -309,9 +309,15 @@ protected:
 class CPDF_ContentParser
 {
 public:
+    enum ParseStatus {
+        Ready,
+        ToBeContinued,
+        Done
+    };
+
     CPDF_ContentParser();
     ~CPDF_ContentParser();
-    typedef enum { Ready, ToBeContinued, Done } ParseStatus;
+
     ParseStatus			GetStatus()
     {
         return m_Status;
@@ -320,7 +326,7 @@ public:
     void				Start(CPDF_Form* pForm, CPDF_AllStates* pGraphicStates, CFX_AffineMatrix* pParentMatrix,
                               CPDF_Type3Char* pType3Char, CPDF_ParseOptions* pOptions, int level);
     void				Continue(IFX_Pause* pPause);
-    int					EstimateProgress();
+
 protected:
     void				Clear();
     ParseStatus			m_Status;

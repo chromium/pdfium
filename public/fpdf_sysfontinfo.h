@@ -94,13 +94,13 @@ typedef struct _FPDF_SYSFONTINFO {
      *          charset     -   Character set identifier for the requested font. See above defined constants.
      *          pitch_family -  A combination of flags. See above defined constants.
      *          face        -   Typeface name. Currently use system local encoding only.
-     *          bExact      -   Pointer to an boolean value receiving the indicator whether mapper found the exact match.
+     *          bExact      -   Pointer to a boolean value receiving the indicator whether mapper found the exact match.
      *                          If mapper is not sure whether it's exact match, ignore this paramter.
      * Return Value:
      *          An opaque pointer for font handle, or NULL if system mapping is not supported.
      **/
-    void* (*MapFont)(struct _FPDF_SYSFONTINFO* pThis, int weight, int bItalic, int charset, int pitch_family,
-                        const char* face, int* bExact);
+    void* (*MapFont)(struct _FPDF_SYSFONTINFO* pThis, int weight, FPDF_BOOL bItalic, int charset, int pitch_family,
+                     const char* face, FPDF_BOOL* bExact);
 
     /**
      * Method: GetFont

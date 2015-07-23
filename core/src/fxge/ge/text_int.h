@@ -32,7 +32,7 @@ public:
         m_RefCount = 0;
     }
     ~CTTFontDesc();
-    FX_BOOL			ReleaseFace(FXFT_Face face);
+    int32_t			ReleaseFace(FXFT_Face face);
     int				m_Type;
     union {
         struct {

@@ -26,10 +26,10 @@ CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode, int destcp, const FX_CHAR* d
         }
         return CFX_ByteString(defchar, -1);
     }
-    FX_BOOL bDef = FALSE;
     char buf[10];
-    int ret = FXSYS_WideCharToMultiByte(destcp, 0, (wchar_t*)&unicode, 1, buf, 10, NULL, &bDef);
-    if (ret && !bDef) {
+    int iDef = 0;
+    int ret = FXSYS_WideCharToMultiByte(destcp, 0, (wchar_t*)&unicode, 1, buf, 10, NULL, &iDef);
+    if (ret && !iDef) {
         return CFX_ByteString(buf, ret);
     }
     const FX_CHAR* altstr = FCS_GetAltStr(unicode);

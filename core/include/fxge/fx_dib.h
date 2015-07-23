@@ -518,54 +518,51 @@ class CStretchEngine;
 class CFX_ImageStretcher
 {
 public:
-
     CFX_ImageStretcher();
-
     ~CFX_ImageStretcher();
 
-    int32_t		Start(IFX_ScanlineComposer* pDest, const CFX_DIBSource* pBitmap,
-                          int dest_width, int dest_height, const FX_RECT& bitmap_rect, FX_DWORD flags);
+    FX_BOOL Start(IFX_ScanlineComposer* pDest, const CFX_DIBSource* pBitmap,
+                  int dest_width, int dest_height, const FX_RECT& bitmap_rect,
+                  FX_DWORD flags);
 
+    FX_BOOL Continue(IFX_Pause* pPause);
+    FX_BOOL StartQuickStretch();
+    FX_BOOL StartStretch();
+    FX_BOOL ContinueQuickStretch(IFX_Pause* pPause);
+    FX_BOOL ContinueStretch(IFX_Pause* pPause);
 
-    int32_t		Continue(IFX_Pause* pPause);
     IFX_ScanlineComposer*	m_pDest;
     const CFX_DIBSource*	m_pSource;
     CStretchEngine*		m_pStretchEngine;
     FX_DWORD		m_Flags;
-    FX_BOOL			m_bFlipX,
-                    m_bFlipY;
-    int				m_DestWidth,
-                    m_DestHeight;
+    FX_BOOL			m_bFlipX;
+    FX_BOOL         m_bFlipY;
+    int				m_DestWidth;
+    int             m_DestHeight;
     FX_RECT			m_ClipRect;
     int				m_LineIndex;
     int				m_DestBPP;
     uint8_t*		m_pScanline;
     uint8_t*       m_pMaskScanline;
     FXDIB_Format	m_DestFormat;
-
-    int32_t		StartQuickStretch();
-
-    int32_t		StartStretch();
-
-    int32_t		ContinueQuickStretch(IFX_Pause* pPause);
-
-    int32_t		ContinueStretch(IFX_Pause* pPause);
 };
 class CFX_ImageTransformer
 {
 public:
-
     CFX_ImageTransformer();
-
     ~CFX_ImageTransformer();
 
-    int32_t	Start(const CFX_DIBSource* pSrc, const CFX_AffineMatrix* pMatrix, int flags, const FX_RECT* pClip);
+    FX_BOOL Start(const CFX_DIBSource* pSrc, const CFX_AffineMatrix* pMatrix,
+                  int flags, const FX_RECT* pClip);
 
+    FX_BOOL Continue(IFX_Pause* pPause);
 
-    int32_t	Continue(IFX_Pause* pPause);
     CFX_AffineMatrix* m_pMatrix;
     FX_RECT		m_StretchClip;
-    int			m_ResultLeft, m_ResultTop, m_ResultWidth, m_ResultHeight;
+    int			m_ResultLeft;
+    int			m_ResultTop;
+    int			m_ResultWidth;
+    int			m_ResultHeight;
     CFX_AffineMatrix	m_dest2stretch;
     CFX_ImageStretcher	m_Stretcher;
     CFX_BitmapStorer	m_Storer;
@@ -575,18 +572,18 @@ public:
 class CFX_ImageRenderer
 {
 public:
-
     CFX_ImageRenderer();
-
     ~CFX_ImageRenderer();
 
-    int32_t			Start(CFX_DIBitmap* pDevice, const CFX_ClipRgn* pClipRgn,
-                              const CFX_DIBSource* pSource, int bitmap_alpha,
-                              FX_DWORD mask_color, const CFX_AffineMatrix* pMatrix, FX_DWORD dib_flags,
-                              FX_BOOL bRgbByteOrder = FALSE, int alpha_flag = 0, void* pIccTransform = NULL,
-                              int blend_type = FXDIB_BLEND_NORMAL);
+    FX_BOOL Start(CFX_DIBitmap* pDevice, const CFX_ClipRgn* pClipRgn,
+                  const CFX_DIBSource* pSource, int bitmap_alpha,
+                  FX_DWORD mask_color, const CFX_AffineMatrix* pMatrix,
+                  FX_DWORD dib_flags, FX_BOOL bRgbByteOrder = FALSE,
+                  int alpha_flag = 0, void* pIccTransform = NULL,
+                  int blend_type = FXDIB_BLEND_NORMAL);
 
-    int32_t			Continue(IFX_Pause* pPause);
+    FX_BOOL Continue(IFX_Pause* pPause);
+
 protected:
     CFX_DIBitmap*		m_pDevice;
     const CFX_ClipRgn*	m_pClipRgn;

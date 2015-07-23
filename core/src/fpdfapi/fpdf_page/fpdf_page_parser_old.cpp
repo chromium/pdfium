@@ -1133,19 +1133,3 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause)
         }
     }
 }
-int CPDF_ContentParser::EstimateProgress()
-{
-    if (m_Status == Ready) {
-        return 0;
-    }
-    if (m_Status == Done) {
-        return 100;
-    }
-    if (m_InternalStage == PAGEPARSE_STAGE_GETCONTENT) {
-        return 10;
-    }
-    if (m_InternalStage == PAGEPARSE_STAGE_CHECKCLIP) {
-        return 90;
-    }
-    return 10 + 80 * m_CurrentOffset / m_Size;
-}

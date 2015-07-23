@@ -44,7 +44,7 @@ DLLEXPORT void STDCALL FPDFPage_SetCropBox(FPDF_PAGE page, float left, float bot
 }
 
 
-DLLEXPORT FX_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page, float* left, float* bottom, float* right, float* top)
+DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page, float* left, float* bottom, float* right, float* top)
 {
 	if(!page)
 		return FALSE;

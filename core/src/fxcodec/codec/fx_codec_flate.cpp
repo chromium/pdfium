@@ -84,19 +84,21 @@ extern "C"
 class CLZWDecoder
 {
 public:
-    FX_BOOL Decode(uint8_t* output, FX_DWORD& outlen, const uint8_t* input, FX_DWORD& size, FX_BOOL bEarlyChange);
+    int Decode(uint8_t* output, FX_DWORD& outlen, const uint8_t* input, FX_DWORD& size, FX_BOOL bEarlyChange);
+
 private:
+    void AddCode(FX_DWORD prefix_code, uint8_t append_char);
+    void DecodeString(FX_DWORD code);
+
     FX_DWORD	m_InPos;
     FX_DWORD	m_OutPos;
     uint8_t*	m_pOutput;
     const uint8_t*	m_pInput;
     FX_BOOL		m_Early;
-    void		AddCode(FX_DWORD prefix_code, uint8_t append_char);
     FX_DWORD	m_CodeArray[5021];
     FX_DWORD	m_nCodes;
     uint8_t		m_DecodeStack[4000];
     FX_DWORD	m_StackLen;
-    void		DecodeString(FX_DWORD code);
     int			m_CodeLen;
 };
 void CLZWDecoder::AddCode(FX_DWORD prefix_code, uint8_t append_char)

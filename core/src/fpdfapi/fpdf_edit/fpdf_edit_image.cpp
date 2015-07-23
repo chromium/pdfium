@@ -12,7 +12,11 @@
 #include "../fpdf_render/render_int.h"
 CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, FX_DWORD size)
 {
-    int32_t width, height, color_trans, num_comps, bits;
+    int32_t width;
+    int32_t height;
+    int32_t num_comps;
+    int32_t bits;
+    FX_BOOL color_trans;
     if (!CPDF_ModuleMgr::Get()->GetJpegModule()->
             LoadInfo(pData, size, width, height, num_comps, bits, color_trans)) {
         return NULL;
