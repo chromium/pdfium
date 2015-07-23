@@ -720,14 +720,19 @@ void CPDF_FormObject::CalcBoundingBox()
     m_Right = form_rect.right;
     m_Top = form_rect.top;
 }
-CPDF_PageObjects::CPDF_PageObjects(FX_BOOL bReleaseMembers) : m_ObjectList(128)
+CPDF_PageObjects::CPDF_PageObjects(FX_BOOL bReleaseMembers)
+    : m_pFormDict(nullptr),
+      m_pFormStream(nullptr),
+      m_pDocument(nullptr),
+      m_pPageResources(nullptr),
+      m_pResources(nullptr),
+      m_Transparency(0),
+      m_ObjectList(128),
+      m_bBackgroundAlphaNeeded(FALSE),
+      m_bReleaseMembers(bReleaseMembers),
+      m_pParser(nullptr),
+      m_ParseState(CONTENT_NOT_PARSED)
 {
-    m_bBackgroundAlphaNeeded = FALSE;
-    m_bReleaseMembers = bReleaseMembers;
-    m_ParseState = PDF_CONTENT_NOT_PARSED;
-    m_pParser = NULL;
-    m_pFormStream = NULL;
-    m_pResources = NULL;
 }
 CPDF_PageObjects::~CPDF_PageObjects()
 {
@@ -747,17 +752,10 @@ void CPDF_PageObjects::ContinueParse(IFX_Pause* pPause)
     }
     m_pParser->Continue(pPause);
     if (m_pParser->GetStatus() == CPDF_ContentParser::Done) {
-        m_ParseState = PDF_CONTENT_PARSED;
+        m_ParseState = CONTENT_PARSED;
         delete m_pParser;
         m_pParser = NULL;
     }
-}
-int CPDF_PageObjects::EstimateParseProgress() const
-{
-    if (!m_pParser) {
-        return m_ParseState == PDF_CONTENT_PARSED ? 100 : 0;
-    }
-    return m_pParser->EstimateProgress();
 }
 FX_POSITION CPDF_PageObjects::InsertObject(FX_POSITION posInsertAfter, CPDF_PageObject* pNewObject)
 {
@@ -843,7 +841,7 @@ void CPDF_PageObjects::LoadTransInfo()
 }
 void CPDF_PageObjects::ClearCacheObjects()
 {
-    m_ParseState = PDF_CONTENT_NOT_PARSED;
+    m_ParseState = CONTENT_NOT_PARSED;
     delete m_pParser;
     m_pParser = NULL;
     if (m_bReleaseMembers) {
@@ -930,12 +928,12 @@ void CPDF_Page::StartParse(CPDF_ParseOptions* pOptions, FX_BOOL bReParse)
     if (bReParse) {
         ClearCacheObjects();
     }
-    if (m_ParseState == PDF_CONTENT_PARSED || m_ParseState == PDF_CONTENT_PARSING) {
+    if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING) {
         return;
     }
     m_pParser = new CPDF_ContentParser;
     m_pParser->Start(this, pOptions);
-    m_ParseState = PDF_CONTENT_PARSING;
+    m_ParseState = CONTENT_PARSING;
 }
 void CPDF_Page::ParseContent(CPDF_ParseOptions* pOptions, FX_BOOL bReParse)
 {
@@ -994,12 +992,12 @@ CPDF_Form::~CPDF_Form()
 void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates, CFX_AffineMatrix* pParentMatrix,
                            CPDF_Type3Char* pType3Char, CPDF_ParseOptions* pOptions, int level)
 {
-    if (m_ParseState == PDF_CONTENT_PARSED || m_ParseState == PDF_CONTENT_PARSING) {
+    if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING) {
         return;
     }
     m_pParser = new CPDF_ContentParser;
     m_pParser->Start(this, pGraphicStates, pParentMatrix, pType3Char, pOptions, level);
-    m_ParseState = PDF_CONTENT_PARSING;
+    m_ParseState = CONTENT_PARSING;
 }
 void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates, CFX_AffineMatrix* pParentMatrix,
                              CPDF_Type3Char* pType3Char, CPDF_ParseOptions* pOptions, int level)
