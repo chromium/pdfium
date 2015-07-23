@@ -7,10 +7,10 @@ Alert: this.calculate is boolean true
 Alert: this.Collab is undefined undefined
 Alert: this.creationDate is string 
 Alert: this.creator is string Joe Random Creator
-Alert: this.delay is number 0
+Alert: this.delay is boolean false
 Alert: this.dirty is boolean false
 Alert: this.documentFileName is string 
-Alert: this.external is number 1
+Alert: this.external is boolean true
 Alert: this.filesize is number 0
 Alert: this.icons is undefined undefined
 Alert: this.info is object [object Object]
@@ -72,10 +72,10 @@ Alert: this.calculate is boolean true
 Alert: this.Collab is undefined undefined
 Alert: this.creationDate is string 3
 Alert: this.creator is string 3
-Alert: this.delay is number 1
+Alert: this.delay is boolean true
 Alert: this.dirty is boolean true
 Alert: this.documentFileName is string 
-Alert: this.external is number 1
+Alert: this.external is boolean true
 Alert: this.filesize is number 0
 Alert: this.icons is undefined undefined
 Alert: this.info is object [object Object]

@@ -182,7 +182,7 @@ private:
 	IconTree*                               m_pIconTree;
 	CPDFSDK_Document*                       m_pDocument;
 	CFX_WideString                          m_cwBaseURL;
-	FX_BOOL                                 m_bDelay;
+	bool                                    m_bDelay;
 	CFX_ArrayTemplate<CJS_DelayData*>       m_DelayData;
 	CFX_ArrayTemplate<CJS_AnnotObj*>        m_DelayAnnotData;
 };

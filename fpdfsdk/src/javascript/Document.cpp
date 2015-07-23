@@ -940,9 +940,7 @@ FX_BOOL Document::delay(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
         if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
             return FALSE;
 
-        bool b;
-        vp >> b;
-        m_bDelay = b;
+        vp >> m_bDelay;
         if (m_bDelay)
         {
             for (int i=0,sz=m_DelayData.GetSize(); i<sz; i++)
@@ -1107,7 +1105,7 @@ FX_BOOL Document::external(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString&
 {
     //In Chrome case,should always return true.
     if (vp.IsGetting()) {
-        vp << TRUE;
+        vp << true;
     }
     return TRUE;
 }
