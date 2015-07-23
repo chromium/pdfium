@@ -137,7 +137,7 @@ struct PWL_CLASS CPWL_Color
 	FX_FLOAT					fColor1,fColor2,fColor3,fColor4;
 };
 
-inline bool operator == (const CPWL_Color &c1, const CPWL_Color &c2)
+inline FX_BOOL operator == (const CPWL_Color &c1, const CPWL_Color &c2)
 {
 	return c1.nColorType == c2.nColorType &&
 		c1.fColor1 - c2.fColor1 < 0.0001 && c1.fColor1 - c2.fColor1 > -0.0001 &&
@@ -146,7 +146,7 @@ inline bool operator == (const CPWL_Color &c1, const CPWL_Color &c2)
 		c1.fColor4 - c2.fColor4 < 0.0001 && c1.fColor4 - c2.fColor4 > -0.0001;
 }
 
-inline bool operator != (const CPWL_Color &c1, const CPWL_Color &c2)
+inline FX_BOOL operator != (const CPWL_Color &c1, const CPWL_Color &c2)
 {
 	return !operator == (c1, c2);
 }
@@ -173,7 +173,7 @@ class IPWL_SpellCheck
 {
 public:
         virtual ~IPWL_SpellCheck() { }
-	virtual bool							CheckWord(const FX_CHAR* sWord) = 0;
+	virtual FX_BOOL							CheckWord(const FX_CHAR* sWord) = 0;
 	virtual void							SuggestWords(const FX_CHAR* sWord, CFX_ByteStringArray & sSuggest) = 0;
 };
 
@@ -298,25 +298,25 @@ public:
 	void							Create(const PWL_CREATEPARAM & cp);
 	virtual CFX_ByteString			GetClassName() const;
 	void							Destroy();
-	void							Move(const CPDF_Rect & rcNew,bool bReset,bool bRefresh);
+	void							Move(const CPDF_Rect & rcNew,FX_BOOL bReset,FX_BOOL bRefresh);
 	virtual void					InvalidateRect(CPDF_Rect* pRect = NULL);
 
 	void							GetAppearanceStream(CFX_ByteString & sAppStream);
 	void							DrawAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device);
 
-	virtual bool					OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
-	virtual bool					OnKeyUp(FX_WORD nChar, FX_DWORD nFlag);
-	virtual bool					OnChar(FX_WORD nChar, FX_DWORD nFlag);
-	virtual bool					OnLButtonDblClk(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnMButtonDblClk(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnMButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnMButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnRButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnRButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
+	virtual FX_BOOL					OnKeyUp(FX_WORD nChar, FX_DWORD nFlag);
+	virtual FX_BOOL					OnChar(FX_WORD nChar, FX_DWORD nFlag);
+	virtual FX_BOOL					OnLButtonDblClk(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnMButtonDblClk(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnMButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnMButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnRButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnRButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag);
 
 	virtual void					SetFocus();
 	virtual void					KillFocus();
@@ -326,7 +326,7 @@ public:
 	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 	virtual void					SetTextColor(const CPWL_Color & color);
 	virtual void					SetTextStrokeColor(const CPWL_Color & color);
-	virtual void					SetVisible(bool bVisible);
+	virtual void					SetVisible(FX_BOOL bVisible);
 
 	virtual CPDF_Rect				GetFocusRect() const;
 	virtual CPWL_Color				GetBackgroundColor() const;
@@ -338,7 +338,7 @@ public:
 	virtual CPWL_Color				GetBorderLeftTopColor(int32_t nBorderStyle) const;
 	virtual CPWL_Color				GetBorderRightBottomColor(int32_t nBorderStyle) const;
 
-	virtual bool					IsModified() const {return false;}
+	virtual FX_BOOL					IsModified() const {return FALSE;}
 
 	virtual void					SetFontSize(FX_FLOAT fFontSize);
 
@@ -356,8 +356,8 @@ public:
 	CPDF_Rect						GetClientCenterSquare() const;
 	CPDF_Rect						GetWindowCenterSquare() const;
 	int32_t						GetBorderWidth() const;
-	bool							IsVisible() const {return m_bVisible;}
-	bool							HasFlag(FX_DWORD dwFlags) const;
+	FX_BOOL							IsVisible() const {return m_bVisible;}
+	FX_BOOL							HasFlag(FX_DWORD dwFlags) const;
 	void							AddFlag(FX_DWORD dwFlags);
 	void							RemoveFlag(FX_DWORD dwFlags);
 	CPDF_Rect						GetClipRect() const;
@@ -366,13 +366,13 @@ public:
 	CPWL_Dash						GetBorderDash() const;
 	void*							GetAttachedData() const;
 
-	bool							WndHitTest(const CPDF_Point & point) const;
-	bool							ClientHitTest(const CPDF_Point & point) const;
-	bool							IsCaptureMouse() const;
+	FX_BOOL							WndHitTest(const CPDF_Point & point) const;
+	FX_BOOL							ClientHitTest(const CPDF_Point & point) const;
+	FX_BOOL							IsCaptureMouse() const;
 
 	const CPWL_Wnd*					GetFocused() const;
-	bool							IsFocused() const;
-	bool							IsReadOnly() const;
+	FX_BOOL							IsFocused() const;
+	FX_BOOL							IsReadOnly() const;
 	CPWL_ScrollBar*					GetVScrollBar() const;
 
 	IFX_Edit_FontMap*				GetFontMap() const;
@@ -398,8 +398,8 @@ public:
 	virtual FX_FLOAT				GetItemLeftMargin() {return 0;}
 	virtual FX_FLOAT				GetItemRightMargin() {return 0;}
 
-	void							EnableWindow(bool bEnable);
-	bool							IsEnabled();
+	void							EnableWindow(FX_BOOL bEnable);
+	FX_BOOL							IsEnabled();
 	virtual void					SetCursor();
 
 protected:
@@ -422,11 +422,11 @@ protected:
 	virtual void					OnEnabled();
 	virtual void					OnDisabled();
 
-	void							SetNotifyFlag(bool bNotifying = true){m_bNotifying = bNotifying;};
+	void							SetNotifyFlag(FX_BOOL bNotifying = TRUE){m_bNotifying = bNotifying;};
 
-	bool							IsValid() const;
+	FX_BOOL							IsValid() const;
 	PWL_CREATEPARAM					GetCreationParam() const;
-	bool							IsNotifying() const {return m_bNotifying;}
+	FX_BOOL							IsNotifying() const {return m_bNotifying;}
 
 	void							InvalidateRectMove(const CPDF_Rect & rcOld, const CPDF_Rect & rcNew);
 
@@ -434,14 +434,14 @@ protected:
 	FX_RECT							PWLtoWnd(const CPDF_Rect & rect) const;
 	FX_HWND							GetAttachedHWnd() const;
 
-	bool							IsWndCaptureMouse(const CPWL_Wnd * pWnd) const;
-	bool							IsWndCaptureKeyboard(const CPWL_Wnd * pWnd) const;
+	FX_BOOL							IsWndCaptureMouse(const CPWL_Wnd * pWnd) const;
+	FX_BOOL							IsWndCaptureKeyboard(const CPWL_Wnd * pWnd) const;
 	const CPWL_Wnd*					GetRootWnd() const;
 
-	bool							IsCTRLpressed(FX_DWORD nFlag) const;
-	bool							IsSHIFTpressed(FX_DWORD nFlag) const;
-	bool							IsALTpressed(FX_DWORD nFlag) const;
-	bool							IsINSERTpressed(FX_DWORD nFlag) const;
+	FX_BOOL							IsCTRLpressed(FX_DWORD nFlag) const;
+	FX_BOOL							IsSHIFTpressed(FX_DWORD nFlag) const;
+	FX_BOOL							IsALTpressed(FX_DWORD nFlag) const;
+	FX_BOOL							IsINSERTpressed(FX_DWORD nFlag) const;
 
 private:
 	void							AddChild(CPWL_Wnd * pWnd);
@@ -467,10 +467,10 @@ private:
 	CPDF_Rect						m_rcWindow;
 	CPDF_Rect						m_rcClip;
 
-	bool							m_bCreated;
-	bool							m_bVisible;
-	bool							m_bNotifying;
-	bool							m_bEnabled;
+	FX_BOOL							m_bCreated;
+	FX_BOOL							m_bVisible;
+	FX_BOOL							m_bNotifying;
+	FX_BOOL							m_bEnabled;
 };
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_WND_H_

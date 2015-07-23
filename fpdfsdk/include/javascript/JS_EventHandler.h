@@ -79,32 +79,32 @@ public:
 	void					OnPage_InView(CPDFSDK_Document* pTarget);
 	void					OnPage_OutView(CPDFSDK_Document* pTarget);
 
-	void					OnField_Calculate(CPDF_FormField* pSource, CPDF_FormField* pTarget, CFX_WideString& Value, bool& bRc);
-	void					OnField_Format(CPDF_FormField* pTarget, CFX_WideString& Value, bool bWillCommit);
+	void					OnField_Calculate(CPDF_FormField* pSource, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL& bRc);
+	void					OnField_Format(CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit);
 	void					OnField_Keystroke(CFX_WideString& strChange, const CFX_WideString& strChangeEx,
-								bool KeyDown, bool bModifier, int &nSelEnd,int &nSelStart, bool bShift,
-								CPDF_FormField* pTarget, CFX_WideString& Value, bool bWillCommit,
-								bool bFieldFull, bool &bRc);
-	void					OnField_Validate(CFX_WideString& strChange, const CFX_WideString& strChangeEx, bool bKeyDown,
-								bool bModifier, bool bShift, CPDF_FormField* pTarget, CFX_WideString& Value, bool& bRc);
+								FX_BOOL KeyDown, FX_BOOL bModifier, int &nSelEnd,int &nSelStart, FX_BOOL bShift,
+								CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL bWillCommit,
+								FX_BOOL bFieldFull, FX_BOOL &bRc);
+	void					OnField_Validate(CFX_WideString& strChange, const CFX_WideString& strChangeEx, FX_BOOL bKeyDown,
+								FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField* pTarget, CFX_WideString& Value, FX_BOOL& bRc);
 
-	void					OnField_MouseDown(bool bModifier, bool bShift, CPDF_FormField *pTarget);
-	void					OnField_MouseEnter(bool bModifier, bool bShift, CPDF_FormField *pTarget);
-	void					OnField_MouseExit(bool bModifier, bool bShift, CPDF_FormField *pTarget);
-	void					OnField_MouseUp(bool bModifier, bool bShift, CPDF_FormField *pTarget);
-	void					OnField_Blur(bool bModifier, bool bShift, CPDF_FormField* pTarget, const CFX_WideString& Value);
-	void					OnField_Focus(bool bModifier, bool bShift, CPDF_FormField* pTarget, const CFX_WideString& Value);
+	void					OnField_MouseDown(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField *pTarget);
+	void					OnField_MouseEnter(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField *pTarget);
+	void					OnField_MouseExit(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField *pTarget);
+	void					OnField_MouseUp(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField *pTarget);
+	void					OnField_Blur(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField* pTarget, const CFX_WideString& Value);
+	void					OnField_Focus(FX_BOOL bModifier, FX_BOOL bShift, CPDF_FormField* pTarget, const CFX_WideString& Value);
 
-	void					OnScreen_Focus(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
-	void					OnScreen_Blur(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
-	void					OnScreen_Open(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
-	void					OnScreen_Close(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
-	void					OnScreen_MouseDown(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
-	void					OnScreen_MouseUp(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
-	void					OnScreen_MouseEnter(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
-	void					OnScreen_MouseExit(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
-	void					OnScreen_InView(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
-	void					OnScreen_OutView(bool bModifier, bool bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_Focus(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_Blur(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_Open(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_Close(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_MouseDown(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_MouseUp(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_MouseEnter(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_MouseExit(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_InView(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
+	void					OnScreen_OutView(FX_BOOL bModifier, FX_BOOL bShift, CPDFSDK_Annot* pScreen);
 
 	void					OnBookmark_MouseUp(CPDF_Bookmark* pBookMark);
 	void					OnLink_MouseUp(CPDFSDK_Document* pTarget);
@@ -117,25 +117,25 @@ public:
 public:
     void					Initial(JS_EVENT_T type);
 	void					Destroy();
-	bool					IsValid();
+	FX_BOOL					IsValid();
 
 
 	CFX_WideString&			Change();
 	CFX_WideString			ChangeEx();
 	int						CommitKey();
-	bool					FieldFull();
-	bool					KeyDown();
-	bool					Modifier();
+	FX_BOOL					FieldFull();
+	FX_BOOL					KeyDown();
+	FX_BOOL					Modifier();
 	const FX_WCHAR*				Name();
 	const FX_WCHAR*				Type();
-	bool&				Rc();
+	FX_BOOL&				Rc();
 	int&					SelEnd();
 	int&					SelStart();
-	bool					Shift();
+	FX_BOOL					Shift();
 	Field*					Source();
 	Field*					Target_Field();
 	CFX_WideString&			Value();
-	bool					WillCommit();
+	FX_BOOL					WillCommit();
 	CFX_WideString			TargetName();
 
 	JS_EVENT_T				EventType() {return m_eEventType;};
@@ -143,7 +143,7 @@ public:
 public:
 	CJS_Context*			m_pJSContext;
 	JS_EVENT_T				m_eEventType;
-	bool					m_bValid;
+	FX_BOOL					m_bValid;
 
 	CFX_WideString			m_strTargetName;
 	CFX_WideString			m_strSourceName;
@@ -151,18 +151,18 @@ public:
 	CFX_WideString			m_WideStrChangeDu;
 	CFX_WideString			m_WideStrChangeEx;
 	int						m_nCommitKey;
-	bool					m_bKeyDown;
-	bool					m_bModifier;
-	bool					m_bShift;
+	FX_BOOL					m_bKeyDown;
+	FX_BOOL					m_bModifier;
+	FX_BOOL					m_bShift;
 	int*					m_pISelEnd;
 	int						m_nSelEndDu;
 	int*					m_pISelStart;
 	int						m_nSelStartDu;
-	bool					m_bWillCommit;
+	FX_BOOL					m_bWillCommit;
 	CFX_WideString*			m_pValue;
-	bool					m_bFieldFull;
-	bool*				m_pbRc;
-	bool					m_bRcDu;
+	FX_BOOL					m_bFieldFull;
+	FX_BOOL*				m_pbRc;
+	FX_BOOL					m_bRcDu;
 
 	CPDFSDK_Document*		m_pSourceDoc;
 	CPDF_Bookmark*			m_pTargetBookMark;

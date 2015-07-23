@@ -13,15 +13,15 @@ class CFX_QuartzDevice : public CFX_RenderDevice
 public:
     CFX_QuartzDevice();
     ~CFX_QuartzDevice();
-    bool Attach(CGContextRef context, int32_t nDeviceClass = FXDC_DISPLAY);
-    bool Attach(CFX_DIBitmap* pBitmap);
-    bool Create(int32_t width, int32_t height, FXDIB_Format format);
+    FX_BOOL Attach(CGContextRef context, int32_t nDeviceClass = FXDC_DISPLAY);
+    FX_BOOL Attach(CFX_DIBitmap* pBitmap);
+    FX_BOOL Create(int32_t width, int32_t height, FXDIB_Format format);
 
     CGContextRef GetContext();
 
 protected:
     CGContextRef m_pContext;
-    bool m_bOwnedBitmap;
+    FX_BOOL m_bOwnedBitmap;
 };
 #endif
 

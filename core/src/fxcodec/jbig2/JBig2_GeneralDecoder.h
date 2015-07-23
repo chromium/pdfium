@@ -76,7 +76,7 @@ private:
     CJBig2_ArithDecoder *m_pArithDecoder;
     JBig2ArithCtx *m_gbContext;
     FX_WORD		m_DecodeType;
-    bool LTP;
+    FX_BOOL LTP;
     FX_RECT m_ReplaceRect;
 private:
 
@@ -112,12 +112,12 @@ private:
 
     CJBig2_Image *decode_Arith_Template3_unopt(CJBig2_ArithDecoder *pArithDecoder, JBig2ArithCtx *gbContext);
 public:
-    bool MMR;
+    FX_BOOL MMR;
     FX_DWORD GBW;
     FX_DWORD GBH;
     uint8_t GBTEMPLATE;
-    bool TPGDON;
-    bool USESKIP;
+    FX_BOOL TPGDON;
+    FX_BOOL USESKIP;
     CJBig2_Image * SKIP;
     signed char GBAT[8];
 };
@@ -139,11 +139,11 @@ public:
 public:
     FX_DWORD GRW;
     FX_DWORD GRH;
-    bool GRTEMPLATE;
+    FX_BOOL GRTEMPLATE;
     CJBig2_Image *GRREFERENCE;
     int32_t GRREFERENCEDX;
     int32_t GRREFERENCEDY;
-    bool TPGRON;
+    FX_BOOL TPGRON;
     signed char	GRAT[4];
 };
 typedef struct {
@@ -167,8 +167,8 @@ public:
     CJBig2_Image *decode_Arith(CJBig2_ArithDecoder *pArithDecoder, JBig2ArithCtx *grContext,
                                JBig2IntDecoderState *pIDS = NULL);
 public:
-    bool SBHUFF;
-    bool SBREFINE;
+    FX_BOOL SBHUFF;
+    FX_BOOL SBREFINE;
     FX_DWORD SBW;
     FX_DWORD SBH;
     FX_DWORD SBNUMINSTANCES;
@@ -179,10 +179,10 @@ public:
     uint8_t SBSYMCODELEN;
 
     CJBig2_Image **SBSYMS;
-    bool SBDEFPIXEL;
+    FX_BOOL SBDEFPIXEL;
 
     JBig2ComposeOp SBCOMBOP;
-    bool TRANSPOSED;
+    FX_BOOL TRANSPOSED;
 
     JBig2Corner REFCORNER;
     signed char SBDSOFFSET;
@@ -194,7 +194,7 @@ public:
                         *SBHUFFRDX,
                         *SBHUFFRDY,
                         *SBHUFFRSIZE;
-    bool SBRTEMPLATE;
+    FX_BOOL SBRTEMPLATE;
     signed char SBRAT[4];
 };
 class CJBig2_SDDProc : public CJBig2_Object
@@ -205,8 +205,8 @@ public:
 
     CJBig2_SymbolDict *decode_Huffman(CJBig2_BitStream *pStream, JBig2ArithCtx *gbContext, JBig2ArithCtx *grContext, IFX_Pause* pPause);
 public:
-    bool SDHUFF;
-    bool SDREFAGG;
+    FX_BOOL SDHUFF;
+    FX_BOOL SDREFAGG;
     FX_DWORD SDNUMINSYMS;
     CJBig2_Image ** SDINSYMS;
     FX_DWORD SDNUMNEWSYMS;
@@ -217,7 +217,7 @@ public:
                         *SDHUFFAGGINST;
     uint8_t SDTEMPLATE;
     signed char SDAT[8];
-    bool SDRTEMPLATE;
+    FX_BOOL SDRTEMPLATE;
     signed char SDRAT[4];
 };
 class CJBig2_HTRDProc : public CJBig2_Object
@@ -230,13 +230,13 @@ public:
 public:
     FX_DWORD HBW,
              HBH;
-    bool HMMR;
+    FX_BOOL HMMR;
     uint8_t HTEMPLATE;
     FX_DWORD HNUMPATS;
     CJBig2_Image **HPATS;
-    bool HDEFPIXEL;
+    FX_BOOL HDEFPIXEL;
     JBig2ComposeOp HCOMBOP;
-    bool HENABLESKIP;
+    FX_BOOL HENABLESKIP;
     FX_DWORD HGW,
              HGH;
     int32_t HGX,
@@ -254,7 +254,7 @@ public:
 
     CJBig2_PatternDict *decode_MMR(CJBig2_BitStream *pStream, IFX_Pause* pPause);
 public:
-    bool HDMMR;
+    FX_BOOL HDMMR;
     uint8_t HDPW,
             HDPH;
     FX_DWORD GRAYMAX;
@@ -268,8 +268,8 @@ public:
 
     FX_DWORD *decode_MMR(CJBig2_BitStream *pStream, IFX_Pause* pPause);
 public:
-    bool GSMMR;
-    bool GSUSESKIP;
+    FX_BOOL GSMMR;
+    FX_BOOL GSUSESKIP;
     uint8_t GSBPP;
     FX_DWORD GSW,
              GSH;

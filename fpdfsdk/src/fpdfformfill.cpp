@@ -28,7 +28,7 @@ CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle)
 CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle, FPDF_PAGE page)
 {
     CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
-    return pSDKDoc ? pSDKDoc->GetPageView((CPDF_Page*)page, true) : nullptr;
+    return pSDKDoc ? pSDKDoc->GetPageView((CPDF_Page*)page, TRUE) : nullptr;
 }
 
 }  // namespace
@@ -41,7 +41,7 @@ DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(
     CPDF_Page* pPage = (CPDF_Page*) page;
 
     nonstd::unique_ptr<CPDF_InterForm> pInterForm(
-        new CPDF_InterForm(pPage->m_pDocument, false));
+        new CPDF_InterForm(pPage->m_pDocument, FALSE));
     CPDF_FormControl* pFormCtrl = pInterForm->GetControlAtPoint(
         pPage, (FX_FLOAT)page_x, (FX_FLOAT)page_y);
     if (!pFormCtrl)
@@ -84,7 +84,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnMouseMove(FPDF_FORMHANDLE hHandle, FPDF_PAGE 
 {
     CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
     if (!pPageView)
-        return false;
+        return FALSE;
 
     CPDF_Point pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
     return pPageView->OnMouseMove(pt, modifier);
@@ -94,7 +94,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle, FPDF_PAG
 {
     CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
     if (!pPageView)
-        return false;
+        return FALSE;
 
     CPDF_Point pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
     return pPageView->OnLButtonDown(pt, modifier);
@@ -104,7 +104,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle, FPDF_PAGE 
 {
     CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
     if (!pPageView)
-        return false;
+        return FALSE;
 
     CPDF_Point pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
     return pPageView->OnLButtonUp(pt, modifier);
@@ -114,7 +114,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnKeyDown(FPDF_FORMHANDLE hHandle, FPDF_PAGE pa
 {
     CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
     if (!pPageView)
-        return false;
+        return FALSE;
 
     return pPageView->OnKeyDown(nKeyCode, modifier);
 }
@@ -123,7 +123,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnKeyUp(FPDF_FORMHANDLE hHandle, FPDF_PAGE page
 {
     CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
     if (!pPageView)
-        return false;
+        return FALSE;
 
     return pPageView->OnKeyUp(nKeyCode, modifier);
 }
@@ -132,7 +132,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnChar(FPDF_FORMHANDLE hHandle, FPDF_PAGE page,
 {
     CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
     if (!pPageView)
-        return false;
+        return FALSE;
 
     return pPageView->OnChar(nChar, modifier);
 }
@@ -141,7 +141,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle)
 {
     CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
     if (!pSDKDoc)
-        return false;
+        return FALSE;
 
     return pSDKDoc->KillFocusAnnot(0);
 }
@@ -216,7 +216,7 @@ DLLEXPORT void STDCALL FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle)
 DLLEXPORT void STDCALL FORM_OnAfterLoadPage(FPDF_PAGE page, FPDF_FORMHANDLE hHandle)
 {
     if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page))
-        pPageView->SetValid(true);
+        pPageView->SetValid(TRUE);
 }
 
 DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page, FPDF_FORMHANDLE hHandle)
@@ -229,10 +229,10 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page, FPDF_FORMHANDLE hH
         return;
 
     CPDF_Page* pPage = (CPDF_Page*)page;
-    CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, false);
+    CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, FALSE);
     if (pPageView)
     {
-        pPageView->SetValid(false);
+        pPageView->SetValid(FALSE);
         // ReMovePageView() takes care of the delete for us.
         pSDKDoc->ReMovePageView(pPage);
     }
@@ -279,7 +279,7 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page, FPDF_FORMHANDLE hHandl
         return;
     CPDFSDK_Document* pSDKDoc = ((CPDFDoc_Environment*)hHandle)->GetSDKDocument();
     CPDF_Page* pPage = (CPDF_Page*)page;
-    CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, false);
+    CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, FALSE);
     if(pPageView)
     {
         CPDFDoc_Environment *pEnv = pSDKDoc->GetEnv();
@@ -293,8 +293,8 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page, FPDF_FORMHANDLE hHandl
 
         CPDF_AAction aa = pPageDict->GetDict(FX_BSTRC("AA"));
 
-        bool bExistOAAction = false;
-        bool bExistCAAction = false;
+        FX_BOOL bExistOAAction = FALSE;
+        FX_BOOL bExistCAAction = FALSE;
         if (FPDFPAGE_AACTION_OPEN == aaType)
         {
             bExistOAAction = aa.ActionExist(CPDF_AAction::OpenPage);

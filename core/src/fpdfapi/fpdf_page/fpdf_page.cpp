@@ -44,7 +44,7 @@ void CPDF_PageObject::Copy(const CPDF_PageObject* pSrc)
     m_Top = pSrc->m_Top;
     m_Bottom = pSrc->m_Bottom;
 }
-void CPDF_PageObject::AppendClipPath(CPDF_Path path, int type, bool bAutoMerge)
+void CPDF_PageObject::AppendClipPath(CPDF_Path path, int type, FX_BOOL bAutoMerge)
 {
     m_ClipPath.AppendPath(path, type, bAutoMerge);
 }
@@ -353,7 +353,7 @@ FX_FLOAT CPDF_TextObject::GetCharWidth(FX_DWORD charcode) const
 {
     FX_FLOAT fontsize = m_TextState.GetFontSize() / 1000;
     CPDF_Font* pFont = m_TextState.GetFont();
-    bool bVertWriting = false;
+    FX_BOOL bVertWriting = FALSE;
     CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
     if (pCIDFont) {
         bVertWriting = pCIDFont->IsVertWriting();
@@ -373,7 +373,7 @@ FX_FLOAT CPDF_TextObject::GetSpaceCharWidth() const
         return GetCharWidth(charCode);
     }
     FX_FLOAT fontSize = m_TextState.GetFontSize() / 4000.0f;
-    bool bVertWriting = false;
+    FX_BOOL bVertWriting = FALSE;
     CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
     if (pCIDFont) {
         bVertWriting = pCIDFont->IsVertWriting();
@@ -388,7 +388,7 @@ FX_FLOAT CPDF_TextObject::GetSpaceCharWidth() const
 void CPDF_TextObject::GetCharRect(int index, CFX_FloatRect& rect) const
 {
     CPDF_Font* pFont = m_TextState.GetFont();
-    bool bVertWriting = false;
+    FX_BOOL bVertWriting = FALSE;
     CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
     if (pCIDFont) {
         bVertWriting = pCIDFont->IsVertWriting();
@@ -441,7 +441,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
     FX_FLOAT min_y = 10000 * 1.0f;
     FX_FLOAT max_y = -10000 * 1.0f;
     CPDF_Font* pFont = m_TextState.GetFont();
-    bool bVertWriting = false;
+    FX_BOOL bVertWriting = FALSE;
     CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
     if (pCIDFont) {
         bVertWriting = pCIDFont->IsVertWriting();
@@ -570,7 +570,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
 void CPDF_TextObject::CalcCharPos(FX_FLOAT* pPosArray) const
 {
     CPDF_Font* pFont = m_TextState.GetFont();
-    bool bVertWriting = false;
+    FX_BOOL bVertWriting = FALSE;
     CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
     if (pCIDFont) {
         bVertWriting = pCIDFont->IsVertWriting();
@@ -720,9 +720,9 @@ void CPDF_FormObject::CalcBoundingBox()
     m_Right = form_rect.right;
     m_Top = form_rect.top;
 }
-CPDF_PageObjects::CPDF_PageObjects(bool bReleaseMembers) : m_ObjectList(128)
+CPDF_PageObjects::CPDF_PageObjects(FX_BOOL bReleaseMembers) : m_ObjectList(128)
 {
-    m_bBackgroundAlphaNeeded = false;
+    m_bBackgroundAlphaNeeded = FALSE;
     m_bReleaseMembers = bReleaseMembers;
     m_ParseState = PDF_CONTENT_NOT_PARSED;
     m_pParser = NULL;
@@ -858,7 +858,7 @@ CPDF_Page::CPDF_Page()
 {
     m_pPageRender = NULL;
 }
-void CPDF_Page::Load(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict, bool bPageCache)
+void CPDF_Page::Load(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict, FX_BOOL bPageCache)
 {
     m_pDocument = (CPDF_Document*)pDocument;
     m_pFormDict = pPageDict;
@@ -925,7 +925,7 @@ void CPDF_Page::Load(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict, bool 
     m_Transparency = PDFTRANS_ISOLATED;
     LoadTransInfo();
 }
-void CPDF_Page::StartParse(CPDF_ParseOptions* pOptions, bool bReParse)
+void CPDF_Page::StartParse(CPDF_ParseOptions* pOptions, FX_BOOL bReParse)
 {
     if (bReParse) {
         ClearCacheObjects();
@@ -937,7 +937,7 @@ void CPDF_Page::StartParse(CPDF_ParseOptions* pOptions, bool bReParse)
     m_pParser->Start(this, pOptions);
     m_ParseState = PDF_CONTENT_PARSING;
 }
-void CPDF_Page::ParseContent(CPDF_ParseOptions* pOptions, bool bReParse)
+void CPDF_Page::ParseContent(CPDF_ParseOptions* pOptions, FX_BOOL bReParse)
 {
     StartParse(pOptions, bReParse);
     ContinueParse(NULL);
@@ -1070,8 +1070,8 @@ void CPDF_Page::GetDisplayMatrix(CFX_AffineMatrix& matrix, int xPos, int yPos,
 }
 CPDF_ParseOptions::CPDF_ParseOptions()
 {
-    m_bTextOnly = false;
-    m_bMarkedContent = true;
-    m_bSeparateForm = true;
-    m_bDecodeInlineImage = false;
+    m_bTextOnly = FALSE;
+    m_bMarkedContent = TRUE;
+    m_bSeparateForm = TRUE;
+    m_bDecodeInlineImage = FALSE;
 }

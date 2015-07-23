@@ -988,7 +988,7 @@ static void aes_encrypt_cbc(unsigned char *dest, const unsigned char *src, int l
     }
     FXSYS_memcpy(ctx->iv, iv, sizeof(iv));
 }
-void CRYPT_AESSetKey(void* context, FX_DWORD blocklen, const uint8_t* key, FX_DWORD keylen, bool bEncrypt)
+void CRYPT_AESSetKey(void* context, FX_DWORD blocklen, const uint8_t* key, FX_DWORD keylen, FX_BOOL bEncrypt)
 {
     aes_setup((AESContext*)context, blocklen, key, keylen);
 }

@@ -44,14 +44,14 @@ CPDF_ModuleMgr::~CPDF_ModuleMgr()
 {
 }
 
-void CPDF_ModuleMgr::SetDownloadCallback(bool (*callback)(const FX_CHAR* module_name))
+void CPDF_ModuleMgr::SetDownloadCallback(FX_BOOL (*callback)(const FX_CHAR* module_name))
 {
     m_pDownloadCallback = callback;
 }
-bool CPDF_ModuleMgr::DownloadModule(const FX_CHAR* module_name)
+FX_BOOL CPDF_ModuleMgr::DownloadModule(const FX_CHAR* module_name)
 {
     if (m_pDownloadCallback == NULL) {
-        return false;
+        return FALSE;
     }
     return m_pDownloadCallback(module_name);
 }

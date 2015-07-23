@@ -88,7 +88,7 @@ public:
         m_pObject->AppendRect(left, bottom, right, top);
     }
 
-    bool				IsRect() const
+    FX_BOOL				IsRect() const
     {
         return m_pObject->IsRect();
     }
@@ -147,7 +147,7 @@ public:
 
     CFX_FloatRect		GetClipBox() const;
 
-    void				AppendPath(CPDF_Path path, int type, bool bAutoMerge);
+    void				AppendPath(CPDF_Path path, int type, FX_BOOL bAutoMerge);
 
     void				DeletePath(int layer_index);
 
@@ -292,15 +292,15 @@ public:
 
     int					m_RenderIntent;
 
-    bool				m_StrokeAdjust;
+    FX_BOOL				m_StrokeAdjust;
 
-    bool				m_AlphaSource;
+    FX_BOOL				m_AlphaSource;
 
-    bool				m_TextKnockout;
+    FX_BOOL				m_TextKnockout;
 
-    bool				m_StrokeOP;
+    FX_BOOL				m_StrokeOP;
 
-    bool				m_FillOP;
+    FX_BOOL				m_FillOP;
 
     int					m_OPMode;
 
@@ -325,7 +325,7 @@ public:
         return m_pObject ? m_pObject->m_BlendType : FXDIB_BLEND_NORMAL;
     }
 
-    int					GetAlpha(bool bStroke) const
+    int					GetAlpha(FX_BOOL bStroke) const
     {
         return m_pObject ? FXSYS_round((bStroke ? m_pObject->m_StrokeAlpha : m_pObject->m_FillAlpha) * 255) : 255;
     }
@@ -362,7 +362,7 @@ public:
         return m_pParam;
     }
 
-    inline bool		HasMCID() const;
+    inline FX_BOOL		HasMCID() const;
 
     inline void			SetName(const CFX_ByteString& name)
     {
@@ -402,7 +402,7 @@ public:
 
     int					GetMCID() const;
 
-    void				AddMark(const CFX_ByteString& name, CPDF_Dictionary* pDict, bool bDictNeedClone);
+    void				AddMark(const CFX_ByteString& name, CPDF_Dictionary* pDict, FX_BOOL bDictNeedClone);
 
     void				DeleteLastMark();
 private:
@@ -418,9 +418,9 @@ public:
         return m_pObject ? m_pObject->GetMCID() : -1;
     }
 
-    bool				HasMark(const CFX_ByteStringC& mark) const;
+    FX_BOOL				HasMark(const CFX_ByteStringC& mark) const;
 
-    bool				LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const;
+    FX_BOOL				LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const;
 };
 
 #define PDFPAGE_TEXT     1
@@ -461,7 +461,7 @@ public:
 
     void				RemoveClipPath();
 
-    void				AppendClipPath(CPDF_Path path, int type, bool bAutoMerge);
+    void				AppendClipPath(CPDF_Path path, int type, FX_BOOL bAutoMerge);
 
     void				CopyClipPath(CPDF_PageObject* pObj);
 
@@ -629,7 +629,7 @@ public:
 
     int					m_FillType;
 
-    bool				m_bStroke;
+    FX_BOOL				m_bStroke;
 
     CFX_AffineMatrix	m_Matrix;
 

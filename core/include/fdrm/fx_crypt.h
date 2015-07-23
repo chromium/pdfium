@@ -16,7 +16,7 @@ extern "C" {
 void CRYPT_ArcFourCryptBlock(uint8_t* data, FX_DWORD size, const uint8_t* key, FX_DWORD keylen);
 void CRYPT_ArcFourSetup(void* context, const uint8_t* key, FX_DWORD length);
 void CRYPT_ArcFourCrypt(void* context, uint8_t* data, FX_DWORD size);
-void CRYPT_AESSetKey(void* context, FX_DWORD blocklen, const uint8_t* key, FX_DWORD keylen, bool bEncrypt);
+void CRYPT_AESSetKey(void* context, FX_DWORD blocklen, const uint8_t* key, FX_DWORD keylen, FX_BOOL bEncrypt);
 void CRYPT_AESSetIV(void* context, const uint8_t* iv);
 void CRYPT_AESDecrypt(void* context, uint8_t* dest, const uint8_t* src, FX_DWORD size);
 void CRYPT_AESEncrypt(void* context, uint8_t* dest, const uint8_t* src, FX_DWORD size);
@@ -40,7 +40,7 @@ void CRYPT_SHA512Start(void* context);
 void CRYPT_SHA512Update(void* context, const uint8_t* data, FX_DWORD size);
 void CRYPT_SHA512Finish(void* context, uint8_t digest[64]);
 void CRYPT_SHA512Generate(const uint8_t* data, FX_DWORD size, uint8_t digest[64]);
-void CRYPT_SetPubKeyDecryptor(bool (*func)(const uint8_t* pData, FX_DWORD size, uint8_t* data_buf, FX_DWORD& data_len));
+void CRYPT_SetPubKeyDecryptor(FX_BOOL (*func)(const uint8_t* pData, FX_DWORD size, uint8_t* data_buf, FX_DWORD& data_len));
 
 #ifdef __cplusplus
 };

@@ -35,7 +35,7 @@ protected:
 	virtual void						DrawChildAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device);
 
 private:
-	void								ResetAll(bool bMove,int32_t nStart);
+	void								ResetAll(FX_BOOL bMove,int32_t nStart);
 
 	CPDF_Rect							m_rcContent;
 	CPDF_Point							m_ptScroll;

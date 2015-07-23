@@ -33,8 +33,8 @@ public:
     ~CTextBaseLine();
     void	InsertTextBox(FX_FLOAT leftx, FX_FLOAT rightx, FX_FLOAT topy, FX_FLOAT bottomy,
                           FX_FLOAT spacew, FX_FLOAT fontsize_v, const CFX_WideString& str);
-    bool	GetWidth(FX_FLOAT& leftx, FX_FLOAT& rightx);
-    bool	CanMerge(CTextBaseLine* pOther);
+    FX_BOOL	GetWidth(FX_FLOAT& leftx, FX_FLOAT& rightx);
+    FX_BOOL	CanMerge(CTextBaseLine* pOther);
     void	Merge(CTextBaseLine* pOther);
     void	MergeBoxes();
     void	CountChars(int& count, FX_FLOAT& width, int& minchars);
@@ -57,9 +57,9 @@ public:
                                  FX_FLOAT rightx, FX_FLOAT topy, FX_FLOAT bottomy, FX_FLOAT spacew, FX_FLOAT fontsize_v,
                                  CFX_ByteString& str, CPDF_Font* pFont);
     void	WriteOutput(CFX_WideStringArray& lines, int iMinWidth);
-    bool	m_bAutoWidth;
-    bool	m_bKeepColumn;
-    bool	m_bBreakSpace;
+    FX_BOOL	m_bAutoWidth;
+    FX_BOOL	m_bKeepColumn;
+    FX_BOOL	m_bBreakSpace;
 
 private:
     CFX_PtrArray	m_BaseLines;

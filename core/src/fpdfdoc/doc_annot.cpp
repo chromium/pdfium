@@ -22,7 +22,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     }
     CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
     CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
-    bool bRegenerateAP = pAcroForm && pAcroForm->GetBoolean("NeedAppearances");
+    FX_BOOL bRegenerateAP = pAcroForm && pAcroForm->GetBoolean("NeedAppearances");
     for (FX_DWORD i = 0; i < pAnnots->GetCount(); ++i) {
         CPDF_Dictionary* pDict = (CPDF_Dictionary*)pAnnots->GetElementValue(i);
         if (pDict == NULL || pDict->GetType() != PDFOBJ_DICTIONARY) {
@@ -55,12 +55,12 @@ CPDF_AnnotList::~CPDF_AnnotList()
     }
 }
 void CPDF_AnnotList::DisplayPass(const CPDF_Page* pPage, CFX_RenderDevice* pDevice,
-                                 CPDF_RenderContext* pContext, bool bPrinting, CFX_AffineMatrix* pMatrix,
-                                 bool bWidgetPass, CPDF_RenderOptions* pOptions, FX_RECT* clip_rect)
+                                 CPDF_RenderContext* pContext, FX_BOOL bPrinting, CFX_AffineMatrix* pMatrix,
+                                 FX_BOOL bWidgetPass, CPDF_RenderOptions* pOptions, FX_RECT* clip_rect)
 {
     for (int i = 0; i < m_AnnotList.GetSize(); ++i) {
         CPDF_Annot* pAnnot = (CPDF_Annot*)m_AnnotList[i];
-        bool bWidget = pAnnot->GetSubType() == "Widget";
+        FX_BOOL bWidget = pAnnot->GetSubType() == "Widget";
         if ((bWidgetPass && !bWidget) || (!bWidgetPass && bWidget)) {
             continue;
         }
@@ -103,24 +103,24 @@ void CPDF_AnnotList::DisplayPass(const CPDF_Page* pPage, CFX_RenderDevice* pDevi
 }
 void CPDF_AnnotList::DisplayAnnots(const CPDF_Page* pPage, CFX_RenderDevice* pDevice,
                                    CFX_AffineMatrix* pUser2Device,
-                                   bool bShowWidget, CPDF_RenderOptions* pOptions)
+                                   FX_BOOL bShowWidget, CPDF_RenderOptions* pOptions)
 {
     FX_RECT clip_rect;
     if (pDevice) {
         clip_rect = pDevice->GetClipBox();
     }
-    bool bPrinting = pDevice->GetDeviceClass() == FXDC_PRINTER || (pOptions && (pOptions->m_Flags & RENDER_PRINTPREVIEW));
+    FX_BOOL bPrinting = pDevice->GetDeviceClass() == FXDC_PRINTER || (pOptions && (pOptions->m_Flags & RENDER_PRINTPREVIEW));
     DisplayAnnots(pPage, pDevice, NULL, bPrinting, pUser2Device, bShowWidget ? 3 : 1, pOptions, &clip_rect);
 }
 void CPDF_AnnotList::DisplayAnnots(const CPDF_Page* pPage, CFX_RenderDevice* pDevice, CPDF_RenderContext* pContext,
-                                   bool bPrinting, CFX_AffineMatrix* pUser2Device, FX_DWORD dwAnnotFlags,
+                                   FX_BOOL bPrinting, CFX_AffineMatrix* pUser2Device, FX_DWORD dwAnnotFlags,
                                    CPDF_RenderOptions* pOptions, FX_RECT* pClipRect)
 {
     if (dwAnnotFlags & 0x01) {
-        DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, false, pOptions, pClipRect);
+        DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, FALSE, pOptions, pClipRect);
     }
     if (dwAnnotFlags & 0x02) {
-        DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, true, pOptions, pClipRect);
+        DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, TRUE, pOptions, pClipRect);
     }
 }
 int CPDF_AnnotList::GetIndex(CPDF_Annot* pAnnot)
@@ -246,28 +246,28 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage, CPDF_Annot* pA
     matrix.Concat(*pUser2Device);
     return pForm;
 }
-bool CPDF_Annot::DrawAppearance(const CPDF_Page* pPage, CFX_RenderDevice* pDevice, const CFX_AffineMatrix* pUser2Device,
+FX_BOOL CPDF_Annot::DrawAppearance(const CPDF_Page* pPage, CFX_RenderDevice* pDevice, const CFX_AffineMatrix* pUser2Device,
                                    AppearanceMode mode, const CPDF_RenderOptions* pOptions)
 {
     CFX_Matrix matrix;
     CPDF_Form* pForm = FPDFDOC_Annot_GetMatrix(pPage, this, mode, pUser2Device, matrix);
     if (!pForm) {
-        return false;
+        return FALSE;
     }
     CPDF_RenderContext context;
     context.Create((CPDF_Page*)pPage);
     context.DrawObjectList(pDevice, pForm, &matrix, pOptions);
-    return true;
+    return TRUE;
 }
-bool CPDF_Annot::DrawInContext(const CPDF_Page* pPage, const CPDF_RenderContext* pContext, const CFX_AffineMatrix* pUser2Device, AppearanceMode mode)
+FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage, const CPDF_RenderContext* pContext, const CFX_AffineMatrix* pUser2Device, AppearanceMode mode)
 {
     CFX_Matrix matrix;
     CPDF_Form* pForm = FPDFDOC_Annot_GetMatrix(pPage, this, mode, pUser2Device, matrix);
     if (!pForm) {
-        return false;
+        return FALSE;
     }
     ((CPDF_RenderContext*)pContext)->AppendObjectList(pForm, &matrix);
-    return true;
+    return TRUE;
 }
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice, const CFX_AffineMatrix* pUser2Device, const CPDF_RenderOptions* pOptions)
 {
@@ -278,7 +278,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice, const CFX_AffineMatrix* p
     if (annot_flags & ANNOTFLAG_HIDDEN) {
         return;
     }
-    bool bPrinting = pDevice->GetDeviceClass() == FXDC_PRINTER || (pOptions && (pOptions->m_Flags & RENDER_PRINTPREVIEW));
+    FX_BOOL bPrinting = pDevice->GetDeviceClass() == FXDC_PRINTER || (pOptions && (pOptions->m_Flags & RENDER_PRINTPREVIEW));
     if (bPrinting && (annot_flags & ANNOTFLAG_PRINT) == 0) {
         return;
     }

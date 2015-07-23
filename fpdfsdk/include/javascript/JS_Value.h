@@ -63,12 +63,12 @@ public:
 	void operator = (const FX_CHAR* pStr);
 	void operator = (CJS_Value value);
 
-	bool IsArrayObject() const;
-	bool	IsDateObject() const;
+	FX_BOOL IsArrayObject() const;
+	FX_BOOL	IsDateObject() const;
 	FXJSVALUETYPE GetType() const;
 
-	bool ConvertToArray(CJS_Array &) const;
-	bool ConvertToDate(CJS_Date &) const;
+	FX_BOOL ConvertToArray(CJS_Array &) const;
+	FX_BOOL ConvertToDate(CJS_Date &) const;
 
 	v8::Isolate* GetIsolate() {return m_isolate;}
 protected:
@@ -95,8 +95,8 @@ public:
 	CJS_PropValue(v8::Isolate* isolate);
 	~CJS_PropValue();
 public:
-	bool IsSetting();
-	bool IsGetting();
+	FX_BOOL IsSetting();
+	FX_BOOL IsGetting();
 	void operator<<(int);
 	void operator>>(int&) const;
 	void operator<<(bool);
@@ -122,7 +122,7 @@ public:
 	void StartSetting();
 	void StartGetting();
 private:
-	bool m_bIsSetting;
+	FX_BOOL m_bIsSetting;
 };
 
 class CJS_Array
@@ -135,7 +135,7 @@ public:
 	void GetElement(unsigned index,CJS_Value &value);
 	void SetElement(unsigned index,CJS_Value value);
     int GetLength();
-	bool IsAttached();
+	FX_BOOL IsAttached();
 	operator v8::Local<v8::Array>();
 
 	v8::Isolate* GetIsolate() {return m_isolate;}
@@ -179,7 +179,7 @@ public:
 
 	static double	MakeDate(int year, int mon, int mday,int hour, int min, int sec,int ms);
 
-	bool	IsValidDate();
+	FX_BOOL	IsValidDate();
 
 protected:
 	v8::Local<v8::Value> m_pDate;

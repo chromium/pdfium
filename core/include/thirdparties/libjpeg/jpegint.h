@@ -95,7 +95,7 @@ struct jpeg_downsampler {
 			     JSAMPIMAGE output_buf,
 			     JDIMENSION out_row_group_index));
 
-  boolean need_context_rows;	/* true if need rows above & below */
+  boolean need_context_rows;	/* TRUE if need rows above & below */
 };
 
 /* Forward DCT (also controls coefficient quantization) */
@@ -213,7 +213,7 @@ struct jpeg_entropy_decoder {
 
   /* This is here to share code between baseline and progressive decoders; */
   /* other modules probably should not use it */
-  boolean insufficient_data;	/* set true after emitting warning */
+  boolean insufficient_data;	/* set TRUE after emitting warning */
 };
 
 /* Inverse DCT (also performs dequantization) */
@@ -239,7 +239,7 @@ struct jpeg_upsampler {
 			   JDIMENSION *out_row_ctr,
 			   JDIMENSION out_rows_avail));
 
-  boolean need_context_rows;	/* true if need rows above & below */
+  boolean need_context_rows;	/* TRUE if need rows above & below */
 };
 
 /* Colorspace conversion */

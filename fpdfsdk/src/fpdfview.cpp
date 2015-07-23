@@ -21,15 +21,15 @@ CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
         m_FileAccess = *pFileAccess;
 }
 
-bool CPDF_CustomAccess::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
+FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
 {
     if (offset < 0) {
-        return false;
+        return FALSE;
     }
     FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
     newPos += offset;
     if (!newPos.IsValid() || newPos.ValueOrDie() > m_FileAccess.m_FileLen) {
-        return false;
+        return FALSE;
     }
     return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,(uint8_t*) buffer, size);
 }
@@ -59,9 +59,9 @@ FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy)
     switch(policy)
     {
     case FPDF_POLICY_MACHINETIME_ACCESS:
-        return (foxit_sandbox_policy & 0x01) ? true : false;
+        return (foxit_sandbox_policy & 0x01) ? TRUE : FALSE;
     default:
-        return false;
+        return FALSE;
     }
 }
 
@@ -81,11 +81,11 @@ public:
     virtual FT_Face FindSubstFont(
                             CPDF_Document* pDoc,                // [IN] The PDF document
                             const CFX_ByteString& face_name,    // [IN] Original name
-                            bool bTrueType,                  // [IN] TrueType or Type1
+                            FX_BOOL bTrueType,                  // [IN] TrueType or Type1
                             FX_DWORD flags,                     // [IN] PDF font flags (see PDF Reference section 5.7.1)
                             int font_weight,                    // [IN] original font weight. 0 for not specified
                             int CharsetCP,                      // [IN] code page for charset (see Win32 GetACP())
-                            bool bVertical,
+                            FX_BOOL bVertical,
                             CPDF_SubstFont* pSubstFont          // [OUT] Subst font data
                         );
 
@@ -191,18 +191,18 @@ public:
 
     virtual void            Release() {delete this;}
     virtual FX_FILESIZE     GetSize() {return m_size;}
-    virtual bool         ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
+    virtual FX_BOOL         ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
     {
             if (offset < 0) {
-                return false;
+                return FALSE;
             }
             FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
             newPos += offset;
             if (!newPos.IsValid() || newPos.ValueOrDie() > (FX_DWORD)m_size) {
-                return false;
+                return FALSE;
             }
         FXSYS_memcpy(buffer, m_pBuf+offset, size);
-        return true;
+        return TRUE;
     }
 private:
     uint8_t* m_pBuf;
@@ -244,14 +244,14 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAc
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc, int* fileVersion)
 {
-    if(!doc||!fileVersion) return false;
+    if(!doc||!fileVersion) return FALSE;
     *fileVersion = 0;
     CPDF_Document* pDoc = (CPDF_Document*)doc;
     CPDF_Parser* pParser = (CPDF_Parser*)pDoc->GetParser();
     if(!pParser)
-        return false;
+        return FALSE;
     *fileVersion = pParser->GetFileVersion();
-    return true;
+    return TRUE;
 }
 
 // jabdelmalek: changed return type from FX_DWORD to build on Linux (and match header).
@@ -332,7 +332,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
 
 #ifndef _WIN32_WCE
     CFX_DIBitmap* pBitmap = NULL;
-    bool bBackgroundAlphaNeeded=false;
+    FX_BOOL bBackgroundAlphaNeeded=FALSE;
     bBackgroundAlphaNeeded = pPage->BackgroundAlphaNeeded();
     if (bBackgroundAlphaNeeded)
     {
@@ -352,7 +352,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
         pContext->m_pDevice = new CFX_WindowsDevice(dc);
 
     FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                           rotate, flags, true, NULL);
+                           rotate, flags, TRUE, NULL);
 
     if (bBackgroundAlphaNeeded)
     {
@@ -366,7 +366,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc, FPDF_PAGE page, int start_x, int 
                 int pitch = pBitmap->GetPitch();
                 pDst->Create(size_x, size_y, FXDIB_Rgb32);
                 FXSYS_memset(pDst->GetBuffer(), -1, pitch*size_y);
-                pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0, FXDIB_BLEND_NORMAL, NULL, false, NULL);
+                pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0, FXDIB_BLEND_NORMAL, NULL, FALSE, NULL);
                 WinDC.StretchDIBits(pDst,0,0,size_x,size_y);
                 delete pDst;
             }
@@ -492,20 +492,20 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap, FPDF_PAGE page,
     pContext->m_pDevice = new CFX_SkiaDevice;
 
     if (flags & FPDF_REVERSE_BYTE_ORDER)
-        ((CFX_SkiaDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap,0,true);
+        ((CFX_SkiaDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap,0,TRUE);
     else
         ((CFX_SkiaDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap);
 #else
     pContext->m_pDevice = new CFX_FxgeDevice;
 
     if (flags & FPDF_REVERSE_BYTE_ORDER)
-        ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap,0,true);
+        ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap,0,TRUE);
     else
         ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap);
 #endif
 
     FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                           rotate, flags, true, NULL);
+                           rotate, flags, TRUE, NULL);
 
     delete pContext;
     pPage->RemovePrivateData((void*)1);
@@ -653,7 +653,7 @@ DLLEXPORT void STDCALL FPDFBitmap_Destroy(FPDF_BITMAP bitmap)
 }
 
 void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_x, int start_y, int size_x, int size_y,
-                            int rotate, int flags,bool bNeedToRestore, IFSDK_PAUSE_Adapter * pause )
+                            int rotate, int flags,FX_BOOL bNeedToRestore, IFSDK_PAUSE_Adapter * pause )
 {
     CPDF_Page* pPage = (CPDF_Page*)page;
     if (pPage == NULL) return;
@@ -705,8 +705,8 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext, FPDF_PAGE page, int start_
 
     if (flags & FPDF_ANNOT) {
         pContext->m_pAnnots = new CPDF_AnnotList(pPage);
-        bool bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
-        pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext, bPrinting, &matrix, true, NULL);
+        FX_BOOL bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
+        pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext, bPrinting, &matrix, TRUE, NULL);
     }
 
     pContext->m_pRenderer = new CPDF_ProgressiveRenderer(
@@ -720,23 +720,23 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document, int page_i
 {
     CPDF_Document* pDoc = (CPDF_Document*)document;
     if(pDoc == NULL)
-        return false;
+        return FALSE;
 
     CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
-    if (pDict == NULL) return false;
+    if (pDict == NULL) return FALSE;
 
     CPDF_Page page;
     page.Load(pDoc, pDict);
     *width = page.GetPageWidth();
     *height = page.GetPageHeight();
 
-    return true;
+    return TRUE;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_VIEWERREF_GetPrintScaling(FPDF_DOCUMENT document)
 {
     CPDF_Document* pDoc = (CPDF_Document*)document;
-    if (!pDoc) return true;
+    if (!pDoc) return TRUE;
     CPDF_ViewerPreferences viewRef(pDoc);
     return viewRef.PrintScaling();
 }

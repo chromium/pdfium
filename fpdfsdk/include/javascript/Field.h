@@ -103,85 +103,85 @@ public:
 	Field(CJS_Object* pJSObject);
 	virtual ~Field(void);
 
-    bool alignment(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-    bool borderStyle(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool buttonAlignX(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool buttonAlignY(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool buttonFitBounds(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool buttonPosition(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool buttonScaleHow(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-    bool buttonScaleWhen(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool calcOrderIndex(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool charLimit(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool comb(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool commitOnSelChange(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool currentValueIndices(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-    bool defaultStyle(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool defaultValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool doNotScroll(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool doNotSpellCheck(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool delay(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool display(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-    bool doc(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool editable(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool exportValues(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool fileSelect(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool fillColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool hidden(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-    bool highlight(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool lineWidth(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool multiline(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool multipleSelection(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool numItems(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-    bool page(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool password(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool print(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool radiosInUnison(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool readonly(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool rect(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-    bool required(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool richText(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool richValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool rotation(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool strokeColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool style(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool submitName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool textColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool textFont(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool textSize(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool type(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool userName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool valueAsString(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool source(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+    FX_BOOL alignment(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+    FX_BOOL borderStyle(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL buttonAlignX(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL buttonAlignY(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL buttonFitBounds(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL buttonPosition(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL buttonScaleHow(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+    FX_BOOL buttonScaleWhen(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL calcOrderIndex(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL charLimit(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL comb(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL commitOnSelChange(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL currentValueIndices(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+    FX_BOOL defaultStyle(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL defaultValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL doNotScroll(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL doNotSpellCheck(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL delay(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL display(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+    FX_BOOL doc(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL editable(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL exportValues(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL fileSelect(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL fillColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL hidden(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+    FX_BOOL highlight(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL lineWidth(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL multiline(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL multipleSelection(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL numItems(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+    FX_BOOL page(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL password(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL print(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL radiosInUnison(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL readonly(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL rect(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+    FX_BOOL required(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL richText(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL richValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL rotation(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL strokeColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL style(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL submitName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL textColor(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL textFont(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL textSize(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL type(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL userName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL valueAsString(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL source(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
-	bool browseForFileToSubmit(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool buttonGetCaption(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool buttonGetIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool buttonImportIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool buttonSetCaption(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool buttonSetIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool checkThisBox(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool clearItems(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool defaultIsChecked(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool deleteItemAt(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool getArray(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool getItemAt(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool getLock(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool insertItemAt(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool isBoxChecked(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool isDefaultChecked(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool setAction(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool setFocus(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool setItems(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool setLock(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool signatureGetModifications(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool signatureGetSeedValue(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool signatureInfo(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool signatureSetSeedValue(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool signatureSign(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	bool signatureValidate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL browseForFileToSubmit(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL buttonGetCaption(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL buttonGetIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL buttonImportIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL buttonSetCaption(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL buttonSetIcon(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL checkThisBox(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL clearItems(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL defaultIsChecked(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL deleteItemAt(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL getArray(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL getItemAt(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL getLock(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL insertItemAt(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL isBoxChecked(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL isDefaultChecked(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL setAction(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL setFocus(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL setItems(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL setLock(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL signatureGetModifications(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL signatureGetSeedValue(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL signatureInfo(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL signatureSetSeedValue(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL signatureSign(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+	FX_BOOL signatureValidate(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
 
 public:
 	static void SetAlignment(CPDFSDK_Document* pDocument, const CFX_WideString& swFieldName, int nControlIndex, const CFX_ByteString& string);
@@ -225,9 +225,9 @@ public:
 											const CFX_WideString& sName, const CPDF_Rect& rcCoords);
 public:
 	static void							UpdateFormField(CPDFSDK_Document* pDocument, CPDF_FormField* pFormField,
-											bool bChangeMark, bool bResetAP, bool bRefresh);
+											FX_BOOL bChangeMark, FX_BOOL bResetAP, FX_BOOL bRefresh);
 	static void							UpdateFormControl(CPDFSDK_Document* pDocument, CPDF_FormControl* pFormControl,
-											bool bChangeMark, bool bResetAP, bool bRefresh);
+											FX_BOOL bChangeMark, FX_BOOL bResetAP, FX_BOOL bRefresh);
 
 	static CPDFSDK_Widget*					GetWidget(CPDFSDK_Document* pDocument, CPDF_FormControl* pFormControl);
 	static void							GetFormFields(CPDFSDK_Document* pDocument, const CFX_WideString& csFieldName, CFX_PtrArray& FieldsArray);
@@ -235,14 +235,14 @@ public:
 	static void							DoDelay(CPDFSDK_Document* pDocument, CJS_DelayData* pData);
 
 public:
-	bool								AttachField(Document* pDocument, const CFX_WideString& csFieldName);
-	void								SetDelay(bool bDelay);
+	FX_BOOL								AttachField(Document* pDocument, const CFX_WideString& csFieldName);
+	void								SetDelay(FX_BOOL bDelay);
 	void								SetIsolate(v8::Isolate* isolate) {m_isolate = isolate;}
 protected:
 	void								ParseFieldName(const std::wstring &strFieldNameParsed,std::wstring &strFieldName,int & iControlNo);
 	void								GetFormFields(const CFX_WideString& csFieldName, CFX_PtrArray& FieldsArray);
 	CPDF_FormControl* 					GetSmartFieldControl(CPDF_FormField* pFormField);
-	bool								ValueIsOccur(CPDF_FormField* pFormField, CFX_WideString csOptLabel);
+	FX_BOOL								ValueIsOccur(CPDF_FormField* pFormField, CFX_WideString csOptLabel);
 
 	void								AddDelay_Int(enum FIELD_PROP prop, int32_t n);
 	void								AddDelay_Bool(enum FIELD_PROP prop,bool b);
@@ -259,9 +259,9 @@ public:
 	CPDFSDK_Document*					m_pDocument;
 	CFX_WideString						m_FieldName;
 	int									m_nFormControlIndex;
-	bool								m_bCanSet;
+	FX_BOOL								m_bCanSet;
 
-	bool								m_bDelay;
+	FX_BOOL								m_bDelay;
 	v8::Isolate*							m_isolate;
 };
 
@@ -271,7 +271,7 @@ public:
 	CJS_Field(JSFXObject pObject) : CJS_Object(pObject) {};
 	virtual ~CJS_Field(void){};
 
-	virtual bool	InitInstance(IFXJS_Context* cc);
+	virtual FX_BOOL	InitInstance(IFXJS_Context* cc);
 
 	DECLARE_JS_CLASS(CJS_Field);
 

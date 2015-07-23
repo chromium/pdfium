@@ -98,7 +98,7 @@ const stru_TbConvert fcTable[] = {
 
 int util::ParstDataType(std::wstring* sFormat)
 {
-    bool bPercent = false;
+    bool bPercent = FALSE;
     for (size_t i = 0; i < sFormat->length(); ++i)
     {
         wchar_t c = (*sFormat)[i];
@@ -136,11 +136,11 @@ int util::ParstDataType(std::wstring* sFormat)
     return -1;
 }
 
-bool util::printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
+FX_BOOL util::printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
     int iSize = params.size();
     if (iSize < 1)
-        return false;
+        return FALSE;
     std::wstring c_ConvChar(params[0].ToCFXWideString().c_str());
     std::vector<std::wstring> c_strConvers;
     int iOffset = 0;
@@ -198,16 +198,16 @@ bool util::printf(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vR
 
     c_strResult.erase(c_strResult.begin());
     vRet = c_strResult.c_str();
-    return true;
+    return TRUE;
 }
 
-bool util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
+FX_BOOL util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
     v8::Isolate* isolate = GetIsolate(cc);
 
     int iSize = params.size();
     if (iSize < 2)
-        return false;
+        return FALSE;
 
     CJS_Value p1(isolate);
     p1 = params[0];
@@ -217,13 +217,13 @@ bool util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vR
     if (!p2.ConvertToDate(jsDate))
     {
         sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT1);
-        return false;
+        return FALSE;
     }
 
     if (!jsDate.IsValidDate())
     {
         sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT2);
-        return false;
+        return FALSE;
     }
 
     if (p1.GetType() == VT_number)
@@ -261,11 +261,11 @@ bool util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vR
                 jsDate.GetSeconds());
             break;
         default:
-            return false;
+            return FALSE;
         }
 
         vRet = swResult.c_str();
-        return true;
+        return TRUE;
     }
     if (p1.GetType() == VT_string)
     {
@@ -279,7 +279,7 @@ bool util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vR
 
         if (bXFAPicture)
         {
-            return false; //currently, it doesn't support XFAPicture.
+            return FALSE; //currently, it doesn't support XFAPicture.
         }
 
         int iIndex;
@@ -355,9 +355,9 @@ bool util::printd(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vR
         strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
         cFormat = buf;
         vRet = cFormat.c_str();
-        return true;
+        return TRUE;
     }
-    return false;
+    return FALSE;
 }
 
 void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPicture, std::wstring &cPurpose)
@@ -450,11 +450,11 @@ void util::printd(const std::wstring &cFormat2, CJS_Date jsDate, bool bXFAPictur
     cPurpose = cFormat;
 }
 
-bool util::printx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
+FX_BOOL util::printx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
     int iSize = params.size();
     if (iSize<2)
-        return false;
+        return FALSE;
     CFX_WideString sFormat = params[0].ToCFXWideString();
     CFX_WideString sSource = params[1].ToCFXWideString();
     std::string cFormat = CFX_ByteString::FromUnicode(sFormat).c_str();
@@ -462,7 +462,7 @@ bool util::printx(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vR
     std::string cDest;
     printx(cFormat,cSource,cDest);
     vRet = cDest.c_str();
-    return true;
+    return TRUE;
 }
 
 void util::printx(const std::string &cFormat,const std::string &cSource2,std::string &cPurpose)
@@ -564,19 +564,19 @@ void util::printx(const std::string &cFormat,const std::string &cSource2,std::st
     }
 }
 
-bool util::scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
+FX_BOOL util::scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
     v8::Isolate* isolate = GetIsolate(cc);
     int iSize = params.size();
     if (iSize < 2)
-        return false;
+        return FALSE;
 
     CFX_WideString sFormat = params[0].ToCFXWideString();
     CFX_WideString sDate = params[1].ToCFXWideString();
     double dDate = JS_GetDateTime();
     if (sDate.GetLength() > 0)
     {
-        bool bWrongFormat = false;
+        FX_BOOL bWrongFormat = FALSE;
         dDate = CJS_PublicMethods::MakeRegularDate(sDate,sFormat,bWrongFormat);
     }
 
@@ -590,7 +590,7 @@ bool util::scand(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRe
         vRet.SetNull();
     }
 
-    return true;
+    return TRUE;
 }
 
 int64_t FX_atoi64(const char *nptr)
@@ -618,15 +618,15 @@ int64_t FX_atoi64(const char *nptr)
         return sign == '-' ? -total : total;
 }
 
-bool util::byteToChar(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
+FX_BOOL util::byteToChar(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
     int iSize = params.size();
     if (iSize == 0)
-        return false;
+        return FALSE;
     int nByte = params[0].ToInt();
     unsigned char cByte = (unsigned char)nByte;
     CFX_WideString csValue;
     csValue.Format(L"%c", cByte);
     vRet = csValue.c_str();
-    return true;
+    return TRUE;
 }

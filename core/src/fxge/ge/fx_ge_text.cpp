@@ -46,7 +46,7 @@ private:
 FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos, int nChars, int anti_alias, FX_FLOAT retinaScaleX, FX_FLOAT retinaScaleY)
 {
     FX_RECT rect(0, 0, 0, 0);
-    bool bStarted = false;
+    FX_BOOL bStarted = FALSE;
     for (int iChar = 0; iChar < nChars; iChar ++) {
         FXTEXT_GLYPHPOS& glyph = pGlyphAndPos[iChar];
         const CFX_GlyphBitmap* pGlyph = glyph.m_pGlyph;
@@ -66,7 +66,7 @@ FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos, int nChars, int anti_a
             rect.right = char_right;
             rect.top = char_top;
             rect.bottom = char_bottom;
-            bStarted = true;
+            bStarted = TRUE;
         } else {
             if (rect.left > char_left) {
                 rect.left = char_left;
@@ -87,9 +87,9 @@ FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos, int nChars, int anti_a
 static void _AdjustGlyphSpace(FXTEXT_GLYPHPOS* pGlyphAndPos, int nChars)
 {
     ASSERT(nChars > 1);
-    bool bVertical = false;
+    FX_BOOL bVertical = FALSE;
     if (pGlyphAndPos[nChars - 1].m_OriginX == pGlyphAndPos[0].m_OriginX) {
-        bVertical = true;
+        bVertical = TRUE;
     } else if (pGlyphAndPos[nChars - 1].m_OriginY != pGlyphAndPos[0].m_OriginY) {
         return;
     }
@@ -155,7 +155,7 @@ void _Color2Argb(FX_ARGB& argb, FX_DWORD color, int alpha_flag, void* pIccTransf
     bgra[3] = (alpha_flag >> 24) ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXGETFLAG_ALPHA_STROKE(alpha_flag);
     argb = FXARGB_MAKE(bgra[3], bgra[2], bgra[1], bgra[0]);
 }
-bool CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos,
+FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos,
         CFX_Font* pFont, CFX_FontCache* pCache,
         FX_FLOAT font_size, const CFX_AffineMatrix* pText2Device,
         FX_DWORD fill_color, FX_DWORD text_flags,
@@ -171,12 +171,12 @@ bool CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos
 #endif
 #endif
                     if (m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache, pText2Device, font_size, fill_color, alpha_flag, pIccTransform)) {
-                        return true;
+                        return TRUE;
                     }
         }
         int alpha = FXGETFLAG_COLORTYPE(alpha_flag) ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(fill_color);
         if (alpha < 255) {
-            return false;
+            return FALSE;
         }
     } else if (!(text_flags & FXTEXT_NO_NATIVETEXT)) {
 #if _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
@@ -186,7 +186,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos
 #endif
 #endif
                 if (m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache, pText2Device, font_size, fill_color, alpha_flag, pIccTransform)) {
-                    return true;
+                    return TRUE;
                 }
     }
     CFX_AffineMatrix char2device, deviceCtm, text2Device;
@@ -204,24 +204,24 @@ bool CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos
         }
     }
     int anti_alias = FXFT_RENDER_MODE_MONO;
-    bool bNormal = false;
+    FX_BOOL bNormal = FALSE;
     if ((text_flags & FXTEXT_NOSMOOTH) == 0) {
         if (m_DeviceClass == FXDC_DISPLAY && m_bpp > 1) {
-            bool bClearType;
+            FX_BOOL bClearType;
             if (pFont->GetFace() == NULL && !(pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_CLEARTYPE)) {
-                bClearType = false;
+                bClearType = FALSE;
             } else {
                 bClearType = text_flags & FXTEXT_CLEARTYPE;
             }
             if ((m_RenderCaps & (FXRC_ALPHA_OUTPUT | FXRC_CMYK_OUTPUT))) {
                 anti_alias = FXFT_RENDER_MODE_LCD;
-                bNormal = true;
+                bNormal = TRUE;
             } else if (m_bpp < 16) {
                 anti_alias = FXFT_RENDER_MODE_NORMAL;
             } else {
-                if (bClearType == false) {
+                if (bClearType == FALSE) {
                     anti_alias = FXFT_RENDER_MODE_LCD;
-                    bNormal = true;
+                    bNormal = TRUE;
                 } else {
                     anti_alias = FXFT_RENDER_MODE_LCD;
                 }
@@ -278,7 +278,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos
     bmp_rect.Intersect(m_ClipBox);
     if (bmp_rect.IsEmpty()) {
         FX_Free(pGlyphAndPos);
-        return true;
+        return TRUE;
     }
     int pixel_width = FXSYS_round(bmp_rect.Width() * scale_x);
     int pixel_height = FXSYS_round(bmp_rect.Height() * scale_y);
@@ -288,7 +288,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos
         CFX_DIBitmap bitmap;
         if (!bitmap.Create(pixel_width, pixel_height, FXDIB_1bppMask)) {
             FX_Free(pGlyphAndPos);
-            return false;
+            return FALSE;
         }
         bitmap.Clear(0);
         for (iChar = 0; iChar < nChars; iChar ++) {
@@ -308,19 +308,19 @@ bool CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos
     if (m_bpp == 8) {
         if (!bitmap.Create(pixel_width, pixel_height, FXDIB_8bppMask)) {
             FX_Free(pGlyphAndPos);
-            return false;
+            return FALSE;
         }
     } else {
         if (!CreateCompatibleBitmap(&bitmap, pixel_width, pixel_height)) {
             FX_Free(pGlyphAndPos);
-            return false;
+            return FALSE;
         }
     }
     if (!bitmap.HasAlpha() && !bitmap.IsAlphaMask()) {
         bitmap.Clear(0xFFFFFFFF);
         if (!GetDIBits(&bitmap, bmp_rect.left, bmp_rect.top)) {
             FX_Free(pGlyphAndPos);
-            return false;
+            return FALSE;
         }
     } else {
         bitmap.Clear(0);
@@ -352,13 +352,13 @@ bool CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos
         int nrows = pGlyph->GetHeight();
         if (anti_alias == FXFT_RENDER_MODE_NORMAL) {
             if (!bitmap.CompositeMask(left, top, ncols, nrows, pGlyph, fill_color,
-                                      0, 0, FXDIB_BLEND_NORMAL, NULL, false, alpha_flag, pIccTransform)) {
+                                      0, 0, FXDIB_BLEND_NORMAL, NULL, FALSE, alpha_flag, pIccTransform)) {
                 FX_Free(pGlyphAndPos);
-                return false;
+                return FALSE;
             }
             continue;
         }
-        bool bBGRStripe = text_flags & FXTEXT_BGR_STRIPE;
+        FX_BOOL bBGRStripe = text_flags & FXTEXT_BGR_STRIPE;
         ncols /= 3;
         int x_subpixel = (int)(glyph.m_fOriginX * 3) % 3;
         uint8_t* src_buf = pGlyph->GetBuffer();
@@ -945,9 +945,9 @@ bool CFX_RenderDevice::DrawNormalText(int nChars, const FXTEXT_CHARPOS* pCharPos
         SetDIBits(&bitmap, bmp_rect.left, bmp_rect.top);
     }
     FX_Free(pGlyphAndPos);
-    return true;
+    return TRUE;
 }
-bool CFX_RenderDevice::DrawTextPath(int nChars, const FXTEXT_CHARPOS* pCharPos,
+FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars, const FXTEXT_CHARPOS* pCharPos,
                                        CFX_Font* pFont, CFX_FontCache* pCache,
                                        FX_FLOAT font_size, const CFX_AffineMatrix* pText2User,
                                        const CFX_AffineMatrix* pUser2Device, const CFX_GraphStateData* pGraphState,
@@ -973,7 +973,7 @@ bool CFX_RenderDevice::DrawTextPath(int nChars, const FXTEXT_CHARPOS* pCharPos,
         matrix.Concat(*pText2User);
         CFX_PathData TransformedPath(*pPath);
         TransformedPath.Transform(&matrix);
-        bool bHasAlpha = FXGETFLAG_COLORTYPE(alpha_flag) ?
+        FX_BOOL bHasAlpha = FXGETFLAG_COLORTYPE(alpha_flag) ?
                             (FXGETFLAG_ALPHA_FILL(alpha_flag) || FXGETFLAG_ALPHA_STROKE(alpha_flag)) :
                             (fill_color || stroke_color);
         if (bHasAlpha) {
@@ -989,24 +989,24 @@ bool CFX_RenderDevice::DrawTextPath(int nChars, const FXTEXT_CHARPOS* pCharPos,
             }
             fill_mode |= FX_FILL_TEXT_MODE;
             if (!DrawPath(&TransformedPath, pUser2Device, pGraphState, fill_color, stroke_color, fill_mode, alpha_flag, pIccTransform, blend_type)) {
-                return false;
+                return FALSE;
             }
         }
         if (pClippingPath) {
             pClippingPath->Append(&TransformedPath, pUser2Device);
         }
     }
-    return true;
+    return TRUE;
 }
 CFX_FontCache::~CFX_FontCache()
 {
-    FreeCache(true);
+    FreeCache(TRUE);
 }
 
 CFX_FaceCache* CFX_FontCache::GetCachedFace(CFX_Font* pFont)
 {
     FXFT_Face internal_face = pFont->GetFace();
-    const bool bExternal = internal_face == nullptr;
+    const FX_BOOL bExternal = internal_face == nullptr;
     FXFT_Face face = bExternal ?
         (FXFT_Face)pFont->GetSubstFont()->m_ExtHandle : internal_face;
     CFX_FTCacheMap& map = bExternal ? m_ExtFaceMap : m_FTFaceMap;
@@ -1028,7 +1028,7 @@ CFX_FaceCache* CFX_FontCache::GetCachedFace(CFX_Font* pFont)
 void CFX_FontCache::ReleaseCachedFace(CFX_Font* pFont)
 {
     FXFT_Face internal_face = pFont->GetFace();
-    const bool bExternal = internal_face == nullptr;
+    const FX_BOOL bExternal = internal_face == nullptr;
     FXFT_Face face = bExternal ?
         (FXFT_Face)pFont->GetSubstFont()->m_ExtHandle : internal_face;
     CFX_FTCacheMap& map =  bExternal ? m_ExtFaceMap : m_FTFaceMap;
@@ -1043,7 +1043,7 @@ void CFX_FontCache::ReleaseCachedFace(CFX_Font* pFont)
     }
 }
 
-void CFX_FontCache::FreeCache(bool bRelease)
+void CFX_FontCache::FreeCache(FX_BOOL bRelease)
 {
     for (auto it = m_FTFaceMap.begin(); it != m_FTFaceMap.end();) {
         auto curr_it = it++;
@@ -1095,7 +1095,7 @@ void CFX_FaceCache::InitPlatform()
 }
 #endif
 CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(CFX_Font* pFont, const CFX_AffineMatrix* pMatrix,
-        CFX_ByteStringC& FaceGlyphsKey, FX_DWORD glyph_index, bool bFontStyle,
+        CFX_ByteStringC& FaceGlyphsKey, FX_DWORD glyph_index, FX_BOOL bFontStyle,
         int dest_width, int anti_alias)
 {
     CFX_SizeGlyphCache* pSizeCache = NULL;
@@ -1114,7 +1114,7 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(CFX_Font* pFont, const CFX_Aff
     pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
     return pGlyphBitmap;
 }
-const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont, FX_DWORD glyph_index, bool bFontStyle, const CFX_AffineMatrix* pMatrix,
+const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont, FX_DWORD glyph_index, FX_BOOL bFontStyle, const CFX_AffineMatrix* pMatrix,
         int dest_width, int anti_alias, int& text_flags)
 {
     if (glyph_index == (FX_DWORD) - 1) {
@@ -1311,7 +1311,7 @@ static void _ContrastAdjust(uint8_t* pDataIn, uint8_t* pDataOut, int nWid, int n
         }
     }
 }
-CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_index, bool bFontStyle,
+CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_index, FX_BOOL bFontStyle,
         const CFX_AffineMatrix* pMatrix, int dest_width, int anti_alias)
 {
     if (m_Face == NULL) {
@@ -1322,7 +1322,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_inde
     ft_matrix.xy = (signed long)(pMatrix->GetC() / 64 * 65536);
     ft_matrix.yx = (signed long)(pMatrix->GetB() / 64 * 65536);
     ft_matrix.yy = (signed long)(pMatrix->GetD() / 64 * 65536);
-    bool bUseCJKSubFont = false;
+    FX_BOOL bUseCJKSubFont = FALSE;
     const CFX_SubstFont* pSubstFont = pFont->GetSubstFont();
     if (pSubstFont) {
         bUseCJKSubFont = pSubstFont->m_bSubstOfCJK && bFontStyle;
@@ -1422,18 +1422,18 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont, FX_DWORD glyph_inde
     }
     return pGlyphBitmap;
 }
-bool _OutputGlyph(void* dib, int x, int y, CFX_Font* pFont,
+FX_BOOL _OutputGlyph(void* dib, int x, int y, CFX_Font* pFont,
                      int glyph_index, FX_ARGB argb)
 {
     CFX_DIBitmap* pDib = (CFX_DIBitmap*)dib;
     FXFT_Face face = pFont->GetFace();
     int error = FXFT_Load_Glyph(face, glyph_index, FXFT_LOAD_NO_BITMAP);
     if (error) {
-        return false;
+        return FALSE;
     }
     error = FXFT_Render_Glyph(face, FXFT_RENDER_MODE_NORMAL);
     if (error) {
-        return false;
+        return FALSE;
     }
     int bmwidth = FXFT_Get_Bitmap_Width(FXFT_Get_Glyph_Bitmap(face));
     int bmheight = FXFT_Get_Bitmap_Rows(FXFT_Get_Glyph_Bitmap(face));
@@ -1451,13 +1451,13 @@ bool _OutputGlyph(void* dib, int x, int y, CFX_Font* pFont,
         FXSYS_memcpy(dest_scan, src_scan, dest_pitch);
     }
     pDib->CompositeMask(x + left, y - top, bmwidth, bmheight, &mask, argb, 0, 0);
-    return true;
+    return TRUE;
 }
-bool OutputText(void* dib, int x, int y, CFX_Font* pFont, double font_size,
+FX_BOOL OutputText(void* dib, int x, int y, CFX_Font* pFont, double font_size,
                    CFX_AffineMatrix* pText_matrix, unsigned short const* text, unsigned long argb)
 {
     if (!pFont) {
-        return false;
+        return FALSE;
     }
     FXFT_Face face = pFont->GetFace();
     FXFT_Select_Charmap(pFont->m_Face, FXFT_ENCODING_UNICODE);
@@ -1490,9 +1490,9 @@ bool OutputText(void* dib, int x, int y, CFX_Font* pFont, double font_size,
     }
     if (pText_matrix)
         ResetTransform(face);
-    return true;
+    return TRUE;
 }
-bool OutputGlyph(void* dib, int x, int y, CFX_Font* pFont, double font_size,
+FX_BOOL OutputGlyph(void* dib, int x, int y, CFX_Font* pFont, double font_size,
                     CFX_AffineMatrix* pMatrix, unsigned long glyph_index, unsigned long argb)
 {
     FXFT_Matrix  ft_matrix;
@@ -1507,7 +1507,7 @@ bool OutputGlyph(void* dib, int x, int y, CFX_Font* pFont, double font_size,
         ft_matrix.yy = (signed long)(font_size / 64 * 65536);
     }
     ScopedFontTransform scoped_transform(pFont->m_Face, &ft_matrix);
-    bool ret = _OutputGlyph(dib, x, y, pFont,
+    FX_BOOL ret = _OutputGlyph(dib, x, y, pFont,
                                glyph_index, argb);
     return ret;
 }
@@ -1533,7 +1533,7 @@ const CFX_PathData* CFX_FaceCache::LoadGlyphPath(CFX_Font* pFont, FX_DWORD glyph
     return pGlyphPath;
 }
 typedef struct {
-    bool			m_bCount;
+    FX_BOOL			m_bCount;
     int				m_PointCount;
     FX_PATHPOINT*	m_pPoints;
     int				m_CurX;
@@ -1684,7 +1684,7 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width)
     funcs.shift = 0;
     funcs.delta = 0;
     OUTLINE_PARAMS params;
-    params.m_bCount = true;
+    params.m_bCount = TRUE;
     params.m_PointCount = 0;
     FXFT_Outline_Decompose(FXFT_Get_Glyph_Outline(m_Face), &funcs, &params);
     if (params.m_PointCount == 0) {
@@ -1692,7 +1692,7 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width)
     }
     CFX_PathData* pPath = new CFX_PathData;
     pPath->SetPointCount(params.m_PointCount);
-    params.m_bCount = false;
+    params.m_bCount = FALSE;
     params.m_PointCount = 0;
     params.m_pPoints = pPath->GetPoints();
     params.m_CurX = params.m_CurY = 0;

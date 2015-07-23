@@ -19,8 +19,8 @@ class CFX_IFileWrite final : public IFX_StreamWrite
 
 public:
     CFX_IFileWrite();
-    bool             Init( FPDF_FILEWRITE * pFileWriteStruct );
-    virtual bool     WriteBlock(const void* pData, size_t size) override;
+    FX_BOOL             Init( FPDF_FILEWRITE * pFileWriteStruct );
+    virtual FX_BOOL     WriteBlock(const void* pData, size_t size) override;
     virtual void        Release() override {}
 
 protected:
@@ -32,22 +32,22 @@ CFX_IFileWrite::CFX_IFileWrite()
     m_pFileWriteStruct = NULL;
 }
 
-bool CFX_IFileWrite::Init( FPDF_FILEWRITE * pFileWriteStruct )
+FX_BOOL CFX_IFileWrite::Init( FPDF_FILEWRITE * pFileWriteStruct )
 {
     if (!pFileWriteStruct)
-        return false;
+        return FALSE;
 
     m_pFileWriteStruct = pFileWriteStruct;
-    return true;
+    return TRUE;
 }
 
-bool CFX_IFileWrite::WriteBlock(const void* pData, size_t size)
+FX_BOOL CFX_IFileWrite::WriteBlock(const void* pData, size_t size)
 {
     if (!m_pFileWriteStruct)
-        return false;
+        return FALSE;
 
     m_pFileWriteStruct->WriteBlock( m_pFileWriteStruct, pData, size );
-    return true;
+    return TRUE;
 }
 
 FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,FPDF_FILEWRITE * pFileWrite,FPDF_DWORD flags, FPDF_BOOL bSetVersion,
@@ -71,7 +71,7 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,FPDF_FILEWRITE * pFileWrite,FPDF
         FileMaker.RemoveSecurity();
     }
     CFX_IFileWrite* pStreamWrite = NULL;
-    bool bRet;
+    FX_BOOL bRet;
     pStreamWrite = new CFX_IFileWrite;
     pStreamWrite->Init( pFileWrite );
     bRet = FileMaker.Create(pStreamWrite, flags);
@@ -82,12 +82,12 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,FPDF_FILEWRITE * pFileWrite,FPDF
 DLLEXPORT FPDF_BOOL STDCALL FPDF_SaveAsCopy(    FPDF_DOCUMENT document,FPDF_FILEWRITE * pFileWrite,
                                                 FPDF_DWORD flags )
 {
-    return _FPDF_Doc_Save(document, pFileWrite, flags, false , 0);
+    return _FPDF_Doc_Save(document, pFileWrite, flags, FALSE , 0);
 }
 
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_SaveWithVersion(   FPDF_DOCUMENT document,FPDF_FILEWRITE * pFileWrite,
     FPDF_DWORD flags, int fileVersion)
 {
-    return _FPDF_Doc_Save(document, pFileWrite, flags, true , fileVersion);
+    return _FPDF_Doc_Save(document, pFileWrite, flags, TRUE , fileVersion);
 }

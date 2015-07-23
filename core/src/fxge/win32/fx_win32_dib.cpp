@@ -49,19 +49,19 @@ CFX_ByteString CFX_WindowsDIB::GetBitmapInfo(const CFX_DIBitmap* pBitmap)
     result.ReleaseBuffer(len);
     return result;
 }
-CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi, LPVOID pData, bool bAlpha)
+CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi, LPVOID pData, FX_BOOL bAlpha)
 {
     int width = pbmi->bmiHeader.biWidth;
     int height = pbmi->bmiHeader.biHeight;
-    BOOL bBottomUp = true;
+    BOOL bBottomUp = TRUE;
     if (height < 0) {
         height = -height;
-        bBottomUp = false;
+        bBottomUp = FALSE;
     }
     int pitch = (width * pbmi->bmiHeader.biBitCount + 31) / 32 * 4;
     CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
     FXDIB_Format format = bAlpha ? (FXDIB_Format)(pbmi->bmiHeader.biBitCount + 0x200) : (FXDIB_Format)pbmi->bmiHeader.biBitCount;
-    bool ret = pBitmap->Create(width, height, format);
+    FX_BOOL ret = pBitmap->Create(width, height, format);
     if (!ret) {
         delete pBitmap;
         return NULL;
@@ -93,7 +93,7 @@ CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi, LPVOID pData, bool bA
 }
 CFX_DIBitmap* CFX_WindowsDIB::LoadFromBuf(BITMAPINFO* pbmi, LPVOID pData)
 {
-    return _FX_WindowsDIB_LoadFromBuf(pbmi, pData, false);
+    return _FX_WindowsDIB_LoadFromBuf(pbmi, pData, FALSE);
 }
 HBITMAP	CFX_WindowsDIB::GetDDBitmap(const CFX_DIBitmap* pBitmap, HDC hDC)
 {
@@ -174,7 +174,7 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args)
 }
 CFX_DIBitmap* CFX_WindowsDIB::LoadFromDDB(HDC hDC, HBITMAP hBitmap, FX_DWORD* pPalette, FX_DWORD palsize)
 {
-    bool bCreatedDC = hDC == NULL;
+    FX_BOOL bCreatedDC = hDC == NULL;
     if (hDC == NULL) {
         hDC = CreateCompatibleDC(NULL);
     }

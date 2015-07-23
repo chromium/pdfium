@@ -17,14 +17,14 @@ int _gAfxGetTimeZoneInSeconds(FX_CHAR tzhour, uint8_t tzminute)
     return (int)tzhour * 3600 + (int)tzminute * (tzhour >= 0 ? 60 : -60);
 }
 
-bool _gAfxIsLeapYear(int16_t year)
+FX_BOOL _gAfxIsLeapYear(int16_t year)
 {
     return ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0)));
 }
 
 FX_WORD _gAfxGetYearDays(int16_t year)
 {
-    return (_gAfxIsLeapYear(year) == true ? 366 : 365);
+    return (_gAfxIsLeapYear(year) == TRUE ? 366 : 365);
 }
 
 uint8_t _gAfxGetMonthDays(int16_t year, uint8_t month)
@@ -50,7 +50,7 @@ uint8_t _gAfxGetMonthDays(int16_t year, uint8_t month)
         break;
 
     case 2:
-        if (_gAfxIsLeapYear(year) == true)
+        if (_gAfxIsLeapYear(year) == TRUE)
             mDays = 29;
         else
             mDays = 28;
@@ -128,17 +128,17 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::operator = (const FX_SYSTEMTIME& st)
     return *this;
 }
 
-bool CPDFSDK_DateTime::operator == (CPDFSDK_DateTime& datetime)
+FX_BOOL CPDFSDK_DateTime::operator == (CPDFSDK_DateTime& datetime)
 {
     return (FXSYS_memcmp(&dt, &datetime.dt, sizeof(FX_DATETIME)) == 0);
 }
 
-bool CPDFSDK_DateTime::operator != (CPDFSDK_DateTime& datetime)
+FX_BOOL CPDFSDK_DateTime::operator != (CPDFSDK_DateTime& datetime)
 {
     return (FXSYS_memcmp(&dt, &datetime.dt, sizeof(FX_DATETIME)) != 0);
 }
 
-bool CPDFSDK_DateTime::operator > (CPDFSDK_DateTime& datetime)
+FX_BOOL CPDFSDK_DateTime::operator > (CPDFSDK_DateTime& datetime)
 {
     CPDFSDK_DateTime dt1 = ToGMT();
     CPDFSDK_DateTime dt2 = datetime.ToGMT();
@@ -147,12 +147,12 @@ bool CPDFSDK_DateTime::operator > (CPDFSDK_DateTime& datetime)
     int d3 = (((int)dt2.dt.year) << 16) | (((int)dt2.dt.month) << 8) | (int)dt2.dt.day;
     int d4 = (((int)dt2.dt.hour) << 16) | (((int)dt2.dt.minute) << 8) | (int)dt2.dt.second;
 
-    if (d1 > d3) return true;
-    if (d2 > d4) return true;
-    return false;
+    if (d1 > d3) return TRUE;
+    if (d2 > d4) return TRUE;
+    return FALSE;
 }
 
-bool CPDFSDK_DateTime::operator >= (CPDFSDK_DateTime& datetime)
+FX_BOOL CPDFSDK_DateTime::operator >= (CPDFSDK_DateTime& datetime)
 {
     CPDFSDK_DateTime dt1 = ToGMT();
     CPDFSDK_DateTime dt2 = datetime.ToGMT();
@@ -161,12 +161,12 @@ bool CPDFSDK_DateTime::operator >= (CPDFSDK_DateTime& datetime)
     int d3 = (((int)dt2.dt.year) << 16) | (((int)dt2.dt.month) << 8) | (int)dt2.dt.day;
     int d4 = (((int)dt2.dt.hour) << 16) | (((int)dt2.dt.minute) << 8) | (int)dt2.dt.second;
 
-    if (d1 >= d3) return true;
-    if (d2 >= d4) return true;
-    return false;
+    if (d1 >= d3) return TRUE;
+    if (d2 >= d4) return TRUE;
+    return FALSE;
 }
 
-bool CPDFSDK_DateTime::operator < (CPDFSDK_DateTime& datetime)
+FX_BOOL CPDFSDK_DateTime::operator < (CPDFSDK_DateTime& datetime)
 {
     CPDFSDK_DateTime dt1 = ToGMT();
     CPDFSDK_DateTime dt2 = datetime.ToGMT();
@@ -175,12 +175,12 @@ bool CPDFSDK_DateTime::operator < (CPDFSDK_DateTime& datetime)
     int d3 = (((int)dt2.dt.year) << 16) | (((int)dt2.dt.month) << 8) | (int)dt2.dt.day;
     int d4 = (((int)dt2.dt.hour) << 16) | (((int)dt2.dt.minute) << 8) | (int)dt2.dt.second;
 
-    if (d1 < d3) return true;
-    if (d2 < d4) return true;
-    return false;
+    if (d1 < d3) return TRUE;
+    if (d2 < d4) return TRUE;
+    return FALSE;
 }
 
-bool CPDFSDK_DateTime::operator <= (CPDFSDK_DateTime& datetime)
+FX_BOOL CPDFSDK_DateTime::operator <= (CPDFSDK_DateTime& datetime)
 {
     CPDFSDK_DateTime dt1 = ToGMT();
     CPDFSDK_DateTime dt2 = datetime.ToGMT();
@@ -189,9 +189,9 @@ bool CPDFSDK_DateTime::operator <= (CPDFSDK_DateTime& datetime)
     int d3 = (((int)dt2.dt.year) << 16) | (((int)dt2.dt.month) << 8) | (int)dt2.dt.day;
     int d4 = (((int)dt2.dt.hour) << 16) | (((int)dt2.dt.minute) << 8) | (int)dt2.dt.second;
 
-    if (d1 <= d3) return true;
-    if (d2 <= d4) return true;
-    return false;
+    if (d1 <= d3) return TRUE;
+    if (d2 <= d4) return TRUE;
+    return FALSE;
 }
 
 CPDFSDK_DateTime::operator time_t()
@@ -506,7 +506,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddSeconds(int seconds)
 CPDFSDK_Annot::CPDFSDK_Annot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView) :
 m_pAnnot(pAnnot),
 m_pPageView(pPageView),
-m_bSelected(false),
+m_bSelected(FALSE),
 m_nTabOrder(-1)
 {
 }
@@ -539,12 +539,12 @@ CPDFSDK_PageView* CPDFSDK_Annot::GetPageView()
     return m_pPageView;
 }
 
-bool CPDFSDK_Annot::IsSelected()
+FX_BOOL CPDFSDK_Annot::IsSelected()
 {
     return m_bSelected;
 }
 
-void CPDFSDK_Annot::SetSelected(bool bSelected)
+void CPDFSDK_Annot::SetSelected(FX_BOOL bSelected)
 {
     m_bSelected = bSelected;
 }
@@ -606,15 +606,15 @@ void CPDFSDK_Annot::DrawAppearance(CFX_RenderDevice* pDevice, const CPDF_Matrix*
     m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, pUser2Device, mode, pOptions);
 }
 
-bool CPDFSDK_Annot::IsAppearanceValid()
+FX_BOOL CPDFSDK_Annot::IsAppearanceValid()
 {
     return m_pAnnot->GetAnnotDict()->GetDict("AP") != NULL;
 }
 
-bool CPDFSDK_Annot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode)
+FX_BOOL CPDFSDK_Annot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode)
 {
     CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDict("AP");
-    if (pAP == NULL) return false;
+    if (pAP == NULL) return FALSE;
 
     // Choose the right sub-ap
     const FX_CHAR* ap_entry = "N";
@@ -627,9 +627,9 @@ bool CPDFSDK_Annot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode)
 
     // Get the AP stream or subdirectory
     CPDF_Object* psub = pAP->GetElementValue(ap_entry);
-    if (psub == NULL) return false;
+    if (psub == NULL) return FALSE;
 
-    return true;
+    return TRUE;
 }
 
 void CPDFSDK_Annot::DrawBorder(CFX_RenderDevice* pDevice, const CPDF_Matrix* pUser2Device,
@@ -875,7 +875,7 @@ void CPDFSDK_Annot::RemoveColor()
     m_pAnnot->GetAnnotDict()->RemoveAt("C");
 }
 
-bool CPDFSDK_Annot::GetColor(FX_COLORREF& color) const
+FX_BOOL CPDFSDK_Annot::GetColor(FX_COLORREF& color) const
 {
     if (CPDF_Array* pEntry = m_pAnnot->GetAnnotDict()->GetArray("C"))
     {
@@ -886,7 +886,7 @@ bool CPDFSDK_Annot::GetColor(FX_COLORREF& color) const
 
             color = FXSYS_RGB((int)g, (int)g, (int)g);
 
-            return true;
+            return TRUE;
         }
         else if (nCount == 3)
         {
@@ -896,7 +896,7 @@ bool CPDFSDK_Annot::GetColor(FX_COLORREF& color) const
 
             color = FXSYS_RGB((int)r, (int)g, (int)b);
 
-            return true;
+            return TRUE;
         }
         else if (nCount == 4)
         {
@@ -911,11 +911,11 @@ bool CPDFSDK_Annot::GetColor(FX_COLORREF& color) const
 
             color = FXSYS_RGB((int)(r * 255), (int)(g * 255), (int)(b * 255));
 
-            return true;
+            return TRUE;
         }
     }
 
-    return false;
+    return FALSE;
 }
 
 
@@ -976,7 +976,7 @@ void CPDFSDK_Annot::WriteAppearance(const CFX_ByteString& sAPType, const CPDF_Re
         pStreamDict->SetAtRect("BBox", rcBBox);
     }
 
-    pStream->SetData((uint8_t*)sContents.c_str(), sContents.GetLength(), false, false);
+    pStream->SetData((uint8_t*)sContents.c_str(), sContents.GetLength(), FALSE, FALSE);
 }
 
 #define BA_ANNOT_MINWIDTH           1
@@ -992,11 +992,11 @@ FX_FLOAT CPDFSDK_Annot::GetMinHeight() const
     return BA_ANNOT_MINHEIGHT;
 }
 
-bool CPDFSDK_Annot::CreateFormFiller()
+FX_BOOL CPDFSDK_Annot::CreateFormFiller()
 {
-    return true;
+    return TRUE;
 }
-bool CPDFSDK_Annot::IsVisible() const
+FX_BOOL CPDFSDK_Annot::IsVisible() const
 {
     int nFlags = GetFlags();
     return !((nFlags & ANNOTFLAG_INVISIBLE) || (nFlags & ANNOTFLAG_HIDDEN) || (nFlags & ANNOTFLAG_NOVIEW));

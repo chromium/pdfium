@@ -29,7 +29,7 @@ static void _DrawAxialShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2B
         t_min = pArray->GetNumber(0);
         t_max = pArray->GetNumber(1);
     }
-    bool bStartExtend = false, bEndExtend = false;
+    FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
     pArray = pDict->GetArray(FX_BSTRC("Extend"));
     if (pArray) {
         bStartExtend = pArray->GetInteger(0);
@@ -116,7 +116,7 @@ static void _DrawRadialShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2
         t_min = pArray->GetNumber(0);
         t_max = pArray->GetNumber(1);
     }
-    bool bStartExtend = false, bEndExtend = false;
+    FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
     pArray = pDict->GetArray(FX_BSTRC("Extend"));
     if (pArray) {
         bStartExtend = pArray->GetInteger(0);
@@ -155,11 +155,11 @@ static void _DrawRadialShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2
     int width = pBitmap->GetWidth();
     int height = pBitmap->GetHeight();
     int pitch = pBitmap->GetPitch();
-    bool bDecreasing = false;
+    FX_BOOL bDecreasing = FALSE;
     if (start_r > end_r) {
         int length = (int)FXSYS_sqrt((FXSYS_Mul(start_x - end_x, start_x - end_x) + FXSYS_Mul(start_y - end_y, start_y - end_y)));
         if (length < start_r - end_r) {
-            bDecreasing = true;
+            bDecreasing = TRUE;
         }
     }
     for (int row = 0; row < height; row ++) {
@@ -281,22 +281,22 @@ static void _DrawFuncShading(CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2Bi
         }
     }
 }
-bool _GetScanlineIntersect(int y, FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2, FX_FLOAT& x)
+FX_BOOL _GetScanlineIntersect(int y, FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2, FX_FLOAT& x)
 {
     if (y1 == y2) {
-        return false;
+        return FALSE;
     }
     if (y1 < y2) {
         if (y < y1 || y > y2) {
-            return false;
+            return FALSE;
         }
     } else {
         if (y < y2 || y > y1) {
-            return false;
+            return FALSE;
         }
     }
     x = x1 + FXSYS_MulDiv(x2 - x1, y - y1, y2 - y1);
-    return true;
+    return TRUE;
 }
 static void _DrawGouraud(CFX_DIBitmap* pBitmap, int alpha, CPDF_MeshVertex triangle[3])
 {
@@ -325,7 +325,7 @@ static void _DrawGouraud(CFX_DIBitmap* pBitmap, int alpha, CPDF_MeshVertex trian
         for (int i = 0; i < 3; i ++) {
             CPDF_MeshVertex& vertex1 = triangle[i];
             CPDF_MeshVertex& vertex2 = triangle[(i + 1) % 3];
-            bool bIntersect = _GetScanlineIntersect(y, vertex1.x, vertex1.y,
+            FX_BOOL bIntersect = _GetScanlineIntersect(y, vertex1.x, vertex1.y,
                                  vertex2.x, vertex2.y, inter_x[nIntersects]);
             if (!bIntersect) {
                 continue;
@@ -601,7 +601,7 @@ struct CPDF_PatchDrawer {
     int					alpha;
     void Draw(int x_scale, int y_scale, int left, int bottom, Coon_Bezier C1, Coon_Bezier C2, Coon_Bezier D1, Coon_Bezier D2)
     {
-        bool bSmall = C1.Distance() < 2 && C2.Distance() < 2 && D1.Distance() < 2 && D2.Distance() < 2;
+        FX_BOOL bSmall = C1.Distance() < 2 && C2.Distance() < 2 && D1.Distance() < 2 && D2.Distance() < 2;
         Coon_Color div_colors[4];
         int d_bottom, d_left, d_top, d_right;
         div_colors[0].BiInterpol(patch_colors, left, bottom, x_scale, y_scale);
@@ -663,9 +663,9 @@ struct CPDF_PatchDrawer {
     }
 };
 
-bool _CheckCoonTensorPara(const CPDF_MeshStream &stream)
+FX_BOOL _CheckCoonTensorPara(const CPDF_MeshStream &stream)
 {
-    bool bCoorBits = ( stream.m_nCoordBits== 1   ||
+    FX_BOOL bCoorBits = ( stream.m_nCoordBits== 1   ||
                           stream.m_nCoordBits == 2  ||
                           stream.m_nCoordBits == 4  ||
                           stream.m_nCoordBits == 8  ||
@@ -674,21 +674,21 @@ bool _CheckCoonTensorPara(const CPDF_MeshStream &stream)
                           stream.m_nCoordBits == 24 ||
                           stream.m_nCoordBits == 32   );
 
-    bool bCompBits = ( stream.m_nCompBits == 1  ||
+    FX_BOOL bCompBits = ( stream.m_nCompBits == 1  ||
                           stream.m_nCompBits == 2  ||
                           stream.m_nCompBits == 4  ||
                           stream.m_nCompBits == 8  ||
                           stream.m_nCompBits == 12 ||
                           stream.m_nCompBits == 16   );
 
-    bool bFlagBits = ( stream.m_nFlagBits == 2  ||
+    FX_BOOL bFlagBits = ( stream.m_nFlagBits == 2  ||
                           stream.m_nFlagBits == 4  ||
                           stream.m_nFlagBits == 8    );
 
     return bCoorBits && bCompBits && bFlagBits;
 }
 
-static void _DrawCoonPatchMeshes(bool bTensor, CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2Bitmap,
+static void _DrawCoonPatchMeshes(FX_BOOL bTensor, CFX_DIBitmap* pBitmap, CFX_AffineMatrix* pObject2Bitmap,
                                  CPDF_Stream* pShadingStream, CPDF_Function** pFuncs, int nFuncs,
                                  CPDF_ColorSpace* pCS, int fill_mode, int alpha)
 {
@@ -768,7 +768,7 @@ static void _DrawCoonPatchMeshes(bool bTensor, CFX_DIBitmap* pBitmap, CFX_Affine
     }
 }
 void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern, CFX_AffineMatrix* pMatrix,
-                                    FX_RECT& clip_rect, int alpha, bool bAlphaMode)
+                                    FX_RECT& clip_rect, int alpha, FX_BOOL bAlphaMode)
 {
     CPDF_Function** pFuncs = pPattern->m_pFunctions;
     int nFuncs = pPattern->m_nFuncs;
@@ -840,7 +840,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern, CFX_AffineMat
     }
     buffer.OutputToDevice();
 }
-void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern, CPDF_PageObject* pPageObj, const CFX_AffineMatrix* pObj2Device, bool bStroke)
+void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern, CPDF_PageObject* pPageObj, const CFX_AffineMatrix* pObj2Device, FX_BOOL bStroke)
 {
     if (!pattern->Load()) {
         return;
@@ -858,7 +858,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern, CPDF_Pa
         return;
     }
     FX_RECT rect;
-    if (GetObjectClippedRect(pPageObj, pObj2Device, false, rect)) {
+    if (GetObjectClippedRect(pPageObj, pObj2Device, FALSE, rect)) {
         m_pDevice->RestoreState();
         return;
     }
@@ -869,19 +869,19 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern, CPDF_Pa
     DrawShading(pattern, &matrix, rect, alpha, m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
     m_pDevice->RestoreState();
 }
-bool CPDF_RenderStatus::ProcessShading(CPDF_ShadingObject* pShadingObj, const CFX_AffineMatrix* pObj2Device)
+FX_BOOL CPDF_RenderStatus::ProcessShading(CPDF_ShadingObject* pShadingObj, const CFX_AffineMatrix* pObj2Device)
 {
     FX_RECT rect = pShadingObj->GetBBox(pObj2Device);
     FX_RECT clip_box = m_pDevice->GetClipBox();
     rect.Intersect(clip_box);
     if (rect.IsEmpty()) {
-        return true;
+        return TRUE;
     }
     CFX_AffineMatrix matrix = pShadingObj->m_Matrix;
     matrix.Concat(*pObj2Device);
-    DrawShading(pShadingObj->m_pShading, &matrix, rect, pShadingObj->m_GeneralState.GetAlpha(false),
+    DrawShading(pShadingObj->m_pShading, &matrix, rect, pShadingObj->m_GeneralState.GetAlpha(FALSE),
                 m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
-    return true;
+    return TRUE;
 }
 static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc, CPDF_PageRenderCache* pCache,
                                        CPDF_TilingPattern* pPattern, const CFX_AffineMatrix* pObject2Device,
@@ -914,7 +914,7 @@ static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc, CPDF_PageRenderCache
     context.DrawObjectList(&bitmap_device, pPattern->m_pForm, &mtPattern2Bitmap, &options);
     return pBitmap;
 }
-void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern, CPDF_PageObject* pPageObj, const CFX_AffineMatrix* pObj2Device, bool bStroke)
+void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern, CPDF_PageObject* pPageObj, const CFX_AffineMatrix* pObj2Device, FX_BOOL bStroke)
 {
     if (!pPattern->Load()) {
         return;
@@ -944,11 +944,11 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern, CPDF_Pag
     CFX_AffineMatrix mtPattern2Device = pPattern->m_Pattern2Form;
     mtPattern2Device.Concat(*pObj2Device);
     GetScaledMatrix(mtPattern2Device);
-    bool bAligned = false;
+    FX_BOOL bAligned = FALSE;
     if (pPattern->m_BBox.left == 0 && pPattern->m_BBox.bottom == 0 &&
             pPattern->m_BBox.right == pPattern->m_XStep && pPattern->m_BBox.top == pPattern->m_YStep &&
             (mtPattern2Device.IsScaled() || mtPattern2Device.Is90Rotated())) {
-        bAligned = true;
+        bAligned = TRUE;
     }
     CFX_FloatRect cell_bbox = pPattern->m_BBox;
     mtPattern2Device.TransformRect(cell_bbox);
@@ -1075,11 +1075,11 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern, CPDF_Pag
             }
         }
     }
-    CompositeDIBitmap(&screen, clip_box.left, clip_box.top, 0, 255, FXDIB_BLEND_NORMAL, false);
+    CompositeDIBitmap(&screen, clip_box.left, clip_box.top, 0, 255, FXDIB_BLEND_NORMAL, FALSE);
     m_pDevice->RestoreState();
     delete pPatternBitmap;
 }
-void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj, const CFX_AffineMatrix* pObj2Device, CPDF_Color* pColor, bool bStroke)
+void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj, const CFX_AffineMatrix* pObj2Device, CPDF_Color* pColor, FX_BOOL bStroke)
 {
     CPDF_Pattern* pattern = pColor->GetPattern();
     if (pattern == NULL) {
@@ -1091,20 +1091,20 @@ void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj, const CFX
         DrawShadingPattern((CPDF_ShadingPattern*)pattern, pPathObj, pObj2Device, bStroke);
     }
 }
-void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj, const CFX_AffineMatrix* pObj2Device, int& filltype, bool& bStroke)
+void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj, const CFX_AffineMatrix* pObj2Device, int& filltype, FX_BOOL& bStroke)
 {
     if(filltype) {
         CPDF_Color& FillColor = *pPathObj->m_ColorState.GetFillColor();
         if(FillColor.m_pCS && FillColor.m_pCS->GetFamily() == PDFCS_PATTERN) {
-            DrawPathWithPattern(pPathObj, pObj2Device, &FillColor, false);
+            DrawPathWithPattern(pPathObj, pObj2Device, &FillColor, FALSE);
             filltype = 0;
         }
     }
     if(bStroke) {
         CPDF_Color& StrokeColor = *pPathObj->m_ColorState.GetStrokeColor();
         if(StrokeColor.m_pCS && StrokeColor.m_pCS->GetFamily() == PDFCS_PATTERN) {
-            DrawPathWithPattern(pPathObj, pObj2Device, &StrokeColor, true);
-            bStroke = false;
+            DrawPathWithPattern(pPathObj, pObj2Device, &StrokeColor, TRUE);
+            bStroke = FALSE;
         }
     }
 }

@@ -57,9 +57,9 @@ public:
         return m_GenNum;
     }
 
-    bool                             IsIdentical(CPDF_Object* pObj) const;
+    FX_BOOL                             IsIdentical(CPDF_Object* pObj) const;
 
-    CPDF_Object*                        Clone(bool bDirect = false) const;
+    CPDF_Object*                        Clone(FX_BOOL bDirect = FALSE) const;
 
     CPDF_Object*                        CloneRef(CPDF_IndirectObjects* pObjs) const;
 
@@ -88,9 +88,9 @@ public:
 
     int                                 GetDirectType() const;
 
-    bool                             IsModified() const
+    FX_BOOL                             IsModified() const
     {
-        return false;
+        return FALSE;
     }
 protected:
     CPDF_Object(FX_DWORD type) : m_Type(type), m_ObjNum(0), m_GenNum(0) { }
@@ -108,27 +108,27 @@ protected:
     friend class			CPDF_SyntaxParser;
 private:
     CPDF_Object(const CPDF_Object& src) {}
-    CPDF_Object* CloneInternal(bool bDirect, CFX_MapPtrToPtr* visited) const;
+    CPDF_Object* CloneInternal(FX_BOOL bDirect, CFX_MapPtrToPtr* visited) const;
 };
 class CPDF_Boolean : public CPDF_Object
 {
 public:
 
-    static CPDF_Boolean*	Create(bool value)
+    static CPDF_Boolean*	Create(FX_BOOL value)
     {
         return new CPDF_Boolean(value);
     }
 
     CPDF_Boolean() : CPDF_Object(PDFOBJ_BOOLEAN), m_bValue(false) { }
-    CPDF_Boolean(bool value) : CPDF_Object(PDFOBJ_BOOLEAN), m_bValue(value) { }
+    CPDF_Boolean(FX_BOOL value) : CPDF_Object(PDFOBJ_BOOLEAN), m_bValue(value) { }
 
-    bool					Identical(CPDF_Boolean* pOther) const
+    FX_BOOL					Identical(CPDF_Boolean* pOther) const
     {
         return m_bValue == pOther->m_bValue;
     }
 protected:
 
-    bool					m_bValue;
+    FX_BOOL					m_bValue;
     friend class			CPDF_Object;
 };
 class CPDF_Number : public CPDF_Object
@@ -150,14 +150,14 @@ public:
         return new CPDF_Number(str);
     }
 
-    static CPDF_Number*		Create(bool bInteger, void* pData)
+    static CPDF_Number*		Create(FX_BOOL bInteger, void* pData)
     {
         return new CPDF_Number(bInteger, pData);
     }
 
     CPDF_Number() : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(false), m_Integer(0) { }
 
-    CPDF_Number(bool bInteger, void* pData);
+    CPDF_Number(FX_BOOL bInteger, void* pData);
 
     CPDF_Number(int value);
 
@@ -165,13 +165,13 @@ public:
 
     CPDF_Number(const CFX_ByteStringC& str);
 
-    bool					Identical(CPDF_Number* pOther) const;
+    FX_BOOL					Identical(CPDF_Number* pOther) const;
 
     CFX_ByteString			GetString() const;
 
     void					SetString(const CFX_ByteStringC& str);
 
-    bool					IsInteger() const
+    FX_BOOL					IsInteger() const
     {
         return m_bInteger;
     }
@@ -199,7 +199,7 @@ public:
     }
 protected:
 
-    bool					m_bInteger;
+    FX_BOOL					m_bInteger;
 
     union {
 
@@ -213,7 +213,7 @@ class CPDF_String : public CPDF_Object
 {
 public:
 
-    static CPDF_String*		Create(const CFX_ByteString& str, bool bHex = false)
+    static CPDF_String*		Create(const CFX_ByteString& str, FX_BOOL bHex = FALSE)
     {
         return new CPDF_String(str, bHex);
     }
@@ -223,9 +223,9 @@ public:
         return new CPDF_String(str);
     }
 
-    CPDF_String() : CPDF_Object(PDFOBJ_STRING), m_bHex(false) { }
+    CPDF_String() : CPDF_Object(PDFOBJ_STRING), m_bHex(FALSE) { }
 
-    CPDF_String(const CFX_ByteString& str, bool bHex = false)
+    CPDF_String(const CFX_ByteString& str, FX_BOOL bHex = FALSE)
         : CPDF_Object(PDFOBJ_STRING), m_String(str), m_bHex(bHex) {
     }
 
@@ -236,12 +236,12 @@ public:
         return m_String;
     }
 
-    bool					Identical(CPDF_String* pOther) const
+    FX_BOOL					Identical(CPDF_String* pOther) const
     {
         return m_String == pOther->m_String;
     }
 
-    bool					IsHex() const
+    FX_BOOL					IsHex() const
     {
         return m_bHex;
     }
@@ -249,7 +249,7 @@ protected:
 
     CFX_ByteString			m_String;
 
-    bool					m_bHex;
+    FX_BOOL					m_bHex;
     friend class			CPDF_Object;
 };
 class CPDF_Name : public CPDF_Object
@@ -280,7 +280,7 @@ public:
         return m_Name;
     }
 
-    bool					Identical(CPDF_Name* pOther) const
+    FX_BOOL					Identical(CPDF_Name* pOther) const
     {
         return m_Name == pOther->m_Name;
     }
@@ -378,7 +378,7 @@ public:
         AddNumber(value);
     }
 
-    bool					Identical(CPDF_Array* pOther) const;
+    FX_BOOL					Identical(CPDF_Array* pOther) const;
 protected:
 
     ~CPDF_Array();
@@ -419,7 +419,7 @@ public:
 
     int						GetInteger(const CFX_ByteStringC& key, int default_int) const;
 
-    bool					GetBoolean(const CFX_ByteStringC& key, bool bDefault = false) const;
+    FX_BOOL					GetBoolean(const CFX_ByteStringC& key, FX_BOOL bDefault = FALSE) const;
 
     FX_FLOAT				GetNumber(const CFX_ByteStringC& key) const;
 
@@ -439,7 +439,7 @@ public:
     }
 
 
-    bool					KeyExist(const CFX_ByteStringC& key) const;
+    FX_BOOL					KeyExist(const CFX_ByteStringC& key) const;
 
     FX_POSITION				GetStartPos() const;
 
@@ -478,7 +478,7 @@ public:
 
     void					SetAtMatrix(const CFX_ByteStringC& key, const CFX_AffineMatrix& matrix);
 
-    void					SetAtBoolean(const CFX_ByteStringC& key, bool bValue);
+    void					SetAtBoolean(const CFX_ByteStringC& key, FX_BOOL bValue);
 
 
 
@@ -487,7 +487,7 @@ public:
 
     void					ReplaceKey(const CFX_ByteStringC& oldkey, const CFX_ByteStringC& newkey);
 
-    bool					Identical(CPDF_Dictionary* pDict) const;
+    FX_BOOL					Identical(CPDF_Dictionary* pDict) const;
 
     int						GetCount() const
     {
@@ -519,15 +519,15 @@ public:
         return m_pDict;
     }
 
-    void					SetData(const uint8_t* pData, FX_DWORD size, bool bCompressed, bool bKeepBuf);
+    void					SetData(const uint8_t* pData, FX_DWORD size, FX_BOOL bCompressed, FX_BOOL bKeepBuf);
 
     void					InitStream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
 
     void					InitStream(IFX_FileRead *pFile, CPDF_Dictionary* pDict);
 
-    bool					Identical(CPDF_Stream* pOther) const;
+    FX_BOOL					Identical(CPDF_Stream* pOther) const;
 
-    CPDF_StreamFilter*		GetStreamFilter(bool bRaw = false) const;
+    CPDF_StreamFilter*		GetStreamFilter(FX_BOOL bRaw = FALSE) const;
 
 
 
@@ -536,15 +536,15 @@ public:
         return m_dwSize;
     }
 
-    bool					ReadRawData(FX_FILESIZE start_pos, uint8_t* pBuf, FX_DWORD buf_size) const;
+    FX_BOOL					ReadRawData(FX_FILESIZE start_pos, uint8_t* pBuf, FX_DWORD buf_size) const;
 
 
-    bool					IsMemoryBased() const
+    FX_BOOL					IsMemoryBased() const
     {
         return m_GenNum == (FX_DWORD) - 1;
     }
 
-    CPDF_Stream*			Clone(bool bDirect, FPDF_LPFCloneStreamCallback lpfCallback, void* pUserData) const;
+    CPDF_Stream*			Clone(FX_BOOL bDirect, FPDF_LPFCloneStreamCallback lpfCallback, void* pUserData) const;
 protected:
 
     ~CPDF_Stream();
@@ -579,8 +579,8 @@ public:
 
     ~CPDF_StreamAcc();
 
-    void					LoadAllData(const CPDF_Stream* pStream, bool bRawAccess = false,
-                                        FX_DWORD estimated_size = 0, bool bImageAcc = false);
+    void					LoadAllData(const CPDF_Stream* pStream, FX_BOOL bRawAccess = FALSE,
+                                        FX_DWORD estimated_size = 0, FX_BOOL bImageAcc = FALSE);
 
     const CPDF_Stream*		GetStream() const
     {
@@ -613,7 +613,7 @@ protected:
 
     FX_DWORD				m_dwSize;
 
-    bool					m_bNewBuf;
+    FX_BOOL					m_bNewBuf;
 
     CFX_ByteString			m_ImageDecoder;
 
@@ -691,7 +691,7 @@ public:
 
     void					SetRef(CPDF_IndirectObjects* pDoc, FX_DWORD objnum);
 
-    bool					Identical(CPDF_Reference* pOther) const
+    FX_BOOL					Identical(CPDF_Reference* pOther) const
     {
         return m_RefObjNum == pOther->m_RefObjNum;
     }

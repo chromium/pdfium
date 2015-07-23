@@ -123,40 +123,40 @@ public:
         m_pMainKeyboardWnd = NULL;
     }
 
-    bool IsWndCreated(const CPWL_Wnd * pWnd) const
+    FX_BOOL IsWndCreated(const CPWL_Wnd * pWnd) const
     {
         return m_pCreatedWnd == pWnd;
     }
 
-    bool IsMainCaptureMouse(const CPWL_Wnd * pWnd) const
+    FX_BOOL IsMainCaptureMouse(const CPWL_Wnd * pWnd) const
     {
         return pWnd == m_pMainMouseWnd;
     }
 
-    bool IsWndCaptureMouse(const CPWL_Wnd * pWnd) const
+    FX_BOOL IsWndCaptureMouse(const CPWL_Wnd * pWnd) const
     {
         if (pWnd)
             for( int32_t i=0,sz=m_aMousePath.GetSize(); i<sz; i++)
                 if (m_aMousePath.GetAt(i) == pWnd)
-                    return true;
+                    return TRUE;
 
-        return false;
+        return FALSE;
     }
 
-    bool IsMainCaptureKeyboard(const CPWL_Wnd * pWnd) const
+    FX_BOOL IsMainCaptureKeyboard(const CPWL_Wnd * pWnd) const
     {
         return pWnd == m_pMainKeyboardWnd;
     }
 
 
-    bool IsWndCaptureKeyboard(const CPWL_Wnd * pWnd) const
+    FX_BOOL IsWndCaptureKeyboard(const CPWL_Wnd * pWnd) const
     {
         if (pWnd)
             for( int32_t i=0,sz=m_aKeyboardPath.GetSize(); i<sz; i++)
                 if (m_aKeyboardPath.GetAt(i) == pWnd)
-                    return true;
+                    return TRUE;
 
-        return false;
+        return FALSE;
     }
 
     void SetFocus(CPWL_Wnd * pWnd)
@@ -225,16 +225,16 @@ CPWL_Wnd::CPWL_Wnd() :
     m_pVScrollBar(NULL),
     m_rcWindow(),
     m_rcClip(),
-    m_bCreated(false),
-    m_bVisible(false),
-    m_bNotifying(false),
-    m_bEnabled(true)
+    m_bCreated(FALSE),
+    m_bVisible(FALSE),
+    m_bNotifying(FALSE),
+    m_bEnabled(TRUE)
 {
 }
 
 CPWL_Wnd::~CPWL_Wnd()
 {
-    ASSERT(m_bCreated == false);
+    ASSERT(m_bCreated == FALSE);
 }
 
 CFX_ByteString CPWL_Wnd::GetClassName() const
@@ -272,7 +272,7 @@ void CPWL_Wnd::Create(const PWL_CREATEPARAM & cp)
         OnCreated();
 
         RePosChildWnd();
-        m_bCreated = true;
+        m_bCreated = TRUE;
     }
 }
 
@@ -308,7 +308,7 @@ void CPWL_Wnd::Destroy()
 
         if (m_sPrivateParam.pParentWnd)
             m_sPrivateParam.pParentWnd->OnNotify(this, PNM_REMOVECHILD);
-        m_bCreated = false;
+        m_bCreated = FALSE;
     }
 
     DestroyMsgControl();
@@ -318,7 +318,7 @@ void CPWL_Wnd::Destroy()
     m_pVScrollBar = NULL;
 }
 
-void CPWL_Wnd::Move(const CPDF_Rect & rcNew, bool bReset,bool bRefresh)
+void CPWL_Wnd::Move(const CPDF_Rect & rcNew, FX_BOOL bReset,FX_BOOL bRefresh)
 {
     if (IsValid())
     {
@@ -494,7 +494,7 @@ void CPWL_Wnd::InvalidateRect(CPDF_Rect* pRect)
 }
 
 #define PWL_IMPLEMENT_KEY_METHOD(key_method_name)\
-bool CPWL_Wnd::key_method_name(FX_WORD nChar, FX_DWORD nFlag)\
+FX_BOOL CPWL_Wnd::key_method_name(FX_WORD nChar, FX_DWORD nFlag)\
 {\
     if (IsValid() && IsVisible() && IsEnabled())\
     {\
@@ -512,11 +512,11 @@ bool CPWL_Wnd::key_method_name(FX_WORD nChar, FX_DWORD nFlag)\
             }\
         }\
     }\
-    return false;\
+    return FALSE;\
 }
 
 #define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)\
-bool CPWL_Wnd::mouse_method_name(const CPDF_Point & point, FX_DWORD nFlag)\
+FX_BOOL CPWL_Wnd::mouse_method_name(const CPDF_Point & point, FX_DWORD nFlag)\
 {\
     if (IsValid() && IsVisible() && IsEnabled())\
     {\
@@ -550,7 +550,7 @@ bool CPWL_Wnd::mouse_method_name(const CPDF_Point & point, FX_DWORD nFlag)\
                 SetCursor();\
         }\
     }\
-    return false;\
+    return FALSE;\
 }
 
 PWL_IMPLEMENT_KEY_METHOD(OnKeyDown)
@@ -567,7 +567,7 @@ PWL_IMPLEMENT_MOUSE_METHOD(OnRButtonDown)
 PWL_IMPLEMENT_MOUSE_METHOD(OnRButtonUp)
 PWL_IMPLEMENT_MOUSE_METHOD(OnMouseMove)
 
-bool CPWL_Wnd::OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag)
+FX_BOOL CPWL_Wnd::OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag)
 {
     if (IsValid() && IsVisible() && IsEnabled())
     {
@@ -586,7 +586,7 @@ bool CPWL_Wnd::OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFl
             }
         }
     }
-    return false;
+    return FALSE;
 }
 
 void CPWL_Wnd::AddChild(CPWL_Wnd * pWnd)
@@ -624,7 +624,7 @@ void CPWL_Wnd::OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam, intptr_t 
     }
 }
 
-bool CPWL_Wnd::IsValid() const
+FX_BOOL CPWL_Wnd::IsValid() const
 {
     return m_bCreated;
 }
@@ -677,7 +677,7 @@ CPDF_Rect CPWL_Wnd::GetWindowCenterSquare() const
     return CPWL_Utils::GetCenterSquare(CPWL_Utils::DeflateRect(GetWindowRect(),0.1f));
 }
 
-bool CPWL_Wnd::HasFlag(FX_DWORD dwFlags) const
+FX_BOOL CPWL_Wnd::HasFlag(FX_DWORD dwFlags) const
 {
     return (m_sPrivateParam.dwFlags & dwFlags) != 0;
 }
@@ -865,12 +865,12 @@ void CPWL_Wnd::OnKillFocus()
 {
 }
 
-bool CPWL_Wnd::WndHitTest(const CPDF_Point & point) const
+FX_BOOL CPWL_Wnd::WndHitTest(const CPDF_Point & point) const
 {
     return IsValid() && IsVisible() && GetWindowRect().Contains(point.x,point.y);
 }
 
-bool CPWL_Wnd::ClientHitTest(const CPDF_Point & point) const
+FX_BOOL CPWL_Wnd::ClientHitTest(const CPDF_Point & point) const
 {
     return IsValid() && IsVisible() && GetClientRect().Contains(point.x,point.y);
 }
@@ -883,7 +883,7 @@ const CPWL_Wnd* CPWL_Wnd::GetRootWnd() const
     return this;
 }
 
-void CPWL_Wnd::SetVisible(bool bVisible)
+void CPWL_Wnd::SetVisible(FX_BOOL bVisible)
 {
     if (IsValid())
     {
@@ -915,7 +915,7 @@ CPDF_Rect CPWL_Wnd::GetClipRect() const
     return m_rcClip;
 }
 
-bool CPWL_Wnd::IsReadOnly() const
+FX_BOOL CPWL_Wnd::IsReadOnly() const
 {
     return HasFlag(PWS_READONLY);
 }
@@ -931,7 +931,7 @@ void CPWL_Wnd::RePosChildWnd()
                             rcContent.right-1.0f,
                             rcContent.top);
 
-    if (pVSB) pVSB->Move(rcVScroll,true,false);
+    if (pVSB) pVSB->Move(rcVScroll,TRUE,FALSE);
 }
 
 void CPWL_Wnd::CreateChildWnd(const PWL_CREATEPARAM & cp)
@@ -968,33 +968,33 @@ CPWL_MsgControl* CPWL_Wnd::GetMsgControl() const
     return m_sPrivateParam.pMsgControl;
 }
 
-bool CPWL_Wnd::IsCaptureMouse() const
+FX_BOOL CPWL_Wnd::IsCaptureMouse() const
 {
     return IsWndCaptureMouse(this);
 }
 
-bool CPWL_Wnd::IsWndCaptureMouse(const CPWL_Wnd * pWnd) const
+FX_BOOL CPWL_Wnd::IsWndCaptureMouse(const CPWL_Wnd * pWnd) const
 {
     if (CPWL_MsgControl * pCtrl = GetMsgControl())
         return pCtrl->IsWndCaptureMouse(pWnd);
 
-    return false;
+    return FALSE;
 }
 
-bool CPWL_Wnd::IsWndCaptureKeyboard(const CPWL_Wnd * pWnd) const
+FX_BOOL CPWL_Wnd::IsWndCaptureKeyboard(const CPWL_Wnd * pWnd) const
 {
     if (CPWL_MsgControl * pCtrl = GetMsgControl())
         return pCtrl->IsWndCaptureKeyboard(pWnd);
 
-    return false;
+    return FALSE;
 }
 
-bool CPWL_Wnd::IsFocused() const
+FX_BOOL CPWL_Wnd::IsFocused() const
 {
     if (CPWL_MsgControl * pCtrl = GetMsgControl())
         return pCtrl->IsMainCaptureKeyboard(this);
 
-    return false;
+    return FALSE;
 }
 
 CPDF_Rect CPWL_Wnd::GetFocusRect() const
@@ -1217,7 +1217,7 @@ const CPWL_Wnd* CPWL_Wnd::GetFocused() const
     return NULL;
 }
 
-void CPWL_Wnd::EnableWindow(bool bEnable)
+void CPWL_Wnd::EnableWindow(FX_BOOL bEnable)
 {
     if (m_bEnabled != bEnable)
     {
@@ -1238,7 +1238,7 @@ void CPWL_Wnd::EnableWindow(bool bEnable)
     }
 }
 
-bool CPWL_Wnd::IsEnabled()
+FX_BOOL CPWL_Wnd::IsEnabled()
 {
     return m_bEnabled;
 }
@@ -1251,42 +1251,42 @@ void CPWL_Wnd::OnDisabled()
 {
 }
 
-bool CPWL_Wnd::IsCTRLpressed(FX_DWORD nFlag) const
+FX_BOOL CPWL_Wnd::IsCTRLpressed(FX_DWORD nFlag) const
 {
     if (IFX_SystemHandler* pSystemHandler = GetSystemHandler())
     {
         return pSystemHandler->IsCTRLKeyDown(nFlag);
     }
 
-    return false;
+    return FALSE;
 }
 
-bool CPWL_Wnd::IsSHIFTpressed(FX_DWORD nFlag) const
+FX_BOOL CPWL_Wnd::IsSHIFTpressed(FX_DWORD nFlag) const
 {
     if (IFX_SystemHandler* pSystemHandler = GetSystemHandler())
     {
         return pSystemHandler->IsSHIFTKeyDown(nFlag);
     }
 
-    return false;
+    return FALSE;
 }
 
-bool CPWL_Wnd::IsALTpressed(FX_DWORD nFlag) const
+FX_BOOL CPWL_Wnd::IsALTpressed(FX_DWORD nFlag) const
 {
     if (IFX_SystemHandler* pSystemHandler = GetSystemHandler())
     {
         return pSystemHandler->IsALTKeyDown(nFlag);
     }
 
-    return false;
+    return FALSE;
 }
 
-bool CPWL_Wnd::IsINSERTpressed(FX_DWORD nFlag) const
+FX_BOOL CPWL_Wnd::IsINSERTpressed(FX_DWORD nFlag) const
 {
     if (IFX_SystemHandler* pSystemHandler = GetSystemHandler())
     {
         return pSystemHandler->IsINSERTKeyDown(nFlag);
     }
 
-    return false;
+    return FALSE;
 }

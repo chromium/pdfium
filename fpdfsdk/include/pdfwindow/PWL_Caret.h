@@ -12,11 +12,11 @@
 struct PWL_CARET_INFO
 {
 public:
-	PWL_CARET_INFO() : bVisible(false), ptHead(0,0), ptFoot(0,0)
+	PWL_CARET_INFO() : bVisible(FALSE), ptHead(0,0), ptFoot(0,0)
 	{
 	}
 
-	bool						bVisible;
+	FX_BOOL						bVisible;
 	CPDF_Point					ptHead;
 	CPDF_Point					ptFoot;
 };
@@ -32,9 +32,9 @@ public:
 	virtual void				GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream);
 	virtual void				DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device);
 	virtual void				InvalidateRect(CPDF_Rect * pRect = NULL);
-	virtual void				SetVisible(bool bVisible) {}
+	virtual void				SetVisible(FX_BOOL bVisible) {}
 	virtual	void				TimerProc();
-	void						SetCaret(bool bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot);
+	void						SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot);
 	CFX_ByteString				GetCaretAppearanceStream(const CPDF_Point & ptOffset);
 	void						SetInvalidRect(CPDF_Rect rc) {m_rcInvalid = rc;}
 
@@ -42,7 +42,7 @@ private:
 	void						GetCaretApp(CFX_ByteTextBuf & sAppStream,const CPDF_Point & ptOffset);
 	CPDF_Rect					GetCaretRect() const;
 
-	bool						m_bFlash;
+	FX_BOOL						m_bFlash;
 	CPDF_Point					m_ptHead;
 	CPDF_Point					m_ptFoot;
 	FX_FLOAT					m_fWidth;

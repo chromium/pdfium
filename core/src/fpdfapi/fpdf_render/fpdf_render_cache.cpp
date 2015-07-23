@@ -108,16 +108,16 @@ FX_DWORD CPDF_PageRenderCache::GetCachedSize(CPDF_Stream* pStream) const
     return pImageCache->EstimateSize();
 }
 void CPDF_PageRenderCache::GetCachedBitmap(CPDF_Stream* pStream, CFX_DIBSource*& pBitmap, CFX_DIBSource*& pMask, FX_DWORD& MatteColor,
-        bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask, CPDF_RenderStatus* pRenderStatus,
+        FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus,
         int32_t downsampleWidth, int32_t downsampleHeight)
 {
     CPDF_ImageCache* pImageCache;
-    bool bFind = m_ImageCaches.Lookup(pStream, (void*&)pImageCache);
+    FX_BOOL bFind = m_ImageCaches.Lookup(pStream, (void*&)pImageCache);
     if (!bFind) {
         pImageCache = new CPDF_ImageCache(m_pPage->m_pDocument, pStream);
     }
     m_nTimeCount ++;
-    bool bCached = pImageCache->GetCachedBitmap(pBitmap, pMask, MatteColor, m_pPage->m_pPageResources, bStdCS, GroupFamily, bLoadMask, pRenderStatus, downsampleWidth, downsampleHeight);
+    FX_BOOL bCached = pImageCache->GetCachedBitmap(pBitmap, pMask, MatteColor, m_pPage->m_pPageResources, bStdCS, GroupFamily, bLoadMask, pRenderStatus, downsampleWidth, downsampleHeight);
     if (!bFind) {
         m_ImageCaches.SetAt(pStream, pImageCache);
     }
@@ -125,7 +125,7 @@ void CPDF_PageRenderCache::GetCachedBitmap(CPDF_Stream* pStream, CFX_DIBSource*&
         m_nCacheSize += pImageCache->EstimateSize();
     }
 }
-bool	CPDF_PageRenderCache::StartGetCachedBitmap(CPDF_Stream* pStream, bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask, CPDF_RenderStatus* pRenderStatus, int32_t downsampleWidth, int32_t downsampleHeight)
+FX_BOOL	CPDF_PageRenderCache::StartGetCachedBitmap(CPDF_Stream* pStream, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus, int32_t downsampleWidth, int32_t downsampleHeight)
 {
     m_bCurFindCache = m_ImageCaches.Lookup(pStream, (void*&)m_pCurImageCache);
     if (!m_bCurFindCache) {
@@ -133,7 +133,7 @@ bool	CPDF_PageRenderCache::StartGetCachedBitmap(CPDF_Stream* pStream, bool bStdC
     }
     int ret = m_pCurImageCache->StartGetCachedBitmap(pRenderStatus->m_pFormResource, m_pPage->m_pPageResources, bStdCS, GroupFamily, bLoadMask, pRenderStatus, downsampleWidth, downsampleHeight);
     if (ret == 2) {
-        return true;
+        return TRUE;
     }
     m_nTimeCount ++;
     if (!m_bCurFindCache) {
@@ -142,13 +142,13 @@ bool	CPDF_PageRenderCache::StartGetCachedBitmap(CPDF_Stream* pStream, bool bStdC
     if (!ret) {
         m_nCacheSize += m_pCurImageCache->EstimateSize();
     }
-    return false;
+    return FALSE;
 }
-bool	CPDF_PageRenderCache::Continue(IFX_Pause* pPause)
+FX_BOOL	CPDF_PageRenderCache::Continue(IFX_Pause* pPause)
 {
     int ret = m_pCurImageCache->Continue(pPause);
     if (ret == 2) {
-        return true;
+        return TRUE;
     }
     m_nTimeCount ++;
     if (!m_bCurFindCache) {
@@ -157,7 +157,7 @@ bool	CPDF_PageRenderCache::Continue(IFX_Pause* pPause)
     if (!ret) {
         m_nCacheSize += m_pCurImageCache->EstimateSize();
     }
-    return false;
+    return FALSE;
 }
 void CPDF_PageRenderCache::ResetBitmap(CPDF_Stream* pStream, const CFX_DIBitmap* pBitmap)
 {
@@ -222,18 +222,18 @@ static FX_DWORD FPDF_ImageCache_EstimateImageSize(const CFX_DIBSource* pDIB)
 {
     return pDIB && pDIB->GetBuffer() ? (FX_DWORD)pDIB->GetHeight() * pDIB->GetPitch() + (FX_DWORD)pDIB->GetPaletteSize() * 4 : 0;
 }
-bool CPDF_ImageCache::GetCachedBitmap(CFX_DIBSource*& pBitmap, CFX_DIBSource*& pMask, FX_DWORD& MatteColor, CPDF_Dictionary* pPageResources,
-        bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask, CPDF_RenderStatus* pRenderStatus,
+FX_BOOL CPDF_ImageCache::GetCachedBitmap(CFX_DIBSource*& pBitmap, CFX_DIBSource*& pMask, FX_DWORD& MatteColor, CPDF_Dictionary* pPageResources,
+        FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus,
         int32_t downsampleWidth, int32_t downsampleHeight)
 {
     if (m_pCachedBitmap) {
         pBitmap = m_pCachedBitmap;
         pMask = m_pCachedMask;
         MatteColor = m_MatteColor;
-        return true;
+        return TRUE;
     }
     if (!pRenderStatus) {
-        return false;
+        return FALSE;
     }
     CPDF_RenderContext*pContext = pRenderStatus->GetContext();
     CPDF_PageRenderCache* pPageRenderCache = pContext->m_pPageCache;
@@ -243,7 +243,7 @@ bool CPDF_ImageCache::GetCachedBitmap(CFX_DIBSource*& pBitmap, CFX_DIBSource*& p
     if (!pSrc->Load(m_pDocument, m_pStream, &pMaskSrc, &MatteColor, pRenderStatus->m_pFormResource, pPageResources, bStdCS, GroupFamily, bLoadMask)) {
         delete pSrc;
         pBitmap = NULL;
-        return false;
+        return FALSE;
     }
     m_MatteColor = MatteColor;
     if (pSrc->GetPitch() * pSrc->GetHeight() < FPDF_HUGE_IMAGE_SIZE) {
@@ -260,7 +260,7 @@ bool CPDF_ImageCache::GetCachedBitmap(CFX_DIBSource*& pBitmap, CFX_DIBSource*& p
     pBitmap = m_pCachedBitmap;
     pMask = m_pCachedMask;
     CalcSize();
-    return false;
+    return FALSE;
 }
 CFX_DIBSource* CPDF_ImageCache::DetachBitmap()
 {
@@ -274,8 +274,8 @@ CFX_DIBSource* CPDF_ImageCache::DetachMask()
     m_pCurMask = NULL;
     return pDIBSource;
 }
-int	CPDF_ImageCache::StartGetCachedBitmap(CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources, bool bStdCS,
-        FX_DWORD GroupFamily, bool bLoadMask, CPDF_RenderStatus* pRenderStatus,
+int	CPDF_ImageCache::StartGetCachedBitmap(CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources, FX_BOOL bStdCS,
+        FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus,
         int32_t downsampleWidth, int32_t downsampleHeight)
 {
     if (m_pCachedBitmap) {
@@ -288,7 +288,7 @@ int	CPDF_ImageCache::StartGetCachedBitmap(CPDF_Dictionary* pFormResources, CPDF_
     }
     m_pRenderStatus = pRenderStatus;
     m_pCurBitmap = new CPDF_DIBSource;
-    int ret = ((CPDF_DIBSource*)m_pCurBitmap)->StartLoadDIBSource(m_pDocument, m_pStream, true, pFormResources, pPageResources, bStdCS, GroupFamily, bLoadMask);
+    int ret = ((CPDF_DIBSource*)m_pCurBitmap)->StartLoadDIBSource(m_pDocument, m_pStream, TRUE, pFormResources, pPageResources, bStdCS, GroupFamily, bLoadMask);
     if (ret == 2) {
         return ret;
     }
@@ -347,7 +347,7 @@ void CPDF_Document::ClearRenderFont()
     if (m_pDocRender) {
         CFX_FontCache* pCache = m_pDocRender->GetFontCache();
         if (pCache) {
-            pCache->FreeCache(false);
+            pCache->FreeCache(FALSE);
         }
     }
 }

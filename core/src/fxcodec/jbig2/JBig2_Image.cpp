@@ -16,7 +16,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h)
     m_nHeight	= h;
     if (m_nWidth <= 0 || m_nHeight <= 0 || m_nWidth > INT_MAX - 31) {
         m_pData = NULL;
-        m_bNeedFree = false;
+        m_bNeedFree = FALSE;
         return;
     }
     m_nStride  = ((w + 31) >> 5) << 2;
@@ -25,7 +25,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h)
     } else {
         m_pData = NULL;
     }
-    m_bNeedFree = true;
+    m_bNeedFree = TRUE;
 }
 CJBig2_Image::CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t*pBuf)
 {
@@ -33,7 +33,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t*pBuf)
     m_nHeight = h;
     m_nStride = stride;
     m_pData = pBuf;
-    m_bNeedFree = false;
+    m_bNeedFree = FALSE;
 }
 CJBig2_Image::CJBig2_Image(CJBig2_Image &im)
 {
@@ -47,7 +47,7 @@ CJBig2_Image::CJBig2_Image(CJBig2_Image &im)
     } else {
         m_pData = NULL;
     }
-    m_bNeedFree = true;
+    m_bNeedFree = TRUE;
 }
 CJBig2_Image::~CJBig2_Image()
 {
@@ -55,7 +55,7 @@ CJBig2_Image::~CJBig2_Image()
         m_pModule->JBig2_Free(m_pData);
     }
 }
-bool CJBig2_Image::getPixel(int32_t x, int32_t y)
+FX_BOOL CJBig2_Image::getPixel(int32_t x, int32_t y)
 {
     if (!m_pData) {
         return 0;
@@ -72,7 +72,7 @@ bool CJBig2_Image::getPixel(int32_t x, int32_t y)
     return ((m_pData[m] >> (7 - n)) & 1);
 }
 
-int32_t CJBig2_Image::setPixel(int32_t x, int32_t y, bool v)
+int32_t CJBig2_Image::setPixel(int32_t x, int32_t y, FX_BOOL v)
 {
     if (!m_pData) {
         return 0;
@@ -104,31 +104,31 @@ void CJBig2_Image::copyLine(int32_t hTo, int32_t hFrom)
         JBIG2_memcpy(m_pData + hTo * m_nStride, m_pData + hFrom * m_nStride, m_nStride);
     }
 }
-void CJBig2_Image::fill(bool v)
+void CJBig2_Image::fill(FX_BOOL v)
 {
     if (!m_pData) {
         return;
     }
     JBIG2_memset(m_pData, v ? 0xff : 0, m_nStride * m_nHeight);
 }
-bool CJBig2_Image::composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
 {
     if (!m_pData) {
-        return false;
+        return FALSE;
     }
     return composeTo_opt2(pDst, x, y, op);
 }
-bool CJBig2_Image::composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect)
+FX_BOOL CJBig2_Image::composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect)
 {
     if (!m_pData) {
-        return false;
+        return FALSE;
     }
     if (NULL == pSrcRect || *pSrcRect == FX_RECT(0, 0, m_nWidth, m_nHeight)) {
         return composeTo_opt2(pDst, x, y, op);
     }
     return composeTo_opt2(pDst, x, y, op, pSrcRect);
 }
-bool CJBig2_Image::composeTo_unopt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeTo_unopt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
 {
     int32_t w, h, dx, dy;
     int32_t i, j;
@@ -192,17 +192,17 @@ bool CJBig2_Image::composeTo_unopt(CJBig2_Image *pDst, int32_t x, int32_t y, JBi
             }
             break;
     }
-    return true;
+    return TRUE;
 }
 
-bool CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
 {
     int32_t x0, x1, y0, y1, xx, yy;
     uint8_t *pLineSrc, *pLineDst, *srcPtr, *destPtr;
     FX_DWORD src0, src1, src, dest, s1, s2, m1, m2, m3;
-    bool oneByte;
+    FX_BOOL oneByte;
     if (!m_pData) {
-        return false;
+        return FALSE;
     }
     if (y < 0) {
         y0 = -y;
@@ -215,7 +215,7 @@ bool CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2
         y1 = m_nHeight;
     }
     if (y0 >= y1) {
-        return false;
+        return FALSE;
     }
     if (x >= 0) {
         x0 = x & ~7;
@@ -227,7 +227,7 @@ bool CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2
         x1 = pDst->m_nWidth;
     }
     if (x0 >= x1) {
-        return false;
+        return FALSE;
     }
     s1 = x & 7;
     s2 = 8 - s1;
@@ -679,19 +679,19 @@ bool CJBig2_Image::composeTo_opt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2
             }
         }
     }
-    return true;
+    return TRUE;
 }
-bool CJBig2_Image::composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op)
 {
     if (!m_pData) {
-        return false;
+        return FALSE;
     }
     return pSrc->composeTo(this, x, y, op);
 }
-bool CJBig2_Image::composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op, const FX_RECT* pSrcRect)
+FX_BOOL CJBig2_Image::composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op, const FX_RECT* pSrcRect)
 {
     if (!m_pData) {
-        return false;
+        return FALSE;
     }
     return pSrc->composeTo(this, x, y, op, pSrcRect);
 }
@@ -765,7 +765,7 @@ CJBig2_Image *CJBig2_Image::subImage(int32_t x, int32_t y, int32_t w, int32_t h)
     }
     return pImage;
 }
-void CJBig2_Image::expand(int32_t h, bool v)
+void CJBig2_Image::expand(int32_t h, FX_BOOL v)
 {
     if (!m_pData || h <= m_nHeight) {
         return;
@@ -788,7 +788,7 @@ void CJBig2_Image::expand(int32_t h, bool v)
     JBIG2_memset(m_pData + dwHeight * dwStride, v ? 0xff : 0, (dwH - dwHeight) * dwStride);
     m_nHeight = h;
 }
-bool CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
+FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op)
 {
     int32_t xs0 = 0, ys0  = 0, xs1  = 0, ys1   = 0, xd0    = 0, yd0          = 0, xd1      = 0, 
              yd1 = 0, xx   = 0, yy   = 0, w     = 0, h      = 0, middleDwords = 0, lineLeft = 0;
@@ -799,10 +799,10 @@ bool CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig
     uint8_t *lineSrc = NULL, *lineDst = NULL, *sp = NULL, *dp = NULL;
 
     if (!m_pData) {
-        return false;
+        return FALSE;
     }
     if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576) {
-        return false;
+        return FALSE;
     }
     if(y < 0) {
         ys0 = -y;
@@ -1205,17 +1205,17 @@ bool CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig
     }
     return 1;
 }
-bool CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect)
+FX_BOOL CJBig2_Image::composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect)
 {
     int32_t xs0, ys0, xs1, ys1, xd0, yd0, xd1, yd1, xx, yy, w, h, middleDwords, lineLeft;
     FX_DWORD s1, d1, d2, shift, shift1, shift2, tmp, tmp1, tmp2, maskL, maskR, maskM;
     uint8_t *lineSrc, *lineDst, *sp, *dp;
     int32_t sw, sh;
     if (!m_pData) {
-        return false;
+        return FALSE;
     }
     if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576) {
-        return false;
+        return FALSE;
     }
     sw = pSrcRect->Width();
     sh = pSrcRect->Height();

@@ -78,7 +78,7 @@ void CPDF_PageModule::ReleaseDoc(CPDF_Document* pDoc)
 }
 void CPDF_PageModule::ClearDoc(CPDF_Document* pDoc)
 {
-    pDoc->GetPageData()->Clear(false);
+    pDoc->GetPageData()->Clear(FALSE);
 }
 void CPDF_PageModule::NotifyCJKAvailable()
 {
@@ -88,7 +88,7 @@ void CPDF_PageModule::NotifyCJKAvailable()
 CPDF_Font* CPDF_Document::LoadFont(CPDF_Dictionary* pFontDict)
 {
     ASSERT(pFontDict);
-    return GetValidatePageData()->GetFont(pFontDict, false);
+    return GetValidatePageData()->GetFont(pFontDict, FALSE);
 }
 
 CPDF_StreamAcc* CPDF_Document::LoadFontFile(CPDF_Stream* pStream)
@@ -101,7 +101,7 @@ CPDF_ColorSpace* CPDF_Document::LoadColorSpace(CPDF_Object* pCSObj, CPDF_Diction
 {
     return GetValidatePageData()->GetColorSpace(pCSObj, pResources);
 }
-CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj, bool bShading, const CFX_AffineMatrix* matrix)
+CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj, FX_BOOL bShading, const CFX_AffineMatrix* matrix)
 {
     return GetValidatePageData()->GetPattern(pPatternObj, bShading, matrix);
 }
@@ -126,14 +126,14 @@ void CPDF_Document::RemoveColorSpaceFromPageData(CPDF_Object* pCSObj)
 }
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
-      m_bForceClear(false)
+      m_bForceClear(FALSE)
 {
 }
 
 CPDF_DocPageData::~CPDF_DocPageData()
 {
-    Clear(false);
-    Clear(true);
+    Clear(FALSE);
+    Clear(TRUE);
 
     for (auto& it : m_PatternMap)
         delete it.second;
@@ -148,7 +148,7 @@ CPDF_DocPageData::~CPDF_DocPageData()
     m_ColorSpaceMap.clear();
 }
 
-void CPDF_DocPageData::Clear(bool bForceRelease)
+void CPDF_DocPageData::Clear(FX_BOOL bForceRelease)
 {
     m_bForceClear = bForceRelease;
 
@@ -235,7 +235,7 @@ void CPDF_DocPageData::Clear(bool bForceRelease)
     }
 }
 
-CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict, bool findOnly)
+CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict, FX_BOOL findOnly)
 {
     if (!pFontDict) {
         return NULL;
@@ -432,7 +432,7 @@ void CPDF_DocPageData::ReleaseColorSpace(CPDF_Object* pColorSpace)
     }
 }
 
-CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj, bool bShading, const CFX_AffineMatrix* matrix)
+CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj, FX_BOOL bShading, const CFX_AffineMatrix* matrix)
 {
     if (!pPatternObj)
         return nullptr;
@@ -455,7 +455,7 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj, bool bShadi
             if (type == 1) {
                 pPattern = new CPDF_TilingPattern(m_pPDFDoc, pPatternObj, matrix);
             } else if (type == 2) {
-                pPattern = new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, false, matrix);
+                pPattern = new CPDF_ShadingPattern(m_pPDFDoc, pPatternObj, FALSE, matrix);
             }
         }
     }
@@ -501,7 +501,7 @@ CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream)
     }
 
     CPDF_Image* pImage = new CPDF_Image(m_pPDFDoc);
-    pImage->LoadImageF((CPDF_Stream*)pImageStream, false);
+    pImage->LoadImageF((CPDF_Stream*)pImageStream, FALSE);
 
     CPDF_CountedImage* imageData = new CPDF_CountedImage(pImage);
     m_ImageMap[dwImageObjNum] = imageData;
@@ -540,7 +540,7 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(CPDF_Stream* pIccProfileStream)
     }
 
     CPDF_StreamAcc stream;
-    stream.LoadAllData(pIccProfileStream, false);
+    stream.LoadAllData(pIccProfileStream, FALSE);
     uint8_t digest[20];
     CPDF_Stream* pCopiedStream = nullptr;
     CRYPT_SHA1Generate(stream.GetData(), stream.GetSize(), digest);
@@ -590,14 +590,14 @@ CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(CPDF_Stream* pFontStream)
         org_size = 0;
 
     CPDF_StreamAcc* pFontFile = new CPDF_StreamAcc;
-    pFontFile->LoadAllData(pFontStream, false, org_size);
+    pFontFile->LoadAllData(pFontStream, FALSE, org_size);
 
     CPDF_CountedStreamAcc* ftData = new CPDF_CountedStreamAcc(pFontFile);
     m_FontFileMap[pFontStream] = ftData;
     return ftData->AddRef();
 }
 
-void CPDF_DocPageData::ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, bool bForce)
+void CPDF_DocPageData::ReleaseFontFileStreamAcc(CPDF_Stream* pFontStream, FX_BOOL bForce)
 {
     if (!pFontStream)
         return;

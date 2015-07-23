@@ -94,7 +94,7 @@ class CFPF_SkiaFontMgr : public IFPF_FontMgr
 public:
     CFPF_SkiaFontMgr();
     virtual ~CFPF_SkiaFontMgr();
-    bool					InitFTLibrary();
+    FX_BOOL					InitFTLibrary();
     virtual void			LoadSystemFonts();
     virtual void			LoadPrivateFont(IFX_FileRead* pFontFile);
     virtual void			LoadPrivateFont(const CFX_ByteStringC& bsFileName);
@@ -109,7 +109,7 @@ protected:
     void				ScanFile(const CFX_ByteStringC& file);
     void				ReportFace(FXFT_Face face, CFPF_SkiaFontDescriptor *pFontDesc);
     void				OutputSystemFonts();
-    bool				m_bLoaded;
+    FX_BOOL				m_bLoaded;
     CFX_PtrArray		m_FontFaces;
     FXFT_Library		m_FTLibrary;
     CFX_MapPtrToPtr		m_FamilyFonts;

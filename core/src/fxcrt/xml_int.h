@@ -23,7 +23,7 @@ public:
     {
         delete this;
     }
-    virtual bool			IsEOF()
+    virtual FX_BOOL			IsEOF()
     {
         return m_dwCurPos >= m_dwSize;
     }
@@ -35,16 +35,16 @@ public:
     {
         return 0;
     }
-    virtual bool			ReadNextBlock(bool bRestart = false)
+    virtual FX_BOOL			ReadNextBlock(FX_BOOL bRestart = FALSE)
     {
         if (bRestart) {
             m_dwCurPos = 0;
         }
         if (m_dwCurPos < m_dwSize) {
             m_dwCurPos = m_dwSize;
-            return true;
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
     virtual const uint8_t*		GetBlockBuffer()
     {
@@ -85,7 +85,7 @@ public:
     {
         delete this;
     }
-    virtual bool			IsEOF()
+    virtual FX_BOOL			IsEOF()
     {
         return m_nStart + (FX_FILESIZE)m_dwSize >= m_pFileRead->GetSize();
     }
@@ -97,7 +97,7 @@ public:
     {
         return 0;
     }
-    virtual bool			ReadNextBlock(bool bRestart = false)
+    virtual FX_BOOL			ReadNextBlock(FX_BOOL bRestart = FALSE)
     {
         if (bRestart) {
             m_nStart = 0;
@@ -105,7 +105,7 @@ public:
         FX_FILESIZE nLength = m_pFileRead->GetSize();
         m_nStart += (FX_FILESIZE)m_dwSize;
         if (m_nStart >= nLength) {
-            return false;
+            return FALSE;
         }
         m_dwSize = (size_t)FX_MIN(FX_XMLDATASTREAM_BufferSize, nLength - m_nStart);
         if (!m_pBuffer) {
@@ -136,28 +136,28 @@ class CXML_Parser
 public:
     ~CXML_Parser();
     IFX_BufferRead*	m_pDataAcc;
-    bool			m_bOwnedStream;
+    FX_BOOL			m_bOwnedStream;
     FX_FILESIZE		m_nOffset;
-    bool			m_bSaveSpaceChars;
+    FX_BOOL			m_bSaveSpaceChars;
     const uint8_t*		m_pBuffer;
     size_t			m_dwBufferSize;
     FX_FILESIZE		m_nBufferOffset;
     size_t			m_dwIndex;
-    bool			Init(uint8_t* pBuffer, size_t size);
-    bool			Init(IFX_FileRead *pFileRead);
-    bool			Init(IFX_BufferRead *pBuffer);
-    bool			Init(bool bOwndedStream);
-    bool			ReadNextBlock();
-    bool			IsEOF();
-    bool			HaveAvailData();
+    FX_BOOL			Init(uint8_t* pBuffer, size_t size);
+    FX_BOOL			Init(IFX_FileRead *pFileRead);
+    FX_BOOL			Init(IFX_BufferRead *pBuffer);
+    FX_BOOL			Init(FX_BOOL bOwndedStream);
+    FX_BOOL			ReadNextBlock();
+    FX_BOOL			IsEOF();
+    FX_BOOL			HaveAvailData();
     void			SkipWhiteSpaces();
     void			GetName(CFX_ByteString& space, CFX_ByteString& name);
     void			GetAttrValue(CFX_WideString &value);
     FX_DWORD		GetCharRef();
-    void			GetTagName(CFX_ByteString &space, CFX_ByteString &name, bool &bEndTag, bool bStartTag = false);
+    void			GetTagName(CFX_ByteString &space, CFX_ByteString &name, FX_BOOL &bEndTag, FX_BOOL bStartTag = FALSE);
     void			SkipLiterals(const CFX_ByteStringC& str);
-    CXML_Element*	ParseElement(CXML_Element* pParent, bool bStartTag = false);
-    void			InsertContentSegment(bool bCDATA, const CFX_WideStringC& content, CXML_Element* pElement);
+    CXML_Element*	ParseElement(CXML_Element* pParent, FX_BOOL bStartTag = FALSE);
+    void			InsertContentSegment(FX_BOOL bCDATA, const CFX_WideStringC& content, CXML_Element* pElement);
     void			InsertCDATASegment(CFX_UTF8Decoder& decoder, CXML_Element* pElement);
 };
 void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName, CFX_ByteStringC &bsSpace, CFX_ByteStringC &bsName);

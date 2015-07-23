@@ -34,17 +34,17 @@ CFXCRT_FileAccess_Posix::~CFXCRT_FileAccess_Posix()
 {
     Close();
 }
-bool CFXCRT_FileAccess_Posix::Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode)
+FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode)
 {
     if (m_nFD > -1) {
-        return false;
+        return FALSE;
     }
     int32_t nFlags, nMasks;
     FXCRT_Posix_GetFileMode(dwMode, nFlags, nMasks);
     m_nFD = open(fileName.GetCStr(), nFlags, nMasks);
     return m_nFD > -1;
 }
-bool CFXCRT_FileAccess_Posix::Open(const CFX_WideStringC& fileName, FX_DWORD dwMode)
+FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_WideStringC& fileName, FX_DWORD dwMode)
 {
     return Open(FX_UTF8Encode(fileName), dwMode);
 }
@@ -121,48 +121,48 @@ size_t CFXCRT_FileAccess_Posix::WritePos(const void* pBuffer, size_t szBuffer, F
     }
     return Write(pBuffer, szBuffer);
 }
-bool CFXCRT_FileAccess_Posix::Flush()
+FX_BOOL CFXCRT_FileAccess_Posix::Flush()
 {
     if (m_nFD < 0) {
-        return false;
+        return FALSE;
     }
     return fsync(m_nFD) > -1;
 }
-bool CFXCRT_FileAccess_Posix::Truncate(FX_FILESIZE szFile)
+FX_BOOL CFXCRT_FileAccess_Posix::Truncate(FX_FILESIZE szFile)
 {
     if (m_nFD < 0) {
-        return false;
+        return FALSE;
     }
     return !ftruncate(m_nFD, szFile);
 }
-bool FX_File_Exist(const CFX_ByteStringC& fileName)
+FX_BOOL FX_File_Exist(const CFX_ByteStringC& fileName)
 {
     return access(fileName.GetCStr(), F_OK) > -1;
 }
-bool FX_File_Exist(const CFX_WideStringC& fileName)
+FX_BOOL FX_File_Exist(const CFX_WideStringC& fileName)
 {
     return FX_File_Exist(FX_UTF8Encode(fileName));
 }
-bool FX_File_Delete(const CFX_ByteStringC& fileName)
+FX_BOOL FX_File_Delete(const CFX_ByteStringC& fileName)
 {
     return remove(fileName.GetCStr()) > -1;
 }
-bool FX_File_Delete(const CFX_WideStringC& fileName)
+FX_BOOL FX_File_Delete(const CFX_WideStringC& fileName)
 {
     return FX_File_Delete(FX_UTF8Encode(fileName));
 }
-bool FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
+FX_BOOL FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
 {
     CFXCRT_FileAccess_Posix src, dst;
     if (!src.Open(fileNameSrc, FX_FILEMODE_ReadOnly)) {
-        return false;
+        return FALSE;
     }
     FX_FILESIZE size = src.GetSize();
     if (!size) {
-        return false;
+        return FALSE;
     }
     if (!dst.Open(fileNameDst, FX_FILEMODE_Truncate)) {
-        return false;
+        return FALSE;
     }
     size_t num = 0;
     uint8_t* pBuffer = FX_Alloc(uint8_t, 32768);
@@ -174,17 +174,17 @@ bool FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fil
         num = src.Read(pBuffer, 32768);
     }
     FX_Free(pBuffer);
-    return true;
+    return TRUE;
 }
-bool FX_File_Copy(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
+FX_BOOL FX_File_Copy(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
 {
     return FX_File_Copy(FX_UTF8Encode(fileNameSrc), FX_UTF8Encode(fileNameDst));
 }
-bool FX_File_Move(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
+FX_BOOL FX_File_Move(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
 {
     return rename(fileNameSrc.GetCStr(), fileNameDst.GetCStr());
 }
-bool FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
+FX_BOOL FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
 {
     return FX_File_Move(FX_UTF8Encode(fileNameSrc), FX_UTF8Encode(fileNameDst));
 }

@@ -30,9 +30,9 @@ Base14Substs[] = {
 class CFX_LinuxFontInfo : public CFX_FolderFontInfo
 {
 public:
-    void* MapFont(int weight, bool bItalic, int charset, int pitch_family, const FX_CHAR* family, int& iExact) override;
-    bool				ParseFontCfg();
-    void*				FindFont(int weight, bool bItalic, int charset, int pitch_family, const FX_CHAR* family, bool bMatchName);
+    void* MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, int& iExact) override;
+    FX_BOOL				ParseFontCfg();
+    void*				FindFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, FX_BOOL bMatchName);
 };
 #define LINUX_GPNAMESIZE	6
 static const struct {
@@ -77,7 +77,7 @@ static int32_t GetJapanesePreference(const FX_CHAR* facearr, int weight, int pic
     }
     return 2;
 }
-void* CFX_LinuxFontInfo::MapFont(int weight, bool bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, int& iExact)
+void* CFX_LinuxFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, int& iExact)
 {
     CFX_ByteString face = cstr_face;
     int iBaseFont;
@@ -91,7 +91,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight, bool bItalic, int charset, int pitc
         return GetFont(face);
     }
     void* p = NULL;
-    bool bCJK = true;
+    FX_BOOL bCJK = TRUE;
     switch (charset) {
         case FXFONT_SHIFTJIS_CHARSET: {
                 int32_t index = GetJapanesePreference(cstr_face, weight, pitch_family);
@@ -129,7 +129,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight, bool bItalic, int charset, int pitc
             }
             break;
         default:
-            bCJK = false;
+            bCJK = FALSE;
             break;
     }
     if (charset == FXFONT_ANSI_CHARSET && (pitch_family & FXFONT_FF_FIXEDPITCH)) {
@@ -157,7 +157,7 @@ static FX_DWORD _LinuxGetCharset(int charset)
     }
     return 0;
 }
-static int32_t _LinuxGetSimilarValue(int weight, bool bItalic, int pitch_family, FX_DWORD style)
+static int32_t _LinuxGetSimilarValue(int weight, FX_BOOL bItalic, int pitch_family, FX_DWORD style)
 {
     int32_t iSimilarValue = 0;
     if ((style & FXFONT_BOLD) == (weight > 400)) {
@@ -177,7 +177,7 @@ static int32_t _LinuxGetSimilarValue(int weight, bool bItalic, int pitch_family,
     }
     return iSimilarValue;
 }
-void* CFX_LinuxFontInfo::FindFont(int weight, bool bItalic, int charset, int pitch_family, const FX_CHAR* family, bool bMatchName)
+void* CFX_LinuxFontInfo::FindFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, FX_BOOL bMatchName)
 {
     CFontFaceInfo* pFind = NULL;
     FX_DWORD charset_flag = _LinuxGetCharset(charset);
@@ -217,9 +217,9 @@ IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault()
     }
     return pInfo;
 }
-bool CFX_LinuxFontInfo::ParseFontCfg()
+FX_BOOL CFX_LinuxFontInfo::ParseFontCfg()
 {
-    return false;
+    return FALSE;
 }
 void CFX_GEModule::InitPlatform()
 {

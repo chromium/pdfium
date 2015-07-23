@@ -68,11 +68,11 @@ public:
 	virtual void					OnCreate(PWL_CREATEPARAM & cp);
 	virtual void					OnCreated();
 
-	virtual bool					OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
-	virtual bool					OnChar(FX_WORD nChar, FX_DWORD nFlag);
-	virtual bool					OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
+	virtual FX_BOOL					OnChar(FX_WORD nChar, FX_DWORD nFlag);
+	virtual FX_BOOL					OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
 	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
 	virtual void					CreateChildWnd(const PWL_CREATEPARAM & cp);
@@ -89,7 +89,7 @@ public:
 
 	CPDF_Rect						GetContentRect() const;
 	void							GetCaretPos(int32_t& x, int32_t& y) const;
-	bool							IsModified() const;
+	FX_BOOL							IsModified() const;
 
 	CFX_WideString					GetText() const;
 	void							SetSel(int32_t nStartChar,int32_t nEndChar);
@@ -105,7 +105,7 @@ public:
 
 	void							Paint();
 
-	void							EnableRefresh(bool bRefresh);
+	void							EnableRefresh(FX_BOOL bRefresh);
 	CPDF_Point						GetScrollPos() const;
 	void							SetScrollPos(const CPDF_Point& point);
 
@@ -120,30 +120,30 @@ public:
 	CPDF_Font *						GetCaretFont() const;
 	FX_FLOAT						GetCaretFontSize() const;
 
-	bool							CanUndo() const;
-	bool							CanRedo() const;
+	FX_BOOL							CanUndo() const;
+	FX_BOOL							CanRedo() const;
 	void							Redo();
 	void							Undo();
 
 	void							SetReadyToInput();
 protected:
-	virtual void					ShowVScrollBar(bool bShow);
+	virtual void					ShowVScrollBar(FX_BOOL bShow);
 
 	virtual void					InsertWord(FX_WORD word, int32_t nCharset);
 	virtual void					InsertReturn();
 	virtual void					InsertText(const FX_WCHAR* csText);
 
 	virtual void					SetCursor();
-	bool							IsWndHorV();
+	FX_BOOL							IsWndHorV();
 
 	void							Delete();
 	void							Backspace();
 
 protected:
 	void							GetCaretInfo(CPDF_Point & ptHead, CPDF_Point & ptFoot) const;
-	void							SetCaret(bool bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot);
+	void							SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot);
 
-	void							SetEditCaret(bool bVisible);
+	void							SetEditCaret(FX_BOOL bVisible);
 
 protected:
 	virtual void					IOnSetScrollInfoX(FX_FLOAT fPlateMin, FX_FLOAT fPlateMax,
@@ -154,7 +154,7 @@ protected:
 												FX_FLOAT fSmallStep, FX_FLOAT fBigStep);
 	virtual void					IOnSetScrollPosX(FX_FLOAT fx){}
 	virtual void					IOnSetScrollPosY(FX_FLOAT fy);
-	virtual void					IOnSetCaret(bool bVisible,const CPDF_Point & ptHead,const CPDF_Point & ptFoot, const CPVT_WordPlace& place);
+	virtual void					IOnSetCaret(FX_BOOL bVisible,const CPDF_Point & ptHead,const CPDF_Point & ptFoot, const CPVT_WordPlace& place);
 	virtual void					IOnCaretChange(const CPVT_SecProps & secProps, const CPVT_WordProps & wordProps);
 	virtual void					IOnContentChange(const CPDF_Rect& rcContent);
 	virtual void					IOnInvalidateRect(CPDF_Rect * pRect);
@@ -165,7 +165,7 @@ private:
 protected:
 	IFX_Edit*						m_pEdit;
 	CPWL_Caret*						m_pEditCaret;
-	bool							m_bMouseDown;
+	FX_BOOL							m_bMouseDown;
 	IPWL_Edit_Notify*				m_pEditNotify;
 
 private:

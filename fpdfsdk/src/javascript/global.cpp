@@ -96,7 +96,7 @@ END_JS_STATIC_METHOD()
 
 IMPLEMENT_SPECIAL_JS_CLASS(CJS_Global, global_alternate, global);
 
-bool CJS_Global::InitInstance(IFXJS_Context* cc)
+FX_BOOL CJS_Global::InitInstance(IFXJS_Context* cc)
 {
     CJS_Context* pContext = (CJS_Context*)cc;
     ASSERT(pContext != NULL);
@@ -106,7 +106,7 @@ bool CJS_Global::InitInstance(IFXJS_Context* cc)
 
     pGlobal->Initial(pContext->GetReaderApp());
 
-    return true;
+    return TRUE;
 };
 
 global_alternate::global_alternate(CJS_Object* pJSObject)
@@ -128,26 +128,26 @@ void global_alternate::Initial(CPDFDoc_Environment* pApp)
     UpdateGlobalPersistentVariables();
 }
 
-bool global_alternate::QueryProperty(const FX_WCHAR* propname)
+FX_BOOL global_alternate::QueryProperty(const FX_WCHAR* propname)
 {
     return CFX_WideString(propname) != L"setPersistent";
 }
 
-bool global_alternate::DelProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CFX_WideString& sError)
+FX_BOOL global_alternate::DelProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CFX_WideString& sError)
 {
     js_global_data* pData = NULL;
     CFX_ByteString sPropName = CFX_ByteString::FromUnicode(propname);
 
     if (m_mapGlobal.Lookup(sPropName, (void*&)pData))
     {
-        pData->bDeleted = true;
-        return true;
+        pData->bDeleted = TRUE;
+        return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
-bool global_alternate::DoProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CJS_PropValue& vp, CFX_WideString& sError)
+FX_BOOL global_alternate::DoProperty(IFXJS_Context* cc, const FX_WCHAR* propname, CJS_PropValue& vp, CFX_WideString& sError)
 {
     if (vp.IsSetting())
     {
@@ -158,34 +158,34 @@ bool global_alternate::DoProperty(IFXJS_Context* cc, const FX_WCHAR* propname, C
             {
                 double dData;
                 vp >> dData;
-                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_NUMBER, dData, false, "", v8::Local<v8::Object>(), false);
+                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_NUMBER, dData, false, "", v8::Local<v8::Object>(), FALSE);
             }
         case VT_boolean:
             {
                 bool bData;
                 vp >> bData;
-                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_BOOLEAN, 0, bData, "", v8::Local<v8::Object>(), false);
+                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_BOOLEAN, 0, bData, "", v8::Local<v8::Object>(), FALSE);
             }
         case VT_string:
             {
                 CFX_ByteString sData;
                 vp >> sData;
-                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_STRING, 0, false, sData, v8::Local<v8::Object>(), false);
+                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_STRING, 0, false, sData, v8::Local<v8::Object>(), FALSE);
             }
         case VT_object:
             {
                 JSObject pData;
                 vp >> pData;
-                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_OBJECT, 0, false, "", pData, false);
+                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_OBJECT, 0, false, "", pData, FALSE);
             }
         case VT_null:
             {
-                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_NULL, 0, false, "", v8::Local<v8::Object>(), false);
+                return SetGlobalVariables(sPropName, JS_GLOBALDATA_TYPE_NULL, 0, false, "", v8::Local<v8::Object>(), FALSE);
             }
         case VT_undefined:
             {
                 DelProperty(cc, propname, sError);
-                return true;
+                return TRUE;
             }
         default:
             break;
@@ -197,51 +197,51 @@ bool global_alternate::DoProperty(IFXJS_Context* cc, const FX_WCHAR* propname, C
         if (!m_mapGlobal.Lookup(CFX_ByteString::FromUnicode(propname), pVoid))
         {
             vp.SetNull();
-            return true;
+            return TRUE;
         }
         if (!pVoid)
         {
             vp.SetNull();
-            return true;
+            return TRUE;
         }
         js_global_data* pData = (js_global_data*)pVoid;
         if (pData->bDeleted)
-            return true;
+            return TRUE;
 
         switch (pData->nType)
         {
             case JS_GLOBALDATA_TYPE_NUMBER:
                 vp << pData->dData;
-                return true;
+                return TRUE;
             case JS_GLOBALDATA_TYPE_BOOLEAN:
                 vp << pData->bData;
-                return true;
+                return TRUE;
             case JS_GLOBALDATA_TYPE_STRING:
                 vp << pData->sData;
-                return true;
+                return TRUE;
             case JS_GLOBALDATA_TYPE_OBJECT:
                 {
                     v8::Local<v8::Object> obj = v8::Local<v8::Object>::New(vp.GetIsolate(),pData->pData);
                     vp << obj;
-                    return true;
+                    return TRUE;
                 }
             case JS_GLOBALDATA_TYPE_NULL:
                 vp.SetNull();
-                return true;
+                return TRUE;
             default:
                 break;
         }
     }
-    return false;
+    return FALSE;
 }
 
-bool global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
+FX_BOOL global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
     CJS_Context* pContext = static_cast<CJS_Context*>(cc);
     if (params.size() != 2)
     {
         sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
-        return false;
+        return FALSE;
     }
 
     CFX_ByteString sName = params[0].ToCFXByteString();
@@ -252,12 +252,12 @@ bool global_alternate::setPersistent(IFXJS_Context* cc, const CJS_Parameters& pa
         if (pData && !pData->bDeleted)
         {
             pData->bPersistent = params[1].ToBool();
-            return true;
+            return TRUE;
         }
     }
 
     sError = JSGetStringFromID(pContext, IDS_STRING_JSNOGLOBAL);
-    return false;
+    return FALSE;
 }
 
 void global_alternate::UpdateGlobalPersistentVariables()
@@ -480,10 +480,10 @@ void global_alternate::DestroyGlobalPersisitentVariables()
 }
 
 
-bool global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType,
+FX_BOOL global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType,
                 double dData, bool bData, const CFX_ByteString& sData, JSObject pData, bool bDefaultPersistent)
 {
-    if (propname == NULL) return false;
+    if (propname == NULL) return FALSE;
 
     js_global_data* pTemp = NULL;
     m_mapGlobal.Lookup(propname, (void*&)pTemp);
@@ -498,7 +498,7 @@ bool global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType,
             pTemp->nType = nType;
         }
 
-        pTemp->bDeleted = false;
+        pTemp->bDeleted = FALSE;
 
         switch (nType)
         {
@@ -525,10 +525,10 @@ bool global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType,
         case JS_GLOBALDATA_TYPE_NULL:
             break;
         default:
-            return false;
+            return FALSE;
         }
 
-        return true;
+        return TRUE;
     }
 
     js_global_data* pNewData = NULL;
@@ -575,12 +575,12 @@ bool global_alternate::SetGlobalVariables(const FX_CHAR* propname, int nType,
         }
         break;
     default:
-        return false;
+        return FALSE;
     }
 
     m_mapGlobal.SetAt(propname, (void*)pNewData);
 
-    return true;
+    return TRUE;
 }
 
 FXJSVALUETYPE GET_VALUE_TYPE(v8::Local<v8::Value> p)

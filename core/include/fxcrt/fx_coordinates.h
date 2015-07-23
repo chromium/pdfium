@@ -68,11 +68,11 @@ public:
         y /= lamda;
         return *this;
     }
-    friend	bool		operator == (const FXT_PSV &obj1, const FXT_PSV &obj2)
+    friend	FX_BOOL		operator == (const FXT_PSV &obj1, const FXT_PSV &obj2)
     {
         return obj1.x == obj2.x && obj1.y == obj2.y;
     }
-    friend	bool		operator != (const FXT_PSV &obj1, const FXT_PSV &obj2)
+    friend	FX_BOOL		operator != (const FXT_PSV &obj1, const FXT_PSV &obj2)
     {
         return obj1.x != obj2.x || obj1.y != obj2.y;
     }
@@ -174,21 +174,21 @@ public:
     {
         return FXT_PSV::x * v.x + FXT_PSV::y * v.y;
     }
-    bool		IsParallel(baseType otherx, baseType othery) const
+    FX_BOOL		IsParallel(baseType otherx, baseType othery) const
     {
         baseType t = FXT_PSV::x * othery - FXT_PSV::y * otherx;
         return FXSYS_fabs(t) < 0x0001f;
     }
-    bool		IsParallel(const FXT_VECTOR &v) const
+    FX_BOOL		IsParallel(const FXT_VECTOR &v) const
     {
         return IsParallel(v.x, v.y);
     }
-    bool		IsPerpendicular(baseType otherx, baseType othery) const
+    FX_BOOL		IsPerpendicular(baseType otherx, baseType othery) const
     {
         baseType t = DotProduct(otherx, othery);
         return FXSYS_fabs(t) < 0x0001f;
     }
-    bool		IsPerpendicular(const FXT_VECTOR &v) const
+    FX_BOOL		IsPerpendicular(const FXT_VECTOR &v) const
     {
         return IsPerpendicular(v.x, v.y);
     }
@@ -340,11 +340,11 @@ public:
     {
         Deflate(rt.left, rt.top, rt.top + rt.width, rt.top + rt.height);
     }
-    bool		IsEmpty() const
+    FX_BOOL		IsEmpty() const
     {
         return width <= 0 || height <= 0;
     }
-    bool		IsEmpty(FX_FLOAT fEpsilon) const
+    FX_BOOL		IsEmpty(FX_FLOAT fEpsilon) const
     {
         return width <= fEpsilon || height <= fEpsilon;
     }
@@ -352,15 +352,15 @@ public:
     {
         width = height = 0;
     }
-    bool		Contains(baseType x, baseType y) const
+    FX_BOOL		Contains(baseType x, baseType y) const
     {
         return x >= left && x < left + width && y >= top && y < top + height;
     }
-    bool		Contains(const FXT_POINT &p) const
+    FX_BOOL		Contains(const FXT_POINT &p) const
     {
         return Contains(p.x, p.y);
     }
-    bool		Contains(const FXT_RECT &rt) const
+    FX_BOOL		Contains(const FXT_RECT &rt) const
     {
         return rt.left >= left && rt.right() <= right() && rt.top >= top && rt.bottom() <= bottom();
     }
@@ -501,23 +501,23 @@ public:
         width = r - left;
         height = b - top;
     }
-    bool		IntersectWith(const FXT_RECT &rt) const
+    FX_BOOL		IntersectWith(const FXT_RECT &rt) const
     {
         FXT_RECT rect = rt;
         rect.Intersect(*this);
         return !rect.IsEmpty();
     }
-    bool		IntersectWith(const FXT_RECT &rt, FX_FLOAT fEpsilon) const
+    FX_BOOL		IntersectWith(const FXT_RECT &rt, FX_FLOAT fEpsilon) const
     {
         FXT_RECT rect = rt;
         rect.Intersect(*this);
         return !rect.IsEmpty(fEpsilon);
     }
-    friend	bool	operator == (const FXT_RECT &rc1, const FXT_RECT &rc2)
+    friend	FX_BOOL	operator == (const FXT_RECT &rc1, const FXT_RECT &rc2)
     {
         return rc1.left == rc2.left && rc1.top == rc2.top && rc1.width == rc2.width && rc1.height == rc2.height;
     }
-    friend	bool	operator != (const FXT_RECT &rc1, const FXT_RECT &rc2)
+    friend	FX_BOOL	operator != (const FXT_RECT &rc1, const FXT_RECT &rc2)
     {
         return rc1.left != rc2.left || rc1.top != rc2.top || rc1.width != rc2.width || rc1.height != rc2.height;
     }
@@ -561,7 +561,7 @@ struct FX_RECT {
         return bottom - top;
     }
 
-    bool		IsEmpty() const
+    FX_BOOL		IsEmpty() const
     {
         return right <= left || bottom <= top;
     }
@@ -577,7 +577,7 @@ struct FX_RECT {
 
     void		Union(const FX_RECT& other_rect);
 
-    bool		operator == (const FX_RECT& src) const
+    FX_BOOL		operator == (const FX_RECT& src) const
     {
         return left == src.left && right == src.right && top == src.top && bottom == src.bottom;
     }
@@ -590,12 +590,12 @@ struct FX_RECT {
         bottom += dy;
     }
 
-    bool		Contains(const FX_RECT& other_rect) const
+    FX_BOOL		Contains(const FX_RECT& other_rect) const
     {
         return other_rect.left >= left && other_rect.right <= right && other_rect.top >= top && other_rect.bottom <= bottom;
     }
 
-    bool		Contains(int x, int y) const
+    FX_BOOL		Contains(int x, int y) const
     {
         return x >= left && x < right && y >= top && y < bottom;
     }
@@ -637,7 +637,7 @@ public:
 
     CFX_FloatRect(const FX_RECT& rect);
 
-    bool				IsEmpty() const
+    FX_BOOL				IsEmpty() const
     {
         return left >= right || bottom >= top;
     }
@@ -649,9 +649,9 @@ public:
         left = right = bottom = top = 0;
     }
 
-    bool				Contains(const CFX_FloatRect& other_rect) const;
+    FX_BOOL				Contains(const CFX_FloatRect& other_rect) const;
 
-    bool				Contains(FX_FLOAT x, FX_FLOAT y) const;
+    FX_BOOL				Contains(FX_FLOAT x, FX_FLOAT y) const;
 
     void				Transform(const CFX_Matrix* pMatrix);
 
@@ -786,11 +786,11 @@ public:
 
     void			SetReverse(const CFX_Matrix &m);
 
-    void			Concat(FX_FLOAT a, FX_FLOAT b, FX_FLOAT c, FX_FLOAT d, FX_FLOAT e, FX_FLOAT f, bool bPrepended = false);
+    void			Concat(FX_FLOAT a, FX_FLOAT b, FX_FLOAT c, FX_FLOAT d, FX_FLOAT e, FX_FLOAT f, FX_BOOL bPrepended = FALSE);
 
-    void			Concat(const CFX_Matrix &m, bool bPrepended = false);
+    void			Concat(const CFX_Matrix &m, FX_BOOL bPrepended = FALSE);
 
-    void			ConcatInverse(const CFX_Matrix& m, bool bPrepended = false);
+    void			ConcatInverse(const CFX_Matrix& m, FX_BOOL bPrepended = FALSE);
     void			Reset()
     {
         SetIdentity();
@@ -801,30 +801,30 @@ public:
         *this = m;
     }
 
-    bool			IsIdentity() const
+    FX_BOOL			IsIdentity() const
     {
         return a == 1 && b == 0 && c == 0 && d == 1 && e == 0 && f == 0;
     }
-    bool			IsInvertible() const;
+    FX_BOOL			IsInvertible() const;
 
-    bool			Is90Rotated() const;
+    FX_BOOL			Is90Rotated() const;
 
-    bool			IsScaled() const;
+    FX_BOOL			IsScaled() const;
 
-    void			Translate(FX_FLOAT x, FX_FLOAT y, bool bPrepended = false);
+    void			Translate(FX_FLOAT x, FX_FLOAT y, FX_BOOL bPrepended = FALSE);
 
-    void			TranslateI(int32_t x, int32_t y, bool bPrepended = false)
+    void			TranslateI(int32_t x, int32_t y, FX_BOOL bPrepended = FALSE)
     {
         Translate((FX_FLOAT)x, (FX_FLOAT)y, bPrepended);
     }
 
-    void			Scale(FX_FLOAT sx, FX_FLOAT sy, bool bPrepended = false);
+    void			Scale(FX_FLOAT sx, FX_FLOAT sy, FX_BOOL bPrepended = FALSE);
 
-    void			Rotate(FX_FLOAT fRadian, bool bPrepended = false);
+    void			Rotate(FX_FLOAT fRadian, FX_BOOL bPrepended = FALSE);
 
-    void			RotateAt(FX_FLOAT fRadian, FX_FLOAT x, FX_FLOAT y, bool bPrepended = false);
+    void			RotateAt(FX_FLOAT fRadian, FX_FLOAT x, FX_FLOAT y, FX_BOOL bPrepended = FALSE);
 
-    void			Shear(FX_FLOAT fAlphaRadian, FX_FLOAT fBetaRadian, bool bPrepended = false);
+    void			Shear(FX_FLOAT fAlphaRadian, FX_FLOAT fBetaRadian, FX_BOOL bPrepended = FALSE);
 
     void			MatchRect(const CFX_FloatRect &dest, const CFX_FloatRect &src);
 

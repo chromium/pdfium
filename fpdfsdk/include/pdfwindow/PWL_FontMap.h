@@ -85,7 +85,7 @@ public:
 	static CFX_ByteString						GetDefaultFontByCharset(int32_t nCharset);
 
 	CPDF_Font*									AddFontToDocument(CPDF_Document* pDoc, CFX_ByteString& sFontName, uint8_t nCharset);
-	static bool								IsStandardFont(const CFX_ByteString& sFontName);
+	static FX_BOOL								IsStandardFont(const CFX_ByteString& sFontName);
 	CPDF_Font*									AddStandardFont(CPDF_Document* pDoc, CFX_ByteString& sFontName);
 	CPDF_Font*									AddSystemFont(CPDF_Document* pDoc, CFX_ByteString& sFontName,
 													uint8_t nCharset);
@@ -93,12 +93,12 @@ public:
 protected:
 	virtual CPDF_Font*							FindFontSameCharset(CFX_ByteString& sFontAlias, int32_t nCharset);
 	virtual void								AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
-	bool										KnowWord(int32_t nFontIndex, FX_WORD word);
+	FX_BOOL										KnowWord(int32_t nFontIndex, FX_WORD word);
 
 	virtual CPDF_Document*						GetDocument();
 
 	void										Empty();
-	int32_t									GetFontIndex(const CFX_ByteString& sFontName, int32_t nCharset, bool bFind);
+	int32_t									GetFontIndex(const CFX_ByteString& sFontName, int32_t nCharset, FX_BOOL bFind);
 	int32_t									GetPWLFontIndex(FX_WORD word, int32_t nCharset);
 	int32_t									AddFontData(CPDF_Font* pFont, const CFX_ByteString& sFontAlias, int32_t nCharset = DEFAULT_CHARSET);
 

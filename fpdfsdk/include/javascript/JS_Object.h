@@ -48,11 +48,11 @@ public:
 	void						MakeWeak();
         void                                            Dispose();
 
-	virtual bool				IsType(const FX_CHAR* sClassName){return true;};
+	virtual FX_BOOL				IsType(const FX_CHAR* sClassName){return TRUE;};
 	virtual CFX_ByteString		GetClassName(){return "";};
 
-	virtual bool				InitInstance(IFXJS_Context* cc){return true;};
-	virtual bool				ExitInstance(){return true;};
+	virtual FX_BOOL				InitInstance(IFXJS_Context* cc){return TRUE;};
+	virtual FX_BOOL				ExitInstance(){return TRUE;};
 
 	operator					JSFXObject () {return v8::Local<v8::Object>::New(m_pIsolate, m_pObject);}
 	operator					CJS_EmbedObj* (){return m_pEmbedObj;};
@@ -172,7 +172,7 @@ public:
 	CJS_Timer(CJS_EmbedObj * pObj,CPDFDoc_Environment* pApp):
 		m_nTimerID(0),
 		m_pEmbedObj(pObj),
-		m_bProcessing(false),
+		m_bProcessing(FALSE),
 		m_dwStartTime(0),
 		m_dwTimeOut(0),
 		m_dwElapse(0),
@@ -265,9 +265,9 @@ public:
 		{
 			if (!pTimer->m_bProcessing)
 			{
-				pTimer->m_bProcessing = true;
+				pTimer->m_bProcessing = TRUE;
 				if (pTimer->m_pEmbedObj) pTimer->m_pEmbedObj->TimerProc(pTimer);
-				pTimer->m_bProcessing = false;
+				pTimer->m_bProcessing = FALSE;
 			}
 			else
 			{
@@ -279,7 +279,7 @@ public:
 private:
 	FX_UINT							m_nTimerID;
 	CJS_EmbedObj*					m_pEmbedObj;
-	bool							m_bProcessing;
+	FX_BOOL							m_bProcessing;
 
 	//data
 	FX_DWORD							m_dwStartTime;

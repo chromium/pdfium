@@ -57,7 +57,7 @@ CPDF_Image* CPDF_Image::Clone()
     CPDF_Image* pImage = new CPDF_Image(m_pDocument);
     pImage->LoadImageF((CPDF_Stream*)((CPDF_Object*)m_pStream)->Clone(), m_bInline);
     if (m_bInline) {
-        CPDF_Dictionary *pInlineDict = (CPDF_Dictionary*)m_pInlineDict->Clone(true);
+        CPDF_Dictionary *pInlineDict = (CPDF_Dictionary*)m_pInlineDict->Clone(TRUE);
         pImage->SetInlineDict(pInlineDict);
     }
     return pImage;
@@ -67,7 +67,7 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc)
     m_pDocument = pDoc;
     m_pStream = NULL;
     m_pOC = NULL;
-    m_bInline = false;
+    m_bInline = FALSE;
     m_pInlineDict = NULL;
     m_pDIBSource = NULL;
     m_pMask = NULL;
@@ -84,7 +84,7 @@ CPDF_Image::~CPDF_Image()
         }
     }
 }
-bool CPDF_Image::LoadImageF(CPDF_Stream* pStream, bool bInline)
+FX_BOOL CPDF_Image::LoadImageF(CPDF_Stream* pStream, FX_BOOL bInline)
 {
     m_pStream = pStream;
     if (m_bInline && m_pInlineDict) {
@@ -101,5 +101,5 @@ bool CPDF_Image::LoadImageF(CPDF_Stream* pStream, bool bInline)
     m_bInterpolate = pDict->GetInteger(FX_BSTRC("Interpolate"));
     m_Height = pDict->GetInteger(FX_BSTRC("Height"));
     m_Width = pDict->GetInteger(FX_BSTRC("Width"));
-    return true;
+    return TRUE;
 }

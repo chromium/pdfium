@@ -208,13 +208,13 @@ DLLEXPORT FPDF_ACTION STDCALL FPDFLink_GetAction(FPDF_LINK pDict)
 DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page, int* startPos, FPDF_LINK* linkAnnot)
 {
     if(!page || !startPos || !linkAnnot)
-        return false;
+        return FALSE;
     CPDF_Page* pPage = (CPDF_Page*)page;
     if(!pPage->m_pFormDict)
-        return false;
+        return FALSE;
     CPDF_Array* pAnnots = pPage->m_pFormDict->GetArray("Annots");
     if(!pAnnots)
-        return false;
+        return FALSE;
     for (int i = *startPos; i < (int)pAnnots->GetCount(); i++) {
         CPDF_Dictionary* pDict = (CPDF_Dictionary*)pAnnots->GetElementValue(i);
         if (!pDict || pDict->GetType() != PDFOBJ_DICTIONARY)
@@ -222,23 +222,23 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page, int* startPos, FP
         if(pDict->GetString(FX_BSTRC("Subtype")).Equal(FX_BSTRC("Link"))) {
             *startPos = i + 1;
             *linkAnnot = (FPDF_LINK)pDict;
-            return true;
+            return TRUE;
         }
     }
-    return false;
+    return FALSE;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetAnnotRect(FPDF_LINK linkAnnot, FS_RECTF* rect)
 {
     if(!linkAnnot || !rect)
-        return false;
+        return FALSE;
     CPDF_Dictionary* pAnnotDict = (CPDF_Dictionary*)linkAnnot;
     CPDF_Rect rt = pAnnotDict->GetRect(FX_BSTRC("Rect"));
     rect->left = rt.left;
     rect->bottom = rt.bottom;
     rect->right = rt.right;
     rect->top = rt.top;
-    return true;
+    return TRUE;
 }
 
 DLLEXPORT int STDCALL FPDFLink_CountQuadPoints(FPDF_LINK linkAnnot)
@@ -255,12 +255,12 @@ DLLEXPORT int STDCALL FPDFLink_CountQuadPoints(FPDF_LINK linkAnnot)
 DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetQuadPoints(FPDF_LINK linkAnnot, int quadIndex, FS_QUADPOINTSF* quadPoints)
 {
     if(!linkAnnot || !quadPoints)
-        return false;
+        return FALSE;
     CPDF_Dictionary* pAnnotDict = (CPDF_Dictionary*)linkAnnot;
     CPDF_Array* pArray = pAnnotDict->GetArray(FX_BSTRC("QuadPoints"));
     if (pArray) {
         if (quadIndex < 0 || quadIndex >= (int)pArray->GetCount()/8 || ((quadIndex*8+7) >= (int)pArray->GetCount()))
-            return false;
+            return FALSE;
         quadPoints->x1 = pArray->GetNumber(quadIndex*8);
         quadPoints->y1 = pArray->GetNumber(quadIndex*8+1);
         quadPoints->x2 = pArray->GetNumber(quadIndex*8+2);
@@ -269,9 +269,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetQuadPoints(FPDF_LINK linkAnnot, int quad
         quadPoints->y3 = pArray->GetNumber(quadIndex*8+5);
         quadPoints->x4 = pArray->GetNumber(quadIndex*8+6);
         quadPoints->y4 = pArray->GetNumber(quadIndex*8+7);
-        return true;
+        return TRUE;
     }
-    return false;
+    return FALSE;
 }
 
 DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT doc, FPDF_BYTESTRING tag,

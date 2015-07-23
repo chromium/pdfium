@@ -51,7 +51,7 @@ public:
     void*	CreateFont(const uint8_t* pFontData, FX_DWORD dwFontSize);
     void	DestroyFont(void* pFont);
     void	setGraphicsTextMatrix(void* graphics, CFX_AffineMatrix* matrix);
-    bool	drawGraphicsString(void*                graphics,
+    FX_BOOL	drawGraphicsString(void*                graphics,
                                void*                font,
                                FX_FLOAT             fontSize,
                                FX_WORD*             glyphIndices,
@@ -92,26 +92,26 @@ public:
     {
         return NULL;
     }
-    virtual bool IsPSPrintDriver()
+    virtual FX_BOOL IsPSPrintDriver()
     {
-        return false;
+        return FALSE;
     }
-    virtual bool	StartRendering()
+    virtual FX_BOOL	StartRendering()
     {
-        return true;
+        return TRUE;
     }
     virtual void	EndRendering() {}
     virtual void	SaveState();
-    virtual void	RestoreState(bool bKeepSaved);
-    virtual bool	SetClip_PathFill(const CFX_PathData* pPathData,
+    virtual void	RestoreState(FX_BOOL bKeepSaved);
+    virtual FX_BOOL	SetClip_PathFill(const CFX_PathData* pPathData,
                                      const CFX_AffineMatrix* pObject2Device,
                                      int fill_mode
                                     );
-    virtual bool	SetClip_PathStroke(const CFX_PathData* pPathData,
+    virtual FX_BOOL	SetClip_PathStroke(const CFX_PathData* pPathData,
                                        const CFX_AffineMatrix* pObject2Device,
                                        const CFX_GraphStateData* pGraphState
                                       );
-    virtual bool	DrawPath(const CFX_PathData* pPathData,
+    virtual FX_BOOL	DrawPath(const CFX_PathData* pPathData,
                              const CFX_AffineMatrix* pObject2Device,
                              const CFX_GraphStateData* pGraphState,
                              FX_DWORD fill_color,
@@ -121,36 +121,36 @@ public:
                              void* pIccTransform = NULL,
                              int blend_type = FXDIB_BLEND_NORMAL
                             );
-    virtual bool	SetPixel(int x, int y, FX_DWORD color,
+    virtual FX_BOOL	SetPixel(int x, int y, FX_DWORD color,
                              int alpha_flag = 0, void* pIccTransform = NULL)
     {
-        return false;
+        return FALSE;
     }
-    virtual bool FillRect(const FX_RECT* pRect, FX_DWORD fill_color,
+    virtual FX_BOOL FillRect(const FX_RECT* pRect, FX_DWORD fill_color,
                              int alpha_flag = 0, void* pIccTransform = NULL, int blend_type = FXDIB_BLEND_NORMAL);
-    virtual bool	DrawCosmeticLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2, FX_DWORD color,
+    virtual FX_BOOL	DrawCosmeticLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2, FX_DWORD color,
                                      int alpha_flag = 0, void* pIccTransform = NULL, int blend_type = FXDIB_BLEND_NORMAL);
-    virtual bool GetClipBox(FX_RECT* pRect);
-    virtual bool	GetDIBits(CFX_DIBitmap* pBitmap, int left, int top, void* pIccTransform = NULL, bool bDEdge = false);
-    virtual bool	SetDIBits(const CFX_DIBSource* pBitmap, FX_DWORD color, const FX_RECT* pSrcRect,
+    virtual FX_BOOL GetClipBox(FX_RECT* pRect);
+    virtual FX_BOOL	GetDIBits(CFX_DIBitmap* pBitmap, int left, int top, void* pIccTransform = NULL, FX_BOOL bDEdge = FALSE);
+    virtual FX_BOOL	SetDIBits(const CFX_DIBSource* pBitmap, FX_DWORD color, const FX_RECT* pSrcRect,
                               int dest_left, int dest_top, int blend_type,
                               int alpha_flag = 0, void* pIccTransform = NULL);
-    virtual bool	StretchDIBits(const CFX_DIBSource* pBitmap, FX_DWORD color, int dest_left, int dest_top,
+    virtual FX_BOOL	StretchDIBits(const CFX_DIBSource* pBitmap, FX_DWORD color, int dest_left, int dest_top,
                                   int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags,
                                   int alpha_flag = 0, void* pIccTransform = NULL, int blend_type = FXDIB_BLEND_NORMAL);
-    virtual bool	StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
+    virtual FX_BOOL	StartDIBits(const CFX_DIBSource* pBitmap, int bitmap_alpha, FX_DWORD color,
                                 const CFX_AffineMatrix* pMatrix, FX_DWORD flags, void*& handle,
                                 int alpha_flag = 0, void* pIccTransform = NULL,
                                 int blend_type = FXDIB_BLEND_NORMAL)
     {
-        return false;
+        return FALSE;
     }
-    virtual bool	ContinueDIBits(void* handle, IFX_Pause* pPause)
+    virtual FX_BOOL	ContinueDIBits(void* handle, IFX_Pause* pPause)
     {
-        return false;
+        return FALSE;
     }
     virtual void	CancelDIBits(void* handle) {}
-    virtual bool DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
+    virtual FX_BOOL DrawDeviceText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
                                    CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device, FX_FLOAT font_size, FX_DWORD color,
                                    int alpha_flag = 0, void* pIccTransform = NULL);
     virtual void    ClearDriver();
@@ -159,7 +159,7 @@ protected:
     void setFillInfo(FX_ARGB argb);
     void setPathToContext(const CFX_PathData * pathData);
     FX_FLOAT getLineWidth(const CFX_GraphStateData * graphState, CGAffineTransform ctm);
-    bool CG_DrawGlypRun(int                        nChars,
+    FX_BOOL CG_DrawGlypRun(int                        nChars,
                            const FXTEXT_CHARPOS*      pCharPos,
                            CFX_Font*                  pFont,
                            CFX_FontCache*             pCache,
@@ -195,9 +195,9 @@ public:
     {
         return (FX_FILESIZE)_totalSize;
     }
-    virtual bool			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+    virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
-    virtual bool			IsEOF() override
+    virtual FX_BOOL			IsEOF() override
     {
         return _offSet == _totalSize;
     }

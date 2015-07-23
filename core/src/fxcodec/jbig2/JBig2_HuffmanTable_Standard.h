@@ -11,7 +11,7 @@ typedef struct {
     int RANDELEN;
     int RANGELOW;
 } JBig2TableLine;
-const bool HuffmanTable_HTOOB_B1 = false;
+const FX_BOOL HuffmanTable_HTOOB_B1 = FALSE;
 const JBig2TableLine HuffmanTable_B1[] = {
     { 1,	4,		0 },
     { 2,	8,	   16 },
@@ -19,7 +19,7 @@ const JBig2TableLine HuffmanTable_B1[] = {
     { 0,   32,	   -1 },
     { 3,   32,	65808 }
 };
-const bool HuffmanTable_HTOOB_B2 = true;
+const FX_BOOL HuffmanTable_HTOOB_B2 = TRUE;
 const JBig2TableLine HuffmanTable_B2[] = {
     { 1,	0,		0 },
     { 2,	0,		1 },
@@ -30,7 +30,7 @@ const JBig2TableLine HuffmanTable_B2[] = {
     { 6,   32,     75 },
     { 6,	0,      0 }
 };
-const bool HuffmanTable_HTOOB_B3 = true;
+const FX_BOOL HuffmanTable_HTOOB_B3 = TRUE;
 const JBig2TableLine HuffmanTable_B3[] = {
     { 8,	8,   -256 },
     { 1,	0,		0 },
@@ -42,7 +42,7 @@ const JBig2TableLine HuffmanTable_B3[] = {
     { 7,   32,     75 },
     { 6,	0,		0 }
 };
-const bool HuffmanTable_HTOOB_B4 = false;
+const FX_BOOL HuffmanTable_HTOOB_B4 = FALSE;
 const JBig2TableLine HuffmanTable_B4[] = {
     { 1,	0,		1 },
     { 2,	0,		2 },
@@ -52,7 +52,7 @@ const JBig2TableLine HuffmanTable_B4[] = {
     { 0,   32,     -1 },
     { 5,   32,	   76 },
 };
-const bool HuffmanTable_HTOOB_B5 = false;
+const FX_BOOL HuffmanTable_HTOOB_B5 = FALSE;
 const JBig2TableLine HuffmanTable_B5[] = {
     { 7,	8,	 -255 },
     { 1,	0,	    1 },
@@ -63,7 +63,7 @@ const JBig2TableLine HuffmanTable_B5[] = {
     { 7,   32,   -256 },
     { 6,   32,     76 }
 };
-const bool HuffmanTable_HTOOB_B6 = false;
+const FX_BOOL HuffmanTable_HTOOB_B6 = FALSE;
 const JBig2TableLine HuffmanTable_B6[] = {
     { 5,   10,	-2048 },
     { 4,    9,	-1024 },
@@ -80,7 +80,7 @@ const JBig2TableLine HuffmanTable_B6[] = {
     { 6,   32,	-2049 },
     { 6,   32,	 2048 }
 };
-const bool HuffmanTable_HTOOB_B7 = false;
+const FX_BOOL HuffmanTable_HTOOB_B7 = FALSE;
 const JBig2TableLine HuffmanTable_B7[] = {
     { 4,	9,	-1024 },
     { 3,	8,	 -512 },
@@ -98,7 +98,7 @@ const JBig2TableLine HuffmanTable_B7[] = {
     { 5,   32,	-1025 },
     { 5,   32,	 2048 },
 };
-const bool HuffmanTable_HTOOB_B8 = true;
+const FX_BOOL HuffmanTable_HTOOB_B8 = TRUE;
 const JBig2TableLine HuffmanTable_B8[] = {
     { 8,	3,	  -15 },
     { 9,	1,	   -7 },
@@ -122,7 +122,7 @@ const JBig2TableLine HuffmanTable_B8[] = {
     { 9,   32,	 1670 },
     { 2,	0,		0 }
 };
-const bool HuffmanTable_HTOOB_B9 = true;
+const FX_BOOL HuffmanTable_HTOOB_B9 = TRUE;
 const JBig2TableLine HuffmanTable_B9[] = {
     { 8,	4,	  -31 },
     { 9,	2,	  -15 },
@@ -147,7 +147,7 @@ const JBig2TableLine HuffmanTable_B9[] = {
     { 9,   32,	 3339 },
     { 2,	0,		0 }
 };
-const bool HuffmanTable_HTOOB_B10 = true;
+const FX_BOOL HuffmanTable_HTOOB_B10 = TRUE;
 const JBig2TableLine HuffmanTable_B10[] = {
     { 7,	4,	  -21 },
     { 8,	0,	   -5 },
@@ -171,7 +171,7 @@ const JBig2TableLine HuffmanTable_B10[] = {
     { 8,   32,	 4166 },
     { 2,	0,		0 }
 };
-const bool HuffmanTable_HTOOB_B11 = false;
+const FX_BOOL HuffmanTable_HTOOB_B11 = FALSE;
 const JBig2TableLine HuffmanTable_B11[] = {
     { 1,	0,		1 },
     { 2,	1,		2 },
@@ -188,7 +188,7 @@ const JBig2TableLine HuffmanTable_B11[] = {
     { 0,   32,		0 },
     { 7,   32,	  141 }
 };
-const bool HuffmanTable_HTOOB_B12 = false;
+const FX_BOOL HuffmanTable_HTOOB_B12 = FALSE;
 const JBig2TableLine HuffmanTable_B12[] = {
     { 1,	0,		1 },
     { 2,	0,		2 },
@@ -205,7 +205,7 @@ const JBig2TableLine HuffmanTable_B12[] = {
     { 0,   32,		0 },
     { 8,   32,	   73 }
 };
-const bool HuffmanTable_HTOOB_B13 = false;
+const FX_BOOL HuffmanTable_HTOOB_B13 = FALSE;
 const JBig2TableLine HuffmanTable_B13[] = {
     { 1,	0,		1 },
     { 3,	0,		2 },
@@ -222,7 +222,7 @@ const JBig2TableLine HuffmanTable_B13[] = {
     { 0,   32,		0 },
     { 7,   32,	  141 }
 };
-const bool HuffmanTable_HTOOB_B14 = false;
+const FX_BOOL HuffmanTable_HTOOB_B14 = FALSE;
 const JBig2TableLine HuffmanTable_B14[] = {
     { 3,	0,	   -2 },
     { 3,	0,	   -1 },
@@ -232,7 +232,7 @@ const JBig2TableLine HuffmanTable_B14[] = {
     { 0,   32,	   -3 },
     { 0,   32,		3 }
 };
-const bool HuffmanTable_HTOOB_B15 = false;
+const FX_BOOL HuffmanTable_HTOOB_B15 = FALSE;
 const JBig2TableLine HuffmanTable_B15[] = {
     { 7,	4,	  -24 },
     { 6,	2,	   -8 },

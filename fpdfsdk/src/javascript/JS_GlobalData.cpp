@@ -296,7 +296,7 @@ void CJS_GlobalData::SetGlobalVariableNull(const FX_CHAR* propname)
     }
 }
 
-bool CJS_GlobalData::SetGlobalVariablePersistent(const FX_CHAR* propname, bool bPersistent)
+FX_BOOL CJS_GlobalData::SetGlobalVariablePersistent(const FX_CHAR* propname, FX_BOOL bPersistent)
 {
     ASSERT(propname != NULL);
     CFX_ByteString sPropName = propname;
@@ -304,18 +304,18 @@ bool CJS_GlobalData::SetGlobalVariablePersistent(const FX_CHAR* propname, bool b
     sPropName.TrimLeft();
     sPropName.TrimRight();
 
-    if (sPropName.GetLength() == 0) return false;
+    if (sPropName.GetLength() == 0) return FALSE;
 
     if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName))
     {
         pData->bPersistent = bPersistent;
-        return true;
+        return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
-bool CJS_GlobalData::DeleteGlobalVariable(const FX_CHAR* propname)
+FX_BOOL CJS_GlobalData::DeleteGlobalVariable(const FX_CHAR* propname)
 {
     ASSERT(propname != NULL);
     CFX_ByteString sPropName = propname;
@@ -323,7 +323,7 @@ bool CJS_GlobalData::DeleteGlobalVariable(const FX_CHAR* propname)
     sPropName.TrimLeft();
     sPropName.TrimRight();
 
-    if (sPropName.GetLength() == 0) return false;
+    if (sPropName.GetLength() == 0) return FALSE;
 
     int nFind = FindGlobalVariable(sPropName);
 
@@ -331,10 +331,10 @@ bool CJS_GlobalData::DeleteGlobalVariable(const FX_CHAR* propname)
     {
         delete m_arrayGlobalData.GetAt(nFind);
         m_arrayGlobalData.RemoveAt(nFind);
-        return true;
+        return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
 int32_t CJS_GlobalData::GetSize() const
@@ -417,7 +417,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables()
                                 break;
                             }
                             SetGlobalVariableNumber(sEntry, dData);
-                            SetGlobalVariablePersistent(sEntry, true);
+                            SetGlobalVariablePersistent(sEntry, TRUE);
                         }
                         break;
                     case JS_GLOBALDATA_TYPE_BOOLEAN:
@@ -425,7 +425,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables()
                             FX_WORD wData = *((FX_WORD*)p);
                             p += sizeof(FX_WORD);
                             SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
-                            SetGlobalVariablePersistent(sEntry, true);
+                            SetGlobalVariablePersistent(sEntry, TRUE);
                         }
                         break;
                     case JS_GLOBALDATA_TYPE_STRING:
@@ -437,14 +437,14 @@ void CJS_GlobalData::LoadGlobalPersistentVariables()
                                 break;
 
                             SetGlobalVariableString(sEntry, CFX_ByteString(p, dwLength));
-                            SetGlobalVariablePersistent(sEntry, true);
+                            SetGlobalVariablePersistent(sEntry, TRUE);
                             p += sizeof(char) * dwLength;
                         }
                         break;
                     case JS_GLOBALDATA_TYPE_NULL:
                         {
                             SetGlobalVariableNull(sEntry);
-                            SetGlobalVariablePersistent(sEntry, true);
+                            SetGlobalVariablePersistent(sEntry, TRUE);
                         }
                     }
                 }

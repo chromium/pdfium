@@ -24,18 +24,18 @@ public:
     CWin32FontInfo();
     ~CWin32FontInfo();
     virtual void		Release();
-    virtual	bool		EnumFontList(CFX_FontMapper* pMapper);
-    virtual void*		MapFont(int weight, bool bItalic, int charset, int pitch_family, const FX_CHAR* face, bool& bExact);
+    virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper);
+    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, FX_BOOL& bExact);
     virtual void*		GetFont(const FX_CHAR* face)
     {
         return NULL;
     }
     virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size);
     virtual void		DeleteFont(void* hFont);
-    virtual	bool		GetFaceName(void* hFont, CFX_ByteString& name);
-    virtual bool		GetFontCharset(void* hFont, int& charset);
-    bool				IsOpenTypeFromDiv(const LOGFONTA *plf);
-    bool				IsSupportFontFormDiv(const LOGFONTA* plf);
+    virtual	FX_BOOL		GetFaceName(void* hFont, CFX_ByteString& name);
+    virtual FX_BOOL		GetFontCharset(void* hFont, int& charset);
+    FX_BOOL				IsOpenTypeFromDiv(const LOGFONTA *plf);
+    FX_BOOL				IsSupportFontFormDiv(const LOGFONTA* plf);
     void				AddInstalledFont(const LOGFONTA *plf, FX_DWORD FontType);
     void				GetGBPreference(CFX_ByteString& face, int weight, int picth_family);
     void				GetJapanesePreference(CFX_ByteString& face, int weight, int picth_family);
@@ -59,10 +59,10 @@ void CWin32FontInfo::Release()
     delete this;
 }
 #define TT_MAKE_TAG(x1, x2, x3, x4) (((FX_DWORD)x1<<24)|((FX_DWORD)x2<<16)|((FX_DWORD)x3<<8)|(FX_DWORD)x4)
-bool CWin32FontInfo::IsOpenTypeFromDiv(const LOGFONTA *plf)
+FX_BOOL CWin32FontInfo::IsOpenTypeFromDiv(const LOGFONTA *plf)
 {
     HFONT hFont = CreateFontIndirectA(plf);
-    bool ret = false;
+    FX_BOOL ret = FALSE;
     FX_DWORD font_size  = GetFontData(hFont, 0, NULL, 0);
     if (font_size != GDI_ERROR && font_size >= sizeof(FX_DWORD)) {
         FX_DWORD lVersion = 0;
@@ -74,16 +74,16 @@ bool CWin32FontInfo::IsOpenTypeFromDiv(const LOGFONTA *plf)
                 lVersion == TT_MAKE_TAG('t', 't', 'c', 'f') ||
                 lVersion == TT_MAKE_TAG('t', 'r', 'u', 'e') ||
                 lVersion == 0x00020000) {
-            ret = true;
+            ret = TRUE;
         }
     }
     DeleteFont(hFont);
     return ret;
 }
-bool CWin32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf)
+FX_BOOL CWin32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf)
 {
     HFONT hFont = CreateFontIndirectA(plf);
-    bool ret = false;
+    FX_BOOL ret = FALSE;
     FX_DWORD font_size  = GetFontData(hFont, 0, NULL, 0);
     if (font_size != GDI_ERROR && font_size >= sizeof(FX_DWORD)) {
         FX_DWORD lVersion = 0;
@@ -95,10 +95,10 @@ bool CWin32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf)
                 lVersion == TT_MAKE_TAG('t', 't', 'c', 'f') ||
                 lVersion == TT_MAKE_TAG('t', 'r', 'u', 'e') ||
                 lVersion == 0x00020000) {
-            ret = true;
+            ret = TRUE;
         } else if ((lVersion & 0xFFFF0000) == TT_MAKE_TAG(0x80, 0x01, 0x00, 0x00) ||
                    (lVersion & 0xFFFF0000) == TT_MAKE_TAG('%', '!', 0, 0)) {
-            ret = true;
+            ret = TRUE;
         }
     }
     DeleteFont(hFont);
@@ -139,7 +139,7 @@ static int CALLBACK FontEnumProc(
     pFontInfo->AddInstalledFont(plf, FontType);
     return 1;
 }
-bool CWin32FontInfo::EnumFontList(CFX_FontMapper* pMapper)
+FX_BOOL CWin32FontInfo::EnumFontList(CFX_FontMapper* pMapper)
 {
     m_pMapper = pMapper;
     LOGFONTA lf;
@@ -151,7 +151,7 @@ bool CWin32FontInfo::EnumFontList(CFX_FontMapper* pMapper)
     if (pMapper->GetFontEnumerator()) {
         pMapper->GetFontEnumerator()->Finish();
     }
-    return true;
+    return TRUE;
 }
 static const struct {
     const FX_CHAR*	m_pFaceName;
@@ -163,22 +163,22 @@ VariantNames[] = {
 static const struct {
     const FX_CHAR*	m_pName;
     const FX_CHAR*	m_pWinName;
-    bool		m_bBold;
-    bool		m_bItalic;
+    FX_BOOL		m_bBold;
+    FX_BOOL		m_bItalic;
 }
 Base14Substs[] = {
-    {"Courier", "Courier New", false, false},
-    {"Courier-Bold", "Courier New", true, false},
-    {"Courier-BoldOblique", "Courier New", true, true},
-    {"Courier-Oblique", "Courier New", false, true},
-    {"Helvetica", "Arial", false, false},
-    {"Helvetica-Bold", "Arial", true, false},
-    {"Helvetica-BoldOblique", "Arial", true, true},
-    {"Helvetica-Oblique", "Arial", false, true},
-    {"Times-Roman", "Times New Roman", false, false},
-    {"Times-Bold", "Times New Roman", true, false},
-    {"Times-BoldItalic", "Times New Roman", true, true},
-    {"Times-Italic", "Times New Roman", false, true},
+    {"Courier", "Courier New", FALSE, FALSE},
+    {"Courier-Bold", "Courier New", TRUE, FALSE},
+    {"Courier-BoldOblique", "Courier New", TRUE, TRUE},
+    {"Courier-Oblique", "Courier New", FALSE, TRUE},
+    {"Helvetica", "Arial", FALSE, FALSE},
+    {"Helvetica-Bold", "Arial", TRUE, FALSE},
+    {"Helvetica-BoldOblique", "Arial", TRUE, TRUE},
+    {"Helvetica-Oblique", "Arial", FALSE, TRUE},
+    {"Times-Roman", "Times New Roman", FALSE, FALSE},
+    {"Times-Bold", "Times New Roman", TRUE, FALSE},
+    {"Times-BoldItalic", "Times New Roman", TRUE, TRUE},
+    {"Times-Italic", "Times New Roman", FALSE, TRUE},
 };
 CFX_ByteString CWin32FontInfo::FindFont(const CFX_ByteString& name)
 {
@@ -212,17 +212,17 @@ extern "C" {
         return FXSYS_stricmp((const FX_CHAR*)key, ((_FontNameMap*)element)->m_pSrcFontName);
     }
 }
-bool _GetSubFontName(CFX_ByteString& name)
+FX_BOOL _GetSubFontName(CFX_ByteString& name)
 {
     int size = sizeof g_JpFontNameMap;
     void* pFontnameMap = (void*)g_JpFontNameMap;
     _FontNameMap* found = (_FontNameMap*)FXSYS_bsearch(name.c_str(), pFontnameMap,
                           size / sizeof (_FontNameMap), sizeof (_FontNameMap), compareString);
     if (found == NULL) {
-        return false;
+        return FALSE;
     }
     name = found->m_pSubFontName;
-    return true;
+    return TRUE;
 }
 void CWin32FontInfo::GetGBPreference(CFX_ByteString& face, int weight, int picth_family)
 {
@@ -285,7 +285,7 @@ void CWin32FontInfo::GetJapanesePreference(CFX_ByteString& face, int weight, int
         face = "MS PMincho";
     }
 }
-void* CWin32FontInfo::MapFont(int weight, bool bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, bool& bExact)
+void* CWin32FontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, FX_BOOL& bExact)
 {
     CFX_ByteString face = cstr_face;
     int iBaseFont;
@@ -294,7 +294,7 @@ void* CWin32FontInfo::MapFont(int weight, bool bItalic, int charset, int pitch_f
             face = Base14Substs[iBaseFont].m_pWinName;
             weight = Base14Substs[iBaseFont].m_bBold ? FW_BOLD : FW_NORMAL;
             bItalic = Base14Substs[iBaseFont].m_bItalic;
-            bExact = true;
+            bExact = TRUE;
             break;
         }
     if (charset == ANSI_CHARSET || charset == SYMBOL_CHARSET) {
@@ -373,26 +373,26 @@ FX_DWORD CWin32FontInfo::GetFontData(void* hFont, FX_DWORD table, uint8_t* buffe
     }
     return size;
 }
-bool CWin32FontInfo::GetFaceName(void* hFont, CFX_ByteString& name)
+FX_BOOL CWin32FontInfo::GetFaceName(void* hFont, CFX_ByteString& name)
 {
     char facebuf[100];
     HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
     int ret = ::GetTextFaceA(m_hDC, 100, facebuf);
     ::SelectObject(m_hDC, hOldFont);
     if (ret == 0) {
-        return false;
+        return FALSE;
     }
     name = facebuf;
-    return true;
+    return TRUE;
 }
-bool CWin32FontInfo::GetFontCharset(void* hFont, int& charset)
+FX_BOOL CWin32FontInfo::GetFontCharset(void* hFont, int& charset)
 {
     TEXTMETRIC tm;
     HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
     ::GetTextMetrics(m_hDC, &tm);
     ::SelectObject(m_hDC, hOldFont);
     charset = tm.tmCharSet;
-    return true;
+    return TRUE;
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault()
 {
@@ -466,16 +466,16 @@ void* CGdiDeviceDriver::GetClipRgn()
     }
     return (void*)hClipRgn;
 }
-bool CGdiDeviceDriver::GDI_SetDIBits(const CFX_DIBitmap* pBitmap1, const FX_RECT* pSrcRect, int left, int top, void* pIccTransform)
+FX_BOOL CGdiDeviceDriver::GDI_SetDIBits(const CFX_DIBitmap* pBitmap1, const FX_RECT* pSrcRect, int left, int top, void* pIccTransform)
 {
     if (m_DeviceClass == FXDC_PRINTER) {
-        CFX_DIBitmap* pBitmap = pBitmap1->FlipImage(false, true);
+        CFX_DIBitmap* pBitmap = pBitmap1->FlipImage(FALSE, TRUE);
         if (pBitmap == NULL) {
-            return false;
+            return FALSE;
         }
         if ((pBitmap->IsCmykImage() || pIccTransform) &&
                 !pBitmap->ConvertFormat(FXDIB_Rgb, pIccTransform)) {
-            return false;
+            return FALSE;
         }
         int width = pSrcRect->Width(), height = pSrcRect->Height();
         int pitch = pBitmap->GetPitch();
@@ -493,7 +493,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const CFX_DIBitmap* pBitmap1, const FX_RECT
         CFX_DIBitmap* pBitmap = (CFX_DIBitmap*)pBitmap1;
         if ((pBitmap->IsCmykImage() || pIccTransform) &&
                 (pBitmap = pBitmap->CloneConvert(FXDIB_Rgb, NULL, pIccTransform)) == NULL) {
-            return false;
+            return FALSE;
         }
         int width = pSrcRect->Width(), height = pSrcRect->Height();
         int pitch = pBitmap->GetPitch();
@@ -505,18 +505,18 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const CFX_DIBitmap* pBitmap1, const FX_RECT
             delete pBitmap;
         }
     }
-    return true;
+    return TRUE;
 }
-bool CGdiDeviceDriver::GDI_StretchDIBits(const CFX_DIBitmap* pBitmap1, int dest_left, int dest_top,
+FX_BOOL CGdiDeviceDriver::GDI_StretchDIBits(const CFX_DIBitmap* pBitmap1, int dest_left, int dest_top,
         int dest_width, int dest_height, FX_DWORD flags, void* pIccTransform)
 {
     CFX_DIBitmap* pBitmap = (CFX_DIBitmap*)pBitmap1;
     if (pBitmap == NULL || dest_width == 0  || dest_height == 0) {
-        return false;
+        return FALSE;
     }
     if ((pBitmap->IsCmykImage() || pIccTransform) &&
             !pBitmap->ConvertFormat(FXDIB_Rgb, pIccTransform)) {
-        return false;
+        return FALSE;
     }
     CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
     if ((int64_t)abs(dest_width) * abs(dest_height) < (int64_t)pBitmap1->GetWidth() * pBitmap1->GetHeight() * 4 ||
@@ -538,15 +538,15 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(const CFX_DIBitmap* pBitmap1, int dest_
     if (del) {
         delete pToStrechBitmap;
     }
-    return true;
+    return TRUE;
 }
-bool CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1, int dest_left, int dest_top,
+FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1, int dest_left, int dest_top,
         int dest_width, int dest_height, FX_DWORD bitmap_color, FX_DWORD flags,
         int alpha_flag, void* pIccTransform)
 {
     CFX_DIBitmap* pBitmap = (CFX_DIBitmap*)pBitmap1;
     if (pBitmap == NULL || dest_width == 0  || dest_height == 0) {
-        return false;
+        return FALSE;
     }
     _Color2Argb(bitmap_color, bitmap_color, alpha_flag | (1 << 24), pIccTransform);
     int width = pBitmap->GetWidth(), height = pBitmap->GetHeight();
@@ -592,16 +592,16 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1, int dest
     SelectObject(m_hDC, hOld);
     DeleteObject(hPattern);
 
-    return true;
+    return TRUE;
 }
 BOOL CGdiDeviceDriver::GetClipBox(FX_RECT* pRect)
 {
     return ::GetClipBox(m_hDC, (RECT*)pRect);
 }
-bool CGdiDeviceDriver::SetClipRgn(void* hRgn)
+FX_BOOL CGdiDeviceDriver::SetClipRgn(void* hRgn)
 {
     ::SelectClipRgn(m_hDC, (HRGN)hRgn);
-    return true;
+    return TRUE;
 }
 static HPEN _CreatePen(const CFX_GraphStateData* pGraphState, const CFX_AffineMatrix* pMatrix, FX_DWORD argb)
 {
@@ -749,11 +749,11 @@ void CGdiDeviceDriver::DrawLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT 
     MoveToEx(m_hDC, FXSYS_round(x1), FXSYS_round(y1), NULL);
     LineTo(m_hDC, FXSYS_round(x2), FXSYS_round(y2));
 }
-static bool _MatrixNoScaled(const CFX_AffineMatrix* pMatrix)
+static FX_BOOL _MatrixNoScaled(const CFX_AffineMatrix* pMatrix)
 {
     return pMatrix->GetA() == 1.0f && pMatrix->GetB() == 0 && pMatrix->GetC() == 0 && pMatrix->GetD() == 1.0f;
 }
-bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
+FX_BOOL CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                    const CFX_AffineMatrix* pMatrix,
                                    const CFX_GraphStateData* pGraphState,
                                    FX_DWORD fill_color,
@@ -765,7 +765,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                   )
 {
     if (blend_type != FXDIB_BLEND_NORMAL) {
-        return false;
+        return FALSE;
     }
     _Color2Argb(fill_color, fill_color, alpha_flag | (1 << 24), pIccTransform);
     _Color2Argb(stroke_color, stroke_color, alpha_flag, pIccTransform);
@@ -786,9 +786,9 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     }
     int fill_alpha = FXARGB_A(fill_color);
     int stroke_alpha = FXARGB_A(stroke_color);
-    bool bDrawAlpha = (fill_alpha > 0 && fill_alpha < 255) || (stroke_alpha > 0 && stroke_alpha < 255 && pGraphState);
+    FX_BOOL bDrawAlpha = (fill_alpha > 0 && fill_alpha < 255) || (stroke_alpha > 0 && stroke_alpha < 255 && pGraphState);
     if (!pPlatform->m_GdiplusExt.IsAvailable() && bDrawAlpha) {
-        return false;
+        return FALSE;
     }
     if (pPlatform->m_GdiplusExt.IsAvailable()) {
         if (bDrawAlpha || ((m_DeviceClass != FXDC_PRINTER && !(fill_mode & FXFILL_FULLCOVER)) || (pGraphState && pGraphState->m_DashCount))) {
@@ -797,7 +797,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                     (pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) &&
                     pPathData->IsRect()) ) {
                 if (pPlatform->m_GdiplusExt.DrawPath(m_hDC, pPathData, pMatrix, pGraphState, fill_color, stroke_color, fill_mode)) {
-                    return true;
+                    return TRUE;
                 }
             }
         }
@@ -852,29 +852,29 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
         hBrush = (HBRUSH)SelectObject(m_hDC, hBrush);
         DeleteObject(hBrush);
     }
-    return true;
+    return TRUE;
 }
-bool CGdiDeviceDriver::FillRect(const FX_RECT* pRect, FX_DWORD fill_color, int alpha_flag, void* pIccTransform, int blend_type)
+FX_BOOL CGdiDeviceDriver::FillRect(const FX_RECT* pRect, FX_DWORD fill_color, int alpha_flag, void* pIccTransform, int blend_type)
 {
     if (blend_type != FXDIB_BLEND_NORMAL) {
-        return false;
+        return FALSE;
     }
     _Color2Argb(fill_color, fill_color, alpha_flag | (1 << 24), pIccTransform);
     int alpha;
     FX_COLORREF rgb;
     ArgbDecode(fill_color, alpha, rgb);
     if (alpha == 0) {
-        return true;
+        return TRUE;
     }
     if (alpha < 255) {
-        return false;
+        return FALSE;
     }
     HBRUSH hBrush = CreateSolidBrush(rgb);
     ::FillRect(m_hDC, (RECT*)pRect, hBrush);
     DeleteObject(hBrush);
-    return true;
+    return TRUE;
 }
-bool CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
+FX_BOOL CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
         const CFX_AffineMatrix* pMatrix,
         int fill_mode
                                           )
@@ -884,15 +884,15 @@ bool CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
         if (pPathData->IsRect(pMatrix, &rectf)) {
             FX_RECT rect = rectf.GetOutterRect();
             IntersectClipRect(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
-            return true;
+            return TRUE;
         }
     }
     _SetPathToDC(m_hDC, pPathData, pMatrix);
     SetPolyFillMode(m_hDC, fill_mode & 3);
     SelectClipPath(m_hDC, RGN_AND);
-    return true;
+    return TRUE;
 }
-bool CGdiDeviceDriver::SetClip_PathStroke(const CFX_PathData* pPathData,
+FX_BOOL CGdiDeviceDriver::SetClip_PathStroke(const CFX_PathData* pPathData,
         const CFX_AffineMatrix* pMatrix,
         const CFX_GraphStateData* pGraphState
                                             )
@@ -902,23 +902,23 @@ bool CGdiDeviceDriver::SetClip_PathStroke(const CFX_PathData* pPathData,
     _SetPathToDC(m_hDC, pPathData, pMatrix);
     WidenPath(m_hDC);
     SetPolyFillMode(m_hDC, WINDING);
-    bool ret = SelectClipPath(m_hDC, RGN_AND);
+    FX_BOOL ret = SelectClipPath(m_hDC, RGN_AND);
     hPen = (HPEN)SelectObject(m_hDC, hPen);
     DeleteObject(hPen);
     return ret;
 }
-bool CGdiDeviceDriver::DrawCosmeticLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2, FX_DWORD color,
+FX_BOOL CGdiDeviceDriver::DrawCosmeticLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2, FX_DWORD color,
         int alpha_flag, void* pIccTransform, int	blend_type)
 {
     if (blend_type != FXDIB_BLEND_NORMAL) {
-        return false;
+        return FALSE;
     }
     _Color2Argb(color, color, alpha_flag | (1 << 24), pIccTransform);
     int a;
     FX_COLORREF rgb;
     ArgbDecode(color, a, rgb);
     if (a == 0) {
-        return true;
+        return TRUE;
     }
     HPEN hPen = CreatePen(PS_SOLID, 1, rgb);
     hPen = (HPEN)SelectObject(m_hDC, hPen);
@@ -926,12 +926,12 @@ bool CGdiDeviceDriver::DrawCosmeticLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, F
     LineTo(m_hDC, FXSYS_round(x2), FXSYS_round(y2));
     hPen = (HPEN)SelectObject(m_hDC, hPen);
     DeleteObject(hPen);
-    return true;
+    return TRUE;
 }
-bool CGdiDeviceDriver::DeleteDeviceRgn(void* pRgn)
+FX_BOOL CGdiDeviceDriver::DeleteDeviceRgn(void* pRgn)
 {
     DeleteObject((HGDIOBJ)pRgn);
-    return true;
+    return TRUE;
 }
 CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC) : CGdiDeviceDriver(hDC, FXDC_DISPLAY)
 {
@@ -940,9 +940,9 @@ CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC) : CGdiDeviceDriver(hDC, FXDC_DISPL
         m_RenderCaps |= FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE;
     }
 }
-bool CGdiDisplayDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top, void* pIccTransform, bool bDEdge)
+FX_BOOL CGdiDisplayDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top, void* pIccTransform, FX_BOOL bDEdge)
 {
-    bool ret = false;
+    FX_BOOL ret = FALSE;
     int width = pBitmap->GetWidth();
     int height = pBitmap->GetHeight();
     HBITMAP hbmp = CreateCompatibleBitmap(m_hDC, width, height);
@@ -969,7 +969,7 @@ bool CGdiDisplayDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top, void
             ::GetDIBits(hDCMemory, hbmp, 0, height, bitmap.GetBuffer(), &bmi, DIB_RGB_COLORS);
             ret = pBitmap->TransferBitmap(0, 0, width, height, &bitmap, 0, 0, pIccTransform);
         } else {
-            ret = false;
+            ret = FALSE;
         }
     }
     if (pBitmap->HasAlpha() && ret) {
@@ -979,22 +979,22 @@ bool CGdiDisplayDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top, void
     DeleteObject(hDCMemory);
     return ret;
 }
-bool CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD color, const FX_RECT* pSrcRect, int left, int top, int blend_type,
+FX_BOOL CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD color, const FX_RECT* pSrcRect, int left, int top, int blend_type,
                                      int alpha_flag, void* pIccTransform)
 {
     ASSERT(blend_type == FXDIB_BLEND_NORMAL);
     if (pSource->IsAlphaMask()) {
         int width = pSource->GetWidth(), height = pSource->GetHeight();
         int alpha = FXGETFLAG_COLORTYPE(alpha_flag) ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
-        bool bGDI = pSource->GetBPP() == 1 && alpha == 255;
+        FX_BOOL bGDI = pSource->GetBPP() == 1 && alpha == 255;
         if (!bGDI) {
             CFX_DIBitmap background;
             if (!background.Create(width, height, FXDIB_Rgb32) ||
                 !GetDIBits(&background, left, top, NULL) ||
                 !background.CompositeMask(0, 0, width, height, pSource, color,
-                                          0, 0, FXDIB_BLEND_NORMAL, NULL, false,
+                                          0, 0, FXDIB_BLEND_NORMAL, NULL, FALSE,
                                           alpha_flag, pIccTransform)) {
-                return false;
+                return FALSE;
             }
             FX_RECT src_rect(0, 0, width, height);
             return SetDIBits(&background, 0, &src_rect, left, top, FXDIB_BLEND_NORMAL, 0, NULL);
@@ -1008,8 +1008,8 @@ bool CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD color, 
         CFX_DIBitmap bitmap;
         if (!bitmap.Create(width, height, FXDIB_Rgb) ||
             !GetDIBits(&bitmap, left, top, NULL) ||
-            !bitmap.CompositeBitmap(0, 0, width, height, pSource, pSrcRect->left, pSrcRect->top, FXDIB_BLEND_NORMAL, NULL, false, pIccTransform)) {
-            return false;
+            !bitmap.CompositeBitmap(0, 0, width, height, pSource, pSrcRect->left, pSrcRect->top, FXDIB_BLEND_NORMAL, NULL, FALSE, pIccTransform)) {
+            return FALSE;
         }
         FX_RECT src_rect(0, 0, width, height);
         return SetDIBits(&bitmap, 0, &src_rect, left, top, FXDIB_BLEND_NORMAL, 0, NULL);
@@ -1019,9 +1019,9 @@ bool CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD color, 
     if (pBitmap) {
         return GDI_SetDIBits(pBitmap, pSrcRect, left, top, pIccTransform);
     }
-    return false;
+    return FALSE;
 }
-bool CGdiDisplayDriver::UseFoxitStretchEngine(const CFX_DIBSource* pSource, FX_DWORD color, int dest_left, int dest_top,
+FX_BOOL CGdiDisplayDriver::UseFoxitStretchEngine(const CFX_DIBSource* pSource, FX_DWORD color, int dest_left, int dest_top,
         int dest_width, int dest_height, const FX_RECT* pClipRect, int render_flags,
         int alpha_flag, void* pIccTransform, int blend_type)
 {
@@ -1035,14 +1035,14 @@ bool CGdiDisplayDriver::UseFoxitStretchEngine(const CFX_DIBSource* pSource, FX_D
     bitmap_clip.Offset(-dest_left, -dest_top);
     CFX_DIBitmap* pStretched = pSource->StretchTo(dest_width, dest_height, render_flags, &bitmap_clip);
     if (pStretched == NULL) {
-        return true;
+        return TRUE;
     }
     FX_RECT src_rect(0, 0, pStretched->GetWidth(), pStretched->GetHeight());
-    bool ret = SetDIBits(pStretched, color, &src_rect, pClipRect->left, pClipRect->top, FXDIB_BLEND_NORMAL, alpha_flag, pIccTransform);
+    FX_BOOL ret = SetDIBits(pStretched, color, &src_rect, pClipRect->left, pClipRect->top, FXDIB_BLEND_NORMAL, alpha_flag, pIccTransform);
     delete pStretched;
     return ret;
 }
-bool CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD color, int dest_left, int dest_top,
+FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD color, int dest_left, int dest_top,
         int dest_width, int dest_height, const FX_RECT* pClipRect, FX_DWORD flags,
         int alpha_flag, void* pIccTransform, int blend_type)
 {
@@ -1063,17 +1063,17 @@ bool CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD col
         int clip_width = clip_rect.Width(), clip_height = clip_rect.Height();
         CFX_DIBitmap* pStretched = pSource->StretchTo(dest_width, dest_height, flags, &clip_rect);
         if (pStretched == NULL) {
-            return true;
+            return TRUE;
         }
         CFX_DIBitmap background;
         if (!background.Create(clip_width, clip_height, FXDIB_Rgb32) ||
             !GetDIBits(&background, image_rect.left + clip_rect.left, image_rect.top + clip_rect.top, NULL) ||
-            !background.CompositeMask(0, 0, clip_width, clip_height, pStretched, color, 0, 0, FXDIB_BLEND_NORMAL, NULL, false, alpha_flag, pIccTransform)) {
+            !background.CompositeMask(0, 0, clip_width, clip_height, pStretched, color, 0, 0, FXDIB_BLEND_NORMAL, NULL, FALSE, alpha_flag, pIccTransform)) {
             delete pStretched;
-            return false;
+            return FALSE;
         }
         FX_RECT src_rect(0, 0, clip_width, clip_height);
-        bool ret = SetDIBits(&background, 0, &src_rect, image_rect.left + clip_rect.left, image_rect.top + clip_rect.top, FXDIB_BLEND_NORMAL, 0, NULL);
+        FX_BOOL ret = SetDIBits(&background, 0, &src_rect, image_rect.left + clip_rect.left, image_rect.top + clip_rect.top, FXDIB_BLEND_NORMAL, 0, NULL);
         delete pStretched;
         return ret;
     }
@@ -1083,7 +1083,7 @@ bool CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD col
             CFX_DIBExtractor temp(pSource);
             CFX_DIBitmap* pBitmap = temp;
             if (pBitmap == NULL) {
-                return false;
+                return FALSE;
             }
             return pPlatform->m_GdiplusExt.StretchDIBits(m_hDC, pBitmap, dest_left, dest_top, dest_width, dest_height, pClipRect, flags);
         }
@@ -1095,7 +1095,7 @@ bool CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD col
     if (pBitmap) {
         return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width, dest_height, flags, pIccTransform);
     }
-    return false;
+    return FALSE;
 }
 #define GET_PS_FEATURESETTING        4121
 #define FEATURESETTING_PSLEVEL       2
@@ -1134,7 +1134,7 @@ int GetPSLevel(HDC hDC)
     return 2;
 }
 int CFX_WindowsDevice::m_psLevel = 2;
-CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC, bool bCmykOutput, bool bForcePSOutput, int psLevel)
+CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC, FX_BOOL bCmykOutput, FX_BOOL bForcePSOutput, int psLevel)
 {
     m_bForcePSOutput = bForcePSOutput;
     m_psLevel = psLevel;
@@ -1154,7 +1154,7 @@ HDC CFX_WindowsDevice::GetDC() const
     }
     return (HDC)pRDD->GetPlatformSurface();
 }
-IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC, bool bCmykOutput)
+IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC, FX_BOOL bCmykOutput)
 {
     int device_type = ::GetDeviceCaps(hDC, TECHNOLOGY);
     int obj_type = ::GetObjectType(hDC);

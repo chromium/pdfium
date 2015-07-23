@@ -179,13 +179,13 @@ public:
 
     virtual const uint8_t*	GetScanline(int line) const = 0;
 
-    virtual bool		SkipToScanline(int line, IFX_Pause* pPause) const
+    virtual FX_BOOL		SkipToScanline(int line, IFX_Pause* pPause) const
     {
-        return false;
+        return FALSE;
     }
 
     virtual void		DownSampleScanline(int line, uint8_t* dest_scan, int dest_bpp,
-                                           int dest_width, bool bFlipX, int clip_left, int clip_width) const = 0;
+                                           int dest_width, FX_BOOL bFlipX, int clip_left, int clip_width) const = 0;
 
     virtual void		SetDownSampleSize(int width, int height) const {}
 
@@ -194,24 +194,24 @@ public:
         return m_bpp;
     }
 
-    bool			IsAlphaMask() const
+    FX_BOOL			IsAlphaMask() const
     {
         return m_AlphaFlag == 1;
     }
 
-    bool			HasAlpha() const
+    FX_BOOL			HasAlpha() const
     {
-        return m_AlphaFlag & 2 ? true : false;
+        return m_AlphaFlag & 2 ? TRUE : FALSE;
     }
 
-    bool			IsOpaqueImage() const
+    FX_BOOL			IsOpaqueImage() const
     {
         return !(m_AlphaFlag & 3);
     }
 
-    bool			IsCmykImage() const
+    FX_BOOL			IsCmykImage() const
     {
-        return m_AlphaFlag & 4 ? true : false;
+        return m_AlphaFlag & 4 ? TRUE : FALSE;
     }
 
 
@@ -248,11 +248,11 @@ public:
 
     CFX_DIBitmap*	GetAlphaMask(const FX_RECT* pClip = NULL) const;
 
-    bool			CopyAlphaMask(const CFX_DIBSource* pAlphaMask, const FX_RECT* pClip = NULL);
+    FX_BOOL			CopyAlphaMask(const CFX_DIBSource* pAlphaMask, const FX_RECT* pClip = NULL);
 
-    CFX_DIBitmap*	SwapXY(bool bXFlip, bool bYFlip, const FX_RECT* pClip = NULL) const;
+    CFX_DIBitmap*	SwapXY(FX_BOOL bXFlip, FX_BOOL bYFlip, const FX_RECT* pClip = NULL) const;
 
-    CFX_DIBitmap*	FlipImage(bool bXFlip, bool bYFlip) const;
+    CFX_DIBitmap*	FlipImage(FX_BOOL bXFlip, FX_BOOL bYFlip) const;
 
     void			GetOverlapRect(int& dest_left, int& dest_top, int& width, int& height, int src_width,
                                    int src_height, int& src_left, int& src_top, const CFX_ClipRgn* pClipRgn);
@@ -276,7 +276,7 @@ protected:
 
     void			BuildPalette();
 
-    bool			BuildAlphaMask();
+    FX_BOOL			BuildAlphaMask();
 
     int				FindPalette(FX_DWORD color) const;
 
@@ -292,9 +292,9 @@ public:
 
     CFX_DIBitmap(const CFX_DIBitmap& src);
 
-    bool			Create(int width, int height, FXDIB_Format format, uint8_t* pBuffer = NULL, int pitch = 0);
+    FX_BOOL			Create(int width, int height, FXDIB_Format format, uint8_t* pBuffer = NULL, int pitch = 0);
 
-    bool			Copy(const CFX_DIBSource* pSrc);
+    FX_BOOL			Copy(const CFX_DIBSource* pSrc);
 
     virtual	uint8_t*	GetBuffer() const
     {
@@ -307,11 +307,11 @@ public:
     }
 
     virtual void	DownSampleScanline(int line, uint8_t* dest_scan, int dest_bpp,
-                                       int dest_width, bool bFlipX, int clip_left, int clip_width) const;
+                                       int dest_width, FX_BOOL bFlipX, int clip_left, int clip_width) const;
 
     void			TakeOver(CFX_DIBitmap* pSrcBitmap);
 
-    bool			ConvertFormat(FXDIB_Format format, void* pIccTransform = NULL);
+    FX_BOOL			ConvertFormat(FXDIB_Format format, void* pIccTransform = NULL);
 
     void			Clear(FX_DWORD color);
 
@@ -319,40 +319,40 @@ public:
 
     void			SetPixel(int x, int y, FX_DWORD color);
 
-    bool			LoadChannel(FXDIB_Channel destChannel, const CFX_DIBSource* pSrcBitmap, FXDIB_Channel srcChannel);
+    FX_BOOL			LoadChannel(FXDIB_Channel destChannel, const CFX_DIBSource* pSrcBitmap, FXDIB_Channel srcChannel);
 
-    bool			LoadChannel(FXDIB_Channel destChannel, int value);
+    FX_BOOL			LoadChannel(FXDIB_Channel destChannel, int value);
 
-    bool			MultiplyAlpha(int alpha);
+    FX_BOOL			MultiplyAlpha(int alpha);
 
-    bool			MultiplyAlpha(const CFX_DIBSource* pAlphaMask);
+    FX_BOOL			MultiplyAlpha(const CFX_DIBSource* pAlphaMask);
 
-    bool			TransferBitmap(int dest_left, int dest_top, int width, int height,
+    FX_BOOL			TransferBitmap(int dest_left, int dest_top, int width, int height,
                                    const CFX_DIBSource* pSrcBitmap, int src_left, int src_top, void* pIccTransform = NULL);
 
-    bool			CompositeBitmap(int dest_left, int dest_top, int width, int height,
+    FX_BOOL			CompositeBitmap(int dest_left, int dest_top, int width, int height,
                                     const CFX_DIBSource* pSrcBitmap, int src_left, int src_top,
-                                    int blend_type = FXDIB_BLEND_NORMAL, const CFX_ClipRgn* pClipRgn = NULL, bool bRgbByteOrder = false, void* pIccTransform = NULL);
+                                    int blend_type = FXDIB_BLEND_NORMAL, const CFX_ClipRgn* pClipRgn = NULL, FX_BOOL bRgbByteOrder = FALSE, void* pIccTransform = NULL);
 
-    bool			TransferMask(int dest_left, int dest_top, int width, int height,
+    FX_BOOL			TransferMask(int dest_left, int dest_top, int width, int height,
                                  const CFX_DIBSource* pMask, FX_DWORD color, int src_left, int src_top, int alpha_flag = 0, void* pIccTransform = NULL);
 
-    bool			CompositeMask(int dest_left, int dest_top, int width, int height,
+    FX_BOOL			CompositeMask(int dest_left, int dest_top, int width, int height,
                                   const CFX_DIBSource* pMask, FX_DWORD color, int src_left, int src_top,
-                                  int blend_type = FXDIB_BLEND_NORMAL, const CFX_ClipRgn* pClipRgn = NULL, bool bRgbByteOrder = false, int alpha_flag = 0, void* pIccTransform = NULL);
+                                  int blend_type = FXDIB_BLEND_NORMAL, const CFX_ClipRgn* pClipRgn = NULL, FX_BOOL bRgbByteOrder = FALSE, int alpha_flag = 0, void* pIccTransform = NULL);
 
-    bool			CompositeRect(int dest_left, int dest_top, int width, int height, FX_DWORD color, int alpha_flag = 0, void* pIccTransform = NULL);
+    FX_BOOL			CompositeRect(int dest_left, int dest_top, int width, int height, FX_DWORD color, int alpha_flag = 0, void* pIccTransform = NULL);
 
-    bool			ConvertColorScale(FX_DWORD forecolor, FX_DWORD backcolor);
+    FX_BOOL			ConvertColorScale(FX_DWORD forecolor, FX_DWORD backcolor);
 
-    bool			DitherFS(const FX_DWORD* pPalette, int pal_size, const FX_RECT* pRect = NULL);
+    FX_BOOL			DitherFS(const FX_DWORD* pPalette, int pal_size, const FX_RECT* pRect = NULL);
 protected:
 
     uint8_t*		m_pBuffer;
 
-    bool			m_bExtBuf;
+    FX_BOOL			m_bExtBuf;
 
-    bool			GetGrayData(void* pIccTransform = NULL);
+    FX_BOOL			GetGrayData(void* pIccTransform = NULL);
 };
 class CFX_DIBExtractor
 {
@@ -379,7 +379,7 @@ public:
 
     ~CFX_FilteredDIB();
 
-    void					LoadSrc(const CFX_DIBSource* pSrc, bool bAutoDropSrc = false);
+    void					LoadSrc(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc = FALSE);
 
     virtual FXDIB_Format	GetDestFormat() = 0;
 
@@ -392,11 +392,11 @@ public:
 protected:
     virtual const uint8_t*		GetScanline(int line) const;
     virtual void			DownSampleScanline(int line, uint8_t* dest_scan, int dest_bpp,
-            int dest_width, bool bFlipX, int clip_left, int clip_width) const;
+            int dest_width, FX_BOOL bFlipX, int clip_left, int clip_width) const;
 
     const CFX_DIBSource*	m_pSrc;
 
-    bool					m_bAutoDropSrc;
+    FX_BOOL					m_bAutoDropSrc;
 
     uint8_t*				m_pScanline;
 };
@@ -407,7 +407,7 @@ public:
 
     virtual	void		ComposeScanline(int line, const uint8_t* scanline, const uint8_t* scan_extra_alpha = NULL) = 0;
 
-    virtual bool		SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette) = 0;
+    virtual FX_BOOL		SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette) = 0;
 };
 class CFX_ScanlineCompositor
 {
@@ -416,8 +416,8 @@ public:
 
     ~CFX_ScanlineCompositor();
 
-    bool				Init(FXDIB_Format dest_format, FXDIB_Format src_format, int32_t width, FX_DWORD* pSrcPalette,
-                             FX_DWORD mask_color, int blend_type, bool bClip, bool bRgbByteOrder = false, int alpha_flag = 0, void* pIccTransform = NULL);
+    FX_BOOL				Init(FXDIB_Format dest_format, FXDIB_Format src_format, int32_t width, FX_DWORD* pSrcPalette,
+                             FX_DWORD mask_color, int blend_type, FX_BOOL bClip, FX_BOOL bRgbByteOrder = FALSE, int alpha_flag = 0, void* pIccTransform = NULL);
 
 
     void				CompositeRgbBitmapLine(uint8_t* dest_scan, const uint8_t* src_scan, int width, const uint8_t* clip_scan,
@@ -449,7 +449,7 @@ protected:
     void*				m_pIccTransform;
     uint8_t*			m_pCacheScanline;
     int					m_CacheSize;
-    bool             m_bRgbByteOrder;
+    FX_BOOL             m_bRgbByteOrder;
 };
 class CFX_BitmapComposer : public IFX_ScanlineComposer
 {
@@ -461,11 +461,11 @@ public:
 
 
     void				Compose(CFX_DIBitmap* pDest, const CFX_ClipRgn* pClipRgn, int bitmap_alpha,
-                                FX_DWORD mask_color, FX_RECT& dest_rect, bool bVertical,
-                                bool bFlipX, bool bFlipY, bool bRgbByteOrder = false,
+                                FX_DWORD mask_color, FX_RECT& dest_rect, FX_BOOL bVertical,
+                                FX_BOOL bFlipX, FX_BOOL bFlipY, FX_BOOL bRgbByteOrder = FALSE,
                                 int alpha_flag = 0, void* pIccTransform = NULL, int blend_type = FXDIB_BLEND_NORMAL);
 
-    virtual bool		SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette);
+    virtual FX_BOOL		SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette);
 
 
     virtual	void		ComposeScanline(int line, const uint8_t* scanline, const uint8_t* scan_extra_alpha);
@@ -480,10 +480,10 @@ protected:
     FX_DWORD			m_MaskColor;
     const CFX_DIBitmap*	m_pClipMask;
     CFX_ScanlineCompositor	m_Compositor;
-    bool				m_bVertical, m_bFlipX, m_bFlipY;
+    FX_BOOL				m_bVertical, m_bFlipX, m_bFlipY;
     int					m_AlphaFlag;
     void*				m_pIccTransform;
-    bool             m_bRgbByteOrder;
+    FX_BOOL             m_bRgbByteOrder;
     int					m_BlendType;
     void				ComposeScanlineV(int line, const uint8_t* scanline, const uint8_t* scan_extra_alpha = NULL);
     uint8_t* m_pScanlineV;
@@ -501,7 +501,7 @@ public:
 
     virtual	void		ComposeScanline(int line, const uint8_t* scanline, const uint8_t* scan_extra_alpha);
 
-    virtual bool		SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette);
+    virtual FX_BOOL		SetInfo(int width, int height, FXDIB_Format src_format, FX_DWORD* pSrcPalette);
 
     CFX_DIBitmap*		GetBitmap()
     {
@@ -521,22 +521,22 @@ public:
     CFX_ImageStretcher();
     ~CFX_ImageStretcher();
 
-    bool Start(IFX_ScanlineComposer* pDest, const CFX_DIBSource* pBitmap,
+    FX_BOOL Start(IFX_ScanlineComposer* pDest, const CFX_DIBSource* pBitmap,
                   int dest_width, int dest_height, const FX_RECT& bitmap_rect,
                   FX_DWORD flags);
 
-    bool Continue(IFX_Pause* pPause);
-    bool StartQuickStretch();
-    bool StartStretch();
-    bool ContinueQuickStretch(IFX_Pause* pPause);
-    bool ContinueStretch(IFX_Pause* pPause);
+    FX_BOOL Continue(IFX_Pause* pPause);
+    FX_BOOL StartQuickStretch();
+    FX_BOOL StartStretch();
+    FX_BOOL ContinueQuickStretch(IFX_Pause* pPause);
+    FX_BOOL ContinueStretch(IFX_Pause* pPause);
 
     IFX_ScanlineComposer*	m_pDest;
     const CFX_DIBSource*	m_pSource;
     CStretchEngine*		m_pStretchEngine;
     FX_DWORD		m_Flags;
-    bool			m_bFlipX;
-    bool         m_bFlipY;
+    FX_BOOL			m_bFlipX;
+    FX_BOOL         m_bFlipY;
     int				m_DestWidth;
     int             m_DestHeight;
     FX_RECT			m_ClipRect;
@@ -552,10 +552,10 @@ public:
     CFX_ImageTransformer();
     ~CFX_ImageTransformer();
 
-    bool Start(const CFX_DIBSource* pSrc, const CFX_AffineMatrix* pMatrix,
+    FX_BOOL Start(const CFX_DIBSource* pSrc, const CFX_AffineMatrix* pMatrix,
                   int flags, const FX_RECT* pClip);
 
-    bool Continue(IFX_Pause* pPause);
+    FX_BOOL Continue(IFX_Pause* pPause);
 
     CFX_AffineMatrix* m_pMatrix;
     FX_RECT		m_StretchClip;
@@ -575,14 +575,14 @@ public:
     CFX_ImageRenderer();
     ~CFX_ImageRenderer();
 
-    bool Start(CFX_DIBitmap* pDevice, const CFX_ClipRgn* pClipRgn,
+    FX_BOOL Start(CFX_DIBitmap* pDevice, const CFX_ClipRgn* pClipRgn,
                   const CFX_DIBSource* pSource, int bitmap_alpha,
                   FX_DWORD mask_color, const CFX_AffineMatrix* pMatrix,
-                  FX_DWORD dib_flags, bool bRgbByteOrder = false,
+                  FX_DWORD dib_flags, FX_BOOL bRgbByteOrder = FALSE,
                   int alpha_flag = 0, void* pIccTransform = NULL,
                   int blend_type = FXDIB_BLEND_NORMAL);
 
-    bool Continue(IFX_Pause* pPause);
+    FX_BOOL Continue(IFX_Pause* pPause);
 
 protected:
     CFX_DIBitmap*		m_pDevice;
@@ -598,7 +598,7 @@ protected:
     FX_DWORD			m_Flags;
     int					m_AlphaFlag;
     void*				m_pIccTransform;
-    bool				m_bRgbByteOrder;
+    FX_BOOL				m_bRgbByteOrder;
     int					m_BlendType;
 };
 

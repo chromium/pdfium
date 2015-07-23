@@ -215,7 +215,7 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPage_GetObject(FPDF_PAGE page, int index)
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page)
 {
-	if(!page) return false;
+	if(!page) return FALSE;
 	CPDF_Page* pPage = (CPDF_Page*)page;
 
 	return pPage->BackgroundAlphaNeeded();
@@ -223,34 +223,34 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page)
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject)
 {
-	if(!pageObject) return false;
+	if(!pageObject) return FALSE;
 	CPDF_PageObject* pPageObj = (CPDF_PageObject*)pageObject;
 
 	const CPDF_GeneralStateData* pGeneralState = pPageObj->m_GeneralState;
 	int blend_type = pGeneralState ? pGeneralState->m_BlendType : FXDIB_BLEND_NORMAL;
-	if (blend_type != FXDIB_BLEND_NORMAL) return true;
+	if (blend_type != FXDIB_BLEND_NORMAL) return TRUE;
 
 	CPDF_Dictionary* pSMaskDict = pGeneralState ? (CPDF_Dictionary*)pGeneralState->m_pSoftMask : NULL;
-	if(pSMaskDict) return true;
+	if(pSMaskDict) return TRUE;
 
 	if(pGeneralState && pGeneralState->m_FillAlpha != 1.0f)
-		return true;
+		return TRUE;
 
 	if(pPageObj->m_Type == PDFPAGE_PATH)
 	{
 		if(pGeneralState && pGeneralState->m_StrokeAlpha != 1.0f)
-			return true;
+			return TRUE;
 	}
 
 	if(pPageObj->m_Type == PDFPAGE_FORM)
 	{
 		CPDF_FormObject* pFormObj = (CPDF_FormObject*)pPageObj;
 		if(pFormObj->m_pForm && (pFormObj->m_pForm->m_Transparency & PDFTRANS_ISOLATED))
-			return true;
+			return TRUE;
 		if(pFormObj->m_pForm && (!(pFormObj->m_pForm->m_Transparency & PDFTRANS_ISOLATED) && (pFormObj->m_pForm->m_Transparency & PDFTRANS_GROUP)))
-			return true;
+			return TRUE;
 	}
-	return false;
+	return FALSE;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page)
@@ -259,12 +259,12 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page)
 	if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type") || !pPage->m_pFormDict->GetElement("Type")->GetDirect()
 		|| pPage->m_pFormDict->GetElement("Type")->GetDirect()->GetString().Compare("Page"))
 	{
-		return false;
+		return FALSE;
 	}
 	CPDF_PageContentGenerate CG(pPage);
 	CG.GenerateContent();
 
-	return true;
+	return TRUE;
 }
 
 DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,

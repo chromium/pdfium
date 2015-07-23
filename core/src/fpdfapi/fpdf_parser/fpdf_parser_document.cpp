@@ -12,7 +12,7 @@ CPDF_Document::CPDF_Document(CPDF_Parser* pParser) : CPDF_IndirectObjects(pParse
     ASSERT(pParser != NULL);
     m_pRootDict = NULL;
     m_pInfoDict = NULL;
-    m_bLinearized = false;
+    m_bLinearized = FALSE;
     m_dwFirstPageNo = 0;
     m_dwFirstPageObjNum = 0;
     m_pDocPage = CPDF_ModuleMgr::Get()->GetPageModule()->CreateDocData(this);
@@ -58,7 +58,7 @@ void CPDF_Document::LoadDoc()
 }
 void CPDF_Document::LoadAsynDoc(CPDF_Dictionary *pLinearized)
 {
-    m_bLinearized = true;
+    m_bLinearized = TRUE;
     m_LastObjNum = m_pParser->GetLastObjNum();
     CPDF_Object* indirectObj = GetIndirectObject(m_pParser->GetRootObjNum());
     m_pRootDict = indirectObj ? indirectObj->GetDict() : NULL;
@@ -228,7 +228,7 @@ int CPDF_Document::GetPageIndex(FX_DWORD objnum)
 {
     FX_DWORD nPages = m_PageList.GetSize();
     FX_DWORD skip_count = 0;
-    bool bSkipped = false;
+    FX_BOOL bSkipped = FALSE;
     for (FX_DWORD i = 0; i < nPages; i ++) {
         FX_DWORD objnum1 = m_PageList.GetAt(i);
         if (objnum1 == objnum) {
@@ -236,7 +236,7 @@ int CPDF_Document::GetPageIndex(FX_DWORD objnum)
         }
         if (!bSkipped && objnum1 == 0) {
             skip_count = i;
-            bSkipped = true;
+            bSkipped = TRUE;
         }
     }
     CPDF_Dictionary* pRoot = GetRoot();
@@ -297,7 +297,7 @@ int CPDF_Document::_GetPageCount() const
     }
     return _CountPages(pPages, 0);
 }
-bool CPDF_Document::IsContentUsedElsewhere(FX_DWORD objnum, CPDF_Dictionary* pThisPageDict)
+FX_BOOL CPDF_Document::IsContentUsedElsewhere(FX_DWORD objnum, CPDF_Dictionary* pThisPageDict)
 {
     for (int i = 0; i < m_PageList.GetSize(); i ++) {
         CPDF_Dictionary* pPageDict = GetPage(i);
@@ -316,42 +316,42 @@ bool CPDF_Document::IsContentUsedElsewhere(FX_DWORD objnum, CPDF_Dictionary* pTh
                     continue;
                 }
                 if (((CPDF_Reference*) pRef)->GetRefObjNum() == objnum) {
-                    return true;
+                    return TRUE;
                 }
             }
         } else if (pContents->GetObjNum() == objnum) {
-            return true;
+            return TRUE;
         }
     }
-    return false;
+    return FALSE;
 }
-FX_DWORD CPDF_Document::GetUserPermissions(bool bCheckRevision) const
+FX_DWORD CPDF_Document::GetUserPermissions(FX_BOOL bCheckRevision) const
 {
     if (m_pParser == NULL) {
         return (FX_DWORD) - 1;
     }
     return m_pParser->GetPermissions(bCheckRevision);
 }
-bool CPDF_Document::IsOwner() const
+FX_BOOL CPDF_Document::IsOwner() const
 {
     if (m_pParser == NULL) {
-        return true;
+        return TRUE;
     }
     return m_pParser->IsOwner();
 }
-bool CPDF_Document::IsFormStream(FX_DWORD objnum, bool& bForm) const
+FX_BOOL CPDF_Document::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const
 {
     {
         CPDF_Object* pObj;
         if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, (void*&)pObj)) {
             bForm = pObj->GetType() == PDFOBJ_STREAM &&
                     ((CPDF_Stream*)pObj)->GetDict()->GetString(FX_BSTRC("Subtype")) == FX_BSTRC("Form");
-            return true;
+            return TRUE;
         }
     }
     if (m_pParser == NULL) {
-        bForm = false;
-        return true;
+        bForm = FALSE;
+        return TRUE;
     }
     return m_pParser->IsFormStream(objnum, bForm);
 }

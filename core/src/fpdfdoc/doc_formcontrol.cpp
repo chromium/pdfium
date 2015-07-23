@@ -113,25 +113,25 @@ CFX_WideString CPDF_FormControl::GetExportValue()
     CFX_WideString csWOn = PDF_DecodeText(csOn);
     return csWOn;
 }
-bool CPDF_FormControl::IsChecked()
+FX_BOOL CPDF_FormControl::IsChecked()
 {
     ASSERT(GetType() == CPDF_FormField::CheckBox || GetType() == CPDF_FormField::RadioButton);
     CFX_ByteString csOn = GetOnStateName();
     CFX_ByteString csAS = m_pWidgetDict->GetString("AS");
     return csAS == csOn;
 }
-bool CPDF_FormControl::IsDefaultChecked()
+FX_BOOL CPDF_FormControl::IsDefaultChecked()
 {
     ASSERT(GetType() == CPDF_FormField::CheckBox || GetType() == CPDF_FormField::RadioButton);
     CPDF_Object* pDV = FPDF_GetFieldAttr(m_pField->m_pDict, "DV");
     if (pDV == NULL) {
-        return false;
+        return FALSE;
     }
     CFX_ByteString csDV = pDV->GetString();
     CFX_ByteString csOn = GetOnStateName();
     return (csDV == csOn);
 }
-void CPDF_FormControl::CheckControl(bool bChecked)
+void CPDF_FormControl::CheckControl(FX_BOOL bChecked)
 {
     ASSERT(GetType() == CPDF_FormField::CheckBox || GetType() == CPDF_FormField::RadioButton);
     CFX_ByteString csOn = GetOnStateName();
@@ -144,7 +144,7 @@ void CPDF_FormControl::CheckControl(bool bChecked)
         return;
     }
     m_pWidgetDict->SetAtName("AS", csAS);
-    m_pForm->m_bUpdated = true;
+    m_pForm->m_bUpdated = TRUE;
 }
 CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict, CPDF_Annot::AppearanceMode mode);
 void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice, CFX_AffineMatrix* pMatrix, CPDF_Page* pPage,
@@ -186,7 +186,7 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
     }
     return Invert;
 }
-CPDF_ApSettings CPDF_FormControl::GetMK(bool bCreate)
+CPDF_ApSettings CPDF_FormControl::GetMK(FX_BOOL bCreate)
 {
     if (!m_pWidgetDict) {
         return NULL;
@@ -201,49 +201,49 @@ CPDF_ApSettings CPDF_FormControl::GetMK(bool bCreate)
     }
     return mk;
 }
-bool CPDF_FormControl::HasMKEntry(CFX_ByteString csEntry)
+FX_BOOL CPDF_FormControl::HasMKEntry(CFX_ByteString csEntry)
 {
-    CPDF_ApSettings mk = GetMK(false);
+    CPDF_ApSettings mk = GetMK(FALSE);
     return mk.HasMKEntry(csEntry);
 }
 int CPDF_FormControl::GetRotation()
 {
-    CPDF_ApSettings mk = GetMK(false);
+    CPDF_ApSettings mk = GetMK(FALSE);
     return mk.GetRotation();
 }
 FX_ARGB CPDF_FormControl::GetColor(int& iColorType, CFX_ByteString csEntry)
 {
-    CPDF_ApSettings mk = GetMK(false);
+    CPDF_ApSettings mk = GetMK(FALSE);
     return mk.GetColor(iColorType, csEntry);
 }
 FX_FLOAT CPDF_FormControl::GetOriginalColor(int index, CFX_ByteString csEntry)
 {
-    CPDF_ApSettings mk = GetMK(false);
+    CPDF_ApSettings mk = GetMK(FALSE);
     return mk.GetOriginalColor(index, csEntry);
 }
 void CPDF_FormControl::GetOriginalColor(int& iColorType, FX_FLOAT fc[4], CFX_ByteString csEntry)
 {
-    CPDF_ApSettings mk = GetMK(false);
+    CPDF_ApSettings mk = GetMK(FALSE);
     mk.GetOriginalColor(iColorType, fc, csEntry);
 }
 CFX_WideString CPDF_FormControl::GetCaption(CFX_ByteString csEntry)
 {
-    CPDF_ApSettings mk = GetMK(false);
+    CPDF_ApSettings mk = GetMK(FALSE);
     return mk.GetCaption(csEntry);
 }
 CPDF_Stream* CPDF_FormControl::GetIcon(CFX_ByteString csEntry)
 {
-    CPDF_ApSettings mk = GetMK(false);
+    CPDF_ApSettings mk = GetMK(FALSE);
     return mk.GetIcon(csEntry);
 }
 CPDF_IconFit CPDF_FormControl::GetIconFit()
 {
-    CPDF_ApSettings mk = GetMK(false);
+    CPDF_ApSettings mk = GetMK(FALSE);
     return mk.GetIconFit();
 }
 int CPDF_FormControl::GetTextPosition()
 {
-    CPDF_ApSettings mk = GetMK(false);
+    CPDF_ApSettings mk = GetMK(FALSE);
     return mk.GetTextPosition();
 }
 CPDF_Action CPDF_FormControl::GetAction()
@@ -343,10 +343,10 @@ int CPDF_FormControl::GetControlAlignment()
     }
     return pObj->GetInteger();
 }
-bool CPDF_ApSettings::HasMKEntry(const CFX_ByteStringC& csEntry)
+FX_BOOL CPDF_ApSettings::HasMKEntry(const CFX_ByteStringC& csEntry)
 {
     if (m_pDict == NULL) {
-        return false;
+        return FALSE;
     }
     return m_pDict->KeyExist(csEntry);
 }

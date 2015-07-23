@@ -289,10 +289,10 @@ const FX_CHAR* g_sAATypes[] = {"E", "X", "D", "U", "Fo", "Bl", "PO", "PC", "PV",
                                "WC", "WS", "DS", "WP", "DP",
                                ""
                               };
-bool CPDF_AAction::ActionExist(AActionType eType) const
+FX_BOOL CPDF_AAction::ActionExist(AActionType eType) const
 {
     if (m_pDict == NULL) {
-        return false;
+        return FALSE;
     }
     return m_pDict->KeyExist(g_sAATypes[(int)eType]);
 }

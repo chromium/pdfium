@@ -46,9 +46,9 @@ public:
 	virtual void					GetImageOffset(FX_FLOAT & x,FX_FLOAT & y);
 
 	int32_t						GetScaleMethod();
-	bool							IsProportionalScale();
+	FX_BOOL							IsProportionalScale();
 	void							GetIconPosition(FX_FLOAT & fLeft, FX_FLOAT & fBottom);
-	bool							GetFittingBounds();
+	FX_BOOL							GetFittingBounds();
 
 	void							SetIconFit(CPDF_IconFit * pIconFit){m_pIconFit = pIconFit;};
 
