@@ -321,7 +321,7 @@ CFX_ArchiveLoader::CFX_ArchiveLoader(const uint8_t* pData, FX_DWORD dwSize)
     m_LoadingPos = 0;
     m_LoadingSize = dwSize;
 }
-FX_BOOL CFX_ArchiveLoader::IsEOF()
+bool CFX_ArchiveLoader::IsEOF()
 {
     return m_LoadingPos >= m_LoadingSize;
 }
@@ -372,14 +372,14 @@ CFX_ArchiveLoader& CFX_ArchiveLoader::operator >> (CFX_WideString& str)
     str = CFX_WideString::FromUTF16LE((const unsigned short*)encoded.c_str(), encoded.GetLength());
     return *this;
 }
-FX_BOOL CFX_ArchiveLoader::Read(void* pBuf, FX_DWORD dwSize)
+bool CFX_ArchiveLoader::Read(void* pBuf, FX_DWORD dwSize)
 {
     if (m_LoadingPos + dwSize > m_LoadingSize) {
-        return FALSE;
+        return false;
     }
     FXSYS_memcpy(pBuf, m_pLoadingBuf + m_LoadingPos, dwSize);
     m_LoadingPos += dwSize;
-    return TRUE;
+    return true;
 }
 void CFX_BitStream::Init(const uint8_t* pData, FX_DWORD dwSize)
 {
@@ -441,9 +441,9 @@ void IFX_BufferArchive::Clear()
         m_pBuffer = NULL;
     }
 }
-FX_BOOL IFX_BufferArchive::Flush()
+bool IFX_BufferArchive::Flush()
 {
-    FX_BOOL bRet = DoWork(m_pBuffer, m_Length);
+    bool bRet = DoWork(m_pBuffer, m_Length);
     m_Length = 0;
     return bRet;
 }
@@ -488,7 +488,7 @@ int32_t IFX_BufferArchive::AppendString(const CFX_ByteStringC& lpsz)
 CFX_FileBufferArchive::CFX_FileBufferArchive(FX_STRSIZE size)
     : IFX_BufferArchive(size)
     , m_pFile(NULL)
-    , m_bTakeover(FALSE)
+    , m_bTakeover(false)
 {
 }
 CFX_FileBufferArchive::~CFX_FileBufferArchive()
@@ -501,58 +501,58 @@ void CFX_FileBufferArchive::Clear()
         m_pFile->Release();
     }
     m_pFile = NULL;
-    m_bTakeover = FALSE;
+    m_bTakeover = false;
     IFX_BufferArchive::Clear();
 }
-FX_BOOL CFX_FileBufferArchive::AttachFile(IFX_StreamWrite *pFile, FX_BOOL bTakeover )
+bool CFX_FileBufferArchive::AttachFile(IFX_StreamWrite *pFile, bool bTakeover )
 {
     if (!pFile) {
-        return FALSE;
+        return false;
     }
     if (m_pFile && m_bTakeover) {
         m_pFile->Release();
     }
     m_pFile = pFile;
     m_bTakeover = bTakeover;
-    return TRUE;
+    return true;
 }
-FX_BOOL CFX_FileBufferArchive::AttachFile(const FX_WCHAR* filename)
+bool CFX_FileBufferArchive::AttachFile(const FX_WCHAR* filename)
 {
     if (!filename) {
-        return FALSE;
+        return false;
     }
     if (m_pFile && m_bTakeover) {
         m_pFile->Release();
     }
     m_pFile = FX_CreateFileWrite(filename);
     if (!m_pFile) {
-        return FALSE;
+        return false;
     }
-    m_bTakeover = TRUE;
-    return TRUE;
+    m_bTakeover = true;
+    return true;
 }
-FX_BOOL CFX_FileBufferArchive::AttachFile(const FX_CHAR* filename)
+bool CFX_FileBufferArchive::AttachFile(const FX_CHAR* filename)
 {
     if (!filename) {
-        return FALSE;
+        return false;
     }
     if (m_pFile && m_bTakeover) {
         m_pFile->Release();
     }
     m_pFile = FX_CreateFileWrite(filename);
     if (!m_pFile) {
-        return FALSE;
+        return false;
     }
-    m_bTakeover = TRUE;
-    return TRUE;
+    m_bTakeover = true;
+    return true;
 }
-FX_BOOL CFX_FileBufferArchive::DoWork(const void* pBuf, size_t size)
+bool CFX_FileBufferArchive::DoWork(const void* pBuf, size_t size)
 {
     if (!m_pFile) {
-        return FALSE;
+        return false;
     }
     if (!pBuf || size < 1) {
-        return TRUE;
+        return true;
     }
     return m_pFile->WriteBlock(pBuf, size);
 }

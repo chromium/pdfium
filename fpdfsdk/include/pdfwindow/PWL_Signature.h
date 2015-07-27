@@ -43,9 +43,9 @@ public:
 	void								SetImage(CFX_DIBSource* pImage);
 	void								SetImageStream(CPDF_Stream * pStream, const FX_CHAR* sImageAlias);
 
-	void								SetTextFlag(FX_BOOL bTextExist);
-	void								SetImageFlag(FX_BOOL bImageExist);
-	void								SetFoxitFlag(FX_BOOL bFlagExist);
+	void								SetTextFlag(bool bTextExist);
+	void								SetImageFlag(bool bImageExist);
+	void								SetFoxitFlag(bool bFlagExist);
 
 protected:
 	virtual void						RePosChildWnd();
@@ -59,9 +59,9 @@ private:
 	CPWL_Label*							m_pDescription;
 	CPWL_Signature_Image*				m_pImage;
 
-	FX_BOOL								m_bTextExist;
-	FX_BOOL								m_bImageExist;
-	FX_BOOL								m_bFlagExist;
+	bool								m_bTextExist;
+	bool								m_bImageExist;
+	bool								m_bFlagExist;
 };
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_SIGNATURE_H_

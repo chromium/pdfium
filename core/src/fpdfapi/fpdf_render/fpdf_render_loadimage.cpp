@@ -105,7 +105,7 @@ class JpxBitMapContext
 
 }  // namespace
 
-CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask, FX_DWORD* pMatteColor, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask) const
+CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask, FX_DWORD* pMatteColor, bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask) const
 {
     CPDF_DIBSource* pSource = new CPDF_DIBSource;
     if (pSource->Load(m_pDocument, m_pStream, (CPDF_DIBSource**)ppMask, pMatteColor, NULL, NULL, bStdCS, GroupFamily, bLoadMask)) {
@@ -126,36 +126,36 @@ CFX_DIBSource* CPDF_Image::DetachMask()
     m_pMask = NULL;
     return pBitmap;
 }
-FX_BOOL CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource, CPDF_Dictionary* pPageResource, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask)
+bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource, CPDF_Dictionary* pPageResource, bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask)
 {
     m_pDIBSource = new CPDF_DIBSource;
-    int ret = ((CPDF_DIBSource*)m_pDIBSource)->StartLoadDIBSource(m_pDocument, m_pStream, TRUE, pFormResource, pPageResource, bStdCS, GroupFamily, bLoadMask);
+    int ret = ((CPDF_DIBSource*)m_pDIBSource)->StartLoadDIBSource(m_pDocument, m_pStream, true, pFormResource, pPageResource, bStdCS, GroupFamily, bLoadMask);
     if (ret == 2) {
-        return TRUE;
+        return true;
     }
     if (!ret) {
         delete m_pDIBSource;
         m_pDIBSource = NULL;
-        return FALSE;
+        return false;
     }
     m_pMask = ((CPDF_DIBSource*)m_pDIBSource)->DetachMask();
     m_MatteColor = ((CPDF_DIBSource*)m_pDIBSource)->m_MatteColor;
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDF_Image::Continue(IFX_Pause* pPause)
+bool CPDF_Image::Continue(IFX_Pause* pPause)
 {
     int ret = ((CPDF_DIBSource*)m_pDIBSource)->ContinueLoadDIBSource(pPause);
     if (ret == 2) {
-        return TRUE;
+        return true;
     }
     if (!ret) {
         delete m_pDIBSource;
         m_pDIBSource = NULL;
-        return FALSE;
+        return false;
     }
     m_pMask = ((CPDF_DIBSource*)m_pDIBSource)->DetachMask();
     m_MatteColor = ((CPDF_DIBSource*)m_pDIBSource)->m_MatteColor;
-    return FALSE;
+    return false;
 }
 CPDF_DIBSource::CPDF_DIBSource()
 {
@@ -165,26 +165,26 @@ CPDF_DIBSource::CPDF_DIBSource()
     m_bpp = 0;
     m_Width = m_Height = 0;
     m_pColorSpace = NULL;
-    m_bDefaultDecode = TRUE;
-    m_bImageMask = FALSE;
-    m_bDoBpcCheck = TRUE;
+    m_bDefaultDecode = true;
+    m_bImageMask = false;
+    m_bDoBpcCheck = true;
     m_pPalette = NULL;
     m_pCompData = NULL;
-    m_bColorKey = FALSE;
+    m_bColorKey = false;
     m_pMaskedLine = m_pLineBuf = NULL;
     m_pDecoder = NULL;
     m_nComponents = 0;
     m_bpc = 0;
-    m_bLoadMask = FALSE;
+    m_bLoadMask = false;
     m_Family = 0;
     m_pMask = NULL;
     m_MatteColor = 0;
     m_pJbig2Context = NULL;
     m_pGlobalStream = NULL;
-    m_bStdCS = FALSE;
+    m_bStdCS = false;
     m_pMaskStream = NULL;
     m_Status = 0;
-    m_bHasMask = FALSE;
+    m_bHasMask = false;
 }
 CPDF_DIBSource::~CPDF_DIBSource()
 {
@@ -220,43 +220,43 @@ void CPDF_DIBSource::ReleaseBitmap(CFX_DIBitmap* pBitmap) const
         delete pBitmap;
     }
 }
-FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CPDF_DIBSource** ppMask,
-                             FX_DWORD* pMatteColor, CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask)
+bool CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CPDF_DIBSource** ppMask,
+                             FX_DWORD* pMatteColor, CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources, bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask)
 {
     if (pStream == NULL) {
-        return FALSE;
+        return false;
     }
     m_pDocument = pDoc;
     m_pDict = pStream->GetDict();
     if (m_pDict == NULL) {
-        return FALSE;
+        return false;
     }
     m_pStream = pStream;
     m_Width = m_pDict->GetInteger(FX_BSTRC("Width"));
     m_Height = m_pDict->GetInteger(FX_BSTRC("Height"));
     if (m_Width <= 0 || m_Height <= 0 || m_Width > 0x01ffff || m_Height > 0x01ffff) {
-        return FALSE;
+        return false;
     }
     m_GroupFamily = GroupFamily;
     m_bLoadMask = bLoadMask;
     if (!LoadColorInfo(m_pStream->GetObjNum() != 0 ? NULL : pFormResources, pPageResources)) {
-        return FALSE;
+        return false;
     }
     if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0)) {
-        return FALSE;
+        return false;
     }
     FX_SAFE_DWORD src_pitch =
         CalculatePitch8(m_bpc, m_nComponents, m_Width, m_Height);
     if (!src_pitch.IsValid()) {
-        return FALSE;
+        return false;
     }
     m_pStreamAcc = new CPDF_StreamAcc;
-    m_pStreamAcc->LoadAllData(pStream, FALSE, src_pitch.ValueOrDie(), TRUE);
+    m_pStreamAcc->LoadAllData(pStream, false, src_pitch.ValueOrDie(), true);
     if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
-        return FALSE;
+        return false;
     }
     if (!CreateDecoder()) {
-        return FALSE;
+        return false;
     }
     if (m_bImageMask) {
         m_bpp = 1;
@@ -272,11 +272,11 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
     }
     FX_SAFE_DWORD pitch = CalculatePitch32(m_bpp, m_Width);
     if (!pitch.IsValid()) {
-        return FALSE;
+        return false;
     }
     m_pLineBuf = FX_Alloc(uint8_t, pitch.ValueOrDie());
     if (m_pColorSpace && bStdCS) {
-        m_pColorSpace->EnableStdConversion(TRUE);
+        m_pColorSpace->EnableStdConversion(true);
     }
     LoadPalette();
     if (m_bColorKey) {
@@ -284,7 +284,7 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
         m_AlphaFlag = 2;
         pitch = CalculatePitch32(m_bpp, m_Width);
         if (!pitch.IsValid()) {
-            return FALSE;
+            return false;
         }
         m_pMaskedLine = FX_Alloc(uint8_t, pitch.ValueOrDie());
     }
@@ -293,9 +293,9 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream, CP
         *ppMask = LoadMask(*pMatteColor);
     }
     if (m_pColorSpace && bStdCS) {
-        m_pColorSpace->EnableStdConversion(FALSE);
+        m_pColorSpace->EnableStdConversion(false);
     }
-    return TRUE;
+    return true;
 }
 int	CPDF_DIBSource::ContinueToLoadMask()
 {
@@ -320,7 +320,7 @@ int	CPDF_DIBSource::ContinueToLoadMask()
     }
     m_pLineBuf = FX_Alloc(uint8_t, pitch.ValueOrDie());
     if (m_pColorSpace && m_bStdCS) {
-        m_pColorSpace->EnableStdConversion(TRUE);
+        m_pColorSpace->EnableStdConversion(true);
     }
     LoadPalette();
     if (m_bColorKey) {
@@ -335,9 +335,9 @@ int	CPDF_DIBSource::ContinueToLoadMask()
     m_Pitch = pitch.ValueOrDie();
     return 1;
 }
-int	CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc, const CPDF_Stream* pStream, FX_BOOL bHasMask,
+int	CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc, const CPDF_Stream* pStream, bool bHasMask,
                                        CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources,
-                                       FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask)
+                                       bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask)
 {
     if (pStream == NULL) {
         return 0;
@@ -366,7 +366,7 @@ int	CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc, const CPDF_Stream* p
         return 0;
     }
     m_pStreamAcc = new CPDF_StreamAcc;
-    m_pStreamAcc->LoadAllData(pStream, FALSE, src_pitch.ValueOrDie(), TRUE);
+    m_pStreamAcc->LoadAllData(pStream, false, src_pitch.ValueOrDie(), true);
     if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
         return 0;
     }
@@ -393,7 +393,7 @@ int	CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc, const CPDF_Stream* p
         return ret;
     }
     if (m_pColorSpace && m_bStdCS) {
-        m_pColorSpace->EnableStdConversion(FALSE);
+        m_pColorSpace->EnableStdConversion(false);
     }
     return ret;
 }
@@ -412,7 +412,7 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
                 CPDF_Stream* pGlobals = m_pStreamAcc->GetImageParam()->GetStream(FX_BSTRC("JBIG2Globals"));
                 if (pGlobals) {
                     m_pGlobalStream = new CPDF_StreamAcc;
-                    m_pGlobalStream->LoadAllData(pGlobals, FALSE);
+                    m_pGlobalStream->LoadAllData(pGlobals, false);
                 }
             }
             ret = pJbig2Module->StartDecode(m_pJbig2Context, m_Width, m_Height, m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(),
@@ -438,7 +438,7 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
                 return ret1;
             }
             if (m_pColorSpace && m_bStdCS) {
-                m_pColorSpace->EnableStdConversion(FALSE);
+                m_pColorSpace->EnableStdConversion(false);
             }
             return ret1;
         }
@@ -463,7 +463,7 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
             return ret1;
         }
         if (m_pColorSpace && m_bStdCS) {
-            m_pColorSpace->EnableStdConversion(FALSE);
+            m_pColorSpace->EnableStdConversion(false);
         }
         return ret1;
     }
@@ -472,11 +472,11 @@ int	CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause)
     }
     return 0;
 }
-FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources)
+bool CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dictionary* pPageResources)
 {
     m_bpc_orig = m_pDict->GetInteger(FX_BSTRC("BitsPerComponent"));
     if (m_pDict->GetInteger("ImageMask")) {
-        m_bImageMask = TRUE;
+        m_bImageMask = true;
     }
     if (m_bImageMask || !m_pDict->KeyExist(FX_BSTRC("ColorSpace"))) {
         if (!m_bImageMask) {
@@ -486,27 +486,27 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dict
                 if (pFilter->GetType() == PDFOBJ_NAME) {
                     filter = pFilter->GetString();
                     if (filter == FX_BSTRC("JPXDecode")) {
-                        m_bDoBpcCheck = FALSE;
-                        return TRUE;
+                        m_bDoBpcCheck = false;
+                        return true;
                     }
                 } else if (pFilter->GetType() == PDFOBJ_ARRAY) {
                     CPDF_Array* pArray = (CPDF_Array*)pFilter;
                     if (pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("JPXDecode")) {
-                        m_bDoBpcCheck = FALSE;
-                        return TRUE;
+                        m_bDoBpcCheck = false;
+                        return true;
                     }
                 }
             }
         }
-        m_bImageMask = TRUE;
+        m_bImageMask = true;
         m_bpc = m_nComponents = 1;
         CPDF_Array* pDecode = m_pDict->GetArray(FX_BSTRC("Decode"));
         m_bDefaultDecode = pDecode == NULL || pDecode->GetInteger(0) == 0;
-        return TRUE;
+        return true;
     }
     CPDF_Object* pCSObj = m_pDict->GetElementValue(FX_BSTRC("ColorSpace"));
     if (pCSObj == NULL) {
-        return FALSE;
+        return false;
     }
     CPDF_DocPageData* pDocPageData = m_pDocument->GetPageData();
     if (pFormResources) {
@@ -516,7 +516,7 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dict
         m_pColorSpace = pDocPageData->GetColorSpace(pCSObj, pPageResources);
     }
     if (m_pColorSpace == NULL) {
-        return FALSE;
+        return false;
     }
     m_Family = m_pColorSpace->GetFamily();
     m_nComponents = m_pColorSpace->CountComponents();
@@ -533,11 +533,11 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources, CPDF_Dict
     ValidateDictParam();
     m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
     if (m_pCompData == NULL) {
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
-DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode, FX_BOOL& bColorKey)
+DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool& bDefaultDecode, bool& bColorKey)
 {
     if (m_pColorSpace == NULL) {
         return NULL;
@@ -556,7 +556,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode, FX
                 def_max = (FX_FLOAT)max_data;
             }
             if (def_min != pCompData[i].m_DecodeMin || def_max != max) {
-                bDefaultDecode = FALSE;
+                bDefaultDecode = false;
             }
         }
     } else {
@@ -584,7 +584,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode, FX
                     pCompData[i].m_ColorKeyMax = FX_MIN(max_num, max_data);
                 }
             }
-            bColorKey = TRUE;
+            bColorKey = true;
         }
     }
     return pCompData;
@@ -612,7 +612,7 @@ int CPDF_DIBSource::CreateDecoder()
             src_data, src_size, m_Width, m_Height, m_nComponents,
             pParams ? pParams->GetInteger("ColorTransform", 1) : 1);
         if (!m_pDecoder) {
-            FX_BOOL bTransform = FALSE;
+            bool bTransform = false;
             int comps, bpc;
             ICodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
             if (pJpegModule->LoadInfo(src_data, src_size, m_Width, m_Height, comps, bpc, bTransform)) {
@@ -693,29 +693,29 @@ void CPDF_DIBSource::LoadJpxBitmap()
         return;
 
     int output_nComps;
-    FX_BOOL bTranslateColor;
-    FX_BOOL bSwapRGB = FALSE;
+    bool bTranslateColor;
+    bool bSwapRGB = false;
     if (m_pColorSpace) {
         if (codestream_nComps != (FX_DWORD)m_pColorSpace->CountComponents())
             return;
         output_nComps = codestream_nComps;
-        bTranslateColor = FALSE;
+        bTranslateColor = false;
         if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB)) {
-            bSwapRGB = TRUE;
+            bSwapRGB = true;
             m_pColorSpace = nullptr;
         }
     } else {
-        bTranslateColor = TRUE;
+        bTranslateColor = true;
         if (image_nComps) {
             output_nComps = image_nComps;
         } else {
             output_nComps = codestream_nComps;
         }
         if (output_nComps == 3) {
-            bSwapRGB = TRUE;
+            bSwapRGB = true;
         } else if (output_nComps == 4) {
             m_pColorSpace = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
-            bTranslateColor = FALSE;
+            bTranslateColor = false;
         }
         m_nComponents = output_nComps;
     }
@@ -829,7 +829,7 @@ int	CPDF_DIBSource::ContinueLoadMaskDIB(IFX_Pause* pPause)
         return ret;
     }
     if (m_pColorSpace && m_bStdCS) {
-        m_pColorSpace->EnableStdConversion(FALSE);
+        m_pColorSpace->EnableStdConversion(false);
     }
     if (!ret) {
         delete m_pMask;
@@ -847,7 +847,7 @@ CPDF_DIBSource*	CPDF_DIBSource::DetachMask()
 CPDF_DIBSource* CPDF_DIBSource::LoadMaskDIB(CPDF_Stream* pMask)
 {
     CPDF_DIBSource* pMaskSource = new CPDF_DIBSource;
-    if (!pMaskSource->Load(m_pDocument, pMask, NULL, NULL, NULL, NULL, TRUE)) {
+    if (!pMaskSource->Load(m_pDocument, pMask, NULL, NULL, NULL, NULL, true)) {
         delete pMaskSource;
         return NULL;
     }
@@ -856,7 +856,7 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMaskDIB(CPDF_Stream* pMask)
 int CPDF_DIBSource::StartLoadMaskDIB()
 {
     m_pMask = new CPDF_DIBSource;
-    int ret = m_pMask->StartLoadDIBSource(m_pDocument, (CPDF_Stream*)m_pMaskStream, FALSE, NULL, NULL, TRUE);
+    int ret = m_pMask->StartLoadDIBSource(m_pDocument, (CPDF_Stream*)m_pMaskStream, false, NULL, NULL, true);
     if (ret == 2) {
         if (m_Status == 0) {
             m_Status = 2;
@@ -1209,15 +1209,15 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const
     }
     return pSrcLine;
 }
-FX_BOOL CPDF_DIBSource::SkipToScanline(int line, IFX_Pause* pPause) const
+bool CPDF_DIBSource::SkipToScanline(int line, IFX_Pause* pPause) const
 {
     if (m_pDecoder) {
         return m_pDecoder->SkipToScanline(line, pPause);
     }
-    return FALSE;
+    return false;
 }
 void CPDF_DIBSource::DownSampleScanline(int line, uint8_t* dest_scan, int dest_bpp,
-                                        int dest_width, FX_BOOL bFlipX, int clip_left, int clip_width) const
+                                        int dest_width, bool bFlipX, int clip_left, int clip_width) const
 {
     if (line < 0 || dest_scan == NULL || dest_bpp <= 0 ||
         dest_width <= 0 || clip_left < 0 || clip_width <= 0) {
@@ -1480,26 +1480,26 @@ CPDF_ProgressiveImageLoaderHandle::CPDF_ProgressiveImageLoaderHandle()
 CPDF_ProgressiveImageLoaderHandle::~CPDF_ProgressiveImageLoaderHandle()
 {
 }
-FX_BOOL CPDF_ProgressiveImageLoaderHandle::Start(CPDF_ImageLoader* pImageLoader, const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus, int32_t nDownsampleWidth, int32_t nDownsampleHeight)
+bool CPDF_ProgressiveImageLoaderHandle::Start(CPDF_ImageLoader* pImageLoader, const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask, CPDF_RenderStatus* pRenderStatus, int32_t nDownsampleWidth, int32_t nDownsampleHeight)
 {
     m_pImageLoader = pImageLoader;
     m_pCache = pCache;
     m_pImage = (CPDF_ImageObject*)pImage;
     m_nDownsampleWidth = nDownsampleWidth;
     m_nDownsampleHeight = nDownsampleHeight;
-    FX_BOOL ret;
+    bool ret;
     if (pCache) {
         ret = pCache->StartGetCachedBitmap(pImage->m_pImage->GetStream(), bStdCS, GroupFamily, bLoadMask, pRenderStatus, m_nDownsampleWidth, m_nDownsampleHeight);
-        if (ret == FALSE) {
-            m_pImageLoader->m_bCached = TRUE;
+        if (ret == false) {
+            m_pImageLoader->m_bCached = true;
             m_pImageLoader->m_pBitmap = pCache->m_pCurImageCache->DetachBitmap();
             m_pImageLoader->m_pMask = pCache->m_pCurImageCache->DetachMask();
             m_pImageLoader->m_MatteColor = pCache->m_pCurImageCache->m_MatteColor;
         }
     } else {
         ret = pImage->m_pImage->StartLoadDIBSource(pRenderStatus->m_pFormResource, pRenderStatus->m_pPageResource, bStdCS, GroupFamily, bLoadMask);
-        if (ret == FALSE) {
-            m_pImageLoader->m_bCached = FALSE;
+        if (ret == false) {
+            m_pImageLoader->m_bCached = false;
             m_pImageLoader->m_pBitmap = m_pImage->m_pImage->DetachBitmap();
             m_pImageLoader->m_pMask = m_pImage->m_pImage->DetachMask();
             m_pImageLoader->m_MatteColor = m_pImage->m_pImage->m_MatteColor;
@@ -1507,21 +1507,21 @@ FX_BOOL CPDF_ProgressiveImageLoaderHandle::Start(CPDF_ImageLoader* pImageLoader,
     }
     return ret;
 }
-FX_BOOL CPDF_ProgressiveImageLoaderHandle::Continue(IFX_Pause* pPause)
+bool CPDF_ProgressiveImageLoaderHandle::Continue(IFX_Pause* pPause)
 {
-    FX_BOOL ret;
+    bool ret;
     if (m_pCache) {
         ret = m_pCache->Continue(pPause);
-        if (ret == FALSE) {
-            m_pImageLoader->m_bCached = TRUE;
+        if (ret == false) {
+            m_pImageLoader->m_bCached = true;
             m_pImageLoader->m_pBitmap = m_pCache->m_pCurImageCache->DetachBitmap();
             m_pImageLoader->m_pMask = m_pCache->m_pCurImageCache->DetachMask();
             m_pImageLoader->m_MatteColor = m_pCache->m_pCurImageCache->m_MatteColor;
         }
     } else {
         ret = m_pImage->m_pImage->Continue(pPause);
-        if (ret == FALSE) {
-            m_pImageLoader->m_bCached = FALSE;
+        if (ret == false) {
+            m_pImageLoader->m_bCached = false;
             m_pImageLoader->m_pBitmap = m_pImage->m_pImage->DetachBitmap();
             m_pImageLoader->m_pMask = m_pImage->m_pImage->DetachMask();
             m_pImageLoader->m_MatteColor = m_pImage->m_pImage->m_MatteColor;
@@ -1529,30 +1529,30 @@ FX_BOOL CPDF_ProgressiveImageLoaderHandle::Continue(IFX_Pause* pPause)
     }
     return ret;
 }
-FX_BOOL CPDF_ImageLoader::Load(const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus)
+bool CPDF_ImageLoader::Load(const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask, CPDF_RenderStatus* pRenderStatus)
 {
     if (pImage == NULL) {
-        return FALSE;
+        return false;
     }
     if (pCache) {
         pCache->GetCachedBitmap(pImage->m_pImage->GetStream(), m_pBitmap, m_pMask, m_MatteColor, bStdCS, GroupFamily, bLoadMask, pRenderStatus, m_nDownsampleWidth, m_nDownsampleHeight);
-        m_bCached = TRUE;
+        m_bCached = true;
     } else {
         m_pBitmap = pImage->m_pImage->LoadDIBSource(&m_pMask, &m_MatteColor, bStdCS, GroupFamily, bLoadMask);
-        m_bCached = FALSE;
+        m_bCached = false;
     }
-    return FALSE;
+    return false;
 }
-FX_BOOL CPDF_ImageLoader::StartLoadImage(const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, void*& LoadHandle, FX_BOOL bStdCS, FX_DWORD GroupFamily, FX_BOOL bLoadMask, CPDF_RenderStatus* pRenderStatus, int32_t nDownsampleWidth, int32_t nDownsampleHeight)
+bool CPDF_ImageLoader::StartLoadImage(const CPDF_ImageObject* pImage, CPDF_PageRenderCache* pCache, void*& LoadHandle, bool bStdCS, FX_DWORD GroupFamily, bool bLoadMask, CPDF_RenderStatus* pRenderStatus, int32_t nDownsampleWidth, int32_t nDownsampleHeight)
 {
     m_nDownsampleWidth = nDownsampleWidth;
     m_nDownsampleHeight = nDownsampleHeight;
     CPDF_ProgressiveImageLoaderHandle* pLoaderHandle = new CPDF_ProgressiveImageLoaderHandle;
-    FX_BOOL ret = pLoaderHandle->Start(this, pImage, pCache, bStdCS, GroupFamily, bLoadMask, pRenderStatus, m_nDownsampleWidth, m_nDownsampleHeight);
+    bool ret = pLoaderHandle->Start(this, pImage, pCache, bStdCS, GroupFamily, bLoadMask, pRenderStatus, m_nDownsampleWidth, m_nDownsampleHeight);
     LoadHandle = pLoaderHandle;
     return ret;
 }
-FX_BOOL	CPDF_ImageLoader::Continue(void* LoadHandle, IFX_Pause* pPause)
+bool	CPDF_ImageLoader::Continue(void* LoadHandle, IFX_Pause* pPause)
 {
     return ((CPDF_ProgressiveImageLoaderHandle*)LoadHandle)->Continue(pPause);
 }

@@ -92,24 +92,24 @@ public:
             m_pInfo->FFI_OnChange(m_pInfo);
     }
 
-    FX_BOOL FFI_IsSHIFTKeyDown(FX_DWORD nFlag) const
+    bool FFI_IsSHIFTKeyDown(FX_DWORD nFlag) const
     {
         return (nFlag & FWL_EVENTFLAG_ShiftKey) != 0;
     }
 
-    FX_BOOL FFI_IsCTRLKeyDown(FX_DWORD nFlag) const
+    bool FFI_IsCTRLKeyDown(FX_DWORD nFlag) const
     {
         return (nFlag & FWL_EVENTFLAG_ControlKey) != 0;
     }
 
-    FX_BOOL FFI_IsALTKeyDown(FX_DWORD nFlag) const
+    bool FFI_IsALTKeyDown(FX_DWORD nFlag) const
     {
         return (nFlag & FWL_EVENTFLAG_AltKey) != 0;
     }
 
-    FX_BOOL FFI_IsINSERTKeyDown(FX_DWORD nFlag) const
+    bool FFI_IsINSERTKeyDown(FX_DWORD nFlag) const
     {
-        return FALSE;
+        return false;
     }
 
     int JS_appAlert(const FX_WCHAR* Msg, const FX_WCHAR* Title, FX_UINT Type, FX_UINT Icon);
@@ -174,7 +174,7 @@ public:
             m_pInfo->FFI_ExecuteNamedAction(m_pInfo, namedAction);
     }
 
-    void FFI_OnSetFieldInputFocus(void* field,FPDF_WIDESTRING focusText, FPDF_DWORD nTextLen, FX_BOOL bFocus)
+    void FFI_OnSetFieldInputFocus(void* field,FPDF_WIDESTRING focusText, FPDF_DWORD nTextLen, bool bFocus)
     {
         if (m_pInfo && m_pInfo->FFI_SetTextFieldFocus)
             m_pInfo->FFI_SetTextFieldFocus(m_pInfo, focusText, nTextLen, bFocus);
@@ -192,7 +192,7 @@ public:
             m_pInfo->FFI_DoGoToAction(m_pInfo, nPageIndex, zoomMode, fPosArray, sizeOfArray);
     }
 
-    FX_BOOL IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
+    bool IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
     void SetSDKDocument(CPDFSDK_Document* pFXDoc) { m_pSDKDoc = pFXDoc; }
     CPDFSDK_Document* GetSDKDocument() const { return m_pSDKDoc; }
     CPDF_Document* GetPDFDocument() const { return m_pPDFDoc; }
@@ -227,7 +227,7 @@ public:
     CPDFSDK_InterForm*      GetInterForm() ;
     CPDF_Document*          GetDocument() {return m_pDoc;}
 
-    CPDFSDK_PageView*       GetPageView(CPDF_Page* pPDFPage, FX_BOOL ReNew = TRUE);
+    CPDFSDK_PageView*       GetPageView(CPDF_Page* pPDFPage, bool ReNew = true);
     CPDFSDK_PageView*       GetPageView(int nIndex);
     CPDFSDK_PageView*       GetCurrentView();
     void                    ReMovePageView(CPDF_Page* pPDFPage);
@@ -237,25 +237,25 @@ public:
 
     IFXJS_Runtime *         GetJsRuntime();
 
-    FX_BOOL                 SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag = 0);
-    FX_BOOL                 KillFocusAnnot(FX_UINT nFlag = 0);
+    bool                 SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag = 0);
+    bool                 KillFocusAnnot(FX_UINT nFlag = 0);
 
-    FX_BOOL                 ExtractPages(const CFX_WordArray &arrExtraPages, CPDF_Document* pDstDoc);
-    FX_BOOL                 InsertPages(int nInsertAt, const CPDF_Document* pSrcDoc, const CFX_WordArray &arrSrcPages);
-    FX_BOOL                 ReplacePages(int nPage, const CPDF_Document* pSrcDoc, const CFX_WordArray &arrSrcPages);
+    bool                 ExtractPages(const CFX_WordArray &arrExtraPages, CPDF_Document* pDstDoc);
+    bool                 InsertPages(int nInsertAt, const CPDF_Document* pSrcDoc, const CFX_WordArray &arrSrcPages);
+    bool                 ReplacePages(int nPage, const CPDF_Document* pSrcDoc, const CFX_WordArray &arrSrcPages);
 
     void                    OnCloseDocument();
 
     int                     GetPageCount() {return m_pDoc->GetPageCount();}
-    FX_BOOL                 GetPermissions(int nFlag);
-    FX_BOOL                 GetChangeMark() {return m_bChangeMask;}
-    void                    SetChangeMark() {m_bChangeMask = TRUE;}
-    void                    ClearChangeMark() {m_bChangeMask= FALSE;}
+    bool                 GetPermissions(int nFlag);
+    bool                 GetChangeMark() {return m_bChangeMask;}
+    void                    SetChangeMark() {m_bChangeMask = true;}
+    void                    ClearChangeMark() {m_bChangeMask= false;}
     CFX_WideString          GetPath() ;
     CPDF_Page*              GetPage(int nIndex);
     CPDFDoc_Environment *   GetEnv() {return m_pEnv; }
     void                    ProcJavascriptFun();
-    FX_BOOL                 ProcOpenAction();
+    bool                 ProcOpenAction();
     CPDF_OCContext*         GetOCContext();
 private:
     std::map<CPDF_Page*, CPDFSDK_PageView*> m_pageMap;
@@ -264,7 +264,7 @@ private:
     CPDFSDK_Annot* m_pFocusAnnot;
     CPDFDoc_Environment* m_pEnv;
     CPDF_OCContext* m_pOccontent;
-    FX_BOOL m_bChangeMask;
+    bool m_bChangeMask;
 };
 class CPDFSDK_PageView final
 {
@@ -278,28 +278,28 @@ public:
     CPDFSDK_Annot*                  GetFXWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
     CPDFSDK_Annot*                  GetFocusAnnot() ;
     void                            SetFocusAnnot(CPDFSDK_Annot* pSDKAnnot,FX_UINT nFlag = 0) {m_pSDKDoc->SetFocusAnnot(pSDKAnnot, nFlag);}
-    FX_BOOL                         KillFocusAnnot(FX_UINT nFlag = 0) {return m_pSDKDoc->KillFocusAnnot(nFlag);}
-    FX_BOOL                         Annot_HasAppearance(CPDF_Annot* pAnnot);
+    bool                         KillFocusAnnot(FX_UINT nFlag = 0) {return m_pSDKDoc->KillFocusAnnot(nFlag);}
+    bool                         Annot_HasAppearance(CPDF_Annot* pAnnot);
 
     CPDFSDK_Annot*                  AddAnnot(CPDF_Dictionary * pDict);
     CPDFSDK_Annot*                  AddAnnot(const FX_CHAR* lpSubType,CPDF_Dictionary * pDict);
     CPDFSDK_Annot*                  AddAnnot(CPDF_Annot * pPDFAnnot);
-        FX_BOOL                     DeleteAnnot(CPDFSDK_Annot* pAnnot);
+        bool                     DeleteAnnot(CPDFSDK_Annot* pAnnot);
     int                             CountAnnots();
     CPDFSDK_Annot*                  GetAnnot(int nIndex);
     CPDFSDK_Annot*                  GetAnnotByDict(CPDF_Dictionary * pDict);
     CPDF_Page*                      GetPDFPage(){return m_page;}
     CPDF_Document*                  GetPDFDocument();
     CPDFSDK_Document*               GetSDKDocument() {return m_pSDKDoc;}
-    FX_BOOL                 OnLButtonDown(const CPDF_Point & point, FX_UINT nFlag);
-    FX_BOOL                 OnLButtonUp(const CPDF_Point & point, FX_UINT nFlag);
-    FX_BOOL                 OnChar(int nChar, FX_UINT nFlag);
-    FX_BOOL                 OnKeyDown(int nKeyCode, int nFlag);
-    FX_BOOL                 OnKeyUp(int nKeyCode, int nFlag);
+    bool                 OnLButtonDown(const CPDF_Point & point, FX_UINT nFlag);
+    bool                 OnLButtonUp(const CPDF_Point & point, FX_UINT nFlag);
+    bool                 OnChar(int nChar, FX_UINT nFlag);
+    bool                 OnKeyDown(int nKeyCode, int nFlag);
+    bool                 OnKeyUp(int nKeyCode, int nFlag);
 
-    FX_BOOL                 OnMouseMove(const CPDF_Point & point, int nFlag);
-    FX_BOOL                 OnMouseWheel(double deltaX, double deltaY,const CPDF_Point& point, int nFlag);
-    FX_BOOL                 IsValidAnnot(void* p);
+    bool                 OnMouseMove(const CPDF_Point & point, int nFlag);
+    bool                 OnMouseWheel(double deltaX, double deltaY,const CPDF_Point& point, int nFlag);
+    bool                 IsValidAnnot(void* p);
     void                    GetCurrentMatrix(CPDF_Matrix& matrix) {matrix = m_curMatrix;}
     void                    UpdateRects(CFX_RectArray& rects);
     void                            UpdateView(CPDFSDK_Annot* pAnnot);
@@ -308,11 +308,11 @@ public:
     int                     GetPageIndex();
     void                            LoadFXAnnots();
 
-        void SetValid(FX_BOOL bValid) {m_bValid = bValid;}
-        FX_BOOL IsValid() {return m_bValid;}
-        void SetLock(FX_BOOL bLocked) {m_bLocked= bLocked;}
-        FX_BOOL IsLocked() {return m_bLocked;}
-        void TakeOverPage() {m_bTakeOverPage = TRUE;}
+        void SetValid(bool bValid) {m_bValid = bValid;}
+        bool IsValid() {return m_bValid;}
+        void SetLock(bool bLocked) {m_bLocked= bLocked;}
+        bool IsLocked() {return m_bLocked;}
+        void TakeOverPage() {m_bTakeOverPage = true;}
 private:
     void PageView_OnHighlightFormFields(CFX_RenderDevice* pDevice, CPDFSDK_Widget* pWidget);
         CPDF_Matrix m_curMatrix;
@@ -322,12 +322,12 @@ private:
     CFX_PtrArray  m_fxAnnotArray;
     CPDFSDK_Document* m_pSDKDoc;
     CPDFSDK_Widget* m_CaptureWidget;
-    FX_BOOL m_bEnterWidget;
-    FX_BOOL m_bExitWidget;
-    FX_BOOL m_bOnWidget;
-    FX_BOOL m_bValid;
-        FX_BOOL m_bLocked;
-        FX_BOOL m_bTakeOverPage;
+    bool m_bEnterWidget;
+    bool m_bExitWidget;
+    bool m_bOnWidget;
+    bool m_bValid;
+        bool m_bLocked;
+        bool m_bTakeOverPage;
 };
 
 
@@ -340,14 +340,14 @@ public:
 
     typedef int (*LP_COMPARE)(TYPE p1, TYPE p2);
 
-    void Sort(LP_COMPARE pCompare, FX_BOOL bAscent = TRUE)
+    void Sort(LP_COMPARE pCompare, bool bAscent = true)
     {
         int nSize = this->GetSize();
         QuickSort(0, nSize -1, bAscent, pCompare);
     }
 
 private:
-    void QuickSort(FX_UINT nStartPos, FX_UINT nStopPos, FX_BOOL bAscend, LP_COMPARE pCompare)
+    void QuickSort(FX_UINT nStartPos, FX_UINT nStopPos, bool bAscend, LP_COMPARE pCompare)
     {
         if (nStartPos >= nStopPos) return;
 

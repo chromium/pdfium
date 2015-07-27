@@ -57,11 +57,11 @@ CFX_WideString Icon::GetIconName()
 	return m_swIconName;
 }
 
-FX_BOOL Icon::name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
+bool Icon::name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)
 {
-	if(!vp.IsGetting())return FALSE;
+	if(!vp.IsGetting())return false;
 
 	vp << m_swIconName;
-	return TRUE;
+	return true;
 }
 

@@ -41,9 +41,9 @@ CPDF_Rect CFFL_Utils::DeflateRect(const CPDF_Rect & crRect,const FX_FLOAT & fSiz
 	return crNew;
 }
 
-FX_BOOL CFFL_Utils::TraceObject(CPDF_Object* pObj)
+bool CFFL_Utils::TraceObject(CPDF_Object* pObj)
 {
-	if (!pObj) return FALSE;
+	if (!pObj) return false;
 
 	FX_DWORD	dwObjNum = pObj->GetObjNum();
 	switch (pObj->GetType())
@@ -71,7 +71,7 @@ FX_BOOL CFFL_Utils::TraceObject(CPDF_Object* pObj)
  				//TRACE(csKey + "\n");
 				if (!pElement) break;
 				TraceObject(pElement);
-			}while (TRUE);
+			}while (true);
 		}
 		break;
 
@@ -107,8 +107,8 @@ FX_BOOL CFFL_Utils::TraceObject(CPDF_Object* pObj)
 	default:
 		break;
 	}
-	if (dwObjNum == 0) return FALSE;
+	if (dwObjNum == 0) return false;
 
-	return TRUE;
+	return true;
 }
 

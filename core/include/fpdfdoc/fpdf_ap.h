@@ -60,7 +60,7 @@ public:
 
     int32_t						GetWordFontIndex(FX_WORD word, int32_t charset, int32_t nFontIndex);
 
-    FX_BOOL							IsLatinWord(FX_WORD word);
+    bool							IsLatinWord(FX_WORD word);
 
     int32_t						GetDefaultFontIndex();
 private:
@@ -76,20 +76,20 @@ class CPVT_GenerateAP
 {
 public:
 
-    static FX_BOOL							GenerateTextFieldAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
+    static bool							GenerateTextFieldAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
 
-    static FX_BOOL							GenerateComboBoxAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
+    static bool							GenerateComboBoxAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
 
-    static FX_BOOL							GenerateListBoxAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
+    static bool							GenerateListBoxAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
 
     static CFX_ByteString					GenerateEditAP(IPVT_FontMap * pFontMap, IPDF_VariableText_Iterator * pIterator,
-            const CPDF_Point & ptOffset, FX_BOOL bContinuous, FX_WORD SubWord = 0, const CPVT_WordRange * pVisible = NULL);
+            const CPDF_Point & ptOffset, bool bContinuous, FX_WORD SubWord = 0, const CPVT_WordRange * pVisible = NULL);
 
     static CFX_ByteString					GenerateBorderAP(const CPDF_Rect & rect, FX_FLOAT fWidth,
             const CPVT_Color & color, const CPVT_Color & crLeftTop, const CPVT_Color & crRightBottom,
             int32_t nStyle, const CPVT_Dash & dash);
 
-    static CFX_ByteString					GenerateColorAP(const CPVT_Color & color, const FX_BOOL & bFillOrStroke);
+    static CFX_ByteString					GenerateColorAP(const CPVT_Color & color, const bool & bFillOrStroke);
 };
 
 #endif  // CORE_INCLUDE_FPDFDOC_FPDF_AP_H_

@@ -72,12 +72,12 @@ size_t FX_File_WritePos(FX_HFILE hFile, const void* pBuffer, size_t szBuffer, FX
     FXSYS_assert(hFile != NULL);
     return ((IFXCRT_FileAccess*)hFile)->WritePos(pBuffer, szBuffer, pos);
 }
-FX_BOOL FX_File_Flush(FX_HFILE hFile)
+bool FX_File_Flush(FX_HFILE hFile)
 {
     FXSYS_assert(hFile != NULL);
     return ((IFXCRT_FileAccess*)hFile)->Flush();
 }
-FX_BOOL FX_File_Truncate(FX_HFILE hFile, FX_FILESIZE szFile)
+bool FX_File_Truncate(FX_HFILE hFile, FX_FILESIZE szFile)
 {
     FXSYS_assert(hFile != NULL);
     return ((IFXCRT_FileAccess*)hFile)->Truncate(szFile);
@@ -122,11 +122,11 @@ IFX_FileRead* FX_CreateFileRead(const FX_WCHAR* filename)
 {
     return FX_CreateFileStream(filename, FX_FILEMODE_ReadOnly);
 }
-IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer, size_t dwSize, FX_BOOL bTakeOver)
+IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer, size_t dwSize, bool bTakeOver)
 {
     return new CFX_MemoryStream(pBuffer, dwSize, bTakeOver);
 }
-IFX_MemoryStream* FX_CreateMemoryStream(FX_BOOL bConsecutive)
+IFX_MemoryStream* FX_CreateMemoryStream(bool bConsecutive)
 {
     return new CFX_MemoryStream(bConsecutive);
 }
@@ -160,10 +160,10 @@ FX_FLOAT FXSYS_wcstof(const FX_WCHAR* pwsStr, int32_t iLength, int32_t *pUsedLen
         return 0.0f;
     }
     int32_t iUsedLen = 0;
-    FX_BOOL bNegtive = FALSE;
+    bool bNegtive = false;
     switch (pwsStr[iUsedLen]) {
         case '-':
-            bNegtive = TRUE;
+            bNegtive = true;
         case '+':
             iUsedLen++;
             break;
@@ -230,7 +230,7 @@ int32_t FXSYS_strnicmp(const FX_CHAR* s1, const FX_CHAR* s2, size_t count)
     }
     return ch1 - ch2;
 }
-FX_DWORD FX_HashCode_String_GetA(const FX_CHAR* pStr, int32_t iLength, FX_BOOL bIgnoreCase)
+FX_DWORD FX_HashCode_String_GetA(const FX_CHAR* pStr, int32_t iLength, bool bIgnoreCase)
 {
     FXSYS_assert(pStr != NULL);
     if (iLength < 0) {
@@ -249,7 +249,7 @@ FX_DWORD FX_HashCode_String_GetA(const FX_CHAR* pStr, int32_t iLength, FX_BOOL b
     }
     return dwHashCode;
 }
-FX_DWORD FX_HashCode_String_GetW(const FX_WCHAR* pStr, int32_t iLength, FX_BOOL bIgnoreCase)
+FX_DWORD FX_HashCode_String_GetW(const FX_WCHAR* pStr, int32_t iLength, bool bIgnoreCase)
 {
     FXSYS_assert(pStr != NULL);
     if (iLength < 0) {
@@ -283,7 +283,7 @@ void* FX_Random_MT_Start(FX_DWORD dwSeed)
     for (i = 1; i < MT_N; i ++) {
         pBuf[i] = (1812433253UL * (pBuf[i - 1] ^ (pBuf[i - 1] >> 30)) + i);
     }
-    pContext->bHaveSeed = TRUE;
+    pContext->bHaveSeed = true;
     return pContext;
 }
 FX_DWORD FX_Random_MT_Generate(void* pContext)
@@ -347,8 +347,8 @@ void FX_Random_GenerateBase(FX_DWORD* pBuffer, int32_t iCount)
     do {
         ::GetSystemTime(&st2);
     } while (FXSYS_memcmp(&st1, &st2, sizeof(SYSTEMTIME)) == 0);
-    FX_DWORD dwHash1 = FX_HashCode_String_GetA((const FX_CHAR*)&st1, sizeof(st1), TRUE);
-    FX_DWORD dwHash2 = FX_HashCode_String_GetA((const FX_CHAR*)&st2, sizeof(st2), TRUE);
+    FX_DWORD dwHash1 = FX_HashCode_String_GetA((const FX_CHAR*)&st1, sizeof(st1), true);
+    FX_DWORD dwHash2 = FX_HashCode_String_GetA((const FX_CHAR*)&st2, sizeof(st2), true);
     ::srand((dwHash1 << 16) | (FX_DWORD)dwHash2);
 #else
     time_t tmLast = time(NULL), tmCur;
@@ -360,15 +360,15 @@ void FX_Random_GenerateBase(FX_DWORD* pBuffer, int32_t iCount)
     }
 }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-FX_BOOL FX_GenerateCryptoRandom(FX_DWORD* pBuffer, int32_t iCount)
+bool FX_GenerateCryptoRandom(FX_DWORD* pBuffer, int32_t iCount)
 {
     HCRYPTPROV hCP = NULL;
     if (!::CryptAcquireContext(&hCP, NULL, NULL, PROV_RSA_FULL, 0) || hCP == NULL) {
-        return FALSE;
+        return false;
     }
     ::CryptGenRandom(hCP, iCount * sizeof(FX_DWORD), (uint8_t*)pBuffer);
     ::CryptReleaseContext(hCP, 0);
-    return TRUE;
+    return true;
 }
 #endif
 void FX_Random_GenerateCrypto(FX_DWORD* pBuffer, int32_t iCount)

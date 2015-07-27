@@ -12,7 +12,7 @@
 /* ------------------------------- CPWL_Button ---------------------------------- */
 
 CPWL_Button::CPWL_Button() :
-	m_bMouseDown(FALSE)
+	m_bMouseDown(false)
 {
 }
 
@@ -31,23 +31,23 @@ void CPWL_Button::OnCreate(PWL_CREATEPARAM & cp)
 	cp.eCursorType = FXCT_HAND;
 }
 
-FX_BOOL CPWL_Button::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
+bool CPWL_Button::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
 {
 	CPWL_Wnd::OnLButtonDown(point, nFlag);
 
-	m_bMouseDown = TRUE;
+	m_bMouseDown = true;
 	SetCapture();
 
-	return TRUE;
+	return true;
 }
 
-FX_BOOL CPWL_Button::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
+bool CPWL_Button::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 {
 	CPWL_Wnd::OnLButtonUp(point, nFlag);
 
 	ReleaseCapture();
-	m_bMouseDown = FALSE;
+	m_bMouseDown = false;
 
-	return TRUE;
+	return true;
 }
 

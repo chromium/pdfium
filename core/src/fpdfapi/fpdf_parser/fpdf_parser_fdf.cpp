@@ -9,7 +9,7 @@ CFDF_Document::CFDF_Document() : CPDF_IndirectObjects(NULL)
 {
     m_pRootDict = NULL;
     m_pFile = NULL;
-    m_bOwnFile = FALSE;
+    m_bOwnFile = false;
 }
 CFDF_Document::~CFDF_Document()
 {
@@ -26,7 +26,7 @@ CFDF_Document* CFDF_Document::CreateNewDoc()
     pDoc->m_pRootDict->SetAt(FX_BSTRC("FDF"), pFDFDict);
     return pDoc;
 }
-CFDF_Document* CFDF_Document::ParseFile(IFX_FileRead *pFile, FX_BOOL bOwnFile)
+CFDF_Document* CFDF_Document::ParseFile(IFX_FileRead *pFile, bool bOwnFile)
 {
   if (!pFile) {
     return NULL;
@@ -41,16 +41,16 @@ CFDF_Document* CFDF_Document::ParseFile(IFX_FileRead *pFile, FX_BOOL bOwnFile)
 }
 CFDF_Document* CFDF_Document::ParseMemory(const uint8_t* pData, FX_DWORD size)
 {
-    return CFDF_Document::ParseFile(FX_CreateMemoryStream((uint8_t*)pData, size), TRUE);
+    return CFDF_Document::ParseFile(FX_CreateMemoryStream((uint8_t*)pData, size), true);
 }
-void CFDF_Document::ParseStream(IFX_FileRead *pFile, FX_BOOL bOwnFile)
+void CFDF_Document::ParseStream(IFX_FileRead *pFile, bool bOwnFile)
 {
     m_pFile = pFile;
     m_bOwnFile = bOwnFile;
     CPDF_SyntaxParser parser;
     parser.InitParser(m_pFile, 0);
     while (1) {
-        FX_BOOL bNumber;
+        bool bNumber;
         CFX_ByteString word = parser.GetNextWord(bNumber);
         if (bNumber) {
             FX_DWORD objnum = FXSYS_atoi(word);
@@ -85,10 +85,10 @@ void CFDF_Document::ParseStream(IFX_FileRead *pFile, FX_BOOL bOwnFile)
         }
     }
 }
-FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const
+bool CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const
 {
     if (m_pRootDict == NULL) {
-        return FALSE;
+        return false;
     }
     buf << FX_BSTRC("%FDF-1.2\r\n");
     FX_POSITION pos = m_IndirectObjs.GetStartPosition();
@@ -99,7 +99,7 @@ FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const
         buf << (FX_DWORD)objnum << FX_BSTRC(" 0 obj\r\n") << pObj << FX_BSTRC("\r\nendobj\r\n\r\n");
     }
     buf << FX_BSTRC("trailer\r\n<</Root ") << m_pRootDict->GetObjNum() << FX_BSTRC(" 0 R>>\r\n%%EOF\r\n");
-    return TRUE;
+    return true;
 }
 CFX_WideString CFDF_Document::GetWin32Path() const
 {

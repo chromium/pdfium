@@ -26,14 +26,14 @@ public:
 	virtual ~CPWL_CheckBox();
 
 	virtual CFX_ByteString		GetClassName() const;
-	virtual FX_BOOL				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual FX_BOOL				OnChar(FX_WORD nChar, FX_DWORD nFlag);
+	virtual bool				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual bool				OnChar(FX_WORD nChar, FX_DWORD nFlag);
 
-	void						SetCheck(FX_BOOL bCheck);
-	FX_BOOL						IsChecked() const;
+	void						SetCheck(bool bCheck);
+	bool						IsChecked() const;
 
 private:
-	FX_BOOL						m_bChecked;
+	bool						m_bChecked;
 };
 
 class PWL_CLASS CPWL_RadioButton : public CPWL_Button
@@ -43,14 +43,14 @@ public:
 	virtual ~CPWL_RadioButton();
 
 	virtual CFX_ByteString		GetClassName() const;
-	virtual FX_BOOL				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual FX_BOOL				OnChar(FX_WORD nChar, FX_DWORD nFlag);
+	virtual bool				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual bool				OnChar(FX_WORD nChar, FX_DWORD nFlag);
 
-	void						SetCheck(FX_BOOL bCheck);
-	FX_BOOL						IsChecked() const;
+	void						SetCheck(bool bCheck);
+	bool						IsChecked() const;
 
 private:
-	FX_BOOL						m_bChecked;
+	bool						m_bChecked;
 };
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_

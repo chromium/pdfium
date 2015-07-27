@@ -92,11 +92,11 @@ enum FX_CHARTYPE {
     FX_CHARTYPE_Arabic				= (12 << FX_CHARTYPEBITS),
 };
 FX_DWORD FX_GetUnicodeProperties(FX_WCHAR wch);
-FX_BOOL	FX_IsCtrlCode(FX_WCHAR ch);
-FX_BOOL	FX_IsRotationCode(FX_WCHAR ch);
-FX_BOOL FX_IsCombinationChar(FX_WCHAR wch);
-FX_BOOL	FX_IsBidiChar(FX_WCHAR wch);
-FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical);
-FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_DWORD dwProps, FX_BOOL bRTL, FX_BOOL bVertical);
+bool	FX_IsCtrlCode(FX_WCHAR ch);
+bool	FX_IsRotationCode(FX_WCHAR ch);
+bool FX_IsCombinationChar(FX_WCHAR wch);
+bool	FX_IsBidiChar(FX_WCHAR wch);
+FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, bool bRTL, bool bVertical);
+FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_DWORD dwProps, bool bRTL, bool bVertical);
 
 #endif  // CORE_INCLUDE_FXCRT_FX_UCD_H_

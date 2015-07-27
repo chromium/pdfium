@@ -153,12 +153,12 @@ typedef struct {
    * CAUTION: IJG versions prior to v6a kept this array in zigzag order.
    */
   UINT16 quantval[DCTSIZE2];	/* quantization step for each coefficient */
-  /* This field is used only during compression.  It's initialized FALSE when
-   * the table is created, and set TRUE when it's been output to the file.
-   * You could suppress output of a table by setting this to TRUE.
+  /* This field is used only during compression.  It's initialized false when
+   * the table is created, and set true when it's been output to the file.
+   * You could suppress output of a table by setting this to true.
    * (See jpeg_suppress_tables for an example.)
    */
-  boolean sent_table;		/* TRUE when table has been output */
+  boolean sent_table;		/* true when table has been output */
 } JQUANT_TBL;
 
 
@@ -169,12 +169,12 @@ typedef struct {
   UINT8 bits[17];		/* bits[k] = # of symbols with codes of */
 				/* length k bits; bits[0] is unused */
   UINT8 huffval[256];		/* The symbols, in order of incr code length */
-  /* This field is used only during compression.  It's initialized FALSE when
-   * the table is created, and set TRUE when it's been output to the file.
-   * You could suppress output of a table by setting this to TRUE.
+  /* This field is used only during compression.  It's initialized false when
+   * the table is created, and set true when it's been output to the file.
+   * You could suppress output of a table by setting this to true.
    * (See jpeg_suppress_tables for an example.)
    */
-  boolean sent_table;		/* TRUE when table has been output */
+  boolean sent_table;		/* true when table has been output */
 } JHUFF_TBL;
 
 
@@ -384,10 +384,10 @@ struct jpeg_compress_struct {
    * set num_scans and scan_info to point to an array of scan definitions.
    */
 
-  boolean raw_data_in;		/* TRUE=caller supplies downsampled data */
-  boolean arith_code;		/* TRUE=arithmetic coding, FALSE=Huffman */
-  boolean optimize_coding;	/* TRUE=optimize entropy encoding parms */
-  boolean CCIR601_sampling;	/* TRUE=first samples are cosited */
+  boolean raw_data_in;		/* true=caller supplies downsampled data */
+  boolean arith_code;		/* true=arithmetic coding, false=Huffman */
+  boolean optimize_coding;	/* true=optimize entropy encoding parms */
+  boolean CCIR601_sampling;	/* true=first samples are cosited */
   int smoothing_factor;		/* 1..100, or 0 for no input smoothing */
   J_DCT_METHOD dct_method;	/* DCT algorithm selector */
 
@@ -427,7 +427,7 @@ struct jpeg_compress_struct {
   /*
    * These fields are computed during compression startup
    */
-  boolean progressive_mode;	/* TRUE if scan script uses progressive mode */
+  boolean progressive_mode;	/* true if scan script uses progressive mode */
   int max_h_samp_factor;	/* largest h_samp_factor */
   int max_v_samp_factor;	/* largest v_samp_factor */
 
@@ -500,17 +500,17 @@ struct jpeg_decompress_struct {
 
   double output_gamma;		/* image gamma wanted in output */
 
-  boolean buffered_image;	/* TRUE=multiple output passes */
-  boolean raw_data_out;		/* TRUE=downsampled data wanted */
+  boolean buffered_image;	/* true=multiple output passes */
+  boolean raw_data_out;		/* true=downsampled data wanted */
 
   J_DCT_METHOD dct_method;	/* IDCT algorithm selector */
-  boolean do_fancy_upsampling;	/* TRUE=apply fancy upsampling */
-  boolean do_block_smoothing;	/* TRUE=apply interblock smoothing */
+  boolean do_fancy_upsampling;	/* true=apply fancy upsampling */
+  boolean do_block_smoothing;	/* true=apply interblock smoothing */
 
-  boolean quantize_colors;	/* TRUE=colormapped output wanted */
+  boolean quantize_colors;	/* true=colormapped output wanted */
   /* the following are ignored if not quantize_colors: */
   J_DITHER_MODE dither_mode;	/* type of color dithering to use */
-  boolean two_pass_quantize;	/* TRUE=use two-pass color quantization */
+  boolean two_pass_quantize;	/* true=use two-pass color quantization */
   int desired_number_of_colors;	/* max # colors to use in created colormap */
   /* these are significant only in buffered-image mode: */
   boolean enable_1pass_quant;	/* enable future use of 1-pass quantizer */
@@ -602,8 +602,8 @@ struct jpeg_decompress_struct {
   jpeg_component_info * comp_info;
   /* comp_info[i] describes component that appears i'th in SOF */
 
-  boolean progressive_mode;	/* TRUE if SOFn specifies progressive mode */
-  boolean arith_code;		/* TRUE=arithmetic coding, FALSE=Huffman */
+  boolean progressive_mode;	/* true if SOFn specifies progressive mode */
+  boolean arith_code;		/* true=arithmetic coding, false=Huffman */
 
   UINT8 arith_dc_L[NUM_ARITH_TBLS]; /* L values for DC arith-coding tables */
   UINT8 arith_dc_U[NUM_ARITH_TBLS]; /* U values for DC arith-coding tables */
@@ -614,17 +614,17 @@ struct jpeg_decompress_struct {
   /* These fields record data obtained from optional markers recognized by
    * the JPEG library.
    */
-  boolean saw_JFIF_marker;	/* TRUE iff a JFIF APP0 marker was found */
-  /* Data copied from JFIF marker; only valid if saw_JFIF_marker is TRUE: */
+  boolean saw_JFIF_marker;	/* true iff a JFIF APP0 marker was found */
+  /* Data copied from JFIF marker; only valid if saw_JFIF_marker is true: */
   UINT8 JFIF_major_version;	/* JFIF version number */
   UINT8 JFIF_minor_version;
   UINT8 density_unit;		/* JFIF code for pixel size units */
   UINT16 X_density;		/* Horizontal pixel density */
   UINT16 Y_density;		/* Vertical pixel density */
-  boolean saw_Adobe_marker;	/* TRUE iff an Adobe APP14 marker was found */
+  boolean saw_Adobe_marker;	/* true iff an Adobe APP14 marker was found */
   UINT8 Adobe_transform;	/* Color transform code from Adobe marker */
 
-  boolean CCIR601_sampling;	/* TRUE=first samples are cosited */
+  boolean CCIR601_sampling;	/* true=first samples are cosited */
 
   /* Aside from the specific data retained from APPn markers known to the
    * library, the uninterpreted contents of any or all APPn and COM markers
@@ -1034,7 +1034,7 @@ EXTERN(int) jpeg_read_header JPP((j_decompress_ptr cinfo,
 #define JPEG_SUSPENDED		0 /* Suspended due to lack of input data */
 #define JPEG_HEADER_OK		1 /* Found valid image datastream */
 #define JPEG_HEADER_TABLES_ONLY	2 /* Found valid table-specs-only datastream */
-/* If you pass require_image = TRUE (normal case), you need not check for
+/* If you pass require_image = true (normal case), you need not check for
  * a TABLES_ONLY return code; an abbreviated file will cause an error exit.
  * JPEG_SUSPENDED is only possible if you use a data source module that can
  * give a suspension return (the stdio source module doesn't).

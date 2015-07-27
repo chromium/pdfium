@@ -12,12 +12,12 @@
 template <class T, class STR_T>
 T FXSYS_StrToInt(STR_T str)
 {
-    FX_BOOL neg = FALSE;
+    bool neg = false;
     if (str == NULL) {
         return 0;
     }
     if (*str == '-') {
-        neg = TRUE;
+        neg = true;
         str ++;
     }
     T num = 0;

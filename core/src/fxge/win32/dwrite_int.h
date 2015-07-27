@@ -35,15 +35,15 @@ public:
     void			Load();
     void            Unload();
 
-    FX_BOOL			IsAvailable()
+    bool			IsAvailable()
     {
         return m_pDWriteFactory != NULL;
     }
 
     void*			DwCreateFontFaceFromStream(uint8_t* pData, FX_DWORD size, int simulation_style);
-    FX_BOOL         DwCreateRenderingTarget(CFX_DIBitmap* pSrc, void** renderTarget);
+    bool         DwCreateRenderingTarget(CFX_DIBitmap* pSrc, void** renderTarget);
     void            DwDeleteRenderingTarget(void* renderTarget);
-    FX_BOOL			DwRendingString(void* renderTarget, CFX_ClipRgn* pClipRgn, FX_RECT& stringRect, CFX_AffineMatrix* pMatrix,
+    bool			DwRendingString(void* renderTarget, CFX_ClipRgn* pClipRgn, FX_RECT& stringRect, CFX_AffineMatrix* pMatrix,
                                     void *font, FX_FLOAT font_size, FX_ARGB text_color,
                                     int glyph_count, unsigned short* glyph_indices,
                                     FX_FLOAT baselineOriginX, FX_FLOAT baselineOriginY,

@@ -41,8 +41,8 @@ public:
     virtual int32_t		GetAscent() const = 0;
     virtual int32_t		GetDescent() const = 0;
 
-    virtual FX_BOOL			GetGlyphBBox(int32_t iGlyphIndex, FX_RECT &rtBBox) = 0;
-    virtual FX_BOOL			GetBBox(FX_RECT &rtBBox) = 0;
+    virtual bool			GetGlyphBBox(int32_t iGlyphIndex, FX_RECT &rtBBox) = 0;
+    virtual bool			GetBBox(FX_RECT &rtBBox) = 0;
 
     virtual int32_t		GetHeight() const = 0;
     virtual int32_t		GetItalicAngle() const = 0;

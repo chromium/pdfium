@@ -12,15 +12,15 @@ class CPDF_CMapManager
 public:
     CPDF_CMapManager();
     ~CPDF_CMapManager();
-    void*				GetPackage(FX_BOOL bPrompt);
-    CPDF_CMap*				GetPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPrompt);
-    CPDF_CID2UnicodeMap*	GetCID2UnicodeMap(int charset, FX_BOOL bPrompt);
+    void*				GetPackage(bool bPrompt);
+    CPDF_CMap*				GetPredefinedCMap(const CFX_ByteString& name, bool bPrompt);
+    CPDF_CID2UnicodeMap*	GetCID2UnicodeMap(int charset, bool bPrompt);
     void					ReloadAll();
 private:
-    CPDF_CMap*				LoadPredefinedCMap(const CFX_ByteString& name,  FX_BOOL bPrompt);
-    CPDF_CID2UnicodeMap*	LoadCID2UnicodeMap(int charset, FX_BOOL bPrompt);
-    void					DropAll(FX_BOOL bReload);
-    FX_BOOL					m_bPrompted;
+    CPDF_CMap*				LoadPredefinedCMap(const CFX_ByteString& name,  bool bPrompt);
+    CPDF_CID2UnicodeMap*	LoadCID2UnicodeMap(int charset, bool bPrompt);
+    void					DropAll(bool bReload);
+    bool					m_bPrompted;
     CFX_MapByteStringToPtr	m_CMaps;
     CPDF_CID2UnicodeMap*	m_CID2UnicodeMaps[6];
 };
@@ -56,7 +56,7 @@ class CPDF_CMapParser
 public:
     CPDF_CMapParser();
     ~CPDF_CMapParser() {}
-    FX_BOOL	Initialize(CPDF_CMap*);
+    bool	Initialize(CPDF_CMap*);
     void	ParseWord(const CFX_ByteStringC& str);
     CFX_BinaryBuf	m_AddMaps;
 private:
@@ -80,10 +80,10 @@ class CPDF_CMap
 {
 public:
     CPDF_CMap();
-    FX_BOOL					LoadPredefined(CPDF_CMapManager* pMgr, const FX_CHAR* name, FX_BOOL bPromptCJK);
-    FX_BOOL					LoadEmbedded(const uint8_t* pData, FX_DWORD dwSize);
+    bool					LoadPredefined(CPDF_CMapManager* pMgr, const FX_CHAR* name, bool bPromptCJK);
+    bool					LoadEmbedded(const uint8_t* pData, FX_DWORD dwSize);
     void					Release();
-    FX_BOOL					IsLoaded() const
+    bool					IsLoaded() const
     {
         return m_bLoaded;
     }
@@ -91,7 +91,7 @@ public:
     {
         return m_Charset;
     }
-    FX_BOOL					IsVertWriting() const
+    bool					IsVertWriting() const
     {
         return m_bVertical;
     }
@@ -109,14 +109,14 @@ protected:
     friend class			CPDF_CIDFont;
 protected:
     CFX_ByteString			m_PredefinedCMap;
-    FX_BOOL					m_bVertical;
+    bool					m_bVertical;
     int						m_Charset, m_Coding;
     CodingScheme			m_CodingScheme;
     int						m_nCodeRanges;
     uint8_t*				m_pLeadingBytes;
     FX_WORD*				m_pMapping;
     uint8_t*				m_pAddMapping;
-    FX_BOOL					m_bLoaded;
+    bool					m_bLoaded;
     const FXCMAP_CMap*		m_pEmbedMap;
     CPDF_CMap*				m_pUseMap;
 };
@@ -146,9 +146,9 @@ class CPDF_CID2UnicodeMap
 public:
     CPDF_CID2UnicodeMap();
     ~CPDF_CID2UnicodeMap();
-    FX_BOOL		Initialize();
-    FX_BOOL		IsLoaded();
-    void		Load(CPDF_CMapManager* pMgr, int charset, FX_BOOL bPromptCJK);
+    bool		Initialize();
+    bool		IsLoaded();
+    void		Load(CPDF_CMapManager* pMgr, int charset, bool bPromptCJK);
     FX_WCHAR	UnicodeFromCID(FX_WORD CID);
 protected:
     int			m_Charset;

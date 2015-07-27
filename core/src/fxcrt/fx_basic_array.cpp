@@ -22,7 +22,7 @@ CFX_BasicArray::~CFX_BasicArray()
 {
     FX_Free(m_pData);
 }
-FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
+bool CFX_BasicArray::SetSize(int nNewSize)
 {
     if (nNewSize <= 0) {
         FX_Free(m_pData);
@@ -36,7 +36,7 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
         totalSize *= m_nUnitSize;
         if (!totalSize.IsValid()) {
             m_nSize = m_nMaxSize = 0;
-            return FALSE;
+            return false;
         }
         m_pData = FX_Alloc(uint8_t, totalSize.ValueOrDie());
         m_nSize = m_nMaxSize = nNewSize;
@@ -50,38 +50,38 @@ FX_BOOL CFX_BasicArray::SetSize(int nNewSize)
         pdfium::base::CheckedNumeric<int> totalSize = nNewMax;
         totalSize *= m_nUnitSize;
         if (!totalSize.IsValid() || nNewMax < m_nSize) {
-            return FALSE;
+            return false;
         }
         uint8_t* pNewData = FX_Realloc(uint8_t, m_pData, totalSize.ValueOrDie());
         if (pNewData == NULL) {
-            return FALSE;
+            return false;
         }
         FXSYS_memset(pNewData + m_nSize * m_nUnitSize, 0, (nNewMax - m_nSize) * m_nUnitSize);
         m_pData = pNewData;
         m_nSize = nNewSize;
         m_nMaxSize = nNewMax;
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL CFX_BasicArray::Append(const CFX_BasicArray& src)
+bool CFX_BasicArray::Append(const CFX_BasicArray& src)
 {
     int nOldSize = m_nSize;
     pdfium::base::CheckedNumeric<int> newSize = m_nSize;
     newSize += src.m_nSize;
     if (m_nUnitSize != src.m_nUnitSize || !newSize.IsValid() || !SetSize(newSize.ValueOrDie())) {
-        return FALSE;
+        return false;
     }
 
     FXSYS_memcpy(m_pData + nOldSize * m_nUnitSize, src.m_pData, src.m_nSize * m_nUnitSize);
-    return TRUE;
+    return true;
 }
-FX_BOOL CFX_BasicArray::Copy(const CFX_BasicArray& src)
+bool CFX_BasicArray::Copy(const CFX_BasicArray& src)
 {
     if (!SetSize(src.m_nSize)) {
-        return FALSE;
+        return false;
     }
     FXSYS_memcpy(m_pData, src.m_pData, src.m_nSize * m_nUnitSize);
-    return TRUE;
+    return true;
 }
 uint8_t* CFX_BasicArray::InsertSpaceAt(int nIndex, int nCount)
 {
@@ -103,31 +103,31 @@ uint8_t* CFX_BasicArray::InsertSpaceAt(int nIndex, int nCount)
     }
     return m_pData + nIndex * m_nUnitSize;
 }
-FX_BOOL CFX_BasicArray::RemoveAt(int nIndex, int nCount)
+bool CFX_BasicArray::RemoveAt(int nIndex, int nCount)
 {
     if (nIndex < 0 || nCount <= 0 || m_nSize < nIndex + nCount) {
-        return FALSE;
+        return false;
     }
     int nMoveCount = m_nSize - (nIndex + nCount);
     if (nMoveCount) {
         FXSYS_memmove(m_pData + nIndex * m_nUnitSize, m_pData + (nIndex + nCount) * m_nUnitSize, nMoveCount * m_nUnitSize);
     }
     m_nSize -= nCount;
-    return TRUE;
+    return true;
 }
-FX_BOOL CFX_BasicArray::InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray)
+bool CFX_BasicArray::InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray)
 {
     if (pNewArray == NULL) {
-        return FALSE;
+        return false;
     }
     if (pNewArray->m_nSize == 0) {
-        return TRUE;
+        return true;
     }
     if (!InsertSpaceAt(nStartIndex, pNewArray->m_nSize)) {
-        return FALSE;
+        return false;
     }
     FXSYS_memcpy(m_pData + nStartIndex * m_nUnitSize, pNewArray->m_pData, pNewArray->m_nSize * m_nUnitSize);
-    return TRUE;
+    return true;
 }
 const void* CFX_BasicArray::GetDataPtr(int index) const
 {
@@ -260,7 +260,7 @@ void** CFX_BaseSegmentedArray::GetIndex(int seg_index) const
     }
     return pSpot;
 }
-void* CFX_BaseSegmentedArray::IterateSegment(const uint8_t* pSegment, int count, FX_BOOL (*callback)(void* param, void* pData), void* param) const
+void* CFX_BaseSegmentedArray::IterateSegment(const uint8_t* pSegment, int count, bool (*callback)(void* param, void* pData), void* param) const
 {
     for (int i = 0; i < count; i ++) {
         if (!callback(param, (void*)(pSegment + i * m_UnitSize))) {
@@ -269,7 +269,7 @@ void* CFX_BaseSegmentedArray::IterateSegment(const uint8_t* pSegment, int count,
     }
     return NULL;
 }
-void* CFX_BaseSegmentedArray::IterateIndex(int level, int& start, void** pIndex, FX_BOOL (*callback)(void* param, void* pData), void* param) const
+void* CFX_BaseSegmentedArray::IterateIndex(int level, int& start, void** pIndex, bool (*callback)(void* param, void* pData), void* param) const
 {
     if (level == 0) {
         int count = m_DataSize - start;
@@ -290,7 +290,7 @@ void* CFX_BaseSegmentedArray::IterateIndex(int level, int& start, void** pIndex,
     }
     return NULL;
 }
-void* CFX_BaseSegmentedArray::Iterate(FX_BOOL (*callback)(void* param, void* pData), void* param) const
+void* CFX_BaseSegmentedArray::Iterate(bool (*callback)(void* param, void* pData), void* param) const
 {
     if (m_pIndex == NULL) {
         return NULL;

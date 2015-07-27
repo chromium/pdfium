@@ -15,14 +15,14 @@ public:
     CPDF_PageOrganizer();
     ~CPDF_PageOrganizer();
 
-    FX_BOOL PDFDocInit(CPDF_Document* pDestPDFDoc, CPDF_Document* pSrcPDFDoc);
-    FX_BOOL ExportPage(CPDF_Document* pSrcPDFDoc,
+    bool PDFDocInit(CPDF_Document* pDestPDFDoc, CPDF_Document* pSrcPDFDoc);
+    bool ExportPage(CPDF_Document* pSrcPDFDoc,
                        CFX_WordArray* nPageNum,
                        CPDF_Document* pDestPDFDoc,
                        int nIndex);
     CPDF_Object* PageDictGetInheritableTag(CPDF_Dictionary* pDict,
                                            CFX_ByteString nSrctag);
-    FX_BOOL UpdateReference(CPDF_Object* pObj,
+    bool UpdateReference(CPDF_Object* pObj,
                             CPDF_Document* pDoc,
                             ObjectNumberMap* pObjNumberMap);
     FX_DWORD GetNewObjId(CPDF_Document* pDoc,
@@ -39,21 +39,21 @@ CPDF_PageOrganizer::~CPDF_PageOrganizer()
 {
 }
 
-FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
+bool CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
                                        CPDF_Document* pSrcPDFDoc)
 {
     if (!pDestPDFDoc || !pSrcPDFDoc)
-        return FALSE;
+        return false;
 
     CPDF_Dictionary* pNewRoot = pDestPDFDoc->GetRoot();
     if (!pNewRoot)
-        return FALSE;
+        return false;
 
     //Set the document information////////////////////////////////////////////
 
     CPDF_Dictionary* DInfoDict = pDestPDFDoc->GetInfo();
     if (!DInfoDict)
-        return FALSE;
+        return false;
 
     CFX_ByteString producerstr;
     producerstr.Format("PDFium");
@@ -89,10 +89,10 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
         pNewPages->SetAt("Count", new CPDF_Number(0));
     }
 
-    return TRUE;
+    return true;
 }
 
-FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
+bool CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
                                        CFX_WordArray* nPageNum,
                                        CPDF_Document* pDestPDFDoc,
                                        int nIndex)
@@ -106,7 +106,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
         CPDF_Dictionary* pSrcPageDict =
             pSrcPDFDoc->GetPage(nPageNum->GetAt(i) - 1);
         if (!pSrcPageDict || !pCurPageDict)
-            return FALSE;
+            return false;
 
         // Clone the page dictionary///////////
         FX_POSITION SrcPos = pSrcPageDict->GetStartPos();
@@ -151,7 +151,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
         if (!pCurPageDict->KeyExist("Resources")) {
             pInheritable = PageDictGetInheritableTag(pSrcPageDict, "Resources");
             if (!pInheritable)
-                return FALSE;
+                return false;
             pCurPageDict->SetAt("Resources", pInheritable->Clone());
         }
         //3 CropBox  //Optional
@@ -178,7 +178,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
         ++curpage;
     }
 
-    return TRUE;
+    return true;
 }
 
 CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
@@ -220,7 +220,7 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
     return nullptr;
 }
 
-FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
+bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
                                             CPDF_Document* pDoc,
                                             ObjectNumberMap* pObjNumberMap)
 {
@@ -229,7 +229,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
             CPDF_Reference* pReference = (CPDF_Reference*)pObj;
             FX_DWORD newobjnum = GetNewObjId(pDoc, pObjNumberMap, pReference);
             if (newobjnum == 0)
-                return FALSE;
+                return false;
             pReference->SetRef(pDoc, newobjnum);
             break;
         }
@@ -249,7 +249,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
                     if (!UpdateReference(pNextObj, pDoc, pObjNumberMap))
                       pDict->RemoveAt(key);
                 } else {
-                    return FALSE;
+                    return false;
                 }
           }
           break;
@@ -260,9 +260,9 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
             for (FX_DWORD i = 0; i < count; ++i) {
                 CPDF_Object* pNextObj = pArray->GetElement(i);
                 if (!pNextObj)
-                    return FALSE;
+                    return false;
                 if (!UpdateReference(pNextObj, pDoc, pObjNumberMap))
-                    return FALSE;
+                    return false;
             }
             break;
         }
@@ -271,9 +271,9 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
             CPDF_Dictionary* pDict = pStream->GetDict();
             if (pDict) {
                 if (!UpdateReference(pDict, pDoc, pObjNumberMap))
-                    return FALSE;
+                    return false;
             } else {
-                return FALSE;
+                return false;
             }
             break;
         }
@@ -281,7 +281,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
             break;
     }
 
-    return TRUE;
+    return true;
 }
 
 FX_DWORD CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
@@ -341,7 +341,7 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
         CFX_ByteString cbCompareString("0123456789-,");
         for (int i = 0; i < nLength; ++i) {
             if (cbCompareString.Find(rangstring[i]) == -1)
-                return FALSE;
+                return false;
         }
         CFX_ByteString cbMidRange;
         int nStringFrom = 0;
@@ -355,23 +355,23 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
             if (nMid == -1) {
                 long lPageNum = atol(cbMidRange);
                 if (lPageNum <= 0 || lPageNum > nCount)
-                    return FALSE;
+                    return false;
                 pageArray->Add((FX_WORD)lPageNum);
             } else {
                 int nStartPageNum = atol(cbMidRange.Mid(0, nMid));
                 if (nStartPageNum == 0)
-                    return FALSE;
+                    return false;
 
                 ++nMid;
                 int nEnd = cbMidRange.GetLength() - nMid;
                 if (nEnd == 0)
-                    return FALSE;
+                    return false;
 
                 int nEndPageNum = atol(cbMidRange.Mid(nMid, nEnd));
                 if (nStartPageNum < 0 ||
                     nStartPageNum >nEndPageNum ||
                     nEndPageNum > nCount) {
-                    return FALSE;
+                    return false;
                 }
                 for (int i = nStartPageNum; i <= nEndPageNum; ++i) {
                     pageArray->Add(i);
@@ -380,7 +380,7 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
             nStringFrom = nStringTo + 1;
         }
     }
-    return TRUE;
+    return true;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
@@ -389,14 +389,14 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
                                              int index)
 {
     if (!dest_doc || !src_doc)
-        return FALSE;
+        return false;
 
     CFX_WordArray pageArray;
     CPDF_Document* pSrcDoc = (CPDF_Document*)src_doc;
     int nCount = pSrcDoc->GetPageCount();
     if (pagerange) {
         if (!ParserPageRangeString(pagerange,&pageArray,nCount))
-            return FALSE;
+            return false;
     } else {
         for (int i = 1; i <= nCount; ++i) {
             pageArray.Add(i);
@@ -421,12 +421,12 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc,
     CPDF_Dictionary* pSrcDict = pSrcDoc->GetRoot();
     pSrcDict = pSrcDict->GetDict(FX_BSTRC("ViewerPreferences"));;
     if (!pSrcDict)
-        return FALSE;
+        return false;
 
     CPDF_Document* pDstDoc = (CPDF_Document*)dest_doc;
     CPDF_Dictionary* pDstDict = pDstDoc->GetRoot();
     if (!pDstDict)
-        return FALSE;
-    pDstDict->SetAt(FX_BSTRC("ViewerPreferences"), pSrcDict->Clone(TRUE));
-    return TRUE;
+        return false;
+    pDstDict->SetAt(FX_BSTRC("ViewerPreferences"), pSrcDict->Clone(true));
+    return true;
 }

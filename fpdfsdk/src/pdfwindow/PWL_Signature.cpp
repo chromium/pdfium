@@ -70,9 +70,9 @@ CPWL_Signature::CPWL_Signature() :
 	m_pText(NULL),
 	m_pDescription(NULL),
 	m_pImage(NULL),
-	m_bTextExist(TRUE),
-	m_bImageExist(FALSE),
-	m_bFlagExist(TRUE)
+	m_bTextExist(true),
+	m_bImageExist(false),
+	m_bFlagExist(true)
 {
 }
 
@@ -80,21 +80,21 @@ CPWL_Signature::~CPWL_Signature()
 {
 }
 
-void CPWL_Signature::SetTextFlag(FX_BOOL bTextExist)
+void CPWL_Signature::SetTextFlag(bool bTextExist)
 {
 	m_bTextExist = bTextExist;
 
 	RePosChildWnd();
 }
 
-void CPWL_Signature::SetImageFlag(FX_BOOL bImageExist)
+void CPWL_Signature::SetImageFlag(bool bImageExist)
 {
 	m_bImageExist = bImageExist;
 
 	RePosChildWnd();
 }
 
-void CPWL_Signature::SetFoxitFlag(FX_BOOL bFlagExist)
+void CPWL_Signature::SetFoxitFlag(bool bFlagExist)
 {
 	m_bFlagExist = bFlagExist;
 }
@@ -135,7 +135,7 @@ void CPWL_Signature::RePosChildWnd()
 	CPDF_Rect rcText = rcClient;
 	CPDF_Rect rcDescription = rcClient;
 
-	FX_BOOL bTextVisible = m_bTextExist && m_pText->GetText().GetLength() > 0;
+	bool bTextVisible = m_bTextExist && m_pText->GetText().GetLength() > 0;
 
 	if ((bTextVisible || m_bImageExist) &&
 		m_pDescription->GetText().GetLength() > 0)
@@ -155,9 +155,9 @@ void CPWL_Signature::RePosChildWnd()
 	m_pText->SetVisible(bTextVisible);
 	m_pImage->SetVisible(m_bImageExist);
 
-	m_pText->Move(rcText, TRUE, FALSE);
-	m_pImage->Move(rcText, TRUE, FALSE);
-	m_pDescription->Move(rcDescription, TRUE, FALSE);
+	m_pText->Move(rcText, true, false);
+	m_pImage->Move(rcText, true, false);
+	m_pDescription->Move(rcDescription, true, false);
 }
 
 void CPWL_Signature::CreateChildWnd(const PWL_CREATEPARAM & cp)

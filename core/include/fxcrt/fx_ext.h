@@ -21,11 +21,11 @@ FX_WCHAR*		FXSYS_wcsncpy(FX_WCHAR* dstStr, const FX_WCHAR* srcStr, size_t count)
 int32_t		FXSYS_wcsnicmp(const FX_WCHAR* s1, const FX_WCHAR* s2, size_t count);
 int32_t		FXSYS_strnicmp(const FX_CHAR* s1, const FX_CHAR* s2, size_t count);
 
-inline FX_BOOL	FXSYS_islower(int32_t ch)
+inline bool	FXSYS_islower(int32_t ch)
 {
     return ch >= 'a' && ch <= 'z';
 }
-inline FX_BOOL	FXSYS_isupper(int32_t ch)
+inline bool	FXSYS_isupper(int32_t ch)
 {
     return ch >= 'A' && ch <= 'Z';
 }
@@ -38,8 +38,8 @@ inline int32_t FXSYS_toupper(int32_t ch)
     return ch < 'a' || ch > 'z' ? ch : (ch - 0x20);
 }
 
-FX_DWORD	FX_HashCode_String_GetA(const FX_CHAR* pStr, int32_t iLength, FX_BOOL bIgnoreCase = FALSE);
-FX_DWORD	FX_HashCode_String_GetW(const FX_WCHAR* pStr, int32_t iLength, FX_BOOL bIgnoreCase = FALSE);
+FX_DWORD	FX_HashCode_String_GetA(const FX_CHAR* pStr, int32_t iLength, bool bIgnoreCase = false);
+FX_DWORD	FX_HashCode_String_GetW(const FX_WCHAR* pStr, int32_t iLength, bool bIgnoreCase = false);
 
 #ifdef __cplusplus
 }

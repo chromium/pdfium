@@ -14,7 +14,7 @@ class CFSDK_UnsupportInfo_Adapter
 {
 public:
     CFSDK_UnsupportInfo_Adapter(UNSUPPORT_INFO* unsp_info){ m_unsp_info = unsp_info;}
-//  FX_BOOL NeedToPauseNow();
+//  bool NeedToPauseNow();
     void ReportError(int nErrorType);
 
 private:
@@ -35,25 +35,25 @@ void FreeUnsupportInfo(void* pData)
     delete pAdapter;
 }
 
-FX_BOOL FPDF_UnSupportError(int nError)
+bool FPDF_UnSupportError(int nError)
 {
     CFSDK_UnsupportInfo_Adapter * pAdapter = (CFSDK_UnsupportInfo_Adapter *)CPDF_ModuleMgr::Get()->GetPrivateData((void *)FPDFSDK_UNSUPPORT_CALL);
 
     if(!pAdapter)
-        return FALSE;
+        return false;
     pAdapter->ReportError(nError);
-    return TRUE;
+    return true;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info)
 {
     if (!unsp_info || unsp_info->version!=1)
-        return FALSE;
+        return false;
     CFSDK_UnsupportInfo_Adapter * pAdapter = new CFSDK_UnsupportInfo_Adapter(unsp_info);
 
     CPDF_ModuleMgr::Get()->SetPrivateData((void *)FPDFSDK_UNSUPPORT_CALL,pAdapter, &FreeUnsupportInfo);
 
-    return TRUE;
+    return true;
 }
 
 void CheckUnSupportAnnot(CPDF_Document * pDoc, CPDF_Annot* pPDFAnnot)
@@ -104,7 +104,7 @@ void CheckUnSupportAnnot(CPDF_Document * pDoc, CPDF_Annot* pPDFAnnot)
 
 }
 
-FX_BOOL CheckSharedForm(CXML_Element * pElement, CFX_ByteString cbName)
+bool CheckSharedForm(CXML_Element * pElement, CFX_ByteString cbName)
 {
     int count = pElement->CountAttrs();
     int i=0;
@@ -143,10 +143,10 @@ FX_BOOL CheckSharedForm(CXML_Element * pElement, CFX_ByteString cbName)
         {
             CXML_Element * pChild = pElement->GetElement(i);
             if(CheckSharedForm(pChild, cbName))
-                return TRUE;
+                return true;
         }
     }
-    return FALSE;
+    return false;
 }
 
 void CheckUnSupportError(CPDF_Document * pDoc, FX_DWORD err_code)
@@ -206,7 +206,7 @@ void CheckUnSupportError(CPDF_Document * pDoc, FX_DWORD err_code)
         CheckSharedForm(pElement, "workflowType");
 
     // XFA Forms
-    CPDF_InterForm * pInterForm = new CPDF_InterForm(pDoc,FALSE);
+    CPDF_InterForm * pInterForm = new CPDF_InterForm(pDoc,false);
     if (pInterForm->HasXFAForm())
     {
         FPDF_UnSupportError(FPDF_UNSP_DOC_XFAFORM);

@@ -13,8 +13,8 @@ CFX_Font::CFX_Font()
 {
     m_pSubstFont = NULL;
     m_Face = NULL;
-    m_bEmbedded = FALSE;
-    m_bVertical = FALSE;
+    m_bEmbedded = false;
+    m_bVertical = false;
     m_pFontData = NULL;
     m_pFontDataAllocation = NULL;
     m_dwSize = 0;
@@ -24,7 +24,7 @@ CFX_Font::CFX_Font()
     m_pPlatformFontCollection = NULL;
     m_pDwFont = NULL;
     m_hHandle = NULL;
-    m_bDwLoaded = FALSE;
+    m_bDwLoaded = false;
 }
 CFX_Font::~CFX_Font()
 {
@@ -61,10 +61,10 @@ void CFX_Font::DeleteFace()
     FXFT_Done_Face(m_Face);
     m_Face = NULL;
 }
-FX_BOOL CFX_Font::LoadSubst(const CFX_ByteString& face_name, FX_BOOL bTrueType, FX_DWORD flags,
-                            int weight, int italic_angle, int CharsetCP, FX_BOOL bVertical)
+bool CFX_Font::LoadSubst(const CFX_ByteString& face_name, bool bTrueType, FX_DWORD flags,
+                            int weight, int italic_angle, int CharsetCP, bool bVertical)
 {
-    m_bEmbedded = FALSE;
+    m_bEmbedded = false;
     m_bVertical = bVertical;
     m_pSubstFont = new CFX_SubstFont;
     m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(face_name, bTrueType, flags, weight, italic_angle,
@@ -79,7 +79,7 @@ FX_BOOL CFX_Font::LoadSubst(const CFX_ByteString& face_name, FX_BOOL bTrueType, 
         m_pFontData = FXFT_Get_Face_Stream_Base(m_Face);
         m_dwSize = FXFT_Get_Face_Stream_Size(m_Face);
     }
-    return TRUE;
+    return true;
 }
 extern "C" {
     unsigned long _FTStreamRead(FXFT_Stream stream, unsigned long offset,
@@ -99,7 +99,7 @@ extern "C" {
     {
     }
 };
-FX_BOOL _LoadFile(FXFT_Library library, FXFT_Face* Face, IFX_FileRead* pFile, FXFT_Stream* stream)
+bool _LoadFile(FXFT_Library library, FXFT_Face* Face, IFX_FileRead* pFile, FXFT_Stream* stream)
 {
     FXFT_Stream stream1 = (FXFT_Stream)FX_Alloc(uint8_t, sizeof (FXFT_StreamRec));
     stream1->base = NULL;
@@ -113,16 +113,16 @@ FX_BOOL _LoadFile(FXFT_Library library, FXFT_Face* Face, IFX_FileRead* pFile, FX
     args.stream = stream1;
     if (FXFT_Open_Face(library, &args, 0, Face)) {
         FX_Free(stream1);
-        return FALSE;
+        return false;
     }
     if (stream) {
         *stream = stream1;
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL CFX_Font::LoadFile(IFX_FileRead* pFile)
+bool CFX_Font::LoadFile(IFX_FileRead* pFile)
 {
-    m_bEmbedded = FALSE;
+    m_bEmbedded = false;
     FXFT_Library library;
     if (CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary == NULL) {
         FXFT_Init_FreeType(&CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary);
@@ -130,11 +130,11 @@ FX_BOOL CFX_Font::LoadFile(IFX_FileRead* pFile)
     library = CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary;
     FXFT_Stream stream = NULL;
     if (!_LoadFile(library, &m_Face, pFile, &stream)) {
-        return FALSE;
+        return false;
     }
     m_pOwnedStream = stream;
     FXFT_Set_Pixel_Sizes(m_Face, 0, 64);
-    return TRUE;
+    return true;
 }
 int CFX_Font::GetGlyphWidth(FX_DWORD glyph_index)
 {
@@ -169,20 +169,20 @@ static FXFT_Face FT_LoadFont(uint8_t* pData, int size)
     }
     return face;
 }
-FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, FX_DWORD size)
+bool CFX_Font::LoadEmbedded(const uint8_t* data, FX_DWORD size)
 {
     m_pFontDataAllocation = FX_Alloc(uint8_t, size);
     FXSYS_memcpy(m_pFontDataAllocation, data, size);
     m_Face = FT_LoadFont((uint8_t*)m_pFontDataAllocation, size);
     m_pFontData = (uint8_t*)m_pFontDataAllocation;
-    m_bEmbedded = TRUE;
+    m_bEmbedded = true;
     m_dwSize = size;
     return m_Face != NULL;
 }
-FX_BOOL CFX_Font::IsTTFont()
+bool CFX_Font::IsTTFont()
 {
     if (m_Face == NULL) {
-        return FALSE;
+        return false;
     }
     return FXFT_Is_Face_TT_OT(m_Face) == FXFT_FACE_FLAG_SFNT;
 }
@@ -202,25 +202,25 @@ int CFX_Font::GetDescent() const
     int descent = EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face), FXFT_Get_Face_Descender(m_Face));
     return descent;
 }
-FX_BOOL CFX_Font::GetGlyphBBox(FX_DWORD glyph_index, FX_RECT &bbox)
+bool CFX_Font::GetGlyphBBox(FX_DWORD glyph_index, FX_RECT &bbox)
 {
     if (m_Face == NULL) {
-        return FALSE;
+        return false;
     }
     if (FXFT_Is_Face_Tricky(m_Face)) {
         int error = FXFT_Set_Char_Size(m_Face, 0, 1000 * 64, 72, 72);
         if (error) {
-            return FALSE;
+            return false;
         }
         error = FXFT_Load_Glyph(m_Face, glyph_index, FXFT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
         if (error) {
-            return FALSE;
+            return false;
         }
         FXFT_BBox cbox;
         FT_Glyph glyph;
         error = FXFT_Get_Glyph(((FXFT_Face)m_Face)->glyph, &glyph);
         if (error) {
-            return FALSE;
+            return false;
         }
         FXFT_Glyph_Get_CBox(glyph, FXFT_GLYPH_BBOX_PIXELS, &cbox);
         int pixel_size_x = ((FXFT_Face)m_Face)->size->metrics.x_ppem,
@@ -246,7 +246,7 @@ FX_BOOL CFX_Font::GetGlyphBBox(FX_DWORD glyph_index, FX_RECT &bbox)
         return FXFT_Set_Pixel_Sizes(m_Face, 0, 64) == 0;
     }
     if (FXFT_Load_Glyph(m_Face, glyph_index, FXFT_LOAD_NO_SCALE | FXFT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH)) {
-        return FALSE;
+        return false;
     }
     int em = FXFT_Get_Face_UnitsPerEM(m_Face);
     if (em == 0) {
@@ -260,34 +260,34 @@ FX_BOOL CFX_Font::GetGlyphBBox(FX_DWORD glyph_index, FX_RECT &bbox)
         bbox.right = (FXFT_Get_Glyph_HoriBearingX(m_Face) + FXFT_Get_Glyph_Width(m_Face)) * 1000 / em;
         bbox.bottom = (FXFT_Get_Glyph_HoriBearingY(m_Face)) * 1000 / em;
     }
-    return TRUE;
+    return true;
 }
-FX_BOOL CFX_Font::IsItalic()
+bool CFX_Font::IsItalic()
 {
     if (m_Face == NULL) {
-        return FALSE;
+        return false;
     }
-    FX_BOOL ret = FXFT_Is_Face_Italic(m_Face) == FXFT_STYLE_FLAG_ITALIC;
+    bool ret = FXFT_Is_Face_Italic(m_Face) == FXFT_STYLE_FLAG_ITALIC;
     if (!ret) {
         CFX_ByteString str(FXFT_Get_Face_Style_Name(m_Face));
         str.MakeLower();
         if (str.Find("italic") != -1) {
-            ret = TRUE;
+            ret = true;
         }
     }
     return ret;
 }
-FX_BOOL CFX_Font::IsBold()
+bool CFX_Font::IsBold()
 {
     if (m_Face == NULL) {
-        return FALSE;
+        return false;
     }
     return FXFT_Is_Face_Bold(m_Face) == FXFT_STYLE_FLAG_BOLD;
 }
-FX_BOOL CFX_Font::IsFixedWidth()
+bool CFX_Font::IsFixedWidth()
 {
     if (m_Face == NULL) {
-        return FALSE;
+        return false;
     }
     return FXFT_Is_Face_fixedwidth(m_Face);
 }
@@ -331,10 +331,10 @@ CFX_ByteString CFX_Font::GetFaceName() const
     }
     return m_pSubstFont->m_Family;
 }
-FX_BOOL CFX_Font::GetBBox(FX_RECT &bbox)
+bool CFX_Font::GetBBox(FX_RECT &bbox)
 {
     if (m_Face == NULL) {
-        return FALSE;
+        return false;
     }
     int em = FXFT_Get_Face_UnitsPerEM(m_Face);
     if (em == 0) {
@@ -348,7 +348,7 @@ FX_BOOL CFX_Font::GetBBox(FX_RECT &bbox)
         bbox.right = FXFT_Get_Face_xMax(m_Face) * 1000 / em;
         bbox.bottom = FXFT_Get_Face_yMax(m_Face) * 1000 / em;
     }
-    return TRUE;
+    return true;
 }
 int CFX_Font::GetHeight()
 {

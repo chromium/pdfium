@@ -61,9 +61,9 @@ class CPDFText_ParseOptions
 public:
 
     CPDFText_ParseOptions();
-    FX_BOOL			m_bGetCharCodeOnly;
-    FX_BOOL			m_bNormalizeObjs;
-    FX_BOOL			m_bOutputHyphen;
+    bool			m_bGetCharCodeOnly;
+    bool			m_bNormalizeObjs;
+    bool			m_bOutputHyphen;
 };
 class IPDF_TextPage
 {
@@ -75,12 +75,12 @@ public:
     static IPDF_TextPage*	CreateTextPage(const CPDF_PageObjects* pObjs, int flags = 0);
     static IPDF_TextPage*	CreateReflowTextPage(IPDF_ReflowedPage* pRefPage);
 
-    virtual void			NormalizeObjects(FX_BOOL bNormalize) = 0;
+    virtual void			NormalizeObjects(bool bNormalize) = 0;
 
-    virtual FX_BOOL			ParseTextPage() = 0;
+    virtual bool			ParseTextPage() = 0;
 
 
-    virtual FX_BOOL			IsParsered() const = 0;
+    virtual bool			IsParsered() const = 0;
 public:
 
     virtual int CharIndexFromTextIndex(int TextIndex) const = 0;
@@ -109,11 +109,11 @@ public:
 
     virtual	void			GetRect(int rectIndex, FX_FLOAT& left, FX_FLOAT& top, FX_FLOAT& right, FX_FLOAT &bottom) const = 0;
 
-    virtual FX_BOOL			GetBaselineRotate(int rectIndex, int& Rotate) = 0;
+    virtual bool			GetBaselineRotate(int rectIndex, int& Rotate) = 0;
 
-    virtual FX_BOOL			GetBaselineRotate(const CFX_FloatRect& rect, int& Rotate) = 0;
+    virtual bool			GetBaselineRotate(const CFX_FloatRect& rect, int& Rotate) = 0;
 
-    virtual	int				CountBoundedSegments(FX_FLOAT left, FX_FLOAT top, FX_FLOAT right, FX_FLOAT bottom, FX_BOOL bContains = FALSE) = 0;
+    virtual	int				CountBoundedSegments(FX_FLOAT left, FX_FLOAT top, FX_FLOAT right, FX_FLOAT bottom, bool bContains = false) = 0;
 
     virtual	void			GetBoundedSegment(int index, int& start, int& count) const = 0;
 
@@ -134,11 +134,11 @@ public:
     static	IPDF_TextPageFind*	CreatePageFind(const IPDF_TextPage* pTextPage);
 public:
 
-    virtual	FX_BOOL				FindFirst(const CFX_WideString& findwhat, int flags, int startPos = 0) = 0;
+    virtual	bool				FindFirst(const CFX_WideString& findwhat, int flags, int startPos = 0) = 0;
 
-    virtual	FX_BOOL				FindNext() = 0;
+    virtual	bool				FindNext() = 0;
 
-    virtual	FX_BOOL				FindPrev() = 0;
+    virtual	bool				FindPrev() = 0;
 
     virtual void				GetRectArray(CFX_RectArray& rects) const = 0;
 
@@ -154,7 +154,7 @@ public:
 
     static	IPDF_LinkExtract*	CreateLinkExtract();
 
-    virtual FX_BOOL				ExtractLinks(const IPDF_TextPage* pTextPage) = 0;
+    virtual bool				ExtractLinks(const IPDF_TextPage* pTextPage) = 0;
 public:
 
     virtual int					CountLinks() const = 0;

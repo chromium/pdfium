@@ -17,15 +17,15 @@ public:
     CFX_GlyphMap();
     ~CFX_GlyphMap();
     void	SetAt(int key, int value);
-    FX_BOOL	Lookup(int key, int &value);
+    bool	Lookup(int key, int &value);
 protected:
     CFX_BinaryBuf	m_Buffer;
 };
 class CFX_CTTGSUBTable
 {
 public:
-    CFX_CTTGSUBTable(void): m_bFeautureMapLoad(FALSE), loaded(false) {};
-    CFX_CTTGSUBTable(FT_Bytes gsub): m_bFeautureMapLoad(FALSE), loaded(false)
+    CFX_CTTGSUBTable(void): m_bFeautureMapLoad(false), loaded(false) {};
+    CFX_CTTGSUBTable(FT_Bytes gsub): m_bFeautureMapLoad(false), loaded(false)
     {
         LoadGSUBTable(gsub);
     }
@@ -395,7 +395,7 @@ private:
         return ret;
     }
     CFX_CMapDWordToDWord m_featureMap;
-    FX_BOOL	m_bFeautureMapLoad;
+    bool	m_bFeautureMapLoad;
     bool loaded;
     struct tt_gsub_header header;
     struct TScriptList ScriptList;
@@ -406,7 +406,7 @@ class CFX_GSUBTable final : public IFX_GSUBTable
 {
 public:
     ~CFX_GSUBTable() override {}
-    virtual FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) override;
+    virtual bool GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) override;
 
     CFX_CTTGSUBTable m_GsubImp;
 };

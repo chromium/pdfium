@@ -9,7 +9,7 @@
 #include <string.h>
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(const JBig2TableLine *pTable, int nLines,
-        FX_BOOL bHTOOB)
+        bool bHTOOB)
 {
     init();
     m_bOK = parseFromStandardTable(pTable, nLines, bHTOOB);
@@ -38,14 +38,14 @@ CJBig2_HuffmanTable::~CJBig2_HuffmanTable()
 }
 void CJBig2_HuffmanTable::init()
 {
-    HTOOB = FALSE;
+    HTOOB = false;
     NTEMP = 0;
     CODES = NULL;
     PREFLEN = NULL;
     RANGELEN = NULL;
     RANGELOW = NULL;
 }
-int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine *pTable, int nLines, FX_BOOL bHTOOB)
+int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine *pTable, int nLines, bool bHTOOB)
 {
     int CURLEN, LENMAX, CURCODE, CURTEMP, i;
     int *LENCOUNT;
@@ -188,7 +188,7 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream *pStream)
     }
     m_pModule->JBig2_Free(LENCOUNT);
     m_pModule->JBig2_Free(FIRSTCODE);
-    return TRUE;
+    return true;
 failed:
-    return FALSE;
+    return false;
 }

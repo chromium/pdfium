@@ -39,13 +39,13 @@ public:
     virtual int32_t		GetAscent() const;
     virtual int32_t		GetDescent() const;
 
-    virtual FX_BOOL			GetGlyphBBox(int32_t iGlyphIndex, FX_RECT &rtBBox);
-    virtual FX_BOOL			GetBBox(FX_RECT &rtBBox);
+    virtual bool			GetGlyphBBox(int32_t iGlyphIndex, FX_RECT &rtBBox);
+    virtual bool			GetBBox(FX_RECT &rtBBox);
 
     virtual int32_t		GetHeight() const;
     virtual int32_t		GetItalicAngle() const;
     virtual FX_DWORD		GetFontData(FX_DWORD dwTable, uint8_t* pBuffer, FX_DWORD dwSize);
-    FX_BOOL					InitFont(CFPF_SkiaFontMgr *pFontMgr, CFPF_SkiaFontDescriptor *pFontDes, const CFX_ByteStringC& bsFamily, FX_DWORD dwStyle, uint8_t uCharset);
+    bool					InitFont(CFPF_SkiaFontMgr *pFontMgr, CFPF_SkiaFontDescriptor *pFontDes, const CFX_ByteStringC& bsFamily, FX_DWORD dwStyle, uint8_t uCharset);
 protected:
     CFPF_SkiaFontMgr		*m_pFontMgr;
     CFPF_SkiaFontDescriptor	*m_pFontDes;

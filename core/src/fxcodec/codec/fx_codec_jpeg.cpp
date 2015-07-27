@@ -78,15 +78,15 @@ extern "C" {
 #define	JPEG_MARKER_AUTHORTIME	(JPEG_APP0 + 3)
 #define	JPEG_MARKER_MAXSIZE	0xFFFF
 #define	JPEG_OVERHEAD_LEN	14
-static	FX_BOOL _JpegEmbedIccProfile(j_compress_ptr cinfo, const uint8_t* icc_buf_ptr, FX_DWORD icc_length)
+static	bool _JpegEmbedIccProfile(j_compress_ptr cinfo, const uint8_t* icc_buf_ptr, FX_DWORD icc_length)
 {
     if(icc_buf_ptr == NULL || icc_length == 0) {
-        return FALSE;
+        return false;
     }
     FX_DWORD icc_segment_size = (JPEG_MARKER_MAXSIZE - 2 - JPEG_OVERHEAD_LEN);
     FX_DWORD icc_segment_num = (icc_length / icc_segment_size) + 1;
     if (icc_segment_num > 255)	{
-        return FALSE;
+        return false;
     }
     FX_DWORD icc_data_length = JPEG_OVERHEAD_LEN + (icc_segment_num > 1 ? icc_segment_size : icc_length);
     uint8_t* icc_data = FX_Alloc(uint8_t, icc_data_length);
@@ -102,7 +102,7 @@ static	FX_BOOL _JpegEmbedIccProfile(j_compress_ptr cinfo, const uint8_t* icc_buf
     FXSYS_memcpy(icc_data + JPEG_OVERHEAD_LEN, icc_buf_ptr + icc_size, icc_length - icc_size);
     jpeg_write_marker(cinfo, JPEG_MARKER_ICC, icc_data, JPEG_OVERHEAD_LEN + icc_length - icc_size);
     FX_Free(icc_data);
-    return TRUE;
+    return true;
 }
 extern "C" {
     static void _dest_do_nothing(j_compress_ptr cinfo) {}
@@ -110,7 +110,7 @@ extern "C" {
 extern "C" {
     static boolean _dest_empty(j_compress_ptr cinfo)
     {
-        return FALSE;
+        return false;
     }
 };
 #define	JPEG_BLOCK_SIZE	1048576
@@ -178,9 +178,9 @@ static void _JpegEncode(const CFX_DIBSource* pSource, uint8_t*& dest_buf, FX_STR
     }
     jpeg_set_defaults(&cinfo);
     if(quality != 75) {
-        jpeg_set_quality(&cinfo, quality, TRUE);
+        jpeg_set_quality(&cinfo, quality, true);
     }
-    jpeg_start_compress(&cinfo, TRUE);
+    jpeg_start_compress(&cinfo, true);
     _JpegEmbedIccProfile(&cinfo, icc_buf, icc_length);
     JSAMPROW row_pointer[1];
     JDIMENSION row;
@@ -221,8 +221,8 @@ static void _JpegEncode(const CFX_DIBSource* pSource, uint8_t*& dest_buf, FX_STR
     }
     dest_size = dest_buf_length - (FX_STRSIZE)dest.free_in_buffer;
 }
-static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf, FX_DWORD src_size, int& width, int& height,
-                             int& num_components, int& bits_per_components, FX_BOOL& color_transform,
+static bool _JpegLoadInfo(const uint8_t* src_buf, FX_DWORD src_size, int& width, int& height,
+                             int& num_components, int& bits_per_components, bool& color_transform,
                              uint8_t** icc_buf_ptr, FX_DWORD* icc_length)
 {
     _JpegScanSOI(src_buf, src_size);
@@ -238,7 +238,7 @@ static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf, FX_DWORD src_size, int& wid
     jmp_buf mark;
     cinfo.client_data = &mark;
     if (setjmp(mark) == -1) {
-        return FALSE;
+        return false;
     }
     jpeg_create_decompress(&cinfo);
     struct jpeg_source_mgr src;
@@ -252,15 +252,15 @@ static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf, FX_DWORD src_size, int& wid
     cinfo.src = &src;
     if (setjmp(mark) == -1) {
         jpeg_destroy_decompress(&cinfo);
-        return FALSE;
+        return false;
     }
     if(icc_buf_ptr && icc_length) {
         jpeg_save_markers(&cinfo, JPEG_MARKER_ICC, JPEG_MARKER_MAXSIZE);
     }
-    int ret = jpeg_read_header(&cinfo, TRUE);
+    int ret = jpeg_read_header(&cinfo, true);
     if (ret != JPEG_HEADER_OK) {
         jpeg_destroy_decompress(&cinfo);
-        return FALSE;
+        return false;
     }
     width = cinfo.image_width;
     height = cinfo.image_height;
@@ -274,21 +274,21 @@ static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf, FX_DWORD src_size, int& wid
         *icc_length = 0;
     }
     jpeg_destroy_decompress(&cinfo);
-    return TRUE;
+    return true;
 }
 class CCodec_JpegDecoder : public CCodec_ScanlineDecoder
 {
 public:
     CCodec_JpegDecoder();
     ~CCodec_JpegDecoder();
-    FX_BOOL				Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height, int nComps,
-                               FX_BOOL ColorTransform, IFX_JpegProvider* pJP);
+    bool				Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height, int nComps,
+                               bool ColorTransform, IFX_JpegProvider* pJP);
     virtual void		Destroy()
     {
         delete this;
     }
     virtual void		v_DownScale(int dest_width, int dest_height);
-    virtual FX_BOOL		v_Rewind();
+    virtual bool		v_Rewind();
     virtual uint8_t*	v_GetNextLine();
     virtual FX_DWORD	GetSrcOffset();
     jmp_buf		m_JmpBuf;
@@ -298,8 +298,8 @@ public:
     const uint8_t*	m_SrcBuf;
     FX_DWORD	m_SrcSize;
     uint8_t*	m_pScanlineBuf;
-    FX_BOOL		InitDecode();
-    FX_BOOL		m_bInited, m_bStarted, m_bJpegTransform;
+    bool		InitDecode();
+    bool		m_bInited, m_bStarted, m_bJpegTransform;
 protected:
     IFX_JpegProvider*	m_pExtProvider;
     void*				m_pExtContext;
@@ -309,8 +309,8 @@ CCodec_JpegDecoder::CCodec_JpegDecoder()
 {
     m_pScanlineBuf = NULL;
     m_DownScale = 1;
-    m_bStarted = FALSE;
-    m_bInited = FALSE;
+    m_bStarted = false;
+    m_bInited = false;
     m_pExtProvider = NULL;
     m_pExtContext = NULL;
     FXSYS_memset(&cinfo, 0, sizeof(cinfo));
@@ -331,31 +331,31 @@ CCodec_JpegDecoder::~CCodec_JpegDecoder()
         jpeg_destroy_decompress(&cinfo);
     }
 }
-FX_BOOL CCodec_JpegDecoder::InitDecode()
+bool CCodec_JpegDecoder::InitDecode()
 {
     cinfo.err = &jerr;
     cinfo.client_data = &m_JmpBuf;
     if (setjmp(m_JmpBuf) == -1) {
-        return FALSE;
+        return false;
     }
     jpeg_create_decompress(&cinfo);
-    m_bInited = TRUE;
+    m_bInited = true;
     cinfo.src = &src;
     src.bytes_in_buffer = m_SrcSize;
     src.next_input_byte = m_SrcBuf;
     if (setjmp(m_JmpBuf) == -1) {
         jpeg_destroy_decompress(&cinfo);
-        m_bInited = FALSE;
-        return FALSE;
+        m_bInited = false;
+        return false;
     }
     cinfo.image_width = m_OrigWidth;
     cinfo.image_height = m_OrigHeight;
-    int ret = jpeg_read_header(&cinfo, TRUE);
+    int ret = jpeg_read_header(&cinfo, true);
     if (ret != JPEG_HEADER_OK) {
-        return FALSE;
+        return false;
     }
     if (cinfo.saw_Adobe_marker) {
-        m_bJpegTransform = TRUE;
+        m_bJpegTransform = true;
     }
     if (cinfo.num_components == 3 && !m_bJpegTransform) {
         cinfo.out_color_space = cinfo.jpeg_color_space;
@@ -365,10 +365,10 @@ FX_BOOL CCodec_JpegDecoder::InitDecode()
     m_OutputWidth = m_OrigWidth;
     m_OutputHeight = m_OrigHeight;
     m_nDefaultScaleDenom = cinfo.scale_denom;
-    return TRUE;
+    return true;
 }
-FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
-                                   int nComps, FX_BOOL ColorTransform, IFX_JpegProvider* pJP)
+bool CCodec_JpegDecoder::Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
+                                   int nComps, bool ColorTransform, IFX_JpegProvider* pJP)
 {
     if (pJP) {
         m_pExtProvider = pJP;
@@ -396,21 +396,21 @@ FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf, FX_DWORD src_size, in
     m_OutputWidth = m_OrigWidth = width;
     m_OutputHeight = m_OrigHeight = height;
     if (!InitDecode()) {
-        return FALSE;
+        return false;
     }
     if (cinfo.num_components < nComps) {
-        return FALSE;
+        return false;
     }
     if ((int)cinfo.image_width < width) {
-        return FALSE;
+        return false;
     }
     m_Pitch = (cinfo.image_width * cinfo.num_components + 3) / 4 * 4;
     m_pScanlineBuf = FX_Alloc(uint8_t, m_Pitch);
     m_nComps = cinfo.num_components;
     m_bpc = 8;
-    m_bColorTransformed = FALSE;
-    m_bStarted = FALSE;
-    return TRUE;
+    m_bColorTransformed = false;
+    m_bStarted = false;
+    return true;
 }
 extern "C" {
     int32_t FX_GetDownsampleRatio(int32_t originWidth, int32_t originHeight, int32_t downsampleWidth, int32_t downsampleHeight)
@@ -445,7 +445,7 @@ void CCodec_JpegDecoder::v_DownScale(int dest_width, int dest_height)
         m_NextLine = -1;
     }
 }
-FX_BOOL CCodec_JpegDecoder::v_Rewind()
+bool CCodec_JpegDecoder::v_Rewind()
 {
     if (m_pExtProvider) {
         return m_pExtProvider->Rewind(m_pExtContext);
@@ -453,25 +453,25 @@ FX_BOOL CCodec_JpegDecoder::v_Rewind()
     if (m_bStarted) {
         jpeg_destroy_decompress(&cinfo);
         if (!InitDecode()) {
-            return FALSE;
+            return false;
         }
     }
     if (setjmp(m_JmpBuf) == -1) {
-        return FALSE;
+        return false;
     }
     cinfo.scale_denom = m_nDefaultScaleDenom * m_DownScale;
     m_OutputWidth = (m_OrigWidth + m_DownScale - 1) / m_DownScale;
     m_OutputHeight = (m_OrigHeight + m_DownScale - 1) / m_DownScale;
     if (!jpeg_start_decompress(&cinfo)) {
         jpeg_destroy_decompress(&cinfo);
-        return FALSE;
+        return false;
     }
     if ((int)cinfo.output_width > m_OrigWidth) {
-        FXSYS_assert(FALSE);
-        return FALSE;
+        FXSYS_assert(false);
+        return false;
     }
-    m_bStarted = TRUE;
-    return TRUE;
+    m_bStarted = true;
+    return true;
 }
 uint8_t* CCodec_JpegDecoder::v_GetNextLine()
 {
@@ -492,7 +492,7 @@ FX_DWORD CCodec_JpegDecoder::GetSrcOffset()
     return (FX_DWORD)(m_SrcSize - src.bytes_in_buffer);
 }
 ICodec_ScanlineDecoder*	CCodec_JpegModule::CreateDecoder(const uint8_t* src_buf, FX_DWORD src_size,
-        int width, int height, int nComps, FX_BOOL ColorTransform)
+        int width, int height, int nComps, bool ColorTransform)
 {
     if (src_buf == NULL || src_size == 0) {
         return NULL;
@@ -504,8 +504,8 @@ ICodec_ScanlineDecoder*	CCodec_JpegModule::CreateDecoder(const uint8_t* src_buf,
     }
     return pDecoder;
 }
-FX_BOOL CCodec_JpegModule::LoadInfo(const uint8_t* src_buf, FX_DWORD src_size, int& width, int& height,
-                                    int& num_components, int& bits_per_components, FX_BOOL& color_transform,
+bool CCodec_JpegModule::LoadInfo(const uint8_t* src_buf, FX_DWORD src_size, int& width, int& height,
+                                    int& num_components, int& bits_per_components, bool& color_transform,
                                     uint8_t** icc_buf_ptr, FX_DWORD* icc_length)
 {
     if (m_pExtProvider) {
@@ -515,17 +515,17 @@ FX_BOOL CCodec_JpegModule::LoadInfo(const uint8_t* src_buf, FX_DWORD src_size, i
     }
     return _JpegLoadInfo(src_buf, src_size, width, height, num_components, bits_per_components, color_transform, icc_buf_ptr, icc_length);
 }
-FX_BOOL CCodec_JpegModule::Encode(const CFX_DIBSource* pSource, uint8_t*& dest_buf, FX_STRSIZE& dest_size, int quality, const uint8_t* icc_buf, FX_DWORD icc_length)
+bool CCodec_JpegModule::Encode(const CFX_DIBSource* pSource, uint8_t*& dest_buf, FX_STRSIZE& dest_size, int quality, const uint8_t* icc_buf, FX_DWORD icc_length)
 {
     if (m_pExtProvider) {
         return m_pExtProvider->Encode(pSource, dest_buf, dest_size, quality, icc_buf, icc_length);
     }
     if(pSource->GetBPP() < 8 || pSource->GetPalette() != NULL) {
         ASSERT(pSource->GetBPP() >= 8 && pSource->GetPalette() == NULL);
-        return FALSE;
+        return false;
     }
     _JpegEncode(pSource, dest_buf, dest_size, quality, icc_buf, icc_length);
-    return TRUE;
+    return true;
 }
 struct FXJPEG_Context {
     jmp_buf			m_JumpMark;
@@ -653,14 +653,14 @@ int CCodec_JpegModule::StartScanline(void* pContext, int down_scale)
     p->m_Info.scale_denom = down_scale;
     return jpeg_start_decompress(&p->m_Info);
 }
-FX_BOOL CCodec_JpegModule::ReadScanline(void* pContext, unsigned char* dest_buf)
+bool CCodec_JpegModule::ReadScanline(void* pContext, unsigned char* dest_buf)
 {
     if (m_pExtProvider) {
         return m_pExtProvider->ReadScanline(pContext, dest_buf);
     }
     FXJPEG_Context* p = (FXJPEG_Context*)pContext;
     if (setjmp(p->m_JumpMark) == -1) {
-        return FALSE;
+        return false;
     }
     int nlines = jpeg_read_scanlines(&p->m_Info, &dest_buf, 1);
     return nlines == 1;

@@ -218,9 +218,9 @@ public:
 
     CFX_ArchiveLoader&		operator >> (CFX_WideString& wstr);
 
-    FX_BOOL					IsEOF();
+    bool					IsEOF();
 
-    FX_BOOL					Read(void* pBuf, FX_DWORD dwSize);
+    bool					Read(void* pBuf, FX_DWORD dwSize);
 protected:
 
     FX_DWORD				m_LoadingPos;
@@ -239,7 +239,7 @@ public:
 
     virtual void Clear();
 
-    FX_BOOL Flush();
+    bool Flush();
 
     int32_t AppendBlock(const void* pBuf, size_t size);
 
@@ -252,7 +252,7 @@ public:
 
 protected:
 
-    virtual FX_BOOL DoWork(const void* pBuf, size_t size) = 0;
+    virtual bool DoWork(const void* pBuf, size_t size) = 0;
 
     FX_STRSIZE m_BufSize;
 
@@ -269,18 +269,18 @@ public:
 
     void Clear() override;
 
-    FX_BOOL AttachFile(IFX_StreamWrite *pFile, FX_BOOL bTakeover = FALSE);
+    bool AttachFile(IFX_StreamWrite *pFile, bool bTakeover = false);
 
-    FX_BOOL AttachFile(const FX_WCHAR* filename);
+    bool AttachFile(const FX_WCHAR* filename);
 
-    FX_BOOL AttachFile(const FX_CHAR* filename);
+    bool AttachFile(const FX_CHAR* filename);
 
 private:
-    FX_BOOL DoWork(const void* pBuf, size_t size) override;
+    bool DoWork(const void* pBuf, size_t size) override;
 
     IFX_StreamWrite* m_pFile;
 
-    FX_BOOL m_bTakeover;
+    bool m_bTakeover;
 };
 
 struct CFX_CharMap {
@@ -362,17 +362,17 @@ protected:
 
     ~CFX_BasicArray();
 
-    FX_BOOL			SetSize(int nNewSize);
+    bool			SetSize(int nNewSize);
 
-    FX_BOOL			Append(const CFX_BasicArray& src);
+    bool			Append(const CFX_BasicArray& src);
 
-    FX_BOOL			Copy(const CFX_BasicArray& src);
+    bool			Copy(const CFX_BasicArray& src);
 
     uint8_t*		InsertSpaceAt(int nIndex, int nCount);
 
-    FX_BOOL			RemoveAt(int nIndex, int nCount);
+    bool			RemoveAt(int nIndex, int nCount);
 
-    FX_BOOL			InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray);
+    bool			InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray);
 
     const void*		GetDataPtr(int index) const;
 protected:
@@ -401,7 +401,7 @@ public:
         return m_nSize - 1;
     }
 
-    FX_BOOL		SetSize(int nNewSize)
+    bool		SetSize(int nNewSize)
     {
         return CFX_BasicArray::SetSize(nNewSize);
     }
@@ -419,13 +419,13 @@ public:
         return ((const TYPE*)m_pData)[nIndex];
     }
 
-    FX_BOOL		SetAt(int nIndex, TYPE newElement)
+    bool		SetAt(int nIndex, TYPE newElement)
     {
         if (nIndex < 0 || nIndex >= m_nSize) {
-            return FALSE;
+            return false;
         }
         ((TYPE*)m_pData)[nIndex] = newElement;
-        return TRUE;
+        return true;
     }
 
     TYPE&		ElementAt(int nIndex)
@@ -446,36 +446,36 @@ public:
         return (TYPE*)m_pData;
     }
 
-    FX_BOOL		SetAtGrow(int nIndex, TYPE newElement)
+    bool		SetAtGrow(int nIndex, TYPE newElement)
     {
         if (nIndex < 0) {
-            return FALSE;
+            return false;
         }
         if (nIndex >= m_nSize)
             if (!SetSize(nIndex + 1)) {
-                return FALSE;
+                return false;
             }
         ((TYPE*)m_pData)[nIndex] = newElement;
-        return TRUE;
+        return true;
     }
 
-    FX_BOOL		Add(TYPE newElement)
+    bool		Add(TYPE newElement)
     {
         if (m_nSize < m_nMaxSize) {
             m_nSize ++;
         } else if (!SetSize(m_nSize + 1)) {
-            return FALSE;
+            return false;
         }
         ((TYPE*)m_pData)[m_nSize - 1] = newElement;
-        return TRUE;
+        return true;
     }
 
-    FX_BOOL		Append(const CFX_ArrayTemplate& src)
+    bool		Append(const CFX_ArrayTemplate& src)
     {
         return CFX_BasicArray::Append(src);
     }
 
-    FX_BOOL		Copy(const CFX_ArrayTemplate& src)
+    bool		Copy(const CFX_ArrayTemplate& src)
     {
         return CFX_BasicArray::Copy(src);
     }
@@ -511,23 +511,23 @@ public:
         return ((TYPE*)m_pData)[nIndex];
     }
 
-    FX_BOOL		InsertAt(int nIndex, TYPE newElement, int nCount = 1)
+    bool		InsertAt(int nIndex, TYPE newElement, int nCount = 1)
     {
         if (!InsertSpaceAt(nIndex, nCount)) {
-            return FALSE;
+            return false;
         }
         while (nCount--) {
             ((TYPE*)m_pData)[nIndex++] = newElement;
         }
-        return TRUE;
+        return true;
     }
 
-    FX_BOOL		RemoveAt(int nIndex, int nCount = 1)
+    bool		RemoveAt(int nIndex, int nCount = 1)
     {
         return CFX_BasicArray::RemoveAt(nIndex, nCount);
     }
 
-    FX_BOOL		InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray)
+    bool		InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray)
     {
         return CFX_BasicArray::InsertAt(nStartIndex, pNewArray);
     }
@@ -700,7 +700,7 @@ public:
         return m_UnitSize;
     }
 
-    void*	Iterate(FX_BOOL (*callback)(void* param, void* pData), void* param) const;
+    void*	Iterate(bool (*callback)(void* param, void* pData), void* param) const;
 private:
 
     int				m_UnitSize;
@@ -715,8 +715,8 @@ private:
 
     void*			m_pIndex;
     void**	GetIndex(int seg_index) const;
-    void*	IterateIndex(int level, int& start, void** pIndex, FX_BOOL (*callback)(void* param, void* pData), void* param) const;
-    void*	IterateSegment(const uint8_t* pSegment, int count, FX_BOOL (*callback)(void* param, void* pData), void* param) const;
+    void*	IterateIndex(int level, int& start, void** pIndex, bool (*callback)(void* param, void* pData), void* param) const;
+    void*	IterateSegment(const uint8_t* pSegment, int count, bool (*callback)(void* param, void* pData), void* param) const;
 };
 template <class ElementType>
 class CFX_SegmentedArray : public CFX_BaseSegmentedArray
@@ -798,12 +798,12 @@ public:
         return m_nCount;
     }
 
-    FX_BOOL IsEmpty() const
+    bool IsEmpty() const
     {
         return m_nCount == 0;
     }
 
-    FX_BOOL Lookup(void* key, void*& rValue) const;
+    bool Lookup(void* key, void*& rValue) const;
 
     void* GetValueAt(void* key) const;
 
@@ -814,7 +814,7 @@ public:
         (*this)[key] = newValue;
     }
 
-    FX_BOOL RemoveKey(void* key);
+    bool RemoveKey(void* key);
 
     void RemoveAll();
 
@@ -830,7 +830,7 @@ public:
         return m_nHashTableSize;
     }
 
-    void InitHashTable(FX_DWORD hashSize, FX_BOOL bAllocNow = TRUE);
+    void InitHashTable(FX_DWORD hashSize, bool bAllocNow = true);
 protected:
 
     CAssoc** m_pHashTable;
@@ -858,7 +858,7 @@ class CFX_CMapDWordToDWord
 {
 public:
 
-    FX_BOOL			Lookup(FX_DWORD key, FX_DWORD& value) const;
+    bool			Lookup(FX_DWORD key, FX_DWORD& value) const;
 
     void			SetAt(FX_DWORD key, FX_DWORD value);
 
@@ -893,12 +893,12 @@ public:
         return m_nCount;
     }
 
-    FX_BOOL IsEmpty() const
+    bool IsEmpty() const
     {
         return m_nCount == 0;
     }
 
-    FX_BOOL Lookup(const CFX_ByteStringC& key, void*& rValue) const;
+    bool Lookup(const CFX_ByteStringC& key, void*& rValue) const;
 
     void*& operator[](const CFX_ByteStringC& key);
 
@@ -907,7 +907,7 @@ public:
         (*this)[key] = newValue;
     }
 
-    FX_BOOL RemoveKey(const CFX_ByteStringC& key);
+    bool RemoveKey(const CFX_ByteStringC& key);
 
     void RemoveAll();
 
@@ -925,7 +925,7 @@ public:
         return m_nHashTableSize;
     }
 
-    void InitHashTable(FX_DWORD hashSize, FX_BOOL bAllocNow = TRUE);
+    void InitHashTable(FX_DWORD hashSize, bool bAllocNow = true);
 
     FX_DWORD HashKey(const CFX_ByteStringC& key) const;
 protected:
@@ -966,7 +966,7 @@ public:
 
     void*		GetNextValue(FX_POSITION& rNextPosition) const;
 
-    FX_BOOL			Lookup(const CFX_ByteStringC& key, void*& rValue) const;
+    bool			Lookup(const CFX_ByteStringC& key, void*& rValue) const;
 
     void			SetAt(const CFX_ByteStringC& key, void* value);
 
@@ -1090,7 +1090,7 @@ struct FX_PRIVATEDATA {
 
     PD_CALLBACK_FREEDATA	m_pCallback;
 
-    FX_BOOL					m_bSelfDestruct;
+    bool					m_bSelfDestruct;
 };
 class CFX_PrivateData
 {
@@ -1106,27 +1106,27 @@ public:
 
     void*				GetPrivateData(void* module_id);
 
-    FX_BOOL					LookupPrivateData(void* module_id, void* &pData) const
+    bool					LookupPrivateData(void* module_id, void* &pData) const
     {
         if (!module_id) {
-            return FALSE;
+            return false;
         }
         FX_DWORD nCount = m_DataList.GetSize();
         for (FX_DWORD n = 0; n < nCount; n ++) {
             if (m_DataList[n].m_pModuleId == module_id) {
                 pData = m_DataList[n].m_pData;
-                return TRUE;
+                return true;
             }
         }
-        return FALSE;
+        return false;
     }
 
-    FX_BOOL					RemovePrivateData(void* module_id);
+    bool					RemovePrivateData(void* module_id);
 protected:
 
     CFX_ArrayTemplate<FX_PRIVATEDATA>	m_DataList;
 
-    void					AddData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback, FX_BOOL bSelfDestruct);
+    void					AddData(void* module_id, void* pData, PD_CALLBACK_FREEDATA callback, bool bSelfDestruct);
 };
 class CFX_BitStream
 {
@@ -1139,7 +1139,7 @@ public:
 
     void				ByteAlign();
 
-    FX_BOOL				IsEOF()
+    bool				IsEOF()
     {
         return m_BitPos >= m_BitSize;
     }
@@ -1252,12 +1252,12 @@ public:
         return m_pObject;
     }
 
-    FX_BOOL				IsNull() const
+    bool				IsNull() const
     {
         return m_pObject == NULL;
     }
 
-    FX_BOOL				NotNull() const
+    bool				NotNull() const
     {
         return m_pObject != NULL;
     }
@@ -1288,7 +1288,7 @@ public:
         m_pObject = NULL;
     }
 
-    FX_BOOL				operator == (const Ref& ref) const
+    bool				operator == (const Ref& ref) const
     {
         return m_pObject == ref.m_pObject;
     }
@@ -1300,7 +1300,7 @@ class IFX_Pause
 {
 public:
     virtual ~IFX_Pause() { }
-    virtual FX_BOOL	NeedToPauseNow() = 0;
+    virtual bool	NeedToPauseNow() = 0;
 };
 class CFX_DataFilter
 {
@@ -1310,7 +1310,7 @@ public:
 
     void			SetDestFilter(CFX_DataFilter* pFilter);
 
-    FX_BOOL			IsEOF() const
+    bool			IsEOF() const
     {
         return m_bEOF;
     }
@@ -1330,7 +1330,7 @@ protected:
     virtual void	v_FilterFinish(CFX_BinaryBuf& dest_buf) = 0;
     void			ReportEOF(FX_DWORD left_input);
 
-    FX_BOOL			m_bEOF;
+    bool			m_bEOF;
 
     FX_DWORD		m_SrcPos;
 

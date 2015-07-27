@@ -9,7 +9,7 @@ CJBig2_SymbolDict::CJBig2_SymbolDict()
 {
     SDNUMEXSYMS = 0;
     SDEXSYMS = NULL;
-    m_bContextRetained = FALSE;
+    m_bContextRetained = false;
     m_gbContext = m_grContext = NULL;
 }
 

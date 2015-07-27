@@ -42,7 +42,7 @@ DLLEXPORT void STDCALL FPDFPage_SetCropBox(FPDF_PAGE page, float left, float bot
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page, float* left, float* bottom, float* right, float* top)
 {
 	if(!page)
-		return FALSE;
+		return false;
 	CPDF_Page* pPage = (CPDF_Page*)page;
 	CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
 	CPDF_Array* pArray = pPageDict->GetArray("MediaBox");
@@ -52,15 +52,15 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page, float* left, fl
 		*bottom = pArray->GetFloat(1);
 		*right = pArray->GetFloat(2);
 		*top = pArray->GetFloat(3);
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetCropBox(FPDF_PAGE page, float* left, float* bottom, float* right, float* top)
 {
 	if(!page)
-		return FALSE;
+		return false;
 	CPDF_Page* pPage = (CPDF_Page*)page;
 	CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
 	CPDF_Array* pArray = pPageDict->GetArray("CropBox");
@@ -70,15 +70,15 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetCropBox(FPDF_PAGE page, float* left, flo
 		*bottom = pArray->GetFloat(1);
 		*right = pArray->GetFloat(2);
 		*top = pArray->GetFloat(3);
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page, FS_MATRIX* matrix, FS_RECTF* clipRect)
 {
 	if(!page)
-		return FALSE;
+		return false;
 
 	CFX_ByteTextBuf textBuf;
 	textBuf<<"q ";
@@ -99,19 +99,19 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page, FS_MATRIX
 	if(!pContentObj)
 		pContentObj = pPageDic ? pPageDic->GetArray("Contents") : NULL;
 	if(!pContentObj)
-		return FALSE;
+		return false;
 
 	CPDF_Dictionary* pDic = new CPDF_Dictionary;
 	CPDF_Stream* pStream = new CPDF_Stream(NULL,0, pDic);
-	pStream->SetData(textBuf.GetBuffer(), textBuf.GetSize(), FALSE, FALSE);
+	pStream->SetData(textBuf.GetBuffer(), textBuf.GetSize(), false, false);
 	CPDF_Document* pDoc = pPage->m_pDocument;
 	if(!pDoc)
-		return FALSE;
+		return false;
 	pDoc->AddIndirectObject(pStream);
 
 	pDic = new CPDF_Dictionary;
 	CPDF_Stream* pEndStream = new CPDF_Stream(NULL,0, pDic);
-	pEndStream->SetData((const uint8_t*)" Q", 2, FALSE, FALSE);
+	pEndStream->SetData((const uint8_t*)" Q", 2, false, false);
 	pDoc->AddIndirectObject(pEndStream);
 
 	CPDF_Array* pContentArray = NULL;
@@ -181,7 +181,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page, FS_MATRIX
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 DLLEXPORT void STDCALL FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,double a, double b, double c, double d, double e, double f)
@@ -205,7 +205,7 @@ DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left, float bottom, fl
 	CPDF_Path Path;
 	Path.GetModify();
 	Path.AppendRect(left, bottom, right, top);
-	pNewClipPath->AppendPath(Path, FXFILL_ALTERNATE, FALSE);
+	pNewClipPath->AppendPath(Path, FXFILL_ALTERNATE, false);
 	return pNewClipPath;
 }
 
@@ -282,7 +282,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,FPDF_CLIPPATH clip
 	}
 	CPDF_Dictionary* pDic = new CPDF_Dictionary;
 	CPDF_Stream* pStream = new CPDF_Stream(NULL,0, pDic);
-	pStream->SetData(strClip.GetBuffer(), strClip.GetSize(), FALSE, FALSE);
+	pStream->SetData(strClip.GetBuffer(), strClip.GetSize(), false, false);
 	CPDF_Document* pDoc = pPage->m_pDocument;
 	if(!pDoc)
 		return;

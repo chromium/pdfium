@@ -11,8 +11,8 @@
 
 void* FX_OpenFolder(const FX_CHAR* path);
 void* FX_OpenFolder(const FX_WCHAR* path);
-FX_BOOL FX_GetNextFile(void* handle, CFX_ByteString& filename, FX_BOOL& bFolder);
-FX_BOOL FX_GetNextFile(void* handle, CFX_WideString& filename, FX_BOOL& bFolder);
+bool FX_GetNextFile(void* handle, CFX_ByteString& filename, bool& bFolder);
+bool FX_GetNextFile(void* handle, CFX_WideString& filename, bool& bFolder);
 void FX_CloseFolder(void* handle);
 FX_WCHAR FX_GetFolderSeparator();
 typedef struct FX_HFILE_ {
@@ -53,23 +53,23 @@ size_t		FX_File_Read(FX_HFILE hFile, void* pBuffer, size_t szBuffer);
 size_t		FX_File_ReadPos(FX_HFILE hFile, void* pBuffer, size_t szBuffer, FX_FILESIZE pos);
 size_t		FX_File_Write(FX_HFILE hFile, const void* pBuffer, size_t szBuffer);
 size_t		FX_File_WritePos(FX_HFILE hFile, const void* pBuffer, size_t szBuffer, FX_FILESIZE pos);
-FX_BOOL		FX_File_Flush(FX_HFILE hFile);
-FX_BOOL		FX_File_Truncate(FX_HFILE hFile, FX_FILESIZE szFile);
-FX_BOOL		FX_File_Exist(const CFX_ByteStringC& fileName);
-FX_BOOL		FX_File_Exist(const CFX_WideStringC& fileName);
-FX_BOOL		FX_File_Delete(const CFX_ByteStringC& fileName);
-FX_BOOL		FX_File_Delete(const CFX_WideStringC& fileName);
-FX_BOOL		FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst);
-FX_BOOL		FX_File_Copy(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst);
-FX_BOOL		FX_File_Move(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst);
-FX_BOOL		FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst);
+bool		FX_File_Flush(FX_HFILE hFile);
+bool		FX_File_Truncate(FX_HFILE hFile, FX_FILESIZE szFile);
+bool		FX_File_Exist(const CFX_ByteStringC& fileName);
+bool		FX_File_Exist(const CFX_WideStringC& fileName);
+bool		FX_File_Delete(const CFX_ByteStringC& fileName);
+bool		FX_File_Delete(const CFX_WideStringC& fileName);
+bool		FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst);
+bool		FX_File_Copy(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst);
+bool		FX_File_Move(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst);
+bool		FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst);
 class IFX_StreamWrite
 {
 public:
     virtual ~IFX_StreamWrite() { }
     virtual void		Release() = 0;
 
-    virtual	FX_BOOL		WriteBlock(const void* pData, size_t size) = 0;
+    virtual	bool		WriteBlock(const void* pData, size_t size) = 0;
 };
 class IFX_FileWrite : public IFX_StreamWrite
 {
@@ -79,10 +79,10 @@ public:
 
     virtual FX_FILESIZE		GetSize() = 0;
 
-    virtual FX_BOOL			Flush() = 0;
+    virtual bool			Flush() = 0;
 
-    virtual	FX_BOOL			WriteBlock(const void* pData, FX_FILESIZE offset, size_t size) = 0;
-    virtual	FX_BOOL			WriteBlock(const void* pData, size_t size)
+    virtual	bool			WriteBlock(const void* pData, FX_FILESIZE offset, size_t size) = 0;
+    virtual	bool			WriteBlock(const void* pData, size_t size)
     {
         return WriteBlock(pData, GetSize(), size);
     }
@@ -96,7 +96,7 @@ public:
 
     virtual void			Release() = 0;
 
-    virtual FX_BOOL			IsEOF() = 0;
+    virtual bool			IsEOF() = 0;
 
     virtual FX_FILESIZE		GetPosition() = 0;
 
@@ -109,9 +109,9 @@ public:
 
     virtual FX_FILESIZE		GetSize() = 0;
 
-    virtual FX_BOOL			IsEOF()
+    virtual bool			IsEOF()
     {
-        return FALSE;
+        return false;
     }
 
     virtual FX_FILESIZE		GetPosition()
@@ -119,14 +119,14 @@ public:
         return 0;
     }
 
-    virtual FX_BOOL			SetRange(FX_FILESIZE offset, FX_FILESIZE size)
+    virtual bool			SetRange(FX_FILESIZE offset, FX_FILESIZE size)
     {
-        return FALSE;
+        return false;
     }
 
     virtual void			ClearRange() {}
 
-    virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) = 0;
+    virtual bool			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) = 0;
 
     virtual size_t			ReadBlock(void* buffer, size_t size)
     {
@@ -145,21 +145,21 @@ public:
 
     virtual FX_FILESIZE			GetSize() = 0;
 
-    virtual FX_BOOL				IsEOF() = 0;
+    virtual bool				IsEOF() = 0;
 
     virtual FX_FILESIZE			GetPosition() = 0;
 
-    virtual FX_BOOL				ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) = 0;
+    virtual bool				ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) = 0;
 
     virtual size_t				ReadBlock(void* buffer, size_t size) = 0;
 
-    virtual	FX_BOOL				WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) = 0;
-    virtual	FX_BOOL				WriteBlock(const void* buffer, size_t size)
+    virtual	bool				WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) = 0;
+    virtual	bool				WriteBlock(const void* buffer, size_t size)
     {
         return WriteBlock(buffer, GetSize(), size);
     }
 
-    virtual FX_BOOL				Flush() = 0;
+    virtual bool				Flush() = 0;
 };
 IFX_FileStream*		FX_CreateFileStream(const FX_CHAR* filename, FX_DWORD dwModes);
 IFX_FileStream*		FX_CreateFileStream(const FX_WCHAR* filename, FX_DWORD dwModes);
@@ -167,31 +167,31 @@ class IFX_MemoryStream : public IFX_FileStream
 {
 public:
 
-    virtual FX_BOOL			IsConsecutive() const = 0;
+    virtual bool			IsConsecutive() const = 0;
 
     virtual void			EstimateSize(size_t nInitSize, size_t nGrowSize) = 0;
 
     virtual uint8_t*		GetBuffer() const = 0;
 
-    virtual void			AttachBuffer(uint8_t* pBuffer, size_t nSize, FX_BOOL bTakeOver = FALSE) = 0;
+    virtual void			AttachBuffer(uint8_t* pBuffer, size_t nSize, bool bTakeOver = false) = 0;
 
     virtual void			DetachBuffer() = 0;
 };
-IFX_MemoryStream*	FX_CreateMemoryStream(uint8_t* pBuffer, size_t nSize, FX_BOOL bTakeOver = FALSE);
-IFX_MemoryStream*	FX_CreateMemoryStream(FX_BOOL bConsecutive = FALSE);
+IFX_MemoryStream*	FX_CreateMemoryStream(uint8_t* pBuffer, size_t nSize, bool bTakeOver = false);
+IFX_MemoryStream*	FX_CreateMemoryStream(bool bConsecutive = false);
 class IFX_BufferRead : public IFX_StreamRead
 {
 public:
 
     virtual void			Release() = 0;
 
-    virtual FX_BOOL			IsEOF() = 0;
+    virtual bool			IsEOF() = 0;
 
     virtual FX_FILESIZE		GetPosition() = 0;
 
     virtual size_t			ReadBlock(void* buffer, size_t size) = 0;
 
-    virtual FX_BOOL			ReadNextBlock(FX_BOOL bRestart = FALSE) = 0;
+    virtual bool			ReadNextBlock(bool bRestart = false) = 0;
 
     virtual const uint8_t*		GetBlockBuffer() = 0;
 

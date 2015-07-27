@@ -54,7 +54,7 @@ public:
         y1 /= base;
     }
 };
-CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip, FX_BOOL bYFlip, const FX_RECT* pDestClip) const
+CFX_DIBitmap* CFX_DIBSource::SwapXY(bool bXFlip, bool bYFlip, const FX_RECT* pDestClip) const
 {
     FX_RECT dest_clip(0, 0, m_Height, m_Width);
     if (pDestClip) {
@@ -148,7 +148,7 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip, FX_BOOL bYFlip, const FX_REC
     return pTransBitmap;
 }
 #define FIX16_005 0.05f
-FX_RECT _FXDIB_SwapClipBox(FX_RECT& clip, int width, int height, FX_BOOL bFlipX, FX_BOOL bFlipY)
+FX_RECT _FXDIB_SwapClipBox(FX_RECT& clip, int width, int height, bool bFlipX, bool bFlipY)
 {
     FX_RECT rect;
     if (bFlipY) {
@@ -206,7 +206,7 @@ CFX_ImageTransformer::CFX_ImageTransformer()
 CFX_ImageTransformer::~CFX_ImageTransformer()
 {
 }
-FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc, const CFX_AffineMatrix* pDestMatrix, int flags, const FX_RECT* pDestClip)
+bool CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc, const CFX_AffineMatrix* pDestMatrix, int flags, const FX_RECT* pDestClip)
 {
     m_pMatrix = (CFX_AffineMatrix*)pDestMatrix;
     CFX_FloatRect unit_rect = pDestMatrix->GetUnitRect();
@@ -216,7 +216,7 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc, const CFX_AffineM
         result_clip.Intersect(*pDestClip);
     }
     if (result_clip.IsEmpty()) {
-        return FALSE;
+        return false;
     }
     m_ResultLeft = result_clip.left;
     m_ResultTop = result_clip.top;
@@ -232,7 +232,7 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc, const CFX_AffineM
         result_clip = _FXDIB_SwapClipBox(result_clip, dest_width, dest_height, pDestMatrix->c > 0, pDestMatrix->b < 0);
         m_Stretcher.Start(&m_Storer, pSrc, dest_height, dest_width, result_clip, flags);
         m_Status = 1;
-        return TRUE;
+        return true;
     }
     if (FXSYS_fabs(pDestMatrix->b) < FIX16_005 && FXSYS_fabs(pDestMatrix->c) < FIX16_005) {
         int dest_width = pDestMatrix->a > 0 ? (int)FXSYS_ceil(pDestMatrix->a) : (int)FXSYS_floor(pDestMatrix->a);
@@ -240,7 +240,7 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc, const CFX_AffineM
         result_clip.Offset(-result_rect.left, -result_rect.top);
         m_Stretcher.Start(&m_Storer, pSrc, dest_width, dest_height, result_clip, flags);
         m_Status = 2;
-        return TRUE;
+        return true;
     }
     int stretch_width = (int)FXSYS_ceil(FXSYS_sqrt2(pDestMatrix->a, pDestMatrix->b));
     int stretch_height = (int)FXSYS_ceil(FXSYS_sqrt2(pDestMatrix->c, pDestMatrix->d));
@@ -254,7 +254,7 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc, const CFX_AffineM
     m_StretchClip.Intersect(0, 0, stretch_width, stretch_height);
     m_Stretcher.Start(&m_Storer, pSrc, stretch_width, stretch_height, m_StretchClip, flags);
     m_Status = 3;
-    return TRUE;
+    return true;
 }
 uint8_t _bilinear_interpol(const uint8_t* buf, int row_offset_l, int row_offset_r,
                            int src_col_l, int src_col_r, int res_x, int res_y,
@@ -335,30 +335,30 @@ FXDIB_Format _GetTransformedFormat(const CFX_DIBSource* pDrc)
     }
     return format;
 }
-FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
+bool CFX_ImageTransformer::Continue(IFX_Pause* pPause)
 {
     if (m_Status == 1) {
         if (m_Stretcher.Continue(pPause)) {
-            return TRUE;
+            return true;
         }
         if (m_Storer.GetBitmap()) {
             m_Storer.Replace(m_Storer.GetBitmap()->SwapXY(m_pMatrix->c > 0, m_pMatrix->b < 0));
         }
-        return FALSE;
+        return false;
     }
     if (m_Status == 2) {
         return m_Stretcher.Continue(pPause);
     }
     if (m_Status != 3) {
-        return FALSE;
+        return false;
     }
     if (m_Stretcher.Continue(pPause)) {
-        return TRUE;
+        return true;
     }
     int stretch_width = m_StretchClip.Width();
     int stretch_height = m_StretchClip.Height();
     if (m_Storer.GetBitmap() == NULL) {
-        return FALSE;
+        return false;
     }
     const uint8_t* stretch_buf = m_Storer.GetBitmap()->GetBuffer();
     const uint8_t* stretch_buf_mask = NULL;
@@ -370,7 +370,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
     FXDIB_Format transformF = _GetTransformedFormat(m_Stretcher.m_pSource);
     if (!pTransformed->Create(m_ResultWidth, m_ResultHeight, transformF)) {
         delete pTransformed;
-        return FALSE;
+        return false;
     }
     pTransformed->Clear(0);
     if (pTransformed->m_pAlphaMask) {
@@ -641,7 +641,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
                 }
             }
         } else {
-            FX_BOOL bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
+            bool bHasAlpha = m_Storer.GetBitmap()->HasAlpha();
             int destBpp = pTransformed->GetBPP() / 8;
             if (!(m_Flags & FXDIB_DOWNSAMPLE) && !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
                 CFX_BilinearMatrix result2stretch_fix(result2stretch, 8);
@@ -786,5 +786,5 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause)
         }
     }
     m_Storer.Replace(pTransformed);
-    return FALSE;
+    return false;
 }

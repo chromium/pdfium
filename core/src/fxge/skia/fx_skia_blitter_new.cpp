@@ -1298,7 +1298,7 @@
 
 
     //--------------------------------------------------------------------
-    FX_BOOL CFX_SkiaRenderer::Init(CFX_DIBitmap* pDevice, CFX_DIBitmap* pOriDevice, const CFX_ClipRgn* pClipRgn, FX_DWORD color, FX_BOOL bFullCover, FX_BOOL bRgbByteOrder,
+    bool CFX_SkiaRenderer::Init(CFX_DIBitmap* pDevice, CFX_DIBitmap* pOriDevice, const CFX_ClipRgn* pClipRgn, FX_DWORD color, bool bFullCover, bool bRgbByteOrder,
         int alpha_flag, void* pIccTransform) //The alpha flag must be fill_flag if exist.
     {
         m_pDevice = pDevice;
@@ -1331,8 +1331,8 @@
 
         m_bFullCover = bFullCover;
 
-        FX_BOOL bObjectCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
-        FX_BOOL bDeviceCMYK = pDevice->IsCmykImage();
+        bool bObjectCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
+        bool bDeviceCMYK = pDevice->IsCmykImage();
 
         m_Alpha = bObjectCMYK ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
 
@@ -1377,7 +1377,7 @@
                         pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&m_Color, 1);
                 } else { // Object RGB
                     if (!pIccTransform)
-                        return FALSE;
+                        return false;
                     color = FXARGB_TODIB(color);
                     pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&m_Color, (const uint8_t*)&color, 1);
                 }
@@ -1385,7 +1385,7 @@
                 m_Green = ((uint8_t*)&m_Color)[1];
                 m_Blue  = ((uint8_t*)&m_Color)[2];
                 m_Gray  = ((uint8_t*)&m_Color)[3];
-                return TRUE;
+                return true;
             }
             if (pIccTransform) {
                 color = bObjectCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
@@ -1496,8 +1496,8 @@
                 break;
         }
         if (composite_span == NULL)
-            return FALSE;
-        return TRUE;
+            return false;
+        return true;
     }
 
     /*----------------------------------------------------------------------------------------------------*/
@@ -1595,7 +1595,7 @@
         blitV(x, y, height, rightAlpha);
     }
 
-    FX_BOOL CFX_SkiaA8Renderer::Init(CFX_DIBitmap* pDevice, int Left, int Top)
+    bool CFX_SkiaA8Renderer::Init(CFX_DIBitmap* pDevice, int Left, int Top)
     {
         m_pDevice = pDevice;
         m_Left = Left;
@@ -1604,6 +1604,6 @@
             m_dstWidth = m_Left + pDevice->GetWidth();
             m_dstHeight = m_Top + pDevice->GetHeight();
         }
-        return TRUE;
+        return true;
     }
 #endif

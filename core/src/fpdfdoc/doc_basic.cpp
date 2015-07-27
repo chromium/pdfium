@@ -313,10 +313,10 @@ static CFX_WideString FILESPEC_DecodeFileName(const CFX_WideStringC& filepath)
     return filepath;
 #endif
 }
-FX_BOOL CPDF_FileSpec::GetFileName(CFX_WideString &csFileName) const
+bool CPDF_FileSpec::GetFileName(CFX_WideString &csFileName) const
 {
     if (m_pObj == NULL) {
-        return FALSE;
+        return false;
     }
     if (m_pObj->GetType() == PDFOBJ_DICTIONARY) {
         CPDF_Dictionary* pDict = (CPDF_Dictionary*)m_pObj;
@@ -325,7 +325,7 @@ FX_BOOL CPDF_FileSpec::GetFileName(CFX_WideString &csFileName) const
             csFileName = CFX_WideString::FromLocal(pDict->GetString(FX_BSTRC("F")));
         }
         if (pDict->GetString(FX_BSTRC("FS")) == FX_BSTRC("URL")) {
-            return TRUE;
+            return true;
         }
         if (csFileName.IsEmpty()) {
             if (pDict->KeyExist(FX_BSTRC("DOS"))) {
@@ -335,14 +335,14 @@ FX_BOOL CPDF_FileSpec::GetFileName(CFX_WideString &csFileName) const
             } else if (pDict->KeyExist(FX_BSTRC("Unix"))) {
                 csFileName = CFX_WideString::FromLocal(pDict->GetString(FX_BSTRC("Unix")));
             } else {
-                return FALSE;
+                return false;
             }
         }
     } else {
         csFileName = CFX_WideString::FromLocal(m_pObj->GetString());
     }
     csFileName = FILESPEC_DecodeFileName(csFileName);
-    return TRUE;
+    return true;
 }
 CPDF_FileSpec::CPDF_FileSpec()
 {
@@ -351,13 +351,13 @@ CPDF_FileSpec::CPDF_FileSpec()
         ((CPDF_Dictionary*)m_pObj)->SetAtName(FX_BSTRC("Type"), FX_BSTRC("Filespec"));
     }
 }
-FX_BOOL CPDF_FileSpec::IsURL() const
+bool CPDF_FileSpec::IsURL() const
 {
     if (m_pObj == NULL) {
-        return FALSE;
+        return false;
     }
     if (m_pObj->GetType() != PDFOBJ_DICTIONARY) {
-        return FALSE;
+        return false;
     }
     return ((CPDF_Dictionary*)m_pObj)->GetString(FX_BSTRC("FS")) == FX_BSTRC("URL");
 }
@@ -416,7 +416,7 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() const
     }
     return NULL;
 }
-static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object *pObj, const CFX_WideStringC& wsFileName, FX_BOOL bURL)
+static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object *pObj, const CFX_WideStringC& wsFileName, bool bURL)
 {
     ASSERT(pObj != NULL);
     CFX_WideString wsStr;
@@ -434,7 +434,7 @@ static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object *pObj, const CFX_WideString
         pDict->SetAtString(FX_BSTRC("UF"), PDF_EncodeText(wsStr));
     }
 }
-void CPDF_FileSpec::SetFileName(const CFX_WideStringC& wsFileName, FX_BOOL bURL)
+void CPDF_FileSpec::SetFileName(const CFX_WideStringC& wsFileName, bool bURL)
 {
     ASSERT(m_pObj != NULL);
     if (m_pObj->GetType() == PDFOBJ_DICTIONARY && bURL) {

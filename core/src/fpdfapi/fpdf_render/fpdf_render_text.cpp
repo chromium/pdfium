@@ -9,7 +9,7 @@
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 #include "../fpdf_page/pageint.h"
 #include "render_int.h"
-extern FX_BOOL IsAvailableMatrix(const CFX_AffineMatrix& matrix);
+extern bool IsAvailableMatrix(const CFX_AffineMatrix& matrix);
 CPDF_Type3Cache::~CPDF_Type3Cache()
 {
     FX_POSITION pos = m_SizeMap.GetStartPosition();
@@ -76,28 +76,28 @@ void CPDF_Type3Glyphs::AdjustBlue(FX_FLOAT top, FX_FLOAT bottom, int& top_line, 
     top_line = _AdjustBlue(top, m_TopBlueCount, m_TopBlue);
     bottom_line = _AdjustBlue(bottom, m_BottomBlueCount, m_BottomBlue);
 }
-static FX_BOOL _IsScanLine1bpp(uint8_t* pBuf, int width)
+static bool _IsScanLine1bpp(uint8_t* pBuf, int width)
 {
     int size = width / 8;
     for (int i = 0; i < size; i ++)
         if (pBuf[i]) {
-            return TRUE;
+            return true;
         }
     if (width % 8)
         if (pBuf[width / 8] & (0xff << (8 - width % 8))) {
-            return TRUE;
+            return true;
         }
-    return FALSE;
+    return false;
 }
-static FX_BOOL _IsScanLine8bpp(uint8_t* pBuf, int width)
+static bool _IsScanLine8bpp(uint8_t* pBuf, int width)
 {
     for (int i = 0; i < width; i ++)
         if (pBuf[i] > 0x40) {
-            return TRUE;
+            return true;
         }
-    return FALSE;
+    return false;
 }
-static int _DetectFirstLastScan(const CFX_DIBitmap* pBitmap, FX_BOOL bFirst)
+static int _DetectFirstLastScan(const CFX_DIBitmap* pBitmap, bool bFirst)
 {
     int height = pBitmap->GetHeight(), pitch = pBitmap->GetPitch(), width = pBitmap->GetWidth();
     int bpp = pBitmap->GetBPP();
@@ -137,12 +137,12 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize, FX_DWORD 
     int left, top;
     if (FXSYS_fabs(image_matrix.b) < FXSYS_fabs(image_matrix.a) / 100 && FXSYS_fabs(image_matrix.c) < FXSYS_fabs(image_matrix.d) / 100) {
         int top_line, bottom_line;
-        top_line = _DetectFirstLastScan(pBitmap, TRUE);
-        bottom_line = _DetectFirstLastScan(pBitmap, FALSE);
+        top_line = _DetectFirstLastScan(pBitmap, true);
+        bottom_line = _DetectFirstLastScan(pBitmap, false);
         if (top_line == 0 && bottom_line == pBitmap->GetHeight() - 1) {
             FX_FLOAT top_y = image_matrix.d + image_matrix.f;
             FX_FLOAT bottom_y = image_matrix.f;
-            FX_BOOL bFlipped = top_y > bottom_y;
+            bool bFlipped = top_y > bottom_y;
             if (bFlipped) {
                 FX_FLOAT temp = top_y;
                 top_y = bottom_y;
@@ -185,76 +185,76 @@ void _CPDF_UniqueKeyGen::Generate(int count, ...)
     va_end(argList);
     m_KeyLen = count * sizeof(FX_DWORD);
 }
-FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj, const CFX_AffineMatrix* pObj2Device, CFX_PathData* pClippingPath)
+bool CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj, const CFX_AffineMatrix* pObj2Device, CFX_PathData* pClippingPath)
 {
     if(textobj->m_nChars == 0) {
-        return TRUE;
+        return true;
     }
     int text_render_mode = textobj->m_TextState.GetObject()->m_TextMode;
     if (text_render_mode == 3) {
-        return TRUE;
+        return true;
     }
     CPDF_Font* pFont = textobj->m_TextState.GetFont();
     if (pFont->GetFontType() == PDFFONT_TYPE3) {
         return ProcessType3Text(textobj, pObj2Device);
     }
-    FX_BOOL bFill = FALSE, bStroke = FALSE, bClip = FALSE;
+    bool bFill = false, bStroke = false, bClip = false;
     if (pClippingPath) {
-        bClip = TRUE;
+        bClip = true;
     } else {
         switch (text_render_mode) {
             case 0:
             case 4:
-                bFill = TRUE;
+                bFill = true;
                 break;
             case 1:
             case 5:
                 if (pFont->GetFace() == NULL && !(pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
-                    bFill = TRUE;
+                    bFill = true;
                 } else {
-                    bStroke = TRUE;
+                    bStroke = true;
                 }
                 break;
             case 2:
             case 6:
                 if (pFont->GetFace() == NULL && !(pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
-                    bFill = TRUE;
+                    bFill = true;
                 } else {
-                    bFill = bStroke = TRUE;
+                    bFill = bStroke = true;
                 }
                 break;
             case 3:
             case 7:
-                return TRUE;
+                return true;
             default:
-                bFill = TRUE;
+                bFill = true;
         }
     }
     FX_ARGB stroke_argb = 0, fill_argb = 0;
-    FX_BOOL bPattern = FALSE;
+    bool bPattern = false;
     if (bStroke) {
         if (textobj->m_ColorState.GetStrokeColor()->IsPattern()) {
-            bPattern = TRUE;
+            bPattern = true;
         } else {
             stroke_argb = GetStrokeArgb(textobj);
         }
     }
     if (bFill) {
         if (textobj->m_ColorState.GetFillColor()->IsPattern()) {
-            bPattern = TRUE;
+            bPattern = true;
         } else {
             fill_argb = GetFillArgb(textobj);
         }
     }
     CFX_AffineMatrix text_matrix;
     textobj->GetTextMatrix(&text_matrix);
-    if(IsAvailableMatrix(text_matrix) == FALSE) {
-        return TRUE;
+    if(IsAvailableMatrix(text_matrix) == false) {
+        return true;
     }
     FX_FLOAT font_size = textobj->m_TextState.GetFontSize();
     if (bPattern) {
         DrawTextPathWithPattern(textobj, pObj2Device, pFont, font_size, &text_matrix, bFill, bStroke);
-        return TRUE;
+        return true;
     }
     if (bClip || bStroke) {
         const CFX_AffineMatrix* pDeviceMatrix = pObj2Device;
@@ -293,7 +293,7 @@ CPDF_Type3Cache* CPDF_RenderStatus::GetCachedType3(CPDF_Type3Font* pFont)
     if (pFont->m_pDocument == NULL) {
         return NULL;
     }
-    pFont->m_pDocument->GetPageData()->GetFont(pFont->GetFontDict(), FALSE);
+    pFont->m_pDocument->GetPageData()->GetFont(pFont->GetFontDict(), false);
     return pFont->m_pDocument->GetRenderData()->GetCachedType3(pFont);
 }
 static void ReleaseCachedType3(CPDF_Type3Font* pFont)
@@ -304,10 +304,10 @@ static void ReleaseCachedType3(CPDF_Type3Font* pFont)
     pFont->m_pDocument->GetRenderData()->ReleaseCachedType3(pFont);
     pFont->m_pDocument->GetPageData()->ReleaseFont(pFont->GetFontDict());
 }
-FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext)
+bool CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext)
 {
     if (m_pBitmap != NULL || m_pForm == NULL) {
-        return TRUE;
+        return true;
     }
     if (m_pForm->CountObjects() == 1 && !m_bColored) {
         CPDF_PageObject *pPageObj = m_pForm->GetObjectAt(m_pForm->GetFirstObjectPosition());
@@ -321,10 +321,10 @@ FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext)
             }
             delete m_pForm;
             m_pForm = NULL;
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
 class CPDF_RefType3Cache
 {
@@ -343,12 +343,12 @@ public:
     FX_DWORD m_dwCount;
     CPDF_Type3Font* m_pType3Font;
 };
-FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, const CFX_AffineMatrix* pObj2Device)
+bool CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, const CFX_AffineMatrix* pObj2Device)
 {
     CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->GetType3Font();
     for (int j = 0; j < m_Type3FontCache.GetSize(); j++)
         if ((CPDF_Type3Font*)m_Type3FontCache.GetAt(j) == pType3Font) {
-            return TRUE;
+            return true;
         }
     CFX_Matrix dCTM = m_pDevice->GetCTM();
     FX_FLOAT sa = FXSYS_fabs(dCTM.a);
@@ -358,14 +358,14 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, cons
     CFX_AffineMatrix char_matrix = pType3Font->GetFontMatrix();
     FX_FLOAT font_size = textobj->m_TextState.GetFontSize();
     char_matrix.Scale(font_size, font_size);
-    FX_ARGB fill_argb = GetFillArgb(textobj, TRUE);
+    FX_ARGB fill_argb = GetFillArgb(textobj, true);
     int fill_alpha = FXARGB_A(fill_argb);
     int device_class = m_pDevice->GetDeviceClass();
     FXTEXT_GLYPHPOS* pGlyphAndPos = NULL;
     if (device_class == FXDC_DISPLAY) {
         pGlyphAndPos = FX_Alloc(FXTEXT_GLYPHPOS, textobj->m_nChars);
     } else if (fill_alpha < 255) {
-        return FALSE;
+        return false;
     }
     CPDF_RefType3Cache refTypeCache(pType3Font);
     FX_DWORD *pChars = textobj->m_pCharCodes;
@@ -399,7 +399,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, cons
                 FX_Free(pGlyphAndPos);
                 pGlyphAndPos = NULL;
             }
-            CPDF_GraphicStates* pStates = CloneObjStates(textobj, FALSE);
+            CPDF_GraphicStates* pStates = CloneObjStates(textobj, false);
             CPDF_RenderOptions Options = m_Options;
             Options.m_Flags |= RENDER_FORCE_HALFTONE | RENDER_RECT_AA;
             Options.m_Flags &= ~RENDER_FORCE_DOWNSAMPLE;
@@ -410,7 +410,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, cons
             if (fill_alpha == 255) {
                 CPDF_RenderStatus status;
                 status.Initialize(m_pContext, m_pDevice, NULL, NULL, this, pStates, &Options,
-                                  pType3Char->m_pForm->m_Transparency, m_bDropObjects, pFormResource, FALSE, pType3Char, fill_argb);
+                                  pType3Char->m_pForm->m_Transparency, m_bDropObjects, pFormResource, false, pType3Char, fill_argb);
                 status.m_Type3FontCache.Append(m_Type3FontCache);
                 status.m_Type3FontCache.Add(pType3Font);
                 m_pDevice->SaveState();
@@ -422,12 +422,12 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, cons
                 FX_RECT rect = rect_f.GetOutterRect();
                 CFX_FxgeDevice bitmap_device;
                 if (!bitmap_device.Create((int)(rect.Width() * sa), (int)(rect.Height() * sd), FXDIB_Argb)) {
-                    return TRUE;
+                    return true;
                 }
                 bitmap_device.GetBitmap()->Clear(0);
                 CPDF_RenderStatus status;
                 status.Initialize(m_pContext, &bitmap_device, NULL, NULL, this, pStates, &Options,
-                                  pType3Char->m_pForm->m_Transparency, m_bDropObjects, pFormResource, FALSE, pType3Char, fill_argb);
+                                  pType3Char->m_pForm->m_Transparency, m_bDropObjects, pFormResource, false, pType3Char, fill_argb);
                 status.m_Type3FontCache.Append(m_Type3FontCache);
                 status.m_Type3FontCache.Add(pType3Font);
                 matrix.TranslateI(-rect.left, -rect.top);
@@ -457,11 +457,11 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, cons
                 CFX_AffineMatrix image_matrix = pType3Char->m_ImageMatrix;
                 image_matrix.Concat(matrix);
                 CPDF_ImageRenderer renderer;
-                if (renderer.Start(this, pType3Char->m_pBitmap, fill_argb, 255, &image_matrix, 0, FALSE)) {
+                if (renderer.Start(this, pType3Char->m_pBitmap, fill_argb, 255, &image_matrix, 0, false)) {
                     renderer.Continue(NULL);
                 }
                 if (!renderer.m_Result) {
-                    return FALSE;
+                    return false;
                 }
             }
         }
@@ -471,7 +471,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, cons
         CFX_DIBitmap bitmap;
         if (!bitmap.Create((int)(rect.Width() * sa), (int)(rect.Height() * sd), FXDIB_8bppMask)) {
             FX_Free(pGlyphAndPos);
-            return TRUE;
+            return true;
         }
         bitmap.Clear(0);
         for (int iChar = 0; iChar < textobj->m_nChars; iChar ++) {
@@ -487,7 +487,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj, cons
         m_pDevice->SetBitMask(&bitmap, rect.left, rect.top, fill_argb);
         FX_Free(pGlyphAndPos);
     }
-    return TRUE;
+    return true;
 }
 class CPDF_CharPosList
 {
@@ -515,13 +515,13 @@ void CPDF_CharPosList::Load(int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos
     m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, nChars);
     m_nChars = 0;
     CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
-    FX_BOOL bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
+    bool bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
     for (int iChar = 0; iChar < nChars; iChar ++) {
         FX_DWORD CharCode = nChars == 1 ? (FX_DWORD)(uintptr_t)pCharCodes : pCharCodes[iChar];
         if (CharCode == (FX_DWORD) - 1) {
             continue;
         }
-        FX_BOOL bVert = FALSE;
+        bool bVert = false;
         FXTEXT_CHARPOS& charpos = m_pCharPos[m_nChars++];
         if (pCIDFont) {
             charpos.m_bFontStyle = pCIDFont->IsFontStyleFromCharCode(CharCode);
@@ -537,7 +537,7 @@ void CPDF_CharPosList::Load(int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos
         }
         charpos.m_OriginX = iChar ? pCharPos[iChar - 1] : 0;
         charpos.m_OriginY = 0;
-        charpos.m_bGlyphAdjust = FALSE;
+        charpos.m_bGlyphAdjust = false;
         if (pCIDFont == NULL) {
             continue;
         }
@@ -558,11 +558,11 @@ void CPDF_CharPosList::Load(int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos
             charpos.m_AdjustMatrix[3] = _CIDTransformToFloat(pTransform[3]);
             charpos.m_OriginX += _CIDTransformToFloat(pTransform[4]) * FontSize;
             charpos.m_OriginY += _CIDTransformToFloat(pTransform[5]) * FontSize;
-            charpos.m_bGlyphAdjust = TRUE;
+            charpos.m_bGlyphAdjust = true;
         }
     }
 }
-FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
+bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
                                         CPDF_Font* pFont, FX_FLOAT font_size,
                                         const CFX_AffineMatrix* pText2User, const CFX_AffineMatrix* pUser2Device,
                                         const CFX_GraphStateData* pGraphState,
@@ -632,7 +632,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice, FX_FLOAT origi
         FX_Free(pCharPos);
     }
 }
-FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
+bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
         CPDF_Font* pFont, FX_FLOAT font_size,
         const CFX_AffineMatrix* pText2Device,
         FX_ARGB fill_argb, const CPDF_RenderOptions* pOptions)
@@ -671,13 +671,13 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice, int nChars,
 }
 void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj, const CFX_AffineMatrix* pObj2Device,
         CPDF_Font* pFont, FX_FLOAT font_size,
-        const CFX_AffineMatrix* pTextMatrix, FX_BOOL bFill, FX_BOOL bStroke)
+        const CFX_AffineMatrix* pTextMatrix, bool bFill, bool bStroke)
 {
     if (!bStroke) {
         CPDF_PathObject path;
         CPDF_TextObject* pCopy = new CPDF_TextObject;
         pCopy->Copy(textobj);
-        path.m_bStroke = FALSE;
+        path.m_bStroke = false;
         path.m_FillType = FXFILL_WINDING;
         path.m_ClipPath.AppendTexts(&pCopy, 1);
         path.m_ColorState = textobj->m_ColorState;

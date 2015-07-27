@@ -31,11 +31,11 @@ public:
 class CPDF_LzwFilter : public CFX_DataFilter
 {
 public:
-    CPDF_LzwFilter(FX_BOOL bEarlyChange);
+    CPDF_LzwFilter(bool bEarlyChange);
     virtual ~CPDF_LzwFilter() {}
     virtual	void	v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf);
     virtual void	v_FilterFinish(CFX_BinaryBuf& dest_buf) {}
-    FX_BOOL			m_bEarlyChange;
+    bool			m_bEarlyChange;
     FX_DWORD		m_CodeArray[5021];
     FX_DWORD		m_nCodes;
     FX_DWORD		m_CodeLen;
@@ -54,7 +54,7 @@ public:
     virtual ~CPDF_PredictorFilter();
     virtual	void	v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf);
     virtual void	v_FilterFinish(CFX_BinaryBuf& dest_buf) {}
-    FX_BOOL			m_bTiff;
+    bool			m_bTiff;
     FX_DWORD		m_Pitch, m_Bpp;
     uint8_t*		m_pRefLine;
     uint8_t*		m_pCurLine;
@@ -102,14 +102,14 @@ public:
     CFX_BinaryBuf	m_InputBuf;
     uint8_t*		m_pScanline;
     int				m_Pitch, m_Height, m_Width, m_nComps, m_iLine;
-    FX_BOOL			m_bGotHeader;
+    bool			m_bGotHeader;
 };
 class CPDF_FaxFilter : public CFX_DataFilter
 {
 public:
     CPDF_FaxFilter();
     virtual ~CPDF_FaxFilter();
-    FX_BOOL			Initialize(int Encoding, int bEndOfLine, int bByteAlign, int bBlack, int nRows, int nColumns);
+    bool			Initialize(int Encoding, int bEndOfLine, int bByteAlign, int bBlack, int nRows, int nColumns);
     virtual	void	v_FilterIn(const uint8_t* src_buf, FX_DWORD src_size, CFX_BinaryBuf& dest_buf);
     virtual void	v_FilterFinish(CFX_BinaryBuf& dest_buf);
     int				m_Encoding, m_bEndOfLine, m_bByteAlign, m_bBlack;
@@ -118,9 +118,9 @@ public:
 	uint8_t*		m_pRefBuf;
     CFX_BinaryBuf	m_InputBuf;
     int				m_InputBitPos;
-    void			ProcessData(const uint8_t* src_buf, FX_DWORD src_size, int& bitpos, FX_BOOL bFinish,
+    void			ProcessData(const uint8_t* src_buf, FX_DWORD src_size, int& bitpos, bool bFinish,
                                 CFX_BinaryBuf& dest_buf);
-    FX_BOOL			ReadLine(const uint8_t* src_buf, int bitsize, int& bitpos);
+    bool			ReadLine(const uint8_t* src_buf, int bitsize, int& bitpos);
 };
 
 #endif  // CORE_SRC_FPDFAPI_FPDF_PARSER_FILTERS_INT_H_

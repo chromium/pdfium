@@ -40,7 +40,7 @@ IFXJS_Runtime*                  CJS_RuntimeFactory::NewJSRuntime(CPDFDoc_Environ
             embedderDataSlot = pApp->GetFormFillInfo()->m_pJsPlatform->m_v8EmbedderSlot;
                 }
         JS_Initial(embedderDataSlot);
-        m_bInit = TRUE;
+        m_bInit = true;
     }
     return new CJS_Runtime(pApp);
 }
@@ -58,7 +58,7 @@ void                            CJS_RuntimeFactory::Release()
         {
             JS_Release();
             ReleaseGlobalData();
-            m_bInit = FALSE;
+            m_bInit = false;
         }
     }
 }
@@ -108,7 +108,7 @@ void CJS_ArrayBufferAllocator::Free(void* data, size_t length) {
 CJS_Runtime::CJS_Runtime(CPDFDoc_Environment * pApp) :
 	m_pApp(pApp),
 	m_pDocument(NULL),
-	m_bBlocking(FALSE),
+	m_bBlocking(false),
 	m_pFieldEventPath(NULL),
     m_isolate(NULL)
 {
@@ -150,46 +150,46 @@ CJS_Runtime::~CJS_Runtime()
     m_isolate->Dispose();
 }
 
-FX_BOOL CJS_Runtime::InitJSObjects()
+bool CJS_Runtime::InitJSObjects()
 {
     v8::Isolate::Scope isolate_scope(GetIsolate());
     v8::HandleScope handle_scope(GetIsolate());
     v8::Local<v8::Context> context = v8::Context::New(GetIsolate());
     v8::Context::Scope context_scope(context);
     //0 - 8
-    if (CJS_Border::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Display::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Font::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Highlight::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Position::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_ScaleHow::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_ScaleWhen::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Style::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Zoomtype::Init(*this, JS_STATIC) < 0) return FALSE;
+    if (CJS_Border::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Display::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Font::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Highlight::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Position::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_ScaleHow::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_ScaleWhen::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Style::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Zoomtype::Init(*this, JS_STATIC) < 0) return false;
 
     //9 - 11
-    if (CJS_App::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Color::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Console::Init(*this, JS_STATIC) < 0) return FALSE;
+    if (CJS_App::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Color::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Console::Init(*this, JS_STATIC) < 0) return false;
 
     //12 - 14
-    if (CJS_Document::Init(*this, JS_DYNAMIC) < 0) return FALSE;
-    if (CJS_Event::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Field::Init(*this, JS_DYNAMIC) < 0) return FALSE;
+    if (CJS_Document::Init(*this, JS_DYNAMIC) < 0) return false;
+    if (CJS_Event::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Field::Init(*this, JS_DYNAMIC) < 0) return false;
 
     //15 - 17
-    if (CJS_Global::Init(*this, JS_STATIC) < 0) return FALSE;
-    if (CJS_Icon::Init(*this, JS_DYNAMIC) < 0) return FALSE;
-    if (CJS_Util::Init(*this, JS_STATIC) < 0) return FALSE;
+    if (CJS_Global::Init(*this, JS_STATIC) < 0) return false;
+    if (CJS_Icon::Init(*this, JS_DYNAMIC) < 0) return false;
+    if (CJS_Util::Init(*this, JS_STATIC) < 0) return false;
 
-    if (CJS_PublicMethods::Init(*this) < 0) return FALSE;
-    if (CJS_GlobalConsts::Init(*this) < 0) return FALSE;
-    if (CJS_GlobalArrays::Init(*this) < 0) return FALSE;
+    if (CJS_PublicMethods::Init(*this) < 0) return false;
+    if (CJS_GlobalConsts::Init(*this) < 0) return false;
+    if (CJS_GlobalArrays::Init(*this) < 0) return false;
 
-    if (CJS_TimerObj::Init(*this, JS_DYNAMIC) < 0) return FALSE;
-    if (CJS_PrintParamsObj::Init(*this, JS_DYNAMIC) <0) return FALSE;
+    if (CJS_TimerObj::Init(*this, JS_DYNAMIC) < 0) return false;
+    if (CJS_PrintParamsObj::Init(*this, JS_DYNAMIC) <0) return false;
 
-    return TRUE;
+    return true;
 }
 
 IFXJS_Context* CJS_Runtime::NewContext()
@@ -255,7 +255,7 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc)
     }
 }
 
-FX_BOOL CJS_Runtime::AddEventToLoop(const CFX_WideString& sTargetName, JS_EVENT_T eEventType)
+bool CJS_Runtime::AddEventToLoop(const CFX_WideString& sTargetName, JS_EVENT_T eEventType)
 {
     if (m_pFieldEventPath == NULL)
     {
@@ -264,7 +264,7 @@ FX_BOOL CJS_Runtime::AddEventToLoop(const CFX_WideString& sTargetName, JS_EVENT_
         m_pFieldEventPath->eEventType = eEventType;
         m_pFieldEventPath->pNext = NULL;
 
-        return TRUE;
+        return true;
     }
 
     //to search
@@ -273,7 +273,7 @@ FX_BOOL CJS_Runtime::AddEventToLoop(const CFX_WideString& sTargetName, JS_EVENT_
     while (p)
     {
         if (p->eEventType == eEventType && p->sTargetName == sTargetName)
-            return FALSE;
+            return false;
 
         pLast = p;
         p = p->pNext;
@@ -287,12 +287,12 @@ FX_BOOL CJS_Runtime::AddEventToLoop(const CFX_WideString& sTargetName, JS_EVENT_
 
     pLast->pNext = pNew;
 
-    return TRUE;
+    return true;
 }
 
 void CJS_Runtime::RemoveEventInLoop(const CFX_WideString& sTargetName, JS_EVENT_T eEventType)
 {
-    FX_BOOL bFind = FALSE;
+    bool bFind = false;
 
     CJS_FieldEvent* p = m_pFieldEventPath;
     CJS_FieldEvent* pLast = NULL;
@@ -300,7 +300,7 @@ void CJS_Runtime::RemoveEventInLoop(const CFX_WideString& sTargetName, JS_EVENT_
     {
         if (p->eEventType == eEventType && p->sTargetName == sTargetName)
         {
-            bFind = TRUE;
+            bFind = true;
             break;
         }
 

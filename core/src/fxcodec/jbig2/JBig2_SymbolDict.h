@@ -19,7 +19,7 @@ public:
 public:
     FX_DWORD SDNUMEXSYMS;
     CJBig2_Image **SDEXSYMS;
-    FX_BOOL m_bContextRetained;
+    bool m_bContextRetained;
     JBig2ArithCtx *m_gbContext,
                   *m_grContext;
 };

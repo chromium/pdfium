@@ -23,10 +23,10 @@ public:
     virtual CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp,
                                    CPDFSDK_PageView* pPageView);
 
-    virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar,
+    virtual bool OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar,
                            FX_UINT nFlags);
 
-    virtual FX_BOOL IsDataChanged(CPDFSDK_PageView* pPageView);
+    virtual bool IsDataChanged(CPDFSDK_PageView* pPageView);
     virtual void SaveData(CPDFSDK_PageView* pPageView);
 
     virtual void GetActionData(CPDFSDK_PageView* pPageView,
@@ -40,8 +40,8 @@ public:
     virtual void RestoreState(CPDFSDK_PageView* pPageView);
 
     virtual CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,
-                                     FX_BOOL bRestoreValue);
-    virtual void OnKeyStroke(FX_BOOL bKeyDown, FX_DWORD nFlag);
+                                     bool bRestoreValue);
+    virtual void OnKeyStroke(bool bKeyDown, FX_DWORD nFlag);
 
 private:
     CBA_FontMap* m_pFontMap;

@@ -29,20 +29,20 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start( FPDF_BITMAP bitmap, FPDF_PAGE
 #ifdef _SKIA_SUPPORT_
     pContext->m_pDevice = new CFX_SkiaDevice;
     if (flags & FPDF_REVERSE_BYTE_ORDER)
-        ((CFX_SkiaDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap,0,TRUE);
+        ((CFX_SkiaDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap,0,true);
     else
         ((CFX_SkiaDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap);
 #else
     pContext->m_pDevice = new CFX_FxgeDevice;
     if (flags & FPDF_REVERSE_BYTE_ORDER)
-        ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap,0,TRUE);
+        ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap,0,true);
     else
         ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)bitmap);
 #endif
     IFSDK_PAUSE_Adapter IPauseAdapter(pause);
 
     FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                           rotate, flags,FALSE, &IPauseAdapter);
+                           rotate, flags,false, &IPauseAdapter);
 
     if (pContext->m_pRenderer)
         return CPDF_ProgressiveRenderer::ToFPDFStatus(pContext->m_pRenderer->GetStatus());

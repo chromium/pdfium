@@ -145,12 +145,12 @@ int32_t CPWL_Icon::GetScaleMethod()
 	return 0;
 }
 
-FX_BOOL	CPWL_Icon::IsProportionalScale()
+bool	CPWL_Icon::IsProportionalScale()
 {
 	if (m_pIconFit)
 		return m_pIconFit->IsProportionalScale();
 
-	return FALSE;
+	return false;
 }
 
 void CPWL_Icon::GetIconPosition(FX_FLOAT & fLeft, FX_FLOAT & fBottom)
@@ -175,12 +175,12 @@ void CPWL_Icon::GetIconPosition(FX_FLOAT & fLeft, FX_FLOAT & fBottom)
 	}
 }
 
-FX_BOOL CPWL_Icon::GetFittingBounds()
+bool CPWL_Icon::GetFittingBounds()
 {
 	if (m_pIconFit)
 		return m_pIconFit->GetFittingBounds();
 
-	return FALSE;
+	return false;
 }
 
 void CPWL_Icon::GetScale(FX_FLOAT & fHScale,FX_FLOAT & fVScale)
