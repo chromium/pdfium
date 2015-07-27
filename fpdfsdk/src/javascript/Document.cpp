@@ -944,7 +944,7 @@ FX_BOOL Document::delay(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sE
 	else
 	{
 		if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
-j			return FALSE;
+			return FALSE;
 
 		vp >> m_bDelay;
 		if (m_bDelay)
