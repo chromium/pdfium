@@ -344,16 +344,11 @@ protected:
 #define PDFPARSE_TYPEONLY	1
 #define PDFPARSE_NOSTREAM	2
 struct PARSE_CONTEXT {
-
-    FX_BOOL		m_Flags;
-
-    FX_FILESIZE	m_DictStart;
-
-    FX_FILESIZE	m_DictEnd;
-
-    FX_FILESIZE	m_DataStart;
-
-    FX_FILESIZE	m_DataEnd;
+    uint32_t m_Flags;
+    FX_FILESIZE m_DictStart;
+    FX_FILESIZE m_DictEnd;
+    FX_FILESIZE m_DataStart;
+    FX_FILESIZE m_DataEnd;
 };
 
 #define PDFPARSE_ERROR_SUCCESS		0

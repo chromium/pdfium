@@ -712,7 +712,7 @@ int	CPDF_TextPage::CountBoundedSegments(FX_FLOAT left, FX_FLOAT top, FX_FLOAT ri
     FPDF_SEGMENT	segment;
     segment.m_Start = 0;
     segment.m_nCount = 0;
-    FX_BOOL		segmentStatus = 0;
+    int  		segmentStatus = 0;
     FX_BOOL		IsContainPreChar = FALSE;
     while (pos < nCount) {
         PAGECHAR_INFO charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(pos);

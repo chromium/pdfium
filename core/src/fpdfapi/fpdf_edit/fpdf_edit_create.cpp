@@ -751,14 +751,14 @@ FX_BOOL CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator, FX_BOOL bEOF
     offset += len + 7;
     if (m_PrevOffset > 0) {
         if (pFile->AppendString(FX_BSTRC("/Prev ")) < 0) {
-            return -1;
+            return FALSE;
         }
         FX_CHAR offset_buf[20];
         FXSYS_memset(offset_buf, 0, sizeof(offset_buf));
         FXSYS_i64toa(m_PrevOffset, offset_buf, 10);
         int32_t len = (int32_t)FXSYS_strlen(offset_buf);
         if (pFile->AppendBlock(offset_buf, len) < 0) {
-            return -1;
+            return FALSE;
         }
         offset += len + 6;
     }
@@ -786,7 +786,7 @@ FX_BOOL CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator, FX_BOOL bEOF
     offset += len + 8;
     if (bEOF) {
         if ((len = PDF_CreatorWriteTrailer(pCreator->m_pDocument, pFile, pCreator->m_pIDArray, pCreator->m_bCompress)) < 0) {
-            return -1;
+            return FALSE;
         }
         offset += len;
         if (pCreator->m_pEncryptDict) {
@@ -795,7 +795,7 @@ FX_BOOL CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator, FX_BOOL bEOF
                 dwEncryptObjNum = pCreator->m_dwEnryptObjNum;
             }
             if ((len = PDF_CreatorWriteEncrypt(pCreator->m_pEncryptDict, dwEncryptObjNum, pFile)) < 0) {
-                return -1;
+                return FALSE;
             }
             offset += len;
         }

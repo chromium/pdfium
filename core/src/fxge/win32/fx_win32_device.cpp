@@ -25,7 +25,7 @@ public:
     ~CWin32FontInfo();
     virtual void		Release();
     virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper);
-    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, FX_BOOL& bExact);
+    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, int& iExact);
     virtual void*		GetFont(const FX_CHAR* face)
     {
         return NULL;
@@ -285,7 +285,7 @@ void CWin32FontInfo::GetJapanesePreference(CFX_ByteString& face, int weight, int
         face = "MS PMincho";
     }
 }
-void* CWin32FontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, FX_BOOL& bExact)
+void* CWin32FontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, int& iExact)
 {
     CFX_ByteString face = cstr_face;
     int iBaseFont;
@@ -294,7 +294,7 @@ void* CWin32FontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitc
             face = Base14Substs[iBaseFont].m_pWinName;
             weight = Base14Substs[iBaseFont].m_bBold ? FW_BOLD : FW_NORMAL;
             bItalic = Base14Substs[iBaseFont].m_bItalic;
-            bExact = TRUE;
+            iExact = TRUE;
             break;
         }
     if (charset == ANSI_CHARSET || charset == SYMBOL_CHARSET) {
@@ -594,7 +594,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1, int d
 
     return TRUE;
 }
-BOOL CGdiDeviceDriver::GetClipBox(FX_RECT* pRect)
+FX_BOOL CGdiDeviceDriver::GetClipBox(FX_RECT* pRect)
 {
     return ::GetClipBox(m_hDC, (RECT*)pRect);
 }

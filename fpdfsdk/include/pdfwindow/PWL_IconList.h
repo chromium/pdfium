@@ -87,7 +87,7 @@ private:
 	void								SelectItem(int32_t nItemIndex, FX_BOOL bSelect);
 	int32_t							FindItemIndex(const CPDF_Point& point);
 
-	FX_BOOL								m_nSelectIndex;
+	int32_t								m_nSelectIndex;
 	IPWL_IconList_Notify*				m_pNotify;
 	FX_BOOL								m_bEnableNotify;
 	FX_BOOL								m_bMouseDown;

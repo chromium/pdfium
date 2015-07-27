@@ -129,7 +129,7 @@ protected:
     SEGMENT_Array					m_Segment;
     CFX_RectArray					m_SelRects;
     LINEOBJ							m_LineObj;
-    FX_BOOL							m_TextlineDir;
+    int32_t							m_TextlineDir;
     CFX_FloatRect					m_CurlineRect;
 };
 class CPDF_TextPageFind: public IPDF_TextPageFind
