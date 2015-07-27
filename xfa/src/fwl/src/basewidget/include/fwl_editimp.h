@@ -64,22 +64,22 @@ public:
     virtual FWL_ERR		SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
     virtual FWL_ERR		SetOuter(IFWL_Widget *pOuter);
     virtual FWL_ERR		SetNumberRange(int32_t iMin, int32_t iMax);
-    virtual void		On_CaretChanged(IFDE_TxtEdtEngine *pEdit, int32_t nPage, FX_BOOL bVisible = TRUE);
-    virtual void		On_TextChanged(IFDE_TxtEdtEngine * pEdit, FDE_TXTEDT_TEXTCHANGE_INFO &ChangeInfo);
-    virtual void		On_PageCountChanged(IFDE_TxtEdtEngine *pEdit) {}
-    virtual void		On_SelChanged(IFDE_TxtEdtEngine *pEdit);
-    virtual FX_BOOL		On_PageLoad(IFDE_TxtEdtEngine *pEdit, int32_t nPageIndex, int32_t nPurpose);
-    virtual FX_BOOL		On_PageUnload(IFDE_TxtEdtEngine *pEdit, int32_t nPageIndex, int32_t nPurpose);
-    virtual FX_BOOL		On_PageChange(IFDE_TxtEdtEngine *pEdit, FX_BOOL bPageUp = TRUE)
+    void On_CaretChanged(IFDE_TxtEdtEngine *pEdit, int32_t nPage, FX_BOOL bVisible = true) override;
+    void On_TextChanged(IFDE_TxtEdtEngine * pEdit, FDE_TXTEDT_TEXTCHANGE_INFO &ChangeInfo) override;
+    void On_PageCountChanged(IFDE_TxtEdtEngine *pEdit) override {}
+    void On_SelChanged(IFDE_TxtEdtEngine *pEdit) override;
+    FX_BOOL On_PageLoad(IFDE_TxtEdtEngine *pEdit, int32_t nPageIndex, int32_t nPurpose) override;
+    FX_BOOL On_PageUnload(IFDE_TxtEdtEngine *pEdit, int32_t nPageIndex, int32_t nPurpose) override;
+    FX_BOOL On_PageChange(IFDE_TxtEdtEngine *pEdit, int32_t nPageIndex) override
     {
         return TRUE;
     }
-    virtual void		On_AddDoRecord(IFDE_TxtEdtEngine *pEdit, const CFX_ByteStringC& bsDoRecord);
-    virtual FX_BOOL		On_ValidateField(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex, int32_t nFieldIndex, \
-                                         const CFX_WideString &wsFieldText, int32_t nCharIndex);
-    virtual FX_BOOL		On_ValidateBlock(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex);
-    virtual FX_BOOL		On_GetBlockFormatText(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex, CFX_WideString &wsBlockText);
-    virtual FX_BOOL		On_Validate(IFDE_TxtEdtEngine * pEdit, CFX_WideString &wsText);
+    void On_AddDoRecord(IFDE_TxtEdtEngine *pEdit, const CFX_ByteStringC& bsDoRecord) override;
+    FX_BOOL On_ValidateField(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex, int32_t nFieldIndex, \
+                          const CFX_WideString &wsFieldText, int32_t nCharIndex) override;
+    FX_BOOL On_ValidateBlock(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex) override;
+    FX_BOOL On_GetBlockFormatText(IFDE_TxtEdtEngine *pEdit, int32_t nBlockIndex, CFX_WideString &wsBlockText) override;
+    FX_BOOL On_Validate(IFDE_TxtEdtEngine * pEdit, CFX_WideString &wsText) override;
     virtual FWL_ERR     SetBackgroundColor(FX_DWORD color);
     virtual FWL_ERR     SetFont(const CFX_WideString &wsFont, FX_FLOAT fSize);
     void				SetScrollOffset(FX_FLOAT fScrollOffset);

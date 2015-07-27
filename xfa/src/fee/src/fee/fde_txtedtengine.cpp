@@ -133,13 +133,12 @@ void CFDE_TxtEdtEngine::SetTextByStream(IFX_Stream *pStream)
             uint8_t bom[4];
             int32_t nPos  = pStream->GetBOM(bom);
             pStream->Seek(FX_STREAMSEEK_Begin, nPos);
-            int32_t	bEos		= FALSE;
             int32_t	nPlateSize	= FX_MIN(nStreamLength, m_pTxtBuf->GetChunkSize());
             FX_WCHAR*	lpwstr		= (FX_WCHAR*)FDE_Alloc(nPlateSize * sizeof(FX_WCHAR));
             FXSYS_assert(lpwstr);
-            int32_t	nRead = 0;
+            FX_BOOL	bEos		= false;
             while (!bEos) {
-                nRead = pStream->ReadString(lpwstr, nPlateSize, bEos);
+                int32_t	nRead = pStream->ReadString(lpwstr, nPlateSize, bEos);
                 bPreIsCR = ReplaceParagEnd(lpwstr, nRead, bPreIsCR);
                 m_pTxtBuf->Insert(nIndex, lpwstr, nRead);
                 nIndex += nRead;
@@ -2547,7 +2546,7 @@ void CFDE_TxtEdtDoRecord_DeleteRange::Serialize(CFX_ByteString &bsDoRecord) cons
     CFX_ArchiveSaver ArchiveSaver;
     ArchiveSaver << int32_t(FDE_TXTEDT_DORECORD_DEL);
     ArchiveSaver << (int32_t)(uintptr_t)m_pEngine;
-    ArchiveSaver << m_bSel;
+    ArchiveSaver << (int32_t)m_bSel;
     ArchiveSaver << m_nIndex;
     ArchiveSaver << m_nCaret;
     ArchiveSaver << m_wsRange;
@@ -2566,7 +2565,9 @@ void CFDE_TxtEdtDoRecord_DeleteRange::Deserialize(const CFX_ByteStringC& bsDoRec
     int32_t nEngine = 0;
     ArchiveLoader >> nEngine;
     m_pEngine = (CFDE_TxtEdtEngine*)(uintptr_t)nEngine;
-    ArchiveLoader >> m_bSel;
+    int32_t iSel = 0;
+    ArchiveLoader >> iSel;
+    m_bSel = !!iSel;
     ArchiveLoader >> m_nIndex;
     ArchiveLoader >> m_nCaret;
     ArchiveLoader >> m_wsRange;

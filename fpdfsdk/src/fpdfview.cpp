@@ -263,7 +263,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BY
 	return pDocument;
 }
 
-DLLEXPORT FX_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int* docType)
+DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document, int* docType)
 {
 	if (!document)
 		return FALSE;
