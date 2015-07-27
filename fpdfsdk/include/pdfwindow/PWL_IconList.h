@@ -94,7 +94,7 @@ private:
 	int32_t							m_nListCount;
 };
 
-class PWL_CLASS CPWL_IconList : public CPWL_Wnd
+class CPWL_IconList : public CPWL_Wnd
 {
 public:
 	CPWL_IconList(int32_t nListCount);

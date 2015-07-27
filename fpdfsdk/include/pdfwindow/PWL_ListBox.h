@@ -37,7 +37,7 @@ private:
 	CPWL_ListBox*					m_pList;
 };
 
-class PWL_CLASS CPWL_ListBox : public CPWL_Wnd
+class CPWL_ListBox : public CPWL_Wnd
 {
 public:
 	CPWL_ListBox();

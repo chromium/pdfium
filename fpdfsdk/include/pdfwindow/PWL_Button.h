@@ -9,7 +9,7 @@
 
 #include "PWL_Wnd.h"
 
-class PWL_CLASS CPWL_Button : public CPWL_Wnd
+class CPWL_Button : public CPWL_Wnd
 {
 public:
 	CPWL_Button();

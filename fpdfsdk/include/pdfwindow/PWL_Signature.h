@@ -32,7 +32,7 @@ private:
 	CFX_DIBSource*						m_pImage;
 };
 
-class PWL_CLASS CPWL_Signature : public CPWL_Wnd
+class CPWL_Signature : public CPWL_Wnd
 {
 public:
 	CPWL_Signature();

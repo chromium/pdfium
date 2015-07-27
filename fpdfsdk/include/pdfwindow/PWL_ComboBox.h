@@ -18,7 +18,7 @@ public:
 	virtual ~CPWL_CBEdit(){};
 };
 
-class PWL_CLASS CPWL_CBListBox : public CPWL_ListBox
+class CPWL_CBListBox : public CPWL_ListBox
 {
 public:
 	CPWL_CBListBox(){};
@@ -48,7 +48,7 @@ public:
 
 };
 
-class PWL_CLASS CPWL_ComboBox : public CPWL_Wnd
+class CPWL_ComboBox : public CPWL_Wnd
 {
 public:
 	CPWL_ComboBox();

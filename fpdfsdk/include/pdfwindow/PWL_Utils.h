@@ -104,7 +104,7 @@ public:
 
 class IPWL_SpellCheck;
 
-class PWL_CLASS CPWL_Utils
+class CPWL_Utils
 {
 public:
 	static CPDF_Rect						InflateRect(const CPDF_Rect& rcRect, FX_FLOAT fSize);

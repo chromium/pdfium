@@ -50,16 +50,7 @@ struct CPWL_FontMap_Native
 
 #endif
 
-#ifndef PWL_CLASS
-
-	#ifdef FX_READER_DLL
-		#define PWL_CLASS		__declspec(dllexport)
-	#else
-		#define PWL_CLASS
-	#endif
-#endif
-
-class PWL_CLASS CPWL_FontMap : public IFX_Edit_FontMap
+class CPWL_FontMap : public IFX_Edit_FontMap
 {
 public:
 	CPWL_FontMap(IFX_SystemHandler* pSystemHandler);
@@ -124,7 +115,7 @@ private:
 	IFX_SystemHandler*							m_pSystemHandler;
 };
 
-class PWL_CLASS CPWL_DocFontMap : public CPWL_FontMap
+class CPWL_DocFontMap : public CPWL_FontMap
 {
 public:
 	CPWL_DocFontMap(IFX_SystemHandler* pSystemHandler, CPDF_Document* pAttachedDoc);

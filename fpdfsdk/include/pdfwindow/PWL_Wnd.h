@@ -21,19 +21,6 @@ class IFX_SystemHandler;
 class IPWL_Provider;
 class IPWL_SpellCheck;
 
-#ifdef FX_READER_DLL
-	#ifdef PWL_EXPORT
-			#define PWL_CLASS		__declspec(dllexport)
-			#define PWL_FUNCTION	PWL_CLASS
-		#else
-			#define PWL_CLASS
-			#define PWL_FUNCTION
-	#endif
-#else
-	#define PWL_CLASS
-	#define PWL_FUNCTION
-#endif
-
 //window styles
 #define PWS_CHILD							0x80000000L
 #define PWS_BORDER							0x40000000L
@@ -115,7 +102,7 @@ struct CPWL_Dash
 	int32_t			nPhase;
 };
 
-struct PWL_CLASS CPWL_Color
+struct CPWL_Color
 {
 	CPWL_Color(int32_t type = COLORTYPE_TRANSPARENT, FX_FLOAT color1 = 0.0f, FX_FLOAT color2 = 0.0f, FX_FLOAT color3 = 0.0f, FX_FLOAT color4 = 0.0f)
 		: nColorType(type), fColor1(color1), fColor2(color2), fColor3(color3), fColor4(color4)
@@ -273,7 +260,7 @@ private:
 	IFX_SystemHandler*					m_pSystemHandler;
 };
 
-class PWL_CLASS CPWL_TimerHandler
+class CPWL_TimerHandler
 {
 public:
 	CPWL_TimerHandler();
@@ -288,7 +275,7 @@ private:
 	CPWL_Timer*							m_pTimer;
 };
 
-class PWL_CLASS CPWL_Wnd : public CPWL_TimerHandler
+class CPWL_Wnd : public CPWL_TimerHandler
 {
 	friend class CPWL_MsgControl;
 public:

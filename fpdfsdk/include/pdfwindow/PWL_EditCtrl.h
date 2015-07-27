@@ -56,7 +56,7 @@ public:
 	virtual void					OnAddUndo(CPWL_Edit* pEdit) {}
 };
 
-class PWL_CLASS CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify
+class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify
 {
 	friend class CPWL_Edit_Notify;
 

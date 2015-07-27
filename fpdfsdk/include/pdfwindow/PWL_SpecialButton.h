@@ -9,7 +9,7 @@
 
 #include "PWL_Button.h"
 
-class PWL_CLASS CPWL_PushButton : public CPWL_Button
+class CPWL_PushButton : public CPWL_Button
 {
 public:
 	CPWL_PushButton();
@@ -19,7 +19,7 @@ public:
 	virtual CPDF_Rect			GetFocusRect() const;
 };
 
-class PWL_CLASS CPWL_CheckBox : public CPWL_Button
+class CPWL_CheckBox : public CPWL_Button
 {
 public:
 	CPWL_CheckBox();
@@ -36,7 +36,7 @@ private:
 	FX_BOOL						m_bChecked;
 };
 
-class PWL_CLASS CPWL_RadioButton : public CPWL_Button
+class CPWL_RadioButton : public CPWL_Button
 {
 public:
 	CPWL_RadioButton();
