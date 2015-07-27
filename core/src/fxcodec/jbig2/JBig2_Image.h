@@ -28,31 +28,31 @@ public:
 
     ~CJBig2_Image();
 
-    bool getPixel(int32_t x, int32_t y);
+    FX_BOOL getPixel(int32_t x, int32_t y);
 
-    int32_t setPixel(int32_t x, int32_t y, bool v);
+    int32_t setPixel(int32_t x, int32_t y, FX_BOOL v);
 
     void copyLine(int32_t hTo, int32_t hFrom);
 
-    void fill(bool v);
+    void fill(FX_BOOL v);
 
-    bool composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op);
-    bool composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect);
+    FX_BOOL composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op);
+    FX_BOOL composeTo(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect);
 
-    bool composeTo_unopt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op);
+    FX_BOOL composeTo_unopt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op);
 
-    bool composeTo_opt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op);
+    FX_BOOL composeTo_opt(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op);
 
-    bool composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op);
-    bool composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect);
+    FX_BOOL composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op);
+    FX_BOOL composeTo_opt2(CJBig2_Image *pDst, int32_t x, int32_t y, JBig2ComposeOp op, const FX_RECT* pSrcRect);
 
-    bool composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op);
-    bool composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op, const FX_RECT* pSrcRect);
+    FX_BOOL composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op);
+    FX_BOOL composeFrom(int32_t x, int32_t y, CJBig2_Image *pSrc, JBig2ComposeOp op, const FX_RECT* pSrcRect);
     CJBig2_Image *subImage_unopt(int32_t x, int32_t y, int32_t w, int32_t h);
 
     CJBig2_Image *subImage(int32_t x, int32_t y, int32_t w, int32_t h);
 
-    void expand(int32_t h, bool v);
+    void expand(int32_t h, FX_BOOL v);
 public:
 
     int32_t m_nWidth;
@@ -63,6 +63,6 @@ public:
 
     uint8_t *m_pData;
 
-    bool m_bNeedFree;
+    FX_BOOL m_bNeedFree;
 };
 #endif

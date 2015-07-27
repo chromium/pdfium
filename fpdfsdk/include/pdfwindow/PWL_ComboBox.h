@@ -25,10 +25,10 @@ public:
 	virtual ~CPWL_CBListBox(){};
 
 public:
-	virtual bool				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
 
-	bool				OnKeyDownWithExit(FX_WORD nChar, bool & bExit, FX_DWORD nFlag);
-	bool				OnCharWithExit(FX_WORD nChar, bool & bExit, FX_DWORD nFlag);
+	FX_BOOL				OnKeyDownWithExit(FX_WORD nChar, FX_BOOL & bExit, FX_DWORD nFlag);
+	FX_BOOL				OnCharWithExit(FX_WORD nChar, FX_BOOL & bExit, FX_DWORD nFlag);
 };
 
 #define PWL_COMBOBOX_BUTTON_WIDTH		13
@@ -43,8 +43,8 @@ public:
 	virtual void				GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream);
 	virtual void				DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device);
 
-	virtual bool				OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL				OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
 
 };
 
@@ -58,8 +58,8 @@ public:
 	virtual CFX_ByteString		GetClassName() const;
 	virtual void				OnCreate(PWL_CREATEPARAM & cp);
 
-	virtual bool				OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
-	virtual bool				OnChar(FX_WORD nChar, FX_DWORD nFlag);
+	virtual FX_BOOL				OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
+	virtual FX_BOOL				OnChar(FX_WORD nChar, FX_DWORD nFlag);
 
 	virtual void				OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
 
@@ -71,7 +71,7 @@ public:
 	virtual void				SetFocus();
 	virtual void				KillFocus();
 
-	bool						IsModified() const;
+	FX_BOOL						IsModified() const;
 
 public:
 	void						SetFillerNotify(IPWL_Filler_Notify* pNotify);
@@ -87,7 +87,7 @@ public:
 	void						GetEditSel(int32_t & nStartChar, int32_t & nEndChar ) const;
 	void						Clear();
 	void						SelectAll();
-	bool						IsPopup() const;
+	FX_BOOL						IsPopup() const;
 
 	void						SetSelectText();
 
@@ -96,14 +96,14 @@ private:
 	void						CreateButton(const PWL_CREATEPARAM & cp);
 	void						CreateListBox(const PWL_CREATEPARAM & cp);
 
-	void						SetPopup(bool bPopup);
+	void						SetPopup(FX_BOOL bPopup);
 
 private:
 	CPWL_CBEdit*				m_pEdit;
 	CPWL_CBButton*				m_pButton;
 	CPWL_CBListBox*				m_pList;
 
-	bool						m_bPopup;
+	FX_BOOL						m_bPopup;
 	CPDF_Rect					m_rcOldWindow;
 	int32_t					m_nPopupWhere;
 	int32_t					m_nSelectItem;

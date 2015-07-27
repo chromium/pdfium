@@ -13,7 +13,7 @@ class CJBig2_HuffmanTable : public CJBig2_Object
 {
 public:
 
-    CJBig2_HuffmanTable(const JBig2TableLine *pTable, int nLines, bool bHTOOB);
+    CJBig2_HuffmanTable(const JBig2TableLine *pTable, int nLines, FX_BOOL bHTOOB);
 
     CJBig2_HuffmanTable(CJBig2_BitStream *pStream);
 
@@ -21,22 +21,22 @@ public:
 
     void init();
 
-    int parseFromStandardTable(const JBig2TableLine *pTable, int nLines, bool bHTOOB);
+    int parseFromStandardTable(const JBig2TableLine *pTable, int nLines, FX_BOOL bHTOOB);
 
     int parseFromCodedBuffer(CJBig2_BitStream *pStream);
 
-    bool isOK()
+    FX_BOOL isOK()
     {
         return m_bOK;
     }
 private:
-    bool HTOOB;
+    FX_BOOL HTOOB;
     int NTEMP;
     int *CODES;
     int *PREFLEN;
     int *RANGELEN;
     int *RANGELOW;
-    bool m_bOK;
+    FX_BOOL m_bOK;
     friend class CJBig2_HuffmanDecoder;
 };
 #endif

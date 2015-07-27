@@ -47,7 +47,7 @@ CJBig2_Context::CJBig2_Context(uint8_t *pGlobalData, FX_DWORD dwGlobalLength,
     JBIG2_ALLOC(m_pSegmentList, CJBig2_List<CJBig2_Segment>);
     JBIG2_ALLOC(m_pPageInfoList, CJBig2_List<JBig2PageInfo>(1));
     m_pPage = NULL;
-    m_bBufSpecified = false;
+    m_bBufSpecified = FALSE;
     m_pPause = pPause;
     m_nSegmentDecoded = 0;
     m_PauseStep = 10;
@@ -231,11 +231,11 @@ int32_t CJBig2_Context::getFirstPage(uint8_t *pBuf, int32_t width, int32_t heigh
             return nRet;
         }
     }
-    m_bFirstPage = true;
+    m_bFirstPage = TRUE;
     m_PauseStep = 0;
     delete m_pPage;
     JBIG2_ALLOC(m_pPage, CJBig2_Image(width, height, stride, pBuf));
-    m_bBufSpecified = true;
+    m_bBufSpecified = TRUE;
     if(m_pPage && pPause && pPause->NeedToPauseNow()) {
         m_PauseStep = 1;
         m_ProcessiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -298,11 +298,11 @@ int32_t CJBig2_Context::Continue(IFX_Pause* pPause)
 int32_t CJBig2_Context::getNextPage(uint8_t *pBuf, int32_t width, int32_t height, int32_t stride, IFX_Pause* pPause)
 {
     int32_t nRet = JBIG2_ERROR_STREAM_TYPE;
-    m_bFirstPage = false;
+    m_bFirstPage = FALSE;
     m_PauseStep = 0;
     delete m_pPage;
     JBIG2_ALLOC(m_pPage, CJBig2_Image(width, height, stride, pBuf));
-    m_bBufSpecified = true;
+    m_bBufSpecified = TRUE;
     if(m_pPage && pPause && pPause->NeedToPauseNow()) {
         m_PauseStep = 1;
         m_ProcessiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -330,7 +330,7 @@ int32_t CJBig2_Context::getNextPage(uint8_t *pBuf, int32_t width, int32_t height
 int32_t CJBig2_Context::getFirstPage(CJBig2_Image **image, IFX_Pause* pPause)
 {
     int32_t nRet;
-    m_bFirstPage = true;
+    m_bFirstPage = TRUE;
     m_PauseStep = 0;
     if(m_pGlobalContext) {
         nRet = m_pGlobalContext->decode_EmbedOrgnazation(pPause);
@@ -338,14 +338,14 @@ int32_t CJBig2_Context::getFirstPage(CJBig2_Image **image, IFX_Pause* pPause)
             return nRet;
         }
     }
-    m_bBufSpecified = false;
+    m_bBufSpecified = FALSE;
     return Continue(pPause);
 }
 int32_t CJBig2_Context::getNextPage(CJBig2_Image **image, IFX_Pause* pPause)
 {
     int32_t nRet;
-    m_bBufSpecified = false;
-    m_bFirstPage = false;
+    m_bBufSpecified = FALSE;
+    m_bFirstPage = FALSE;
     m_PauseStep = 0;
     switch(m_nStreamType) {
         case JBIG2_FILE_STREAM:
@@ -601,14 +601,14 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
     CJBig2_HuffmanTable *Table_B1 = NULL, *Table_B2 = NULL, *Table_B3 = NULL, *Table_B4 = NULL, *Table_B5 = NULL;
     int32_t i, nIndex, nRet;
     CJBig2_Segment *pSeg = NULL, *pLRSeg = NULL;
-    bool bUsed;
+    FX_BOOL bUsed;
     CJBig2_Image ** SDINSYMS = NULL;
     CJBig2_SDDProc *pSymbolDictDecoder;
     JBig2ArithCtx *gbContext = NULL, *grContext = NULL;
     CJBig2_ArithDecoder *pArithDecoder;
     JBIG2_ALLOC(pSymbolDictDecoder, CJBig2_SDDProc());
     uint8_t *key = pSegment->m_pData;
-    bool cache_hit = false;
+    FX_BOOL cache_hit = false;
     if(m_pStream->readShortInteger(&wFlags) != 0) {
         m_pModule->JBig2_Error("symbol dictionary segment : data header too short.");
         nRet = JBIG2_ERROR_TOO_SHORT;
@@ -825,16 +825,16 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
         }
     }
     if(wFlags & 0x0200) {
-        pSegment->m_Result.sd->m_bContextRetained = true;
+        pSegment->m_Result.sd->m_bContextRetained = TRUE;
         if(pSymbolDictDecoder->SDHUFF == 0) {
             pSegment->m_Result.sd->m_gbContext = gbContext;
         }
         if(pSymbolDictDecoder->SDREFAGG == 1) {
             pSegment->m_Result.sd->m_grContext = grContext;
         }
-        bUsed = true;
+        bUsed = TRUE;
     } else {
-        bUsed = false;
+        bUsed = FALSE;
     }
     delete pSymbolDictDecoder;
     if(SDINSYMS) {
@@ -845,7 +845,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment *pSegment, IFX_Pause* pPa
     delete Table_B3;
     delete Table_B4;
     delete Table_B5;
-    if(bUsed == false) {
+    if(bUsed == FALSE) {
         if(gbContext) {
             m_pModule->JBig2_Free(gbContext);
         }

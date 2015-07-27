@@ -133,7 +133,7 @@ LPVOID	CDWriteExt::DwCreateFontFaceFromStream(uint8_t* pData, FX_DWORD size, int
     IDWriteFactory* pDwFactory = (IDWriteFactory*)m_pDWriteFactory;
     IDWriteFontFile* pDwFontFile = NULL;
     IDWriteFontFace* pDwFontFace = NULL;
-    BOOL isSupportedFontType = false;
+    BOOL isSupportedFontType = FALSE;
     DWRITE_FONT_FILE_TYPE fontFileType;
     DWRITE_FONT_FACE_TYPE fontFaceType;
     UINT32 numberOfFaces;
@@ -174,10 +174,10 @@ failed:
     SafeRelease(&pDwFontFile);
     return NULL;
 }
-bool CDWriteExt::DwCreateRenderingTarget(CFX_DIBitmap* pBitmap, void** renderTarget)
+FX_BOOL CDWriteExt::DwCreateRenderingTarget(CFX_DIBitmap* pBitmap, void** renderTarget)
 {
     if (pBitmap->GetFormat() > FXDIB_Argb) {
-        return false;
+        return FALSE;
     }
     IDWriteFactory* pDwFactory = (IDWriteFactory*)m_pDWriteFactory;
     IDWriteGdiInterop* pGdiInterop = NULL;
@@ -212,14 +212,14 @@ bool CDWriteExt::DwCreateRenderingTarget(CFX_DIBitmap* pBitmap, void** renderTar
     SafeRelease(&pGdiInterop);
     SafeRelease(&pBitmapRenderTarget);
     SafeRelease(&pRenderingParams);
-    return true;
+    return TRUE;
 failed:
     SafeRelease(&pGdiInterop);
     SafeRelease(&pBitmapRenderTarget);
     SafeRelease(&pRenderingParams);
-    return false;
+    return FALSE;
 }
-bool	CDWriteExt::DwRendingString(void* renderTarget, CFX_ClipRgn* pClipRgn, FX_RECT& stringRect, CFX_AffineMatrix* pMatrix,
+FX_BOOL	CDWriteExt::DwRendingString(void* renderTarget, CFX_ClipRgn* pClipRgn, FX_RECT& stringRect, CFX_AffineMatrix* pMatrix,
                                     void *font, FX_FLOAT font_size, FX_ARGB text_color,
                                     int glyph_count, unsigned short* glyph_indices,
                                     FX_FLOAT baselineOriginX, FX_FLOAT baselineOriginY,
@@ -227,7 +227,7 @@ bool	CDWriteExt::DwRendingString(void* renderTarget, CFX_ClipRgn* pClipRgn, FX_R
                                     FX_FLOAT* glyph_advances)
 {
     if (renderTarget == NULL) {
-        return true;
+        return TRUE;
     }
     CDwGdiTextRenderer* pTextRenderer = (CDwGdiTextRenderer*)renderTarget;
     DWRITE_MATRIX transform;
@@ -247,7 +247,7 @@ bool	CDWriteExt::DwRendingString(void* renderTarget, CFX_ClipRgn* pClipRgn, FX_R
     glyphRun.glyphIndices = glyph_indices;
     glyphRun.glyphAdvances = glyph_advances;
     glyphRun.glyphOffsets = (DWRITE_GLYPH_OFFSET*)glyph_offsets;
-    glyphRun.isSideways = false;
+    glyphRun.isSideways = FALSE;
     glyphRun.bidiLevel = 0;
     hr = pTextRenderer->DrawGlyphRun(
              stringRect,
@@ -258,7 +258,7 @@ bool	CDWriteExt::DwRendingString(void* renderTarget, CFX_ClipRgn* pClipRgn, FX_R
              &glyphRun,
              RGB(FXARGB_R(text_color), FXARGB_G(text_color), FXARGB_B(text_color))
          );
-    return SUCCEEDED(hr) ? true : false;
+    return SUCCEEDED(hr) ? TRUE : FALSE;
 }
 void CDWriteExt::DwDeleteRenderingTarget(void* renderTarget)
 {

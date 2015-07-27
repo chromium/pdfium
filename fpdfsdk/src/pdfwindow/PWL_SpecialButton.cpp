@@ -32,7 +32,7 @@ CPDF_Rect CPWL_PushButton::GetFocusRect() const
 
 /* --------------------------- CPWL_CheckBox ---------------------------- */
 
-CPWL_CheckBox::CPWL_CheckBox() : m_bChecked(false)
+CPWL_CheckBox::CPWL_CheckBox() : m_bChecked(FALSE)
 {
 }
 
@@ -45,33 +45,33 @@ CFX_ByteString CPWL_CheckBox::GetClassName() const
 	return "CPWL_CheckBox";
 }
 
-void CPWL_CheckBox::SetCheck(bool bCheck)
+void CPWL_CheckBox::SetCheck(FX_BOOL bCheck)
 {
 	m_bChecked = bCheck;
 }
 
-bool CPWL_CheckBox::IsChecked() const
+FX_BOOL CPWL_CheckBox::IsChecked() const
 {
 	return m_bChecked;
 }
 
-bool CPWL_CheckBox::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
+FX_BOOL CPWL_CheckBox::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 {
-	if (IsReadOnly()) return false;
+	if (IsReadOnly()) return FALSE;
 
 	SetCheck(!IsChecked());
-	return true;
+	return TRUE;
 }
 
-bool CPWL_CheckBox::OnChar(FX_WORD nChar, FX_DWORD nFlag)
+FX_BOOL CPWL_CheckBox::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 {
 	SetCheck(!IsChecked());
-	return true;
+	return TRUE;
 }
 
 /* --------------------------- CPWL_RadioButton ---------------------------- */
 
-CPWL_RadioButton::CPWL_RadioButton() : m_bChecked(false)
+CPWL_RadioButton::CPWL_RadioButton() : m_bChecked(FALSE)
 {
 }
 
@@ -84,27 +84,27 @@ CFX_ByteString CPWL_RadioButton::GetClassName() const
 	return "CPWL_RadioButton";
 }
 
-bool	CPWL_RadioButton::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
+FX_BOOL	CPWL_RadioButton::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
 {
-	if (IsReadOnly()) return false;
+	if (IsReadOnly()) return FALSE;
 
-	SetCheck(true);
-	return true;
+	SetCheck(TRUE);
+	return TRUE;
 }
 
-void CPWL_RadioButton::SetCheck(bool bCheck)
+void CPWL_RadioButton::SetCheck(FX_BOOL bCheck)
 {
 	m_bChecked = bCheck;
 }
 
-bool CPWL_RadioButton::IsChecked() const
+FX_BOOL CPWL_RadioButton::IsChecked() const
 {
 	return m_bChecked;
 }
 
-bool CPWL_RadioButton::OnChar(FX_WORD nChar, FX_DWORD nFlag)
+FX_BOOL CPWL_RadioButton::OnChar(FX_WORD nChar, FX_DWORD nFlag)
 {
-	SetCheck(true);
-	return true;
+	SetCheck(TRUE);
+	return TRUE;
 }
 

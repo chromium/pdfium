@@ -29,7 +29,7 @@ public:
 												FX_FLOAT fSmallStep, FX_FLOAT fBigStep);
 	void							IOnSetScrollPosX(FX_FLOAT fx){}
 	void							IOnSetScrollPosY(FX_FLOAT fy);
-	void							IOnSetCaret(bool bVisible,const CPDF_Point & ptHead,const CPDF_Point & ptFoot, const CPVT_WordPlace& place);
+	void							IOnSetCaret(FX_BOOL bVisible,const CPDF_Point & ptHead,const CPDF_Point & ptFoot, const CPVT_WordPlace& place);
 	void							IOnCaretChange(const CPVT_SecProps & secProps, const CPVT_WordProps & wordProps);
 	void							IOnInvalidateRect(CPDF_Rect * pRect);
 
@@ -49,12 +49,12 @@ public:
 	virtual void					GetThisAppearanceStream(CFX_ByteTextBuf & sAppStream);
 	virtual void					DrawThisAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device);
 
-	virtual bool					OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
-	virtual bool					OnChar(FX_WORD nChar, FX_DWORD nFlag);
-	virtual bool					OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool					OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
+	virtual FX_BOOL					OnChar(FX_WORD nChar, FX_DWORD nFlag);
+	virtual FX_BOOL					OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnMouseMove(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL					OnMouseWheel(short zDelta, const CPDF_Point & point, FX_DWORD nFlag);
 	virtual void					KillFocus();
 
 	virtual void					OnNotify(CPWL_Wnd* pWnd, FX_DWORD msg, intptr_t wParam = 0, intptr_t lParam = 0);
@@ -64,7 +64,7 @@ public:
 	virtual void					SetFontSize(FX_FLOAT fFontSize);
 	virtual FX_FLOAT				GetFontSize() const;
 
-	void							OnNotifySelChanged(bool bKeyDown, bool & bExit , FX_DWORD nFlag);
+	void							OnNotifySelChanged(FX_BOOL bKeyDown, FX_BOOL & bExit , FX_DWORD nFlag);
 
 	void							AddString(const FX_WCHAR* string);
 	void							SetTopVisibleIndex(int32_t nItemIndex);
@@ -73,13 +73,13 @@ public:
 	void							Reset();
 	void							Select(int32_t nItemIndex);
 	void							SetCaret(int32_t nItemIndex);
-	void							SetHoverSel(bool bHoverSel);
+	void							SetHoverSel(FX_BOOL bHoverSel);
 
 	int32_t						GetCount() const;
-	bool							IsMultipleSel() const;
+	FX_BOOL							IsMultipleSel() const;
 	int32_t						GetCaretIndex() const;
 	int32_t						GetCurSel() const;
-	bool							IsItemSelected(int32_t nItemIndex) const;
+	FX_BOOL							IsItemSelected(int32_t nItemIndex) const;
 	int32_t						GetTopVisibleIndex() const;
 	int32_t						FindNext(int32_t nIndex,FX_WCHAR nChar) const;
 	CPDF_Rect						GetContentRect() const;
@@ -91,8 +91,8 @@ public:
 protected:
 	IFX_List*						m_pList;
 	CPWL_List_Notify*				m_pListNotify;
-	bool							m_bMouseDown;
-	bool							m_bHoverSel;
+	FX_BOOL							m_bMouseDown;
+	FX_BOOL							m_bHoverSel;
 	IPWL_Filler_Notify*				m_pFillerNotify;
 public:
 	void							AttachFFLData(void* pData) {m_pFormFiller = pData;}

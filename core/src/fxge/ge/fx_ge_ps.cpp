@@ -10,7 +10,7 @@
 struct PSGlyph {
     CFX_Font*		m_pFont;
     FX_DWORD		m_GlyphIndex;
-    bool			m_bGlyphAdjust;
+    FX_BOOL			m_bGlyphAdjust;
     FX_FLOAT		m_AdjustMatrix[4];
 };
 class CPSFont
@@ -22,8 +22,8 @@ public:
 CFX_PSRenderer::CFX_PSRenderer()
 {
     m_pOutput = NULL;
-    m_bColorSet = m_bGraphStateSet = false;
-    m_bInited = false;
+    m_bColorSet = m_bGraphStateSet = FALSE;
+    m_bInited = FALSE;
 }
 CFX_PSRenderer::~CFX_PSRenderer()
 {
@@ -33,7 +33,7 @@ CFX_PSRenderer::~CFX_PSRenderer()
     }
 }
 #define OUTPUT_PS(str) m_pOutput->OutputPS(str, sizeof str-1)
-void CFX_PSRenderer::Init(IFX_PSOutput* pOutput, int pslevel, int width, int height, bool bCmykOutput)
+void CFX_PSRenderer::Init(IFX_PSOutput* pOutput, int pslevel, int width, int height, FX_BOOL bCmykOutput)
 {
     m_PSLevel = pslevel;
     m_pOutput = pOutput;
@@ -42,10 +42,10 @@ void CFX_PSRenderer::Init(IFX_PSOutput* pOutput, int pslevel, int width, int hei
     m_ClipBox.bottom = height;
     m_bCmykOutput = bCmykOutput;
 }
-bool CFX_PSRenderer::StartRendering()
+FX_BOOL CFX_PSRenderer::StartRendering()
 {
     if (m_bInited) {
-        return true;
+        return TRUE;
     }
     static const char init_str[] = "\nsave\n/im/initmatrix load def\n"
                                    "/n/newpath load def/m/moveto load def/l/lineto load def/c/curveto load def/h/closepath load def\n"
@@ -57,15 +57,15 @@ bool CFX_PSRenderer::StartRendering()
                                    "/cm/concat load def/Cm/currentmatrix load def/mx/matrix load def/sm/setmatrix load def\n"
                                    ;
     OUTPUT_PS(init_str);
-    m_bInited = true;
-    return true;
+    m_bInited = TRUE;
+    return TRUE;
 }
 void CFX_PSRenderer::EndRendering()
 {
     if (m_bInited) {
         OUTPUT_PS("\nrestore\n");
     }
-    m_bInited = false;
+    m_bInited = FALSE;
 }
 void CFX_PSRenderer::SaveState()
 {
@@ -73,7 +73,7 @@ void CFX_PSRenderer::SaveState()
     OUTPUT_PS("q\n");
     m_ClipBoxStack.Add(m_ClipBox);
 }
-void CFX_PSRenderer::RestoreState(bool bKeepSaved)
+void CFX_PSRenderer::RestoreState(FX_BOOL bKeepSaved)
 {
     StartRendering();
     if (bKeepSaved) {
@@ -81,7 +81,7 @@ void CFX_PSRenderer::RestoreState(bool bKeepSaved)
     } else {
         OUTPUT_PS("Q\n");
     }
-    m_bColorSet = m_bGraphStateSet = false;
+    m_bColorSet = m_bGraphStateSet = FALSE;
     m_ClipBox = m_ClipBoxStack.GetAt(m_ClipBoxStack.GetSize() - 1);
     if (!bKeepSaved) {
         m_ClipBoxStack.RemoveAt(m_ClipBoxStack.GetSize() - 1);
@@ -175,7 +175,7 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
         OUTPUT_PS("strokepath W n\n");
     }
 }
-bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
+FX_BOOL CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
                                  const CFX_AffineMatrix* pObject2Device,
                                  const CFX_GraphStateData* pGraphState,
                                  FX_DWORD fill_color,
@@ -189,13 +189,13 @@ bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
     int fill_alpha = FXGETFLAG_COLORTYPE(alpha_flag) ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(fill_color);
     int stroke_alpha = FXGETFLAG_COLORTYPE(alpha_flag) ? FXGETFLAG_ALPHA_STROKE(alpha_flag) : FXARGB_A(stroke_color);
     if (fill_alpha && fill_alpha < 255) {
-        return false;
+        return FALSE;
     }
     if (stroke_alpha && stroke_alpha < 255) {
-        return false;
+        return FALSE;
     }
     if (fill_alpha == 0 && stroke_alpha == 0) {
-        return false;
+        return FALSE;
     }
     if (stroke_alpha) {
         SetGraphState(pGraphState);
@@ -233,7 +233,7 @@ bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
         }
     }
     OUTPUT_PS("\n");
-    return true;
+    return TRUE;
 }
 void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState)
 {
@@ -259,7 +259,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState)
         buf << pGraphState->m_MiterLimit << FX_BSTRC(" M\n");
     }
     m_CurGraphState.Copy(*pGraphState);
-    m_bGraphStateSet = true;
+    m_bGraphStateSet = TRUE;
     if (buf.GetSize()) {
         m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
     }
@@ -305,7 +305,7 @@ static void PSCompressData(int PSLevel, uint8_t* src_buf, FX_DWORD src_size,
         }
     }
 }
-bool CFX_PSRenderer::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD color, int left, int top,
+FX_BOOL CFX_PSRenderer::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD color, int left, int top,
                                   int alpha_flag, void* pIccTransform)
 {
     StartRendering();
@@ -313,7 +313,7 @@ bool CFX_PSRenderer::SetDIBits(const CFX_DIBSource* pSource, FX_DWORD color, int
                             (FX_FLOAT)(left), (FX_FLOAT)(top + pSource->GetHeight()));
     return DrawDIBits(pSource, color, &matrix, 0, alpha_flag, pIccTransform);
 }
-bool CFX_PSRenderer::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD color, int dest_left, int dest_top,
+FX_BOOL CFX_PSRenderer::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD color, int dest_left, int dest_top,
                                       int dest_width, int dest_height, FX_DWORD flags,
                                       int alpha_flag, void* pIccTransform)
 {
@@ -322,20 +322,20 @@ bool CFX_PSRenderer::StretchDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
                             (FX_FLOAT)(dest_left), (FX_FLOAT)(dest_top + dest_height));
     return DrawDIBits(pSource, color, &matrix, flags, alpha_flag, pIccTransform);
 }
-bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
+FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
                                    const CFX_AffineMatrix* pMatrix, FX_DWORD flags,
                                    int alpha_flag, void* pIccTransform)
 {
     StartRendering();
     if ((pMatrix->a == 0 && pMatrix->b == 0) || (pMatrix->c == 0 && pMatrix->d == 0)) {
-        return true;
+        return TRUE;
     }
     if (pSource->HasAlpha()) {
-        return false;
+        return FALSE;
     }
     int alpha = FXGETFLAG_COLORTYPE(alpha_flag) ? FXGETFLAG_ALPHA_FILL(color) : FXARGB_A(color);
     if (pSource->IsAlphaMask() && (alpha < 255 || pSource->GetBPP() != 1)) {
-        return false;
+        return FALSE;
     }
     OUTPUT_PS("q\n");
     CFX_ByteTextBuf buf;
@@ -358,7 +358,7 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
         FaxCompressData(src_buf, width, height, output_buf, output_size);
         if (pSource->IsAlphaMask()) {
             SetColor(color, alpha_flag, pIccTransform);
-            m_bColorSet = false;
+            m_bColorSet = FALSE;
             buf << FX_BSTRC(" true[");
         } else {
             buf << FX_BSTRC(" 1[");
@@ -406,7 +406,7 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
         }
         if (pConverted == NULL) {
             OUTPUT_PS("\nQ\n");
-            return false;
+            return FALSE;
         }
         int Bpp = pConverted->GetBPP() / 8;
         uint8_t* output_buf = NULL;
@@ -462,14 +462,14 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource, FX_DWORD color,
         FX_Free(output_buf);
     }
     OUTPUT_PS("\nQ\n");
-    return true;
+    return TRUE;
 }
 void CFX_PSRenderer::SetColor(FX_DWORD color, int alpha_flag, void* pIccTransform)
 {
     if (!CFX_GEModule::Get()->GetCodecModule() || !CFX_GEModule::Get()->GetCodecModule()->GetIccModule()) {
         pIccTransform = NULL;
     }
-    bool bCMYK = false;
+    FX_BOOL bCMYK = FALSE;
     if (pIccTransform) {
         ICodec_IccModule* pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
         color = FXGETFLAG_COLORTYPE(alpha_flag) ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
@@ -490,7 +490,7 @@ void CFX_PSRenderer::SetColor(FX_DWORD color, int alpha_flag, void* pIccTransfor
                 << FXARGB_B(color) / 255.0 << FX_BSTRC(" rg\n");
         }
         if (bCMYK == m_bCmykOutput) {
-            m_bColorSet = true;
+            m_bColorSet = TRUE;
             m_LastColor = color;
         }
         m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
@@ -588,7 +588,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache, CFX_Font* pFont,
         << FX_BSTRC("/") << ps_glyphindex << FX_BSTRC(" put\n");
     m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
 }
-bool CFX_PSRenderer::DrawText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
+FX_BOOL CFX_PSRenderer::DrawText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Font* pFont,
                                  CFX_FontCache* pCache, const CFX_AffineMatrix* pObject2Device,
                                  FX_FLOAT font_size, FX_DWORD color,
                                  int alpha_flag, void* pIccTransform)
@@ -596,10 +596,10 @@ bool CFX_PSRenderer::DrawText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Fo
     StartRendering();
     int alpha = FXGETFLAG_COLORTYPE(alpha_flag) ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
     if (alpha < 255) {
-        return false;
+        return FALSE;
     }
     if ((pObject2Device->a == 0 && pObject2Device->b == 0) || (pObject2Device->c == 0 && pObject2Device->d == 0)) {
-        return true;
+        return TRUE;
     }
     SetColor(color, alpha_flag, pIccTransform);
     CFX_ByteTextBuf buf;
@@ -628,7 +628,7 @@ bool CFX_PSRenderer::DrawText(int nChars, const FXTEXT_CHARPOS* pCharPos, CFX_Fo
     }
     buf << FX_BSTRC("Q\n");
     m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
-    return true;
+    return TRUE;
 }
 void CFX_PSRenderer::WritePSBinary(const uint8_t* data, int len)
 {

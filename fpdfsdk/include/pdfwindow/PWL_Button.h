@@ -17,11 +17,11 @@ public:
 
 	virtual CFX_ByteString		GetClassName() const;
 	virtual void				OnCreate(PWL_CREATEPARAM & cp);
-	virtual bool				OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual bool				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL				OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag);
+	virtual FX_BOOL				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
 
 protected:
-	bool						m_bMouseDown;
+	FX_BOOL						m_bMouseDown;
 };
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_BUTTON_H_

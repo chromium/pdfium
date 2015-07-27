@@ -21,7 +21,7 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document)
 DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages, int nCount,FPDF_PAGEOBJECT image_object, FPDF_FILEACCESS* fileAccess)
 {
 	if (!image_object || !fileAccess)
-		return false;
+		return FALSE;
 
 	IFX_FileRead* pFile = new CPDF_CustomAccess(fileAccess);
 	CPDF_ImageObject* pImgObj = (CPDF_ImageObject*)image_object;
@@ -33,7 +33,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages, int nCou
 	}
 	pImgObj->m_pImage->SetJpegImage(pFile);
 
-	return true;
+	return TRUE;
 }
 
 
@@ -41,7 +41,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix	(FPDF_PAGEOBJECT image_object
 												 double a, double b, double c, double d, double e, double f)
 {
 	if (!image_object)
-		return false;
+		return FALSE;
 	CPDF_ImageObject* pImgObj = (CPDF_ImageObject*)image_object;
 	pImgObj->m_Matrix.a = (FX_FLOAT)a;
 	pImgObj->m_Matrix.b = (FX_FLOAT)b;
@@ -50,13 +50,13 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix	(FPDF_PAGEOBJECT image_object
 	pImgObj->m_Matrix.e = (FX_FLOAT)e;
 	pImgObj->m_Matrix.f = (FX_FLOAT)f;
 	pImgObj->CalcBoundingBox();
-	return  true;
+	return  TRUE;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,int nCount,FPDF_PAGEOBJECT image_object,FPDF_BITMAP bitmap)
 {
 	if (!image_object || !bitmap)
-		return false;
+		return FALSE;
 	CFX_DIBitmap* pBmp = NULL;
 	pBmp = (CFX_DIBitmap*)bitmap;
 	CPDF_ImageObject* pImgObj = (CPDF_ImageObject*)image_object;
@@ -66,8 +66,8 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,int nCount,F
 		CPDF_Page* pPage = (CPDF_Page*)pages[index];
 		pImgObj->m_pImage->ResetCache(pPage,NULL);
 	}
-	pImgObj->m_pImage->SetImage(pBmp,false);
+	pImgObj->m_pImage->SetImage(pBmp,FALSE);
 	pImgObj->CalcBoundingBox();
-	return true;
+	return TRUE;
 }
 

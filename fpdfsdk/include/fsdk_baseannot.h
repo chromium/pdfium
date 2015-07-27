@@ -38,12 +38,12 @@ public:
 
 	CPDFSDK_DateTime&	operator = (const CPDFSDK_DateTime& datetime);
 	CPDFSDK_DateTime&	operator = (const FX_SYSTEMTIME& st);
-	bool				operator == (CPDFSDK_DateTime& datetime);
-	bool				operator != (CPDFSDK_DateTime& datetime);
-	bool				operator > (CPDFSDK_DateTime& datetime);
-	bool				operator >= (CPDFSDK_DateTime& datetime);
-	bool				operator < (CPDFSDK_DateTime& datetime);
-	bool				operator <= (CPDFSDK_DateTime& datetime);
+	FX_BOOL				operator == (CPDFSDK_DateTime& datetime);
+	FX_BOOL				operator != (CPDFSDK_DateTime& datetime);
+	FX_BOOL				operator > (CPDFSDK_DateTime& datetime);
+	FX_BOOL				operator >= (CPDFSDK_DateTime& datetime);
+	FX_BOOL				operator < (CPDFSDK_DateTime& datetime);
+	FX_BOOL				operator <= (CPDFSDK_DateTime& datetime);
 						operator time_t();
 
 	CPDFSDK_DateTime&	FromPDFDateTimeString(const CFX_ByteString& dtStr);
@@ -92,8 +92,8 @@ public:
 	void						SetTabOrder(int iTabOrder);
 
 	// Selection
-	bool						IsSelected();
-	void						SetSelected(bool bSelected);
+	FX_BOOL						IsSelected();
+	void						SetSelected(FX_BOOL bSelected);
 
 	CFX_ByteString				GetType() const;
 	virtual CFX_ByteString		GetSubType() const;
@@ -146,9 +146,9 @@ public:
 
 	void						SetColor(FX_COLORREF color);
 	void						RemoveColor();
-	bool						GetColor(FX_COLORREF& color) const;
+	FX_BOOL						GetColor(FX_COLORREF& color) const;
 
-	bool						IsVisible() const;
+	FX_BOOL						IsVisible() const;
 	//action
 
 	CPDF_Action					GetAction() const;
@@ -162,8 +162,8 @@ public:
 	virtual CPDF_Action			GetAAction(CPDF_AAction::AActionType eAAT);
 
 public:
-	bool						IsAppearanceValid();
-	bool						IsAppearanceValid(CPDF_Annot::AppearanceMode mode);
+	FX_BOOL						IsAppearanceValid();
+	FX_BOOL						IsAppearanceValid(CPDF_Annot::AppearanceMode mode);
 	void						DrawAppearance(CFX_RenderDevice* pDevice, const CPDF_Matrix* pUser2Device,
 		CPDF_Annot::AppearanceMode mode, const CPDF_RenderOptions* pOptions);
 	void						DrawBorder(CFX_RenderDevice* pDevice, const CPDF_Matrix* pUser2Device,
@@ -181,11 +181,11 @@ public:
 
 
 private:
-	bool CreateFormFiller();
+	FX_BOOL CreateFormFiller();
 protected:
 	CPDF_Annot*			m_pAnnot;
 	CPDFSDK_PageView*	m_pPageView;
-	bool				m_bSelected;
+	FX_BOOL				m_bSelected;
 	int					m_nTabOrder;
 
 };

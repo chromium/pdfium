@@ -26,10 +26,10 @@ CFX_WideString GetFullName(CPDF_Dictionary* pFieldDict)
     }
     return full_name;
 }
-bool CPDF_DefaultAppearance::HasFont()
+FX_BOOL CPDF_DefaultAppearance::HasFont()
 {
     if (m_csDA.IsEmpty()) {
-        return false;
+        return FALSE;
     }
     CPDF_SimpleParser syntax(m_csDA);
     return syntax.FindTagParam("Tf", 2);
@@ -65,23 +65,23 @@ void CPDF_DefaultAppearance::GetFont(CFX_ByteString& csFontNameTag, FX_FLOAT& fF
     }
     csFontNameTag = PDF_NameDecode(csFontNameTag);
 }
-bool CPDF_DefaultAppearance::HasColor(bool bStrokingOperation)
+FX_BOOL CPDF_DefaultAppearance::HasColor(FX_BOOL bStrokingOperation)
 {
     if (m_csDA.IsEmpty()) {
-        return false;
+        return FALSE;
     }
     CPDF_SimpleParser syntax(m_csDA);
     if (syntax.FindTagParam(bStrokingOperation ? "G" : "g", 1)) {
-        return true;
+        return TRUE;
     }
     syntax.SetPos(0);
     if (syntax.FindTagParam(bStrokingOperation ? "RG" : "rg", 3)) {
-        return true;
+        return TRUE;
     }
     syntax.SetPos(0);
     return syntax.FindTagParam(bStrokingOperation ? "K" : "k", 4);
 }
-CFX_ByteString CPDF_DefaultAppearance::GetColorString(bool bStrokingOperation)
+CFX_ByteString CPDF_DefaultAppearance::GetColorString(FX_BOOL bStrokingOperation)
 {
     CFX_ByteString csColor;
     if (m_csDA.IsEmpty()) {
@@ -119,7 +119,7 @@ CFX_ByteString CPDF_DefaultAppearance::GetColorString(bool bStrokingOperation)
     }
     return csColor;
 }
-void CPDF_DefaultAppearance::GetColor(int& iColorType, FX_FLOAT fc[4], bool bStrokingOperation)
+void CPDF_DefaultAppearance::GetColor(int& iColorType, FX_FLOAT fc[4], FX_BOOL bStrokingOperation)
 {
     iColorType = COLORTYPE_TRANSPARENT;
     for (int c = 0; c < 4; c ++) {
@@ -151,7 +151,7 @@ void CPDF_DefaultAppearance::GetColor(int& iColorType, FX_FLOAT fc[4], bool bStr
         fc[3] = FX_atof((CFX_ByteString)syntax.GetWord());
     }
 }
-void CPDF_DefaultAppearance::GetColor(FX_ARGB& color, int& iColorType, bool bStrokingOperation)
+void CPDF_DefaultAppearance::GetColor(FX_ARGB& color, int& iColorType, FX_BOOL bStrokingOperation)
 {
     color = 0;
     iColorType = COLORTYPE_TRANSPARENT;
@@ -187,10 +187,10 @@ void CPDF_DefaultAppearance::GetColor(FX_ARGB& color, int& iColorType, bool bStr
         color = ArgbEncode(255, (int)(r * 255 + 0.5f), (int)(g * 255 + 0.5f), (int)(b * 255 + 0.5f));
     }
 }
-bool CPDF_DefaultAppearance::HasTextMatrix()
+FX_BOOL CPDF_DefaultAppearance::HasTextMatrix()
 {
     if (m_csDA.IsEmpty()) {
-        return false;
+        return FALSE;
     }
     CPDF_SimpleParser syntax(m_csDA);
     return syntax.FindTagParam("Tm", 6);
@@ -468,18 +468,18 @@ CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pDo
     }
     return GetNativeInterFormFont(pFormDict, pDocument, charSet, csNameTag);
 }
-bool FindInterFormFont(CPDF_Dictionary* pFormDict, const CPDF_Font* pFont, CFX_ByteString& csNameTag)
+FX_BOOL FindInterFormFont(CPDF_Dictionary* pFormDict, const CPDF_Font* pFont, CFX_ByteString& csNameTag)
 {
     if (pFormDict == NULL || pFont == NULL) {
-        return false;
+        return FALSE;
     }
     CPDF_Dictionary* pDR = pFormDict->GetDict("DR");
     if (pDR == NULL) {
-        return false;
+        return FALSE;
     }
     CPDF_Dictionary* pFonts = pDR->GetDict("Font");
     if (pFonts == NULL) {
-        return false;
+        return FALSE;
     }
     FX_POSITION pos = pFonts->GetStartPos();
     while (pos) {
@@ -499,23 +499,23 @@ bool FindInterFormFont(CPDF_Dictionary* pFormDict, const CPDF_Font* pFont, CFX_B
         }
         if (pFont->GetFontDict() == pElement) {
             csNameTag = csKey;
-            return true;
+            return TRUE;
         }
     }
-    return false;
+    return FALSE;
 }
-bool FindInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pDocument, CFX_ByteString csFontName, CPDF_Font*& pFont, CFX_ByteString& csNameTag)
+FX_BOOL FindInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pDocument, CFX_ByteString csFontName, CPDF_Font*& pFont, CFX_ByteString& csNameTag)
 {
     if (pFormDict == NULL) {
-        return false;
+        return FALSE;
     }
     CPDF_Dictionary* pDR = pFormDict->GetDict("DR");
     if (pDR == NULL) {
-        return false;
+        return FALSE;
     }
     CPDF_Dictionary* pFonts = pDR->GetDict("Font");
     if (pFonts == NULL) {
-        return false;
+        return FALSE;
     }
     if (csFontName.GetLength() > 0) {
         csFontName.Remove(' ');
@@ -545,10 +545,10 @@ bool FindInterFormFont(CPDF_Dictionary* pFormDict, CPDF_Document* pDocument, CFX
         csBaseFont.Remove(' ');
         if (csBaseFont == csFontName) {
             csNameTag = csKey;
-            return true;
+            return TRUE;
         }
     }
-    return false;
+    return FALSE;
 }
 void AddInterFormFont(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument, const CPDF_Font* pFont, CFX_ByteString& csNameTag)
 {
@@ -670,10 +670,10 @@ CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod()
     }
     return Always;
 }
-bool CPDF_IconFit::IsProportionalScale()
+FX_BOOL CPDF_IconFit::IsProportionalScale()
 {
     if (m_pDict == NULL) {
-        return true;
+        return TRUE;
     }
     return m_pDict->GetString("S", "P") != "A";
 }
@@ -694,10 +694,10 @@ void CPDF_IconFit::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom)
         }
     }
 }
-bool CPDF_IconFit::GetFittingBounds()
+FX_BOOL CPDF_IconFit::GetFittingBounds()
 {
     if (m_pDict == NULL) {
-        return false;
+        return FALSE;
     }
     return m_pDict->GetBoolean("FB");
 }

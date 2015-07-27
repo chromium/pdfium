@@ -26,7 +26,7 @@ void FX_PRIVATEDATA::FreeData()
         m_pCallback(m_pData);
     }
 }
-void CFX_PrivateData::AddData(void* pModuleId, void* pData, PD_CALLBACK_FREEDATA callback, bool bSelfDestruct)
+void CFX_PrivateData::AddData(void* pModuleId, void* pData, PD_CALLBACK_FREEDATA callback, FX_BOOL bSelfDestruct)
 {
     if (pModuleId == NULL) {
         return;
@@ -46,26 +46,26 @@ void CFX_PrivateData::AddData(void* pModuleId, void* pData, PD_CALLBACK_FREEDATA
 }
 void CFX_PrivateData::SetPrivateData(void* pModuleId, void* pData, PD_CALLBACK_FREEDATA callback)
 {
-    AddData(pModuleId, pData, callback, false);
+    AddData(pModuleId, pData, callback, FALSE);
 }
 void CFX_PrivateData::SetPrivateObj(void* pModuleId, CFX_DestructObject* pObj)
 {
-    AddData(pModuleId, pObj, NULL, true);
+    AddData(pModuleId, pObj, NULL, TRUE);
 }
-bool CFX_PrivateData::RemovePrivateData(void* pModuleId)
+FX_BOOL CFX_PrivateData::RemovePrivateData(void* pModuleId)
 {
     if (pModuleId == NULL) {
-        return false;
+        return FALSE;
     }
     FX_PRIVATEDATA* pList = m_DataList.GetData();
     int count = m_DataList.GetSize();
     for (int i = 0; i < count; i ++) {
         if (pList[i].m_pModuleId == pModuleId) {
             m_DataList.RemoveAt(i);
-            return true;
+            return TRUE;
         }
     }
-    return false;
+    return FALSE;
 }
 void* CFX_PrivateData::GetPrivateData(void* pModuleId)
 {
@@ -90,18 +90,18 @@ void CFX_PrivateData::ClearAll()
     }
     m_DataList.RemoveAll();
 }
-void FX_atonum(const CFX_ByteStringC& strc, bool& bInteger, void* pData)
+void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData)
 {
     if (FXSYS_memchr(strc.GetPtr(), '.', strc.GetLength()) == NULL) {
-        bInteger = true;
+        bInteger = TRUE;
         int cc = 0, integer = 0;
         const FX_CHAR* str = strc.GetCStr();
         int len = strc.GetLength();
-        bool bNegative = false;
+        FX_BOOL bNegative = FALSE;
         if (str[0] == '+') {
             cc++;
         } else if (str[0] == '-') {
-            bNegative = true;
+            bNegative = TRUE;
             cc++;
         }
         while (cc < len) {
@@ -119,7 +119,7 @@ void FX_atonum(const CFX_ByteStringC& strc, bool& bInteger, void* pData)
         }
         *(int*)pData = integer;
     } else {
-        bInteger = false;
+        bInteger = FALSE;
         *(FX_FLOAT*)pData = FX_atof(strc);
     }
 }
@@ -129,13 +129,13 @@ FX_FLOAT FX_atof(const CFX_ByteStringC& strc)
         return 0.0;
     }
     int cc = 0;
-    bool bNegative = false;
+    FX_BOOL bNegative = FALSE;
     const FX_CHAR* str = strc.GetCStr();
     int len = strc.GetLength();
     if (str[0] == '+') {
         cc++;
     } else if (str[0] == '-') {
-        bNegative = true;
+        bNegative = TRUE;
         cc++;
     }
     while (cc < len) {
@@ -187,13 +187,13 @@ void FXSYS_vsnprintf(char *str, size_t size, const char* fmt, va_list ap)
 }
 #endif  // _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
 
-static bool FX_IsDigit(uint8_t ch)
+static FX_BOOL FX_IsDigit(uint8_t ch)
 {
-    return (ch >= '0' && ch <= '9') ? true : false;
+    return (ch >= '0' && ch <= '9') ? TRUE : FALSE;
 }
-static bool FX_IsXDigit(uint8_t ch)
+static FX_BOOL FX_IsXDigit(uint8_t ch)
 {
-    return (FX_IsDigit(ch) || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f')) ? true : false;
+    return (FX_IsDigit(ch) || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f')) ? TRUE : FALSE;
 }
 static uint8_t FX_MakeUpper(uint8_t ch)
 {
@@ -299,7 +299,7 @@ class CFindFileData
 public:
     virtual ~CFindFileData() {}
     HANDLE				m_Handle;
-    bool				m_bEnd;
+    FX_BOOL				m_bEnd;
 };
 class CFindFileDataA : public CFindFileData
 {
@@ -332,7 +332,7 @@ void* FX_OpenFolder(const FX_CHAR* path)
         delete pData;
         return NULL;
     }
-    pData->m_bEnd = false;
+    pData->m_bEnd = FALSE;
     return pData;
 #else
     DIR* dir = opendir(path);
@@ -352,82 +352,82 @@ void* FX_OpenFolder(const FX_WCHAR* path)
         delete pData;
         return NULL;
     }
-    pData->m_bEnd = false;
+    pData->m_bEnd = FALSE;
     return pData;
 #else
     DIR* dir = opendir(CFX_ByteString::FromUnicode(path));
     return dir;
 #endif
 }
-bool FX_GetNextFile(void* handle, CFX_ByteString& filename, bool& bFolder)
+FX_BOOL FX_GetNextFile(void* handle, CFX_ByteString& filename, FX_BOOL& bFolder)
 {
     if (handle == NULL) {
-        return false;
+        return FALSE;
     }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #ifndef _WIN32_WCE
     CFindFileDataA* pData = (CFindFileDataA*)handle;
     if (pData->m_bEnd) {
-        return false;
+        return FALSE;
     }
     filename = pData->m_FindData.cFileName;
     bFolder = pData->m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
     if (!FindNextFileA(pData->m_Handle, &pData->m_FindData)) {
-        pData->m_bEnd = true;
+        pData->m_bEnd = TRUE;
     }
-    return true;
+    return TRUE;
 #else
     CFindFileDataW* pData = (CFindFileDataW*)handle;
     if (pData->m_bEnd) {
-        return false;
+        return FALSE;
     }
     filename = CFX_ByteString::FromUnicode(pData->m_FindData.cFileName);
     bFolder = pData->m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
     if (!FindNextFileW(pData->m_Handle, &pData->m_FindData)) {
-        pData->m_bEnd = true;
+        pData->m_bEnd = TRUE;
     }
-    return true;
+    return TRUE;
 #endif
 #elif defined(__native_client__)
     abort();
-    return false;
+    return FALSE;
 #else
     struct dirent *de = readdir((DIR*)handle);
     if (de == NULL) {
-        return false;
+        return FALSE;
     }
     filename = de->d_name;
     bFolder = de->d_type == DT_DIR;
-    return true;
+    return TRUE;
 #endif
 }
-bool FX_GetNextFile(void* handle, CFX_WideString& filename, bool& bFolder)
+FX_BOOL FX_GetNextFile(void* handle, CFX_WideString& filename, FX_BOOL& bFolder)
 {
     if (handle == NULL) {
-        return false;
+        return FALSE;
     }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     CFindFileDataW* pData = (CFindFileDataW*)handle;
     if (pData->m_bEnd) {
-        return false;
+        return FALSE;
     }
     filename = pData->m_FindData.cFileName;
     bFolder = pData->m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
     if (!FindNextFileW(pData->m_Handle, &pData->m_FindData)) {
-        pData->m_bEnd = true;
+        pData->m_bEnd = TRUE;
     }
-    return true;
+    return TRUE;
 #elif defined(__native_client__)
     abort();
-    return false;
+    return FALSE;
 #else
     struct dirent *de = readdir((DIR*)handle);
     if (de == NULL) {
-        return false;
+        return FALSE;
     }
     filename = CFX_WideString::FromLocal(de->d_name);
     bFolder = de->d_type == DT_DIR;
-    return true;
+    return TRUE;
 #endif
 }
 void FX_CloseFolder(void* handle)

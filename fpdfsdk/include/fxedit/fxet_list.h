@@ -31,7 +31,7 @@ public:
 		y = 0.0f;
 	}
 
-	bool operator != (const CLST_Size & size) const
+	FX_BOOL operator != (const CLST_Size & size) const
 	{
 		return FXSYS_memcmp(this, &size, sizeof(CLST_Size)) != 0;
 	}
@@ -81,12 +81,12 @@ public:
 		return *this;
 	}
 
-	bool operator == (const CLST_Rect & rect) const
+	FX_BOOL operator == (const CLST_Rect & rect) const
 	{
 		return FXSYS_memcmp(this, &rect, sizeof(CLST_Rect)) == 0;
 	}
 
-	bool operator != (const CLST_Rect & rect) const
+	FX_BOOL operator != (const CLST_Rect & rect) const
 	{
 		return FXSYS_memcmp(this, &rect, sizeof(CLST_Rect)) != 0;
 	}
@@ -162,22 +162,22 @@ public:
 
 public:
 	void							SetRect(const CLST_Rect & rect);
-	void							SetSelect(bool bSelected);
-	void							SetCaret(bool bCaret);
+	void							SetSelect(FX_BOOL bSelected);
+	void							SetCaret(FX_BOOL bCaret);
 	void							SetText(const FX_WCHAR* text);
 	void							SetFontSize(FX_FLOAT fFontSize);
 	CFX_WideString					GetText() const;
 
 	CLST_Rect						GetRect() const;
-	bool							IsSelected() const;
-	bool							IsCaret() const;
+	FX_BOOL							IsSelected() const;
+	FX_BOOL							IsCaret() const;
 	FX_FLOAT						GetItemHeight() const;
 	FX_WORD							GetFirstChar() const;
 
 private:
 	IFX_Edit*						m_pEdit;
-	bool							m_bSelected;
-	bool							m_bCaret;
+	FX_BOOL							m_bSelected;
+	FX_BOOL							m_bCaret;
 	CLST_Rect						m_rcListItem;
 };
 
@@ -209,7 +209,7 @@ private:
 template<class TYPE> class CLST_ArrayTemplate : public CFX_ArrayTemplate<TYPE>
 {
 public:
-	bool IsEmpty() { return CFX_ArrayTemplate<TYPE>::GetSize() <= 0; }
+	FX_BOOL IsEmpty() { return CFX_ArrayTemplate<TYPE>::GetSize() <= 0; }
 	TYPE GetAt(int32_t nIndex) const { if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize()) return CFX_ArrayTemplate<TYPE>::GetAt(nIndex); return NULL;}
 	void RemoveAt(int32_t nIndex){if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize()) CFX_ArrayTemplate<TYPE>::RemoveAt(nIndex);}
 };
@@ -230,12 +230,12 @@ public:
 	virtual FX_FLOAT				GetFontSize() const;
 	virtual IFX_Edit*				GetItemEdit(int32_t nIndex) const;
 	virtual int32_t				GetCount() const;
-	virtual bool					IsItemSelected(int32_t nIndex) const;
+	virtual FX_BOOL					IsItemSelected(int32_t nIndex) const;
 	virtual FX_FLOAT				GetFirstHeight() const;
 
-	virtual void					SetMultipleSel(bool bMultiple);
-	virtual bool					IsMultipleSel() const;
-	virtual bool					IsValid(int32_t nItemIndex) const;
+	virtual void					SetMultipleSel(FX_BOOL bMultiple);
+	virtual FX_BOOL					IsMultipleSel() const;
+	virtual FX_BOOL					IsValid(int32_t nItemIndex) const;
 	virtual int32_t				FindNext(int32_t nIndex,FX_WCHAR nChar) const;
 
 protected:
@@ -247,8 +247,8 @@ protected:
 	virtual CPDF_Rect				GetItemRect(int32_t nIndex) const;
 	CFX_WideString					GetItemText(int32_t nIndex) const;
 
-	void							SetItemSelect(int32_t nItemIndex, bool bSelected);
-	void							SetItemCaret(int32_t nItemIndex, bool bCaret);
+	void							SetItemSelect(int32_t nItemIndex, FX_BOOL bSelected);
+	void							SetItemCaret(int32_t nItemIndex, FX_BOOL bCaret);
 
 	virtual int32_t				GetItemIndex(const CPDF_Point & point) const;
 	int32_t						GetFirstSelected() const;
@@ -259,7 +259,7 @@ private:
 	CLST_ArrayTemplate<CFX_ListItem*>	m_aListItems;
 	FX_FLOAT							m_fFontSize;
 	IFX_Edit_FontMap*					m_pFontMap;
-	bool								m_bMultiple;
+	FX_BOOL								m_bMultiple;
 };
 
 struct CPLST_Select_Item
@@ -285,7 +285,7 @@ public:
 	void							Add(int32_t nBeginIndex, int32_t nEndIndex);
 	void							Sub(int32_t nItemIndex);
 	void							Sub(int32_t nBeginIndex, int32_t nEndIndex);
-	bool							IsExist(int32_t nItemIndex) const;
+	FX_BOOL							IsExist(int32_t nItemIndex) const;
 	int32_t						Find(int32_t nItemIndex) const;
 	int32_t						GetCount() const;
 	int32_t						GetItemIndex(int32_t nIndex) const;
@@ -306,16 +306,16 @@ public:
 public:
 	void							SetNotify(IFX_List_Notify * pNotify);
 
-	void							OnMouseDown(const CPDF_Point & point,bool bShift,bool bCtrl);
-	void							OnMouseMove(const CPDF_Point & point,bool bShift,bool bCtrl);
-	void							OnVK_UP(bool bShift,bool bCtrl);
-	void							OnVK_DOWN(bool bShift,bool bCtrl);
-	void							OnVK_LEFT(bool bShift,bool bCtrl);
-	void							OnVK_RIGHT(bool bShift,bool bCtrl);
-	void							OnVK_HOME(bool bShift,bool bCtrl);
-	void							OnVK_END(bool bShift,bool bCtrl);
-	void							OnVK(int32_t nItemIndex,bool bShift,bool bCtrl);
-	bool							OnChar(FX_WORD nChar,bool bShift,bool bCtrl);
+	void							OnMouseDown(const CPDF_Point & point,FX_BOOL bShift,FX_BOOL bCtrl);
+	void							OnMouseMove(const CPDF_Point & point,FX_BOOL bShift,FX_BOOL bCtrl);
+	void							OnVK_UP(FX_BOOL bShift,FX_BOOL bCtrl);
+	void							OnVK_DOWN(FX_BOOL bShift,FX_BOOL bCtrl);
+	void							OnVK_LEFT(FX_BOOL bShift,FX_BOOL bCtrl);
+	void							OnVK_RIGHT(FX_BOOL bShift,FX_BOOL bCtrl);
+	void							OnVK_HOME(FX_BOOL bShift,FX_BOOL bCtrl);
+	void							OnVK_END(FX_BOOL bShift,FX_BOOL bCtrl);
+	void							OnVK(int32_t nItemIndex,FX_BOOL bShift,FX_BOOL bCtrl);
+	FX_BOOL							OnChar(FX_WORD nChar,FX_BOOL bShift,FX_BOOL bCtrl);
 
 	virtual CPDF_Point				InToOut(const CPDF_Point & point) const;
 	virtual CPDF_Point				OutToIn(const CPDF_Point & point) const;
@@ -341,23 +341,23 @@ public:
 	CFX_WideString					GetText() const;
 
 private:
-	void							SetMultipleSelect(int32_t nItemIndex, bool bSelected);
+	void							SetMultipleSelect(int32_t nItemIndex, FX_BOOL bSelected);
 	void							SetSingleSelect(int32_t nItemIndex);
 	void							InvalidateItem(int32_t nItemIndex);
 	void							SelectItems();
-	bool							IsItemVisible(int32_t nItemIndex) const;
+	FX_BOOL							IsItemVisible(int32_t nItemIndex) const;
 	void							SetScrollInfo();
 	void							SetScrollPosY(FX_FLOAT fy);
 	virtual void					ReArrange(int32_t nItemIndex);
 
 private:
 	IFX_List_Notify*				m_pNotify;
-	bool							m_bNotifyFlag;
+	FX_BOOL							m_bNotifyFlag;
 	CPDF_Point						m_ptScrollPos;
 	CPLST_Select					m_aSelItems;	//for multiple
 	int32_t						m_nSelItem;		//for single
 	int32_t						m_nFootIndex;	//for multiple
-	bool							m_bCtrlSel;		//for multiple
+	FX_BOOL							m_bCtrlSel;		//for multiple
 	int32_t						m_nCaretIndex;	//for multiple
 };
 

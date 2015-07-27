@@ -289,7 +289,7 @@ void CTextPage::WriteOutput(CFX_WideStringArray& lines, int iMinWidth)
 }
 void NormalizeCompositeChar(FX_WCHAR wChar, CFX_WideString& sDest)
 {
-    wChar = FX_GetMirrorChar(wChar, true, false);
+    wChar = FX_GetMirrorChar(wChar, TRUE, FALSE);
     FX_WCHAR* pDst = NULL;
     FX_STRSIZE nCount = FX_Unicode_GetNormalization(wChar, pDst);
     if (nCount < 1 ) {
@@ -311,7 +311,7 @@ void NormalizeString(CFX_WideString& str)
     CFX_WideString sBuffer;
     nonstd::unique_ptr<IFX_BidiChar> pBidiChar(IFX_BidiChar::Create());
     CFX_WordArray order;
-    bool bR2L = false;
+    FX_BOOL bR2L = FALSE;
     int32_t start = 0, count = 0, i = 0;
     int nR2L = 0, nL2R = 0;
     for (i = 0; i < str.GetLength(); i++) {
@@ -343,7 +343,7 @@ void NormalizeString(CFX_WideString& str)
         }
     }
     if(nR2L > 0 && nR2L >= nL2R) {
-        bR2L = true;
+        bR2L = TRUE;
     }
     if(bR2L) {
         int count = order.GetSize();
@@ -357,7 +357,7 @@ void NormalizeString(CFX_WideString& str)
                 }
             } else {
                 i = j;
-                bool bSymbol = false;
+                FX_BOOL bSymbol = FALSE;
                 while(i > 0 && order.GetAt(i) != 2) {
                     bSymbol = !order.GetAt(i);
                     i -= 3;
@@ -389,7 +389,7 @@ void NormalizeString(CFX_WideString& str)
         }
     } else {
         int count = order.GetSize();
-        bool bL2R = false;
+        FX_BOOL bL2R = FALSE;
         for(int j = 0; j < count; j += 3) {
             int ret = order.GetAt(j + 2);
             int start = order.GetAt(j);
@@ -405,7 +405,7 @@ void NormalizeString(CFX_WideString& str)
                 }
                 if(i == 3) {
                     j = -3;
-                    bL2R = true;
+                    bL2R = TRUE;
                     continue;
                 }
                 int end = str.GetLength() - 1;
@@ -427,15 +427,15 @@ void NormalizeString(CFX_WideString& str)
     str.Empty();
     str += sBuffer;
 }
-static bool IsNumber(CFX_WideString& str)
+static FX_BOOL IsNumber(CFX_WideString& str)
 {
     for (int i = 0; i < str.GetLength(); i ++) {
         FX_WCHAR ch = str[i];
         if ((ch < '0' || ch > '9') && ch != '-' && ch != '+' && ch != '.' && ch != ' ') {
-            return false;
+            return FALSE;
         }
     }
-    return true;
+    return TRUE;
 }
 void CTextPage::FindColumns()
 {
@@ -534,18 +534,18 @@ void CTextBaseLine::InsertTextBox(FX_FLOAT leftx, FX_FLOAT rightx, FX_FLOAT topy
     pText->m_pColumn = NULL;
     m_TextList.InsertAt(i, pText);
 }
-bool GetIntersection(FX_FLOAT low1, FX_FLOAT high1, FX_FLOAT low2, FX_FLOAT high2,
+FX_BOOL GetIntersection(FX_FLOAT low1, FX_FLOAT high1, FX_FLOAT low2, FX_FLOAT high2,
                         FX_FLOAT& interlow, FX_FLOAT& interhigh);
-bool CTextBaseLine::CanMerge(CTextBaseLine* pOther)
+FX_BOOL CTextBaseLine::CanMerge(CTextBaseLine* pOther)
 {
     FX_FLOAT inter_top, inter_bottom;
     if (!GetIntersection(m_Bottom, m_Top, pOther->m_Bottom, pOther->m_Top,
                          inter_bottom, inter_top)) {
-        return false;
+        return FALSE;
     }
     FX_FLOAT inter_h = inter_top - inter_bottom;
     if (inter_h < (m_Top - m_Bottom) / 2 && inter_h < (pOther->m_Top - pOther->m_Bottom) / 2) {
-        return false;
+        return FALSE;
     }
     FX_FLOAT dy = (FX_FLOAT)FXSYS_fabs(m_BaseLine - pOther->m_BaseLine);
     for (int i = 0; i < m_TextList.GetSize(); i ++) {
@@ -563,11 +563,11 @@ bool CTextBaseLine::CanMerge(CTextBaseLine* pOther)
             }
             if (dy >= (pText->m_Bottom - pText->m_Top) / 2 ||
                     dy >= (pOtherText->m_Bottom - pOtherText->m_Top) / 2) {
-                return false;
+                return FALSE;
             }
         }
     }
-    return true;
+    return TRUE;
 }
 void CTextBaseLine::Merge(CTextBaseLine* pOther)
 {
@@ -577,7 +577,7 @@ void CTextBaseLine::Merge(CTextBaseLine* pOther)
                       pText->m_SpaceWidth, pText->m_FontSizeV, pText->m_Text);
     }
 }
-bool CTextBaseLine::GetWidth(FX_FLOAT& leftx, FX_FLOAT& rightx)
+FX_BOOL CTextBaseLine::GetWidth(FX_FLOAT& leftx, FX_FLOAT& rightx)
 {
     int i;
     for (i = 0; i < m_TextList.GetSize(); i ++) {
@@ -587,7 +587,7 @@ bool CTextBaseLine::GetWidth(FX_FLOAT& leftx, FX_FLOAT& rightx)
         }
     }
     if (i == m_TextList.GetSize()) {
-        return false;
+        return FALSE;
     }
     CTextBox* pText = (CTextBox*)m_TextList.GetAt(i);
     leftx = pText->m_Left;
@@ -599,7 +599,7 @@ bool CTextBaseLine::GetWidth(FX_FLOAT& leftx, FX_FLOAT& rightx)
     }
     pText = (CTextBox*)m_TextList.GetAt(i);
     rightx = pText->m_Right;
-    return true;
+    return TRUE;
 }
 void CTextBaseLine::MergeBoxes()
 {
@@ -724,8 +724,8 @@ void PDF_GetPageText_Unicode(CFX_WideStringArray& lines, CPDF_Document* pDoc, CP
     CPDF_Page page;
     page.Load(pDoc, pPage);
     CPDF_ParseOptions options;
-    options.m_bTextOnly = true;
-    options.m_bSeparateForm = false;
+    options.m_bTextOnly = TRUE;
+    options.m_bSeparateForm = FALSE;
     page.ParseContent(&options);
     CFX_FloatRect page_bbox = page.GetPageBBox();
     if (flags & PDF2TXT_AUTO_ROTATE) {
@@ -734,7 +734,7 @@ void PDF_GetPageText_Unicode(CFX_WideStringArray& lines, CPDF_Document* pDoc, CP
     CTextPage texts;
     texts.m_bAutoWidth = flags & PDF2TXT_AUTO_WIDTH;
     texts.m_bKeepColumn = flags & PDF2TXT_KEEP_COLUMN;
-    texts.m_bBreakSpace = true;
+    texts.m_bBreakSpace = TRUE;
     FX_POSITION pos = page.GetFirstObjectPosition();
     while (pos) {
         CPDF_PageObject* pObject = page.GetNextObject(pos);
@@ -763,7 +763,7 @@ void PDF_GetPageText(CFX_ByteStringArray& lines, CPDF_Document* pDoc, CPDF_Dicti
         lines.Add(str);
     }
 }
-extern void _PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_PageObjects* pPage, bool bUseLF,
+extern void _PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_PageObjects* pPage, FX_BOOL bUseLF,
                                        CFX_PtrArray* pObjArray);
 void PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_Document* pDoc, CPDF_Dictionary* pPage, FX_DWORD flags)
 {
@@ -771,8 +771,8 @@ void PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_Document* pDoc, CPD
     CPDF_Page page;
     page.Load(pDoc, pPage);
     CPDF_ParseOptions options;
-    options.m_bTextOnly = true;
-    options.m_bSeparateForm = false;
+    options.m_bTextOnly = TRUE;
+    options.m_bSeparateForm = FALSE;
     page.ParseContent(&options);
-    _PDF_GetTextStream_Unicode(buffer, &page, true, NULL);
+    _PDF_GetTextStream_Unicode(buffer, &page, TRUE, NULL);
 }

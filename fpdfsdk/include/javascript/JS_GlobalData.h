@@ -56,7 +56,7 @@ public:
 	virtual ~CJS_GlobalData_Element(){}
 
 	CJS_KeyValue			data;
-	bool					bPersistent;
+	FX_BOOL					bPersistent;
 };
 
 class CJS_GlobalData
@@ -72,8 +72,8 @@ public:
 	void								SetGlobalVariableObject(const FX_CHAR* propname, const CJS_GlobalVariableArray& array);
 	void								SetGlobalVariableNull(const FX_CHAR* propname);
 
-	bool								SetGlobalVariablePersistent(const FX_CHAR* propname, bool bPersistent);
-	bool								DeleteGlobalVariable(const FX_CHAR* propname);
+	FX_BOOL								SetGlobalVariablePersistent(const FX_CHAR* propname, FX_BOOL bPersistent);
+	FX_BOOL								DeleteGlobalVariable(const FX_CHAR* propname);
 
 	int32_t							GetSize() const;
 	CJS_GlobalData_Element*				GetAt(int index) const;

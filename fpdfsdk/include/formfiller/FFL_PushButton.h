@@ -17,7 +17,7 @@ public:
 
 	virtual CPWL_Wnd*			NewPDFWindow(const PWL_CREATEPARAM& cp, CPDFSDK_PageView* pPageView);
 
-	virtual bool				OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
+	virtual FX_BOOL				OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
 	virtual void				OnDraw(CPDFSDK_PageView *pPageView,  CPDFSDK_Annot* pAnnot,
 									CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,
 									FX_DWORD dwFlags);

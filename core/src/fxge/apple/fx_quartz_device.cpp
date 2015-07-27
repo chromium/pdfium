@@ -76,7 +76,7 @@ void CQuartz2D::setGraphicsTextMatrix(void* graphics, CFX_AffineMatrix* matrix)
                            matrix->e,
                            ty));
 }
-bool CQuartz2D::drawGraphicsString(void*                 graphics,
+FX_BOOL CQuartz2D::drawGraphicsString(void*                 graphics,
                                       void*                 font,
                                       FX_FLOAT              fontSize,
                                       FX_WORD*              glyphIndices,
@@ -86,7 +86,7 @@ bool CQuartz2D::drawGraphicsString(void*                 graphics,
                                       CFX_AffineMatrix*     matrix )
 {
     if (!graphics) {
-        return false;
+        return FALSE;
     }
     CGContextRef context = (CGContextRef) graphics;
     CGContextSetFont(context, (CGFontRef)font);
@@ -113,7 +113,7 @@ bool CQuartz2D::drawGraphicsString(void*                 graphics,
 #if CGFLOAT_IS_DOUBLE
     CGPoint* glyphPositionsCG = new CGPoint[charsCount];
     if (!glyphPositionsCG) {
-        return false;
+        return FALSE;
     }
     for (int index = 0; index < charsCount; ++index) {
         glyphPositionsCG[index].x = glyphPositions[index].x;
@@ -130,7 +130,7 @@ bool CQuartz2D::drawGraphicsString(void*                 graphics,
     delete[] glyphPositionsCG;
 #endif
     CGContextRestoreGState(context);
-    return true;
+    return TRUE;
 }
 void CQuartz2D::saveGraphicsState(void * graphics)
 {
@@ -251,7 +251,7 @@ void CFX_QuartzDeviceDriver::SaveState()
     CGContextSaveGState(_context);
     m_saveCount++;
 }
-void CFX_QuartzDeviceDriver::RestoreState(bool isKeepSaved )
+void CFX_QuartzDeviceDriver::RestoreState(FX_BOOL isKeepSaved )
 {
     CGContextRestoreGState(_context);
     if (isKeepSaved) {
@@ -260,7 +260,7 @@ void CFX_QuartzDeviceDriver::RestoreState(bool isKeepSaved )
         m_saveCount--;
     }
 }
-bool CFX_QuartzDeviceDriver::SetClip_PathFill(const CFX_PathData*    pathData,
+FX_BOOL CFX_QuartzDeviceDriver::SetClip_PathFill(const CFX_PathData*    pathData,
         const CFX_AffineMatrix*   matrix,
         int                       fillMode )
 {
@@ -272,13 +272,13 @@ bool CFX_QuartzDeviceDriver::SetClip_PathFill(const CFX_PathData*    pathData,
     m = CGAffineTransformConcat(m, _foxitDevice2User);
     CGContextConcatCTM(_context, m);
     setPathToContext(pathData);
-    RestoreState(false);
+    RestoreState(FALSE);
     if ((fillMode & 3) == FXFILL_WINDING) {
         CGContextClip(_context);
     } else {
         CGContextEOClip(_context);
     }
-    return true;
+    return TRUE;
 }
 FX_FLOAT CFX_QuartzDeviceDriver::getLineWidth(const CFX_GraphStateData * graphState, CGAffineTransform ctm)
 {
@@ -294,7 +294,7 @@ FX_FLOAT CFX_QuartzDeviceDriver::getLineWidth(const CFX_GraphStateData * graphSt
     }
     return lineWidth;
 }
-bool CFX_QuartzDeviceDriver::SetClip_PathStroke(const CFX_PathData*      pathData,
+FX_BOOL CFX_QuartzDeviceDriver::SetClip_PathStroke(const CFX_PathData*      pathData,
         const CFX_AffineMatrix*     matrix,
         const CFX_GraphStateData*   graphState )
 {
@@ -309,9 +309,9 @@ bool CFX_QuartzDeviceDriver::SetClip_PathStroke(const CFX_PathData*      pathDat
     setStrokeInfo(graphState, 0xFF000000, lineWidth);
     setPathToContext(pathData);
     CGContextReplacePathWithStrokedPath(_context);
-    RestoreState(false);
+    RestoreState(FALSE);
     CGContextClip(_context);
-    return true;
+    return TRUE;
 }
 static CGBlendMode GetCGBlendMode(int blend_type)
 {
@@ -371,7 +371,7 @@ static CGBlendMode GetCGBlendMode(int blend_type)
     }
     return mode;
 }
-bool CFX_QuartzDeviceDriver::DrawPath(const CFX_PathData*        pathData,
+FX_BOOL CFX_QuartzDeviceDriver::DrawPath(const CFX_PathData*        pathData,
         const CFX_AffineMatrix*       matrix,
         const CFX_GraphStateData*     graphState,
         FX_DWORD                      fillArgb,
@@ -423,10 +423,10 @@ bool CFX_QuartzDeviceDriver::DrawPath(const CFX_PathData*        pathData,
     } else if (pathMode == 6) {
         CGContextDrawPath(_context, kCGPathEOFillStroke);
     }
-    RestoreState(false);
-    return true;
+    RestoreState(FALSE);
+    return TRUE;
 }
-bool CFX_QuartzDeviceDriver::FillRect(const FX_RECT*         rect,
+FX_BOOL CFX_QuartzDeviceDriver::FillRect(const FX_RECT*         rect,
         FX_ARGB                   fillArgb,
         int                       alphaFlag	   ,
         void*                     iccTransform ,
@@ -449,9 +449,9 @@ bool CFX_QuartzDeviceDriver::FillRect(const FX_RECT*         rect,
     if (mode != kCGBlendModeNormal) {
         CGContextSetBlendMode(_context, kCGBlendModeNormal);
     }
-    return true;
+    return TRUE;
 }
-bool CFX_QuartzDeviceDriver::DrawCosmeticLine(FX_FLOAT           x1,
+FX_BOOL CFX_QuartzDeviceDriver::DrawCosmeticLine(FX_FLOAT           x1,
         FX_FLOAT              y1,
         FX_FLOAT              x2,
         FX_FLOAT              y2,
@@ -483,9 +483,9 @@ bool CFX_QuartzDeviceDriver::DrawCosmeticLine(FX_FLOAT           x1,
     if (mode != kCGBlendModeNormal) {
         CGContextSetBlendMode(_context, kCGBlendModeNormal);
     }
-    return true;
+    return TRUE;
 }
-bool CFX_QuartzDeviceDriver::GetClipBox(FX_RECT* rect)
+FX_BOOL CFX_QuartzDeviceDriver::GetClipBox(FX_RECT* rect)
 {
     CGRect r = CGContextGetClipBoundingBox(_context);
     r = CGRectApplyAffineTransform(r, _user2FoxitDevice);
@@ -493,22 +493,22 @@ bool CFX_QuartzDeviceDriver::GetClipBox(FX_RECT* rect)
     rect->top		= FXSYS_floor(r.origin.y);
     rect->right		= FXSYS_ceil(r.origin.x + r.size.width);
     rect->bottom	= FXSYS_ceil(r.origin.y + r.size.height);
-    return true;
+    return TRUE;
 }
-bool CFX_QuartzDeviceDriver::GetDIBits(CFX_DIBitmap*     bitmap,
+FX_BOOL CFX_QuartzDeviceDriver::GetDIBits(CFX_DIBitmap*     bitmap,
         int32_t            left,
         int32_t            top,
         void* pIccTransform,
-        bool bDEdge)
+        FX_BOOL bDEdge)
 {
     if (FXDC_PRINTER == _deviceClass) {
-        return false;
+        return FALSE;
     }
     if (bitmap->GetBPP() < 32) {
-        return false;
+        return FALSE;
     }
     if (!(_renderCaps | FXRC_GET_BITS)) {
-        return false;
+        return FALSE;
     }
     CGPoint pt = CGPointMake(left, top);
     pt = CGPointApplyAffineTransform(pt, _foxitDevice2User);
@@ -517,7 +517,7 @@ bool CFX_QuartzDeviceDriver::GetDIBits(CFX_DIBitmap*     bitmap,
     pt.y *= FXSYS_fabs(ctm.d);
     CGImageRef image = CGBitmapContextCreateImage(_context);
     if (NULL == image) {
-        return false;
+        return FALSE;
     }
     CGFloat width	= (CGFloat) bitmap->GetWidth();
     CGFloat height	= (CGFloat) bitmap->GetHeight();
@@ -552,9 +552,9 @@ bool CFX_QuartzDeviceDriver::GetDIBits(CFX_DIBitmap*     bitmap,
             }
         }
     }
-    return true;
+    return TRUE;
 }
-bool CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource*      pBitmap,
+FX_BOOL CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource*      pBitmap,
         FX_ARGB                     argb,
         const FX_RECT*              srcRect,
         int                         dest_left,
@@ -598,8 +598,8 @@ bool CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource*      pBitmap,
             pBitmap1 = pBitmap->Clone();
         }
         if (NULL == pBitmap1) {
-            RestoreState(false);
-            return false;
+            RestoreState(FALSE);
+            return FALSE;
         }
         CGDataProviderRef pBitmapProvider = CGDataProviderCreateWithData(NULL,
                                             pBitmap1->GetBuffer(),
@@ -629,8 +629,8 @@ bool CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource*      pBitmap,
         if (pBitmap1 != pBitmap) {
             delete pBitmap1;
         }
-        RestoreState(false);
-        return true;
+        RestoreState(FALSE);
+        return TRUE;
     }
     if (pBitmap->GetBPP() < 32) {
         pBitmap1 = pBitmap->CloneConvert(FXDIB_Rgb32);
@@ -642,15 +642,15 @@ bool CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource*      pBitmap,
         }
     }
     if (NULL == pBitmap1) {
-        RestoreState(false);
-        return false;
+        RestoreState(FALSE);
+        return FALSE;
     }
     if (pBitmap1->HasAlpha()) {
         if (pBitmap1 == pBitmap) {
             pBitmap1 = pBitmap->Clone();
             if (!pBitmap1) {
-                RestoreState(false);
-                return false;
+                RestoreState(FALSE);
+                return FALSE;
             }
         }
         for (int row = 0; row < pBitmap1->GetHeight(); row ++) {
@@ -682,10 +682,10 @@ bool CFX_QuartzDeviceDriver::SetDIBits(const CFX_DIBSource*      pBitmap,
     if (pBitmap1 != pBitmap) {
         delete pBitmap1;
     }
-    RestoreState(false);
-    return true;
+    RestoreState(FALSE);
+    return TRUE;
 }
-bool CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource*      pBitmap,
+FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource*      pBitmap,
         FX_ARGB                     argb,
         int                         dest_left,
         int                         dest_top,
@@ -723,8 +723,8 @@ bool CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource*      pBitmap,
             pBitmap1 = pBitmap->Clone();
         }
         if (NULL == pBitmap1) {
-            RestoreState(false);
-            return false;
+            RestoreState(FALSE);
+            return FALSE;
         }
         CGDataProviderRef pBitmapProvider = CGDataProviderCreateWithData(NULL,
                                             pBitmap1->GetBuffer(),
@@ -754,8 +754,8 @@ bool CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource*      pBitmap,
         if (pBitmap1 != pBitmap) {
             delete pBitmap1;
         }
-        RestoreState(false);
-        return true;
+        RestoreState(FALSE);
+        return TRUE;
     }
     if (pBitmap->GetBPP() < 32) {
         pBitmap1 = pBitmap->CloneConvert(FXDIB_Rgb32);
@@ -767,15 +767,15 @@ bool CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource*      pBitmap,
         }
     }
     if (NULL == pBitmap1) {
-        RestoreState(false);
-        return false;
+        RestoreState(FALSE);
+        return FALSE;
     }
     if (pBitmap1->HasAlpha()) {
         if (pBitmap1 == pBitmap) {
             pBitmap1 = pBitmap->Clone();
             if (!pBitmap1) {
-                RestoreState(false);
-                return false;
+                RestoreState(FALSE);
+                return FALSE;
             }
         }
         for (int row = 0; row < pBitmap1->GetHeight(); row ++) {
@@ -796,10 +796,10 @@ bool CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource*      pBitmap,
     if (pBitmap1 != pBitmap) {
         delete pBitmap1;
     }
-    RestoreState(false);
-    return true;
+    RestoreState(FALSE);
+    return TRUE;
 }
-bool CFX_QuartzDeviceDriver::CG_DrawGlypRun(int                        nChars,
+FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int                        nChars,
         const FXTEXT_CHARPOS*      pCharPos,
         CFX_Font*                  pFont,
         CFX_FontCache*             pCache,
@@ -811,16 +811,16 @@ bool CFX_QuartzDeviceDriver::CG_DrawGlypRun(int                        nChars,
         void*                      pIccTransform)
 {
     if (nChars == 0) {
-        return true;
+        return TRUE;
     }
     CQuartz2D& quartz2d = ((CApplePlatform *) CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
     if (!pFont->m_pPlatformFont) {
         if (pFont->GetPsName() == CFX_WideString::FromLocal("DFHeiStd-W5")) {
-            return false;
+            return FALSE;
         }
         pFont->m_pPlatformFont = quartz2d.CreateFont(pFont->m_pFontData, pFont->m_dwSize);
         if (NULL == pFont->m_pPlatformFont) {
-            return false;
+            return FALSE;
         }
     }
     CFX_FixedBufGrow<FX_WORD, 32> glyph_indices(nChars);
@@ -872,10 +872,10 @@ bool CFX_QuartzDeviceDriver::CG_DrawGlypRun(int                        nChars,
                                    (CGGlyph*)glyph_indices,
                                    glyph_positions,
                                    nChars);
-    RestoreState(false);
-    return true;
+    RestoreState(FALSE);
+    return TRUE;
 }
-bool CFX_QuartzDeviceDriver::DrawDeviceText(int                      nChars,
+FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int                      nChars,
         const FXTEXT_CHARPOS*    pCharPos,
         CFX_Font*                pFont,
         CFX_FontCache*           pCache,
@@ -886,24 +886,24 @@ bool CFX_QuartzDeviceDriver::DrawDeviceText(int                      nChars,
         void*                    pIccTransform)
 {
     if (NULL == pFont || NULL == _context) {
-        return false;
+        return FALSE;
     }
-    bool bBold = pFont->IsBold();
+    FX_BOOL bBold = pFont->IsBold();
     if (!bBold && pFont->GetSubstFont() &&
             pFont->GetSubstFont()->m_Weight >= 500 &&
             pFont->GetSubstFont()->m_Weight <= 600) {
-        return false;
+        return FALSE;
     }
     SaveState();
     CGContextSetTextDrawingMode(_context, kCGTextFillClip);
-    bool ret = false;
+    FX_BOOL ret = FALSE;
     int32_t i = 0;
     while (i < nChars) {
         if (pCharPos[i].m_bGlyphAdjust || font_size < 0) {
             if (i > 0) {
                 ret = CG_DrawGlypRun(i, pCharPos, pFont, pCache, NULL, pObject2Device, font_size, color, alpha_flag, pIccTransform);
                 if (!ret) {
-                    RestoreState(false);
+                    RestoreState(FALSE);
                     return ret;
                 }
             }
@@ -920,7 +920,7 @@ bool CFX_QuartzDeviceDriver::DrawDeviceText(int                      nChars,
             }
             ret = CG_DrawGlypRun(1, char_pos, pFont, pCache, &glphy_matrix, pObject2Device, font_size, color, alpha_flag, pIccTransform);
             if (!ret) {
-                RestoreState(false);
+                RestoreState(FALSE);
                 return ret;
             }
             i ++;
@@ -934,7 +934,7 @@ bool CFX_QuartzDeviceDriver::DrawDeviceText(int                      nChars,
     if (i > 0) {
         ret = CG_DrawGlypRun(i, pCharPos, pFont, pCache, NULL, pObject2Device, font_size, color, alpha_flag, pIccTransform);
     }
-    RestoreState(false);
+    RestoreState(FALSE);
     return ret;
 }
 void CFX_QuartzDeviceDriver::setStrokeInfo(const CFX_GraphStateData* graphState, FX_ARGB argb, FX_FLOAT lineWidth)
@@ -1074,7 +1074,7 @@ void CFX_QuartzDeviceDriver::ClearDriver()
 }
 CFX_QuartzDevice::CFX_QuartzDevice()
 {
-    m_bOwnedBitmap = false;
+    m_bOwnedBitmap = FALSE;
     m_pContext = NULL;
 }
 CFX_QuartzDevice::~CFX_QuartzDevice()
@@ -1090,7 +1090,7 @@ CGContextRef CFX_QuartzDevice::GetContext()
 {
     return m_pContext;
 }
-bool CFX_QuartzDevice::Attach(CGContextRef context, int32_t nDeviceClass)
+FX_BOOL CFX_QuartzDevice::Attach(CGContextRef context, int32_t nDeviceClass)
 {
     if (m_pContext) {
         CGContextRelease(m_pContext);
@@ -1099,30 +1099,30 @@ bool CFX_QuartzDevice::Attach(CGContextRef context, int32_t nDeviceClass)
     CGContextRetain(m_pContext);
     IFX_RenderDeviceDriver* pDriver = new CFX_QuartzDeviceDriver(m_pContext, nDeviceClass);
     SetDeviceDriver(pDriver);
-    return true;
+    return TRUE;
 }
-bool CFX_QuartzDevice::Attach(CFX_DIBitmap* pBitmap)
+FX_BOOL CFX_QuartzDevice::Attach(CFX_DIBitmap* pBitmap)
 {
     SetBitmap(pBitmap);
     m_pContext = createContextWithBitmap(pBitmap);
     if (NULL == m_pContext) {
-        return false;
+        return FALSE;
     }
     IFX_RenderDeviceDriver* pDriver = new CFX_QuartzDeviceDriver(m_pContext, FXDC_DISPLAY);
     SetDeviceDriver(pDriver);
-    return true;
+    return TRUE;
 }
-bool CFX_QuartzDevice::Create(int32_t width, int32_t height, FXDIB_Format format)
+FX_BOOL CFX_QuartzDevice::Create(int32_t width, int32_t height, FXDIB_Format format)
 {
     if ((uint8_t)format < 32) {
-        return false;
+        return FALSE;
     }
     CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
     if (!pBitmap->Create(width, height, format)) {
         delete pBitmap;
-        return false;
+        return FALSE;
     }
-    m_bOwnedBitmap = true;
+    m_bOwnedBitmap = TRUE;
     return Attach(pBitmap);
 }
 #endif  // _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_

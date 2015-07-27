@@ -33,9 +33,9 @@ public:
 
     virtual ~IPDF_OCContext() {}
 
-    virtual bool	CheckOCGVisible(const CPDF_Dictionary* pOCG) = 0;
+    virtual FX_BOOL	CheckOCGVisible(const CPDF_Dictionary* pOCG) = 0;
 
-    bool CheckObjectVisible(const CPDF_PageObject* pObj);
+    FX_BOOL CheckObjectVisible(const CPDF_PageObject* pObj);
 };
 #define RENDER_COLOR_NORMAL		0
 #define RENDER_COLOR_GRAY		1
@@ -89,10 +89,10 @@ public:
 
     CPDF_RenderContext();
 
-    void			Create(CPDF_Page* pPage, bool bFirstLayer = true);
+    void			Create(CPDF_Page* pPage, FX_BOOL bFirstLayer = TRUE);
 
     void			Create(CPDF_Document* pDoc = NULL, CPDF_PageRenderCache* pPageCache = NULL,
-                           CPDF_Dictionary* pPageResources = NULL, bool bFirstLayer = true);
+                           CPDF_Dictionary* pPageResources = NULL, FX_BOOL bFirstLayer = TRUE);
 
     ~CPDF_RenderContext();
 
@@ -126,7 +126,7 @@ protected:
 
     CFX_ArrayTemplate<struct _PDF_RenderItem>	m_ContentList;
 
-    bool					m_bFirstLayer;
+    FX_BOOL					m_bFirstLayer;
 
     void			Render(CFX_RenderDevice* pDevice, const CPDF_PageObject* pStopObj,
                            const CPDF_RenderOptions* pOptions, const CFX_AffineMatrix* pFinalMatrix);
@@ -192,17 +192,17 @@ public:
                                    const CPDF_RenderOptions* pOptions = NULL
                                );
 
-    static bool	DrawTextPath(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
+    static FX_BOOL	DrawTextPath(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
                                  CPDF_Font* pFont, FX_FLOAT font_size,
                                  const CFX_AffineMatrix* pText2User, const CFX_AffineMatrix* pUser2Device,
                                  const CFX_GraphStateData* pGraphState,
                                  FX_ARGB fill_argb, FX_ARGB stroke_argb, CFX_PathData* pClippingPath, int nFlag = 0);
 
-    static bool	DrawNormalText(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
+    static FX_BOOL	DrawNormalText(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
                                    CPDF_Font* pFont, FX_FLOAT font_size, const CFX_AffineMatrix* pText2Device,
                                    FX_ARGB fill_argb, const CPDF_RenderOptions* pOptions);
 
-    static bool	DrawType3Text(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
+    static FX_BOOL	DrawType3Text(CFX_RenderDevice* pDevice, int nChars, FX_DWORD* pCharCodes, FX_FLOAT* pCharPos,
                                   CPDF_Font* pFont, FX_FLOAT font_size, const CFX_AffineMatrix* pText2Device,
                                   FX_ARGB fill_argb);
 };
@@ -215,7 +215,7 @@ public:
         m_nTimeCount = 0;
         m_nCacheSize = 0;
         m_pCurImageCache = NULL;
-        m_bCurFindCache = false;
+        m_bCurFindCache = FALSE;
         m_pCurImageCaches = NULL;
     }
     ~CPDF_PageRenderCache()
@@ -238,7 +238,7 @@ public:
     }
 
     void				GetCachedBitmap(CPDF_Stream* pStream, CFX_DIBSource*& pBitmap, CFX_DIBSource*& pMask, FX_DWORD& MatteColor,
-                                        bool bStdCS = false, FX_DWORD GroupFamily = 0, bool bLoadMask = false,
+                                        FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE,
                                         CPDF_RenderStatus* pRenderStatus = NULL, int32_t downsampleWidth = 0, int32_t downsampleHeight = 0);
 
     void				ResetBitmap(CPDF_Stream* pStream, const CFX_DIBitmap* pBitmap);
@@ -249,11 +249,11 @@ public:
     }
     CFX_MapPtrToPtr		m_ImageCaches;
 public:
-    bool				StartGetCachedBitmap(CPDF_Stream* pStream, bool bStdCS = false, FX_DWORD GroupFamily = 0,
-            bool bLoadMask = false, CPDF_RenderStatus* pRenderStatus = NULL,
+    FX_BOOL				StartGetCachedBitmap(CPDF_Stream* pStream, FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0,
+            FX_BOOL bLoadMask = FALSE, CPDF_RenderStatus* pRenderStatus = NULL,
             int32_t downsampleWidth = 0, int32_t downsampleHeight = 0);
 
-    bool				Continue(IFX_Pause* pPause);
+    FX_BOOL				Continue(IFX_Pause* pPause);
     CPDF_ImageCache*	m_pCurImageCache;
     CFX_PtrArray*       m_pCurImageCaches;
 protected:
@@ -262,7 +262,7 @@ protected:
 
     FX_DWORD			m_nTimeCount;
     FX_DWORD			m_nCacheSize;
-    bool				m_bCurFindCache;
+    FX_BOOL				m_bCurFindCache;
 };
 class CPDF_RenderConfig
 {

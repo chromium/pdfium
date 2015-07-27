@@ -58,7 +58,7 @@ void CPDF_Metadata::LoadDoc(CPDF_Document *pDoc)
         return;
     }
     CPDF_StreamAcc acc;
-    acc.LoadAllData(pStream, false);
+    acc.LoadAllData(pStream, FALSE);
     int size = acc.GetSize();
     const uint8_t* pBuf = acc.GetData();
     CXML_Element *&pXmlElmnt = ((PDFDOC_LPMETADATA)m_pData)->m_pXmlElmnt;

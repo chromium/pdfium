@@ -51,7 +51,7 @@ struct JSMethodSpec
 
 /* ======================================== PROP CALLBACK ============================================ */
 
-template <class C, bool (C::*M)(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)>
+template <class C, FX_BOOL (C::*M)(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -74,7 +74,7 @@ void JSPropGetter(const char* prop_name_string,
   info.GetReturnValue().Set((v8::Local<v8::Value>)value);
 }
 
-template <class C, bool (C::*M)(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)>
+template <class C, FX_BOOL (C::*M)(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)>
 void JSPropSetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -113,7 +113,7 @@ void JSPropSetter(const char* prop_name_string,
 
 /* ========================================= METHOD CALLBACK =========================================== */
 
-template <class C, bool (C::*M)(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)>
+template <class C, FX_BOOL (C::*M)(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)>
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
@@ -240,7 +240,7 @@ void JSSpecialPropQuery(const char *, v8::Local<v8::String> property,const v8::P
   CFX_WideString propname = CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
   CJS_Object* pJSObj = reinterpret_cast<CJS_Object*>(JS_GetPrivate(isolate, info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
-  bool bRet = pObj->QueryProperty(propname.c_str());
+  FX_BOOL bRet = pObj->QueryProperty(propname.c_str());
   info.GetReturnValue().Set(bRet ? 4 : 0);
 }
 
@@ -382,7 +382,7 @@ int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType)\
 
 /* ======================================== GLOBAL METHODS ============================================ */
 
-template <bool (*F)(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)>
+template <FX_BOOL (*F)(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)>
 void JSGlobalFunc(const char *func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();

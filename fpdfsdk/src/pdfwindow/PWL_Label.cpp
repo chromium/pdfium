@@ -39,7 +39,7 @@ void CPWL_Label::OnCreated()
 	if (HasFlag(PES_TEXTOVERFLOW))
 	{
 		SetClipRect(CPDF_Rect(0.0f,0.0f,0.0f,0.0f));
-		m_pEdit->SetTextOverflow(true);
+		m_pEdit->SetTextOverflow(TRUE);
 	}
 }
 

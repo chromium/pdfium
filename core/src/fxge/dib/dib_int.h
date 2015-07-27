@@ -63,7 +63,7 @@ public:
                    int dest_width, int dest_height, const FX_RECT& clip_rect,
                    const CFX_DIBSource* pSrcBitmap, int flags);
     ~CStretchEngine();
-    bool		Continue(IFX_Pause* pPause);
+    FX_BOOL		Continue(IFX_Pause* pPause);
 public:
     FXDIB_Format m_DestFormat;
     int		m_DestBpp, m_SrcBpp, m_bHasAlpha;
@@ -84,8 +84,8 @@ public:
     int 	m_Flags;
     CWeightTable	m_WeightTable;
     int		m_CurRow;
-    bool	StartStretchHorz();
-    bool	ContinueStretchHorz(IFX_Pause* pPause);
+    FX_BOOL	StartStretchHorz();
+    FX_BOOL	ContinueStretchHorz(IFX_Pause* pPause);
     void	StretchVert();
     int		m_State;
 };

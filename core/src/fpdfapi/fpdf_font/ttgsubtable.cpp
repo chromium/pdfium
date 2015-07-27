@@ -48,15 +48,15 @@ void CFX_GlyphMap::SetAt(int key, int value)
     }
     m_Buffer.InsertBlock(low * sizeof(_IntPair), &pair, sizeof(_IntPair));
 }
-bool CFX_GlyphMap::Lookup(int key, int &value)
+FX_BOOL CFX_GlyphMap::Lookup(int key, int &value)
 {
     void* pResult = FXSYS_bsearch(&key, m_Buffer.GetBuffer(), m_Buffer.GetSize() / sizeof(_IntPair),
                                       sizeof(_IntPair), _CompareInt);
     if (pResult == NULL) {
-        return false;
+        return FALSE;
     }
     value = ((FX_DWORD*)pResult)[1];
-    return true;
+    return TRUE;
 }
 bool CFX_CTTGSUBTable::LoadGSUBTable(FT_Bytes gsub)
 {
@@ -108,7 +108,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyph(TT_uint32_t glyphnum, TT_uint32_t *vglyp
                 }
             }
         }
-        m_bFeautureMapLoad = true;
+        m_bFeautureMapLoad = TRUE;
     }
     FX_POSITION pos = m_featureMap.GetStartPosition();
     while (pos) {
@@ -420,7 +420,7 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw, TSingleSubstFormat2
         rec->Substitute[i] = GetUInt16(sp);
     }
 }
-bool CFX_GSUBTable::GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum)
+FX_BOOL CFX_GSUBTable::GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum)
 {
     return m_GsubImp.GetVerticalGlyph(glyphnum, vglyphnum);
 }

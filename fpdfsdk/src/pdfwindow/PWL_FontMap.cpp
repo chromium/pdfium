@@ -72,7 +72,7 @@ CFX_ByteString CPWL_FontMap::GetPDFFontAlias(int32_t nFontIndex)
     return "";
 }
 
-bool CPWL_FontMap::KnowWord(int32_t nFontIndex, FX_WORD word)
+FX_BOOL CPWL_FontMap::KnowWord(int32_t nFontIndex, FX_WORD word)
 {
     if (nFontIndex >=0 && nFontIndex < m_aData.GetSize())
     {
@@ -82,7 +82,7 @@ bool CPWL_FontMap::KnowWord(int32_t nFontIndex, FX_WORD word)
         }
     }
 
-    return false;
+    return FALSE;
 }
 
 int32_t CPWL_FontMap::GetWordFontIndex(FX_WORD word, int32_t nCharset, int32_t nFontIndex)
@@ -106,13 +106,13 @@ int32_t CPWL_FontMap::GetWordFontIndex(FX_WORD word, int32_t nCharset, int32_t n
         }
     }
 
-    int32_t nNewFontIndex = GetFontIndex(GetNativeFontName(nCharset), nCharset, true);
+    int32_t nNewFontIndex = GetFontIndex(GetNativeFontName(nCharset), nCharset, TRUE);
     if (nNewFontIndex >= 0)
     {
         if (KnowWord(nNewFontIndex, word))
             return nNewFontIndex;
     }
-    nNewFontIndex = GetFontIndex("Arial Unicode MS", DEFAULT_CHARSET, false);
+    nNewFontIndex = GetFontIndex("Arial Unicode MS", DEFAULT_CHARSET, FALSE);
     if (nNewFontIndex >= 0)
     {
         if (KnowWord(nNewFontIndex, word))
@@ -189,7 +189,7 @@ void CPWL_FontMap::Initial(const FX_CHAR* fontname)
     if (sFontName.IsEmpty())
         sFontName = DEFAULT_FONT_NAME;
 
-    GetFontIndex(sFontName, ANSI_CHARSET, false);
+    GetFontIndex(sFontName, ANSI_CHARSET, FALSE);
 }
 
 
@@ -206,15 +206,15 @@ const char* g_sDEStandardFontName[] = {"Courier", "Courier-Bold", "Courier-BoldO
     "Times-Roman", "Times-Bold", "Times-Italic", "Times-BoldItalic",
     "Symbol", "ZapfDingbats"};
 
-bool CPWL_FontMap::IsStandardFont(const CFX_ByteString& sFontName)
+FX_BOOL CPWL_FontMap::IsStandardFont(const CFX_ByteString& sFontName)
 {
     for (int32_t i=0; i<14; i++)
     {
         if (sFontName == g_sDEStandardFontName[i])
-            return true;
+            return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
 int32_t CPWL_FontMap::FindFont(const CFX_ByteString& sFontName, int32_t nCharset)
@@ -234,7 +234,7 @@ int32_t CPWL_FontMap::FindFont(const CFX_ByteString& sFontName, int32_t nCharset
     return -1;
 }
 
-int32_t CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName, int32_t nCharset, bool bFind)
+int32_t CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName, int32_t nCharset, FX_BOOL bFind)
 {
     int32_t nFontIndex = FindFont(EncodeFontAlias(sFontName, nCharset), nCharset);
     if (nFontIndex >= 0)

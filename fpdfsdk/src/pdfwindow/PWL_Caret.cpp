@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////
 
 CPWL_Caret::CPWL_Caret() :
-	m_bFlash(false),
+	m_bFlash(FALSE),
 	m_ptHead(0,0),
 	m_ptFoot(0,0),
 	m_fWidth(0.4f),
@@ -135,7 +135,7 @@ CPDF_Rect CPWL_Caret::GetCaretRect() const
 			m_ptHead.y);
 }
 
-void CPWL_Caret::SetCaret(bool bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot)
+void CPWL_Caret::SetCaret(FX_BOOL bVisible, const CPDF_Point & ptHead, const CPDF_Point & ptFoot)
 {
 	if (bVisible)
 	{
@@ -147,9 +147,9 @@ void CPWL_Caret::SetCaret(bool bVisible, const CPDF_Point & ptHead, const CPDF_P
 				m_ptHead = ptHead;
 				m_ptFoot = ptFoot;
 
-				m_bFlash = true;
-				//Move(GetCaretRect(),false,true);
-				Move(m_rcInvalid, false, true);
+				m_bFlash = TRUE;
+				//Move(GetCaretRect(),FALSE,TRUE);
+				Move(m_rcInvalid, FALSE, TRUE);
 			}
 		}
 		else
@@ -160,11 +160,11 @@ void CPWL_Caret::SetCaret(bool bVisible, const CPDF_Point & ptHead, const CPDF_P
 			EndTimer();
 			BeginTimer(PWL_CARET_FLASHINTERVAL);
 
-			CPWL_Wnd::SetVisible(true);
-			m_bFlash = true;
+			CPWL_Wnd::SetVisible(TRUE);
+			m_bFlash = TRUE;
 
-			//Move(GetCaretRect(),false,true);
-			Move(m_rcInvalid, false, true);
+			//Move(GetCaretRect(),FALSE,TRUE);
+			Move(m_rcInvalid, FALSE, TRUE);
 		}
 	}
 	else
@@ -172,11 +172,11 @@ void CPWL_Caret::SetCaret(bool bVisible, const CPDF_Point & ptHead, const CPDF_P
 		m_ptHead = CPDF_Point(0, 0);
 		m_ptFoot = CPDF_Point(0, 0);
 
-		m_bFlash = false;
+		m_bFlash = FALSE;
 		if (IsVisible())
 		{
 			EndTimer();
-			CPWL_Wnd::SetVisible(false);
+			CPWL_Wnd::SetVisible(FALSE);
 		}
 	}
 }

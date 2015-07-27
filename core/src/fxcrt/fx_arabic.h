@@ -15,14 +15,14 @@ public:
     CFX_BidiChar();
     ~CFX_BidiChar() override {}
 
-    void SetPolicy(bool bSeparateNeutral = true) override;
-    bool AppendChar(FX_WCHAR wch) override;
-    bool EndChar() override;
+    void SetPolicy(FX_BOOL bSeparateNeutral = TRUE) override;
+    FX_BOOL AppendChar(FX_WCHAR wch) override;
+    FX_BOOL EndChar() override;
     int32_t GetBidiInfo(int32_t &iStart, int32_t &iCount) override;
     void Reset() override;
 
 private:
-    bool	m_bSeparateNeutral;
+    FX_BOOL	m_bSeparateNeutral;
     int32_t	m_iCurStart;
     int32_t	m_iCurCount;
     int32_t	m_iCurBidi;

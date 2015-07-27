@@ -132,9 +132,9 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, IF
 						const CPDF_Rect& rcClip, const CPDF_Point& ptOffset, const CPVT_WordRange* pRange, IFX_SystemHandler* pSystemHandler, void* pFFLData)
 {
 
-	bool bContinuous = pEdit->GetCharArray() == 0;
+	FX_BOOL bContinuous = pEdit->GetCharArray() == 0;
 	if (pEdit->GetCharSpace() > 0.0f)
-		bContinuous = false;
+		bContinuous = FALSE;
 
 	FX_WORD SubWord = pEdit->GetPasswordChar();
 	FX_FLOAT fFontSize = pEdit->GetFontSize();
@@ -144,7 +144,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device, IF
 	FX_COLORREF crCurFill = crTextFill;
 	FX_COLORREF crOldFill = crCurFill;
 
-	bool bSelect = false;
+	FX_BOOL bSelect = FALSE;
 	const FX_COLORREF crWhite = ArgbEncode(255,255,255,255);
 	const FX_COLORREF crSelBK = ArgbEncode(255,0,51,113);
 
@@ -278,7 +278,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device
 
 	FX_COLORREF crCurText = ArgbEncode(255, 0,0,0);
 	FX_COLORREF crOld = crCurText;
-	bool bSelect = false;
+	FX_BOOL bSelect = FALSE;
 	const FX_COLORREF crWhite = ArgbEncode(255,255,255,255);
 	const FX_COLORREF crSelBK = ArgbEncode(255,0,51,113);
 
@@ -410,7 +410,7 @@ static void AddRectToPageObjects(CPDF_PageObjects* pPageObjs, FX_COLORREF crFill
 	pPathObj->m_ColorState.SetFillColor(CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
 
 	pPathObj->m_FillType = FXFILL_ALTERNATE;
-	pPathObj->m_bStroke = false;
+	pPathObj->m_bStroke = FALSE;
 
 	pPageObjs->InsertObject(pPageObjs->GetLastObjectPosition(),pPathObj);
 }

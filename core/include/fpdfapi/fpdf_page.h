@@ -28,12 +28,12 @@ class CPDF_StreamContentParser;
 class CPDF_PageObjects
 {
 public:
-    CPDF_PageObjects(bool bReleaseMembers = true);
+    CPDF_PageObjects(FX_BOOL bReleaseMembers = TRUE);
     ~CPDF_PageObjects();
 
     void				ContinueParse(IFX_Pause* pPause);
 
-    bool				IsParsed() const
+    FX_BOOL				IsParsed() const
     {
         return m_ParseState == CONTENT_PARSED;
     }
@@ -76,7 +76,7 @@ public:
 
     void				Transform(const CFX_AffineMatrix& matrix);
 
-    bool				BackgroundAlphaNeeded() const
+    FX_BOOL				BackgroundAlphaNeeded() const
     {
         return m_bBackgroundAlphaNeeded;
     }
@@ -106,8 +106,8 @@ protected:
     void                ClearCacheObjects();
 
     CFX_PtrList			m_ObjectList;
-    bool				m_bBackgroundAlphaNeeded;
-    bool				m_bReleaseMembers;
+    FX_BOOL				m_bBackgroundAlphaNeeded;
+    FX_BOOL				m_bReleaseMembers;
     CPDF_ContentParser*	m_pParser;
     ParseState			m_ParseState;
 };
@@ -120,11 +120,11 @@ public:
 
     ~CPDF_Page();
 
-    void				Load(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict, bool bPageCache = true);
+    void				Load(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict, FX_BOOL bPageCache = TRUE);
 
-    void				StartParse(CPDF_ParseOptions* pOptions = NULL, bool bReParse = false);
+    void				StartParse(CPDF_ParseOptions* pOptions = NULL, FX_BOOL bReParse = FALSE);
 
-    void				ParseContent(CPDF_ParseOptions* pOptions = NULL, bool bReParse = false);
+    void				ParseContent(CPDF_ParseOptions* pOptions = NULL, FX_BOOL bReParse = FALSE);
 
     void				GetDisplayMatrix(CFX_AffineMatrix& matrix, int xPos, int yPos,
                                          int xSize, int ySize, int iRotate) const;
@@ -177,13 +177,13 @@ public:
 
     CPDF_ParseOptions();
 
-    bool				m_bTextOnly;
+    FX_BOOL				m_bTextOnly;
 
-    bool				m_bMarkedContent;
+    FX_BOOL				m_bMarkedContent;
 
-    bool				m_bSeparateForm;
+    FX_BOOL				m_bSeparateForm;
 
-    bool				m_bDecodeInlineImage;
+    FX_BOOL				m_bDecodeInlineImage;
 };
 class CPDF_Form : public CPDF_PageObjects
 {
@@ -206,7 +206,7 @@ class CPDF_PageContentGenerate
 public:
     CPDF_PageContentGenerate(CPDF_Page* pPage);
     ~CPDF_PageContentGenerate();
-    bool InsertPageObject(CPDF_PageObject* pPageObject);
+    FX_BOOL InsertPageObject(CPDF_PageObject* pPageObject);
     void GenerateContent();
     void TransformContent(CFX_Matrix& matrix);
 protected:

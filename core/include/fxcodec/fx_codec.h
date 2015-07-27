@@ -51,9 +51,9 @@ class ICodec_BasicModule
 public:
 
     virtual ~ICodec_BasicModule() {}
-    virtual bool	RunLengthEncode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf,
+    virtual FX_BOOL	RunLengthEncode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf,
                                     FX_DWORD& dest_size) = 0;
-    virtual bool	A85Encode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf,
+    virtual FX_BOOL	A85Encode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf,
                               FX_DWORD& dest_size) = 0;
     virtual ICodec_ScanlineDecoder*	CreateRunLengthDecoder(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc) = 0;
@@ -70,7 +70,7 @@ public:
 
     virtual uint8_t*	GetScanline(int line) = 0;
 
-    virtual bool		SkipToScanline(int line, IFX_Pause* pPause) = 0;
+    virtual FX_BOOL		SkipToScanline(int line, IFX_Pause* pPause) = 0;
 
     virtual int			GetWidth() = 0;
 
@@ -80,7 +80,7 @@ public:
 
     virtual int			GetBPC() = 0;
 
-    virtual bool		IsColorTransformed() = 0;
+    virtual FX_BOOL		IsColorTransformed() = 0;
 
     virtual void		ClearImageData() = 0;
 };
@@ -91,13 +91,13 @@ public:
     virtual ~ICodec_FlateModule() {}
     virtual ICodec_ScanlineDecoder*	CreateDecoder(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
             int nComps, int bpc, int predictor, int Colors, int BitsPerComponent, int Columns) = 0;
-    virtual FX_DWORD	FlateOrLZWDecode(bool bLZW, const uint8_t* src_buf, FX_DWORD src_size, bool bEarlyChange,
+    virtual FX_DWORD	FlateOrLZWDecode(FX_BOOL bLZW, const uint8_t* src_buf, FX_DWORD src_size, FX_BOOL bEarlyChange,
                                          int predictor, int Colors, int BitsPerComponent, int Columns,
                                          FX_DWORD estimated_size, uint8_t*& dest_buf, FX_DWORD& dest_size) = 0;
-    virtual bool		Encode(const uint8_t* src_buf, FX_DWORD src_size,
+    virtual FX_BOOL		Encode(const uint8_t* src_buf, FX_DWORD src_size,
                                int predictor, int Colors, int BitsPerComponent, int Columns,
                                uint8_t*& dest_buf, FX_DWORD& dest_size) = 0;
-    virtual bool		Encode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf, FX_DWORD& dest_size) = 0;
+    virtual FX_BOOL		Encode(const uint8_t* src_buf, FX_DWORD src_size, uint8_t*& dest_buf, FX_DWORD& dest_size) = 0;
 };
 class ICodec_FaxModule
 {
@@ -106,10 +106,10 @@ public:
     virtual ~ICodec_FaxModule() {}
 
     virtual ICodec_ScanlineDecoder*	CreateDecoder(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
-            int K, bool EndOfLine, bool EncodedByteAlign, bool BlackIs1, int Columns, int Rows) = 0;
+            int K, FX_BOOL EndOfLine, FX_BOOL EncodedByteAlign, FX_BOOL BlackIs1, int Columns, int Rows) = 0;
 
 
-    virtual bool		Encode(const uint8_t* src_buf, int width, int height, int pitch,
+    virtual FX_BOOL		Encode(const uint8_t* src_buf, int width, int height, int pitch,
                                uint8_t*& dest_buf, FX_DWORD& dest_size) = 0;
 };
 class ICodec_JpegModule
@@ -121,13 +121,13 @@ public:
     virtual void		SetPovider(IFX_JpegProvider* pJP) = 0;
 
     virtual ICodec_ScanlineDecoder*	CreateDecoder(const uint8_t* src_buf, FX_DWORD src_size,
-            int width, int height, int nComps, bool ColorTransform) = 0;
+            int width, int height, int nComps, FX_BOOL ColorTransform) = 0;
 
-    virtual bool		LoadInfo(const uint8_t* src_buf, FX_DWORD src_size, int& width, int& height,
-                                 int& num_components, int& bits_per_components, bool& color_transform,
+    virtual FX_BOOL		LoadInfo(const uint8_t* src_buf, FX_DWORD src_size, int& width, int& height,
+                                 int& num_components, int& bits_per_components, FX_BOOL& color_transform,
                                  uint8_t** icc_buf_ptr = NULL, FX_DWORD* icc_length = NULL) = 0;
 
-    virtual bool		Encode(const class CFX_DIBSource* pSource, uint8_t*& dest_buf, FX_STRSIZE& dest_size, int quality = 75,
+    virtual FX_BOOL		Encode(const class CFX_DIBSource* pSource, uint8_t*& dest_buf, FX_STRSIZE& dest_size, int quality = 75,
                                const uint8_t* icc_buf = NULL, FX_DWORD icc_length = 0) = 0;
 
     virtual void*		Start() = 0;
@@ -142,7 +142,7 @@ public:
     virtual int			StartScanline(void* pContext, int down_scale) = 0;
 
 
-    virtual bool		ReadScanline(void* pContext, uint8_t* dest_buf) = 0;
+    virtual FX_BOOL		ReadScanline(void* pContext, uint8_t* dest_buf) = 0;
 
 
     virtual FX_DWORD	GetAvailInput(void* pContext, uint8_t** avail_buf_ptr = NULL) = 0;
@@ -153,13 +153,13 @@ public:
 
     virtual ~ICodec_JpxModule() {}
 
-    virtual void* 	CreateDecoder(const uint8_t* src_buf, FX_DWORD src_size, bool useColorSpace = false) = 0;
+    virtual void* 	CreateDecoder(const uint8_t* src_buf, FX_DWORD src_size, FX_BOOL useColorSpace = FALSE) = 0;
 
     virtual void		GetImageInfo(void* ctx, FX_DWORD& width, FX_DWORD& height,
                                      FX_DWORD& codestream_nComps, FX_DWORD& output_nComps) = 0;
 
-    virtual bool		Decode(void* ctx, uint8_t* dest_data, int pitch,
-                               bool bTranslateColor, uint8_t* offsets) = 0;
+    virtual FX_BOOL		Decode(void* ctx, uint8_t* dest_data, int pitch,
+                               FX_BOOL bTranslateColor, uint8_t* offsets) = 0;
 
     virtual void		DestroyDecoder(void* ctx) = 0;
 };
@@ -169,10 +169,10 @@ public:
 
     virtual ~ICodec_Jbig2Module() {}
 
-    virtual bool		Decode(FX_DWORD width, FX_DWORD height, const uint8_t* src_buf, FX_DWORD src_size,
+    virtual FX_BOOL		Decode(FX_DWORD width, FX_DWORD height, const uint8_t* src_buf, FX_DWORD src_size,
                                const uint8_t* global_data, FX_DWORD global_size, uint8_t* dest_buf, FX_DWORD dest_pitch)  = 0;
 
-    virtual bool		Decode(IFX_FileRead* file_ptr, FX_DWORD& width, FX_DWORD& height,
+    virtual FX_BOOL		Decode(IFX_FileRead* file_ptr, FX_DWORD& width, FX_DWORD& height,
                                FX_DWORD& pitch, uint8_t*& dest_buf) = 0;
     virtual void*				CreateJbig2Context() = 0;
 
@@ -251,6 +251,6 @@ public:
 };
 void AdobeCMYK_to_sRGB(FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B);
 void AdobeCMYK_to_sRGB1(uint8_t c, uint8_t m, uint8_t y, uint8_t k, uint8_t& R, uint8_t& G, uint8_t& B);
-bool MD5ComputeID(const void* buf, FX_DWORD dwSize, uint8_t ID[16]);
+FX_BOOL MD5ComputeID(const void* buf, FX_DWORD dwSize, uint8_t ID[16]);
 
 #endif  // CORE_INCLUDE_FXCODEC_FX_CODEC_H_

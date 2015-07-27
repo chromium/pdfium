@@ -72,13 +72,13 @@ protected:
 class CFX_WindowsDevice : public CFX_RenderDevice
 {
 public:
-    static IFX_RenderDeviceDriver*	CreateDriver(HDC hDC, bool bCmykOutput = false);
+    static IFX_RenderDeviceDriver*	CreateDriver(HDC hDC, FX_BOOL bCmykOutput = FALSE);
 
-    CFX_WindowsDevice(HDC hDC, bool bCmykOutput = false, bool bForcePSOutput = false, int psLevel = 2);
+    CFX_WindowsDevice(HDC hDC, FX_BOOL bCmykOutput = FALSE, FX_BOOL bForcePSOutput = FALSE, int psLevel = 2);
 
     HDC		GetDC() const;
 
-    bool m_bForcePSOutput;
+    FX_BOOL m_bForcePSOutput;
 
     static int m_psLevel;
 };

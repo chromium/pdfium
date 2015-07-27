@@ -17,7 +17,7 @@ public:
                                  const FX_FLOAT& fSize);
     static CPDF_Rect DeflateRect(const CPDF_Rect& crRect,
                                  const FX_FLOAT& fSize);
-    static bool TraceObject(CPDF_Object* pObj);
+    static FX_BOOL TraceObject(CPDF_Object* pObj);
 };
 
 #endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_UTILS_H_

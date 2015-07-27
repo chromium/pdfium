@@ -191,7 +191,7 @@ struct CPVT_FloatRange {
 template<class TYPE> class CPVT_ArrayTemplate : public CFX_ArrayTemplate<TYPE>
 {
 public:
-    bool IsEmpty()
+    FX_BOOL IsEmpty()
     {
         return CFX_ArrayTemplate<TYPE>::GetSize() <= 0;
     }
@@ -316,7 +316,7 @@ public:
     CPVT_FloatRect							Typeset();
     CPVT_FloatRect							CharArray();
 private:
-    void									SplitLines(bool bTypeset, FX_FLOAT fFontSize);
+    void									SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize);
     void									OutputLines();
 
     CPVT_FloatRect							m_rcRet;
@@ -423,11 +423,11 @@ public:
     {
         m_nHorzScale = nHorzScale;
     }
-    void									SetMultiLine(bool bMultiLine = true)
+    void									SetMultiLine(FX_BOOL bMultiLine = TRUE)
     {
         m_bMultiLine = bMultiLine;
     }
-    void									SetAutoReturn(bool bAuto = true)
+    void									SetAutoReturn(FX_BOOL bAuto = TRUE)
     {
         m_bLimitWidth = bAuto;
     }
@@ -439,11 +439,11 @@ public:
     {
         m_nCharArray = nCharArray;
     }
-    void									SetAutoFontSize(bool bAuto = true)
+    void									SetAutoFontSize(FX_BOOL bAuto = TRUE)
     {
         m_bAutoFontSize = bAuto;
     }
-    void									SetRichText(bool bRichText)
+    void									SetRichText(FX_BOOL bRichText)
     {
         m_bRichText = bRichText;
     }
@@ -452,11 +452,11 @@ public:
         m_fLineLeading = fLineLeading;
     }
     void									Initialize();
-    bool									IsValid() const
+    FX_BOOL									IsValid() const
     {
         return m_bInitial;
     }
-    bool									IsRichText() const
+    FX_BOOL									IsRichText() const
     {
         return m_bRichText;
     }
@@ -496,7 +496,7 @@ public:
     {
         return m_nLimitChar;
     }
-    bool									IsMultiLine() const
+    FX_BOOL									IsMultiLine() const
     {
         return m_bMultiLine;
     }
@@ -537,25 +537,25 @@ private:
     int32_t								GetTypeDescent(int32_t nFontIndex);
     int32_t								GetWordFontIndex(FX_WORD word, int32_t charset, int32_t nFontIndex);
     int32_t								GetDefaultFontIndex();
-    bool									IsLatinWord(FX_WORD word);
+    FX_BOOL									IsLatinWord(FX_WORD word);
 private:
 
     CPVT_WordPlace							AddSection(const CPVT_WordPlace & place, const CPVT_SectionInfo & secinfo);
     CPVT_WordPlace							AddLine(const CPVT_WordPlace & place, const CPVT_LineInfo & lineinfo);
     CPVT_WordPlace							AddWord(const CPVT_WordPlace & place, const CPVT_WordInfo & wordinfo);
-    bool									GetWordInfo(const CPVT_WordPlace & place, CPVT_WordInfo & wordinfo);
-    bool									SetWordInfo(const CPVT_WordPlace & place, const CPVT_WordInfo & wordinfo);
-    bool									GetLineInfo(const CPVT_WordPlace & place, CPVT_LineInfo & lineinfo);
-    bool									GetSectionInfo(const CPVT_WordPlace & place, CPVT_SectionInfo & secinfo);
-    FX_FLOAT								GetWordFontSize(const CPVT_WordInfo & WordInfo, bool bFactFontSize = false);
+    FX_BOOL									GetWordInfo(const CPVT_WordPlace & place, CPVT_WordInfo & wordinfo);
+    FX_BOOL									SetWordInfo(const CPVT_WordPlace & place, const CPVT_WordInfo & wordinfo);
+    FX_BOOL									GetLineInfo(const CPVT_WordPlace & place, CPVT_LineInfo & lineinfo);
+    FX_BOOL									GetSectionInfo(const CPVT_WordPlace & place, CPVT_SectionInfo & secinfo);
+    FX_FLOAT								GetWordFontSize(const CPVT_WordInfo & WordInfo, FX_BOOL bFactFontSize = FALSE);
     FX_FLOAT								GetWordWidth(int32_t nFontIndex, FX_WORD Word, FX_WORD SubWord,
             FX_FLOAT fCharSpace, int32_t nHorzScale,
             FX_FLOAT fFontSize, FX_FLOAT fWordTail, int32_t nWordStyle);
     FX_FLOAT								GetWordWidth(const CPVT_WordInfo & WordInfo);
     FX_FLOAT								GetWordAscent(const CPVT_WordInfo & WordInfo, FX_FLOAT fFontSize);
     FX_FLOAT								GetWordDescent(const CPVT_WordInfo & WordInfo, FX_FLOAT fFontSize);
-    FX_FLOAT								GetWordAscent(const CPVT_WordInfo & WordInfo, bool bFactFontSize = false);
-    FX_FLOAT								GetWordDescent(const CPVT_WordInfo & WordInfo, bool bFactFontSize = false);
+    FX_FLOAT								GetWordAscent(const CPVT_WordInfo & WordInfo, FX_BOOL bFactFontSize = FALSE);
+    FX_FLOAT								GetWordDescent(const CPVT_WordInfo & WordInfo, FX_BOOL bFactFontSize = FALSE);
     FX_FLOAT								GetLineAscent(const CPVT_SectionInfo & SecInfo);
     FX_FLOAT								GetLineDescent(const CPVT_SectionInfo & SecInfo);
     FX_FLOAT								GetFontAscent(int32_t nFontIndex, FX_FLOAT fFontSize);
@@ -568,8 +568,8 @@ private:
     int32_t								GetAlignment(const CPVT_SectionInfo& SecInfo);
 
     void									ClearSectionRightWords(const CPVT_WordPlace & place);
-    CPVT_WordPlace							AjustLineHeader(const CPVT_WordPlace & place, bool bPrevOrNext) const;
-    bool									ClearEmptySection(const CPVT_WordPlace & place);
+    CPVT_WordPlace							AjustLineHeader(const CPVT_WordPlace & place, FX_BOOL bPrevOrNext) const;
+    FX_BOOL									ClearEmptySection(const CPVT_WordPlace & place);
     void									ClearEmptySections(const CPVT_WordRange & PlaceRange);
     void									LinkLatterSection(const CPVT_WordPlace & place);
     void									ClearWords(const CPVT_WordRange & PlaceRange);
@@ -578,7 +578,7 @@ private:
 private:
     CPVT_FloatRect							Rearrange(const CPVT_WordRange & PlaceRange);
     FX_FLOAT								GetAutoFontSize();
-    bool									IsBigger(FX_FLOAT fFontSize);
+    FX_BOOL									IsBigger(FX_FLOAT fFontSize);
     CPVT_FloatRect							RearrangeSections(const CPVT_WordRange & PlaceRange);
 private:
     void									ResetSectionArray();
@@ -586,9 +586,9 @@ private:
     CPVT_ArrayTemplate<CSection*>			m_SectionArray;
     int32_t								m_nLimitChar;
     int32_t								m_nCharArray;
-    bool									m_bMultiLine;
-    bool									m_bLimitWidth;
-    bool									m_bAutoFontSize;
+    FX_BOOL									m_bMultiLine;
+    FX_BOOL									m_bLimitWidth;
+    FX_BOOL									m_bAutoFontSize;
     int32_t								m_nAlignment;
     FX_FLOAT								m_fLineLeading;
     FX_FLOAT								m_fCharSpace;
@@ -597,8 +597,8 @@ private:
     FX_FLOAT								m_fFontSize;
 
 private:
-    bool									m_bInitial;
-    bool									m_bRichText;
+    FX_BOOL									m_bInitial;
+    FX_BOOL									m_bRichText;
     IPDF_VariableText_Provider *			m_pVTProvider;
     CPDF_VariableText_Iterator *			m_pVTIterator;
 };
@@ -607,17 +607,17 @@ class CPDF_VariableText_Iterator : public IPDF_VariableText_Iterator
 public:
     CPDF_VariableText_Iterator(CPDF_VariableText * pVT);
     virtual ~CPDF_VariableText_Iterator();
-    bool									NextWord();
-    bool									PrevWord();
-    bool									NextLine();
-    bool									PrevLine();
-    bool									NextSection();
-    bool									PrevSection();
-    bool									SetWord(const CPVT_Word & word);
-    bool									GetWord(CPVT_Word & word) const;
-    bool									GetLine(CPVT_Line & line) const;
-    bool									GetSection(CPVT_Section & section) const;
-    bool									SetSection(const CPVT_Section & section);
+    FX_BOOL									NextWord();
+    FX_BOOL									PrevWord();
+    FX_BOOL									NextLine();
+    FX_BOOL									PrevLine();
+    FX_BOOL									NextSection();
+    FX_BOOL									PrevSection();
+    FX_BOOL									SetWord(const CPVT_Word & word);
+    FX_BOOL									GetWord(CPVT_Word & word) const;
+    FX_BOOL									GetLine(CPVT_Line & line) const;
+    FX_BOOL									GetSection(CPVT_Section & section) const;
+    FX_BOOL									SetSection(const CPVT_Section & section);
     void									SetAt(int32_t nWordIndex);
     void									SetAt(const CPVT_WordPlace & place);
     const CPVT_WordPlace &					GetAt() const

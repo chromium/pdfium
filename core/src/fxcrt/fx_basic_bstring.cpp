@@ -1086,9 +1086,9 @@ FX_STRSIZE FX_ftoa(FX_FLOAT d, FX_CHAR* buf)
     if (d == 0.0f) {
         return 1;
     }
-    bool bNegative = false;
+    FX_BOOL bNegative = FALSE;
     if (d < 0) {
-        bNegative = true;
+        bNegative = TRUE;
         d = -d;
     }
     int scale = 1;

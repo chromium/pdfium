@@ -79,7 +79,7 @@ int _FindBit(const uint8_t* data_buf, int max_pos, int start_pos, int bit)
     }
     return pos;
 }
-void _FaxG4FindB1B2(const uint8_t* ref_buf, int columns, int a0, bool a0color, int& b1, int& b2)
+void _FaxG4FindB1B2(const uint8_t* ref_buf, int columns, int a0, FX_BOOL a0color, int& b1, int& b2)
 {
     if (a0color) {
         a0color = 1;
@@ -400,27 +400,27 @@ int _FaxGetRun(const uint8_t* ins_array, const uint8_t* src_buf, int& bitpos, in
         }
     }
 }
-bool _FaxG4GetRow(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* dest_buf, const uint8_t* ref_buf, int columns)
+FX_BOOL _FaxG4GetRow(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* dest_buf, const uint8_t* ref_buf, int columns)
 {
     int a0 = -1, a0color = 1;
     while (1) {
         if (bitpos >= bitsize) {
-            return false;
+            return FALSE;
         }
         int a1, a2, b1, b2;
         _FaxG4FindB1B2(ref_buf, columns, a0, a0color, b1, b2);
-        bool bit = NEXTBIT;
+        FX_BOOL bit = NEXTBIT;
         int v_delta = 0;
         if (bit) {
         } else {
             if (bitpos >= bitsize) {
-                return false;
+                return FALSE;
             }
-            bool bit1 = NEXTBIT;
+            FX_BOOL bit1 = NEXTBIT;
             if (bitpos >= bitsize) {
-                return false;
+                return FALSE;
             }
-            bool bit2 = NEXTBIT;
+            FX_BOOL bit2 = NEXTBIT;
             if (bit1 && bit2) {
                 v_delta = 1;
             } else if (bit1) {
@@ -457,10 +457,10 @@ bool _FaxG4GetRow(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* des
                 if (a0 < columns) {
                     continue;
                 }
-                return true;
+                return TRUE;
             } else {
                 if (bitpos >= bitsize) {
-                    return false;
+                    return FALSE;
                 }
                 bit = NEXTBIT;
                 if (bit) {
@@ -468,26 +468,26 @@ bool _FaxG4GetRow(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* des
                         _FaxFillBits(dest_buf, columns, a0, b2);
                     }
                     if (b2 >= columns) {
-                        return true;
+                        return TRUE;
                     }
                     a0 = b2;
                     continue;
                 } else {
                     if (bitpos >= bitsize) {
-                        return false;
+                        return FALSE;
                     }
-                    bool bit1 = NEXTBIT;
+                    FX_BOOL bit1 = NEXTBIT;
                     if (bitpos >= bitsize) {
-                        return false;
+                        return FALSE;
                     }
-                    bool bit2 = NEXTBIT;
+                    FX_BOOL bit2 = NEXTBIT;
                     if (bit1 && bit2) {
                         v_delta = 2;
                     } else if (bit1) {
                         v_delta = -2;
                     } else if (bit2) {
                         if (bitpos >= bitsize) {
-                            return false;
+                            return FALSE;
                         }
                         bit = NEXTBIT;
                         if (bit) {
@@ -497,7 +497,7 @@ bool _FaxG4GetRow(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* des
                         }
                     } else {
                         if (bitpos >= bitsize) {
-                            return false;
+                            return FALSE;
                         }
                         bit = NEXTBIT;
                         if (bit) {
@@ -505,7 +505,7 @@ bool _FaxG4GetRow(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* des
                             continue;
                         } else {
                             bitpos += 5;
-                            return true;
+                            return TRUE;
                         }
                     }
                 }
@@ -516,13 +516,13 @@ bool _FaxG4GetRow(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* des
             _FaxFillBits(dest_buf, columns, a0, a1);
         }
         if (a1 >= columns) {
-            return true;
+            return TRUE;
         }
         a0 = a1;
         a0color = !a0color;
     }
 }
-bool _FaxSkipEOL(const uint8_t* src_buf, int bitsize, int& bitpos)
+FX_BOOL _FaxSkipEOL(const uint8_t* src_buf, int bitsize, int& bitpos)
 {
     int startbit = bitpos;
     while (bitpos < bitsize) {
@@ -531,18 +531,18 @@ bool _FaxSkipEOL(const uint8_t* src_buf, int bitsize, int& bitpos)
             if (bitpos - startbit <= 11) {
                 bitpos = startbit;
             }
-            return true;
+            return TRUE;
         }
     }
-    return false;
+    return FALSE;
 }
-bool _FaxGet1DLine(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* dest_buf, int columns)
+FX_BOOL _FaxGet1DLine(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* dest_buf, int columns)
 {
-    int color = true;
+    int color = TRUE;
     int startpos = 0;
     while (1) {
         if (bitpos >= bitsize) {
-            return false;
+            return FALSE;
         }
         int run_len = 0;
         while (1) {
@@ -551,10 +551,10 @@ bool _FaxGet1DLine(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* de
                 while (bitpos < bitsize) {
                     int bit = NEXTBIT;
                     if (bit) {
-                        return true;
+                        return TRUE;
                     }
                 }
-                return false;
+                return FALSE;
             }
             run_len += run;
             if (run < 64) {
@@ -570,17 +570,17 @@ bool _FaxGet1DLine(const uint8_t* src_buf, int bitsize, int& bitpos, uint8_t* de
         }
         color = !color;
     }
-    return true;
+    return TRUE;
 }
 class CCodec_FaxDecoder : public CCodec_ScanlineDecoder
 {
 public:
     CCodec_FaxDecoder();
     virtual ~CCodec_FaxDecoder();
-    bool				Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
-                               int K, bool EndOfLine, bool EncodedByteAlign, bool BlackIs1, int Columns, int Rows);
+    FX_BOOL				Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
+                               int K, FX_BOOL EndOfLine, FX_BOOL EncodedByteAlign, FX_BOOL BlackIs1, int Columns, int Rows);
     virtual void		v_DownScale(int dest_width, int dest_height) {}
-    virtual bool		v_Rewind();
+    virtual FX_BOOL		v_Rewind();
     virtual uint8_t*	v_GetNextLine();
     virtual FX_DWORD	GetSrcOffset();
     int			m_Encoding, m_bEndOfLine, m_bByteAlign, m_bBlack;
@@ -604,8 +604,8 @@ CCodec_FaxDecoder::~CCodec_FaxDecoder()
         FX_Free(m_pRefBuf);
     }
 }
-bool CCodec_FaxDecoder::Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
-                                  int K, bool EndOfLine, bool EncodedByteAlign, bool BlackIs1, int Columns, int Rows)
+FX_BOOL CCodec_FaxDecoder::Create(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
+                                  int K, FX_BOOL EndOfLine, FX_BOOL EncodedByteAlign, FX_BOOL BlackIs1, int Columns, int Rows)
 {
     m_Encoding = K;
     m_bEndOfLine = EndOfLine;
@@ -628,14 +628,14 @@ bool CCodec_FaxDecoder::Create(const uint8_t* src_buf, FX_DWORD src_size, int wi
     m_SrcSize = src_size;
     m_nComps = 1;
     m_bpc = 1;
-    m_bColorTransformed = false;
-    return true;
+    m_bColorTransformed = FALSE;
+    return TRUE;
 }
-bool CCodec_FaxDecoder::v_Rewind()
+FX_BOOL CCodec_FaxDecoder::v_Rewind()
 {
     FXSYS_memset(m_pRefBuf, 0xff, m_Pitch);
     bitpos = 0;
-    return true;
+    return TRUE;
 }
 uint8_t* CCodec_FaxDecoder::v_GetNextLine()
 {
@@ -651,7 +651,7 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine()
     } else if (m_Encoding == 0) {
         _FaxGet1DLine(m_pSrcBuf, bitsize, bitpos, m_pScanlineBuf, m_OrigWidth);
     } else {
-        bool bNext1D = m_pSrcBuf[bitpos / 8] & (1 << (7 - bitpos % 8));
+        FX_BOOL bNext1D = m_pSrcBuf[bitpos / 8] & (1 << (7 - bitpos % 8));
         bitpos ++;
         if (bNext1D) {
             _FaxGet1DLine(m_pSrcBuf, bitsize, bitpos, m_pScanlineBuf, m_OrigWidth);
@@ -669,7 +669,7 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine()
         while (m_bByteAlign && bitpos0 < bitpos1) {
             int bit = m_pSrcBuf[bitpos0 / 8] & (1 << (7 - bitpos0 % 8));
             if (bit != 0) {
-                m_bByteAlign = false;
+                m_bByteAlign = FALSE;
             } else {
                 bitpos0 ++;
             }
@@ -846,7 +846,7 @@ static void _AddBitStream(uint8_t* dest_buf, int& dest_bitpos, int data, int bit
         dest_bitpos ++;
     }
 }
-static void _FaxEncodeRun(uint8_t* dest_buf, int& dest_bitpos, int run, bool bWhite)
+static void _FaxEncodeRun(uint8_t* dest_buf, int& dest_bitpos, int run, FX_BOOL bWhite)
 {
     while (run >= 2560) {
         _AddBitStream(dest_buf, dest_bitpos, 0x1f, 12);
@@ -972,14 +972,14 @@ void CCodec_FaxEncoder::Encode(uint8_t*& dest_buf, FX_DWORD& dest_size)
     dest_size = m_DestBuf.GetSize();
     m_DestBuf.DetachBuffer();
 }
-bool	CCodec_FaxModule::Encode(const uint8_t* src_buf, int width, int height, int pitch, uint8_t*& dest_buf, FX_DWORD& dest_size)
+FX_BOOL	CCodec_FaxModule::Encode(const uint8_t* src_buf, int width, int height, int pitch, uint8_t*& dest_buf, FX_DWORD& dest_size)
 {
     CCodec_FaxEncoder encoder(src_buf, width, height, pitch);
     encoder.Encode(dest_buf, dest_size);
-    return true;
+    return TRUE;
 }
 ICodec_ScanlineDecoder*	CCodec_FaxModule::CreateDecoder(const uint8_t* src_buf, FX_DWORD src_size, int width, int height,
-        int K, bool EndOfLine, bool EncodedByteAlign, bool BlackIs1, int Columns, int Rows)
+        int K, FX_BOOL EndOfLine, FX_BOOL EncodedByteAlign, FX_BOOL BlackIs1, int Columns, int Rows)
 {
     CCodec_FaxDecoder* pDecoder = new CCodec_FaxDecoder;
     pDecoder->Create(src_buf, src_size, width, height, K, EndOfLine, EncodedByteAlign, BlackIs1, Columns, Rows);

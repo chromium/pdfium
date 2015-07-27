@@ -21,7 +21,7 @@ public:
 		m_pfileAvail = pfileAvail;
 	}
 
-	virtual bool			IsDataAvail( FX_FILESIZE offset, FX_DWORD size)
+	virtual FX_BOOL			IsDataAvail( FX_FILESIZE offset, FX_DWORD size)
 	{
 		return m_pfileAvail->IsDataAvail(m_pfileAvail, offset, size);
 	}
@@ -48,7 +48,7 @@ public:
 		return m_pFileAccess->m_FileLen;
 	}
 
-	virtual bool			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
+	virtual FX_BOOL			ReadBlock(void* buffer, FX_FILESIZE offset, size_t size)
 	{
 		return m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset, (uint8_t*)buffer, size);
 	}

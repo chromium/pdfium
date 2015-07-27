@@ -34,7 +34,7 @@ class IFSDK_PAUSE_Adapter : public IFX_Pause
 {
 public:
 	IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause );
-	bool NeedToPauseNow();
+	FX_BOOL NeedToPauseNow();
 
 private:
 	IFSDK_PAUSE* m_IPause;

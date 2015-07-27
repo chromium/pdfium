@@ -116,7 +116,7 @@ public:
         return m_Flags;
     }
 
-    virtual bool			IsVertWriting()const;
+    virtual FX_BOOL			IsVertWriting()const;
 
 
 
@@ -142,14 +142,14 @@ public:
     }
 
 
-    bool					IsEmbedded() const
+    FX_BOOL					IsEmbedded() const
     {
         return m_FontType == PDFFONT_TYPE3 || m_pFontFile != NULL;
     }
 
-    virtual bool			IsUnicodeCompatible() const
+    virtual FX_BOOL			IsUnicodeCompatible() const
     {
-        return false;
+        return FALSE;
     }
 
     CPDF_StreamAcc*			GetFontFile() const
@@ -162,7 +162,7 @@ public:
         return m_pFontDict;
     }
 
-    bool					IsStandardFont() const;
+    FX_BOOL					IsStandardFont() const;
 
     FXFT_Face				GetFace() const
     {
@@ -199,7 +199,7 @@ public:
 
 
 
-    virtual int				GlyphFromCharCode(FX_DWORD charcode, bool *pVertGlyph = NULL) = 0;
+    virtual int				GlyphFromCharCode(FX_DWORD charcode, FX_BOOL *pVertGlyph = NULL) = 0;
     virtual int				GlyphFromCharCodeExt(FX_DWORD charcode)
     {
         return GlyphFromCharCode(charcode);
@@ -265,11 +265,11 @@ public:
 protected:
     explicit CPDF_Font(int fonttype);
 
-    bool					Initialize();
+    FX_BOOL					Initialize();
 
-    bool					Load();
+    FX_BOOL					Load();
 
-    virtual bool			_Load() = 0;
+    virtual FX_BOOL			_Load() = 0;
 
     virtual FX_WCHAR		_UnicodeFromCharCode(FX_DWORD charcode) const = 0;
 
@@ -278,7 +278,7 @@ protected:
     void					LoadUnicodeMap();
 
     void					LoadPDFEncoding(CPDF_Object* pEncoding, int& iBaseEncoding,
-                                            CFX_ByteString*& pCharNames, bool bEmbedded, bool bTrueType);
+                                            CFX_ByteString*& pCharNames, FX_BOOL bEmbedded, FX_BOOL bTrueType);
 
     void					LoadFontDescriptor(CPDF_Dictionary*);
 
@@ -298,7 +298,7 @@ protected:
 
     CPDF_ToUnicodeMap*		m_pToUnicodeMap;
 
-    bool					m_bToUnicodeLoaded;
+    FX_BOOL					m_bToUnicodeLoaded;
 
 
 
@@ -338,7 +338,7 @@ public:
 
     void					LoadEncoding(CPDF_Object* pEncoding);
 
-    bool					IsIdentical(CPDF_FontEncoding* pAnother) const;
+    FX_BOOL					IsIdentical(CPDF_FontEncoding* pAnother) const;
 
     FX_WCHAR				UnicodeFromCharCode(uint8_t charcode) const
     {
@@ -370,11 +370,11 @@ public:
     }
     int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
     void GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0) override;
-    int GlyphFromCharCode(FX_DWORD charcode, bool *pVertGlyph = NULL) override;
-    bool IsUnicodeCompatible() const override;
+    int GlyphFromCharCode(FX_DWORD charcode, FX_BOOL *pVertGlyph = NULL) override;
+    FX_BOOL IsUnicodeCompatible() const override;
 
 protected:
-    bool LoadCommon();
+    FX_BOOL LoadCommon();
 
     void LoadSubstFont();
 
@@ -401,7 +401,7 @@ protected:
     int m_BaseEncoding;
     FX_WORD m_CharWidth[256];
     FX_SMALL_RECT m_CharBBox[256];
-    bool m_bUseFontWidth;
+    FX_BOOL m_bUseFontWidth;
 };
 
 class CPDF_Type1Font : public CPDF_SimpleFont
@@ -416,7 +416,7 @@ public:
     }
     virtual int				GlyphFromCharCodeExt(FX_DWORD charcode);
 protected:
-    virtual bool			_Load();
+    virtual FX_BOOL			_Load();
 
     int						m_Base14Font;
     virtual void			LoadGlyphMap();
@@ -427,7 +427,7 @@ public:
 
     CPDF_TrueTypeFont();
 protected:
-    virtual bool			_Load();
+    virtual FX_BOOL			_Load();
     virtual void			LoadGlyphMap();
 };
 class CPDF_Type3Char
@@ -438,11 +438,11 @@ public:
 
     ~CPDF_Type3Char();
 
-    bool LoadBitmap(CPDF_RenderContext* pContext);
+    FX_BOOL LoadBitmap(CPDF_RenderContext* pContext);
 
-    bool					m_bColored;
+    FX_BOOL					m_bColored;
 
-    bool					m_bPageRequired;
+    FX_BOOL					m_bPageRequired;
 
 
 
@@ -484,7 +484,7 @@ protected:
     CFX_AffineMatrix m_FontMatrix;
 
 private:
-    bool _Load() override;
+    FX_BOOL _Load() override;
     void LoadGlyphMap() override {}
 
     int m_CharWidthL[256];
@@ -511,13 +511,13 @@ public:
 
     ~CPDF_CIDFont() override;
 
-    bool LoadGB2312();
-    int GlyphFromCharCode(FX_DWORD charcode, bool *pVertGlyph = NULL) override;
+    FX_BOOL LoadGB2312();
+    int GlyphFromCharCode(FX_DWORD charcode, FX_BOOL *pVertGlyph = NULL) override;
     int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
     void GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0) override;
     FX_WORD CIDFromCharCode(FX_DWORD charcode) const;
 
-    bool IsTrueType() const
+    FX_BOOL IsTrueType() const
     {
         return !m_bType1;
     }
@@ -533,19 +533,19 @@ public:
     }
 
     const uint8_t* GetCIDTransform(FX_WORD CID) const;
-    bool IsVertWriting() const override;
+    FX_BOOL IsVertWriting() const override;
     short GetVertWidth(FX_WORD CID) const;
     void GetVertOrigin(FX_WORD CID, short& vx, short& vy) const;
-    bool IsUnicodeCompatible() const override;
-    virtual bool IsFontStyleFromCharCode(FX_DWORD charcode) const;
+    FX_BOOL IsUnicodeCompatible() const override;
+    virtual FX_BOOL IsFontStyleFromCharCode(FX_DWORD charcode) const;
 
 protected:
     friend class CPDF_Font;
 
-    bool _Load() override;
+    FX_BOOL _Load() override;
     FX_WCHAR _UnicodeFromCharCode(FX_DWORD charcode) const override;
     FX_DWORD _CharCodeFromUnicode(FX_WCHAR Unicode) const override;
-    int GetGlyphIndex(FX_DWORD unicodeb, bool *pVertGlyph);
+    int GetGlyphIndex(FX_DWORD unicodeb, FX_BOOL *pVertGlyph);
     void LoadMetricsArray(CPDF_Array* pArray, CFX_DWordArray& result, int nElements);
     void LoadSubstFont();
 
@@ -553,9 +553,9 @@ protected:
     CPDF_CMap* m_pAllocatedCMap;
     CPDF_CID2UnicodeMap* m_pCID2UnicodeMap;
     int m_Charset;
-    bool m_bType1;
+    FX_BOOL m_bType1;
     CPDF_StreamAcc* m_pCIDToGIDMap;
-    bool m_bCIDIsGID;
+    FX_BOOL m_bCIDIsGID;
     FX_WORD m_DefaultWidth;
     FX_WORD* m_pAnsiWidths;
     FX_SMALL_RECT m_CharBBox[256];
@@ -563,7 +563,7 @@ protected:
     short m_DefaultVY;
     short m_DefaultW1;
     CFX_DWordArray m_VertMetrics;
-    bool m_bAdobeCourierStd;
+    FX_BOOL m_bAdobeCourierStd;
     CFX_CTTGSUBTable* m_pTTGSUBTable;
 };
 
@@ -612,27 +612,27 @@ public:
         max = 1.0f;
     }
 
-    bool					sRGB() const;
+    FX_BOOL					sRGB() const;
 
 
 
-    virtual bool			GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const = 0;
+    virtual FX_BOOL			GetRGB(FX_FLOAT* pBuf, FX_FLOAT& R, FX_FLOAT& G, FX_FLOAT& B) const = 0;
 
-    virtual bool			SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const
+    virtual FX_BOOL			SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const
     {
-        return false;
+        return FALSE;
     }
 
 
 
 
-    bool					GetCMYK(FX_FLOAT* pBuf, FX_FLOAT& c, FX_FLOAT& m, FX_FLOAT& y, FX_FLOAT& k) const;
+    FX_BOOL					GetCMYK(FX_FLOAT* pBuf, FX_FLOAT& c, FX_FLOAT& m, FX_FLOAT& y, FX_FLOAT& k) const;
 
-    bool					SetCMYK(FX_FLOAT* pBuf, FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k) const;
+    FX_BOOL					SetCMYK(FX_FLOAT* pBuf, FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k) const;
 
 
     virtual void			TranslateImageLine(uint8_t* dest_buf, const uint8_t* src_buf, int pixels,
-            int image_width, int image_height, bool bTransMask = false) const;
+            int image_width, int image_height, FX_BOOL bTransMask = FALSE) const;
 
     CPDF_Array*&			GetArray()
     {
@@ -646,7 +646,7 @@ public:
         return NULL;
     }
 
-    virtual void			EnableStdConversion(bool bEnabled);
+    virtual void			EnableStdConversion(FX_BOOL bEnabled);
 
     CPDF_Document* const m_pDocument;
 
@@ -659,17 +659,17 @@ protected:
           m_dwStdConversion(0) {
     }
     virtual ~CPDF_ColorSpace() {}
-    virtual bool			v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
+    virtual FX_BOOL			v_Load(CPDF_Document* pDoc, CPDF_Array* pArray)
     {
-        return true;
+        return TRUE;
     }
-    virtual bool			v_GetCMYK(FX_FLOAT* pBuf, FX_FLOAT& c, FX_FLOAT& m, FX_FLOAT& y, FX_FLOAT& k) const
+    virtual FX_BOOL			v_GetCMYK(FX_FLOAT* pBuf, FX_FLOAT& c, FX_FLOAT& m, FX_FLOAT& y, FX_FLOAT& k) const
     {
-        return false;
+        return FALSE;
     }
-    virtual bool			v_SetCMYK(FX_FLOAT* pBuf, FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k) const
+    virtual FX_BOOL			v_SetCMYK(FX_FLOAT* pBuf, FX_FLOAT c, FX_FLOAT m, FX_FLOAT y, FX_FLOAT k) const
     {
-        return false;
+        return FALSE;
     }
 
     int						m_Family;
@@ -692,14 +692,14 @@ public:
 
     ~CPDF_Color();
 
-    bool					IsNull() const
+    FX_BOOL					IsNull() const
     {
         return m_pBuffer == NULL;
     }
 
-    bool					IsEqual(const CPDF_Color& other) const;
+    FX_BOOL					IsEqual(const CPDF_Color& other) const;
 
-    bool					IsPattern() const
+    FX_BOOL					IsPattern() const
     {
         return m_pCS && m_pCS->GetFamily() == PDFCS_PATTERN;
     }
@@ -712,7 +712,7 @@ public:
 
     void					SetValue(CPDF_Pattern* pPattern, FX_FLOAT* comp, int ncomps);
 
-    bool					GetRGB(int& R, int& G, int& B) const;
+    FX_BOOL					GetRGB(int& R, int& G, int& B) const;
 
     CPDF_Pattern*			GetPattern() const;
 
@@ -734,7 +734,7 @@ class CPDF_Pattern
 public:
 
     virtual ~CPDF_Pattern();
-    void    SetForceClear(bool bForceClear) { m_bForceClear = bForceClear; }
+    void    SetForceClear(FX_BOOL bForceClear) { m_bForceClear = bForceClear; }
 
     CPDF_Object*                m_pPatternObj;
 
@@ -747,7 +747,7 @@ public:
 
 protected:
     CPDF_Pattern(const CFX_AffineMatrix* pParentMatrix);
-    bool     m_bForceClear;
+    FX_BOOL     m_bForceClear;
 };
 
 class CPDF_TilingPattern : public CPDF_Pattern
@@ -758,11 +758,11 @@ public:
 
     virtual ~CPDF_TilingPattern();
 
-    bool				Load();
+    FX_BOOL				Load();
 
 
 
-    bool				m_bColored;
+    FX_BOOL				m_bColored;
 
     CFX_FloatRect		m_BBox;
 
@@ -778,17 +778,17 @@ class CPDF_ShadingPattern : public CPDF_Pattern
 {
 public:
 
-    CPDF_ShadingPattern(CPDF_Document* pDoc, CPDF_Object* pPatternObj, bool bShading, const CFX_AffineMatrix* parentMatrix);
+    CPDF_ShadingPattern(CPDF_Document* pDoc, CPDF_Object* pPatternObj, FX_BOOL bShading, const CFX_AffineMatrix* parentMatrix);
 
     virtual ~CPDF_ShadingPattern();
 
     CPDF_Object*		m_pShadingObj;
 
-    bool				m_bShadingObj;
+    FX_BOOL				m_bShadingObj;
 
-    bool				Load();
+    FX_BOOL				Load();
 
-    bool				Reload();
+    FX_BOOL				Reload();
 
     int					m_ShadingType;
 
@@ -810,7 +810,7 @@ class CPDF_MeshStream
 {
 public:
 
-    bool				Load(CPDF_Stream* pShadingStream, CPDF_Function** pFuncs, int nFuncs, CPDF_ColorSpace* pCS);
+    FX_BOOL				Load(CPDF_Stream* pShadingStream, CPDF_Function** pFuncs, int nFuncs, CPDF_ColorSpace* pCS);
 
     FX_DWORD			GetFlag();
 
@@ -820,7 +820,7 @@ public:
 
     FX_DWORD 			GetVertex(CPDF_MeshVertex& vertex, CFX_AffineMatrix* pObject2Bitmap);
 
-    bool				GetVertexRow(CPDF_MeshVertex* vertex, int count, CFX_AffineMatrix* pObject2Bitmap);
+    FX_BOOL				GetVertexRow(CPDF_MeshVertex* vertex, int count, CFX_AffineMatrix* pObject2Bitmap);
     CPDF_Function**	m_pFuncs;
     CPDF_ColorSpace*	m_pCS;
     FX_DWORD			m_nFuncs, m_nCoordBits, m_nCompBits, m_nFlagBits, m_nComps;
@@ -854,13 +854,13 @@ public:
 
     ~CPDF_Image();
 
-    bool					LoadImageF(CPDF_Stream* pImageStream, bool bInline);
+    FX_BOOL					LoadImageF(CPDF_Stream* pImageStream, FX_BOOL bInline);
 
     void					Release();
 
     CPDF_Image*				Clone();
 
-    bool					IsInline()
+    FX_BOOL					IsInline()
     {
         return m_bInline;
     }
@@ -908,17 +908,17 @@ public:
     }
 
 
-    bool					IsMask() const
+    FX_BOOL					IsMask() const
     {
         return m_bIsMask;
     }
 
-    bool					IsInterpol() const
+    FX_BOOL					IsInterpol() const
     {
         return m_bInterpolate;
     }
 
-    CFX_DIBSource*			LoadDIBSource(CFX_DIBSource** ppMask = NULL, FX_DWORD* pMatteColor = NULL, bool bStdCS = false, FX_DWORD GroupFamily = 0, bool bLoadMask = false) const;
+    CFX_DIBSource*			LoadDIBSource(CFX_DIBSource** ppMask = NULL, FX_DWORD* pMatteColor = NULL, FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE) const;
 
 
 
@@ -931,8 +931,8 @@ public:
     void					ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pDIBitmap);
 
 public:
-    bool					StartLoadDIBSource(CPDF_Dictionary* pFormResource, CPDF_Dictionary* pPageResource, bool bStdCS = false, FX_DWORD GroupFamily = 0, bool bLoadMask = false);
-    bool					Continue(IFX_Pause* pPause);
+    FX_BOOL					StartLoadDIBSource(CPDF_Dictionary* pFormResource, CPDF_Dictionary* pPageResource, FX_BOOL bStdCS = FALSE, FX_DWORD GroupFamily = 0, FX_BOOL bLoadMask = FALSE);
+    FX_BOOL					Continue(IFX_Pause* pPause);
     CFX_DIBSource*			DetachBitmap();
     CFX_DIBSource*			DetachMask();
     CFX_DIBSource*			m_pDIBSource;
@@ -941,16 +941,16 @@ public:
 private:
 
     CPDF_Stream*			m_pStream;
-    bool					m_bInline;
+    FX_BOOL					m_bInline;
     CPDF_Dictionary*		m_pInlineDict;
 
     int32_t				m_Height;
 
     int32_t				m_Width;
 
-    bool					m_bIsMask;
+    FX_BOOL					m_bIsMask;
 
-    bool					m_bInterpolate;
+    FX_BOOL					m_bInterpolate;
 
     CPDF_Document*			m_pDocument;
 

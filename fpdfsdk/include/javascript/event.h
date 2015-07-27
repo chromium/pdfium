@@ -16,26 +16,26 @@ public:
 	virtual ~event(void);
 
 public:
-	bool change(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool changeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool commitKey(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool fieldFull(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool keyDown(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool modifier(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool rc(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool richChange(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool richChangeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool richValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool selEnd(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool selStart(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool shift(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool source(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool target(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool targetName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool type(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-	bool willCommit(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL change(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL changeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL commitKey(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL fieldFull(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL keyDown(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL modifier(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL rc(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL richChange(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL richChangeEx(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL richValue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL selEnd(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL selStart(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL shift(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL source(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL target(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL targetName(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL type(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL value(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+	FX_BOOL willCommit(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
 };
 

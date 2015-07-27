@@ -155,7 +155,7 @@ void color::ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color)
 }
 
 #define JS_IMPLEMENT_COLORPROP(prop, var)\
-bool color::prop(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)\
+FX_BOOL color::prop(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)\
 {\
 	CJS_Context* pContext = (CJS_Context*)cc;\
 	v8::Isolate* isolate = pContext->GetJSRuntime()->GetIsolate();\
@@ -168,10 +168,10 @@ bool color::prop(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)\
 	else\
 	{\
 		CJS_Array array(isolate);\
-		if (!vp.ConvertToArray(array)) return false;\
+		if (!vp.ConvertToArray(array)) return FALSE;\
 		ConvertArrayToPWLColor(array, var);\
 	}\
-	return true;\
+	return TRUE;\
 }
 
 JS_IMPLEMENT_COLORPROP(transparent, m_crTransparent)
@@ -187,13 +187,13 @@ JS_IMPLEMENT_COLORPROP(dkGray, m_crDKGray)
 JS_IMPLEMENT_COLORPROP(gray, m_crGray)
 JS_IMPLEMENT_COLORPROP(ltGray, m_crLTGray)
 
-bool color::convert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
+FX_BOOL color::convert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	v8::Isolate* isolate = GetIsolate(cc);
 	int iSize = params.size();
-	if (iSize < 2) return false;
+	if (iSize < 2) return FALSE;
 	CJS_Array aSource(isolate);
-	if (!params[0].ConvertToArray(aSource)) return false;
+	if (!params[0].ConvertToArray(aSource)) return FALSE;
 
 	CPWL_Color crSource;
 	ConvertArrayToPWLColor(aSource, crSource);
@@ -224,18 +224,18 @@ bool color::convert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& 
 	ConvertPWLColorToArray(crDest, aDest);
 	vRet = aDest;
 
-	return true;
+	return TRUE;
 }
 
-bool color::equal(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
+FX_BOOL color::equal(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
 {
 	v8::Isolate* isolate = GetIsolate(cc);
-	if (params.size() < 2) return false;
+	if (params.size() < 2) return FALSE;
 
 	CJS_Array array1(isolate), array2(isolate);
 
-	if (!params[0].ConvertToArray(array1)) return false;
-	if (!params[1].ConvertToArray(array2)) return false;
+	if (!params[0].ConvertToArray(array1)) return FALSE;
+	if (!params[1].ConvertToArray(array2)) return FALSE;
 
 	CPWL_Color color1;
 	CPWL_Color color2;
@@ -246,6 +246,6 @@ bool color::equal(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vR
 	color1.ConvertColorType(color2.nColorType);
 
 	vRet = color1 == color2;
-	return true;
+	return TRUE;
 }
 

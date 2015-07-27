@@ -16,7 +16,7 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, FX_DWORD size)
     int32_t height;
     int32_t num_comps;
     int32_t bits;
-    bool color_trans;
+    FX_BOOL color_trans;
     if (!CPDF_ModuleMgr::Get()->GetJpegModule()->
             LoadInfo(pData, size, width, height, num_comps, bits, color_trans)) {
         return NULL;
@@ -48,7 +48,7 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, FX_DWORD size)
         pDict->SetAt("DecodeParms", pParms);
         pParms->SetAtInteger("ColorTransform", 0);
     }
-    m_bIsMask = false;
+    m_bIsMask = FALSE;
     m_Width = width;
     m_Height = height;
     if (m_pStream == NULL) {
@@ -92,7 +92,7 @@ void CPDF_Image::SetJpegImage(IFX_FileRead *pFile)
 void _DCTEncodeBitmap(CPDF_Dictionary *pBitmapDict, const CFX_DIBitmap* pBitmap, int quality, uint8_t* &buf, FX_STRSIZE &size)
 {
 }
-void _JBIG2EncodeBitmap(CPDF_Dictionary *pBitmapDict, const CFX_DIBitmap *pBitmap, CPDF_Document *pDoc, uint8_t* &buf, FX_STRSIZE &size, bool bLossLess)
+void _JBIG2EncodeBitmap(CPDF_Dictionary *pBitmapDict, const CFX_DIBitmap *pBitmap, CPDF_Document *pDoc, uint8_t* &buf, FX_STRSIZE &size, FX_BOOL bLossLess)
 {
 }
 void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress, IFX_FileWrite *pFileWrite, IFX_FileRead *pFileRead, const CFX_DIBitmap* pMask, const CPDF_ImageSetParam* pParam)
@@ -105,7 +105,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress, IFX_Fi
     uint8_t* src_buf = pBitmap->GetBuffer();
     int32_t src_pitch = pBitmap->GetPitch();
     int32_t bpp = pBitmap->GetBPP();
-    bool bUseMatte = pParam && pParam->pMatteColor && (pBitmap->GetFormat() == FXDIB_Argb);
+    FX_BOOL bUseMatte = pParam && pParam->pMatteColor && (pBitmap->GetFormat() == FXDIB_Argb);
     CPDF_Dictionary* pDict = new CPDF_Dictionary;
     pDict->SetAtName(FX_BSTRC("Type"), FX_BSTRC("XObject"));
     pDict->SetAtName(FX_BSTRC("Subtype"), FX_BSTRC("Image"));
@@ -121,7 +121,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress, IFX_Fi
             ArgbDecode(pBitmap->GetPaletteArgb(1), set_a, set_r, set_g, set_b);
         }
         if (set_a == 0 || reset_a == 0) {
-            pDict->SetAt(FX_BSTRC("ImageMask"), new CPDF_Boolean(true));
+            pDict->SetAt(FX_BSTRC("ImageMask"), new CPDF_Boolean(TRUE));
             if (reset_a == 0) {
                 CPDF_Array* pArray = new CPDF_Array;
                 pArray->AddInteger(1);
@@ -142,7 +142,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress, IFX_Fi
             pBuf[4] = (FX_CHAR)set_g;
             pBuf[5] = (FX_CHAR)set_b;
             ct.ReleaseBuffer(6);
-            pCS->Add(CPDF_String::Create(ct, true));
+            pCS->Add(CPDF_String::Create(ct, TRUE));
             pDict->SetAt(FX_BSTRC("ColorSpace"), pCS);
         }
         pDict->SetAtInteger(FX_BSTRC("BitsPerComponent"), 1);
@@ -194,10 +194,10 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress, IFX_Fi
         }
     }
     const CFX_DIBitmap* pMaskBitmap = NULL;
-    bool bDeleteMask = false;
+    FX_BOOL bDeleteMask = FALSE;
     if (pBitmap->HasAlpha()) {
         pMaskBitmap = pBitmap->GetAlphaMask();
-        bDeleteMask = true;
+        bDeleteMask = TRUE;
     }
     if (!pMaskBitmap && pMask) {
         FXDIB_Format maskFormat = pMask->GetFormat();
@@ -220,7 +220,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress, IFX_Fi
         if (pMaskBitmap->GetBPP() == 8 && (iCompress & PDF_IMAGE_MASK_LOSSY_COMPRESS) != 0) {
             _DCTEncodeBitmap(pMaskDict, pMaskBitmap, pParam ? pParam->nQuality : 75, mask_buf, mask_size);
         } else if (pMaskBitmap->GetFormat() == FXDIB_1bppMask) {
-            _JBIG2EncodeBitmap(pMaskDict, pMaskBitmap, m_pDocument, mask_buf, mask_size, true);
+            _JBIG2EncodeBitmap(pMaskDict, pMaskBitmap, m_pDocument, mask_buf, mask_size, TRUE);
         } else {
             mask_buf = FX_Alloc2D(uint8_t, maskHeight, maskWidth);
             mask_size = maskHeight * maskWidth;  // Safe since checked alloc returned.
@@ -245,15 +245,15 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress, IFX_Fi
             delete pMaskBitmap;
         }
     }
-    bool bStream = pFileWrite != NULL && pFileRead != NULL;
+    FX_BOOL bStream = pFileWrite != NULL && pFileRead != NULL;
     if (opType == 0) {
         if (iCompress & PDF_IMAGE_LOSSLESS_COMPRESS) {
             if (pBitmap->GetBPP() == 1) {
-                _JBIG2EncodeBitmap(pDict, pBitmap, m_pDocument, dest_buf, dest_size, true);
+                _JBIG2EncodeBitmap(pDict, pBitmap, m_pDocument, dest_buf, dest_size, TRUE);
             }
         } else {
             if (pBitmap->GetBPP() == 1) {
-                _JBIG2EncodeBitmap(pDict, pBitmap, m_pDocument, dest_buf, dest_size, false);
+                _JBIG2EncodeBitmap(pDict, pBitmap, m_pDocument, dest_buf, dest_size, FALSE);
             } else if (pBitmap->GetBPP() >= 8 && pBitmap->GetPalette() != NULL) {
                 CFX_DIBitmap *pNewBitmap = new CFX_DIBitmap();
                 pNewBitmap->Copy(pBitmap);

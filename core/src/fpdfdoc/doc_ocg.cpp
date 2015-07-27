@@ -25,7 +25,7 @@ static int32_t FPDFDOC_OCG_FindGroup(const CPDF_Object *pObject, const CPDF_Dict
     }
     return -1;
 }
-static bool FPDFDOC_OCG_HasIntent(const CPDF_Dictionary *pDict, const CFX_ByteStringC& csElement, const CFX_ByteStringC& csDef = FX_BSTRC(""))
+static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary *pDict, const CFX_ByteStringC& csElement, const CFX_ByteStringC& csDef = FX_BSTRC(""))
 {
     FXSYS_assert(pDict != NULL);
     CPDF_Object *pIntent = pDict->GetElementValue(FX_BSTRC("Intent"));
@@ -38,10 +38,10 @@ static bool FPDFDOC_OCG_HasIntent(const CPDF_Dictionary *pDict, const CFX_ByteSt
         for (FX_DWORD i = 0; i < dwCount; i++) {
             bsIntent = ((CPDF_Array*)pIntent)->GetString(i);
             if (bsIntent == FX_BSTRC("All") || bsIntent == csElement) {
-                return true;
+                return TRUE;
             }
         }
-        return false;
+        return FALSE;
     }
     bsIntent = pIntent->GetString();
     return bsIntent == FX_BSTRC("All") || bsIntent == csElement;
@@ -101,24 +101,24 @@ CPDF_OCContext::~CPDF_OCContext()
 {
     m_OCGStates.clear();
 }
-bool CPDF_OCContext::LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig, const CPDF_Dictionary *pOCGDict, bool &bValidConfig) const
+FX_BOOL CPDF_OCContext::LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig, const CPDF_Dictionary *pOCGDict, FX_BOOL &bValidConfig) const
 {
     CPDF_Dictionary *pConfig = FPDFDOC_OCG_GetConfig(m_pDocument, pOCGDict, csConfig);
     if (!pConfig) {
-        return true;
+        return TRUE;
     }
-    bValidConfig = true;
-    bool bState = pConfig->GetString(FX_BSTRC("BaseState"), FX_BSTRC("ON")) != FX_BSTRC("OFF");
+    bValidConfig = TRUE;
+    FX_BOOL bState = pConfig->GetString(FX_BSTRC("BaseState"), FX_BSTRC("ON")) != FX_BSTRC("OFF");
     CPDF_Array *pArray = pConfig->GetArray(FX_BSTRC("ON"));
     if (pArray) {
         if (FPDFDOC_OCG_FindGroup(pArray, pOCGDict) >= 0) {
-            bState = true;
+            bState = TRUE;
         }
     }
     pArray = pConfig->GetArray(FX_BSTRC("OFF"));
     if (pArray) {
         if (FPDFDOC_OCG_FindGroup(pArray, pOCGDict) >= 0) {
-            bState = false;
+            bState = FALSE;
         }
     }
     pArray = pConfig->GetArray(FX_BSTRC("AS"));
@@ -149,10 +149,10 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig, con
     }
     return bState;
 }
-bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary *pOCGDict) const
+FX_BOOL CPDF_OCContext::LoadOCGState(const CPDF_Dictionary *pOCGDict) const
 {
     if (!FPDFDOC_OCG_HasIntent(pOCGDict, FX_BSTRC("View"), FX_BSTRC("View"))) {
-        return true;
+        return TRUE;
     }
     CFX_ByteString csState = FPDFDOC_OCG_GetUsageTypeString(m_eUsageType);
     CPDF_Dictionary *pUsage = pOCGDict->GetDict(FX_BSTRC("Usage"));
@@ -171,31 +171,31 @@ bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary *pOCGDict) const
             }
         }
     }
-    bool bDefValid = false;
+    FX_BOOL bDefValid = FALSE;
     return LoadOCGStateFromConfig(csState, pOCGDict, bDefValid);
 }
 
-bool CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict)
+FX_BOOL CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict)
 {
     if (!pOCGDict)
-        return false;
+        return FALSE;
 
     const auto it = m_OCGStates.find(pOCGDict);
     if (it != m_OCGStates.end())
         return it->second;
 
-    bool bState = LoadOCGState(pOCGDict);
+    FX_BOOL bState = LoadOCGState(pOCGDict);
     m_OCGStates[pOCGDict] = bState;
     return bState;
 }
 
-bool CPDF_OCContext::GetOCGVE(CPDF_Array *pExpression, bool bFromConfig, int nLevel)
+FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array *pExpression, FX_BOOL bFromConfig, int nLevel)
 {
     if (nLevel > 32) {
-        return false;
+        return FALSE;
     }
     if (pExpression == NULL) {
-        return false;
+        return FALSE;
     }
     int32_t iCount = pExpression->GetCount();
     CPDF_Object *pOCGObj;
@@ -203,7 +203,7 @@ bool CPDF_OCContext::GetOCGVE(CPDF_Array *pExpression, bool bFromConfig, int nLe
     if (csOperator == FX_BSTRC("Not")) {
         pOCGObj = pExpression->GetElementValue(1);
         if (pOCGObj == NULL) {
-            return false;
+            return FALSE;
         }
         if (pOCGObj->GetType() == PDFOBJ_DICTIONARY) {
             return !(bFromConfig ? LoadOCGState((CPDF_Dictionary*)pOCGObj) : GetOCGVisible((CPDF_Dictionary*)pOCGObj));
@@ -211,16 +211,16 @@ bool CPDF_OCContext::GetOCGVE(CPDF_Array *pExpression, bool bFromConfig, int nLe
         if (pOCGObj->GetType() == PDFOBJ_ARRAY) {
             return !GetOCGVE((CPDF_Array*)pOCGObj, bFromConfig, nLevel + 1);
         }
-        return false;
+        return FALSE;
     }
     if (csOperator == FX_BSTRC("Or") || csOperator == FX_BSTRC("And")) {
-        bool bValue = false;
+        FX_BOOL bValue = FALSE;
         for (int32_t i = 1; i < iCount; i ++) {
             pOCGObj = pExpression->GetElementValue(1);
             if (pOCGObj == NULL) {
                 continue;
             }
-            bool bItem = false;
+            FX_BOOL bItem = FALSE;
             if (pOCGObj->GetType() == PDFOBJ_DICTIONARY) {
                 bItem = bFromConfig ? LoadOCGState((CPDF_Dictionary*)pOCGObj) : GetOCGVisible((CPDF_Dictionary*)pOCGObj);
             } else if (pOCGObj->GetType() == PDFOBJ_ARRAY) {
@@ -238,9 +238,9 @@ bool CPDF_OCContext::GetOCGVE(CPDF_Array *pExpression, bool bFromConfig, int nLe
         }
         return bValue;
     }
-    return false;
+    return FALSE;
 }
-bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary *pOCMDDict, bool bFromConfig)
+FX_BOOL CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary *pOCMDDict, FX_BOOL bFromConfig)
 {
     FXSYS_assert(pOCMDDict != NULL);
     CPDF_Array *pVE = pOCMDDict->GetArray(FX_BSTRC("VE"));
@@ -250,50 +250,50 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary *pOCMDDict, bool bFromC
     CFX_ByteString csP = pOCMDDict->GetString(FX_BSTRC("P"), FX_BSTRC("AnyOn"));
     CPDF_Object *pOCGObj = pOCMDDict->GetElementValue(FX_BSTRC("OCGs"));
     if (pOCGObj == NULL) {
-        return true;
+        return TRUE;
     }
     if (pOCGObj->GetType() == PDFOBJ_DICTIONARY) {
         return bFromConfig ? LoadOCGState((CPDF_Dictionary*)pOCGObj) : GetOCGVisible((CPDF_Dictionary*)pOCGObj);
     }
     if (pOCGObj->GetType() != PDFOBJ_ARRAY) {
-        return true;
+        return TRUE;
     }
-    bool bState = false;
+    FX_BOOL bState = FALSE;
     if (csP == FX_BSTRC("AllOn") || csP == FX_BSTRC("AllOff")) {
-        bState = true;
+        bState = TRUE;
     }
     int32_t iCount = ((CPDF_Array*)pOCGObj)->GetCount();
     for (int32_t i = 0; i < iCount; i ++) {
-        bool bItem = true;
+        FX_BOOL bItem = TRUE;
         CPDF_Dictionary* pItemDict = ((CPDF_Array*)pOCGObj)->GetDict(i);
         if (pItemDict) {
             bItem = bFromConfig ? LoadOCGState(pItemDict) : GetOCGVisible(pItemDict);
         }
         if (csP == FX_BSTRC("AnyOn") && bItem) {
-            return true;
+            return TRUE;
         }
         if (csP == FX_BSTRC("AnyOff") && !bItem) {
-            return true;
+            return TRUE;
         }
         if (csP == FX_BSTRC("AllOn") && !bItem) {
-            return false;
+            return FALSE;
         }
         if (csP == FX_BSTRC("AllOff") && bItem) {
-            return false;
+            return FALSE;
         }
     }
     return bState;
 }
-bool CPDF_OCContext::CheckOCGVisible(const CPDF_Dictionary *pOCGDict)
+FX_BOOL CPDF_OCContext::CheckOCGVisible(const CPDF_Dictionary *pOCGDict)
 {
     if (!pOCGDict) {
-        return true;
+        return TRUE;
     }
     CFX_ByteString csType = pOCGDict->GetString(FX_BSTRC("Type"), FX_BSTRC("OCG"));
     if (csType == FX_BSTRC("OCG")) {
         return GetOCGVisible(pOCGDict);
     }
-    return LoadOCMDState(pOCGDict, false);
+    return LoadOCMDState(pOCGDict, FALSE);
 }
 void CPDF_OCContext::ResetOCContext()
 {

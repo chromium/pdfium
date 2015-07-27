@@ -230,7 +230,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString &sAlias)
 
 	CPDF_Dictionary* pAcroFormDict = NULL;
 
-	bool bWidget = (m_pAnnotDict->GetString("Subtype") == "Widget");
+	FX_BOOL bWidget = (m_pAnnotDict->GetString("Subtype") == "Widget");
 
 	if (bWidget)
 	{

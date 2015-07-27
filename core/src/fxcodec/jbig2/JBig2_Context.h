@@ -123,13 +123,13 @@ private:
 
     CJBig2_Image *m_pPage;
 
-    bool m_bBufSpecified;
+    FX_BOOL m_bBufSpecified;
 
     int32_t m_nSegmentDecoded;
     IFX_Pause*	m_pPause;
     int32_t	m_PauseStep;
     FXCODEC_STATUS m_ProcessiveStatus;
-    bool	m_bFirstPage;
+    FX_BOOL	m_bFirstPage;
     CJBig2_ArithDecoder *m_pArithDecoder;
     CJBig2_GRDProc *m_pGRD;
     JBig2ArithCtx *m_gbContext;

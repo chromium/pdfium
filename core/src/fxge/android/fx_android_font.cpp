@@ -10,20 +10,20 @@ CFX_AndroidFontInfo::CFX_AndroidFontInfo()
     : m_pFontMgr(NULL)
 {
 }
-bool CFX_AndroidFontInfo::Init(IFPF_FontMgr *pFontMgr)
+FX_BOOL CFX_AndroidFontInfo::Init(IFPF_FontMgr *pFontMgr)
 {
     if (!pFontMgr) {
-        return false;
+        return FALSE;
     }
     pFontMgr->LoadSystemFonts();
     m_pFontMgr = pFontMgr;
-    return true;
+    return TRUE;
 }
-bool CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper)
+FX_BOOL CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper)
 {
-    return false;
+    return FALSE;
 }
-void* CFX_AndroidFontInfo::MapFont(int weight, bool bItalic, int charset, int pitch_family, const FX_CHAR* face, bool& bExact)
+void* CFX_AndroidFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, FX_BOOL& bExact)
 {
     if (!m_pFontMgr) {
         return NULL;
@@ -57,21 +57,21 @@ FX_DWORD CFX_AndroidFontInfo::GetFontData(void* hFont, FX_DWORD table, uint8_t* 
     }
     return ((IFPF_Font*)hFont)->GetFontData(table, buffer, size);
 }
-bool CFX_AndroidFontInfo::GetFaceName(void* hFont, CFX_ByteString& name)
+FX_BOOL CFX_AndroidFontInfo::GetFaceName(void* hFont, CFX_ByteString& name)
 {
     if (!hFont) {
-        return false;
+        return FALSE;
     }
     name = ((IFPF_Font*)hFont)->GetFamilyName();
-    return true;
+    return TRUE;
 }
-bool CFX_AndroidFontInfo::GetFontCharset(void* hFont, int& charset)
+FX_BOOL CFX_AndroidFontInfo::GetFontCharset(void* hFont, int& charset)
 {
     if (!hFont) {
-        return false;
+        return FALSE;
     }
     charset = ((IFPF_Font*)hFont)->GetCharset();
-    return false;
+    return FALSE;
 }
 void CFX_AndroidFontInfo::DeleteFont(void* hFont)
 {

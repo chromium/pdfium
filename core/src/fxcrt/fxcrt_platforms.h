@@ -17,8 +17,8 @@ class CFXCRT_FileAccess_CRT : public IFXCRT_FileAccess
 public:
     CFXCRT_FileAccess_CRT();
     virtual ~CFXCRT_FileAccess_CRT();
-    virtual bool		Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode);
-    virtual bool		Open(const CFX_WideStringC& fileName, FX_DWORD dwMode);
+    virtual FX_BOOL		Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode);
+    virtual FX_BOOL		Open(const CFX_WideStringC& fileName, FX_DWORD dwMode);
     virtual void		Close();
     virtual void		Release();
     virtual FX_FILESIZE	GetSize() const;
@@ -28,8 +28,8 @@ public:
     virtual size_t		Write(const void* pBuffer, size_t szBuffer);
     virtual size_t		ReadPos(void* pBuffer, size_t szBuffer, FX_FILESIZE pos);
     virtual size_t		WritePos(const void* pBuffer, size_t szBuffer, FX_FILESIZE pos);
-    virtual bool		Flush();
-    virtual bool		Truncate(FX_FILESIZE szFile);
+    virtual FX_BOOL		Flush();
+    virtual FX_BOOL		Truncate(FX_FILESIZE szFile);
 protected:
     FXSYS_FILE*	m_hFile;
 };

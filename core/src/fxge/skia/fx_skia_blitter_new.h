@@ -15,9 +15,9 @@ protected:
 				m_Blue,		// Yellow
 				m_Gray;		// Black
 	FX_DWORD	m_Color;	// FX_ARGB or FX_CMYK
-	bool		m_bFullCover;
+	FX_BOOL		m_bFullCover;
 	int			m_ProcessFilter;
-	bool     m_bRgbByteOrder;
+	FX_BOOL     m_bRgbByteOrder;
 
 	FX_RECT				m_ClipBox;
 	CFX_DIBitmap*		m_pDevice;
@@ -205,7 +205,7 @@ public:
 
 
 	//--------------------------------------------------------------------
-	bool Init(CFX_DIBitmap* pDevice, CFX_DIBitmap* pOriDevice, const CFX_ClipRgn* pClipRgn, FX_DWORD color, bool bFullCover, bool bRgbByteOrder,
+	FX_BOOL Init(CFX_DIBitmap* pDevice, CFX_DIBitmap* pOriDevice, const CFX_ClipRgn* pClipRgn, FX_DWORD color, FX_BOOL bFullCover, FX_BOOL bRgbByteOrder,
 		int alpha_flag = 0, void* pIccTransform = NULL); //The alpha flag must be fill_flag if exist.
 };
 class CFX_SkiaA8Renderer : public SkBlitter
@@ -218,7 +218,7 @@ public:
 	virtual void blitRect(int x, int y, int width, int height);
 	virtual	void blitAntiRect(int x, int y, int width, int height, SkAlpha leftAlpha, SkAlpha rightAlpha);
 	//--------------------------------------------------------------------
-	bool Init(CFX_DIBitmap* pDevice, int Left, int Top);
+	FX_BOOL Init(CFX_DIBitmap* pDevice, int Left, int Top);
 	CFX_DIBitmap* m_pDevice;
 	int m_Left;
 	int m_Top;

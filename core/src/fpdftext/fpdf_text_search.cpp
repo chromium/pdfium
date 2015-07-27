@@ -9,56 +9,56 @@
 class CPDF_TextStream
 {
 public:
-    CPDF_TextStream(CFX_WideTextBuf& buffer, bool bUseLF, CFX_PtrArray* pObjArray);
+    CPDF_TextStream(CFX_WideTextBuf& buffer, FX_BOOL bUseLF, CFX_PtrArray* pObjArray);
     ~CPDF_TextStream() {}
-    bool ProcessObject(const CPDF_TextObject* pObj, bool bFirstLine);
+    FX_BOOL ProcessObject(const CPDF_TextObject* pObj, FX_BOOL bFirstLine);
     CFX_WideTextBuf&	m_Buffer;
-    bool				m_bUseLF;
+    FX_BOOL				m_bUseLF;
     CFX_PtrArray*		m_pObjArray;
     const CPDF_TextObject*	m_pLastObj;
 };
-CPDF_TextStream::CPDF_TextStream(CFX_WideTextBuf& buffer, bool bUseLF, CFX_PtrArray* pObjArray) : m_Buffer(buffer)
+CPDF_TextStream::CPDF_TextStream(CFX_WideTextBuf& buffer, FX_BOOL bUseLF, CFX_PtrArray* pObjArray) : m_Buffer(buffer)
 {
     m_pLastObj = NULL;
     m_bUseLF = bUseLF;
     m_pObjArray = pObjArray;
 }
-bool FPDFText_IsSameTextObject(const CPDF_TextObject* pTextObj1, const CPDF_TextObject* pTextObj2)
+FX_BOOL FPDFText_IsSameTextObject(const CPDF_TextObject* pTextObj1, const CPDF_TextObject* pTextObj2)
 {
     if (!pTextObj1 || !pTextObj2) {
-        return false;
+        return FALSE;
     }
     CFX_FloatRect rcPreObj(pTextObj2->m_Left, pTextObj2->m_Bottom, pTextObj2->m_Right, pTextObj2->m_Top);
     CFX_FloatRect rcCurObj(pTextObj1->m_Left, pTextObj1->m_Bottom, pTextObj1->m_Right, pTextObj1->m_Top);
     if (rcPreObj.IsEmpty() && rcCurObj.IsEmpty()) {
-        return true;
+        return TRUE;
     }
     if (!rcPreObj.IsEmpty() || !rcCurObj.IsEmpty()) {
         rcPreObj.Intersect(rcCurObj);
         if (rcPreObj.IsEmpty()) {
-            return false;
+            return FALSE;
         }
         if (FXSYS_fabs(rcPreObj.Width() - rcCurObj.Width()) > rcCurObj.Width() / 2) {
-            return false;
+            return FALSE;
         }
         if (pTextObj2->GetFontSize() != pTextObj1->GetFontSize()) {
-            return false;
+            return FALSE;
         }
     }
     int nPreCount = pTextObj2->CountItems();
     int nCurCount = pTextObj1->CountItems();
     if (nPreCount != nCurCount) {
-        return false;
+        return FALSE;
     }
     for (int i = 0; i < nPreCount; i++) {
         CPDF_TextObjectItem itemPer, itemCur;
         pTextObj2->GetItemInfo(i, &itemPer);
         pTextObj1->GetItemInfo(i, &itemCur);
         if (itemCur.m_CharCode != itemPer.m_CharCode) {
-            return false;
+            return FALSE;
         }
     }
-    return true;
+    return TRUE;
 }
 int GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont)
 {
@@ -133,7 +133,7 @@ int FPDFText_ProcessInterObj(const CPDF_TextObject* pPrevObj, const CPDF_TextObj
     }
     return 0;
 }
-bool CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj, bool bFirstLine)
+FX_BOOL CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj, FX_BOOL bFirstLine)
 {
     CPDF_Font* pFont = pObj->GetFont();
     CFX_AffineMatrix matrix;
@@ -150,7 +150,7 @@ bool CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj, bool bFirstLine
                 }
             } else {
                 if (bFirstLine) {
-                    return true;
+                    return TRUE;
                 }
                 if (m_bUseLF) {
                     m_Buffer.AppendChar(L'\r');
@@ -176,7 +176,7 @@ bool CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj, bool bFirstLine
             }
         } else if (result == -1) {
             m_pLastObj = pObj;
-            return false;
+            return FALSE;
         } else if (result == 3) {
             item_index = 1;
         }
@@ -277,9 +277,9 @@ bool CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj, bool bFirstLine
             }
         }
     }
-    return false;
+    return FALSE;
 }
-void _PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_PageObjects* pPage, bool bUseLF,
+void _PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_PageObjects* pPage, FX_BOOL bUseLF,
                                 CFX_PtrArray* pObjArray)
 {
     CPDF_TextStream textstream(buffer, bUseLF, pObjArray);
@@ -292,7 +292,7 @@ void _PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer, CPDF_PageObjects* pPage
         if (pObject->m_Type != PDFPAGE_TEXT) {
             continue;
         }
-        textstream.ProcessObject((CPDF_TextObject*)pObject, false);
+        textstream.ProcessObject((CPDF_TextObject*)pObject, FALSE);
     }
 }
 CFX_WideString PDF_GetFirstTextLine_Unicode(CPDF_Document* pDoc, CPDF_Dictionary* pPage)
@@ -302,17 +302,17 @@ CFX_WideString PDF_GetFirstTextLine_Unicode(CPDF_Document* pDoc, CPDF_Dictionary
     CPDF_Page page;
     page.Load(pDoc, pPage);
     CPDF_ParseOptions options;
-    options.m_bTextOnly = true;
-    options.m_bSeparateForm = false;
+    options.m_bTextOnly = TRUE;
+    options.m_bSeparateForm = FALSE;
     page.ParseContent(&options);
-    CPDF_TextStream textstream(buffer, false, NULL);
+    CPDF_TextStream textstream(buffer, FALSE, NULL);
     FX_POSITION pos = page.GetFirstObjectPosition();
     while (pos) {
         CPDF_PageObject* pObject = page.GetNextObject(pos);
         if (pObject->m_Type != PDFPAGE_TEXT) {
             continue;
         }
-        if (textstream.ProcessObject((CPDF_TextObject*)pObject, true)) {
+        if (textstream.ProcessObject((CPDF_TextObject*)pObject, TRUE)) {
             break;
         }
     }

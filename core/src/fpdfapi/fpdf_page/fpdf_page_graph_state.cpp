@@ -97,7 +97,7 @@ void CPDF_ClipPathData::SetCount(int path_count, int text_count)
 CPDF_Rect CPDF_ClipPath::GetClipBox() const
 {
     CPDF_Rect rect;
-    bool bStarted = false;
+    FX_BOOL bStarted = FALSE;
     int count = GetPathCount();
     if (count) {
         rect = GetPath(0).GetBoundingBox();
@@ -105,26 +105,26 @@ CPDF_Rect CPDF_ClipPath::GetClipBox() const
             CPDF_Rect path_rect = GetPath(i).GetBoundingBox();
             rect.Intersect(path_rect);
         }
-        bStarted = true;
+        bStarted = TRUE;
     }
     count = GetTextCount();
     if (count) {
         CPDF_Rect layer_rect;
-        bool bLayerStarted = false;
+        FX_BOOL bLayerStarted = FALSE;
         for (int i = 0; i < count; i ++) {
             CPDF_TextObject* pTextObj = GetText(i);
             if (pTextObj == NULL) {
                 if (!bStarted) {
                     rect = layer_rect;
-                    bStarted = true;
+                    bStarted = TRUE;
                 } else {
                     rect.Intersect(layer_rect);
                 }
-                bLayerStarted = false;
+                bLayerStarted = FALSE;
             } else {
                 if (!bLayerStarted) {
                     layer_rect = pTextObj->GetBBox(NULL);
-                    bLayerStarted = true;
+                    bLayerStarted = TRUE;
                 } else {
                     layer_rect.Union(pTextObj->GetBBox(NULL));
                 }
@@ -133,7 +133,7 @@ CPDF_Rect CPDF_ClipPath::GetClipBox() const
     }
     return rect;
 }
-void CPDF_ClipPath::AppendPath(CPDF_Path path, int type, bool bAutoMerge)
+void CPDF_ClipPath::AppendPath(CPDF_Path path, int type, FX_BOOL bAutoMerge)
 {
     CPDF_ClipPathData* pData = GetModify();
     if (pData->m_PathCount && bAutoMerge) {
@@ -256,7 +256,7 @@ void CPDF_ColorState::SetFillPattern(CPDF_Pattern* pPattern, FX_FLOAT* pValue, i
     CPDF_ColorStateData* pData = GetModify();
     pData->m_FillColor.SetValue(pPattern, pValue, nValues);
     int R, G, B;
-    bool ret = pData->m_FillColor.GetRGB(R, G, B);
+    FX_BOOL ret = pData->m_FillColor.GetRGB(R, G, B);
     if (pPattern->m_PatternType == 1 && ((CPDF_TilingPattern*)pPattern)->m_bColored && !ret) {
         pData->m_FillRGB = 0x00BFBFBF;
         return;
@@ -268,7 +268,7 @@ void CPDF_ColorState::SetStrokePattern(CPDF_Pattern* pPattern, FX_FLOAT* pValue,
     CPDF_ColorStateData* pData = GetModify();
     pData->m_StrokeColor.SetValue(pPattern, pValue, nValues);
     int R, G, B;
-    bool ret = pData->m_StrokeColor.GetRGB(R, G, B);
+    FX_BOOL ret = pData->m_StrokeColor.GetRGB(R, G, B);
     if (pPattern->m_PatternType == 1 && ((CPDF_TilingPattern*)pPattern)->m_bColored && !ret) {
         pData->m_StrokeRGB = 0x00BFBFBF;
         return;
@@ -295,7 +295,7 @@ CPDF_TextStateData::CPDF_TextStateData(const CPDF_TextStateData& src)
     }
     FXSYS_memcpy(this, &src, sizeof(CPDF_TextStateData));
     if (m_pDocument && m_pFont) {
-        m_pFont = m_pDocument->GetPageData()->GetFont(m_pFont->GetFontDict(), false);
+        m_pFont = m_pDocument->GetPageData()->GetFont(m_pFont->GetFontDict(), FALSE);
     }
 }
 CPDF_TextStateData::~CPDF_TextStateData()
@@ -545,7 +545,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS, CPDF_StreamContentParser
                     }
                     pGeneralState->SetBlendMode(mode);
                     if (pGeneralState->m_BlendType > FXDIB_BLEND_MULTIPLY) {
-                        pParser->GetObjectList()->m_bBackgroundAlphaNeeded = true;
+                        pParser->GetObjectList()->m_bBackgroundAlphaNeeded = TRUE;
                     }
                     break;
                 }
@@ -631,12 +631,12 @@ CPDF_ContentMarkItem::~CPDF_ContentMarkItem()
         ((CPDF_Dictionary*)m_pParam)->Release();
     }
 }
-bool	CPDF_ContentMarkItem::HasMCID() const
+FX_BOOL	CPDF_ContentMarkItem::HasMCID() const
 {
     if (m_pParam && (m_ParamType == DirectDict || m_ParamType == PropertiesDict)) {
         return ((CPDF_Dictionary *)m_pParam)->KeyExist(FX_BSTRC("MCID"));
     }
-    return false;
+    return FALSE;
 }
 CPDF_ContentMarkData::CPDF_ContentMarkData(const CPDF_ContentMarkData& src)
 {
@@ -658,7 +658,7 @@ int CPDF_ContentMarkData::GetMCID() const
     }
     return -1;
 }
-void CPDF_ContentMarkData::AddMark(const CFX_ByteString& name, CPDF_Dictionary* pDict, bool bDirect)
+void CPDF_ContentMarkData::AddMark(const CFX_ByteString& name, CPDF_Dictionary* pDict, FX_BOOL bDirect)
 {
     CPDF_ContentMarkItem& item = m_Marks.Add();
     item.SetName(name);
@@ -676,23 +676,23 @@ void CPDF_ContentMarkData::DeleteLastMark()
     }
     m_Marks.RemoveAt(size - 1);
 }
-bool CPDF_ContentMark::HasMark(const CFX_ByteStringC& mark) const
+FX_BOOL CPDF_ContentMark::HasMark(const CFX_ByteStringC& mark) const
 {
     if (m_pObject == NULL) {
-        return false;
+        return FALSE;
     }
     for (int i = 0; i < m_pObject->CountItems(); i ++) {
         CPDF_ContentMarkItem& item = m_pObject->GetItem(i);
         if (item.GetName() == mark) {
-            return true;
+            return TRUE;
         }
     }
-    return false;
+    return FALSE;
 }
-bool CPDF_ContentMark::LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const
+FX_BOOL CPDF_ContentMark::LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const
 {
     if (m_pObject == NULL) {
-        return false;
+        return FALSE;
     }
     for (int i = 0; i < m_pObject->CountItems(); i ++) {
         CPDF_ContentMarkItem& item = m_pObject->GetItem(i);
@@ -702,8 +702,8 @@ bool CPDF_ContentMark::LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*&
                     item.GetParamType() == CPDF_ContentMarkItem::DirectDict) {
                 pDict = (CPDF_Dictionary*)item.GetParam();
             }
-            return true;
+            return TRUE;
         }
     }
-    return false;
+    return FALSE;
 }

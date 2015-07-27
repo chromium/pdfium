@@ -274,12 +274,12 @@ void* CGdiplusExt::GdiAddFontMemResourceEx(void *pFontdata, FX_DWORD size, void*
     }
     return NULL;
 }
-bool CGdiplusExt::GdiRemoveFontMemResourceEx(void* handle)
+FX_BOOL CGdiplusExt::GdiRemoveFontMemResourceEx(void* handle)
 {
     if (m_pGdiRemoveFontMemResourseEx) {
         return ((FuncType_GdiRemoveFontMemResourceEx)m_pGdiRemoveFontMemResourseEx)((HANDLE)handle);
     }
-    return false;
+    return FALSE;
 }
 static GpBrush* _GdipCreateBrush(DWORD argb)
 {
@@ -291,11 +291,11 @@ static GpBrush* _GdipCreateBrush(DWORD argb)
 static CFX_DIBitmap* _StretchMonoToGray(int dest_width, int dest_height,
                                         const CFX_DIBitmap* pSource, FX_RECT* pClipRect)
 {
-    bool bFlipX = dest_width < 0;
+    FX_BOOL bFlipX = dest_width < 0;
     if (bFlipX) {
         dest_width = -dest_width;
     }
-    bool bFlipY = dest_height < 0;
+    FX_BOOL bFlipY = dest_height < 0;
     if (bFlipY) {
         dest_height = -dest_height;
     }
@@ -382,7 +382,7 @@ static void OutputImageMask(GpGraphics* pGraphics, BOOL bMonoDevice, const CFX_D
         if (src_width * src_height > 10000) {
             pStretched = _StretchMonoToGray(dest_width, dest_height, pBitmap, &image_clip);
         } else {
-            pStretched = pBitmap->StretchTo(dest_width, dest_height, false, &image_clip);
+            pStretched = pBitmap->StretchTo(dest_width, dest_height, FALSE, &image_clip);
         }
         GpBitmap* bitmap;
         CallFunc(GdipCreateBitmapFromScan0)(image_clip.Width(), image_clip.Height(),
@@ -536,7 +536,7 @@ void CGdiplusExt::DeleteMemFont(LPVOID pCollection)
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     CallFunc(GdipDeletePrivateFontCollection)((GpFontCollection**)&pCollection);
 }
-bool CGdiplusExt::GdipCreateBitmap(CFX_DIBitmap* pBitmap, void**bitmap)
+FX_BOOL CGdiplusExt::GdipCreateBitmap(CFX_DIBitmap* pBitmap, void**bitmap)
 {
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     PixelFormat format;
@@ -551,41 +551,41 @@ bool CGdiplusExt::GdipCreateBitmap(CFX_DIBitmap* pBitmap, void**bitmap)
             format = PixelFormat32bppARGB;
             break;
         default:
-            return false;
+            return FALSE;
     }
     GpStatus status = CallFunc(GdipCreateBitmapFromScan0)(pBitmap->GetWidth(), pBitmap->GetHeight(),
                       pBitmap->GetPitch(), format, pBitmap->GetBuffer(), (GpBitmap**)bitmap);
     if (status == Ok) {
-        return true;
+        return TRUE;
     }
-    return false;
+    return FALSE;
 }
-bool CGdiplusExt::GdipCreateFromImage(void* bitmap, void** graphics)
+FX_BOOL CGdiplusExt::GdipCreateFromImage(void* bitmap, void** graphics)
 {
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     GpStatus status = CallFunc(GdipGetImageGraphicsContext)((GpBitmap*)bitmap, (GpGraphics**)graphics);
     if (status == Ok) {
-        return true;
+        return TRUE;
     }
-    return false;
+    return FALSE;
 }
-bool CGdiplusExt::GdipCreateFontFamilyFromName(const FX_WCHAR* name, void* pFontCollection, void**pFamily)
+FX_BOOL CGdiplusExt::GdipCreateFontFamilyFromName(const FX_WCHAR* name, void* pFontCollection, void**pFamily)
 {
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     GpStatus status = CallFunc(GdipCreateFontFamilyFromName)((GDIPCONST WCHAR *)name, (GpFontCollection*)pFontCollection, (GpFontFamily**)pFamily);
     if (status == Ok) {
-        return true;
+        return TRUE;
     }
-    return false;
+    return FALSE;
 }
-bool CGdiplusExt::GdipCreateFontFromFamily(void* pFamily, FX_FLOAT font_size, int fontstyle, int flag, void** pFont)
+FX_BOOL CGdiplusExt::GdipCreateFontFromFamily(void* pFamily, FX_FLOAT font_size, int fontstyle, int flag, void** pFont)
 {
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     GpStatus status = CallFunc(GdipCreateFont)((GpFontFamily*)pFamily, font_size, fontstyle, Unit(flag), (GpFont**)pFont);
     if (status == Ok) {
-        return true;
+        return TRUE;
     }
-    return false;
+    return FALSE;
 }
 void CGdiplusExt::GdipGetFontSize(void *pFont, FX_FLOAT *size)
 {
@@ -608,16 +608,16 @@ void CGdiplusExt::GdipSetPageUnit(void* graphics, FX_DWORD unit)
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     CallFunc(GdipSetPageUnit)((GpGraphics*)graphics, (GpUnit)unit);
 }
-bool CGdiplusExt::GdipDrawDriverString(void *graphics,  unsigned short *text, int length,
+FX_BOOL CGdiplusExt::GdipDrawDriverString(void *graphics,  unsigned short *text, int length,
         void *font, void* brush, void *positions, int flags, const void *matrix)
 {
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     GpStatus status = CallFunc(GdipDrawDriverString)((GpGraphics*)graphics, (GDIPCONST UINT16 *)text, (INT)length, (GDIPCONST GpFont *)font, (GDIPCONST GpBrush*)brush,
                       (GDIPCONST PointF *)positions, (INT)flags, (GDIPCONST GpMatrix *)matrix);
     if (status == Ok) {
-        return true;
+        return TRUE;
     }
-    return false;
+    return FALSE;
 }
 void CGdiplusExt::GdipCreateBrush(FX_DWORD fill_argb, void** pBrush)
 {
@@ -684,7 +684,7 @@ void CGdiplusExt::GdipDeleteGraphics(void* graphics)
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     CallFunc(GdipDeleteGraphics)((GpGraphics*)graphics);
 }
-bool CGdiplusExt::StretchBitMask(HDC hDC, BOOL bMonoDevice, const CFX_DIBitmap* pBitmap, int dest_left, int dest_top,
+FX_BOOL CGdiplusExt::StretchBitMask(HDC hDC, BOOL bMonoDevice, const CFX_DIBitmap* pBitmap, int dest_left, int dest_top,
                                     int dest_width, int dest_height, FX_DWORD argb, const FX_RECT* pClipRect, int flags)
 {
     ASSERT(pBitmap->GetBPP() == 1);
@@ -699,9 +699,9 @@ bool CGdiplusExt::StretchBitMask(HDC hDC, BOOL bMonoDevice, const CFX_DIBitmap* 
     }
     OutputImageMask(pGraphics, bMonoDevice, pBitmap, dest_left, dest_top, dest_width, dest_height, argb, pClipRect);
     CallFunc(GdipDeleteGraphics)(pGraphics);
-    return true;
+    return TRUE;
 }
-bool CGdiplusExt::StretchDIBits(HDC hDC, const CFX_DIBitmap* pBitmap, int dest_left, int dest_top,
+FX_BOOL CGdiplusExt::StretchDIBits(HDC hDC, const CFX_DIBitmap* pBitmap, int dest_left, int dest_top,
                                    int dest_width, int dest_height, const FX_RECT* pClipRect, int flags)
 {
     GpGraphics* pGraphics;
@@ -719,9 +719,9 @@ bool CGdiplusExt::StretchDIBits(HDC hDC, const CFX_DIBitmap* pBitmap, int dest_l
     OutputImage(pGraphics, pBitmap, &src_rect, dest_left, dest_top, dest_width, dest_height);
     CallFunc(GdipDeleteGraphics)(pGraphics);
     CallFunc(GdipDeleteGraphics)(pGraphics);
-    return true;
+    return TRUE;
 }
-static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState, const CFX_AffineMatrix* pMatrix, DWORD argb, bool bTextMode = false)
+static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState, const CFX_AffineMatrix* pMatrix, DWORD argb, FX_BOOL bTextMode = FALSE)
 {
     CGdiplusExt& GdiplusExt = ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
     FX_FLOAT width = pGraphState ? pGraphState->m_LineWidth : 1.0f;
@@ -735,7 +735,7 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState, const CFX_Af
     CallFunc(GdipCreatePen1)((ARGB)argb, width, UnitWorld, &pPen);
     LineCap lineCap;
     DashCap dashCap = DashCapFlat;
-    bool bDashExtend = false;
+    FX_BOOL bDashExtend = FALSE;
     switch(pGraphState->m_LineCap) {
         case CFX_GraphStateData::LineCapButt:
             lineCap = LineCapFlat;
@@ -743,11 +743,11 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState, const CFX_Af
         case CFX_GraphStateData::LineCapRound:
             lineCap = LineCapRound;
             dashCap = DashCapRound;
-            bDashExtend = true;
+            bDashExtend = TRUE;
             break;
         case CFX_GraphStateData::LineCapSquare:
             lineCap = LineCapSquare;
-            bDashExtend = true;
+            bDashExtend = TRUE;
             break;
     }
     CallFunc(GdipSetPenLineCap197819)(pPen, lineCap, lineCap, dashCap);
@@ -839,10 +839,10 @@ static BOOL IsSmallTriangle(PointF* points, const CFX_AffineMatrix* pMatrix, int
         if (distance_square < (1.0f * 2 + 1.0f / 4)) {
             v1 = i;
             v2 = pair1;
-            return true;
+            return TRUE;
         }
     }
-    return false;
+    return FALSE;
 }
 BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
                            const CFX_AffineMatrix* pObject2Device,
@@ -854,7 +854,7 @@ BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
 {
     int nPoints = pPathData->GetPointCount();
     if (nPoints == 0) {
-        return true;
+        return TRUE;
     }
     FX_PATHPOINT* pPoints = pPathData->GetPoints();
     GpGraphics* pGraphics = NULL;
@@ -870,9 +870,9 @@ BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
     PointF *points = FX_Alloc(PointF, nPoints);
     BYTE * types  = FX_Alloc(BYTE, nPoints);
     int nSubPathes = 0;
-    bool bSubClose = false;
+    FX_BOOL bSubClose = FALSE;
     int pos_subclose = 0;
-    bool bSmooth = false;
+    FX_BOOL bSmooth = FALSE;
     int startpoint = 0;
     for(int i = 0; i < nPoints; i++) {
         points[i].X = pPoints[i].m_PointX;
@@ -900,7 +900,7 @@ BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
         if(point_type == FXPT_MOVETO) {
             types[i] = PathPointTypeStart;
             nSubPathes ++;
-            bSubClose = false;
+            bSubClose = FALSE;
             startpoint = i;
         } else if (point_type == FXPT_LINETO) {
             types[i] = PathPointTypeLine;
@@ -910,31 +910,31 @@ BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
                 continue;
             }
             if (!bSmooth && points[i].X != points[i - 1].X && points[i].Y != points[i - 1].Y) {
-                bSmooth = true;
+                bSmooth = TRUE;
             }
         } else if (point_type == FXPT_BEZIERTO)	{
             types[i] = PathPointTypeBezier;
-            bSmooth = true;
+            bSmooth = TRUE;
         }
         if (pPoints[i].m_Flag & FXPT_CLOSEFIGURE) {
             if (bSubClose) {
                 types[pos_subclose] &= ~PathPointTypeCloseSubpath;
             } else {
-                bSubClose = true;
+                bSubClose = TRUE;
             }
             pos_subclose = i;
             types[i] |= PathPointTypeCloseSubpath;
             if (!bSmooth && points[i].X != points[startpoint].X && points[i].Y != points[startpoint].Y) {
-                bSmooth = true;
+                bSmooth = TRUE;
             }
         }
     }
     if (fill_mode & FXFILL_NOPATHSMOOTH) {
-        bSmooth = false;
+        bSmooth = FALSE;
         CallFunc(GdipSetSmoothingMode)(pGraphics, SmoothingModeNone);
     } else if (!(fill_mode & FXFILL_FULLCOVER)) {
         if (!bSmooth && (fill_mode & 3)) {
-            bSmooth = true;
+            bSmooth = TRUE;
         }
         if (bSmooth || (pGraphState && pGraphState->m_LineWidth > 2)) {
             CallFunc(GdipSetSmoothingMode)(pGraphics, SmoothingModeAntiAlias);
@@ -949,7 +949,7 @@ BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
             CallFunc(GdipDrawLineI)(pGraphics, pPen, FXSYS_round(points[v1].X), FXSYS_round(points[v1].Y),
                                     FXSYS_round(points[v2].X), FXSYS_round(points[v2].Y));
             CallFunc(GdipDeletePen)(pPen);
-            return true;
+            return TRUE;
         }
     }
     GpPath* pGpPath = NULL;
@@ -961,7 +961,7 @@ BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
         FX_Free(points);
         FX_Free(types);
         CallFunc(GdipDeleteGraphics)(pGraphics);
-        return false;
+        return FALSE;
     }
     if (new_fill_mode) {
         GpBrush* pBrush = _GdipCreateBrush(fill_argb);
@@ -994,7 +994,7 @@ BOOL CGdiplusExt::DrawPath(HDC hDC, const CFX_PathData* pPathData,
     FX_Free(types);
     CallFunc(GdipDeletePath)(pGpPath);
     CallFunc(GdipDeleteGraphics)(pGraphics);
-    return true;
+    return TRUE;
 }
 class GpStream final : public IStream
 {
@@ -1229,7 +1229,7 @@ static void FreeDIBitmap(PREVIEW3_DIBITMAP* pInfo)
     }
     FX_Free(pInfo);
 }
-CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi, LPVOID pData, bool bAlpha);
+CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi, LPVOID pData, FX_BOOL bAlpha);
 CFX_DIBitmap* CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args)
 {
     PREVIEW3_DIBITMAP* pInfo = ::LoadDIBitmap(args);
