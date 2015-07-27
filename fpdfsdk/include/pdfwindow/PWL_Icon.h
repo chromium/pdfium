@@ -10,7 +10,7 @@
 #include "../../../core/include/fxcrt/fx_string.h"
 #include "PWL_Wnd.h"
 
-class PWL_CLASS CPWL_Image : public CPWL_Wnd
+class CPWL_Image : public CPWL_Wnd
 {
 public:
 	CPWL_Image();
@@ -34,7 +34,7 @@ protected:
 	CFX_ByteString					m_sImageAlias;
 };
 
-class PWL_CLASS CPWL_Icon : public CPWL_Image
+class CPWL_Icon : public CPWL_Image
 {
 public:
 	CPWL_Icon();

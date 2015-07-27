@@ -11,7 +11,7 @@
 
 class IFX_Edit;
 
-class PWL_CLASS CPWL_Label : public CPWL_Wnd
+class CPWL_Label : public CPWL_Wnd
 {
 public:
 	CPWL_Label();

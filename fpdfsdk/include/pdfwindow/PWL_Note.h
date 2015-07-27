@@ -82,7 +82,7 @@ public:
 	virtual CPWL_Edit*					GetEdit() const = 0;
 };
 
-class PWL_CLASS CPWL_Note_Icon : public CPWL_Wnd
+class CPWL_Note_Icon : public CPWL_Wnd
 {
 public:
 	CPWL_Note_Icon();
@@ -213,7 +213,7 @@ private:
 	CPWL_Note_Edit*						m_pEdit;
 };
 
-class PWL_CLASS CPWL_NoteItem : public CPWL_Wnd, public IPWL_NoteItem
+class CPWL_NoteItem : public CPWL_Wnd, public IPWL_NoteItem
 {
 public:
 	CPWL_NoteItem();
@@ -293,7 +293,7 @@ private:
 	FX_BOOL								m_bAllowModify;
 };
 
-class PWL_CLASS CPWL_Note : public CPWL_NoteItem
+class CPWL_Note : public CPWL_NoteItem
 {
 public:
 	CPWL_Note(IPopup_Note* pPopupNote, IPWL_NoteNotify* pNoteNotify, IPWL_NoteHandler* pNoteHandler);

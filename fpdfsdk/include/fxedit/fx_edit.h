@@ -46,16 +46,6 @@ struct CPVT_WordRange;
 
 #define FX_EDIT_ISLATINWORD(u)	(u == 0x2D || (u <= 0x005A && u >= 0x0041) || (u <= 0x007A && u >= 0x0061) || (u <= 0x02AF && u >= 0x00C0))
 
-#ifdef FX_READER_DLL
-	#ifdef FXET_EXPORT
-		#define FXET_CLASS __declspec(dllexport)
-	#else
-		#define FXET_CLASS
-	#endif
-#else
-	#define FXET_CLASS
-#endif
-
 #ifndef DEFAULT_CHARSET
 #define DEFAULT_CHARSET         1
 #endif
@@ -171,7 +161,7 @@ public:
 	virtual CFX_WideString					GetUndoTitle() = 0;
 };
 
-class FXET_CLASS IFX_Edit
+class IFX_Edit
 {
 public:
 	static IFX_Edit*						NewEdit();
@@ -433,7 +423,7 @@ public:
 	virtual void							IOnInvalidateRect(CPDF_Rect * pRect) = 0;
 };
 
-class FXET_CLASS IFX_List
+class IFX_List
 {
 public:
 	static IFX_List*						NewList();

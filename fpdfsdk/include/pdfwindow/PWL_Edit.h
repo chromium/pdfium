@@ -28,7 +28,7 @@ public:
 	virtual void					OnAfterKeyStroke(FX_BOOL bEditOrList, void* pPrivateData, FX_BOOL & bExit, FX_DWORD nFlag) = 0;
 };
 
-class PWL_CLASS CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify
+class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify
 {
 public:
 	CPWL_Edit();
