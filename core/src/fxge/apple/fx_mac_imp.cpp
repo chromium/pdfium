@@ -28,7 +28,7 @@ Base14Substs[] = {
 class CFX_MacFontInfo : public CFX_FolderFontInfo
 {
 public:
-    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, FX_BOOL& bExact);
+    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* family, int& iExact);
 };
 #define JAPAN_GOTHIC "Hiragino Kaku Gothic Pro W6"
 #define JAPAN_MINCHO "Hiragino Mincho Pro W6"
@@ -44,14 +44,14 @@ static void GetJapanesePreference(CFX_ByteString& face, int weight, int picth_fa
         face = JAPAN_MINCHO;
     }
 }
-void* CFX_MacFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, FX_BOOL& bExact)
+void* CFX_MacFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, int& iExact)
 {
     CFX_ByteString face = cstr_face;
     int iBaseFont;
     for (iBaseFont = 0; iBaseFont < 12; iBaseFont ++)
         if (face == CFX_ByteStringC(Base14Substs[iBaseFont].m_pName)) {
             face = Base14Substs[iBaseFont].m_pSubstName;
-            bExact = TRUE;
+            iExact = TRUE;
             break;
         }
     if (iBaseFont < 12) {

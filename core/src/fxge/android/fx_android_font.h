@@ -20,7 +20,7 @@ public:
 
     virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper);
 
-    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, FX_BOOL& bExact);
+    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, int& bExact);
 
     virtual void*		GetFont(const FX_CHAR* face);
     virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size);

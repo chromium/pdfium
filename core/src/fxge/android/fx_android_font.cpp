@@ -23,7 +23,7 @@ FX_BOOL CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper)
 {
     return FALSE;
 }
-void* CFX_AndroidFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, FX_BOOL& bExact)
+void* CFX_AndroidFontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, int& iExact)
 {
     if (!m_pFontMgr) {
         return NULL;
