@@ -41,3 +41,15 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_487928) {
   delegate.AdvanceTime(5000);
   UnloadPage(page);
 }
+
+TEST_F(FPDFFormFillEmbeddertest, BUG_514690) {
+  EXPECT_TRUE(OpenDocument("testing/resources/hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+
+  // Test that FORM_OnMouseMove() etc. permit null HANDLES and PAGES.
+  FORM_OnMouseMove(nullptr, page, 0, 10.0, 10.0);
+  FORM_OnMouseMove(form_handle(), nullptr, 0, 10.0, 10.0);
+
+  UnloadPage(page);
+}
