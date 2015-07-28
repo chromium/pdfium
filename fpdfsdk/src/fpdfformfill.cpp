@@ -27,6 +27,9 @@ CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle)
 
 CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle, FPDF_PAGE page)
 {
+    if (!page)
+        return nullptr;
+
     CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
     return pSDKDoc ? pSDKDoc->GetPageView((CPDF_Page*)page, TRUE) : nullptr;
 }
