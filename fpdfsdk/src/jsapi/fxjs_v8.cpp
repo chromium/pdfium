@@ -26,6 +26,7 @@ static double GetNan()
 {
   return *(double*)g_nan;
 }
+static unsigned int g_embedderDataSlot = 0u;
 
 
 class CJS_PrivateData
@@ -78,11 +79,11 @@ int JS_DefineObj(IJS_Runtime* pJSRuntime, const wchar_t* sObjName, FXJSOBJTYPE e
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray)
 	{
 		pArray = FX_NEW CFX_PtrArray();
-		isolate->SetData(1, pArray);
+		isolate->SetData(g_embedderDataSlot, pArray);
 	}
 	CJS_ObjDefintion* pObjDef = FX_NEW CJS_ObjDefintion(isolate, sObjName, eObjType, pConstructor, pDestructor);
 	pArray->Add(pObjDef);
@@ -98,7 +99,7 @@ int JS_DefineObjMethod(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t* s
 	CFX_WideString ws = CFX_WideString(sMethodName);
 	CFX_ByteString bsMethodName = ws.UTF8Encode();
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return 0;
 
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
@@ -118,7 +119,7 @@ int JS_DefineObjProperty(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t*
 	CFX_WideString ws = CFX_WideString(sPropName);
 	CFX_ByteString bsPropertyName = ws.UTF8Encode();
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return 0;
 
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
@@ -135,7 +136,7 @@ int	JS_DefineObjAllProperties(IJS_Runtime* pJSRuntime, int nObjDefnID, v8::Named
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return 0;
 
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return 0;
@@ -152,7 +153,7 @@ int JS_DefineObjConst(IJS_Runtime* pJSRuntime, int nObjDefnID, const wchar_t* sC
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return 0;
 
 	CFX_WideString ws = CFX_WideString(sConstName);
@@ -172,7 +173,7 @@ static v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(IJS_Runtime* pJS
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	ASSERT(pArray != NULL);
 	for(int i=0; i<pArray->GetSize(); i++)
 	{
@@ -245,9 +246,10 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,IFXJS_Runtime* pFXRuntime, IFXJS_
 
 	//v8::Local<External> ptr = External::New(isolate, pFXRuntime);
 	//v8Context->SetEmbedderData(1, ptr);
+	// TODO(tsepez): Don't use more than one embedder data slot.
 	isolate->SetData(2, pFXRuntime);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return;
 
 	for(int i=0; i<pArray->GetSize(); i++)
@@ -291,7 +293,7 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime, v8::Global<v8::Context>& v8Persi
 	v8::Locker locker(isolate);
 	v8::HandleScope handle_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return ;
 
 	for(int i=0; i<pArray->GetSize(); i++)
@@ -308,11 +310,14 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime, v8::Global<v8::Context>& v8Persi
 	}
 	delete pArray;
 	isolate->SetData(1,NULL);
+	isolate->SetData(g_embedderDataSlot,NULL);
+	// TODO(tsepez): Don't use more than one embedder data slot.
 	isolate->SetData(2,NULL);
 }
 
-void JS_Initial()
+void JS_Initial(unsigned int embedderDataSlot)
 {
+	g_embedderDataSlot = embedderDataSlot;
 }
 void JS_Release()
 {
@@ -374,7 +379,7 @@ v8::Local<v8::Object> JS_NewFxDynamicObj(IJS_Runtime* pJSRuntime, IFXJS_Context*
                 return v8::Local<v8::Object>();
 	}
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return v8::Local<v8::Object>();
 
 
@@ -399,7 +404,7 @@ v8::Local<v8::Object> JS_GetStaticObj(IJS_Runtime* pJSRuntime, int nObjDefnID)
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return v8::Local<v8::Object>();
 
 	if(nObjDefnID<0 || nObjDefnID>= pArray->GetSize()) return v8::Local<v8::Object>();
@@ -418,7 +423,7 @@ v8::Local<v8::Object>	JS_GetThisObj(IJS_Runtime * pJSRuntime)
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return v8::Local<v8::Object>();
 
 	v8::Local<v8::Context> context = isolate->GetCurrentContext();
@@ -447,7 +452,7 @@ int JS_GetObjDefnID(IJS_Runtime * pJSRuntime, const wchar_t* pObjName)
 	v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
 	v8::Isolate::Scope isolate_scope(isolate);
 
-	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(1);
+	CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
 	if(!pArray) return -1;
 
 	for(int i=0; i<pArray->GetSize(); i++)

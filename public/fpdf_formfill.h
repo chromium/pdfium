@@ -22,10 +22,12 @@ extern "C" {
 
 typedef struct _IPDF_JsPlatform
 {
-/**
-* Version number of the interface. Currently must be 1.
-**/
+    /**
+    * Version number of the interface. Currently must be 2.
+    **/
     int version;
+
+    /* Version 1. */
 
     /**
     * Method: app_alert
@@ -228,6 +230,20 @@ typedef struct _IPDF_JsPlatform
     *   pointer to FPDF_FORMFILLINFO interface.
     **/
     void*   m_pFormfillinfo;
+
+    /* Version 2. */
+
+    /**
+    *   pointer to the v8::Isolate to use, or NULL to force PDFium to create one.
+    **/
+    void*   m_isolate;
+
+    /**
+     *   The embedder data slot to use in the v8::Isolate to store PDFium's
+     *   per-isolate data. The value needs to be between 0 and
+     *   v8::Internals::kNumIsolateDataLots (exclusive).
+     */
+    unsigned int m_v8EmbedderSlot;
 } IPDF_JSPLATFORM;
 
 // Flags for Cursor type

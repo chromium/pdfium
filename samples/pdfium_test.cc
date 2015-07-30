@@ -427,7 +427,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
   IPDF_JSPLATFORM platform_callbacks;
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
-  platform_callbacks.version = 1;
+  platform_callbacks.version = 2;
   platform_callbacks.app_alert = ExampleAppAlert;
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
 
