@@ -131,7 +131,7 @@ static_library("pdfium") {
   }
 
   if (pdfium_bundle_freetype) {
-    deps += [ "third_party:freetype" ]
+    deps += [ "third_party:fx_freetype" ]
   } else {
     libs += [ "freetype" ]
   }

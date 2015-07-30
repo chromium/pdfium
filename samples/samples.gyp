@@ -22,12 +22,21 @@
       'dependencies': [
         'fx_lpng',
         '../pdfium.gyp:pdfium',
+        # Regardless of whether the library ships against system freetype,
+        # always link this binary against the bundled one for consistency
+        # of results across platforms.
+        '../third_party/third_party.gyp:fx_freetype',
         '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
       ],
       'sources': [
         'pdfium_test.cc',
         'image_diff_png.cc',
       ],
+      'link_settings': {
+        'libraries!': [
+          '-lfreetype',
+        ],
+      },
     },
     {
       'target_name': 'pdfium_diff',

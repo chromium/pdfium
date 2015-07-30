@@ -24,6 +24,10 @@ executable("pdfium_test") {
   ]
   deps = [
     "//third_party/pdfium",
+    # Regardless of whether the library ships against system freetype,
+    # always link this binary against the bundled one for consistency
+    # of results across platforms.
+    "//third_party/pdfium/third_party:fx_freetype",
     "//v8:v8_libplatform",
     ":fx_lpng",
   ]

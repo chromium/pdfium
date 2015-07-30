@@ -112,7 +112,7 @@
         }],
         ['bundle_freetype==1', {
           'dependencies': [
-            'third_party/third_party.gyp:freetype',
+            'third_party/third_party.gyp:fx_freetype',
           ],
         }, {
           'link_settings': {
