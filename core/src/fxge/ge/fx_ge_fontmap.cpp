@@ -1367,7 +1367,7 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path)
         }
         FX_DWORD face_bytes = nFaces * 4;
         uint8_t* offsets = FX_Alloc(uint8_t, face_bytes);
-        readCnt = FXSYS_fread(offsets, face_bytes, 1, pFile);
+        readCnt = FXSYS_fread(offsets, 1, face_bytes, pFile);
         if (readCnt != face_bytes) {
             FX_Free(offsets);
             FXSYS_fclose(pFile);
