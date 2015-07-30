@@ -13,7 +13,6 @@ font_size.in
 2_11_stamp3.pdf
 2_color_calrgb.pdf
 2_color_indexed.pdf
-2_uncolor_tiling.pdf
 3_interpolate_image.pdf
 3bigpreview.pdf
 4_35.pdf
@@ -319,8 +318,6 @@ example_062.pdf
 example_063.pdf
 example_064.pdf
 example_065.pdf
-font_1_embedded_font_en_feature.pdf
-font_2_embedded_font_en_size14.pdf
 form_combobox_date.pdf
 form_combobox_date2.pdf
 form_combobox_num.pdf
