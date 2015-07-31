@@ -63,8 +63,3 @@ const uint8_t* CFX_GEModule::GetTextGammaTable()
 {
     return m_GammaValue;
 }
-void CFX_GEModule::SetExtFontMapper(IFX_FontMapper* pFontMapper)
-{
-    GetFontMgr()->m_pExtMapper = pFontMapper;
-    pFontMapper->m_pFontMgr = m_pFontMgr;
-}

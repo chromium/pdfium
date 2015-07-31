@@ -65,16 +65,10 @@ public:
 class CApplePlatform
 {
 public:
-    CApplePlatform()
-    {
-        m_pFontMapper = NULL;
-    }
-    ~CApplePlatform()
-    {
-        delete m_pFontMapper;
-    }
+    CApplePlatform() {}
+    ~CApplePlatform() {}
+
     CQuartz2D	_quartz2d;
-    IFX_FontMapper* m_pFontMapper;
 };
 class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver
 {
