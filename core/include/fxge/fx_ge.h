@@ -42,7 +42,6 @@ public:
     }
     void					SetTextGamma(FX_FLOAT gammaValue);
     const uint8_t*				GetTextGammaTable();
-    void					SetExtFontMapper(IFX_FontMapper* pFontMapper);
 
     void					SetCodecModule(CCodec_ModuleMgr* pCodecModule)
     {

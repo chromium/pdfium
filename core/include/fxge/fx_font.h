@@ -18,7 +18,6 @@ class IFX_FontEncoding;
 class CFX_PathData;
 class CFX_SubstFont;
 class CFX_FaceCache;
-class IFX_FontMapper;
 class CFX_FontMapper;
 class IFX_SystemFontInfo;
 class CFontFileFaceInfo;
@@ -255,21 +254,9 @@ public:
 
     FX_BOOL			GetStandardFont(const uint8_t*& pFontData, FX_DWORD& size, int index);
     CFX_FontMapper*	m_pBuiltinMapper;
-    IFX_FontMapper*	m_pExtMapper;
     CFX_MapByteStringToPtr	m_FaceMap;
     FXFT_Library	m_FTLibrary;
     FoxitFonts m_ExternalFonts[16];
-};
-class IFX_FontMapper
-{
-public:
-
-    virtual ~IFX_FontMapper() {}
-
-    virtual FXFT_Face	FindSubstFont(const CFX_ByteString& face_name, FX_BOOL bTrueType, FX_DWORD flags,
-                                      int weight, int italic_angle, int CharsetCP, CFX_SubstFont* pSubstFont) = 0;
-
-    CFX_FontMgr*		m_pFontMgr;
 };
 class IFX_FontEnumerator
 {
@@ -287,13 +274,15 @@ public:
     virtual int  CountFiles() = 0;
     virtual IFX_FileStream* GetFontFile(int index) = 0;
 };
-class CFX_FontMapper : public IFX_FontMapper
+class CFX_FontMapper
 {
 public:
-    CFX_FontMapper();
-    virtual ~CFX_FontMapper();
-    void                        SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo);
-    IFX_SystemFontInfo*         GetSystemFontInfo()
+
+    CFX_FontMapper(CFX_FontMgr* mgr);
+    ~CFX_FontMapper();
+
+    void				SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo);
+    IFX_SystemFontInfo*	GetSystemFontInfo()
     {
         return m_pFontInfo;
     }
@@ -308,14 +297,16 @@ public:
     {
         return m_pFontEnumerator;
     }
-    virtual FXFT_Face           FindSubstFont(const CFX_ByteString& face_name, FX_BOOL bTrueType, FX_DWORD flags,
-                                              int weight, int italic_angle, int CharsetCP, CFX_SubstFont* pSubstFont);
+
+    FXFT_Face FindSubstFont(const CFX_ByteString& face_name, FX_BOOL bTrueType, FX_DWORD flags,
+                            int weight, int italic_angle, int CharsetCP, CFX_SubstFont* pSubstFont);
     FXFT_Face                   FindSubstFontByUnicode(FX_DWORD dwUnicode, FX_DWORD flags, int weight, int italic_angle);
     FX_BOOL                     IsBuiltinFace(const FXFT_Face face) const;
 
 private:
     static const size_t         MM_FACE_COUNT = 2;
     static const size_t         FOXIT_FACE_COUNT = 14;
+
     CFX_ByteString              GetPSNameFromTT(void* hFont);
     CFX_ByteString              MatchInstalledFonts(const CFX_ByteString& norm_name);
     FXFT_Face                   UseInternalSubst(CFX_SubstFont* pSubstFont, int iBaseFont, int italic_angle, int weight, int picthfamily);
@@ -328,6 +319,7 @@ private:
     IFX_SystemFontInfo*         m_pFontInfo;
     FXFT_Face                   m_FoxitFaces[FOXIT_FACE_COUNT];
     IFX_FontEnumerator*         m_pFontEnumerator;
+    CFX_FontMgr* const m_pFontMgr;
 };
 class IFX_SystemFontInfo
 {

@@ -61,15 +61,9 @@ int32_t CTTFontDesc::ReleaseFace(FXFT_Face face)
     delete this;
     return 0;
 }
-CFX_FontMgr::CFX_FontMgr()
+CFX_FontMgr::CFX_FontMgr() : m_FTLibrary(nullptr)
 {
-    m_pBuiltinMapper = FX_NEW CFX_FontMapper;
-    if (!m_pBuiltinMapper) {
-        return;
-    }
-    m_pBuiltinMapper->m_pFontMgr = this;
-    m_pExtMapper = NULL;
-    m_FTLibrary = NULL;
+    m_pBuiltinMapper = new CFX_FontMapper(this);
     FXSYS_memset(m_ExternalFonts, 0, sizeof m_ExternalFonts);
 }
 CFX_FontMgr::~CFX_FontMgr()
@@ -104,18 +98,10 @@ void CFX_FontMgr::SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo)
 FXFT_Face CFX_FontMgr::FindSubstFont(const CFX_ByteString& face_name, FX_BOOL bTrueType,
                                      FX_DWORD flags, int weight, int italic_angle, int CharsetCP, CFX_SubstFont* pSubstFont)
 {
-    if (m_FTLibrary == NULL) {
+    if (!m_FTLibrary) {
         FXFT_Init_FreeType(&m_FTLibrary);
     }
-    if (m_pExtMapper) {
-        FXFT_Face face = m_pExtMapper->FindSubstFont(face_name, bTrueType, flags, weight, italic_angle,
-                         CharsetCP, pSubstFont);
-        if (face) {
-            return face;
-        }
-    }
-    return m_pBuiltinMapper->FindSubstFont(face_name, bTrueType, flags, weight, italic_angle,
-                                           CharsetCP, pSubstFont);
+    return m_pBuiltinMapper->FindSubstFont(face_name, bTrueType, flags, weight, italic_angle, CharsetCP, pSubstFont);
 }
 FXFT_Face CFX_FontMgr::GetCachedFace(const CFX_ByteString& face_name,
                                      int weight, FX_BOOL bItalic, uint8_t*& pFontData)
@@ -471,13 +457,14 @@ FX_BOOL CFX_FontMgr::GetStandardFont(const uint8_t*& pFontData, FX_DWORD& size, 
     }
     return TRUE;
 }
-CFX_FontMapper::CFX_FontMapper()
+CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
+        : m_pFontInfo(nullptr),
+          m_bListLoaded(FALSE),
+          m_pFontEnumerator(nullptr),
+          m_pFontMgr(mgr)
 {
     FXSYS_memset(m_FoxitFaces, 0, sizeof m_FoxitFaces);
     m_MMFaces[0] = m_MMFaces[1] = NULL;
-    m_pFontInfo = NULL;
-    m_bListLoaded = FALSE;
-    m_pFontEnumerator = NULL;
 }
 CFX_FontMapper::~CFX_FontMapper()
 {
