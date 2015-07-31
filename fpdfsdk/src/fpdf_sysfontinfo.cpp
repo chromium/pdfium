@@ -8,10 +8,10 @@
 #include "../include/fsdk_define.h"
 #include "../include/pdfwindow/PWL_FontMap.h"
 
-class CSysFontInfo_Ext final : public IFX_SystemFontInfo
+class CFX_ExternalFontInfo final : public IFX_SystemFontInfo
 {
 public:
-	FPDF_SYSFONTINFO*	m_pInfo;
+	CFX_ExternalFontInfo(FPDF_SYSFONTINFO* pInfo) : m_pInfo(pInfo) { }
 
 	virtual void		Release() override
 	{
@@ -78,7 +78,9 @@ public:
 	}
 
 private:
-        ~CSysFontInfo_Ext() { }
+	~CFX_ExternalFontInfo() { }
+
+	FPDF_SYSFONTINFO* const m_pInfo;
 };
 
 DLLEXPORT void STDCALL FPDF_AddInstalledFont(void* mapper, const char* name, int charset)
@@ -88,11 +90,11 @@ DLLEXPORT void STDCALL FPDF_AddInstalledFont(void* mapper, const char* name, int
 
 DLLEXPORT void STDCALL FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt)
 {
-	if (pFontInfoExt->version != 1) return;
+	if (pFontInfoExt->version != 1)
+		return;
 
-	CSysFontInfo_Ext* pFontInfo = new CSysFontInfo_Ext;
-	pFontInfo->m_pInfo = pFontInfoExt;
-	CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(pFontInfo);
+	CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
+		new CFX_ExternalFontInfo(pFontInfoExt));
 }
 
 DLLEXPORT const FPDF_CharsetFontMap* STDCALL FPDF_GetDefaultTTFMap()

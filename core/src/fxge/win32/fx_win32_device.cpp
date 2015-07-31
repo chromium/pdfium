@@ -18,11 +18,11 @@
 #include "dwrite_int.h"
 #include "win32_int.h"
 
-class CWin32FontInfo final : public IFX_SystemFontInfo
+class CFX_Win32FontInfo final : public IFX_SystemFontInfo
 {
 public:
-    CWin32FontInfo();
-    ~CWin32FontInfo();
+    CFX_Win32FontInfo();
+    ~CFX_Win32FontInfo();
     virtual void		Release();
     virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper);
     virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, int& iExact);
@@ -45,21 +45,21 @@ public:
     CFX_ByteString		m_LastFamily;
     CFX_ByteString		m_KaiTi, m_FangSong;
 };
-CWin32FontInfo::CWin32FontInfo()
+CFX_Win32FontInfo::CFX_Win32FontInfo()
 {
     m_hDC = CreateCompatibleDC(NULL);
 }
-CWin32FontInfo::~CWin32FontInfo()
+CFX_Win32FontInfo::~CFX_Win32FontInfo()
 {
     m_pMapper = NULL;
 }
-void CWin32FontInfo::Release()
+void CFX_Win32FontInfo::Release()
 {
     DeleteDC(m_hDC);
     delete this;
 }
 #define TT_MAKE_TAG(x1, x2, x3, x4) (((FX_DWORD)x1<<24)|((FX_DWORD)x2<<16)|((FX_DWORD)x3<<8)|(FX_DWORD)x4)
-FX_BOOL CWin32FontInfo::IsOpenTypeFromDiv(const LOGFONTA *plf)
+FX_BOOL CFX_Win32FontInfo::IsOpenTypeFromDiv(const LOGFONTA *plf)
 {
     HFONT hFont = CreateFontIndirectA(plf);
     FX_BOOL ret = FALSE;
@@ -80,7 +80,7 @@ FX_BOOL CWin32FontInfo::IsOpenTypeFromDiv(const LOGFONTA *plf)
     DeleteFont(hFont);
     return ret;
 }
-FX_BOOL CWin32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf)
+FX_BOOL CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf)
 {
     HFONT hFont = CreateFontIndirectA(plf);
     FX_BOOL ret = FALSE;
@@ -104,7 +104,7 @@ FX_BOOL CWin32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf)
     DeleteFont(hFont);
     return ret;
 }
-void CWin32FontInfo::AddInstalledFont(const LOGFONTA *plf, FX_DWORD FontType)
+void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA *plf, FX_DWORD FontType)
 {
     CFX_ByteString name(plf->lfFaceName, -1);
     if (name[0] == '@') {
@@ -132,14 +132,14 @@ static int CALLBACK FontEnumProc(
     LPARAM lParam
 )
 {
-    CWin32FontInfo* pFontInfo = (CWin32FontInfo*)lParam;
+    CFX_Win32FontInfo* pFontInfo = (CFX_Win32FontInfo*)lParam;
     if (pFontInfo->m_pMapper->GetFontEnumerator()) {
         pFontInfo->m_pMapper->GetFontEnumerator()->HitFont();
     }
     pFontInfo->AddInstalledFont(plf, FontType);
     return 1;
 }
-FX_BOOL CWin32FontInfo::EnumFontList(CFX_FontMapper* pMapper)
+FX_BOOL CFX_Win32FontInfo::EnumFontList(CFX_FontMapper* pMapper)
 {
     m_pMapper = pMapper;
     LOGFONTA lf;
@@ -180,7 +180,7 @@ Base14Substs[] = {
     {"Times-BoldItalic", "Times New Roman", TRUE, TRUE},
     {"Times-Italic", "Times New Roman", FALSE, TRUE},
 };
-CFX_ByteString CWin32FontInfo::FindFont(const CFX_ByteString& name)
+CFX_ByteString CFX_Win32FontInfo::FindFont(const CFX_ByteString& name)
 {
     if (m_pMapper == NULL) {
         return name;
@@ -224,7 +224,7 @@ FX_BOOL _GetSubFontName(CFX_ByteString& name)
     name = found->m_pSubFontName;
     return TRUE;
 }
-void CWin32FontInfo::GetGBPreference(CFX_ByteString& face, int weight, int picth_family)
+void CFX_Win32FontInfo::GetGBPreference(CFX_ByteString& face, int weight, int picth_family)
 {
     if (face.Find("KaiTi") >= 0 || face.Find("\xbf\xac") >= 0) {
         if (m_KaiTi.IsEmpty()) {
@@ -252,7 +252,7 @@ void CWin32FontInfo::GetGBPreference(CFX_ByteString& face, int weight, int picth
         face = "SimSun";
     }
 }
-void CWin32FontInfo::GetJapanesePreference(CFX_ByteString& face, int weight, int picth_family)
+void CFX_Win32FontInfo::GetJapanesePreference(CFX_ByteString& face, int weight, int picth_family)
 {
     if (face.Find("Gothic") >= 0 || face.Find("\x83\x53\x83\x56\x83\x62\x83\x4e") >= 0) {
         if (face.Find("PGothic") >= 0 || face.Find("\x82\x6f\x83\x53\x83\x56\x83\x62\x83\x4e") >= 0) {
@@ -285,7 +285,7 @@ void CWin32FontInfo::GetJapanesePreference(CFX_ByteString& face, int weight, int
         face = "MS PMincho";
     }
 }
-void* CWin32FontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, int& iExact)
+void* CFX_Win32FontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* cstr_face, int& iExact)
 {
     CFX_ByteString face = cstr_face;
     int iBaseFont;
@@ -358,11 +358,11 @@ void* CWin32FontInfo::MapFont(int weight, FX_BOOL bItalic, int charset, int pitc
                           0, 0, subst_pitch_family, face);
     return hFont;
 }
-void CWin32FontInfo::DeleteFont(void* hFont)
+void CFX_Win32FontInfo::DeleteFont(void* hFont)
 {
     ::DeleteObject(hFont);
 }
-FX_DWORD CWin32FontInfo::GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size)
+FX_DWORD CFX_Win32FontInfo::GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size)
 {
     HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
     table = FXDWORD_FROM_MSBFIRST(table);
@@ -373,7 +373,7 @@ FX_DWORD CWin32FontInfo::GetFontData(void* hFont, FX_DWORD table, uint8_t* buffe
     }
     return size;
 }
-FX_BOOL CWin32FontInfo::GetFaceName(void* hFont, CFX_ByteString& name)
+FX_BOOL CFX_Win32FontInfo::GetFaceName(void* hFont, CFX_ByteString& name)
 {
     char facebuf[100];
     HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
@@ -385,7 +385,7 @@ FX_BOOL CWin32FontInfo::GetFaceName(void* hFont, CFX_ByteString& name)
     name = facebuf;
     return TRUE;
 }
-FX_BOOL CWin32FontInfo::GetFontCharset(void* hFont, int& charset)
+FX_BOOL CFX_Win32FontInfo::GetFontCharset(void* hFont, int& charset)
 {
     TEXTMETRIC tm;
     HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
@@ -396,7 +396,7 @@ FX_BOOL CWin32FontInfo::GetFontCharset(void* hFont, int& charset)
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault()
 {
-    return new CWin32FontInfo;
+    return new CFX_Win32FontInfo;
 }
 void CFX_GEModule::InitPlatform()
 {
