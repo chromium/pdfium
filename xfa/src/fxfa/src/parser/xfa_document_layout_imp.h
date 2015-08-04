@@ -10,43 +10,36 @@ class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutPageMgr;
 class CXFA_LayoutAppAdapter;
 class CXFA_ContainerLayoutItemImpl;
-class CXFA_LayoutProcessor : public IXFA_DocLayout
-{
-public:
-    CXFA_LayoutProcessor(CXFA_Document* pDocument);
-    ~CXFA_LayoutProcessor();
-    virtual CXFA_Document*		GetDocument() const;
-    virtual	int32_t			StartLayout(FX_BOOL bForceRestart = FALSE);
-    virtual int32_t			DoLayout(IFX_Pause *pPause = NULL);
-    virtual FX_BOOL				IncrementLayout();
-    virtual int32_t			CountPages() const;
-    virtual IXFA_LayoutPage*	GetPage(int32_t index) const;
-    virtual CXFA_LayoutItem*	GetLayoutItem(CXFA_Node *pFormItem);
+class CXFA_LayoutProcessor : public IXFA_DocLayout {
+ public:
+  CXFA_LayoutProcessor(CXFA_Document* pDocument);
+  ~CXFA_LayoutProcessor();
+  virtual CXFA_Document* GetDocument() const;
+  virtual int32_t StartLayout(FX_BOOL bForceRestart = FALSE);
+  virtual int32_t DoLayout(IFX_Pause* pPause = NULL);
+  virtual FX_BOOL IncrementLayout();
+  virtual int32_t CountPages() const;
+  virtual IXFA_LayoutPage* GetPage(int32_t index) const;
+  virtual CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
 
-    void				AddChangedContainer(CXFA_Node* pContainer);
-    void				SetForceReLayout(FX_BOOL bForceRestart)
-    {
-        m_bNeeLayout = bForceRestart;
-    }
-    CXFA_ContainerLayoutItemImpl*	GetRootLayoutItem() const;
-    CXFA_ItemLayoutProcessor*	GetRootRootItemLayoutProcessor()
-    {
-        return m_pRootItemLayoutProcessor;
-    }
-    CXFA_LayoutPageMgr*			GetLayoutPageMgr()
-    {
-        return m_pLayoutPageMgr;
-    }
-protected:
-    void		ClearLayoutData();
+  void AddChangedContainer(CXFA_Node* pContainer);
+  void SetForceReLayout(FX_BOOL bForceRestart) { m_bNeeLayout = bForceRestart; }
+  CXFA_ContainerLayoutItemImpl* GetRootLayoutItem() const;
+  CXFA_ItemLayoutProcessor* GetRootRootItemLayoutProcessor() {
+    return m_pRootItemLayoutProcessor;
+  }
+  CXFA_LayoutPageMgr* GetLayoutPageMgr() { return m_pLayoutPageMgr; }
 
-    FX_BOOL		IsNeedLayout();
+ protected:
+  void ClearLayoutData();
 
-    CXFA_Document*				m_pDocument;
-    CXFA_ItemLayoutProcessor*   m_pRootItemLayoutProcessor;
-    CXFA_LayoutPageMgr*			m_pLayoutPageMgr;
-    CXFA_NodeArray				m_rgChangedContainers;
-    uint32_t					m_nProgressCounter;
-    FX_BOOL						m_bNeeLayout;
+  FX_BOOL IsNeedLayout();
+
+  CXFA_Document* m_pDocument;
+  CXFA_ItemLayoutProcessor* m_pRootItemLayoutProcessor;
+  CXFA_LayoutPageMgr* m_pLayoutPageMgr;
+  CXFA_NodeArray m_rgChangedContainers;
+  uint32_t m_nProgressCounter;
+  FX_BOOL m_bNeeLayout;
 };
 #endif

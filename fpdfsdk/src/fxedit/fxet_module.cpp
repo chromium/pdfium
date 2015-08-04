@@ -10,37 +10,30 @@
 
 /* ---------------------- IFX_Edit ---------------------- */
 
-IFX_Edit* IFX_Edit::NewEdit()
-{
-	if (IPDF_VariableText * pVT = IPDF_VariableText::NewVariableText())
-	{
-		return new CFX_Edit(pVT);
-	}
+IFX_Edit* IFX_Edit::NewEdit() {
+  if (IPDF_VariableText* pVT = IPDF_VariableText::NewVariableText()) {
+    return new CFX_Edit(pVT);
+  }
 
-	return NULL;
+  return NULL;
 }
 
-void IFX_Edit::DelEdit(IFX_Edit* pEdit)
-{
-	ASSERT(pEdit != NULL);
+void IFX_Edit::DelEdit(IFX_Edit* pEdit) {
+  ASSERT(pEdit != NULL);
 
-	IPDF_VariableText::DelVariableText(pEdit->GetVariableText());
+  IPDF_VariableText::DelVariableText(pEdit->GetVariableText());
 
-	delete (CFX_Edit*)pEdit;
+  delete (CFX_Edit*)pEdit;
 }
-
 
 /* ---------------------- IFX_List ---------------------- */
 
-IFX_List* IFX_List::NewList()
-{
-	return new CFX_ListCtrl();
+IFX_List* IFX_List::NewList() {
+  return new CFX_ListCtrl();
 }
 
-void IFX_List::DelList(IFX_List* pList)
-{
-	ASSERT(pList != NULL);
+void IFX_List::DelList(IFX_List* pList) {
+  ASSERT(pList != NULL);
 
-	delete (CFX_ListCtrl*)pList;
+  delete (CFX_ListCtrl*)pList;
 }
-

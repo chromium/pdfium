@@ -17,8 +17,10 @@
 #include "../common/xfa_debug.h"
 #include "../common/xfa_localemgr.h"
 #include "../common/xfa_fm2jsapi.h"
-#define  RUNTIMEFUNCTIONRETURNVALUE (FX_WSTRC(L"foxit_xfa_formcalc_runtime_func_return_value"))
-#define  EXCLAMATION_IN_IDENTIFIER	(FX_WSTRC(L"foxit_xfa_formcalc__exclamation__"))
+#define RUNTIMEFUNCTIONRETURNVALUE \
+  (FX_WSTRC(L"foxit_xfa_formcalc_runtime_func_return_value"))
+#define EXCLAMATION_IN_IDENTIFIER \
+  (FX_WSTRC(L"foxit_xfa_formcalc__exclamation__"))
 typedef CFX_ArrayTemplate<CFX_WideStringC> CFX_WideStringCArray;
 #include "xfa_error.h"
 #include "xfa_lexer.h"

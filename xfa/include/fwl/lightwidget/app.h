@@ -9,17 +9,17 @@
 class CFWL_Theme;
 class IFWL_App;
 class CFWL_App;
-class CFWL_App
-{
-public:
-    CFWL_App();
-    virtual ~CFWL_App();
-    FWL_ERR		Initialize();
-    CFWL_Theme*		GetTheme();
-    FWL_ERR		Exit(int32_t iExitCode = 0);
-    IFWL_App*	GetApp();
-protected:
-    IFWL_App	*m_pAppImp;
-    CFWL_Theme	*m_pThemeProvider;
+class CFWL_App {
+ public:
+  CFWL_App();
+  virtual ~CFWL_App();
+  FWL_ERR Initialize();
+  CFWL_Theme* GetTheme();
+  FWL_ERR Exit(int32_t iExitCode = 0);
+  IFWL_App* GetApp();
+
+ protected:
+  IFWL_App* m_pAppImp;
+  CFWL_Theme* m_pThemeProvider;
 };
 #endif

@@ -7,16 +7,17 @@
 #ifndef _BC_QRCODERBLOCKPAIR_H_
 #define _BC_QRCODERBLOCKPAIR_H_
 class CBC_CommonByteArray;
-class CBC_QRCoderBlockPair
-{
-private:
-    CBC_CommonByteArray* m_dataBytes;
-    CBC_CommonByteArray* m_errorCorrectionBytes;
-public:
-    CBC_QRCoderBlockPair(CBC_CommonByteArray* data, CBC_CommonByteArray* errorCorrection);
-    virtual ~CBC_QRCoderBlockPair();
+class CBC_QRCoderBlockPair {
+ private:
+  CBC_CommonByteArray* m_dataBytes;
+  CBC_CommonByteArray* m_errorCorrectionBytes;
 
-    CBC_CommonByteArray* GetDataBytes();
-    CBC_CommonByteArray* GetErrorCorrectionBytes();
+ public:
+  CBC_QRCoderBlockPair(CBC_CommonByteArray* data,
+                       CBC_CommonByteArray* errorCorrection);
+  virtual ~CBC_QRCoderBlockPair();
+
+  CBC_CommonByteArray* GetDataBytes();
+  CBC_CommonByteArray* GetErrorCorrectionBytes();
 };
 #endif

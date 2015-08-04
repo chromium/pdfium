@@ -25,19 +25,16 @@
 #include "BC_SymbolShapeHint.h"
 #include "BC_SymbolInfo.h"
 #include "BC_DataMatrixSymbolInfo144.h"
-CBC_DataMatrixSymbolInfo144::CBC_DataMatrixSymbolInfo144() : CBC_SymbolInfo(FALSE, 1558, 620, 22, 22, 36)
-{
-    m_rsBlockData = -1;
-    m_rsBlockError = 62;
+CBC_DataMatrixSymbolInfo144::CBC_DataMatrixSymbolInfo144()
+    : CBC_SymbolInfo(FALSE, 1558, 620, 22, 22, 36) {
+  m_rsBlockData = -1;
+  m_rsBlockError = 62;
 }
-CBC_DataMatrixSymbolInfo144::~CBC_DataMatrixSymbolInfo144()
-{
+CBC_DataMatrixSymbolInfo144::~CBC_DataMatrixSymbolInfo144() {}
+int32_t CBC_DataMatrixSymbolInfo144::getInterleavedBlockCount() {
+  return 10;
 }
-int32_t CBC_DataMatrixSymbolInfo144::getInterleavedBlockCount()
-{
-    return 10;
-}
-int32_t CBC_DataMatrixSymbolInfo144getDataLengthForInterleavedBlock(int32_t index)
-{
-    return (index <= 8) ? 156 : 155;
+int32_t CBC_DataMatrixSymbolInfo144getDataLengthForInterleavedBlock(
+    int32_t index) {
+  return (index <= 8) ? 156 : 155;
 }

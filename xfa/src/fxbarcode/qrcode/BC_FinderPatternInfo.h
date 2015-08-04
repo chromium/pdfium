@@ -7,17 +7,17 @@
 #ifndef _BC_FINDERPATTERNINFO_H_
 #define _BC_FINDERPATTERNINFO_H_
 class CBC_QRFinderPattern;
-class CBC_QRFinderPatternInfo
-{
-private:
-    CBC_QRFinderPattern *m_bottomLeft;
-    CBC_QRFinderPattern *m_topLeft;
-    CBC_QRFinderPattern *m_topRight;
-public:
-    CBC_QRFinderPatternInfo(CFX_PtrArray *patternCenters);
-    virtual ~CBC_QRFinderPatternInfo();
-    CBC_QRFinderPattern* GetBottomLeft();
-    CBC_QRFinderPattern* GetTopLeft();
-    CBC_QRFinderPattern* GetTopRight();
+class CBC_QRFinderPatternInfo {
+ private:
+  CBC_QRFinderPattern* m_bottomLeft;
+  CBC_QRFinderPattern* m_topLeft;
+  CBC_QRFinderPattern* m_topRight;
+
+ public:
+  CBC_QRFinderPatternInfo(CFX_PtrArray* patternCenters);
+  virtual ~CBC_QRFinderPatternInfo();
+  CBC_QRFinderPattern* GetBottomLeft();
+  CBC_QRFinderPattern* GetTopLeft();
+  CBC_QRFinderPattern* GetTopRight();
 };
 #endif

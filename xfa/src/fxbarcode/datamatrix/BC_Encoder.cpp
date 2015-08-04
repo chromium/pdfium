@@ -6,9 +6,5 @@
 
 #include "../barcode.h"
 #include "BC_Encoder.h"
-CBC_Encoder::CBC_Encoder()
-{
-}
-CBC_Encoder::~CBC_Encoder()
-{
-}
+CBC_Encoder::CBC_Encoder() {}
+CBC_Encoder::~CBC_Encoder() {}

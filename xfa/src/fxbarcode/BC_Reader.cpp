@@ -6,9 +6,5 @@
 
 #include "barcode.h"
 #include "BC_Reader.h"
-CBC_Reader::CBC_Reader()
-{
-}
-CBC_Reader::~CBC_Reader()
-{
-}
+CBC_Reader::CBC_Reader() {}
+CBC_Reader::~CBC_Reader() {}

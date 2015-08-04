@@ -11,96 +11,87 @@
 #ifndef _WINDOWS_
 #include <windows.h>
 #endif
-#define WINDIB_OPEN_MEMORY    0x1
-#define WINDIB_OPEN_PATHNAME  0x2
-typedef struct  WINDIB_Open_Args_ {
+#define WINDIB_OPEN_MEMORY 0x1
+#define WINDIB_OPEN_PATHNAME 0x2
+typedef struct WINDIB_Open_Args_ {
+  int flags;
 
-    int         flags;
+  const uint8_t* memory_base;
 
-    const uint8_t*  memory_base;
+  size_t memory_size;
 
-    size_t    memory_size;
-
-    const FX_WCHAR*  path_name;
+  const FX_WCHAR* path_name;
 } WINDIB_Open_Args_;
-class CFX_WindowsDIB : public CFX_DIBitmap
-{
-public:
+class CFX_WindowsDIB : public CFX_DIBitmap {
+ public:
+  static CFX_ByteString GetBitmapInfo(const CFX_DIBitmap* pBitmap);
 
-    static CFX_ByteString	GetBitmapInfo(const CFX_DIBitmap* pBitmap);
+  static CFX_DIBitmap* LoadFromBuf(BITMAPINFO* pbmi, void* pData);
 
-    static CFX_DIBitmap* LoadFromBuf(BITMAPINFO* pbmi, void* pData);
+  static HBITMAP GetDDBitmap(const CFX_DIBitmap* pBitmap, HDC hDC);
 
-    static HBITMAP		GetDDBitmap(const CFX_DIBitmap* pBitmap, HDC hDC);
+  static CFX_DIBitmap* LoadFromDDB(HDC hDC,
+                                   HBITMAP hBitmap,
+                                   FX_DWORD* pPalette = NULL,
+                                   FX_DWORD size = 256);
 
-    static CFX_DIBitmap* LoadFromDDB(HDC hDC, HBITMAP hBitmap, FX_DWORD* pPalette = NULL, FX_DWORD size = 256);
+  static CFX_DIBitmap* LoadFromFile(const FX_WCHAR* filename);
 
-    static CFX_DIBitmap* LoadFromFile(const FX_WCHAR* filename);
+  static CFX_DIBitmap* LoadFromFile(const FX_CHAR* filename) {
+    return LoadFromFile(CFX_WideString::FromLocal(filename).c_str());
+  }
 
-    static CFX_DIBitmap* LoadFromFile(const FX_CHAR* filename)
-    {
-        return LoadFromFile(CFX_WideString::FromLocal(filename).c_str());
-    }
+  static CFX_DIBitmap* LoadDIBitmap(WINDIB_Open_Args_ args);
 
-    static CFX_DIBitmap* LoadDIBitmap(WINDIB_Open_Args_ args);
+  CFX_WindowsDIB(HDC hDC, int width, int height);
 
-    CFX_WindowsDIB(HDC hDC, int width, int height);
+  ~CFX_WindowsDIB();
 
-    ~CFX_WindowsDIB();
+  HDC GetDC() const { return m_hMemDC; }
 
-    HDC					GetDC() const
-    {
-        return m_hMemDC;
-    }
+  HBITMAP GetWindowsBitmap() const { return m_hBitmap; }
 
-    HBITMAP				GetWindowsBitmap() const
-    {
-        return m_hBitmap;
-    }
+  void LoadFromDevice(HDC hDC, int left, int top);
 
-    void				LoadFromDevice(HDC hDC, int left, int top);
+  void SetToDevice(HDC hDC, int left, int top);
 
-    void				SetToDevice(HDC hDC, int left, int top);
-protected:
+ protected:
+  HDC m_hMemDC;
 
-    HDC					m_hMemDC;
+  HBITMAP m_hBitmap;
 
-    HBITMAP				m_hBitmap;
-
-    HBITMAP				m_hOldBitmap;
+  HBITMAP m_hOldBitmap;
 };
-class CFX_WindowsDevice : public CFX_RenderDevice
-{
-public:
-    static IFX_RenderDeviceDriver*	CreateDriver(HDC hDC, FX_BOOL bCmykOutput = FALSE);
+class CFX_WindowsDevice : public CFX_RenderDevice {
+ public:
+  static IFX_RenderDeviceDriver* CreateDriver(HDC hDC,
+                                              FX_BOOL bCmykOutput = FALSE);
 
-    CFX_WindowsDevice(HDC hDC, FX_BOOL bCmykOutput = FALSE, FX_BOOL bForcePSOutput = FALSE, int psLevel = 2);
+  CFX_WindowsDevice(HDC hDC,
+                    FX_BOOL bCmykOutput = FALSE,
+                    FX_BOOL bForcePSOutput = FALSE,
+                    int psLevel = 2);
 
-    HDC		GetDC() const;
+  HDC GetDC() const;
 
-    FX_BOOL m_bForcePSOutput;
+  FX_BOOL m_bForcePSOutput;
 
-    static int m_psLevel;
+  static int m_psLevel;
 };
-class CFX_WinBitmapDevice : public CFX_RenderDevice
-{
-public:
+class CFX_WinBitmapDevice : public CFX_RenderDevice {
+ public:
+  CFX_WinBitmapDevice(int width, int height, FXDIB_Format format);
 
-    CFX_WinBitmapDevice(int width, int height, FXDIB_Format format);
+  ~CFX_WinBitmapDevice();
 
-    ~CFX_WinBitmapDevice();
+  HDC GetDC() { return m_hDC; }
 
-    HDC		GetDC()
-    {
-        return m_hDC;
-    }
-protected:
+ protected:
+  HBITMAP m_hBitmap;
 
-    HBITMAP	m_hBitmap;
+  HBITMAP m_hOldBitmap;
 
-    HBITMAP m_hOldBitmap;
-
-    HDC		m_hDC;
+  HDC m_hDC;
 };
 #endif
 

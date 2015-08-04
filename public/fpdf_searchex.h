@@ -16,11 +16,14 @@ extern "C" {
 // Function: FPDFText_GetCharIndexFromTextIndex
 //      Get the actually char index in text_page's internal char list.
 // Parameters:
-//          text_page   -   Handle to a text page information structure. Returned by FPDFText_LoadPage function.
-//          nTextIndex  -   The index of the text in the string get from FPDFText_GetText.
+//          text_page   -   Handle to a text page information structure.
+//          Returned by FPDFText_LoadPage function.
+//          nTextIndex  -   The index of the text in the string get from
+//          FPDFText_GetText.
 //  Return value:
 //          The index of the character in internal charlist. -1 for error.
-DLLEXPORT int STDCALL  FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex);
+DLLEXPORT int STDCALL
+FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex);
 
 #ifdef __cplusplus
 }

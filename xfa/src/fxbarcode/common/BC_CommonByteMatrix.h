@@ -6,23 +6,23 @@
 
 #ifndef _BC_COMMONBYTEMATRIX_H_
 #define _BC_COMMONBYTEMATRIX_H_
-class CBC_CommonByteMatrix
-{
-public:
-    CBC_CommonByteMatrix(int32_t width, int32_t height);
-    virtual ~CBC_CommonByteMatrix();
-    int32_t GetHeight();
-    int32_t GetWidth();
-    uint8_t Get(int32_t x, int32_t y);
-    uint8_t* GetArray();
+class CBC_CommonByteMatrix {
+ public:
+  CBC_CommonByteMatrix(int32_t width, int32_t height);
+  virtual ~CBC_CommonByteMatrix();
+  int32_t GetHeight();
+  int32_t GetWidth();
+  uint8_t Get(int32_t x, int32_t y);
+  uint8_t* GetArray();
 
-    void Set(int32_t x, int32_t y, int32_t value);
-    void Set(int32_t x, int32_t y, uint8_t value);
-    void clear(uint8_t value);
-    virtual void Init();
-private:
-    uint8_t *m_bytes;
-    int32_t m_width;
-    int32_t m_height;
+  void Set(int32_t x, int32_t y, int32_t value);
+  void Set(int32_t x, int32_t y, uint8_t value);
+  void clear(uint8_t value);
+  virtual void Init();
+
+ private:
+  uint8_t* m_bytes;
+  int32_t m_width;
+  int32_t m_height;
 };
 #endif

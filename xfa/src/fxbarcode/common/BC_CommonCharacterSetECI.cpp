@@ -23,28 +23,22 @@
 #include "../barcode.h"
 #include "BC_CommonECI.h"
 #include "BC_CommonCharacterSetECI.h"
-void CBC_CommonCharacterSetECI::initialize()
-{
+void CBC_CommonCharacterSetECI::initialize() {}
+CBC_CommonCharacterSetECI::CBC_CommonCharacterSetECI(
+    int32_t value,
+    CFX_ByteString encodingName)
+    : CBC_CommonECI(value), m_encodingName(encodingName) {}
+CBC_CommonCharacterSetECI::~CBC_CommonCharacterSetECI() {}
+CFX_ByteString CBC_CommonCharacterSetECI::GetEncodingName() {
+  return m_encodingName;
 }
-CBC_CommonCharacterSetECI::CBC_CommonCharacterSetECI(int32_t value, CFX_ByteString encodingName):
-    CBC_CommonECI(value), m_encodingName(encodingName)
-{
+void CBC_CommonCharacterSetECI::AddCharacterSet(int32_t value,
+                                                CFX_ByteString encodingName) {}
+CBC_CommonCharacterSetECI* CBC_CommonCharacterSetECI::GetCharacterSetECIByValue(
+    int32_t value) {
+  return NULL;
 }
-CBC_CommonCharacterSetECI::~CBC_CommonCharacterSetECI()
-{
-}
-CFX_ByteString CBC_CommonCharacterSetECI::GetEncodingName()
-{
-    return m_encodingName;
-}
-void CBC_CommonCharacterSetECI::AddCharacterSet(int32_t value, CFX_ByteString encodingName)
-{
-}
-CBC_CommonCharacterSetECI* CBC_CommonCharacterSetECI::GetCharacterSetECIByValue(int32_t value)
-{
-    return NULL;
-}
-CBC_CommonCharacterSetECI* CBC_CommonCharacterSetECI::GetCharacterSetECIByName(const CFX_ByteString& name)
-{
-    return NULL;
+CBC_CommonCharacterSetECI* CBC_CommonCharacterSetECI::GetCharacterSetECIByName(
+    const CFX_ByteString& name) {
+  return NULL;
 }

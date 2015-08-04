@@ -8,15 +8,15 @@
 #define _BC_QRDETECTORRESULT_H_
 class CBC_CommonBitMatrix;
 class CBC_ResultPoint;
-class CBC_QRDetectorResult
-{
-private:
-    CBC_CommonBitMatrix *m_bits;
-    CFX_PtrArray *m_points;
-public:
-    CBC_QRDetectorResult(CBC_CommonBitMatrix *bits, CFX_PtrArray *points);
-    virtual ~CBC_QRDetectorResult();
-    CBC_CommonBitMatrix *GetBits();
-    CFX_PtrArray *GetPoints();
+class CBC_QRDetectorResult {
+ private:
+  CBC_CommonBitMatrix* m_bits;
+  CFX_PtrArray* m_points;
+
+ public:
+  CBC_QRDetectorResult(CBC_CommonBitMatrix* bits, CFX_PtrArray* points);
+  virtual ~CBC_QRDetectorResult();
+  CBC_CommonBitMatrix* GetBits();
+  CFX_PtrArray* GetPoints();
 };
 #endif

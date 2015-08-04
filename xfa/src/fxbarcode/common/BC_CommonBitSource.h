@@ -6,17 +6,17 @@
 
 #ifndef _BC_COMMONBITSOURCE_H_
 #define _BC_COMMONBITSOURCE_H_
-class CBC_CommonBitSource
-{
-public:
-    CBC_CommonBitSource(CFX_ByteArray *bytes);
-    virtual ~CBC_CommonBitSource();
-    int32_t ReadBits(int32_t numBits, int32_t &e);
-    int32_t Available();
-    int32_t getByteOffset();
-private:
-    CFX_ByteArray m_bytes;
-    int32_t m_byteOffset;
-    int32_t m_bitOffset;
+class CBC_CommonBitSource {
+ public:
+  CBC_CommonBitSource(CFX_ByteArray* bytes);
+  virtual ~CBC_CommonBitSource();
+  int32_t ReadBits(int32_t numBits, int32_t& e);
+  int32_t Available();
+  int32_t getByteOffset();
+
+ private:
+  CFX_ByteArray m_bytes;
+  int32_t m_byteOffset;
+  int32_t m_bitOffset;
 };
 #endif

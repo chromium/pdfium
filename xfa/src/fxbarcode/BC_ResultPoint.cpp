@@ -22,14 +22,10 @@
 
 #include "barcode.h"
 #include "BC_ResultPoint.h"
-CBC_ResultPoint::CBC_ResultPoint(FX_FLOAT x, FX_FLOAT y): m_x(x), m_y(y)
-{
+CBC_ResultPoint::CBC_ResultPoint(FX_FLOAT x, FX_FLOAT y) : m_x(x), m_y(y) {}
+FX_FLOAT CBC_ResultPoint::GetX() {
+  return m_x;
 }
-FX_FLOAT CBC_ResultPoint::GetX()
-{
-    return m_x;
-}
-FX_FLOAT CBC_ResultPoint::GetY()
-{
-    return m_y;
+FX_FLOAT CBC_ResultPoint::GetY() {
+  return m_y;
 }

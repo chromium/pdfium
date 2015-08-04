@@ -22,55 +22,50 @@
 
 #include "../barcode.h"
 #include "BC_CommonBitSource.h"
-CBC_CommonBitSource::CBC_CommonBitSource(CFX_ByteArray* bytes)
-{
-    m_bytes.Copy((*bytes));
-    m_bitOffset = 0;
-    m_byteOffset = 0;
+CBC_CommonBitSource::CBC_CommonBitSource(CFX_ByteArray* bytes) {
+  m_bytes.Copy((*bytes));
+  m_bitOffset = 0;
+  m_byteOffset = 0;
 }
-CBC_CommonBitSource::~CBC_CommonBitSource()
-{
-}
-int32_t CBC_CommonBitSource::ReadBits(int32_t numBits, int32_t &e)
-{
-    if (numBits < 1 || numBits > 32) {
-        e = BCExceptionIllegalArgument;
-        return 0;
+CBC_CommonBitSource::~CBC_CommonBitSource() {}
+int32_t CBC_CommonBitSource::ReadBits(int32_t numBits, int32_t& e) {
+  if (numBits < 1 || numBits > 32) {
+    e = BCExceptionIllegalArgument;
+    return 0;
+  }
+  int32_t result = 0;
+  if (m_bitOffset > 0) {
+    int32_t bitsLeft = 8 - m_bitOffset;
+    int32_t toRead = numBits < bitsLeft ? numBits : bitsLeft;
+    int32_t bitsToNotRead = bitsLeft - toRead;
+    int32_t mask = (0xff >> (8 - toRead)) << bitsToNotRead;
+    result = (m_bytes[m_byteOffset] & mask) >> bitsToNotRead;
+    numBits -= toRead;
+    m_bitOffset += toRead;
+    if (m_bitOffset == 8) {
+      m_bitOffset = 0;
+      m_byteOffset++;
     }
-    int32_t result = 0;
-    if (m_bitOffset > 0) {
-        int32_t bitsLeft = 8 - m_bitOffset;
-        int32_t toRead = numBits < bitsLeft ? numBits : bitsLeft;
-        int32_t bitsToNotRead = bitsLeft - toRead;
-        int32_t mask = (0xff >> (8 - toRead)) << bitsToNotRead;
-        result = (m_bytes[m_byteOffset] & mask) >> bitsToNotRead;
-        numBits -= toRead;
-        m_bitOffset += toRead;
-        if (m_bitOffset == 8) {
-            m_bitOffset = 0;
-            m_byteOffset++;
-        }
+  }
+  if (numBits > 0) {
+    while (numBits >= 8) {
+      result = (result << 8) | (m_bytes[m_byteOffset] & 0xff);
+      m_byteOffset++;
+      numBits -= 8;
     }
     if (numBits > 0) {
-        while(numBits >= 8) {
-            result = (result << 8) | (m_bytes[m_byteOffset] & 0xff);
-            m_byteOffset++;
-            numBits -= 8;
-        }
-        if (numBits > 0) {
-            int32_t bitsToNotRead = 8 - numBits;
-            int32_t mask = (0xff >> bitsToNotRead) << bitsToNotRead;
-            result = (result << numBits) | ((m_bytes[m_byteOffset] & mask) >> bitsToNotRead);
-            m_bitOffset += numBits;
-        }
+      int32_t bitsToNotRead = 8 - numBits;
+      int32_t mask = (0xff >> bitsToNotRead) << bitsToNotRead;
+      result = (result << numBits) |
+               ((m_bytes[m_byteOffset] & mask) >> bitsToNotRead);
+      m_bitOffset += numBits;
     }
-    return result;
+  }
+  return result;
 }
-int32_t CBC_CommonBitSource::Available()
-{
-    return 8 * (m_bytes.GetSize() - m_byteOffset) - m_bitOffset;
+int32_t CBC_CommonBitSource::Available() {
+  return 8 * (m_bytes.GetSize() - m_byteOffset) - m_bitOffset;
 }
-int32_t CBC_CommonBitSource::getByteOffset()
-{
-    return m_byteOffset;
+int32_t CBC_CommonBitSource::getByteOffset() {
+  return m_byteOffset;
 }

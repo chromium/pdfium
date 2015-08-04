@@ -9,15 +9,17 @@
 class CBC_ReedSolomonDecoder;
 class CBC_CommonDecoderResult;
 class CBC_CommonBitMatrix;
-class CBC_DataMatrixDecoder
-{
-public:
-    CBC_DataMatrixDecoder();
-    virtual ~CBC_DataMatrixDecoder();
-    CBC_CommonDecoderResult *Decode(CBC_CommonBitMatrix *bits, int32_t &e);
-    virtual void Init();
-private:
-    void CorrectErrors(CFX_ByteArray &codewordBytes, int32_t numDataCodewords, int32_t &e);
-    CBC_ReedSolomonDecoder *m_rsDecoder;
+class CBC_DataMatrixDecoder {
+ public:
+  CBC_DataMatrixDecoder();
+  virtual ~CBC_DataMatrixDecoder();
+  CBC_CommonDecoderResult* Decode(CBC_CommonBitMatrix* bits, int32_t& e);
+  virtual void Init();
+
+ private:
+  void CorrectErrors(CFX_ByteArray& codewordBytes,
+                     int32_t numDataCodewords,
+                     int32_t& e);
+  CBC_ReedSolomonDecoder* m_rsDecoder;
 };
 #endif

@@ -8,12 +8,11 @@
 #define _FWL_BARCODETP_H
 class CFWL_WidgetTP;
 class CFWL_BarcodeTP;
-class CFWL_BarcodeTP : public CFWL_WidgetTP
-{
-public:
-    CFWL_BarcodeTP();
-    virtual ~CFWL_BarcodeTP();
-    virtual FX_BOOL		IsValidWidget(IFWL_Widget *pWidget);
-    virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams);
+class CFWL_BarcodeTP : public CFWL_WidgetTP {
+ public:
+  CFWL_BarcodeTP();
+  virtual ~CFWL_BarcodeTP();
+  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
+  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
 };
 #endif

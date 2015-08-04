@@ -22,17 +22,12 @@
 
 #include "barcode.h"
 #include "BC_LuminanceSource.h"
-CBC_LuminanceSource::CBC_LuminanceSource(int32_t width, int32_t height): m_width(width), m_height(height)
-{
+CBC_LuminanceSource::CBC_LuminanceSource(int32_t width, int32_t height)
+    : m_width(width), m_height(height) {}
+CBC_LuminanceSource::~CBC_LuminanceSource() {}
+int32_t CBC_LuminanceSource::GetWidth() {
+  return m_width;
 }
-CBC_LuminanceSource::~CBC_LuminanceSource()
-{
-}
-int32_t CBC_LuminanceSource::GetWidth()
-{
-    return m_width;
-}
-int32_t CBC_LuminanceSource::GetHeight()
-{
-    return m_height;
+int32_t CBC_LuminanceSource::GetHeight() {
+  return m_height;
 }

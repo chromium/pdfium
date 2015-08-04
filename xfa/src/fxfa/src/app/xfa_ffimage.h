@@ -6,14 +6,16 @@
 
 #ifndef _XFA_DRAW_IMAGE_IMP_H
 #define _XFA_DRAW_IMAGE_IMP_H
-class CXFA_FFImage : public CXFA_FFDraw
-{
-public:
-    CXFA_FFImage(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-    virtual ~CXFA_FFImage();
-    virtual	void			RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix = NULL, FX_DWORD dwStatus = 0, int32_t iRotate = 0);
-    virtual	FX_BOOL			IsLoaded();
-    virtual FX_BOOL			LoadWidget();
-    virtual void			UnloadWidget();
+class CXFA_FFImage : public CXFA_FFDraw {
+ public:
+  CXFA_FFImage(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  virtual ~CXFA_FFImage();
+  virtual void RenderWidget(CFX_Graphics* pGS,
+                            CFX_Matrix* pMatrix = NULL,
+                            FX_DWORD dwStatus = 0,
+                            int32_t iRotate = 0);
+  virtual FX_BOOL IsLoaded();
+  virtual FX_BOOL LoadWidget();
+  virtual void UnloadWidget();
 };
 #endif

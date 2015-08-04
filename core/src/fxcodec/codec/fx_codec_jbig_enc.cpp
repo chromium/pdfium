@@ -5,7 +5,6 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxcodec/fx_codec.h"
-ICodec_Jbig2Encoder* CCodec_ModuleMgr::CreateJbig2Encoder()
-{
-    return NULL;
+ICodec_Jbig2Encoder* CCodec_ModuleMgr::CreateJbig2Encoder() {
+  return NULL;
 }

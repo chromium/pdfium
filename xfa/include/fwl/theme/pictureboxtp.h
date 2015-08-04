@@ -8,12 +8,11 @@
 #define _FWL_PICTUREBOXTP_H
 class CFWL_WidgetTP;
 class CFWL_PictureBoxTP;
-class CFWL_PictureBoxTP : public CFWL_WidgetTP
-{
-public:
-    CFWL_PictureBoxTP();
-    virtual ~CFWL_PictureBoxTP();
-    virtual FX_BOOL		IsValidWidget(IFWL_Widget *pWidget);
-    virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams);
+class CFWL_PictureBoxTP : public CFWL_WidgetTP {
+ public:
+  CFWL_PictureBoxTP();
+  virtual ~CFWL_PictureBoxTP();
+  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
+  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
 };
 #endif

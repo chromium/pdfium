@@ -8,8 +8,7 @@
 #include "fx_codepage.h"
 #ifdef _FXCP
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 extern const FX_CODEPAGE_HEADER g_CP936_MapHeader;
 extern const FX_CODEPAGE_HEADER g_CP932_MapHeader;
@@ -39,25 +38,24 @@ extern const FX_CPCU_MAPINFO g_CP1255_CUMap;
 extern const FX_CPCU_MAPINFO g_CP1256_CUMap;
 extern const FX_CPCU_MAPINFO g_CP1257_CUMap;
 extern const FX_CPCU_MAPINFO g_CP1258_CUMap;
-FX_LPCCODEPAGE FX_GetCodePage(FX_WORD wCodePage)
-{
-    int32_t iEnd = sizeof(g_FXCodePageMgr) / sizeof(FX_CODEPAGE) - 1;
-    FXSYS_assert(iEnd >= 0);
-    int32_t iStart = 0, iMid;
-    uint16_t uCPID;
-    do {
-        iMid = (iStart + iEnd) / 2;
-        const FX_CODEPAGE &cp = g_FXCodePageMgr[iMid];
-        uCPID = cp.pCPHeader->uCPID;
-        if (wCodePage == uCPID) {
-            return g_FXCodePageMgr + iMid;
-        } else if (wCodePage < uCPID) {
-            iEnd = iMid - 1;
-        } else {
-            iStart = iMid + 1;
-        }
-    } while (iStart <= iEnd);
-    return NULL;
+FX_LPCCODEPAGE FX_GetCodePage(FX_WORD wCodePage) {
+  int32_t iEnd = sizeof(g_FXCodePageMgr) / sizeof(FX_CODEPAGE) - 1;
+  FXSYS_assert(iEnd >= 0);
+  int32_t iStart = 0, iMid;
+  uint16_t uCPID;
+  do {
+    iMid = (iStart + iEnd) / 2;
+    const FX_CODEPAGE& cp = g_FXCodePageMgr[iMid];
+    uCPID = cp.pCPHeader->uCPID;
+    if (wCodePage == uCPID) {
+      return g_FXCodePageMgr + iMid;
+    } else if (wCodePage < uCPID) {
+      iEnd = iMid - 1;
+    } else {
+      iStart = iMid + 1;
+    }
+  } while (iStart <= iEnd);
+  return NULL;
 }
 #ifdef __cplusplus
 }

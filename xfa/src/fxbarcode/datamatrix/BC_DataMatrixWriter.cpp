@@ -43,96 +43,109 @@
 #include "BC_ASCIIEncoder.h"
 #include "BC_HighLevelEncoder.h"
 #include "BC_DataMatrixWriter.h"
-CBC_DataMatrixWriter::CBC_DataMatrixWriter()
-{
+CBC_DataMatrixWriter::CBC_DataMatrixWriter() {}
+CBC_DataMatrixWriter::~CBC_DataMatrixWriter() {}
+FX_BOOL CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
+  m_iCorrectLevel = level;
+  return TRUE;
 }
-CBC_DataMatrixWriter::~CBC_DataMatrixWriter()
-{
+uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
+                                      int32_t& outWidth,
+                                      int32_t& outHeight,
+                                      int32_t& e) {
+  if (outWidth < 0 || outHeight < 0) {
+    e = BCExceptionHeightAndWidthMustBeAtLeast1;
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  }
+  CBC_SymbolShapeHint::SymbolShapeHint shape =
+      CBC_SymbolShapeHint::FORCE_SQUARE;
+  CBC_Dimension* minSize = NULL;
+  CBC_Dimension* maxSize = NULL;
+  CFX_WideString ecLevel;
+  CFX_WideString encoded = CBC_HighLevelEncoder::encodeHighLevel(
+      contents, ecLevel, shape, minSize, maxSize, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  CBC_SymbolInfo* symbolInfo = CBC_SymbolInfo::lookup(
+      encoded.GetLength(), shape, minSize, maxSize, TRUE, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  CFX_WideString codewords =
+      CBC_ErrorCorrection::encodeECC200(encoded, symbolInfo, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  CBC_DefaultPlacement* placement =
+      FX_NEW CBC_DefaultPlacement(codewords, symbolInfo->getSymbolDataWidth(e),
+                                  symbolInfo->getSymbolDataHeight(e));
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  placement->place();
+  CBC_CommonByteMatrix* bytematrix = encodeLowLevel(placement, symbolInfo, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  outWidth = bytematrix->GetWidth();
+  outHeight = bytematrix->GetHeight();
+  uint8_t* result = FX_Alloc(uint8_t, outWidth * outHeight);
+  FXSYS_memcpy(result, bytematrix->GetArray(), outWidth * outHeight);
+  delete bytematrix;
+  delete placement;
+  return result;
 }
-FX_BOOL CBC_DataMatrixWriter::SetErrorCorrectionLevel (int32_t level)
-{
-    m_iCorrectLevel = level;
-    return TRUE;
+uint8_t* CBC_DataMatrixWriter::Encode(const CFX_ByteString& contents,
+                                      BCFORMAT format,
+                                      int32_t& outWidth,
+                                      int32_t& outHeight,
+                                      int32_t& e) {
+  return NULL;
 }
-uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString &contents, int32_t &outWidth, int32_t &outHeight, int32_t &e)
-{
-    if (outWidth < 0 || outHeight < 0) {
-        e = BCExceptionHeightAndWidthMustBeAtLeast1;
-        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+uint8_t* CBC_DataMatrixWriter::Encode(const CFX_ByteString& contents,
+                                      BCFORMAT format,
+                                      int32_t& outWidth,
+                                      int32_t& outHeight,
+                                      int32_t hints,
+                                      int32_t& e) {
+  return NULL;
+}
+CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(
+    CBC_DefaultPlacement* placement,
+    CBC_SymbolInfo* symbolInfo,
+    int32_t& e) {
+  int32_t symbolWidth = symbolInfo->getSymbolDataWidth(e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  int32_t symbolHeight = symbolInfo->getSymbolDataHeight(e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  CBC_CommonByteMatrix* matrix = FX_NEW CBC_CommonByteMatrix(
+      symbolInfo->getSymbolWidth(e), symbolInfo->getSymbolHeight(e));
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  matrix->Init();
+  int32_t matrixY = 0;
+  for (int32_t y = 0; y < symbolHeight; y++) {
+    int32_t matrixX;
+    if ((y % symbolInfo->m_matrixHeight) == 0) {
+      matrixX = 0;
+      for (int32_t x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
+        matrix->Set(matrixX, matrixY, (x % 2) == 0);
+        matrixX++;
+      }
+      matrixY++;
     }
-    CBC_SymbolShapeHint::SymbolShapeHint shape = CBC_SymbolShapeHint::FORCE_SQUARE;
-    CBC_Dimension* minSize = NULL;
-    CBC_Dimension* maxSize = NULL;
-    CFX_WideString ecLevel;
-    CFX_WideString encoded = CBC_HighLevelEncoder::encodeHighLevel(contents, ecLevel, shape, minSize, maxSize, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    CBC_SymbolInfo* symbolInfo = CBC_SymbolInfo::lookup(encoded.GetLength(), shape, minSize, maxSize, TRUE, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    CFX_WideString codewords = CBC_ErrorCorrection::encodeECC200(encoded, symbolInfo, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    CBC_DefaultPlacement* placement = FX_NEW CBC_DefaultPlacement(codewords, symbolInfo->getSymbolDataWidth(e), symbolInfo->getSymbolDataHeight(e));
-    BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    placement->place();
-    CBC_CommonByteMatrix* bytematrix = encodeLowLevel(placement, symbolInfo, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    outWidth = bytematrix->GetWidth();
-    outHeight = bytematrix->GetHeight();
-    uint8_t* result = FX_Alloc(uint8_t, outWidth * outHeight);
-    FXSYS_memcpy(result, bytematrix->GetArray(), outWidth * outHeight);
-    delete bytematrix;
-    delete placement;
-    return result;
-}
-uint8_t *CBC_DataMatrixWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t &e)
-{
-    return NULL;
-}
-uint8_t *CBC_DataMatrixWriter::Encode(const CFX_ByteString &contents, BCFORMAT format, int32_t &outWidth, int32_t &outHeight, int32_t hints, int32_t &e)
-{
-    return NULL;
-}
-CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(CBC_DefaultPlacement* placement, CBC_SymbolInfo* symbolInfo, int32_t &e)
-{
-    int32_t symbolWidth = symbolInfo->getSymbolDataWidth(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    int32_t symbolHeight = symbolInfo->getSymbolDataHeight(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    CBC_CommonByteMatrix* matrix = FX_NEW CBC_CommonByteMatrix(symbolInfo->getSymbolWidth(e), symbolInfo->getSymbolHeight(e));
-    BC_EXCEPTION_CHECK_ReturnValue(e,  NULL);
-    matrix->Init();
-    int32_t matrixY = 0;
-    for (int32_t y = 0; y < symbolHeight; y++) {
-        int32_t matrixX;
-        if ((y % symbolInfo->m_matrixHeight) == 0) {
-            matrixX = 0;
-            for (int32_t x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
-                matrix->Set(matrixX, matrixY, (x % 2) == 0);
-                matrixX++;
-            }
-            matrixY++;
-        }
-        matrixX = 0;
-        for (int32_t x = 0; x < symbolWidth; x++) {
-            if ((x % symbolInfo->m_matrixWidth) == 0) {
-                matrix->Set(matrixX, matrixY, TRUE);
-                matrixX++;
-            }
-            matrix->Set(matrixX, matrixY, placement->getBit(x, y));
-            matrixX++;
-            if ((x % symbolInfo->m_matrixWidth) == symbolInfo->m_matrixWidth - 1) {
-                matrix->Set(matrixX, matrixY, (y % 2) == 0);
-                matrixX++;
-            }
-        }
-        matrixY++;
-        if ((y % symbolInfo->m_matrixHeight) == symbolInfo->m_matrixHeight - 1) {
-            matrixX = 0;
-            for (int32_t x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
-                matrix->Set(matrixX, matrixY, TRUE);
-                matrixX++;
-            }
-            matrixY++;
-        }
+    matrixX = 0;
+    for (int32_t x = 0; x < symbolWidth; x++) {
+      if ((x % symbolInfo->m_matrixWidth) == 0) {
+        matrix->Set(matrixX, matrixY, TRUE);
+        matrixX++;
+      }
+      matrix->Set(matrixX, matrixY, placement->getBit(x, y));
+      matrixX++;
+      if ((x % symbolInfo->m_matrixWidth) == symbolInfo->m_matrixWidth - 1) {
+        matrix->Set(matrixX, matrixY, (y % 2) == 0);
+        matrixX++;
+      }
     }
-    return matrix;
+    matrixY++;
+    if ((y % symbolInfo->m_matrixHeight) == symbolInfo->m_matrixHeight - 1) {
+      matrixX = 0;
+      for (int32_t x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
+        matrix->Set(matrixX, matrixY, TRUE);
+        matrixX++;
+      }
+      matrixY++;
+    }
+  }
+  return matrix;
 }

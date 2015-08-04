@@ -7,18 +7,16 @@
 #ifndef _BC_RESULTPOINT_H_
 #define _BC_RESULTPOINT_H_
 class CBC_ResultPoint;
-class CBC_ResultPoint
-{
-public:
-    CBC_ResultPoint();
-    CBC_ResultPoint(FX_FLOAT x, FX_FLOAT y);
-    virtual ~CBC_ResultPoint()
-    {
-    }
-    virtual FX_FLOAT GetX();
-    virtual FX_FLOAT GetY();
-protected:
-    FX_FLOAT m_x;
-    FX_FLOAT m_y;
+class CBC_ResultPoint {
+ public:
+  CBC_ResultPoint();
+  CBC_ResultPoint(FX_FLOAT x, FX_FLOAT y);
+  virtual ~CBC_ResultPoint() {}
+  virtual FX_FLOAT GetX();
+  virtual FX_FLOAT GetY();
+
+ protected:
+  FX_FLOAT m_x;
+  FX_FLOAT m_y;
 };
 #endif

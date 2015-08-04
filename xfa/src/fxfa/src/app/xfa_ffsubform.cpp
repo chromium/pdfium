@@ -11,10 +11,7 @@
 #include "xfa_ffpageview.h"
 #include "xfa_ffapp.h"
 #include "xfa_ffdoc.h"
-CXFA_FFSubForm::CXFA_FFSubForm(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFWidget(pPageView, pDataAcc)
-{
-}
-CXFA_FFSubForm::~CXFA_FFSubForm()
-{
-}
+CXFA_FFSubForm::CXFA_FFSubForm(CXFA_FFPageView* pPageView,
+                               CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFWidget(pPageView, pDataAcc) {}
+CXFA_FFSubForm::~CXFA_FFSubForm() {}

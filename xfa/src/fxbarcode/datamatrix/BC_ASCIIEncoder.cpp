@@ -28,72 +28,72 @@
 #include "BC_EncoderContext.h"
 #include "BC_HighLevelEncoder.h"
 #include "BC_ASCIIEncoder.h"
-CBC_ASCIIEncoder::CBC_ASCIIEncoder()
-{
+CBC_ASCIIEncoder::CBC_ASCIIEncoder() {}
+CBC_ASCIIEncoder::~CBC_ASCIIEncoder() {}
+int32_t CBC_ASCIIEncoder::getEncodingMode() {
+  return ASCII_ENCODATION;
 }
-CBC_ASCIIEncoder::~CBC_ASCIIEncoder()
-{
-}
-int32_t CBC_ASCIIEncoder::getEncodingMode()
-{
-    return ASCII_ENCODATION;
-}
-void CBC_ASCIIEncoder::Encode(CBC_EncoderContext &context, int32_t &e)
-{
-    int32_t n = CBC_HighLevelEncoder::determineConsecutiveDigitCount(context.m_msg, context.m_pos);
-    if (n >= 2) {
-        FX_WCHAR code = encodeASCIIDigits(context.m_msg.GetAt(context.m_pos), context.m_msg.GetAt(context.m_pos + 1), e);
-        if (e != BCExceptionNO) {
-            return;
-        }
-        context.writeCodeword(code);
-        context.m_pos += 2;
+void CBC_ASCIIEncoder::Encode(CBC_EncoderContext& context, int32_t& e) {
+  int32_t n = CBC_HighLevelEncoder::determineConsecutiveDigitCount(
+      context.m_msg, context.m_pos);
+  if (n >= 2) {
+    FX_WCHAR code =
+        encodeASCIIDigits(context.m_msg.GetAt(context.m_pos),
+                          context.m_msg.GetAt(context.m_pos + 1), e);
+    if (e != BCExceptionNO) {
+      return;
+    }
+    context.writeCodeword(code);
+    context.m_pos += 2;
+  } else {
+    FX_WCHAR c = context.getCurrentChar();
+    int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
+        context.m_msg, context.m_pos, getEncodingMode());
+    if (newMode != getEncodingMode()) {
+      switch (newMode) {
+        case BASE256_ENCODATION:
+          context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_BASE256);
+          context.signalEncoderChange(BASE256_ENCODATION);
+          return;
+        case C40_ENCODATION:
+          context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_C40);
+          context.signalEncoderChange(C40_ENCODATION);
+          return;
+        case X12_ENCODATION:
+          context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_ANSIX12);
+          context.signalEncoderChange(X12_ENCODATION);
+          break;
+        case TEXT_ENCODATION:
+          context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_TEXT);
+          context.signalEncoderChange(TEXT_ENCODATION);
+          break;
+        case EDIFACT_ENCODATION:
+          context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_EDIFACT);
+          context.signalEncoderChange(EDIFACT_ENCODATION);
+          break;
+        default:
+          e = BCExceptionIllegalStateIllegalMode;
+          return;
+      }
+    } else if (CBC_HighLevelEncoder::isExtendedASCII(c)) {
+      context.writeCodeword(CBC_HighLevelEncoder::UPPER_SHIFT);
+      context.writeCodeword((FX_WCHAR)(c - 128 + 1));
+      context.m_pos++;
     } else {
-        FX_WCHAR c = context.getCurrentChar();
-        int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(context.m_msg, context.m_pos, getEncodingMode());
-        if (newMode != getEncodingMode()) {
-            switch (newMode) {
-                case BASE256_ENCODATION:
-                    context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_BASE256);
-                    context.signalEncoderChange(BASE256_ENCODATION);
-                    return;
-                case C40_ENCODATION:
-                    context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_C40);
-                    context.signalEncoderChange(C40_ENCODATION);
-                    return;
-                case X12_ENCODATION:
-                    context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_ANSIX12);
-                    context.signalEncoderChange(X12_ENCODATION);
-                    break;
-                case TEXT_ENCODATION:
-                    context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_TEXT);
-                    context.signalEncoderChange(TEXT_ENCODATION);
-                    break;
-                case EDIFACT_ENCODATION:
-                    context.writeCodeword(CBC_HighLevelEncoder::LATCH_TO_EDIFACT);
-                    context.signalEncoderChange(EDIFACT_ENCODATION);
-                    break;
-                default:
-                    e = BCExceptionIllegalStateIllegalMode;
-                    return;
-            }
-        } else if (CBC_HighLevelEncoder::isExtendedASCII(c)) {
-            context.writeCodeword(CBC_HighLevelEncoder::UPPER_SHIFT);
-            context.writeCodeword((FX_WCHAR) (c - 128 + 1));
-            context.m_pos++;
-        } else {
-            context.writeCodeword((FX_WCHAR) (c + 1));
-            context.m_pos++;
-        }
+      context.writeCodeword((FX_WCHAR)(c + 1));
+      context.m_pos++;
     }
+  }
 }
-FX_WCHAR CBC_ASCIIEncoder::encodeASCIIDigits(FX_WCHAR digit1, FX_WCHAR digit2, int32_t &e)
-{
-    if (CBC_HighLevelEncoder::isDigit(digit1) && CBC_HighLevelEncoder::isDigit(digit2)) {
-        int32_t num = (digit1 - 48) * 10 + (digit2 - 48);
-        FX_WCHAR a = (FX_WCHAR) (num + 130);
-        return (FX_WCHAR) (num + 130);
-    }
-    e = BCExceptionIllegalArgumentNotGigits;
-    return 0;
+FX_WCHAR CBC_ASCIIEncoder::encodeASCIIDigits(FX_WCHAR digit1,
+                                             FX_WCHAR digit2,
+                                             int32_t& e) {
+  if (CBC_HighLevelEncoder::isDigit(digit1) &&
+      CBC_HighLevelEncoder::isDigit(digit2)) {
+    int32_t num = (digit1 - 48) * 10 + (digit2 - 48);
+    FX_WCHAR a = (FX_WCHAR)(num + 130);
+    return (FX_WCHAR)(num + 130);
+  }
+  e = BCExceptionIllegalArgumentNotGigits;
+  return 0;
 }

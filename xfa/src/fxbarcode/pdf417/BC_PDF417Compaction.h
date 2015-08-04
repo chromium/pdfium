@@ -7,16 +7,10 @@
 #ifndef _BC_COMPACTION_H_
 #define _BC_COMPACTION_H_
 class CBC_Compaction;
-enum Compaction {
-    AUTO,
-    TEXT,
-    BYTES,
-    NUMERIC
-};
-class CBC_Compaction
-{
-public:
-    CBC_Compaction();
-    virtual ~CBC_Compaction();
+enum Compaction { AUTO, TEXT, BYTES, NUMERIC };
+class CBC_Compaction {
+ public:
+  CBC_Compaction();
+  virtual ~CBC_Compaction();
 };
 #endif

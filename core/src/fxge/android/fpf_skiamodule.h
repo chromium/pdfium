@@ -9,15 +9,15 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 class CFPF_SkiaFontMgr;
-class CFPF_SkiaDeviceModule : public IFPF_DeviceModule
-{
-public:
-    CFPF_SkiaDeviceModule() : m_pFontMgr(NULL) {}
-    virtual ~CFPF_SkiaDeviceModule();
-    virtual void				Destroy();
-    virtual IFPF_FontMgr*		GetFontMgr();
-protected:
-    CFPF_SkiaFontMgr	*m_pFontMgr;
+class CFPF_SkiaDeviceModule : public IFPF_DeviceModule {
+ public:
+  CFPF_SkiaDeviceModule() : m_pFontMgr(NULL) {}
+  virtual ~CFPF_SkiaDeviceModule();
+  virtual void Destroy();
+  virtual IFPF_FontMgr* GetFontMgr();
+
+ protected:
+  CFPF_SkiaFontMgr* m_pFontMgr;
 };
 #endif
 

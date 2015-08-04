@@ -86,38 +86,36 @@
 #include "qrcode/BC_QRCoderVersion.h"
 #include "qrcode/BC_QRDataMask.h"
 #include "qrcode/BC_QRDecodedBitStreamParser.h"
-void BC_Library_Init()
-{
-    CBC_QRCoderErrorCorrectionLevel::Initialize();
-    CBC_QRCoderMode::Initialize();
-    CBC_QRCoderVersion::Initialize();
-    CBC_QRDataMask::Initialize();
-    CBC_ReedSolomonGF256::Initialize();
-    CBC_DataMatrixVersion::Initialize();
-    CBC_SymbolInfo::Initialize();
-    CBC_ErrorCorrection::Initialize();
-    CBC_PDF417HighLevelEncoder::Initialize();
-    int32_t e = 0;
-    CBC_PDF417ECModulusGF::Initialize(e);
-    CBC_DecodedBitStreamPaser::Initialize();
-    CBC_PDF417CodewordDecoder::Initialize();
-    CBC_PDF417ECErrorCorrection::Initialize(e);
-    CBC_PDF417ScanningDecoder::Initialize();
+void BC_Library_Init() {
+  CBC_QRCoderErrorCorrectionLevel::Initialize();
+  CBC_QRCoderMode::Initialize();
+  CBC_QRCoderVersion::Initialize();
+  CBC_QRDataMask::Initialize();
+  CBC_ReedSolomonGF256::Initialize();
+  CBC_DataMatrixVersion::Initialize();
+  CBC_SymbolInfo::Initialize();
+  CBC_ErrorCorrection::Initialize();
+  CBC_PDF417HighLevelEncoder::Initialize();
+  int32_t e = 0;
+  CBC_PDF417ECModulusGF::Initialize(e);
+  CBC_DecodedBitStreamPaser::Initialize();
+  CBC_PDF417CodewordDecoder::Initialize();
+  CBC_PDF417ECErrorCorrection::Initialize(e);
+  CBC_PDF417ScanningDecoder::Initialize();
 }
-void BC_Library_Destory()
-{
-    CBC_QRCoderErrorCorrectionLevel::Finalize();
-    CBC_QRCoderMode::Finalize();
-    CBC_QRCoderVersion::Finalize();
-    CBC_QRDataMask::Finalize();
-    CBC_ReedSolomonGF256::Finalize();
-    CBC_DataMatrixVersion::Finalize();
-    CBC_SymbolInfo::Finalize();
-    CBC_ErrorCorrection::Finalize();
-    CBC_PDF417HighLevelEncoder::Finalize();
-    CBC_DecodedBitStreamPaser::Finalize();
-    CBC_PDF417CodewordDecoder::Finalize();
-    CBC_PDF417ECErrorCorrection::Finalize();
-    CBC_PDF417ECModulusGF::Finalize();
-    CBC_PDF417ScanningDecoder::Finalize();
+void BC_Library_Destory() {
+  CBC_QRCoderErrorCorrectionLevel::Finalize();
+  CBC_QRCoderMode::Finalize();
+  CBC_QRCoderVersion::Finalize();
+  CBC_QRDataMask::Finalize();
+  CBC_ReedSolomonGF256::Finalize();
+  CBC_DataMatrixVersion::Finalize();
+  CBC_SymbolInfo::Finalize();
+  CBC_ErrorCorrection::Finalize();
+  CBC_PDF417HighLevelEncoder::Finalize();
+  CBC_DecodedBitStreamPaser::Finalize();
+  CBC_PDF417CodewordDecoder::Finalize();
+  CBC_PDF417ECErrorCorrection::Finalize();
+  CBC_PDF417ECModulusGF::Finalize();
+  CBC_PDF417ScanningDecoder::Finalize();
 }

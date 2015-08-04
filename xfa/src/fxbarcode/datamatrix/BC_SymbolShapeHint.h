@@ -6,15 +6,14 @@
 
 #ifndef _BC_SYMBOLSHAPEHINT_H_
 #define _BC_SYMBOLSHAPEHINT_H_
-class CBC_SymbolShapeHint
-{
-public:
-    CBC_SymbolShapeHint();
-    virtual ~CBC_SymbolShapeHint();
-    enum SymbolShapeHint {
-        FORCE_NONE,
-        FORCE_SQUARE,
-        FORCE_RECTANGLE,
-    };
+class CBC_SymbolShapeHint {
+ public:
+  CBC_SymbolShapeHint();
+  virtual ~CBC_SymbolShapeHint();
+  enum SymbolShapeHint {
+    FORCE_NONE,
+    FORCE_SQUARE,
+    FORCE_RECTANGLE,
+  };
 };
 #endif

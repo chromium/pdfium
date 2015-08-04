@@ -7,15 +7,14 @@
 #ifndef _FWL_TIMER_H
 #define _FWL_TIMER_H
 class IFWL_Timer;
-typedef struct _FWL_HTIMER {
-    void* pData;
-} *FWL_HTIMER;
-class IFWL_Timer
-{
-public:
-    virtual ~IFWL_Timer() {}
-    virtual int32_t Run(FWL_HTIMER hTimer) = 0;
+typedef struct _FWL_HTIMER { void* pData; } * FWL_HTIMER;
+class IFWL_Timer {
+ public:
+  virtual ~IFWL_Timer() {}
+  virtual int32_t Run(FWL_HTIMER hTimer) = 0;
 };
-FWL_HTIMER FWL_StartTimer(IFWL_Timer *pTimer, FX_DWORD dwElapse, FX_BOOL bImmediately = TRUE);
+FWL_HTIMER FWL_StartTimer(IFWL_Timer* pTimer,
+                          FX_DWORD dwElapse,
+                          FX_BOOL bImmediately = TRUE);
 int32_t FWL_StopTimer(FWL_HTIMER hTimer);
 #endif

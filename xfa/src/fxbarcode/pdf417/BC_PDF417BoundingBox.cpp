@@ -24,171 +24,186 @@
 #include "../BC_ResultPoint.h"
 #include "../common/BC_CommonBitMatrix.h"
 #include "BC_PDF417BoundingBox.h"
-CBC_BoundingBox::CBC_BoundingBox(CBC_CommonBitMatrix* image, CBC_ResultPoint* topLeft, CBC_ResultPoint* bottomLeft, CBC_ResultPoint* topRight, CBC_ResultPoint* bottomRight, int32_t &e)
-{
-    if ((topLeft == NULL && topRight == NULL) ||
-            (bottomLeft == NULL && bottomRight == NULL) ||
-            (topLeft != NULL && bottomLeft == NULL) ||
-            (topRight != NULL && bottomRight == NULL)) {
-        e = BCExceptionNotFoundInstance;
-    }
-    init(image, topLeft, bottomLeft, topRight, bottomRight);
+CBC_BoundingBox::CBC_BoundingBox(CBC_CommonBitMatrix* image,
+                                 CBC_ResultPoint* topLeft,
+                                 CBC_ResultPoint* bottomLeft,
+                                 CBC_ResultPoint* topRight,
+                                 CBC_ResultPoint* bottomRight,
+                                 int32_t& e) {
+  if ((topLeft == NULL && topRight == NULL) ||
+      (bottomLeft == NULL && bottomRight == NULL) ||
+      (topLeft != NULL && bottomLeft == NULL) ||
+      (topRight != NULL && bottomRight == NULL)) {
+    e = BCExceptionNotFoundInstance;
+  }
+  init(image, topLeft, bottomLeft, topRight, bottomRight);
 }
-CBC_BoundingBox::CBC_BoundingBox(CBC_BoundingBox* boundingBox)
-{
-    init(boundingBox->m_image, boundingBox->m_topLeft, boundingBox->m_bottomLeft, boundingBox->m_topRight, boundingBox->m_bottomRight);
+CBC_BoundingBox::CBC_BoundingBox(CBC_BoundingBox* boundingBox) {
+  init(boundingBox->m_image, boundingBox->m_topLeft, boundingBox->m_bottomLeft,
+       boundingBox->m_topRight, boundingBox->m_bottomRight);
 }
-CBC_BoundingBox::~CBC_BoundingBox()
-{
-    if (m_topLeft) {
-        delete m_topLeft;
-    }
-    if (m_bottomLeft) {
-        delete m_bottomLeft;
-    }
-    if (m_topRight) {
-        delete m_topRight;
-    }
-    if (m_bottomRight) {
-        delete m_bottomRight;
-    }
+CBC_BoundingBox::~CBC_BoundingBox() {
+  if (m_topLeft) {
+    delete m_topLeft;
+  }
+  if (m_bottomLeft) {
+    delete m_bottomLeft;
+  }
+  if (m_topRight) {
+    delete m_topRight;
+  }
+  if (m_bottomRight) {
+    delete m_bottomRight;
+  }
 }
-CBC_BoundingBox* CBC_BoundingBox::merge(CBC_BoundingBox* leftBox, CBC_BoundingBox* rightBox, int32_t &e)
-{
-    CBC_BoundingBox* boundingBox = NULL;
-    if (leftBox == NULL) {
-        boundingBox = FX_NEW CBC_BoundingBox(rightBox);
-        return boundingBox;
-    }
-    if (rightBox == NULL) {
-        boundingBox = FX_NEW CBC_BoundingBox(leftBox);
-        return boundingBox;
-    }
-    boundingBox = FX_NEW CBC_BoundingBox(leftBox->m_image, leftBox->m_topLeft, leftBox->m_bottomLeft, rightBox->m_topRight, rightBox->m_bottomRight, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+CBC_BoundingBox* CBC_BoundingBox::merge(CBC_BoundingBox* leftBox,
+                                        CBC_BoundingBox* rightBox,
+                                        int32_t& e) {
+  CBC_BoundingBox* boundingBox = NULL;
+  if (leftBox == NULL) {
+    boundingBox = FX_NEW CBC_BoundingBox(rightBox);
     return boundingBox;
-}
-CBC_BoundingBox* CBC_BoundingBox::addMissingRows(int32_t missingStartRows, int32_t missingEndRows, FX_BOOL isLeft, int32_t &e)
-{
-    CBC_ResultPoint* newTopLeft = m_topLeft;
-    CBC_ResultPoint* newBottomLeft = m_bottomLeft;
-    CBC_ResultPoint* newTopRight = m_topRight;
-    CBC_ResultPoint* newBottomRight = m_bottomRight;
-    CBC_ResultPoint* newTop = NULL;
-    CBC_ResultPoint* newBottom = NULL;
-    if (missingStartRows > 0) {
-        CBC_ResultPoint* top = isLeft ? m_topLeft : m_topRight;
-        int32_t newMinY = (int32_t) top->GetY() - missingStartRows;
-        if (newMinY < 0) {
-            newMinY = 0;
-        }
-        newTop = FX_NEW CBC_ResultPoint((FX_FLOAT)top->GetX(), (FX_FLOAT)newMinY);
-        if (isLeft) {
-            newTopLeft = newTop;
-        } else {
-            newTopRight = newTop;
-        }
-    }
-    if (missingEndRows > 0) {
-        CBC_ResultPoint* bottom = isLeft ? m_bottomLeft : m_bottomRight;
-        int32_t newMaxY = (int32_t) bottom->GetY() + missingEndRows;
-        if (newMaxY >= m_image->GetHeight()) {
-            newMaxY = m_image->GetHeight() - 1;
-        }
-        newBottom = FX_NEW CBC_ResultPoint((FX_FLOAT)bottom->GetX(), (FX_FLOAT)newMaxY);
-        if (isLeft) {
-            newBottomLeft = newBottom;
-        } else {
-            newBottomRight = newBottom;
-        }
-    }
-    calculateMinMaxValues();
-    CBC_BoundingBox* boundingBox = FX_NEW CBC_BoundingBox(m_image, newTopLeft, newBottomLeft, newTopRight, newBottomRight, e);
-    delete newTop;
-    delete newBottom;
-    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  }
+  if (rightBox == NULL) {
+    boundingBox = FX_NEW CBC_BoundingBox(leftBox);
     return boundingBox;
+  }
+  boundingBox = FX_NEW CBC_BoundingBox(
+      leftBox->m_image, leftBox->m_topLeft, leftBox->m_bottomLeft,
+      rightBox->m_topRight, rightBox->m_bottomRight, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  return boundingBox;
 }
-void CBC_BoundingBox::setTopRight(CBC_ResultPoint topRight)
-{
-    if (m_topRight) {
-        delete m_topRight;
+CBC_BoundingBox* CBC_BoundingBox::addMissingRows(int32_t missingStartRows,
+                                                 int32_t missingEndRows,
+                                                 FX_BOOL isLeft,
+                                                 int32_t& e) {
+  CBC_ResultPoint* newTopLeft = m_topLeft;
+  CBC_ResultPoint* newBottomLeft = m_bottomLeft;
+  CBC_ResultPoint* newTopRight = m_topRight;
+  CBC_ResultPoint* newBottomRight = m_bottomRight;
+  CBC_ResultPoint* newTop = NULL;
+  CBC_ResultPoint* newBottom = NULL;
+  if (missingStartRows > 0) {
+    CBC_ResultPoint* top = isLeft ? m_topLeft : m_topRight;
+    int32_t newMinY = (int32_t)top->GetY() - missingStartRows;
+    if (newMinY < 0) {
+      newMinY = 0;
     }
-    m_topRight = FX_NEW CBC_ResultPoint(topRight.GetX(), topRight.GetY());
-    calculateMinMaxValues();
-}
-void CBC_BoundingBox::setBottomRight(CBC_ResultPoint bottomRight)
-{
-    if (m_bottomRight) {
-        delete m_bottomRight;
+    newTop = FX_NEW CBC_ResultPoint((FX_FLOAT)top->GetX(), (FX_FLOAT)newMinY);
+    if (isLeft) {
+      newTopLeft = newTop;
+    } else {
+      newTopRight = newTop;
     }
-    m_bottomRight = FX_NEW CBC_ResultPoint(bottomRight.GetX(), bottomRight.GetY());
-    calculateMinMaxValues();
-}
-int32_t CBC_BoundingBox::getMinX()
-{
-    return m_minX;
-}
-int32_t CBC_BoundingBox::getMaxX()
-{
-    return m_maxX;
-}
-int32_t CBC_BoundingBox::getMinY()
-{
-    return m_minY;
-}
-int32_t CBC_BoundingBox::getMaxY()
-{
-    return m_maxY;
-}
-CBC_ResultPoint* CBC_BoundingBox::getTopLeft()
-{
-    return m_topLeft;
-}
-CBC_ResultPoint* CBC_BoundingBox::getTopRight()
-{
-    return m_topRight;
-}
-CBC_ResultPoint* CBC_BoundingBox::getBottomLeft()
-{
-    return m_bottomLeft;
-}
-CBC_ResultPoint* CBC_BoundingBox::getBottomRight()
-{
-    return m_bottomRight;
-}
-void CBC_BoundingBox::init(CBC_CommonBitMatrix* image, CBC_ResultPoint* topLeft, CBC_ResultPoint* bottomLeft, CBC_ResultPoint* topRight, CBC_ResultPoint* bottomRight)
-{
-    m_topLeft = NULL;
-    m_bottomLeft = NULL;
-    m_topRight = NULL;
-    m_bottomRight = NULL;
-    m_image = image;
-    if (topLeft) {
-        m_topLeft = FX_NEW CBC_ResultPoint(topLeft->GetX(), topLeft->GetY());
+  }
+  if (missingEndRows > 0) {
+    CBC_ResultPoint* bottom = isLeft ? m_bottomLeft : m_bottomRight;
+    int32_t newMaxY = (int32_t)bottom->GetY() + missingEndRows;
+    if (newMaxY >= m_image->GetHeight()) {
+      newMaxY = m_image->GetHeight() - 1;
     }
-    if (bottomLeft) {
-        m_bottomLeft = FX_NEW CBC_ResultPoint(bottomLeft->GetX(), bottomLeft->GetY());
+    newBottom =
+        FX_NEW CBC_ResultPoint((FX_FLOAT)bottom->GetX(), (FX_FLOAT)newMaxY);
+    if (isLeft) {
+      newBottomLeft = newBottom;
+    } else {
+      newBottomRight = newBottom;
     }
-    if (topRight) {
-        m_topRight = FX_NEW CBC_ResultPoint(topRight->GetX(), topRight->GetY());
-    }
-    if (bottomRight) {
-        m_bottomRight = FX_NEW CBC_ResultPoint(bottomRight->GetX(), bottomRight->GetY());
-    }
-    calculateMinMaxValues();
+  }
+  calculateMinMaxValues();
+  CBC_BoundingBox* boundingBox = FX_NEW CBC_BoundingBox(
+      m_image, newTopLeft, newBottomLeft, newTopRight, newBottomRight, e);
+  delete newTop;
+  delete newBottom;
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  return boundingBox;
 }
-void CBC_BoundingBox::calculateMinMaxValues()
-{
-    if (m_topLeft == NULL) {
-        m_topLeft = FX_NEW CBC_ResultPoint(0, m_topRight->GetY());
-        m_bottomLeft = FX_NEW CBC_ResultPoint(0, m_bottomRight->GetY());
-    } else if (m_topRight == NULL) {
-        m_topRight = FX_NEW CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1, (FX_FLOAT)m_topLeft->GetY());
-        m_bottomRight = FX_NEW CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1, (FX_FLOAT)m_bottomLeft->GetY());
-    }
-    m_minX = (int32_t) (m_topLeft->GetX() < m_bottomLeft->GetX() ? m_topLeft->GetX() : m_bottomLeft->GetX());
-    m_maxX = (int32_t) (m_topRight->GetX() > m_bottomRight->GetX() ? m_topRight->GetX() : m_bottomRight->GetX());
-    m_minY = (int32_t) (m_topLeft->GetY() <  m_topRight->GetY() ? m_topLeft->GetY() : m_topRight->GetY());
-    m_maxY = (int32_t) (m_bottomLeft->GetY() >  m_bottomRight->GetY() ? m_bottomLeft->GetY() : m_bottomRight->GetY());
+void CBC_BoundingBox::setTopRight(CBC_ResultPoint topRight) {
+  if (m_topRight) {
+    delete m_topRight;
+  }
+  m_topRight = FX_NEW CBC_ResultPoint(topRight.GetX(), topRight.GetY());
+  calculateMinMaxValues();
+}
+void CBC_BoundingBox::setBottomRight(CBC_ResultPoint bottomRight) {
+  if (m_bottomRight) {
+    delete m_bottomRight;
+  }
+  m_bottomRight =
+      FX_NEW CBC_ResultPoint(bottomRight.GetX(), bottomRight.GetY());
+  calculateMinMaxValues();
+}
+int32_t CBC_BoundingBox::getMinX() {
+  return m_minX;
+}
+int32_t CBC_BoundingBox::getMaxX() {
+  return m_maxX;
+}
+int32_t CBC_BoundingBox::getMinY() {
+  return m_minY;
+}
+int32_t CBC_BoundingBox::getMaxY() {
+  return m_maxY;
+}
+CBC_ResultPoint* CBC_BoundingBox::getTopLeft() {
+  return m_topLeft;
+}
+CBC_ResultPoint* CBC_BoundingBox::getTopRight() {
+  return m_topRight;
+}
+CBC_ResultPoint* CBC_BoundingBox::getBottomLeft() {
+  return m_bottomLeft;
+}
+CBC_ResultPoint* CBC_BoundingBox::getBottomRight() {
+  return m_bottomRight;
+}
+void CBC_BoundingBox::init(CBC_CommonBitMatrix* image,
+                           CBC_ResultPoint* topLeft,
+                           CBC_ResultPoint* bottomLeft,
+                           CBC_ResultPoint* topRight,
+                           CBC_ResultPoint* bottomRight) {
+  m_topLeft = NULL;
+  m_bottomLeft = NULL;
+  m_topRight = NULL;
+  m_bottomRight = NULL;
+  m_image = image;
+  if (topLeft) {
+    m_topLeft = FX_NEW CBC_ResultPoint(topLeft->GetX(), topLeft->GetY());
+  }
+  if (bottomLeft) {
+    m_bottomLeft =
+        FX_NEW CBC_ResultPoint(bottomLeft->GetX(), bottomLeft->GetY());
+  }
+  if (topRight) {
+    m_topRight = FX_NEW CBC_ResultPoint(topRight->GetX(), topRight->GetY());
+  }
+  if (bottomRight) {
+    m_bottomRight =
+        FX_NEW CBC_ResultPoint(bottomRight->GetX(), bottomRight->GetY());
+  }
+  calculateMinMaxValues();
+}
+void CBC_BoundingBox::calculateMinMaxValues() {
+  if (m_topLeft == NULL) {
+    m_topLeft = FX_NEW CBC_ResultPoint(0, m_topRight->GetY());
+    m_bottomLeft = FX_NEW CBC_ResultPoint(0, m_bottomRight->GetY());
+  } else if (m_topRight == NULL) {
+    m_topRight = FX_NEW CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,
+                                        (FX_FLOAT)m_topLeft->GetY());
+    m_bottomRight = FX_NEW CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,
+                                           (FX_FLOAT)m_bottomLeft->GetY());
+  }
+  m_minX = (int32_t)(m_topLeft->GetX() < m_bottomLeft->GetX()
+                         ? m_topLeft->GetX()
+                         : m_bottomLeft->GetX());
+  m_maxX = (int32_t)(m_topRight->GetX() > m_bottomRight->GetX()
+                         ? m_topRight->GetX()
+                         : m_bottomRight->GetX());
+  m_minY =
+      (int32_t)(m_topLeft->GetY() < m_topRight->GetY() ? m_topLeft->GetY()
+                                                       : m_topRight->GetY());
+  m_maxY = (int32_t)(m_bottomLeft->GetY() > m_bottomRight->GetY()
+                         ? m_bottomLeft->GetY()
+                         : m_bottomRight->GetY());
 }

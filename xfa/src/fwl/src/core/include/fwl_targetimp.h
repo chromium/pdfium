@@ -7,26 +7,25 @@
 #ifndef _FWL_TARGET_IMP_H
 #define _FWL_TARGET_IMP_H
 class IFWL_Target;
-class CFWL_Target
-{
-public:
-    virtual FX_DWORD		Release();
-    virtual IFWL_Target*	Retain();
-    virtual	FX_DWORD		GetRefCount() const;
-    virtual FWL_ERR			GetClassName(CFX_WideString &wsClass) const;
-    virtual FX_DWORD		GetClassID() const;
-    virtual FX_BOOL			IsInstance(const CFX_WideStringC& wsClass) const;
-    virtual FWL_ERR			Initialize();
-    virtual FWL_ERR			Finalize();
-protected:
-    CFWL_Target();
-    virtual ~CFWL_Target();
-    FX_DWORD	m_dwRefCount;
+class CFWL_Target {
+ public:
+  virtual FX_DWORD Release();
+  virtual IFWL_Target* Retain();
+  virtual FX_DWORD GetRefCount() const;
+  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FX_DWORD GetClassID() const;
+  virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
+  virtual FWL_ERR Initialize();
+  virtual FWL_ERR Finalize();
+
+ protected:
+  CFWL_Target();
+  virtual ~CFWL_Target();
+  FX_DWORD m_dwRefCount;
 };
-class IFWL_TargetData : public IFWL_Target
-{
-public:
-    void* GetData();
-    void	  SetData(void* pData);
+class IFWL_TargetData : public IFWL_Target {
+ public:
+  void* GetData();
+  void SetData(void* pData);
 };
 #endif

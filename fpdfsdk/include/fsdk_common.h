@@ -7,39 +7,39 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_COMMON_H_
 #define FPDFSDK_INCLUDE_FSDK_COMMON_H_
 
-#define BFFT_SIGNATURE				"Signature"
+#define BFFT_SIGNATURE "Signature"
 
-//for all fields
-#define FIELDFLAG_READONLY					1
-#define FIELDFLAG_REQUIRED					2
-#define FIELDFLAG_NOEXPORT					4
-//for text fields
-#define FIELDFLAG_MULTILINE					(1<<12)
-#define FIELDFLAG_PASSWORD					(1<<13)
-#define FIELDFLAG_FILESELECT				(1<<20)
-#define FIELDFLAG_DONOTSPELLCHECK			(1<<22)
-#define FIELDFLAG_DONOTSCROLL				(1<<23)
-#define FIELDFLAG_COMB						(1<<24)
-#define FIELDFLAG_RICHTEXT					(1<<25)
-//for button fileds
-#define FIELDFLAG_NOTOGGLETOOFF				(1<<14)
-#define FIELDFLAG_RADIO						(1<<15)
-#define FIELDFLAG_PUSHBUTTON				(1<<16)
-#define FIELDFLAG_RADIOSINUNISON			(1<<25)
-//for choice fields
-#define FIELDFLAG_COMBO						(1<<17)
-#define FIELDFLAG_EDIT						(1<<18)
-#define FIELDFLAG_SORT						(1<<19)
-#define FIELDFLAG_MULTISELECT				(1<<21)
+// for all fields
+#define FIELDFLAG_READONLY 1
+#define FIELDFLAG_REQUIRED 2
+#define FIELDFLAG_NOEXPORT 4
+// for text fields
+#define FIELDFLAG_MULTILINE (1 << 12)
+#define FIELDFLAG_PASSWORD (1 << 13)
+#define FIELDFLAG_FILESELECT (1 << 20)
+#define FIELDFLAG_DONOTSPELLCHECK (1 << 22)
+#define FIELDFLAG_DONOTSCROLL (1 << 23)
+#define FIELDFLAG_COMB (1 << 24)
+#define FIELDFLAG_RICHTEXT (1 << 25)
+// for button fileds
+#define FIELDFLAG_NOTOGGLETOOFF (1 << 14)
+#define FIELDFLAG_RADIO (1 << 15)
+#define FIELDFLAG_PUSHBUTTON (1 << 16)
+#define FIELDFLAG_RADIOSINUNISON (1 << 25)
+// for choice fields
+#define FIELDFLAG_COMBO (1 << 17)
+#define FIELDFLAG_EDIT (1 << 18)
+#define FIELDFLAG_SORT (1 << 19)
+#define FIELDFLAG_MULTISELECT (1 << 21)
 #ifndef FIELDFLAG_DONOTSPELLCHECK
-#define FIELDFLAG_DONOTSPELLCHECK		(1<<22)
+#define FIELDFLAG_DONOTSPELLCHECK (1 << 22)
 #endif
-#define FIELDFLAG_COMMITONSELCHANGE			(1<<26)
+#define FIELDFLAG_COMMITONSELCHANGE (1 << 26)
 
-#define BBS_SOLID					0
-#define BBS_DASH					1
-#define BBS_BEVELED					2
-#define BBS_INSET					3
-#define BBS_UNDERLINE				4
+#define BBS_SOLID 0
+#define BBS_DASH 1
+#define BBS_BEVELED 2
+#define BBS_INSET 3
+#define BBS_UNDERLINE 4
 
 #endif  // FPDFSDK_INCLUDE_FSDK_COMMON_H_

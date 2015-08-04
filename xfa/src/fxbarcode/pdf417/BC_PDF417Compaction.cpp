@@ -22,9 +22,5 @@
 
 #include "../barcode.h"
 #include "BC_PDF417Compaction.h"
-CBC_Compaction::CBC_Compaction()
-{
-}
-CBC_Compaction::~CBC_Compaction()
-{
-}
+CBC_Compaction::CBC_Compaction() {}
+CBC_Compaction::~CBC_Compaction() {}

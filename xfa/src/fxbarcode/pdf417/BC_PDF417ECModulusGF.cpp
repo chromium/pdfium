@@ -25,102 +25,95 @@
 #include "BC_PDF417ECModulusPoly.h"
 #include "BC_PDF417ECModulusGF.h"
 CBC_PDF417ECModulusGF* CBC_PDF417ECModulusGF::PDF417_GF = NULL;
-void CBC_PDF417ECModulusGF::Initialize(int32_t &e)
-{
-    PDF417_GF = FX_NEW CBC_PDF417ECModulusGF(CBC_PDF417Common::NUMBER_OF_CODEWORDS, 3, e);
+void CBC_PDF417ECModulusGF::Initialize(int32_t& e) {
+  PDF417_GF =
+      FX_NEW CBC_PDF417ECModulusGF(CBC_PDF417Common::NUMBER_OF_CODEWORDS, 3, e);
 }
-void CBC_PDF417ECModulusGF::Finalize()
-{
-    delete PDF417_GF;
+void CBC_PDF417ECModulusGF::Finalize() {
+  delete PDF417_GF;
 }
-CBC_PDF417ECModulusGF::CBC_PDF417ECModulusGF(int32_t modulus, int32_t generator, int32_t &e)
-{
-    m_modulus = modulus;
-    m_expTable.SetSize(modulus);
-    m_logTable.SetSize(modulus);
-    int32_t x = 1;
-    for (int32_t i = 0; i < modulus; i++) {
-        m_expTable[i] = x;
-        x = (x * generator) % modulus;
-    }
-    for (int32_t j = 0; j < modulus - 1; j++) {
-        m_logTable[m_expTable[j]] = j;
-    }
-    CFX_Int32Array zero;
-    zero.Add(0);
-    m_zero = FX_NEW CBC_PDF417ECModulusPoly(this, zero, e);
-    CFX_Int32Array one;
-    one.Add(1);
-    m_one = FX_NEW CBC_PDF417ECModulusPoly(this, one, e);
+CBC_PDF417ECModulusGF::CBC_PDF417ECModulusGF(int32_t modulus,
+                                             int32_t generator,
+                                             int32_t& e) {
+  m_modulus = modulus;
+  m_expTable.SetSize(modulus);
+  m_logTable.SetSize(modulus);
+  int32_t x = 1;
+  for (int32_t i = 0; i < modulus; i++) {
+    m_expTable[i] = x;
+    x = (x * generator) % modulus;
+  }
+  for (int32_t j = 0; j < modulus - 1; j++) {
+    m_logTable[m_expTable[j]] = j;
+  }
+  CFX_Int32Array zero;
+  zero.Add(0);
+  m_zero = FX_NEW CBC_PDF417ECModulusPoly(this, zero, e);
+  CFX_Int32Array one;
+  one.Add(1);
+  m_one = FX_NEW CBC_PDF417ECModulusPoly(this, one, e);
 }
-CBC_PDF417ECModulusGF::~CBC_PDF417ECModulusGF()
-{
-    delete m_zero;
-    delete m_one;
+CBC_PDF417ECModulusGF::~CBC_PDF417ECModulusGF() {
+  delete m_zero;
+  delete m_one;
 }
-CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::getZero()
-{
-    return m_zero;
+CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::getZero() {
+  return m_zero;
 }
-CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::getOne()
-{
-    return m_one;
+CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::getOne() {
+  return m_one;
 }
-CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::buildMonomial(int32_t degree, int32_t coefficient, int32_t &e)
-{
-    if (degree < 0) {
-        e = BCExceptionIllegalArgument;
-        return NULL;
-    }
-    CBC_PDF417ECModulusPoly* modulusPoly = NULL;
-    if (coefficient == 0) {
-        modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(m_zero->getField(), m_zero->getCoefficients(), e);
-        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-        return modulusPoly;
-    }
-    CFX_Int32Array coefficients;
-    coefficients.SetSize(degree + 1);
-    coefficients[0] = coefficient;
-    modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(this, coefficients, e);
+CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::buildMonomial(
+    int32_t degree,
+    int32_t coefficient,
+    int32_t& e) {
+  if (degree < 0) {
+    e = BCExceptionIllegalArgument;
+    return NULL;
+  }
+  CBC_PDF417ECModulusPoly* modulusPoly = NULL;
+  if (coefficient == 0) {
+    modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(m_zero->getField(),
+                                                 m_zero->getCoefficients(), e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
+  }
+  CFX_Int32Array coefficients;
+  coefficients.SetSize(degree + 1);
+  coefficients[0] = coefficient;
+  modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(this, coefficients, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  return modulusPoly;
 }
-int32_t CBC_PDF417ECModulusGF::add(int32_t a, int32_t b)
-{
-    return (a + b) % m_modulus;
+int32_t CBC_PDF417ECModulusGF::add(int32_t a, int32_t b) {
+  return (a + b) % m_modulus;
 }
-int32_t CBC_PDF417ECModulusGF::subtract(int32_t a, int32_t b)
-{
-    return (m_modulus + a - b) % m_modulus;
+int32_t CBC_PDF417ECModulusGF::subtract(int32_t a, int32_t b) {
+  return (m_modulus + a - b) % m_modulus;
 }
-int32_t CBC_PDF417ECModulusGF::exp(int32_t a)
-{
-    return m_expTable[a];
+int32_t CBC_PDF417ECModulusGF::exp(int32_t a) {
+  return m_expTable[a];
 }
-int32_t CBC_PDF417ECModulusGF::log(int32_t a, int32_t &e)
-{
-    if (a == 0) {
-        e = BCExceptionIllegalArgument;
-        return -1;
-    }
-    return m_logTable[a];
+int32_t CBC_PDF417ECModulusGF::log(int32_t a, int32_t& e) {
+  if (a == 0) {
+    e = BCExceptionIllegalArgument;
+    return -1;
+  }
+  return m_logTable[a];
 }
-int32_t CBC_PDF417ECModulusGF::inverse(int32_t a, int32_t &e)
-{
-    if (a == 0) {
-        e = BCExceptionIllegalArgument;
-        return -1;
-    }
-    return m_expTable[m_modulus - m_logTable[a] - 1];
+int32_t CBC_PDF417ECModulusGF::inverse(int32_t a, int32_t& e) {
+  if (a == 0) {
+    e = BCExceptionIllegalArgument;
+    return -1;
+  }
+  return m_expTable[m_modulus - m_logTable[a] - 1];
 }
-int32_t CBC_PDF417ECModulusGF::multiply(int32_t a, int32_t b)
-{
-    if (a == 0 || b == 0) {
-        return 0;
-    }
-    return m_expTable[(m_logTable[a] + m_logTable[b]) % (m_modulus - 1)];
+int32_t CBC_PDF417ECModulusGF::multiply(int32_t a, int32_t b) {
+  if (a == 0 || b == 0) {
+    return 0;
+  }
+  return m_expTable[(m_logTable[a] + m_logTable[b]) % (m_modulus - 1)];
 }
-int32_t CBC_PDF417ECModulusGF::getSize()
-{
-    return m_modulus;
+int32_t CBC_PDF417ECModulusGF::getSize() {
+  return m_modulus;
 }

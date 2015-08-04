@@ -10,17 +10,19 @@ class CBC_QRCoderVersion;
 class CBC_QRCoderECBlocks;
 class CBC_QRCoderECB;
 class CBC_QRCoderErrorCorrectionLevel;
-class CBC_QRDataBlock
-{
-private:
-    int32_t m_numDataCodewords;
-    CFX_ByteArray *m_codewords;
-    CBC_QRDataBlock(int32_t numDataCodewords, CFX_ByteArray *codewords);
-public:
-    virtual ~CBC_QRDataBlock();
-    int32_t GetNumDataCodewords();
-    CFX_ByteArray* GetCodewords();
-    static CFX_PtrArray *GetDataBlocks(CFX_ByteArray* rawCodewords,
-                                       CBC_QRCoderVersion *version, CBC_QRCoderErrorCorrectionLevel* ecLevel, int32_t &e);
+class CBC_QRDataBlock {
+ private:
+  int32_t m_numDataCodewords;
+  CFX_ByteArray* m_codewords;
+  CBC_QRDataBlock(int32_t numDataCodewords, CFX_ByteArray* codewords);
+
+ public:
+  virtual ~CBC_QRDataBlock();
+  int32_t GetNumDataCodewords();
+  CFX_ByteArray* GetCodewords();
+  static CFX_PtrArray* GetDataBlocks(CFX_ByteArray* rawCodewords,
+                                     CBC_QRCoderVersion* version,
+                                     CBC_QRCoderErrorCorrectionLevel* ecLevel,
+                                     int32_t& e);
 };
 #endif

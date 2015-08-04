@@ -14,17 +14,17 @@ class IFWL_AdapterCursorMgr;
 class IFWL_AdapterMonitorMgr;
 class IFWL_AdapterClipboardMgr;
 
-class IFWL_AdapterNative
-{
-public:
-    virtual ~IFWL_AdapterNative() {}
-    virtual IFWL_AdapterWidgetMgr*	GetWidgetMgr(IFWL_WidgetMgrDelegate *pDelegate) = 0;
-    virtual IFWL_AdapterThreadMgr*	GetThreadMgr() = 0;
-    virtual IFWL_AdapterTimerMgr*	GetTimerMgr() = 0;
-    virtual IFWL_AdapterCursorMgr*	GetCursorMgr() = 0;
-    virtual IFWL_AdapterMonitorMgr* GetMonitorMgr() = 0;
-    virtual	IFWL_AdapterClipboardMgr* GetClipboardMgr() = 0;
+class IFWL_AdapterNative {
+ public:
+  virtual ~IFWL_AdapterNative() {}
+  virtual IFWL_AdapterWidgetMgr* GetWidgetMgr(
+      IFWL_WidgetMgrDelegate* pDelegate) = 0;
+  virtual IFWL_AdapterThreadMgr* GetThreadMgr() = 0;
+  virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
+  virtual IFWL_AdapterCursorMgr* GetCursorMgr() = 0;
+  virtual IFWL_AdapterMonitorMgr* GetMonitorMgr() = 0;
+  virtual IFWL_AdapterClipboardMgr* GetClipboardMgr() = 0;
 };
 IFWL_AdapterNative* FWL_CreateFuelAdapterNative();
-void FWL_ReleaseFuelAdapterNative(IFWL_AdapterNative *pAdapterNative);
+void FWL_ReleaseFuelAdapterNative(IFWL_AdapterNative* pAdapterNative);
 #endif

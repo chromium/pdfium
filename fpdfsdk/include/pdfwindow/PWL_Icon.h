@@ -10,51 +10,48 @@
 #include "../../../core/include/fxcrt/fx_string.h"
 #include "PWL_Wnd.h"
 
-class CPWL_Image : public CPWL_Wnd
-{
-public:
-	CPWL_Image();
-	virtual ~CPWL_Image();
+class CPWL_Image : public CPWL_Wnd {
+ public:
+  CPWL_Image();
+  virtual ~CPWL_Image();
 
-	virtual CFX_ByteString			GetImageAppStream();
+  virtual CFX_ByteString GetImageAppStream();
 
-	virtual void					GetScale(FX_FLOAT & fHScale,FX_FLOAT & fVScale);
-	virtual void					GetImageOffset(FX_FLOAT & x,FX_FLOAT & y);
-	virtual CPDF_Stream *			GetPDFStream();
+  virtual void GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale);
+  virtual void GetImageOffset(FX_FLOAT& x, FX_FLOAT& y);
+  virtual CPDF_Stream* GetPDFStream();
 
-public:
-	void							SetPDFStream(CPDF_Stream* pStream);
-	void							GetImageSize(FX_FLOAT & fWidth,FX_FLOAT & fHeight);
-	CPDF_Matrix						GetImageMatrix();
-	CFX_ByteString					GetImageAlias();
-	void							SetImageAlias(const FX_CHAR* sImageAlias);
+ public:
+  void SetPDFStream(CPDF_Stream* pStream);
+  void GetImageSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight);
+  CPDF_Matrix GetImageMatrix();
+  CFX_ByteString GetImageAlias();
+  void SetImageAlias(const FX_CHAR* sImageAlias);
 
-protected:
-	CPDF_Stream*					m_pPDFStream;
-	CFX_ByteString					m_sImageAlias;
+ protected:
+  CPDF_Stream* m_pPDFStream;
+  CFX_ByteString m_sImageAlias;
 };
 
-class CPWL_Icon : public CPWL_Image
-{
-public:
-	CPWL_Icon();
-	virtual ~CPWL_Icon();
+class CPWL_Icon : public CPWL_Image {
+ public:
+  CPWL_Icon();
+  virtual ~CPWL_Icon();
 
-	virtual CPDF_IconFit *			GetIconFit(){return m_pIconFit;};
+  virtual CPDF_IconFit* GetIconFit() { return m_pIconFit; };
 
-	virtual void					GetScale(FX_FLOAT & fHScale,FX_FLOAT & fVScale);
-	virtual void					GetImageOffset(FX_FLOAT & x,FX_FLOAT & y);
+  virtual void GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale);
+  virtual void GetImageOffset(FX_FLOAT& x, FX_FLOAT& y);
 
-	int32_t						GetScaleMethod();
-	FX_BOOL							IsProportionalScale();
-	void							GetIconPosition(FX_FLOAT & fLeft, FX_FLOAT & fBottom);
-	FX_BOOL							GetFittingBounds();
+  int32_t GetScaleMethod();
+  FX_BOOL IsProportionalScale();
+  void GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom);
+  FX_BOOL GetFittingBounds();
 
-	void							SetIconFit(CPDF_IconFit * pIconFit){m_pIconFit = pIconFit;};
+  void SetIconFit(CPDF_IconFit* pIconFit) { m_pIconFit = pIconFit; };
 
-private:
-	CPDF_IconFit *					m_pIconFit;
+ private:
+  CPDF_IconFit* m_pIconFit;
 };
-
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICON_H_

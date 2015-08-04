@@ -22,9 +22,5 @@
 
 #include "../barcode.h"
 #include "BC_SymbolShapeHint.h"
-CBC_SymbolShapeHint::CBC_SymbolShapeHint()
-{
-}
-CBC_SymbolShapeHint::~CBC_SymbolShapeHint()
-{
-}
+CBC_SymbolShapeHint::CBC_SymbolShapeHint() {}
+CBC_SymbolShapeHint::~CBC_SymbolShapeHint() {}

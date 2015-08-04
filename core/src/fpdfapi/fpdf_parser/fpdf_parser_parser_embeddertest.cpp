@@ -5,8 +5,7 @@
 #include "../../../testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class FPDFParserEmbeddertest : public EmbedderTest {
-};
+class FPDFParserEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFParserEmbeddertest, LoadError_454695) {
   // Test trailer dictionary with $$ze instead of Size.

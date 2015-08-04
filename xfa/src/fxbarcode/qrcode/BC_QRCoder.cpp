@@ -25,144 +25,111 @@
 #include "BC_QRCoderErrorCorrectionLevel.h"
 #include "BC_QRCoderMode.h"
 #include "BC_QRCoder.h"
-CBC_QRCoder::CBC_QRCoder()
-{
-    m_mode = NULL;
-    m_ecLevel = NULL;
-    m_version = -1;
-    m_matrixWidth = -1;
-    m_maskPattern = -1;
-    m_numTotalBytes = -1;
-    m_numDataBytes = -1;
-    m_numECBytes = -1;
-    m_numRSBlocks = -1;
+CBC_QRCoder::CBC_QRCoder() {
+  m_mode = NULL;
+  m_ecLevel = NULL;
+  m_version = -1;
+  m_matrixWidth = -1;
+  m_maskPattern = -1;
+  m_numTotalBytes = -1;
+  m_numDataBytes = -1;
+  m_numECBytes = -1;
+  m_numRSBlocks = -1;
+  m_matrix = NULL;
+}
+CBC_QRCoder::~CBC_QRCoder() {
+  if (m_matrix != NULL) {
+    delete m_matrix;
     m_matrix = NULL;
+  }
+  m_mode = NULL;
+  m_ecLevel = NULL;
+  m_version = -1;
+  m_matrixWidth = -1;
+  m_maskPattern = -1;
+  m_numTotalBytes = -1;
+  m_numDataBytes = -1;
+  m_numECBytes = -1;
+  m_numRSBlocks = -1;
 }
-CBC_QRCoder::~CBC_QRCoder()
-{
-    if(m_matrix != NULL) {
-        delete m_matrix;
-        m_matrix = NULL;
-    }
-    m_mode = NULL;
-    m_ecLevel = NULL;
-    m_version = -1;
-    m_matrixWidth = -1;
-    m_maskPattern = -1;
-    m_numTotalBytes = -1;
-    m_numDataBytes = -1;
-    m_numECBytes = -1;
-    m_numRSBlocks = -1;
+CBC_QRCoderMode* CBC_QRCoder::GetMode() {
+  return m_mode;
 }
-CBC_QRCoderMode* CBC_QRCoder::GetMode()
-{
-    return m_mode;
+CBC_QRCoderErrorCorrectionLevel* CBC_QRCoder::GetECLevel() {
+  return m_ecLevel;
 }
-CBC_QRCoderErrorCorrectionLevel* CBC_QRCoder::GetECLevel()
-{
-    return m_ecLevel;
+int32_t CBC_QRCoder::GetVersion() {
+  return m_version;
 }
-int32_t CBC_QRCoder::GetVersion()
-{
-    return m_version;
+int32_t CBC_QRCoder::GetMatrixWidth() {
+  return m_matrixWidth;
 }
-int32_t CBC_QRCoder::GetMatrixWidth()
-{
-    return m_matrixWidth;
+int32_t CBC_QRCoder::GetMaskPattern() {
+  return m_maskPattern;
 }
-int32_t CBC_QRCoder::GetMaskPattern()
-{
-    return m_maskPattern;
+int32_t CBC_QRCoder::GetNumTotalBytes() {
+  return m_numTotalBytes;
 }
-int32_t CBC_QRCoder::GetNumTotalBytes()
-{
-    return m_numTotalBytes;
+int32_t CBC_QRCoder::GetNumDataBytes() {
+  return m_numDataBytes;
 }
-int32_t CBC_QRCoder::GetNumDataBytes()
-{
-    return m_numDataBytes;
+int32_t CBC_QRCoder::GetNumECBytes() {
+  return m_numECBytes;
 }
-int32_t CBC_QRCoder::GetNumECBytes()
-{
-    return m_numECBytes;
+int32_t CBC_QRCoder::GetNumRSBlocks() {
+  return m_numRSBlocks;
 }
-int32_t CBC_QRCoder::GetNumRSBlocks()
-{
-    return m_numRSBlocks;
+CBC_CommonByteMatrix* CBC_QRCoder::GetMatrix() {
+  return m_matrix;
 }
-CBC_CommonByteMatrix* CBC_QRCoder::GetMatrix()
-{
-    return m_matrix;
+int32_t CBC_QRCoder::At(int32_t x, int32_t y, int32_t& e) {
+  int32_t value = m_matrix->Get(x, y);
+  if (!(value == 0 || value == 1)) {
+    e = BCExceptionValueMustBeEither0or1;
+    BC_EXCEPTION_CHECK_ReturnValue(e, 0);
+  }
+  return value;
 }
-int32_t CBC_QRCoder::At(int32_t x, int32_t y, int32_t &e)
-{
-    int32_t value = m_matrix->Get(x, y);
-    if(!(value == 0 || value == 1)) {
-        e = BCExceptionValueMustBeEither0or1;
-        BC_EXCEPTION_CHECK_ReturnValue(e, 0);
-    }
-    return value;
+FX_BOOL CBC_QRCoder::IsValid() {
+  return m_mode != NULL && m_ecLevel != NULL && m_version != -1 &&
+         m_matrixWidth != -1 && m_maskPattern != -1 && m_numTotalBytes != -1 &&
+         m_numDataBytes != -1 && m_numECBytes != -1 && m_numRSBlocks != -1 &&
+         IsValidMaskPattern(m_maskPattern) &&
+         m_numTotalBytes == m_numDataBytes + m_numECBytes && m_matrix != NULL &&
+         m_matrixWidth == m_matrix->GetWidth() &&
+         m_matrix->GetWidth() == m_matrix->GetHeight();
 }
-FX_BOOL CBC_QRCoder::IsValid()
-{
-    return
-        m_mode != NULL &&
-        m_ecLevel != NULL &&
-        m_version != -1 &&
-        m_matrixWidth != -1 &&
-        m_maskPattern != -1 &&
-        m_numTotalBytes != -1 &&
-        m_numDataBytes != -1 &&
-        m_numECBytes != -1 &&
-        m_numRSBlocks != -1 &&
-        IsValidMaskPattern(m_maskPattern) &&
-        m_numTotalBytes == m_numDataBytes + m_numECBytes &&
-        m_matrix != NULL &&
-        m_matrixWidth == m_matrix->GetWidth() &&
-        m_matrix->GetWidth() == m_matrix->GetHeight();
+void CBC_QRCoder::SetMode(CBC_QRCoderMode* value) {
+  m_mode = value;
 }
-void CBC_QRCoder::SetMode(CBC_QRCoderMode* value)
-{
-    m_mode = value;
+void CBC_QRCoder::SetECLevel(CBC_QRCoderErrorCorrectionLevel* ecLevel) {
+  m_ecLevel = ecLevel;
 }
-void CBC_QRCoder::SetECLevel(CBC_QRCoderErrorCorrectionLevel* ecLevel)
-{
-    m_ecLevel = ecLevel;
+void CBC_QRCoder::SetVersion(int32_t version) {
+  m_version = version;
 }
-void CBC_QRCoder::SetVersion(int32_t version)
-{
-    m_version = version;
+void CBC_QRCoder::SetMatrixWidth(int32_t width) {
+  m_matrixWidth = width;
 }
-void CBC_QRCoder::SetMatrixWidth(int32_t width)
-{
-    m_matrixWidth = width;
+void CBC_QRCoder::SetMaskPattern(int32_t pattern) {
+  m_maskPattern = pattern;
 }
-void CBC_QRCoder::SetMaskPattern(int32_t pattern)
-{
-    m_maskPattern = pattern;
+void CBC_QRCoder::SetNumDataBytes(int32_t bytes) {
+  m_numDataBytes = bytes;
 }
-void CBC_QRCoder::SetNumDataBytes(int32_t bytes)
-{
-    m_numDataBytes = bytes;
+void CBC_QRCoder::SetNumTotalBytes(int32_t value) {
+  m_numTotalBytes = value;
 }
-void CBC_QRCoder::SetNumTotalBytes(int32_t value)
-{
-    m_numTotalBytes = value;
+void CBC_QRCoder::SetNumRSBlocks(int32_t block) {
+  m_numRSBlocks = block;
 }
-void CBC_QRCoder::SetNumRSBlocks(int32_t block)
-{
-    m_numRSBlocks = block;
+void CBC_QRCoder::SetNumECBytes(int32_t value) {
+  m_numECBytes = value;
 }
-void CBC_QRCoder::SetNumECBytes(int32_t value)
-{
-    m_numECBytes = value;
+FX_BOOL CBC_QRCoder::IsValidMaskPattern(int32_t maskPattern) {
+  return maskPattern >= 0 && maskPattern < NUM_MASK_PATTERNS;
 }
-FX_BOOL CBC_QRCoder::IsValidMaskPattern(int32_t maskPattern)
-{
-    return maskPattern >= 0 && maskPattern < NUM_MASK_PATTERNS;
-}
-void CBC_QRCoder::SetMatrix(CBC_CommonByteMatrix* value)
-{
-    m_matrix = value;
+void CBC_QRCoder::SetMatrix(CBC_CommonByteMatrix* value) {
+  m_matrix = value;
 }
 const int32_t CBC_QRCoder::NUM_MASK_PATTERNS = 8;

@@ -12,9 +12,5 @@
 #include "xfa_ffapp.h"
 #include "xfa_ffdoc.h"
 CXFA_FFDraw::CXFA_FFDraw(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFWidget(pPageView, pDataAcc)
-{
-}
-CXFA_FFDraw::~CXFA_FFDraw()
-{
-}
+    : CXFA_FFWidget(pPageView, pDataAcc) {}
+CXFA_FFDraw::~CXFA_FFDraw() {}

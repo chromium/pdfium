@@ -23,24 +23,19 @@
 #include "../barcode.h"
 #include "BC_CommonECI.h"
 #include "BC_CommonCharacterSetECI.h"
-CBC_CommonECI::CBC_CommonECI(int32_t value)
-{
-    m_value = value;
+CBC_CommonECI::CBC_CommonECI(int32_t value) {
+  m_value = value;
 }
-CBC_CommonECI::~CBC_CommonECI()
-{
+CBC_CommonECI::~CBC_CommonECI() {}
+int32_t CBC_CommonECI::GetValue() {
+  return m_value;
 }
-int32_t CBC_CommonECI::GetValue()
-{
-    return m_value;
-}
-CBC_CommonECI* CBC_CommonECI::GetEICByValue(int32_t value, int32_t &e)
-{
-    if(value < 0 || value > 999999) {
-        e = BCExceptionBadECI;
-        return NULL;
-    }
-    if(value < 900) {
-    }
+CBC_CommonECI* CBC_CommonECI::GetEICByValue(int32_t value, int32_t& e) {
+  if (value < 0 || value > 999999) {
+    e = BCExceptionBadECI;
     return NULL;
+  }
+  if (value < 900) {
+  }
+  return NULL;
 }

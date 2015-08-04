@@ -25,14 +25,10 @@
 #include "BC_Binarizer.h"
 #include "common/BC_CommonBitMatrix.h"
 #include "common/BC_CommonBitArray.h"
-CBC_Binarizer::CBC_Binarizer(CBC_LuminanceSource *source)
-{
-    m_source = source;
+CBC_Binarizer::CBC_Binarizer(CBC_LuminanceSource* source) {
+  m_source = source;
 }
-CBC_Binarizer::~CBC_Binarizer()
-{
-}
-CBC_LuminanceSource *CBC_Binarizer::GetLuminanceSource()
-{
-    return m_source;
+CBC_Binarizer::~CBC_Binarizer() {}
+CBC_LuminanceSource* CBC_Binarizer::GetLuminanceSource() {
+  return m_source;
 }

@@ -18,18 +18,24 @@ class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderMode;
 class CBC_QRDataMask;
 class CBC_QRCodeReader;
-class CBC_QRCodeReader  : public CBC_Reader
-{
-private:
-    CBC_QRCoderDecoder *m_decoder;
-public:
-    CBC_QRCodeReader();
-    virtual ~CBC_QRCodeReader();
-    CFX_ByteString Decode(CFX_DIBitmap *pBitmap, int32_t hints, int32_t byteModeDecode, int32_t &e);
-    CFX_ByteString Decode(const CFX_WideString &filename, int32_t hints, int32_t byteModeDecode, int32_t &e);
-    static void ReleaseAll();
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e);
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t &e);
-    virtual void Init();
+class CBC_QRCodeReader : public CBC_Reader {
+ private:
+  CBC_QRCoderDecoder* m_decoder;
+
+ public:
+  CBC_QRCodeReader();
+  virtual ~CBC_QRCodeReader();
+  CFX_ByteString Decode(CFX_DIBitmap* pBitmap,
+                        int32_t hints,
+                        int32_t byteModeDecode,
+                        int32_t& e);
+  CFX_ByteString Decode(const CFX_WideString& filename,
+                        int32_t hints,
+                        int32_t byteModeDecode,
+                        int32_t& e);
+  static void ReleaseAll();
+  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t hints, int32_t& e);
+  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e);
+  virtual void Init();
 };
 #endif

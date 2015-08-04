@@ -6,24 +6,24 @@
 
 #ifndef _BC_COMMONBYTEARRAY_H_
 #define _BC_COMMONBYTEARRAY_H_
-class CBC_CommonByteArray
-{
-private:
-    int32_t m_size;
-    int32_t m_index;
-    uint8_t* m_bytes;
-public:
-    CBC_CommonByteArray();
-    CBC_CommonByteArray(int32_t size);
-    CBC_CommonByteArray(uint8_t* byteArray, int32_t size);
-    virtual ~CBC_CommonByteArray();
-    int32_t At(int32_t index);
-    void Set(int32_t index, int32_t value);
-    int32_t Size();
-    FX_BOOL IsEmpty();
-    void AppendByte(int32_t value);
-    void Reserve(int32_t capacity);
-    void Set(uint8_t* source, int32_t offset, int32_t count);
-    void Set(CFX_ByteArray* source, int32_t offset, int32_t count);
+class CBC_CommonByteArray {
+ private:
+  int32_t m_size;
+  int32_t m_index;
+  uint8_t* m_bytes;
+
+ public:
+  CBC_CommonByteArray();
+  CBC_CommonByteArray(int32_t size);
+  CBC_CommonByteArray(uint8_t* byteArray, int32_t size);
+  virtual ~CBC_CommonByteArray();
+  int32_t At(int32_t index);
+  void Set(int32_t index, int32_t value);
+  int32_t Size();
+  FX_BOOL IsEmpty();
+  void AppendByte(int32_t value);
+  void Reserve(int32_t capacity);
+  void Set(uint8_t* source, int32_t offset, int32_t count);
+  void Set(CFX_ByteArray* source, int32_t offset, int32_t count);
 };
 #endif

@@ -23,46 +23,39 @@
 #include "../barcode.h"
 #include "BC_PDF417Common.h"
 #include "BC_PDF417BarcodeValue.h"
-CBC_BarcodeValue::CBC_BarcodeValue()
-{
-}
-CBC_BarcodeValue::~CBC_BarcodeValue()
-{
-}
-void CBC_BarcodeValue::setValue(int32_t value)
-{
-    int32_t confidence = 0;
-    for (int32_t i = 0; i < m_keys.GetSize(); i++) {
-        if (m_keys.GetAt(i) == value) {
-            confidence = m_values.GetAt(i);
-            m_values.SetAt(i, confidence + 1);
-            return;
-        }
+CBC_BarcodeValue::CBC_BarcodeValue() {}
+CBC_BarcodeValue::~CBC_BarcodeValue() {}
+void CBC_BarcodeValue::setValue(int32_t value) {
+  int32_t confidence = 0;
+  for (int32_t i = 0; i < m_keys.GetSize(); i++) {
+    if (m_keys.GetAt(i) == value) {
+      confidence = m_values.GetAt(i);
+      m_values.SetAt(i, confidence + 1);
+      return;
     }
-    confidence = 1;
-    m_keys.Add(value);
-    m_values.Add(confidence);
+  }
+  confidence = 1;
+  m_keys.Add(value);
+  m_values.Add(confidence);
 }
-CFX_Int32Array* CBC_BarcodeValue::getValue()
-{
-    int32_t maxConfidence = -1;
-    CFX_Int32Array* result = FX_NEW CFX_Int32Array;
-    for (int32_t i = 0; i < m_keys.GetSize(); i++) {
-        if (m_values.GetAt(i) > maxConfidence) {
-            maxConfidence = m_values.GetAt(i);
-            result->RemoveAll();
-            result->Add(m_keys.GetAt(i));
-        } else if (m_values.GetAt(i) == maxConfidence) {
-            result->Add(m_keys.GetAt(i));
-        }
+CFX_Int32Array* CBC_BarcodeValue::getValue() {
+  int32_t maxConfidence = -1;
+  CFX_Int32Array* result = FX_NEW CFX_Int32Array;
+  for (int32_t i = 0; i < m_keys.GetSize(); i++) {
+    if (m_values.GetAt(i) > maxConfidence) {
+      maxConfidence = m_values.GetAt(i);
+      result->RemoveAll();
+      result->Add(m_keys.GetAt(i));
+    } else if (m_values.GetAt(i) == maxConfidence) {
+      result->Add(m_keys.GetAt(i));
     }
-    return result;
+  }
+  return result;
 }
-int32_t CBC_BarcodeValue::getConfidence(int32_t value)
-{
-    for (int32_t i = 0; i < m_keys.GetSize(); i++)
-        if (m_keys.GetAt(i) == value) {
-            return m_values.GetAt(i);
-        }
-    return -1;
+int32_t CBC_BarcodeValue::getConfidence(int32_t value) {
+  for (int32_t i = 0; i < m_keys.GetSize(); i++)
+    if (m_keys.GetAt(i) == value) {
+      return m_values.GetAt(i);
+    }
+  return -1;
 }

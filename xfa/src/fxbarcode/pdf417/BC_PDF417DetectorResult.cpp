@@ -24,30 +24,27 @@
 #include "../common/BC_CommonBitMatrix.h"
 #include "../BC_ResultPoint.h"
 #include "BC_PDF417DetectorResult.h"
-CBC_PDF417DetectorResult::CBC_PDF417DetectorResult(CBC_CommonBitMatrix* bits, CFX_PtrArray* points)
-{
-    m_bits = bits;
-    m_points = points;
+CBC_PDF417DetectorResult::CBC_PDF417DetectorResult(CBC_CommonBitMatrix* bits,
+                                                   CFX_PtrArray* points) {
+  m_bits = bits;
+  m_points = points;
 }
-CBC_PDF417DetectorResult::~CBC_PDF417DetectorResult()
-{
-    for (int32_t i = 0; i < m_points->GetSize(); i++) {
-        CFX_PtrArray* temp = (CFX_PtrArray*)m_points->GetAt(i);
-        for (int32_t j = 0; j < temp->GetSize(); j++) {
-            delete (CBC_ResultPoint*)temp->GetAt(j);
-        }
-        temp->RemoveAll();
-        delete temp;
+CBC_PDF417DetectorResult::~CBC_PDF417DetectorResult() {
+  for (int32_t i = 0; i < m_points->GetSize(); i++) {
+    CFX_PtrArray* temp = (CFX_PtrArray*)m_points->GetAt(i);
+    for (int32_t j = 0; j < temp->GetSize(); j++) {
+      delete (CBC_ResultPoint*)temp->GetAt(j);
     }
-    m_points->RemoveAll();
-    delete m_points;
+    temp->RemoveAll();
+    delete temp;
+  }
+  m_points->RemoveAll();
+  delete m_points;
 }
-CBC_CommonBitMatrix* CBC_PDF417DetectorResult::getBits()
-{
-    return m_bits;
+CBC_CommonBitMatrix* CBC_PDF417DetectorResult::getBits() {
+  return m_bits;
 }
 
-CFX_PtrArray* CBC_PDF417DetectorResult::getPoints()
-{
-    return m_points;
+CFX_PtrArray* CBC_PDF417DetectorResult::getPoints() {
+  return m_points;
 }

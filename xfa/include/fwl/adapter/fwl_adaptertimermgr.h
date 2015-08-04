@@ -12,11 +12,13 @@
 
 class IFWL_Timer;
 
-class IFWL_AdapterTimerMgr
-{
-public:
-    virtual ~IFWL_AdapterTimerMgr() {}
-    virtual FWL_ERR		Start(IFWL_Timer *pTimer, FX_DWORD dwElapse, FWL_HTIMER &hTimer, FX_BOOL bImmediately = TRUE) = 0;
-    virtual FWL_ERR		Stop(FWL_HTIMER hTimer) = 0;
+class IFWL_AdapterTimerMgr {
+ public:
+  virtual ~IFWL_AdapterTimerMgr() {}
+  virtual FWL_ERR Start(IFWL_Timer* pTimer,
+                        FX_DWORD dwElapse,
+                        FWL_HTIMER& hTimer,
+                        FX_BOOL bImmediately = TRUE) = 0;
+  virtual FWL_ERR Stop(FWL_HTIMER hTimer) = 0;
 };
 #endif

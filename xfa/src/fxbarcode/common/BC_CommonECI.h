@@ -6,15 +6,15 @@
 
 #ifndef _BC_COMMONECI_H_
 #define _BC_COMMONECI_H_
-class CBC_CommonECI
-{
-public:
-    CBC_CommonECI(int32_t value);
-    virtual ~CBC_CommonECI();
+class CBC_CommonECI {
+ public:
+  CBC_CommonECI(int32_t value);
+  virtual ~CBC_CommonECI();
 
-    int32_t GetValue();
-    static CBC_CommonECI* GetEICByValue(int32_t value, int32_t &e);
-private:
-    int32_t m_value;
+  int32_t GetValue();
+  static CBC_CommonECI* GetEICByValue(int32_t value, int32_t& e);
+
+ private:
+  int32_t m_value;
 };
 #endif

@@ -12,39 +12,43 @@
 class CPDF_Dictionary;
 class CPDFSDK_Annot;
 
-class CBA_FontMap : public CPWL_FontMap
-{
-public:
-	CBA_FontMap(CPDFSDK_Annot* pAnnot, IFX_SystemHandler* pSystemHandler);
-	CBA_FontMap(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict, IFX_SystemHandler* pSystemHandler);
+class CBA_FontMap : public CPWL_FontMap {
+ public:
+  CBA_FontMap(CPDFSDK_Annot* pAnnot, IFX_SystemHandler* pSystemHandler);
+  CBA_FontMap(CPDF_Document* pDocument,
+              CPDF_Dictionary* pAnnotDict,
+              IFX_SystemHandler* pSystemHandler);
 
-	virtual ~CBA_FontMap();
+  virtual ~CBA_FontMap();
 
-	virtual void				Initial(const FX_CHAR* fontname = NULL);
+  virtual void Initial(const FX_CHAR* fontname = NULL);
 
-public:
-	void						SetDefaultFont(CPDF_Font * pFont, const CFX_ByteString & sFontName);
+ public:
+  void SetDefaultFont(CPDF_Font* pFont, const CFX_ByteString& sFontName);
 
-	void						Reset();
-	void						SetAPType(const CFX_ByteString& sAPType);
+  void Reset();
+  void SetAPType(const CFX_ByteString& sAPType);
 
-protected:
-	virtual CPDF_Font*			FindFontSameCharset(CFX_ByteString& sFontAlias, int32_t nCharset);
-	virtual void				AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
-	virtual CPDF_Document*		GetDocument();
-private:
-	CPDF_Font*					FindResFontSameCharset(CPDF_Dictionary* pResDict, CFX_ByteString& sFontAlias,
-									int32_t nCharset);
-	CPDF_Font*					GetAnnotDefaultFont(CFX_ByteString &csNameTag);
-	void						AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAlias);
+ protected:
+  virtual CPDF_Font* FindFontSameCharset(CFX_ByteString& sFontAlias,
+                                         int32_t nCharset);
+  virtual void AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
+  virtual CPDF_Document* GetDocument();
 
-private:
-	CPDF_Document*				m_pDocument;
-	CPDF_Dictionary*			m_pAnnotDict;
-	CPDF_Font*					m_pDefaultFont;
-	CFX_ByteString				m_sDefaultFontName;
+ private:
+  CPDF_Font* FindResFontSameCharset(CPDF_Dictionary* pResDict,
+                                    CFX_ByteString& sFontAlias,
+                                    int32_t nCharset);
+  CPDF_Font* GetAnnotDefaultFont(CFX_ByteString& csNameTag);
+  void AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAlias);
 
-	CFX_ByteString				m_sAPType;
+ private:
+  CPDF_Document* m_pDocument;
+  CPDF_Dictionary* m_pAnnotDict;
+  CPDF_Font* m_pDefaultFont;
+  CFX_ByteString m_sDefaultFontName;
+
+  CFX_ByteString m_sAPType;
 };
 
 #endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_CBA_FONTMAP_H_

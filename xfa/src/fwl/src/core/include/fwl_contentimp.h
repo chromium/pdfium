@@ -9,23 +9,23 @@
 class CFWL_WidgetImp;
 class IFWL_Widget;
 class CFWL_ContentImp;
-class CFWL_ContentImp : public CFWL_WidgetImp
-{
-public:
-    CFWL_ContentImp();
-    CFWL_ContentImp(const CFWL_WidgetImpProperties &properties);
-    virtual ~CFWL_ContentImp();
-    virtual FWL_ERR				InsertWidget(IFWL_Widget *pChild, int32_t nIndex = -1);
-    virtual FWL_ERR				RemoveWidget(IFWL_Widget *pWidget);
-    virtual	FWL_ERR				RemoveAllWidgets();
-    virtual FWL_ERR		GetMinSize(FX_FLOAT &fWidth, FX_FLOAT &fHeight);
-    virtual FWL_ERR		SetMinSize(FX_FLOAT fWidth, FX_FLOAT fHeight);
-    virtual	FWL_ERR		GetMaxSize(FX_FLOAT &fWidth, FX_FLOAT &fHeight);
-    virtual FWL_ERR		SetMaxSize(FX_FLOAT fWidth, FX_FLOAT fHeight);
-protected:
-    FX_FLOAT m_fWidthMin;
-    FX_FLOAT m_fWidthMax;
-    FX_FLOAT m_fHeightMax;
-    FX_FLOAT m_fHeightMin;
+class CFWL_ContentImp : public CFWL_WidgetImp {
+ public:
+  CFWL_ContentImp();
+  CFWL_ContentImp(const CFWL_WidgetImpProperties& properties);
+  virtual ~CFWL_ContentImp();
+  virtual FWL_ERR InsertWidget(IFWL_Widget* pChild, int32_t nIndex = -1);
+  virtual FWL_ERR RemoveWidget(IFWL_Widget* pWidget);
+  virtual FWL_ERR RemoveAllWidgets();
+  virtual FWL_ERR GetMinSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight);
+  virtual FWL_ERR SetMinSize(FX_FLOAT fWidth, FX_FLOAT fHeight);
+  virtual FWL_ERR GetMaxSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight);
+  virtual FWL_ERR SetMaxSize(FX_FLOAT fWidth, FX_FLOAT fHeight);
+
+ protected:
+  FX_FLOAT m_fWidthMin;
+  FX_FLOAT m_fWidthMax;
+  FX_FLOAT m_fHeightMax;
+  FX_FLOAT m_fHeightMin;
 };
 #endif

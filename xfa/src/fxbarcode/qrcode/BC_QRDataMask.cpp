@@ -25,125 +25,92 @@
 #include "BC_QRDataMask.h"
 static int32_t N_DATA_MASKS = 0;
 CFX_PtrArray* CBC_QRDataMask::DATA_MASKS = NULL;
-void CBC_QRDataMask::Initialize()
-{
-    DATA_MASKS = FX_NEW CFX_PtrArray();
-    N_DATA_MASKS = BuildDataMasks();
+void CBC_QRDataMask::Initialize() {
+  DATA_MASKS = FX_NEW CFX_PtrArray();
+  N_DATA_MASKS = BuildDataMasks();
 }
-void CBC_QRDataMask::Finalize()
-{
-    Destroy();
-    delete DATA_MASKS;
+void CBC_QRDataMask::Finalize() {
+  Destroy();
+  delete DATA_MASKS;
 }
-void CBC_QRDataMask::Destroy()
-{
-    int32_t i;
-    for(i = 0; i < N_DATA_MASKS; i++) {
-        CBC_QRDataMask* p = (CBC_QRDataMask*)(*DATA_MASKS)[i];
-        if (p) {
-            delete p;
-        }
+void CBC_QRDataMask::Destroy() {
+  int32_t i;
+  for (i = 0; i < N_DATA_MASKS; i++) {
+    CBC_QRDataMask* p = (CBC_QRDataMask*)(*DATA_MASKS)[i];
+    if (p) {
+      delete p;
     }
+  }
 }
-void CBC_QRDataMask::UnmaskBitMatirx(CBC_CommonBitMatrix *bits, int32_t dimension)
-{
-    for(int32_t i = 0; i < dimension; i++) {
-        for(int32_t j = 0; j < dimension; j++) {
-            if(IsMasked(i, j)) {
-                bits->Flip(j, i);
-            }
-        }
+void CBC_QRDataMask::UnmaskBitMatirx(CBC_CommonBitMatrix* bits,
+                                     int32_t dimension) {
+  for (int32_t i = 0; i < dimension; i++) {
+    for (int32_t j = 0; j < dimension; j++) {
+      if (IsMasked(i, j)) {
+        bits->Flip(j, i);
+      }
     }
+  }
 }
-CBC_QRDataMask* CBC_QRDataMask::ForReference(int32_t reference, int32_t &e)
-{
-    if(reference < 0 || reference > 7) {
-        e = BCExceptionReferenceMustBeBetween0And7;
-        BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    }
-    return (CBC_QRDataMask*)(*DATA_MASKS)[reference];
+CBC_QRDataMask* CBC_QRDataMask::ForReference(int32_t reference, int32_t& e) {
+  if (reference < 0 || reference > 7) {
+    e = BCExceptionReferenceMustBeBetween0And7;
+    BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
+  }
+  return (CBC_QRDataMask*)(*DATA_MASKS)[reference];
 }
-class DataMask000 : public CBC_QRDataMask
-{
-public:
-    FX_BOOL IsMasked(int32_t x, int32_t y)
-    {
-        return ((x + y) % 2) == 0;
-    }
+class DataMask000 : public CBC_QRDataMask {
+ public:
+  FX_BOOL IsMasked(int32_t x, int32_t y) { return ((x + y) % 2) == 0; }
 };
-class DataMask001 : public CBC_QRDataMask
-{
-public:
-    FX_BOOL IsMasked(int32_t x, int32_t y)
-    {
-        return (x % 2) == 0;
-    }
+class DataMask001 : public CBC_QRDataMask {
+ public:
+  FX_BOOL IsMasked(int32_t x, int32_t y) { return (x % 2) == 0; }
 };
-class DataMask010 : public CBC_QRDataMask
-{
-public:
-    FX_BOOL IsMasked(int32_t x, int32_t y)
-    {
-        return y % 3 == 0;
-    }
+class DataMask010 : public CBC_QRDataMask {
+ public:
+  FX_BOOL IsMasked(int32_t x, int32_t y) { return y % 3 == 0; }
 };
-class DataMask011 : public CBC_QRDataMask
-{
-public:
-    FX_BOOL IsMasked(int32_t x, int32_t y)
-    {
-        return (x + y) % 3 == 0;
-    }
+class DataMask011 : public CBC_QRDataMask {
+ public:
+  FX_BOOL IsMasked(int32_t x, int32_t y) { return (x + y) % 3 == 0; }
 };
-class DataMask100 : public CBC_QRDataMask
-{
-public:
-    FX_BOOL IsMasked(int32_t x, int32_t y)
-    {
-        return (((x >> 1) + (y / 3)) % 2) == 0;
-    }
+class DataMask100 : public CBC_QRDataMask {
+ public:
+  FX_BOOL IsMasked(int32_t x, int32_t y) {
+    return (((x >> 1) + (y / 3)) % 2) == 0;
+  }
 };
-class DataMask101 : public CBC_QRDataMask
-{
-public:
-    FX_BOOL IsMasked(int32_t x, int32_t y)
-    {
-        size_t temp = x * y;
-        return (temp % 2) + (temp % 3) == 0;
-    }
+class DataMask101 : public CBC_QRDataMask {
+ public:
+  FX_BOOL IsMasked(int32_t x, int32_t y) {
+    size_t temp = x * y;
+    return (temp % 2) + (temp % 3) == 0;
+  }
 };
-class DataMask110 : public CBC_QRDataMask
-{
-public:
-    FX_BOOL IsMasked(int32_t x, int32_t y)
-    {
-        size_t temp = x * y;
-        return (((temp % 2) + (temp % 3)) % 2) == 0;
-    }
+class DataMask110 : public CBC_QRDataMask {
+ public:
+  FX_BOOL IsMasked(int32_t x, int32_t y) {
+    size_t temp = x * y;
+    return (((temp % 2) + (temp % 3)) % 2) == 0;
+  }
 };
-class DataMask111 : public CBC_QRDataMask
-{
-public:
-    FX_BOOL IsMasked(int32_t x, int32_t y)
-    {
-        return ((((x + y) % 2) + ((x * y) % 3)) % 2) == 0;
-    }
+class DataMask111 : public CBC_QRDataMask {
+ public:
+  FX_BOOL IsMasked(int32_t x, int32_t y) {
+    return ((((x + y) % 2) + ((x * y) % 3)) % 2) == 0;
+  }
 };
-int32_t CBC_QRDataMask::BuildDataMasks()
-{
-    DATA_MASKS->Add(FX_NEW DataMask000);
-    DATA_MASKS->Add(FX_NEW DataMask001);
-    DATA_MASKS->Add(FX_NEW DataMask010);
-    DATA_MASKS->Add(FX_NEW DataMask011);
-    DATA_MASKS->Add(FX_NEW DataMask100);
-    DATA_MASKS->Add(FX_NEW DataMask101);
-    DATA_MASKS->Add(FX_NEW DataMask110);
-    DATA_MASKS->Add(FX_NEW DataMask111);
-    return DATA_MASKS->GetSize();
+int32_t CBC_QRDataMask::BuildDataMasks() {
+  DATA_MASKS->Add(FX_NEW DataMask000);
+  DATA_MASKS->Add(FX_NEW DataMask001);
+  DATA_MASKS->Add(FX_NEW DataMask010);
+  DATA_MASKS->Add(FX_NEW DataMask011);
+  DATA_MASKS->Add(FX_NEW DataMask100);
+  DATA_MASKS->Add(FX_NEW DataMask101);
+  DATA_MASKS->Add(FX_NEW DataMask110);
+  DATA_MASKS->Add(FX_NEW DataMask111);
+  return DATA_MASKS->GetSize();
 }
-CBC_QRDataMask::CBC_QRDataMask()
-{
-}
-CBC_QRDataMask::~CBC_QRDataMask()
-{
-}
+CBC_QRDataMask::CBC_QRDataMask() {}
+CBC_QRDataMask::~CBC_QRDataMask() {}

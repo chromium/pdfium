@@ -22,55 +22,45 @@
 
 #include "../barcode.h"
 #include "BC_CommonByteMatrix.h"
-CBC_CommonByteMatrix::CBC_CommonByteMatrix(int32_t width, int32_t height)
-{
-    m_height = height;
-    m_width = width;
+CBC_CommonByteMatrix::CBC_CommonByteMatrix(int32_t width, int32_t height) {
+  m_height = height;
+  m_width = width;
+  m_bytes = NULL;
+}
+void CBC_CommonByteMatrix::Init() {
+  m_bytes = FX_Alloc(uint8_t, m_height * m_width);
+  FXSYS_memset(m_bytes, 0xff, m_height * m_width);
+}
+CBC_CommonByteMatrix::~CBC_CommonByteMatrix() {
+  if (m_bytes != NULL) {
+    FX_Free(m_bytes);
     m_bytes = NULL;
+  }
 }
-void CBC_CommonByteMatrix::Init()
-{
-    m_bytes = FX_Alloc(uint8_t, m_height * m_width);
-    FXSYS_memset(m_bytes, 0xff, m_height * m_width);
+int32_t CBC_CommonByteMatrix::GetHeight() {
+  return m_height;
 }
-CBC_CommonByteMatrix::~CBC_CommonByteMatrix()
-{
-    if(m_bytes != NULL) {
-        FX_Free(m_bytes);
-        m_bytes = NULL;
+int32_t CBC_CommonByteMatrix::GetWidth() {
+  return m_width;
+}
+uint8_t CBC_CommonByteMatrix::Get(int32_t x, int32_t y) {
+  return m_bytes[y * m_width + x];
+}
+void CBC_CommonByteMatrix::Set(int32_t x, int32_t y, int32_t value) {
+  m_bytes[y * m_width + x] = (uint8_t)value;
+}
+void CBC_CommonByteMatrix::Set(int32_t x, int32_t y, uint8_t value) {
+  m_bytes[y * m_width + x] = value;
+}
+void CBC_CommonByteMatrix::clear(uint8_t value) {
+  int32_t y;
+  for (y = 0; y < m_height; y++) {
+    int32_t x;
+    for (x = 0; x < m_width; x++) {
+      m_bytes[y * m_width + x] = value;
     }
+  }
 }
-int32_t CBC_CommonByteMatrix::GetHeight()
-{
-    return m_height;
-}
-int32_t CBC_CommonByteMatrix::GetWidth()
-{
-    return m_width;
-}
-uint8_t CBC_CommonByteMatrix::Get(int32_t x, int32_t y)
-{
-    return m_bytes[y * m_width + x];
-}
-void CBC_CommonByteMatrix::Set(int32_t x, int32_t y, int32_t value)
-{
-    m_bytes[y * m_width + x] = (uint8_t)value;
-}
-void CBC_CommonByteMatrix::Set(int32_t x, int32_t y, uint8_t value)
-{
-    m_bytes[y * m_width + x] = value;
-}
-void CBC_CommonByteMatrix::clear(uint8_t value)
-{
-    int32_t y;
-    for(y = 0; y < m_height; y++) {
-        int32_t x;
-        for(x = 0; x < m_width; x++) {
-            m_bytes[y * m_width + x] = value;
-        }
-    }
-}
-uint8_t* CBC_CommonByteMatrix::GetArray()
-{
-    return m_bytes;
+uint8_t* CBC_CommonByteMatrix::GetArray() {
+  return m_bytes;
 }

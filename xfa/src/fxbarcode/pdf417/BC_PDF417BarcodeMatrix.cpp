@@ -23,76 +23,68 @@
 #include "../barcode.h"
 #include "BC_PDF417BarcodeRow.h"
 #include "BC_PDF417BarcodeMatrix.h"
-CBC_BarcodeMatrix::CBC_BarcodeMatrix(int32_t height, int32_t width)
-{
-    m_matrix.SetSize(height + 2);
-    for (int32_t i = 0, matrixLength = m_matrix.GetSize(); i < matrixLength; i++) {
-        m_matrix[i] = FX_NEW CBC_BarcodeRow((width + 4) * 17 + 1);
+CBC_BarcodeMatrix::CBC_BarcodeMatrix(int32_t height, int32_t width) {
+  m_matrix.SetSize(height + 2);
+  for (int32_t i = 0, matrixLength = m_matrix.GetSize(); i < matrixLength;
+       i++) {
+    m_matrix[i] = FX_NEW CBC_BarcodeRow((width + 4) * 17 + 1);
+  }
+  m_width = width * 17;
+  m_height = height + 2;
+  m_currentRow = 0;
+  m_outHeight = 0;
+  m_outWidth = 0;
+}
+CBC_BarcodeMatrix::~CBC_BarcodeMatrix() {
+  for (int32_t i = 0; i < m_matrix.GetSize(); i++) {
+    delete (CBC_BarcodeRow*)m_matrix.GetAt(i);
+  }
+  m_matrix.RemoveAll();
+  m_matrixOut.RemoveAll();
+}
+void CBC_BarcodeMatrix::set(int32_t x, int32_t y, uint8_t value) {
+  ((CBC_BarcodeRow*)m_matrix[y])->set(x, value);
+}
+void CBC_BarcodeMatrix::setMatrix(int32_t x, int32_t y, FX_BOOL black) {
+  set(x, y, (uint8_t)(black ? 1 : 0));
+}
+void CBC_BarcodeMatrix::startRow() {
+  ++m_currentRow;
+}
+CBC_BarcodeRow* CBC_BarcodeMatrix::getCurrentRow() {
+  return (CBC_BarcodeRow*)m_matrix[m_currentRow];
+}
+int32_t CBC_BarcodeMatrix::getWidth() {
+  return m_outWidth;
+}
+int32_t CBC_BarcodeMatrix::getHeight() {
+  return m_outHeight;
+}
+CFX_ByteArray& CBC_BarcodeMatrix::getMatrix() {
+  return getScaledMatrix(1, 1);
+}
+CFX_ByteArray& CBC_BarcodeMatrix::getScaledMatrix(int32_t scale) {
+  return getScaledMatrix(scale, scale);
+}
+CFX_ByteArray& CBC_BarcodeMatrix::getScaledMatrix(int32_t xScale,
+                                                  int32_t yScale) {
+  int32_t yMax = m_height * yScale;
+  CFX_ByteArray bytearray;
+  bytearray.Copy(((CBC_BarcodeRow*)m_matrix[0])->getScaledRow(xScale));
+  int32_t xMax = bytearray.GetSize();
+  m_matrixOut.SetSize(xMax * yMax);
+  m_outWidth = xMax;
+  m_outHeight = yMax;
+  int32_t k = 0;
+  for (int32_t i = 0; i < yMax; i++) {
+    if (i != 0) {
+      bytearray.Copy(
+          ((CBC_BarcodeRow*)m_matrix[i / yScale])->getScaledRow(xScale));
     }
-    m_width = width * 17;
-    m_height = height + 2;
-    m_currentRow = 0;
-    m_outHeight = 0;
-    m_outWidth = 0;
-}
-CBC_BarcodeMatrix::~CBC_BarcodeMatrix()
-{
-    for (int32_t i = 0; i < m_matrix.GetSize(); i++) {
-        delete (CBC_BarcodeRow*)m_matrix.GetAt(i);
+    k = i * xMax;
+    for (int32_t l = 0; l < xMax; l++) {
+      m_matrixOut[k + l] = bytearray.GetAt(l);
     }
-    m_matrix.RemoveAll();
-    m_matrixOut.RemoveAll();
-}
-void CBC_BarcodeMatrix::set(int32_t x, int32_t y, uint8_t value)
-{
-    ((CBC_BarcodeRow*)m_matrix[y])->set(x, value);
-}
-void CBC_BarcodeMatrix::setMatrix(int32_t x, int32_t y, FX_BOOL black)
-{
-    set(x, y, (uint8_t) (black ? 1 : 0));
-}
-void CBC_BarcodeMatrix::startRow()
-{
-    ++m_currentRow;
-}
-CBC_BarcodeRow* CBC_BarcodeMatrix::getCurrentRow()
-{
-    return (CBC_BarcodeRow*)m_matrix[m_currentRow];
-}
-int32_t CBC_BarcodeMatrix::getWidth()
-{
-    return m_outWidth;
-}
-int32_t CBC_BarcodeMatrix::getHeight()
-{
-    return m_outHeight;
-}
-CFX_ByteArray& CBC_BarcodeMatrix::getMatrix()
-{
-    return getScaledMatrix(1, 1);
-}
-CFX_ByteArray& CBC_BarcodeMatrix::getScaledMatrix(int32_t scale)
-{
-    return getScaledMatrix(scale, scale);
-}
-CFX_ByteArray& CBC_BarcodeMatrix::getScaledMatrix(int32_t xScale, int32_t yScale)
-{
-    int32_t yMax = m_height * yScale;
-    CFX_ByteArray bytearray;
-    bytearray.Copy(((CBC_BarcodeRow*)m_matrix[0])->getScaledRow(xScale));
-    int32_t xMax = bytearray.GetSize();
-    m_matrixOut.SetSize(xMax * yMax);
-    m_outWidth = xMax;
-    m_outHeight = yMax;
-    int32_t k = 0;
-    for (int32_t i = 0; i < yMax; i++) {
-        if (i != 0) {
-            bytearray.Copy(((CBC_BarcodeRow*)m_matrix[i / yScale])->getScaledRow(xScale));
-        }
-        k = i * xMax;
-        for (int32_t l = 0; l < xMax; l++) {
-            m_matrixOut[k + l] = bytearray.GetAt(l);
-        }
-    }
-    return m_matrixOut;
+  }
+  return m_matrixOut;
 }

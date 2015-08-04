@@ -10,16 +10,16 @@ class CBC_BinaryBitmap;
 class CBC_DataMatrixDecoder;
 class CBC_Reader;
 class CBC_DataMatrixReader;
-class CBC_DataMatrixReader  : public CBC_Reader
-{
-public:
-    CBC_DataMatrixReader();
-    virtual ~CBC_DataMatrixReader();
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, int32_t &e);
-    CFX_ByteString Decode(CBC_BinaryBitmap *image, int hints, int32_t &e);
+class CBC_DataMatrixReader : public CBC_Reader {
+ public:
+  CBC_DataMatrixReader();
+  virtual ~CBC_DataMatrixReader();
+  CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e);
+  CFX_ByteString Decode(CBC_BinaryBitmap* image, int hints, int32_t& e);
 
-    virtual void Init();
-private:
-    CBC_DataMatrixDecoder *m_decoder;
+  virtual void Init();
+
+ private:
+  CBC_DataMatrixDecoder* m_decoder;
 };
 #endif

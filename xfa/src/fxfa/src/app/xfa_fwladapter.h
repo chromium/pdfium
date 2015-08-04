@@ -6,44 +6,48 @@
 
 #ifndef _XFA_FWL_ADAPTER_IMP_H
 #define _XFA_FWL_ADAPTER_IMP_H
-class CXFA_FWLAdapterWidgetMgr : public CFWL_SDAdapterWidgetMgr
-{
-public:
-    virtual FWL_ERR RepaintWidget(IFWL_Widget *pWidget, const CFX_RectF *pRect);
-    virtual FX_BOOL	 GetPopupPos(IFWL_Widget* pWidget, FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight, const CFX_RectF &rtAnchor, CFX_RectF &rtPopup);
+class CXFA_FWLAdapterWidgetMgr : public CFWL_SDAdapterWidgetMgr {
+ public:
+  virtual FWL_ERR RepaintWidget(IFWL_Widget* pWidget, const CFX_RectF* pRect);
+  virtual FX_BOOL GetPopupPos(IFWL_Widget* pWidget,
+                              FX_FLOAT fMinHeight,
+                              FX_FLOAT fMaxHeight,
+                              const CFX_RectF& rtAnchor,
+                              CFX_RectF& rtPopup);
 };
-class IXFA_FWLEventHandler
-{
-public:
-    virtual ~IXFA_FWLEventHandler() {}
-    virtual FX_BOOL		GetPopupPos(IFWL_Widget *pWidget, FX_FLOAT fMinPopup, FX_FLOAT fMaxPopup,
-                                    const CFX_RectF &rtAnchor, CFX_RectF& rtPopup)
-    {
-        return FALSE;
-    }
-    virtual void		OnPreOpen(IFWL_Widget *pWidget) {}
-    virtual void		OnPostOpen(IFWL_Widget *pWidget) {}
-    virtual	void		OnSelectChanged(IFWL_Widget *pWidget, int32_t iYear, int32_t iMonth, int32_t iDay) {}
-    virtual	void		OnTextChanged(IFWL_Widget *pWidget, const CFX_WideString &wsChanged) {}
-    virtual void		OnTextFull(IFWL_Widget *pWidget) {}
-    virtual FX_BOOL		OnValidate(IFWL_Widget *pWidget, CFX_WideString &wsText)
-    {
-        return FALSE;
-    }
-    virtual	void		OnSelectChanged(IFWL_Widget *pWidget, const CFX_Int32Array &arrSels) {}
-    virtual void		OnAddDoRecord(IFWL_Widget *pWidget) {}
-    virtual CXFA_Edge	GetComboSplitColor(IFWL_Widget *pWidget)
-    {
-        return CXFA_Edge(NULL);
-    }
-    virtual void		GetUIMargin(CFX_RectF &rtMargin) {}
-    virtual FX_BOOL		CheckWord(const CFX_ByteStringC& sWord)
-    {
-        return TRUE;
-    }
-    virtual FX_BOOL		GetSuggestWords(const CFX_ByteStringC& sWord, CFX_ByteStringArray &sSuggest)
-    {
-        return FALSE;
-    }
+class IXFA_FWLEventHandler {
+ public:
+  virtual ~IXFA_FWLEventHandler() {}
+  virtual FX_BOOL GetPopupPos(IFWL_Widget* pWidget,
+                              FX_FLOAT fMinPopup,
+                              FX_FLOAT fMaxPopup,
+                              const CFX_RectF& rtAnchor,
+                              CFX_RectF& rtPopup) {
+    return FALSE;
+  }
+  virtual void OnPreOpen(IFWL_Widget* pWidget) {}
+  virtual void OnPostOpen(IFWL_Widget* pWidget) {}
+  virtual void OnSelectChanged(IFWL_Widget* pWidget,
+                               int32_t iYear,
+                               int32_t iMonth,
+                               int32_t iDay) {}
+  virtual void OnTextChanged(IFWL_Widget* pWidget,
+                             const CFX_WideString& wsChanged) {}
+  virtual void OnTextFull(IFWL_Widget* pWidget) {}
+  virtual FX_BOOL OnValidate(IFWL_Widget* pWidget, CFX_WideString& wsText) {
+    return FALSE;
+  }
+  virtual void OnSelectChanged(IFWL_Widget* pWidget,
+                               const CFX_Int32Array& arrSels) {}
+  virtual void OnAddDoRecord(IFWL_Widget* pWidget) {}
+  virtual CXFA_Edge GetComboSplitColor(IFWL_Widget* pWidget) {
+    return CXFA_Edge(NULL);
+  }
+  virtual void GetUIMargin(CFX_RectF& rtMargin) {}
+  virtual FX_BOOL CheckWord(const CFX_ByteStringC& sWord) { return TRUE; }
+  virtual FX_BOOL GetSuggestWords(const CFX_ByteStringC& sWord,
+                                  CFX_ByteStringArray& sSuggest) {
+    return FALSE;
+  }
 };
 #endif

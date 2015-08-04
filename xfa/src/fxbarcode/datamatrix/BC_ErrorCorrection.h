@@ -7,22 +7,31 @@
 #ifndef _BC_ERRORCORRECTION_H_
 #define _BC_ERRORCORRECTION_H_
 class CBC_SymbolInfo;
-class CBC_ErrorCorrection
-{
-public:
-    CBC_ErrorCorrection();
-    virtual ~CBC_ErrorCorrection();
-    static void Initialize();
-    static void Finalize();
-    static CFX_WideString encodeECC200(CFX_WideString codewords, CBC_SymbolInfo* symbolInfo, int32_t &e);
-private:
-    static int32_t FACTOR_SETS[];
-    static int32_t FACTORS[][100];
-    static int32_t MODULO_VALUE;
-    static int32_t LOG[256];
-    static int32_t ALOG[256];
-private:
-    static CFX_WideString createECCBlock(CFX_WideString codewords, int32_t numECWords, int32_t &e);
-    static CFX_WideString createECCBlock(CFX_WideString codewords, int32_t start, int32_t len, int32_t numECWords, int32_t &e);
+class CBC_ErrorCorrection {
+ public:
+  CBC_ErrorCorrection();
+  virtual ~CBC_ErrorCorrection();
+  static void Initialize();
+  static void Finalize();
+  static CFX_WideString encodeECC200(CFX_WideString codewords,
+                                     CBC_SymbolInfo* symbolInfo,
+                                     int32_t& e);
+
+ private:
+  static int32_t FACTOR_SETS[];
+  static int32_t FACTORS[][100];
+  static int32_t MODULO_VALUE;
+  static int32_t LOG[256];
+  static int32_t ALOG[256];
+
+ private:
+  static CFX_WideString createECCBlock(CFX_WideString codewords,
+                                       int32_t numECWords,
+                                       int32_t& e);
+  static CFX_WideString createECCBlock(CFX_WideString codewords,
+                                       int32_t start,
+                                       int32_t len,
+                                       int32_t numECWords,
+                                       int32_t& e);
 };
 #endif

@@ -5,38 +5,30 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../foxitlib.h"
-CFWL_App::CFWL_App()
-    : m_pAppImp(NULL)
-    , m_pThemeProvider(NULL)
-{
-    m_pAppImp = IFWL_App::Create(NULL);
+CFWL_App::CFWL_App() : m_pAppImp(NULL), m_pThemeProvider(NULL) {
+  m_pAppImp = IFWL_App::Create(NULL);
 }
-CFWL_App::~CFWL_App()
-{
-    if (m_pThemeProvider) {
-        m_pThemeProvider->Finalize();
-        delete m_pThemeProvider;
-        m_pThemeProvider = NULL;
-    }
-    m_pAppImp->Release();
+CFWL_App::~CFWL_App() {
+  if (m_pThemeProvider) {
+    m_pThemeProvider->Finalize();
+    delete m_pThemeProvider;
+    m_pThemeProvider = NULL;
+  }
+  m_pAppImp->Release();
 }
-FWL_ERR CFWL_App::Initialize()
-{
-    m_pThemeProvider = FX_NEW CFWL_Theme;
-    m_pThemeProvider->Initialize();
-    m_pAppImp->SetThemeProvider((IFWL_ThemeProvider*)m_pThemeProvider);
-    return m_pAppImp->Initialize();
+FWL_ERR CFWL_App::Initialize() {
+  m_pThemeProvider = FX_NEW CFWL_Theme;
+  m_pThemeProvider->Initialize();
+  m_pAppImp->SetThemeProvider((IFWL_ThemeProvider*)m_pThemeProvider);
+  return m_pAppImp->Initialize();
 }
-CFWL_Theme*	CFWL_App::GetTheme()
-{
-    return m_pThemeProvider;
+CFWL_Theme* CFWL_App::GetTheme() {
+  return m_pThemeProvider;
 }
-FWL_ERR	CFWL_App::Exit(int32_t iExitCode )
-{
-    _FWL_RETURN_VALUE_IF_FAIL(m_pAppImp, FWL_ERR_Indefinite);
-    return m_pAppImp->Exit(iExitCode);
+FWL_ERR CFWL_App::Exit(int32_t iExitCode) {
+  _FWL_RETURN_VALUE_IF_FAIL(m_pAppImp, FWL_ERR_Indefinite);
+  return m_pAppImp->Exit(iExitCode);
 }
-IFWL_App* CFWL_App::GetApp()
-{
-    return m_pAppImp;
+IFWL_App* CFWL_App::GetApp() {
+  return m_pAppImp;
 }

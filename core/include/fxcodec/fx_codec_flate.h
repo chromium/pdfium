@@ -13,9 +13,11 @@ extern "C" {
 // Note: Some of these return Z_* status codes from zlib.h.
 void* FPDFAPI_FlateInit(void* (*alloc_func)(void*, unsigned int, unsigned int),
                         void (*free_func)(void*, void*));
-void FPDFAPI_FlateInput(void* context, const unsigned char* src_buf,
+void FPDFAPI_FlateInput(void* context,
+                        const unsigned char* src_buf,
                         unsigned int src_size);
-int FPDFAPI_FlateOutput(void* context, unsigned char* dest_buf,
+int FPDFAPI_FlateOutput(void* context,
+                        unsigned char* dest_buf,
                         unsigned int dest_size);
 int FPDFAPI_FlateGetAvailIn(void* context);
 int FPDFAPI_FlateGetAvailOut(void* context);

@@ -9,29 +9,34 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 class IFPF_FontMgr;
-class CFX_AndroidFontInfo : public IFX_SystemFontInfo
-{
-public:
-    CFX_AndroidFontInfo();
-    virtual void		Release()
-    {
-        delete this;
-    }
+class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
+ public:
+  CFX_AndroidFontInfo();
+  virtual void Release() { delete this; }
 
-    virtual	FX_BOOL		EnumFontList(CFX_FontMapper* pMapper);
+  virtual FX_BOOL EnumFontList(CFX_FontMapper* pMapper);
 
-    virtual void*		MapFont(int weight, FX_BOOL bItalic, int charset, int pitch_family, const FX_CHAR* face, int& bExact);
+  virtual void* MapFont(int weight,
+                        FX_BOOL bItalic,
+                        int charset,
+                        int pitch_family,
+                        const FX_CHAR* face,
+                        int& bExact);
 
-    virtual void*		GetFont(const FX_CHAR* face);
-    virtual FX_DWORD	GetFontData(void* hFont, FX_DWORD table, uint8_t* buffer, FX_DWORD size);
-    virtual FX_BOOL		GetFaceName(void* hFont, CFX_ByteString& name);
-    virtual FX_BOOL		GetFontCharset(void* hFont, int& charset);
+  virtual void* GetFont(const FX_CHAR* face);
+  virtual FX_DWORD GetFontData(void* hFont,
+                               FX_DWORD table,
+                               uint8_t* buffer,
+                               FX_DWORD size);
+  virtual FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name);
+  virtual FX_BOOL GetFontCharset(void* hFont, int& charset);
 
-    virtual void		DeleteFont(void* hFont);
-    virtual void*       RetainFont(void* hFont);
-    FX_BOOL				Init(IFPF_FontMgr *pFontMgr);
-protected:
-    IFPF_FontMgr		*m_pFontMgr;
+  virtual void DeleteFont(void* hFont);
+  virtual void* RetainFont(void* hFont);
+  FX_BOOL Init(IFPF_FontMgr* pFontMgr);
+
+ protected:
+  IFPF_FontMgr* m_pFontMgr;
 };
 #endif
 

@@ -9,14 +9,16 @@
 class CBC_Encoder;
 class CBC_EncoderContext;
 class CBC_ASCIIEncoder;
-class CBC_ASCIIEncoder : public CBC_Encoder
-{
-public:
-    CBC_ASCIIEncoder();
-    virtual ~CBC_ASCIIEncoder();
-    int32_t getEncodingMode();
-    void Encode(CBC_EncoderContext &context, int32_t &e);
-private:
-    static FX_WCHAR encodeASCIIDigits(FX_WCHAR digit1, FX_WCHAR digit2, int32_t &e);
+class CBC_ASCIIEncoder : public CBC_Encoder {
+ public:
+  CBC_ASCIIEncoder();
+  virtual ~CBC_ASCIIEncoder();
+  int32_t getEncodingMode();
+  void Encode(CBC_EncoderContext& context, int32_t& e);
+
+ private:
+  static FX_WCHAR encodeASCIIDigits(FX_WCHAR digit1,
+                                    FX_WCHAR digit2,
+                                    int32_t& e);
 };
 #endif

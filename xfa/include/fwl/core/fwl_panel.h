@@ -10,31 +10,33 @@ class IFWL_Widget;
 class IFWL_Content;
 class IFWL_Panel;
 class IFWL_CustomPanel;
-#define FWL_CLASS_Panel					L"FWL_Panel"
-#define FWL_CLASSHASH_Panel				881567292
-class IFWL_Panel : public IFWL_Widget
-{
-public:
-    static IFWL_Panel* Create();
-    FWL_ERR			Initialize(IFWL_Widget *pOuter = NULL);
-    FWL_ERR			Initialize(CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
-    IFWL_Content*	GetContent();
-    FWL_ERR			SetContent(IFWL_Content *pContent);
-protected:
-    IFWL_Panel();
-    virtual ~IFWL_Panel();
+#define FWL_CLASS_Panel L"FWL_Panel"
+#define FWL_CLASSHASH_Panel 881567292
+class IFWL_Panel : public IFWL_Widget {
+ public:
+  static IFWL_Panel* Create();
+  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
+  FWL_ERR Initialize(CFWL_WidgetImpProperties& properties,
+                     IFWL_Widget* pOuter = NULL);
+  IFWL_Content* GetContent();
+  FWL_ERR SetContent(IFWL_Content* pContent);
+
+ protected:
+  IFWL_Panel();
+  virtual ~IFWL_Panel();
 };
-class IFWL_CustomPanel : public IFWL_Widget
-{
-public:
-    static IFWL_CustomPanel* Create();
-    FWL_ERR			Initialize(IFWL_Widget *pOuter = NULL);
-    FWL_ERR			Initialize(CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
-    IFWL_Content*	GetContent();
-    FWL_ERR			SetContent(IFWL_Content *pContent);
-    FWL_ERR			SetProxy(IFWL_Proxy *pProxy);
-protected:
-    IFWL_CustomPanel();
-    virtual ~IFWL_CustomPanel();
+class IFWL_CustomPanel : public IFWL_Widget {
+ public:
+  static IFWL_CustomPanel* Create();
+  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
+  FWL_ERR Initialize(CFWL_WidgetImpProperties& properties,
+                     IFWL_Widget* pOuter = NULL);
+  IFWL_Content* GetContent();
+  FWL_ERR SetContent(IFWL_Content* pContent);
+  FWL_ERR SetProxy(IFWL_Proxy* pProxy);
+
+ protected:
+  IFWL_CustomPanel();
+  virtual ~IFWL_CustomPanel();
 };
 #endif

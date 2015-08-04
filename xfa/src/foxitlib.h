@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef	_FOXIT_LIB_H_
+#ifndef _FOXIT_LIB_H_
 #define _FOXIT_LIB_H_
 #include "../include/foxitxfa.h"
 #include "./fgas/include/fgas.h"

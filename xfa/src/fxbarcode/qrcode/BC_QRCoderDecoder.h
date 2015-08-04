@@ -12,17 +12,24 @@ class CBC_CommonDecoderResult;
 class CBC_QRBitMatrixParser;
 class CBC_QRCoderVersion;
 class CBC_QRDataBlock;
-class CBC_QRCoderDecoder
-{
-private:
-    CBC_ReedSolomonDecoder *m_rsDecoder;
-public:
-    CBC_QRCoderDecoder();
-    virtual ~CBC_QRCoderDecoder();
+class CBC_QRCoderDecoder {
+ private:
+  CBC_ReedSolomonDecoder* m_rsDecoder;
 
-    CBC_CommonDecoderResult* Decode(FX_BOOL* image, int32_t width, int32_t height, int32_t &e);
-    CBC_CommonDecoderResult* Decode(CBC_CommonBitMatrix* bits, int32_t byteModeDecode, int32_t &e);
-    void CorrectErrors(CFX_ByteArray* codewordBytes, int32_t numDataCodewords, int32_t &e);
-    virtual void Init();
+ public:
+  CBC_QRCoderDecoder();
+  virtual ~CBC_QRCoderDecoder();
+
+  CBC_CommonDecoderResult* Decode(FX_BOOL* image,
+                                  int32_t width,
+                                  int32_t height,
+                                  int32_t& e);
+  CBC_CommonDecoderResult* Decode(CBC_CommonBitMatrix* bits,
+                                  int32_t byteModeDecode,
+                                  int32_t& e);
+  void CorrectErrors(CFX_ByteArray* codewordBytes,
+                     int32_t numDataCodewords,
+                     int32_t& e);
+  virtual void Init();
 };
 #endif

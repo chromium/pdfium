@@ -11,22 +11,21 @@
 #include "xfa_ffpageview.h"
 #include "xfa_ffapp.h"
 #include "xfa_ffdoc.h"
-CXFA_FFExclGroup::CXFA_FFExclGroup(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFWidget(pPageView, pDataAcc)
-{
-}
-CXFA_FFExclGroup::~CXFA_FFExclGroup()
-{
-}
-void CXFA_FFExclGroup::RenderWidget(CFX_Graphics* pGS, CFX_Matrix* pMatrix , FX_DWORD dwStatus , int32_t iRotate )
-{
-    if (!IsMatchVisibleStatus(dwStatus)) {
-        return;
-    }
-    CFX_Matrix mtRotate;
-    GetRotateMatrix(mtRotate);
-    if (pMatrix) {
-        mtRotate.Concat(*pMatrix);
-    }
-    CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
+CXFA_FFExclGroup::CXFA_FFExclGroup(CXFA_FFPageView* pPageView,
+                                   CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFWidget(pPageView, pDataAcc) {}
+CXFA_FFExclGroup::~CXFA_FFExclGroup() {}
+void CXFA_FFExclGroup::RenderWidget(CFX_Graphics* pGS,
+                                    CFX_Matrix* pMatrix,
+                                    FX_DWORD dwStatus,
+                                    int32_t iRotate) {
+  if (!IsMatchVisibleStatus(dwStatus)) {
+    return;
+  }
+  CFX_Matrix mtRotate;
+  GetRotateMatrix(mtRotate);
+  if (pMatrix) {
+    mtRotate.Concat(*pMatrix);
+  }
+  CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
 }

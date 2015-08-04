@@ -25,14 +25,16 @@ class EmbedderTest : public ::testing::Test,
  public:
   class Delegate {
    public:
-    virtual ~Delegate() { }
+    virtual ~Delegate() {}
 
     // Equivalent to UNSUPPORT_INFO::FSDK_UnSupport_Handler().
-    virtual void UnsupportedHandler(int type) { }
+    virtual void UnsupportedHandler(int type) {}
 
     // Equivalent to IPDF_JSPLATFORM::app_alert().
-    virtual int Alert(FPDF_WIDESTRING message, FPDF_WIDESTRING title,
-                      int type, int icon) {
+    virtual int Alert(FPDF_WIDESTRING message,
+                      FPDF_WIDESTRING title,
+                      int type,
+                      int icon) {
       return 0;
     }
 
@@ -40,7 +42,7 @@ class EmbedderTest : public ::testing::Test,
     virtual int SetTimer(int msecs, TimerCallback fn) { return 0; }
 
     // Equivalent to FPDF_FORMFILLINFO::FFI_KillTimer().
-    virtual void KillTimer(int id) { }
+    virtual void KillTimer(int id) {}
   };
 
   EmbedderTest();
@@ -95,9 +97,13 @@ class EmbedderTest : public ::testing::Test,
 
  private:
   static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);
-  static int AlertTrampoline(IPDF_JSPLATFORM* plaform, FPDF_WIDESTRING message,
-                             FPDF_WIDESTRING title, int type, int icon);
-  static int SetTimerTrampoline(FPDF_FORMFILLINFO* info, int msecs,
+  static int AlertTrampoline(IPDF_JSPLATFORM* plaform,
+                             FPDF_WIDESTRING message,
+                             FPDF_WIDESTRING title,
+                             int type,
+                             int icon);
+  static int SetTimerTrampoline(FPDF_FORMFILLINFO* info,
+                                int msecs,
                                 TimerCallback fn);
   static void KillTimerTrampoline(FPDF_FORMFILLINFO* info, int id);
 };

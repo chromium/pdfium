@@ -8,14 +8,18 @@
 #define _FWL_CARETTP_H
 class CFWL_WidgetTP;
 class CFWL_CaretTP;
-class CFWL_CaretTP : public CFWL_WidgetTP
-{
-public:
-    CFWL_CaretTP();
-    virtual ~CFWL_CaretTP();
-    virtual FX_BOOL		IsValidWidget(IFWL_Widget *pWidget);
-    virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams);
-protected:
-    void	DrawCaretBK(CFX_Graphics *pGraphics, FX_DWORD dwStates, const CFX_RectF *pRect, CFX_Color *crFill, CFX_Matrix *pMatrix = NULL);
+class CFWL_CaretTP : public CFWL_WidgetTP {
+ public:
+  CFWL_CaretTP();
+  virtual ~CFWL_CaretTP();
+  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
+  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
+
+ protected:
+  void DrawCaretBK(CFX_Graphics* pGraphics,
+                   FX_DWORD dwStates,
+                   const CFX_RectF* pRect,
+                   CFX_Color* crFill,
+                   CFX_Matrix* pMatrix = NULL);
 };
 #endif

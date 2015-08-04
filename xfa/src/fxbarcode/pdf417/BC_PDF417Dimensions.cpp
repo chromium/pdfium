@@ -20,32 +20,27 @@
  * limitations under the License.
  */
 
-
 #include "../barcode.h"
 #include "BC_PDF417Dimensions.h"
-CBC_Dimensions::CBC_Dimensions(int32_t minCols, int32_t maxCols, int32_t minRows, int32_t maxRows)
-{
-    m_minCols = minCols;
-    m_maxCols = maxCols;
-    m_minRows = minRows;
-    m_maxRows = maxRows;
+CBC_Dimensions::CBC_Dimensions(int32_t minCols,
+                               int32_t maxCols,
+                               int32_t minRows,
+                               int32_t maxRows) {
+  m_minCols = minCols;
+  m_maxCols = maxCols;
+  m_minRows = minRows;
+  m_maxRows = maxRows;
 }
-CBC_Dimensions::~CBC_Dimensions()
-{
+CBC_Dimensions::~CBC_Dimensions() {}
+int32_t CBC_Dimensions::getMinCols() {
+  return m_minCols;
 }
-int32_t CBC_Dimensions::getMinCols()
-{
-    return m_minCols;
+int32_t CBC_Dimensions::getMaxCols() {
+  return m_maxCols;
 }
-int32_t CBC_Dimensions::getMaxCols()
-{
-    return m_maxCols;
+int32_t CBC_Dimensions::getMinRows() {
+  return m_minRows;
 }
-int32_t CBC_Dimensions::getMinRows()
-{
-    return m_minRows;
-}
-int32_t CBC_Dimensions::getMaxRows()
-{
-    return m_maxRows;
+int32_t CBC_Dimensions::getMaxRows() {
+  return m_maxRows;
 }

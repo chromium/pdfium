@@ -6,15 +6,19 @@
 
 #ifndef _BC_PDF417ERRORCORRECTION_H_
 #define _BC_PDF417ERRORCORRECTION_H_
-class CBC_PDF417ErrorCorrection
-{
-public:
-    CBC_PDF417ErrorCorrection();
-    virtual ~CBC_PDF417ErrorCorrection();
-    static int32_t getErrorCorrectionCodewordCount(int32_t errorCorrectionLevel, int32_t &e);
-    static int32_t getRecommendedMinimumErrorCorrectionLevel(int32_t n, int32_t &e);
-    static CFX_WideString generateErrorCorrection(CFX_WideString dataCodewords, int32_t errorCorrectionLevel, int32_t &e);
-private:
-    static int32_t EC_COEFFICIENTS[][2500];
+class CBC_PDF417ErrorCorrection {
+ public:
+  CBC_PDF417ErrorCorrection();
+  virtual ~CBC_PDF417ErrorCorrection();
+  static int32_t getErrorCorrectionCodewordCount(int32_t errorCorrectionLevel,
+                                                 int32_t& e);
+  static int32_t getRecommendedMinimumErrorCorrectionLevel(int32_t n,
+                                                           int32_t& e);
+  static CFX_WideString generateErrorCorrection(CFX_WideString dataCodewords,
+                                                int32_t errorCorrectionLevel,
+                                                int32_t& e);
+
+ private:
+  static int32_t EC_COEFFICIENTS[][2500];
 };
 #endif

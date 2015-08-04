@@ -22,41 +22,29 @@
 
 #include "../barcode.h"
 #include "BC_PDF417ResultMetadata.h"
-CBC_PDF417ResultMetadata::CBC_PDF417ResultMetadata()
-{
+CBC_PDF417ResultMetadata::CBC_PDF417ResultMetadata() {}
+CBC_PDF417ResultMetadata::~CBC_PDF417ResultMetadata() {}
+int32_t CBC_PDF417ResultMetadata::getSegmentIndex() {
+  return m_segmentIndex;
 }
-CBC_PDF417ResultMetadata::~CBC_PDF417ResultMetadata()
-{
+void CBC_PDF417ResultMetadata::setSegmentIndex(int32_t segmentIndex) {
+  m_segmentIndex = segmentIndex;
 }
-int32_t CBC_PDF417ResultMetadata::getSegmentIndex()
-{
-    return m_segmentIndex;
+CFX_ByteString CBC_PDF417ResultMetadata::getFileId() {
+  return m_fileId;
 }
-void CBC_PDF417ResultMetadata::setSegmentIndex(int32_t segmentIndex)
-{
-    m_segmentIndex = segmentIndex;
+void CBC_PDF417ResultMetadata::setFileId(CFX_ByteString fileId) {
+  m_fileId = fileId;
 }
-CFX_ByteString CBC_PDF417ResultMetadata::getFileId()
-{
-    return m_fileId;
+CFX_Int32Array& CBC_PDF417ResultMetadata::getOptionalData() {
+  return m_optionalData;
 }
-void CBC_PDF417ResultMetadata::setFileId(CFX_ByteString fileId)
-{
-    m_fileId = fileId;
+void CBC_PDF417ResultMetadata::setOptionalData(CFX_Int32Array& optionalData) {
+  m_optionalData.Copy(optionalData);
 }
-CFX_Int32Array& CBC_PDF417ResultMetadata::getOptionalData()
-{
-    return m_optionalData;
+FX_BOOL CBC_PDF417ResultMetadata::isLastSegment() {
+  return m_lastSegment;
 }
-void CBC_PDF417ResultMetadata::setOptionalData(CFX_Int32Array &optionalData)
-{
-    m_optionalData.Copy(optionalData);
-}
-FX_BOOL CBC_PDF417ResultMetadata::isLastSegment()
-{
-    return m_lastSegment;
-}
-void CBC_PDF417ResultMetadata::setLastSegment(FX_BOOL lastSegment)
-{
-    m_lastSegment = lastSegment;
+void CBC_PDF417ResultMetadata::setLastSegment(FX_BOOL lastSegment) {
+  m_lastSegment = lastSegment;
 }

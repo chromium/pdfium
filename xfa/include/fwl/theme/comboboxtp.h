@@ -8,16 +8,20 @@
 #define _FWL_COMBOBOXTP_H
 class CFWL_WidgetTP;
 class CFWL_ComboBoxTP;
-class CFWL_ComboBoxTP : public CFWL_WidgetTP
-{
-public:
-    CFWL_ComboBoxTP();
-    virtual ~CFWL_ComboBoxTP();
-    virtual	FX_BOOL		IsValidWidget(IFWL_Widget *pWidget);
-    virtual FX_BOOL		DrawBackground(CFWL_ThemeBackground *pParams);
-    virtual void*   GetCapacity(CFWL_ThemePart *pThemePart, FX_DWORD dwCapacity);
-protected:
-    void	DrawDropDownButton(CFWL_ThemeBackground *pParams, FX_DWORD dwStates, CFX_Matrix *pMatrix);
-    void	DrawStrethHandler(CFWL_ThemeBackground *pParams, FX_DWORD dwStates, CFX_Matrix *pMatrix);
+class CFWL_ComboBoxTP : public CFWL_WidgetTP {
+ public:
+  CFWL_ComboBoxTP();
+  virtual ~CFWL_ComboBoxTP();
+  virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
+  virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, FX_DWORD dwCapacity);
+
+ protected:
+  void DrawDropDownButton(CFWL_ThemeBackground* pParams,
+                          FX_DWORD dwStates,
+                          CFX_Matrix* pMatrix);
+  void DrawStrethHandler(CFWL_ThemeBackground* pParams,
+                         FX_DWORD dwStates,
+                         CFX_Matrix* pMatrix);
 };
 #endif

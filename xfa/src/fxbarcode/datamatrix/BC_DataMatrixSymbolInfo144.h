@@ -8,12 +8,11 @@
 #define _BC_DATAMATRIXSYMBOLINFO144_H_
 class CBC_SymbolInfo;
 class CBC_DataMatrixSymbolInfo144;
-class CBC_DataMatrixSymbolInfo144 : public CBC_SymbolInfo
-{
-public:
-    CBC_DataMatrixSymbolInfo144();
-    virtual ~CBC_DataMatrixSymbolInfo144();
-    int32_t getInterleavedBlockCount();
-    int32_t getDataLengthForInterleavedBlock(int32_t index);
+class CBC_DataMatrixSymbolInfo144 : public CBC_SymbolInfo {
+ public:
+  CBC_DataMatrixSymbolInfo144();
+  virtual ~CBC_DataMatrixSymbolInfo144();
+  int32_t getInterleavedBlockCount();
+  int32_t getDataLengthForInterleavedBlock(int32_t index);
 };
 #endif

@@ -6,12 +6,11 @@
 
 #ifndef _FXFA_FORMFILLER_SUBFORM_IMP_H
 #define _FXFA_FORMFILLER_SUBFORM_IMP_H
-class CXFA_FFSubForm : public CXFA_FFWidget
-{
-public:
-    CXFA_FFSubForm(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
-    virtual ~CXFA_FFSubForm();
+class CXFA_FFSubForm : public CXFA_FFWidget {
+ public:
+  CXFA_FFSubForm(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  virtual ~CXFA_FFSubForm();
 
-protected:
+ protected:
 };
 #endif

@@ -16,36 +16,37 @@ class CFWL_BarcodeEdit;
 class CFWL_BarcodeEditDelegate;
 class CFWL_BarcodeImp;
 class CFWL_BarcodeImpDelegate;
-#define XFA_BCS_NeedUpdate		0x0001
-#define XFA_BCS_EncodeSuccess	0x0002
-class CFWL_BarcodeImp : public CFWL_EditImp
-{
-public:
-    CFWL_BarcodeImp(IFWL_Widget *pOuter = NULL);
-    CFWL_BarcodeImp(const CFWL_WidgetImpProperties &properties, IFWL_Widget *pOuter = NULL);
-    virtual ~CFWL_BarcodeImp();
-    virtual FWL_ERR		GetClassName(CFX_WideString &wsClass) const;
-    virtual FX_DWORD	GetClassID() const;
-    virtual FWL_ERR		Initialize();
-    virtual FWL_ERR		Finalize();
-    virtual	FWL_ERR		Update();
-    virtual FWL_ERR		DrawWidget(CFX_Graphics *pGraphics, const CFX_Matrix *pMatrix = NULL);
-    virtual FWL_ERR		SetText(const CFX_WideString &wsText);
-    virtual void		SetType(BC_TYPE type);
-    FX_BOOL				IsProtectedType();
-protected:
-    void			GenerateBarcodeImageCache();
-    void			CreateBarcodeEngine();
-    void			ReleaseBarcodeEngine();
-    IFX_Barcode		*m_pBarcodeEngine;
-    FX_DWORD		m_dwStatus;
-    BC_TYPE			m_type;
-    friend class CFWL_BarcodeImpDelegate;
+#define XFA_BCS_NeedUpdate 0x0001
+#define XFA_BCS_EncodeSuccess 0x0002
+class CFWL_BarcodeImp : public CFWL_EditImp {
+ public:
+  CFWL_BarcodeImp(IFWL_Widget* pOuter = NULL);
+  CFWL_BarcodeImp(const CFWL_WidgetImpProperties& properties,
+                  IFWL_Widget* pOuter = NULL);
+  virtual ~CFWL_BarcodeImp();
+  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
+  virtual FX_DWORD GetClassID() const;
+  virtual FWL_ERR Initialize();
+  virtual FWL_ERR Finalize();
+  virtual FWL_ERR Update();
+  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
+                             const CFX_Matrix* pMatrix = NULL);
+  virtual FWL_ERR SetText(const CFX_WideString& wsText);
+  virtual void SetType(BC_TYPE type);
+  FX_BOOL IsProtectedType();
+
+ protected:
+  void GenerateBarcodeImageCache();
+  void CreateBarcodeEngine();
+  void ReleaseBarcodeEngine();
+  IFX_Barcode* m_pBarcodeEngine;
+  FX_DWORD m_dwStatus;
+  BC_TYPE m_type;
+  friend class CFWL_BarcodeImpDelegate;
 };
-class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate
-{
-public:
-    CFWL_BarcodeImpDelegate(CFWL_BarcodeImp *pOwner);
-    virtual FWL_ERR		OnProcessEvent(CFWL_Event *pEvent);
+class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate {
+ public:
+  CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner);
+  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
 };
 #endif

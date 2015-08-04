@@ -22,34 +22,29 @@
 
 #include "../barcode.h"
 #include "BC_PDF417BarcodeMetadata.h"
-CBC_BarcodeMetadata::CBC_BarcodeMetadata(int32_t columnCount, int32_t rowCountUpperPart, int32_t rowCountLowerPart, int32_t errorCorrectionLevel)
-{
-    m_columnCount = columnCount;
-    m_rowCountUpperPart = rowCountUpperPart;
-    m_rowCountLowerPart = rowCountLowerPart;
-    m_errorCorrectionLevel = errorCorrectionLevel;
-    m_rowCount = m_rowCountUpperPart + m_rowCountLowerPart;
+CBC_BarcodeMetadata::CBC_BarcodeMetadata(int32_t columnCount,
+                                         int32_t rowCountUpperPart,
+                                         int32_t rowCountLowerPart,
+                                         int32_t errorCorrectionLevel) {
+  m_columnCount = columnCount;
+  m_rowCountUpperPart = rowCountUpperPart;
+  m_rowCountLowerPart = rowCountLowerPart;
+  m_errorCorrectionLevel = errorCorrectionLevel;
+  m_rowCount = m_rowCountUpperPart + m_rowCountLowerPart;
 }
-CBC_BarcodeMetadata::~CBC_BarcodeMetadata()
-{
+CBC_BarcodeMetadata::~CBC_BarcodeMetadata() {}
+int32_t CBC_BarcodeMetadata::getColumnCount() {
+  return m_columnCount;
 }
-int32_t CBC_BarcodeMetadata::getColumnCount()
-{
-    return m_columnCount;
+int32_t CBC_BarcodeMetadata::getErrorCorrectionLevel() {
+  return m_errorCorrectionLevel;
 }
-int32_t CBC_BarcodeMetadata::getErrorCorrectionLevel()
-{
-    return m_errorCorrectionLevel;
+int32_t CBC_BarcodeMetadata::getRowCount() {
+  return m_rowCount;
 }
-int32_t CBC_BarcodeMetadata::getRowCount()
-{
-    return m_rowCount;
+int32_t CBC_BarcodeMetadata::getRowCountUpperPart() {
+  return m_rowCountUpperPart;
 }
-int32_t CBC_BarcodeMetadata::getRowCountUpperPart()
-{
-    return m_rowCountUpperPart;
-}
-int32_t CBC_BarcodeMetadata::getRowCountLowerPart()
-{
-    return m_rowCountLowerPart;
+int32_t CBC_BarcodeMetadata::getRowCountLowerPart() {
+  return m_rowCountLowerPart;
 }

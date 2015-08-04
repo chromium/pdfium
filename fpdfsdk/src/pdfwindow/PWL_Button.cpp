@@ -9,45 +9,37 @@
 #include "../../include/pdfwindow/PWL_Button.h"
 #include "../../include/pdfwindow/PWL_Utils.h"
 
-/* ------------------------------- CPWL_Button ---------------------------------- */
+/* ------------------------------- CPWL_Button
+ * ---------------------------------- */
 
-CPWL_Button::CPWL_Button() :
-	m_bMouseDown(FALSE)
-{
+CPWL_Button::CPWL_Button() : m_bMouseDown(FALSE) {}
+
+CPWL_Button::~CPWL_Button() {
+  //	PWL_TRACE("~CPWL_Button\n");
 }
 
-CPWL_Button::~CPWL_Button()
-{
-//	PWL_TRACE("~CPWL_Button\n");
+CFX_ByteString CPWL_Button::GetClassName() const {
+  return "CPWL_Button";
 }
 
-CFX_ByteString CPWL_Button::GetClassName() const
-{
-	return "CPWL_Button";
+void CPWL_Button::OnCreate(PWL_CREATEPARAM& cp) {
+  cp.eCursorType = FXCT_HAND;
 }
 
-void CPWL_Button::OnCreate(PWL_CREATEPARAM & cp)
-{
-	cp.eCursorType = FXCT_HAND;
+FX_BOOL CPWL_Button::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) {
+  CPWL_Wnd::OnLButtonDown(point, nFlag);
+
+  m_bMouseDown = TRUE;
+  SetCapture();
+
+  return TRUE;
 }
 
-FX_BOOL CPWL_Button::OnLButtonDown(const CPDF_Point & point, FX_DWORD nFlag)
-{
-	CPWL_Wnd::OnLButtonDown(point, nFlag);
+FX_BOOL CPWL_Button::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
+  CPWL_Wnd::OnLButtonUp(point, nFlag);
 
-	m_bMouseDown = TRUE;
-	SetCapture();
+  ReleaseCapture();
+  m_bMouseDown = FALSE;
 
-	return TRUE;
+  return TRUE;
 }
-
-FX_BOOL CPWL_Button::OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag)
-{
-	CPWL_Wnd::OnLButtonUp(point, nFlag);
-
-	ReleaseCapture();
-	m_bMouseDown = FALSE;
-
-	return TRUE;
-}
-

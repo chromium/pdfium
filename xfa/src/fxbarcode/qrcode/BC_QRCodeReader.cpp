@@ -40,72 +40,72 @@
 #include "BC_QRDataMask.h"
 #include "BC_QRCodeReader.h"
 #include "BC_QRCoderVersion.h"
-CBC_QRCodeReader::CBC_QRCodeReader(): m_decoder(NULL)
-{
+CBC_QRCodeReader::CBC_QRCodeReader() : m_decoder(NULL) {}
+void CBC_QRCodeReader::Init() {
+  m_decoder = FX_NEW CBC_QRCoderDecoder;
+  m_decoder->Init();
 }
-void CBC_QRCodeReader::Init()
-{
-    m_decoder = FX_NEW CBC_QRCoderDecoder;
-    m_decoder->Init();
+CBC_QRCodeReader::~CBC_QRCodeReader() {
+  if (m_decoder != NULL) {
+    delete m_decoder;
+  }
+  m_decoder = NULL;
 }
-CBC_QRCodeReader::~CBC_QRCodeReader()
-{
-    if(m_decoder != NULL) {
-        delete m_decoder;
-    }
-    m_decoder = NULL;
+CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap* image,
+                                        int32_t hints,
+                                        int32_t& e) {
+  CBC_CommonBitMatrix* matrix = image->GetMatrix(e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, "");
+  CBC_QRDetector detector(matrix);
+  CBC_QRDetectorResult* qdr = detector.Detect(hints, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, "");
+  CBC_AutoPtr<CBC_QRDetectorResult> detectorResult(qdr);
+  CBC_CommonDecoderResult* qdr2 =
+      m_decoder->Decode(detectorResult->GetBits(), 0, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, "");
+  CBC_AutoPtr<CBC_CommonDecoderResult> decodeResult(qdr2);
+  return (decodeResult->GetText());
 }
-CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap *image, int32_t hints, int32_t &e)
-{
-    CBC_CommonBitMatrix *matrix = image->GetMatrix(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, "");
-    CBC_QRDetector detector(matrix);
-    CBC_QRDetectorResult* qdr = detector.Detect(hints, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, "");
-    CBC_AutoPtr<CBC_QRDetectorResult> detectorResult(qdr);
-    CBC_CommonDecoderResult* qdr2 = m_decoder->Decode(detectorResult->GetBits(), 0, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, "");
-    CBC_AutoPtr<CBC_CommonDecoderResult> decodeResult(qdr2);
-    return (decodeResult->GetText());
+CFX_ByteString CBC_QRCodeReader::Decode(const CFX_WideString& filename,
+                                        int32_t hints,
+                                        int32_t byteModeDecode,
+                                        int32_t& e) {
+  CBC_BufferedImageLuminanceSource source(filename);
+  source.Init(e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, "");
+  CBC_GlobalHistogramBinarizer binarizer(&source);
+  CBC_BinaryBitmap bitmap(&binarizer);
+  CFX_ByteString bs = Decode(&bitmap, hints, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, "");
+  return bs;
 }
-CFX_ByteString CBC_QRCodeReader::Decode(const CFX_WideString &filename, int32_t hints, int32_t byteModeDecode, int32_t &e)
-{
-    CBC_BufferedImageLuminanceSource source(filename);
-    source.Init(e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, "");
-    CBC_GlobalHistogramBinarizer binarizer(&source);
-    CBC_BinaryBitmap bitmap(&binarizer);
-    CFX_ByteString bs = Decode(&bitmap, hints, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, "");
-    return bs;
+CFX_ByteString CBC_QRCodeReader::Decode(CFX_DIBitmap* pBitmap,
+                                        int32_t hints,
+                                        int32_t byteModeDecode,
+                                        int32_t& e) {
+  CBC_BufferedImageLuminanceSource source(pBitmap);
+  CBC_GlobalHistogramBinarizer binarizer(&source);
+  CBC_BinaryBitmap bitmap(&binarizer);
+  CFX_ByteString bs = Decode(&bitmap, hints, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, "");
+  return bs;
 }
-CFX_ByteString CBC_QRCodeReader::Decode(CFX_DIBitmap *pBitmap, int32_t hints, int32_t byteModeDecode, int32_t &e)
-{
-    CBC_BufferedImageLuminanceSource source(pBitmap);
-    CBC_GlobalHistogramBinarizer binarizer(&source);
-    CBC_BinaryBitmap bitmap(&binarizer);
-    CFX_ByteString bs = Decode(&bitmap, hints, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, "");
-    return bs;
+CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap* image, int32_t& e) {
+  CFX_ByteString bs = Decode(image, 0, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, "");
+  return bs;
 }
-CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap *image, int32_t &e)
-{
-    CFX_ByteString bs = Decode(image, 0, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, "");
-    return bs;
-}
-void CBC_QRCodeReader::ReleaseAll()
-{
-    if(CBC_ReedSolomonGF256 ::QRCodeFild) {
-        delete CBC_ReedSolomonGF256 ::QRCodeFild;
-        CBC_ReedSolomonGF256 ::QRCodeFild = NULL;
-    }
-    if(CBC_ReedSolomonGF256 ::DataMatrixField) {
-        delete CBC_ReedSolomonGF256 ::DataMatrixField;
-        CBC_ReedSolomonGF256 ::DataMatrixField = NULL;
-    }
-    CBC_QRCoderMode::Destroy();
-    CBC_QRCoderErrorCorrectionLevel::Destroy();
-    CBC_QRDataMask::Destroy();
-    CBC_QRCoderVersion::Destroy();
+void CBC_QRCodeReader::ReleaseAll() {
+  if (CBC_ReedSolomonGF256::QRCodeFild) {
+    delete CBC_ReedSolomonGF256::QRCodeFild;
+    CBC_ReedSolomonGF256::QRCodeFild = NULL;
+  }
+  if (CBC_ReedSolomonGF256::DataMatrixField) {
+    delete CBC_ReedSolomonGF256::DataMatrixField;
+    CBC_ReedSolomonGF256::DataMatrixField = NULL;
+  }
+  CBC_QRCoderMode::Destroy();
+  CBC_QRCoderErrorCorrectionLevel::Destroy();
+  CBC_QRDataMask::Destroy();
+  CBC_QRCoderVersion::Destroy();
 }
