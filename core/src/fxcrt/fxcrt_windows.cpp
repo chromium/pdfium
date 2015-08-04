@@ -8,208 +8,202 @@
 #include "fxcrt_windows.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-FX_BOOL FX_File_Exist(const CFX_ByteStringC& fileName)
-{
-    FX_DWORD dwAttri = ::GetFileAttributesA(fileName.GetCStr());
-    if (dwAttri == -1) {
-        return FALSE;
-    }
-    return (dwAttri & FILE_ATTRIBUTE_DIRECTORY) == 0;
+FX_BOOL FX_File_Exist(const CFX_ByteStringC& fileName) {
+  FX_DWORD dwAttri = ::GetFileAttributesA(fileName.GetCStr());
+  if (dwAttri == -1) {
+    return FALSE;
+  }
+  return (dwAttri & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
-FX_BOOL FX_File_Exist(const CFX_WideStringC& fileName)
-{
-    FX_DWORD dwAttri = ::GetFileAttributesW((LPCWSTR)fileName.GetPtr());
-    if (dwAttri == -1) {
-        return FALSE;
-    }
-    return (dwAttri & FILE_ATTRIBUTE_DIRECTORY) == 0;
+FX_BOOL FX_File_Exist(const CFX_WideStringC& fileName) {
+  FX_DWORD dwAttri = ::GetFileAttributesW((LPCWSTR)fileName.GetPtr());
+  if (dwAttri == -1) {
+    return FALSE;
+  }
+  return (dwAttri & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
-IFXCRT_FileAccess* FXCRT_FileAccess_Create()
-{
-    return new CFXCRT_FileAccess_Win64;
+IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
+  return new CFXCRT_FileAccess_Win64;
 }
-void FXCRT_Windows_GetFileMode(FX_DWORD dwMode, FX_DWORD &dwAccess, FX_DWORD &dwShare, FX_DWORD &dwCreation)
-{
-    dwAccess = GENERIC_READ;
-    dwShare = FILE_SHARE_READ | FILE_SHARE_WRITE;
-    if (!(dwMode & FX_FILEMODE_ReadOnly)) {
-        dwAccess |= GENERIC_WRITE;
-        dwCreation = (dwMode & FX_FILEMODE_Truncate) ? CREATE_ALWAYS : OPEN_ALWAYS;
-    } else {
-        dwCreation = OPEN_EXISTING;
-    }
+void FXCRT_Windows_GetFileMode(FX_DWORD dwMode,
+                               FX_DWORD& dwAccess,
+                               FX_DWORD& dwShare,
+                               FX_DWORD& dwCreation) {
+  dwAccess = GENERIC_READ;
+  dwShare = FILE_SHARE_READ | FILE_SHARE_WRITE;
+  if (!(dwMode & FX_FILEMODE_ReadOnly)) {
+    dwAccess |= GENERIC_WRITE;
+    dwCreation = (dwMode & FX_FILEMODE_Truncate) ? CREATE_ALWAYS : OPEN_ALWAYS;
+  } else {
+    dwCreation = OPEN_EXISTING;
+  }
 }
 #ifdef __cplusplus
 extern "C" {
 #endif
 WINBASEAPI BOOL WINAPI GetFileSizeEx(HANDLE hFile, PLARGE_INTEGER lpFileSize);
-WINBASEAPI BOOL WINAPI SetFilePointerEx(HANDLE hFile, LARGE_INTEGER liDistanceToMove, PLARGE_INTEGER lpNewFilePointer, DWORD dwMoveMethod);
+WINBASEAPI BOOL WINAPI SetFilePointerEx(HANDLE hFile,
+                                        LARGE_INTEGER liDistanceToMove,
+                                        PLARGE_INTEGER lpNewFilePointer,
+                                        DWORD dwMoveMethod);
 #ifdef __cplusplus
 }
 #endif
-CFXCRT_FileAccess_Win64::CFXCRT_FileAccess_Win64()
-    : m_hFile(NULL)
-{
+CFXCRT_FileAccess_Win64::CFXCRT_FileAccess_Win64() : m_hFile(NULL) {}
+CFXCRT_FileAccess_Win64::~CFXCRT_FileAccess_Win64() {
+  Close();
 }
-CFXCRT_FileAccess_Win64::~CFXCRT_FileAccess_Win64()
-{
-    Close();
-}
-FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode)
-{
-    if (m_hFile) {
-        return FALSE;
-    }
-    FX_DWORD dwAccess, dwShare, dwCreation;
-    FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
-    m_hFile = ::CreateFileA(fileName.GetCStr(), dwAccess, dwShare, NULL, dwCreation, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (m_hFile == INVALID_HANDLE_VALUE) {
-        m_hFile = NULL;
-    }
-    return m_hFile != NULL;
-}
-FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName, FX_DWORD dwMode)
-{
-    if (m_hFile) {
-        return FALSE;
-    }
-    FX_DWORD dwAccess, dwShare, dwCreation;
-    FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
-    m_hFile = ::CreateFileW((LPCWSTR)fileName.GetPtr(), dwAccess, dwShare, NULL, dwCreation, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (m_hFile == INVALID_HANDLE_VALUE) {
-        m_hFile = NULL;
-    }
-    return m_hFile != NULL;
-}
-void CFXCRT_FileAccess_Win64::Close()
-{
-    if (!m_hFile) {
-        return;
-    }
-    ::CloseHandle(m_hFile);
+FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName,
+                                      FX_DWORD dwMode) {
+  if (m_hFile) {
+    return FALSE;
+  }
+  FX_DWORD dwAccess, dwShare, dwCreation;
+  FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
+  m_hFile = ::CreateFileA(fileName.GetCStr(), dwAccess, dwShare, NULL,
+                          dwCreation, FILE_ATTRIBUTE_NORMAL, NULL);
+  if (m_hFile == INVALID_HANDLE_VALUE) {
     m_hFile = NULL;
+  }
+  return m_hFile != NULL;
 }
-void CFXCRT_FileAccess_Win64::Release()
-{
-    delete this;
+FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName,
+                                      FX_DWORD dwMode) {
+  if (m_hFile) {
+    return FALSE;
+  }
+  FX_DWORD dwAccess, dwShare, dwCreation;
+  FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
+  m_hFile = ::CreateFileW((LPCWSTR)fileName.GetPtr(), dwAccess, dwShare, NULL,
+                          dwCreation, FILE_ATTRIBUTE_NORMAL, NULL);
+  if (m_hFile == INVALID_HANDLE_VALUE) {
+    m_hFile = NULL;
+  }
+  return m_hFile != NULL;
 }
-FX_FILESIZE CFXCRT_FileAccess_Win64::GetSize() const
-{
-    if (!m_hFile) {
-        return 0;
-    }
-    LARGE_INTEGER size = {};
-    if (!::GetFileSizeEx(m_hFile, &size)) {
-        return 0;
-    }
-    return (FX_FILESIZE)size.QuadPart;
+void CFXCRT_FileAccess_Win64::Close() {
+  if (!m_hFile) {
+    return;
+  }
+  ::CloseHandle(m_hFile);
+  m_hFile = NULL;
 }
-FX_FILESIZE CFXCRT_FileAccess_Win64::GetPosition() const
-{
-    if (!m_hFile) {
-        return (FX_FILESIZE) - 1;
-    }
-    LARGE_INTEGER dist = {};
-    LARGE_INTEGER newPos = {};
-    if (!::SetFilePointerEx(m_hFile, dist, &newPos, FILE_CURRENT)) {
-        return (FX_FILESIZE) - 1;
-    }
-    return (FX_FILESIZE)newPos.QuadPart;
+void CFXCRT_FileAccess_Win64::Release() {
+  delete this;
 }
-FX_FILESIZE CFXCRT_FileAccess_Win64::SetPosition(FX_FILESIZE pos)
-{
-    if (!m_hFile) {
-        return (FX_FILESIZE) - 1;
-    }
-    LARGE_INTEGER dist;
-    dist.QuadPart = pos;
-    LARGE_INTEGER newPos = {};
-    if (!::SetFilePointerEx(m_hFile, dist, &newPos, FILE_BEGIN)) {
-        return (FX_FILESIZE) - 1;
-    }
-    return (FX_FILESIZE)newPos.QuadPart;
+FX_FILESIZE CFXCRT_FileAccess_Win64::GetSize() const {
+  if (!m_hFile) {
+    return 0;
+  }
+  LARGE_INTEGER size = {};
+  if (!::GetFileSizeEx(m_hFile, &size)) {
+    return 0;
+  }
+  return (FX_FILESIZE)size.QuadPart;
 }
-size_t CFXCRT_FileAccess_Win64::Read(void* pBuffer, size_t szBuffer)
-{
-    if (!m_hFile) {
-        return 0;
-    }
-    size_t szRead = 0;
-    if (!::ReadFile(m_hFile, pBuffer, (DWORD)szBuffer, (LPDWORD)&szRead, NULL)) {
-        return 0;
-    }
-    return szRead;
+FX_FILESIZE CFXCRT_FileAccess_Win64::GetPosition() const {
+  if (!m_hFile) {
+    return (FX_FILESIZE)-1;
+  }
+  LARGE_INTEGER dist = {};
+  LARGE_INTEGER newPos = {};
+  if (!::SetFilePointerEx(m_hFile, dist, &newPos, FILE_CURRENT)) {
+    return (FX_FILESIZE)-1;
+  }
+  return (FX_FILESIZE)newPos.QuadPart;
 }
-size_t CFXCRT_FileAccess_Win64::Write(const void* pBuffer, size_t szBuffer)
-{
-    if (!m_hFile) {
-        return 0;
-    }
-    size_t szWrite = 0;
-    if (!::WriteFile(m_hFile, pBuffer, (DWORD)szBuffer, (LPDWORD)&szWrite, NULL)) {
-        return 0;
-    }
-    return szWrite;
+FX_FILESIZE CFXCRT_FileAccess_Win64::SetPosition(FX_FILESIZE pos) {
+  if (!m_hFile) {
+    return (FX_FILESIZE)-1;
+  }
+  LARGE_INTEGER dist;
+  dist.QuadPart = pos;
+  LARGE_INTEGER newPos = {};
+  if (!::SetFilePointerEx(m_hFile, dist, &newPos, FILE_BEGIN)) {
+    return (FX_FILESIZE)-1;
+  }
+  return (FX_FILESIZE)newPos.QuadPart;
 }
-size_t CFXCRT_FileAccess_Win64::ReadPos(void* pBuffer, size_t szBuffer, FX_FILESIZE pos)
-{
-    if (!m_hFile) {
-        return 0;
-    }
-    if (pos >= GetSize()) {
-        return 0;
-    }
-    if (SetPosition(pos) == (FX_FILESIZE) - 1) {
-        return 0;
-    }
-    return Read(pBuffer, szBuffer);
+size_t CFXCRT_FileAccess_Win64::Read(void* pBuffer, size_t szBuffer) {
+  if (!m_hFile) {
+    return 0;
+  }
+  size_t szRead = 0;
+  if (!::ReadFile(m_hFile, pBuffer, (DWORD)szBuffer, (LPDWORD)&szRead, NULL)) {
+    return 0;
+  }
+  return szRead;
 }
-size_t CFXCRT_FileAccess_Win64::WritePos(const void* pBuffer, size_t szBuffer, FX_FILESIZE pos)
-{
-    if (!m_hFile) {
-        return 0;
-    }
-    if (SetPosition(pos) == (FX_FILESIZE) - 1) {
-        return 0;
-    }
-    return Write(pBuffer, szBuffer);
+size_t CFXCRT_FileAccess_Win64::Write(const void* pBuffer, size_t szBuffer) {
+  if (!m_hFile) {
+    return 0;
+  }
+  size_t szWrite = 0;
+  if (!::WriteFile(m_hFile, pBuffer, (DWORD)szBuffer, (LPDWORD)&szWrite,
+                   NULL)) {
+    return 0;
+  }
+  return szWrite;
 }
-FX_BOOL CFXCRT_FileAccess_Win64::Flush()
-{
-    if (!m_hFile) {
-        return FALSE;
-    }
-    return ::FlushFileBuffers(m_hFile);
+size_t CFXCRT_FileAccess_Win64::ReadPos(void* pBuffer,
+                                        size_t szBuffer,
+                                        FX_FILESIZE pos) {
+  if (!m_hFile) {
+    return 0;
+  }
+  if (pos >= GetSize()) {
+    return 0;
+  }
+  if (SetPosition(pos) == (FX_FILESIZE)-1) {
+    return 0;
+  }
+  return Read(pBuffer, szBuffer);
 }
-FX_BOOL CFXCRT_FileAccess_Win64::Truncate(FX_FILESIZE szFile)
-{
-    if (SetPosition(szFile) == (FX_FILESIZE) - 1) {
-        return FALSE;
-    }
-    return ::SetEndOfFile(m_hFile);
+size_t CFXCRT_FileAccess_Win64::WritePos(const void* pBuffer,
+                                         size_t szBuffer,
+                                         FX_FILESIZE pos) {
+  if (!m_hFile) {
+    return 0;
+  }
+  if (SetPosition(pos) == (FX_FILESIZE)-1) {
+    return 0;
+  }
+  return Write(pBuffer, szBuffer);
 }
-FX_BOOL FX_File_Delete(const CFX_ByteStringC& fileName)
-{
-    return ::DeleteFileA(fileName.GetCStr());
+FX_BOOL CFXCRT_FileAccess_Win64::Flush() {
+  if (!m_hFile) {
+    return FALSE;
+  }
+  return ::FlushFileBuffers(m_hFile);
 }
-FX_BOOL FX_File_Delete(const CFX_WideStringC& fileName)
-{
-    return ::DeleteFileW((LPCWSTR)fileName.GetPtr());
+FX_BOOL CFXCRT_FileAccess_Win64::Truncate(FX_FILESIZE szFile) {
+  if (SetPosition(szFile) == (FX_FILESIZE)-1) {
+    return FALSE;
+  }
+  return ::SetEndOfFile(m_hFile);
 }
-FX_BOOL FX_File_Copy(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
-{
-    return ::CopyFileA(fileNameSrc.GetCStr(), fileNameDst.GetCStr(), FALSE);
+FX_BOOL FX_File_Delete(const CFX_ByteStringC& fileName) {
+  return ::DeleteFileA(fileName.GetCStr());
 }
-FX_BOOL FX_File_Copy(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
-{
-    return ::CopyFileW((LPCWSTR)fileNameSrc.GetPtr(), (LPCWSTR)fileNameDst.GetPtr(), FALSE);
+FX_BOOL FX_File_Delete(const CFX_WideStringC& fileName) {
+  return ::DeleteFileW((LPCWSTR)fileName.GetPtr());
 }
-FX_BOOL FX_File_Move(const CFX_ByteStringC& fileNameSrc, const CFX_ByteStringC& fileNameDst)
-{
-    return ::MoveFileA(fileNameSrc.GetCStr(), fileNameDst.GetCStr());
+FX_BOOL FX_File_Copy(const CFX_ByteStringC& fileNameSrc,
+                     const CFX_ByteStringC& fileNameDst) {
+  return ::CopyFileA(fileNameSrc.GetCStr(), fileNameDst.GetCStr(), FALSE);
 }
-FX_BOOL FX_File_Move(const CFX_WideStringC& fileNameSrc, const CFX_WideStringC& fileNameDst)
-{
-    return ::MoveFileW((LPCWSTR)fileNameSrc.GetPtr(), (LPCWSTR)fileNameDst.GetPtr());
+FX_BOOL FX_File_Copy(const CFX_WideStringC& fileNameSrc,
+                     const CFX_WideStringC& fileNameDst) {
+  return ::CopyFileW((LPCWSTR)fileNameSrc.GetPtr(),
+                     (LPCWSTR)fileNameDst.GetPtr(), FALSE);
+}
+FX_BOOL FX_File_Move(const CFX_ByteStringC& fileNameSrc,
+                     const CFX_ByteStringC& fileNameDst) {
+  return ::MoveFileA(fileNameSrc.GetCStr(), fileNameDst.GetCStr());
+}
+FX_BOOL FX_File_Move(const CFX_WideStringC& fileNameSrc,
+                     const CFX_WideStringC& fileNameDst) {
+  return ::MoveFileW((LPCWSTR)fileNameSrc.GetPtr(),
+                     (LPCWSTR)fileNameDst.GetPtr());
 }
 #endif

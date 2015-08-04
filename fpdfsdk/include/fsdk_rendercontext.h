@@ -11,33 +11,31 @@
 #include "fsdk_define.h"
 
 // Everything about rendering is put here: for OOM recovery
-class CRenderContext
-{
-public:
-	CRenderContext() { Clear(); }
-	~CRenderContext();
+class CRenderContext {
+ public:
+  CRenderContext() { Clear(); }
+  ~CRenderContext();
 
-	void Clear();
+  void Clear();
 
-	CFX_RenderDevice*		m_pDevice;
-	CPDF_RenderContext*		m_pContext;
-	CPDF_ProgressiveRenderer*	m_pRenderer;
-	CPDF_AnnotList*			m_pAnnots;
-	CPDF_RenderOptions*		m_pOptions;
+  CFX_RenderDevice* m_pDevice;
+  CPDF_RenderContext* m_pContext;
+  CPDF_ProgressiveRenderer* m_pRenderer;
+  CPDF_AnnotList* m_pAnnots;
+  CPDF_RenderOptions* m_pOptions;
 #ifdef _WIN32_WCE
-	CFX_DIBitmap*	m_pBitmap;
-	HBITMAP			m_hBitmap;
+  CFX_DIBitmap* m_pBitmap;
+  HBITMAP m_hBitmap;
 #endif
 };
 
-class IFSDK_PAUSE_Adapter : public IFX_Pause
-{
-public:
-	IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause );
-	FX_BOOL NeedToPauseNow();
+class IFSDK_PAUSE_Adapter : public IFX_Pause {
+ public:
+  IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause);
+  FX_BOOL NeedToPauseNow();
 
-private:
-	IFSDK_PAUSE* m_IPause;
+ private:
+  IFSDK_PAUSE* m_IPause;
 };
 
 #endif  // FPDFSDK_INCLUDE_FSDK_RENDERCONTEXT_H_

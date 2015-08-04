@@ -7,8 +7,7 @@
 #include "../../testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class FPDFDataAvailEmbeddertest : public EmbedderTest {
-};
+class FPDFDataAvailEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFDataAvailEmbeddertest, TrailerUnterminated) {
   // Document must open without crashing but is too malformed to be available.

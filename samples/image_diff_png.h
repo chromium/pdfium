@@ -12,9 +12,11 @@
 namespace image_diff_png {
 
 // Decode a PNG into an RGBA pixel array.
-bool DecodePNG(const unsigned char* input, size_t input_size,
+bool DecodePNG(const unsigned char* input,
+               size_t input_size,
                std::vector<unsigned char>* output,
-               int* width, int* height);
+               int* width,
+               int* height);
 
 // Encode an RGBA pixel array into a PNG.
 bool EncodeRGBAPNG(const unsigned char* input,

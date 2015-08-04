@@ -9,48 +9,45 @@
 
 #include "PWL_Button.h"
 
-class CPWL_PushButton : public CPWL_Button
-{
-public:
-	CPWL_PushButton();
-	virtual ~CPWL_PushButton();
+class CPWL_PushButton : public CPWL_Button {
+ public:
+  CPWL_PushButton();
+  virtual ~CPWL_PushButton();
 
-	virtual CFX_ByteString		GetClassName() const;
-	virtual CPDF_Rect			GetFocusRect() const;
+  virtual CFX_ByteString GetClassName() const;
+  virtual CPDF_Rect GetFocusRect() const;
 };
 
-class CPWL_CheckBox : public CPWL_Button
-{
-public:
-	CPWL_CheckBox();
-	virtual ~CPWL_CheckBox();
+class CPWL_CheckBox : public CPWL_Button {
+ public:
+  CPWL_CheckBox();
+  virtual ~CPWL_CheckBox();
 
-	virtual CFX_ByteString		GetClassName() const;
-	virtual FX_BOOL				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual FX_BOOL				OnChar(FX_WORD nChar, FX_DWORD nFlag);
+  virtual CFX_ByteString GetClassName() const;
+  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag);
 
-	void						SetCheck(FX_BOOL bCheck);
-	FX_BOOL						IsChecked() const;
+  void SetCheck(FX_BOOL bCheck);
+  FX_BOOL IsChecked() const;
 
-private:
-	FX_BOOL						m_bChecked;
+ private:
+  FX_BOOL m_bChecked;
 };
 
-class CPWL_RadioButton : public CPWL_Button
-{
-public:
-	CPWL_RadioButton();
-	virtual ~CPWL_RadioButton();
+class CPWL_RadioButton : public CPWL_Button {
+ public:
+  CPWL_RadioButton();
+  virtual ~CPWL_RadioButton();
 
-	virtual CFX_ByteString		GetClassName() const;
-	virtual FX_BOOL				OnLButtonUp(const CPDF_Point & point, FX_DWORD nFlag);
-	virtual FX_BOOL				OnChar(FX_WORD nChar, FX_DWORD nFlag);
+  virtual CFX_ByteString GetClassName() const;
+  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag);
 
-	void						SetCheck(FX_BOOL bCheck);
-	FX_BOOL						IsChecked() const;
+  void SetCheck(FX_BOOL bCheck);
+  FX_BOOL IsChecked() const;
 
-private:
-	FX_BOOL						m_bChecked;
+ private:
+  FX_BOOL m_bChecked;
 };
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_

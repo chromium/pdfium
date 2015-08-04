@@ -13,90 +13,84 @@
 extern "C" {
 #endif
 
-typedef int         FPDF_INT32;
+typedef int FPDF_INT32;
 typedef unsigned int FPDF_UINT32;
-typedef float       FPDF_FLOAT;
-//event type
-typedef enum
-{
-    FWL_EVENTTYPE_Mouse = 0 ,
-    FWL_EVENTTYPE_MouseWheel,
-    FWL_EVENTTYPE_Key       ,
+typedef float FPDF_FLOAT;
+// event type
+typedef enum {
+  FWL_EVENTTYPE_Mouse = 0,
+  FWL_EVENTTYPE_MouseWheel,
+  FWL_EVENTTYPE_Key,
 } FWL_EVENTTYPE;
 
-//key flag
-typedef enum
-{
-    FWL_EVENTFLAG_ShiftKey          = 1 << 0,
-    FWL_EVENTFLAG_ControlKey        = 1 << 1,
-    FWL_EVENTFLAG_AltKey            = 1 << 2,
-    FWL_EVENTFLAG_MetaKey           = 1 << 3,
-    FWL_EVENTFLAG_KeyPad            = 1 << 4,
-    FWL_EVENTFLAG_AutoRepeat        = 1 << 5,
-    FWL_EVENTFLAG_LeftButtonDown    = 1 << 6,
-    FWL_EVENTFLAG_MiddleButtonDown  = 1 << 7,
-    FWL_EVENTFLAG_RightButtonDown   = 1 << 8,
+// key flag
+typedef enum {
+  FWL_EVENTFLAG_ShiftKey = 1 << 0,
+  FWL_EVENTFLAG_ControlKey = 1 << 1,
+  FWL_EVENTFLAG_AltKey = 1 << 2,
+  FWL_EVENTFLAG_MetaKey = 1 << 3,
+  FWL_EVENTFLAG_KeyPad = 1 << 4,
+  FWL_EVENTFLAG_AutoRepeat = 1 << 5,
+  FWL_EVENTFLAG_LeftButtonDown = 1 << 6,
+  FWL_EVENTFLAG_MiddleButtonDown = 1 << 7,
+  FWL_EVENTFLAG_RightButtonDown = 1 << 8,
 } FWL_EVENTFLAG;
 
 // Mouse message command
-typedef enum
-{
-    FWL_EVENTMOUSECMD_LButtonDown = 1,
-    FWL_EVENTMOUSECMD_LButtonUp,
-    FWL_EVENTMOUSECMD_LButtonDblClk,
-    FWL_EVENTMOUSECMD_RButtonDown,
-    FWL_EVENTMOUSECMD_RButtonUp,
-    FWL_EVENTMOUSECMD_RButtonDblClk,
-    FWL_EVENTMOUSECMD_MButtonDown,
-    FWL_EVENTMOUSECMD_MButtonUp,
-    FWL_EVENTMOUSECMD_MButtonDblClk,
-    FWL_EVENTMOUSECMD_MouseMove,
-    FWL_EVENTMOUSECMD_MouseEnter,
-    FWL_EVENTMOUSECMD_MouseHover,
-    FWL_EVENTMOUSECMD_MouseLeave,
+typedef enum {
+  FWL_EVENTMOUSECMD_LButtonDown = 1,
+  FWL_EVENTMOUSECMD_LButtonUp,
+  FWL_EVENTMOUSECMD_LButtonDblClk,
+  FWL_EVENTMOUSECMD_RButtonDown,
+  FWL_EVENTMOUSECMD_RButtonUp,
+  FWL_EVENTMOUSECMD_RButtonDblClk,
+  FWL_EVENTMOUSECMD_MButtonDown,
+  FWL_EVENTMOUSECMD_MButtonUp,
+  FWL_EVENTMOUSECMD_MButtonDblClk,
+  FWL_EVENTMOUSECMD_MouseMove,
+  FWL_EVENTMOUSECMD_MouseEnter,
+  FWL_EVENTMOUSECMD_MouseHover,
+  FWL_EVENTMOUSECMD_MouseLeave,
 } FWL_EVENT_MOUSECMD;
 
-//mouse event
-struct FWL_EVENT_MOUSE
-{
-    FPDF_UINT32 command;
-    FPDF_DWORD flag;
-    FPDF_FLOAT x;
-    FPDF_FLOAT y;
+// mouse event
+struct FWL_EVENT_MOUSE {
+  FPDF_UINT32 command;
+  FPDF_DWORD flag;
+  FPDF_FLOAT x;
+  FPDF_FLOAT y;
 };
 
-//mouse wheel
-struct FWL_EVENT_MOUSEWHEEL
-{
-    FPDF_DWORD flag;
-    FPDF_FLOAT x;
-    FPDF_FLOAT y;
-    FPDF_FLOAT deltaX;
-    FPDF_FLOAT deltaY;
+// mouse wheel
+struct FWL_EVENT_MOUSEWHEEL {
+  FPDF_DWORD flag;
+  FPDF_FLOAT x;
+  FPDF_FLOAT y;
+  FPDF_FLOAT deltaX;
+  FPDF_FLOAT deltaY;
 };
 
-//virtual keycode
-typedef enum
-{
-  FWL_VKEY_Back     = 0x08,
-  FWL_VKEY_Tab      = 0x09,
-  FWL_VKEY_Clear    = 0x0C,
-  FWL_VKEY_Return   = 0x0D,
-  FWL_VKEY_Shift    = 0x10,
-  FWL_VKEY_Control  = 0x11,
-  FWL_VKEY_Menu     = 0x12,
-  FWL_VKEY_Pause    = 0x13,
-  FWL_VKEY_Capital  = 0x14,
-  FWL_VKEY_Kana     = 0x15,
-  FWL_VKEY_Hangul   = 0x15,
-  FWL_VKEY_Junja    = 0x17,
-  FWL_VKEY_Final    = 0x18,
-  FWL_VKEY_Hanja    = 0x19,
-  FWL_VKEY_Kanji    = 0x19,
-  FWL_VKEY_Escape   = 0x1B,
-  FWL_VKEY_Convert  = 0x1C,
+// virtual keycode
+typedef enum {
+  FWL_VKEY_Back = 0x08,
+  FWL_VKEY_Tab = 0x09,
+  FWL_VKEY_Clear = 0x0C,
+  FWL_VKEY_Return = 0x0D,
+  FWL_VKEY_Shift = 0x10,
+  FWL_VKEY_Control = 0x11,
+  FWL_VKEY_Menu = 0x12,
+  FWL_VKEY_Pause = 0x13,
+  FWL_VKEY_Capital = 0x14,
+  FWL_VKEY_Kana = 0x15,
+  FWL_VKEY_Hangul = 0x15,
+  FWL_VKEY_Junja = 0x17,
+  FWL_VKEY_Final = 0x18,
+  FWL_VKEY_Hanja = 0x19,
+  FWL_VKEY_Kanji = 0x19,
+  FWL_VKEY_Escape = 0x1B,
+  FWL_VKEY_Convert = 0x1C,
   FWL_VKEY_NonConvert = 0x1D,
-  FWL_VKEY_Accept    = 0x1E,
+  FWL_VKEY_Accept = 0x1E,
   FWL_VKEY_ModeChange = 0x1F,
   FWL_VKEY_Space = 0x20,
   FWL_VKEY_Prior = 0x21,
@@ -248,41 +242,36 @@ typedef enum
   FWL_VKEY_Unknown = 0,
 } FWL_VKEYCODE;
 
-//key event command
-typedef enum
-{
-    FWL_EVENTKEYCMD_KeyDown = 1,
-    FWL_EVENTKEYCMD_KeyUp,
-    FWL_EVENTKEYCMD_Char,
+// key event command
+typedef enum {
+  FWL_EVENTKEYCMD_KeyDown = 1,
+  FWL_EVENTKEYCMD_KeyUp,
+  FWL_EVENTKEYCMD_Char,
 } FWL_EVENTKEYCMD;
 
-//key event
-struct FWL_EVENT_KEY
-{
-    FPDF_UINT32 command;
-    FPDF_DWORD flag;
-    union
-    {
-        //Virtual key code.
-        FPDF_UINT32 vkcode;
-        //Character code.
-        FPDF_DWORD charcode;
-    }code;
+// key event
+struct FWL_EVENT_KEY {
+  FPDF_UINT32 command;
+  FPDF_DWORD flag;
+  union {
+    // Virtual key code.
+    FPDF_UINT32 vkcode;
+    // Character code.
+    FPDF_DWORD charcode;
+  } code;
 };
 
-//event type
-struct FWL_EVENT
-{
-    //structure size.
-    FPDF_UINT32 size;
-    //FWL_EVENTTYPE.
-    FPDF_UINT32 type;
-    union
-    {
-        struct FWL_EVENT_MOUSE mouse;
-        struct FWL_EVENT_MOUSEWHEEL wheel;
-        struct FWL_EVENT_KEY key;
-    }s;
+// event type
+struct FWL_EVENT {
+  // structure size.
+  FPDF_UINT32 size;
+  // FWL_EVENTTYPE.
+  FPDF_UINT32 type;
+  union {
+    struct FWL_EVENT_MOUSE mouse;
+    struct FWL_EVENT_MOUSEWHEEL wheel;
+    struct FWL_EVENT_KEY key;
+  } s;
 };
 
 #ifdef __cplusplus

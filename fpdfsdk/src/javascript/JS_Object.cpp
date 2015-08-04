@@ -10,137 +10,130 @@
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Context.h"
 
-JS_TIMER_MAPARRAY& GetTimeMap()
-{
+JS_TIMER_MAPARRAY& GetTimeMap() {
   // Leak the timer array at shutdown.
   static auto* timeMap = new JS_TIMER_MAPARRAY;
   return *timeMap;
 }
 
-int FXJS_MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, const FX_WCHAR* swMsg, const FX_WCHAR* swTitle, FX_UINT nType, FX_UINT nIcon)
-{
-    if (!pApp)
-        return 0;
+int FXJS_MsgBox(CPDFDoc_Environment* pApp,
+                CPDFSDK_PageView* pPageView,
+                const FX_WCHAR* swMsg,
+                const FX_WCHAR* swTitle,
+                FX_UINT nType,
+                FX_UINT nIcon) {
+  if (!pApp)
+    return 0;
 
-    if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
-        pDoc->KillFocusAnnot();
+  if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
+    pDoc->KillFocusAnnot();
 
-    return pApp->JS_appAlert(swMsg, swTitle, nType, nIcon);
+  return pApp->JS_appAlert(swMsg, swTitle, nType, nIcon);
 }
 
-CPDFSDK_PageView* FXJS_GetPageView(IFXJS_Context* cc)
-{
-    if (CJS_Context* pContext = (CJS_Context *)cc)
-    {
-        if (pContext->GetReaderDocument())
-            return NULL;
-    }
-    return NULL;
+CPDFSDK_PageView* FXJS_GetPageView(IFXJS_Context* cc) {
+  if (CJS_Context* pContext = (CJS_Context*)cc) {
+    if (pContext->GetReaderDocument())
+      return NULL;
+  }
+  return NULL;
 }
 
-/* ---------------------------------  CJS_EmbedObj --------------------------------- */
+/* ---------------------------------  CJS_EmbedObj
+ * --------------------------------- */
 
-CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) :
-    m_pJSObject(pJSObject)
-{
+CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : m_pJSObject(pJSObject) {}
+
+CJS_EmbedObj::~CJS_EmbedObj() {
+  m_pJSObject = NULL;
 }
 
-CJS_EmbedObj::~CJS_EmbedObj()
-{
-    m_pJSObject = NULL;
-
+CPDFSDK_PageView* CJS_EmbedObj::JSGetPageView(IFXJS_Context* cc) {
+  return FXJS_GetPageView(cc);
 }
 
-CPDFSDK_PageView* CJS_EmbedObj::JSGetPageView(IFXJS_Context* cc)
-{
-    return FXJS_GetPageView(cc);
+int CJS_EmbedObj::MsgBox(CPDFDoc_Environment* pApp,
+                         CPDFSDK_PageView* pPageView,
+                         const FX_WCHAR* swMsg,
+                         const FX_WCHAR* swTitle,
+                         FX_UINT nType,
+                         FX_UINT nIcon) {
+  return FXJS_MsgBox(pApp, pPageView, swMsg, swTitle, nType, nIcon);
 }
 
-int CJS_EmbedObj::MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView,const FX_WCHAR* swMsg,const FX_WCHAR* swTitle,FX_UINT nType,FX_UINT nIcon)
-{
-    return FXJS_MsgBox(pApp, pPageView, swMsg, swTitle, nType, nIcon);
+void CJS_EmbedObj::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
+  CJS_Object::Alert(pContext, swMsg);
 }
 
-void CJS_EmbedObj::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg)
-{
-    CJS_Object::Alert(pContext, swMsg);
+CJS_Timer* CJS_EmbedObj::BeginTimer(CPDFDoc_Environment* pApp,
+                                    FX_UINT nElapse) {
+  CJS_Timer* pTimer = new CJS_Timer(this, pApp);
+  pTimer->SetJSTimer(nElapse);
+
+  return pTimer;
 }
 
-CJS_Timer* CJS_EmbedObj::BeginTimer(CPDFDoc_Environment * pApp,FX_UINT nElapse)
-{
-    CJS_Timer* pTimer = new CJS_Timer(this,pApp);
-    pTimer->SetJSTimer(nElapse);
-
-    return pTimer;
+void CJS_EmbedObj::EndTimer(CJS_Timer* pTimer) {
+  ASSERT(pTimer != NULL);
+  pTimer->KillJSTimer();
+  delete pTimer;
 }
 
-void CJS_EmbedObj::EndTimer(CJS_Timer* pTimer)
-{
-    ASSERT(pTimer != NULL);
-    pTimer->KillJSTimer();
-    delete pTimer;
+/* ---------------------------------  CJS_Object
+ * --------------------------------- */
+void FreeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {
+  CJS_Object* pJSObj = data.GetParameter();
+  pJSObj->ExitInstance();
+  delete pJSObj;
+  JS_FreePrivate(data.GetInternalField(0));
 }
 
-/* ---------------------------------  CJS_Object --------------------------------- */
-void  FreeObject(const v8::WeakCallbackInfo<CJS_Object>& data)
-{
-    CJS_Object* pJSObj  = data.GetParameter();
-        pJSObj->ExitInstance();
-        delete pJSObj;
-    JS_FreePrivate(data.GetInternalField(0));
+void DisposeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {
+  CJS_Object* pJSObj = data.GetParameter();
+  pJSObj->Dispose();
+  data.SetSecondPassCallback(FreeObject);
 }
 
-void  DisposeObject(const v8::WeakCallbackInfo<CJS_Object>& data)
-{
-    CJS_Object* pJSObj  = data.GetParameter();
-        pJSObj->Dispose();
-        data.SetSecondPassCallback(FreeObject);
-}
-
-CJS_Object::CJS_Object(JSFXObject pObject) :m_pEmbedObj(NULL)
-{
-    v8::Local<v8::Context> context = pObject->CreationContext();
-    m_pIsolate = context->GetIsolate();
-    m_pObject.Reset(m_pIsolate, pObject);
+CJS_Object::CJS_Object(JSFXObject pObject) : m_pEmbedObj(NULL) {
+  v8::Local<v8::Context> context = pObject->CreationContext();
+  m_pIsolate = context->GetIsolate();
+  m_pObject.Reset(m_pIsolate, pObject);
 };
 
-CJS_Object::~CJS_Object(void)
-{
-    delete m_pEmbedObj;
-    m_pEmbedObj = NULL;
+CJS_Object::~CJS_Object(void) {
+  delete m_pEmbedObj;
+  m_pEmbedObj = NULL;
 
-    m_pObject.Reset();
+  m_pObject.Reset();
 };
 
-void    CJS_Object::MakeWeak()
-{
-    m_pObject.SetWeak(
-            this, DisposeObject, v8::WeakCallbackType::kInternalFields);
+void CJS_Object::MakeWeak() {
+  m_pObject.SetWeak(this, DisposeObject, v8::WeakCallbackType::kInternalFields);
 }
 
-void    CJS_Object::Dispose()
-{
-        m_pObject.Reset();
+void CJS_Object::Dispose() {
+  m_pObject.Reset();
 }
 
-CPDFSDK_PageView* CJS_Object::JSGetPageView(IFXJS_Context* cc)
-{
-    return FXJS_GetPageView(cc);
+CPDFSDK_PageView* CJS_Object::JSGetPageView(IFXJS_Context* cc) {
+  return FXJS_GetPageView(cc);
 }
 
-int CJS_Object::MsgBox(CPDFDoc_Environment* pApp, CPDFSDK_PageView* pPageView, const FX_WCHAR* swMsg, const FX_WCHAR* swTitle, FX_UINT nType, FX_UINT nIcon)
-{
-    return FXJS_MsgBox(pApp, pPageView, swMsg, swTitle, nType, nIcon);
+int CJS_Object::MsgBox(CPDFDoc_Environment* pApp,
+                       CPDFSDK_PageView* pPageView,
+                       const FX_WCHAR* swMsg,
+                       const FX_WCHAR* swTitle,
+                       FX_UINT nType,
+                       FX_UINT nIcon) {
+  return FXJS_MsgBox(pApp, pPageView, swMsg, swTitle, nType, nIcon);
 }
 
-void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg)
-{
-    ASSERT(pContext != NULL);
+void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
+  ASSERT(pContext != NULL);
 
-    if (pContext->IsMsgBoxEnabled())
-    {
-        CPDFDoc_Environment* pApp = pContext->GetReaderApp();
-        if(pApp)
-            pApp->JS_appAlert(swMsg, NULL, 0, 3);
-    }
+  if (pContext->IsMsgBoxEnabled()) {
+    CPDFDoc_Environment* pApp = pContext->GetReaderApp();
+    if (pApp)
+      pApp->JS_appAlert(swMsg, NULL, 0, 3);
+  }
 }

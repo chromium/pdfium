@@ -8,28 +8,28 @@
 #define FPDFSDK_INCLUDE_JAVASCRIPT_RESOURCE_H_
 
 #include "../../../core/include/fxcrt/fx_string.h"  // For CFX_WideString.
-#include "../fsdk_define.h"  // For FX_UINT.
+#include "../fsdk_define.h"                         // For FX_UINT.
 
 class CJS_Context;
 
-#define IDS_STRING_JSALERT              25613
-#define IDS_STRING_JSPARAMERROR         25614
+#define IDS_STRING_JSALERT 25613
+#define IDS_STRING_JSPARAMERROR 25614
 #define IDS_STRING_JSAFNUMBER_KEYSTROKE 25615
-#define IDS_STRING_JSPARAM_TOOLONG      25617
-#define IDS_STRING_JSPARSEDATE          25618
-#define IDS_STRING_JSRANGE1             25619
-#define IDS_STRING_JSRANGE2             25620
-#define IDS_STRING_JSRANGE3             25621
-#define IDS_STRING_NOTSUPPORT           25627
-#define IDS_STRING_JSBUSY               25628
-#define IDS_STRING_JSEVENT              25629
-#define IDS_STRING_RUN                  25630
-#define IDS_STRING_JSPRINT1             25632
-#define IDS_STRING_JSPRINT2             25633
-#define IDS_STRING_JSNOGLOBAL           25635
-#define IDS_STRING_JSREADONLY           25636
-#define IDS_STRING_JSTYPEERROR          25637
-#define IDS_STRING_JSVALUEERROR         25638
+#define IDS_STRING_JSPARAM_TOOLONG 25617
+#define IDS_STRING_JSPARSEDATE 25618
+#define IDS_STRING_JSRANGE1 25619
+#define IDS_STRING_JSRANGE2 25620
+#define IDS_STRING_JSRANGE3 25621
+#define IDS_STRING_NOTSUPPORT 25627
+#define IDS_STRING_JSBUSY 25628
+#define IDS_STRING_JSEVENT 25629
+#define IDS_STRING_RUN 25630
+#define IDS_STRING_JSPRINT1 25632
+#define IDS_STRING_JSPRINT2 25633
+#define IDS_STRING_JSNOGLOBAL 25635
+#define IDS_STRING_JSREADONLY 25636
+#define IDS_STRING_JSTYPEERROR 25637
+#define IDS_STRING_JSVALUEERROR 25638
 
 CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id);
 CFX_WideString JSFormatErrorString(const char* class_name,

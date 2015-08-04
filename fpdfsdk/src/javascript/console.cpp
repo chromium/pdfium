@@ -22,45 +22,45 @@ BEGIN_JS_STATIC_PROP(CJS_Console)
 END_JS_STATIC_PROP()
 
 BEGIN_JS_STATIC_METHOD(CJS_Console)
-	JS_STATIC_METHOD_ENTRY(clear)
-	JS_STATIC_METHOD_ENTRY(hide)
-	JS_STATIC_METHOD_ENTRY(println)
-	JS_STATIC_METHOD_ENTRY(show)
+JS_STATIC_METHOD_ENTRY(clear)
+JS_STATIC_METHOD_ENTRY(hide)
+JS_STATIC_METHOD_ENTRY(println)
+JS_STATIC_METHOD_ENTRY(show)
 END_JS_STATIC_METHOD()
 
-IMPLEMENT_JS_CLASS(CJS_Console,console)
+IMPLEMENT_JS_CLASS(CJS_Console, console)
 
-console::console(CJS_Object* pJSObject): CJS_EmbedObj(pJSObject)
-{
+console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
+
+console::~console() {}
+
+FX_BOOL console::clear(IFXJS_Context* cc,
+                       const CJS_Parameters& params,
+                       CJS_Value& vRet,
+                       CFX_WideString& sError) {
+  return TRUE;
 }
 
-console::~console()
-{
+FX_BOOL console::hide(IFXJS_Context* cc,
+                      const CJS_Parameters& params,
+                      CJS_Value& vRet,
+                      CFX_WideString& sError) {
+  return TRUE;
 }
 
-FX_BOOL console::clear(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
-{
-	return TRUE;
+FX_BOOL console::println(IFXJS_Context* cc,
+                         const CJS_Parameters& params,
+                         CJS_Value& vRet,
+                         CFX_WideString& sError) {
+  if (params.size() < 1) {
+    return FALSE;
+  }
+  return TRUE;
 }
 
-FX_BOOL console::hide(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
-{
-	return TRUE;
+FX_BOOL console::show(IFXJS_Context* cc,
+                      const CJS_Parameters& params,
+                      CJS_Value& vRet,
+                      CFX_WideString& sError) {
+  return TRUE;
 }
-
-FX_BOOL console::println(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
-{
-	if (params.size() < 1)
-	{
-		return FALSE;
-	}
-	return TRUE;
-}
-
-FX_BOOL console::show(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
-{
-	return TRUE;
-}
-
-
-

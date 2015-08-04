@@ -9,28 +9,32 @@
 
 #include "JS_Define.h"
 
-class Report : public CJS_EmbedObj
-{
-public:
-	Report(CJS_Object * pJSObject);
-	virtual ~Report();
+class Report : public CJS_EmbedObj {
+ public:
+  Report(CJS_Object* pJSObject);
+  virtual ~Report();
 
-public:
-	FX_BOOL save(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
-	FX_BOOL writeText(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError);
+ public:
+  FX_BOOL save(IFXJS_Context* cc,
+               const CJS_Parameters& params,
+               CJS_Value& vRet,
+               CFX_WideString& sError);
+  FX_BOOL writeText(IFXJS_Context* cc,
+                    const CJS_Parameters& params,
+                    CJS_Value& vRet,
+                    CFX_WideString& sError);
 };
 
-class CJS_Report : public CJS_Object
-{
-public:
-	CJS_Report(JSFXObject  pObject) : CJS_Object(pObject){};
-	virtual ~CJS_Report(){};
+class CJS_Report : public CJS_Object {
+ public:
+  CJS_Report(JSFXObject pObject) : CJS_Object(pObject){};
+  virtual ~CJS_Report(){};
 
-public:
-	DECLARE_JS_CLASS(CJS_Report);
+ public:
+  DECLARE_JS_CLASS(CJS_Report);
 
-	JS_STATIC_METHOD(save, Report)
-	JS_STATIC_METHOD(writeText, Report);
+  JS_STATIC_METHOD(save, Report)
+  JS_STATIC_METHOD(writeText, Report);
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_REPORT_H_

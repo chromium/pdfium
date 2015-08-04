@@ -21,202 +21,182 @@ class CPDF_StreamFilter;
 class CPDF_AllStates;
 class CPDF_ContentParser;
 class CPDF_StreamContentParser;
-#define PDFTRANS_GROUP			0x0100
-#define PDFTRANS_ISOLATED		0x0200
-#define PDFTRANS_KNOCKOUT		0x0400
+#define PDFTRANS_GROUP 0x0100
+#define PDFTRANS_ISOLATED 0x0200
+#define PDFTRANS_KNOCKOUT 0x0400
 
-class CPDF_PageObjects
-{
-public:
-    CPDF_PageObjects(FX_BOOL bReleaseMembers = TRUE);
-    ~CPDF_PageObjects();
+class CPDF_PageObjects {
+ public:
+  CPDF_PageObjects(FX_BOOL bReleaseMembers = TRUE);
+  ~CPDF_PageObjects();
 
-    void				ContinueParse(IFX_Pause* pPause);
+  void ContinueParse(IFX_Pause* pPause);
 
-    FX_BOOL				IsParsed() const
-    {
-        return m_ParseState == CONTENT_PARSED;
-    }
+  FX_BOOL IsParsed() const { return m_ParseState == CONTENT_PARSED; }
 
-    FX_POSITION			GetFirstObjectPosition() const
-    {
-        return m_ObjectList.GetHeadPosition();
-    }
+  FX_POSITION GetFirstObjectPosition() const {
+    return m_ObjectList.GetHeadPosition();
+  }
 
-    FX_POSITION			GetLastObjectPosition() const
-    {
-        return m_ObjectList.GetTailPosition();
-    }
+  FX_POSITION GetLastObjectPosition() const {
+    return m_ObjectList.GetTailPosition();
+  }
 
-    CPDF_PageObject*	GetNextObject(FX_POSITION& pos) const
-    {
-        return (CPDF_PageObject*)m_ObjectList.GetNext(pos);
-    }
+  CPDF_PageObject* GetNextObject(FX_POSITION& pos) const {
+    return (CPDF_PageObject*)m_ObjectList.GetNext(pos);
+  }
 
-    CPDF_PageObject*	GetPrevObject(FX_POSITION& pos) const
-    {
-        return (CPDF_PageObject*)m_ObjectList.GetPrev(pos);
-    }
+  CPDF_PageObject* GetPrevObject(FX_POSITION& pos) const {
+    return (CPDF_PageObject*)m_ObjectList.GetPrev(pos);
+  }
 
-    CPDF_PageObject*	GetObjectAt(FX_POSITION pos) const
-    {
-        return (CPDF_PageObject*)m_ObjectList.GetAt(pos);
-    }
+  CPDF_PageObject* GetObjectAt(FX_POSITION pos) const {
+    return (CPDF_PageObject*)m_ObjectList.GetAt(pos);
+  }
 
-    FX_DWORD			CountObjects() const
-    {
-        return m_ObjectList.GetCount();
-    }
+  FX_DWORD CountObjects() const { return m_ObjectList.GetCount(); }
 
-    int					GetObjectIndex(CPDF_PageObject* pObj) const;
+  int GetObjectIndex(CPDF_PageObject* pObj) const;
 
-    CPDF_PageObject*	GetObjectByIndex(int index) const;
+  CPDF_PageObject* GetObjectByIndex(int index) const;
 
-    FX_POSITION			InsertObject(FX_POSITION posInsertAfter, CPDF_PageObject* pNewObject);
+  FX_POSITION InsertObject(FX_POSITION posInsertAfter,
+                           CPDF_PageObject* pNewObject);
 
-    void				Transform(const CFX_AffineMatrix& matrix);
+  void Transform(const CFX_AffineMatrix& matrix);
 
-    FX_BOOL				BackgroundAlphaNeeded() const
-    {
-        return m_bBackgroundAlphaNeeded;
-    }
+  FX_BOOL BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
 
-    CFX_FloatRect		CalcBoundingBox() const;
+  CFX_FloatRect CalcBoundingBox() const;
 
-    CPDF_Dictionary*	m_pFormDict;
-    CPDF_Stream*		m_pFormStream;
-    CPDF_Document*		m_pDocument;
-    CPDF_Dictionary*	m_pPageResources;
-    CPDF_Dictionary*	m_pResources;
-    CFX_FloatRect		m_BBox;
-    int					m_Transparency;
+  CPDF_Dictionary* m_pFormDict;
+  CPDF_Stream* m_pFormStream;
+  CPDF_Document* m_pDocument;
+  CPDF_Dictionary* m_pPageResources;
+  CPDF_Dictionary* m_pResources;
+  CFX_FloatRect m_BBox;
+  int m_Transparency;
 
-protected:
-    friend class		CPDF_ContentParser;
-    friend class		CPDF_StreamContentParser;
-    friend class		CPDF_AllStates;
+ protected:
+  friend class CPDF_ContentParser;
+  friend class CPDF_StreamContentParser;
+  friend class CPDF_AllStates;
 
-    enum ParseState {
-        CONTENT_NOT_PARSED,
-        CONTENT_PARSING,
-        CONTENT_PARSED
-    };
+  enum ParseState { CONTENT_NOT_PARSED, CONTENT_PARSING, CONTENT_PARSED };
 
-    void				LoadTransInfo();
-    void                ClearCacheObjects();
+  void LoadTransInfo();
+  void ClearCacheObjects();
 
-    CFX_PtrList			m_ObjectList;
-    FX_BOOL				m_bBackgroundAlphaNeeded;
-    FX_BOOL				m_bReleaseMembers;
-    CPDF_ContentParser*	m_pParser;
-    ParseState			m_ParseState;
+  CFX_PtrList m_ObjectList;
+  FX_BOOL m_bBackgroundAlphaNeeded;
+  FX_BOOL m_bReleaseMembers;
+  CPDF_ContentParser* m_pParser;
+  ParseState m_ParseState;
 };
 
-class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData
-{
-public:
+class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
+ public:
+  CPDF_Page();
 
-    CPDF_Page();
+  ~CPDF_Page();
 
-    ~CPDF_Page();
+  void Load(CPDF_Document* pDocument,
+            CPDF_Dictionary* pPageDict,
+            FX_BOOL bPageCache = TRUE);
 
-    void				Load(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict, FX_BOOL bPageCache = TRUE);
+  void StartParse(CPDF_ParseOptions* pOptions = NULL, FX_BOOL bReParse = FALSE);
 
-    void				StartParse(CPDF_ParseOptions* pOptions = NULL, FX_BOOL bReParse = FALSE);
+  void ParseContent(CPDF_ParseOptions* pOptions = NULL,
+                    FX_BOOL bReParse = FALSE);
 
-    void				ParseContent(CPDF_ParseOptions* pOptions = NULL, FX_BOOL bReParse = FALSE);
+  void GetDisplayMatrix(CFX_AffineMatrix& matrix,
+                        int xPos,
+                        int yPos,
+                        int xSize,
+                        int ySize,
+                        int iRotate) const;
 
-    void				GetDisplayMatrix(CFX_AffineMatrix& matrix, int xPos, int yPos,
-                                         int xSize, int ySize, int iRotate) const;
+  FX_FLOAT GetPageWidth() const { return m_PageWidth; }
 
-    FX_FLOAT			GetPageWidth() const
-    {
-        return m_PageWidth;
-    }
+  FX_FLOAT GetPageHeight() const { return m_PageHeight; }
 
-    FX_FLOAT			GetPageHeight() const
-    {
-        return m_PageHeight;
-    }
+  CFX_FloatRect GetPageBBox() const { return m_BBox; }
 
-    CFX_FloatRect		GetPageBBox() const
-    {
-        return m_BBox;
-    }
+  const CFX_AffineMatrix& GetPageMatrix() const { return m_PageMatrix; }
 
-    const CFX_AffineMatrix&	GetPageMatrix() const
-    {
-        return m_PageMatrix;
-    }
+  CPDF_Object* GetPageAttr(const CFX_ByteStringC& name) const;
 
-    CPDF_Object*		GetPageAttr(const CFX_ByteStringC& name) const;
+  CPDF_PageRenderCache* GetRenderCache() const { return m_pPageRender; }
 
+  void ClearRenderCache();
 
+ protected:
+  friend class CPDF_ContentParser;
 
-    CPDF_PageRenderCache*	GetRenderCache() const
-    {
-        return m_pPageRender;
-    }
+  FX_FLOAT m_PageWidth;
 
-    void				ClearRenderCache();
+  FX_FLOAT m_PageHeight;
 
-protected:
-    friend class		CPDF_ContentParser;
+  CFX_AffineMatrix m_PageMatrix;
 
-    FX_FLOAT			m_PageWidth;
-
-    FX_FLOAT			m_PageHeight;
-
-    CFX_AffineMatrix	m_PageMatrix;
-
-    CPDF_PageRenderCache*	m_pPageRender;
+  CPDF_PageRenderCache* m_pPageRender;
 };
-class CPDF_ParseOptions
-{
-public:
+class CPDF_ParseOptions {
+ public:
+  CPDF_ParseOptions();
 
-    CPDF_ParseOptions();
+  FX_BOOL m_bTextOnly;
 
-    FX_BOOL				m_bTextOnly;
+  FX_BOOL m_bMarkedContent;
 
-    FX_BOOL				m_bMarkedContent;
+  FX_BOOL m_bSeparateForm;
 
-    FX_BOOL				m_bSeparateForm;
-
-    FX_BOOL				m_bDecodeInlineImage;
+  FX_BOOL m_bDecodeInlineImage;
 };
-class CPDF_Form : public CPDF_PageObjects
-{
-public:
+class CPDF_Form : public CPDF_PageObjects {
+ public:
+  CPDF_Form(CPDF_Document* pDocument,
+            CPDF_Dictionary* pPageResources,
+            CPDF_Stream* pFormStream,
+            CPDF_Dictionary* pParentResources = NULL);
 
-    CPDF_Form(CPDF_Document* pDocument, CPDF_Dictionary* pPageResources, CPDF_Stream* pFormStream, CPDF_Dictionary* pParentResources = NULL);
+  ~CPDF_Form();
 
-    ~CPDF_Form();
+  void StartParse(CPDF_AllStates* pGraphicStates,
+                  CFX_AffineMatrix* pParentMatrix,
+                  CPDF_Type3Char* pType3Char,
+                  CPDF_ParseOptions* pOptions,
+                  int level = 0);
 
-    void				StartParse(CPDF_AllStates* pGraphicStates,  CFX_AffineMatrix* pParentMatrix,
-                                   CPDF_Type3Char* pType3Char, CPDF_ParseOptions* pOptions, int level = 0);
+  void ParseContent(CPDF_AllStates* pGraphicStates,
+                    CFX_AffineMatrix* pParentMatrix,
+                    CPDF_Type3Char* pType3Char,
+                    CPDF_ParseOptions* pOptions,
+                    int level = 0);
 
-    void				ParseContent(CPDF_AllStates* pGraphicStates, CFX_AffineMatrix* pParentMatrix,
-                                     CPDF_Type3Char* pType3Char, CPDF_ParseOptions* pOptions, int level = 0);
-
-    CPDF_Form*			Clone() const;
+  CPDF_Form* Clone() const;
 };
-class CPDF_PageContentGenerate
-{
-public:
-    CPDF_PageContentGenerate(CPDF_Page* pPage);
-    ~CPDF_PageContentGenerate();
-    FX_BOOL InsertPageObject(CPDF_PageObject* pPageObject);
-    void GenerateContent();
-    void TransformContent(CFX_Matrix& matrix);
-protected:
-    void            ProcessImage(CFX_ByteTextBuf& buf, CPDF_ImageObject* pImageObj);
-    void            ProcessForm(CFX_ByteTextBuf& buf, const uint8_t* data, FX_DWORD size, CFX_Matrix& matrix);
-    CFX_ByteString  RealizeResource(CPDF_Object* pResourceObj, const FX_CHAR* szType);
-private:
-    CPDF_Page*      m_pPage;
-    CPDF_Document*  m_pDocument;
-    CFX_PtrArray    m_pageObjects;
+class CPDF_PageContentGenerate {
+ public:
+  CPDF_PageContentGenerate(CPDF_Page* pPage);
+  ~CPDF_PageContentGenerate();
+  FX_BOOL InsertPageObject(CPDF_PageObject* pPageObject);
+  void GenerateContent();
+  void TransformContent(CFX_Matrix& matrix);
+
+ protected:
+  void ProcessImage(CFX_ByteTextBuf& buf, CPDF_ImageObject* pImageObj);
+  void ProcessForm(CFX_ByteTextBuf& buf,
+                   const uint8_t* data,
+                   FX_DWORD size,
+                   CFX_Matrix& matrix);
+  CFX_ByteString RealizeResource(CPDF_Object* pResourceObj,
+                                 const FX_CHAR* szType);
+
+ private:
+  CPDF_Page* m_pPage;
+  CPDF_Document* m_pDocument;
+  CFX_PtrArray m_pageObjects;
 };
 
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_

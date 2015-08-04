@@ -14,15 +14,14 @@
 #include "../../include/javascript/JS_Context.h"
 #include "../../include/javascript/JS_Runtime.h"
 
-static v8::Isolate* GetIsolate(IFXJS_Context* cc)
-{
-	CJS_Context* pContext = (CJS_Context *)cc;
-	ASSERT(pContext != NULL);
+static v8::Isolate* GetIsolate(IFXJS_Context* cc) {
+  CJS_Context* pContext = (CJS_Context*)cc;
+  ASSERT(pContext != NULL);
 
-	CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-	ASSERT(pRuntime != NULL);
+  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+  ASSERT(pRuntime != NULL);
 
-	return pRuntime->GetIsolate();
+  return pRuntime->GetIsolate();
 }
 /* -------------------------- color -------------------------- */
 
@@ -30,149 +29,132 @@ BEGIN_JS_STATIC_CONST(CJS_Color)
 END_JS_STATIC_CONST()
 
 BEGIN_JS_STATIC_PROP(CJS_Color)
-	JS_STATIC_PROP_ENTRY(black)
-	JS_STATIC_PROP_ENTRY(blue)
-	JS_STATIC_PROP_ENTRY(cyan)
-	JS_STATIC_PROP_ENTRY(dkGray)
-	JS_STATIC_PROP_ENTRY(gray)
-	JS_STATIC_PROP_ENTRY(green)
-	JS_STATIC_PROP_ENTRY(ltGray)
-	JS_STATIC_PROP_ENTRY(magenta)
-	JS_STATIC_PROP_ENTRY(red)
-	JS_STATIC_PROP_ENTRY(transparent)
-	JS_STATIC_PROP_ENTRY(white)
-	JS_STATIC_PROP_ENTRY(yellow)
+JS_STATIC_PROP_ENTRY(black)
+JS_STATIC_PROP_ENTRY(blue)
+JS_STATIC_PROP_ENTRY(cyan)
+JS_STATIC_PROP_ENTRY(dkGray)
+JS_STATIC_PROP_ENTRY(gray)
+JS_STATIC_PROP_ENTRY(green)
+JS_STATIC_PROP_ENTRY(ltGray)
+JS_STATIC_PROP_ENTRY(magenta)
+JS_STATIC_PROP_ENTRY(red)
+JS_STATIC_PROP_ENTRY(transparent)
+JS_STATIC_PROP_ENTRY(white)
+JS_STATIC_PROP_ENTRY(yellow)
 END_JS_STATIC_PROP()
 
 BEGIN_JS_STATIC_METHOD(CJS_Color)
-	JS_STATIC_METHOD_ENTRY(convert)
-	JS_STATIC_METHOD_ENTRY(equal)
+JS_STATIC_METHOD_ENTRY(convert)
+JS_STATIC_METHOD_ENTRY(equal)
 END_JS_STATIC_METHOD()
 
-IMPLEMENT_JS_CLASS(CJS_Color,color)
+IMPLEMENT_JS_CLASS(CJS_Color, color)
 
-color::color(CJS_Object* pJSObject): CJS_EmbedObj(pJSObject)
-{
-	m_crTransparent = CPWL_Color(COLORTYPE_TRANSPARENT);
-	m_crBlack = CPWL_Color(COLORTYPE_GRAY, 0);
-	m_crWhite = CPWL_Color(COLORTYPE_GRAY, 1);
-	m_crRed = CPWL_Color(COLORTYPE_RGB, 1, 0 ,0);
-	m_crGreen = CPWL_Color(COLORTYPE_RGB, 0, 1 ,0);
-	m_crBlue = CPWL_Color(COLORTYPE_RGB, 0, 0 ,1);
-	m_crCyan = CPWL_Color(COLORTYPE_CMYK, 1, 0 ,0, 0);
-	m_crMagenta = CPWL_Color(COLORTYPE_CMYK, 0, 1 ,0, 0);
-	m_crYellow = CPWL_Color(COLORTYPE_CMYK, 0, 0 ,1, 0);
-	m_crDKGray = CPWL_Color(COLORTYPE_GRAY, 0.25);
-	m_crGray = CPWL_Color(COLORTYPE_GRAY, 0.5);
-	m_crLTGray = CPWL_Color(COLORTYPE_GRAY, 0.75);
+color::color(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {
+  m_crTransparent = CPWL_Color(COLORTYPE_TRANSPARENT);
+  m_crBlack = CPWL_Color(COLORTYPE_GRAY, 0);
+  m_crWhite = CPWL_Color(COLORTYPE_GRAY, 1);
+  m_crRed = CPWL_Color(COLORTYPE_RGB, 1, 0, 0);
+  m_crGreen = CPWL_Color(COLORTYPE_RGB, 0, 1, 0);
+  m_crBlue = CPWL_Color(COLORTYPE_RGB, 0, 0, 1);
+  m_crCyan = CPWL_Color(COLORTYPE_CMYK, 1, 0, 0, 0);
+  m_crMagenta = CPWL_Color(COLORTYPE_CMYK, 0, 1, 0, 0);
+  m_crYellow = CPWL_Color(COLORTYPE_CMYK, 0, 0, 1, 0);
+  m_crDKGray = CPWL_Color(COLORTYPE_GRAY, 0.25);
+  m_crGray = CPWL_Color(COLORTYPE_GRAY, 0.5);
+  m_crLTGray = CPWL_Color(COLORTYPE_GRAY, 0.75);
 }
 
-color::~color(void)
-{
+color::~color(void) {}
+
+void color::ConvertPWLColorToArray(const CPWL_Color& color, CJS_Array& array) {
+  switch (color.nColorType) {
+    case COLORTYPE_TRANSPARENT:
+      array.SetElement(0, CJS_Value(array.GetIsolate(), "T"));
+      break;
+    case COLORTYPE_GRAY:
+      array.SetElement(0, CJS_Value(array.GetIsolate(), "G"));
+      array.SetElement(1, CJS_Value(array.GetIsolate(), color.fColor1));
+      break;
+    case COLORTYPE_RGB:
+      array.SetElement(0, CJS_Value(array.GetIsolate(), "RGB"));
+      array.SetElement(1, CJS_Value(array.GetIsolate(), color.fColor1));
+      array.SetElement(2, CJS_Value(array.GetIsolate(), color.fColor2));
+      array.SetElement(3, CJS_Value(array.GetIsolate(), color.fColor3));
+      break;
+    case COLORTYPE_CMYK:
+      array.SetElement(0, CJS_Value(array.GetIsolate(), "CMYK"));
+      array.SetElement(1, CJS_Value(array.GetIsolate(), color.fColor1));
+      array.SetElement(2, CJS_Value(array.GetIsolate(), color.fColor2));
+      array.SetElement(3, CJS_Value(array.GetIsolate(), color.fColor3));
+      array.SetElement(4, CJS_Value(array.GetIsolate(), color.fColor4));
+      break;
+  }
 }
 
-void color::ConvertPWLColorToArray(const CPWL_Color& color, CJS_Array& array)
-{
-	switch (color.nColorType)
-	{
-	case COLORTYPE_TRANSPARENT:
-		array.SetElement(0, CJS_Value(array.GetIsolate(), "T"));
-		break;
-	case COLORTYPE_GRAY:
-		array.SetElement(0, CJS_Value(array.GetIsolate(),"G"));
-		array.SetElement(1, CJS_Value(array.GetIsolate(),color.fColor1));
-		break;
-	case COLORTYPE_RGB:
-		array.SetElement(0, CJS_Value(array.GetIsolate(),"RGB"));
-		array.SetElement(1, CJS_Value(array.GetIsolate(),color.fColor1));
-		array.SetElement(2, CJS_Value(array.GetIsolate(),color.fColor2));
-		array.SetElement(3, CJS_Value(array.GetIsolate(),color.fColor3));
-		break;
-	case COLORTYPE_CMYK:
-		array.SetElement(0, CJS_Value(array.GetIsolate(),"CMYK"));
-		array.SetElement(1, CJS_Value(array.GetIsolate(),color.fColor1));
-		array.SetElement(2, CJS_Value(array.GetIsolate(),color.fColor2));
-		array.SetElement(3, CJS_Value(array.GetIsolate(),color.fColor3));
-		array.SetElement(4, CJS_Value(array.GetIsolate(),color.fColor4));
-		break;
-	}
+void color::ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color) {
+  int nArrayLen = array.GetLength();
+  if (nArrayLen < 1)
+    return;
+
+  CJS_Value value(array.GetIsolate());
+  array.GetElement(0, value);
+  CFX_ByteString sSpace = value.ToCFXByteString();
+
+  double d1 = 0;
+  double d2 = 0;
+  double d3 = 0;
+  double d4 = 0;
+
+  if (nArrayLen > 1) {
+    array.GetElement(1, value);
+    d1 = value.ToDouble();
+  }
+
+  if (nArrayLen > 2) {
+    array.GetElement(2, value);
+    d2 = value.ToDouble();
+  }
+
+  if (nArrayLen > 3) {
+    array.GetElement(3, value);
+    d3 = value.ToDouble();
+  }
+
+  if (nArrayLen > 4) {
+    array.GetElement(4, value);
+    d4 = value.ToDouble();
+  }
+
+  if (sSpace == "T") {
+    color = CPWL_Color(COLORTYPE_TRANSPARENT);
+  } else if (sSpace == "G") {
+    color = CPWL_Color(COLORTYPE_GRAY, (FX_FLOAT)d1);
+  } else if (sSpace == "RGB") {
+    color = CPWL_Color(COLORTYPE_RGB, (FX_FLOAT)d1, (FX_FLOAT)d2, (FX_FLOAT)d3);
+  } else if (sSpace == "CMYK") {
+    color = CPWL_Color(COLORTYPE_CMYK, (FX_FLOAT)d1, (FX_FLOAT)d2, (FX_FLOAT)d3,
+                       (FX_FLOAT)d4);
+  }
 }
 
-void color::ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color)
-{
-	int nArrayLen = array.GetLength();
-	if (nArrayLen < 1) return;
-
-	CJS_Value value(array.GetIsolate());
-	array.GetElement(0, value);
-	CFX_ByteString sSpace = value.ToCFXByteString();
-
-	double d1 = 0;
-	double d2 = 0;
-	double d3 = 0;
-	double d4 = 0;
-
-	if (nArrayLen > 1)
-	{
-		array.GetElement(1, value);
-		d1 = value.ToDouble();
-	}
-
-	if (nArrayLen > 2)
-	{
-		array.GetElement(2, value);
-		d2 = value.ToDouble();
-	}
-
-	if (nArrayLen > 3)
-	{
-		array.GetElement(3, value);
-		d3 = value.ToDouble();
-	}
-
-	if (nArrayLen > 4)
-	{
-		array.GetElement(4, value);
-		d4 = value.ToDouble();
-	}
-
-	if (sSpace == "T")
-	{
-		color = CPWL_Color(COLORTYPE_TRANSPARENT);
-	}
-	else if (sSpace == "G")
-	{
-		color = CPWL_Color(COLORTYPE_GRAY, (FX_FLOAT)d1);
-	}
-	else if (sSpace == "RGB")
-	{
-		color = CPWL_Color(COLORTYPE_RGB, (FX_FLOAT)d1, (FX_FLOAT)d2, (FX_FLOAT)d3);
-	}
-	else if (sSpace == "CMYK")
-	{
-		color = CPWL_Color(COLORTYPE_CMYK, (FX_FLOAT)d1, (FX_FLOAT)d2, (FX_FLOAT)d3, (FX_FLOAT)d4);
-	}
-}
-
-#define JS_IMPLEMENT_COLORPROP(prop, var)\
-FX_BOOL color::prop(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)\
-{\
-	CJS_Context* pContext = (CJS_Context*)cc;\
-	v8::Isolate* isolate = pContext->GetJSRuntime()->GetIsolate();\
-	if (vp.IsGetting())\
-	{\
-		CJS_Array array(isolate);\
-		ConvertPWLColorToArray(var, array);\
-		vp << array;\
-	}\
-	else\
-	{\
-		CJS_Array array(isolate);\
-		if (!vp.ConvertToArray(array)) return FALSE;\
-		ConvertArrayToPWLColor(array, var);\
-	}\
-	return TRUE;\
-}
+#define JS_IMPLEMENT_COLORPROP(prop, var)                          \
+  FX_BOOL color::prop(IFXJS_Context* cc, CJS_PropValue& vp,        \
+                      CFX_WideString& sError) {                    \
+    CJS_Context* pContext = (CJS_Context*)cc;                      \
+    v8::Isolate* isolate = pContext->GetJSRuntime()->GetIsolate(); \
+    if (vp.IsGetting()) {                                          \
+      CJS_Array array(isolate);                                    \
+      ConvertPWLColorToArray(var, array);                          \
+      vp << array;                                                 \
+    } else {                                                       \
+      CJS_Array array(isolate);                                    \
+      if (!vp.ConvertToArray(array))                               \
+        return FALSE;                                              \
+      ConvertArrayToPWLColor(array, var);                          \
+    }                                                              \
+    return TRUE;                                                   \
+  }
 
 JS_IMPLEMENT_COLORPROP(transparent, m_crTransparent)
 JS_IMPLEMENT_COLORPROP(black, m_crBlack)
@@ -187,65 +169,66 @@ JS_IMPLEMENT_COLORPROP(dkGray, m_crDKGray)
 JS_IMPLEMENT_COLORPROP(gray, m_crGray)
 JS_IMPLEMENT_COLORPROP(ltGray, m_crLTGray)
 
-FX_BOOL color::convert(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
-{
-	v8::Isolate* isolate = GetIsolate(cc);
-	int iSize = params.size();
-	if (iSize < 2) return FALSE;
-	CJS_Array aSource(isolate);
-	if (!params[0].ConvertToArray(aSource)) return FALSE;
+FX_BOOL color::convert(IFXJS_Context* cc,
+                       const CJS_Parameters& params,
+                       CJS_Value& vRet,
+                       CFX_WideString& sError) {
+  v8::Isolate* isolate = GetIsolate(cc);
+  int iSize = params.size();
+  if (iSize < 2)
+    return FALSE;
+  CJS_Array aSource(isolate);
+  if (!params[0].ConvertToArray(aSource))
+    return FALSE;
 
-	CPWL_Color crSource;
-	ConvertArrayToPWLColor(aSource, crSource);
+  CPWL_Color crSource;
+  ConvertArrayToPWLColor(aSource, crSource);
 
-	CFX_ByteString sDestSpace = params[1].ToCFXByteString();
-	int nColorType = COLORTYPE_TRANSPARENT;
+  CFX_ByteString sDestSpace = params[1].ToCFXByteString();
+  int nColorType = COLORTYPE_TRANSPARENT;
 
-	if (sDestSpace == "T")
-	{
-		nColorType = COLORTYPE_TRANSPARENT;
-	}
-	else if (sDestSpace == "G")
-	{
-		nColorType = COLORTYPE_GRAY;
-	}
-	else if (sDestSpace == "RGB")
-	{
-		nColorType = COLORTYPE_RGB;
-	}
-	else if (sDestSpace == "CMYK")
-	{
-		nColorType = COLORTYPE_CMYK;
-	}
+  if (sDestSpace == "T") {
+    nColorType = COLORTYPE_TRANSPARENT;
+  } else if (sDestSpace == "G") {
+    nColorType = COLORTYPE_GRAY;
+  } else if (sDestSpace == "RGB") {
+    nColorType = COLORTYPE_RGB;
+  } else if (sDestSpace == "CMYK") {
+    nColorType = COLORTYPE_CMYK;
+  }
 
-	CJS_Array aDest(isolate);
-	CPWL_Color crDest = crSource;
-	crDest.ConvertColorType(nColorType);
-	ConvertPWLColorToArray(crDest, aDest);
-	vRet = aDest;
+  CJS_Array aDest(isolate);
+  CPWL_Color crDest = crSource;
+  crDest.ConvertColorType(nColorType);
+  ConvertPWLColorToArray(crDest, aDest);
+  vRet = aDest;
 
-	return TRUE;
+  return TRUE;
 }
 
-FX_BOOL color::equal(IFXJS_Context* cc, const CJS_Parameters& params, CJS_Value& vRet, CFX_WideString& sError)
-{
-	v8::Isolate* isolate = GetIsolate(cc);
-	if (params.size() < 2) return FALSE;
+FX_BOOL color::equal(IFXJS_Context* cc,
+                     const CJS_Parameters& params,
+                     CJS_Value& vRet,
+                     CFX_WideString& sError) {
+  v8::Isolate* isolate = GetIsolate(cc);
+  if (params.size() < 2)
+    return FALSE;
 
-	CJS_Array array1(isolate), array2(isolate);
+  CJS_Array array1(isolate), array2(isolate);
 
-	if (!params[0].ConvertToArray(array1)) return FALSE;
-	if (!params[1].ConvertToArray(array2)) return FALSE;
+  if (!params[0].ConvertToArray(array1))
+    return FALSE;
+  if (!params[1].ConvertToArray(array2))
+    return FALSE;
 
-	CPWL_Color color1;
-	CPWL_Color color2;
+  CPWL_Color color1;
+  CPWL_Color color2;
 
-	ConvertArrayToPWLColor(array1, color1);
-	ConvertArrayToPWLColor(array2, color2);
+  ConvertArrayToPWLColor(array1, color1);
+  ConvertArrayToPWLColor(array2, color2);
 
-	color1.ConvertColorType(color2.nColorType);
+  color1.ConvertColorType(color2.nColorType);
 
-	vRet = color1 == color2;
-	return TRUE;
+  vRet = color1 == color2;
+  return TRUE;
 }
-

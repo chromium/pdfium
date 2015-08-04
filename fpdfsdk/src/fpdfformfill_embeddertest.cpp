@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 #include "../../public/fpdf_formfill.h"
 #include "../../testing/embedder_test.h"
 #include "../../testing/embedder_test_mock_delegate.h"
@@ -13,8 +12,7 @@
 using testing::_;
 using testing::Return;
 
-class FPDFFormFillEmbeddertest : public EmbedderTest {
-};
+class FPDFFormFillEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFFormFillEmbeddertest, FirstTest) {
   EmbedderTestMockDelegate mock;

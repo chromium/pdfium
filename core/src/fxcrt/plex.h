@@ -9,13 +9,10 @@
 #include "../../include/fxcrt/fx_system.h"
 
 struct CFX_Plex {
-    CFX_Plex* pNext;
-    void* data()
-    {
-        return this + 1;
-    }
-    static CFX_Plex* Create(CFX_Plex*& head, FX_DWORD nMax, FX_DWORD cbElement);
-    void FreeDataChain();
+  CFX_Plex* pNext;
+  void* data() { return this + 1; }
+  static CFX_Plex* Create(CFX_Plex*& head, FX_DWORD nMax, FX_DWORD cbElement);
+  void FreeDataChain();
 };
 
 #endif  // CORE_SRC_FXCRT_PLEX_H_

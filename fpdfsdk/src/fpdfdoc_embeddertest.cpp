@@ -7,8 +7,7 @@
 #include "../../testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class FPDFDocEmbeddertest : public EmbedderTest {
-};
+class FPDFDocEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {
   EXPECT_TRUE(OpenDocument("testing/resources/named_dests.pdf"));
