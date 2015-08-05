@@ -98,7 +98,8 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
       m_pDocument(NULL),
       m_bBlocking(FALSE),
       m_pFieldEventPath(NULL),
-      m_isolate(NULL) {
+      m_isolate(NULL),
+      m_isolateManaged(false) {
   if (m_pApp->GetFormFillInfo()->m_pJsPlatform->version >= 2) {
     m_isolate = reinterpret_cast<v8::Isolate*>(
         m_pApp->GetFormFillInfo()->m_pJsPlatform->m_isolate);
@@ -109,6 +110,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     v8::Isolate::CreateParams params;
     params.array_buffer_allocator = m_pArrayBufferAllocator.get();
     m_isolate = v8::Isolate::New(params);
+    m_isolateManaged = true;
   }
 
   InitJSObjects();
@@ -133,8 +135,8 @@ CJS_Runtime::~CJS_Runtime() {
   m_pFieldEventPath = NULL;
   m_context.Reset();
 
-  // m_isolate->Exit();
-  m_isolate->Dispose();
+  if (m_isolateManaged)
+    m_isolate->Dispose();
 }
 
 FX_BOOL CJS_Runtime::InitJSObjects() {
