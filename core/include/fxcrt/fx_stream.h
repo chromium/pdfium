@@ -100,12 +100,6 @@ class IFX_FileRead : IFX_StreamRead {
 
   virtual FX_FILESIZE GetPosition() { return 0; }
 
-  virtual FX_BOOL SetRange(FX_FILESIZE offset, FX_FILESIZE size) {
-    return FALSE;
-  }
-
-  virtual void ClearRange() {}
-
   virtual FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) = 0;
 
   virtual size_t ReadBlock(void* buffer, size_t size) { return 0; }
