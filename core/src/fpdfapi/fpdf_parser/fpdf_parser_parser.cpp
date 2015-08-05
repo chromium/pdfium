@@ -116,20 +116,6 @@ static int32_t GetHeaderOffset(IFX_FileRead* pFile) {
   }
   return -1;
 }
-FX_DWORD CPDF_Parser::StartParse(const FX_CHAR* filename, FX_BOOL bReParse) {
-  IFX_FileRead* pFileAccess = FX_CreateFileRead(filename);
-  if (!pFileAccess) {
-    return PDFPARSE_ERROR_FILE;
-  }
-  return StartParse(pFileAccess, bReParse);
-}
-FX_DWORD CPDF_Parser::StartParse(const FX_WCHAR* filename, FX_BOOL bReParse) {
-  IFX_FileRead* pFileAccess = FX_CreateFileRead(filename);
-  if (!pFileAccess) {
-    return PDFPARSE_ERROR_FILE;
-  }
-  return StartParse(pFileAccess, bReParse);
-}
 CPDF_SecurityHandler* FPDF_CreateStandardSecurityHandler();
 CPDF_SecurityHandler* FPDF_CreatePubKeyHandler(void*);
 FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,

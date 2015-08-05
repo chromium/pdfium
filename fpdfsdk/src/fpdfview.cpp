@@ -155,12 +155,20 @@ DLLEXPORT void STDCALL FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
   return FSDK_SetSandBoxPolicy(policy, enable);
 }
 
+
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
                                                   FPDF_BYTESTRING password) {
+  // NOTE: the creation of the file needs to be by the embedder on the
+  // other side of this API.
+  IFX_FileRead* pFileAccess = FX_CreateFileRead((const FX_CHAR*)file_path);
+  if (!pFileAccess) {
+    return nullptr;
+  }
+
   CPDF_Parser* pParser = new CPDF_Parser;
   pParser->SetPassword(password);
 
-  FX_DWORD err_code = pParser->StartParse((const FX_CHAR*)file_path);
+  FX_DWORD err_code = pParser->StartParse(pFileAccess);
   if (err_code) {
     delete pParser;
     ProcessParseError(err_code);
