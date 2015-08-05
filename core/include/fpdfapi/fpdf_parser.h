@@ -355,8 +355,6 @@ class CPDF_Parser {
   CPDF_Parser();
   ~CPDF_Parser();
 
-  FX_DWORD StartParse(const FX_CHAR* filename, FX_BOOL bReParse = FALSE);
-  FX_DWORD StartParse(const FX_WCHAR* filename, FX_BOOL bReParse = FALSE);
   FX_DWORD StartParse(IFX_FileRead* pFile,
                       FX_BOOL bReParse = FALSE,
                       FX_BOOL bOwnFileRead = TRUE);
