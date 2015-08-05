@@ -101,7 +101,8 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
       m_pDocument(NULL),
       m_bBlocking(FALSE),
       m_pFieldEventPath(NULL),
-      m_isolate(NULL) {
+      m_isolate(NULL),
+      m_isolateManaged(false) {
   if (CPDFXFA_App::GetInstance()->GetJSERuntime()) {
     // TODO(tsepez): CPDFXFA_App should also use the embedder provided isolate.
     m_isolate = (v8::Isolate*)CPDFXFA_App::GetInstance()->GetJSERuntime();
@@ -115,6 +116,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     v8::Isolate::CreateParams params;
     params.array_buffer_allocator = m_pArrayBufferAllocator.get();
     m_isolate = v8::Isolate::New(params);
+    m_isolateManaged = true;
   }
 
   v8::Isolate* isolate = m_isolate;
@@ -149,6 +151,8 @@ CJS_Runtime::~CJS_Runtime() {
   m_pFieldEventPath = NULL;
   m_context.Reset();
 
+  if (m_isolateManaged)
+    m_isolate->Dispose();
   m_isolate = NULL;
 }
 
