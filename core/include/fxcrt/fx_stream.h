@@ -78,8 +78,6 @@ class IFX_FileWrite : public IFX_StreamWrite {
     return WriteBlock(pData, GetSize(), size);
   }
 };
-IFX_FileWrite* FX_CreateFileWrite(const FX_CHAR* filename);
-IFX_FileWrite* FX_CreateFileWrite(const FX_WCHAR* filename);
 class IFX_StreamRead {
  public:
   virtual ~IFX_StreamRead() {}

@@ -2016,26 +2016,6 @@ void CPDF_Creator::Clear() {
     m_pIDArray = NULL;
   }
 }
-FX_BOOL CPDF_Creator::Create(const FX_CHAR* filename, FX_DWORD flags) {
-  if (!m_File.AttachFile(filename)) {
-    return FALSE;
-  }
-  FX_BOOL bRet = Create(flags);
-  if (!bRet || !(flags & FPDFCREATE_PROGRESSIVE)) {
-    Clear();
-  }
-  return bRet;
-}
-FX_BOOL CPDF_Creator::Create(const FX_WCHAR* filename, FX_DWORD flags) {
-  if (!m_File.AttachFile(filename)) {
-    return FALSE;
-  }
-  FX_BOOL bRet = Create(flags);
-  if (!bRet || !(flags & FPDFCREATE_PROGRESSIVE)) {
-    Clear();
-  }
-  return bRet;
-}
 FX_BOOL CPDF_Creator::Create(IFX_StreamWrite* pFile, FX_DWORD flags) {
   if (!pFile) {
     return FALSE;

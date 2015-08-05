@@ -164,18 +164,12 @@ class CFX_FileBufferArchive : public IFX_BufferArchive {
   ~CFX_FileBufferArchive() override;
 
   void Clear() override;
-
   FX_BOOL AttachFile(IFX_StreamWrite* pFile, FX_BOOL bTakeover = FALSE);
-
-  FX_BOOL AttachFile(const FX_WCHAR* filename);
-
-  FX_BOOL AttachFile(const FX_CHAR* filename);
 
  private:
   FX_BOOL DoWork(const void* pBuf, size_t size) override;
 
   IFX_StreamWrite* m_pFile;
-
   FX_BOOL m_bTakeover;
 };
 

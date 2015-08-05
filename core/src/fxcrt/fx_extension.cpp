@@ -36,12 +36,6 @@ IFX_FileStream* FX_CreateFileStream(const FX_WCHAR* filename,
   }
   return new CFX_CRTFileStream(pFA);
 }
-IFX_FileWrite* FX_CreateFileWrite(const FX_CHAR* filename) {
-  return FX_CreateFileStream(filename, FX_FILEMODE_Truncate);
-}
-IFX_FileWrite* FX_CreateFileWrite(const FX_WCHAR* filename) {
-  return FX_CreateFileStream(filename, FX_FILEMODE_Truncate);
-}
 IFX_FileRead* FX_CreateFileRead(const FX_CHAR* filename) {
   return FX_CreateFileStream(filename, FX_FILEMODE_ReadOnly);
 }

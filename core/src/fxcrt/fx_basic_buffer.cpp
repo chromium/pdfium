@@ -327,34 +327,6 @@ FX_BOOL CFX_FileBufferArchive::AttachFile(IFX_StreamWrite* pFile,
   m_bTakeover = bTakeover;
   return TRUE;
 }
-FX_BOOL CFX_FileBufferArchive::AttachFile(const FX_WCHAR* filename) {
-  if (!filename) {
-    return FALSE;
-  }
-  if (m_pFile && m_bTakeover) {
-    m_pFile->Release();
-  }
-  m_pFile = FX_CreateFileWrite(filename);
-  if (!m_pFile) {
-    return FALSE;
-  }
-  m_bTakeover = TRUE;
-  return TRUE;
-}
-FX_BOOL CFX_FileBufferArchive::AttachFile(const FX_CHAR* filename) {
-  if (!filename) {
-    return FALSE;
-  }
-  if (m_pFile && m_bTakeover) {
-    m_pFile->Release();
-  }
-  m_pFile = FX_CreateFileWrite(filename);
-  if (!m_pFile) {
-    return FALSE;
-  }
-  m_bTakeover = TRUE;
-  return TRUE;
-}
 FX_BOOL CFX_FileBufferArchive::DoWork(const void* pBuf, size_t size) {
   if (!m_pFile) {
     return FALSE;
