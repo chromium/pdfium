@@ -110,22 +110,15 @@ class CPDF_PageArchiveLoader : public CPDF_ObjArchiveLoader {
 #define FPDFCREATE_NO_ORIGINAL 2
 #define FPDFCREATE_PROGRESSIVE 4
 #define FPDFCREATE_OBJECTSTREAM 8
+
 class CPDF_Creator {
  public:
   CPDF_Creator(CPDF_Document* pDoc);
-
   ~CPDF_Creator();
 
   void RemoveSecurity();
-
-  FX_BOOL Create(const FX_WCHAR* filename, FX_DWORD flags = 0);
-
-  FX_BOOL Create(const FX_CHAR* filename, FX_DWORD flags = 0);
-
   FX_BOOL Create(IFX_StreamWrite* pFile, FX_DWORD flags = 0);
-
   int32_t Continue(IFX_Pause* pPause = NULL);
-
   FX_BOOL SetFileVersion(int32_t fileVersion = 17);
 
  protected:
