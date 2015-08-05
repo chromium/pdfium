@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_ListBox* CFWL_ListBox::Create() {
-  return FX_NEW CFWL_ListBox;
+  return new CFWL_ListBox;
 }
 FWL_ERR CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);
@@ -39,7 +39,7 @@ FWL_ERR CFWL_ListBox::AddDIBitmap(CFX_DIBitmap* pDIB, FWL_HLISTITEM hItem) {
 }
 FWL_HLISTITEM CFWL_ListBox::AddString(const CFX_WideStringC& wsAdd,
                                       FX_BOOL bSelect) {
-  CFWL_ListItem* pItem = FX_NEW CFWL_ListItem;
+  CFWL_ListItem* pItem = new CFWL_ListItem;
   pItem->m_dwStates = 0;
   pItem->m_wsText = wsAdd;
   pItem->m_dwStates = bSelect ? FWL_ITEMSTATE_LTB_Selected : 0;

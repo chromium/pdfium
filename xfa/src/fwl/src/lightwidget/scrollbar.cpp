@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_ScrollBar* CFWL_ScrollBar::Create() {
-  return FX_NEW CFWL_ScrollBar;
+  return new CFWL_ScrollBar;
 }
 FWL_ERR CFWL_ScrollBar::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);

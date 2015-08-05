@@ -19,7 +19,7 @@ CXFA_FFImageEdit::~CXFA_FFImageEdit() {
   CXFA_FFImageEdit::UnloadWidget();
 }
 FX_BOOL CXFA_FFImageEdit::LoadWidget() {
-  CFWL_PictureBox* pPictureBox = FX_NEW CFWL_PictureBox;
+  CFWL_PictureBox* pPictureBox = new CFWL_PictureBox;
   if (pPictureBox) {
     pPictureBox->Initialize();
   }

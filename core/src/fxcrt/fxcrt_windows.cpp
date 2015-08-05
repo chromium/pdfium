@@ -23,7 +23,7 @@ FX_BOOL FX_File_Exist(const CFX_WideStringC& fileName) {
   return (dwAttri & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
 IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
-  return FX_NEW CFXCRT_FileAccess_Win64;
+  return new CFXCRT_FileAccess_Win64;
 }
 void FXCRT_Windows_GetFileMode(FX_DWORD dwMode,
                                FX_DWORD& dwAccess,

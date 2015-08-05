@@ -11,7 +11,7 @@
 static IFPF_DeviceModule* gs_pPFModule = NULL;
 IFPF_DeviceModule* FPF_GetDeviceModule() {
   if (!gs_pPFModule) {
-    gs_pPFModule = FX_NEW CFPF_SkiaDeviceModule;
+    gs_pPFModule = new CFPF_SkiaDeviceModule;
   }
   return gs_pPFModule;
 }
@@ -24,7 +24,7 @@ void CFPF_SkiaDeviceModule::Destroy() {
 }
 IFPF_FontMgr* CFPF_SkiaDeviceModule::GetFontMgr() {
   if (!m_pFontMgr) {
-    m_pFontMgr = FX_NEW CFPF_SkiaFontMgr;
+    m_pFontMgr = new CFPF_SkiaFontMgr;
     if (!m_pFontMgr) {
       return NULL;
     }

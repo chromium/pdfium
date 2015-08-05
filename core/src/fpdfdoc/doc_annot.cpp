@@ -232,7 +232,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
   if (m_APMap.Lookup(pStream, (void*&)pForm)) {
     return pForm;
   }
-  pForm = FX_NEW CPDF_Form(m_pList->m_pDocument, pPage->m_pResources, pStream);
+  pForm = new CPDF_Form(m_pList->m_pDocument, pPage->m_pResources, pStream);
   if (pForm == NULL) {
     return NULL;
   }

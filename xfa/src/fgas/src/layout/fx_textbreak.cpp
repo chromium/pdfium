@@ -14,7 +14,7 @@ extern const FX_WCHAR gs_FX_TextLayout_VerticalMirror[64];
 extern const FX_WCHAR gs_FX_TextLayout_BidiMirror[512];
 extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32];
 IFX_TxtBreak* IFX_TxtBreak::Create(FX_DWORD dwPolicies) {
-  return FX_NEW CFX_TxtBreak(dwPolicies);
+  return new CFX_TxtBreak(dwPolicies);
 }
 CFX_TxtBreak::CFX_TxtBreak(FX_DWORD dwPolicies)
     : m_dwPolicies(dwPolicies),
@@ -55,11 +55,11 @@ CFX_TxtBreak::CFX_TxtBreak(FX_DWORD dwPolicies)
   m_bPagination = (m_dwPolicies & FX_TXTBREAKPOLICY_Pagination) != 0;
   m_pArabicChar = IFX_ArabicChar::Create();
   if (m_bPagination) {
-    m_pTxtLine1 = FX_NEW CFX_TxtLine(sizeof(CFX_Char));
-    m_pTxtLine2 = FX_NEW CFX_TxtLine(sizeof(CFX_Char));
+    m_pTxtLine1 = new CFX_TxtLine(sizeof(CFX_Char));
+    m_pTxtLine2 = new CFX_TxtLine(sizeof(CFX_Char));
   } else {
-    m_pTxtLine1 = FX_NEW CFX_TxtLine(sizeof(CFX_TxtChar));
-    m_pTxtLine2 = FX_NEW CFX_TxtLine(sizeof(CFX_TxtChar));
+    m_pTxtLine1 = new CFX_TxtLine(sizeof(CFX_TxtChar));
+    m_pTxtLine2 = new CFX_TxtLine(sizeof(CFX_TxtChar));
   }
   m_pCurLine = m_pTxtLine1;
   ResetArabicContext();

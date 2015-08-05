@@ -37,7 +37,7 @@ CBC_QRFinderPattern::~CBC_QRFinderPattern() {
 }
 CBC_QRFinderPattern* CBC_QRFinderPattern::Clone() {
   CBC_QRFinderPattern* temp =
-      FX_NEW CBC_QRFinderPattern(m_x, m_y, m_estimatedModuleSize);
+      new CBC_QRFinderPattern(m_x, m_y, m_estimatedModuleSize);
   temp->m_count = m_count;
   return temp;
 }

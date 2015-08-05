@@ -10,7 +10,7 @@
 #include "xfa_ffwidget.h"
 #define XFA_RENDERCONTEXT_MaxCount 30
 IXFA_RenderContext* XFA_RenderContext_Create() {
-  return FX_NEW CXFA_RenderContext;
+  return new CXFA_RenderContext;
 }
 CXFA_RenderContext::CXFA_RenderContext() {
   m_pWidgetIterator = NULL;

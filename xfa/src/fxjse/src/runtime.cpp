@@ -22,7 +22,7 @@ static void FXJSE_KillV8() {
 }
 void FXJSE_Initialize() {
   if (!CFXJSE_RuntimeData::g_RuntimeList) {
-    CFXJSE_RuntimeData::g_RuntimeList = FX_NEW CFXJSE_RuntimeList;
+    CFXJSE_RuntimeData::g_RuntimeList = new CFXJSE_RuntimeList;
   }
   static FX_BOOL bV8Initialized = FALSE;
   if (bV8Initialized) {
@@ -72,7 +72,7 @@ void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime) {
   }
 }
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Create(v8::Isolate* pIsolate) {
-  CFXJSE_RuntimeData* pRuntimeData = FX_NEW CFXJSE_RuntimeData(pIsolate);
+  CFXJSE_RuntimeData* pRuntimeData = new CFXJSE_RuntimeData(pIsolate);
   ASSERT(pRuntimeData);
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
   v8::Local<v8::FunctionTemplate> hFuncTemplate =

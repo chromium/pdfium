@@ -178,7 +178,7 @@ CFX_PtrArray* CBC_ReedSolomonDecoder::RunEuclideanAlgorithm(
   CBC_ReedSolomonGF256Poly* rsg14 = r->Multiply(inverse, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   CBC_AutoPtr<CBC_ReedSolomonGF256Poly> omega(rsg14);
-  CFX_PtrArray* temp = FX_NEW CFX_PtrArray;
+  CFX_PtrArray* temp = new CFX_PtrArray;
   temp->Add(sigma.release());
   temp->Add(omega.release());
   return temp;
@@ -188,11 +188,11 @@ CFX_Int32Array* CBC_ReedSolomonDecoder::FindErrorLocations(
     int32_t& e) {
   int32_t numErrors = errorLocator->GetDegree();
   if (numErrors == 1) {
-    CBC_AutoPtr<CFX_Int32Array> temp(FX_NEW CFX_Int32Array);
+    CBC_AutoPtr<CFX_Int32Array> temp(new CFX_Int32Array);
     temp->Add(errorLocator->GetCoefficients(1));
     return temp.release();
   }
-  CFX_Int32Array* tempT = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* tempT = new CFX_Int32Array;
   tempT->SetSize(numErrors);
   CBC_AutoPtr<CFX_Int32Array> result(tempT);
   int32_t ie = 0;
@@ -215,7 +215,7 @@ CFX_Int32Array* CBC_ReedSolomonDecoder::FindErrorMagnitudes(
     FX_BOOL dataMatrix,
     int32_t& e) {
   int32_t s = errorLocations->GetSize();
-  CFX_Int32Array* temp = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* temp = new CFX_Int32Array;
   temp->SetSize(s);
   CBC_AutoPtr<CFX_Int32Array> result(temp);
   for (int32_t i = 0; i < s; i++) {

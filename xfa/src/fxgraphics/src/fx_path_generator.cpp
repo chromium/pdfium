@@ -10,7 +10,7 @@ CFX_PathGenerator::CFX_PathGenerator() {
   m_pPathData = NULL;
 }
 void CFX_PathGenerator::Create() {
-  m_pPathData = FX_NEW CFX_PathData;
+  m_pPathData = new CFX_PathData;
 }
 CFX_PathGenerator::~CFX_PathGenerator() {
   if (m_pPathData) {

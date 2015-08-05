@@ -26,17 +26,17 @@ CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp) : m_pApp(pApp) {
   m_pCalendarFont = NULL;
   m_Rect.Set(0, 0, 0, 0);
   m_SizeAboveBelow.Set(0, 0);
-  m_pCheckBoxTP = FX_NEW CXFA_FWLCheckBoxTP;
-  m_pListBoxTP = FX_NEW CFWL_ListBoxTP;
-  m_pPictureBoxTP = FX_NEW CFWL_PictureBoxTP;
-  m_pSrollBarTP = FX_NEW CFWL_ScrollBarTP;
-  m_pEditTP = FX_NEW CXFA_FWLEditTP;
-  m_pComboBoxTP = FX_NEW CFWL_ComboBoxTP;
-  m_pMonthCalendarTP = FX_NEW CFWL_MonthCalendarTP;
-  m_pDateTimePickerTP = FX_NEW CFWL_DateTimePickerTP;
-  m_pPushButtonTP = FX_NEW CFWL_PushButtonTP;
-  m_pCaretTP = FX_NEW CFWL_CaretTP;
-  m_pBarcodeTP = FX_NEW CFWL_BarcodeTP;
+  m_pCheckBoxTP = new CXFA_FWLCheckBoxTP;
+  m_pListBoxTP = new CFWL_ListBoxTP;
+  m_pPictureBoxTP = new CFWL_PictureBoxTP;
+  m_pSrollBarTP = new CFWL_ScrollBarTP;
+  m_pEditTP = new CXFA_FWLEditTP;
+  m_pComboBoxTP = new CFWL_ComboBoxTP;
+  m_pMonthCalendarTP = new CFWL_MonthCalendarTP;
+  m_pDateTimePickerTP = new CFWL_DateTimePickerTP;
+  m_pPushButtonTP = new CFWL_PushButtonTP;
+  m_pCaretTP = new CFWL_CaretTP;
+  m_pBarcodeTP = new CFWL_BarcodeTP;
   Initialize();
 }
 CXFA_FWLTheme::~CXFA_FWLTheme() {

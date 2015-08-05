@@ -25,11 +25,11 @@ IFWL_WidgetMgr* FWL_GetWidgetMgr() {
 }
 CFWL_WidgetMgr::CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative)
     : m_dwCapability(0) {
-  m_pDelegate = FX_NEW CFWL_WidgetMgrDelegate(this);
+  m_pDelegate = new CFWL_WidgetMgrDelegate(this);
   m_pAdapter =
       pAdapterNative->GetWidgetMgr((IFWL_WidgetMgrDelegate*)m_pDelegate);
   FXSYS_assert(m_pAdapter);
-  CFWL_WidgetMgrItem* pRoot = FX_NEW CFWL_WidgetMgrItem;
+  CFWL_WidgetMgrItem* pRoot = new CFWL_WidgetMgrItem;
   m_mapWidgetItem.SetAt(NULL, pRoot);
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   m_rtScreen.Reset();
@@ -236,7 +236,7 @@ void CFWL_WidgetMgr::AddWidget(IFWL_Widget* pWidget) {
   CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(NULL);
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem) {
-    pItem = FX_NEW CFWL_WidgetMgrItem;
+    pItem = new CFWL_WidgetMgrItem;
     pItem->pWidget = pWidget;
     m_mapWidgetItem.SetAt(pWidget, pItem);
   }
@@ -259,7 +259,7 @@ void CFWL_WidgetMgr::InsertWidget(IFWL_Widget* pParent,
                                   int32_t nIndex) {
   CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pParent);
   if (!pParentItem) {
-    pParentItem = FX_NEW CFWL_WidgetMgrItem;
+    pParentItem = new CFWL_WidgetMgrItem;
     pParentItem->pWidget = pParent;
     m_mapWidgetItem.SetAt(pParent, pParentItem);
     CFWL_WidgetMgrItem* pRoot = GetWidgetMgrItem(NULL);
@@ -268,7 +268,7 @@ void CFWL_WidgetMgr::InsertWidget(IFWL_Widget* pParent,
   }
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pChild);
   if (!pItem) {
-    pItem = FX_NEW CFWL_WidgetMgrItem;
+    pItem = new CFWL_WidgetMgrItem;
     pItem->pWidget = pChild;
     m_mapWidgetItem.SetAt(pChild, pItem);
   }
@@ -312,7 +312,7 @@ void CFWL_WidgetMgr::RemoveWidget(IFWL_Widget* pWidget) {
 void CFWL_WidgetMgr::SetOwner(IFWL_Widget* pOwner, IFWL_Widget* pOwned) {
   CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pOwner);
   if (!pParentItem) {
-    pParentItem = FX_NEW CFWL_WidgetMgrItem;
+    pParentItem = new CFWL_WidgetMgrItem;
     pParentItem->pWidget = pOwner;
     m_mapWidgetItem.SetAt(pOwner, pParentItem);
     CFWL_WidgetMgrItem* pRoot = GetWidgetMgrItem(NULL);
@@ -321,7 +321,7 @@ void CFWL_WidgetMgr::SetOwner(IFWL_Widget* pOwner, IFWL_Widget* pOwned) {
   }
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pOwned);
   if (!pItem) {
-    pItem = FX_NEW CFWL_WidgetMgrItem;
+    pItem = new CFWL_WidgetMgrItem;
     pItem->pWidget = pOwned;
     m_mapWidgetItem.SetAt(pOwned, pItem);
   }
@@ -824,7 +824,7 @@ CFX_Graphics* CFWL_WidgetMgrDelegate::DrawWidgetBefore(
   }
   CFWL_WidgetMgrItem* pItem = m_pWidgetMgr->GetWidgetMgrItem(pWidget);
   if (!pItem->pOffscreen) {
-    pItem->pOffscreen = FX_NEW CFX_Graphics;
+    pItem->pOffscreen = new CFX_Graphics;
     CFX_RectF rect;
     pWidget->GetWidgetRect(rect);
     pItem->pOffscreen->Create((int32_t)rect.width, (int32_t)rect.height,

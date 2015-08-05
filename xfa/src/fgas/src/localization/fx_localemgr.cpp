@@ -14,7 +14,7 @@ IFX_LocaleMgr* FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath,
   if (!pPathHandle) {
     return NULL;
   }
-  CFX_LocaleMgr* pLocaleMgr = FX_NEW CFX_LocaleMgr(wDefaultLCID);
+  CFX_LocaleMgr* pLocaleMgr = new CFX_LocaleMgr(wDefaultLCID);
   CFX_WideString wsFileName;
   FX_BOOL bFolder = FALSE;
   while (FX_GetNextFile(pPathHandle, wsFileName, bFolder)) {

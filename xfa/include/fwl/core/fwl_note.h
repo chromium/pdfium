@@ -173,14 +173,14 @@ class CFWL_Message : public CFWL_Note {
   class classname : public CFWL_Message {                          \
    public:                                                         \
     classname() : CFWL_Message() {}                                \
-    virtual CFWL_Note* Clone() { return FX_NEW classname(*this); } \
+    virtual CFWL_Note* Clone() { return new classname(*this); } \
     virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const {  \
       wsClass = L" ## classname ## ";                              \
       return FWL_ERR_Succeeded;                                    \
     }                                                              \
     virtual FX_DWORD GetClassID() const { return msghashcode; }    \
     virtual CFWL_Event* CloneToEvent() {                           \
-      classname* pEvent = FX_NEW classname;                        \
+      classname* pEvent = new classname;                        \
       pEvent->m_bIsEvent = TRUE;                                   \
       return (CFWL_Event*)pEvent;                                  \
     }

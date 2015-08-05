@@ -18,7 +18,7 @@
 #endif
 
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
-  CPDF_Document* pDoc = FX_NEW CPDF_Document;
+  CPDF_Document* pDoc = new CPDF_Document;
   if (!pDoc)
     return NULL;
   pDoc->CreateNewDoc();
@@ -42,11 +42,11 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
   if (pInfoDict) {
     if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
       pInfoDict->SetAt("CreationDate", new CPDF_String(DateStr));
-    pInfoDict->SetAt("Creator", FX_NEW CPDF_String(L"PDFium"));
+    pInfoDict->SetAt("Creator", new CPDF_String(L"PDFium"));
   }
 
   CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
-  CPDFXFA_Document* document = FX_NEW CPDFXFA_Document(pDoc, pApp);
+  CPDFXFA_Document* document = new CPDFXFA_Document(pDoc, pApp);
   return document;
 }
 
@@ -79,22 +79,22 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
   CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(page_index);
   if (!pPageDict)
     return NULL;
-  CPDF_Array* pMediaBoxArray = FX_NEW CPDF_Array;
-  pMediaBoxArray->Add(FX_NEW CPDF_Number(0));
-  pMediaBoxArray->Add(FX_NEW CPDF_Number(0));
-  pMediaBoxArray->Add(FX_NEW CPDF_Number(FX_FLOAT(width)));
-  pMediaBoxArray->Add(FX_NEW CPDF_Number(FX_FLOAT(height)));
+  CPDF_Array* pMediaBoxArray = new CPDF_Array;
+  pMediaBoxArray->Add(new CPDF_Number(0));
+  pMediaBoxArray->Add(new CPDF_Number(0));
+  pMediaBoxArray->Add(new CPDF_Number(FX_FLOAT(width)));
+  pMediaBoxArray->Add(new CPDF_Number(FX_FLOAT(height)));
 
   pPageDict->SetAt("MediaBox", pMediaBoxArray);
-  pPageDict->SetAt("Rotate", FX_NEW CPDF_Number(0));
-  pPageDict->SetAt("Resources", FX_NEW CPDF_Dictionary);
+  pPageDict->SetAt("Rotate", new CPDF_Number(0));
+  pPageDict->SetAt("Resources", new CPDF_Dictionary);
 
-  // 	CPDF_Page* pPage = FX_NEW CPDF_Page;
+  // 	CPDF_Page* pPage = new CPDF_Page;
   // 	pPage->Load(pDoc,pPageDict);
   // 	pPage->ParseContent();
 
   CPDFXFA_Page* pPage =
-      FX_NEW CPDFXFA_Page((CPDFXFA_Document*)document, page_index);
+      new CPDFXFA_Page((CPDFXFA_Document*)document, page_index);
   pPage->LoadPDFPage(pPageDict);
 
   return pPage;
@@ -288,7 +288,7 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_object;
   if (pPageObj == NULL)
     return;
-  // PDF_ImageObject* pImageObj = FX_NEW CPDF_ImageObject;
+  // PDF_ImageObject* pImageObj = new CPDF_ImageObject;
   CFX_AffineMatrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
                           (FX_FLOAT)e, (FX_FLOAT)f);
   pPageObj->Transform(matrix);
@@ -345,5 +345,5 @@ DLLEXPORT void STDCALL FPDFPage_SetRotation(FPDF_PAGE page, int rotate) {
   CPDF_Dictionary* pDict = pPage->m_pFormDict;
   rotate %= 4;
 
-  pDict->SetAt("Rotate", FX_NEW CPDF_Number(rotate * 90));
+  pDict->SetAt("Rotate", new CPDF_Number(rotate * 90));
 }

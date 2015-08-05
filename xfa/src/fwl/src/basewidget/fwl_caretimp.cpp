@@ -22,13 +22,13 @@ IFWL_Caret::~IFWL_Caret() {
   }
 }
 FWL_ERR IFWL_Caret::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_CaretImp(pOuter);
+  m_pData = new CFWL_CaretImp(pOuter);
   ((CFWL_CaretImp*)m_pData)->SetInterface(this);
   return ((CFWL_CaretImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_Caret::Initialize(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_CaretImp(properties, pOuter);
+  m_pData = new CFWL_CaretImp(properties, pOuter);
   ((CFWL_CaretImp*)m_pData)->SetInterface(this);
   return ((CFWL_CaretImp*)m_pData)->Initialize();
 }
@@ -46,7 +46,7 @@ FWL_ERR IFWL_Caret::SetColor(CFX_Color crFill) {
 }
 CFWL_CaretImp::CFWL_CaretImp(IFWL_Widget* pOuter) : m_hTimer(NULL) {
   m_dwElapse = 400;
-  m_pTimer = FX_NEW CFWL_CaretTimer(this);
+  m_pTimer = new CFWL_CaretTimer(this);
   m_bSetColor = FALSE;
   SetStates(FWL_STATE_CAT_HightLight);
 }
@@ -54,7 +54,7 @@ CFWL_CaretImp::CFWL_CaretImp(const CFWL_WidgetImpProperties& properties,
                              IFWL_Widget* pOuter)
     : m_hTimer(NULL) {
   m_dwElapse = 400;
-  m_pTimer = FX_NEW CFWL_CaretTimer(this);
+  m_pTimer = new CFWL_CaretTimer(this);
   m_bSetColor = FALSE;
   SetStates(FWL_STATE_CAT_HightLight);
 }
@@ -74,7 +74,7 @@ FX_DWORD CFWL_CaretImp::GetClassID() const {
 FWL_ERR CFWL_CaretImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_CaretImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_CaretImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_CaretImp::Finalize() {

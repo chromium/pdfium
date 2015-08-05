@@ -93,7 +93,7 @@ CBC_CommonDecoderResult* CBC_DataMatrixDecodedBitStreamParser::Decode(
   if (resultTrailer.GetLength() > 0) {
     result += resultTrailer;
   }
-  CBC_CommonDecoderResult* tempCp = FX_NEW CBC_CommonDecoderResult();
+  CBC_CommonDecoderResult* tempCp = new CBC_CommonDecoderResult();
   tempCp->Init(bytes, result,
                (byteSegments.GetSize() <= 0) ? CFX_Int32Array() : byteSegments,
                NULL, e);
@@ -457,7 +457,7 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeBase256Segment(
     e = BCExceptionFormatException;
     return;
   }
-  CFX_ByteArray* bytes = FX_NEW CFX_ByteArray();
+  CFX_ByteArray* bytes = new CFX_ByteArray();
   bytes->SetSize(count);
   int32_t i;
   for (i = 0; i < count; i++) {

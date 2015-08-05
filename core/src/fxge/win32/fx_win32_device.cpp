@@ -405,7 +405,7 @@ IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
   return new CFX_Win32FontInfo;
 }
 void CFX_GEModule::InitPlatform() {
-  CWin32Platform* pPlatformData = FX_NEW CWin32Platform;
+  CWin32Platform* pPlatformData = new CWin32Platform;
   if (!pPlatformData) {
     return;
   }
@@ -1251,7 +1251,7 @@ CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC,
   m_bForcePSOutput = bForcePSOutput;
   m_psLevel = psLevel;
   if (bForcePSOutput) {
-    IFX_RenderDeviceDriver* pDriver = FX_NEW CPSPrinterDriver;
+    IFX_RenderDeviceDriver* pDriver = new CPSPrinterDriver;
     if (!pDriver) {
       return;
     }
@@ -1280,9 +1280,9 @@ IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC,
     device_class = FXDC_DISPLAY;
   }
   if (device_class == FXDC_PRINTER) {
-    return FX_NEW CGdiPrinterDriver(hDC);
+    return new CGdiPrinterDriver(hDC);
   }
-  return FX_NEW CGdiDisplayDriver(hDC);
+  return new CGdiDisplayDriver(hDC);
 }
 CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width,
                                          int height,
@@ -1300,7 +1300,7 @@ CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width,
   if (m_hBitmap == NULL) {
     return;
   }
-  CFX_DIBitmap* pBitmap = FX_NEW CFX_DIBitmap;
+  CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
   if (!pBitmap) {
     return;
   }
@@ -1308,7 +1308,7 @@ CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width,
   SetBitmap(pBitmap);
   m_hDC = ::CreateCompatibleDC(NULL);
   m_hOldBitmap = (HBITMAP)SelectObject(m_hDC, m_hBitmap);
-  IFX_RenderDeviceDriver* pDriver = FX_NEW CGdiDisplayDriver(m_hDC);
+  IFX_RenderDeviceDriver* pDriver = new CGdiDisplayDriver(m_hDC);
   if (!pDriver) {
     return;
   }

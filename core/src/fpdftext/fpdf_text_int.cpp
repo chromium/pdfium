@@ -84,17 +84,17 @@ CPDFText_ParseOptions::CPDFText_ParseOptions()
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(
     const CPDF_Page* pPage,
     CPDFText_ParseOptions ParserOptions) {
-  CPDF_TextPage* pTextPageEx = FX_NEW CPDF_TextPage(pPage, ParserOptions);
+  CPDF_TextPage* pTextPageEx = new CPDF_TextPage(pPage, ParserOptions);
   return pTextPageEx;
 }
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(const CPDF_Page* pPage,
                                              int flags) {
-  CPDF_TextPage* pTextPage = FX_NEW CPDF_TextPage(pPage, flags);
+  CPDF_TextPage* pTextPage = new CPDF_TextPage(pPage, flags);
   return pTextPage;
 }
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(const CPDF_PageObjects* pObjs,
                                              int flags) {
-  CPDF_TextPage* pTextPage = FX_NEW CPDF_TextPage(pObjs, flags);
+  CPDF_TextPage* pTextPage = new CPDF_TextPage(pObjs, flags);
   return pTextPage;
 }
 IPDF_TextPageFind* IPDF_TextPageFind::CreatePageFind(
@@ -102,10 +102,10 @@ IPDF_TextPageFind* IPDF_TextPageFind::CreatePageFind(
   if (!pTextPage) {
     return NULL;
   }
-  return FX_NEW CPDF_TextPageFind(pTextPage);
+  return new CPDF_TextPageFind(pTextPage);
 }
 IPDF_LinkExtract* IPDF_LinkExtract::CreateLinkExtract() {
-  return FX_NEW CPDF_LinkExtract();
+  return new CPDF_LinkExtract();
 }
 #define TEXT_BLANK_CHAR L' '
 #define TEXT_LINEFEED_CHAR L'\n'
@@ -2737,7 +2737,7 @@ FX_BOOL CPDF_LinkExtract::AppendToLinkList(int start,
                                            int count,
                                            const CFX_WideString& strUrl) {
   CPDF_LinkExt* linkInfo = NULL;
-  linkInfo = FX_NEW CPDF_LinkExt;
+  linkInfo = new CPDF_LinkExt;
   if (!linkInfo) {
     return FALSE;
   }

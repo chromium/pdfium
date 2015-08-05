@@ -14,7 +14,7 @@
 #define CHECKBOX_COLOR_BOXRB2 (ArgbEncode(255, 255, 255, 255))
 #define CHECKBOX_FXGE_CoordinatesAdjust
 CFWL_CheckBoxTP::CFWL_CheckBoxTP() : m_pCheckPath(NULL) {
-  m_pThemeData = FX_NEW CKBThemeData;
+  m_pThemeData = new CKBThemeData;
   SetThemeData(0);
 }
 CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
@@ -456,7 +456,7 @@ void CFWL_CheckBoxTP::SetThemeData(FX_DWORD dwID) {
 }
 void CFWL_CheckBoxTP::initCheckPath(FX_FLOAT fCheckLen) {
   if (!m_pCheckPath) {
-    m_pCheckPath = FX_NEW CFX_Path;
+    m_pCheckPath = new CFX_Path;
     m_pCheckPath->Create();
     FX_FLOAT fWidth = CHECKBOX_SIZE_SIGNPATH;
     FX_FLOAT fHeight = -CHECKBOX_SIZE_SIGNPATH;

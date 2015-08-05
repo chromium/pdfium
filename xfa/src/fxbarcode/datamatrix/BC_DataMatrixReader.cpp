@@ -32,7 +32,7 @@ CBC_DataMatrixReader::CBC_DataMatrixReader() {
   m_decoder = NULL;
 }
 void CBC_DataMatrixReader::Init() {
-  m_decoder = FX_NEW CBC_DataMatrixDecoder;
+  m_decoder = new CBC_DataMatrixDecoder;
   m_decoder->Init();
 }
 CBC_DataMatrixReader::~CBC_DataMatrixReader() {

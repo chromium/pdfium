@@ -196,7 +196,7 @@ CBC_ResultPoint* CBC_WhiteRectangleDetector::GetBlackPointOnSegment(
     int32_t x = Round(aX + i * xStep);
     int32_t y = Round(aY + i * yStep);
     if (m_image->Get(x, y)) {
-      return FX_NEW CBC_ResultPoint((FX_FLOAT)x, (FX_FLOAT)y);
+      return new CBC_ResultPoint((FX_FLOAT)x, (FX_FLOAT)y);
     }
   }
   return NULL;
@@ -222,20 +222,20 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::CenterEdges(CBC_ResultPoint* y,
   float ti = t->GetX();
   float tj = t->GetY();
   if (yi < m_width / 2) {
-    CFX_PtrArray* result = FX_NEW CFX_PtrArray;
+    CFX_PtrArray* result = new CFX_PtrArray;
     result->SetSize(4);
-    (*result)[0] = FX_NEW CBC_ResultPoint(ti - CORR, tj + CORR);
-    (*result)[1] = FX_NEW CBC_ResultPoint(zi + CORR, zj + CORR);
-    (*result)[2] = FX_NEW CBC_ResultPoint(xi - CORR, xj - CORR);
-    (*result)[3] = FX_NEW CBC_ResultPoint(yi + CORR, yj - CORR);
+    (*result)[0] = new CBC_ResultPoint(ti - CORR, tj + CORR);
+    (*result)[1] = new CBC_ResultPoint(zi + CORR, zj + CORR);
+    (*result)[2] = new CBC_ResultPoint(xi - CORR, xj - CORR);
+    (*result)[3] = new CBC_ResultPoint(yi + CORR, yj - CORR);
     return result;
   } else {
-    CFX_PtrArray* result = FX_NEW CFX_PtrArray;
+    CFX_PtrArray* result = new CFX_PtrArray;
     result->SetSize(4);
-    (*result)[0] = FX_NEW CBC_ResultPoint(ti + CORR, tj + CORR);
-    (*result)[1] = FX_NEW CBC_ResultPoint(zi + CORR, zj - CORR);
-    (*result)[2] = FX_NEW CBC_ResultPoint(xi - CORR, xj + CORR);
-    (*result)[3] = FX_NEW CBC_ResultPoint(yi - CORR, yj - CORR);
+    (*result)[0] = new CBC_ResultPoint(ti + CORR, tj + CORR);
+    (*result)[1] = new CBC_ResultPoint(zi + CORR, zj - CORR);
+    (*result)[2] = new CBC_ResultPoint(xi - CORR, xj + CORR);
+    (*result)[3] = new CBC_ResultPoint(yi - CORR, yj - CORR);
     return result;
   }
 }

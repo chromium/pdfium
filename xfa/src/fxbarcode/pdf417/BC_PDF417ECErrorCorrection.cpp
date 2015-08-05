@@ -28,7 +28,7 @@
 CBC_PDF417ECModulusGF* CBC_PDF417ECErrorCorrection::m_field = NULL;
 void CBC_PDF417ECErrorCorrection::Initialize(int32_t& e) {
   m_field =
-      FX_NEW CBC_PDF417ECModulusGF(CBC_PDF417Common::NUMBER_OF_CODEWORDS, 3, e);
+      new CBC_PDF417ECModulusGF(CBC_PDF417Common::NUMBER_OF_CODEWORDS, 3, e);
 }
 void CBC_PDF417ECErrorCorrection::Finalize() {
   delete m_field;
@@ -55,7 +55,7 @@ int32_t CBC_PDF417ECErrorCorrection::decode(CFX_Int32Array& received,
     return 0;
   }
   CBC_PDF417ECModulusPoly* syndrome =
-      FX_NEW CBC_PDF417ECModulusPoly(m_field, S, e);
+      new CBC_PDF417ECModulusPoly(m_field, S, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, -1);
   CBC_PDF417ECModulusPoly* buildmonomial =
       m_field->buildMonomial(numECCodewords, 1, e);
@@ -321,7 +321,7 @@ CFX_PtrArray* CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(
     delete rtemp;
   }
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CFX_PtrArray* modulusPoly = FX_NEW CFX_PtrArray;
+  CFX_PtrArray* modulusPoly = new CFX_PtrArray;
   modulusPoly->Add(sigma);
   modulusPoly->Add(omega);
   return modulusPoly;
@@ -330,7 +330,7 @@ CFX_Int32Array* CBC_PDF417ECErrorCorrection::findErrorLocations(
     CBC_PDF417ECModulusPoly* errorLocator,
     int32_t& e) {
   int32_t numErrors = errorLocator->getDegree();
-  CFX_Int32Array* result = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* result = new CFX_Int32Array;
   result->SetSize(numErrors);
   int32_t ee = 0;
   for (int32_t i = 1; i < m_field->getSize() && ee < numErrors; i++) {
@@ -366,7 +366,7 @@ CFX_Int32Array* CBC_PDF417ECErrorCorrection::findErrorMagnitudes(
                                            formalDerivativeCoefficients, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   int32_t s = errorLocations.GetSize();
-  CFX_Int32Array* result = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* result = new CFX_Int32Array;
   result->SetSize(s);
   for (int32_t i = 0; i < s; i++) {
     int32_t xiInverse = m_field->inverse(errorLocations[i], e);

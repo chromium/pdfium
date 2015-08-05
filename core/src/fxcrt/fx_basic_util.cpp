@@ -298,7 +298,7 @@ class CFindFileDataW : public CFindFileData {
 void* FX_OpenFolder(const FX_CHAR* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #ifndef _WIN32_WCE
-  CFindFileDataA* pData = FX_NEW CFindFileDataA;
+  CFindFileDataA* pData = new CFindFileDataA;
   if (!pData) {
     return NULL;
   }
@@ -311,7 +311,7 @@ void* FX_OpenFolder(const FX_CHAR* path) {
                        &pData->m_FindData, FindExSearchNameMatch, NULL, 0);
 #endif
 #else
-  CFindFileDataW* pData = FX_NEW CFindFileDataW;
+  CFindFileDataW* pData = new CFindFileDataW;
   if (!pData) {
     return NULL;
   }
@@ -331,7 +331,7 @@ void* FX_OpenFolder(const FX_CHAR* path) {
 }
 void* FX_OpenFolder(const FX_WCHAR* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  CFindFileDataW* pData = FX_NEW CFindFileDataW;
+  CFindFileDataW* pData = new CFindFileDataW;
   if (!pData) {
     return NULL;
   }

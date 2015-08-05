@@ -31,7 +31,7 @@ CBC_OnedUPCAWriter::CBC_OnedUPCAWriter() {
   m_bRightPadding = TRUE;
 }
 void CBC_OnedUPCAWriter::Init() {
-  m_subWriter = FX_NEW CBC_OnedEAN13Writer;
+  m_subWriter = new CBC_OnedEAN13Writer;
 }
 CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {
   if (m_subWriter != NULL) {

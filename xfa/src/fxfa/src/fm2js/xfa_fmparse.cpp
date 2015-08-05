@@ -26,7 +26,7 @@ int32_t CXFA_FMParse::Init(const CFX_WideStringC& wsFormcalc,
   m_pScript = wsFormcalc.GetPtr();
   m_uLength = wsFormcalc.GetLength();
   m_pErrorInfo = pErrorInfo;
-  m_lexer = FX_NEW CXFA_FMLexer(wsFormcalc, m_pErrorInfo);
+  m_lexer = new CXFA_FMLexer(wsFormcalc, m_pErrorInfo);
   if (m_lexer == 0) {
     return -1;
   }
@@ -59,7 +59,7 @@ void CXFA_FMParse::Error(FX_DWORD lineNum, XFA_FM_ERRMSG msg, ...) {
 }
 CFX_PtrArray* CXFA_FMParse::ParseTopExpression() {
   CXFA_FMExpression* e = 0;
-  CFX_PtrArray* expression = FX_NEW CFX_PtrArray();
+  CFX_PtrArray* expression = new CFX_PtrArray();
   while (1) {
     if (m_pToken->m_type == TOKeof) {
       return expression;
@@ -113,7 +113,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseFunction() {
   if (m_pToken->m_type == TOKrparen) {
     NextToken();
   } else {
-    pArguments = FX_NEW CFX_WideStringCArray();
+    pArguments = new CFX_WideStringCArray();
     CFX_WideStringC p;
     while (1) {
       if (m_pToken->m_type == TOKidentifier) {
@@ -147,7 +147,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseFunction() {
     Check(TOKendfunc);
   }
   if (m_pErrorInfo->message.IsEmpty()) {
-    e = FX_NEW CXFA_FMFunctionDefinition(line, 0, ident, pArguments,
+    e = new CXFA_FMFunctionDefinition(line, 0, ident, pArguments,
                                          pExpressions);
   } else {
     int32_t size = 0;
@@ -206,11 +206,11 @@ CXFA_FMExpression* CXFA_FMParse::ParseExpression() {
       e = ParseDoExpression();
       break;
     case TOKbreak:
-      e = FX_NEW CXFA_FMBreakExpression(line);
+      e = new CXFA_FMBreakExpression(line);
       NextToken();
       break;
     case TOKcontinue:
-      e = FX_NEW CXFA_FMContinueExpression(line);
+      e = new CXFA_FMContinueExpression(line);
       NextToken();
       break;
     default:
@@ -240,7 +240,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseVarExpression() {
     e = ParseExpExpression();
   }
   if (m_pErrorInfo->message.IsEmpty()) {
-    e = FX_NEW CXFA_FMVarExpression(line, ident, e);
+    e = new CXFA_FMVarExpression(line, ident, e);
   } else {
     delete e;
     e = 0;
@@ -255,7 +255,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseSimpleExpression() {
     NextToken();
     pExp2 = ParseLogicalOrExpression();
     if (m_pErrorInfo->message.IsEmpty()) {
-      pExp1 = FX_NEW CXFA_FMAssignExpression(line, TOKassign, pExp1, pExp2);
+      pExp1 = new CXFA_FMAssignExpression(line, TOKassign, pExp1, pExp2);
     } else {
       delete pExp1;
       pExp1 = 0;
@@ -269,7 +269,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseExpExpression() {
   CXFA_FMSimpleExpression* pExp1 = 0;
   pExp1 = ParseSimpleExpression();
   if (m_pErrorInfo->message.IsEmpty()) {
-    e = FX_NEW CXFA_FMExpExpression(line, pExp1);
+    e = new CXFA_FMExpExpression(line, pExp1);
   } else {
     delete pExp1;
     e = 0;
@@ -287,7 +287,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseLogicalOrExpression() {
         NextToken();
         e2 = ParseLogicalAndExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMLogicalOrExpression(line, TOKor, e1, e2);
+          e1 = new CXFA_FMLogicalOrExpression(line, TOKor, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -311,7 +311,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseLogicalAndExpression() {
         NextToken();
         e2 = ParseEqualityExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMLogicalAndExpression(line, TOKand, e1, e2);
+          e1 = new CXFA_FMLogicalAndExpression(line, TOKand, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -335,7 +335,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseEqualityExpression() {
         NextToken();
         e2 = ParseRelationalExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMEqualityExpression(line, TOKeq, e1, e2);
+          e1 = new CXFA_FMEqualityExpression(line, TOKeq, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -346,7 +346,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseEqualityExpression() {
         NextToken();
         e2 = ParseRelationalExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMEqualityExpression(line, TOKne, e1, e2);
+          e1 = new CXFA_FMEqualityExpression(line, TOKne, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -370,7 +370,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseRelationalExpression() {
         NextToken();
         e2 = ParseAddtiveExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMRelationalExpression(line, TOKlt, e1, e2);
+          e1 = new CXFA_FMRelationalExpression(line, TOKlt, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -381,7 +381,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseRelationalExpression() {
         NextToken();
         e2 = ParseAddtiveExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMRelationalExpression(line, TOKgt, e1, e2);
+          e1 = new CXFA_FMRelationalExpression(line, TOKgt, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -392,7 +392,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseRelationalExpression() {
         NextToken();
         e2 = ParseAddtiveExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMRelationalExpression(line, TOKle, e1, e2);
+          e1 = new CXFA_FMRelationalExpression(line, TOKle, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -403,7 +403,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseRelationalExpression() {
         NextToken();
         e2 = ParseAddtiveExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMRelationalExpression(line, TOKge, e1, e2);
+          e1 = new CXFA_FMRelationalExpression(line, TOKge, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -426,7 +426,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseAddtiveExpression() {
         NextToken();
         e2 = ParseMultiplicativeExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMAdditiveExpression(line, TOKplus, e1, e2);
+          e1 = new CXFA_FMAdditiveExpression(line, TOKplus, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -436,7 +436,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseAddtiveExpression() {
         NextToken();
         e2 = ParseMultiplicativeExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMAdditiveExpression(line, TOKminus, e1, e2);
+          e1 = new CXFA_FMAdditiveExpression(line, TOKminus, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -459,7 +459,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseMultiplicativeExpression() {
         NextToken();
         e2 = ParseUnaryExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMMultiplicativeExpression(line, TOKmul, e1, e2);
+          e1 = new CXFA_FMMultiplicativeExpression(line, TOKmul, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -469,7 +469,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseMultiplicativeExpression() {
         NextToken();
         e2 = ParseUnaryExpression();
         if (m_pErrorInfo->message.IsEmpty()) {
-          e1 = FX_NEW CXFA_FMMultiplicativeExpression(line, TOKdiv, e1, e2);
+          e1 = new CXFA_FMMultiplicativeExpression(line, TOKdiv, e1, e2);
         } else {
           delete e1;
           e1 = 0;
@@ -490,7 +490,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseUnaryExpression() {
       NextToken();
       e = ParseUnaryExpression();
       if (m_pErrorInfo->message.IsEmpty()) {
-        e = FX_NEW CXFA_FMPosExpression(line, e);
+        e = new CXFA_FMPosExpression(line, e);
       } else {
         e = 0;
       }
@@ -499,7 +499,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseUnaryExpression() {
       NextToken();
       e = ParseUnaryExpression();
       if (m_pErrorInfo->message.IsEmpty()) {
-        e = FX_NEW CXFA_FMNegExpression(line, e);
+        e = new CXFA_FMNegExpression(line, e);
       } else {
         e = 0;
       }
@@ -508,7 +508,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseUnaryExpression() {
       NextToken();
       e = ParseUnaryExpression();
       if (m_pErrorInfo->message.IsEmpty()) {
-        e = FX_NEW CXFA_FMNotExpression(line, e);
+        e = new CXFA_FMNotExpression(line, e);
       } else {
         e = 0;
       }
@@ -524,11 +524,11 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePrimaryExpression() {
   FX_DWORD line = m_pToken->m_uLinenum;
   switch (m_pToken->m_type) {
     case TOKnumber:
-      e = FX_NEW CXFA_FMNumberExpression(line, m_pToken->m_wstring);
+      e = new CXFA_FMNumberExpression(line, m_pToken->m_wstring);
       NextToken();
       break;
     case TOKstring:
-      e = FX_NEW CXFA_FMStringExpression(line, m_pToken->m_wstring);
+      e = new CXFA_FMStringExpression(line, m_pToken->m_wstring);
       NextToken();
       break;
     case TOKidentifier: {
@@ -537,20 +537,20 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePrimaryExpression() {
       if (m_pToken->m_type == TOKlbracket) {
         CXFA_FMSimpleExpression* s = ParseIndexExpression();
         if (s) {
-          e = FX_NEW CXFA_FMDotAccessorExpression(line, NULL, TOKdot,
+          e = new CXFA_FMDotAccessorExpression(line, NULL, TOKdot,
                                                   wsIdentifier, s);
         }
         NextToken();
       } else {
-        e = FX_NEW CXFA_FMIdentifierExpressionn(line, wsIdentifier);
+        e = new CXFA_FMIdentifierExpressionn(line, wsIdentifier);
       }
     } break;
     case TOKif:
-      e = FX_NEW CXFA_FMIdentifierExpressionn(line, m_pToken->m_wstring);
+      e = new CXFA_FMIdentifierExpressionn(line, m_pToken->m_wstring);
       NextToken();
       break;
     case TOKnull:
-      e = FX_NEW CXFA_FMNullExpression(line);
+      e = new CXFA_FMNullExpression(line);
       NextToken();
       break;
     case TOKlparen:
@@ -579,7 +579,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
         NextToken();
         CFX_PtrArray* pArray = 0;
         if (m_pToken->m_type != TOKrparen) {
-          pArray = FX_NEW CFX_PtrArray();
+          pArray = new CFX_PtrArray();
           while (m_pToken->m_type != TOKrparen) {
             CXFA_FMSimpleExpression* e = ParseSimpleExpression();
             if (e) {
@@ -598,14 +598,14 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
           }
         }
         if (m_pErrorInfo->message.IsEmpty()) {
-          e = FX_NEW CXFA_FMCallExpression(line, e, pArray, FALSE);
+          e = new CXFA_FMCallExpression(line, e, pArray, FALSE);
           NextToken();
           if (m_pToken->m_type != TOKlbracket) {
             continue;
           }
           CXFA_FMSimpleExpression* s = ParseIndexExpression();
           if (s) {
-            e = FX_NEW CXFA_FMDotAccessorExpression(line, e, TOKcall,
+            e = new CXFA_FMDotAccessorExpression(line, e, TOKcall,
                                                     FX_WSTRC(L""), s);
           } else {
             delete e;
@@ -636,7 +636,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
             NextToken();
             CFX_PtrArray* pArray = 0;
             if (m_pToken->m_type != TOKrparen) {
-              pArray = FX_NEW CFX_PtrArray();
+              pArray = new CFX_PtrArray();
               while (m_pToken->m_type != TOKrparen) {
                 CXFA_FMSimpleExpression* exp = ParseSimpleExpression();
                 pArray->Add(exp);
@@ -654,10 +654,10 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
             }
             if (m_pErrorInfo->message.IsEmpty()) {
               CXFA_FMSimpleExpression* pIdentifier =
-                  FX_NEW CXFA_FMIdentifierExpressionn(tempLine, tempStr);
+                  new CXFA_FMIdentifierExpressionn(tempLine, tempStr);
               pExpCall =
-                  FX_NEW CXFA_FMCallExpression(line, pIdentifier, pArray, TRUE);
-              e = FX_NEW CXFA_FMMethodCallExpression(line, pExpAccessor,
+                  new CXFA_FMCallExpression(line, pIdentifier, pArray, TRUE);
+              e = new CXFA_FMMethodCallExpression(line, pExpAccessor,
                                                      pExpCall);
               NextToken();
               if (m_pToken->m_type != TOKlbracket) {
@@ -665,7 +665,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               }
               CXFA_FMSimpleExpression* s = ParseIndexExpression();
               if (s) {
-                e = FX_NEW CXFA_FMDotAccessorExpression(line, e, TOKcall,
+                e = new CXFA_FMDotAccessorExpression(line, e, TOKcall,
                                                         FX_WSTRC(L""), s);
               } else {
                 delete e;
@@ -695,12 +695,12 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               }
               return e;
             }
-            e = FX_NEW CXFA_FMDotAccessorExpression(tempLine, e, TOKdot,
+            e = new CXFA_FMDotAccessorExpression(tempLine, e, TOKdot,
                                                     tempStr, s);
           } else {
-            CXFA_FMSimpleExpression* s = FX_NEW CXFA_FMIndexExpression(
+            CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
                 tempLine, ACCESSOR_NO_INDEX, NULL, FALSE);
-            e = FX_NEW CXFA_FMDotAccessorExpression(line, e, TOKdot, tempStr,
+            e = new CXFA_FMDotAccessorExpression(line, e, TOKdot, tempStr,
                                                     s);
             continue;
           }
@@ -730,12 +730,12 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               }
               return e;
             }
-            e = FX_NEW CXFA_FMDotDotAccessorExpression(tempLine, e, TOKdotdot,
+            e = new CXFA_FMDotDotAccessorExpression(tempLine, e, TOKdotdot,
                                                        tempStr, s);
           } else {
-            CXFA_FMSimpleExpression* s = FX_NEW CXFA_FMIndexExpression(
+            CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
                 tempLine, ACCESSOR_NO_INDEX, NULL, FALSE);
-            e = FX_NEW CXFA_FMDotDotAccessorExpression(line, e, TOKdotdot,
+            e = new CXFA_FMDotDotAccessorExpression(line, e, TOKdotdot,
                                                        tempStr, s);
             continue;
           }
@@ -765,12 +765,12 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               }
               return e;
             }
-            e = FX_NEW CXFA_FMDotAccessorExpression(tempLine, e, TOKdotscream,
+            e = new CXFA_FMDotAccessorExpression(tempLine, e, TOKdotscream,
                                                     tempStr, s);
           } else {
-            CXFA_FMSimpleExpression* s = FX_NEW CXFA_FMIndexExpression(
+            CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
                 tempLine, ACCESSOR_NO_INDEX, NULL, FALSE);
-            e = FX_NEW CXFA_FMDotAccessorExpression(line, e, TOKdotscream,
+            e = new CXFA_FMDotAccessorExpression(line, e, TOKdotscream,
                                                     tempStr, s);
             continue;
           }
@@ -783,8 +783,8 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
         break;
       case TOKdotstar: {
         CXFA_FMSimpleExpression* s =
-            FX_NEW CXFA_FMIndexExpression(line, ACCESSOR_NO_INDEX, NULL, FALSE);
-        e = FX_NEW CXFA_FMDotAccessorExpression(line, e, TOKdotstar,
+            new CXFA_FMIndexExpression(line, ACCESSOR_NO_INDEX, NULL, FALSE);
+        e = new CXFA_FMDotAccessorExpression(line, e, TOKdotstar,
                                                 FX_WSTRC(L"*"), s);
       } break;
       default:
@@ -801,7 +801,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseIndexExpression() {
   CXFA_FMSimpleExpression* s = 0;
   XFA_FM_AccessorIndex accessorIndex = ACCESSOR_NO_RELATIVEINDEX;
   if (m_pToken->m_type == TOKmul) {
-    pExp = FX_NEW CXFA_FMIndexExpression(line, accessorIndex, s, TRUE);
+    pExp = new CXFA_FMIndexExpression(line, accessorIndex, s, TRUE);
     NextToken();
     if (m_pToken->m_type != TOKrbracket) {
       CFX_WideString ws_TempString = m_pToken->m_wstring;
@@ -830,7 +830,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseIndexExpression() {
       delete s;
     }
   } else {
-    pExp = FX_NEW CXFA_FMIndexExpression(line, accessorIndex, s, FALSE);
+    pExp = new CXFA_FMIndexExpression(line, accessorIndex, s, FALSE);
   }
   return pExp;
 }
@@ -844,7 +844,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseParenExpression() {
       NextToken();
       pExp2 = ParseLogicalOrExpression();
       if (m_pErrorInfo->message.IsEmpty()) {
-        pExp1 = FX_NEW CXFA_FMAssignExpression(line, TOKassign, pExp1, pExp2);
+        pExp1 = new CXFA_FMAssignExpression(line, TOKassign, pExp1, pExp2);
       } else {
         delete pExp1;
         pExp1 = 0;
@@ -859,7 +859,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseParenExpression() {
 CXFA_FMExpression* CXFA_FMParse::ParseBlockExpression() {
   FX_DWORD line = m_pToken->m_uLinenum;
   CXFA_FMExpression* e = 0;
-  CFX_PtrArray* expression = FX_NEW CFX_PtrArray();
+  CFX_PtrArray* expression = new CFX_PtrArray();
   while (1) {
     switch (m_pToken->m_type) {
       case TOKeof:
@@ -888,7 +888,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseBlockExpression() {
   }
   CXFA_FMBlockExpression* pExp = 0;
   if (m_pErrorInfo->message.IsEmpty()) {
-    pExp = FX_NEW CXFA_FMBlockExpression(line, expression);
+    pExp = new CXFA_FMBlockExpression(line, expression);
   } else {
     int32_t size = expression->GetSize();
     int32_t index = 0;
@@ -928,7 +928,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseIfExpression() {
       delete pExpression;
     }
     m_lexer->SetCurrentLine(line);
-    m_pToken = FX_NEW CXFA_FMToken(line);
+    m_pToken = new CXFA_FMToken(line);
     m_pToken->m_type = TOKidentifier;
     m_pToken->m_wstring = FX_WSTRC(L"if");
     m_lexer->SetToken(m_pToken);
@@ -962,7 +962,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseIfExpression() {
   }
   CXFA_FMIfExpression* pExp = 0;
   if (m_pErrorInfo->message.IsEmpty()) {
-    pExp = FX_NEW CXFA_FMIfExpression(line, pExpression, pIfExpression,
+    pExp = new CXFA_FMIfExpression(line, pExpression, pIfExpression,
                                       pElseExpression);
   } else {
     if (pExpression) {
@@ -997,7 +997,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseWhileExpression() {
     delete e;
     e = 0;
   } else {
-    e = FX_NEW CXFA_FMWhileExpression(line, pCondition, pExpression);
+    e = new CXFA_FMWhileExpression(line, pCondition, pExpression);
   }
   return e;
 }
@@ -1060,7 +1060,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForExpression() {
   pList = ParseBlockExpression();
   Check(TOKendfor);
   if (m_pErrorInfo->message.IsEmpty()) {
-    e = FX_NEW CXFA_FMForExpression(line, wsVariant, pAssignment, pAccessor,
+    e = new CXFA_FMForExpression(line, wsVariant, pAssignment, pAccessor,
                                     iDirection, pStep, pList);
   } else {
     if (pAssignment) {
@@ -1100,7 +1100,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForeachExpression() {
           ws_TempString.c_str());
     NextToken();
   } else {
-    pAccessors = FX_NEW CFX_PtrArray();
+    pAccessors = new CFX_PtrArray();
     while (m_pToken->m_type != TOKrparen) {
       CXFA_FMSimpleExpression* s = ParseSimpleExpression();
       if (s) {
@@ -1118,7 +1118,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForeachExpression() {
   pList = ParseBlockExpression();
   Check(TOKendfor);
   if (m_pErrorInfo->message.IsEmpty()) {
-    e = FX_NEW CXFA_FMForeachExpression(line, wsIdentifier, pAccessors, pList);
+    e = new CXFA_FMForeachExpression(line, wsIdentifier, pAccessors, pList);
   } else {
     if (pAccessors) {
       CXFA_FMSimpleExpression* s = 0;
@@ -1146,7 +1146,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseDoExpression() {
   e = ParseBlockExpression();
   Check(TOKend);
   if (m_pErrorInfo->message.IsEmpty()) {
-    e = FX_NEW CXFA_FMDoExpression(line, e);
+    e = new CXFA_FMDoExpression(line, e);
   } else {
     delete e;
     e = 0;

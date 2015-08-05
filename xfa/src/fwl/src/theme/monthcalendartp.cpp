@@ -49,7 +49,7 @@
 #define FWL_MC_WIDTH 200
 #define FWL_MC_HEIGHT 160
 CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() {
-  m_pThemeData = FX_NEW MCThemeData;
+  m_pThemeData = new MCThemeData;
   SetThemeData(0);
 }
 CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() {

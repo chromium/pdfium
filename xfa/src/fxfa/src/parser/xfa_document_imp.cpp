@@ -133,37 +133,37 @@ CXFA_Object* CXFA_Document::GetXFANode(FX_DWORD dwNodeNameHash) {
     }
     case XFA_HASHCODE_DataWindow: {
       if (m_pScriptDataWindow == NULL) {
-        m_pScriptDataWindow = FX_NEW CScript_DataWindow(this);
+        m_pScriptDataWindow = new CScript_DataWindow(this);
       }
       return m_pScriptDataWindow;
     }
     case XFA_HASHCODE_Event: {
       if (m_pScriptEvent == NULL) {
-        m_pScriptEvent = FX_NEW CScript_EventPseudoModel(this);
+        m_pScriptEvent = new CScript_EventPseudoModel(this);
       }
       return m_pScriptEvent;
     }
     case XFA_HASHCODE_Host: {
       if (m_pScriptHost == NULL) {
-        m_pScriptHost = FX_NEW CScript_HostPseudoModel(this);
+        m_pScriptHost = new CScript_HostPseudoModel(this);
       }
       return m_pScriptHost;
     }
     case XFA_HASHCODE_Log: {
       if (m_pScriptLog == NULL) {
-        m_pScriptLog = FX_NEW CScript_LogPseudoModel(this);
+        m_pScriptLog = new CScript_LogPseudoModel(this);
       }
       return m_pScriptLog;
     }
     case XFA_HASHCODE_Signature: {
       if (m_pScriptSignature == NULL) {
-        m_pScriptSignature = FX_NEW CScript_SignaturePseudoModel(this);
+        m_pScriptSignature = new CScript_SignaturePseudoModel(this);
       }
       return m_pScriptSignature;
     }
     case XFA_HASHCODE_Layout: {
       if (m_pScriptLayout == NULL) {
-        m_pScriptLayout = FX_NEW CScript_LayoutPseudoModel(this);
+        m_pScriptLayout = new CScript_LayoutPseudoModel(this);
       }
       return m_pScriptLayout;
     }
@@ -182,7 +182,7 @@ CXFA_Node* CXFA_Document::CreateNode(XFA_LPCPACKETINFO pPacket,
   }
   XFA_LPCELEMENTINFO pElement = XFA_GetElementByID(eElement);
   if (pElement && (pElement->dwPackets & pPacket->eName)) {
-    CXFA_Node* pNode = FX_NEW CXFA_Node(this, pPacket->eName, pElement->eName);
+    CXFA_Node* pNode = new CXFA_Node(this, pPacket->eName, pElement->eName);
     if (pNode) {
       AddPurgeNode(pNode);
     }
@@ -244,7 +244,7 @@ CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   if (!m_pLocalMgr) {
     CFX_WideString wsLanguage;
     this->GetParser()->GetNotify()->GetAppProvider()->GetLanguage(wsLanguage);
-    m_pLocalMgr = FX_NEW CXFA_LocaleMgr(
+    m_pLocalMgr = new CXFA_LocaleMgr(
         (CXFA_Node*)this->GetXFANode(XFA_HASHCODE_LocaleSet), wsLanguage);
   }
   return m_pLocalMgr;

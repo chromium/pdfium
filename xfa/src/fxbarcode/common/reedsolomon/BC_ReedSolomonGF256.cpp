@@ -26,9 +26,9 @@
 CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::QRCodeFild = NULL;
 CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::DataMatrixField = NULL;
 void CBC_ReedSolomonGF256::Initialize() {
-  QRCodeFild = FX_NEW CBC_ReedSolomonGF256(0x011D);
+  QRCodeFild = new CBC_ReedSolomonGF256(0x011D);
   QRCodeFild->Init();
-  DataMatrixField = FX_NEW CBC_ReedSolomonGF256(0x012D);
+  DataMatrixField = new CBC_ReedSolomonGF256(0x012D);
   DataMatrixField->Init();
 }
 void CBC_ReedSolomonGF256::Finalize() {
@@ -56,8 +56,8 @@ CBC_ReedSolomonGF256::CBC_ReedSolomonGF256(int32_t primitive) {
   m_logTable[0] = 0;
 }
 void CBC_ReedSolomonGF256::Init() {
-  m_zero = FX_NEW CBC_ReedSolomonGF256Poly(this, 0);
-  m_one = FX_NEW CBC_ReedSolomonGF256Poly(this, 1);
+  m_zero = new CBC_ReedSolomonGF256Poly(this, 0);
+  m_one = new CBC_ReedSolomonGF256Poly(this, 1);
 }
 CBC_ReedSolomonGF256::~CBC_ReedSolomonGF256() {
   if (m_zero != NULL) {
@@ -91,7 +91,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(
   CFX_Int32Array coefficients;
   coefficients.SetSize(degree + 1);
   coefficients[0] = coefficient;
-  CBC_ReedSolomonGF256Poly* temp = FX_NEW CBC_ReedSolomonGF256Poly();
+  CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(this, &coefficients, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return temp;

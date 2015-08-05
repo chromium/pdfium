@@ -580,7 +580,7 @@ FX_BOOL CXFA_ImageRenderer::StartDIBSource() {
     FX_RECT clip_box = m_pDevice->GetClipBox();
     clip_box.Intersect(image_rect);
     m_Status = 2;
-    m_pTransformer = FX_NEW CFX_ImageTransformer;
+    m_pTransformer = new CFX_ImageTransformer;
     m_pTransformer->Start(pDib, &m_ImageMatrix, m_Flags, &clip_box);
     return TRUE;
   }
@@ -1076,7 +1076,7 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_FileRead* pImageFileRead,
     int32_t iComponents = pProgressiveDecoder->GetNumComponents();
     int32_t iBpc = pProgressiveDecoder->GetBPC();
     FXDIB_Format dibFormat = XFA_GetDIBFormat(type, iComponents, iBpc);
-    pBitmap = FX_NEW CFX_DIBitmap();
+    pBitmap = new CFX_DIBitmap();
     pBitmap->Create(pProgressiveDecoder->GetWidth(),
                     pProgressiveDecoder->GetHeight(), dibFormat);
     pBitmap->Clear(0xffffffff);

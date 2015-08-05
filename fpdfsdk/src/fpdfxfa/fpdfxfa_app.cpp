@@ -17,7 +17,7 @@ CPDFXFA_App* CPDFXFA_App::g_pApp = NULL;
 
 CPDFXFA_App* CPDFXFA_App::GetInstance() {
   if (!g_pApp) {
-    g_pApp = FX_NEW CPDFXFA_App();
+    g_pApp = new CPDFXFA_App();
   }
   return g_pApp;
 }
@@ -551,6 +551,6 @@ IFWL_AdapterTimerMgr* CPDFXFA_App::GetTimerMgr() {
   CXFA_FWLAdapterTimerMgr* pAdapter = NULL;
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv)
-    pAdapter = FX_NEW CXFA_FWLAdapterTimerMgr(pEnv);
+    pAdapter = new CXFA_FWLAdapterTimerMgr(pEnv);
   return pAdapter;
 }

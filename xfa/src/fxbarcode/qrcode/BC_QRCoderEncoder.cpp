@@ -146,7 +146,7 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index += 2;
   }
   if (index != flag) {
-    result.Add(FX_NEW Make_Pair(CBC_QRCoderMode::sGBK,
+    result.Add(new Make_Pair(CBC_QRCoderMode::sGBK,
                                 content.Mid(flag, index - flag)));
   }
   flag = index;
@@ -170,7 +170,7 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     }
   }
   if (index != flag) {
-    result.Add(FX_NEW Make_Pair(CBC_QRCoderMode::sBYTE,
+    result.Add(new Make_Pair(CBC_QRCoderMode::sBYTE,
                                 content.Mid(flag, index - flag)));
   }
   flag = index;
@@ -182,7 +182,7 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index++;
   }
   if (index != flag) {
-    result.Add(FX_NEW Make_Pair(CBC_QRCoderMode::sNUMERIC,
+    result.Add(new Make_Pair(CBC_QRCoderMode::sNUMERIC,
                                 content.Mid(flag, index - flag)));
   }
   flag = index;
@@ -194,7 +194,7 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index++;
   }
   if (index != flag) {
-    result.Add(FX_NEW Make_Pair(CBC_QRCoderMode::sALPHANUMERIC,
+    result.Add(new Make_Pair(CBC_QRCoderMode::sALPHANUMERIC,
                                 content.Mid(flag, index - flag)));
   }
   flag = index;
@@ -405,7 +405,7 @@ void CBC_QRCoderEncoder::EncodeWithSpecifyVersion(
                         qrCode->GetNumDataBytes(), qrCode->GetNumRSBlocks(),
                         &finalBits, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_CommonByteMatrix* pDecoder = FX_NEW CBC_CommonByteMatrix(
+  CBC_CommonByteMatrix* pDecoder = new CBC_CommonByteMatrix(
       qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   pDecoder->Init();
   CBC_AutoPtr<CBC_CommonByteMatrix> matrix(pDecoder);
@@ -496,7 +496,7 @@ catchException:
                         qrCode->GetNumDataBytes(), qrCode->GetNumRSBlocks(),
                         &finalBits, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_CommonByteMatrix* pDecoder = FX_NEW CBC_CommonByteMatrix(
+  CBC_CommonByteMatrix* pDecoder = new CBC_CommonByteMatrix(
       qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   pDecoder->Init();
   CBC_AutoPtr<CBC_CommonByteMatrix> matrix(pDecoder);
@@ -547,7 +547,7 @@ void CBC_QRCoderEncoder::Encode(const CFX_WideString& content,
                         qrCode->GetNumDataBytes(), qrCode->GetNumRSBlocks(),
                         &finalBits, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_CommonByteMatrix* pDecoder = FX_NEW CBC_CommonByteMatrix(
+  CBC_CommonByteMatrix* pDecoder = new CBC_CommonByteMatrix(
       qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   pDecoder->Init();
   CBC_AutoPtr<CBC_CommonByteMatrix> matrix(pDecoder);
@@ -870,12 +870,12 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     GetNumDataBytesAndNumECBytesForBlockID(numTotalBytes, numDataBytes,
                                            numRSBlocks, i, numDataBytesInBlock,
                                            numEcBytesInBlosk);
-    CBC_CommonByteArray* dataBytes = FX_NEW CBC_CommonByteArray;
+    CBC_CommonByteArray* dataBytes = new CBC_CommonByteArray;
     dataBytes->Set(bits->GetArray(), dataBytesOffset, numDataBytesInBlock);
     CBC_CommonByteArray* ecBytes =
         GenerateECBytes(dataBytes, numEcBytesInBlosk, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
-    blocks.Add(FX_NEW CBC_QRCoderBlockPair(dataBytes, ecBytes));
+    blocks.Add(new CBC_QRCoderBlockPair(dataBytes, ecBytes));
     maxNumDataBytes = FX_MAX(maxNumDataBytes, dataBytes->Size());
     maxNumEcBytes = FX_MAX(maxNumEcBytes, ecBytes->Size());
     dataBytesOffset += numDataBytesInBlock;
@@ -952,7 +952,7 @@ CBC_CommonByteArray* CBC_QRCoderEncoder::GenerateECBytes(
   encode.Init();
   encode.Encode(&toEncode, numEcBytesInBlock, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_CommonByteArray* ecBytes = FX_NEW CBC_CommonByteArray(numEcBytesInBlock);
+  CBC_CommonByteArray* ecBytes = new CBC_CommonByteArray(numEcBytesInBlock);
   for (int32_t j = 0; j < numEcBytesInBlock; j++) {
     ecBytes->Set(j, toEncode[numDataBytes + j]);
   }

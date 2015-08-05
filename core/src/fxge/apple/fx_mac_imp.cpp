@@ -94,7 +94,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
   return NULL;
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
-  CFX_MacFontInfo* pInfo = FX_NEW CFX_MacFontInfo;
+  CFX_MacFontInfo* pInfo = new CFX_MacFontInfo;
   if (!pInfo) {
     return NULL;
   }
@@ -104,7 +104,7 @@ IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
   return pInfo;
 }
 void CFX_GEModule::InitPlatform() {
-  m_pPlatformData = FX_NEW CApplePlatform;
+  m_pPlatformData = new CApplePlatform;
   m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault());
 }
 void CFX_GEModule::DestroyPlatform() {

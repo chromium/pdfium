@@ -33,7 +33,7 @@ FX_BOOL CFWL_FormProxyImp::IsInstance(const CFX_WideStringC& wsClass) const {
 FWL_ERR CFWL_FormProxyImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_FormProxyImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_FormProxyImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_FormProxyImp::Finalize() {

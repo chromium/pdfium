@@ -665,7 +665,7 @@ CFWL_ArrowData::CFWL_ArrowData() : m_pColorData(NULL) {
 CFWL_FontManager* FWL_GetFontManager() {
   static CFWL_FontManager* _fontManager = NULL;
   if (_fontManager == NULL) {
-    _fontManager = FX_NEW CFWL_FontManager;
+    _fontManager = new CFWL_FontManager;
   }
   return _fontManager;
 }
@@ -740,7 +740,7 @@ IFX_Font* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
       return data->GetFont();
     }
   }
-  CFWL_FontData* fontData = FX_NEW CFWL_FontData;
+  CFWL_FontData* fontData = new CFWL_FontData;
   if (!fontData->LoadFont(wsFontFamily, dwFontStyles, wCodePage)) {
     delete fontData;
     return NULL;
@@ -767,7 +767,7 @@ FX_DWORD FWL_MakeThemeID(FX_DWORD dwLayout, FX_DWORD dwColor) {
 CFWL_ArrowData* CFWL_ArrowData::m_pInstance = NULL;
 CFWL_ArrowData* CFWL_ArrowData::GetInstance() {
   if (!m_pInstance) {
-    m_pInstance = FX_NEW CFWL_ArrowData;
+    m_pInstance = new CFWL_ArrowData;
   }
   return m_pInstance;
 }
@@ -788,7 +788,7 @@ CFWL_ArrowData::~CFWL_ArrowData() {
 }
 void CFWL_ArrowData::SetColorData(FX_DWORD dwID) {
   if (!m_pColorData) {
-    m_pColorData = FX_NEW CColorData;
+    m_pColorData = new CColorData;
   }
   if (dwID) {
     m_pColorData->clrBorder[0] = ArgbEncode(255, 142, 153, 125);

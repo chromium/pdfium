@@ -37,45 +37,45 @@ CBC_SymbolInfo* CBC_SymbolInfo::m_symbols[30] = {
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 void CBC_SymbolInfo::Initialize() {
-  m_PROD_SYMBOLS[0] = FX_NEW CBC_SymbolInfo(FALSE, 3, 5, 8, 8, 1);
-  m_PROD_SYMBOLS[1] = FX_NEW CBC_SymbolInfo(FALSE, 5, 7, 10, 10, 1);
-  m_PROD_SYMBOLS[2] = FX_NEW CBC_SymbolInfo(TRUE, 5, 7, 16, 6, 1);
-  m_PROD_SYMBOLS[3] = FX_NEW CBC_SymbolInfo(FALSE, 8, 10, 12, 12, 1);
-  m_PROD_SYMBOLS[4] = FX_NEW CBC_SymbolInfo(TRUE, 10, 11, 14, 6, 2);
-  m_PROD_SYMBOLS[5] = FX_NEW CBC_SymbolInfo(FALSE, 12, 12, 14, 14, 1);
-  m_PROD_SYMBOLS[6] = FX_NEW CBC_SymbolInfo(TRUE, 16, 14, 24, 10, 1);
-  m_PROD_SYMBOLS[7] = FX_NEW CBC_SymbolInfo(FALSE, 18, 14, 16, 16, 1);
-  m_PROD_SYMBOLS[8] = FX_NEW CBC_SymbolInfo(FALSE, 22, 18, 18, 18, 1);
-  m_PROD_SYMBOLS[9] = FX_NEW CBC_SymbolInfo(TRUE, 22, 18, 16, 10, 2);
-  m_PROD_SYMBOLS[10] = FX_NEW CBC_SymbolInfo(FALSE, 30, 20, 20, 20, 1);
-  m_PROD_SYMBOLS[11] = FX_NEW CBC_SymbolInfo(TRUE, 32, 24, 16, 14, 2);
-  m_PROD_SYMBOLS[12] = FX_NEW CBC_SymbolInfo(FALSE, 36, 24, 22, 22, 1);
-  m_PROD_SYMBOLS[13] = FX_NEW CBC_SymbolInfo(FALSE, 44, 28, 24, 24, 1);
-  m_PROD_SYMBOLS[14] = FX_NEW CBC_SymbolInfo(TRUE, 49, 28, 22, 14, 2);
-  m_PROD_SYMBOLS[15] = FX_NEW CBC_SymbolInfo(FALSE, 62, 36, 14, 14, 4);
-  m_PROD_SYMBOLS[16] = FX_NEW CBC_SymbolInfo(FALSE, 86, 42, 16, 16, 4);
-  m_PROD_SYMBOLS[17] = FX_NEW CBC_SymbolInfo(FALSE, 114, 48, 18, 18, 4);
-  m_PROD_SYMBOLS[18] = FX_NEW CBC_SymbolInfo(FALSE, 144, 56, 20, 20, 4);
-  m_PROD_SYMBOLS[19] = FX_NEW CBC_SymbolInfo(FALSE, 174, 68, 22, 22, 4);
+  m_PROD_SYMBOLS[0] = new CBC_SymbolInfo(FALSE, 3, 5, 8, 8, 1);
+  m_PROD_SYMBOLS[1] = new CBC_SymbolInfo(FALSE, 5, 7, 10, 10, 1);
+  m_PROD_SYMBOLS[2] = new CBC_SymbolInfo(TRUE, 5, 7, 16, 6, 1);
+  m_PROD_SYMBOLS[3] = new CBC_SymbolInfo(FALSE, 8, 10, 12, 12, 1);
+  m_PROD_SYMBOLS[4] = new CBC_SymbolInfo(TRUE, 10, 11, 14, 6, 2);
+  m_PROD_SYMBOLS[5] = new CBC_SymbolInfo(FALSE, 12, 12, 14, 14, 1);
+  m_PROD_SYMBOLS[6] = new CBC_SymbolInfo(TRUE, 16, 14, 24, 10, 1);
+  m_PROD_SYMBOLS[7] = new CBC_SymbolInfo(FALSE, 18, 14, 16, 16, 1);
+  m_PROD_SYMBOLS[8] = new CBC_SymbolInfo(FALSE, 22, 18, 18, 18, 1);
+  m_PROD_SYMBOLS[9] = new CBC_SymbolInfo(TRUE, 22, 18, 16, 10, 2);
+  m_PROD_SYMBOLS[10] = new CBC_SymbolInfo(FALSE, 30, 20, 20, 20, 1);
+  m_PROD_SYMBOLS[11] = new CBC_SymbolInfo(TRUE, 32, 24, 16, 14, 2);
+  m_PROD_SYMBOLS[12] = new CBC_SymbolInfo(FALSE, 36, 24, 22, 22, 1);
+  m_PROD_SYMBOLS[13] = new CBC_SymbolInfo(FALSE, 44, 28, 24, 24, 1);
+  m_PROD_SYMBOLS[14] = new CBC_SymbolInfo(TRUE, 49, 28, 22, 14, 2);
+  m_PROD_SYMBOLS[15] = new CBC_SymbolInfo(FALSE, 62, 36, 14, 14, 4);
+  m_PROD_SYMBOLS[16] = new CBC_SymbolInfo(FALSE, 86, 42, 16, 16, 4);
+  m_PROD_SYMBOLS[17] = new CBC_SymbolInfo(FALSE, 114, 48, 18, 18, 4);
+  m_PROD_SYMBOLS[18] = new CBC_SymbolInfo(FALSE, 144, 56, 20, 20, 4);
+  m_PROD_SYMBOLS[19] = new CBC_SymbolInfo(FALSE, 174, 68, 22, 22, 4);
   m_PROD_SYMBOLS[20] =
-      FX_NEW CBC_SymbolInfo(FALSE, 204, 84, 24, 24, 4, 102, 42);
+      new CBC_SymbolInfo(FALSE, 204, 84, 24, 24, 4, 102, 42);
   m_PROD_SYMBOLS[21] =
-      FX_NEW CBC_SymbolInfo(FALSE, 280, 112, 14, 14, 16, 140, 56);
+      new CBC_SymbolInfo(FALSE, 280, 112, 14, 14, 16, 140, 56);
   m_PROD_SYMBOLS[22] =
-      FX_NEW CBC_SymbolInfo(FALSE, 368, 144, 16, 16, 16, 92, 36);
+      new CBC_SymbolInfo(FALSE, 368, 144, 16, 16, 16, 92, 36);
   m_PROD_SYMBOLS[23] =
-      FX_NEW CBC_SymbolInfo(FALSE, 456, 192, 18, 18, 16, 114, 48);
+      new CBC_SymbolInfo(FALSE, 456, 192, 18, 18, 16, 114, 48);
   m_PROD_SYMBOLS[24] =
-      FX_NEW CBC_SymbolInfo(FALSE, 576, 224, 20, 20, 16, 144, 56);
+      new CBC_SymbolInfo(FALSE, 576, 224, 20, 20, 16, 144, 56);
   m_PROD_SYMBOLS[25] =
-      FX_NEW CBC_SymbolInfo(FALSE, 696, 272, 22, 22, 16, 174, 68);
+      new CBC_SymbolInfo(FALSE, 696, 272, 22, 22, 16, 174, 68);
   m_PROD_SYMBOLS[26] =
-      FX_NEW CBC_SymbolInfo(FALSE, 816, 336, 24, 24, 16, 136, 56);
+      new CBC_SymbolInfo(FALSE, 816, 336, 24, 24, 16, 136, 56);
   m_PROD_SYMBOLS[27] =
-      FX_NEW CBC_SymbolInfo(FALSE, 1050, 408, 18, 18, 36, 175, 68);
+      new CBC_SymbolInfo(FALSE, 1050, 408, 18, 18, 36, 175, 68);
   m_PROD_SYMBOLS[28] =
-      FX_NEW CBC_SymbolInfo(FALSE, 1304, 496, 20, 20, 36, 163, 62);
-  m_PROD_SYMBOLS[29] = FX_NEW CBC_DataMatrixSymbolInfo144();
+      new CBC_SymbolInfo(FALSE, 1304, 496, 20, 20, 36, 163, 62);
+  m_PROD_SYMBOLS[29] = new CBC_DataMatrixSymbolInfo144();
   for (int32_t i = 0; i < SYMBOLS_COUNT; i++) {
     m_symbols[i] = m_PROD_SYMBOLS[i];
   }

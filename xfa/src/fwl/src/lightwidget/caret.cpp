@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_Caret* CFWL_Caret::Create() {
-  return FX_NEW CFWL_Caret;
+  return new CFWL_Caret;
 }
 FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);

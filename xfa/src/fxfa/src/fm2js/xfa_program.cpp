@@ -34,7 +34,7 @@ int32_t CXFA_FMProgram::ParseProgram() {
     return -1;
   }
   m_globalFunction =
-      FX_NEW CXFA_FMFunctionDefinition(1, 1, FX_WSTRC(L""), 0, expressions);
+      new CXFA_FMFunctionDefinition(1, 1, FX_WSTRC(L""), 0, expressions);
   return 0;
 }
 int32_t CXFA_FMProgram::TranslateProgram(CFX_WideTextBuf& wsJavaScript) {

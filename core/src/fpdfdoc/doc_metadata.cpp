@@ -22,7 +22,7 @@ CPDF_Metadata::CPDF_Metadata() {
   m_pData = FX_Alloc(PDFDOC_METADATA, 1);
   CFX_CMapByteStringToPtr*& pStringMap =
       ((PDFDOC_LPMETADATA)m_pData)->m_pStringMap;
-  pStringMap = FX_NEW CFX_CMapByteStringToPtr;
+  pStringMap = new CFX_CMapByteStringToPtr;
   if (pStringMap != NULL) {
     CFX_ByteString bstr;
     for (int i = 0; i < 18; i += 2) {

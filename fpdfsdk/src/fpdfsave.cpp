@@ -171,12 +171,12 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
       pContext->UpdateChecksum((IFX_FileRead*)pDsfileWrite);
       pContext->FinishChecksum();
 #endif
-      CPDF_Dictionary* pDataDict = FX_NEW CPDF_Dictionary;
+      CPDF_Dictionary* pDataDict = new CPDF_Dictionary;
       if (iDataSetsIndex != -1) {
         if (pDataSetsStream)
           pDataSetsStream->InitStream(pDsfileWrite, pDataDict);
       } else {
-        CPDF_Stream* pData = FX_NEW CPDF_Stream(NULL, 0, NULL);
+        CPDF_Stream* pData = new CPDF_Stream(NULL, 0, NULL);
         pData->InitStream(pDsfileWrite, pDataDict);
         FX_DWORD AppStreamobjnum = pPDFDocument->AddIndirectObject(pData);
         CPDF_Reference* pRef =
@@ -202,12 +202,12 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
                                     CFX_WideStringC(L"form"), pfileWrite,
                                     pContext) &&
         pfileWrite > 0) {
-      CPDF_Dictionary* pDataDict = FX_NEW CPDF_Dictionary;
+      CPDF_Dictionary* pDataDict = new CPDF_Dictionary;
       if (iFormIndex != -1) {
         if (pFormStream)
           pFormStream->InitStream(pfileWrite, pDataDict);
       } else {
-        CPDF_Stream* pData = FX_NEW CPDF_Stream(NULL, 0, NULL);
+        CPDF_Stream* pData = new CPDF_Stream(NULL, 0, NULL);
         pData->InitStream(pfileWrite, pDataDict);
         FX_DWORD AppStreamobjnum = pPDFDocument->AddIndirectObject(pData);
         CPDF_Reference* pRef =

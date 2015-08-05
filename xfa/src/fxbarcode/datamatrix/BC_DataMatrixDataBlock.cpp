@@ -40,7 +40,7 @@ CFX_PtrArray* CBC_DataMatrixDataBlock::GetDataBlocks(
   for (i = 0; i < ecBlockArray.GetSize(); i++) {
     totalBlocks += ((ECB*)ecBlockArray[i])->GetCount();
   }
-  CBC_AutoPtr<CFX_PtrArray> result(FX_NEW CFX_PtrArray());
+  CBC_AutoPtr<CFX_PtrArray> result(new CFX_PtrArray());
   result->SetSize(totalBlocks);
   int32_t numResultBlocks = 0;
   int32_t j;
@@ -51,7 +51,7 @@ CFX_PtrArray* CBC_DataMatrixDataBlock::GetDataBlocks(
       CFX_ByteArray codewords;
       codewords.SetSize(numBlockCodewords);
       (*result)[numResultBlocks++] =
-          FX_NEW CBC_DataMatrixDataBlock(numDataCodewords, &codewords);
+          new CBC_DataMatrixDataBlock(numDataCodewords, &codewords);
       codewords.SetSize(0);
     }
   }

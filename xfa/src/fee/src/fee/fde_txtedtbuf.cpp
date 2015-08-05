@@ -135,7 +135,7 @@ FX_BOOL CFDE_TxtEdtBufIter::IsEOF(FX_BOOL bTail) const {
   return bTail ? m_nIndex == (m_pBuf->GetTextLength() - 2) : m_nIndex == 0;
 }
 IFX_CharIter* CFDE_TxtEdtBufIter::Clone() {
-  CFDE_TxtEdtBufIter* pIter = FX_NEW CFDE_TxtEdtBufIter(m_pBuf);
+  CFDE_TxtEdtBufIter* pIter = new CFDE_TxtEdtBufIter(m_pBuf);
   pIter->m_nCurChunk = m_nCurChunk;
   pIter->m_nCurIndex = m_nCurIndex;
   pIter->m_nIndex = m_nIndex;

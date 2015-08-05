@@ -16,7 +16,7 @@
 #define FWLTHEME_FORMBTN_Span 2
 #define FWLTHEME_FORMBTN_Size 21
 CFWL_FormTP::CFWL_FormTP() : m_pActiveBitmap(NULL), m_pDeactivebitmap(NULL) {
-  m_pThemeData = FX_NEW SBThemeData;
+  m_pThemeData = new SBThemeData;
   SetThemeData(0);
   m_rtDisLBorder.Reset();
   m_rtDisRBorder.Reset();
@@ -840,7 +840,7 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
       delete m_pActiveBitmap;
       m_pActiveBitmap = NULL;
     }
-    m_pActiveBitmap = FX_NEW CFX_DIBitmap;
+    m_pActiveBitmap = new CFX_DIBitmap;
     m_pActiveBitmap->Create(1, FWLTHEME_CAPACITY_CYCaption, FXDIB_Argb);
     dev.Attach(m_pActiveBitmap);
     gs.Create(&dev);
@@ -865,7 +865,7 @@ void CFWL_FormTP::InitCaption(FX_BOOL bActive) {
       delete m_pDeactivebitmap;
       m_pDeactivebitmap = NULL;
     }
-    m_pDeactivebitmap = FX_NEW CFX_DIBitmap;
+    m_pDeactivebitmap = new CFX_DIBitmap;
     m_pDeactivebitmap->Create(1, FWLTHEME_CAPACITY_CYCaption, FXDIB_Argb);
     dev.Attach(m_pDeactivebitmap);
     gs.Create(&dev);

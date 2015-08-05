@@ -159,7 +159,7 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
   }
 
   if (!pPage) {
-    pPage = FX_NEW CPDFXFA_Page(this, page_index);
+    pPage = new CPDFXFA_Page(this, page_index);
     FX_BOOL bRet = pPage->LoadPage();
     if (!bRet) {
       delete pPage;
@@ -649,7 +649,7 @@ void CPDFXFA_Document::SetTitle(IXFA_Doc* hDoc,
 
   if (pInfoDict == NULL)
     return;
-  pInfoDict->SetAt("Title", FX_NEW CPDF_String(wsTitle));
+  pInfoDict->SetAt("Title", new CPDF_String(wsTitle));
 }
 void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
                                   const CFX_WideStringC& wsFilePath,
@@ -767,7 +767,7 @@ content.GetLength());
         }
 
         CPDF_Stream* pStream = (CPDF_Stream*)pDirectObj;
-        CPDF_StreamAcc* pAcc = FX_NEW CPDF_StreamAcc;
+        CPDF_StreamAcc* pAcc = new CPDF_StreamAcc;
         pAcc->LoadAllData(pStream);
         fileWrite.WriteBlock(pAcc->GetData(), fileWrite.GetSize(),
                              pAcc->GetSize());
@@ -998,7 +998,7 @@ IFX_FileRead* CPDFXFA_Document::OpenLinkedFile(IXFA_Doc* hDoc,
 
   if (pFileHandler == NULL)
     return NULL;
-  CFPDF_FileStream* pFileRead = FX_NEW CFPDF_FileStream(pFileHandler);
+  CFPDF_FileStream* pFileRead = new CFPDF_FileStream(pFileHandler);
   return pFileRead;
 }
 FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,

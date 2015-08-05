@@ -63,7 +63,7 @@ class CDwFontFileLoader final : public IDWriteFontFileLoader {
 
   static IDWriteFontFileLoader* GetLoader() {
     if (instance_ == NULL) {
-      instance_ = FX_NEW CDwFontFileLoader();
+      instance_ = new CDwFontFileLoader();
       return instance_;
     }
     return instance_;
@@ -190,7 +190,7 @@ FX_BOOL CDWriteExt::DwCreateRenderingTarget(CFX_DIBitmap* pBitmap,
     goto failed;
   }
   *(CDwGdiTextRenderer**)renderTarget =
-      FX_NEW CDwGdiTextRenderer(pBitmap, pBitmapRenderTarget, pRenderingParams);
+      new CDwGdiTextRenderer(pBitmap, pBitmapRenderTarget, pRenderingParams);
   if (*(CDwGdiTextRenderer**)renderTarget == NULL) {
     goto failed;
   }
@@ -336,7 +336,7 @@ HRESULT STDMETHODCALLTYPE CDwFontFileLoader::CreateStreamFromKey(
     OUT IDWriteFontFileStream** fontFileStream) {
   *fontFileStream = NULL;
   CDwFontFileStream* stream =
-      FX_NEW CDwFontFileStream(fontFileReferenceKey, fontFileReferenceKeySize);
+      new CDwFontFileStream(fontFileReferenceKey, fontFileReferenceKeySize);
   if (stream == NULL) {
     return E_OUTOFMEMORY;
   }

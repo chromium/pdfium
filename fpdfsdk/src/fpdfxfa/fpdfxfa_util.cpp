@@ -16,7 +16,7 @@ FWL_ERR CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
                                        FX_BOOL bImmediately /* = TRUE */) {
   if (m_pEnv) {
     uint32_t uIDEvent = m_pEnv->FFI_SetTimer(dwElapse, TimerProc);
-    CFWL_TimerInfo* pInfo = FX_NEW CFWL_TimerInfo;
+    CFWL_TimerInfo* pInfo = new CFWL_TimerInfo;
     pInfo->uIDEvent = uIDEvent;
     pInfo->pTimer = pTimer;
     ms_timerArray.Add(pInfo);

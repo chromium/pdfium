@@ -182,7 +182,7 @@ CXFA_FMToken* CXFA_FMLexer::NextToken() {
 }
 CXFA_FMToken* CXFA_FMLexer::Scan() {
   uint16_t ch = 0;
-  CXFA_FMToken* p = FX_NEW CXFA_FMToken(m_uCurrentLine);
+  CXFA_FMToken* p = new CXFA_FMToken(m_uCurrentLine);
   if (!XFA_FMDChar::isAvalid(m_ptr)) {
     ch = XFA_FMDChar::get(m_ptr);
     Error(FMERR_UNSUPPORTED_CHAR, ch);

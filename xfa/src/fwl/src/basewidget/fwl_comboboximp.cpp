@@ -31,13 +31,13 @@ IFWL_ComboBox::~IFWL_ComboBox() {
   }
 }
 FWL_ERR IFWL_ComboBox::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_ComboBoxImp(pOuter);
+  m_pData = new CFWL_ComboBoxImp(pOuter);
   ((CFWL_ComboBoxImp*)m_pData)->SetInterface(this);
   return ((CFWL_ComboBoxImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_ComboBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                   IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_ComboBoxImp(properties, pOuter);
+  m_pData = new CFWL_ComboBoxImp(properties, pOuter);
   ((CFWL_ComboBoxImp*)m_pData)->SetInterface(this);
   return ((CFWL_ComboBoxImp*)m_pData)->Initialize();
 }
@@ -218,7 +218,7 @@ FWL_ERR CFWL_ComboList::Initialize() {
     delete (CFWL_ComboListDelegate*)m_pDelegate;
     m_pDelegate = NULL;
   }
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_ComboListDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_ComboListDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ComboList::Finalize() {
@@ -526,7 +526,7 @@ FWL_ERR CFWL_ComboBoxImp::Initialize() {
   }
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_WGTSTATE_Invisible);
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_ComboBoxImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_ComboBoxImpDelegate(this);
   CFWL_WidgetImpProperties prop;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
   prop.m_dwStyles |= FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
@@ -534,13 +534,13 @@ FWL_ERR CFWL_ComboBoxImp::Initialize() {
     prop.m_dwStyleExes |= FWL_STYLEEXT_LTB_Icon;
   }
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
-  CFWL_ComboList* pList = FX_NEW CFWL_ComboList(prop, m_pInterface);
+  CFWL_ComboList* pList = new CFWL_ComboList(prop, m_pInterface);
   m_pListBox = IFWL_ListBox::Create();
   pList->SetInterface(m_pListBox);
   ((IFWL_TargetData*)m_pListBox)->SetData(pList);
   pList->Initialize();
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
-    CFWL_ComboEdit* pEdit = FX_NEW CFWL_ComboEdit(m_pInterface);
+    CFWL_ComboEdit* pEdit = new CFWL_ComboEdit(m_pInterface);
     m_pEdit = IFWL_Edit::Create();
     pEdit->SetInterface(m_pEdit);
     ((IFWL_TargetData*)m_pEdit)->SetData(pEdit);
@@ -595,7 +595,7 @@ FWL_ERR CFWL_ComboBoxImp::ModifyStylesEx(FX_DWORD dwStylesExAdded,
   FX_BOOL bAddDropDown = dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown;
   FX_BOOL bRemoveDropDown = dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown;
   if (bAddDropDown && !m_pEdit) {
-    CFWL_ComboEdit* pEdit = FX_NEW CFWL_ComboEdit(m_pInterface);
+    CFWL_ComboEdit* pEdit = new CFWL_ComboEdit(m_pInterface);
     m_pEdit = IFWL_Edit::Create();
     pEdit->SetInterface(m_pEdit);
     ((IFWL_TargetData*)m_pEdit)->SetData(pEdit);
@@ -1156,19 +1156,19 @@ void CFWL_ComboBoxImp::InitProxyForm() {
   propForm.m_pOwner = m_pInterface;
   propForm.m_dwStyles = FWL_WGTSTYLE_Popup;
   propForm.m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pProxy = FX_NEW CFWL_FormProxyImp(propForm, m_pListBox);
+  m_pProxy = new CFWL_FormProxyImp(propForm, m_pListBox);
   m_pForm = IFWL_Form::Create();
   m_pProxy->SetInterface(m_pForm);
   ((IFWL_TargetData*)m_pForm)->SetData(m_pProxy);
   m_pProxy->Initialize();
   m_pListBox->SetParent((IFWL_Widget*)m_pForm);
-  m_pListProxyDelegate = FX_NEW CFWL_ComboProxyImpDelegate(m_pForm, this);
+  m_pListProxyDelegate = new CFWL_ComboProxyImpDelegate(m_pForm, this);
   m_pProxy->SetDelegate((IFWL_WidgetDelegate*)m_pListProxyDelegate);
 }
 FWL_ERR CFWL_ComboBoxImp::DisForm_Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_WGTSTATE_Invisible);
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_ComboBoxImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_ComboBoxImpDelegate(this);
   DisForm_InitComboList();
   DisForm_InitComboEdit();
   return FWL_ERR_Succeeded;
@@ -1183,7 +1183,7 @@ void CFWL_ComboBoxImp::DisForm_InitComboList() {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  CFWL_ComboList* pList = FX_NEW CFWL_ComboList(prop, m_pInterface);
+  CFWL_ComboList* pList = new CFWL_ComboList(prop, m_pInterface);
   m_pListBox = IFWL_ListBox::Create();
   pList->SetInterface(m_pListBox);
   ((IFWL_TargetData*)m_pListBox)->SetData(pList);
@@ -1198,7 +1198,7 @@ void CFWL_ComboBoxImp::DisForm_InitComboEdit() {
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) == 0) {
   }
-  CFWL_ComboEdit* pEdit = FX_NEW CFWL_ComboEdit(prop, m_pInterface);
+  CFWL_ComboEdit* pEdit = new CFWL_ComboEdit(prop, m_pInterface);
   m_pEdit = IFWL_Edit::Create();
   pEdit->SetInterface(m_pEdit);
   ((IFWL_TargetData*)m_pEdit)->SetData(pEdit);

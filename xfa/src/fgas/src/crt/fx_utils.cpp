@@ -145,7 +145,7 @@ CFX_BaseMassArrayImp::CFX_BaseMassArrayImp(int32_t iChunkSize,
       m_iChunkCount(0),
       m_iBlockCount(0) {
   FXSYS_assert(m_iChunkSize > 0 && m_iBlockSize > 0);
-  m_pData = FX_NEW CFX_PtrArray;
+  m_pData = new CFX_PtrArray;
   m_pData->SetSize(16);
 }
 CFX_BaseMassArrayImp::~CFX_BaseMassArrayImp() {
@@ -337,7 +337,7 @@ CFX_BaseDiscreteArray::CFX_BaseDiscreteArray(int32_t iChunkSize,
                                              int32_t iBlockSize) {
   FXSYS_assert(iChunkSize > 0 && iBlockSize > 0);
   FX_LPBASEDISCRETEARRAYDATA pData;
-  m_pData = pData = FX_NEW FX_BASEDISCRETEARRAYDATA;
+  m_pData = pData = new FX_BASEDISCRETEARRAYDATA;
   pData->ChunkBuffer.SetSize(16);
   pData->iChunkCount = 0;
   pData->iChunkSize = iChunkSize;

@@ -445,7 +445,7 @@ void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
       dataCodewords, errorCorrectionLevel, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
   CFX_WideString fullCodewords = dataCodewords + ec;
-  m_barcodeMatrix = FX_NEW CBC_BarcodeMatrix(rows, cols);
+  m_barcodeMatrix = new CBC_BarcodeMatrix(rows, cols);
   encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,
                  m_barcodeMatrix);
 }
@@ -561,7 +561,7 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(
     if (dimension) {
       delete dimension;
     }
-    dimension = FX_NEW CFX_Int32Array;
+    dimension = new CFX_Int32Array;
     dimension->Add(cols);
     dimension->Add(rows);
   }
@@ -569,11 +569,11 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(
     int32_t rows = calculateNumberOfRows(sourceCodeWords,
                                          errorCorrectionCodeWords, m_minCols);
     if (rows < m_minRows) {
-      dimension = FX_NEW CFX_Int32Array;
+      dimension = new CFX_Int32Array;
       dimension->Add(m_minCols);
       dimension->Add(m_minRows);
     } else if (rows >= 3 && rows <= 90) {
-      dimension = FX_NEW CFX_Int32Array;
+      dimension = new CFX_Int32Array;
       dimension->Add(m_minCols);
       dimension->Add(rows);
     }

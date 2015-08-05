@@ -7,7 +7,7 @@
 #include "../../../foxitlib.h"
 #define PUSHBUTTON_SIZE_Corner 2
 CFWL_PushButtonTP::CFWL_PushButtonTP() {
-  m_pThemeData = FX_NEW PBThemeData;
+  m_pThemeData = new PBThemeData;
   SetThemeData(0);
 }
 CFWL_PushButtonTP::~CFWL_PushButtonTP() {

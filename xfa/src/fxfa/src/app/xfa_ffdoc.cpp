@@ -28,7 +28,7 @@ FX_DWORD CXFA_FFDoc::GetDocType() {
   return m_dwDocType;
 }
 int32_t CXFA_FFDoc::StartLoad() {
-  m_pNotify = FX_NEW CXFA_FFNotify(this);
+  m_pNotify = new CXFA_FFNotify(this);
   IXFA_DocParser* pDocParser = IXFA_DocParser::Create(m_pNotify);
   int32_t iStatus = pDocParser->StartParse(m_pStream);
   m_pDocument = pDocParser->GetDocument();
@@ -187,7 +187,7 @@ IXFA_DocView* CXFA_FFDoc::CreateDocView(FX_DWORD dwView) {
   CXFA_FFDocView* pDocView =
       (CXFA_FFDocView*)m_mapTypeToDocView.GetValueAt((void*)(uintptr_t)dwView);
   if (!pDocView) {
-    pDocView = FX_NEW CXFA_FFDocView(this);
+    pDocView = new CXFA_FFDocView(this);
     m_mapTypeToDocView.SetAt((void*)(uintptr_t)dwView, pDocView);
   }
   return pDocView;
@@ -252,7 +252,7 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (xfaStreams.GetSize() < 1) {
     return FALSE;
   }
-  IFX_FileRead* pFileRead = FX_NEW CXFA_FileRead2(xfaStreams);
+  IFX_FileRead* pFileRead = new CXFA_FileRead2(xfaStreams);
   if (!pFileRead) {
     return FALSE;
   }

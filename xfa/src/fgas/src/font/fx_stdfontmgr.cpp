@@ -11,7 +11,7 @@
 IFX_FontMgr* IFX_FontMgr::Create(FX_LPEnumAllFonts pEnumerator,
                                  FX_LPMatchFont pMatcher,
                                  void* pUserData) {
-  return FX_NEW CFX_StdFontMgrImp(pEnumerator, pMatcher, pUserData);
+  return new CFX_StdFontMgrImp(pEnumerator, pMatcher, pUserData);
 }
 CFX_StdFontMgrImp::CFX_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator,
                                      FX_LPMatchFont pMatcher,
@@ -130,7 +130,7 @@ IFX_Font* CFX_StdFontMgrImp::GetDefFontByUnicode(
   if (ftFace == NULL) {
     return NULL;
   }
-  CFX_Font* pFXFont = FX_NEW CFX_Font;
+  CFX_Font* pFXFont = new CFX_Font;
   if (pFXFont == NULL) {
     return NULL;
   }
@@ -591,7 +591,7 @@ IFX_FileAccess* CFX_FontSourceEnum_File::GetNext(FX_POSITION& pos,
   return (IFX_FileAccess*)pAccess;
 }
 IFX_FontSourceEnum* FX_CreateDefaultFontSourceEnum() {
-  return (IFX_FontSourceEnum*)FX_NEW CFX_FontSourceEnum_File;
+  return (IFX_FontSourceEnum*)new CFX_FontSourceEnum_File;
 }
 IFX_FontMgr* IFX_FontMgr::Create(IFX_FontSourceEnum* pFontEnum,
                                  IFX_FontMgrDelegate* pDelegate,
@@ -600,7 +600,7 @@ IFX_FontMgr* IFX_FontMgr::Create(IFX_FontSourceEnum* pFontEnum,
     return NULL;
   }
   CFX_FontMgrImp* pFontMgr =
-      FX_NEW CFX_FontMgrImp(pFontEnum, pDelegate, pUserData);
+      new CFX_FontMgrImp(pFontEnum, pDelegate, pUserData);
   if (NULL == pFontMgr) {
     return NULL;
   }
@@ -757,7 +757,7 @@ IFX_Font* CFX_FontMgrImp::GetFontByCodePage(FX_WORD wCodePage,
     }
   }
   if (NULL == pFonts) {
-    pFonts = FX_NEW CFX_ArrayTemplate<IFX_Font*>;
+    pFonts = new CFX_ArrayTemplate<IFX_Font*>;
   }
   if (NULL == pFonts) {
     return NULL;
@@ -765,7 +765,7 @@ IFX_Font* CFX_FontMgrImp::GetFontByCodePage(FX_WORD wCodePage,
   m_Hash2Fonts.SetAt(dwHash, pFonts);
   CFX_FontDescriptorInfos* sortedFonts = NULL;
   if (!m_Hash2CandidateList.Lookup(dwHash, sortedFonts)) {
-    sortedFonts = FX_NEW CFX_FontDescriptorInfos;
+    sortedFonts = new CFX_FontDescriptorInfos;
     MatchFonts(*sortedFonts, wCodePage, dwFontStyles,
                CFX_WideString(pszFontFamily), 0);
     m_Hash2CandidateList.SetAt(dwHash, sortedFonts);
@@ -819,7 +819,7 @@ IFX_Font* CFX_FontMgrImp::GetFontByUnicode(FX_WCHAR wUnicode,
     }
   }
   if (NULL == pFonts) {
-    pFonts = FX_NEW CFX_ArrayTemplate<IFX_Font*>;
+    pFonts = new CFX_ArrayTemplate<IFX_Font*>;
   }
   if (NULL == pFonts) {
     return NULL;
@@ -827,7 +827,7 @@ IFX_Font* CFX_FontMgrImp::GetFontByUnicode(FX_WCHAR wUnicode,
   m_Hash2Fonts.SetAt(dwHash, pFonts);
   CFX_FontDescriptorInfos* sortedFonts = NULL;
   if (!m_Hash2CandidateList.Lookup(dwHash, sortedFonts)) {
-    sortedFonts = FX_NEW CFX_FontDescriptorInfos;
+    sortedFonts = new CFX_FontDescriptorInfos;
     MatchFonts(*sortedFonts, wCodePage, dwFontStyles,
                CFX_WideString(pszFontFamily), wUnicode);
     m_Hash2CandidateList.SetAt(dwHash, sortedFonts);
@@ -973,7 +973,7 @@ IFX_Font* CFX_FontMgrImp::LoadFont(IFX_FileAccess* pFontAccess,
       }
     }
   }
-  CFX_Font* pInternalFont = FX_NEW CFX_Font;
+  CFX_Font* pInternalFont = new CFX_Font;
   if (NULL == pInternalFont) {
     return NULL;
   }
@@ -1276,7 +1276,7 @@ void CFX_FontMgrImp::ReportFace(FXFT_Face pFace,
   if (0 == (pFace->face_flags & FT_FACE_FLAG_SCALABLE)) {
     return;
   }
-  CFX_FontDescriptor* pFont = FX_NEW CFX_FontDescriptor;
+  CFX_FontDescriptor* pFont = new CFX_FontDescriptor;
   if (NULL == pFont) {
     return;
   }

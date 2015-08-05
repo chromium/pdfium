@@ -619,7 +619,7 @@ static CXFA_Node* XFA_DataMerge_FindMatchingDataNode(
   FX_BOOL bOwnIterator = FALSE;
   if (!pIterator) {
     bOwnIterator = TRUE;
-    pIterator = FX_NEW CXFA_NodeIteratorTemplate<
+    pIterator = new CXFA_NodeIteratorTemplate<
         CXFA_Node, CXFA_TraverseStrategy_XFAContainerNode>(pTemplateNode);
   }
   CXFA_Node* pResult = NULL;

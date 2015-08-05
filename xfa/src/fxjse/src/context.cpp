@@ -146,7 +146,7 @@ CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate,
                                        const FXJSE_CLASS* lpGlobalClass,
                                        void* lpGlobalObject) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
-  CFXJSE_Context* pContext = FX_NEW CFXJSE_Context(pIsolate);
+  CFXJSE_Context* pContext = new CFXJSE_Context(pIsolate);
   CFXJSE_Class* lpGlobalClassObj = NULL;
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
   if (lpGlobalClass) {

@@ -150,7 +150,7 @@ CFX_Int32Array* CBC_OnedCode39Reader::FindAsteriskPattern(
                            patternStart, FALSE, e);
           BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
           if (bT1) {
-            CFX_Int32Array* result = FX_NEW CFX_Int32Array;
+            CFX_Int32Array* result = new CFX_Int32Array;
             result->SetSize(2);
             (*result)[0] = patternStart;
             (*result)[1] = i;

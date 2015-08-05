@@ -150,74 +150,74 @@ CXFA_LayoutItem* CXFA_FFNotify::OnCreateLayoutItem(CXFA_Node* pNode) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView(pLayout);
   XFA_ELEMENT eType = pNode->GetClassID();
   if (eType == XFA_ELEMENT_PageArea) {
-    return (CXFA_LayoutItem*)(FX_NEW CXFA_FFPageView(pDocView, pNode));
+    return (CXFA_LayoutItem*)(new CXFA_FFPageView(pDocView, pNode));
   } else if (eType == XFA_ELEMENT_ContentArea) {
-    return (CXFA_LayoutItem*)(FX_NEW CXFA_ContainerLayoutItemImpl(pNode));
+    return (CXFA_LayoutItem*)(new CXFA_ContainerLayoutItemImpl(pNode));
   }
   CXFA_WidgetAcc* pAcc = (CXFA_WidgetAcc*)pNode->GetWidgetData();
   if (!pAcc) {
-    return (CXFA_LayoutItem*)(FX_NEW CXFA_ContentLayoutItemImpl(pNode));
+    return (CXFA_LayoutItem*)(new CXFA_ContentLayoutItemImpl(pNode));
   }
   CXFA_FFPageView* pPageView = NULL;
   CXFA_FFWidget* pWidget = NULL;
   switch (pAcc->GetUIType()) {
     case XFA_ELEMENT_Barcode:
-      pWidget = FX_NEW CXFA_FFBarcode(pPageView, pAcc);
+      pWidget = new CXFA_FFBarcode(pPageView, pAcc);
       break;
     case XFA_ELEMENT_Button:
-      pWidget = FX_NEW CXFA_FFPushButton(pPageView, pAcc);
+      pWidget = new CXFA_FFPushButton(pPageView, pAcc);
       break;
     case XFA_ELEMENT_CheckButton:
-      pWidget = FX_NEW CXFA_FFCheckButton(pPageView, pAcc);
+      pWidget = new CXFA_FFCheckButton(pPageView, pAcc);
       break;
     case XFA_ELEMENT_ChoiceList: {
       if (pAcc->IsListBox()) {
-        pWidget = FX_NEW CXFA_FFListBox(pPageView, pAcc);
+        pWidget = new CXFA_FFListBox(pPageView, pAcc);
       } else {
-        pWidget = FX_NEW CXFA_FFComboBox(pPageView, pAcc);
+        pWidget = new CXFA_FFComboBox(pPageView, pAcc);
       }
     } break;
     case XFA_ELEMENT_DateTimeEdit:
-      pWidget = FX_NEW CXFA_FFDateTimeEdit(pPageView, pAcc);
+      pWidget = new CXFA_FFDateTimeEdit(pPageView, pAcc);
       break;
     case XFA_ELEMENT_ImageEdit:
-      pWidget = FX_NEW CXFA_FFImageEdit(pPageView, pAcc);
+      pWidget = new CXFA_FFImageEdit(pPageView, pAcc);
       break;
     case XFA_ELEMENT_NumericEdit:
-      pWidget = FX_NEW CXFA_FFNumericEdit(pPageView, pAcc);
+      pWidget = new CXFA_FFNumericEdit(pPageView, pAcc);
       break;
     case XFA_ELEMENT_PasswordEdit:
-      pWidget = FX_NEW CXFA_FFPasswordEdit(pPageView, pAcc);
+      pWidget = new CXFA_FFPasswordEdit(pPageView, pAcc);
       break;
     case XFA_ELEMENT_Signature:
-      pWidget = FX_NEW CXFA_FFSignature(pPageView, pAcc);
+      pWidget = new CXFA_FFSignature(pPageView, pAcc);
       break;
     case XFA_ELEMENT_TextEdit:
-      pWidget = FX_NEW CXFA_FFTextEdit(pPageView, pAcc);
+      pWidget = new CXFA_FFTextEdit(pPageView, pAcc);
       break;
     case XFA_ELEMENT_Arc:
-      pWidget = FX_NEW CXFA_FFArc(pPageView, pAcc);
+      pWidget = new CXFA_FFArc(pPageView, pAcc);
       break;
     case XFA_ELEMENT_Line:
-      pWidget = FX_NEW CXFA_FFLine(pPageView, pAcc);
+      pWidget = new CXFA_FFLine(pPageView, pAcc);
       break;
     case XFA_ELEMENT_Rectangle:
-      pWidget = FX_NEW CXFA_FFRectangle(pPageView, pAcc);
+      pWidget = new CXFA_FFRectangle(pPageView, pAcc);
       break;
     case XFA_ELEMENT_Text:
-      pWidget = FX_NEW CXFA_FFText(pPageView, pAcc);
+      pWidget = new CXFA_FFText(pPageView, pAcc);
       break;
     case XFA_ELEMENT_Image:
-      pWidget = FX_NEW CXFA_FFImage(pPageView, pAcc);
+      pWidget = new CXFA_FFImage(pPageView, pAcc);
       break;
     case XFA_ELEMENT_Draw:
-      pWidget = FX_NEW CXFA_FFDraw(pPageView, pAcc);
+      pWidget = new CXFA_FFDraw(pPageView, pAcc);
       break;
     case XFA_ELEMENT_Subform:
-      pWidget = FX_NEW CXFA_FFSubForm(pPageView, pAcc);
+      pWidget = new CXFA_FFSubForm(pPageView, pAcc);
       break;
     case XFA_ELEMENT_ExclGroup:
-      pWidget = FX_NEW CXFA_FFExclGroup(pPageView, pAcc);
+      pWidget = new CXFA_FFExclGroup(pPageView, pAcc);
       break;
     case XFA_ELEMENT_DefaultUi:
     default:
@@ -402,7 +402,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
   }
   XFA_ELEMENT iType = pNode->GetClassID();
   if (XFA_IsCreateWidget(iType)) {
-    CXFA_WidgetAcc* pAcc = FX_NEW CXFA_WidgetAcc(pDocView, (CXFA_Node*)pNode);
+    CXFA_WidgetAcc* pAcc = new CXFA_WidgetAcc(pDocView, (CXFA_Node*)pNode);
     pNode->SetObject(XFA_ATTRIBUTE_WidgetData, pAcc, &gs_XFADeleteWidgetAcc);
     return;
   }

@@ -247,7 +247,7 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
     return pClass;
   }
   v8::Isolate* pIsolate = lpContext->m_pIsolate;
-  pClass = FX_NEW CFXJSE_Class(lpContext);
+  pClass = new CFXJSE_Class(lpContext);
   ASSERT(pClass);
   pClass->m_szClassName = lpClassDefinition->name;
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);

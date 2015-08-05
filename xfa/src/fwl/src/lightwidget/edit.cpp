@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_Edit* CFWL_Edit::Create() {
-  return FX_NEW CFWL_Edit;
+  return new CFWL_Edit;
 }
 FWL_ERR CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);

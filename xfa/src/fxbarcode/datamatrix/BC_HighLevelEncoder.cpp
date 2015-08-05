@@ -87,12 +87,12 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
     context.m_pos += 6;
   }
   CFX_PtrArray encoders;
-  encoders.Add(FX_NEW CBC_ASCIIEncoder());
-  encoders.Add(FX_NEW CBC_C40Encoder());
-  encoders.Add(FX_NEW CBC_TextEncoder());
-  encoders.Add(FX_NEW CBC_X12Encoder());
-  encoders.Add(FX_NEW CBC_EdifactEncoder());
-  encoders.Add(FX_NEW CBC_Base256Encoder());
+  encoders.Add(new CBC_ASCIIEncoder());
+  encoders.Add(new CBC_C40Encoder());
+  encoders.Add(new CBC_TextEncoder());
+  encoders.Add(new CBC_X12Encoder());
+  encoders.Add(new CBC_EdifactEncoder());
+  encoders.Add(new CBC_Base256Encoder());
   int32_t encodingMode = ASCII_ENCODATION;
   while (context.hasMoreCharacters()) {
     ((CBC_Encoder*)encoders.GetAt(encodingMode))->Encode(context, e);

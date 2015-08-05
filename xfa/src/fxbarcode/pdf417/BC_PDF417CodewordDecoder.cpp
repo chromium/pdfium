@@ -59,7 +59,7 @@ CFX_Int32Array* CBC_PDF417CodewordDecoder::sampleBitCounts(
     CFX_Int32Array& moduleBitCount) {
   FX_FLOAT bitCountSum =
       (FX_FLOAT)CBC_PDF417Common::getBitCountSum(moduleBitCount);
-  CFX_Int32Array* bitCount = FX_NEW CFX_Int32Array();
+  CFX_Int32Array* bitCount = new CFX_Int32Array();
   bitCount->SetSize(CBC_PDF417Common::BARS_IN_MODULE);
   int32_t bitCountIndex = 0;
   int32_t sumPreviousBits = 0;

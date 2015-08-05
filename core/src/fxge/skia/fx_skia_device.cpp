@@ -265,7 +265,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap,
                                            FX_BOOL bRgbByteOrder,
                                            CFX_DIBitmap* pOriDevice,
                                            FX_BOOL bGroupKnockout) {
-  m_pAggDriver = FX_NEW CFX_AggDeviceDriver(pBitmap, dither_bits, bRgbByteOrder,
+  m_pAggDriver = new CFX_AggDeviceDriver(pBitmap, dither_bits, bRgbByteOrder,
                                             pOriDevice, bGroupKnockout);
 }
 CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
@@ -335,7 +335,7 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathFill(
     int fill_mode                            // fill mode, WINDING or ALTERNATE
     ) {
   if (m_pAggDriver->m_pClipRgn == NULL)
-    m_pAggDriver->m_pClipRgn = FX_NEW CFX_ClipRgn(
+    m_pAggDriver->m_pClipRgn = new CFX_ClipRgn(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
 
   if (pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) {
@@ -372,7 +372,7 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathStroke(
     const CFX_GraphStateData* pGraphState  // graphic state, for pen attributes
     ) {
   if (m_pAggDriver->m_pClipRgn == NULL)
-    m_pAggDriver->m_pClipRgn = FX_NEW CFX_ClipRgn(
+    m_pAggDriver->m_pClipRgn = new CFX_ClipRgn(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
 
   // build path data
@@ -598,7 +598,7 @@ FX_BOOL CFX_SkiaDevice::Attach(CFX_DIBitmap* pBitmap,
   if (pBitmap == NULL)
     return FALSE;
   SetBitmap(pBitmap);
-  CFX_SkiaDeviceDriver* pDriver = FX_NEW CFX_SkiaDeviceDriver(
+  CFX_SkiaDeviceDriver* pDriver = new CFX_SkiaDeviceDriver(
       pBitmap, dither_bits, bRgbByteOrder, pOriDevice, bGroupKnockout);
   SetDeviceDriver(pDriver);
   return TRUE;
@@ -610,13 +610,13 @@ FX_BOOL CFX_SkiaDevice::Create(int width,
                                int dither_bits,
                                CFX_DIBitmap* pOriDevice) {
   m_bOwnedBitmap = TRUE;
-  CFX_DIBitmap* pBitmap = FX_NEW CFX_DIBitmap;
+  CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
   if (!pBitmap->Create(width, height, format)) {
     delete pBitmap;
     return FALSE;
   }
   SetBitmap(pBitmap);
-  CFX_SkiaDeviceDriver* pDriver = FX_NEW CFX_SkiaDeviceDriver(
+  CFX_SkiaDeviceDriver* pDriver = new CFX_SkiaDeviceDriver(
       pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
   SetDeviceDriver(pDriver);
   return TRUE;

@@ -851,7 +851,7 @@ FX_BOOL CFX_ImageStretcher::Continue(IFX_Pause* pPause) {
 #define MAX_PROGRESSIVE_STRETCH_PIXELS 1000000
 FX_BOOL CFX_ImageStretcher::StartStretch() {
   m_pStretchEngine =
-      FX_NEW CStretchEngine(m_pDest, m_DestFormat, m_DestWidth, m_DestHeight,
+      new CStretchEngine(m_pDest, m_DestFormat, m_DestWidth, m_DestHeight,
                             m_ClipRect, m_pSource, m_Flags);
   if (!m_pStretchEngine) {
     return FALSE;

@@ -30,7 +30,7 @@ CBC_OnedUPCAReader::CBC_OnedUPCAReader() {
   m_ean13Reader = NULL;
 }
 void CBC_OnedUPCAReader::Init() {
-  m_ean13Reader = FX_NEW CBC_OnedEAN13Reader;
+  m_ean13Reader = new CBC_OnedEAN13Reader;
 }
 CBC_OnedUPCAReader::~CBC_OnedUPCAReader() {
   if (m_ean13Reader != NULL) {

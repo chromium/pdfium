@@ -37,7 +37,7 @@ void CFDE_TxtEdtParag::LoadParag() {
     wcAlias = m_pEngine->GetAliasChar();
   }
   IFX_CharIter* pIter =
-      FX_NEW CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pTxtBuf, wcAlias);
+      new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pTxtBuf, wcAlias);
   pIter->SetAt(m_nCharStart);
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   CFX_ArrayTemplate<int32_t> LineBaseArr;
@@ -102,7 +102,7 @@ void CFDE_TxtEdtParag::UnloadParag() {
 void CFDE_TxtEdtParag::CalcLines() {
   IFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
   IFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
-  IFX_CharIter* pIter = FX_NEW CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pTxtBuf);
+  IFX_CharIter* pIter = new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pTxtBuf);
   int32_t nCount = 0;
   FX_DWORD dwBreakStatus = FX_TXTBREAK_None;
   int32_t nEndIndex = m_nCharStart + m_nCharCount;

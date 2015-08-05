@@ -29,7 +29,7 @@ CFX_Int32Array* CBC_UtilRSS::GetRssWidths(int32_t val,
                                           int32_t elements,
                                           int32_t maxWidth,
                                           FX_BOOL noNarrow) {
-  CFX_Int32Array* iTemp = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* iTemp = new CFX_Int32Array;
   iTemp->SetSize(elements);
   CBC_AutoPtr<CFX_Int32Array> widths(iTemp);
   int32_t bar;
@@ -131,7 +131,7 @@ int32_t CBC_UtilRSS::Combins(int32_t n, int32_t r) {
 CFX_Int32Array* CBC_UtilRSS::Elements(CFX_Int32Array& eDist,
                                       int32_t N,
                                       int32_t K) {
-  CFX_Int32Array* widths = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* widths = new CFX_Int32Array;
   widths->SetSize(eDist.GetSize() + 2);
   int32_t twoK = K << 1;
   (*widths)[0] = 1;

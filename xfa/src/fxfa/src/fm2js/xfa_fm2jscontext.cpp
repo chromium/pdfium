@@ -7183,7 +7183,7 @@ CXFA_FM2JSContext::~CXFA_FM2JSContext() {
   m_hScriptRuntime = NULL;
 }
 CXFA_FM2JSContext* CXFA_FM2JSContext::Create() {
-  return FX_NEW CXFA_FM2JSContext;
+  return new CXFA_FM2JSContext;
 }
 void CXFA_FM2JSContext::Initialize(FXJSE_HRUNTIME hScriptRuntime,
                                    FXJSE_HCONTEXT hScriptContext,

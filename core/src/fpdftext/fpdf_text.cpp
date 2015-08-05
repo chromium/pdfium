@@ -188,7 +188,7 @@ CTextBaseLine* CTextPage::InsertTextBox(CTextBaseLine* pBaseLine,
       }
     }
     if (pBaseLine == NULL) {
-      pBaseLine = FX_NEW CTextBaseLine;
+      pBaseLine = new CTextBaseLine;
       if (NULL == pBaseLine) {
         return NULL;
       }
@@ -462,7 +462,7 @@ void CTextPage::FindColumns() {
       CTextBox* pTextBox = (CTextBox*)pBaseLine->m_TextList.GetAt(j);
       CTextColumn* pColumn = FindColumn(pTextBox->m_Right);
       if (pColumn == NULL) {
-        pColumn = FX_NEW CTextColumn;
+        pColumn = new CTextColumn;
         if (pColumn) {
           pColumn->m_Count = 1;
           pColumn->m_AvgPos = pTextBox->m_Right;
@@ -541,7 +541,7 @@ void CTextBaseLine::InsertTextBox(FX_FLOAT leftx,
       break;
     }
   }
-  CTextBox* pText = FX_NEW CTextBox;
+  CTextBox* pText = new CTextBox;
   if (NULL == pText) {
     return;
   }

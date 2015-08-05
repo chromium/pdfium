@@ -20,7 +20,7 @@
 #include "xfa_parser_imp.h"
 IXFA_Parser* IXFA_Parser::Create(IXFA_ObjFactory* pFactory,
                                  FX_BOOL bDocumentParser) {
-  return FX_NEW CXFA_SimpleParser(pFactory, bDocumentParser);
+  return new CXFA_SimpleParser(pFactory, bDocumentParser);
 }
 CXFA_SimpleParser::CXFA_SimpleParser(IXFA_ObjFactory* pFactory,
                                      FX_BOOL bDocumentParser)
@@ -81,7 +81,7 @@ int32_t CXFA_SimpleParser::StartParse(IFX_FileRead* pStream,
   if (m_pXMLDoc == NULL) {
     return XFA_PARSESTATUS_StatusErr;
   }
-  m_pXMLParser = FX_NEW CXFA_XMLParser(m_pXMLDoc->GetRoot(), m_pStream);
+  m_pXMLParser = new CXFA_XMLParser(m_pXMLDoc->GetRoot(), m_pStream);
   if (m_pXMLParser == NULL) {
     return XFA_PARSESTATUS_StatusErr;
   }
@@ -129,7 +129,7 @@ int32_t CXFA_SimpleParser::ParseXMLData(const CFX_WideString& wsXML,
     return XFA_PARSESTATUS_StatusErr;
   }
   CXFA_XMLParser* pParser =
-      FX_NEW CXFA_XMLParser(m_pXMLDoc->GetRoot(), m_pStream);
+      new CXFA_XMLParser(m_pXMLDoc->GetRoot(), m_pStream);
   if (pParser == NULL) {
     return XFA_PARSESTATUS_StatusErr;
   }
@@ -1378,7 +1378,7 @@ void CXFA_SimpleParser::CloseParser() {
   }
 }
 IXFA_DocParser* IXFA_DocParser::Create(IXFA_Notify* pNotify) {
-  return FX_NEW CXFA_DocumentParser(pNotify);
+  return new CXFA_DocumentParser(pNotify);
 }
 CXFA_DocumentParser::CXFA_DocumentParser(IXFA_Notify* pNotify)
     : m_pNotify(pNotify), m_nodeParser(NULL, TRUE), m_pDocument(NULL) {}
@@ -1390,7 +1390,7 @@ int32_t CXFA_DocumentParser::StartParse(IFX_FileRead* pStream,
   CloseParser();
   int32_t nRetStatus = m_nodeParser.StartParse(pStream, ePacketID);
   if (nRetStatus == XFA_PARSESTATUS_Ready) {
-    m_pDocument = FX_NEW CXFA_Document(this);
+    m_pDocument = new CXFA_Document(this);
     m_nodeParser.SetFactory(m_pDocument);
   }
   return nRetStatus;
@@ -1409,7 +1409,7 @@ int32_t CXFA_DocumentParser::ParseXMLData(const CFX_WideString& wsXML,
   CloseParser();
   int32_t nRetStatus = m_nodeParser.ParseXMLData(wsXML, pXMLNode, NULL);
   if (nRetStatus == XFA_PARSESTATUS_Done && pXMLNode) {
-    m_pDocument = FX_NEW CXFA_Document(this);
+    m_pDocument = new CXFA_Document(this);
     m_nodeParser.SetFactory(m_pDocument);
   }
   return nRetStatus;

@@ -25,13 +25,13 @@ IFWL_SpinButton::~IFWL_SpinButton() {
   }
 }
 FWL_ERR IFWL_SpinButton::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_SpinButtonImp;
+  m_pData = new CFWL_SpinButtonImp;
   ((CFWL_SpinButtonImp*)m_pData)->SetInterface(this);
   return ((CFWL_SpinButtonImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_SpinButton::Initialize(const CFWL_WidgetImpProperties& properties,
                                     IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_SpinButtonImp(properties);
+  m_pData = new CFWL_SpinButtonImp(properties);
   ((CFWL_SpinButtonImp*)m_pData)->SetInterface(this);
   return ((CFWL_SpinButtonImp*)m_pData)->Initialize();
 }
@@ -78,7 +78,7 @@ FX_DWORD CFWL_SpinButtonImp::GetClassID() const {
 FWL_ERR CFWL_SpinButtonImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_SpinButtonImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_SpinButtonImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_SpinButtonImp::Finalize() {

@@ -15,7 +15,7 @@ IFWL_Content* IFWL_Content::Create() {
   return new IFWL_Content;
 }
 FWL_ERR IFWL_Content::Initialize() {
-  m_pData = FX_NEW CFWL_ContentImp;
+  m_pData = new CFWL_ContentImp;
   ((CFWL_ContentImp*)m_pData)->SetInterface(this);
   return ((CFWL_ContentImp*)m_pData)->Initialize();
 }

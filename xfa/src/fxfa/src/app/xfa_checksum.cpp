@@ -134,7 +134,7 @@ void CXFA_SAXReaderHandler::UpdateChecksum(FX_BOOL bCheckSpace) {
   m_SAXContext.m_TextBuf.Clear();
 }
 IXFA_ChecksumContext* XFA_Checksum_Create() {
-  return FX_NEW CXFA_ChecksumContext;
+  return new CXFA_ChecksumContext;
 }
 CXFA_ChecksumContext::CXFA_ChecksumContext()
     : m_pSAXReader(NULL), m_pByteContext(NULL) {}

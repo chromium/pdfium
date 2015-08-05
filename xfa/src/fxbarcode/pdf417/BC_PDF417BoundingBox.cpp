@@ -61,14 +61,14 @@ CBC_BoundingBox* CBC_BoundingBox::merge(CBC_BoundingBox* leftBox,
                                         int32_t& e) {
   CBC_BoundingBox* boundingBox = NULL;
   if (leftBox == NULL) {
-    boundingBox = FX_NEW CBC_BoundingBox(rightBox);
+    boundingBox = new CBC_BoundingBox(rightBox);
     return boundingBox;
   }
   if (rightBox == NULL) {
-    boundingBox = FX_NEW CBC_BoundingBox(leftBox);
+    boundingBox = new CBC_BoundingBox(leftBox);
     return boundingBox;
   }
-  boundingBox = FX_NEW CBC_BoundingBox(
+  boundingBox = new CBC_BoundingBox(
       leftBox->m_image, leftBox->m_topLeft, leftBox->m_bottomLeft,
       rightBox->m_topRight, rightBox->m_bottomRight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
@@ -90,7 +90,7 @@ CBC_BoundingBox* CBC_BoundingBox::addMissingRows(int32_t missingStartRows,
     if (newMinY < 0) {
       newMinY = 0;
     }
-    newTop = FX_NEW CBC_ResultPoint((FX_FLOAT)top->GetX(), (FX_FLOAT)newMinY);
+    newTop = new CBC_ResultPoint((FX_FLOAT)top->GetX(), (FX_FLOAT)newMinY);
     if (isLeft) {
       newTopLeft = newTop;
     } else {
@@ -104,7 +104,7 @@ CBC_BoundingBox* CBC_BoundingBox::addMissingRows(int32_t missingStartRows,
       newMaxY = m_image->GetHeight() - 1;
     }
     newBottom =
-        FX_NEW CBC_ResultPoint((FX_FLOAT)bottom->GetX(), (FX_FLOAT)newMaxY);
+        new CBC_ResultPoint((FX_FLOAT)bottom->GetX(), (FX_FLOAT)newMaxY);
     if (isLeft) {
       newBottomLeft = newBottom;
     } else {
@@ -112,7 +112,7 @@ CBC_BoundingBox* CBC_BoundingBox::addMissingRows(int32_t missingStartRows,
     }
   }
   calculateMinMaxValues();
-  CBC_BoundingBox* boundingBox = FX_NEW CBC_BoundingBox(
+  CBC_BoundingBox* boundingBox = new CBC_BoundingBox(
       m_image, newTopLeft, newBottomLeft, newTopRight, newBottomRight, e);
   delete newTop;
   delete newBottom;
@@ -123,7 +123,7 @@ void CBC_BoundingBox::setTopRight(CBC_ResultPoint topRight) {
   if (m_topRight) {
     delete m_topRight;
   }
-  m_topRight = FX_NEW CBC_ResultPoint(topRight.GetX(), topRight.GetY());
+  m_topRight = new CBC_ResultPoint(topRight.GetX(), topRight.GetY());
   calculateMinMaxValues();
 }
 void CBC_BoundingBox::setBottomRight(CBC_ResultPoint bottomRight) {
@@ -131,7 +131,7 @@ void CBC_BoundingBox::setBottomRight(CBC_ResultPoint bottomRight) {
     delete m_bottomRight;
   }
   m_bottomRight =
-      FX_NEW CBC_ResultPoint(bottomRight.GetX(), bottomRight.GetY());
+      new CBC_ResultPoint(bottomRight.GetX(), bottomRight.GetY());
   calculateMinMaxValues();
 }
 int32_t CBC_BoundingBox::getMinX() {
@@ -169,29 +169,29 @@ void CBC_BoundingBox::init(CBC_CommonBitMatrix* image,
   m_bottomRight = NULL;
   m_image = image;
   if (topLeft) {
-    m_topLeft = FX_NEW CBC_ResultPoint(topLeft->GetX(), topLeft->GetY());
+    m_topLeft = new CBC_ResultPoint(topLeft->GetX(), topLeft->GetY());
   }
   if (bottomLeft) {
     m_bottomLeft =
-        FX_NEW CBC_ResultPoint(bottomLeft->GetX(), bottomLeft->GetY());
+        new CBC_ResultPoint(bottomLeft->GetX(), bottomLeft->GetY());
   }
   if (topRight) {
-    m_topRight = FX_NEW CBC_ResultPoint(topRight->GetX(), topRight->GetY());
+    m_topRight = new CBC_ResultPoint(topRight->GetX(), topRight->GetY());
   }
   if (bottomRight) {
     m_bottomRight =
-        FX_NEW CBC_ResultPoint(bottomRight->GetX(), bottomRight->GetY());
+        new CBC_ResultPoint(bottomRight->GetX(), bottomRight->GetY());
   }
   calculateMinMaxValues();
 }
 void CBC_BoundingBox::calculateMinMaxValues() {
   if (m_topLeft == NULL) {
-    m_topLeft = FX_NEW CBC_ResultPoint(0, m_topRight->GetY());
-    m_bottomLeft = FX_NEW CBC_ResultPoint(0, m_bottomRight->GetY());
+    m_topLeft = new CBC_ResultPoint(0, m_topRight->GetY());
+    m_bottomLeft = new CBC_ResultPoint(0, m_bottomRight->GetY());
   } else if (m_topRight == NULL) {
-    m_topRight = FX_NEW CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,
+    m_topRight = new CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,
                                         (FX_FLOAT)m_topLeft->GetY());
-    m_bottomRight = FX_NEW CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,
+    m_bottomRight = new CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,
                                            (FX_FLOAT)m_bottomLeft->GetY());
   }
   m_minX = (int32_t)(m_topLeft->GetX() < m_bottomLeft->GetX()

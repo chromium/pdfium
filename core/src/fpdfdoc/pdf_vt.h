@@ -85,14 +85,14 @@ struct CPVT_SectionInfo {
       if (pSecProps) {
         *pSecProps = *other.pSecProps;
       } else {
-        pSecProps = FX_NEW CPVT_SecProps(*other.pSecProps);
+        pSecProps = new CPVT_SecProps(*other.pSecProps);
       }
     }
     if (other.pWordProps) {
       if (pWordProps) {
         *pWordProps = *other.pWordProps;
       } else {
-        pWordProps = FX_NEW CPVT_WordProps(*other.pWordProps);
+        pWordProps = new CPVT_WordProps(*other.pWordProps);
       }
     }
   }
@@ -162,7 +162,7 @@ struct CPVT_WordInfo {
       if (pWordProps) {
         *pWordProps = *word.pWordProps;
       } else {
-        pWordProps = FX_NEW CPVT_WordProps(*word.pWordProps);
+        pWordProps = new CPVT_WordProps(*word.pWordProps);
       }
     }
   }
@@ -223,7 +223,7 @@ class CLines {
   }
   int32_t Add(const CPVT_LineInfo& lineinfo) {
     if (m_nTotal >= GetSize()) {
-      if (CLine* pLine = FX_NEW CLine) {
+      if (CLine* pLine = new CLine) {
         pLine->m_LineInfo = lineinfo;
         m_Lines.Add(pLine);
         return m_nTotal++;

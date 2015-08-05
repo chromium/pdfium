@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_DateTimePicker* CFWL_DateTimePicker::Create() {
-  return FX_NEW CFWL_DateTimePicker;
+  return new CFWL_DateTimePicker;
 }
 FWL_ERR CFWL_DateTimePicker::Initialize(
     const CFWL_WidgetProperties* pProperties) {

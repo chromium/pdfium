@@ -28,7 +28,7 @@ int32_t CBC_DetectionResultColumn::MAX_NEARBY_DISTANCE = 5;
 CBC_DetectionResultColumn::CBC_DetectionResultColumn(
     CBC_BoundingBox* boundingBox) {
   m_boundingBox = boundingBox;
-  m_codewords = FX_NEW CFX_PtrArray;
+  m_codewords = new CFX_PtrArray;
   m_codewords->SetSize(boundingBox->getMaxY() - boundingBox->getMinY() + 1);
 }
 CBC_DetectionResultColumn::~CBC_DetectionResultColumn() {

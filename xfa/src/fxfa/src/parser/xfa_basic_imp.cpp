@@ -561,7 +561,7 @@ XFA_UNIT CXFA_Measurement::GetUnit(const CFX_WideStringC& wsUnit) {
   }
 }
 IFX_Stream* XFA_CreateWideTextRead(const CFX_WideString& wsBuffer) {
-  return FX_NEW CXFA_WideTextRead(wsBuffer);
+  return new CXFA_WideTextRead(wsBuffer);
 }
 CXFA_WideTextRead::CXFA_WideTextRead(const CFX_WideString& wsBuffer)
     : m_wsBuffer(wsBuffer), m_iPosition(0), m_iRefCount(1) {}

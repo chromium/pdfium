@@ -501,7 +501,7 @@ CFWL_WidgetImp::CFWL_WidgetImp(IFWL_Widget* pOuter)
       m_pOuter(pOuter),
       m_pInterface(NULL),
       m_iLock(0) {
-  m_pProperties = FX_NEW CFWL_WidgetImpProperties;
+  m_pProperties = new CFWL_WidgetImpProperties;
   m_pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
   FXSYS_assert(m_pWidgetMgr != NULL);
 }
@@ -515,7 +515,7 @@ CFWL_WidgetImp::CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
       m_pInterface(NULL),
       m_iLock(0) {
   if (!m_pProperties) {
-    m_pProperties = FX_NEW CFWL_WidgetImpProperties;
+    m_pProperties = new CFWL_WidgetImpProperties;
   }
   *m_pProperties = properties;
   m_pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
@@ -1124,13 +1124,13 @@ IFWL_Custom::~IFWL_Custom() {
   }
 }
 FWL_ERR IFWL_Custom::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_Custom(pOuter);
+  m_pData = new CFWL_Custom(pOuter);
   ((CFWL_Custom*)m_pData)->SetInterface(this);
   return ((CFWL_Custom*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_Custom::Initialize(const CFWL_WidgetImpProperties& properties,
                                 IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_Custom(properties, pOuter);
+  m_pData = new CFWL_Custom(properties, pOuter);
   ((CFWL_Custom*)m_pData)->SetInterface(this);
   return ((CFWL_Custom*)m_pData)->Initialize();
 }

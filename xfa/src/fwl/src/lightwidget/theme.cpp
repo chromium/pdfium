@@ -89,18 +89,18 @@ FWL_ERR CFWL_Theme::Finalize() {
   return FWL_ERR_Succeeded;
 }
 CFWL_Theme::CFWL_Theme() {
-  CFWL_FormTP* pFormTP = FX_NEW CFWL_FormTP;
-  CFWL_PushButtonTP* pPushButtonTP = FX_NEW CFWL_PushButtonTP;
-  CFWL_CheckBoxTP* pCheckBoxTP = FX_NEW CFWL_CheckBoxTP;
-  CFWL_ListBoxTP* pListBoxTP = FX_NEW CFWL_ListBoxTP;
-  CFWL_PictureBoxTP* pPictureBoxTP = FX_NEW CFWL_PictureBoxTP;
-  CFWL_ScrollBarTP* pSrollBarTP = FX_NEW CFWL_ScrollBarTP;
-  CFWL_EditTP* pEditTP = FX_NEW CFWL_EditTP;
-  CFWL_ComboBoxTP* pComboBoxTP = FX_NEW CFWL_ComboBoxTP;
-  CFWL_BarcodeTP* pBarcodeTP = FX_NEW CFWL_BarcodeTP;
-  CFWL_DateTimePickerTP* pDateTimePickerTP = FX_NEW CFWL_DateTimePickerTP;
-  CFWL_MonthCalendarTP* pMonthCalendarTP = FX_NEW CFWL_MonthCalendarTP;
-  CFWL_CaretTP* pCaretTP = FX_NEW CFWL_CaretTP;
+  CFWL_FormTP* pFormTP = new CFWL_FormTP;
+  CFWL_PushButtonTP* pPushButtonTP = new CFWL_PushButtonTP;
+  CFWL_CheckBoxTP* pCheckBoxTP = new CFWL_CheckBoxTP;
+  CFWL_ListBoxTP* pListBoxTP = new CFWL_ListBoxTP;
+  CFWL_PictureBoxTP* pPictureBoxTP = new CFWL_PictureBoxTP;
+  CFWL_ScrollBarTP* pSrollBarTP = new CFWL_ScrollBarTP;
+  CFWL_EditTP* pEditTP = new CFWL_EditTP;
+  CFWL_ComboBoxTP* pComboBoxTP = new CFWL_ComboBoxTP;
+  CFWL_BarcodeTP* pBarcodeTP = new CFWL_BarcodeTP;
+  CFWL_DateTimePickerTP* pDateTimePickerTP = new CFWL_DateTimePickerTP;
+  CFWL_MonthCalendarTP* pMonthCalendarTP = new CFWL_MonthCalendarTP;
+  CFWL_CaretTP* pCaretTP = new CFWL_CaretTP;
   m_arrThemes.Add(pFormTP);
   m_arrThemes.Add(pPushButtonTP);
   m_arrThemes.Add(pCheckBoxTP);

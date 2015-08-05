@@ -11,7 +11,7 @@
 #include "include/fwl_widgetmgrimp.h"
 #include "include/fwl_appimp.h"
 IFWL_App* IFWL_App::Create(IFWL_AdapterNative* pAdapter) {
-  return (IFWL_App*)FX_NEW CFWL_AppImp(pAdapter);
+  return (IFWL_App*)new CFWL_AppImp(pAdapter);
 }
 CFWL_AppImp::CFWL_AppImp(IFWL_AdapterNative* pAdapter)
     : m_pWidgetMgr(NULL), m_pThemeProvider(NULL) {
@@ -36,7 +36,7 @@ CFWL_AppImp::~CFWL_AppImp() {
 }
 FWL_ERR CFWL_AppImp::Initialize() {
   if (!m_pWidgetMgr) {
-    m_pWidgetMgr = FX_NEW CFWL_WidgetMgr(m_pAdapterNative);
+    m_pWidgetMgr = new CFWL_WidgetMgr(m_pAdapterNative);
   }
   return FWL_ERR_Succeeded;
 }

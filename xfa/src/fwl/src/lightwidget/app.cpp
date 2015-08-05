@@ -17,7 +17,7 @@ CFWL_App::~CFWL_App() {
   m_pAppImp->Release();
 }
 FWL_ERR CFWL_App::Initialize() {
-  m_pThemeProvider = FX_NEW CFWL_Theme;
+  m_pThemeProvider = new CFWL_Theme;
   m_pThemeProvider->Initialize();
   m_pAppImp->SetThemeProvider((IFWL_ThemeProvider*)m_pThemeProvider);
   return m_pAppImp->Initialize();

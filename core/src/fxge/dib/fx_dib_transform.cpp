@@ -77,7 +77,7 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip,
   if (dest_clip.IsEmpty()) {
     return NULL;
   }
-  CFX_DIBitmap* pTransBitmap = FX_NEW CFX_DIBitmap;
+  CFX_DIBitmap* pTransBitmap = new CFX_DIBitmap;
   if (!pTransBitmap) {
     return NULL;
   }
@@ -422,7 +422,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
     stretch_buf_mask = m_Storer.GetBitmap()->m_pAlphaMask->GetBuffer();
   }
   int stretch_pitch = m_Storer.GetBitmap()->GetPitch();
-  CFX_DIBitmap* pTransformed = FX_NEW CFX_DIBitmap;
+  CFX_DIBitmap* pTransformed = new CFX_DIBitmap;
   if (!pTransformed) {
     return FALSE;
   }

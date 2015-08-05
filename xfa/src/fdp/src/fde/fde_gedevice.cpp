@@ -30,7 +30,7 @@ IFDE_RenderDevice* IFDE_RenderDevice::Create(CFX_DIBitmap* pBitmap,
   if (pBitmap == NULL) {
     return NULL;
   }
-  CFX_FxgeDevice* pDevice = FX_NEW CFX_FxgeDevice;
+  CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
   if (pDevice == NULL) {
     return NULL;
   }

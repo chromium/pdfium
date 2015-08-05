@@ -37,8 +37,8 @@ void CXFA_CSSTagProvider::GetNextAttribute(FX_POSITION& pos,
 }
 void CXFA_CSSTagProvider::SetAttribute(const CFX_WideString& wsAttr,
                                        const CFX_WideString& wsValue) {
-  CFX_WideString* pName = FX_NEW CFX_WideString();
-  CFX_WideString* pValue = FX_NEW CFX_WideString();
+  CFX_WideString* pName = new CFX_WideString();
+  CFX_WideString* pValue = new CFX_WideString();
   *pName = wsAttr;
   *pValue = wsValue;
   m_Attributes.SetAt(pName, pValue);
@@ -881,7 +881,7 @@ void CXFA_TextLayout::InitBreak(IFDE_CSSComputedStyle* pStyle,
     m_pBreak->SetLinePos(fStart);
     m_pBreak->SetTabWidth(m_textParser.GetTabInterval(pStyle));
     if (m_pTabstopContext == NULL) {
-      m_pTabstopContext = FX_NEW CXFA_TextTabstopsContext;
+      m_pTabstopContext = new CXFA_TextTabstopsContext;
     }
     m_textParser.GetTabstops(pStyle, m_pTabstopContext);
     for (int32_t i = 0; i < m_pTabstopContext->m_iTabCount; i++) {
@@ -933,7 +933,7 @@ FX_FLOAT CXFA_TextLayout::GetLayoutHeight() {
 }
 FX_FLOAT CXFA_TextLayout::StartLayout(FX_FLOAT fWidth) {
   if (m_pLoader == NULL) {
-    m_pLoader = FX_NEW CXFA_LoaderContext;
+    m_pLoader = new CXFA_LoaderContext;
   }
   if (fWidth < 0 || (m_pLoader->m_fWidth > -1 &&
                      FXSYS_fabs(fWidth - m_pLoader->m_fWidth) > 0)) {

@@ -354,7 +354,7 @@ class CPDFDoc_Environment final {
       FPDF_LPFILEHANDLER fileHandler =
           m_pInfo->FFI_DownloadFromURL(m_pInfo, wsURL);
 
-      CFPDF_FileStream* fileStream = FX_NEW CFPDF_FileStream(fileHandler);
+      CFPDF_FileStream* fileStream = new CFPDF_FileStream(fileHandler);
       return fileStream;
     }
     return NULL;

@@ -88,9 +88,9 @@ IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(
     FX_DWORD dwWidgetFilter) {
   switch (dwTraverseWay) {
     case XFA_TRAVERSEWAY_Tranvalse:
-      return FX_NEW CXFA_FFTabOrderPageWidgetIterator(this, dwWidgetFilter);
+      return new CXFA_FFTabOrderPageWidgetIterator(this, dwWidgetFilter);
     case XFA_TRAVERSEWAY_Form:
-      return FX_NEW CXFA_FFPageWidgetIterator(this, dwWidgetFilter);
+      return new CXFA_FFPageWidgetIterator(this, dwWidgetFilter);
   }
   return NULL;
 }
@@ -363,7 +363,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
         bCurrentItem = TRUE;
         break;
       }
-      CXFA_TabParam* pParam = FX_NEW CXFA_TabParam;
+      CXFA_TabParam* pParam = new CXFA_TabParam;
       pParam->m_pWidget = hWidget;
       tabParams.Add(pParam);
       if (XFA_IsLayoutElement(pSearchItem->GetFormNode()->GetClassID(), TRUE)) {
@@ -397,7 +397,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
     CXFA_WidgetArray& WidgetArray) {
   CXFA_LayoutItemIterator sIterator;
   sIterator.Init((CXFA_LayoutItem*)m_pPageView->GetLayoutPage());
-  CXFA_TabParam* pParam = FX_NEW CXFA_TabParam;
+  CXFA_TabParam* pParam = new CXFA_TabParam;
   FX_BOOL bCurrentItem = FALSE;
   FX_BOOL bContentArea = FALSE;
   OrderContainer(&sIterator, NULL, pParam, bCurrentItem, bContentArea);

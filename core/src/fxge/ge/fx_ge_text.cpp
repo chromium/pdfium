@@ -1226,7 +1226,7 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     int anti_alias) {
   CFX_SizeGlyphCache* pSizeCache = NULL;
   if (!m_SizeMap.Lookup(FaceGlyphsKey, (void*&)pSizeCache)) {
-    pSizeCache = FX_NEW CFX_SizeGlyphCache;
+    pSizeCache = new CFX_SizeGlyphCache;
     if (pSizeCache == NULL) {
       return NULL;
     }
@@ -1571,7 +1571,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
     return NULL;
   }
   int dib_width = bmwidth;
-  CFX_GlyphBitmap* pGlyphBitmap = FX_NEW CFX_GlyphBitmap;
+  CFX_GlyphBitmap* pGlyphBitmap = new CFX_GlyphBitmap;
   if (!pGlyphBitmap) {
     return NULL;
   }
@@ -1923,7 +1923,7 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width) {
   if (params.m_PointCount == 0) {
     return NULL;
   }
-  CFX_PathData* pPath = FX_NEW CFX_PathData;
+  CFX_PathData* pPath = new CFX_PathData;
   if (!pPath) {
     return NULL;
   }

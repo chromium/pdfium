@@ -104,7 +104,7 @@ CBC_CommonDecoderResult* CBC_QRDecodedBitStreamParser::Decode(
       }
     }
   } while (!(mode == CBC_QRCoderMode::sTERMINATOR));
-  CBC_CommonDecoderResult* tempCd = FX_NEW CBC_CommonDecoderResult();
+  CBC_CommonDecoderResult* tempCd = new CBC_CommonDecoderResult();
   tempCd->Init(*bytes, result, byteSegments, ecLevel, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return tempCd;

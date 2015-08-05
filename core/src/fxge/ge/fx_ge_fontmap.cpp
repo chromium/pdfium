@@ -124,7 +124,7 @@ FXFT_Face CFX_FontMgr::AddCachedFace(const CFX_ByteString& face_name,
                                      uint8_t* pData,
                                      FX_DWORD size,
                                      int face_index) {
-  CTTFontDesc* pFontDesc = FX_NEW CTTFontDesc;
+  CTTFontDesc* pFontDesc = new CTTFontDesc;
   if (!pFontDesc) {
     return NULL;
   }
@@ -330,7 +330,7 @@ FXFT_Face CFX_FontMgr::AddCachedTTCFace(int ttc_size,
                                         int font_offset) {
   CFX_ByteString key;
   key.Format("%d:%d", ttc_size, checksum);
-  CTTFontDesc* pFontDesc = FX_NEW CTTFontDesc;
+  CTTFontDesc* pFontDesc = new CTTFontDesc;
   if (!pFontDesc) {
     return NULL;
   }
@@ -1493,7 +1493,7 @@ void CFX_FolderFontInfo::ReportFace(CFX_ByteString& path,
   if (m_FontList.Lookup(facename, p)) {
     return;
   }
-  CFontFaceInfo* pInfo = FX_NEW CFontFaceInfo;
+  CFontFaceInfo* pInfo = new CFontFaceInfo;
   if (!pInfo) {
     return;
   }

@@ -47,7 +47,7 @@ CBC_PDF417ECErrorCorrection* CBC_PDF417ScanningDecoder::errorCorrection = NULL;
 CBC_PDF417ScanningDecoder::CBC_PDF417ScanningDecoder() {}
 CBC_PDF417ScanningDecoder::~CBC_PDF417ScanningDecoder() {}
 void CBC_PDF417ScanningDecoder::Initialize() {
-  errorCorrection = FX_NEW CBC_PDF417ECErrorCorrection;
+  errorCorrection = new CBC_PDF417ECErrorCorrection;
 }
 void CBC_PDF417ScanningDecoder::Finalize() {
   delete errorCorrection;
@@ -61,7 +61,7 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
     int32_t minCodewordWidth,
     int32_t maxCodewordWidth,
     int32_t& e) {
-  CBC_BoundingBox* boundingBox = FX_NEW CBC_BoundingBox(
+  CBC_BoundingBox* boundingBox = new CBC_BoundingBox(
       image, imageTopLeft, imageBottomLeft, imageTopRight, imageBottomRight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   CBC_DetectionResultRowIndicatorColumn* leftRowIndicatorColumn = NULL;
@@ -111,10 +111,10 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
     }
     CBC_DetectionResultColumn* detectionResultColumn = NULL;
     if (barcodeColumn == 0 || barcodeColumn == maxBarcodeColumn) {
-      detectionResultColumn = FX_NEW CBC_DetectionResultRowIndicatorColumn(
+      detectionResultColumn = new CBC_DetectionResultRowIndicatorColumn(
           boundingBox, barcodeColumn == 0);
     } else {
-      detectionResultColumn = FX_NEW CBC_DetectionResultColumn(boundingBox);
+      detectionResultColumn = new CBC_DetectionResultColumn(boundingBox);
     }
     detectionResult->setDetectionResultColumn(barcodeColumn,
                                               detectionResultColumn);
@@ -207,7 +207,7 @@ CBC_DetectionResult* CBC_PDF417ScanningDecoder::merge(
     return NULL;
   }
   CBC_DetectionResult* detectionresult =
-      FX_NEW CBC_DetectionResult(barcodeMetadata, boundingBox);
+      new CBC_DetectionResult(barcodeMetadata, boundingBox);
   return detectionresult;
 }
 CBC_BoundingBox* CBC_PDF417ScanningDecoder::adjustBoundingBox(
@@ -297,7 +297,7 @@ CBC_PDF417ScanningDecoder::getRowIndicatorColumn(CBC_CommonBitMatrix* image,
                                                  int32_t minCodewordWidth,
                                                  int32_t maxCodewordWidth) {
   CBC_DetectionResultRowIndicatorColumn* rowIndicatorColumn =
-      FX_NEW CBC_DetectionResultRowIndicatorColumn(boundingBox, leftToRight);
+      new CBC_DetectionResultRowIndicatorColumn(boundingBox, leftToRight);
   for (int32_t i = 0; i < 2; i++) {
     int32_t increment = i == 0 ? 1 : -1;
     int32_t startColumn = (int32_t)startPoint.GetX();
@@ -459,16 +459,16 @@ CBC_PDF417ScanningDecoder::createDecoderResultFromAmbiguousValues(
 }
 CFX_PtrArray* CBC_PDF417ScanningDecoder::createBarcodeMatrix(
     CBC_DetectionResult* detectionResult) {
-  CFX_PtrArray* barcodeMatrix = FX_NEW CFX_PtrArray;
+  CFX_PtrArray* barcodeMatrix = new CFX_PtrArray;
   barcodeMatrix->SetSize(detectionResult->getBarcodeRowCount());
   CFX_PtrArray* temp = NULL;
   int32_t colume = 0;
   for (int32_t row = 0; row < barcodeMatrix->GetSize(); row++) {
-    temp = FX_NEW CFX_PtrArray;
+    temp = new CFX_PtrArray;
     temp->SetSize(detectionResult->getBarcodeColumnCount() + 2);
     for (colume = 0; colume < detectionResult->getBarcodeColumnCount() + 2;
          colume++) {
-      temp->SetAt(colume, FX_NEW CBC_BarcodeValue());
+      temp->SetAt(colume, new CBC_BarcodeValue());
     }
     barcodeMatrix->SetAt(row, temp);
   }
@@ -590,7 +590,7 @@ CBC_Codeword* CBC_PDF417ScanningDecoder::detectCodeword(
   if (codeword == -1) {
     return NULL;
   }
-  return FX_NEW CBC_Codeword(startColumn, endColumn,
+  return new CBC_Codeword(startColumn, endColumn,
                              getCodewordBucketNumber(decodedValue), codeword);
 }
 CFX_Int32Array* CBC_PDF417ScanningDecoder::getModuleBitCount(
@@ -601,7 +601,7 @@ CFX_Int32Array* CBC_PDF417ScanningDecoder::getModuleBitCount(
     int32_t startColumn,
     int32_t imageRow) {
   int32_t imageColumn = startColumn;
-  CFX_Int32Array* moduleBitCount = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* moduleBitCount = new CFX_Int32Array;
   moduleBitCount->SetSize(8);
   int32_t moduleNumber = 0;
   int32_t increment = leftToRight ? 1 : -1;
@@ -721,7 +721,7 @@ void CBC_PDF417ScanningDecoder::verifyCodewordCount(CFX_Int32Array& codewords,
 }
 CFX_Int32Array* CBC_PDF417ScanningDecoder::getBitCountForCodeword(
     int32_t codeword) {
-  CFX_Int32Array* result = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* result = new CFX_Int32Array;
   result->SetSize(8);
   int32_t previousValue = 0;
   int32_t i = result->GetSize() - 1;

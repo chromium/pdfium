@@ -17,7 +17,7 @@ FWL_ERR CFWL_ControlThread::Run(FWL_HTHREAD hThread) {
   return FWL_ERR_Succeeded;
 }
 IFWL_Thread* IFWL_Thread::Create() {
-  return (IFWL_Thread*)FX_NEW CFWL_Thread;
+  return (IFWL_Thread*)new CFWL_Thread;
 }
 CFWL_Thread::CFWL_Thread() {}
 CFWL_Thread::~CFWL_Thread() {}
@@ -28,10 +28,10 @@ CFWL_ControlThread* CFWL_NoteThread::_assistantThreadHandler = NULL;
 FWL_HTHREAD CFWL_NoteThread::_assistantThread = NULL;
 int32_t CFWL_NoteThread::_refCount = 0;
 IFWL_NoteThread* IFWL_NoteThread::Create() {
-  return (IFWL_NoteThread*)FX_NEW CFWL_NoteThread;
+  return (IFWL_NoteThread*)new CFWL_NoteThread;
 }
 CFWL_NoteThread::CFWL_NoteThread() : m_hThread(NULL) {
-  m_pNoteDriver = FX_NEW CFWL_NoteDriver;
+  m_pNoteDriver = new CFWL_NoteDriver;
 }
 CFWL_NoteThread::~CFWL_NoteThread() {
   if (m_hThread) {

@@ -30,14 +30,14 @@ IFWL_MonthCalendar::~IFWL_MonthCalendar() {
   }
 }
 FWL_ERR IFWL_MonthCalendar::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_MonthCalendarImp(pOuter);
+  m_pData = new CFWL_MonthCalendarImp(pOuter);
   ((CFWL_MonthCalendarImp*)m_pData)->SetInterface(this);
   return ((CFWL_MonthCalendarImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_MonthCalendar::Initialize(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_MonthCalendarImp(properties, pOuter);
+  m_pData = new CFWL_MonthCalendarImp(properties, pOuter);
   ((CFWL_MonthCalendarImp*)m_pData)->SetInterface(this);
   return ((CFWL_MonthCalendarImp*)m_pData)->Initialize();
 }
@@ -132,7 +132,7 @@ FWL_ERR CFWL_MonthCalendarImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
   m_pDelegate =
-      (IFWL_WidgetDelegate*)FX_NEW CFWL_MonthCalendarImpDelegate(this);
+      (IFWL_WidgetDelegate*)new CFWL_MonthCalendarImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_MonthCalendarImp::Finalize() {

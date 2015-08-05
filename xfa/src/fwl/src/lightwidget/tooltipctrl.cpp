@@ -12,7 +12,7 @@
 #include "../core/include/fwl_formimp.h"
 #include "../core/include/fwl_threadimp.h"
 CFWL_ToolTip* CFWL_ToolTip::Create() {
-  return FX_NEW CFWL_ToolTip;
+  return new CFWL_ToolTip;
 }
 FWL_ERR CFWL_ToolTip::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);

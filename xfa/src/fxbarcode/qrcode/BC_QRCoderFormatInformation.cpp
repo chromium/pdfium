@@ -79,7 +79,7 @@ CBC_QRCoderFormatInformation::DoDecodeFormatInformation(
     int32_t const* decodeInfo = &FORMAT_INFO_DECODE_LOOKUP[i][0];
     int32_t targetInfo = decodeInfo[0];
     if (targetInfo == maskedFormatInfo) {
-      return FX_NEW CBC_QRCoderFormatInformation(decodeInfo[1]);
+      return new CBC_QRCoderFormatInformation(decodeInfo[1]);
     }
     int32_t bitsDifference = NumBitsDiffering(maskedFormatInfo, targetInfo);
     if (bitsDifference < bestDifference) {
@@ -88,7 +88,7 @@ CBC_QRCoderFormatInformation::DoDecodeFormatInformation(
     }
   }
   if (bestDifference <= 3) {
-    return FX_NEW CBC_QRCoderFormatInformation(bestFormatInfo);
+    return new CBC_QRCoderFormatInformation(bestFormatInfo);
   }
   return NULL;
 }

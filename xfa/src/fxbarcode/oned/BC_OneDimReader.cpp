@@ -167,7 +167,7 @@ CFX_Int32Array* CBC_OneDimReader::FindGuardPattern(CBC_CommonBitArray* row,
       if (counterPosition == patternLength - 1) {
         if (PatternMatchVariance(&counters, &(*pattern)[0],
                                  MAX_INDIVIDUAL_VARIANCE) < MAX_AVG_VARIANCE) {
-          CFX_Int32Array* result = FX_NEW CFX_Int32Array();
+          CFX_Int32Array* result = new CFX_Int32Array();
           result->SetSize(2);
           (*result)[0] = patternStart;
           (*result)[1] = x;

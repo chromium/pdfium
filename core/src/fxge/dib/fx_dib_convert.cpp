@@ -1105,7 +1105,7 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
     }
     return pClone;
   }
-  CFX_DIBitmap* pClone = FX_NEW CFX_DIBitmap;
+  CFX_DIBitmap* pClone = new CFX_DIBitmap;
   if (!pClone) {
     return NULL;
   }

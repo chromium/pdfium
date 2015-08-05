@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_CheckBox* CFWL_CheckBox::Create() {
-  return FX_NEW CFWL_CheckBox;
+  return new CFWL_CheckBox;
 }
 FWL_ERR CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);

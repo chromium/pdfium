@@ -46,7 +46,7 @@ IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily,
                              FX_DWORD dwFontStyles,
                              FX_WORD wCodePage,
                              IFX_FontMgr* pFontMgr) {
-  CFX_GdiFont* pFont = FX_NEW CFX_GdiFont(pFontMgr);
+  CFX_GdiFont* pFont = new CFX_GdiFont(pFontMgr);
   if (!pFont->LoadFont(pszFontFamily, dwFontStyles, wCodePage)) {
     pFont->Release();
     return NULL;
@@ -56,7 +56,7 @@ IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily,
 IFX_Font* IFX_Font::LoadFont(const uint8_t* pBuffer,
                              int32_t iLength,
                              IFX_FontMgr* pFontMgr) {
-  CFX_GdiFont* pFont = FX_NEW CFX_GdiFont(pFontMgr);
+  CFX_GdiFont* pFont = new CFX_GdiFont(pFontMgr);
   if (!pFont->LoadFont(pBuffer, iLength)) {
     pFont->Release();
     return NULL;
@@ -65,7 +65,7 @@ IFX_Font* IFX_Font::LoadFont(const uint8_t* pBuffer,
 }
 IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFileName,
                              IFX_FontMgr* pFontMgr) {
-  CFX_GdiFont* pFont = FX_NEW CFX_GdiFont(pFontMgr);
+  CFX_GdiFont* pFont = new CFX_GdiFont(pFontMgr);
   if (!pFont->LoadFont(pszFileName)) {
     pFont->Release();
     return NULL;
@@ -75,7 +75,7 @@ IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFileName,
 IFX_Font* IFX_Font::LoadFont(IFX_Stream* pFontStream,
                              IFX_FontMgr* pFontMgr,
                              FX_BOOL bSaveStream) {
-  CFX_GdiFont* pFont = FX_NEW CFX_GdiFont(pFontMgr);
+  CFX_GdiFont* pFont = new CFX_GdiFont(pFontMgr);
   if (!pFont->LoadFont(pFontStream)) {
     pFont->Release();
     return NULL;
@@ -491,7 +491,7 @@ FX_DWORD CFX_GdiFont::GetGlyphDIBits(int32_t iGlyphIndex,
     ::GetGlyphOutlineW(m_hDC, iGlyphIndex, uFormat, &gm, dwGlyphSize,
                        pGlyphOutline, pMatrix);
     if (pCache == NULL) {
-      pCache = FX_NEW CFX_GdiFontCache;
+      pCache = new CFX_GdiFontCache;
       if (m_FontCache.GetCount() >= FX_GDIFONT_FONTCACHESIZE) {
         ClearCache();
       }

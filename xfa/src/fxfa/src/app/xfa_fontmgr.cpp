@@ -1746,7 +1746,7 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(
 }
 // static
 IXFA_FontMgr* IXFA_FontMgr::CreateDefault() {
-  return FX_NEW CXFA_DefFontMgr;
+  return new CXFA_DefFontMgr;
 }
 // virtual
 IXFA_FontMgr::~IXFA_FontMgr() {}
@@ -2110,7 +2110,7 @@ IFX_Font* CXFA_FontMgr::GetFont(IXFA_Doc* hDoc,
 }
 void CXFA_FontMgr::LoadDocFonts(IXFA_Doc* hDoc) {
   if (!m_PDFFontMgrArray.GetValueAt(hDoc)) {
-    m_PDFFontMgrArray.SetAt(hDoc, FX_NEW CXFA_PDFFontMgr((CXFA_FFDoc*)hDoc));
+    m_PDFFontMgrArray.SetAt(hDoc, new CXFA_PDFFontMgr((CXFA_FFDoc*)hDoc));
   }
 }
 void CXFA_FontMgr::ReleaseDocFonts(IXFA_Doc* hDoc) {

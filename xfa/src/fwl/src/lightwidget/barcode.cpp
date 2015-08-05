@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_Barcode* CFWL_Barcode::Create() {
-  return FX_NEW CFWL_Barcode;
+  return new CFWL_Barcode;
 }
 FWL_ERR CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);

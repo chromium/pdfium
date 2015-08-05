@@ -23,13 +23,13 @@ IFWL_Barcode::~IFWL_Barcode() {
   }
 }
 FWL_ERR IFWL_Barcode::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_BarcodeImp(pOuter);
+  m_pData = new CFWL_BarcodeImp(pOuter);
   ((CFWL_BarcodeImp*)m_pData)->SetInterface(this);
   return ((CFWL_BarcodeImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_Barcode::Initialize(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_BarcodeImp(properties, pOuter);
+  m_pData = new CFWL_BarcodeImp(properties, pOuter);
   ((CFWL_BarcodeImp*)m_pData)->SetInterface(this);
   return ((CFWL_BarcodeImp*)m_pData)->Initialize();
 }
@@ -62,7 +62,7 @@ FX_DWORD CFWL_BarcodeImp::GetClassID() const {
 }
 FWL_ERR CFWL_BarcodeImp::Initialize() {
   if (!m_pDelegate) {
-    m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_BarcodeImpDelegate(this);
+    m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_BarcodeImpDelegate(this);
   }
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_EditImp::Initialize(),
                                       FWL_ERR_Indefinite);

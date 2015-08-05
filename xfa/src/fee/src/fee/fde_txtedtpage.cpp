@@ -16,7 +16,7 @@
 #define FDE_TXTEDT_TOLERANCE 0.1f
 IFDE_TxtEdtPage* IFDE_TxtEdtPage::Create(IFDE_TxtEdtEngine* pEngine,
                                          int32_t nIndex) {
-  return (IFDE_TxtEdtPage*)FX_NEW CFDE_TxtEdtPage(pEngine, nIndex);
+  return (IFDE_TxtEdtPage*)new CFDE_TxtEdtPage(pEngine, nIndex);
 }
 CFDE_TxtEdtTextSet::CFDE_TxtEdtTextSet(CFDE_TxtEdtPage* pPage)
     : m_pPage(pPage) {}
@@ -368,7 +368,7 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
     return -1;
   }
   IFX_WordBreak* pIter = FX_WordBreak_Create();
-  pIter->Attach(FX_NEW CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf));
+  pIter->Attach(new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf));
   pIter->SetAt(nIndex);
   nCount = pIter->GetWordLength();
   int32_t nRet = pIter->GetWordPos();
@@ -392,7 +392,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox, IFX_Pause* pPause) {
   if (pParams->dwMode & FDE_TEXTEDITMODE_Password) {
     wcAlias = m_pEditEngine->GetAliasChar();
   }
-  m_pIter = FX_NEW CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf, wcAlias);
+  m_pIter = new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf, wcAlias);
   IFX_TxtBreak* pBreak = m_pEditEngine->GetTextBreak();
   pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
   pBreak->ClearBreakPieces();
@@ -425,7 +425,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox, IFX_Pause* pPause) {
       (bVertial && bLineReserve) ? (-pParams->fLineSpace) : pParams->fLineSpace;
   FX_FLOAT fLinePos = fLineStart;
   if (m_pTextSet == NULL) {
-    m_pTextSet = FX_NEW CFDE_TxtEdtTextSet(this);
+    m_pTextSet = new CFDE_TxtEdtTextSet(this);
   }
   m_PieceMassArr.RemoveAll(TRUE);
   FX_DWORD dwBreakStatus = FX_TXTBREAK_None;

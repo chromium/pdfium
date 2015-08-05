@@ -72,7 +72,7 @@ static const FX_WCHAR* const gs_LocalNumberSymbols[] = {
     L"zero",    L"currencySymbol", L"currencyName",
 };
 IFX_Locale* IFX_Locale::Create(CXML_Element* pLocaleData) {
-  return FX_NEW CFX_Locale(pLocaleData);
+  return new CFX_Locale(pLocaleData);
 }
 CFX_Locale::CFX_Locale(CXML_Element* pLocaleData) {
   m_pElement = pLocaleData;
@@ -545,7 +545,7 @@ IFX_FormatString* IFX_FormatString::Create(IFX_LocaleMgr* pLocaleMgr,
   if (!pLocaleMgr) {
     return NULL;
   }
-  return FX_NEW CFX_FormatString(pLocaleMgr, bUseLCID);
+  return new CFX_FormatString(pLocaleMgr, bUseLCID);
 }
 CFX_FormatString::CFX_FormatString(IFX_LocaleMgr* pLocaleMgr, FX_BOOL bUseLCID)
     : m_pLocaleMgr(pLocaleMgr), m_bUseLCID(bUseLCID) {}

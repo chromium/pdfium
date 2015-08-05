@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_PushButton* CFWL_PushButton::Create() {
-  return FX_NEW CFWL_PushButton;
+  return new CFWL_PushButton;
 }
 FWL_ERR CFWL_PushButton::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);

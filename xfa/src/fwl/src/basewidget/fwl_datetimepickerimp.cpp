@@ -23,21 +23,21 @@ IFWL_DateTimePicker* IFWL_DateTimePicker::Create() {
 FWL_ERR IFWL_DateTimeForm::Initialize(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_FormProxyImp(properties, pOuter);
+  m_pData = new CFWL_FormProxyImp(properties, pOuter);
   ((CFWL_FormProxyImp*)m_pData)->SetInterface(this);
   return ((CFWL_FormProxyImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_DateTimeCalender::Initialize(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_DateTimeCalendar(properties, pOuter);
+  m_pData = new CFWL_DateTimeCalendar(properties, pOuter);
   ((CFWL_DateTimeCalendar*)m_pData)->SetInterface(this);
   return ((CFWL_DateTimeCalendar*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_DateTimeEdit::Initialize(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_DateTimeEdit(properties, pOuter);
+  m_pData = new CFWL_DateTimeEdit(properties, pOuter);
   ((CFWL_DateTimeEdit*)m_pData)->SetInterface(this);
   return ((CFWL_DateTimeEdit*)m_pData)->Initialize();
 }
@@ -51,14 +51,14 @@ IFWL_DateTimePicker::~IFWL_DateTimePicker() {
   }
 }
 FWL_ERR IFWL_DateTimePicker::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_DateTimePickerImp(pOuter);
+  m_pData = new CFWL_DateTimePickerImp(pOuter);
   ((CFWL_DateTimePickerImp*)m_pData)->SetInterface(this);
   return ((CFWL_DateTimePickerImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_DateTimePicker::Initialize(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_DateTimePickerImp(properties, pOuter);
+  m_pData = new CFWL_DateTimePickerImp(properties, pOuter);
   ((CFWL_DateTimePickerImp*)m_pData)->SetInterface(this);
   return ((CFWL_DateTimePickerImp*)m_pData)->Initialize();
 }
@@ -145,7 +145,7 @@ CFWL_DateTimeEdit::CFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_EditImp(properties, pOuter) {}
 FWL_ERR CFWL_DateTimeEdit::Initialize() {
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_DateTimeEditDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_DateTimeEditDelegate(this);
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_EditImp::Initialize(),
                                       FWL_ERR_Indefinite);
   return FWL_ERR_Succeeded;
@@ -211,7 +211,7 @@ FWL_ERR CFWL_DateTimeCalendar::Initialize() {
     delete (CFWL_MonthCalendarImpDelegate*)m_pDelegate;
   }
   m_pDelegate =
-      (IFWL_WidgetDelegate*)FX_NEW CFWL_DateTimeCalendarDelegate(this);
+      (IFWL_WidgetDelegate*)new CFWL_DateTimeCalendarDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_DateTimeCalendar::Finalize() {
@@ -455,7 +455,7 @@ FWL_ERR CFWL_DateTimePickerImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
   m_pDelegate =
-      (IFWL_WidgetDelegate*)FX_NEW CFWL_DateTimePickerImpDelegate(this);
+      (IFWL_WidgetDelegate*)new CFWL_DateTimePickerImpDelegate(this);
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
   CFWL_WidgetImpProperties propMonth;
   propMonth.m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;

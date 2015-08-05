@@ -8,7 +8,7 @@
 #include "../../include/fpdfdoc/fpdf_vt.h"
 #include "pdf_vt.h"
 IPDF_VariableText* IPDF_VariableText::NewVariableText() {
-  return FX_NEW CPDF_VariableText();
+  return new CPDF_VariableText();
 }
 void IPDF_VariableText::DelVariableText(IPDF_VariableText* pVT) {
   delete (CPDF_VariableText*)pVT;

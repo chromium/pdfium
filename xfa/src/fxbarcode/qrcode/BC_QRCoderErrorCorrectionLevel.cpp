@@ -36,10 +36,10 @@ CBC_QRCoderErrorCorrectionLevel::CBC_QRCoderErrorCorrectionLevel(
 }
 CBC_QRCoderErrorCorrectionLevel::~CBC_QRCoderErrorCorrectionLevel() {}
 void CBC_QRCoderErrorCorrectionLevel::Initialize() {
-  L = FX_NEW CBC_QRCoderErrorCorrectionLevel(0, 0x01, (FX_CHAR*)"L");
-  M = FX_NEW CBC_QRCoderErrorCorrectionLevel(1, 0x00, (FX_CHAR*)"M");
-  Q = FX_NEW CBC_QRCoderErrorCorrectionLevel(2, 0x03, (FX_CHAR*)"Q");
-  H = FX_NEW CBC_QRCoderErrorCorrectionLevel(3, 0x02, (FX_CHAR*)"H");
+  L = new CBC_QRCoderErrorCorrectionLevel(0, 0x01, (FX_CHAR*)"L");
+  M = new CBC_QRCoderErrorCorrectionLevel(1, 0x00, (FX_CHAR*)"M");
+  Q = new CBC_QRCoderErrorCorrectionLevel(2, 0x03, (FX_CHAR*)"Q");
+  H = new CBC_QRCoderErrorCorrectionLevel(3, 0x02, (FX_CHAR*)"H");
 }
 void CBC_QRCoderErrorCorrectionLevel::Finalize() {
   delete L;

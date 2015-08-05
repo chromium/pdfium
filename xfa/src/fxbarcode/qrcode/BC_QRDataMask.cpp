@@ -26,7 +26,7 @@
 static int32_t N_DATA_MASKS = 0;
 CFX_PtrArray* CBC_QRDataMask::DATA_MASKS = NULL;
 void CBC_QRDataMask::Initialize() {
-  DATA_MASKS = FX_NEW CFX_PtrArray();
+  DATA_MASKS = new CFX_PtrArray();
   N_DATA_MASKS = BuildDataMasks();
 }
 void CBC_QRDataMask::Finalize() {
@@ -102,14 +102,14 @@ class DataMask111 : public CBC_QRDataMask {
   }
 };
 int32_t CBC_QRDataMask::BuildDataMasks() {
-  DATA_MASKS->Add(FX_NEW DataMask000);
-  DATA_MASKS->Add(FX_NEW DataMask001);
-  DATA_MASKS->Add(FX_NEW DataMask010);
-  DATA_MASKS->Add(FX_NEW DataMask011);
-  DATA_MASKS->Add(FX_NEW DataMask100);
-  DATA_MASKS->Add(FX_NEW DataMask101);
-  DATA_MASKS->Add(FX_NEW DataMask110);
-  DATA_MASKS->Add(FX_NEW DataMask111);
+  DATA_MASKS->Add(new DataMask000);
+  DATA_MASKS->Add(new DataMask001);
+  DATA_MASKS->Add(new DataMask010);
+  DATA_MASKS->Add(new DataMask011);
+  DATA_MASKS->Add(new DataMask100);
+  DATA_MASKS->Add(new DataMask101);
+  DATA_MASKS->Add(new DataMask110);
+  DATA_MASKS->Add(new DataMask111);
   return DATA_MASKS->GetSize();
 }
 CBC_QRDataMask::CBC_QRDataMask() {}

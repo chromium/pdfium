@@ -69,7 +69,7 @@ void CSection::ResetLinePlace() {
 }
 CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace& place,
                                  const CPVT_WordInfo& wordinfo) {
-  if (CPVT_WordInfo* pWord = FX_NEW CPVT_WordInfo(wordinfo)) {
+  if (CPVT_WordInfo* pWord = new CPVT_WordInfo(wordinfo)) {
     int32_t nWordIndex =
         FPDF_MAX(FPDF_MIN(place.nWordIndex, m_WordArray.GetSize()), 0);
     if (nWordIndex == m_WordArray.GetSize()) {
@@ -815,8 +815,8 @@ void CPDF_VariableText::Initialize() {
   if (!m_bInitial) {
     CPVT_SectionInfo secinfo;
     if (m_bRichText) {
-      secinfo.pSecProps = FX_NEW CPVT_SecProps(0.0f, 0.0f, 0);
-      secinfo.pWordProps = FX_NEW CPVT_WordProps(GetDefaultFontIndex(),
+      secinfo.pSecProps = new CPVT_SecProps(0.0f, 0.0f, 0);
+      secinfo.pWordProps = new CPVT_WordProps(GetDefaultFontIndex(),
                                                  PVT_DEFAULT_FONTSIZE, 0, 0, 0);
     }
     CPVT_WordPlace place;
@@ -884,10 +884,10 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(
     CPVT_SectionInfo secinfo;
     if (m_bRichText) {
       if (pSecProps) {
-        secinfo.pSecProps = FX_NEW CPVT_SecProps(*pSecProps);
+        secinfo.pSecProps = new CPVT_SecProps(*pSecProps);
       }
       if (pWordProps) {
-        secinfo.pWordProps = FX_NEW CPVT_WordProps(*pWordProps);
+        secinfo.pWordProps = new CPVT_WordProps(*pWordProps);
       }
     }
     AddSection(NewPlace, secinfo);
@@ -976,10 +976,10 @@ void CPDF_VariableText::SetText(const FX_WCHAR* text,
   CPVT_SectionInfo secinfo;
   if (m_bRichText) {
     if (pSecProps) {
-      secinfo.pSecProps = FX_NEW CPVT_SecProps(*pSecProps);
+      secinfo.pSecProps = new CPVT_SecProps(*pSecProps);
     }
     if (pWordProps) {
-      secinfo.pWordProps = FX_NEW CPVT_WordProps(*pWordProps);
+      secinfo.pWordProps = new CPVT_WordProps(*pWordProps);
     }
   }
   if (CSection* pSection = m_SectionArray.GetAt(0)) {
@@ -1662,7 +1662,7 @@ FX_BOOL CPDF_VariableText::IsLatinWord(FX_WORD word) {
 }
 IPDF_VariableText_Iterator* CPDF_VariableText::GetIterator() {
   if (!m_pVTIterator) {
-    return m_pVTIterator = FX_NEW CPDF_VariableText_Iterator(this);
+    return m_pVTIterator = new CPDF_VariableText_Iterator(this);
   }
   return m_pVTIterator;
 }

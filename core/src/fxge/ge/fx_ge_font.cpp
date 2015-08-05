@@ -34,7 +34,7 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
   }
   m_bLogic = TRUE;
   if (pFont->m_pSubstFont) {
-    m_pSubstFont = FX_NEW CFX_SubstFont;
+    m_pSubstFont = new CFX_SubstFont;
     if (!m_pSubstFont) {
       return FALSE;
     }
@@ -102,7 +102,7 @@ FX_BOOL CFX_Font::LoadSubst(const CFX_ByteString& face_name,
                             FX_BOOL bVertical) {
   m_bEmbedded = FALSE;
   m_bVertical = bVertical;
-  m_pSubstFont = FX_NEW CFX_SubstFont;
+  m_pSubstFont = new CFX_SubstFont;
   if (!m_pSubstFont) {
     return FALSE;
   }
@@ -468,7 +468,7 @@ FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCodeEx(FX_DWORD charcode,
 }
 IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont) {
   CFX_UnicodeEncoding* pEncoding = NULL;
-  pEncoding = FX_NEW CFX_UnicodeEncoding(pFont);
+  pEncoding = new CFX_UnicodeEncoding(pFont);
   return pEncoding;
 }
 CFX_FontEncodingEX::CFX_FontEncodingEX() {
@@ -603,7 +603,7 @@ static IFX_FontEncodingEx* _FXFM_CreateFontEncoding(CFX_Font* pFont,
   if (error) {
     return NULL;
   }
-  CFX_FontEncodingEX* pFontEncoding = FX_NEW CFX_FontEncodingEX;
+  CFX_FontEncodingEX* pFontEncoding = new CFX_FontEncodingEX;
   if (pFontEncoding && !pFontEncoding->Init(pFont, nEncodingID)) {
     delete pFontEncoding;
     pFontEncoding = NULL;

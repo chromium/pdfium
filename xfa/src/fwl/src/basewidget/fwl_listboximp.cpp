@@ -24,13 +24,13 @@ IFWL_ListBox::~IFWL_ListBox() {
   }
 }
 FWL_ERR IFWL_ListBox::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_ListBoxImp(pOuter);
+  m_pData = new CFWL_ListBoxImp(pOuter);
   ((CFWL_ListBoxImp*)m_pData)->SetInterface(this);
   return ((CFWL_ListBoxImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_ListBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_ListBoxImp(properties, pOuter);
+  m_pData = new CFWL_ListBoxImp(properties, pOuter);
   ((CFWL_ListBoxImp*)m_pData)->SetInterface(this);
   return ((CFWL_ListBoxImp*)m_pData)->Initialize();
 }
@@ -104,7 +104,7 @@ FX_DWORD CFWL_ListBoxImp::GetClassID() const {
 FWL_ERR CFWL_ListBoxImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_ListBoxImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_ListBoxImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ListBoxImp::Finalize() {

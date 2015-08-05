@@ -191,7 +191,7 @@ IFWL_WidgetDelegate* CFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
 }
 CFWL_Widget::CFWL_Widget()
     : m_pImp(NULL), m_pDelegate(NULL), m_pProperties(NULL) {
-  m_pProperties = FX_NEW CFWL_WidgetProperties;
+  m_pProperties = new CFWL_WidgetProperties;
   m_pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
   FXSYS_assert(m_pWidgetMgr != NULL);
 }

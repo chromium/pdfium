@@ -196,20 +196,20 @@ CXFA_FFApp::~CXFA_FFApp() {
 }
 IXFA_MenuHandler* CXFA_FFApp::GetMenuHandler() {
   if (!m_pMenuHandler) {
-    m_pMenuHandler = FX_NEW CXFA_FFMenuHandler;
+    m_pMenuHandler = new CXFA_FFMenuHandler;
   }
   return m_pMenuHandler;
 }
 IXFA_DocHandler* CXFA_FFApp::GetDocHandler() {
   if (!m_pDocHandler) {
-    m_pDocHandler = FX_NEW CXFA_FFDocHandler;
+    m_pDocHandler = new CXFA_FFDocHandler;
   }
   return m_pDocHandler;
 }
 IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
                                 IFX_FileRead* pStream,
                                 FX_BOOL bTakeOverFile) {
-  CXFA_FFDoc* pDoc = FX_NEW CXFA_FFDoc(this, pProvider);
+  CXFA_FFDoc* pDoc = new CXFA_FFDoc(this, pProvider);
   if (!pDoc) {
     return NULL;
   }
@@ -225,7 +225,7 @@ IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
   if (pPDFDoc == NULL) {
     return NULL;
   }
-  CXFA_FFDoc* pDoc = FX_NEW CXFA_FFDoc(this, pProvider);
+  CXFA_FFDoc* pDoc = new CXFA_FFDoc(this, pProvider);
   if (!pDoc) {
     return NULL;
   }
@@ -239,7 +239,7 @@ IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
 
 void CXFA_FFApp::SetDefaultFontMgr(IXFA_FontMgr* pFontMgr) {
   if (!m_pFontMgr) {
-    m_pFontMgr = FX_NEW CXFA_FontMgr();
+    m_pFontMgr = new CXFA_FontMgr();
   }
   m_pFontMgr->SetDefFontMgr(pFontMgr);
 }
@@ -259,14 +259,14 @@ IFX_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
 }
 CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme() {
   if (!m_pFWLTheme) {
-    m_pFWLTheme = FX_NEW CXFA_FWLTheme(this);
+    m_pFWLTheme = new CXFA_FWLTheme(this);
   }
   return m_pFWLTheme;
 }
 IFWL_AdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
     IFWL_WidgetMgrDelegate* pDelegate) {
   if (!m_pAdapterWidgetMgr) {
-    m_pAdapterWidgetMgr = FX_NEW CXFA_FWLAdapterWidgetMgr;
+    m_pAdapterWidgetMgr = new CXFA_FWLAdapterWidgetMgr;
     pDelegate->OnSetCapability(FWL_WGTMGR_DisableThread |
                                FWL_WGTMGR_DisableForm);
     m_pWidgetMgrDelegate = pDelegate;
@@ -275,7 +275,7 @@ IFWL_AdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
 }
 IFWL_AdapterThreadMgr* CXFA_FFApp::GetThreadMgr() {
   if (!m_pAdapterThreadMgr) {
-    m_pAdapterThreadMgr = FX_NEW CFWL_SDAdapterThreadMgr;
+    m_pAdapterThreadMgr = new CFWL_SDAdapterThreadMgr;
   }
   return m_pAdapterThreadMgr;
 }

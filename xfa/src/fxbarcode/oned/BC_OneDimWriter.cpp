@@ -424,7 +424,7 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
   if (!isDevice) {
     m_barWidth = codeLength * m_multiple;
   }
-  m_output = FX_NEW CBC_CommonBitMatrix;
+  m_output = new CBC_CommonBitMatrix;
   m_output->Init(outputWidth, outputHeight);
   int32_t outputX = leftPadding * m_multiple;
   for (int32_t inputX = 0; inputX < codeOldLength; inputX++) {

@@ -87,7 +87,7 @@ CBC_QRDetectorResult* CBC_QRDetector::ProcessFinderPatternInfo(
       SampleGrid(m_image, topLeft.get(), topRight.get(), bottomLeft.get(),
                  (CBC_ResultPoint*)(alignmentPattern), dimension, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CFX_PtrArray* points = FX_NEW CFX_PtrArray;
+  CFX_PtrArray* points = new CFX_PtrArray;
   if (alignmentPattern == NULL) {
     points->Add(bottomLeft.release());
     points->Add(topLeft.release());
@@ -98,7 +98,7 @@ CBC_QRDetectorResult* CBC_QRDetector::ProcessFinderPatternInfo(
     points->Add(topRight.release());
     points->Add(alignmentPattern);
   }
-  return FX_NEW CBC_QRDetectorResult(bits, points);
+  return new CBC_QRDetectorResult(bits, points);
 }
 CBC_CommonBitMatrix* CBC_QRDetector::SampleGrid(
     CBC_CommonBitMatrix* image,

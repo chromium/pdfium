@@ -179,7 +179,7 @@ FX_BOOL CFDE_TxtEdtFieldFormatParser::Parse(const CFX_WideString& wsFormat) {
       i++;
     }
     FormatItem.nValCount = i - FormatItem.nValStart;
-    FDE_LPTXTEDTFORMATITEM pFormatItem = FX_NEW FDE_TXTEDTFORMATITEM;
+    FDE_LPTXTEDTFORMATITEM pFormatItem = new FDE_TXTEDTFORMATITEM;
     FXSYS_memcpy(pFormatItem, &FormatItem, sizeof(FDE_TXTEDTFORMATITEM));
     m_ItemArr.Add(pFormatItem);
   }
@@ -206,18 +206,18 @@ CFDE_TxtEdtField* CFDE_TxtEdtField::Create(const CFX_WideString& wsField,
                                            int32_t nIndex,
                                            CFDE_TxtEdtBlock* pBlock) {
   if (wsField[0] != L'%' || (wsField[0] == L'%' && wsField[1] == L'%')) {
-    return FX_NEW CFDE_TxtEdtField_Fixed(wsField, nIndex, pBlock);
+    return new CFDE_TxtEdtField_Fixed(wsField, nIndex, pBlock);
   }
   FX_WCHAR wcType = wsField[wsField.GetLength() - 1];
   switch (wcType) {
     case L'd':
-      return FX_NEW CFDE_TxtEdtField_Integer(wsField, nIndex, pBlock);
+      return new CFDE_TxtEdtField_Integer(wsField, nIndex, pBlock);
     case L'f':
-      return FX_NEW CFDE_TxtEdtField_Float(wsField, nIndex, pBlock);
+      return new CFDE_TxtEdtField_Float(wsField, nIndex, pBlock);
     case L's':
-      return FX_NEW CFDE_TxtEdtField_String(wsField, nIndex, pBlock);
+      return new CFDE_TxtEdtField_String(wsField, nIndex, pBlock);
     case L'p':
-      return FX_NEW CFDE_TxtEdtField_Password(wsField, nIndex, pBlock);
+      return new CFDE_TxtEdtField_Password(wsField, nIndex, pBlock);
     default:
       break;
   }

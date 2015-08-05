@@ -12,7 +12,7 @@
      _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_ &&   \
      _FXM_PLATFORM_ != _FXM_PLATFORM_ANDROID_)
 IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
-  return FX_NEW CFXCRT_FileAccess_CRT;
+  return new CFXCRT_FileAccess_CRT;
 }
 void FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_ByteString& bsMode) {
   if (dwModes & FX_FILEMODE_ReadOnly) {

@@ -36,7 +36,7 @@ CBC_QRCoderDecoder::CBC_QRCoderDecoder() {
 }
 
 void CBC_QRCoderDecoder::Init() {
-  m_rsDecoder = FX_NEW CBC_ReedSolomonDecoder(CBC_ReedSolomonGF256::QRCodeFild);
+  m_rsDecoder = new CBC_ReedSolomonDecoder(CBC_ReedSolomonGF256::QRCodeFild);
 }
 CBC_QRCoderDecoder::~CBC_QRCoderDecoder() {
   if (m_rsDecoder != NULL) {

@@ -24,13 +24,13 @@ IFWL_ScrollBar::~IFWL_ScrollBar() {
   }
 }
 FWL_ERR IFWL_ScrollBar::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_ScrollBarImp(pOuter);
+  m_pData = new CFWL_ScrollBarImp(pOuter);
   ((CFWL_ScrollBarImp*)m_pData)->SetInterface(this);
   return ((CFWL_ScrollBarImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_ScrollBar::Initialize(const CFWL_WidgetImpProperties& properties,
                                    IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_ScrollBarImp(properties, pOuter);
+  m_pData = new CFWL_ScrollBarImp(properties, pOuter);
   ((CFWL_ScrollBarImp*)m_pData)->SetInterface(this);
   return ((CFWL_ScrollBarImp*)m_pData)->Initialize();
 }
@@ -148,7 +148,7 @@ FX_DWORD CFWL_ScrollBarImp::GetClassID() const {
 FWL_ERR CFWL_ScrollBarImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_ScrollBarImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_ScrollBarImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ScrollBarImp::Finalize() {

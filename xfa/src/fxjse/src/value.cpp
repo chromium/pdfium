@@ -268,7 +268,7 @@ void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
   pIsolate->ThrowException(hError);
 }
 CFXJSE_Value* CFXJSE_Value::Create(v8::Isolate* pIsolate) {
-  return FX_NEW CFXJSE_Value(pIsolate);
+  return new CFXJSE_Value(pIsolate);
 }
 void* CFXJSE_Value::ToObject(CFXJSE_Class* lpClass) const {
   ASSERT(!m_hValue.IsEmpty());

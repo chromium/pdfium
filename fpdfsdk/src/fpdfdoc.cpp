@@ -179,7 +179,7 @@ DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page,
   CPDF_Document* pDoc = pPage->m_pDocument;
   CPDF_LinkList* pLinkList = (CPDF_LinkList*)pDoc->GetPrivateData(&THISMODULE);
   if (!pLinkList) {
-    pLinkList = FX_NEW CPDF_LinkList(pDoc);
+    pLinkList = new CPDF_LinkList(pDoc);
     pDoc->SetPrivateData(&THISMODULE, pLinkList, ReleaseLinkList);
   }
   return pLinkList->GetLinkAtPoint(pPage, (FX_FLOAT)x, (FX_FLOAT)y).GetDict();

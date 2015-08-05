@@ -102,7 +102,7 @@ class CPDF_Object {
 class CPDF_Boolean : public CPDF_Object {
  public:
   static CPDF_Boolean* Create(FX_BOOL value) {
-    return FX_NEW CPDF_Boolean(value);
+    return new CPDF_Boolean(value);
   }
 
   CPDF_Boolean() : CPDF_Object(PDFOBJ_BOOLEAN), m_bValue(false) {}
@@ -118,18 +118,18 @@ class CPDF_Boolean : public CPDF_Object {
 };
 class CPDF_Number : public CPDF_Object {
  public:
-  static CPDF_Number* Create(int value) { return FX_NEW CPDF_Number(value); }
+  static CPDF_Number* Create(int value) { return new CPDF_Number(value); }
 
   static CPDF_Number* Create(FX_FLOAT value) {
-    return FX_NEW CPDF_Number(value);
+    return new CPDF_Number(value);
   }
 
   static CPDF_Number* Create(const CFX_ByteStringC& str) {
-    return FX_NEW CPDF_Number(str);
+    return new CPDF_Number(str);
   }
 
   static CPDF_Number* Create(FX_BOOL bInteger, void* pData) {
-    return FX_NEW CPDF_Number(bInteger, pData);
+    return new CPDF_Number(bInteger, pData);
   }
 
   CPDF_Number() : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(false), m_Integer(0) {}
@@ -177,11 +177,11 @@ class CPDF_Number : public CPDF_Object {
 class CPDF_String : public CPDF_Object {
  public:
   static CPDF_String* Create(const CFX_ByteString& str, FX_BOOL bHex = FALSE) {
-    return FX_NEW CPDF_String(str, bHex);
+    return new CPDF_String(str, bHex);
   }
 
   static CPDF_String* Create(const CFX_WideString& str) {
-    return FX_NEW CPDF_String(str);
+    return new CPDF_String(str);
   }
 
   CPDF_String() : CPDF_Object(PDFOBJ_STRING), m_bHex(FALSE) {}
@@ -208,14 +208,14 @@ class CPDF_String : public CPDF_Object {
 class CPDF_Name : public CPDF_Object {
  public:
   static CPDF_Name* Create(const CFX_ByteString& str) {
-    return FX_NEW CPDF_Name(str);
+    return new CPDF_Name(str);
   }
 
   static CPDF_Name* Create(const CFX_ByteStringC& str) {
-    return FX_NEW CPDF_Name(str);
+    return new CPDF_Name(str);
   }
 
-  static CPDF_Name* Create(const FX_CHAR* str) { return FX_NEW CPDF_Name(str); }
+  static CPDF_Name* Create(const FX_CHAR* str) { return new CPDF_Name(str); }
 
   CPDF_Name(const CFX_ByteString& str)
       : CPDF_Object(PDFOBJ_NAME), m_Name(str) {}
@@ -235,7 +235,7 @@ class CPDF_Name : public CPDF_Object {
 };
 class CPDF_Array : public CPDF_Object {
  public:
-  static CPDF_Array* Create() { return FX_NEW CPDF_Array(); }
+  static CPDF_Array* Create() { return new CPDF_Array(); }
 
   CPDF_Array() : CPDF_Object(PDFOBJ_ARRAY) {}
 
@@ -305,7 +305,7 @@ class CPDF_Array : public CPDF_Object {
 };
 class CPDF_Dictionary : public CPDF_Object {
  public:
-  static CPDF_Dictionary* Create() { return FX_NEW CPDF_Dictionary(); }
+  static CPDF_Dictionary* Create() { return new CPDF_Dictionary(); }
 
   CPDF_Dictionary() : CPDF_Object(PDFOBJ_DICTIONARY) {}
 
@@ -413,7 +413,7 @@ class CPDF_Stream : public CPDF_Object {
   static CPDF_Stream* Create(uint8_t* pData,
                              FX_DWORD size,
                              CPDF_Dictionary* pDict) {
-    return FX_NEW CPDF_Stream(pData, size, pDict);
+    return new CPDF_Stream(pData, size, pDict);
   }
 
   CPDF_Stream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
@@ -546,14 +546,14 @@ class CPDF_StreamFilter {
 };
 class CPDF_Null : public CPDF_Object {
  public:
-  static CPDF_Null* Create() { return FX_NEW CPDF_Null(); }
+  static CPDF_Null* Create() { return new CPDF_Null(); }
 
   CPDF_Null() : CPDF_Object(PDFOBJ_NULL) {}
 };
 class CPDF_Reference : public CPDF_Object {
  public:
   static CPDF_Reference* Create(CPDF_IndirectObjects* pDoc, int objnum) {
-    return FX_NEW CPDF_Reference(pDoc, objnum);
+    return new CPDF_Reference(pDoc, objnum);
   }
 
   CPDF_Reference(CPDF_IndirectObjects* pDoc, int objnum)

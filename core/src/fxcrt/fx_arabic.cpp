@@ -145,7 +145,7 @@ FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda) {
 };
 #endif
 IFX_ArabicChar* IFX_ArabicChar::Create() {
-  return FX_NEW CFX_ArabicChar;
+  return new CFX_ArabicChar;
 }
 FX_BOOL CFX_ArabicChar::IsArabicChar(FX_WCHAR wch) const {
   FX_DWORD dwRet =
@@ -1055,7 +1055,7 @@ void FX_BidiLine(CFX_RTFCharArray& chars, int32_t iCount, int32_t iBaseLevel) {
   blt.FX_BidiLine(chars, iCount, iBaseLevel);
 }
 IFX_BidiChar* IFX_BidiChar::Create() {
-  return FX_NEW CFX_BidiChar;
+  return new CFX_BidiChar;
 }
 CFX_BidiChar::CFX_BidiChar()
     : m_bSeparateNeutral(TRUE),

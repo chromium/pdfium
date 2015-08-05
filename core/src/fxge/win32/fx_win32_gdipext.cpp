@@ -475,7 +475,7 @@ static CFX_DIBitmap* _StretchMonoToGray(int dest_width,
   int result_width = pClipRect->Width();
   int result_height = pClipRect->Height();
   int result_pitch = (result_width + 3) / 4 * 4;
-  CFX_DIBitmap* pStretched = FX_NEW CFX_DIBitmap;
+  CFX_DIBitmap* pStretched = new CFX_DIBitmap;
   if (!pStretched) {
     return NULL;
   }
@@ -1416,7 +1416,7 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
     if (args.memory_size == 0 || !args.memory_base) {
       return NULL;
     }
-    pStream = FX_NEW GpStream;
+    pStream = new GpStream;
     if (!pStream) {
       return NULL;
     }

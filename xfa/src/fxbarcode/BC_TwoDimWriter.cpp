@@ -131,7 +131,7 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
   if (topPadding < 0) {
     topPadding = 0;
   }
-  m_output = FX_NEW CBC_CommonBitMatrix;
+  m_output = new CBC_CommonBitMatrix;
   m_output->Init(outputWidth, outputHeight);
   for (int32_t inputY = 0, outputY = topPadding;
        (inputY < inputHeight) && (outputY < outputHeight - multiY);

@@ -85,10 +85,10 @@ int JS_DefineObj(IJS_Runtime* pJSRuntime,
   v8::HandleScope handle_scope(isolate);
   CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
   if (!pArray) {
-    pArray = FX_NEW CFX_PtrArray();
+    pArray = new CFX_PtrArray();
     isolate->SetData(g_embedderDataSlot, pArray);
   }
-  CJS_ObjDefintion* pObjDef = FX_NEW CJS_ObjDefintion(
+  CJS_ObjDefintion* pObjDef = new CJS_ObjDefintion(
       isolate, sObjName, eObjType, pConstructor, pDestructor);
   pArray->Add(pObjDef);
   return pArray->GetSize() - 1;
@@ -313,7 +313,7 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,
       // Document is set as global object, need to construct it first.
       CFX_WideString wsString(L"Document");
       if (ws.Equal(wsString)) {
-        CJS_PrivateData* pPrivateData = FX_NEW CJS_PrivateData;
+        CJS_PrivateData* pPrivateData = new CJS_PrivateData;
         pPrivateData->ObjDefID = i;
 
         v8Context->Global()
@@ -459,7 +459,7 @@ v8::Local<v8::Object> JS_NewFxDynamicObj(IJS_Runtime* pJSRuntime,
   v8::Local<v8::Object> obj;
   if (!objTemp->NewInstance(context).ToLocal(&obj))
     return v8::Local<v8::Object>();
-  CJS_PrivateData* pPrivateData = FX_NEW CJS_PrivateData;
+  CJS_PrivateData* pPrivateData = new CJS_PrivateData;
   pPrivateData->ObjDefID = nObjDefnID;
 
   obj->SetAlignedPointerInInternalField(0, pPrivateData);

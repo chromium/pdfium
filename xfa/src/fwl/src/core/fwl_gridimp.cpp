@@ -15,12 +15,12 @@ IFWL_Grid* IFWL_Grid::Create() {
   return new IFWL_Grid;
 }
 FWL_ERR IFWL_Grid::Initialize() {
-  m_pData = FX_NEW CFWL_GridImp;
+  m_pData = new CFWL_GridImp;
   ((CFWL_GridImp*)m_pData)->SetInterface(this);
   return ((CFWL_GridImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_Grid::Initialize(CFWL_WidgetImpProperties& properties) {
-  m_pData = FX_NEW CFWL_GridImp(properties);
+  m_pData = new CFWL_GridImp(properties);
   ((CFWL_GridImp*)m_pData)->SetInterface(this);
   return ((CFWL_GridImp*)m_pData)->Initialize();
 }
@@ -187,7 +187,7 @@ FX_DWORD CFWL_GridImp::GetClassID() const {
 FWL_ERR CFWL_GridImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_ContentImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_GridDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_GridDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_GridImp::Finalize() {
@@ -274,7 +274,7 @@ FWL_ERR CFWL_GridImp::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
   _FWL_RETURN_VALUE_IF_FAIL(pChild, FWL_ERR_Indefinite);
   CFWL_ContentImp::InsertWidget(pChild, nIndex);
   if (!m_mapWidgetInfo.GetValueAt(pChild)) {
-    CFWL_GridWidgetInfo* pInfo = FX_NEW CFWL_GridWidgetInfo;
+    CFWL_GridWidgetInfo* pInfo = new CFWL_GridWidgetInfo;
     m_mapWidgetInfo.SetAt(pChild, pInfo);
     m_Widgets.Add(pChild);
   }
@@ -297,14 +297,14 @@ FWL_HGRIDCOLROW CFWL_GridImp::InsertColRow(FX_BOOL bColumn, int32_t nIndex) {
     if (nIndex < 0 || nIndex > m_Columns.GetSize()) {
       nIndex = m_Columns.GetSize();
     }
-    CFWL_GridColRow* pColumn = FX_NEW CFWL_GridColRow;
+    CFWL_GridColRow* pColumn = new CFWL_GridColRow;
     m_Columns.InsertAt(nIndex, pColumn, 1);
     return (FWL_HGRIDCOLROW)pColumn;
   }
   if (nIndex < 0 || nIndex > m_Rows.GetSize()) {
     nIndex = m_Rows.GetSize();
   }
-  CFWL_GridColRow* pRow = FX_NEW CFWL_GridColRow;
+  CFWL_GridColRow* pRow = new CFWL_GridColRow;
   m_Rows.InsertAt(nIndex, pRow, 1);
   return (FWL_HGRIDCOLROW)pRow;
 }

@@ -332,7 +332,7 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
     CFPF_SkiaFontDescriptor* pFontDes =
         (CFPF_SkiaFontDescriptor*)m_FontFaces.ElementAt(nItem);
 <<<<<<< HEAD
-    CFPF_SkiaFont* pFont = FX_NEW CFPF_SkiaFont;
+    CFPF_SkiaFont* pFont = new CFPF_SkiaFont;
     if (pFont) {
       if (pFont->InitFont(this, pFontDes, bsFamilyname, dwStyle, uCharset)) {
         m_FamilyFonts.SetAt((void*)(uintptr_t)dwHash, (void*)pFont);
@@ -449,7 +449,7 @@ void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteStringC& path) {
 void CFPF_SkiaFontMgr::ScanFile(const CFX_ByteStringC& file) {
   FXFT_Face face = GetFontFace(file);
   if (face) {
-    CFPF_SkiaPathFont* pFontDesc = FX_NEW CFPF_SkiaPathFont;
+    CFPF_SkiaPathFont* pFontDesc = new CFPF_SkiaPathFont;
     if (!pFontDesc) {
       return;
     }

@@ -13,9 +13,9 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL
 FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document) {
   if (!document)
     return NULL;
-  CPDF_ImageObject* pImageObj = FX_NEW CPDF_ImageObject;
+  CPDF_ImageObject* pImageObj = new CPDF_ImageObject;
   CPDF_Image* pImg =
-      FX_NEW CPDF_Image(((CPDFXFA_Document*)document)->GetPDFDoc());
+      new CPDF_Image(((CPDFXFA_Document*)document)->GetPDFDoc());
   pImageObj->m_pImage = pImg;
   return pImageObj;
 }
@@ -28,7 +28,7 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
   if (!image_object || !fileAccess || !pages)
     return FALSE;
 
-  IFX_FileRead* pFile = FX_NEW CPDF_CustomAccess(fileAccess);
+  IFX_FileRead* pFile = new CPDF_CustomAccess(fileAccess);
 
   CPDF_ImageObject* pImgObj = (CPDF_ImageObject*)image_object;
   pImgObj->m_GeneralState.GetModify();

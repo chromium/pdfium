@@ -11,7 +11,7 @@
     _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
 IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
-  return FX_NEW CFXCRT_FileAccess_Posix;
+  return new CFXCRT_FileAccess_Posix;
 }
 void FXCRT_Posix_GetFileMode(FX_DWORD dwModes,
                              int32_t& nFlags,

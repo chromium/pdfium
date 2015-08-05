@@ -42,7 +42,7 @@
 #include "BC_QRCoderVersion.h"
 CBC_QRCodeReader::CBC_QRCodeReader() : m_decoder(NULL) {}
 void CBC_QRCodeReader::Init() {
-  m_decoder = FX_NEW CBC_QRCoderDecoder;
+  m_decoder = new CBC_QRCoderDecoder;
   m_decoder->Init();
 }
 CBC_QRCodeReader::~CBC_QRCodeReader() {

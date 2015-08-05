@@ -147,7 +147,7 @@ CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(int32_t& e) {
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   CBC_AutoPtr<CBC_CommonBitMatrix> functionPattern(cbm);
   FX_BOOL readingUp = TRUE;
-  CFX_ByteArray* temp = FX_NEW CFX_ByteArray;
+  CFX_ByteArray* temp = new CFX_ByteArray;
   temp->SetSize(version->GetTotalCodeWords());
   CBC_AutoPtr<CFX_ByteArray> result(temp);
   int32_t resultOffset = 0;

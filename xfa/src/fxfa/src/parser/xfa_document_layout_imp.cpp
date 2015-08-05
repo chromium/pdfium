@@ -25,7 +25,7 @@
 #include "xfa_layout_appadapter.h"
 CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {
   if (!m_pLayoutProcessor) {
-    m_pLayoutProcessor = FX_NEW CXFA_LayoutProcessor(this);
+    m_pLayoutProcessor = new CXFA_LayoutProcessor(this);
     ASSERT(m_pLayoutProcessor);
   }
   return m_pLayoutProcessor;
@@ -65,7 +65,7 @@ int32_t CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart) {
     return -1;
   }
   if (!m_pLayoutPageMgr) {
-    m_pLayoutPageMgr = FX_NEW CXFA_LayoutPageMgr(this);
+    m_pLayoutPageMgr = new CXFA_LayoutPageMgr(this);
   }
   if (!m_pLayoutPageMgr->InitLayoutPage(pFormRoot)) {
     return -1;
@@ -74,7 +74,7 @@ int32_t CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart) {
     return -1;
   }
   m_pRootItemLayoutProcessor =
-      FX_NEW CXFA_ItemLayoutProcessor(pFormRoot, m_pLayoutPageMgr);
+      new CXFA_ItemLayoutProcessor(pFormRoot, m_pLayoutPageMgr);
 #ifndef _XFA_LAYOUTITEM_ProcessCACHE_
   m_pRootItemLayoutProcessor->m_pPageMgrCreateItem = m_pLayoutPageMgr;
 #endif

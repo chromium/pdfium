@@ -9,27 +9,27 @@
 static CBC_CodeBase* FX_Barcode_CreateBarCodeEngineObject(BC_TYPE type) {
   switch (type) {
     case BC_CODE39:
-      return FX_NEW CBC_Code39();
+      return new CBC_Code39();
     case BC_CODABAR:
-      return FX_NEW CBC_Codabar();
+      return new CBC_Codabar();
     case BC_CODE128:
-      return FX_NEW CBC_Code128(BC_CODE128_B);
+      return new CBC_Code128(BC_CODE128_B);
     case BC_CODE128_B:
-      return FX_NEW CBC_Code128(BC_CODE128_B);
+      return new CBC_Code128(BC_CODE128_B);
     case BC_CODE128_C:
-      return FX_NEW CBC_Code128(BC_CODE128_C);
+      return new CBC_Code128(BC_CODE128_C);
     case BC_EAN8:
-      return FX_NEW CBC_EAN8();
+      return new CBC_EAN8();
     case BC_UPCA:
-      return FX_NEW CBC_UPCA();
+      return new CBC_UPCA();
     case BC_EAN13:
-      return FX_NEW CBC_EAN13();
+      return new CBC_EAN13();
     case BC_QR_CODE:
-      return FX_NEW CBC_QRCode();
+      return new CBC_QRCode();
     case BC_PDF417:
-      return FX_NEW CBC_PDF417I();
+      return new CBC_PDF417I();
     case BC_DATAMATRIX:
-      return FX_NEW CBC_DataMatrix();
+      return new CBC_DataMatrix();
     case BC_UNKNOWN:
     default:
       return NULL;
@@ -368,7 +368,7 @@ CFX_WideString CFX_Barcode::Decode(CFX_DIBitmap* pBitmap, int32_t& errorCode) {
   return CFX_WideString();
 }
 IFX_Barcode* FX_Barcode_Create(BC_TYPE type) {
-  CFX_Barcode* pBarcode = FX_NEW CFX_Barcode;
+  CFX_Barcode* pBarcode = new CFX_Barcode;
   if (pBarcode->Crreate(type)) {
     return pBarcode;
   }

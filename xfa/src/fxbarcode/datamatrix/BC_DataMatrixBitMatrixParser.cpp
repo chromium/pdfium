@@ -40,7 +40,7 @@ void CBC_DataMatrixBitMatrixParser::Init(CBC_CommonBitMatrix* bitMatrix,
   BC_EXCEPTION_CHECK_ReturnVoid(e);
   m_mappingBitMatrix = ExtractDataRegion(bitMatrix, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  m_readMappingMatrix = FX_NEW CBC_CommonBitMatrix();
+  m_readMappingMatrix = new CBC_CommonBitMatrix();
   m_readMappingMatrix->Init(m_mappingBitMatrix->GetWidth(),
                             m_mappingBitMatrix->GetHeight());
 }
@@ -68,7 +68,7 @@ CBC_DataMatrixVersion* CBC_DataMatrixBitMatrixParser::ReadVersion(
   return temp;
 }
 CFX_ByteArray* CBC_DataMatrixBitMatrixParser::ReadCodewords(int32_t& e) {
-  CBC_AutoPtr<CFX_ByteArray> result(FX_NEW CFX_ByteArray());
+  CBC_AutoPtr<CFX_ByteArray> result(new CFX_ByteArray());
   result->SetSize(m_version->GetTotalCodewords());
   int32_t resultOffset = 0;
   int32_t row = 4;
@@ -350,7 +350,7 @@ CBC_CommonBitMatrix* CBC_DataMatrixBitMatrixParser::ExtractDataRegion(
   int32_t numDataRegionsColumn = symbolSizeColumns / dataRegionSizeColumns;
   int32_t sizeDataRegionRow = numDataRegionsRow * dataRegionSizeRows;
   int32_t sizeDataRegionColumn = numDataRegionsColumn * dataRegionSizeColumns;
-  CBC_CommonBitMatrix* bitMatrixWithoutAlignment = FX_NEW CBC_CommonBitMatrix();
+  CBC_CommonBitMatrix* bitMatrixWithoutAlignment = new CBC_CommonBitMatrix();
   bitMatrixWithoutAlignment->Init(sizeDataRegionColumn, sizeDataRegionRow);
   int32_t dataRegionRow;
   for (dataRegionRow = 0; dataRegionRow < numDataRegionsRow; ++dataRegionRow) {

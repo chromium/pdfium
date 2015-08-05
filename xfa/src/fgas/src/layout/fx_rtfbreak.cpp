@@ -12,7 +12,7 @@ extern const FX_WCHAR gs_FX_TextLayout_VerticalMirror[64];
 extern const FX_WCHAR gs_FX_TextLayout_BidiMirror[512];
 extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32];
 IFX_RTFBreak* IFX_RTFBreak::Create(FX_DWORD dwPolicies) {
-  return FX_NEW CFX_RTFBreak(dwPolicies);
+  return new CFX_RTFBreak(dwPolicies);
 }
 CFX_RTFBreak::CFX_RTFBreak(FX_DWORD dwPolicies)
     : m_dwPolicies(dwPolicies),

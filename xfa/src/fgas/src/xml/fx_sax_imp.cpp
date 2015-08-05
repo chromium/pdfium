@@ -7,7 +7,7 @@
 #include "../fgas_base.h"
 #include "fx_sax_imp.h"
 IFX_SAXReader* FX_SAXReader_Create() {
-  return FX_NEW CFX_SAXReader;
+  return new CFX_SAXReader;
 }
 CFX_SAXFile::CFX_SAXFile()
     : m_pFile(NULL),
@@ -129,7 +129,7 @@ void CFX_SAXReader::Reset() {
   }
 }
 inline void CFX_SAXReader::Push() {
-  CFX_SAXItem* pNew = FX_NEW CFX_SAXItem;
+  CFX_SAXItem* pNew = new CFX_SAXItem;
   pNew->m_dwID = ++m_dwItemID;
   pNew->m_bSkip = m_pCurItem->m_bSkip;
   pNew->m_pPrev = m_pCurItem;
@@ -192,7 +192,7 @@ int32_t CFX_SAXReader::StartParse(IFX_FileRead* pFile,
   m_ePrevMode = FX_SAXMODE_Text;
   m_bCharData = FALSE;
   m_dwDataOffset = 0;
-  m_pRoot = m_pCurItem = FX_NEW CFX_SAXItem;
+  m_pRoot = m_pCurItem = new CFX_SAXItem;
   m_pCurItem->m_dwID = ++m_dwItemID;
   m_dwParseMode = dwParseMode;
   return 0;
@@ -371,7 +371,7 @@ void CFX_SAXReader::ParseDeclOrComment() {
     m_eMode = FX_SAXMODE_Comment;
     m_pCurItem->m_eNode = FX_SAXNODE_Comment;
     if (m_pCommentContext == NULL) {
-      m_pCommentContext = FX_NEW CFX_SAXCommentContext;
+      m_pCommentContext = new CFX_SAXCommentContext;
     }
     m_pCommentContext->m_iHeaderCount = 1;
     m_pCommentContext->m_iTailCount = 0;

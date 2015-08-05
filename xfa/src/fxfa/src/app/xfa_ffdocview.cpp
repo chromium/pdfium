@@ -313,7 +313,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
 }
 IXFA_WidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
   if (!m_pWidgetHandler) {
-    m_pWidgetHandler = FX_NEW CXFA_FFWidgetHandler(this);
+    m_pWidgetHandler = new CXFA_FFWidgetHandler(this);
   }
   return m_pWidgetHandler;
 }
@@ -322,7 +322,7 @@ IXFA_WidgetIterator* CXFA_FFDocView::CreateWidgetIterator() {
   if (!pFormRoot) {
     return NULL;
   }
-  return FX_NEW CXFA_FFDocWidgetIterator(this, pFormRoot);
+  return new CXFA_FFDocWidgetIterator(this, pFormRoot);
 }
 IXFA_WidgetAccIterator* CXFA_FFDocView::CreateWidgetAccIterator(
     XFA_WIDGETORDER eOrder) {
@@ -330,7 +330,7 @@ IXFA_WidgetAccIterator* CXFA_FFDocView::CreateWidgetAccIterator(
   if (!pFormRoot) {
     return NULL;
   }
-  return FX_NEW CXFA_WidgetAccIterator(this, pFormRoot);
+  return new CXFA_WidgetAccIterator(this, pFormRoot);
 }
 IXFA_Widget* CXFA_FFDocView::GetFocusWidget() {
   return m_pFocusWidget;
@@ -575,7 +575,7 @@ void CXFA_FFDocView::AddInvalidateRect(IXFA_PageView* pPageView,
                                        const CFX_RectF& rtInvalidate) {
   CFX_RectF* pRect = (CFX_RectF*)m_mapPageInvalidate.GetValueAt(pPageView);
   if (!pRect) {
-    pRect = FX_NEW CFX_RectF;
+    pRect = new CFX_RectF;
     pRect->Set(rtInvalidate.left, rtInvalidate.top, rtInvalidate.width,
                rtInvalidate.height);
     m_mapPageInvalidate.SetAt(pPageView, pRect);
@@ -890,7 +890,7 @@ IXFA_WidgetAccIterator* XFA_WidgetAccIterator_Create(
   if (!pTravelRoot) {
     return NULL;
   }
-  return FX_NEW CXFA_WidgetAccIterator(pTravelRoot->GetDocView(),
+  return new CXFA_WidgetAccIterator(pTravelRoot->GetDocView(),
                                        pTravelRoot->GetNode());
 }
 CXFA_WidgetAccIterator::CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView,

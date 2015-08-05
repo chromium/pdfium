@@ -381,7 +381,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageContent(
   CXFA_NodeArray retArray;
   Script_LayoutPseudoModel_GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea,
                                        retArray);
-  CXFA_ArrayNodeList* pArrayNodeList = FX_NEW CXFA_ArrayNodeList(m_pDocument);
+  CXFA_ArrayNodeList* pArrayNodeList = new CXFA_ArrayNodeList(m_pDocument);
   pArrayNodeList->SetArrayNodeList(retArray);
   FXJSE_Value_SetObject(pArguments->GetReturnValue(),
                         (CXFA_Object*)pArrayNodeList,

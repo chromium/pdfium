@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_PictureBox* CFWL_PictureBox::Create() {
-  return FX_NEW CFWL_PictureBox;
+  return new CFWL_PictureBox;
 }
 FWL_ERR CFWL_PictureBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);

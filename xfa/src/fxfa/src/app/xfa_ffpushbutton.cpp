@@ -144,18 +144,18 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
       FX_BOOL bRichText;
       if (m_pDataAcc->GetButtonRollover(wsRollover, bRichText)) {
         if (m_pRollProvider == NULL) {
-          m_pRollProvider = FX_NEW CXFA_TextProvider(
+          m_pRollProvider = new CXFA_TextProvider(
               m_pDataAcc, XFA_TEXTPROVIDERTYPE_Rollover);
         }
-        m_pRolloverTextLayout = FX_NEW CXFA_TextLayout(m_pRollProvider);
+        m_pRolloverTextLayout = new CXFA_TextLayout(m_pRollProvider);
       }
       CFX_WideString wsDown;
       if (m_pDataAcc->GetButtonDown(wsDown, bRichText)) {
         if (m_pDownProvider == NULL) {
           m_pDownProvider =
-              FX_NEW CXFA_TextProvider(m_pDataAcc, XFA_TEXTPROVIDERTYPE_Down);
+              new CXFA_TextProvider(m_pDataAcc, XFA_TEXTPROVIDERTYPE_Down);
         }
-        m_pDownTextLayout = FX_NEW CXFA_TextLayout(m_pDownProvider);
+        m_pDownTextLayout = new CXFA_TextLayout(m_pDownProvider);
       }
     }
   }

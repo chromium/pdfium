@@ -12,14 +12,14 @@ CXML_Parser::~CXML_Parser() {
   }
 }
 FX_BOOL CXML_Parser::Init(uint8_t* pBuffer, size_t size) {
-  m_pDataAcc = FX_NEW CXML_DataBufAcc(pBuffer, size);
+  m_pDataAcc = new CXML_DataBufAcc(pBuffer, size);
   if (!m_pDataAcc) {
     return FALSE;
   }
   return Init(TRUE);
 }
 FX_BOOL CXML_Parser::Init(IFX_FileRead* pFileRead) {
-  m_pDataAcc = FX_NEW CXML_DataStmAcc(pFileRead);
+  m_pDataAcc = new CXML_DataStmAcc(pFileRead);
   if (!m_pDataAcc) {
     return FALSE;
   }
@@ -370,7 +370,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
     return NULL;
   }
   CXML_Element* pElement;
-  pElement = FX_NEW CXML_Element;
+  pElement = new CXML_Element;
   if (pElement) {
     pElement->m_pParent = pParent;
     pElement->SetTag(tag_space, tag_name);
@@ -523,7 +523,7 @@ void CXML_Parser::InsertContentSegment(FX_BOOL bCDATA,
     return;
   }
   CXML_Content* pContent;
-  pContent = FX_NEW CXML_Content;
+  pContent = new CXML_Content;
   if (!pContent) {
     return;
   }
@@ -805,7 +805,7 @@ void CXML_AttrMap::SetAt(const CFX_ByteStringC& space,
     }
   }
   if (!m_pMap) {
-    m_pMap = FX_NEW CFX_ObjectArray<CXML_AttrItem>;
+    m_pMap = new CFX_ObjectArray<CXML_AttrItem>;
   }
   if (!m_pMap) {
     return;

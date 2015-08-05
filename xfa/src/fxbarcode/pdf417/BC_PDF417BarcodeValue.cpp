@@ -40,7 +40,7 @@ void CBC_BarcodeValue::setValue(int32_t value) {
 }
 CFX_Int32Array* CBC_BarcodeValue::getValue() {
   int32_t maxConfidence = -1;
-  CFX_Int32Array* result = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* result = new CFX_Int32Array;
   for (int32_t i = 0; i < m_keys.GetSize(); i++) {
     if (m_values.GetAt(i) > maxConfidence) {
       maxConfidence = m_values.GetAt(i);

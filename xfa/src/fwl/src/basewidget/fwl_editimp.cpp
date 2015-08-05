@@ -27,13 +27,13 @@ IFWL_Edit::~IFWL_Edit() {
   }
 }
 FWL_ERR IFWL_Edit::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_EditImp(pOuter);
+  m_pData = new CFWL_EditImp(pOuter);
   ((CFWL_EditImp*)m_pData)->SetInterface(this);
   return ((CFWL_EditImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_Edit::Initialize(const CFWL_WidgetImpProperties& properties,
                               IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_EditImp(properties, pOuter);
+  m_pData = new CFWL_EditImp(properties, pOuter);
   ((CFWL_EditImp*)m_pData)->SetInterface(this);
   return ((CFWL_EditImp*)m_pData)->Initialize();
 }
@@ -245,7 +245,7 @@ FWL_ERR CFWL_EditImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
   if (!m_pDelegate) {
-    m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_EditImpDelegate(this);
+    m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_EditImpDelegate(this);
   }
   InitCaret();
   if (!m_pEdtEngine) {

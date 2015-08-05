@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_DateTimePickerTP::CFWL_DateTimePickerTP() {
-  m_pThemeData = FX_NEW DTPThemeData;
+  m_pThemeData = new DTPThemeData;
   initThemeData();
 }
 CFWL_DateTimePickerTP::~CFWL_DateTimePickerTP() {

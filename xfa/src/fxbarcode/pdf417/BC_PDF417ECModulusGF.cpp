@@ -27,7 +27,7 @@
 CBC_PDF417ECModulusGF* CBC_PDF417ECModulusGF::PDF417_GF = NULL;
 void CBC_PDF417ECModulusGF::Initialize(int32_t& e) {
   PDF417_GF =
-      FX_NEW CBC_PDF417ECModulusGF(CBC_PDF417Common::NUMBER_OF_CODEWORDS, 3, e);
+      new CBC_PDF417ECModulusGF(CBC_PDF417Common::NUMBER_OF_CODEWORDS, 3, e);
 }
 void CBC_PDF417ECModulusGF::Finalize() {
   delete PDF417_GF;
@@ -48,10 +48,10 @@ CBC_PDF417ECModulusGF::CBC_PDF417ECModulusGF(int32_t modulus,
   }
   CFX_Int32Array zero;
   zero.Add(0);
-  m_zero = FX_NEW CBC_PDF417ECModulusPoly(this, zero, e);
+  m_zero = new CBC_PDF417ECModulusPoly(this, zero, e);
   CFX_Int32Array one;
   one.Add(1);
-  m_one = FX_NEW CBC_PDF417ECModulusPoly(this, one, e);
+  m_one = new CBC_PDF417ECModulusPoly(this, one, e);
 }
 CBC_PDF417ECModulusGF::~CBC_PDF417ECModulusGF() {
   delete m_zero;
@@ -73,7 +73,7 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::buildMonomial(
   }
   CBC_PDF417ECModulusPoly* modulusPoly = NULL;
   if (coefficient == 0) {
-    modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(m_zero->getField(),
+    modulusPoly = new CBC_PDF417ECModulusPoly(m_zero->getField(),
                                                  m_zero->getCoefficients(), e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
@@ -81,7 +81,7 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::buildMonomial(
   CFX_Int32Array coefficients;
   coefficients.SetSize(degree + 1);
   coefficients[0] = coefficient;
-  modulusPoly = FX_NEW CBC_PDF417ECModulusPoly(this, coefficients, e);
+  modulusPoly = new CBC_PDF417ECModulusPoly(this, coefficients, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return modulusPoly;
 }

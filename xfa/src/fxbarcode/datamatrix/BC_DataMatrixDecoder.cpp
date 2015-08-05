@@ -34,7 +34,7 @@ CBC_DataMatrixDecoder::CBC_DataMatrixDecoder() {
 }
 void CBC_DataMatrixDecoder::Init() {
   m_rsDecoder =
-      FX_NEW CBC_ReedSolomonDecoder(CBC_ReedSolomonGF256::DataMatrixField);
+      new CBC_ReedSolomonDecoder(CBC_ReedSolomonGF256::DataMatrixField);
 }
 CBC_DataMatrixDecoder::~CBC_DataMatrixDecoder() {
   if (m_rsDecoder != NULL) {

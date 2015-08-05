@@ -21,20 +21,20 @@ IFWL_Form* IFWL_Form::Create() {
   return new IFWL_Form;
 }
 FWL_ERR IFWL_Form::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_FormImp(pOuter);
+  m_pData = new CFWL_FormImp(pOuter);
   ((CFWL_FormImp*)m_pData)->SetInterface(this);
   return ((CFWL_FormImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_Form::Initialize(CFWL_WidgetImpProperties& properties,
                               IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_FormImp(properties, pOuter);
+  m_pData = new CFWL_FormImp(properties, pOuter);
   ((CFWL_FormImp*)m_pData)->SetInterface(this);
   return ((CFWL_FormImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_Form::Initialize(CFWL_WidgetImpProperties& properties,
                               CFX_WideString* classname,
                               IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_FormImp(properties, pOuter);
+  m_pData = new CFWL_FormImp(properties, pOuter);
   ((CFWL_FormImp*)m_pData)->SetInterface(this);
   ((CFWL_FormImp*)m_pData)->SetPrivateData(this, classname, NULL);
   return ((CFWL_FormImp*)m_pData)->Initialize();
@@ -152,7 +152,7 @@ FWL_ERR CFWL_FormImp::Initialize() {
                                       FWL_ERR_Indefinite);
   RegisterForm();
   RegisterEventTarget();
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_FormDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_FormDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_FormImp::Finalize() {
@@ -436,7 +436,7 @@ IFWL_Widget* CFWL_FormImp::DoModal() {
   _FWL_RETURN_VALUE_IF_FAIL(pThread, NULL);
   IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
   _FWL_RETURN_VALUE_IF_FAIL(pDriver, NULL);
-  m_pNoteLoop = FX_NEW CFWL_NoteLoop(this);
+  m_pNoteLoop = new CFWL_NoteLoop(this);
   pDriver->PushNoteLoop((IFWL_NoteLoop*)m_pNoteLoop);
   m_bDoModalFlag = TRUE;
   SetStates(FWL_WGTSTATE_Invisible, FALSE);
@@ -781,7 +781,7 @@ void CFWL_FormImp::ReSetSysBtn() {
   }
   m_iSysBox = 0;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_CloseBox) {
-    m_pCloseBox = FX_NEW CFWL_SysBtn;
+    m_pCloseBox = new CFWL_SysBtn;
     if (m_bCustomizeLayout) {
       CFWL_ThemeBackground param;
       param.m_pWidget = m_pInterface;
@@ -795,7 +795,7 @@ void CFWL_FormImp::ReSetSysBtn() {
     m_iSysBox++;
   }
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_MaximizeBox) {
-    m_pMaxBox = FX_NEW CFWL_SysBtn;
+    m_pMaxBox = new CFWL_SysBtn;
     if (m_bCustomizeLayout) {
       CFWL_ThemeBackground param;
       param.m_pWidget = m_pInterface;
@@ -815,7 +815,7 @@ void CFWL_FormImp::ReSetSysBtn() {
     m_iSysBox++;
   }
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_MinimizeBox) {
-    m_pMinBox = FX_NEW CFWL_SysBtn;
+    m_pMinBox = new CFWL_SysBtn;
     if (m_bCustomizeLayout) {
       CFWL_ThemeBackground param;
       param.m_pWidget = m_pInterface;

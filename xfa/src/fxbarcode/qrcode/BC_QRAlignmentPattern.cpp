@@ -45,5 +45,5 @@ FX_BOOL CBC_QRAlignmentPattern::AboutEquals(FX_FLOAT moduleSize,
   return FALSE;
 }
 CBC_QRAlignmentPattern* CBC_QRAlignmentPattern::Clone() {
-  return FX_NEW CBC_QRAlignmentPattern(m_x, m_y, m_moduleSize);
+  return new CBC_QRAlignmentPattern(m_x, m_y, m_moduleSize);
 }

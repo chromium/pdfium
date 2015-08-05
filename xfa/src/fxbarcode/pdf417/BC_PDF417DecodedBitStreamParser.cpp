@@ -64,7 +64,7 @@ CBC_CommonDecoderResult* CBC_DecodedBitStreamPaser::decode(
   int32_t codeIndex = 1;
   int32_t code = codewords.GetAt(codeIndex);
   codeIndex++;
-  CBC_PDF417ResultMetadata* resultMetadata = FX_NEW CBC_PDF417ResultMetadata;
+  CBC_PDF417ResultMetadata* resultMetadata = new CBC_PDF417ResultMetadata;
   while (codeIndex < codewords[0]) {
     switch (code) {
       case TEXT_COMPACTION_MODE_LATCH:
@@ -110,7 +110,7 @@ CBC_CommonDecoderResult* CBC_DecodedBitStreamPaser::decode(
   }
   CFX_ByteArray rawBytes;
   CFX_PtrArray byteSegments;
-  CBC_CommonDecoderResult* tempCd = FX_NEW CBC_CommonDecoderResult();
+  CBC_CommonDecoderResult* tempCd = new CBC_CommonDecoderResult();
   tempCd->Init(rawBytes, result, byteSegments, ecLevel, e);
   if (e != BCExceptionNO) {
     delete resultMetadata;

@@ -7,7 +7,7 @@
 #include "../../../foxitlib.h"
 #define FWL_SCROLL_PawLen 12.5f
 CFWL_ScrollBarTP::CFWL_ScrollBarTP() {
-  m_pThemeData = FX_NEW SBThemeData;
+  m_pThemeData = new SBThemeData;
   SetThemeData(0);
 }
 CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {

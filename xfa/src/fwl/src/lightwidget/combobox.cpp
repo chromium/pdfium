@@ -6,7 +6,7 @@
 
 #include "../../../foxitlib.h"
 CFWL_ComboBox* CFWL_ComboBox::Create() {
-  return FX_NEW CFWL_ComboBox;
+  return new CFWL_ComboBox;
 }
 FWL_ERR CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);
@@ -34,14 +34,14 @@ FWL_ERR CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   return ret;
 }
 int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText) {
-  CFWL_ComboBoxItem* pItem = FX_NEW CFWL_ComboBoxItem;
+  CFWL_ComboBoxItem* pItem = new CFWL_ComboBoxItem;
   pItem->m_wsText = wsText;
   pItem->m_dwStyles = 0;
   return m_comboBoxData.m_arrItem.Add(pItem);
 }
 int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText,
                                  CFX_DIBitmap* pIcon) {
-  CFWL_ComboBoxItem* pItem = FX_NEW CFWL_ComboBoxItem;
+  CFWL_ComboBoxItem* pItem = new CFWL_ComboBoxItem;
   pItem->m_wsText = wsText;
   pItem->m_dwStyles = 0;
   pItem->m_pDIB = pIcon;

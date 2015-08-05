@@ -13,7 +13,7 @@ void CFX_GEModule::InitPlatform() {
   }
   IFPF_FontMgr* pFontMgr = pDeviceModule->GetFontMgr();
   if (pFontMgr) {
-    CFX_AndroidFontInfo* pFontInfo = FX_NEW CFX_AndroidFontInfo;
+    CFX_AndroidFontInfo* pFontInfo = new CFX_AndroidFontInfo;
     if (!pFontInfo) {
       return;
     }

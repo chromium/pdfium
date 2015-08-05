@@ -380,7 +380,7 @@ FX_BOOL CBC_QRFinderPatternFinder::HandlePossibleCenter(
       }
       if (!found) {
         m_possibleCenters.Add(
-            FX_NEW CBC_QRFinderPattern(centerJ, centerI, estimatedModuleSize));
+            new CBC_QRFinderPattern(centerJ, centerI, estimatedModuleSize));
       }
       return TRUE;
     }
@@ -463,7 +463,7 @@ CFX_PtrArray* CBC_QRFinderPatternFinder::SelectBestpatterns(int32_t& e) {
   if (m_possibleCenters.GetSize() > 3) {
     BC_FX_PtrArray_Sort(m_possibleCenters, centerComparator);
   }
-  CFX_PtrArray* vec = FX_NEW CFX_PtrArray();
+  CFX_PtrArray* vec = new CFX_PtrArray();
   vec->SetSize(3);
   (*vec)[0] = ((CBC_QRFinderPattern*)m_possibleCenters[0])->Clone();
   (*vec)[1] = ((CBC_QRFinderPattern*)m_possibleCenters[1])->Clone();

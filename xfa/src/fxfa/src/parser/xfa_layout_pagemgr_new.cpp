@@ -56,7 +56,7 @@ FX_BOOL CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     m_pPageSetLayoutItemRoot->m_pFormNode = m_pTemplatePageSetRoot;
   } else {
     m_pPageSetLayoutItemRoot =
-        FX_NEW CXFA_ContainerLayoutItemImpl(m_pTemplatePageSetRoot);
+        new CXFA_ContainerLayoutItemImpl(m_pTemplatePageSetRoot);
   }
   m_pPageSetCurRoot = m_pPageSetLayoutItemRoot;
   m_pTemplatePageSetRoot->SetUserData(XFA_LAYOUTITEMKEY,
@@ -335,7 +335,7 @@ FX_BOOL XFA_LayoutPageMgr_RunBreakTestScript(CXFA_Node* pTestScript) {
 CXFA_ContainerRecord* CXFA_LayoutPageMgr::CreateContainerRecord(
     CXFA_Node* pPageNode,
     FX_BOOL bCreateNew) {
-  CXFA_ContainerRecord* pNewRecord = FX_NEW CXFA_ContainerRecord();
+  CXFA_ContainerRecord* pNewRecord = new CXFA_ContainerRecord();
   if (m_pCurrentContainerRecord) {
     if (!IsPageSetRootOrderedOccurrence() || pPageNode == NULL) {
       *pNewRecord = *GetCurrentContainerRecord();
@@ -368,7 +368,7 @@ CXFA_ContainerRecord* CXFA_LayoutPageMgr::CreateContainerRecord(
                 ->GetUserData(XFA_LAYOUTITEMKEY);
       }
       CXFA_ContainerLayoutItemImpl* pPageSetLayoutItem =
-          FX_NEW CXFA_ContainerLayoutItemImpl(pPageSet);
+          new CXFA_ContainerLayoutItemImpl(pPageSet);
       pPageSet->SetUserData(XFA_LAYOUTITEMKEY, (void*)pPageSetLayoutItem);
       if (pParentPageSetLayout == NULL) {
         CXFA_ContainerLayoutItemImpl* pPrePageSet = m_pPageSetLayoutItemRoot;
@@ -390,7 +390,7 @@ CXFA_ContainerRecord* CXFA_LayoutPageMgr::CreateContainerRecord(
         pNewRecord->pCurPageSet = m_pPageSetLayoutItemRoot;
       } else {
         CXFA_ContainerLayoutItemImpl* pPageSetLayoutItem =
-            FX_NEW CXFA_ContainerLayoutItemImpl(pPageSet);
+            new CXFA_ContainerLayoutItemImpl(pPageSet);
         pPageSet->SetUserData(XFA_LAYOUTITEMKEY, (void*)pPageSetLayoutItem);
         m_pPageSetLayoutItemRoot->AddChild(pPageSetLayoutItem);
         pNewRecord->pCurPageSet = pPageSetLayoutItem;
@@ -435,7 +435,7 @@ void CXFA_LayoutPageMgr::AddContentAreaLayoutItem(
     return;
   }
   CXFA_ContainerLayoutItemImpl* pNewContentAreaLayoutItem =
-      FX_NEW CXFA_ContainerLayoutItemImpl(pContentArea);
+      new CXFA_ContainerLayoutItemImpl(pContentArea);
   ASSERT(pNewRecord->pCurPageArea);
   pNewRecord->pCurPageArea->AddChild(pNewContentAreaLayoutItem);
   pNewRecord->pCurContentArea = pNewContentAreaLayoutItem;

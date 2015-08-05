@@ -39,7 +39,7 @@ CBC_CommonBitArray* CBC_GlobalHistogramBinarizer::GetBlackRow(
     int32_t& e) {
   CBC_LuminanceSource* source = GetLuminanceSource();
   int32_t width = source->GetWidth();
-  CBC_AutoPtr<CBC_CommonBitArray> result(FX_NEW CBC_CommonBitArray(width));
+  CBC_AutoPtr<CBC_CommonBitArray> result(new CBC_CommonBitArray(width));
   InitArrays(width);
   CFX_ByteArray* localLuminances = source->GetRow(y, m_luminance, e);
   if (e != BCExceptionNO) {
@@ -73,7 +73,7 @@ CBC_CommonBitMatrix* CBC_GlobalHistogramBinarizer::GetBlackMatrix(int32_t& e) {
   CBC_LuminanceSource* source = GetLuminanceSource();
   int32_t width = source->GetWidth();
   int32_t height = source->GetHeight();
-  CBC_CommonBitMatrix* BitMatrixTemp = FX_NEW CBC_CommonBitMatrix();
+  CBC_CommonBitMatrix* BitMatrixTemp = new CBC_CommonBitMatrix();
   BitMatrixTemp->Init(width, height);
   CBC_AutoPtr<CBC_CommonBitMatrix> matrix(BitMatrixTemp);
   InitArrays(width);

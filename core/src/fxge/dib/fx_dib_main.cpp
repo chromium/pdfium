@@ -161,7 +161,7 @@ CFX_DIBitmap* CFX_DIBSource::Clone(const FX_RECT* pClip) const {
       return NULL;
     }
   }
-  CFX_DIBitmap* pNewBitmap = FX_NEW CFX_DIBitmap;
+  CFX_DIBitmap* pNewBitmap = new CFX_DIBitmap;
   if (!pNewBitmap) {
     return NULL;
   }
@@ -226,7 +226,7 @@ FX_BOOL CFX_DIBSource::BuildAlphaMask() {
   if (m_pAlphaMask) {
     return TRUE;
   }
-  m_pAlphaMask = FX_NEW CFX_DIBitmap;
+  m_pAlphaMask = new CFX_DIBitmap;
   if (!m_pAlphaMask) {
     return FALSE;
   }
@@ -591,7 +591,7 @@ CFX_DIBitmap* CFX_DIBSource::GetAlphaMask(const FX_RECT* pClip) const {
       return NULL;
     }
   }
-  CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
+  CFX_DIBitmap* pMask = new CFX_DIBitmap;
   if (!pMask) {
     return NULL;
   }
@@ -925,7 +925,7 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform) {
         int b = (uint8_t)m_pPalette[i];
         gray[i] = (uint8_t)FXRGB2GRAY(r, g, b);
       }
-      CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
+      CFX_DIBitmap* pMask = new CFX_DIBitmap;
       if (!pMask) {
         return FALSE;
       }
@@ -959,7 +959,7 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform) {
         int b = (uint8_t)m_pPalette[i];
         gray[i] = (uint8_t)FXRGB2GRAY(r, g, b);
       }
-      CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
+      CFX_DIBitmap* pMask = new CFX_DIBitmap;
       if (!pMask) {
         return FALSE;
       }
@@ -979,7 +979,7 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform) {
       break;
     }
     case FXDIB_Rgb: {
-      CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
+      CFX_DIBitmap* pMask = new CFX_DIBitmap;
       if (!pMask) {
         return FALSE;
       }
@@ -1000,7 +1000,7 @@ FX_BOOL CFX_DIBitmap::GetGrayData(void* pIccTransform) {
       break;
     }
     case FXDIB_Rgb32: {
-      CFX_DIBitmap* pMask = FX_NEW CFX_DIBitmap;
+      CFX_DIBitmap* pMask = new CFX_DIBitmap;
       if (!pMask) {
         return FALSE;
       }
@@ -1443,7 +1443,7 @@ FX_BOOL CFX_DIBitmap::DitherFS(const FX_DWORD* pPalette,
   return TRUE;
 }
 CFX_DIBitmap* CFX_DIBSource::FlipImage(FX_BOOL bXFlip, FX_BOOL bYFlip) const {
-  CFX_DIBitmap* pFlipped = FX_NEW CFX_DIBitmap;
+  CFX_DIBitmap* pFlipped = new CFX_DIBitmap;
   if (!pFlipped) {
     return NULL;
   }
@@ -1521,7 +1521,7 @@ CFX_DIBExtractor::CFX_DIBExtractor(const CFX_DIBSource* pSrc) {
   if (pSrc->GetBuffer() == NULL) {
     m_pBitmap = pSrc->Clone();
   } else {
-    m_pBitmap = FX_NEW CFX_DIBitmap;
+    m_pBitmap = new CFX_DIBitmap;
     if (!m_pBitmap) {
       return;
     }
@@ -1644,7 +1644,7 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
       return TRUE;
     }
     m_Status = 2;
-    m_pTransformer = FX_NEW CFX_ImageTransformer;
+    m_pTransformer = new CFX_ImageTransformer;
     if (!m_pTransformer) {
       return FALSE;
     }
@@ -1752,7 +1752,7 @@ FX_BOOL CFX_BitmapStorer::SetInfo(int width,
                                   int height,
                                   FXDIB_Format src_format,
                                   FX_DWORD* pSrcPalette) {
-  m_pBitmap = FX_NEW CFX_DIBitmap;
+  m_pBitmap = new CFX_DIBitmap;
   if (!m_pBitmap) {
     return FALSE;
   }

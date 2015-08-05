@@ -96,7 +96,7 @@ CBC_CommonPerspectiveTransform::SquareToQuadrilateral(FX_FLOAT x0,
   FX_FLOAT dy2 = y3 - y2;
   FX_FLOAT dy3 = y0 - y1 + y2 - y3;
   if ((dy2 == 0.0f) && (dy3 == 0.0f)) {
-    return FX_NEW CBC_CommonPerspectiveTransform(x1 - x0, x2 - x1, x0, y1 - y0,
+    return new CBC_CommonPerspectiveTransform(x1 - x0, x2 - x1, x0, y1 - y0,
                                                  y2 - y1, y0, 0.0f, 0.0f, 1.0f);
   } else {
     FX_FLOAT dx1 = x1 - x2;
@@ -106,7 +106,7 @@ CBC_CommonPerspectiveTransform::SquareToQuadrilateral(FX_FLOAT x0,
     FX_FLOAT denominator = dx1 * dy2 - dx2 * dy1;
     FX_FLOAT a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
     FX_FLOAT a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
-    return FX_NEW CBC_CommonPerspectiveTransform(
+    return new CBC_CommonPerspectiveTransform(
         x1 - x0 + a13 * x1, x3 - x0 + a23 * x3, x0, y1 - y0 + a13 * y1,
         y3 - y0 + a23 * y3, y0, a13, a23, 1.0f);
   }
@@ -125,7 +125,7 @@ CBC_CommonPerspectiveTransform::QuadrilateralToSquare(FX_FLOAT x0,
   return temp1->BuildAdjoint();
 }
 CBC_CommonPerspectiveTransform* CBC_CommonPerspectiveTransform::BuildAdjoint() {
-  return FX_NEW CBC_CommonPerspectiveTransform(
+  return new CBC_CommonPerspectiveTransform(
       m_a22 * m_a33 - m_a23 * m_a32, m_a23 * m_a31 - m_a21 * m_a33,
       m_a21 * m_a32 - m_a22 * m_a31, m_a13 * m_a32 - m_a12 * m_a33,
       m_a11 * m_a33 - m_a13 * m_a31, m_a12 * m_a31 - m_a11 * m_a32,
@@ -134,7 +134,7 @@ CBC_CommonPerspectiveTransform* CBC_CommonPerspectiveTransform::BuildAdjoint() {
 }
 CBC_CommonPerspectiveTransform* CBC_CommonPerspectiveTransform::Times(
     CBC_CommonPerspectiveTransform& other) {
-  return FX_NEW CBC_CommonPerspectiveTransform(
+  return new CBC_CommonPerspectiveTransform(
       m_a11 * other.m_a11 + m_a21 * other.m_a12 + m_a31 * other.m_a13,
       m_a11 * other.m_a21 + m_a21 * other.m_a22 + m_a31 * other.m_a23,
       m_a11 * other.m_a31 + m_a21 * other.m_a32 + m_a31 * other.m_a33,

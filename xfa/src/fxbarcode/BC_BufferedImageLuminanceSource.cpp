@@ -38,7 +38,7 @@ static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread) {
   if (status != FXCODEC_STATUS_FRAME_READY) {
     return NULL;
   }
-  bitmap = FX_NEW CFX_DIBitmap;
+  bitmap = new CFX_DIBitmap;
   bitmap->Create(pImageCodec->GetWidth(), pImageCodec->GetHeight(), FXDIB_Argb);
   bitmap->Clear(FXARGB_MAKE(0xFF, 0xFF, 0xFF, 0xFF));
   CBC_Pause pause;
@@ -149,7 +149,7 @@ CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetRow(int32_t y,
   return &row;
 }
 CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetMatrix() {
-  CFX_ByteArray* matirx = FX_NEW CFX_ByteArray();
+  CFX_ByteArray* matirx = new CFX_ByteArray();
   matirx->SetSize(m_bytesPerLine * m_height);
   int32_t* rgb = (int32_t*)m_pBitmap->GetBuffer();
   int32_t y;

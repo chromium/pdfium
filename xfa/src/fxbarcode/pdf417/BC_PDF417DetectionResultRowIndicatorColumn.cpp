@@ -113,7 +113,7 @@ CFX_Int32Array* CBC_DetectionResultRowIndicatorColumn::getRowHeights(
     return NULL;
   }
   adjustIncompleteIndicatorColumnRowNumbers(*barcodeMetadata);
-  CFX_Int32Array* result = FX_NEW CFX_Int32Array;
+  CFX_Int32Array* result = new CFX_Int32Array;
   result->SetSize(barcodeMetadata->getRowCount());
   for (int32_t i = 0; i < getCodewords()->GetSize(); i++) {
     CBC_Codeword* codeword = (CBC_Codeword*)getCodewords()->GetAt(i);
@@ -209,7 +209,7 @@ CBC_DetectionResultRowIndicatorColumn::getBarcodeMetadata() {
     return NULL;
   }
   CBC_BarcodeMetadata* barcodeMetadata =
-      FX_NEW CBC_BarcodeMetadata(barcodeColumnCount.getValue()->GetAt(0),
+      new CBC_BarcodeMetadata(barcodeColumnCount.getValue()->GetAt(0),
                                  barcodeRowCountUpperPart.getValue()->GetAt(0),
                                  barcodeRowCountLowerPart.getValue()->GetAt(0),
                                  barcodeECLevel.getValue()->GetAt(0));

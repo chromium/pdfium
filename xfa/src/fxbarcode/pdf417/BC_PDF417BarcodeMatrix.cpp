@@ -27,7 +27,7 @@ CBC_BarcodeMatrix::CBC_BarcodeMatrix(int32_t height, int32_t width) {
   m_matrix.SetSize(height + 2);
   for (int32_t i = 0, matrixLength = m_matrix.GetSize(); i < matrixLength;
        i++) {
-    m_matrix[i] = FX_NEW CBC_BarcodeRow((width + 4) * 17 + 1);
+    m_matrix[i] = new CBC_BarcodeRow((width + 4) * 17 + 1);
   }
   m_width = width * 17;
   m_height = height + 2;

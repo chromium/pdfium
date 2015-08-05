@@ -16,7 +16,7 @@ class CFX_TxtLine {
  public:
   CFX_TxtLine(int32_t iBlockSize)
       : m_iStart(0), m_iWidth(0), m_iArabicChars(0) {
-    m_pLineChars = FX_NEW CFX_TxtCharArray;
+    m_pLineChars = new CFX_TxtCharArray;
     m_pLinePieces = new CFX_TxtPieceArray(16);
   }
   ~CFX_TxtLine() {

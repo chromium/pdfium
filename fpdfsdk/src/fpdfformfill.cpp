@@ -299,7 +299,7 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
     options.m_BackColor = 0xffffff;
   }
   options.m_AddFlags = flags >> 8;
-  options.m_pOCContext = FX_NEW CPDF_OCContext(pPDFDoc);
+  options.m_pOCContext = new CPDF_OCContext(pPDFDoc);
 
   if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView((CPDFXFA_Page*)page))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, &clip);
@@ -496,7 +496,7 @@ FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
   if (pXFAMenuHander == NULL)
     return;
 
-  CFX_ByteStringArray* sSuggestWords = FX_NEW CFX_ByteStringArray;
+  CFX_ByteStringArray* sSuggestWords = new CFX_ByteStringArray;
   CFX_PointF ptPopup;
   ptPopup.x = x;
   ptPopup.y = y;

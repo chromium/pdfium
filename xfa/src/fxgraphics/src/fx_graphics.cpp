@@ -59,7 +59,7 @@ FX_ERR CFX_Graphics::Create(int32_t width,
   _type = FX_CONTEXT_Device;
   _info._isAntialiasing = isAntialiasing;
   {
-    _aggGraphics = FX_NEW CAGG_Graphics;
+    _aggGraphics = new CAGG_Graphics;
     return _aggGraphics->Create(this, width, height, format);
   }
 }
@@ -112,7 +112,7 @@ FX_ERR CFX_Graphics::SaveGraphState() {
     case FX_CONTEXT_Device: {
       _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
       _renderDevice->SaveState();
-      TInfo* info = FX_NEW TInfo;
+      TInfo* info = new TInfo;
       info->_graphState.Copy(_info._graphState);
       info->_isAntialiasing = _info._isAntialiasing;
       info->_strokeAlignment = _info._strokeAlignment;
@@ -1152,7 +1152,7 @@ FX_ERR CAGG_Graphics::Create(CFX_Graphics* owner,
   if (_owner) {
     return FX_ERR_Property_Invalid;
   }
-  CFX_FxgeDevice* device = FX_NEW CFX_FxgeDevice;
+  CFX_FxgeDevice* device = new CFX_FxgeDevice;
   device->Create(width, height, format);
   _owner = owner;
   _owner->_renderDevice = device;
@@ -1172,7 +1172,7 @@ FX_ERR CFX_Path::Create() {
   if (_generator) {
     return FX_ERR_Property_Invalid;
   }
-  _generator = FX_NEW CFX_PathGenerator;
+  _generator = new CFX_PathGenerator;
   _generator->Create();
   return FX_ERR_Succeeded;
 }

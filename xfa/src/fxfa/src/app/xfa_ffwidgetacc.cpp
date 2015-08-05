@@ -49,8 +49,8 @@ class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
     if (m_pTextLayout) {
       return TRUE;
     }
-    m_pTextProvider = FX_NEW CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Text);
-    m_pTextLayout = FX_NEW CXFA_TextLayout(m_pTextProvider);
+    m_pTextProvider = new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Text);
+    m_pTextLayout = new CXFA_TextLayout(m_pTextProvider);
     return m_pTextLayout != NULL;
   }
   CXFA_TextLayout* m_pTextLayout;
@@ -128,8 +128,8 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
     if (caption.IsExistInXML() &&
         caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
       m_pCapTextProvider =
-          FX_NEW CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Caption);
-      m_pCapTextLayout = FX_NEW CXFA_TextLayout(m_pCapTextProvider);
+          new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Caption);
+      m_pCapTextLayout = new CXFA_TextLayout(m_pCapTextProvider);
       return m_pCapTextLayout != NULL;
     }
     return FALSE;
@@ -693,7 +693,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
         CXFA_CalcData* pGlobalData =
             (CXFA_CalcData*)pRefNode->GetUserData(XFA_CalcData);
         if (!pGlobalData) {
-          pGlobalData = FX_NEW CXFA_CalcData;
+          pGlobalData = new CXFA_CalcData;
           pRefNode->SetUserData(XFA_CalcData, pGlobalData,
                                 &gs_XFADeleteCalcData);
         }
@@ -1272,7 +1272,7 @@ FX_BOOL CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex,
   }
   if (!((CXFA_FieldLayoutData*)m_pLayoutData)->m_pFieldSplitArray) {
     ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pFieldSplitArray =
-        FX_NEW CFX_FloatArray;
+        new CFX_FloatArray;
   }
   CFX_FloatArray* pFieldArray =
       ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pFieldSplitArray;
@@ -1424,24 +1424,24 @@ void CXFA_WidgetAcc::InitLayoutData() {
   }
   switch (GetUIType()) {
     case XFA_ELEMENT_Text:
-      m_pLayoutData = FX_NEW CXFA_TextLayoutData;
+      m_pLayoutData = new CXFA_TextLayoutData;
       return;
     case XFA_ELEMENT_TextEdit:
-      m_pLayoutData = FX_NEW CXFA_TextEditData;
+      m_pLayoutData = new CXFA_TextEditData;
       return;
     case XFA_ELEMENT_Image:
-      m_pLayoutData = FX_NEW CXFA_ImageLayoutData;
+      m_pLayoutData = new CXFA_ImageLayoutData;
       return;
     case XFA_ELEMENT_ImageEdit:
-      m_pLayoutData = FX_NEW CXFA_ImageEditData;
+      m_pLayoutData = new CXFA_ImageEditData;
       return;
     default:
       break;
   }
   if (GetClassID() == XFA_ELEMENT_Field) {
-    m_pLayoutData = FX_NEW CXFA_FieldLayoutData;
+    m_pLayoutData = new CXFA_FieldLayoutData;
   } else {
-    m_pLayoutData = FX_NEW CXFA_WidgetLayoutData;
+    m_pLayoutData = new CXFA_WidgetLayoutData;
   }
 }
 void CXFA_WidgetAcc::StartTextLayout(FX_FLOAT& fCalcWidth,

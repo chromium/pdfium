@@ -190,8 +190,8 @@ void JSMethod(const char* method_name_string,
   const wchar_t* js_class_name::m_pClassName = JS_WIDESTRING(class_name);      \
   void js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject obj,         \
                                     JSFXObject global) {                       \
-    CJS_Object* pObj = FX_NEW js_class_name(obj);                              \
-    pObj->SetEmbedObject(FX_NEW class_alternate(pObj));                        \
+    CJS_Object* pObj = new js_class_name(obj);                              \
+    pObj->SetEmbedObject(new class_alternate(pObj));                        \
     JS_SetPrivate(NULL, obj, (void*)pObj);                                     \
     pObj->InitInstance(cc);                                                    \
   }                                                                            \
@@ -398,8 +398,8 @@ void JSSpecialPropDel(const char* class_name,
   }                                                                            \
   void js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject obj,         \
                                     JSFXObject global) {                       \
-    CJS_Object* pObj = FX_NEW js_class_name(obj);                              \
-    pObj->SetEmbedObject(FX_NEW class_alternate(pObj));                        \
+    CJS_Object* pObj = new js_class_name(obj);                              \
+    pObj->SetEmbedObject(new class_alternate(pObj));                        \
     JS_SetPrivate(NULL, obj, (void*)pObj);                                     \
     pObj->InitInstance(cc);                                                    \
   }                                                                            \

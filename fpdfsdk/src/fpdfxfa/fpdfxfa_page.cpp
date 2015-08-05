@@ -51,7 +51,7 @@ FX_BOOL CPDFXFA_Page::LoadPDFPage() {
       m_pPDFPage = NULL;
     }
 
-    m_pPDFPage = FX_NEW CPDF_Page;
+    m_pPDFPage = new CPDF_Page;
     m_pPDFPage->Load(pPDFDoc, pDict);
     m_pPDFPage->ParseContent();
     return TRUE;
@@ -113,7 +113,7 @@ FX_BOOL CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
   if (m_pPDFPage)
     delete m_pPDFPage;
 
-  m_pPDFPage = FX_NEW CPDF_Page();
+  m_pPDFPage = new CPDF_Page();
   m_pPDFPage->Load(m_pDocument->GetPDFDoc(), pageDict);
   m_pPDFPage->ParseContent();
 

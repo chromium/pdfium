@@ -28,7 +28,7 @@ CBC_ReedSolomonEncoder::CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field) {
   m_field = field;
 }
 void CBC_ReedSolomonEncoder::Init() {
-  m_cachedGenerators.Add(FX_NEW CBC_ReedSolomonGF256Poly(m_field, 1));
+  m_cachedGenerators.Add(new CBC_ReedSolomonGF256Poly(m_field, 1));
 }
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(int32_t degree,
                                                                  int32_t& e) {

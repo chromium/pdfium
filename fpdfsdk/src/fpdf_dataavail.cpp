@@ -72,7 +72,7 @@ class CFPDF_DataAvail {
 
 DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail,
                                               FPDF_FILEACCESS* file) {
-  CFPDF_DataAvail* pAvail = FX_NEW CFPDF_DataAvail;
+  CFPDF_DataAvail* pAvail = new CFPDF_DataAvail;
   pAvail->m_FileAvail.Set(file_avail);
   pAvail->m_FileRead.Set(file);
   pAvail->m_pDataAvail =
@@ -98,7 +98,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL
 FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   if (avail == NULL)
     return NULL;
-  CPDF_Parser* pParser = FX_NEW CPDF_Parser;
+  CPDF_Parser* pParser = new CPDF_Parser;
   pParser->SetPassword(password);
 
   FX_DWORD err_code = pParser->StartAsynParse(
@@ -112,7 +112,7 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   CheckUnSupportError(pParser->GetDocument(), FPDF_ERR_SUCCESS);
   CPDF_Document* pPDFDoc = pParser->GetDocument();
   CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
-  CPDFXFA_Document* pDocument = FX_NEW CPDFXFA_Document(pPDFDoc, pApp);
+  CPDFXFA_Document* pDocument = new CPDFXFA_Document(pPDFDoc, pApp);
   return pDocument;
 }
 

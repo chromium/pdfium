@@ -97,7 +97,7 @@ CFWL_NoteDriver::CFWL_NoteDriver()
       m_pHover(NULL),
       m_pGrab(NULL),
       m_hook(NULL) {
-  m_pNoteLoop = FX_NEW CFWL_NoteLoop;
+  m_pNoteLoop = new CFWL_NoteLoop;
   PushNoteLoop((IFWL_NoteLoop*)m_pNoteLoop);
 }
 CFWL_NoteDriver::~CFWL_NoteDriver() {
@@ -169,7 +169,7 @@ FWL_ERR CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget* pListener,
   }
   CFWL_EventTarget* value = NULL;
   if (!m_eventTargets.Lookup((void*)(uintptr_t)dwkey, (void*&)value)) {
-    value = FX_NEW CFWL_EventTarget(this, pListener);
+    value = new CFWL_EventTarget(this, pListener);
     m_eventTargets.SetAt((void*)(uintptr_t)dwkey, value);
   }
   value->SetEventSource(pEventSource, dwFilter);
@@ -912,7 +912,7 @@ CFWL_ToolTipContainer* CFWL_ToolTipContainer::s_pInstance = NULL;
 
 CFWL_ToolTipContainer::CFWL_ToolTipContainer()
     : pCurTarget(NULL), m_pToolTipImp(NULL) {
-  m_ToolTipDp = FX_NEW CFWL_CoreToopTipDP;
+  m_ToolTipDp = new CFWL_CoreToopTipDP;
   m_ToolTipDp->m_nInitDelayTime = 0;
   m_ToolTipDp->m_nAutoPopDelayTime = 2000;
 }
@@ -931,7 +931,7 @@ CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {
 // static
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::getInstance() {
   if (!s_pInstance) {
-    s_pInstance = FX_NEW CFWL_ToolTipContainer;
+    s_pInstance = new CFWL_ToolTipContainer;
   }
   return s_pInstance;
 }
@@ -978,7 +978,7 @@ FX_BOOL CFWL_ToolTipContainer::ProcessEnter(CFWL_EvtMouse* pEvt,
       CFX_RectF rtTooltip;
       rtTooltip.Set(150, 150, 100, 50);
       prop.m_rtWidget = rtTooltip;
-      m_pToolTipImp = FX_NEW CFWL_ToolTipImp(prop);
+      m_pToolTipImp = new CFWL_ToolTipImp(prop);
       IFWL_ToolTip* pToolTip = IFWL_ToolTip::Create();
       m_pToolTipImp->SetInterface(pToolTip);
       ((IFWL_TargetData*)pToolTip)->SetData(m_pToolTipImp);

@@ -175,7 +175,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDict("AP");
 
   if (pAPDict == NULL) {
-    pAPDict = FX_NEW CPDF_Dictionary;
+    pAPDict = new CPDF_Dictionary;
     m_pAnnotDict->SetAt("AP", pAPDict);
   }
 
@@ -194,14 +194,14 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
 
   if (!pStreamDict) {
-    pStreamDict = FX_NEW CPDF_Dictionary;
+    pStreamDict = new CPDF_Dictionary;
     pStream->InitStream(NULL, 0, pStreamDict);
   }
 
   if (pStreamDict) {
     CPDF_Dictionary* pStreamResList = pStreamDict->GetDict("Resources");
     if (!pStreamResList) {
-      pStreamResList = FX_NEW CPDF_Dictionary();
+      pStreamResList = new CPDF_Dictionary();
       pStreamDict->SetAt("Resources", pStreamResList);
     }
 

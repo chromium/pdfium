@@ -32,7 +32,7 @@ const int32_t CBC_DataMatrixDetector::INTEGERS[5] = {0, 1, 2, 3, 4};
 CBC_DataMatrixDetector::CBC_DataMatrixDetector(CBC_CommonBitMatrix* image)
     : m_image(image), m_rectangleDetector(NULL) {}
 void CBC_DataMatrixDetector::Init(int32_t& e) {
-  m_rectangleDetector = FX_NEW CBC_WhiteRectangleDetector(m_image);
+  m_rectangleDetector = new CBC_WhiteRectangleDetector(m_image);
   m_rectangleDetector->Init(e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
 }
@@ -191,13 +191,13 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
         dimensionCorrected, dimensionCorrected, e));
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   }
-  CFX_PtrArray* result = FX_NEW CFX_PtrArray;
+  CFX_PtrArray* result = new CFX_PtrArray;
   result->SetSize(4);
   result->Add(topLeft);
   result->Add(bottomLeft);
   result->Add(bottomRight);
   result->Add(correctedTopRight.release());
-  return FX_NEW CBC_QRDetectorResult(bits.release(), result);
+  return new CBC_QRDetectorResult(bits.release(), result);
 }
 CBC_ResultPoint* CBC_DataMatrixDetector::CorrectTopRightRectangular(
     CBC_ResultPoint* bottomLeft,
@@ -210,13 +210,13 @@ CBC_ResultPoint* CBC_DataMatrixDetector::CorrectTopRightRectangular(
   int32_t norm = Distance(topLeft, topRight);
   FX_FLOAT cos = (topRight->GetX() - topLeft->GetX()) / norm;
   FX_FLOAT sin = (topRight->GetY() - topLeft->GetY()) / norm;
-  CBC_AutoPtr<CBC_ResultPoint> c1(FX_NEW CBC_ResultPoint(
+  CBC_AutoPtr<CBC_ResultPoint> c1(new CBC_ResultPoint(
       topRight->GetX() + corr * cos, topRight->GetY() + corr * sin));
   corr = Distance(bottomLeft, topLeft) / (FX_FLOAT)dimensionRight;
   norm = Distance(bottomRight, topRight);
   cos = (topRight->GetX() - bottomRight->GetX()) / norm;
   sin = (topRight->GetY() - bottomRight->GetY()) / norm;
-  CBC_AutoPtr<CBC_ResultPoint> c2(FX_NEW CBC_ResultPoint(
+  CBC_AutoPtr<CBC_ResultPoint> c2(new CBC_ResultPoint(
       topRight->GetX() + corr * cos, topRight->GetY() + corr * sin));
   if (!IsValid(c1.get())) {
     if (IsValid(c2.get())) {
@@ -257,13 +257,13 @@ CBC_ResultPoint* CBC_DataMatrixDetector::CorrectTopRight(
   int32_t norm = Distance(topLeft, topRight);
   FX_FLOAT cos = (topRight->GetX() - topLeft->GetX()) / norm;
   FX_FLOAT sin = (topRight->GetY() - topLeft->GetY()) / norm;
-  CBC_AutoPtr<CBC_ResultPoint> c1(FX_NEW CBC_ResultPoint(
+  CBC_AutoPtr<CBC_ResultPoint> c1(new CBC_ResultPoint(
       topRight->GetX() + corr * cos, topRight->GetY() + corr * sin));
   corr = Distance(bottomLeft, bottomRight) / (FX_FLOAT)dimension;
   norm = Distance(bottomRight, topRight);
   cos = (topRight->GetX() - bottomRight->GetX()) / norm;
   sin = (topRight->GetY() - bottomRight->GetY()) / norm;
-  CBC_AutoPtr<CBC_ResultPoint> c2(FX_NEW CBC_ResultPoint(
+  CBC_AutoPtr<CBC_ResultPoint> c2(new CBC_ResultPoint(
       topRight->GetX() + corr * cos, topRight->GetY() + corr * sin));
   if (!IsValid(c1.get())) {
     if (IsValid(c2.get())) {
@@ -367,7 +367,7 @@ CBC_ResultPointsAndTransitions* CBC_DataMatrixDetector::TransitionsBetween(
       error -= dx;
     }
   }
-  return FX_NEW CBC_ResultPointsAndTransitions(from, to, transitions);
+  return new CBC_ResultPointsAndTransitions(from, to, transitions);
 }
 void CBC_DataMatrixDetector::OrderBestPatterns(CFX_PtrArray* patterns) {
   FX_FLOAT abDistance = (FX_FLOAT)Distance((CBC_ResultPoint*)(*patterns)[0],

@@ -79,7 +79,7 @@ void CXFA_ScriptContext::Initialize(FXJSE_HRUNTIME hRuntime) {
   m_hJsRuntime = hRuntime;
   DefineJsContext();
   DefineJsClass();
-  m_pResolveProcessor = FX_NEW CXFA_ResolveProcessor;
+  m_pResolveProcessor = new CXFA_ResolveProcessor;
 }
 void CXFA_ScriptContext::Release() {
   delete this;
@@ -460,7 +460,7 @@ FXJSE_HCONTEXT CXFA_ScriptContext::CreateVariablesContext(
     m_JsGlobalVariablesClass.dynMethodCall =
         CXFA_ScriptContext::NormalMethodCall;
   }
-  CXFA_ThisProxy* lpVariableNode = FX_NEW CXFA_ThisProxy(pSubform, pScriptNode);
+  CXFA_ThisProxy* lpVariableNode = new CXFA_ThisProxy(pSubform, pScriptNode);
   FXJSE_HCONTEXT hVariablesContext = FXJSE_Context_Create(
       m_hJsRuntime, &m_JsGlobalVariablesClass, (CXFA_Object*)lpVariableNode);
   FXJSE_Context_EnableCompatibleMode(
@@ -824,7 +824,7 @@ void CXFA_ScriptContext::AddNodesOfRunScript(CXFA_Node* pNode) {
   }
 }
 IXFA_ScriptContext* XFA_ScriptContext_Create(CXFA_Document* pDocument) {
-  return FX_NEW CXFA_ScriptContext(pDocument);
+  return new CXFA_ScriptContext(pDocument);
 }
 static const XFA_JSBUILTININFO gs_JSBUILTINData[] = {
     {0x8108b9a9, "Number"},

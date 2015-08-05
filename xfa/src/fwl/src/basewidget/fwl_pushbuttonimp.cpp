@@ -13,13 +13,13 @@ IFWL_PushButton* IFWL_PushButton::Create() {
   return new IFWL_PushButton;
 }
 FWL_ERR IFWL_PushButton::Initialize(IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_PushButtonImp(pOuter);
+  m_pData = new CFWL_PushButtonImp(pOuter);
   ((CFWL_PushButtonImp*)m_pData)->SetInterface(this);
   return ((CFWL_PushButtonImp*)m_pData)->Initialize();
 }
 FWL_ERR IFWL_PushButton::Initialize(const CFWL_WidgetImpProperties& properties,
                                     IFWL_Widget* pOuter) {
-  m_pData = FX_NEW CFWL_PushButtonImp(properties, pOuter);
+  m_pData = new CFWL_PushButtonImp(properties, pOuter);
   ((CFWL_PushButtonImp*)m_pData)->SetInterface(this);
   return ((CFWL_PushButtonImp*)m_pData)->Initialize();
 }
@@ -61,7 +61,7 @@ FX_DWORD CFWL_PushButtonImp::GetClassID() const {
 FWL_ERR CFWL_PushButtonImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)FX_NEW CFWL_PushButtonImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_PushButtonImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_PushButtonImp::Finalize() {

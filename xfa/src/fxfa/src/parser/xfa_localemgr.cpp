@@ -1056,7 +1056,7 @@ static IFX_Locale* XFA_GetLocaleFromBuffer(const uint8_t* pBuf, int nBufLen) {
     FX_Free(pOut);
   }
   if (pLocale) {
-    return FX_NEW CXFA_XMLLocale(pLocale);
+    return new CXFA_XMLLocale(pLocale);
   }
   return NULL;
 }
@@ -1128,7 +1128,7 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid)
   if (pLocaleSet &&
       (pNodeLocale = pLocaleSet->GetNodeItem(XFA_NODEITEM_FirstChild))) {
     while (pNodeLocale) {
-      m_LocaleArray.Add(FX_NEW CXFA_NodeLocale(pNodeLocale));
+      m_LocaleArray.Add(new CXFA_NodeLocale(pNodeLocale));
       pNodeLocale = pNodeLocale->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
   }
@@ -1273,12 +1273,12 @@ CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
 static CXFA_TimeZoneProvider* g_pProvider = NULL;
 IXFA_TimeZoneProvider* IXFA_TimeZoneProvider::Create() {
   FXSYS_assert(!g_pProvider);
-  g_pProvider = FX_NEW CXFA_TimeZoneProvider();
+  g_pProvider = new CXFA_TimeZoneProvider();
   return g_pProvider;
 }
 IXFA_TimeZoneProvider* IXFA_TimeZoneProvider::Get() {
   if (!g_pProvider) {
-    g_pProvider = FX_NEW CXFA_TimeZoneProvider();
+    g_pProvider = new CXFA_TimeZoneProvider();
   }
   return g_pProvider;
 }

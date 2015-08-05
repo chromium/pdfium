@@ -93,7 +93,7 @@ int32_t CBC_ReedSolomonGF256Poly::EvaluateAt(int32_t a) {
   return result;
 }
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Clone(int32_t& e) {
-  CBC_ReedSolomonGF256Poly* temp = FX_NEW CBC_ReedSolomonGF256Poly();
+  CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &m_coefficients, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return temp;
@@ -130,7 +130,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(
     sumDiff[j] = (CBC_ReedSolomonGF256::AddOrSubtract(
         smallerCoefficients[j - lengthDiff], largerCoefficients[j]));
   }
-  CBC_ReedSolomonGF256Poly* temp = FX_NEW CBC_ReedSolomonGF256Poly();
+  CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &sumDiff, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return temp;
@@ -159,7 +159,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(
           m_field->Multiply(aCoeff, other->GetCoefficients()->operator[](j)));
     }
   }
-  CBC_ReedSolomonGF256Poly* temp = FX_NEW CBC_ReedSolomonGF256Poly();
+  CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &product, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return temp;
@@ -181,7 +181,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(int32_t scalar,
   for (int32_t i = 0; i < size; i++) {
     product[i] = m_field->Multiply(m_coefficients[i], scalar);
   }
-  CBC_ReedSolomonGF256Poly* temp = FX_NEW CBC_ReedSolomonGF256Poly();
+  CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &product, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return temp;
@@ -205,7 +205,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(
   for (int32_t i = 0; i < size; i++) {
     product[i] = (m_field->Multiply(m_coefficients[i], coefficient));
   }
-  CBC_ReedSolomonGF256Poly* temp = FX_NEW CBC_ReedSolomonGF256Poly();
+  CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &product, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return temp;
@@ -250,7 +250,7 @@ CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly* other,
     CBC_AutoPtr<CBC_ReedSolomonGF256Poly> temp1(rsg6);
     remainder = temp1;
   }
-  CFX_PtrArray* tempPtrA = FX_NEW CFX_PtrArray;
+  CFX_PtrArray* tempPtrA = new CFX_PtrArray;
   tempPtrA->Add(quotient.release());
   tempPtrA->Add(remainder.release());
   return tempPtrA;

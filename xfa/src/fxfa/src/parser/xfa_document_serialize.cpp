@@ -18,7 +18,7 @@
 #include "xfa_debug_parser.h"
 #include "xfa_document_serialize.h"
 IXFA_PacketImport* IXFA_PacketImport::Create(CXFA_Document* pDocument) {
-  return FX_NEW CXFA_DataImporter(pDocument);
+  return new CXFA_DataImporter(pDocument);
 }
 CXFA_DataImporter::CXFA_DataImporter(CXFA_Document* pDocument)
     : m_pDocument(pDocument) {
@@ -466,7 +466,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
 }
 IXFA_PacketExport* IXFA_PacketExport::Create(CXFA_Document* pDocument,
                                              XFA_DATAFORMAT eFormat) {
-  return FX_NEW CXFA_DataExporter(pDocument);
+  return new CXFA_DataExporter(pDocument);
 }
 CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)
     : m_pDocument(pDocument) {

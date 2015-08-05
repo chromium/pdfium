@@ -109,7 +109,7 @@ CBC_CommonBitMatrix* CBC_QRGridSampler::SampleGrid(CBC_CommonBitMatrix* image,
       CBC_CommonPerspectiveTransform::QuadrilateralToQuadrilateral(
           p1ToX, p1ToY, p2ToX, p2ToY, p3ToX, p3ToY, p4ToX, p4ToY, p1FromX,
           p1FromY, p2FromX, p2FromY, p3FromX, p3FromY, p4FromX, p4FromY));
-  CBC_CommonBitMatrix* tempBitM = FX_NEW CBC_CommonBitMatrix();
+  CBC_CommonBitMatrix* tempBitM = new CBC_CommonBitMatrix();
   tempBitM->Init(dimensionX, dimensionY);
   CBC_AutoPtr<CBC_CommonBitMatrix> bits(tempBitM);
   CFX_FloatArray points;

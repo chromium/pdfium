@@ -56,7 +56,7 @@ CFX_PtrArray* CBC_QRDataBlock::GetDataBlocks(
   for (i = 0; i < ecBlockArray->GetSize(); i++) {
     totalBlocks += ((CBC_QRCoderECB*)(*ecBlockArray)[i])->GetCount();
   }
-  CFX_PtrArray* datablock = FX_NEW CFX_PtrArray();
+  CFX_PtrArray* datablock = new CFX_PtrArray();
   datablock->SetSize(totalBlocks);
   CBC_AutoPtr<CFX_PtrArray> result(datablock);
   int32_t numResultBlocks = 0;
@@ -66,10 +66,10 @@ CFX_PtrArray* CBC_QRDataBlock::GetDataBlocks(
       int32_t numDataCodewords = ecBlock->GetDataCodeWords();
       int32_t numBlockCodewords =
           ecBlocks->GetECCodeWordsPerBlock() + numDataCodewords;
-      CFX_ByteArray* bytearray = FX_NEW CFX_ByteArray();
+      CFX_ByteArray* bytearray = new CFX_ByteArray();
       bytearray->SetSize(numBlockCodewords);
       (*result)[numResultBlocks++] =
-          FX_NEW CBC_QRDataBlock(numDataCodewords, bytearray);
+          new CBC_QRDataBlock(numDataCodewords, bytearray);
     }
   }
   int32_t shorterBlocksTotalCodewords =

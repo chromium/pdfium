@@ -228,7 +228,7 @@ void* CFX_LinuxFontInfo::FindFont(int weight,
   return pFind;
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
-  CFX_LinuxFontInfo* pInfo = FX_NEW CFX_LinuxFontInfo;
+  CFX_LinuxFontInfo* pInfo = new CFX_LinuxFontInfo;
   if (!pInfo) {
     return NULL;
   }

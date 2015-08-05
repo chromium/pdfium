@@ -108,9 +108,9 @@ CBC_CommonBitArray* CBC_CommonBitMatrix::GetRow(int32_t y,
                                                 CBC_CommonBitArray* row) {
   CBC_CommonBitArray* rowArray = NULL;
   if (row == NULL || row->GetSize() < m_width) {
-    rowArray = FX_NEW CBC_CommonBitArray(m_width);
+    rowArray = new CBC_CommonBitArray(m_width);
   } else {
-    rowArray = FX_NEW CBC_CommonBitArray(row);
+    rowArray = new CBC_CommonBitArray(row);
   }
   int32_t offset = y * m_rowSize;
   int32_t x;
