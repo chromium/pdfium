@@ -174,8 +174,8 @@ void CBC_OneCode::SetFontColor(FX_ARGB color) {
   }
 }
 CBC_Code39::CBC_Code39() {
-  m_pBCReader = (CBC_Reader*)new(CBC_OnedCode39Reader);
-  m_pBCWriter = (CBC_Writer*)new(CBC_OnedCode39Writer);
+  m_pBCReader = (CBC_Reader*)new (CBC_OnedCode39Reader);
+  m_pBCWriter = (CBC_Writer*)new (CBC_OnedCode39Writer);
 }
 CBC_Code39::CBC_Code39(FX_BOOL usingCheckDigit) {
   m_pBCReader = (CBC_Reader*)new CBC_OnedCode39Reader(usingCheckDigit);
@@ -267,8 +267,8 @@ FX_BOOL CBC_Code39::SetWideNarrowRatio(int32_t ratio) {
   return FALSE;
 }
 CBC_Codabar::CBC_Codabar() {
-  m_pBCReader = (CBC_Reader*)new(CBC_OnedCodaBarReader);
-  m_pBCWriter = (CBC_Writer*)new(CBC_OnedCodaBarWriter);
+  m_pBCReader = (CBC_Reader*)new (CBC_OnedCodaBarReader);
+  m_pBCWriter = (CBC_Writer*)new (CBC_OnedCodaBarWriter);
 }
 CBC_Codabar::~CBC_Codabar() {
   if (m_pBCReader) {
@@ -358,7 +358,7 @@ CFX_WideString CBC_Codabar::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   return CFX_WideString::FromUTF8(str, str.GetLength());
 }
 CBC_Code128::CBC_Code128(BC_TYPE type) {
-  m_pBCReader = (CBC_Reader*)new(CBC_OnedCode128Reader);
+  m_pBCReader = (CBC_Reader*)new (CBC_OnedCode128Reader);
   m_pBCWriter = (CBC_Writer*)new CBC_OnedCode128Writer(type);
 }
 CBC_Code128::~CBC_Code128() {
@@ -435,8 +435,8 @@ CFX_WideString CBC_Code128::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   return CFX_WideString::FromUTF8(str, str.GetLength());
 }
 CBC_EAN8::CBC_EAN8() {
-  m_pBCReader = (CBC_Reader*)new(CBC_OnedEAN8Reader);
-  m_pBCWriter = (CBC_Writer*)new(CBC_OnedEAN8Writer);
+  m_pBCReader = (CBC_Reader*)new (CBC_OnedEAN8Reader);
+  m_pBCWriter = (CBC_Writer*)new (CBC_OnedEAN8Writer);
 }
 CBC_EAN8::~CBC_EAN8() {
   if (m_pBCReader) {
@@ -518,8 +518,8 @@ CFX_WideString CBC_EAN8::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   return CFX_WideString::FromUTF8(str, str.GetLength());
 }
 CBC_EAN13::CBC_EAN13() {
-  m_pBCReader = (CBC_Reader*)new(CBC_OnedEAN13Reader);
-  m_pBCWriter = (CBC_Writer*)new(CBC_OnedEAN13Writer);
+  m_pBCReader = (CBC_Reader*)new (CBC_OnedEAN13Reader);
+  m_pBCWriter = (CBC_Writer*)new (CBC_OnedEAN13Writer);
 }
 CBC_EAN13::~CBC_EAN13() {
   if (m_pBCReader) {
@@ -602,9 +602,9 @@ CFX_WideString CBC_EAN13::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   return CFX_WideString::FromUTF8(str, str.GetLength());
 }
 CBC_UPCA::CBC_UPCA() {
-  m_pBCReader = (CBC_Reader*)new(CBC_OnedUPCAReader);
+  m_pBCReader = (CBC_Reader*)new (CBC_OnedUPCAReader);
   ((CBC_OnedUPCAReader*)m_pBCReader)->Init();
-  m_pBCWriter = (CBC_Writer*)new(CBC_OnedUPCAWriter);
+  m_pBCWriter = (CBC_Writer*)new (CBC_OnedUPCAWriter);
 }
 CBC_UPCA::~CBC_UPCA() {
   if (m_pBCReader) {
@@ -688,9 +688,9 @@ CFX_WideString CBC_UPCA::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   return CFX_WideString::FromUTF8(str, str.GetLength());
 }
 CBC_QRCode::CBC_QRCode() {
-  m_pBCReader = (CBC_Reader*)new(CBC_QRCodeReader);
+  m_pBCReader = (CBC_Reader*)new (CBC_QRCodeReader);
   ((CBC_QRCodeReader*)m_pBCReader)->Init();
-  m_pBCWriter = (CBC_Writer*)new(CBC_QRCodeWriter);
+  m_pBCWriter = (CBC_Writer*)new (CBC_QRCodeWriter);
 }
 CBC_QRCode::~CBC_QRCode() {
   if (m_pBCReader) {
@@ -762,8 +762,8 @@ CFX_WideString CBC_QRCode::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   return CFX_WideString::FromUTF8(retStr, retStr.GetLength());
 }
 CBC_PDF417I::CBC_PDF417I() {
-  m_pBCReader = (CBC_Reader*)new(CBC_PDF417Reader);
-  m_pBCWriter = (CBC_Writer*)new(CBC_PDF417Writer);
+  m_pBCReader = (CBC_Reader*)new (CBC_PDF417Reader);
+  m_pBCWriter = (CBC_Writer*)new (CBC_PDF417Writer);
 }
 CBC_PDF417I::~CBC_PDF417I() {
   if (m_pBCReader) {
@@ -823,9 +823,9 @@ CFX_WideString CBC_PDF417I::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   return CFX_WideString::FromUTF8(bytestring, bytestring.GetLength());
 }
 CBC_DataMatrix::CBC_DataMatrix() {
-  m_pBCReader = (CBC_Reader*)new(CBC_DataMatrixReader);
+  m_pBCReader = (CBC_Reader*)new (CBC_DataMatrixReader);
   ((CBC_DataMatrixReader*)m_pBCReader)->Init();
-  m_pBCWriter = (CBC_Writer*)new(CBC_DataMatrixWriter);
+  m_pBCWriter = (CBC_Writer*)new (CBC_DataMatrixWriter);
 }
 CBC_DataMatrix::~CBC_DataMatrix() {
   if (m_pBCReader) {

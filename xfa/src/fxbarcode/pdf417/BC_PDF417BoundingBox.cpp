@@ -68,9 +68,9 @@ CBC_BoundingBox* CBC_BoundingBox::merge(CBC_BoundingBox* leftBox,
     boundingBox = new CBC_BoundingBox(leftBox);
     return boundingBox;
   }
-  boundingBox = new CBC_BoundingBox(
-      leftBox->m_image, leftBox->m_topLeft, leftBox->m_bottomLeft,
-      rightBox->m_topRight, rightBox->m_bottomRight, e);
+  boundingBox = new CBC_BoundingBox(leftBox->m_image, leftBox->m_topLeft,
+                                    leftBox->m_bottomLeft, rightBox->m_topRight,
+                                    rightBox->m_bottomRight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return boundingBox;
 }
@@ -130,8 +130,7 @@ void CBC_BoundingBox::setBottomRight(CBC_ResultPoint bottomRight) {
   if (m_bottomRight) {
     delete m_bottomRight;
   }
-  m_bottomRight =
-      new CBC_ResultPoint(bottomRight.GetX(), bottomRight.GetY());
+  m_bottomRight = new CBC_ResultPoint(bottomRight.GetX(), bottomRight.GetY());
   calculateMinMaxValues();
 }
 int32_t CBC_BoundingBox::getMinX() {
@@ -172,8 +171,7 @@ void CBC_BoundingBox::init(CBC_CommonBitMatrix* image,
     m_topLeft = new CBC_ResultPoint(topLeft->GetX(), topLeft->GetY());
   }
   if (bottomLeft) {
-    m_bottomLeft =
-        new CBC_ResultPoint(bottomLeft->GetX(), bottomLeft->GetY());
+    m_bottomLeft = new CBC_ResultPoint(bottomLeft->GetX(), bottomLeft->GetY());
   }
   if (topRight) {
     m_topRight = new CBC_ResultPoint(topRight->GetX(), topRight->GetY());
@@ -190,9 +188,9 @@ void CBC_BoundingBox::calculateMinMaxValues() {
     m_bottomLeft = new CBC_ResultPoint(0, m_bottomRight->GetY());
   } else if (m_topRight == NULL) {
     m_topRight = new CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,
-                                        (FX_FLOAT)m_topLeft->GetY());
+                                     (FX_FLOAT)m_topLeft->GetY());
     m_bottomRight = new CBC_ResultPoint((FX_FLOAT)m_image->GetWidth() - 1,
-                                           (FX_FLOAT)m_bottomLeft->GetY());
+                                        (FX_FLOAT)m_bottomLeft->GetY());
   }
   m_minX = (int32_t)(m_topLeft->GetX() < m_bottomLeft->GetX()
                          ? m_topLeft->GetX()

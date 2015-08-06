@@ -449,9 +449,9 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
         5, new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(1, 108)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(2, 43)),
         new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 15),
-                                   new CBC_QRCoderECB(2, 16)),
+                                new CBC_QRCoderECB(2, 16)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(2, 11),
-                                   new CBC_QRCoderECB(2, 12))));
+                                new CBC_QRCoderECB(2, 12))));
     VERSION->Add(new CBC_QRCoderVersion(
         6, new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 68)),
         new CBC_QRCoderECBlocks(16, new CBC_QRCoderECB(4, 27)),
@@ -461,298 +461,298 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
         7, new CBC_QRCoderECBlocks(20, new CBC_QRCoderECB(2, 78)),
         new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(4, 31)),
         new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 14),
-                                   new CBC_QRCoderECB(4, 15)),
+                                new CBC_QRCoderECB(4, 15)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(4, 13),
-                                   new CBC_QRCoderECB(1, 14))));
+                                new CBC_QRCoderECB(1, 14))));
     VERSION->Add(new CBC_QRCoderVersion(
         8, new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(2, 97)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(2, 38),
-                                   new CBC_QRCoderECB(2, 39)),
+                                new CBC_QRCoderECB(2, 39)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(4, 18),
-                                   new CBC_QRCoderECB(2, 19)),
+                                new CBC_QRCoderECB(2, 19)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(4, 14),
-                                   new CBC_QRCoderECB(2, 15))));
+                                new CBC_QRCoderECB(2, 15))));
     VERSION->Add(new CBC_QRCoderVersion(
         9, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(2, 116)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(3, 36),
-                                   new CBC_QRCoderECB(2, 37)),
+                                new CBC_QRCoderECB(2, 37)),
         new CBC_QRCoderECBlocks(20, new CBC_QRCoderECB(4, 16),
-                                   new CBC_QRCoderECB(4, 17)),
+                                new CBC_QRCoderECB(4, 17)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(4, 12),
-                                   new CBC_QRCoderECB(4, 13))));
+                                new CBC_QRCoderECB(4, 13))));
     VERSION->Add(new CBC_QRCoderVersion(
         10, new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 68),
-                                       new CBC_QRCoderECB(2, 69)),
+                                    new CBC_QRCoderECB(2, 69)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(4, 43),
-                                   new CBC_QRCoderECB(1, 44)),
+                                new CBC_QRCoderECB(1, 44)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(6, 19),
-                                   new CBC_QRCoderECB(2, 20)),
+                                new CBC_QRCoderECB(2, 20)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(6, 15),
-                                   new CBC_QRCoderECB(2, 16))));
+                                new CBC_QRCoderECB(2, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         11, new CBC_QRCoderECBlocks(20, new CBC_QRCoderECB(4, 81)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(1, 50),
-                                   new CBC_QRCoderECB(4, 51)),
+                                new CBC_QRCoderECB(4, 51)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(4, 22),
-                                   new CBC_QRCoderECB(4, 23)),
+                                new CBC_QRCoderECB(4, 23)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(3, 12),
-                                   new CBC_QRCoderECB(8, 13))));
+                                new CBC_QRCoderECB(8, 13))));
     VERSION->Add(new CBC_QRCoderVersion(
         12, new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(2, 92),
-                                       new CBC_QRCoderECB(2, 93)),
+                                    new CBC_QRCoderECB(2, 93)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(6, 36),
-                                   new CBC_QRCoderECB(2, 37)),
+                                new CBC_QRCoderECB(2, 37)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(4, 20),
-                                   new CBC_QRCoderECB(6, 21)),
+                                new CBC_QRCoderECB(6, 21)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(7, 14),
-                                   new CBC_QRCoderECB(4, 15))));
+                                new CBC_QRCoderECB(4, 15))));
     VERSION->Add(new CBC_QRCoderVersion(
         13, new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(4, 107)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(8, 37),
-                                   new CBC_QRCoderECB(1, 38)),
+                                new CBC_QRCoderECB(1, 38)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(8, 20),
-                                   new CBC_QRCoderECB(4, 21)),
+                                new CBC_QRCoderECB(4, 21)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(12, 11),
-                                   new CBC_QRCoderECB(4, 12))));
+                                new CBC_QRCoderECB(4, 12))));
     VERSION->Add(new CBC_QRCoderVersion(
         14, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(3, 115),
-                                       new CBC_QRCoderECB(1, 116)),
+                                    new CBC_QRCoderECB(1, 116)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(4, 40),
-                                   new CBC_QRCoderECB(5, 41)),
+                                new CBC_QRCoderECB(5, 41)),
         new CBC_QRCoderECBlocks(20, new CBC_QRCoderECB(11, 16),
-                                   new CBC_QRCoderECB(5, 17)),
+                                new CBC_QRCoderECB(5, 17)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(11, 12),
-                                   new CBC_QRCoderECB(5, 13))));
+                                new CBC_QRCoderECB(5, 13))));
     VERSION->Add(new CBC_QRCoderVersion(
         15, new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(5, 87),
-                                       new CBC_QRCoderECB(1, 88)),
+                                    new CBC_QRCoderECB(1, 88)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(5, 41),
-                                   new CBC_QRCoderECB(5, 42)),
+                                new CBC_QRCoderECB(5, 42)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(5, 24),
-                                   new CBC_QRCoderECB(7, 25)),
+                                new CBC_QRCoderECB(7, 25)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(11, 12),
-                                   new CBC_QRCoderECB(7, 13))));
+                                new CBC_QRCoderECB(7, 13))));
     VERSION->Add(new CBC_QRCoderVersion(
         16, new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(5, 98),
-                                       new CBC_QRCoderECB(1, 99)),
+                                    new CBC_QRCoderECB(1, 99)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(7, 45),
-                                   new CBC_QRCoderECB(3, 46)),
+                                new CBC_QRCoderECB(3, 46)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(15, 19),
-                                   new CBC_QRCoderECB(2, 20)),
+                                new CBC_QRCoderECB(2, 20)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(3, 15),
-                                   new CBC_QRCoderECB(13, 16))));
+                                new CBC_QRCoderECB(13, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         17, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(1, 107),
-                                       new CBC_QRCoderECB(5, 108)),
+                                    new CBC_QRCoderECB(5, 108)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(10, 46),
-                                   new CBC_QRCoderECB(1, 47)),
+                                new CBC_QRCoderECB(1, 47)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(1, 22),
-                                   new CBC_QRCoderECB(15, 23)),
+                                new CBC_QRCoderECB(15, 23)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(2, 14),
-                                   new CBC_QRCoderECB(17, 15))));
+                                new CBC_QRCoderECB(17, 15))));
     VERSION->Add(new CBC_QRCoderVersion(
         18, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(5, 120),
-                                       new CBC_QRCoderECB(1, 121)),
+                                    new CBC_QRCoderECB(1, 121)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(9, 43),
-                                   new CBC_QRCoderECB(4, 44)),
+                                new CBC_QRCoderECB(4, 44)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(17, 22),
-                                   new CBC_QRCoderECB(1, 23)),
+                                new CBC_QRCoderECB(1, 23)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(2, 14),
-                                   new CBC_QRCoderECB(19, 15))));
+                                new CBC_QRCoderECB(19, 15))));
     VERSION->Add(new CBC_QRCoderVersion(
         19, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(3, 113),
-                                       new CBC_QRCoderECB(4, 114)),
+                                    new CBC_QRCoderECB(4, 114)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(3, 44),
-                                   new CBC_QRCoderECB(11, 45)),
+                                new CBC_QRCoderECB(11, 45)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(17, 21),
-                                   new CBC_QRCoderECB(4, 22)),
+                                new CBC_QRCoderECB(4, 22)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(9, 13),
-                                   new CBC_QRCoderECB(16, 14))));
+                                new CBC_QRCoderECB(16, 14))));
     VERSION->Add(new CBC_QRCoderVersion(
         20, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(3, 107),
-                                       new CBC_QRCoderECB(5, 108)),
+                                    new CBC_QRCoderECB(5, 108)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(3, 41),
-                                   new CBC_QRCoderECB(13, 42)),
+                                new CBC_QRCoderECB(13, 42)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(15, 24),
-                                   new CBC_QRCoderECB(5, 25)),
+                                new CBC_QRCoderECB(5, 25)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(15, 15),
-                                   new CBC_QRCoderECB(10, 16))));
+                                new CBC_QRCoderECB(10, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         21, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(4, 116),
-                                       new CBC_QRCoderECB(4, 117)),
+                                    new CBC_QRCoderECB(4, 117)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(17, 42)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(17, 22),
-                                   new CBC_QRCoderECB(6, 23)),
+                                new CBC_QRCoderECB(6, 23)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(19, 16),
-                                   new CBC_QRCoderECB(6, 17))));
+                                new CBC_QRCoderECB(6, 17))));
     VERSION->Add(new CBC_QRCoderVersion(
         22, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(2, 111),
-                                       new CBC_QRCoderECB(7, 112)),
+                                    new CBC_QRCoderECB(7, 112)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(17, 46)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(7, 24),
-                                   new CBC_QRCoderECB(16, 25)),
+                                new CBC_QRCoderECB(16, 25)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(34, 13))));
     VERSION->Add(new CBC_QRCoderVersion(
         23, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(4, 121),
-                                       new CBC_QRCoderECB(5, 122)),
+                                    new CBC_QRCoderECB(5, 122)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(4, 47),
-                                   new CBC_QRCoderECB(14, 48)),
+                                new CBC_QRCoderECB(14, 48)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(11, 24),
-                                   new CBC_QRCoderECB(14, 25)),
+                                new CBC_QRCoderECB(14, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(16, 15),
-                                   new CBC_QRCoderECB(14, 16))));
+                                new CBC_QRCoderECB(14, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         24, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(6, 117),
-                                       new CBC_QRCoderECB(4, 118)),
+                                    new CBC_QRCoderECB(4, 118)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(6, 45),
-                                   new CBC_QRCoderECB(14, 46)),
+                                new CBC_QRCoderECB(14, 46)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(11, 24),
-                                   new CBC_QRCoderECB(16, 25)),
+                                new CBC_QRCoderECB(16, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(30, 16),
-                                   new CBC_QRCoderECB(2, 17))));
+                                new CBC_QRCoderECB(2, 17))));
     VERSION->Add(new CBC_QRCoderVersion(
         25, new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(8, 106),
-                                       new CBC_QRCoderECB(4, 107)),
+                                    new CBC_QRCoderECB(4, 107)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(8, 47),
-                                   new CBC_QRCoderECB(13, 48)),
+                                new CBC_QRCoderECB(13, 48)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(7, 24),
-                                   new CBC_QRCoderECB(22, 25)),
+                                new CBC_QRCoderECB(22, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(22, 15),
-                                   new CBC_QRCoderECB(13, 16))));
+                                new CBC_QRCoderECB(13, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         26, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(10, 114),
-                                       new CBC_QRCoderECB(2, 115)),
+                                    new CBC_QRCoderECB(2, 115)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(19, 46),
-                                   new CBC_QRCoderECB(4, 47)),
+                                new CBC_QRCoderECB(4, 47)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(28, 22),
-                                   new CBC_QRCoderECB(6, 23)),
+                                new CBC_QRCoderECB(6, 23)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(33, 16),
-                                   new CBC_QRCoderECB(4, 17))));
+                                new CBC_QRCoderECB(4, 17))));
     VERSION->Add(new CBC_QRCoderVersion(
         27, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(8, 122),
-                                       new CBC_QRCoderECB(4, 123)),
+                                    new CBC_QRCoderECB(4, 123)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(22, 45),
-                                   new CBC_QRCoderECB(3, 46)),
+                                new CBC_QRCoderECB(3, 46)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(8, 23),
-                                   new CBC_QRCoderECB(26, 24)),
+                                new CBC_QRCoderECB(26, 24)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(12, 15),
-                                   new CBC_QRCoderECB(28, 16))));
+                                new CBC_QRCoderECB(28, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         28, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(3, 117),
-                                       new CBC_QRCoderECB(10, 118)),
+                                    new CBC_QRCoderECB(10, 118)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(3, 45),
-                                   new CBC_QRCoderECB(23, 46)),
+                                new CBC_QRCoderECB(23, 46)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(4, 24),
-                                   new CBC_QRCoderECB(31, 25)),
+                                new CBC_QRCoderECB(31, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(11, 15),
-                                   new CBC_QRCoderECB(31, 16))));
+                                new CBC_QRCoderECB(31, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         29, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(7, 116),
-                                       new CBC_QRCoderECB(7, 117)),
+                                    new CBC_QRCoderECB(7, 117)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(21, 45),
-                                   new CBC_QRCoderECB(7, 46)),
+                                new CBC_QRCoderECB(7, 46)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(1, 23),
-                                   new CBC_QRCoderECB(37, 24)),
+                                new CBC_QRCoderECB(37, 24)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(19, 15),
-                                   new CBC_QRCoderECB(26, 16))));
+                                new CBC_QRCoderECB(26, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         30, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(5, 115),
-                                       new CBC_QRCoderECB(10, 116)),
+                                    new CBC_QRCoderECB(10, 116)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(19, 47),
-                                   new CBC_QRCoderECB(10, 48)),
+                                new CBC_QRCoderECB(10, 48)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(15, 24),
-                                   new CBC_QRCoderECB(25, 25)),
+                                new CBC_QRCoderECB(25, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(23, 15),
-                                   new CBC_QRCoderECB(25, 16))));
+                                new CBC_QRCoderECB(25, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         31, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(13, 115),
-                                       new CBC_QRCoderECB(3, 116)),
+                                    new CBC_QRCoderECB(3, 116)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(2, 46),
-                                   new CBC_QRCoderECB(29, 47)),
+                                new CBC_QRCoderECB(29, 47)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(42, 24),
-                                   new CBC_QRCoderECB(1, 25)),
+                                new CBC_QRCoderECB(1, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(23, 15),
-                                   new CBC_QRCoderECB(28, 16))));
+                                new CBC_QRCoderECB(28, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         32, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(17, 115)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(10, 46),
-                                   new CBC_QRCoderECB(23, 47)),
+                                new CBC_QRCoderECB(23, 47)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(10, 24),
-                                   new CBC_QRCoderECB(35, 25)),
+                                new CBC_QRCoderECB(35, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(19, 15),
-                                   new CBC_QRCoderECB(35, 16))));
+                                new CBC_QRCoderECB(35, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         33, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(17, 115),
-                                       new CBC_QRCoderECB(1, 116)),
+                                    new CBC_QRCoderECB(1, 116)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(14, 46),
-                                   new CBC_QRCoderECB(21, 47)),
+                                new CBC_QRCoderECB(21, 47)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(29, 24),
-                                   new CBC_QRCoderECB(19, 25)),
+                                new CBC_QRCoderECB(19, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(11, 15),
-                                   new CBC_QRCoderECB(46, 16))));
+                                new CBC_QRCoderECB(46, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         34, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(13, 115),
-                                       new CBC_QRCoderECB(6, 116)),
+                                    new CBC_QRCoderECB(6, 116)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(14, 46),
-                                   new CBC_QRCoderECB(23, 47)),
+                                new CBC_QRCoderECB(23, 47)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(44, 24),
-                                   new CBC_QRCoderECB(7, 25)),
+                                new CBC_QRCoderECB(7, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(59, 16),
-                                   new CBC_QRCoderECB(1, 17))));
+                                new CBC_QRCoderECB(1, 17))));
     VERSION->Add(new CBC_QRCoderVersion(
         35, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(12, 121),
-                                       new CBC_QRCoderECB(7, 122)),
+                                    new CBC_QRCoderECB(7, 122)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(12, 47),
-                                   new CBC_QRCoderECB(26, 48)),
+                                new CBC_QRCoderECB(26, 48)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(39, 24),
-                                   new CBC_QRCoderECB(14, 25)),
+                                new CBC_QRCoderECB(14, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(22, 15),
-                                   new CBC_QRCoderECB(41, 16))));
+                                new CBC_QRCoderECB(41, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         36, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(6, 121),
-                                       new CBC_QRCoderECB(14, 122)),
+                                    new CBC_QRCoderECB(14, 122)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(6, 47),
-                                   new CBC_QRCoderECB(34, 48)),
+                                new CBC_QRCoderECB(34, 48)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(46, 24),
-                                   new CBC_QRCoderECB(10, 25)),
+                                new CBC_QRCoderECB(10, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(2, 15),
-                                   new CBC_QRCoderECB(64, 16))));
+                                new CBC_QRCoderECB(64, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         37, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(17, 122),
-                                       new CBC_QRCoderECB(4, 123)),
+                                    new CBC_QRCoderECB(4, 123)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(29, 46),
-                                   new CBC_QRCoderECB(14, 47)),
+                                new CBC_QRCoderECB(14, 47)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(49, 24),
-                                   new CBC_QRCoderECB(10, 25)),
+                                new CBC_QRCoderECB(10, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(24, 15),
-                                   new CBC_QRCoderECB(46, 16))));
+                                new CBC_QRCoderECB(46, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         38, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(4, 122),
-                                       new CBC_QRCoderECB(18, 123)),
+                                    new CBC_QRCoderECB(18, 123)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(13, 46),
-                                   new CBC_QRCoderECB(32, 47)),
+                                new CBC_QRCoderECB(32, 47)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(48, 24),
-                                   new CBC_QRCoderECB(14, 25)),
+                                new CBC_QRCoderECB(14, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(42, 15),
-                                   new CBC_QRCoderECB(32, 16))));
+                                new CBC_QRCoderECB(32, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         39, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(20, 117),
-                                       new CBC_QRCoderECB(4, 118)),
+                                    new CBC_QRCoderECB(4, 118)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(40, 47),
-                                   new CBC_QRCoderECB(7, 48)),
+                                new CBC_QRCoderECB(7, 48)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(43, 24),
-                                   new CBC_QRCoderECB(22, 25)),
+                                new CBC_QRCoderECB(22, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(10, 15),
-                                   new CBC_QRCoderECB(67, 16))));
+                                new CBC_QRCoderECB(67, 16))));
     VERSION->Add(new CBC_QRCoderVersion(
         40, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(19, 118),
-                                       new CBC_QRCoderECB(6, 119)),
+                                    new CBC_QRCoderECB(6, 119)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(18, 47),
-                                   new CBC_QRCoderECB(31, 48)),
+                                new CBC_QRCoderECB(31, 48)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(34, 24),
-                                   new CBC_QRCoderECB(34, 25)),
+                                new CBC_QRCoderECB(34, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(20, 15),
-                                   new CBC_QRCoderECB(61, 16))));
+                                new CBC_QRCoderECB(61, 16))));
   }
   if (versionNumber < 1 || versionNumber > 40) {
     e = BCExceptionIllegalArgument;

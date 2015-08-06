@@ -339,10 +339,10 @@ class CFX_ListCtrl : public CFX_List {
   FX_BOOL m_bNotifyFlag;
   CPDF_Point m_ptScrollPos;
   CPLST_Select m_aSelItems;  // for multiple
-  int32_t m_nSelItem;  // for single
-  int32_t m_nFootIndex;  // for multiple
-  FX_BOOL m_bCtrlSel;  // for multiple
-  int32_t m_nCaretIndex;  // for multiple
+  int32_t m_nSelItem;        // for single
+  int32_t m_nFootIndex;      // for multiple
+  FX_BOOL m_bCtrlSel;        // for multiple
+  int32_t m_nCaretIndex;     // for multiple
 };
 
 #endif  // FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_

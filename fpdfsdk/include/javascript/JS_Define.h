@@ -37,10 +37,10 @@ struct JSMethodSpec {
 #define BEGIN_JS_STATIC_CONST(js_class_name) \
   JSConstSpec js_class_name::JS_Class_Consts[] = {
 #define JS_STATIC_CONST_ENTRY_NUMBER(const_name, pValue) \
-  { const_name, pValue, L"", 0 }          \
+  { const_name, pValue, L"", 0 }                         \
   ,
-#define JS_STATIC_CONST_ENTRY_STRING(const_name, pValue)     \
-  { const_name, 0, pValue, 1 } \
+#define JS_STATIC_CONST_ENTRY_STRING(const_name, pValue) \
+  { const_name, 0, pValue, 1 }                           \
   ,
 #define END_JS_STATIC_CONST() \
   { 0, 0, 0, 0 }              \
@@ -190,8 +190,8 @@ void JSMethod(const char* method_name_string,
   const wchar_t* js_class_name::m_pClassName = JS_WIDESTRING(class_name);      \
   void js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject obj,         \
                                     JSFXObject global) {                       \
-    CJS_Object* pObj = new js_class_name(obj);                              \
-    pObj->SetEmbedObject(new class_alternate(pObj));                        \
+    CJS_Object* pObj = new js_class_name(obj);                                 \
+    pObj->SetEmbedObject(new class_alternate(pObj));                           \
     JS_SetPrivate(NULL, obj, (void*)pObj);                                     \
     pObj->InitInstance(cc);                                                    \
   }                                                                            \
@@ -398,8 +398,8 @@ void JSSpecialPropDel(const char* class_name,
   }                                                                            \
   void js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject obj,         \
                                     JSFXObject global) {                       \
-    CJS_Object* pObj = new js_class_name(obj);                              \
-    pObj->SetEmbedObject(new class_alternate(pObj));                        \
+    CJS_Object* pObj = new js_class_name(obj);                                 \
+    pObj->SetEmbedObject(new class_alternate(pObj));                           \
     JS_SetPrivate(NULL, obj, (void*)pObj);                                     \
     pObj->InitInstance(cc);                                                    \
   }                                                                            \

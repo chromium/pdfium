@@ -57,20 +57,13 @@ void CBC_SymbolInfo::Initialize() {
   m_PROD_SYMBOLS[17] = new CBC_SymbolInfo(FALSE, 114, 48, 18, 18, 4);
   m_PROD_SYMBOLS[18] = new CBC_SymbolInfo(FALSE, 144, 56, 20, 20, 4);
   m_PROD_SYMBOLS[19] = new CBC_SymbolInfo(FALSE, 174, 68, 22, 22, 4);
-  m_PROD_SYMBOLS[20] =
-      new CBC_SymbolInfo(FALSE, 204, 84, 24, 24, 4, 102, 42);
-  m_PROD_SYMBOLS[21] =
-      new CBC_SymbolInfo(FALSE, 280, 112, 14, 14, 16, 140, 56);
-  m_PROD_SYMBOLS[22] =
-      new CBC_SymbolInfo(FALSE, 368, 144, 16, 16, 16, 92, 36);
-  m_PROD_SYMBOLS[23] =
-      new CBC_SymbolInfo(FALSE, 456, 192, 18, 18, 16, 114, 48);
-  m_PROD_SYMBOLS[24] =
-      new CBC_SymbolInfo(FALSE, 576, 224, 20, 20, 16, 144, 56);
-  m_PROD_SYMBOLS[25] =
-      new CBC_SymbolInfo(FALSE, 696, 272, 22, 22, 16, 174, 68);
-  m_PROD_SYMBOLS[26] =
-      new CBC_SymbolInfo(FALSE, 816, 336, 24, 24, 16, 136, 56);
+  m_PROD_SYMBOLS[20] = new CBC_SymbolInfo(FALSE, 204, 84, 24, 24, 4, 102, 42);
+  m_PROD_SYMBOLS[21] = new CBC_SymbolInfo(FALSE, 280, 112, 14, 14, 16, 140, 56);
+  m_PROD_SYMBOLS[22] = new CBC_SymbolInfo(FALSE, 368, 144, 16, 16, 16, 92, 36);
+  m_PROD_SYMBOLS[23] = new CBC_SymbolInfo(FALSE, 456, 192, 18, 18, 16, 114, 48);
+  m_PROD_SYMBOLS[24] = new CBC_SymbolInfo(FALSE, 576, 224, 20, 20, 16, 144, 56);
+  m_PROD_SYMBOLS[25] = new CBC_SymbolInfo(FALSE, 696, 272, 22, 22, 16, 174, 68);
+  m_PROD_SYMBOLS[26] = new CBC_SymbolInfo(FALSE, 816, 336, 24, 24, 16, 136, 56);
   m_PROD_SYMBOLS[27] =
       new CBC_SymbolInfo(FALSE, 1050, 408, 18, 18, 36, 175, 68);
   m_PROD_SYMBOLS[28] =

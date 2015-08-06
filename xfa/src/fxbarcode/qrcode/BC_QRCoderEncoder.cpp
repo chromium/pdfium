@@ -146,8 +146,8 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index += 2;
   }
   if (index != flag) {
-    result.Add(new Make_Pair(CBC_QRCoderMode::sGBK,
-                                content.Mid(flag, index - flag)));
+    result.Add(
+        new Make_Pair(CBC_QRCoderMode::sGBK, content.Mid(flag, index - flag)));
   }
   flag = index;
   if (index >= content.GetLength()) {
@@ -170,8 +170,8 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     }
   }
   if (index != flag) {
-    result.Add(new Make_Pair(CBC_QRCoderMode::sBYTE,
-                                content.Mid(flag, index - flag)));
+    result.Add(
+        new Make_Pair(CBC_QRCoderMode::sBYTE, content.Mid(flag, index - flag)));
   }
   flag = index;
   if (index >= content.GetLength()) {
@@ -183,7 +183,7 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
   }
   if (index != flag) {
     result.Add(new Make_Pair(CBC_QRCoderMode::sNUMERIC,
-                                content.Mid(flag, index - flag)));
+                             content.Mid(flag, index - flag)));
   }
   flag = index;
   if (index >= content.GetLength()) {
@@ -195,7 +195,7 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
   }
   if (index != flag) {
     result.Add(new Make_Pair(CBC_QRCoderMode::sALPHANUMERIC,
-                                content.Mid(flag, index - flag)));
+                             content.Mid(flag, index - flag)));
   }
   flag = index;
   if (index >= content.GetLength()) {

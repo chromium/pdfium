@@ -266,7 +266,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap,
                                            CFX_DIBitmap* pOriDevice,
                                            FX_BOOL bGroupKnockout) {
   m_pAggDriver = new CFX_AggDeviceDriver(pBitmap, dither_bits, bRgbByteOrder,
-                                            pOriDevice, bGroupKnockout);
+                                         pOriDevice, bGroupKnockout);
 }
 CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   delete m_pAggDriver;
@@ -616,8 +616,8 @@ FX_BOOL CFX_SkiaDevice::Create(int width,
     return FALSE;
   }
   SetBitmap(pBitmap);
-  CFX_SkiaDeviceDriver* pDriver = new CFX_SkiaDeviceDriver(
-      pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
+  CFX_SkiaDeviceDriver* pDriver =
+      new CFX_SkiaDeviceDriver(pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
   SetDeviceDriver(pDriver);
   return TRUE;
 }

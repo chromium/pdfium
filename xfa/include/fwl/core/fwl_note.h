@@ -169,20 +169,20 @@ class CFWL_Message : public CFWL_Note {
   virtual ~CFWL_Message() {}
   virtual CFWL_Event* CloneToEvent() { return NULL; }
 };
-#define BEGIN_FWL_MESSAGE_DEF(classname, msghashcode)              \
-  class classname : public CFWL_Message {                          \
-   public:                                                         \
-    classname() : CFWL_Message() {}                                \
-    virtual CFWL_Note* Clone() { return new classname(*this); } \
-    virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const {  \
-      wsClass = L" ## classname ## ";                              \
-      return FWL_ERR_Succeeded;                                    \
-    }                                                              \
-    virtual FX_DWORD GetClassID() const { return msghashcode; }    \
-    virtual CFWL_Event* CloneToEvent() {                           \
-      classname* pEvent = new classname;                        \
-      pEvent->m_bIsEvent = TRUE;                                   \
-      return (CFWL_Event*)pEvent;                                  \
+#define BEGIN_FWL_MESSAGE_DEF(classname, msghashcode)             \
+  class classname : public CFWL_Message {                         \
+   public:                                                        \
+    classname() : CFWL_Message() {}                               \
+    virtual CFWL_Note* Clone() { return new classname(*this); }   \
+    virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const { \
+      wsClass = L" ## classname ## ";                             \
+      return FWL_ERR_Succeeded;                                   \
+    }                                                             \
+    virtual FX_DWORD GetClassID() const { return msghashcode; }   \
+    virtual CFWL_Event* CloneToEvent() {                          \
+      classname* pEvent = new classname;                          \
+      pEvent->m_bIsEvent = TRUE;                                  \
+      return (CFWL_Event*)pEvent;                                 \
     }
 #define END_FWL_MESSAGE_DEF \
   }                         \

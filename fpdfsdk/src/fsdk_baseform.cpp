@@ -1126,10 +1126,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
   ASSERT(pDoc != NULL);
   CPDFDoc_Environment* pEnv = pDoc->GetEnv();
 
-  CBA_FontMap FontMap(
-      this,
-      pEnv->GetSysHandler());  //,
-                               //ISystemHandle::GetSystemHandler(m_pBaseForm->GetEnv()));
+  CBA_FontMap FontMap(this, pEnv->GetSysHandler());
   FontMap.Initial();
 
   FontMap.SetAPType("N");
@@ -1689,10 +1686,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
     ASSERT(pDoc != NULL);
     CPDFDoc_Environment* pEnv = pDoc->GetEnv();
 
-    CBA_FontMap FontMap(
-        this,
-        pEnv->GetSysHandler());  //,
-                                 //ISystemHandle::GetSystemHandler(m_pBaseForm->GetEnv()));
+    CBA_FontMap FontMap(this, pEnv->GetSysHandler());
     FontMap.Initial();
     pEdit->SetFontMap(&FontMap);
 

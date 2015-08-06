@@ -74,7 +74,7 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusGF::buildMonomial(
   CBC_PDF417ECModulusPoly* modulusPoly = NULL;
   if (coefficient == 0) {
     modulusPoly = new CBC_PDF417ECModulusPoly(m_zero->getField(),
-                                                 m_zero->getCoefficients(), e);
+                                              m_zero->getCoefficients(), e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
   }

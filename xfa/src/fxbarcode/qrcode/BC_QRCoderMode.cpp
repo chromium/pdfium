@@ -55,11 +55,10 @@ CBC_QRCoderMode::~CBC_QRCoderMode() {
 }
 void CBC_QRCoderMode::Initialize() {
   sBYTE = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 16, 16, 0x4, "BYTE");
-  sALPHANUMERIC = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 9, 11, 13, 0x2,
-                                         "ALPHANUMERIC");
+  sALPHANUMERIC =
+      new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 9, 11, 13, 0x2, "ALPHANUMERIC");
   sECI = new CBC_QRCoderMode(NULL, 0, 0, 0, 0x7, "ECI");
-  sKANJI =
-      new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 10, 12, 0x8, "KANJI");
+  sKANJI = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 10, 12, 0x8, "KANJI");
   sNUMERIC =
       new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 10, 12, 14, 0x1, "NUMERIC");
   sGBK = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 8, 10, 12, 0x0D, "GBK");
@@ -69,8 +68,8 @@ void CBC_QRCoderMode::Initialize() {
       new CBC_QRCoderMode(NULL, 0, 0, 0, 0x05, "FNC1_FIRST_POSITION");
   sFNC1_SECOND_POSITION =
       new CBC_QRCoderMode(NULL, 0, 0, 0, 0x09, "FNC1_SECOND_POSITION");
-  sSTRUCTURED_APPEND = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 0, 0, 0,
-                                              0x03, "STRUCTURED_APPEND");
+  sSTRUCTURED_APPEND = new CBC_QRCoderMode(FX_Alloc(int32_t, 3), 0, 0, 0, 0x03,
+                                           "STRUCTURED_APPEND");
 }
 void CBC_QRCoderMode::Finalize() {
   delete sBYTE;

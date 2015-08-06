@@ -891,7 +891,7 @@ IXFA_WidgetAccIterator* XFA_WidgetAccIterator_Create(
     return NULL;
   }
   return new CXFA_WidgetAccIterator(pTravelRoot->GetDocView(),
-                                       pTravelRoot->GetNode());
+                                    pTravelRoot->GetNode());
 }
 CXFA_WidgetAccIterator::CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView,
                                                CXFA_Node* pTravelRoot)

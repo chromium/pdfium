@@ -742,7 +742,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
 // CPDFSDK_XFAAnnotHandler
 
 #define FWL_WGTHITTEST_Unknown 0
-#define FWL_WGTHITTEST_Client 1  // arrow
+#define FWL_WGTHITTEST_Client 1     // arrow
 #define FWL_WGTHITTEST_Titlebar 11  // caption
 #define FWL_WGTHITTEST_HScrollBar 15
 #define FWL_WGTHITTEST_VScrollBar 16

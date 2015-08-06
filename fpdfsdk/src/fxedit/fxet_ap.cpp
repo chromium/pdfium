@@ -196,11 +196,6 @@ CFX_ByteString IFX_Edit::GetSelectAppearanceStream(
         CPVT_Word word;
         CPVT_Line line;
         if (pIterator->GetWord(word) && pIterator->GetLine(line)) {
-          // CPDF_Rect rcWordSel = CPDF_Rect(word.ptWord.x,line.ptLine.y +
-          // line.fLineDescent,
-          //		word.ptWord.x+word.fWidth,line.ptLine.y +
-          //line.fLineAscent);
-
           sRet << word.ptWord.x + ptOffset.x << " "
                << line.ptLine.y + line.fLineDescent << " " << word.fWidth << " "
                << line.fLineAscent - line.fLineDescent << " re\nf\n";

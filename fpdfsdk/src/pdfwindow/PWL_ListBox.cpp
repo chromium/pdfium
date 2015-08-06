@@ -183,7 +183,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
       if (m_pList->IsItemSelected(i)) {
         //	CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcItem,
-        //ArgbEncode(255,0,51,113));
+        // ArgbEncode(255,0,51,113));
         IFX_SystemHandler* pSysHandler = GetSystemHandler();
         if (pSysHandler && pSysHandler->IsSelectionImplemented()) {
           IFX_Edit::DrawEdit(

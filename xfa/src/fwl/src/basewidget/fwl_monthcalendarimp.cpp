@@ -131,8 +131,7 @@ FX_DWORD CFWL_MonthCalendarImp::GetClassID() const {
 FWL_ERR CFWL_MonthCalendarImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate =
-      (IFWL_WidgetDelegate*)new CFWL_MonthCalendarImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_MonthCalendarImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_MonthCalendarImp::Finalize() {

@@ -852,7 +852,7 @@ FX_BOOL CFX_ImageStretcher::Continue(IFX_Pause* pPause) {
 FX_BOOL CFX_ImageStretcher::StartStretch() {
   m_pStretchEngine =
       new CStretchEngine(m_pDest, m_DestFormat, m_DestWidth, m_DestHeight,
-                            m_ClipRect, m_pSource, m_Flags);
+                         m_ClipRect, m_pSource, m_Flags);
   if (!m_pStretchEngine) {
     return FALSE;
   }

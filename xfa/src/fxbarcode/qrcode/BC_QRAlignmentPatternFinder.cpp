@@ -193,7 +193,7 @@ CBC_QRAlignmentPattern* CBC_QRAlignmentPatternFinder::HandlePossibleCenter(
           (CBC_QRAlignmentPattern*)(m_possibleCenters[index]);
       if (center->AboutEquals(estimatedModuleSize, centerI, centerJ)) {
         return new CBC_QRAlignmentPattern(centerJ, centerI,
-                                             estimatedModuleSize);
+                                          estimatedModuleSize);
       }
     }
     m_possibleCenters.Add(

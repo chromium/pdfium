@@ -97,7 +97,7 @@ CBC_CommonPerspectiveTransform::SquareToQuadrilateral(FX_FLOAT x0,
   FX_FLOAT dy3 = y0 - y1 + y2 - y3;
   if ((dy2 == 0.0f) && (dy3 == 0.0f)) {
     return new CBC_CommonPerspectiveTransform(x1 - x0, x2 - x1, x0, y1 - y0,
-                                                 y2 - y1, y0, 0.0f, 0.0f, 1.0f);
+                                              y2 - y1, y0, 0.0f, 0.0f, 1.0f);
   } else {
     FX_FLOAT dx1 = x1 - x2;
     FX_FLOAT dx2 = x3 - x2;

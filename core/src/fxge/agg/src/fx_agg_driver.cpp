@@ -187,7 +187,7 @@ IFX_RenderDeviceDriver* IFX_RenderDeviceDriver::CreateFxgeDriver(
     CFX_DIBitmap* pOriDevice,
     FX_BOOL bGroupKnockout) {
   return new CFX_AggDeviceDriver(pBitmap, 0, bRgbByteOrder, pOriDevice,
-                                    bGroupKnockout);
+                                 bGroupKnockout);
 }
 CFX_AggDeviceDriver::CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap,
                                          int dither_bits,
@@ -323,7 +323,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathFill(
   m_FillFlags = fill_mode;
   if (m_pClipRgn == NULL) {
     m_pClipRgn = new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
-                                    GetDeviceCaps(FXDC_PIXEL_HEIGHT));
+                                 GetDeviceCaps(FXDC_PIXEL_HEIGHT));
     if (!m_pClipRgn) {
       return FALSE;
     }
@@ -358,7 +358,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(
     const CFX_GraphStateData* pGraphState) {
   if (m_pClipRgn == NULL) {
     m_pClipRgn = new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
-                                    GetDeviceCaps(FXDC_PIXEL_HEIGHT));
+                                 GetDeviceCaps(FXDC_PIXEL_HEIGHT));
     if (!m_pClipRgn) {
       return FALSE;
     }
@@ -1800,8 +1800,8 @@ FX_BOOL CFX_FxgeDevice::Create(int width,
     return FALSE;
   }
   SetBitmap(pBitmap);
-  IFX_RenderDeviceDriver* pDriver = new CFX_AggDeviceDriver(
-      pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
+  IFX_RenderDeviceDriver* pDriver =
+      new CFX_AggDeviceDriver(pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
   if (!pDriver) {
     return FALSE;
   }

@@ -14,8 +14,7 @@ FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document) {
   if (!document)
     return NULL;
   CPDF_ImageObject* pImageObj = new CPDF_ImageObject;
-  CPDF_Image* pImg =
-      new CPDF_Image(((CPDFXFA_Document*)document)->GetPDFDoc());
+  CPDF_Image* pImg = new CPDF_Image(((CPDFXFA_Document*)document)->GetPDFDoc());
   pImageObj->m_pImage = pImg;
   return pImageObj;
 }

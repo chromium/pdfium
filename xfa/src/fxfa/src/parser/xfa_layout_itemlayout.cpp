@@ -2487,8 +2487,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           } else if (m_pPageMgr &&
                      m_pPageMgr->ProcessBookendLeaderOrTrailer(
                          m_pCurChildNode, TRUE, pLeaderNode)) {
-            pProcessor =
-                new CXFA_ItemLayoutProcessor(pLeaderNode, m_pPageMgr);
+            pProcessor = new CXFA_ItemLayoutProcessor(pLeaderNode, m_pPageMgr);
 #ifndef _XFA_LAYOUTITEM_ProcessCACHE_
             pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
 #endif
@@ -2517,8 +2516,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           } else if (m_pPageMgr &&
                      m_pPageMgr->ProcessBookendLeaderOrTrailer(
                          m_pCurChildNode, FALSE, pTrailerNode)) {
-            pProcessor =
-                new CXFA_ItemLayoutProcessor(pTrailerNode, m_pPageMgr);
+            pProcessor = new CXFA_ItemLayoutProcessor(pTrailerNode, m_pPageMgr);
 #ifndef _XFA_LAYOUTITEM_ProcessCACHE_
             pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
 #endif

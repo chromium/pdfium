@@ -817,7 +817,7 @@ void CPDF_VariableText::Initialize() {
     if (m_bRichText) {
       secinfo.pSecProps = new CPVT_SecProps(0.0f, 0.0f, 0);
       secinfo.pWordProps = new CPVT_WordProps(GetDefaultFontIndex(),
-                                                 PVT_DEFAULT_FONTSIZE, 0, 0, 0);
+                                              PVT_DEFAULT_FONTSIZE, 0, 0, 0);
     }
     CPVT_WordPlace place;
     place.nSecIndex = 0;

@@ -485,11 +485,10 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
         Replace(nBgn, nEnd - nBgn + 1, wsDisplay);
         int32_t nNewCaret = nBgn + nCaret;
         if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-          IFDE_TxtEdtDoRecord* pRecord =
-              new CFDE_TxtEdtDoRecord_FieldReplace(
-                  this, m_nCaret, nNewCaret, pField, nIndexInField, nBgn,
-                  wsDisplay.GetLength(), wsDel,
-                  CFX_WideStringC(lpText, nLength), TRUE);
+          IFDE_TxtEdtDoRecord* pRecord = new CFDE_TxtEdtDoRecord_FieldReplace(
+              this, m_nCaret, nNewCaret, pField, nIndexInField, nBgn,
+              wsDisplay.GetLength(), wsDel, CFX_WideStringC(lpText, nLength),
+              TRUE);
           CFX_ByteString bsDoRecord;
           pRecord->Serialize(bsDoRecord);
           m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord);

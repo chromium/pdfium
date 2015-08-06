@@ -88,8 +88,8 @@ int JS_DefineObj(IJS_Runtime* pJSRuntime,
     pArray = new CFX_PtrArray();
     isolate->SetData(g_embedderDataSlot, pArray);
   }
-  CJS_ObjDefintion* pObjDef = new CJS_ObjDefintion(
-      isolate, sObjName, eObjType, pConstructor, pDestructor);
+  CJS_ObjDefintion* pObjDef = new CJS_ObjDefintion(isolate, sObjName, eObjType,
+                                                   pConstructor, pDestructor);
   pArray->Add(pObjDef);
   return pArray->GetSize() - 1;
 }

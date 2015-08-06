@@ -151,8 +151,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
     if (pDirectObj != NULL) {
       if (pDirectObj->GetType() == PDFOBJ_ARRAY) {
         pContentArray = (CPDF_Array*)pDirectObj;
-        CPDF_Reference* pRef =
-            new CPDF_Reference(pDoc, pStream->GetObjNum());
+        CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
         pContentArray->InsertAt(0, pRef);
         pContentArray->AddReference(pDoc, pEndStream);
 
@@ -324,8 +323,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
     if (pDirectObj != NULL) {
       if (pDirectObj->GetType() == PDFOBJ_ARRAY) {
         pContentArray = (CPDF_Array*)pDirectObj;
-        CPDF_Reference* pRef =
-            new CPDF_Reference(pDoc, pStream->GetObjNum());
+        CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
         pContentArray->InsertAt(0, pRef);
 
       } else if (pDirectObj->GetType() == PDFOBJ_STREAM) {

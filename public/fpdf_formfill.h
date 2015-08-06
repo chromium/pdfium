@@ -11,9 +11,9 @@
 
 typedef void* FPDF_FORMHANDLE;
 
-#define DOCTYPE_PDF 0  // Normal pdf Document
+#define DOCTYPE_PDF 0          // Normal pdf Document
 #define DOCTYPE_DYNIMIC_XFA 1  // Dynimic xfa Document Type
-#define DOCTYPE_STATIC_XFA 2  // Static xfa Document Type
+#define DOCTYPE_STATIC_XFA 2   // Static xfa Document Type
 
 // Exported Functions
 #ifdef __cplusplus
@@ -1104,6 +1104,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle);
   0x13  // WP, before printing document, JavaScript action.
 #define FPDFDOC_AACTION_DP \
   0x14  // DP, after printing document, JavaScript action.
+
 /**
 * Function: FORM_DoDocumentAAction
 *           This method is required for performing the document's

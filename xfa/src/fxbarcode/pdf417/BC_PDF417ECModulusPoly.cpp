@@ -94,7 +94,7 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::add(
   CBC_PDF417ECModulusPoly* modulusPoly = NULL;
   if (isZero()) {
     modulusPoly = new CBC_PDF417ECModulusPoly(other->getField(),
-                                                 other->getCoefficients(), e);
+                                              other->getCoefficients(), e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
   }
@@ -149,9 +149,9 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(
     int32_t& e) {
   CBC_PDF417ECModulusPoly* modulusPoly = NULL;
   if (isZero() || other->isZero()) {
-    modulusPoly = new CBC_PDF417ECModulusPoly(
-        m_field->getZero()->getField(), m_field->getZero()->getCoefficients(),
-        e);
+    modulusPoly =
+        new CBC_PDF417ECModulusPoly(m_field->getZero()->getField(),
+                                    m_field->getZero()->getCoefficients(), e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
   }
@@ -190,9 +190,9 @@ CBC_PDF417ECModulusPoly* CBC_PDF417ECModulusPoly::multiply(int32_t scalar,
                                                            int32_t& e) {
   CBC_PDF417ECModulusPoly* modulusPoly = NULL;
   if (scalar == 0) {
-    modulusPoly = new CBC_PDF417ECModulusPoly(
-        m_field->getZero()->getField(), m_field->getZero()->getCoefficients(),
-        e);
+    modulusPoly =
+        new CBC_PDF417ECModulusPoly(m_field->getZero()->getField(),
+                                    m_field->getZero()->getCoefficients(), e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     return modulusPoly;
   }

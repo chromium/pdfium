@@ -73,7 +73,7 @@ uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   CBC_DefaultPlacement* placement =
       new CBC_DefaultPlacement(codewords, symbolInfo->getSymbolDataWidth(e),
-                                  symbolInfo->getSymbolDataHeight(e));
+                               symbolInfo->getSymbolDataHeight(e));
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   placement->place();
   CBC_CommonByteMatrix* bytematrix = encodeLowLevel(placement, symbolInfo, e);

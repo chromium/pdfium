@@ -147,8 +147,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseFunction() {
     Check(TOKendfunc);
   }
   if (m_pErrorInfo->message.IsEmpty()) {
-    e = new CXFA_FMFunctionDefinition(line, 0, ident, pArguments,
-                                         pExpressions);
+    e = new CXFA_FMFunctionDefinition(line, 0, ident, pArguments, pExpressions);
   } else {
     int32_t size = 0;
     int32_t index = 0;
@@ -537,8 +536,8 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePrimaryExpression() {
       if (m_pToken->m_type == TOKlbracket) {
         CXFA_FMSimpleExpression* s = ParseIndexExpression();
         if (s) {
-          e = new CXFA_FMDotAccessorExpression(line, NULL, TOKdot,
-                                                  wsIdentifier, s);
+          e = new CXFA_FMDotAccessorExpression(line, NULL, TOKdot, wsIdentifier,
+                                               s);
         }
         NextToken();
       } else {
@@ -606,7 +605,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
           CXFA_FMSimpleExpression* s = ParseIndexExpression();
           if (s) {
             e = new CXFA_FMDotAccessorExpression(line, e, TOKcall,
-                                                    FX_WSTRC(L""), s);
+                                                 FX_WSTRC(L""), s);
           } else {
             delete e;
             e = 0;
@@ -657,8 +656,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
                   new CXFA_FMIdentifierExpressionn(tempLine, tempStr);
               pExpCall =
                   new CXFA_FMCallExpression(line, pIdentifier, pArray, TRUE);
-              e = new CXFA_FMMethodCallExpression(line, pExpAccessor,
-                                                     pExpCall);
+              e = new CXFA_FMMethodCallExpression(line, pExpAccessor, pExpCall);
               NextToken();
               if (m_pToken->m_type != TOKlbracket) {
                 continue;
@@ -666,7 +664,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               CXFA_FMSimpleExpression* s = ParseIndexExpression();
               if (s) {
                 e = new CXFA_FMDotAccessorExpression(line, e, TOKcall,
-                                                        FX_WSTRC(L""), s);
+                                                     FX_WSTRC(L""), s);
               } else {
                 delete e;
                 e = 0;
@@ -695,13 +693,12 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               }
               return e;
             }
-            e = new CXFA_FMDotAccessorExpression(tempLine, e, TOKdot,
-                                                    tempStr, s);
+            e = new CXFA_FMDotAccessorExpression(tempLine, e, TOKdot, tempStr,
+                                                 s);
           } else {
             CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
                 tempLine, ACCESSOR_NO_INDEX, NULL, FALSE);
-            e = new CXFA_FMDotAccessorExpression(line, e, TOKdot, tempStr,
-                                                    s);
+            e = new CXFA_FMDotAccessorExpression(line, e, TOKdot, tempStr, s);
             continue;
           }
         } else {
@@ -731,12 +728,12 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               return e;
             }
             e = new CXFA_FMDotDotAccessorExpression(tempLine, e, TOKdotdot,
-                                                       tempStr, s);
+                                                    tempStr, s);
           } else {
             CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
                 tempLine, ACCESSOR_NO_INDEX, NULL, FALSE);
-            e = new CXFA_FMDotDotAccessorExpression(line, e, TOKdotdot,
-                                                       tempStr, s);
+            e = new CXFA_FMDotDotAccessorExpression(line, e, TOKdotdot, tempStr,
+                                                    s);
             continue;
           }
         } else {
@@ -766,12 +763,12 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               return e;
             }
             e = new CXFA_FMDotAccessorExpression(tempLine, e, TOKdotscream,
-                                                    tempStr, s);
+                                                 tempStr, s);
           } else {
             CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
                 tempLine, ACCESSOR_NO_INDEX, NULL, FALSE);
-            e = new CXFA_FMDotAccessorExpression(line, e, TOKdotscream,
-                                                    tempStr, s);
+            e = new CXFA_FMDotAccessorExpression(line, e, TOKdotscream, tempStr,
+                                                 s);
             continue;
           }
         } else {
@@ -785,7 +782,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
         CXFA_FMSimpleExpression* s =
             new CXFA_FMIndexExpression(line, ACCESSOR_NO_INDEX, NULL, FALSE);
         e = new CXFA_FMDotAccessorExpression(line, e, TOKdotstar,
-                                                FX_WSTRC(L"*"), s);
+                                             FX_WSTRC(L"*"), s);
       } break;
       default:
         return e;
@@ -963,7 +960,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseIfExpression() {
   CXFA_FMIfExpression* pExp = 0;
   if (m_pErrorInfo->message.IsEmpty()) {
     pExp = new CXFA_FMIfExpression(line, pExpression, pIfExpression,
-                                      pElseExpression);
+                                   pElseExpression);
   } else {
     if (pExpression) {
       delete pExpression;
@@ -1061,7 +1058,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForExpression() {
   Check(TOKendfor);
   if (m_pErrorInfo->message.IsEmpty()) {
     e = new CXFA_FMForExpression(line, wsVariant, pAssignment, pAccessor,
-                                    iDirection, pStep, pList);
+                                 iDirection, pStep, pList);
   } else {
     if (pAssignment) {
       delete pAssignment;

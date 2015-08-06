@@ -214,10 +214,10 @@ CFX_PtrArray* CBC_Detector::findRowsWithPattern(CBC_CommonBitMatrix* matrix,
           break;
         }
       }
-      result->SetAt(0, new CBC_ResultPoint((FX_FLOAT)loc->GetAt(0),
-                                              (FX_FLOAT)startRow));
-      result->SetAt(1, new CBC_ResultPoint((FX_FLOAT)loc->GetAt(1),
-                                              (FX_FLOAT)startRow));
+      result->SetAt(
+          0, new CBC_ResultPoint((FX_FLOAT)loc->GetAt(0), (FX_FLOAT)startRow));
+      result->SetAt(
+          1, new CBC_ResultPoint((FX_FLOAT)loc->GetAt(1), (FX_FLOAT)startRow));
       found = TRUE;
       delete loc;
       break;
@@ -250,9 +250,9 @@ CFX_PtrArray* CBC_Detector::findRowsWithPattern(CBC_CommonBitMatrix* matrix,
     }
     stopRow -= skippedRowCount + 1;
     result->SetAt(2, new CBC_ResultPoint((FX_FLOAT)previousRowLoc.GetAt(0),
-                                            (FX_FLOAT)stopRow));
+                                         (FX_FLOAT)stopRow));
     result->SetAt(3, new CBC_ResultPoint((FX_FLOAT)previousRowLoc.GetAt(1),
-                                            (FX_FLOAT)stopRow));
+                                         (FX_FLOAT)stopRow));
   }
   if (stopRow - startRow < BARCODE_MIN_HEIGHT) {
     for (int32_t i = 0; i < result->GetSize(); i++) {

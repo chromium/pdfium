@@ -546,7 +546,8 @@ void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
 
   if (dwEvent == XFA_WIDGETEVENT_PostAdded) {
-    // 			CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(hWidget,
+    // 			CPDFSDK_Annot* pAnnot =
+    // pAnnotHandlerMgr->NewAnnot(hWidget,
     // pSdkPageView);
     // 			pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
 

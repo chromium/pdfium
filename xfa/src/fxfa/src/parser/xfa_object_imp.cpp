@@ -745,8 +745,7 @@ void CXFA_Node::Script_TreeClass_Nodes(FXJSE_HVALUE hValue,
     FXJSE_ThrowMessage(FX_BSTRC(""),
                        FX_UTF8Encode(wsMessage, wsMessage.GetLength()));
   } else {
-    CXFA_AttachNodeList* pNodeList =
-        new CXFA_AttachNodeList(m_pDocument, this);
+    CXFA_AttachNodeList* pNodeList = new CXFA_AttachNodeList(m_pDocument, this);
     FXJSE_Value_SetObject(hValue, (CXFA_Object*)pNodeList,
                           pScriptContext->GetJseNormalClass());
   }

@@ -101,9 +101,7 @@ class CPDF_Object {
 };
 class CPDF_Boolean : public CPDF_Object {
  public:
-  static CPDF_Boolean* Create(FX_BOOL value) {
-    return new CPDF_Boolean(value);
-  }
+  static CPDF_Boolean* Create(FX_BOOL value) { return new CPDF_Boolean(value); }
 
   CPDF_Boolean() : CPDF_Object(PDFOBJ_BOOLEAN), m_bValue(false) {}
   CPDF_Boolean(FX_BOOL value) : CPDF_Object(PDFOBJ_BOOLEAN), m_bValue(value) {}
@@ -120,9 +118,7 @@ class CPDF_Number : public CPDF_Object {
  public:
   static CPDF_Number* Create(int value) { return new CPDF_Number(value); }
 
-  static CPDF_Number* Create(FX_FLOAT value) {
-    return new CPDF_Number(value);
-  }
+  static CPDF_Number* Create(FX_FLOAT value) { return new CPDF_Number(value); }
 
   static CPDF_Number* Create(const CFX_ByteStringC& str) {
     return new CPDF_Number(str);

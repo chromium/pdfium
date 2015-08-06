@@ -96,67 +96,67 @@ CBC_DataMatrixVersion* CBC_DataMatrixVersion::GetVersionForDimensions(
     return NULL;
   }
   if (VERSIONS->GetSize() == 0) {
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        1, 10, 10, 8, 8, new ECBlocks(5, new ECB(1, 3))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        2, 12, 12, 10, 10, new ECBlocks(7, new ECB(1, 5))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        3, 14, 14, 12, 12, new ECBlocks(10, new ECB(1, 8))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        4, 16, 16, 14, 14, new ECBlocks(12, new ECB(1, 12))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        5, 18, 18, 16, 16, new ECBlocks(14, new ECB(1, 18))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        6, 20, 20, 18, 18, new ECBlocks(18, new ECB(1, 22))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        7, 22, 22, 20, 20, new ECBlocks(20, new ECB(1, 30))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        8, 24, 24, 22, 22, new ECBlocks(24, new ECB(1, 36))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        9, 26, 26, 24, 24, new ECBlocks(28, new ECB(1, 44))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        10, 32, 32, 14, 14, new ECBlocks(36, new ECB(1, 62))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        11, 36, 36, 16, 16, new ECBlocks(42, new ECB(1, 86))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        12, 40, 40, 18, 18, new ECBlocks(48, new ECB(1, 114))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        13, 44, 44, 20, 20, new ECBlocks(56, new ECB(1, 144))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        14, 48, 48, 22, 22, new ECBlocks(68, new ECB(1, 174))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        15, 52, 52, 24, 24, new ECBlocks(42, new ECB(2, 102))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        16, 64, 64, 14, 14, new ECBlocks(56, new ECB(2, 140))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        17, 72, 72, 16, 16, new ECBlocks(36, new ECB(4, 92))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        18, 80, 80, 18, 18, new ECBlocks(48, new ECB(4, 114))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        19, 88, 88, 20, 20, new ECBlocks(56, new ECB(4, 144))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        20, 96, 96, 22, 22, new ECBlocks(68, new ECB(4, 174))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        21, 104, 104, 24, 24, new ECBlocks(56, new ECB(6, 136))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        22, 120, 120, 18, 18, new ECBlocks(68, new ECB(6, 175))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        23, 132, 132, 20, 20, new ECBlocks(62, new ECB(8, 163))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(1, 10, 10, 8, 8,
+                                            new ECBlocks(5, new ECB(1, 3))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(2, 12, 12, 10, 10,
+                                            new ECBlocks(7, new ECB(1, 5))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(3, 14, 14, 12, 12,
+                                            new ECBlocks(10, new ECB(1, 8))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(4, 16, 16, 14, 14,
+                                            new ECBlocks(12, new ECB(1, 12))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(5, 18, 18, 16, 16,
+                                            new ECBlocks(14, new ECB(1, 18))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(6, 20, 20, 18, 18,
+                                            new ECBlocks(18, new ECB(1, 22))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(7, 22, 22, 20, 20,
+                                            new ECBlocks(20, new ECB(1, 30))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(8, 24, 24, 22, 22,
+                                            new ECBlocks(24, new ECB(1, 36))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(9, 26, 26, 24, 24,
+                                            new ECBlocks(28, new ECB(1, 44))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(10, 32, 32, 14, 14,
+                                            new ECBlocks(36, new ECB(1, 62))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(11, 36, 36, 16, 16,
+                                            new ECBlocks(42, new ECB(1, 86))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(12, 40, 40, 18, 18,
+                                            new ECBlocks(48, new ECB(1, 114))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(13, 44, 44, 20, 20,
+                                            new ECBlocks(56, new ECB(1, 144))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(14, 48, 48, 22, 22,
+                                            new ECBlocks(68, new ECB(1, 174))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(15, 52, 52, 24, 24,
+                                            new ECBlocks(42, new ECB(2, 102))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(16, 64, 64, 14, 14,
+                                            new ECBlocks(56, new ECB(2, 140))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(17, 72, 72, 16, 16,
+                                            new ECBlocks(36, new ECB(4, 92))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(18, 80, 80, 18, 18,
+                                            new ECBlocks(48, new ECB(4, 114))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(19, 88, 88, 20, 20,
+                                            new ECBlocks(56, new ECB(4, 144))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(20, 96, 96, 22, 22,
+                                            new ECBlocks(68, new ECB(4, 174))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(21, 104, 104, 24, 24,
+                                            new ECBlocks(56, new ECB(6, 136))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(22, 120, 120, 18, 18,
+                                            new ECBlocks(68, new ECB(6, 175))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(23, 132, 132, 20, 20,
+                                            new ECBlocks(62, new ECB(8, 163))));
     VERSIONS->Add(new CBC_DataMatrixVersion(
         24, 144, 144, 22, 22,
         new ECBlocks(62, new ECB(8, 156), new ECB(2, 155))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        25, 8, 18, 6, 16, new ECBlocks(7, new ECB(1, 5))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        26, 8, 32, 6, 14, new ECBlocks(11, new ECB(1, 10))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        27, 12, 26, 10, 24, new ECBlocks(14, new ECB(1, 16))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        28, 12, 36, 10, 16, new ECBlocks(18, new ECB(1, 22))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        29, 16, 36, 14, 16, new ECBlocks(24, new ECB(1, 32))));
-    VERSIONS->Add(new CBC_DataMatrixVersion(
-        30, 16, 48, 14, 22, new ECBlocks(28, new ECB(1, 49))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(25, 8, 18, 6, 16,
+                                            new ECBlocks(7, new ECB(1, 5))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(26, 8, 32, 6, 14,
+                                            new ECBlocks(11, new ECB(1, 10))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(27, 12, 26, 10, 24,
+                                            new ECBlocks(14, new ECB(1, 16))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(28, 12, 36, 10, 16,
+                                            new ECBlocks(18, new ECB(1, 22))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(29, 16, 36, 14, 16,
+                                            new ECBlocks(24, new ECB(1, 32))));
+    VERSIONS->Add(new CBC_DataMatrixVersion(30, 16, 48, 14, 22,
+                                            new ECBlocks(28, new ECB(1, 49))));
   }
   int32_t numVersions = VERSIONS->GetSize();
   for (int32_t i = 0; i < numVersions; ++i) {

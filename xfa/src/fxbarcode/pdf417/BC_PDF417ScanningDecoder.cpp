@@ -591,7 +591,7 @@ CBC_Codeword* CBC_PDF417ScanningDecoder::detectCodeword(
     return NULL;
   }
   return new CBC_Codeword(startColumn, endColumn,
-                             getCodewordBucketNumber(decodedValue), codeword);
+                          getCodewordBucketNumber(decodedValue), codeword);
 }
 CFX_Int32Array* CBC_PDF417ScanningDecoder::getModuleBitCount(
     CBC_CommonBitMatrix* image,

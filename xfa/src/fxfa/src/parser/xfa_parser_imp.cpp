@@ -128,8 +128,7 @@ int32_t CXFA_SimpleParser::ParseXMLData(const CFX_WideString& wsXML,
   if (m_pXMLDoc == NULL) {
     return XFA_PARSESTATUS_StatusErr;
   }
-  CXFA_XMLParser* pParser =
-      new CXFA_XMLParser(m_pXMLDoc->GetRoot(), m_pStream);
+  CXFA_XMLParser* pParser = new CXFA_XMLParser(m_pXMLDoc->GetRoot(), m_pStream);
   if (pParser == NULL) {
     return XFA_PARSESTATUS_StatusErr;
   }

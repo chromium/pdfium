@@ -196,8 +196,7 @@ void SetPageContents(CFX_ByteString key,
   if (!pContentsObj) {
     // Create a new contents dictionary
     if (!key.IsEmpty()) {
-      CPDF_Stream* pNewContents =
-          new CPDF_Stream(NULL, 0, new CPDF_Dictionary);
+      CPDF_Stream* pNewContents = new CPDF_Stream(NULL, 0, new CPDF_Dictionary);
       if (!pNewContents)
         return;
       pPage->SetAtReference("Contents", pDocument,
@@ -246,8 +245,7 @@ void SetPageContents(CFX_ByteString key,
   pPage->SetAtReference("Contents", pDocument, dwObjNum);
 
   if (!key.IsEmpty()) {
-    CPDF_Stream* pNewContents =
-        new CPDF_Stream(NULL, 0, new CPDF_Dictionary);
+    CPDF_Stream* pNewContents = new CPDF_Stream(NULL, 0, new CPDF_Dictionary);
     dwObjNum = pDocument->AddIndirectObject(pNewContents);
     pContentsArray->AddReference(pDocument, dwObjNum);
 
@@ -391,8 +389,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pPageDict->SetAt("Resources", pRes);
   }
 
-  CPDF_Stream* pNewXObject =
-      new CPDF_Stream(NULL, 0, new CPDF_Dictionary);
+  CPDF_Stream* pNewXObject = new CPDF_Stream(NULL, 0, new CPDF_Dictionary);
   FX_DWORD dwObjNum = pDocument->AddIndirectObject(pNewXObject);
   CPDF_Dictionary* pPageXObject = pRes->GetDict("XObject");
   if (!pPageXObject) {

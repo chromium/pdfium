@@ -210,8 +210,7 @@ FWL_ERR CFWL_DateTimeCalendar::Initialize() {
   if (m_pDelegate) {
     delete (CFWL_MonthCalendarImpDelegate*)m_pDelegate;
   }
-  m_pDelegate =
-      (IFWL_WidgetDelegate*)new CFWL_DateTimeCalendarDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_DateTimeCalendarDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_DateTimeCalendar::Finalize() {
@@ -454,8 +453,7 @@ FX_DWORD CFWL_DateTimePickerImp::GetClassID() const {
 FWL_ERR CFWL_DateTimePickerImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate =
-      (IFWL_WidgetDelegate*)new CFWL_DateTimePickerImpDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_DateTimePickerImpDelegate(this);
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
   CFWL_WidgetImpProperties propMonth;
   propMonth.m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;

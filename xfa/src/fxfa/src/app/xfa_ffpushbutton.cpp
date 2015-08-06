@@ -144,8 +144,8 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
       FX_BOOL bRichText;
       if (m_pDataAcc->GetButtonRollover(wsRollover, bRichText)) {
         if (m_pRollProvider == NULL) {
-          m_pRollProvider = new CXFA_TextProvider(
-              m_pDataAcc, XFA_TEXTPROVIDERTYPE_Rollover);
+          m_pRollProvider =
+              new CXFA_TextProvider(m_pDataAcc, XFA_TEXTPROVIDERTYPE_Rollover);
         }
         m_pRolloverTextLayout = new CXFA_TextLayout(m_pRollProvider);
       }

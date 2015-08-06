@@ -210,9 +210,9 @@ CBC_DetectionResultRowIndicatorColumn::getBarcodeMetadata() {
   }
   CBC_BarcodeMetadata* barcodeMetadata =
       new CBC_BarcodeMetadata(barcodeColumnCount.getValue()->GetAt(0),
-                                 barcodeRowCountUpperPart.getValue()->GetAt(0),
-                                 barcodeRowCountLowerPart.getValue()->GetAt(0),
-                                 barcodeECLevel.getValue()->GetAt(0));
+                              barcodeRowCountUpperPart.getValue()->GetAt(0),
+                              barcodeRowCountLowerPart.getValue()->GetAt(0),
+                              barcodeECLevel.getValue()->GetAt(0));
   removeIncorrectCodewords(codewords, *barcodeMetadata);
   return barcodeMetadata;
 }
