@@ -226,28 +226,28 @@ struct PWL_CREATEPARAM {
         eCursorType(FXCT_ARROW),
         mtChild(1, 0, 0, 1, 0, 0) {}
 
-  CPDF_Rect rcRectWnd;  // required
+  CPDF_Rect rcRectWnd;                // required
   IFX_SystemHandler* pSystemHandler;  // required
-  IFX_Edit_FontMap* pFontMap;  // required for text window
-  IPWL_Provider* pProvider;  // required for self coordinate
-  IPWL_FocusHandler* pFocusHandler;  // optional
-  FX_DWORD dwFlags;  // optional
-  CPWL_Color sBackgroundColor;  // optional
-  FX_HWND hAttachedWnd;  // required for no-reader framework
-  IPWL_SpellCheck* pSpellCheck;  // required for spellchecking
-  int32_t nBorderStyle;  // optional
-  int32_t dwBorderWidth;  // optional
-  CPWL_Color sBorderColor;  // optional
-  CPWL_Color sTextColor;  // optional
-  CPWL_Color sTextStrokeColor;  // optional
-  int32_t nTransparency;  // optional
-  FX_FLOAT fFontSize;  // optional
-  CPWL_Dash sDash;  // optional
-  void* pAttachedData;  // optional
-  CPWL_Wnd* pParentWnd;  // ignore
-  CPWL_MsgControl* pMsgControl;  // ignore
-  int32_t eCursorType;  // ignore
-  CPDF_Matrix mtChild;  // ignore
+  IFX_Edit_FontMap* pFontMap;         // required for text window
+  IPWL_Provider* pProvider;           // required for self coordinate
+  IPWL_FocusHandler* pFocusHandler;   // optional
+  FX_DWORD dwFlags;                   // optional
+  CPWL_Color sBackgroundColor;        // optional
+  FX_HWND hAttachedWnd;               // required for no-reader framework
+  IPWL_SpellCheck* pSpellCheck;       // required for spellchecking
+  int32_t nBorderStyle;               // optional
+  int32_t dwBorderWidth;              // optional
+  CPWL_Color sBorderColor;            // optional
+  CPWL_Color sTextColor;              // optional
+  CPWL_Color sTextStrokeColor;        // optional
+  int32_t nTransparency;              // optional
+  FX_FLOAT fFontSize;                 // optional
+  CPWL_Dash sDash;                    // optional
+  void* pAttachedData;                // optional
+  CPWL_Wnd* pParentWnd;               // ignore
+  CPWL_MsgControl* pMsgControl;       // ignore
+  int32_t eCursorType;                // ignore
+  CPDF_Matrix mtChild;                // ignore
 };
 
 class CPWL_Timer {

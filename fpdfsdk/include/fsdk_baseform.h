@@ -43,18 +43,18 @@ typedef struct _PDFSDK_FieldAction {
     bRC = TRUE;
   }
 
-  FX_BOOL bModifier;  // in
-  FX_BOOL bShift;  // in
-  int nCommitKey;  // in
-  CFX_WideString sChange;  // in[out]
+  FX_BOOL bModifier;         // in
+  FX_BOOL bShift;            // in
+  int nCommitKey;            // in
+  CFX_WideString sChange;    // in[out]
   CFX_WideString sChangeEx;  // in
-  FX_BOOL bKeyDown;  // in
-  int nSelEnd;  // in[out]
-  int nSelStart;  // in[out]
-  CFX_WideString sValue;  // in[out]
-  FX_BOOL bWillCommit;  // in
-  FX_BOOL bFieldFull;  // in
-  FX_BOOL bRC;  // in[out]
+  FX_BOOL bKeyDown;          // in
+  int nSelEnd;               // in[out]
+  int nSelStart;             // in[out]
+  CFX_WideString sValue;     // in[out]
+  FX_BOOL bWillCommit;       // in
+  FX_BOOL bFieldFull;        // in
+  FX_BOOL bRC;               // in[out]
 } PDFSDK_FieldAction;
 class CPDFSDK_Widget : public CPDFSDK_Annot {
  public:

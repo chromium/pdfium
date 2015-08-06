@@ -302,10 +302,10 @@ FX_BOOL app::alert(IFXJS_Context* cc,
           CJS_Value* pValue = new CJS_Value(isolate);
           //					if (iLenth == 1)
           //						pValue = new
-          //CJS_Value(isolate);
+          // CJS_Value(isolate);
           //					else if (iLenth > 1)
           //						pValue = new
-          //CJS_Value[iLenth];
+          // CJS_Value[iLenth];
 
           for (int i = 0; i < iLenth; i++) {
             carray.GetElement(i, *pValue);

@@ -67,8 +67,10 @@ class CFX_UnicodeEncoding : public IFX_FontEncoding {
 
 class CFX_FontFaceInfo {
  public:
-  CFX_FontFaceInfo(CFX_ByteString filePath, CFX_ByteString faceName,
-                   CFX_ByteString fontTables, FX_DWORD fontOffset,
+  CFX_FontFaceInfo(CFX_ByteString filePath,
+                   CFX_ByteString faceName,
+                   CFX_ByteString fontTables,
+                   FX_DWORD fontOffset,
                    FX_DWORD fileSize)
       : m_FilePath(filePath),
         m_FaceName(faceName),

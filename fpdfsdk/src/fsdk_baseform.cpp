@@ -396,8 +396,6 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
 
   int nFieldType = GetFieldType();
   if (m_pInterForm->IsNeedHighLight(nFieldType)) {
-    //          if (nFieldType != FIELDTYPE_PUSHBUTTON)
-    //          {
     CPDF_Rect rc = GetRect();
     FX_COLORREF color = m_pInterForm->GetHighlightColor(nFieldType);
     uint8_t alpha = m_pInterForm->GetHighlightAlpha();
@@ -411,10 +409,6 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
     pPageView->GetCurrentMatrix(page2device);
     page2device.Transform(((FX_FLOAT)rc.left), ((FX_FLOAT)rc.bottom),
                           rcDevice.left, rcDevice.bottom);
-    //          pEnv->FFI_PageToDevice(m_pPageView->GetPDFPage(), rc.left,
-    //          rc.bottom, &rcDevice.left, &rcDevice.bottom);
-    //          pEnv->FFI_PageToDevice(m_pPageView->GetPDFPage(), rc.right,
-    //          rc.top, &rcDevice.right, &rcDevice.top);
     page2device.Transform(((FX_FLOAT)rc.right), ((FX_FLOAT)rc.top),
                           rcDevice.right, rcDevice.top);
 
@@ -424,7 +418,6 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
     FX_RECT rcDev((int)rcDevice.left, (int)rcDevice.top, (int)rcDevice.right,
                   (int)rcDevice.bottom);
     pDevice->FillRect(&rcDev, argb);
-    /*      }*/
   }
 }
 
@@ -573,10 +566,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
   ASSERT(pDoc != NULL);
   CPDFDoc_Environment* pEnv = pDoc->GetEnv();
 
-  CBA_FontMap FontMap(
-      this,
-      pEnv->GetSysHandler());  //,
-                               //ISystemHandle::GetSystemHandler(m_pBaseForm->GetEnv()));
+  CBA_FontMap FontMap(this, pEnv->GetSysHandler());
   FontMap.Initial();
 
   FontMap.SetAPType("N");
@@ -1136,10 +1126,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
     ASSERT(pDoc != NULL);
     CPDFDoc_Environment* pEnv = pDoc->GetEnv();
 
-    CBA_FontMap FontMap(
-        this,
-        pEnv->GetSysHandler());  //,
-                                 //ISystemHandle::GetSystemHandler(m_pBaseForm->GetEnv()));
+    CBA_FontMap FontMap(this, pEnv->GetSysHandler());
     FontMap.Initial();
     pEdit->SetFontMap(&FontMap);
 

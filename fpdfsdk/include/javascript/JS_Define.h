@@ -37,10 +37,10 @@ struct JSMethodSpec {
 #define BEGIN_JS_STATIC_CONST(js_class_name) \
   JSConstSpec js_class_name::JS_Class_Consts[] = {
 #define JS_STATIC_CONST_ENTRY_NUMBER(const_name, pValue) \
-  { const_name, pValue, L"", 0 }          \
+  { const_name, pValue, L"", 0 }                         \
   ,
-#define JS_STATIC_CONST_ENTRY_STRING(const_name, pValue)     \
-  { const_name, 0, pValue, 1 } \
+#define JS_STATIC_CONST_ENTRY_STRING(const_name, pValue) \
+  { const_name, 0, pValue, 1 }                           \
   ,
 #define END_JS_STATIC_CONST() \
   { 0, 0, 0, 0 }              \

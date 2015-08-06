@@ -2434,7 +2434,7 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
   unsigned char byte1 = 0;
   unsigned char byte2 = 0;
   GetCharAt(pos, byte1);
-  GetCharAt(pos+1, byte2);
+  GetCharAt(pos + 1, byte2);
   unsigned int markers = 0;
   if (byte1 == '\r' && byte2 == '\n') {
     markers = 2;
@@ -2454,7 +2454,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
                    ((CPDF_Reference*)pLenObj)->GetRefObjNum() != objnum))) {
     len = pLenObj->GetInteger();
   }
-  //Check whether end of line markers follow the keyword 'stream'.
+  // Check whether end of line markers follow the keyword 'stream'.
   unsigned int numMarkers = ReadEOLMarkers(m_Pos);
   m_Pos += numMarkers;
   FX_FILESIZE streamStartPos = m_Pos;
@@ -2463,7 +2463,8 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   }
   const unsigned int ENDSTREAM_LEN = sizeof("endstream") - 1;
   const unsigned int ENDOBJ_LEN = sizeof("endobj") - 1;
-  CPDF_CryptoHandler* pCryptoHandler = objnum == (FX_DWORD)m_MetadataObjnum ? nullptr : m_pCryptoHandler;
+  CPDF_CryptoHandler* pCryptoHandler =
+      objnum == (FX_DWORD)m_MetadataObjnum ? nullptr : m_pCryptoHandler;
   if (!pCryptoHandler) {
     FX_BOOL bSearchForKeyword = TRUE;
     unsigned int prevMarkers = 0;
@@ -2483,27 +2484,28 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
       }
     }
     if (bSearchForKeyword) {
-      //If len is not available, len needs to be calculated
-      //by searching the keywords "endstream" or "endobj".
+      // If len is not available, len needs to be calculated
+      // by searching the keywords "endstream" or "endobj".
       m_Pos = streamStartPos;
       FX_FILESIZE endStreamOffset = 0;
       while (endStreamOffset >= 0) {
         endStreamOffset = FindTag(FX_BSTRC("endstream"), 0);
         if (endStreamOffset < 0) {
-          //Can't find any "endstream".
+          // Can't find any "endstream".
           break;
         }
         prevMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 1);
-        nextMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset + ENDSTREAM_LEN);
+        nextMarkers =
+            ReadEOLMarkers(streamStartPos + endStreamOffset + ENDSTREAM_LEN);
         if (prevMarkers != 0 && nextMarkers != 0) {
-          //Stop searching when the keyword "endstream" is found.
+          // Stop searching when the keyword "endstream" is found.
           break;
         } else {
           unsigned char ch = 0x00;
           GetCharAt(streamStartPos + endStreamOffset + ENDSTREAM_LEN, ch);
           if (ch == 0x09 || ch == 0x20) {
             //"endstream" is treated as a keyword
-            //when it is followed by a tab or whitespace
+            // when it is followed by a tab or whitespace
             break;
           }
         }
@@ -2514,26 +2516,27 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
       while (endObjOffset >= 0) {
         endObjOffset = FindTag(FX_BSTRC("endobj"), 0);
         if (endObjOffset < 0) {
-          //Can't find any "endobj".
+          // Can't find any "endobj".
           break;
         }
         prevMarkers = ReadEOLMarkers(streamStartPos + endObjOffset - 1);
-        nextMarkers = ReadEOLMarkers(streamStartPos + endObjOffset + ENDOBJ_LEN);
+        nextMarkers =
+            ReadEOLMarkers(streamStartPos + endObjOffset + ENDOBJ_LEN);
         if (prevMarkers != 0 && nextMarkers != 0) {
-          //Stop searching when the keyword "endobj" is found.
+          // Stop searching when the keyword "endobj" is found.
           break;
         }
         m_Pos += ENDOBJ_LEN;
       }
       if (endStreamOffset < 0 && endObjOffset < 0) {
-        //Can't find "endstream" or "endobj".
+        // Can't find "endstream" or "endobj".
         return nullptr;
       }
       if (endStreamOffset < 0 && endObjOffset >= 0) {
-        //Correct the position of end stream.
+        // Correct the position of end stream.
         endStreamOffset = endObjOffset;
       } else if (endStreamOffset >= 0 && endObjOffset < 0) {
-        //Correct the position of end obj.
+        // Correct the position of end obj.
         endObjOffset = endStreamOffset;
       } else if (endStreamOffset > endObjOffset) {
         endStreamOffset = endObjOffset;
@@ -2578,8 +2581,8 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   streamStartPos = m_Pos;
   GetNextWord();
   numMarkers = ReadEOLMarkers(m_Pos);
-  if (m_WordSize == ENDOBJ_LEN && numMarkers != 0 && 
-    FXSYS_memcmp(m_WordBuffer, "endobj", ENDOBJ_LEN) == 0) {
+  if (m_WordSize == ENDOBJ_LEN && numMarkers != 0 &&
+      FXSYS_memcmp(m_WordBuffer, "endobj", ENDOBJ_LEN) == 0) {
     m_Pos = streamStartPos;
   }
   return pStream;

@@ -32,10 +32,7 @@ class IFXCRT_FileAccess {
 IFXCRT_FileAccess* FXCRT_FileAccess_Create();
 class CFX_CRTFileStream final : public IFX_FileStream {
  public:
-  CFX_CRTFileStream(IFXCRT_FileAccess* pFA)
-      : m_pFile(pFA),
-        m_dwCount(1) {
-  }
+  CFX_CRTFileStream(IFXCRT_FileAccess* pFA) : m_pFile(pFA), m_dwCount(1) {}
   ~CFX_CRTFileStream() {
     if (m_pFile) {
       m_pFile->Release();
@@ -51,13 +48,9 @@ class CFX_CRTFileStream final : public IFX_FileStream {
       delete this;
     }
   }
-  virtual FX_FILESIZE GetSize() override {
-    return m_pFile->GetSize();
-  }
+  virtual FX_FILESIZE GetSize() override { return m_pFile->GetSize(); }
   virtual FX_BOOL IsEOF() override { return GetPosition() >= GetSize(); }
-  virtual FX_FILESIZE GetPosition() override {
-    return m_pFile->GetPosition();
-  }
+  virtual FX_FILESIZE GetPosition() override { return m_pFile->GetPosition(); }
   virtual FX_BOOL ReadBlock(void* buffer,
                             FX_FILESIZE offset,
                             size_t size) override {
@@ -120,13 +113,9 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     }
     delete this;
   }
-  virtual FX_FILESIZE GetSize() override {
-    return (FX_FILESIZE)m_nCurSize;
-  }
+  virtual FX_FILESIZE GetSize() override { return (FX_FILESIZE)m_nCurSize; }
   virtual FX_BOOL IsEOF() override { return m_nCurPos >= (size_t)GetSize(); }
-  virtual FX_FILESIZE GetPosition() override {
-    return (FX_FILESIZE)m_nCurPos;
-  }
+  virtual FX_FILESIZE GetPosition() override { return (FX_FILESIZE)m_nCurPos; }
   virtual FX_BOOL ReadBlock(void* buffer,
                             FX_FILESIZE offset,
                             size_t size) override {

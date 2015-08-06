@@ -767,6 +767,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle);
   0x13  // WP, before printing document, JavaScript action.
 #define FPDFDOC_AACTION_DP \
   0x14  // DP, after printing document, JavaScript action.
+
 /**
 * Function: FORM_DoDocumentAAction
 *           This method is required for performing the document's

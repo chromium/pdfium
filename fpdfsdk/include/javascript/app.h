@@ -36,71 +36,6 @@ class CJS_TimerObj : public CJS_Object {
   DECLARE_JS_CLASS(CJS_TimerObj);
 };
 
-// struct APP_MENUITEM_ARRAY;
-//
-// struct APP_MENUITEM
-// {
-// 	APP_MENUITEM() : oSubMenu(NULL), cName(L""), cReturn(L""),
-// bMarked(false), bEnabled(true)
-// 	{
-// 	}
-// 	CFX_WideString cName;
-// 	CFX_WideString cReturn;
-// 	APP_MENUITEM_ARRAY* oSubMenu;
-// 	bool bMarked;
-// 	bool bEnabled;
-// };
-
-// struct APP_MENUITEM_ARRAY
-// {
-// 	APP_MENUITEM_ARRAY() : m_hMenu(NULL), pContents(NULL), nSize(0)
-// 	{
-//
-// 	}
-// 	APP_MENUITEM * pContents;
-// 	HMENU m_hMenu;
-// 	int	nSize;
-// };
-
-// struct APP_MENU;
-// struct APP_MENU_ARRAY
-// {
-// 	APP_MENU_ARRAY():
-//     pContent(NULL)
-// 	{
-// 	}
-//
-// 	APP_MENU* pContent;
-// };
-
-// struct APP_MENU
-// {
-// 	APP_MENU():bSubMenu(false),
-// 	SubMenuItems(NULL),
-// 	cwMenuItemName(L""),
-// 	hMenu(NULL),
-// 	iSize(0)
-// 	{
-//
-// 	}
-//
-// 	APP_MENU(CFX_WideString &cwName):
-// 	cwMenuItemName(cwName),
-// 	bSubMenu(false),
-// 	SubMenuItems(NULL),
-// 	hMenu(NULL),
-// 	iSize(0)
-// 	{
-//
-// 	}
-//
-// 	CFX_WideString cwMenuItemName;
-// 	bool bSubMenu;
-// 	APP_MENU_ARRAY* SubMenuItems;
-// 	int iSize;
-// 	HMENU hMenu;
-// };
-
 class app : public CJS_EmbedObj {
  public:
   app(CJS_Object* pJSObject);
@@ -226,25 +161,8 @@ class app : public CJS_EmbedObj {
                      CFX_WideString& sError);
 
  private:
-  //	FX_DWORD					AppGetTickCount();
   void TimerProc(CJS_Timer* pTimer);
   void RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript);
-  //	void						ParsePopupMenuObj(APP_MENUITEM *
-  //ppMenuItem,JSObject * pObj);
-  //	void						DeleteMenuItems(APP_MENUITEM_ARRAY *
-  //pMenuItems);
-  // 	void						AddMenuItem(APP_MENUITEM_ARRAY * pMenuItems, HMENU
-  // hMenu, MENUITEMINFO MenuItemInfo);
-  // 	void						InitMenuItemInfo(MENUITEMINFO&
-  // MenuItemInfo);
-  // 	void						DestroyPopUpMenu();
-
-  // 	void						ParserMenuItem(APP_MENU* pHead, const
-  // CJS_Parameters&params);
-  // 	void						AddItemToMenu(APP_MENU* pHead, HMENU hMenu,
-  // MENUITEMINFO MenuItemInfo);
-  // 	void						DestroyMenuItems(APP_MENU*
-  // pHead);
 
  public:
   static CFX_WideString SysPathToPDFPath(const CFX_WideString& sOldPath);
@@ -254,10 +172,6 @@ class app : public CJS_EmbedObj {
   bool m_bRuntimeHighLight;
 
   CFX_ArrayTemplate<CJS_Timer*> m_aTimer;
-  //	APP_MENU*					m_pMenuHead;
-
- public:
-  //	static CReader_App* s_App;
 };
 
 class CJS_App : public CJS_Object {
