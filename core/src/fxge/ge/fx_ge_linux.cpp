@@ -198,13 +198,13 @@ void* CFX_LinuxFontInfo::FindFont(int weight,
                                   int pitch_family,
                                   const FX_CHAR* family,
                                   FX_BOOL bMatchName) {
-  CFontFaceInfo* pFind = NULL;
+  CFX_FontFaceInfo* pFind = NULL;
   FX_DWORD charset_flag = _LinuxGetCharset(charset);
   int32_t iBestSimilar = 0;
   FX_POSITION pos = m_FontList.GetStartPosition();
   while (pos) {
     CFX_ByteString bsName;
-    CFontFaceInfo* pFont = NULL;
+    CFX_FontFaceInfo* pFont = NULL;
     m_FontList.GetNextAssoc(pos, bsName, (void*&)pFont);
     if (!(pFont->m_Charsets & charset_flag) &&
         charset != FXFONT_DEFAULT_CHARSET) {

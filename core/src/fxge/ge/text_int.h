@@ -64,20 +64,34 @@ class CFX_UnicodeEncoding : public IFX_FontEncoding {
 #define CHARSET_FLAG_BIG5 8
 #define CHARSET_FLAG_GB 16
 #define CHARSET_FLAG_KOREAN 32
-class CFontFaceInfo {
+
+class CFX_FontFaceInfo {
  public:
-  CFX_ByteString m_FilePath;
-  CFX_ByteString m_FaceName;
+  CFX_FontFaceInfo(CFX_ByteString filePath, CFX_ByteString faceName,
+                   CFX_ByteString fontTables, FX_DWORD fontOffset,
+                   FX_DWORD fileSize)
+      : m_FilePath(filePath),
+        m_FaceName(faceName),
+        m_FontTables(fontTables),
+        m_FontOffset(fontOffset),
+        m_FileSize(fileSize),
+        m_Styles(0),
+        m_Charsets(0) {}
+
+  const CFX_ByteString m_FilePath;
+  const CFX_ByteString m_FaceName;
+  const CFX_ByteString m_FontTables;
+  const FX_DWORD m_FontOffset;
+  const FX_DWORD m_FileSize;
   FX_DWORD m_Styles;
   FX_DWORD m_Charsets;
-  FX_DWORD m_FontOffset;
-  FX_DWORD m_FileSize;
-  CFX_ByteString m_FontTables;
 };
+
 class CFontFileFaceInfo {
  public:
   CFontFileFaceInfo();
   ~CFontFileFaceInfo();
+
   IFX_FileStream* m_pFile;
   FXFT_Face m_Face;
   CFX_ByteString m_FaceName;
