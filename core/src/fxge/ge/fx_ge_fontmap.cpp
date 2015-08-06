@@ -453,12 +453,13 @@ FX_BOOL CFX_FontMgr::GetStandardFont(const uint8_t*& pFontData,
   return TRUE;
 }
 CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
-    : m_pFontInfo(nullptr),
-      m_bListLoaded(FALSE),
+    : m_bListLoaded(FALSE),
+      m_pFontInfo(nullptr),
       m_pFontEnumerator(nullptr),
       m_pFontMgr(mgr) {
-  FXSYS_memset(m_FoxitFaces, 0, sizeof m_FoxitFaces);
-  m_MMFaces[0] = m_MMFaces[1] = NULL;
+  m_MMFaces[0] = nullptr;
+  m_MMFaces[1] = nullptr;
+  FXSYS_memset(m_FoxitFaces, 0, sizeof(m_FoxitFaces));
 }
 CFX_FontMapper::~CFX_FontMapper() {
   for (int i = 0; i < 14; i++)
@@ -1280,7 +1281,7 @@ CFX_FolderFontInfo::~CFX_FolderFontInfo() {
     CFX_ByteString key;
     void* value;
     m_FontList.GetNextAssoc(pos, key, value);
-    delete (CFontFaceInfo*)value;
+    delete (CFX_FontFaceInfo*)value;
   }
 }
 void CFX_FolderFontInfo::AddPath(const CFX_ByteStringC& path) {
@@ -1394,13 +1395,8 @@ void CFX_FolderFontInfo::ReportFace(CFX_ByteString& path,
   if (m_FontList.Lookup(facename, p)) {
     return;
   }
-  CFontFaceInfo* pInfo = new CFontFaceInfo;
-  pInfo->m_FilePath = path;
-  pInfo->m_FaceName = facename;
-  pInfo->m_FontTables = tables;
-  pInfo->m_FontOffset = offset;
-  pInfo->m_FileSize = filesize;
-  pInfo->m_Charsets = 0;
+  CFX_FontFaceInfo* pInfo =
+      new CFX_FontFaceInfo(path, facename, tables, offset, filesize);
   CFX_ByteString os2 =
       _FPDF_LoadTableFromTT(pFile, tables, nTables, 0x4f532f32);
   if (os2.GetLength() >= 86) {
@@ -1464,7 +1460,7 @@ FX_DWORD CFX_FolderFontInfo::GetFontData(void* hFont,
   if (hFont == NULL) {
     return 0;
   }
-  CFontFaceInfo* pFont = (CFontFaceInfo*)hFont;
+  CFX_FontFaceInfo* pFont = (CFX_FontFaceInfo*)hFont;
   FXSYS_FILE* pFile = NULL;
   if (size > 0) {
     pFile = FXSYS_fopen(pFont->m_FilePath, "rb");
@@ -1504,7 +1500,7 @@ FX_BOOL CFX_FolderFontInfo::GetFaceName(void* hFont, CFX_ByteString& name) {
   if (hFont == NULL) {
     return FALSE;
   }
-  CFontFaceInfo* pFont = (CFontFaceInfo*)hFont;
+  CFX_FontFaceInfo* pFont = (CFX_FontFaceInfo*)hFont;
   name = pFont->m_FaceName;
   return TRUE;
 }
