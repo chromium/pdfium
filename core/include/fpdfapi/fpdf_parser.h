@@ -297,6 +297,8 @@ class CPDF_SyntaxParser {
 
   CFX_ByteString ReadHexString();
 
+  unsigned int ReadEOLMarkers(FX_FILESIZE pos);
+
   CPDF_Stream* ReadStream(CPDF_Dictionary* pDict,
                           PARSE_CONTEXT* pContext,
                           FX_DWORD objnum,

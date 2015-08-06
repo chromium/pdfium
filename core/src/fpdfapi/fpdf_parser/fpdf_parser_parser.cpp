@@ -2430,65 +2430,134 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
   }
   return NULL;
 }
+unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
+  unsigned char byte1 = 0;
+  unsigned char byte2 = 0;
+  GetCharAt(pos, byte1);
+  GetCharAt(pos+1, byte2);
+  unsigned int markers = 0;
+  if (byte1 == '\r' && byte2 == '\n') {
+    markers = 2;
+  } else if (byte1 == '\r' || byte1 == '\n') {
+    markers = 1;
+  }
+  return markers;
+}
 CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
                                            PARSE_CONTEXT* pContext,
                                            FX_DWORD objnum,
                                            FX_DWORD gennum) {
   CPDF_Object* pLenObj = pDict->GetElement(FX_BSTRC("Length"));
-  FX_FILESIZE len = 0;
+  FX_FILESIZE len = -1;
   if (pLenObj && ((pLenObj->GetType() != PDFOBJ_REFERENCE) ||
-                  ((((CPDF_Reference*)pLenObj)->GetObjList() != NULL) &&
+                  ((((CPDF_Reference*)pLenObj)->GetObjList()) &&
                    ((CPDF_Reference*)pLenObj)->GetRefObjNum() != objnum))) {
     len = pLenObj->GetInteger();
   }
-
-  ToNextLine();
-  FX_FILESIZE StreamStartPos = m_Pos;
+  //Check whether end of line markers follow the keyword 'stream'.
+  unsigned int numMarkers = ReadEOLMarkers(m_Pos);
+  m_Pos += numMarkers;
+  FX_FILESIZE streamStartPos = m_Pos;
   if (pContext) {
-    pContext->m_DataStart = m_Pos;
+    pContext->m_DataStart = streamStartPos;
   }
-
-  CPDF_CryptoHandler* pCryptoHandler =
-      objnum == (FX_DWORD)m_MetadataObjnum ? NULL : m_pCryptoHandler;
-  if (pCryptoHandler == NULL) {
-    pdfium::base::CheckedNumeric<FX_FILESIZE> pos = m_Pos;
-    pos += len;
-    if (pos.IsValid() && pos.ValueOrDie() < m_FileLen) {
-      m_Pos = pos.ValueOrDie();
-    }
-    GetNextWord();
-    if (m_WordSize < 9 || FXSYS_memcmp(m_WordBuffer, "endstream", 9)) {
-      m_Pos = StreamStartPos;
-      FX_FILESIZE offset = FindTag(FX_BSTRC("endstream"), 0);
-      if (offset >= 0) {
-        FX_FILESIZE curPos = m_Pos;
-        m_Pos = StreamStartPos;
-        FX_FILESIZE endobjOffset = FindTag(FX_BSTRC("endobj"), 0);
-        if (endobjOffset < offset && endobjOffset >= 0) {
-          offset = endobjOffset;
-        } else {
-          m_Pos = curPos;
-        }
-        uint8_t byte1, byte2;
-        GetCharAt(StreamStartPos + offset - 1, byte1);
-        GetCharAt(StreamStartPos + offset - 2, byte2);
-        if (byte1 == 0x0a && byte2 == 0x0d) {
-          len -= 2;
-        } else if (byte1 == 0x0a || byte1 == 0x0d) {
-          len--;
-        }
-        len = (FX_DWORD)offset;
-        pDict->SetAtInteger(FX_BSTRC("Length"), len);
-      } else {
-        m_Pos = StreamStartPos;
-        if (FindTag(FX_BSTRC("endobj"), 0) < 0) {
-          return NULL;
-        }
+  const unsigned int ENDSTREAM_LEN = sizeof("endstream") - 1;
+  const unsigned int ENDOBJ_LEN = sizeof("endobj") - 1;
+  CPDF_CryptoHandler* pCryptoHandler = objnum == (FX_DWORD)m_MetadataObjnum ? nullptr : m_pCryptoHandler;
+  if (!pCryptoHandler) {
+    FX_BOOL bSearchForKeyword = TRUE;
+    unsigned int prevMarkers = 0;
+    unsigned int nextMarkers = 0;
+    if (len >= 0) {
+      pdfium::base::CheckedNumeric<FX_FILESIZE> pos = m_Pos;
+      pos += len;
+      if (pos.IsValid() && pos.ValueOrDie() < m_FileLen) {
+        m_Pos = pos.ValueOrDie();
+      }
+      prevMarkers = ReadEOLMarkers(m_Pos);
+      GetNextWord();
+      nextMarkers = ReadEOLMarkers(m_Pos);
+      if (m_WordSize == ENDSTREAM_LEN && prevMarkers != 0 && nextMarkers != 0 &&
+          FXSYS_memcmp(m_WordBuffer, "endstream", ENDSTREAM_LEN) == 0) {
+        bSearchForKeyword = FALSE;
       }
     }
-    m_Pos = StreamStartPos;
+    if (bSearchForKeyword) {
+      //If len is not available, len needs to be calculated
+      //by searching the keywords "endstream" or "endobj".
+      m_Pos = streamStartPos;
+      FX_FILESIZE endStreamOffset = 0;
+      while (endStreamOffset >= 0) {
+        endStreamOffset = FindTag(FX_BSTRC("endstream"), 0);
+        if (endStreamOffset < 0) {
+          //Can't find any "endstream".
+          break;
+        }
+        prevMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 1);
+        nextMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset + ENDSTREAM_LEN);
+        if (prevMarkers != 0 && nextMarkers != 0) {
+          //Stop searching when the keyword "endstream" is found.
+          break;
+        } else {
+          unsigned char ch = 0x00;
+          GetCharAt(streamStartPos + endStreamOffset + ENDSTREAM_LEN, ch);
+          if (ch == 0x09 || ch == 0x20) {
+            //"endstream" is treated as a keyword
+            //when it is followed by a tab or whitespace
+            break;
+          }
+        }
+        m_Pos += ENDSTREAM_LEN;
+      }
+      m_Pos = streamStartPos;
+      FX_FILESIZE endObjOffset = 0;
+      while (endObjOffset >= 0) {
+        endObjOffset = FindTag(FX_BSTRC("endobj"), 0);
+        if (endObjOffset < 0) {
+          //Can't find any "endobj".
+          break;
+        }
+        prevMarkers = ReadEOLMarkers(streamStartPos + endObjOffset - 1);
+        nextMarkers = ReadEOLMarkers(streamStartPos + endObjOffset + ENDOBJ_LEN);
+        if (prevMarkers != 0 && nextMarkers != 0) {
+          //Stop searching when the keyword "endobj" is found.
+          break;
+        }
+        m_Pos += ENDOBJ_LEN;
+      }
+      if (endStreamOffset < 0 && endObjOffset < 0) {
+        //Can't find "endstream" or "endobj".
+        return nullptr;
+      }
+      if (endStreamOffset < 0 && endObjOffset >= 0) {
+        //Correct the position of end stream.
+        endStreamOffset = endObjOffset;
+      } else if (endStreamOffset >= 0 && endObjOffset < 0) {
+        //Correct the position of end obj.
+        endObjOffset = endStreamOffset;
+      } else if (endStreamOffset > endObjOffset) {
+        endStreamOffset = endObjOffset;
+      }
+      len = endStreamOffset;
+      numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 2);
+      if (numMarkers == 2) {
+        len -= 2;
+      } else {
+        numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 1);
+        if (numMarkers == 1) {
+          len -= 1;
+        }
+      }
+      if (len <= 0) {
+        return nullptr;
+      }
+      pDict->SetAtInteger(FX_BSTRC("Length"), len);
+    }
+    m_Pos = streamStartPos;
   }
-  CPDF_Stream* pStream;
+  if (len <= 0) {
+    return nullptr;
+  }
   uint8_t* pData = FX_Alloc(uint8_t, len);
   ReadBlock(pData, len);
   if (pCryptoHandler) {
@@ -2502,14 +2571,16 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
     len = dest_buf.GetSize();
     dest_buf.DetachBuffer();
   }
-  pStream = new CPDF_Stream(pData, len, pDict);
+  CPDF_Stream* pStream = new CPDF_Stream(pData, len, pDict);
   if (pContext) {
     pContext->m_DataEnd = pContext->m_DataStart + len;
   }
-  StreamStartPos = m_Pos;
+  streamStartPos = m_Pos;
   GetNextWord();
-  if (m_WordSize == 6 && 0 == FXSYS_memcmp(m_WordBuffer, "endobj", 6)) {
-    m_Pos = StreamStartPos;
+  numMarkers = ReadEOLMarkers(m_Pos);
+  if (m_WordSize == ENDOBJ_LEN && numMarkers != 0 && 
+    FXSYS_memcmp(m_WordBuffer, "endobj", ENDOBJ_LEN) == 0) {
+    m_Pos = streamStartPos;
   }
   return pStream;
 }
