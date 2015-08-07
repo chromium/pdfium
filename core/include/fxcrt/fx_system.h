@@ -268,7 +268,6 @@ int32_t FXSYS_wtoi(const FX_WCHAR* str);
 int64_t FXSYS_atoi64(const FX_CHAR* str);
 int64_t FXSYS_wtoi64(const FX_WCHAR* str);
 const FX_CHAR* FXSYS_i64toa(int64_t value, FX_CHAR* str, int radix);
-const FX_WCHAR* FXSYS_i64tow(int64_t value, FX_WCHAR* str, int radix);
 int FXSYS_round(FX_FLOAT f);
 #define FXSYS_Mul(a, b) ((a) * (b))
 #define FXSYS_Div(a, b) ((a) / (b))

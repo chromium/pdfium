@@ -32,30 +32,41 @@ T FXSYS_StrToInt(STR_T str) {
   }
   return neg ? -num : num;
 }
-template <typename T, typename STR_T>
+
+template <typename T, typename UT, typename STR_T>
 STR_T FXSYS_IntToStr(T value, STR_T string, int radix) {
-  int i = 0;
-  if (value < 0) {
-    string[i++] = '-';
-    value = -value;
-  } else if (value == 0) {
+  if (radix < 2 || radix > 16) {
+    string[0] = 0;
+    return string;
+  }
+  if (value == 0) {
     string[0] = '0';
     string[1] = 0;
     return string;
   }
+  int i = 0;
+  UT uvalue;
+  if (value < 0) {
+    string[i++] = '-';
+    // Standard trick to avoid undefined behaviour when negating INT_MIN.
+    uvalue = static_cast<UT>(-(value + 1)) + 1;
+  } else {
+    uvalue = value;
+  }
   int digits = 1;
-  T order = value / 10;
+  T order = uvalue / radix;
   while (order > 0) {
     digits++;
-    order = order / 10;
+    order = order / radix;
   }
   for (int d = digits - 1; d > -1; d--) {
-    string[d + i] = "0123456789abcdef"[value % 10];
-    value /= 10;
+    string[d + i] = "0123456789abcdef"[uvalue % radix];
+    uvalue /= radix;
   }
   string[digits + i] = 0;
   return string;
 }
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -72,10 +83,7 @@ int64_t FXSYS_wtoi64(const FX_WCHAR* str) {
   return FXSYS_StrToInt<int64_t, const FX_WCHAR*>(str);
 }
 const FX_CHAR* FXSYS_i64toa(int64_t value, FX_CHAR* str, int radix) {
-  return FXSYS_IntToStr<int64_t, FX_CHAR*>(value, str, radix);
-}
-const FX_WCHAR* FXSYS_i64tow(int64_t value, FX_WCHAR* str, int radix) {
-  return FXSYS_IntToStr<int64_t, FX_WCHAR*>(value, str, radix);
+  return FXSYS_IntToStr<int64_t, uint64_t, FX_CHAR*>(value, str, radix);
 }
 #ifdef __cplusplus
 }
@@ -182,7 +190,7 @@ int FXSYS_wcsicmp(const FX_WCHAR* dst, const FX_WCHAR* src) {
   return (f - l);
 }
 char* FXSYS_itoa(int value, char* string, int radix) {
-  return FXSYS_IntToStr<int32_t, FX_CHAR*>(value, string, radix);
+  return FXSYS_IntToStr<int32_t, uint32_t, FX_CHAR*>(value, string, radix);
 }
 #ifdef __cplusplus
 }
