@@ -73,7 +73,11 @@ void Check64BitBase2Itoa(int64_t input, const char* expected_output) {
 TEST(fxcrt, FXSYS_itoa_InvalidRadix) {
   FX_CHAR buf[32];
 
-  FXSYS_itoa(42, buf, 17);
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+  FXSYS_itoa(42, buf, 17);  // Ours stops at 16.
+#else
+  FXSYS_itoa(42, buf, 37);  // Theirs goes up to 36.
+#endif
   EXPECT_EQ(std::string(""), buf);
 
   FXSYS_itoa(42, buf, 1);
@@ -114,7 +118,11 @@ TEST(fxcrt, FXSYS_itoa) {
 TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
   FX_CHAR buf[32];
 
-  FXSYS_i64toa(42, buf, 17);
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+  FXSYS_i64toa(42, buf, 17);  // Ours stops at 16.
+#else
+  FXSYS_i64toa(42, buf, 37);  // Theirs goes up to 36.
+#endif
   EXPECT_EQ(std::string(""), buf);
 
   FXSYS_i64toa(42, buf, 1);
