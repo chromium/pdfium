@@ -70,14 +70,12 @@ void Check64BitBase2Itoa(int64_t input, const char* expected_output) {
 
 }  // namespace
 
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
 TEST(fxcrt, FXSYS_itoa_InvalidRadix) {
   FX_CHAR buf[32];
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   FXSYS_itoa(42, buf, 17);  // Ours stops at 16.
-#else
-  FXSYS_itoa(42, buf, 37);  // Theirs goes up to 36.
-#endif
   EXPECT_EQ(std::string(""), buf);
 
   FXSYS_itoa(42, buf, 1);
@@ -89,6 +87,8 @@ TEST(fxcrt, FXSYS_itoa_InvalidRadix) {
   FXSYS_itoa(42, buf, -1);
   EXPECT_EQ(std::string(""), buf);
 }
+
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 TEST(fxcrt, FXSYS_itoa) {
   Check32BitBase16Itoa(std::numeric_limits<int32_t>::min(), "-80000000");
@@ -114,15 +114,12 @@ TEST(fxcrt, FXSYS_itoa) {
                       "1111111111111111111111111111111");
 }
 
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
   FX_CHAR buf[32];
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   FXSYS_i64toa(42, buf, 17);  // Ours stops at 16.
-#else
-  FXSYS_i64toa(42, buf, 37);  // Theirs goes up to 36.
-#endif
   EXPECT_EQ(std::string(""), buf);
 
   FXSYS_i64toa(42, buf, 1);
@@ -134,6 +131,8 @@ TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
   FXSYS_i64toa(42, buf, -1);
   EXPECT_EQ(std::string(""), buf);
 };
+
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 TEST(fxcrt, FXSYS_i64toa) {
   Check64BitBase16Itoa(
