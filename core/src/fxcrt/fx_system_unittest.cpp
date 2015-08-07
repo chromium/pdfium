@@ -10,6 +10,9 @@
 
 // Unit test covering cases where PDFium replaces well-known library
 // functionality on any given platformn.
+
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
 namespace {
 
 const FX_CHAR kSentinel = 0x7f;
@@ -70,8 +73,6 @@ void Check64BitBase2Itoa(int64_t input, const char* expected_output) {
 
 }  // namespace
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-
 TEST(fxcrt, FXSYS_itoa_InvalidRadix) {
   FX_CHAR buf[32];
 
@@ -87,8 +88,6 @@ TEST(fxcrt, FXSYS_itoa_InvalidRadix) {
   FXSYS_itoa(42, buf, -1);
   EXPECT_EQ(std::string(""), buf);
 }
-
-#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 TEST(fxcrt, FXSYS_itoa) {
   Check32BitBase16Itoa(std::numeric_limits<int32_t>::min(), "-80000000");
@@ -114,8 +113,6 @@ TEST(fxcrt, FXSYS_itoa) {
                       "1111111111111111111111111111111");
 }
 
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-
 TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
   FX_CHAR buf[32];
 
@@ -132,7 +129,6 @@ TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
   EXPECT_EQ(std::string(""), buf);
 };
 
-#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 TEST(fxcrt, FXSYS_i64toa) {
   Check64BitBase16Itoa(
@@ -163,3 +159,6 @@ TEST(fxcrt, FXSYS_i64toa) {
       std::numeric_limits<int64_t>::max(),
       "111111111111111111111111111111111111111111111111111111111111111");
 }
+
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
