@@ -231,18 +231,19 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   CFX_WideString GetTemporaryFileName(const CFX_WideString& sFileExt);
 
  private:
-  virtual int BeforeValueChange(const CPDF_FormField* pField,
-                                CFX_WideString& csValue);
-  virtual int AfterValueChange(const CPDF_FormField* pField);
-  virtual int BeforeSelectionChange(const CPDF_FormField* pField,
-                                    CFX_WideString& csValue);
-  virtual int AfterSelectionChange(const CPDF_FormField* pField);
-  virtual int AfterCheckedStatusChange(const CPDF_FormField* pField,
-                                       const CFX_ByteArray& statusArray);
-  virtual int BeforeFormReset(const CPDF_InterForm* pForm);
-  virtual int AfterFormReset(const CPDF_InterForm* pForm);
-  virtual int BeforeFormImportData(const CPDF_InterForm* pForm);
-  virtual int AfterFormImportData(const CPDF_InterForm* pForm);
+  // CPDF_FormNotify
+  int BeforeValueChange(const CPDF_FormField* pField,
+                        CFX_WideString& csValue) override;
+  int AfterValueChange(const CPDF_FormField* pField) override;
+  int BeforeSelectionChange(const CPDF_FormField* pField,
+                            CFX_WideString& csValue) override;
+  int AfterSelectionChange(const CPDF_FormField* pField) override;
+  int AfterCheckedStatusChange(const CPDF_FormField* pField,
+                               const CFX_ByteArray& statusArray) override;
+  int BeforeFormReset(const CPDF_InterForm* pForm) override;
+  int AfterFormReset(const CPDF_InterForm* pForm) override;
+  int BeforeFormImportData(const CPDF_InterForm* pForm) override;
+  int AfterFormImportData(const CPDF_InterForm* pForm) override;
 
   FX_BOOL FDFToURLEncodedData(CFX_WideString csFDFFile,
                               CFX_WideString csTxtFile);

@@ -287,22 +287,9 @@ void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
                                      nCharacters, TRUE);
 
     pEdit->SetEditNotify(this);
-    // pUndo->BeginEdit(pDocument);
   }
 }
 
 void CFFL_TextField::OnKillFocus(CPWL_Wnd* pWnd) {}
-
-FX_BOOL CFFL_TextField::CanCopy(CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-FX_BOOL CFFL_TextField::CanCut(CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-FX_BOOL CFFL_TextField::CanPaste(CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
 
 void CFFL_TextField::OnAddUndo(CPWL_Edit* pEdit) {}

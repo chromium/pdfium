@@ -10,18 +10,16 @@
 #include "FFL_IFormFiller.h"
 #include "FFL_CBA_Fontmap.h"
 
-class CPDFSDK_Annot;
-class CFFL_FormFiller;
-class CFFL_Notify;
 class CPDFDoc_Environment;
-class CPDFSDK_PageView;
+class CPDFSDK_Annot;
 class CPDFSDK_Document;
+class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
 class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
  public:
   CFFL_FormFiller(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot);
-  virtual ~CFFL_FormFiller();
+  ~CFFL_FormFiller() override;
 
   virtual FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot);
@@ -78,23 +76,16 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
                             FX_UINT nFlags);
   virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
 
-  virtual FX_BOOL OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
-  virtual FX_BOOL OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
-
-  virtual FX_BOOL CanCopy(CPDFSDK_Document* pDocument);
-  virtual FX_BOOL CanCut(CPDFSDK_Document* pDocument);
-  virtual FX_BOOL CanPaste(CPDFSDK_Document* pDocument);
-
-  virtual void DoCopy(CPDFSDK_Document* pDocument);
-  virtual void DoCut(CPDFSDK_Document* pDocument);
-  virtual void DoPaste(CPDFSDK_Document* pDocument);
+  FX_BOOL SetFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
+  FX_BOOL KillFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 
   // CPWL_TimerHandler
-  virtual void TimerProc();
-  virtual IFX_SystemHandler* GetSystemHandler() const;
+  void TimerProc() override;
+  IFX_SystemHandler* GetSystemHandler() const override;
 
-  virtual CPDF_Matrix GetWindowMatrix(void* pAttachedData);
-  virtual CFX_WideString LoadPopupMenuString(int nIndex);
+  // IPWL_Provider
+  CPDF_Matrix GetWindowMatrix(void* pAttachedData) override;
+  CFX_WideString LoadPopupMenuString(int nIndex) override;
 
   virtual void GetActionData(CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
@@ -112,7 +103,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   virtual CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,
                                    FX_BOOL bRestoreValue);
 
-  virtual void OnKeyStroke(FX_BOOL bKeyDown);
+  virtual void OnKeyStroke(FX_BOOL bKeyDown, FX_DWORD nFlag);
 
   CPDF_Matrix GetCurMatrix();
 

@@ -300,24 +300,6 @@ void CFFL_ComboBox::OnKillFocus(CPWL_Wnd* pWnd) {
   ASSERT(m_pApp != NULL);
 }
 
-FX_BOOL CFFL_ComboBox::CanCopy(CPDFSDK_Document* pDocument) {
-  ASSERT(pDocument != NULL);
-
-  return FALSE;
-}
-
-FX_BOOL CFFL_ComboBox::CanCut(CPDFSDK_Document* pDocument) {
-  ASSERT(pDocument != NULL);
-
-  return FALSE;
-}
-
-FX_BOOL CFFL_ComboBox::CanPaste(CPDFSDK_Document* pDocument) {
-  ASSERT(pDocument != NULL);
-
-  return FALSE;
-}
-
 void CFFL_ComboBox::OnAddUndo(CPWL_Edit* pEdit) {
   ASSERT(pEdit != NULL);
 }

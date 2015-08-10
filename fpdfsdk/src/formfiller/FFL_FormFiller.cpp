@@ -242,7 +242,8 @@ FX_BOOL CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
   return FALSE;
 }
 
-FX_BOOL CFFL_FormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
+FX_BOOL CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot,
+                                          FX_UINT nFlag) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   CPDF_Page* pPage = pWidget->GetPDFPage();
   CPDFSDK_Document* pDoc = m_pApp->GetSDKDocument();
@@ -256,7 +257,8 @@ FX_BOOL CFFL_FormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   return TRUE;
 }
 
-FX_BOOL CFFL_FormFiller::OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
+FX_BOOL CFFL_FormFiller::KillFocusForAnnot(CPDFSDK_Annot* pAnnot,
+                                           FX_UINT nFlag) {
   if (!IsValid())
     return TRUE;
 
@@ -597,7 +599,7 @@ IFX_SystemHandler* CFFL_FormFiller::GetSystemHandler() const {
   return m_pApp->GetSysHandler();
 }
 
-void CFFL_FormFiller::OnKeyStroke(FX_BOOL bKeyDown) {}
+void CFFL_FormFiller::OnKeyStroke(FX_BOOL bKeyDown, FX_DWORD nFlag) {}
 
 void CFFL_FormFiller::EscapeFiller(CPDFSDK_PageView* pPageView,
                                    FX_BOOL bDestroyPDFWindow) {
@@ -609,24 +611,6 @@ void CFFL_FormFiller::EscapeFiller(CPDFSDK_PageView* pPageView,
   if (bDestroyPDFWindow)
     DestroyPDFWindow(pPageView);
 }
-
-FX_BOOL CFFL_FormFiller::CanCopy(CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-FX_BOOL CFFL_FormFiller::CanCut(CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-FX_BOOL CFFL_FormFiller::CanPaste(CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-void CFFL_FormFiller::DoCopy(CPDFSDK_Document* pDocument) {}
-
-void CFFL_FormFiller::DoCut(CPDFSDK_Document* pDocument) {}
-
-void CFFL_FormFiller::DoPaste(CPDFSDK_Document* pDocument) {}
 
 void CFFL_FormFiller::InvalidateRect(double left,
                                      double top,

@@ -459,7 +459,7 @@ FX_BOOL CFFL_IFormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   }
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, TRUE))
-    return pFormFiller->OnSetFocus(pAnnot, nFlag);
+    return pFormFiller->SetFocusForAnnot(pAnnot, nFlag);
 
   return TRUE;
 }
@@ -470,28 +470,28 @@ FX_BOOL CFFL_IFormFiller::OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubType() == "Widget");
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
-    if (pFormFiller->OnKillFocus(pAnnot, nFlag)) {
-      if (!m_bNotifying) {
-        CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
-        if (pWidget->GetAAction(CPDF_AAction::LoseFocus)) {
-          m_bNotifying = TRUE;
-          pWidget->ClearAppModified();
-
-          CPDFSDK_PageView* pPageView = pWidget->GetPageView();
-          ASSERT(pPageView != NULL);
-
-          PDFSDK_FieldAction fa;
-          fa.bModifier = m_pApp->FFI_IsCTRLKeyDown(nFlag);
-          fa.bShift = m_pApp->FFI_IsSHIFTKeyDown(nFlag);
-
-          pFormFiller->GetActionData(pPageView, CPDF_AAction::LoseFocus, fa);
-
-          pWidget->OnAAction(CPDF_AAction::LoseFocus, fa, pPageView);
-          m_bNotifying = FALSE;
-        }
-      }
-    } else
+    if (!pFormFiller->KillFocusForAnnot(pAnnot, nFlag))
       return FALSE;
+
+    if (!m_bNotifying) {
+      CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+      if (pWidget->GetAAction(CPDF_AAction::LoseFocus)) {
+        m_bNotifying = TRUE;
+        pWidget->ClearAppModified();
+
+        CPDFSDK_PageView* pPageView = pWidget->GetPageView();
+        ASSERT(pPageView != NULL);
+
+        PDFSDK_FieldAction fa;
+        fa.bModifier = m_pApp->FFI_IsCTRLKeyDown(nFlag);
+        fa.bShift = m_pApp->FFI_IsSHIFTKeyDown(nFlag);
+
+        pFormFiller->GetActionData(pPageView, CPDF_AAction::LoseFocus, fa);
+
+        pWidget->OnAAction(CPDF_AAction::LoseFocus, fa, pPageView);
+        m_bNotifying = FALSE;
+      }
+    }
   }
 
   return TRUE;
@@ -898,13 +898,11 @@ void CFFL_IFormFiller::OnAfterKeyStroke(FX_BOOL bEditOrList,
                                         void* pPrivateData,
                                         FX_BOOL& bExit,
                                         FX_DWORD nFlag) {
-  ASSERT(pPrivateData != NULL);
   CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
-  ASSERT(pData->pWidget != NULL);
+  ASSERT(pData->pWidget);
 
   CFFL_FormFiller* pFormFiller = GetFormFiller(pData->pWidget, FALSE);
-  ASSERT(pFormFiller != NULL);
 
   if (!bEditOrList)
-    pFormFiller->OnKeyStroke(bExit);
+    pFormFiller->OnKeyStroke(bExit, nFlag);
 }

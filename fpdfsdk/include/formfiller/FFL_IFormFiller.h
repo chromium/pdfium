@@ -16,8 +16,8 @@ class CFFL_PrivateData;
 
 class CFFL_IFormFiller : public IPWL_Filler_Notify {
  public:
-  CFFL_IFormFiller(CPDFDoc_Environment* pApp);
-  virtual ~CFFL_IFormFiller();
+  explicit CFFL_IFormFiller(CPDFDoc_Environment* pApp);
+  ~CFFL_IFormFiller() override;
 
   virtual FX_BOOL Annot_HitTest(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
@@ -25,10 +25,10 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
   virtual FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot);
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
-                      /*HDC hDC,*/ CPDFSDK_Annot* pAnnot,
+                      CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
                       CPDF_Matrix* pUser2Device,
-                      /*const CRect& rcWindow,*/ FX_DWORD dwFlags);
+                      FX_DWORD dwFlags);
 
   virtual void OnCreate(CPDFSDK_Annot* pAnnot);
   virtual void OnLoad(CPDFSDK_Annot* pAnnot);
@@ -79,27 +79,6 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
   virtual FX_BOOL OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
   virtual FX_BOOL OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 
-  virtual void QueryWherePopup(void* pPrivateData,
-                               FX_FLOAT fPopupMin,
-                               FX_FLOAT fPopupMax,
-                               int32_t& nRet,
-                               FX_FLOAT& fPopupRet);
-  virtual void OnBeforeKeyStroke(FX_BOOL bEditOrList,
-                                 void* pPrivateData,
-                                 int32_t nKeyCode,
-                                 CFX_WideString& strChange,
-                                 const CFX_WideString& strChangeEx,
-                                 int nSelStart,
-                                 int nSelEnd,
-                                 FX_BOOL bKeyDown,
-                                 FX_BOOL& bRC,
-                                 FX_BOOL& bExit,
-                                 FX_DWORD nFlag);
-  virtual void OnAfterKeyStroke(FX_BOOL bEditOrList,
-                                void* pPrivateData,
-                                FX_BOOL& bExit,
-                                FX_DWORD nFlag);
-
   CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot, FX_BOOL bRegister);
   void RemoveFormFiller(CPDFSDK_Annot* pAnnot);
 
@@ -136,6 +115,28 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
 
  private:
   using CFFL_Widget2Filler = std::map<CPDFSDK_Annot*, CFFL_FormFiller*>;
+
+  // IPWL_Filler_Notify:
+  void QueryWherePopup(void* pPrivateData,
+                       FX_FLOAT fPopupMin,
+                       FX_FLOAT fPopupMax,
+                       int32_t& nRet,
+                       FX_FLOAT& fPopupRet) override;
+  void OnBeforeKeyStroke(FX_BOOL bEditOrList,
+                         void* pPrivateData,
+                         int32_t nKeyCode,
+                         CFX_WideString& strChange,
+                         const CFX_WideString& strChangeEx,
+                         int nSelStart,
+                         int nSelEnd,
+                         FX_BOOL bKeyDown,
+                         FX_BOOL& bRC,
+                         FX_BOOL& bExit,
+                         FX_DWORD nFlag) override;
+  void OnAfterKeyStroke(FX_BOOL bEditOrList,
+                        void* pPrivateData,
+                        FX_BOOL& bExit,
+                        FX_DWORD nFlag) override;
 
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 

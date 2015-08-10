@@ -512,7 +512,7 @@ class CPDF_LabCS : public CPDF_ColorSpace {
                           int pixels,
                           int image_width,
                           int image_height,
-                          FX_BOOL bTransMask = FALSE) const;
+                          FX_BOOL bTransMask = FALSE) const override;
 
   FX_FLOAT m_WhitePoint[3];
   FX_FLOAT m_BlackPoint[3];
