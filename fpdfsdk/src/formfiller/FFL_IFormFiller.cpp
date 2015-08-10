@@ -398,20 +398,6 @@ FX_BOOL CFFL_IFormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
   return FALSE;
 }
 
-FX_BOOL CFFL_IFormFiller::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
-                                          CPDFSDK_Annot* pAnnot,
-                                          FX_UINT nFlags,
-                                          const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubType() == "Widget");
-
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
-    return pFormFiller->OnRButtonDblClk(pPageView, pAnnot, nFlags, point);
-  }
-
-  return FALSE;
-}
-
 FX_BOOL CFFL_IFormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                     FX_UINT nKeyCode,
                                     FX_UINT nFlags) {
@@ -436,24 +422,6 @@ FX_BOOL CFFL_IFormFiller::OnChar(CPDFSDK_Annot* pAnnot,
     return pFormFiller->OnChar(pAnnot, nChar, nFlags);
 
   return FALSE;
-}
-
-void CFFL_IFormFiller::OnDeSelected(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubType() == "Widget");
-
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
-    pFormFiller->OnDeSelected(pAnnot);
-  }
-}
-
-void CFFL_IFormFiller::OnSelected(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubType() == "Widget");
-
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
-    pFormFiller->OnSelected(pAnnot);
-  }
 }
 
 FX_BOOL CFFL_IFormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
@@ -616,10 +584,6 @@ void CFFL_IFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot) {
   m_Maps.erase(it);
 }
 
-void CFFL_IFormFiller::SetFocusAnnotTab(CPDFSDK_Annot* pWidget,
-                                        FX_BOOL bSameField,
-                                        FX_BOOL bNext) {}
-
 void CFFL_IFormFiller::QueryWherePopup(void* pPrivateData,
                                        FX_FLOAT fPopupMin,
                                        FX_FLOAT fPopupMax,
@@ -693,48 +657,6 @@ void CFFL_IFormFiller::QueryWherePopup(void* pPrivateData,
 
   nRet = bBottom ? 0 : 1;
   fPopupRet = fFactHeight;
-}
-
-void CFFL_IFormFiller::OnSetWindowRect(void* pPrivateData,
-                                       const CPDF_Rect& rcWindow) {
-  ASSERT(pPrivateData != NULL);
-
-  CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
-
-  if (CFFL_FormFiller* pFormFiller = GetFormFiller(pData->pWidget, TRUE)) {
-    CPDF_Rect rcOld =
-        pFormFiller->PWLtoFFL(pFormFiller->GetWindowRect(pData->pPageView));
-    CPDF_Rect rcNew = pFormFiller->PWLtoFFL(rcWindow);
-    pFormFiller->SetWindowRect(pData->pPageView, rcWindow);
-
-    CPDF_Rect unRect = rcOld;
-    unRect.Union(rcNew);
-    // FX_RECT rcRect = unRect.GetOutterRect();
-    unRect.left = (FX_FLOAT)(unRect.left - 0.5);
-    unRect.right = (FX_FLOAT)(unRect.right + 0.5);
-    unRect.top = (FX_FLOAT)(unRect.top + 0.5);
-    unRect.bottom = (FX_FLOAT)(unRect.bottom - 0.5);
-    m_pApp->FFI_Invalidate(pData->pWidget->GetPDFXFAPage(), unRect.left,
-                           unRect.top, unRect.right, unRect.bottom);
-  }
-}
-
-void CFFL_IFormFiller::OnKeyStroke(FX_BOOL bEditOrList,
-                                   void* pPrivateData,
-                                   int32_t nKeyCode,
-                                   CFX_WideString& strChange,
-                                   const CFX_WideString& strChangeEx,
-                                   FX_BOOL bKeyDown,
-                                   FX_BOOL& bRC,
-                                   FX_BOOL& bExit) {
-  ASSERT(pPrivateData != NULL);
-  CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
-  ASSERT(pData->pWidget != NULL);
-
-  CFFL_FormFiller* pFormFiller = GetFormFiller(pData->pWidget, FALSE);
-  ASSERT(pFormFiller != NULL);
-
-  pFormFiller->OnKeyStroke(bKeyDown);
 }
 
 void CFFL_IFormFiller::OnKeyStrokeCommit(CPDFSDK_Widget* pWidget,
@@ -1065,33 +987,6 @@ FX_BOOL CFFL_IFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
   return FALSE;
 }
 
-void CFFL_IFormFiller::BeforeUndo(CPDFSDK_Document* pDocument) {}
-
-void CFFL_IFormFiller::BeforeRedo(CPDFSDK_Document* pDocument) {
-  BeforeUndo(pDocument);
-}
-
-void CFFL_IFormFiller::AfterUndo(CPDFSDK_Document* pDocument) {}
-
-void CFFL_IFormFiller::AfterRedo(CPDFSDK_Document* pDocument) {}
-
-FX_BOOL CFFL_IFormFiller::CanCopy(CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-FX_BOOL CFFL_IFormFiller::CanCut(CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-FX_BOOL CFFL_IFormFiller::CanPaste(CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-void CFFL_IFormFiller::DoCopy(CPDFSDK_Document* pDocument) {}
-
-void CFFL_IFormFiller::DoCut(CPDFSDK_Document* pDocument) {}
-
-void CFFL_IFormFiller::DoPaste(CPDFSDK_Document* pDocument) {}
 void CFFL_IFormFiller::OnBeforeKeyStroke(FX_BOOL bEditOrList,
                                          void* pPrivateData,
                                          int32_t nKeyCode,

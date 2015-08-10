@@ -70,18 +70,11 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                               CPDFSDK_Annot* pAnnot,
                               FX_UINT nFlags,
                               const CPDF_Point& point);
-  virtual FX_BOOL OnRButtonDblClk(CPDFSDK_PageView* pPageView,
-                                  CPDFSDK_Annot* pAnnot,
-                                  FX_UINT nFlags,
-                                  const CPDF_Point& point);
 
   virtual FX_BOOL OnKeyDown(CPDFSDK_Annot* pAnnot,
                             FX_UINT nKeyCode,
                             FX_UINT nFlags);
   virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
-
-  virtual void OnDeSelected(CPDFSDK_Annot* pAnnot);
-  virtual void OnSelected(CPDFSDK_Annot* pAnnot);
 
   virtual FX_BOOL OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
   virtual FX_BOOL OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
@@ -107,34 +100,12 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                                 FX_BOOL& bExit,
                                 FX_DWORD nFlag);
 
-  virtual void OnSetWindowRect(void* pPrivateData, const CPDF_Rect& rcWindow);
-  virtual void OnKeyStroke(FX_BOOL bEditOrList,
-                           void* pPrivateData,
-                           int32_t nKeyCode,
-                           CFX_WideString& strChange,
-                           const CFX_WideString& strChangeEx,
-                           FX_BOOL bKeyDown,
-                           FX_BOOL& bRC,
-                           FX_BOOL& bExit);
   virtual void OnPopupPreOpen(void* pPrivateData,
                               FX_BOOL& bExit,
                               FX_DWORD nFlag);
   virtual void OnPopupPostOpen(void* pPrivateData,
                                FX_BOOL& bExit,
                                FX_DWORD nFlag);
-
-  virtual void BeforeUndo(CPDFSDK_Document* pDocument);
-  virtual void BeforeRedo(CPDFSDK_Document* pDocument);
-  virtual void AfterUndo(CPDFSDK_Document* pDocument);
-  virtual void AfterRedo(CPDFSDK_Document* pDocument);
-
-  virtual FX_BOOL CanCopy(CPDFSDK_Document* pDocument);
-  virtual FX_BOOL CanCut(CPDFSDK_Document* pDocument);
-  virtual FX_BOOL CanPaste(CPDFSDK_Document* pDocument);
-
-  virtual void DoCopy(CPDFSDK_Document* pDocument);
-  virtual void DoCut(CPDFSDK_Document* pDocument);
-  virtual void DoPaste(CPDFSDK_Document* pDocument);
 
   CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot, FX_BOOL bRegister);
   void RemoveFormFiller(CPDFSDK_Annot* pAnnot);

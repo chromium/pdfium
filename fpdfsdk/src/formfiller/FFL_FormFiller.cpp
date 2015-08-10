@@ -212,18 +212,6 @@ FX_BOOL CFFL_FormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
   return FALSE;
 }
 
-FX_BOOL CFFL_FormFiller::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
-                                         CPDFSDK_Annot* pAnnot,
-                                         FX_UINT nFlags,
-                                         const CPDF_Point& point) {
-  if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, FALSE)) {
-    pWnd->OnRButtonDblClk(WndtoPWL(pPageView, point), nFlags);
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
 FX_BOOL CFFL_FormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                    FX_UINT nKeyCode,
                                    FX_UINT nFlags) {
@@ -252,14 +240,6 @@ FX_BOOL CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
   }
 
   return FALSE;
-}
-
-void CFFL_FormFiller::OnDeSelected(CPDFSDK_Annot* pAnnot) {
-  ASSERT(FALSE);
-}
-
-void CFFL_FormFiller::OnSelected(CPDFSDK_Annot* pAnnot) {
-  ASSERT(FALSE);
 }
 
 FX_BOOL CFFL_FormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
