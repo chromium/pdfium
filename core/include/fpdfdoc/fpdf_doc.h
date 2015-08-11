@@ -9,6 +9,7 @@
 
 #include <map>
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fpdfapi/fpdf_parser.h"
 #include "../fpdfapi/fpdf_render.h"
 
@@ -1151,23 +1152,19 @@ class CPDF_PageLabel {
  protected:
   CPDF_Document* m_pDocument;
 };
+
 class CPDF_Metadata {
  public:
-  CPDF_Metadata();
-
+  explicit CPDF_Metadata(CPDF_Document* pDoc);
   ~CPDF_Metadata();
 
-  void LoadDoc(CPDF_Document* pDoc);
+  const CXML_Element* GetRoot() const;
 
-  int32_t GetString(const CFX_ByteStringC& bsItem, CFX_WideString& wsStr);
-
-  CXML_Element* GetRoot() const;
-
-  CXML_Element* GetRDF() const;
-
- protected:
-  void* m_pData;
+ private:
+  CPDF_Document* const m_pDoc;  // Not owned.
+  nonstd::unique_ptr<CXML_Element> m_pXmlElement;
 };
+
 class CPDF_ViewerPreferences {
  public:
   CPDF_ViewerPreferences(CPDF_Document* pDoc);
