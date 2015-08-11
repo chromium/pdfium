@@ -101,13 +101,13 @@ FX_BOOL CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
     return FALSE;
 
   if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
-    int nSelCount = 0;
+    size_t nSelCount = 0;
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; ++i) {
       if (pListBox->IsItemSelected(i)) {
         if (m_OriginSelections.count(i) == 0)
           return TRUE;
 
-        nSelCount++;
+        ++nSelCount;
       }
     }
 

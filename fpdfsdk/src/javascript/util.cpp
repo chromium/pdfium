@@ -253,14 +253,12 @@ FX_BOOL util::printd(IFXJS_Context* cc,
       return FALSE;  // currently, it doesn't support XFAPicture.
     }
 
-    int iIndex;
-    for (iIndex = 0; iIndex < sizeof(fcTable) / sizeof(stru_TbConvert);
-         iIndex++) {
+    for (size_t i = 0; i < sizeof(fcTable) / sizeof(stru_TbConvert); ++i) {
       int iStart = 0;
       int iEnd;
-      while ((iEnd = cFormat.find(fcTable[iIndex].lpszJSMark, iStart)) != -1) {
-        cFormat.replace(iEnd, FXSYS_wcslen(fcTable[iIndex].lpszJSMark),
-                        fcTable[iIndex].lpszCppMark);
+      while ((iEnd = cFormat.find(fcTable[i].lpszJSMark, iStart)) != -1) {
+        cFormat.replace(iEnd, FXSYS_wcslen(fcTable[i].lpszJSMark),
+                        fcTable[i].lpszCppMark);
         iStart = iEnd;
       }
     }
@@ -292,25 +290,23 @@ FX_BOOL util::printd(IFXJS_Context* cc,
         {L"M", iMin},       {L"s", iSec},
     };
 
-    for (iIndex = 0; iIndex < sizeof(cTableAd) / sizeof(stru_TbConvertAd);
-         iIndex++) {
+    for (size_t i = 0; i < sizeof(cTableAd) / sizeof(stru_TbConvertAd); ++i) {
       wchar_t tszValue[10];
       CFX_WideString sValue;
-      sValue.Format(L"%d", cTableAd[iIndex].iValue);
+      sValue.Format(L"%d", cTableAd[i].iValue);
       memcpy(tszValue, (wchar_t*)sValue.GetBuffer(sValue.GetLength() + 1),
              (sValue.GetLength() + 1) * sizeof(wchar_t));
 
       int iStart = 0;
       int iEnd;
-      while ((iEnd = cFormat.find(cTableAd[iIndex].lpszJSMark, iStart)) != -1) {
+      while ((iEnd = cFormat.find(cTableAd[i].lpszJSMark, iStart)) != -1) {
         if (iEnd > 0) {
           if (cFormat[iEnd - 1] == L'%') {
             iStart = iEnd + 1;
             continue;
           }
         }
-        cFormat.replace(iEnd, FXSYS_wcslen(cTableAd[iIndex].lpszJSMark),
-                        tszValue);
+        cFormat.replace(iEnd, FXSYS_wcslen(cTableAd[i].lpszJSMark), tszValue);
         iStart = iEnd;
       }
     }
@@ -335,14 +331,12 @@ void util::printd(const std::wstring& cFormat2,
     return;  // currently, it doesn't support XFAPicture.
   }
 
-  int iIndex;
-  for (iIndex = 0; iIndex < sizeof(fcTable) / sizeof(stru_TbConvert);
-       iIndex++) {
+  for (size_t i = 0; i < sizeof(fcTable) / sizeof(stru_TbConvert); ++i) {
     int iStart = 0;
     int iEnd;
-    while ((iEnd = cFormat.find(fcTable[iIndex].lpszJSMark, iStart)) != -1) {
-      cFormat.replace(iEnd, FXSYS_wcslen(fcTable[iIndex].lpszJSMark),
-                      fcTable[iIndex].lpszCppMark);
+    while ((iEnd = cFormat.find(fcTable[i].lpszJSMark, iStart)) != -1) {
+      cFormat.replace(iEnd, FXSYS_wcslen(fcTable[i].lpszJSMark),
+                      fcTable[i].lpszCppMark);
       iStart = iEnd;
     }
   }
@@ -377,28 +371,23 @@ void util::printd(const std::wstring& cFormat2,
   };
 
   // cFormat = strFormat.GetBuffer(strFormat.GetLength()+1);
-  for (iIndex = 0; iIndex < sizeof(cTableAd) / sizeof(stru_TbConvertAd);
-       iIndex++) {
+  for (size_t i = 0; i < sizeof(cTableAd) / sizeof(stru_TbConvertAd); ++i) {
     wchar_t tszValue[10];
-    //_itot(cTableAd[iIndex].iValue,tszValue,10);
     CFX_WideString sValue;
-    sValue.Format(L"%d", cTableAd[iIndex].iValue);
+    sValue.Format(L"%d", cTableAd[i].iValue);
     memcpy(tszValue, (wchar_t*)sValue.GetBuffer(sValue.GetLength() + 1),
            sValue.GetLength() * sizeof(wchar_t));
 
-    // strFormat.Replace(cTableAd[iIndex].lpszJSMark,"%d");
-    // strFormat.Format(strFormat,cTableAd[iIndex].iValue);
     int iStart = 0;
     int iEnd;
-    while ((iEnd = cFormat.find(cTableAd[iIndex].lpszJSMark, iStart)) != -1) {
+    while ((iEnd = cFormat.find(cTableAd[i].lpszJSMark, iStart)) != -1) {
       if (iEnd > 0) {
         if (cFormat[iEnd - 1] == L'%') {
           iStart = iEnd + 1;
           continue;
         }
       }
-      cFormat.replace(iEnd, FXSYS_wcslen(cTableAd[iIndex].lpszJSMark),
-                      tszValue);
+      cFormat.replace(iEnd, FXSYS_wcslen(cTableAd[i].lpszJSMark), tszValue);
       iStart = iEnd;
     }
   }
@@ -441,7 +430,6 @@ void util::printx(const std::string& cFormat,
     char letter = cFormat[iIndex];
     switch (letter) {
       case '?':
-        // cPurpose.push_back(cSource[itSource]);
         cPurpose += cSource[itSource];
         itSource++;
         break;
@@ -450,7 +438,6 @@ void util::printx(const std::string& cFormat,
           if ((cSource[itSource] >= '0' && cSource[itSource] <= '9') ||
               (cSource[itSource] >= 'a' && cSource[itSource] <= 'z') ||
               (cSource[itSource] >= 'A' && cSource[itSource] <= 'Z')) {
-            // cPurpose.push_back(cSource[itSource]);
             cPurpose += cSource[itSource];
             itSource++;
             break;
@@ -463,7 +450,6 @@ void util::printx(const std::string& cFormat,
         while (itSource < iSize) {
           if ((cSource[itSource] >= 'a' && cSource[itSource] <= 'z') ||
               (cSource[itSource] >= 'A' && cSource[itSource] <= 'Z')) {
-            // cPurpose.push_back(cSource[itSource]);
             cPurpose += cSource[itSource];
             itSource++;
             break;
@@ -475,7 +461,6 @@ void util::printx(const std::string& cFormat,
       case '9': {
         while (itSource < iSize) {
           if (cSource[itSource] >= '0' && cSource[itSource] <= '9') {
-            // cPurpose.push_back(cSource[itSource]);
             cPurpose += cSource[itSource];
             itSource++;
             break;
@@ -508,7 +493,6 @@ void util::printx(const std::string& cFormat,
       case '=':
         break;
       default:
-        // cPurpose.push_back(letter);
         cPurpose += letter;
         break;
     }
