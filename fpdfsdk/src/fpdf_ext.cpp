@@ -89,7 +89,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, CPDF_Annot* pPDFAnnot) {
   }
 }
 
-FX_BOOL CheckSharedForm(CXML_Element* pElement, CFX_ByteString cbName) {
+FX_BOOL CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
   int count = pElement->CountAttrs();
   int i = 0;
   for (i = 0; i < count; i++) {
@@ -169,9 +169,8 @@ void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code) {
   }
 
   // SharedForm
-  CPDF_Metadata metaData;
-  metaData.LoadDoc(pDoc);
-  CXML_Element* pElement = metaData.GetRoot();
+  CPDF_Metadata metaData(pDoc);
+  const CXML_Element* pElement = metaData.GetRoot();
   if (pElement)
     CheckSharedForm(pElement, "workflowType");
 }
