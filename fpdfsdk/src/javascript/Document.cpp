@@ -1208,7 +1208,7 @@ CFX_WideString Document::CutString(CFX_WideString cbFrom) {
   wchar_t* pResult = (wchar_t*)malloc(iSize.ValueOrDie());
   wchar_t* pFrom = (wchar_t*)cbFrom.GetBuffer(iLength);
 
-  for (int i = 0; i < iLength; i++) {
+  for (size_t i = 0; i < iLength; i++) {
     if (pFrom[i] == L'\\' || pFrom[i] == L'/') {
       pResult[i] = L'\0';
       break;

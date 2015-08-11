@@ -1135,8 +1135,8 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc,
   if (-1 != pEvent->SelStart())
     w_strSelected = w_strValue2.substr(pEvent->SelStart(),
                                        (pEvent->SelEnd() - pEvent->SelStart()));
-  FX_BOOL bHasSign =
-      (w_strValue2.find('-') != -1) && (w_strSelected.find('-') == -1);
+  bool bHasSign = (w_strValue2.find('-') != std::wstring::npos) &&
+                  (w_strSelected.find('-') == std::wstring::npos);
   if (bHasSign) {
     // can't insert "change" in front to sign postion.
     if (pEvent->SelStart() == 0) {
@@ -1159,7 +1159,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc,
       break;
   }
 
-  FX_BOOL bHasSep = (w_strValue2.find(cSep) != -1);
+  bool bHasSep = (w_strValue2.find(cSep) != std::wstring::npos);
   for (std::wstring::iterator it = w_strChange2.begin();
        it != w_strChange2.end(); it++) {
     if (*it == cSep) {
