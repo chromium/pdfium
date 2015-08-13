@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_OBJECT_H_
 #define FPDFSDK_INCLUDE_JAVASCRIPT_JS_OBJECT_H_
 
+#include <map>
+
 #include "../fsdk_define.h"       // For FX_UINT
 #include "../fsdk_mgr.h"          // For CPDFDoc_Environment
 #include "../fx_systemhandler.h"  // For IFX_SystemHandler
@@ -82,77 +84,8 @@ class CJS_Object {
   v8::Isolate* m_pIsolate;
 };
 
-struct JS_TIMER_MAP {
-  FX_UINT nID;
-  CJS_Timer* pTimer;
-};
-
-typedef CFX_ArrayTemplate<JS_TIMER_MAP*> CTimerMapArray;
-
-struct JS_TIMER_MAPARRAY {
- public:
-  JS_TIMER_MAPARRAY() {}
-
-  ~JS_TIMER_MAPARRAY() { Reset(); }
-
-  void Reset() {
-    for (int i = 0, sz = m_Array.GetSize(); i < sz; i++)
-      delete m_Array.GetAt(i);
-
-    m_Array.RemoveAll();
-  }
-
-  void SetAt(FX_UINT nIndex, CJS_Timer* pTimer) {
-    int i = Find(nIndex);
-
-    if (i >= 0) {
-      if (JS_TIMER_MAP* pMap = m_Array.GetAt(i))
-        pMap->pTimer = pTimer;
-    } else {
-      JS_TIMER_MAP* pMap = new JS_TIMER_MAP;
-      pMap->nID = nIndex;
-      pMap->pTimer = pTimer;
-      m_Array.Add(pMap);
-    }
-  }
-
-  CJS_Timer* GetAt(FX_UINT nIndex) {
-    int i = Find(nIndex);
-
-    if (i >= 0) {
-      if (JS_TIMER_MAP* pMap = m_Array.GetAt(i))
-        return pMap->pTimer;
-    }
-    return NULL;
-  }
-
-  void RemoveAt(FX_UINT nIndex) {
-    int i = Find(nIndex);
-
-    if (i >= 0) {
-      delete m_Array.GetAt(i);
-      m_Array.RemoveAt(i);
-    }
-    // To prevent potential fake memory leak reported by vc6.
-    if (m_Array.GetSize() == 0)
-      m_Array.RemoveAll();
-  }
-
-  int Find(FX_UINT nIndex) {
-    for (int i = 0, sz = m_Array.GetSize(); i < sz; i++) {
-      if (JS_TIMER_MAP* pMap = m_Array.GetAt(i)) {
-        if (pMap->nID == nIndex)
-          return i;
-      }
-    }
-
-    return -1;
-  }
-
-  CTimerMapArray m_Array;
-};
-
-JS_TIMER_MAPARRAY& GetTimeMap();
+using JSTimerMap = std::map<FX_UINT, CJS_Timer*>;
+JSTimerMap* GetGlobalTimerMap();
 
 class CJS_Runtime;
 
@@ -177,7 +110,7 @@ class CJS_Timer {
       KillJSTimer();
     IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
     m_nTimerID = pHandler->SetTimer(nElapse, TimerProc);
-    GetTimeMap().SetAt(m_nTimerID, this);
+    (*GetGlobalTimerMap())[m_nTimerID] = this;
     m_dwElapse = nElapse;
     return m_nTimerID;
   };
@@ -186,7 +119,7 @@ class CJS_Timer {
     if (m_nTimerID) {
       IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
       pHandler->KillTimer(m_nTimerID);
-      GetTimeMap().RemoveAt(m_nTimerID);
+      GetGlobalTimerMap()->erase(m_nTimerID);
       m_nTimerID = 0;
     }
   };
@@ -212,14 +145,14 @@ class CJS_Timer {
   CFX_WideString GetJScript() const { return m_swJScript; }
 
   static void TimerProc(int idEvent) {
-    if (CJS_Timer* pTimer = GetTimeMap().GetAt(idEvent)) {
+    const auto it = GetGlobalTimerMap()->find(idEvent);
+    if (it != GetGlobalTimerMap()->end()) {
+      CJS_Timer* pTimer = it->second;
       if (!pTimer->m_bProcessing) {
         pTimer->m_bProcessing = TRUE;
         if (pTimer->m_pEmbedObj)
           pTimer->m_pEmbedObj->TimerProc(pTimer);
         pTimer->m_bProcessing = FALSE;
-      } else {
-        //	TRACE(L"BUSY!\n");
       }
     }
   };
