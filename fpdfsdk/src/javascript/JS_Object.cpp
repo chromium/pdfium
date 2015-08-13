@@ -10,12 +10,6 @@
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Context.h"
 
-JSTimerMap* GetGlobalTimerMap() {
-  // Leak the timer array at shutdown.
-  static auto* timeMap = new JSTimerMap;
-  return timeMap;
-}
-
 int FXJS_MsgBox(CPDFDoc_Environment* pApp,
                 CPDFSDK_PageView* pPageView,
                 const FX_WCHAR* swMsg,
@@ -38,9 +32,6 @@ CPDFSDK_PageView* FXJS_GetPageView(IFXJS_Context* cc) {
   }
   return NULL;
 }
-
-/* ---------------------------------  CJS_EmbedObj
- * --------------------------------- */
 
 CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : m_pJSObject(pJSObject) {}
 
@@ -79,8 +70,6 @@ void CJS_EmbedObj::EndTimer(CJS_Timer* pTimer) {
   delete pTimer;
 }
 
-/* ---------------------------------  CJS_Object
- * --------------------------------- */
 void FreeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {
   CJS_Object* pJSObj = data.GetParameter();
   pJSObj->ExitInstance();
@@ -101,9 +90,6 @@ CJS_Object::CJS_Object(JSFXObject pObject) : m_pEmbedObj(NULL) {
 };
 
 CJS_Object::~CJS_Object(void) {
-  delete m_pEmbedObj;
-  m_pEmbedObj = NULL;
-
   m_pObject.Reset();
 };
 
@@ -136,4 +122,44 @@ void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
     if (pApp)
       pApp->JS_appAlert(swMsg, NULL, 0, 3);
   }
+}
+
+FX_UINT CJS_Timer::SetJSTimer(FX_UINT nElapse) {
+  if (m_nTimerID)
+    KillJSTimer();
+  IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
+  m_nTimerID = pHandler->SetTimer(nElapse, TimerProc);
+  (*GetGlobalTimerMap())[m_nTimerID] = this;
+  m_dwElapse = nElapse;
+  return m_nTimerID;
+}
+
+void CJS_Timer::KillJSTimer() {
+  if (m_nTimerID) {
+    IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
+    pHandler->KillTimer(m_nTimerID);
+    GetGlobalTimerMap()->erase(m_nTimerID);
+    m_nTimerID = 0;
+  }
+}
+
+// static
+void CJS_Timer::TimerProc(int idEvent) {
+  const auto it = GetGlobalTimerMap()->find(idEvent);
+  if (it != GetGlobalTimerMap()->end()) {
+    CJS_Timer* pTimer = it->second;
+    if (!pTimer->m_bProcessing) {
+      pTimer->m_bProcessing = TRUE;
+      if (pTimer->m_pEmbedObj)
+        pTimer->m_pEmbedObj->TimerProc(pTimer);
+      pTimer->m_bProcessing = FALSE;
+    }
+  }
+}
+
+// static
+CJS_Timer::TimerMap* CJS_Timer::GetGlobalTimerMap() {
+  // Leak the timer array at shutdown.
+  static auto* s_TimerMap = new TimerMap;
+  return s_TimerMap;
 }
