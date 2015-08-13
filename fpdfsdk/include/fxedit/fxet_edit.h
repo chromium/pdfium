@@ -115,8 +115,7 @@ class CFX_Edit_LineRectArray {
   }
 
   void Add(const CPVT_WordRange& wrLine, const CPDF_Rect& rcLine) {
-    if (CFX_Edit_LineRect* pRect = new CFX_Edit_LineRect(wrLine, rcLine))
-      m_LineRects.Add(pRect);
+    m_LineRects.Add(new CFX_Edit_LineRect(wrLine, rcLine));
   }
 
   int32_t GetSize() const { return m_LineRects.GetSize(); }
@@ -145,14 +144,14 @@ class CFX_Edit_RectArray {
   }
 
   void Add(const CPDF_Rect& rect) {
-    // check for overlaped area
-    for (int32_t i = 0, sz = m_Rects.GetSize(); i < sz; i++)
-      if (CPDF_Rect* pRect = m_Rects.GetAt(i))
-        if (pRect->Contains(rect))
-          return;
+    // check for overlapped area
+    for (int32_t i = 0, sz = m_Rects.GetSize(); i < sz; i++) {
+      CPDF_Rect* pRect = m_Rects.GetAt(i);
+      if (pRect && pRect->Contains(rect))
+        return;
+    }
 
-    if (CPDF_Rect* pNewRect = new CPDF_Rect(rect))
-      m_Rects.Add(pNewRect);
+    m_Rects.Add(new CPDF_Rect(rect));
   }
 
   int32_t GetSize() const { return m_Rects.GetSize(); }

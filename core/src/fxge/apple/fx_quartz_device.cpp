@@ -93,9 +93,6 @@ FX_BOOL CQuartz2D::drawGraphicsString(void* graphics,
   CGContextSaveGState(context);
 #if CGFLOAT_IS_DOUBLE
   CGPoint* glyphPositionsCG = new CGPoint[charsCount];
-  if (!glyphPositionsCG) {
-    return FALSE;
-  }
   for (int index = 0; index < charsCount; ++index) {
     glyphPositionsCG[index].x = glyphPositions[index].x;
     glyphPositionsCG[index].y = glyphPositions[index].y;
@@ -908,9 +905,6 @@ void CFX_QuartzDeviceDriver::setStrokeInfo(const CFX_GraphStateData* graphState,
   if (graphState->m_DashCount) {
 #if CGFLOAT_IS_DOUBLE
     CGFloat* dashArray = new CGFloat[graphState->m_DashCount];
-    if (!dashArray) {
-      return;
-    }
     for (int index = 0; index < graphState->m_DashCount; ++index) {
       dashArray[index] = graphState->m_DashArray[index];
     }

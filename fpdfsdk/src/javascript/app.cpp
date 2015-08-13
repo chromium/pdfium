@@ -298,19 +298,12 @@ FX_BOOL app::alert(IFXJS_Context* cc,
       if (swMsg == L"") {
         CJS_Array carray(isolate);
         if (params[0].ConvertToArray(carray)) {
-          int iLenth = carray.GetLength();
+          int iLength = carray.GetLength();
           CJS_Value* pValue = new CJS_Value(isolate);
-          //					if (iLenth == 1)
-          //						pValue = new
-          // CJS_Value(isolate);
-          //					else if (iLenth > 1)
-          //						pValue = new
-          // CJS_Value[iLenth];
-
-          for (int i = 0; i < iLenth; i++) {
+          for (int i = 0; i < iLength; ++i) {
             carray.GetElement(i, *pValue);
             swMsg += (*pValue).ToCFXWideString();
-            if (i < iLenth - 1)
+            if (i < iLength - 1)
               swMsg += L",  ";
           }
 
