@@ -37,8 +37,6 @@ class IFX_FileRead;
 #define PDFOBJ_NULL 8
 #define PDFOBJ_REFERENCE 9
 
-typedef IFX_FileStream* (*FPDF_LPFCloneStreamCallback)(CPDF_Stream* pStream,
-                                                       void* pUserData);
 class CPDF_Object {
  public:
   int GetType() const { return m_Type; }
@@ -427,8 +425,6 @@ class CPDF_Stream : public CPDF_Object {
 
   FX_BOOL Identical(CPDF_Stream* pOther) const;
 
-  CPDF_StreamFilter* GetStreamFilter(FX_BOOL bRaw = FALSE) const;
-
   FX_DWORD GetRawSize() const { return m_dwSize; }
 
   FX_BOOL ReadRawData(FX_FILESIZE start_pos,
@@ -436,10 +432,6 @@ class CPDF_Stream : public CPDF_Object {
                       FX_DWORD buf_size) const;
 
   FX_BOOL IsMemoryBased() const { return m_GenNum == (FX_DWORD)-1; }
-
-  CPDF_Stream* Clone(FX_BOOL bDirect,
-                     FPDF_LPFCloneStreamCallback lpfCallback,
-                     void* pUserData) const;
 
  protected:
   ~CPDF_Stream();
@@ -507,39 +499,7 @@ class CPDF_StreamAcc {
 
   uint8_t* m_pSrcData;
 };
-CFX_DataFilter* FPDF_CreateFilter(const CFX_ByteStringC& name,
-                                  const CPDF_Dictionary* pParam,
-                                  int width = 0,
-                                  int height = 0);
-#define FPDF_FILTER_BUFFER_SIZE 20480
-class CPDF_StreamFilter {
- public:
-  ~CPDF_StreamFilter();
 
-  FX_DWORD ReadBlock(uint8_t* buffer, FX_DWORD size);
-
-  FX_DWORD GetSrcPos() { return m_SrcOffset; }
-
-  const CPDF_Stream* GetStream() { return m_pStream; }
-
- protected:
-  CPDF_StreamFilter() {}
-
-  FX_DWORD ReadLeftOver(uint8_t* buffer, FX_DWORD buf_size);
-
-  const CPDF_Stream* m_pStream;
-
-  CFX_DataFilter* m_pFilter;
-
-  CFX_BinaryBuf* m_pBuffer;
-
-  FX_DWORD m_BufOffset;
-
-  FX_DWORD m_SrcOffset;
-
-  uint8_t m_SrcBuffer[FPDF_FILTER_BUFFER_SIZE];
-  friend class CPDF_Stream;
-};
 class CPDF_Null : public CPDF_Object {
  public:
   static CPDF_Null* Create() { return new CPDF_Null(); }

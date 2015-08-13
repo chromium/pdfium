@@ -366,7 +366,6 @@ class CPDF_ContentParser {
   FX_DWORD m_Size;
   class CPDF_StreamContentParser* m_pParser;
   FX_DWORD m_CurrentOffset;
-  CPDF_StreamFilter* m_pStreamFilter;
 };
 class CPDF_AllStates : public CPDF_GraphicStates {
  public:
