@@ -285,7 +285,7 @@ class CFX_FontMapper {
 };
 class IFX_SystemFontInfo {
  public:
-  static IFX_SystemFontInfo* CreateDefault(const char** pUserPaths);
+  static IFX_SystemFontInfo* CreateDefault();
   virtual void Release() = 0;
 
   virtual FX_BOOL EnumFontList(CFX_FontMapper* pMapper) = 0;

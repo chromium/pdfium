@@ -7,13 +7,12 @@
 #include "../../../include/fxge/fx_ge.h"
 #include "text_int.h"
 static CFX_GEModule* g_pGEModule = NULL;
-CFX_GEModule::CFX_GEModule(const char** pUserFontPaths) {
+CFX_GEModule::CFX_GEModule() {
   m_pFontCache = NULL;
   m_pFontMgr = NULL;
   m_FTLibrary = NULL;
   m_pCodecModule = NULL;
   m_pPlatformData = NULL;
-  m_pUserFontPaths = pUserFontPaths;
 }
 CFX_GEModule::~CFX_GEModule() {
   delete m_pFontCache;
@@ -25,8 +24,8 @@ CFX_GEModule::~CFX_GEModule() {
 CFX_GEModule* CFX_GEModule::Get() {
   return g_pGEModule;
 }
-void CFX_GEModule::Create(const char** userFontPaths) {
-  g_pGEModule = new CFX_GEModule(userFontPaths);
+void CFX_GEModule::Create() {
+  g_pGEModule = new CFX_GEModule;
   g_pGEModule->m_pFontMgr = new CFX_FontMgr;
   g_pGEModule->InitPlatform();
   g_pGEModule->SetTextGamma(2.2f);

@@ -91,14 +91,9 @@ CFontMapper* g_pFontMapper = NULL;
 #endif  // #if _FX_OS_ == _FX_LINUX_EMBEDDED_
 
 DLLEXPORT void STDCALL FPDF_InitLibrary() {
-  FPDF_InitLibraryWithConfig(nullptr);
-}
-
-DLLEXPORT void STDCALL FPDF_InitLibraryWithConfig(
-    const FPDF_LIBRARY_CONFIG* cfg) {
   g_pCodecModule = new CCodec_ModuleMgr();
 
-  CFX_GEModule::Create(cfg ? cfg->m_pUserFontPaths : nullptr);
+  CFX_GEModule::Create();
   CFX_GEModule::Get()->SetCodecModule(g_pCodecModule);
 
   CPDF_ModuleMgr::Create();

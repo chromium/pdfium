@@ -168,7 +168,7 @@ static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
 }
 
 DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo() {
-  IFX_SystemFontInfo* pFontInfo = IFX_SystemFontInfo::CreateDefault(nullptr);
+  IFX_SystemFontInfo* pFontInfo = IFX_SystemFontInfo::CreateDefault();
   if (pFontInfo == NULL)
     return NULL;
 

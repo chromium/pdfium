@@ -401,7 +401,7 @@ FX_BOOL CFX_Win32FontInfo::GetFontCharset(void* hFont, int& charset) {
   charset = tm.tmCharSet;
   return TRUE;
 }
-IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
+IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
   return new CFX_Win32FontInfo;
 }
 void CFX_GEModule::InitPlatform() {
@@ -412,7 +412,7 @@ void CFX_GEModule::InitPlatform() {
   pPlatformData->m_bHalfTone = ver.dwMajorVersion >= 5;
   pPlatformData->m_GdiplusExt.Load();
   m_pPlatformData = pPlatformData;
-  m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault(nullptr));
+  m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault());
 }
 void CFX_GEModule::DestroyPlatform() {
   delete (CWin32Platform*)m_pPlatformData;
