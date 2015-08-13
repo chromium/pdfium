@@ -21,13 +21,14 @@ import suppressor
 #   c_dir - "path/to/a/b/c"
 
 def test_one_file(input_filename, source_dir, working_dir,
-                  pdfium_test_path, image_differ):
+                  pdfium_test_path, font_dir, image_differ):
   input_path = os.path.join(source_dir, input_filename)
   pdf_path = os.path.join(working_dir, input_filename)
   try:
     shutil.copyfile(input_path, pdf_path)
     sys.stdout.flush()
-    subprocess.check_call([pdfium_test_path, '--png', pdf_path])
+    subprocess.check_call([pdfium_test_path, '--font-dir=' + font_dir,
+                           '--png', pdf_path])
   except subprocess.CalledProcessError as e:
     print "FAILURE: " + input_filename + "; " + str(e)
     return False
@@ -57,6 +58,7 @@ def main():
   failures = []
   surprises = []
   walk_from_dir = finder.TestingDir('corpus');
+  font_dir = os.path.join(walk_from_dir, 'fonts');
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]pdf$')
   for source_dir, _, filename_list in os.walk(walk_from_dir):
     for input_filename in filename_list:
@@ -64,7 +66,7 @@ def main():
          input_path = os.path.join(source_dir, input_filename)
          if os.path.isfile(input_path):
            result = test_one_file(input_filename, source_dir, working_dir,
-                                  pdfium_test_path, image_differ)
+                                  pdfium_test_path, font_dir, image_differ)
            if test_suppressor.IsSuppressed(input_filename):
              if result:
                surprises.append(input_path)

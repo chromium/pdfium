@@ -172,6 +172,7 @@ int CheckPDFiumCApi() {
 
     // fpdfview.h
     CHK(FPDF_InitLibrary);
+    CHK(FPDF_InitLibraryWithConfig);
     CHK(FPDF_DestroyLibrary);
     CHK(FPDF_SetSandBoxPolicy);
     CHK(FPDF_LoadDocument);
