@@ -33,10 +33,19 @@ source_set("bigint") {
 # Tests may link against this even if the production library doesn't,
 # so it needs to be separate from it.
 static_library("fx_freetype") {
+  config("fx_freetype_warnings") {
+    if (is_clang) {
+      # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
+      # ftbase.h are unused.
+      cflags = [ "-Wno-unused-function" ]
+    }
+  }
+
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+    ":fx_freetype_warnings",
   ]
   defines = [ "FT2_BUILD_LIBRARY" ]
   sources = [
@@ -50,6 +59,7 @@ static_library("fx_freetype") {
     "freetype/include/internal/tttypes.h",
     "freetype/include/tttables.h",
     "freetype/src/base/ftbase.c",
+    "freetype/src/base/ftbase.h",
     "freetype/src/base/ftbitmap.c",
     "freetype/src/base/ftglyph.c",
     "freetype/src/base/ftinit.c",
@@ -72,10 +82,17 @@ static_library("fx_freetype") {
 }
 
 source_set("fx_agg") {
+  config("fx_agg_warnings") {
+    if (is_clang) {
+      # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
+      cflags = [ "-Wno-unused-function" ]
+    }
+  }
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+    ":fx_agg_warnings",
   ]
   sources = [
     "agg23/agg_basics.h",
@@ -99,9 +116,13 @@ source_set("fx_agg") {
 source_set("fx_lcms2") {
   config("fx_lcms2_warnings") {
     if (is_clang) {
-      # cmslut.cc is sloppy with aggregate initialization. Version 2.7 of this
-      # library doesn't appear to have this problem.
-      cflags = [ "-Wno-missing-braces" ]
+      cflags = [
+        # cmslut.cc is sloppy with aggregate initialization. Version 2.7 of this
+        # library doesn't appear to have this problem.
+        "-Wno-missing-braces",
+        # FindPrev() in cmsplugin.c is unused.
+        "-Wno-unused-function",
+      ]
     }
   }
   configs -= [ "//build/config/compiler:chromium_code" ]

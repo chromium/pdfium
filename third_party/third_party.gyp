@@ -52,6 +52,7 @@
         'freetype/src/cff/cfftypes.h',
         'freetype/src/cff/cff.c',
         'freetype/src/base/ftbase.c',
+        'freetype/src/base/ftbase.h',
         'freetype/src/base/ftbitmap.c',
         'freetype/src/base/ftglyph.c',
         'freetype/src/base/ftinit.c',
@@ -68,6 +69,13 @@
         'freetype/src/type1/type1.c',
         'freetype/src/cid/type1cid.c',
       ],
+      'variables': {
+        'clang_warning_flags': [
+          # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
+          # ftbase.h are unused.
+          '-Wno-unused-function',
+        ],
+      },
     },
     {
       'target_name': 'fx_agg',
@@ -95,6 +103,12 @@
           'cflags': [ '-Wno-extra', ],
         }],
       ],
+      'variables': {
+        'clang_warning_flags': [
+          # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
+          '-Wno-unused-function',
+        ],
+      },
     },
     {
       'target_name': 'fx_lcms2',
@@ -140,6 +154,8 @@
       'variables': {
         'clang_warning_flags': [
           '-Wno-missing-braces',
+          # FindPrev() in cmsplugin.c is unused.
+          '-Wno-unused-function',
         ],
       },
     },
