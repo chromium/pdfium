@@ -128,12 +128,11 @@ void CFX_List::SetFontSize(FX_FLOAT fFontSize) {
 }
 
 void CFX_List::AddItem(const FX_WCHAR* str) {
-  if (CFX_ListItem* pListItem = new CFX_ListItem()) {
-    pListItem->SetFontMap(m_pFontMap);
-    pListItem->SetFontSize(m_fFontSize);
-    pListItem->SetText(str);
-    m_aListItems.Add(pListItem);
-  }
+  CFX_ListItem* pListItem = new CFX_ListItem();
+  pListItem->SetFontMap(m_pFontMap);
+  pListItem->SetFontSize(m_fFontSize);
+  pListItem->SetText(str);
+  m_aListItems.Add(pListItem);
 }
 
 void CFX_List::ReArrange(int32_t nItemIndex) {

@@ -685,8 +685,8 @@ void CPWL_Wnd::CreateVScrollBar(const PWL_CREATEPARAM& cp) {
     scp.eCursorType = FXCT_ARROW;
     scp.nTransparency = PWL_SCROLLBAR_TRANSPARANCY;
 
-    if ((m_pVScrollBar = new CPWL_ScrollBar(SBT_VSCROLL)))
-      m_pVScrollBar->Create(scp);
+    m_pVScrollBar = new CPWL_ScrollBar(SBT_VSCROLL);
+    m_pVScrollBar->Create(scp);
   }
 }
 

@@ -145,22 +145,20 @@ static void WritePpm(const char* pdf_name, int num, const void* buffer_void,
   // Source data is B, G, R, unused.
   // Dest data is R, G, B.
   char* result = new char[out_len];
-  if (result) {
-    for (int h = 0; h < height; ++h) {
-      const char* src_line = buffer + (stride * h);
-      char* dest_line = result + (width * h * 3);
-      for (int w = 0; w < width; ++w) {
-        // R
-        dest_line[w * 3] = src_line[(w * 4) + 2];
-        // G
-        dest_line[(w * 3) + 1] = src_line[(w * 4) + 1];
-        // B
-        dest_line[(w * 3) + 2] = src_line[w * 4];
-      }
+  for (int h = 0; h < height; ++h) {
+    const char* src_line = buffer + (stride * h);
+    char* dest_line = result + (width * h * 3);
+    for (int w = 0; w < width; ++w) {
+      // R
+      dest_line[w * 3] = src_line[(w * 4) + 2];
+      // G
+      dest_line[(w * 3) + 1] = src_line[(w * 4) + 1];
+      // B
+      dest_line[(w * 3) + 2] = src_line[w * 4];
     }
-    fwrite(result, out_len, 1, fp);
-    delete [] result;
   }
+  fwrite(result, out_len, 1, fp);
+  delete[] result;
   fclose(fp);
 }
 

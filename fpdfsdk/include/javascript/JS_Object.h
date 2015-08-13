@@ -109,11 +109,10 @@ struct JS_TIMER_MAPARRAY {
       if (JS_TIMER_MAP* pMap = m_Array.GetAt(i))
         pMap->pTimer = pTimer;
     } else {
-      if (JS_TIMER_MAP* pMap = new JS_TIMER_MAP) {
-        pMap->nID = nIndex;
-        pMap->pTimer = pTimer;
-        m_Array.Add(pMap);
-      }
+      JS_TIMER_MAP* pMap = new JS_TIMER_MAP;
+      pMap->nID = nIndex;
+      pMap->pTimer = pTimer;
+      m_Array.Add(pMap);
     }
   }
 
