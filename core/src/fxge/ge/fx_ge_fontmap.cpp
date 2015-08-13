@@ -1270,7 +1270,7 @@ extern FX_BOOL _LoadFile(FXFT_Library library,
                          IFX_FileRead* pFile,
                          FXFT_Stream* stream);
 #if _FX_OS_ == _FX_ANDROID_
-IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
+IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
   return NULL;
 }
 #endif

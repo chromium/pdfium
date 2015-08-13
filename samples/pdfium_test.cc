@@ -46,6 +46,7 @@ struct Options {
   std::string scale_factor_as_string;
   std::string exe_path;
   std::string bin_directory;
+  std::string font_directory;
 };
 
 // Reads the entire contents of a file into a newly malloc'd buffer.
@@ -347,7 +348,15 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OUTPUT_PNG;
+    } else if (cur_arg.size() > 11 &&
+               cur_arg.compare(0, 11, "--font-dir=") == 0) {
+      if (!options->font_directory.empty()) {
+        fprintf(stderr, "Duplicate --font-dir argument\n");
+        return false;
+      }
+      options->font_directory = cur_arg.substr(11);
     }
+
 #ifdef _WIN32
     else if (cur_arg == "--emf") {
       if (options->output_format != OUTPUT_NONE) {
@@ -560,8 +569,9 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
 static const char usage_string[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
-    "  --bin-dir=<path> - override path to v8 external data\n"
-    "  --scale=<number> - scale output size by number (e.g. 0.5)\n"
+    "  --bin-dir=<path>  - override path to v8 external data\n"
+    "  --font-dir=<path> - override path to external fonts\n"
+    "  --scale=<number>  - scale output size by number (e.g. 0.5)\n"
 #ifdef _WIN32
     "  --bmp - write page images <pdf-name>.<page-number>.bmp\n"
     "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
@@ -599,7 +609,17 @@ int main(int argc, const char* argv[]) {
   v8::V8::SetSnapshotDataBlob(&snapshot);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
-  FPDF_InitLibrary();
+  if (!options.font_directory.empty()) {
+    const char* path_array[2];
+    path_array[0] = options.font_directory.c_str();
+    path_array[1] = nullptr;
+    FPDF_LIBRARY_CONFIG config;
+    config.version = 1;
+    config.m_pUserFontPaths = path_array;
+    FPDF_InitLibraryWithConfig(&config);
+  } else {
+    FPDF_InitLibrary();
+  }
 
   UNSUPPORT_INFO unsuppored_info;
   memset(&unsuppored_info, '\0', sizeof(unsuppored_info));

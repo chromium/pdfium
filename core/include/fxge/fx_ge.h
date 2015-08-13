@@ -24,7 +24,7 @@ class IFXG_PaintModuleMgr;
 
 class CFX_GEModule {
  public:
-  static void Create();
+  static void Create(const char** pUserFontPaths);
 
   static void Use(CFX_GEModule* pMgr);
 
@@ -46,7 +46,7 @@ class CFX_GEModule {
   void* GetPlatformData() { return m_pPlatformData; }
 
  protected:
-  CFX_GEModule();
+  explicit CFX_GEModule(const char** pUserFontPaths);
 
   ~CFX_GEModule();
   void InitPlatform();
@@ -58,6 +58,7 @@ class CFX_GEModule {
   CFX_FontMgr* m_pFontMgr;
   CCodec_ModuleMgr* m_pCodecModule;
   void* m_pPlatformData;
+  const char** m_pUserFontPaths;
 };
 typedef struct {
   FX_FLOAT m_PointX;
