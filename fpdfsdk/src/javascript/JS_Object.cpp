@@ -10,10 +10,10 @@
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Context.h"
 
-JS_TIMER_MAPARRAY& GetTimeMap() {
+JSTimerMap* GetGlobalTimerMap() {
   // Leak the timer array at shutdown.
-  static auto* timeMap = new JS_TIMER_MAPARRAY;
-  return *timeMap;
+  static auto* timeMap = new JSTimerMap;
+  return timeMap;
 }
 
 int FXJS_MsgBox(CPDFDoc_Environment* pApp,
