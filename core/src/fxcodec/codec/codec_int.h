@@ -54,9 +54,7 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
   int GetBPC() override { return m_bpc; }
   FX_BOOL IsColorTransformed() override { return m_bColorTransformed; }
   void ClearImageData() override {
-    if (m_pDataCache) {
-      FX_Free(m_pDataCache);
-    }
+    FX_Free(m_pDataCache);
     m_pDataCache = NULL;
   }
 

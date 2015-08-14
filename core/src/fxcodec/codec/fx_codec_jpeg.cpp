@@ -221,9 +221,7 @@ static void _JpegEncode(const CFX_DIBSource* pSource,
   }
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
-  if (line_buf) {
-    FX_Free(line_buf);
-  }
+  FX_Free(line_buf);
   dest_size = dest_buf_length - (FX_STRSIZE)dest.free_in_buffer;
 }
 static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf,
@@ -345,9 +343,7 @@ CCodec_JpegDecoder::~CCodec_JpegDecoder() {
     m_pExtProvider->DestroyDecoder(m_pExtContext);
     return;
   }
-  if (m_pScanlineBuf) {
-    FX_Free(m_pScanlineBuf);
-  }
+  FX_Free(m_pScanlineBuf);
   if (m_bInited) {
     jpeg_destroy_decompress(&cinfo);
   }

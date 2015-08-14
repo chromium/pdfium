@@ -30,10 +30,8 @@ CFX_Font::CFX_Font() {
 CFX_Font::~CFX_Font() {
   delete m_pSubstFont;
   m_pSubstFont = NULL;
-  if (m_pFontDataAllocation) {
-    FX_Free(m_pFontDataAllocation);
-    m_pFontDataAllocation = NULL;
-  }
+  FX_Free(m_pFontDataAllocation);
+  m_pFontDataAllocation = NULL;
   if (m_Face) {
     if (FXFT_Get_Face_External_Stream(m_Face)) {
       FXFT_Clear_Face_External_Stream(m_Face);
@@ -44,14 +42,10 @@ CFX_Font::~CFX_Font() {
       CFX_GEModule::Get()->GetFontMgr()->ReleaseFace(m_Face);
     }
   }
-  if (m_pOwnedStream) {
-    FX_Free(m_pOwnedStream);
-    m_pOwnedStream = NULL;
-  }
-  if (m_pGsubData) {
-    FX_Free(m_pGsubData);
-    m_pGsubData = NULL;
-  }
+  FX_Free(m_pOwnedStream);
+  m_pOwnedStream = NULL;
+  FX_Free(m_pGsubData);
+  m_pGsubData = NULL;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   ReleasePlatformResource();
 #endif

@@ -403,7 +403,7 @@ CPDF_FlateEncoder::~CPDF_FlateEncoder() {
   if (m_bCloned && m_pDict) {
     m_pDict->Release();
   }
-  if (m_bNewData && m_pData) {
+  if (m_bNewData) {
     FX_Free(m_pData);
   }
 }
@@ -2054,9 +2054,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
       CFX_ByteStringC bsBuffer((const uint8_t*)pBuffer, 4 * sizeof(FX_DWORD));
       m_pIDArray->Add(CPDF_String::Create(bsBuffer, TRUE), m_pDocument);
     }
-    if (pBuffer) {
-      FX_Free(pBuffer);
-    }
+    FX_Free(pBuffer);
   }
   if (!bDefault) {
     return;

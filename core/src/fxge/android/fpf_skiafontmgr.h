@@ -24,18 +24,12 @@ class CFPF_SkiaFontDescriptor {
         m_iFaceIndex(0),
         m_dwCharsets(0),
         m_iGlyphNum(0) {}
-  virtual ~CFPF_SkiaFontDescriptor() {
-    if (m_pFamily) {
-      FX_Free(m_pFamily);
-    }
-  }
+  virtual ~CFPF_SkiaFontDescriptor() { FX_Free(m_pFamily); }
 
   virtual int32_t GetType() const { return FPF_SKIAFONTTYPE_Unknown; }
 
   void SetFamily(const FX_CHAR* pFamily) {
-    if (m_pFamily) {
-      FX_Free(m_pFamily);
-    }
+    FX_Free(m_pFamily);
     int32_t iSize = FXSYS_strlen(pFamily);
     m_pFamily = FX_Alloc(FX_CHAR, iSize + 1);
     FXSYS_memcpy(m_pFamily, pFamily, iSize * sizeof(FX_CHAR));
@@ -51,19 +45,13 @@ class CFPF_SkiaFontDescriptor {
 class CFPF_SkiaPathFont : public CFPF_SkiaFontDescriptor {
  public:
   CFPF_SkiaPathFont() : m_pPath(NULL) {}
-  ~CFPF_SkiaPathFont() override {
-    if (m_pPath) {
-      FX_Free(m_pPath);
-    }
-  }
+  ~CFPF_SkiaPathFont() override { FX_Free(m_pPath); }
 
   // CFPF_SkiaFontDescriptor
   int32_t GetType() const override { return FPF_SKIAFONTTYPE_Path; }
 
   void SetPath(const FX_CHAR* pPath) {
-    if (m_pPath) {
-      FX_Free(m_pPath);
-    }
+    FX_Free(m_pPath);
     int32_t iSize = FXSYS_strlen(pPath);
     m_pPath = FX_Alloc(FX_CHAR, iSize + 1);
     FXSYS_memcpy(m_pPath, pPath, iSize * sizeof(FX_CHAR));

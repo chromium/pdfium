@@ -1040,7 +1040,5 @@ CPDF_StandardCryptoHandler::CPDF_StandardCryptoHandler() {
   m_KeyLen = 0;
 }
 CPDF_StandardCryptoHandler::~CPDF_StandardCryptoHandler() {
-  if (m_pAESContext) {
-    FX_Free(m_pAESContext);
-  }
+  FX_Free(m_pAESContext);
 }

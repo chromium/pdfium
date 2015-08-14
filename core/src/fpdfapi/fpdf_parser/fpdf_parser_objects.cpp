@@ -828,7 +828,7 @@ CPDF_Stream::CPDF_Stream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict)
   m_pCryptoHandler = NULL;
 }
 CPDF_Stream::~CPDF_Stream() {
-  if (m_GenNum == (FX_DWORD)-1 && m_pDataBuf != NULL) {
+  if (m_GenNum == (FX_DWORD)-1) {
     FX_Free(m_pDataBuf);
   }
   if (m_pDict) {
@@ -843,9 +843,7 @@ void CPDF_Stream::InitStream(CPDF_Dictionary* pDict) {
     m_pDict = pDict;
   }
   if (m_GenNum == (FX_DWORD)-1) {
-    if (m_pDataBuf) {
-      FX_Free(m_pDataBuf);
-    }
+    FX_Free(m_pDataBuf);
   }
   m_GenNum = 0;
   m_pFile = NULL;
@@ -871,9 +869,7 @@ void CPDF_Stream::SetData(const uint8_t* pData,
                           FX_BOOL bCompressed,
                           FX_BOOL bKeepBuf) {
   if (m_GenNum == (FX_DWORD)-1) {
-    if (m_pDataBuf) {
-      FX_Free(m_pDataBuf);
-    }
+    FX_Free(m_pDataBuf);
   } else {
     m_GenNum = (FX_DWORD)-1;
     m_pCryptoHandler = NULL;
@@ -1070,12 +1066,10 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
   m_bNewBuf = m_pData != pStream->m_pDataBuf;
 }
 CPDF_StreamAcc::~CPDF_StreamAcc() {
-  if (m_bNewBuf && m_pData) {
+  if (m_bNewBuf) {
     FX_Free(m_pData);
   }
-  if (m_pSrcData) {
-    FX_Free(m_pSrcData);
-  }
+  FX_Free(m_pSrcData);
 }
 const uint8_t* CPDF_StreamAcc::GetData() const {
   if (m_bNewBuf) {

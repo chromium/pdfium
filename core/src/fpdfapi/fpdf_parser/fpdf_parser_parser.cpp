@@ -1732,9 +1732,7 @@ CPDF_SyntaxParser::CPDF_SyntaxParser() {
   m_bFileStream = FALSE;
 }
 CPDF_SyntaxParser::~CPDF_SyntaxParser() {
-  if (m_pFileBuf) {
-    FX_Free(m_pFileBuf);
-  }
+  FX_Free(m_pFileBuf);
 }
 FX_BOOL CPDF_SyntaxParser::GetCharAt(FX_FILESIZE pos, uint8_t& ch) {
   FX_FILESIZE save_pos = m_Pos;
@@ -2589,10 +2587,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
 }
 void CPDF_SyntaxParser::InitParser(IFX_FileRead* pFileAccess,
                                    FX_DWORD HeaderOffset) {
-  if (m_pFileBuf) {
-    FX_Free(m_pFileBuf);
-    m_pFileBuf = NULL;
-  }
+  FX_Free(m_pFileBuf);
   m_pFileBuf = FX_Alloc(uint8_t, m_BufSize);
   m_HeaderOffset = HeaderOffset;
   m_FileLen = pFileAccess->GetSize();

@@ -13,9 +13,7 @@ CFX_BinaryBuf::CFX_BinaryBuf(FX_STRSIZE size)
   m_pBuffer = FX_Alloc(uint8_t, size);
 }
 CFX_BinaryBuf::~CFX_BinaryBuf() {
-  if (m_pBuffer) {
-    FX_Free(m_pBuffer);
-  }
+  FX_Free(m_pBuffer);
 }
 void CFX_BinaryBuf::Delete(int start_index, int count) {
   if (!m_pBuffer || start_index < 0 || start_index + count > m_DataSize) {
@@ -34,9 +32,7 @@ void CFX_BinaryBuf::DetachBuffer() {
   m_AllocSize = 0;
 }
 void CFX_BinaryBuf::AttachData(void* buffer, FX_STRSIZE size) {
-  if (m_pBuffer) {
-    FX_Free(m_pBuffer);
-  }
+  FX_Free(m_pBuffer);
   m_DataSize = size;
   m_pBuffer = (uint8_t*)buffer;
   m_AllocSize = size;
@@ -258,10 +254,8 @@ IFX_BufferArchive::IFX_BufferArchive(FX_STRSIZE size)
     : m_BufSize(size), m_pBuffer(NULL), m_Length(0) {}
 void IFX_BufferArchive::Clear() {
   m_Length = 0;
-  if (m_pBuffer) {
-    FX_Free(m_pBuffer);
-    m_pBuffer = NULL;
-  }
+  FX_Free(m_pBuffer);
+  m_pBuffer = NULL;
 }
 FX_BOOL IFX_BufferArchive::Flush() {
   FX_BOOL bRet = DoWork(m_pBuffer, m_Length);

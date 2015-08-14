@@ -48,9 +48,7 @@ CFX_DIBSource::CFX_DIBSource() {
   m_pAlphaMask = NULL;
 }
 CFX_DIBSource::~CFX_DIBSource() {
-  if (m_pPalette) {
-    FX_Free(m_pPalette);
-  }
+  FX_Free(m_pPalette);
   delete m_pAlphaMask;
 }
 CFX_DIBitmap::CFX_DIBitmap() {
@@ -102,7 +100,7 @@ FX_BOOL CFX_DIBitmap::Create(int width,
     FX_BOOL ret = TRUE;
     ret = BuildAlphaMask();
     if (!ret) {
-      if (!m_bExtBuf && m_pBuffer) {
+      if (!m_bExtBuf) {
         FX_Free(m_pBuffer);
         m_pBuffer = NULL;
         m_Width = m_Height = m_Pitch = 0;
@@ -127,18 +125,16 @@ FX_BOOL CFX_DIBitmap::Copy(const CFX_DIBSource* pSrc) {
   return TRUE;
 }
 CFX_DIBitmap::~CFX_DIBitmap() {
-  if (m_pBuffer && !m_bExtBuf) {
+  if (!m_bExtBuf) {
     FX_Free(m_pBuffer);
   }
   m_pBuffer = NULL;
 }
 void CFX_DIBitmap::TakeOver(CFX_DIBitmap* pSrcBitmap) {
-  if (m_pBuffer && !m_bExtBuf) {
+  if (!m_bExtBuf) {
     FX_Free(m_pBuffer);
   }
-  if (m_pPalette) {
-    FX_Free(m_pPalette);
-  }
+  FX_Free(m_pPalette);
   delete m_pAlphaMask;
   m_pBuffer = pSrcBitmap->m_pBuffer;
   m_pPalette = pSrcBitmap->m_pPalette;
@@ -542,9 +538,7 @@ FX_BOOL CFX_DIBitmap::TransferMask(int dest_left,
 }
 void CFX_DIBSource::CopyPalette(const FX_DWORD* pSrc, FX_DWORD size) {
   if (pSrc == NULL || GetBPP() > 8) {
-    if (m_pPalette) {
-      FX_Free(m_pPalette);
-    }
+    FX_Free(m_pPalette);
     m_pPalette = NULL;
   } else {
     FX_DWORD pal_size = 1 << GetBPP();
@@ -1519,9 +1513,7 @@ CFX_FilteredDIB::~CFX_FilteredDIB() {
   if (m_bAutoDropSrc) {
     delete m_pSrc;
   }
-  if (m_pScanline) {
-    FX_Free(m_pScanline);
-  }
+  FX_Free(m_pScanline);
 }
 void CFX_FilteredDIB::LoadSrc(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc) {
   m_pSrc = pSrc;

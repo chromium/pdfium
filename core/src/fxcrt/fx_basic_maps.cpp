@@ -23,10 +23,8 @@ CFX_MapPtrToPtr::CFX_MapPtrToPtr(int nBlockSize)
   ASSERT(m_nBlockSize > 0);
 }
 void CFX_MapPtrToPtr::RemoveAll() {
-  if (m_pHashTable) {
-    FX_Free(m_pHashTable);
-    m_pHashTable = NULL;
-  }
+  FX_Free(m_pHashTable);
+  m_pHashTable = NULL;
   m_nCount = 0;
   m_pFreeList = NULL;
   m_pBlocks->FreeDataChain();
@@ -134,10 +132,8 @@ CFX_MapPtrToPtr::CAssoc* CFX_MapPtrToPtr::NewAssoc() {
 void CFX_MapPtrToPtr::InitHashTable(FX_DWORD nHashSize, FX_BOOL bAllocNow) {
   ASSERT(m_nCount == 0);
   ASSERT(nHashSize > 0);
-  if (m_pHashTable != NULL) {
-    FX_Free(m_pHashTable);
-    m_pHashTable = NULL;
-  }
+  FX_Free(m_pHashTable);
+  m_pHashTable = NULL;
   if (bAllocNow) {
     m_pHashTable = FX_Alloc(CAssoc*, nHashSize);
   }
@@ -321,10 +317,8 @@ void CFX_MapByteStringToPtr::InitHashTable(FX_DWORD nHashSize,
                                            FX_BOOL bAllocNow) {
   ASSERT(m_nCount == 0);
   ASSERT(nHashSize > 0);
-  if (m_pHashTable != NULL) {
-    FX_Free(m_pHashTable);
-    m_pHashTable = NULL;
-  }
+  FX_Free(m_pHashTable);
+  m_pHashTable = NULL;
   if (bAllocNow) {
     m_pHashTable = FX_Alloc(CAssoc*, nHashSize);
   }

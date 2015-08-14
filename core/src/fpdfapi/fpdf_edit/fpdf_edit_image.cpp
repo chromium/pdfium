@@ -278,10 +278,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
           pDict->Release();
           pDict = NULL;
         }
-        if (dest_buf) {
-          FX_Free(dest_buf);
-          dest_buf = NULL;
-        }
+        FX_Free(dest_buf);
+        dest_buf = NULL;
         dest_size = 0;
         delete pNewBitmap;
         return;
@@ -380,9 +378,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
   m_bIsMask = pBitmap->IsAlphaMask();
   m_Width = BitmapWidth;
   m_Height = BitmapHeight;
-  if (dest_buf) {
-    FX_Free(dest_buf);
-  }
+  FX_Free(dest_buf);
 }
 void CPDF_Image::ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pBitmap) {
   pPage->GetRenderCache()->ResetBitmap(m_pStream, pBitmap);

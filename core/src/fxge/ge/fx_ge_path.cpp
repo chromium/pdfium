@@ -117,17 +117,12 @@ CFX_PathData::CFX_PathData() {
   m_pPoints = NULL;
 }
 CFX_PathData::~CFX_PathData() {
-  if (m_pPoints) {
-    FX_Free(m_pPoints);
-  }
+  FX_Free(m_pPoints);
 }
 void CFX_PathData::SetPointCount(int nPoints) {
   m_PointCount = nPoints;
   if (m_AllocCount < nPoints) {
-    if (m_pPoints) {
-      FX_Free(m_pPoints);
-      m_pPoints = NULL;
-    }
+    FX_Free(m_pPoints);
     m_pPoints = FX_Alloc(FX_PATHPOINT, nPoints);
     m_AllocCount = nPoints;
   }
@@ -138,9 +133,7 @@ void CFX_PathData::AllocPointCount(int nPoints) {
     if (m_PointCount) {
       FXSYS_memcpy(pNewBuf, m_pPoints, m_PointCount * sizeof(FX_PATHPOINT));
     }
-    if (m_pPoints) {
-      FX_Free(m_pPoints);
-    }
+    FX_Free(m_pPoints);
     m_pPoints = pNewBuf;
     m_AllocCount = nPoints;
   }
@@ -640,9 +633,7 @@ CFX_GraphStateData::CFX_GraphStateData(const CFX_GraphStateData& src) {
 void CFX_GraphStateData::Copy(const CFX_GraphStateData& src) {
   m_LineCap = src.m_LineCap;
   m_DashCount = src.m_DashCount;
-  if (m_DashArray) {
-    FX_Free(m_DashArray);
-  }
+  FX_Free(m_DashArray);
   m_DashArray = NULL;
   m_DashPhase = src.m_DashPhase;
   m_LineJoin = src.m_LineJoin;
@@ -654,14 +645,10 @@ void CFX_GraphStateData::Copy(const CFX_GraphStateData& src) {
   }
 }
 CFX_GraphStateData::~CFX_GraphStateData() {
-  if (m_DashArray) {
-    FX_Free(m_DashArray);
-  }
+  FX_Free(m_DashArray);
 }
 void CFX_GraphStateData::SetDashCount(int count) {
-  if (m_DashArray) {
-    FX_Free(m_DashArray);
-  }
+  FX_Free(m_DashArray);
   m_DashArray = NULL;
   m_DashCount = count;
   if (count == 0) {

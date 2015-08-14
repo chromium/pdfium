@@ -322,9 +322,7 @@ static void PSCompressData(int PSLevel,
     output_size = dest_size;
   } else {
     filter = NULL;
-    if (dest_buf) {
-      FX_Free(dest_buf);
-    }
+    FX_Free(dest_buf);
   }
 }
 FX_BOOL CFX_PSRenderer::SetDIBits(const CFX_DIBSource* pSource,

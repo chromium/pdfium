@@ -565,9 +565,7 @@ class CFX_FixedBufGrow {
     }
   }
   void SetDataSize(int data_size) {
-    if (m_pData) {
-      FX_Free(m_pData);
-    }
+    FX_Free(m_pData);
     m_pData = NULL;
     if (data_size > FixedSize) {
       m_pData = FX_Alloc(DataType, data_size);
@@ -575,11 +573,7 @@ class CFX_FixedBufGrow {
       FXSYS_memset(m_Data, 0, sizeof(DataType) * FixedSize);
     }
   }
-  ~CFX_FixedBufGrow() {
-    if (m_pData) {
-      FX_Free(m_pData);
-    }
-  }
+  ~CFX_FixedBufGrow() { FX_Free(m_pData); }
   operator DataType*() { return m_pData ? m_pData : m_Data; }
 
  private:
@@ -1078,9 +1072,7 @@ class CFX_SortListArray {
   void Clear() {
     for (int32_t i = m_DataLists.GetUpperBound(); i >= 0; i--) {
       DataList list = m_DataLists.ElementAt(i);
-      if (list.data) {
-        FX_Free(list.data);
-      }
+      FX_Free(list.data);
     }
     m_DataLists.RemoveAll();
     m_CurList = 0;

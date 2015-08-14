@@ -491,12 +491,8 @@ CCodec_FaxDecoder::CCodec_FaxDecoder() {
   m_pRefBuf = NULL;
 }
 CCodec_FaxDecoder::~CCodec_FaxDecoder() {
-  if (m_pScanlineBuf) {
-    FX_Free(m_pScanlineBuf);
-  }
-  if (m_pRefBuf) {
-    FX_Free(m_pRefBuf);
-  }
+  FX_Free(m_pScanlineBuf);
+  FX_Free(m_pRefBuf);
 }
 FX_BOOL CCodec_FaxDecoder::Create(const uint8_t* src_buf,
                                   FX_DWORD src_size,
@@ -770,12 +766,8 @@ CCodec_FaxEncoder::CCodec_FaxEncoder(const uint8_t* src_buf,
   m_DestBuf.EstimateSize(0, 10240);
 }
 CCodec_FaxEncoder::~CCodec_FaxEncoder() {
-  if (m_pRefLine) {
-    FX_Free(m_pRefLine);
-  }
-  if (m_pLineBuf) {
-    FX_Free(m_pLineBuf);
-  }
+  FX_Free(m_pRefLine);
+  FX_Free(m_pLineBuf);
 }
 void CCodec_FaxEncoder::Encode(uint8_t*& dest_buf, FX_DWORD& dest_size) {
   int dest_bitpos = 0;

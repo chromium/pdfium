@@ -16,10 +16,8 @@ void CWeightTable::Calc(int dest_len,
                         int src_min,
                         int src_max,
                         int flags) {
-  if (m_pWeightTables) {
-    FX_Free(m_pWeightTables);
-    m_pWeightTables = NULL;
-  }
+  FX_Free(m_pWeightTables);
+  m_pWeightTables = NULL;
   double scale, base;
   scale = FXSYS_Div((FX_FLOAT)(src_len), (FX_FLOAT)(dest_len));
   if (dest_len < 0) {
@@ -334,18 +332,10 @@ FX_BOOL CStretchEngine::Continue(IFX_Pause* pPause) {
   return FALSE;
 }
 CStretchEngine::~CStretchEngine() {
-  if (m_pDestScanline) {
-    FX_Free(m_pDestScanline);
-  }
-  if (m_pInterBuf) {
-    FX_Free(m_pInterBuf);
-  }
-  if (m_pExtraAlphaBuf) {
-    FX_Free(m_pExtraAlphaBuf);
-  }
-  if (m_pDestMaskScanline) {
-    FX_Free(m_pDestMaskScanline);
-  }
+  FX_Free(m_pDestScanline);
+  FX_Free(m_pInterBuf);
+  FX_Free(m_pExtraAlphaBuf);
+  FX_Free(m_pDestMaskScanline);
 }
 FX_BOOL CStretchEngine::StartStretchHorz() {
   if (m_DestWidth == 0 || m_pDestScanline == NULL ||
@@ -769,13 +759,9 @@ CFX_ImageStretcher::CFX_ImageStretcher() {
   m_pMaskScanline = NULL;
 }
 CFX_ImageStretcher::~CFX_ImageStretcher() {
-  if (m_pScanline) {
-    FX_Free(m_pScanline);
-  }
+  FX_Free(m_pScanline);
   delete m_pStretchEngine;
-  if (m_pMaskScanline) {
-    FX_Free(m_pMaskScanline);
-  }
+  FX_Free(m_pMaskScanline);
 }
 FXDIB_Format _GetStretchedFormat(const CFX_DIBSource* pSrc) {
   FXDIB_Format format = pSrc->GetFormat();

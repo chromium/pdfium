@@ -487,12 +487,8 @@ CPDF_SampledFunc::CPDF_SampledFunc() {
 }
 CPDF_SampledFunc::~CPDF_SampledFunc() {
   delete m_pSampleStream;
-  if (m_pEncodeInfo) {
-    FX_Free(m_pEncodeInfo);
-  }
-  if (m_pDecodeInfo) {
-    FX_Free(m_pDecodeInfo);
-  }
+  FX_Free(m_pEncodeInfo);
+  FX_Free(m_pDecodeInfo);
 }
 FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
   if (pObj->GetType() != PDFOBJ_STREAM) {
@@ -678,12 +674,8 @@ CPDF_ExpIntFunc::CPDF_ExpIntFunc() {
   m_pEndValues = NULL;
 }
 CPDF_ExpIntFunc::~CPDF_ExpIntFunc() {
-  if (m_pBeginValues) {
     FX_Free(m_pBeginValues);
-  }
-  if (m_pEndValues) {
     FX_Free(m_pEndValues);
-  }
 }
 FX_BOOL CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj) {
   CPDF_Dictionary* pDict = pObj->GetDict();
@@ -747,15 +739,9 @@ CPDF_StitchFunc::CPDF_StitchFunc() {
 CPDF_StitchFunc::~CPDF_StitchFunc() {
   for (int i = 0; i < m_nSubs; i++)
     delete m_pSubFunctions[i];
-  if (m_pSubFunctions) {
-    FX_Free(m_pSubFunctions);
-  }
-  if (m_pBounds) {
-    FX_Free(m_pBounds);
-  }
-  if (m_pEncode) {
-    FX_Free(m_pEncode);
-  }
+  FX_Free(m_pSubFunctions);
+  FX_Free(m_pBounds);
+  FX_Free(m_pEncode);
 }
 FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   CPDF_Dictionary* pDict = pObj->GetDict();
@@ -859,14 +845,8 @@ CPDF_Function::CPDF_Function() {
   m_pRanges = NULL;
 }
 CPDF_Function::~CPDF_Function() {
-  if (m_pDomains) {
-    FX_Free(m_pDomains);
-    m_pDomains = NULL;
-  }
-  if (m_pRanges) {
-    FX_Free(m_pRanges);
-    m_pRanges = NULL;
-  }
+  FX_Free(m_pDomains);
+  FX_Free(m_pRanges);
 }
 FX_BOOL CPDF_Function::Init(CPDF_Object* pObj) {
   CPDF_Dictionary* pDict;

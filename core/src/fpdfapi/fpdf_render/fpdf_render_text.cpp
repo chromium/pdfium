@@ -531,9 +531,7 @@ CPDF_CharPosList::CPDF_CharPosList() {
   m_pCharPos = NULL;
 }
 CPDF_CharPosList::~CPDF_CharPosList() {
-  if (m_pCharPos) {
-    FX_Free(m_pCharPos);
-  }
+  FX_Free(m_pCharPos);
 }
 void CPDF_CharPosList::Load(int nChars,
                             FX_DWORD* pCharCodes,

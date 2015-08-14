@@ -439,9 +439,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
         pDict->RemoveAt(FX_BSTRC("DecodeParms"));
       }
     } else {
-      if (pData) {
-        FX_Free(pData);
-      }
+      FX_Free(pData);
       FX_DWORD dwSavePos = m_Pos;
       m_Pos += dwStreamSize;
       while (1) {
@@ -960,9 +958,8 @@ void CPDF_ContentParser::Clear() {
       delete m_pStreamArray[i];
     FX_Free(m_pStreamArray);
   }
-  if (m_pData && m_pSingleStream == NULL) {
-    FX_Free((void*)m_pData);
-  }
+  if (!m_pSingleStream)
+    FX_Free(m_pData);
   m_pParser = NULL;
   m_pStreamArray = NULL;
   m_pSingleStream = NULL;

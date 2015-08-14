@@ -392,9 +392,7 @@ CFX_IccTransformCache::~CFX_IccTransformCache() {
   if (m_pIccTransform) {
     cmsDeleteTransform(m_pIccTransform);
   }
-  if (m_pCmm) {
-    FX_Free(m_pCmm);
-  }
+  FX_Free(m_pCmm);
 }
 void CFX_IccTransformCache::Purge() {}
 class CFX_ByteStringKey : public CFX_BinaryBuf {

@@ -202,36 +202,24 @@ CFX_Palette::CFX_Palette() {
   m_lut = 0;
 }
 CFX_Palette::~CFX_Palette() {
-  if (m_pPalette) {
-    FX_Free(m_pPalette);
-  }
-  if (m_cLut) {
-    FX_Free(m_cLut);
-  }
-  if (m_aLut) {
-    FX_Free(m_aLut);
-  }
+  FX_Free(m_pPalette);
+  FX_Free(m_cLut);
+  FX_Free(m_aLut);
   m_lut = 0;
 }
 FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap, int pal_type) {
   if (pBitmap == NULL) {
     return FALSE;
   }
-  if (m_pPalette != NULL) {
-    FX_Free(m_pPalette);
-  }
+  FX_Free(m_pPalette);
   m_pPalette = FX_Alloc(FX_DWORD, 256);
   int bpp = pBitmap->GetBPP() / 8;
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
-  if (m_cLut) {
-    FX_Free(m_cLut);
-    m_cLut = NULL;
-  }
-  if (m_aLut) {
-    FX_Free(m_aLut);
-    m_aLut = NULL;
-  }
+  FX_Free(m_cLut);
+  m_cLut = NULL;
+  FX_Free(m_aLut);
+  m_aLut = NULL;
   m_cLut = FX_Alloc(FX_DWORD, 4096);
   m_aLut = FX_Alloc(FX_DWORD, 4096);
   int row, col;
@@ -1135,9 +1123,7 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
   ret = ConvertBuffer(dest_format, pClone->GetBuffer(), pClone->GetPitch(),
                       m_Width, m_Height, this, 0, 0, pal_8bpp, pIccTransform);
   if (!ret) {
-    if (pal_8bpp) {
-      FX_Free(pal_8bpp);
-    }
+    FX_Free(pal_8bpp);
     delete pClone;
     return NULL;
   }
@@ -1215,24 +1201,18 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format,
   ret = ConvertBuffer(dest_format, dest_buf, dest_pitch, m_Width, m_Height,
                       this, 0, 0, pal_8bpp, pIccTransform);
   if (!ret) {
-    if (pal_8bpp) {
-      FX_Free(pal_8bpp);
-    }
+    FX_Free(pal_8bpp);
     if (pAlphaMask != m_pAlphaMask) {
       delete pAlphaMask;
     }
-    if (dest_buf) {
-      FX_Free(dest_buf);
-    }
+    FX_Free(dest_buf);
     return FALSE;
   }
   if (m_pAlphaMask && pAlphaMask != m_pAlphaMask) {
     delete m_pAlphaMask;
   }
   m_pAlphaMask = pAlphaMask;
-  if (m_pPalette) {
-    FX_Free(m_pPalette);
-  }
+  FX_Free(m_pPalette);
   m_pPalette = pal_8bpp;
   if (!m_bExtBuf) {
     FX_Free(m_pBuffer);

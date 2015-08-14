@@ -182,17 +182,11 @@ CPDF_DIBSource::CPDF_DIBSource() {
 }
 CPDF_DIBSource::~CPDF_DIBSource() {
   delete m_pStreamAcc;
-  if (m_pMaskedLine) {
-    FX_Free(m_pMaskedLine);
-  }
-  if (m_pLineBuf) {
-    FX_Free(m_pLineBuf);
-  }
+  FX_Free(m_pMaskedLine);
+  FX_Free(m_pLineBuf);
   m_pCachedBitmap.reset();
   delete m_pDecoder;
-  if (m_pCompData) {
-    FX_Free(m_pCompData);
-  }
+  FX_Free(m_pCompData);
   CPDF_ColorSpace* pCS = m_pColorSpace;
   if (pCS && m_pDocument) {
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());

@@ -31,14 +31,10 @@ CPDF_ClipPathData::CPDF_ClipPathData() {
 CPDF_ClipPathData::~CPDF_ClipPathData() {
   int i;
   delete[] m_pPathList;
-  if (m_pTypeList) {
-    FX_Free(m_pTypeList);
-  }
+  FX_Free(m_pTypeList);
   for (i = m_TextCount - 1; i > -1; i--)
     delete m_pTextList[i];
-  if (m_pTextList) {
-    FX_Free(m_pTextList);
-  }
+  FX_Free(m_pTextList);
 }
 CPDF_ClipPathData::CPDF_ClipPathData(const CPDF_ClipPathData& src) {
   m_pPathList = NULL;
@@ -148,9 +144,7 @@ void CPDF_ClipPath::AppendPath(CPDF_Path path, int type, FX_BOOL bAutoMerge) {
     delete[] pData->m_pPathList;
     uint8_t* pNewType = FX_Alloc(uint8_t, pData->m_PathCount + 8);
     FXSYS_memcpy(pNewType, pData->m_pTypeList, pData->m_PathCount);
-    if (pData->m_pTypeList) {
-      FX_Free(pData->m_pTypeList);
-    }
+    FX_Free(pData->m_pTypeList);
     pData->m_pPathList = pNewPath;
     pData->m_pTypeList = pNewType;
   }

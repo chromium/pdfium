@@ -647,18 +647,10 @@ CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder() {
   m_LeftOver = 0;
 }
 CCodec_FlateScanlineDecoder::~CCodec_FlateScanlineDecoder() {
-  if (m_pScanline) {
-    FX_Free(m_pScanline);
-  }
-  if (m_pLastLine) {
-    FX_Free(m_pLastLine);
-  }
-  if (m_pPredictBuffer) {
-    FX_Free(m_pPredictBuffer);
-  }
-  if (m_pPredictRaw) {
-    FX_Free(m_pPredictRaw);
-  }
+  FX_Free(m_pScanline);
+  FX_Free(m_pLastLine);
+  FX_Free(m_pPredictBuffer);
+  FX_Free(m_pPredictRaw);
   if (m_pFlate) {
     FPDFAPI_FlateEnd(m_pFlate);
   }

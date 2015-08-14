@@ -534,8 +534,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
     sizeOfAry = j;
   }
   pApp->FFI_DoGoToAction(nPageIndex, nFitType, pPosAry, sizeOfAry);
-  if (pPosAry)
-    delete[] pPosAry;
+  delete[] pPosAry;
 }
 
 void CPDFSDK_ActionHandler::DoAction_GoToR(CPDFSDK_Document* pDocument,

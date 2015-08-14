@@ -104,9 +104,7 @@ void CTextPage::ProcessObject(CPDF_PageObject* pObject) {
       InsertTextBox(NULL, char_origy, char_left, char_right, char_top,
                     char_bottom, spacew, fontsize_v, str, pFont);
     }
-    if (pPosArray) {
-      FX_Free(pPosArray);
-    }
+    FX_Free(pPosArray);
     return;
   }
   FX_FLOAT ratio_h = fontsize_h / pText->m_TextState.GetFontSize();

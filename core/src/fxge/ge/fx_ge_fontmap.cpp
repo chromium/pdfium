@@ -33,9 +33,7 @@ CTTFontDesc::~CTTFontDesc() {
         FXFT_Done_Face(m_TTCFace.m_pFaces[i]);
       }
   }
-  if (m_pFontData) {
-    FX_Free(m_pFontData);
-  }
+  FX_Free(m_pFontData);
 }
 FX_BOOL CTTFontDesc::ReleaseFace(FXFT_Face face) {
   if (m_Type == 1) {
