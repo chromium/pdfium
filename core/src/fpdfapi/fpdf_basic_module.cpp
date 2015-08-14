@@ -11,8 +11,6 @@ namespace {
 
 CPDF_ModuleMgr* g_FPDFAPI_pDefaultMgr = nullptr;
 
-const char kAddinNameCJK[] = "Eastern Asian Language Support";
-
 }  // namespace
 
 // static
