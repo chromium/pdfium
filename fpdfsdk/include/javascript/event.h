@@ -12,7 +12,7 @@
 class event : public CJS_EmbedObj {
  public:
   event(CJS_Object* pJSObject);
-  virtual ~event(void);
+  ~event() override;
 
  public:
   FX_BOOL change(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
@@ -59,8 +59,8 @@ class event : public CJS_EmbedObj {
 
 class CJS_Event : public CJS_Object {
  public:
-  CJS_Event(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Event(void){};
+  CJS_Event(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Event() override {}
 
   DECLARE_JS_CLASS(CJS_Event);
 

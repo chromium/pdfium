@@ -89,7 +89,7 @@ CJS_Object::CJS_Object(JSFXObject pObject) : m_pEmbedObj(NULL) {
   m_pObject.Reset(m_pIsolate, pObject);
 };
 
-CJS_Object::~CJS_Object(void) {
+CJS_Object::~CJS_Object() {
   m_pObject.Reset();
 };
 

@@ -357,7 +357,7 @@ template <class TYPE>
 class CGW_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {
  public:
   CGW_ArrayTemplate() {}
-  virtual ~CGW_ArrayTemplate() {}
+  ~CGW_ArrayTemplate() {}
 
   typedef int (*LP_COMPARE)(TYPE p1, TYPE p2);
 

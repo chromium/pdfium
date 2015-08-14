@@ -71,9 +71,10 @@ CCodec_ModuleMgr* g_pCodecModule = nullptr;
 class CFontMapper : public IPDF_FontMapper {
  public:
   CFontMapper();
-  virtual ~CFontMapper();
+  ~CFontMapper() override;
 
-  virtual FT_Face FindSubstFont(
+  // IPDF_FontMapper
+  FT_Face FindSubstFont(
       CPDF_Document* pDoc,              // [IN] The PDF document
       const CFX_ByteString& face_name,  // [IN] Original name
       FX_BOOL bTrueType,                // [IN] TrueType or Type1
@@ -82,7 +83,7 @@ class CFontMapper : public IPDF_FontMapper {
       int CharsetCP,    // [IN] code page for charset (see Win32 GetACP())
       FX_BOOL bVertical,
       CPDF_SubstFont* pSubstFont  // [OUT] Subst font data
-      );
+      ) override;
 
   FT_Face m_SysFace;
 };
@@ -204,6 +205,8 @@ class CMemFile final : public IFX_FileRead {
   }
 
  private:
+  ~CMemFile() {}
+
   uint8_t* m_pBuf;
   FX_FILESIZE m_size;
 };

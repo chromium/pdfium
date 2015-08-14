@@ -18,10 +18,12 @@ class CFX_IFileWrite final : public IFX_StreamWrite {
  public:
   CFX_IFileWrite();
   FX_BOOL Init(FPDF_FILEWRITE* pFileWriteStruct);
-  virtual FX_BOOL WriteBlock(const void* pData, size_t size) override;
-  virtual void Release() override {}
+  FX_BOOL WriteBlock(const void* pData, size_t size) override;
+  void Release() override;
 
  protected:
+  ~CFX_IFileWrite() override {}
+
   FPDF_FILEWRITE* m_pFileWriteStruct;
 };
 
@@ -43,6 +45,10 @@ FX_BOOL CFX_IFileWrite::WriteBlock(const void* pData, size_t size) {
 
   m_pFileWriteStruct->WriteBlock(m_pFileWriteStruct, pData, size);
   return TRUE;
+}
+
+void CFX_IFileWrite::Release() {
+  delete this;
 }
 
 FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
@@ -70,7 +76,7 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
   pStreamWrite = new CFX_IFileWrite;
   pStreamWrite->Init(pFileWrite);
   bRet = FileMaker.Create(pStreamWrite, flags);
-  delete pStreamWrite;
+  pStreamWrite->Release();
   return bRet;
 }
 

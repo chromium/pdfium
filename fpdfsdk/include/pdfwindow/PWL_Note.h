@@ -82,14 +82,14 @@ class IPWL_NoteItem {
 class CPWL_Note_Icon : public CPWL_Wnd {
  public:
   CPWL_Note_Icon();
-  virtual ~CPWL_Note_Icon();
+  ~CPWL_Note_Icon() override;
 
   void SetIconType(int32_t nType);
 
- public:
  protected:
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
+  // CPWL_Wnd
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
 
  private:
   int32_t m_nType;
@@ -98,13 +98,14 @@ class CPWL_Note_Icon : public CPWL_Wnd {
 class CPWL_Note_CloseBox : public CPWL_Button {
  public:
   CPWL_Note_CloseBox();
-  virtual ~CPWL_Note_CloseBox();
+  ~CPWL_Note_CloseBox() override;
 
  protected:
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
+  // CPWL_Button
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
 
  private:
   FX_BOOL m_bMouseDown;
@@ -113,43 +114,44 @@ class CPWL_Note_CloseBox : public CPWL_Button {
 class CPWL_Note_LBBox : public CPWL_Wnd {
  public:
   CPWL_Note_LBBox();
-  virtual ~CPWL_Note_LBBox();
+  ~CPWL_Note_LBBox() override;
 
  protected:
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
+  // CPWL_Wnd
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
 };
 
 class CPWL_Note_RBBox : public CPWL_Wnd {
  public:
   CPWL_Note_RBBox();
-  virtual ~CPWL_Note_RBBox();
+  ~CPWL_Note_RBBox() override;
 
  protected:
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
+  // CPWL_Wnd
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
 };
 
 class CPWL_Note_Edit : public CPWL_Edit {
  public:
   CPWL_Note_Edit();
-  virtual ~CPWL_Note_Edit();
+  ~CPWL_Note_Edit() override;
 
   void EnableNotify(FX_BOOL bEnable) { m_bEnableNotify = bEnable; }
-  virtual FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth);
-  FX_FLOAT GetItemLeftMargin();
-  FX_FLOAT GetItemRightMargin();
 
-  virtual void SetText(const FX_WCHAR* csText);
-
- protected:
-  virtual void OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
-                        intptr_t wParam = 0,
-                        intptr_t lParam = 0);
-  virtual void RePosChildWnd();
-  virtual void OnSetFocus();
-  virtual void OnKillFocus();
+  // CPWL_Edit
+  FX_FLOAT GetItemLeftMargin() override;
+  FX_FLOAT GetItemRightMargin() override;
+  FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth) override;
+  void SetText(const FX_WCHAR* csText) override;
+  void OnNotify(CPWL_Wnd* pWnd,
+                FX_DWORD msg,
+                intptr_t wParam = 0,
+                intptr_t lParam = 0) override;
+  void RePosChildWnd() override;
+  void OnSetFocus() override;
+  void OnKillFocus() override;
 
  private:
   FX_BOOL m_bEnableNotify;
@@ -162,17 +164,17 @@ class CPWL_Note_Edit : public CPWL_Edit {
 class CPWL_Note_Options : public CPWL_Wnd {
  public:
   CPWL_Note_Options();
-  virtual ~CPWL_Note_Options();
+  ~CPWL_Note_Options() override;
 
   CPDF_Rect GetContentRect() const;
-  virtual void SetTextColor(const CPWL_Color& color);
   void SetText(const CFX_WideString& sText);
 
- protected:
-  virtual void RePosChildWnd();
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
+  // CPWL_Wnd
+  void RePosChildWnd() override;
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  void SetTextColor(const CPWL_Color& color) override;
 
  private:
   CPWL_Label* m_pText;
@@ -181,19 +183,11 @@ class CPWL_Note_Options : public CPWL_Wnd {
 class CPWL_Note_Contents : public CPWL_ListCtrl {
  public:
   CPWL_Note_Contents();
-  virtual ~CPWL_Note_Contents();
-
-  virtual CFX_ByteString GetClassName() const;
-  virtual void OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
-                        intptr_t wParam = 0,
-                        intptr_t lParam = 0);
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
+  ~CPWL_Note_Contents() override;
 
   void SetEditFocus(FX_BOOL bLast);
   CPWL_Edit* GetEdit() const;
 
- public:
   void SetText(const CFX_WideString& sText);
   CFX_WideString GetText() const;
 
@@ -206,8 +200,14 @@ class CPWL_Note_Contents : public CPWL_ListCtrl {
   void EnableRead(FX_BOOL bEnabled);
   void EnableModify(FX_BOOL bEnabled);
 
- protected:
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
+  // CPWL_ListCtrl
+  CFX_ByteString GetClassName() const override;
+  void OnNotify(CPWL_Wnd* pWnd,
+                FX_DWORD msg,
+                intptr_t wParam = 0,
+                intptr_t lParam = 0) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
 
  private:
   CPWL_Note_Edit* m_pEdit;
@@ -216,65 +216,60 @@ class CPWL_Note_Contents : public CPWL_ListCtrl {
 class CPWL_NoteItem : public CPWL_Wnd, public IPWL_NoteItem {
  public:
   CPWL_NoteItem();
-  virtual ~CPWL_NoteItem();
+  ~CPWL_NoteItem() override;
 
- public:
-  virtual void SetPrivateData(void* pData);
-  virtual void SetBkColor(const CPWL_Color& color);
-  virtual void SetSubjectName(const CFX_WideString& sName);
-  virtual void SetAuthorName(const CFX_WideString& sName);
-  virtual void SetDateTime(FX_SYSTEMTIME time);
-  virtual void SetContents(const CFX_WideString& sContents);
-
-  virtual IPWL_NoteItem* CreateSubItem();
-  virtual int32_t CountSubItems() const;
-  virtual IPWL_NoteItem* GetSubItems(int32_t index) const;
-  virtual void DeleteSubItem(IPWL_NoteItem* pNoteItem);
-  virtual void SetFocus() { SetNoteFocus(FALSE); }
-
-  virtual IPWL_NoteItem* GetParentItem() const;
-  virtual void* GetPrivateData() const;
-  virtual CFX_WideString GetAuthorName() const;
-  virtual CPWL_Color GetBkColor() const;
-  virtual CFX_WideString GetContents() const;
-  virtual FX_SYSTEMTIME GetDateTime() const;
-  virtual CFX_WideString GetSubjectName() const;
-  virtual FX_BOOL IsTopItem() const { return FALSE; }
-  virtual CPWL_Edit* GetEdit() const;
-
- public:
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual CFX_ByteString GetClassName() const;
   virtual IPWL_NoteItem* GetHitNoteItem(const CPDF_Point& point);
   virtual IPWL_NoteItem* GetFocusedNoteItem() const;
+
+  virtual FX_BOOL IsTopItem() const { return FALSE; }
 
   virtual void ResetSubjectName(int32_t nItemIndex);
   void EnableRead(FX_BOOL bEnabled);
   void EnableModify(FX_BOOL bEnabled);
 
+  void OnContentsValidate();
+  void OnCreateNoteItem();
+
+  // IPWL_NoteItem
+  void SetPrivateData(void* pData) override;
+  void SetBkColor(const CPWL_Color& color) override;
+  void SetSubjectName(const CFX_WideString& sName) override;
+  void SetAuthorName(const CFX_WideString& sName) override;
+  void SetDateTime(FX_SYSTEMTIME time) override;
+  void SetContents(const CFX_WideString& sContents) override;
+  IPWL_NoteItem* CreateSubItem() override;
+  int32_t CountSubItems() const override;
+  IPWL_NoteItem* GetSubItems(int32_t index) const override;
+  void DeleteSubItem(IPWL_NoteItem* pNoteItem) override;
+  void SetFocus() override { SetNoteFocus(FALSE); }
+  IPWL_NoteItem* GetParentItem() const override;
+  void* GetPrivateData() const override;
+  CFX_WideString GetAuthorName() const override;
+  CPWL_Color GetBkColor() const override;
+  CFX_WideString GetContents() const override;
+  FX_SYSTEMTIME GetDateTime() const override;
+  CFX_WideString GetSubjectName() const override;
+  CPWL_Edit* GetEdit() const override;
+
  protected:
-  virtual void RePosChildWnd();
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
+  // CPWL_Wnd
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  CFX_ByteString GetClassName() const override;
+  void RePosChildWnd() override;
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void OnNotify(CPWL_Wnd* pWnd,
+                FX_DWORD msg,
+                intptr_t wParam = 0,
+                intptr_t lParam = 0) override;
+  FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth) override;
+  FX_FLOAT GetItemLeftMargin() override;
+  FX_FLOAT GetItemRightMargin() override;
 
-  virtual void OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
-                        intptr_t wParam = 0,
-                        intptr_t lParam = 0);
-
- public:
-  virtual FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth);
-  virtual FX_FLOAT GetItemLeftMargin();
-  virtual FX_FLOAT GetItemRightMargin();
   CPWL_NoteItem* CreateNoteItem();
   CPWL_NoteItem* GetParentNoteItem() const;
 
   void SetNoteFocus(FX_BOOL bLast);
-  void OnContentsValidate();
-
-  void OnCreateNoteItem();
-
- protected:
   void PopupNoteItemMenu(const CPDF_Point& point);
 
   virtual const CPWL_Note* GetNote() const;
@@ -300,19 +295,8 @@ class CPWL_Note : public CPWL_NoteItem {
   CPWL_Note(IPopup_Note* pPopupNote,
             IPWL_NoteNotify* pNoteNotify,
             IPWL_NoteHandler* pNoteHandler);
-  virtual ~CPWL_Note();
+  ~CPWL_Note() override;
 
- public:
-  virtual void SetSubjectName(const CFX_WideString& sName);
-  virtual void SetAuthorName(const CFX_WideString& sName);
-  virtual CFX_WideString GetAuthorName() const;
-  virtual void SetBkColor(const CPWL_Color& color);
-  virtual void ResetSubjectName(int32_t nItemIndex) {}
-  virtual FX_BOOL IsTopItem() const { return TRUE; }
-  virtual const CPWL_Note* GetNote() const;
-  virtual IPWL_NoteNotify* GetNoteNotify() const;
-
- public:
   IPWL_NoteItem* Reply();
   void EnableNotify(FX_BOOL bEnabled);
   void SetIconType(int32_t nType);
@@ -329,22 +313,28 @@ class CPWL_Note : public CPWL_NoteItem {
   CPDF_Rect GetCaptionRect() const { return m_rcCaption; }
   IPopup_Note* GetPopupNote() const { return m_pPopupNote; }
 
- public:
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMouseWheel(short zDelta,
-                               const CPDF_Point& point,
-                               FX_DWORD nFlag);
+  // CPWL_NoteItem
+  void SetSubjectName(const CFX_WideString& sName) override;
+  void SetAuthorName(const CFX_WideString& sName) override;
+  CFX_WideString GetAuthorName() const override;
+  void SetBkColor(const CPWL_Color& color) override;
+  void ResetSubjectName(int32_t nItemIndex) override {}
+  FX_BOOL IsTopItem() const override { return TRUE; }
+  const CPWL_Note* GetNote() const override;
+  IPWL_NoteNotify* GetNoteNotify() const override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnMouseWheel(short zDelta,
+                       const CPDF_Point& point,
+                       FX_DWORD nFlag) override;
+  void RePosChildWnd() override;
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void OnNotify(CPWL_Wnd* pWnd,
+                FX_DWORD msg,
+                intptr_t wParam = 0,
+                intptr_t lParam = 0) override;
 
  protected:
-  virtual void RePosChildWnd();
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
-
-  virtual void OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
-                        intptr_t wParam = 0,
-                        intptr_t lParam = 0);
-
   FX_BOOL ResetScrollBar();
   void RePosNoteChildren();
   FX_BOOL ScrollBarShouldVisible();

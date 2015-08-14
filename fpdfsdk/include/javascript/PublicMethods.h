@@ -11,8 +11,8 @@
 
 class CJS_PublicMethods : public CJS_Object {
  public:
-  CJS_PublicMethods(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_PublicMethods(void){};
+  CJS_PublicMethods(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_PublicMethods() override {}
 
  public:
   static FX_BOOL AFNumber_Format(IFXJS_Context* cc,

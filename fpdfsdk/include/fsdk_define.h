@@ -46,15 +46,13 @@ class IFSDK_PAUSE_Adapter;
 class CPDF_CustomAccess final : public IFX_FileRead {
  public:
   CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
-  ~CPDF_CustomAccess() {}
+  ~CPDF_CustomAccess() override {}
 
-  virtual FX_FILESIZE GetSize() override { return m_FileAccess.m_FileLen; }
+  FX_FILESIZE GetSize() override { return m_FileAccess.m_FileLen; }
 
-  virtual void Release() override { delete this; }
+  void Release() override { delete this; }
 
-  virtual FX_BOOL ReadBlock(void* buffer,
-                            FX_FILESIZE offset,
-                            size_t size) override;
+  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
  private:
   FPDF_FILEACCESS m_FileAccess;

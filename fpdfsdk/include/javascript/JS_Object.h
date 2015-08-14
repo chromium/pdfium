@@ -49,7 +49,7 @@ class CJS_EmbedObj {
 class CJS_Object {
  public:
   explicit CJS_Object(JSFXObject pObject);
-  virtual ~CJS_Object(void);
+  virtual ~CJS_Object();
 
   void MakeWeak();
   void Dispose();

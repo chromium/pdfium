@@ -65,7 +65,8 @@ color::color(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {
   m_crLTGray = CPWL_Color(COLORTYPE_GRAY, 0.75);
 }
 
-color::~color(void) {}
+color::~color() {
+}
 
 void color::ConvertPWLColorToArray(const CPWL_Color& color, CJS_Array& array) {
   switch (color.nColorType) {

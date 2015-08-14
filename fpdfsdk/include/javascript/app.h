@@ -18,7 +18,7 @@ class CJS_Timer;
 class TimerObj : public CJS_EmbedObj {
  public:
   TimerObj(CJS_Object* pJSObject);
-  virtual ~TimerObj();
+  ~TimerObj() override;
 
  public:
   void SetTimer(CJS_Timer* pTimer);
@@ -31,7 +31,7 @@ class TimerObj : public CJS_EmbedObj {
 class CJS_TimerObj : public CJS_Object {
  public:
   CJS_TimerObj(JSFXObject pObject) : CJS_Object(pObject) {}
-  virtual ~CJS_TimerObj() {}
+  ~CJS_TimerObj() override {}
 
   DECLARE_JS_CLASS(CJS_TimerObj);
 };
@@ -39,7 +39,7 @@ class CJS_TimerObj : public CJS_Object {
 class app : public CJS_EmbedObj {
  public:
   app(CJS_Object* pJSObject);
-  virtual ~app();
+  ~app() override;
 
  public:
   FX_BOOL activeDocs(IFXJS_Context* cc,
@@ -160,24 +160,22 @@ class app : public CJS_EmbedObj {
                      CJS_Value& vRet,
                      CFX_WideString& sError);
 
- private:
-  void TimerProc(CJS_Timer* pTimer);
-  void RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript);
-
- public:
   static CFX_WideString SysPathToPDFPath(const CFX_WideString& sOldPath);
 
  private:
+  // CJS_EmbedObj
+  void TimerProc(CJS_Timer* pTimer) override;
+  void RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript);
+
   bool m_bCalculate;
   bool m_bRuntimeHighLight;
-
   CFX_ArrayTemplate<CJS_Timer*> m_aTimer;
 };
 
 class CJS_App : public CJS_Object {
  public:
-  CJS_App(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_App(void){};
+  explicit CJS_App(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_App() override {}
 
   DECLARE_JS_CLASS(CJS_App);
 

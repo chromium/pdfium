@@ -35,17 +35,17 @@ class CPWL_SBButton : public CPWL_Wnd {
  public:
   CPWL_SBButton(PWL_SCROLLBAR_TYPE eScrollBarType,
                 PWL_SBBUTTON_TYPE eButtonType);
-  virtual ~CPWL_SBButton();
+  ~CPWL_SBButton() override;
 
- public:
-  virtual CFX_ByteString GetClassName() const;
-  virtual void OnCreate(PWL_CREATEPARAM& cp);
-  virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag);
+  // CPWL_Wnd
+  CFX_ByteString GetClassName() const override;
+  void OnCreate(PWL_CREATEPARAM& cp) override;
+  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag) override;
 
  protected:
   PWL_SCROLLBAR_TYPE m_eScrollBarType;
@@ -92,24 +92,23 @@ struct PWL_SCROLL_PRIVATEDATA {
 class CPWL_ScrollBar : public CPWL_Wnd {
  public:
   CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType = SBT_HSCROLL);
-  virtual ~CPWL_ScrollBar();
+  ~CPWL_ScrollBar() override;
 
- public:
-  virtual CFX_ByteString GetClassName() const;
-  virtual void OnCreate(PWL_CREATEPARAM& cp);
-  virtual void RePosChildWnd();
-  virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual void OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
-                        intptr_t wParam = 0,
-                        intptr_t lParam = 0);
-
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
+  // CPWL_Wnd
+  CFX_ByteString GetClassName() const override;
+  void OnCreate(PWL_CREATEPARAM& cp) override;
+  void RePosChildWnd() override;
+  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  void OnNotify(CPWL_Wnd* pWnd,
+                FX_DWORD msg,
+                intptr_t wParam = 0,
+                intptr_t lParam = 0) override;
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void TimerProc() override;
 
   FX_FLOAT GetScrollBarWidth() const;
   PWL_SCROLLBAR_TYPE GetScrollBarType() const { return m_sbType; };
@@ -142,9 +141,6 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   FX_FLOAT TrueToFace(FX_FLOAT);
   FX_FLOAT FaceToTrue(FX_FLOAT);
 
-  virtual void TimerProc();
-
- private:
   PWL_SCROLLBAR_TYPE m_sbType;
   PWL_SCROLL_INFO m_OriginInfo;
   CPWL_SBButton* m_pMinButton;

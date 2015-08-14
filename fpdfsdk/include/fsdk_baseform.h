@@ -56,25 +56,25 @@ typedef struct _PDFSDK_FieldAction {
   FX_BOOL bFieldFull;        // in
   FX_BOOL bRC;               // in[out]
 } PDFSDK_FieldAction;
+
 class CPDFSDK_Widget : public CPDFSDK_Annot {
  public:
   CPDFSDK_Widget(CPDF_Annot* pAnnot,
                  CPDFSDK_PageView* pPageView,
                  CPDFSDK_InterForm* pInterForm);
-  virtual ~CPDFSDK_Widget();
+  ~CPDFSDK_Widget() override;
 
-  virtual CFX_ByteString GetSubType() const;
+  // CPDFSDK_Annot
+  CFX_ByteString GetSubType() const override;
+  CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
 
-  virtual CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT);
+  int GetLayoutOrder() const override { return 2; }
 
+  // Possible values from PDF 32000-1:2008, table 221.
+  // FIELDFLAG_READONLY
+  // FIELDFLAG_REQUIRED
+  // FIELDFLAG_NOEXPORT
   int GetFieldType() const;
-  // define layout order to 2.
-  virtual int GetLayoutOrder() const { return 2; }
-  /*
-  FIELDFLAG_READONLY
-  FIELDFLAG_REQUIRED
-  FIELDFLAG_NOEXPORT
-  */
 
   int GetFieldFlags() const;
   int GetRotate() const;

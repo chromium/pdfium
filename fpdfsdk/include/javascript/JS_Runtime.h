@@ -31,14 +31,14 @@ class CJS_FieldEvent {
 class CJS_Runtime : public IFXJS_Runtime {
  public:
   CJS_Runtime(CPDFDoc_Environment* pApp);
-  virtual ~CJS_Runtime();
+  ~CJS_Runtime() override;
 
-  virtual IFXJS_Context* NewContext();
-  virtual void ReleaseContext(IFXJS_Context* pContext);
-  virtual IFXJS_Context* GetCurrentContext();
-
-  virtual void SetReaderDocument(CPDFSDK_Document* pReaderDoc);
-  virtual CPDFSDK_Document* GetReaderDocument() { return m_pDocument; }
+  // IFXJS_Runtime
+  IFXJS_Context* NewContext() override;
+  void ReleaseContext(IFXJS_Context* pContext) override;
+  IFXJS_Context* GetCurrentContext() override;
+  void SetReaderDocument(CPDFSDK_Document* pReaderDoc) override;
+  CPDFSDK_Document* GetReaderDocument() override { return m_pDocument; }
 
   CPDFDoc_Environment* GetReaderApp() { return m_pApp; }
 

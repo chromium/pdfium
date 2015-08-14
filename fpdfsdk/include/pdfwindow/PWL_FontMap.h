@@ -51,24 +51,20 @@ struct CPWL_FontMap_Native {
 class CPWL_FontMap : public IFX_Edit_FontMap {
  public:
   CPWL_FontMap(IFX_SystemHandler* pSystemHandler);
-  virtual ~CPWL_FontMap();
+  ~CPWL_FontMap() override;
 
-  virtual CPDF_Font* GetPDFFont(int32_t nFontIndex);
-  virtual CFX_ByteString GetPDFFontAlias(int32_t nFontIndex);
-  virtual int32_t GetWordFontIndex(FX_WORD word,
-                                   int32_t nCharset,
-                                   int32_t nFontIndex);
-  virtual int32_t CharCodeFromUnicode(int32_t nFontIndex, FX_WORD word);
-  virtual int32_t CharSetFromUnicode(FX_WORD word, int32_t nOldCharset);
+  // IFX_Edit_FontMap
+  CPDF_Font* GetPDFFont(int32_t nFontIndex) override;
+  CFX_ByteString GetPDFFontAlias(int32_t nFontIndex) override;
+  int32_t GetWordFontIndex(FX_WORD word,
+                           int32_t nCharset,
+                           int32_t nFontIndex) override;
+  int32_t CharCodeFromUnicode(int32_t nFontIndex, FX_WORD word) override;
+  int32_t CharSetFromUnicode(FX_WORD word, int32_t nOldCharset) override;
 
- public:
-  virtual void Initial(const FX_CHAR* fontname = NULL);
   void SetSystemHandler(IFX_SystemHandler* pSystemHandler);
-
   int32_t GetFontMapCount() const;
   const CPWL_FontMap_Data* GetFontMapData(int32_t nIndex) const;
-
- public:
   static int32_t GetNativeCharset();
   CFX_ByteString GetNativeFontName(int32_t nCharset);
 
@@ -84,12 +80,12 @@ class CPWL_FontMap : public IFX_Edit_FontMap {
                            uint8_t nCharset);
 
  protected:
-  virtual CPDF_Font* FindFontSameCharset(CFX_ByteString& sFontAlias,
-                                         int32_t nCharset);
-  virtual void AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
-  FX_BOOL KnowWord(int32_t nFontIndex, FX_WORD word);
+  void Initial(const FX_CHAR* fontname = NULL);
+  CPDF_Document* GetDocument();
+  CPDF_Font* FindFontSameCharset(CFX_ByteString& sFontAlias, int32_t nCharset);
+  void AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
 
-  virtual CPDF_Document* GetDocument();
+  FX_BOOL KnowWord(int32_t nFontIndex, FX_WORD word);
 
   void Empty();
   int32_t GetFontIndex(const CFX_ByteString& sFontName,
@@ -128,7 +124,7 @@ class CPWL_DocFontMap : public CPWL_FontMap {
  public:
   CPWL_DocFontMap(IFX_SystemHandler* pSystemHandler,
                   CPDF_Document* pAttachedDoc);
-  virtual ~CPWL_DocFontMap();
+  ~CPWL_DocFontMap() override;
 
   virtual CPDF_Document* GetDocument();
 

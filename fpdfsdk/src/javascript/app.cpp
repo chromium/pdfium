@@ -112,7 +112,7 @@ IMPLEMENT_JS_CLASS(CJS_App, app)
 app::app(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_bCalculate(true), m_bRuntimeHighLight(false) {}
 
-app::~app(void) {
+app::~app() {
   for (int i = 0, sz = m_aTimer.GetSize(); i < sz; i++)
     delete m_aTimer[i];
 

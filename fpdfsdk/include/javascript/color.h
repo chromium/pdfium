@@ -13,7 +13,7 @@
 class color : public CJS_EmbedObj {
  public:
   color(CJS_Object* pJSObject);
-  virtual ~color(void);
+  ~color() override;
 
   FX_BOOL black(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
   FX_BOOL blue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
@@ -60,8 +60,8 @@ class color : public CJS_EmbedObj {
 
 class CJS_Color : public CJS_Object {
  public:
-  CJS_Color(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Color(void){};
+  CJS_Color(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Color() override {}
 
   DECLARE_JS_CLASS(CJS_Color);
 

@@ -12,20 +12,22 @@
 class CPWL_PushButton : public CPWL_Button {
  public:
   CPWL_PushButton();
-  virtual ~CPWL_PushButton();
+  ~CPWL_PushButton() override;
 
-  virtual CFX_ByteString GetClassName() const;
-  virtual CPDF_Rect GetFocusRect() const;
+  // CPWL_Button
+  CFX_ByteString GetClassName() const override;
+  CPDF_Rect GetFocusRect() const override;
 };
 
 class CPWL_CheckBox : public CPWL_Button {
  public:
   CPWL_CheckBox();
-  virtual ~CPWL_CheckBox();
+  ~CPWL_CheckBox() override;
 
-  virtual CFX_ByteString GetClassName() const;
-  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag);
+  // CPWL_Button
+  CFX_ByteString GetClassName() const override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
 
   void SetCheck(FX_BOOL bCheck);
   FX_BOOL IsChecked() const;
@@ -37,11 +39,12 @@ class CPWL_CheckBox : public CPWL_Button {
 class CPWL_RadioButton : public CPWL_Button {
  public:
   CPWL_RadioButton();
-  virtual ~CPWL_RadioButton();
+  ~CPWL_RadioButton() override;
 
-  virtual CFX_ByteString GetClassName() const;
-  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag);
+  // CPWL_Button
+  CFX_ByteString GetClassName() const override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
 
   void SetCheck(FX_BOOL bCheck);
   FX_BOOL IsChecked() const;

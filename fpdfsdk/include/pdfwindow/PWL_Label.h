@@ -14,11 +14,7 @@ class IFX_Edit;
 class CPWL_Label : public CPWL_Wnd {
  public:
   CPWL_Label();
-  virtual ~CPWL_Label();
-
-  virtual CFX_ByteString GetClassName() const;
-  virtual void SetFontSize(FX_FLOAT fFontSize);
-  virtual FX_FLOAT GetFontSize() const;
+  ~CPWL_Label() override;
 
   void SetText(const FX_WCHAR* csText);
   CFX_WideString GetText() const;
@@ -30,11 +26,15 @@ class CPWL_Label : public CPWL_Wnd {
   CFX_ByteString GetTextAppearanceStream(const CPDF_Point& ptOffset) const;
 
  protected:
-  virtual void OnCreated();
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-  virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
-  virtual void RePosChildWnd();
+  // CPWL_Wnd
+  CFX_ByteString GetClassName() const override;
+  void SetFontSize(FX_FLOAT fFontSize) override;
+  FX_FLOAT GetFontSize() const override;
+  void OnCreated() override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
+  void RePosChildWnd() override;
 
  private:
   void SetParamByFlag();

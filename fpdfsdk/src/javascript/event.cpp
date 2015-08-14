@@ -50,7 +50,8 @@ IMPLEMENT_JS_CLASS(CJS_Event, event)
 
 event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}
 
-event::~event(void) {}
+event::~event() {
+}
 
 FX_BOOL event::change(IFXJS_Context* cc,
                       CJS_PropValue& vp,

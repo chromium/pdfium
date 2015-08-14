@@ -12,7 +12,7 @@
 class console : public CJS_EmbedObj {
  public:
   console(CJS_Object* pJSObject);
-  virtual ~console(void);
+  ~console() override;
 
  public:
   FX_BOOL clear(IFXJS_Context* cc,
@@ -35,8 +35,8 @@ class console : public CJS_EmbedObj {
 
 class CJS_Console : public CJS_Object {
  public:
-  CJS_Console(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Console(void){};
+  CJS_Console(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Console() override {}
 
   DECLARE_JS_CLASS(CJS_Console);
 

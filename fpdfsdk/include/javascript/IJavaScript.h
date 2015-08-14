@@ -17,7 +17,6 @@ class CPDFSDK_Document;
 
 class IFXJS_Context {
  public:
-  virtual ~IFXJS_Context() {}
   virtual FX_BOOL Compile(const CFX_WideString& script,
                           CFX_WideString& info) = 0;
   virtual FX_BOOL RunScript(const CFX_WideString& script,
@@ -128,6 +127,9 @@ class IFXJS_Context {
   virtual void OnExternal_Exec() = 0;
 
   virtual void EnableMessageBox(FX_BOOL bEnable) = 0;
+
+ protected:
+  virtual ~IFXJS_Context() {}
 };
 
 class IFXJS_Runtime {
@@ -140,7 +142,7 @@ class IFXJS_Runtime {
   virtual CPDFSDK_Document* GetReaderDocument() = 0;
 
  protected:
-  ~IFXJS_Runtime() {}
+  virtual ~IFXJS_Runtime() {}
 };
 
 class CPDFDoc_Environment;

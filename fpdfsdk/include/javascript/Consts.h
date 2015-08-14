@@ -13,8 +13,8 @@
 
 class CJS_Border : public CJS_Object {
  public:
-  CJS_Border(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Border(void){};
+  explicit CJS_Border(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Border() override {}
 
   DECLARE_JS_CLASS_CONST();
 };
@@ -23,8 +23,8 @@ class CJS_Border : public CJS_Object {
 
 class CJS_Display : public CJS_Object {
  public:
-  CJS_Display(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Display(void){};
+  explicit CJS_Display(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Display() override {}
 
   DECLARE_JS_CLASS_CONST();
 };
@@ -33,8 +33,8 @@ class CJS_Display : public CJS_Object {
 
 class CJS_Font : public CJS_Object {
  public:
-  CJS_Font(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Font(void){};
+  explicit CJS_Font(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Font() override {}
 
   DECLARE_JS_CLASS_CONST();
 };
@@ -43,8 +43,8 @@ class CJS_Font : public CJS_Object {
 
 class CJS_Highlight : public CJS_Object {
  public:
-  CJS_Highlight(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Highlight(void){};
+  explicit CJS_Highlight(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Highlight() override {}
 
   DECLARE_JS_CLASS_CONST();
 };
@@ -53,8 +53,8 @@ class CJS_Highlight : public CJS_Object {
 
 class CJS_Position : public CJS_Object {
  public:
-  CJS_Position(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Position(void){};
+  explicit CJS_Position(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Position() override {}
 
   DECLARE_JS_CLASS_CONST();
 };
@@ -63,8 +63,8 @@ class CJS_Position : public CJS_Object {
 
 class CJS_ScaleHow : public CJS_Object {
  public:
-  CJS_ScaleHow(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_ScaleHow(void){};
+  explicit CJS_ScaleHow(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_ScaleHow() override {}
 
   DECLARE_JS_CLASS_CONST();
 };
@@ -73,8 +73,8 @@ class CJS_ScaleHow : public CJS_Object {
 
 class CJS_ScaleWhen : public CJS_Object {
  public:
-  CJS_ScaleWhen(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_ScaleWhen(void){};
+  explicit CJS_ScaleWhen(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_ScaleWhen() override {}
 
   DECLARE_JS_CLASS_CONST();
 };
@@ -83,8 +83,8 @@ class CJS_ScaleWhen : public CJS_Object {
 
 class CJS_Style : public CJS_Object {
  public:
-  CJS_Style(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Style(void){};
+  explicit CJS_Style(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Style() override {}
 
   DECLARE_JS_CLASS_CONST();
 };
@@ -93,8 +93,8 @@ class CJS_Style : public CJS_Object {
 
 class CJS_Zoomtype : public CJS_Object {
  public:
-  CJS_Zoomtype(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Zoomtype(void){};
+  explicit CJS_Zoomtype(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Zoomtype() override {}
 
   DECLARE_JS_CLASS_CONST();
 };

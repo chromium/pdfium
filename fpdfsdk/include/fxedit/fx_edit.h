@@ -477,12 +477,11 @@ class IFX_Edit {
                                        FX_COLORREF color);
 
  protected:
-  ~IFX_Edit() {}
+  virtual ~IFX_Edit() {}
 };
 
 class IFX_List_Notify {
  public:
-  virtual ~IFX_List_Notify() {}
   // set the horizontal scrollbar information.
   virtual void IOnSetScrollInfoX(FX_FLOAT fPlateMin,
                                  FX_FLOAT fPlateMax,
@@ -503,6 +502,9 @@ class IFX_List_Notify {
   virtual void IOnSetScrollPosY(FX_FLOAT fy) = 0;
   // Invalidate the rectangle relative to the bounding box of edit.
   virtual void IOnInvalidateRect(CPDF_Rect* pRect) = 0;
+
+ protected:
+  virtual ~IFX_List_Notify() {}
 };
 
 class IFX_List {
@@ -563,7 +565,7 @@ class IFX_List {
   virtual FX_BOOL OnChar(FX_WORD nChar, FX_BOOL bShift, FX_BOOL bCtrl) = 0;
 
  protected:
-  ~IFX_List() {}
+  virtual ~IFX_List() {}
 };
 
 #endif  // FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_

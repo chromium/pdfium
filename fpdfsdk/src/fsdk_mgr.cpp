@@ -17,81 +17,64 @@
 #include <ctime>
 #endif
 
-// extern CPDFDoc_Environment* g_pFormFillApp;
 class CFX_SystemHandler : public IFX_SystemHandler {
  public:
   CFX_SystemHandler(CPDFDoc_Environment* pEnv) : m_pEnv(pEnv), m_nCharSet(-1) {}
+  ~CFX_SystemHandler() override {}
 
  public:
-  virtual void InvalidateRect(FX_HWND hWnd, FX_RECT rect);
-  virtual void OutputSelectedRect(void* pFormFiller, CPDF_Rect& rect);
-
-  virtual FX_BOOL IsSelectionImplemented();
-
-  virtual CFX_WideString GetClipboardText(FX_HWND hWnd) { return L""; }
-  virtual FX_BOOL SetClipboardText(FX_HWND hWnd, CFX_WideString string) {
+  // IFX_SystemHandler
+  void InvalidateRect(FX_HWND hWnd, FX_RECT rect) override;
+  void OutputSelectedRect(void* pFormFiller, CPDF_Rect& rect) override;
+  FX_BOOL IsSelectionImplemented() override;
+  CFX_WideString GetClipboardText(FX_HWND hWnd) override { return L""; }
+  FX_BOOL SetClipboardText(FX_HWND hWnd, CFX_WideString string) override {
     return FALSE;
   }
-
-  virtual void ClientToScreen(FX_HWND hWnd, int32_t& x, int32_t& y) {}
-  virtual void ScreenToClient(FX_HWND hWnd, int32_t& x, int32_t& y) {}
-
-  /*cursor style
-  FXCT_ARROW
-  FXCT_NESW
-  FXCT_NWSE
-  FXCT_VBEAM
-  FXCT_HBEAM
-  FXCT_HAND
-  */
-  virtual void SetCursor(int32_t nCursorType);
-
-  virtual FX_HMENU CreatePopupMenu() { return NULL; }
-  virtual FX_BOOL AppendMenuItem(FX_HMENU hMenu,
-                                 int32_t nIDNewItem,
-                                 CFX_WideString string) {
+  void ClientToScreen(FX_HWND hWnd, int32_t& x, int32_t& y) override {}
+  void ScreenToClient(FX_HWND hWnd, int32_t& x, int32_t& y) override {}
+  void SetCursor(int32_t nCursorType) override;
+  FX_HMENU CreatePopupMenu() override { return NULL; }
+  FX_BOOL AppendMenuItem(FX_HMENU hMenu,
+                         int32_t nIDNewItem,
+                         CFX_WideString string) override {
     return FALSE;
   }
-  virtual FX_BOOL EnableMenuItem(FX_HMENU hMenu,
-                                 int32_t nIDItem,
-                                 FX_BOOL bEnabled) {
+  FX_BOOL EnableMenuItem(FX_HMENU hMenu,
+                         int32_t nIDItem,
+                         FX_BOOL bEnabled) override {
     return FALSE;
   }
-  virtual int32_t TrackPopupMenu(FX_HMENU hMenu,
-                                 int32_t x,
-                                 int32_t y,
-                                 FX_HWND hParent) {
+  int32_t TrackPopupMenu(FX_HMENU hMenu,
+                         int32_t x,
+                         int32_t y,
+                         FX_HWND hParent) override {
     return -1;
   }
-  virtual void DestroyMenu(FX_HMENU hMenu) {}
-
-  virtual CFX_ByteString GetNativeTrueTypeFont(int32_t nCharset);
-  virtual FX_BOOL FindNativeTrueTypeFont(int32_t nCharset,
-                                         CFX_ByteString sFontFaceName);
-  virtual CPDF_Font* AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
-                                                CFX_ByteString sFontFaceName,
-                                                uint8_t nCharset);
-
-  virtual int32_t SetTimer(int32_t uElapse, TimerCallback lpTimerFunc);
-  virtual void KillTimer(int32_t nID);
-
-  virtual FX_BOOL IsSHIFTKeyDown(FX_DWORD nFlag) {
+  void DestroyMenu(FX_HMENU hMenu) override {}
+  CFX_ByteString GetNativeTrueTypeFont(int32_t nCharset) override;
+  FX_BOOL FindNativeTrueTypeFont(int32_t nCharset,
+                                 CFX_ByteString sFontFaceName) override;
+  CPDF_Font* AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
+                                        CFX_ByteString sFontFaceName,
+                                        uint8_t nCharset) override;
+  int32_t SetTimer(int32_t uElapse, TimerCallback lpTimerFunc) override;
+  void KillTimer(int32_t nID) override;
+  FX_BOOL IsSHIFTKeyDown(FX_DWORD nFlag) override {
     return m_pEnv->FFI_IsSHIFTKeyDown(nFlag);
   }
-  virtual FX_BOOL IsCTRLKeyDown(FX_DWORD nFlag) {
+  FX_BOOL IsCTRLKeyDown(FX_DWORD nFlag) override {
     return m_pEnv->FFI_IsCTRLKeyDown(nFlag);
   }
-  virtual FX_BOOL IsALTKeyDown(FX_DWORD nFlag) {
+  FX_BOOL IsALTKeyDown(FX_DWORD nFlag) override {
     return m_pEnv->FFI_IsALTKeyDown(nFlag);
   }
-  virtual FX_BOOL IsINSERTKeyDown(FX_DWORD nFlag) {
+  FX_BOOL IsINSERTKeyDown(FX_DWORD nFlag) override {
     return m_pEnv->FFI_IsINSERTKeyDown(nFlag);
   }
-
-  virtual FX_SYSTEMTIME GetLocalTime();
-
-  virtual int32_t GetCharSet() { return m_nCharSet; }
-  virtual void SetCharSet(int32_t nCharSet) { m_nCharSet = nCharSet; }
+  FX_SYSTEMTIME GetLocalTime() override;
+  int32_t GetCharSet() override { return m_nCharSet; }
+  void SetCharSet(int32_t nCharSet) override { m_nCharSet = nCharSet; }
 
  private:
   CPDFDoc_Environment* m_pEnv;

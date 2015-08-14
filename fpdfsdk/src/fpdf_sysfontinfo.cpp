@@ -10,15 +10,15 @@
 
 class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
  public:
-  CFX_ExternalFontInfo(FPDF_SYSFONTINFO* pInfo) : m_pInfo(pInfo) {}
+  explicit CFX_ExternalFontInfo(FPDF_SYSFONTINFO* pInfo) : m_pInfo(pInfo) {}
 
-  virtual void Release() override {
+  void Release() override {
     if (m_pInfo->Release)
       m_pInfo->Release(m_pInfo);
     delete this;
   }
 
-  virtual FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override {
+  FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override {
     if (m_pInfo->EnumFonts) {
       m_pInfo->EnumFonts(m_pInfo, pMapper);
       return TRUE;
@@ -26,34 +26,34 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
     return FALSE;
   }
 
-  virtual void* MapFont(int weight,
-                        FX_BOOL bItalic,
-                        int charset,
-                        int pitch_family,
-                        const FX_CHAR* family,
-                        int& iExact) override {
+  void* MapFont(int weight,
+                FX_BOOL bItalic,
+                int charset,
+                int pitch_family,
+                const FX_CHAR* family,
+                int& iExact) override {
     if (m_pInfo->MapFont)
       return m_pInfo->MapFont(m_pInfo, weight, bItalic, charset, pitch_family,
                               family, &iExact);
     return NULL;
   }
 
-  virtual void* GetFont(const FX_CHAR* family) override {
+  void* GetFont(const FX_CHAR* family) override {
     if (m_pInfo->GetFont)
       return m_pInfo->GetFont(m_pInfo, family);
     return NULL;
   }
 
-  virtual FX_DWORD GetFontData(void* hFont,
-                               FX_DWORD table,
-                               uint8_t* buffer,
-                               FX_DWORD size) override {
+  FX_DWORD GetFontData(void* hFont,
+                       FX_DWORD table,
+                       uint8_t* buffer,
+                       FX_DWORD size) override {
     if (m_pInfo->GetFontData)
       return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer, size);
     return 0;
   }
 
-  virtual FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override {
+  FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override {
     if (m_pInfo->GetFaceName == NULL)
       return FALSE;
     FX_DWORD size = m_pInfo->GetFaceName(m_pInfo, hFont, NULL, 0);
@@ -66,7 +66,7 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
     return TRUE;
   }
 
-  virtual FX_BOOL GetFontCharset(void* hFont, int& charset) override {
+  FX_BOOL GetFontCharset(void* hFont, int& charset) override {
     if (m_pInfo->GetFontCharset) {
       charset = m_pInfo->GetFontCharset(m_pInfo, hFont);
       return TRUE;
@@ -74,13 +74,13 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
     return FALSE;
   }
 
-  virtual void DeleteFont(void* hFont) override {
+  void DeleteFont(void* hFont) override {
     if (m_pInfo->DeleteFont)
       m_pInfo->DeleteFont(m_pInfo, hFont);
   }
 
  private:
-  ~CFX_ExternalFontInfo() {}
+  ~CFX_ExternalFontInfo() override {}
 
   FPDF_SYSFONTINFO* const m_pInfo;
 };

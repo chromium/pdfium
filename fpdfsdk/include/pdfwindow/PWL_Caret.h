@@ -21,15 +21,17 @@ struct PWL_CARET_INFO {
 class CPWL_Caret : public CPWL_Wnd {
  public:
   CPWL_Caret();
-  virtual ~CPWL_Caret();
+  ~CPWL_Caret() override;
 
-  virtual CFX_ByteString GetClassName() const;
-  virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-  virtual void InvalidateRect(CPDF_Rect* pRect = NULL);
-  virtual void SetVisible(FX_BOOL bVisible) {}
-  virtual void TimerProc();
+  // CPWL_Wnd
+  CFX_ByteString GetClassName() const override;
+  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  void InvalidateRect(CPDF_Rect* pRect = NULL) override;
+  void SetVisible(FX_BOOL bVisible) override {}
+  void TimerProc() override;
+
   void SetCaret(FX_BOOL bVisible,
                 const CPDF_Point& ptHead,
                 const CPDF_Point& ptFoot);

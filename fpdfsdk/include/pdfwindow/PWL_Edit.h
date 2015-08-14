@@ -44,32 +44,29 @@ class IPWL_Filler_Notify {
 class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
  public:
   CPWL_Edit();
-  virtual ~CPWL_Edit();
+  ~CPWL_Edit() override;
 
- public:
-  virtual CFX_ByteString GetClassName() const;
-  virtual void OnDestroy();
-  virtual void OnCreated();
-  virtual void RePosChildWnd();
-  virtual CPDF_Rect GetClientRect() const;
+  // CPWL_EditCtrl
+  CFX_ByteString GetClassName() const override;
+  void OnDestroy() override;
+  void OnCreated() override;
+  void RePosChildWnd() override;
+  CPDF_Rect GetClientRect() const override;
+  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDblClk(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnMouseWheel(short zDelta,
+                       const CPDF_Point& point,
+                       FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
+  CPDF_Rect GetFocusRect() const override;
+  void OnSetFocus() override;
+  void OnKillFocus() override;
 
-  virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonDblClk(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMouseWheel(short zDelta,
-                               const CPDF_Point& point,
-                               FX_DWORD nFlag);
-
-  virtual FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag);
-
-  virtual CPDF_Rect GetFocusRect() const;
-
- public:
   void SetAlignFormatH(PWL_EDIT_ALIGNFORMAT_H nFormat = PEAH_LEFT,
                        FX_BOOL bPaint = TRUE);  // 0:left 1:right 2:middle
   void SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat = PEAV_TOP,
@@ -119,25 +116,22 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
                            const CPDF_Point& ptOffset);
 
  protected:
-  virtual void OnSetFocus();
-  virtual void OnKillFocus();
-
- protected:
-  virtual void OnInsertWord(const CPVT_WordPlace& place,
-                            const CPVT_WordPlace& oldplace);
-  virtual void OnInsertReturn(const CPVT_WordPlace& place,
-                              const CPVT_WordPlace& oldplace);
-  virtual void OnBackSpace(const CPVT_WordPlace& place,
-                           const CPVT_WordPlace& oldplace);
-  virtual void OnDelete(const CPVT_WordPlace& place,
-                        const CPVT_WordPlace& oldplace);
-  virtual void OnClear(const CPVT_WordPlace& place,
-                       const CPVT_WordPlace& oldplace);
-  virtual void OnSetText(const CPVT_WordPlace& place,
-                         const CPVT_WordPlace& oldplace);
-  virtual void OnInsertText(const CPVT_WordPlace& place,
-                            const CPVT_WordPlace& oldplace);
-  virtual void OnAddUndo(IFX_Edit_UndoItem* pUndoItem);
+  // IFX_Edit_OprNotify
+  void OnInsertWord(const CPVT_WordPlace& place,
+                    const CPVT_WordPlace& oldplace) override;
+  void OnInsertReturn(const CPVT_WordPlace& place,
+                      const CPVT_WordPlace& oldplace) override;
+  void OnBackSpace(const CPVT_WordPlace& place,
+                   const CPVT_WordPlace& oldplace) override;
+  void OnDelete(const CPVT_WordPlace& place,
+                const CPVT_WordPlace& oldplace) override;
+  void OnClear(const CPVT_WordPlace& place,
+               const CPVT_WordPlace& oldplace) override;
+  void OnSetText(const CPVT_WordPlace& place,
+                 const CPVT_WordPlace& oldplace) override;
+  void OnInsertText(const CPVT_WordPlace& place,
+                    const CPVT_WordPlace& oldplace) override;
+  void OnAddUndo(IFX_Edit_UndoItem* pUndoItem) override;
 
  private:
   CPVT_WordRange GetSelectWordRange() const;

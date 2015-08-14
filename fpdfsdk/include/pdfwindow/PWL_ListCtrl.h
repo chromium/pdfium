@@ -12,7 +12,7 @@
 class CPWL_ListCtrl : public CPWL_Wnd {
  public:
   CPWL_ListCtrl();
-  virtual ~CPWL_ListCtrl();
+  ~CPWL_ListCtrl() override;
 
   void SetScrollPos(const CPDF_Point& point);
   CPDF_Point GetScrollPos() const;
@@ -30,9 +30,10 @@ class CPWL_ListCtrl : public CPWL_Wnd {
   CPDF_Rect OutToIn(const CPDF_Rect& rect) const;
 
  protected:
-  virtual void RePosChildWnd();
-  virtual void DrawChildAppearance(CFX_RenderDevice* pDevice,
-                                   CPDF_Matrix* pUser2Device);
+  // CPWL_Wnd
+  void RePosChildWnd() override;
+  void DrawChildAppearance(CFX_RenderDevice* pDevice,
+                           CPDF_Matrix* pUser2Device) override;
 
  private:
   void ResetAll(FX_BOOL bMove, int32_t nStart);

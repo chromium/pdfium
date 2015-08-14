@@ -19,7 +19,7 @@ CJS_Context::CJS_Context(CJS_Runtime* pRuntime)
   m_pEventHandler = new CJS_EventHandler(this);
 }
 
-CJS_Context::~CJS_Context(void) {
+CJS_Context::~CJS_Context() {
   delete m_pEventHandler;
 }
 

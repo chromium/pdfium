@@ -36,7 +36,7 @@ struct js_global_data {
 class global_alternate : public CJS_EmbedObj {
  public:
   global_alternate(CJS_Object* pJSObject);
-  virtual ~global_alternate();
+  ~global_alternate() override;
 
  public:
   FX_BOOL setPersistent(IFXJS_Context* cc,
@@ -81,10 +81,11 @@ class global_alternate : public CJS_EmbedObj {
 
 class CJS_Global : public CJS_Object {
  public:
-  CJS_Global(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Global(void){};
+  explicit CJS_Global(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Global() override {}
 
-  virtual FX_BOOL InitInstance(IFXJS_Context* cc);
+  // CJS_Object
+  FX_BOOL InitInstance(IFXJS_Context* cc) override;
 
   DECLARE_SPECIAL_JS_CLASS(CJS_Global);
 

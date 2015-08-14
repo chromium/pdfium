@@ -89,7 +89,7 @@ struct CJS_DelayData {
 class Field : public CJS_EmbedObj {
  public:
   Field(CJS_Object* pJSObject);
-  virtual ~Field(void);
+  ~Field() override;
 
   FX_BOOL alignment(IFXJS_Context* cc,
                     CJS_PropValue& vp,
@@ -533,10 +533,10 @@ class Field : public CJS_EmbedObj {
 
 class CJS_Field : public CJS_Object {
  public:
-  CJS_Field(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Field(void){};
+  CJS_Field(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Field(void) override {}
 
-  virtual FX_BOOL InitInstance(IFXJS_Context* cc);
+  FX_BOOL InitInstance(IFXJS_Context* cc) override;
 
   DECLARE_JS_CLASS(CJS_Field);
 
