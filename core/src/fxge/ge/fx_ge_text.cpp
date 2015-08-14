@@ -182,18 +182,19 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   int nativetext_flags = text_flags;
   if (m_DeviceClass != FXDC_DISPLAY) {
     if (!(text_flags & FXTEXT_PRINTGRAPHICTEXT)) {
+      bool should_call_draw_device_text = true;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-      if (!(text_flags & FXFONT_CIDFONT) &&
-          pFont->GetPsName().Find(CFX_WideString::FromLocal("+ZJHL")) == -1)
-#ifdef FOXIT_CHROME_BUILD
-        if (pFont->GetPsName() != CFX_WideString::FromLocal("CNAAJI+cmex10"))
+      if ((text_flags & FXFONT_CIDFONT) ||
+          (pFont->GetPsName().Find(CFX_WideString::FromLocal("+ZJHL")) != -1) ||
+          (pFont->GetPsName() == CFX_WideString::FromLocal("CNAAJI+cmex10"))) {
+        should_call_draw_device_text = false;
+      }
 #endif
-#endif
-          if (m_pDeviceDriver->DrawDeviceText(
-                  nChars, pCharPos, pFont, pCache, pText2Device, font_size,
-                  fill_color, alpha_flag, pIccTransform)) {
-            return TRUE;
-          }
+      if (should_call_draw_device_text &&
+          m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
+                                          pText2Device, font_size, fill_color,
+                                          alpha_flag, pIccTransform)) {
+        return TRUE;
     }
     int alpha = FXGETFLAG_COLORTYPE(alpha_flag)
                     ? FXGETFLAG_ALPHA_FILL(alpha_flag)
@@ -202,17 +203,19 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
       return FALSE;
     }
   } else if (!(text_flags & FXTEXT_NO_NATIVETEXT)) {
+    bool should_call_draw_device_text = true;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-    if (!(text_flags & FXFONT_CIDFONT))
-#ifdef FOXIT_CHROME_BUILD
-      if (pFont->GetPsName() != CFX_WideString::FromLocal("CNAAJI+cmex10"))
+    if ((text_flags & FXFONT_CIDFONT) ||
+        (pFont->GetPsName() == CFX_WideString::FromLocal("CNAAJI+cmex10"))) {
+      should_call_draw_device_text = false;
+    }
 #endif
-#endif
-        if (m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
-                                            pText2Device, font_size, fill_color,
-                                            alpha_flag, pIccTransform)) {
-          return TRUE;
-        }
+    if (should_call_draw_device_text &&
+        m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
+                                        pText2Device, font_size, fill_color,
+                                        alpha_flag, pIccTransform)) {
+      return TRUE;
+    }
   }
   CFX_AffineMatrix char2device, deviceCtm, text2Device;
   if (pText2Device) {
