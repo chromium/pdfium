@@ -431,22 +431,6 @@ FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos,
                            int anti_alias,
                            FX_FLOAT retinaScaleX = 1.0f,
                            FX_FLOAT retinaScaleY = 1.0f);
-FX_BOOL OutputGlyph(void* dib,
-                    int x,
-                    int y,
-                    CFX_Font* pFont,
-                    double font_size,
-                    CFX_AffineMatrix* pMatrix,
-                    unsigned long glyph_index,
-                    unsigned long argb);
-FX_BOOL OutputText(void* dib,
-                   int x,
-                   int y,
-                   CFX_Font* pFont,
-                   double font_size,
-                   CFX_AffineMatrix* pText_matrix,
-                   unsigned short const* text,
-                   unsigned long argb);
 class IFX_GSUBTable {
  public:
   static IFX_GSUBTable* Create(CFX_Font* pFont);
