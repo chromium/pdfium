@@ -1161,7 +1161,6 @@ class CPDF_Metadata {
   const CXML_Element* GetRoot() const;
 
  private:
-  CPDF_Document* const m_pDoc;  // Not owned.
   nonstd::unique_ptr<CXML_Element> m_pXmlElement;
 };
 

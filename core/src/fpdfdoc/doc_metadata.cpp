@@ -7,7 +7,7 @@
 #include "../../include/fpdfdoc/fpdf_doc.h"
 #include "../../include/fxcrt/fx_xml.h"
 
-CPDF_Metadata::CPDF_Metadata(CPDF_Document* pDoc) : m_pDoc(pDoc) {
+CPDF_Metadata::CPDF_Metadata(CPDF_Document* pDoc) {
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot)
     return;
