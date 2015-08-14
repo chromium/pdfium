@@ -136,7 +136,7 @@ DLLEXPORT void STDCALL FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
 DLLEXPORT int STDCALL FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
                                                  double x,
                                                  double y,
-                                                 double xTorelance,
+                                                 double xTolerance,
                                                  double yTolerance);
 
 // Function: FPDFText_GetText

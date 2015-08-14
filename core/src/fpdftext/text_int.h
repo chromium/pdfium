@@ -61,12 +61,12 @@ class CPDF_TextPage : public IPDF_TextPage {
                             int nCount,
                             CFX_RectArray& rectArray) const;
   virtual int GetIndexAtPos(CPDF_Point point,
-                            FX_FLOAT xTorelance,
-                            FX_FLOAT yTorelance) const;
+                            FX_FLOAT xTolerance,
+                            FX_FLOAT yTolerance) const;
   virtual int GetIndexAtPos(FX_FLOAT x,
                             FX_FLOAT y,
-                            FX_FLOAT xTorelance,
-                            FX_FLOAT yTorelance) const;
+                            FX_FLOAT xTolerance,
+                            FX_FLOAT yTolerance) const;
   virtual CFX_WideString GetTextByRect(const CFX_FloatRect& rect) const;
   virtual void GetRectsArrayByRect(const CFX_FloatRect& rect,
                                    CFX_RectArray& resRectArray) const;
