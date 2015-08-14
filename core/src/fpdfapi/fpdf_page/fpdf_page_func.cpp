@@ -463,18 +463,23 @@ typedef struct {
   int sizes;
 } SampleEncodeInfo;
 typedef struct { FX_FLOAT decode_max, decode_min; } SampleDecodeInfo;
+
 class CPDF_SampledFunc : public CPDF_Function {
  public:
   CPDF_SampledFunc();
-  virtual ~CPDF_SampledFunc();
-  virtual FX_BOOL v_Init(CPDF_Object* pObj);
-  virtual FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const;
+  ~CPDF_SampledFunc() override;
+
+  // CPDF_Function
+  FX_BOOL v_Init(CPDF_Object* pObj) override;
+  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+
   SampleEncodeInfo* m_pEncodeInfo;
   SampleDecodeInfo* m_pDecodeInfo;
   FX_DWORD m_nBitsPerSample;
   FX_DWORD m_SampleMax;
   CPDF_StreamAcc* m_pSampleStream;
 };
+
 CPDF_SampledFunc::CPDF_SampledFunc() {
   m_pSampleStream = NULL;
   m_pEncodeInfo = NULL;
@@ -620,12 +625,16 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
   }
   return TRUE;
 }
+
 class CPDF_PSFunc : public CPDF_Function {
  public:
-  virtual FX_BOOL v_Init(CPDF_Object* pObj);
-  virtual FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const;
+  // CPDF_Function
+  FX_BOOL v_Init(CPDF_Object* pObj) override;
+  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+
   CPDF_PSEngine m_PS;
 };
+
 FX_BOOL CPDF_PSFunc::v_Init(CPDF_Object* pObj) {
   CPDF_Stream* pStream = (CPDF_Stream*)pObj;
   CPDF_StreamAcc acc;
@@ -648,17 +657,22 @@ FX_BOOL CPDF_PSFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
   }
   return TRUE;
 }
+
 class CPDF_ExpIntFunc : public CPDF_Function {
  public:
   CPDF_ExpIntFunc();
-  virtual ~CPDF_ExpIntFunc();
-  virtual FX_BOOL v_Init(CPDF_Object* pObj);
-  virtual FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const;
+  ~CPDF_ExpIntFunc() override;
+
+  // CPDF_Function
+  FX_BOOL v_Init(CPDF_Object* pObj) override;
+  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+
   FX_FLOAT m_Exponent;
   FX_FLOAT* m_pBeginValues;
   FX_FLOAT* m_pEndValues;
   int m_nOrigOutputs;
 };
+
 CPDF_ExpIntFunc::CPDF_ExpIntFunc() {
   m_pBeginValues = NULL;
   m_pEndValues = NULL;
@@ -708,17 +722,22 @@ FX_BOOL CPDF_ExpIntFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
     }
   return TRUE;
 }
+
 class CPDF_StitchFunc : public CPDF_Function {
  public:
   CPDF_StitchFunc();
-  virtual ~CPDF_StitchFunc();
-  virtual FX_BOOL v_Init(CPDF_Object* pObj);
-  virtual FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const;
+  ~CPDF_StitchFunc() override;
+
+  // CPDF_Function
+  FX_BOOL v_Init(CPDF_Object* pObj) override;
+  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+
   int m_nSubs;
   CPDF_Function** m_pSubFunctions;
   FX_FLOAT* m_pBounds;
   FX_FLOAT* m_pEncode;
 };
+
 CPDF_StitchFunc::CPDF_StitchFunc() {
   m_nSubs = 0;
   m_pSubFunctions = NULL;

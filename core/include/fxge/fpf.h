@@ -9,18 +9,21 @@
 
 #include "../fxcrt/fx_coordinates.h"
 
-class IFPF_DeviceModule;
 class IFPF_FontMgr;
-class IFPF_Font;
+
 class IFPF_DeviceModule {
  public:
   virtual ~IFPF_DeviceModule() {}
   virtual void Destroy() = 0;
   virtual IFPF_FontMgr* GetFontMgr() = 0;
 };
+
 IFPF_DeviceModule* FPF_GetDeviceModule();
+
 #define FPF_MATCHFONT_REPLACEANSI 1
+
 typedef struct FPF_HFONT_ { void* pData; } * FPF_HFONT;
+
 class IFPF_Font {
  public:
   virtual void Release() = 0;
@@ -47,8 +50,9 @@ class IFPF_Font {
                                FX_DWORD dwSize) = 0;
 
  protected:
-  ~IFPF_Font() {}
+  virtual ~IFPF_Font() {}
 };
+
 class IFPF_FontMgr {
  public:
   virtual ~IFPF_FontMgr() {}

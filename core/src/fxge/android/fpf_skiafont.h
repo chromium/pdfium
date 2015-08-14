@@ -8,38 +8,37 @@
 #define CORE_SRC_FXGE_ANDROID_FPF_SKIAFONT_H_
 
 #if _FX_OS_ == _FX_ANDROID_
+
+#include "../../../include/fxge/fpf.h"
+
 class CFPF_SkiaFontDescriptor;
 class CFPF_SkiaFontMgr;
 class SkTypeface;
 class CFPF_SkiaFont : public IFPF_Font {
  public:
   CFPF_SkiaFont();
-  virtual ~CFPF_SkiaFont();
-  virtual void Release();
-  virtual IFPF_Font* Retain();
+  ~CFPF_SkiaFont() override;
 
-  virtual FPF_HFONT GetHandle();
+  // IFPF_Font
+  void Release() override;
+  IFPF_Font* Retain() override;
+  FPF_HFONT GetHandle() override;
+  CFX_ByteString GetFamilyName() override;
+  CFX_WideString GetPsName() override;
+  FX_DWORD GetFontStyle() const override { return m_dwStyle; }
+  uint8_t GetCharset() const override { return m_uCharset; }
+  int32_t GetGlyphIndex(FX_WCHAR wUnicode) override;
+  int32_t GetGlyphWidth(int32_t iGlyphIndex) override;
+  int32_t GetAscent() const override;
+  int32_t GetDescent() const override;
+  FX_BOOL GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox) override;
+  FX_BOOL GetBBox(FX_RECT& rtBBox) override;
+  int32_t GetHeight() const override;
+  int32_t GetItalicAngle() const override;
+  FX_DWORD GetFontData(FX_DWORD dwTable,
+                       uint8_t* pBuffer,
+                       FX_DWORD dwSize) override;
 
-  virtual CFX_ByteString GetFamilyName();
-  virtual CFX_WideString GetPsName();
-
-  virtual FX_DWORD GetFontStyle() const { return m_dwStyle; }
-  virtual uint8_t GetCharset() const { return m_uCharset; }
-
-  virtual int32_t GetGlyphIndex(FX_WCHAR wUnicode);
-  virtual int32_t GetGlyphWidth(int32_t iGlyphIndex);
-
-  virtual int32_t GetAscent() const;
-  virtual int32_t GetDescent() const;
-
-  virtual FX_BOOL GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox);
-  virtual FX_BOOL GetBBox(FX_RECT& rtBBox);
-
-  virtual int32_t GetHeight() const;
-  virtual int32_t GetItalicAngle() const;
-  virtual FX_DWORD GetFontData(FX_DWORD dwTable,
-                               uint8_t* pBuffer,
-                               FX_DWORD dwSize);
   FX_BOOL InitFont(CFPF_SkiaFontMgr* pFontMgr,
                    CFPF_SkiaFontDescriptor* pFontDes,
                    const CFX_ByteStringC& bsFamily,

@@ -2815,7 +2815,7 @@ void CPDF_SyntaxParser::GetBinary(uint8_t* buffer, FX_DWORD size) {
 class CPDF_DataAvail final : public IPDF_DataAvail {
  public:
   CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead);
-  ~CPDF_DataAvail();
+  ~CPDF_DataAvail() override;
 
   virtual FX_BOOL IsDocAvail(IFX_DownloadHints* pHints) override;
 

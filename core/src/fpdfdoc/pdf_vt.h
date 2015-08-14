@@ -343,6 +343,7 @@ class CPDF_EditContainer {
   CPDF_Rect m_rcPlate;
   CPVT_FloatRect m_rcContent;
 };
+
 class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   friend class CTypeset;
   friend class CSection;
@@ -350,80 +351,102 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
 
  public:
   CPDF_VariableText();
-  virtual ~CPDF_VariableText();
+  ~CPDF_VariableText() override;
+
+  // IPDF_VariableText
   IPDF_VariableText_Provider* SetProvider(
-      IPDF_VariableText_Provider* pProvider);
-  IPDF_VariableText_Iterator* GetIterator();
-  void SetPlateRect(const CPDF_Rect& rect) {
+      IPDF_VariableText_Provider* pProvider) override;
+  IPDF_VariableText_Iterator* GetIterator() override;
+  void SetPlateRect(const CPDF_Rect& rect) override {
     CPDF_EditContainer::SetPlateRect(rect);
   }
-  void SetAlignment(int32_t nFormat = 0) { m_nAlignment = nFormat; }
-  void SetPasswordChar(FX_WORD wSubWord = '*') { m_wSubWord = wSubWord; }
-  void SetLimitChar(int32_t nLimitChar = 0) { m_nLimitChar = nLimitChar; }
-  void SetCharSpace(FX_FLOAT fCharSpace = 0.0f) { m_fCharSpace = fCharSpace; }
-  void SetHorzScale(int32_t nHorzScale = 100) { m_nHorzScale = nHorzScale; }
-  void SetMultiLine(FX_BOOL bMultiLine = TRUE) { m_bMultiLine = bMultiLine; }
-  void SetAutoReturn(FX_BOOL bAuto = TRUE) { m_bLimitWidth = bAuto; }
-  void SetFontSize(FX_FLOAT fFontSize) { m_fFontSize = fFontSize; }
-  void SetCharArray(int32_t nCharArray = 0) { m_nCharArray = nCharArray; }
-  void SetAutoFontSize(FX_BOOL bAuto = TRUE) { m_bAutoFontSize = bAuto; }
-  void SetRichText(FX_BOOL bRichText) { m_bRichText = bRichText; }
-  void SetLineLeading(FX_FLOAT fLineLeading) { m_fLineLeading = fLineLeading; }
-  void Initialize();
-  FX_BOOL IsValid() const { return m_bInitial; }
-  FX_BOOL IsRichText() const { return m_bRichText; }
-  void RearrangeAll();
-  void RearrangePart(const CPVT_WordRange& PlaceRange);
-  void ResetAll();
+  void SetAlignment(int32_t nFormat = 0) override { m_nAlignment = nFormat; }
+  void SetPasswordChar(FX_WORD wSubWord = '*') override {
+    m_wSubWord = wSubWord;
+  }
+  void SetLimitChar(int32_t nLimitChar = 0) override {
+    m_nLimitChar = nLimitChar;
+  }
+  void SetCharSpace(FX_FLOAT fCharSpace = 0.0f) override {
+    m_fCharSpace = fCharSpace;
+  }
+  void SetHorzScale(int32_t nHorzScale = 100) override {
+    m_nHorzScale = nHorzScale;
+  }
+  void SetMultiLine(FX_BOOL bMultiLine = TRUE) override {
+    m_bMultiLine = bMultiLine;
+  }
+  void SetAutoReturn(FX_BOOL bAuto = TRUE) override { m_bLimitWidth = bAuto; }
+  void SetFontSize(FX_FLOAT fFontSize) override { m_fFontSize = fFontSize; }
+  void SetCharArray(int32_t nCharArray = 0) override {
+    m_nCharArray = nCharArray;
+  }
+  void SetAutoFontSize(FX_BOOL bAuto = TRUE) override {
+    m_bAutoFontSize = bAuto;
+  }
+  void SetRichText(FX_BOOL bRichText) override { m_bRichText = bRichText; }
+  void SetLineLeading(FX_FLOAT fLineLeading) override {
+    m_fLineLeading = fLineLeading;
+  }
+  void Initialize() override;
+  FX_BOOL IsValid() const override { return m_bInitial; }
+  FX_BOOL IsRichText() const override { return m_bRichText; }
+  void RearrangeAll() override;
+  void RearrangePart(const CPVT_WordRange& PlaceRange) override;
+  void ResetAll() override;
   void SetText(const FX_WCHAR* text,
                int32_t charset = 1,
                const CPVT_SecProps* pSecProps = NULL,
-               const CPVT_WordProps* pWordProps = NULL);
+               const CPVT_WordProps* pWordProps = NULL) override;
   CPVT_WordPlace InsertWord(const CPVT_WordPlace& place,
                             FX_WORD word,
                             int32_t charset = 1,
-                            const CPVT_WordProps* pWordProps = NULL);
-  CPVT_WordPlace InsertSection(const CPVT_WordPlace& place,
-                               const CPVT_SecProps* pSecProps = NULL,
-                               const CPVT_WordProps* pWordProps = NULL);
+                            const CPVT_WordProps* pWordProps = NULL) override;
+  CPVT_WordPlace InsertSection(
+      const CPVT_WordPlace& place,
+      const CPVT_SecProps* pSecProps = NULL,
+      const CPVT_WordProps* pWordProps = NULL) override;
   CPVT_WordPlace InsertText(const CPVT_WordPlace& place,
                             const FX_WCHAR* text,
                             int32_t charset = 1,
                             const CPVT_SecProps* pSecProps = NULL,
-                            const CPVT_WordProps* pWordProps = NULL);
-  CPVT_WordPlace DeleteWords(const CPVT_WordRange& PlaceRange);
-  CPVT_WordPlace DeleteWord(const CPVT_WordPlace& place);
-  CPVT_WordPlace BackSpaceWord(const CPVT_WordPlace& place);
-  const CPDF_Rect& GetPlateRect() const {
+                            const CPVT_WordProps* pWordProps = NULL) override;
+  CPVT_WordPlace DeleteWords(const CPVT_WordRange& PlaceRange) override;
+  CPVT_WordPlace DeleteWord(const CPVT_WordPlace& place) override;
+  CPVT_WordPlace BackSpaceWord(const CPVT_WordPlace& place) override;
+  const CPDF_Rect& GetPlateRect() const override {
     return CPDF_EditContainer::GetPlateRect();
   }
-  CPDF_Rect GetContentRect() const;
-  int32_t GetTotalWords() const;
-  FX_FLOAT GetFontSize() const { return m_fFontSize; }
-  int32_t GetAlignment() const { return m_nAlignment; }
-  int32_t GetCharArray() const { return m_nCharArray; }
-  int32_t GetLimitChar() const { return m_nLimitChar; }
-  FX_BOOL IsMultiLine() const { return m_bMultiLine; }
-  int32_t GetHorzScale() const { return m_nHorzScale; }
-  FX_FLOAT GetCharSpace() const { return m_fCharSpace; }
-
-  CPVT_WordPlace GetBeginWordPlace() const;
-  CPVT_WordPlace GetEndWordPlace() const;
-  CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace GetNextWordPlace(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace SearchWordPlace(const CPDF_Point& point) const;
+  CPDF_Rect GetContentRect() const override;
+  int32_t GetTotalWords() const override;
+  FX_FLOAT GetFontSize() const override { return m_fFontSize; }
+  int32_t GetAlignment() const override { return m_nAlignment; }
+  FX_WORD GetPasswordChar() const override { return GetSubWord(); }
+  int32_t GetCharArray() const override { return m_nCharArray; }
+  int32_t GetLimitChar() const override { return m_nLimitChar; }
+  FX_BOOL IsMultiLine() const override { return m_bMultiLine; }
+  int32_t GetHorzScale() const override { return m_nHorzScale; }
+  FX_FLOAT GetCharSpace() const override { return m_fCharSpace; }
+  CPVT_WordPlace GetBeginWordPlace() const override;
+  CPVT_WordPlace GetEndWordPlace() const override;
+  CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const override;
+  CPVT_WordPlace GetNextWordPlace(const CPVT_WordPlace& place) const override;
+  CPVT_WordPlace SearchWordPlace(const CPDF_Point& point) const override;
   CPVT_WordPlace GetUpWordPlace(const CPVT_WordPlace& place,
-                                const CPDF_Point& point) const;
+                                const CPDF_Point& point) const override;
   CPVT_WordPlace GetDownWordPlace(const CPVT_WordPlace& place,
-                                  const CPDF_Point& point) const;
-  CPVT_WordPlace GetLineBeginPlace(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace GetLineEndPlace(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace GetSectionBeginPlace(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace GetSectionEndPlace(const CPVT_WordPlace& place) const;
-  void UpdateWordPlace(CPVT_WordPlace& place) const;
-  int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
-  FX_WORD GetPasswordChar() const { return GetSubWord(); }
+                                  const CPDF_Point& point) const override;
+  CPVT_WordPlace GetLineBeginPlace(const CPVT_WordPlace& place) const override;
+  CPVT_WordPlace GetLineEndPlace(const CPVT_WordPlace& place) const override;
+  CPVT_WordPlace GetSectionBeginPlace(
+      const CPVT_WordPlace& place) const override;
+  CPVT_WordPlace GetSectionEndPlace(const CPVT_WordPlace& place) const override;
+  void UpdateWordPlace(CPVT_WordPlace& place) const override;
+  CPVT_WordPlace AdjustLineHeader(const CPVT_WordPlace& place,
+                                  FX_BOOL bPrevOrNext) const override;
+  int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const override;
+  CPVT_WordPlace WordIndexToWordPlace(int32_t index) const override;
+
   FX_WORD GetSubWord() const { return m_wSubWord; }
 
  private:
@@ -437,7 +460,6 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   int32_t GetDefaultFontIndex();
   FX_BOOL IsLatinWord(FX_WORD word);
 
- private:
   CPVT_WordPlace AddSection(const CPVT_WordPlace& place,
                             const CPVT_SectionInfo& secinfo);
   CPVT_WordPlace AddLine(const CPVT_WordPlace& place,
@@ -479,8 +501,7 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   int32_t GetAlignment(const CPVT_SectionInfo& SecInfo);
 
   void ClearSectionRightWords(const CPVT_WordPlace& place);
-  CPVT_WordPlace AjustLineHeader(const CPVT_WordPlace& place,
-                                 FX_BOOL bPrevOrNext) const;
+
   FX_BOOL ClearEmptySection(const CPVT_WordPlace& place);
   void ClearEmptySections(const CPVT_WordRange& PlaceRange);
   void LinkLatterSection(const CPVT_WordPlace& place);
@@ -494,10 +515,8 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   FX_BOOL IsBigger(FX_FLOAT fFontSize);
   CPVT_FloatRect RearrangeSections(const CPVT_WordRange& PlaceRange);
 
- private:
   void ResetSectionArray();
 
- private:
   CPVT_ArrayTemplate<CSection*> m_SectionArray;
   int32_t m_nLimitChar;
   int32_t m_nCharArray;
@@ -517,24 +536,27 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   IPDF_VariableText_Provider* m_pVTProvider;
   CPDF_VariableText_Iterator* m_pVTIterator;
 };
+
 class CPDF_VariableText_Iterator : public IPDF_VariableText_Iterator {
  public:
   CPDF_VariableText_Iterator(CPDF_VariableText* pVT);
-  virtual ~CPDF_VariableText_Iterator();
-  FX_BOOL NextWord();
-  FX_BOOL PrevWord();
-  FX_BOOL NextLine();
-  FX_BOOL PrevLine();
-  FX_BOOL NextSection();
-  FX_BOOL PrevSection();
-  FX_BOOL SetWord(const CPVT_Word& word);
-  FX_BOOL GetWord(CPVT_Word& word) const;
-  FX_BOOL GetLine(CPVT_Line& line) const;
-  FX_BOOL GetSection(CPVT_Section& section) const;
-  FX_BOOL SetSection(const CPVT_Section& section);
-  void SetAt(int32_t nWordIndex);
-  void SetAt(const CPVT_WordPlace& place);
-  const CPVT_WordPlace& GetAt() const { return m_CurPos; };
+  ~CPDF_VariableText_Iterator() override;
+
+  // IPDF_VariableText_Iterator
+  FX_BOOL NextWord() override;
+  FX_BOOL PrevWord() override;
+  FX_BOOL NextLine() override;
+  FX_BOOL PrevLine() override;
+  FX_BOOL NextSection() override;
+  FX_BOOL PrevSection() override;
+  FX_BOOL SetWord(const CPVT_Word& word) override;
+  FX_BOOL GetWord(CPVT_Word& word) const override;
+  FX_BOOL GetLine(CPVT_Line& line) const override;
+  FX_BOOL GetSection(CPVT_Section& section) const override;
+  FX_BOOL SetSection(const CPVT_Section& section) override;
+  void SetAt(int32_t nWordIndex) override;
+  void SetAt(const CPVT_WordPlace& place) override;
+  const CPVT_WordPlace& GetAt() const override { return m_CurPos; };
 
  private:
   CPVT_WordPlace m_CurPos;

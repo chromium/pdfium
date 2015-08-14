@@ -448,7 +448,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void CreateScrollBar(const PWL_CREATEPARAM& cp);
   void CreateVScrollBar(const PWL_CREATEPARAM& cp);
 
-  void AjustStyle();
+  void AdjustStyle();
   void CreateMsgControl();
   void DestroyMsgControl();
 

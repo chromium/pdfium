@@ -960,10 +960,10 @@ CPVT_WordPlace CPDF_VariableText::DeleteWords(
   return PlaceRange.BeginPos;
 }
 CPVT_WordPlace CPDF_VariableText::DeleteWord(const CPVT_WordPlace& place) {
-  return ClearRightWord(AjustLineHeader(place, TRUE));
+  return ClearRightWord(AdjustLineHeader(place, TRUE));
 }
 CPVT_WordPlace CPDF_VariableText::BackSpaceWord(const CPVT_WordPlace& place) {
-  return ClearLeftWord(AjustLineHeader(place, TRUE));
+  return ClearLeftWord(AdjustLineHeader(place, TRUE));
 }
 void CPDF_VariableText::SetText(const FX_WCHAR* text,
                                 int32_t charset,
@@ -1032,7 +1032,7 @@ void CPDF_VariableText::UpdateWordPlace(CPVT_WordPlace& place) const {
   if (place.nSecIndex >= m_SectionArray.GetSize()) {
     place = GetEndWordPlace();
   }
-  place = AjustLineHeader(place, TRUE);
+  place = AdjustLineHeader(place, TRUE);
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     pSection->UpdateWordPlace(place);
   }
@@ -1429,7 +1429,7 @@ int32_t CPDF_VariableText::GetHorzScale(const CPVT_WordInfo& WordInfo) {
                                             : m_nHorzScale;
 }
 void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
-  CPVT_WordPlace wordplace = AjustLineHeader(place, TRUE);
+  CPVT_WordPlace wordplace = AdjustLineHeader(place, TRUE);
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     for (int32_t w = pSection->m_WordArray.GetSize() - 1;
          w > wordplace.nWordIndex; w--) {
@@ -1438,8 +1438,8 @@ void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
     }
   }
 }
-CPVT_WordPlace CPDF_VariableText::AjustLineHeader(const CPVT_WordPlace& place,
-                                                  FX_BOOL bPrevOrNext) const {
+CPVT_WordPlace CPDF_VariableText::AdjustLineHeader(const CPVT_WordPlace& place,
+                                                   FX_BOOL bPrevOrNext) const {
   if (place.nWordIndex < 0 && place.nLineIndex > 0) {
     return bPrevOrNext ? GetPrevWordPlace(place) : GetNextWordPlace(place);
   }
@@ -1467,7 +1467,7 @@ void CPDF_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {
   }
 }
 void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
-  CPVT_WordPlace oldplace = AjustLineHeader(place, TRUE);
+  CPVT_WordPlace oldplace = AdjustLineHeader(place, TRUE);
   if (CSection* pNextSection = m_SectionArray.GetAt(place.nSecIndex + 1)) {
     if (CSection* pSection = m_SectionArray.GetAt(oldplace.nSecIndex)) {
       for (int32_t w = 0, sz = pNextSection->m_WordArray.GetSize(); w < sz;
@@ -1484,8 +1484,8 @@ void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
 }
 void CPDF_VariableText::ClearWords(const CPVT_WordRange& PlaceRange) {
   CPVT_WordRange NewRange;
-  NewRange.BeginPos = AjustLineHeader(PlaceRange.BeginPos, TRUE);
-  NewRange.EndPos = AjustLineHeader(PlaceRange.EndPos, TRUE);
+  NewRange.BeginPos = AdjustLineHeader(PlaceRange.BeginPos, TRUE);
+  NewRange.EndPos = AdjustLineHeader(PlaceRange.EndPos, TRUE);
   for (int32_t s = NewRange.EndPos.nSecIndex; s >= NewRange.BeginPos.nSecIndex;
        s--) {
     if (CSection* pSection = m_SectionArray.GetAt(s)) {
@@ -1513,7 +1513,8 @@ CPVT_WordPlace CPDF_VariableText::ClearLeftWord(const CPVT_WordPlace& place) {
 }
 CPVT_WordPlace CPDF_VariableText::ClearRightWord(const CPVT_WordPlace& place) {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
-    CPVT_WordPlace rightplace = AjustLineHeader(GetNextWordPlace(place), FALSE);
+    CPVT_WordPlace rightplace =
+        AdjustLineHeader(GetNextWordPlace(place), FALSE);
     if (rightplace != place) {
       if (rightplace.nSecIndex != place.nSecIndex) {
         LinkLatterSection(place);

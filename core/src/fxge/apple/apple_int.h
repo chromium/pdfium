@@ -8,9 +8,13 @@
 #define CORE_SRC_FXGE_APPLE_APPLE_INT_H_
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+
+#include "../../../include/fxge/fx_ge.h"
+
 #if _FX_OS_ == _FX_MACOSX_
 #include <Carbon/Carbon.h>
 #endif
+
 typedef enum eFXIOSFONTCHARSET {
   eFXFontCharsetDEFAULT = 0,
   eFXFontCharsetANSI = 1,
@@ -68,105 +72,107 @@ class CApplePlatform {
 
   CQuartz2D _quartz2d;
 };
+
 class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
  public:
   CFX_QuartzDeviceDriver(CGContextRef context, int32_t deviceClass);
-  virtual ~CFX_QuartzDeviceDriver();
+  ~CFX_QuartzDeviceDriver() override;
 
-  virtual int GetDeviceCaps(int caps_id);
-  virtual CFX_Matrix GetCTM() const;
-  virtual CFX_DIBitmap* GetBackDrop() { return NULL; }
-  virtual void* GetPlatformSurface() { return NULL; }
-  virtual FX_BOOL IsPSPrintDriver() { return FALSE; }
-  virtual FX_BOOL StartRendering() { return TRUE; }
-  virtual void EndRendering() {}
-  virtual void SaveState();
-  virtual void RestoreState(FX_BOOL bKeepSaved);
-  virtual FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
-                                   const CFX_AffineMatrix* pObject2Device,
-                                   int fill_mode);
-  virtual FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
-                                     const CFX_AffineMatrix* pObject2Device,
-                                     const CFX_GraphStateData* pGraphState);
-  virtual FX_BOOL DrawPath(const CFX_PathData* pPathData,
+  // IFX_RenderDeviceDriver
+  int GetDeviceCaps(int caps_id) override;
+  CFX_Matrix GetCTM() const override;
+  FX_BOOL IsPSPrintDriver() override { return FALSE; }
+  FX_BOOL StartRendering() override { return TRUE; }
+  void EndRendering() override {}
+  void SaveState() override;
+  void RestoreState(FX_BOOL bKeepSaved) override;
+  FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
                            const CFX_AffineMatrix* pObject2Device,
-                           const CFX_GraphStateData* pGraphState,
-                           FX_DWORD fill_color,
-                           FX_DWORD stroke_color,
-                           int fill_mode,
-                           int alpha_flag = 0,
-                           void* pIccTransform = NULL,
-                           int blend_type = FXDIB_BLEND_NORMAL);
-  virtual FX_BOOL SetPixel(int x,
-                           int y,
+                           int fill_mode) override;
+  FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
+                             const CFX_AffineMatrix* pObject2Device,
+                             const CFX_GraphStateData* pGraphState) override;
+  FX_BOOL DrawPath(const CFX_PathData* pPathData,
+                   const CFX_AffineMatrix* pObject2Device,
+                   const CFX_GraphStateData* pGraphState,
+                   FX_DWORD fill_color,
+                   FX_DWORD stroke_color,
+                   int fill_mode,
+                   int alpha_flag = 0,
+                   void* pIccTransform = NULL,
+                   int blend_type = FXDIB_BLEND_NORMAL) override;
+  FX_BOOL SetPixel(int x,
+                   int y,
+                   FX_DWORD color,
+                   int alpha_flag = 0,
+                   void* pIccTransform = NULL) override {
+    return FALSE;
+  }
+  FX_BOOL FillRect(const FX_RECT* pRect,
+                   FX_DWORD fill_color,
+                   int alpha_flag = 0,
+                   void* pIccTransform = NULL,
+                   int blend_type = FXDIB_BLEND_NORMAL) override;
+  FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
+                           FX_FLOAT y1,
+                           FX_FLOAT x2,
+                           FX_FLOAT y2,
                            FX_DWORD color,
                            int alpha_flag = 0,
-                           void* pIccTransform = NULL) {
-    return FALSE;
-  }
-  virtual FX_BOOL FillRect(const FX_RECT* pRect,
-                           FX_DWORD fill_color,
-                           int alpha_flag = 0,
                            void* pIccTransform = NULL,
-                           int blend_type = FXDIB_BLEND_NORMAL);
-  virtual FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
-                                   FX_FLOAT y1,
-                                   FX_FLOAT x2,
-                                   FX_FLOAT y2,
-                                   FX_DWORD color,
-                                   int alpha_flag = 0,
-                                   void* pIccTransform = NULL,
-                                   int blend_type = FXDIB_BLEND_NORMAL);
-  virtual FX_BOOL GetClipBox(FX_RECT* pRect);
-  virtual FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap,
-                            int left,
-                            int top,
-                            void* pIccTransform = NULL,
-                            FX_BOOL bDEdge = FALSE);
-  virtual FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
-                            FX_DWORD color,
-                            const FX_RECT* pSrcRect,
-                            int dest_left,
-                            int dest_top,
-                            int blend_type,
-                            int alpha_flag = 0,
-                            void* pIccTransform = NULL);
-  virtual FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
-                                FX_DWORD color,
-                                int dest_left,
-                                int dest_top,
-                                int dest_width,
-                                int dest_height,
-                                const FX_RECT* pClipRect,
-                                FX_DWORD flags,
-                                int alpha_flag = 0,
-                                void* pIccTransform = NULL,
-                                int blend_type = FXDIB_BLEND_NORMAL);
-  virtual FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
-                              int bitmap_alpha,
-                              FX_DWORD color,
-                              const CFX_AffineMatrix* pMatrix,
-                              FX_DWORD flags,
-                              void*& handle,
-                              int alpha_flag = 0,
-                              void* pIccTransform = NULL,
-                              int blend_type = FXDIB_BLEND_NORMAL) {
+                           int blend_type = FXDIB_BLEND_NORMAL) override;
+  FX_BOOL GetClipBox(FX_RECT* pRect) override;
+  FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap,
+                    int left,
+                    int top,
+                    void* pIccTransform = NULL,
+                    FX_BOOL bDEdge = FALSE) override;
+  CFX_DIBitmap* GetBackDrop() override { return NULL; }
+  FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
+                    FX_DWORD color,
+                    const FX_RECT* pSrcRect,
+                    int dest_left,
+                    int dest_top,
+                    int blend_type,
+                    int alpha_flag = 0,
+                    void* pIccTransform = NULL) override;
+  FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
+                        FX_DWORD color,
+                        int dest_left,
+                        int dest_top,
+                        int dest_width,
+                        int dest_height,
+                        const FX_RECT* pClipRect,
+                        FX_DWORD flags,
+                        int alpha_flag = 0,
+                        void* pIccTransform = NULL,
+                        int blend_type = FXDIB_BLEND_NORMAL) override;
+  FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
+                      int bitmap_alpha,
+                      FX_DWORD color,
+                      const CFX_AffineMatrix* pMatrix,
+                      FX_DWORD flags,
+                      void*& handle,
+                      int alpha_flag = 0,
+                      void* pIccTransform = NULL,
+                      int blend_type = FXDIB_BLEND_NORMAL) override {
     return FALSE;
   }
-  virtual FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) {
+  FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause) override {
     return FALSE;
   }
-  virtual void CancelDIBits(void* handle) {}
-  virtual FX_BOOL DrawDeviceText(int nChars,
-                                 const FXTEXT_CHARPOS* pCharPos,
-                                 CFX_Font* pFont,
-                                 CFX_FontCache* pCache,
-                                 const CFX_AffineMatrix* pObject2Device,
-                                 FX_FLOAT font_size,
-                                 FX_DWORD color,
-                                 int alpha_flag = 0,
-                                 void* pIccTransform = NULL);
-  virtual void ClearDriver();
+  void CancelDIBits(void* handle) override {}
+  FX_BOOL DrawDeviceText(int nChars,
+                         const FXTEXT_CHARPOS* pCharPos,
+                         CFX_Font* pFont,
+                         CFX_FontCache* pCache,
+                         const CFX_AffineMatrix* pObject2Device,
+                         FX_FLOAT font_size,
+                         FX_DWORD color,
+                         int alpha_flag = 0,
+                         void* pIccTransform = NULL) override;
+  void* GetPlatformSurface() override { return NULL; }
+  void ClearDriver() override;
 
  protected:
   void setStrokeInfo(const CFX_GraphStateData* graphState,
@@ -206,21 +212,20 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   int32_t _horzSize;
   int32_t _vertSize;
 };
+
 class CFX_FontProvider final : public IFX_FileRead {
  public:
-  virtual void Release() override { delete this; }
-  virtual FX_FILESIZE GetSize() override { return (FX_FILESIZE)_totalSize; }
-  virtual FX_BOOL ReadBlock(void* buffer,
-                            FX_FILESIZE offset,
-                            size_t size) override;
-
-  virtual FX_BOOL IsEOF() override { return _offSet == _totalSize; }
-  virtual FX_FILESIZE GetPosition() override { return (FX_FILESIZE)_offSet; }
-  virtual size_t ReadBlock(void* buffer, size_t size) override;
+  // IFX_FileRead
+  void Release() override { delete this; }
+  FX_FILESIZE GetSize() override { return (FX_FILESIZE)_totalSize; }
+  FX_BOOL IsEOF() override { return _offSet == _totalSize; }
+  FX_FILESIZE GetPosition() override { return (FX_FILESIZE)_offSet; }
+  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  size_t ReadBlock(void* buffer, size_t size) override;
 
  public:
   CFX_FontProvider(CGFontRef cgFont);
-  ~CFX_FontProvider();
+  ~CFX_FontProvider() override;
   void InitTableOffset();
   unsigned long Read(unsigned long offset,
                      unsigned char* buffer,
@@ -254,6 +259,7 @@ class CFX_FontProvider final : public IFX_FileRead {
   int _tableCount;
   int _totalSize;
 };
+
 uint32_t FX_GetHashCode(const FX_CHAR* pStr);
 FX_DWORD FX_IOSGetMatchFamilyNameHashcode(const FX_CHAR* pFontName);
 uint32_t FX_IOSGetFamilyNamesCount();

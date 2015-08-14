@@ -30,10 +30,11 @@ class IFXCRT_FileAccess {
   virtual FX_BOOL Truncate(FX_FILESIZE szFile) = 0;
 };
 IFXCRT_FileAccess* FXCRT_FileAccess_Create();
+
 class CFX_CRTFileStream final : public IFX_FileStream {
  public:
   CFX_CRTFileStream(IFXCRT_FileAccess* pFA) : m_pFile(pFA), m_dwCount(1) {}
-  ~CFX_CRTFileStream() {
+  ~CFX_CRTFileStream() override {
     if (m_pFile) {
       m_pFile->Release();
     }
@@ -70,6 +71,7 @@ class CFX_CRTFileStream final : public IFX_FileStream {
   IFXCRT_FileAccess* m_pFile;
   FX_DWORD m_dwCount;
 };
+
 #define FX_MEMSTREAM_BlockSize (64 * 1024)
 #define FX_MEMSTREAM_Consecutive 0x01
 #define FX_MEMSTREAM_TakeOver 0x02
@@ -94,7 +96,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     m_dwFlags =
         FX_MEMSTREAM_Consecutive | (bTakeOver ? FX_MEMSTREAM_TakeOver : 0);
   }
-  ~CFX_MemoryStream() {
+  ~CFX_MemoryStream() override {
     if (m_dwFlags & FX_MEMSTREAM_TakeOver) {
       for (int32_t i = 0; i < m_Blocks.GetSize(); i++) {
         FX_Free((uint8_t*)m_Blocks[i]);
@@ -287,6 +289,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     return TRUE;
   }
 };
+
 #ifdef __cplusplus
 extern "C" {
 #endif

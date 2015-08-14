@@ -31,36 +31,29 @@ class CCodec_BasicModule : public ICodec_BasicModule {
                                                          int nComps,
                                                          int bpc);
 };
+
 struct CCodec_ImageDataCache {
   int m_Width, m_Height;
   int m_nCachedLines;
   uint8_t m_Data;
 };
+
 class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
  public:
   CCodec_ScanlineDecoder();
+  ~CCodec_ScanlineDecoder() override;
 
-  virtual ~CCodec_ScanlineDecoder();
-
-  virtual FX_DWORD GetSrcOffset() { return -1; }
-
-  virtual void DownScale(int dest_width, int dest_height);
-
-  uint8_t* GetScanline(int line);
-
-  FX_BOOL SkipToScanline(int line, IFX_Pause* pPause);
-
-  int GetWidth() { return m_OutputWidth; }
-
-  int GetHeight() { return m_OutputHeight; }
-
-  int CountComps() { return m_nComps; }
-
-  int GetBPC() { return m_bpc; }
-
-  FX_BOOL IsColorTransformed() { return m_bColorTransformed; }
-
-  void ClearImageData() {
+  // ICodec_ScanlineDecoder
+  FX_DWORD GetSrcOffset() override { return -1; }
+  void DownScale(int dest_width, int dest_height) override;
+  uint8_t* GetScanline(int line) override;
+  FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) override;
+  int GetWidth() override { return m_OutputWidth; }
+  int GetHeight() override { return m_OutputHeight; }
+  int CountComps() override { return m_nComps; }
+  int GetBPC() override { return m_bpc; }
+  FX_BOOL IsColorTransformed() override { return m_bColorTransformed; }
+  void ClearImageData() override {
     if (m_pDataCache) {
       FX_Free(m_pDataCache);
     }
@@ -100,6 +93,7 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
 
   CCodec_ImageDataCache* m_pDataCache;
 };
+
 class CCodec_FaxModule : public ICodec_FaxModule {
  public:
   virtual ICodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
@@ -119,6 +113,7 @@ class CCodec_FaxModule : public ICodec_FaxModule {
                  uint8_t*& dest_buf,
                  FX_DWORD& dest_size);
 };
+
 class CCodec_FlateModule : public ICodec_FlateModule {
  public:
   virtual ICodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
@@ -155,6 +150,7 @@ class CCodec_FlateModule : public ICodec_FlateModule {
                          uint8_t*& dest_buf,
                          FX_DWORD& dest_size);
 };
+
 class CCodec_JpegModule : public ICodec_JpegModule {
  public:
   CCodec_JpegModule() : m_pExtProvider(NULL) {}
@@ -244,6 +240,7 @@ class CCodec_IccModule : public ICodec_IccModule {
                       Icc_CLASS ic,
                       CFX_BinaryBuf* pTransformKey);
 };
+
 class CCodec_JpxModule : public ICodec_JpxModule {
  public:
   CCodec_JpxModule();
@@ -262,6 +259,7 @@ class CCodec_JpxModule : public ICodec_JpxModule {
                  uint8_t* offsets);
   void DestroyDecoder(void* ctx);
 };
+
 class CPDF_Jbig2Interface : public CJBig2_Module {
  public:
   virtual void* JBig2_Malloc(FX_DWORD dwSize) {
@@ -288,6 +286,7 @@ class CPDF_Jbig2Interface : public CJBig2_Module {
   }
   virtual void JBig2_Free(void* pMem) { FX_Free(pMem); }
 };
+
 class CCodec_Jbig2Context {
  public:
   CCodec_Jbig2Context();
@@ -309,7 +308,9 @@ class CCodec_Jbig2Context {
 class CCodec_Jbig2Module : public ICodec_Jbig2Module {
  public:
   CCodec_Jbig2Module(){};
-  ~CCodec_Jbig2Module();
+  ~CCodec_Jbig2Module() override;
+
+  // ICodec_Jbig2Module
   FX_BOOL Decode(FX_DWORD width,
                  FX_DWORD height,
                  const uint8_t* src_buf,
@@ -317,13 +318,13 @@ class CCodec_Jbig2Module : public ICodec_Jbig2Module {
                  const uint8_t* global_data,
                  FX_DWORD global_size,
                  uint8_t* dest_buf,
-                 FX_DWORD dest_pitch);
+                 FX_DWORD dest_pitch) override;
   FX_BOOL Decode(IFX_FileRead* file_ptr,
                  FX_DWORD& width,
                  FX_DWORD& height,
                  FX_DWORD& pitch,
-                 uint8_t*& dest_buf);
-  void* CreateJbig2Context();
+                 uint8_t*& dest_buf) override;
+  void* CreateJbig2Context() override;
   FXCODEC_STATUS StartDecode(void* pJbig2Context,
                              FX_DWORD width,
                              FX_DWORD height,
@@ -333,21 +334,21 @@ class CCodec_Jbig2Module : public ICodec_Jbig2Module {
                              FX_DWORD global_size,
                              uint8_t* dest_buf,
                              FX_DWORD dest_pitch,
-                             IFX_Pause* pPause);
-
+                             IFX_Pause* pPause) override;
   FXCODEC_STATUS StartDecode(void* pJbig2Context,
                              IFX_FileRead* file_ptr,
                              FX_DWORD& width,
                              FX_DWORD& height,
                              FX_DWORD& pitch,
                              uint8_t*& dest_buf,
-                             IFX_Pause* pPause);
-  FXCODEC_STATUS ContinueDecode(void* pJbig2Context, IFX_Pause* pPause);
-  void DestroyJbig2Context(void* pJbig2Context);
-  CPDF_Jbig2Interface m_Module;
-  std::list<CJBig2_CachePair> m_SymbolDictCache;
+                             IFX_Pause* pPause) override;
+  FXCODEC_STATUS ContinueDecode(void* pJbig2Context,
+                                IFX_Pause* pPause) override;
+  void DestroyJbig2Context(void* pJbig2Context) override;
 
  private:
+  CPDF_Jbig2Interface m_Module;
+  std::list<CJBig2_CachePair> m_SymbolDictCache;
 };
 
 struct DecodeData {

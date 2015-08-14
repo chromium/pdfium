@@ -132,14 +132,13 @@ class CPDF_OCContext : public IPDF_OCContext {
   enum UsageType { View = 0, Design, Print, Export };
 
   CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType = View);
-
-  virtual ~CPDF_OCContext();
+  ~CPDF_OCContext() override;
 
   CPDF_Document* GetDocument() const { return m_pDocument; }
 
   UsageType GetUsageType() const { return m_eUsageType; }
 
-  FX_BOOL CheckOCGVisible(const CPDF_Dictionary* pOCGDict);
+  FX_BOOL CheckOCGVisible(const CPDF_Dictionary* pOCGDict) override;
 
   void ResetOCContext();
 
@@ -589,7 +588,6 @@ class CPDF_DefaultAppearance {
 class CPDF_InterForm : public CFX_PrivateData {
  public:
   CPDF_InterForm(CPDF_Document* pDocument, FX_BOOL bUpdateAP);
-
   ~CPDF_InterForm();
 
   static void EnableUpdateAP(FX_BOOL bUpdateAP);

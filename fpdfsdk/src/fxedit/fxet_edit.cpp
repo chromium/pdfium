@@ -2801,8 +2801,8 @@ FX_BOOL CFX_Edit::Clear(FX_BOOL bAddUndo, FX_BOOL bPaint) {
                 }
               } else {
                 if (pIterator->GetWord(wordinfo)) {
-                  oldplace = m_pVT->AjustLineHeader(oldplace, TRUE);
-                  place = m_pVT->AjustLineHeader(place, TRUE);
+                  oldplace = m_pVT->AdjustLineHeader(oldplace, TRUE);
+                  place = m_pVT->AdjustLineHeader(place, TRUE);
 
                   AddEditUndoItem(new CFXEU_ClearRich(
                       this, oldplace, place, range, wordinfo.Word,

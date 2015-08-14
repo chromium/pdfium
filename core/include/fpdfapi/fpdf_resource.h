@@ -664,7 +664,7 @@ class CPDF_TilingPattern : public CPDF_Pattern {
                      CPDF_Object* pPatternObj,
                      const CFX_AffineMatrix* parentMatrix);
 
-  virtual ~CPDF_TilingPattern();
+  ~CPDF_TilingPattern() override;
 
   FX_BOOL Load();
 
@@ -685,7 +685,7 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
                       FX_BOOL bShading,
                       const CFX_AffineMatrix* parentMatrix);
 
-  virtual ~CPDF_ShadingPattern();
+  ~CPDF_ShadingPattern() override;
 
   CPDF_Object* m_pShadingObj;
 

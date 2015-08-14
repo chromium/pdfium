@@ -21,23 +21,26 @@
 class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
  public:
   CFX_Win32FontInfo();
-  ~CFX_Win32FontInfo();
-  virtual void Release();
-  virtual FX_BOOL EnumFontList(CFX_FontMapper* pMapper);
-  virtual void* MapFont(int weight,
-                        FX_BOOL bItalic,
-                        int charset,
-                        int pitch_family,
-                        const FX_CHAR* face,
-                        int& iExact);
-  virtual void* GetFont(const FX_CHAR* face) { return NULL; }
-  virtual FX_DWORD GetFontData(void* hFont,
-                               FX_DWORD table,
-                               uint8_t* buffer,
-                               FX_DWORD size);
-  virtual void DeleteFont(void* hFont);
-  virtual FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name);
-  virtual FX_BOOL GetFontCharset(void* hFont, int& charset);
+  ~CFX_Win32FontInfo() override;
+
+  // IFX_SystemFontInfo
+  void Release() override;
+  FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override;
+  void* MapFont(int weight,
+                FX_BOOL bItalic,
+                int charset,
+                int pitch_family,
+                const FX_CHAR* face,
+                int& iExact) override;
+  void* GetFont(const FX_CHAR* face) override { return NULL; }
+  FX_DWORD GetFontData(void* hFont,
+                       FX_DWORD table,
+                       uint8_t* buffer,
+                       FX_DWORD size) override;
+  FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override;
+  FX_BOOL GetFontCharset(void* hFont, int& charset) override;
+  void DeleteFont(void* hFont) override;
+
   FX_BOOL IsOpenTypeFromDiv(const LOGFONTA* plf);
   FX_BOOL IsSupportFontFormDiv(const LOGFONTA* plf);
   void AddInstalledFont(const LOGFONTA* plf, FX_DWORD FontType);
@@ -51,6 +54,7 @@ class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
   CFX_ByteString m_LastFamily;
   CFX_ByteString m_KaiTi, m_FangSong;
 };
+
 CFX_Win32FontInfo::CFX_Win32FontInfo() {
   m_hDC = CreateCompatibleDC(NULL);
 }

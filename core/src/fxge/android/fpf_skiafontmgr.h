@@ -8,10 +8,14 @@
 #define CORE_SRC_FXGE_ANDROID_FPF_SKIAFONTMGR_H_
 
 #if _FX_OS_ == _FX_ANDROID_
+
+#include "../../../include/fxge/fpf.h"
+
 #define FPF_SKIAFONTTYPE_Unknown 0
 #define FPF_SKIAFONTTYPE_Path 1
 #define FPF_SKIAFONTTYPE_File 2
 #define FPF_SKIAFONTTYPE_Buffer 3
+
 class CFPF_SkiaFontDescriptor {
  public:
   CFPF_SkiaFontDescriptor()
@@ -25,7 +29,9 @@ class CFPF_SkiaFontDescriptor {
       FX_Free(m_pFamily);
     }
   }
+
   virtual int32_t GetType() const { return FPF_SKIAFONTTYPE_Unknown; }
+
   void SetFamily(const FX_CHAR* pFamily) {
     if (m_pFamily) {
       FX_Free(m_pFamily);
@@ -41,15 +47,19 @@ class CFPF_SkiaFontDescriptor {
   FX_DWORD m_dwCharsets;
   int32_t m_iGlyphNum;
 };
+
 class CFPF_SkiaPathFont : public CFPF_SkiaFontDescriptor {
  public:
   CFPF_SkiaPathFont() : m_pPath(NULL) {}
-  virtual ~CFPF_SkiaPathFont() {
+  ~CFPF_SkiaPathFont() override {
     if (m_pPath) {
       FX_Free(m_pPath);
     }
   }
-  virtual int32_t GetType() const { return FPF_SKIAFONTTYPE_Path; }
+
+  // CFPF_SkiaFontDescriptor
+  int32_t GetType() const override { return FPF_SKIAFONTTYPE_Path; }
+
   void SetPath(const FX_CHAR* pPath) {
     if (m_pPath) {
       FX_Free(m_pPath);
@@ -61,33 +71,43 @@ class CFPF_SkiaPathFont : public CFPF_SkiaFontDescriptor {
   }
   FX_CHAR* m_pPath;
 };
+
 class CFPF_SkiaFileFont : public CFPF_SkiaFontDescriptor {
  public:
   CFPF_SkiaFileFont() : m_pFile(NULL) {}
-  virtual int32_t GetType() const { return FPF_SKIAFONTTYPE_File; }
+
+  // CFPF_SkiaFontDescriptor
+  int32_t GetType() const override { return FPF_SKIAFONTTYPE_File; }
   IFX_FileRead* m_pFile;
 };
+
 class CFPF_SkiaBufferFont : public CFPF_SkiaFontDescriptor {
  public:
   CFPF_SkiaBufferFont() : m_pBuffer(NULL), m_szBuffer(0) {}
-  virtual int32_t GetType() const { return FPF_SKIAFONTTYPE_Buffer; }
+
+  // CFPF_SkiaFontDescriptor
+  int32_t GetType() const override { return FPF_SKIAFONTTYPE_Buffer; }
+
   void* m_pBuffer;
   size_t m_szBuffer;
 };
+
 class CFPF_SkiaFontMgr : public IFPF_FontMgr {
  public:
   CFPF_SkiaFontMgr();
-  virtual ~CFPF_SkiaFontMgr();
-  FX_BOOL InitFTLibrary();
-  virtual void LoadSystemFonts();
-  virtual void LoadPrivateFont(IFX_FileRead* pFontFile);
-  virtual void LoadPrivateFont(const CFX_ByteStringC& bsFileName);
-  virtual void LoadPrivateFont(void* pBuffer, size_t szBuffer);
+  ~CFPF_SkiaFontMgr() override;
 
-  virtual IFPF_Font* CreateFont(const CFX_ByteStringC& bsFamilyname,
-                                uint8_t uCharset,
-                                FX_DWORD dwStyle,
-                                FX_DWORD dwMatch = 0);
+  // IFPF_FontMgr
+  void LoadSystemFonts() override;
+  void LoadPrivateFont(IFX_FileRead* pFontFile) override;
+  void LoadPrivateFont(const CFX_ByteStringC& bsFileName) override;
+  void LoadPrivateFont(void* pBuffer, size_t szBuffer) override;
+  IFPF_Font* CreateFont(const CFX_ByteStringC& bsFamilyname,
+                        uint8_t uCharset,
+                        FX_DWORD dwStyle,
+                        FX_DWORD dwMatch = 0) override;
+
+  FX_BOOL InitFTLibrary();
   FXFT_Face GetFontFace(IFX_FileRead* pFileRead, int32_t iFaceIndex = 0);
   FXFT_Face GetFontFace(const CFX_ByteStringC& bsFile, int32_t iFaceIndex = 0);
   FXFT_Face GetFontFace(const uint8_t* pBuffer,
@@ -104,6 +124,7 @@ class CFPF_SkiaFontMgr : public IFPF_FontMgr {
   FXFT_Library m_FTLibrary;
   CFX_MapPtrToPtr m_FamilyFonts;
 };
+
 #endif
 
 #endif  // CORE_SRC_FXGE_ANDROID_FPF_SKIAFONTMGR_H_

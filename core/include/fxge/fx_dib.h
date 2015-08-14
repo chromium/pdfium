@@ -69,6 +69,8 @@ typedef FX_DWORD FX_CMYK;
 class CFX_ClipRgn;
 class CFX_DIBSource;
 class CFX_DIBitmap;
+class CStretchEngine;
+
 #define FXSYS_RGB(r, g, b) ((r) | ((g) << 8) | ((b) << 16))
 #define FXSYS_GetRValue(rgb) ((rgb)&0xff)
 #define FXSYS_GetGValue(rgb) (((rgb) >> 8) & 0xff)
@@ -281,11 +283,9 @@ class CFX_DIBSource {
 };
 class CFX_DIBitmap : public CFX_DIBSource {
  public:
-  virtual ~CFX_DIBitmap();
-
   CFX_DIBitmap();
-
-  CFX_DIBitmap(const CFX_DIBitmap& src);
+  explicit CFX_DIBitmap(const CFX_DIBitmap& src);
+  ~CFX_DIBitmap() override;
 
   FX_BOOL Create(int width,
                  int height,
@@ -295,19 +295,18 @@ class CFX_DIBitmap : public CFX_DIBSource {
 
   FX_BOOL Copy(const CFX_DIBSource* pSrc);
 
-  virtual uint8_t* GetBuffer() const { return m_pBuffer; }
-
-  virtual const uint8_t* GetScanline(int line) const {
+  // CFX_DIBSource
+  uint8_t* GetBuffer() const override { return m_pBuffer; }
+  const uint8_t* GetScanline(int line) const override {
     return m_pBuffer ? m_pBuffer + line * m_Pitch : NULL;
   }
-
-  virtual void DownSampleScanline(int line,
-                                  uint8_t* dest_scan,
-                                  int dest_bpp,
-                                  int dest_width,
-                                  FX_BOOL bFlipX,
-                                  int clip_left,
-                                  int clip_width) const;
+  void DownSampleScanline(int line,
+                          uint8_t* dest_scan,
+                          int dest_bpp,
+                          int dest_width,
+                          FX_BOOL bFlipX,
+                          int clip_left,
+                          int clip_width) const override;
 
   void TakeOver(CFX_DIBitmap* pSrcBitmap);
 
@@ -407,12 +406,12 @@ class CFX_DIBExtractor {
  private:
   CFX_DIBitmap* m_pBitmap;
 };
+
 typedef CFX_CountRef<CFX_DIBitmap> CFX_DIBitmapRef;
 class CFX_FilteredDIB : public CFX_DIBSource {
  public:
   CFX_FilteredDIB();
-
-  ~CFX_FilteredDIB();
+  ~CFX_FilteredDIB() override;
 
   void LoadSrc(const CFX_DIBSource* pSrc, FX_BOOL bAutoDropSrc = FALSE);
 
@@ -429,14 +428,15 @@ class CFX_FilteredDIB : public CFX_DIBSource {
                                     int Bpp) const = 0;
 
  protected:
-  virtual const uint8_t* GetScanline(int line) const;
-  virtual void DownSampleScanline(int line,
-                                  uint8_t* dest_scan,
-                                  int dest_bpp,
-                                  int dest_width,
-                                  FX_BOOL bFlipX,
-                                  int clip_left,
-                                  int clip_width) const;
+  // CFX_DIBSource
+  const uint8_t* GetScanline(int line) const override;
+  void DownSampleScanline(int line,
+                          uint8_t* dest_scan,
+                          int dest_bpp,
+                          int dest_width,
+                          FX_BOOL bFlipX,
+                          int clip_left,
+                          int clip_width) const override;
 
   const CFX_DIBSource* m_pSrc;
 
@@ -444,6 +444,7 @@ class CFX_FilteredDIB : public CFX_DIBSource {
 
   uint8_t* m_pScanline;
 };
+
 class IFX_ScanlineComposer {
  public:
   virtual ~IFX_ScanlineComposer() {}
@@ -514,11 +515,11 @@ class CFX_ScanlineCompositor {
   int m_CacheSize;
   FX_BOOL m_bRgbByteOrder;
 };
+
 class CFX_BitmapComposer : public IFX_ScanlineComposer {
  public:
   CFX_BitmapComposer();
-
-  ~CFX_BitmapComposer();
+  ~CFX_BitmapComposer() override;
 
   void Compose(CFX_DIBitmap* pDest,
                const CFX_ClipRgn* pClipRgn,
@@ -533,14 +534,15 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
                void* pIccTransform = NULL,
                int blend_type = FXDIB_BLEND_NORMAL);
 
-  virtual FX_BOOL SetInfo(int width,
-                          int height,
-                          FXDIB_Format src_format,
-                          FX_DWORD* pSrcPalette);
+  // IFX_ScanlineComposer
+  FX_BOOL SetInfo(int width,
+                  int height,
+                  FXDIB_Format src_format,
+                  FX_DWORD* pSrcPalette) override;
 
-  virtual void ComposeScanline(int line,
-                               const uint8_t* scanline,
-                               const uint8_t* scan_extra_alpha);
+  void ComposeScanline(int line,
+                       const uint8_t* scanline,
+                       const uint8_t* scan_extra_alpha) override;
 
  protected:
   void DoCompose(uint8_t* dest_scan,
@@ -569,20 +571,21 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
   uint8_t* m_pAddClipScan;
   uint8_t* m_pScanlineAlphaV;
 };
+
 class CFX_BitmapStorer : public IFX_ScanlineComposer {
  public:
   CFX_BitmapStorer();
+  ~CFX_BitmapStorer() override;
 
-  ~CFX_BitmapStorer();
+  // IFX_ScanlineComposer
+  void ComposeScanline(int line,
+                       const uint8_t* scanline,
+                       const uint8_t* scan_extra_alpha) override;
 
-  virtual void ComposeScanline(int line,
-                               const uint8_t* scanline,
-                               const uint8_t* scan_extra_alpha);
-
-  virtual FX_BOOL SetInfo(int width,
-                          int height,
-                          FXDIB_Format src_format,
-                          FX_DWORD* pSrcPalette);
+  FX_BOOL SetInfo(int width,
+                  int height,
+                  FXDIB_Format src_format,
+                  FX_DWORD* pSrcPalette) override;
 
   CFX_DIBitmap* GetBitmap() { return m_pBitmap; }
 
@@ -593,7 +596,7 @@ class CFX_BitmapStorer : public IFX_ScanlineComposer {
  private:
   CFX_DIBitmap* m_pBitmap;
 };
-class CStretchEngine;
+
 class CFX_ImageStretcher {
  public:
   CFX_ImageStretcher();
