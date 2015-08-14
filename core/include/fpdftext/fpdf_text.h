@@ -102,13 +102,13 @@ class IPDF_TextPage {
                             CFX_RectArray& rectArray) const = 0;
 
   virtual int GetIndexAtPos(CPDF_Point point,
-                            FX_FLOAT xTorelance,
-                            FX_FLOAT yTorelance) const = 0;
+                            FX_FLOAT xTolerance,
+                            FX_FLOAT yTolerance) const = 0;
 
   virtual int GetIndexAtPos(FX_FLOAT x,
                             FX_FLOAT y,
-                            FX_FLOAT xTorelance,
-                            FX_FLOAT yTorelance) const = 0;
+                            FX_FLOAT xTolerance,
+                            FX_FLOAT yTolerance) const = 0;
 
   virtual CFX_WideString GetTextByRect(const CFX_FloatRect& rect) const = 0;
 

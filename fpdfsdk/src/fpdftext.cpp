@@ -85,13 +85,13 @@ DLLEXPORT void STDCALL FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
 DLLEXPORT int STDCALL FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
                                                  double x,
                                                  double y,
-                                                 double xTorelance,
-                                                 double yTorelance) {
+                                                 double xTolerance,
+                                                 double yTolerance) {
   if (!text_page)
     return -3;
   IPDF_TextPage* textpage = (IPDF_TextPage*)text_page;
-  return textpage->GetIndexAtPos((FX_FLOAT)x, (FX_FLOAT)y, (FX_FLOAT)xTorelance,
-                                 (FX_FLOAT)yTorelance);
+  return textpage->GetIndexAtPos((FX_FLOAT)x, (FX_FLOAT)y, (FX_FLOAT)xTolerance,
+                                 (FX_FLOAT)yTolerance);
 }
 
 DLLEXPORT int STDCALL FPDFText_GetText(FPDF_TEXTPAGE text_page,

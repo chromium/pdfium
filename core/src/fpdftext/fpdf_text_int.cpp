@@ -350,8 +350,8 @@ void CPDF_TextPage::GetRectArray(int start,
   return;
 }
 int CPDF_TextPage::GetIndexAtPos(CPDF_Point point,
-                                 FX_FLOAT xTorelance,
-                                 FX_FLOAT yTorelance) const {
+                                 FX_FLOAT xTolerance,
+                                 FX_FLOAT yTolerance) const {
   if (m_ParseOptions.m_bGetCharCodeOnly) {
     return -3;
   }
@@ -367,13 +367,13 @@ int CPDF_TextPage::GetIndexAtPos(CPDF_Point point,
     if (charrect.Contains(point.x, point.y)) {
       break;
     }
-    if (xTorelance > 0 || yTorelance > 0) {
+    if (xTolerance > 0 || yTolerance > 0) {
       CFX_FloatRect charRectExt;
       charrect.Normalize();
-      charRectExt.left = charrect.left - xTorelance / 2;
-      charRectExt.right = charrect.right + xTorelance / 2;
-      charRectExt.top = charrect.top + yTorelance / 2;
-      charRectExt.bottom = charrect.bottom - yTorelance / 2;
+      charRectExt.left = charrect.left - xTolerance / 2;
+      charRectExt.right = charrect.right + xTolerance / 2;
+      charRectExt.top = charrect.top + yTolerance / 2;
+      charRectExt.bottom = charrect.bottom - yTolerance / 2;
       if (charRectExt.Contains(point.x, point.y)) {
         double curXdif, curYdif;
         curXdif = FXSYS_fabs(point.x - charrect.left) <
@@ -489,13 +489,13 @@ void CPDF_TextPage::GetRectsArrayByRect(const CFX_FloatRect& rect,
 }
 int CPDF_TextPage::GetIndexAtPos(FX_FLOAT x,
                                  FX_FLOAT y,
-                                 FX_FLOAT xTorelance,
-                                 FX_FLOAT yTorelance) const {
+                                 FX_FLOAT xTolerance,
+                                 FX_FLOAT yTolerance) const {
   if (m_ParseOptions.m_bGetCharCodeOnly) {
     return -3;
   }
   CPDF_Point point(x, y);
-  return GetIndexAtPos(point, xTorelance, yTorelance);
+  return GetIndexAtPos(point, xTolerance, yTolerance);
 }
 void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO& info) const {
   if (m_ParseOptions.m_bGetCharCodeOnly) {
