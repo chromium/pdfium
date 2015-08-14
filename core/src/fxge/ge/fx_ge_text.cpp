@@ -195,6 +195,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
                                           pText2Device, font_size, fill_color,
                                           alpha_flag, pIccTransform)) {
         return TRUE;
+      }
     }
     int alpha = FXGETFLAG_COLORTYPE(alpha_flag)
                     ? FXGETFLAG_ALPHA_FILL(alpha_flag)
