@@ -50,17 +50,9 @@ class CPDF_ModuleMgr {
   CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule; }
 
   void InitPageModule();
-
   void InitRenderModule();
 
-  void SetDownloadCallback(FX_BOOL (*callback)(const FX_CHAR* module_name));
-
-  FX_BOOL DownloadModule(const FX_CHAR* module_name);
-
-  void NotifyModuleAvailable(const FX_CHAR* module_name);
-
   IPDF_RenderModule* GetRenderModule() const { return m_pRenderModule.get(); }
-
   IPDF_PageModule* GetPageModule() const { return m_pPageModule.get(); }
 
   void LoadEmbeddedGB1CMaps();
@@ -75,13 +67,6 @@ class CPDF_ModuleMgr {
   ICodec_IccModule* GetIccModule();
   ICodec_FlateModule* GetFlateModule();
 
-  void RegisterSecurityHandler(
-      const FX_CHAR* name,
-      CPDF_SecurityHandler* (*CreateHandler)(void* param),
-      void* param);
-
-  CPDF_SecurityHandler* CreateSecurityHandler(const FX_CHAR* name);
-
   void SetPrivateData(void* module_id,
                       void* pData,
                       PD_CALLBACK_FREEDATA callback);
@@ -93,14 +78,9 @@ class CPDF_ModuleMgr {
   ~CPDF_ModuleMgr();
 
   CCodec_ModuleMgr* m_pCodecModule;
-
   nonstd::unique_ptr<IPDF_RenderModule> m_pRenderModule;
   nonstd::unique_ptr<IPDF_PageModule> m_pPageModule;
-
   FX_BOOL (*m_pDownloadCallback)(const FX_CHAR* module_name);
-
-  CFX_MapByteStringToPtr m_SecurityHandlerMap;
-
   CFX_PrivateData m_privateData;
 };
 
