@@ -448,8 +448,8 @@ class IPDF_VariableText {
 
   virtual void UpdateWordPlace(CPVT_WordPlace& place) const = 0;
 
-  virtual CPVT_WordPlace AjustLineHeader(const CPVT_WordPlace& place,
-                                         FX_BOOL bPrevOrNext) const = 0;
+  virtual CPVT_WordPlace AdjustLineHeader(const CPVT_WordPlace& place,
+                                          FX_BOOL bPrevOrNext) const = 0;
 
   virtual int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const = 0;
 

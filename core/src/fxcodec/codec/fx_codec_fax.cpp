@@ -455,10 +455,12 @@ FX_BOOL _FaxGet1DLine(const uint8_t* src_buf,
   }
   return TRUE;
 }
+
 class CCodec_FaxDecoder : public CCodec_ScanlineDecoder {
  public:
   CCodec_FaxDecoder();
-  virtual ~CCodec_FaxDecoder();
+  ~CCodec_FaxDecoder() override;
+
   FX_BOOL Create(const uint8_t* src_buf,
                  FX_DWORD src_size,
                  int width,
@@ -469,10 +471,13 @@ class CCodec_FaxDecoder : public CCodec_ScanlineDecoder {
                  FX_BOOL BlackIs1,
                  int Columns,
                  int Rows);
-  virtual void v_DownScale(int dest_width, int dest_height) {}
-  virtual FX_BOOL v_Rewind();
-  virtual uint8_t* v_GetNextLine();
-  virtual FX_DWORD GetSrcOffset();
+
+  // CCodec_ScanlineDecoder
+  void v_DownScale(int dest_width, int dest_height) override {}
+  FX_BOOL v_Rewind() override;
+  uint8_t* v_GetNextLine() override;
+  FX_DWORD GetSrcOffset() override;
+
   int m_Encoding, m_bEndOfLine, m_bByteAlign, m_bBlack;
   int bitpos;
   const uint8_t* m_pSrcBuf;
@@ -480,6 +485,7 @@ class CCodec_FaxDecoder : public CCodec_ScanlineDecoder {
   uint8_t* m_pScanlineBuf;
   uint8_t* m_pRefBuf;
 };
+
 CCodec_FaxDecoder::CCodec_FaxDecoder() {
   m_pScanlineBuf = NULL;
   m_pRefBuf = NULL;

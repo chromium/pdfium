@@ -278,7 +278,7 @@ class IFX_AdditionalFontEnum {
 };
 class CFX_FontMapper {
  public:
-  CFX_FontMapper(CFX_FontMgr* mgr);
+  explicit CFX_FontMapper(CFX_FontMgr* mgr);
   ~CFX_FontMapper();
 
   void SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo);
@@ -326,6 +326,7 @@ class CFX_FontMapper {
   IFX_FontEnumerator* m_pFontEnumerator;
   CFX_FontMgr* const m_pFontMgr;
 };
+
 class IFX_SystemFontInfo {
  public:
   static IFX_SystemFontInfo* CreateDefault();
@@ -356,12 +357,13 @@ class IFX_SystemFontInfo {
   virtual void* RetainFont(void* hFont) { return NULL; }
 
  protected:
-  ~IFX_SystemFontInfo() {}
+  virtual ~IFX_SystemFontInfo() {}
 };
+
 class CFX_FolderFontInfo : public IFX_SystemFontInfo {
  public:
   CFX_FolderFontInfo();
-  virtual ~CFX_FolderFontInfo();
+  ~CFX_FolderFontInfo() override;
 
   void AddPath(const CFX_ByteStringC& path);
 

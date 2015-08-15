@@ -38,15 +38,19 @@ FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   }
   return FALSE;
 }
+
 class CPVT_FontMap : public IPVT_FontMap {
  public:
   CPVT_FontMap(CPDF_Document* pDoc,
                CPDF_Dictionary* pResDict,
                CPDF_Font* pDefFont,
                const CFX_ByteString& sDefFontAlias);
-  virtual ~CPVT_FontMap();
-  CPDF_Font* GetPDFFont(int32_t nFontIndex);
-  CFX_ByteString GetPDFFontAlias(int32_t nFontIndex);
+  ~CPVT_FontMap() override;
+
+  // IPVT_FontMap
+  CPDF_Font* GetPDFFont(int32_t nFontIndex) override;
+  CFX_ByteString GetPDFFontAlias(int32_t nFontIndex) override;
+
   static void GetAnnotSysPDFFont(CPDF_Document* pDoc,
                                  CPDF_Dictionary* pResDict,
                                  CPDF_Font*& pSysFont,
@@ -60,6 +64,7 @@ class CPVT_FontMap : public IPVT_FontMap {
   CPDF_Font* m_pSysFont;
   CFX_ByteString m_sSysFontAlias;
 };
+
 CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
                            CPDF_Dictionary* pResDict,
                            CPDF_Font* pDefFont,

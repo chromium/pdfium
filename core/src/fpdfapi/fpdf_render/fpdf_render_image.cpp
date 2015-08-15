@@ -139,6 +139,10 @@ CFX_DIBSource* CPDF_TransferFunc::TranslateImage(const CFX_DIBSource* pSrc,
   pDest->LoadSrc(pSrc, bAutoDropSrc);
   return pDest;
 }
+
+CPDF_DIBTransferFunc::~CPDF_DIBTransferFunc() {
+}
+
 FXDIB_Format CPDF_DIBTransferFunc::GetDestFormat() {
   if (m_pSrc->IsAlphaMask()) {
     return FXDIB_8bppMask;

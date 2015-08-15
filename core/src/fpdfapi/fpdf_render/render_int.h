@@ -87,7 +87,9 @@ struct _PDF_RenderItem {
   CPDF_PageObjects* m_pObjectList;
   CFX_AffineMatrix m_Matrix;
 };
+
 typedef CFX_ArrayTemplate<_PDF_RenderItem> CPDF_RenderLayer;
+
 class IPDF_ObjectRenderer {
  public:
   static IPDF_ObjectRenderer* Create(int type);
@@ -100,6 +102,7 @@ class IPDF_ObjectRenderer {
   virtual FX_BOOL Continue(IFX_Pause* pPause) = 0;
   FX_BOOL m_Result;
 };
+
 class CPDF_RenderStatus {
  public:
   CPDF_RenderStatus();
@@ -319,15 +322,20 @@ class CPDF_ProgressiveImageLoaderHandle {
   int32_t m_nDownsampleHeight;
 };
 class CFX_ImageTransformer;
+
 class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
  public:
   CPDF_ImageRenderer();
-  ~CPDF_ImageRenderer();
+  ~CPDF_ImageRenderer() override;
+
+  // IPDF_ObjectRenderer
   FX_BOOL Start(CPDF_RenderStatus* pStatus,
                 const CPDF_PageObject* pObj,
                 const CFX_AffineMatrix* pObj2Device,
                 FX_BOOL bStdCS,
-                int blendType = FXDIB_BLEND_NORMAL);
+                int blendType = FXDIB_BLEND_NORMAL) override;
+  FX_BOOL Continue(IFX_Pause* pPause) override;
+
   FX_BOOL Start(CPDF_RenderStatus* pStatus,
                 const CFX_DIBSource* pDIBSource,
                 FX_ARGB bitmap_argb,
@@ -336,7 +344,6 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
                 FX_DWORD flags,
                 FX_BOOL bStdCS,
                 int blendType = FXDIB_BLEND_NORMAL);
-  FX_BOOL Continue(IFX_Pause* pPause);
 
  protected:
   CPDF_RenderStatus* m_pRenderStatus;
@@ -365,6 +372,7 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
   FX_BOOL DrawMaskedImage();
   FX_BOOL DrawPatternImage(const CFX_Matrix* pObj2Device);
 };
+
 class CPDF_ScaledRenderBuffer {
  public:
   CPDF_ScaledRenderBuffer();
@@ -483,10 +491,12 @@ typedef struct {
   int m_ColorKeyMin;
   int m_ColorKeyMax;
 } DIB_COMP_DATA;
+
 class CPDF_DIBSource : public CFX_DIBSource {
  public:
   CPDF_DIBSource();
-  virtual ~CPDF_DIBSource();
+  ~CPDF_DIBSource() override;
+
   FX_BOOL Load(CPDF_Document* pDoc,
                const CPDF_Stream* pStream,
                CPDF_DIBSource** ppMask,
@@ -496,17 +506,20 @@ class CPDF_DIBSource : public CFX_DIBSource {
                FX_BOOL bStdCS = FALSE,
                FX_DWORD GroupFamily = 0,
                FX_BOOL bLoadMask = FALSE);
-  virtual FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) const;
-  virtual uint8_t* GetBuffer() const;
-  virtual const uint8_t* GetScanline(int line) const;
-  virtual void DownSampleScanline(int line,
-                                  uint8_t* dest_scan,
-                                  int dest_bpp,
-                                  int dest_width,
-                                  FX_BOOL bFlipX,
-                                  int clip_left,
-                                  int clip_width) const;
-  virtual void SetDownSampleSize(int dest_width, int dest_height) const;
+
+  // CFX_DIBSource
+  FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) const override;
+  uint8_t* GetBuffer() const override;
+  const uint8_t* GetScanline(int line) const override;
+  void DownSampleScanline(int line,
+                          uint8_t* dest_scan,
+                          int dest_bpp,
+                          int dest_width,
+                          FX_BOOL bFlipX,
+                          int clip_left,
+                          int clip_width) const override;
+  void SetDownSampleSize(int dest_width, int dest_height) const override;
+
   CFX_DIBitmap* GetBitmap() const;
   void ReleaseBitmap(CFX_DIBitmap*) const;
   void ClearImageData();
@@ -569,22 +582,28 @@ class CPDF_DIBSource : public CFX_DIBSource {
   nonstd::unique_ptr<CFX_DIBitmap> m_pCachedBitmap;
   ICodec_ScanlineDecoder* m_pDecoder;
 };
+
 #define FPDF_HUGE_IMAGE_SIZE 60000000
 class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
  public:
   CPDF_DIBTransferFunc(const CPDF_TransferFunc* pTransferFunc);
-  virtual FXDIB_Format GetDestFormat();
-  virtual FX_ARGB* GetDestPalette() { return NULL; }
-  virtual void TranslateScanline(uint8_t* dest_buf,
-                                 const uint8_t* src_buf) const;
-  virtual void TranslateDownSamples(uint8_t* dest_buf,
-                                    const uint8_t* src_buf,
-                                    int pixels,
-                                    int Bpp) const;
+  ~CPDF_DIBTransferFunc() override;
+
+  // CFX_FilteredDIB
+  FXDIB_Format GetDestFormat() override;
+  FX_ARGB* GetDestPalette() override { return NULL; }
+  void TranslateScanline(uint8_t* dest_buf,
+                         const uint8_t* src_buf) const override;
+  void TranslateDownSamples(uint8_t* dest_buf,
+                            const uint8_t* src_buf,
+                            int pixels,
+                            int Bpp) const override;
+
   const uint8_t* m_RampR;
   const uint8_t* m_RampG;
   const uint8_t* m_RampB;
 };
+
 struct _CPDF_UniqueKeyGen {
   void Generate(int count, ...);
   FX_CHAR m_Key[128];

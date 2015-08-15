@@ -1203,8 +1203,6 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
   return range;
 }
 
-void CPWL_Edit::AjustArabicWords(const CPVT_WordRange& wr) {}
-
 void CPWL_Edit::GeneratePageObjects(
     CPDF_PageObjects* pPageObjects,
     const CPDF_Point& ptOffset,

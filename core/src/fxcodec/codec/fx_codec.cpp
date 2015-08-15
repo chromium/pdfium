@@ -563,17 +563,20 @@ FX_BOOL CFX_DIBAttributeExif::GetInfo(FX_WORD tag, void* val) {
 class CCodec_RLScanlineDecoder : public CCodec_ScanlineDecoder {
  public:
   CCodec_RLScanlineDecoder();
-  virtual ~CCodec_RLScanlineDecoder();
+  ~CCodec_RLScanlineDecoder() override;
+
   FX_BOOL Create(const uint8_t* src_buf,
                  FX_DWORD src_size,
                  int width,
                  int height,
                  int nComps,
                  int bpc);
-  virtual void v_DownScale(int dest_width, int dest_height) {}
-  virtual FX_BOOL v_Rewind();
-  virtual uint8_t* v_GetNextLine();
-  virtual FX_DWORD GetSrcOffset() { return m_SrcOffset; }
+
+  // CCodec_ScanlineDecoder
+  void v_DownScale(int dest_width, int dest_height) override {}
+  FX_BOOL v_Rewind() override;
+  uint8_t* v_GetNextLine() override;
+  FX_DWORD GetSrcOffset() override { return m_SrcOffset; }
 
  protected:
   FX_BOOL CheckDestSize();

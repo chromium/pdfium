@@ -13,12 +13,14 @@ class CXML_DataBufAcc : public IFX_BufferRead {
  public:
   CXML_DataBufAcc(const uint8_t* pBuffer, size_t size)
       : m_pBuffer(pBuffer), m_dwSize(size), m_dwCurPos(0) {}
-  virtual ~CXML_DataBufAcc() {}
-  virtual void Release() { delete this; }
-  virtual FX_BOOL IsEOF() { return m_dwCurPos >= m_dwSize; }
-  virtual FX_FILESIZE GetPosition() { return (FX_FILESIZE)m_dwCurPos; }
-  virtual size_t ReadBlock(void* buffer, size_t size) { return 0; }
-  virtual FX_BOOL ReadNextBlock(FX_BOOL bRestart = FALSE) {
+  ~CXML_DataBufAcc() override {}
+
+  // IFX_BufferRead
+  void Release() override { delete this; }
+  FX_BOOL IsEOF() override { return m_dwCurPos >= m_dwSize; }
+  FX_FILESIZE GetPosition() override { return (FX_FILESIZE)m_dwCurPos; }
+  size_t ReadBlock(void* buffer, size_t size) override { return 0; }
+  FX_BOOL ReadNextBlock(FX_BOOL bRestart = FALSE) override {
     if (bRestart) {
       m_dwCurPos = 0;
     }
@@ -28,15 +30,16 @@ class CXML_DataBufAcc : public IFX_BufferRead {
     }
     return FALSE;
   }
-  virtual const uint8_t* GetBlockBuffer() { return m_pBuffer; }
-  virtual size_t GetBlockSize() { return m_dwSize; }
-  virtual FX_FILESIZE GetBlockOffset() { return 0; }
+  const uint8_t* GetBlockBuffer() override { return m_pBuffer; }
+  size_t GetBlockSize() override { return m_dwSize; }
+  FX_FILESIZE GetBlockOffset() override { return 0; }
 
  protected:
   const uint8_t* m_pBuffer;
   size_t m_dwSize;
   size_t m_dwCurPos;
 };
+
 #define FX_XMLDATASTREAM_BufferSize (32 * 1024)
 class CXML_DataStmAcc : public IFX_BufferRead {
  public:
@@ -44,18 +47,21 @@ class CXML_DataStmAcc : public IFX_BufferRead {
       : m_pFileRead(pFileRead), m_pBuffer(NULL), m_nStart(0), m_dwSize(0) {
     FXSYS_assert(m_pFileRead != NULL);
   }
-  virtual ~CXML_DataStmAcc() {
+  ~CXML_DataStmAcc() override {
     if (m_pBuffer) {
       FX_Free(m_pBuffer);
     }
   }
-  virtual void Release() { delete this; }
-  virtual FX_BOOL IsEOF() {
+
+  void Release() override { delete this; }
+  FX_BOOL IsEOF() override {
     return m_nStart + (FX_FILESIZE)m_dwSize >= m_pFileRead->GetSize();
   }
-  virtual FX_FILESIZE GetPosition() { return m_nStart + (FX_FILESIZE)m_dwSize; }
-  virtual size_t ReadBlock(void* buffer, size_t size) { return 0; }
-  virtual FX_BOOL ReadNextBlock(FX_BOOL bRestart = FALSE) {
+  FX_FILESIZE GetPosition() override {
+    return m_nStart + (FX_FILESIZE)m_dwSize;
+  }
+  size_t ReadBlock(void* buffer, size_t size) override { return 0; }
+  FX_BOOL ReadNextBlock(FX_BOOL bRestart = FALSE) override {
     if (bRestart) {
       m_nStart = 0;
     }
@@ -70,9 +76,9 @@ class CXML_DataStmAcc : public IFX_BufferRead {
     }
     return m_pFileRead->ReadBlock(m_pBuffer, m_nStart, m_dwSize);
   }
-  virtual const uint8_t* GetBlockBuffer() { return (const uint8_t*)m_pBuffer; }
-  virtual size_t GetBlockSize() { return m_dwSize; }
-  virtual FX_FILESIZE GetBlockOffset() { return m_nStart; }
+  const uint8_t* GetBlockBuffer() override { return (const uint8_t*)m_pBuffer; }
+  size_t GetBlockSize() override { return m_dwSize; }
+  FX_FILESIZE GetBlockOffset() override { return m_nStart; }
 
  protected:
   IFX_FileRead* m_pFileRead;
@@ -80,6 +86,7 @@ class CXML_DataStmAcc : public IFX_BufferRead {
   FX_FILESIZE m_nStart;
   size_t m_dwSize;
 };
+
 class CXML_Parser {
  public:
   ~CXML_Parser();
@@ -113,6 +120,7 @@ class CXML_Parser {
                             CXML_Element* pElement);
   void InsertCDATASegment(CFX_UTF8Decoder& decoder, CXML_Element* pElement);
 };
+
 void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
                                CFX_ByteStringC& bsSpace,
                                CFX_ByteStringC& bsName);

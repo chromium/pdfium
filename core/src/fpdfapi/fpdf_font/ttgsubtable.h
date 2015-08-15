@@ -166,7 +166,7 @@ class CFX_CTTGSUBTable {
     TT_uint16_t GlyphCount;
     TT_uint16_t* GlyphArray;
     TCoverageFormat1() : GlyphCount(0), GlyphArray(NULL) { CoverageFormat = 1; }
-    ~TCoverageFormat1() {
+    ~TCoverageFormat1() override {
       if (GlyphArray) {
         delete[] GlyphArray;
       }
@@ -194,7 +194,7 @@ class CFX_CTTGSUBTable {
     TCoverageFormat2() : RangeCount(0), RangeRecord(NULL) {
       CoverageFormat = 2;
     }
-    ~TCoverageFormat2() {
+    ~TCoverageFormat2() override {
       if (RangeRecord) {
         delete[] RangeRecord;
       }
@@ -220,7 +220,7 @@ class CFX_CTTGSUBTable {
     TClassDefFormat1() : StartGlyph(0), GlyphCount(0), ClassValueArray(NULL) {
       ClassFormat = 1;
     }
-    ~TClassDefFormat1() {
+    ~TClassDefFormat1() override {
       if (ClassValueArray) {
         delete[] ClassValueArray;
       }
@@ -246,7 +246,7 @@ class CFX_CTTGSUBTable {
     TClassDefFormat2() : ClassRangeCount(0), ClassRangeRecord(NULL) {
       ClassFormat = 2;
     }
-    ~TClassDefFormat2() {
+    ~TClassDefFormat2() override {
       if (ClassRangeRecord) {
         delete[] ClassRangeRecord;
       }
@@ -279,7 +279,7 @@ class CFX_CTTGSUBTable {
     TCoverageFormatBase* Coverage;
     TT_int16_t DeltaGlyphID;
     TSingleSubstFormat1() : Coverage(NULL), DeltaGlyphID(0) { SubstFormat = 1; }
-    ~TSingleSubstFormat1() { delete Coverage; }
+    ~TSingleSubstFormat1() override { delete Coverage; }
 
    private:
     TSingleSubstFormat1(const TSingleSubstFormat1&);

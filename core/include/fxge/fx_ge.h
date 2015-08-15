@@ -10,17 +10,12 @@
 #include "fx_dib.h"
 #include "fx_font.h"
 
-class CFX_ClipRgn;
-class CFX_PathData;
-class CFX_GraphStateData;
 class CFX_Font;
 class CFX_FontMgr;
 class CFX_FontCache;
 class CFX_FaceCache;
-class CFX_RenderDevice;
 class IFX_RenderDeviceDriver;
 class CCodec_ModuleMgr;
-class IFXG_PaintModuleMgr;
 
 class CFX_GEModule {
  public:
@@ -434,8 +429,7 @@ class CFX_RenderDevice {
 class CFX_FxgeDevice : public CFX_RenderDevice {
  public:
   CFX_FxgeDevice();
-
-  ~CFX_FxgeDevice();
+  ~CFX_FxgeDevice() override;
 
   FX_BOOL Attach(CFX_DIBitmap* pBitmap,
                  int dither_bits = 0,
@@ -455,8 +449,7 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
 class CFX_SkiaDevice : public CFX_RenderDevice {
  public:
   CFX_SkiaDevice();
-
-  ~CFX_SkiaDevice();
+  ~CFX_SkiaDevice() override;
 
   FX_BOOL Attach(CFX_DIBitmap* pBitmap,
                  int dither_bits = 0,
@@ -473,6 +466,7 @@ class CFX_SkiaDevice : public CFX_RenderDevice {
  protected:
   FX_BOOL m_bOwnedBitmap;
 };
+
 class IFX_RenderDeviceDriver {
  public:
   static IFX_RenderDeviceDriver* CreateFxgeDriver(
@@ -612,14 +606,16 @@ class IFX_RenderDeviceDriver {
 
   virtual void ClearDriver() {}
 };
+
 class IFX_PSOutput {
  public:
   virtual void Release() = 0;
   virtual void OutputPS(const FX_CHAR* string, int len) = 0;
 
  protected:
-  ~IFX_PSOutput() {}
+  virtual ~IFX_PSOutput() {}
 };
+
 class CPSFont;
 class CFX_PSRenderer {
  public:

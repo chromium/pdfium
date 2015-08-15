@@ -547,17 +547,18 @@ class CPDF_SecurityHandler {
 class CPDF_StandardSecurityHandler : public CPDF_SecurityHandler {
  public:
   CPDF_StandardSecurityHandler();
+  ~CPDF_StandardSecurityHandler() override;
 
-  virtual ~CPDF_StandardSecurityHandler();
-  virtual FX_BOOL OnInit(CPDF_Parser* pParser, CPDF_Dictionary* pEncryptDict);
-  virtual FX_DWORD GetPermissions();
-  virtual FX_BOOL IsOwner() { return m_bOwner; }
-  virtual FX_BOOL GetCryptInfo(int& cipher,
-                               const uint8_t*& buffer,
-                               int& keylen);
-  virtual FX_BOOL IsMetadataEncrypted();
-  virtual CPDF_CryptoHandler* CreateCryptoHandler();
-  virtual CPDF_StandardSecurityHandler* GetStandardHandler() { return this; }
+  // CPDF_SecurityHandler
+  FX_BOOL OnInit(CPDF_Parser* pParser, CPDF_Dictionary* pEncryptDict) override;
+  FX_DWORD GetPermissions() override;
+  FX_BOOL IsOwner() override { return m_bOwner; }
+  FX_BOOL GetCryptInfo(int& cipher,
+                       const uint8_t*& buffer,
+                       int& keylen) override;
+  FX_BOOL IsMetadataEncrypted() override;
+  CPDF_CryptoHandler* CreateCryptoHandler() override;
+  CPDF_StandardSecurityHandler* GetStandardHandler() override { return this; }
 
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 CPDF_Array* pIdArray,
@@ -683,29 +684,30 @@ class CPDF_CryptoHandler {
 class CPDF_StandardCryptoHandler : public CPDF_CryptoHandler {
  public:
   CPDF_StandardCryptoHandler();
+  ~CPDF_StandardCryptoHandler() override;
 
-  virtual ~CPDF_StandardCryptoHandler();
+  // CPDF_CryptoHandler
+  FX_BOOL Init(CPDF_Dictionary* pEncryptDict,
+               CPDF_SecurityHandler* pSecurityHandler) override;
+  FX_DWORD DecryptGetSize(FX_DWORD src_size) override;
+  void* DecryptStart(FX_DWORD objnum, FX_DWORD gennum) override;
+  FX_BOOL DecryptStream(void* context,
+                        const uint8_t* src_buf,
+                        FX_DWORD src_size,
+                        CFX_BinaryBuf& dest_buf) override;
+  FX_BOOL DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) override;
+  FX_DWORD EncryptGetSize(FX_DWORD objnum,
+                          FX_DWORD version,
+                          const uint8_t* src_buf,
+                          FX_DWORD src_size) override;
+  FX_BOOL EncryptContent(FX_DWORD objnum,
+                         FX_DWORD version,
+                         const uint8_t* src_buf,
+                         FX_DWORD src_size,
+                         uint8_t* dest_buf,
+                         FX_DWORD& dest_size) override;
 
   FX_BOOL Init(int cipher, const uint8_t* key, int keylen);
-  virtual FX_BOOL Init(CPDF_Dictionary* pEncryptDict,
-                       CPDF_SecurityHandler* pSecurityHandler);
-  virtual FX_DWORD DecryptGetSize(FX_DWORD src_size);
-  virtual void* DecryptStart(FX_DWORD objnum, FX_DWORD gennum);
-  virtual FX_BOOL DecryptStream(void* context,
-                                const uint8_t* src_buf,
-                                FX_DWORD src_size,
-                                CFX_BinaryBuf& dest_buf);
-  virtual FX_BOOL DecryptFinish(void* context, CFX_BinaryBuf& dest_buf);
-  virtual FX_DWORD EncryptGetSize(FX_DWORD objnum,
-                                  FX_DWORD version,
-                                  const uint8_t* src_buf,
-                                  FX_DWORD src_size);
-  virtual FX_BOOL EncryptContent(FX_DWORD objnum,
-                                 FX_DWORD version,
-                                 const uint8_t* src_buf,
-                                 FX_DWORD src_size,
-                                 uint8_t* dest_buf,
-                                 FX_DWORD& dest_size);
 
  protected:
   virtual void CryptBlock(FX_BOOL bEncrypt,

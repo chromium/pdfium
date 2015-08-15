@@ -51,20 +51,19 @@ struct CPVT_Color {
 class CPVT_Provider : public IPDF_VariableText_Provider {
  public:
   CPVT_Provider(IPVT_FontMap* pFontMap);
+  ~CPVT_Provider() override;
 
-  virtual ~CPVT_Provider();
-
-  int32_t GetCharWidth(int32_t nFontIndex, FX_WORD word, int32_t nWordStyle);
-
-  int32_t GetTypeAscent(int32_t nFontIndex);
-
-  int32_t GetTypeDescent(int32_t nFontIndex);
-
-  int32_t GetWordFontIndex(FX_WORD word, int32_t charset, int32_t nFontIndex);
-
-  FX_BOOL IsLatinWord(FX_WORD word);
-
-  int32_t GetDefaultFontIndex();
+  // IPDF_VariableText_Provider
+  int32_t GetCharWidth(int32_t nFontIndex,
+                       FX_WORD word,
+                       int32_t nWordStyle) override;
+  int32_t GetTypeAscent(int32_t nFontIndex) override;
+  int32_t GetTypeDescent(int32_t nFontIndex) override;
+  int32_t GetWordFontIndex(FX_WORD word,
+                           int32_t charset,
+                           int32_t nFontIndex) override;
+  FX_BOOL IsLatinWord(FX_WORD word) override;
+  int32_t GetDefaultFontIndex() override;
 
  private:
   IPVT_FontMap* m_pFontMap;

@@ -603,10 +603,12 @@ static FX_BOOL TIFF_Predictor(uint8_t*& data_buf,
   }
   return TRUE;
 }
+
 class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
  public:
   CCodec_FlateScanlineDecoder();
-  ~CCodec_FlateScanlineDecoder();
+  ~CCodec_FlateScanlineDecoder() override;
+
   void Create(const uint8_t* src_buf,
               FX_DWORD src_size,
               int width,
@@ -617,11 +619,14 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
               int Colors,
               int BitsPerComponent,
               int Columns);
-  virtual void Destroy() { delete this; }
-  virtual void v_DownScale(int dest_width, int dest_height) {}
-  virtual FX_BOOL v_Rewind();
-  virtual uint8_t* v_GetNextLine();
-  virtual FX_DWORD GetSrcOffset();
+  void Destroy() { delete this; }
+
+  // CCodec_ScanlineDecoder
+  void v_DownScale(int dest_width, int dest_height) override {}
+  FX_BOOL v_Rewind() override;
+  uint8_t* v_GetNextLine() override;
+  FX_DWORD GetSrcOffset() override;
+
   void* m_pFlate;
   const uint8_t* m_SrcBuf;
   FX_DWORD m_SrcSize;
@@ -632,6 +637,7 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
   int m_Predictor;
   int m_Colors, m_BitsPerComponent, m_Columns, m_PredictPitch, m_LeftOver;
 };
+
 CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder() {
   m_pFlate = NULL;
   m_pScanline = NULL;

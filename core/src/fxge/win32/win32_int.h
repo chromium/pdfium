@@ -6,6 +6,8 @@
 #ifndef CORE_SRC_FXGE_WIN32_WIN32_INT_H_
 #define CORE_SRC_FXGE_WIN32_WIN32_INT_H_
 
+#include "../../../include/fxge/fx_ge.h"
+
 struct WINDIB_Open_Args_;
 class CGdiplusExt {
  public:
@@ -101,50 +103,54 @@ class CWin32Platform {
   CGdiplusExt m_GdiplusExt;
   CDWriteExt m_DWriteExt;
 };
+
 class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
  protected:
-  virtual int GetDeviceCaps(int caps_id);
-  virtual void SaveState() { SaveDC(m_hDC); }
-  virtual void RestoreState(FX_BOOL bKeepSaved = FALSE) {
+  // IFX_RenderDeviceDriver
+  int GetDeviceCaps(int caps_id) override;
+  void SaveState() override { SaveDC(m_hDC); }
+  void RestoreState(FX_BOOL bKeepSaved = FALSE) override {
     RestoreDC(m_hDC, -1);
     if (bKeepSaved) {
       SaveDC(m_hDC);
     }
   }
-  virtual FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
-                                   const CFX_AffineMatrix* pObject2Device,
-                                   int fill_mode);
-  virtual FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
-                                     const CFX_AffineMatrix* pObject2Device,
-                                     const CFX_GraphStateData* pGraphState);
-  virtual FX_BOOL DrawPath(const CFX_PathData* pPathData,
+  FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
                            const CFX_AffineMatrix* pObject2Device,
-                           const CFX_GraphStateData* pGraphState,
-                           FX_DWORD fill_color,
-                           FX_DWORD stroke_color,
-                           int fill_mode,
+                           int fill_mode) override;
+  FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
+                             const CFX_AffineMatrix* pObject2Device,
+                             const CFX_GraphStateData* pGraphState) override;
+  FX_BOOL DrawPath(const CFX_PathData* pPathData,
+                   const CFX_AffineMatrix* pObject2Device,
+                   const CFX_GraphStateData* pGraphState,
+                   FX_DWORD fill_color,
+                   FX_DWORD stroke_color,
+                   int fill_mode,
+                   int alpha_flag,
+                   void* pIccTransform,
+                   int blend_type) override;
+  FX_BOOL FillRect(const FX_RECT* pRect,
+                   FX_DWORD fill_color,
+                   int alpha_flag,
+                   void* pIccTransform,
+                   int blend_type) override;
+  FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
+                           FX_FLOAT y1,
+                           FX_FLOAT x2,
+                           FX_FLOAT y2,
+                           FX_DWORD color,
                            int alpha_flag,
                            void* pIccTransform,
-                           int blend_type);
-  virtual FX_BOOL FillRect(const FX_RECT* pRect,
-                           FX_DWORD fill_color,
-                           int alpha_flag,
-                           void* pIccTransform,
-                           int blend_type);
-  virtual FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
-                                   FX_FLOAT y1,
-                                   FX_FLOAT x2,
-                                   FX_FLOAT y2,
-                                   FX_DWORD color,
-                                   int alpha_flag,
-                                   void* pIccTransform,
-                                   int blend_type);
+                           int blend_type) override;
+  FX_BOOL GetClipBox(FX_RECT* pRect) override;
+  void* GetPlatformSurface() override { return (void*)m_hDC; }
+
   virtual void* GetClipRgn();
   virtual FX_BOOL SetClipRgn(void* pRgn);
-  virtual FX_BOOL GetClipBox(FX_RECT* pRect);
   virtual FX_BOOL DeleteDeviceRgn(void* pRgn);
   virtual void DrawLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
-  virtual void* GetPlatformSurface() { return (void*)m_hDC; }
+
   FX_BOOL GDI_SetDIBits(const CFX_DIBitmap* pBitmap,
                         const FX_RECT* pSrcRect,
                         int left,
@@ -170,8 +176,9 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
   int m_Width, m_Height, m_nBitsPerPixel;
   int m_DeviceClass, m_RenderCaps;
   CGdiDeviceDriver(HDC hDC, int device_class);
-  ~CGdiDeviceDriver() {}
+  ~CGdiDeviceDriver() override {}
 };
+
 class CGdiDisplayDriver : public CGdiDeviceDriver {
  public:
   CGdiDisplayDriver(HDC hDC);
@@ -261,83 +268,91 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
   int m_HorzSize, m_VertSize;
   FX_BOOL m_bSupportROP;
 };
+
 class CPSOutput : public IFX_PSOutput {
  public:
-  CPSOutput(HDC hDC);
-  virtual ~CPSOutput();
-  virtual void Release() { delete this; }
+  explicit CPSOutput(HDC hDC);
+  ~CPSOutput() override;
+
+  // IFX_PSOutput
+  void Release() override { delete this; }
+  void OutputPS(const FX_CHAR* string, int len) override;
+
   void Init();
-  virtual void OutputPS(const FX_CHAR* string, int len);
+
   HDC m_hDC;
   FX_CHAR* m_pBuf;
 };
+
 class CPSPrinterDriver : public IFX_RenderDeviceDriver {
  public:
   CPSPrinterDriver();
   FX_BOOL Init(HDC hDC, int ps_level, FX_BOOL bCmykOutput);
-  ~CPSPrinterDriver();
+  ~CPSPrinterDriver() override;
 
  protected:
-  virtual FX_BOOL IsPSPrintDriver() { return TRUE; }
-  virtual int GetDeviceCaps(int caps_id);
-  virtual FX_BOOL StartRendering();
-  virtual void EndRendering();
-  virtual void SaveState();
-  virtual void RestoreState(FX_BOOL bKeepSaved = FALSE);
-  virtual FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
-                                   const CFX_AffineMatrix* pObject2Device,
-                                   int fill_mode);
-  virtual FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
-                                     const CFX_AffineMatrix* pObject2Device,
-                                     const CFX_GraphStateData* pGraphState);
-  virtual FX_BOOL DrawPath(const CFX_PathData* pPathData,
+  // IFX_RenderDeviceDriver
+  int GetDeviceCaps(int caps_id);
+  FX_BOOL IsPSPrintDriver() override { return TRUE; }
+  FX_BOOL StartRendering() override;
+  void EndRendering() override;
+  void SaveState() override;
+  void RestoreState(FX_BOOL bKeepSaved = FALSE) override;
+  FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
                            const CFX_AffineMatrix* pObject2Device,
-                           const CFX_GraphStateData* pGraphState,
-                           FX_DWORD fill_color,
-                           FX_DWORD stroke_color,
-                           int fill_mode,
-                           int alpha_flag,
-                           void* pIccTransform,
-                           int blend_type);
-  virtual FX_BOOL GetClipBox(FX_RECT* pRect);
-  virtual FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
-                            FX_DWORD color,
-                            const FX_RECT* pSrcRect,
-                            int left,
-                            int top,
-                            int blend_type,
-                            int alpha_flag,
-                            void* pIccTransform);
-  virtual FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
-                                FX_DWORD color,
-                                int dest_left,
-                                int dest_top,
-                                int dest_width,
-                                int dest_height,
-                                const FX_RECT* pClipRect,
-                                FX_DWORD flags,
-                                int alpha_flag,
-                                void* pIccTransform,
-                                int blend_type);
-  virtual FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
-                              int bitmap_alpha,
-                              FX_DWORD color,
-                              const CFX_AffineMatrix* pMatrix,
-                              FX_DWORD render_flags,
-                              void*& handle,
-                              int alpha_flag,
-                              void* pIccTransform,
-                              int blend_type);
-  virtual FX_BOOL DrawDeviceText(int nChars,
-                                 const FXTEXT_CHARPOS* pCharPos,
-                                 CFX_Font* pFont,
-                                 CFX_FontCache* pCache,
-                                 const CFX_AffineMatrix* pObject2Device,
-                                 FX_FLOAT font_size,
-                                 FX_DWORD color,
-                                 int alpha_flag,
-                                 void* pIccTransform);
-  virtual void* GetPlatformSurface() { return (void*)m_hDC; }
+                           int fill_mode) override;
+  FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
+                             const CFX_AffineMatrix* pObject2Device,
+                             const CFX_GraphStateData* pGraphState) override;
+  FX_BOOL DrawPath(const CFX_PathData* pPathData,
+                   const CFX_AffineMatrix* pObject2Device,
+                   const CFX_GraphStateData* pGraphState,
+                   FX_DWORD fill_color,
+                   FX_DWORD stroke_color,
+                   int fill_mode,
+                   int alpha_flag,
+                   void* pIccTransform,
+                   int blend_type) override;
+  FX_BOOL GetClipBox(FX_RECT* pRect) override;
+  FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
+                    FX_DWORD color,
+                    const FX_RECT* pSrcRect,
+                    int left,
+                    int top,
+                    int blend_type,
+                    int alpha_flag,
+                    void* pIccTransform) override;
+  FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
+                        FX_DWORD color,
+                        int dest_left,
+                        int dest_top,
+                        int dest_width,
+                        int dest_height,
+                        const FX_RECT* pClipRect,
+                        FX_DWORD flags,
+                        int alpha_flag,
+                        void* pIccTransform,
+                        int blend_type) override;
+  FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
+                      int bitmap_alpha,
+                      FX_DWORD color,
+                      const CFX_AffineMatrix* pMatrix,
+                      FX_DWORD render_flags,
+                      void*& handle,
+                      int alpha_flag,
+                      void* pIccTransform,
+                      int blend_type) override;
+  FX_BOOL DrawDeviceText(int nChars,
+                         const FXTEXT_CHARPOS* pCharPos,
+                         CFX_Font* pFont,
+                         CFX_FontCache* pCache,
+                         const CFX_AffineMatrix* pObject2Device,
+                         FX_FLOAT font_size,
+                         FX_DWORD color,
+                         int alpha_flag,
+                         void* pIccTransform) override;
+  void* GetPlatformSurface() override { return (void*)m_hDC; }
+
   HDC m_hDC;
   FX_BOOL m_bCmykOutput;
   int m_Width, m_Height, m_nBitsPerPixel;

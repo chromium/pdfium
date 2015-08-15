@@ -7,7 +7,6 @@
 #ifndef CORE_SRC_FPDFTEXT_TEXT_INT_H_
 #define CORE_SRC_FPDFTEXT_TEXT_INT_H_
 
-class CPDF_TextPage;
 class CPDF_LinkExtract;
 class CPDF_TextPageFind;
 class CPDF_DocProgressiveSearch;
@@ -42,53 +41,52 @@ typedef struct {
   CFX_AffineMatrix m_formMatrix;
 } PDFTEXT_Obj;
 typedef CFX_ArrayTemplate<PDFTEXT_Obj> LINEOBJ;
+
 class CPDF_TextPage : public IPDF_TextPage {
  public:
   CPDF_TextPage(const CPDF_Page* pPage, int flags = 0);
   CPDF_TextPage(const CPDF_PageObjects* pPage, int flags = 0);
   CPDF_TextPage(const CPDF_Page* pPage, CPDFText_ParseOptions ParserOptions);
-  virtual FX_BOOL ParseTextPage();
-  virtual void NormalizeObjects(FX_BOOL bNormalize);
-  virtual FX_BOOL IsParsered() const { return m_IsParsered; }
-  virtual ~CPDF_TextPage(){};
+  ~CPDF_TextPage() override{};
 
- public:
-  virtual int CharIndexFromTextIndex(int TextIndex) const;
-  virtual int TextIndexFromCharIndex(int CharIndex) const;
-  virtual int CountChars() const;
-  virtual void GetCharInfo(int index, FPDF_CHAR_INFO& info) const;
-  virtual void GetRectArray(int start,
-                            int nCount,
-                            CFX_RectArray& rectArray) const;
-  virtual int GetIndexAtPos(CPDF_Point point,
-                            FX_FLOAT xTolerance,
-                            FX_FLOAT yTolerance) const;
-  virtual int GetIndexAtPos(FX_FLOAT x,
-                            FX_FLOAT y,
-                            FX_FLOAT xTolerance,
-                            FX_FLOAT yTolerance) const;
-  virtual CFX_WideString GetTextByRect(const CFX_FloatRect& rect) const;
-  virtual void GetRectsArrayByRect(const CFX_FloatRect& rect,
-                                   CFX_RectArray& resRectArray) const;
-  virtual CFX_WideString GetPageText(int start = 0, int nCount = -1) const;
+  // IPDF_TextPage
+  FX_BOOL ParseTextPage() override;
+  void NormalizeObjects(FX_BOOL bNormalize) override;
+  FX_BOOL IsParsered() const override { return m_IsParsered; }
+  int CharIndexFromTextIndex(int TextIndex) const override;
+  int TextIndexFromCharIndex(int CharIndex) const override;
+  int CountChars() const override;
+  void GetCharInfo(int index, FPDF_CHAR_INFO& info) const override;
+  void GetRectArray(int start,
+                    int nCount,
+                    CFX_RectArray& rectArray) const override;
+  int GetIndexAtPos(CPDF_Point point,
+                    FX_FLOAT xTolerance,
+                    FX_FLOAT yTolerance) const override;
+  int GetIndexAtPos(FX_FLOAT x,
+                    FX_FLOAT y,
+                    FX_FLOAT xTolerance,
+                    FX_FLOAT yTolerance) const override;
+  CFX_WideString GetTextByRect(const CFX_FloatRect& rect) const override;
+  void GetRectsArrayByRect(const CFX_FloatRect& rect,
+                           CFX_RectArray& resRectArray) const override;
+  CFX_WideString GetPageText(int start = 0, int nCount = -1) const override;
+  int CountRects(int start, int nCount) override;
+  void GetRect(int rectIndex,
+               FX_FLOAT& left,
+               FX_FLOAT& top,
+               FX_FLOAT& right,
+               FX_FLOAT& bottom) const override;
+  FX_BOOL GetBaselineRotate(int rectIndex, int& Rotate) override;
+  FX_BOOL GetBaselineRotate(const CFX_FloatRect& rect, int& Rotate) override;
+  int CountBoundedSegments(FX_FLOAT left,
+                           FX_FLOAT top,
+                           FX_FLOAT right,
+                           FX_FLOAT bottom,
+                           FX_BOOL bContains = FALSE) override;
+  void GetBoundedSegment(int index, int& start, int& count) const override;
+  int GetWordBreak(int index, int direction) const override;
 
-  virtual int CountRects(int start, int nCount);
-  virtual void GetRect(int rectIndex,
-                       FX_FLOAT& left,
-                       FX_FLOAT& top,
-                       FX_FLOAT& right,
-                       FX_FLOAT& bottom) const;
-  virtual FX_BOOL GetBaselineRotate(int rectIndex, int& Rotate);
-  virtual FX_BOOL GetBaselineRotate(const CFX_FloatRect& rect, int& Rotate);
-  virtual int CountBoundedSegments(FX_FLOAT left,
-                                   FX_FLOAT top,
-                                   FX_FLOAT right,
-                                   FX_FLOAT bottom,
-                                   FX_BOOL bContains = FALSE);
-  virtual void GetBoundedSegment(int index, int& start, int& count) const;
-  virtual int GetWordBreak(int index, int direction) const;
-
- public:
   const PAGECHAR_InfoArray* GetCharList() const { return &m_charList; }
   static FX_BOOL IsRectIntersect(const CFX_FloatRect& rect1,
                                  const CFX_FloatRect& rect2);
@@ -143,21 +141,21 @@ class CPDF_TextPage : public IPDF_TextPage {
   int32_t m_TextlineDir;
   CFX_FloatRect m_CurlineRect;
 };
+
 class CPDF_TextPageFind : public IPDF_TextPageFind {
  public:
   CPDF_TextPageFind(const IPDF_TextPage* pTextPage);
-  virtual ~CPDF_TextPageFind(){};
+  ~CPDF_TextPageFind() override{};
 
- public:
-  virtual FX_BOOL FindFirst(const CFX_WideString& findwhat,
-                            int flags,
-                            int startPos = 0);
-  virtual FX_BOOL FindNext();
-  virtual FX_BOOL FindPrev();
-
-  virtual void GetRectArray(CFX_RectArray& rects) const;
-  virtual int GetCurOrder() const;
-  virtual int GetMatchedCount() const;
+  // IPDF_TextPageFind
+  FX_BOOL FindFirst(const CFX_WideString& findwhat,
+                    int flags,
+                    int startPos = 0) override;
+  FX_BOOL FindNext() override;
+  FX_BOOL FindPrev() override;
+  void GetRectArray(CFX_RectArray& rects) const override;
+  int GetCurOrder() const override;
+  int GetMatchedCount() const override;
 
  protected:
   void ExtractFindWhat(const CFX_WideString& findwhat);
@@ -199,19 +197,22 @@ class CPDF_LinkExt {
   CFX_WideString m_strUrl;
   virtual ~CPDF_LinkExt(){};
 };
+
 typedef CFX_ArrayTemplate<CPDF_LinkExt*> LINK_InfoArray;
+
 class CPDF_LinkExtract : public IPDF_LinkExtract {
  public:
   CPDF_LinkExtract();
-  virtual ~CPDF_LinkExtract();
-  virtual FX_BOOL ExtractLinks(const IPDF_TextPage* pTextPage);
-  virtual FX_BOOL IsExtract() const { return m_IsParserd; }
+  ~CPDF_LinkExtract() override;
 
- public:
-  virtual int CountLinks() const;
-  virtual CFX_WideString GetURL(int index) const;
-  virtual void GetBoundedSegment(int index, int& start, int& count) const;
-  virtual void GetRects(int index, CFX_RectArray& rects) const;
+  // IPDF_LinkExtract
+  FX_BOOL ExtractLinks(const IPDF_TextPage* pTextPage) override;
+  int CountLinks() const override;
+  CFX_WideString GetURL(int index) const override;
+  void GetBoundedSegment(int index, int& start, int& count) const override;
+  void GetRects(int index, CFX_RectArray& rects) const override;
+
+  FX_BOOL IsExtract() const { return m_IsParserd; }
 
  protected:
   void parserLink();
@@ -226,6 +227,7 @@ class CPDF_LinkExtract : public IPDF_LinkExtract {
   CFX_WideString m_strPageText;
   FX_BOOL m_IsParserd;
 };
+
 FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst);
 void NormalizeString(CFX_WideString& str);
 void NormalizeCompositeChar(FX_WCHAR wChar, CFX_WideString& sDest);

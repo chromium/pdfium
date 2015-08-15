@@ -164,8 +164,6 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
                                    FX_BOOL bLatin,
                                    FX_BOOL bArabic) const;
 
-  void AjustArabicWords(const CPVT_WordRange& wr);
-
  public:
   FX_BOOL IsProceedtoOnChar(FX_WORD nKeyCode, FX_DWORD nFlag);
 

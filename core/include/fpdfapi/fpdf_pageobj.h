@@ -70,9 +70,7 @@ class CPDF_Path : public CFX_CountRef<CFX_PathData> {
 class CPDF_ClipPathData {
  public:
   CPDF_ClipPathData();
-
   CPDF_ClipPathData(const CPDF_ClipPathData&);
-
   ~CPDF_ClipPathData();
 
   void SetCount(int path_count, int text_count);
@@ -88,6 +86,7 @@ class CPDF_ClipPathData {
 
   CPDF_TextObject** m_pTextList;
 };
+
 class CPDF_ClipPath : public CFX_CountRef<CPDF_ClipPathData> {
  public:
   FX_DWORD GetPathCount() const { return m_pObject->m_PathCount; }
@@ -492,11 +491,13 @@ class CPDF_TextObject : public CPDF_PageObject {
 class CPDF_PathObject : public CPDF_PageObject {
  public:
   CPDF_PathObject() { m_Type = PDFPAGE_PATH; }
+  ~CPDF_PathObject() override {}
 
-  virtual ~CPDF_PathObject() {}
   void Transform(const CFX_AffineMatrix& maxtrix) override;
 
   void SetGraphState(CPDF_GraphState GraphState);
+
+  void CalcBoundingBox();
 
   CPDF_Path m_Path;
 
@@ -506,8 +507,6 @@ class CPDF_PathObject : public CPDF_PageObject {
 
   CFX_AffineMatrix m_Matrix;
 
-  void CalcBoundingBox();
-
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject) override;
 };
@@ -515,8 +514,8 @@ class CPDF_PathObject : public CPDF_PageObject {
 class CPDF_ImageObject : public CPDF_PageObject {
  public:
   CPDF_ImageObject();
+  ~CPDF_ImageObject() override;
 
-  virtual ~CPDF_ImageObject();
   void Transform(const CFX_AffineMatrix& matrix) override;
 
   CPDF_Image* m_pImage;
@@ -532,8 +531,7 @@ class CPDF_ImageObject : public CPDF_PageObject {
 class CPDF_ShadingObject : public CPDF_PageObject {
  public:
   CPDF_ShadingObject();
-
-  virtual ~CPDF_ShadingObject();
+  ~CPDF_ShadingObject() override;
 
   CPDF_ShadingPattern* m_pShading;
 
@@ -553,8 +551,8 @@ class CPDF_FormObject : public CPDF_PageObject {
     m_Type = PDFPAGE_FORM;
     m_pForm = NULL;
   }
+  ~CPDF_FormObject() override;
 
-  virtual ~CPDF_FormObject();
   void Transform(const CFX_AffineMatrix& matrix) override;
 
   CPDF_Form* m_pForm;

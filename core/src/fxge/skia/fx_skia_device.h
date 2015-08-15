@@ -13,7 +13,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                        FX_BOOL bRgbByteOrder,
                        CFX_DIBitmap* pOriDevice,
                        FX_BOOL bGroupKnockout);
-  virtual ~CFX_SkiaDeviceDriver();
+  ~CFX_SkiaDeviceDriver() override;
 
   /** Options */
   virtual int GetDeviceCaps(int caps_id);

@@ -362,10 +362,12 @@ static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf,
   jpeg_destroy_decompress(&cinfo);
   return TRUE;
 }
+
 class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
  public:
   CCodec_JpegDecoder();
-  ~CCodec_JpegDecoder();
+  ~CCodec_JpegDecoder() override;
+
   FX_BOOL Create(const uint8_t* src_buf,
                  FX_DWORD src_size,
                  int width,
@@ -373,11 +375,16 @@ class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
                  int nComps,
                  FX_BOOL ColorTransform,
                  IFX_JpegProvider* pJP);
-  virtual void Destroy() { delete this; }
-  virtual void v_DownScale(int dest_width, int dest_height);
-  virtual FX_BOOL v_Rewind();
-  virtual uint8_t* v_GetNextLine();
-  virtual FX_DWORD GetSrcOffset();
+  void Destroy() { delete this; }
+
+  // CCodec_ScanlineDecoder
+  void v_DownScale(int dest_width, int dest_height) override;
+  FX_BOOL v_Rewind() override;
+  uint8_t* v_GetNextLine() override;
+  FX_DWORD GetSrcOffset() override;
+
+  FX_BOOL InitDecode();
+
   jmp_buf m_JmpBuf;
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -385,14 +392,17 @@ class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
   const uint8_t* m_SrcBuf;
   FX_DWORD m_SrcSize;
   uint8_t* m_pScanlineBuf;
-  FX_BOOL InitDecode();
-  FX_BOOL m_bInited, m_bStarted, m_bJpegTransform;
+
+  FX_BOOL m_bInited;
+  FX_BOOL m_bStarted;
+  FX_BOOL m_bJpegTransform;
 
  protected:
   IFX_JpegProvider* m_pExtProvider;
   void* m_pExtContext;
   FX_DWORD m_nDefaultScaleDenom;
 };
+
 CCodec_JpegDecoder::CCodec_JpegDecoder() {
   m_pScanlineBuf = NULL;
   m_DownScale = 1;
