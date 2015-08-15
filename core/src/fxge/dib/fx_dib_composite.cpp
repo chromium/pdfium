@@ -4193,12 +4193,8 @@ CFX_ScanlineCompositor::CFX_ScanlineCompositor() {
   m_BlendType = FXDIB_BLEND_NORMAL;
 }
 CFX_ScanlineCompositor::~CFX_ScanlineCompositor() {
-  if (m_pSrcPalette) {
-    FX_Free(m_pSrcPalette);
-  }
-  if (m_pCacheScanline) {
-    FX_Free(m_pCacheScanline);
-  }
+  FX_Free(m_pSrcPalette);
+  FX_Free(m_pCacheScanline);
 }
 FX_BOOL CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
                                      FXDIB_Format src_format,
@@ -5010,18 +5006,10 @@ CFX_BitmapComposer::CFX_BitmapComposer() {
   m_BlendType = FXDIB_BLEND_NORMAL;
 }
 CFX_BitmapComposer::~CFX_BitmapComposer() {
-  if (m_pScanlineV) {
-    FX_Free(m_pScanlineV);
-  }
-  if (m_pScanlineAlphaV) {
-    FX_Free(m_pScanlineAlphaV);
-  }
-  if (m_pClipScanV) {
-    FX_Free(m_pClipScanV);
-  }
-  if (m_pAddClipScan) {
-    FX_Free(m_pAddClipScan);
-  }
+  FX_Free(m_pScanlineV);
+  FX_Free(m_pScanlineAlphaV);
+  FX_Free(m_pClipScanV);
+  FX_Free(m_pAddClipScan);
 }
 void CFX_BitmapComposer::Compose(CFX_DIBitmap* pDest,
                                  const CFX_ClipRgn* pClipRgn,

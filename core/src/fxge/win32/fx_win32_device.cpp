@@ -702,9 +702,7 @@ static HPEN _CreatePen(const CFX_GraphStateData* pGraphState,
   }
   HPEN hPen = ExtCreatePen(PenStyle, (DWORD)FXSYS_ceil(width), &lb,
                            pGraphState->m_DashCount, (const DWORD*)pDash);
-  if (pDash) {
-    FX_Free(pDash);
-  }
+  FX_Free(pDash);
   return hPen;
 }
 static HBRUSH _CreateBrush(FX_DWORD argb) {

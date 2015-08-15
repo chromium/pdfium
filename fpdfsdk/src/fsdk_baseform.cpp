@@ -2885,7 +2885,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 
   pEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination.c_str());
 
-  if (bUrlEncoded && pBuffer) {
+  if (bUrlEncoded) {
     FX_Free(pBuffer);
     pBuffer = NULL;
   }

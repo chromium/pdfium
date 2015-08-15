@@ -83,9 +83,7 @@ CPDF_StreamContentParser::~CPDF_StreamContentParser() {
   for (int i = 0; i < m_StateStack.GetSize(); ++i) {
     delete (CPDF_AllStates*)m_StateStack[i];
   }
-  if (m_pPathPoints) {
-    FX_Free(m_pPathPoints);
-  }
+  FX_Free(m_pPathPoints);
   if (m_pLastImageDict) {
     m_pLastImageDict->Release();
   }
@@ -1087,9 +1085,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
   } else {
     m_pCurStates->m_ColorState.SetFillColor(NULL, values, nvalues);
   }
-  if (values) {
-    FX_Free(values);
-  }
+  FX_Free(values);
 }
 void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
   if (m_Options.m_bTextOnly) {
@@ -1119,9 +1115,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
   } else {
     m_pCurStates->m_ColorState.SetStrokeColor(NULL, values, nvalues);
   }
-  if (values) {
-    FX_Free(values);
-  }
+  FX_Free(values);
 }
 CFX_FloatRect _GetShadingBBox(CPDF_Stream* pStream,
                               int type,

@@ -82,9 +82,7 @@ FX_BOOL CCodec_Jbig2Module::Decode(IFX_FileRead* file_ptr,
   FX_Free(src_buf);
   return TRUE;
 failed:
-  if (src_buf) {
-    FX_Free(src_buf);
-  }
+  FX_Free(src_buf);
   return FALSE;
 }
 FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context,
@@ -188,9 +186,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context,
   FX_Free(m_pJbig2Context->m_src_buf);
   return FXCODEC_STATUS_DECODE_FINISH;
 failed:
-  if (m_pJbig2Context->m_src_buf) {
-    FX_Free(m_pJbig2Context->m_src_buf);
-  }
+  FX_Free(m_pJbig2Context->m_src_buf);
   m_pJbig2Context->m_src_buf = NULL;
   return FXCODEC_STATUS_ERROR;
 }
@@ -206,9 +202,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::ContinueDecode(void* pJbig2Context,
     CJBig2_Context::DestroyContext(m_pJbig2Context->m_pContext);
     m_pJbig2Context->m_pContext = NULL;
     if (ret != JBIG2_SUCCESS) {
-      if (m_pJbig2Context->m_src_buf) {
-        FX_Free(m_pJbig2Context->m_src_buf);
-      }
+      FX_Free(m_pJbig2Context->m_src_buf);
       m_pJbig2Context->m_src_buf = NULL;
       return FXCODEC_STATUS_ERROR;
     }

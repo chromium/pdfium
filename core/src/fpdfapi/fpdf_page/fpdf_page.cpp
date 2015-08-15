@@ -95,12 +95,10 @@ CPDF_TextObject::CPDF_TextObject()
 }
 
 CPDF_TextObject::~CPDF_TextObject() {
-  if (m_nChars > 1 && m_pCharCodes) {
+  if (m_nChars > 1) {
     FX_Free(m_pCharCodes);
   }
-  if (m_pCharPos) {
-    FX_Free(m_pCharPos);
-  }
+  FX_Free(m_pCharPos);
 }
 
 void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
@@ -186,14 +184,12 @@ void CPDF_TextObject::GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const {
 
 void CPDF_TextObject::CopyData(const CPDF_PageObject* pSrc) {
   const CPDF_TextObject* pSrcObj = (const CPDF_TextObject*)pSrc;
-  if (m_nChars > 1 && m_pCharCodes) {
+  if (m_nChars > 1) {
     FX_Free(m_pCharCodes);
     m_pCharCodes = nullptr;
   }
-  if (m_pCharPos) {
-    FX_Free(m_pCharPos);
-    m_pCharPos = nullptr;
-  }
+  FX_Free(m_pCharPos);
+  m_pCharPos = nullptr;
   m_nChars = pSrcObj->m_nChars;
   if (m_nChars > 1) {
     m_pCharCodes = FX_Alloc(FX_DWORD, m_nChars);
@@ -220,14 +216,12 @@ void CPDF_TextObject::GetTextMatrix(CFX_AffineMatrix* pMatrix) const {
 void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
                                   FX_FLOAT* pKerning,
                                   int nsegs) {
-  if (m_nChars > 1 && m_pCharCodes) {
+  if (m_nChars > 1) {
     FX_Free(m_pCharCodes);
     m_pCharCodes = nullptr;
   }
-  if (m_pCharPos) {
-    FX_Free(m_pCharPos);
-    m_pCharPos = nullptr;
-  }
+  FX_Free(m_pCharPos);
+  m_pCharPos = nullptr;
   CPDF_Font* pFont = m_TextState.GetFont();
   m_nChars = 0;
   for (int i = 0; i < nsegs; ++i) {
@@ -262,10 +256,10 @@ void CPDF_TextObject::SetText(const CFX_ByteString& str) {
 }
 
 void CPDF_TextObject::SetEmpty() {
-  if (m_nChars > 1 && m_pCharCodes) {
+  if (m_nChars > 1) {
     FX_Free(m_pCharCodes);
   }
-  if (m_nChars > 1 && m_pCharPos) {
+  if (m_nChars > 1) {
     FX_Free(m_pCharPos);
   }
   m_nChars = 0;
@@ -285,14 +279,12 @@ void CPDF_TextObject::SetText(CFX_ByteString* pStrs,
 void CPDF_TextObject::SetText(int nChars,
                               FX_DWORD* pCharCodes,
                               FX_FLOAT* pKernings) {
-  if (m_nChars > 1 && m_pCharCodes) {
+  if (m_nChars > 1) {
     FX_Free(m_pCharCodes);
     m_pCharCodes = nullptr;
   }
-  if (m_pCharPos) {
-    FX_Free(m_pCharPos);
-    m_pCharPos = nullptr;
-  }
+  FX_Free(m_pCharPos);
+  m_pCharPos = nullptr;
   int nKernings = 0;
   int i;
   for (i = 0; i < nChars - 1; ++i) {

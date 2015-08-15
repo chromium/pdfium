@@ -671,12 +671,8 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
 };
 
 CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
-  if (m_pCache) {
-    FX_Free(m_pCache);
-  }
-  if (m_pRanges) {
-    FX_Free(m_pRanges);
-  }
+  FX_Free(m_pCache);
+  FX_Free(m_pRanges);
   if (m_pAlterCS && m_bOwn) {
     m_pAlterCS->ReleaseCS();
   }
@@ -882,9 +878,7 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
   FX_FLOAT* m_pCompMinMax;
 };
 CPDF_IndexedCS::~CPDF_IndexedCS() {
-  if (m_pCompMinMax) {
-    FX_Free(m_pCompMinMax);
-  }
+  FX_Free(m_pCompMinMax);
   CPDF_ColorSpace* pCS = m_pCountedBaseCS ? m_pCountedBaseCS->get() : NULL;
   if (pCS && m_pDocument) {
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
@@ -1460,9 +1454,7 @@ void CPDF_Color::SetValue(CPDF_Pattern* pPattern, FX_FLOAT* comps, int ncomps) {
     return;
   }
   if (m_pCS == NULL || m_pCS->GetFamily() != PDFCS_PATTERN) {
-    if (m_pBuffer) {
-      FX_Free(m_pBuffer);
-    }
+    FX_Free(m_pBuffer);
     m_pCS = CPDF_ColorSpace::GetStockCS(PDFCS_PATTERN);
     m_pBuffer = m_pCS->CreateBuf();
   }

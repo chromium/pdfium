@@ -289,9 +289,7 @@ CPSOutput::CPSOutput(HDC hDC) {
   m_pBuf = NULL;
 }
 CPSOutput::~CPSOutput() {
-  if (m_pBuf) {
-    FX_Free(m_pBuf);
-  }
+  FX_Free(m_pBuf);
 }
 void CPSOutput::Init() {
   m_pBuf = FX_Alloc(FX_CHAR, 1026);

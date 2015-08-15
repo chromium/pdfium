@@ -301,15 +301,9 @@ CPDF_CMap::CPDF_CMap() {
   m_nCodeRanges = 0;
 }
 CPDF_CMap::~CPDF_CMap() {
-  if (m_pMapping) {
-    FX_Free(m_pMapping);
-  }
-  if (m_pAddMapping) {
-    FX_Free(m_pAddMapping);
-  }
-  if (m_pLeadingBytes) {
-    FX_Free(m_pLeadingBytes);
-  }
+  FX_Free(m_pMapping);
+  FX_Free(m_pAddMapping);
+  FX_Free(m_pLeadingBytes);
   delete m_pUseMap;
 }
 void CPDF_CMap::Release() {

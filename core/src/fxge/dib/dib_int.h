@@ -35,9 +35,7 @@ class CWeightTable {
  public:
   CWeightTable() { m_pWeightTables = NULL; }
   ~CWeightTable() {
-    if (m_pWeightTables) {
-      FX_Free(m_pWeightTables);
-    }
+    FX_Free(m_pWeightTables);
     m_pWeightTables = NULL;
   }
   void Calc(int dest_len,

@@ -30,9 +30,7 @@ CPDF_FontGlobals::CPDF_FontGlobals() : m_pContrastRamps(NULL) {
 }
 CPDF_FontGlobals::~CPDF_FontGlobals() {
   ClearAll();
-  if (m_pContrastRamps) {
-    FX_Free(m_pContrastRamps);
-  }
+  FX_Free(m_pContrastRamps);
 }
 class CFX_StockFontArray {
  public:

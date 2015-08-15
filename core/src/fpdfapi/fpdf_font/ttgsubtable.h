@@ -49,11 +49,7 @@ class CFX_CTTGSUBTable {
           ReqFeatureIndex(0),
           FeatureCount(0),
           FeatureIndex(NULL) {}
-    ~TLangSys() {
-      if (FeatureIndex) {
-        delete[] FeatureIndex;
-      }
-    }
+    ~TLangSys() { delete[] FeatureIndex; }
 
    private:
     TLangSys(const TLangSys&);
@@ -73,11 +69,7 @@ class CFX_CTTGSUBTable {
     TT_uint16_t LangSysCount;
     struct TLangSysRecord* LangSysRecord;
     TScript() : DefaultLangSys(0), LangSysCount(0), LangSysRecord(NULL) {}
-    ~TScript() {
-      if (LangSysRecord) {
-        delete[] LangSysRecord;
-      }
-    }
+    ~TScript() { delete[] LangSysRecord; }
 
    private:
     TScript(const TScript&);
@@ -96,11 +88,7 @@ class CFX_CTTGSUBTable {
     TT_uint16_t ScriptCount;
     struct TScriptRecord* ScriptRecord;
     TScriptList() : ScriptCount(0), ScriptRecord(NULL) {}
-    ~TScriptList() {
-      if (ScriptRecord) {
-        delete[] ScriptRecord;
-      }
-    }
+    ~TScriptList() { delete[] ScriptRecord; }
 
    private:
     TScriptList(const TScriptList&);
@@ -111,11 +99,7 @@ class CFX_CTTGSUBTable {
     int LookupCount;
     TT_uint16_t* LookupListIndex;
     TFeature() : FeatureParams(0), LookupCount(0), LookupListIndex(NULL) {}
-    ~TFeature() {
-      if (LookupListIndex) {
-        delete[] LookupListIndex;
-      }
-    }
+    ~TFeature() { delete[] LookupListIndex; }
 
    private:
     TFeature(const TFeature&);
@@ -134,11 +118,7 @@ class CFX_CTTGSUBTable {
     int FeatureCount;
     struct TFeatureRecord* FeatureRecord;
     TFeatureList() : FeatureCount(0), FeatureRecord(NULL) {}
-    ~TFeatureList() {
-      if (FeatureRecord) {
-        delete[] FeatureRecord;
-      }
-    }
+    ~TFeatureList() { delete[] FeatureRecord; }
 
    private:
     TFeatureList(const TFeatureList&);
@@ -166,11 +146,7 @@ class CFX_CTTGSUBTable {
     TT_uint16_t GlyphCount;
     TT_uint16_t* GlyphArray;
     TCoverageFormat1() : GlyphCount(0), GlyphArray(NULL) { CoverageFormat = 1; }
-    ~TCoverageFormat1() override {
-      if (GlyphArray) {
-        delete[] GlyphArray;
-      }
-    }
+    ~TCoverageFormat1() override { delete[] GlyphArray; }
 
    private:
     TCoverageFormat1(const TCoverageFormat1&);
@@ -194,11 +170,7 @@ class CFX_CTTGSUBTable {
     TCoverageFormat2() : RangeCount(0), RangeRecord(NULL) {
       CoverageFormat = 2;
     }
-    ~TCoverageFormat2() override {
-      if (RangeRecord) {
-        delete[] RangeRecord;
-      }
-    }
+    ~TCoverageFormat2() override { delete[] RangeRecord; }
 
    private:
     TCoverageFormat2(const TCoverageFormat2&);
@@ -220,11 +192,7 @@ class CFX_CTTGSUBTable {
     TClassDefFormat1() : StartGlyph(0), GlyphCount(0), ClassValueArray(NULL) {
       ClassFormat = 1;
     }
-    ~TClassDefFormat1() override {
-      if (ClassValueArray) {
-        delete[] ClassValueArray;
-      }
-    }
+    ~TClassDefFormat1() override { delete[] ClassValueArray; }
 
    private:
     TClassDefFormat1(const TClassDefFormat1&);
@@ -246,11 +214,7 @@ class CFX_CTTGSUBTable {
     TClassDefFormat2() : ClassRangeCount(0), ClassRangeRecord(NULL) {
       ClassFormat = 2;
     }
-    ~TClassDefFormat2() override {
-      if (ClassRangeRecord) {
-        delete[] ClassRangeRecord;
-      }
-    }
+    ~TClassDefFormat2() override { delete[] ClassRangeRecord; }
 
    private:
     TClassDefFormat2(const TClassDefFormat2&);
@@ -325,11 +289,7 @@ class CFX_CTTGSUBTable {
     int LookupCount;
     struct TLookup* Lookup;
     TLookupList() : LookupCount(0), Lookup(NULL) {}
-    ~TLookupList() {
-      if (Lookup) {
-        delete[] Lookup;
-      }
-    }
+    ~TLookupList() { delete[] Lookup; }
 
    private:
     TLookupList(const TLookupList&);

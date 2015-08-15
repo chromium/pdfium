@@ -25,9 +25,7 @@ CCodec_ScanlineDecoder::CCodec_ScanlineDecoder() {
   m_pLastScanline = NULL;
 }
 CCodec_ScanlineDecoder::~CCodec_ScanlineDecoder() {
-  if (m_pDataCache) {
-    FX_Free(m_pDataCache);
-  }
+  FX_Free(m_pDataCache);
 }
 uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
   if (m_pDataCache && line < m_pDataCache->m_nCachedLines) {
@@ -600,9 +598,7 @@ CCodec_RLScanlineDecoder::CCodec_RLScanlineDecoder()
       m_bEOD(FALSE),
       m_Operator(0) {}
 CCodec_RLScanlineDecoder::~CCodec_RLScanlineDecoder() {
-  if (m_pScanline) {
-    FX_Free(m_pScanline);
-  }
+  FX_Free(m_pScanline);
 }
 FX_BOOL CCodec_RLScanlineDecoder::CheckDestSize() {
   FX_DWORD i = 0;

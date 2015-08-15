@@ -77,14 +77,10 @@ CFX_Font::~CFX_Font() {
       CFX_GEModule::Get()->GetFontMgr()->ReleaseFace(m_Face);
     }
   }
-  if (m_pOwnedStream) {
-    FX_Free(m_pOwnedStream);
-    m_pOwnedStream = NULL;
-  }
-  if (m_pGsubData) {
-    FX_Free(m_pGsubData);
-    m_pGsubData = NULL;
-  }
+  FX_Free(m_pOwnedStream);
+  m_pOwnedStream = NULL;
+  FX_Free(m_pGsubData);
+  m_pGsubData = NULL;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   ReleasePlatformResource();
 #endif
