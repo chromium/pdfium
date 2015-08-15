@@ -37,32 +37,26 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
 
 }  // namespace
 
-DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
-                                                  FPDF_PAGE page,
-                                                  double page_x,
-                                                  double page_y) {
+DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
+                                                   FPDF_PAGE page,
+                                                   double page_x,
+                                                   double page_y) {
   if (!page || !hHandle)
     return -1;
+
   CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
   if (pPage) {
-    CPDF_InterForm* pInterForm = NULL;
-    pInterForm = new CPDF_InterForm(pPage->m_pDocument, FALSE);
-    if (!pInterForm)
+    CPDF_InterForm interform(pPage->m_pDocument, FALSE);
+    CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
+        pPage, (FX_FLOAT)page_x, (FX_FLOAT)page_y, nullptr);
+    if (!pFormCtrl)
       return -1;
-    CPDF_FormControl* pFormCtrl = pInterForm->GetControlAtPoint(
-        pPage, (FX_FLOAT)page_x, (FX_FLOAT)page_y);
-    if (!pFormCtrl) {
-      delete pInterForm;
-      return -1;
-    }
+
     CPDF_FormField* pFormField = pFormCtrl->GetField();
-    if (!pFormField) {
-      delete pInterForm;
+    if (!pFormField)
       return -1;
-    }
 
     int nType = pFormField->GetFieldType();
-    delete pInterForm;
     return nType;
   }
 
@@ -107,6 +101,28 @@ DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   }
 
   return -1;
+}
+
+DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
+                                                  FPDF_PAGE page,
+                                                  double page_x,
+                                                  double page_y) {
+  return FPDFPage_HasFormFieldAtPoint(hHandle, page, page_x, page_y);
+}
+
+DLLEXPORT int STDCALL FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
+                                                      FPDF_PAGE page,
+                                                      double page_x,
+                                                      double page_y) {
+  if (!page || !hHandle)
+    return -1;
+
+  CPDF_Page* pPage = (CPDF_Page*)page;
+  CPDF_InterForm interform(pPage->m_pDocument, FALSE);
+  int z_order = -1;
+  (void)interform.GetControlAtPoint(pPage, (FX_FLOAT)page_x, (FX_FLOAT)page_y,
+                                    &z_order);
+  return z_order;
 }
 
 DLLEXPORT FPDF_FORMHANDLE STDCALL

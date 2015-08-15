@@ -11,7 +11,7 @@ CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,
   m_pWidgetDict = pWidgetDict;
   m_pForm = m_pField->m_pForm;
 }
-CFX_FloatRect CPDF_FormControl::GetRect() {
+CFX_FloatRect CPDF_FormControl::GetRect() const {
   return m_pWidgetDict->GetRect("Rect");
 }
 CFX_ByteString CPDF_FormControl::GetOnStateName() {

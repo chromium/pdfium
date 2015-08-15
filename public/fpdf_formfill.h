@@ -1311,22 +1311,49 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle);
 #define FPDF_FORMFIELD_XFA 7          // text field type.
 
 /**
- * Function: FPDPage_HasFormFieldAtPoint
- *          Check the form filed position by point.
+ * Function: FPDFPage_HasFormFieldAtPoint
+ *     Get the form field type by point.
  * Parameters:
- *          hHandle     -   Handle to the form fill module. Returned by
- *FPDFDOC_InitFormFillEnvironment.
- *          page        -   Handle to the page. Returned by FPDF_LoadPage
- *function.
- *          page_x      -   X position in PDF "user space".
- *          page_y      -   Y position in PDF "user space".
+ *     hHandle     -   Handle to the form fill module. Returned by
+ *                     FPDFDOC_InitFormFillEnvironment().
+ *     page        -   Handle to the page. Returned by FPDF_LoadPage().
+ *     page_x      -   X position in PDF "user space".
+ *     page_y      -   Y position in PDF "user space".
  * Return Value:
- *          Return the type of the formfiled; -1 indicates no fields.
+ *     Return the type of the form field; -1 indicates no field.
+ *     See field types above.
+ **/
+DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
+                                                   FPDF_PAGE page,
+                                                   double page_x,
+                                                   double page_y);
+
+/**
+ * Function: FPDPage_HasFormFieldAtPoint
+ *     DEPRECATED. Please use FPDFPage_HasFormFieldAtPoint.
  **/
 DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
                                                   FPDF_PAGE page,
                                                   double page_x,
                                                   double page_y);
+
+/**
+ * Function: FPDFPage_FormFieldZOrderAtPoint
+ *     Get the form field z-order by point.
+ * Parameters:
+ *     hHandle     -   Handle to the form fill module. Returned by
+ *                     FPDFDOC_InitFormFillEnvironment().
+ *     page        -   Handle to the page. Returned by FPDF_LoadPage().
+ *     page_x      -   X position in PDF "user space".
+ *     page_y      -   Y position in PDF "user space".
+ * Return Value:
+ *     Return the z-order of the form field; -1 indicates no field.
+ *     Higher numbers are closer to the front.
+ **/
+DLLEXPORT int STDCALL FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
+                                                      FPDF_PAGE page,
+                                                      double page_x,
+                                                      double page_y);
 
 /**
  * Function: FPDF_SetFormFieldHighlightColor
