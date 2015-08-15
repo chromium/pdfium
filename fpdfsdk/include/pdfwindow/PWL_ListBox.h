@@ -18,29 +18,31 @@ class IPWL_Filler_Notify;
 class CPWL_List_Notify : public IFX_List_Notify {
  public:
   CPWL_List_Notify(CPWL_ListBox* pList);
-  virtual ~CPWL_List_Notify();
+  ~CPWL_List_Notify() override;
 
+  // IFX_List_Notify
   void IOnSetScrollInfoX(FX_FLOAT fPlateMin,
                          FX_FLOAT fPlateMax,
                          FX_FLOAT fContentMin,
                          FX_FLOAT fContentMax,
                          FX_FLOAT fSmallStep,
-                         FX_FLOAT fBigStep) {}
+                         FX_FLOAT fBigStep) override {}
   void IOnSetScrollInfoY(FX_FLOAT fPlateMin,
                          FX_FLOAT fPlateMax,
                          FX_FLOAT fContentMin,
                          FX_FLOAT fContentMax,
                          FX_FLOAT fSmallStep,
-                         FX_FLOAT fBigStep);
-  void IOnSetScrollPosX(FX_FLOAT fx) {}
-  void IOnSetScrollPosY(FX_FLOAT fy);
+                         FX_FLOAT fBigStep) override;
+  void IOnSetScrollPosX(FX_FLOAT fx) override {}
+  void IOnSetScrollPosY(FX_FLOAT fy) override;
+  void IOnInvalidateRect(CPDF_Rect* pRect) override;
+
   void IOnSetCaret(FX_BOOL bVisible,
                    const CPDF_Point& ptHead,
                    const CPDF_Point& ptFoot,
                    const CPVT_WordPlace& place);
   void IOnCaretChange(const CPVT_SecProps& secProps,
                       const CPVT_WordProps& wordProps);
-  void IOnInvalidateRect(CPDF_Rect* pRect);
 
  private:
   CPWL_ListBox* m_pList;
@@ -49,34 +51,34 @@ class CPWL_List_Notify : public IFX_List_Notify {
 class CPWL_ListBox : public CPWL_Wnd {
  public:
   CPWL_ListBox();
-  virtual ~CPWL_ListBox();
+  ~CPWL_ListBox() override;
 
-  virtual CFX_ByteString GetClassName() const;
-  virtual void OnCreated();
-  virtual void OnDestroy();
-  virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
+  // CPWL_Wnd
+  CFX_ByteString GetClassName() const override;
+  void OnCreated() override;
+  void OnDestroy() override;
+  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnMouseWheel(short zDelta,
+                       const CPDF_Point& point,
+                       FX_DWORD nFlag) override;
+  void KillFocus() override;
+  void OnNotify(CPWL_Wnd* pWnd,
+                FX_DWORD msg,
+                intptr_t wParam = 0,
+                intptr_t lParam = 0) override;
+  void RePosChildWnd() override;
+  CPDF_Rect GetFocusRect() const override;
+  void SetFontSize(FX_FLOAT fFontSize) override;
+  FX_FLOAT GetFontSize() const override;
 
-  virtual FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMouseWheel(short zDelta,
-                               const CPDF_Point& point,
-                               FX_DWORD nFlag);
-  virtual void KillFocus();
-
-  virtual void OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
-                        intptr_t wParam = 0,
-                        intptr_t lParam = 0);
-  virtual void RePosChildWnd();
   virtual CFX_WideString GetText() const;
-  virtual CPDF_Rect GetFocusRect() const;
-  virtual void SetFontSize(FX_FLOAT fFontSize);
-  virtual FX_FLOAT GetFontSize() const;
 
   void OnNotifySelChanged(FX_BOOL bKeyDown, FX_BOOL& bExit, FX_DWORD nFlag);
 

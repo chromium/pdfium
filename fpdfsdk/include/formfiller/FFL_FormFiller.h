@@ -161,33 +161,34 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
 class CFFL_Button : public CFFL_FormFiller {
  public:
   CFFL_Button(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget);
-  virtual ~CFFL_Button();
+  ~CFFL_Button() override;
 
-  virtual void OnMouseEnter(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
-  virtual void OnMouseExit(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
-  virtual FX_BOOL OnLButtonDown(CPDFSDK_PageView* pPageView,
-                                CPDFSDK_Annot* pAnnot,
-                                FX_UINT nFlags,
-                                const CPDF_Point& point);
-  virtual FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot* pAnnot,
-                              FX_UINT nFlags,
-                              const CPDF_Point& point);
-  virtual FX_BOOL OnMouseMove(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot* pAnnot,
-                              FX_UINT nFlags,
-                              const CPDF_Point& point);
-  virtual void OnDraw(CPDFSDK_PageView* pPageView,
+  // CFFL_FormFiller
+  void OnMouseEnter(CPDFSDK_PageView* pPageView,
+                    CPDFSDK_Annot* pAnnot) override;
+  void OnMouseExit(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot) override;
+  FX_BOOL OnLButtonDown(CPDFSDK_PageView* pPageView,
+                        CPDFSDK_Annot* pAnnot,
+                        FX_UINT nFlags,
+                        const CPDF_Point& point) override;
+  FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
+                      CPDFSDK_Annot* pAnnot,
+                      FX_UINT nFlags,
+                      const CPDF_Point& point) override;
+  FX_BOOL OnMouseMove(CPDFSDK_PageView* pPageView,
+                      CPDFSDK_Annot* pAnnot,
+                      FX_UINT nFlags,
+                      const CPDF_Point& point) override;
+  void OnDraw(CPDFSDK_PageView* pPageView,
+              CPDFSDK_Annot* pAnnot,
+              CFX_RenderDevice* pDevice,
+              CPDF_Matrix* pUser2Device,
+              FX_DWORD dwFlags) override;
+  void OnDrawDeactive(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
                       CPDF_Matrix* pUser2Device,
-                      FX_DWORD dwFlags);
-
-  virtual void OnDrawDeactive(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot* pAnnot,
-                              CFX_RenderDevice* pDevice,
-                              CPDF_Matrix* pUser2Device,
-                              FX_DWORD dwFlags);
+                      FX_DWORD dwFlags) override;
 
  protected:
   FX_BOOL m_bMouseIn;

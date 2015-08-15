@@ -13,17 +13,17 @@
 
 class CPWL_CBEdit : public CPWL_Edit {
  public:
-  CPWL_CBEdit(){};
-  virtual ~CPWL_CBEdit(){};
+  CPWL_CBEdit() {}
+  ~CPWL_CBEdit() override {}
 };
 
 class CPWL_CBListBox : public CPWL_ListBox {
  public:
-  CPWL_CBListBox(){};
-  virtual ~CPWL_CBListBox(){};
+  CPWL_CBListBox() {}
+  ~CPWL_CBListBox() override {}
 
- public:
-  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
+  // CPWL_ListBox
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
 
   FX_BOOL OnKeyDownWithExit(FX_WORD nChar, FX_BOOL& bExit, FX_DWORD nFlag);
   FX_BOOL OnCharWithExit(FX_WORD nChar, FX_BOOL& bExit, FX_DWORD nFlag);
@@ -33,46 +33,40 @@ class CPWL_CBListBox : public CPWL_ListBox {
 
 class CPWL_CBButton : public CPWL_Wnd {
  public:
-  CPWL_CBButton(){};
-  virtual ~CPWL_CBButton(){};
+  CPWL_CBButton() {}
+  ~CPWL_CBButton() override {}
 
- public:
-  virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
+  // CPWL_Wnd
+  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
 };
 
 class CPWL_ComboBox : public CPWL_Wnd {
  public:
   CPWL_ComboBox();
+  ~CPWL_ComboBox() {}
+
   operator CPWL_Edit*() { return m_pEdit; }
 
- public:
-  virtual CFX_ByteString GetClassName() const;
-  virtual void OnCreate(PWL_CREATEPARAM& cp);
+  // CPWL_Wnd
+  CFX_ByteString GetClassName() const override;
+  void OnCreate(PWL_CREATEPARAM& cp) override;
+  FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
+  void OnNotify(CPWL_Wnd* pWnd,
+                FX_DWORD msg,
+                intptr_t wParam = 0,
+                intptr_t lParam = 0) override;
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void RePosChildWnd() override;
+  CPDF_Rect GetFocusRect() const override;
+  void SetFocus() override;
+  void KillFocus() override;
+  FX_BOOL IsModified() const override;
 
-  virtual FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag);
-
-  virtual void OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
-                        intptr_t wParam = 0,
-                        intptr_t lParam = 0);
-
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
-  virtual void RePosChildWnd();
-
-  virtual CPDF_Rect GetFocusRect() const;
-
-  virtual void SetFocus();
-  virtual void KillFocus();
-
-  FX_BOOL IsModified() const;
-
- public:
   void SetFillerNotify(IPWL_Filler_Notify* pNotify);
 
   CFX_WideString GetText() const;
@@ -90,28 +84,23 @@ class CPWL_ComboBox : public CPWL_Wnd {
 
   void SetSelectText();
 
+  void AttachFFLData(void* pData) { m_pFormFiller = pData; }
+
  private:
   void CreateEdit(const PWL_CREATEPARAM& cp);
   void CreateButton(const PWL_CREATEPARAM& cp);
   void CreateListBox(const PWL_CREATEPARAM& cp);
-
   void SetPopup(FX_BOOL bPopup);
 
- private:
   CPWL_CBEdit* m_pEdit;
   CPWL_CBButton* m_pButton;
   CPWL_CBListBox* m_pList;
-
   FX_BOOL m_bPopup;
   CPDF_Rect m_rcOldWindow;
   int32_t m_nPopupWhere;
   int32_t m_nSelectItem;
   IPWL_Filler_Notify* m_pFillerNotify;
 
- public:
-  void AttachFFLData(void* pData) { m_pFormFiller = pData; }
-
- private:
   void* m_pFormFiller;
 };
 

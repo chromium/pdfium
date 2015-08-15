@@ -19,7 +19,7 @@ class CBA_FontMap : public CPWL_FontMap {
               CPDF_Dictionary* pAnnotDict,
               IFX_SystemHandler* pSystemHandler);
 
-  virtual ~CBA_FontMap();
+  ~CBA_FontMap() override;
 
   virtual void Initial(const FX_CHAR* fontname = NULL);
 

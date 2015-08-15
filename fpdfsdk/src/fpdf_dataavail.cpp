@@ -14,10 +14,12 @@ extern void ProcessParseError(FX_DWORD err_code);
 class CFPDF_FileAvailWrap : public IFX_FileAvail {
  public:
   CFPDF_FileAvailWrap() { m_pfileAvail = NULL; }
+  ~CFPDF_FileAvailWrap() override {}
 
   void Set(FX_FILEAVAIL* pfileAvail) { m_pfileAvail = pfileAvail; }
 
-  virtual FX_BOOL IsDataAvail(FX_FILESIZE offset, FX_DWORD size) {
+  // IFX_FileAvail
+  FX_BOOL IsDataAvail(FX_FILESIZE offset, FX_DWORD size) override {
     return m_pfileAvail->IsDataAvail(m_pfileAvail, offset, size);
   }
 
@@ -28,17 +30,19 @@ class CFPDF_FileAvailWrap : public IFX_FileAvail {
 class CFPDF_FileAccessWrap : public IFX_FileRead {
  public:
   CFPDF_FileAccessWrap() { m_pFileAccess = NULL; }
+  ~CFPDF_FileAccessWrap() override {}
 
   void Set(FPDF_FILEACCESS* pFile) { m_pFileAccess = pFile; }
 
-  virtual FX_FILESIZE GetSize() { return m_pFileAccess->m_FileLen; }
+  // IFX_FileRead
+  FX_FILESIZE GetSize() override { return m_pFileAccess->m_FileLen; }
 
-  virtual FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
+  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
     return m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset,
                                      (uint8_t*)buffer, size);
   }
 
-  virtual void Release() {}
+  void Release() override {}
 
  private:
   FPDF_FILEACCESS* m_pFileAccess;
@@ -46,12 +50,14 @@ class CFPDF_FileAccessWrap : public IFX_FileRead {
 
 class CFPDF_DownloadHintsWrap : public IFX_DownloadHints {
  public:
-  CFPDF_DownloadHintsWrap(FX_DOWNLOADHINTS* pDownloadHints) {
+  explicit CFPDF_DownloadHintsWrap(FX_DOWNLOADHINTS* pDownloadHints) {
     m_pDownloadHints = pDownloadHints;
   }
+  ~CFPDF_DownloadHintsWrap() override {}
 
  public:
-  virtual void AddSegment(FX_FILESIZE offset, FX_DWORD size) {
+  // IFX_DownloadHints
+  void AddSegment(FX_FILESIZE offset, FX_DWORD size) override {
     m_pDownloadHints->AddSegment(m_pDownloadHints, offset, size);
   }
 

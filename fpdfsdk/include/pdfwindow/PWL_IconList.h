@@ -26,11 +26,7 @@ class IPWL_IconList_Notify {
 class CPWL_IconList_Item : public CPWL_Wnd {
  public:
   CPWL_IconList_Item();
-  virtual ~CPWL_IconList_Item();
-
-  virtual CFX_ByteString GetClassName() const;
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
-  virtual void RePosChildWnd();
+  ~CPWL_IconList_Item() override;
 
   void SetSelect(FX_BOOL bSelected);
   FX_BOOL IsSelected() const;
@@ -41,12 +37,15 @@ class CPWL_IconList_Item : public CPWL_Wnd {
   CFX_WideString GetText() const;
 
  protected:
-  virtual FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth);
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-
-  virtual void OnEnabled();
-  virtual void OnDisabled();
+  // CPWL_Wnd
+  CFX_ByteString GetClassName() const override;
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void RePosChildWnd() override;
+  FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth) override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  void OnEnabled() override;
+  void OnDisabled() override;
 
  private:
   int32_t m_nIconIndex;
@@ -59,7 +58,7 @@ class CPWL_IconList_Item : public CPWL_Wnd {
 class CPWL_IconList_Content : public CPWL_ListCtrl {
  public:
   CPWL_IconList_Content(int32_t nListCount);
-  virtual ~CPWL_IconList_Content();
+  ~CPWL_IconList_Content() override;
 
   void SetSelect(int32_t nIndex);
   int32_t GetSelect() const;
@@ -74,11 +73,12 @@ class CPWL_IconList_Content : public CPWL_ListCtrl {
   void ScrollToItem(int32_t nItemIndex);
 
  protected:
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
-  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
+  // CPWL_ListCtrl
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
 
  private:
   CPWL_IconList_Item* GetListItem(int32_t nItemIndex) const;
@@ -95,11 +95,7 @@ class CPWL_IconList_Content : public CPWL_ListCtrl {
 class CPWL_IconList : public CPWL_Wnd {
  public:
   CPWL_IconList(int32_t nListCount);
-  virtual ~CPWL_IconList();
-
-  virtual FX_BOOL OnMouseWheel(short zDelta,
-                               const CPDF_Point& point,
-                               FX_DWORD nFlag);
+  ~CPWL_IconList() override;
 
   void SetSelect(int32_t nIndex);
   void SetTopItem(int32_t nIndex);
@@ -113,14 +109,17 @@ class CPWL_IconList : public CPWL_Wnd {
   CFX_WideString GetListString(int32_t nItemIndex) const;
 
  protected:
-  virtual void OnCreated();
-  virtual void RePosChildWnd();
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
-
-  virtual void OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
-                        intptr_t wParam = 0,
-                        intptr_t lParam = 0);
+  // CPWL_Wnd
+  FX_BOOL OnMouseWheel(short zDelta,
+                       const CPDF_Point& point,
+                       FX_DWORD nFlag) override;
+  void OnCreated() override;
+  void RePosChildWnd() override;
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void OnNotify(CPWL_Wnd* pWnd,
+                FX_DWORD msg,
+                intptr_t wParam = 0,
+                intptr_t lParam = 0) override;
 
  private:
   CPWL_IconList_Content* m_pListContent;

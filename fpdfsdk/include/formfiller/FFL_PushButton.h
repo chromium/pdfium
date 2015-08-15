@@ -12,17 +12,17 @@
 class CFFL_PushButton : public CFFL_Button {
  public:
   CFFL_PushButton(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot);
-  virtual ~CFFL_PushButton();
+  ~CFFL_PushButton() override;
 
-  virtual CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp,
-                                 CPDFSDK_PageView* pPageView);
-
-  virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
-  virtual void OnDraw(CPDFSDK_PageView* pPageView,
-                      CPDFSDK_Annot* pAnnot,
-                      CFX_RenderDevice* pDevice,
-                      CPDF_Matrix* pUser2Device,
-                      FX_DWORD dwFlags);
+  // CFFL_Button
+  CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp,
+                         CPDFSDK_PageView* pPageView) override;
+  FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags) override;
+  void OnDraw(CPDFSDK_PageView* pPageView,
+              CPDFSDK_Annot* pAnnot,
+              CFX_RenderDevice* pDevice,
+              CPDF_Matrix* pUser2Device,
+              FX_DWORD dwFlags) override;
 };
 
 #endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_PUSHBUTTON_H_

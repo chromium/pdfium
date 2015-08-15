@@ -48,7 +48,8 @@ IMPLEMENT_JS_CLASS(CJS_Util, util)
 
 util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
-util::~util(void) {}
+util::~util() {
+}
 
 struct stru_TbConvert {
   const FX_WCHAR* lpszJSMark;

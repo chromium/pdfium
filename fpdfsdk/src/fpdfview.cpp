@@ -323,6 +323,8 @@ class CMemFile final : public IFX_FileRead {
   }
 
  private:
+  ~CMemFile() override {}
+
   uint8_t* m_pBuf;
   FX_FILESIZE m_size;
 };

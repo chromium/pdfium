@@ -12,7 +12,8 @@
 class Icon : public CJS_EmbedObj {
  public:
   Icon(CJS_Object* pJSObject);
-  virtual ~Icon();
+  ~Icon() override;
+
   FX_BOOL name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
   void SetStream(CPDF_Stream* pIconStream);
   CPDF_Stream* GetStream();
@@ -26,8 +27,8 @@ class Icon : public CJS_EmbedObj {
 
 class CJS_Icon : public CJS_Object {
  public:
-  CJS_Icon(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Icon(){};
+  CJS_Icon(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Icon() override {}
 
  public:
   DECLARE_JS_CLASS(CJS_Icon);

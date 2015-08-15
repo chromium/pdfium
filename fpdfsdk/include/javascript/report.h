@@ -12,7 +12,7 @@
 class Report : public CJS_EmbedObj {
  public:
   Report(CJS_Object* pJSObject);
-  virtual ~Report();
+  ~Report() override;
 
  public:
   FX_BOOL save(IFXJS_Context* cc,
@@ -27,8 +27,8 @@ class Report : public CJS_EmbedObj {
 
 class CJS_Report : public CJS_Object {
  public:
-  CJS_Report(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Report(){};
+  CJS_Report(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Report() override {}
 
  public:
   DECLARE_JS_CLASS(CJS_Report);

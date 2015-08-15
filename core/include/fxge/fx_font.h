@@ -14,13 +14,13 @@
 
 typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;
-class IFX_FontEncoding;
-class CFX_PathData;
-class CFX_SubstFont;
+class CFontFileFaceInfo;
 class CFX_FaceCache;
 class CFX_FontMapper;
+class CFX_PathData;
+class CFX_SubstFont;
 class IFX_SystemFontInfo;
-class CFontFileFaceInfo;
+
 #define FXFONT_FIXED_PITCH 0x01
 #define FXFONT_SERIF 0x02
 #define FXFONT_SYMBOLIC 0x04
@@ -139,6 +139,7 @@ class CFX_Font {
 };
 #define ENCODING_INTERNAL 0
 #define ENCODING_UNICODE 1
+
 class IFX_FontEncoding {
  public:
   virtual ~IFX_FontEncoding() {}
@@ -149,6 +150,7 @@ class IFX_FontEncoding {
 
   virtual FX_DWORD CharCodeFromUnicode(FX_WCHAR Unicode) const = 0;
 };
+
 IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont);
 #define FXFM_ENC_TAG(a, b, c, d)                                          \
   (((FX_DWORD)(a) << 24) | ((FX_DWORD)(b) << 16) | ((FX_DWORD)(c) << 8) | \
@@ -262,20 +264,26 @@ class CFX_FontMgr {
   FXFT_Library m_FTLibrary;
   FoxitFonts m_ExternalFonts[16];
 };
+
 class IFX_FontEnumerator {
  public:
-  virtual ~IFX_FontEnumerator() {}
-
   virtual void HitFont() = 0;
 
   virtual void Finish() = 0;
+
+ protected:
+  virtual ~IFX_FontEnumerator() {}
 };
+
 class IFX_AdditionalFontEnum {
  public:
-  virtual ~IFX_AdditionalFontEnum() {}
   virtual int CountFiles() = 0;
   virtual IFX_FileStream* GetFontFile(int index) = 0;
+
+ protected:
+  virtual ~IFX_AdditionalFontEnum() {}
 };
+
 class CFX_FontMapper {
  public:
   explicit CFX_FontMapper(CFX_FontMgr* mgr);
@@ -487,11 +495,14 @@ FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos,
                            int anti_alias,
                            FX_FLOAT retinaScaleX = 1.0f,
                            FX_FLOAT retinaScaleY = 1.0f);
+
 class IFX_GSUBTable {
  public:
   static IFX_GSUBTable* Create(CFX_Font* pFont);
-  virtual ~IFX_GSUBTable() {}
   virtual FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) = 0;
+
+ protected:
+  virtual ~IFX_GSUBTable() {}
 };
 
 #endif  // CORE_INCLUDE_FXGE_FX_FONT_H_

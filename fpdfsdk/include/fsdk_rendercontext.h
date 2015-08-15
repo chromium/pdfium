@@ -31,8 +31,10 @@ class CRenderContext {
 
 class IFSDK_PAUSE_Adapter : public IFX_Pause {
  public:
-  IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause);
-  FX_BOOL NeedToPauseNow();
+  explicit IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause);
+  ~IFSDK_PAUSE_Adapter() override;
+
+  FX_BOOL NeedToPauseNow() override;
 
  private:
   IFSDK_PAUSE* m_IPause;

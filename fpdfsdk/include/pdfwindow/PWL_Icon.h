@@ -13,7 +13,7 @@
 class CPWL_Image : public CPWL_Wnd {
  public:
   CPWL_Image();
-  virtual ~CPWL_Image();
+  ~CPWL_Image() override;
 
   virtual CFX_ByteString GetImageAppStream();
 
@@ -36,12 +36,13 @@ class CPWL_Image : public CPWL_Wnd {
 class CPWL_Icon : public CPWL_Image {
  public:
   CPWL_Icon();
-  virtual ~CPWL_Icon();
+  ~CPWL_Icon() override;
 
   virtual CPDF_IconFit* GetIconFit() { return m_pIconFit; };
 
-  virtual void GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale);
-  virtual void GetImageOffset(FX_FLOAT& x, FX_FLOAT& y);
+  // CPWL_Image
+  void GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) override;
+  void GetImageOffset(FX_FLOAT& x, FX_FLOAT& y) override;
 
   int32_t GetScaleMethod();
   FX_BOOL IsProportionalScale();

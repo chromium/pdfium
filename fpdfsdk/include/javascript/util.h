@@ -14,7 +14,7 @@
 class util : public CJS_EmbedObj {
  public:
   util(CJS_Object* pJSObject);
-  virtual ~util(void);
+  ~util() override;
 
  public:
   FX_BOOL printd(IFXJS_Context* cc,
@@ -51,8 +51,8 @@ class util : public CJS_EmbedObj {
 
 class CJS_Util : public CJS_Object {
  public:
-  CJS_Util(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Util(void){};
+  CJS_Util(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Util() override {}
 
   DECLARE_JS_CLASS(CJS_Util);
 

@@ -284,7 +284,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
  public:
   CPWL_Wnd();
-  virtual ~CPWL_Wnd();
+  ~CPWL_Wnd() override;
 
   void Create(const PWL_CREATEPARAM& cp);
   virtual CFX_ByteString GetClassName() const;
@@ -373,7 +373,6 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   IFX_Edit_FontMap* GetFontMap() const;
   IPWL_Provider* GetProvider() const;
-  virtual IFX_SystemHandler* GetSystemHandler() const;
   IPWL_FocusHandler* GetFocusHandler() const;
 
   int32_t GetTransparency();
@@ -399,6 +398,9 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void SetCursor();
 
  protected:
+  // CPWL_TimerHandler
+  IFX_SystemHandler* GetSystemHandler() const override;
+
   virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
   virtual void RePosChildWnd();
   void GetAppearanceStream(CFX_ByteTextBuf& sAppStream);

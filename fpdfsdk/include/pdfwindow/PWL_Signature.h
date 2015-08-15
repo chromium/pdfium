@@ -16,17 +16,17 @@ class CPWL_Label;
 class CPWL_Signature_Image : public CPWL_Image {
  public:
   CPWL_Signature_Image();
-  virtual ~CPWL_Signature_Image();
+  ~CPWL_Signature_Image() override;
 
   void SetImage(CFX_DIBSource* pImage);
   CFX_DIBSource* GetImage();
 
  protected:
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-  virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
-
-  virtual void GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale);
+  // CPWL_Image
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
+  void GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) override;
 
  private:
   CFX_DIBSource* m_pImage;
@@ -35,7 +35,7 @@ class CPWL_Signature_Image : public CPWL_Image {
 class CPWL_Signature : public CPWL_Wnd {
  public:
   CPWL_Signature();
-  virtual ~CPWL_Signature();
+  ~CPWL_Signature() override;
 
   void SetText(const FX_WCHAR* sText);
   void SetDescription(const FX_WCHAR* string);
@@ -47,12 +47,12 @@ class CPWL_Signature : public CPWL_Wnd {
   void SetFoxitFlag(FX_BOOL bFlagExist);
 
  protected:
-  virtual void RePosChildWnd();
-  virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
-
-  virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
-  virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
+  // CPWL_Wnd
+  void RePosChildWnd() override;
+  void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
+  void DrawThisAppearance(CFX_RenderDevice* pDevice,
+                          CPDF_Matrix* pUser2Device) override;
+  void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
 
  private:
   CPWL_Label* m_pText;

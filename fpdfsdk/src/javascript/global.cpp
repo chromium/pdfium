@@ -107,7 +107,7 @@ FX_BOOL CJS_Global::InitInstance(IFXJS_Context* cc) {
 global_alternate::global_alternate(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_pApp(NULL) {}
 
-global_alternate::~global_alternate(void) {
+global_alternate::~global_alternate() {
   DestroyGlobalPersisitentVariables();
   CPDFXFA_App::GetInstance()->GetRuntimeFactory()->ReleaseGlobalData();
 }

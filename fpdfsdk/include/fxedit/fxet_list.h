@@ -54,6 +54,8 @@ class CLST_Rect : public CPDF_Rect {
     bottom = rect.bottom;
   }
 
+  ~CLST_Rect() {}
+
   void Default() { left = top = right = bottom = 0.0f; }
 
   const CLST_Rect operator=(const CPDF_Rect& rect) {
@@ -285,44 +287,46 @@ class CPLST_Select {
 class CFX_ListCtrl : public CFX_List {
  public:
   CFX_ListCtrl();
-  virtual ~CFX_ListCtrl();
+  ~CFX_ListCtrl() override;
 
- public:
-  void SetNotify(IFX_List_Notify* pNotify);
-
-  void OnMouseDown(const CPDF_Point& point, FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnMouseMove(const CPDF_Point& point, FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_UP(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_DOWN(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_LEFT(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_RIGHT(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_HOME(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK(int32_t nItemIndex, FX_BOOL bShift, FX_BOOL bCtrl);
-  FX_BOOL OnChar(FX_WORD nChar, FX_BOOL bShift, FX_BOOL bCtrl);
+  // CFX_List
+  void SetNotify(IFX_List_Notify* pNotify) override;
+  void OnMouseDown(const CPDF_Point& point,
+                   FX_BOOL bShift,
+                   FX_BOOL bCtrl) override;
+  void OnMouseMove(const CPDF_Point& point,
+                   FX_BOOL bShift,
+                   FX_BOOL bCtrl) override;
+  void OnVK_UP(FX_BOOL bShift, FX_BOOL bCtrl) override;
+  void OnVK_DOWN(FX_BOOL bShift, FX_BOOL bCtrl) override;
+  void OnVK_LEFT(FX_BOOL bShift, FX_BOOL bCtrl) override;
+  void OnVK_RIGHT(FX_BOOL bShift, FX_BOOL bCtrl) override;
+  void OnVK_HOME(FX_BOOL bShift, FX_BOOL bCtrl) override;
+  void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl) override;
+  void OnVK(int32_t nItemIndex, FX_BOOL bShift, FX_BOOL bCtrl) override;
+  FX_BOOL OnChar(FX_WORD nChar, FX_BOOL bShift, FX_BOOL bCtrl) override;
+  void SetPlateRect(const CPDF_Rect& rect) override;
+  void SetScrollPos(const CPDF_Point& point) override;
+  void ScrollToListItem(int32_t nItemIndex) override;
+  CPDF_Rect GetItemRect(int32_t nIndex) const override;
+  int32_t GetCaret() const override { return m_nCaretIndex; }
+  int32_t GetSelect() const override { return m_nSelItem; }
+  int32_t GetTopItem() const override;
+  CPDF_Rect GetContentRect() const override;
+  int32_t GetItemIndex(const CPDF_Point& point) const override;
+  void AddString(const FX_WCHAR* string) override;
+  void SetTopItem(int32_t nIndex) override;
+  void Select(int32_t nItemIndex) override;
+  void SetCaret(int32_t nItemIndex) override;
+  void Empty() override;
+  void Cancel() override;
+  CFX_WideString GetText() const override;
+  void ReArrange(int32_t nItemIndex) override;
 
   virtual CPDF_Point InToOut(const CPDF_Point& point) const;
   virtual CPDF_Point OutToIn(const CPDF_Point& point) const;
   virtual CPDF_Rect InToOut(const CPDF_Rect& rect) const;
   virtual CPDF_Rect OutToIn(const CPDF_Rect& rect) const;
-
-  virtual void SetPlateRect(const CPDF_Rect& rect);
-  void SetScrollPos(const CPDF_Point& point);
-  void ScrollToListItem(int32_t nItemIndex);
-  virtual CPDF_Rect GetItemRect(int32_t nIndex) const;
-  int32_t GetCaret() const { return m_nCaretIndex; }
-  int32_t GetSelect() const { return m_nSelItem; }
-  int32_t GetTopItem() const;
-  virtual CPDF_Rect GetContentRect() const;
-  virtual int32_t GetItemIndex(const CPDF_Point& point) const;
-
-  void AddString(const FX_WCHAR* string);
-  void SetTopItem(int32_t nIndex);
-  void Select(int32_t nItemIndex);
-  virtual void SetCaret(int32_t nItemIndex);
-  virtual void Empty();
-  virtual void Cancel();
-  CFX_WideString GetText() const;
 
  private:
   void SetMultipleSelect(int32_t nItemIndex, FX_BOOL bSelected);
@@ -332,7 +336,6 @@ class CFX_ListCtrl : public CFX_List {
   FX_BOOL IsItemVisible(int32_t nItemIndex) const;
   void SetScrollInfo();
   void SetScrollPosY(FX_FLOAT fy);
-  virtual void ReArrange(int32_t nItemIndex);
 
  private:
   IFX_List_Notify* m_pNotify;

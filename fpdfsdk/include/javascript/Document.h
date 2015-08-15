@@ -12,7 +12,7 @@
 class PrintParamsObj : public CJS_EmbedObj {
  public:
   PrintParamsObj(CJS_Object* pJSObject);
-  virtual ~PrintParamsObj() {}
+  ~PrintParamsObj() override {}
 
  public:
   FX_BOOL bUI;
@@ -28,7 +28,7 @@ class PrintParamsObj : public CJS_EmbedObj {
 class CJS_PrintParamsObj : public CJS_Object {
  public:
   CJS_PrintParamsObj(JSFXObject pObject) : CJS_Object(pObject) {}
-  virtual ~CJS_PrintParamsObj() {}
+  ~CJS_PrintParamsObj() override {}
 
   DECLARE_JS_CLASS(CJS_PrintParamsObj);
 };
@@ -70,7 +70,7 @@ struct CJS_AnnotObj;
 class Document : public CJS_EmbedObj {
  public:
   Document(CJS_Object* pJSObject);
-  virtual ~Document();
+  ~Document() override;
 
  public:
   FX_BOOL ADBE(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
@@ -323,10 +323,11 @@ class Document : public CJS_EmbedObj {
 
 class CJS_Document : public CJS_Object {
  public:
-  CJS_Document(JSFXObject pObject) : CJS_Object(pObject){};
-  virtual ~CJS_Document(){};
+  explicit CJS_Document(JSFXObject pObject) : CJS_Object(pObject) {}
+  ~CJS_Document() override {}
 
-  virtual FX_BOOL InitInstance(IFXJS_Context* cc);
+  // CJS_Object
+  FX_BOOL InitInstance(IFXJS_Context* cc) override;
 
   DECLARE_JS_CLASS(CJS_Document);
 
