@@ -66,7 +66,7 @@ class CJBig2_Context : public CJBig2_Object {
 
   int32_t getNextPage(CJBig2_Image** image, IFX_Pause* pPause);
   int32_t Continue(IFX_Pause* pPause);
-  FXCODEC_STATUS GetProcessiveStatus() { return m_ProcessiveStatus; };
+  FXCODEC_STATUS GetProcessiveStatus() { return m_ProcessiveStatus; }
 
  private:
   CJBig2_Context(uint8_t* pGlobalData,

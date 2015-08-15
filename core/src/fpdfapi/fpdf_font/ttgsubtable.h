@@ -23,7 +23,7 @@ class CFX_GlyphMap {
 };
 class CFX_CTTGSUBTable {
  public:
-  CFX_CTTGSUBTable(void) : m_bFeautureMapLoad(FALSE), loaded(false){};
+  CFX_CTTGSUBTable(void) : m_bFeautureMapLoad(FALSE), loaded(false) {}
   CFX_CTTGSUBTable(FT_Bytes gsub) : m_bFeautureMapLoad(FALSE), loaded(false) {
     LoadGSUBTable(gsub);
   }

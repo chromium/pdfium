@@ -301,16 +301,16 @@ class CTypeset {
 };
 class CPDF_EditContainer {
  public:
-  CPDF_EditContainer() : m_rcPlate(0, 0, 0, 0), m_rcContent(0, 0, 0, 0){};
-  virtual ~CPDF_EditContainer(){};
-  virtual void SetPlateRect(const CPDF_Rect& rect) { m_rcPlate = rect; };
-  virtual const CPDF_Rect& GetPlateRect() const { return m_rcPlate; };
+  CPDF_EditContainer() : m_rcPlate(0, 0, 0, 0), m_rcContent(0, 0, 0, 0) {}
+  virtual ~CPDF_EditContainer() {}
+  virtual void SetPlateRect(const CPDF_Rect& rect) { m_rcPlate = rect; }
+  virtual const CPDF_Rect& GetPlateRect() const { return m_rcPlate; }
   virtual void SetContentRect(const CPVT_FloatRect& rect) {
     m_rcContent = rect;
   };
-  virtual CPDF_Rect GetContentRect() const { return m_rcContent; };
-  FX_FLOAT GetPlateWidth() const { return m_rcPlate.right - m_rcPlate.left; };
-  FX_FLOAT GetPlateHeight() const { return m_rcPlate.top - m_rcPlate.bottom; };
+  virtual CPDF_Rect GetContentRect() const { return m_rcContent; }
+  FX_FLOAT GetPlateWidth() const { return m_rcPlate.right - m_rcPlate.left; }
+  FX_FLOAT GetPlateHeight() const { return m_rcPlate.top - m_rcPlate.bottom; }
   CPVT_Size GetPlateSize() const {
     return CPVT_Size(GetPlateWidth(), GetPlateHeight());
   };
@@ -556,7 +556,7 @@ class CPDF_VariableText_Iterator : public IPDF_VariableText_Iterator {
   FX_BOOL SetSection(const CPVT_Section& section) override;
   void SetAt(int32_t nWordIndex) override;
   void SetAt(const CPVT_WordPlace& place) override;
-  const CPVT_WordPlace& GetAt() const override { return m_CurPos; };
+  const CPVT_WordPlace& GetAt() const override { return m_CurPos; }
 
  private:
   CPVT_WordPlace m_CurPos;

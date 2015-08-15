@@ -422,7 +422,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void OnEnabled();
   virtual void OnDisabled();
 
-  void SetNotifyFlag(FX_BOOL bNotifying = TRUE) { m_bNotifying = bNotifying; };
+  void SetNotifyFlag(FX_BOOL bNotifying = TRUE) { m_bNotifying = bNotifying; }
 
   FX_BOOL IsValid() const;
   PWL_CREATEPARAM GetCreationParam() const;

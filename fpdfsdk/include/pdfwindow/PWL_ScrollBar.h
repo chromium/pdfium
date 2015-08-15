@@ -111,7 +111,7 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   void TimerProc() override;
 
   FX_FLOAT GetScrollBarWidth() const;
-  PWL_SCROLLBAR_TYPE GetScrollBarType() const { return m_sbType; };
+  PWL_SCROLLBAR_TYPE GetScrollBarType() const { return m_sbType; }
 
   void SetNotifyForever(FX_BOOL bForever) { m_bNotifyForever = bForever; }
 

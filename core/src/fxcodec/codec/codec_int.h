@@ -288,7 +288,7 @@ class CPDF_Jbig2Interface : public CJBig2_Module {
 class CCodec_Jbig2Context {
  public:
   CCodec_Jbig2Context();
-  ~CCodec_Jbig2Context(){};
+  ~CCodec_Jbig2Context() {}
 
   FX_DWORD m_width;
   FX_DWORD m_height;
@@ -305,7 +305,7 @@ class CCodec_Jbig2Context {
 };
 class CCodec_Jbig2Module : public ICodec_Jbig2Module {
  public:
-  CCodec_Jbig2Module(){};
+  CCodec_Jbig2Module() {}
   ~CCodec_Jbig2Module() override;
 
   // ICodec_Jbig2Module

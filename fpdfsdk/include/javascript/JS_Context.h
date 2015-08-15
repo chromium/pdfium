@@ -128,7 +128,7 @@ class CJS_Context : public IFXJS_Context {
 
   FX_BOOL DoJob(int nMode, const CFX_WideString& script, CFX_WideString& info);
 
-  CJS_EventHandler* GetEventHandler() { return m_pEventHandler; };
+  CJS_EventHandler* GetEventHandler() { return m_pEventHandler; }
   CPDFSDK_Document* GetReaderDocument();
 
  private:
