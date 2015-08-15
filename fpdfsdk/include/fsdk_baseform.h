@@ -70,12 +70,12 @@ class CPDFSDK_Widget : public CPDFSDK_Annot {
 
   int GetLayoutOrder() const override { return 2; }
 
+  int GetFieldType() const;
+
   // Possible values from PDF 32000-1:2008, table 221.
   // FIELDFLAG_READONLY
   // FIELDFLAG_REQUIRED
   // FIELDFLAG_NOEXPORT
-  int GetFieldType() const;
-
   int GetFieldFlags() const;
   int GetRotate() const;
 
