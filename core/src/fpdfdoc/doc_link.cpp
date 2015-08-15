@@ -6,75 +6,68 @@
 
 #include "../../include/fpdfdoc/fpdf_doc.h"
 
+CPDF_LinkList::CPDF_LinkList() {
+}
+
 CPDF_LinkList::~CPDF_LinkList() {
-  FX_POSITION pos = m_PageMap.GetStartPosition();
-  while (pos) {
-    void* key;
-    void* value;
-    m_PageMap.GetNextAssoc(pos, key, value);
-    delete (CFX_PtrArray*)value;
-  }
 }
-CFX_PtrArray* CPDF_LinkList::GetPageLinks(CPDF_Page* pPage) {
+
+const std::vector<CPDF_Dictionary*>* CPDF_LinkList::GetPageLinks(
+    CPDF_Page* pPage) {
   FX_DWORD objnum = pPage->m_pFormDict->GetObjNum();
-  if (objnum == 0) {
-    return NULL;
-  }
-  CFX_PtrArray* pPageLinkList = NULL;
-  if (!m_PageMap.Lookup((void*)(uintptr_t)objnum, (void*&)pPageLinkList)) {
-    pPageLinkList = new CFX_PtrArray;
-    m_PageMap.SetAt((void*)(uintptr_t)objnum, pPageLinkList);
-    LoadPageLinks(pPage, pPageLinkList);
-  }
-  return pPageLinkList;
+  if (objnum == 0)
+    return nullptr;
+
+  auto it = m_PageMap.find(objnum);
+  if (it != m_PageMap.end())
+    return &it->second;
+
+  // std::map::operator[] forces the creation of a map entry.
+  std::vector<CPDF_Dictionary*>& page_link_list = m_PageMap[objnum];
+  LoadPageLinks(pPage, &page_link_list);
+  return &page_link_list;
 }
-int CPDF_LinkList::CountLinks(CPDF_Page* pPage) {
-  CFX_PtrArray* pPageLinkList = GetPageLinks(pPage);
-  if (pPageLinkList == NULL) {
-    return 0;
-  }
-  return pPageLinkList->GetSize();
-}
-CPDF_Link CPDF_LinkList::GetLink(CPDF_Page* pPage, int index) {
-  CFX_PtrArray* pPageLinkList = GetPageLinks(pPage);
-  if (!pPageLinkList) {
-    return CPDF_Link();
-  }
-  return CPDF_Link((CPDF_Dictionary*)pPageLinkList->GetAt(index));
-}
+
 CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
                                         FX_FLOAT pdf_x,
-                                        FX_FLOAT pdf_y) {
-  CFX_PtrArray* pPageLinkList = GetPageLinks(pPage);
-  if (!pPageLinkList) {
+                                        FX_FLOAT pdf_y,
+                                        int* z_order) {
+  const std::vector<CPDF_Dictionary*>* pPageLinkList = GetPageLinks(pPage);
+  if (!pPageLinkList)
     return CPDF_Link();
-  }
-  int size = pPageLinkList->GetSize();
-  for (int i = size - 1; i >= 0; --i) {
-    CPDF_Link link((CPDF_Dictionary*)pPageLinkList->GetAt(i));
+
+  for (size_t i = pPageLinkList->size(); i > 0; --i) {
+    size_t annot_index = i - 1;
+    CPDF_Dictionary* pAnnot = (*pPageLinkList)[annot_index];
+    if (!pAnnot)
+      continue;
+
+    CPDF_Link link(pAnnot);
     CPDF_Rect rect = link.GetRect();
-    if (rect.Contains(pdf_x, pdf_y)) {
-      return link;
-    }
+    if (!rect.Contains(pdf_x, pdf_y))
+      continue;
+
+    if (z_order)
+      *z_order = annot_index;
+    return link;
   }
   return CPDF_Link();
 }
-void CPDF_LinkList::LoadPageLinks(CPDF_Page* pPage, CFX_PtrArray* pList) {
+
+void CPDF_LinkList::LoadPageLinks(CPDF_Page* pPage,
+                                  std::vector<CPDF_Dictionary*>* pList) {
   CPDF_Array* pAnnotList = pPage->m_pFormDict->GetArray("Annots");
-  if (pAnnotList == NULL) {
+  if (!pAnnotList)
     return;
-  }
-  for (FX_DWORD i = 0; i < pAnnotList->GetCount(); i++) {
+
+  for (FX_DWORD i = 0; i < pAnnotList->GetCount(); ++i) {
     CPDF_Dictionary* pAnnot = pAnnotList->GetDict(i);
-    if (pAnnot == NULL) {
-      continue;
-    }
-    if (pAnnot->GetString("Subtype") != "Link") {
-      continue;
-    }
-    pList->Add(pAnnot);
+    bool add_link = (pAnnot && pAnnot->GetString("Subtype") == "Link");
+    // Add non-links as nullptrs to preserve z-order.
+    pList->push_back(add_link ? pAnnot : nullptr);
   }
 }
+
 CPDF_Rect CPDF_Link::GetRect() {
   return m_pDict->GetRect("Rect");
 }

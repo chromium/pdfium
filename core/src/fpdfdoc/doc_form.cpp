@@ -253,23 +253,19 @@ CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument, FX_BOOL bGenerateAP)
     LoadField(pFields->GetDict(i));
   }
 }
+
 CPDF_InterForm::~CPDF_InterForm() {
-  FX_POSITION pos = m_ControlMap.GetStartPosition();
-  while (pos) {
-    void* key;
-    void* value;
-    m_ControlMap.GetNextAssoc(pos, key, value);
-    delete (CPDF_FormControl*)value;
-  }
-  if (m_pFieldTree != NULL) {
+  for (auto it : m_ControlMap)
+    delete it.second;
+  if (m_pFieldTree) {
     int nCount = m_pFieldTree->m_Root.CountFields();
-    for (int i = 0; i < nCount; i++) {
-      CPDF_FormField* pField = m_pFieldTree->m_Root.GetField(i);
-      delete pField;
+    for (int i = 0; i < nCount; ++i) {
+      delete m_pFieldTree->m_Root.GetField(i);
     }
     delete m_pFieldTree;
   }
 }
+
 FX_BOOL CPDF_InterForm::m_bUpdateAP = TRUE;
 FX_BOOL CPDF_InterForm::UpdatingAPEnabled() {
   return m_bUpdateAP;
@@ -788,215 +784,43 @@ CPDF_FormField* CPDF_InterForm::GetFieldByDict(
   CFX_WideString csWName = GetFullName(pFieldDict);
   return m_pFieldTree->GetField(csWName);
 }
-FX_DWORD CPDF_InterForm::CountControls(CFX_WideString csFieldName) {
-  if (csFieldName.IsEmpty()) {
-    return (FX_DWORD)m_ControlMap.GetCount();
-  }
-  CPDF_FormField* pField = m_pFieldTree->GetField(csFieldName);
-  if (pField == NULL) {
-    return 0;
-  }
-  return pField->m_ControlList.GetSize();
-}
-CPDF_FormControl* CPDF_InterForm::GetControl(FX_DWORD index,
-                                             CFX_WideString csFieldName) {
-  CPDF_FormField* pField = m_pFieldTree->GetField(csFieldName);
-  if (pField == NULL) {
-    return NULL;
-  }
-  if (index < (FX_DWORD)pField->m_ControlList.GetSize()) {
-    return (CPDF_FormControl*)pField->m_ControlList.GetAt(index);
-  }
-  return NULL;
-}
-FX_BOOL CPDF_InterForm::IsValidFormControl(const void* pControl) {
-  if (pControl == NULL) {
-    return FALSE;
-  }
-  FX_POSITION pos = m_ControlMap.GetStartPosition();
-  while (pos) {
-    CPDF_Dictionary* pWidgetDict = NULL;
-    void* pFormControl = NULL;
-    m_ControlMap.GetNextAssoc(pos, (void*&)pWidgetDict, pFormControl);
-    if (pControl == pFormControl) {
-      return TRUE;
-    }
-  }
-  return FALSE;
-}
-int CPDF_InterForm::CountPageControls(CPDF_Page* pPage) const {
-  CPDF_Array* pAnnotList = pPage->m_pFormDict->GetArray("Annots");
-  if (pAnnotList == NULL) {
-    return 0;
-  }
-  int count = 0;
-  for (FX_DWORD i = 0; i < pAnnotList->GetCount(); i++) {
-    CPDF_Dictionary* pAnnot = pAnnotList->GetDict(i);
-    if (pAnnot == NULL) {
-      continue;
-    }
-    CPDF_FormControl* pControl;
-    if (!m_ControlMap.Lookup(pAnnot, (void*&)pControl)) {
-      continue;
-    }
-    count++;
-  }
-  return count;
-}
-CPDF_FormControl* CPDF_InterForm::GetPageControl(CPDF_Page* pPage,
-                                                 int index) const {
-  CPDF_Array* pAnnotList = pPage->m_pFormDict->GetArray("Annots");
-  if (pAnnotList == NULL) {
-    return NULL;
-  }
-  int count = 0;
-  for (FX_DWORD i = 0; i < pAnnotList->GetCount(); i++) {
-    CPDF_Dictionary* pAnnot = pAnnotList->GetDict(i);
-    if (pAnnot == NULL) {
-      continue;
-    }
-    CPDF_FormControl* pControl;
-    if (!m_ControlMap.Lookup(pAnnot, (void*&)pControl)) {
-      continue;
-    }
-    if (index == count) {
-      return pControl;
-    }
-    count++;
-  }
-  return NULL;
-}
+
 CPDF_FormControl* CPDF_InterForm::GetControlAtPoint(CPDF_Page* pPage,
                                                     FX_FLOAT pdf_x,
-                                                    FX_FLOAT pdf_y) const {
+                                                    FX_FLOAT pdf_y,
+                                                    int* z_order) const {
   CPDF_Array* pAnnotList = pPage->m_pFormDict->GetArray("Annots");
-  if (pAnnotList == NULL) {
-    return NULL;
-  }
-  for (FX_DWORD i = pAnnotList->GetCount(); i > 0; i--) {
-    CPDF_Dictionary* pAnnot = pAnnotList->GetDict(i - 1);
-    if (pAnnot == NULL) {
+  if (!pAnnotList)
+    return nullptr;
+
+  for (FX_DWORD i = pAnnotList->GetCount(); i > 0; --i) {
+    FX_DWORD annot_index = i - 1;
+    CPDF_Dictionary* pAnnot = pAnnotList->GetDict(annot_index);
+    if (!pAnnot)
       continue;
-    }
-    CPDF_FormControl* pControl;
-    if (!m_ControlMap.Lookup(pAnnot, (void*&)pControl)) {
+
+    const auto it = m_ControlMap.find(pAnnot);
+    if (it == m_ControlMap.end())
       continue;
-    }
+
+    CPDF_FormControl* pControl = it->second;
     CFX_FloatRect rect = pControl->GetRect();
-    if (rect.Contains(pdf_x, pdf_y)) {
-      return pControl;
-    }
+    if (!rect.Contains(pdf_x, pdf_y))
+      continue;
+
+    if (z_order)
+      *z_order = annot_index;
+    return pControl;
   }
-  return NULL;
-}
-CPDF_FormControl* CPDF_InterForm::GetControlByDict(
-    CPDF_Dictionary* pWidgetDict) const {
-  CPDF_FormControl* pControl = NULL;
-  m_ControlMap.Lookup(pWidgetDict, (void*&)pControl);
-  return pControl;
-}
-FX_DWORD CPDF_InterForm::CountInternalFields(
-    const CFX_WideString& csFieldName) const {
-  if (!m_pFormDict) {
-    return 0;
-  }
-  CPDF_Array* pArray = m_pFormDict->GetArray("Fields");
-  if (!pArray) {
-    return 0;
-  }
-  if (csFieldName.IsEmpty()) {
-    return pArray->GetCount();
-  }
-  int iLength = csFieldName.GetLength();
-  int iPos = 0;
-  CPDF_Dictionary* pDict = NULL;
-  while (pArray != NULL) {
-    CFX_WideString csSub;
-    if (iPos < iLength && csFieldName[iPos] == L'.') {
-      iPos++;
-    }
-    while (iPos < iLength && csFieldName[iPos] != L'.') {
-      csSub += csFieldName[iPos++];
-    }
-    int iCount = pArray->GetCount();
-    FX_BOOL bFind = FALSE;
-    for (int i = 0; i < iCount; i++) {
-      pDict = pArray->GetDict(i);
-      if (pDict == NULL) {
-        continue;
-      }
-      CFX_WideString csT = pDict->GetUnicodeText("T");
-      if (csT == csSub) {
-        bFind = TRUE;
-        break;
-      }
-    }
-    if (!bFind) {
-      return 0;
-    }
-    if (iPos >= iLength) {
-      break;
-    }
-    pArray = pDict->GetArray("Kids");
-  }
-  if (!pDict) {
-    return 0;
-  }
-  pArray = pDict->GetArray("Kids");
-  return pArray ? pArray->GetCount() : 1;
+  return nullptr;
 }
 
-CPDF_Dictionary* CPDF_InterForm::GetInternalField(
-    FX_DWORD index,
-    const CFX_WideString& csFieldName) const {
-  if (!m_pFormDict) {
-    return nullptr;
-  }
-  CPDF_Array* pArray = m_pFormDict->GetArray("Fields");
-  if (!pArray) {
-    return nullptr;
-  }
-  if (csFieldName.IsEmpty()) {
-    return pArray->GetDict(index);
-  }
-  int iLength = csFieldName.GetLength();
-  int iPos = 0;
-  CPDF_Dictionary* pDict = NULL;
-  while (pArray != NULL) {
-    CFX_WideString csSub;
-    if (iPos < iLength && csFieldName[iPos] == L'.') {
-      iPos++;
-    }
-    while (iPos < iLength && csFieldName[iPos] != L'.') {
-      csSub += csFieldName[iPos++];
-    }
-    int iCount = pArray->GetCount();
-    FX_BOOL bFind = FALSE;
-    for (int i = 0; i < iCount; i++) {
-      pDict = pArray->GetDict(i);
-      if (pDict == NULL) {
-        continue;
-      }
-      CFX_WideString csT = pDict->GetUnicodeText("T");
-      if (csT == csSub) {
-        bFind = TRUE;
-        break;
-      }
-    }
-    if (!bFind) {
-      return NULL;
-    }
-    if (iPos >= iLength) {
-      break;
-    }
-    pArray = pDict->GetArray("Kids");
-  }
-  if (!pDict) {
-    return nullptr;
-  }
-  pArray = pDict->GetArray("Kids");
-  return pArray ? pArray->GetDict(index) : pDict;
+CPDF_FormControl* CPDF_InterForm::GetControlByDict(
+    CPDF_Dictionary* pWidgetDict) const {
+  const auto it = m_ControlMap.find(pWidgetDict);
+  return it != m_ControlMap.end() ? it->second : nullptr;
 }
+
 FX_BOOL CPDF_InterForm::NeedConstructAP() {
   if (m_pFormDict == NULL) {
     return FALSE;
@@ -1172,33 +996,6 @@ FX_BOOL CPDF_InterForm::ResetForm(FX_BOOL bNotify) {
   }
   return TRUE;
 }
-void CPDF_InterForm::ReloadForm() {
-  FX_POSITION pos = m_ControlMap.GetStartPosition();
-  while (pos) {
-    CPDF_Dictionary* pWidgetDict;
-    CPDF_FormControl* pControl;
-    m_ControlMap.GetNextAssoc(pos, (void*&)pWidgetDict, (void*&)pControl);
-    delete pControl;
-  }
-  m_ControlMap.RemoveAll();
-  int nCount = m_pFieldTree->m_Root.CountFields();
-  for (int k = 0; k < nCount; k++) {
-    CPDF_FormField* pField = m_pFieldTree->m_Root.GetField(k);
-    delete pField;
-  }
-  m_pFieldTree->RemoveAll();
-  if (m_pFormDict == NULL) {
-    return;
-  }
-  CPDF_Array* pFields = m_pFormDict->GetArray("Fields");
-  if (pFields == NULL) {
-    return;
-  }
-  int iCount = pFields->GetCount();
-  for (int i = 0; i < iCount; i++) {
-    LoadField(pFields->GetDict(i));
-  }
-}
 void CPDF_InterForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
   if (nLevel > nMaxRecursion) {
     return;
@@ -1320,13 +1117,13 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(
 CPDF_FormControl* CPDF_InterForm::AddControl(
     const CPDF_FormField* pField,
     const CPDF_Dictionary* pWidgetDict) {
-  void* rValue = NULL;
-  if (m_ControlMap.Lookup((CPDF_Dictionary*)pWidgetDict, rValue)) {
-    return (CPDF_FormControl*)rValue;
-  }
+  const auto it = m_ControlMap.find(pWidgetDict);
+  if (it != m_ControlMap.end())
+    return it->second;
+
   CPDF_FormControl* pControl = new CPDF_FormControl(
       (CPDF_FormField*)pField, (CPDF_Dictionary*)pWidgetDict);
-  m_ControlMap.SetAt((CPDF_Dictionary*)pWidgetDict, pControl);
+  m_ControlMap[pWidgetDict] = pControl;
   ((CPDF_FormField*)pField)->m_ControlList.Add(pControl);
   return pControl;
 }
@@ -1580,46 +1377,4 @@ FX_BOOL CPDF_InterForm::ImportFromFDF(const CFDF_Document* pFDF,
 }
 void CPDF_InterForm::SetFormNotify(const CPDF_FormNotify* pNotify) {
   m_pFormNotify = (CPDF_FormNotify*)pNotify;
-}
-int CPDF_InterForm::GetPageWithWidget(int iCurPage, FX_BOOL bNext) {
-  if (iCurPage < 0) {
-    return -1;
-  }
-  int iPageCount = m_pDocument->GetPageCount();
-  if (iCurPage >= iPageCount) {
-    return -1;
-  }
-  int iNewPage = iCurPage;
-  do {
-    iNewPage += bNext ? 1 : -1;
-    if (iNewPage >= iPageCount) {
-      iNewPage = 0;
-    }
-    if (iNewPage < 0) {
-      iNewPage = iPageCount - 1;
-    }
-    if (iNewPage == iCurPage) {
-      break;
-    }
-    CPDF_Dictionary* pPageDict = m_pDocument->GetPage(iNewPage);
-    if (pPageDict == NULL) {
-      continue;
-    }
-    CPDF_Array* pAnnots = pPageDict->GetArray("Annots");
-    if (pAnnots == NULL) {
-      continue;
-    }
-    FX_DWORD dwCount = pAnnots->GetCount();
-    for (FX_DWORD i = 0; i < dwCount; i++) {
-      CPDF_Object* pAnnotDict = pAnnots->GetElementValue(i);
-      if (pAnnotDict == NULL) {
-        continue;
-      }
-      CPDF_FormControl* pControl = NULL;
-      if (m_ControlMap.Lookup(pAnnotDict, (void*&)pControl)) {
-        return iNewPage;
-      }
-    }
-  } while (TRUE);
-  return -1;
 }

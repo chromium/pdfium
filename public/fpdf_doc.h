@@ -177,23 +177,42 @@ DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document,
                                                       FPDF_DEST dest);
 
 // Function: FPDFLink_GetLinkAtPoint
-//          Find a link at specified point on a document page.
+//     Find a link at specified point on a document page.
 // Parameters:
-//          page        -   Handle to the document page.
-//          x           -   The x coordinate of the point, specified in page
-//          coordinate system.
-//          y           -   The y coordinate of the point, specified in page
-//          coordinate system.
+//     page        -   Handle to the document page.
+//     x           -   The x coordinate of the point, specified in page
+//                     coordinate system.
+//     y           -   The y coordinate of the point, specified in page
+//                     coordinate system.
 // Return value:
-//          Handle to the link. NULL if no link found at that point.
+//     Handle to the link. NULL if no link found at that point.
 // Comments:
-//          The point coordinates are specified in page coordinate system. You
-//          can convert coordinates
-//          from screen system to page system using FPDF_DeviceToPage functions.
+//     The point coordinates are specified in page coordinate system. You can
+//     convert coordinates from screen system to page system using
+//     FPDF_DeviceToPage().
 //
 DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page,
                                                     double x,
                                                     double y);
+
+// Function: FPDFLink_GetLinkZOrderAtPoint
+//     Find the z-order of a link at specified point on a document page.
+// Parameters:
+//     page        -   Handle to the document page.
+//     x           -   The x coordinate of the point, specified in page
+//                     coordinate system.
+//     y           -   The y coordinate of the point, specified in page
+//                     coordinate system.
+// Return value:
+//     Z-order of the link, or -1 if no link found at that point.
+//     Higher numbers are closer to the front.
+// Comments:
+//     The point coordinates are specified in page coordinate system. You can
+//     convert coordinates from screen system to page system using
+//     FPDF_DeviceToPage().
+//
+DLLEXPORT int STDCALL
+FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page, double x, double y);
 
 // Function: FPDFLink_GetDest
 //          Get destination info of a link.

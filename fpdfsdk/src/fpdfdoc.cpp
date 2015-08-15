@@ -7,11 +7,13 @@
 #include "../include/fsdk_define.h"
 #include "../../public/fpdf_doc.h"
 
-static int THISMODULE = 0;
+namespace {
 
-static CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
-                                  CPDF_Bookmark bookmark,
-                                  const CFX_WideString& title) {
+int THISMODULE = 0;
+
+CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
+                           CPDF_Bookmark bookmark,
+                           const CFX_WideString& title) {
   if (bookmark && bookmark.GetTitle().CompareNoCase(title.c_str()) == 0) {
     // First check this item
     return bookmark;
@@ -27,6 +29,26 @@ static CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
   }
   return CPDF_Bookmark();
 }
+
+void ReleaseLinkList(void* data) {
+  delete (CPDF_LinkList*)data;
+}
+
+CPDF_LinkList* GetLinkList(CPDF_Page* page) {
+  if (!page)
+    return nullptr;
+
+  // Link list is stored with the document
+  CPDF_Document* pDoc = page->m_pDocument;
+  CPDF_LinkList* pLinkList = (CPDF_LinkList*)pDoc->GetPrivateData(&THISMODULE);
+  if (!pLinkList) {
+    pLinkList = new CPDF_LinkList;
+    pDoc->SetPrivateData(&THISMODULE, pLinkList, ReleaseLinkList);
+  }
+  return pLinkList;
+}
+
+}  // namespace
 
 DLLEXPORT FPDF_BOOKMARK STDCALL
 FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
@@ -161,24 +183,27 @@ DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document,
   return dest.GetPageIndex(pDoc);
 }
 
-static void ReleaseLinkList(void* data) {
-  delete (CPDF_LinkList*)data;
+DLLEXPORT FPDF_LINK STDCALL
+FPDFLink_GetLinkAtPoint(FPDF_PAGE page, double x, double y) {
+  CPDF_Page* pPage = (CPDF_Page*)page;
+  CPDF_LinkList* pLinkList = GetLinkList(pPage);
+  if (!pLinkList)
+    return nullptr;
+
+  return pLinkList->GetLinkAtPoint(pPage, (FX_FLOAT)x, (FX_FLOAT)y, nullptr)
+      .GetDict();
 }
 
-DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page,
-                                                    double x,
-                                                    double y) {
-  if (!page)
-    return NULL;
+DLLEXPORT int STDCALL
+FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page, double x, double y) {
   CPDF_Page* pPage = (CPDF_Page*)page;
-  // Link list is stored with the document
-  CPDF_Document* pDoc = pPage->m_pDocument;
-  CPDF_LinkList* pLinkList = (CPDF_LinkList*)pDoc->GetPrivateData(&THISMODULE);
-  if (!pLinkList) {
-    pLinkList = new CPDF_LinkList(pDoc);
-    pDoc->SetPrivateData(&THISMODULE, pLinkList, ReleaseLinkList);
-  }
-  return pLinkList->GetLinkAtPoint(pPage, (FX_FLOAT)x, (FX_FLOAT)y).GetDict();
+  CPDF_LinkList* pLinkList = GetLinkList(pPage);
+  if (!pLinkList)
+    return -1;
+
+  int z_order = -1;
+  pLinkList->GetLinkAtPoint(pPage, (FX_FLOAT)x, (FX_FLOAT)y, &z_order);
+  return z_order;
 }
 
 DLLEXPORT FPDF_DEST STDCALL FPDFLink_GetDest(FPDF_DOCUMENT document,

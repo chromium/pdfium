@@ -8,6 +8,7 @@
 #define CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
 
 #include <map>
+#include <vector>
 
 #include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fpdfapi/fpdf_parser.h"
@@ -32,7 +33,6 @@ class CPDF_FormNotify;
 class CPDF_IconFit;
 class CPDF_InterForm;
 class CPDF_Link;
-class CPDF_LinkList;
 class CPDF_LWinParam;
 class CPDF_Metadata;
 class CPDF_NumberTree;
@@ -357,29 +357,25 @@ class CPDF_FileSpec {
  protected:
   CPDF_Object* m_pObj;
 };
+
 class CPDF_LinkList {
  public:
-  CPDF_LinkList(CPDF_Document* pDoc) { m_pDocument = pDoc; }
-
+  CPDF_LinkList();
   ~CPDF_LinkList();
 
-  CPDF_Link GetLinkAtPoint(CPDF_Page* pPage, FX_FLOAT pdf_x, FX_FLOAT pdf_y);
+  CPDF_Link GetLinkAtPoint(CPDF_Page* pPage,
+                           FX_FLOAT pdf_x,
+                           FX_FLOAT pdf_y,
+                           int* z_order);
 
-  int CountLinks(CPDF_Page* pPage);
+ private:
+  const std::vector<CPDF_Dictionary*>* GetPageLinks(CPDF_Page* pPage);
 
-  CPDF_Link GetLink(CPDF_Page* pPage, int index);
+  void LoadPageLinks(CPDF_Page* pPage, std::vector<CPDF_Dictionary*>* pList);
 
-  CPDF_Document* GetDocument() const { return m_pDocument; }
-
- protected:
-  CPDF_Document* m_pDocument;
-
-  CFX_MapPtrToPtr m_PageMap;
-
-  CFX_PtrArray* GetPageLinks(CPDF_Page* pPage);
-
-  void LoadPageLinks(CPDF_Page* pPage, CFX_PtrArray* pList);
+  std::map<FX_DWORD, std::vector<CPDF_Dictionary*>> m_PageMap;
 };
+
 class CPDF_Link {
  public:
   CPDF_Link() : m_pDict(nullptr) {}
@@ -642,28 +638,12 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   CPDF_FormField* GetFieldByDict(CPDF_Dictionary* pFieldDict) const;
 
-  FX_DWORD CountControls(CFX_WideString csFieldName = L"");
-
-  CPDF_FormControl* GetControl(FX_DWORD index,
-                               CFX_WideString csFieldName = L"");
-
-  FX_BOOL IsValidFormControl(const void* pControl);
-
-  int CountPageControls(CPDF_Page* pPage) const;
-
-  CPDF_FormControl* GetPageControl(CPDF_Page* pPage, int index) const;
-
   CPDF_FormControl* GetControlAtPoint(CPDF_Page* pPage,
                                       FX_FLOAT pdf_x,
-                                      FX_FLOAT pdf_y) const;
+                                      FX_FLOAT pdf_y,
+                                      int* z_order) const;
 
   CPDF_FormControl* GetControlByDict(CPDF_Dictionary* pWidgetDict) const;
-
-  FX_DWORD CountInternalFields(const CFX_WideString& csFieldName = L"") const;
-
-  CPDF_Dictionary* GetInternalField(
-      FX_DWORD index,
-      const CFX_WideString& csFieldName = L"") const;
 
   CPDF_Document* GetDocument() const { return m_pDocument; }
 
@@ -738,13 +718,9 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   FX_BOOL ResetForm(FX_BOOL bNotify = FALSE);
 
-  void ReloadForm();
-
   CPDF_FormNotify* GetFormNotify() const { return m_pFormNotify; }
 
   void SetFormNotify(const CPDF_FormNotify* pNotify);
-
-  int GetPageWithWidget(int iCurPage, FX_BOOL bNext);
 
   FX_BOOL IsUpdated() { return m_bUpdated; }
 
@@ -788,7 +764,7 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   CPDF_Dictionary* m_pFormDict;
 
-  CFX_MapPtrToPtr m_ControlMap;
+  std::map<const CPDF_Dictionary*, CPDF_FormControl*> m_ControlMap;
 
   CFieldTree* m_pFieldTree;
 
@@ -831,8 +807,6 @@ class CPDF_FormField {
   Type GetType() { return m_Type; }
 
   FX_DWORD GetFlags() { return m_Flags; }
-
-  CPDF_InterForm* GetInterForm() const { return m_pForm; }
 
   CPDF_Dictionary* GetFieldDict() const { return m_pDict; }
 
@@ -1000,7 +974,7 @@ class CPDF_FormControl {
 
   CPDF_Dictionary* GetWidget() const { return m_pWidgetDict; }
 
-  CFX_FloatRect GetRect();
+  CFX_FloatRect GetRect() const;
 
   void DrawControl(CFX_RenderDevice* pDevice,
                    CFX_AffineMatrix* pMatrix,
