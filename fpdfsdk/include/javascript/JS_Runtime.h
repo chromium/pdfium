@@ -55,7 +55,7 @@ class CJS_Runtime : public IFXJS_Runtime {
   FX_BOOL IsBlocking() { return m_bBlocking; }
 
   operator IJS_Runtime*() { return (IJS_Runtime*)m_isolate; }
-  v8::Isolate* GetIsolate() { return m_isolate; };
+  v8::Isolate* GetIsolate() { return m_isolate; }
   void SetIsolate(v8::Isolate* isolate) { m_isolate = isolate; }
 
   v8::Local<v8::Context> NewJSContext();

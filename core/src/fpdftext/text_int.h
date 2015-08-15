@@ -47,7 +47,7 @@ class CPDF_TextPage : public IPDF_TextPage {
   CPDF_TextPage(const CPDF_Page* pPage, int flags = 0);
   CPDF_TextPage(const CPDF_PageObjects* pPage, int flags = 0);
   CPDF_TextPage(const CPDF_Page* pPage, CPDFText_ParseOptions ParserOptions);
-  ~CPDF_TextPage() override{};
+  ~CPDF_TextPage() override {}
 
   // IPDF_TextPage
   FX_BOOL ParseTextPage() override;
@@ -145,7 +145,7 @@ class CPDF_TextPage : public IPDF_TextPage {
 class CPDF_TextPageFind : public IPDF_TextPageFind {
  public:
   CPDF_TextPageFind(const IPDF_TextPage* pTextPage);
-  ~CPDF_TextPageFind() override{};
+  ~CPDF_TextPageFind() override {}
 
   // IPDF_TextPageFind
   FX_BOOL FindFirst(const CFX_WideString& findwhat,
@@ -191,11 +191,11 @@ class CPDF_TextPageFind : public IPDF_TextPageFind {
 };
 class CPDF_LinkExt {
  public:
-  CPDF_LinkExt(){};
+  CPDF_LinkExt() {}
   int m_Start;
   int m_Count;
   CFX_WideString m_strUrl;
-  virtual ~CPDF_LinkExt(){};
+  virtual ~CPDF_LinkExt() {}
 };
 
 typedef CFX_ArrayTemplate<CPDF_LinkExt*> LINK_InfoArray;

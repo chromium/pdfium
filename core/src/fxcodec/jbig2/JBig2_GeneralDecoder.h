@@ -63,7 +63,7 @@ class CJBig2_GRDProc : public CJBig2_Object {
                                   CJBig2_BitStream* pStream,
                                   IFX_Pause* pPause = NULL);
   FXCODEC_STATUS Continue_decode(IFX_Pause* pPause);
-  FX_RECT GetReplaceRect() { return m_ReplaceRect; };
+  FX_RECT GetReplaceRect() { return m_ReplaceRect; }
 
  private:
   FXCODEC_STATUS decode_Arith(IFX_Pause* pPause);

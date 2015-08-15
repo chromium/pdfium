@@ -185,7 +185,7 @@ class CJS_EventHandler {
   FX_BOOL WillCommit();
   CFX_WideString TargetName();
 
-  JS_EVENT_T EventType() { return m_eEventType; };
+  JS_EVENT_T EventType() { return m_eEventType; }
 
  public:
   CJS_Context* m_pJSContext;
