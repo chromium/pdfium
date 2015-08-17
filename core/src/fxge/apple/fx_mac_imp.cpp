@@ -66,7 +66,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
     return GetFont(face);
   }
   auto it = m_FontList.find(face);
-  if (it != m_FontList.end)
+  if (it != m_FontList.end())
     return it->second;
 
   if (charset == FXFONT_ANSI_CHARSET && (pitch_family & FXFONT_FF_FIXEDPITCH)) {
@@ -89,7 +89,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
       face = "LiSong Pro Light";
   }
   it = m_FontList.Lookup(face);
-  if (it != m_FontList.end)
+  if (it != m_FontList.end())
     return it->second;
 
   return NULL;
