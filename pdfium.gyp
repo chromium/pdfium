@@ -499,6 +499,12 @@
         'core/src/fxge/ge/fx_ge_text.cpp',
         'core/src/fxge/ge/text_int.h',
       ],
+      'variables': {
+        'clang_warning_flags': [
+          # http://code.google.com/p/pdfium/issues/detail?id=188
+          '-Wno-switch',
+        ],
+      },
       'conditions': [
         ['pdf_use_skia==1', {
           'sources': [

@@ -505,10 +505,19 @@ static_library("fxge") {
     "core/src/fxge/ge/text_int.h",
   ]
 
+  config("fxge_warnings") {
+    if (is_clang) {
+      cflags = [
+        # http://code.google.com/p/pdfium/issues/detail?id=188
+        "-Wno-switch",
+      ]
+    }
+  }
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     ":pdfium_config",
     "//build/config/compiler:no_chromium_code",
+    ":fxge_warnings",
   ]
 
   if (pdf_use_skia) {
