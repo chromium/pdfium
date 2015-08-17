@@ -832,6 +832,8 @@ FX_WORD CPDF_CIDFont::CIDFromCharCode(FX_DWORD charcode) const {
 FX_BOOL CPDF_CIDFont::IsVertWriting() const {
   return m_pCMap ? m_pCMap->IsVertWriting() : FALSE;
 }
+
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 extern FX_DWORD FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, FX_WORD cid);
 static FX_DWORD _EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
                                              int charset,
@@ -857,6 +859,8 @@ static FX_DWORD _EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
   }
   return 0;
 }
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
 static FX_WCHAR _EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
                                              int charset,
                                              FX_DWORD charcode) {
