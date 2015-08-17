@@ -1496,12 +1496,9 @@ FX_BOOL CJS_PublicMethods::AFDate_Format(IFXJS_Context* cc,
                                 L"m/d/yy h:MM tt",
                                 L"m/d/yy HH:MM"};
 
-  ASSERT(iIndex < FX_ArraySize(cFormats));
+  if (iIndex < 0 || (static_cast<size_t>(iIndex) >= FX_ArraySize(cFormats)))
+    iIndex = 0;
 
-  if (iIndex < 0)
-    iIndex = 0;
-  if (iIndex >= FX_ArraySize(cFormats))
-    iIndex = 0;
   CJS_Parameters newParams;
   CJS_Value val(isolate, cFormats[iIndex]);
   newParams.push_back(val);
@@ -1539,12 +1536,9 @@ FX_BOOL CJS_PublicMethods::AFDate_Keystroke(IFXJS_Context* cc,
                                 L"m/d/yy h:MM tt",
                                 L"m/d/yy HH:MM"};
 
-  ASSERT(iIndex < FX_ArraySize(cFormats));
+  if (iIndex < 0 || (static_cast<size_t>(iIndex) >= FX_ArraySize(cFormats)))
+    iIndex = 0;
 
-  if (iIndex < 0)
-    iIndex = 0;
-  if (iIndex >= FX_ArraySize(cFormats))
-    iIndex = 0;
   CJS_Parameters newParams;
   CJS_Value val(isolate, cFormats[iIndex]);
   newParams.push_back(val);
@@ -1569,12 +1563,9 @@ FX_BOOL CJS_PublicMethods::AFTime_Format(IFXJS_Context* cc,
   const FX_WCHAR* cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss",
                                 L"h:MM:ss tt"};
 
-  ASSERT(iIndex < FX_ArraySize(cFormats));
+  if (iIndex < 0 || (static_cast<size_t>(iIndex) >= FX_ArraySize(cFormats)))
+    iIndex = 0;
 
-  if (iIndex < 0)
-    iIndex = 0;
-  if (iIndex >= FX_ArraySize(cFormats))
-    iIndex = 0;
   CJS_Parameters newParams;
   CJS_Value val(isolate, cFormats[iIndex]);
   newParams.push_back(val);
@@ -1597,12 +1588,9 @@ FX_BOOL CJS_PublicMethods::AFTime_Keystroke(IFXJS_Context* cc,
   const FX_WCHAR* cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss",
                                 L"h:MM:ss tt"};
 
-  ASSERT(iIndex < FX_ArraySize(cFormats));
+  if (iIndex < 0 || (static_cast<size_t>(iIndex) >= FX_ArraySize(cFormats)))
+    iIndex = 0;
 
-  if (iIndex < 0)
-    iIndex = 0;
-  if (iIndex >= FX_ArraySize(cFormats))
-    iIndex = 0;
   CJS_Parameters newParams;
   CJS_Value val(isolate, cFormats[iIndex]);
   newParams.push_back(val);
@@ -1698,22 +1686,21 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(IFXJS_Context* cc,
   if (wstrMask.IsEmpty())
     return TRUE;
 
-  std::wstring wstrValue = valEvent.c_str();
+  const size_t wstrMaskLen = wstrMask.GetLength();
+  const std::wstring wstrValue = valEvent.c_str();
 
   if (pEvent->WillCommit()) {
     if (wstrValue.empty())
       return TRUE;
-    int iIndexMask = 0;
-    for (std::wstring::iterator it = wstrValue.begin(); it != wstrValue.end();
-         it++) {
-      wchar_t w_Value = *it;
+    size_t iIndexMask = 0;
+    for (const auto& w_Value : wstrValue) {
       if (!maskSatisfied(w_Value, wstrMask[iIndexMask]))
         break;
       iIndexMask++;
     }
 
-    if (iIndexMask != wstrMask.GetLength() ||
-        (iIndexMask != wstrValue.size() && wstrMask.GetLength() != 0)) {
+    if (iIndexMask != wstrMaskLen ||
+        (iIndexMask != wstrValue.size() && wstrMaskLen != 0)) {
       Alert(
           pContext,
           JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE).c_str());
@@ -1729,16 +1716,16 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(IFXJS_Context* cc,
 
   int iIndexMask = pEvent->SelStart();
 
-  if (wstrValue.length() - (pEvent->SelEnd() - pEvent->SelStart()) +
-          wChange.length() >
-      (FX_DWORD)wstrMask.GetLength()) {
+  size_t combined_len = wstrValue.length() + wChange.length() -
+                        (pEvent->SelEnd() - pEvent->SelStart());
+  if (combined_len > wstrMaskLen) {
     Alert(pContext,
           JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
     pEvent->Rc() = FALSE;
     return TRUE;
   }
 
-  if (iIndexMask >= wstrMask.GetLength() && (!wChange.empty())) {
+  if (iIndexMask >= wstrMaskLen && (!wChange.empty())) {
     Alert(pContext,
           JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
     pEvent->Rc() = FALSE;
@@ -1746,7 +1733,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(IFXJS_Context* cc,
   }
 
   for (std::wstring::iterator it = wChange.begin(); it != wChange.end(); it++) {
-    if (iIndexMask >= wstrMask.GetLength()) {
+    if (iIndexMask >= wstrMaskLen) {
       Alert(pContext,
             JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG).c_str());
       pEvent->Rc() = FALSE;

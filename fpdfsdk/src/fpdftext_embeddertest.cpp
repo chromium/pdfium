@@ -40,13 +40,17 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
 
   // Check includes the terminating NUL that is provided.
-  EXPECT_EQ(sizeof(expected), FPDFText_GetText(textpage, 0, 128, fixed_buffer));
+  int num_chars = FPDFText_GetText(textpage, 0, 128, fixed_buffer);
+  ASSERT_GE(num_chars, 0);
+  EXPECT_EQ(sizeof(expected), static_cast<size_t>(num_chars));
   EXPECT_TRUE(check_unsigned_shorts(expected, fixed_buffer, sizeof(expected)));
 
   // Count does not include the terminating NUL in the string literal.
   EXPECT_EQ(sizeof(expected) - 1, FPDFText_CountChars(textpage));
   for (size_t i = 0; i < sizeof(expected) - 1; ++i) {
-    EXPECT_EQ(expected[i], FPDFText_GetUnicode(textpage, i)) << " at " << i;
+    EXPECT_EQ(static_cast<unsigned int>(expected[i]),
+              FPDFText_GetUnicode(textpage, i))
+        << " at " << i;
   }
 
   EXPECT_EQ(12.0, FPDFText_GetFontSize(textpage, 0));
