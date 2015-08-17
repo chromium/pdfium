@@ -14,11 +14,16 @@
 
 typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;
-class CFontFileFaceInfo;
+
 class CFX_FaceCache;
+class CFX_FontFaceInfo;
 class CFX_FontMapper;
 class CFX_PathData;
+class CFX_SizeGlyphCache;
 class CFX_SubstFont;
+class CFontFileFaceInfo;
+class CTTFontDesc;
+class IFX_FontEncoding;
 class IFX_SystemFontInfo;
 
 #define FXFONT_FIXED_PITCH 0x01
@@ -221,12 +226,11 @@ class CFX_FontMgr {
                           int italic_angle,
                           int CharsetCP,
                           CFX_SubstFont* pSubstFont);
-
   void FreeCache();
-
   FX_BOOL GetStandardFont(const uint8_t*& pFontData, FX_DWORD& size, int index);
+
   CFX_FontMapper* m_pBuiltinMapper;
-  CFX_MapByteStringToPtr m_FaceMap;
+  std::map<CFX_ByteString, CTTFontDesc*> m_FaceMap;
   FXFT_Library m_FTLibrary;
   FoxitFonts m_ExternalFonts[16];
 };
@@ -344,7 +348,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
   FX_BOOL GetFontCharset(void* hFont, int& charset) override;
 
  protected:
-  CFX_MapByteStringToPtr m_FontList;
+  std::map<CFX_ByteString, CFX_FontFaceInfo*> m_FontList;
   CFX_ByteStringArray m_PathList;
   CFX_FontMapper* m_pMapper;
   void ScanPath(CFX_ByteString& path);
@@ -424,7 +428,7 @@ class CFX_FaceCache {
                                      FX_BOOL bFontStyle,
                                      int dest_width,
                                      int anti_alias);
-  CFX_MapByteStringToPtr m_SizeMap;
+  std::map<CFX_ByteString, CFX_SizeGlyphCache*> m_SizeMap;
   CFX_MapPtrToPtr m_PathMap;
   CFX_DIBitmap* m_pBitmap;
 

@@ -22,19 +22,24 @@ CPDF_CMapManager::CPDF_CMapManager() {
   FXSYS_memset(m_CID2UnicodeMaps, 0, sizeof m_CID2UnicodeMaps);
 }
 CPDF_CMapManager::~CPDF_CMapManager() {
-  DropAll(FALSE);
+  for (const auto& pair : m_CMaps) {
+    delete pair.second;
+  }
+  m_CMaps.clear();
+  for (int i = 0; i < FX_ArraySize(m_CID2UnicodeMaps); ++i) {
+    delete m_CID2UnicodeMaps[i];
+  }
 }
 CPDF_CMap* CPDF_CMapManager::GetPredefinedCMap(const CFX_ByteString& name,
                                                FX_BOOL bPromptCJK) {
-  CPDF_CMap* pCMap;
-  if (m_CMaps.Lookup(name, (void*&)pCMap)) {
-    return pCMap;
+  auto it = m_CMaps.find(name);
+  if (it != m_CMaps.end()) {
+    return it->second;
   }
-  pCMap = LoadPredefinedCMap(name, bPromptCJK);
-  if (name.IsEmpty()) {
-    return pCMap;
+  CPDF_CMap* pCMap = LoadPredefinedCMap(name, bPromptCJK);
+  if (!name.IsEmpty()) {
+    m_CMaps[name] = pCMap;
   }
-  m_CMaps.SetAt(name, pCMap);
   return pCMap;
 }
 CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name,
@@ -59,33 +64,13 @@ int _CharsetFromOrdering(const CFX_ByteString& Ordering) {
   return CIDSET_UNKNOWN;
 }
 void CPDF_CMapManager::ReloadAll() {
-  DropAll(TRUE);
-}
-void CPDF_CMapManager::DropAll(FX_BOOL bReload) {
-  FX_POSITION pos = m_CMaps.GetStartPosition();
-  while (pos) {
-    CFX_ByteString name;
-    CPDF_CMap* pCMap;
-    m_CMaps.GetNextAssoc(pos, name, (void*&)pCMap);
-    if (pCMap == NULL) {
-      continue;
-    }
-    if (bReload) {
-      pCMap->LoadPredefined(this, name, FALSE);
-    } else {
-      delete pCMap;
-    }
+  for (const auto& pair : m_CMaps) {
+    CPDF_CMap* pCMap = pair.second;
+    pCMap->LoadPredefined(this, pair.first, FALSE);
   }
-  for (int i = 0; i < sizeof m_CID2UnicodeMaps / sizeof(CPDF_CID2UnicodeMap*);
-       i++) {
-    CPDF_CID2UnicodeMap* pMap = m_CID2UnicodeMaps[i];
-    if (pMap == NULL) {
-      continue;
-    }
-    if (bReload) {
+  for (int i = 0; i < FX_ArraySize(m_CID2UnicodeMaps); ++i) {
+    if (CPDF_CID2UnicodeMap* pMap = m_CID2UnicodeMaps[i]) {
       pMap->Load(this, i, FALSE);
-    } else {
-      delete pMap;
     }
   }
 }

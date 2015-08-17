@@ -422,9 +422,8 @@ class CPDF_DocPageData {
   using CPDF_PatternMap = std::map<CPDF_Object*, CPDF_CountedPattern*>;
 
   CPDF_Document* const m_pPDFDoc;
-  CFX_MapByteStringToPtr m_HashProfileMap;
   FX_BOOL m_bForceClear;
-
+  std::map<CFX_ByteString, CPDF_Stream*> m_HashProfileMap;
   CPDF_ColorSpaceMap m_ColorSpaceMap;
   CPDF_FontFileMap m_FontFileMap;
   CPDF_FontMap m_FontMap;

@@ -171,14 +171,10 @@ void CPDF_DocPageData::Clear(FX_BOOL bForceRelease) {
       continue;
 
     if (bForceRelease || ipData->use_count() < 2) {
-      CPDF_Stream* ipKey = curr_it->first;
-      FX_POSITION pos2 = m_HashProfileMap.GetStartPosition();
-      while (pos2) {
-        CFX_ByteString bsKey;
-        CPDF_Stream* pFindStream = nullptr;
-        m_HashProfileMap.GetNextAssoc(pos2, bsKey, (void*&)pFindStream);
-        if (ipKey == pFindStream) {
-          m_HashProfileMap.RemoveKey(bsKey);
+      for (auto hash_it = m_HashProfileMap.begin();
+           hash_it != m_HashProfileMap.end(); ++hash_it) {
+        if (curr_it->first == hash_it->second) {
+          m_HashProfileMap.erase(hash_it);
           break;
         }
       }
@@ -519,18 +515,17 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
   CPDF_StreamAcc stream;
   stream.LoadAllData(pIccProfileStream, FALSE);
   uint8_t digest[20];
-  CPDF_Stream* pCopiedStream = nullptr;
   CRYPT_SHA1Generate(stream.GetData(), stream.GetSize(), digest);
-  if (m_HashProfileMap.Lookup(CFX_ByteStringC(digest, 20),
-                              (void*&)pCopiedStream)) {
-    auto it_copied_stream = m_IccProfileMap.find(pCopiedStream);
+  auto hash_it = m_HashProfileMap.find(CFX_ByteStringC(digest, 20));
+  if (hash_it != m_HashProfileMap.end()) {
+    auto it_copied_stream = m_IccProfileMap.find(hash_it->second);
     return it_copied_stream->second->AddRef();
   }
   CPDF_IccProfile* pProfile =
       new CPDF_IccProfile(stream.GetData(), stream.GetSize());
   CPDF_CountedIccProfile* ipData = new CPDF_CountedIccProfile(pProfile);
   m_IccProfileMap[pIccProfileStream] = ipData;
-  m_HashProfileMap.SetAt(CFX_ByteStringC(digest, 20), pIccProfileStream);
+  m_HashProfileMap[CFX_ByteStringC(digest, 20)] = pIccProfileStream;
   return ipData->AddRef();
 }
 

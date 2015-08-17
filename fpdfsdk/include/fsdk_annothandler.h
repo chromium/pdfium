@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_ANNOTHANDLER_H_
 #define FPDFSDK_INCLUDE_FSDK_ANNOTHANDLER_H_
 
+#include <map>
+
 #include "../../core/include/fxcrt/fx_basic.h"
 
 class CFFL_IFormFiller;
@@ -297,7 +299,7 @@ class CPDFSDK_AnnotHandlerMgr {
 
  private:
   CBA_AnnotHandlerArray m_Handlers;
-  CFX_MapByteStringToPtr m_mapType2Handler;
+  std::map<CFX_ByteString, IPDFSDK_AnnotHandler*> m_mapType2Handler;
   CPDFDoc_Environment* m_pApp;
 };
 

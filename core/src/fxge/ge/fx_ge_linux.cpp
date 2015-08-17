@@ -105,7 +105,6 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
   if (iBaseFont < 12) {
     return GetFont(face);
   }
-  void* p = NULL;
   FX_BOOL bCJK = TRUE;
   switch (charset) {
     case FXFONT_SHIFTJIS_CHARSET: {
@@ -113,34 +112,36 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       if (index < 0) {
         break;
       }
-      for (int32_t i = 0; i < LINUX_GPNAMESIZE; i++)
-        if (m_FontList.Lookup(LinuxGpFontList[index].NameArr[i], p)) {
-          return p;
+      for (int32_t i = 0; i < LINUX_GPNAMESIZE; i++) {
+        auto it = m_FontList.find(LinuxGpFontList[index].NameArr[i]);
+        if (it != m_FontList.end()) {
+          return it->second;
         }
+      }
     } break;
     case FXFONT_GB2312_CHARSET: {
-      static int32_t s_gbCount =
-          sizeof(g_LinuxGbFontList) / sizeof(const FX_CHAR*);
-      for (int32_t i = 0; i < s_gbCount; i++)
-        if (m_FontList.Lookup(g_LinuxGbFontList[i], p)) {
-          return p;
+      for (int32_t i = 0; i < FX_ArraySize(g_LinuxGbFontList); ++i) {
+        auto it = m_FontList.find(g_LinuxGbFontList[i]);
+        if (it != m_FontList.end()) {
+          return it->second;
         }
+      }
     } break;
     case FXFONT_CHINESEBIG5_CHARSET: {
-      static int32_t s_b5Count =
-          sizeof(g_LinuxB5FontList) / sizeof(const FX_CHAR*);
-      for (int32_t i = 0; i < s_b5Count; i++)
-        if (m_FontList.Lookup(g_LinuxB5FontList[i], p)) {
-          return p;
+      for (int32_t i = 0; i < FX_ArraySize(g_LinuxB5FontList); ++i) {
+        auto it = m_FontList.find(g_LinuxB5FontList[i]);
+        if (it != m_FontList.end()) {
+          return it->second;
         }
+      }
     } break;
     case FXFONT_HANGEUL_CHARSET: {
-      static int32_t s_hgCount =
-          sizeof(g_LinuxHGFontList) / sizeof(const FX_CHAR*);
-      for (int32_t i = 0; i < s_hgCount; i++)
-        if (m_FontList.Lookup(g_LinuxHGFontList[i], p)) {
-          return p;
+      for (int32_t i = 0; i < FX_ArraySize(g_LinuxHGFontList); ++i) {
+        auto it = m_FontList.find(g_LinuxHGFontList[i]);
+        if (it != m_FontList.end()) {
+          return it->second;
         }
+      }
     } break;
     default:
       bCJK = FALSE;
@@ -201,11 +202,9 @@ void* CFX_LinuxFontInfo::FindFont(int weight,
   CFX_FontFaceInfo* pFind = NULL;
   FX_DWORD charset_flag = _LinuxGetCharset(charset);
   int32_t iBestSimilar = 0;
-  FX_POSITION pos = m_FontList.GetStartPosition();
-  while (pos) {
-    CFX_ByteString bsName;
-    CFX_FontFaceInfo* pFont = NULL;
-    m_FontList.GetNextAssoc(pos, bsName, (void*&)pFont);
+  for (const auto& it : m_FontList) {
+    const CFX_ByteString& bsName = it.first;
+    CFX_FontFaceInfo* pFont = it.second;
     if (!(pFont->m_Charsets & charset_flag) &&
         charset != FXFONT_DEFAULT_CHARSET) {
       continue;

@@ -1232,15 +1232,11 @@ CFX_FaceCache::CFX_FaceCache(FXFT_Face face) {
   m_Face = face;
 }
 CFX_FaceCache::~CFX_FaceCache() {
-  FX_POSITION pos = m_SizeMap.GetStartPosition();
-  CFX_ByteString Key;
-  CFX_SizeGlyphCache* pSizeCache = NULL;
-  while (pos) {
-    m_SizeMap.GetNextAssoc(pos, Key, (void*&)pSizeCache);
-    delete pSizeCache;
+  for (const auto& pair : m_SizeMap) {
+    delete pair.second;
   }
-  m_SizeMap.RemoveAll();
-  pos = m_PathMap.GetStartPosition();
+  m_SizeMap.clear();
+  FX_POSITION pos = m_PathMap.GetStartPosition();
   void* key1;
   CFX_PathData* pPath;
   while (pos) {
@@ -1260,10 +1256,13 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     FX_BOOL bFontStyle,
     int dest_width,
     int anti_alias) {
-  CFX_SizeGlyphCache* pSizeCache = NULL;
-  if (!m_SizeMap.Lookup(FaceGlyphsKey, (void*&)pSizeCache)) {
+  CFX_SizeGlyphCache* pSizeCache;
+  auto it = m_SizeMap.find(FaceGlyphsKey);
+  if (it == m_SizeMap.end()) {
     pSizeCache = new CFX_SizeGlyphCache;
-    m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
+    m_SizeMap[FaceGlyphsKey] = pSizeCache;
+  } else {
+    pSizeCache = it->second;
   }
   CFX_GlyphBitmap* pGlyphBitmap = NULL;
   if (pSizeCache->m_GlyphMap.Lookup((void*)(uintptr_t)glyph_index,

@@ -11,14 +11,10 @@
 #include "render_int.h"
 extern FX_BOOL IsAvailableMatrix(const CFX_AffineMatrix& matrix);
 CPDF_Type3Cache::~CPDF_Type3Cache() {
-  FX_POSITION pos = m_SizeMap.GetStartPosition();
-  CFX_ByteString Key;
-  CPDF_Type3Glyphs* pSizeCache = NULL;
-  while (pos) {
-    pSizeCache = (CPDF_Type3Glyphs*)m_SizeMap.GetNextValue(pos);
-    delete pSizeCache;
+  for (const auto& pair : m_SizeMap) {
+    delete pair.second;
   }
-  m_SizeMap.RemoveAll();
+  m_SizeMap.clear();
 }
 CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(FX_DWORD charcode,
                                             const CFX_AffineMatrix* pMatrix,
@@ -29,10 +25,13 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(FX_DWORD charcode,
       4, FXSYS_round(pMatrix->a * 10000), FXSYS_round(pMatrix->b * 10000),
       FXSYS_round(pMatrix->c * 10000), FXSYS_round(pMatrix->d * 10000));
   CFX_ByteStringC FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
-  CPDF_Type3Glyphs* pSizeCache = NULL;
-  if (!m_SizeMap.Lookup(FaceGlyphsKey, (void*&)pSizeCache)) {
+  CPDF_Type3Glyphs* pSizeCache;
+  auto it = m_SizeMap.find(FaceGlyphsKey);
+  if (it == m_SizeMap.end()) {
     pSizeCache = new CPDF_Type3Glyphs;
-    m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
+    m_SizeMap[FaceGlyphsKey] = pSizeCache;
+  } else {
+    pSizeCache = it->second;
   }
   CFX_GlyphBitmap* pGlyphBitmap;
   if (pSizeCache->m_GlyphMap.Lookup((void*)(uintptr_t)charcode,
