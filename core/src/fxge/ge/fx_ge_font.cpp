@@ -379,48 +379,27 @@ int CFX_Font::GetULthickness() {
                             FXFT_Get_Face_UnderLineThickness(m_Face));
   return thickness;
 }
-CFX_UnicodeEncoding::CFX_UnicodeEncoding(CFX_Font* pFont) {
-  m_pFont = pFont;
+
+CFX_UnicodeEncoding::CFX_UnicodeEncoding(CFX_Font* pFont) : m_pFont(pFont) {
 }
+
+CFX_UnicodeEncoding::~CFX_UnicodeEncoding() {
+}
+
 FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCode(FX_DWORD charcode) {
   FXFT_Face face = m_pFont->GetFace();
-  if (!face) {
+  if (!face)
     return charcode;
-  }
-  if (FXFT_Select_Charmap(face, FXFT_ENCODING_UNICODE) == 0) {
+
+  if (FXFT_Select_Charmap(face, FXFT_ENCODING_UNICODE) == 0)
     return FXFT_Get_Char_Index(face, charcode);
-  }
+
   if (m_pFont->m_pSubstFont && m_pFont->m_pSubstFont->m_Charset == 2) {
     FX_DWORD index = 0;
-    if (FXFT_Select_Charmap(face, FXFT_ENCODING_MS_SYMBOL) == 0) {
+    if (FXFT_Select_Charmap(face, FXFT_ENCODING_MS_SYMBOL) == 0)
       index = FXFT_Get_Char_Index(face, charcode);
-    }
-    if (!index && !FXFT_Select_Charmap(face, FXFT_ENCODING_APPLE_ROMAN)) {
+    if (!index && !FXFT_Select_Charmap(face, FXFT_ENCODING_APPLE_ROMAN))
       return FXFT_Get_Char_Index(face, charcode);
-    }
   }
   return charcode;
-}
-FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCodeEx(FX_DWORD charcode,
-                                                  int encoding) {
-  FXFT_Face face = m_pFont->GetFace();
-  if (!face) {
-    return charcode;
-  }
-  if (encoding == ENCODING_UNICODE) {
-    return GlyphFromCharCode(charcode);
-  }
-  int nmaps = FXFT_Get_Face_CharmapCount(m_pFont->m_Face);
-  int i = 0;
-  while (i < nmaps) {
-    int encoding = FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[i++]);
-    if (encoding != FXFT_ENCODING_UNICODE) {
-      FXFT_Select_Charmap(face, encoding);
-      break;
-    }
-  }
-  return FXFT_Get_Char_Index(face, charcode);
-}
-IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont) {
-  return new CFX_UnicodeEncoding(pFont);
 }

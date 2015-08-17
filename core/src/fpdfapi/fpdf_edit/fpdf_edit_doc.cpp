@@ -426,6 +426,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
   return LoadFont(pBaseDict);
 }
 #endif
+
 #if (_FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_)
 uint32_t FX_GetLangHashCode(const FX_CHAR* pStr) {
   FXSYS_assert(pStr != NULL);
@@ -791,9 +792,10 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
   CFRelease(languages);
   return LoadFont(pBaseDict);
 }
-#endif
+#endif  // (_FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_)
+
 static void _InsertWidthArray1(CFX_Font* pFont,
-                               IFX_FontEncoding* pEncoding,
+                               CFX_UnicodeEncoding* pEncoding,
                                FX_WCHAR start,
                                FX_WCHAR end,
                                CPDF_Array* pWidthArray) {
@@ -821,6 +823,7 @@ static void _InsertWidthArray1(CFX_Font* pFont,
   }
   FX_Free(widths);
 }
+
 CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   if (pFont == NULL) {
     return NULL;
@@ -843,7 +846,8 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   }
   CPDF_Dictionary* pBaseDict = new CPDF_Dictionary;
   pBaseDict->SetAtName("Type", "Font");
-  IFX_FontEncoding* pEncoding = FXGE_CreateUnicodeEncoding(pFont);
+  nonstd::unique_ptr<CFX_UnicodeEncoding> pEncoding(
+      new CFX_UnicodeEncoding(pFont));
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
     CPDF_Array* pWidths = new CPDF_Array;
@@ -921,35 +925,35 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
         ordering = "CNS1";
         supplement = 4;
         pWidthArray->AddInteger(1);
-        _InsertWidthArray1(pFont, pEncoding, 0x20, 0x7e, pWidthArray);
+        _InsertWidthArray1(pFont, pEncoding.get(), 0x20, 0x7e, pWidthArray);
         break;
       case FXFONT_GB2312_CHARSET:
         cmap = bVert ? "GBK-EUC-V" : "GBK-EUC-H";
         ordering = "GB1", supplement = 2;
         pWidthArray->AddInteger(7716);
-        _InsertWidthArray1(pFont, pEncoding, 0x20, 0x20, pWidthArray);
+        _InsertWidthArray1(pFont, pEncoding.get(), 0x20, 0x20, pWidthArray);
         pWidthArray->AddInteger(814);
-        _InsertWidthArray1(pFont, pEncoding, 0x21, 0x7e, pWidthArray);
+        _InsertWidthArray1(pFont, pEncoding.get(), 0x21, 0x7e, pWidthArray);
         break;
       case FXFONT_HANGEUL_CHARSET:
         cmap = bVert ? "KSCms-UHC-V" : "KSCms-UHC-H";
         ordering = "Korea1";
         supplement = 2;
         pWidthArray->AddInteger(1);
-        _InsertWidthArray1(pFont, pEncoding, 0x20, 0x7e, pWidthArray);
+        _InsertWidthArray1(pFont, pEncoding.get(), 0x20, 0x7e, pWidthArray);
         break;
       case FXFONT_SHIFTJIS_CHARSET:
         cmap = bVert ? "90ms-RKSJ-V" : "90ms-RKSJ-H";
         ordering = "Japan1";
         supplement = 5;
         pWidthArray->AddInteger(231);
-        _InsertWidthArray1(pFont, pEncoding, 0x20, 0x7d, pWidthArray);
+        _InsertWidthArray1(pFont, pEncoding.get(), 0x20, 0x7d, pWidthArray);
         pWidthArray->AddInteger(326);
-        _InsertWidthArray1(pFont, pEncoding, 0xa0, 0xa0, pWidthArray);
+        _InsertWidthArray1(pFont, pEncoding.get(), 0xa0, 0xa0, pWidthArray);
         pWidthArray->AddInteger(327);
-        _InsertWidthArray1(pFont, pEncoding, 0xa1, 0xdf, pWidthArray);
+        _InsertWidthArray1(pFont, pEncoding.get(), 0xa1, 0xdf, pWidthArray);
         pWidthArray->AddInteger(631);
-        _InsertWidthArray1(pFont, pEncoding, 0x7e, 0x7e, pWidthArray);
+        _InsertWidthArray1(pFont, pEncoding.get(), 0x7e, 0x7e, pWidthArray);
         break;
     }
     pBaseDict->SetAtName("Subtype", "Type0");
@@ -1003,7 +1007,6 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
       }
     }
   }
-  delete pEncoding;
   pFontDesc->SetAtInteger("StemV", nStemV);
   AddIndirectObject(pFontDesc);
   pFontDict->SetAtReference("FontDescriptor", this, pFontDesc);

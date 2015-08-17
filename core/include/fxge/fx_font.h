@@ -134,18 +134,18 @@ class CFX_Font {
 #define ENCODING_INTERNAL 0
 #define ENCODING_UNICODE 1
 
-class IFX_FontEncoding {
+class CFX_UnicodeEncoding {
  public:
-  virtual ~IFX_FontEncoding() {}
+  explicit CFX_UnicodeEncoding(CFX_Font* pFont);
+  ~CFX_UnicodeEncoding();
 
-  virtual FX_DWORD GlyphFromCharCode(FX_DWORD charcode) = 0;
+  FX_DWORD GlyphFromCharCode(FX_DWORD charcode);
 
-  virtual CFX_WideString UnicodeFromCharCode(FX_DWORD charcode) const = 0;
-
-  virtual FX_DWORD CharCodeFromUnicode(FX_WCHAR Unicode) const = 0;
+ private:
+  // Unowned, not nullptr.
+  CFX_Font* m_pFont;
 };
 
-IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont);
 #define FXFONT_SUBST_MM 0x01
 #define FXFONT_SUBST_GLYPHPATH 0x04
 #define FXFONT_SUBST_CLEARTYPE 0x08
