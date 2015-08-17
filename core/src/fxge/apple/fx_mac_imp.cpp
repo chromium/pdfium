@@ -65,10 +65,10 @@ void* CFX_MacFontInfo::MapFont(int weight,
   if (iBaseFont < 12) {
     return GetFont(face);
   }
-  void* p;
-  if (m_FontList.Lookup(face, p)) {
-    return p;
-  }
+  auto it = m_FontList.find(face);
+  if (it != m_FontList.end)
+    return it->second;
+
   if (charset == FXFONT_ANSI_CHARSET && (pitch_family & FXFONT_FF_FIXEDPITCH)) {
     return GetFont("Courier New");
   }
@@ -88,9 +88,10 @@ void* CFX_MacFontInfo::MapFont(int weight,
     case FXFONT_CHINESEBIG5_CHARSET:
       face = "LiSong Pro Light";
   }
-  if (m_FontList.Lookup(face, p)) {
-    return p;
-  }
+  it = m_FontList.Lookup(face);
+  if (it != m_FontList.end)
+    return it->second;
+
   return NULL;
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
