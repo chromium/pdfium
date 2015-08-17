@@ -21,7 +21,6 @@ class CPDF_CMap;
 class CPDF_Color;
 class CPDF_ColorSpace;
 class CPDF_Face;
-class CPDF_Font;
 class CPDF_FontEncoding;
 class CPDF_Form;
 class CPDF_Function;
@@ -101,6 +100,7 @@ class CPDF_Font {
                                 CPDF_Dictionary* pFontDict);
   static CPDF_Font* GetStockFont(CPDF_Document* pDoc,
                                  const CFX_ByteStringC& fontname);
+  static const FX_DWORD kInvalidCharCode = static_cast<FX_DWORD>(-1);
 
   virtual ~CPDF_Font();
 

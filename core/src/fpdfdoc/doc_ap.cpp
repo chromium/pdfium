@@ -133,7 +133,7 @@ int32_t CPVT_Provider::GetCharWidth(int32_t nFontIndex,
                                     int32_t nWordStyle) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
     FX_DWORD charcode = pPDFFont->CharCodeFromUnicode(word);
-    if (charcode != -1) {
+    if (charcode != CPDF_Font::kInvalidCharCode) {
       return pPDFFont->GetCharWidthF(charcode);
     }
   }
@@ -155,14 +155,15 @@ int32_t CPVT_Provider::GetWordFontIndex(FX_WORD word,
                                         int32_t charset,
                                         int32_t nFontIndex) {
   if (CPDF_Font* pDefFont = m_pFontMap->GetPDFFont(0)) {
-    if (pDefFont->CharCodeFromUnicode(word) != -1) {
+    if (pDefFont->CharCodeFromUnicode(word) != CPDF_Font::kInvalidCharCode) {
       return 0;
     }
   }
-  if (CPDF_Font* pSysFont = m_pFontMap->GetPDFFont(1))
-    if (pSysFont->CharCodeFromUnicode(word) != -1) {
+  if (CPDF_Font* pSysFont = m_pFontMap->GetPDFFont(1)) {
+    if (pSysFont->CharCodeFromUnicode(word) != CPDF_Font::kInvalidCharCode) {
       return 1;
     }
+  }
   return -1;
 }
 FX_BOOL CPVT_Provider::IsLatinWord(FX_WORD word) {
@@ -175,6 +176,7 @@ FX_BOOL CPVT_Provider::IsLatinWord(FX_WORD word) {
 int32_t CPVT_Provider::GetDefaultFontIndex() {
   return 0;
 }
+
 static CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                                        int32_t nFontIndex,
                                        FX_WORD Word,
@@ -182,23 +184,26 @@ static CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
   CFX_ByteString sWord;
   if (SubWord > 0) {
     sWord.Format("%c", SubWord);
-  } else {
-    if (pFontMap) {
-      if (CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex)) {
-        if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
-            pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
-          sWord.Format("%c", Word);
-        } else {
-          FX_DWORD dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
-          if (dwCharCode != -1) {
-            pPDFFont->AppendChar(sWord, dwCharCode);
-          }
-        }
+    return sWord;
+  }
+
+  if (!pFontMap)
+    return sWord;
+
+  if (CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex)) {
+    if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
+        pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
+      sWord.Format("%c", Word);
+    } else {
+      FX_DWORD dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
+      if (dwCharCode != CPDF_Font::kInvalidCharCode) {
+        pPDFFont->AppendChar(sWord, dwCharCode);
       }
     }
   }
   return sWord;
 }
+
 static CFX_ByteString GetWordRenderString(const CFX_ByteString& strWords) {
   if (strWords.GetLength() > 0) {
     return PDF_EncodeString(strWords) + " Tj\n";
