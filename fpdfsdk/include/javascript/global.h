@@ -13,8 +13,8 @@ class CJS_GlobalData;
 class CJS_GlobalVariableArray;
 class CJS_KeyValue;
 
-struct js_global_data {
-  js_global_data() {
+struct JSGlobalData {
+  JSGlobalData() {
     nType = 0;
     dData = 0;
     bData = FALSE;
@@ -23,7 +23,7 @@ struct js_global_data {
     bDeleted = FALSE;
   }
 
-  ~js_global_data() { pData.Reset(); }
+  ~JSGlobalData() { pData.Reset(); }
   int nType;  // 0:int 1:bool 2:string 3:obj
   double dData;
   bool bData;
@@ -33,18 +33,15 @@ struct js_global_data {
   bool bDeleted;
 };
 
-class global_alternate : public CJS_EmbedObj {
+class JSGlobalAlternate : public CJS_EmbedObj {
  public:
-  global_alternate(CJS_Object* pJSObject);
-  ~global_alternate() override;
+  JSGlobalAlternate(CJS_Object* pJSObject);
+  ~JSGlobalAlternate() override;
 
- public:
   FX_BOOL setPersistent(IFXJS_Context* cc,
                         const CJS_Parameters& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
-
- public:
   FX_BOOL QueryProperty(const FX_WCHAR* propname);
   FX_BOOL DoProperty(IFXJS_Context* cc,
                      const FX_WCHAR* propname,
@@ -53,7 +50,6 @@ class global_alternate : public CJS_EmbedObj {
   FX_BOOL DelProperty(IFXJS_Context* cc,
                       const FX_WCHAR* propname,
                       CFX_WideString& sError);
-
   void Initial(CPDFDoc_Environment* pApp);
 
  private:
@@ -89,7 +85,7 @@ class CJS_Global : public CJS_Object {
 
   DECLARE_SPECIAL_JS_CLASS(CJS_Global);
 
-  JS_SPECIAL_STATIC_METHOD(setPersistent, global_alternate, global);
+  JS_SPECIAL_STATIC_METHOD(setPersistent, JSGlobalAlternate, global);
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_GLOBAL_H_

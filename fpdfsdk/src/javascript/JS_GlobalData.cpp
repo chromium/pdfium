@@ -398,23 +398,6 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
   }
 }
 
-/*
-struct js_global_datafile_header
-{
-    FX_WORD type; //FX ('X' << 8) | 'F'
-    FX_WORD version; //1.0
-    FX_DWORD datacount;
-};
-struct js_global_datafile_data
-{
-    FX_WORD type;
-    FX_DWORD nData;
-    FX_WORD bData;
-    FX_DWORD nStrLen;
-    char* pStr;
-};
-*/
-
 void CJS_GlobalData::SaveGlobalPersisitentVariables() {
   FX_DWORD nCount = 0;
   CFX_BinaryBuf sData;
