@@ -1334,8 +1334,9 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(
                              bFontStyle, dest_width, anti_alias);
   }
   CFX_GlyphBitmap* pGlyphBitmap;
-  CFX_SizeGlyphCache* pSizeCache = NULL;
-  if (m_SizeMap.Lookup(FaceGlyphsKey, (void*&)pSizeCache)) {
+  auto it = m_SizeMap.find(FaceGlyphsKey);
+  if (it != m_SizeMap.end()) {
+    CFX_SizeGlyphCache* pSizeCache = it->second;
     if (pSizeCache->m_GlyphMap.Lookup((void*)(uintptr_t)glyph_index,
                                       (void*&)pGlyphBitmap)) {
       return pGlyphBitmap;
@@ -1350,8 +1351,8 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(
     pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix,
                                           dest_width, anti_alias);
     if (pGlyphBitmap) {
-      pSizeCache = new CFX_SizeGlyphCache;
-      m_SizeMap.SetAt(FaceGlyphsKey, pSizeCache);
+      CFX_SizeGlyphCache* pSizeCache = new CFX_SizeGlyphCache;
+      m_SizeMap[FaceGlyphsKey] = pSizeCache;
       pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
       return pGlyphBitmap;
     }
