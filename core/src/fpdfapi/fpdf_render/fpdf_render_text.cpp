@@ -788,10 +788,10 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(
     ProcessPath(&path, pObj2Device);
   }
 }
+
 CFX_PathData* CPDF_Font::LoadGlyphPath(FX_DWORD charcode, int dest_width) {
   int glyph_index = GlyphFromCharCode(charcode);
-  if (m_Font.m_Face == NULL) {
-    return NULL;
-  }
+  if (!m_Font.GetFace())
+    return nullptr;
   return m_Font.LoadGlyphPath(glyph_index, dest_width);
 }
