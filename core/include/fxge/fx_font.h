@@ -91,6 +91,10 @@ class CFX_Font {
   FX_BOOL IsEmbedded() const { return m_bEmbedded; }
   uint8_t* GetSubData() const { return m_pGsubData; }
   void SetSubData(uint8_t* data) { m_pGsubData = data; }
+  void* GetPlatformFont() const { return m_pPlatformFont; }
+  void SetPlatformFont(void* font) { m_pPlatformFont = font; }
+  uint8_t* GetFontData() const { return m_pFontData; }
+  FX_DWORD GetSize() const { return m_dwSize; }
   void AdjustMMParams(int glyph_index, int width, int weight);
 
  private:

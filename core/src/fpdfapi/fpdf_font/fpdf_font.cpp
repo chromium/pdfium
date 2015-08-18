@@ -1090,13 +1090,13 @@ void CPDF_Type1Font::LoadGlyphMap() {
   FX_BOOL bCoreText = TRUE;
   CQuartz2D& quartz2d =
       ((CApplePlatform*)CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
-  if (!m_Font.m_pPlatformFont) {
+  if (!m_Font.GetPlatformFont()) {
     if (m_Font.GetPsName() == CFX_WideString::FromLocal("DFHeiStd-W5")) {
       bCoreText = FALSE;
     }
-    m_Font.m_pPlatformFont =
-        quartz2d.CreateFont(m_Font.m_pFontData, m_Font.m_dwSize);
-    if (NULL == m_Font.m_pPlatformFont) {
+    m_Font.SetPlatformFont(
+        quartz2d.CreateFont(m_Font.GetFontData(), m_Font.GetSize()));
+    if (!m_Font.GetPlatformFont()) {
       bCoreText = FALSE;
     }
   }
@@ -1119,7 +1119,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
               kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
               kCFAllocatorNull);
           m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.m_pPlatformFont, name_ct);
+              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
           if (name_ct) {
             CFRelease(name_ct);
           }
@@ -1161,7 +1161,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
           kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
           kCFAllocatorNull);
       m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-          (CGFontRef)m_Font.m_pPlatformFont, name_ct);
+          (CGFontRef)m_Font.GetPlatformFont(), name_ct);
       if (name_ct) {
         CFRelease(name_ct);
       }
@@ -1178,7 +1178,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
             kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
             kCFAllocatorNull);
         m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-            (CGFontRef)m_Font.m_pPlatformFont, name_ct);
+            (CGFontRef)m_Font.GetPlatformFont(), name_ct);
         if (name_ct) {
           CFRelease(name_ct);
         }
@@ -1207,7 +1207,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
               kCFAllocatorDefault, name, kCFStringEncodingASCII,
               kCFAllocatorNull);
           m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.m_pPlatformFont, name_ct);
+              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
           if (name_ct) {
             CFRelease(name_ct);
           }
@@ -1232,7 +1232,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
               kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
               kCFAllocatorNull);
           m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.m_pPlatformFont, name_ct);
+              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
           if (name_ct) {
             CFRelease(name_ct);
           }
@@ -1261,7 +1261,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
           kCFAllocatorDefault, name, kCFStringEncodingASCII, kCFAllocatorNull);
       m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-          (CGFontRef)m_Font.m_pPlatformFont, name_ct);
+          (CGFontRef)m_Font.GetPlatformFont(), name_ct);
       if (name_ct) {
         CFRelease(name_ct);
       }
@@ -1279,7 +1279,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
               kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
               kCFAllocatorNull);
           m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.m_pPlatformFont, name_ct);
+              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
           if (name_ct) {
             CFRelease(name_ct);
           }
@@ -1295,7 +1295,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
               kCFAllocatorDefault, name_glyph, kCFStringEncodingASCII,
               kCFAllocatorNull);
           m_ExtGID[charcode] = CGFontGetGlyphWithGlyphName(
-              (CGFontRef)m_Font.m_pPlatformFont, name_ct);
+              (CGFontRef)m_Font.GetPlatformFont(), name_ct);
           if (name_ct) {
             CFRelease(name_ct);
           }
