@@ -85,33 +85,26 @@ bool CFX_CTTGSUBTable::GetVerticalGlyph(TT_uint32_t glyphnum,
                 k);
           if (FeatureList.FeatureRecord[index].FeatureTag == tag[0] ||
               FeatureList.FeatureRecord[index].FeatureTag == tag[1]) {
-            FX_DWORD value;
-            if (!m_featureMap.Lookup(index, value)) {
-              m_featureMap.SetAt(index, index);
+            if (m_featureMap.find(index) == m_featureMap.end()) {
+              m_featureMap[index] = index;
             }
           }
         }
       }
     }
-    if (!m_featureMap.GetStartPosition()) {
+    if (m_featureMap.empty()) {
       for (int i = 0; i < FeatureList.FeatureCount; i++) {
         if (FeatureList.FeatureRecord[i].FeatureTag == tag[0] ||
             FeatureList.FeatureRecord[i].FeatureTag == tag[1]) {
-          FX_DWORD value;
-          if (!m_featureMap.Lookup(i, value)) {
-            m_featureMap.SetAt(i, i);
-          }
+          m_featureMap[i] = i;
         }
       }
     }
     m_bFeautureMapLoad = TRUE;
   }
-  FX_POSITION pos = m_featureMap.GetStartPosition();
-  while (pos) {
-    FX_DWORD index, value;
-    m_featureMap.GetNextAssoc(pos, index, value);
+  for (const auto& pair : m_featureMap) {
     if (GetVerticalGlyphSub(glyphnum, vglyphnum,
-                            &FeatureList.FeatureRecord[value].Feature)) {
+                            &FeatureList.FeatureRecord[pair.second].Feature)) {
       return true;
     }
   }

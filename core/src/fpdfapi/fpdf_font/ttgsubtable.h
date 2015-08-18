@@ -341,7 +341,7 @@ class CFX_CTTGSUBTable {
     p += 4;
     return ret;
   }
-  CFX_CMapDWordToDWord m_featureMap;
+  std::map<FX_DWORD, FX_DWORD> m_featureMap;
   FX_BOOL m_bFeautureMapLoad;
   bool loaded;
   struct tt_gsub_header header;
