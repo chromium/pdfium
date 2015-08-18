@@ -140,18 +140,6 @@ class CFX_Font {
 #define ENCODING_INTERNAL 0
 #define ENCODING_UNICODE 1
 
-class IFX_FontEncoding {
- public:
-  virtual ~IFX_FontEncoding() {}
-
-  virtual FX_DWORD GlyphFromCharCode(FX_DWORD charcode) = 0;
-
-  virtual CFX_WideString UnicodeFromCharCode(FX_DWORD charcode) const = 0;
-
-  virtual FX_DWORD CharCodeFromUnicode(FX_WCHAR Unicode) const = 0;
-};
-
-IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont);
 #define FXFM_ENC_TAG(a, b, c, d)                                          \
   (((FX_DWORD)(a) << 24) | ((FX_DWORD)(b) << 16) | ((FX_DWORD)(c) << 8) | \
    (FX_DWORD)(d))
@@ -169,17 +157,37 @@ IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont);
 #define FXFM_ENCODING_ADOBE_LATIN_1 FXFM_ENC_TAG('l', 'a', 't', '1')
 #define FXFM_ENCODING_OLD_LATIN_2 FXFM_ENC_TAG('l', 'a', 't', '2')
 #define FXFM_ENCODING_APPLE_ROMAN FXFM_ENC_TAG('a', 'r', 'm', 'n')
-class IFX_FontEncodingEx : public IFX_FontEncoding {
+
+class CFX_UnicodeEncoding {
  public:
-  virtual FX_DWORD GlyphIndexFromName(const FX_CHAR* pStrName) = 0;
+  explicit CFX_UnicodeEncoding(CFX_Font* pFont);
+  virtual ~CFX_UnicodeEncoding();
 
-  virtual CFX_ByteString NameFromGlyphIndex(FX_DWORD dwGlyphIndex) = 0;
+  virtual FX_DWORD GlyphFromCharCode(FX_DWORD charcode);
 
-  virtual FX_DWORD CharCodeFromGlyphIndex(FX_DWORD dwGlyphIndex) = 0;
+ protected:
+  // Unowned, not nullptr.
+  CFX_Font* m_pFont;
 };
-IFX_FontEncodingEx* FX_CreateFontEncodingEx(
+
+class CFX_UnicodeEncodingEx : public CFX_UnicodeEncoding {
+ public:
+  CFX_UnicodeEncodingEx(CFX_Font* pFont, FX_DWORD EncodingID);
+  ~CFX_UnicodeEncodingEx() override;
+
+  // CFX_UnicodeEncoding:
+  FX_DWORD GlyphFromCharCode(FX_DWORD charcode) override;
+
+  FX_DWORD CharCodeFromUnicode(FX_WCHAR Unicode) const;
+
+ private:
+  FX_DWORD m_nEncodingID;
+};
+
+CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(
     CFX_Font* pFont,
     FX_DWORD nEncodingID = FXFM_ENCODING_NONE);
+
 #define FXFONT_SUBST_MM 0x01
 #define FXFONT_SUBST_GLYPHPATH 0x04
 #define FXFONT_SUBST_CLEARTYPE 0x08

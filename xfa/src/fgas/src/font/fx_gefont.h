@@ -64,7 +64,7 @@ class CFX_GEFont : public IFX_Font, public CFX_ThreadLock {
   FX_BOOL m_bExtFont;
   IFX_Stream* m_pStream;
   IFX_FileRead* m_pFileRead;
-  IFX_FontEncoding* m_pFontEncoding;
+  CFX_UnicodeEncoding* m_pFontEncoding;
   CFX_WordDiscreteArray* m_pCharWidthMap;
   CFX_RectMassArray* m_pRectArray;
   CFX_MapPtrToPtr* m_pBBoxMap;

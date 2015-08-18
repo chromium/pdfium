@@ -20,6 +20,7 @@
  * limitations under the License.
  */
 
+#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../barcode.h"
 #include "../BC_Writer.h"
 #include "../common/BC_CommonBitMatrix.h"
@@ -129,11 +130,9 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
                                     FX_FLOAT geWidth,
                                     int32_t fontSize,
                                     FX_FLOAT& charsLen) {
-#ifdef FXFM_ENCODING_NONE
-  IFX_FontEncodingEx* encoding = FX_CreateFontEncodingEx(cFont);
-#else
-  IFX_FontEncoding* encoding = FXGE_CreateUnicodeEncoding(cFont);
-#endif
+  nonstd::unique_ptr<CFX_UnicodeEncodingEx> encoding(
+      FX_CreateFontEncodingEx(cFont));
+
   int32_t length = text.GetLength();
   FX_DWORD* pCharCode = FX_Alloc(FX_DWORD, text.GetLength());
   FX_FLOAT charWidth = 0;
@@ -174,8 +173,6 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
         (FX_FLOAT)(charPos[i].m_FontCharWidth) * (FX_FLOAT)fontSize / 1000.0f;
   }
   FX_Free(pCharCode);
-  delete encoding;
-  encoding = NULL;
 }
 void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                                        const CFX_Matrix* matrix,

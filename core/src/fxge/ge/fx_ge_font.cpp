@@ -7,10 +7,39 @@
 #include "../../../include/fxge/fx_ge.h"
 #include "../../../include/fxge/fx_freetype.h"
 #include "text_int.h"
+
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 extern void _FPDFAPI_GetInternalFontData(int id1,
                                          const uint8_t*& data,
                                          FX_DWORD& size);
+
+namespace {
+
+const FX_DWORD g_EncodingID[] = {
+  FXFM_ENCODING_MS_SYMBOL,
+  FXFM_ENCODING_UNICODE,
+  FXFM_ENCODING_MS_SJIS,
+  FXFM_ENCODING_MS_GB2312,
+  FXFM_ENCODING_MS_BIG5,
+  FXFM_ENCODING_MS_WANSUNG,
+  FXFM_ENCODING_MS_JOHAB,
+  FXFM_ENCODING_ADOBE_STANDARD,
+  FXFM_ENCODING_ADOBE_EXPERT,
+  FXFM_ENCODING_ADOBE_CUSTOM,
+  FXFM_ENCODING_ADOBE_LATIN_1,
+  FXFM_ENCODING_OLD_LATIN_2,
+  FXFM_ENCODING_APPLE_ROMAN,
+};
+
+CFX_UnicodeEncodingEx* _FXFM_CreateFontEncoding(CFX_Font* pFont,
+                                                FX_DWORD nEncodingID) {
+  if (FXFT_Select_Charmap(pFont->m_Face, nEncodingID))
+    return nullptr;
+  return new CFX_UnicodeEncodingEx(pFont, nEncodingID);
+}
+
+}  // namespace
+
 CFX_Font::CFX_Font() {
   m_pSubstFont = NULL;
   m_Face = NULL;
@@ -420,67 +449,41 @@ int CFX_Font::GetULthickness() {
                             FXFT_Get_Face_UnderLineThickness(m_Face));
   return thickness;
 }
-CFX_UnicodeEncoding::CFX_UnicodeEncoding(CFX_Font* pFont) {
-  m_pFont = pFont;
+
+CFX_UnicodeEncoding::CFX_UnicodeEncoding(CFX_Font* pFont) : m_pFont(pFont) {
 }
+
+CFX_UnicodeEncoding::~CFX_UnicodeEncoding() {
+}
+
 FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCode(FX_DWORD charcode) {
   FXFT_Face face = m_pFont->GetFace();
-  if (!face) {
+  if (!face)
     return charcode;
-  }
-  if (FXFT_Select_Charmap(face, FXFT_ENCODING_UNICODE) == 0) {
+
+  if (FXFT_Select_Charmap(face, FXFT_ENCODING_UNICODE) == 0)
     return FXFT_Get_Char_Index(face, charcode);
-  }
+
   if (m_pFont->m_pSubstFont && m_pFont->m_pSubstFont->m_Charset == 2) {
     FX_DWORD index = 0;
-    if (FXFT_Select_Charmap(face, FXFT_ENCODING_MS_SYMBOL) == 0) {
+    if (FXFT_Select_Charmap(face, FXFT_ENCODING_MS_SYMBOL) == 0)
       index = FXFT_Get_Char_Index(face, charcode);
-    }
-    if (!index && !FXFT_Select_Charmap(face, FXFT_ENCODING_APPLE_ROMAN)) {
+    if (!index && !FXFT_Select_Charmap(face, FXFT_ENCODING_APPLE_ROMAN))
       return FXFT_Get_Char_Index(face, charcode);
-    }
   }
   return charcode;
 }
-FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCodeEx(FX_DWORD charcode,
-                                                  int encoding) {
+
+CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* pFont,
+                                             FX_DWORD EncodingID)
+    : CFX_UnicodeEncoding(pFont), m_nEncodingID(EncodingID) {
+}
+
+CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() {
+}
+
+FX_DWORD CFX_UnicodeEncodingEx::GlyphFromCharCode(FX_DWORD charcode) {
   FXFT_Face face = m_pFont->GetFace();
-  if (!face) {
-    return charcode;
-  }
-  if (encoding == ENCODING_UNICODE) {
-    return GlyphFromCharCode(charcode);
-  }
-  int nmaps = FXFT_Get_Face_CharmapCount(m_pFont->m_Face);
-  int i = 0;
-  while (i < nmaps) {
-    int encoding = FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[i++]);
-    if (encoding != FXFT_ENCODING_UNICODE) {
-      FXFT_Select_Charmap(face, encoding);
-      break;
-    }
-  }
-  return FXFT_Get_Char_Index(face, charcode);
-}
-IFX_FontEncoding* FXGE_CreateUnicodeEncoding(CFX_Font* pFont) {
-  CFX_UnicodeEncoding* pEncoding = NULL;
-  pEncoding = new CFX_UnicodeEncoding(pFont);
-  return pEncoding;
-}
-CFX_FontEncodingEX::CFX_FontEncodingEX() {
-  m_pFont = NULL;
-  m_nEncodingID = FXFM_ENCODING_NONE;
-}
-FX_BOOL CFX_FontEncodingEX::Init(CFX_Font* pFont, FX_DWORD EncodingID) {
-  if (!pFont) {
-    return FALSE;
-  }
-  m_pFont = pFont;
-  m_nEncodingID = EncodingID;
-  return TRUE;
-}
-FX_DWORD CFX_FontEncodingEX::GlyphFromCharCode(FX_DWORD charcode) {
-  FXFT_Face face = m_pFont->m_Face;
   FT_UInt nIndex = FXFT_Get_Char_Index(face, charcode);
   if (nIndex > 0) {
     return nIndex;
@@ -506,14 +509,8 @@ FX_DWORD CFX_FontEncodingEX::GlyphFromCharCode(FX_DWORD charcode) {
   FXFT_Select_Charmap(face, m_nEncodingID);
   return 0;
 }
-CFX_WideString CFX_FontEncodingEX::UnicodeFromCharCode(
-    FX_DWORD charcode) const {
-  if (m_nEncodingID == FXFM_ENCODING_UNICODE) {
-    return CFX_WideString((FX_WCHAR)charcode);
-  }
-  return CFX_WideString((FX_WCHAR)0);
-}
-FX_DWORD CFX_FontEncodingEX::CharCodeFromUnicode(FX_WCHAR Unicode) const {
+
+FX_DWORD CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
   if (m_nEncodingID == FXFM_ENCODING_UNICODE ||
       m_nEncodingID == FXFM_ENCODING_MS_SYMBOL) {
     return Unicode;
@@ -530,94 +527,18 @@ FX_DWORD CFX_FontEncodingEX::CharCodeFromUnicode(FX_WCHAR Unicode) const {
   }
   return -1;
 }
-FX_BOOL CFX_FontEncodingEX::IsUnicodeCompatible() const {
-  return m_nEncodingID == FXFM_ENCODING_UNICODE;
-}
-FX_DWORD CFX_FontEncodingEX::GlyphIndexFromName(const FX_CHAR* pStrName) {
-  FXFT_Face face = m_pFont->m_Face;
-  return FT_Get_Name_Index(face, (FT_String*)pStrName);
-}
-CFX_ByteString CFX_FontEncodingEX::NameFromGlyphIndex(FX_DWORD dwGlyphIndex) {
-  FXFT_Face face = m_pFont->m_Face;
-  CFX_ByteString glyphName("                ");
-  if (FT_HAS_GLYPH_NAMES(((FT_Face)face))) {
-    if (FT_Get_Glyph_Name((FT_Face)face, dwGlyphIndex,
-                          (FT_Pointer)(const FX_CHAR*)glyphName, 16)) {
-      glyphName.Empty();
-      return glyphName;
-    }
-    return glyphName;
-  } else {
-    return glyphName;
-  }
-}
-FX_DWORD CFX_FontEncodingEX::CharCodeFromGlyphIndex(FX_DWORD dwGlyphIndex) {
-  FXFT_Face face = m_pFont->GetFace();
-  FX_DWORD charcode;
-  FT_UInt gid;
-  charcode = FT_Get_First_Char((FT_Face)face, &gid);
-  while (gid != 0) {
-    if (dwGlyphIndex == gid) {
-      return charcode;
-    }
-    charcode = FT_Get_Next_Char((FT_Face)face, charcode, &gid);
-  }
-  int nmaps = FXFT_Get_Face_CharmapCount(face);
-  int m = 0;
-  while (m < nmaps) {
-    int nEncodingID =
-        FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[m++]);
-    if (m_nEncodingID == nEncodingID) {
-      continue;
-    }
-    int error = FXFT_Select_Charmap(face, nEncodingID);
-    if (error) {
-      continue;
-    }
-    charcode = FT_Get_First_Char((FT_Face)face, &gid);
-    while (gid != 0) {
-      if (dwGlyphIndex == gid) {
-        m_nEncodingID = nEncodingID;
-        return charcode;
-      }
-      charcode = FT_Get_Next_Char((FT_Face)face, charcode, &gid);
-    }
-  }
-  return (FX_DWORD)-1;
-}
-static const FX_DWORD gs_EncodingID[] = {
-    FXFM_ENCODING_MS_SYMBOL,     FXFM_ENCODING_UNICODE,
-    FXFM_ENCODING_MS_SJIS,       FXFM_ENCODING_MS_GB2312,
-    FXFM_ENCODING_MS_BIG5,       FXFM_ENCODING_MS_WANSUNG,
-    FXFM_ENCODING_MS_JOHAB,      FXFM_ENCODING_ADOBE_STANDARD,
-    FXFM_ENCODING_ADOBE_EXPERT,  FXFM_ENCODING_ADOBE_CUSTOM,
-    FXFM_ENCODING_ADOBE_LATIN_1, FXFM_ENCODING_OLD_LATIN_2,
-    FXFM_ENCODING_APPLE_ROMAN};
-static IFX_FontEncodingEx* _FXFM_CreateFontEncoding(CFX_Font* pFont,
-                                                    FX_DWORD nEncodingID) {
-  int error = FXFT_Select_Charmap(pFont->m_Face, nEncodingID);
-  if (error) {
-    return NULL;
-  }
-  CFX_FontEncodingEX* pFontEncoding = new CFX_FontEncodingEX;
-  if (pFontEncoding && !pFontEncoding->Init(pFont, nEncodingID)) {
-    delete pFontEncoding;
-    pFontEncoding = NULL;
-  }
-  return pFontEncoding;
-}
-IFX_FontEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,
-                                            FX_DWORD nEncodingID) {
-  if (!pFont || !pFont->m_Face) {
-    return NULL;
-  }
-  if (nEncodingID != FXFM_ENCODING_NONE) {
+
+CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,
+                                               FX_DWORD nEncodingID) {
+  if (!pFont || !pFont->m_Face)
+    return nullptr;
+
+  if (nEncodingID != FXFM_ENCODING_NONE)
     return _FXFM_CreateFontEncoding(pFont, nEncodingID);
-  }
-  static int s_count = sizeof(gs_EncodingID) / sizeof(FX_DWORD);
-  for (int i = 0; i < s_count; i++) {
-    IFX_FontEncodingEx* pFontEncoding =
-        _FXFM_CreateFontEncoding(pFont, gs_EncodingID[i]);
+
+  for (size_t i = 0; i < FX_ArraySize(g_EncodingID); ++i) {
+    CFX_UnicodeEncodingEx* pFontEncoding =
+        _FXFM_CreateFontEncoding(pFont, g_EncodingID[i]);
     if (pFontEncoding) {
       return pFontEncoding;
     }

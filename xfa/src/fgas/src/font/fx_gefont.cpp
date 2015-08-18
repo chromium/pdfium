@@ -88,6 +88,10 @@ IFX_Font* IFX_Font::LoadFont(CFX_Font* pExtFont,
 }
 CFX_GEFont::CFX_GEFont(IFX_FontMgr* pFontMgr)
     : CFX_ThreadLock(),
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+      m_bUseLogFontStyle(FALSE),
+      m_dwLogFontStyle(0),
+#endif
       m_pFont(NULL),
       m_pFontMgr(pFontMgr),
       m_iRefCount(1),
@@ -98,19 +102,18 @@ CFX_GEFont::CFX_GEFont(IFX_FontMgr* pFontMgr)
       m_pCharWidthMap(NULL),
       m_pRectArray(NULL),
       m_pBBoxMap(NULL),
+      m_pProvider(NULL),
       m_wCharSet(0xFFFF),
-      m_pProvider(NULL)
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-      ,
-      m_bUseLogFontStyle(FALSE),
-      m_dwLogFontStyle(0)
-#endif
-      ,
       m_SubstFonts(),
       m_FontMapper(16) {
 }
+
 CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, FX_DWORD dwFontStyles)
     : CFX_ThreadLock(),
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+      m_bUseLogFontStyle(FALSE),
+      m_dwLogFontStyle(0),
+#endif
       m_pFont(NULL),
       m_pFontMgr(src.m_pFontMgr),
       m_iRefCount(1),
@@ -121,8 +124,8 @@ CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, FX_DWORD dwFontStyles)
       m_pCharWidthMap(NULL),
       m_pRectArray(NULL),
       m_pBBoxMap(NULL),
-      m_wCharSet(0xFFFF),
       m_pProvider(NULL),
+      m_wCharSet(0xFFFF),
       m_SubstFonts(),
       m_FontMapper(16) {
   m_pFont = new CFX_Font;
@@ -334,11 +337,7 @@ void CFX_GEFont::InitFont() {
     return;
   }
   if (m_pFontEncoding == NULL) {
-#ifdef FXFM_ENCODING_NONE
     m_pFontEncoding = FX_CreateFontEncodingEx(m_pFont);
-#else
-    m_pFontEncoding = FXGE_CreateUnicodeEncoding(m_pFont);
-#endif
   }
   if (m_pCharWidthMap == NULL) {
     m_pCharWidthMap = new CFX_WordDiscreteArray(1024);
