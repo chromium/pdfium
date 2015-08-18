@@ -88,7 +88,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
     case FXFONT_CHINESEBIG5_CHARSET:
       face = "LiSong Pro Light";
   }
-  it = m_FontList.Lookup(face);
+  it = m_FontList.find(face);
   if (it != m_FontList.end())
     return it->second;
 
