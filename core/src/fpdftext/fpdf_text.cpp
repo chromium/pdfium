@@ -9,7 +9,7 @@
 #include "../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../include/fpdfapi/fpdf_resource.h"
 #include "../../include/fpdftext/fpdf_text.h"
-#include "../../include/fxcrt/fx_arb.h"
+#include "../../include/fxcrt/fx_bidi.h"
 #include "../../include/fxcrt/fx_ucd.h"
 #include "text_int.h"
 #include "txtproc.h"
@@ -321,35 +321,35 @@ void NormalizeString(CFX_WideString& str) {
     return;
   }
   CFX_WideString sBuffer;
-  nonstd::unique_ptr<IFX_BidiChar> pBidiChar(IFX_BidiChar::Create());
+  nonstd::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
   CFX_WordArray order;
   FX_BOOL bR2L = FALSE;
   int32_t start = 0, count = 0, i = 0;
   int nR2L = 0, nL2R = 0;
   for (i = 0; i < str.GetLength(); i++) {
     if (pBidiChar->AppendChar(str.GetAt(i))) {
-      int32_t ret = pBidiChar->GetBidiInfo(start, count);
+      CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
       order.Add(start);
       order.Add(count);
       order.Add(ret);
       if (!bR2L) {
-        if (ret == 2) {
+        if (ret == CFX_BidiChar::RIGHT) {
           nR2L++;
-        } else if (ret == 1) {
+        } else if (ret == CFX_BidiChar::LEFT) {
           nL2R++;
         }
       }
     }
   }
   if (pBidiChar->EndChar()) {
-    int32_t ret = pBidiChar->GetBidiInfo(start, count);
+    CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
     order.Add(start);
     order.Add(count);
     order.Add(ret);
     if (!bR2L) {
-      if (ret == 2) {
+      if (ret == CFX_BidiChar::RIGHT) {
         nR2L++;
-      } else if (ret == 1) {
+      } else if (ret == CFX_BidiChar::LEFT) {
         nL2R++;
       }
     }
