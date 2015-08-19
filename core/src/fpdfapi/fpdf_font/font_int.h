@@ -3,10 +3,22 @@
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
 #ifndef CORE_SRC_FPDFAPI_FPDF_FONT_FONT_INT_H_
 #define CORE_SRC_FPDFAPI_FPDF_FONT_FONT_INT_H_
 
+#include <map>
+
+#include "../../../include/fxcrt/fx_basic.h"
+#include "../../../include/fpdfapi/fpdf_resource.h"
+
+class CPDF_CID2UnicodeMap;
+class CPDF_CMap;
+class CPDF_Font;
+class CPDF_Stream;
+
 typedef void* FXFT_Library;
+
 class CPDF_CMapManager {
  public:
   CPDF_CMapManager();
@@ -19,9 +31,9 @@ class CPDF_CMapManager {
  private:
   CPDF_CMap* LoadPredefinedCMap(const CFX_ByteString& name, FX_BOOL bPrompt);
   CPDF_CID2UnicodeMap* LoadCID2UnicodeMap(int charset, FX_BOOL bPrompt);
-  void DropAll(FX_BOOL bReload);
+
   FX_BOOL m_bPrompted;
-  CFX_MapByteStringToPtr m_CMaps;
+  std::map<CFX_ByteString, CPDF_CMap*> m_CMaps;
   CPDF_CID2UnicodeMap* m_CID2UnicodeMaps[6];
 };
 class CPDF_FontGlobals {

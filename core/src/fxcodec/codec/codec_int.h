@@ -9,10 +9,14 @@
 
 #include <limits.h>
 #include <list>
+#include <map>
 
 #include "../../../../third_party/libopenjpeg20/openjpeg.h"  // For OPJ_SIZE_T.
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../jbig2/JBig2_Context.h"
+
+class CFX_IccProfileCache;
+class CFX_IccTransformCache;
 
 class CCodec_BasicModule : public ICodec_BasicModule {
  public:
@@ -289,18 +293,19 @@ class CCodec_IccModule : public ICodec_IccModule {
   virtual ~CCodec_IccModule();
 
  protected:
-  CFX_MapByteStringToPtr m_MapTranform;
-  CFX_MapByteStringToPtr m_MapProfile;
-  FX_DWORD m_nComponents;
-  typedef enum {
+  enum Icc_CLASS {
     Icc_CLASS_INPUT = 0,
     Icc_CLASS_OUTPUT,
     Icc_CLASS_PROOF,
     Icc_CLASS_MAX
-  } Icc_CLASS;
+  };
   void* CreateProfile(ICodec_IccModule::IccParam* pIccParam,
                       Icc_CLASS ic,
                       CFX_BinaryBuf* pTransformKey);
+
+  FX_DWORD m_nComponents;
+  std::map<CFX_ByteString, CFX_IccTransformCache*> m_MapTranform;
+  std::map<CFX_ByteString, CFX_IccProfileCache*> m_MapProfile;
 };
 
 class CCodec_JpxModule : public ICodec_JpxModule {

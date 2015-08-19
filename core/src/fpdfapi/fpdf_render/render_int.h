@@ -12,8 +12,11 @@
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 
+class CFX_GlyphBitmap;
 class CPDF_QuickStretcher;
+
 #define TYPE3_MAX_BLUES 16
+
 class CPDF_Type3Glyphs {
  public:
   CPDF_Type3Glyphs() {
@@ -30,11 +33,11 @@ class CPDF_Type3Glyphs {
   int m_TopBlue[TYPE3_MAX_BLUES], m_BottomBlue[TYPE3_MAX_BLUES];
   int m_TopBlueCount, m_BottomBlueCount;
 };
-class CFX_GlyphBitmap;
 class CPDF_Type3Cache {
  public:
-  CPDF_Type3Cache(CPDF_Type3Font* pFont) { m_pFont = pFont; }
+  explicit CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {}
   ~CPDF_Type3Cache();
+
   CFX_GlyphBitmap* LoadGlyph(FX_DWORD charcode,
                              const CFX_AffineMatrix* pMatrix,
                              FX_FLOAT retinaScaleX = 1.0f,
@@ -46,8 +49,8 @@ class CPDF_Type3Cache {
                                const CFX_AffineMatrix* pMatrix,
                                FX_FLOAT retinaScaleX = 1.0f,
                                FX_FLOAT retinaScaleY = 1.0f);
-  CPDF_Type3Font* m_pFont;
-  CFX_MapByteStringToPtr m_SizeMap;
+  CPDF_Type3Font* const m_pFont;
+  std::map<CFX_ByteString, CPDF_Type3Glyphs*> m_SizeMap;
 };
 class CPDF_TransferFunc {
  public:

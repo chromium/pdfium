@@ -40,7 +40,6 @@ class CPDFXFA_Document : public IXFA_DocProvider {
 
   void FXRect2PDFRect(const CFX_RectF& fxRectF, CPDF_Rect& pdfRect);
 
- public:
   virtual void SetChangeMark(IXFA_Doc* hDoc);
   virtual FX_BOOL GetChangeMark(IXFA_Doc* hDoc);
   // used in dynamic xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
@@ -220,16 +219,9 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   IXFA_Doc* m_pXFADoc;
   IXFA_DocView* m_pXFADocView;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
-
   CPDFSDK_Document* m_pSDKDoc;
   CPDFXFA_App* m_pApp;
-
-  CFX_MapByteStringToPtr m_XfaGlobalProperty;
-
-  CFX_MapByteStringToPtr m_ValueMap;
-
   IFXJS_Context* m_pJSContext;
-
   int m_iDocType;
 };
 

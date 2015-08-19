@@ -9,9 +9,31 @@
 #include "../../../include/fxge/fx_ge.h"
 #include "../../../include/fxge/fx_freetype.h"
 #include "text_int.h"
+
 #define GET_TT_SHORT(w) (FX_WORD)(((w)[0] << 8) | (w)[1])
 #define GET_TT_LONG(w) \
   (FX_DWORD)(((w)[0] << 24) | ((w)[1] << 16) | ((w)[2] << 8) | (w)[3])
+
+namespace {
+
+CFX_ByteString KeyNameFromFace(const CFX_ByteString& face_name,
+                               int weight,
+                               FX_BOOL bItalic) {
+  CFX_ByteString key(face_name);
+  key += ',';
+  key += CFX_ByteString::FormatInteger(weight);
+  key += bItalic ? 'I' : 'N';
+  return key;
+}
+
+CFX_ByteString KeyNameFromSize(int ttc_size, FX_DWORD checksum) {
+  CFX_ByteString key;
+  key.Format("%d:%d", ttc_size, checksum);
+  return key;
+}
+
+}  // namespace
+
 CFX_SubstFont::CFX_SubstFont() {
   m_ExtHandle = NULL;
   m_Charset = 0;
@@ -74,14 +96,10 @@ void CFX_FontMgr::InitFTLibrary() {
   }
 }
 void CFX_FontMgr::FreeCache() {
-  FX_POSITION pos = m_FaceMap.GetStartPosition();
-  while (pos) {
-    CFX_ByteString Key;
-    CTTFontDesc* face;
-    m_FaceMap.GetNextAssoc(pos, Key, (void*&)face);
-    delete face;
+  for (const auto& pair : m_FaceMap) {
+    delete pair.second;
   }
-  m_FaceMap.RemoveAll();
+  m_FaceMap.clear();
 }
 void CFX_FontMgr::SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo) {
   m_pBuiltinMapper->SetSystemFontInfo(pFontInfo);
@@ -103,18 +121,14 @@ FXFT_Face CFX_FontMgr::GetCachedFace(const CFX_ByteString& face_name,
                                      int weight,
                                      FX_BOOL bItalic,
                                      uint8_t*& pFontData) {
-  CFX_ByteString key(face_name);
-  key += ',';
-  key += CFX_ByteString::FormatInteger(weight);
-  key += bItalic ? 'I' : 'N';
-  CTTFontDesc* pFontDesc = NULL;
-  m_FaceMap.Lookup(key, (void*&)pFontDesc);
-  if (pFontDesc) {
-    pFontData = pFontDesc->m_pFontData;
-    pFontDesc->m_RefCount++;
-    return pFontDesc->m_SingleFace.m_pFace;
-  }
-  return NULL;
+  auto it = m_FaceMap.find(KeyNameFromFace(face_name, weight, bItalic));
+  if (it == m_FaceMap.end())
+    return nullptr;
+
+  CTTFontDesc* pFontDesc = it->second;
+  pFontData = pFontDesc->m_pFontData;
+  pFontDesc->m_RefCount++;
+  return pFontDesc->m_SingleFace.m_pFace;
 }
 FXFT_Face CFX_FontMgr::AddCachedFace(const CFX_ByteString& face_name,
                                      int weight,
@@ -148,11 +162,7 @@ FXFT_Face CFX_FontMgr::AddCachedFace(const CFX_ByteString& face_name,
     delete pFontDesc;
     return NULL;
   }
-  CFX_ByteString key(face_name);
-  key += ',';
-  key += CFX_ByteString::FormatInteger(weight);
-  key += bItalic ? 'I' : 'N';
-  m_FaceMap.SetAt(key, pFontDesc);
+  m_FaceMap[KeyNameFromFace(face_name, weight, bItalic)] = pFontDesc;
   return pFontDesc->m_SingleFace.m_pFace;
 }
 const FX_CHAR* const g_Base14FontNames[14] = {
@@ -305,17 +315,15 @@ FXFT_Face CFX_FontMgr::GetCachedTTCFace(int ttc_size,
                                         FX_DWORD checksum,
                                         int font_offset,
                                         uint8_t*& pFontData) {
-  CFX_ByteString key;
-  key.Format("%d:%d", ttc_size, checksum);
-  CTTFontDesc* pFontDesc = NULL;
-  m_FaceMap.Lookup(key, (void*&)pFontDesc);
-  if (pFontDesc == NULL) {
-    return NULL;
-  }
+  auto it = m_FaceMap.find(KeyNameFromSize(ttc_size, checksum));
+  if (it == m_FaceMap.end())
+    return nullptr;
+
+  CTTFontDesc* pFontDesc = it->second;
   pFontData = pFontDesc->m_pFontData;
   pFontDesc->m_RefCount++;
   int face_index = GetTTCIndex(pFontDesc->m_pFontData, ttc_size, font_offset);
-  if (pFontDesc->m_TTCFace.m_pFaces[face_index] == NULL) {
+  if (!pFontDesc->m_TTCFace.m_pFaces[face_index]) {
     pFontDesc->m_TTCFace.m_pFaces[face_index] =
         GetFixedFace(pFontDesc->m_pFontData, ttc_size, face_index);
   }
@@ -326,8 +334,6 @@ FXFT_Face CFX_FontMgr::AddCachedTTCFace(int ttc_size,
                                         uint8_t* pData,
                                         FX_DWORD size,
                                         int font_offset) {
-  CFX_ByteString key;
-  key.Format("%d:%d", ttc_size, checksum);
   CTTFontDesc* pFontDesc = new CTTFontDesc;
   if (!pFontDesc) {
     return NULL;
@@ -338,8 +344,7 @@ FXFT_Face CFX_FontMgr::AddCachedTTCFace(int ttc_size,
     pFontDesc->m_TTCFace.m_pFaces[i] = NULL;
   }
   pFontDesc->m_RefCount++;
-  key.Format("%d:%d", ttc_size, checksum);
-  m_FaceMap.SetAt(key, pFontDesc);
+  m_FaceMap[KeyNameFromSize(ttc_size, checksum)] = pFontDesc;
   int face_index = GetTTCIndex(pFontDesc->m_pFontData, ttc_size, font_offset);
   pFontDesc->m_TTCFace.m_pFaces[face_index] =
       GetFixedFace(pFontDesc->m_pFontData, ttc_size, face_index);
@@ -382,18 +387,16 @@ FXFT_Face CFX_FontMgr::GetFileFace(const FX_CHAR* filename, int face_index) {
   return face;
 }
 void CFX_FontMgr::ReleaseFace(FXFT_Face face) {
-  if (face == NULL) {
+  if (!face) {
     return;
   }
-  FX_POSITION pos = m_FaceMap.GetStartPosition();
   FX_BOOL bNeedFaceDone = TRUE;
-  while (pos) {
-    CFX_ByteString Key;
-    CTTFontDesc* ttface;
-    m_FaceMap.GetNextAssoc(pos, Key, (void*&)ttface);
-    int nRet = ttface->ReleaseFace(face);
+  auto it = m_FaceMap.begin();
+  while (it != m_FaceMap.end()) {
+    auto temp = it++;
+    int nRet = temp->second->ReleaseFace(face);
     if (nRet == 0) {
-      m_FaceMap.RemoveKey(Key);
+      m_FaceMap.erase(temp);
       bNeedFaceDone = FALSE;
     } else if (nRet > 0) {
       bNeedFaceDone = FALSE;
@@ -1373,12 +1376,8 @@ IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
 #endif
 CFX_FolderFontInfo::CFX_FolderFontInfo() {}
 CFX_FolderFontInfo::~CFX_FolderFontInfo() {
-  FX_POSITION pos = m_FontList.GetStartPosition();
-  while (pos) {
-    CFX_ByteString key;
-    void* value;
-    m_FontList.GetNextAssoc(pos, key, value);
-    delete (CFX_FontFaceInfo*)value;
+  for (const auto& pair : m_FontList) {
+    delete pair.second;
   }
 }
 void CFX_FolderFontInfo::AddPath(const CFX_ByteStringC& path) {
@@ -1488,8 +1487,7 @@ void CFX_FolderFontInfo::ReportFace(CFX_ByteString& path,
   if (style != "Regular") {
     facename += " " + style;
   }
-  void* p;
-  if (m_FontList.Lookup(facename, p)) {
+  if (m_FontList.find(facename) != m_FontList.end()) {
     return;
   }
   CFX_FontFaceInfo* pInfo =
@@ -1533,7 +1531,7 @@ void CFX_FolderFontInfo::ReportFace(CFX_ByteString& path,
   if (facename.Find(FX_BSTRC("Serif")) > -1) {
     pInfo->m_Styles |= FXFONT_SERIF;
   }
-  m_FontList.SetAt(facename, pInfo);
+  m_FontList[facename] = pInfo;
 }
 void* CFX_FolderFontInfo::MapFont(int weight,
                                   FX_BOOL bItalic,
@@ -1550,11 +1548,8 @@ void* CFX_FolderFontInfo::MapFontByUnicode(FX_DWORD dwUnicode,
   return NULL;
 }
 void* CFX_FolderFontInfo::GetFont(const FX_CHAR* face) {
-  void* p;
-  if (!m_FontList.Lookup(face, p)) {
-    return NULL;
-  }
-  return p;
+  auto it = m_FontList.find(face);
+  return it != m_FontList.end() ? it->second : nullptr;
 }
 FX_DWORD CFX_FolderFontInfo::GetFontData(void* hFont,
                                          FX_DWORD table,

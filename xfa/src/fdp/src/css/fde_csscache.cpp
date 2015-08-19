@@ -17,21 +17,16 @@ _FDE_CSSCACHEITEM::~_FDE_CSSCACHEITEM() {
 IFDE_CSSStyleSheetCache* IFDE_CSSStyleSheetCache::Create() {
   return new CFDE_CSSStyleSheetCache;
 }
+
 CFDE_CSSStyleSheetCache::CFDE_CSSStyleSheetCache()
     : m_pFixedStore(NULL), m_iMaxItems(5) {}
+
 CFDE_CSSStyleSheetCache::~CFDE_CSSStyleSheetCache() {
-  FX_POSITION pos = m_Stylesheets.GetStartPosition();
-  if (pos != NULL) {
-    CFX_ByteString szKey;
-    void* pValue;
-    while (pos != NULL) {
-      m_Stylesheets.GetNextAssoc(pos, szKey, pValue);
-      FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore,
-                     (FDE_LPCSSCACHEITEM)pValue);
-    }
-    m_Stylesheets.RemoveAll();
+  for (const auto& pair : m_Stylesheets) {
+    FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, pair.second);
   }
-  if (m_pFixedStore != NULL) {
+  m_Stylesheets.clear();
+  if (m_pFixedStore) {
     m_pFixedStore->Release();
   }
 }
@@ -43,9 +38,9 @@ void CFDE_CSSStyleSheetCache::AddStyleSheet(const CFX_ByteStringC& szKey,
         FX_ALLOCTYPE_Fixed, FX_MAX(10, m_iMaxItems), sizeof(FDE_CSSCACHEITEM));
     FXSYS_assert(m_pFixedStore != NULL);
   }
-  void* pValue = NULL;
-  if (m_Stylesheets.Lookup(szKey, pValue)) {
-    FDE_LPCSSCACHEITEM pItem = (FDE_LPCSSCACHEITEM)pValue;
+  auto it = m_Stylesheets.find(szKey);
+  if (it != m_Stylesheets.end()) {
+    FDE_LPCSSCACHEITEM pItem = it->second;
     if (pItem->pStylesheet != pStyleSheet) {
       pItem->pStylesheet->Release();
       pItem->pStylesheet = pStyleSheet;
@@ -53,56 +48,48 @@ void CFDE_CSSStyleSheetCache::AddStyleSheet(const CFX_ByteStringC& szKey,
       pItem->dwActivity = 0;
     }
   } else {
-    while (m_Stylesheets.GetCount() >= m_iMaxItems) {
+    while (static_cast<int32_t>(m_Stylesheets.size()) >= m_iMaxItems) {
       RemoveLowestActivityItem();
     }
-    FDE_LPCSSCACHEITEM pItem =
+    m_Stylesheets[szKey] =
         FDE_NewWith(m_pFixedStore) FDE_CSSCACHEITEM(pStyleSheet);
-    FXSYS_assert(pItem != NULL);
-    m_Stylesheets.SetAt(szKey, pItem);
   }
 }
 IFDE_CSSStyleSheet* CFDE_CSSStyleSheetCache::GetStyleSheet(
     const CFX_ByteStringC& szKey) const {
-  void* pValue = NULL;
-  if (m_Stylesheets.Lookup(szKey, pValue)) {
-    FDE_LPCSSCACHEITEM pItem = (FDE_LPCSSCACHEITEM)pValue;
-    pItem->dwActivity++;
-    pItem->pStylesheet->AddRef();
-    return pItem->pStylesheet;
+  auto it = m_Stylesheets.find(szKey);
+  if (it == m_Stylesheets.end()) {
+    return nullptr;
   }
-  return NULL;
+  FDE_LPCSSCACHEITEM pItem = it->second;
+  pItem->dwActivity++;
+  pItem->pStylesheet->AddRef();
+  return pItem->pStylesheet;
 }
 void CFDE_CSSStyleSheetCache::RemoveStyleSheet(const CFX_ByteStringC& szKey) {
-  void* pValue = NULL;
-  if (!m_Stylesheets.Lookup(szKey, pValue)) {
+  auto it = m_Stylesheets.find(szKey);
+  if (it == m_Stylesheets.end()) {
     return;
   }
-  FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, (FDE_LPCSSCACHEITEM)pValue);
-  m_Stylesheets.RemoveKey(szKey);
+  FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, it->second);
+  m_Stylesheets.erase(it);
 }
 void CFDE_CSSStyleSheetCache::RemoveLowestActivityItem() {
-  FX_POSITION pos = m_Stylesheets.GetStartPosition();
-  CFX_ByteString szKey;
-  void* pValue;
-  FDE_LPCSSCACHEITEM pItem = NULL;
-  CFX_ByteString szItem;
-  while (pos != NULL) {
-    m_Stylesheets.GetNextAssoc(pos, szKey, pValue);
-    switch (szKey.GetID()) {
+  auto found = m_Stylesheets.end();
+  for (auto it = m_Stylesheets.begin(); it != m_Stylesheets.end(); ++it) {
+    switch (it->first.GetID()) {
       case FXBSTR_ID('#', 'U', 'S', 'E'):
       case FXBSTR_ID('#', 'A', 'G', 'E'):
         continue;
     }
-    FDE_LPCSSCACHEITEM p = (FDE_LPCSSCACHEITEM)pValue;
-    if (pItem == NULL || pItem->dwActivity > p->dwActivity) {
-      szItem = szKey;
-      pItem = p;
+    if (found == m_Stylesheets.end() ||
+        it->second->dwActivity > found->second->dwActivity) {
+      found = it;
     }
   }
-  if (pItem != NULL) {
-    FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, pItem);
-    m_Stylesheets.RemoveKey(szItem);
+  if (found != m_Stylesheets.end()) {
+    FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, found->second);
+    m_Stylesheets.erase(found);
   }
 }
 _FDE_CSSTAGCACHE::_FDE_CSSTAGCACHE(_FDE_CSSTAGCACHE* parent,

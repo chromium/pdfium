@@ -434,7 +434,8 @@ void* CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
   CFX_ByteString ProfileKey(key.GetBuffer(), key.GetSize());
   ASSERT(pTransformKey);
   pTransformKey->AppendBlock(ProfileKey.GetBuffer(0), ProfileKey.GetLength());
-  if (!m_MapProfile.Lookup(ProfileKey, (void*&)pCache)) {
+  auto it = m_MapProfile.find(ProfileKey);
+  if (it == m_MapProfile.end()) {
     pCache = new CFX_IccProfileCache;
     switch (pIccParam->dwProfileType) {
       case Icc_PARAMTYPE_BUFFER:
@@ -456,8 +457,9 @@ void* CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
       default:
         break;
     }
-    m_MapProfile.SetAt(ProfileKey, pCache);
+    m_MapProfile[ProfileKey] = pCache;
   } else {
+    pCache = it->second;
     pCache->m_dwRate++;
   }
   return pCache->m_pProfile;
@@ -496,7 +498,8 @@ void* CCodec_IccModule::CreateTransform(
       << (pProofProfile != NULL) << dwPrfIntent << dwPrfFlag;
   CFX_ByteStringC TransformKey(key.GetBuffer(), key.GetSize());
   CFX_IccTransformCache* pTransformCache;
-  if (!m_MapTranform.Lookup(TransformKey, (void*&)pTransformCache)) {
+  auto it = m_MapTranform.find(TransformKey);
+  if (it == m_MapTranform.end()) {
     pCmm = FX_Alloc(CLcmsCmm, 1);
     pCmm->m_nSrcComponents = T_CHANNELS(dwInputProfileType);
     pCmm->m_nDstComponents = T_CHANNELS(dwOutputProfileType);
@@ -512,26 +515,22 @@ void* CCodec_IccModule::CreateTransform(
                              dwOutputProfileType, dwIntent, dwFlag);
     }
     pCmm->m_hTransform = pTransformCache->m_pIccTransform;
-    m_MapTranform.SetAt(TransformKey, pTransformCache);
+    m_MapTranform[TransformKey] = pTransformCache;
   } else {
+    pTransformCache = it->second;
     pTransformCache->m_dwRate++;
   }
   return pTransformCache->m_pCmm;
 }
 CCodec_IccModule::~CCodec_IccModule() {
-  FX_POSITION pos = m_MapProfile.GetStartPosition();
-  CFX_ByteString key;
-  CFX_IccProfileCache* pProfileCache;
-  while (pos) {
-    m_MapProfile.GetNextAssoc(pos, key, (void*&)pProfileCache);
-    delete pProfileCache;
+  for (const auto& pair : m_MapProfile) {
+    delete pair.second;
   }
-  pos = m_MapTranform.GetStartPosition();
-  CFX_IccTransformCache* pTransformCache;
-  while (pos) {
-    m_MapTranform.GetNextAssoc(pos, key, (void*&)pTransformCache);
-    delete pTransformCache;
+  m_MapProfile.clear();
+  for (const auto& pair : m_MapTranform) {
+    delete pair.second;
   }
+  m_MapTranform.clear();
 }
 void* CCodec_IccModule::CreateTransform_sRGB(const uint8_t* pProfileData,
                                              FX_DWORD dwProfileSize,

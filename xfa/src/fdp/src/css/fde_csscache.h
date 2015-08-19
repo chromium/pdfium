@@ -32,7 +32,7 @@ class CFDE_CSSStyleSheetCache : public IFDE_CSSStyleSheetCache,
 
  protected:
   void RemoveLowestActivityItem();
-  CFX_MapByteStringToPtr m_Stylesheets;
+  std::map<CFX_ByteString, FDE_LPCSSCACHEITEM> m_Stylesheets;
   IFX_MEMAllocator* m_pFixedStore;
   int32_t m_iMaxItems;
 };
