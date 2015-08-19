@@ -11,11 +11,6 @@
 #define FX_EDIT_UNDERLINEHALFWIDTH 0.5f
 #define FX_EDIT_CROSSOUTHALFWIDTH 0.5f
 
-extern CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
-                                       int32_t nFontIndex,
-                                       FX_WORD Word,
-                                       FX_WORD SubWord);
-
 CPDF_Rect GetUnderLineRect(const CPVT_Word& word) {
   return CPDF_Rect(word.ptWord.x, word.ptWord.y + word.fDescent * 0.5f,
                    word.ptWord.x + word.fWidth,

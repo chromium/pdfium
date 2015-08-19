@@ -288,4 +288,6 @@ class CPDF_RenderConfig {
   int m_RenderStepLimit;
 };
 
+FX_BOOL IsAvailableMatrix(const CFX_AffineMatrix& matrix);
+
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_

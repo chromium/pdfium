@@ -51,6 +51,9 @@ class CFX_PrivateData;
 //   'R' - otherwise.
 extern const char PDF_CharType[256];
 
+// Indexed by 8-bit char code, contains unicode code points.
+extern const FX_WORD PDFDocEncoding[256];
+
 class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjects {
  public:
   CPDF_Document();
@@ -920,5 +923,15 @@ enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_LOADALLFILE,
   PDF_DATAAVAIL_TRAILER_APPEND
 };
+
+FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
+                       FX_DWORD src_size,
+                       const CPDF_Dictionary* pDict,
+                       uint8_t*& dest_buf,
+                       FX_DWORD& dest_size,
+                       CFX_ByteString& ImageEncoding,
+                       CPDF_Dictionary*& pImageParms,
+                       FX_DWORD estimated_size,
+                       FX_BOOL bImageAcc);
 
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_

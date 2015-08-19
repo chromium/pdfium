@@ -219,15 +219,13 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont,
   FXSYS_strcpy(lfa.lfFaceName, face.c_str());
   return AddWindowsFont(&lfa, bVert, bTranslateName);
 }
-extern CFX_ByteString _FPDF_GetNameFromTT(const uint8_t* name_table,
-                                          FX_DWORD name);
 CFX_ByteString _FPDF_GetPSNameFromTT(HDC hDC) {
   CFX_ByteString result;
   DWORD size = ::GetFontData(hDC, 'eman', 0, NULL, 0);
   if (size != GDI_ERROR) {
     LPBYTE buffer = FX_Alloc(BYTE, size);
     ::GetFontData(hDC, 'eman', 0, buffer, size);
-    result = _FPDF_GetNameFromTT(buffer, 6);
+    result = GetNameFromTT(buffer, 6);
     FX_Free(buffer);
   }
   return result;

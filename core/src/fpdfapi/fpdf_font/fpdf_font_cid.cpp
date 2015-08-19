@@ -430,12 +430,7 @@ const CPDF_PredefinedCMap g_PredefinedCMaps[] = {
     {"UniKS-UCS2", CIDSET_KOREA1, CIDCODING_UCS2, CPDF_CMap::TwoBytes},
     {"UniKS-UTF16", CIDSET_KOREA1, CIDCODING_UTF16, CPDF_CMap::TwoBytes},
     {NULL, 0, 0}};
-extern void FPDFAPI_FindEmbeddedCMap(const char* name,
-                                     int charset,
-                                     int coding,
-                                     const FXCMAP_CMap*& pMap);
-extern FX_WORD FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap,
-                                       FX_DWORD charcode);
+
 FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
                                   const FX_CHAR* pName,
                                   FX_BOOL bPromptCJK) {
@@ -814,7 +809,6 @@ FX_BOOL CPDF_CIDFont::IsVertWriting() const {
 }
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-extern FX_DWORD FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, FX_WORD cid);
 static FX_DWORD _EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
                                              int charset,
                                              FX_WCHAR unicode) {

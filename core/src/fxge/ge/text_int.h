@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FXGE_GE_TEXT_INT_H_
 #define CORE_SRC_FXGE_GE_TEXT_INT_H_
 
+#include "../../../include/fxge/fx_freetype.h"
+
 struct _CFX_UniqueKeyGen {
   void Generate(int count, ...);
   FX_CHAR m_Key[128];

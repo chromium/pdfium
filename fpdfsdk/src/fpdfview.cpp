@@ -61,10 +61,6 @@ FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
   }
 }
 
-#ifndef _T
-#define _T(x) x
-#endif
-
 CCodec_ModuleMgr* g_pCodecModule = nullptr;
 
 #if _FX_OS_ == _FX_LINUX_EMBEDDED_

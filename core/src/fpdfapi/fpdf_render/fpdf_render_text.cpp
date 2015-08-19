@@ -9,7 +9,7 @@
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 #include "../fpdf_page/pageint.h"
 #include "render_int.h"
-extern FX_BOOL IsAvailableMatrix(const CFX_AffineMatrix& matrix);
+
 CPDF_Type3Cache::~CPDF_Type3Cache() {
   for (const auto& pair : m_SizeMap) {
     delete pair.second;

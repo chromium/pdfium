@@ -86,7 +86,6 @@ void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
 void CPDF_Document::LoadPages() {
   m_PageList.SetSize(_GetPageCount());
 }
-extern void FPDF_TTFaceMapper_ReleaseDoc(CPDF_Document*);
 CPDF_Document::~CPDF_Document() {
   if (m_pDocPage) {
     CPDF_ModuleMgr::Get()->GetPageModule()->ReleaseDoc(this);

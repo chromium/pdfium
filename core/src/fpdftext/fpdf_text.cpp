@@ -783,10 +783,6 @@ void PDF_GetPageText(CFX_ByteStringArray& lines,
     lines.Add(str);
   }
 }
-extern void _PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer,
-                                       CPDF_PageObjects* pPage,
-                                       FX_BOOL bUseLF,
-                                       CFX_PtrArray* pObjArray);
 void PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer,
                                CPDF_Document* pDoc,
                                CPDF_Dictionary* pPage,
@@ -798,5 +794,5 @@ void PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer,
   options.m_bTextOnly = TRUE;
   options.m_bSeparateForm = FALSE;
   page.ParseContent(&options);
-  _PDF_GetTextStream_Unicode(buffer, &page, TRUE, NULL);
+  GetTextStream_Unicode(buffer, &page, TRUE, NULL);
 }

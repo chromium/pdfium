@@ -568,4 +568,9 @@ class IFX_List {
   virtual ~IFX_List() {}
 };
 
+CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
+                                int32_t nFontIndex,
+                                FX_WORD Word,
+                                FX_WORD SubWord);
+
 #endif  // FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_

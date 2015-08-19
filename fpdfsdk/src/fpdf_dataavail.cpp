@@ -7,7 +7,6 @@
 #include "../../public/fpdf_dataavail.h"
 #include "../include/fsdk_define.h"
 
-extern void ProcessParseError(FX_DWORD err_code);
 class CFPDF_FileAvailWrap : public IFX_FileAvail {
  public:
   CFPDF_FileAvailWrap() { m_pfileAvail = NULL; }

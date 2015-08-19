@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../include/fpdfdoc/fpdf_ap.h"
 #include "../../include/fpdfdoc/fpdf_doc.h"
 #include "../../include/fpdfdoc/fpdf_vt.h"
+#include "doc_utils.h"
 #include "pdf_vt.h"
-#include "../../include/fpdfdoc/fpdf_ap.h"
+
 FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   if (!pAnnotDict ||
       pAnnotDict->GetConstString("Subtype") != FX_BSTRC("Widget")) {
@@ -76,9 +78,6 @@ CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
       m_pSysFont(NULL),
       m_sSysFontAlias() {}
 CPVT_FontMap::~CPVT_FontMap() {}
-extern CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
-                                         CPDF_Document* pDocument,
-                                         CFX_ByteString& csNameTag);
 void CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
                                       CPDF_Dictionary* pResDict,
                                       CPDF_Font*& pSysFont,

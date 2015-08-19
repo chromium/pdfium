@@ -22,4 +22,11 @@ struct FXCMAP_CMap {
   int m_UseOffset;
 };
 
+void FPDFAPI_FindEmbeddedCMap(const char* name,
+                              int charset,
+                              int coding,
+                              const FXCMAP_CMap*& pMap);
+FX_WORD FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, FX_DWORD charcode);
+FX_DWORD FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, FX_WORD cid);
+
 #endif  // CORE_SRC_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_
