@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <limits.h>
+
 #include "../../../include/fxge/fx_dib.h"
 #include "../../../include/fxge/fx_ge.h"
 #include "dib_int.h"
-#include <limits.h>
-extern int SDP_Table[513];
+
 void CWeightTable::Calc(int dest_len,
                         int dest_min,
                         int dest_max,

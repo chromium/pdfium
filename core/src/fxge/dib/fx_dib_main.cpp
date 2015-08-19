@@ -1578,11 +1578,6 @@ CFX_ImageRenderer::CFX_ImageRenderer() {
 CFX_ImageRenderer::~CFX_ImageRenderer() {
   delete m_pTransformer;
 }
-extern FX_RECT _FXDIB_SwapClipBox(FX_RECT& clip,
-                                  int width,
-                                  int height,
-                                  FX_BOOL bFlipX,
-                                  FX_BOOL bFlipY);
 FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
                                  const CFX_ClipRgn* pClipRgn,
                                  const CFX_DIBSource* pSource,
@@ -1623,8 +1618,8 @@ FX_BOOL CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
       int dest_height = image_rect.Height();
       FX_RECT bitmap_clip = m_ClipBox;
       bitmap_clip.Offset(-image_rect.left, -image_rect.top);
-      bitmap_clip = _FXDIB_SwapClipBox(bitmap_clip, dest_width, dest_height,
-                                       m_Matrix.c > 0, m_Matrix.b < 0);
+      bitmap_clip = FXDIB_SwapClipBox(bitmap_clip, dest_width, dest_height,
+                                      m_Matrix.c > 0, m_Matrix.b < 0);
       m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
                          TRUE, m_Matrix.c > 0, m_Matrix.b < 0, m_bRgbByteOrder,
                          alpha_flag, pIccTransform, m_BlendType);

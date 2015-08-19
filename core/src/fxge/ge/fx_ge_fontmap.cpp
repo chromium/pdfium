@@ -423,11 +423,6 @@ const FoxitFonts g_FoxitFonts[14] = {
     {g_FoxitSymbolFontData, 16729},
     {g_FoxitDingbatsFontData, 29513},
 };
-void _FPDFAPI_GetInternalFontData(int id,
-                                  const uint8_t*& data,
-                                  FX_DWORD& size) {
-  CFX_GEModule::Get()->GetFontMgr()->GetStandardFont(data, size, id);
-}
 FX_BOOL CFX_FontMgr::GetStandardFont(const uint8_t*& pFontData,
                                      FX_DWORD& size,
                                      int index) {
@@ -495,8 +490,7 @@ static CFX_ByteString _TT_NormalizeName(const FX_CHAR* family) {
   norm.MakeLower();
   return norm;
 }
-CFX_ByteString _FPDF_GetNameFromTT(const uint8_t* name_table,
-                                   FX_DWORD name_id) {
+CFX_ByteString GetNameFromTT(const uint8_t* name_table, FX_DWORD name_id) {
   const uint8_t* ptr = name_table + 2;
   int name_count = GET_TT_SHORT(ptr);
   int string_offset = GET_TT_SHORT(ptr + 2);
@@ -564,7 +558,7 @@ CFX_ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
   if (size) {
     uint8_t* buffer = FX_Alloc(uint8_t, size);
     m_pFontInfo->GetFontData(hFont, 0x6e616d65, buffer, size);
-    result = _FPDF_GetNameFromTT(buffer, 6);
+    result = GetNameFromTT(buffer, 6);
     FX_Free(buffer);
   }
   return result;
@@ -1348,10 +1342,6 @@ CFontFileFaceInfo::~CFontFileFaceInfo() {
   }
   m_Face = NULL;
 }
-extern FX_BOOL _LoadFile(FXFT_Library library,
-                         FXFT_Face* Face,
-                         IFX_FileRead* pFile,
-                         FXFT_Stream* stream);
 #if _FX_OS_ == _FX_ANDROID_
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
   return NULL;
@@ -1465,8 +1455,8 @@ void CFX_FolderFontInfo::ReportFace(CFX_ByteString& path,
   }
   CFX_ByteString names =
       _FPDF_LoadTableFromTT(pFile, tables, nTables, 0x6e616d65);
-  CFX_ByteString facename = _FPDF_GetNameFromTT(names, 1);
-  CFX_ByteString style = _FPDF_GetNameFromTT(names, 2);
+  CFX_ByteString facename = GetNameFromTT(names, 1);
+  CFX_ByteString style = GetNameFromTT(names, 2);
   if (style != "Regular") {
     facename += " " + style;
   }

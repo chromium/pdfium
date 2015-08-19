@@ -6,6 +6,8 @@
 
 #include "../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../include/fpdfapi/fpdf_page.h"
+#include "text_int.h"
+
 class CPDF_TextStream {
  public:
   CPDF_TextStream(CFX_WideTextBuf& buffer,
@@ -293,10 +295,10 @@ FX_BOOL CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj,
   }
   return FALSE;
 }
-void _PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer,
-                                CPDF_PageObjects* pPage,
-                                FX_BOOL bUseLF,
-                                CFX_PtrArray* pObjArray) {
+void GetTextStream_Unicode(CFX_WideTextBuf& buffer,
+                           CPDF_PageObjects* pPage,
+                           FX_BOOL bUseLF,
+                           CFX_PtrArray* pObjArray) {
   CPDF_TextStream textstream(buffer, bUseLF, pObjArray);
   FX_POSITION pos = pPage->GetFirstObjectPosition();
   while (pos) {

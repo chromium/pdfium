@@ -1014,15 +1014,6 @@ CPDF_Stream* CPDF_Stream::Clone(FX_BOOL bDirect,
   pObj->InitStream((IFX_FileRead*)pFS, pCloneDict);
   return pObj;
 }
-extern FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
-                              FX_DWORD src_size,
-                              const CPDF_Dictionary* pDict,
-                              uint8_t*& dest_buf,
-                              FX_DWORD& dest_size,
-                              CFX_ByteString& ImageEncoding,
-                              CPDF_Dictionary*& pImageParms,
-                              FX_DWORD estimated_size,
-                              FX_BOOL bImageAcc);
 CPDF_StreamAcc::CPDF_StreamAcc() {
   m_bNewBuf = FALSE;
   m_pData = NULL;

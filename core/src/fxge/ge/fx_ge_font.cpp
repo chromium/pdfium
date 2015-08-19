@@ -9,6 +9,7 @@
 #include "text_int.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
+
 extern void _FPDFAPI_GetInternalFontData(int id1,
                                          const uint8_t*& data,
                                          FX_DWORD& size);

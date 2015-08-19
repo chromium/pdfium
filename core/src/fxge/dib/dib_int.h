@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FXGE_DIB_DIB_INT_H_
 #define CORE_SRC_FXGE_DIB_DIB_INT_H_
 
+extern const int SDP_Table[513];
+
 class CPDF_FixedMatrix {
  public:
   CPDF_FixedMatrix(const CFX_AffineMatrix& src, int bits) {
@@ -88,5 +90,11 @@ class CStretchEngine {
   void StretchVert();
   int m_State;
 };
+
+FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
+                          int width,
+                          int height,
+                          FX_BOOL bFlipX,
+                          FX_BOOL bFlipY);
 
 #endif  // CORE_SRC_FXGE_DIB_DIB_INT_H_

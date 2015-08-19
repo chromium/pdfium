@@ -1049,7 +1049,6 @@ static FX_BOOL FT_UseType1Charmap(FXFT_Face face) {
   }
   return TRUE;
 }
-extern FX_WCHAR FT_UnicodeFromCharCode(int encoding, FX_DWORD charcode);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include "../../fxge/apple/apple_int.h"
 #endif

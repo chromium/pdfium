@@ -517,4 +517,6 @@ class IFX_GSUBTable {
   virtual ~IFX_GSUBTable() {}
 };
 
+CFX_ByteString GetNameFromTT(const uint8_t* name_table, FX_DWORD name);
+
 #endif  // CORE_INCLUDE_FXGE_FX_FONT_H_

@@ -6,7 +6,8 @@
 
 #include "../../../include/fxge/fx_dib.h"
 #include "dib_int.h"
-int SDP_Table[513] = {
+
+const int SDP_Table[513] = {
     256, 256, 256, 256, 256, 256, 256, 256, 256, 255, 255, 255, 255, 255, 255,
     254, 254, 254, 254, 253, 253, 253, 252, 252, 252, 251, 251, 251, 250, 250,
     249, 249, 249, 248, 248, 247, 247, 246, 246, 245, 244, 244, 243, 243, 242,
@@ -168,11 +169,11 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip,
   return pTransBitmap;
 }
 #define FIX16_005 0.05f
-FX_RECT _FXDIB_SwapClipBox(FX_RECT& clip,
-                           int width,
-                           int height,
-                           FX_BOOL bFlipX,
-                           FX_BOOL bFlipY) {
+FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
+                          int width,
+                          int height,
+                          FX_BOOL bFlipX,
+                          FX_BOOL bFlipY) {
   FX_RECT rect;
   if (bFlipY) {
     rect.left = height - clip.top;
@@ -256,8 +257,8 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc,
     int dest_width = result_rect.Width();
     int dest_height = result_rect.Height();
     result_clip.Offset(-result_rect.left, -result_rect.top);
-    result_clip = _FXDIB_SwapClipBox(result_clip, dest_width, dest_height,
-                                     pDestMatrix->c > 0, pDestMatrix->b < 0);
+    result_clip = FXDIB_SwapClipBox(result_clip, dest_width, dest_height,
+                                    pDestMatrix->c > 0, pDestMatrix->b < 0);
     m_Stretcher.Start(&m_Storer, pSrc, dest_height, dest_width, result_clip,
                       flags);
     m_Status = 1;

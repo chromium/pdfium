@@ -5,11 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_page.h"
+#include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fpdfapi/fpdf_resource.h"
 #include "../../../include/fxge/fx_freetype.h"
-
-// TODO(tsepez): These belong in headers, too.
-extern const FX_WORD PDFDocEncoding[256];
 
 static const struct _UnicodeAlt {
   FX_WORD m_Unicode;
@@ -1774,14 +1772,6 @@ const FX_WORD* PDF_UnicodesForPredefinedCharSet(int encoding) {
 FX_DWORD PDF_PredefinedCharCodeFromUnicode(int encoding, FX_WCHAR unicode) {
   return PDF_FindCode(PDF_UnicodesForPredefinedCharSet(encoding), unicode);
 }
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern int FXFT_unicode_from_adobe_name(const char* name);
-extern void FXFT_adobe_name_from_unicode(char* glyph_name, FX_WCHAR unicode);
-#ifdef __cplusplus
-}
-#endif
 FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name) {
   return (FX_WCHAR)(FXFT_unicode_from_adobe_name(name) & 0x7FFFFFFF);
 }

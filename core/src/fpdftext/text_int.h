@@ -7,9 +7,16 @@
 #ifndef CORE_SRC_FPDFTEXT_TEXT_INT_H_
 #define CORE_SRC_FPDFTEXT_TEXT_INT_H_
 
+#include "../../include/fpdftext/fpdf_text.h"
+#include "../../include/fxcrt/fx_arb.h"
+#include "../../include/fxcrt/fx_basic.h"
+
+class CFX_BidiChar;
+class CPDF_DocProgressiveSearch;
+class CPDF_FormObject;
 class CPDF_LinkExtract;
 class CPDF_TextPageFind;
-class CPDF_DocProgressiveSearch;
+
 #define FPDFTEXT_CHAR_ERROR -1
 #define FPDFTEXT_CHAR_NORMAL 0
 #define FPDFTEXT_CHAR_GENERATED 1
@@ -19,6 +26,7 @@ class CPDF_DocProgressiveSearch;
 #define FPDFTEXT_MC_PASS 0
 #define FPDFTEXT_MC_DONE 1
 #define FPDFTEXT_MC_DELAY 2
+
 typedef struct _PAGECHAR_INFO {
   int m_CharCode;
   FX_WCHAR m_Unicode;
@@ -231,5 +239,9 @@ class CPDF_LinkExtract : public IPDF_LinkExtract {
 FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst);
 void NormalizeString(CFX_WideString& str);
 void NormalizeCompositeChar(FX_WCHAR wChar, CFX_WideString& sDest);
+void GetTextStream_Unicode(CFX_WideTextBuf& buffer,
+                           CPDF_PageObjects* pPage,
+                           FX_BOOL bUseLF,
+                           CFX_PtrArray* pObjArray);
 
 #endif  // CORE_SRC_FPDFTEXT_TEXT_INT_H_
