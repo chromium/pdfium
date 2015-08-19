@@ -4,6 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "chromefontdata.h"
+
 const unsigned char g_FoxitFixedItalicFontData [18746] = {0x1,
                                                           0x0, 0x4, 0x2, 0x0, 0x1, 0x1, 0x1, 0x15,
                                                           0x43, 0x68, 0x72, 0x6f, 0x6d, 0x46, 0x69, 0x78,

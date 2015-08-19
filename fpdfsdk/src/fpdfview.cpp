@@ -182,8 +182,6 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
   return pParser->GetDocument();
 }
 
-extern void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code);
-
 class CMemFile final : public IFX_FileRead {
  public:
   CMemFile(uint8_t* pBuf, FX_FILESIZE size) : m_pBuf(pBuf), m_size(size) {}

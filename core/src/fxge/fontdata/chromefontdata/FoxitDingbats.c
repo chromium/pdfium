@@ -4,6 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "chromefontdata.h"
+
 const unsigned char g_FoxitDingbatsFontData [29513] = {0x1,
                                                        0x0, 0x4, 0x2, 0x0, 0x1, 0x1, 0x1, 0x11,
                                                        0x43, 0x68, 0x72, 0x6f, 0x6d, 0x44, 0x69, 0x6e,

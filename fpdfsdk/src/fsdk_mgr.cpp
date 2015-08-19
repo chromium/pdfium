@@ -916,15 +916,8 @@ FX_BOOL CPDFSDK_PageView::OnKeyDown(int nKeyCode, int nFlag) {
 }
 
 FX_BOOL CPDFSDK_PageView::OnKeyUp(int nKeyCode, int nFlag) {
-  //  if(CPDFSDK_Annot* pAnnot = GetFocusAnnot())
-  //  {
-  //      CFFL_IFormFiller* pIFormFiller = g_pFormFillApp->GetIFormFiller();
-  //      return pIFormFiller->OnKeyUp(pAnnot, nKeyCode, nFlag);
-  //  }
   return FALSE;
 }
-
-extern void CheckUnSupportAnnot(CPDF_Document* pDoc, CPDF_Annot* pPDFAnnot);
 
 void CPDFSDK_PageView::LoadFXAnnots() {
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
