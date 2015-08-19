@@ -742,21 +742,6 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
     rValue = (ValueType)(uintptr_t)pValue;
   }
 };
-class CFX_CMapDWordToDWord {
- public:
-  FX_BOOL Lookup(FX_DWORD key, FX_DWORD& value) const;
-
-  void SetAt(FX_DWORD key, FX_DWORD value);
-
-  void EstimateSize(FX_DWORD size, FX_DWORD grow_by);
-
-  FX_POSITION GetStartPosition() const;
-
-  void GetNextAssoc(FX_POSITION& pos, FX_DWORD& key, FX_DWORD& value) const;
-
- protected:
-  CFX_BinaryBuf m_Buffer;
-};
 class CFX_CMapByteStringToPtr {
  public:
   CFX_CMapByteStringToPtr();

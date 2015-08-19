@@ -172,7 +172,7 @@ class CPDF_ToUnicodeMap {
   FX_DWORD ReverseLookup(FX_WCHAR unicode);
 
  protected:
-  CFX_CMapDWordToDWord m_Map;
+  std::map<FX_DWORD, FX_DWORD> m_Map;
   CPDF_CID2UnicodeMap* m_pBaseMap;
   CFX_WideTextBuf m_MultiCharBuf;
 };

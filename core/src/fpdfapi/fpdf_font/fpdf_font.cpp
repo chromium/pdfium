@@ -473,8 +473,9 @@ CPDF_FontCharMap::CPDF_FontCharMap(CPDF_Font* pFont) {
   m_pFont = pFont;
 }
 CFX_WideString CPDF_ToUnicodeMap::Lookup(FX_DWORD charcode) {
-  FX_DWORD value;
-  if (m_Map.Lookup(charcode, value)) {
+  auto it = m_Map.find(charcode);
+  if (it != m_Map.end()) {
+    FX_DWORD value = it->second;
     FX_WCHAR unicode = (FX_WCHAR)(value & 0xffff);
     if (unicode != 0xffff) {
       return unicode;
@@ -500,13 +501,9 @@ CFX_WideString CPDF_ToUnicodeMap::Lookup(FX_DWORD charcode) {
   return CFX_WideString();
 }
 FX_DWORD CPDF_ToUnicodeMap::ReverseLookup(FX_WCHAR unicode) {
-  FX_POSITION pos = m_Map.GetStartPosition();
-  while (pos) {
-    FX_DWORD key, value;
-    m_Map.GetNextAssoc(pos, key, value);
-    if ((FX_WCHAR)value == unicode) {
-      return key;
-    }
+  for (const auto& pair : m_Map) {
+    if (pair.second == unicode)
+      return pair.first;
   }
   return 0;
 }
@@ -599,7 +596,6 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
   CPDF_StreamAcc stream;
   stream.LoadAllData(pStream, FALSE);
   CPDF_SimpleParser parser(stream.GetData(), stream.GetSize());
-  m_Map.EstimateSize(stream.GetSize() / 8, 1024);
   while (1) {
     CFX_ByteStringC word = parser.GetWord();
     if (word.IsEmpty()) {
@@ -619,9 +615,9 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
           continue;
         }
         if (len == 1) {
-          m_Map.SetAt(srccode, destcode.GetAt(0));
+          m_Map[srccode] = destcode.GetAt(0);
         } else {
-          m_Map.SetAt(srccode, m_MultiCharBuf.GetLength() * 0x10000 + 0xffff);
+          m_Map[srccode] = m_MultiCharBuf.GetLength() * 0x10000 + 0xffff;
           m_MultiCharBuf.AppendChar(destcode.GetLength());
           m_MultiCharBuf << destcode;
         }
@@ -650,9 +646,9 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
               continue;
             }
             if (len == 1) {
-              m_Map.SetAt(code, destcode.GetAt(0));
+              m_Map[code] = destcode.GetAt(0);
             } else {
-              m_Map.SetAt(code, m_MultiCharBuf.GetLength() * 0x10000 + 0xffff);
+              m_Map[code] = m_MultiCharBuf.GetLength() * 0x10000 + 0xffff;
               m_MultiCharBuf.AppendChar(destcode.GetLength());
               m_MultiCharBuf << destcode;
             }
@@ -665,7 +661,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
           if (len == 1) {
             value = _StringToCode(start);
             for (FX_DWORD code = lowcode; code <= highcode; code++) {
-              m_Map.SetAt(code, value++);
+              m_Map[code] = value++;
             }
           } else {
             for (FX_DWORD code = lowcode; code <= highcode; code++) {
@@ -675,7 +671,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
               } else {
                 retcode = _StringDataAdd(destcode);
               }
-              m_Map.SetAt(code, m_MultiCharBuf.GetLength() * 0x10000 + 0xffff);
+              m_Map[code] = m_MultiCharBuf.GetLength() * 0x10000 + 0xffff;
               m_MultiCharBuf.AppendChar(retcode.GetLength());
               m_MultiCharBuf << retcode;
               destcode = retcode;

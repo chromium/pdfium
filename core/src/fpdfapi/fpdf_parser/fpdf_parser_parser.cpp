@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -3012,9 +3013,8 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
 
   CPDF_PageNode m_pageNodes;
 
-  CFX_CMapDWordToDWord* m_pageMapCheckState;
-
-  CFX_CMapDWordToDWord* m_pagesLoadState;
+  std::set<FX_DWORD> m_pageMapCheckState;
+  std::set<FX_DWORD> m_pagesLoadState;
 };
 
 IPDF_DataAvail::IPDF_DataAvail(IFX_FileAvail* pFileAvail,
@@ -3072,13 +3072,11 @@ CPDF_DataAvail::CPDF_DataAvail(IFX_FileAvail* pFileAvail,
   m_pAcroForm = NULL;
   m_pPageDict = NULL;
   m_pPageResource = NULL;
-  m_pageMapCheckState = NULL;
   m_docStatus = PDF_DATAAVAIL_HEADER;
   m_parser.m_bOwnFileRead = FALSE;
   m_bTotalLoadPageTree = FALSE;
   m_bCurPageDictLoadOK = FALSE;
   m_bLinearedDataOK = FALSE;
-  m_pagesLoadState = NULL;
 }
 CPDF_DataAvail::~CPDF_DataAvail() {
   if (m_pLinearized) {
@@ -3090,8 +3088,6 @@ CPDF_DataAvail::~CPDF_DataAvail() {
   if (m_pTrailer) {
     m_pTrailer->Release();
   }
-  delete m_pageMapCheckState;
-  delete m_pagesLoadState;
   int32_t i = 0;
   int32_t iSize = m_arrayAcroforms.GetSize();
   for (i = 0; i < iSize; ++i) {
@@ -3526,29 +3522,14 @@ FX_BOOL CPDF_DataAvail::PreparePageItem() {
   return TRUE;
 }
 FX_BOOL CPDF_DataAvail::IsFirstCheck(int iPage) {
-  if (NULL == m_pageMapCheckState) {
-    m_pageMapCheckState = new CFX_CMapDWordToDWord();
-  }
-  FX_DWORD dwValue = 0;
-  if (!m_pageMapCheckState->Lookup(iPage, dwValue)) {
-    m_pageMapCheckState->SetAt(iPage, 1);
-    return TRUE;
-  }
-  if (dwValue != 0) {
+  if (m_pageMapCheckState.find(iPage) != m_pageMapCheckState.end())
     return FALSE;
-  }
-  m_pageMapCheckState->SetAt(iPage, 1);
+
+  m_pageMapCheckState.insert(iPage);
   return TRUE;
 }
 void CPDF_DataAvail::ResetFirstCheck(int iPage) {
-  if (NULL == m_pageMapCheckState) {
-    m_pageMapCheckState = new CFX_CMapDWordToDWord();
-  }
-  FX_DWORD dwValue = 1;
-  if (!m_pageMapCheckState->Lookup(iPage, dwValue)) {
-    return;
-  }
-  m_pageMapCheckState->SetAt(iPage, 0);
+  m_pageMapCheckState.erase(iPage);
 }
 FX_BOOL CPDF_DataAvail::CheckPage(IFX_DownloadHints* pHints) {
   FX_DWORD iPageObjs = m_PageObjList.GetSize();
@@ -4522,16 +4503,12 @@ FX_BOOL CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
     m_objs_array.RemoveAll();
     m_objnum_array.RemoveAll();
   }
-  if (m_pagesLoadState == NULL) {
-    m_pagesLoadState = new CFX_CMapDWordToDWord();
-  }
-  FX_DWORD dwPageLoad = 0;
-  if (m_pagesLoadState->Lookup(iPage, dwPageLoad) && dwPageLoad != 0) {
+  if (m_pagesLoadState.find(iPage) != m_pagesLoadState.end()) {
     return TRUE;
   }
   if (m_bLinearized) {
     if ((FX_DWORD)iPage == m_dwFirstPageNo) {
-      m_pagesLoadState->SetAt(iPage, TRUE);
+      m_pagesLoadState.insert(iPage);
       return TRUE;
     }
     if (!CheckLinearizedData(pHints)) {
@@ -4626,7 +4603,7 @@ FX_BOOL CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
   m_bAnnotsLoad = FALSE;
   m_bCurPageDictLoadOK = FALSE;
   ResetFirstCheck(iPage);
-  m_pagesLoadState->SetAt(iPage, TRUE);
+  m_pagesLoadState.insert(iPage);
   return TRUE;
 }
 FX_BOOL CPDF_DataAvail::CheckResources(IFX_DownloadHints* pHints) {
