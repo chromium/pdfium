@@ -8,6 +8,7 @@
 
 #include "../../../include/fxge/fx_ge.h"
 #include "../../../include/fxge/fx_freetype.h"
+#include "../fontdata/chromefontdata/chromefontdata.h"
 #include "text_int.h"
 
 #define GET_TT_SHORT(w) (FX_WORD)(((w)[0] << 8) | (w)[1])
@@ -406,24 +407,6 @@ void CFX_FontMgr::ReleaseFace(FXFT_Face face) {
     FXFT_Done_Face(face);
   }
 }
-extern "C" {
-extern const unsigned char g_FoxitFixedItalicFontData[18746];
-extern const unsigned char g_FoxitFixedFontData[17597];
-extern const unsigned char g_FoxitSansItalicFontData[16339];
-extern const unsigned char g_FoxitSansFontData[15025];
-extern const unsigned char g_FoxitSerifItalicFontData[21227];
-extern const unsigned char g_FoxitSerifFontData[19469];
-extern const unsigned char g_FoxitFixedBoldItalicFontData[19151];
-extern const unsigned char g_FoxitFixedBoldFontData[18055];
-extern const unsigned char g_FoxitSansBoldItalicFontData[16418];
-extern const unsigned char g_FoxitSansBoldFontData[16344];
-extern const unsigned char g_FoxitSerifBoldItalicFontData[20733];
-extern const unsigned char g_FoxitSerifBoldFontData[19395];
-extern const unsigned char g_FoxitSymbolFontData[16729];
-extern const unsigned char g_FoxitDingbatsFontData[29513];
-extern const unsigned char g_FoxitSerifMMFontData[113417];
-extern const unsigned char g_FoxitSansMMFontData[66919];
-};
 const FoxitFonts g_FoxitFonts[14] = {
     {g_FoxitFixedFontData, 17597},
     {g_FoxitFixedBoldFontData, 18055},

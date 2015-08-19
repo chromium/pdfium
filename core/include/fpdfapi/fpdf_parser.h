@@ -801,6 +801,14 @@ void FlateEncode(const uint8_t* src_buf,
                  FX_DWORD src_size,
                  uint8_t*& dest_buf,
                  FX_DWORD& dest_size);
+void FlateEncode(const uint8_t* src_buf,
+                 FX_DWORD src_size,
+                 int predictor,
+                 int Colors,
+                 int BitsPerComponent,
+                 int Columns,
+                 uint8_t*& dest_buf,
+                 FX_DWORD& dest_size);
 FX_DWORD FlateDecode(const uint8_t* src_buf,
                      FX_DWORD src_size,
                      uint8_t*& dest_buf,
@@ -809,6 +817,8 @@ FX_DWORD RunLengthDecode(const uint8_t* src_buf,
                          FX_DWORD src_size,
                          uint8_t*& dest_buf,
                          FX_DWORD& dest_size);
+FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict);
+
 class CPDF_NumberTree {
  public:
   CPDF_NumberTree(CPDF_Dictionary* pRoot) { m_pRoot = pRoot; }

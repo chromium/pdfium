@@ -14,9 +14,6 @@
 #include <tchar.h>
 #endif
 
-// jabdelmalek: commented out to build on Linux.  Not used.
-// extern HANDLE g_hModule;
-
 DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page) {
   if (!page)
     return NULL;

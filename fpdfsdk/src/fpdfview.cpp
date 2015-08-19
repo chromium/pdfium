@@ -300,8 +300,6 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document) {
   return document && (static_cast<CPDFXFA_Document*>(document))->LoadXFADoc();
 }
 
-extern void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code);
-
 class CMemFile final : public IFX_FileRead {
  public:
   CMemFile(uint8_t* pBuf, FX_FILESIZE size) : m_pBuf(pBuf), m_size(size) {}

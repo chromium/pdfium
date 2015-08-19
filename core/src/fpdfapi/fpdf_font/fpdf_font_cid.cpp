@@ -12,11 +12,6 @@
 #include "../fpdf_cmaps/cmap_int.h"
 #include "font_int.h"
 
-extern short TT2PDF(int m, FXFT_Face face);
-extern FX_BOOL FT_UseTTCharmap(FXFT_Face face,
-                               int platform_id,
-                               int encoding_id);
-
 CPDF_CMapManager::CPDF_CMapManager() {
   m_bPrompted = FALSE;
   FXSYS_memset(m_CID2UnicodeMaps, 0, sizeof m_CID2UnicodeMaps);

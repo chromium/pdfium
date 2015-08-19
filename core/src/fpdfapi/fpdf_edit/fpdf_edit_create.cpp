@@ -6,23 +6,12 @@
 
 #include "../../../include/fxcrt/fx_ext.h"
 #include "../../../include/fpdfapi/fpdf_serial.h"
+#include "../../../include/fpdfapi/fpdf_parser.h"
 #include "editint.h"
 
 #define PDF_OBJECTSTREAM_MAXLENGTH (256 * 1024)
 #define PDF_XREFSTREAM_MAXSIZE 10000
-extern void FlateEncode(const uint8_t* src_buf,
-                        FX_DWORD src_data,
-                        uint8_t*& dest_buf,
-                        FX_DWORD& dest_size);
-extern void FlateEncode(const uint8_t* src_buf,
-                        FX_DWORD src_size,
-                        int predictor,
-                        int Colors,
-                        int BitsPerComponent,
-                        int Columns,
-                        uint8_t*& dest_buf,
-                        FX_DWORD& dest_size);
-extern FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict);
+
 int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
                                 CFX_FileBufferArchive* pFile,
                                 FX_FILESIZE& offset) {

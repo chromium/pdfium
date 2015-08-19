@@ -323,6 +323,7 @@
         'core/src/fpdftext/txtproc.h',
         'core/src/fpdftext/unicodenormalization.cpp',
         'core/src/fpdftext/unicodenormalizationdata.cpp',
+        'core/src/fpdftext/unicodenormalizationdata.h',
       ],
     },
     {
@@ -540,6 +541,7 @@
         'core/src/fxge/dib/fx_dib_engine.cpp',
         'core/src/fxge/dib/fx_dib_main.cpp',
         'core/src/fxge/dib/fx_dib_transform.cpp',
+        'core/src/fxge/fontdata/chromefontdata/chromefontdata.h',
         'core/src/fxge/fontdata/chromefontdata/FoxitDingbats.c',
         'core/src/fxge/fontdata/chromefontdata/FoxitFixed.c',
         'core/src/fxge/fontdata/chromefontdata/FoxitFixedBold.c',

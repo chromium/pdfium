@@ -4,6 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "chromefontdata.h"
+
 const unsigned char g_FoxitSymbolFontData [16729] = {0x1,
                                                      0x0, 0x4, 0x2, 0x0, 0x1, 0x1, 0x1, 0xf,
                                                      0x43, 0x68, 0x72, 0x6f, 0x6d, 0x53, 0x79, 0x6d,

@@ -19,6 +19,9 @@ class CPDF_Stream;
 
 typedef void* FXFT_Library;
 
+short TT2PDF(int m, FXFT_Face face);
+FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
+
 class CPDF_CMapManager {
  public:
   CPDF_CMapManager();

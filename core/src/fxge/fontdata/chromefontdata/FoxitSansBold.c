@@ -4,6 +4,8 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "chromefontdata.h"
+
 const unsigned char g_FoxitSansBoldFontData [16344] = {0x1,
                                                        0x0, 0x4, 0x2, 0x0, 0x1, 0x1, 0x1, 0x12,
                                                        0x43, 0x68, 0x72, 0x6f, 0x6d, 0x53, 0x61, 0x6e,

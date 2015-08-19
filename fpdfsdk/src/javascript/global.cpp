@@ -39,19 +39,18 @@ struct CHash<ACC, N, Ns...> {
   static const unsigned value = CHash<CHash<ACC, N>::value, Ns...>::value;
 };
 
-extern const unsigned int JSCONST_nStringHash =
+const unsigned int JSCONST_nStringHash =
     CHash<'s', 't', 'r', 'i', 'n', 'g'>::value;
-extern const unsigned int JSCONST_nNumberHash =
+const unsigned int JSCONST_nNumberHash =
     CHash<'n', 'u', 'm', 'b', 'e', 'r'>::value;
-extern const unsigned int JSCONST_nBoolHash =
+const unsigned int JSCONST_nBoolHash =
     CHash<'b', 'o', 'o', 'l', 'e', 'a', 'n'>::value;
-extern const unsigned int JSCONST_nDateHash = CHash<'d', 'a', 't', 'e'>::value;
-extern const unsigned int JSCONST_nObjectHash =
+const unsigned int JSCONST_nDateHash = CHash<'d', 'a', 't', 'e'>::value;
+const unsigned int JSCONST_nObjectHash =
     CHash<'o', 'b', 'j', 'e', 'c', 't'>::value;
-extern const unsigned int JSCONST_nFXobjHash =
-    CHash<'f', 'x', 'o', 'b', 'j'>::value;
-extern const unsigned int JSCONST_nNullHash = CHash<'n', 'u', 'l', 'l'>::value;
-extern const unsigned int JSCONST_nUndefHash =
+const unsigned int JSCONST_nFXobjHash = CHash<'f', 'x', 'o', 'b', 'j'>::value;
+const unsigned int JSCONST_nNullHash = CHash<'n', 'u', 'l', 'l'>::value;
+const unsigned int JSCONST_nUndefHash =
     CHash<'u', 'n', 'd', 'e', 'f', 'i', 'n', 'e', 'd'>::value;
 
 #ifdef _DEBUG

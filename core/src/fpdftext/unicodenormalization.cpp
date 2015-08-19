@@ -5,15 +5,15 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/fxcrt/fx_string.h"
+#include "unicodenormalizationdata.h"
 
-extern const FX_WCHAR g_UnicodeData_Normalization[];
-extern const FX_WCHAR g_UnicodeData_Normalization_Map1[];
-extern const FX_WCHAR g_UnicodeData_Normalization_Map2[];
-extern const FX_WCHAR g_UnicodeData_Normalization_Map3[];
-extern const FX_WCHAR g_UnicodeData_Normalization_Map4[];
-const FX_WCHAR* g_UnicodeData_Normalization_Maps[5] = {
-    NULL, g_UnicodeData_Normalization_Map1, g_UnicodeData_Normalization_Map2,
-    g_UnicodeData_Normalization_Map3, g_UnicodeData_Normalization_Map4};
+const FX_WCHAR* const g_UnicodeData_Normalization_Maps[5] = {
+    nullptr,
+    g_UnicodeData_Normalization_Map1,
+    g_UnicodeData_Normalization_Map2,
+    g_UnicodeData_Normalization_Map3,
+    g_UnicodeData_Normalization_Map4};
+
 FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst) {
   wch = wch & 0xFFFF;
   FX_WCHAR wFind = g_UnicodeData_Normalization[wch];

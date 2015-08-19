@@ -98,8 +98,6 @@ DLLEXPORT int STDCALL FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
   return ((CFPDF_DataAvail*)avail)->m_pDataAvail->IsDocAvail(&hints_wrap);
 }
 
-extern void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code);
-
 DLLEXPORT FPDF_DOCUMENT STDCALL
 FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   if (avail == NULL)
