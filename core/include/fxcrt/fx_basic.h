@@ -267,28 +267,19 @@ class CFX_UTF8Decoder {
 
   CFX_WideTextBuf m_Buffer;
 };
+
 class CFX_UTF8Encoder {
  public:
-  CFX_UTF8Encoder() { m_UTF16First = 0; }
+  CFX_UTF8Encoder() {}
 
   void Input(FX_WCHAR unicode);
-
-  void AppendStr(const CFX_ByteStringC& str) {
-    m_UTF16First = 0;
-    m_Buffer << str;
-  }
-
+  void AppendStr(const CFX_ByteStringC& str) { m_Buffer << str; }
   CFX_ByteStringC GetResult() const { return m_Buffer.GetByteString(); }
 
  protected:
   CFX_ByteTextBuf m_Buffer;
-
-  FX_DWORD m_UTF16First;
 };
-CFX_ByteString FX_UrlEncode(const CFX_WideString& wsUrl);
-CFX_WideString FX_UrlDecode(const CFX_ByteString& bsUrl);
-CFX_ByteString FX_EncodeURI(const CFX_WideString& wsURI);
-CFX_WideString FX_DecodeURI(const CFX_ByteString& bsURI);
+
 class CFX_BasicArray {
  protected:
   CFX_BasicArray(int unit_size);
@@ -447,6 +438,7 @@ typedef CFX_ArrayTemplate<void*> CFX_PtrArray;
 typedef CFX_ArrayTemplate<FX_FILESIZE> CFX_FileSizeArray;
 typedef CFX_ArrayTemplate<FX_FLOAT> CFX_FloatArray;
 typedef CFX_ArrayTemplate<int32_t> CFX_Int32Array;
+
 template <class ObjectClass>
 class CFX_ObjectArray : public CFX_BasicArray {
  public:
