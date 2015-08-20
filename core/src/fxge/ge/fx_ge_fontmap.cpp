@@ -1435,13 +1435,11 @@ FX_DWORD CFX_FolderFontInfo::GetFontData(void* hFont,
     }
   }
   FX_DWORD datasize = 0;
-  FX_DWORD offset;
+  FX_DWORD offset = 0;
   if (table == 0) {
     datasize = pFont->m_FontOffset ? 0 : pFont->m_FileSize;
-    offset = 0;
   } else if (table == 0x74746366) {
     datasize = pFont->m_FontOffset ? pFont->m_FileSize : 0;
-    offset = 0;
   } else {
     FX_DWORD nTables = pFont->m_FontTables.GetLength() / 16;
     for (FX_DWORD i = 0; i < nTables; i++) {

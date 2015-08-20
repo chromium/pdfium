@@ -527,7 +527,6 @@ class CPDF_DIBSource : public CFX_DIBSource {
   void ReleaseBitmap(CFX_DIBitmap*) const;
   void ClearImageData();
 
- public:
   int StartLoadDIBSource(CPDF_Document* pDoc,
                          const CPDF_Stream* pStream,
                          FX_BOOL bHasMask,
@@ -551,7 +550,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   CPDF_Object* m_pMaskStream;
   FX_BOOL m_bHasMask;
 
- protected:
+ private:
   FX_BOOL LoadColorInfo(CPDF_Dictionary* pFormResources,
                         CPDF_Dictionary* pPageResources);
   DIB_COMP_DATA* GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
@@ -564,6 +563,35 @@ class CPDF_DIBSource : public CFX_DIBSource {
   void TranslateScanline24bpp(uint8_t* dest_scan,
                               const uint8_t* src_scan) const;
   void ValidateDictParam();
+  void DownSampleScanline1Bit(int orig_Bpp,
+                              int dest_Bpp,
+                              FX_DWORD src_width,
+                              const uint8_t* pSrcLine,
+                              uint8_t* dest_scan,
+                              int dest_width,
+                              FX_BOOL bFlipX,
+                              int clip_left,
+                              int clip_width) const;
+  void DownSampleScanline8Bit(int orig_Bpp,
+                              int dest_Bpp,
+                              FX_DWORD src_width,
+                              const uint8_t* pSrcLine,
+                              uint8_t* dest_scan,
+                              int dest_width,
+                              FX_BOOL bFlipX,
+                              int clip_left,
+                              int clip_width) const;
+  void DownSampleScanline32Bit(int orig_Bpp,
+                               int dest_Bpp,
+                               FX_DWORD src_width,
+                               const uint8_t* pSrcLine,
+                               uint8_t* dest_scan,
+                               int dest_width,
+                               FX_BOOL bFlipX,
+                               int clip_left,
+                               int clip_width) const;
+  FX_BOOL TransMask() const;
+
   CPDF_Document* m_pDocument;
   const CPDF_Stream* m_pStream;
   CPDF_StreamAcc* m_pStreamAcc;
