@@ -254,8 +254,6 @@
         'core/src/fpdfapi/fpdf_cmaps/Japan1/UniJIS-UCS2-HW-V_4.cpp',
         'core/src/fpdfapi/fpdf_cmaps/Japan1/UniJIS-UCS2-H_4.cpp',
         'core/src/fpdfapi/fpdf_cmaps/Japan1/UniJIS-UCS2-V_4.cpp',
-        'core/src/fpdfapi/fpdf_cmaps/Japan1/UniJIS-UTF16-H_5.cpp',
-        'core/src/fpdfapi/fpdf_cmaps/Japan1/UniJIS-UTF16-V_5.cpp',
         'core/src/fpdfapi/fpdf_cmaps/Japan1/V_1.cpp',
         'core/src/fpdfapi/fpdf_cmaps/Korea1/Adobe-Korea1-UCS2_2.cpp',
         'core/src/fpdfapi/fpdf_cmaps/Korea1/cmaps_korea1.cpp',
