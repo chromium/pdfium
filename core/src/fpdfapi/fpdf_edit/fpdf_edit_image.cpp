@@ -218,7 +218,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
     int32_t maskWidth = pMaskBitmap->GetWidth();
     int32_t maskHeight = pMaskBitmap->GetHeight();
     uint8_t* mask_buf = NULL;
-    FX_STRSIZE mask_size;
+    FX_STRSIZE mask_size = 0;
     CPDF_Dictionary* pMaskDict = new CPDF_Dictionary;
     pMaskDict->SetAtName(FX_BSTRC("Type"), FX_BSTRC("XObject"));
     pMaskDict->SetAtName(FX_BSTRC("Subtype"), FX_BSTRC("Image"));

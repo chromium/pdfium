@@ -91,6 +91,8 @@ class JpxBitMapContext {
   void operator=(const JpxBitMapContext&);
 };
 
+const int kMaxImageDimension = 0x01FFFF;
+
 }  // namespace
 
 CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask,
@@ -225,8 +227,8 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc,
   m_pStream = pStream;
   m_Width = m_pDict->GetInteger(FX_BSTRC("Width"));
   m_Height = m_pDict->GetInteger(FX_BSTRC("Height"));
-  if (m_Width <= 0 || m_Height <= 0 || m_Width > 0x01ffff ||
-      m_Height > 0x01ffff) {
+  if (m_Width <= 0 || m_Height <= 0 || m_Width > kMaxImageDimension ||
+      m_Height > kMaxImageDimension) {
     return FALSE;
   }
   m_GroupFamily = GroupFamily;
@@ -345,8 +347,8 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
   m_bHasMask = bHasMask;
   m_Width = m_pDict->GetInteger(FX_BSTRC("Width"));
   m_Height = m_pDict->GetInteger(FX_BSTRC("Height"));
-  if (m_Width <= 0 || m_Height <= 0 || m_Width > 0x01ffff ||
-      m_Height > 0x01ffff) {
+  if (m_Width <= 0 || m_Height <= 0 || m_Width > kMaxImageDimension ||
+      m_Height > kMaxImageDimension) {
     return 0;
   }
   m_GroupFamily = GroupFamily;
@@ -782,7 +784,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
   m_bpc = 8;
 }
 CPDF_DIBSource* CPDF_DIBSource::LoadMask(FX_DWORD& MatteColor) {
-  MatteColor = 0xffffffff;
+  MatteColor = 0xFFFFFFFF;
   CPDF_Stream* pSoftMask = m_pDict->GetStream(FX_BSTRC("SMask"));
   if (pSoftMask) {
     CPDF_Array* pMatte = pSoftMask->GetDict()->GetArray(FX_BSTRC("Matte"));
@@ -810,7 +812,7 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMask(FX_DWORD& MatteColor) {
   return NULL;
 }
 int CPDF_DIBSource::StratLoadMask() {
-  m_MatteColor = 0xffffffff;
+  m_MatteColor = 0XFFFFFFFF;
   m_pMaskStream = m_pDict->GetStream(FX_BSTRC("SMask"));
   if (m_pMaskStream) {
     CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArray(FX_BSTRC("Matte"));
@@ -1043,10 +1045,8 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
     }
     if (m_bpc == 8) {
       if (m_nComponents == m_pColorSpace->CountComponents())
-        m_pColorSpace->TranslateImageLine(
-            dest_scan, src_scan, m_Width, m_Width, m_Height,
-            m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK &&
-                m_Family == PDFCS_DEVICECMYK);
+        m_pColorSpace->TranslateImageLine(dest_scan, src_scan, m_Width, m_Width,
+                                          m_Height, TransMask());
       return;
     }
   }
@@ -1062,8 +1062,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
         color_values[color] = m_pCompData[color].m_DecodeMin +
                               m_pCompData[color].m_DecodeStep * data;
       }
-      if (m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK &&
-          m_Family == PDFCS_DEVICECMYK) {
+      if (TransMask()) {
         FX_FLOAT k = 1.0f - color_values[3];
         R = (1.0f - color_values[0]) * k;
         G = (1.0f - color_values[1]) * k;
@@ -1089,8 +1088,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
                               m_pCompData[color].m_DecodeStep * data;
         src_bit_pos += m_bpc;
       }
-      if (m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK &&
-          m_Family == PDFCS_DEVICECMYK) {
+      if (TransMask()) {
         FX_FLOAT k = 1.0f - color_values[3];
         R = (1.0f - color_values[0]) * k;
         G = (1.0f - color_values[1]) * k;
@@ -1137,7 +1135,7 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
   }
   if (pSrcLine == NULL) {
     uint8_t* pLineBuf = m_pMaskedLine ? m_pMaskedLine : m_pLineBuf;
-    FXSYS_memset(pLineBuf, 0xff, m_Pitch);
+    FXSYS_memset(pLineBuf, 0xFF, m_Pitch);
     return pLineBuf;
   }
   if (m_bpc * m_nComponents == 1) {
@@ -1147,8 +1145,8 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
       }
     } else if (m_bColorKey) {
       FX_DWORD reset_argb, set_argb;
-      reset_argb = m_pPalette ? m_pPalette[0] : 0xff000000;
-      set_argb = m_pPalette ? m_pPalette[1] : 0xffffffff;
+      reset_argb = m_pPalette ? m_pPalette[0] : 0xFF000000;
+      set_argb = m_pPalette ? m_pPalette[1] : 0xFFFFFFFF;
       if (m_pCompData[0].m_ColorKeyMin == 0) {
         reset_argb = 0;
       }
@@ -1203,7 +1201,7 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
         }
         *pDestPixel = (index < m_pCompData[0].m_ColorKeyMin ||
                        index > m_pCompData[0].m_ColorKeyMax)
-                          ? 0xff
+                          ? 0xFF
                           : 0;
         pDestPixel++;
       }
@@ -1222,11 +1220,11 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
                                   pPixel[1] > m_pCompData[1].m_ColorKeyMax ||
                                   pPixel[2] < m_pCompData[2].m_ColorKeyMin ||
                                   pPixel[2] > m_pCompData[2].m_ColorKeyMax)
-                                     ? 0xff
+                                     ? 0xFF
                                      : 0;
       }
     } else {
-      FXSYS_memset(m_pMaskedLine, 0xff, m_Pitch);
+      FXSYS_memset(m_pMaskedLine, 0xFF, m_Pitch);
     }
   }
   if (m_pColorSpace) {
@@ -1246,12 +1244,11 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
   }
   return pSrcLine;
 }
+
 FX_BOOL CPDF_DIBSource::SkipToScanline(int line, IFX_Pause* pPause) const {
-  if (m_pDecoder) {
-    return m_pDecoder->SkipToScanline(line, pPause);
-  }
-  return FALSE;
+  return m_pDecoder && m_pDecoder->SkipToScanline(line, pPause);
 }
+
 void CPDF_DIBSource::DownSampleScanline(int line,
                                         uint8_t* dest_scan,
                                         int dest_bpp,
@@ -1259,18 +1256,17 @@ void CPDF_DIBSource::DownSampleScanline(int line,
                                         FX_BOOL bFlipX,
                                         int clip_left,
                                         int clip_width) const {
-  if (line < 0 || dest_scan == NULL || dest_bpp <= 0 || dest_width <= 0 ||
+  if (line < 0 || !dest_scan || dest_bpp <= 0 || dest_width <= 0 ||
       clip_left < 0 || clip_width <= 0) {
     return;
   }
 
   FX_DWORD src_width = m_Width;
   FX_SAFE_DWORD pitch = CalculatePitch8(m_bpc, m_nComponents, m_Width, 1);
-  if (!pitch.IsValid()) {
+  if (!pitch.IsValid())
     return;
-  }
 
-  const uint8_t* pSrcLine = NULL;
+  const uint8_t* pSrcLine = nullptr;
   if (m_pCachedBitmap) {
     pSrcLine = m_pCachedBitmap->GetScanline(line);
   } else if (m_pDecoder) {
@@ -1288,8 +1284,8 @@ void CPDF_DIBSource::DownSampleScanline(int line,
   }
   int orig_Bpp = m_bpc * m_nComponents / 8;
   int dest_Bpp = dest_bpp / 8;
-  if (pSrcLine == NULL) {
-    FXSYS_memset(dest_scan, 0xff, dest_Bpp * clip_width);
+  if (!pSrcLine) {
+    FXSYS_memset(dest_scan, 0xFF, dest_Bpp * clip_width);
     return;
   }
 
@@ -1297,227 +1293,263 @@ void CPDF_DIBSource::DownSampleScanline(int line,
   max_src_x += clip_width - 1;
   max_src_x *= src_width;
   max_src_x /= dest_width;
-  if (!max_src_x.IsValid()) {
+  if (!max_src_x.IsValid())
     return;
-  }
 
-  CFX_FixedBufGrow<uint8_t, 128> temp(orig_Bpp);
   if (m_bpc * m_nComponents == 1) {
-    FX_DWORD set_argb = (FX_DWORD)-1, reset_argb = 0;
-    if (m_bImageMask) {
-      if (m_bDefaultDecode) {
-        set_argb = 0;
-        reset_argb = (FX_DWORD)-1;
-      }
-    } else if (m_bColorKey) {
-      reset_argb = m_pPalette ? m_pPalette[0] : 0xff000000;
-      set_argb = m_pPalette ? m_pPalette[1] : 0xffffffff;
-      if (m_pCompData[0].m_ColorKeyMin == 0) {
-        reset_argb = 0;
-      }
-      if (m_pCompData[0].m_ColorKeyMax == 1) {
-        set_argb = 0;
-      }
-      set_argb = FXARGB_TODIB(set_argb);
-      reset_argb = FXARGB_TODIB(reset_argb);
-      for (int i = 0; i < clip_width; i++) {
-        FX_DWORD src_x = (clip_left + i) * src_width / dest_width;
-        if (bFlipX) {
-          src_x = src_width - src_x - 1;
-        }
-        src_x %= src_width;
-        if (pSrcLine[src_x / 8] & (1 << (7 - src_x % 8))) {
-          ((FX_DWORD*)dest_scan)[i] = set_argb;
-        } else {
-          ((FX_DWORD*)dest_scan)[i] = reset_argb;
-        }
-      }
-      return;
-    } else {
-      if (dest_Bpp == 1) {
-      } else if (m_pPalette) {
-        reset_argb = m_pPalette[0];
-        set_argb = m_pPalette[1];
-      }
-    }
-    for (int i = 0; i < clip_width; i++) {
-      FX_DWORD src_x = (clip_left + i) * src_width / dest_width;
-      if (bFlipX) {
-        src_x = src_width - src_x - 1;
-      }
-      src_x %= src_width;
-      int dest_pos = i * dest_Bpp;
-      if (pSrcLine[src_x / 8] & (1 << (7 - src_x % 8))) {
-        if (dest_Bpp == 1) {
-          dest_scan[dest_pos] = (uint8_t)set_argb;
-        } else if (dest_Bpp == 3) {
-          dest_scan[dest_pos] = FXARGB_B(set_argb);
-          dest_scan[dest_pos + 1] = FXARGB_G(set_argb);
-          dest_scan[dest_pos + 2] = FXARGB_R(set_argb);
-        } else {
-          *(FX_DWORD*)(dest_scan + dest_pos) = set_argb;
-        }
-      } else {
-        if (dest_Bpp == 1) {
-          dest_scan[dest_pos] = (uint8_t)reset_argb;
-        } else if (dest_Bpp == 3) {
-          dest_scan[dest_pos] = FXARGB_B(reset_argb);
-          dest_scan[dest_pos + 1] = FXARGB_G(reset_argb);
-          dest_scan[dest_pos + 2] = FXARGB_R(reset_argb);
-        } else {
-          *(FX_DWORD*)(dest_scan + dest_pos) = reset_argb;
-        }
-      }
-    }
-    return;
+    DownSampleScanline1Bit(orig_Bpp, dest_Bpp, src_width, pSrcLine, dest_scan,
+                           dest_width, bFlipX, clip_left, clip_width);
   } else if (m_bpc * m_nComponents <= 8) {
-    if (m_bpc < 8) {
-      int src_bit_pos = 0;
-      for (FX_DWORD col = 0; col < src_width; col++) {
-        int color_index = 0;
-        for (FX_DWORD color = 0; color < m_nComponents; color++) {
-          int data = _GetBits8(pSrcLine, src_bit_pos, m_bpc);
-          color_index |= data << (color * m_bpc);
-          src_bit_pos += m_bpc;
-        }
-        m_pLineBuf[col] = color_index;
-      }
-      pSrcLine = m_pLineBuf;
+    DownSampleScanline8Bit(orig_Bpp, dest_Bpp, src_width, pSrcLine, dest_scan,
+                           dest_width, bFlipX, clip_left, clip_width);
+  } else {
+    DownSampleScanline32Bit(orig_Bpp, dest_Bpp, src_width, pSrcLine, dest_scan,
+                            dest_width, bFlipX, clip_left, clip_width);
+  }
+}
+
+void CPDF_DIBSource::DownSampleScanline1Bit(int orig_Bpp,
+                                            int dest_Bpp,
+                                            FX_DWORD src_width,
+                                            const uint8_t* pSrcLine,
+                                            uint8_t* dest_scan,
+                                            int dest_width,
+                                            FX_BOOL bFlipX,
+                                            int clip_left,
+                                            int clip_width) const {
+  FX_DWORD set_argb = (FX_DWORD)-1;
+  FX_DWORD reset_argb = 0;
+  if (m_bImageMask) {
+    if (m_bDefaultDecode) {
+      set_argb = 0;
+      reset_argb = (FX_DWORD)-1;
     }
-    if (m_bColorKey) {
-      for (int i = 0; i < clip_width; i++) {
-        FX_DWORD src_x = (clip_left + i) * src_width / dest_width;
-        if (bFlipX) {
-          src_x = src_width - src_x - 1;
-        }
-        src_x %= src_width;
-        uint8_t* pDestPixel = dest_scan + i * 4;
-        uint8_t index = pSrcLine[src_x];
-        if (m_pPalette) {
-          *pDestPixel++ = FXARGB_B(m_pPalette[index]);
-          *pDestPixel++ = FXARGB_G(m_pPalette[index]);
-          *pDestPixel++ = FXARGB_R(m_pPalette[index]);
-        } else {
-          *pDestPixel++ = index;
-          *pDestPixel++ = index;
-          *pDestPixel++ = index;
-        }
-        *pDestPixel = (index < m_pCompData[0].m_ColorKeyMin ||
-                       index > m_pCompData[0].m_ColorKeyMax)
-                          ? 0xff
-                          : 0;
-      }
-      return;
+  } else if (m_bColorKey) {
+    reset_argb = m_pPalette ? m_pPalette[0] : 0xFF000000;
+    set_argb = m_pPalette ? m_pPalette[1] : 0xFFFFFFFF;
+    if (m_pCompData[0].m_ColorKeyMin == 0) {
+      reset_argb = 0;
     }
+    if (m_pCompData[0].m_ColorKeyMax == 1) {
+      set_argb = 0;
+    }
+    set_argb = FXARGB_TODIB(set_argb);
+    reset_argb = FXARGB_TODIB(reset_argb);
     for (int i = 0; i < clip_width; i++) {
       FX_DWORD src_x = (clip_left + i) * src_width / dest_width;
       if (bFlipX) {
         src_x = src_width - src_x - 1;
       }
       src_x %= src_width;
-      uint8_t index = pSrcLine[src_x];
-      if (dest_Bpp == 1) {
-        dest_scan[i] = index;
+      if (pSrcLine[src_x / 8] & (1 << (7 - src_x % 8))) {
+        ((FX_DWORD*)dest_scan)[i] = set_argb;
       } else {
-        int dest_pos = i * dest_Bpp;
-        FX_ARGB argb = m_pPalette[index];
-        dest_scan[dest_pos] = FXARGB_B(argb);
-        dest_scan[dest_pos + 1] = FXARGB_G(argb);
-        dest_scan[dest_pos + 2] = FXARGB_R(argb);
+        ((FX_DWORD*)dest_scan)[i] = reset_argb;
       }
     }
     return;
   } else {
-    int last_src_x = -1;
-    FX_ARGB last_argb;
-    FX_FLOAT orig_Not8Bpp = (FX_FLOAT)m_bpc * (FX_FLOAT)m_nComponents / 8.0f;
-    FX_FLOAT unit_To8Bpc = 255.0f / ((1 << m_bpc) - 1);
-    for (int i = 0; i < clip_width; i++) {
-      int dest_x = clip_left + i;
-      FX_DWORD src_x = (bFlipX ? (dest_width - dest_x - 1) : dest_x) *
-                       (int64_t)src_width / dest_width;
-      src_x %= src_width;
-      const uint8_t* pSrcPixel = NULL;
-      if (m_bpc % 8 == 0) {
-        pSrcPixel = pSrcLine + src_x * orig_Bpp;
+    if (dest_Bpp == 1) {
+    } else if (m_pPalette) {
+      reset_argb = m_pPalette[0];
+      set_argb = m_pPalette[1];
+    }
+  }
+  for (int i = 0; i < clip_width; i++) {
+    FX_DWORD src_x = (clip_left + i) * src_width / dest_width;
+    if (bFlipX) {
+      src_x = src_width - src_x - 1;
+    }
+    src_x %= src_width;
+    int dest_pos = i * dest_Bpp;
+    if (pSrcLine[src_x / 8] & (1 << (7 - src_x % 8))) {
+      if (dest_Bpp == 1) {
+        dest_scan[dest_pos] = (uint8_t)set_argb;
+      } else if (dest_Bpp == 3) {
+        dest_scan[dest_pos] = FXARGB_B(set_argb);
+        dest_scan[dest_pos + 1] = FXARGB_G(set_argb);
+        dest_scan[dest_pos + 2] = FXARGB_R(set_argb);
       } else {
-        pSrcPixel = pSrcLine + (int)(src_x * orig_Not8Bpp);
+        *(FX_DWORD*)(dest_scan + dest_pos) = set_argb;
       }
-      uint8_t* pDestPixel = dest_scan + i * dest_Bpp;
-      FX_ARGB argb;
-      if (src_x == last_src_x) {
-        argb = last_argb;
+    } else {
+      if (dest_Bpp == 1) {
+        dest_scan[dest_pos] = (uint8_t)reset_argb;
+      } else if (dest_Bpp == 3) {
+        dest_scan[dest_pos] = FXARGB_B(reset_argb);
+        dest_scan[dest_pos + 1] = FXARGB_G(reset_argb);
+        dest_scan[dest_pos + 2] = FXARGB_R(reset_argb);
       } else {
-        if (m_pColorSpace) {
-          uint8_t color[4];
-          if (!m_bDefaultDecode) {
-            for (int i = 0; i < m_nComponents; i++) {
-              int color_value =
-                  (int)((m_pCompData[i].m_DecodeMin +
-                         m_pCompData[i].m_DecodeStep * (FX_FLOAT)pSrcPixel[i]) *
-                            255.0f +
-                        0.5f);
-              temp[i] =
-                  color_value > 255 ? 255 : (color_value < 0 ? 0 : color_value);
-            }
-            m_pColorSpace->TranslateImageLine(
-                color, temp, 1, 0, 0, m_bLoadMask &&
-                                          m_GroupFamily == PDFCS_DEVICECMYK &&
-                                          m_Family == PDFCS_DEVICECMYK);
-          } else {
-            if (m_bpc < 8) {
-              int src_bit_pos = 0;
-              if (src_x % 2) {
-                src_bit_pos = 4;
-              }
-              for (FX_DWORD i = 0; i < m_nComponents; i++) {
-                temp[i] = (uint8_t)(_GetBits8(pSrcPixel, src_bit_pos, m_bpc) *
-                                    unit_To8Bpc);
-                src_bit_pos += m_bpc;
-              }
-              m_pColorSpace->TranslateImageLine(
-                  color, temp, 1, 0, 0, m_bLoadMask &&
-                                            m_GroupFamily == PDFCS_DEVICECMYK &&
-                                            m_Family == PDFCS_DEVICECMYK);
-            } else {
-              m_pColorSpace->TranslateImageLine(
-                  color, pSrcPixel, 1, 0, 0,
-                  m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK &&
-                      m_Family == PDFCS_DEVICECMYK);
-            }
-          }
-          argb = FXARGB_MAKE(0xff, color[2], color[1], color[0]);
-        } else {
-          argb = FXARGB_MAKE(0xff, pSrcPixel[2], pSrcPixel[1], pSrcPixel[0]);
-        }
-        if (m_bColorKey) {
-          int alpha = 0xff;
-          if (m_nComponents == 3 && m_bpc == 8) {
-            alpha = (pSrcPixel[0] < m_pCompData[0].m_ColorKeyMin ||
-                     pSrcPixel[0] > m_pCompData[0].m_ColorKeyMax ||
-                     pSrcPixel[1] < m_pCompData[1].m_ColorKeyMin ||
-                     pSrcPixel[1] > m_pCompData[1].m_ColorKeyMax ||
-                     pSrcPixel[2] < m_pCompData[2].m_ColorKeyMin ||
-                     pSrcPixel[2] > m_pCompData[2].m_ColorKeyMax)
-                        ? 0xff
-                        : 0;
-          }
-          argb &= 0xffffff;
-          argb |= alpha << 24;
-        }
-        last_src_x = src_x;
-        last_argb = argb;
-      }
-      if (dest_Bpp == 4) {
-        *(FX_DWORD*)pDestPixel = FXARGB_TODIB(argb);
-      } else {
-        *pDestPixel++ = FXARGB_B(argb);
-        *pDestPixel++ = FXARGB_G(argb);
-        *pDestPixel = FXARGB_R(argb);
+        *(FX_DWORD*)(dest_scan + dest_pos) = reset_argb;
       }
     }
   }
 }
+
+void CPDF_DIBSource::DownSampleScanline8Bit(int orig_Bpp,
+                                            int dest_Bpp,
+                                            FX_DWORD src_width,
+                                            const uint8_t* pSrcLine,
+                                            uint8_t* dest_scan,
+                                            int dest_width,
+                                            FX_BOOL bFlipX,
+                                            int clip_left,
+                                            int clip_width) const {
+  if (m_bpc < 8) {
+    int src_bit_pos = 0;
+    for (FX_DWORD col = 0; col < src_width; col++) {
+      int color_index = 0;
+      for (FX_DWORD color = 0; color < m_nComponents; color++) {
+        int data = _GetBits8(pSrcLine, src_bit_pos, m_bpc);
+        color_index |= data << (color * m_bpc);
+        src_bit_pos += m_bpc;
+      }
+      m_pLineBuf[col] = color_index;
+    }
+    pSrcLine = m_pLineBuf;
+  }
+  if (m_bColorKey) {
+    for (int i = 0; i < clip_width; i++) {
+      FX_DWORD src_x = (clip_left + i) * src_width / dest_width;
+      if (bFlipX) {
+        src_x = src_width - src_x - 1;
+      }
+      src_x %= src_width;
+      uint8_t* pDestPixel = dest_scan + i * 4;
+      uint8_t index = pSrcLine[src_x];
+      if (m_pPalette) {
+        *pDestPixel++ = FXARGB_B(m_pPalette[index]);
+        *pDestPixel++ = FXARGB_G(m_pPalette[index]);
+        *pDestPixel++ = FXARGB_R(m_pPalette[index]);
+      } else {
+        *pDestPixel++ = index;
+        *pDestPixel++ = index;
+        *pDestPixel++ = index;
+      }
+      *pDestPixel = (index < m_pCompData[0].m_ColorKeyMin ||
+                     index > m_pCompData[0].m_ColorKeyMax)
+                        ? 0xFF
+                        : 0;
+    }
+    return;
+  }
+  for (int i = 0; i < clip_width; i++) {
+    FX_DWORD src_x = (clip_left + i) * src_width / dest_width;
+    if (bFlipX) {
+      src_x = src_width - src_x - 1;
+    }
+    src_x %= src_width;
+    uint8_t index = pSrcLine[src_x];
+    if (dest_Bpp == 1) {
+      dest_scan[i] = index;
+    } else {
+      int dest_pos = i * dest_Bpp;
+      FX_ARGB argb = m_pPalette[index];
+      dest_scan[dest_pos] = FXARGB_B(argb);
+      dest_scan[dest_pos + 1] = FXARGB_G(argb);
+      dest_scan[dest_pos + 2] = FXARGB_R(argb);
+    }
+  }
+}
+
+void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
+                                             int dest_Bpp,
+                                             FX_DWORD src_width,
+                                             const uint8_t* pSrcLine,
+                                             uint8_t* dest_scan,
+                                             int dest_width,
+                                             FX_BOOL bFlipX,
+                                             int clip_left,
+                                             int clip_width) const {
+  int last_src_x = -1;
+  FX_ARGB last_argb = FXARGB_MAKE(0xFF, 0xFF, 0xFF, 0xFF);
+  FX_FLOAT orig_Not8Bpp = (FX_FLOAT)m_bpc * (FX_FLOAT)m_nComponents / 8.0f;
+  FX_FLOAT unit_To8Bpc = 255.0f / ((1 << m_bpc) - 1);
+  for (int i = 0; i < clip_width; i++) {
+    int dest_x = clip_left + i;
+    FX_DWORD src_x = (bFlipX ? (dest_width - dest_x - 1) : dest_x) *
+                     (int64_t)src_width / dest_width;
+    src_x %= src_width;
+    const uint8_t* pSrcPixel = nullptr;
+    if (m_bpc % 8 == 0) {
+      pSrcPixel = pSrcLine + src_x * orig_Bpp;
+    } else {
+      pSrcPixel = pSrcLine + (int)(src_x * orig_Not8Bpp);
+    }
+    uint8_t* pDestPixel = dest_scan + i * dest_Bpp;
+    FX_ARGB argb;
+    if (src_x == last_src_x) {
+      argb = last_argb;
+    } else {
+      if (m_pColorSpace) {
+        CFX_FixedBufGrow<uint8_t, 128> temp(orig_Bpp);
+        uint8_t color[4];
+        const FX_BOOL bTransMask = TransMask();
+        if (m_bDefaultDecode) {
+          if (m_bpc < 8) {
+            int src_bit_pos = 0;
+            if (src_x % 2) {
+              src_bit_pos = 4;
+            }
+            for (FX_DWORD j = 0; j < m_nComponents; ++j) {
+              temp[j] = (uint8_t)(_GetBits8(pSrcPixel, src_bit_pos, m_bpc) *
+                                  unit_To8Bpc);
+              src_bit_pos += m_bpc;
+            }
+            m_pColorSpace->TranslateImageLine(color, temp, 1, 0, 0, bTransMask);
+          } else {
+            m_pColorSpace->TranslateImageLine(color, pSrcPixel, 1, 0, 0,
+                                              bTransMask);
+          }
+        } else {
+          for (int j = 0; j < m_nComponents; ++j) {
+            int color_value =
+                (int)((m_pCompData[j].m_DecodeMin +
+                       m_pCompData[j].m_DecodeStep * (FX_FLOAT)pSrcPixel[j]) *
+                          255.0f +
+                      0.5f);
+            temp[j] =
+                color_value > 255 ? 255 : (color_value < 0 ? 0 : color_value);
+          }
+          m_pColorSpace->TranslateImageLine(color, temp, 1, 0, 0, bTransMask);
+        }
+        argb = FXARGB_MAKE(0xFF, color[2], color[1], color[0]);
+      } else {
+        argb = FXARGB_MAKE(0xFf, pSrcPixel[2], pSrcPixel[1], pSrcPixel[0]);
+      }
+      if (m_bColorKey) {
+        int alpha = 0xFF;
+        if (m_nComponents == 3 && m_bpc == 8) {
+          alpha = (pSrcPixel[0] < m_pCompData[0].m_ColorKeyMin ||
+                   pSrcPixel[0] > m_pCompData[0].m_ColorKeyMax ||
+                   pSrcPixel[1] < m_pCompData[1].m_ColorKeyMin ||
+                   pSrcPixel[1] > m_pCompData[1].m_ColorKeyMax ||
+                   pSrcPixel[2] < m_pCompData[2].m_ColorKeyMin ||
+                   pSrcPixel[2] > m_pCompData[2].m_ColorKeyMax)
+                      ? 0xFF
+                      : 0;
+        }
+        argb &= 0xFFFFFF;
+        argb |= alpha << 24;
+      }
+      last_src_x = src_x;
+      last_argb = argb;
+    }
+    if (dest_Bpp == 4) {
+      *(FX_DWORD*)pDestPixel = FXARGB_TODIB(argb);
+    } else {
+      *pDestPixel++ = FXARGB_B(argb);
+      *pDestPixel++ = FXARGB_G(argb);
+      *pDestPixel = FXARGB_R(argb);
+    }
+  }
+}
+
+FX_BOOL CPDF_DIBSource::TransMask() const {
+  return m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK &&
+         m_Family == PDFCS_DEVICECMYK;
+}
+
 void CPDF_DIBSource::SetDownSampleSize(int dest_width, int dest_height) const {
   if (m_pDecoder) {
     m_pDecoder->DownScale(dest_width, dest_height);
@@ -1525,11 +1557,13 @@ void CPDF_DIBSource::SetDownSampleSize(int dest_width, int dest_height) const {
     ((CPDF_DIBSource*)this)->m_Height = m_pDecoder->GetHeight();
   }
 }
+
 void CPDF_DIBSource::ClearImageData() {
   if (m_pDecoder) {
     m_pDecoder->ClearImageData();
   }
 }
+
 CPDF_ProgressiveImageLoaderHandle::CPDF_ProgressiveImageLoaderHandle() {
   m_pImageLoader = NULL;
   m_pCache = NULL;
