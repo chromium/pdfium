@@ -17,12 +17,14 @@
 class CJBig2_HuffmanTable;
 class CJBig2_Image;
 class CJBig2_PatternDict;
-typedef enum {
+
+enum JBig2Corner {
   JBIG2_CORNER_BOTTOMLEFT = 0,
   JBIG2_CORNER_TOPLEFT = 1,
   JBIG2_CORNER_BOTTOMRIGHT = 2,
   JBIG2_CORNER_TOPRIGHT = 3
-} JBig2Corner;
+};
+
 class CJBig2_GRDProc : public CJBig2_Object {
  public:
   CJBig2_GRDProc() {
@@ -40,36 +42,27 @@ class CJBig2_GRDProc : public CJBig2_Object {
   CJBig2_Image* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                              JBig2ArithCtx* gbContext);
 
-  CJBig2_Image* decode_Arith_V2(CJBig2_ArithDecoder* pArithDecoder,
-                                JBig2ArithCtx* gbContext);
-
-  CJBig2_Image* decode_Arith_V1(CJBig2_ArithDecoder* pArithDecoder,
-                                JBig2ArithCtx* gbContext);
-
-  CJBig2_Image* decode_MMR(CJBig2_BitStream* pStream);
   FXCODEC_STATUS Start_decode_Arith(CJBig2_Image** pImage,
                                     CJBig2_ArithDecoder* pArithDecoder,
                                     JBig2ArithCtx* gbContext,
                                     IFX_Pause* pPause = NULL);
-  FXCODEC_STATUS Start_decode_Arith_V2(CJBig2_Image** pImage,
-                                       CJBig2_ArithDecoder* pArithDecoder,
-                                       JBig2ArithCtx* gbContext,
-                                       IFX_Pause* pPause = NULL);
-  FXCODEC_STATUS Start_decode_Arith_V1(CJBig2_Image** pImage,
-                                       CJBig2_ArithDecoder* pArithDecoder,
-                                       JBig2ArithCtx* gbContext,
-                                       IFX_Pause* pPause = NULL);
   FXCODEC_STATUS Start_decode_MMR(CJBig2_Image** pImage,
                                   CJBig2_BitStream* pStream,
                                   IFX_Pause* pPause = NULL);
   FXCODEC_STATUS Continue_decode(IFX_Pause* pPause);
   FX_RECT GetReplaceRect() { return m_ReplaceRect; }
 
+  FX_BOOL MMR;
+  FX_DWORD GBW;
+  FX_DWORD GBH;
+  uint8_t GBTEMPLATE;
+  FX_BOOL TPGDON;
+  FX_BOOL USESKIP;
+  CJBig2_Image* SKIP;
+  char GBAT[8];
+
  private:
   FXCODEC_STATUS decode_Arith(IFX_Pause* pPause);
-  FXCODEC_STATUS decode_Arith_V2(IFX_Pause* pPause);
-  FXCODEC_STATUS decode_Arith_V1(IFX_Pause* pPause);
-  FXCODEC_STATUS decode_MMR();
   FXCODEC_STATUS decode_Arith_Template0_opt3(CJBig2_Image* pImage,
                                              CJBig2_ArithDecoder* pArithDecoder,
                                              JBig2ArithCtx* gbContext,
@@ -106,18 +99,6 @@ class CJBig2_GRDProc : public CJBig2_Object {
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext,
       IFX_Pause* pPause);
-  FX_DWORD m_loopIndex;
-  uint8_t* m_pLine;
-  IFX_Pause* m_pPause;
-  FXCODEC_STATUS m_ProssiveStatus;
-  CJBig2_Image** m_pImage;
-  CJBig2_ArithDecoder* m_pArithDecoder;
-  JBig2ArithCtx* m_gbContext;
-  FX_WORD m_DecodeType;
-  FX_BOOL LTP;
-  FX_RECT m_ReplaceRect;
-
- private:
   CJBig2_Image* decode_Arith_Template0_opt(CJBig2_ArithDecoder* pArithDecoder,
                                            JBig2ArithCtx* gbContext);
 
@@ -166,16 +147,18 @@ class CJBig2_GRDProc : public CJBig2_Object {
   CJBig2_Image* decode_Arith_Template3_unopt(CJBig2_ArithDecoder* pArithDecoder,
                                              JBig2ArithCtx* gbContext);
 
- public:
-  FX_BOOL MMR;
-  FX_DWORD GBW;
-  FX_DWORD GBH;
-  uint8_t GBTEMPLATE;
-  FX_BOOL TPGDON;
-  FX_BOOL USESKIP;
-  CJBig2_Image* SKIP;
-  signed char GBAT[8];
+  FX_DWORD m_loopIndex;
+  uint8_t* m_pLine;
+  IFX_Pause* m_pPause;
+  FXCODEC_STATUS m_ProssiveStatus;
+  CJBig2_Image** m_pImage;
+  CJBig2_ArithDecoder* m_pArithDecoder;
+  JBig2ArithCtx* m_gbContext;
+  FX_WORD m_DecodeType;
+  FX_BOOL LTP;
+  FX_RECT m_ReplaceRect;
 };
+
 class CJBig2_GRRDProc : public CJBig2_Object {
  public:
   CJBig2_Image* decode(CJBig2_ArithDecoder* pArithDecoder,
@@ -193,10 +176,6 @@ class CJBig2_GRRDProc : public CJBig2_Object {
   CJBig2_Image* decode_Template1_opt(CJBig2_ArithDecoder* pArithDecoder,
                                      JBig2ArithCtx* grContext);
 
-  CJBig2_Image* decode_V1(CJBig2_ArithDecoder* pArithDecoder,
-                          JBig2ArithCtx* grContext);
-
- public:
   FX_DWORD GRW;
   FX_DWORD GRH;
   FX_BOOL GRTEMPLATE;
@@ -206,11 +185,13 @@ class CJBig2_GRRDProc : public CJBig2_Object {
   FX_BOOL TPGRON;
   signed char GRAT[4];
 };
+
 typedef struct {
   CJBig2_ArithIntDecoder *IADT, *IAFS, *IADS, *IAIT, *IARI, *IARDW, *IARDH,
       *IARDX, *IARDY;
   CJBig2_ArithIaidDecoder* IAID;
 } JBig2IntDecoderState;
+
 class CJBig2_TRDProc : public CJBig2_Object {
  public:
   CJBig2_Image* decode_Huffman(CJBig2_BitStream* pStream,
