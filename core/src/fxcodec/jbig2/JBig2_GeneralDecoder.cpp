@@ -39,28 +39,27 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     return pImage;
   }
   if (GBTEMPLATE == 0) {
-    if ((GBAT[0] == 3) && (GBAT[1] == (signed char)-1) &&
-        (GBAT[2] == (signed char)-3) && (GBAT[3] == (signed char)-1) &&
-        (GBAT[4] == 2) && (GBAT[5] == (signed char)-2) &&
-        (GBAT[6] == (signed char)-2) && (GBAT[7] == (signed char)-2)) {
+    if ((GBAT[0] == 3) && (GBAT[1] == (int8_t)-1) && (GBAT[2] == (int8_t)-3) &&
+        (GBAT[3] == (int8_t)-1) && (GBAT[4] == 2) && (GBAT[5] == (int8_t)-2) &&
+        (GBAT[6] == (int8_t)-2) && (GBAT[7] == (int8_t)-2)) {
       return decode_Arith_Template0_opt3(pArithDecoder, gbContext);
     } else {
       return decode_Arith_Template0_unopt(pArithDecoder, gbContext);
     }
   } else if (GBTEMPLATE == 1) {
-    if ((GBAT[0] == 3) && (GBAT[1] == (signed char)-1)) {
+    if ((GBAT[0] == 3) && (GBAT[1] == (int8_t)-1)) {
       return decode_Arith_Template1_opt3(pArithDecoder, gbContext);
     } else {
       return decode_Arith_Template1_unopt(pArithDecoder, gbContext);
     }
   } else if (GBTEMPLATE == 2) {
-    if ((GBAT[0] == 2) && (GBAT[1] == (signed char)-1)) {
+    if ((GBAT[0] == 2) && (GBAT[1] == (int8_t)-1)) {
       return decode_Arith_Template2_opt3(pArithDecoder, gbContext);
     } else {
       return decode_Arith_Template2_unopt(pArithDecoder, gbContext);
     }
   } else {
-    if ((GBAT[0] == 2) && (GBAT[1] == (signed char)-1)) {
+    if ((GBAT[0] == 2) && (GBAT[1] == (int8_t)-1)) {
       return decode_Arith_Template3_opt3(pArithDecoder, gbContext);
     } else {
       return decode_Arith_Template3_unopt(pArithDecoder, gbContext);
@@ -1067,8 +1066,8 @@ CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
     return pImage;
   }
   if (GRTEMPLATE == 0) {
-    if ((GRAT[0] == (signed char)-1) && (GRAT[1] == (signed char)-1) &&
-        (GRAT[2] == (signed char)-1) && (GRAT[3] == (signed char)-1) &&
+    if ((GRAT[0] == (int8_t)-1) && (GRAT[1] == (int8_t)-1) &&
+        (GRAT[2] == (int8_t)-1) && (GRAT[3] == (int8_t)-1) &&
         (GRREFERENCEDX == 0) && (GRW == (FX_DWORD)GRREFERENCE->m_nWidth)) {
       return decode_Template0_opt(pArithDecoder, grContext);
     } else {
@@ -3247,10 +3246,9 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
   int iline = m_loopIndex;
   CJBig2_Image* pImage = *m_pImage;
   if (GBTEMPLATE == 0) {
-    if ((GBAT[0] == 3) && (GBAT[1] == (signed char)-1) &&
-        (GBAT[2] == (signed char)-3) && (GBAT[3] == (signed char)-1) &&
-        (GBAT[4] == 2) && (GBAT[5] == (signed char)-2) &&
-        (GBAT[6] == (signed char)-2) && (GBAT[7] == (signed char)-2)) {
+    if ((GBAT[0] == 3) && (GBAT[1] == (int8_t)-1) && (GBAT[2] == (int8_t)-3) &&
+        (GBAT[3] == (int8_t)-1) && (GBAT[4] == 2) && (GBAT[5] == (int8_t)-2) &&
+        (GBAT[6] == (int8_t)-2) && (GBAT[7] == (int8_t)-2)) {
       m_ProssiveStatus = decode_Arith_Template0_opt3(pImage, m_pArithDecoder,
                                                      m_gbContext, pPause);
     } else {
@@ -3258,7 +3256,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
                                                       m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 1) {
-    if ((GBAT[0] == 3) && (GBAT[1] == (signed char)-1)) {
+    if ((GBAT[0] == 3) && (GBAT[1] == (int8_t)-1)) {
       m_ProssiveStatus = decode_Arith_Template1_opt3(pImage, m_pArithDecoder,
                                                      m_gbContext, pPause);
     } else {
@@ -3266,7 +3264,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
                                                       m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 2) {
-    if ((GBAT[0] == 2) && (GBAT[1] == (signed char)-1)) {
+    if ((GBAT[0] == 2) && (GBAT[1] == (int8_t)-1)) {
       m_ProssiveStatus = decode_Arith_Template2_opt3(pImage, m_pArithDecoder,
                                                      m_gbContext, pPause);
     } else {
@@ -3274,7 +3272,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
                                                       m_gbContext, pPause);
     }
   } else {
-    if ((GBAT[0] == 2) && (GBAT[1] == (signed char)-1)) {
+    if ((GBAT[0] == 2) && (GBAT[1] == (int8_t)-1)) {
       m_ProssiveStatus = decode_Arith_Template3_opt3(pImage, m_pArithDecoder,
                                                      m_gbContext, pPause);
     } else {

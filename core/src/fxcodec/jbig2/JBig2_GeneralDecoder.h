@@ -59,7 +59,7 @@ class CJBig2_GRDProc : public CJBig2_Object {
   FX_BOOL TPGDON;
   FX_BOOL USESKIP;
   CJBig2_Image* SKIP;
-  char GBAT[8];
+  int8_t GBAT[8];
 
  private:
   FXCODEC_STATUS decode_Arith(IFX_Pause* pPause);
@@ -183,7 +183,7 @@ class CJBig2_GRRDProc : public CJBig2_Object {
   int32_t GRREFERENCEDX;
   int32_t GRREFERENCEDY;
   FX_BOOL TPGRON;
-  signed char GRAT[4];
+  int8_t GRAT[4];
 };
 
 typedef struct {
@@ -220,11 +220,11 @@ class CJBig2_TRDProc : public CJBig2_Object {
   FX_BOOL TRANSPOSED;
 
   JBig2Corner REFCORNER;
-  signed char SBDSOFFSET;
+  int8_t SBDSOFFSET;
   CJBig2_HuffmanTable *SBHUFFFS, *SBHUFFDS, *SBHUFFDT, *SBHUFFRDW, *SBHUFFRDH,
       *SBHUFFRDX, *SBHUFFRDY, *SBHUFFRSIZE;
   FX_BOOL SBRTEMPLATE;
-  signed char SBRAT[4];
+  int8_t SBRAT[4];
 };
 class CJBig2_SDDProc : public CJBig2_Object {
  public:
@@ -246,9 +246,9 @@ class CJBig2_SDDProc : public CJBig2_Object {
   FX_DWORD SDNUMEXSYMS;
   CJBig2_HuffmanTable *SDHUFFDH, *SDHUFFDW, *SDHUFFBMSIZE, *SDHUFFAGGINST;
   uint8_t SDTEMPLATE;
-  signed char SDAT[8];
+  int8_t SDAT[8];
   FX_BOOL SDRTEMPLATE;
-  signed char SDRAT[4];
+  int8_t SDRAT[4];
 };
 class CJBig2_HTRDProc : public CJBig2_Object {
  public:
