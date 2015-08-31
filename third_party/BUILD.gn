@@ -30,17 +30,18 @@ source_set("bigint") {
   ]
 }
 
+config("fx_freetype_warnings") {
+  visibility = [ ":*" ]
+  if (is_clang) {
+    # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
+    # ftbase.h are unused.
+    cflags = [ "-Wno-unused-function" ]
+  }
+}
+
 # Tests may link against this even if the production library doesn't,
 # so it needs to be separate from it.
 static_library("fx_freetype") {
-  config("fx_freetype_warnings") {
-    if (is_clang) {
-      # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
-      # ftbase.h are unused.
-      cflags = [ "-Wno-unused-function" ]
-    }
-  }
-
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -81,13 +82,15 @@ static_library("fx_freetype") {
   ]
 }
 
-source_set("fx_agg") {
-  config("fx_agg_warnings") {
-    if (is_clang) {
-      # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
-      cflags = [ "-Wno-unused-function" ]
-    }
+config("fx_agg_warnings") {
+  visibility = [ ":*" ]
+  if (is_clang) {
+    # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
+    cflags = [ "-Wno-unused-function" ]
   }
+}
+
+source_set("fx_agg") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -113,18 +116,20 @@ source_set("fx_agg") {
   ]
 }
 
-source_set("fx_lcms2") {
-  config("fx_lcms2_warnings") {
-    if (is_clang) {
-      cflags = [
-        # cmslut.cc is sloppy with aggregate initialization. Version 2.7 of this
-        # library doesn't appear to have this problem.
-        "-Wno-missing-braces",
-        # FindPrev() in cmsplugin.c is unused.
-        "-Wno-unused-function",
-      ]
-    }
+config("fx_lcms2_warnings") {
+  visibility = [ ":*" ]
+  if (is_clang) {
+    cflags = [
+      # cmslut.cc is sloppy with aggregate initialization. Version 2.7 of this
+      # library doesn't appear to have this problem.
+      "-Wno-missing-braces",
+      # FindPrev() in cmsplugin.c is unused.
+      "-Wno-unused-function",
+    ]
   }
+}
+
+source_set("fx_lcms2") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",

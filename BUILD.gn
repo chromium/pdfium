@@ -393,6 +393,15 @@ static_library("fxcodec") {
   ]
 }
 
+config("fxge_warnings") {
+  if (is_clang) {
+    cflags = [
+      # http://code.google.com/p/pdfium/issues/detail?id=188
+      "-Wno-switch",
+    ]
+  }
+}
+
 static_library("fxcrt") {
   sources = [
     "core/include/fxcrt/fx_basic.h",
@@ -504,14 +513,6 @@ static_library("fxge") {
     "core/src/fxge/ge/text_int.h",
   ]
 
-  config("fxge_warnings") {
-    if (is_clang) {
-      cflags = [
-        # http://code.google.com/p/pdfium/issues/detail?id=188
-        "-Wno-switch",
-      ]
-    }
-  }
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     ":pdfium_config",
