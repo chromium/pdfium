@@ -410,7 +410,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
         CFX_ByteString key;
         CPDF_Object* pValue = p->GetNextElement(pos, key);
         buf << FX_BSTRC("/") << PDF_NameEncode(key);
-        if (pValue->GetObjNum()) {
+        if (pValue && pValue->GetObjNum()) {
           buf << " " << pValue->GetObjNum() << FX_BSTRC(" 0 R ");
         } else {
           buf << pValue;

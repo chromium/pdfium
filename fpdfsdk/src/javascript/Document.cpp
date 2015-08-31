@@ -1367,8 +1367,12 @@ FX_BOOL Document::addIcon(IFXJS_Context* cc,
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-
   CFX_WideString swIconName = params[0].ToCFXWideString();
+
+  if (params[1].GetType() != VT_object) {
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
+    return FALSE;
+  }
   JSFXObject pJSIcon = params[1].ToV8Object();
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
