@@ -71,6 +71,7 @@ Alert: PASS: this.addIcon() threw error Document.addIcon: Incorrect number of pa
 Alert: PASS: this.addIcon(1) threw error Document.addIcon: Incorrect number of parameters passed to function.
 Alert: PASS: this.addIcon(1, 2, 3) threw error Document.addIcon: Incorrect number of parameters passed to function.
 Alert: PASS: this.addIcon("myicon", 3) threw error Document.addIcon: Incorrect parameter type.
+Alert: PASS: this.addIcon("myicon", undefined) threw error Document.addIcon: Incorrect parameter type.
 Alert: PASS: typeof this.calculateNow = function
 Alert: PASS: typeof this.deletePages = function
 Alert: PASS: typeof this.getField = function

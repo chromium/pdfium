@@ -122,6 +122,7 @@ function testAddIcon() {
 
    // Second argument must actually be an icon.
    expectError('this.addIcon("myicon", 3)');
+   expectError('this.addIcon("myicon", undefined)');
 
    // TODO(tsepez): test success cases.
 }
