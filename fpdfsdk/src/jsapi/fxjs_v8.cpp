@@ -368,31 +368,8 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime,
 void JS_Initial(unsigned int embedderDataSlot) {
   g_embedderDataSlot = embedderDataSlot;
 }
-void JS_Release() {}
-int JS_Parse(IJS_Runtime* pJSRuntime,
-             IFXJS_Context* pJSContext,
-             const wchar_t* script,
-             long length,
-             FXJSErr* perror) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::TryCatch try_catch(isolate);
 
-  CFX_WideString wsScript(script);
-  CFX_ByteString bsScript = wsScript.UTF8Encode();
-
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Script> compiled_script;
-  if (!v8::Script::Compile(context,
-                           v8::String::NewFromUtf8(isolate, bsScript.c_str(),
-                                                   v8::NewStringType::kNormal,
-                                                   bsScript.GetLength())
-                               .ToLocalChecked())
-           .ToLocal(&compiled_script)) {
-    v8::String::Utf8Value error(try_catch.Exception());
-    return -1;
-  }
-  return 0;
+void JS_Release() {
 }
 
 int JS_Execute(IJS_Runtime* pJSRuntime,

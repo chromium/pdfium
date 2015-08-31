@@ -16,11 +16,10 @@ class CJS_Runtime;
 
 class CJS_Context : public IFXJS_Context {
  public:
-  CJS_Context(CJS_Runtime* pRuntime);
+  explicit CJS_Context(CJS_Runtime* pRuntime);
   ~CJS_Context() override;
 
   // IFXJS_Context
-  FX_BOOL Compile(const CFX_WideString& script, CFX_WideString& info) override;
   FX_BOOL RunScript(const CFX_WideString& script,
                     CFX_WideString& info) override;
   void OnApp_Init() override;
@@ -124,11 +123,8 @@ class CJS_Context : public IFXJS_Context {
   FX_BOOL IsMsgBoxEnabled() const { return m_bMsgBoxEnable; }
 
   CPDFDoc_Environment* GetReaderApp();
-  CJS_Runtime* GetJSRuntime() { return m_pRuntime; }
-
-  FX_BOOL DoJob(int nMode, const CFX_WideString& script, CFX_WideString& info);
-
-  CJS_EventHandler* GetEventHandler() { return m_pEventHandler; }
+  CJS_Runtime* GetJSRuntime() const { return m_pRuntime; }
+  CJS_EventHandler* GetEventHandler() const { return m_pEventHandler; }
   CPDFSDK_Document* GetReaderDocument();
 
  private:
