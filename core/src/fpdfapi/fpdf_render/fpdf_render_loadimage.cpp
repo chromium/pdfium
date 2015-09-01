@@ -62,17 +62,17 @@ FX_SAFE_DWORD CalculatePitch32(int bpp, int width) {
 class JpxBitMapContext {
  public:
   explicit JpxBitMapContext(ICodec_JpxModule* jpx_module)
-      : jpx_module_(jpx_module), ctx_(nullptr), output_offsets_(nullptr) {}
+      : jpx_module_(jpx_module), decoder_(nullptr), output_offsets_(nullptr) {}
 
   ~JpxBitMapContext() {
     FX_Free(output_offsets_);
-    jpx_module_->DestroyDecoder(ctx_);
+    jpx_module_->DestroyDecoder(decoder_);
   }
 
-  // Takes ownership of |ctx|.
-  void set_context(void* ctx) { ctx_ = ctx; }
+  // Takes ownership of |decoder|.
+  void set_decoder(CJPX_Decoder* decoder) { decoder_ = decoder; }
 
-  void* context() { return ctx_; }
+  CJPX_Decoder* decoder() { return decoder_; }
 
   // Takes ownership of |output_offsets|.
   void set_output_offsets(unsigned char* output_offsets) {
@@ -83,7 +83,7 @@ class JpxBitMapContext {
 
  private:
   ICodec_JpxModule* jpx_module_;   // Weak pointer.
-  void* ctx_;                      // Decoder context, owned.
+  CJPX_Decoder* decoder_;          // Decoder, owned.
   unsigned char* output_offsets_;  // Output offsets for decoding, owned.
 
   // Disallow evil constructors
@@ -698,74 +698,64 @@ void CPDF_DIBSource::LoadJpxBitmap() {
 
   nonstd::unique_ptr<JpxBitMapContext> context(
       new JpxBitMapContext(pJpxModule));
-  context->set_context(pJpxModule->CreateDecoder(m_pStreamAcc->GetData(),
+  context->set_decoder(pJpxModule->CreateDecoder(m_pStreamAcc->GetData(),
                                                  m_pStreamAcc->GetSize(),
                                                  m_pColorSpace != nullptr));
-  if (!context->context())
+  if (!context->decoder())
     return;
 
   FX_DWORD width = 0;
   FX_DWORD height = 0;
-  FX_DWORD codestream_nComps = 0;
-  FX_DWORD image_nComps = 0;
-  pJpxModule->GetImageInfo(context->context(), width, height, codestream_nComps,
-                           image_nComps);
+  FX_DWORD components = 0;
+  pJpxModule->GetImageInfo(context->decoder(), &width, &height, &components);
   if ((int)width < m_Width || (int)height < m_Height)
     return;
 
-  int output_nComps;
-  FX_BOOL bTranslateColor;
   FX_BOOL bSwapRGB = FALSE;
   if (m_pColorSpace) {
-    if (codestream_nComps != (FX_DWORD)m_pColorSpace->CountComponents())
+    if (components != (FX_DWORD)m_pColorSpace->CountComponents())
       return;
-    output_nComps = codestream_nComps;
-    bTranslateColor = FALSE;
+
     if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB)) {
       bSwapRGB = TRUE;
       m_pColorSpace = nullptr;
     }
   } else {
-    bTranslateColor = TRUE;
-    if (image_nComps) {
-      output_nComps = image_nComps;
-    } else {
-      output_nComps = codestream_nComps;
-    }
-    if (output_nComps == 3) {
+    if (components == 3) {
       bSwapRGB = TRUE;
-    } else if (output_nComps == 4) {
+    } else if (components == 4) {
       m_pColorSpace = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
-      bTranslateColor = FALSE;
     }
-    m_nComponents = output_nComps;
+    m_nComponents = components;
   }
+
   FXDIB_Format format;
-  if (output_nComps == 1) {
+  if (components == 1) {
     format = FXDIB_8bppRgb;
-  } else if (output_nComps <= 3) {
+  } else if (components <= 3) {
     format = FXDIB_Rgb;
-  } else if (output_nComps == 4) {
+  } else if (components == 4) {
     format = FXDIB_Rgb32;
   } else {
-    width = (width * output_nComps + 2) / 3;
+    width = (width * components + 2) / 3;
     format = FXDIB_Rgb;
   }
+
   m_pCachedBitmap.reset(new CFX_DIBitmap);
   if (!m_pCachedBitmap->Create(width, height, format)) {
     m_pCachedBitmap.reset();
     return;
   }
   m_pCachedBitmap->Clear(0xFFFFFFFF);
-  context->set_output_offsets(FX_Alloc(uint8_t, output_nComps));
-  for (int i = 0; i < output_nComps; ++i)
+  context->set_output_offsets(FX_Alloc(uint8_t, components));
+  for (int i = 0; i < components; ++i)
     context->output_offsets()[i] = i;
   if (bSwapRGB) {
     context->output_offsets()[0] = 2;
     context->output_offsets()[2] = 0;
   }
-  if (!pJpxModule->Decode(context->context(), m_pCachedBitmap->GetBuffer(),
-                          m_pCachedBitmap->GetPitch(), bTranslateColor,
+  if (!pJpxModule->Decode(context->decoder(), m_pCachedBitmap->GetBuffer(),
+                          m_pCachedBitmap->GetPitch(),
                           context->output_offsets())) {
     m_pCachedBitmap.reset();
     return;

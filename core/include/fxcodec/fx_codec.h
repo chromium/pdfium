@@ -13,6 +13,7 @@
 #include "fx_codec_provider.h"
 
 class CFX_DIBSource;
+class CJPX_Decoder;
 class ICodec_ScanlineDecoder;
 class ICodec_BasicModule;
 class ICodec_FaxModule;
@@ -196,28 +197,28 @@ class ICodec_JpegModule {
   virtual FX_DWORD GetAvailInput(void* pContext,
                                  uint8_t** avail_buf_ptr = NULL) = 0;
 };
+
 class ICodec_JpxModule {
  public:
   virtual ~ICodec_JpxModule() {}
 
-  virtual void* CreateDecoder(const uint8_t* src_buf,
-                              FX_DWORD src_size,
-                              FX_BOOL useColorSpace = FALSE) = 0;
+  virtual CJPX_Decoder* CreateDecoder(const uint8_t* src_buf,
+                                      FX_DWORD src_size,
+                                      bool use_colorspace) = 0;
 
-  virtual void GetImageInfo(void* ctx,
-                            FX_DWORD& width,
-                            FX_DWORD& height,
-                            FX_DWORD& codestream_nComps,
-                            FX_DWORD& output_nComps) = 0;
+  virtual void GetImageInfo(CJPX_Decoder* pDecoder,
+                            FX_DWORD* width,
+                            FX_DWORD* height,
+                            FX_DWORD* components) = 0;
 
-  virtual FX_BOOL Decode(void* ctx,
+  virtual FX_BOOL Decode(CJPX_Decoder* pDecoder,
                          uint8_t* dest_data,
                          int pitch,
-                         FX_BOOL bTranslateColor,
                          uint8_t* offsets) = 0;
 
-  virtual void DestroyDecoder(void* ctx) = 0;
+  virtual void DestroyDecoder(CJPX_Decoder* pDecoder) = 0;
 };
+
 class ICodec_Jbig2Module {
  public:
   virtual ~ICodec_Jbig2Module() {}
