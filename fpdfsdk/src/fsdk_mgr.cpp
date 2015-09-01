@@ -396,7 +396,7 @@ CPDFSDK_AnnotHandlerMgr* CPDFDoc_Environment::GetAnnotHandlerMgr() {
 
 CPDFSDK_ActionHandler* CPDFDoc_Environment::GetActionHander() {
   if (!m_pActionHandler)
-    m_pActionHandler = new CPDFSDK_ActionHandler(this);
+    m_pActionHandler = new CPDFSDK_ActionHandler();
   return m_pActionHandler;
 }
 

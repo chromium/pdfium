@@ -13,12 +13,10 @@
 #include "fsdk_baseform.h"
 
 class CFX_PtrList;
-class CPDFDoc_Environment;
 class CPDFSDK_Annot;
 class CPDFSDK_Document;
 class CPDF_Bookmark;
 class CPDF_Dictionary;
-class IFXJS_Runtime;
 
 class CPDFSDK_FormActionHandler {
  public:
@@ -31,21 +29,9 @@ class CPDFSDK_FormActionHandler {
                               CPDFSDK_Document* pDocument);
 };
 
-class CPDFSDK_MediaActionHandler {
- public:
-  FX_BOOL DoAction_Rendition(const CPDF_Action& action,
-                             CPDFSDK_Document* pDocument);
-  FX_BOOL DoAction_Sound(const CPDF_Action& action,
-                         CPDFSDK_Document* pDocument);
-  FX_BOOL DoAction_Movie(const CPDF_Action& action,
-                         CPDFSDK_Document* pDocument);
-};
-
 class CPDFSDK_ActionHandler {
  public:
-  CPDFSDK_ActionHandler(CPDFDoc_Environment* pEvi);
-
-  void SetMediaActionHandler(CPDFSDK_MediaActionHandler* pHandler);
+  CPDFSDK_ActionHandler();
 
   FX_BOOL DoAction_DocOpen(const CPDF_Action& action,
                            CPDFSDK_Document* pDocument);
@@ -131,7 +117,6 @@ class CPDFSDK_ActionHandler {
                             const CPDF_Action& action);
 
   nonstd::unique_ptr<CPDFSDK_FormActionHandler> m_pFormActionHandler;
-  CPDFSDK_MediaActionHandler* m_pMediaActionHandler;
 };
 
 #endif  // FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
