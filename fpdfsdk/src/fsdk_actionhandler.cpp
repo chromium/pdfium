@@ -10,27 +10,16 @@
 #include "../include/fsdk_actionhandler.h"
 #include "../include/javascript/IJavaScript.h"
 
-/* -------------------------- CBA_ActionHandler -------------------------- */
-
-CPDFSDK_ActionHandler::CPDFSDK_ActionHandler(CPDFDoc_Environment* pEvi)
-    : m_pFormActionHandler(new CPDFSDK_FormActionHandler),
-      m_pMediaActionHandler(NULL) {}
-
-void CPDFSDK_ActionHandler::SetMediaActionHandler(
-    CPDFSDK_MediaActionHandler* pHandler) {
-  ASSERT(pHandler != NULL);
-  ASSERT(m_pMediaActionHandler == NULL);
-  m_pMediaActionHandler = pHandler;
+CPDFSDK_ActionHandler::CPDFSDK_ActionHandler()
+    : m_pFormActionHandler(new CPDFSDK_FormActionHandler) {
 }
 
-// document open
 FX_BOOL CPDFSDK_ActionHandler::DoAction_DocOpen(const CPDF_Action& action,
                                                 CPDFSDK_Document* pDocument) {
   CFX_PtrList list;
   return ExecuteDocumentOpenAction(action, pDocument, list);
 }
 
-// document open
 FX_BOOL CPDFSDK_ActionHandler::DoAction_JavaScript(
     const CPDF_Action& JsAction,
     CFX_WideString csJSName,
@@ -454,14 +443,8 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action,
       DoAction_URI(pDocument, action);
       break;
     case CPDF_Action::Sound:
-      if (m_pMediaActionHandler) {
-        m_pMediaActionHandler->DoAction_Sound(action, pDocument);
-      }
       break;
     case CPDF_Action::Movie:
-      if (m_pMediaActionHandler) {
-        m_pMediaActionHandler->DoAction_Movie(action, pDocument);
-      }
       break;
     case CPDF_Action::Hide:
       if (m_pFormActionHandler) {
@@ -493,9 +476,6 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action,
       DoAction_SetOCGState(pDocument, action);
       break;
     case CPDF_Action::Rendition:
-      if (m_pMediaActionHandler) {
-        m_pMediaActionHandler->DoAction_Rendition(action, pDocument);
-      }
       break;
     case CPDF_Action::Trans:
       break;
@@ -765,23 +745,5 @@ FX_BOOL CPDFSDK_FormActionHandler::DoAction_ImportData(
     return TRUE;
   }
 
-  return FALSE;
-}
-
-FX_BOOL CPDFSDK_MediaActionHandler::DoAction_Rendition(
-    const CPDF_Action& action,
-    CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-FX_BOOL CPDFSDK_MediaActionHandler::DoAction_Sound(
-    const CPDF_Action& action,
-    CPDFSDK_Document* pDocument) {
-  return FALSE;
-}
-
-FX_BOOL CPDFSDK_MediaActionHandler::DoAction_Movie(
-    const CPDF_Action& action,
-    CPDFSDK_Document* pDocument) {
   return FALSE;
 }
