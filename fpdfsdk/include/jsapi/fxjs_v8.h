@@ -91,11 +91,6 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime,
                        v8::Global<v8::Context>& v8PersistentContext);
 void JS_Initial(unsigned int embedderDataSlot);
 void JS_Release();
-int JS_Parse(IJS_Runtime* pJSRuntime,
-             IFXJS_Context* pJSContext,
-             const wchar_t* script,
-             long length,
-             FXJSErr* perror);
 int JS_Execute(IJS_Runtime* pJSRuntime,
                IFXJS_Context* pJSContext,
                const wchar_t* script,

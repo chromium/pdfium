@@ -18,8 +18,6 @@ class CPDFSDK_Document;
 
 class IFXJS_Context {
  public:
-  virtual FX_BOOL Compile(const CFX_WideString& script,
-                          CFX_WideString& info) = 0;
   virtual FX_BOOL RunScript(const CFX_WideString& script,
                             CFX_WideString& info) = 0;
 
