@@ -17,8 +17,6 @@ class CJBig2_HuffmanTable : public CJBig2_Object {
 
   ~CJBig2_HuffmanTable();
 
-  void init();
-
   int parseFromStandardTable(const JBig2TableLine* pTable,
                              int nLines,
                              FX_BOOL bHTOOB);
@@ -28,6 +26,8 @@ class CJBig2_HuffmanTable : public CJBig2_Object {
   FX_BOOL isOK() { return m_bOK; }
 
  private:
+  void init();
+
   FX_BOOL HTOOB;
   int NTEMP;
   int* CODES;

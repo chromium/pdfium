@@ -17,11 +17,6 @@
 // difference for typical JBIG2 documents.
 const int kSymbolDictCacheMaxSize = 2;
 
-void OutputBitmap(CJBig2_Image* pImage) {
-  if (!pImage) {
-    return;
-  }
-}
 CJBig2_Context* CJBig2_Context::CreateContext(
     CJBig2_Module* pModule,
     uint8_t* pGlobalData,
@@ -170,7 +165,6 @@ int32_t CJBig2_Context::decode_SquentialOrgnazation(IFX_Pause* pPause) {
       } else {
         m_pStream->offset(4);
       }
-      OutputBitmap(m_pPage);
       m_pSegment = NULL;
       if (m_pStream->getByteLeft() > 0 && m_pPage && pPause &&
           pPause->NeedToPauseNow()) {
@@ -303,41 +297,6 @@ int32_t CJBig2_Context::Continue(IFX_Pause* pPause) {
   }
   return nRet;
 }
-int32_t CJBig2_Context::getNextPage(uint8_t* pBuf,
-                                    int32_t width,
-                                    int32_t height,
-                                    int32_t stride,
-                                    IFX_Pause* pPause) {
-  int32_t nRet = JBIG2_ERROR_STREAM_TYPE;
-  m_bFirstPage = FALSE;
-  m_PauseStep = 0;
-  delete m_pPage;
-  JBIG2_ALLOC(m_pPage, CJBig2_Image(width, height, stride, pBuf));
-  m_bBufSpecified = TRUE;
-  if (m_pPage && pPause && pPause->NeedToPauseNow()) {
-    m_PauseStep = 1;
-    m_ProcessiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-    return nRet;
-  }
-  return Continue(pPause);
-  switch (m_nStreamType) {
-    case JBIG2_FILE_STREAM:
-      nRet = decodeFile(pPause);
-      break;
-    case JBIG2_SQUENTIAL_STREAM:
-      nRet = decode_SquentialOrgnazation(pPause);
-      break;
-    case JBIG2_RANDOM_STREAM:
-      nRet = decode_RandomOrgnazation(pPause);
-      break;
-    case JBIG2_EMBED_STREAM:
-      nRet = decode_EmbedOrgnazation(pPause);
-      break;
-    default:
-      return JBIG2_ERROR_STREAM_TYPE;
-  }
-  return nRet;
-}
 int32_t CJBig2_Context::getFirstPage(CJBig2_Image** image, IFX_Pause* pPause) {
   int32_t nRet;
   m_bFirstPage = TRUE;
@@ -350,34 +309,6 @@ int32_t CJBig2_Context::getFirstPage(CJBig2_Image** image, IFX_Pause* pPause) {
   }
   m_bBufSpecified = FALSE;
   return Continue(pPause);
-}
-int32_t CJBig2_Context::getNextPage(CJBig2_Image** image, IFX_Pause* pPause) {
-  int32_t nRet;
-  m_bBufSpecified = FALSE;
-  m_bFirstPage = FALSE;
-  m_PauseStep = 0;
-  switch (m_nStreamType) {
-    case JBIG2_FILE_STREAM:
-      nRet = decodeFile(pPause);
-      break;
-    case JBIG2_SQUENTIAL_STREAM:
-      nRet = decode_SquentialOrgnazation(pPause);
-      break;
-    case JBIG2_RANDOM_STREAM:
-      nRet = decode_RandomOrgnazation(pPause);
-      break;
-    case JBIG2_EMBED_STREAM:
-      nRet = decode_EmbedOrgnazation(pPause);
-      break;
-    default:
-      return JBIG2_ERROR_STREAM_TYPE;
-  }
-  if (nRet == JBIG2_SUCCESS) {
-    *image = m_pPage;
-    m_pPage = NULL;
-    return JBIG2_SUCCESS;
-  }
-  return nRet;
 }
 CJBig2_Segment* CJBig2_Context::findSegmentByNumber(FX_DWORD dwNumber) {
   CJBig2_Segment* pSeg;
@@ -1556,7 +1487,6 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     } else {
       m_ProcessiveStatus = m_pGRD->Continue_decode(pPause);
     }
-    OutputBitmap(pSegment->m_Result.im);
     if (m_ProcessiveStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       if (pSegment->m_cFlags.s.type != 36) {
         if (!m_bBufSpecified) {

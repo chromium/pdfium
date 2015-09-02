@@ -6,12 +6,6 @@
 
 #include "JBig2_Segment.h"
 CJBig2_Segment::CJBig2_Segment() {
-  init();
-}
-CJBig2_Segment::~CJBig2_Segment() {
-  clean();
-}
-void CJBig2_Segment::init() {
   m_dwNumber = 0;
   m_cFlags.c = 0;
   m_nReferred_to_segment_count = 0;
@@ -23,6 +17,9 @@ void CJBig2_Segment::init() {
   m_State = JBIG2_SEGMENT_HEADER_UNPARSED;
   m_nResultType = JBIG2_VOID_POINTER;
   m_Result.vd = NULL;
+}
+CJBig2_Segment::~CJBig2_Segment() {
+  clean();
 }
 void CJBig2_Segment::clean() {
   if (m_pReferred_to_segment_numbers) {

@@ -315,19 +315,6 @@ class CCodec_Jbig2Module : public ICodec_Jbig2Module {
   ~CCodec_Jbig2Module() override;
 
   // ICodec_Jbig2Module
-  FX_BOOL Decode(FX_DWORD width,
-                 FX_DWORD height,
-                 const uint8_t* src_buf,
-                 FX_DWORD src_size,
-                 const uint8_t* global_data,
-                 FX_DWORD global_size,
-                 uint8_t* dest_buf,
-                 FX_DWORD dest_pitch) override;
-  FX_BOOL Decode(IFX_FileRead* file_ptr,
-                 FX_DWORD& width,
-                 FX_DWORD& height,
-                 FX_DWORD& pitch,
-                 uint8_t*& dest_buf) override;
   void* CreateJbig2Context() override;
   FXCODEC_STATUS StartDecode(void* pJbig2Context,
                              FX_DWORD width,
@@ -338,13 +325,6 @@ class CCodec_Jbig2Module : public ICodec_Jbig2Module {
                              FX_DWORD global_size,
                              uint8_t* dest_buf,
                              FX_DWORD dest_pitch,
-                             IFX_Pause* pPause) override;
-  FXCODEC_STATUS StartDecode(void* pJbig2Context,
-                             IFX_FileRead* file_ptr,
-                             FX_DWORD& width,
-                             FX_DWORD& height,
-                             FX_DWORD& pitch,
-                             uint8_t*& dest_buf,
                              IFX_Pause* pPause) override;
   FXCODEC_STATUS ContinueDecode(void* pJbig2Context,
                                 IFX_Pause* pPause) override;

@@ -34,8 +34,6 @@ class CJBig2_Segment : public CJBig2_Object {
 
   ~CJBig2_Segment();
 
-  void init();
-
   void clean();
 
  public:
