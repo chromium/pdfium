@@ -1,0 +1,25 @@
+diff -u a/jp2.c b/jp2.c
+--- a/jp2.c
++++ b/jp2.c
+@@ -1429,7 +1429,7 @@
+ 		    /* Part 1, I.5.3.4: Either both or none : */
+ 		    if( !jp2->color.jp2_pclr->cmap)
+ 			    opj_jp2_free_pclr(&(jp2->color));
+-		    else
++		    else if (p_image->pdfium_use_colorspace)
+ 			    opj_jp2_apply_pclr(p_image, &(jp2->color));
+ 	    }
+ 
+diff -u a/openjpeg.h b/openjpeg.h
+--- a/openjpeg.h
++++ b/openjpeg.h
+@@ -677,6 +677,9 @@
+ 	OPJ_BYTE *icc_profile_buf;
+ 	/** size of ICC profile */
+ 	OPJ_UINT32 icc_profile_len;
++
++        /** Whether to apply PCLR or not */
++        OPJ_BOOL pdfium_use_colorspace;
+ } opj_image_t;
+ 
+ 

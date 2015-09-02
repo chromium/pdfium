@@ -677,6 +677,9 @@ typedef struct opj_image {
 	OPJ_BYTE *icc_profile_buf;
 	/** size of ICC profile */
 	OPJ_UINT32 icc_profile_len;
+
+        /** Whether to apply PCLR or not */
+        OPJ_BOOL pdfium_use_colorspace;
 } opj_image_t;
 
 

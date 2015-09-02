@@ -700,7 +700,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
       new JpxBitMapContext(pJpxModule));
   context->set_decoder(pJpxModule->CreateDecoder(m_pStreamAcc->GetData(),
                                                  m_pStreamAcc->GetSize(),
-                                                 m_pColorSpace != nullptr));
+                                                 m_pColorSpace == nullptr));
   if (!context->decoder())
     return;
 
