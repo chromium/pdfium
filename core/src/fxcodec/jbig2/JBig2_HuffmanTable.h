@@ -9,7 +9,7 @@
 #include "JBig2_Module.h"
 #include "JBig2_HuffmanTable_Standard.h"
 #include "JBig2_BitStream.h"
-class CJBig2_HuffmanTable : public CJBig2_Object {
+class CJBig2_HuffmanTable {
  public:
   CJBig2_HuffmanTable(const JBig2TableLine* pTable, int nLines, FX_BOOL bHTOOB);
 

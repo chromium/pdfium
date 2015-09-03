@@ -8,13 +8,12 @@
 #define _JBIG2_PATTERN_DICT_H_
 #include "JBig2_Define.h"
 #include "JBig2_Image.h"
-class CJBig2_PatternDict : public CJBig2_Object {
+class CJBig2_PatternDict {
  public:
   CJBig2_PatternDict();
 
   ~CJBig2_PatternDict();
 
- public:
   FX_DWORD NUMPATS;
   CJBig2_Image** HDPATS;
 };

@@ -8,7 +8,7 @@
 #define _JBIG2_HUFFMAN_DECODER_H_
 #include "JBig2_BitStream.h"
 #include "JBig2_HuffmanTable.h"
-class CJBig2_HuffmanDecoder : public CJBig2_Object {
+class CJBig2_HuffmanDecoder {
  public:
   CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream);
 

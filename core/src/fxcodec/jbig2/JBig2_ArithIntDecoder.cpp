@@ -5,12 +5,15 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "JBig2_ArithIntDecoder.h"
+
+#include "../../../include/fxcrt/fx_memory.h"
+
 CJBig2_ArithIntDecoder::CJBig2_ArithIntDecoder() {
-  IAx = (JBig2ArithCtx*)m_pModule->JBig2_Malloc2(sizeof(JBig2ArithCtx), 512);
+  IAx = (JBig2ArithCtx*)FX_AllocOrDie(sizeof(JBig2ArithCtx), 512);
   JBIG2_memset(IAx, 0, sizeof(JBig2ArithCtx) * 512);
 }
 CJBig2_ArithIntDecoder::~CJBig2_ArithIntDecoder() {
-  m_pModule->JBig2_Free(IAx);
+  FX_Free(IAx);
 }
 int CJBig2_ArithIntDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
                                    int* nResult) {
@@ -79,12 +82,12 @@ int CJBig2_ArithIntDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
 }
 CJBig2_ArithIaidDecoder::CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA) {
   SBSYMCODELEN = SBSYMCODELENA;
-  IAID = (JBig2ArithCtx*)m_pModule->JBig2_Malloc2(sizeof(JBig2ArithCtx),
-                                                  (1 << SBSYMCODELEN));
+  IAID =
+      (JBig2ArithCtx*)FX_AllocOrDie(sizeof(JBig2ArithCtx), (1 << SBSYMCODELEN));
   JBIG2_memset(IAID, 0, sizeof(JBig2ArithCtx) * (int)(1 << SBSYMCODELEN));
 }
 CJBig2_ArithIaidDecoder::~CJBig2_ArithIaidDecoder() {
-  m_pModule->JBig2_Free(IAID);
+  FX_Free(IAID);
 }
 int CJBig2_ArithIaidDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
                                     int* nResult) {

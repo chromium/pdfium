@@ -28,15 +28,12 @@ typedef enum {
   JBIG2_PATTERN_DICT_POINTER,
   JBIG2_HUFFMAN_TABLE_POINTER
 } JBig2_ResultType;
-class CJBig2_Segment : public CJBig2_Object {
+class CJBig2_Segment {
  public:
   CJBig2_Segment();
 
   ~CJBig2_Segment();
 
-  void clean();
-
- public:
   FX_DWORD m_dwNumber;
   union {
     struct {

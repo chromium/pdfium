@@ -29,7 +29,7 @@ extern const JBig2ArithQe QeTable[] = {
     {0x0015, 43, 40, 0}, {0x0009, 44, 41, 0}, {0x0005, 45, 42, 0},
     {0x0001, 45, 43, 0}, {0x5601, 46, 46, 0}};
 
-extern const unsigned int JBIG2_QE_NUM = sizeof(QeTable) / sizeof(JBig2ArithQe);
+extern const unsigned int JBIG2_QE_NUM = FX_ArraySize(QeTable);
 
 CJBig2_Image* CJBig2_GRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                            JBig2ArithCtx* gbContext) {
@@ -1138,10 +1138,9 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
   FX_BOOL bFirst;
   FX_DWORD nTmp;
   int32_t nVal, nBits;
-  CJBig2_HuffmanDecoder* pHuffmanDecoder;
   CJBig2_GRRDProc* pGRRD;
   CJBig2_ArithDecoder* pArithDecoder;
-  JBIG2_ALLOC(pHuffmanDecoder, CJBig2_HuffmanDecoder(pStream));
+  CJBig2_HuffmanDecoder* pHuffmanDecoder = new CJBig2_HuffmanDecoder(pStream);
   JBIG2_ALLOC(SBREG, CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
   if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &STRIPT) != 0) {
@@ -1266,7 +1265,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         pGRRD->GRAT[1] = SBRAT[1];
         pGRRD->GRAT[2] = SBRAT[2];
         pGRRD->GRAT[3] = SBRAT[3];
-        JBIG2_ALLOC(pArithDecoder, CJBig2_ArithDecoder(pStream));
+        pArithDecoder = new CJBig2_ArithDecoder(pStream);
         IBI = pGRRD->decode(pArithDecoder, grContext);
         if (IBI == NULL) {
           delete pGRRD;
@@ -1388,16 +1387,16 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     IAID = pIDS->IAID;
     bRetained = TRUE;
   } else {
-    JBIG2_ALLOC(IADT, CJBig2_ArithIntDecoder());
-    JBIG2_ALLOC(IAFS, CJBig2_ArithIntDecoder());
-    JBIG2_ALLOC(IADS, CJBig2_ArithIntDecoder());
-    JBIG2_ALLOC(IAIT, CJBig2_ArithIntDecoder());
-    JBIG2_ALLOC(IARI, CJBig2_ArithIntDecoder());
-    JBIG2_ALLOC(IARDW, CJBig2_ArithIntDecoder());
-    JBIG2_ALLOC(IARDH, CJBig2_ArithIntDecoder());
-    JBIG2_ALLOC(IARDX, CJBig2_ArithIntDecoder());
-    JBIG2_ALLOC(IARDY, CJBig2_ArithIntDecoder());
-    JBIG2_ALLOC(IAID, CJBig2_ArithIaidDecoder(SBSYMCODELEN));
+    IADT = new CJBig2_ArithIntDecoder();
+    IAFS = new CJBig2_ArithIntDecoder();
+    IADS = new CJBig2_ArithIntDecoder();
+    IAIT = new CJBig2_ArithIntDecoder();
+    IARI = new CJBig2_ArithIntDecoder();
+    IARDW = new CJBig2_ArithIntDecoder();
+    IARDH = new CJBig2_ArithIntDecoder();
+    IARDX = new CJBig2_ArithIntDecoder();
+    IARDY = new CJBig2_ArithIntDecoder();
+    IAID = new CJBig2_ArithIaidDecoder(SBSYMCODELEN);
     bRetained = FALSE;
   }
   JBIG2_ALLOC(SBREG, CJBig2_Image(SBW, SBH));
@@ -1633,24 +1632,24 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
       *IAFS, *IADS, *IAIT, *IARI, *IARDW, *IARDH;
   CJBig2_ArithIaidDecoder* IAID;
   CJBig2_SymbolDict* pDict;
-  JBIG2_ALLOC(IADH, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IADW, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IAAI, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IARDX, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IARDY, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IAEX, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IADT, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IAFS, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IADS, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IAIT, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IARI, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IARDW, CJBig2_ArithIntDecoder());
-  JBIG2_ALLOC(IARDH, CJBig2_ArithIntDecoder());
+  IADH = new CJBig2_ArithIntDecoder();
+  IADW = new CJBig2_ArithIntDecoder();
+  IAAI = new CJBig2_ArithIntDecoder();
+  IARDX = new CJBig2_ArithIntDecoder();
+  IARDY = new CJBig2_ArithIntDecoder();
+  IAEX = new CJBig2_ArithIntDecoder();
+  IADT = new CJBig2_ArithIntDecoder();
+  IAFS = new CJBig2_ArithIntDecoder();
+  IADS = new CJBig2_ArithIntDecoder();
+  IAIT = new CJBig2_ArithIntDecoder();
+  IARI = new CJBig2_ArithIntDecoder();
+  IARDW = new CJBig2_ArithIntDecoder();
+  IARDH = new CJBig2_ArithIntDecoder();
   nTmp = 0;
   while ((FX_DWORD)(1 << nTmp) < (SDNUMINSYMS + SDNUMNEWSYMS)) {
     nTmp++;
   }
-  JBIG2_ALLOC(IAID, CJBig2_ArithIaidDecoder((uint8_t)nTmp));
+  IAID = new CJBig2_ArithIaidDecoder((uint8_t)nTmp);
   SDNEWSYMS = (CJBig2_Image**)m_pModule->JBig2_Malloc2(SDNUMNEWSYMS,
                                                        sizeof(CJBig2_Image*));
   FXSYS_memset(SDNEWSYMS, 0, SDNUMNEWSYMS * sizeof(CJBig2_Image*));
@@ -1757,39 +1756,30 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           pDecoder->TRANSPOSED = 0;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
-          JBIG2_ALLOC(SBHUFFFS, CJBig2_HuffmanTable(HuffmanTable_B6,
-                                                    sizeof(HuffmanTable_B6) /
-                                                        sizeof(JBig2TableLine),
-                                                    HuffmanTable_HTOOB_B6));
-          JBIG2_ALLOC(SBHUFFDS, CJBig2_HuffmanTable(HuffmanTable_B8,
-                                                    sizeof(HuffmanTable_B8) /
-                                                        sizeof(JBig2TableLine),
-                                                    HuffmanTable_HTOOB_B8));
-          JBIG2_ALLOC(SBHUFFDT, CJBig2_HuffmanTable(HuffmanTable_B11,
-                                                    sizeof(HuffmanTable_B11) /
-                                                        sizeof(JBig2TableLine),
-                                                    HuffmanTable_HTOOB_B11));
-          JBIG2_ALLOC(SBHUFFRDW, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                     sizeof(HuffmanTable_B15) /
-                                                         sizeof(JBig2TableLine),
-                                                     HuffmanTable_HTOOB_B15));
-          JBIG2_ALLOC(SBHUFFRDH, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                     sizeof(HuffmanTable_B15) /
-                                                         sizeof(JBig2TableLine),
-                                                     HuffmanTable_HTOOB_B15));
-          JBIG2_ALLOC(SBHUFFRDX, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                     sizeof(HuffmanTable_B15) /
-                                                         sizeof(JBig2TableLine),
-                                                     HuffmanTable_HTOOB_B15));
-          JBIG2_ALLOC(SBHUFFRDY, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                     sizeof(HuffmanTable_B15) /
-                                                         sizeof(JBig2TableLine),
-                                                     HuffmanTable_HTOOB_B15));
-          JBIG2_ALLOC(SBHUFFRSIZE,
-                      CJBig2_HuffmanTable(
-                          HuffmanTable_B1,
-                          sizeof(HuffmanTable_B1) / sizeof(JBig2TableLine),
-                          HuffmanTable_HTOOB_B1));
+          SBHUFFFS = new CJBig2_HuffmanTable(HuffmanTable_B6,
+                                             FX_ArraySize(HuffmanTable_B6),
+                                             HuffmanTable_HTOOB_B6);
+          SBHUFFDS = new CJBig2_HuffmanTable(HuffmanTable_B8,
+                                             FX_ArraySize(HuffmanTable_B8),
+                                             HuffmanTable_HTOOB_B8);
+          SBHUFFDT = new CJBig2_HuffmanTable(HuffmanTable_B11,
+                                             FX_ArraySize(HuffmanTable_B11),
+                                             HuffmanTable_HTOOB_B11);
+          SBHUFFRDW = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                              FX_ArraySize(HuffmanTable_B15),
+                                              HuffmanTable_HTOOB_B15);
+          SBHUFFRDH = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                              FX_ArraySize(HuffmanTable_B15),
+                                              HuffmanTable_HTOOB_B15);
+          SBHUFFRDX = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                              FX_ArraySize(HuffmanTable_B15),
+                                              HuffmanTable_HTOOB_B15);
+          SBHUFFRDY = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                              FX_ArraySize(HuffmanTable_B15),
+                                              HuffmanTable_HTOOB_B15);
+          SBHUFFRSIZE = new CJBig2_HuffmanTable(HuffmanTable_B1,
+                                                FX_ArraySize(HuffmanTable_B1),
+                                                HuffmanTable_HTOOB_B1);
           pDecoder->SBHUFFFS = SBHUFFFS;
           pDecoder->SBHUFFDS = SBHUFFDS;
           pDecoder->SBHUFFDT = SBHUFFDT;
@@ -2014,7 +2004,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
   CJBig2_ArithDecoder* pArithDecoder;
   CJBig2_GRDProc* pGRD;
   CJBig2_SymbolDict* pDict;
-  JBIG2_ALLOC(pHuffmanDecoder, CJBig2_HuffmanDecoder(pStream));
+  pHuffmanDecoder = new CJBig2_HuffmanDecoder(pStream);
   SDNEWSYMS = (CJBig2_Image**)m_pModule->JBig2_Malloc2(SDNUMNEWSYMS,
                                                        sizeof(CJBig2_Image*));
   FXSYS_memset(SDNEWSYMS, 0, SDNUMNEWSYMS * sizeof(CJBig2_Image*));
@@ -2114,39 +2104,30 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           pDecoder->TRANSPOSED = 0;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
-          JBIG2_ALLOC(SBHUFFFS, CJBig2_HuffmanTable(HuffmanTable_B6,
-                                                    sizeof(HuffmanTable_B6) /
-                                                        sizeof(JBig2TableLine),
-                                                    HuffmanTable_HTOOB_B6));
-          JBIG2_ALLOC(SBHUFFDS, CJBig2_HuffmanTable(HuffmanTable_B8,
-                                                    sizeof(HuffmanTable_B8) /
-                                                        sizeof(JBig2TableLine),
-                                                    HuffmanTable_HTOOB_B8));
-          JBIG2_ALLOC(SBHUFFDT, CJBig2_HuffmanTable(HuffmanTable_B11,
-                                                    sizeof(HuffmanTable_B11) /
-                                                        sizeof(JBig2TableLine),
-                                                    HuffmanTable_HTOOB_B11));
-          JBIG2_ALLOC(SBHUFFRDW, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                     sizeof(HuffmanTable_B15) /
-                                                         sizeof(JBig2TableLine),
-                                                     HuffmanTable_HTOOB_B15));
-          JBIG2_ALLOC(SBHUFFRDH, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                     sizeof(HuffmanTable_B15) /
-                                                         sizeof(JBig2TableLine),
-                                                     HuffmanTable_HTOOB_B15));
-          JBIG2_ALLOC(SBHUFFRDX, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                     sizeof(HuffmanTable_B15) /
-                                                         sizeof(JBig2TableLine),
-                                                     HuffmanTable_HTOOB_B15));
-          JBIG2_ALLOC(SBHUFFRDY, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                     sizeof(HuffmanTable_B15) /
-                                                         sizeof(JBig2TableLine),
-                                                     HuffmanTable_HTOOB_B15));
-          JBIG2_ALLOC(SBHUFFRSIZE,
-                      CJBig2_HuffmanTable(
-                          HuffmanTable_B1,
-                          sizeof(HuffmanTable_B1) / sizeof(JBig2TableLine),
-                          HuffmanTable_HTOOB_B1));
+          SBHUFFFS = new CJBig2_HuffmanTable(HuffmanTable_B6,
+                                             FX_ArraySize(HuffmanTable_B6),
+                                             HuffmanTable_HTOOB_B6);
+          SBHUFFDS = new CJBig2_HuffmanTable(HuffmanTable_B8,
+                                             FX_ArraySize(HuffmanTable_B8),
+                                             HuffmanTable_HTOOB_B8);
+          SBHUFFDT = new CJBig2_HuffmanTable(HuffmanTable_B11,
+                                             FX_ArraySize(HuffmanTable_B11),
+                                             HuffmanTable_HTOOB_B11);
+          SBHUFFRDW = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                              FX_ArraySize(HuffmanTable_B15),
+                                              HuffmanTable_HTOOB_B15);
+          SBHUFFRDH = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                              FX_ArraySize(HuffmanTable_B15),
+                                              HuffmanTable_HTOOB_B15);
+          SBHUFFRDX = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                              FX_ArraySize(HuffmanTable_B15),
+                                              HuffmanTable_HTOOB_B15);
+          SBHUFFRDY = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                              FX_ArraySize(HuffmanTable_B15),
+                                              HuffmanTable_HTOOB_B15);
+          SBHUFFRSIZE = new CJBig2_HuffmanTable(HuffmanTable_B1,
+                                                FX_ArraySize(HuffmanTable_B1),
+                                                HuffmanTable_HTOOB_B1);
           pDecoder->SBHUFFFS = SBHUFFFS;
           pDecoder->SBHUFFDS = SBHUFFDS;
           pDecoder->SBHUFFDT = SBHUFFDT;
@@ -2220,15 +2201,12 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
             }
           }
           m_pModule->JBig2_Free(SBSYMCODES);
-          JBIG2_ALLOC(SBHUFFRDX, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                     sizeof(HuffmanTable_B15) /
-                                                         sizeof(JBig2TableLine),
-                                                     HuffmanTable_HTOOB_B15));
-          JBIG2_ALLOC(SBHUFFRSIZE,
-                      CJBig2_HuffmanTable(
-                          HuffmanTable_B1,
-                          sizeof(HuffmanTable_B1) / sizeof(JBig2TableLine),
-                          HuffmanTable_HTOOB_B1));
+          SBHUFFRDX = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                              FX_ArraySize(HuffmanTable_B15),
+                                              HuffmanTable_HTOOB_B15);
+          SBHUFFRSIZE = new CJBig2_HuffmanTable(HuffmanTable_B1,
+                                                FX_ArraySize(HuffmanTable_B1),
+                                                HuffmanTable_HTOOB_B1);
           if ((pHuffmanDecoder->decodeAValue(SBHUFFRDX, &RDXI) != 0) ||
               (pHuffmanDecoder->decodeAValue(SBHUFFRDX, &RDYI) != 0) ||
               (pHuffmanDecoder->decodeAValue(SBHUFFRSIZE, &nVal) != 0)) {
@@ -2259,7 +2237,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           pGRRD->GRAT[1] = SDRAT[1];
           pGRRD->GRAT[2] = SDRAT[2];
           pGRRD->GRAT[3] = SDRAT[3];
-          JBIG2_ALLOC(pArithDecoder, CJBig2_ArithDecoder(pStream));
+          pArithDecoder = new CJBig2_ArithDecoder(pStream);
           BS = pGRRD->decode(pArithDecoder, grContext);
           if (BS == NULL) {
             m_pModule->JBig2_Free(SBSYMS);
@@ -2338,10 +2316,8 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
   }
   EXINDEX = 0;
   CUREXFLAG = 0;
-  JBIG2_ALLOC(pTable, CJBig2_HuffmanTable(
-                          HuffmanTable_B1,
-                          sizeof(HuffmanTable_B1) / sizeof(JBig2TableLine),
-                          HuffmanTable_HTOOB_B1));
+  pTable = new CJBig2_HuffmanTable(
+      HuffmanTable_B1, FX_ArraySize(HuffmanTable_B1), HuffmanTable_HTOOB_B1);
   EXFLAGS = (FX_BOOL*)m_pModule->JBig2_Malloc2(sizeof(FX_BOOL),
                                                (SDNUMINSYMS + SDNUMNEWSYMS));
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
@@ -2523,7 +2499,7 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
   CJBig2_Image* BHDC = NULL;
   CJBig2_PatternDict* pDict;
   CJBig2_GRDProc* pGRD;
-  JBIG2_ALLOC(pDict, CJBig2_PatternDict());
+  pDict = new CJBig2_PatternDict();
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = (CJBig2_Image**)m_pModule->JBig2_Malloc2(
       sizeof(CJBig2_Image*), pDict->NUMPATS);
@@ -2571,9 +2547,8 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream,
                                                IFX_Pause* pPause) {
   FX_DWORD GRAY;
   CJBig2_Image* BHDC = NULL;
-  CJBig2_PatternDict* pDict;
   CJBig2_GRDProc* pGRD;
-  JBIG2_ALLOC(pDict, CJBig2_PatternDict());
+  CJBig2_PatternDict* pDict = new CJBig2_PatternDict();
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = (CJBig2_Image**)m_pModule->JBig2_Malloc2(
       sizeof(CJBig2_Image*), pDict->NUMPATS);
