@@ -311,20 +311,21 @@ class CCodec_IccModule : public ICodec_IccModule {
 class CCodec_JpxModule : public ICodec_JpxModule {
  public:
   CCodec_JpxModule();
-  void* CreateDecoder(const uint8_t* src_buf,
-                      FX_DWORD src_size,
-                      FX_BOOL useColorSpace = FALSE);
-  void GetImageInfo(void* ctx,
-                    FX_DWORD& width,
-                    FX_DWORD& height,
-                    FX_DWORD& codestream_nComps,
-                    FX_DWORD& output_nComps);
-  FX_BOOL Decode(void* ctx,
+  ~CCodec_JpxModule() override;
+
+  // ICodec_JpxModule:
+  CJPX_Decoder* CreateDecoder(const uint8_t* src_buf,
+                              FX_DWORD src_size,
+                              bool use_colorspace) override;
+  void GetImageInfo(CJPX_Decoder* pDecoder,
+                    FX_DWORD* width,
+                    FX_DWORD* height,
+                    FX_DWORD* components) override;
+  FX_BOOL Decode(CJPX_Decoder* pDecoder,
                  uint8_t* dest_data,
                  int pitch,
-                 FX_BOOL bTranslateColor,
-                 uint8_t* offsets);
-  void DestroyDecoder(void* ctx);
+                 uint8_t* offsets) override;
+  void DestroyDecoder(CJPX_Decoder* pDecoder) override;
 };
 
 class CCodec_TiffModule : public ICodec_TiffModule {
