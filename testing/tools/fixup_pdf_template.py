@@ -74,8 +74,8 @@ class TemplateProcessor:
 def expand_file(input_path, output_path):
   processor = TemplateProcessor()
   try:
-    with open(input_path, 'r') as infile:
-      with open(output_path, 'w') as outfile:
+    with open(input_path, 'rb') as infile:
+      with open(output_path, 'wb') as outfile:
         for line in infile:
            outfile.write(processor.process_line(line))
   except IOError:
