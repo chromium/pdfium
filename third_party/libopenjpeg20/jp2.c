@@ -1429,7 +1429,7 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
 		    /* Part 1, I.5.3.4: Either both or none : */
 		    if( !jp2->color.jp2_pclr->cmap)
 			    opj_jp2_free_pclr(&(jp2->color));
-		    else
+		    else if (p_image->pdfium_use_colorspace)
 			    opj_jp2_apply_pclr(p_image, &(jp2->color));
 	    }
 

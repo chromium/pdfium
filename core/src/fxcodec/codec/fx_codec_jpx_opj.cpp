@@ -627,7 +627,7 @@ class CJPX_Decoder {
   opj_image_t* image;
   opj_codec_t* l_codec;
   opj_stream_t* l_stream;
-  bool m_UseColorSpace;
+  const bool m_UseColorSpace;
 };
 
 CJPX_Decoder::CJPX_Decoder(bool use_colorspace)
@@ -687,6 +687,8 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size) {
     image = NULL;
     return FALSE;
   }
+  image->pdfium_use_colorspace = m_UseColorSpace;
+
   if (!parameters.nb_tile_to_decode) {
     if (!opj_set_decode_area(l_codec, image, parameters.DA_x0, parameters.DA_y0,
                              parameters.DA_x1, parameters.DA_y1)) {
