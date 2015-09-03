@@ -44,16 +44,6 @@ class CJBig2_Image : public CJBig2_Object {
                     JBig2ComposeOp op,
                     const FX_RECT* pSrcRect);
 
-  FX_BOOL composeTo_unopt(CJBig2_Image* pDst,
-                          int32_t x,
-                          int32_t y,
-                          JBig2ComposeOp op);
-
-  FX_BOOL composeTo_opt(CJBig2_Image* pDst,
-                        int32_t x,
-                        int32_t y,
-                        JBig2ComposeOp op);
-
   FX_BOOL composeTo_opt2(CJBig2_Image* pDst,
                          int32_t x,
                          int32_t y,
@@ -73,7 +63,6 @@ class CJBig2_Image : public CJBig2_Object {
                       CJBig2_Image* pSrc,
                       JBig2ComposeOp op,
                       const FX_RECT* pSrcRect);
-  CJBig2_Image* subImage_unopt(int32_t x, int32_t y, int32_t w, int32_t h);
 
   CJBig2_Image* subImage(int32_t x, int32_t y, int32_t w, int32_t h);
 

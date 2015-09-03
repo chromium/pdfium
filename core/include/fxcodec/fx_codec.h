@@ -355,20 +355,6 @@ class ICodec_Jbig2Module {
  public:
   virtual ~ICodec_Jbig2Module() {}
 
-  virtual FX_BOOL Decode(FX_DWORD width,
-                         FX_DWORD height,
-                         const uint8_t* src_buf,
-                         FX_DWORD src_size,
-                         const uint8_t* global_data,
-                         FX_DWORD global_size,
-                         uint8_t* dest_buf,
-                         FX_DWORD dest_pitch) = 0;
-
-  virtual FX_BOOL Decode(IFX_FileRead* file_ptr,
-                         FX_DWORD& width,
-                         FX_DWORD& height,
-                         FX_DWORD& pitch,
-                         uint8_t*& dest_buf) = 0;
   virtual void* CreateJbig2Context() = 0;
 
   virtual FXCODEC_STATUS StartDecode(void* pJbig2Context,
@@ -382,13 +368,6 @@ class ICodec_Jbig2Module {
                                      FX_DWORD dest_pitch,
                                      IFX_Pause* pPause) = 0;
 
-  virtual FXCODEC_STATUS StartDecode(void* pJbig2Context,
-                                     IFX_FileRead* file_ptr,
-                                     FX_DWORD& width,
-                                     FX_DWORD& height,
-                                     FX_DWORD& pitch,
-                                     uint8_t*& dest_buf,
-                                     IFX_Pause* pPause) = 0;
   virtual FXCODEC_STATUS ContinueDecode(void* pJbig2Content,
                                         IFX_Pause* pPause) = 0;
   virtual void DestroyJbig2Context(void* pJbig2Content) = 0;

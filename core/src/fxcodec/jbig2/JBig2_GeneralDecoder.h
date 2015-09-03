@@ -99,23 +99,11 @@ class CJBig2_GRDProc : public CJBig2_Object {
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext,
       IFX_Pause* pPause);
-  CJBig2_Image* decode_Arith_Template0_opt(CJBig2_ArithDecoder* pArithDecoder,
-                                           JBig2ArithCtx* gbContext);
-
-  CJBig2_Image* decode_Arith_Template0_opt2(CJBig2_ArithDecoder* pArithDecoder,
-                                            JBig2ArithCtx* gbContext);
-
   CJBig2_Image* decode_Arith_Template0_opt3(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext);
 
   CJBig2_Image* decode_Arith_Template0_unopt(CJBig2_ArithDecoder* pArithDecoder,
                                              JBig2ArithCtx* gbContext);
-
-  CJBig2_Image* decode_Arith_Template1_opt(CJBig2_ArithDecoder* pArithDecoder,
-                                           JBig2ArithCtx* gbContext);
-
-  CJBig2_Image* decode_Arith_Template1_opt2(CJBig2_ArithDecoder* pArithDecoder,
-                                            JBig2ArithCtx* gbContext);
 
   CJBig2_Image* decode_Arith_Template1_opt3(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext);
@@ -123,23 +111,11 @@ class CJBig2_GRDProc : public CJBig2_Object {
   CJBig2_Image* decode_Arith_Template1_unopt(CJBig2_ArithDecoder* pArithDecoder,
                                              JBig2ArithCtx* gbContext);
 
-  CJBig2_Image* decode_Arith_Template2_opt(CJBig2_ArithDecoder* pArithDecoder,
-                                           JBig2ArithCtx* gbContext);
-
-  CJBig2_Image* decode_Arith_Template2_opt2(CJBig2_ArithDecoder* pArithDecoder,
-                                            JBig2ArithCtx* gbContext);
-
   CJBig2_Image* decode_Arith_Template2_opt3(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext);
 
   CJBig2_Image* decode_Arith_Template2_unopt(CJBig2_ArithDecoder* pArithDecoder,
                                              JBig2ArithCtx* gbContext);
-
-  CJBig2_Image* decode_Arith_Template3_opt(CJBig2_ArithDecoder* pArithDecoder,
-                                           JBig2ArithCtx* gbContext);
-
-  CJBig2_Image* decode_Arith_Template3_opt2(CJBig2_ArithDecoder* pArithDecoder,
-                                            JBig2ArithCtx* gbContext);
 
   CJBig2_Image* decode_Arith_Template3_opt3(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext);
