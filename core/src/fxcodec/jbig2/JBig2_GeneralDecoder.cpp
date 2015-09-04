@@ -80,10 +80,6 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_opt3(
   JBIG2_ALLOC(GBREG, CJBig2_Image(GBW, GBH));
   if (GBREG->m_pData == NULL) {
     delete GBREG;
-    m_pModule->JBig2_Error(
-        "Generic region decoding procedure: Create Image Failed with width = "
-        "%d, height = %d\n",
-        GBW, GBH);
     return NULL;
   }
   pLine = GBREG->m_pData;
@@ -223,10 +219,6 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_opt3(
   JBIG2_ALLOC(GBREG, CJBig2_Image(GBW, GBH));
   if (GBREG->m_pData == NULL) {
     delete GBREG;
-    m_pModule->JBig2_Error(
-        "Generic region decoding procedure: Create Image Failed with width = "
-        "%d, height = %d\n",
-        GBW, GBH);
     return NULL;
   }
   pLine = GBREG->m_pData;
@@ -363,10 +355,6 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_opt3(
   JBIG2_ALLOC(GBREG, CJBig2_Image(GBW, GBH));
   if (GBREG->m_pData == NULL) {
     delete GBREG;
-    m_pModule->JBig2_Error(
-        "Generic region decoding procedure: Create Image Failed with width = "
-        "%d, height = %d\n",
-        GBW, GBH);
     return NULL;
   }
   pLine = GBREG->m_pData;
@@ -501,10 +489,6 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_opt3(
   JBIG2_ALLOC(GBREG, CJBig2_Image(GBW, GBH));
   if (GBREG->m_pData == NULL) {
     delete GBREG;
-    m_pModule->JBig2_Error(
-        "Generic region decoding procedure: Create Image Failed with width = "
-        "%d, height = %d\n",
-        GBW, GBH);
     return NULL;
   }
   pLine = GBREG->m_pData;
@@ -763,10 +747,6 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
   JBIG2_ALLOC(GRREG, CJBig2_Image(GRW, GRH));
   if (GRREG->m_pData == NULL) {
     delete GRREG;
-    m_pModule->JBig2_Error(
-        "Generic refinement region decoding procedure: Create Image Failed "
-        "with width = %d, height = %d\n",
-        GRW, GRH);
     return NULL;
   }
   pLine = GRREG->m_pData;
@@ -1003,10 +983,6 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
   JBIG2_ALLOC(GRREG, CJBig2_Image(GRW, GRH));
   if (GRREG->m_pData == NULL) {
     delete GRREG;
-    m_pModule->JBig2_Error(
-        "Generic refinement region decoding procedure: Create Image Failed "
-        "with width = %d, height = %d\n",
-        GRW, GRH);
     return NULL;
   }
   pLine = GRREG->m_pData;
@@ -1144,8 +1120,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
   JBIG2_ALLOC(SBREG, CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
   if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &STRIPT) != 0) {
-    m_pModule->JBig2_Error(
-        "text region decoding procedure (huffman): too short.");
     goto failed;
   }
   STRIPT *= SBSTRIPS;
@@ -1154,8 +1128,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
   NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
     if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &DT) != 0) {
-      m_pModule->JBig2_Error(
-          "text region decoding procedure (huffman): too short.");
       goto failed;
     }
     DT *= SBSTRIPS;
@@ -1164,8 +1136,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
     for (;;) {
       if (bFirst) {
         if (pHuffmanDecoder->decodeAValue(SBHUFFFS, &DFS) != 0) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (huffman): too short.");
           goto failed;
         }
         FIRSTS = FIRSTS + DFS;
@@ -1176,8 +1146,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         if (nVal == JBIG2_OOB) {
           break;
         } else if (nVal != 0) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (huffman): too short.");
           goto failed;
         } else {
           CURS = CURS + IDS + SBDSOFFSET;
@@ -1191,8 +1159,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
           nTmp++;
         }
         if (pStream->readNBits(nTmp, &nVal) != 0) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (huffman): too short.");
           goto failed;
         }
         CURT = nVal;
@@ -1202,8 +1168,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       nBits = 0;
       for (;;) {
         if (pStream->read1Bit(&nTmp) != 0) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (huffman): too short.");
           goto failed;
         }
         nVal = (nVal << 1) | nTmp;
@@ -1222,8 +1186,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         RI = 0;
       } else {
         if (pStream->read1Bit(&RI) != 0) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (huffman): too short.");
           goto failed;
         }
       }
@@ -1235,8 +1197,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
             (pHuffmanDecoder->decodeAValue(SBHUFFRDX, &RDXI) != 0) ||
             (pHuffmanDecoder->decodeAValue(SBHUFFRDY, &RDYI) != 0) ||
             (pHuffmanDecoder->decodeAValue(SBHUFFRSIZE, &nVal) != 0)) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (huffman): too short.");
           goto failed;
         }
         pStream->alignByte();
@@ -1248,9 +1208,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         WOI = IBOI->m_nWidth;
         HOI = IBOI->m_nHeight;
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (huffman): Invalid RDWI or RDHI "
-              "value.");
           goto failed;
         }
         JBIG2_ALLOC(pGRRD, CJBig2_GRRDProc());
@@ -1278,10 +1235,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         if ((FX_DWORD)nVal != (pStream->getOffset() - nTmp)) {
           delete IBI;
           delete pGRRD;
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (huffman):"
-              "bytes processed by generic refinement region decoding procedure "
-              "doesn't equal SBHUFFRSIZE.");
           goto failed;
         }
         delete pGRRD;
@@ -1402,8 +1355,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   JBIG2_ALLOC(SBREG, CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
   if (IADT->decode(pArithDecoder, &STRIPT) == -1) {
-    m_pModule->JBig2_Error(
-        "text region decoding procedure (arith): too short.");
     goto failed;
   }
   STRIPT *= SBSTRIPS;
@@ -1412,8 +1363,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
     if (IADT->decode(pArithDecoder, &DT) == -1) {
-      m_pModule->JBig2_Error(
-          "text region decoding procedure (arith): too short.");
       goto failed;
     }
     DT *= SBSTRIPS;
@@ -1422,8 +1371,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     for (;;) {
       if (bFirst) {
         if (IAFS->decode(pArithDecoder, &DFS) == -1) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (arith): too short.");
           goto failed;
         }
         FIRSTS = FIRSTS + DFS;
@@ -1434,8 +1381,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         if (nRet == JBIG2_OOB) {
           break;
         } else if (nRet != 0) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (arith): too short.");
           goto failed;
         } else {
           CURS = CURS + IDS + SBDSOFFSET;
@@ -1448,32 +1393,22 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         CURT = 0;
       } else {
         if (IAIT->decode(pArithDecoder, &nVal) == -1) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (arith): too short.");
           goto failed;
         }
         CURT = nVal;
       }
       TI = STRIPT + CURT;
       if (IAID->decode(pArithDecoder, &nVal) == -1) {
-        m_pModule->JBig2_Error(
-            "text region decoding procedure (arith): too short.");
         goto failed;
       }
       IDI = nVal;
       if (IDI >= SBNUMSYMS) {
-        m_pModule->JBig2_Error(
-            "text region decoding procedure (arith): symbol id out of "
-            "range.(%d/%d)",
-            IDI, SBNUMSYMS);
         goto failed;
       }
       if (SBREFINE == 0) {
         RI = 0;
       } else {
         if (IARI->decode(pArithDecoder, &RI) == -1) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (arith): too short.");
           goto failed;
         }
       }
@@ -1487,17 +1422,12 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
             (IARDH->decode(pArithDecoder, &RDHI) == -1) ||
             (IARDX->decode(pArithDecoder, &RDXI) == -1) ||
             (IARDY->decode(pArithDecoder, &RDYI) == -1)) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (arith): too short.");
           goto failed;
         }
         IBOI = SBSYMS[IDI];
         WOI = IBOI->m_nWidth;
         HOI = IBOI->m_nHeight;
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0) {
-          m_pModule->JBig2_Error(
-              "text region decoding procedure (arith): Invalid RDWI or RDHI "
-              "value.");
           goto failed;
         }
         JBIG2_ALLOC(pGRRD, CJBig2_GRRDProc());
@@ -1658,15 +1588,10 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   while (NSYMSDECODED < SDNUMNEWSYMS) {
     BS = NULL;
     if (IADH->decode(pArithDecoder, &HCDH) == -1) {
-      m_pModule->JBig2_Error(
-          "symbol dictionary decoding procedure (arith): too short.");
       goto failed;
     }
     HCHEIGHT = HCHEIGHT + HCDH;
     if ((int)HCHEIGHT < 0 || (int)HCHEIGHT > JBIG2_MAX_IMAGE_SIZE) {
-      m_pModule->JBig2_Error(
-          "symbol dictionary decoding procedure (arith): invalid HCHEIGHT "
-          "value.");
       goto failed;
     }
     SYMWIDTH = 0;
@@ -1676,21 +1601,13 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
       if (nVal == JBIG2_OOB) {
         break;
       } else if (nVal != 0) {
-        m_pModule->JBig2_Error(
-            "symbol dictionary decoding procedure (arith): too short.");
         goto failed;
       } else {
         if (NSYMSDECODED >= SDNUMNEWSYMS) {
-          m_pModule->JBig2_Error(
-              "symbol dictionary decoding procedure (arith): NSYMSDECODED >= "
-              "SDNUMNEWSYMS.");
           goto failed;
         }
         SYMWIDTH = SYMWIDTH + DW;
         if ((int)SYMWIDTH < 0 || (int)SYMWIDTH > JBIG2_MAX_IMAGE_SIZE) {
-          m_pModule->JBig2_Error(
-              "symbol dictionary decoding procedure (arith): invalid SYMWIDTH "
-              "value.");
           goto failed;
         } else if (HCHEIGHT == 0 || SYMWIDTH == 0) {
           TOTWIDTH = TOTWIDTH + SYMWIDTH;
@@ -1724,8 +1641,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
         delete pGRD;
       } else {
         if (IAAI->decode(pArithDecoder, (int*)&REFAGGNINST) == -1) {
-          m_pModule->JBig2_Error(
-              "symbol dictionary decoding procedure (arith): too short.");
           goto failed;
         }
         if (REFAGGNINST > 1) {
@@ -1831,21 +1746,13 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
         } else if (REFAGGNINST == 1) {
           SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
           if (IAID->decode(pArithDecoder, (int*)&IDI) == -1) {
-            m_pModule->JBig2_Error(
-                "symbol dictionary decoding procedure (arith): too short.");
             goto failed;
           }
           if ((IARDX->decode(pArithDecoder, &RDXI) == -1) ||
               (IARDY->decode(pArithDecoder, &RDYI) == -1)) {
-            m_pModule->JBig2_Error(
-                "symbol dictionary decoding procedure (arith): too short.");
             goto failed;
           }
           if (IDI >= SBNUMSYMS) {
-            m_pModule->JBig2_Error(
-                "symbol dictionary decoding procedure (arith):"
-                " refinement references unknown symbol %d",
-                IDI);
             goto failed;
           }
           SBSYMS = (CJBig2_Image**)m_pModule->JBig2_Malloc2(
@@ -1891,15 +1798,10 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
     if (IAEX->decode(pArithDecoder, (int*)&EXRUNLENGTH) == -1) {
       m_pModule->JBig2_Free(EXFLAGS);
-      m_pModule->JBig2_Error(
-          "symbol dictionary decoding procedure (arith): too short.");
       goto failed;
     }
     if (EXINDEX + EXRUNLENGTH > SDNUMINSYMS + SDNUMNEWSYMS) {
       m_pModule->JBig2_Free(EXFLAGS);
-      m_pModule->JBig2_Error(
-          "symbol dictionary decoding procedure (arith): Invalid EXRUNLENGTH "
-          "value.");
       goto failed;
     }
     if (EXRUNLENGTH != 0) {
@@ -2020,15 +1922,10 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
   BS = NULL;
   while (NSYMSDECODED < SDNUMNEWSYMS) {
     if (pHuffmanDecoder->decodeAValue(SDHUFFDH, &HCDH) != 0) {
-      m_pModule->JBig2_Error(
-          "symbol dictionary decoding procedure (huffman): too short.");
       goto failed;
     }
     HCHEIGHT = HCHEIGHT + HCDH;
     if ((int)HCHEIGHT < 0 || (int)HCHEIGHT > JBIG2_MAX_IMAGE_SIZE) {
-      m_pModule->JBig2_Error(
-          "symbol dictionary decoding procedure (huffman): invalid HCHEIGHT "
-          "value.");
       goto failed;
     }
     SYMWIDTH = 0;
@@ -2039,21 +1936,13 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
       if (nVal == JBIG2_OOB) {
         break;
       } else if (nVal != 0) {
-        m_pModule->JBig2_Error(
-            "symbol dictionary decoding procedure (huffman): too short.");
         goto failed;
       } else {
         if (NSYMSDECODED >= SDNUMNEWSYMS) {
-          m_pModule->JBig2_Error(
-              "symbol dictionary decoding procedure (huffman): NSYMSDECODED >= "
-              "SDNUMNEWSYMS.");
           goto failed;
         }
         SYMWIDTH = SYMWIDTH + DW;
         if ((int)SYMWIDTH < 0 || (int)SYMWIDTH > JBIG2_MAX_IMAGE_SIZE) {
-          m_pModule->JBig2_Error(
-              "symbol dictionary decoding procedure (huffman): invalid "
-              "SYMWIDTH value.");
           goto failed;
         } else if (HCHEIGHT == 0 || SYMWIDTH == 0) {
           TOTWIDTH = TOTWIDTH + SYMWIDTH;
@@ -2066,8 +1955,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
       if (SDREFAGG == 1) {
         if (pHuffmanDecoder->decodeAValue(SDHUFFAGGINST, (int*)&REFAGGNINST) !=
             0) {
-          m_pModule->JBig2_Error(
-              "symbol dictionary decoding procedure (huffman): too short.");
           goto failed;
         }
         BS = NULL;
@@ -2185,8 +2072,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           for (;;) {
             if (pStream->read1Bit(&nTmp) != 0) {
               m_pModule->JBig2_Free(SBSYMCODES);
-              m_pModule->JBig2_Error(
-                  "symbol dictionary decoding procedure (huffman): too short.");
               goto failed;
             }
             nVal = (nVal << 1) | nTmp;
@@ -2212,8 +2097,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
               (pHuffmanDecoder->decodeAValue(SBHUFFRSIZE, &nVal) != 0)) {
             delete SBHUFFRDX;
             delete SBHUFFRSIZE;
-            m_pModule->JBig2_Error(
-                "symbol dictionary decoding procedure (huffman): too short.");
             goto failed;
           }
           delete SBHUFFRDX;
@@ -2252,10 +2135,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
             m_pModule->JBig2_Free(SBSYMS);
             delete pGRRD;
             delete pArithDecoder;
-            m_pModule->JBig2_Error(
-                "symbol dictionary decoding procedure (huffman):"
-                "bytes processed by generic refinement region decoding "
-                "procedure doesn't equal SBHUFFRSIZE.");
             goto failed;
           }
           m_pModule->JBig2_Free(SBSYMS);
@@ -2271,8 +2150,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
     }
     if (SDREFAGG == 0) {
       if (pHuffmanDecoder->decodeAValue(SDHUFFBMSIZE, (int32_t*)&BMSIZE) != 0) {
-        m_pModule->JBig2_Error(
-            "symbol dictionary decoding procedure (huffman): too short.");
         goto failed;
       }
       pStream->alignByte();
@@ -2286,8 +2163,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
             pStream->offset(stride);
           }
         } else {
-          m_pModule->JBig2_Error(
-              "symbol dictionary decoding procedure (huffman): too short.");
           goto failed;
         }
       } else {
@@ -2324,16 +2199,11 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
     if (pHuffmanDecoder->decodeAValue(pTable, (int*)&EXRUNLENGTH) != 0) {
       delete pTable;
       m_pModule->JBig2_Free(EXFLAGS);
-      m_pModule->JBig2_Error(
-          "symbol dictionary decoding procedure (huffman): too short.");
       goto failed;
     }
     if (EXINDEX + EXRUNLENGTH > SDNUMINSYMS + SDNUMNEWSYMS) {
       delete pTable;
       m_pModule->JBig2_Free(EXFLAGS);
-      m_pModule->JBig2_Error(
-          "symbol dictionary decoding procedure (arith): Invalid EXRUNLENGTH "
-          "value.");
       goto failed;
     }
     if (EXRUNLENGTH != 0) {
@@ -2749,10 +2619,6 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
   if ((*pImage)->m_pData == NULL) {
     delete *pImage;
     *pImage = NULL;
-    m_pModule->JBig2_Error(
-        "Generic region decoding procedure: Create Image Failed with width = "
-        "%d, height = %d\n",
-        GBW, GBH);
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;
   }
@@ -2821,10 +2687,6 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(CJBig2_Image** pImage,
   if ((*pImage)->m_pData == NULL) {
     delete (*pImage);
     (*pImage) = NULL;
-    m_pModule->JBig2_Error(
-        "Generic region decoding procedure: Create Image Failed with width = "
-        "%d, height = %d\n",
-        GBW, GBH);
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return m_ProssiveStatus;
   }
