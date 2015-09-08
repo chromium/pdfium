@@ -18,15 +18,9 @@
 
 static v8::Isolate* GetIsolate(IFXJS_Context* cc) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
-
   return pRuntime->GetIsolate();
 }
-
-/* ---------------------------- TimerObj ---------------------------- */
 
 BEGIN_JS_STATIC_CONST(CJS_TimerObj)
 END_JS_STATIC_CONST()
@@ -52,18 +46,13 @@ CJS_Timer* TimerObj::GetTimer() const {
   return m_pTimer;
 }
 
-#define JS_STR_VIEWERTYPE_READER L"Reader"
-#define JS_STR_VIEWERTYPE_STANDARD L"Exchange"
+#define JS_STR_VIEWERTYPE L"pdfium"
 #define JS_STR_VIEWERVARIATION L"Full"
 #define JS_STR_PLATFORM L"WIN"
 #define JS_STR_LANGUANGE L"ENU"
-#define JS_STR_VIEWERVERSION 8
-#define JS_STR_VIEWERVERSION_XFA 11
+#define JS_NUM_VIEWERVERSION 8
+#define JS_NUM_VIEWERVERSION_XFA 11
 #define JS_NUM_FORMSVERSION 7
-
-#define JS_FILEPATH_MAXLEN 2000
-
-/* ---------------------------- app ---------------------------- */
 
 BEGIN_JS_STATIC_CONST(CJS_App)
 END_JS_STATIC_CONST()
@@ -188,7 +177,7 @@ FX_BOOL app::viewerType(IFXJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
   if (vp.IsGetting()) {
-    vp << L"pdfium";
+    vp << JS_STR_VIEWERTYPE;
     return TRUE;
   }
 
@@ -216,9 +205,9 @@ FX_BOOL app::viewerVersion(IFXJS_Context* cc,
   CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
   CPDFXFA_Document* pDoc = pCurDoc->GetDocument();
   if (pDoc->GetDocType() == 1 || pDoc->GetDocType() == 2)
-    vp << JS_STR_VIEWERVERSION_XFA;
+    vp << JS_NUM_VIEWERVERSION_XFA;
   else
-    vp << JS_STR_VIEWERVERSION;
+    vp << JS_NUM_VIEWERVERSION;
 
   return TRUE;
 }
