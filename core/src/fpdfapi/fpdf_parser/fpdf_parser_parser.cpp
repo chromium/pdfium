@@ -4118,13 +4118,11 @@ FX_BOOL CPDF_DataAvail::CheckTrailer(IFX_DownloadHints* pHints) {
       return FALSE;
     }
     CPDF_Dictionary* pTrailerDict = pTrailer->GetDict();
-    if (pTrailerDict) {
-      CPDF_Object* pEncrypt = pTrailerDict->GetElement("Encrypt");
-      if (pEncrypt && pEncrypt->GetType() == PDFOBJ_REFERENCE) {
-        m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
-        pTrailer->Release();
-        return TRUE;
-      }
+    CPDF_Object* pEncrypt = pTrailerDict->GetElement("Encrypt");
+    if (pEncrypt && pEncrypt->GetType() == PDFOBJ_REFERENCE) {
+      m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
+      pTrailer->Release();
+      return TRUE;
     }
     FX_DWORD xrefpos = GetDirectInteger(pTrailer->GetDict(), FX_BSTRC("Prev"));
     if (xrefpos) {
@@ -4241,8 +4239,7 @@ FX_BOOL CPDF_DataAvail::CheckUnkownPageNode(FX_DWORD dwPageNo,
   }
   pPageNode->m_dwPageNo = dwPageNo;
   CPDF_Dictionary* pDict = pPage->GetDict();
-  CFX_ByteString type =
-      pDict ? pDict->GetString(FX_BSTRC("Type")) : CFX_ByteString();
+  CFX_ByteString type = pDict->GetString(FX_BSTRC("Type"));
   if (type == FX_BSTRC("Pages")) {
     pPageNode->m_type = PDF_PAGENODE_PAGES;
     CPDF_Object* pKids = pDict->GetElement(FX_BSTRC("Kids"));
