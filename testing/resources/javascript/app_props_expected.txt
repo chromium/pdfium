@@ -1,0 +1,1 @@
+Alert: app.viewerType property value: pdfium
