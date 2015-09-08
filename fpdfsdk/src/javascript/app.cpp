@@ -188,7 +188,7 @@ FX_BOOL app::viewerType(IFXJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
   if (vp.IsGetting()) {
-    vp << L"unknown";
+    vp << L"pdfium";
     return TRUE;
   }
 

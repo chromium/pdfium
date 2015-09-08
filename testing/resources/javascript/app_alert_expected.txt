@@ -1,1 +1,1 @@
-Alert: This test passes if alert() logs output under the test utiltiy.
+Alert: This test passes if alert() logs output under the test utility.

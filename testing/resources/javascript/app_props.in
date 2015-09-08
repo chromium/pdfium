@@ -34,7 +34,7 @@ endobj
 {{object 11 0}} <<
 >>
 stream
-app.alert("This test passes if alert() logs output under the test utility.");
+app.alert("app.viewerType property value: " + app.viewerType);
 endstream
 endobj
 {{xref}}
