@@ -24,6 +24,14 @@ def test_one_file(input_filename, source_dir, working_dir,
                   pdfium_test_path, image_differ):
   input_path = os.path.join(source_dir, input_filename)
   pdf_path = os.path.join(working_dir, input_filename)
+
+  # Remove any existing generated images from previous runs.
+  actual_images = image_differ.GetActualFiles(
+      input_filename, source_dir, working_dir)
+  for image in actual_images:
+    if os.path.exists(image):
+      os.remove(image)
+
   try:
     shutil.copyfile(input_path, pdf_path)
     sys.stdout.flush()
@@ -34,6 +42,7 @@ def test_one_file(input_filename, source_dir, working_dir,
   if image_differ.HasDifferences(input_filename, source_dir, working_dir):
     return False
   return True
+
 
 def main():
   parser = optparse.OptionParser()

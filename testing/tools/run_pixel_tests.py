@@ -24,6 +24,14 @@ def generate_and_test(input_filename, source_dir, working_dir,
   input_root, _ = os.path.splitext(input_filename)
   input_path = os.path.join(source_dir, input_root + '.in')
   pdf_path = os.path.join(working_dir, input_root + '.pdf')
+
+  # Remove any existing generated images from previous runs.
+  actual_images = image_differ.GetActualFiles(
+      input_filename, source_dir, working_dir)
+  for image in actual_images:
+    if os.path.exists(image):
+      os.remove(image)
+
   try:
     sys.stdout.flush()
     subprocess.check_call(
@@ -36,6 +44,7 @@ def generate_and_test(input_filename, source_dir, working_dir,
     print "FAILURE: " + input_filename
     return False
   return True
+
 
 def main():
   parser = optparse.OptionParser()
@@ -76,6 +85,7 @@ def main():
       print failure
     return 1
   return 0
+
 
 if __name__ == '__main__':
   sys.exit(main())
