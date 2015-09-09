@@ -221,6 +221,7 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
   formfillinfo->version = 1;
   formfillinfo->FFI_SetTimer = SetTimerTrampoline;
   formfillinfo->FFI_KillTimer = KillTimerTrampoline;
+  formfillinfo->FFI_GetPage = GetPageTrampoline;
   formfillinfo->m_pJsPlatform = platform;
 
   form_handle_ = FPDFDOC_InitFormFillEnvironment(document_, formfillinfo);
@@ -259,6 +260,15 @@ FPDF_PAGE EmbedderTest::LoadPage(int page_number) {
   return page;
 }
 
+FPDF_PAGE EmbedderTest::LoadAndCachePage(int page_number) {
+  FPDF_PAGE page = delegate_->GetPage(form_handle_, document_, page_number);
+  if (!page) {
+    return nullptr;
+  }
+  FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_OPEN);
+  return page;
+}
+
 FPDF_BITMAP EmbedderTest::RenderPage(FPDF_PAGE page) {
   int width = static_cast<int>(FPDF_GetPageWidth(page));
   int height = static_cast<int>(FPDF_GetPageHeight(page));
@@ -273,6 +283,22 @@ void EmbedderTest::UnloadPage(FPDF_PAGE page) {
   FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, form_handle_);
   FPDF_ClosePage(page);
+}
+
+FPDF_PAGE EmbedderTest::Delegate::GetPage(FPDF_FORMHANDLE form_handle,
+                                          FPDF_DOCUMENT document,
+                                          int page_index) {
+  auto it = m_pageMap.find(page_index);
+  if (it != m_pageMap.end()) {
+    return it->second;
+  }
+  FPDF_PAGE page = FPDF_LoadPage(document, page_index);
+  if (!page) {
+    return nullptr;
+  }
+  m_pageMap[page_index] = page;
+  FORM_OnAfterLoadPage(page, form_handle);
+  return page;
 }
 
 // static
@@ -304,6 +330,14 @@ int EmbedderTest::SetTimerTrampoline(FPDF_FORMFILLINFO* info,
 void EmbedderTest::KillTimerTrampoline(FPDF_FORMFILLINFO* info, int id) {
   EmbedderTest* test = static_cast<EmbedderTest*>(info);
   return test->delegate_->KillTimer(id);
+}
+
+// static
+FPDF_PAGE EmbedderTest::GetPageTrampoline(FPDF_FORMFILLINFO* info,
+                                          FPDF_DOCUMENT document,
+                                          int page_index) {
+  EmbedderTest* test = static_cast<EmbedderTest*>(info);
+  return test->delegate_->GetPage(test->m_pFormfillinfo, document, page_index);
 }
 
 // Can't use gtest-provided main since we need to stash the path to the
