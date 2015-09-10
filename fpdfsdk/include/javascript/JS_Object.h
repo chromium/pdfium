@@ -48,7 +48,7 @@ class CJS_EmbedObj {
 
 class CJS_Object {
  public:
-  explicit CJS_Object(JSFXObject pObject);
+  explicit CJS_Object(v8::Local<v8::Object> pObject);
   virtual ~CJS_Object();
 
   void MakeWeak();
@@ -60,7 +60,7 @@ class CJS_Object {
   virtual FX_BOOL InitInstance(IFXJS_Context* cc) { return TRUE; }
   virtual FX_BOOL ExitInstance() { return TRUE; }
 
-  operator JSFXObject() {
+  operator v8::Local<v8::Object>() {
     return v8::Local<v8::Object>::New(m_pIsolate, m_pObject);
   }
 

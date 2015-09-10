@@ -533,7 +533,7 @@ class Field : public CJS_EmbedObj {
 
 class CJS_Field : public CJS_Object {
  public:
-  CJS_Field(JSFXObject pObject) : CJS_Object(pObject) {}
+  CJS_Field(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Field(void) override {}
 
   FX_BOOL InitInstance(IFXJS_Context* cc) override;

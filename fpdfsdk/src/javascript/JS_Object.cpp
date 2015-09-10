@@ -83,7 +83,7 @@ void DisposeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {
   data.SetSecondPassCallback(FreeObject);
 }
 
-CJS_Object::CJS_Object(JSFXObject pObject) : m_pEmbedObj(NULL) {
+CJS_Object::CJS_Object(v8::Local<v8::Object> pObject) : m_pEmbedObj(NULL) {
   v8::Local<v8::Context> context = pObject->CreationContext();
   m_pIsolate = context->GetIsolate();
   m_pObject.Reset(m_pIsolate, pObject);

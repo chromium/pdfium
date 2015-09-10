@@ -27,7 +27,7 @@ class PrintParamsObj : public CJS_EmbedObj {
 
 class CJS_PrintParamsObj : public CJS_Object {
  public:
-  CJS_PrintParamsObj(JSFXObject pObject) : CJS_Object(pObject) {}
+  CJS_PrintParamsObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_PrintParamsObj() override {}
 
   DECLARE_JS_CLASS(CJS_PrintParamsObj);
@@ -309,7 +309,6 @@ class Document : public CJS_EmbedObj {
   bool IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect);
   int CountWords(CPDF_TextObject* pTextObj);
   CFX_WideString GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
-  FX_BOOL ParserParams(JSObject* pObj, CJS_AnnotObj& annotobj);
 
   v8::Isolate* m_isolate;
   IconTree* m_pIconTree;
@@ -322,7 +321,7 @@ class Document : public CJS_EmbedObj {
 
 class CJS_Document : public CJS_Object {
  public:
-  explicit CJS_Document(JSFXObject pObject) : CJS_Object(pObject) {}
+  explicit CJS_Document(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Document() override {}
 
   // CJS_Object

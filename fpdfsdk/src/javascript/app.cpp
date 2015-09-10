@@ -122,13 +122,15 @@ FX_BOOL app::activeDocs(IFXJS_Context* cc,
   if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument()) {
     CJS_Document* pJSDocument = NULL;
     if (pDoc == pCurDoc) {
-      JSFXObject pObj = JS_GetThisObj(*pRuntime);
-      if (JS_GetObjDefnID(pObj) == JS_GetObjDefnID(*pRuntime, L"Document"))
+      v8::Local<v8::Object> pObj = JS_GetThisObj(pRuntime->GetIsolate());
+      if (JS_GetObjDefnID(pObj) ==
+          JS_GetObjDefnID(pRuntime->GetIsolate(), L"Document"))
         pJSDocument =
             (CJS_Document*)JS_GetPrivate(pRuntime->GetIsolate(), pObj);
     } else {
-      JSFXObject pObj = JS_NewFxDynamicObj(
-          *pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"Document"));
+      v8::Local<v8::Object> pObj = JS_NewFxDynamicObj(
+          pRuntime->GetIsolate(), pContext,
+          JS_GetObjDefnID(pRuntime->GetIsolate(), L"Document"));
       pJSDocument = (CJS_Document*)JS_GetPrivate(pRuntime->GetIsolate(), pObj);
       ASSERT(pJSDocument != NULL);
     }
@@ -268,7 +270,7 @@ FX_BOOL app::alert(IFXJS_Context* cc,
 
   if (iSize == 1) {
     if (params[0].GetType() == VT_object) {
-      JSObject pObj = params[0].ToV8Object();
+      v8::Local<v8::Object> pObj = params[0].ToV8Object();
       {
         v8::Local<v8::Value> pValue =
             JS_GetObjectElement(isolate, pObj, L"cMsg");
@@ -413,8 +415,9 @@ FX_BOOL app::setInterval(IFXJS_Context* cc,
   //	pTimer->SetStartTime(GetTickCount());
   pTimer->SetJSTimer(dwInterval);
 
-  JSFXObject pRetObj = JS_NewFxDynamicObj(
-      *pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"TimerObj"));
+  v8::Local<v8::Object> pRetObj =
+      JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
+                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj"));
 
   CJS_TimerObj* pJS_TimerObj =
       (CJS_TimerObj*)JS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
@@ -465,8 +468,9 @@ FX_BOOL app::setTimeOut(IFXJS_Context* cc,
   pTimer->SetTimeOut(dwTimeOut);
   pTimer->SetJSTimer(dwTimeOut);
 
-  JSFXObject pRetObj = JS_NewFxDynamicObj(
-      *pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"TimerObj"));
+  v8::Local<v8::Object> pRetObj =
+      JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
+                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj"));
 
   CJS_TimerObj* pJS_TimerObj =
       (CJS_TimerObj*)JS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
@@ -497,9 +501,10 @@ FX_BOOL app::clearTimeOut(IFXJS_Context* cc,
   }
 
   if (params[0].GetType() == VT_fxobject) {
-    JSFXObject pObj = params[0].ToV8Object();
+    v8::Local<v8::Object> pObj = params[0].ToV8Object();
     {
-      if (JS_GetObjDefnID(pObj) == JS_GetObjDefnID(*pRuntime, L"TimerObj")) {
+      if (JS_GetObjDefnID(pObj) ==
+          JS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj")) {
         if (CJS_Object* pJSObj = params[0].ToCJSObject()) {
           if (TimerObj* pTimerObj = (TimerObj*)pJSObj->GetEmbedObject()) {
             if (CJS_Timer* pTimer = pTimerObj->GetTimer()) {
@@ -539,9 +544,10 @@ FX_BOOL app::clearInterval(IFXJS_Context* cc,
   }
 
   if (params[0].GetType() == VT_fxobject) {
-    JSFXObject pObj = params[0].ToV8Object();
+    v8::Local<v8::Object> pObj = params[0].ToV8Object();
     {
-      if (JS_GetObjDefnID(pObj) == JS_GetObjDefnID(*pRuntime, L"TimerObj")) {
+      if (JS_GetObjDefnID(pObj) ==
+          JS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj")) {
         if (CJS_Object* pJSObj = params[0].ToCJSObject()) {
           if (TimerObj* pTimerObj = (TimerObj*)pJSObj->GetEmbedObject()) {
             if (CJS_Timer* pTimer = pTimerObj->GetTimer()) {
@@ -636,7 +642,7 @@ FX_BOOL app::mailMsg(IFXJS_Context* cc,
     return FALSE;
 
   if (params[0].GetType() == VT_object) {
-    JSObject pObj = params[0].ToV8Object();
+    v8::Local<v8::Object> pObj = params[0].ToV8Object();
 
     v8::Local<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"bUI");
     bUI = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToBool();
@@ -774,7 +780,7 @@ FX_BOOL app::response(IFXJS_Context* cc,
 
   int iLength = params.size();
   if (iLength > 0 && params[0].GetType() == VT_object) {
-    JSObject pObj = params[0].ToV8Object();
+    v8::Local<v8::Object> pObj = params[0].ToV8Object();
     v8::Local<v8::Value> pValue =
         JS_GetObjectElement(isolate, pObj, L"cQuestion");
     swQuestion =

@@ -63,7 +63,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
                              double dData,
                              bool bData,
                              const CFX_ByteString& sData,
-                             JSObject pData,
+                             v8::Local<v8::Object> pData,
                              bool bDefaultPersistent);
 
   void ObjectToArray(v8::Local<v8::Object> pObj,
@@ -79,7 +79,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
 
 class CJS_Global : public CJS_Object {
  public:
-  explicit CJS_Global(JSFXObject pObject) : CJS_Object(pObject) {}
+  explicit CJS_Global(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Global() override {}
 
   // CJS_Object

@@ -35,7 +35,7 @@ class console : public CJS_EmbedObj {
 
 class CJS_Console : public CJS_Object {
  public:
-  CJS_Console(JSFXObject pObject) : CJS_Object(pObject) {}
+  CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Console() override {}
 
   DECLARE_JS_CLASS(CJS_Console);

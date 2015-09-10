@@ -189,41 +189,42 @@ void JSMethod(const char* method_name_string,
 /* ===================================== JS CLASS
  * =============================================== */
 
-#define DECLARE_JS_CLASS(js_class_name)                         \
-  static void JSConstructor(IFXJS_Context* cc, JSFXObject obj,  \
-                            JSFXObject global);                 \
-  static void JSDestructor(JSFXObject obj);                     \
-  static int Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType); \
-  static JSConstSpec JS_Class_Consts[];                         \
-  static JSPropertySpec JS_Class_Properties[];                  \
-  static JSMethodSpec JS_Class_Methods[];                       \
+#define DECLARE_JS_CLASS(js_class_name)                                   \
+  static void JSConstructor(IFXJS_Context* cc, v8::Local<v8::Object> obj, \
+                            v8::Local<v8::Object> global);                \
+  static void JSDestructor(v8::Local<v8::Object> obj);                    \
+  static int Init(v8::Isolate* pIsolate, FXJSOBJTYPE eObjType);           \
+  static JSConstSpec JS_Class_Consts[];                                   \
+  static JSPropertySpec JS_Class_Properties[];                            \
+  static JSMethodSpec JS_Class_Methods[];                                 \
   static const wchar_t* m_pClassName
 
 #define IMPLEMENT_JS_CLASS_RICH(js_class_name, class_alternate, class_name)    \
   const wchar_t* js_class_name::m_pClassName = JS_WIDESTRING(class_name);      \
-  void js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject obj,         \
-                                    JSFXObject global) {                       \
+  void js_class_name::JSConstructor(IFXJS_Context* cc,                         \
+                                    v8::Local<v8::Object> obj,                 \
+                                    v8::Local<v8::Object> global) {            \
     CJS_Object* pObj = new js_class_name(obj);                                 \
     pObj->SetEmbedObject(new class_alternate(pObj));                           \
     JS_SetPrivate(NULL, obj, (void*)pObj);                                     \
     pObj->InitInstance(cc);                                                    \
   }                                                                            \
                                                                                \
-  void js_class_name::JSDestructor(JSFXObject obj) {                           \
+  void js_class_name::JSDestructor(v8::Local<v8::Object> obj) {                \
     js_class_name* pObj = (js_class_name*)JS_GetPrivate(NULL, obj);            \
     ASSERT(pObj != NULL);                                                      \
     pObj->ExitInstance();                                                      \
     delete pObj;                                                               \
   }                                                                            \
                                                                                \
-  int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType) {       \
-    int nObjDefnID = JS_DefineObj(pRuntime, js_class_name::m_pClassName,       \
+  int js_class_name::Init(v8::Isolate* pIsolate, FXJSOBJTYPE eObjType) {       \
+    int nObjDefnID = JS_DefineObj(pIsolate, js_class_name::m_pClassName,       \
                                   eObjType, JSConstructor, JSDestructor);      \
     if (nObjDefnID >= 0) {                                                     \
       for (int j = 0,                                                          \
                szj = sizeof(JS_Class_Properties) / sizeof(JSPropertySpec) - 1; \
            j < szj; j++) {                                                     \
-        if (JS_DefineObjProperty(pRuntime, nObjDefnID,                         \
+        if (JS_DefineObjProperty(pIsolate, nObjDefnID,                         \
                                  JS_Class_Properties[j].pName,                 \
                                  JS_Class_Properties[j].pPropGet,              \
                                  JS_Class_Properties[j].pPropPut) < 0)         \
@@ -232,7 +233,7 @@ void JSMethod(const char* method_name_string,
       for (int k = 0,                                                          \
                szk = sizeof(JS_Class_Methods) / sizeof(JSMethodSpec) - 1;      \
            k < szk; k++) {                                                     \
-        if (JS_DefineObjMethod(pRuntime, nObjDefnID,                           \
+        if (JS_DefineObjMethod(pIsolate, nObjDefnID,                           \
                                JS_Class_Methods[k].pName,                      \
                                JS_Class_Methods[k].pMethodCall) < 0)           \
           return -1;                                                           \
@@ -249,27 +250,27 @@ void JSMethod(const char* method_name_string,
  * ============================================ */
 
 #define DECLARE_JS_CLASS_CONST()                                \
-  static int Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType); \
+  static int Init(v8::Isolate* pIsolate, FXJSOBJTYPE eObjType); \
   static JSConstSpec JS_Class_Consts[];                         \
   static const wchar_t* m_pClassName
 
 #define IMPLEMENT_JS_CLASS_CONST(js_class_name, class_name)                   \
   const wchar_t* js_class_name::m_pClassName = JS_WIDESTRING(class_name);     \
-  int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType) {      \
-    int nObjDefnID = JS_DefineObj(pRuntime, js_class_name::m_pClassName,      \
+  int js_class_name::Init(v8::Isolate* pIsolate, FXJSOBJTYPE eObjType) {      \
+    int nObjDefnID = JS_DefineObj(pIsolate, js_class_name::m_pClassName,      \
                                   eObjType, NULL, NULL);                      \
     if (nObjDefnID >= 0) {                                                    \
       for (int i = 0, sz = sizeof(JS_Class_Consts) / sizeof(JSConstSpec) - 1; \
            i < sz; i++) {                                                     \
         if (JS_Class_Consts[i].t == 0) {                                      \
           if (JS_DefineObjConst(                                              \
-                  pRuntime, nObjDefnID, JS_Class_Consts[i].pName,             \
-                  JS_NewNumber(pRuntime, JS_Class_Consts[i].number)) < 0)     \
+                  pIsolate, nObjDefnID, JS_Class_Consts[i].pName,             \
+                  JS_NewNumber(pIsolate, JS_Class_Consts[i].number)) < 0)     \
             return -1;                                                        \
         } else {                                                              \
           if (JS_DefineObjConst(                                              \
-                  pRuntime, nObjDefnID, JS_Class_Consts[i].pName,             \
-                  JS_NewString(pRuntime, JS_Class_Consts[i].string)) < 0)     \
+                  pIsolate, nObjDefnID, JS_Class_Consts[i].pName,             \
+                  JS_NewString(pIsolate, JS_Class_Consts[i].string)) < 0)     \
             return -1;                                                        \
         }                                                                     \
       }                                                                       \
@@ -371,26 +372,26 @@ void JSSpecialPropDel(const char* class_name,
   }
 }
 
-#define DECLARE_SPECIAL_JS_CLASS(js_class_name)                   \
-  static void JSConstructor(IFXJS_Context* cc, JSFXObject obj,    \
-                            JSFXObject global);                   \
-  static void JSDestructor(JSFXObject obj);                       \
-  static JSConstSpec JS_Class_Consts[];                           \
-  static JSPropertySpec JS_Class_Properties[];                    \
-  static JSMethodSpec JS_Class_Methods[];                         \
-  static int Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType);   \
-  static const wchar_t* m_pClassName;                             \
-  static void queryprop_##js_class_name##_static(                 \
-      v8::Local<v8::String> property,                             \
-      const v8::PropertyCallbackInfo<v8::Integer>& info);         \
-  static void getprop_##js_class_name##_static(                   \
-      v8::Local<v8::String> property,                             \
-      const v8::PropertyCallbackInfo<v8::Value>& info);           \
-  static void putprop_##js_class_name##_static(                   \
-      v8::Local<v8::String> property, v8::Local<v8::Value> value, \
-      const v8::PropertyCallbackInfo<v8::Value>& info);           \
-  static void delprop_##js_class_name##_static(                   \
-      v8::Local<v8::String> property,                             \
+#define DECLARE_SPECIAL_JS_CLASS(js_class_name)                           \
+  static void JSConstructor(IFXJS_Context* cc, v8::Local<v8::Object> obj, \
+                            v8::Local<v8::Object> global);                \
+  static void JSDestructor(v8::Local<v8::Object> obj);                    \
+  static JSConstSpec JS_Class_Consts[];                                   \
+  static JSPropertySpec JS_Class_Properties[];                            \
+  static JSMethodSpec JS_Class_Methods[];                                 \
+  static int Init(v8::Isolate* pIsolate, FXJSOBJTYPE eObjType);           \
+  static const wchar_t* m_pClassName;                                     \
+  static void queryprop_##js_class_name##_static(                         \
+      v8::Local<v8::String> property,                                     \
+      const v8::PropertyCallbackInfo<v8::Integer>& info);                 \
+  static void getprop_##js_class_name##_static(                           \
+      v8::Local<v8::String> property,                                     \
+      const v8::PropertyCallbackInfo<v8::Value>& info);                   \
+  static void putprop_##js_class_name##_static(                           \
+      v8::Local<v8::String> property, v8::Local<v8::Value> value,         \
+      const v8::PropertyCallbackInfo<v8::Value>& info);                   \
+  static void delprop_##js_class_name##_static(                           \
+      v8::Local<v8::String> property,                                     \
       const v8::PropertyCallbackInfo<v8::Boolean>& info)
 
 #define IMPLEMENT_SPECIAL_JS_CLASS(js_class_name, class_alternate, class_name) \
@@ -415,30 +416,31 @@ void JSSpecialPropDel(const char* class_name,
       const v8::PropertyCallbackInfo<v8::Boolean>& info) {                     \
     JSSpecialPropDel<class_alternate>(#class_name, property, info);            \
   }                                                                            \
-  void js_class_name::JSConstructor(IFXJS_Context* cc, JSFXObject obj,         \
-                                    JSFXObject global) {                       \
+  void js_class_name::JSConstructor(IFXJS_Context* cc,                         \
+                                    v8::Local<v8::Object> obj,                 \
+                                    v8::Local<v8::Object> global) {            \
     CJS_Object* pObj = new js_class_name(obj);                                 \
     pObj->SetEmbedObject(new class_alternate(pObj));                           \
     JS_SetPrivate(NULL, obj, (void*)pObj);                                     \
     pObj->InitInstance(cc);                                                    \
   }                                                                            \
                                                                                \
-  void js_class_name::JSDestructor(JSFXObject obj) {                           \
+  void js_class_name::JSDestructor(v8::Local<v8::Object> obj) {                \
     js_class_name* pObj = (js_class_name*)JS_GetPrivate(NULL, obj);            \
     ASSERT(pObj != NULL);                                                      \
     pObj->ExitInstance();                                                      \
     delete pObj;                                                               \
   }                                                                            \
                                                                                \
-  int js_class_name::Init(IJS_Runtime* pRuntime, FXJSOBJTYPE eObjType) {       \
-    int nObjDefnID = JS_DefineObj(pRuntime, js_class_name::m_pClassName,       \
+  int js_class_name::Init(v8::Isolate* pIsolate, FXJSOBJTYPE eObjType) {       \
+    int nObjDefnID = JS_DefineObj(pIsolate, js_class_name::m_pClassName,       \
                                   eObjType, JSConstructor, JSDestructor);      \
                                                                                \
     if (nObjDefnID >= 0) {                                                     \
       for (int j = 0,                                                          \
                szj = sizeof(JS_Class_Properties) / sizeof(JSPropertySpec) - 1; \
            j < szj; j++) {                                                     \
-        if (JS_DefineObjProperty(pRuntime, nObjDefnID,                         \
+        if (JS_DefineObjProperty(pIsolate, nObjDefnID,                         \
                                  JS_Class_Properties[j].pName,                 \
                                  JS_Class_Properties[j].pPropGet,              \
                                  JS_Class_Properties[j].pPropPut) < 0)         \
@@ -448,13 +450,13 @@ void JSSpecialPropDel(const char* class_name,
       for (int k = 0,                                                          \
                szk = sizeof(JS_Class_Methods) / sizeof(JSMethodSpec) - 1;      \
            k < szk; k++) {                                                     \
-        if (JS_DefineObjMethod(pRuntime, nObjDefnID,                           \
+        if (JS_DefineObjMethod(pIsolate, nObjDefnID,                           \
                                JS_Class_Methods[k].pName,                      \
                                JS_Class_Methods[k].pMethodCall) < 0)           \
           return -1;                                                           \
       }                                                                        \
       if (JS_DefineObjAllProperties(                                           \
-              pRuntime, nObjDefnID,                                            \
+              pIsolate, nObjDefnID,                                            \
               js_class_name::queryprop_##js_class_name##_static,               \
               js_class_name::getprop_##js_class_name##_static,                 \
               js_class_name::putprop_##js_class_name##_static,                 \
@@ -503,7 +505,7 @@ void JSGlobalFunc(const char* func_name_string,
 
 #define JS_STATIC_DECLARE_GLOBAL_FUN()  \
   static JSMethodSpec global_methods[]; \
-  static int Init(IJS_Runtime* pRuntime)
+  static int Init(v8::Isolate* pIsolate)
 
 #define BEGIN_JS_STATIC_GLOBAL_FUN(js_class_name) \
   JSMethodSpec js_class_name::global_methods[] = {
@@ -513,13 +515,13 @@ void JSGlobalFunc(const char* func_name_string,
 #define END_JS_STATIC_GLOBAL_FUN() END_JS_STATIC_METHOD()
 
 #define IMPLEMENT_JS_STATIC_GLOBAL_FUN(js_class_name)            \
-  int js_class_name::Init(IJS_Runtime* pRuntime) {               \
+  int js_class_name::Init(v8::Isolate* pIsolate) {               \
     for (int i = 0, sz = sizeof(js_class_name::global_methods) / \
                              sizeof(JSMethodSpec) -              \
                          1;                                      \
          i < sz; i++) {                                          \
       if (JS_DefineGlobalMethod(                                 \
-              pRuntime, js_class_name::global_methods[i].pName,  \
+              pIsolate, js_class_name::global_methods[i].pName,  \
               js_class_name::global_methods[i].pMethodCall) < 0) \
         return -1;                                               \
     }                                                            \
@@ -528,25 +530,25 @@ void JSGlobalFunc(const char* func_name_string,
 
 /* ======================================== GLOBAL CONSTS
  * ============================================ */
-#define DEFINE_GLOBAL_CONST(pRuntime, const_name, const_value) \
+#define DEFINE_GLOBAL_CONST(pIsolate, const_name, const_value) \
   if (JS_DefineGlobalConst(                                    \
-          pRuntime, JS_WIDESTRING(const_name),                 \
-          JS_NewString(pRuntime, JS_WIDESTRING(const_value)))) \
+          pIsolate, JS_WIDESTRING(const_name),                 \
+          JS_NewString(pIsolate, JS_WIDESTRING(const_value)))) \
   return -1
 
 /* ======================================== GLOBAL ARRAYS
  * ============================================ */
 
-#define DEFINE_GLOBAL_ARRAY(pRuntime)                           \
+#define DEFINE_GLOBAL_ARRAY(pIsolate)                           \
   int size = FX_ArraySize(ArrayContent);                        \
                                                                 \
-  CJS_Array array(pRuntime);                                    \
+  CJS_Array array(pIsolate);                                    \
   for (int i = 0; i < size; i++)                                \
-    array.SetElement(i, CJS_Value(pRuntime, ArrayContent[i]));  \
+    array.SetElement(i, CJS_Value(pIsolate, ArrayContent[i]));  \
                                                                 \
-  CJS_PropValue prop(pRuntime);                                 \
+  CJS_PropValue prop(pIsolate);                                 \
   prop << array;                                                \
-  if (JS_DefineGlobalConst(pRuntime, (const wchar_t*)ArrayName, \
+  if (JS_DefineGlobalConst(pIsolate, (const wchar_t*)ArrayName, \
                            prop.ToV8Value()) < 0)               \
   return -1
 

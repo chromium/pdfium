@@ -260,11 +260,6 @@ FX_BOOL Document::pageNum(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL Document::ParserParams(JSObject* pObj, CJS_AnnotObj& annotobj) {
-  // Not supported.
-  return TRUE;
-}
-
 FX_BOOL Document::addAnnot(IFXJS_Context* cc,
                            const CJS_Parameters& params,
                            CJS_Value& vRet,
@@ -330,8 +325,9 @@ FX_BOOL Document::getField(IFXJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  JSFXObject pFieldObj = JS_NewFxDynamicObj(
-      *pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"Field"));
+  v8::Local<v8::Object> pFieldObj =
+      JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
+                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"Field"));
 
   v8::Isolate* isolate = GetIsolate(cc);
   CJS_Field* pJSField = (CJS_Field*)JS_GetPrivate(isolate, pFieldObj);
@@ -462,10 +458,10 @@ FX_BOOL Document::print(IFXJS_Context* cc,
   int nlength = params.size();
   if (nlength == 9) {
     if (params[8].GetType() == VT_fxobject) {
-      JSFXObject pObj = params[8].ToV8Object();
+      v8::Local<v8::Object> pObj = params[8].ToV8Object();
       {
         if (JS_GetObjDefnID(pObj) ==
-            JS_GetObjDefnID(*pRuntime, L"PrintParamsObj")) {
+            JS_GetObjDefnID(pRuntime->GetIsolate(), L"PrintParamsObj")) {
           if (CJS_Object* pJSObj = params[8].ToCJSObject()) {
             if (PrintParamsObj* pprintparamsObj =
                     (PrintParamsObj*)pJSObj->GetEmbedObject()) {
@@ -664,7 +660,7 @@ FX_BOOL Document::submitForm(IFXJS_Context* cc,
     if (nSize > 3)
       aFields.Attach(params[3].ToV8Array());
   } else if (v.GetType() == VT_object) {
-    JSObject pObj = params[0].ToV8Object();
+    v8::Local<v8::Object> pObj = params[0].ToV8Object();
     v8::Local<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"cURL");
     if (!pValue.IsEmpty())
       strURL =
@@ -771,7 +767,7 @@ FX_BOOL Document::mailDoc(IFXJS_Context* cc,
   v8::Isolate* isolate = GetIsolate(cc);
 
   if (params.size() >= 1 && params[0].GetType() == VT_object) {
-    JSObject pObj = params[0].ToV8Object();
+    v8::Local<v8::Object> pObj = params[0].ToV8Object();
 
     v8::Local<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"bUI");
     bUI = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToInt();
@@ -854,7 +850,8 @@ FX_BOOL Document::info(IFXJS_Context* cc,
   if (vp.IsGetting()) {
     CJS_Context* pContext = (CJS_Context*)cc;
     CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-    JSFXObject pObj = JS_NewFxDynamicObj(*pRuntime, pContext, -1);
+    v8::Local<v8::Object> pObj =
+        JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext, -1);
     JS_PutObjectString(isolate, pObj, L"Author", cwAuthor.c_str());
     JS_PutObjectString(isolate, pObj, L"Title", cwTitle.c_str());
     JS_PutObjectString(isolate, pObj, L"Subject", cwSubject.c_str());
@@ -1373,10 +1370,11 @@ FX_BOOL Document::addIcon(IFXJS_Context* cc,
     sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
     return FALSE;
   }
-  JSFXObject pJSIcon = params[1].ToV8Object();
+  v8::Local<v8::Object> pJSIcon = params[1].ToV8Object();
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  if (JS_GetObjDefnID(pJSIcon) != JS_GetObjDefnID(*pRuntime, L"Icon")) {
+  if (JS_GetObjDefnID(pJSIcon) !=
+      JS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon")) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
     return FALSE;
   }
@@ -1423,8 +1421,9 @@ FX_BOOL Document::icons(IFXJS_Context* cc,
   for (int i = 0; i < iIconTreeLength; i++) {
     pIconElement = (*m_pIconTree)[i];
 
-    JSFXObject pObj = JS_NewFxDynamicObj(*pRuntime, pContext,
-                                         JS_GetObjDefnID(*pRuntime, L"Icon"));
+    v8::Local<v8::Object> pObj =
+        JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
+                           JS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon"));
     if (pObj.IsEmpty())
       return FALSE;
 
@@ -1466,8 +1465,9 @@ FX_BOOL Document::getIcon(IFXJS_Context* cc,
     if ((*m_pIconTree)[i]->IconName == swIconName) {
       Icon* pRetIcon = (*m_pIconTree)[i]->IconStream;
 
-      JSFXObject pObj = JS_NewFxDynamicObj(*pRuntime, pContext,
-                                           JS_GetObjDefnID(*pRuntime, L"Icon"));
+      v8::Local<v8::Object> pObj =
+          JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
+                             JS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon"));
       if (pObj.IsEmpty())
         return FALSE;
 
@@ -1662,8 +1662,9 @@ FX_BOOL Document::getPrintParams(IFXJS_Context* cc,
                                  CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  JSFXObject pRetObj = JS_NewFxDynamicObj(
-      *pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"PrintParamsObj"));
+  v8::Local<v8::Object> pRetObj = JS_NewFxDynamicObj(
+      pRuntime->GetIsolate(), pContext,
+      JS_GetObjDefnID(pRuntime->GetIsolate(), L"PrintParamsObj"));
 
   // Not implemented yet.
 

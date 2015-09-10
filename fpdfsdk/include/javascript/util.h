@@ -51,7 +51,7 @@ class util : public CJS_EmbedObj {
 
 class CJS_Util : public CJS_Object {
  public:
-  CJS_Util(JSFXObject pObject) : CJS_Object(pObject) {}
+  CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Util() override {}
 
   DECLARE_JS_CLASS(CJS_Util);
