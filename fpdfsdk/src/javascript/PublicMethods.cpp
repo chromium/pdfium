@@ -2023,9 +2023,8 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(IFXJS_Context* cc,
   dValue = (double)floor(dValue * FXSYS_pow((double)10, (double)6) + 0.49) /
            FXSYS_pow((double)10, (double)6);
   CJS_Value jsValue(isolate, dValue);
-  if ((CJS_EventHandler*)pContext->GetEventHandler()->m_pValue)
-    ((CJS_EventHandler*)pContext->GetEventHandler())->Value() =
-        jsValue.ToCFXWideString();
+  if (pContext->GetEventHandler()->m_pValue)
+    pContext->GetEventHandler()->Value() = jsValue.ToCFXWideString();
 
   return TRUE;
 }
