@@ -6,8 +6,10 @@
 
 #ifndef _JBIG2_BIT_STREAM_H_
 #define _JBIG2_BIT_STREAM_H_
+
 #include "JBig2_Define.h"
-class CJBig2_BitStream : public CJBig2_Object {
+
+class CJBig2_BitStream {
  public:
   CJBig2_BitStream(uint8_t* pBuffer, FX_DWORD dwLength);
 

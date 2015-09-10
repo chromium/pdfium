@@ -9,13 +9,15 @@
 #include "JBig2_Define.h"
 #include "JBig2_BitStream.h"
 #include "JBig2_ArithQe.h"
-typedef struct {
+
+struct JBig2ArithCtx {
   unsigned int MPS;
   unsigned int I;
-} JBig2ArithCtx;
-class CJBig2_ArithDecoder : public CJBig2_Object {
+};
+
+class CJBig2_ArithDecoder {
  public:
-  CJBig2_ArithDecoder(CJBig2_BitStream* pStream);
+  explicit CJBig2_ArithDecoder(CJBig2_BitStream* pStream);
 
   ~CJBig2_ArithDecoder();
 
@@ -23,14 +25,15 @@ class CJBig2_ArithDecoder : public CJBig2_Object {
 
  private:
   void INITDEC();
-
   void BYTEIN();
+
   unsigned char B;
   unsigned int C;
   unsigned int A;
   unsigned int CT;
   CJBig2_BitStream* m_pStream;
 };
+
 inline CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream) {
   m_pStream = pStream;
   INITDEC();

@@ -6,12 +6,17 @@
 
 #ifndef _JBIG2_PAGE_H_
 #define _JBIG2_PAGE_H_
-#include "JBig2_Image.h"
-struct JBig2PageInfo : public CJBig2_Object {
-  FX_DWORD m_dwWidth, m_dwHeight;
-  FX_DWORD m_dwResolutionX, m_dwResolutionY;
+
+#include "../../../include/fxcrt/fx_system.h"
+
+struct JBig2PageInfo {
+  FX_DWORD m_dwWidth;
+  FX_DWORD m_dwHeight;
+  FX_DWORD m_dwResolutionX;
+  FX_DWORD m_dwResolutionY;
   uint8_t m_cFlags;
   FX_BOOL m_bIsStriped;
   FX_WORD m_wMaxStripeSize;
 };
+
 #endif

@@ -4,7 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <map>
 #include <list>
 #include "JBig2_Context.h"
 
@@ -47,11 +46,9 @@ CJBig2_Context::CJBig2_Context(uint8_t* pGlobalData,
   } else {
     m_pGlobalContext = NULL;
   }
-  JBIG2_ALLOC(m_pStream, CJBig2_BitStream(pData, dwLength));
+  m_pStream = new CJBig2_BitStream(pData, dwLength);
   m_nStreamType = nStreamType;
   m_nState = JBIG2_OUT_OF_PAGE;
-  JBIG2_ALLOC(m_pSegmentList, CJBig2_List<CJBig2_Segment>);
-  JBIG2_ALLOC(m_pPageInfoList, CJBig2_List<JBig2PageInfo>(1));
   m_pPage = NULL;
   m_bBufSpecified = FALSE;
   m_pPause = pPause;
@@ -60,7 +57,6 @@ CJBig2_Context::CJBig2_Context(uint8_t* pGlobalData,
   m_pArithDecoder = NULL;
   m_pGRD = NULL;
   m_gbContext = NULL;
-  m_pSegment = NULL;
   m_dwOffset = 0;
   m_ProcessiveStatus = FXCODEC_STATUS_FRAME_READY;
   m_pSymbolDictCache = pSymbolDictCache;
@@ -76,16 +72,12 @@ CJBig2_Context::~CJBig2_Context() {
   m_gbContext = NULL;
   delete m_pGlobalContext;
   m_pGlobalContext = NULL;
-  delete m_pPageInfoList;
-  m_pPageInfoList = NULL;
   if (m_bBufSpecified) {
     delete m_pPage;
   }
   m_pPage = NULL;
   delete m_pStream;
   m_pStream = NULL;
-  delete m_pSegmentList;
-  m_pSegmentList = NULL;
 }
 int32_t CJBig2_Context::decodeFile(IFX_Pause* pPause) {
   uint8_t cFlags;
@@ -115,8 +107,8 @@ int32_t CJBig2_Context::decodeFile(IFX_Pause* pPause) {
       goto failed;
     }
     if (dwTemp > 0) {
-      delete m_pPageInfoList;
-      JBIG2_ALLOC(m_pPageInfoList, CJBig2_List<JBig2PageInfo>(dwTemp));
+      m_PageInfoList.clear();
+      m_PageInfoList.resize(dwTemp);
     }
   }
   if (cFlags & 0x01) {
@@ -131,50 +123,46 @@ failed:
 }
 int32_t CJBig2_Context::decode_SquentialOrgnazation(IFX_Pause* pPause) {
   int32_t nRet;
-  if (m_pStream->getByteLeft() > 0) {
-    while (m_pStream->getByteLeft() >= JBIG2_MIN_SEGMENT_SIZE) {
-      if (m_pSegment == NULL) {
-        JBIG2_ALLOC(m_pSegment, CJBig2_Segment());
-        nRet = parseSegmentHeader(m_pSegment);
-        if (nRet != JBIG2_SUCCESS) {
-          delete m_pSegment;
-          m_pSegment = NULL;
-          return nRet;
-        }
-        m_dwOffset = m_pStream->getOffset();
-      }
-      nRet = parseSegmentData(m_pSegment, pPause);
-      if (m_ProcessiveStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-        m_ProcessiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-        m_PauseStep = 2;
-        return JBIG2_SUCCESS;
-      }
-      if ((nRet == JBIG2_END_OF_PAGE) || (nRet == JBIG2_END_OF_FILE)) {
-        delete m_pSegment;
-        m_pSegment = NULL;
-        break;
-      } else if (nRet != JBIG2_SUCCESS) {
-        delete m_pSegment;
-        m_pSegment = NULL;
+  if (m_pStream->getByteLeft() <= 0)
+    return JBIG2_END_OF_FILE;
+
+  while (m_pStream->getByteLeft() >= JBIG2_MIN_SEGMENT_SIZE) {
+    if (!m_pSegment) {
+      m_pSegment.reset(new CJBig2_Segment);
+      nRet = parseSegmentHeader(m_pSegment.get());
+      if (nRet != JBIG2_SUCCESS) {
+        m_pSegment.reset();
         return nRet;
       }
-      m_pSegmentList->addItem(m_pSegment);
-      if (m_pSegment->m_dwData_length != 0xffffffff) {
-        m_dwOffset = m_dwOffset + m_pSegment->m_dwData_length;
-        m_pStream->setOffset(m_dwOffset);
-      } else {
-        m_pStream->offset(4);
-      }
-      m_pSegment = NULL;
-      if (m_pStream->getByteLeft() > 0 && m_pPage && pPause &&
-          pPause->NeedToPauseNow()) {
-        m_ProcessiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-        m_PauseStep = 2;
-        return JBIG2_SUCCESS;
-      }
+      m_dwOffset = m_pStream->getOffset();
     }
-  } else {
-    return JBIG2_END_OF_FILE;
+    nRet = parseSegmentData(m_pSegment.get(), pPause);
+    if (m_ProcessiveStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
+      m_ProcessiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
+      m_PauseStep = 2;
+      return JBIG2_SUCCESS;
+    }
+    if ((nRet == JBIG2_END_OF_PAGE) || (nRet == JBIG2_END_OF_FILE)) {
+      m_pSegment.reset();
+      return JBIG2_SUCCESS;
+    }
+    if (nRet != JBIG2_SUCCESS) {
+      m_pSegment.reset();
+      return nRet;
+    }
+    if (m_pSegment->m_dwData_length != 0xffffffff) {
+      m_dwOffset = m_dwOffset + m_pSegment->m_dwData_length;
+      m_pStream->setOffset(m_dwOffset);
+    } else {
+      m_pStream->offset(4);
+    }
+    m_SegmentList.push_back(m_pSegment.release());
+    if (m_pStream->getByteLeft() > 0 && m_pPage && pPause &&
+        pPause->NeedToPauseNow()) {
+      m_ProcessiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
+      m_PauseStep = 2;
+      return JBIG2_SUCCESS;
+    }
   }
   return JBIG2_SUCCESS;
 }
@@ -182,19 +170,16 @@ int32_t CJBig2_Context::decode_EmbedOrgnazation(IFX_Pause* pPause) {
   return decode_SquentialOrgnazation(pPause);
 }
 int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
-  CJBig2_Segment* pSegment;
   int32_t nRet;
   while (m_pStream->getByteLeft() > JBIG2_MIN_SEGMENT_SIZE) {
-    JBIG2_ALLOC(pSegment, CJBig2_Segment());
-    nRet = parseSegmentHeader(pSegment);
+    nonstd::unique_ptr<CJBig2_Segment> pSegment(new CJBig2_Segment);
+    nRet = parseSegmentHeader(pSegment.get());
     if (nRet != JBIG2_SUCCESS) {
-      delete pSegment;
       return nRet;
     } else if (pSegment->m_cFlags.s.type == 51) {
-      delete pSegment;
       break;
     }
-    m_pSegmentList->addItem(pSegment);
+    m_SegmentList.push_back(pSegment.release());
     if (pPause && m_pPause && pPause->NeedToPauseNow()) {
       m_PauseStep = 3;
       m_ProcessiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -205,14 +190,15 @@ int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
   return decode_RandomOrgnazation(pPause);
 }
 int32_t CJBig2_Context::decode_RandomOrgnazation(IFX_Pause* pPause) {
-  int32_t nRet;
-  for (; m_nSegmentDecoded < m_pSegmentList->getLength(); m_nSegmentDecoded++) {
-    nRet = parseSegmentData(m_pSegmentList->getAt(m_nSegmentDecoded), pPause);
-    if ((nRet == JBIG2_END_OF_PAGE) || (nRet == JBIG2_END_OF_FILE)) {
-      break;
-    } else if (nRet != JBIG2_SUCCESS) {
+  for (; m_nSegmentDecoded < m_SegmentList.size(); ++m_nSegmentDecoded) {
+    int32_t nRet =
+        parseSegmentData(m_SegmentList.get(m_nSegmentDecoded), pPause);
+    if ((nRet == JBIG2_END_OF_PAGE) || (nRet == JBIG2_END_OF_FILE))
+      return JBIG2_SUCCESS;
+
+    if (nRet != JBIG2_SUCCESS)
       return nRet;
-    }
+
     if (m_pPage && pPause && pPause->NeedToPauseNow()) {
       m_PauseStep = 4;
       m_ProcessiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -312,20 +298,19 @@ int32_t CJBig2_Context::getFirstPage(CJBig2_Image** image, IFX_Pause* pPause) {
 }
 CJBig2_Segment* CJBig2_Context::findSegmentByNumber(FX_DWORD dwNumber) {
   CJBig2_Segment* pSeg;
-  int32_t i;
   if (m_pGlobalContext) {
     pSeg = m_pGlobalContext->findSegmentByNumber(dwNumber);
     if (pSeg) {
       return pSeg;
     }
   }
-  for (i = 0; i < m_pSegmentList->getLength(); i++) {
-    pSeg = m_pSegmentList->getAt(i);
+  for (size_t i = 0; i < m_SegmentList.size(); ++i) {
+    pSeg = m_SegmentList.get(i);
     if (pSeg->m_dwNumber == dwNumber) {
       return pSeg;
     }
   }
-  return NULL;
+  return nullptr;
 }
 CJBig2_Segment* CJBig2_Context::findReferredSegmentByTypeAndIndex(
     CJBig2_Segment* pSegment,
@@ -480,23 +465,21 @@ int32_t CJBig2_Context::ProcessiveParseSegmentData(CJBig2_Segment* pSegment,
       }
     case 48: {
       FX_WORD wTemp;
-      JBig2PageInfo* pPageInfo;
-      JBIG2_ALLOC(pPageInfo, JBig2PageInfo);
+      nonstd::unique_ptr<JBig2PageInfo> pPageInfo(new JBig2PageInfo);
       if ((m_pStream->readInteger(&pPageInfo->m_dwWidth) != 0) ||
           (m_pStream->readInteger(&pPageInfo->m_dwHeight) != 0) ||
           (m_pStream->readInteger(&pPageInfo->m_dwResolutionX) != 0) ||
           (m_pStream->readInteger(&pPageInfo->m_dwResolutionY) != 0) ||
           (m_pStream->read1Byte(&pPageInfo->m_cFlags) != 0) ||
           (m_pStream->readShortInteger(&wTemp) != 0)) {
-        delete pPageInfo;
         goto failed1;
       }
       pPageInfo->m_bIsStriped = ((wTemp >> 15) & 1) ? 1 : 0;
       pPageInfo->m_wMaxStripeSize = wTemp & 0x7fff;
       if ((pPageInfo->m_dwHeight == 0xffffffff) &&
-          (pPageInfo->m_bIsStriped != 1)) {
+          (pPageInfo->m_bIsStriped != TRUE)) {
         m_pModule->JBig2_Warn("page height = 0xffffffff buf stripe field is 0");
-        pPageInfo->m_bIsStriped = 1;
+        pPageInfo->m_bIsStriped = TRUE;
       }
       if (!m_bBufSpecified) {
         delete m_pPage;
@@ -509,7 +492,7 @@ int32_t CJBig2_Context::ProcessiveParseSegmentData(CJBig2_Segment* pSegment,
         }
       }
       m_pPage->fill((pPageInfo->m_cFlags & 4) ? 1 : 0);
-      m_pPageInfoList->addItem(pPageInfo);
+      m_PageInfoList.push_back(pPageInfo.release());
       m_nState = JBIG2_IN_PAGE;
     } break;
     case 49:
@@ -653,16 +636,14 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     }
     nIndex = 0;
     if (cSDHUFFDH == 0) {
-      JBIG2_ALLOC(Table_B4, CJBig2_HuffmanTable(HuffmanTable_B4,
-                                                sizeof(HuffmanTable_B4) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B4));
+      Table_B4 = new CJBig2_HuffmanTable(HuffmanTable_B4,
+                                         FX_ArraySize(HuffmanTable_B4),
+                                         HuffmanTable_HTOOB_B4);
       pSymbolDictDecoder->SDHUFFDH = Table_B4;
     } else if (cSDHUFFDH == 1) {
-      JBIG2_ALLOC(Table_B5, CJBig2_HuffmanTable(HuffmanTable_B5,
-                                                sizeof(HuffmanTable_B5) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B5));
+      Table_B5 = new CJBig2_HuffmanTable(HuffmanTable_B5,
+                                         FX_ArraySize(HuffmanTable_B5),
+                                         HuffmanTable_HTOOB_B5);
       pSymbolDictDecoder->SDHUFFDH = Table_B5;
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
@@ -676,16 +657,14 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       pSymbolDictDecoder->SDHUFFDH = pSeg->m_Result.ht;
     }
     if (cSDHUFFDW == 0) {
-      JBIG2_ALLOC(Table_B2, CJBig2_HuffmanTable(HuffmanTable_B2,
-                                                sizeof(HuffmanTable_B2) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B2));
+      Table_B2 = new CJBig2_HuffmanTable(HuffmanTable_B2,
+                                         FX_ArraySize(HuffmanTable_B2),
+                                         HuffmanTable_HTOOB_B2);
       pSymbolDictDecoder->SDHUFFDW = Table_B2;
     } else if (cSDHUFFDW == 1) {
-      JBIG2_ALLOC(Table_B3, CJBig2_HuffmanTable(HuffmanTable_B3,
-                                                sizeof(HuffmanTable_B3) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B3));
+      Table_B3 = new CJBig2_HuffmanTable(HuffmanTable_B3,
+                                         FX_ArraySize(HuffmanTable_B3),
+                                         HuffmanTable_HTOOB_B3);
       pSymbolDictDecoder->SDHUFFDW = Table_B3;
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
@@ -699,10 +678,9 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       pSymbolDictDecoder->SDHUFFDW = pSeg->m_Result.ht;
     }
     if (cSDHUFFBMSIZE == 0) {
-      JBIG2_ALLOC(Table_B1, CJBig2_HuffmanTable(HuffmanTable_B1,
-                                                sizeof(HuffmanTable_B1) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B1));
+      Table_B1 = new CJBig2_HuffmanTable(HuffmanTable_B1,
+                                         FX_ArraySize(HuffmanTable_B1),
+                                         HuffmanTable_HTOOB_B1);
       pSymbolDictDecoder->SDHUFFBMSIZE = Table_B1;
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
@@ -718,10 +696,9 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     if (pSymbolDictDecoder->SDREFAGG == 1) {
       if (cSDHUFFAGGINST == 0) {
         if (!Table_B1) {
-          JBIG2_ALLOC(Table_B1, CJBig2_HuffmanTable(HuffmanTable_B1,
-                                                    sizeof(HuffmanTable_B1) /
-                                                        sizeof(JBig2TableLine),
-                                                    HuffmanTable_HTOOB_B1));
+          Table_B1 = new CJBig2_HuffmanTable(HuffmanTable_B1,
+                                             FX_ArraySize(HuffmanTable_B1),
+                                             HuffmanTable_HTOOB_B1);
         }
         pSymbolDictDecoder->SDHUFFAGGINST = Table_B1;
       } else {
@@ -783,7 +760,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   }
   if (!cache_hit) {
     if (pSymbolDictDecoder->SDHUFF == 0) {
-      JBIG2_ALLOC(pArithDecoder, CJBig2_ArithDecoder(m_pStream));
+      pArithDecoder = new CJBig2_ArithDecoder(m_pStream);
       pSegment->m_Result.sd =
           pSymbolDictDecoder->decode_Arith(pArithDecoder, gbContext, grContext);
       delete pArithDecoder;
@@ -987,16 +964,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     nIndex = 0;
     if (cSBHUFFFS == 0) {
-      JBIG2_ALLOC(Table_B6, CJBig2_HuffmanTable(HuffmanTable_B6,
-                                                sizeof(HuffmanTable_B6) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B6));
+      Table_B6 = new CJBig2_HuffmanTable(HuffmanTable_B6,
+                                         FX_ArraySize(HuffmanTable_B6),
+                                         HuffmanTable_HTOOB_B6);
       pTRD->SBHUFFFS = Table_B6;
     } else if (cSBHUFFFS == 1) {
-      JBIG2_ALLOC(Table_B7, CJBig2_HuffmanTable(HuffmanTable_B7,
-                                                sizeof(HuffmanTable_B7) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B7));
+      Table_B7 = new CJBig2_HuffmanTable(HuffmanTable_B7,
+                                         FX_ArraySize(HuffmanTable_B7),
+                                         HuffmanTable_HTOOB_B7);
       pTRD->SBHUFFFS = Table_B7;
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
@@ -1009,22 +984,19 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFFS = pSeg->m_Result.ht;
     }
     if (cSBHUFFDS == 0) {
-      JBIG2_ALLOC(Table_B8, CJBig2_HuffmanTable(HuffmanTable_B8,
-                                                sizeof(HuffmanTable_B8) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B8));
+      Table_B8 = new CJBig2_HuffmanTable(HuffmanTable_B8,
+                                         FX_ArraySize(HuffmanTable_B8),
+                                         HuffmanTable_HTOOB_B8);
       pTRD->SBHUFFDS = Table_B8;
     } else if (cSBHUFFDS == 1) {
-      JBIG2_ALLOC(Table_B9, CJBig2_HuffmanTable(HuffmanTable_B9,
-                                                sizeof(HuffmanTable_B9) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B9));
+      Table_B9 = new CJBig2_HuffmanTable(HuffmanTable_B9,
+                                         FX_ArraySize(HuffmanTable_B9),
+                                         HuffmanTable_HTOOB_B9);
       pTRD->SBHUFFDS = Table_B9;
     } else if (cSBHUFFDS == 2) {
-      JBIG2_ALLOC(Table_B10, CJBig2_HuffmanTable(HuffmanTable_B10,
-                                                 sizeof(HuffmanTable_B10) /
-                                                     sizeof(JBig2TableLine),
-                                                 HuffmanTable_HTOOB_B10));
+      Table_B10 = new CJBig2_HuffmanTable(HuffmanTable_B10,
+                                          FX_ArraySize(HuffmanTable_B10),
+                                          HuffmanTable_HTOOB_B10);
       pTRD->SBHUFFDS = Table_B10;
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
@@ -1037,22 +1009,19 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDS = pSeg->m_Result.ht;
     }
     if (cSBHUFFDT == 0) {
-      JBIG2_ALLOC(Table_B11, CJBig2_HuffmanTable(HuffmanTable_B11,
-                                                 sizeof(HuffmanTable_B11) /
-                                                     sizeof(JBig2TableLine),
-                                                 HuffmanTable_HTOOB_B11));
+      Table_B11 = new CJBig2_HuffmanTable(HuffmanTable_B11,
+                                          FX_ArraySize(HuffmanTable_B11),
+                                          HuffmanTable_HTOOB_B11);
       pTRD->SBHUFFDT = Table_B11;
     } else if (cSBHUFFDT == 1) {
-      JBIG2_ALLOC(Table_B12, CJBig2_HuffmanTable(HuffmanTable_B12,
-                                                 sizeof(HuffmanTable_B12) /
-                                                     sizeof(JBig2TableLine),
-                                                 HuffmanTable_HTOOB_B12));
+      Table_B12 = new CJBig2_HuffmanTable(HuffmanTable_B12,
+                                          FX_ArraySize(HuffmanTable_B12),
+                                          HuffmanTable_HTOOB_B12);
       pTRD->SBHUFFDT = Table_B12;
     } else if (cSBHUFFDT == 2) {
-      JBIG2_ALLOC(Table_B13, CJBig2_HuffmanTable(HuffmanTable_B13,
-                                                 sizeof(HuffmanTable_B13) /
-                                                     sizeof(JBig2TableLine),
-                                                 HuffmanTable_HTOOB_B13));
+      Table_B13 = new CJBig2_HuffmanTable(HuffmanTable_B13,
+                                          FX_ArraySize(HuffmanTable_B13),
+                                          HuffmanTable_HTOOB_B13);
       pTRD->SBHUFFDT = Table_B13;
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
@@ -1065,16 +1034,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDT = pSeg->m_Result.ht;
     }
     if (cSBHUFFRDW == 0) {
-      JBIG2_ALLOC(Table_B14, CJBig2_HuffmanTable(HuffmanTable_B14,
-                                                 sizeof(HuffmanTable_B14) /
-                                                     sizeof(JBig2TableLine),
-                                                 HuffmanTable_HTOOB_B14));
+      Table_B14 = new CJBig2_HuffmanTable(HuffmanTable_B14,
+                                          FX_ArraySize(HuffmanTable_B14),
+                                          HuffmanTable_HTOOB_B14);
       pTRD->SBHUFFRDW = Table_B14;
     } else if (cSBHUFFRDW == 1) {
-      JBIG2_ALLOC(Table_B15, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                 sizeof(HuffmanTable_B15) /
-                                                     sizeof(JBig2TableLine),
-                                                 HuffmanTable_HTOOB_B15));
+      Table_B15 = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                          FX_ArraySize(HuffmanTable_B15),
+                                          HuffmanTable_HTOOB_B15);
       pTRD->SBHUFFRDW = Table_B15;
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
@@ -1088,18 +1055,16 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     if (cSBHUFFRDH == 0) {
       if (!Table_B14) {
-        JBIG2_ALLOC(Table_B14, CJBig2_HuffmanTable(HuffmanTable_B14,
-                                                   sizeof(HuffmanTable_B14) /
-                                                       sizeof(JBig2TableLine),
-                                                   HuffmanTable_HTOOB_B14));
+        Table_B14 = new CJBig2_HuffmanTable(HuffmanTable_B14,
+                                            FX_ArraySize(HuffmanTable_B14),
+                                            HuffmanTable_HTOOB_B14);
       }
       pTRD->SBHUFFRDH = Table_B14;
     } else if (cSBHUFFRDH == 1) {
       if (!Table_B15) {
-        JBIG2_ALLOC(Table_B15, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                   sizeof(HuffmanTable_B15) /
-                                                       sizeof(JBig2TableLine),
-                                                   HuffmanTable_HTOOB_B15));
+        Table_B15 = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                            FX_ArraySize(HuffmanTable_B15),
+                                            HuffmanTable_HTOOB_B15);
       }
       pTRD->SBHUFFRDH = Table_B15;
     } else {
@@ -1114,18 +1079,16 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     if (cSBHUFFRDX == 0) {
       if (!Table_B14) {
-        JBIG2_ALLOC(Table_B14, CJBig2_HuffmanTable(HuffmanTable_B14,
-                                                   sizeof(HuffmanTable_B14) /
-                                                       sizeof(JBig2TableLine),
-                                                   HuffmanTable_HTOOB_B14));
+        Table_B14 = new CJBig2_HuffmanTable(HuffmanTable_B14,
+                                            FX_ArraySize(HuffmanTable_B14),
+                                            HuffmanTable_HTOOB_B14);
       }
       pTRD->SBHUFFRDX = Table_B14;
     } else if (cSBHUFFRDX == 1) {
       if (!Table_B15) {
-        JBIG2_ALLOC(Table_B15, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                   sizeof(HuffmanTable_B15) /
-                                                       sizeof(JBig2TableLine),
-                                                   HuffmanTable_HTOOB_B15));
+        Table_B15 = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                            FX_ArraySize(HuffmanTable_B15),
+                                            HuffmanTable_HTOOB_B15);
       }
       pTRD->SBHUFFRDX = Table_B15;
     } else {
@@ -1140,18 +1103,16 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     if (cSBHUFFRDY == 0) {
       if (!Table_B14) {
-        JBIG2_ALLOC(Table_B14, CJBig2_HuffmanTable(HuffmanTable_B14,
-                                                   sizeof(HuffmanTable_B14) /
-                                                       sizeof(JBig2TableLine),
-                                                   HuffmanTable_HTOOB_B14));
+        Table_B14 = new CJBig2_HuffmanTable(HuffmanTable_B14,
+                                            FX_ArraySize(HuffmanTable_B14),
+                                            HuffmanTable_HTOOB_B14);
       }
       pTRD->SBHUFFRDY = Table_B14;
     } else if (cSBHUFFRDY == 1) {
       if (!Table_B15) {
-        JBIG2_ALLOC(Table_B15, CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                   sizeof(HuffmanTable_B15) /
-                                                       sizeof(JBig2TableLine),
-                                                   HuffmanTable_HTOOB_B15));
+        Table_B15 = new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                            FX_ArraySize(HuffmanTable_B15),
+                                            HuffmanTable_HTOOB_B15);
       }
       pTRD->SBHUFFRDY = Table_B15;
     } else {
@@ -1165,10 +1126,9 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDY = pSeg->m_Result.ht;
     }
     if (cSBHUFFRSIZE == 0) {
-      JBIG2_ALLOC(Table_B1, CJBig2_HuffmanTable(HuffmanTable_B1,
-                                                sizeof(HuffmanTable_B1) /
-                                                    sizeof(JBig2TableLine),
-                                                HuffmanTable_HTOOB_B1));
+      Table_B1 = new CJBig2_HuffmanTable(HuffmanTable_B1,
+                                         FX_ArraySize(HuffmanTable_B1),
+                                         HuffmanTable_HTOOB_B1);
       pTRD->SBHUFFRSIZE = Table_B1;
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
@@ -1188,7 +1148,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     JBIG2_memset(grContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
   }
   if (pTRD->SBHUFF == 0) {
-    JBIG2_ALLOC(pArithDecoder, CJBig2_ArithDecoder(m_pStream));
+    pArithDecoder = new CJBig2_ArithDecoder(m_pStream);
     pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
     pSegment->m_Result.im = pTRD->decode_Arith(pArithDecoder, grContext);
     delete pArithDecoder;
@@ -1209,7 +1169,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   }
   if (pSegment->m_cFlags.s.type != 4) {
     if (!m_bBufSpecified) {
-      JBig2PageInfo* pPageInfo = m_pPageInfoList->getLast();
+      JBig2PageInfo* pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (ri.y + ri.height > m_pPage->m_nHeight)) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
@@ -1299,7 +1259,7 @@ int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
     gbContext =
         (JBig2ArithCtx*)m_pModule->JBig2_Malloc2(sizeof(JBig2ArithCtx), dwTemp);
     JBIG2_memset(gbContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
-    JBIG2_ALLOC(pArithDecoder, CJBig2_ArithDecoder(m_pStream));
+    pArithDecoder = new CJBig2_ArithDecoder(m_pStream);
     pSegment->m_Result.pd =
         pPDD->decode_Arith(pArithDecoder, gbContext, pPause);
     delete pArithDecoder;
@@ -1385,7 +1345,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     gbContext =
         (JBig2ArithCtx*)m_pModule->JBig2_Malloc2(sizeof(JBig2ArithCtx), dwTemp);
     JBIG2_memset(gbContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
-    JBIG2_ALLOC(pArithDecoder, CJBig2_ArithDecoder(m_pStream));
+    pArithDecoder = new CJBig2_ArithDecoder(m_pStream);
     pSegment->m_Result.im =
         pHRD->decode_Arith(pArithDecoder, gbContext, pPause);
     delete pArithDecoder;
@@ -1407,7 +1367,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
   }
   if (pSegment->m_cFlags.s.type != 20) {
     if (!m_bBufSpecified) {
-      JBig2PageInfo* pPageInfo = m_pPageInfoList->getLast();
+      JBig2PageInfo* pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (ri.y + ri.height > m_pPage->m_nHeight)) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
@@ -1481,7 +1441,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
       JBIG2_memset(m_gbContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
     }
     if (m_pArithDecoder == NULL) {
-      JBIG2_ALLOC(m_pArithDecoder, CJBig2_ArithDecoder(m_pStream));
+      m_pArithDecoder = new CJBig2_ArithDecoder(m_pStream);
       m_ProcessiveStatus = m_pGRD->Start_decode_Arith(
           &pSegment->m_Result.im, m_pArithDecoder, m_gbContext, pPause);
     } else {
@@ -1490,7 +1450,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     if (m_ProcessiveStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       if (pSegment->m_cFlags.s.type != 36) {
         if (!m_bBufSpecified) {
-          JBig2PageInfo* pPageInfo = m_pPageInfoList->getLast();
+          JBig2PageInfo* pPageInfo = m_PageInfoList.back();
           if ((pPageInfo->m_bIsStriped == 1) &&
               (m_ri.y + m_ri.height > m_pPage->m_nHeight)) {
             m_pPage->expand(m_ri.y + m_ri.height,
@@ -1532,7 +1492,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
   }
   if (pSegment->m_cFlags.s.type != 36) {
     if (!m_bBufSpecified) {
-      JBig2PageInfo* pPageInfo = m_pPageInfoList->getLast();
+      JBig2PageInfo* pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (m_ri.y + m_ri.height > m_pPage->m_nHeight)) {
         m_pPage->expand(m_ri.y + m_ri.height,
@@ -1619,7 +1579,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   grContext =
       (JBig2ArithCtx*)m_pModule->JBig2_Malloc2(sizeof(JBig2ArithCtx), dwTemp);
   JBIG2_memset(grContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
-  JBIG2_ALLOC(pArithDecoder, CJBig2_ArithDecoder(m_pStream));
+  pArithDecoder = new CJBig2_ArithDecoder(m_pStream);
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   pSegment->m_Result.im = pGRRD->decode(pArithDecoder, grContext);
   delete pArithDecoder;
@@ -1633,7 +1593,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   m_pStream->offset(2);
   if (pSegment->m_cFlags.s.type != 40) {
     if (!m_bBufSpecified) {
-      JBig2PageInfo* pPageInfo = m_pPageInfoList->getLast();
+      JBig2PageInfo* pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (ri.y + ri.height > m_pPage->m_nHeight)) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
@@ -1652,7 +1612,7 @@ failed:
 }
 int32_t CJBig2_Context::parseTable(CJBig2_Segment* pSegment) {
   pSegment->m_nResultType = JBIG2_HUFFMAN_TABLE_POINTER;
-  JBIG2_ALLOC(pSegment->m_Result.ht, CJBig2_HuffmanTable(m_pStream));
+  pSegment->m_Result.ht = new CJBig2_HuffmanTable(m_pStream);
   if (!pSegment->m_Result.ht->isOK()) {
     delete pSegment->m_Result.ht;
     pSegment->m_Result.ht = NULL;

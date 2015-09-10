@@ -8,7 +8,7 @@
 #define _JBIG2_ARITH_INT_DECODER_H_
 #include "JBig2_Module.h"
 #include "JBig2_ArithDecoder.h"
-class CJBig2_ArithIntDecoder : public CJBig2_Object {
+class CJBig2_ArithIntDecoder {
  public:
   CJBig2_ArithIntDecoder();
 
@@ -19,7 +19,7 @@ class CJBig2_ArithIntDecoder : public CJBig2_Object {
  private:
   JBig2ArithCtx* IAx;
 };
-class CJBig2_ArithIaidDecoder : public CJBig2_Object {
+class CJBig2_ArithIaidDecoder {
  public:
   CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA);
 
