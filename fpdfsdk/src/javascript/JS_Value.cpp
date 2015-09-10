@@ -39,7 +39,7 @@ CJS_Value::CJS_Value(v8::Isolate* isolate, const double& dValue)
   operator=(dValue);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, JSFXObject pJsObj)
+CJS_Value::CJS_Value(v8::Isolate* isolate, v8::Local<v8::Object> pJsObj)
     : m_isolate(isolate) {
   operator=(pJsObj);
 }
@@ -53,7 +53,7 @@ CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Document* pJsDoc)
     : m_isolate(isolate) {
   m_eType = VT_object;
   if (pJsDoc)
-    m_pValue = (JSFXObject)*pJsDoc;
+    m_pValue = (v8::Local<v8::Object>)*pJsDoc;
 }
 
 CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_WCHAR* pWstr)
@@ -168,13 +168,13 @@ void CJS_Value::operator=(v8::Local<v8::Object> pObj) {
 
 void CJS_Value::operator=(CJS_Object* pObj) {
   if (pObj)
-    operator=((JSFXObject)*pObj);
+    operator=((v8::Local<v8::Object>)*pObj);
 }
 
 void CJS_Value::operator=(CJS_Document* pJsDoc) {
   m_eType = VT_object;
   if (pJsDoc) {
-    m_pValue = static_cast<JSFXObject>(*pJsDoc);
+    m_pValue = static_cast<v8::Local<v8::Object>>(*pJsDoc);
   }
 }
 
@@ -341,12 +341,12 @@ void CJS_PropValue::operator>>(CJS_Document*& ppJsDoc) const {
   ppJsDoc = static_cast<CJS_Document*>(CJS_Value::ToCJSObject());
 }
 
-void CJS_PropValue::operator<<(JSFXObject pObj) {
+void CJS_PropValue::operator<<(v8::Local<v8::Object> pObj) {
   ASSERT(!m_bIsSetting);
   CJS_Value::operator=(pObj);
 }
 
-void CJS_PropValue::operator>>(JSFXObject& ppObj) const {
+void CJS_PropValue::operator>>(v8::Local<v8::Object>& ppObj) const {
   ASSERT(m_bIsSetting);
   ppObj = CJS_Value::ToV8Object();
 }

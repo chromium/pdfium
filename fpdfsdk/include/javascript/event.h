@@ -59,7 +59,7 @@ class event : public CJS_EmbedObj {
 
 class CJS_Event : public CJS_Object {
  public:
-  CJS_Event(JSFXObject pObject) : CJS_Object(pObject) {}
+  CJS_Event(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Event() override {}
 
   DECLARE_JS_CLASS(CJS_Event);

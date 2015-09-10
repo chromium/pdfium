@@ -60,7 +60,7 @@ class color : public CJS_EmbedObj {
 
 class CJS_Color : public CJS_Object {
  public:
-  CJS_Color(JSFXObject pObject) : CJS_Object(pObject) {}
+  CJS_Color(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Color() override {}
 
   DECLARE_JS_CLASS(CJS_Color);

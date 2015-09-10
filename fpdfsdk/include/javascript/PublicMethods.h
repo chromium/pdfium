@@ -11,7 +11,7 @@
 
 class CJS_PublicMethods : public CJS_Object {
  public:
-  CJS_PublicMethods(JSFXObject pObject) : CJS_Object(pObject) {}
+  CJS_PublicMethods(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_PublicMethods() override {}
 
  public:

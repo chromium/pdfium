@@ -40,7 +40,7 @@ class CJS_Runtime : public IFXJS_Runtime {
   void SetReaderDocument(CPDFSDK_Document* pReaderDoc) override;
   CPDFSDK_Document* GetReaderDocument() override { return m_pDocument; }
 
-  CPDFDoc_Environment* GetReaderApp() { return m_pApp; }
+  CPDFDoc_Environment* GetReaderApp() const { return m_pApp; }
 
   FX_BOOL InitJSObjects();
 
@@ -52,12 +52,9 @@ class CJS_Runtime : public IFXJS_Runtime {
 
   void BeginBlock() { m_bBlocking = TRUE; }
   void EndBlock() { m_bBlocking = FALSE; }
-  FX_BOOL IsBlocking() { return m_bBlocking; }
+  FX_BOOL IsBlocking() const { return m_bBlocking; }
 
-  operator IJS_Runtime*() { return (IJS_Runtime*)m_isolate; }
-  v8::Isolate* GetIsolate() { return m_isolate; }
-  void SetIsolate(v8::Isolate* isolate) { m_isolate = isolate; }
-
+  v8::Isolate* GetIsolate() const { return m_isolate; }
   v8::Local<v8::Context> NewJSContext();
 
   virtual FX_BOOL GetHValueByName(const CFX_ByteStringC& utf8Name,
@@ -71,7 +68,6 @@ class CJS_Runtime : public IFXJS_Runtime {
   CPDFSDK_Document* m_pDocument;
   FX_BOOL m_bBlocking;
   CJS_FieldEvent* m_pFieldEventPath;
-
   v8::Isolate* m_isolate;
   bool m_isolateManaged;
   nonstd::unique_ptr<CJS_ArrayBufferAllocator> m_pArrayBufferAllocator;

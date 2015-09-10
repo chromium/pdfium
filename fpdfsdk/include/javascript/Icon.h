@@ -27,7 +27,7 @@ class Icon : public CJS_EmbedObj {
 
 class CJS_Icon : public CJS_Object {
  public:
-  CJS_Icon(JSFXObject pObject) : CJS_Object(pObject) {}
+  CJS_Icon(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Icon() override {}
 
  public:

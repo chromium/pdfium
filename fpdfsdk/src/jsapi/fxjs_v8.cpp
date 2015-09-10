@@ -75,37 +75,35 @@ class CJS_ObjDefintion {
   v8::Global<v8::Object> m_StaticObj;
 };
 
-int JS_DefineObj(IJS_Runtime* pJSRuntime,
+int JS_DefineObj(v8::Isolate* pIsolate,
                  const wchar_t* sObjName,
                  FXJSOBJTYPE eObjType,
                  LP_CONSTRUCTOR pConstructor,
                  LP_DESTRUCTOR pDestructor) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray) {
     pArray = new CFX_PtrArray();
-    isolate->SetData(g_embedderDataSlot, pArray);
+    pIsolate->SetData(g_embedderDataSlot, pArray);
   }
-  CJS_ObjDefintion* pObjDef = new CJS_ObjDefintion(isolate, sObjName, eObjType,
+  CJS_ObjDefintion* pObjDef = new CJS_ObjDefintion(pIsolate, sObjName, eObjType,
                                                    pConstructor, pDestructor);
   pArray->Add(pObjDef);
   return pArray->GetSize() - 1;
 }
 
-int JS_DefineObjMethod(IJS_Runtime* pJSRuntime,
+int JS_DefineObjMethod(v8::Isolate* pIsolate,
                        int nObjDefnID,
                        const wchar_t* sMethodName,
                        v8::FunctionCallback pMethodCall) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
 
   CFX_WideString ws = CFX_WideString(sMethodName);
   CFX_ByteString bsMethodName = ws.UTF8Encode();
 
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return 0;
 
@@ -113,28 +111,27 @@ int JS_DefineObjMethod(IJS_Runtime* pJSRuntime,
     return 0;
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
   v8::Local<v8::ObjectTemplate> objTemp =
-      v8::Local<v8::ObjectTemplate>::New(isolate, pObjDef->m_objTemplate);
-  objTemp->Set(v8::String::NewFromUtf8(isolate, bsMethodName.c_str(),
-                                       v8::NewStringType::kNormal)
-                   .ToLocalChecked(),
-               v8::FunctionTemplate::New(isolate, pMethodCall), v8::ReadOnly);
-  pObjDef->m_objTemplate.Reset(isolate, objTemp);
+      v8::Local<v8::ObjectTemplate>::New(pIsolate, pObjDef->m_objTemplate);
+  objTemp->Set(
+      v8::String::NewFromUtf8(pIsolate, bsMethodName.c_str(),
+                              v8::NewStringType::kNormal).ToLocalChecked(),
+      v8::FunctionTemplate::New(pIsolate, pMethodCall), v8::ReadOnly);
+  pObjDef->m_objTemplate.Reset(pIsolate, objTemp);
   return 0;
 }
 
-int JS_DefineObjProperty(IJS_Runtime* pJSRuntime,
+int JS_DefineObjProperty(v8::Isolate* pIsolate,
                          int nObjDefnID,
                          const wchar_t* sPropName,
                          v8::AccessorGetterCallback pPropGet,
                          v8::AccessorSetterCallback pPropPut) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
 
   CFX_WideString ws = CFX_WideString(sPropName);
   CFX_ByteString bsPropertyName = ws.UTF8Encode();
 
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return 0;
 
@@ -142,26 +139,25 @@ int JS_DefineObjProperty(IJS_Runtime* pJSRuntime,
     return 0;
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
   v8::Local<v8::ObjectTemplate> objTemp =
-      v8::Local<v8::ObjectTemplate>::New(isolate, pObjDef->m_objTemplate);
-  objTemp->SetAccessor(v8::String::NewFromUtf8(isolate, bsPropertyName.c_str(),
-                                               v8::NewStringType::kNormal)
-                           .ToLocalChecked(),
-                       pPropGet, pPropPut);
-  pObjDef->m_objTemplate.Reset(isolate, objTemp);
+      v8::Local<v8::ObjectTemplate>::New(pIsolate, pObjDef->m_objTemplate);
+  objTemp->SetAccessor(
+      v8::String::NewFromUtf8(pIsolate, bsPropertyName.c_str(),
+                              v8::NewStringType::kNormal).ToLocalChecked(),
+      pPropGet, pPropPut);
+  pObjDef->m_objTemplate.Reset(pIsolate, objTemp);
   return 0;
 }
 
-int JS_DefineObjAllProperties(IJS_Runtime* pJSRuntime,
+int JS_DefineObjAllProperties(v8::Isolate* pIsolate,
                               int nObjDefnID,
                               v8::NamedPropertyQueryCallback pPropQurey,
                               v8::NamedPropertyGetterCallback pPropGet,
                               v8::NamedPropertySetterCallback pPropPut,
                               v8::NamedPropertyDeleterCallback pPropDel) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
 
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return 0;
 
@@ -169,21 +165,20 @@ int JS_DefineObjAllProperties(IJS_Runtime* pJSRuntime,
     return 0;
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
   v8::Local<v8::ObjectTemplate> objTemp =
-      v8::Local<v8::ObjectTemplate>::New(isolate, pObjDef->m_objTemplate);
+      v8::Local<v8::ObjectTemplate>::New(pIsolate, pObjDef->m_objTemplate);
   objTemp->SetNamedPropertyHandler(pPropGet, pPropPut, pPropQurey, pPropDel);
-  pObjDef->m_objTemplate.Reset(isolate, objTemp);
+  pObjDef->m_objTemplate.Reset(pIsolate, objTemp);
   return 0;
 }
 
-int JS_DefineObjConst(IJS_Runtime* pJSRuntime,
+int JS_DefineObjConst(v8::Isolate* pIsolate,
                       int nObjDefnID,
                       const wchar_t* sConstName,
                       v8::Local<v8::Value> pDefault) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
 
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return 0;
 
@@ -194,19 +189,18 @@ int JS_DefineObjConst(IJS_Runtime* pJSRuntime,
     return 0;
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
   v8::Local<v8::ObjectTemplate> objTemp =
-      v8::Local<v8::ObjectTemplate>::New(isolate, pObjDef->m_objTemplate);
-  objTemp->Set(isolate, bsConstName.c_str(), pDefault);
-  pObjDef->m_objTemplate.Reset(isolate, objTemp);
+      v8::Local<v8::ObjectTemplate>::New(pIsolate, pObjDef->m_objTemplate);
+  objTemp->Set(pIsolate, bsConstName.c_str(), pDefault);
+  pObjDef->m_objTemplate.Reset(pIsolate, objTemp);
   return 0;
 }
 
 static v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(
-    IJS_Runtime* pJSRuntime) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+    v8::Isolate* pIsolate) {
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
 
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   ASSERT(pArray != NULL);
   for (int i = 0; i < pArray->GetSize(); i++) {
     CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(i);
@@ -217,42 +211,40 @@ static v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(
   return gloabalObjectTemplate;
 }
 
-int JS_DefineGlobalMethod(IJS_Runtime* pJSRuntime,
+int JS_DefineGlobalMethod(v8::Isolate* pIsolate,
                           const wchar_t* sMethodName,
                           v8::FunctionCallback pMethodCall) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
 
   CFX_WideString ws = CFX_WideString(sMethodName);
   CFX_ByteString bsMethodName = ws.UTF8Encode();
 
   v8::Local<v8::FunctionTemplate> funTempl =
-      v8::FunctionTemplate::New(isolate, pMethodCall);
+      v8::FunctionTemplate::New(pIsolate, pMethodCall);
   v8::Local<v8::ObjectTemplate> objTemp;
 
   v8::Global<v8::ObjectTemplate>& globalObjTemp =
-      _getGlobalObjectTemplate(pJSRuntime);
+      _getGlobalObjectTemplate(pIsolate);
   if (globalObjTemp.IsEmpty())
-    objTemp = v8::ObjectTemplate::New(isolate);
+    objTemp = v8::ObjectTemplate::New(pIsolate);
   else
-    objTemp = v8::Local<v8::ObjectTemplate>::New(isolate, globalObjTemp);
-  objTemp->Set(v8::String::NewFromUtf8(isolate, bsMethodName.c_str(),
-                                       v8::NewStringType::kNormal)
-                   .ToLocalChecked(),
-               funTempl, v8::ReadOnly);
+    objTemp = v8::Local<v8::ObjectTemplate>::New(pIsolate, globalObjTemp);
+  objTemp->Set(
+      v8::String::NewFromUtf8(pIsolate, bsMethodName.c_str(),
+                              v8::NewStringType::kNormal).ToLocalChecked(),
+      funTempl, v8::ReadOnly);
 
-  globalObjTemp.Reset(isolate, objTemp);
+  globalObjTemp.Reset(pIsolate, objTemp);
 
   return 0;
 }
 
-int JS_DefineGlobalConst(IJS_Runtime* pJSRuntime,
+int JS_DefineGlobalConst(v8::Isolate* pIsolate,
                          const wchar_t* sConstName,
                          v8::Local<v8::Value> pDefault) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
 
   CFX_WideString ws = CFX_WideString(sConstName);
   CFX_ByteString bsConst = ws.UTF8Encode();
@@ -260,43 +252,42 @@ int JS_DefineGlobalConst(IJS_Runtime* pJSRuntime,
   v8::Local<v8::ObjectTemplate> objTemp;
 
   v8::Global<v8::ObjectTemplate>& globalObjTemp =
-      _getGlobalObjectTemplate(pJSRuntime);
+      _getGlobalObjectTemplate(pIsolate);
   if (globalObjTemp.IsEmpty())
-    objTemp = v8::ObjectTemplate::New(isolate);
+    objTemp = v8::ObjectTemplate::New(pIsolate);
   else
-    objTemp = v8::Local<v8::ObjectTemplate>::New(isolate, globalObjTemp);
-  objTemp->Set(v8::String::NewFromUtf8(isolate, bsConst.c_str(),
-                                       v8::NewStringType::kNormal)
-                   .ToLocalChecked(),
-               pDefault, v8::ReadOnly);
+    objTemp = v8::Local<v8::ObjectTemplate>::New(pIsolate, globalObjTemp);
+  objTemp->Set(
+      v8::String::NewFromUtf8(pIsolate, bsConst.c_str(),
+                              v8::NewStringType::kNormal).ToLocalChecked(),
+      pDefault, v8::ReadOnly);
 
-  globalObjTemp.Reset(isolate, objTemp);
+  globalObjTemp.Reset(pIsolate, objTemp);
 
   return 0;
 }
 
-void JS_InitialRuntime(IJS_Runtime* pJSRuntime,
+void JS_InitialRuntime(v8::Isolate* pIsolate,
                        IFXJS_Runtime* pFXRuntime,
                        IFXJS_Context* context,
                        v8::Global<v8::Context>& v8PersistentContext) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::Locker locker(isolate);
-  v8::HandleScope handle_scope(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::Locker locker(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
 
   v8::Global<v8::ObjectTemplate>& globalObjTemp =
-      _getGlobalObjectTemplate(pJSRuntime);
+      _getGlobalObjectTemplate(pIsolate);
   v8::Local<v8::Context> v8Context = v8::Context::New(
-      isolate, NULL,
-      v8::Local<v8::ObjectTemplate>::New(isolate, globalObjTemp));
+      pIsolate, NULL,
+      v8::Local<v8::ObjectTemplate>::New(pIsolate, globalObjTemp));
   v8::Context::Scope context_scope(v8Context);
 
   // v8::Local<External> ptr = External::New(isolate, pFXRuntime);
   // v8Context->SetEmbedderData(1, ptr);
   // TODO(tsepez): Don't use more than one embedder data slot.
-  isolate->SetData(2, pFXRuntime);
+  pIsolate->SetData(2, pFXRuntime);
 
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return;
 
@@ -305,9 +296,9 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,
     CFX_WideString ws = CFX_WideString(pObjDef->objName);
     CFX_ByteString bs = ws.UTF8Encode();
     v8::Local<v8::String> objName =
-        v8::String::NewFromUtf8(isolate, bs.c_str(), v8::NewStringType::kNormal,
-                                bs.GetLength())
-            .ToLocalChecked();
+        v8::String::NewFromUtf8(pIsolate, bs.c_str(),
+                                v8::NewStringType::kNormal,
+                                bs.GetLength()).ToLocalChecked();
 
     if (pObjDef->objType == JS_DYNAMIC) {
       // Document is set as global object, need to construct it first.
@@ -333,22 +324,24 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,
                                       .ToLocalChecked());
       }
     } else {
-      v8::Local<v8::Object> obj = JS_NewFxDynamicObj(pJSRuntime, context, i);
+      v8::Local<v8::Object> obj = JS_NewFxDynamicObj(pIsolate, context, i);
       v8Context->Global()->Set(v8Context, objName, obj).FromJust();
-      pObjDef->m_StaticObj.Reset(isolate, obj);
+      pObjDef->m_StaticObj.Reset(pIsolate, obj);
     }
   }
-  v8PersistentContext.Reset(isolate, v8Context);
+  v8PersistentContext.Reset(pIsolate, v8Context);
 }
 
-void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime,
+void JS_ReleaseRuntime(v8::Isolate* pIsolate,
                        v8::Global<v8::Context>& v8PersistentContext) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::Locker locker(isolate);
-  v8::HandleScope handle_scope(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::Locker locker(pIsolate);
+  v8::HandleScope handle_scope(pIsolate);
+  v8::Local<v8::Context> context =
+      v8::Local<v8::Context>::New(pIsolate, v8PersistentContext);
+  v8::Context::Scope context_scope(context);
 
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return;
 
@@ -356,7 +349,7 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime,
     CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(i);
     if (!pObjDef->m_StaticObj.IsEmpty()) {
       v8::Local<v8::Object> pObj =
-          v8::Local<v8::Object>::New(isolate, pObjDef->m_StaticObj);
+          v8::Local<v8::Object>::New(pIsolate, pObjDef->m_StaticObj);
       if (pObjDef->m_pDestructor)
         pObjDef->m_pDestructor(pObj);
       JS_FreePrivate(pObj);
@@ -364,10 +357,11 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime,
     delete pObjDef;
   }
   delete pArray;
-  isolate->SetData(1, NULL);
-  isolate->SetData(g_embedderDataSlot, NULL);
+
+  pIsolate->SetData(1, NULL);
+  pIsolate->SetData(g_embedderDataSlot, NULL);
   // TODO(tsepez): Don't use more than one embedder data slot.
-  isolate->SetData(2, NULL);
+  pIsolate->SetData(2, NULL);
 }
 
 void JS_Initial(unsigned int embedderDataSlot) {
@@ -377,25 +371,23 @@ void JS_Initial(unsigned int embedderDataSlot) {
 void JS_Release() {
 }
 
-int JS_Execute(IJS_Runtime* pJSRuntime,
+int JS_Execute(v8::Isolate* pIsolate,
                IFXJS_Context* pJSContext,
                const wchar_t* script,
                long length,
                FXJSErr* perror) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::TryCatch try_catch(isolate);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::TryCatch try_catch(pIsolate);
 
   CFX_WideString wsScript(script);
   CFX_ByteString bsScript = wsScript.UTF8Encode();
 
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   v8::Local<v8::Script> compiled_script;
-  if (!v8::Script::Compile(context,
-                           v8::String::NewFromUtf8(isolate, bsScript.c_str(),
-                                                   v8::NewStringType::kNormal,
-                                                   bsScript.GetLength())
-                               .ToLocalChecked())
+  if (!v8::Script::Compile(
+           context, v8::String::NewFromUtf8(
+                        pIsolate, bsScript.c_str(), v8::NewStringType::kNormal,
+                        bsScript.GetLength()).ToLocalChecked())
            .ToLocal(&compiled_script)) {
     v8::String::Utf8Value error(try_catch.Exception());
     return -1;
@@ -409,21 +401,20 @@ int JS_Execute(IJS_Runtime* pJSRuntime,
   return 0;
 }
 
-v8::Local<v8::Object> JS_NewFxDynamicObj(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Object> JS_NewFxDynamicObj(v8::Isolate* pIsolate,
                                          IFXJS_Context* pJSContext,
                                          int nObjDefnID) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   if (-1 == nObjDefnID) {
-    v8::Local<v8::ObjectTemplate> objTempl = v8::ObjectTemplate::New(isolate);
+    v8::Local<v8::ObjectTemplate> objTempl = v8::ObjectTemplate::New(pIsolate);
     v8::Local<v8::Object> obj;
     if (objTempl->NewInstance(context).ToLocal(&obj))
       return obj;
     return v8::Local<v8::Object>();
   }
 
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return v8::Local<v8::Object>();
 
@@ -432,7 +423,7 @@ v8::Local<v8::Object> JS_NewFxDynamicObj(IJS_Runtime* pJSRuntime,
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
 
   v8::Local<v8::ObjectTemplate> objTemp =
-      v8::Local<v8::ObjectTemplate>::New(isolate, pObjDef->m_objTemplate);
+      v8::Local<v8::ObjectTemplate>::New(pIsolate, pObjDef->m_objTemplate);
   v8::Local<v8::Object> obj;
   if (!objTemp->NewInstance(context).ToLocal(&obj))
     return v8::Local<v8::Object>();
@@ -448,11 +439,9 @@ v8::Local<v8::Object> JS_NewFxDynamicObj(IJS_Runtime* pJSRuntime,
   return obj;
 }
 
-v8::Local<v8::Object> JS_GetStaticObj(IJS_Runtime* pJSRuntime, int nObjDefnID) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+v8::Local<v8::Object> JS_GetStaticObj(v8::Isolate* pIsolate, int nObjDefnID) {
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return v8::Local<v8::Object>();
 
@@ -460,23 +449,18 @@ v8::Local<v8::Object> JS_GetStaticObj(IJS_Runtime* pJSRuntime, int nObjDefnID) {
     return v8::Local<v8::Object>();
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
   v8::Local<v8::Object> obj =
-      v8::Local<v8::Object>::New(isolate, pObjDef->m_StaticObj);
+      v8::Local<v8::Object>::New(pIsolate, pObjDef->m_StaticObj);
   return obj;
 }
 
-void JS_SetThisObj(IJS_Runtime* pJSRuntime, int nThisObjID) {
-  // Do nothing.
-}
-v8::Local<v8::Object> JS_GetThisObj(IJS_Runtime* pJSRuntime) {
+v8::Local<v8::Object> JS_GetThisObj(v8::Isolate* pIsolate) {
   // Return the global object.
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return v8::Local<v8::Object>();
 
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   return context->Global()->GetPrototype()->ToObject(context).ToLocalChecked();
 }
 
@@ -490,7 +474,7 @@ int JS_GetObjDefnID(v8::Local<v8::Object> pObj) {
   return -1;
 }
 
-IJS_Runtime* JS_GetRuntime(v8::Local<v8::Object> pObj) {
+v8::Isolate* JS_GetRuntime(v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty())
     return NULL;
   v8::Local<v8::Context> context = pObj->CreationContext();
@@ -499,11 +483,9 @@ IJS_Runtime* JS_GetRuntime(v8::Local<v8::Object> pObj) {
   return context->GetIsolate();
 }
 
-int JS_GetObjDefnID(IJS_Runtime* pJSRuntime, const wchar_t* pObjName) {
-  v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
-  v8::Isolate::Scope isolate_scope(isolate);
-
-  CFX_PtrArray* pArray = (CFX_PtrArray*)isolate->GetData(g_embedderDataSlot);
+int JS_GetObjDefnID(v8::Isolate* pIsolate, const wchar_t* pObjName) {
+  v8::Isolate::Scope isolate_scope(pIsolate);
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
   if (!pArray)
     return -1;
 
@@ -515,14 +497,14 @@ int JS_GetObjDefnID(IJS_Runtime* pJSRuntime, const wchar_t* pObjName) {
   return -1;
 }
 
-void JS_Error(v8::Isolate* isolate, const CFX_WideString& message) {
+void JS_Error(v8::Isolate* pIsolate, const CFX_WideString& message) {
   // Conversion from pdfium's wchar_t wide-strings to v8's uint16_t
   // wide-strings isn't handled by v8, so use UTF8 as a common
   // intermediate format.
   CFX_ByteString utf8_message = message.UTF8Encode();
-  isolate->ThrowException(v8::String::NewFromUtf8(isolate, utf8_message.c_str(),
-                                                  v8::NewStringType::kNormal)
-                              .ToLocalChecked());
+  pIsolate->ThrowException(
+      v8::String::NewFromUtf8(pIsolate, utf8_message.c_str(),
+                              v8::NewStringType::kNormal).ToLocalChecked());
 }
 
 unsigned JS_CalcHash(const wchar_t* main, unsigned nLen) {
@@ -560,9 +542,7 @@ void* JS_GetPrivate(v8::Local<v8::Object> pObj) {
   return JS_GetPrivate(NULL, pObj);
 }
 
-void JS_SetPrivate(IJS_Runtime* pJSRuntime,
-                   v8::Local<v8::Object> pObj,
-                   void* p) {
+void JS_SetPrivate(v8::Isolate* pIsolate, v8::Local<v8::Object> pObj, void* p) {
   if (pObj.IsEmpty() || !pObj->InternalFieldCount())
     return;
   CJS_PrivateData* pPrivateData =
@@ -572,7 +552,7 @@ void JS_SetPrivate(IJS_Runtime* pJSRuntime,
   pPrivateData->pPrivate = p;
 }
 
-void* JS_GetPrivate(IJS_Runtime* pJSRuntime, v8::Local<v8::Object> pObj) {
+void* JS_GetPrivate(v8::Isolate* pIsolate, v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty())
     return NULL;
   CJS_PrivateData* pPrivateData = NULL;
@@ -582,7 +562,7 @@ void* JS_GetPrivate(IJS_Runtime* pJSRuntime, v8::Local<v8::Object> pObj) {
   else {
     // It could be a global proxy object.
     v8::Local<v8::Value> v = pObj->GetPrototype();
-    v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
+    v8::Isolate* isolate = (v8::Isolate*)pIsolate;
     v8::Local<v8::Context> context = isolate->GetCurrentContext();
     if (v->IsObject())
       pPrivateData = (CJS_PrivateData*)v->ToObject(context)
@@ -609,146 +589,132 @@ v8::Local<v8::Value> JS_GetObjectValue(v8::Local<v8::Object> pObj) {
   return pObj;
 }
 
-v8::Local<v8::String> WSToJSString(IJS_Runtime* pJSRuntime,
+v8::Local<v8::String> WSToJSString(v8::Isolate* pIsolate,
                                    const wchar_t* PropertyName,
                                    int Len = -1) {
   CFX_WideString ws = CFX_WideString(PropertyName, Len);
   CFX_ByteString bs = ws.UTF8Encode();
-  if (!pJSRuntime)
-    pJSRuntime = v8::Isolate::GetCurrent();
-  return v8::String::NewFromUtf8(pJSRuntime, bs.c_str(),
-                                 v8::NewStringType::kNormal)
-      .ToLocalChecked();
+  if (!pIsolate)
+    pIsolate = v8::Isolate::GetCurrent();
+  return v8::String::NewFromUtf8(pIsolate, bs.c_str(),
+                                 v8::NewStringType::kNormal).ToLocalChecked();
 }
 
-v8::Local<v8::Value> JS_GetObjectElement(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Value> JS_GetObjectElement(v8::Isolate* pIsolate,
                                          v8::Local<v8::Object> pObj,
                                          const wchar_t* PropertyName) {
   if (pObj.IsEmpty())
     return v8::Local<v8::Value>();
   v8::Local<v8::Value> val;
-  if (!pObj->Get(pJSRuntime->GetCurrentContext(),
-                 WSToJSString(pJSRuntime, PropertyName))
-           .ToLocal(&val))
+  if (!pObj->Get(pIsolate->GetCurrentContext(),
+                 WSToJSString(pIsolate, PropertyName)).ToLocal(&val))
     return v8::Local<v8::Value>();
   return val;
 }
 
-v8::Local<v8::Array> JS_GetObjectElementNames(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Array> JS_GetObjectElementNames(v8::Isolate* pIsolate,
                                               v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty())
     return v8::Local<v8::Array>();
   v8::Local<v8::Array> val;
-  if (!pObj->GetPropertyNames(pJSRuntime->GetCurrentContext()).ToLocal(&val))
+  if (!pObj->GetPropertyNames(pIsolate->GetCurrentContext()).ToLocal(&val))
     return v8::Local<v8::Array>();
   return val;
 }
 
-void JS_PutObjectString(IJS_Runtime* pJSRuntime,
+void JS_PutObjectString(v8::Isolate* pIsolate,
                         v8::Local<v8::Object> pObj,
                         const wchar_t* PropertyName,
                         const wchar_t* sValue)  // VT_string
 {
   if (pObj.IsEmpty())
     return;
-  pObj->Set(pJSRuntime->GetCurrentContext(),
-            WSToJSString(pJSRuntime, PropertyName),
-            WSToJSString(pJSRuntime, sValue))
-      .FromJust();
+  pObj->Set(pIsolate->GetCurrentContext(), WSToJSString(pIsolate, PropertyName),
+            WSToJSString(pIsolate, sValue)).FromJust();
 }
 
-void JS_PutObjectNumber(IJS_Runtime* pJSRuntime,
+void JS_PutObjectNumber(v8::Isolate* pIsolate,
                         v8::Local<v8::Object> pObj,
                         const wchar_t* PropertyName,
                         int nValue) {
   if (pObj.IsEmpty())
     return;
-  pObj->Set(pJSRuntime->GetCurrentContext(),
-            WSToJSString(pJSRuntime, PropertyName),
-            v8::Int32::New(pJSRuntime, nValue))
-      .FromJust();
+  pObj->Set(pIsolate->GetCurrentContext(), WSToJSString(pIsolate, PropertyName),
+            v8::Int32::New(pIsolate, nValue)).FromJust();
 }
 
-void JS_PutObjectNumber(IJS_Runtime* pJSRuntime,
+void JS_PutObjectNumber(v8::Isolate* pIsolate,
                         v8::Local<v8::Object> pObj,
                         const wchar_t* PropertyName,
                         float fValue) {
   if (pObj.IsEmpty())
     return;
-  pObj->Set(pJSRuntime->GetCurrentContext(),
-            WSToJSString(pJSRuntime, PropertyName),
-            v8::Number::New(pJSRuntime, (double)fValue))
-      .FromJust();
+  pObj->Set(pIsolate->GetCurrentContext(), WSToJSString(pIsolate, PropertyName),
+            v8::Number::New(pIsolate, (double)fValue)).FromJust();
 }
 
-void JS_PutObjectNumber(IJS_Runtime* pJSRuntime,
+void JS_PutObjectNumber(v8::Isolate* pIsolate,
                         v8::Local<v8::Object> pObj,
                         const wchar_t* PropertyName,
                         double dValue) {
   if (pObj.IsEmpty())
     return;
-  pObj->Set(pJSRuntime->GetCurrentContext(),
-            WSToJSString(pJSRuntime, PropertyName),
-            v8::Number::New(pJSRuntime, (double)dValue))
-      .FromJust();
+  pObj->Set(pIsolate->GetCurrentContext(), WSToJSString(pIsolate, PropertyName),
+            v8::Number::New(pIsolate, (double)dValue)).FromJust();
 }
 
-void JS_PutObjectBoolean(IJS_Runtime* pJSRuntime,
+void JS_PutObjectBoolean(v8::Isolate* pIsolate,
                          v8::Local<v8::Object> pObj,
                          const wchar_t* PropertyName,
                          bool bValue) {
   if (pObj.IsEmpty())
     return;
-  pObj->Set(pJSRuntime->GetCurrentContext(),
-            WSToJSString(pJSRuntime, PropertyName),
-            v8::Boolean::New(pJSRuntime, bValue))
-      .FromJust();
+  pObj->Set(pIsolate->GetCurrentContext(), WSToJSString(pIsolate, PropertyName),
+            v8::Boolean::New(pIsolate, bValue)).FromJust();
 }
 
-void JS_PutObjectObject(IJS_Runtime* pJSRuntime,
+void JS_PutObjectObject(v8::Isolate* pIsolate,
                         v8::Local<v8::Object> pObj,
                         const wchar_t* PropertyName,
                         v8::Local<v8::Object> pPut) {
   if (pObj.IsEmpty())
     return;
-  pObj->Set(pJSRuntime->GetCurrentContext(),
-            WSToJSString(pJSRuntime, PropertyName), pPut)
-      .FromJust();
+  pObj->Set(pIsolate->GetCurrentContext(), WSToJSString(pIsolate, PropertyName),
+            pPut).FromJust();
 }
 
-void JS_PutObjectNull(IJS_Runtime* pJSRuntime,
+void JS_PutObjectNull(v8::Isolate* pIsolate,
                       v8::Local<v8::Object> pObj,
                       const wchar_t* PropertyName) {
   if (pObj.IsEmpty())
     return;
-  pObj->Set(pJSRuntime->GetCurrentContext(),
-            WSToJSString(pJSRuntime, PropertyName), v8::Local<v8::Object>())
-      .FromJust();
+  pObj->Set(pIsolate->GetCurrentContext(), WSToJSString(pIsolate, PropertyName),
+            v8::Local<v8::Object>()).FromJust();
 }
 
-v8::Local<v8::Array> JS_NewArray(IJS_Runtime* pJSRuntime) {
-  return v8::Array::New(pJSRuntime);
+v8::Local<v8::Array> JS_NewArray(v8::Isolate* pIsolate) {
+  return v8::Array::New(pIsolate);
 }
 
-unsigned JS_PutArrayElement(IJS_Runtime* pJSRuntime,
+unsigned JS_PutArrayElement(v8::Isolate* pIsolate,
                             v8::Local<v8::Array> pArray,
                             unsigned index,
                             v8::Local<v8::Value> pValue,
                             FXJSVALUETYPE eType) {
   if (pArray.IsEmpty())
     return 0;
-  if (pArray->Set(pJSRuntime->GetCurrentContext(), index, pValue).IsNothing())
+  if (pArray->Set(pIsolate->GetCurrentContext(), index, pValue).IsNothing())
     return 0;
   return 1;
 }
 
-v8::Local<v8::Value> JS_GetArrayElement(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Value> JS_GetArrayElement(v8::Isolate* pIsolate,
                                         v8::Local<v8::Array> pArray,
                                         unsigned index) {
   if (pArray.IsEmpty())
     return v8::Local<v8::Value>();
   v8::Local<v8::Value> val;
-  if (!pArray->Get(pJSRuntime->GetCurrentContext(), index).ToLocal(&val))
+  if (!pArray->Get(pIsolate->GetCurrentContext(), index).ToLocal(&val))
     return v8::Local<v8::Value>();
   return val;
 }
@@ -759,63 +725,63 @@ unsigned JS_GetArrayLength(v8::Local<v8::Array> pArray) {
   return pArray->Length();
 }
 
-v8::Local<v8::Value> JS_NewNumber(IJS_Runtime* pJSRuntime, int number) {
-  return v8::Int32::New(pJSRuntime, number);
+v8::Local<v8::Value> JS_NewNumber(v8::Isolate* pIsolate, int number) {
+  return v8::Int32::New(pIsolate, number);
 }
 
-v8::Local<v8::Value> JS_NewNumber(IJS_Runtime* pJSRuntime, double number) {
-  return v8::Number::New(pJSRuntime, number);
+v8::Local<v8::Value> JS_NewNumber(v8::Isolate* pIsolate, double number) {
+  return v8::Number::New(pIsolate, number);
 }
 
-v8::Local<v8::Value> JS_NewNumber(IJS_Runtime* pJSRuntime, float number) {
-  return v8::Number::New(pJSRuntime, (float)number);
+v8::Local<v8::Value> JS_NewNumber(v8::Isolate* pIsolate, float number) {
+  return v8::Number::New(pIsolate, (float)number);
 }
 
-v8::Local<v8::Value> JS_NewBoolean(IJS_Runtime* pJSRuntime, bool b) {
-  return v8::Boolean::New(pJSRuntime, b);
+v8::Local<v8::Value> JS_NewBoolean(v8::Isolate* pIsolate, bool b) {
+  return v8::Boolean::New(pIsolate, b);
 }
 
-v8::Local<v8::Value> JS_NewObject(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Value> JS_NewObject(v8::Isolate* pIsolate,
                                   v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty())
     return v8::Local<v8::Value>();
   return pObj->Clone();
 }
 
-v8::Local<v8::Value> JS_NewObject2(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Value> JS_NewObject2(v8::Isolate* pIsolate,
                                    v8::Local<v8::Array> pObj) {
   if (pObj.IsEmpty())
     return v8::Local<v8::Value>();
   return pObj->Clone();
 }
 
-v8::Local<v8::Value> JS_NewString(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Value> JS_NewString(v8::Isolate* pIsolate,
                                   const wchar_t* string) {
-  return WSToJSString(pJSRuntime, string);
+  return WSToJSString(pIsolate, string);
 }
 
-v8::Local<v8::Value> JS_NewString(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Value> JS_NewString(v8::Isolate* pIsolate,
                                   const wchar_t* string,
                                   unsigned nLen) {
-  return WSToJSString(pJSRuntime, string, nLen);
+  return WSToJSString(pIsolate, string, nLen);
 }
 
 v8::Local<v8::Value> JS_NewNull() {
   return v8::Local<v8::Value>();
 }
 
-v8::Local<v8::Value> JS_NewDate(IJS_Runtime* pJSRuntime, double d) {
-  return v8::Date::New(pJSRuntime->GetCurrentContext(), d).ToLocalChecked();
+v8::Local<v8::Value> JS_NewDate(v8::Isolate* pIsolate, double d) {
+  return v8::Date::New(pIsolate->GetCurrentContext(), d).ToLocalChecked();
 }
 
-v8::Local<v8::Value> JS_NewValue(IJS_Runtime* pJSRuntime) {
+v8::Local<v8::Value> JS_NewValue(v8::Isolate* pIsolate) {
   return v8::Local<v8::Value>();
 }
 
-v8::Local<v8::Value> JS_GetListValue(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Value> JS_GetListValue(v8::Isolate* pIsolate,
                                      v8::Local<v8::Value> pList,
                                      int index) {
-  v8::Local<v8::Context> context = pJSRuntime->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   if (!pList.IsEmpty() && pList->IsObject()) {
     v8::Local<v8::Object> obj;
     if (pList->ToObject(context).ToLocal(&obj)) {
@@ -827,49 +793,48 @@ v8::Local<v8::Value> JS_GetListValue(IJS_Runtime* pJSRuntime,
   return v8::Local<v8::Value>();
 }
 
-int JS_ToInt32(IJS_Runtime* pJSRuntime, v8::Local<v8::Value> pValue) {
+int JS_ToInt32(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return 0;
-  v8::Local<v8::Context> context = pJSRuntime->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   return pValue->ToInt32(context).ToLocalChecked()->Value();
 }
 
-bool JS_ToBoolean(IJS_Runtime* pJSRuntime, v8::Local<v8::Value> pValue) {
+bool JS_ToBoolean(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return false;
-  v8::Local<v8::Context> context = pJSRuntime->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   return pValue->ToBoolean(context).ToLocalChecked()->Value();
 }
 
-double JS_ToNumber(IJS_Runtime* pJSRuntime, v8::Local<v8::Value> pValue) {
+double JS_ToNumber(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return 0.0;
-  v8::Local<v8::Context> context = pJSRuntime->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   return pValue->ToNumber(context).ToLocalChecked()->Value();
 }
 
-v8::Local<v8::Object> JS_ToObject(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Object> JS_ToObject(v8::Isolate* pIsolate,
                                   v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return v8::Local<v8::Object>();
-  v8::Local<v8::Context> context = pJSRuntime->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   return pValue->ToObject(context).ToLocalChecked();
 }
 
-CFX_WideString JS_ToString(IJS_Runtime* pJSRuntime,
-                           v8::Local<v8::Value> pValue) {
+CFX_WideString JS_ToString(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return L"";
-  v8::Local<v8::Context> context = pJSRuntime->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   v8::String::Utf8Value s(pValue->ToString(context).ToLocalChecked());
   return CFX_WideString::FromUTF8(*s, s.length());
 }
 
-v8::Local<v8::Array> JS_ToArray(IJS_Runtime* pJSRuntime,
+v8::Local<v8::Array> JS_ToArray(v8::Isolate* pIsolate,
                                 v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return v8::Local<v8::Array>();
-  v8::Local<v8::Context> context = pJSRuntime->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
 }
 

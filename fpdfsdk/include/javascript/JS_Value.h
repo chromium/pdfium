@@ -23,7 +23,7 @@ class CJS_Value {
   CJS_Value(v8::Isolate* isolate, const double& dValue);
   CJS_Value(v8::Isolate* isolate, const float& fValue);
   CJS_Value(v8::Isolate* isolate, const bool& bValue);
-  CJS_Value(v8::Isolate* isolate, JSFXObject);
+  CJS_Value(v8::Isolate* isolate, v8::Local<v8::Object>);
   CJS_Value(v8::Isolate* isolate, CJS_Object*);
   CJS_Value(v8::Isolate* isolate, CJS_Document*);
   CJS_Value(v8::Isolate* isolate, const FX_CHAR* pStr);
@@ -108,8 +108,8 @@ class CJS_PropValue : public CJS_Value {
   void operator<<(CFX_WideString);
   void operator>>(CFX_WideString&) const;
   void operator<<(const FX_WCHAR* c_string);
-  void operator<<(JSFXObject);
-  void operator>>(JSFXObject&) const;
+  void operator<<(v8::Local<v8::Object>);
+  void operator>>(v8::Local<v8::Object>&) const;
   void operator>>(CJS_Array& array) const;
   void operator<<(CJS_Array& array);
   void operator<<(CJS_Date& date);

@@ -94,8 +94,8 @@ void CJS_ArrayBufferAllocator::Free(void* data, size_t length) {
 }
 
 /* ------------------------------ CJS_Runtime ------------------------------ */
-extern v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(
-    IJS_Runtime* pJSRuntime);
+v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(v8::Isolate* pIsolate);
+
 CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     : m_pApp(pApp),
       m_pDocument(NULL),
@@ -125,7 +125,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
   v8::HandleScope handle_scope(isolate);
   if (CPDFXFA_App::GetInstance()->InitRuntime(FALSE)) {
     CJS_Context* pContext = (CJS_Context*)NewContext();
-    JS_InitialRuntime(*this, this, pContext, m_context);
+    JS_InitialRuntime(GetIsolate(), this, pContext, m_context);
     ReleaseContext(pContext);
     return;
   }
@@ -133,7 +133,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
   InitJSObjects();
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
-  JS_InitialRuntime(*this, this, pContext, m_context);
+  JS_InitialRuntime(GetIsolate(), this, pContext, m_context);
   ReleaseContext(pContext);
 }
 
@@ -163,59 +163,59 @@ FX_BOOL CJS_Runtime::InitJSObjects() {
   v8::Local<v8::Context> context = v8::Context::New(GetIsolate());
   v8::Context::Scope context_scope(context);
   // 0 - 8
-  if (CJS_Border::Init(*this, JS_STATIC) < 0)
+  if (CJS_Border::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Display::Init(*this, JS_STATIC) < 0)
+  if (CJS_Display::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Font::Init(*this, JS_STATIC) < 0)
+  if (CJS_Font::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Highlight::Init(*this, JS_STATIC) < 0)
+  if (CJS_Highlight::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Position::Init(*this, JS_STATIC) < 0)
+  if (CJS_Position::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_ScaleHow::Init(*this, JS_STATIC) < 0)
+  if (CJS_ScaleHow::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_ScaleWhen::Init(*this, JS_STATIC) < 0)
+  if (CJS_ScaleWhen::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Style::Init(*this, JS_STATIC) < 0)
+  if (CJS_Style::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Zoomtype::Init(*this, JS_STATIC) < 0)
+  if (CJS_Zoomtype::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
 
   // 9 - 11
-  if (CJS_App::Init(*this, JS_STATIC) < 0)
+  if (CJS_App::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Color::Init(*this, JS_STATIC) < 0)
+  if (CJS_Color::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Console::Init(*this, JS_STATIC) < 0)
+  if (CJS_Console::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
 
   // 12 - 14
-  if (CJS_Document::Init(*this, JS_DYNAMIC) < 0)
+  if (CJS_Document::Init(GetIsolate(), JS_DYNAMIC) < 0)
     return FALSE;
-  if (CJS_Event::Init(*this, JS_STATIC) < 0)
+  if (CJS_Event::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Field::Init(*this, JS_DYNAMIC) < 0)
+  if (CJS_Field::Init(GetIsolate(), JS_DYNAMIC) < 0)
     return FALSE;
 
   // 15 - 17
-  if (CJS_Global::Init(*this, JS_STATIC) < 0)
+  if (CJS_Global::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
-  if (CJS_Icon::Init(*this, JS_DYNAMIC) < 0)
+  if (CJS_Icon::Init(GetIsolate(), JS_DYNAMIC) < 0)
     return FALSE;
-  if (CJS_Util::Init(*this, JS_STATIC) < 0)
-    return FALSE;
-
-  if (CJS_PublicMethods::Init(*this) < 0)
-    return FALSE;
-  if (CJS_GlobalConsts::Init(*this) < 0)
-    return FALSE;
-  if (CJS_GlobalArrays::Init(*this) < 0)
+  if (CJS_Util::Init(GetIsolate(), JS_STATIC) < 0)
     return FALSE;
 
-  if (CJS_TimerObj::Init(*this, JS_DYNAMIC) < 0)
+  if (CJS_PublicMethods::Init(GetIsolate()) < 0)
     return FALSE;
-  if (CJS_PrintParamsObj::Init(*this, JS_DYNAMIC) < 0)
+  if (CJS_GlobalConsts::Init(GetIsolate()) < 0)
+    return FALSE;
+  if (CJS_GlobalArrays::Init(GetIsolate()) < 0)
+    return FALSE;
+
+  if (CJS_TimerObj::Init(GetIsolate(), JS_DYNAMIC) < 0)
+    return FALSE;
+  if (CJS_PrintParamsObj::Init(GetIsolate(), JS_DYNAMIC) < 0)
     return FALSE;
 
   return TRUE;
@@ -255,20 +255,17 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
     v8::Context::Scope context_scope(context);
 
     m_pDocument = pReaderDoc;
-
     if (pReaderDoc) {
-      JSObject pThis = JS_GetThisObj(*this);
+      v8::Local<v8::Object> pThis = JS_GetThisObj(GetIsolate());
       if (!pThis.IsEmpty()) {
-        if (JS_GetObjDefnID(pThis) == JS_GetObjDefnID(*this, L"Document")) {
+        if (JS_GetObjDefnID(pThis) ==
+            JS_GetObjDefnID(GetIsolate(), L"Document")) {
           if (CJS_Document* pJSDocument = (CJS_Document*)JS_GetPrivate(pThis)) {
             if (Document* pDocument = (Document*)pJSDocument->GetEmbedObject())
               pDocument->AttachDoc(pReaderDoc);
           }
         }
       }
-      JS_SetThisObj(*this, JS_GetObjDefnID(*this, L"Document"));
-    } else {
-      JS_SetThisObj(*this, JS_GetObjDefnID(*this, L"app"));
     }
   }
 }

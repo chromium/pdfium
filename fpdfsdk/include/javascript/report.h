@@ -27,7 +27,7 @@ class Report : public CJS_EmbedObj {
 
 class CJS_Report : public CJS_Object {
  public:
-  CJS_Report(JSFXObject pObject) : CJS_Object(pObject) {}
+  CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Report() override {}
 
  public:

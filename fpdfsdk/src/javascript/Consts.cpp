@@ -130,28 +130,28 @@ IMPLEMENT_JS_CLASS_CONST(CJS_Zoomtype, zoomtype)
 /* ------------------------------ CJS_GlobalConsts
  * ------------------------------ */
 
-int CJS_GlobalConsts::Init(IJS_Runtime* pRuntime) {
-  DEFINE_GLOBAL_CONST(pRuntime, IDS_GREATER_THAN, Invalid value
+int CJS_GlobalConsts::Init(v8::Isolate* pIsolate) {
+  DEFINE_GLOBAL_CONST(pIsolate, IDS_GREATER_THAN, Invalid value
                       : must be greater than or equal to % s.);
   DEFINE_GLOBAL_CONST(
-      pRuntime, IDS_GT_AND_LT, Invalid value
+      pIsolate, IDS_GT_AND_LT, Invalid value
       : must be greater than or equal to % s and less than or equal to % s.);
-  DEFINE_GLOBAL_CONST(pRuntime, IDS_LESS_THAN, Invalid value
+  DEFINE_GLOBAL_CONST(pIsolate, IDS_LESS_THAN, Invalid value
                       : must be less than or equal to % s.);
-  DEFINE_GLOBAL_CONST(pRuntime, IDS_INVALID_MONTH, **Invalid**);
-  DEFINE_GLOBAL_CONST(pRuntime, IDS_INVALID_DATE, Invalid date / time
+  DEFINE_GLOBAL_CONST(pIsolate, IDS_INVALID_MONTH, **Invalid**);
+  DEFINE_GLOBAL_CONST(pIsolate, IDS_INVALID_DATE, Invalid date / time
                       : please ensure that the date / time exists.Field);
-  DEFINE_GLOBAL_CONST(pRuntime, IDS_INVALID_VALUE,
+  DEFINE_GLOBAL_CONST(pIsolate, IDS_INVALID_VALUE,
                       The value entered does not match the format of the field);
-  DEFINE_GLOBAL_CONST(pRuntime, IDS_AM, am);
-  DEFINE_GLOBAL_CONST(pRuntime, IDS_PM, pm);
+  DEFINE_GLOBAL_CONST(pIsolate, IDS_AM, am);
+  DEFINE_GLOBAL_CONST(pIsolate, IDS_PM, pm);
   DEFINE_GLOBAL_CONST(
-      pRuntime, IDS_MONTH_INFO,
+      pIsolate, IDS_MONTH_INFO,
       January[1] February[2] March[3] April[4] May[5] June[6] July[7] August
           [8] September[9] October[10] November[11] December[12] Sept[9] Jan
               [1] Feb[2] Mar[3] Apr[4] Jun[6] Jul[7] Aug[8] Sep[9] Oct[10] Nov
                   [11] Dec[12]);
-  DEFINE_GLOBAL_CONST(pRuntime, IDS_STARTUP_CONSOLE_MSG, ** ^ _ ^ **);
+  DEFINE_GLOBAL_CONST(pIsolate, IDS_STARTUP_CONSOLE_MSG, ** ^ _ ^ **);
 
   return 0;
 }
@@ -159,11 +159,11 @@ int CJS_GlobalConsts::Init(IJS_Runtime* pRuntime) {
 /* ------------------------------ CJS_GlobalArrays
  * ------------------------------ */
 
-int CJS_GlobalArrays::Init(IJS_Runtime* pRuntime) {
+int CJS_GlobalArrays::Init(v8::Isolate* pIsolate) {
   {
     const FX_WCHAR* ArrayName = L"RE_NUMBER_ENTRY_DOT_SEP";
     const FX_WCHAR* ArrayContent[] = {L"[+-]?\\d*\\.?\\d*"};
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
@@ -173,14 +173,14 @@ int CJS_GlobalArrays::Init(IJS_Runtime* pRuntime) {
         L"[+-]?\\.\\d+",        /* -.1 */
         L"[+-]?\\d+\\."         /* -1. */
     };
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_NUMBER_ENTRY_COMMA_SEP";
     const FX_WCHAR* ArrayContent[] = {L"[+-]?\\d*,?\\d*"};
 
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
@@ -190,31 +190,31 @@ int CJS_GlobalArrays::Init(IJS_Runtime* pRuntime) {
         L"[+-]?[.,]\\d+",        /* -,1 */
         L"[+-]?\\d+[.,]"         /* -1, */
     };
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_ZIP_ENTRY";
     const FX_WCHAR* ArrayContent[] = {L"\\d{0,5}"};
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_ZIP_COMMIT";
     const FX_WCHAR* ArrayContent[] = {L"\\d{5}"};
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_ZIP4_ENTRY";
     const FX_WCHAR* ArrayContent[] = {L"\\d{0,5}(\\.|[- ])?\\d{0,4}"};
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_ZIP4_COMMIT";
     const FX_WCHAR* ArrayContent[] = {L"\\d{5}(\\.|[- ])?\\d{4}"};
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
@@ -232,7 +232,7 @@ int CJS_GlobalArrays::Init(IJS_Runtime* pRuntime) {
                                                                  */
         L"011(\\.|[- \\d])*" /* international */
     };
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
@@ -243,21 +243,21 @@ int CJS_GlobalArrays::Init(IJS_Runtime* pRuntime) {
         L"\\(\\d{3}\\)(\\.|[- ])?\\d{3}(\\.|[- ])?\\d{4}", /* (408) 555-1234 */
         L"011(\\.|[- \\d])*"                               /* international */
     };
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_SSN_ENTRY";
     const FX_WCHAR* ArrayContent[] = {
         L"\\d{0,3}(\\.|[- ])?\\d{0,2}(\\.|[- ])?\\d{0,4}"};
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_SSN_COMMIT";
     const FX_WCHAR* ArrayContent[] = {
         L"\\d{3}(\\.|[- ])?\\d{2}(\\.|[- ])?\\d{4}"};
-    DEFINE_GLOBAL_ARRAY(pRuntime);
+    DEFINE_GLOBAL_ARRAY(pIsolate);
   }
 
   return 0;

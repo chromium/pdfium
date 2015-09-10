@@ -615,11 +615,13 @@ Field* CJS_EventHandler::Source() {
 
   CJS_Runtime* pRuntime = m_pJSContext->GetJSRuntime();
 
-  JSFXObject pDocObj = JS_NewFxDynamicObj(
-      *pRuntime, m_pJSContext, JS_GetObjDefnID(*pRuntime, L"Document"));
+  v8::Local<v8::Object> pDocObj =
+      JS_NewFxDynamicObj(pRuntime->GetIsolate(), m_pJSContext,
+                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"Document"));
   ASSERT(pDocObj.IsEmpty() == FALSE);
-  JSFXObject pFieldObj = JS_NewFxDynamicObj(
-      *pRuntime, m_pJSContext, JS_GetObjDefnID(*pRuntime, L"Field"));
+  v8::Local<v8::Object> pFieldObj =
+      JS_NewFxDynamicObj(pRuntime->GetIsolate(), m_pJSContext,
+                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"Field"));
   ASSERT(pFieldObj.IsEmpty() == FALSE);
 
   CJS_Document* pJSDocument = (CJS_Document*)JS_GetPrivate(pDocObj);
@@ -650,11 +652,13 @@ Field* CJS_EventHandler::Target_Field() {
 
   CJS_Runtime* pRuntime = m_pJSContext->GetJSRuntime();
 
-  JSFXObject pDocObj = JS_NewFxDynamicObj(
-      *pRuntime, m_pJSContext, JS_GetObjDefnID(*pRuntime, L"Document"));
+  v8::Local<v8::Object> pDocObj =
+      JS_NewFxDynamicObj(pRuntime->GetIsolate(), m_pJSContext,
+                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"Document"));
   ASSERT(pDocObj.IsEmpty() == FALSE);
-  JSFXObject pFieldObj = JS_NewFxDynamicObj(
-      *pRuntime, m_pJSContext, JS_GetObjDefnID(*pRuntime, L"Field"));
+  v8::Local<v8::Object> pFieldObj =
+      JS_NewFxDynamicObj(pRuntime->GetIsolate(), m_pJSContext,
+                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"Field"));
   ASSERT(pFieldObj.IsEmpty() == FALSE);
 
   CJS_Document* pJSDocument = (CJS_Document*)JS_GetPrivate(pDocObj);
