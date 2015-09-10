@@ -141,38 +141,41 @@ CPDF_Dictionary* CPDF_Document::_FindPDFPage(CPDF_Dictionary* pPages, int iPage,
     }
     return NULL;
 }
+
 CPDF_Dictionary* CPDF_Document::GetPage(int iPage)
 {
-    if (iPage < 0 || iPage >= m_PageList.GetSize()) {
-        return NULL;
-    }
+    if (iPage < 0 || iPage >= m_PageList.GetSize())
+        return nullptr;
+
     if (m_bLinearized && (iPage == (int)m_dwFirstPageNo)) {
         CPDF_Object* pObj = GetIndirectObject(m_dwFirstPageObjNum);
         if (pObj && pObj->GetType() == PDFOBJ_DICTIONARY) {
-            return (CPDF_Dictionary*)pObj;
+            return static_cast<CPDF_Dictionary*>(pObj);
         }
     }
     int objnum = m_PageList.GetAt(iPage);
     if (objnum) {
         CPDF_Object* pObj = GetIndirectObject(objnum);
-        ASSERT(pObj->GetType() == PDFOBJ_DICTIONARY);
-        return (CPDF_Dictionary*)pObj;
+        if (pObj && pObj->GetType() == PDFOBJ_DICTIONARY) {
+            return static_cast<CPDF_Dictionary*>(pObj);
+        }
     }
     CPDF_Dictionary* pRoot = GetRoot();
-    if (pRoot == NULL) {
-        return NULL;
-    }
+    if (!pRoot)
+        return nullptr;
+
     CPDF_Dictionary* pPages = pRoot->GetDict(FX_BSTRC("Pages"));
-    if (pPages == NULL) {
-        return NULL;
-    }
+    if (!pPages)
+        return nullptr;
+
     CPDF_Dictionary* pPage = _FindPDFPage(pPages, iPage, iPage, 0);
-    if (pPage == NULL) {
-        return NULL;
-    }
+    if (!pPage)
+        return nullptr;
+
     m_PageList.SetAt(iPage, pPage->GetObjNum());
     return pPage;
 }
+
 int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode, FX_DWORD& skip_count, FX_DWORD objnum, int& index, int level)
 {
     if (pNode->KeyExist(FX_BSTRC("Kids"))) {
