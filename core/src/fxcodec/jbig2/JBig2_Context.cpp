@@ -85,24 +85,20 @@ int32_t CJBig2_Context::decodeFile(IFX_Pause* pPause) {
   const uint8_t fileID[] = {0x97, 0x4A, 0x42, 0x32, 0x0D, 0x0A, 0x1A, 0x0A};
   int32_t nRet;
   if (m_pStream->getByteLeft() < 8) {
-    m_pModule->JBig2_Error("file header too short.");
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
   if (JBIG2_memcmp(m_pStream->getPointer(), fileID, 8) != 0) {
-    m_pModule->JBig2_Error("not jbig2 file");
     nRet = JBIG2_ERROR_FILE_FORMAT;
     goto failed;
   }
   m_pStream->offset(8);
   if (m_pStream->read1Byte(&cFlags) != 0) {
-    m_pModule->JBig2_Error("file header too short.");
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
   if (!(cFlags & 0x02)) {
     if (m_pStream->readInteger(&dwTemp) != 0) {
-      m_pModule->JBig2_Error("file header too short.");
       nRet = JBIG2_ERROR_TOO_SHORT;
       goto failed;
     }
@@ -349,7 +345,6 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
     pSegment->m_nReferred_to_segment_count &= 0x1fffffff;
     if (pSegment->m_nReferred_to_segment_count >
         JBIG2_MAX_REFERRED_SEGMENT_COUNT) {
-      m_pModule->JBig2_Error("Too many referred segments.");
       return JBIG2_ERROR_LIMIT;
     }
     dwTemp = 5 + 4 + (pSegment->m_nReferred_to_segment_count + 1) / 8;
@@ -389,8 +384,6 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
           break;
       }
       if (pSegment->m_pReferred_to_segment_numbers[i] >= pSegment->m_dwNumber) {
-        m_pModule->JBig2_Error(
-            "The referred segment number is greater than this segment number.");
         goto failed;
       }
     }
@@ -412,7 +405,6 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
   pSegment->m_State = JBIG2_SEGMENT_DATA_UNPARSED;
   return JBIG2_SUCCESS;
 failed:
-  m_pModule->JBig2_Error("header too short.");
   return JBIG2_ERROR_TOO_SHORT;
 }
 int32_t CJBig2_Context::parseSegmentData(CJBig2_Segment* pSegment,
@@ -478,7 +470,6 @@ int32_t CJBig2_Context::ProcessiveParseSegmentData(CJBig2_Segment* pSegment,
       pPageInfo->m_wMaxStripeSize = wTemp & 0x7fff;
       if ((pPageInfo->m_dwHeight == 0xffffffff) &&
           (pPageInfo->m_bIsStriped != TRUE)) {
-        m_pModule->JBig2_Warn("page height = 0xffffffff buf stripe field is 0");
         pPageInfo->m_bIsStriped = TRUE;
       }
       if (!m_bBufSpecified) {
@@ -517,10 +508,8 @@ int32_t CJBig2_Context::ProcessiveParseSegmentData(CJBig2_Segment* pSegment,
   }
   return JBIG2_SUCCESS;
 failed1:
-  m_pModule->JBig2_Error("segment data too short.");
   return JBIG2_ERROR_TOO_SHORT;
 failed2:
-  m_pModule->JBig2_Error("segment syntax error.");
   return JBIG2_ERROR_FATAL;
 }
 int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
@@ -541,8 +530,6 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   uint8_t* key = pSegment->m_pData;
   FX_BOOL cache_hit = false;
   if (m_pStream->readShortInteger(&wFlags) != 0) {
-    m_pModule->JBig2_Error(
-        "symbol dictionary segment : data header too short.");
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
@@ -562,8 +549,6 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     }
     for (i = 0; i < (int32_t)dwTemp; i++) {
       if (m_pStream->read1Byte((uint8_t*)&pSymbolDictDecoder->SDAT[i]) != 0) {
-        m_pModule->JBig2_Error(
-            "symbol dictionary segment : data header too short.");
         nRet = JBIG2_ERROR_TOO_SHORT;
         goto failed;
       }
@@ -573,8 +558,6 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       (pSymbolDictDecoder->SDRTEMPLATE == 0)) {
     for (i = 0; i < 4; i++) {
       if (m_pStream->read1Byte((uint8_t*)&pSymbolDictDecoder->SDRAT[i]) != 0) {
-        m_pModule->JBig2_Error(
-            "symbol dictionary segment : data header too short.");
         nRet = JBIG2_ERROR_TOO_SHORT;
         goto failed;
       }
@@ -582,22 +565,16 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   }
   if ((m_pStream->readInteger(&pSymbolDictDecoder->SDNUMEXSYMS) != 0) ||
       (m_pStream->readInteger(&pSymbolDictDecoder->SDNUMNEWSYMS) != 0)) {
-    m_pModule->JBig2_Error(
-        "symbol dictionary segment : data header too short.");
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
   if (pSymbolDictDecoder->SDNUMEXSYMS > JBIG2_MAX_EXPORT_SYSMBOLS ||
       pSymbolDictDecoder->SDNUMNEWSYMS > JBIG2_MAX_NEW_SYSMBOLS) {
-    m_pModule->JBig2_Error(
-        "symbol dictionary segment : too many export/new symbols.");
     nRet = JBIG2_ERROR_LIMIT;
     goto failed;
   }
   for (i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
     if (!findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i])) {
-      m_pModule->JBig2_Error(
-          "symbol dictionary segment : can't find refered to segments");
       nRet = JBIG2_ERROR_FATAL;
       goto failed;
     }
@@ -628,9 +605,6 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   pSymbolDictDecoder->SDINSYMS = SDINSYMS;
   if (pSymbolDictDecoder->SDHUFF == 1) {
     if ((cSDHUFFDH == 2) || (cSDHUFFDW == 2)) {
-      m_pModule->JBig2_Error(
-          "symbol dictionary segment : SDHUFFDH=2 or SDHUFFDW=2 is not "
-          "permitted.");
       nRet = JBIG2_ERROR_FATAL;
       goto failed;
     }
@@ -648,9 +622,6 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "symbol dictionary segment : SDHUFFDH can't find user supplied "
-            "table.");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -669,9 +640,6 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "symbol dictionary segment : SDHUFFDW can't find user supplied "
-            "table.");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -685,9 +653,6 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "symbol dictionary segment : SDHUFFBMSIZE can't find user supplied "
-            "table.");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -704,9 +669,6 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       } else {
         pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
         if (!pSeg) {
-          m_pModule->JBig2_Error(
-              "symbol dictionary segment : SDHUFFAGGINST can't find user "
-              "supplied table.");
           nRet = JBIG2_ERROR_FATAL;
           goto failed;
         }
@@ -857,7 +819,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   JBIG2_ALLOC(pTRD, CJBig2_TRDProc());
   if ((parseRegionInfo(&ri) != JBIG2_SUCCESS) ||
       (m_pStream->readShortInteger(&wFlags) != 0)) {
-    m_pModule->JBig2_Error("text region segment : data header too short.");
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
@@ -878,7 +839,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   pTRD->SBRTEMPLATE = (wFlags >> 15) & 0x0001;
   if (pTRD->SBHUFF == 1) {
     if (m_pStream->readShortInteger(&wFlags) != 0) {
-      m_pModule->JBig2_Error("text region segment : data header too short.");
       nRet = JBIG2_ERROR_TOO_SHORT;
       goto failed;
     }
@@ -894,21 +854,17 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   if ((pTRD->SBREFINE == 1) && (pTRD->SBRTEMPLATE == 0)) {
     for (i = 0; i < 4; i++) {
       if (m_pStream->read1Byte((uint8_t*)&pTRD->SBRAT[i]) != 0) {
-        m_pModule->JBig2_Error("text region segment : data header too short.");
         nRet = JBIG2_ERROR_TOO_SHORT;
         goto failed;
       }
     }
   }
   if (m_pStream->readInteger(&pTRD->SBNUMINSTANCES) != 0) {
-    m_pModule->JBig2_Error("text region segment : data header too short.");
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
   for (i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
     if (!findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i])) {
-      m_pModule->JBig2_Error(
-          "text region segment : can't find refered to segments");
       nRet = JBIG2_ERROR_FATAL;
       goto failed;
     }
@@ -939,8 +895,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   if (pTRD->SBHUFF == 1) {
     SBSYMCODES = decodeSymbolIDHuffmanTable(m_pStream, pTRD->SBNUMSYMS);
     if (SBSYMCODES == NULL) {
-      m_pModule->JBig2_Error(
-          "text region segment: symbol ID huffman table decode failure!");
       nRet = JBIG2_ERROR_FATAL;
       goto failed;
     }
@@ -956,9 +910,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   if (pTRD->SBHUFF == 1) {
     if ((cSBHUFFFS == 2) || (cSBHUFFRDW == 2) || (cSBHUFFRDH == 2) ||
         (cSBHUFFRDX == 2) || (cSBHUFFRDY == 2)) {
-      m_pModule->JBig2_Error(
-          "text region segment : SBHUFFFS=2 or SBHUFFRDW=2 or "
-          "SBHUFFRDH=2 or SBHUFFRDX=2 or SBHUFFRDY=2 is not permitted");
       nRet = JBIG2_ERROR_FATAL;
       goto failed;
     }
@@ -976,8 +927,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "text region segment : SBHUFFFS can't find user supplied table");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -1001,8 +950,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "text region segment : SBHUFFDS can't find user supplied table");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -1026,8 +973,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "text region segment : SBHUFFDT can't find user supplied table");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -1046,8 +991,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "text region segment : SBHUFFRDW can't find user supplied table");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -1070,8 +1013,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "text region segment : SBHUFFRDH can't find user supplied table");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -1094,8 +1035,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "text region segment : SBHUFFRDX can't find user supplied table");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -1118,8 +1057,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "text region segment : SBHUFFRDY can't find user supplied table");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -1133,8 +1070,6 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       pSeg = findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg) {
-        m_pModule->JBig2_Error(
-            "text region segment : SBHUFFRSIZE can't find user supplied table");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -1240,13 +1175,10 @@ int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
       (m_pStream->read1Byte(&pPDD->HDPW) != 0) ||
       (m_pStream->read1Byte(&pPDD->HDPH) != 0) ||
       (m_pStream->readInteger(&pPDD->GRAYMAX) != 0)) {
-    m_pModule->JBig2_Error(
-        "pattern dictionary segment : data header too short.");
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
   if (pPDD->GRAYMAX > JBIG2_MAX_PATTERN_INDEX) {
-    m_pModule->JBig2_Error("pattern dictionary segment : too max gray max.");
     nRet = JBIG2_ERROR_LIMIT;
     goto failed;
   }
@@ -1305,7 +1237,6 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
       (m_pStream->readInteger((FX_DWORD*)&pHRD->HGY) != 0) ||
       (m_pStream->readShortInteger(&pHRD->HRX) != 0) ||
       (m_pStream->readShortInteger(&pHRD->HRY) != 0)) {
-    m_pModule->JBig2_Error("halftone region segment : data header too short.");
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
@@ -1317,21 +1248,16 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
   pHRD->HCOMBOP = (JBig2ComposeOp)((cFlags >> 4) & 0x07);
   pHRD->HDEFPIXEL = (cFlags >> 7) & 0x01;
   if (pSegment->m_nReferred_to_segment_count != 1) {
-    m_pModule->JBig2_Error(
-        "halftone region segment : refered to segment count not equals 1");
     nRet = JBIG2_ERROR_FATAL;
     goto failed;
   }
   pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[0]);
   if ((pSeg == NULL) || (pSeg->m_cFlags.s.type != 16)) {
-    m_pModule->JBig2_Error(
-        "halftone region segment : refered to segment is not pattern dict");
     nRet = JBIG2_ERROR_FATAL;
     goto failed;
   }
   pPatternDict = pSeg->m_Result.pd;
   if ((pPatternDict == NULL) || (pPatternDict->NUMPATS == 0)) {
-    m_pModule->JBig2_Error("halftone region segment : has no patterns input");
     nRet = JBIG2_ERROR_FATAL;
     goto failed;
   }
@@ -1394,12 +1320,10 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     JBIG2_ALLOC(m_pGRD, CJBig2_GRDProc());
     if ((parseRegionInfo(&m_ri) != JBIG2_SUCCESS) ||
         (m_pStream->read1Byte(&cFlags) != 0)) {
-      m_pModule->JBig2_Error("generic region segment : data header too short.");
       nRet = JBIG2_ERROR_TOO_SHORT;
       goto failed;
     }
     if (m_ri.height < 0 || m_ri.width < 0) {
-      m_pModule->JBig2_Error("generic region segment : wrong data.");
       nRet = JBIG2_FAILED;
       goto failed;
     }
@@ -1412,8 +1336,6 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
       if (m_pGRD->GBTEMPLATE == 0) {
         for (i = 0; i < 8; i++) {
           if (m_pStream->read1Byte((uint8_t*)&m_pGRD->GBAT[i]) != 0) {
-            m_pModule->JBig2_Error(
-                "generic region segment : data header too short.");
             nRet = JBIG2_ERROR_TOO_SHORT;
             goto failed;
           }
@@ -1421,8 +1343,6 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
       } else {
         for (i = 0; i < 2; i++) {
           if (m_pStream->read1Byte((uint8_t*)&m_pGRD->GBAT[i]) != 0) {
-            m_pModule->JBig2_Error(
-                "generic region segment : data header too short.");
             nRet = JBIG2_ERROR_TOO_SHORT;
             goto failed;
           }
@@ -1527,8 +1447,6 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   JBIG2_ALLOC(pGRRD, CJBig2_GRRDProc());
   if ((parseRegionInfo(&ri) != JBIG2_SUCCESS) ||
       (m_pStream->read1Byte(&cFlags) != 0)) {
-    m_pModule->JBig2_Error(
-        "generic refinement region segment : data header too short.");
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
@@ -1539,8 +1457,6 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   if (pGRRD->GRTEMPLATE == 0) {
     for (i = 0; i < 4; i++) {
       if (m_pStream->read1Byte((uint8_t*)&pGRRD->GRAT[i]) != 0) {
-        m_pModule->JBig2_Error(
-            "generic refinement region segment : data header too short.");
         nRet = JBIG2_ERROR_TOO_SHORT;
         goto failed;
       }
@@ -1551,9 +1467,6 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
     for (i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
       pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[0]);
       if (pSeg == NULL) {
-        m_pModule->JBig2_Error(
-            "generic refinement region segment : can't find refered to "
-            "segments");
         nRet = JBIG2_ERROR_FATAL;
         goto failed;
       }
@@ -1563,9 +1476,6 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
       }
     }
     if (i >= pSegment->m_nReferred_to_segment_count) {
-      m_pModule->JBig2_Error(
-          "generic refinement region segment : can't find refered to "
-          "intermediate region");
       nRet = JBIG2_ERROR_FATAL;
       goto failed;
     }
