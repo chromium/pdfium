@@ -6,11 +6,12 @@
 
 #ifndef _JBIG2_SEGMENT_H_
 #define _JBIG2_SEGMENT_H_
+
 #include "JBig2_Define.h"
-#include "JBig2_SymbolDict.h"
-#include "JBig2_PatternDict.h"
-#include "JBig2_Module.h"
 #include "JBig2_HuffmanTable.h"
+#include "JBig2_PatternDict.h"
+#include "JBig2_SymbolDict.h"
+
 #define JBIG2_GET_INT32(buf) \
   (((buf)[0] << 24) | ((buf)[1] << 16) | ((buf)[2] << 8) | (buf)[3])
 #define JBIG2_GET_INT16(buf) (((buf)[0] << 8) | (buf)[1])
@@ -49,7 +50,7 @@ class CJBig2_Segment {
   FX_DWORD m_dwData_length;
 
   FX_DWORD m_dwHeader_Length;
-  uint8_t* m_pData;
+  const uint8_t* m_pData;
   JBig2_SegmentState m_State;
   JBig2_ResultType m_nResultType;
   union {

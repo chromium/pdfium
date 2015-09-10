@@ -264,33 +264,6 @@ class CCodec_JpxModule : public ICodec_JpxModule {
   void DestroyDecoder(CJPX_Decoder* pDecoder) override;
 };
 
-class CPDF_Jbig2Interface : public CJBig2_Module {
- public:
-  virtual void* JBig2_Malloc(FX_DWORD dwSize) {
-    return FX_Alloc(uint8_t, dwSize);
-  }
-  virtual void* JBig2_Malloc2(FX_DWORD num, FX_DWORD dwSize) {
-    if (dwSize && num >= UINT_MAX / dwSize) {
-      return NULL;
-    }
-    return FX_Alloc(uint8_t, num * dwSize);
-  }
-  virtual void* JBig2_Malloc3(FX_DWORD num, FX_DWORD dwSize, FX_DWORD dwSize2) {
-    if (dwSize2 && dwSize >= UINT_MAX / dwSize2) {
-      return NULL;
-    }
-    FX_DWORD size = dwSize2 * dwSize;
-    if (size && num >= UINT_MAX / size) {
-      return NULL;
-    }
-    return FX_Alloc(uint8_t, num * size);
-  }
-  virtual void* JBig2_Realloc(void* pMem, FX_DWORD dwSize) {
-    return FX_Realloc(uint8_t, pMem, dwSize);
-  }
-  virtual void JBig2_Free(void* pMem) { FX_Free(pMem); }
-};
-
 class CCodec_Jbig2Context {
  public:
   CCodec_Jbig2Context();
@@ -331,7 +304,6 @@ class CCodec_Jbig2Module : public ICodec_Jbig2Module {
   void DestroyJbig2Context(void* pJbig2Context) override;
 
  private:
-  CPDF_Jbig2Interface m_Module;
   std::list<CJBig2_CachePair> m_SymbolDictCache;
 };
 

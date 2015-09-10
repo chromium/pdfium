@@ -25,7 +25,7 @@ enum JBig2Corner {
   JBIG2_CORNER_TOPRIGHT = 3
 };
 
-class CJBig2_GRDProc : public CJBig2_Object {
+class CJBig2_GRDProc {
  public:
   CJBig2_GRDProc() {
     m_loopIndex = 0;
@@ -135,7 +135,7 @@ class CJBig2_GRDProc : public CJBig2_Object {
   FX_RECT m_ReplaceRect;
 };
 
-class CJBig2_GRRDProc : public CJBig2_Object {
+class CJBig2_GRRDProc {
  public:
   CJBig2_Image* decode(CJBig2_ArithDecoder* pArithDecoder,
                        JBig2ArithCtx* grContext);
@@ -168,7 +168,7 @@ typedef struct {
   CJBig2_ArithIaidDecoder* IAID;
 } JBig2IntDecoderState;
 
-class CJBig2_TRDProc : public CJBig2_Object {
+class CJBig2_TRDProc {
  public:
   CJBig2_Image* decode_Huffman(CJBig2_BitStream* pStream,
                                JBig2ArithCtx* grContext);
@@ -202,7 +202,7 @@ class CJBig2_TRDProc : public CJBig2_Object {
   FX_BOOL SBRTEMPLATE;
   int8_t SBRAT[4];
 };
-class CJBig2_SDDProc : public CJBig2_Object {
+class CJBig2_SDDProc {
  public:
   CJBig2_SymbolDict* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                   JBig2ArithCtx* gbContext,
@@ -226,7 +226,7 @@ class CJBig2_SDDProc : public CJBig2_Object {
   FX_BOOL SDRTEMPLATE;
   int8_t SDRAT[4];
 };
-class CJBig2_HTRDProc : public CJBig2_Object {
+class CJBig2_HTRDProc {
  public:
   CJBig2_Image* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                              JBig2ArithCtx* gbContext,
@@ -248,7 +248,7 @@ class CJBig2_HTRDProc : public CJBig2_Object {
   FX_WORD HRX, HRY;
   uint8_t HPW, HPH;
 };
-class CJBig2_PDDProc : public CJBig2_Object {
+class CJBig2_PDDProc {
  public:
   CJBig2_PatternDict* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                    JBig2ArithCtx* gbContext,
@@ -262,7 +262,7 @@ class CJBig2_PDDProc : public CJBig2_Object {
   FX_DWORD GRAYMAX;
   uint8_t HDTEMPLATE;
 };
-class CJBig2_GSIDProc : public CJBig2_Object {
+class CJBig2_GSIDProc {
  public:
   FX_DWORD* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                          JBig2ArithCtx* gbContext,

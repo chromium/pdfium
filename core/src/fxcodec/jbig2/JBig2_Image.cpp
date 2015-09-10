@@ -20,7 +20,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   }
   m_nStride = ((w + 31) >> 5) << 2;
   if (m_nStride * m_nHeight > 0 && 104857600 / (int)m_nStride > m_nHeight) {
-    m_pData = (uint8_t*)m_pModule->JBig2_Malloc2(m_nStride, m_nHeight);
+    m_pData = FX_Alloc2D(uint8_t, m_nStride, m_nHeight);
   } else {
     m_pData = NULL;
   }
@@ -37,12 +37,11 @@ CJBig2_Image::CJBig2_Image(int32_t w,
   m_bNeedFree = FALSE;
 }
 CJBig2_Image::CJBig2_Image(CJBig2_Image& im) {
-  m_pModule = im.m_pModule;
   m_nWidth = im.m_nWidth;
   m_nHeight = im.m_nHeight;
   m_nStride = im.m_nStride;
   if (im.m_pData) {
-    m_pData = (uint8_t*)m_pModule->JBig2_Malloc2(m_nStride, m_nHeight);
+    m_pData = FX_Alloc2D(uint8_t, m_nStride, m_nHeight);
     JBIG2_memcpy(m_pData, im.m_pData, m_nStride * m_nHeight);
   } else {
     m_pData = NULL;
@@ -50,8 +49,8 @@ CJBig2_Image::CJBig2_Image(CJBig2_Image& im) {
   m_bNeedFree = TRUE;
 }
 CJBig2_Image::~CJBig2_Image() {
-  if (m_bNeedFree && m_pData) {
-    m_pModule->JBig2_Free(m_pData);
+  if (m_bNeedFree) {
+    FX_Free(m_pData);
   }
 }
 FX_BOOL CJBig2_Image::getPixel(int32_t x, int32_t y) {
@@ -155,7 +154,6 @@ CJBig2_Image* CJBig2_Image::subImage(int32_t x,
                                      int32_t y,
                                      int32_t w,
                                      int32_t h) {
-  CJBig2_Image* pImage;
   int32_t m, n, j;
   uint8_t *pLineSrc, *pLineDst;
   FX_DWORD wTmp;
@@ -163,7 +161,7 @@ CJBig2_Image* CJBig2_Image::subImage(int32_t x,
   if (w == 0 || h == 0) {
     return NULL;
   }
-  JBIG2_ALLOC(pImage, CJBig2_Image(w, h));
+  CJBig2_Image* pImage = new CJBig2_Image(w, h);
   if (!m_pData) {
     pImage->fill(0);
     return pImage;
@@ -224,8 +222,8 @@ void CJBig2_Image::expand(int32_t h, FX_BOOL v) {
     return;
   }
   // The guaranteed reallocated memory is to be < 4GB (unsigned int).
-  m_pData =
-      (uint8_t*)m_pModule->JBig2_Realloc(m_pData, safeMemSize.ValueOrDie());
+  m_pData = FX_Realloc(uint8_t, m_pData, safeMemSize.ValueOrDie());
+
   // The result of dwHeight * dwStride doesn't overflow after the
   // checking of safeMemSize.
   // The same as the result of (dwH - dwHeight) * dwStride) because

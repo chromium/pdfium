@@ -14,11 +14,10 @@
 #include "../../../include/fxcodec/fx_codec_def.h"
 #include "JBig2_GeneralDecoder.h"
 #include "JBig2_List.h"
-#include "JBig2_Module.h"
 #include "JBig2_Page.h"
 #include "JBig2_Segment.h"
 
-using CJBig2_CachePair = std::pair<uint8_t*, CJBig2_SymbolDict*>;
+using CJBig2_CachePair = std::pair<const uint8_t*, CJBig2_SymbolDict*>;
 
 #define JBIG2_SUCCESS 0
 #define JBIG2_FAILED -1
@@ -35,13 +34,12 @@ using CJBig2_CachePair = std::pair<uint8_t*, CJBig2_SymbolDict*>;
 #define JBIG2_EMBED_STREAM 3
 #define JBIG2_MIN_SEGMENT_SIZE 11
 
-class CJBig2_Context : public CJBig2_Object {
+class CJBig2_Context {
  public:
   static CJBig2_Context* CreateContext(
-      CJBig2_Module* pModule,
-      uint8_t* pGlobalData,
+      const uint8_t* pGlobalData,
       FX_DWORD dwGlobalLength,
-      uint8_t* pData,
+      const uint8_t* pData,
       FX_DWORD dwLength,
       int32_t nStreamType,
       std::list<CJBig2_CachePair>* pSymbolDictCache,
@@ -66,9 +64,9 @@ class CJBig2_Context : public CJBig2_Object {
     JBIG2_IN_PAGE,
   };
 
-  CJBig2_Context(uint8_t* pGlobalData,
+  CJBig2_Context(const uint8_t* pGlobalData,
                  FX_DWORD dwGlobalLength,
-                 uint8_t* pData,
+                 const uint8_t* pData,
                  FX_DWORD dwLength,
                  int32_t nStreamType,
                  std::list<CJBig2_CachePair>* pSymbolDictCache,

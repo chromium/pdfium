@@ -6,11 +6,15 @@
 
 #ifndef _JBIG2_HUFFMAN_TABLE_STANDARD_H_
 #define _JBIG2_HUFFMAN_TABLE_STANDARD_H_
-typedef struct {
+
+#include "../../../../core/include/fxcrt/fx_system.h"
+
+struct JBig2TableLine {
   int PREFLEN;
   int RANDELEN;
   int RANGELOW;
-} JBig2TableLine;
+};
+
 const FX_BOOL HuffmanTable_HTOOB_B1 = FALSE;
 const JBig2TableLine HuffmanTable_B1[] = {{1, 4, 0},
                                           {2, 8, 16},

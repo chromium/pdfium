@@ -6,17 +6,19 @@
 
 #ifndef _JBIG2_IMAGE_H_
 #define _JBIG2_IMAGE_H_
+
 #include "JBig2_Define.h"
-#include "JBig2_Module.h"
-typedef enum {
+
+enum JBig2ComposeOp {
   JBIG2_COMPOSE_OR = 0,
   JBIG2_COMPOSE_AND = 1,
   JBIG2_COMPOSE_XOR = 2,
   JBIG2_COMPOSE_XNOR = 3,
   JBIG2_COMPOSE_REPLACE = 4
-} JBig2ComposeOp;
+};
+
 struct FX_RECT;
-class CJBig2_Image : public CJBig2_Object {
+class CJBig2_Image {
  public:
   CJBig2_Image(int32_t w, int32_t h);
 
