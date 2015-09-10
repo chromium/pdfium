@@ -402,6 +402,7 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
 failed:
   return JBIG2_ERROR_TOO_SHORT;
 }
+
 int32_t CJBig2_Context::parseSegmentData(CJBig2_Segment* pSegment,
                                          IFX_Pause* pPause) {
   int32_t ret = ProcessiveParseSegmentData(pSegment, pPause);
@@ -411,6 +412,7 @@ int32_t CJBig2_Context::parseSegmentData(CJBig2_Segment* pSegment,
   }
   return ret;
 }
+
 int32_t CJBig2_Context::ProcessiveParseSegmentData(CJBig2_Segment* pSegment,
                                                    IFX_Pause* pPause) {
   switch (pSegment->m_cFlags.s.type) {
@@ -419,37 +421,29 @@ int32_t CJBig2_Context::ProcessiveParseSegmentData(CJBig2_Segment* pSegment,
     case 4:
     case 6:
     case 7:
-      if (m_nState == JBIG2_OUT_OF_PAGE) {
-        goto failed2;
-      } else {
-        return parseTextRegion(pSegment);
-      }
+      if (m_nState == JBIG2_OUT_OF_PAGE)
+        return JBIG2_ERROR_FATAL;
+      return parseTextRegion(pSegment);
     case 16:
       return parsePatternDict(pSegment, pPause);
     case 20:
     case 22:
     case 23:
-      if (m_nState == JBIG2_OUT_OF_PAGE) {
-        goto failed2;
-      } else {
-        return parseHalftoneRegion(pSegment, pPause);
-      }
+      if (m_nState == JBIG2_OUT_OF_PAGE)
+        return JBIG2_ERROR_FATAL;
+      return parseHalftoneRegion(pSegment, pPause);
     case 36:
     case 38:
     case 39:
-      if (m_nState == JBIG2_OUT_OF_PAGE) {
-        goto failed2;
-      } else {
-        return parseGenericRegion(pSegment, pPause);
-      }
+      if (m_nState == JBIG2_OUT_OF_PAGE)
+        return JBIG2_ERROR_FATAL;
+      return parseGenericRegion(pSegment, pPause);
     case 40:
     case 42:
     case 43:
-      if (m_nState == JBIG2_OUT_OF_PAGE) {
-        goto failed2;
-      } else {
-        return parseGenericRefinementRegion(pSegment);
-      }
+      if (m_nState == JBIG2_OUT_OF_PAGE)
+        return JBIG2_ERROR_FATAL;
+      return parseGenericRefinementRegion(pSegment);
     case 48: {
       FX_WORD wTemp;
       nonstd::unique_ptr<JBig2PageInfo> pPageInfo(new JBig2PageInfo);
@@ -459,24 +453,26 @@ int32_t CJBig2_Context::ProcessiveParseSegmentData(CJBig2_Segment* pSegment,
           (m_pStream->readInteger(&pPageInfo->m_dwResolutionY) != 0) ||
           (m_pStream->read1Byte(&pPageInfo->m_cFlags) != 0) ||
           (m_pStream->readShortInteger(&wTemp) != 0)) {
-        goto failed1;
+        return JBIG2_ERROR_TOO_SHORT;
       }
-      pPageInfo->m_bIsStriped = ((wTemp >> 15) & 1) ? 1 : 0;
+      pPageInfo->m_bIsStriped = ((wTemp >> 15) & 1) ? TRUE : FALSE;
       pPageInfo->m_wMaxStripeSize = wTemp & 0x7fff;
-      if ((pPageInfo->m_dwHeight == 0xffffffff) &&
-          (pPageInfo->m_bIsStriped != TRUE)) {
+      bool bMaxHeight = (pPageInfo->m_dwHeight == 0xffffffff);
+      if (bMaxHeight && pPageInfo->m_bIsStriped != TRUE)
         pPageInfo->m_bIsStriped = TRUE;
-      }
+
       if (!m_bBufSpecified) {
         delete m_pPage;
-        if (pPageInfo->m_dwHeight == 0xffffffff) {
-          m_pPage = new CJBig2_Image(pPageInfo->m_dwWidth,
-                                     pPageInfo->m_wMaxStripeSize);
-        } else {
-          m_pPage =
-              new CJBig2_Image(pPageInfo->m_dwWidth, pPageInfo->m_dwHeight);
-        }
+        FX_DWORD height =
+            bMaxHeight ? pPageInfo->m_wMaxStripeSize : pPageInfo->m_dwHeight;
+        m_pPage = new CJBig2_Image(pPageInfo->m_dwWidth, height);
       }
+
+      if (!m_pPage->m_pData) {
+        m_ProcessiveStatus = FXCODEC_STATUS_ERROR;
+        return JBIG2_ERROR_TOO_SHORT;
+      }
+
       m_pPage->fill((pPageInfo->m_cFlags & 4) ? 1 : 0);
       m_PageInfoList.push_back(pPageInfo.release());
       m_nState = JBIG2_IN_PAGE;
@@ -502,11 +498,8 @@ int32_t CJBig2_Context::ProcessiveParseSegmentData(CJBig2_Segment* pSegment,
       break;
   }
   return JBIG2_SUCCESS;
-failed1:
-  return JBIG2_ERROR_TOO_SHORT;
-failed2:
-  return JBIG2_ERROR_FATAL;
 }
+
 int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
                                         IFX_Pause* pPause) {
   FX_DWORD dwTemp;
