@@ -590,8 +590,7 @@ FX_DWORD CCodec_FaxDecoder::GetSrcOffset() {
   return ret;
 }
 extern "C" {
-void _FaxG4Decode(void*,
-                  const uint8_t* src_buf,
+void _FaxG4Decode(const uint8_t* src_buf,
                   FX_DWORD src_size,
                   int* pbitpos,
                   uint8_t* dest_buf,

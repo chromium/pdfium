@@ -11,7 +11,7 @@
 
 class CJBig2_BitStream {
  public:
-  CJBig2_BitStream(uint8_t* pBuffer, FX_DWORD dwLength);
+  CJBig2_BitStream(const uint8_t* pBuffer, FX_DWORD dwLength);
 
   CJBig2_BitStream(CJBig2_BitStream& bs);
 
@@ -55,18 +55,18 @@ class CJBig2_BitStream {
 
   void setBitPos(FX_DWORD dwBitPos);
 
-  uint8_t* getBuf();
+  const uint8_t* getBuf();
 
   FX_DWORD getLength() { return m_dwLength; }
 
-  uint8_t* getPointer();
+  const uint8_t* getPointer();
 
   void offset(FX_DWORD dwOffset);
 
   FX_DWORD getByteLeft();
 
  private:
-  uint8_t* m_pBuf;
+  const uint8_t* m_pBuf;
 
   FX_DWORD m_dwLength;
 
@@ -74,7 +74,8 @@ class CJBig2_BitStream {
 
   FX_DWORD m_dwBitIdx;
 };
-inline CJBig2_BitStream::CJBig2_BitStream(uint8_t* pBuffer, FX_DWORD dwLength) {
+inline CJBig2_BitStream::CJBig2_BitStream(const uint8_t* pBuffer,
+                                          FX_DWORD dwLength) {
   m_pBuf = pBuffer;
   m_dwLength = dwLength;
   m_dwByteIdx = 0;
@@ -274,10 +275,10 @@ inline void CJBig2_BitStream::setBitPos(FX_DWORD dwBitPos) {
   m_dwByteIdx = dwBitPos >> 3;
   m_dwBitIdx = dwBitPos & 7;
 }
-inline uint8_t* CJBig2_BitStream::getBuf() {
+inline const uint8_t* CJBig2_BitStream::getBuf() {
   return m_pBuf;
 }
-inline uint8_t* CJBig2_BitStream::getPointer() {
+inline const uint8_t* CJBig2_BitStream::getPointer() {
   return m_pBuf + m_dwByteIdx;
 }
 inline void CJBig2_BitStream::offset(FX_DWORD dwOffset) {

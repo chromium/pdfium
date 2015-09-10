@@ -6,10 +6,12 @@
 
 #ifndef _JBIG2_SYMBOL_DICT_H_
 #define _JBIG2_SYMBOL_DICT_H_
-#include "JBig2_Define.h"
+
 #include "JBig2_ArithDecoder.h"
+#include "JBig2_Define.h"
 #include "JBig2_Image.h"
-class CJBig2_SymbolDict : public CJBig2_Object {
+
+class CJBig2_SymbolDict {
  public:
   CJBig2_SymbolDict();
   CJBig2_SymbolDict* DeepCopy();
@@ -19,6 +21,8 @@ class CJBig2_SymbolDict : public CJBig2_Object {
   FX_DWORD SDNUMEXSYMS;
   CJBig2_Image** SDEXSYMS;
   FX_BOOL m_bContextRetained;
-  JBig2ArithCtx *m_gbContext, *m_grContext;
+  JBig2ArithCtx* m_gbContext;
+  JBig2ArithCtx* m_grContext;
 };
+
 #endif

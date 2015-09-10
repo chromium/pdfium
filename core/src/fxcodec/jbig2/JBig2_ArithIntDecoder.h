@@ -6,8 +6,9 @@
 
 #ifndef _JBIG2_ARITH_INT_DECODER_H_
 #define _JBIG2_ARITH_INT_DECODER_H_
-#include "JBig2_Module.h"
+
 #include "JBig2_ArithDecoder.h"
+
 class CJBig2_ArithIntDecoder {
  public:
   CJBig2_ArithIntDecoder();

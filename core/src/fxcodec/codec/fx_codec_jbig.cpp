@@ -48,8 +48,8 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context,
   m_pJbig2Context->m_bFileReader = FALSE;
   FXSYS_memset(dest_buf, 0, height * dest_pitch);
   m_pJbig2Context->m_pContext = CJBig2_Context::CreateContext(
-      &m_Module, (uint8_t*)global_data, global_size, (uint8_t*)src_buf,
-      src_size, JBIG2_EMBED_STREAM, &m_SymbolDictCache, pPause);
+      global_data, global_size, src_buf, src_size, JBIG2_EMBED_STREAM,
+      &m_SymbolDictCache, pPause);
   if (!m_pJbig2Context->m_pContext) {
     return FXCODEC_STATUS_ERROR;
   }
