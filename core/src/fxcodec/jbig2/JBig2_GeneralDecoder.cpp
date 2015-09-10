@@ -719,6 +719,9 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
 CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
+  if (!GRREFERENCE->m_pData)
+    return nullptr;
+
   FX_BOOL LTP, SLTP, bVal;
   FX_DWORD CONTEXT;
   FX_DWORD line1, line1_r, line2_r, line3_r;
@@ -953,6 +956,9 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
 CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
+  if (!GRREFERENCE->m_pData)
+    return nullptr;
+
   FX_BOOL LTP, SLTP, bVal;
   FX_DWORD CONTEXT;
   FX_DWORD line1, line1_r, line2_r, line3_r;
