@@ -36,8 +36,14 @@ struct FXJSErr {
   unsigned linnum;
 };
 
-/* --------------------------------------------- API
- * --------------------------------------------- */
+extern const wchar_t kFXJSValueNameString[];
+extern const wchar_t kFXJSValueNameNumber[];
+extern const wchar_t kFXJSValueNameBoolean[];
+extern const wchar_t kFXJSValueNameDate[];
+extern const wchar_t kFXJSValueNameObject[];
+extern const wchar_t kFXJSValueNameFxobj[];
+extern const wchar_t kFXJSValueNameNull[];
+extern const wchar_t kFXJSValueNameUndefined[];
 
 class IFXJS_Context;
 class IFXJS_Runtime;
@@ -47,36 +53,38 @@ typedef void (*LP_CONSTRUCTOR)(IFXJS_Context* cc,
                                v8::Local<v8::Object> global);
 typedef void (*LP_DESTRUCTOR)(v8::Local<v8::Object> obj);
 
+// Always returns a valid, newly-created objDefnID.
 int JS_DefineObj(v8::Isolate* pIsolate,
                  const wchar_t* sObjName,
                  FXJSOBJTYPE eObjType,
                  LP_CONSTRUCTOR pConstructor,
                  LP_DESTRUCTOR pDestructor);
-int JS_DefineObjMethod(v8::Isolate* pIsolate,
+
+void JS_DefineObjMethod(v8::Isolate* pIsolate,
+                        int nObjDefnID,
+                        const wchar_t* sMethodName,
+                        v8::FunctionCallback pMethodCall);
+void JS_DefineObjProperty(v8::Isolate* pIsolate,
+                          int nObjDefnID,
+                          const wchar_t* sPropName,
+                          v8::AccessorGetterCallback pPropGet,
+                          v8::AccessorSetterCallback pPropPut);
+void JS_DefineObjAllProperties(v8::Isolate* pIsolate,
+                               int nObjDefnID,
+                               v8::NamedPropertyQueryCallback pPropQurey,
+                               v8::NamedPropertyGetterCallback pPropGet,
+                               v8::NamedPropertySetterCallback pPropPut,
+                               v8::NamedPropertyDeleterCallback pPropDel);
+void JS_DefineObjConst(v8::Isolate* pIsolate,
                        int nObjDefnID,
-                       const wchar_t* sMethodName,
-                       v8::FunctionCallback pMethodCall);
-int JS_DefineObjProperty(v8::Isolate* pIsolate,
-                         int nObjDefnID,
-                         const wchar_t* sPropName,
-                         v8::AccessorGetterCallback pPropGet,
-                         v8::AccessorSetterCallback pPropPut);
-int JS_DefineObjAllProperties(v8::Isolate* pIsolate,
-                              int nObjDefnID,
-                              v8::NamedPropertyQueryCallback pPropQurey,
-                              v8::NamedPropertyGetterCallback pPropGet,
-                              v8::NamedPropertySetterCallback pPropPut,
-                              v8::NamedPropertyDeleterCallback pPropDel);
-int JS_DefineObjConst(v8::Isolate* pIsolate,
-                      int nObjDefnID,
-                      const wchar_t* sConstName,
-                      v8::Local<v8::Value> pDefault);
-int JS_DefineGlobalMethod(v8::Isolate* pIsolate,
-                          const wchar_t* sMethodName,
-                          v8::FunctionCallback pMethodCall);
-int JS_DefineGlobalConst(v8::Isolate* pIsolate,
-                         const wchar_t* sConstName,
-                         v8::Local<v8::Value> pDefault);
+                       const wchar_t* sConstName,
+                       v8::Local<v8::Value> pDefault);
+void JS_DefineGlobalMethod(v8::Isolate* pIsolate,
+                           const wchar_t* sMethodName,
+                           v8::FunctionCallback pMethodCall);
+void JS_DefineGlobalConst(v8::Isolate* pIsolate,
+                          const wchar_t* sConstName,
+                          v8::Local<v8::Value> pDefault);
 
 void JS_InitialRuntime(v8::Isolate* pIsolate,
                        IFXJS_Runtime* pFXRuntime,

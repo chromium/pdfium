@@ -12,14 +12,14 @@
 #include <cmath>
 #include <limits>
 
-#define VALUE_NAME_STRING L"string"
-#define VALUE_NAME_NUMBER L"number"
-#define VALUE_NAME_BOOLEAN L"boolean"
-#define VALUE_NAME_DATE L"date"
-#define VALUE_NAME_OBJECT L"object"
-#define VALUE_NAME_FXOBJ L"fxobj"
-#define VALUE_NAME_NULL L"null"
-#define VALUE_NAME_UNDEFINED L"undefined"
+const wchar_t kFXJSValueNameString[] = L"string";
+const wchar_t kFXJSValueNameNumber[] = L"number";
+const wchar_t kFXJSValueNameBoolean[] = L"boolean";
+const wchar_t kFXJSValueNameDate[] = L"date";
+const wchar_t kFXJSValueNameObject[] = L"object";
+const wchar_t kFXJSValueNameFxobj[] = L"fxobj";
+const wchar_t kFXJSValueNameNull[] = L"null";
+const wchar_t kFXJSValueNameUndefined[] = L"undefined";
 
 const static FX_DWORD g_nan[2] = {0, 0x7FF80000};
 static double GetNan() {
@@ -93,22 +93,18 @@ int JS_DefineObj(v8::Isolate* pIsolate,
   return pArray->GetSize() - 1;
 }
 
-int JS_DefineObjMethod(v8::Isolate* pIsolate,
-                       int nObjDefnID,
-                       const wchar_t* sMethodName,
-                       v8::FunctionCallback pMethodCall) {
+void JS_DefineObjMethod(v8::Isolate* pIsolate,
+                        int nObjDefnID,
+                        const wchar_t* sMethodName,
+                        v8::FunctionCallback pMethodCall) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
 
   CFX_WideString ws = CFX_WideString(sMethodName);
   CFX_ByteString bsMethodName = ws.UTF8Encode();
-
   CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
-  if (!pArray)
-    return 0;
 
-  if (nObjDefnID < 0 || nObjDefnID >= pArray->GetSize())
-    return 0;
+  // Note: GetAt() halts if out-of-range even in release builds.
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
   v8::Local<v8::ObjectTemplate> objTemp =
       v8::Local<v8::ObjectTemplate>::New(pIsolate, pObjDef->m_objTemplate);
@@ -117,26 +113,21 @@ int JS_DefineObjMethod(v8::Isolate* pIsolate,
                               v8::NewStringType::kNormal).ToLocalChecked(),
       v8::FunctionTemplate::New(pIsolate, pMethodCall), v8::ReadOnly);
   pObjDef->m_objTemplate.Reset(pIsolate, objTemp);
-  return 0;
 }
 
-int JS_DefineObjProperty(v8::Isolate* pIsolate,
-                         int nObjDefnID,
-                         const wchar_t* sPropName,
-                         v8::AccessorGetterCallback pPropGet,
-                         v8::AccessorSetterCallback pPropPut) {
+void JS_DefineObjProperty(v8::Isolate* pIsolate,
+                          int nObjDefnID,
+                          const wchar_t* sPropName,
+                          v8::AccessorGetterCallback pPropGet,
+                          v8::AccessorSetterCallback pPropPut) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
 
   CFX_WideString ws = CFX_WideString(sPropName);
   CFX_ByteString bsPropertyName = ws.UTF8Encode();
-
   CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
-  if (!pArray)
-    return 0;
 
-  if (nObjDefnID < 0 || nObjDefnID >= pArray->GetSize())
-    return 0;
+  // Note: GetAt() halts if out-of-range even in release builds.
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
   v8::Local<v8::ObjectTemplate> objTemp =
       v8::Local<v8::ObjectTemplate>::New(pIsolate, pObjDef->m_objTemplate);
@@ -145,54 +136,43 @@ int JS_DefineObjProperty(v8::Isolate* pIsolate,
                               v8::NewStringType::kNormal).ToLocalChecked(),
       pPropGet, pPropPut);
   pObjDef->m_objTemplate.Reset(pIsolate, objTemp);
-  return 0;
 }
 
-int JS_DefineObjAllProperties(v8::Isolate* pIsolate,
-                              int nObjDefnID,
-                              v8::NamedPropertyQueryCallback pPropQurey,
-                              v8::NamedPropertyGetterCallback pPropGet,
-                              v8::NamedPropertySetterCallback pPropPut,
-                              v8::NamedPropertyDeleterCallback pPropDel) {
+void JS_DefineObjAllProperties(v8::Isolate* pIsolate,
+                               int nObjDefnID,
+                               v8::NamedPropertyQueryCallback pPropQurey,
+                               v8::NamedPropertyGetterCallback pPropGet,
+                               v8::NamedPropertySetterCallback pPropPut,
+                               v8::NamedPropertyDeleterCallback pPropDel) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
-
   CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
-  if (!pArray)
-    return 0;
 
-  if (nObjDefnID < 0 || nObjDefnID >= pArray->GetSize())
-    return 0;
+  // Note: GetAt() halts if out-of-range even in release builds.
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
   v8::Local<v8::ObjectTemplate> objTemp =
       v8::Local<v8::ObjectTemplate>::New(pIsolate, pObjDef->m_objTemplate);
   objTemp->SetNamedPropertyHandler(pPropGet, pPropPut, pPropQurey, pPropDel);
   pObjDef->m_objTemplate.Reset(pIsolate, objTemp);
-  return 0;
 }
 
-int JS_DefineObjConst(v8::Isolate* pIsolate,
-                      int nObjDefnID,
-                      const wchar_t* sConstName,
-                      v8::Local<v8::Value> pDefault) {
+void JS_DefineObjConst(v8::Isolate* pIsolate,
+                       int nObjDefnID,
+                       const wchar_t* sConstName,
+                       v8::Local<v8::Value> pDefault) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
 
-  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
-  if (!pArray)
-    return 0;
-
   CFX_WideString ws = CFX_WideString(sConstName);
   CFX_ByteString bsConstName = ws.UTF8Encode();
+  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
 
-  if (nObjDefnID < 0 || nObjDefnID >= pArray->GetSize())
-    return 0;
+  // Note: GetAt() halts if out-of-range even in release builds.
   CJS_ObjDefintion* pObjDef = (CJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
   v8::Local<v8::ObjectTemplate> objTemp =
       v8::Local<v8::ObjectTemplate>::New(pIsolate, pObjDef->m_objTemplate);
   objTemp->Set(pIsolate, bsConstName.c_str(), pDefault);
   pObjDef->m_objTemplate.Reset(pIsolate, objTemp);
-  return 0;
 }
 
 static v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(
@@ -211,9 +191,9 @@ static v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(
   return gloabalObjectTemplate;
 }
 
-int JS_DefineGlobalMethod(v8::Isolate* pIsolate,
-                          const wchar_t* sMethodName,
-                          v8::FunctionCallback pMethodCall) {
+void JS_DefineGlobalMethod(v8::Isolate* pIsolate,
+                           const wchar_t* sMethodName,
+                           v8::FunctionCallback pMethodCall) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
 
@@ -236,13 +216,11 @@ int JS_DefineGlobalMethod(v8::Isolate* pIsolate,
       funTempl, v8::ReadOnly);
 
   globalObjTemp.Reset(pIsolate, objTemp);
-
-  return 0;
 }
 
-int JS_DefineGlobalConst(v8::Isolate* pIsolate,
-                         const wchar_t* sConstName,
-                         v8::Local<v8::Value> pDefault) {
+void JS_DefineGlobalConst(v8::Isolate* pIsolate,
+                          const wchar_t* sConstName,
+                          v8::Local<v8::Value> pDefault) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
 
@@ -263,8 +241,6 @@ int JS_DefineGlobalConst(v8::Isolate* pIsolate,
       pDefault, v8::ReadOnly);
 
   globalObjTemp.Reset(pIsolate, objTemp);
-
-  return 0;
 }
 
 void JS_InitialRuntime(v8::Isolate* pIsolate,
@@ -510,19 +486,19 @@ const wchar_t* JS_GetTypeof(v8::Local<v8::Value> pObj) {
   if (pObj.IsEmpty())
     return NULL;
   if (pObj->IsString())
-    return VALUE_NAME_STRING;
+    return kFXJSValueNameString;
   if (pObj->IsNumber())
-    return VALUE_NAME_NUMBER;
+    return kFXJSValueNameNumber;
   if (pObj->IsBoolean())
-    return VALUE_NAME_BOOLEAN;
+    return kFXJSValueNameBoolean;
   if (pObj->IsDate())
-    return VALUE_NAME_DATE;
+    return kFXJSValueNameDate;
   if (pObj->IsObject())
-    return VALUE_NAME_OBJECT;
+    return kFXJSValueNameObject;
   if (pObj->IsNull())
-    return VALUE_NAME_NULL;
+    return kFXJSValueNameNull;
   if (pObj->IsUndefined())
-    return VALUE_NAME_UNDEFINED;
+    return kFXJSValueNameUndefined;
   return NULL;
 }
 void JS_SetPrivate(v8::Local<v8::Object> pObj, void* p) {

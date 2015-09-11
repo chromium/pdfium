@@ -36,11 +36,36 @@ endobj
 stream
 
 function doTest(name, props) {
-  for (var i = 0; i < props.length; ++i) {
-    var expr = name + "." + props[i];
-    app.alert(expr + " is " + eval(expr));
+  try {
+    for (var i = 0; i < props.length; ++i) {
+      var expr = name + "." + props[i];
+      app.alert(expr + " is " + eval(expr));
+    }
+  } catch (e) {
+    app.alert("ERROR: " + e.toString());
   }
 }
+
+function doGlobalTest(props) {
+  try {
+    for (var i = 0; i < props.length; ++i) {
+      app.alert(props[i] + " is " + eval(props[i]));
+    }
+  } catch (e) {
+    app.alert("ERROR: " + e.toString());
+  }
+}
+
+function doGlobalArrayTest(props) {
+  try {
+    for (var i = 0; i < props.length; ++i) {
+      app.alert(props[i] + " is\n  " + eval(props[i]).join(",\n  "));
+    }
+  } catch (e) {
+    app.alert("ERROR: " + e.toString());
+  }
+}
+
 
 try {
   doTest("border", ["s", "b", "d", "i", "u", "nonesuch"]);
@@ -58,6 +83,35 @@ try {
   doTest("style", ["ch", "cr", "di", "ci", "st", "sq", "nonesuch"]);
   doTest("zoomtype", ["none", "fitP", "fitW", "fitH", "fitV", "pref", "refW",
                       "nonesuch"]);
+
+  doGlobalTest([
+    "IDS_GREATER_THAN",
+    "IDS_GT_AND_LT",
+    "IDS_LESS_THAN",
+    "IDS_INVALID_MONTH",
+    "IDS_INVALID_DATE",
+    "IDS_INVALID_VALUE",
+    "IDS_AM",
+    "IDS_PM",
+    "IDS_MONTH_INFO",
+    "IDS_STARTUP_CONSOLE_MSG"
+  ]);
+
+  doGlobalArrayTest([
+    "RE_NUMBER_ENTRY_DOT_SEP",
+    "RE_NUMBER_COMMIT_DOT_SEP",
+    "RE_NUMBER_ENTRY_COMMA_SEP",
+    "RE_NUMBER_COMMIT_COMMA_SEP",
+    "RE_ZIP_ENTRY",
+    "RE_ZIP_COMMIT",
+    "RE_ZIP4_ENTRY",
+    "RE_ZIP4_COMMIT",
+    "RE_PHONE_ENTRY",
+    "RE_PHONE_COMMIT",
+    "RE_SSN_ENTRY",
+    "RE_SSN_COMMIT"
+  ]);
+
 } catch (e) {
   app.alert("ERROR: " + e.toString());
 }
@@ -69,3 +123,4 @@ trailer <<
 >>
 {{startxref}}
 %%EOF
+

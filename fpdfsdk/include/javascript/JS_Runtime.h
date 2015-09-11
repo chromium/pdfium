@@ -56,7 +56,7 @@ class CJS_Runtime : public IFXJS_Runtime {
   v8::Local<v8::Context> NewJSContext();
 
  private:
-  FX_BOOL DefineJSObjects();
+  void DefineJSObjects();
 
   CFX_ArrayTemplate<CJS_Context*> m_ContextArray;
   CPDFDoc_Environment* m_pApp;
