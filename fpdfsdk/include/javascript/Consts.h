@@ -103,14 +103,14 @@ class CJS_Zoomtype : public CJS_Object {
 
 class CJS_GlobalConsts : public CJS_Object {
  public:
-  static int Init(v8::Isolate* pIsolate);
+  static int DefineJSObjects(v8::Isolate* pIsolate);
 };
 
 /* ------------------------------ CJS_GlobalArrays -------------------------- */
 
 class CJS_GlobalArrays : public CJS_Object {
  public:
-  static int Init(v8::Isolate* pIsolate);
+  static int DefineJSObjects(v8::Isolate* pIsolate);
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_CONSTS_H_

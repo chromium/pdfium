@@ -127,10 +127,16 @@ END_JS_STATIC_CONST()
 
 IMPLEMENT_JS_CLASS_CONST(CJS_Zoomtype, zoomtype)
 
-/* ------------------------------ CJS_GlobalConsts
- * ------------------------------ */
+/* ------------------------------ CJS_GlobalConsts ------------------------- */
 
-int CJS_GlobalConsts::Init(v8::Isolate* pIsolate) {
+#define DEFINE_GLOBAL_CONST(pIsolate, const_name, const_value)   \
+  if (JS_DefineGlobalConst(                                      \
+          pIsolate, JS_WIDESTRING(const_name),                   \
+          JS_NewString(pIsolate, JS_WIDESTRING(const_value)))) { \
+    return -1;                                                   \
+  }
+
+int CJS_GlobalConsts::DefineJSObjects(v8::Isolate* pIsolate) {
   DEFINE_GLOBAL_CONST(pIsolate, IDS_GREATER_THAN, Invalid value
                       : must be greater than or equal to % s.);
   DEFINE_GLOBAL_CONST(
@@ -156,10 +162,23 @@ int CJS_GlobalConsts::Init(v8::Isolate* pIsolate) {
   return 0;
 }
 
-/* ------------------------------ CJS_GlobalArrays
- * ------------------------------ */
+/* ------------------------------ CJS_GlobalArrays  ------------------------ */
 
-int CJS_GlobalArrays::Init(v8::Isolate* pIsolate) {
+#define DEFINE_GLOBAL_ARRAY(pIsolate)                           \
+  int size = FX_ArraySize(ArrayContent);                        \
+                                                                \
+  CJS_Array array(pIsolate);                                    \
+  for (int i = 0; i < size; i++)                                \
+    array.SetElement(i, CJS_Value(pIsolate, ArrayContent[i]));  \
+                                                                \
+  CJS_PropValue prop(pIsolate);                                 \
+  prop << array;                                                \
+  if (JS_DefineGlobalConst(pIsolate, (const wchar_t*)ArrayName, \
+                           prop.ToV8Value()) < 0) {             \
+    return -1;                                                  \
+  }
+
+int CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {
   {
     const FX_WCHAR* ArrayName = L"RE_NUMBER_ENTRY_DOT_SEP";
     const FX_WCHAR* ArrayContent[] = {L"[+-]?\\d*\\.?\\d*"};
