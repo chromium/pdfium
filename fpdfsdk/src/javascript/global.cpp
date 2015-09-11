@@ -61,21 +61,21 @@ class HashVerify {
 
 HashVerify::HashVerify() {
   ASSERT(JSCONST_nStringHash ==
-         JS_CalcHash(VALUE_NAME_STRING, wcslen(VALUE_NAME_STRING)));
+         JS_CalcHash(kFXJSValueNameString, wcslen(kFXJSValueNameString)));
   ASSERT(JSCONST_nNumberHash ==
-         JS_CalcHash(VALUE_NAME_NUMBER, wcslen(VALUE_NAME_NUMBER)));
+         JS_CalcHash(kFXJSValueNameNumber, wcslen(kFXJSValueNameNumber)));
   ASSERT(JSCONST_nBoolHash ==
-         JS_CalcHash(VALUE_NAME_BOOLEAN, wcslen(VALUE_NAME_BOOLEAN)));
+         JS_CalcHash(kFXJSValueNameBoolean, wcslen(kFXJSValueNameBoolean)));
   ASSERT(JSCONST_nDateHash ==
-         JS_CalcHash(VALUE_NAME_DATE, wcslen(VALUE_NAME_DATE)));
+         JS_CalcHash(kFXJSValueNameDate, wcslen(kFXJSValueNameDate)));
   ASSERT(JSCONST_nObjectHash ==
-         JS_CalcHash(VALUE_NAME_OBJECT, wcslen(VALUE_NAME_OBJECT)));
+         JS_CalcHash(kFXJSValueNameObject, wcslen(kFXJSValueNameObject)));
   ASSERT(JSCONST_nFXobjHash ==
-         JS_CalcHash(VALUE_NAME_FXOBJ, wcslen(VALUE_NAME_FXOBJ)));
+         JS_CalcHash(kFXJSValueNameFxobj, wcslen(kFXJSValueNameFxobj)));
   ASSERT(JSCONST_nNullHash ==
-         JS_CalcHash(VALUE_NAME_NULL, wcslen(VALUE_NAME_NULL)));
+         JS_CalcHash(kFXJSValueNameNull, wcslen(kFXJSValueNameNull)));
   ASSERT(JSCONST_nUndefHash ==
-         JS_CalcHash(VALUE_NAME_UNDEFINED, wcslen(VALUE_NAME_UNDEFINED)));
+         JS_CalcHash(kFXJSValueNameUndefined, wcslen(kFXJSValueNameUndefined)));
 }
 #endif
 

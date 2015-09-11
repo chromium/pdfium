@@ -60,3 +60,49 @@ Alert: zoomtype.fitV is FitVisibleWidth
 Alert: zoomtype.pref is Preferred
 Alert: zoomtype.refW is ReflowWidth
 Alert: zoomtype.nonesuch is undefined
+Alert: IDS_GREATER_THAN is Invalid value: must be greater than or equal to % s.
+Alert: IDS_GT_AND_LT is Invalid value: must be greater than or equal to % s and less than or equal to % s.
+Alert: IDS_LESS_THAN is Invalid value: must be less than or equal to % s.
+Alert: IDS_INVALID_MONTH is **Invalid**
+Alert: IDS_INVALID_DATE is Invalid date / time: please ensure that the date / time exists.Field
+Alert: IDS_INVALID_VALUE is The value entered does not match the format of the field
+Alert: IDS_AM is am
+Alert: IDS_PM is pm
+Alert: IDS_MONTH_INFO is January[1] February[2] March[3] April[4] May[5] June[6] July[7] August[8] September[9] October[10] November[11] December[12] Sept[9] Jan[1] Feb[2] Mar[3] Apr[4] Jun[6] Jul[7] Aug[8] Sep[9] Oct[10] Nov[11] Dec[12]
+Alert: IDS_STARTUP_CONSOLE_MSG is ** ^ _ ^ **
+Alert: RE_NUMBER_ENTRY_DOT_SEP is
+  [+-]?\d*\.?\d*
+Alert: RE_NUMBER_COMMIT_DOT_SEP is
+  [+-]?\d+(\.\d+)?,
+  [+-]?\.\d+,
+  [+-]?\d+\.
+Alert: RE_NUMBER_ENTRY_COMMA_SEP is
+  [+-]?\d*,?\d*
+Alert: RE_NUMBER_COMMIT_COMMA_SEP is
+  [+-]?\d+([.,]\d+)?,
+  [+-]?[.,]\d+,
+  [+-]?\d+[.,]
+Alert: RE_ZIP_ENTRY is
+  \d{0,5}
+Alert: RE_ZIP_COMMIT is
+  \d{5}
+Alert: RE_ZIP4_ENTRY is
+  \d{0,5}(\.|[- ])?\d{0,4}
+Alert: RE_ZIP4_COMMIT is
+  \d{5}(\.|[- ])?\d{4}
+Alert: RE_PHONE_ENTRY is
+  \d{0,3}(\.|[- ])?\d{0,3}(\.|[- ])?\d{0,4},
+  \(\d{0,3},
+  \(\d{0,3}\)(\.|[- ])?\d{0,3}(\.|[- ])?\d{0,4},
+  \(\d{0,3}(\.|[- ])?\d{0,3}(\.|[- ])?\d{0,4},
+  \d{0,3}\)(\.|[- ])?\d{0,3}(\.|[- ])?\d{0,4},
+  011(\.|[- \d])*
+Alert: RE_PHONE_COMMIT is
+  \d{3}(\.|[- ])?\d{4},
+  \d{3}(\.|[- ])?\d{3}(\.|[- ])?\d{4},
+  \(\d{3}\)(\.|[- ])?\d{3}(\.|[- ])?\d{4},
+  011(\.|[- \d])*
+Alert: RE_SSN_ENTRY is
+  \d{0,3}(\.|[- ])?\d{0,2}(\.|[- ])?\d{0,4}
+Alert: RE_SSN_COMMIT is
+  \d{3}(\.|[- ])?\d{2}(\.|[- ])?\d{4}

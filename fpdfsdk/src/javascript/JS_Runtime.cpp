@@ -156,7 +156,7 @@ CJS_Runtime::~CJS_Runtime() {
   m_isolate = NULL;
 }
 
-FX_BOOL CJS_Runtime::DefineJSObjects() {
+void CJS_Runtime::DefineJSObjects() {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::Locker locker(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
@@ -165,67 +165,43 @@ FX_BOOL CJS_Runtime::DefineJSObjects() {
 
   // The call order determines the "ObjDefID" assigned to each class.
   // ObjDefIDs 0 - 2
-  if (CJS_Border::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_Display::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_Font::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
+  CJS_Border::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Display::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Font::DefineJSObjects(GetIsolate(), JS_STATIC);
 
   // ObjDefIDs 3 - 5
-  if (CJS_Highlight::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_Position::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_ScaleHow::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
+  CJS_Highlight::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Position::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_ScaleHow::DefineJSObjects(GetIsolate(), JS_STATIC);
 
   // ObjDefIDs 6 - 8
-  if (CJS_ScaleWhen::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_Style::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_Zoomtype::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
+  CJS_ScaleWhen::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Style::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Zoomtype::DefineJSObjects(GetIsolate(), JS_STATIC);
 
   // ObjDefIDs 9 - 11
-  if (CJS_App::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_Color::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_Console::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
+  CJS_App::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Color::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Console::DefineJSObjects(GetIsolate(), JS_STATIC);
 
   // ObjDefIDs 12 - 14
-  if (CJS_Document::DefineJSObjects(GetIsolate(), JS_DYNAMIC) < 0)
-    return FALSE;
-  if (CJS_Event::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_Field::DefineJSObjects(GetIsolate(), JS_DYNAMIC) < 0)
-    return FALSE;
+  CJS_Document::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
+  CJS_Event::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Field::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
 
   // ObjDefIDs 15 - 17
-  if (CJS_Global::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
-  if (CJS_Icon::DefineJSObjects(GetIsolate(), JS_DYNAMIC) < 0)
-    return FALSE;
-  if (CJS_Util::DefineJSObjects(GetIsolate(), JS_STATIC) < 0)
-    return FALSE;
+  CJS_Global::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Icon::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
+  CJS_Util::DefineJSObjects(GetIsolate(), JS_STATIC);
 
-  // ObjDefIDs 18 - 20
-  if (CJS_PublicMethods::DefineJSObjects(GetIsolate()) < 0)
-    return FALSE;
-  if (CJS_GlobalConsts::DefineJSObjects(GetIsolate()) < 0)
-    return FALSE;
-  if (CJS_GlobalArrays::DefineJSObjects(GetIsolate()) < 0)
-    return FALSE;
+  // ObjDefIDs 18 - 20 (these can't fail, return void).
+  CJS_PublicMethods::DefineJSObjects(GetIsolate());
+  CJS_GlobalConsts::DefineJSObjects(GetIsolate());
+  CJS_GlobalArrays::DefineJSObjects(GetIsolate());
 
-  if (CJS_TimerObj::DefineJSObjects(GetIsolate(), JS_DYNAMIC) < 0)
-    return FALSE;
-  if (CJS_PrintParamsObj::DefineJSObjects(GetIsolate(), JS_DYNAMIC) < 0)
-    return FALSE;
-
-  return TRUE;
+  // ObjDefIDs 21 - 22.
+  CJS_TimerObj::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
+  CJS_PrintParamsObj::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
 }
 
 IFXJS_Context* CJS_Runtime::NewContext() {

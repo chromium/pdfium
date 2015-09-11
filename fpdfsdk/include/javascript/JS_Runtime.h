@@ -61,7 +61,7 @@ class CJS_Runtime : public IFXJS_Runtime {
                                   FXJSE_HVALUE hValue);
 
  private:
-  FX_BOOL DefineJSObjects();
+  void DefineJSObjects();
 
   CFX_ArrayTemplate<CJS_Context*> m_ContextArray;
   CPDFDoc_Environment* m_pApp;
