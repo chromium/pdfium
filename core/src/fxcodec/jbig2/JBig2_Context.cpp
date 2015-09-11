@@ -75,44 +75,41 @@ CJBig2_Context::~CJBig2_Context() {
   delete m_pStream;
   m_pStream = NULL;
 }
+
 int32_t CJBig2_Context::decodeFile(IFX_Pause* pPause) {
-  uint8_t cFlags;
-  FX_DWORD dwTemp;
+  if (m_pStream->getByteLeft() < 8)
+    return JBIG2_ERROR_TOO_SHORT;
+
   const uint8_t fileID[] = {0x97, 0x4A, 0x42, 0x32, 0x0D, 0x0A, 0x1A, 0x0A};
-  int32_t nRet;
-  if (m_pStream->getByteLeft() < 8) {
-    nRet = JBIG2_ERROR_TOO_SHORT;
-    goto failed;
-  }
-  if (JBIG2_memcmp(m_pStream->getPointer(), fileID, 8) != 0) {
-    nRet = JBIG2_ERROR_FILE_FORMAT;
-    goto failed;
-  }
+  if (JBIG2_memcmp(m_pStream->getPointer(), fileID, 8) != 0)
+    return JBIG2_ERROR_FILE_FORMAT;
+
   m_pStream->offset(8);
-  if (m_pStream->read1Byte(&cFlags) != 0) {
-    nRet = JBIG2_ERROR_TOO_SHORT;
-    goto failed;
-  }
+
+  uint8_t cFlags;
+  if (m_pStream->read1Byte(&cFlags) != 0)
+    return JBIG2_ERROR_TOO_SHORT;
+
   if (!(cFlags & 0x02)) {
-    if (m_pStream->readInteger(&dwTemp) != 0) {
-      nRet = JBIG2_ERROR_TOO_SHORT;
-      goto failed;
-    }
+    FX_DWORD dwTemp;
+    if (m_pStream->readInteger(&dwTemp) != 0)
+      return JBIG2_ERROR_TOO_SHORT;
+
     if (dwTemp > 0) {
       m_PageInfoList.clear();
       m_PageInfoList.resize(dwTemp);
     }
   }
+
   if (cFlags & 0x01) {
     m_nStreamType = JBIG2_SQUENTIAL_STREAM;
     return decode_SquentialOrgnazation(pPause);
-  } else {
-    m_nStreamType = JBIG2_RANDOM_STREAM;
-    return decode_RandomOrgnazation_FirstPage(pPause);
   }
-failed:
-  return nRet;
+
+  m_nStreamType = JBIG2_RANDOM_STREAM;
+  return decode_RandomOrgnazation_FirstPage(pPause);
 }
+
 int32_t CJBig2_Context::decode_SquentialOrgnazation(IFX_Pause* pPause) {
   int32_t nRet;
   if (m_pStream->getByteLeft() <= 0)
@@ -324,19 +321,17 @@ CJBig2_Segment* CJBig2_Context::findReferredSegmentByTypeAndIndex(
   return NULL;
 }
 int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
-  uint8_t cSSize, cPSize;
-  uint8_t cTemp;
-  FX_WORD wTemp;
-  FX_DWORD dwTemp;
   if ((m_pStream->readInteger(&pSegment->m_dwNumber) != 0) ||
       (m_pStream->read1Byte(&pSegment->m_cFlags.c) != 0)) {
-    goto failed;
+    return JBIG2_ERROR_TOO_SHORT;
   }
-  cTemp = m_pStream->getCurByte();
+
+  FX_DWORD dwTemp;
+  uint8_t cTemp = m_pStream->getCurByte();
   if ((cTemp >> 5) == 7) {
     if (m_pStream->readInteger(
             (FX_DWORD*)&pSegment->m_nReferred_to_segment_count) != 0) {
-      goto failed;
+      return JBIG2_ERROR_TOO_SHORT;
     }
     pSegment->m_nReferred_to_segment_count &= 0x1fffffff;
     if (pSegment->m_nReferred_to_segment_count >
@@ -345,62 +340,59 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
     }
     dwTemp = 5 + 4 + (pSegment->m_nReferred_to_segment_count + 1) / 8;
   } else {
-    if (m_pStream->read1Byte(&cTemp) != 0) {
-      goto failed;
-    }
+    if (m_pStream->read1Byte(&cTemp) != 0)
+      return JBIG2_ERROR_TOO_SHORT;
+
     pSegment->m_nReferred_to_segment_count = cTemp >> 5;
     dwTemp = 5 + 1;
   }
-  cSSize =
+  uint8_t cSSize =
       pSegment->m_dwNumber > 65536 ? 4 : pSegment->m_dwNumber > 256 ? 2 : 1;
-  cPSize = pSegment->m_cFlags.s.page_association_size ? 4 : 1;
+  uint8_t cPSize = pSegment->m_cFlags.s.page_association_size ? 4 : 1;
   if (pSegment->m_nReferred_to_segment_count) {
     pSegment->m_pReferred_to_segment_numbers =
         FX_Alloc(FX_DWORD, pSegment->m_nReferred_to_segment_count);
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
       switch (cSSize) {
         case 1:
-          if (m_pStream->read1Byte(&cTemp) != 0) {
-            goto failed;
-          }
+          if (m_pStream->read1Byte(&cTemp) != 0)
+            return JBIG2_ERROR_TOO_SHORT;
+
           pSegment->m_pReferred_to_segment_numbers[i] = cTemp;
           break;
         case 2:
-          if (m_pStream->readShortInteger(&wTemp) != 0) {
-            goto failed;
-          }
+          FX_WORD wTemp;
+          if (m_pStream->readShortInteger(&wTemp) != 0)
+            return JBIG2_ERROR_TOO_SHORT;
+
           pSegment->m_pReferred_to_segment_numbers[i] = wTemp;
           break;
         case 4:
-          if (m_pStream->readInteger(&dwTemp) != 0) {
-            goto failed;
-          }
+          if (m_pStream->readInteger(&dwTemp) != 0)
+            return JBIG2_ERROR_TOO_SHORT;
+
           pSegment->m_pReferred_to_segment_numbers[i] = dwTemp;
           break;
       }
-      if (pSegment->m_pReferred_to_segment_numbers[i] >= pSegment->m_dwNumber) {
-        goto failed;
-      }
+      if (pSegment->m_pReferred_to_segment_numbers[i] >= pSegment->m_dwNumber)
+        return JBIG2_ERROR_TOO_SHORT;
     }
   }
   if (cPSize == 1) {
-    if (m_pStream->read1Byte(&cTemp) != 0) {
-      goto failed;
-    }
+    if (m_pStream->read1Byte(&cTemp) != 0)
+      return JBIG2_ERROR_TOO_SHORT;
     pSegment->m_dwPage_association = cTemp;
   } else {
     if (m_pStream->readInteger(&pSegment->m_dwPage_association) != 0) {
-      goto failed;
+      return JBIG2_ERROR_TOO_SHORT;
     }
   }
-  if (m_pStream->readInteger(&pSegment->m_dwData_length) != 0) {
-    goto failed;
-  }
+  if (m_pStream->readInteger(&pSegment->m_dwData_length) != 0)
+    return JBIG2_ERROR_TOO_SHORT;
+
   pSegment->m_pData = m_pStream->getPointer();
   pSegment->m_State = JBIG2_SEGMENT_DATA_UNPARSED;
   return JBIG2_SUCCESS;
-failed:
-  return JBIG2_ERROR_TOO_SHORT;
 }
 
 int32_t CJBig2_Context::parseSegmentData(CJBig2_Segment* pSegment,
