@@ -42,8 +42,6 @@ class CJS_Runtime : public IFXJS_Runtime {
 
   CPDFDoc_Environment* GetReaderApp() const { return m_pApp; }
 
-  FX_BOOL InitJSObjects();
-
   FX_BOOL AddEventToLoop(const CFX_WideString& sTargetName,
                          JS_EVENT_T eEventType);
   void RemoveEventInLoop(const CFX_WideString& sTargetName,
@@ -57,7 +55,9 @@ class CJS_Runtime : public IFXJS_Runtime {
   v8::Isolate* GetIsolate() const { return m_isolate; }
   v8::Local<v8::Context> NewJSContext();
 
- protected:
+ private:
+  FX_BOOL DefineJSObjects();
+
   CFX_ArrayTemplate<CJS_Context*> m_ContextArray;
   CPDFDoc_Environment* m_pApp;
   CPDFSDK_Document* m_pDocument;
