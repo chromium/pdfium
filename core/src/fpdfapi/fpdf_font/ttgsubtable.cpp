@@ -393,7 +393,7 @@ IFX_GSUBTable* IFX_GSUBTable::Create(CFX_Font* pFont) {
     int error = FXFT_Load_Sfnt_Table(
         pFont->GetFace(), FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, NULL, &length);
     if (!error) {
-      pFont->SetSubData((uint8_t*)FX_Alloc(uint8_t, length));
+      pFont->SetSubData(FX_Alloc(uint8_t, length));
     }
     if (!pFont->GetSubData()) {
       return NULL;

@@ -601,8 +601,7 @@ void* CCodec_JpegModule::Start() {
   if (m_pExtProvider) {
     return m_pExtProvider->Start();
   }
-  FXJPEG_Context* p =
-      (FXJPEG_Context*)FX_Alloc(uint8_t, sizeof(FXJPEG_Context));
+  FXJPEG_Context* p = FX_Alloc(FXJPEG_Context, 1);
   p->m_AllocFunc = jpeg_alloc_func;
   p->m_FreeFunc = jpeg_free_func;
   p->m_ErrMgr.error_exit = _error_fatal1;

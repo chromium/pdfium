@@ -187,7 +187,7 @@ void* CFX_BaseSegmentedArray::Add() {
     return pSegment;
   }
   if (m_IndexDepth == 0) {
-    void** pIndex = (void**)FX_Alloc(void*, m_IndexSize);
+    void** pIndex = FX_Alloc(void*, m_IndexSize);
     pIndex[0] = m_pIndex;
     pIndex[1] = pSegment;
     m_pIndex = pIndex;
@@ -208,7 +208,7 @@ void* CFX_BaseSegmentedArray::Add() {
     tree_size *= m_IndexSize;
   }
   if (m_DataSize == tree_size * m_SegmentSize) {
-    void** pIndex = (void**)FX_Alloc(void*, m_IndexSize);
+    void** pIndex = FX_Alloc(void*, m_IndexSize);
     pIndex[0] = m_pIndex;
     m_pIndex = pIndex;
     m_IndexDepth++;
@@ -218,7 +218,7 @@ void* CFX_BaseSegmentedArray::Add() {
   void** pSpot = (void**)m_pIndex;
   for (i = 1; i < m_IndexDepth; i++) {
     if (pSpot[seg_index / tree_size] == NULL) {
-      pSpot[seg_index / tree_size] = (void*)FX_Alloc(void*, m_IndexSize);
+      pSpot[seg_index / tree_size] = FX_Alloc(void*, m_IndexSize);
     }
     pSpot = (void**)pSpot[seg_index / tree_size];
     seg_index = seg_index % tree_size;

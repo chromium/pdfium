@@ -9,7 +9,7 @@
 #include "../../../include/fxcrt/fx_memory.h"
 
 CJBig2_ArithIntDecoder::CJBig2_ArithIntDecoder() {
-  IAx = (JBig2ArithCtx*)FX_AllocOrDie(sizeof(JBig2ArithCtx), 512);
+  IAx = FX_Alloc(JBig2ArithCtx, 512);
   JBIG2_memset(IAx, 0, sizeof(JBig2ArithCtx) * 512);
 }
 CJBig2_ArithIntDecoder::~CJBig2_ArithIntDecoder() {
@@ -82,8 +82,7 @@ int CJBig2_ArithIntDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
 }
 CJBig2_ArithIaidDecoder::CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA) {
   SBSYMCODELEN = SBSYMCODELENA;
-  IAID =
-      (JBig2ArithCtx*)FX_AllocOrDie(sizeof(JBig2ArithCtx), (1 << SBSYMCODELEN));
+  IAID = FX_Alloc(JBig2ArithCtx, 1 << SBSYMCODELEN);
   JBIG2_memset(IAID, 0, sizeof(JBig2ArithCtx) * (int)(1 << SBSYMCODELEN));
 }
 CJBig2_ArithIaidDecoder::~CJBig2_ArithIaidDecoder() {

@@ -45,10 +45,10 @@ int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine* pTable,
   int* FIRSTCODE;
   HTOOB = bHTOOB;
   NTEMP = nLines;
-  CODES = (int*)FX_AllocOrDie(sizeof(int), NTEMP);
-  PREFLEN = (int*)FX_AllocOrDie(sizeof(int), NTEMP);
-  RANGELEN = (int*)FX_AllocOrDie(sizeof(int), NTEMP);
-  RANGELOW = (int*)FX_AllocOrDie(sizeof(int), NTEMP);
+  CODES = FX_Alloc(int, NTEMP);
+  PREFLEN = FX_Alloc(int, NTEMP);
+  RANGELEN = FX_Alloc(int, NTEMP);
+  RANGELOW = FX_Alloc(int, NTEMP);
   LENMAX = 0;
   for (i = 0; i < NTEMP; i++) {
     PREFLEN[i] = pTable[i].PREFLEN;
@@ -58,9 +58,9 @@ int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine* pTable,
       LENMAX = PREFLEN[i];
     }
   }
-  LENCOUNT = (int*)FX_AllocOrDie(sizeof(int), (LENMAX + 1));
+  LENCOUNT = FX_Alloc(int, LENMAX + 1);
   JBIG2_memset(LENCOUNT, 0, sizeof(int) * (LENMAX + 1));
-  FIRSTCODE = (int*)FX_AllocOrDie(sizeof(int), (LENMAX + 1));
+  FIRSTCODE = FX_Alloc(int, LENMAX + 1);
   for (i = 0; i < NTEMP; i++) {
     LENCOUNT[PREFLEN[i]]++;
   }
@@ -85,12 +85,12 @@ int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine* pTable,
   return 1;
 }
 
-#define HT_CHECK_MEMORY_ADJUST                                           \
-  if (NTEMP >= nSize) {                                                  \
-    nSize += 16;                                                         \
-    PREFLEN = (int*)FX_Realloc(uint8_t, PREFLEN, sizeof(int) * nSize);   \
-    RANGELEN = (int*)FX_Realloc(uint8_t, RANGELEN, sizeof(int) * nSize); \
-    RANGELOW = (int*)FX_Realloc(uint8_t, RANGELOW, sizeof(int) * nSize); \
+#define HT_CHECK_MEMORY_ADJUST                   \
+  if (NTEMP >= nSize) {                          \
+    nSize += 16;                                 \
+    PREFLEN = FX_Realloc(int, PREFLEN, nSize);   \
+    RANGELEN = FX_Realloc(int, RANGELEN, nSize); \
+    RANGELOW = FX_Realloc(int, RANGELOW, nSize); \
   }
 int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream* pStream) {
   unsigned char HTPS, HTRS;
@@ -111,9 +111,9 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream* pStream) {
       pStream->readInteger(&HTHIGH) == -1 || HTLOW > HTHIGH) {
     goto failed;
   }
-  PREFLEN = (int*)FX_AllocOrDie(sizeof(int), nSize);
-  RANGELEN = (int*)FX_AllocOrDie(sizeof(int), nSize);
-  RANGELOW = (int*)FX_AllocOrDie(sizeof(int), nSize);
+  PREFLEN = FX_Alloc(int, nSize);
+  RANGELEN = FX_Alloc(int, nSize);
+  RANGELOW = FX_Alloc(int, nSize);
   CURRANGELOW = HTLOW;
   NTEMP = 0;
   do {
@@ -147,16 +147,16 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream* pStream) {
     }
     NTEMP = NTEMP + 1;
   }
-  CODES = (int*)FX_AllocOrDie(sizeof(int), NTEMP);
+  CODES = FX_Alloc(int, NTEMP);
   LENMAX = 0;
   for (int i = 0; i < NTEMP; i++) {
     if (PREFLEN[i] > LENMAX) {
       LENMAX = PREFLEN[i];
     }
   }
-  LENCOUNT = (int*)FX_AllocOrDie(sizeof(int), (LENMAX + 1));
+  LENCOUNT = FX_Alloc(int, (LENMAX + 1));
   JBIG2_memset(LENCOUNT, 0, sizeof(int) * (LENMAX + 1));
-  FIRSTCODE = (int*)FX_AllocOrDie(sizeof(int), (LENMAX + 1));
+  FIRSTCODE = FX_Alloc(int, (LENMAX + 1));
   for (int i = 0; i < NTEMP; i++) {
     LENCOUNT[PREFLEN[i]]++;
   }
