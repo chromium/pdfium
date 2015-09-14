@@ -99,19 +99,31 @@ static const uint8_t JS_RC4KEY[] = {
     0x0e, 0xd0, 0x6b, 0xbb, 0xd5, 0x75, 0x55, 0x8b, 0x6e, 0x6b, 0x19, 0xa0,
     0xf8, 0x77, 0xd5, 0xa3};
 
-CJS_GlobalData::CJS_GlobalData(CPDFDoc_Environment* pApp) {
-  //  IBaseAnnot* pBaseAnnot = IBaseAnnot::GetBaseAnnot(m_pApp);
-  //  ASSERT(pBaseAnnot != NULL);
-  //
-  //  m_sFilePath = pBaseAnnot->GetUserPath();
-  m_sFilePath += SDK_JS_GLOBALDATA_FILENAME;
+CJS_GlobalData* CJS_GlobalData::g_Instance = nullptr;
 
+// static
+CJS_GlobalData* CJS_GlobalData::GetRetainedInstance(CPDFDoc_Environment* pApp) {
+  if (!g_Instance) {
+    g_Instance = new CJS_GlobalData(pApp);
+  }
+  ++g_Instance->m_RefCount;
+  return g_Instance;
+}
+
+void CJS_GlobalData::Release() {
+  if (!--m_RefCount) {
+    delete g_Instance;
+    g_Instance = nullptr;
+  }
+}
+
+CJS_GlobalData::CJS_GlobalData(CPDFDoc_Environment* pApp) : m_RefCount(0) {
+  m_sFilePath += SDK_JS_GLOBALDATA_FILENAME;
   LoadGlobalPersistentVariables();
 }
 
 CJS_GlobalData::~CJS_GlobalData() {
   SaveGlobalPersisitentVariables();
-
   for (int i = 0, sz = m_arrayGlobalData.GetSize(); i < sz; i++)
     delete m_arrayGlobalData.GetAt(i);
 
@@ -119,19 +131,12 @@ CJS_GlobalData::~CJS_GlobalData() {
 }
 
 int CJS_GlobalData::FindGlobalVariable(const FX_CHAR* propname) {
-  ASSERT(propname != NULL);
-
-  int nRet = -1;
-
   for (int i = 0, sz = m_arrayGlobalData.GetSize(); i < sz; i++) {
     CJS_GlobalData_Element* pTemp = m_arrayGlobalData.GetAt(i);
-    if (pTemp->data.sKey[0] == *propname && pTemp->data.sKey == propname) {
-      nRet = i;
-      break;
-    }
+    if (pTemp->data.sKey[0] == *propname && pTemp->data.sKey == propname)
+      return i;
   }
-
-  return nRet;
+  return -1;
 }
 
 CJS_GlobalData_Element* CJS_GlobalData::GetGlobalVariable(

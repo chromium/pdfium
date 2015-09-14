@@ -108,12 +108,12 @@ JSGlobalAlternate::JSGlobalAlternate(CJS_Object* pJSObject)
 
 JSGlobalAlternate::~JSGlobalAlternate() {
   DestroyGlobalPersisitentVariables();
-  m_pApp->GetRuntimeFactory()->ReleaseGlobalData();
+  m_pGlobalData->Release();
 }
 
 void JSGlobalAlternate::Initial(CPDFDoc_Environment* pApp) {
   m_pApp = pApp;
-  m_pGlobalData = pApp->GetRuntimeFactory()->NewGlobalData(pApp);
+  m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pApp);
   UpdateGlobalPersistentVariables();
 }
 

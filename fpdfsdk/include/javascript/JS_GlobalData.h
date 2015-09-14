@@ -58,10 +58,9 @@ class CJS_GlobalData_Element {
 
 class CJS_GlobalData {
  public:
-  CJS_GlobalData(CPDFDoc_Environment* pApp);
-  virtual ~CJS_GlobalData();
+  static CJS_GlobalData* GetRetainedInstance(CPDFDoc_Environment* pApp);
+  void Release();
 
- public:
   void SetGlobalVariableNumber(const FX_CHAR* propname, double dData);
   void SetGlobalVariableBoolean(const FX_CHAR* propname, bool bData);
   void SetGlobalVariableString(const FX_CHAR* propname,
@@ -78,6 +77,11 @@ class CJS_GlobalData {
   CJS_GlobalData_Element* GetAt(int index) const;
 
  private:
+  static CJS_GlobalData* g_Instance;
+
+  CJS_GlobalData(CPDFDoc_Environment* pApp);
+  ~CJS_GlobalData();
+
   void LoadGlobalPersistentVariables();
   void SaveGlobalPersisitentVariables();
 
@@ -95,6 +99,7 @@ class CJS_GlobalData {
                       CFX_BinaryBuf& sData);
 
  private:
+  size_t m_RefCount;
   CFX_ArrayTemplate<CJS_GlobalData_Element*> m_arrayGlobalData;
   CFX_WideString m_sFilePath;
 };
