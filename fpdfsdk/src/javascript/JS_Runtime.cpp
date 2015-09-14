@@ -52,7 +52,6 @@ void CJS_RuntimeFactory::Release() {
     // to do.Should be implemented as atom manipulation.
     if (--m_nRef == 0) {
       JS_Release();
-      ReleaseGlobalData();
       m_bInit = FALSE;
     }
   }
@@ -60,25 +59,6 @@ void CJS_RuntimeFactory::Release() {
 
 void CJS_RuntimeFactory::DeleteJSRuntime(IFXJS_Runtime* pRuntime) {
   delete (CJS_Runtime*)pRuntime;
-}
-
-CJS_GlobalData* CJS_RuntimeFactory::NewGlobalData(CPDFDoc_Environment* pApp) {
-  if (m_pGlobalData) {
-    m_nGlobalDataCount++;
-    return m_pGlobalData;
-  }
-  m_nGlobalDataCount = 1;
-  m_pGlobalData = new CJS_GlobalData(pApp);
-  return m_pGlobalData;
-}
-
-void CJS_RuntimeFactory::ReleaseGlobalData() {
-  m_nGlobalDataCount--;
-
-  if (m_nGlobalDataCount <= 0) {
-    delete m_pGlobalData;
-    m_pGlobalData = NULL;
-  }
 }
 
 void* CJS_ArrayBufferAllocator::Allocate(size_t length) {

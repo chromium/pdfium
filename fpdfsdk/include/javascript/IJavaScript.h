@@ -11,10 +11,11 @@
 #include "../../../core/include/fxcrt/fx_system.h"
 #include "../../../xfa/include/fxjse/fxjse.h"
 
-class CPDF_Bookmark;
-class CPDF_FormField;
+class CPDFDoc_Environment;
 class CPDFSDK_Annot;
 class CPDFSDK_Document;
+class CPDF_Bookmark;
+class CPDF_FormField;
 
 class IFXJS_Context {
  public:
@@ -150,27 +151,19 @@ class IFXJS_Runtime {
   virtual ~IFXJS_Runtime() {}
 };
 
-class CPDFDoc_Environment;
-class CJS_GlobalData;
-
 class CJS_RuntimeFactory {
  public:
-  CJS_RuntimeFactory()
-      : m_bInit(FALSE), m_nRef(0), m_pGlobalData(NULL), m_nGlobalDataCount(0) {}
+  CJS_RuntimeFactory() : m_bInit(FALSE), m_nRef(0) {}
   ~CJS_RuntimeFactory();
+
   IFXJS_Runtime* NewJSRuntime(CPDFDoc_Environment* pApp);
   void DeleteJSRuntime(IFXJS_Runtime* pRuntime);
   void AddRef();
   void Release();
 
-  CJS_GlobalData* NewGlobalData(CPDFDoc_Environment* pApp);
-  void ReleaseGlobalData();
-
  private:
   FX_BOOL m_bInit;
   int m_nRef;
-  CJS_GlobalData* m_pGlobalData;
-  int32_t m_nGlobalDataCount;
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
