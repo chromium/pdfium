@@ -15,12 +15,6 @@
 
 class CJS_Context;
 
-class CJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
-  void* Allocate(size_t length) override;
-  void* AllocateUninitialized(size_t length) override;
-  void Free(void* data, size_t length) override;
-};
-
 class CJS_FieldEvent {
  public:
   CFX_WideString sTargetName;
@@ -30,7 +24,7 @@ class CJS_FieldEvent {
 
 class CJS_Runtime : public IFXJS_Runtime {
  public:
-  CJS_Runtime(CPDFDoc_Environment* pApp);
+  explicit CJS_Runtime(CPDFDoc_Environment* pApp);
   ~CJS_Runtime() override;
 
   // IFXJS_Runtime
@@ -65,7 +59,7 @@ class CJS_Runtime : public IFXJS_Runtime {
   CJS_FieldEvent* m_pFieldEventPath;
   v8::Isolate* m_isolate;
   bool m_isolateManaged;
-  nonstd::unique_ptr<CJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
+  nonstd::unique_ptr<JS_ArrayBufferAllocator> m_pArrayBufferAllocator;
   v8::Global<v8::Context> m_context;
 };
 

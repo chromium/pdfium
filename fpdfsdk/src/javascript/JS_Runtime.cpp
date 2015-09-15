@@ -30,24 +30,14 @@
 CJS_RuntimeFactory::~CJS_RuntimeFactory() {}
 
 IFXJS_Runtime* CJS_RuntimeFactory::NewJSRuntime(CPDFDoc_Environment* pApp) {
-  if (!m_bInit) {
-    unsigned int embedderDataSlot = 0;
-    if (pApp->GetFormFillInfo()->m_pJsPlatform->version >= 2) {
-      embedderDataSlot =
-          pApp->GetFormFillInfo()->m_pJsPlatform->m_v8EmbedderSlot;
-    }
-    JS_Initial(embedderDataSlot);
-    m_bInit = TRUE;
-  }
+  m_bInit = true;
   return new CJS_Runtime(pApp);
 }
 void CJS_RuntimeFactory::AddRef() {
-  // to do.Should be implemented as atom manipulation.
   m_nRef++;
 }
 void CJS_RuntimeFactory::Release() {
   if (m_bInit) {
-    // to do.Should be implemented as atom manipulation.
     if (--m_nRef == 0) {
       JS_Release();
       m_bInit = FALSE;
@@ -59,18 +49,6 @@ void CJS_RuntimeFactory::DeleteJSRuntime(IFXJS_Runtime* pRuntime) {
   delete (CJS_Runtime*)pRuntime;
 }
 
-void* CJS_ArrayBufferAllocator::Allocate(size_t length) {
-  return calloc(1, length);
-}
-
-void* CJS_ArrayBufferAllocator::AllocateUninitialized(size_t length) {
-  return malloc(length);
-}
-
-void CJS_ArrayBufferAllocator::Free(void* data, size_t length) {
-  free(data);
-}
-
 /* ------------------------------ CJS_Runtime ------------------------------ */
 
 CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
@@ -80,12 +58,14 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
       m_pFieldEventPath(NULL),
       m_isolate(NULL),
       m_isolateManaged(false) {
+  unsigned int embedderDataSlot = 0;
   if (m_pApp->GetFormFillInfo()->m_pJsPlatform->version >= 2) {
     m_isolate = reinterpret_cast<v8::Isolate*>(
         m_pApp->GetFormFillInfo()->m_pJsPlatform->m_isolate);
+    embedderDataSlot = pApp->GetFormFillInfo()->m_pJsPlatform->m_v8EmbedderSlot;
   }
   if (!m_isolate) {
-    m_pArrayBufferAllocator.reset(new CJS_ArrayBufferAllocator());
+    m_pArrayBufferAllocator.reset(new JS_ArrayBufferAllocator());
 
     v8::Isolate::CreateParams params;
     params.array_buffer_allocator = m_pArrayBufferAllocator.get();
@@ -93,10 +73,11 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     m_isolateManaged = true;
   }
 
+  JS_Initialize(embedderDataSlot);
   DefineJSObjects();
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
-  JS_InitialRuntime(GetIsolate(), this, pContext, m_context);
+  JS_InitializeRuntime(GetIsolate(), this, pContext, m_context);
   ReleaseContext(pContext);
 }
 

@@ -146,7 +146,7 @@ class IFXJS_Runtime {
 
 class CJS_RuntimeFactory {
  public:
-  CJS_RuntimeFactory() : m_bInit(FALSE), m_nRef(0) {}
+  CJS_RuntimeFactory() : m_bInit(false), m_nRef(0) {}
   ~CJS_RuntimeFactory();
 
   IFXJS_Runtime* NewJSRuntime(CPDFDoc_Environment* pApp);
@@ -155,7 +155,7 @@ class CJS_RuntimeFactory {
   void Release();
 
  private:
-  FX_BOOL m_bInit;
+  bool m_bInit;
   int m_nRef;
 };
 
