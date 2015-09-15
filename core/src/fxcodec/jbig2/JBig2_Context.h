@@ -56,7 +56,7 @@ class CJBig2_Context {
   int32_t getFirstPage(CJBig2_Image** image, IFX_Pause* pPause);
 
   int32_t Continue(IFX_Pause* pPause);
-  FXCODEC_STATUS GetProcessiveStatus() { return m_ProcessiveStatus; }
+  FXCODEC_STATUS GetProcessingStatus() { return m_ProcessingStatus; }
 
  private:
   enum JBig2State {
@@ -93,7 +93,7 @@ class CJBig2_Context {
   int32_t parseSegmentHeader(CJBig2_Segment* pSegment);
 
   int32_t parseSegmentData(CJBig2_Segment* pSegment, IFX_Pause* pPause);
-  int32_t ProcessiveParseSegmentData(CJBig2_Segment* pSegment,
+  int32_t ProcessingParseSegmentData(CJBig2_Segment* pSegment,
                                      IFX_Pause* pPause);
 
   int32_t parseSymbolDict(CJBig2_Segment* pSegment, IFX_Pause* pPause);
@@ -131,7 +131,7 @@ class CJBig2_Context {
   size_t m_nSegmentDecoded;
   IFX_Pause* m_pPause;
   int32_t m_PauseStep;
-  FXCODEC_STATUS m_ProcessiveStatus;
+  FXCODEC_STATUS m_ProcessingStatus;
   FX_BOOL m_bFirstPage;
   CJBig2_ArithDecoder* m_pArithDecoder;
   CJBig2_GRDProc* m_pGRD;
