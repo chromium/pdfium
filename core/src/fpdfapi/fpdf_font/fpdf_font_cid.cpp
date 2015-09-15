@@ -1251,7 +1251,7 @@ int CPDF_CIDFont::GetGlyphIndex(FX_DWORD unicode, FX_BOOL* pVertGlyph) {
       int error = FXFT_Load_Sfnt_Table(
           m_Font.m_Face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, NULL, &length);
       if (!error) {
-        m_Font.m_pGsubData = (unsigned char*)FX_Alloc(uint8_t, length);
+        m_Font.m_pGsubData = FX_Alloc(uint8_t, length);
       }
     }
     int error =

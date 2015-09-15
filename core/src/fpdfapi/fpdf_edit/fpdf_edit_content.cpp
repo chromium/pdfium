@@ -128,8 +128,7 @@ void CPDF_PageContentGenerate::TransformContent(CFX_Matrix& matrix) {
   if (type == PDFOBJ_ARRAY) {
     CPDF_Array* pArray = (CPDF_Array*)pContent;
     int iCount = pArray->GetCount();
-    CPDF_StreamAcc** pContentArray =
-        (CPDF_StreamAcc**)FX_Alloc(CPDF_StreamAcc*, iCount);
+    CPDF_StreamAcc** pContentArray = FX_Alloc(CPDF_StreamAcc*, iCount);
     int size = 0;
     int i = 0;
     for (i = 0; i < iCount; ++i) {
