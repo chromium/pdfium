@@ -50,7 +50,7 @@ TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {
   ASSERT_TRUE(action);
 
   const char kExpectedResult[] = "test.pdf";
-  const unsigned long kExpectedLength = sizeof(kExpectedLength);
+  const unsigned long kExpectedLength = sizeof(kExpectedResult);
   unsigned long bufsize = FPDFAction_GetFilePath(action, nullptr, 0);
   ASSERT_EQ(kExpectedLength, bufsize);
 
