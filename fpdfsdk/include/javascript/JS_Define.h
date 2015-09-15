@@ -83,6 +83,8 @@ void JSPropGetter(const char* prop_name_string,
   v8::Isolate* isolate = info.GetIsolate();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  if (v.IsEmpty())
+    return;
   v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
   IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pContext = pRuntime->GetCurrentContext();
@@ -111,6 +113,8 @@ void JSPropSetter(const char* prop_name_string,
   v8::Isolate* isolate = info.GetIsolate();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  if (v.IsEmpty())
+    return;
   v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
   IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pContext = pRuntime->GetCurrentContext();
@@ -153,6 +157,8 @@ void JSMethod(const char* method_name_string,
   v8::Isolate* isolate = info.GetIsolate();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  if (v.IsEmpty())
+    return;
   v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
   IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* cc = pRuntime->GetCurrentContext();
@@ -282,6 +288,8 @@ void JSSpecialPropGet(const char* class_name,
   v8::Isolate* isolate = info.GetIsolate();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  if (v.IsEmpty())
+    return;
   v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
   IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
@@ -309,6 +317,8 @@ void JSSpecialPropPut(const char* class_name,
   v8::Isolate* isolate = info.GetIsolate();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  if (v.IsEmpty())
+    return;
   v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
   IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
@@ -333,6 +343,8 @@ void JSSpecialPropDel(const char* class_name,
   v8::Isolate* isolate = info.GetIsolate();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  if (v.IsEmpty())
+    return;
   v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
   IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
@@ -444,6 +456,8 @@ void JSGlobalFunc(const char* func_name_string,
   v8::Isolate* isolate = info.GetIsolate();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Value> v = context->GetEmbedderData(1);
+  if (v.IsEmpty())
+    return;
   v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
   IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* cc = pRuntime->GetCurrentContext();
