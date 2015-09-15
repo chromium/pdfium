@@ -78,7 +78,7 @@ namespace nonstd {
 // Replacement for move, but doesn't allow things that are already
 // rvalue references.
 template <class T>
-constexpr T&& move(T& t) {
+T&& move(T& t) {
   return static_cast<T&&>(t);
 }
 
