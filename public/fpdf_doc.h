@@ -110,10 +110,9 @@ DLLEXPORT FPDF_ACTION STDCALL FPDFBookmark_GetAction(FPDF_BOOKMARK bookmark);
 #define PDFACTION_UNSUPPORTED 0  // Unsupported action type.
 #define PDFACTION_GOTO 1         // Go to a destination within current document.
 #define PDFACTION_REMOTEGOTO 2   // Go to a destination within another document.
-#define PDFACTION_URI \
-  3  // Universal Resource Identifier, including web pages and
-     // other Internet based resources.
-#define PDFACTION_LAUNCH 4  // Launch an application or open a file.
+#define PDFACTION_URI 3          // Universal Resource Identifier, including web
+                                 // pages and other Internet based resources.
+#define PDFACTION_LAUNCH 4       // Launch an application or open a file.
 
 // Function: FPDFAction_GetType
 //          Get type of an action.
@@ -142,6 +141,25 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetType(FPDF_ACTION action);
 DLLEXPORT FPDF_DEST STDCALL FPDFAction_GetDest(FPDF_DOCUMENT document,
                                                FPDF_ACTION action);
 
+// Function: FPDFAction_GetFilePath
+//          Get file path of a remote goto action.
+// Parameters:
+//          action    -   Handle to the action. Must be a REMOTEGOTO or
+//                        LAUNCH action.
+//          buffer    -   A buffer for output the path string. Can be NULL.
+//          buflen    -   The length of the buffer, number of bytes. Can be 0.
+// Return value:
+//          Number of bytes the file path consumes, including trailing zero.
+//
+// Comments:
+//          The file path is UTF-8 encoded. The return value is the number of
+//          bytes required for the buffer, even when there is no buffer
+//          specified, or the buffer size is less then required. In this case,
+//          the buffer will not be modified.
+//
+DLLEXPORT unsigned long STDCALL
+FPDFAction_GetFilePath(FPDF_ACTION action, void* buffer, unsigned long buflen);
+
 // Function: FPDFAction_GetURIPath
 //          Get URI path of a URI action.
 // Parameters:
@@ -154,11 +172,9 @@ DLLEXPORT FPDF_DEST STDCALL FPDFAction_GetDest(FPDF_DOCUMENT document,
 // Comments:
 //          The URI path is always encoded in 7-bit ASCII.
 //
-//          The return value always indicated number of bytes required for the
-//          buffer, even when there is
-//          no buffer specified, or the buffer size is less then required. In
-//          this case, the buffer will not
-//          be modified.
+//          The return value is the number of bytes required for the buffer,
+//          even when there is no buffer specified, or the buffer size is less
+//          then required. In this case, the buffer will not be modified.
 //
 DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document,
                                                       FPDF_ACTION action,

@@ -126,7 +126,8 @@ DLLEXPORT FPDF_ACTION STDCALL FPDFBookmark_GetAction(FPDF_BOOKMARK pDict) {
 
 DLLEXPORT unsigned long STDCALL FPDFAction_GetType(FPDF_ACTION pDict) {
   if (!pDict)
-    return 0;
+    return PDFACTION_UNSUPPORTED;
+
   CPDF_Action action((CPDF_Dictionary*)pDict);
   CPDF_Action::ActionType type = action.GetType();
   switch (type) {
@@ -141,43 +142,53 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetType(FPDF_ACTION pDict) {
     default:
       return PDFACTION_UNSUPPORTED;
   }
-  return PDFACTION_UNSUPPORTED;
 }
 
 DLLEXPORT FPDF_DEST STDCALL FPDFAction_GetDest(FPDF_DOCUMENT document,
                                                FPDF_ACTION pDict) {
-  if (!document)
-    return NULL;
-  if (!pDict)
-    return NULL;
+  if (!document || !pDict)
+    return nullptr;
+
   CPDF_Document* pDoc = (CPDF_Document*)document;
   CPDF_Action action((CPDF_Dictionary*)pDict);
   return action.GetDest(pDoc).GetObject();
+}
+
+DLLEXPORT unsigned long STDCALL
+FPDFAction_GetFilePath(FPDF_ACTION pDict, void* buffer, unsigned long buflen) {
+  unsigned long type = FPDFAction_GetType(pDict);
+  if (type != PDFACTION_REMOTEGOTO && type != PDFACTION_LAUNCH)
+    return 0;
+
+  CPDF_Action action((CPDF_Dictionary*)pDict);
+  CFX_ByteString path = action.GetFilePath().UTF8Encode();
+  unsigned long len = path.GetLength() + 1;
+  if (buffer && buflen >= len)
+    FXSYS_memcpy(buffer, path.c_str(), len);
+  return len;
 }
 
 DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document,
                                                       FPDF_ACTION pDict,
                                                       void* buffer,
                                                       unsigned long buflen) {
-  if (!document)
+  if (!document || !pDict)
     return 0;
-  if (!pDict)
-    return 0;
+
   CPDF_Document* pDoc = (CPDF_Document*)document;
   CPDF_Action action((CPDF_Dictionary*)pDict);
   CFX_ByteString path = action.GetURI(pDoc);
   unsigned long len = path.GetLength() + 1;
-  if (buffer != NULL && buflen >= len)
+  if (buffer && buflen >= len)
     FXSYS_memcpy(buffer, path.c_str(), len);
   return len;
 }
 
 DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document,
                                                       FPDF_DEST pDict) {
-  if (!document)
+  if (!document || !pDict)
     return 0;
-  if (!pDict)
-    return 0;
+
   CPDF_Document* pDoc = (CPDF_Document*)document;
   CPDF_Dest dest((CPDF_Array*)pDict);
   return dest.GetPageIndex(pDoc);
@@ -208,10 +219,9 @@ FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page, double x, double y) {
 
 DLLEXPORT FPDF_DEST STDCALL FPDFLink_GetDest(FPDF_DOCUMENT document,
                                              FPDF_LINK pDict) {
-  if (!document)
-    return NULL;
-  if (!pDict)
-    return NULL;
+  if (!document || !pDict)
+    return nullptr;
+
   CPDF_Document* pDoc = (CPDF_Document*)document;
   CPDF_Link link((CPDF_Dictionary*)pDict);
   FPDF_DEST dest = link.GetDest(pDoc).GetObject();
@@ -220,13 +230,14 @@ DLLEXPORT FPDF_DEST STDCALL FPDFLink_GetDest(FPDF_DOCUMENT document,
   // If this link is not directly associated with a dest, we try to get action
   CPDF_Action action = link.GetAction();
   if (!action)
-    return NULL;
+    return nullptr;
   return action.GetDest(pDoc).GetObject();
 }
 
 DLLEXPORT FPDF_ACTION STDCALL FPDFLink_GetAction(FPDF_LINK pDict) {
   if (!pDict)
-    return NULL;
+    return nullptr;
+
   CPDF_Link link((CPDF_Dictionary*)pDict);
   return link.GetAction().GetDict();
 }

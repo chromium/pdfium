@@ -179,15 +179,7 @@ CPDF_Object* CPDF_ActionFields::GetField(FX_DWORD iIndex) const {
   }
   return pFindObj;
 }
-CPDF_LWinParam CPDF_Action::GetWinParam() const {
-  if (m_pDict == NULL) {
-    return NULL;
-  }
-  if (m_pDict->GetString("S") != "Launch") {
-    return NULL;
-  }
-  return m_pDict->GetDict("Win");
-}
+
 CFX_WideString CPDF_Action::GetJavaScript() const {
   CFX_WideString csJS;
   if (m_pDict == NULL) {
