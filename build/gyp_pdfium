@@ -28,14 +28,19 @@ def run_gyp(args):
 def main():
   args = sys.argv[1:]
   args.append(os.path.join(script_dir, 'all.gyp'))
-  
+
   args.append('-I')
   args.append(os.path.join(pdfium_root, 'build', 'standalone.gypi'))
-  
+
   args.extend(['-D', 'gyp_output_dir=out'])
 
   # Set the GYP DEPTH variable to the root of the PDFium project.
   args.append('--depth=' + os.path.relpath(pdfium_root))
+
+  # GYP does not default to ninja, but PDFium should.
+  if not os.environ.get('GYP_GENERATORS', ''):
+    print 'GYP_GENERATORS is not set, defaulting to ninja'
+    os.environ['GYP_GENERATORS'] = 'ninja'
 
   print 'Updating projects from gyp files...'
   sys.stdout.flush()
