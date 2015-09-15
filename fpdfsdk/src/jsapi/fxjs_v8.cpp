@@ -75,6 +75,23 @@ class CJS_ObjDefintion {
   v8::Global<v8::Object> m_StaticObj;
 };
 
+void* JS_ArrayBufferAllocator::Allocate(size_t length) {
+  return calloc(1, length);
+}
+
+void* JS_ArrayBufferAllocator::AllocateUninitialized(size_t length) {
+  return malloc(length);
+}
+
+void JS_ArrayBufferAllocator::Free(void* data, size_t length) {
+  free(data);
+}
+
+void JS_PrepareIsolate(v8::Isolate* pIsolate) {
+  if (!pIsolate->GetData(g_embedderDataSlot))
+    pIsolate->SetData(g_embedderDataSlot, new CFX_PtrArray());
+}
+
 int JS_DefineObj(v8::Isolate* pIsolate,
                  const wchar_t* sObjName,
                  FXJSOBJTYPE eObjType,
@@ -82,11 +99,9 @@ int JS_DefineObj(v8::Isolate* pIsolate,
                  LP_DESTRUCTOR pDestructor) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
+
+  JS_PrepareIsolate(pIsolate);
   CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
-  if (!pArray) {
-    pArray = new CFX_PtrArray();
-    pIsolate->SetData(g_embedderDataSlot, pArray);
-  }
   CJS_ObjDefintion* pObjDef = new CJS_ObjDefintion(pIsolate, sObjName, eObjType,
                                                    pConstructor, pDestructor);
   pArray->Add(pObjDef);
@@ -243,10 +258,10 @@ void JS_DefineGlobalConst(v8::Isolate* pIsolate,
   globalObjTemp.Reset(pIsolate, objTemp);
 }
 
-void JS_InitialRuntime(v8::Isolate* pIsolate,
-                       IFXJS_Runtime* pFXRuntime,
-                       IFXJS_Context* context,
-                       v8::Global<v8::Context>& v8PersistentContext) {
+void JS_InitializeRuntime(v8::Isolate* pIsolate,
+                          IFXJS_Runtime* pFXRuntime,
+                          IFXJS_Context* context,
+                          v8::Global<v8::Context>& v8PersistentContext) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::Locker locker(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
@@ -340,7 +355,7 @@ void JS_ReleaseRuntime(v8::Isolate* pIsolate,
   pIsolate->SetData(2, NULL);
 }
 
-void JS_Initial(unsigned int embedderDataSlot) {
+void JS_Initialize(unsigned int embedderDataSlot) {
   g_embedderDataSlot = embedderDataSlot;
 }
 

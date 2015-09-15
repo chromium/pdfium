@@ -45,13 +45,29 @@ extern const wchar_t kFXJSValueNameFxobj[];
 extern const wchar_t kFXJSValueNameNull[];
 extern const wchar_t kFXJSValueNameUndefined[];
 
+// FXJS_V8 places no interpretation on these two classes; it merely
+// passes them on to the caller-provided LP_CONSTRUCTORs.
 class IFXJS_Context;
 class IFXJS_Runtime;
+
+class JS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
+  void* Allocate(size_t length) override;
+  void* AllocateUninitialized(size_t length) override;
+  void Free(void* data, size_t length) override;
+};
 
 typedef void (*LP_CONSTRUCTOR)(IFXJS_Context* cc,
                                v8::Local<v8::Object> obj,
                                v8::Local<v8::Object> global);
 typedef void (*LP_DESTRUCTOR)(v8::Local<v8::Object> obj);
+
+// Call before making JS_PrepareIsolate call.
+void JS_Initialize(unsigned int embedderDataSlot);
+void JS_Release();
+
+// Call before making JS_Define* calls. Resources allocated here are cleared
+// as part of JS_ReleaseRuntime().
+void JS_PrepareIsolate(v8::Isolate* pIsolate);
 
 // Always returns a valid, newly-created objDefnID.
 int JS_DefineObj(v8::Isolate* pIsolate,
@@ -86,19 +102,21 @@ void JS_DefineGlobalConst(v8::Isolate* pIsolate,
                           const wchar_t* sConstName,
                           v8::Local<v8::Value> pDefault);
 
-void JS_InitialRuntime(v8::Isolate* pIsolate,
-                       IFXJS_Runtime* pFXRuntime,
-                       IFXJS_Context* context,
-                       v8::Global<v8::Context>& v8PersistentContext);
+// Called after JS_Define* calls made.
+void JS_InitializeRuntime(v8::Isolate* pIsolate,
+                          IFXJS_Runtime* pFXRuntime,
+                          IFXJS_Context* context,
+                          v8::Global<v8::Context>& v8PersistentContext);
 void JS_ReleaseRuntime(v8::Isolate* pIsolate,
                        v8::Global<v8::Context>& v8PersistentContext);
-void JS_Initial(unsigned int embedderDataSlot);
-void JS_Release();
+
+// Called after JS_InitializeRuntime call made.
 int JS_Execute(v8::Isolate* pIsolate,
                IFXJS_Context* pJSContext,
                const wchar_t* script,
                long length,
                FXJSErr* perror);
+
 v8::Local<v8::Object> JS_NewFxDynamicObj(v8::Isolate* pIsolate,
                                          IFXJS_Context* pJSContext,
                                          int nObjDefnID);
