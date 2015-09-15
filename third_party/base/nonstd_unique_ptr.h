@@ -66,7 +66,7 @@
 #ifndef NONSTD_UNIQUE_PTR_H_
 #define NONSTD_UNIQUE_PTR_H_
 
-// This is an implementation designed to match the anticipated future TR2
+// This is an implementation designed to match the anticipated future C++11
 // implementation of the unique_ptr class.
 
 #include <assert.h>
@@ -74,6 +74,13 @@
 #include <stdlib.h>
 
 namespace nonstd {
+
+// Replacement for move, but doesn't allow things that are already
+// rvalue references.
+template <class T>
+T&& move(T& t) {
+  return static_cast<T&&>(t);
+}
 
 // Common implementation for both pointers to elements and pointers to
 // arrays. These are differentiated below based on the need to invoke
@@ -86,6 +93,12 @@ class unique_ptr_base {
   typedef C element_type;
 
   explicit unique_ptr_base(C* p) : ptr_(p) { }
+
+  // Move constructor.
+  unique_ptr_base(unique_ptr_base<C>&& that) {
+    ptr_ = that.ptr_;
+    that.ptr_ = nullptr;
+  }
 
   // Accessors to get the owned object.
   // operator* and operator-> will assert() if there is no current object.
@@ -124,7 +137,7 @@ class unique_ptr_base {
   }
 
   // Allow promotion to bool for conditional statements.
-  operator bool() const { return ptr_ != NULL; }
+  explicit operator bool() const { return ptr_ != NULL; }
 
  protected:
   C* ptr_;
@@ -140,6 +153,9 @@ class unique_ptr : public unique_ptr_base<C> {
   // to create an uninitialized unique_ptr. The input parameter must be
   // allocated with new (not new[] - see below).
   explicit unique_ptr(C* p = NULL) : unique_ptr_base<C>(p) { }
+
+  // Move constructor.
+  unique_ptr(unique_ptr<C>&& that) : unique_ptr_base<C>(nonstd::move(that)) {}
 
   // Destructor.  If there is a C object, delete it.
   // We don't need to test ptr_ == NULL because C++ does that for us.
@@ -167,9 +183,10 @@ private:
   template <class C2> bool operator==(unique_ptr<C2> const& p2) const;
   template <class C2> bool operator!=(unique_ptr<C2> const& p2) const;
 
-  // Disallow evil constructors
-  unique_ptr(const unique_ptr&);
-  void operator=(const unique_ptr&);
+  // Disallow evil constructors. It doesn't make sense to make a copy of
+  // something that's allegedly unique.
+  unique_ptr(const unique_ptr&) = delete;
+  void operator=(const unique_ptr&) = delete;
 };
 
 // Specialization for arrays using delete[].
@@ -182,6 +199,9 @@ class unique_ptr<C[]> : public unique_ptr_base<C> {
   // to create an uninitialized unique_ptr. The input parameter must be
   // allocated with new[] (not new - see above).
   explicit unique_ptr(C* p = NULL) : unique_ptr_base<C>(p) { }
+
+  // Move constructor.
+  unique_ptr(unique_ptr<C>&& that) : unique_ptr_base<C>(nonstd::move(that)) {}
 
   // Destructor.  If there is a C object, delete it.
   // We don't need to test ptr_ == NULL because C++ does that for us.
@@ -212,9 +232,10 @@ private:
   template <class C2> bool operator==(unique_ptr<C2> const& p2) const;
   template <class C2> bool operator!=(unique_ptr<C2> const& p2) const;
 
-  // Disallow evil constructors
-  unique_ptr(const unique_ptr&);
-  void operator=(const unique_ptr&);
+  // Disallow evil constructors.  It doesn't make sense to make a copy of
+  // something that's allegedly unique.
+  unique_ptr(const unique_ptr&) = delete;
+  void operator=(const unique_ptr&) = delete;
 };
 
 // Free functions
