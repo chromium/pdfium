@@ -62,6 +62,10 @@ class CJBig2_GRDProc {
   int8_t GBAT[8];
 
  private:
+  bool UseTemplate0Opt3() const;
+  bool UseTemplate1Opt3() const;
+  bool UseTemplate23Opt3() const;
+
   FXCODEC_STATUS decode_Arith(IFX_Pause* pPause);
   FXCODEC_STATUS decode_Arith_Template0_opt3(CJBig2_Image* pImage,
                                              CJBig2_ArithDecoder* pArithDecoder,
