@@ -60,7 +60,7 @@ TEST_F(FXJSV8Embeddertest, Getters) {
   FXJSErr error;
   CFX_WideString wsInfo;
   CFX_WideString wsScript(kScript);
-  int sts = JS_Execute(nullptr, nullptr, kScript, wcslen(kScript), &error);
+  int sts = JS_Execute(isolate(), nullptr, kScript, wcslen(kScript), &error);
   EXPECT_EQ(0, sts);
 
   v8::Local<v8::Object> This = JS_GetThisObj(isolate());
