@@ -5,6 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "JBig2_GeneralDecoder.h"
+
+#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_ArithIntDecoder.h"
 #include "JBig2_HuffmanDecoder.h"
@@ -31,37 +33,41 @@ extern const JBig2ArithQe QeTable[] = {
 
 extern const unsigned int JBIG2_QE_NUM = FX_ArraySize(QeTable);
 
+bool CJBig2_GRDProc::UseTemplate0Opt3() const {
+  return (GBAT[0] == 3) && (GBAT[1] == -1) && (GBAT[2] == -3) &&
+         (GBAT[3] == -1) && (GBAT[4] == 2) && (GBAT[5] == -2) &&
+         (GBAT[6] == -2) && (GBAT[7] == -2);
+}
+
+bool CJBig2_GRDProc::UseTemplate1Opt3() const {
+  return (GBAT[0] == 3) && (GBAT[1] == -1);
+}
+
+bool CJBig2_GRDProc::UseTemplate23Opt3() const {
+  return (GBAT[0] == 2) && (GBAT[1] == -1);
+}
+
 CJBig2_Image* CJBig2_GRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                            JBig2ArithCtx* gbContext) {
-  if (GBW == 0 || GBH == 0) {
+  if (GBW == 0 || GBH == 0)
     return new CJBig2_Image(GBW, GBH);
-  }
+
   if (GBTEMPLATE == 0) {
-    if ((GBAT[0] == 3) && (GBAT[1] == (int8_t)-1) && (GBAT[2] == (int8_t)-3) &&
-        (GBAT[3] == (int8_t)-1) && (GBAT[4] == 2) && (GBAT[5] == (int8_t)-2) &&
-        (GBAT[6] == (int8_t)-2) && (GBAT[7] == (int8_t)-2)) {
+    if (UseTemplate0Opt3())
       return decode_Arith_Template0_opt3(pArithDecoder, gbContext);
-    } else {
-      return decode_Arith_Template0_unopt(pArithDecoder, gbContext);
-    }
+    return decode_Arith_Template0_unopt(pArithDecoder, gbContext);
   } else if (GBTEMPLATE == 1) {
-    if ((GBAT[0] == 3) && (GBAT[1] == (int8_t)-1)) {
+    if (UseTemplate1Opt3())
       return decode_Arith_Template1_opt3(pArithDecoder, gbContext);
-    } else {
-      return decode_Arith_Template1_unopt(pArithDecoder, gbContext);
-    }
+    return decode_Arith_Template1_unopt(pArithDecoder, gbContext);
   } else if (GBTEMPLATE == 2) {
-    if ((GBAT[0] == 2) && (GBAT[1] == (int8_t)-1)) {
+    if (UseTemplate23Opt3())
       return decode_Arith_Template2_opt3(pArithDecoder, gbContext);
-    } else {
-      return decode_Arith_Template2_unopt(pArithDecoder, gbContext);
-    }
+    return decode_Arith_Template2_unopt(pArithDecoder, gbContext);
   } else {
-    if ((GBAT[0] == 2) && (GBAT[1] == (int8_t)-1)) {
+    if (UseTemplate23Opt3())
       return decode_Arith_Template3_opt3(pArithDecoder, gbContext);
-    } else {
-      return decode_Arith_Template3_unopt(pArithDecoder, gbContext);
-    }
+    return decode_Arith_Template3_unopt(pArithDecoder, gbContext);
   }
 }
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_opt3(
@@ -74,11 +80,10 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_opt3(
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
   LTP = 0;
-  CJBig2_Image* GBREG = new CJBig2_Image(GBW, GBH);
-  if (GBREG->m_pData == NULL) {
-    delete GBREG;
-    return NULL;
-  }
+  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  if (!GBREG->m_pData)
+    return nullptr;
+
   pLine = GBREG->m_pData;
   nStride = GBREG->m_nStride;
   nStride2 = nStride << 1;
@@ -152,8 +157,9 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_opt3(
     }
     pLine += nStride;
   }
-  return GBREG;
+  return GBREG.release();
 }
+
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
@@ -161,7 +167,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3;
   LTP = 0;
-  CJBig2_Image* GBREG = new CJBig2_Image(GBW, GBH);
+  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
   for (FX_DWORD h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -199,8 +205,9 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_unopt(
       }
     }
   }
-  return GBREG;
+  return GBREG.release();
 }
+
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
@@ -211,11 +218,10 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_opt3(
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
   LTP = 0;
-  CJBig2_Image* GBREG = new CJBig2_Image(GBW, GBH);
-  if (GBREG->m_pData == NULL) {
-    delete GBREG;
-    return NULL;
-  }
+  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  if (!GBREG->m_pData)
+    return nullptr;
+
   pLine = GBREG->m_pData;
   nStride = GBREG->m_nStride;
   nStride2 = nStride << 1;
@@ -288,8 +294,9 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_opt3(
     }
     pLine += nStride;
   }
-  return GBREG;
+  return GBREG.release();
 }
+
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
@@ -297,7 +304,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3;
   LTP = 0;
-  CJBig2_Image* GBREG = new CJBig2_Image(GBW, GBH);
+  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
   for (FX_DWORD h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -333,7 +340,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_unopt(
       }
     }
   }
-  return GBREG;
+  return GBREG.release();
 }
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
@@ -345,11 +352,10 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_opt3(
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
   LTP = 0;
-  CJBig2_Image* GBREG = new CJBig2_Image(GBW, GBH);
-  if (GBREG->m_pData == NULL) {
-    delete GBREG;
-    return NULL;
-  }
+  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  if (!GBREG->m_pData)
+    return nullptr;
+
   pLine = GBREG->m_pData;
   nStride = GBREG->m_nStride;
   nStride2 = nStride << 1;
@@ -422,8 +428,9 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_opt3(
     }
     pLine += nStride;
   }
-  return GBREG;
+  return GBREG.release();
 }
+
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
@@ -431,7 +438,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3;
   LTP = 0;
-  CJBig2_Image* GBREG = new CJBig2_Image(GBW, GBH);
+  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
   for (FX_DWORD h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -465,8 +472,9 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_unopt(
       }
     }
   }
-  return GBREG;
+  return GBREG.release();
 }
+
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
@@ -477,11 +485,10 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_opt3(
   int32_t nStride, k;
   int32_t nLineBytes, nBitsLeft, cc;
   LTP = 0;
-  CJBig2_Image* GBREG = new CJBig2_Image(GBW, GBH);
-  if (GBREG->m_pData == NULL) {
-    delete GBREG;
-    return NULL;
-  }
+  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  if (!GBREG->m_pData)
+    return nullptr;
+
   pLine = GBREG->m_pData;
   nStride = GBREG->m_nStride;
   nLineBytes = ((GBW + 7) >> 3) - 1;
@@ -540,8 +547,9 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_opt3(
     }
     pLine += nStride;
   }
-  return GBREG;
+  return GBREG.release();
 }
+
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
@@ -549,7 +557,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2;
   LTP = 0;
-  CJBig2_Image* GBREG = new CJBig2_Image(GBW, GBH);
+  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
   for (FX_DWORD h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -579,29 +587,28 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_unopt(
       }
     }
   }
-  return GBREG;
+  return GBREG.release();
 }
+
 CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
                                       JBig2ArithCtx* grContext) {
-  if (GRW == 0 || GRH == 0) {
+  if (GRW == 0 || GRH == 0)
     return new CJBig2_Image(GRW, GRH);
-  }
+
   if (GRTEMPLATE == 0) {
-    if ((GRAT[0] == (int8_t)-1) && (GRAT[1] == (int8_t)-1) &&
-        (GRAT[2] == (int8_t)-1) && (GRAT[3] == (int8_t)-1) &&
-        (GRREFERENCEDX == 0) && (GRW == (FX_DWORD)GRREFERENCE->m_nWidth)) {
+    if ((GRAT[0] == -1) && (GRAT[1] == -1) && (GRAT[2] == -1) &&
+        (GRAT[3] == -1) && (GRREFERENCEDX == 0) &&
+        (GRW == (FX_DWORD)GRREFERENCE->m_nWidth)) {
       return decode_Template0_opt(pArithDecoder, grContext);
-    } else {
-      return decode_Template0_unopt(pArithDecoder, grContext);
     }
-  } else {
-    if ((GRREFERENCEDX == 0) && (GRW == (FX_DWORD)GRREFERENCE->m_nWidth)) {
-      return decode_Template1_opt(pArithDecoder, grContext);
-    } else {
-      return decode_Template1_unopt(pArithDecoder, grContext);
-    }
+    return decode_Template0_unopt(pArithDecoder, grContext);
   }
+
+  if ((GRREFERENCEDX == 0) && (GRW == (FX_DWORD)GRREFERENCE->m_nWidth))
+    return decode_Template1_opt(pArithDecoder, grContext);
+  return decode_Template1_unopt(pArithDecoder, grContext);
 }
+
 CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
@@ -609,7 +616,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3, line4, line5;
   LTP = 0;
-  CJBig2_Image* GRREG = new CJBig2_Image(GRW, GRH);
+  nonstd::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   GRREG->fill(0);
   for (FX_DWORD h = 0; h < GRH; h++) {
     if (TPGRON) {
@@ -714,8 +721,9 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
       }
     }
   }
-  return GRREG;
+  return GRREG.release();
 }
+
 CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
@@ -733,11 +741,10 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
   GRW = (int32_t)CJBig2_GRRDProc::GRW;
   GRH = (int32_t)CJBig2_GRRDProc::GRH;
   LTP = 0;
-  CJBig2_Image* GRREG = new CJBig2_Image(GRW, GRH);
-  if (GRREG->m_pData == NULL) {
-    delete GRREG;
-    return NULL;
-  }
+  nonstd::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
+  if (!GRREG->m_pData)
+    return nullptr;
+
   pLine = GRREG->m_pData;
   pLineR = GRREFERENCE->m_pData;
   nStride = GRREG->m_nStride;
@@ -781,11 +788,11 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
           if (line2_r_ok)
             line2_r = (line2_r << 8) |
                       (w + 8 < GRWR ? pLineR[nOffset + (w >> 3) + 1] : 0);
-          if (line3_r_ok)
+          if (line3_r_ok) {
             line3_r =
                 (line3_r << 8) |
                 (w + 8 < GRWR ? pLineR[nOffset + nStrideR + (w >> 3) + 1] : 0);
-          else {
+          } else {
             line3_r = 0;
           }
         }
@@ -816,11 +823,11 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
         if (line2_r_ok)
           line2_r = (line2_r << 8) |
                     (w + 8 < GRWR ? pLineR[nOffset + (w >> 3) + 1] : 0);
-        if (line3_r_ok)
+        if (line3_r_ok) {
           line3_r =
               (line3_r << 8) |
               (w + 8 < GRWR ? pLineR[nOffset + nStrideR + (w >> 3) + 1] : 0);
-        else {
+        } else {
           line3_r = 0;
         }
         cVal = 0;
@@ -851,8 +858,9 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
       pLineR += nStrideR;
     }
   }
-  return GRREG;
+  return GRREG.release();
 }
+
 CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
@@ -860,7 +868,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3, line4, line5;
   LTP = 0;
-  CJBig2_Image* GRREG = new CJBig2_Image(GRW, GRH);
+  nonstd::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   GRREG->fill(0);
   for (FX_DWORD h = 0; h < GRH; h++) {
     if (TPGRON) {
@@ -951,8 +959,9 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
       }
     }
   }
-  return GRREG;
+  return GRREG.release();
 }
+
 CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
@@ -970,11 +979,10 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
   GRW = (int32_t)CJBig2_GRRDProc::GRW;
   GRH = (int32_t)CJBig2_GRRDProc::GRH;
   LTP = 0;
-  CJBig2_Image* GRREG = new CJBig2_Image(GRW, GRH);
-  if (GRREG->m_pData == NULL) {
-    delete GRREG;
-    return NULL;
-  }
+  nonstd::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
+  if (!GRREG->m_pData)
+    return nullptr;
+
   pLine = GRREG->m_pData;
   pLineR = GRREFERENCE->m_pData;
   nStride = GRREG->m_nStride;
@@ -1013,11 +1021,11 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
         if (line2_r_ok)
           line2_r = (line2_r << 8) |
                     (w + 8 < GRWR ? pLineR[nOffset + (w >> 3) + 1] : 0);
-        if (line3_r_ok)
+        if (line3_r_ok) {
           line3_r =
               (line3_r << 8) |
               (w + 8 < GRWR ? pLineR[nOffset + nStrideR + (w >> 3) + 1] : 0);
-        else {
+        } else {
           line3_r = 0;
         }
         cVal = 0;
@@ -1047,11 +1055,11 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
         if (line2_r_ok)
           line2_r = (line2_r << 8) |
                     (w + 8 < GRWR ? pLineR[nOffset + (w >> 3) + 1] : 0);
-        if (line3_r_ok)
+        if (line3_r_ok) {
           line3_r =
               (line3_r << 8) |
               (w + 8 < GRWR ? pLineR[nOffset + nStrideR + (w >> 3) + 1] : 0);
-        else {
+        } else {
           line3_r = 0;
         }
         cVal = 0;
@@ -1082,7 +1090,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
       pLineR += nStrideR;
     }
   }
-  return GRREG;
+  return GRREG.release();
 }
 
 CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
@@ -1103,30 +1111,29 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
   FX_BOOL bFirst;
   FX_DWORD nTmp;
   int32_t nVal, nBits;
-  CJBig2_GRRDProc* pGRRD;
-  CJBig2_ArithDecoder* pArithDecoder;
-  CJBig2_HuffmanDecoder* pHuffmanDecoder = new CJBig2_HuffmanDecoder(pStream);
-  CJBig2_Image* SBREG = new CJBig2_Image(SBW, SBH);
+  nonstd::unique_ptr<CJBig2_HuffmanDecoder> pHuffmanDecoder(
+      new CJBig2_HuffmanDecoder(pStream));
+  nonstd::unique_ptr<CJBig2_Image> SBREG(new CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
-  if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &STRIPT) != 0) {
-    goto failed;
-  }
+  if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &STRIPT) != 0)
+    return nullptr;
+
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
   FIRSTS = 0;
   NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
-    if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &DT) != 0) {
-      goto failed;
-    }
+    if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &DT) != 0)
+      return nullptr;
+
     DT *= SBSTRIPS;
     STRIPT = STRIPT + DT;
     bFirst = TRUE;
     for (;;) {
       if (bFirst) {
-        if (pHuffmanDecoder->decodeAValue(SBHUFFFS, &DFS) != 0) {
-          goto failed;
-        }
+        if (pHuffmanDecoder->decodeAValue(SBHUFFFS, &DFS) != 0)
+          return nullptr;
+
         FIRSTS = FIRSTS + DFS;
         CURS = FIRSTS;
         bFirst = FALSE;
@@ -1135,7 +1142,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         if (nVal == JBIG2_OOB) {
           break;
         } else if (nVal != 0) {
-          goto failed;
+          return nullptr;
         } else {
           CURS = CURS + IDS + SBDSOFFSET;
         }
@@ -1147,18 +1154,18 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         while ((FX_DWORD)(1 << nTmp) < SBSTRIPS) {
           nTmp++;
         }
-        if (pStream->readNBits(nTmp, &nVal) != 0) {
-          goto failed;
-        }
+        if (pStream->readNBits(nTmp, &nVal) != 0)
+          return nullptr;
+
         CURT = nVal;
       }
       TI = STRIPT + CURT;
       nVal = 0;
       nBits = 0;
       for (;;) {
-        if (pStream->read1Bit(&nTmp) != 0) {
-          goto failed;
-        }
+        if (pStream->read1Bit(&nTmp) != 0)
+          return nullptr;
+
         nVal = (nVal << 1) | nTmp;
         nBits++;
         for (IDI = 0; IDI < SBNUMSYMS; IDI++) {
@@ -1175,7 +1182,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         RI = 0;
       } else {
         if (pStream->read1Bit(&RI) != 0) {
-          goto failed;
+          return nullptr;
         }
       }
       if (RI == 0) {
@@ -1186,20 +1193,20 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
             (pHuffmanDecoder->decodeAValue(SBHUFFRDX, &RDXI) != 0) ||
             (pHuffmanDecoder->decodeAValue(SBHUFFRDY, &RDYI) != 0) ||
             (pHuffmanDecoder->decodeAValue(SBHUFFRSIZE, &nVal) != 0)) {
-          goto failed;
+          return nullptr;
         }
         pStream->alignByte();
         nTmp = pStream->getOffset();
         IBOI = SBSYMS[IDI];
-        if (!IBOI) {
-          goto failed;
-        }
+        if (!IBOI)
+          return nullptr;
+
         WOI = IBOI->m_nWidth;
         HOI = IBOI->m_nHeight;
-        if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0) {
-          goto failed;
-        }
-        pGRRD = new CJBig2_GRRDProc();
+        if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0)
+          return nullptr;
+
+        nonstd::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
         pGRRD->GRW = WOI + RDWI;
         pGRRD->GRH = HOI + RDHI;
         pGRRD->GRTEMPLATE = SBRTEMPLATE;
@@ -1211,22 +1218,21 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         pGRRD->GRAT[1] = SBRAT[1];
         pGRRD->GRAT[2] = SBRAT[2];
         pGRRD->GRAT[3] = SBRAT[3];
-        pArithDecoder = new CJBig2_ArithDecoder(pStream);
-        IBI = pGRRD->decode(pArithDecoder, grContext);
-        if (IBI == NULL) {
-          delete pGRRD;
-          delete pArithDecoder;
-          goto failed;
+
+        {
+          nonstd::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
+              new CJBig2_ArithDecoder(pStream));
+          IBI = pGRRD->decode(pArithDecoder.get(), grContext);
+          if (!IBI)
+            return nullptr;
         }
-        delete pArithDecoder;
+
         pStream->alignByte();
         pStream->offset(2);
         if ((FX_DWORD)nVal != (pStream->getOffset() - nTmp)) {
           delete IBI;
-          delete pGRRD;
-          goto failed;
+          return nullptr;
         }
-        delete pGRRD;
       }
       if (!IBI) {
         continue;
@@ -1285,13 +1291,9 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       NINSTANCES = NINSTANCES + 1;
     }
   }
-  delete pHuffmanDecoder;
-  return SBREG;
-failed:
-  delete pHuffmanDecoder;
-  delete SBREG;
-  return NULL;
+  return SBREG.release();
 }
+
 CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                            JBig2ArithCtx* grContext,
                                            JBig2IntDecoderState* pIDS) {
@@ -1308,14 +1310,12 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   int32_t RDWI, RDHI, RDXI, RDYI;
   CJBig2_Image* IBOI;
   FX_DWORD WOI, HOI;
-  CJBig2_Image* SBREG;
   FX_BOOL bFirst;
   int32_t nRet, nVal;
   int32_t bRetained;
   CJBig2_ArithIntDecoder *IADT, *IAFS, *IADS, *IAIT, *IARI, *IARDW, *IARDH,
       *IARDX, *IARDY;
   CJBig2_ArithIaidDecoder* IAID;
-  CJBig2_GRRDProc* pGRRD;
   if (pIDS) {
     IADT = pIDS->IADT;
     IAFS = pIDS->IAFS;
@@ -1341,7 +1341,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     IAID = new CJBig2_ArithIaidDecoder(SBSYMCODELEN);
     bRetained = FALSE;
   }
-  SBREG = new CJBig2_Image(SBW, SBH);
+  nonstd::unique_ptr<CJBig2_Image> SBREG(new CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
   if (IADT->decode(pArithDecoder, &STRIPT) == -1) {
     goto failed;
@@ -1419,7 +1419,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0) {
           goto failed;
         }
-        pGRRD = new CJBig2_GRRDProc();
+        nonstd::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
         pGRRD->GRW = WOI + RDWI;
         pGRRD->GRH = HOI + RDHI;
         pGRRD->GRTEMPLATE = SBRTEMPLATE;
@@ -1432,11 +1432,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         pGRRD->GRAT[2] = SBRAT[2];
         pGRRD->GRAT[3] = SBRAT[3];
         IBI = pGRRD->decode(pArithDecoder, grContext);
-        if (IBI == NULL) {
-          delete pGRRD;
+        if (!IBI)
           goto failed;
-        }
-        delete pGRRD;
       }
       WI = IBI->m_nWidth;
       HI = IBI->m_nHeight;
@@ -1504,7 +1501,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     delete IARDY;
     delete IAID;
   }
-  return SBREG;
+  return SBREG.release();
 failed:
   if (bRetained == FALSE) {
     delete IADT;
@@ -1518,9 +1515,9 @@ failed:
     delete IARDY;
     delete IAID;
   }
-  delete SBREG;
-  return NULL;
+  return nullptr;
 }
+
 CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -1543,38 +1540,33 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   FX_DWORD IDI;
   int32_t RDXI, RDYI;
   CJBig2_Image** SBSYMS;
-  CJBig2_HuffmanTable *SBHUFFFS, *SBHUFFDS, *SBHUFFDT, *SBHUFFRDW, *SBHUFFRDH,
-      *SBHUFFRDX, *SBHUFFRDY, *SBHUFFRSIZE;
-  CJBig2_GRRDProc* pGRRD;
-  CJBig2_GRDProc* pGRD;
-  CJBig2_ArithIntDecoder *IADH, *IADW, *IAAI, *IARDX, *IARDY, *IAEX, *IADT,
-      *IAFS, *IADS, *IAIT, *IARI, *IARDW, *IARDH;
-  CJBig2_ArithIaidDecoder* IAID;
-  CJBig2_SymbolDict* pDict;
-  IADH = new CJBig2_ArithIntDecoder();
-  IADW = new CJBig2_ArithIntDecoder();
-  IAAI = new CJBig2_ArithIntDecoder();
-  IARDX = new CJBig2_ArithIntDecoder();
-  IARDY = new CJBig2_ArithIntDecoder();
-  IAEX = new CJBig2_ArithIntDecoder();
-  IADT = new CJBig2_ArithIntDecoder();
-  IAFS = new CJBig2_ArithIntDecoder();
-  IADS = new CJBig2_ArithIntDecoder();
-  IAIT = new CJBig2_ArithIntDecoder();
-  IARI = new CJBig2_ArithIntDecoder();
-  IARDW = new CJBig2_ArithIntDecoder();
-  IARDH = new CJBig2_ArithIntDecoder();
+  nonstd::unique_ptr<CJBig2_ArithIaidDecoder> IAID;
+  nonstd::unique_ptr<CJBig2_SymbolDict> pDict;
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IADH(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IADW(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IAAI(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARDX(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARDY(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IAEX(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IADT(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IAFS(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IADS(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IAIT(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARI(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARDW(new CJBig2_ArithIntDecoder);
+  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARDH(new CJBig2_ArithIntDecoder);
   nTmp = 0;
   while ((FX_DWORD)(1 << nTmp) < (SDNUMINSYMS + SDNUMNEWSYMS)) {
     nTmp++;
   }
-  IAID = new CJBig2_ArithIaidDecoder((uint8_t)nTmp);
+  IAID.reset(new CJBig2_ArithIaidDecoder((uint8_t)nTmp));
   SDNEWSYMS = FX_Alloc(CJBig2_Image*, SDNUMNEWSYMS);
   FXSYS_memset(SDNEWSYMS, 0, SDNUMNEWSYMS * sizeof(CJBig2_Image*));
+
   HCHEIGHT = 0;
   NSYMSDECODED = 0;
   while (NSYMSDECODED < SDNUMNEWSYMS) {
-    BS = NULL;
+    BS = nullptr;
     if (IADH->decode(pArithDecoder, &HCDH) == -1) {
       goto failed;
     }
@@ -1599,14 +1591,14 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           goto failed;
         } else if (HCHEIGHT == 0 || SYMWIDTH == 0) {
           TOTWIDTH = TOTWIDTH + SYMWIDTH;
-          SDNEWSYMS[NSYMSDECODED] = NULL;
+          SDNEWSYMS[NSYMSDECODED] = nullptr;
           NSYMSDECODED = NSYMSDECODED + 1;
           continue;
         }
         TOTWIDTH = TOTWIDTH + SYMWIDTH;
       }
       if (SDREFAGG == 0) {
-        pGRD = new CJBig2_GRDProc();
+        nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
         pGRD->MMR = 0;
         pGRD->GBW = SYMWIDTH;
         pGRD->GBH = HCHEIGHT;
@@ -1622,18 +1614,15 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
         pGRD->GBAT[6] = SDAT[6];
         pGRD->GBAT[7] = SDAT[7];
         BS = pGRD->decode_Arith(pArithDecoder, gbContext);
-        if (BS == NULL) {
-          delete pGRD;
+        if (!BS) {
           goto failed;
         }
-        delete pGRD;
       } else {
         if (IAAI->decode(pArithDecoder, (int*)&REFAGGNINST) == -1) {
           goto failed;
         }
         if (REFAGGNINST > 1) {
-          CJBig2_TRDProc* pDecoder;
-          pDecoder = new CJBig2_TRDProc();
+          nonstd::unique_ptr<CJBig2_TRDProc> pDecoder(new CJBig2_TRDProc());
           pDecoder->SBHUFF = SDHUFF;
           pDecoder->SBREFINE = 1;
           pDecoder->SBW = SYMWIDTH;
@@ -1658,78 +1647,68 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           pDecoder->TRANSPOSED = 0;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
-          SBHUFFFS = new CJBig2_HuffmanTable(HuffmanTable_B6,
-                                             FX_ArraySize(HuffmanTable_B6),
-                                             HuffmanTable_HTOOB_B6);
-          SBHUFFDS = new CJBig2_HuffmanTable(HuffmanTable_B8,
-                                             FX_ArraySize(HuffmanTable_B8),
-                                             HuffmanTable_HTOOB_B8);
-          SBHUFFDT = new CJBig2_HuffmanTable(HuffmanTable_B11,
-                                             FX_ArraySize(HuffmanTable_B11),
-                                             HuffmanTable_HTOOB_B11);
-          SBHUFFRDW = new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15);
-          SBHUFFRDH = new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15);
-          SBHUFFRDX = new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15);
-          SBHUFFRDY = new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15);
-          SBHUFFRSIZE = new CJBig2_HuffmanTable(HuffmanTable_B1,
-                                                FX_ArraySize(HuffmanTable_B1),
-                                                HuffmanTable_HTOOB_B1);
-          pDecoder->SBHUFFFS = SBHUFFFS;
-          pDecoder->SBHUFFDS = SBHUFFDS;
-          pDecoder->SBHUFFDT = SBHUFFDT;
-          pDecoder->SBHUFFRDW = SBHUFFRDW;
-          pDecoder->SBHUFFRDH = SBHUFFRDH;
-          pDecoder->SBHUFFRDX = SBHUFFRDX;
-          pDecoder->SBHUFFRDY = SBHUFFRDY;
-          pDecoder->SBHUFFRSIZE = SBHUFFRSIZE;
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFFS(
+              new CJBig2_HuffmanTable(HuffmanTable_B6,
+                                      FX_ArraySize(HuffmanTable_B6),
+                                      HuffmanTable_HTOOB_B6));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFDS(
+              new CJBig2_HuffmanTable(HuffmanTable_B8,
+                                      FX_ArraySize(HuffmanTable_B8),
+                                      HuffmanTable_HTOOB_B8));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFDT(
+              new CJBig2_HuffmanTable(HuffmanTable_B11,
+                                      FX_ArraySize(HuffmanTable_B11),
+                                      HuffmanTable_HTOOB_B11));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDW(
+              new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                      FX_ArraySize(HuffmanTable_B15),
+                                      HuffmanTable_HTOOB_B15));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDH(
+              new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                      FX_ArraySize(HuffmanTable_B15),
+                                      HuffmanTable_HTOOB_B15));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDX(
+              new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                      FX_ArraySize(HuffmanTable_B15),
+                                      HuffmanTable_HTOOB_B15));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDY(
+              new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                      FX_ArraySize(HuffmanTable_B15),
+                                      HuffmanTable_HTOOB_B15));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRSIZE(
+              new CJBig2_HuffmanTable(HuffmanTable_B1,
+                                      FX_ArraySize(HuffmanTable_B1),
+                                      HuffmanTable_HTOOB_B1));
+          pDecoder->SBHUFFFS = SBHUFFFS.get();
+          pDecoder->SBHUFFDS = SBHUFFDS.get();
+          pDecoder->SBHUFFDT = SBHUFFDT.get();
+          pDecoder->SBHUFFRDW = SBHUFFRDW.get();
+          pDecoder->SBHUFFRDH = SBHUFFRDH.get();
+          pDecoder->SBHUFFRDX = SBHUFFRDX.get();
+          pDecoder->SBHUFFRDY = SBHUFFRDY.get();
+          pDecoder->SBHUFFRSIZE = SBHUFFRSIZE.get();
           pDecoder->SBRTEMPLATE = SDRTEMPLATE;
           pDecoder->SBRAT[0] = SDRAT[0];
           pDecoder->SBRAT[1] = SDRAT[1];
           pDecoder->SBRAT[2] = SDRAT[2];
           pDecoder->SBRAT[3] = SDRAT[3];
           JBig2IntDecoderState ids;
-          ids.IADT = IADT;
-          ids.IAFS = IAFS;
-          ids.IADS = IADS;
-          ids.IAIT = IAIT;
-          ids.IARI = IARI;
-          ids.IARDW = IARDW;
-          ids.IARDH = IARDH;
-          ids.IARDX = IARDX;
-          ids.IARDY = IARDY;
-          ids.IAID = IAID;
+          ids.IADT = IADT.get();
+          ids.IAFS = IAFS.get();
+          ids.IADS = IADS.get();
+          ids.IAIT = IAIT.get();
+          ids.IARI = IARI.get();
+          ids.IARDW = IARDW.get();
+          ids.IARDH = IARDH.get();
+          ids.IARDX = IARDX.get();
+          ids.IARDY = IARDY.get();
+          ids.IAID = IAID.get();
           BS = pDecoder->decode_Arith(pArithDecoder, grContext, &ids);
-          if (BS == NULL) {
+          if (!BS) {
             FX_Free(SBSYMS);
-            delete SBHUFFFS;
-            delete SBHUFFDS;
-            delete SBHUFFDT;
-            delete SBHUFFRDW;
-            delete SBHUFFRDH;
-            delete SBHUFFRDX;
-            delete SBHUFFRDY;
-            delete SBHUFFRSIZE;
-            delete pDecoder;
             goto failed;
           }
           FX_Free(SBSYMS);
-          delete SBHUFFFS;
-          delete SBHUFFDS;
-          delete SBHUFFDT;
-          delete SBHUFFRDW;
-          delete SBHUFFRDH;
-          delete SBHUFFRDX;
-          delete SBHUFFRDY;
-          delete SBHUFFRSIZE;
-          delete pDecoder;
         } else if (REFAGGNINST == 1) {
           SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
           if (IAID->decode(pArithDecoder, (int*)&IDI) == -1) {
@@ -1750,7 +1729,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
             FX_Free(SBSYMS);
             goto failed;
           }
-          pGRRD = new CJBig2_GRRDProc();
+          nonstd::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
           pGRRD->GRW = SYMWIDTH;
           pGRRD->GRH = HCHEIGHT;
           pGRRD->GRTEMPLATE = SDRTEMPLATE;
@@ -1763,17 +1742,15 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           pGRRD->GRAT[2] = SDRAT[2];
           pGRRD->GRAT[3] = SDRAT[3];
           BS = pGRRD->decode(pArithDecoder, grContext);
-          if (BS == NULL) {
+          if (!BS) {
             FX_Free(SBSYMS);
-            delete pGRRD;
             goto failed;
           }
           FX_Free(SBSYMS);
-          delete pGRRD;
         }
       }
       SDNEWSYMS[NSYMSDECODED] = BS;
-      BS = NULL;
+      BS = nullptr;
       NSYMSDECODED = NSYMSDECODED + 1;
     }
   }
@@ -1797,7 +1774,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
     EXINDEX = EXINDEX + EXRUNLENGTH;
     CUREXFLAG = !CUREXFLAG;
   }
-  pDict = new CJBig2_SymbolDict();
+  pDict.reset(new CJBig2_SymbolDict);
   pDict->SDNUMEXSYMS = SDNUMEXSYMS;
   pDict->SDEXSYMS = FX_Alloc(CJBig2_Image*, SDNUMEXSYMS);
   I = J = 0;
@@ -1818,45 +1795,18 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   }
   FX_Free(EXFLAGS);
   FX_Free(SDNEWSYMS);
-  delete IADH;
-  delete IADW;
-  delete IAAI;
-  delete IARDX;
-  delete IARDY;
-  delete IAEX;
-  delete IAID;
-  delete IADT;
-  delete IAFS;
-  delete IADS;
-  delete IAIT;
-  delete IARI;
-  delete IARDW;
-  delete IARDH;
-  return pDict;
+  return pDict.release();
 failed:
   for (I = 0; I < NSYMSDECODED; I++) {
     if (SDNEWSYMS[I]) {
       delete SDNEWSYMS[I];
-      SDNEWSYMS[I] = NULL;
+      SDNEWSYMS[I] = nullptr;
     }
   }
   FX_Free(SDNEWSYMS);
-  delete IADH;
-  delete IADW;
-  delete IAAI;
-  delete IARDX;
-  delete IARDY;
-  delete IAEX;
-  delete IAID;
-  delete IADT;
-  delete IAFS;
-  delete IADS;
-  delete IAIT;
-  delete IARI;
-  delete IARDW;
-  delete IARDH;
-  return NULL;
+  return nullptr;
 }
+
 CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
                                                   JBig2ArithCtx* gbContext,
                                                   JBig2ArithCtx* grContext,
@@ -1883,25 +1833,22 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
   FX_DWORD BMSIZE;
   FX_DWORD stride;
   CJBig2_Image** SBSYMS;
-  CJBig2_HuffmanTable *SBHUFFFS, *SBHUFFDS, *SBHUFFDT, *SBHUFFRDW, *SBHUFFRDH,
-      *SBHUFFRDX, *SBHUFFRDY, *SBHUFFRSIZE, *pTable;
-  CJBig2_HuffmanDecoder* pHuffmanDecoder;
-  CJBig2_GRRDProc* pGRRD;
-  CJBig2_ArithDecoder* pArithDecoder;
-  CJBig2_GRDProc* pGRD;
-  CJBig2_SymbolDict* pDict;
-  pHuffmanDecoder = new CJBig2_HuffmanDecoder(pStream);
+  nonstd::unique_ptr<CJBig2_HuffmanDecoder> pHuffmanDecoder(
+      new CJBig2_HuffmanDecoder(pStream));
   SDNEWSYMS = FX_Alloc(CJBig2_Image*, SDNUMNEWSYMS);
   FXSYS_memset(SDNEWSYMS, 0, SDNUMNEWSYMS * sizeof(CJBig2_Image*));
-  SDNEWSYMWIDTHS = NULL;
-  BHC = NULL;
+  SDNEWSYMWIDTHS = nullptr;
+  BHC = nullptr;
   if (SDREFAGG == 0) {
     SDNEWSYMWIDTHS = FX_Alloc(FX_DWORD, SDNUMNEWSYMS);
     FXSYS_memset(SDNEWSYMWIDTHS, 0, SDNUMNEWSYMS * sizeof(FX_DWORD));
   }
+  nonstd::unique_ptr<CJBig2_SymbolDict> pDict(new CJBig2_SymbolDict());
+  nonstd::unique_ptr<CJBig2_HuffmanTable> pTable;
+
   HCHEIGHT = 0;
   NSYMSDECODED = 0;
-  BS = NULL;
+  BS = nullptr;
   while (NSYMSDECODED < SDNUMNEWSYMS) {
     if (pHuffmanDecoder->decodeAValue(SDHUFFDH, &HCDH) != 0) {
       goto failed;
@@ -1928,7 +1875,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           goto failed;
         } else if (HCHEIGHT == 0 || SYMWIDTH == 0) {
           TOTWIDTH = TOTWIDTH + SYMWIDTH;
-          SDNEWSYMS[NSYMSDECODED] = NULL;
+          SDNEWSYMS[NSYMSDECODED] = nullptr;
           NSYMSDECODED = NSYMSDECODED + 1;
           continue;
         }
@@ -1939,9 +1886,9 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
             0) {
           goto failed;
         }
-        BS = NULL;
+        BS = nullptr;
         if (REFAGGNINST > 1) {
-          CJBig2_TRDProc* pDecoder = new CJBig2_TRDProc();
+          nonstd::unique_ptr<CJBig2_TRDProc> pDecoder(new CJBig2_TRDProc());
           pDecoder->SBHUFF = SDHUFF;
           pDecoder->SBREFINE = 1;
           pDecoder->SBW = SYMWIDTH;
@@ -1970,69 +1917,59 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           pDecoder->TRANSPOSED = 0;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
-          SBHUFFFS = new CJBig2_HuffmanTable(HuffmanTable_B6,
-                                             FX_ArraySize(HuffmanTable_B6),
-                                             HuffmanTable_HTOOB_B6);
-          SBHUFFDS = new CJBig2_HuffmanTable(HuffmanTable_B8,
-                                             FX_ArraySize(HuffmanTable_B8),
-                                             HuffmanTable_HTOOB_B8);
-          SBHUFFDT = new CJBig2_HuffmanTable(HuffmanTable_B11,
-                                             FX_ArraySize(HuffmanTable_B11),
-                                             HuffmanTable_HTOOB_B11);
-          SBHUFFRDW = new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15);
-          SBHUFFRDH = new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15);
-          SBHUFFRDX = new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15);
-          SBHUFFRDY = new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15);
-          SBHUFFRSIZE = new CJBig2_HuffmanTable(HuffmanTable_B1,
-                                                FX_ArraySize(HuffmanTable_B1),
-                                                HuffmanTable_HTOOB_B1);
-          pDecoder->SBHUFFFS = SBHUFFFS;
-          pDecoder->SBHUFFDS = SBHUFFDS;
-          pDecoder->SBHUFFDT = SBHUFFDT;
-          pDecoder->SBHUFFRDW = SBHUFFRDW;
-          pDecoder->SBHUFFRDH = SBHUFFRDH;
-          pDecoder->SBHUFFRDX = SBHUFFRDX;
-          pDecoder->SBHUFFRDY = SBHUFFRDY;
-          pDecoder->SBHUFFRSIZE = SBHUFFRSIZE;
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFFS(
+              new CJBig2_HuffmanTable(HuffmanTable_B6,
+                                      FX_ArraySize(HuffmanTable_B6),
+                                      HuffmanTable_HTOOB_B6));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFDS(
+              new CJBig2_HuffmanTable(HuffmanTable_B8,
+                                      FX_ArraySize(HuffmanTable_B8),
+                                      HuffmanTable_HTOOB_B8));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFDT(
+              new CJBig2_HuffmanTable(HuffmanTable_B11,
+                                      FX_ArraySize(HuffmanTable_B11),
+                                      HuffmanTable_HTOOB_B11));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDW(
+              new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                      FX_ArraySize(HuffmanTable_B15),
+                                      HuffmanTable_HTOOB_B15));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDH(
+              new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                      FX_ArraySize(HuffmanTable_B15),
+                                      HuffmanTable_HTOOB_B15));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDX(
+              new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                      FX_ArraySize(HuffmanTable_B15),
+                                      HuffmanTable_HTOOB_B15));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDY(
+              new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                      FX_ArraySize(HuffmanTable_B15),
+                                      HuffmanTable_HTOOB_B15));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRSIZE(
+              new CJBig2_HuffmanTable(HuffmanTable_B1,
+                                      FX_ArraySize(HuffmanTable_B1),
+                                      HuffmanTable_HTOOB_B1));
+          pDecoder->SBHUFFFS = SBHUFFFS.get();
+          pDecoder->SBHUFFDS = SBHUFFDS.get();
+          pDecoder->SBHUFFDT = SBHUFFDT.get();
+          pDecoder->SBHUFFRDW = SBHUFFRDW.get();
+          pDecoder->SBHUFFRDH = SBHUFFRDH.get();
+          pDecoder->SBHUFFRDX = SBHUFFRDX.get();
+          pDecoder->SBHUFFRDY = SBHUFFRDY.get();
+          pDecoder->SBHUFFRSIZE = SBHUFFRSIZE.get();
           pDecoder->SBRTEMPLATE = SDRTEMPLATE;
           pDecoder->SBRAT[0] = SDRAT[0];
           pDecoder->SBRAT[1] = SDRAT[1];
           pDecoder->SBRAT[2] = SDRAT[2];
           pDecoder->SBRAT[3] = SDRAT[3];
           BS = pDecoder->decode_Huffman(pStream, grContext);
-          if (BS == NULL) {
+          if (!BS) {
             FX_Free(SBSYMCODES);
             FX_Free(SBSYMS);
-            delete SBHUFFFS;
-            delete SBHUFFDS;
-            delete SBHUFFDT;
-            delete SBHUFFRDW;
-            delete SBHUFFRDH;
-            delete SBHUFFRDX;
-            delete SBHUFFRDY;
-            delete SBHUFFRSIZE;
-            delete pDecoder;
             goto failed;
           }
           FX_Free(SBSYMCODES);
           FX_Free(SBSYMS);
-          delete SBHUFFFS;
-          delete SBHUFFDS;
-          delete SBHUFFDT;
-          delete SBHUFFRDW;
-          delete SBHUFFRDH;
-          delete SBHUFFRDX;
-          delete SBHUFFRDY;
-          delete SBHUFFRSIZE;
-          delete pDecoder;
         } else if (REFAGGNINST == 1) {
           SBNUMSYMS = SDNUMINSYMS + SDNUMNEWSYMS;
           nTmp = 1;
@@ -2064,28 +2001,26 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
             }
           }
           FX_Free(SBSYMCODES);
-          SBHUFFRDX = new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15);
-          SBHUFFRSIZE = new CJBig2_HuffmanTable(HuffmanTable_B1,
-                                                FX_ArraySize(HuffmanTable_B1),
-                                                HuffmanTable_HTOOB_B1);
-          if ((pHuffmanDecoder->decodeAValue(SBHUFFRDX, &RDXI) != 0) ||
-              (pHuffmanDecoder->decodeAValue(SBHUFFRDX, &RDYI) != 0) ||
-              (pHuffmanDecoder->decodeAValue(SBHUFFRSIZE, &nVal) != 0)) {
-            delete SBHUFFRDX;
-            delete SBHUFFRSIZE;
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDX(
+              new CJBig2_HuffmanTable(HuffmanTable_B15,
+                                      FX_ArraySize(HuffmanTable_B15),
+                                      HuffmanTable_HTOOB_B15));
+          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRSIZE(
+              new CJBig2_HuffmanTable(HuffmanTable_B1,
+                                      FX_ArraySize(HuffmanTable_B1),
+                                      HuffmanTable_HTOOB_B1));
+          if ((pHuffmanDecoder->decodeAValue(SBHUFFRDX.get(), &RDXI) != 0) ||
+              (pHuffmanDecoder->decodeAValue(SBHUFFRDX.get(), &RDYI) != 0) ||
+              (pHuffmanDecoder->decodeAValue(SBHUFFRSIZE.get(), &nVal) != 0)) {
             goto failed;
           }
-          delete SBHUFFRDX;
-          delete SBHUFFRSIZE;
           pStream->alignByte();
           nTmp = pStream->getOffset();
           SBSYMS = FX_Alloc(CJBig2_Image*, SBNUMSYMS);
           JBIG2_memcpy(SBSYMS, SDINSYMS, SDNUMINSYMS * sizeof(CJBig2_Image*));
           JBIG2_memcpy(SBSYMS + SDNUMINSYMS, SDNEWSYMS,
                        NSYMSDECODED * sizeof(CJBig2_Image*));
-          pGRRD = new CJBig2_GRRDProc();
+          nonstd::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
           pGRRD->GRW = SYMWIDTH;
           pGRRD->GRH = HCHEIGHT;
           pGRRD->GRTEMPLATE = SDRTEMPLATE;
@@ -2097,12 +2032,11 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           pGRRD->GRAT[1] = SDRAT[1];
           pGRRD->GRAT[2] = SDRAT[2];
           pGRRD->GRAT[3] = SDRAT[3];
-          pArithDecoder = new CJBig2_ArithDecoder(pStream);
-          BS = pGRRD->decode(pArithDecoder, grContext);
-          if (BS == NULL) {
+          nonstd::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
+              new CJBig2_ArithDecoder(pStream));
+          BS = pGRRD->decode(pArithDecoder.get(), grContext);
+          if (!BS) {
             FX_Free(SBSYMS);
-            delete pGRRD;
-            delete pArithDecoder;
             goto failed;
           }
           pStream->alignByte();
@@ -2110,13 +2044,9 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           if ((FX_DWORD)nVal != (pStream->getOffset() - nTmp)) {
             delete BS;
             FX_Free(SBSYMS);
-            delete pGRRD;
-            delete pArithDecoder;
             goto failed;
           }
           FX_Free(SBSYMS);
-          delete pGRRD;
-          delete pArithDecoder;
         }
         SDNEWSYMS[NSYMSDECODED] = BS;
       }
@@ -2143,7 +2073,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           goto failed;
         }
       } else {
-        pGRD = new CJBig2_GRDProc();
+        nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
         pGRD->MMR = 1;
         pGRD->GBW = TOTWIDTH;
         pGRD->GBH = HCHEIGHT;
@@ -2151,7 +2081,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
         while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
           pGRD->Continue_decode(pPause);
         }
-        delete pGRD;
         pStream->alignByte();
       }
       nTmp = 0;
@@ -2163,22 +2092,20 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
         nTmp += SDNEWSYMWIDTHS[I];
       }
       delete BHC;
-      BHC = NULL;
+      BHC = nullptr;
     }
   }
   EXINDEX = 0;
   CUREXFLAG = 0;
-  pTable = new CJBig2_HuffmanTable(
-      HuffmanTable_B1, FX_ArraySize(HuffmanTable_B1), HuffmanTable_HTOOB_B1);
+  pTable.reset(new CJBig2_HuffmanTable(
+      HuffmanTable_B1, FX_ArraySize(HuffmanTable_B1), HuffmanTable_HTOOB_B1));
   EXFLAGS = FX_Alloc(FX_BOOL, SDNUMINSYMS + SDNUMNEWSYMS);
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
-    if (pHuffmanDecoder->decodeAValue(pTable, (int*)&EXRUNLENGTH) != 0) {
-      delete pTable;
+    if (pHuffmanDecoder->decodeAValue(pTable.get(), (int*)&EXRUNLENGTH) != 0) {
       FX_Free(EXFLAGS);
       goto failed;
     }
     if (EXINDEX + EXRUNLENGTH > SDNUMINSYMS + SDNUMNEWSYMS) {
-      delete pTable;
       FX_Free(EXFLAGS);
       goto failed;
     }
@@ -2190,8 +2117,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
     EXINDEX = EXINDEX + EXRUNLENGTH;
     CUREXFLAG = !CUREXFLAG;
   }
-  delete pTable;
-  pDict = new CJBig2_SymbolDict();
   pDict->SDNUMEXSYMS = SDNUMEXSYMS;
   pDict->SDEXSYMS = FX_Alloc(CJBig2_Image*, SDNUMEXSYMS);
   I = J = 0;
@@ -2215,8 +2140,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
   if (SDREFAGG == 0) {
     FX_Free(SDNEWSYMWIDTHS);
   }
-  delete pHuffmanDecoder;
-  return pDict;
+  return pDict.release();
 failed:
   for (I = 0; I < NSYMSDECODED; I++) {
     delete SDNEWSYMS[I];
@@ -2225,9 +2149,9 @@ failed:
   if (SDREFAGG == 0) {
     FX_Free(SDNEWSYMWIDTHS);
   }
-  delete pHuffmanDecoder;
-  return NULL;
+  return nullptr;
 }
+
 CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext,
                                             IFX_Pause* pPause) {
@@ -2235,11 +2159,11 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   int32_t x, y;
   FX_DWORD HBPP;
   FX_DWORD* GI;
-  CJBig2_Image* HSKIP = nullptr;
-  CJBig2_Image* HTREG = new CJBig2_Image(HBW, HBH);
+  nonstd::unique_ptr<CJBig2_Image> HSKIP;
+  nonstd::unique_ptr<CJBig2_Image> HTREG(new CJBig2_Image(HBW, HBH));
   HTREG->fill(HDEFPIXEL);
   if (HENABLESKIP == 1) {
-    HSKIP = new CJBig2_Image(HGW, HGH);
+    HSKIP.reset(new CJBig2_Image(HGW, HGH));
     for (mg = 0; mg < HGH; mg++) {
       for (ng = 0; ng < HGW; ng++) {
         x = (HGX + mg * HRY + ng * HRX) >> 8;
@@ -2257,18 +2181,18 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   while ((FX_DWORD)(1 << HBPP) < HNUMPATS) {
     HBPP++;
   }
-  CJBig2_GSIDProc* pGID = new CJBig2_GSIDProc();
+  nonstd::unique_ptr<CJBig2_GSIDProc> pGID(new CJBig2_GSIDProc());
   pGID->GSMMR = HMMR;
   pGID->GSW = HGW;
   pGID->GSH = HGH;
   pGID->GSBPP = (uint8_t)HBPP;
   pGID->GSUSESKIP = HENABLESKIP;
-  pGID->GSKIP = HSKIP;
+  pGID->GSKIP = HSKIP.get();
   pGID->GSTEMPLATE = HTEMPLATE;
   GI = pGID->decode_Arith(pArithDecoder, gbContext, pPause);
-  if (GI == NULL) {
-    goto failed;
-  }
+  if (!GI)
+    return nullptr;
+
   for (mg = 0; mg < HGH; mg++) {
     for (ng = 0; ng < HGW; ng++) {
       x = (HGX + mg * HRY + ng * HRX) >> 8;
@@ -2281,36 +2205,30 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     }
   }
   FX_Free(GI);
-  delete HSKIP;
-  delete pGID;
-  return HTREG;
-failed:
-  delete HSKIP;
-  delete pGID;
-  delete HTREG;
-  return NULL;
+  return HTREG.release();
 }
+
 CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream,
                                           IFX_Pause* pPause) {
   FX_DWORD ng, mg;
   int32_t x, y;
   FX_DWORD* GI;
-  CJBig2_Image* HTREG = new CJBig2_Image(HBW, HBH);
+  nonstd::unique_ptr<CJBig2_Image> HTREG(new CJBig2_Image(HBW, HBH));
   HTREG->fill(HDEFPIXEL);
   FX_DWORD HBPP = 1;
   while ((FX_DWORD)(1 << HBPP) < HNUMPATS) {
     HBPP++;
   }
-  CJBig2_GSIDProc* pGID = new CJBig2_GSIDProc();
+  nonstd::unique_ptr<CJBig2_GSIDProc> pGID(new CJBig2_GSIDProc());
   pGID->GSMMR = HMMR;
   pGID->GSW = HGW;
   pGID->GSH = HGH;
   pGID->GSBPP = (uint8_t)HBPP;
   pGID->GSUSESKIP = 0;
   GI = pGID->decode_MMR(pStream, pPause);
-  if (GI == NULL) {
-    goto failed;
-  }
+  if (!GI)
+    return nullptr;
+
   for (mg = 0; mg < HGH; mg++) {
     for (ng = 0; ng < HGW; ng++) {
       x = (HGX + mg * HRY + ng * HRX) >> 8;
@@ -2323,24 +2241,21 @@ CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream,
     }
   }
   FX_Free(GI);
-  delete pGID;
-  return HTREG;
-failed:
-  delete pGID;
-  delete HTREG;
-  return NULL;
+  return HTREG.release();
 }
+
 CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   FX_DWORD GRAY;
-  CJBig2_Image* BHDC = NULL;
-  CJBig2_PatternDict* pDict = new CJBig2_PatternDict();
+  CJBig2_Image* BHDC = nullptr;
+  nonstd::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
   JBIG2_memset(pDict->HDPATS, 0, sizeof(CJBig2_Image*) * pDict->NUMPATS);
-  CJBig2_GRDProc* pGRD = new CJBig2_GRDProc();
+
+  nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
   pGRD->GBH = HDPH;
@@ -2362,32 +2277,28 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
     pGRD->Continue_decode(pPause);
   }
-  if (BHDC == NULL) {
-    delete pGRD;
-    goto failed;
-  }
-  delete pGRD;
+  if (!BHDC)
+    return nullptr;
+
   GRAY = 0;
   while (GRAY <= GRAYMAX) {
     pDict->HDPATS[GRAY] = BHDC->subImage(HDPW * GRAY, 0, HDPW, HDPH);
     GRAY = GRAY + 1;
   }
   delete BHDC;
-  return pDict;
-failed:
-  delete pDict;
-  return NULL;
+  return pDict.release();
 }
 
 CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream,
                                                IFX_Pause* pPause) {
   FX_DWORD GRAY;
-  CJBig2_Image* BHDC = NULL;
-  CJBig2_PatternDict* pDict = new CJBig2_PatternDict();
+  CJBig2_Image* BHDC = nullptr;
+  nonstd::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
   JBIG2_memset(pDict->HDPATS, 0, sizeof(CJBig2_Image*) * pDict->NUMPATS);
-  CJBig2_GRDProc* pGRD = new CJBig2_GRDProc();
+
+  nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
   pGRD->GBH = HDPH;
@@ -2395,22 +2306,18 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream,
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
     pGRD->Continue_decode(pPause);
   }
-  if (BHDC == NULL) {
-    delete pGRD;
-    goto failed;
-  }
-  delete pGRD;
+  if (!BHDC)
+    return nullptr;
+
   GRAY = 0;
   while (GRAY <= GRAYMAX) {
     pDict->HDPATS[GRAY] = BHDC->subImage(HDPW * GRAY, 0, HDPW, HDPH);
     GRAY = GRAY + 1;
   }
   delete BHDC;
-  return pDict;
-failed:
-  delete pDict;
-  return NULL;
+  return pDict.release();
 }
+
 FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                         JBig2ArithCtx* gbContext,
                                         IFX_Pause* pPause) {
@@ -2419,17 +2326,11 @@ FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   FX_DWORD x, y;
   FX_DWORD* GSVALS;
   GSPLANES = FX_Alloc(CJBig2_Image*, GSBPP);
-  if (!GSPLANES) {
-    return NULL;
-  }
   GSVALS = FX_Alloc2D(FX_DWORD, GSW, GSH);
-  if (!GSVALS) {
-    FX_Free(GSPLANES);
-    return NULL;
-  }
   JBIG2_memset(GSPLANES, 0, sizeof(CJBig2_Image*) * GSBPP);
   JBIG2_memset(GSVALS, 0, sizeof(FX_DWORD) * GSW * GSH);
-  CJBig2_GRDProc* pGRD = new CJBig2_GRDProc();
+
+  nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
   pGRD->MMR = GSMMR;
   pGRD->GBW = GSW;
   pGRD->GBH = GSH;
@@ -2456,7 +2357,7 @@ FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
     pGRD->Continue_decode(pPause);
   }
-  if (GSPLANES[GSBPP - 1] == NULL) {
+  if (!GSPLANES[GSBPP - 1]) {
     goto failed;
   }
   J = GSBPP - 2;
@@ -2466,7 +2367,7 @@ FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       pGRD->Continue_decode(pPause);
     }
-    if (GSPLANES[J] == NULL) {
+    if (!GSPLANES[J]) {
       for (K = GSBPP - 1; K > J; K--) {
         delete GSPLANES[K];
         goto failed;
@@ -2486,14 +2387,13 @@ FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     delete GSPLANES[J];
   }
   FX_Free(GSPLANES);
-  delete pGRD;
   return GSVALS;
 failed:
   FX_Free(GSPLANES);
-  delete pGRD;
   FX_Free(GSVALS);
-  return NULL;
+  return nullptr;
 }
+
 FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
                                       IFX_Pause* pPause) {
   CJBig2_Image** GSPLANES;
@@ -2501,17 +2401,11 @@ FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
   FX_DWORD x, y;
   FX_DWORD* GSVALS;
   GSPLANES = FX_Alloc(CJBig2_Image*, GSBPP);
-  if (!GSPLANES) {
-    return NULL;
-  }
   GSVALS = FX_Alloc2D(FX_DWORD, GSW, GSH);
-  if (!GSVALS) {
-    FX_Free(GSPLANES);
-    return NULL;
-  }
   JBIG2_memset(GSPLANES, 0, sizeof(CJBig2_Image*) * GSBPP);
   JBIG2_memset(GSVALS, 0, sizeof(FX_DWORD) * GSW * GSH);
-  CJBig2_GRDProc* pGRD = new CJBig2_GRDProc();
+
+  nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
   pGRD->MMR = GSMMR;
   pGRD->GBW = GSW;
   pGRD->GBH = GSH;
@@ -2519,7 +2413,7 @@ FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
     pGRD->Continue_decode(pPause);
   }
-  if (GSPLANES[GSBPP - 1] == NULL) {
+  if (!GSPLANES[GSBPP - 1]) {
     goto failed;
   }
   pStream->alignByte();
@@ -2530,7 +2424,7 @@ FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
     while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       pGRD->Continue_decode(pPause);
     }
-    if (GSPLANES[J] == NULL) {
+    if (!GSPLANES[J]) {
       for (K = GSBPP - 1; K > J; K--) {
         delete GSPLANES[K];
         goto failed;
@@ -2552,14 +2446,13 @@ FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
     delete GSPLANES[J];
   }
   FX_Free(GSPLANES);
-  delete pGRD;
   return GSVALS;
 failed:
   FX_Free(GSPLANES);
-  delete pGRD;
   FX_Free(GSVALS);
-  return NULL;
+  return nullptr;
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
     CJBig2_Image** pImage,
     CJBig2_ArithDecoder* pArithDecoder,
@@ -2573,9 +2466,9 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
   m_pPause = pPause;
   if (!*pImage)
     *pImage = new CJBig2_Image(GBW, GBH);
-  if ((*pImage)->m_pData == NULL) {
+  if (!(*pImage)->m_pData) {
     delete *pImage;
-    *pImage = NULL;
+    *pImage = nullptr;
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;
   }
@@ -2585,17 +2478,16 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
   m_pArithDecoder = pArithDecoder;
   m_gbContext = gbContext;
   LTP = 0;
-  m_pLine = NULL;
+  m_pLine = nullptr;
   m_loopIndex = 0;
   return decode_Arith(pPause);
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
   int iline = m_loopIndex;
   CJBig2_Image* pImage = *m_pImage;
   if (GBTEMPLATE == 0) {
-    if ((GBAT[0] == 3) && (GBAT[1] == (int8_t)-1) && (GBAT[2] == (int8_t)-3) &&
-        (GBAT[3] == (int8_t)-1) && (GBAT[4] == 2) && (GBAT[5] == (int8_t)-2) &&
-        (GBAT[6] == (int8_t)-2) && (GBAT[7] == (int8_t)-2)) {
+    if (UseTemplate0Opt3()) {
       m_ProssiveStatus = decode_Arith_Template0_opt3(pImage, m_pArithDecoder,
                                                      m_gbContext, pPause);
     } else {
@@ -2603,7 +2495,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
                                                       m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 1) {
-    if ((GBAT[0] == 3) && (GBAT[1] == (int8_t)-1)) {
+    if (UseTemplate1Opt3()) {
       m_ProssiveStatus = decode_Arith_Template1_opt3(pImage, m_pArithDecoder,
                                                      m_gbContext, pPause);
     } else {
@@ -2611,7 +2503,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
                                                       m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 2) {
-    if ((GBAT[0] == 2) && (GBAT[1] == (int8_t)-1)) {
+    if (UseTemplate23Opt3()) {
       m_ProssiveStatus = decode_Arith_Template2_opt3(pImage, m_pArithDecoder,
                                                      m_gbContext, pPause);
     } else {
@@ -2619,7 +2511,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
                                                       m_gbContext, pPause);
     }
   } else {
-    if ((GBAT[0] == 2) && (GBAT[1] == (int8_t)-1)) {
+    if (UseTemplate23Opt3()) {
       m_ProssiveStatus = decode_Arith_Template3_opt3(pImage, m_pArithDecoder,
                                                      m_gbContext, pPause);
     } else {
@@ -2636,14 +2528,15 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(IFX_Pause* pPause) {
   }
   return m_ProssiveStatus;
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(CJBig2_Image** pImage,
                                                 CJBig2_BitStream* pStream,
                                                 IFX_Pause* pPause) {
   int bitpos, i;
   *pImage = new CJBig2_Image(GBW, GBH);
-  if ((*pImage)->m_pData == NULL) {
+  if (!(*pImage)->m_pData) {
     delete (*pImage);
-    (*pImage) = NULL;
+    (*pImage) = nullptr;
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return m_ProssiveStatus;
   }
@@ -2681,7 +2574,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
   uint8_t *pLine1, *pLine2, cVal;
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
-  if (m_pLine == NULL) {
+  if (!m_pLine) {
     m_pLine = pImage->m_pData;
   }
   nStride = pImage->m_nStride;
@@ -2764,6 +2657,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
   return FXCODEC_STATUS_DECODE_FINISH;
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
@@ -2818,6 +2712,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_unopt(
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
   return FXCODEC_STATUS_DECODE_FINISH;
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
@@ -2911,6 +2806,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
   return FXCODEC_STATUS_DECODE_FINISH;
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
@@ -2961,6 +2857,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_unopt(
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
   return FXCODEC_STATUS_DECODE_FINISH;
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
@@ -3054,6 +2951,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
   return FXCODEC_STATUS_DECODE_FINISH;
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
@@ -3104,6 +3002,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_unopt(
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
   return FXCODEC_STATUS_DECODE_FINISH;
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
@@ -3183,6 +3082,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
   return FXCODEC_STATUS_DECODE_FINISH;
 }
+
 FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
