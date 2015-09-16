@@ -416,20 +416,6 @@ v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
   return obj;
 }
 
-v8::Local<v8::Object> FXJS_GetStaticObj(v8::Isolate* pIsolate, int nObjDefnID) {
-  v8::Isolate::Scope isolate_scope(pIsolate);
-  CFX_PtrArray* pArray = (CFX_PtrArray*)pIsolate->GetData(g_embedderDataSlot);
-  if (!pArray)
-    return v8::Local<v8::Object>();
-
-  if (nObjDefnID < 0 || nObjDefnID >= pArray->GetSize())
-    return v8::Local<v8::Object>();
-  CFXJS_ObjDefintion* pObjDef = (CFXJS_ObjDefintion*)pArray->GetAt(nObjDefnID);
-  v8::Local<v8::Object> obj =
-      v8::Local<v8::Object>::New(pIsolate, pObjDef->m_StaticObj);
-  return obj;
-}
-
 v8::Local<v8::Object> FXJS_GetThisObj(v8::Isolate* pIsolate) {
   // Return the global object.
   v8::Isolate::Scope isolate_scope(pIsolate);
@@ -565,10 +551,6 @@ v8::Local<v8::String> FXJS_WSToJSString(v8::Isolate* pIsolate,
     pIsolate = v8::Isolate::GetCurrent();
   return v8::String::NewFromUtf8(pIsolate, bs.c_str(),
                                  v8::NewStringType::kNormal).ToLocalChecked();
-}
-
-v8::Local<v8::Value> FXJS_GetObjectValue(v8::Local<v8::Object> pObj) {
-  return pObj;
 }
 
 v8::Local<v8::Value> FXJS_GetObjectElement(v8::Isolate* pIsolate,
@@ -736,37 +718,12 @@ v8::Local<v8::Value> FXJS_NewString(v8::Isolate* pIsolate,
   return FXJS_WSToJSString(pIsolate, string);
 }
 
-v8::Local<v8::Value> FXJS_NewString(v8::Isolate* pIsolate,
-                                    const wchar_t* string,
-                                    unsigned nLen) {
-  return FXJS_WSToJSString(pIsolate, string, nLen);
-}
-
 v8::Local<v8::Value> FXJS_NewNull() {
   return v8::Local<v8::Value>();
 }
 
 v8::Local<v8::Value> FXJS_NewDate(v8::Isolate* pIsolate, double d) {
   return v8::Date::New(pIsolate->GetCurrentContext(), d).ToLocalChecked();
-}
-
-v8::Local<v8::Value> FXJS_NewValue(v8::Isolate* pIsolate) {
-  return v8::Local<v8::Value>();
-}
-
-v8::Local<v8::Value> FXJS_GetListValue(v8::Isolate* pIsolate,
-                                       v8::Local<v8::Value> pList,
-                                       int index) {
-  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
-  if (!pList.IsEmpty() && pList->IsObject()) {
-    v8::Local<v8::Object> obj;
-    if (pList->ToObject(context).ToLocal(&obj)) {
-      v8::Local<v8::Value> val;
-      if (obj->Get(context, index).ToLocal(&val))
-        return val;
-    }
-  }
-  return v8::Local<v8::Value>();
 }
 
 int FXJS_ToInt32(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {
