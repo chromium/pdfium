@@ -776,6 +776,7 @@ test("pdfium_embeddertests") {
   deps = [
     "//testing/gmock",
     "//testing/gtest",
+    "//v8",
     "//v8:v8_libplatform",
     ":pdfium",
   ]
