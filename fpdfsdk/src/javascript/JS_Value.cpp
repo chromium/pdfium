@@ -4,6 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <time.h>
+#include <cmath>
+#include <limits>
+
 #include "../../include/javascript/JavaScript.h"
 #include "../../include/javascript/JS_Define.h"
 #include "../../include/javascript/JS_Object.h"

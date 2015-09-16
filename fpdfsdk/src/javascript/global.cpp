@@ -71,7 +71,7 @@ HashVerify::HashVerify() {
   ASSERT(JSCONST_nObjectHash == JS_CalcHash(kFXJSValueNameObject));
   ASSERT(JSCONST_nFXobjHash == JS_CalcHash(kFXJSValueNameFxobj));
   ASSERT(JSCONST_nNullHash == JS_CalcHash(kFXJSValueNameNull));
-  ASSERT(JSCONST_nUndefHash == JS_CalcHash(kFXJSValueNameUndefined);
+  ASSERT(JSCONST_nUndefHash == JS_CalcHash(kFXJSValueNameUndefined));
 }
 #endif
 

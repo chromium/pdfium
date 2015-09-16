@@ -4,10 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <time.h>
-#include <cmath>
-#include <limits>
-
 #include "../../../core/include/fxcrt/fx_basic.h"
 #include "../../include/fsdk_define.h"
 #include "../../include/jsapi/fxjs_v8.h"
