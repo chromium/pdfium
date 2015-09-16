@@ -22,7 +22,7 @@ class FXJSV8Embeddertest : public EmbedderTest {
 
   void SetUp() override {
     EmbedderTest::SetUp();
-    m_pAllocator.reset(new JS_ArrayBufferAllocator());
+    m_pAllocator.reset(new FXJS_ArrayBufferAllocator());
 
     v8::Isolate::CreateParams params;
     params.array_buffer_allocator = m_pAllocator.get();
@@ -30,14 +30,14 @@ class FXJSV8Embeddertest : public EmbedderTest {
 
     v8::Isolate::Scope isolate_scope(m_pIsolate);
     v8::HandleScope handle_scope(m_pIsolate);
-    JS_Initialize(0);
-    JS_PrepareIsolate(m_pIsolate);
-    JS_InitializeRuntime(m_pIsolate, nullptr, nullptr, m_pPersistentContext);
+    FXJS_Initialize(0);
+    FXJS_PrepareIsolate(m_pIsolate);
+    FXJS_InitializeRuntime(m_pIsolate, nullptr, nullptr, m_pPersistentContext);
   }
 
   void TearDown() override {
-    JS_ReleaseRuntime(m_pIsolate, m_pPersistentContext);
-    JS_Release();
+    FXJS_ReleaseRuntime(m_pIsolate, m_pPersistentContext);
+    FXJS_Release();
     EmbedderTest::TearDown();
   }
 
@@ -60,10 +60,10 @@ TEST_F(FXJSV8Embeddertest, Getters) {
   FXJSErr error;
   CFX_WideString wsInfo;
   CFX_WideString wsScript(kScript);
-  int sts = JS_Execute(isolate(), nullptr, kScript, wcslen(kScript), &error);
+  int sts = FXJS_Execute(isolate(), nullptr, kScript, wcslen(kScript), &error);
   EXPECT_EQ(0, sts);
 
-  v8::Local<v8::Object> This = JS_GetThisObj(isolate());
-  v8::Local<v8::Value> fred = JS_GetObjectElement(isolate(), This, L"fred");
+  v8::Local<v8::Object> This = FXJS_GetThisObj(isolate());
+  v8::Local<v8::Value> fred = FXJS_GetObjectElement(isolate(), This, L"fred");
   EXPECT_TRUE(fred->IsNumber());
 }

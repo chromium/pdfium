@@ -74,7 +74,7 @@ void FreeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {
   CJS_Object* pJSObj = data.GetParameter();
   pJSObj->ExitInstance();
   delete pJSObj;
-  JS_FreePrivate(data.GetInternalField(0));
+  FXJS_FreePrivate(data.GetInternalField(0));
 }
 
 void DisposeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {

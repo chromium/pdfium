@@ -39,7 +39,7 @@ void CJS_RuntimeFactory::AddRef() {
 void CJS_RuntimeFactory::Release() {
   if (m_bInit) {
     if (--m_nRef == 0) {
-      JS_Release();
+      FXJS_Release();
       m_bInit = FALSE;
     }
   }
@@ -65,7 +65,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     embedderDataSlot = pApp->GetFormFillInfo()->m_pJsPlatform->m_v8EmbedderSlot;
   }
   if (!m_isolate) {
-    m_pArrayBufferAllocator.reset(new JS_ArrayBufferAllocator());
+    m_pArrayBufferAllocator.reset(new FXJS_ArrayBufferAllocator());
 
     v8::Isolate::CreateParams params;
     params.array_buffer_allocator = m_pArrayBufferAllocator.get();
@@ -73,11 +73,11 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     m_isolateManaged = true;
   }
 
-  JS_Initialize(embedderDataSlot);
+  FXJS_Initialize(embedderDataSlot);
   DefineJSObjects();
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
-  JS_InitializeRuntime(GetIsolate(), this, pContext, m_context);
+  FXJS_InitializeRuntime(GetIsolate(), this, pContext, m_context);
   ReleaseContext(pContext);
 }
 
@@ -86,7 +86,7 @@ CJS_Runtime::~CJS_Runtime() {
     delete m_ContextArray.GetAt(i);
 
   m_ContextArray.RemoveAll();
-  JS_ReleaseRuntime(GetIsolate(), m_context);
+  FXJS_ReleaseRuntime(GetIsolate(), m_context);
   RemoveEventsInLoop(m_pFieldEventPath);
 
   m_pApp = NULL;
@@ -106,34 +106,34 @@ void CJS_Runtime::DefineJSObjects() {
 
   // The call order determines the "ObjDefID" assigned to each class.
   // ObjDefIDs 0 - 2
-  CJS_Border::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_Display::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_Font::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Border::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_Display::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_Font::DefineJSObjects(GetIsolate(), FXJS_STATIC);
 
   // ObjDefIDs 3 - 5
-  CJS_Highlight::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_Position::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_ScaleHow::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Highlight::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_Position::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_ScaleHow::DefineJSObjects(GetIsolate(), FXJS_STATIC);
 
   // ObjDefIDs 6 - 8
-  CJS_ScaleWhen::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_Style::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_Zoomtype::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_ScaleWhen::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_Style::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_Zoomtype::DefineJSObjects(GetIsolate(), FXJS_STATIC);
 
   // ObjDefIDs 9 - 11
-  CJS_App::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_Color::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_Console::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_App::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_Color::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_Console::DefineJSObjects(GetIsolate(), FXJS_STATIC);
 
   // ObjDefIDs 12 - 14
-  CJS_Document::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
-  CJS_Event::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_Field::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
+  CJS_Document::DefineJSObjects(GetIsolate(), FXJS_DYNAMIC);
+  CJS_Event::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_Field::DefineJSObjects(GetIsolate(), FXJS_DYNAMIC);
 
   // ObjDefIDs 15 - 17
-  CJS_Global::DefineJSObjects(GetIsolate(), JS_STATIC);
-  CJS_Icon::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
-  CJS_Util::DefineJSObjects(GetIsolate(), JS_STATIC);
+  CJS_Global::DefineJSObjects(GetIsolate(), FXJS_STATIC);
+  CJS_Icon::DefineJSObjects(GetIsolate(), FXJS_DYNAMIC);
+  CJS_Util::DefineJSObjects(GetIsolate(), FXJS_STATIC);
 
   // ObjDefIDs 18 - 20 (these can't fail, return void).
   CJS_PublicMethods::DefineJSObjects(GetIsolate());
@@ -141,8 +141,8 @@ void CJS_Runtime::DefineJSObjects() {
   CJS_GlobalArrays::DefineJSObjects(GetIsolate());
 
   // ObjDefIDs 21 - 22.
-  CJS_TimerObj::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
-  CJS_PrintParamsObj::DefineJSObjects(GetIsolate(), JS_DYNAMIC);
+  CJS_TimerObj::DefineJSObjects(GetIsolate(), FXJS_DYNAMIC);
+  CJS_PrintParamsObj::DefineJSObjects(GetIsolate(), FXJS_DYNAMIC);
 }
 
 IFXJS_Context* CJS_Runtime::NewContext() {
@@ -179,11 +179,12 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
 
     m_pDocument = pReaderDoc;
     if (pReaderDoc) {
-      v8::Local<v8::Object> pThis = JS_GetThisObj(GetIsolate());
+      v8::Local<v8::Object> pThis = FXJS_GetThisObj(GetIsolate());
       if (!pThis.IsEmpty()) {
-        if (JS_GetObjDefnID(pThis) ==
-            JS_GetObjDefnID(GetIsolate(), L"Document")) {
-          if (CJS_Document* pJSDocument = (CJS_Document*)JS_GetPrivate(pThis)) {
+        if (FXJS_GetObjDefnID(pThis) ==
+            FXJS_GetObjDefnID(GetIsolate(), L"Document")) {
+          if (CJS_Document* pJSDocument =
+                  (CJS_Document*)FXJS_GetPrivate(pThis)) {
             if (Document* pDocument = (Document*)pJSDocument->GetEmbedObject())
               pDocument->AttachDoc(pReaderDoc);
           }

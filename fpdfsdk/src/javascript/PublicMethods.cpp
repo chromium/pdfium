@@ -1934,7 +1934,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(IFXJS_Context* cc,
 
   CJS_Value params1 = params[1];
 
-  if (!params1.IsArrayObject() && params1.GetType() != VT_string) {
+  if (!params1.IsArrayObject() && params1.GetType() != CJS_Value::VT_string) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }

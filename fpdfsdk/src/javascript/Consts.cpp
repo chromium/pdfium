@@ -132,7 +132,8 @@ IMPLEMENT_JS_CLASS_CONST(CJS_Zoomtype, zoomtype)
 static void DefineGlobalConstString(v8::Isolate* pIsolate,
                                     const wchar_t* pConstName,
                                     const wchar_t* pValue) {
-  JS_DefineGlobalConst(pIsolate, pConstName, JS_NewString(pIsolate, pValue));
+  FXJS_DefineGlobalConst(pIsolate, pConstName,
+                         FXJS_NewString(pIsolate, pValue));
 }
 
 void CJS_GlobalConsts::DefineJSObjects(v8::Isolate* pIsolate) {
@@ -176,7 +177,7 @@ void DefineGlobalConstStringArray(v8::Isolate* pIsolate,
   }
   CJS_PropValue prop(pIsolate);
   prop << array;
-  JS_DefineGlobalConst(pIsolate, sConstName, prop.ToV8Value());
+  FXJS_DefineGlobalConst(pIsolate, sConstName, prop.ToV8Value());
 }
 
 void CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {

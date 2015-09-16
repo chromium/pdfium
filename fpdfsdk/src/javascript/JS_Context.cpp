@@ -55,8 +55,8 @@ FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
   FXJSErr error = {NULL, NULL, 0};
   int nRet = 0;
   if (script.GetLength() > 0) {
-    nRet = JS_Execute(m_pRuntime->GetIsolate(), this, script.c_str(),
-                      script.GetLength(), &error);
+    nRet = FXJS_Execute(m_pRuntime->GetIsolate(), this, script.c_str(),
+                        script.GetLength(), &error);
   }
 
   if (nRet < 0) {
