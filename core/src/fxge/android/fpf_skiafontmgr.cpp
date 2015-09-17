@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../include/fxcrt/fx_ext.h"
 #include "fx_fpf.h"
 #if _FX_OS_ == _FX_ANDROID_
 #define FPF_SKIAMATCHWEIGHT_NAME1 62
