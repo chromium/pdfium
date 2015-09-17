@@ -125,9 +125,7 @@ const wchar_t* FXJS_GetTypeof(v8::Local<v8::Value> pObj);
 void FXJS_SetPrivate(v8::Isolate* pIsolate,
                      v8::Local<v8::Object> pObj,
                      void* p);
-void FXJS_SetPrivate(v8::Local<v8::Object> pObj, void* p);
 void* FXJS_GetPrivate(v8::Isolate* pIsolate, v8::Local<v8::Object> pObj);
-void* FXJS_GetPrivate(v8::Local<v8::Object> pObj);
 void FXJS_FreePrivate(void* p);
 void FXJS_FreePrivate(v8::Local<v8::Object> pObj);
 

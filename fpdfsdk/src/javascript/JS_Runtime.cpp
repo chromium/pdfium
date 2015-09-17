@@ -184,7 +184,7 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
         if (FXJS_GetObjDefnID(pThis) ==
             FXJS_GetObjDefnID(GetIsolate(), L"Document")) {
           if (CJS_Document* pJSDocument =
-                  (CJS_Document*)FXJS_GetPrivate(pThis)) {
+                  (CJS_Document*)FXJS_GetPrivate(GetIsolate(), pThis)) {
             if (Document* pDocument = (Document*)pJSDocument->GetEmbedObject())
               pDocument->AttachDoc(pReaderDoc);
           }

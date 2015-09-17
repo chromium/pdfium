@@ -1428,7 +1428,7 @@ FX_BOOL Document::icons(IFXJS_Context* cc,
     if (pObj.IsEmpty())
       return FALSE;
 
-    CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(pObj);
+    CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(m_isolate, pObj);
     if (!pJS_Icon)
       return FALSE;
 
@@ -1472,7 +1472,7 @@ FX_BOOL Document::getIcon(IFXJS_Context* cc,
       if (pObj.IsEmpty())
         return FALSE;
 
-      CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(pObj);
+      CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(m_isolate, pObj);
       if (!pJS_Icon)
         return FALSE;
 

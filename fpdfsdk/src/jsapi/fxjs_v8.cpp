@@ -489,13 +489,6 @@ const wchar_t* FXJS_GetTypeof(v8::Local<v8::Value> pObj) {
     return kFXJSValueNameUndefined;
   return NULL;
 }
-void FXJS_SetPrivate(v8::Local<v8::Object> pObj, void* p) {
-  FXJS_SetPrivate(NULL, pObj, p);
-}
-
-void* FXJS_GetPrivate(v8::Local<v8::Object> pObj) {
-  return FXJS_GetPrivate(NULL, pObj);
-}
 
 void FXJS_SetPrivate(v8::Isolate* pIsolate,
                      v8::Local<v8::Object> pObj,
@@ -511,24 +504,21 @@ void FXJS_SetPrivate(v8::Isolate* pIsolate,
 
 void* FXJS_GetPrivate(v8::Isolate* pIsolate, v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty())
-    return NULL;
-  CFXJS_PrivateData* pPrivateData = NULL;
-  if (pObj->InternalFieldCount())
+    return nullptr;
+  CFXJS_PrivateData* pPrivateData = nullptr;
+  if (pObj->InternalFieldCount()) {
     pPrivateData =
         (CFXJS_PrivateData*)pObj->GetAlignedPointerFromInternalField(0);
-  else {
+  } else {
     // It could be a global proxy object.
     v8::Local<v8::Value> v = pObj->GetPrototype();
-    v8::Isolate* isolate = (v8::Isolate*)pIsolate;
-    v8::Local<v8::Context> context = isolate->GetCurrentContext();
+    v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
     if (v->IsObject())
       pPrivateData = (CFXJS_PrivateData*)v->ToObject(context)
                          .ToLocalChecked()
                          ->GetAlignedPointerFromInternalField(0);
   }
-  if (!pPrivateData)
-    return NULL;
-  return pPrivateData->pPrivate;
+  return pPrivateData ? pPrivateData->pPrivate : nullptr;
 }
 
 void FXJS_FreePrivate(void* pPrivateData) {
