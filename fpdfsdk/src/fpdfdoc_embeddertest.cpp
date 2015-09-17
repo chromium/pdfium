@@ -35,3 +35,28 @@ TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(0U, FPDFDest_GetPageIndex(document(), dest));
 }
+
+TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {
+  EXPECT_TRUE(OpenDocument("testing/resources/launch_action.pdf"));
+
+  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  ASSERT_TRUE(page);
+
+  // The target action is nearly the size of the whole page.
+  FPDF_LINK link = FPDFLink_GetLinkAtPoint(page, 100, 100);
+  ASSERT_TRUE(link);
+
+  FPDF_ACTION action = FPDFLink_GetAction(link);
+  ASSERT_TRUE(action);
+
+  const char kExpectedResult[] = "test.pdf";
+  const unsigned long kExpectedLength = sizeof(kExpectedResult);
+  unsigned long bufsize = FPDFAction_GetFilePath(action, nullptr, 0);
+  ASSERT_EQ(kExpectedLength, bufsize);
+
+  char buf[kExpectedLength];
+  EXPECT_EQ(bufsize, FPDFAction_GetFilePath(action, buf, bufsize));
+  EXPECT_EQ(std::string(kExpectedResult), std::string(buf));
+
+  FPDF_ClosePage(page);
+}

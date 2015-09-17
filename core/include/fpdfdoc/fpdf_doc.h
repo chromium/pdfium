@@ -33,7 +33,6 @@ class CPDF_FormNotify;
 class CPDF_IconFit;
 class CPDF_InterForm;
 class CPDF_Link;
-class CPDF_LWinParam;
 class CPDF_Metadata;
 class CPDF_NumberTree;
 class CPDF_OCContext;
@@ -163,24 +162,7 @@ class CPDF_OCContext : public IPDF_OCContext {
 
   std::map<const CPDF_Dictionary*, FX_BOOL> m_OCGStates;
 };
-class CPDF_LWinParam {
- public:
-  CPDF_LWinParam(CPDF_Dictionary* pDict) { m_pDict = pDict; }
 
-  operator CPDF_Dictionary*() const { return m_pDict; }
-
-  inline CFX_ByteString GetFileName() { return m_pDict->GetString("F"); }
-
-  inline CFX_ByteString GetDefaultDirectory() {
-    return m_pDict->GetString("D");
-  }
-
-  inline CFX_ByteString GetOperation() { return m_pDict->GetString("O"); }
-
-  inline CFX_ByteString GetParameter() { return m_pDict->GetString("P"); }
-
-  CPDF_Dictionary* m_pDict;
-};
 class CPDF_ActionFields {
  public:
   CPDF_ActionFields(const CPDF_Action* pAction) {
@@ -243,8 +225,6 @@ class CPDF_Action {
   CFX_WideString GetFilePath() const;
 
   FX_BOOL GetNewWindow() const { return m_pDict->GetBoolean("NewWindow"); }
-
-  CPDF_LWinParam GetWinParam() const;
 
   CFX_ByteString GetURI(CPDF_Document* pDoc) const;
 

@@ -51,6 +51,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFBookmark_GetAction);
     CHK(FPDFAction_GetType);
     CHK(FPDFAction_GetDest);
+    CHK(FPDFAction_GetFilePath);
     CHK(FPDFAction_GetURIPath);
     CHK(FPDFDest_GetPageIndex);
     CHK(FPDFLink_GetLinkAtPoint);
