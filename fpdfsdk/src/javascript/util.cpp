@@ -212,7 +212,7 @@ FX_BOOL util::printd(IFXJS_Context* cc,
     return FALSE;
   }
 
-  if (p1.GetType() == VT_number) {
+  if (p1.GetType() == CJS_Value::VT_number) {
     int nFormat = p1.ToInt();
     CFX_WideString swResult;
 
@@ -242,7 +242,7 @@ FX_BOOL util::printd(IFXJS_Context* cc,
     vRet = swResult.c_str();
     return TRUE;
   }
-  if (p1.GetType() == VT_string) {
+  if (p1.GetType() == CJS_Value::VT_string) {
     std::basic_string<wchar_t> cFormat = p1.ToCFXWideString().c_str();
 
     bool bXFAPicture = false;

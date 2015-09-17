@@ -112,7 +112,7 @@ FX_BOOL CPDFXFA_App::RemoveFormFillEnv(CPDFDoc_Environment* pEnv) {
 }
 void CPDFXFA_App::ReleaseRuntime() {
   v8::Global<v8::Context> context;
-  JS_ReleaseRuntime((v8::Isolate*)m_hJSERuntime, context);
+  FXJS_ReleaseRuntime((v8::Isolate*)m_hJSERuntime, context);
 }
 
 void CPDFXFA_App::GetAppType(CFX_WideString& wsAppType) {

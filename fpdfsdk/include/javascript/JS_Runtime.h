@@ -64,7 +64,7 @@ class CJS_Runtime : public IFXJS_Runtime {
   CJS_FieldEvent* m_pFieldEventPath;
   v8::Isolate* m_isolate;
   bool m_isolateManaged;
-  nonstd::unique_ptr<JS_ArrayBufferAllocator> m_pArrayBufferAllocator;
+  nonstd::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
   v8::Global<v8::Context> m_context;
 };
 

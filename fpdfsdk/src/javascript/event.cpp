@@ -63,7 +63,7 @@ FX_BOOL event::change(IFXJS_Context* cc,
 
   CFX_WideString& wChange = pEvent->Change();
   if (vp.IsSetting()) {
-    if (vp.GetType() == VT_string)
+    if (vp.GetType() == CJS_Value::VT_string)
       vp >> wChange;
   } else {
     vp << wChange;

@@ -17,8 +17,20 @@ class CJS_Object;
 
 class CJS_Value {
  public:
+  enum Type {
+    VT_unknown,
+    VT_string,
+    VT_number,
+    VT_boolean,
+    VT_date,
+    VT_object,
+    VT_fxobject,
+    VT_null,
+    VT_undefined
+  };
+
   CJS_Value(v8::Isolate* isolate);
-  CJS_Value(v8::Isolate* isolate, v8::Local<v8::Value> pValue, FXJSVALUETYPE t);
+  CJS_Value(v8::Isolate* isolate, v8::Local<v8::Value> pValue, Type t);
   CJS_Value(v8::Isolate* isolate, const int& iValue);
   CJS_Value(v8::Isolate* isolate, const double& dValue);
   CJS_Value(v8::Isolate* isolate, const float& fValue);
@@ -33,10 +45,11 @@ class CJS_Value {
   ~CJS_Value();
 
   void SetNull();
-  void Attach(v8::Local<v8::Value> pValue, FXJSVALUETYPE t);
+  void Attach(v8::Local<v8::Value> pValue, Type t);
   void Attach(CJS_Value* pValue);
   void Detach();
 
+  Type GetType() const;
   int ToInt() const;
   bool ToBool() const;
   double ToDouble() const;
@@ -63,16 +76,14 @@ class CJS_Value {
 
   FX_BOOL IsArrayObject() const;
   FX_BOOL IsDateObject() const;
-  FXJSVALUETYPE GetType() const;
-
   FX_BOOL ConvertToArray(CJS_Array&) const;
   FX_BOOL ConvertToDate(CJS_Date&) const;
 
   v8::Isolate* GetIsolate() { return m_isolate; }
 
  protected:
+  Type m_eType;
   v8::Local<v8::Value> m_pValue;
-  FXJSVALUETYPE m_eType;
   v8::Isolate* m_isolate;
 };
 
@@ -189,5 +200,19 @@ class CJS_Date {
   v8::Local<v8::Value> m_pDate;
   v8::Isolate* m_isolate;
 };
+
+double JS_GetDateTime();
+int JS_GetYearFromTime(double dt);
+int JS_GetMonthFromTime(double dt);
+int JS_GetDayFromTime(double dt);
+int JS_GetHourFromTime(double dt);
+int JS_GetMinFromTime(double dt);
+int JS_GetSecFromTime(double dt);
+double JS_DateParse(const wchar_t* string);
+double JS_MakeDay(int nYear, int nMonth, int nDay);
+double JS_MakeTime(int nHour, int nMin, int nSec, int nMs);
+double JS_MakeDate(double day, double time);
+bool JS_PortIsNan(double d);
+double JS_LocalTime(double d);
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_VALUE_H_

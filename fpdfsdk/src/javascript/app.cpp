@@ -122,16 +122,17 @@ FX_BOOL app::activeDocs(IFXJS_Context* cc,
   if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument()) {
     CJS_Document* pJSDocument = NULL;
     if (pDoc == pCurDoc) {
-      v8::Local<v8::Object> pObj = JS_GetThisObj(pRuntime->GetIsolate());
-      if (JS_GetObjDefnID(pObj) ==
-          JS_GetObjDefnID(pRuntime->GetIsolate(), L"Document"))
+      v8::Local<v8::Object> pObj = FXJS_GetThisObj(pRuntime->GetIsolate());
+      if (FXJS_GetObjDefnID(pObj) ==
+          FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Document"))
         pJSDocument =
-            (CJS_Document*)JS_GetPrivate(pRuntime->GetIsolate(), pObj);
+            (CJS_Document*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
     } else {
-      v8::Local<v8::Object> pObj = JS_NewFxDynamicObj(
+      v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
           pRuntime->GetIsolate(), pContext,
-          JS_GetObjDefnID(pRuntime->GetIsolate(), L"Document"));
-      pJSDocument = (CJS_Document*)JS_GetPrivate(pRuntime->GetIsolate(), pObj);
+          FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Document"));
+      pJSDocument =
+          (CJS_Document*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
       ASSERT(pJSDocument != NULL);
     }
     aDocs.SetElement(0, CJS_Value(pRuntime->GetIsolate(), pJSDocument));
@@ -275,21 +276,23 @@ FX_BOOL app::alert(IFXJS_Context* cc,
   v8::Isolate* isolate = GetIsolate(cc);
 
   if (iSize == 1) {
-    if (params[0].GetType() == VT_object) {
+    if (params[0].GetType() == CJS_Value::VT_object) {
       v8::Local<v8::Object> pObj = params[0].ToV8Object();
       {
         v8::Local<v8::Value> pValue =
-            JS_GetObjectElement(isolate, pObj, L"cMsg");
-        swMsg = CJS_Value(isolate, pValue, VT_unknown).ToCFXWideString();
+            FXJS_GetObjectElement(isolate, pObj, L"cMsg");
+        swMsg =
+            CJS_Value(isolate, pValue, CJS_Value::VT_unknown).ToCFXWideString();
 
-        pValue = JS_GetObjectElement(isolate, pObj, L"cTitle");
-        swTitle = CJS_Value(isolate, pValue, VT_unknown).ToCFXWideString();
+        pValue = FXJS_GetObjectElement(isolate, pObj, L"cTitle");
+        swTitle =
+            CJS_Value(isolate, pValue, CJS_Value::VT_unknown).ToCFXWideString();
 
-        pValue = JS_GetObjectElement(isolate, pObj, L"nIcon");
-        iIcon = CJS_Value(isolate, pValue, VT_unknown).ToInt();
+        pValue = FXJS_GetObjectElement(isolate, pObj, L"nIcon");
+        iIcon = CJS_Value(isolate, pValue, CJS_Value::VT_unknown).ToInt();
 
-        pValue = JS_GetObjectElement(isolate, pObj, L"nType");
-        iType = CJS_Value(isolate, pValue, VT_unknown).ToInt();
+        pValue = FXJS_GetObjectElement(isolate, pObj, L"nType");
+        iType = CJS_Value(isolate, pValue, CJS_Value::VT_unknown).ToInt();
       }
 
       if (swMsg == L"") {
@@ -310,7 +313,7 @@ FX_BOOL app::alert(IFXJS_Context* cc,
 
       if (swTitle == L"")
         swTitle = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSALERT);
-    } else if (params[0].GetType() == VT_boolean) {
+    } else if (params[0].GetType() == CJS_Value::VT_boolean) {
       FX_BOOL bGet = params[0].ToBool();
       if (bGet)
         swMsg = L"true";
@@ -323,7 +326,7 @@ FX_BOOL app::alert(IFXJS_Context* cc,
       swTitle = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSALERT);
     }
   } else {
-    if (params[0].GetType() == VT_boolean) {
+    if (params[0].GetType() == CJS_Value::VT_boolean) {
       FX_BOOL bGet = params[0].ToBool();
       if (bGet)
         swMsg = L"true";
@@ -421,12 +424,12 @@ FX_BOOL app::setInterval(IFXJS_Context* cc,
   //	pTimer->SetStartTime(GetTickCount());
   pTimer->SetJSTimer(dwInterval);
 
-  v8::Local<v8::Object> pRetObj =
-      JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
-                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj"));
+  v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
+      pRuntime->GetIsolate(), pContext,
+      FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj"));
 
   CJS_TimerObj* pJS_TimerObj =
-      (CJS_TimerObj*)JS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
+      (CJS_TimerObj*)FXJS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
   ASSERT(pJS_TimerObj != NULL);
 
   TimerObj* pTimerObj = (TimerObj*)pJS_TimerObj->GetEmbedObject();
@@ -474,12 +477,12 @@ FX_BOOL app::setTimeOut(IFXJS_Context* cc,
   pTimer->SetTimeOut(dwTimeOut);
   pTimer->SetJSTimer(dwTimeOut);
 
-  v8::Local<v8::Object> pRetObj =
-      JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
-                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj"));
+  v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
+      pRuntime->GetIsolate(), pContext,
+      FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj"));
 
   CJS_TimerObj* pJS_TimerObj =
-      (CJS_TimerObj*)JS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
+      (CJS_TimerObj*)FXJS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
   ASSERT(pJS_TimerObj != NULL);
 
   TimerObj* pTimerObj = (TimerObj*)pJS_TimerObj->GetEmbedObject();
@@ -506,11 +509,11 @@ FX_BOOL app::clearTimeOut(IFXJS_Context* cc,
     return FALSE;
   }
 
-  if (params[0].GetType() == VT_fxobject) {
+  if (params[0].GetType() == CJS_Value::VT_fxobject) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
     {
-      if (JS_GetObjDefnID(pObj) ==
-          JS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj")) {
+      if (FXJS_GetObjDefnID(pObj) ==
+          FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj")) {
         if (CJS_Object* pJSObj = params[0].ToCJSObject()) {
           if (TimerObj* pTimerObj = (TimerObj*)pJSObj->GetEmbedObject()) {
             if (CJS_Timer* pTimer = pTimerObj->GetTimer()) {
@@ -549,11 +552,11 @@ FX_BOOL app::clearInterval(IFXJS_Context* cc,
     return FALSE;
   }
 
-  if (params[0].GetType() == VT_fxobject) {
+  if (params[0].GetType() == CJS_Value::VT_fxobject) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
     {
-      if (JS_GetObjDefnID(pObj) ==
-          JS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj")) {
+      if (FXJS_GetObjDefnID(pObj) ==
+          FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"TimerObj")) {
         if (CJS_Object* pJSObj = params[0].ToCJSObject()) {
           if (TimerObj* pTimerObj = (TimerObj*)pJSObj->GetEmbedObject()) {
             if (CJS_Timer* pTimer = pTimerObj->GetTimer()) {
@@ -647,26 +650,26 @@ FX_BOOL app::mailMsg(IFXJS_Context* cc,
   if (params.size() < 1)
     return FALSE;
 
-  if (params[0].GetType() == VT_object) {
+  if (params[0].GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
 
-    v8::Local<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"bUI");
+    v8::Local<v8::Value> pValue = FXJS_GetObjectElement(isolate, pObj, L"bUI");
     bUI = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToBool();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cTo");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cTo");
     cTo = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cCc");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cCc");
     cCc = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cBcc");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cBcc");
     cBcc = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cSubject");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cSubject");
     cSubject =
         CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cMsg");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cMsg");
     cMsg = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
   } else {
     if (params.size() < 2)
@@ -785,26 +788,26 @@ FX_BOOL app::response(IFXJS_Context* cc,
   v8::Isolate* isolate = GetIsolate(cc);
 
   int iLength = params.size();
-  if (iLength > 0 && params[0].GetType() == VT_object) {
+  if (iLength > 0 && params[0].GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
     v8::Local<v8::Value> pValue =
-        JS_GetObjectElement(isolate, pObj, L"cQuestion");
+        FXJS_GetObjectElement(isolate, pObj, L"cQuestion");
     swQuestion =
         CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cTitle");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cTitle");
     swTitle =
         CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cDefault");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cDefault");
     swDefault =
         CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cLabel");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cLabel");
     swLabel =
         CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"bPassword");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"bPassword");
     bPassWord = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToBool();
   } else {
     switch (iLength) {

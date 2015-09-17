@@ -326,11 +326,11 @@ FX_BOOL Document::getField(IFXJS_Context* cc,
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   v8::Local<v8::Object> pFieldObj =
-      JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
-                         JS_GetObjDefnID(pRuntime->GetIsolate(), L"Field"));
+      FXJS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
+                           FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Field"));
 
   v8::Isolate* isolate = GetIsolate(cc);
-  CJS_Field* pJSField = (CJS_Field*)JS_GetPrivate(isolate, pFieldObj);
+  CJS_Field* pJSField = (CJS_Field*)FXJS_GetPrivate(isolate, pFieldObj);
   Field* pField = (Field*)pJSField->GetEmbedObject();
   pField->AttachField(this, wideName);
 
@@ -457,11 +457,11 @@ FX_BOOL Document::print(IFXJS_Context* cc,
 
   int nlength = params.size();
   if (nlength == 9) {
-    if (params[8].GetType() == VT_fxobject) {
+    if (params[8].GetType() == CJS_Value::VT_fxobject) {
       v8::Local<v8::Object> pObj = params[8].ToV8Object();
       {
-        if (JS_GetObjDefnID(pObj) ==
-            JS_GetObjDefnID(pRuntime->GetIsolate(), L"PrintParamsObj")) {
+        if (FXJS_GetObjDefnID(pObj) ==
+            FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"PrintParamsObj")) {
           if (CJS_Object* pJSObj = params[8].ToCJSObject()) {
             if (PrintParamsObj* pprintparamsObj =
                     (PrintParamsObj*)pJSObj->GetEmbedObject()) {
@@ -595,7 +595,7 @@ FX_BOOL Document::resetForm(IFXJS_Context* cc,
       default:
         aName.Attach(params[0].ToV8Array());
         break;
-      case VT_string:
+      case CJS_Value::VT_string:
         aName.SetElement(0, params[0]);
         break;
     }
@@ -651,7 +651,7 @@ FX_BOOL Document::submitForm(IFXJS_Context* cc,
   CJS_Array aFields(isolate);
 
   CJS_Value v = params[0];
-  if (v.GetType() == VT_string) {
+  if (v.GetType() == CJS_Value::VT_string) {
     strURL = params[0].ToCFXWideString();
     if (nSize > 1)
       bFDF = params[1].ToBool();
@@ -659,17 +659,17 @@ FX_BOOL Document::submitForm(IFXJS_Context* cc,
       bEmpty = params[2].ToBool();
     if (nSize > 3)
       aFields.Attach(params[3].ToV8Array());
-  } else if (v.GetType() == VT_object) {
+  } else if (v.GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
-    v8::Local<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"cURL");
+    v8::Local<v8::Value> pValue = FXJS_GetObjectElement(isolate, pObj, L"cURL");
     if (!pValue.IsEmpty())
       strURL =
           CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
-    pValue = JS_GetObjectElement(isolate, pObj, L"bFDF");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"bFDF");
     bFDF = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToBool();
-    pValue = JS_GetObjectElement(isolate, pObj, L"bEmpty");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"bEmpty");
     bEmpty = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToBool();
-    pValue = JS_GetObjectElement(isolate, pObj, L"aFields");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"aFields");
     aFields.Attach(
         CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToV8Array());
   }
@@ -766,26 +766,26 @@ FX_BOOL Document::mailDoc(IFXJS_Context* cc,
 
   v8::Isolate* isolate = GetIsolate(cc);
 
-  if (params.size() >= 1 && params[0].GetType() == VT_object) {
+  if (params.size() >= 1 && params[0].GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
 
-    v8::Local<v8::Value> pValue = JS_GetObjectElement(isolate, pObj, L"bUI");
+    v8::Local<v8::Value> pValue = FXJS_GetObjectElement(isolate, pObj, L"bUI");
     bUI = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToInt();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cTo");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cTo");
     cTo = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cCc");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cCc");
     cCc = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cBcc");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cBcc");
     cBcc = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cSubject");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cSubject");
     cSubject =
         CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
-    pValue = JS_GetObjectElement(isolate, pObj, L"cMsg");
+    pValue = FXJS_GetObjectElement(isolate, pObj, L"cMsg");
     cMsg = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
   }
 
@@ -853,16 +853,17 @@ FX_BOOL Document::info(IFXJS_Context* cc,
     CJS_Context* pContext = (CJS_Context*)cc;
     CJS_Runtime* pRuntime = pContext->GetJSRuntime();
     v8::Local<v8::Object> pObj =
-        JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext, -1);
-    JS_PutObjectString(isolate, pObj, L"Author", cwAuthor.c_str());
-    JS_PutObjectString(isolate, pObj, L"Title", cwTitle.c_str());
-    JS_PutObjectString(isolate, pObj, L"Subject", cwSubject.c_str());
-    JS_PutObjectString(isolate, pObj, L"Keywords", cwKeywords.c_str());
-    JS_PutObjectString(isolate, pObj, L"Creator", cwCreator.c_str());
-    JS_PutObjectString(isolate, pObj, L"Producer", cwProducer.c_str());
-    JS_PutObjectString(isolate, pObj, L"CreationDate", cwCreationDate.c_str());
-    JS_PutObjectString(isolate, pObj, L"ModDate", cwModDate.c_str());
-    JS_PutObjectString(isolate, pObj, L"Trapped", cwTrapped.c_str());
+        FXJS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext, -1);
+    FXJS_PutObjectString(isolate, pObj, L"Author", cwAuthor.c_str());
+    FXJS_PutObjectString(isolate, pObj, L"Title", cwTitle.c_str());
+    FXJS_PutObjectString(isolate, pObj, L"Subject", cwSubject.c_str());
+    FXJS_PutObjectString(isolate, pObj, L"Keywords", cwKeywords.c_str());
+    FXJS_PutObjectString(isolate, pObj, L"Creator", cwCreator.c_str());
+    FXJS_PutObjectString(isolate, pObj, L"Producer", cwProducer.c_str());
+    FXJS_PutObjectString(isolate, pObj, L"CreationDate",
+                         cwCreationDate.c_str());
+    FXJS_PutObjectString(isolate, pObj, L"ModDate", cwModDate.c_str());
+    FXJS_PutObjectString(isolate, pObj, L"Trapped", cwTrapped.c_str());
 
     // It's to be compatible to non-standard info dictionary.
     FX_POSITION pos = pDictionary->GetStartPos();
@@ -872,14 +873,14 @@ FX_BOOL Document::info(IFXJS_Context* cc,
       CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey, bsKey.GetLength());
       if ((pValueObj->GetType() == PDFOBJ_STRING) ||
           (pValueObj->GetType() == PDFOBJ_NAME))
-        JS_PutObjectString(isolate, pObj, wsKey.c_str(),
-                           pValueObj->GetUnicodeText().c_str());
+        FXJS_PutObjectString(isolate, pObj, wsKey.c_str(),
+                             pValueObj->GetUnicodeText().c_str());
       if (pValueObj->GetType() == PDFOBJ_NUMBER)
-        JS_PutObjectNumber(isolate, pObj, wsKey.c_str(),
-                           (float)pValueObj->GetNumber());
+        FXJS_PutObjectNumber(isolate, pObj, wsKey.c_str(),
+                             (float)pValueObj->GetNumber());
       if (pValueObj->GetType() == PDFOBJ_BOOLEAN)
-        JS_PutObjectBoolean(isolate, pObj, wsKey.c_str(),
-                            (bool)pValueObj->GetInteger());
+        FXJS_PutObjectBoolean(isolate, pObj, wsKey.c_str(),
+                              (bool)pValueObj->GetInteger());
     }
 
     vp << pObj;
@@ -1292,7 +1293,7 @@ FX_BOOL Document::getAnnots3D(IFXJS_Context* cc,
                               const CJS_Parameters& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
-  vRet = VT_undefined;
+  vRet = CJS_Value::VT_undefined;
   return TRUE;
 }
 
@@ -1405,15 +1406,15 @@ FX_BOOL Document::addIcon(IFXJS_Context* cc,
   }
   CFX_WideString swIconName = params[0].ToCFXWideString();
 
-  if (params[1].GetType() != VT_object) {
+  if (params[1].GetType() != CJS_Value::VT_object) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
     return FALSE;
   }
   v8::Local<v8::Object> pJSIcon = params[1].ToV8Object();
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  if (JS_GetObjDefnID(pJSIcon) !=
-      JS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon")) {
+  if (FXJS_GetObjDefnID(pJSIcon) !=
+      FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon")) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
     return FALSE;
   }
@@ -1460,13 +1461,13 @@ FX_BOOL Document::icons(IFXJS_Context* cc,
   for (int i = 0; i < iIconTreeLength; i++) {
     pIconElement = (*m_pIconTree)[i];
 
-    v8::Local<v8::Object> pObj =
-        JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
-                           JS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon"));
+    v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
+        pRuntime->GetIsolate(), pContext,
+        FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon"));
     if (pObj.IsEmpty())
       return FALSE;
 
-    CJS_Icon* pJS_Icon = (CJS_Icon*)JS_GetPrivate(pObj);
+    CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(pObj);
     if (!pJS_Icon)
       return FALSE;
 
@@ -1504,13 +1505,13 @@ FX_BOOL Document::getIcon(IFXJS_Context* cc,
     if ((*m_pIconTree)[i]->IconName == swIconName) {
       Icon* pRetIcon = (*m_pIconTree)[i]->IconStream;
 
-      v8::Local<v8::Object> pObj =
-          JS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
-                             JS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon"));
+      v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
+          pRuntime->GetIsolate(), pContext,
+          FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon"));
       if (pObj.IsEmpty())
         return FALSE;
 
-      CJS_Icon* pJS_Icon = (CJS_Icon*)JS_GetPrivate(pObj);
+      CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(pObj);
       if (!pJS_Icon)
         return FALSE;
 
@@ -1706,9 +1707,9 @@ FX_BOOL Document::getPrintParams(IFXJS_Context* cc,
                                  CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Local<v8::Object> pRetObj = JS_NewFxDynamicObj(
+  v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
       pRuntime->GetIsolate(), pContext,
-      JS_GetObjDefnID(pRuntime->GetIsolate(), L"PrintParamsObj"));
+      FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"PrintParamsObj"));
 
   // Not implemented yet.
 
@@ -1830,13 +1831,12 @@ FX_BOOL Document::deletePages(IFXJS_Context* cc,
 
   if (iSize < 1) {
   } else if (iSize == 1) {
-    if (params[0].GetType() == VT_object) {
+    if (params[0].GetType() == CJS_Value::VT_object) {
       v8::Local<v8::Object> pObj = params[0].ToV8Object();
       v8::Local<v8::Value> pValue =
-          JS_GetObjectElement(isolate, pObj, L"nStart");
+          FXJS_GetObjectElement(isolate, pObj, L"nStart");
       nStart = CJS_Value(m_isolate, pValue, GET_VALUE_TYPE(pValue)).ToInt();
-
-      pValue = JS_GetObjectElement(isolate, pObj, L"nEnd");
+      pValue = FXJS_GetObjectElement(isolate, pObj, L"nEnd");
       nEnd = CJS_Value(m_isolate, pValue, GET_VALUE_TYPE(pValue)).ToInt();
     } else {
       nStart = params[0].ToInt();
