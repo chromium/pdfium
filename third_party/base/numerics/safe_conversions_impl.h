@@ -217,4 +217,3 @@ inline RangeConstraint DstRangeRelationToSrcRange(Src value) {
 }  // namespace pdfium
 
 #endif  // PDFIUM_THIRD_PARTY_BASE_SAFE_CONVERSIONS_IMPL_H_
-
