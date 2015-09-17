@@ -5,6 +5,7 @@
 #ifndef PDFIUM_THIRD_PARTY_BASE_SAFE_CONVERSIONS_IMPL_H_
 #define PDFIUM_THIRD_PARTY_BASE_SAFE_CONVERSIONS_IMPL_H_
 
+#include <assert.h>
 #include <limits>
 
 #include "../macros.h"
@@ -216,4 +217,3 @@ inline RangeConstraint DstRangeRelationToSrcRange(Src value) {
 }  // namespace pdfium
 
 #endif  // PDFIUM_THIRD_PARTY_BASE_SAFE_CONVERSIONS_IMPL_H_
-
