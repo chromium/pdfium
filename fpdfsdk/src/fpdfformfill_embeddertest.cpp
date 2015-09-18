@@ -41,3 +41,15 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_487928) {
   delegate.AdvanceTime(5000);
   UnloadPage(page);
 }
+
+TEST_F(FPDFFormFillEmbeddertest, BUG_507316) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("testing/resources/bug_507316.pdf"));
+  FPDF_PAGE page = LoadAndCachePage(2);
+  EXPECT_NE(nullptr, page);
+  DoOpenActions();
+  delegate.AdvanceTime(4000);
+  UnloadPage(page);
+}

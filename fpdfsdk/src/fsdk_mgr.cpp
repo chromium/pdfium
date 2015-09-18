@@ -613,28 +613,33 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,CPDF_Page* page):m_
 
 CPDFSDK_PageView::~CPDFSDK_PageView()
 {
-	CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-	int nAnnotCount = m_fxAnnotArray.GetSize();
-
-	for (int i=0; i<nAnnotCount; i++)
-	{
-		CPDFSDK_Annot* pAnnot = (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(i);
-		//if there is a focused annot on the page, we should kill the focus first.
-		if(pAnnot == m_pSDKDoc->GetFocusAnnot())
-			KillFocusAnnot();
-		CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
-		ASSERT(pAnnotHandlerMgr);
-		pAnnotHandlerMgr->ReleaseAnnot(pAnnot);
-	}
-	m_fxAnnotArray.RemoveAll();
-
-        delete m_pAnnotList;
-        m_pAnnotList = NULL;
-
-        m_page->RemovePrivateData((void*)m_page);
-        if(m_bTakeOverPage) {
-            delete m_page;
+    // if there is a focused annot on the page, we should kill the focus first.
+    if (CPDFSDK_Annot* focusedAnnot = m_pSDKDoc->GetFocusAnnot()) {
+      for (int i = 0, count = m_fxAnnotArray.GetSize(); i < count; i++) {
+        CPDFSDK_Annot* pAnnot = (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(i);
+        if (pAnnot == focusedAnnot) {
+          KillFocusAnnot();
+          break;
         }
+      }
+    }
+
+    CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
+    ASSERT(pAnnotHandlerMgr);
+    for (int i = 0, count = m_fxAnnotArray.GetSize(); i < count; i++) {
+      CPDFSDK_Annot* pAnnot = (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(i);
+      pAnnotHandlerMgr->ReleaseAnnot(pAnnot);
+    }
+    m_fxAnnotArray.RemoveAll();
+
+    delete m_pAnnotList;
+    m_pAnnotList = NULL;
+
+    m_page->RemovePrivateData((void*)m_page);
+    if (m_bTakeOverPage) {
+      delete m_page;
+    }
 }
 
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device,CPDF_RenderOptions* pOptions)

@@ -5,6 +5,7 @@
 #ifndef TESTING_EMBEDDER_TEST_H_
 #define TESTING_EMBEDDER_TEST_H_
 
+#include <map>
 #include <string>
 
 #include "../public/fpdf_dataavail.h"
@@ -41,6 +42,14 @@ class EmbedderTest : public ::testing::Test,
 
     // Equivalent to FPDF_FORMFILLINFO::FFI_KillTimer().
     virtual void KillTimer(int id) { }
+
+    // Equivalent to FPDF_FORMFILLINFO::FFI_GetPage().
+    virtual FPDF_PAGE GetPage(FPDF_FORMHANDLE form_handle,
+                              FPDF_DOCUMENT document,
+                              int page_index);
+
+   private:
+    std::map<int, FPDF_PAGE> m_pageMap;
   };
 
   EmbedderTest();
@@ -69,6 +78,10 @@ class EmbedderTest : public ::testing::Test,
 
   // Load a specific page of the open document.
   virtual FPDF_PAGE LoadPage(int page_number);
+
+  // Load a specific page of the open document using delegate_->GetPage.
+  // delegate_->GetPage also caches loaded page.
+  virtual FPDF_PAGE LoadAndCachePage(int page_number);
 
   // Convert a loaded page into a bitmap.
   virtual FPDF_BITMAP RenderPage(FPDF_PAGE page);
@@ -100,6 +113,9 @@ class EmbedderTest : public ::testing::Test,
   static int SetTimerTrampoline(FPDF_FORMFILLINFO* info, int msecs,
                                 TimerCallback fn);
   static void KillTimerTrampoline(FPDF_FORMFILLINFO* info, int id);
+  static FPDF_PAGE GetPageTrampoline(FPDF_FORMFILLINFO* info,
+                                     FPDF_DOCUMENT document,
+                                     int page_index);
 };
 
 #endif  // TESTING_EMBEDDER_TEST_H_
