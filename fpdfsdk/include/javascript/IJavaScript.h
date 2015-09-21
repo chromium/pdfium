@@ -133,30 +133,13 @@ class IFXJS_Context {
 
 class IFXJS_Runtime {
  public:
+  virtual ~IFXJS_Runtime() {}
+
   virtual IFXJS_Context* NewContext() = 0;
   virtual void ReleaseContext(IFXJS_Context* pContext) = 0;
   virtual IFXJS_Context* GetCurrentContext() = 0;
-
   virtual void SetReaderDocument(CPDFSDK_Document* pReaderDoc) = 0;
   virtual CPDFSDK_Document* GetReaderDocument() = 0;
-
- protected:
-  virtual ~IFXJS_Runtime() {}
-};
-
-class CJS_RuntimeFactory {
- public:
-  CJS_RuntimeFactory() : m_bInit(false), m_nRef(0) {}
-  ~CJS_RuntimeFactory();
-
-  IFXJS_Runtime* NewJSRuntime(CPDFDoc_Environment* pApp);
-  void DeleteJSRuntime(IFXJS_Runtime* pRuntime);
-  void AddRef();
-  void Release();
-
- private:
-  bool m_bInit;
-  int m_nRef;
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_

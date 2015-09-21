@@ -10,6 +10,7 @@
 #include "../include/fsdk_mgr.h"
 #include "../include/formfiller/FFL_FormFiller.h"
 #include "../include/javascript/IJavaScript.h"
+#include "../include/javascript/JS_Runtime.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
@@ -203,31 +204,20 @@ FX_SYSTEMTIME CFX_SystemHandler::GetLocalTime() {
   return m_pEnv->FFI_GetLocalTime();
 }
 
-CJS_RuntimeFactory* GetJSRuntimeFactory() {
-  static CJS_RuntimeFactory s_JSRuntimeFactory;
-  return &s_JSRuntimeFactory;
-}
-
 CPDFDoc_Environment::CPDFDoc_Environment(CPDF_Document* pDoc,
                                          FPDF_FORMFILLINFO* pFFinfo)
     : m_pAnnotHandlerMgr(NULL),
       m_pActionHandler(NULL),
-      m_pJSRuntime(NULL),
       m_pInfo(pFFinfo),
       m_pSDKDoc(NULL),
       m_pPDFDoc(pDoc),
       m_pIFormFiller(NULL) {
   m_pSysHandler = new CFX_SystemHandler(this);
-  m_pJSRuntimeFactory = GetJSRuntimeFactory();
-  m_pJSRuntimeFactory->AddRef();
 }
 
 CPDFDoc_Environment::~CPDFDoc_Environment() {
   delete m_pIFormFiller;
   m_pIFormFiller = NULL;
-  if (m_pJSRuntime && m_pJSRuntimeFactory)
-    m_pJSRuntimeFactory->DeleteJSRuntime(m_pJSRuntime);
-  m_pJSRuntimeFactory->Release();
 
   delete m_pSysHandler;
   m_pSysHandler = NULL;
@@ -384,8 +374,8 @@ IFXJS_Runtime* CPDFDoc_Environment::GetJSRuntime() {
   if (!IsJSInitiated())
     return NULL;
   if (!m_pJSRuntime)
-    m_pJSRuntime = m_pJSRuntimeFactory->NewJSRuntime(this);
-  return m_pJSRuntime;
+    m_pJSRuntime.reset(new CJS_Runtime(this));
+  return m_pJSRuntime.get();
 }
 
 CPDFSDK_AnnotHandlerMgr* CPDFDoc_Environment::GetAnnotHandlerMgr() {

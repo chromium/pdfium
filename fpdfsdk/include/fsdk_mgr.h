@@ -22,7 +22,6 @@
 #include "javascript/IJavaScript.h"
 
 class CFFL_IFormFiller;
-class CJS_RuntimeFactory;
 class CPDFSDK_ActionHandler;
 class CPDFSDK_Annot;
 class CPDFSDK_Document;
@@ -207,7 +206,6 @@ class CPDFDoc_Environment final {
   CFX_ByteString GetAppName() const { return ""; }
   IFX_SystemHandler* GetSysHandler() const { return m_pSysHandler; }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
-  CJS_RuntimeFactory* GetRuntimeFactory() const { return m_pJSRuntimeFactory; }
 
   CFFL_IFormFiller* GetIFormFiller();             // Creates if not present.
   CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Creates if not present.
@@ -217,13 +215,12 @@ class CPDFDoc_Environment final {
  private:
   CPDFSDK_AnnotHandlerMgr* m_pAnnotHandlerMgr;
   CPDFSDK_ActionHandler* m_pActionHandler;
-  IFXJS_Runtime* m_pJSRuntime;
+  nonstd::unique_ptr<IFXJS_Runtime> m_pJSRuntime;
   FPDF_FORMFILLINFO* const m_pInfo;
   CPDFSDK_Document* m_pSDKDoc;
   CPDF_Document* const m_pPDFDoc;
   CFFL_IFormFiller* m_pIFormFiller;
   IFX_SystemHandler* m_pSysHandler;
-  CJS_RuntimeFactory* m_pJSRuntimeFactory;
 };
 
 class CPDFSDK_Document {
