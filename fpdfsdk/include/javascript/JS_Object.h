@@ -60,9 +60,7 @@ class CJS_Object {
   virtual FX_BOOL InitInstance(IFXJS_Context* cc) { return TRUE; }
   virtual FX_BOOL ExitInstance() { return TRUE; }
 
-  operator v8::Local<v8::Object>() {
-    return v8::Local<v8::Object>::New(m_pIsolate, m_pObject);
-  }
+  v8::Local<v8::Object> ToV8Object() { return m_pV8Object.Get(m_pIsolate); }
 
   // Takes ownership of |pObj|.
   void SetEmbedObject(CJS_EmbedObj* pObj) { m_pEmbedObj.reset(pObj); }
@@ -81,7 +79,7 @@ class CJS_Object {
 
  protected:
   nonstd::unique_ptr<CJS_EmbedObj> m_pEmbedObj;
-  v8::Global<v8::Object> m_pObject;
+  v8::Global<v8::Object> m_pV8Object;
   v8::Isolate* m_pIsolate;
 };
 

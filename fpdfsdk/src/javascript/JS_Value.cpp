@@ -61,7 +61,7 @@ CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Document* pJsDoc)
     : m_isolate(isolate) {
   m_eType = VT_object;
   if (pJsDoc)
-    m_pValue = (v8::Local<v8::Object>)*pJsDoc;
+    m_pValue = pJsDoc->ToV8Object();
 }
 
 CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_WCHAR* pWstr)
@@ -172,13 +172,13 @@ void CJS_Value::operator=(v8::Local<v8::Object> pObj) {
 
 void CJS_Value::operator=(CJS_Object* pObj) {
   if (pObj)
-    operator=((v8::Local<v8::Object>)*pObj);
+    operator=(pObj->ToV8Object());
 }
 
 void CJS_Value::operator=(CJS_Document* pJsDoc) {
   m_eType = VT_object;
   if (pJsDoc) {
-    m_pValue = static_cast<v8::Local<v8::Object>>(*pJsDoc);
+    m_pValue = pJsDoc->ToV8Object();
   }
 }
 

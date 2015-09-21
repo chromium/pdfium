@@ -83,22 +83,21 @@ void DisposeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {
   data.SetSecondPassCallback(FreeObject);
 }
 
-CJS_Object::CJS_Object(v8::Local<v8::Object> pObject) : m_pEmbedObj(NULL) {
-  v8::Local<v8::Context> context = pObject->CreationContext();
-  m_pIsolate = context->GetIsolate();
-  m_pObject.Reset(m_pIsolate, pObject);
-};
+CJS_Object::CJS_Object(v8::Local<v8::Object> pObject) {
+  m_pIsolate = pObject->CreationContext()->GetIsolate();
+  m_pV8Object.Reset(m_pIsolate, pObject);
+}
 
 CJS_Object::~CJS_Object() {
-  m_pObject.Reset();
-};
+}
 
 void CJS_Object::MakeWeak() {
-  m_pObject.SetWeak(this, DisposeObject, v8::WeakCallbackType::kInternalFields);
+  m_pV8Object.SetWeak(this, DisposeObject,
+                      v8::WeakCallbackType::kInternalFields);
 }
 
 void CJS_Object::Dispose() {
-  m_pObject.Reset();
+  m_pV8Object.Reset();
 }
 
 CPDFSDK_PageView* CJS_Object::JSGetPageView(IFXJS_Context* cc) {
