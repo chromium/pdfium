@@ -222,10 +222,8 @@ CPDFDoc_Environment::~CPDFDoc_Environment() {
   m_pIFormFiller = NULL;
 
   CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
-  if (pProvider->m_pEnvList.GetSize() == 0) {
-    pProvider->ReleaseRuntime();
-    pProvider->InitRuntime(TRUE);
-  }
+  if (pProvider->m_pEnvList.GetSize() == 0)
+    pProvider->SetJavaScriptInitialized(FALSE);
 
   delete m_pSysHandler;
   m_pSysHandler = NULL;

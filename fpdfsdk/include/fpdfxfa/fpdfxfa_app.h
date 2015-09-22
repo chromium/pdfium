@@ -23,9 +23,12 @@ class CPDFXFA_App : public IXFA_AppProvider {
   FX_BOOL AddFormFillEnv(CPDFDoc_Environment* pEnv);
   FX_BOOL RemoveFormFillEnv(CPDFDoc_Environment* pEnv);
 
-  FXJSE_HRUNTIME GetJSERuntime() { return m_hJSERuntime; }
-  void ReleaseRuntime();
-  FX_BOOL InitRuntime(FX_BOOL bReset = FALSE);
+  FX_BOOL IsJavaScriptInitialized() const { return m_bJavaScriptInitialized; }
+  void SetJavaScriptInitialized(FX_BOOL bInitialized) {
+    m_bJavaScriptInitialized = bInitialized;
+  }
+
+  FXJSE_HRUNTIME GetJSERuntime() const { return m_hJSERuntime; }
 
   // IFXA_AppProvider:
   void GetAppType(CFX_WideString& wsAppType) override;
@@ -81,7 +84,7 @@ class CPDFXFA_App : public IXFA_AppProvider {
  protected:
   static CPDFXFA_App* g_pApp;
 
-  FX_BOOL m_bInitRuntime;
+  FX_BOOL m_bJavaScriptInitialized;
   IXFA_App* m_pXFAApp;
   IXFA_FontMgr* m_pFontMgr;
   FXJSE_HRUNTIME m_hJSERuntime;

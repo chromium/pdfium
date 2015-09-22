@@ -59,7 +59,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
   v8::Isolate::Scope isolate_scope(isolate);
   v8::Locker locker(isolate);
   v8::HandleScope handle_scope(isolate);
-  if (CPDFXFA_App::GetInstance()->InitRuntime(FALSE)) {
+  if (CPDFXFA_App::GetInstance()->IsJavaScriptInitialized()) {
     CJS_Context* pContext = (CJS_Context*)NewContext();
     FXJS_InitializeRuntime(GetIsolate(), this, pContext, m_context);
     ReleaseContext(pContext);
@@ -71,6 +71,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     embedderDataSlot = pApp->GetFormFillInfo()->m_pJsPlatform->m_v8EmbedderSlot;
   FXJS_Initialize(embedderDataSlot);
   DefineJSObjects();
+  CPDFXFA_App::GetInstance()->SetJavaScriptInitialized(TRUE);
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
   FXJS_InitializeRuntime(GetIsolate(), this, pContext, m_context);

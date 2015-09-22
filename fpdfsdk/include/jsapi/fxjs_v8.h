@@ -11,7 +11,16 @@
 #define FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
 
 #include <v8.h>
-#include "../../../core/include/fxcrt/fx_string.h"  // For CFX_WideString
+#include "../../../core/include/fxcrt/fx_basic.h"
+
+// FXJS_V8 places no interpretation on these two classes; it merely
+// passes them on to the caller-provided FXJS_CONSTRUCTORs.
+class IFXJS_Context;
+class IFXJS_Runtime;
+
+// FXJS_V8 places no interpreation on this calass; it merely passes it
+// along to XFA.
+class CFXJSE_RuntimeData;
 
 enum FXJSOBJTYPE {
   FXJS_DYNAMIC = 0,
@@ -24,6 +33,20 @@ struct FXJSErr {
   unsigned linnum;
 };
 
+class FXJS_PerIsolateData {
+ public:
+  static void SetUp(v8::Isolate* pIsolate);
+  static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
+
+  CFX_PtrArray m_ObjectDefnArray;
+  IFXJS_Runtime* m_pFXJSRuntime;
+  CFXJSE_RuntimeData* m_pFXJSERuntimeData;
+
+ protected:
+  FXJS_PerIsolateData()
+      : m_pFXJSRuntime(nullptr), m_pFXJSERuntimeData(nullptr) {}
+};
+
 extern const wchar_t kFXJSValueNameString[];
 extern const wchar_t kFXJSValueNameNumber[];
 extern const wchar_t kFXJSValueNameBoolean[];
@@ -33,10 +56,6 @@ extern const wchar_t kFXJSValueNameFxobj[];
 extern const wchar_t kFXJSValueNameNull[];
 extern const wchar_t kFXJSValueNameUndefined[];
 
-// FXJS_V8 places no interpretation on these two classes; it merely
-// passes them on to the caller-provided FXJS_CONSTRUCTORs.
-class IFXJS_Context;
-class IFXJS_Runtime;
 
 class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   void* Allocate(size_t length) override;

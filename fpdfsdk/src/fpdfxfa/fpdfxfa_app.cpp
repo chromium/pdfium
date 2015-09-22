@@ -28,7 +28,7 @@ void CPDFXFA_App::ReleaseInstance() {
 }
 
 CPDFXFA_App::CPDFXFA_App()
-    : m_bInitRuntime(FALSE),
+    : m_bJavaScriptInitialized(FALSE),
       m_pXFAApp(NULL),
       m_pFontMgr(NULL),
       m_hJSERuntime(NULL),
@@ -70,18 +70,6 @@ FX_BOOL CPDFXFA_App::Initialize() {
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_App::InitRuntime(FX_BOOL bReset) {
-  if (bReset) {
-    m_bInitRuntime = FALSE;
-    return TRUE;
-  }
-  if (m_bInitRuntime) {
-    return TRUE;
-  }
-  m_bInitRuntime = TRUE;
-  return FALSE;
-}
-
 FX_BOOL CPDFXFA_App::AddFormFillEnv(CPDFDoc_Environment* pEnv) {
   if (!pEnv)
     return FALSE;
@@ -101,10 +89,6 @@ FX_BOOL CPDFXFA_App::RemoveFormFillEnv(CPDFDoc_Environment* pEnv) {
   }
 
   return FALSE;
-}
-void CPDFXFA_App::ReleaseRuntime() {
-  v8::Global<v8::Context> context;
-  FXJS_ReleaseRuntime((v8::Isolate*)m_hJSERuntime, context);
 }
 
 void CPDFXFA_App::GetAppType(CFX_WideString& wsAppType) {

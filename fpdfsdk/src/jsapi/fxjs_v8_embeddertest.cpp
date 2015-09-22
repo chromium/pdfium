@@ -32,7 +32,7 @@ class FXJSV8Embeddertest : public EmbedderTest {
     v8::Locker locker(m_pIsolate);
     v8::HandleScope handle_scope(m_pIsolate);
     FXJS_Initialize(0);
-    FXJS_PrepareIsolate(m_pIsolate);
+    FXJS_PerIsolateData::SetUp(m_pIsolate);
     FXJS_InitializeRuntime(m_pIsolate, nullptr, nullptr, m_pPersistentContext);
   }
 

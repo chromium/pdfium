@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../../fpdfsdk/include/jsapi/fxjs_v8.h"  // For per-isolate data.
 #include "../../foxitlib.h"
 #include "fxv8.h"
 #include "runtime.h"
@@ -38,11 +39,9 @@ void FXJSE_Initialize() {
 static void FXJSE_Runtime_DisposeCallback(v8::Isolate* pIsolate) {
   {
     v8::Locker locker(pIsolate);
-    CFXJSE_RuntimeData* pRuntimeData =
-        reinterpret_cast<CFXJSE_RuntimeData*>(pIsolate->GetData(0));
-    if (pRuntimeData) {
-      pIsolate->SetData(0, NULL);
-      delete pRuntimeData;
+    if (FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate)) {
+      delete pData->m_pFXJSERuntimeData;
+      pData->m_pFXJSERuntimeData = nullptr;
     }
   }
   pIsolate->Dispose();
@@ -73,7 +72,6 @@ void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime) {
 }
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Create(v8::Isolate* pIsolate) {
   CFXJSE_RuntimeData* pRuntimeData = new CFXJSE_RuntimeData(pIsolate);
-  ASSERT(pRuntimeData);
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
   v8::Local<v8::FunctionTemplate> hFuncTemplate =
       v8::FunctionTemplate::New(pIsolate);
@@ -85,15 +83,10 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Create(v8::Isolate* pIsolate) {
   return pRuntimeData;
 }
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
-  ASSERT(pIsolate);
-  CFXJSE_RuntimeData* pRuntimeData =
-      static_cast<CFXJSE_RuntimeData*>(pIsolate->GetData(0));
-  if (!pRuntimeData) {
-    pRuntimeData = CFXJSE_RuntimeData::Create(pIsolate);
-    ASSERT(pRuntimeData);
-    pIsolate->SetData(0, pRuntimeData);
-  }
-  return pRuntimeData;
+  FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
+  if (!pData->m_pFXJSERuntimeData)
+    pData->m_pFXJSERuntimeData = CFXJSE_RuntimeData::Create(pIsolate);
+  return pData->m_pFXJSERuntimeData;
 }
 CFXJSE_RuntimeList* CFXJSE_RuntimeData::g_RuntimeList = NULL;
 void CFXJSE_RuntimeList::AppendRuntime(v8::Isolate* pIsolate) {
