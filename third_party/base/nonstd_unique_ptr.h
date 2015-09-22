@@ -176,6 +176,13 @@ class unique_ptr : public unique_ptr_base<C> {
     }
   }
 
+  // Move assignment.
+  unique_ptr<C>& operator=(unique_ptr<C>&& that) {
+    if (that.ptr_ != ptr_)
+      reset(that.release());
+    return *this;
+  }
+
 private:
   // Forbid comparison of unique_ptr types.  If C2 != C, it totally doesn't
   // make sense, and if C2 == C, it still doesn't make sense because you should
@@ -220,6 +227,13 @@ class unique_ptr<C[]> : public unique_ptr_base<C> {
       ptr_ = p;
       delete[] old_ptr;
     }
+  }
+
+  // Move assignment.
+  unique_ptr<C>& operator=(unique_ptr<C>&& that) {
+    if (that.ptr_ != ptr_)
+      reset(that.release());
+    return *this;
   }
 
   // Support indexing since it is holding array.

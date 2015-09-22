@@ -802,6 +802,7 @@
         'core/src/fxcrt/fx_basic_wstring_unittest.cpp',
         'testing/fx_string_testhelpers.h',
         'testing/fx_string_testhelpers.cpp',
+        'third_party/base/nonstd_unique_ptr_unittest.cpp',
         'xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
         'xfa/src/fxfa/src/parser/xfa_utils_imp_unittest.cpp',
       ],
