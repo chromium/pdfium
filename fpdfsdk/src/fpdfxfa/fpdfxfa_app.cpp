@@ -27,19 +27,12 @@ void CPDFXFA_App::ReleaseInstance() {
   g_pApp = NULL;
 }
 
-CJS_RuntimeFactory* g_GetJSRuntimeFactory() {
-  static CJS_RuntimeFactory g_JSRuntimeFactory;
-  return &g_JSRuntimeFactory;
-}
-
 CPDFXFA_App::CPDFXFA_App()
     : m_bInitRuntime(FALSE),
       m_pXFAApp(NULL),
       m_pFontMgr(NULL),
       m_hJSERuntime(NULL),
       m_csAppType(JS_STR_VIEWERTYPE_STANDARD) {
-  m_pJSRuntimeFactory = g_GetJSRuntimeFactory();
-  m_pJSRuntimeFactory->AddRef();
   m_pEnvList.RemoveAll();
 }
 
@@ -50,7 +43,6 @@ CPDFXFA_App::~CPDFXFA_App() {
   delete m_pXFAApp;
   m_pXFAApp = NULL;
 
-  m_pJSRuntimeFactory->Release();
   FXJSE_Runtime_Release(m_hJSERuntime);
   m_hJSERuntime = NULL;
 

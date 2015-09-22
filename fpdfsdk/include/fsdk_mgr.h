@@ -24,7 +24,6 @@
 #include "javascript/IJavaScript.h"
 
 class CFFL_IFormFiller;
-class CJS_RuntimeFactory;
 class CPDFSDK_ActionHandler;
 class CPDFSDK_Annot;
 class CPDFSDK_Document;
@@ -469,7 +468,7 @@ class CPDFDoc_Environment final {
  private:
   CPDFSDK_AnnotHandlerMgr* m_pAnnotHandlerMgr;
   CPDFSDK_ActionHandler* m_pActionHandler;
-  IFXJS_Runtime* m_pJSRuntime;
+  nonstd::unique_ptr<IFXJS_Runtime> m_pJSRuntime;
   FPDF_FORMFILLINFO* const m_pInfo;
   CPDFSDK_Document* m_pSDKDoc;
   CPDFXFA_Document* const m_pXFADoc;

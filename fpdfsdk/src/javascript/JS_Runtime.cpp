@@ -29,28 +29,6 @@
 #include "../../include/fpdfxfa/fpdfxfa_app.h"
 #include "../../../xfa/src/fxjse/src/value.h"
 
-CJS_RuntimeFactory::~CJS_RuntimeFactory() {}
-
-IFXJS_Runtime* CJS_RuntimeFactory::NewJSRuntime(CPDFDoc_Environment* pApp) {
-  m_bInit = true;
-  return new CJS_Runtime(pApp);
-}
-void CJS_RuntimeFactory::AddRef() {
-  m_nRef++;
-}
-void CJS_RuntimeFactory::Release() {
-  if (m_bInit) {
-    if (--m_nRef == 0) {
-      FXJS_Release();
-      m_bInit = FALSE;
-    }
-  }
-}
-
-void CJS_RuntimeFactory::DeleteJSRuntime(IFXJS_Runtime* pRuntime) {
-  delete (CJS_Runtime*)pRuntime;
-}
-
 /* ------------------------------ CJS_Runtime ------------------------------ */
 v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(v8::Isolate* pIsolate);
 

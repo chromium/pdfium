@@ -8,7 +8,6 @@
 #define FPDFXFA_APP_H_
 
 class IFXJS_Runtime;
-class CJS_RuntimeFactory;
 
 class CPDFXFA_App : public IXFA_AppProvider {
  public:
@@ -27,8 +26,6 @@ class CPDFXFA_App : public IXFA_AppProvider {
   FXJSE_HRUNTIME GetJSERuntime() { return m_hJSERuntime; }
   void ReleaseRuntime();
   FX_BOOL InitRuntime(FX_BOOL bReset = FALSE);
-
-  CJS_RuntimeFactory* GetRuntimeFactory() { return m_pJSRuntimeFactory; }
 
   // IFXA_AppProvider:
   void GetAppType(CFX_WideString& wsAppType) override;
@@ -89,7 +86,6 @@ class CPDFXFA_App : public IXFA_AppProvider {
   IXFA_FontMgr* m_pFontMgr;
   FXJSE_HRUNTIME m_hJSERuntime;
   IFXJS_Runtime* m_pJSRuntime;
-  CJS_RuntimeFactory* m_pJSRuntimeFactory;
   CFX_WideString m_csAppType;
 };
 
