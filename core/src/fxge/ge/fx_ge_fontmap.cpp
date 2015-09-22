@@ -537,7 +537,7 @@ CFX_ByteString _FPDF_LoadTableFromTTStreamFile(IFX_FileStream* pFile,
 }
 CFX_ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
   if (m_pFontInfo == NULL) {
-    CFX_ByteString();
+    return CFX_ByteString();
   }
   CFX_ByteString result;
   FX_DWORD size = m_pFontInfo->GetFontData(hFont, 0x6e616d65, NULL, 0);
