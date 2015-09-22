@@ -46,8 +46,9 @@ FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
   m_bBusy = TRUE;
 
   ASSERT(m_pEventHandler->IsValid());
-  if (!m_pRuntime->AddEventToLoop(m_pEventHandler->TargetName(),
-                                  m_pEventHandler->EventType())) {
+  CJS_Runtime::FieldEvent event(m_pEventHandler->TargetName(),
+                                m_pEventHandler->EventType());
+  if (!m_pRuntime->AddEventToSet(event)) {
     info = JSGetStringFromID(this, IDS_STRING_JSEVENT);
     return FALSE;
   }
@@ -68,9 +69,7 @@ FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
     info = JSGetStringFromID(this, IDS_STRING_RUN);
   }
 
-  m_pRuntime->RemoveEventInLoop(m_pEventHandler->TargetName(),
-                                m_pEventHandler->EventType());
-
+  m_pRuntime->RemoveEventFromSet(event);
   m_pEventHandler->Destroy();
   m_bBusy = FALSE;
 

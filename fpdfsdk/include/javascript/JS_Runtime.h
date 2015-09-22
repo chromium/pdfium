@@ -7,6 +7,9 @@
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
 #define FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
 
+#include <set>
+#include <utility>
+
 #include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../core/include/fxcrt/fx_basic.h"
 #include "../jsapi/fxjs_v8.h"
@@ -15,15 +18,10 @@
 
 class CJS_Context;
 
-class CJS_FieldEvent {
- public:
-  CFX_WideString sTargetName;
-  JS_EVENT_T eEventType;
-  CJS_FieldEvent* pNext;
-};
-
 class CJS_Runtime : public IFXJS_Runtime {
  public:
+  using FieldEvent = std::pair<CFX_WideString, JS_EVENT_T>;
+
   explicit CJS_Runtime(CPDFDoc_Environment* pApp);
   ~CJS_Runtime() override;
 
@@ -36,11 +34,9 @@ class CJS_Runtime : public IFXJS_Runtime {
 
   CPDFDoc_Environment* GetReaderApp() const { return m_pApp; }
 
-  FX_BOOL AddEventToLoop(const CFX_WideString& sTargetName,
-                         JS_EVENT_T eEventType);
-  void RemoveEventInLoop(const CFX_WideString& sTargetName,
-                         JS_EVENT_T eEventType);
-  void RemoveEventsInLoop(CJS_FieldEvent* pStart);
+  // Returns true if the event isn't already found in the set.
+  bool AddEventToSet(const FieldEvent& event);
+  void RemoveEventFromSet(const FieldEvent& event);
 
   void BeginBlock() { m_bBlocking = TRUE; }
   void EndBlock() { m_bBlocking = FALSE; }
@@ -56,7 +52,7 @@ class CJS_Runtime : public IFXJS_Runtime {
   CPDFDoc_Environment* m_pApp;
   CPDFSDK_Document* m_pDocument;
   FX_BOOL m_bBlocking;
-  CJS_FieldEvent* m_pFieldEventPath;
+  std::set<FieldEvent> m_FieldEventSet;
   v8::Isolate* m_isolate;
   bool m_isolateManaged;
   nonstd::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;

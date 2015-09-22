@@ -33,7 +33,6 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     : m_pApp(pApp),
       m_pDocument(NULL),
       m_bBlocking(FALSE),
-      m_pFieldEventPath(NULL),
       m_isolate(NULL),
       m_isolateManaged(false) {
   unsigned int embedderDataSlot = 0;
@@ -65,11 +64,9 @@ CJS_Runtime::~CJS_Runtime() {
 
   m_ContextArray.RemoveAll();
   FXJS_ReleaseRuntime(GetIsolate(), m_context);
-  RemoveEventsInLoop(m_pFieldEventPath);
 
   m_pApp = NULL;
   m_pDocument = NULL;
-  m_pFieldEventPath = NULL;
   m_context.Reset();
 
   if (m_isolateManaged)
@@ -172,75 +169,12 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
   }
 }
 
-FX_BOOL CJS_Runtime::AddEventToLoop(const CFX_WideString& sTargetName,
-                                    JS_EVENT_T eEventType) {
-  if (m_pFieldEventPath == NULL) {
-    m_pFieldEventPath = new CJS_FieldEvent;
-    m_pFieldEventPath->sTargetName = sTargetName;
-    m_pFieldEventPath->eEventType = eEventType;
-    m_pFieldEventPath->pNext = NULL;
-
-    return TRUE;
-  }
-
-  // to search
-  CJS_FieldEvent* p = m_pFieldEventPath;
-  CJS_FieldEvent* pLast = m_pFieldEventPath;
-  while (p) {
-    if (p->eEventType == eEventType && p->sTargetName == sTargetName)
-      return FALSE;
-
-    pLast = p;
-    p = p->pNext;
-  }
-
-  // to add
-  CJS_FieldEvent* pNew = new CJS_FieldEvent;
-  pNew->sTargetName = sTargetName;
-  pNew->eEventType = eEventType;
-  pNew->pNext = NULL;
-
-  pLast->pNext = pNew;
-
-  return TRUE;
+bool CJS_Runtime::AddEventToSet(const FieldEvent& event) {
+  return m_FieldEventSet.insert(event).second;
 }
 
-void CJS_Runtime::RemoveEventInLoop(const CFX_WideString& sTargetName,
-                                    JS_EVENT_T eEventType) {
-  FX_BOOL bFind = FALSE;
-
-  CJS_FieldEvent* p = m_pFieldEventPath;
-  CJS_FieldEvent* pLast = NULL;
-  while (p) {
-    if (p->eEventType == eEventType && p->sTargetName == sTargetName) {
-      bFind = TRUE;
-      break;
-    }
-
-    pLast = p;
-    p = p->pNext;
-  }
-
-  if (bFind) {
-    RemoveEventsInLoop(p);
-
-    if (p == m_pFieldEventPath)
-      m_pFieldEventPath = NULL;
-
-    if (pLast)
-      pLast->pNext = NULL;
-  }
-}
-
-void CJS_Runtime::RemoveEventsInLoop(CJS_FieldEvent* pStart) {
-  CJS_FieldEvent* p = pStart;
-
-  while (p) {
-    CJS_FieldEvent* pOld = p;
-    p = pOld->pNext;
-
-    delete pOld;
-  }
+void CJS_Runtime::RemoveEventFromSet(const FieldEvent& event) {
+  m_FieldEventSet.erase(event);
 }
 
 v8::Local<v8::Context> CJS_Runtime::NewJSContext() {
