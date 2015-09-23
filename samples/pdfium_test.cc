@@ -55,24 +55,26 @@ static char* GetFileContents(const char* filename, size_t* retlen) {
   FILE* file = fopen(filename, "rb");
   if (!file) {
     fprintf(stderr, "Failed to open: %s\n", filename);
-    return NULL;
+    return nullptr;
   }
-  (void) fseek(file, 0, SEEK_END);
+  (void)fseek(file, 0, SEEK_END);
   size_t file_length = ftell(file);
   if (!file_length) {
-    return NULL;
+    (void)fclose(file);
+    return nullptr;
   }
-  (void) fseek(file, 0, SEEK_SET);
-  char* buffer = (char*) malloc(file_length);
+  (void)fseek(file, 0, SEEK_SET);
+  char* buffer = static_cast<char*>(malloc(file_length));
   if (!buffer) {
-    return NULL;
+    (void)fclose(file);
+    return nullptr;
   }
   size_t bytes_read = fread(buffer, 1, file_length, file);
-  (void) fclose(file);
+  (void)fclose(file);
   if (bytes_read != file_length) {
     fprintf(stderr, "Failed to read: %s\n", filename);
     free(buffer);
-    return NULL;
+    return nullptr;
   }
   *retlen = bytes_read;
   return buffer;
@@ -195,7 +197,7 @@ static void WritePng(const char* pdf_name, int num, const void* buffer_void,
   if (bytes_written != png_encoding.size())
     fprintf(stderr, "Failed to write to  %s\n", filename);
 
-  (void) fclose(fp);
+  (void)fclose(fp);
 }
 
 #ifdef _WIN32
@@ -241,7 +243,7 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
   char filename[256];
   snprintf(filename, sizeof(filename), "%s.%d.emf", pdf_name, num);
 
-  HDC dc = CreateEnhMetaFileA(NULL, filename, NULL, NULL);
+  HDC dc = CreateEnhMetaFileA(nullptr, filename, nullptr, nullptr);
 
   HRGN rgn = CreateRectRgn(0, 0, width, height);
   SelectClipRgn(dc, rgn);
@@ -267,7 +269,7 @@ int ExampleAppAlert(IPDF_JSPLATFORM*, FPDF_WIDESTRING msg, FPDF_WIDESTRING,
     ++characters;
   }
   wchar_t* platform_string =
-      (wchar_t*)malloc((characters + 1) * sizeof(wchar_t));
+      static_cast<wchar_t*>(malloc((characters + 1) * sizeof(wchar_t)));
   for (size_t i = 0; i < characters + 1; ++i) {
     unsigned char* ptr = (unsigned char*)&msg[i];
     platform_string[i] = ptr[0] + 256 * ptr[1];
@@ -404,9 +406,11 @@ TestLoader::TestLoader(const char* pBuf, size_t len)
     : m_pBuf(pBuf), m_Len(len) {
 }
 
-int Get_Block(void* param, unsigned long pos, unsigned char* pBuf,
-              unsigned long size) {
-  TestLoader* pLoader = (TestLoader*) param;
+int GetBlock(void* param,
+             unsigned long pos,
+             unsigned char* pBuf,
+             unsigned long size) {
+  TestLoader* pLoader = static_cast<TestLoader*>(param);
   if (pos + size < pos || pos + size > pLoader->m_Len) return 0;
   memcpy(pBuf, pLoader->m_pBuf + pos, size);
   return 1;
@@ -439,7 +443,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   FPDF_FILEACCESS file_access;
   memset(&file_access, '\0', sizeof(file_access));
   file_access.m_FileLen = static_cast<unsigned long>(len);
-  file_access.m_GetBlock = Get_Block;
+  file_access.m_GetBlock = GetBlock;
   file_access.m_Param = &loader;
 
   FX_FILEAVAIL file_avail;
@@ -455,41 +459,39 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   FPDF_DOCUMENT doc;
   FPDF_AVAIL pdf_avail = FPDFAvail_Create(&file_avail, &file_access);
 
-  (void) FPDFAvail_IsDocAvail(pdf_avail, &hints);
+  (void)FPDFAvail_IsDocAvail(pdf_avail, &hints);
 
   if (!FPDFAvail_IsLinearized(pdf_avail)) {
     fprintf(stderr, "Non-linearized path...\n");
-    doc = FPDF_LoadCustomDocument(&file_access, NULL);
+    doc = FPDF_LoadCustomDocument(&file_access, nullptr);
   } else {
     fprintf(stderr, "Linearized path...\n");
-    doc = FPDFAvail_GetDocument(pdf_avail, NULL);
+    doc = FPDFAvail_GetDocument(pdf_avail, nullptr);
   }
 
-  if (!doc)
-  {
+  if (!doc) {
     fprintf(stderr, "Load pdf docs unsuccessful.\n");
     return;
   }
 
-  (void) FPDF_GetDocPermissions(doc);
-  (void) FPDFAvail_IsFormAvail(pdf_avail, &hints);
+  (void)FPDF_GetDocPermissions(doc);
+  (void)FPDFAvail_IsFormAvail(pdf_avail, &hints);
 
   FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
   int docType = DOCTYPE_PDF;
-  if (FPDF_HasXFAField(doc, &docType))
-  {
-      if (docType != DOCTYPE_PDF && !FPDF_LoadXFA(doc))
-          fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
+  if (FPDF_HasXFAField(doc, &docType) && docType != DOCTYPE_PDF &&
+      !FPDF_LoadXFA(doc)) {
+    fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
   }
   FPDF_SetFormFieldHighlightColor(form, 0, 0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form, 100);
 
   int first_page = FPDFAvail_GetFirstPageNum(doc);
-  (void) FPDFAvail_IsPageAvail(pdf_avail, first_page, &hints);
+  (void)FPDFAvail_IsPageAvail(pdf_avail, first_page, &hints);
 
   int page_count = FPDF_GetPageCount(doc);
   for (int i = 0; i < page_count; ++i) {
-    (void) FPDFAvail_IsPageAvail(pdf_avail, i, &hints);
+    (void)FPDFAvail_IsPageAvail(pdf_avail, i, &hints);
   }
 
   FORM_DoDocumentJSAction(form);
@@ -500,8 +502,8 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   for (int i = 0; i < page_count; ++i) {
     FPDF_PAGE page = FPDF_LoadPage(doc, i);
     if (!page) {
-        bad_pages ++;
-        continue;
+      ++bad_pages;
+      continue;
     }
     FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
     FORM_OnAfterLoadPage(page, form);
@@ -523,7 +525,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
     FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
-    rendered_pages ++;
+    ++rendered_pages;
 
     FPDF_FFLDraw(form, bitmap, page, 0, 0, width, height, 0, 0);
     int stride = FPDFBitmap_GetStride(bitmap);
