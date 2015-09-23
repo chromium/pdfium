@@ -152,9 +152,33 @@ extern "C" {
 // Return value:
 //          None.
 // Comments:
+//          Convenience function to call FPDF_InitLibraryWithConfig() for
+//          backwards comatibility purposes.
+DLLEXPORT void STDCALL FPDF_InitLibrary();
+
+// Process-wide options for initializing library.
+typedef struct FPDF_LIBRARY_CONFIG_ {
+  // Version number of the interface. Currently must be 1.
+  int version;
+
+  // Array of paths to scan in place of the defaults when using built-in
+  // FXGE font loading code. The array is terminated by a NULL pointer.
+  // The Array may be NULL itself to use the default paths. May be ignored
+  // entirely depending upon the platform.
+  const char** m_pUserFontPaths;
+} FPDF_LIBRARY_CONFIG;
+
+// Function: FPDF_InitLibraryWithConfig
+//          Initialize the FPDFSDK library
+// Parameters:
+//          cfg - configuration information as above.
+// Return value:
+//          None.
+// Comments:
 //          You have to call this function before you can call any PDF
 //          processing functions.
-DLLEXPORT void STDCALL FPDF_InitLibrary();
+DLLEXPORT void STDCALL
+FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config);
 
 // Function: FPDF_DestroyLibary
 //          Release all resources allocated by the FPDFSDK library.

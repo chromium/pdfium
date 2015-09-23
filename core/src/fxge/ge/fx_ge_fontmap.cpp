@@ -1343,7 +1343,7 @@ CFontFileFaceInfo::~CFontFileFaceInfo() {
   m_Face = NULL;
 }
 #if _FX_OS_ == _FX_ANDROID_
-IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
+IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
   return NULL;
 }
 #endif

@@ -34,7 +34,7 @@ class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
                 int pitch_family,
                 const FX_CHAR* family,
                 int& iExact) override;
-  FX_BOOL ParseFontCfg();
+  FX_BOOL ParseFontCfg(const char** pUserPaths);
   void* FindFont(int weight,
                  FX_BOOL bItalic,
                  int charset,
@@ -226,12 +226,9 @@ void* CFX_LinuxFontInfo::FindFont(int weight,
   }
   return pFind;
 }
-IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
+IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUserPaths) {
   CFX_LinuxFontInfo* pInfo = new CFX_LinuxFontInfo;
-  if (!pInfo) {
-    return NULL;
-  }
-  if (!pInfo->ParseFontCfg()) {
+  if (!pInfo->ParseFontCfg(pUserPaths)) {
     pInfo->AddPath("/usr/share/fonts");
     pInfo->AddPath("/usr/share/X11/fonts/Type1");
     pInfo->AddPath("/usr/share/X11/fonts/TTF");
@@ -239,11 +236,18 @@ IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault() {
   }
   return pInfo;
 }
-FX_BOOL CFX_LinuxFontInfo::ParseFontCfg() {
-  return FALSE;
+FX_BOOL CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
+  if (!pUserPaths) {
+    return FALSE;
+  }
+  for (const char** pPath = pUserPaths; *pPath; ++pPath) {
+    AddPath(*pPath);
+  }
+  return TRUE;
 }
 void CFX_GEModule::InitPlatform() {
-  m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault());
+  m_pFontMgr->SetSystemFontInfo(
+      IFX_SystemFontInfo::CreateDefault(m_pUserFontPaths));
 }
 void CFX_GEModule::DestroyPlatform() {}
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
