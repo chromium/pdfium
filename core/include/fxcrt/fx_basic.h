@@ -947,6 +947,13 @@ class CFX_AutoRestorer {
   T m_OldValue;
 };
 
+// Used with nonstd::unique_ptr to Release() objects that can't be deleted.
+template <class T>
+struct ReleaseDeleter {
+  inline void operator()(T* ptr) const { ptr->Release(); }
+};
+
+// TODO(thestig) Remove in favor of nonstd::unique_ptr.
 template <class T>
 class CFX_SmartPointer {
  public:
@@ -959,6 +966,7 @@ class CFX_SmartPointer {
  protected:
   T* m_pObj;
 };
+
 #define FX_DATALIST_LENGTH 1024
 template <size_t unit>
 class CFX_SortListArray {
