@@ -2385,8 +2385,9 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
         continue;
       }
       key = PDF_NameDecode(key);
-      CPDF_Object* pObj = GetObject(pObjList, objnum, gennum);
-      if (pObj == NULL) {
+      nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> obj(
+          GetObject(pObjList, objnum, gennum));
+      if (!obj) {
         if (pDict) {
           pDict->Release();
         }
@@ -2403,7 +2404,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
       }
       if (key.GetLength() > 1) {
         pDict->AddValue(CFX_ByteStringC(key.c_str() + 1, key.GetLength() - 1),
-                        pObj);
+                        obj.release());
       }
     }
     if (pContext) {
