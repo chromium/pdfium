@@ -635,7 +635,7 @@ v8::Local<v8::Value> JS_GetArrayElement(IJS_Runtime* pJSRuntime, v8::Local<v8::A
 {
 	if(pArray.IsEmpty()) return v8::Local<v8::Value>();
         v8::Local<v8::Value> val;
-	if (pArray->Get(pJSRuntime->GetCurrentContext(), index).ToLocal(&val)) return v8::Local<v8::Value>();
+	if (!pArray->Get(pJSRuntime->GetCurrentContext(), index).ToLocal(&val)) return v8::Local<v8::Value>();
         return val;
 }
 
