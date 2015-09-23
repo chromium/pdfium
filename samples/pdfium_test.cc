@@ -469,12 +469,17 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
   (void)FPDFAvail_IsDocAvail(pdf_avail, &hints);
 
-  if (!FPDFAvail_IsLinearized(pdf_avail)) {
-    fprintf(stderr, "Non-linearized path...\n");
-    doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  } else {
+  if (FPDFAvail_IsLinearized(pdf_avail)) {
     fprintf(stderr, "Linearized path...\n");
     doc = FPDFAvail_GetDocument(pdf_avail, nullptr);
+  } else {
+    fprintf(stderr, "Non-linearized path...\n");
+    doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  }
+
+  if (!doc) {
+    fprintf(stderr, "Load pdf docs unsuccessful.\n");
+    return;
   }
 
   (void)FPDF_GetDocPermissions(doc);
@@ -611,7 +616,9 @@ int main(int argc, const char* argv[]) {
   v8::V8::SetSnapshotDataBlob(&snapshot);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
-  if (!options.font_directory.empty()) {
+  if (options.font_directory.empty()) {
+    FPDF_InitLibrary();
+  } else {
     const char* path_array[2];
     path_array[0] = options.font_directory.c_str();
     path_array[1] = nullptr;
@@ -619,8 +626,6 @@ int main(int argc, const char* argv[]) {
     config.version = 1;
     config.m_pUserFontPaths = path_array;
     FPDF_InitLibraryWithConfig(&config);
-  } else {
-    FPDF_InitLibrary();
   }
 
   UNSUPPORT_INFO unsuppored_info;
