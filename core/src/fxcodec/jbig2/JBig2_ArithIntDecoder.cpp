@@ -7,6 +7,7 @@
 #include "JBig2_ArithIntDecoder.h"
 
 #include "../../../include/fxcrt/fx_memory.h"
+#include "JBig2_Define.h"
 
 CJBig2_ArithIntDecoder::CJBig2_ArithIntDecoder() {
   IAx = FX_Alloc(JBig2ArithCtx, 512);

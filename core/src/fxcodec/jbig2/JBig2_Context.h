@@ -4,18 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JBIG2_CONTEXT_H_
-#define _JBIG2_CONTEXT_H_
+#ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
+#define CORE_SRC_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
 
 #include <list>
 #include <utility>
 
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fxcodec/fx_codec_def.h"
-#include "JBig2_GeneralDecoder.h"
 #include "JBig2_List.h"
 #include "JBig2_Page.h"
 #include "JBig2_Segment.h"
+
+class CJBig2_GRDProc;
+class IFX_Pause;
 
 using CJBig2_CachePair = std::pair<const uint8_t*, CJBig2_SymbolDict*>;
 
@@ -141,4 +143,5 @@ class CJBig2_Context {
   JBig2RegionInfo m_ri;
   std::list<CJBig2_CachePair>* m_pSymbolDictCache;
 };
-#endif
+
+#endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
