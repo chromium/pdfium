@@ -10,7 +10,13 @@
 CCodec_Jbig2Context::CCodec_Jbig2Context() {
   FXSYS_memset(this, 0, sizeof(CCodec_Jbig2Context));
 }
-CCodec_Jbig2Module::~CCodec_Jbig2Module() {}
+
+CCodec_Jbig2Module::~CCodec_Jbig2Module() {
+  for (auto it : m_SymbolDictCache) {
+    delete it.second;
+  }
+}
+
 void* CCodec_Jbig2Module::CreateJbig2Context() {
   return new CCodec_Jbig2Context();
 }
