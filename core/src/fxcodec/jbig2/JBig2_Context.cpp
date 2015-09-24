@@ -4,8 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <list>
 #include "JBig2_Context.h"
+
+#include <list>
+
+#include "JBig2_GrdProc.h"
+#include "JBig2_GrrdProc.h"
+#include "JBig2_HtrdProc.h"
+#include "JBig2_PddProc.h"
+#include "JBig2_SddProc.h"
+#include "JBig2_TrdProc.h"
 
 // Implement a very small least recently used (LRU) cache. It is very
 // common for a JBIG2 dictionary to span multiple pages in a PDF file,
@@ -14,7 +22,7 @@
 // list keeps track of the freshness of entries, with freshest ones
 // at the front. Even a tiny cache size like 2 makes a dramatic
 // difference for typical JBIG2 documents.
-const int kSymbolDictCacheMaxSize = 2;
+static const int kSymbolDictCacheMaxSize = 2;
 
 CJBig2_Context* CJBig2_Context::CreateContext(
     const uint8_t* pGlobalData,
@@ -497,13 +505,18 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   FX_DWORD dwTemp;
   FX_WORD wFlags;
   uint8_t cSDHUFFDH, cSDHUFFDW, cSDHUFFBMSIZE, cSDHUFFAGGINST;
-  CJBig2_HuffmanTable *Table_B1 = NULL, *Table_B2 = NULL, *Table_B3 = NULL,
-                      *Table_B4 = NULL, *Table_B5 = NULL;
+  CJBig2_HuffmanTable* Table_B1 = nullptr;
+  CJBig2_HuffmanTable* Table_B2 = nullptr;
+  CJBig2_HuffmanTable* Table_B3 = nullptr;
+  CJBig2_HuffmanTable* Table_B4 = nullptr;
+  CJBig2_HuffmanTable* Table_B5 = nullptr;
   int32_t i, nIndex, nRet;
-  CJBig2_Segment *pSeg = NULL, *pLRSeg = NULL;
+  CJBig2_Segment* pSeg = nullptr;
+  CJBig2_Segment* pLRSeg = nullptr;
   FX_BOOL bUsed;
-  CJBig2_Image** SDINSYMS = NULL;
-  JBig2ArithCtx *gbContext = NULL, *grContext = NULL;
+  CJBig2_Image** SDINSYMS = nullptr;
+  JBig2ArithCtx* gbContext = nullptr;
+  JBig2ArithCtx* grContext = nullptr;
   CJBig2_ArithDecoder* pArithDecoder;
   CJBig2_SDDProc* pSymbolDictDecoder = new CJBig2_SDDProc();
   const uint8_t* key = pSegment->m_pData;
@@ -767,15 +780,22 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   int32_t i, nIndex, nRet;
   JBig2RegionInfo ri;
   CJBig2_Segment* pSeg;
-  CJBig2_Image** SBSYMS = NULL;
-  JBig2HuffmanCode* SBSYMCODES = NULL;
+  CJBig2_Image** SBSYMS = nullptr;
+  JBig2HuffmanCode* SBSYMCODES = nullptr;
   uint8_t cSBHUFFFS, cSBHUFFDS, cSBHUFFDT, cSBHUFFRDW, cSBHUFFRDH, cSBHUFFRDX,
       cSBHUFFRDY, cSBHUFFRSIZE;
-  CJBig2_HuffmanTable *Table_B1 = NULL, *Table_B6 = NULL, *Table_B7 = NULL,
-                      *Table_B8 = NULL, *Table_B9 = NULL, *Table_B10 = NULL,
-                      *Table_B11 = NULL, *Table_B12 = NULL, *Table_B13 = NULL,
-                      *Table_B14 = NULL, *Table_B15 = NULL;
-  JBig2ArithCtx* grContext = NULL;
+  CJBig2_HuffmanTable* Table_B1 = nullptr;
+  CJBig2_HuffmanTable* Table_B6 = nullptr;
+  CJBig2_HuffmanTable* Table_B7 = nullptr;
+  CJBig2_HuffmanTable* Table_B8 = nullptr;
+  CJBig2_HuffmanTable* Table_B9 = nullptr;
+  CJBig2_HuffmanTable* Table_B10 = nullptr;
+  CJBig2_HuffmanTable* Table_B11 = nullptr;
+  CJBig2_HuffmanTable* Table_B12 = nullptr;
+  CJBig2_HuffmanTable* Table_B13 = nullptr;
+  CJBig2_HuffmanTable* Table_B14 = nullptr;
+  CJBig2_HuffmanTable* Table_B15 = nullptr;
+  JBig2ArithCtx* grContext = nullptr;
   CJBig2_ArithDecoder* pArithDecoder;
   CJBig2_TRDProc* pTRD = new CJBig2_TRDProc();
   if ((parseRegionInfo(&ri) != JBIG2_SUCCESS) ||
