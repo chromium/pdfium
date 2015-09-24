@@ -30,10 +30,6 @@ using CJBig2_CachePair = std::pair<const uint8_t*, CJBig2_SymbolDict*>;
 #define JBIG2_ERROR_FILE_FORMAT -4
 #define JBIG2_ERROR_STREAM_TYPE -5
 #define JBIG2_ERROR_LIMIT -6
-#define JBIG2_FILE_STREAM 0
-#define JBIG2_SQUENTIAL_STREAM 1
-#define JBIG2_RANDOM_STREAM 2
-#define JBIG2_EMBED_STREAM 3
 #define JBIG2_MIN_SEGMENT_SIZE 11
 
 class CJBig2_Context {
@@ -43,7 +39,6 @@ class CJBig2_Context {
       FX_DWORD dwGlobalLength,
       const uint8_t* pData,
       FX_DWORD dwLength,
-      int32_t nStreamType,
       std::list<CJBig2_CachePair>* pSymbolDictCache,
       IFX_Pause* pPause = NULL);
 
@@ -55,28 +50,18 @@ class CJBig2_Context {
                        int32_t stride,
                        IFX_Pause* pPause);
 
-  int32_t getFirstPage(CJBig2_Image** image, IFX_Pause* pPause);
-
   int32_t Continue(IFX_Pause* pPause);
   FXCODEC_STATUS GetProcessingStatus() { return m_ProcessingStatus; }
 
  private:
-  enum JBig2State {
-    JBIG2_OUT_OF_PAGE = 0,
-    JBIG2_IN_PAGE,
-  };
-
   CJBig2_Context(const uint8_t* pGlobalData,
                  FX_DWORD dwGlobalLength,
                  const uint8_t* pData,
                  FX_DWORD dwLength,
-                 int32_t nStreamType,
                  std::list<CJBig2_CachePair>* pSymbolDictCache,
                  IFX_Pause* pPause);
 
   ~CJBig2_Context();
-
-  int32_t decodeFile(IFX_Pause* pPause);
 
   int32_t decode_SquentialOrgnazation(IFX_Pause* pPause);
 
@@ -123,25 +108,23 @@ class CJBig2_Context {
 
  private:
   CJBig2_Context* m_pGlobalContext;
-  int32_t m_nStreamType;
-  CJBig2_BitStream* m_pStream;
-  int32_t m_nState;
+  nonstd::unique_ptr<CJBig2_BitStream> m_pStream;
   CJBig2_List<CJBig2_Segment> m_SegmentList;
   CJBig2_List<JBig2PageInfo> m_PageInfoList;
-  CJBig2_Image* m_pPage;
-  FX_BOOL m_bBufSpecified;
+  nonstd::unique_ptr<CJBig2_Image> m_pPage;
   size_t m_nSegmentDecoded;
-  IFX_Pause* m_pPause;
+  bool m_bInPage;
+  bool m_bBufSpecified;
   int32_t m_PauseStep;
+  IFX_Pause* m_pPause;
   FXCODEC_STATUS m_ProcessingStatus;
-  FX_BOOL m_bFirstPage;
   CJBig2_ArithDecoder* m_pArithDecoder;
-  CJBig2_GRDProc* m_pGRD;
+  nonstd::unique_ptr<CJBig2_GRDProc> m_pGRD;
   JBig2ArithCtx* m_gbContext;
   nonstd::unique_ptr<CJBig2_Segment> m_pSegment;
   FX_DWORD m_dwOffset;
   JBig2RegionInfo m_ri;
-  std::list<CJBig2_CachePair>* m_pSymbolDictCache;
+  std::list<CJBig2_CachePair>* const m_pSymbolDictCache;
 };
 
 #endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
