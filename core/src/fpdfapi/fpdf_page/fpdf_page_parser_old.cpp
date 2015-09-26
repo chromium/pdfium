@@ -9,27 +9,7 @@
 #include "../../../include/fxcodec/fx_codec.h"
 #include "pageint.h"
 #include <limits.h>
-const FX_CHAR* const _PDF_OpCharType =
-    "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
-    "IIVIIIIVIIVIIIIIVVIIIIIIIIIIIIII"
-    "IIVVVVVVIVVVVVVIVVVVVIIVVIIIIIII"
-    "IIVVVVVVVVVVVVVVIVVVIIVVIVVIIIII"
-    "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
-    "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
-    "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
-    "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII";
-FX_BOOL _PDF_HasInvalidOpChar(const FX_CHAR* op) {
-  if (!op) {
-    return FALSE;
-  }
-  uint8_t ch;
-  while ((ch = *op++)) {
-    if (_PDF_OpCharType[ch] == 'I') {
-      return TRUE;
-    }
-  }
-  return FALSE;
-}
+
 class CPDF_StreamParserAutoClearer {
  public:
   CPDF_StreamParserAutoClearer(CPDF_StreamParser** scoped_variable,
@@ -61,13 +41,7 @@ FX_DWORD CPDF_StreamContentParser::Parse(const uint8_t* pData,
       case CPDF_StreamParser::EndOfData:
         return m_pSyntax->GetPos();
       case CPDF_StreamParser::Keyword:
-        if (!OnOperator((char*)syntax.GetWordBuf()) &&
-            _PDF_HasInvalidOpChar((char*)syntax.GetWordBuf())) {
-          m_bAbort = TRUE;
-        }
-        if (m_bAbort) {
-          return m_pSyntax->GetPos();
-        }
+        OnOperator((char*)syntax.GetWordBuf());
         ClearAllParams();
         break;
       case CPDF_StreamParser::Number:
@@ -1126,10 +1100,6 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         m_CurrentOffset +=
             m_pParser->Parse(m_pData + m_CurrentOffset,
                              m_Size - m_CurrentOffset, PARSE_STEP_LIMIT);
-        if (m_pParser->ShouldAbort()) {
-          m_InternalStage = PAGEPARSE_STAGE_CHECKCLIP;
-          continue;
-        }
       }
     }
     if (m_InternalStage == PAGEPARSE_STAGE_CHECKCLIP) {

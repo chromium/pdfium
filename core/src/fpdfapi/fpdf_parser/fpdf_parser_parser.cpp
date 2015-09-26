@@ -2455,8 +2455,8 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
     len = pLenObj->GetInteger();
   }
   // Check whether end of line markers follow the keyword 'stream'.
-  unsigned int numMarkers = ReadEOLMarkers(m_Pos);
-  m_Pos += numMarkers;
+  // The stream starts after end of line markers.
+  m_Pos += ReadEOLMarkers(m_Pos);
   FX_FILESIZE streamStartPos = m_Pos;
   if (pContext) {
     pContext->m_DataStart = streamStartPos;
@@ -2467,19 +2467,18 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
       objnum == (FX_DWORD)m_MetadataObjnum ? nullptr : m_pCryptoHandler;
   if (!pCryptoHandler) {
     FX_BOOL bSearchForKeyword = TRUE;
-    unsigned int prevMarkers = 0;
-    unsigned int nextMarkers = 0;
     if (len >= 0) {
       pdfium::base::CheckedNumeric<FX_FILESIZE> pos = m_Pos;
       pos += len;
       if (pos.IsValid() && pos.ValueOrDie() < m_FileLen) {
         m_Pos = pos.ValueOrDie();
       }
-      prevMarkers = ReadEOLMarkers(m_Pos);
+      m_Pos += ReadEOLMarkers(m_Pos);
+      FXSYS_memset(m_WordBuffer, 0, ENDSTREAM_LEN + 1);
       GetNextWord();
-      nextMarkers = ReadEOLMarkers(m_Pos);
-      if (m_WordSize == ENDSTREAM_LEN && prevMarkers != 0 && nextMarkers != 0 &&
-          FXSYS_memcmp(m_WordBuffer, "endstream", ENDSTREAM_LEN) == 0) {
+      if (FXSYS_memcmp(m_WordBuffer, "endstream", ENDSTREAM_LEN) == 0 &&
+          IsWholeWord(m_Pos - ENDSTREAM_LEN, m_FileLen,
+                      FX_BSTRC("endstream").GetPtr(), ENDSTREAM_LEN, TRUE)) {
         bSearchForKeyword = FALSE;
       }
     }
@@ -2494,22 +2493,12 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
           // Can't find any "endstream".
           break;
         }
-        prevMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 1);
-        nextMarkers =
-            ReadEOLMarkers(streamStartPos + endStreamOffset + ENDSTREAM_LEN);
-        if (prevMarkers != 0 && nextMarkers != 0) {
+        if (IsWholeWord(m_Pos - ENDSTREAM_LEN, m_FileLen,
+                        FX_BSTRC("endstream").GetPtr(), ENDSTREAM_LEN, TRUE)) {
           // Stop searching when the keyword "endstream" is found.
+          endStreamOffset = m_Pos - streamStartPos - ENDSTREAM_LEN;
           break;
-        } else {
-          unsigned char ch = 0x00;
-          GetCharAt(streamStartPos + endStreamOffset + ENDSTREAM_LEN, ch);
-          if (ch == 0x09 || ch == 0x20) {
-            //"endstream" is treated as a keyword
-            // when it is followed by a tab or whitespace
-            break;
-          }
         }
-        m_Pos += ENDSTREAM_LEN;
       }
       m_Pos = streamStartPos;
       FX_FILESIZE endObjOffset = 0;
@@ -2519,14 +2508,12 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
           // Can't find any "endobj".
           break;
         }
-        prevMarkers = ReadEOLMarkers(streamStartPos + endObjOffset - 1);
-        nextMarkers =
-            ReadEOLMarkers(streamStartPos + endObjOffset + ENDOBJ_LEN);
-        if (prevMarkers != 0 && nextMarkers != 0) {
+        if (IsWholeWord(m_Pos - ENDOBJ_LEN, m_FileLen,
+                        FX_BSTRC("endobj").GetPtr(), ENDOBJ_LEN, TRUE)) {
           // Stop searching when the keyword "endobj" is found.
+          endObjOffset = m_Pos - streamStartPos - ENDOBJ_LEN;
           break;
         }
-        m_Pos += ENDOBJ_LEN;
       }
       if (endStreamOffset < 0 && endObjOffset < 0) {
         // Can't find "endstream" or "endobj".
@@ -2542,7 +2529,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
         endStreamOffset = endObjOffset;
       }
       len = endStreamOffset;
-      numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 2);
+      int numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 2);
       if (numMarkers == 2) {
         len -= 2;
       } else {
@@ -2579,8 +2566,9 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
     pContext->m_DataEnd = pContext->m_DataStart + len;
   }
   streamStartPos = m_Pos;
+  FXSYS_memset(m_WordBuffer, 0, ENDOBJ_LEN + 1);
   GetNextWord();
-  numMarkers = ReadEOLMarkers(m_Pos);
+  int numMarkers = ReadEOLMarkers(m_Pos);
   if (m_WordSize == ENDOBJ_LEN && numMarkers != 0 &&
       FXSYS_memcmp(m_WordBuffer, "endobj", ENDOBJ_LEN) == 0) {
     m_Pos = streamStartPos;
@@ -2611,7 +2599,8 @@ int32_t CPDF_SyntaxParser::GetDirectNum() {
 FX_BOOL CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
                                        FX_FILESIZE limit,
                                        const uint8_t* tag,
-                                       FX_DWORD taglen) {
+                                       FX_DWORD taglen,
+                                       FX_BOOL checkKeyword) {
   uint8_t type = PDF_CharType[tag[0]];
   FX_BOOL bCheckLeft = type != 'D' && type != 'W';
   type = PDF_CharType[tag[taglen - 1]];
@@ -2620,13 +2609,13 @@ FX_BOOL CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
   if (bCheckRight && startpos + (int32_t)taglen <= limit &&
       GetCharAt(startpos + (int32_t)taglen, ch)) {
     uint8_t type = PDF_CharType[ch];
-    if (type == 'N' || type == 'R') {
+    if (type == 'N' || type == 'R' || (checkKeyword && type == 'D')) {
       return FALSE;
     }
   }
   if (bCheckLeft && startpos > 0 && GetCharAt(startpos - 1, ch)) {
     uint8_t type = PDF_CharType[ch];
-    if (type == 'N' || type == 'R') {
+    if (type == 'N' || type == 'R' || (checkKeyword && type == 'D')) {
       return FALSE;
     }
   }
@@ -2682,7 +2671,8 @@ FX_BOOL CPDF_SyntaxParser::SearchWord(const CFX_ByteStringC& tag,
         }
       }
       FX_FILESIZE startpos = bForward ? pos - taglen + 1 : pos;
-      if (!bWholeWord || IsWholeWord(startpos, limit, tag.GetPtr(), taglen)) {
+      if (!bWholeWord ||
+          IsWholeWord(startpos, limit, tag.GetPtr(), taglen, FALSE)) {
         m_Pos = startpos;
         return TRUE;
       }
@@ -2739,7 +2729,7 @@ int32_t CPDF_SyntaxParser::SearchMultiWord(const CFX_ByteStringC& tags,
         if (pPatterns[i].m_Offset == pPatterns[i].m_Len) {
           if (!bWholeWord ||
               IsWholeWord(pos - pPatterns[i].m_Len, limit, pPatterns[i].m_pTag,
-                          pPatterns[i].m_Len)) {
+                          pPatterns[i].m_Len, FALSE)) {
             found = i;
             goto end;
           } else {

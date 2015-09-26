@@ -294,7 +294,8 @@ class CPDF_SyntaxParser {
   FX_BOOL IsWholeWord(FX_FILESIZE startpos,
                       FX_FILESIZE limit,
                       const uint8_t* tag,
-                      FX_DWORD taglen);
+                      FX_DWORD taglen,
+                      FX_BOOL checkKeyword);
 
   CFX_ByteString ReadString();
 

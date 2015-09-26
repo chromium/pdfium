@@ -11,7 +11,6 @@
 
 #define REQUIRE_PARAMS(count)  \
   if (m_ParamCount != count) { \
-    m_bAbort = TRUE;           \
     return;                    \
   }
 
@@ -34,7 +33,6 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_Level(level),
       m_ParamStartPos(0),
       m_ParamCount(0),
-      m_bAbort(FALSE),
       m_pCurStates(new CPDF_AllStates),
       m_pLastTextObject(nullptr),
       m_DefFontSize(0),
