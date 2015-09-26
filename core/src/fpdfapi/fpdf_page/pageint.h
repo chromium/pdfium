@@ -162,7 +162,6 @@ class CPDF_StreamContentParser {
                            int level);
   ~CPDF_StreamContentParser();
 
-  FX_BOOL ShouldAbort() const { return m_bAbort; }
   CPDF_PageObjects* GetObjectList() const { return m_pObjectList; }
   CPDF_AllStates* GetCurStates() const { return m_pCurStates.get(); }
   FX_BOOL IsColored() const { return m_bColored; }
@@ -305,7 +304,6 @@ class CPDF_StreamContentParser {
   _ContentParam m_ParamBuf1[PARAM_BUF_SIZE];
   FX_DWORD m_ParamStartPos;
   FX_DWORD m_ParamCount;
-  FX_BOOL m_bAbort;
   CPDF_StreamParser* m_pSyntax;
   nonstd::unique_ptr<CPDF_AllStates> m_pCurStates;
   CPDF_ContentMark m_CurContentMark;
