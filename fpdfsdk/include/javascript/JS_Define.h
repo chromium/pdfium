@@ -79,12 +79,9 @@ void JSPropGetter(const char* prop_name_string,
                   v8::Local<v8::String> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Value> v = context->GetEmbedderData(1);
-  if (v.IsEmpty())
+  IFXJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  if (!pRuntime)
     return;
-  v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
-  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
@@ -107,12 +104,9 @@ void JSPropSetter(const char* prop_name_string,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Value> v = context->GetEmbedderData(1);
-  if (v.IsEmpty())
+  IFXJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  if (!pRuntime)
     return;
-  v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
-  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
@@ -151,12 +145,9 @@ void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Value> v = context->GetEmbedderData(1);
-  if (v.IsEmpty())
+  IFXJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  if (!pRuntime)
     return;
-  v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
-  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
   CJS_Parameters parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
@@ -282,12 +273,9 @@ void JSSpecialPropGet(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Value> v = context->GetEmbedderData(1);
-  if (v.IsEmpty())
+  IFXJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  if (!pRuntime)
     return;
-  v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
-  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj =
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
@@ -311,12 +299,9 @@ void JSSpecialPropPut(const char* class_name,
                       v8::Local<v8::Value> value,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Value> v = context->GetEmbedderData(1);
-  if (v.IsEmpty())
+  IFXJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  if (!pRuntime)
     return;
-  v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
-  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj =
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
@@ -337,12 +322,9 @@ void JSSpecialPropDel(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Boolean>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Value> v = context->GetEmbedderData(1);
-  if (v.IsEmpty())
+  IFXJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  if (!pRuntime)
     return;
-  v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
-  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj =
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
@@ -448,12 +430,9 @@ template <FX_BOOL (
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Value> v = context->GetEmbedderData(1);
-  if (v.IsEmpty())
+  IFXJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  if (!pRuntime)
     return;
-  v8::Local<v8::External> field = v8::Local<v8::External>::Cast(v);
-  IFXJS_Runtime* pRuntime = (IFXJS_Runtime*)field->Value();
   IFXJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
   CJS_Parameters parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {

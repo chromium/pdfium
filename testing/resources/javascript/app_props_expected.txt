@@ -1,5 +1,5 @@
 Alert: *** Getting properties ***
-Alert: app.activeDocs is object [object Object]
+Alert: app.activeDocs is object [object global]
 Alert: app.calculate is boolean true
 Alert: app.formsVersion is number 7
 Alert: ERROR: app.fs: 
@@ -25,7 +25,7 @@ Alert: ERROR: app.viewerType:
 Alert: ERROR: app.viewerVariation: 
 Alert: ERROR: app.viewerVersion: 
 Alert: *** Getting properties ***
-Alert: app.activeDocs is object [object Object]
+Alert: app.activeDocs is object [object global]
 Alert: app.calculate is boolean true
 Alert: app.formsVersion is number 7
 Alert: ERROR: app.fs: 

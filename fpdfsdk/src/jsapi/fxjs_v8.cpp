@@ -5,7 +5,6 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../core/include/fxcrt/fx_basic.h"
-#include "../../include/fsdk_define.h"
 #include "../../include/jsapi/fxjs_v8.h"
 
 const wchar_t kFXJSValueNameString[] = L"string";
@@ -18,6 +17,12 @@ const wchar_t kFXJSValueNameNull[] = L"null";
 const wchar_t kFXJSValueNameUndefined[] = L"undefined";
 
 static unsigned int g_embedderDataSlot = 1u;
+
+// Keep this consistent with the values defined in gin/public/context_holder.h
+// (without actually requiring a dependency on gin itself for the standalone
+// embedders of PDFIum). The value we want to use is:
+//   kPerContextDataStartIndex + kEmbedderPDFium, which is 3.
+static const unsigned int kPerContextDataIndex = 3u;
 
 class CFXJS_PrivateData {
  public:
@@ -98,6 +103,13 @@ void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {
 FXJS_PerIsolateData* FXJS_PerIsolateData::Get(v8::Isolate* pIsolate) {
   return static_cast<FXJS_PerIsolateData*>(
       pIsolate->GetData(g_embedderDataSlot));
+}
+
+void FXJS_Initialize(unsigned int embedderDataSlot) {
+  g_embedderDataSlot = embedderDataSlot;
+}
+
+void FXJS_Release() {
 }
 
 int FXJS_DefineObj(v8::Isolate* pIsolate,
@@ -269,8 +281,7 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
   v8::Context::Scope context_scope(v8Context);
 
   FXJS_PerIsolateData::SetUp(pIsolate);
-  v8::Local<v8::External> ptr = v8::External::New(pIsolate, pFXRuntime);
-  v8Context->SetEmbedderData(1, ptr);
+  v8Context->SetAlignedPointerInEmbedderData(kPerContextDataIndex, pFXRuntime);
 
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
   for (int i = 0; i < maxID; ++i) {
@@ -343,11 +354,10 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
   delete pData;
 }
 
-void FXJS_Initialize(unsigned int embedderDataSlot) {
-  g_embedderDataSlot = embedderDataSlot;
-}
-
-void FXJS_Release() {
+IFXJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate) {
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
+  return static_cast<IFXJS_Runtime*>(
+      context->GetAlignedPointerFromEmbedderData(kPerContextDataIndex));
 }
 
 int FXJS_Execute(v8::Isolate* pIsolate,
