@@ -69,10 +69,6 @@ void FXJS_Release();
 // as part of FXJS_ReleaseRuntime().
 void FXJS_PrepareIsolate(v8::Isolate* pIsolate);
 
-// Call before making JS_PrepareIsolate call.
-void JS_Initialize(unsigned int embedderDataSlot);
-void JS_Release();
-
 // Call before making JS_Define* calls. Resources allocated here are cleared
 // as part of JS_ReleaseRuntime().
 void JS_PrepareIsolate(v8::Isolate* pIsolate);
@@ -117,6 +113,7 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
                             v8::Global<v8::Context>& v8PersistentContext);
 void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
                          v8::Global<v8::Context>& v8PersistentContext);
+IFXJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate);
 
 // Called after FXJS_InitializeRuntime call made.
 int FXJS_Execute(v8::Isolate* pIsolate,
