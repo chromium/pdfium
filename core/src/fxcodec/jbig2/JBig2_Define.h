@@ -26,16 +26,6 @@ struct JBig2HuffmanCode {
   int32_t code;
 };
 
-extern "C" {
-void _FaxG4Decode(const uint8_t* src_buf,
-                  FX_DWORD src_size,
-                  int* pbitpos,
-                  uint8_t* dest_buf,
-                  int width,
-                  int height,
-                  int pitch = 0);
-};
-
 #define JBIG2_MAX_REFERRED_SEGMENT_COUNT 64
 #define JBIG2_MAX_EXPORT_SYSMBOLS 65535
 #define JBIG2_MAX_NEW_SYSMBOLS 65535

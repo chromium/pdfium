@@ -846,18 +846,7 @@ void CPDF_FaxFilter::v_FilterFinish(CFX_BinaryBuf& dest_buf) {
   ProcessData(m_InputBuf.GetBuffer(), m_InputBuf.GetSize(), m_InputBitPos, TRUE,
               dest_buf);
 }
-FX_BOOL _FaxSkipEOL(const uint8_t* src_buf, int bitsize, int& bitpos);
-FX_BOOL _FaxG4GetRow(const uint8_t* src_buf,
-                     int bitsize,
-                     int& bitpos,
-                     uint8_t* dest_buf,
-                     const uint8_t* ref_buf,
-                     int columns);
-FX_BOOL _FaxGet1DLine(const uint8_t* src_buf,
-                      int bitsize,
-                      int& bitpos,
-                      uint8_t* dest_buf,
-                      int columns);
+
 void CPDF_FaxFilter::ProcessData(const uint8_t* src_buf,
                                  FX_DWORD src_size,
                                  int& bitpos,
@@ -893,15 +882,15 @@ void CPDF_FaxFilter::ProcessData(const uint8_t* src_buf,
 FX_BOOL CPDF_FaxFilter::ReadLine(const uint8_t* src_buf,
                                  int bitsize,
                                  int& bitpos) {
-  if (!_FaxSkipEOL(src_buf, bitsize, bitpos)) {
+  if (!FaxSkipEOL(src_buf, bitsize, bitpos)) {
     return FALSE;
   }
   FX_BOOL ret;
   if (m_Encoding < 0) {
-    ret = _FaxG4GetRow(src_buf, bitsize, bitpos, m_pScanlineBuf, m_pRefBuf,
-                       m_nColumns);
+    ret = FaxG4GetRow(src_buf, bitsize, bitpos, m_pScanlineBuf, m_pRefBuf,
+                      m_nColumns);
   } else if (m_Encoding == 0) {
-    ret = _FaxGet1DLine(src_buf, bitsize, bitpos, m_pScanlineBuf, m_nColumns);
+    ret = FaxGet1DLine(src_buf, bitsize, bitpos, m_pScanlineBuf, m_nColumns);
   } else {
     if (bitpos == bitsize) {
       return FALSE;
@@ -909,17 +898,17 @@ FX_BOOL CPDF_FaxFilter::ReadLine(const uint8_t* src_buf,
     FX_BOOL bNext1D = src_buf[bitpos / 8] & (1 << (7 - bitpos % 8));
     bitpos++;
     if (bNext1D) {
-      ret = _FaxGet1DLine(src_buf, bitsize, bitpos, m_pScanlineBuf, m_nColumns);
+      ret = FaxGet1DLine(src_buf, bitsize, bitpos, m_pScanlineBuf, m_nColumns);
     } else {
-      ret = _FaxG4GetRow(src_buf, bitsize, bitpos, m_pScanlineBuf, m_pRefBuf,
-                         m_nColumns);
+      ret = FaxG4GetRow(src_buf, bitsize, bitpos, m_pScanlineBuf, m_pRefBuf,
+                        m_nColumns);
     }
   }
   if (!ret) {
     return FALSE;
   }
   if (m_bEndOfLine)
-    if (!_FaxSkipEOL(src_buf, bitsize, bitpos)) {
+    if (!FaxSkipEOL(src_buf, bitsize, bitpos)) {
       return FALSE;
     }
   if (m_bByteAlign) {

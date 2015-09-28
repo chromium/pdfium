@@ -530,4 +530,24 @@ class IFX_DIBAttributeExif {
   virtual FX_BOOL GetInfo(FX_WORD tag, void* val) = 0;
 };
 
+FX_BOOL FaxSkipEOL(const uint8_t* src_buf, int bitsize, int& bitpos);
+FX_BOOL FaxGet1DLine(const uint8_t* src_buf,
+                     int bitsize,
+                     int& bitpos,
+                     uint8_t* dest_buf,
+                     int columns);
+FX_BOOL FaxG4GetRow(const uint8_t* src_buf,
+                    int bitsize,
+                    int& bitpos,
+                    uint8_t* dest_buf,
+                    const uint8_t* ref_buf,
+                    int columns);
+void FaxG4Decode(const uint8_t* src_buf,
+                 FX_DWORD src_size,
+                 int* pbitpos,
+                 uint8_t* dest_buf,
+                 int width,
+                 int height,
+                 int pitch);
+
 #endif  // CORE_INCLUDE_FXCODEC_FX_CODEC_H_

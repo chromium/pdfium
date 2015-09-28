@@ -7,6 +7,7 @@
 #include "JBig2_GrdProc.h"
 
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
+#include "../../../include/fxcodec/fx_codec.h"
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_BitStream.h"
 #include "JBig2_Image.h"
@@ -668,8 +669,8 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(CJBig2_Image** pImage,
     return m_ProssiveStatus;
   }
   bitpos = (int)pStream->getBitPos();
-  _FaxG4Decode(pStream->getBuf(), pStream->getLength(), &bitpos,
-               (*pImage)->m_pData, GBW, GBH, (*pImage)->m_nStride);
+  FaxG4Decode(pStream->getBuf(), pStream->getLength(), &bitpos,
+              (*pImage)->m_pData, GBW, GBH, (*pImage)->m_nStride);
   pStream->setBitPos(bitpos);
   for (i = 0; (FX_DWORD)i < (*pImage)->m_nStride * GBH; i++) {
     (*pImage)->m_pData[i] = ~(*pImage)->m_pData[i];
