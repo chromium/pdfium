@@ -39,12 +39,10 @@ class FXJS_PerIsolateData {
   static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
 
   CFX_PtrArray m_ObjectDefnArray;
-  IFXJS_Runtime* m_pFXJSRuntime;
   CFXJSE_RuntimeData* m_pFXJSERuntimeData;
 
  protected:
-  FXJS_PerIsolateData()
-      : m_pFXJSRuntime(nullptr), m_pFXJSERuntimeData(nullptr) {}
+  FXJS_PerIsolateData() : m_pFXJSERuntimeData(nullptr) {}
 };
 
 extern const wchar_t kFXJSValueNameString[];

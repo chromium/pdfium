@@ -269,8 +269,8 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
   v8::Context::Scope context_scope(v8Context);
 
   FXJS_PerIsolateData::SetUp(pIsolate);
-  FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
-  pData->m_pFXJSRuntime = pFXRuntime;
+  v8::Local<v8::External> ptr = v8::External::New(pIsolate, pFXRuntime);
+  v8Context->SetEmbedderData(1, ptr);
 
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
   for (int i = 0; i < maxID; ++i) {
