@@ -965,8 +965,11 @@ void CPDF_DIBSource::ValidateDictParam() {
         m_bpc = 1;
         m_nComponents = 1;
       }
-      if (filter == FX_BSTRC("RunLengthDecode") ||
-          filter == FX_BSTRC("DCTDecode")) {
+      if (filter == FX_BSTRC("RunLengthDecode")) {
+        if (m_bpc != 1) {
+          m_bpc = 8;
+        }
+      } else if (filter == FX_BSTRC("DCTDecode")) {
         m_bpc = 8;
       }
     } else if (pFilter->GetType() == PDFOBJ_ARRAY) {
