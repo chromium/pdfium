@@ -23,14 +23,14 @@ class CJBig2_ArithDecoder {
   int DECODE(JBig2ArithCtx* pCX);
 
  private:
-  void INITDEC();
   void BYTEIN();
+  void ReadValueA();
 
-  unsigned char B;
-  unsigned int C;
-  unsigned int A;
-  unsigned int CT;
-  CJBig2_BitStream* m_pStream;
+  unsigned char m_B;
+  unsigned int m_C;
+  unsigned int m_A;
+  unsigned int m_CT;
+  CJBig2_BitStream* const m_pStream;
 };
 
 #endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_ARITHDECODER_H_
