@@ -63,7 +63,13 @@ CJS_Runtime::~CJS_Runtime() {
     delete m_ContextArray.GetAt(i);
 
   m_ContextArray.RemoveAll();
-  FXJS_ReleaseRuntime(GetIsolate(), m_context);
+
+  // TODO(raymes): Currently we're freeing per-isolate data everytime a
+  // document is destroyed even though it may be in use by other documents. For
+  // now we leak the per-isolate data (when m_isolateManaged is false) until
+  // crbug.com/531339 is fixed.
+  if (m_isolateManaged)
+    FXJS_ReleaseRuntime(GetIsolate(), m_context);
 
   m_pApp = NULL;
   m_pDocument = NULL;
