@@ -8,7 +8,6 @@
 
 #include "../../../include/fxcrt/fx_basic.h"
 #include "JBig2_BitStream.h"
-#include "JBig2_Define.h"
 
 namespace {
 
@@ -69,98 +68,85 @@ const JBig2ArithQe kQeTable[] = {
     {0x0001, 45, 43, 0},
     {0x5601, 46, 46, 0}};
 
+const unsigned int kDefaultAValue = 0x8000;
+
+int DecodeNMPS(JBig2ArithCtx* pCX, const JBig2ArithQe& qe) {
+  pCX->I = qe.NMPS;
+  return pCX->MPS;
+}
+
+int DecodeNLPS(JBig2ArithCtx* pCX, const JBig2ArithQe& qe) {
+  // TODO(thestig): |D|, |MPS| and friends probably should be booleans.
+  int D = 1 - pCX->MPS;
+  if (qe.nSwitch == 1)
+    pCX->MPS = 1 - pCX->MPS;
+  pCX->I = qe.NLPS;
+  return D;
+}
+
 }  // namespace
 
-CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream) {
-  m_pStream = pStream;
-  INITDEC();
+CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
+    : m_pStream(pStream) {
+  m_B = m_pStream->getCurByte_arith();
+  m_C = (m_B ^ 0xff) << 16;
+  BYTEIN();
+  m_C = m_C << 7;
+  m_CT = m_CT - 7;
+  m_A = kDefaultAValue;
 }
 
 CJBig2_ArithDecoder::~CJBig2_ArithDecoder() {
 }
 
 int CJBig2_ArithDecoder::DECODE(JBig2ArithCtx* pCX) {
-  if (!pCX || pCX->I >= FX_ArraySize(kQeTable)) {
+  if (!pCX || pCX->I >= FX_ArraySize(kQeTable))
     return 0;
+
+  const JBig2ArithQe& qe = kQeTable[pCX->I];
+  m_A -= qe.Qe;
+  if ((m_C >> 16) < m_A) {
+    if (m_A & kDefaultAValue)
+      return pCX->MPS;
+
+    const int D = m_A < qe.Qe ? DecodeNLPS(pCX, qe) : DecodeNMPS(pCX, qe);
+    ReadValueA();
+    return D;
   }
 
-  int D;
-  const JBig2ArithQe* qe = &kQeTable[pCX->I];
-  A = A - qe->Qe;
-  if ((C >> 16) < A) {
-    if (A & 0x8000) {
-      D = pCX->MPS;
-    } else {
-      if (A < qe->Qe) {
-        D = 1 - pCX->MPS;
-        if (qe->nSwitch == 1) {
-          pCX->MPS = 1 - pCX->MPS;
-        }
-        pCX->I = qe->NLPS;
-      } else {
-        D = pCX->MPS;
-        pCX->I = qe->NMPS;
-      }
-      do {
-        if (CT == 0) {
-          BYTEIN();
-        }
-        A <<= 1;
-        C <<= 1;
-        CT--;
-      } while ((A & 0x8000) == 0);
-    }
-  } else {
-    C -= A << 16;
-    if (A < qe->Qe) {
-      A = qe->Qe;
-      D = pCX->MPS;
-      pCX->I = qe->NMPS;
-    } else {
-      A = qe->Qe;
-      D = 1 - pCX->MPS;
-      if (qe->nSwitch == 1) {
-        pCX->MPS = 1 - pCX->MPS;
-      }
-      pCX->I = qe->NLPS;
-    }
-    do {
-      if (CT == 0) {
-        BYTEIN();
-      }
-      A <<= 1;
-      C <<= 1;
-      CT--;
-    } while ((A & 0x8000) == 0);
-  }
+  m_C -= m_A << 16;
+  const int D = m_A < qe.Qe ? DecodeNMPS(pCX, qe) : DecodeNLPS(pCX, qe);
+  m_A = qe.Qe;
+  ReadValueA();
   return D;
-}
-
-void CJBig2_ArithDecoder::INITDEC() {
-  B = m_pStream->getCurByte_arith();
-  C = (B ^ 0xff) << 16;
-  BYTEIN();
-  C = C << 7;
-  CT = CT - 7;
-  A = 0x8000;
 }
 
 void CJBig2_ArithDecoder::BYTEIN() {
   unsigned char B1;
-  if (B == 0xff) {
+  if (m_B == 0xff) {
     B1 = m_pStream->getNextByte_arith();
     if (B1 > 0x8f) {
-      CT = 8;
+      m_CT = 8;
     } else {
       m_pStream->incByteIdx();
-      B = B1;
-      C = C + 0xfe00 - (B << 9);
-      CT = 7;
+      m_B = B1;
+      m_C = m_C + 0xfe00 - (m_B << 9);
+      m_CT = 7;
     }
   } else {
     m_pStream->incByteIdx();
-    B = m_pStream->getCurByte_arith();
-    C = C + 0xff00 - (B << 8);
-    CT = 8;
+    m_B = m_pStream->getCurByte_arith();
+    m_C = m_C + 0xff00 - (m_B << 8);
+    m_CT = 8;
   }
+}
+
+void CJBig2_ArithDecoder::ReadValueA() {
+  do {
+    if (m_CT == 0)
+      BYTEIN();
+    m_A <<= 1;
+    m_C <<= 1;
+    --m_CT;
+  } while ((m_A & kDefaultAValue) == 0);
 }
