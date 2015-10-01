@@ -20,9 +20,6 @@ CPDF_StructTree* CPDF_StructTree::LoadPage(const CPDF_Document* pDoc,
     return NULL;
   }
   CPDF_StructTreeImpl* pTree = new CPDF_StructTreeImpl(pDoc);
-  if (pTree == NULL) {
-    return NULL;
-  }
   pTree->LoadPageTree(pPageDict);
   return pTree;
 }
@@ -31,9 +28,6 @@ CPDF_StructTree* CPDF_StructTree::LoadDoc(const CPDF_Document* pDoc) {
     return NULL;
   }
   CPDF_StructTreeImpl* pTree = new CPDF_StructTreeImpl(pDoc);
-  if (pTree == NULL) {
-    return NULL;
-  }
   pTree->LoadDocTree();
   return pTree;
 }
@@ -63,9 +57,6 @@ void CPDF_StructTreeImpl::LoadDocTree() {
   if (pKids->GetType() == PDFOBJ_DICTIONARY) {
     CPDF_StructElementImpl* pStructElementImpl =
         new CPDF_StructElementImpl(this, NULL, (CPDF_Dictionary*)pKids);
-    if (pStructElementImpl == NULL) {
-      return;
-    }
     m_Kids.Add(pStructElementImpl);
     return;
   }
@@ -77,9 +68,6 @@ void CPDF_StructTreeImpl::LoadDocTree() {
     CPDF_Dictionary* pKid = pArray->GetDict(i);
     CPDF_StructElementImpl* pStructElementImpl =
         new CPDF_StructElementImpl(this, NULL, pKid);
-    if (pStructElementImpl == NULL) {
-      return;
-    }
     m_Kids.Add(pStructElementImpl);
   }
 }
@@ -138,9 +126,6 @@ CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(CPDF_Dictionary* pDict,
     return pElement;
   }
   pElement = new CPDF_StructElementImpl(this, NULL, pDict);
-  if (pElement == NULL) {
-    return NULL;
-  }
   map.SetAt(pDict, pElement);
   CPDF_Dictionary* pParent = pDict->GetDict(FX_BSTRC("P"));
   if (pParent == NULL ||

@@ -69,14 +69,13 @@ void CSection::ResetLinePlace() {
 }
 CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace& place,
                                  const CPVT_WordInfo& wordinfo) {
-  if (CPVT_WordInfo* pWord = new CPVT_WordInfo(wordinfo)) {
-    int32_t nWordIndex =
-        FPDF_MAX(FPDF_MIN(place.nWordIndex, m_WordArray.GetSize()), 0);
-    if (nWordIndex == m_WordArray.GetSize()) {
-      m_WordArray.Add(pWord);
-    } else {
-      m_WordArray.InsertAt(nWordIndex, pWord);
-    }
+  CPVT_WordInfo* pWord = new CPVT_WordInfo(wordinfo);
+  int32_t nWordIndex =
+      FPDF_MAX(FPDF_MIN(place.nWordIndex, m_WordArray.GetSize()), 0);
+  if (nWordIndex == m_WordArray.GetSize()) {
+    m_WordArray.Add(pWord);
+  } else {
+    m_WordArray.InsertAt(nWordIndex, pWord);
   }
   return place;
 }
@@ -1663,7 +1662,7 @@ FX_BOOL CPDF_VariableText::IsLatinWord(FX_WORD word) {
 }
 IPDF_VariableText_Iterator* CPDF_VariableText::GetIterator() {
   if (!m_pVTIterator) {
-    return m_pVTIterator = new CPDF_VariableText_Iterator(this);
+    m_pVTIterator = new CPDF_VariableText_Iterator(this);
   }
   return m_pVTIterator;
 }

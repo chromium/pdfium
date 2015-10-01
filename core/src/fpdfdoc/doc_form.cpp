@@ -102,9 +102,6 @@ CFieldTree::_Node* CFieldTree::AddChild(_Node* pParent,
     return NULL;
   }
   _Node* pNode = new _Node;
-  if (pNode == NULL) {
-    return NULL;
-  }
   pNode->parent = pParent;
   pNode->short_name = short_name;
   pNode->field_ptr = field_ptr;

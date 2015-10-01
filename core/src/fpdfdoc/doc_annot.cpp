@@ -233,9 +233,6 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
     return pForm;
   }
   pForm = new CPDF_Form(m_pList->m_pDocument, pPage->m_pResources, pStream);
-  if (pForm == NULL) {
-    return NULL;
-  }
   pForm->ParseContent(NULL, NULL, NULL, NULL);
   m_APMap.SetAt(pStream, pForm);
   return pForm;

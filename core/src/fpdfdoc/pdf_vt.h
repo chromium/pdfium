@@ -223,18 +223,13 @@ class CLines {
   }
   int32_t Add(const CPVT_LineInfo& lineinfo) {
     if (m_nTotal >= GetSize()) {
-      if (CLine* pLine = new CLine) {
-        pLine->m_LineInfo = lineinfo;
-        m_Lines.Add(pLine);
-        return m_nTotal++;
-      }
-      return m_nTotal;
-    } else {
-      if (CLine* pLine = GetAt(m_nTotal)) {
-        pLine->m_LineInfo = lineinfo;
-      }
-      return m_nTotal++;
+      CLine* pLine = new CLine;
+      pLine->m_LineInfo = lineinfo;
+      m_Lines.Add(pLine);
+    } else if (CLine* pLine = GetAt(m_nTotal)) {
+      pLine->m_LineInfo = lineinfo;
     }
+    return m_nTotal++;
   }
   void Clear() {
     for (int32_t i = GetSize() - 1; i >= m_nTotal; i--) {
