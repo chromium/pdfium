@@ -4,33 +4,36 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JBIG2_ARITH_INT_DECODER_H_
-#define _JBIG2_ARITH_INT_DECODER_H_
+#ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_ARITHINTDECODER_H_
+#define CORE_SRC_FXCODEC_JBIG2_JBIG2_ARITHINTDECODER_H_
 
+#include <vector>
+
+#include "../../../include/fxcrt/fx_system.h"
 #include "JBig2_ArithDecoder.h"
 
 class CJBig2_ArithIntDecoder {
  public:
   CJBig2_ArithIntDecoder();
-
   ~CJBig2_ArithIntDecoder();
 
-  int decode(CJBig2_ArithDecoder* pArithDecoder, int* nResult);
+  bool decode(CJBig2_ArithDecoder* pArithDecoder, int* nResult);
 
  private:
-  JBig2ArithCtx* IAx;
+  std::vector<JBig2ArithCtx> m_IAx;
 };
+
 class CJBig2_ArithIaidDecoder {
  public:
-  CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA);
-
+  explicit CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA);
   ~CJBig2_ArithIaidDecoder();
 
-  int decode(CJBig2_ArithDecoder* pArithDecoder, int* nResult);
+  void decode(CJBig2_ArithDecoder* pArithDecoder, FX_DWORD* nResult);
 
  private:
-  JBig2ArithCtx* IAID;
+  std::vector<JBig2ArithCtx> m_IAID;
 
-  unsigned char SBSYMCODELEN;
+  const unsigned char SBSYMCODELEN;
 };
-#endif
+
+#endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_ARITHINTDECODER_H_

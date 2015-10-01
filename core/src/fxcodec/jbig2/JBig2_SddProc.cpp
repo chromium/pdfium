@@ -35,7 +35,6 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   FX_DWORD nTmp;
   FX_DWORD SBNUMSYMS;
   uint8_t SBSYMCODELEN;
-  FX_DWORD IDI;
   int32_t RDXI, RDYI;
   CJBig2_Image** SBSYMS;
   nonstd::unique_ptr<CJBig2_ArithIaidDecoder> IAID;
@@ -65,7 +64,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   NSYMSDECODED = 0;
   while (NSYMSDECODED < SDNUMNEWSYMS) {
     BS = nullptr;
-    if (IADH->decode(pArithDecoder, &HCDH) == -1) {
+    if (!IADH->decode(pArithDecoder, &HCDH)) {
       goto failed;
     }
     HCHEIGHT = HCHEIGHT + HCDH;
@@ -116,7 +115,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           goto failed;
         }
       } else {
-        if (IAAI->decode(pArithDecoder, (int*)&REFAGGNINST) == -1) {
+        if (!IAAI->decode(pArithDecoder, (int*)&REFAGGNINST)) {
           goto failed;
         }
         if (REFAGGNINST > 1) {
@@ -209,11 +208,10 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           FX_Free(SBSYMS);
         } else if (REFAGGNINST == 1) {
           SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
-          if (IAID->decode(pArithDecoder, (int*)&IDI) == -1) {
-            goto failed;
-          }
-          if ((IARDX->decode(pArithDecoder, &RDXI) == -1) ||
-              (IARDY->decode(pArithDecoder, &RDYI) == -1)) {
+          FX_DWORD IDI;
+          IAID->decode(pArithDecoder, &IDI);
+          if (!IARDX->decode(pArithDecoder, &RDXI) ||
+              !IARDY->decode(pArithDecoder, &RDYI)) {
             goto failed;
           }
           if (IDI >= SBNUMSYMS) {
@@ -256,7 +254,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   CUREXFLAG = 0;
   EXFLAGS = FX_Alloc(FX_BOOL, SDNUMINSYMS + SDNUMNEWSYMS);
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
-    if (IAEX->decode(pArithDecoder, (int*)&EXRUNLENGTH) == -1) {
+    if (!IAEX->decode(pArithDecoder, (int*)&EXRUNLENGTH)) {
       FX_Free(EXFLAGS);
       goto failed;
     }
