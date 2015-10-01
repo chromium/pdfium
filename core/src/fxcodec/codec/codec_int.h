@@ -11,6 +11,7 @@
 #include <list>
 #include <map>
 
+#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../../third_party/libopenjpeg20/openjpeg.h"  // For OPJ_SIZE_T.
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../jbig2/JBig2_Context.h"
@@ -36,12 +37,6 @@ class CCodec_BasicModule : public ICodec_BasicModule {
                                                          int bpc);
 };
 
-struct CCodec_ImageDataCache {
-  int m_Width, m_Height;
-  int m_nCachedLines;
-  uint8_t m_Data;
-};
-
 class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
  public:
   CCodec_ScanlineDecoder();
@@ -50,50 +45,58 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
   // ICodec_ScanlineDecoder
   FX_DWORD GetSrcOffset() override { return -1; }
   void DownScale(int dest_width, int dest_height) override;
-  uint8_t* GetScanline(int line) override;
+  const uint8_t* GetScanline(int line) override;
   FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) override;
   int GetWidth() override { return m_OutputWidth; }
   int GetHeight() override { return m_OutputHeight; }
   int CountComps() override { return m_nComps; }
   int GetBPC() override { return m_bpc; }
   FX_BOOL IsColorTransformed() override { return m_bColorTransformed; }
-  void ClearImageData() override {
-    FX_Free(m_pDataCache);
-    m_pDataCache = NULL;
-  }
+  void ClearImageData() override { m_pDataCache.reset(); }
 
  protected:
-  int m_OrigWidth;
+  class ImageDataCache {
+   public:
+    ImageDataCache(int width, int height, int pitch);
+    ~ImageDataCache();
 
-  int m_OrigHeight;
+    bool AllocateCache();
+    void AppendLine(const uint8_t* line);
 
-  int m_DownScale;
+    int NumLines() const { return m_nCachedLines; }
+    const uint8_t* GetLine(int line) const;
+    bool IsSameDimensions(int width, int height) const {
+      return width == m_Width && height == m_Height;
+    }
 
-  int m_OutputWidth;
+   private:
+    bool IsValid() const { return m_Data.get() != nullptr; }
 
-  int m_OutputHeight;
+    const int m_Width;
+    const int m_Height;
+    const int m_Pitch;
+    int m_nCachedLines;
+    nonstd::unique_ptr<uint8_t, FxFreeDeleter> m_Data;
+  };
 
-  int m_nComps;
-
-  int m_bpc;
-
-  int m_Pitch;
-
-  FX_BOOL m_bColorTransformed;
+  virtual FX_BOOL v_Rewind() = 0;
+  virtual uint8_t* v_GetNextLine() = 0;
+  virtual void v_DownScale(int dest_width, int dest_height) = 0;
 
   uint8_t* ReadNextLine();
 
-  virtual FX_BOOL v_Rewind() = 0;
-
-  virtual uint8_t* v_GetNextLine() = 0;
-
-  virtual void v_DownScale(int dest_width, int dest_height) = 0;
-
+  int m_OrigWidth;
+  int m_OrigHeight;
+  int m_DownScale;
+  int m_OutputWidth;
+  int m_OutputHeight;
+  int m_nComps;
+  int m_bpc;
+  int m_Pitch;
+  FX_BOOL m_bColorTransformed;
   int m_NextLine;
-
   uint8_t* m_pLastScanline;
-
-  CCodec_ImageDataCache* m_pDataCache;
+  nonstd::unique_ptr<ImageDataCache> m_pDataCache;
 };
 
 class CCodec_FaxModule : public ICodec_FaxModule {
@@ -257,10 +260,10 @@ class CCodec_JpxModule : public ICodec_JpxModule {
                     FX_DWORD* width,
                     FX_DWORD* height,
                     FX_DWORD* components) override;
-  FX_BOOL Decode(CJPX_Decoder* pDecoder,
-                 uint8_t* dest_data,
-                 int pitch,
-                 uint8_t* offsets) override;
+  bool Decode(CJPX_Decoder* pDecoder,
+              uint8_t* dest_data,
+              int pitch,
+              const std::vector<uint8_t>& offsets) override;
   void DestroyDecoder(CJPX_Decoder* pDecoder) override;
 };
 

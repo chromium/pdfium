@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <vector>
+
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
@@ -57,15 +59,13 @@ FX_SAFE_DWORD CalculatePitch32(int bpp, int width) {
   return pitch;
 }
 
-// Wrapper class to hold objects allocated in CPDF_DIBSource::LoadJpxBitmap(),
-// because nonstd::unique_ptr does not support custom deleters yet.
+// Wrapper class to use with nonstd::unique_ptr for CJPX_Decoder.
 class JpxBitMapContext {
  public:
   explicit JpxBitMapContext(ICodec_JpxModule* jpx_module)
-      : jpx_module_(jpx_module), decoder_(nullptr), output_offsets_(nullptr) {}
+      : jpx_module_(jpx_module), decoder_(nullptr) {}
 
   ~JpxBitMapContext() {
-    FX_Free(output_offsets_);
     jpx_module_->DestroyDecoder(decoder_);
   }
 
@@ -74,17 +74,9 @@ class JpxBitMapContext {
 
   CJPX_Decoder* decoder() { return decoder_; }
 
-  // Takes ownership of |output_offsets|.
-  void set_output_offsets(unsigned char* output_offsets) {
-    output_offsets_ = output_offsets;
-  }
-
-  unsigned char* output_offsets() { return output_offsets_; }
-
  private:
-  ICodec_JpxModule* jpx_module_;   // Weak pointer.
-  CJPX_Decoder* decoder_;          // Decoder, owned.
-  unsigned char* output_offsets_;  // Output offsets for decoding, owned.
+  ICodec_JpxModule* const jpx_module_;  // Weak pointer.
+  CJPX_Decoder* decoder_;               // Decoder, owned.
 
   // Disallow evil constructors
   JpxBitMapContext(const JpxBitMapContext&);
@@ -747,16 +739,15 @@ void CPDF_DIBSource::LoadJpxBitmap() {
     return;
   }
   m_pCachedBitmap->Clear(0xFFFFFFFF);
-  context->set_output_offsets(FX_Alloc(uint8_t, components));
+  std::vector<uint8_t> output_offsets(components);
   for (int i = 0; i < components; ++i)
-    context->output_offsets()[i] = i;
+    output_offsets[i] = i;
   if (bSwapRGB) {
-    context->output_offsets()[0] = 2;
-    context->output_offsets()[2] = 0;
+    output_offsets[0] = 2;
+    output_offsets[2] = 0;
   }
   if (!pJpxModule->Decode(context->decoder(), m_pCachedBitmap->GetBuffer(),
-                          m_pCachedBitmap->GetPitch(),
-                          context->output_offsets())) {
+                          m_pCachedBitmap->GetPitch(), output_offsets)) {
     m_pCachedBitmap.reset();
     return;
   }

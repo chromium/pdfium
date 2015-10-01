@@ -5,7 +5,13 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fxcodec/fx_codec.h"
+
+#include <cmath>
+
+#include "../../../../third_party/base/logging.h"
+#include "../../../include/fxcrt/fx_safe_types.h"
 #include "codec_int.h"
+
 CCodec_ModuleMgr::CCodec_ModuleMgr()
     : m_pBasicModule(new CCodec_BasicModule),
       m_pFaxModule(new CCodec_FaxModule),
@@ -14,25 +20,66 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
       m_pJbig2Module(new CCodec_Jbig2Module),
       m_pIccModule(new CCodec_IccModule),
       m_pFlateModule(new CCodec_FlateModule) {}
-CCodec_ScanlineDecoder::CCodec_ScanlineDecoder() {
-  m_NextLine = -1;
-  m_pDataCache = NULL;
-  m_pLastScanline = NULL;
+
+CCodec_ScanlineDecoder::ImageDataCache::ImageDataCache(int width,
+                                                       int height,
+                                                       int pitch)
+    : m_Width(width), m_Height(height), m_Pitch(pitch), m_nCachedLines(0) {
 }
+
+CCodec_ScanlineDecoder::ImageDataCache::~ImageDataCache() {
+}
+
+bool CCodec_ScanlineDecoder::ImageDataCache::AllocateCache() {
+  if (m_Pitch <= 0 || m_Height < 0)
+    return false;
+
+  FX_SAFE_SIZE_T size = m_Pitch;
+  size *= m_Height;
+  if (!size.IsValid())
+    return false;
+
+  m_Data.reset(FX_TryAlloc(uint8_t, size.ValueOrDie()));
+  return IsValid();
+}
+
+void CCodec_ScanlineDecoder::ImageDataCache::AppendLine(const uint8_t* line) {
+  // If the callers adds more lines than there is room, fail.
+  if (m_Pitch <= 0 || m_nCachedLines >= m_Height) {
+    NOTREACHED();
+    return;
+  }
+
+  size_t offset = m_Pitch;
+  FXSYS_memcpy(m_Data.get() + offset * m_nCachedLines, line, m_Pitch);
+  ++m_nCachedLines;
+}
+
+const uint8_t* CCodec_ScanlineDecoder::ImageDataCache::GetLine(int line) const {
+  if (m_Pitch <= 0 || line < 0 || line >= m_nCachedLines)
+    return nullptr;
+
+  size_t offset = m_Pitch;
+  return m_Data.get() + offset * line;
+}
+
+CCodec_ScanlineDecoder::CCodec_ScanlineDecoder()
+    : m_NextLine(-1), m_pLastScanline(nullptr) {
+}
+
 CCodec_ScanlineDecoder::~CCodec_ScanlineDecoder() {
-  FX_Free(m_pDataCache);
 }
-uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
-  if (m_pDataCache && line < m_pDataCache->m_nCachedLines) {
-    return &m_pDataCache->m_Data + line * m_Pitch;
-  }
-  if (m_NextLine == line + 1) {
+
+const uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
+  if (m_pDataCache && line < m_pDataCache->NumLines())
+    return m_pDataCache->GetLine(line);
+
+  if (m_NextLine == line + 1)
     return m_pLastScanline;
-  }
+
   if (m_NextLine < 0 || m_NextLine > line) {
-    if (!v_Rewind()) {
-      return NULL;
-    }
+    if (!v_Rewind())
+      return nullptr;
     m_NextLine = 0;
   }
   while (m_NextLine < line) {
@@ -43,18 +90,19 @@ uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
   m_NextLine++;
   return m_pLastScanline;
 }
+
 FX_BOOL CCodec_ScanlineDecoder::SkipToScanline(int line, IFX_Pause* pPause) {
-  if (m_pDataCache && line < m_pDataCache->m_nCachedLines) {
+  if (m_pDataCache && line < m_pDataCache->NumLines())
     return FALSE;
-  }
-  if (m_NextLine == line || m_NextLine == line + 1) {
+
+  if (m_NextLine == line || m_NextLine == line + 1)
     return FALSE;
-  }
+
   if (m_NextLine < 0 || m_NextLine > line) {
     v_Rewind();
     m_NextLine = 0;
   }
-  m_pLastScanline = NULL;
+  m_pLastScanline = nullptr;
   while (m_NextLine < line) {
     m_pLastScanline = ReadNextLine();
     m_NextLine++;
@@ -64,42 +112,35 @@ FX_BOOL CCodec_ScanlineDecoder::SkipToScanline(int line, IFX_Pause* pPause) {
   }
   return FALSE;
 }
+
 uint8_t* CCodec_ScanlineDecoder::ReadNextLine() {
   uint8_t* pLine = v_GetNextLine();
-  if (pLine == NULL) {
-    return NULL;
-  }
-  if (m_pDataCache && m_NextLine == m_pDataCache->m_nCachedLines) {
-    FXSYS_memcpy(&m_pDataCache->m_Data + m_NextLine * m_Pitch, pLine, m_Pitch);
-    m_pDataCache->m_nCachedLines++;
-  }
+  if (!pLine)
+    return nullptr;
+
+  if (m_pDataCache && m_NextLine == m_pDataCache->NumLines())
+    m_pDataCache->AppendLine(pLine);
   return pLine;
 }
+
 void CCodec_ScanlineDecoder::DownScale(int dest_width, int dest_height) {
-  if (dest_width < 0) {
-    dest_width = -dest_width;
-  }
-  if (dest_height < 0) {
-    dest_height = -dest_height;
-  }
+  dest_width = std::abs(dest_width);
+  dest_height = std::abs(dest_height);
   v_DownScale(dest_width, dest_height);
-  if (m_pDataCache) {
-    if (m_pDataCache->m_Height == m_OutputHeight &&
-        m_pDataCache->m_Width == m_OutputWidth) {
-      return;
-    }
-    FX_Free(m_pDataCache);
-    m_pDataCache = NULL;
-  }
-  m_pDataCache = (CCodec_ImageDataCache*)FX_TryAlloc(
-      uint8_t, sizeof(CCodec_ImageDataCache) + m_Pitch * m_OutputHeight);
-  if (m_pDataCache == NULL) {
+
+  if (m_pDataCache &&
+      m_pDataCache->IsSameDimensions(m_OutputWidth, m_OutputHeight)) {
     return;
   }
-  m_pDataCache->m_Height = m_OutputHeight;
-  m_pDataCache->m_Width = m_OutputWidth;
-  m_pDataCache->m_nCachedLines = 0;
+
+  nonstd::unique_ptr<ImageDataCache> cache(
+      new ImageDataCache(m_OutputWidth, m_OutputHeight, m_Pitch));
+  if (!cache->AllocateCache())
+    return;
+
+  m_pDataCache = nonstd::move(cache);
 }
+
 FX_BOOL CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf,
                                             FX_DWORD src_size,
                                             uint8_t*& dest_buf,

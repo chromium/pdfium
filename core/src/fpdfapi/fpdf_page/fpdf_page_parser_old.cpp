@@ -247,10 +247,10 @@ FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder,
   dest_buf = FX_Alloc2D(uint8_t, pitch, height);
   dest_size = pitch * height;  // Safe since checked alloc returned.
   for (int row = 0; row < height; row++) {
-    uint8_t* pLine = pDecoder->GetScanline(row);
-    if (pLine == NULL) {
+    const uint8_t* pLine = pDecoder->GetScanline(row);
+    if (!pLine)
       break;
-    }
+
     FXSYS_memcpy(dest_buf + row * pitch, pLine, pitch);
   }
   FX_DWORD srcoff = pDecoder->GetSrcOffset();

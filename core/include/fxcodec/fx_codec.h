@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 #define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 
+#include <vector>
+
 #include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fxcrt/fx_basic.h"
 #include "fx_codec_def.h"
@@ -64,6 +66,7 @@ class ICodec_BasicModule {
                                                          int nComps,
                                                          int bpc) = 0;
 };
+
 class ICodec_ScanlineDecoder {
  public:
   virtual ~ICodec_ScanlineDecoder() {}
@@ -72,7 +75,7 @@ class ICodec_ScanlineDecoder {
 
   virtual void DownScale(int dest_width, int dest_height) = 0;
 
-  virtual uint8_t* GetScanline(int line) = 0;
+  virtual const uint8_t* GetScanline(int line) = 0;
 
   virtual FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) = 0;
 
@@ -88,6 +91,7 @@ class ICodec_ScanlineDecoder {
 
   virtual void ClearImageData() = 0;
 };
+
 class ICodec_FlateModule {
  public:
   virtual ~ICodec_FlateModule() {}
@@ -211,10 +215,10 @@ class ICodec_JpxModule {
                             FX_DWORD* height,
                             FX_DWORD* components) = 0;
 
-  virtual FX_BOOL Decode(CJPX_Decoder* pDecoder,
-                         uint8_t* dest_data,
-                         int pitch,
-                         uint8_t* offsets) = 0;
+  virtual bool Decode(CJPX_Decoder* pDecoder,
+                      uint8_t* dest_data,
+                      int pitch,
+                      const std::vector<uint8_t>& offsets) = 0;
 
   virtual void DestroyDecoder(CJPX_Decoder* pDecoder) = 0;
 };
