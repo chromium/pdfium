@@ -22,6 +22,9 @@
 // list keeps track of the freshness of entries, with freshest ones
 // at the front. Even a tiny cache size like 2 makes a dramatic
 // difference for typical JBIG2 documents.
+//
+// Disabled until we can figure out how to clear cache between documents.
+// https://code.google.com/p/pdfium/issues/detail?id=207
 static const int kSymbolDictCacheMaxSize = 2;
 
 CJBig2_Context* CJBig2_Context::CreateContext(
