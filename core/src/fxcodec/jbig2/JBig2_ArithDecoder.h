@@ -10,6 +10,8 @@
 class CJBig2_BitStream;
 
 struct JBig2ArithCtx {
+  JBig2ArithCtx() : MPS(0), I(0) {}
+
   unsigned int MPS;
   unsigned int I;
 };
