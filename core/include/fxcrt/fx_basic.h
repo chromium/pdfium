@@ -1085,6 +1085,10 @@ class CFX_AutoRestorer {
   T m_OldValue;
 };
 
+struct FxFreeDeleter {
+  inline void operator()(void* ptr) const { FX_Free(ptr); }
+};
+
 // Used with nonstd::unique_ptr to Release() objects that can't be deleted.
 template <class T>
 struct ReleaseDeleter {
