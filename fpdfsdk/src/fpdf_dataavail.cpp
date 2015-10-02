@@ -115,8 +115,7 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   CheckUnSupportError(pParser->GetDocument(), FPDF_ERR_SUCCESS);
   CPDF_Document* pPDFDoc = pParser->GetDocument();
   CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
-  CPDFXFA_Document* pDocument = new CPDFXFA_Document(pPDFDoc, pApp);
-  return pDocument;
+  return new CPDFXFA_Document(pPDFDoc, pApp);
 }
 
 DLLEXPORT int STDCALL FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc) {

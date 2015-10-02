@@ -265,8 +265,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
     return NULL;
 
   CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
-  CPDFXFA_Document* pDocument = new CPDFXFA_Document(pPDFDoc, pProvider);
-  return pDocument;
+  return new CPDFXFA_Document(pPDFDoc, pProvider);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
@@ -351,8 +350,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf,
     return NULL;
 
   CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
-  CPDFXFA_Document* pDocument = new CPDFXFA_Document(pPDFDoc, pProvider);
-  return pDocument;
+  return new CPDFXFA_Document(pPDFDoc, pProvider);
 }
 
 DLLEXPORT FPDF_DOCUMENT STDCALL
@@ -375,8 +373,7 @@ FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
     return NULL;
 
   CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
-  CPDFXFA_Document* pDocument = new CPDFXFA_Document(pPDFDoc, pProvider);
-  return pDocument;
+  return new CPDFXFA_Document(pPDFDoc, pProvider);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
@@ -885,18 +882,6 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                               int page_index,
                                               double* width,
                                               double* height) {
-  // 	CPDF_Document* pDoc = (CPDF_Document*)document;
-  // 	if(pDoc == NULL)
-  // 		return FALSE;
-  //
-  // 	CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
-  // 	if (pDict == NULL) return FALSE;
-  //
-  // 	CPDF_Page page;
-  // 	page.Load(pDoc, pDict);
-  // 	*width = page.GetPageWidth();
-  // 	*height = page.GetPageHeight();
-
   CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
   if (pDoc == NULL)
     return FALSE;

@@ -197,8 +197,6 @@ void SetPageContents(CFX_ByteString key,
     // Create a new contents dictionary
     if (!key.IsEmpty()) {
       CPDF_Stream* pNewContents = new CPDF_Stream(NULL, 0, new CPDF_Dictionary);
-      if (!pNewContents)
-        return;
       pPage->SetAtReference("Contents", pDocument,
                             pDocument->AddIndirectObject(pNewContents));
 

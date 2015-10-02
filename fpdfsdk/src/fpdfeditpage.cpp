@@ -19,8 +19,6 @@
 
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
   CPDF_Document* pDoc = new CPDF_Document;
-  if (!pDoc)
-    return NULL;
   pDoc->CreateNewDoc();
   time_t currentTime;
 
@@ -46,8 +44,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
   }
 
   CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
-  CPDFXFA_Document* document = new CPDFXFA_Document(pDoc, pApp);
-  return document;
+  return new CPDFXFA_Document(pDoc, pApp);
 }
 
 DLLEXPORT void STDCALL FPDFPage_Delete(FPDF_DOCUMENT document, int page_index) {
@@ -88,10 +85,6 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
   pPageDict->SetAt("MediaBox", pMediaBoxArray);
   pPageDict->SetAt("Rotate", new CPDF_Number(0));
   pPageDict->SetAt("Resources", new CPDF_Dictionary);
-
-  // 	CPDF_Page* pPage = new CPDF_Page;
-  // 	pPage->Load(pDoc,pPageDict);
-  // 	pPage->ParseContent();
 
   CPDFXFA_Page* pPage =
       new CPDFXFA_Page((CPDFXFA_Document*)document, page_index);
@@ -288,7 +281,7 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_object;
   if (pPageObj == NULL)
     return;
-  // PDF_ImageObject* pImageObj = new CPDF_ImageObject;
+
   CFX_AffineMatrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
                           (FX_FLOAT)e, (FX_FLOAT)f);
   pPageObj->Transform(matrix);
