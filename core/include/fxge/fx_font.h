@@ -60,14 +60,13 @@ class CFX_Font {
   CFX_Font();
   ~CFX_Font();
 
-  FX_BOOL LoadSubst(const CFX_ByteString& face_name,
-                    FX_BOOL bTrueType,
-                    FX_DWORD flags,
-                    int weight,
-                    int italic_angle,
-                    int CharsetCP,
-                    FX_BOOL bVertical = FALSE);
-
+  void LoadSubst(const CFX_ByteString& face_name,
+                 FX_BOOL bTrueType,
+                 FX_DWORD flags,
+                 int weight,
+                 int italic_angle,
+                 int CharsetCP,
+                 FX_BOOL bVertical = FALSE);
   FX_BOOL LoadEmbedded(const uint8_t* data, FX_DWORD size);
 
   FX_BOOL LoadFile(IFX_FileRead* pFile,

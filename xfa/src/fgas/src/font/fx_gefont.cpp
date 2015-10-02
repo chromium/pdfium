@@ -235,9 +235,8 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
   } else if (dwFlags & FXFONT_ITALIC) {
     csFontFamily += ",Italic";
   }
-  FX_BOOL bRet =
-      m_pFont->LoadSubst(csFontFamily, TRUE, dwFlags, iWeight, 0, wCodePage);
-  bRet = m_pFont->m_Face != NULL;
+  m_pFont->LoadSubst(csFontFamily, TRUE, dwFlags, iWeight, 0, wCodePage);
+  FX_BOOL bRet = m_pFont->m_Face != nullptr;
   if (bRet) {
     InitFont();
   }
