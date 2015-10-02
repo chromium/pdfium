@@ -400,6 +400,8 @@ static FX_BOOL PNG_Predictor(uint8_t*& data_buf,
   if (row_size <= 0)
     return FALSE;
   const int row_count = (data_size + row_size) / (row_size + 1);
+  if (row_count <= 0)
+    return FALSE;
   const int last_row_size = data_size % (row_size + 1);
   uint8_t* dest_buf = FX_Alloc2D(uint8_t, row_size, row_count);
   int byte_cnt = 0;
