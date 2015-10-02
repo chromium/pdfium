@@ -242,8 +242,7 @@ FX_BOOL CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
   return FALSE;
 }
 
-FX_BOOL CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot,
-                                          FX_UINT nFlag) {
+void CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   CPDF_Page* pPage = pWidget->GetPDFPage();
   CPDFSDK_Document* pDoc = m_pApp->GetSDKDocument();
@@ -254,31 +253,31 @@ FX_BOOL CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot,
   m_bValid = TRUE;
   FX_RECT rcRect = GetViewBBox(pPageView, pAnnot);
   InvalidateRect(rcRect.left, rcRect.top, rcRect.right, rcRect.bottom);
-  return TRUE;
 }
 
-FX_BOOL CFFL_FormFiller::KillFocusForAnnot(CPDFSDK_Annot* pAnnot,
-                                           FX_UINT nFlag) {
+void CFFL_FormFiller::KillFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   if (!IsValid())
-    return TRUE;
+    return;
 
   CPDFSDK_PageView* pPageView = GetCurPageView();
+  if (!pPageView)
+    return;
+
   CommitData(pPageView, nFlag);
 
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, FALSE))
     pWnd->KillFocus();
 
+  FX_BOOL bDestroyPDFWindow;
   switch (m_pWidget->GetFieldType()) {
     case FIELDTYPE_PUSHBUTTON:
     case FIELDTYPE_CHECKBOX:
     case FIELDTYPE_RADIOBUTTON:
-      EscapeFiller(pPageView, TRUE);
-      break;
+      bDestroyPDFWindow = TRUE;
     default:
-      EscapeFiller(pPageView, FALSE);
-      break;
+      bDestroyPDFWindow = FALSE;
   }
-  return TRUE;
+  EscapeFiller(pPageView, bDestroyPDFWindow);
 }
 
 FX_BOOL CFFL_FormFiller::IsValid() const {
