@@ -35,22 +35,17 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
       m_bBlocking(FALSE),
       m_isolate(NULL),
       m_isolateManaged(false) {
-  unsigned int embedderDataSlot = 0;
-  if (m_pApp->GetFormFillInfo()->m_pJsPlatform->version >= 2) {
-    m_isolate = reinterpret_cast<v8::Isolate*>(
-        m_pApp->GetFormFillInfo()->m_pJsPlatform->m_isolate);
-    embedderDataSlot = pApp->GetFormFillInfo()->m_pJsPlatform->m_v8EmbedderSlot;
+  IPDF_JSPLATFORM* pPlatform = m_pApp->GetFormFillInfo()->m_pJsPlatform;
+  if (pPlatform->version <= 2) {
+    unsigned int embedderDataSlot = 0;
+    v8::Isolate* pExternalIsolate = nullptr;
+    if (pPlatform->version == 2) {
+      pExternalIsolate = reinterpret_cast<v8::Isolate*>(pPlatform->m_isolate);
+      embedderDataSlot = pPlatform->m_v8EmbedderSlot;
+    }
+    FXJS_Initialize(embedderDataSlot, pExternalIsolate);
   }
-  if (!m_isolate) {
-    m_pArrayBufferAllocator.reset(new FXJS_ArrayBufferAllocator());
-
-    v8::Isolate::CreateParams params;
-    params.array_buffer_allocator = m_pArrayBufferAllocator.get();
-    m_isolate = v8::Isolate::New(params);
-    m_isolateManaged = true;
-  }
-
-  FXJS_Initialize(embedderDataSlot);
+  m_isolateManaged = FXJS_GetIsolate(&m_isolate);
   DefineJSObjects();
 
   CJS_Context* pContext = (CJS_Context*)NewContext();

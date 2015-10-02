@@ -10,7 +10,6 @@
 #include <set>
 #include <utility>
 
-#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../core/include/fxcrt/fx_basic.h"
 #include "../jsapi/fxjs_v8.h"
 #include "IJavaScript.h"
@@ -55,7 +54,6 @@ class CJS_Runtime : public IFXJS_Runtime {
   std::set<FieldEvent> m_FieldEventSet;
   v8::Isolate* m_isolate;
   bool m_isolateManaged;
-  nonstd::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
   v8::Global<v8::Context> m_context;
 };
 

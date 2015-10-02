@@ -130,7 +130,7 @@ DLLEXPORT void STDCALL FPDF_InitLibrary();
 
 // Process-wide options for initializing library.
 typedef struct FPDF_LIBRARY_CONFIG_ {
-  // Version number of the interface. Currently must be 1.
+  // Version number of the interface. Currently must be 2.
   int version;
 
   // Array of paths to scan in place of the defaults when using built-in
@@ -138,6 +138,17 @@ typedef struct FPDF_LIBRARY_CONFIG_ {
   // The Array may be NULL itself to use the default paths. May be ignored
   // entirely depending upon the platform.
   const char** m_pUserFontPaths;
+
+  // Version 2.
+
+  // pointer to the v8::Isolate to use, or NULL to force PDFium to create one.
+  void* m_pIsolate;
+
+  // The embedder data slot to use in the v8::Isolate to store PDFium's
+  // per-isolate data. The value needs to be between 0 and
+  // v8::Internals::kNumIsolateDataLots (exclusive). Note that 0 is fine
+  // for most embedders.
+  unsigned int m_v8EmbedderSlot;
 } FPDF_LIBRARY_CONFIG;
 
 // Function: FPDF_InitLibraryWithConfig
