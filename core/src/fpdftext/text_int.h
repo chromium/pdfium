@@ -227,7 +227,7 @@ class CPDF_LinkExtract : public IPDF_LinkExtract {
   void DeleteLinkList();
   FX_BOOL CheckWebLink(CFX_WideString& strBeCheck);
   FX_BOOL CheckMailLink(CFX_WideString& str);
-  FX_BOOL AppendToLinkList(int start, int count, const CFX_WideString& strUrl);
+  void AppendToLinkList(int start, int count, const CFX_WideString& strUrl);
 
  private:
   LINK_InfoArray m_LinkList;

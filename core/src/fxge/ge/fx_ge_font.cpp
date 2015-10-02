@@ -48,13 +48,13 @@ void CFX_Font::DeleteFace() {
   FXFT_Done_Face(m_Face);
   m_Face = NULL;
 }
-FX_BOOL CFX_Font::LoadSubst(const CFX_ByteString& face_name,
-                            FX_BOOL bTrueType,
-                            FX_DWORD flags,
-                            int weight,
-                            int italic_angle,
-                            int CharsetCP,
-                            FX_BOOL bVertical) {
+void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
+                         FX_BOOL bTrueType,
+                         FX_DWORD flags,
+                         int weight,
+                         int italic_angle,
+                         int CharsetCP,
+                         FX_BOOL bVertical) {
   m_bEmbedded = FALSE;
   m_bVertical = bVertical;
   m_pSubstFont = new CFX_SubstFont;
@@ -71,7 +71,6 @@ FX_BOOL CFX_Font::LoadSubst(const CFX_ByteString& face_name,
     m_pFontData = FXFT_Get_Face_Stream_Base(m_Face);
     m_dwSize = FXFT_Get_Face_Stream_Size(m_Face);
   }
-  return TRUE;
 }
 
 int CFX_Font::GetGlyphWidth(FX_DWORD glyph_index) {

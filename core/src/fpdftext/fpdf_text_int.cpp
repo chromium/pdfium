@@ -2574,9 +2574,7 @@ void CPDF_LinkExtract::ParseLink() {
         }
         if (nCount > 5 &&
             (CheckWebLink(strBeCheck) || CheckMailLink(strBeCheck))) {
-          if (!AppendToLinkList(start, nCount, strBeCheck)) {
-            break;
-          }
+          AppendToLinkList(start, nCount, strBeCheck);
         }
       }
       start = ++pos;
@@ -2690,16 +2688,17 @@ FX_BOOL CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
   }
   return TRUE;
 }
-FX_BOOL CPDF_LinkExtract::AppendToLinkList(int start,
-                                           int count,
-                                           const CFX_WideString& strUrl) {
+
+void CPDF_LinkExtract::AppendToLinkList(int start,
+                                        int count,
+                                        const CFX_WideString& strUrl) {
   CPDF_LinkExt* linkInfo = new CPDF_LinkExt;
   linkInfo->m_strUrl = strUrl;
   linkInfo->m_Start = start;
   linkInfo->m_Count = count;
   m_LinkList.Add(linkInfo);
-  return TRUE;
 }
+
 CFX_WideString CPDF_LinkExtract::GetURL(int index) const {
   if (!m_bIsParsed || index < 0 || index >= m_LinkList.GetSize()) {
     return L"";
