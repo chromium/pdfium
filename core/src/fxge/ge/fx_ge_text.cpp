@@ -1577,9 +1577,6 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
   }
   int dib_width = bmwidth;
   CFX_GlyphBitmap* pGlyphBitmap = new CFX_GlyphBitmap;
-  if (!pGlyphBitmap) {
-    return NULL;
-  }
   pGlyphBitmap->m_Bitmap.Create(
       dib_width, bmheight,
       anti_alias == FXFT_RENDER_MODE_MONO ? FXDIB_1bppMask : FXDIB_8bppMask);
@@ -1828,9 +1825,6 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width) {
     return NULL;
   }
   CFX_PathData* pPath = new CFX_PathData;
-  if (!pPath) {
-    return NULL;
-  }
   pPath->SetPointCount(params.m_PointCount);
   params.m_bCount = FALSE;
   params.m_PointCount = 0;

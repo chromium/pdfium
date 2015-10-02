@@ -65,9 +65,6 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
   m_bLogic = TRUE;
   if (pFont->m_pSubstFont) {
     m_pSubstFont = new CFX_SubstFont;
-    if (!m_pSubstFont) {
-      return FALSE;
-    }
     m_pSubstFont->m_Charset = pFont->m_pSubstFont->m_Charset;
     m_pSubstFont->m_ExtHandle = pFont->m_pSubstFont->m_ExtHandle;
     m_pSubstFont->m_SubstFlags = pFont->m_pSubstFont->m_SubstFlags;
@@ -129,9 +126,6 @@ FX_BOOL CFX_Font::LoadSubst(const CFX_ByteString& face_name,
   m_bEmbedded = FALSE;
   m_bVertical = bVertical;
   m_pSubstFont = new CFX_SubstFont;
-  if (!m_pSubstFont) {
-    return FALSE;
-  }
   m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(
       face_name, bTrueType, flags, weight, italic_angle, CharsetCP,
       m_pSubstFont);

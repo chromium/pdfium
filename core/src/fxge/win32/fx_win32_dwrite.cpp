@@ -337,9 +337,6 @@ HRESULT STDMETHODCALLTYPE CDwFontFileLoader::CreateStreamFromKey(
   *fontFileStream = NULL;
   CDwFontFileStream* stream =
       new CDwFontFileStream(fontFileReferenceKey, fontFileReferenceKeySize);
-  if (stream == NULL) {
-    return E_OUTOFMEMORY;
-  }
   if (!stream->IsInitialized()) {
     delete stream;
     return E_FAIL;

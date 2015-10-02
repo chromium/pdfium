@@ -2195,7 +2195,6 @@ CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
   ASSERT(m_pDocument != NULL);
   m_pInterForm =
       new CPDF_InterForm(m_pDocument->GetDocument()->GetPDFDoc(), FALSE);
-  ASSERT(m_pInterForm != NULL);
   m_pInterForm->SetFormNotify(this);
 
   for (int i = 0; i < 6; i++)

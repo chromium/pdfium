@@ -410,9 +410,6 @@ IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
 }
 void CFX_GEModule::InitPlatform() {
   CWin32Platform* pPlatformData = new CWin32Platform;
-  if (!pPlatformData) {
-    return;
-  }
   OSVERSIONINFO ver;
   ver.dwOSVersionInfoSize = sizeof(ver);
   GetVersionEx(&ver);
@@ -1254,9 +1251,6 @@ CFX_WindowsDevice::CFX_WindowsDevice(HDC hDC,
   m_psLevel = psLevel;
   if (bForcePSOutput) {
     IFX_RenderDeviceDriver* pDriver = new CPSPrinterDriver;
-    if (!pDriver) {
-      return;
-    }
     ((CPSPrinterDriver*)pDriver)->Init(hDC, psLevel, bCmykOutput);
     SetDeviceDriver(pDriver);
     return;
@@ -1303,17 +1297,11 @@ CFX_WinBitmapDevice::CFX_WinBitmapDevice(int width,
     return;
   }
   CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
-  if (!pBitmap) {
-    return;
-  }
   pBitmap->Create(width, height, format, pBuffer);
   SetBitmap(pBitmap);
   m_hDC = ::CreateCompatibleDC(NULL);
   m_hOldBitmap = (HBITMAP)SelectObject(m_hDC, m_hBitmap);
   IFX_RenderDeviceDriver* pDriver = new CGdiDisplayDriver(m_hDC);
-  if (!pDriver) {
-    return;
-  }
   SetDeviceDriver(pDriver);
 }
 CFX_WinBitmapDevice::~CFX_WinBitmapDevice() {

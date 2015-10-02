@@ -1019,9 +1019,6 @@ FX_BOOL CFX_QuartzDevice::Attach(CGContextRef context, int32_t nDeviceClass) {
   CGContextRetain(m_pContext);
   IFX_RenderDeviceDriver* pDriver =
       new CFX_QuartzDeviceDriver(m_pContext, nDeviceClass);
-  if (!pDriver) {
-    return FALSE;
-  }
   SetDeviceDriver(pDriver);
   return TRUE;
 }
@@ -1033,9 +1030,6 @@ FX_BOOL CFX_QuartzDevice::Attach(CFX_DIBitmap* pBitmap) {
   }
   IFX_RenderDeviceDriver* pDriver =
       new CFX_QuartzDeviceDriver(m_pContext, FXDC_DISPLAY);
-  if (!pDriver) {
-    return FALSE;
-  }
   SetDeviceDriver(pDriver);
   return TRUE;
 }
@@ -1046,9 +1040,6 @@ FX_BOOL CFX_QuartzDevice::Create(int32_t width,
     return FALSE;
   }
   CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
-  if (!pBitmap) {
-    return FALSE;
-  }
   if (!pBitmap->Create(width, height, format)) {
     delete pBitmap;
     return FALSE;

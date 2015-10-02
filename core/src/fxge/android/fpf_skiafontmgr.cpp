@@ -332,23 +332,12 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
   if (nItem > -1) {
     CFPF_SkiaFontDescriptor* pFontDes =
         (CFPF_SkiaFontDescriptor*)m_FontFaces.ElementAt(nItem);
-<<<<<<< HEAD
-    CFPF_SkiaFont* pFont = new CFPF_SkiaFont;
-    if (pFont) {
-      if (pFont->InitFont(this, pFontDes, bsFamilyname, dwStyle, uCharset)) {
-        m_FamilyFonts.SetAt((void*)(uintptr_t)dwHash, (void*)pFont);
-        return pFont->Retain();
-      }
-      pFont->Release();
-      pFont = NULL;
-=======
     CFPF_SkiaFont* pFont = new CFPF_SkiaFont;
     if (pFont->InitFont(this, pFontDes, bsFamilyname, dwStyle, uCharset)) {
       m_FamilyFonts.SetAt((void*)(uintptr_t)dwHash, (void*)pFont);
       return pFont->Retain();
->>>>>>> bb17868... Use stdint.h types throughout PDFium.
     }
-    return pFont;
+    pFont->Release()
   }
   return NULL;
 }
@@ -451,9 +440,6 @@ void CFPF_SkiaFontMgr::ScanFile(const CFX_ByteStringC& file) {
   FXFT_Face face = GetFontFace(file);
   if (face) {
     CFPF_SkiaPathFont* pFontDesc = new CFPF_SkiaPathFont;
-    if (!pFontDesc) {
-      return;
-    }
     pFontDesc->SetPath(file.GetCStr());
     ReportFace(face, pFontDesc);
     m_FontFaces.Add(pFontDesc);

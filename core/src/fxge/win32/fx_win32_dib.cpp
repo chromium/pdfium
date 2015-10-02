@@ -60,9 +60,6 @@ CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
   }
   int pitch = (width * pbmi->bmiHeader.biBitCount + 31) / 32 * 4;
   CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
-  if (!pBitmap) {
-    return NULL;
-  }
   FXDIB_Format format = bAlpha
                             ? (FXDIB_Format)(pbmi->bmiHeader.biBitCount + 0x200)
                             : (FXDIB_Format)pbmi->bmiHeader.biBitCount;
@@ -132,10 +129,6 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadFromFile(const FX_WCHAR* filename) {
   int width, height;
   GetBitmapSize(hBitmap, width, height);
   CFX_DIBitmap* pDIBitmap = new CFX_DIBitmap;
-  if (!pDIBitmap) {
-    DeleteDC(hDC);
-    return NULL;
-  }
   if (!pDIBitmap->Create(width, height, FXDIB_Rgb)) {
     delete pDIBitmap;
     DeleteDC(hDC);
@@ -169,10 +162,6 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args) {
   int width, height;
   GetBitmapSize(hBitmap, width, height);
   CFX_DIBitmap* pDIBitmap = new CFX_DIBitmap;
-  if (!pDIBitmap) {
-    DeleteDC(hDC);
-    return NULL;
-  }
   if (!pDIBitmap->Create(width, height, FXDIB_Rgb)) {
     delete pDIBitmap;
     DeleteDC(hDC);
@@ -205,9 +194,6 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadFromDDB(HDC hDC,
   bmih.biHeight = -height;
   bmih.biCompression = BI_RGB;
   CFX_DIBitmap* pDIBitmap = new CFX_DIBitmap;
-  if (!pDIBitmap) {
-    return NULL;
-  }
   int ret = 0;
   if (bmih.biBitCount == 1 || bmih.biBitCount == 8) {
     int size = sizeof(BITMAPINFOHEADER) + 8;

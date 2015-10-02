@@ -267,9 +267,6 @@ void CFX_AggDeviceDriver::SaveState() {
   void* pClip = NULL;
   if (m_pClipRgn) {
     pClip = new CFX_ClipRgn(*m_pClipRgn);
-    if (!pClip) {
-      return;
-    }
   }
   m_StateStack.Add(pClip);
 }
@@ -321,12 +318,9 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathFill(
     const CFX_AffineMatrix* pObject2Device,
     int fill_mode) {
   m_FillFlags = fill_mode;
-  if (m_pClipRgn == NULL) {
+  if (!m_pClipRgn) {
     m_pClipRgn = new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
                                  GetDeviceCaps(FXDC_PIXEL_HEIGHT));
-    if (!m_pClipRgn) {
-      return FALSE;
-    }
   }
   if (pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) {
     CFX_FloatRect rectf;
@@ -356,12 +350,9 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(
     const CFX_PathData* pPathData,
     const CFX_AffineMatrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
-  if (m_pClipRgn == NULL) {
+  if (!m_pClipRgn) {
     m_pClipRgn = new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
                                  GetDeviceCaps(FXDC_PIXEL_HEIGHT));
-    if (!m_pClipRgn) {
-      return FALSE;
-    }
   }
   CAgg_PathData path_data;
   path_data.BuildPath(pPathData, NULL);
@@ -1745,9 +1736,6 @@ FX_BOOL CFX_AggDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
     return TRUE;
   }
   CFX_ImageRenderer* pRenderer = new CFX_ImageRenderer;
-  if (!pRenderer) {
-    return FALSE;
-  }
   pRenderer->Start(m_pBitmap, m_pClipRgn, pSource, bitmap_alpha, argb, pMatrix,
                    render_flags, m_bRgbByteOrder, alpha_flag, pIccTransform);
   handle = pRenderer;
@@ -1779,9 +1767,6 @@ FX_BOOL CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap,
   SetBitmap(pBitmap);
   IFX_RenderDeviceDriver* pDriver = new CFX_AggDeviceDriver(
       pBitmap, dither_bits, bRgbByteOrder, pOriDevice, bGroupKnockout);
-  if (!pDriver) {
-    return FALSE;
-  }
   SetDeviceDriver(pDriver);
   return TRUE;
 }
@@ -1792,9 +1777,6 @@ FX_BOOL CFX_FxgeDevice::Create(int width,
                                CFX_DIBitmap* pOriDevice) {
   m_bOwnedBitmap = TRUE;
   CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
-  if (!pBitmap) {
-    return FALSE;
-  }
   if (!pBitmap->Create(width, height, format)) {
     delete pBitmap;
     return FALSE;
@@ -1802,9 +1784,6 @@ FX_BOOL CFX_FxgeDevice::Create(int width,
   SetBitmap(pBitmap);
   IFX_RenderDeviceDriver* pDriver =
       new CFX_AggDeviceDriver(pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
-  if (!pDriver) {
-    return FALSE;
-  }
   SetDeviceDriver(pDriver);
   return TRUE;
 }
