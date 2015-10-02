@@ -24,7 +24,7 @@ static unsigned int g_embedderDataSlot = 1u;
 //   kPerContextDataStartIndex + kEmbedderPDFium, which is 3.
 static const unsigned int kPerContextDataIndex = 3u;
 
-static v8::Global<v8::ObjectTemplate> g_DefaultGlobalObjectTemplate;
+static v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 
 class CFXJS_PrivateData {
  public:
@@ -111,11 +111,12 @@ static v8::Local<v8::ObjectTemplate> GetGlobalObjectTemplate(
       return pObjDef->GetInstanceTemplate();
   }
 
-  if (g_DefaultGlobalObjectTemplate.IsEmpty())
-    g_DefaultGlobalObjectTemplate.Reset(pIsolate,
-                                        v8::ObjectTemplate::New(pIsolate));
-
-  return g_DefaultGlobalObjectTemplate.Get(pIsolate);
+  if (!g_DefaultGlobalObjectTemplate) {
+    g_DefaultGlobalObjectTemplate = new v8::Global<v8::ObjectTemplate>;
+    g_DefaultGlobalObjectTemplate->Reset(pIsolate,
+                                         v8::ObjectTemplate::New(pIsolate));
+  }
+  return g_DefaultGlobalObjectTemplate->Get(pIsolate);
 }
 
 void* FXJS_ArrayBufferAllocator::Allocate(size_t length) {
