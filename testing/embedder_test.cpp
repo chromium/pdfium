@@ -337,7 +337,7 @@ FPDF_PAGE EmbedderTest::GetPageTrampoline(FPDF_FORMFILLINFO* info,
                                           FPDF_DOCUMENT document,
                                           int page_index) {
   EmbedderTest* test = static_cast<EmbedderTest*>(info);
-  return test->delegate_->GetPage(test->m_pFormfillinfo, document, page_index);
+  return test->delegate_->GetPage(test->form_handle(), document, page_index);
 }
 
 // Can't use gtest-provided main since we need to stash the path to the
