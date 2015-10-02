@@ -925,7 +925,7 @@ FX_BOOL CFDE_XMLDoc::LoadXML(IFX_Stream* pXMLStream,
   } else {
     m_pXMLParser = new CFDE_XMLSAXParser(pHandler, m_pSyntaxParser);
   }
-  return m_pXMLParser != NULL;
+  return TRUE;
 }
 FX_BOOL CFDE_XMLDoc::LoadXML(IFDE_XMLParser* pXMLParser) {
   if (pXMLParser == NULL) {

@@ -52,7 +52,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   void StartWidgetLayout(FX_FLOAT& fCalcWidth, FX_FLOAT& fCalcHeight);
   FX_BOOL FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight);
   FX_BOOL LoadCaption();
-  FX_BOOL LoadText();
+  void LoadText();
   FX_BOOL LoadImageImage();
   FX_BOOL LoadImageEditImage();
   void GetImageDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);

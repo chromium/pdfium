@@ -48,9 +48,6 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(
     FX_WORD wCodePage,
     FX_DWORD dwMediaList) {
   CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
-  if (pStyleSheet == NULL) {
-    return NULL;
-  }
   if (!pStyleSheet->LoadFromStream(szUrl, pStream, wCodePage)) {
     pStyleSheet->Release();
     pStyleSheet = NULL;
@@ -64,9 +61,6 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromBuffer(
     FX_WORD wCodePage,
     FX_DWORD dwMediaList) {
   CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
-  if (pStyleSheet == NULL) {
-    return NULL;
-  }
   if (!pStyleSheet->LoadFromBuffer(szUrl, pBuffer, iBufSize, wCodePage)) {
     pStyleSheet->Release();
     pStyleSheet = NULL;

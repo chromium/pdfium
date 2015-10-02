@@ -11,81 +11,49 @@ IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
                                      int32_t iFileSize,
                                      FX_BOOL bReleaseBufferRead) {
   CFX_Stream* pSR = new CFX_Stream;
-  if (!pSR) {
-    return NULL;
-  }
   if (!pSR->LoadBufferRead(pBufferRead, iFileSize, dwAccess,
                            bReleaseBufferRead)) {
     pSR->Release();
     return NULL;
   }
   if (dwAccess & FX_STREAMACCESS_Text) {
-    IFX_Stream* pTR = new CFX_TextStream(pSR, TRUE);
-    if (!pTR) {
-      pTR->Release();
-      pTR = NULL;
-    }
-    return pTR;
+    return new CFX_TextStream(pSR, TRUE);
   }
   return pSR;
 }
 IFX_Stream* IFX_Stream::CreateStream(IFX_FileRead* pFileRead,
                                      FX_DWORD dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
-  if (pSR == NULL) {
-    return NULL;
-  }
   if (!pSR->LoadFileRead(pFileRead, dwAccess)) {
     pSR->Release();
     return NULL;
   }
   if (dwAccess & FX_STREAMACCESS_Text) {
-    IFX_Stream* pTR = new CFX_TextStream(pSR, TRUE);
-    if (pTR == NULL) {
-      pSR->Release();
-      return NULL;
-    }
-    return pTR;
+    return new CFX_TextStream(pSR, TRUE);
   }
   return pSR;
 }
 IFX_Stream* IFX_Stream::CreateStream(IFX_FileWrite* pFileWrite,
                                      FX_DWORD dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
-  if (pSR == NULL) {
-    return NULL;
-  }
   if (!pSR->LoadFileWrite(pFileWrite, dwAccess)) {
     pSR->Release();
     return NULL;
   }
   if (dwAccess & FX_STREAMACCESS_Text) {
-    IFX_Stream* pTR = new CFX_TextStream(pSR, TRUE);
-    if (pTR == NULL) {
-      pSR->Release();
-      return NULL;
-    }
-    return pTR;
+    return new CFX_TextStream(pSR, TRUE);
   }
   return pSR;
 }
 IFX_Stream* IFX_Stream::CreateStream(const FX_WCHAR* pszFileName,
                                      FX_DWORD dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
-  if (pSR == NULL) {
-    return NULL;
-  }
   if (!pSR->LoadFile(pszFileName, dwAccess)) {
     pSR->Release();
     return NULL;
   }
   if (dwAccess & FX_STREAMACCESS_Text) {
-    IFX_Stream* pTR = new CFX_TextStream(pSR, TRUE);
-    if (pTR == NULL) {
-      pSR->Release();
-      return NULL;
-    }
-    return pTR;
+    return new CFX_TextStream(pSR, TRUE);
   }
   return pSR;
 }
@@ -93,20 +61,12 @@ IFX_Stream* IFX_Stream::CreateStream(uint8_t* pData,
                                      int32_t length,
                                      FX_DWORD dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
-  if (pSR == NULL) {
-    return NULL;
-  }
   if (!pSR->LoadBuffer(pData, length, dwAccess)) {
     pSR->Release();
     return NULL;
   }
   if (dwAccess & FX_STREAMACCESS_Text) {
-    IFX_Stream* pTR = new CFX_TextStream(pSR, TRUE);
-    if (pTR == NULL) {
-      pSR->Release();
-      return NULL;
-    }
-    return pTR;
+    return new CFX_TextStream(pSR, TRUE);
   }
   return pSR;
 }
@@ -778,12 +738,7 @@ IFX_Stream* CFX_TextStream::CreateSharedStream(FX_DWORD dwAccess,
     return NULL;
   }
   if (dwAccess & FX_STREAMACCESS_Text) {
-    IFX_Stream* pTR = new CFX_TextStream(pSR, TRUE);
-    if (pTR == NULL) {
-      pSR->Release();
-      return NULL;
-    }
-    return pTR;
+    return new CFX_TextStream(pSR, TRUE);
   }
   return pSR;
 }
@@ -901,9 +856,6 @@ FX_BOOL CFX_Stream::LoadFile(const FX_WCHAR* pszSrcFileName,
     return FALSE;
   }
   m_pStreamImp = new CFX_FileStreamImp();
-  if (m_pStreamImp == NULL) {
-    return FALSE;
-  }
   FX_BOOL bRet =
       ((CFX_FileStreamImp*)m_pStreamImp)->LoadFile(pszSrcFileName, dwAccess);
   if (!bRet) {
@@ -924,9 +876,6 @@ FX_BOOL CFX_Stream::LoadFileRead(IFX_FileRead* pFileRead, FX_DWORD dwAccess) {
     return FALSE;
   }
   m_pStreamImp = new CFX_FileReadStreamImp();
-  if (m_pStreamImp == NULL) {
-    return FALSE;
-  }
   FX_BOOL bRet =
       ((CFX_FileReadStreamImp*)m_pStreamImp)->LoadFileRead(pFileRead, dwAccess);
   if (!bRet) {
@@ -948,9 +897,6 @@ FX_BOOL CFX_Stream::LoadFileWrite(IFX_FileWrite* pFileWrite,
     return FALSE;
   }
   m_pStreamImp = new CFX_FileWriteStreamImp();
-  if (m_pStreamImp == NULL) {
-    return FALSE;
-  }
   FX_BOOL bRet = ((CFX_FileWriteStreamImp*)m_pStreamImp)
                      ->LoadFileWrite(pFileWrite, dwAccess);
   if (!bRet) {
@@ -973,9 +919,6 @@ FX_BOOL CFX_Stream::LoadBuffer(uint8_t* pData,
     return FALSE;
   }
   m_pStreamImp = new CFX_BufferStreamImp();
-  if (m_pStreamImp == NULL) {
-    return FALSE;
-  }
   FX_BOOL bRet = ((CFX_BufferStreamImp*)m_pStreamImp)
                      ->LoadBuffer(pData, iTotalSize, dwAccess);
   if (!bRet) {
@@ -999,9 +942,6 @@ FX_BOOL CFX_Stream::LoadBufferRead(IFX_BufferRead* pBufferRead,
     return FALSE;
   }
   m_pStreamImp = new CFX_BufferReadStreamImp;
-  if (m_pStreamImp == NULL) {
-    return FALSE;
-  }
   FX_BOOL bRet = ((CFX_BufferReadStreamImp*)m_pStreamImp)
                      ->LoadBufferRead(pBufferRead, iFileSize, dwAccess,
                                       bReleaseBufferRead);
@@ -1245,9 +1185,6 @@ IFX_Stream* CFX_Stream::CreateSharedStream(FX_DWORD dwAccess,
     return NULL;
   }
   CFX_Stream* pShared = new CFX_Stream;
-  if (pShared == NULL) {
-    return NULL;
-  }
   pShared->m_eStreamType = FX_STREAMTYPE_Stream;
   pShared->m_pStreamImp = m_pStreamImp;
   pShared->m_dwAccess = dwAccess;

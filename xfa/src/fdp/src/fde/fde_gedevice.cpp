@@ -31,17 +31,11 @@ IFDE_RenderDevice* IFDE_RenderDevice::Create(CFX_DIBitmap* pBitmap,
     return NULL;
   }
   CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
-  if (pDevice == NULL) {
-    return NULL;
-  }
   pDevice->Attach(pBitmap, 0, bRgbByteOrder);
   return new CFDE_FxgeDevice(pDevice, TRUE);
 }
 IFDE_RenderDevice* IFDE_RenderDevice::Create(CFX_RenderDevice* pDevice) {
-  if (pDevice == NULL) {
-    return NULL;
-  }
-  return new CFDE_FxgeDevice(pDevice, FALSE);
+  return pDevice ? new CFDE_FxgeDevice(pDevice, FALSE) : nullptr;
 }
 CFDE_FxgeDevice::CFDE_FxgeDevice(CFX_RenderDevice* pDevice,
                                  FX_BOOL bOwnerDevice)

@@ -131,9 +131,6 @@ IFX_Font* CFX_StdFontMgrImp::GetDefFontByUnicode(
     return NULL;
   }
   CFX_Font* pFXFont = new CFX_Font;
-  if (pFXFont == NULL) {
-    return NULL;
-  }
   pFXFont->m_Face = ftFace;
   pFXFont->m_pFontData = FXFT_Get_Face_Stream_Base(ftFace);
   pFXFont->m_dwSize = FXFT_Get_Face_Stream_Size(ftFace);
@@ -601,9 +598,6 @@ IFX_FontMgr* IFX_FontMgr::Create(IFX_FontSourceEnum* pFontEnum,
   }
   CFX_FontMgrImp* pFontMgr =
       new CFX_FontMgrImp(pFontEnum, pDelegate, pUserData);
-  if (NULL == pFontMgr) {
-    return NULL;
-  }
   if (pFontMgr->EnumFonts()) {
     return pFontMgr;
   }
@@ -756,12 +750,8 @@ IFX_Font* CFX_FontMgrImp::GetFontByCodePage(FX_WORD wCodePage,
       return pFonts->GetAt(0)->Retain();
     }
   }
-  if (NULL == pFonts) {
+  if (!pFonts)
     pFonts = new CFX_ArrayTemplate<IFX_Font*>;
-  }
-  if (NULL == pFonts) {
-    return NULL;
-  }
   m_Hash2Fonts.SetAt(dwHash, pFonts);
   CFX_FontDescriptorInfos* sortedFonts = NULL;
   if (!m_Hash2CandidateList.Lookup(dwHash, sortedFonts)) {
@@ -818,12 +808,8 @@ IFX_Font* CFX_FontMgrImp::GetFontByUnicode(FX_WCHAR wUnicode,
       }
     }
   }
-  if (NULL == pFonts) {
+  if (!pFonts)
     pFonts = new CFX_ArrayTemplate<IFX_Font*>;
-  }
-  if (NULL == pFonts) {
-    return NULL;
-  }
   m_Hash2Fonts.SetAt(dwHash, pFonts);
   CFX_FontDescriptorInfos* sortedFonts = NULL;
   if (!m_Hash2CandidateList.Lookup(dwHash, sortedFonts)) {
@@ -974,9 +960,6 @@ IFX_Font* CFX_FontMgrImp::LoadFont(IFX_FileAccess* pFontAccess,
     }
   }
   CFX_Font* pInternalFont = new CFX_Font;
-  if (NULL == pInternalFont) {
-    return NULL;
-  }
   IFX_FileRead* pFontStream =
       pFontAccess->CreateFileStream(FX_FILEMODE_ReadOnly);
   if (NULL == pFontStream) {
@@ -1277,9 +1260,6 @@ void CFX_FontMgrImp::ReportFace(FXFT_Face pFace,
     return;
   }
   CFX_FontDescriptor* pFont = new CFX_FontDescriptor;
-  if (NULL == pFont) {
-    return;
-  }
   pFont->m_dwFontStyles |= FXFT_Is_Face_Bold(pFace) ? FX_FONTSTYLE_Bold : 0;
   pFont->m_dwFontStyles |= FXFT_Is_Face_Italic(pFace) ? FX_FONTSTYLE_Italic : 0;
   pFont->m_dwFontStyles |= GetFlags(pFace);

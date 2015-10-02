@@ -3977,9 +3977,6 @@ FX_BOOL CXFA_Node::SetCData(XFA_ATTRIBUTE eAttr,
   OnChanging(eAttr, (void*)(const FX_WCHAR*)wsValue, bNotify);
   if (eAttr == XFA_ATTRIBUTE_Value) {
     CFX_WideString* pClone = new CFX_WideString(wsValue);
-    if (pClone == NULL) {
-      return FALSE;
-    }
     SetUserData(pKey, pClone, &deleteWideStringCallBack);
   } else {
     SetMapModuleString(pKey, wsValue);
@@ -4056,9 +4053,6 @@ FX_BOOL CXFA_Node::SetAttributeValue(const CFX_WideString& wsValue,
   }
   OnChanging(XFA_ATTRIBUTE_Value, (void*)(const FX_WCHAR*)wsValue, bNotify);
   CFX_WideString* pClone = new CFX_WideString(wsValue);
-  if (pClone == NULL) {
-    return FALSE;
-  }
   SetUserData(pKey, pClone, &deleteWideStringCallBack);
   OnChanged(XFA_ATTRIBUTE_Value, (void*)(const FX_WCHAR*)wsValue, bNotify,
             bScriptModify);

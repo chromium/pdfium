@@ -210,9 +210,6 @@ IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
                                 IFX_FileRead* pStream,
                                 FX_BOOL bTakeOverFile) {
   CXFA_FFDoc* pDoc = new CXFA_FFDoc(this, pProvider);
-  if (!pDoc) {
-    return NULL;
-  }
   FX_BOOL bSuccess = pDoc->OpenDoc(pStream, bTakeOverFile);
   if (!bSuccess) {
     delete pDoc;
@@ -226,9 +223,6 @@ IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
     return NULL;
   }
   CXFA_FFDoc* pDoc = new CXFA_FFDoc(this, pProvider);
-  if (!pDoc) {
-    return NULL;
-  }
   FX_BOOL bSuccess = pDoc->OpenDoc(pPDFDoc);
   if (!bSuccess) {
     delete pDoc;

@@ -253,9 +253,6 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
     return FALSE;
   }
   IFX_FileRead* pFileRead = new CXFA_FileRead2(xfaStreams);
-  if (!pFileRead) {
-    return FALSE;
-  }
   m_pPDFDoc = pPDFDoc;
   if (m_pStream) {
     m_pStream->Release();

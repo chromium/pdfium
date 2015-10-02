@@ -200,16 +200,8 @@ void CPDFXFA_Document::RemovePage(CPDFXFA_Page* page) {
 
 CPDFSDK_Document* CPDFXFA_Document::GetSDKDocument(
     CPDFDoc_Environment* pFormFillEnv) {
-  if (!pFormFillEnv)
-    return m_pSDKDoc;
-
-  if (m_pSDKDoc)
-    return m_pSDKDoc;
-
-  m_pSDKDoc = new CPDFSDK_Document(this, pFormFillEnv);
-  if (!m_pSDKDoc)
-    return NULL;
-
+  if (!m_pSDKDoc && pFormFillEnv)
+    m_pSDKDoc = new CPDFSDK_Document(this, pFormFillEnv);
   return m_pSDKDoc;
 }
 
@@ -999,8 +991,7 @@ IFX_FileRead* CPDFXFA_Document::OpenLinkedFile(IXFA_Doc* hDoc,
 
   if (pFileHandler == NULL)
     return NULL;
-  CFPDF_FileStream* pFileRead = new CFPDF_FileStream(pFileHandler);
-  return pFileRead;
+  return new CFPDF_FileStream(pFileHandler);
 }
 FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
                                             int fileType,

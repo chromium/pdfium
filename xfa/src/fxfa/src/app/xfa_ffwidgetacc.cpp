@@ -45,13 +45,12 @@ class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
     }
     m_pTextProvider = NULL;
   }
-  FX_BOOL LoadText(CXFA_WidgetAcc* pAcc) {
-    if (m_pTextLayout) {
-      return TRUE;
-    }
+  void LoadText(CXFA_WidgetAcc* pAcc) {
+    if (m_pTextLayout)
+      return;
+
     m_pTextProvider = new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Text);
     m_pTextLayout = new CXFA_TextLayout(m_pTextProvider);
-    return m_pTextLayout != NULL;
   }
   CXFA_TextLayout* m_pTextLayout;
   CXFA_TextProvider* m_pTextProvider;
@@ -130,7 +129,7 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
       m_pCapTextProvider =
           new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Caption);
       m_pCapTextLayout = new CXFA_TextLayout(m_pCapTextProvider);
-      return m_pCapTextLayout != NULL;
+      return TRUE;
     }
     return FALSE;
   }
@@ -1043,9 +1042,7 @@ void CXFA_WidgetAcc::GetImageEditDpi(int32_t& iImageXDpi, int32_t& iImageYDpi) {
   iImageYDpi = ((CXFA_ImageEditData*)m_pLayoutData)->m_iImageYDpi;
 }
 FX_BOOL CXFA_WidgetAcc::CalculateTextAutoSize(CFX_SizeF& size) {
-  if (!LoadText()) {
-    return FALSE;
-  }
+  LoadText();
   CXFA_TextLayout* pTextLayout =
       ((CXFA_TextLayoutData*)m_pLayoutData)->m_pTextLayout;
   if (pTextLayout) {
@@ -1054,9 +1051,9 @@ FX_BOOL CXFA_WidgetAcc::CalculateTextAutoSize(CFX_SizeF& size) {
   }
   return CalculateWidgetAutoSize(size);
 }
-FX_BOOL CXFA_WidgetAcc::LoadText() {
+void CXFA_WidgetAcc::LoadText() {
   InitLayoutData();
-  return ((CXFA_TextLayoutData*)m_pLayoutData)->LoadText(this);
+  ((CXFA_TextLayoutData*)m_pLayoutData)->LoadText(this);
 }
 FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoWidth(FX_FLOAT fWidthCalc) {
   CXFA_Margin mgWidget = this->GetMargin();

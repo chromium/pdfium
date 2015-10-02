@@ -50,10 +50,7 @@ void CBC_Writer::SetBarcodeColor(FX_ARGB foregroundColor) {
   m_barColor = foregroundColor;
 }
 CFX_DIBitmap* CBC_Writer::CreateDIBitmap(int32_t width, int32_t height) {
-  CFX_DIBitmap* pDIBitmap = NULL;
-  pDIBitmap = new CFX_DIBitmap;
-  if (pDIBitmap != NULL) {
-    pDIBitmap->Create(width, height, m_colorSpace);
-  }
+  CFX_DIBitmap* pDIBitmap = new CFX_DIBitmap;
+  pDIBitmap->Create(width, height, m_colorSpace);
   return pDIBitmap;
 }

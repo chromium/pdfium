@@ -248,7 +248,6 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
   }
   v8::Isolate* pIsolate = lpContext->m_pIsolate;
   pClass = new CFXJSE_Class(lpContext);
-  ASSERT(pClass);
   pClass->m_szClassName = lpClassDefinition->name;
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::FunctionTemplate> hFunctionTemplate = v8::FunctionTemplate::New(
