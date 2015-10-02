@@ -84,18 +84,15 @@ CPDFText_ParseOptions::CPDFText_ParseOptions()
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(
     const CPDF_Page* pPage,
     CPDFText_ParseOptions ParserOptions) {
-  CPDF_TextPage* pTextPageEx = new CPDF_TextPage(pPage, ParserOptions);
-  return pTextPageEx;
+  return new CPDF_TextPage(pPage, ParserOptions);
 }
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(const CPDF_Page* pPage,
                                              int flags) {
-  CPDF_TextPage* pTextPage = new CPDF_TextPage(pPage, flags);
-  return pTextPage;
+  return new CPDF_TextPage(pPage, flags);
 }
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(const CPDF_PageObjects* pObjs,
                                              int flags) {
-  CPDF_TextPage* pTextPage = new CPDF_TextPage(pObjs, flags);
-  return pTextPage;
+  return new CPDF_TextPage(pObjs, flags);
 }
 IPDF_TextPageFind* IPDF_TextPageFind::CreatePageFind(
     const IPDF_TextPage* pTextPage) {
@@ -2736,11 +2733,7 @@ FX_BOOL CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
 FX_BOOL CPDF_LinkExtract::AppendToLinkList(int start,
                                            int count,
                                            const CFX_WideString& strUrl) {
-  CPDF_LinkExt* linkInfo = NULL;
-  linkInfo = new CPDF_LinkExt;
-  if (!linkInfo) {
-    return FALSE;
-  }
+  CPDF_LinkExt* linkInfo = new CPDF_LinkExt;
   linkInfo->m_strUrl = strUrl;
   linkInfo->m_Start = start;
   linkInfo->m_Count = count;
