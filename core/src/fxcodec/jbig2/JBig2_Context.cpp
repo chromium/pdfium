@@ -1127,6 +1127,11 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     nRet = JBIG2_ERROR_TOO_SHORT;
     goto failed;
   }
+  if (pHRD->HGW == 0 || pHRD->HGH == 0) {
+    nRet = JBIG2_ERROR_FATAL;
+    goto failed;
+  }
+
   pHRD->HBW = ri.width;
   pHRD->HBH = ri.height;
   pHRD->HMMR = cFlags & 0x01;
