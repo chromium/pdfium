@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../include/javascript/JavaScript.h"
 #include "../../include/javascript/IJavaScript.h"
 #include "../../include/javascript/JS_Define.h"
@@ -838,26 +839,20 @@ FX_BOOL app::response(IFXJS_Context* cc,
   ASSERT(pApp != NULL);
 
   const int MAX_INPUT_BYTES = 2048;
-  char* pBuff = new char[MAX_INPUT_BYTES + 2];
-  if (!pBuff)
-    return FALSE;
-
-  memset(pBuff, 0, MAX_INPUT_BYTES + 2);
-  int nLengthBytes = pApp->JS_appResponse(swQuestion.c_str(), swTitle.c_str(),
-                                          swDefault.c_str(), swLabel.c_str(),
-                                          bPassWord, pBuff, MAX_INPUT_BYTES);
+  nonstd::unique_ptr<char[]> pBuff(new char[MAX_INPUT_BYTES + 2]);
+  memset(pBuff.get(), 0, MAX_INPUT_BYTES + 2);
+  int nLengthBytes = pApp->JS_appResponse(
+      swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),
+      bPassWord, pBuff.get(), MAX_INPUT_BYTES);
   if (nLengthBytes <= 0) {
     vRet.SetNull();
-    delete[] pBuff;
     return FALSE;
   }
-  if (nLengthBytes > MAX_INPUT_BYTES)
-    nLengthBytes = MAX_INPUT_BYTES;
+  nLengthBytes = std::min(nLengthBytes, MAX_INPUT_BYTES);
 
-  vRet = CFX_WideString::FromUTF16LE((unsigned short*)pBuff,
-                                     nLengthBytes / sizeof(unsigned short))
-             .c_str();
-  delete[] pBuff;
+  CFX_WideString ret_string = CFX_WideString::FromUTF16LE(
+      (unsigned short*)pBuff.get(), nLengthBytes / sizeof(unsigned short));
+  vRet = ret_string.c_str();
   return TRUE;
 }
 

@@ -239,9 +239,6 @@ class CPDFDoc_Environment final {
         return L"";
 
       char* pbuff = new char[nRequiredLen];
-      if (!pbuff)
-        return L"";
-
       memset(pbuff, 0, nRequiredLen);
       int nActualLen = m_pInfo->FFI_GetPlatform(m_pInfo, pbuff, nRequiredLen);
       if (nActualLen <= 0 || nActualLen > nRequiredLen) {
@@ -353,8 +350,7 @@ class CPDFDoc_Environment final {
       FPDF_LPFILEHANDLER fileHandler =
           m_pInfo->FFI_DownloadFromURL(m_pInfo, wsURL);
 
-      CFPDF_FileStream* fileStream = new CFPDF_FileStream(fileHandler);
-      return fileStream;
+      return new CFPDF_FileStream(fileHandler);
     }
     return NULL;
   }
@@ -433,9 +429,6 @@ class CPDFDoc_Environment final {
         return L"";
 
       char* pbuff = new char[nRequiredLen];
-      if (!pbuff)
-        return L"";
-
       memset(pbuff, 0, nRequiredLen);
       int nActualLen = m_pInfo->FFI_GetLanguage(m_pInfo, pbuff, nRequiredLen);
       if (nActualLen <= 0 || nActualLen > nRequiredLen) {
