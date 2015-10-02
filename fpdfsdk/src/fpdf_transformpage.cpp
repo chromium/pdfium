@@ -9,24 +9,57 @@
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 
+namespace {
+
+CPDF_Page* GetPageFromFPDFPage(FPDF_PAGE page) {
+  return page ? static_cast<CPDFXFA_Page*>(page)->GetPDFPage() : nullptr;
+}
+
+void SetBoundingBox(CPDF_Page* page,
+                    const CFX_ByteStringC& key,
+                    float left,
+                    float bottom,
+                    float right,
+                    float top) {
+  CPDF_Dictionary* pPageDict = page->m_pFormDict;
+  CPDF_Array* pBoundingBoxArray = new CPDF_Array;
+  pBoundingBoxArray->Add(new CPDF_Number(left));
+  pBoundingBoxArray->Add(new CPDF_Number(bottom));
+  pBoundingBoxArray->Add(new CPDF_Number(right));
+  pBoundingBoxArray->Add(new CPDF_Number(top));
+  pPageDict->SetAt(key, pBoundingBoxArray);
+}
+
+FPDF_BOOL GetBoundingBox(CPDF_Page* page,
+                         const CFX_ByteStringC& key,
+                         float* left,
+                         float* bottom,
+                         float* right,
+                         float* top) {
+  CPDF_Dictionary* pPageDict = page->m_pFormDict;
+  CPDF_Array* pArray = pPageDict->GetArray(key);
+  if (!pArray)
+    return FALSE;
+
+  *left = pArray->GetFloat(0);
+  *bottom = pArray->GetFloat(1);
+  *right = pArray->GetFloat(2);
+  *top = pArray->GetFloat(3);
+  return TRUE;
+}
+
+}  // namespace
+
 DLLEXPORT void STDCALL FPDFPage_SetMediaBox(FPDF_PAGE page,
                                             float left,
                                             float bottom,
                                             float right,
                                             float top) {
-  if (!page)
-    return;
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = GetPageFromFPDFPage(page);
   if (!pPage)
     return;
-  CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
-  CPDF_Array* pMediaBoxArray = new CPDF_Array;
-  pMediaBoxArray->Add(new CPDF_Number(left));
-  pMediaBoxArray->Add(new CPDF_Number(bottom));
-  pMediaBoxArray->Add(new CPDF_Number(FX_FLOAT(right)));
-  pMediaBoxArray->Add(new CPDF_Number(FX_FLOAT(top)));
 
-  pPageDict->SetAt("MediaBox", pMediaBoxArray);
+  SetBoundingBox(pPage, "MediaBox", left, bottom, right, top);
 }
 
 DLLEXPORT void STDCALL FPDFPage_SetCropBox(FPDF_PAGE page,
@@ -34,19 +67,11 @@ DLLEXPORT void STDCALL FPDFPage_SetCropBox(FPDF_PAGE page,
                                            float bottom,
                                            float right,
                                            float top) {
-  if (!page)
-    return;
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = GetPageFromFPDFPage(page);
   if (!pPage)
     return;
-  CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
-  CPDF_Array* pCropBoxArray = new CPDF_Array;
-  pCropBoxArray->Add(new CPDF_Number(left));
-  pCropBoxArray->Add(new CPDF_Number(bottom));
-  pCropBoxArray->Add(new CPDF_Number(FX_FLOAT(right)));
-  pCropBoxArray->Add(new CPDF_Number(FX_FLOAT(top)));
 
-  pPageDict->SetAt("CropBox", pCropBoxArray);
+  SetBoundingBox(pPage, "CropBox", left, bottom, right, top);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page,
@@ -54,21 +79,8 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetMediaBox(FPDF_PAGE page,
                                                  float* bottom,
                                                  float* right,
                                                  float* top) {
-  if (!page)
-    return FALSE;
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
-  if (!pPage)
-    return FALSE;
-  CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
-  CPDF_Array* pArray = pPageDict->GetArray("MediaBox");
-  if (pArray) {
-    *left = pArray->GetFloat(0);
-    *bottom = pArray->GetFloat(1);
-    *right = pArray->GetFloat(2);
-    *top = pArray->GetFloat(3);
-    return TRUE;
-  }
-  return FALSE;
+  CPDF_Page* pPage = GetPageFromFPDFPage(page);
+  return pPage && GetBoundingBox(pPage, "MediaBox", left, bottom, right, top);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetCropBox(FPDF_PAGE page,
@@ -76,30 +88,14 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GetCropBox(FPDF_PAGE page,
                                                 float* bottom,
                                                 float* right,
                                                 float* top) {
-  if (!page)
-    return FALSE;
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
-  if (!pPage)
-    return FALSE;
-  CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
-  CPDF_Array* pArray = pPageDict->GetArray("CropBox");
-  if (pArray) {
-    *left = pArray->GetFloat(0);
-    *bottom = pArray->GetFloat(1);
-    *right = pArray->GetFloat(2);
-    *top = pArray->GetFloat(3);
-    return TRUE;
-  }
-  return FALSE;
+  CPDF_Page* pPage = GetPageFromFPDFPage(page);
+  return pPage && GetBoundingBox(pPage, "CropBox", left, bottom, right, top);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
                                                        FS_MATRIX* matrix,
                                                        FS_RECTF* clipRect) {
-  if (!page)
-    return FALSE;
-
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = GetPageFromFPDFPage(page);
   if (!pPage)
     return FALSE;
 
@@ -274,11 +270,10 @@ void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {
 
 DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
                                                FPDF_CLIPPATH clipPath) {
-  if (!page)
-    return;
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = GetPageFromFPDFPage(page);
   if (!pPage)
     return;
+
   CPDF_Dictionary* pPageDic = pPage->m_pFormDict;
   CPDF_Object* pContentObj = pPageDic ? pPageDic->GetElement("Contents") : NULL;
   if (!pContentObj)
