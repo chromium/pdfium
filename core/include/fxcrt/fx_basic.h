@@ -936,15 +936,13 @@ class IFX_Pause {
 template <typename T>
 class CFX_AutoRestorer {
  public:
-  explicit CFX_AutoRestorer(T* location) {
-    m_Location = location;
-    m_OldValue = *location;
-  }
+  explicit CFX_AutoRestorer(T* location)
+      : m_Location(location), m_OldValue(*location) {}
   ~CFX_AutoRestorer() { *m_Location = m_OldValue; }
 
  private:
-  T* m_Location;
-  T m_OldValue;
+  T* const m_Location;
+  const T m_OldValue;
 };
 
 struct FxFreeDeleter {
