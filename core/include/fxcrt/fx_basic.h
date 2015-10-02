@@ -956,12 +956,8 @@ class CFX_CountRef {
       if (m_pObject->m_RefCount <= 0) {
         delete m_pObject;
       }
-      m_pObject = NULL;
     }
     m_pObject = new CountedObj;
-    if (!m_pObject) {
-      return NULL;
-    }
     m_pObject->m_RefCount = 1;
     return m_pObject;
   }
@@ -1002,17 +998,12 @@ class CFX_CountRef {
   ObjClass* GetModify() {
     if (m_pObject == NULL) {
       m_pObject = new CountedObj;
-      if (m_pObject) {
-        m_pObject->m_RefCount = 1;
-      }
+      m_pObject->m_RefCount = 1;
     } else if (m_pObject->m_RefCount > 1) {
       m_pObject->m_RefCount--;
       CountedObj* pOldObject = m_pObject;
-      m_pObject = NULL;
       m_pObject = new CountedObj(*pOldObject);
-      if (m_pObject) {
-        m_pObject->m_RefCount = 1;
-      }
+      m_pObject->m_RefCount = 1;
     }
     return m_pObject;
   }

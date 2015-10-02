@@ -206,9 +206,6 @@ void* FX_OpenFolder(const FX_CHAR* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #ifndef _WIN32_WCE
   CFindFileDataA* pData = new CFindFileDataA;
-  if (!pData) {
-    return NULL;
-  }
 #ifdef _FX_WINAPI_PARTITION_DESKTOP_
   pData->m_Handle =
       FindFirstFileA(CFX_ByteString(path) + "/*.*", &pData->m_FindData);
@@ -219,9 +216,6 @@ void* FX_OpenFolder(const FX_CHAR* path) {
 #endif
 #else
   CFindFileDataW* pData = new CFindFileDataW;
-  if (!pData) {
-    return NULL;
-  }
   pData->m_Handle = FindFirstFileW(CFX_WideString::FromLocal(path) + L"/*.*",
                                    &pData->m_FindData);
 #endif
@@ -239,9 +233,6 @@ void* FX_OpenFolder(const FX_CHAR* path) {
 void* FX_OpenFolder(const FX_WCHAR* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   CFindFileDataW* pData = new CFindFileDataW;
-  if (!pData) {
-    return NULL;
-  }
 #ifdef _FX_WINAPI_PARTITION_DESKTOP_
   pData->m_Handle = FindFirstFileW((CFX_WideString(path) + L"/*.*").c_str(),
                                    &pData->m_FindData);
