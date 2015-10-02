@@ -453,10 +453,10 @@ class CPDF_Parser {
 
   FX_BOOL LoadAllCrossRefV5(FX_FILESIZE pos);
 
-  FX_BOOL LoadCrossRefV4(FX_FILESIZE pos,
-                         FX_FILESIZE streampos,
-                         FX_BOOL bSkip,
-                         FX_BOOL bFirst);
+  bool LoadCrossRefV4(FX_FILESIZE pos,
+                      FX_FILESIZE streampos,
+                      FX_BOOL bSkip,
+                      FX_BOOL bFirst);
 
   FX_BOOL LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL bMainXRef);
 
@@ -481,6 +481,8 @@ class CPDF_Parser {
   CPDF_StreamAcc* GetObjectStream(FX_DWORD number);
 
   FX_BOOL IsLinearizedFile(IFX_FileRead* pFileAccess, FX_DWORD offset);
+
+  bool FindPosInOffsets(FX_FILESIZE pos) const;
 
   int m_FileVersion;
 
