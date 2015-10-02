@@ -416,6 +416,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
       FX_Free(last_buf);
     }
     if (offset == -1) {
+      FX_Free(new_buf);
       return FALSE;
     }
     last_buf = new_buf;
