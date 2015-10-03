@@ -738,7 +738,7 @@ class CPDF_InterForm : public CFX_PrivateData {
   int CompareFieldName(const CFX_ByteString& name1,
                        const CFX_ByteString& name2);
 
-  CPDF_Document* m_pDocument;
+  CPDF_Document* const m_pDocument;
 
   FX_BOOL m_bGenerateAP;
 
@@ -746,7 +746,7 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   std::map<const CPDF_Dictionary*, CPDF_FormControl*> m_ControlMap;
 
-  CFieldTree* m_pFieldTree;
+  nonstd::unique_ptr<CFieldTree> m_pFieldTree;
 
   CFX_ByteString m_bsEncoding;
 
