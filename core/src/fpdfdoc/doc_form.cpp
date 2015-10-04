@@ -233,21 +233,25 @@ CFieldTree::_Node* CFieldTree::FindNode(const CFX_WideString& full_name) {
   return pNode;
 }
 CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument, FX_BOOL bGenerateAP)
-    : CFX_PrivateData() {
-  m_pDocument = pDocument;
-  m_bGenerateAP = bGenerateAP;
-  m_pFormNotify = NULL;
-  m_bUpdated = FALSE;
-  m_pFieldTree = new CFieldTree;
+    : CFX_PrivateData(),
+      m_pDocument(pDocument),
+      m_bGenerateAP(bGenerateAP),
+      m_pFormDict(nullptr),
+      m_pFieldTree(new CFieldTree),
+      m_pFormNotify(nullptr),
+      m_bUpdated(FALSE) {
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
+  if (!pRoot)
+    return;
+
   m_pFormDict = pRoot->GetDict("AcroForm");
-  if (m_pFormDict == NULL) {
+  if (!m_pFormDict)
     return;
-  }
+
   CPDF_Array* pFields = m_pFormDict->GetArray("Fields");
-  if (pFields == NULL) {
+  if (!pFields)
     return;
-  }
+
   int count = pFields->GetCount();
   for (int i = 0; i < count; i++) {
     LoadField(pFields->GetDict(i));
@@ -257,12 +261,10 @@ CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument, FX_BOOL bGenerateAP)
 CPDF_InterForm::~CPDF_InterForm() {
   for (auto it : m_ControlMap)
     delete it.second;
-  if (m_pFieldTree) {
-    int nCount = m_pFieldTree->m_Root.CountFields();
-    for (int i = 0; i < nCount; ++i) {
-      delete m_pFieldTree->m_Root.GetField(i);
-    }
-    delete m_pFieldTree;
+
+  int nCount = m_pFieldTree->m_Root.CountFields();
+  for (int i = 0; i < nCount; ++i) {
+    delete m_pFieldTree->m_Root.GetField(i);
   }
 }
 
