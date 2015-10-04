@@ -463,7 +463,7 @@ FX_BOOL CFFL_IFormFiller::OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   }
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, TRUE))
-    return pFormFiller->SetFocusForAnnot(pAnnot, nFlag);
+    pFormFiller->SetFocusForAnnot(pAnnot, nFlag);
 
   return TRUE;
 }
@@ -474,8 +474,7 @@ FX_BOOL CFFL_IFormFiller::OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubType() == "Widget");
 
   if (CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, FALSE)) {
-    if (!pFormFiller->KillFocusForAnnot(pAnnot, nFlag))
-      return FALSE;
+    pFormFiller->KillFocusForAnnot(pAnnot, nFlag);
 
     if (!m_bNotifying) {
       CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
