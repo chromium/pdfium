@@ -346,8 +346,8 @@ FX_BOOL app::alert(IFXJS_Context* cc,
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   ASSERT(pRuntime != NULL);
   pRuntime->BeginBlock();
-  vRet = MsgBox(pRuntime->GetReaderApp(), JSGetPageView(cc), swMsg.c_str(),
-                swTitle.c_str(), iType, iIcon);
+  vRet = MsgBox(pRuntime->GetReaderApp(), swMsg.c_str(), swTitle.c_str(), iType,
+                iIcon);
   pRuntime->EndBlock();
 
   return TRUE;

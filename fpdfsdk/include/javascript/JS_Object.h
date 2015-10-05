@@ -17,7 +17,6 @@
 #include "../jsapi/fxjs_v8.h"
 #include "JS_Runtime.h"
 
-class CPDFSDK_PageView;
 class CJS_Context;
 class CJS_Object;
 class CJS_Timer;
@@ -31,13 +30,11 @@ class CJS_EmbedObj {
 
   CJS_Object* GetJSObject() const { return m_pJSObject; }
 
-  CPDFSDK_PageView* JSGetPageView(IFXJS_Context* cc);
   int MsgBox(CPDFDoc_Environment* pApp,
-             CPDFSDK_PageView* pPageView,
              const FX_WCHAR* swMsg,
-             const FX_WCHAR* swTitle = NULL,
-             FX_UINT nType = 0,
-             FX_UINT nIcon = 0);
+             const FX_WCHAR* swTitle,
+             FX_UINT nType,
+             FX_UINT nIcon);
   void Alert(CJS_Context* pContext, const FX_WCHAR* swMsg);
 
  protected:
@@ -64,13 +61,11 @@ class CJS_Object {
   void SetEmbedObject(CJS_EmbedObj* pObj) { m_pEmbedObj.reset(pObj); }
   CJS_EmbedObj* GetEmbedObject() const { return m_pEmbedObj.get(); }
 
-  static CPDFSDK_PageView* JSGetPageView(IFXJS_Context* cc);
   static int MsgBox(CPDFDoc_Environment* pApp,
-                    CPDFSDK_PageView* pPageView,
                     const FX_WCHAR* swMsg,
-                    const FX_WCHAR* swTitle = NULL,
-                    FX_UINT nType = 0,
-                    FX_UINT nIcon = 0);
+                    const FX_WCHAR* swTitle,
+                    FX_UINT nType,
+                    FX_UINT nIcon);
   static void Alert(CJS_Context* pContext, const FX_WCHAR* swMsg);
 
   v8::Isolate* GetIsolate() { return m_pIsolate; }
