@@ -8,7 +8,6 @@
 #include <cmath>
 #include <limits>
 
-#include "../../include/javascript/JavaScript.h"
 #include "../../include/javascript/JS_Define.h"
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Value.h"

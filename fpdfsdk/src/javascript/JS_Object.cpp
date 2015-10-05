@@ -8,7 +8,6 @@
 #include "../../include/javascript/JS_Context.h"
 #include "../../include/javascript/JS_Define.h"
 #include "../../include/javascript/JS_Object.h"
-#include "../../include/javascript/JavaScript.h"
 
 namespace {
 

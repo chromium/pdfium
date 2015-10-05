@@ -4,7 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/javascript/JavaScript.h"
 #include "../../include/javascript/IJavaScript.h"
 #include "../../include/javascript/JS_Define.h"
 #include "../../include/javascript/JS_Object.h"

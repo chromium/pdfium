@@ -8,7 +8,6 @@
 #include "../../include/javascript/JS_Context.h"
 #include "../../include/javascript/JS_EventHandler.h"
 #include "../../include/javascript/JS_Runtime.h"
-#include "../../include/javascript/JavaScript.h"
 #include "../../include/javascript/resource.h"
 
 /* -------------------------- CJS_Context -------------------------- */

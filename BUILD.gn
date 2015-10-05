@@ -642,7 +642,6 @@ static_library("javascript") {
     "fpdfsdk/include/javascript/JS_Object.h",
     "fpdfsdk/include/javascript/JS_Runtime.h",
     "fpdfsdk/include/javascript/JS_Value.h",
-    "fpdfsdk/include/javascript/JavaScript.h",
     "fpdfsdk/include/javascript/PublicMethods.h",
     "fpdfsdk/include/javascript/app.h",
     "fpdfsdk/include/javascript/color.h",
