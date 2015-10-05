@@ -70,6 +70,9 @@ void FXJS_Release();
 // created.
 bool FXJS_GetIsolate(v8::Isolate** pResultIsolate);
 
+// Get the global isolate's ref count.
+size_t FXJS_GlobalIsolateRefCount();
+
 // Call before making FXJS_Define* calls. Resources allocated here are cleared
 // as part of FXJS_ReleaseRuntime().
 void FXJS_PrepareIsolate(v8::Isolate* pIsolate);

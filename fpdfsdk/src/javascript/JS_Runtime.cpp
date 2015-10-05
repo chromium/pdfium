@@ -45,7 +45,8 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     FXJS_Initialize(embedderDataSlot, pExternalIsolate);
   }
   m_isolateManaged = FXJS_GetIsolate(&m_isolate);
-  DefineJSObjects();
+  if (m_isolateManaged || FXJS_GlobalIsolateRefCount() == 0)
+    DefineJSObjects();
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
   FXJS_InitializeRuntime(GetIsolate(), this, pContext, m_context);
