@@ -9,7 +9,7 @@
 
 #include <string>  // For std::wstring.
 
-// TODO(tsepez): include PWL_Wnd.h for PWL_Color after fixing its IWYU.
+#include "../pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 #include "JS_Define.h"
 
 class Document;

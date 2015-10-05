@@ -12,7 +12,6 @@
 #include "../../include/javascript/JS_GlobalData.h"
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Value.h"
-#include "../../include/javascript/JavaScript.h"
 #include "../../include/javascript/global.h"
 #include "../../include/fpdfxfa/fpdfxfa_app.h"
 #include "../../include/javascript/resource.h"

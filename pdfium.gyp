@@ -714,7 +714,6 @@
         'fpdfsdk/include/javascript/global.h',
         'fpdfsdk/include/javascript/Icon.h',
         'fpdfsdk/include/javascript/IJavaScript.h',
-        'fpdfsdk/include/javascript/JavaScript.h',
         'fpdfsdk/include/javascript/JS_Context.h',
         'fpdfsdk/include/javascript/JS_Define.h',
         'fpdfsdk/include/javascript/JS_EventHandler.h',

@@ -5,7 +5,6 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../core/include/fdrm/fx_crypt.h"
-#include "../../include/javascript/JavaScript.h"
 #include "../../include/javascript/IJavaScript.h"
 #include "../../include/javascript/JS_GlobalData.h"
 
