@@ -18,6 +18,15 @@
 #include "dwrite_int.h"
 #include "win32_int.h"
 
+class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
+ public:
+  void* MapFont(int weight,
+                FX_BOOL bItalic,
+                int charset,
+                int pitch_family,
+                const FX_CHAR* family,
+                int& iExact) override;
+};
 class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
  public:
   CFX_Win32FontInfo();
@@ -198,6 +207,29 @@ CFX_ByteString CFX_Win32FontInfo::FindFont(const CFX_ByteString& name) {
     }
   }
   return CFX_ByteString();
+}
+void* CFX_Win32FallbackFontInfo::MapFont(int weight,
+                                         FX_BOOL bItalic,
+                                         int charset,
+                                         int pitch_family,
+                                         const FX_CHAR* cstr_face,
+                                         int& iExact) {
+  void* font = GetSubstFont(cstr_face);
+  if (font) {
+    iExact = 1;
+    return font;
+  }
+  FX_BOOL bCJK = TRUE;
+  switch (charset) {
+    case FXFONT_SHIFTJIS_CHARSET:
+    case FXFONT_GB2312_CHARSET:
+    case FXFONT_CHINESEBIG5_CHARSET:
+    case FXFONT_HANGEUL_CHARSET:
+    default:
+      bCJK = FALSE;
+      break;
+  }
+  return FindFont(weight, bItalic, charset, pitch_family, cstr_face, !bCJK);
 }
 struct _FontNameMap {
   const FX_CHAR* m_pSubFontName;
@@ -406,7 +438,24 @@ FX_BOOL CFX_Win32FontInfo::GetFontCharset(void* hFont, int& charset) {
   return TRUE;
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
-  return new CFX_Win32FontInfo;
+  HDC hdc = ::GetDC(NULL);
+  if (hdc) {
+    ::ReleaseDC(NULL, hdc);
+    return new CFX_Win32FontInfo;
+  }
+  // If GDI is disabled then GetDC for the desktop will fail. Select the
+  // fallback font information class if GDI is disabled.
+  CFX_Win32FallbackFontInfo* pInfoFallback = new CFX_Win32FallbackFontInfo;
+  // Construct the font path manually, SHGetKnownFolderPath won't work under
+  // a restrictive sandbox.
+  CHAR windows_path[MAX_PATH] = {};
+  DWORD path_len = ::GetWindowsDirectoryA(windows_path, MAX_PATH);
+  if (path_len > 0 && path_len < MAX_PATH) {
+    CFX_ByteString fonts_path(windows_path);
+    fonts_path += "\\Fonts";
+    pInfoFallback->AddPath(fonts_path);
+  }
+  return pInfoFallback;
 }
 void CFX_GEModule::InitPlatform() {
   CWin32Platform* pPlatformData = new CWin32Platform;
