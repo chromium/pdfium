@@ -15,11 +15,11 @@
 #include "../fsdk_mgr.h"          // For CPDFDoc_Environment
 #include "../fx_systemhandler.h"  // For IFX_SystemHandler
 #include "../jsapi/fxjs_v8.h"
+#include "JS_Runtime.h"
 
 class CPDFSDK_PageView;
 class CJS_Context;
 class CJS_Object;
-class CJS_Runtime;
 class CJS_Timer;
 
 class CJS_EmbedObj {
@@ -28,8 +28,6 @@ class CJS_EmbedObj {
   virtual ~CJS_EmbedObj();
 
   virtual void TimerProc(CJS_Timer* pTimer) {}
-  CJS_Timer* BeginTimer(CPDFDoc_Environment* pApp, FX_UINT nElapse);
-  void EndTimer(CJS_Timer* pTimer);
 
   CJS_Object* GetJSObject() const { return m_pJSObject; }
 
@@ -85,38 +83,22 @@ class CJS_Object {
   v8::Isolate* m_pIsolate;
 };
 
-class CJS_Timer {
+class CJS_Timer : public CJS_Runtime::Observer {
  public:
-  CJS_Timer(CJS_EmbedObj* pObj, CPDFDoc_Environment* pApp)
-      : m_nTimerID(0),
-        m_pEmbedObj(pObj),
-        m_bProcessing(FALSE),
-        m_dwStartTime(0),
-        m_dwTimeOut(0),
-        m_dwElapse(0),
-        m_pRuntime(NULL),
-        m_nType(0),
-        m_pApp(pApp) {}
+  CJS_Timer(CJS_EmbedObj* pObj,
+            CPDFDoc_Environment* pApp,
+            CJS_Runtime* pRuntime,
+            int nType,
+            const CFX_WideString& script,
+            FX_DWORD dwElapse,
+            FX_DWORD dwTimeOut);
+  ~CJS_Timer() override;
 
-  virtual ~CJS_Timer() { KillJSTimer(); }
-
- public:
-  FX_UINT SetJSTimer(FX_UINT nElapse);
   void KillJSTimer();
 
-  void SetType(int nType) { m_nType = nType; }
   int GetType() const { return m_nType; }
-
-  void SetStartTime(FX_DWORD dwStartTime) { m_dwStartTime = dwStartTime; }
-  FX_DWORD GetStartTime() const { return m_dwStartTime; }
-
-  void SetTimeOut(FX_DWORD dwTimeOut) { m_dwTimeOut = dwTimeOut; }
   FX_DWORD GetTimeOut() const { return m_dwTimeOut; }
-
-  void SetRuntime(CJS_Runtime* pRuntime) { m_pRuntime = pRuntime; }
-  CJS_Runtime* GetRuntime() const { return m_pRuntime; }
-
-  void SetJScript(const CFX_WideString& script) { m_swJScript = script; }
+  CJS_Runtime* GetRuntime() const { return m_bValid ? m_pRuntime : nullptr; }
   CFX_WideString GetJScript() const { return m_swJScript; }
 
   static void TimerProc(int idEvent);
@@ -125,19 +107,20 @@ class CJS_Timer {
   using TimerMap = std::map<FX_UINT, CJS_Timer*>;
   static TimerMap* GetGlobalTimerMap();
 
-  FX_UINT m_nTimerID;
-  CJS_EmbedObj* m_pEmbedObj;
-  FX_BOOL m_bProcessing;
+  // CJS_Runtime::Observer
+  void OnDestroyed() override;
+
+  FX_DWORD m_nTimerID;
+  CJS_EmbedObj* const m_pEmbedObj;
+  bool m_bProcessing;
+  bool m_bValid;
 
   // data
-  FX_DWORD m_dwStartTime;
-  FX_DWORD m_dwTimeOut;
-  FX_DWORD m_dwElapse;
-  CJS_Runtime* m_pRuntime;
-  CFX_WideString m_swJScript;
-  int m_nType;  // 0:Interval; 1:TimeOut
-
-  CPDFDoc_Environment* m_pApp;
+  const int m_nType;  // 0:Interval; 1:TimeOut
+  const FX_DWORD m_dwTimeOut;
+  const CFX_WideString m_swJScript;
+  CJS_Runtime* const m_pRuntime;
+  CPDFDoc_Environment* const m_pApp;
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_OBJECT_H_

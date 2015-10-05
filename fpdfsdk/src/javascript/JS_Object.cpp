@@ -56,20 +56,6 @@ void CJS_EmbedObj::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
   CJS_Object::Alert(pContext, swMsg);
 }
 
-CJS_Timer* CJS_EmbedObj::BeginTimer(CPDFDoc_Environment* pApp,
-                                    FX_UINT nElapse) {
-  CJS_Timer* pTimer = new CJS_Timer(this, pApp);
-  pTimer->SetJSTimer(nElapse);
-
-  return pTimer;
-}
-
-void CJS_EmbedObj::EndTimer(CJS_Timer* pTimer) {
-  ASSERT(pTimer != NULL);
-  pTimer->KillJSTimer();
-  delete pTimer;
-}
-
 void FreeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {
   CJS_Object* pJSObj = data.GetParameter();
   pJSObj->ExitInstance();
@@ -124,20 +110,40 @@ void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
   }
 }
 
-FX_UINT CJS_Timer::SetJSTimer(FX_UINT nElapse) {
-  if (m_nTimerID)
-    KillJSTimer();
+CJS_Timer::CJS_Timer(CJS_EmbedObj* pObj,
+                     CPDFDoc_Environment* pApp,
+                     CJS_Runtime* pRuntime,
+                     int nType,
+                     const CFX_WideString& script,
+                     FX_DWORD dwElapse,
+                     FX_DWORD dwTimeOut)
+    : m_nTimerID(0),
+      m_pEmbedObj(pObj),
+      m_bProcessing(false),
+      m_bValid(true),
+      m_nType(nType),
+      m_dwTimeOut(dwTimeOut),
+      m_pRuntime(pRuntime),
+      m_pApp(pApp) {
   IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
-  m_nTimerID = pHandler->SetTimer(nElapse, TimerProc);
+  m_nTimerID = pHandler->SetTimer(dwElapse, TimerProc);
   (*GetGlobalTimerMap())[m_nTimerID] = this;
-  m_dwElapse = nElapse;
-  return m_nTimerID;
+  m_pRuntime->AddObserver(this);
+}
+
+CJS_Timer::~CJS_Timer() {
+  CJS_Runtime* pRuntime = GetRuntime();
+  if (pRuntime)
+    pRuntime->RemoveObserver(this);
+  KillJSTimer();
 }
 
 void CJS_Timer::KillJSTimer() {
   if (m_nTimerID) {
-    IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
-    pHandler->KillTimer(m_nTimerID);
+    if (m_bValid) {
+      IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();
+      pHandler->KillTimer(m_nTimerID);
+    }
     GetGlobalTimerMap()->erase(m_nTimerID);
     m_nTimerID = 0;
   }
@@ -149,10 +155,10 @@ void CJS_Timer::TimerProc(int idEvent) {
   if (it != GetGlobalTimerMap()->end()) {
     CJS_Timer* pTimer = it->second;
     if (!pTimer->m_bProcessing) {
-      pTimer->m_bProcessing = TRUE;
+      CFX_AutoRestorer<bool> scoped_processing(&pTimer->m_bProcessing);
+      pTimer->m_bProcessing = true;
       if (pTimer->m_pEmbedObj)
         pTimer->m_pEmbedObj->TimerProc(pTimer);
-      pTimer->m_bProcessing = FALSE;
     }
   }
 }
@@ -162,4 +168,8 @@ CJS_Timer::TimerMap* CJS_Timer::GetGlobalTimerMap() {
   // Leak the timer array at shutdown.
   static auto* s_TimerMap = new TimerMap;
   return s_TimerMap;
+}
+
+void CJS_Timer::OnDestroyed() {
+  m_bValid = false;
 }

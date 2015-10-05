@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
 #define FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
 
+#include <set>
+
 #include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../core/include/fxcrt/fx_basic.h"
 #include "../jsapi/fxjs_v8.h"
@@ -30,6 +32,14 @@ class CJS_FieldEvent {
 
 class CJS_Runtime : public IFXJS_Runtime {
  public:
+  class Observer {
+   public:
+    virtual void OnDestroyed() = 0;
+
+   protected:
+    virtual ~Observer() {}
+  };
+
   CJS_Runtime(CPDFDoc_Environment* pApp);
   ~CJS_Runtime() override;
 
@@ -60,6 +70,9 @@ class CJS_Runtime : public IFXJS_Runtime {
 
   v8::Local<v8::Context> NewJSContext();
 
+  void AddObserver(Observer* observer);
+  void RemoveObserver(Observer* observer);
+
  protected:
   CFX_ArrayTemplate<CJS_Context*> m_ContextArray;
   CPDFDoc_Environment* m_pApp;
@@ -71,6 +84,7 @@ class CJS_Runtime : public IFXJS_Runtime {
   bool m_isolateManaged;
   nonstd::unique_ptr<CJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
   v8::Global<v8::Context> m_context;
+  std::set<Observer*> m_observers;
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_

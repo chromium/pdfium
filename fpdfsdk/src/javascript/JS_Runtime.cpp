@@ -12,7 +12,6 @@
 #include "../../include/javascript/JS_Define.h"
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Value.h"
-#include "../../include/javascript/Document.h"
 #include "../../include/javascript/app.h"
 #include "../../include/javascript/color.h"
 #include "../../include/javascript/Consts.h"
@@ -121,6 +120,9 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
 }
 
 CJS_Runtime::~CJS_Runtime() {
+  for (auto* obs : m_observers)
+    obs->OnDestroyed();
+
   for (int i = 0, sz = m_ContextArray.GetSize(); i < sz; i++)
     delete m_ContextArray.GetAt(i);
 
@@ -327,6 +329,16 @@ void CJS_Runtime::RemoveEventsInLoop(CJS_FieldEvent* pStart) {
 
 v8::Local<v8::Context> CJS_Runtime::NewJSContext() {
   return v8::Local<v8::Context>::New(m_isolate, m_context);
+}
+
+void CJS_Runtime::AddObserver(Observer* observer) {
+  ASSERT(m_observers.find(observer) == m_observers.end());
+  m_observers.insert(observer);
+}
+
+void CJS_Runtime::RemoveObserver(Observer* observer) {
+  ASSERT(m_observers.find(observer) != m_observers.end());
+  m_observers.erase(observer);
 }
 
 CFX_WideString ChangeObjName(const CFX_WideString& str) {

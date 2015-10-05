@@ -414,15 +414,9 @@ FX_BOOL app::setInterval(IFXJS_Context* cc,
 
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
   ASSERT(pApp);
-  CJS_Timer* pTimer = new CJS_Timer(this, pApp);
+  CJS_Timer* pTimer =
+      new CJS_Timer(this, pApp, pRuntime, 0, script, dwInterval, 0);
   m_aTimer.Add(pTimer);
-
-  pTimer->SetType(0);
-  pTimer->SetRuntime(pRuntime);
-  pTimer->SetJScript(script);
-  pTimer->SetTimeOut(0);
-  //	pTimer->SetStartTime(GetTickCount());
-  pTimer->SetJSTimer(dwInterval);
 
   JSFXObject pRetObj = JS_NewFxDynamicObj(
       *pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"TimerObj"));
@@ -467,14 +461,9 @@ FX_BOOL app::setTimeOut(IFXJS_Context* cc,
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
   ASSERT(pApp);
 
-  CJS_Timer* pTimer = new CJS_Timer(this, pApp);
+  CJS_Timer* pTimer =
+      new CJS_Timer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut);
   m_aTimer.Add(pTimer);
-
-  pTimer->SetType(1);
-  pTimer->SetRuntime(pRuntime);
-  pTimer->SetJScript(script);
-  pTimer->SetTimeOut(dwTimeOut);
-  pTimer->SetJSTimer(dwTimeOut);
 
   JSFXObject pRetObj = JS_NewFxDynamicObj(
       *pRuntime, pContext, JS_GetObjDefnID(*pRuntime, L"TimerObj"));
@@ -587,13 +576,17 @@ FX_BOOL app::execMenuItem(IFXJS_Context* cc,
 void app::TimerProc(CJS_Timer* pTimer) {
   ASSERT(pTimer != NULL);
 
+  CJS_Runtime* pRuntime = pTimer->GetRuntime();
+
   switch (pTimer->GetType()) {
     case 0:  // interval
-      RunJsScript(pTimer->GetRuntime(), pTimer->GetJScript());
+      if (pRuntime)
+        RunJsScript(pRuntime, pTimer->GetJScript());
       break;
     case 1:
       if (pTimer->GetTimeOut() > 0) {
-        RunJsScript(pTimer->GetRuntime(), pTimer->GetJScript());
+        if (pRuntime)
+          RunJsScript(pRuntime, pTimer->GetJScript());
         pTimer->KillJSTimer();
       }
       break;
