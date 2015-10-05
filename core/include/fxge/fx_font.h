@@ -338,6 +338,13 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                   FXSYS_FILE* pFile,
                   FX_DWORD filesize,
                   FX_DWORD offset);
+  void* GetSubstFont(const CFX_ByteString& face);
+  void* FindFont(int weight,
+                 FX_BOOL bItalic,
+                 int charset,
+                 int pitch_family,
+                 const FX_CHAR* family,
+                 FX_BOOL bMatchName);
 };
 class CFX_CountedFaceCache {
  public:
