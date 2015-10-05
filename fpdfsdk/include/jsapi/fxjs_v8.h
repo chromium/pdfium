@@ -88,8 +88,9 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,
                        IFXJS_Context* context,
                        v8::Global<v8::Context>& v8PersistentContext);
 void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime,
+                       bool bReleaseGlobal,
                        v8::Global<v8::Context>& v8PersistentContext);
-void JS_Initial(unsigned int embedderDataSlot);
+void JS_Initial(unsigned int embedderDataSlot, v8::Isolate* isolate);
 void JS_Release();
 int JS_Parse(IJS_Runtime* pJSRuntime,
              IFXJS_Context* pJSContext,

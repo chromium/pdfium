@@ -26,6 +26,7 @@ static double GetNan() {
   return *(double*)g_nan;
 }
 static unsigned int g_embedderDataSlot = 0u;
+static v8::Isolate* g_isolate = nullptr;
 
 class CJS_PrivateData {
  public:
@@ -338,8 +339,12 @@ void JS_InitialRuntime(IJS_Runtime* pJSRuntime,
 }
 
 void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime,
+                       bool bReleaseGlobal,
                        v8::Global<v8::Context>& v8PersistentContext) {
   v8::Isolate* isolate = (v8::Isolate*)pJSRuntime;
+  if (isolate == g_isolate && !bReleaseGlobal)
+    return;
+
   v8::Isolate::Scope isolate_scope(isolate);
   v8::HandleScope handle_scope(isolate);
   v8::Local<v8::Context> context =
@@ -362,13 +367,18 @@ void JS_ReleaseRuntime(IJS_Runtime* pJSRuntime,
     delete pObjDef;
   }
   delete pArray;
-  isolate->SetData(g_embedderDataSlot, NULL);
 }
 
-void JS_Initial(unsigned int embedderDataSlot) {
+void JS_Initial(unsigned int embedderDataSlot, v8::Isolate* isolate) {
   g_embedderDataSlot = embedderDataSlot;
+  g_isolate = isolate;
 }
-void JS_Release() {}
+void JS_Release() {
+  g_isolate->SetData(g_embedderDataSlot, nullptr);
+  g_isolate = nullptr;
+  g_embedderDataSlot = 0;
+}
+
 int JS_Parse(IJS_Runtime* pJSRuntime,
              IFXJS_Context* pJSContext,
              const wchar_t* script,

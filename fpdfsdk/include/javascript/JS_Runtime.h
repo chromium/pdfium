@@ -40,7 +40,7 @@ class CJS_Runtime : public IFXJS_Runtime {
     virtual ~Observer() {}
   };
 
-  CJS_Runtime(CPDFDoc_Environment* pApp);
+  CJS_Runtime(CPDFDoc_Environment* pApp, bool bInitJsObjects);
   ~CJS_Runtime() override;
 
   // IFXJS_Runtime

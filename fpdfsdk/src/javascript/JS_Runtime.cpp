@@ -26,23 +26,30 @@
 #include "../../include/javascript/global.h"
 #include "../../include/javascript/console.h"
 
+static bool g_only_one_js_runtime_left = false;
+
 CJS_RuntimeFactory::~CJS_RuntimeFactory() {}
 
 IFXJS_Runtime* CJS_RuntimeFactory::NewJSRuntime(CPDFDoc_Environment* pApp) {
+  bool bInitJsObjects = false;
   if (!m_bInit) {
     unsigned int embedderDataSlot = 0;
-    if (pApp->GetFormFillInfo()->m_pJsPlatform->version >= 2) {
-      embedderDataSlot =
-          pApp->GetFormFillInfo()->m_pJsPlatform->m_v8EmbedderSlot;
+    v8::Isolate* isolate = nullptr;
+    IPDF_JSPLATFORM* pJsPlatform = pApp->GetFormFillInfo()->m_pJsPlatform;
+    if (pJsPlatform->version >= 2) {
+      embedderDataSlot = pJsPlatform->m_v8EmbedderSlot;
+      isolate = static_cast<v8::Isolate*>(pJsPlatform->m_isolate);
     }
-    JS_Initial(embedderDataSlot);
+    JS_Initial(embedderDataSlot, isolate);
     m_bInit = TRUE;
+    bInitJsObjects = true;
   }
-  return new CJS_Runtime(pApp);
+  return new CJS_Runtime(pApp, bInitJsObjects);
 }
 void CJS_RuntimeFactory::AddRef() {
   // to do.Should be implemented as atom manipulation.
   m_nRef++;
+  g_only_one_js_runtime_left = (m_nRef == 1);
 }
 void CJS_RuntimeFactory::Release() {
   if (m_bInit) {
@@ -53,6 +60,7 @@ void CJS_RuntimeFactory::Release() {
       m_bInit = FALSE;
     }
   }
+  g_only_one_js_runtime_left = (m_nRef == 1);
 }
 
 void CJS_RuntimeFactory::DeleteJSRuntime(IFXJS_Runtime* pRuntime) {
@@ -92,16 +100,16 @@ void CJS_ArrayBufferAllocator::Free(void* data, size_t length) {
 
 /* ------------------------------ CJS_Runtime ------------------------------ */
 
-CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
+CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp, bool bInitJsObjects)
     : m_pApp(pApp),
       m_pDocument(NULL),
       m_bBlocking(FALSE),
       m_pFieldEventPath(NULL),
       m_isolate(NULL),
       m_isolateManaged(false) {
-  if (m_pApp->GetFormFillInfo()->m_pJsPlatform->version >= 2) {
-    m_isolate = reinterpret_cast<v8::Isolate*>(
-        m_pApp->GetFormFillInfo()->m_pJsPlatform->m_isolate);
+  IPDF_JSPLATFORM* pJsPlatform = pApp->GetFormFillInfo()->m_pJsPlatform;
+  if (pJsPlatform->version >= 2) {
+    m_isolate = static_cast<v8::Isolate*>(pJsPlatform->m_isolate);
   }
   if (!m_isolate) {
     m_pArrayBufferAllocator.reset(new CJS_ArrayBufferAllocator());
@@ -112,7 +120,8 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     m_isolateManaged = true;
   }
 
-  InitJSObjects();
+  if (m_isolateManaged || bInitJsObjects)
+    InitJSObjects();
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
   JS_InitialRuntime(*this, this, pContext, m_context);
@@ -128,7 +137,7 @@ CJS_Runtime::~CJS_Runtime() {
 
   m_ContextArray.RemoveAll();
 
-  JS_ReleaseRuntime(*this, m_context);
+  JS_ReleaseRuntime(*this, g_only_one_js_runtime_left, m_context);
 
   RemoveEventsInLoop(m_pFieldEventPath);
 
