@@ -76,8 +76,8 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
                             FX_UINT nFlags);
   virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot, FX_UINT nChar, FX_UINT nFlags);
 
-  FX_BOOL SetFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
-  FX_BOOL KillFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
+  void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
+  void KillFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 
   // CPWL_TimerHandler
   void TimerProc() override;
