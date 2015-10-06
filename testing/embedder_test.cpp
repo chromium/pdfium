@@ -123,21 +123,21 @@ FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {}
 
 EmbedderTest::EmbedderTest()
-    : document_(nullptr),
+    : default_delegate_(new EmbedderTest::Delegate()),
+      document_(nullptr),
       form_handle_(nullptr),
       avail_(nullptr),
+      external_isolate_(nullptr),
       loader_(nullptr),
       file_length_(0),
       file_contents_(nullptr) {
   memset(&hints_, 0, sizeof(hints_));
   memset(&file_access_, 0, sizeof(file_access_));
   memset(&file_avail_, 0, sizeof(file_avail_));
-  default_delegate_ = new EmbedderTest::Delegate();
-  delegate_ = default_delegate_;
+  delegate_ = default_delegate_.get();
 }
 
 EmbedderTest::~EmbedderTest() {
-  delete default_delegate_;
 }
 
 void EmbedderTest::SetUp() {
@@ -159,7 +159,12 @@ void EmbedderTest::SetUp() {
   v8::V8::SetSnapshotDataBlob(&snapshot_);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
-  FPDF_InitLibrary();
+  FPDF_LIBRARY_CONFIG config;
+  config.version = 2;
+  config.m_pUserFontPaths = nullptr;
+  config.m_pIsolate = external_isolate_;
+  config.m_v8EmbedderSlot = 0;
+  FPDF_InitLibraryWithConfig(&config);
 
   UNSUPPORT_INFO* info = static_cast<UNSUPPORT_INFO*>(this);
   memset(info, 0, sizeof(UNSUPPORT_INFO));
