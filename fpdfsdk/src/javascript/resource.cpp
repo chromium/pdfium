@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/javascript/resource.h"
+#include "resource.h"
 
 CFX_WideString JSGetStringFromID(CJS_Context* pContext, FX_UINT id) {
   switch (id) {

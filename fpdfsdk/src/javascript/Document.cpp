@@ -4,20 +4,21 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/javascript/IJavaScript.h"
-#include "../../include/javascript/JS_Define.h"
-#include "../../include/javascript/JS_Object.h"
-#include "../../include/javascript/JS_Value.h"
-#include "../../include/javascript/Document.h"
-#include "../../include/javascript/JS_EventHandler.h"
-#include "../../include/javascript/JS_Context.h"
-#include "../../include/javascript/JS_Runtime.h"
-#include "../../include/javascript/app.h"
-#include "../../include/javascript/Field.h"
-#include "../../include/javascript/Icon.h"
-#include "../../include/javascript/resource.h"
+#include "Document.h"
 
 #include "../../../third_party/base/numerics/safe_math.h"
+#include "../../include/fsdk_mgr.h"  // For CPDFDoc_Environment.
+#include "../../include/javascript/IJavaScript.h"
+#include "Field.h"
+#include "Icon.h"
+#include "JS_Context.h"
+#include "JS_Define.h"
+#include "JS_EventHandler.h"
+#include "JS_Object.h"
+#include "JS_Runtime.h"
+#include "JS_Value.h"
+#include "app.h"
+#include "resource.h"
 
 static v8::Isolate* GetIsolate(IFXJS_Context* cc) {
   CJS_Context* pContext = (CJS_Context*)cc;

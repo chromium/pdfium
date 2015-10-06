@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_DEFINE_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_DEFINE_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_JS_DEFINE_H_
+#define FPDFSDK_SRC_JAVASCRIPT_JS_DEFINE_H_
 
-#include "../jsapi/fxjs_v8.h"
+#include "../../include/jsapi/fxjs_v8.h"
 #include "resource.h"
 #include "JS_Object.h"
 #include "JS_Value.h"
@@ -49,10 +49,11 @@ struct JSMethodSpec {
 
 #define BEGIN_JS_STATIC_PROP(js_class_name) \
   JSPropertySpec js_class_name::JS_Class_Properties[] = {
-#define JS_STATIC_PROP_ENTRY(prop_name)                                          \
-  {                                                                              \
-    JS_WIDESTRING(prop_name), get_##prop_name##_static, set_##prop_name##_static \
-  }                                                                              \
+#define JS_STATIC_PROP_ENTRY(prop_name)                 \
+  {                                                     \
+    JS_WIDESTRING(prop_name), get_##prop_name##_static, \
+        set_##prop_name##_static                        \
+  }                                                     \
   ,
 #define END_JS_STATIC_PROP() \
   { 0, 0, 0 }                \
@@ -481,4 +482,4 @@ void JSGlobalFunc(const char* func_name_string,
 
 CJS_Value::Type GET_VALUE_TYPE(v8::Local<v8::Value> p);
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_DEFINE_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_JS_DEFINE_H_

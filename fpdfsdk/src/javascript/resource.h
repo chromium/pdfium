@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_RESOURCE_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_RESOURCE_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_RESOURCE_H_
+#define FPDFSDK_SRC_JAVASCRIPT_RESOURCE_H_
 
 #include "../../../core/include/fxcrt/fx_string.h"  // For CFX_WideString.
-#include "../fsdk_define.h"                         // For FX_UINT.
+#include "../../include/fsdk_define.h"              // For FX_UINT.
 
 class CJS_Context;
 
@@ -36,4 +36,4 @@ CFX_WideString JSFormatErrorString(const char* class_name,
                                    const char* property_name,
                                    const CFX_WideString& details);
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_RESOURCE_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_RESOURCE_H_

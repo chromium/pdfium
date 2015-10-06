@@ -133,6 +133,7 @@ class IFXJS_Context {
 
 class IFXJS_Runtime {
  public:
+  static IFXJS_Runtime* Create(CPDFDoc_Environment* pEnv);
   virtual ~IFXJS_Runtime() {}
 
   virtual IFXJS_Context* NewContext() = 0;
@@ -140,6 +141,9 @@ class IFXJS_Runtime {
   virtual IFXJS_Context* GetCurrentContext() = 0;
   virtual void SetReaderDocument(CPDFSDK_Document* pReaderDoc) = 0;
   virtual CPDFSDK_Document* GetReaderDocument() = 0;
+
+ protected:
+  IFXJS_Runtime() {}
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_

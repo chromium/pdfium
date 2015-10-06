@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_CONSOLE_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_CONSOLE_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_CONSOLE_H_
+#define FPDFSDK_SRC_JAVASCRIPT_CONSOLE_H_
 
 #include "JS_Define.h"
 
@@ -46,4 +46,4 @@ class CJS_Console : public CJS_Object {
   JS_STATIC_METHOD(show, console);
 };
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_CONSOLE_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_CONSOLE_H_

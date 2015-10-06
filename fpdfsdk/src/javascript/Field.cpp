@@ -4,18 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "Field.h"
+
+#include "../../include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "../../include/javascript/IJavaScript.h"
-#include "../../include/javascript/JS_Define.h"
-#include "../../include/javascript/JS_Object.h"
-#include "../../include/javascript/JS_Value.h"
-#include "../../include/javascript/Field.h"
-#include "../../include/javascript/JS_EventHandler.h"
-#include "../../include/javascript/JS_Context.h"
-#include "../../include/javascript/JS_Runtime.h"
-#include "../../include/javascript/Document.h"
-#include "../../include/javascript/color.h"
-#include "../../include/javascript/PublicMethods.h"
-#include "../../include/javascript/Icon.h"
+#include "Document.h"
+#include "Icon.h"
+#include "JS_Context.h"
+#include "JS_Define.h"
+#include "JS_EventHandler.h"
+#include "JS_Object.h"
+#include "JS_Runtime.h"
+#include "JS_Value.h"
+#include "PublicMethods.h"
+#include "color.h"
 
 /* ---------------------- Field ---------------------- */
 

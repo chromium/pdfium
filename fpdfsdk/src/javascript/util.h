@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_UTIL_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_UTIL_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_UTIL_H_
+#define FPDFSDK_SRC_JAVASCRIPT_UTIL_H_
 
 #include <string>  // For std::wstring.
 
@@ -65,4 +65,4 @@ class CJS_Util : public CJS_Object {
 
 int64_t FX_atoi64(const char* nptr);
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_UTIL_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_UTIL_H_

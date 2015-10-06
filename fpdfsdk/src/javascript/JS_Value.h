@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_VALUE_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_VALUE_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_JS_VALUE_H_
+#define FPDFSDK_SRC_JAVASCRIPT_JS_VALUE_H_
 
 #include "../../../core/include/fxcrt/fx_basic.h"
-#include "../jsapi/fxjs_v8.h"
+#include "../../include/jsapi/fxjs_v8.h"
 
 class CJS_Array;
 class CJS_Date;
@@ -215,4 +215,4 @@ double JS_MakeDate(double day, double time);
 bool JS_PortIsNan(double d);
 double JS_LocalTime(double d);
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_VALUE_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_JS_VALUE_H_

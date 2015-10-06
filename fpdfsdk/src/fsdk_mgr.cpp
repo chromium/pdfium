@@ -10,7 +10,6 @@
 #include "../include/fsdk_mgr.h"
 #include "../include/formfiller/FFL_FormFiller.h"
 #include "../include/javascript/IJavaScript.h"
-#include "../include/javascript/JS_Runtime.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
@@ -374,7 +373,7 @@ IFXJS_Runtime* CPDFDoc_Environment::GetJSRuntime() {
   if (!IsJSInitiated())
     return NULL;
   if (!m_pJSRuntime)
-    m_pJSRuntime.reset(new CJS_Runtime(this));
+    m_pJSRuntime.reset(IFXJS_Runtime::Create(this));
   return m_pJSRuntime.get();
 }
 

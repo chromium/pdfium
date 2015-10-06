@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_PUBLICMETHODS_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_PUBLICMETHODS_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_PUBLICMETHODS_H_
+#define FPDFSDK_SRC_JAVASCRIPT_PUBLICMETHODS_H_
 
 #include "JS_Define.h"
 
@@ -182,4 +182,4 @@ class CJS_PublicMethods : public CJS_Object {
   static CJS_Array AF_MakeArrayFromList(v8::Isolate* isolate, CJS_Value val);
 };
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_PUBLICMETHODS_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_PUBLICMETHODS_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_GLOBAL_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_GLOBAL_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_GLOBAL_H_
+#define FPDFSDK_SRC_JAVASCRIPT_GLOBAL_H_
 
 #include <map>
 
@@ -90,4 +90,4 @@ class CJS_Global : public CJS_Object {
   JS_SPECIAL_STATIC_METHOD(setPersistent, JSGlobalAlternate, global);
 };
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_GLOBAL_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_GLOBAL_H_

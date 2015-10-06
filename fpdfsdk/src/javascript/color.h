@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_COLOR_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_COLOR_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_COLOR_H_
+#define FPDFSDK_SRC_JAVASCRIPT_COLOR_H_
 
-#include "../pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
+#include "../../include/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 #include "JS_Define.h"
 
 class color : public CJS_EmbedObj {
@@ -82,4 +82,4 @@ class CJS_Color : public CJS_Object {
   JS_STATIC_METHOD(equal, color);
 };
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_COLOR_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_COLOR_H_

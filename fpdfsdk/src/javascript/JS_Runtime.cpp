@@ -4,28 +4,34 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "JS_Runtime.h"
+
+#include "../../include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "../../include/javascript/IJavaScript.h"
-#include "../../include/javascript/JS_EventHandler.h"
-#include "../../include/javascript/JS_Runtime.h"
-#include "../../include/javascript/JS_Context.h"
-#include "../../include/javascript/JS_Define.h"
-#include "../../include/javascript/JS_Object.h"
-#include "../../include/javascript/JS_Value.h"
-#include "../../include/javascript/app.h"
-#include "../../include/javascript/color.h"
-#include "../../include/javascript/Consts.h"
-#include "../../include/javascript/Document.h"
-#include "../../include/javascript/event.h"
-#include "../../include/javascript/Field.h"
-#include "../../include/javascript/Icon.h"
-#include "../../include/javascript/PublicMethods.h"
-#include "../../include/javascript/report.h"
-#include "../../include/javascript/util.h"
-#include "../../include/javascript/JS_GlobalData.h"
-#include "../../include/javascript/global.h"
-#include "../../include/javascript/console.h"
+#include "Consts.h"
+#include "Document.h"
+#include "Field.h"
+#include "Icon.h"
+#include "JS_Context.h"
+#include "JS_Define.h"
+#include "JS_EventHandler.h"
+#include "JS_GlobalData.h"
+#include "JS_Object.h"
+#include "JS_Value.h"
+#include "PublicMethods.h"
+#include "app.h"
+#include "color.h"
+#include "console.h"
+#include "event.h"
+#include "global.h"
+#include "report.h"
+#include "util.h"
 
 /* ------------------------------ CJS_Runtime ------------------------------ */
+
+IFXJS_Runtime* IFXJS_Runtime::Create(CPDFDoc_Environment* pEnv) {
+  return new CJS_Runtime(pEnv);
+}
 
 CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     : m_pApp(pApp),

@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "JS_GlobalData.h"
+
 #include "../../../core/include/fdrm/fx_crypt.h"
 #include "../../include/javascript/IJavaScript.h"
-#include "../../include/javascript/JS_GlobalData.h"
 
 #define JS_MAXGLOBALDATA (1024 * 4 - 8)
 

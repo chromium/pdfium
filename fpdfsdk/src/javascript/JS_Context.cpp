@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "JS_Context.h"
+
 #include "../../include/javascript/IJavaScript.h"
-#include "../../include/javascript/JS_Context.h"
-#include "../../include/javascript/JS_EventHandler.h"
-#include "../../include/javascript/JS_Runtime.h"
-#include "../../include/javascript/resource.h"
+#include "JS_EventHandler.h"
+#include "JS_Runtime.h"
+#include "resource.h"
 
 /* -------------------------- CJS_Context -------------------------- */
 

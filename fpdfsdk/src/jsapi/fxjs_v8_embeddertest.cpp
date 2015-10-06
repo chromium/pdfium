@@ -2,10 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../core/include/fpdfapi/fpdf_parser.h"
 #include "../../../testing/embedder_test.h"
-#include "../../include/fsdk_mgr.h"
-#include "../../include/javascript/JS_Runtime.h"
 #include "../../include/jsapi/fxjs_v8.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -49,7 +48,7 @@ class FXJSV8Embeddertest : public EmbedderTest {
  private:
   v8::Isolate* m_pIsolate;
   v8::Global<v8::Context> m_pPersistentContext;
-  nonstd::unique_ptr<v8::ArrayBuffer::Allocator> m_pAllocator;
+  nonstd::unique_ptr<FXJS_ArrayBufferAllocator> m_pAllocator;
 };
 
 TEST_F(FXJSV8Embeddertest, Getters) {
