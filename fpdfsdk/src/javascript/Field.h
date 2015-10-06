@@ -539,8 +539,7 @@ class CJS_Field : public CJS_Object {
 
   FX_BOOL InitInstance(IFXJS_Context* cc) override;
 
-  DECLARE_JS_CLASS(CJS_Field);
-
+  DECLARE_JS_CLASS();
   JS_STATIC_PROP(alignment, Field);
   JS_STATIC_PROP(borderStyle, Field);
   JS_STATIC_PROP(buttonAlignX, Field);

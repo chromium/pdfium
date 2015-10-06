@@ -85,8 +85,7 @@ class CJS_Global : public CJS_Object {
   // CJS_Object
   FX_BOOL InitInstance(IFXJS_Context* cc) override;
 
-  DECLARE_SPECIAL_JS_CLASS(CJS_Global);
-
+  DECLARE_SPECIAL_JS_CLASS();
   JS_SPECIAL_STATIC_METHOD(setPersistent, JSGlobalAlternate, global);
 };
 

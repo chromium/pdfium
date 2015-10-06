@@ -30,8 +30,7 @@ class CJS_Report : public CJS_Object {
   CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Report() override {}
 
- public:
-  DECLARE_JS_CLASS(CJS_Report);
+  DECLARE_JS_CLASS();
 
   JS_STATIC_METHOD(save, Report)
   JS_STATIC_METHOD(writeText, Report);

@@ -3310,9 +3310,8 @@ FX_BOOL Field::buttonGetIcon(IFXJS_Context* cc,
 
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Local<v8::Object> pObj =
-      FXJS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
-                           FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon"));
+  v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
+      pRuntime->GetIsolate(), pContext, CJS_Icon::g_nObjDefnID);
   ASSERT(pObj.IsEmpty() == FALSE);
 
   CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
@@ -3521,9 +3520,8 @@ FX_BOOL Field::getArray(IFXJS_Context* cc,
   for (int j = 0, jsz = swSort.GetSize(); j < jsz; j++) {
     nonstd::unique_ptr<CFX_WideString> pStr(swSort.GetAt(j));
     v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-        pRuntime->GetIsolate(), pContext,
-        FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Field"));
-    ASSERT(pObj.IsEmpty() == FALSE);
+        pRuntime->GetIsolate(), pContext, CJS_Field::g_nObjDefnID);
+    ASSERT(!pObj.IsEmpty());
 
     CJS_Field* pJSField =
         (CJS_Field*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);

@@ -63,7 +63,7 @@ class CJS_Color : public CJS_Object {
   CJS_Color(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Color() override {}
 
-  DECLARE_JS_CLASS(CJS_Color);
+  DECLARE_JS_CLASS();
 
   JS_STATIC_PROP(black, color);
   JS_STATIC_PROP(blue, color);

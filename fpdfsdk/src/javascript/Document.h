@@ -30,7 +30,7 @@ class CJS_PrintParamsObj : public CJS_Object {
   CJS_PrintParamsObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_PrintParamsObj() override {}
 
-  DECLARE_JS_CLASS(CJS_PrintParamsObj);
+  DECLARE_JS_CLASS();
 };
 
 class Icon;
@@ -327,7 +327,7 @@ class CJS_Document : public CJS_Object {
   // CJS_Object
   FX_BOOL InitInstance(IFXJS_Context* cc) override;
 
-  DECLARE_JS_CLASS(CJS_Document);
+  DECLARE_JS_CLASS();
 
   JS_STATIC_PROP(ADBE, Document);
   JS_STATIC_PROP(author, Document);

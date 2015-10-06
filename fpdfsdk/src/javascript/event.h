@@ -62,8 +62,7 @@ class CJS_Event : public CJS_Object {
   CJS_Event(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Event() override {}
 
-  DECLARE_JS_CLASS(CJS_Event);
-
+  DECLARE_JS_CLASS();
   JS_STATIC_PROP(change, event);
   JS_STATIC_PROP(changeEx, event);
   JS_STATIC_PROP(commitKey, event);
