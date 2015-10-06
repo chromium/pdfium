@@ -23,8 +23,9 @@ class IFXJS_Runtime;
 class CFXJSE_RuntimeData;
 
 enum FXJSOBJTYPE {
-  FXJS_DYNAMIC = 0,
-  FXJS_STATIC = 1,
+  FXJSOBJTYPE_DYNAMIC = 0,  // Created by native method and returned to JS.
+  FXJSOBJTYPE_STATIC,       // Created by init and hung off of global object.
+  FXJSOBJTYPE_GLOBAL,       // The global object itself (may only appear once).
 };
 
 struct FXJSErr {
@@ -132,7 +133,6 @@ v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
                                            int nObjDefnID);
 v8::Local<v8::Object> FXJS_GetThisObj(v8::Isolate* pIsolate);
 int FXJS_GetObjDefnID(v8::Local<v8::Object> pObj);
-int FXJS_GetObjDefnID(v8::Isolate* pIsolate, const wchar_t* pObjName);
 v8::Isolate* FXJS_GetRuntime(v8::Local<v8::Object> pObj);
 const wchar_t* FXJS_GetTypeof(v8::Local<v8::Value> pObj);
 

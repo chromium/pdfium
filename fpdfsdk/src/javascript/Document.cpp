@@ -325,9 +325,8 @@ FX_BOOL Document::getField(IFXJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Local<v8::Object> pFieldObj =
-      FXJS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext,
-                           FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Field"));
+  v8::Local<v8::Object> pFieldObj = FXJS_NewFxDynamicObj(
+      pRuntime->GetIsolate(), pContext, CJS_Field::g_nObjDefnID);
 
   v8::Isolate* isolate = GetIsolate(cc);
   CJS_Field* pJSField = (CJS_Field*)FXJS_GetPrivate(isolate, pFieldObj);
@@ -441,11 +440,6 @@ FX_BOOL Document::print(IFXJS_Context* cc,
                         const CJS_Parameters& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
-
   FX_BOOL bUI = TRUE;
   int nStart = 0;
   int nEnd = 0;
@@ -460,8 +454,7 @@ FX_BOOL Document::print(IFXJS_Context* cc,
     if (params[8].GetType() == CJS_Value::VT_fxobject) {
       v8::Local<v8::Object> pObj = params[8].ToV8Object();
       {
-        if (FXJS_GetObjDefnID(pObj) ==
-            FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"PrintParamsObj")) {
+        if (FXJS_GetObjDefnID(pObj) == CJS_PrintParamsObj::g_nObjDefnID) {
           if (CJS_Object* pJSObj = params[8].ToCJSObject()) {
             if (PrintParamsObj* pprintparamsObj =
                     (PrintParamsObj*)pJSObj->GetEmbedObject()) {
@@ -1410,11 +1403,9 @@ FX_BOOL Document::addIcon(IFXJS_Context* cc,
     sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
     return FALSE;
   }
-  v8::Local<v8::Object> pJSIcon = params[1].ToV8Object();
 
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  if (FXJS_GetObjDefnID(pJSIcon) !=
-      FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon")) {
+  v8::Local<v8::Object> pJSIcon = params[1].ToV8Object();
+  if (FXJS_GetObjDefnID(pJSIcon) != CJS_Icon::g_nObjDefnID) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSTYPEERROR);
     return FALSE;
   }
@@ -1462,8 +1453,7 @@ FX_BOOL Document::icons(IFXJS_Context* cc,
     pIconElement = (*m_pIconTree)[i];
 
     v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-        pRuntime->GetIsolate(), pContext,
-        FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon"));
+        pRuntime->GetIsolate(), pContext, CJS_Icon::g_nObjDefnID);
     if (pObj.IsEmpty())
       return FALSE;
 
@@ -1506,8 +1496,7 @@ FX_BOOL Document::getIcon(IFXJS_Context* cc,
       Icon* pRetIcon = (*m_pIconTree)[i]->IconStream;
 
       v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-          pRuntime->GetIsolate(), pContext,
-          FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"Icon"));
+          pRuntime->GetIsolate(), pContext, CJS_Icon::g_nObjDefnID);
       if (pObj.IsEmpty())
         return FALSE;
 
@@ -1708,8 +1697,7 @@ FX_BOOL Document::getPrintParams(IFXJS_Context* cc,
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pContext,
-      FXJS_GetObjDefnID(pRuntime->GetIsolate(), L"PrintParamsObj"));
+      pRuntime->GetIsolate(), pContext, CJS_PrintParamsObj::g_nObjDefnID);
 
   // Not implemented yet.
 

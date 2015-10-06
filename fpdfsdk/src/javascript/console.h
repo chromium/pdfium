@@ -38,7 +38,7 @@ class CJS_Console : public CJS_Object {
   CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Console() override {}
 
-  DECLARE_JS_CLASS(CJS_Console);
+  DECLARE_JS_CLASS();
 
   JS_STATIC_METHOD(clear, console);
   JS_STATIC_METHOD(hide, console);

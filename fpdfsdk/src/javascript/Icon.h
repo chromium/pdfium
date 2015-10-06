@@ -30,9 +30,7 @@ class CJS_Icon : public CJS_Object {
   CJS_Icon(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Icon() override {}
 
- public:
-  DECLARE_JS_CLASS(CJS_Icon);
-
+  DECLARE_JS_CLASS();
   JS_STATIC_PROP(name, Icon);
 };
 

@@ -33,7 +33,7 @@ class CJS_TimerObj : public CJS_Object {
   CJS_TimerObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_TimerObj() override {}
 
-  DECLARE_JS_CLASS(CJS_TimerObj);
+  DECLARE_JS_CLASS();
 };
 
 class app : public CJS_EmbedObj {
@@ -177,7 +177,7 @@ class CJS_App : public CJS_Object {
   explicit CJS_App(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_App() override {}
 
-  DECLARE_JS_CLASS(CJS_App);
+  DECLARE_JS_CLASS();
 
   JS_STATIC_PROP(activeDocs, app);
   JS_STATIC_PROP(calculate, app);
