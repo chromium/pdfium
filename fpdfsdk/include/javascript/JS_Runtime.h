@@ -19,6 +19,14 @@ class CJS_Context;
 
 class CJS_Runtime : public IFXJS_Runtime {
  public:
+  class Observer {
+   public:
+    virtual void OnDestroyed() = 0;
+
+   protected:
+    virtual ~Observer() {}
+  };
+
   using FieldEvent = std::pair<CFX_WideString, JS_EVENT_T>;
 
   explicit CJS_Runtime(CPDFDoc_Environment* pApp);
@@ -44,6 +52,9 @@ class CJS_Runtime : public IFXJS_Runtime {
   v8::Isolate* GetIsolate() const { return m_isolate; }
   v8::Local<v8::Context> NewJSContext();
 
+  void AddObserver(Observer* observer);
+  void RemoveObserver(Observer* observer);
+
  private:
   void DefineJSObjects();
 
@@ -55,6 +66,7 @@ class CJS_Runtime : public IFXJS_Runtime {
   v8::Isolate* m_isolate;
   bool m_isolateManaged;
   v8::Global<v8::Context> m_context;
+  std::set<Observer*> m_observers;
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
