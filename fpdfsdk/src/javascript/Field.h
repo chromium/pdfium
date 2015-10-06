@@ -4,14 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_FIELD_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_FIELD_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_FIELD_H_
+#define FPDFSDK_SRC_JAVASCRIPT_FIELD_H_
 
 #include <string>  // For std::wstring.
 
-#include "../pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
+#include "../../include/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 #include "JS_Define.h"
 
+class CPDFSDK_Widget;
 class Document;
 
 enum FIELD_PROP {
@@ -621,4 +622,4 @@ class CJS_Field : public CJS_Object {
   JS_STATIC_METHOD(signatureValidate, Field);
 };
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_FIELD_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_FIELD_H_

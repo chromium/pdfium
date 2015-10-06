@@ -4,23 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_OBJECT_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_OBJECT_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_JS_OBJECT_H_
+#define FPDFSDK_SRC_JAVASCRIPT_JS_OBJECT_H_
 
 #include <map>
 
 #include "../../../third_party/base/nonstd_unique_ptr.h"
-
-#include "../fsdk_define.h"       // For FX_UINT
-#include "../fsdk_mgr.h"          // For CPDFDoc_Environment
-#include "../fx_systemhandler.h"  // For IFX_SystemHandler
-#include "../jsapi/fxjs_v8.h"
+#include "../../include/fsdk_define.h"  // For FX_UINT
+#include "../../include/jsapi/fxjs_v8.h"
 #include "JS_Runtime.h"
 
 class CJS_Context;
 class CJS_Object;
 class CJS_Timer;
-
+class CPDFDoc_Environment;
 class CJS_EmbedObj {
  public:
   explicit CJS_EmbedObj(CJS_Object* pJSObject);
@@ -116,4 +113,4 @@ class CJS_Timer : public CJS_Runtime::Observer {
   CPDFDoc_Environment* const m_pApp;
 };
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_OBJECT_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_JS_OBJECT_H_

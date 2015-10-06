@@ -4,15 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "JS_EventHandler.h"
+
 #include "../../include/javascript/IJavaScript.h"
-#include "../../include/javascript/JS_EventHandler.h"
-#include "../../include/javascript/JS_Context.h"
-#include "../../include/javascript/JS_Runtime.h"
-#include "../../include/javascript/JS_Define.h"
-#include "../../include/javascript/JS_Object.h"
-#include "../../include/javascript/JS_Value.h"
-#include "../../include/javascript/Document.h"
-#include "../../include/javascript/Field.h"
+#include "Document.h"
+#include "Field.h"
+#include "JS_Context.h"
+#include "JS_Define.h"
+#include "JS_Object.h"
+#include "JS_Runtime.h"
+#include "JS_Value.h"
 
 /* ---------------------------- CJS_EventHandler ---------------------------- */
 

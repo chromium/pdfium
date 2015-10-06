@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_JS_RUNTIME_H_
+#define FPDFSDK_SRC_JAVASCRIPT_JS_RUNTIME_H_
 
 #include <set>
 #include <utility>
 
 #include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../core/include/fxcrt/fx_basic.h"
-#include "../jsapi/fxjs_v8.h"
-#include "IJavaScript.h"
+#include "../../include/javascript/IJavaScript.h"
+#include "../../include/jsapi/fxjs_v8.h"
 #include "JS_EventHandler.h"
 
 class CJS_Context;
@@ -76,4 +76,4 @@ class CJS_Runtime : public IFXJS_Runtime {
   std::set<Observer*> m_observers;
 };
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_JS_RUNTIME_H_

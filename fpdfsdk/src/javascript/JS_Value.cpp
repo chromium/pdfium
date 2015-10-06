@@ -4,14 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "JS_Value.h"
+
 #include <time.h>
 #include <cmath>
 #include <limits>
 
-#include "../../include/javascript/JS_Define.h"
-#include "../../include/javascript/JS_Object.h"
-#include "../../include/javascript/JS_Value.h"
-#include "../../include/javascript/Document.h"
+#include "Document.h"
+#include "JS_Define.h"
+#include "JS_Object.h"
 
 static const FX_DWORD g_nan[2] = {0, 0x7FF80000};
 static double GetNan() {

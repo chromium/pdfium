@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_NODEACC_H
-#define _FXFA_NODEACC_H
+#ifndef FXFA_OBJECTACC_H_
+#define FXFA_OBJECTACC_H_
+
+#include "../../../core/include/fxge/fx_dib.h"  // For FX_ARGB.
+
 class CXFA_Node;
 class IFX_Locale;
 class CXFA_Data;
@@ -841,4 +844,5 @@ class CXFA_Manifest : public CXFA_Data {
   int32_t CountReives();
   CFX_WideString GetRefContent(int32_t nIndex);
 };
-#endif
+
+#endif  // FXFA_OBJECTACC_H_

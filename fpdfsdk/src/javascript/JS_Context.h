@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_JS_CONTEXT_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_JS_CONTEXT_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_JS_CONTEXT_H_
+#define FPDFSDK_SRC_JAVASCRIPT_JS_CONTEXT_H_
 
 #include "../../../core/include/fxcrt/fx_system.h"
 #include "../../../core/include/fxcrt/fx_string.h"
-#include "IJavaScript.h"
+#include "../../include/javascript/IJavaScript.h"
 
 class CJS_EventHandler;
 class CJS_Runtime;
@@ -134,4 +134,4 @@ class CJS_Context : public IFXJS_Context {
   FX_BOOL m_bMsgBoxEnable;
 };
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_CONTEXT_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_JS_CONTEXT_H_

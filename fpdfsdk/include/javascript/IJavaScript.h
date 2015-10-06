@@ -134,6 +134,7 @@ class IFXJS_Context {
 
 class IFXJS_Runtime {
  public:
+  static IFXJS_Runtime* Create(CPDFDoc_Environment* pEnv);
   virtual ~IFXJS_Runtime() {}
 
   virtual IFXJS_Context* NewContext() = 0;
@@ -147,6 +148,9 @@ class IFXJS_Runtime {
                                   FXJSE_HVALUE hValue) = 0;
   virtual FX_BOOL SetHValueByName(const CFX_ByteStringC& utf8Name,
                                   FXJSE_HVALUE hValue) = 0;
+
+ protected:
+  IFXJS_Runtime() {}
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_

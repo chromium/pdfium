@@ -7,6 +7,8 @@
 #ifndef FPDFXFA_APP_H_
 #define FPDFXFA_APP_H_
 
+#include "../../../xfa/include/fxfa/fxfa.h"
+
 class IFXJS_Runtime;
 
 class CPDFXFA_App : public IXFA_AppProvider {

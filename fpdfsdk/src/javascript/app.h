@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_JAVASCRIPT_APP_H_
-#define FPDFSDK_INCLUDE_JAVASCRIPT_APP_H_
+#ifndef FPDFSDK_SRC_JAVASCRIPT_APP_H_
+#define FPDFSDK_SRC_JAVASCRIPT_APP_H_
 
 #include "JS_Define.h"
 
@@ -215,4 +215,4 @@ class CJS_App : public CJS_Object {
   JS_STATIC_METHOD(setTimeOut, app);
 };
 
-#endif  // FPDFSDK_INCLUDE_JAVASCRIPT_APP_H_
+#endif  // FPDFSDK_SRC_JAVASCRIPT_APP_H_

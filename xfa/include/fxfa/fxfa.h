@@ -7,26 +7,27 @@
 #ifndef FXFA_H_
 #define FXFA_H_
 
-class IFDE_XMLElement;
+class CFX_Graphics;
+class CPDF_Document;
 class CXFA_Node;
 class CXFA_NodeList;
 class CXFA_WidgetAcc;
+class IFDE_XMLElement;
 class IFWL_AdapterTimerMgr;
 class IFX_Font;
-class CFX_Graphics;
-class IXFA_AppProvider;
 class IXFA_App;
-class IXFA_FontMgr;
-class IXFA_DocProvider;
+class IXFA_AppProvider;
+class IXFA_ChecksumContext;
 class IXFA_DocHandler;
+class IXFA_DocProvider;
 class IXFA_DocView;
-class IXFA_PageViewRender;
+class IXFA_FontMgr;
+class IXFA_MenuHandler;
 class IXFA_PageView;
+class IXFA_PageViewRender;
+class IXFA_WidgetAccIterator;
 class IXFA_WidgetHandler;
 class IXFA_WidgetIterator;
-class IXFA_MenuHandler;
-class IXFA_ChecksumContext;
-class IXFA_WidgetAccIterator;
 
 class IXFA_Doc {
  public:
