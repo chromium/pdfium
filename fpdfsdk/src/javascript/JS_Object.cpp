@@ -5,12 +5,13 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/javascript/IJavaScript.h"
+#include "../../include/javascript/JS_Context.h"
 #include "../../include/javascript/JS_Define.h"
 #include "../../include/javascript/JS_Object.h"
-#include "../../include/javascript/JS_Context.h"
+
+namespace {
 
 int FXJS_MsgBox(CPDFDoc_Environment* pApp,
-                CPDFSDK_PageView* pPageView,
                 const FX_WCHAR* swMsg,
                 const FX_WCHAR* swTitle,
                 FX_UINT nType,
@@ -24,13 +25,7 @@ int FXJS_MsgBox(CPDFDoc_Environment* pApp,
   return pApp->JS_appAlert(swMsg, swTitle, nType, nIcon);
 }
 
-CPDFSDK_PageView* FXJS_GetPageView(IFXJS_Context* cc) {
-  if (CJS_Context* pContext = (CJS_Context*)cc) {
-    if (pContext->GetReaderDocument())
-      return NULL;
-  }
-  return NULL;
-}
+}  // namespace
 
 CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : m_pJSObject(pJSObject) {}
 
@@ -38,17 +33,12 @@ CJS_EmbedObj::~CJS_EmbedObj() {
   m_pJSObject = NULL;
 }
 
-CPDFSDK_PageView* CJS_EmbedObj::JSGetPageView(IFXJS_Context* cc) {
-  return FXJS_GetPageView(cc);
-}
-
 int CJS_EmbedObj::MsgBox(CPDFDoc_Environment* pApp,
-                         CPDFSDK_PageView* pPageView,
                          const FX_WCHAR* swMsg,
                          const FX_WCHAR* swTitle,
                          FX_UINT nType,
                          FX_UINT nIcon) {
-  return FXJS_MsgBox(pApp, pPageView, swMsg, swTitle, nType, nIcon);
+  return FXJS_MsgBox(pApp, swMsg, swTitle, nType, nIcon);
 }
 
 void CJS_EmbedObj::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
@@ -85,17 +75,12 @@ void CJS_Object::Dispose() {
   m_pV8Object.Reset();
 }
 
-CPDFSDK_PageView* CJS_Object::JSGetPageView(IFXJS_Context* cc) {
-  return FXJS_GetPageView(cc);
-}
-
 int CJS_Object::MsgBox(CPDFDoc_Environment* pApp,
-                       CPDFSDK_PageView* pPageView,
                        const FX_WCHAR* swMsg,
                        const FX_WCHAR* swTitle,
                        FX_UINT nType,
                        FX_UINT nIcon) {
-  return FXJS_MsgBox(pApp, pPageView, swMsg, swTitle, nType, nIcon);
+  return FXJS_MsgBox(pApp, swMsg, swTitle, nType, nIcon);
 }
 
 void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
