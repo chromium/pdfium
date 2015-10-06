@@ -11,7 +11,6 @@
 #include "../../include/javascript/JS_Define.h"
 #include "../../include/javascript/JS_Object.h"
 #include "../../include/javascript/JS_Value.h"
-#include "../../include/javascript/Document.h"
 #include "../../include/javascript/app.h"
 #include "../../include/javascript/color.h"
 #include "../../include/javascript/Consts.h"
@@ -77,6 +76,9 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
 }
 
 CJS_Runtime::~CJS_Runtime() {
+  for (auto* obs : m_observers)
+    obs->OnDestroyed();
+
   int size = m_ContextArray.GetSize();
   for (int i = 0; i < size; i++)
     delete m_ContextArray.GetAt(i);
@@ -255,4 +257,14 @@ FX_BOOL CJS_Runtime::SetHValueByName(const CFX_ByteStringC& utf8Name,
       propvalue);
 
   return TRUE;
+}
+
+void CJS_Runtime::AddObserver(Observer* observer) {
+  ASSERT(m_observers.find(observer) == m_observers.end());
+  m_observers.insert(observer);
+}
+
+void CJS_Runtime::RemoveObserver(Observer* observer) {
+  ASSERT(m_observers.find(observer) != m_observers.end());
+  m_observers.erase(observer);
 }

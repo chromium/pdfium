@@ -20,6 +20,14 @@ class CJS_Context;
 
 class CJS_Runtime : public IFXJS_Runtime {
  public:
+  class Observer {
+   public:
+    virtual void OnDestroyed() = 0;
+
+   protected:
+    virtual ~Observer() {}
+  };
+
   using FieldEvent = std::pair<CFX_WideString, JS_EVENT_T>;
 
   explicit CJS_Runtime(CPDFDoc_Environment* pApp);
@@ -50,6 +58,9 @@ class CJS_Runtime : public IFXJS_Runtime {
   virtual FX_BOOL SetHValueByName(const CFX_ByteStringC& utf8Name,
                                   FXJSE_HVALUE hValue);
 
+  void AddObserver(Observer* observer);
+  void RemoveObserver(Observer* observer);
+
  private:
   void DefineJSObjects();
 
@@ -62,6 +73,7 @@ class CJS_Runtime : public IFXJS_Runtime {
   bool m_isolateManaged;
   nonstd::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
   v8::Global<v8::Context> m_context;
+  std::set<Observer*> m_observers;
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_JS_RUNTIME_H_
