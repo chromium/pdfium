@@ -17,7 +17,7 @@ deps = {
      "https://chromium.googlesource.com/external/googletest.git@8245545b6dc9c4703e6496d1efd19e975ad2b038",
 
   "v8":
-    "https://chromium.googlesource.com/v8/v8.git@d7f813b4da929a42713b4bacd6a266ade742a41e",
+    "https://chromium.googlesource.com/v8/v8.git@9081ee11af0311aecb152bfe80330fc1bf6085e6",
 
   "v8/third_party/icu":
     "https://chromium.googlesource.com/chromium/deps/icu46",
