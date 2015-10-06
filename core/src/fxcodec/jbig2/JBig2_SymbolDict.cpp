@@ -7,6 +7,7 @@
 #include "JBig2_SymbolDict.h"
 
 #include "../../../include/fxcrt/fx_memory.h"
+#include "JBig2_Image.h"
 
 CJBig2_SymbolDict::CJBig2_SymbolDict() {
   SDNUMEXSYMS = 0;
@@ -15,15 +16,16 @@ CJBig2_SymbolDict::CJBig2_SymbolDict() {
   m_gbContext = m_grContext = NULL;
 }
 
-CJBig2_SymbolDict* CJBig2_SymbolDict::DeepCopy() {
-  CJBig2_SymbolDict* src = this;
-  if (src->m_bContextRetained || src->m_gbContext || src->m_grContext) {
-    return NULL;
-  }
-  CJBig2_SymbolDict* dst = new CJBig2_SymbolDict;
+nonstd::unique_ptr<CJBig2_SymbolDict> CJBig2_SymbolDict::DeepCopy() const {
+  nonstd::unique_ptr<CJBig2_SymbolDict> dst;
+  const CJBig2_SymbolDict* src = this;
+  if (src->m_bContextRetained || src->m_gbContext || src->m_grContext)
+    return dst;
+
+  dst.reset(new CJBig2_SymbolDict);
   dst->SDNUMEXSYMS = src->SDNUMEXSYMS;
   dst->SDEXSYMS = FX_Alloc(CJBig2_Image*, src->SDNUMEXSYMS);
-  for (FX_DWORD i = 0; i < src->SDNUMEXSYMS; i++) {
+  for (FX_DWORD i = 0; i < src->SDNUMEXSYMS; ++i) {
     if (src->SDEXSYMS[i]) {
       dst->SDEXSYMS[i] = new CJBig2_Image(*(src->SDEXSYMS[i]));
     } else {

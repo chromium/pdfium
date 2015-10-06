@@ -25,7 +25,10 @@
 //
 // Disabled until we can figure out how to clear cache between documents.
 // https://code.google.com/p/pdfium/issues/detail?id=207
+#define DISABLE_SYMBOL_CACHE
+#ifndef DISABLE_SYMBOL_CACHE
 static const int kSymbolDictCacheMaxSize = 2;
+#endif
 
 CJBig2_Context* CJBig2_Context::CreateContext(
     const uint8_t* pGlobalData,
@@ -623,7 +626,8 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   for (std::list<CJBig2_CachePair>::iterator it = m_pSymbolDictCache->begin();
        it != m_pSymbolDictCache->end(); ++it) {
     if (it->first == key) {
-      pSegment->m_Result.sd = it->second->DeepCopy();
+      nonstd::unique_ptr<CJBig2_SymbolDict> copy(it->second->DeepCopy());
+      pSegment->m_Result.sd = copy.release();
       m_pSymbolDictCache->push_front(*it);
       m_pSymbolDictCache->erase(it);
       cache_hit = true;
@@ -651,14 +655,17 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       }
       m_pStream->alignByte();
     }
-    CJBig2_SymbolDict* value = pSegment->m_Result.sd->DeepCopy();
+#ifndef DISABLE_SYMBOL_CACHE
+    nonstd::unique_ptr<CJBig2_SymbolDict> value =
+        pSegment->m_Result.sd->DeepCopy();
     if (value && kSymbolDictCacheMaxSize > 0) {
       while (m_pSymbolDictCache->size() >= kSymbolDictCacheMaxSize) {
         delete m_pSymbolDictCache->back().second;
         m_pSymbolDictCache->pop_back();
       }
-      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value));
+      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
     }
+#endif
   }
   if (wFlags & 0x0200) {
     pSegment->m_Result.sd->m_bContextRetained = TRUE;
