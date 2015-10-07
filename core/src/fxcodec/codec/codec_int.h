@@ -280,7 +280,6 @@ class CCodec_Jbig2Context {
   FX_DWORD m_global_size;
   uint8_t* m_dest_buf;
   FX_DWORD m_dest_pitch;
-  FX_BOOL m_bFileReader;
   IFX_Pause* m_pPause;
   CJBig2_Context* m_pContext;
   CJBig2_Image* m_dest_image;
