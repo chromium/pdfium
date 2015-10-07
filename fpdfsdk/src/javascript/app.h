@@ -42,120 +42,114 @@ class app : public CJS_EmbedObj {
   ~app() override;
 
  public:
-  FX_BOOL activeDocs(IFXJS_Context* cc,
+  FX_BOOL activeDocs(IJS_Context* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError);
-  FX_BOOL calculate(IFXJS_Context* cc,
-                    CJS_PropValue& vp,
-                    CFX_WideString& sError);
-  FX_BOOL formsVersion(IFXJS_Context* cc,
+  FX_BOOL calculate(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL formsVersion(IJS_Context* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError);
-  FX_BOOL fs(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL fullscreen(IFXJS_Context* cc,
+  FX_BOOL fs(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL fullscreen(IJS_Context* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError);
-  FX_BOOL language(IFXJS_Context* cc,
-                   CJS_PropValue& vp,
-                   CFX_WideString& sError);
-  FX_BOOL media(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL platform(IFXJS_Context* cc,
-                   CJS_PropValue& vp,
-                   CFX_WideString& sError);
-  FX_BOOL runtimeHighlight(IFXJS_Context* cc,
+  FX_BOOL language(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL media(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL platform(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL runtimeHighlight(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError);
-  FX_BOOL viewerType(IFXJS_Context* cc,
+  FX_BOOL viewerType(IJS_Context* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError);
-  FX_BOOL viewerVariation(IFXJS_Context* cc,
+  FX_BOOL viewerVariation(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError);
-  FX_BOOL viewerVersion(IFXJS_Context* cc,
+  FX_BOOL viewerVersion(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError);
 
-  FX_BOOL alert(IFXJS_Context* cc,
+  FX_BOOL alert(IJS_Context* cc,
                 const CJS_Parameters& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);
-  FX_BOOL beep(IFXJS_Context* cc,
+  FX_BOOL beep(IJS_Context* cc,
                const CJS_Parameters& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  FX_BOOL browseForDoc(IFXJS_Context* cc,
+  FX_BOOL browseForDoc(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
-  FX_BOOL clearInterval(IFXJS_Context* cc,
+  FX_BOOL clearInterval(IJS_Context* cc,
                         const CJS_Parameters& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
-  FX_BOOL clearTimeOut(IFXJS_Context* cc,
+  FX_BOOL clearTimeOut(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
-  FX_BOOL execDialog(IFXJS_Context* cc,
+  FX_BOOL execDialog(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
-  FX_BOOL execMenuItem(IFXJS_Context* cc,
+  FX_BOOL execMenuItem(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
-  FX_BOOL findComponent(IFXJS_Context* cc,
+  FX_BOOL findComponent(IJS_Context* cc,
                         const CJS_Parameters& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
-  FX_BOOL goBack(IFXJS_Context* cc,
+  FX_BOOL goBack(IJS_Context* cc,
                  const CJS_Parameters& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  FX_BOOL goForward(IFXJS_Context* cc,
+  FX_BOOL goForward(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
-  FX_BOOL launchURL(IFXJS_Context* cc,
+  FX_BOOL launchURL(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
-  FX_BOOL mailMsg(IFXJS_Context* cc,
+  FX_BOOL mailMsg(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL newFDF(IFXJS_Context* cc,
+  FX_BOOL newFDF(IJS_Context* cc,
                  const CJS_Parameters& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  FX_BOOL newDoc(IFXJS_Context* cc,
+  FX_BOOL newDoc(IJS_Context* cc,
                  const CJS_Parameters& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  FX_BOOL openDoc(IFXJS_Context* cc,
+  FX_BOOL openDoc(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL openFDF(IFXJS_Context* cc,
+  FX_BOOL openFDF(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL popUpMenuEx(IFXJS_Context* cc,
+  FX_BOOL popUpMenuEx(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
-  FX_BOOL popUpMenu(IFXJS_Context* cc,
+  FX_BOOL popUpMenu(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
-  FX_BOOL response(IFXJS_Context* cc,
+  FX_BOOL response(IJS_Context* cc,
                    const CJS_Parameters& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  FX_BOOL setInterval(IFXJS_Context* cc,
+  FX_BOOL setInterval(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
-  FX_BOOL setTimeOut(IFXJS_Context* cc,
+  FX_BOOL setTimeOut(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);

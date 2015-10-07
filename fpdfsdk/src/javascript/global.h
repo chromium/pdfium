@@ -40,16 +40,16 @@ class JSGlobalAlternate : public CJS_EmbedObj {
   JSGlobalAlternate(CJS_Object* pJSObject);
   ~JSGlobalAlternate() override;
 
-  FX_BOOL setPersistent(IFXJS_Context* cc,
+  FX_BOOL setPersistent(IJS_Context* cc,
                         const CJS_Parameters& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
   FX_BOOL QueryProperty(const FX_WCHAR* propname);
-  FX_BOOL DoProperty(IFXJS_Context* cc,
+  FX_BOOL DoProperty(IJS_Context* cc,
                      const FX_WCHAR* propname,
                      CJS_PropValue& vp,
                      CFX_WideString& sError);
-  FX_BOOL DelProperty(IFXJS_Context* cc,
+  FX_BOOL DelProperty(IJS_Context* cc,
                       const FX_WCHAR* propname,
                       CFX_WideString& sError);
   void Initial(CPDFDoc_Environment* pApp);
@@ -83,7 +83,7 @@ class CJS_Global : public CJS_Object {
   ~CJS_Global() override {}
 
   // CJS_Object
-  FX_BOOL InitInstance(IFXJS_Context* cc) override;
+  FX_BOOL InitInstance(IJS_Context* cc) override;
 
   DECLARE_SPECIAL_JS_CLASS();
   JS_SPECIAL_STATIC_METHOD(setPersistent, JSGlobalAlternate, global);

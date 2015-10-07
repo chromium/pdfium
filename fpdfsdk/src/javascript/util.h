@@ -17,23 +17,23 @@ class util : public CJS_EmbedObj {
   ~util() override;
 
  public:
-  FX_BOOL printd(IFXJS_Context* cc,
+  FX_BOOL printd(IJS_Context* cc,
                  const CJS_Parameters& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  FX_BOOL printf(IFXJS_Context* cc,
+  FX_BOOL printf(IJS_Context* cc,
                  const CJS_Parameters& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  FX_BOOL printx(IFXJS_Context* cc,
+  FX_BOOL printx(IJS_Context* cc,
                  const CJS_Parameters& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  FX_BOOL scand(IFXJS_Context* cc,
+  FX_BOOL scand(IJS_Context* cc,
                 const CJS_Parameters& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);
-  FX_BOOL byteToChar(IFXJS_Context* cc,
+  FX_BOOL byteToChar(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);

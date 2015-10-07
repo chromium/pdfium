@@ -1757,7 +1757,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
   m_bBusy = TRUE;
 
   if (IsCalculateEnabled()) {
-    IFXJS_Runtime* pRuntime = m_pDocument->GetJsRuntime();
+    IJS_Runtime* pRuntime = m_pDocument->GetJsRuntime();
     ASSERT(pRuntime != NULL);
 
     pRuntime->SetReaderDocument(m_pDocument);
@@ -1775,7 +1775,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
             if (action) {
               CFX_WideString csJS = action.GetJavaScript();
               if (!csJS.IsEmpty()) {
-                IFXJS_Context* pContext = pRuntime->NewContext();
+                IJS_Context* pContext = pRuntime->NewContext();
                 ASSERT(pContext != NULL);
 
                 CFX_WideString sOldValue = pField->GetValue();
@@ -1817,7 +1817,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
     return sValue;
   }
 
-  IFXJS_Runtime* pRuntime = m_pDocument->GetJsRuntime();
+  IJS_Runtime* pRuntime = m_pDocument->GetJsRuntime();
   ASSERT(pRuntime != NULL);
 
   pRuntime->SetReaderDocument(m_pDocument);
@@ -1840,7 +1840,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
       if (!script.IsEmpty()) {
         CFX_WideString Value = sValue;
 
-        IFXJS_Context* pContext = pRuntime->NewContext();
+        IJS_Context* pContext = pRuntime->NewContext();
         ASSERT(pContext != NULL);
 
         pContext->OnField_Format(pFormField, Value, TRUE);

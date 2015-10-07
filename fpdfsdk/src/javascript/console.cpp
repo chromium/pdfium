@@ -34,21 +34,21 @@ console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 console::~console() {}
 
-FX_BOOL console::clear(IFXJS_Context* cc,
+FX_BOOL console::clear(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   return TRUE;
 }
 
-FX_BOOL console::hide(IFXJS_Context* cc,
+FX_BOOL console::hide(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
   return TRUE;
 }
 
-FX_BOOL console::println(IFXJS_Context* cc,
+FX_BOOL console::println(IJS_Context* cc,
                          const CJS_Parameters& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
@@ -58,7 +58,7 @@ FX_BOOL console::println(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL console::show(IFXJS_Context* cc,
+FX_BOOL console::show(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {

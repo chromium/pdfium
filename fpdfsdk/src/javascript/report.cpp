@@ -30,7 +30,7 @@ Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 Report::~Report() {}
 
-FX_BOOL Report::writeText(IFXJS_Context* cc,
+FX_BOOL Report::writeText(IJS_Context* cc,
                           const CJS_Parameters& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
@@ -38,7 +38,7 @@ FX_BOOL Report::writeText(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL Report::save(IFXJS_Context* cc,
+FX_BOOL Report::save(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {

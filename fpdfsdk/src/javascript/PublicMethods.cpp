@@ -19,7 +19,7 @@
 #include "resource.h"
 #include "util.h"
 
-static v8::Isolate* GetIsolate(IFXJS_Context* cc) {
+static v8::Isolate* GetIsolate(IJS_Context* cc) {
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
 
@@ -906,7 +906,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
 
 // function AFNumber_Format(nDec, sepStyle, negStyle, currStyle, strCurrency,
 // bCurrencyPrepend)
-FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
                                            const CJS_Parameters& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
@@ -1090,7 +1090,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IFXJS_Context* cc,
 
 // function AFNumber_Keystroke(nDec, sepStyle, negStyle, currStyle, strCurrency,
 // bCurrencyPrepend)
-FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IJS_Context* cc,
                                               const CJS_Parameters& params,
                                               CJS_Value& vRet,
                                               CFX_WideString& sError) {
@@ -1209,7 +1209,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IFXJS_Context* cc,
 }
 
 // function AFPercent_Format(nDec, sepStyle)
-FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFPercent_Format(IJS_Context* cc,
                                             const CJS_Parameters& params,
                                             CJS_Value& vRet,
                                             CFX_WideString& sError) {
@@ -1306,7 +1306,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IFXJS_Context* cc,
   return TRUE;
 }
 // AFPercent_Keystroke(nDec, sepStyle)
-FX_BOOL CJS_PublicMethods::AFPercent_Keystroke(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFPercent_Keystroke(IJS_Context* cc,
                                                const CJS_Parameters& params,
                                                CJS_Value& vRet,
                                                CFX_WideString& sError) {
@@ -1314,7 +1314,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Keystroke(IFXJS_Context* cc,
 }
 
 // function AFDate_FormatEx(cFormat)
-FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IJS_Context* cc,
                                            const CJS_Parameters& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
@@ -1430,7 +1430,7 @@ double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue) {
 }
 
 // AFDate_KeystrokeEx(cFormat)
-FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(IJS_Context* cc,
                                               const CJS_Parameters& params,
                                               CJS_Value& vRet,
                                               CFX_WideString& sError) {
@@ -1466,7 +1466,7 @@ FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFDate_Format(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFDate_Format(IJS_Context* cc,
                                          const CJS_Parameters& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
@@ -1506,7 +1506,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Format(IFXJS_Context* cc,
 }
 
 // AFDate_KeystrokeEx(cFormat)
-FX_BOOL CJS_PublicMethods::AFDate_Keystroke(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFDate_Keystroke(IJS_Context* cc,
                                             const CJS_Parameters& params,
                                             CJS_Value& vRet,
                                             CFX_WideString& sError) {
@@ -1546,7 +1546,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Keystroke(IFXJS_Context* cc,
 }
 
 // function AFTime_Format(ptf)
-FX_BOOL CJS_PublicMethods::AFTime_Format(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFTime_Format(IJS_Context* cc,
                                          const CJS_Parameters& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
@@ -1572,7 +1572,7 @@ FX_BOOL CJS_PublicMethods::AFTime_Format(IFXJS_Context* cc,
   return AFDate_FormatEx(cc, newParams, vRet, sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFTime_Keystroke(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFTime_Keystroke(IJS_Context* cc,
                                             const CJS_Parameters& params,
                                             CJS_Value& vRet,
                                             CFX_WideString& sError) {
@@ -1597,14 +1597,14 @@ FX_BOOL CJS_PublicMethods::AFTime_Keystroke(IFXJS_Context* cc,
   return AFDate_KeystrokeEx(cc, newParams, vRet, sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFTime_FormatEx(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFTime_FormatEx(IJS_Context* cc,
                                            const CJS_Parameters& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
   return AFDate_FormatEx(cc, params, vRet, sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFTime_KeystrokeEx(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFTime_KeystrokeEx(IJS_Context* cc,
                                               const CJS_Parameters& params,
                                               CJS_Value& vRet,
                                               CFX_WideString& sError) {
@@ -1612,7 +1612,7 @@ FX_BOOL CJS_PublicMethods::AFTime_KeystrokeEx(IFXJS_Context* cc,
 }
 
 // function AFSpecial_Format(psf)
-FX_BOOL CJS_PublicMethods::AFSpecial_Format(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFSpecial_Format(IJS_Context* cc,
                                             const CJS_Parameters& params,
                                             CJS_Value& vRet,
                                             CFX_WideString& sError) {
@@ -1663,7 +1663,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(IFXJS_Context* cc,
 }
 
 // function AFSpecial_KeystrokeEx(mask)
-FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(IJS_Context* cc,
                                                  const CJS_Parameters& params,
                                                  CJS_Value& vRet,
                                                  CFX_WideString& sError) {
@@ -1756,7 +1756,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(IFXJS_Context* cc,
 }
 
 // function AFSpecial_Keystroke(psf)
-FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(IJS_Context* cc,
                                                const CJS_Parameters& params,
                                                CJS_Value& vRet,
                                                CFX_WideString& sError) {
@@ -1814,7 +1814,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(IFXJS_Context* cc,
   return AFSpecial_KeystrokeEx(cc, params2, vRet, sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFMergeChange(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFMergeChange(IJS_Context* cc,
                                          const CJS_Parameters& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
@@ -1856,7 +1856,7 @@ FX_BOOL CJS_PublicMethods::AFMergeChange(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFParseDateEx(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFParseDateEx(IJS_Context* cc,
                                          const CJS_Parameters& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
@@ -1886,7 +1886,7 @@ FX_BOOL CJS_PublicMethods::AFParseDateEx(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFSimple(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFSimple(IJS_Context* cc,
                                     const CJS_Parameters& params,
                                     CJS_Value& vRet,
                                     CFX_WideString& sError) {
@@ -1903,7 +1903,7 @@ FX_BOOL CJS_PublicMethods::AFSimple(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFMakeNumber(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFMakeNumber(IJS_Context* cc,
                                         const CJS_Parameters& params,
                                         CJS_Value& vRet,
                                         CFX_WideString& sError) {
@@ -1918,7 +1918,7 @@ FX_BOOL CJS_PublicMethods::AFMakeNumber(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFSimple_Calculate(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFSimple_Calculate(IJS_Context* cc,
                                               const CJS_Parameters& params,
                                               CJS_Value& vRet,
                                               CFX_WideString& sError) {
@@ -2032,7 +2032,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(IFXJS_Context* cc,
 /* This function validates the current event to ensure that its value is
 ** within the specified range. */
 
-FX_BOOL CJS_PublicMethods::AFRange_Validate(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFRange_Validate(IJS_Context* cc,
                                             const CJS_Parameters& params,
                                             CJS_Value& vRet,
                                             CFX_WideString& sError) {
@@ -2079,7 +2079,7 @@ FX_BOOL CJS_PublicMethods::AFRange_Validate(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFExtractNums(IFXJS_Context* cc,
+FX_BOOL CJS_PublicMethods::AFExtractNums(IJS_Context* cc,
                                          const CJS_Parameters& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {

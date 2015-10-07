@@ -273,8 +273,8 @@ void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
 }
 
 void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
-                            IFXJS_Runtime* pFXRuntime,
-                            IFXJS_Context* context,
+                            IJS_Runtime* pFXRuntime,
+                            IJS_Context* context,
                             v8::Global<v8::Context>& v8PersistentContext) {
   if (pIsolate == g_isolate)
     ++g_isolate_ref_count;
@@ -350,14 +350,14 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
   delete pData;
 }
 
-IFXJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate) {
+IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate) {
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
-  return static_cast<IFXJS_Runtime*>(
+  return static_cast<IJS_Runtime*>(
       context->GetAlignedPointerFromEmbedderData(kPerContextDataIndex));
 }
 
 int FXJS_Execute(v8::Isolate* pIsolate,
-                 IFXJS_Context* pJSContext,
+                 IJS_Context* pJSContext,
                  const wchar_t* script,
                  long length,
                  FXJSErr* pError) {
@@ -386,7 +386,7 @@ int FXJS_Execute(v8::Isolate* pIsolate,
 }
 
 v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
-                                           IFXJS_Context* pJSContext,
+                                           IJS_Context* pJSContext,
                                            int nObjDefnID) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();

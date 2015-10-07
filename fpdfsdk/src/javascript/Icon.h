@@ -14,7 +14,7 @@ class Icon : public CJS_EmbedObj {
   Icon(CJS_Object* pJSObject);
   ~Icon() override;
 
-  FX_BOOL name(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
   void SetStream(CPDF_Stream* pIconStream);
   CPDF_Stream* GetStream();
   void SetIconName(CFX_WideString name);

@@ -209,13 +209,13 @@ class CPDFDoc_Environment final {
 
   CFFL_IFormFiller* GetIFormFiller();             // Creates if not present.
   CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Creates if not present.
-  IFXJS_Runtime* GetJSRuntime();                  // Creates if not present.
+  IJS_Runtime* GetJSRuntime();                    // Creates if not present.
   CPDFSDK_ActionHandler* GetActionHander();       // Creates if not present.
 
  private:
   CPDFSDK_AnnotHandlerMgr* m_pAnnotHandlerMgr;
   CPDFSDK_ActionHandler* m_pActionHandler;
-  nonstd::unique_ptr<IFXJS_Runtime> m_pJSRuntime;
+  nonstd::unique_ptr<IJS_Runtime> m_pJSRuntime;
   FPDF_FORMFILLINFO* const m_pInfo;
   CPDFSDK_Document* m_pSDKDoc;
   CPDF_Document* const m_pPDFDoc;
@@ -239,7 +239,7 @@ class CPDFSDK_Document {
 
   CPDFSDK_Annot* GetFocusAnnot();
 
-  IFXJS_Runtime* GetJsRuntime();
+  IJS_Runtime* GetJsRuntime();
 
   FX_BOOL SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag = 0);
   FX_BOOL KillFocusAnnot(FX_UINT nFlag = 0);

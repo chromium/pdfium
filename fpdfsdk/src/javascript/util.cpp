@@ -20,7 +20,7 @@
 #include <ctype.h>
 #endif
 
-static v8::Isolate* GetIsolate(IFXJS_Context* cc) {
+static v8::Isolate* GetIsolate(IJS_Context* cc) {
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
 
@@ -124,7 +124,7 @@ int util::ParstDataType(std::wstring* sFormat) {
   return -1;
 }
 
-FX_BOOL util::printf(IFXJS_Context* cc,
+FX_BOOL util::printf(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
@@ -187,7 +187,7 @@ FX_BOOL util::printf(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL util::printd(IFXJS_Context* cc,
+FX_BOOL util::printd(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
@@ -400,7 +400,7 @@ void util::printd(const std::wstring& cFormat2,
   cPurpose = cFormat;
 }
 
-FX_BOOL util::printx(IFXJS_Context* cc,
+FX_BOOL util::printx(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
@@ -500,7 +500,7 @@ void util::printx(const std::string& cFormat,
   }
 }
 
-FX_BOOL util::scand(IFXJS_Context* cc,
+FX_BOOL util::scand(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
@@ -551,7 +551,7 @@ int64_t FX_atoi64(const char* nptr) {
   return sign == '-' ? -total : total;
 }
 
-FX_BOOL util::byteToChar(IFXJS_Context* cc,
+FX_BOOL util::byteToChar(IJS_Context* cc,
                          const CJS_Parameters& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {

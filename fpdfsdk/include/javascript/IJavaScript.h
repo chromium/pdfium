@@ -16,7 +16,7 @@ class CPDFSDK_Document;
 class CPDF_Bookmark;
 class CPDF_FormField;
 
-class IFXJS_Context {
+class IJS_Context {
  public:
   virtual FX_BOOL RunScript(const CFX_WideString& script,
                             CFX_WideString& info) = 0;
@@ -128,22 +128,22 @@ class IFXJS_Context {
   virtual void EnableMessageBox(FX_BOOL bEnable) = 0;
 
  protected:
-  virtual ~IFXJS_Context() {}
+  virtual ~IJS_Context() {}
 };
 
-class IFXJS_Runtime {
+class IJS_Runtime {
  public:
-  static IFXJS_Runtime* Create(CPDFDoc_Environment* pEnv);
-  virtual ~IFXJS_Runtime() {}
+  static IJS_Runtime* Create(CPDFDoc_Environment* pEnv);
+  virtual ~IJS_Runtime() {}
 
-  virtual IFXJS_Context* NewContext() = 0;
-  virtual void ReleaseContext(IFXJS_Context* pContext) = 0;
-  virtual IFXJS_Context* GetCurrentContext() = 0;
+  virtual IJS_Context* NewContext() = 0;
+  virtual void ReleaseContext(IJS_Context* pContext) = 0;
+  virtual IJS_Context* GetCurrentContext() = 0;
   virtual void SetReaderDocument(CPDFSDK_Document* pReaderDoc) = 0;
   virtual CPDFSDK_Document* GetReaderDocument() = 0;
 
  protected:
-  IFXJS_Runtime() {}
+  IJS_Runtime() {}
 };
 
 #endif  // FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
