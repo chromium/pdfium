@@ -118,7 +118,7 @@ class CJBig2_Context {
   int32_t m_PauseStep;
   IFX_Pause* m_pPause;
   FXCODEC_STATUS m_ProcessingStatus;
-  CJBig2_ArithDecoder* m_pArithDecoder;
+  nonstd::unique_ptr<CJBig2_ArithDecoder> m_pArithDecoder;
   nonstd::unique_ptr<CJBig2_GRDProc> m_pGRD;
   JBig2ArithCtx* m_gbContext;
   nonstd::unique_ptr<CJBig2_Segment> m_pSegment;
