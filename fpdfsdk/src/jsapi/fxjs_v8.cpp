@@ -293,11 +293,7 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
         pObjDef->m_pConstructor(context, v8Context->Global()
                                              ->GetPrototype()
                                              ->ToObject(v8Context)
-                                             .ToLocalChecked(),
-                                v8Context->Global()
-                                    ->GetPrototype()
-                                    ->ToObject(v8Context)
-                                    .ToLocalChecked());
+                                             .ToLocalChecked());
     } else if (pObjDef->m_ObjType == FXJSOBJTYPE_STATIC) {
       v8::Local<v8::Object> obj = FXJS_NewFxDynamicObj(pIsolate, context, i);
       v8Context->Global()->Set(v8Context, m_ObjName, obj).FromJust();
@@ -403,9 +399,7 @@ v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
 
   obj->SetAlignedPointerInInternalField(0, new CFXJS_PrivateData(nObjDefnID));
   if (pObjDef->m_pConstructor)
-    pObjDef->m_pConstructor(
-        pJSContext, obj,
-        context->Global()->GetPrototype()->ToObject(context).ToLocalChecked());
+    pObjDef->m_pConstructor(pJSContext, obj);
 
   return obj;
 }

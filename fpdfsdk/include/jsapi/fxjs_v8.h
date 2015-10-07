@@ -62,9 +62,7 @@ class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   void Free(void* data, size_t length) override;
 };
 
-using FXJS_CONSTRUCTOR = void (*)(IFXJS_Context* cc,
-                                  v8::Local<v8::Object> obj,
-                                  v8::Local<v8::Object> global);
+using FXJS_CONSTRUCTOR = void (*)(IFXJS_Context* cc, v8::Local<v8::Object> obj);
 using FXJS_DESTRUCTOR = void (*)(v8::Local<v8::Object> obj);
 
 // Call before making FXJS_PrepareIsolate call.
