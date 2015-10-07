@@ -16,40 +16,42 @@ const wchar_t kScript[] = L"fred = 7";
 
 class FXJSV8Embeddertest : public EmbedderTest {
  public:
-  FXJSV8Embeddertest() : m_pIsolate(nullptr) {}
-  ~FXJSV8Embeddertest() override {}
+  FXJSV8Embeddertest()
+      : m_pArrayBufferAllocator(new FXJS_ArrayBufferAllocator) {
+    v8::Isolate::CreateParams params;
+    params.array_buffer_allocator = m_pArrayBufferAllocator.get();
+    m_pIsolate = v8::Isolate::New(params);
+  }
+
+  ~FXJSV8Embeddertest() override { m_pIsolate->Dispose(); }
 
   void SetUp() override {
+    EmbedderTest::SetExternalIsolate(m_pIsolate);
     EmbedderTest::SetUp();
-    m_pAllocator.reset(new FXJS_ArrayBufferAllocator());
-
-    v8::Isolate::CreateParams params;
-    params.array_buffer_allocator = m_pAllocator.get();
-    m_pIsolate = v8::Isolate::New(params);
 
     v8::Isolate::Scope isolate_scope(m_pIsolate);
     v8::Locker locker(m_pIsolate);
     v8::HandleScope handle_scope(m_pIsolate);
-    FXJS_Initialize(0);
     FXJS_PerIsolateData::SetUp(m_pIsolate);
     FXJS_InitializeRuntime(m_pIsolate, nullptr, nullptr, m_pPersistentContext);
   }
 
   void TearDown() override {
     FXJS_ReleaseRuntime(m_pIsolate, m_pPersistentContext);
+    m_pPersistentContext.Reset();
     FXJS_Release();
     EmbedderTest::TearDown();
   }
 
-  v8::Isolate* isolate() const { return m_pIsolate; }
+  v8::Isolate* isolate() { return m_pIsolate; }
   v8::Local<v8::Context> GetV8Context() {
-    return v8::Local<v8::Context>::New(m_pIsolate, m_pPersistentContext);
+    return m_pPersistentContext.Get(m_pIsolate);
   }
 
  private:
+  nonstd::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
   v8::Isolate* m_pIsolate;
   v8::Global<v8::Context> m_pPersistentContext;
-  nonstd::unique_ptr<FXJS_ArrayBufferAllocator> m_pAllocator;
 };
 
 TEST_F(FXJSV8Embeddertest, Getters) {

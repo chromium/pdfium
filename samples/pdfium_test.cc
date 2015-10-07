@@ -437,7 +437,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
   IPDF_JSPLATFORM platform_callbacks;
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
-  platform_callbacks.version = 2;
+  platform_callbacks.version = 3;
   platform_callbacks.app_alert = ExampleAppAlert;
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
 
@@ -621,17 +621,19 @@ int main(int argc, const char* argv[]) {
   v8::V8::SetSnapshotDataBlob(&snapshot);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
-  if (options.font_directory.empty()) {
-    FPDF_InitLibrary();
-  } else {
-    const char* path_array[2];
+  FPDF_LIBRARY_CONFIG config;
+  config.version = 2;
+  config.m_pUserFontPaths = nullptr;
+  config.m_pIsolate = nullptr;
+  config.m_v8EmbedderSlot = 0;
+
+  const char* path_array[2];
+  if (!options.font_directory.empty()) {
     path_array[0] = options.font_directory.c_str();
     path_array[1] = nullptr;
-    FPDF_LIBRARY_CONFIG config;
-    config.version = 1;
     config.m_pUserFontPaths = path_array;
-    FPDF_InitLibraryWithConfig(&config);
   }
+  FPDF_InitLibraryWithConfig(&config);
 
   UNSUPPORT_INFO unsuppored_info;
   memset(&unsuppored_info, '\0', sizeof(unsuppored_info));

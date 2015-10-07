@@ -16,14 +16,14 @@ const wchar_t kFXJSValueNameFxobj[] = L"fxobj";
 const wchar_t kFXJSValueNameNull[] = L"null";
 const wchar_t kFXJSValueNameUndefined[] = L"undefined";
 
-static unsigned int g_embedderDataSlot = 1u;
-
 // Keep this consistent with the values defined in gin/public/context_holder.h
 // (without actually requiring a dependency on gin itself for the standalone
 // embedders of PDFIum). The value we want to use is:
 //   kPerContextDataStartIndex + kEmbedderPDFium, which is 3.
 static const unsigned int kPerContextDataIndex = 3u;
-
+static unsigned int g_embedderDataSlot = 1u;
+static v8::Isolate* g_isolate = nullptr;
+static FXJS_ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
 static v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 
 class CFXJS_PrivateData {
@@ -123,6 +123,33 @@ void FXJS_ArrayBufferAllocator::Free(void* data, size_t length) {
   free(data);
 }
 
+void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate) {
+  g_embedderDataSlot = embedderDataSlot;
+  g_isolate = pIsolate;
+}
+
+void FXJS_Release() {
+  g_DefaultGlobalObjectTemplate = nullptr;
+  g_isolate = nullptr;
+
+  delete g_arrayBufferAllocator;
+  g_arrayBufferAllocator = nullptr;
+}
+
+bool FXJS_GetIsolate(v8::Isolate** pResultIsolate) {
+  if (g_isolate) {
+    *pResultIsolate = g_isolate;
+    return false;
+  }
+  // Provide backwards compatibility when no external isolate.
+  if (!g_arrayBufferAllocator)
+    g_arrayBufferAllocator = new FXJS_ArrayBufferAllocator();
+  v8::Isolate::CreateParams params;
+  params.array_buffer_allocator = g_arrayBufferAllocator;
+  *pResultIsolate = v8::Isolate::New(params);
+  return true;
+}
+
 // static
 void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {
   if (!pIsolate->GetData(g_embedderDataSlot))
@@ -133,13 +160,6 @@ void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {
 FXJS_PerIsolateData* FXJS_PerIsolateData::Get(v8::Isolate* pIsolate) {
   return static_cast<FXJS_PerIsolateData*>(
       pIsolate->GetData(g_embedderDataSlot));
-}
-
-void FXJS_Initialize(unsigned int embedderDataSlot) {
-  g_embedderDataSlot = embedderDataSlot;
-}
-
-void FXJS_Release() {
 }
 
 int FXJS_DefineObj(v8::Isolate* pIsolate,

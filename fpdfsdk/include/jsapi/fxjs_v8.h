@@ -68,8 +68,13 @@ using FXJS_CONSTRUCTOR = void (*)(IFXJS_Context* cc,
 using FXJS_DESTRUCTOR = void (*)(v8::Local<v8::Object> obj);
 
 // Call before making FXJS_PrepareIsolate call.
-void FXJS_Initialize(unsigned int embedderDataSlot);
+void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate);
 void FXJS_Release();
+
+// Gets the global isolate set by FXJS_Initialize(), or makes a new one each
+// time if there is no such isolate. Returns true if a new isolate had to be
+// created.
+bool FXJS_GetIsolate(v8::Isolate** pResultIsolate);
 
 // Call before making FXJS_Define* calls. Resources allocated here are cleared
 // as part of FXJS_ReleaseRuntime().
