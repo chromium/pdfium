@@ -60,9 +60,8 @@ On Windows, open build\all.sln
 ## Running the sample program
 
 The pdfium\_test program supports reading, parsing, and rasterizing the pages of
-a .pdf file to .ppm output image files (windows supports two other formats, and
-.png support is available for all platforms in an alternate branch (see branches
-section below)). For example: `out/Debug/pdfium_test --ppm path/to/myfile.pdf
+a .pdf file to .ppm or .png output image files (windows supports two other
+formats). For example: `out/Debug/pdfium_test --ppm path/to/myfile.pdf
 `
 
 ## Waterfall
@@ -75,8 +74,4 @@ http://build.chromium.org/p/client.pdfium/console
 There is a branch for a forthcoming feature called XFA that you can get by
 following the steps above, then: `git checkout origin/xfa build/gyp_pdfium ninja
 -C out/Debug
-`
-
-The XFA version of the sample pdfium\_test program supports rasterizing to .png
-format files. For example: `out/Debug/pdfium_test --png path/to/myfile.pdf
 `
