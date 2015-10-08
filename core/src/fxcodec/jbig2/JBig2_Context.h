@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
+#include "../../../include/fpdfapi/fpdf_objects.h"
 #include "../../../include/fxcodec/fx_codec_def.h"
 #include "JBig2_List.h"
 #include "JBig2_Page.h"
@@ -20,7 +21,10 @@ class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;
 class IFX_Pause;
 
-using CJBig2_CachePair = std::pair<const uint8_t*, CJBig2_SymbolDict*>;
+// Cache is keyed by the ObjNum of a stream and an index within the stream.
+using CJBig2_CacheKey = std::pair<FX_DWORD, FX_DWORD>;
+// NB: CJBig2_SymbolDict* is owned.
+using CJBig2_CachePair = std::pair<CJBig2_CacheKey, CJBig2_SymbolDict*>;
 
 #define JBIG2_SUCCESS 0
 #define JBIG2_FAILED -1
@@ -36,10 +40,8 @@ using CJBig2_CachePair = std::pair<const uint8_t*, CJBig2_SymbolDict*>;
 class CJBig2_Context {
  public:
   static CJBig2_Context* CreateContext(
-      const uint8_t* pGlobalData,
-      FX_DWORD dwGlobalLength,
-      const uint8_t* pData,
-      FX_DWORD dwLength,
+      CPDF_StreamAcc* pGlobalStream,
+      CPDF_StreamAcc* pSrcStream,
       std::list<CJBig2_CachePair>* pSymbolDictCache,
       IFX_Pause* pPause = NULL);
 
@@ -55,12 +57,11 @@ class CJBig2_Context {
   FXCODEC_STATUS GetProcessingStatus() { return m_ProcessingStatus; }
 
  private:
-  CJBig2_Context(const uint8_t* pGlobalData,
-                 FX_DWORD dwGlobalLength,
-                 const uint8_t* pData,
-                 FX_DWORD dwLength,
+  CJBig2_Context(CPDF_StreamAcc* pGlobalStream,
+                 CPDF_StreamAcc* pSrcStream,
                  std::list<CJBig2_CachePair>* pSymbolDictCache,
-                 IFX_Pause* pPause);
+                 IFX_Pause* pPause,
+                 bool bIsGlobal);
 
   ~CJBig2_Context();
 
@@ -126,6 +127,7 @@ class CJBig2_Context {
   FX_DWORD m_dwOffset;
   JBig2RegionInfo m_ri;
   std::list<CJBig2_CachePair>* const m_pSymbolDictCache;
+  bool m_bIsGlobal;
 };
 
 #endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
