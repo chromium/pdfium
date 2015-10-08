@@ -2527,28 +2527,31 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
           len -= 1;
         }
       }
-      if (len <= 0) {
+      if (len < 0) {
         return nullptr;
       }
       pDict->SetAtInteger(FX_BSTRC("Length"), len);
     }
     m_Pos = streamStartPos;
   }
-  if (len <= 0) {
+  if (len < 0) {
     return nullptr;
   }
-  uint8_t* pData = FX_Alloc(uint8_t, len);
-  ReadBlock(pData, len);
-  if (pCryptoHandler) {
-    CFX_BinaryBuf dest_buf;
-    dest_buf.EstimateSize(pCryptoHandler->DecryptGetSize(len));
-    void* context = pCryptoHandler->DecryptStart(objnum, gennum);
-    pCryptoHandler->DecryptStream(context, pData, len, dest_buf);
-    pCryptoHandler->DecryptFinish(context, dest_buf);
-    FX_Free(pData);
-    pData = dest_buf.GetBuffer();
-    len = dest_buf.GetSize();
-    dest_buf.DetachBuffer();
+  uint8_t* pData = nullptr;
+  if (len > 0) {
+    pData = FX_Alloc(uint8_t, len);
+    ReadBlock(pData, len);
+    if (pCryptoHandler) {
+      CFX_BinaryBuf dest_buf;
+      dest_buf.EstimateSize(pCryptoHandler->DecryptGetSize(len));
+      void* context = pCryptoHandler->DecryptStart(objnum, gennum);
+      pCryptoHandler->DecryptStream(context, pData, len, dest_buf);
+      pCryptoHandler->DecryptFinish(context, dest_buf);
+      FX_Free(pData);
+      pData = dest_buf.GetBuffer();
+      len = dest_buf.GetSize();
+      dest_buf.DetachBuffer();
+    }
   }
   CPDF_Stream* pStream = new CPDF_Stream(pData, len, pDict);
   if (pContext) {
