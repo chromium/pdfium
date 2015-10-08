@@ -16,6 +16,8 @@
 
 class CFX_DIBSource;
 class CJPX_Decoder;
+class CPDF_PrivateData;
+class CPDF_StreamAcc;
 class ICodec_ScanlineDecoder;
 class ICodec_BasicModule;
 class ICodec_FaxModule;
@@ -230,12 +232,11 @@ class ICodec_Jbig2Module {
   virtual void* CreateJbig2Context() = 0;
 
   virtual FXCODEC_STATUS StartDecode(void* pJbig2Context,
+                                     CFX_PrivateData* pPrivateData,
                                      FX_DWORD width,
                                      FX_DWORD height,
-                                     const uint8_t* src_buf,
-                                     FX_DWORD src_size,
-                                     const uint8_t* global_data,
-                                     FX_DWORD global_size,
+                                     CPDF_StreamAcc* src_stream,
+                                     CPDF_StreamAcc* global_stream,
                                      uint8_t* dest_buf,
                                      FX_DWORD dest_pitch,
                                      IFX_Pause* pPause) = 0;

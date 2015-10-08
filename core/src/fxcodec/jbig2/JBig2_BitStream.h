@@ -9,9 +9,11 @@
 
 #include "../../../include/fxcrt/fx_basic.h"
 
+class CPDF_StreamAcc;
+
 class CJBig2_BitStream {
  public:
-  CJBig2_BitStream(const uint8_t* pBuffer, FX_DWORD dwLength);
+  explicit CJBig2_BitStream(CPDF_StreamAcc* pSrcStream);
   ~CJBig2_BitStream();
 
   // TODO(thestig): readFoo() should return bool.
@@ -36,6 +38,7 @@ class CJBig2_BitStream {
   const uint8_t* getPointer() const;
   void offset(FX_DWORD dwOffset);
   FX_DWORD getByteLeft() const;
+  FX_DWORD getObjNum() const;
 
  private:
   void AdvanceBit();
@@ -46,6 +49,7 @@ class CJBig2_BitStream {
   FX_DWORD m_dwLength;
   FX_DWORD m_dwByteIdx;
   FX_DWORD m_dwBitIdx;
+  const FX_DWORD m_dwObjNum;
 
   CJBig2_BitStream(const CJBig2_BitStream&) = delete;
   void operator=(const CJBig2_BitStream&) = delete;

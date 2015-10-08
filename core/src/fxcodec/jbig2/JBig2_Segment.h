@@ -50,7 +50,8 @@ class CJBig2_Segment {
   FX_DWORD m_dwData_length;
 
   FX_DWORD m_dwHeader_Length;
-  const uint8_t* m_pData;
+  FX_DWORD m_dwObjNum;
+  FX_DWORD m_dwDataOffset;
   JBig2_SegmentState m_State;
   JBig2_ResultType m_nResultType;
   union {

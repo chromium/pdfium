@@ -7,14 +7,41 @@
 #include "../../../include/fxcodec/fx_codec.h"
 #include "codec_int.h"
 
+// Holds per-document JBig2 related data.
+class JBig2DocumentContext : public CFX_DestructObject {
+ public:
+  std::list<CJBig2_CachePair>* GetSymbolDictCache() {
+    return &m_SymbolDictCache;
+  }
+
+  ~JBig2DocumentContext() {
+    for (auto it : m_SymbolDictCache) {
+      delete it.second;
+    }
+  }
+
+ private:
+  std::list<CJBig2_CachePair> m_SymbolDictCache;
+};
+
+JBig2DocumentContext* GetJBig2DocumentContext(CCodec_Jbig2Module* pModule,
+                                              CFX_PrivateData* pPrivateData) {
+  void* pModulePrivateData = pPrivateData->GetPrivateData(pModule);
+  if (pModulePrivateData) {
+    CFX_DestructObject* pDestructObject =
+        reinterpret_cast<CFX_DestructObject*>(pModulePrivateData);
+    return static_cast<JBig2DocumentContext*>(pDestructObject);
+  }
+  JBig2DocumentContext* pJBig2DocumentContext = new JBig2DocumentContext();
+  pPrivateData->SetPrivateObj(pModule, pJBig2DocumentContext);
+  return pJBig2DocumentContext;
+}
+
 CCodec_Jbig2Context::CCodec_Jbig2Context() {
   FXSYS_memset(this, 0, sizeof(CCodec_Jbig2Context));
 }
 
 CCodec_Jbig2Module::~CCodec_Jbig2Module() {
-  for (auto it : m_SymbolDictCache) {
-    delete it.second;
-  }
 }
 
 void* CCodec_Jbig2Module::CreateJbig2Context() {
@@ -29,31 +56,31 @@ void CCodec_Jbig2Module::DestroyJbig2Context(void* pJbig2Content) {
   pJbig2Content = NULL;
 }
 FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context,
+                                               CFX_PrivateData* pPrivateData,
                                                FX_DWORD width,
                                                FX_DWORD height,
-                                               const uint8_t* src_buf,
-                                               FX_DWORD src_size,
-                                               const uint8_t* global_data,
-                                               FX_DWORD global_size,
+                                               CPDF_StreamAcc* src_stream,
+                                               CPDF_StreamAcc* global_stream,
                                                uint8_t* dest_buf,
                                                FX_DWORD dest_pitch,
                                                IFX_Pause* pPause) {
   if (!pJbig2Context) {
     return FXCODEC_STATUS_ERR_PARAMS;
   }
+  JBig2DocumentContext* pJBig2DocumentContext =
+      GetJBig2DocumentContext(this, pPrivateData);
   CCodec_Jbig2Context* m_pJbig2Context = (CCodec_Jbig2Context*)pJbig2Context;
   m_pJbig2Context->m_width = width;
   m_pJbig2Context->m_height = height;
-  m_pJbig2Context->m_src_buf = (unsigned char*)src_buf;
-  m_pJbig2Context->m_src_size = src_size;
-  m_pJbig2Context->m_global_data = global_data;
-  m_pJbig2Context->m_global_size = global_size;
+  m_pJbig2Context->m_pSrcStream = src_stream;
+  m_pJbig2Context->m_pGlobalStream = global_stream;
   m_pJbig2Context->m_dest_buf = dest_buf;
   m_pJbig2Context->m_dest_pitch = dest_pitch;
   m_pJbig2Context->m_pPause = pPause;
   FXSYS_memset(dest_buf, 0, height * dest_pitch);
   m_pJbig2Context->m_pContext = CJBig2_Context::CreateContext(
-      global_data, global_size, src_buf, src_size, &m_SymbolDictCache, pPause);
+      global_stream, src_stream, pJBig2DocumentContext->GetSymbolDictCache(),
+      pPause);
   if (!m_pJbig2Context->m_pContext) {
     return FXCODEC_STATUS_ERROR;
   }

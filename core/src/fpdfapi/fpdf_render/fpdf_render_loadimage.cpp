@@ -407,12 +407,10 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
           m_pGlobalStream->LoadAllData(pGlobals, FALSE);
         }
       }
-      ret = pJbig2Module->StartDecode(
-          m_pJbig2Context, m_Width, m_Height, m_pStreamAcc->GetData(),
-          m_pStreamAcc->GetSize(),
-          m_pGlobalStream ? m_pGlobalStream->GetData() : NULL,
-          m_pGlobalStream ? m_pGlobalStream->GetSize() : 0,
-          m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
+      ret = pJbig2Module->StartDecode(m_pJbig2Context, m_pDocument, m_Width,
+                                      m_Height, m_pStreamAcc, m_pGlobalStream,
+                                      m_pCachedBitmap->GetBuffer(),
+                                      m_pCachedBitmap->GetPitch(), pPause);
       if (ret < 0) {
         m_pCachedBitmap.reset();
         delete m_pGlobalStream;

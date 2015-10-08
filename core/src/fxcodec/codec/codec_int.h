@@ -274,10 +274,8 @@ class CCodec_Jbig2Context {
 
   FX_DWORD m_width;
   FX_DWORD m_height;
-  uint8_t* m_src_buf;
-  FX_DWORD m_src_size;
-  const uint8_t* m_global_data;
-  FX_DWORD m_global_size;
+  CPDF_StreamAcc* m_pGlobalStream;
+  CPDF_StreamAcc* m_pSrcStream;
   uint8_t* m_dest_buf;
   FX_DWORD m_dest_pitch;
   IFX_Pause* m_pPause;
@@ -292,21 +290,17 @@ class CCodec_Jbig2Module : public ICodec_Jbig2Module {
   // ICodec_Jbig2Module
   void* CreateJbig2Context() override;
   FXCODEC_STATUS StartDecode(void* pJbig2Context,
+                             CFX_PrivateData* pPrivateData,
                              FX_DWORD width,
                              FX_DWORD height,
-                             const uint8_t* src_buf,
-                             FX_DWORD src_size,
-                             const uint8_t* global_data,
-                             FX_DWORD global_size,
+                             CPDF_StreamAcc* src_stream,
+                             CPDF_StreamAcc* global_stream,
                              uint8_t* dest_buf,
                              FX_DWORD dest_pitch,
                              IFX_Pause* pPause) override;
   FXCODEC_STATUS ContinueDecode(void* pJbig2Context,
                                 IFX_Pause* pPause) override;
   void DestroyJbig2Context(void* pJbig2Context) override;
-
- private:
-  std::list<CJBig2_CachePair> m_SymbolDictCache;
 };
 
 struct DecodeData {

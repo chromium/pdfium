@@ -4,12 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../include/fpdfapi/fpdf_objects.h"
 #include "JBig2_BitStream.h"
 
 #include <algorithm>
 
-CJBig2_BitStream::CJBig2_BitStream(const uint8_t* pBuffer, FX_DWORD dwLength)
-    : m_pBuf(pBuffer), m_dwLength(dwLength), m_dwByteIdx(0), m_dwBitIdx(0) {
+CJBig2_BitStream::CJBig2_BitStream(CPDF_StreamAcc* pSrcStream)
+    : m_pBuf(pSrcStream->GetData()),
+      m_dwLength(pSrcStream->GetSize()),
+      m_dwByteIdx(0),
+      m_dwBitIdx(0),
+      m_dwObjNum(pSrcStream->GetStream() ? pSrcStream->GetStream()->GetObjNum()
+                                         : 0) {
   if (m_dwLength > 256 * 1024 * 1024) {
     m_dwLength = 0;
     m_pBuf = nullptr;
@@ -175,4 +181,8 @@ bool CJBig2_BitStream::IsInBound() const {
 
 FX_DWORD CJBig2_BitStream::LengthInBits() const {
   return m_dwLength << 3;
+}
+
+FX_DWORD CJBig2_BitStream::getObjNum() const {
+  return m_dwObjNum;
 }

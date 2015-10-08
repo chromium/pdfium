@@ -35,35 +35,26 @@ size_t GetRefAggContextSize(FX_BOOL val) {
 // list keeps track of the freshness of entries, with freshest ones
 // at the front. Even a tiny cache size like 2 makes a dramatic
 // difference for typical JBIG2 documents.
-//
-// Disabled until we can figure out how to clear cache between documents.
-// https://code.google.com/p/pdfium/issues/detail?id=207
-#define DISABLE_SYMBOL_CACHE
-#ifndef DISABLE_SYMBOL_CACHE
 static const int kSymbolDictCacheMaxSize = 2;
-#endif
 
 CJBig2_Context* CJBig2_Context::CreateContext(
-    const uint8_t* pGlobalData,
-    FX_DWORD dwGlobalLength,
-    const uint8_t* pData,
-    FX_DWORD dwLength,
+    CPDF_StreamAcc* pGlobalStream,
+    CPDF_StreamAcc* pSrcStream,
     std::list<CJBig2_CachePair>* pSymbolDictCache,
     IFX_Pause* pPause) {
-  return new CJBig2_Context(pGlobalData, dwGlobalLength, pData, dwLength,
-                            pSymbolDictCache, pPause);
+  return new CJBig2_Context(pGlobalStream, pSrcStream, pSymbolDictCache, pPause,
+                            false);
 }
 
 void CJBig2_Context::DestroyContext(CJBig2_Context* pContext) {
   delete pContext;
 }
 
-CJBig2_Context::CJBig2_Context(const uint8_t* pGlobalData,
-                               FX_DWORD dwGlobalLength,
-                               const uint8_t* pData,
-                               FX_DWORD dwLength,
+CJBig2_Context::CJBig2_Context(CPDF_StreamAcc* pGlobalStream,
+                               CPDF_StreamAcc* pSrcStream,
                                std::list<CJBig2_CachePair>* pSymbolDictCache,
-                               IFX_Pause* pPause)
+                               IFX_Pause* pPause,
+                               bool bIsGlobal)
     : m_nSegmentDecoded(0),
       m_bInPage(false),
       m_bBufSpecified(false),
@@ -72,15 +63,16 @@ CJBig2_Context::CJBig2_Context(const uint8_t* pGlobalData,
       m_ProcessingStatus(FXCODEC_STATUS_FRAME_READY),
       m_gbContext(NULL),
       m_dwOffset(0),
-      m_pSymbolDictCache(pSymbolDictCache) {
-  if (pGlobalData && (dwGlobalLength > 0)) {
-    m_pGlobalContext = new CJBig2_Context(
-        nullptr, 0, pGlobalData, dwGlobalLength, pSymbolDictCache, pPause);
+      m_pSymbolDictCache(pSymbolDictCache),
+      m_bIsGlobal(bIsGlobal) {
+  if (pGlobalStream && (pGlobalStream->GetSize() > 0)) {
+    m_pGlobalContext = new CJBig2_Context(nullptr, pGlobalStream,
+                                          pSymbolDictCache, pPause, true);
   } else {
     m_pGlobalContext = nullptr;
   }
 
-  m_pStream.reset(new CJBig2_BitStream(pData, dwLength));
+  m_pStream.reset(new CJBig2_BitStream(pSrcStream));
 }
 
 CJBig2_Context::~CJBig2_Context() {
@@ -331,7 +323,8 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
   if (m_pStream->readInteger(&pSegment->m_dwData_length) != 0)
     return JBIG2_ERROR_TOO_SHORT;
 
-  pSegment->m_pData = m_pStream->getPointer();
+  pSegment->m_dwObjNum = m_pStream->getObjNum();
+  pSegment->m_dwDataOffset = m_pStream->getOffset();
   pSegment->m_State = JBIG2_SEGMENT_DATA_UNPARSED;
   return JBIG2_SUCCESS;
 }
@@ -602,18 +595,21 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       JBIG2_memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
     }
   }
-  const uint8_t* key = pSegment->m_pData;
+  CJBig2_CacheKey key =
+      CJBig2_CacheKey(pSegment->m_dwObjNum, pSegment->m_dwDataOffset);
   FX_BOOL cache_hit = false;
   pSegment->m_nResultType = JBIG2_SYMBOL_DICT_POINTER;
-  for (std::list<CJBig2_CachePair>::iterator it = m_pSymbolDictCache->begin();
-       it != m_pSymbolDictCache->end(); ++it) {
-    if (it->first == key) {
-      nonstd::unique_ptr<CJBig2_SymbolDict> copy(it->second->DeepCopy());
-      pSegment->m_Result.sd = copy.release();
-      m_pSymbolDictCache->push_front(*it);
-      m_pSymbolDictCache->erase(it);
-      cache_hit = true;
-      break;
+  if (m_bIsGlobal && key.first != 0) {
+    for (auto it = m_pSymbolDictCache->begin(); it != m_pSymbolDictCache->end();
+         ++it) {
+      if (it->first == key) {
+        nonstd::unique_ptr<CJBig2_SymbolDict> copy(it->second->DeepCopy());
+        pSegment->m_Result.sd = copy.release();
+        m_pSymbolDictCache->push_front(*it);
+        m_pSymbolDictCache->erase(it);
+        cache_hit = true;
+        break;
+      }
     }
   }
   if (!cache_hit) {
@@ -634,17 +630,17 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
         return JBIG2_ERROR_FATAL;
       m_pStream->alignByte();
     }
-#ifndef DISABLE_SYMBOL_CACHE
-    nonstd::unique_ptr<CJBig2_SymbolDict> value =
-        pSegment->m_Result.sd->DeepCopy();
-    if (value && kSymbolDictCacheMaxSize > 0) {
-      while (m_pSymbolDictCache->size() >= kSymbolDictCacheMaxSize) {
-        delete m_pSymbolDictCache->back().second;
-        m_pSymbolDictCache->pop_back();
+    if (m_bIsGlobal && kSymbolDictCacheMaxSize > 0) {
+      nonstd::unique_ptr<CJBig2_SymbolDict> value =
+          pSegment->m_Result.sd->DeepCopy();
+      if (value) {
+        while (m_pSymbolDictCache->size() >= kSymbolDictCacheMaxSize) {
+          delete m_pSymbolDictCache->back().second;
+          m_pSymbolDictCache->pop_back();
+        }
+        m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
       }
-      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
     }
-#endif
   }
   if (wFlags & 0x0200) {
     pSegment->m_Result.sd->m_bContextRetained = TRUE;
