@@ -70,7 +70,9 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     return;
   }
 
-  DefineJSObjects();
+  if (m_isolateManaged || FXJS_GlobalIsolateRefCount() == 0)
+    DefineJSObjects();
+
   CPDFXFA_App::GetInstance()->SetJavaScriptInitialized(TRUE);
 
   CJS_Context* pContext = (CJS_Context*)NewContext();

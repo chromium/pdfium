@@ -158,6 +158,10 @@ bool FXJS_GetIsolate(v8::Isolate** pResultIsolate) {
   return true;
 }
 
+size_t FXJS_GlobalIsolateRefCount() {
+  return g_isolate_ref_count;
+}
+
 // static
 void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {
   if (!pIsolate->GetData(g_embedderDataSlot))
