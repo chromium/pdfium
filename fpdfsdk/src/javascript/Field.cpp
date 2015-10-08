@@ -1031,7 +1031,7 @@ void Field::SetCommitOnSelChange(CPDFSDK_Document* pDocument,
 FX_BOOL Field::currentValueIndices(IJS_Context* cc,
                                    CJS_PropValue& vp,
                                    CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
@@ -1044,8 +1044,8 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
       vp >> iSelecting;
       array.Add(iSelecting);
     } else if (vp.IsArrayObject()) {
-      CJS_Array SelArray(m_isolate);
-      CJS_Value SelValue(m_isolate);
+      CJS_Array SelArray(pRuntime);
+      CJS_Value SelValue(pRuntime);
       int iSelecting;
       vp >> SelArray;
       for (int i = 0, sz = SelArray.GetLength(); i < sz; i++) {
@@ -1077,10 +1077,10 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
     if (pFormField->CountSelectedItems() == 1)
       vp << pFormField->GetSelectedIndex(0);
     else if (pFormField->CountSelectedItems() > 1) {
-      CJS_Array SelArray(m_isolate);
+      CJS_Array SelArray(pRuntime);
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
         SelArray.SetElement(
-            i, CJS_Value(m_isolate, pFormField->GetSelectedIndex(i)));
+            i, CJS_Value(pRuntime, pFormField->GetSelectedIndex(i)));
       }
       vp << SelArray;
     } else
@@ -1489,8 +1489,6 @@ FX_BOOL Field::editable(IJS_Context* cc,
 FX_BOOL Field::exportValues(IJS_Context* cc,
                             CJS_PropValue& vp,
                             CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   CFX_PtrArray FieldArray;
   GetFormFields(m_FieldName, FieldArray);
   if (FieldArray.GetSize() <= 0)
@@ -1508,12 +1506,13 @@ FX_BOOL Field::exportValues(IJS_Context* cc,
     if (!vp.IsArrayObject())
       return FALSE;
   } else {
-    CJS_Array ExportValusArray(m_isolate);
+    CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+    CJS_Array ExportValusArray(pRuntime);
     if (m_nFormControlIndex < 0) {
       for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
         CPDF_FormControl* pFormControl = pFormField->GetControl(i);
         ExportValusArray.SetElement(
-            i, CJS_Value(m_isolate, pFormControl->GetExportValue().c_str()));
+            i, CJS_Value(pRuntime, pFormControl->GetExportValue().c_str()));
       }
     } else {
       if (m_nFormControlIndex >= pFormField->CountControls())
@@ -1525,7 +1524,7 @@ FX_BOOL Field::exportValues(IJS_Context* cc,
         return FALSE;
 
       ExportValusArray.SetElement(
-          0, CJS_Value(m_isolate, pFormControl->GetExportValue().c_str()));
+          0, CJS_Value(pRuntime, pFormControl->GetExportValue().c_str()));
     }
     vp << ExportValusArray;
   }
@@ -1564,10 +1563,8 @@ FX_BOOL Field::fileSelect(IJS_Context* cc,
 FX_BOOL Field::fillColor(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
-  CJS_Array crArray(m_isolate);
-
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Array crArray(pRuntime);
   CFX_PtrArray FieldArray;
   GetFormFields(m_FieldName, FieldArray);
   if (FieldArray.GetSize() <= 0)
@@ -2021,23 +2018,20 @@ FX_BOOL Field::name(IJS_Context* cc,
 FX_BOOL Field::numItems(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
+  if (!vp.IsGetting())
+    return FALSE;
+
   CFX_PtrArray FieldArray;
   GetFormFields(m_FieldName, FieldArray);
   if (FieldArray.GetSize() <= 0)
     return FALSE;
 
   CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
-  ASSERT(pFormField != NULL);
-
   if (pFormField->GetFieldType() != FIELDTYPE_COMBOBOX &&
       pFormField->GetFieldType() != FIELDTYPE_LISTBOX)
     return FALSE;
 
-  if (!vp.IsGetting())
-    return FALSE;
-
   vp << (int32_t)pFormField->CountOptions();
-
   return TRUE;
 }
 
@@ -2056,28 +2050,22 @@ FX_BOOL Field::page(IJS_Context* cc,
   if (!pFormField)
     return FALSE;
 
-  ASSERT(m_pDocument != NULL);
-
+  CFX_PtrArray widgetArray;
   CPDFSDK_InterForm* pInterForm =
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
-  CFX_PtrArray widgetArray;
   pInterForm->GetWidgets(pFormField, widgetArray);
 
   if (widgetArray.GetSize() > 0) {
-    CJS_Array PageArray(m_isolate);
-
+    CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+    CJS_Array PageArray(pRuntime);
     for (int i = 0, sz = widgetArray.GetSize(); i < sz; i++) {
       CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)widgetArray.GetAt(i);
-      ASSERT(pWidget != NULL);
-
       CPDFSDK_PageView* pPageView = pWidget->GetPageView();
       if (!pPageView)
         return FALSE;
 
       PageArray.SetElement(
-          i, CJS_Value(m_isolate, (int32_t)pPageView->GetPageIndex()));
+          i, CJS_Value(pRuntime, (int32_t)pPageView->GetPageIndex()));
     }
 
     vp << PageArray;
@@ -2284,7 +2272,11 @@ FX_BOOL Field::readonly(IJS_Context* cc,
 FX_BOOL Field::rect(IJS_Context* cc,
                     CJS_PropValue& vp,
                     CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Value Upper_Leftx(pRuntime);
+  CJS_Value Upper_Lefty(pRuntime);
+  CJS_Value Lower_Rightx(pRuntime);
+  CJS_Value Lower_Righty(pRuntime);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
@@ -2292,10 +2284,8 @@ FX_BOOL Field::rect(IJS_Context* cc,
     if (!vp.IsArrayObject())
       return FALSE;
 
-    CJS_Array rcArray(m_isolate);
+    CJS_Array rcArray(pRuntime);
     vp >> rcArray;
-    CJS_Value Upper_Leftx(m_isolate), Upper_Lefty(m_isolate),
-        Lower_Rightx(m_isolate), Lower_Righty(m_isolate);
     rcArray.GetElement(0, Upper_Leftx);
     rcArray.GetElement(1, Upper_Lefty);
     rcArray.GetElement(2, Lower_Rightx);
@@ -2308,7 +2298,6 @@ FX_BOOL Field::rect(IJS_Context* cc,
     pArray[3] = (FX_FLOAT)Upper_Lefty.ToInt();
 
     CPDF_Rect crRect(pArray);
-
     if (m_bDelay) {
       AddDelay_Rect(FP_RECT, crRect);
     } else {
@@ -2321,34 +2310,26 @@ FX_BOOL Field::rect(IJS_Context* cc,
       return FALSE;
 
     CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
-    ASSERT(pFormField != NULL);
-
     CPDFSDK_InterForm* pInterForm =
         (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-    ASSERT(pInterForm != NULL);
-
     CPDFSDK_Widget* pWidget =
         pInterForm->GetWidget(GetSmartFieldControl(pFormField));
     if (!pWidget)
       return FALSE;
 
     CFX_FloatRect crRect = pWidget->GetRect();
-    CJS_Value Upper_Leftx(m_isolate), Upper_Lefty(m_isolate),
-        Lower_Rightx(m_isolate), Lower_Righty(m_isolate);
     Upper_Leftx = (int32_t)crRect.left;
     Upper_Lefty = (int32_t)crRect.top;
     Lower_Rightx = (int32_t)crRect.right;
     Lower_Righty = (int32_t)crRect.bottom;
 
-    CJS_Array rcArray(m_isolate);
+    CJS_Array rcArray(pRuntime);
     rcArray.SetElement(0, Upper_Leftx);
     rcArray.SetElement(1, Upper_Lefty);
     rcArray.SetElement(2, Lower_Rightx);
     rcArray.SetElement(3, Lower_Righty);
-
     vp << rcArray;
   }
-
   return TRUE;
 }
 
@@ -2572,7 +2553,8 @@ void Field::SetRotation(CPDFSDK_Document* pDocument,
 FX_BOOL Field::strokeColor(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Array crArray(pRuntime);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
@@ -2581,7 +2563,6 @@ FX_BOOL Field::strokeColor(IJS_Context* cc,
     if (!vp.IsArrayObject())
       return FALSE;
 
-    CJS_Array crArray(m_isolate);
     vp >> crArray;
 
     CPWL_Color color;
@@ -2600,8 +2581,6 @@ FX_BOOL Field::strokeColor(IJS_Context* cc,
       return FALSE;
 
     CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
-    ASSERT(pFormField != NULL);
-
     CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
     if (!pFormControl)
       return FALSE;
@@ -2610,7 +2589,6 @@ FX_BOOL Field::strokeColor(IJS_Context* cc,
     pFormControl->GetBorderColor(iColorType);
 
     CPWL_Color color;
-
     if (iColorType == COLORTYPE_TRANSPARENT) {
       color = CPWL_Color(COLORTYPE_TRANSPARENT);
     } else if (iColorType == COLORTYPE_GRAY) {
@@ -2629,11 +2607,9 @@ FX_BOOL Field::strokeColor(IJS_Context* cc,
     } else
       return FALSE;
 
-    CJS_Array crArray(m_isolate);
     color::ConvertPWLColorToArray(color, crArray);
     vp << crArray;
   }
-
   return TRUE;
 }
 
@@ -2724,15 +2700,16 @@ FX_BOOL Field::submitName(IJS_Context* cc,
 FX_BOOL Field::textColor(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Array crArray(pRuntime);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return FALSE;
 
-    CJS_Array crArray(m_isolate);
     if (!vp.IsArrayObject())
       return FALSE;
+
     vp >> crArray;
 
     CPWL_Color color;
@@ -2750,8 +2727,6 @@ FX_BOOL Field::textColor(IJS_Context* cc,
       return FALSE;
 
     CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
-    ASSERT(pFormField != NULL);
-
     CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
     if (!pFormControl)
       return FALSE;
@@ -2770,11 +2745,9 @@ FX_BOOL Field::textColor(IJS_Context* cc,
     if (iColorType == COLORTYPE_TRANSPARENT)
       crRet = CPWL_Color(COLORTYPE_TRANSPARENT);
 
-    CJS_Array crArray(m_isolate);
     color::ConvertPWLColorToArray(crRet, crArray);
     vp << crArray;
   }
-
   return TRUE;
 }
 
@@ -2983,7 +2956,7 @@ void Field::SetUserName(CPDFSDK_Document* pDocument,
 FX_BOOL Field::value(IJS_Context* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
 
   if (vp.IsSetting()) {
     if (!m_bCanSet)
@@ -2992,17 +2965,16 @@ FX_BOOL Field::value(IJS_Context* cc,
     CJS_WideStringArray strArray;
 
     if (vp.IsArrayObject()) {
-      CJS_Array ValueArray(m_isolate);
+      CJS_Array ValueArray(pRuntime);
       vp.ConvertToArray(ValueArray);
       for (int i = 0, sz = ValueArray.GetLength(); i < sz; i++) {
-        CJS_Value ElementValue(m_isolate);
+        CJS_Value ElementValue(pRuntime);
         ValueArray.GetElement(i, ElementValue);
         strArray.Add(ElementValue.ToCFXWideString());
       }
     } else {
       CFX_WideString swValue;
       vp >> swValue;
-
       strArray.Add(swValue);
     }
 
@@ -3018,8 +2990,6 @@ FX_BOOL Field::value(IJS_Context* cc,
       return FALSE;
 
     CPDF_FormField* pFormField = (CPDF_FormField*)FieldArray.ElementAt(0);
-    ASSERT(pFormField != NULL);
-
     switch (pFormField->GetFieldType()) {
       case FIELDTYPE_PUSHBUTTON:
         return FALSE;
@@ -3040,8 +3010,8 @@ FX_BOOL Field::value(IJS_Context* cc,
       } break;
       case FIELDTYPE_LISTBOX: {
         if (pFormField->CountSelectedItems() > 1) {
-          CJS_Array ValueArray(m_isolate);
-          CJS_Value ElementValue(m_isolate);
+          CJS_Array ValueArray(pRuntime);
+          CJS_Value ElementValue(pRuntime);
           int iIndex;
           for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
             iIndex = pFormField->GetSelectedIndex(i);
@@ -3514,7 +3484,7 @@ FX_BOOL Field::getArray(IJS_Context* cc,
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   ASSERT(pRuntime != NULL);
 
-  CJS_Array FormFieldArray(m_isolate);
+  CJS_Array FormFieldArray(pRuntime);
   for (int j = 0, jsz = swSort.GetSize(); j < jsz; j++) {
     nonstd::unique_ptr<CFX_WideString> pStr(swSort.GetAt(j));
     v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
@@ -3526,7 +3496,7 @@ FX_BOOL Field::getArray(IJS_Context* cc,
     Field* pField = (Field*)pJSField->GetEmbedObject();
     pField->AttachField(m_pJSDoc, *pStr);
 
-    CJS_Value FormFieldValue(m_isolate);
+    CJS_Value FormFieldValue(pRuntime);
     FormFieldValue = pJSField;
     FormFieldArray.SetElement(j, FormFieldValue);
   }

@@ -179,7 +179,7 @@ class CJS_PublicMethods : public CJS_Object {
   static double AF_Simple(const FX_WCHAR* sFuction,
                           double dValue1,
                           double dValue2);
-  static CJS_Array AF_MakeArrayFromList(v8::Isolate* isolate, CJS_Value val);
+  static CJS_Array AF_MakeArrayFromList(CJS_Runtime* pRuntime, CJS_Value val);
 };
 
 #endif  // FPDFSDK_SRC_JAVASCRIPT_PUBLICMETHODS_H_

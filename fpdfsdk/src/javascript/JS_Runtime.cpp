@@ -32,8 +32,15 @@
 /* ------------------------------ CJS_Runtime ------------------------------ */
 v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(v8::Isolate* pIsolate);
 
+// static
 IJS_Runtime* IJS_Runtime::Create(CPDFDoc_Environment* pEnv) {
   return new CJS_Runtime(pEnv);
+}
+
+// static
+CJS_Runtime* CJS_Runtime::FromContext(const IJS_Context* cc) {
+  const CJS_Context* pContext = static_cast<const CJS_Context*>(cc);
+  return pContext->GetJSRuntime();
 }
 
 CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
@@ -139,8 +146,8 @@ void CJS_Runtime::DefineJSObjects() {
 
   // ObjDefIDs 18 - 20 (these can't fail, return void).
   CJS_PublicMethods::DefineJSObjects(GetIsolate());
-  CJS_GlobalConsts::DefineJSObjects(GetIsolate());
-  CJS_GlobalArrays::DefineJSObjects(GetIsolate());
+  CJS_GlobalConsts::DefineJSObjects(this);
+  CJS_GlobalArrays::DefineJSObjects(this);
 
   // ObjDefIDs 21 - 22.
   CJS_TimerObj::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_DYNAMIC);

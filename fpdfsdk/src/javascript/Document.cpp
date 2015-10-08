@@ -566,8 +566,6 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
                             const CJS_Parameters& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
         m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
         m_pDocument->GetPermissions(FPDFPERM_FILL_FORM)))
@@ -575,13 +573,9 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
 
   CPDFSDK_InterForm* pInterForm =
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
-  ASSERT(pPDFForm != NULL);
-
-  v8::Isolate* isolate = GetIsolate(cc);
-  CJS_Array aName(isolate);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Array aName(pRuntime);
 
   if (params.size() > 0) {
     switch (params[0].GetType()) {
@@ -596,10 +590,9 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
     CFX_PtrArray aFields;
 
     for (int i = 0, isz = aName.GetLength(); i < isz; i++) {
-      CJS_Value valElement(isolate);
+      CJS_Value valElement(pRuntime);
       aName.GetElement(i, valElement);
       CFX_WideString swVal = valElement.ToCFXWideString();
-
       for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; j++) {
         aFields.Add((void*)pPDFForm->GetField(j, swVal));
       }
@@ -629,7 +622,6 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
                              const CJS_Parameters& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
   CJS_Context* pContext = (CJS_Context*)cc;
   int nSize = params.size();
   if (nSize < 1) {
@@ -637,11 +629,12 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
     return FALSE;
   }
 
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  v8::Isolate* isolate = pRuntime->GetIsolate();
+  CJS_Array aFields(pRuntime);
   CFX_WideString strURL;
   FX_BOOL bFDF = TRUE;
   FX_BOOL bEmpty = FALSE;
-  v8::Isolate* isolate = GetIsolate(cc);
-  CJS_Array aFields(isolate);
 
   CJS_Value v = params[0];
   if (v.GetType() == CJS_Value::VT_string) {
@@ -657,17 +650,19 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
     v8::Local<v8::Value> pValue = FXJS_GetObjectElement(isolate, pObj, L"cURL");
     if (!pValue.IsEmpty())
       strURL =
-          CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+          CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+
     pValue = FXJS_GetObjectElement(isolate, pObj, L"bFDF");
-    bFDF = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToBool();
+    bFDF = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToBool();
+
     pValue = FXJS_GetObjectElement(isolate, pObj, L"bEmpty");
-    bEmpty = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToBool();
+    bEmpty = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToBool();
+
     pValue = FXJS_GetObjectElement(isolate, pObj, L"aFields");
     aFields.Attach(
-        CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToV8Array());
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToV8Array());
   }
 
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CPDFSDK_InterForm* pInterForm =
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
@@ -683,7 +678,7 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
 
   CFX_PtrArray fieldObjects;
   for (int i = 0, sz = aFields.GetLength(); i < sz; i++) {
-    CJS_Value valName(isolate);
+    CJS_Value valName(pRuntime);
     aFields.GetElement(i, valName);
 
     CFX_WideString sName = valName.ToCFXWideString();
@@ -735,8 +730,6 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
                           const CJS_Parameters& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   FX_BOOL bUI = TRUE;
   CFX_WideString cTo = L"";
   CFX_WideString cCc = L"";
@@ -757,35 +750,33 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
   if (params.size() >= 6)
     cMsg = params[5].ToCFXWideString();
 
-  v8::Isolate* isolate = GetIsolate(cc);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  v8::Isolate* isolate = pRuntime->GetIsolate();
 
   if (params.size() >= 1 && params[0].GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
 
     v8::Local<v8::Value> pValue = FXJS_GetObjectElement(isolate, pObj, L"bUI");
-    bUI = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToInt();
+    bUI = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToInt();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cTo");
-    cTo = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cTo = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cCc");
-    cCc = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cCc = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cBcc");
-    cBcc = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cBcc =
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cSubject");
     cSubject =
-        CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cMsg");
-    cMsg = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cMsg =
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
   }
-
-  CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
 
   pRuntime->BeginBlock();
   CPDFDoc_Environment* pEnv = pRuntime->GetReaderApp();
@@ -1442,13 +1433,11 @@ FX_BOOL Document::icons(IJS_Context* cc,
     return TRUE;
   }
 
-  CJS_Array Icons(m_isolate);
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Array Icons(pRuntime);
   IconElement* pIconElement = NULL;
   int iIconTreeLength = m_pIconTree->GetLength();
-
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-
   for (int i = 0; i < iIconTreeLength; i++) {
     pIconElement = (*m_pIconTree)[i];
 
@@ -1467,7 +1456,7 @@ FX_BOOL Document::icons(IJS_Context* cc,
 
     pIcon->SetStream(pIconElement->IconStream->GetStream());
     pIcon->SetIconName(pIconElement->IconName);
-    Icons.SetElement(i, CJS_Value(m_isolate, pJS_Icon));
+    Icons.SetElement(i, CJS_Value(pRuntime, pJS_Icon));
   }
 
   vp << Icons;
@@ -1805,27 +1794,25 @@ FX_BOOL Document::deletePages(IJS_Context* cc,
                               const CJS_Parameters& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
-  v8::Isolate* isolate = GetIsolate(cc);
-  ASSERT(m_pDocument != NULL);
-
   if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
         m_pDocument->GetPermissions(FPDFPERM_ASSEMBLE)))
     return FALSE;
 
-  int iSize = params.size();
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  v8::Isolate* isolate = pRuntime->GetIsolate();
 
+  int iSize = params.size();
   int nStart = 0;
   int nEnd = 0;
-
   if (iSize < 1) {
   } else if (iSize == 1) {
     if (params[0].GetType() == CJS_Value::VT_object) {
       v8::Local<v8::Object> pObj = params[0].ToV8Object();
       v8::Local<v8::Value> pValue =
           FXJS_GetObjectElement(isolate, pObj, L"nStart");
-      nStart = CJS_Value(m_isolate, pValue, GET_VALUE_TYPE(pValue)).ToInt();
+      nStart = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToInt();
       pValue = FXJS_GetObjectElement(isolate, pObj, L"nEnd");
-      nEnd = CJS_Value(m_isolate, pValue, GET_VALUE_TYPE(pValue)).ToInt();
+      nEnd = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToInt();
     } else {
       nStart = params[0].ToInt();
     }
@@ -1835,7 +1822,6 @@ FX_BOOL Document::deletePages(IJS_Context* cc,
   }
 
   int nTotal = m_pDocument->GetPageCount();
-
   if (nStart < 0)
     nStart = 0;
   if (nStart >= nTotal)

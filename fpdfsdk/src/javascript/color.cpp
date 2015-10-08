@@ -14,15 +14,6 @@
 #include "JS_Context.h"
 #include "JS_Runtime.h"
 
-static v8::Isolate* GetIsolate(IJS_Context* cc) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
-
-  return pRuntime->GetIsolate();
-}
 /* -------------------------- color -------------------------- */
 
 BEGIN_JS_STATIC_CONST(CJS_Color)
@@ -71,24 +62,24 @@ color::~color() {
 void color::ConvertPWLColorToArray(const CPWL_Color& color, CJS_Array& array) {
   switch (color.nColorType) {
     case COLORTYPE_TRANSPARENT:
-      array.SetElement(0, CJS_Value(array.GetIsolate(), "T"));
+      array.SetElement(0, CJS_Value(array.GetJSRuntime(), "T"));
       break;
     case COLORTYPE_GRAY:
-      array.SetElement(0, CJS_Value(array.GetIsolate(), "G"));
-      array.SetElement(1, CJS_Value(array.GetIsolate(), color.fColor1));
+      array.SetElement(0, CJS_Value(array.GetJSRuntime(), "G"));
+      array.SetElement(1, CJS_Value(array.GetJSRuntime(), color.fColor1));
       break;
     case COLORTYPE_RGB:
-      array.SetElement(0, CJS_Value(array.GetIsolate(), "RGB"));
-      array.SetElement(1, CJS_Value(array.GetIsolate(), color.fColor1));
-      array.SetElement(2, CJS_Value(array.GetIsolate(), color.fColor2));
-      array.SetElement(3, CJS_Value(array.GetIsolate(), color.fColor3));
+      array.SetElement(0, CJS_Value(array.GetJSRuntime(), "RGB"));
+      array.SetElement(1, CJS_Value(array.GetJSRuntime(), color.fColor1));
+      array.SetElement(2, CJS_Value(array.GetJSRuntime(), color.fColor2));
+      array.SetElement(3, CJS_Value(array.GetJSRuntime(), color.fColor3));
       break;
     case COLORTYPE_CMYK:
-      array.SetElement(0, CJS_Value(array.GetIsolate(), "CMYK"));
-      array.SetElement(1, CJS_Value(array.GetIsolate(), color.fColor1));
-      array.SetElement(2, CJS_Value(array.GetIsolate(), color.fColor2));
-      array.SetElement(3, CJS_Value(array.GetIsolate(), color.fColor3));
-      array.SetElement(4, CJS_Value(array.GetIsolate(), color.fColor4));
+      array.SetElement(0, CJS_Value(array.GetJSRuntime(), "CMYK"));
+      array.SetElement(1, CJS_Value(array.GetJSRuntime(), color.fColor1));
+      array.SetElement(2, CJS_Value(array.GetJSRuntime(), color.fColor2));
+      array.SetElement(3, CJS_Value(array.GetJSRuntime(), color.fColor3));
+      array.SetElement(4, CJS_Value(array.GetJSRuntime(), color.fColor4));
       break;
   }
 }
@@ -98,7 +89,7 @@ void color::ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color) {
   if (nArrayLen < 1)
     return;
 
-  CJS_Value value(array.GetIsolate());
+  CJS_Value value(array.GetJSRuntime());
   array.GetElement(0, value);
   CFX_ByteString sSpace = value.ToCFXByteString();
 
@@ -139,22 +130,20 @@ void color::ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color) {
   }
 }
 
-#define JS_IMPLEMENT_COLORPROP(prop, var)                          \
-  FX_BOOL color::prop(IJS_Context* cc, CJS_PropValue& vp,          \
-                      CFX_WideString& sError) {                    \
-    CJS_Context* pContext = (CJS_Context*)cc;                      \
-    v8::Isolate* isolate = pContext->GetJSRuntime()->GetIsolate(); \
-    if (vp.IsGetting()) {                                          \
-      CJS_Array array(isolate);                                    \
-      ConvertPWLColorToArray(var, array);                          \
-      vp << array;                                                 \
-    } else {                                                       \
-      CJS_Array array(isolate);                                    \
-      if (!vp.ConvertToArray(array))                               \
-        return FALSE;                                              \
-      ConvertArrayToPWLColor(array, var);                          \
-    }                                                              \
-    return TRUE;                                                   \
+#define JS_IMPLEMENT_COLORPROP(prop, var)                 \
+  FX_BOOL color::prop(IJS_Context* cc, CJS_PropValue& vp, \
+                      CFX_WideString& sError) {           \
+    CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc); \
+    CJS_Array array(pRuntime);                            \
+    if (vp.IsGetting()) {                                 \
+      ConvertPWLColorToArray(var, array);                 \
+      vp << array;                                        \
+    } else {                                              \
+      if (!vp.ConvertToArray(array))                      \
+        return FALSE;                                     \
+      ConvertArrayToPWLColor(array, var);                 \
+    }                                                     \
+    return TRUE;                                          \
   }
 
 JS_IMPLEMENT_COLORPROP(transparent, m_crTransparent)
@@ -174,11 +163,12 @@ FX_BOOL color::convert(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
-  v8::Isolate* isolate = GetIsolate(cc);
   int iSize = params.size();
   if (iSize < 2)
     return FALSE;
-  CJS_Array aSource(isolate);
+
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Array aSource(pRuntime);
   if (!params[0].ConvertToArray(aSource))
     return FALSE;
 
@@ -198,7 +188,7 @@ FX_BOOL color::convert(IJS_Context* cc,
     nColorType = COLORTYPE_CMYK;
   }
 
-  CJS_Array aDest(isolate);
+  CJS_Array aDest(pRuntime);
   CPWL_Color crDest = crSource;
   crDest.ConvertColorType(nColorType);
   ConvertPWLColorToArray(crDest, aDest);
@@ -211,12 +201,12 @@ FX_BOOL color::equal(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
-  v8::Isolate* isolate = GetIsolate(cc);
   if (params.size() < 2)
     return FALSE;
 
-  CJS_Array array1(isolate), array2(isolate);
-
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Array array1(pRuntime);
+  CJS_Array array2(pRuntime);
   if (!params[0].ConvertToArray(array1))
     return FALSE;
   if (!params[1].ConvertToArray(array2))
@@ -224,12 +214,9 @@ FX_BOOL color::equal(IJS_Context* cc,
 
   CPWL_Color color1;
   CPWL_Color color2;
-
   ConvertArrayToPWLColor(array1, color1);
   ConvertArrayToPWLColor(array2, color2);
-
   color1.ConvertColorType(color2.nColorType);
-
   vRet = color1 == color2;
   return TRUE;
 }

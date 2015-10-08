@@ -194,8 +194,8 @@ FX_BOOL JSGlobalAlternate::DoProperty(IJS_Context* cc,
         vp << pData->sData;
         return TRUE;
       case JS_GLOBALDATA_TYPE_OBJECT: {
-        v8::Local<v8::Object> obj =
-            v8::Local<v8::Object>::New(vp.GetIsolate(), pData->pData);
+        v8::Local<v8::Object> obj = v8::Local<v8::Object>::New(
+            vp.GetJSRuntime()->GetIsolate(), pData->pData);
         vp << obj;
         return TRUE;
       }
@@ -287,8 +287,7 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
   }
 }
 
-void JSGlobalAlternate::CommitGlobalPersisitentVariables() {
-  ASSERT(m_pGlobalData);
+void JSGlobalAlternate::CommitGlobalPersisitentVariables(IJS_Context* cc) {
   for (auto it = m_mapGlobal.begin(); it != m_mapGlobal.end(); ++it) {
     CFX_ByteString name = it->first;
     JSGlobalData* pData = it->second;
@@ -309,12 +308,11 @@ void JSGlobalAlternate::CommitGlobalPersisitentVariables() {
           m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
           break;
         case JS_GLOBALDATA_TYPE_OBJECT:
-          // if (pData->pData)
           {
             CJS_GlobalVariableArray array;
             v8::Local<v8::Object> obj = v8::Local<v8::Object>::New(
                 GetJSObject()->GetIsolate(), pData->pData);
-            ObjectToArray(obj, array);
+            ObjectToArray(cc, obj, array);
             m_pGlobalData->SetGlobalVariableObject(name, array);
             m_pGlobalData->SetGlobalVariablePersistent(name,
                                                        pData->bPersistent);
@@ -329,13 +327,15 @@ void JSGlobalAlternate::CommitGlobalPersisitentVariables() {
   }
 }
 
-void JSGlobalAlternate::ObjectToArray(v8::Local<v8::Object> pObj,
+void JSGlobalAlternate::ObjectToArray(IJS_Context* cc,
+                                      v8::Local<v8::Object> pObj,
                                       CJS_GlobalVariableArray& array) {
   v8::Local<v8::Context> context = pObj->CreationContext();
   v8::Isolate* isolate = context->GetIsolate();
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+
   v8::Local<v8::Array> pKeyList = FXJS_GetObjectElementNames(isolate, pObj);
   int nObjElements = pKeyList->Length();
-
   for (int i = 0; i < nObjElements; i++) {
     CFX_WideString ws =
         FXJS_ToString(isolate, FXJS_GetArrayElement(isolate, pKeyList, i));
@@ -359,7 +359,7 @@ void JSGlobalAlternate::ObjectToArray(v8::Local<v8::Object> pObj,
       } break;
       case CJS_Value::VT_string: {
         CFX_ByteString sValue =
-            CJS_Value(isolate, v, CJS_Value::VT_string).ToCFXByteString();
+            CJS_Value(pRuntime, v, CJS_Value::VT_string).ToCFXByteString();
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
         pObjElement->nType = JS_GLOBALDATA_TYPE_STRING;
         pObjElement->sKey = sKey;
@@ -370,7 +370,7 @@ void JSGlobalAlternate::ObjectToArray(v8::Local<v8::Object> pObj,
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
         pObjElement->nType = JS_GLOBALDATA_TYPE_OBJECT;
         pObjElement->sKey = sKey;
-        ObjectToArray(FXJS_ToObject(isolate, v), pObjElement->objData);
+        ObjectToArray(cc, FXJS_ToObject(isolate, v), pObjElement->objData);
         array.Add(pObjElement);
       } break;
       case CJS_Value::VT_null: {

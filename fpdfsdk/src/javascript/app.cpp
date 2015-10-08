@@ -18,12 +18,6 @@
 #include "JS_Value.h"
 #include "resource.h"
 
-static v8::Isolate* GetIsolate(IJS_Context* cc) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  return pRuntime->GetIsolate();
-}
-
 BEGIN_JS_STATIC_CONST(CJS_TimerObj)
 END_JS_STATIC_CONST()
 
@@ -120,7 +114,7 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
   CPDFDoc_Environment* pApp = pContext->GetReaderApp();
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
-  CJS_Array aDocs(pRuntime->GetIsolate());
+  CJS_Array aDocs(pRuntime);
   if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument()) {
     CJS_Document* pJSDocument = NULL;
     if (pDoc == pCurDoc) {
@@ -135,7 +129,7 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
           (CJS_Document*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
       ASSERT(pJSDocument != NULL);
     }
-    aDocs.SetElement(0, CJS_Value(pRuntime->GetIsolate(), pJSDocument));
+    aDocs.SetElement(0, CJS_Value(pRuntime, pJSDocument));
   }
   if (aDocs.GetLength() > 0)
     vp << aDocs;
@@ -156,7 +150,7 @@ FX_BOOL app::calculate(IJS_Context* cc,
     CJS_Context* pContext = (CJS_Context*)cc;
     CPDFDoc_Environment* pApp = pContext->GetReaderApp();
     CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-    CJS_Array aDocs(pRuntime->GetIsolate());
+    CJS_Array aDocs(pRuntime);
     if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument())
       pDoc->GetInterForm()->EnableCalculate((FX_BOOL)m_bCalculate);
   } else {
@@ -273,7 +267,8 @@ FX_BOOL app::alert(IJS_Context* cc,
   int iIcon = 0;
   int iType = 0;
 
-  v8::Isolate* isolate = GetIsolate(cc);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  v8::Isolate* isolate = pRuntime->GetIsolate();
 
   if (iSize == 1) {
     if (params[0].GetType() == CJS_Value::VT_object) {
@@ -281,25 +276,25 @@ FX_BOOL app::alert(IJS_Context* cc,
       {
         v8::Local<v8::Value> pValue =
             FXJS_GetObjectElement(isolate, pObj, L"cMsg");
-        swMsg =
-            CJS_Value(isolate, pValue, CJS_Value::VT_unknown).ToCFXWideString();
+        swMsg = CJS_Value(pRuntime, pValue, CJS_Value::VT_unknown)
+                    .ToCFXWideString();
 
         pValue = FXJS_GetObjectElement(isolate, pObj, L"cTitle");
-        swTitle =
-            CJS_Value(isolate, pValue, CJS_Value::VT_unknown).ToCFXWideString();
+        swTitle = CJS_Value(pRuntime, pValue, CJS_Value::VT_unknown)
+                      .ToCFXWideString();
 
         pValue = FXJS_GetObjectElement(isolate, pObj, L"nIcon");
-        iIcon = CJS_Value(isolate, pValue, CJS_Value::VT_unknown).ToInt();
+        iIcon = CJS_Value(pRuntime, pValue, CJS_Value::VT_unknown).ToInt();
 
         pValue = FXJS_GetObjectElement(isolate, pObj, L"nType");
-        iType = CJS_Value(isolate, pValue, CJS_Value::VT_unknown).ToInt();
+        iType = CJS_Value(pRuntime, pValue, CJS_Value::VT_unknown).ToInt();
       }
 
       if (swMsg == L"") {
-        CJS_Array carray(isolate);
+        CJS_Array carray(pRuntime);
         if (params[0].ConvertToArray(carray)) {
           int iLength = carray.GetLength();
-          CJS_Value* pValue = new CJS_Value(isolate);
+          CJS_Value* pValue = new CJS_Value(pRuntime);
           for (int i = 0; i < iLength; ++i) {
             carray.GetElement(i, *pValue);
             swMsg += (*pValue).ToCFXWideString();
@@ -347,15 +342,10 @@ FX_BOOL app::alert(IJS_Context* cc,
     }
   }
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
   pRuntime->BeginBlock();
   vRet = MsgBox(pRuntime->GetReaderApp(), swMsg.c_str(), swTitle.c_str(), iType,
                 iIcon);
   pRuntime->EndBlock();
-
   return TRUE;
 }
 
@@ -602,8 +592,8 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  v8::Isolate* isolate = GetIsolate(cc);
+  if (params.size() < 1)
+    return FALSE;
 
   FX_BOOL bUI = TRUE;
   CFX_WideString cTo = L"";
@@ -612,30 +602,33 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
   CFX_WideString cSubject = L"";
   CFX_WideString cMsg = L"";
 
-  if (params.size() < 1)
-    return FALSE;
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
+  v8::Isolate* isolate = pRuntime->GetIsolate();
 
   if (params[0].GetType() == CJS_Value::VT_object) {
     v8::Local<v8::Object> pObj = params[0].ToV8Object();
 
     v8::Local<v8::Value> pValue = FXJS_GetObjectElement(isolate, pObj, L"bUI");
-    bUI = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToBool();
+    bUI = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToBool();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cTo");
-    cTo = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cTo = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cCc");
-    cCc = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cCc = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cBcc");
-    cBcc = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cBcc =
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cSubject");
     cSubject =
-        CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cMsg");
-    cMsg = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+    cMsg =
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
   } else {
     if (params.size() < 2)
       return FALSE;
@@ -653,15 +646,10 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
       cMsg = params[5].ToCFXWideString();
   }
 
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
-
-  CPDFDoc_Environment* pApp = pContext->GetReaderApp();
-  ASSERT(pApp != NULL);
-
   pRuntime->BeginBlock();
-  pApp->JS_docmailForm(NULL, 0, bUI, cTo.c_str(), cSubject.c_str(), cCc.c_str(),
-                       cBcc.c_str(), cMsg.c_str());
+  pContext->GetReaderApp()->JS_docmailForm(NULL, 0, bUI, cTo.c_str(),
+                                           cSubject.c_str(), cCc.c_str(),
+                                           cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
 
   return FALSE;
@@ -750,7 +738,8 @@ FX_BOOL app::response(IJS_Context* cc,
   CFX_WideString swDefault = L"";
   bool bPassWord = false;
 
-  v8::Isolate* isolate = GetIsolate(cc);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  v8::Isolate* isolate = pRuntime->GetIsolate();
 
   int iLength = params.size();
   if (iLength > 0 && params[0].GetType() == CJS_Value::VT_object) {
@@ -758,22 +747,22 @@ FX_BOOL app::response(IJS_Context* cc,
     v8::Local<v8::Value> pValue =
         FXJS_GetObjectElement(isolate, pObj, L"cQuestion");
     swQuestion =
-        CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cTitle");
     swTitle =
-        CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cDefault");
     swDefault =
-        CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"cLabel");
     swLabel =
-        CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
 
     pValue = FXJS_GetObjectElement(isolate, pObj, L"bPassword");
-    bPassWord = CJS_Value(isolate, pValue, GET_VALUE_TYPE(pValue)).ToBool();
+    bPassWord = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToBool();
   } else {
     switch (iLength) {
       case 5:

@@ -29,6 +29,8 @@ class CJS_Runtime : public IJS_Runtime {
 
   using FieldEvent = std::pair<CFX_WideString, JS_EVENT_T>;
 
+  static CJS_Runtime* FromContext(const IJS_Context* cc);
+
   explicit CJS_Runtime(CPDFDoc_Environment* pApp);
   ~CJS_Runtime() override;
 

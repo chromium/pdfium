@@ -129,62 +129,62 @@ IMPLEMENT_JS_CLASS_CONST(CJS_Zoomtype, zoomtype)
 
 /* ------------------------------ CJS_GlobalConsts ------------------------- */
 
-static void DefineGlobalConstString(v8::Isolate* pIsolate,
+static void DefineGlobalConstString(CJS_Runtime* pRuntime,
                                     const wchar_t* pConstName,
                                     const wchar_t* pValue) {
-  FXJS_DefineGlobalConst(pIsolate, pConstName,
-                         FXJS_NewString(pIsolate, pValue));
+  FXJS_DefineGlobalConst(pRuntime->GetIsolate(), pConstName,
+                         FXJS_NewString(pRuntime->GetIsolate(), pValue));
 }
 
-void CJS_GlobalConsts::DefineJSObjects(v8::Isolate* pIsolate) {
+void CJS_GlobalConsts::DefineJSObjects(CJS_Runtime* pRuntime) {
   DefineGlobalConstString(
-      pIsolate, L"IDS_GREATER_THAN",
+      pRuntime, L"IDS_GREATER_THAN",
       L"Invalid value: must be greater than or equal to % s.");
   DefineGlobalConstString(
-      pIsolate, L"IDS_GT_AND_LT",
+      pRuntime, L"IDS_GT_AND_LT",
       L"Invalid value: must be greater than or equal to % s "
       L"and less than or equal to % s.");
-  DefineGlobalConstString(pIsolate, L"IDS_LESS_THAN",
+  DefineGlobalConstString(pRuntime, L"IDS_LESS_THAN",
                           L"Invalid value: must be less than or equal to % s.");
-  DefineGlobalConstString(pIsolate, L"IDS_INVALID_MONTH", L"**Invalid**");
+  DefineGlobalConstString(pRuntime, L"IDS_INVALID_MONTH", L"**Invalid**");
   DefineGlobalConstString(
-      pIsolate, L"IDS_INVALID_DATE",
+      pRuntime, L"IDS_INVALID_DATE",
       L"Invalid date / time: please ensure that the date / time exists.Field");
   DefineGlobalConstString(
-      pIsolate, L"IDS_INVALID_VALUE",
+      pRuntime, L"IDS_INVALID_VALUE",
       L"The value entered does not match the format of the field");
-  DefineGlobalConstString(pIsolate, L"IDS_AM", L"am");
-  DefineGlobalConstString(pIsolate, L"IDS_PM", L"pm");
+  DefineGlobalConstString(pRuntime, L"IDS_AM", L"am");
+  DefineGlobalConstString(pRuntime, L"IDS_PM", L"pm");
   DefineGlobalConstString(
-      pIsolate, L"IDS_MONTH_INFO",
+      pRuntime, L"IDS_MONTH_INFO",
       L"January[1] February[2] March[3] April[4] May[5] "
       L"June[6] July[7] August[8] September[9] October[10] "
       L"November[11] December[12] Sept[9] Jan[1] Feb[2] Mar[3] "
       L"Apr[4] Jun[6] Jul[7] Aug[8] Sep[9] Oct[10] Nov[11] "
       L"Dec[12]");
-  DefineGlobalConstString(pIsolate, L"IDS_STARTUP_CONSOLE_MSG", L"** ^ _ ^ **");
+  DefineGlobalConstString(pRuntime, L"IDS_STARTUP_CONSOLE_MSG", L"** ^ _ ^ **");
 }
 
 /* ------------------------------ CJS_GlobalArrays  ------------------------ */
 
-void DefineGlobalConstStringArray(v8::Isolate* pIsolate,
+void DefineGlobalConstStringArray(CJS_Runtime* pRuntime,
                                   const wchar_t* sConstName,
                                   const wchar_t** pValues,
                                   size_t nValues) {
-  CJS_Array array(pIsolate);
+  CJS_Array array(pRuntime);
   for (size_t i = 0; i < nValues; ++i) {
-    array.SetElement(i, CJS_Value(pIsolate, pValues[i]));
+    array.SetElement(i, CJS_Value(pRuntime, pValues[i]));
   }
-  CJS_PropValue prop(pIsolate);
+  CJS_PropValue prop(pRuntime);
   prop << array;
-  FXJS_DefineGlobalConst(pIsolate, sConstName, prop.ToV8Value());
+  FXJS_DefineGlobalConst(pRuntime->GetIsolate(), sConstName, prop.ToV8Value());
 }
 
-void CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {
+void CJS_GlobalArrays::DefineJSObjects(CJS_Runtime* pRuntime) {
   {
     const FX_WCHAR* ArrayName = L"RE_NUMBER_ENTRY_DOT_SEP";
     const FX_WCHAR* ArrayContent[] = {L"[+-]?\\d*\\.?\\d*"};
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
@@ -195,7 +195,7 @@ void CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {
         L"[+-]?\\.\\d+",        /* -.1 */
         L"[+-]?\\d+\\."         /* -1. */
     };
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
@@ -203,7 +203,7 @@ void CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {
     const FX_WCHAR* ArrayName = L"RE_NUMBER_ENTRY_COMMA_SEP";
     const FX_WCHAR* ArrayContent[] = {L"[+-]?\\d*,?\\d*"};
 
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
@@ -214,35 +214,35 @@ void CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {
         L"[+-]?[.,]\\d+",        /* -,1 */
         L"[+-]?\\d+[.,]"         /* -1, */
     };
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_ZIP_ENTRY";
     const FX_WCHAR* ArrayContent[] = {L"\\d{0,5}"};
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_ZIP_COMMIT";
     const FX_WCHAR* ArrayContent[] = {L"\\d{5}"};
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_ZIP4_ENTRY";
     const FX_WCHAR* ArrayContent[] = {L"\\d{0,5}(\\.|[- ])?\\d{0,4}"};
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
   {
     const FX_WCHAR* ArrayName = L"RE_ZIP4_COMMIT";
     const FX_WCHAR* ArrayContent[] = {L"\\d{5}(\\.|[- ])?\\d{4}"};
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
@@ -261,7 +261,7 @@ void CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {
                                                                  */
         L"011(\\.|[- \\d])*" /* international */
     };
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
@@ -273,7 +273,7 @@ void CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {
         L"\\(\\d{3}\\)(\\.|[- ])?\\d{3}(\\.|[- ])?\\d{4}", /* (408) 555-1234 */
         L"011(\\.|[- \\d])*"                               /* international */
     };
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
@@ -281,7 +281,7 @@ void CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {
     const FX_WCHAR* ArrayName = L"RE_SSN_ENTRY";
     const FX_WCHAR* ArrayContent[] = {
         L"\\d{0,3}(\\.|[- ])?\\d{0,2}(\\.|[- ])?\\d{0,4}"};
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 
@@ -289,7 +289,7 @@ void CJS_GlobalArrays::DefineJSObjects(v8::Isolate* pIsolate) {
     const FX_WCHAR* ArrayName = L"RE_SSN_COMMIT";
     const FX_WCHAR* ArrayContent[] = {
         L"\\d{3}(\\.|[- ])?\\d{2}(\\.|[- ])?\\d{4}"};
-    DefineGlobalConstStringArray(pIsolate, ArrayName, ArrayContent,
+    DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
   }
 }
