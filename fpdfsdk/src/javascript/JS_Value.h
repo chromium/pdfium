@@ -14,6 +14,7 @@ class CJS_Array;
 class CJS_Date;
 class CJS_Document;
 class CJS_Object;
+class CJS_Runtime;
 
 class CJS_Value {
  public:
@@ -29,18 +30,18 @@ class CJS_Value {
     VT_undefined
   };
 
-  CJS_Value(v8::Isolate* isolate);
-  CJS_Value(v8::Isolate* isolate, v8::Local<v8::Value> pValue, Type t);
-  CJS_Value(v8::Isolate* isolate, const int& iValue);
-  CJS_Value(v8::Isolate* isolate, const double& dValue);
-  CJS_Value(v8::Isolate* isolate, const float& fValue);
-  CJS_Value(v8::Isolate* isolate, const bool& bValue);
-  CJS_Value(v8::Isolate* isolate, v8::Local<v8::Object>);
-  CJS_Value(v8::Isolate* isolate, CJS_Object*);
-  CJS_Value(v8::Isolate* isolate, CJS_Document*);
-  CJS_Value(v8::Isolate* isolate, const FX_CHAR* pStr);
-  CJS_Value(v8::Isolate* isolate, const FX_WCHAR* pWstr);
-  CJS_Value(v8::Isolate* isolate, CJS_Array& array);
+  CJS_Value(CJS_Runtime* pRuntime);
+  CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue, Type t);
+  CJS_Value(CJS_Runtime* pRuntime, const int& iValue);
+  CJS_Value(CJS_Runtime* pRuntime, const double& dValue);
+  CJS_Value(CJS_Runtime* pRuntime, const float& fValue);
+  CJS_Value(CJS_Runtime* pRuntime, const bool& bValue);
+  CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Object>);
+  CJS_Value(CJS_Runtime* pRuntime, CJS_Object*);
+  CJS_Value(CJS_Runtime* pRuntime, CJS_Document*);
+  CJS_Value(CJS_Runtime* pRuntime, const FX_CHAR* pStr);
+  CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr);
+  CJS_Value(CJS_Runtime* pRuntime, CJS_Array& array);
 
   ~CJS_Value();
 
@@ -79,12 +80,12 @@ class CJS_Value {
   FX_BOOL ConvertToArray(CJS_Array&) const;
   FX_BOOL ConvertToDate(CJS_Date&) const;
 
-  v8::Isolate* GetIsolate() { return m_isolate; }
+  CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime; }
 
  protected:
   Type m_eType;
   v8::Local<v8::Value> m_pValue;
-  v8::Isolate* m_isolate;
+  CJS_Runtime* m_pJSRuntime;
 };
 
 class CJS_Parameters : public CFX_ArrayTemplate<CJS_Value> {
@@ -98,12 +99,12 @@ class CJS_Parameters : public CFX_ArrayTemplate<CJS_Value> {
 class CJS_PropValue : public CJS_Value {
  public:
   CJS_PropValue(const CJS_Value&);
-  CJS_PropValue(v8::Isolate* isolate);
+  CJS_PropValue(CJS_Runtime* pRuntime);
   ~CJS_PropValue();
 
- public:
-  FX_BOOL IsSetting();
-  FX_BOOL IsGetting();
+  FX_BOOL IsSetting() const { return m_bIsSetting; }
+  FX_BOOL IsGetting() const { return !m_bIsSetting; }
+
   void operator<<(int);
   void operator>>(int&) const;
   void operator<<(bool);
@@ -135,7 +136,7 @@ class CJS_PropValue : public CJS_Value {
 
 class CJS_Array {
  public:
-  CJS_Array(v8::Isolate* isolate);
+  CJS_Array(CJS_Runtime* pRuntime);
   virtual ~CJS_Array();
 
   void Attach(v8::Local<v8::Array> pArray);
@@ -145,20 +146,20 @@ class CJS_Array {
   FX_BOOL IsAttached();
   operator v8::Local<v8::Array>();
 
-  v8::Isolate* GetIsolate() { return m_isolate; }
+  CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime; }
 
  private:
   v8::Local<v8::Array> m_pArray;
-  v8::Isolate* m_isolate;
+  CJS_Runtime* m_pJSRuntime;
 };
 
 class CJS_Date {
   friend class CJS_Value;
 
  public:
-  CJS_Date(v8::Isolate* isolate);
-  CJS_Date(v8::Isolate* isolate, double dMsec_time);
-  CJS_Date(v8::Isolate* isolate,
+  CJS_Date(CJS_Runtime* pRuntime);
+  CJS_Date(CJS_Runtime* pRuntime, double dMsec_time);
+  CJS_Date(CJS_Runtime* pRuntime,
            int year,
            int mon,
            int day,
@@ -198,7 +199,7 @@ class CJS_Date {
 
  protected:
   v8::Local<v8::Value> m_pDate;
-  v8::Isolate* m_isolate;
+  CJS_Runtime* m_pJSRuntime;
 };
 
 double JS_GetDateTime();

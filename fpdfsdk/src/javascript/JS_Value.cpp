@@ -21,61 +21,63 @@ static double GetNan() {
 
 /* ---------------------------- CJS_Value ---------------------------- */
 
-CJS_Value::CJS_Value(v8::Isolate* isolate)
-    : m_eType(VT_unknown), m_isolate(isolate) {}
-CJS_Value::CJS_Value(v8::Isolate* isolate, v8::Local<v8::Value> pValue, Type t)
-    : m_eType(t), m_pValue(pValue), m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime)
+    : m_eType(VT_unknown), m_pJSRuntime(pRuntime) {
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, const int& iValue)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Value> pValue, Type t)
+    : m_eType(t), m_pValue(pValue), m_pJSRuntime(pRuntime) {
+}
+
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const int& iValue)
+    : m_pJSRuntime(pRuntime) {
   operator=(iValue);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, const bool& bValue)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const bool& bValue)
+    : m_pJSRuntime(pRuntime) {
   operator=(bValue);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, const float& fValue)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const float& fValue)
+    : m_pJSRuntime(pRuntime) {
   operator=(fValue);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, const double& dValue)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const double& dValue)
+    : m_pJSRuntime(pRuntime) {
   operator=(dValue);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, v8::Local<v8::Object> pJsObj)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, v8::Local<v8::Object> pJsObj)
+    : m_pJSRuntime(pRuntime) {
   operator=(pJsObj);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Object* pJsObj)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pJsObj)
+    : m_pJSRuntime(pRuntime) {
   operator=(pJsObj);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Document* pJsDoc)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Document* pJsDoc)
+    : m_pJSRuntime(pRuntime) {
   m_eType = VT_object;
   if (pJsDoc)
     m_pValue = pJsDoc->ToV8Object();
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_WCHAR* pWstr)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr)
+    : m_pJSRuntime(pRuntime) {
   operator=(pWstr);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, const FX_CHAR* pStr)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const FX_CHAR* pStr)
+    : m_pJSRuntime(pRuntime) {
   operator=(pStr);
 }
 
-CJS_Value::CJS_Value(v8::Isolate* isolate, CJS_Array& array)
-    : m_isolate(isolate) {
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Array& array)
+    : m_pJSRuntime(pRuntime) {
   operator=(array);
 }
 
@@ -100,15 +102,15 @@ void CJS_Value::Detach() {
  */
 
 int CJS_Value::ToInt() const {
-  return FXJS_ToInt32(m_isolate, m_pValue);
+  return FXJS_ToInt32(m_pJSRuntime->GetIsolate(), m_pValue);
 }
 
 bool CJS_Value::ToBool() const {
-  return FXJS_ToBoolean(m_isolate, m_pValue);
+  return FXJS_ToBoolean(m_pJSRuntime->GetIsolate(), m_pValue);
 }
 
 double CJS_Value::ToDouble() const {
-  return FXJS_ToNumber(m_isolate, m_pValue);
+  return FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pValue);
 }
 
 float CJS_Value::ToFloat() const {
@@ -116,16 +118,17 @@ float CJS_Value::ToFloat() const {
 }
 
 CJS_Object* CJS_Value::ToCJSObject() const {
-  v8::Local<v8::Object> pObj = FXJS_ToObject(m_isolate, m_pValue);
-  return (CJS_Object*)FXJS_GetPrivate(m_isolate, pObj);
+  v8::Local<v8::Object> pObj =
+      FXJS_ToObject(m_pJSRuntime->GetIsolate(), m_pValue);
+  return (CJS_Object*)FXJS_GetPrivate(m_pJSRuntime->GetIsolate(), pObj);
 }
 
 v8::Local<v8::Object> CJS_Value::ToV8Object() const {
-  return FXJS_ToObject(m_isolate, m_pValue);
+  return FXJS_ToObject(m_pJSRuntime->GetIsolate(), m_pValue);
 }
 
 CFX_WideString CJS_Value::ToCFXWideString() const {
-  return FXJS_ToString(m_isolate, m_pValue);
+  return FXJS_ToString(m_pJSRuntime->GetIsolate(), m_pValue);
 }
 
 CFX_ByteString CJS_Value::ToCFXByteString() const {
@@ -138,7 +141,8 @@ v8::Local<v8::Value> CJS_Value::ToV8Value() const {
 
 v8::Local<v8::Array> CJS_Value::ToV8Array() const {
   if (IsArrayObject())
-    return v8::Local<v8::Array>::Cast(FXJS_ToObject(m_isolate, m_pValue));
+    return v8::Local<v8::Array>::Cast(
+        FXJS_ToObject(m_pJSRuntime->GetIsolate(), m_pValue));
   return v8::Local<v8::Array>();
 }
 
@@ -146,27 +150,27 @@ v8::Local<v8::Array> CJS_Value::ToV8Array() const {
  */
 
 void CJS_Value::operator=(int iValue) {
-  m_pValue = FXJS_NewNumber(m_isolate, iValue);
+  m_pValue = FXJS_NewNumber(m_pJSRuntime->GetIsolate(), iValue);
   m_eType = VT_number;
 }
 
 void CJS_Value::operator=(bool bValue) {
-  m_pValue = FXJS_NewBoolean(m_isolate, bValue);
+  m_pValue = FXJS_NewBoolean(m_pJSRuntime->GetIsolate(), bValue);
   m_eType = VT_boolean;
 }
 
 void CJS_Value::operator=(double dValue) {
-  m_pValue = FXJS_NewNumber(m_isolate, dValue);
+  m_pValue = FXJS_NewNumber(m_pJSRuntime->GetIsolate(), dValue);
   m_eType = VT_number;
 }
 
 void CJS_Value::operator=(float fValue) {
-  m_pValue = FXJS_NewNumber(m_isolate, fValue);
+  m_pValue = FXJS_NewNumber(m_pJSRuntime->GetIsolate(), fValue);
   m_eType = VT_number;
 }
 
 void CJS_Value::operator=(v8::Local<v8::Object> pObj) {
-  m_pValue = FXJS_NewObject(m_isolate, pObj);
+  m_pValue = FXJS_NewObject(m_pJSRuntime->GetIsolate(), pObj);
   m_eType = VT_fxobject;
 }
 
@@ -183,7 +187,7 @@ void CJS_Value::operator=(CJS_Document* pJsDoc) {
 }
 
 void CJS_Value::operator=(const FX_WCHAR* pWstr) {
-  m_pValue = FXJS_NewString(m_isolate, (wchar_t*)pWstr);
+  m_pValue = FXJS_NewString(m_pJSRuntime->GetIsolate(), (wchar_t*)pWstr);
   m_eType = VT_string;
 }
 
@@ -197,19 +201,20 @@ void CJS_Value::operator=(const FX_CHAR* pStr) {
 }
 
 void CJS_Value::operator=(CJS_Array& array) {
-  m_pValue = FXJS_NewObject2(m_isolate, (v8::Local<v8::Array>)array);
+  m_pValue =
+      FXJS_NewObject2(m_pJSRuntime->GetIsolate(), (v8::Local<v8::Array>)array);
   m_eType = VT_object;
 }
 
 void CJS_Value::operator=(CJS_Date& date) {
-  m_pValue = FXJS_NewDate(m_isolate, (double)date);
+  m_pValue = FXJS_NewDate(m_pJSRuntime->GetIsolate(), (double)date);
   m_eType = VT_date;
 }
 
 void CJS_Value::operator=(CJS_Value value) {
   m_pValue = value.ToV8Value();
   m_eType = value.m_eType;
-  m_isolate = value.m_isolate;
+  m_pJSRuntime = value.m_pJSRuntime;
 }
 
 /* ----------------------------------------------------------------------------------------
@@ -250,7 +255,7 @@ FX_BOOL CJS_Value::IsDateObject() const {
 // CJS_Value::operator CJS_Array()
 FX_BOOL CJS_Value::ConvertToArray(CJS_Array& array) const {
   if (IsArrayObject()) {
-    array.Attach(FXJS_ToArray(m_isolate, m_pValue));
+    array.Attach(FXJS_ToArray(m_pJSRuntime->GetIsolate(), m_pValue));
     return TRUE;
   }
 
@@ -277,17 +282,11 @@ FX_BOOL CJS_Value::ConvertToDate(CJS_Date& date) const {
 CJS_PropValue::CJS_PropValue(const CJS_Value& value)
     : CJS_Value(value), m_bIsSetting(0) {}
 
-CJS_PropValue::CJS_PropValue(v8::Isolate* isolate)
-    : CJS_Value(isolate), m_bIsSetting(0) {}
-
-CJS_PropValue::~CJS_PropValue() {}
-
-FX_BOOL CJS_PropValue::IsSetting() {
-  return m_bIsSetting;
+CJS_PropValue::CJS_PropValue(CJS_Runtime* pRuntime)
+    : CJS_Value(pRuntime), m_bIsSetting(0) {
 }
 
-FX_BOOL CJS_PropValue::IsGetting() {
-  return !m_bIsSetting;
+CJS_PropValue::~CJS_PropValue() {
 }
 
 void CJS_PropValue::operator<<(int iValue) {
@@ -406,9 +405,8 @@ CJS_PropValue::operator v8::Local<v8::Value>() const {
   return m_pValue;
 }
 
-/* ======================================== CJS_Array
- * ========================================= */
-CJS_Array::CJS_Array(v8::Isolate* isolate) : m_isolate(isolate) {}
+CJS_Array::CJS_Array(CJS_Runtime* pRuntime) : m_pJSRuntime(pRuntime) {
+}
 
 CJS_Array::~CJS_Array() {}
 
@@ -423,15 +421,17 @@ FX_BOOL CJS_Array::IsAttached() {
 void CJS_Array::GetElement(unsigned index, CJS_Value& value) {
   if (m_pArray.IsEmpty())
     return;
-  v8::Local<v8::Value> p = FXJS_GetArrayElement(m_isolate, m_pArray, index);
+  v8::Local<v8::Value> p =
+      FXJS_GetArrayElement(m_pJSRuntime->GetIsolate(), m_pArray, index);
   value.Attach(p, CJS_Value::VT_object);
 }
 
 void CJS_Array::SetElement(unsigned index, CJS_Value value) {
   if (m_pArray.IsEmpty())
-    m_pArray = FXJS_NewArray(m_isolate);
+    m_pArray = FXJS_NewArray(m_pJSRuntime->GetIsolate());
 
-  FXJS_PutArrayElement(m_isolate, m_pArray, index, value.ToV8Value());
+  FXJS_PutArrayElement(m_pJSRuntime->GetIsolate(), m_pArray, index,
+                       value.ToV8Value());
 }
 
 int CJS_Array::GetLength() {
@@ -442,30 +442,29 @@ int CJS_Array::GetLength() {
 
 CJS_Array::operator v8::Local<v8::Array>() {
   if (m_pArray.IsEmpty())
-    m_pArray = FXJS_NewArray(m_isolate);
+    m_pArray = FXJS_NewArray(m_pJSRuntime->GetIsolate());
 
   return m_pArray;
 }
 
-/* ======================================== CJS_Date
- * ========================================= */
-
-CJS_Date::CJS_Date(v8::Isolate* isolate) : m_isolate(isolate) {}
-
-CJS_Date::CJS_Date(v8::Isolate* isolate, double dMsec_time) {
-  m_isolate = isolate;
-  m_pDate = FXJS_NewDate(isolate, dMsec_time);
+CJS_Date::CJS_Date(CJS_Runtime* pRuntime) : m_pJSRuntime(pRuntime) {
 }
 
-CJS_Date::CJS_Date(v8::Isolate* isolate,
+CJS_Date::CJS_Date(CJS_Runtime* pRuntime, double dMsecTime)
+    : m_pJSRuntime(pRuntime) {
+  m_pDate = FXJS_NewDate(pRuntime->GetIsolate(), dMsecTime);
+}
+
+CJS_Date::CJS_Date(CJS_Runtime* pRuntime,
                    int year,
                    int mon,
                    int day,
                    int hour,
                    int min,
-                   int sec) {
-  m_isolate = isolate;
-  m_pDate = FXJS_NewDate(isolate, MakeDate(year, mon, day, hour, min, sec, 0));
+                   int sec)
+    : m_pJSRuntime(pRuntime) {
+  m_pDate = FXJS_NewDate(pRuntime->GetIsolate(),
+                         MakeDate(year, mon, day, hour, min, sec, 0));
 }
 
 double CJS_Date::MakeDate(int year,
@@ -484,7 +483,7 @@ CJS_Date::~CJS_Date() {}
 FX_BOOL CJS_Date::IsValidDate() {
   if (m_pDate.IsEmpty())
     return FALSE;
-  return !JS_PortIsNan(FXJS_ToNumber(m_isolate, m_pDate));
+  return !JS_PortIsNan(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate));
 }
 
 void CJS_Date::Attach(v8::Local<v8::Value> pDate) {
@@ -493,7 +492,8 @@ void CJS_Date::Attach(v8::Local<v8::Value> pDate) {
 
 int CJS_Date::GetYear() {
   if (IsValidDate())
-    return JS_GetYearFromTime(JS_LocalTime(FXJS_ToNumber(m_isolate, m_pDate)));
+    return JS_GetYearFromTime(
+        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 
   return 0;
 }
@@ -501,12 +501,13 @@ int CJS_Date::GetYear() {
 void CJS_Date::SetYear(int iYear) {
   double date = MakeDate(iYear, GetMonth(), GetDay(), GetHours(), GetMinutes(),
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_isolate, date));
+  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
 int CJS_Date::GetMonth() {
   if (IsValidDate())
-    return JS_GetMonthFromTime(JS_LocalTime(FXJS_ToNumber(m_isolate, m_pDate)));
+    return JS_GetMonthFromTime(
+        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 
   return 0;
 }
@@ -514,12 +515,13 @@ int CJS_Date::GetMonth() {
 void CJS_Date::SetMonth(int iMonth) {
   double date = MakeDate(GetYear(), iMonth, GetDay(), GetHours(), GetMinutes(),
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_isolate, date));
+  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
 int CJS_Date::GetDay() {
   if (IsValidDate())
-    return JS_GetDayFromTime(JS_LocalTime(FXJS_ToNumber(m_isolate, m_pDate)));
+    return JS_GetDayFromTime(
+        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 
   return 0;
 }
@@ -527,12 +529,13 @@ int CJS_Date::GetDay() {
 void CJS_Date::SetDay(int iDay) {
   double date = MakeDate(GetYear(), GetMonth(), iDay, GetHours(), GetMinutes(),
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_isolate, date));
+  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
 int CJS_Date::GetHours() {
   if (IsValidDate())
-    return JS_GetHourFromTime(JS_LocalTime(FXJS_ToNumber(m_isolate, m_pDate)));
+    return JS_GetHourFromTime(
+        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 
   return 0;
 }
@@ -540,12 +543,13 @@ int CJS_Date::GetHours() {
 void CJS_Date::SetHours(int iHours) {
   double date = MakeDate(GetYear(), GetMonth(), GetDay(), iHours, GetMinutes(),
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_isolate, date));
+  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
 int CJS_Date::GetMinutes() {
   if (IsValidDate())
-    return JS_GetMinFromTime(JS_LocalTime(FXJS_ToNumber(m_isolate, m_pDate)));
+    return JS_GetMinFromTime(
+        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 
   return 0;
 }
@@ -553,12 +557,13 @@ int CJS_Date::GetMinutes() {
 void CJS_Date::SetMinutes(int minutes) {
   double date = MakeDate(GetYear(), GetMonth(), GetDay(), GetHours(), minutes,
                          GetSeconds(), 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_isolate, date));
+  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
 int CJS_Date::GetSeconds() {
   if (IsValidDate())
-    return JS_GetSecFromTime(JS_LocalTime(FXJS_ToNumber(m_isolate, m_pDate)));
+    return JS_GetSecFromTime(
+        JS_LocalTime(FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate)));
 
   return 0;
 }
@@ -566,7 +571,7 @@ int CJS_Date::GetSeconds() {
 void CJS_Date::SetSeconds(int seconds) {
   double date = MakeDate(GetYear(), GetMonth(), GetDay(), GetHours(),
                          GetMinutes(), seconds, 0);
-  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_isolate, date));
+  FXJS_ValueCopy(m_pDate, FXJS_NewDate(m_pJSRuntime->GetIsolate(), date));
 }
 
 CJS_Date::operator v8::Local<v8::Value>() {
@@ -576,13 +581,13 @@ CJS_Date::operator v8::Local<v8::Value>() {
 CJS_Date::operator double() const {
   if (m_pDate.IsEmpty())
     return 0.0;
-  return FXJS_ToNumber(m_isolate, m_pDate);
+  return FXJS_ToNumber(m_pJSRuntime->GetIsolate(), m_pDate);
 }
 
 CFX_WideString CJS_Date::ToString() const {
   if (m_pDate.IsEmpty())
     return L"";
-  return FXJS_ToString(m_isolate, m_pDate);
+  return FXJS_ToString(m_pJSRuntime->GetIsolate(), m_pDate);
 }
 
 double _getLocalTZA() {

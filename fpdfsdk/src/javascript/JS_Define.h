@@ -79,14 +79,15 @@ void JSPropGetter(const char* prop_name_string,
                   v8::Local<v8::String> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  IJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  CJS_Runtime* pRuntime =
+      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
-  CJS_PropValue value(isolate);
+  CJS_PropValue value(pRuntime);
   value.StartGetting();
   if (!(pObj->*M)(pContext, value, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name_string, prop_name_string,
@@ -105,14 +106,15 @@ void JSPropSetter(const char* prop_name_string,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  IJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  CJS_Runtime* pRuntime =
+      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
-  CJS_PropValue propValue(CJS_Value(isolate, value, CJS_Value::VT_unknown));
+  CJS_PropValue propValue(CJS_Value(pRuntime, value, CJS_Value::VT_unknown));
   propValue.StartSetting();
   if (!(pObj->*M)(pContext, propValue, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name_string, prop_name_string,
@@ -143,15 +145,16 @@ void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  IJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  CJS_Runtime* pRuntime =
+      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* cc = pRuntime->GetCurrentContext();
   CJS_Parameters parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
-    parameters.push_back(CJS_Value(isolate, info[i], CJS_Value::VT_unknown));
+    parameters.push_back(CJS_Value(pRuntime, info[i], CJS_Value::VT_unknown));
   }
-  CJS_Value valueRes(isolate);
+  CJS_Value valueRes(pRuntime);
   CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
@@ -365,7 +368,8 @@ void JSSpecialPropGet(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  IJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  CJS_Runtime* pRuntime =
+      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
@@ -376,7 +380,7 @@ void JSSpecialPropGet(const char* class_name,
   CFX_WideString propname =
       CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
   CFX_WideString sError;
-  CJS_PropValue value(isolate);
+  CJS_PropValue value(pRuntime);
   value.StartGetting();
   if (!pObj->DoProperty(pRuntimeContext, propname.c_str(), value, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name, "GetProperty", sError));
@@ -391,7 +395,8 @@ void JSSpecialPropPut(const char* class_name,
                       v8::Local<v8::Value> value,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
   v8::Isolate* isolate = info.GetIsolate();
-  IJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  CJS_Runtime* pRuntime =
+      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
   if (!pRuntime)
     return;
   IJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
@@ -402,7 +407,7 @@ void JSSpecialPropPut(const char* class_name,
   CFX_WideString propname =
       CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
   CFX_WideString sError;
-  CJS_PropValue PropValue(CJS_Value(isolate, value, CJS_Value::VT_unknown));
+  CJS_PropValue PropValue(CJS_Value(pRuntime, value, CJS_Value::VT_unknown));
   PropValue.StartSetting();
   if (!pObj->DoProperty(pRuntimeContext, propname.c_str(), PropValue, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name, "PutProperty", sError));
@@ -438,19 +443,20 @@ template <FX_BOOL (*F)(IJS_Context* cc,
                        CFX_WideString& sError)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
-  v8::Isolate* isolate = info.GetIsolate();
-  IJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
+  CJS_Runtime* pRuntime =
+      static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(info.GetIsolate()));
   if (!pRuntime)
     return;
   IJS_Context* cc = pRuntime->GetCurrentContext();
   CJS_Parameters parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
-    parameters.push_back(CJS_Value(isolate, info[i], CJS_Value::VT_unknown));
+    parameters.push_back(CJS_Value(pRuntime, info[i], CJS_Value::VT_unknown));
   }
-  CJS_Value valueRes(isolate);
+  CJS_Value valueRes(pRuntime);
   CFX_WideString sError;
   if (!(*F)(cc, parameters, valueRes, sError)) {
-    FXJS_Error(isolate, JSFormatErrorString(func_name_string, nullptr, sError));
+    FXJS_Error(pRuntime->GetIsolate(),
+               JSFormatErrorString(func_name_string, nullptr, sError));
     return;
   }
   info.GetReturnValue().Set(valueRes.ToV8Value());

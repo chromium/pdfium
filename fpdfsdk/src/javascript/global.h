@@ -56,7 +56,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
 
  private:
   void UpdateGlobalPersistentVariables();
-  void CommitGlobalPersisitentVariables();
+  void CommitGlobalPersisitentVariables(IJS_Context* cc);
   void DestroyGlobalPersisitentVariables();
   FX_BOOL SetGlobalVariables(const FX_CHAR* propname,
                              int nType,
@@ -65,12 +65,11 @@ class JSGlobalAlternate : public CJS_EmbedObj {
                              const CFX_ByteString& sData,
                              v8::Local<v8::Object> pData,
                              bool bDefaultPersistent);
-
-  void ObjectToArray(v8::Local<v8::Object> pObj,
+  void ObjectToArray(IJS_Context* cc,
+                     v8::Local<v8::Object> pObj,
                      CJS_GlobalVariableArray& array);
   void PutObjectProperty(v8::Local<v8::Object> obj, CJS_KeyValue* pData);
 
- private:
   std::map<CFX_ByteString, JSGlobalData*> m_mapGlobal;
   CFX_WideString m_sFilePath;
   CJS_GlobalData* m_pGlobalData;

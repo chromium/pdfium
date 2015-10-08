@@ -20,16 +20,6 @@
 #include <ctype.h>
 #endif
 
-static v8::Isolate* GetIsolate(IJS_Context* cc) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
-
-  return pRuntime->GetIsolate();
-}
-
 BEGIN_JS_STATIC_CONST(CJS_Util)
 END_JS_STATIC_CONST()
 
@@ -191,17 +181,16 @@ FX_BOOL util::printd(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
-  v8::Isolate* isolate = GetIsolate(cc);
-
   int iSize = params.size();
   if (iSize < 2)
     return FALSE;
 
-  CJS_Value p1(isolate);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Value p1(pRuntime);
   p1 = params[0];
 
   CJS_Value p2 = params[1];
-  CJS_Date jsDate(isolate);
+  CJS_Date jsDate(pRuntime);
   if (!p2.ConvertToDate(jsDate)) {
     sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPRINT1);
     return FALSE;
@@ -504,7 +493,6 @@ FX_BOOL util::scand(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
-  v8::Isolate* isolate = GetIsolate(cc);
   int iSize = params.size();
   if (iSize < 2)
     return FALSE;
@@ -518,8 +506,7 @@ FX_BOOL util::scand(IJS_Context* cc,
   }
 
   if (!JS_PortIsNan(dDate)) {
-    CJS_Date date(isolate, dDate);
-    vRet = date;
+    vRet = CJS_Date(CJS_Runtime::FromContext(cc), dDate);
   } else {
     vRet.SetNull();
   }
