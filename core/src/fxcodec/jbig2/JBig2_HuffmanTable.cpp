@@ -8,6 +8,8 @@
 
 #include <string.h>
 
+#include <vector>
+
 #include "../../../include/fxcrt/fx_memory.h"
 #include "JBig2_BitStream.h"
 
@@ -40,7 +42,7 @@ void CJBig2_HuffmanTable::init() {
 int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine* pTable,
                                                 int nLines,
                                                 FX_BOOL bHTOOB) {
-  int CURLEN, LENMAX, CURCODE, CURTEMP, i;
+  int CURLEN, LENMAX, CURCODE, CURTEMP;
   int* LENCOUNT;
   int* FIRSTCODE;
   HTOOB = bHTOOB;
@@ -50,7 +52,7 @@ int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine* pTable,
   RANGELEN = FX_Alloc(int, NTEMP);
   RANGELOW = FX_Alloc(int, NTEMP);
   LENMAX = 0;
-  for (i = 0; i < NTEMP; i++) {
+  for (int i = 0; i < NTEMP; i++) {
     PREFLEN[i] = pTable[i].PREFLEN;
     RANGELEN[i] = pTable[i].RANDELEN;
     RANGELOW[i] = pTable[i].RANGELOW;
@@ -61,7 +63,7 @@ int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine* pTable,
   LENCOUNT = FX_Alloc(int, LENMAX + 1);
   JBIG2_memset(LENCOUNT, 0, sizeof(int) * (LENMAX + 1));
   FIRSTCODE = FX_Alloc(int, LENMAX + 1);
-  for (i = 0; i < NTEMP; i++) {
+  for (int i = 0; i < NTEMP; i++) {
     LENCOUNT[PREFLEN[i]]++;
   }
   CURLEN = 1;
@@ -93,92 +95,77 @@ int CJBig2_HuffmanTable::parseFromStandardTable(const JBig2TableLine* pTable,
     RANGELOW = FX_Realloc(int, RANGELOW, nSize); \
   }
 int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream* pStream) {
-  unsigned char HTPS, HTRS;
-  FX_DWORD HTLOW, HTHIGH;
-  FX_DWORD CURRANGELOW;
-  FX_DWORD nSize = 16;
-  int CURLEN, LENMAX, CURCODE, CURTEMP;
-  int* LENCOUNT;
-  int* FIRSTCODE;
   unsigned char cTemp;
-  if (pStream->read1Byte(&cTemp) == -1) {
-    goto failed;
-  }
+  if (pStream->read1Byte(&cTemp) == -1)
+    return FALSE;
+
   HTOOB = cTemp & 0x01;
-  HTPS = ((cTemp >> 1) & 0x07) + 1;
-  HTRS = ((cTemp >> 4) & 0x07) + 1;
+  unsigned char HTPS = ((cTemp >> 1) & 0x07) + 1;
+  unsigned char HTRS = ((cTemp >> 4) & 0x07) + 1;
+  FX_DWORD HTLOW;
+  FX_DWORD HTHIGH;
   if (pStream->readInteger(&HTLOW) == -1 ||
       pStream->readInteger(&HTHIGH) == -1 || HTLOW > HTHIGH) {
-    goto failed;
+    return FALSE;
   }
+  FX_DWORD nSize = 16;
   PREFLEN = FX_Alloc(int, nSize);
   RANGELEN = FX_Alloc(int, nSize);
   RANGELOW = FX_Alloc(int, nSize);
-  CURRANGELOW = HTLOW;
+  FX_DWORD CURRANGELOW = HTLOW;
   NTEMP = 0;
   do {
     HT_CHECK_MEMORY_ADJUST
     if ((pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1) ||
         (pStream->readNBits(HTRS, &RANGELEN[NTEMP]) == -1)) {
-      goto failed;
+      return FALSE;
     }
     RANGELOW[NTEMP] = CURRANGELOW;
     CURRANGELOW = CURRANGELOW + (1 << RANGELEN[NTEMP]);
     NTEMP = NTEMP + 1;
   } while (CURRANGELOW < HTHIGH);
   HT_CHECK_MEMORY_ADJUST
-  if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1) {
-    goto failed;
-  }
+  if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
+    return FALSE;
+
   RANGELEN[NTEMP] = 32;
   RANGELOW[NTEMP] = HTLOW - 1;
   NTEMP = NTEMP + 1;
   HT_CHECK_MEMORY_ADJUST
-  if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1) {
-    goto failed;
-  }
+  if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
+    return FALSE;
+
   RANGELEN[NTEMP] = 32;
   RANGELOW[NTEMP] = HTHIGH;
   NTEMP = NTEMP + 1;
   if (HTOOB) {
     HT_CHECK_MEMORY_ADJUST
-    if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1) {
-      goto failed;
-    }
+    if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
+      return FALSE;
     NTEMP = NTEMP + 1;
   }
   CODES = FX_Alloc(int, NTEMP);
-  LENMAX = 0;
+  int LENMAX = 0;
   for (int i = 0; i < NTEMP; i++) {
     if (PREFLEN[i] > LENMAX) {
       LENMAX = PREFLEN[i];
     }
   }
-  LENCOUNT = FX_Alloc(int, (LENMAX + 1));
-  JBIG2_memset(LENCOUNT, 0, sizeof(int) * (LENMAX + 1));
-  FIRSTCODE = FX_Alloc(int, (LENMAX + 1));
-  for (int i = 0; i < NTEMP; i++) {
+
+  std::vector<int> LENCOUNT(LENMAX + 1);
+  for (int i = 0; i < NTEMP; ++i)
     LENCOUNT[PREFLEN[i]]++;
-  }
-  CURLEN = 1;
-  FIRSTCODE[0] = 0;
   LENCOUNT[0] = 0;
-  while (CURLEN <= LENMAX) {
-    FIRSTCODE[CURLEN] = (FIRSTCODE[CURLEN - 1] + LENCOUNT[CURLEN - 1]) << 1;
-    CURCODE = FIRSTCODE[CURLEN];
-    CURTEMP = 0;
-    while (CURTEMP < NTEMP) {
-      if (PREFLEN[CURTEMP] == CURLEN) {
-        CODES[CURTEMP] = CURCODE;
-        CURCODE = CURCODE + 1;
-      }
-      CURTEMP = CURTEMP + 1;
+
+  std::vector<int> FIRSTCODE(LENMAX + 1);
+  FIRSTCODE[0] = 0;
+  for (int i = 0; i <= LENMAX; ++i) {
+    FIRSTCODE[i] = (FIRSTCODE[i - 1] + LENCOUNT[i - 1]) << 1;
+    int CURCODE = FIRSTCODE[i];
+    for (int j = 0; j < NTEMP; ++j) {
+      if (PREFLEN[j] == i)
+        CODES[j] = CURCODE++;
     }
-    CURLEN = CURLEN + 1;
   }
-  FX_Free(LENCOUNT);
-  FX_Free(FIRSTCODE);
   return TRUE;
-failed:
-  return FALSE;
 }
