@@ -137,6 +137,7 @@ void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate) {
 
 void FXJS_Release() {
   ASSERT(!g_isolate || g_isolate_ref_count == 0);
+  delete g_DefaultGlobalObjectTemplate;
   g_DefaultGlobalObjectTemplate = nullptr;
   g_isolate = nullptr;
 
