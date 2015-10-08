@@ -394,6 +394,7 @@ static_library("fxcodec") {
     "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h",
     "core/src/fxcodec/jbig2/JBig2_ArithIntDecoder.cpp",
     "core/src/fxcodec/jbig2/JBig2_ArithIntDecoder.h",
+    "core/src/fxcodec/jbig2/JBig2_BitStream.cpp",
     "core/src/fxcodec/jbig2/JBig2_BitStream.h",
     "core/src/fxcodec/jbig2/JBig2_Context.cpp",
     "core/src/fxcodec/jbig2/JBig2_Context.h",
