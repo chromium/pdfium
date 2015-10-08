@@ -51,7 +51,6 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context,
   m_pJbig2Context->m_dest_buf = dest_buf;
   m_pJbig2Context->m_dest_pitch = dest_pitch;
   m_pJbig2Context->m_pPause = pPause;
-  m_pJbig2Context->m_bFileReader = FALSE;
   FXSYS_memset(dest_buf, 0, height * dest_pitch);
   m_pJbig2Context->m_pContext = CJBig2_Context::CreateContext(
       global_data, global_size, src_buf, src_size, &m_SymbolDictCache, pPause);
@@ -83,18 +82,6 @@ FXCODEC_STATUS CCodec_Jbig2Module::ContinueDecode(void* pJbig2Context,
   if (m_pJbig2Context->m_pContext->GetProcessingStatus() !=
       FXCODEC_STATUS_DECODE_FINISH) {
     return m_pJbig2Context->m_pContext->GetProcessingStatus();
-  }
-  if (m_pJbig2Context->m_bFileReader) {
-    CJBig2_Context::DestroyContext(m_pJbig2Context->m_pContext);
-    m_pJbig2Context->m_pContext = NULL;
-    if (ret != JBIG2_SUCCESS) {
-      FX_Free(m_pJbig2Context->m_src_buf);
-      m_pJbig2Context->m_src_buf = NULL;
-      return FXCODEC_STATUS_ERROR;
-    }
-    delete m_pJbig2Context->m_dest_image;
-    FX_Free(m_pJbig2Context->m_src_buf);
-    return FXCODEC_STATUS_DECODE_FINISH;
   }
   CJBig2_Context::DestroyContext(m_pJbig2Context->m_pContext);
   m_pJbig2Context->m_pContext = NULL;
