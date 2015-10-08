@@ -14,7 +14,7 @@ class CJBig2_HuffmanTable {
  public:
   CJBig2_HuffmanTable(const JBig2TableLine* pTable, int nLines, FX_BOOL bHTOOB);
 
-  CJBig2_HuffmanTable(CJBig2_BitStream* pStream);
+  explicit CJBig2_HuffmanTable(CJBig2_BitStream* pStream);
 
   ~CJBig2_HuffmanTable();
 
@@ -24,13 +24,13 @@ class CJBig2_HuffmanTable {
 
   int parseFromCodedBuffer(CJBig2_BitStream* pStream);
 
-  FX_BOOL isOK() { return m_bOK; }
+  FX_BOOL isOK() const { return m_bOK; }
 
  private:
   void init();
 
   FX_BOOL HTOOB;
-  int NTEMP;
+  FX_DWORD NTEMP;
   int* CODES;
   int* PREFLEN;
   int* RANGELEN;

@@ -414,19 +414,23 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   CFX_MapPtrToPtr m_DeletedMap;
 };
 
-#define CIDSET_UNKNOWN 0
-#define CIDSET_GB1 1
-#define CIDSET_CNS1 2
-#define CIDSET_JAPAN1 3
-#define CIDSET_KOREA1 4
-#define CIDSET_UNICODE 5
-#define NUMBER_OF_CIDSETS 6
+enum CIDSet {
+  CIDSET_UNKNOWN,
+  CIDSET_GB1,
+  CIDSET_CNS1,
+  CIDSET_JAPAN1,
+  CIDSET_KOREA1,
+  CIDSET_UNICODE,
+  CIDSET_NUM_SETS
+};
 
 class CPDF_CIDFont : public CPDF_Font {
  public:
   CPDF_CIDFont();
 
   ~CPDF_CIDFont() override;
+
+  static FX_FLOAT CIDTransformToFloat(uint8_t ch);
 
   FX_BOOL LoadGB2312();
   int GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph = NULL) override;
@@ -442,9 +446,6 @@ class CPDF_CIDFont : public CPDF_Font {
   int CountChar(const FX_CHAR* pString, int size) const override;
   int AppendChar(FX_CHAR* str, FX_DWORD charcode) const override;
   int GetCharSize(FX_DWORD charcode) const override;
-
-  int GetCharset() const { return m_Charset; }
-
   const uint8_t* GetCIDTransform(FX_WORD CID) const;
   FX_BOOL IsVertWriting() const override;
   short GetVertWidth(FX_WORD CID) const;
@@ -467,7 +468,7 @@ class CPDF_CIDFont : public CPDF_Font {
   CPDF_CMap* m_pCMap;
   CPDF_CMap* m_pAllocatedCMap;
   CPDF_CID2UnicodeMap* m_pCID2UnicodeMap;
-  int m_Charset;
+  CIDSet m_Charset;
   FX_BOOL m_bType1;
   CPDF_StreamAcc* m_pCIDToGIDMap;
   FX_BOOL m_bCIDIsGID;

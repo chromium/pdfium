@@ -8,6 +8,7 @@
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../fpdf_font/font_int.h"
 #include "cmap_int.h"
+
 void FPDFAPI_FindEmbeddedCMap(const char* name,
                               int charset,
                               int coding,
@@ -179,7 +180,8 @@ FX_DWORD FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, FX_WORD cid) {
   }
   return 0;
 }
-void FPDFAPI_LoadCID2UnicodeMap(int charset,
+
+void FPDFAPI_LoadCID2UnicodeMap(CIDSet charset,
                                 const FX_WORD*& pMap,
                                 FX_DWORD& count) {
   CPDF_FontGlobals* pFontGlobals =

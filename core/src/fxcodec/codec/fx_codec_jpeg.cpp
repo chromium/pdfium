@@ -193,7 +193,7 @@ static void _JpegEncode(const CFX_DIBSource* pSource,
     if (nComponents > 1) {
       uint8_t* dest_scan = line_buf;
       if (nComponents == 3) {
-        for (int i = 0; i < width; i++) {
+        for (FX_DWORD i = 0; i < width; i++) {
           dest_scan[0] = src_scan[2];
           dest_scan[1] = src_scan[1];
           dest_scan[2] = src_scan[0];
@@ -201,7 +201,7 @@ static void _JpegEncode(const CFX_DIBSource* pSource,
           src_scan += Bpp;
         }
       } else {
-        for (int i = 0; i < pitch; i++) {
+        for (FX_DWORD i = 0; i < pitch; i++) {
           *dest_scan++ = ~*src_scan++;
         }
       }

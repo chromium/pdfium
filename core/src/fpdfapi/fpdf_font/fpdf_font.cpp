@@ -38,7 +38,7 @@ class CFX_StockFontArray {
     FXSYS_memset(m_pStockFonts, 0, sizeof(m_pStockFonts));
   }
   ~CFX_StockFontArray() {
-    for (int i = 0; i < FX_ArraySize(m_pStockFonts); i++) {
+    for (size_t i = 0; i < FX_ArraySize(m_pStockFonts); i++) {
       if (!m_pStockFonts[i])
         continue;
       CPDF_Dictionary* pFontDict = m_pStockFonts[i]->GetFontDict();
@@ -593,7 +593,7 @@ static CFX_WideString _StringToWideString(const CFX_ByteStringC& str) {
   return result;
 }
 void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
-  int CIDSet = 0;
+  CIDSet cid_set = CIDSET_UNKNOWN;
   CPDF_StreamAcc stream;
   stream.LoadAllData(pStream, FALSE);
   CPDF_SimpleParser parser(stream.GetData(), stream.GetSize());
@@ -681,20 +681,20 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
         }
       }
     } else if (word == FX_BSTRC("/Adobe-Korea1-UCS2")) {
-      CIDSet = CIDSET_KOREA1;
+      cid_set = CIDSET_KOREA1;
     } else if (word == FX_BSTRC("/Adobe-Japan1-UCS2")) {
-      CIDSet = CIDSET_JAPAN1;
+      cid_set = CIDSET_JAPAN1;
     } else if (word == FX_BSTRC("/Adobe-CNS1-UCS2")) {
-      CIDSet = CIDSET_CNS1;
+      cid_set = CIDSET_CNS1;
     } else if (word == FX_BSTRC("/Adobe-GB1-UCS2")) {
-      CIDSet = CIDSET_GB1;
+      cid_set = CIDSET_GB1;
     }
   }
-  if (CIDSet) {
+  if (cid_set) {
     m_pBaseMap = CPDF_ModuleMgr::Get()
                      ->GetPageModule()
                      ->GetFontGlobals()
-                     ->m_CMapManager.GetCID2UnicodeMap(CIDSet, FALSE);
+                     ->m_CMapManager.GetCID2UnicodeMap(cid_set, FALSE);
   } else {
     m_pBaseMap = NULL;
   }

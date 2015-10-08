@@ -525,7 +525,7 @@ class CPDF_CharPosList {
   FXTEXT_CHARPOS* m_pCharPos;
   FX_DWORD m_nChars;
 };
-FX_FLOAT _CIDTransformToFloat(uint8_t ch);
+
 CPDF_CharPosList::CPDF_CharPosList() {
   m_pCharPos = NULL;
 }
@@ -578,12 +578,14 @@ void CPDF_CharPosList::Load(int nChars,
     }
     const uint8_t* pTransform = pCIDFont->GetCIDTransform(CID);
     if (pTransform && !bVert) {
-      charpos.m_AdjustMatrix[0] = _CIDTransformToFloat(pTransform[0]);
-      charpos.m_AdjustMatrix[2] = _CIDTransformToFloat(pTransform[2]);
-      charpos.m_AdjustMatrix[1] = _CIDTransformToFloat(pTransform[1]);
-      charpos.m_AdjustMatrix[3] = _CIDTransformToFloat(pTransform[3]);
-      charpos.m_OriginX += _CIDTransformToFloat(pTransform[4]) * FontSize;
-      charpos.m_OriginY += _CIDTransformToFloat(pTransform[5]) * FontSize;
+      charpos.m_AdjustMatrix[0] = pCIDFont->CIDTransformToFloat(pTransform[0]);
+      charpos.m_AdjustMatrix[2] = pCIDFont->CIDTransformToFloat(pTransform[2]);
+      charpos.m_AdjustMatrix[1] = pCIDFont->CIDTransformToFloat(pTransform[1]);
+      charpos.m_AdjustMatrix[3] = pCIDFont->CIDTransformToFloat(pTransform[3]);
+      charpos.m_OriginX +=
+          pCIDFont->CIDTransformToFloat(pTransform[4]) * FontSize;
+      charpos.m_OriginY +=
+          pCIDFont->CIDTransformToFloat(pTransform[5]) * FontSize;
       charpos.m_bGlyphAdjust = TRUE;
     }
   }
