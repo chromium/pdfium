@@ -258,23 +258,18 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
     CUREXFLAG = !CUREXFLAG;
   }
   pDict.reset(new CJBig2_SymbolDict);
-  pDict->SDNUMEXSYMS = SDNUMEXSYMS;
-  pDict->SDEXSYMS = FX_Alloc(CJBig2_Image*, SDNUMEXSYMS);
   I = J = 0;
   for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; I++) {
     if (EXFLAGS[I] && J < SDNUMEXSYMS) {
       if (I < SDNUMINSYMS) {
-        pDict->SDEXSYMS[J] = new CJBig2_Image(*SDINSYMS[I]);
+        pDict->AddImage(new CJBig2_Image(*SDINSYMS[I]));
       } else {
-        pDict->SDEXSYMS[J] = SDNEWSYMS[I - SDNUMINSYMS];
+        pDict->AddImage(SDNEWSYMS[I - SDNUMINSYMS]);
       }
-      J = J + 1;
+      ++J;
     } else if (!EXFLAGS[I] && I >= SDNUMINSYMS) {
       delete SDNEWSYMS[I - SDNUMINSYMS];
     }
-  }
-  if (J < SDNUMEXSYMS) {
-    pDict->SDNUMEXSYMS = J;
   }
   FX_Free(EXFLAGS);
   FX_Free(SDNEWSYMS);
@@ -600,23 +595,18 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
     EXINDEX = EXINDEX + EXRUNLENGTH;
     CUREXFLAG = !CUREXFLAG;
   }
-  pDict->SDNUMEXSYMS = SDNUMEXSYMS;
-  pDict->SDEXSYMS = FX_Alloc(CJBig2_Image*, SDNUMEXSYMS);
   I = J = 0;
   for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; I++) {
     if (EXFLAGS[I] && J < SDNUMEXSYMS) {
       if (I < SDNUMINSYMS) {
-        pDict->SDEXSYMS[J] = new CJBig2_Image(*SDINSYMS[I]);
+        pDict->AddImage(new CJBig2_Image(*SDINSYMS[I]));
       } else {
-        pDict->SDEXSYMS[J] = SDNEWSYMS[I - SDNUMINSYMS];
+        pDict->AddImage(SDNEWSYMS[I - SDNUMINSYMS]);
       }
-      J = J + 1;
+      ++J;
     } else if (!EXFLAGS[I] && I >= SDNUMINSYMS) {
       delete SDNEWSYMS[I - SDNUMINSYMS];
     }
-  }
-  if (J < SDNUMEXSYMS) {
-    pDict->SDNUMEXSYMS = J;
   }
   FX_Free(EXFLAGS);
   FX_Free(SDNEWSYMS);

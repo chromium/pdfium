@@ -8,6 +8,7 @@
 
 #include <list>
 
+#include "JBig2_ArithDecoder.h"
 #include "JBig2_GrdProc.h"
 #include "JBig2_GrrdProc.h"
 #include "JBig2_HtrdProc.h"
@@ -478,7 +479,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     CJBig2_Segment* pSeg =
         findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
-      pSymbolDictDecoder->SDNUMINSYMS += pSeg->m_Result.sd->SDNUMEXSYMS;
+      pSymbolDictDecoder->SDNUMINSYMS += pSeg->m_Result.sd->NumImages();
       pLRSeg = pSeg;
     }
   }
@@ -491,9 +492,10 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       CJBig2_Segment* pSeg =
           findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
-        JBIG2_memcpy(SDINSYMS.get() + dwTemp, pSeg->m_Result.sd->SDEXSYMS,
-                     pSeg->m_Result.sd->SDNUMEXSYMS * sizeof(CJBig2_Image*));
-        dwTemp += pSeg->m_Result.sd->SDNUMEXSYMS;
+        const CJBig2_SymbolDict& dict = *pSeg->m_Result.sd;
+        for (size_t j = 0; j < dict.NumImages(); ++j)
+          SDINSYMS.get()[dwTemp + j] = dict.GetImage(j);
+        dwTemp += dict.NumImages();
       }
     }
   }
@@ -721,7 +723,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     CJBig2_Segment* pSeg =
         findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
-      pTRD->SBNUMSYMS += pSeg->m_Result.sd->SDNUMEXSYMS;
+      pTRD->SBNUMSYMS += pSeg->m_Result.sd->NumImages();
     }
   }
 
@@ -733,9 +735,10 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
-        JBIG2_memcpy(SBSYMS.get() + dwTemp, pSeg->m_Result.sd->SDEXSYMS,
-                     pSeg->m_Result.sd->SDNUMEXSYMS * sizeof(CJBig2_Image*));
-        dwTemp += pSeg->m_Result.sd->SDNUMEXSYMS;
+        const CJBig2_SymbolDict& dict = *pSeg->m_Result.sd;
+        for (size_t j = 0; j < dict.NumImages(); ++j)
+          SBSYMS.get()[dwTemp + j] = dict.GetImage(j);
+        dwTemp += dict.NumImages();
       }
     }
     pTRD->SBSYMS = SBSYMS.get();
