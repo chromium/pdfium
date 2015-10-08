@@ -226,7 +226,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   CJBig2_Image* IBOI;
   FX_DWORD WOI, HOI;
   FX_BOOL bFirst;
-  int32_t nRet;
   int32_t bRetained;
   CJBig2_ArithIntDecoder* IADT, *IAFS, *IADS, *IAIT, *IARI, *IARDW, *IARDH,
       *IARDX, *IARDY;
@@ -258,72 +257,55 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   }
   nonstd::unique_ptr<CJBig2_Image> SBREG(new CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
-  if (!IADT->decode(pArithDecoder, &STRIPT)) {
-    goto failed;
-  }
+  IADT->decode(pArithDecoder, &STRIPT);
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
   FIRSTS = 0;
   NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
-    if (!IADT->decode(pArithDecoder, &DT)) {
-      goto failed;
-    }
+    IADT->decode(pArithDecoder, &DT);
     DT *= SBSTRIPS;
     STRIPT = STRIPT + DT;
     bFirst = TRUE;
     for (;;) {
       if (bFirst) {
-        if (!IAFS->decode(pArithDecoder, &DFS)) {
-          goto failed;
-        }
+        IAFS->decode(pArithDecoder, &DFS);
         FIRSTS = FIRSTS + DFS;
         CURS = FIRSTS;
         bFirst = FALSE;
       } else {
-        nRet = IADS->decode(pArithDecoder, &IDS);
-        if (nRet == JBIG2_OOB) {
+        if (!IADS->decode(pArithDecoder, &IDS))
           break;
-        } else if (nRet != 0) {
-          goto failed;
-        } else {
-          CURS = CURS + IDS + SBDSOFFSET;
-        }
+        CURS = CURS + IDS + SBDSOFFSET;
       }
       if (NINSTANCES >= SBNUMINSTANCES) {
         break;
       }
       int CURT = 0;
-      if (SBSTRIPS != 1) {
-        if (!IAIT->decode(pArithDecoder, &CURT)) {
-          goto failed;
-        }
-      }
+      if (SBSTRIPS != 1)
+        IAIT->decode(pArithDecoder, &CURT);
+
       TI = STRIPT + CURT;
       FX_DWORD IDI;
       IAID->decode(pArithDecoder, &IDI);
-      if (IDI >= SBNUMSYMS) {
+      if (IDI >= SBNUMSYMS)
         goto failed;
-      }
-      if (SBREFINE == 0) {
+
+      if (SBREFINE == 0)
         RI = 0;
-      } else {
-        if (!IARI->decode(pArithDecoder, &RI)) {
-          goto failed;
-        }
-      }
-      if (!SBSYMS[IDI]) {
+      else
+        IARI->decode(pArithDecoder, &RI);
+
+      if (!SBSYMS[IDI])
         goto failed;
-      }
+
       if (RI == 0) {
         IBI = SBSYMS[IDI];
       } else {
-        if (!IARDW->decode(pArithDecoder, &RDWI) ||
-            !IARDH->decode(pArithDecoder, &RDHI) ||
-            !IARDX->decode(pArithDecoder, &RDXI) ||
-            !IARDY->decode(pArithDecoder, &RDYI)) {
-          goto failed;
-        }
+        IARDW->decode(pArithDecoder, &RDWI);
+        IARDH->decode(pArithDecoder, &RDHI);
+        IARDX->decode(pArithDecoder, &RDXI);
+        IARDY->decode(pArithDecoder, &RDYI);
         IBOI = SBSYMS[IDI];
         WOI = IBOI->m_nWidth;
         HOI = IBOI->m_nHeight;
