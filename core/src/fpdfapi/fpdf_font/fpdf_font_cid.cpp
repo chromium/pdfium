@@ -1742,10 +1742,10 @@ const uint8_t* CPDF_CIDFont::GetCIDTransform(FX_WORD CID) const {
   if (m_Charset != CIDSET_JAPAN1 || m_pFontFile)
     return nullptr;
 
-  size_t begin = 0;
-  size_t end = FX_ArraySize(g_Japan1_VertCIDs) - 1;
+  int begin = 0;
+  int end = FX_ArraySize(g_Japan1_VertCIDs) - 1;
   while (begin <= end) {
-    size_t middle = (begin + end) / 2;
+    int middle = (begin + end) / 2;
     FX_WORD middlecode = g_Japan1_VertCIDs[middle].CID;
     if (middlecode > CID) {
       end = middle - 1;
