@@ -1293,7 +1293,7 @@ int32_t CJBig2_Context::parseRegionInfo(JBig2RegionInfo* pRI) {
 JBig2HuffmanCode* CJBig2_Context::decodeSymbolIDHuffmanTable(
     CJBig2_BitStream* pStream,
     FX_DWORD SBNUMSYMS) {
-  size_t kRunCodesSize = 35;
+  const size_t kRunCodesSize = 35;
   int32_t runcodes[kRunCodesSize];
   int32_t runcodes_len[kRunCodesSize];
   for (int32_t i = 0; i < kRunCodesSize; ++i) {
