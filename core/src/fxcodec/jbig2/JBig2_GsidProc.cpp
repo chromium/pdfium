@@ -11,6 +11,7 @@
 #include "JBig2_BitStream.h"
 #include "JBig2_GrdProc.h"
 #include "JBig2_Image.h"
+#include "JBig2_List.h"
 
 FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                         JBig2ArithCtx* gbContext,
@@ -38,46 +39,31 @@ FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     pGRD->GBAT[7] = -2;
   }
 
-  nonstd::unique_ptr<CJBig2_Image*, FxFreeDeleter> GSPLANES(
-      FX_Alloc(CJBig2_Image*, GSBPP));
-  JBIG2_memset(GSPLANES.get(), 0, sizeof(CJBig2_Image*) * GSBPP);
-  FXCODEC_STATUS status = pGRD->Start_decode_Arith(
-      &GSPLANES.get()[GSBPP - 1], pArithDecoder, gbContext, nullptr);
-  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-    pGRD->Continue_decode(pPause);
-  }
-  if (!GSPLANES.get()[GSBPP - 1])
-    return nullptr;
-
-  int32_t J = GSBPP - 2;
-  while (J >= 0) {
-    FXCODEC_STATUS status = pGRD->Start_decode_Arith(
-        &GSPLANES.get()[J], pArithDecoder, gbContext, nullptr);
-    while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
+  CJBig2_List<CJBig2_Image> GSPLANES(GSBPP);
+  for (int32_t i = GSBPP - 1; i >= 0; --i) {
+    CJBig2_Image* pImage = nullptr;
+    FXCODEC_STATUS status =
+        pGRD->Start_decode_Arith(&pImage, pArithDecoder, gbContext, nullptr);
+    while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
       pGRD->Continue_decode(pPause);
-    }
-    if (!GSPLANES.get()[J]) {
-      for (int32_t K = GSBPP - 1; K > J; --K) {
-        delete GSPLANES.get()[K];
-        return nullptr;
-      }
-    }
-    GSPLANES.get()[J]->composeFrom(0, 0, GSPLANES.get()[J + 1],
-                                   JBIG2_COMPOSE_XOR);
-    J = J - 1;
+
+    if (!pImage)
+      return nullptr;
+
+    GSPLANES.set(i, pImage);
+
+    if (i < GSBPP - 1)
+      pImage->composeFrom(0, 0, GSPLANES.get(i + 1), JBIG2_COMPOSE_XOR);
   }
   nonstd::unique_ptr<FX_DWORD, FxFreeDeleter> GSVALS(
       FX_Alloc2D(FX_DWORD, GSW, GSH));
   JBIG2_memset(GSVALS.get(), 0, sizeof(FX_DWORD) * GSW * GSH);
   for (FX_DWORD y = 0; y < GSH; ++y) {
     for (FX_DWORD x = 0; x < GSW; ++x) {
-      for (J = 0; J < GSBPP; ++J) {
-        GSVALS.get()[y * GSW + x] |= GSPLANES.get()[J]->getPixel(x, y) << J;
+      for (int32_t i = 0; i < GSBPP; ++i) {
+        GSVALS.get()[y * GSW + x] |= GSPLANES.get(i)->getPixel(x, y) << i;
       }
     }
-  }
-  for (J = 0; J < GSBPP; ++J) {
-    delete GSPLANES.get()[J];
   }
   return GSVALS.release();
 }
