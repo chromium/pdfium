@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../core/include/fxcrt/fx_basic.h"
 #include "../../include/jsapi/fxjs_v8.h"
+
+#include "../../../core/include/fxcrt/fx_basic.h"
 
 const wchar_t kFXJSValueNameString[] = L"string";
 const wchar_t kFXJSValueNameNumber[] = L"number";
@@ -23,6 +24,7 @@ const wchar_t kFXJSValueNameUndefined[] = L"undefined";
 static const unsigned int kPerContextDataIndex = 3u;
 static unsigned int g_embedderDataSlot = 1u;
 static v8::Isolate* g_isolate = nullptr;
+static size_t g_isolate_ref_count = 0;
 static FXJS_ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
 static v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 
@@ -124,11 +126,17 @@ void FXJS_ArrayBufferAllocator::Free(void* data, size_t length) {
 }
 
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate) {
+  if (g_isolate) {
+    ASSERT(g_embedderDataSlot == embedderDataSlot);
+    ASSERT(g_isolate == pIsolate);
+    return;
+  }
   g_embedderDataSlot = embedderDataSlot;
   g_isolate = pIsolate;
 }
 
 void FXJS_Release() {
+  ASSERT(!g_isolate || g_isolate_ref_count == 0);
   g_DefaultGlobalObjectTemplate = nullptr;
   g_isolate = nullptr;
 
@@ -263,6 +271,9 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
                             IFXJS_Runtime* pFXRuntime,
                             IFXJS_Context* context,
                             v8::Global<v8::Context>& v8PersistentContext) {
+  if (pIsolate == g_isolate)
+    ++g_isolate_ref_count;
+
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::Locker locker(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
@@ -289,11 +300,12 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
           .ToLocalChecked()
           ->SetAlignedPointerInInternalField(0, new CFXJS_PrivateData(i));
 
-      if (pObjDef->m_pConstructor)
+      if (pObjDef->m_pConstructor) {
         pObjDef->m_pConstructor(context, v8Context->Global()
                                              ->GetPrototype()
                                              ->ToObject(v8Context)
                                              .ToLocalChecked());
+      }
     } else if (pObjDef->m_ObjType == FXJSOBJTYPE_STATIC) {
       v8::Local<v8::Object> obj = FXJS_NewFxDynamicObj(pIsolate, context, i);
       v8Context->Global()->Set(v8Context, m_ObjName, obj).FromJust();
@@ -305,6 +317,9 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
 
 void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
                          v8::Global<v8::Context>& v8PersistentContext) {
+  if (pIsolate == g_isolate && --g_isolate_ref_count > 0)
+    return;
+
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::Locker locker(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
@@ -486,10 +501,11 @@ void* FXJS_GetPrivate(v8::Isolate* pIsolate, v8::Local<v8::Object> pObj) {
     // It could be a global proxy object.
     v8::Local<v8::Value> v = pObj->GetPrototype();
     v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
-    if (v->IsObject())
+    if (v->IsObject()) {
       pPrivateData = (CFXJS_PrivateData*)v->ToObject(context)
                          .ToLocalChecked()
                          ->GetAlignedPointerFromInternalField(0);
+    }
   }
   return pPrivateData ? pPrivateData->pPrivate : nullptr;
 }
