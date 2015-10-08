@@ -14,8 +14,8 @@ class CPDFXFA_Document;
 class CPDFXFA_Page;
 class CPDFSDK_Document;
 class CPDFDoc_Environment;
-class IFXJS_Runtime;
-class IFXJS_Context;
+class IJS_Runtime;
+class IJS_Context;
 class IXFA_DocHandler;
 
 class CPDFXFA_Document : public IXFA_DocProvider {
@@ -187,7 +187,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
 
   FX_BOOL _GetHValueByName(const CFX_ByteStringC& utf8Name,
                            FXJSE_HVALUE hValue,
-                           IFXJS_Runtime* runTime);
+                           IJS_Runtime* runTime);
   FX_BOOL _OnBeforeNotifySumbit();
   void _OnAfterNotifySumbit();
   FX_BOOL _NotifySubmit(FX_BOOL bPrevOrPost);
@@ -221,7 +221,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
   CPDFSDK_Document* m_pSDKDoc;
   CPDFXFA_App* m_pApp;
-  IFXJS_Context* m_pJSContext;
+  IJS_Context* m_pJSContext;
   int m_iDocType;
 };
 

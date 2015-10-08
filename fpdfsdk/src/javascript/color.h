@@ -15,26 +15,26 @@ class color : public CJS_EmbedObj {
   color(CJS_Object* pJSObject);
   ~color() override;
 
-  FX_BOOL black(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL blue(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL cyan(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL dkGray(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL gray(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL green(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL ltGray(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL magenta(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL red(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL transparent(IFXJS_Context* cc,
+  FX_BOOL black(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL blue(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL cyan(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL dkGray(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL gray(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL green(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL ltGray(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL magenta(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL red(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL transparent(IJS_Context* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError);
-  FX_BOOL white(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL yellow(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL white(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL yellow(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
-  FX_BOOL convert(IFXJS_Context* cc,
+  FX_BOOL convert(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL equal(IFXJS_Context* cc,
+  FX_BOOL equal(IJS_Context* cc,
                 const CJS_Parameters& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);

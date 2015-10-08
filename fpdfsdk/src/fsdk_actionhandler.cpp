@@ -149,12 +149,12 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(const CPDF_Action& action,
     if (pEnv->IsJSInitiated()) {
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
-        IFXJS_Runtime* pRuntime = pDocument->GetJsRuntime();  //????
+        IJS_Runtime* pRuntime = pDocument->GetJsRuntime();  //????
         ASSERT(pRuntime != NULL);
 
         pRuntime->SetReaderDocument(pDocument);
 
-        IFXJS_Context* pContext = pRuntime->NewContext();
+        IJS_Context* pContext = pRuntime->NewContext();
         ASSERT(pContext != NULL);
 
         pContext->OnLink_MouseUp(pDocument);
@@ -292,12 +292,12 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(
     if (pEnv->IsJSInitiated()) {
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
-        IFXJS_Runtime* pRuntime = pDocument->GetJsRuntime();
+        IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
         ASSERT(pRuntime != NULL);
 
         pRuntime->SetReaderDocument(pDocument);
 
-        IFXJS_Context* pContext = pRuntime->NewContext();
+        IJS_Context* pContext = pRuntime->NewContext();
         ASSERT(pContext != NULL);
 
         // 			switch (type)
@@ -388,12 +388,12 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteBookMark(const CPDF_Action& action,
     if (pEnv->IsJSInitiated()) {
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
-        IFXJS_Runtime* pRuntime = pDocument->GetJsRuntime();
+        IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
         ASSERT(pRuntime != NULL);
 
         pRuntime->SetReaderDocument(pDocument);
 
-        IFXJS_Context* pContext = pRuntime->NewContext();
+        IJS_Context* pContext = pRuntime->NewContext();
         ASSERT(pContext != NULL);
 
         pContext->OnBookmark_MouseUp(pBookmark);
@@ -556,12 +556,12 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(CPDFSDK_Document* pDocument,
 
   ASSERT(pDocument != NULL);
 
-  IFXJS_Runtime* pRuntime = pDocument->GetJsRuntime();
+  IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
   ASSERT(pRuntime != NULL);
 
   pRuntime->SetReaderDocument(pDocument);
 
-  IFXJS_Context* pContext = pRuntime->NewContext();
+  IJS_Context* pContext = pRuntime->NewContext();
   ASSERT(pContext != NULL);
 
   switch (type) {
@@ -616,12 +616,12 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
     const CFX_WideString& script) {
   ASSERT(pDocument != NULL);
 
-  IFXJS_Runtime* pRuntime = pDocument->GetJsRuntime();
+  IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
   ASSERT(pRuntime != NULL);
 
   pRuntime->SetReaderDocument(pDocument);
 
-  IFXJS_Context* pContext = pRuntime->NewContext();
+  IJS_Context* pContext = pRuntime->NewContext();
   ASSERT(pContext != NULL);
 
   pContext->OnDoc_Open(pDocument, sScriptName);
@@ -641,12 +641,12 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
     const CFX_WideString& script) {
   ASSERT(pDocument != NULL);
 
-  IFXJS_Runtime* pRuntime = pDocument->GetJsRuntime();
+  IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
   ASSERT(pRuntime != NULL);
 
   pRuntime->SetReaderDocument(pDocument);
 
-  IFXJS_Context* pContext = pRuntime->NewContext();
+  IJS_Context* pContext = pRuntime->NewContext();
   ASSERT(pContext != NULL);
 
   switch (type) {

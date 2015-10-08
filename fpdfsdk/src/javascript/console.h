@@ -15,19 +15,19 @@ class console : public CJS_EmbedObj {
   ~console() override;
 
  public:
-  FX_BOOL clear(IFXJS_Context* cc,
+  FX_BOOL clear(IJS_Context* cc,
                 const CJS_Parameters& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);
-  FX_BOOL hide(IFXJS_Context* cc,
+  FX_BOOL hide(IJS_Context* cc,
                const CJS_Parameters& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  FX_BOOL println(IFXJS_Context* cc,
+  FX_BOOL println(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL show(IFXJS_Context* cc,
+  FX_BOOL show(IJS_Context* cc,
                const CJS_Parameters& params,
                CJS_Value& vRet,
                CFX_WideString& sError);

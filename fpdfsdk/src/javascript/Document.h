@@ -73,219 +73,203 @@ class Document : public CJS_EmbedObj {
   ~Document() override;
 
  public:
-  FX_BOOL ADBE(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL author(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL baseURL(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL bookmarkRoot(IFXJS_Context* cc,
+  FX_BOOL ADBE(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL author(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL baseURL(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL bookmarkRoot(IJS_Context* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError);
-  FX_BOOL calculate(IFXJS_Context* cc,
-                    CJS_PropValue& vp,
-                    CFX_WideString& sError);
-  FX_BOOL Collab(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL creationDate(IFXJS_Context* cc,
+  FX_BOOL calculate(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL Collab(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL creationDate(IJS_Context* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError);
-  FX_BOOL creator(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL delay(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL dirty(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL documentFileName(IFXJS_Context* cc,
+  FX_BOOL creator(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL delay(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL dirty(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL documentFileName(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError);
-  FX_BOOL external(IFXJS_Context* cc,
-                   CJS_PropValue& vp,
-                   CFX_WideString& sError);
-  FX_BOOL filesize(IFXJS_Context* cc,
-                   CJS_PropValue& vp,
-                   CFX_WideString& sError);
-  FX_BOOL icons(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL info(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL keywords(IFXJS_Context* cc,
-                   CJS_PropValue& vp,
-                   CFX_WideString& sError);
-  FX_BOOL layout(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL media(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL modDate(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL mouseX(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL mouseY(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL numFields(IFXJS_Context* cc,
-                    CJS_PropValue& vp,
-                    CFX_WideString& sError);
-  FX_BOOL numPages(IFXJS_Context* cc,
-                   CJS_PropValue& vp,
-                   CFX_WideString& sError);
-  FX_BOOL pageNum(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL pageWindowRect(IFXJS_Context* cc,
+  FX_BOOL external(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL filesize(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL icons(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL info(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL keywords(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL layout(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL media(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL modDate(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL mouseX(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL mouseY(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL numFields(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL numPages(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL pageNum(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL pageWindowRect(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError);
-  FX_BOOL path(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL producer(IFXJS_Context* cc,
-                   CJS_PropValue& vp,
-                   CFX_WideString& sError);
-  FX_BOOL subject(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL title(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL zoom(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL zoomType(IFXJS_Context* cc,
-                   CJS_PropValue& vp,
-                   CFX_WideString& sError);
+  FX_BOOL path(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL producer(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL subject(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL title(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL zoom(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  FX_BOOL zoomType(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
-  FX_BOOL addAnnot(IFXJS_Context* cc,
+  FX_BOOL addAnnot(IJS_Context* cc,
                    const CJS_Parameters& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  FX_BOOL addField(IFXJS_Context* cc,
+  FX_BOOL addField(IJS_Context* cc,
                    const CJS_Parameters& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  FX_BOOL addLink(IFXJS_Context* cc,
+  FX_BOOL addLink(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL addIcon(IFXJS_Context* cc,
+  FX_BOOL addIcon(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL calculateNow(IFXJS_Context* cc,
+  FX_BOOL calculateNow(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
-  FX_BOOL closeDoc(IFXJS_Context* cc,
+  FX_BOOL closeDoc(IJS_Context* cc,
                    const CJS_Parameters& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  FX_BOOL createDataObject(IFXJS_Context* cc,
+  FX_BOOL createDataObject(IJS_Context* cc,
                            const CJS_Parameters& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError);
-  FX_BOOL deletePages(IFXJS_Context* cc,
+  FX_BOOL deletePages(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
-  FX_BOOL exportAsText(IFXJS_Context* cc,
+  FX_BOOL exportAsText(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
-  FX_BOOL exportAsFDF(IFXJS_Context* cc,
+  FX_BOOL exportAsFDF(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
-  FX_BOOL exportAsXFDF(IFXJS_Context* cc,
+  FX_BOOL exportAsXFDF(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
-  FX_BOOL extractPages(IFXJS_Context* cc,
+  FX_BOOL extractPages(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
-  FX_BOOL getAnnot(IFXJS_Context* cc,
+  FX_BOOL getAnnot(IJS_Context* cc,
                    const CJS_Parameters& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  FX_BOOL getAnnots(IFXJS_Context* cc,
+  FX_BOOL getAnnots(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
-  FX_BOOL getAnnot3D(IFXJS_Context* cc,
+  FX_BOOL getAnnot3D(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
-  FX_BOOL getAnnots3D(IFXJS_Context* cc,
+  FX_BOOL getAnnots3D(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
-  FX_BOOL getField(IFXJS_Context* cc,
+  FX_BOOL getField(IJS_Context* cc,
                    const CJS_Parameters& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  FX_BOOL getIcon(IFXJS_Context* cc,
+  FX_BOOL getIcon(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL getLinks(IFXJS_Context* cc,
+  FX_BOOL getLinks(IJS_Context* cc,
                    const CJS_Parameters& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  FX_BOOL getNthFieldName(IFXJS_Context* cc,
+  FX_BOOL getNthFieldName(IJS_Context* cc,
                           const CJS_Parameters& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError);
-  FX_BOOL getOCGs(IFXJS_Context* cc,
+  FX_BOOL getOCGs(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL getPageBox(IFXJS_Context* cc,
+  FX_BOOL getPageBox(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
-  FX_BOOL getPageNthWord(IFXJS_Context* cc,
+  FX_BOOL getPageNthWord(IJS_Context* cc,
                          const CJS_Parameters& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError);
-  FX_BOOL getPageNthWordQuads(IFXJS_Context* cc,
+  FX_BOOL getPageNthWordQuads(IJS_Context* cc,
                               const CJS_Parameters& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError);
-  FX_BOOL getPageNumWords(IFXJS_Context* cc,
+  FX_BOOL getPageNumWords(IJS_Context* cc,
                           const CJS_Parameters& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError);
-  FX_BOOL getPrintParams(IFXJS_Context* cc,
+  FX_BOOL getPrintParams(IJS_Context* cc,
                          const CJS_Parameters& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError);
-  FX_BOOL getURL(IFXJS_Context* cc,
+  FX_BOOL getURL(IJS_Context* cc,
                  const CJS_Parameters& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  FX_BOOL importAnFDF(IFXJS_Context* cc,
+  FX_BOOL importAnFDF(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
-  FX_BOOL importAnXFDF(IFXJS_Context* cc,
+  FX_BOOL importAnXFDF(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
-  FX_BOOL importTextData(IFXJS_Context* cc,
+  FX_BOOL importTextData(IJS_Context* cc,
                          const CJS_Parameters& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError);
-  FX_BOOL insertPages(IFXJS_Context* cc,
+  FX_BOOL insertPages(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
-  FX_BOOL mailForm(IFXJS_Context* cc,
+  FX_BOOL mailForm(IJS_Context* cc,
                    const CJS_Parameters& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  FX_BOOL print(IFXJS_Context* cc,
+  FX_BOOL print(IJS_Context* cc,
                 const CJS_Parameters& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);
-  FX_BOOL removeField(IFXJS_Context* cc,
+  FX_BOOL removeField(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
-  FX_BOOL replacePages(IFXJS_Context* cc,
+  FX_BOOL replacePages(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
-  FX_BOOL resetForm(IFXJS_Context* cc,
+  FX_BOOL resetForm(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
-  FX_BOOL saveAs(IFXJS_Context* cc,
+  FX_BOOL saveAs(IJS_Context* cc,
                  const CJS_Parameters& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  FX_BOOL submitForm(IFXJS_Context* cc,
+  FX_BOOL submitForm(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
-  FX_BOOL mailDoc(IFXJS_Context* cc,
+  FX_BOOL mailDoc(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  FX_BOOL removeIcon(IFXJS_Context* cc,
+  FX_BOOL removeIcon(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
@@ -326,7 +310,7 @@ class CJS_Document : public CJS_Object {
   ~CJS_Document() override {}
 
   // CJS_Object
-  FX_BOOL InitInstance(IFXJS_Context* cc) override;
+  FX_BOOL InitInstance(IJS_Context* cc) override;
 
   DECLARE_JS_CLASS();
 

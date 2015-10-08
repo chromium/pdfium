@@ -15,91 +15,91 @@ class CJS_PublicMethods : public CJS_Object {
   ~CJS_PublicMethods() override {}
 
  public:
-  static FX_BOOL AFNumber_Format(IFXJS_Context* cc,
+  static FX_BOOL AFNumber_Format(IJS_Context* cc,
                                  const CJS_Parameters& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError);
-  static FX_BOOL AFNumber_Keystroke(IFXJS_Context* cc,
+  static FX_BOOL AFNumber_Keystroke(IJS_Context* cc,
                                     const CJS_Parameters& params,
                                     CJS_Value& vRet,
                                     CFX_WideString& sError);
-  static FX_BOOL AFPercent_Format(IFXJS_Context* cc,
+  static FX_BOOL AFPercent_Format(IJS_Context* cc,
                                   const CJS_Parameters& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError);
-  static FX_BOOL AFPercent_Keystroke(IFXJS_Context* cc,
+  static FX_BOOL AFPercent_Keystroke(IJS_Context* cc,
                                      const CJS_Parameters& params,
                                      CJS_Value& vRet,
                                      CFX_WideString& sError);
-  static FX_BOOL AFDate_FormatEx(IFXJS_Context* cc,
+  static FX_BOOL AFDate_FormatEx(IJS_Context* cc,
                                  const CJS_Parameters& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError);
-  static FX_BOOL AFDate_KeystrokeEx(IFXJS_Context* cc,
+  static FX_BOOL AFDate_KeystrokeEx(IJS_Context* cc,
                                     const CJS_Parameters& params,
                                     CJS_Value& vRet,
                                     CFX_WideString& sError);
-  static FX_BOOL AFDate_Format(IFXJS_Context* cc,
+  static FX_BOOL AFDate_Format(IJS_Context* cc,
                                const CJS_Parameters& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError);
-  static FX_BOOL AFDate_Keystroke(IFXJS_Context* cc,
+  static FX_BOOL AFDate_Keystroke(IJS_Context* cc,
                                   const CJS_Parameters& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError);
-  static FX_BOOL AFTime_FormatEx(IFXJS_Context* cc,
+  static FX_BOOL AFTime_FormatEx(IJS_Context* cc,
                                  const CJS_Parameters& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError);  //
-  static FX_BOOL AFTime_KeystrokeEx(IFXJS_Context* cc,
+  static FX_BOOL AFTime_KeystrokeEx(IJS_Context* cc,
                                     const CJS_Parameters& params,
                                     CJS_Value& vRet,
                                     CFX_WideString& sError);
-  static FX_BOOL AFTime_Format(IFXJS_Context* cc,
+  static FX_BOOL AFTime_Format(IJS_Context* cc,
                                const CJS_Parameters& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError);
-  static FX_BOOL AFTime_Keystroke(IFXJS_Context* cc,
+  static FX_BOOL AFTime_Keystroke(IJS_Context* cc,
                                   const CJS_Parameters& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError);
-  static FX_BOOL AFSpecial_Format(IFXJS_Context* cc,
+  static FX_BOOL AFSpecial_Format(IJS_Context* cc,
                                   const CJS_Parameters& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError);
-  static FX_BOOL AFSpecial_Keystroke(IFXJS_Context* cc,
+  static FX_BOOL AFSpecial_Keystroke(IJS_Context* cc,
                                      const CJS_Parameters& params,
                                      CJS_Value& vRet,
                                      CFX_WideString& sError);
-  static FX_BOOL AFSpecial_KeystrokeEx(IFXJS_Context* cc,
+  static FX_BOOL AFSpecial_KeystrokeEx(IJS_Context* cc,
                                        const CJS_Parameters& params,
                                        CJS_Value& vRet,
                                        CFX_WideString& sError);  //
-  static FX_BOOL AFSimple(IFXJS_Context* cc,
+  static FX_BOOL AFSimple(IJS_Context* cc,
                           const CJS_Parameters& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError);
-  static FX_BOOL AFMakeNumber(IFXJS_Context* cc,
+  static FX_BOOL AFMakeNumber(IJS_Context* cc,
                               const CJS_Parameters& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError);
-  static FX_BOOL AFSimple_Calculate(IFXJS_Context* cc,
+  static FX_BOOL AFSimple_Calculate(IJS_Context* cc,
                                     const CJS_Parameters& params,
                                     CJS_Value& vRet,
                                     CFX_WideString& sError);
-  static FX_BOOL AFRange_Validate(IFXJS_Context* cc,
+  static FX_BOOL AFRange_Validate(IJS_Context* cc,
                                   const CJS_Parameters& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError);
-  static FX_BOOL AFMergeChange(IFXJS_Context* cc,
+  static FX_BOOL AFMergeChange(IJS_Context* cc,
                                const CJS_Parameters& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError);
-  static FX_BOOL AFParseDateEx(IFXJS_Context* cc,
+  static FX_BOOL AFParseDateEx(IJS_Context* cc,
                                const CJS_Parameters& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError);
-  static FX_BOOL AFExtractNums(IFXJS_Context* cc,
+  static FX_BOOL AFExtractNums(IJS_Context* cc,
                                const CJS_Parameters& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError);

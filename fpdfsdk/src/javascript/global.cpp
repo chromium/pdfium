@@ -88,7 +88,7 @@ END_JS_STATIC_METHOD()
 
 IMPLEMENT_SPECIAL_JS_CLASS(CJS_Global, JSGlobalAlternate, global);
 
-FX_BOOL CJS_Global::InitInstance(IFXJS_Context* cc) {
+FX_BOOL CJS_Global::InitInstance(IJS_Context* cc) {
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
 
@@ -119,7 +119,7 @@ FX_BOOL JSGlobalAlternate::QueryProperty(const FX_WCHAR* propname) {
   return CFX_WideString(propname) != L"setPersistent";
 }
 
-FX_BOOL JSGlobalAlternate::DelProperty(IFXJS_Context* cc,
+FX_BOOL JSGlobalAlternate::DelProperty(IJS_Context* cc,
                                        const FX_WCHAR* propname,
                                        CFX_WideString& sError) {
   auto it = m_mapGlobal.find(CFX_ByteString::FromUnicode(propname));
@@ -130,7 +130,7 @@ FX_BOOL JSGlobalAlternate::DelProperty(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL JSGlobalAlternate::DoProperty(IFXJS_Context* cc,
+FX_BOOL JSGlobalAlternate::DoProperty(IJS_Context* cc,
                                       const FX_WCHAR* propname,
                                       CJS_PropValue& vp,
                                       CFX_WideString& sError) {
@@ -209,7 +209,7 @@ FX_BOOL JSGlobalAlternate::DoProperty(IFXJS_Context* cc,
   return FALSE;
 }
 
-FX_BOOL JSGlobalAlternate::setPersistent(IFXJS_Context* cc,
+FX_BOOL JSGlobalAlternate::setPersistent(IJS_Context* cc,
                                          const CJS_Parameters& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {

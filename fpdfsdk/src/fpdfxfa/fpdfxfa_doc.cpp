@@ -1338,6 +1338,6 @@ FX_BOOL CPDFXFA_Document::GetGlobalProperty(IXFA_Doc* hDoc,
 }
 FX_BOOL CPDFXFA_Document::_GetHValueByName(const CFX_ByteStringC& utf8Name,
                                            FXJSE_HVALUE hValue,
-                                           IFXJS_Runtime* runTime) {
+                                           IJS_Runtime* runTime) {
   return runTime->GetHValueByName(utf8Name, hValue);
 }

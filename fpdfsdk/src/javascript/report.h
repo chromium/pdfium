@@ -15,11 +15,11 @@ class Report : public CJS_EmbedObj {
   ~Report() override;
 
  public:
-  FX_BOOL save(IFXJS_Context* cc,
+  FX_BOOL save(IJS_Context* cc,
                const CJS_Parameters& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  FX_BOOL writeText(IFXJS_Context* cc,
+  FX_BOOL writeText(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);

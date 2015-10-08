@@ -376,11 +376,11 @@ void CPDFDoc_Environment::JS_docmailForm(void* mailData,
   }
 }
 
-IFXJS_Runtime* CPDFDoc_Environment::GetJSRuntime() {
+IJS_Runtime* CPDFDoc_Environment::GetJSRuntime() {
   if (!IsJSInitiated())
     return NULL;
   if (!m_pJSRuntime)
-    m_pJSRuntime.reset(IFXJS_Runtime::Create(this));
+    m_pJSRuntime.reset(IJS_Runtime::Create(this));
   return m_pJSRuntime.get();
 }
 
@@ -626,7 +626,7 @@ FX_BOOL CPDFSDK_Document::GetPermissions(int nFlag) {
   return dwPermissions & nFlag;
 }
 
-IFXJS_Runtime* CPDFSDK_Document::GetJsRuntime() {
+IJS_Runtime* CPDFSDK_Document::GetJsRuntime() {
   ASSERT(m_pEnv != NULL);
   return m_pEnv->GetJSRuntime();
 }

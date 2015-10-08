@@ -14,7 +14,7 @@
 #include "JS_Context.h"
 #include "JS_Runtime.h"
 
-static v8::Isolate* GetIsolate(IFXJS_Context* cc) {
+static v8::Isolate* GetIsolate(IJS_Context* cc) {
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
 
@@ -140,7 +140,7 @@ void color::ConvertArrayToPWLColor(CJS_Array& array, CPWL_Color& color) {
 }
 
 #define JS_IMPLEMENT_COLORPROP(prop, var)                          \
-  FX_BOOL color::prop(IFXJS_Context* cc, CJS_PropValue& vp,        \
+  FX_BOOL color::prop(IJS_Context* cc, CJS_PropValue& vp,          \
                       CFX_WideString& sError) {                    \
     CJS_Context* pContext = (CJS_Context*)cc;                      \
     v8::Isolate* isolate = pContext->GetJSRuntime()->GetIsolate(); \
@@ -170,7 +170,7 @@ JS_IMPLEMENT_COLORPROP(dkGray, m_crDKGray)
 JS_IMPLEMENT_COLORPROP(gray, m_crGray)
 JS_IMPLEMENT_COLORPROP(ltGray, m_crLTGray)
 
-FX_BOOL color::convert(IFXJS_Context* cc,
+FX_BOOL color::convert(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
@@ -207,7 +207,7 @@ FX_BOOL color::convert(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL color::equal(IFXJS_Context* cc,
+FX_BOOL color::equal(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {

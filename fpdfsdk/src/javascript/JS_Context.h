@@ -14,12 +14,12 @@
 class CJS_EventHandler;
 class CJS_Runtime;
 
-class CJS_Context : public IFXJS_Context {
+class CJS_Context : public IJS_Context {
  public:
   explicit CJS_Context(CJS_Runtime* pRuntime);
   ~CJS_Context() override;
 
-  // IFXJS_Context
+  // IJS_Context
   FX_BOOL RunScript(const CFX_WideString& script,
                     CFX_WideString& info) override;
   void OnApp_Init() override;

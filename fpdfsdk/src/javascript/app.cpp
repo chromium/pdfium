@@ -18,7 +18,7 @@
 #include "JS_Value.h"
 #include "resource.h"
 
-static v8::Isolate* GetIsolate(IFXJS_Context* cc) {
+static v8::Isolate* GetIsolate(IJS_Context* cc) {
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   return pRuntime->GetIsolate();
@@ -110,7 +110,7 @@ app::~app() {
   m_aTimer.RemoveAll();
 }
 
-FX_BOOL app::activeDocs(IFXJS_Context* cc,
+FX_BOOL app::activeDocs(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
   if (!vp.IsGetting())
@@ -145,7 +145,7 @@ FX_BOOL app::activeDocs(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::calculate(IFXJS_Context* cc,
+FX_BOOL app::calculate(IJS_Context* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
   if (vp.IsSetting()) {
@@ -165,7 +165,7 @@ FX_BOOL app::calculate(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::formsVersion(IFXJS_Context* cc,
+FX_BOOL app::formsVersion(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -176,7 +176,7 @@ FX_BOOL app::formsVersion(IFXJS_Context* cc,
   return FALSE;
 }
 
-FX_BOOL app::viewerType(IFXJS_Context* cc,
+FX_BOOL app::viewerType(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -187,7 +187,7 @@ FX_BOOL app::viewerType(IFXJS_Context* cc,
   return FALSE;
 }
 
-FX_BOOL app::viewerVariation(IFXJS_Context* cc,
+FX_BOOL app::viewerVariation(IJS_Context* cc,
                              CJS_PropValue& vp,
                              CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -198,7 +198,7 @@ FX_BOOL app::viewerVariation(IFXJS_Context* cc,
   return FALSE;
 }
 
-FX_BOOL app::viewerVersion(IFXJS_Context* cc,
+FX_BOOL app::viewerVersion(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
   if (!vp.IsGetting())
@@ -215,7 +215,7 @@ FX_BOOL app::viewerVersion(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::platform(IFXJS_Context* cc,
+FX_BOOL app::platform(IJS_Context* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -226,7 +226,7 @@ FX_BOOL app::platform(IFXJS_Context* cc,
   return FALSE;
 }
 
-FX_BOOL app::language(IFXJS_Context* cc,
+FX_BOOL app::language(IJS_Context* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -241,7 +241,7 @@ FX_BOOL app::language(IFXJS_Context* cc,
 // comment: need reader support
 // note:
 // CFDF_Document * CPDFDoc_Environment::NewFDF();
-FX_BOOL app::newFDF(IFXJS_Context* cc,
+FX_BOOL app::newFDF(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
@@ -253,14 +253,14 @@ FX_BOOL app::newFDF(IFXJS_Context* cc,
 // parmeters, how old an fdf document while do not show it.
 // CFDF_Document * CPDFDoc_Environment::OpenFDF(string strPath,bool bUserConv);
 
-FX_BOOL app::openFDF(IFXJS_Context* cc,
+FX_BOOL app::openFDF(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   return TRUE;
 }
 
-FX_BOOL app::alert(IFXJS_Context* cc,
+FX_BOOL app::alert(IJS_Context* cc,
                    const CJS_Parameters& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError) {
@@ -359,7 +359,7 @@ FX_BOOL app::alert(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::beep(IFXJS_Context* cc,
+FX_BOOL app::beep(IJS_Context* cc,
                   const CJS_Parameters& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
@@ -375,25 +375,25 @@ FX_BOOL app::beep(IFXJS_Context* cc,
   return FALSE;
 }
 
-FX_BOOL app::findComponent(IFXJS_Context* cc,
+FX_BOOL app::findComponent(IJS_Context* cc,
                            const CJS_Parameters& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   return TRUE;
 }
 
-FX_BOOL app::popUpMenuEx(IFXJS_Context* cc,
+FX_BOOL app::popUpMenuEx(IJS_Context* cc,
                          const CJS_Parameters& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   return FALSE;
 }
 
-FX_BOOL app::fs(IFXJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+FX_BOOL app::fs(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
   return FALSE;
 }
 
-FX_BOOL app::setInterval(IFXJS_Context* cc,
+FX_BOOL app::setInterval(IJS_Context* cc,
                          const CJS_Parameters& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
@@ -429,7 +429,7 @@ FX_BOOL app::setInterval(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::setTimeOut(IFXJS_Context* cc,
+FX_BOOL app::setTimeOut(IJS_Context* cc,
                         const CJS_Parameters& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
@@ -470,7 +470,7 @@ FX_BOOL app::setTimeOut(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::clearTimeOut(IFXJS_Context* cc,
+FX_BOOL app::clearTimeOut(IJS_Context* cc,
                           const CJS_Parameters& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
@@ -506,7 +506,7 @@ FX_BOOL app::clearTimeOut(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::clearInterval(IFXJS_Context* cc,
+FX_BOOL app::clearInterval(IJS_Context* cc,
                            const CJS_Parameters& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
@@ -542,7 +542,7 @@ FX_BOOL app::clearInterval(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::execMenuItem(IFXJS_Context* cc,
+FX_BOOL app::execMenuItem(IJS_Context* cc,
                           const CJS_Parameters& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
@@ -573,7 +573,7 @@ void app::RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript) {
   ASSERT(pRuntime != NULL);
 
   if (!pRuntime->IsBlocking()) {
-    IFXJS_Context* pContext = pRuntime->NewContext();
+    IJS_Context* pContext = pRuntime->NewContext();
     ASSERT(pContext != NULL);
     pContext->OnExternal_Exec();
     CFX_WideString wtInfo;
@@ -582,7 +582,7 @@ void app::RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript) {
   }
 }
 
-FX_BOOL app::goBack(IFXJS_Context* cc,
+FX_BOOL app::goBack(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
@@ -590,7 +590,7 @@ FX_BOOL app::goBack(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::goForward(IFXJS_Context* cc,
+FX_BOOL app::goForward(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
@@ -598,7 +598,7 @@ FX_BOOL app::goForward(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::mailMsg(IFXJS_Context* cc,
+FX_BOOL app::mailMsg(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
@@ -667,7 +667,7 @@ FX_BOOL app::mailMsg(IFXJS_Context* cc,
   return FALSE;
 }
 
-FX_BOOL app::launchURL(IFXJS_Context* cc,
+FX_BOOL app::launchURL(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
@@ -675,7 +675,7 @@ FX_BOOL app::launchURL(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::runtimeHighlight(IFXJS_Context* cc,
+FX_BOOL app::runtimeHighlight(IJS_Context* cc,
                               CJS_PropValue& vp,
                               CFX_WideString& sError) {
   if (vp.IsSetting()) {
@@ -687,20 +687,20 @@ FX_BOOL app::runtimeHighlight(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::fullscreen(IFXJS_Context* cc,
+FX_BOOL app::fullscreen(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
   return FALSE;
 }
 
-FX_BOOL app::popUpMenu(IFXJS_Context* cc,
+FX_BOOL app::popUpMenu(IJS_Context* cc,
                        const CJS_Parameters& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   return FALSE;
 }
 
-FX_BOOL app::browseForDoc(IFXJS_Context* cc,
+FX_BOOL app::browseForDoc(IJS_Context* cc,
                           const CJS_Parameters& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
@@ -726,21 +726,21 @@ CFX_WideString app::SysPathToPDFPath(const CFX_WideString& sOldPath) {
   return sRet;
 }
 
-FX_BOOL app::newDoc(IFXJS_Context* cc,
+FX_BOOL app::newDoc(IJS_Context* cc,
                     const CJS_Parameters& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
   return FALSE;
 }
 
-FX_BOOL app::openDoc(IFXJS_Context* cc,
+FX_BOOL app::openDoc(IJS_Context* cc,
                      const CJS_Parameters& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   return FALSE;
 }
 
-FX_BOOL app::response(IFXJS_Context* cc,
+FX_BOOL app::response(IJS_Context* cc,
                       const CJS_Parameters& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
@@ -820,13 +820,11 @@ FX_BOOL app::response(IFXJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL app::media(IFXJS_Context* cc,
-                   CJS_PropValue& vp,
-                   CFX_WideString& sError) {
+FX_BOOL app::media(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
   return FALSE;
 }
 
-FX_BOOL app::execDialog(IFXJS_Context* cc,
+FX_BOOL app::execDialog(IJS_Context* cc,
                         const CJS_Parameters& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {

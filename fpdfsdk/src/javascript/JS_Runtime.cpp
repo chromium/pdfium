@@ -32,7 +32,7 @@
 /* ------------------------------ CJS_Runtime ------------------------------ */
 v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(v8::Isolate* pIsolate);
 
-IFXJS_Runtime* IFXJS_Runtime::Create(CPDFDoc_Environment* pEnv) {
+IJS_Runtime* IJS_Runtime::Create(CPDFDoc_Environment* pEnv) {
   return new CJS_Runtime(pEnv);
 }
 
@@ -145,13 +145,13 @@ void CJS_Runtime::DefineJSObjects() {
   CJS_PrintParamsObj::DefineJSObjects(GetIsolate(), FXJSOBJTYPE_DYNAMIC);
 }
 
-IFXJS_Context* CJS_Runtime::NewContext() {
+IJS_Context* CJS_Runtime::NewContext() {
   CJS_Context* p = new CJS_Context(this);
   m_ContextArray.Add(p);
   return p;
 }
 
-void CJS_Runtime::ReleaseContext(IFXJS_Context* pContext) {
+void CJS_Runtime::ReleaseContext(IJS_Context* pContext) {
   CJS_Context* pJSContext = (CJS_Context*)pContext;
 
   for (int i = 0, sz = m_ContextArray.GetSize(); i < sz; i++) {
@@ -163,7 +163,7 @@ void CJS_Runtime::ReleaseContext(IFXJS_Context* pContext) {
   }
 }
 
-IFXJS_Context* CJS_Runtime::GetCurrentContext() {
+IJS_Context* CJS_Runtime::GetCurrentContext() {
   if (!m_ContextArray.GetSize())
     return NULL;
   return m_ContextArray.GetAt(m_ContextArray.GetSize() - 1);

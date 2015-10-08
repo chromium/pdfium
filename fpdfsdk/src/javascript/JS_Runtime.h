@@ -17,7 +17,7 @@
 
 class CJS_Context;
 
-class CJS_Runtime : public IFXJS_Runtime {
+class CJS_Runtime : public IJS_Runtime {
  public:
   class Observer {
    public:
@@ -32,10 +32,10 @@ class CJS_Runtime : public IFXJS_Runtime {
   explicit CJS_Runtime(CPDFDoc_Environment* pApp);
   ~CJS_Runtime() override;
 
-  // IFXJS_Runtime
-  IFXJS_Context* NewContext() override;
-  void ReleaseContext(IFXJS_Context* pContext) override;
-  IFXJS_Context* GetCurrentContext() override;
+  // IJS_Runtime
+  IJS_Context* NewContext() override;
+  void ReleaseContext(IJS_Context* pContext) override;
+  IJS_Context* GetCurrentContext() override;
   void SetReaderDocument(CPDFSDK_Document* pReaderDoc) override;
   CPDFSDK_Document* GetReaderDocument() override { return m_pDocument; }
 
