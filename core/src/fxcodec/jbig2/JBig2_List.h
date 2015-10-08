@@ -15,6 +15,7 @@ template <class TYPE>
 class CJBig2_List {
  public:
   CJBig2_List() {}
+  explicit CJBig2_List(size_t count) { resize(count); }
 
   ~CJBig2_List() {
     clear();
@@ -33,6 +34,12 @@ class CJBig2_List {
 
   // Takes ownership of |pItem|.
   void push_back(TYPE* pItem) { m_vector.push_back(pItem); }
+
+  // Takes ownership of |pItem|.
+  void set(size_t index, TYPE* pItem) {
+    delete m_vector[index];
+    m_vector[index] = pItem;
+  }
 
   void resize(size_t count) {
     for (size_t i = count; i < size(); ++i)
