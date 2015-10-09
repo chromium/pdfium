@@ -464,3 +464,79 @@ TEST(fxcodec, DecodeDataSeek) {
   EXPECT_EQ(kReadError, opj_read_from_memory(buffer, 1, &dd));
   EXPECT_EQ(0xbd, buffer[0]);
 }
+
+TEST(fxcodec, YUV420ToRGB) {
+  opj_image_comp_t u;
+  memset(&u, 0, sizeof(u));
+  u.dx = 1;
+  u.dy = 1;
+  u.w = 16;
+  u.h = 16;
+  u.prec = 8;
+  u.bpp = 8;
+  u.data = FX_Alloc(OPJ_INT32, u.w * u.h);
+  memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
+  opj_image_comp_t v;
+  memset(&v, 0, sizeof(v));
+  v.dx = 1;
+  v.dy = 1;
+  v.w = 16;
+  v.h = 16;
+  v.prec = 8;
+  v.bpp = 8;
+  v.data = FX_Alloc(OPJ_INT32, v.w * v.h);
+  memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));
+  opj_image_comp_t y;
+  memset(&y, 0, sizeof(y));
+  y.dx = 1;
+  y.dy = 1;
+  y.prec = 8;
+  y.bpp = 8;
+  opj_image_t img;
+  memset(&img, 0, sizeof(img));
+  img.numcomps = 3;
+  img.color_space = OPJ_CLRSPC_SYCC;
+  img.comps = FX_Alloc(opj_image_comp_t, 3);
+  const struct {
+    int w;
+    bool expected;
+  } cases[] = {{0, false},
+               {1, false},
+               {30, false},
+               {31, true},
+               {32, true},
+               {33, true},
+               {34, false},
+               {UINT_MAX, false}};
+  for (int i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
+    y.w = cases[i].w;
+    y.h = y.w;
+    img.x1 = y.w;
+    img.y1 = y.h;
+    y.data = FX_Alloc(OPJ_INT32, y.w * y.h);
+    memset(y.data, 1, y.w * y.h * sizeof(OPJ_INT32));
+    u.data = FX_Alloc(OPJ_INT32, u.w * u.h);
+    memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
+    v.data = FX_Alloc(OPJ_INT32, v.w * v.h);
+    memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));
+    img.comps[0] = y;
+    img.comps[1] = u;
+    img.comps[2] = v;
+    sycc420_to_rgb(&img);
+    if (cases[i].expected) {
+      EXPECT_EQ(img.comps[0].w, img.comps[1].w);
+      EXPECT_EQ(img.comps[0].h, img.comps[1].h);
+      EXPECT_EQ(img.comps[0].w, img.comps[2].w);
+      EXPECT_EQ(img.comps[0].h, img.comps[2].h);
+    } else {
+      EXPECT_NE(img.comps[0].w, img.comps[1].w);
+      EXPECT_NE(img.comps[0].h, img.comps[1].h);
+      EXPECT_NE(img.comps[0].w, img.comps[2].w);
+      EXPECT_NE(img.comps[0].h, img.comps[2].h);
+    }
+    FX_Free(img.comps[0].data);
+    FX_Free(img.comps[1].data);
+    FX_Free(img.comps[2].data);
+  }
+  FX_Free(img.comps);
+}
