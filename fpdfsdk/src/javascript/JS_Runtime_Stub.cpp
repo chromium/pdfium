@@ -15,7 +15,7 @@ class CJS_ContextStub final : public IJS_Context {
 
   // IJS_Context:
   FX_BOOL RunScript(const CFX_WideString& script,
-                    CFX_WideString& info) override {
+                    CFX_WideString* info) override {
     return FALSE;
   }
 
@@ -135,6 +135,12 @@ class CJS_RuntimeStub final : public IJS_Runtime {
     m_pDoc = pReaderDoc;
   }
   CPDFSDK_Document* GetReaderDocument() override { return m_pDoc; }
+
+  int Execute(IJS_Context* cc,
+              const wchar_t* script,
+              CFX_WideString* info) override {
+    return 0;
+  }
 
  protected:
   CPDFSDK_Document* m_pDoc;

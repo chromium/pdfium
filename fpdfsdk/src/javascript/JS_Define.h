@@ -247,22 +247,22 @@ void JSMethod(const char* method_name_string,
     DefineMethods(pIsolate);                                                \
   }
 
-#define DECLARE_JS_CLASS_RICH_PART()                                     \
-  static void JSConstructor(IJS_Context* cc, v8::Local<v8::Object> obj); \
-  static void JSDestructor(v8::Local<v8::Object> obj);                   \
-  static void DefineProps(v8::Isolate* pIsoalte);                        \
-  static void DefineMethods(v8::Isolate* pIsoalte);                      \
-  static JSPropertySpec JS_Class_Properties[];                           \
+#define DECLARE_JS_CLASS_RICH_PART()                                           \
+  static void JSConstructor(IJS_Runtime* pRuntime, v8::Local<v8::Object> obj); \
+  static void JSDestructor(v8::Local<v8::Object> obj);                         \
+  static void DefineProps(v8::Isolate* pIsoalte);                              \
+  static void DefineMethods(v8::Isolate* pIsoalte);                            \
+  static JSPropertySpec JS_Class_Properties[];                                 \
   static JSMethodSpec JS_Class_Methods[];
 
 #define IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate,          \
                                      class_name)                              \
-  void js_class_name::JSConstructor(IJS_Context* cc,                          \
+  void js_class_name::JSConstructor(IJS_Runtime* pIRuntime,                   \
                                     v8::Local<v8::Object> obj) {              \
     CJS_Object* pObj = new js_class_name(obj);                                \
     pObj->SetEmbedObject(new class_alternate(pObj));                          \
     FXJS_SetPrivate(nullptr, obj, (void*)pObj);                               \
-    pObj->InitInstance(cc);                                                   \
+    pObj->InitInstance(pIRuntime);                                            \
   }                                                                           \
   void js_class_name::JSDestructor(v8::Local<v8::Object> obj) {               \
     js_class_name* pObj = (js_class_name*)FXJS_GetPrivate(nullptr, obj);      \

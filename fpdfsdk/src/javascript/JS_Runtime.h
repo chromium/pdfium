@@ -40,6 +40,9 @@ class CJS_Runtime : public IJS_Runtime {
   IJS_Context* GetCurrentContext() override;
   void SetReaderDocument(CPDFSDK_Document* pReaderDoc) override;
   CPDFSDK_Document* GetReaderDocument() override { return m_pDocument; }
+  int Execute(IJS_Context* cc,
+              const wchar_t* script,
+              CFX_WideString* info) override;
 
   CPDFDoc_Environment* GetReaderApp() const { return m_pApp; }
 

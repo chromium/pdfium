@@ -1418,8 +1418,7 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
                                           CPDF_Stream* pImage) {
   ASSERT(pImage != NULL);
 
-  CPDF_Document* pDoc =
-      m_pPageView->GetPDFDocument();  // pDocument->GetDocument();
+  CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
   ASSERT(pDoc != NULL);
 
   CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDict("AP");
@@ -1766,7 +1765,6 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
     for (int i = 0; i < nSize; i++) {
       if (CPDF_FormField* pField =
               m_pInterForm->GetFieldInCalculationOrder(i)) {
-        //          ASSERT(pField != NULL);
         int nType = pField->GetFieldType();
         if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD) {
           CPDF_AAction aAction = pField->GetAdditionalAction();
@@ -1784,7 +1782,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
                 pContext->OnField_Calculate(pFormField, pField, sValue, bRC);
 
                 CFX_WideString sInfo;
-                FX_BOOL bRet = pContext->RunScript(csJS, sInfo);
+                FX_BOOL bRet = pContext->RunScript(csJS, &sInfo);
                 pRuntime->ReleaseContext(pContext);
 
                 if (bRet) {
@@ -1846,7 +1844,7 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
         pContext->OnField_Format(pFormField, Value, TRUE);
 
         CFX_WideString sInfo;
-        FX_BOOL bRet = pContext->RunScript(script, sInfo);
+        FX_BOOL bRet = pContext->RunScript(script, &sInfo);
         pRuntime->ReleaseContext(pContext);
 
         if (bRet) {
@@ -2144,7 +2142,7 @@ FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(const CFX_PtrArray& fields,
       m_pDocument->GetPath(), (CFX_PtrArray&)fields, bIncludeOrExclude);
   if (!pFDF)
     return FALSE;
-  FX_BOOL bRet = pFDF->WriteBuf(textBuf);  // = FALSE;//
+  FX_BOOL bRet = pFDF->WriteBuf(textBuf);
   delete pFDF;
 
   return bRet;

@@ -64,7 +64,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     DefineJSObjects();
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
-  FXJS_InitializeRuntime(GetIsolate(), this, pContext, m_context);
+  FXJS_InitializeRuntime(GetIsolate(), this, m_context);
   ReleaseContext(pContext);
 }
 
@@ -179,6 +179,18 @@ void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {
       }
     }
   }
+}
+
+int CJS_Runtime::Execute(IJS_Context* cc,
+                         const wchar_t* script,
+                         CFX_WideString* info) {
+  FXJSErr error = {};
+  int nRet = FXJS_Execute(m_isolate, cc, script, &error);
+  if (nRet < 0) {
+    info->Format(L"[ Line: %05d { %s } ] : %s", error.linnum - 1, error.srcline,
+                 error.message);
+  }
+  return nRet;
 }
 
 bool CJS_Runtime::AddEventToSet(const FieldEvent& event) {

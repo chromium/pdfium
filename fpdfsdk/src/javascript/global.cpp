@@ -87,17 +87,12 @@ END_JS_STATIC_METHOD()
 
 IMPLEMENT_SPECIAL_JS_CLASS(CJS_Global, JSGlobalAlternate, global);
 
-FX_BOOL CJS_Global::InitInstance(IJS_Context* cc) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-
-  JSGlobalAlternate* pGlobal = (JSGlobalAlternate*)GetEmbedObject();
-  ASSERT(pGlobal != NULL);
-
-  pGlobal->Initial(pContext->GetReaderApp());
-
-  return TRUE;
-};
+void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
+  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
+  JSGlobalAlternate* pGlobal =
+      static_cast<JSGlobalAlternate*>(GetEmbedObject());
+  pGlobal->Initial(pRuntime->GetReaderApp());
+}
 
 JSGlobalAlternate::JSGlobalAlternate(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_pApp(NULL) {

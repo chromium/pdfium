@@ -613,11 +613,11 @@ FX_BOOL CJS_EventHandler::Shift() {
 Field* CJS_EventHandler::Source() {
   CJS_Runtime* pRuntime = m_pJSContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), m_pJSContext, CJS_Document::g_nObjDefnID);
+      pRuntime->GetIsolate(), pRuntime, CJS_Document::g_nObjDefnID);
   ASSERT(!pDocObj.IsEmpty());
 
   v8::Local<v8::Object> pFieldObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), m_pJSContext, CJS_Field::g_nObjDefnID);
+      pRuntime->GetIsolate(), pRuntime, CJS_Field::g_nObjDefnID);
   ASSERT(!pFieldObj.IsEmpty());
 
   CJS_Document* pJSDocument =
@@ -636,11 +636,11 @@ Field* CJS_EventHandler::Source() {
 Field* CJS_EventHandler::Target_Field() {
   CJS_Runtime* pRuntime = m_pJSContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), m_pJSContext, CJS_Document::g_nObjDefnID);
+      pRuntime->GetIsolate(), pRuntime, CJS_Document::g_nObjDefnID);
   ASSERT(!pDocObj.IsEmpty());
 
   v8::Local<v8::Object> pFieldObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), m_pJSContext, CJS_Field::g_nObjDefnID);
+      pRuntime->GetIsolate(), pRuntime, CJS_Field::g_nObjDefnID);
   ASSERT(!pFieldObj.IsEmpty());
 
   CJS_Document* pJSDocument =

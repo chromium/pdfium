@@ -501,7 +501,7 @@ class CJS_Field : public CJS_Object {
   CJS_Field(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Field(void) override {}
 
-  FX_BOOL InitInstance(IJS_Context* cc) override;
+  void InitInstance(IJS_Runtime* pIRuntime) override;
 
   DECLARE_JS_CLASS();
   JS_STATIC_PROP(alignment, Field);

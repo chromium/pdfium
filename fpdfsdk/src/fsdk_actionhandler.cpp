@@ -148,18 +148,14 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(const CPDF_Action& action,
     if (pEnv->IsJSInitiated()) {
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
-        IJS_Runtime* pRuntime = pDocument->GetJsRuntime();  //????
-        ASSERT(pRuntime != NULL);
-
+        IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
         pRuntime->SetReaderDocument(pDocument);
 
         IJS_Context* pContext = pRuntime->NewContext();
-        ASSERT(pContext != NULL);
-
         pContext->OnLink_MouseUp(pDocument);
 
         CFX_WideString csInfo;
-        FX_BOOL bRet = pContext->RunScript(swJS, csInfo);
+        FX_BOOL bRet = pContext->RunScript(swJS, &csInfo);
         if (!bRet) {
           // FIXME: return error.
         }
@@ -292,65 +288,13 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-        ASSERT(pRuntime != NULL);
-
         pRuntime->SetReaderDocument(pDocument);
 
         IJS_Context* pContext = pRuntime->NewContext();
-        ASSERT(pContext != NULL);
-
-        // 			switch (type)
-        // 			{
-        // 			case CPDF_AAction::CursorEnter:
-        // 				pContext->OnScreen_MouseEnter(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			case CPDF_AAction::CursorExit:
-        // 				pContext->OnScreen_MouseExit(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			case CPDF_AAction::ButtonDown:
-        // 				pContext->OnScreen_MouseDown(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			case CPDF_AAction::ButtonUp:
-        // 				pContext->OnScreen_MouseUp(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			case CPDF_AAction::GetFocus:
-        // 				pContext->OnScreen_Focus(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			case CPDF_AAction::LoseFocus:
-        // 				pContext->OnScreen_Blur(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			case CPDF_AAction::PageOpen:
-        // 				pContext->OnScreen_Open(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			case CPDF_AAction::PageClose:
-        // 				pContext->OnScreen_Close(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			case CPDF_AAction::PageVisible:
-        // 				pContext->OnScreen_InView(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			case CPDF_AAction::PageInvisible:
-        // 				pContext->OnScreen_OutView(IsCTRLpressed(),
-        // IsSHIFTpressed(), pScreen);
-        // 				break;
-        // 			default:
-        // 				ASSERT(FALSE);
-        // 				break;
-        // 			}
-
         CFX_WideString csInfo;
-        FX_BOOL bRet = pContext->RunScript(swJS, csInfo);
+        FX_BOOL bRet = pContext->RunScript(swJS, &csInfo);
         if (!bRet) {
-          // CBCL_FormNotify::MsgBoxJSError(pPageView->GetPageViewWnd(),
-          // csInfo);
+          // FIXME: return error.
         }
 
         pRuntime->ReleaseContext(pContext);
@@ -388,20 +332,15 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteBookMark(const CPDF_Action& action,
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-        ASSERT(pRuntime != NULL);
-
         pRuntime->SetReaderDocument(pDocument);
 
         IJS_Context* pContext = pRuntime->NewContext();
-        ASSERT(pContext != NULL);
-
         pContext->OnBookmark_MouseUp(pBookmark);
 
         CFX_WideString csInfo;
-        FX_BOOL bRet = pContext->RunScript(swJS, csInfo);
+        FX_BOOL bRet = pContext->RunScript(swJS, &csInfo);
         if (!bRet) {
-          // CBCL_FormNotify::MsgBoxJSError(pPageView->GetPageViewWnd(),
-          // csInfo);
+          // FIXME: return error.
         }
 
         pRuntime->ReleaseContext(pContext);
@@ -601,9 +540,9 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(CPDFSDK_Document* pDocument,
   }
 
   CFX_WideString csInfo;
-  FX_BOOL bRet = pContext->RunScript(script, csInfo);
+  FX_BOOL bRet = pContext->RunScript(script, &csInfo);
   if (!bRet) {
-    // CBCL_FormNotify::MsgBoxJSError(pPageView->GetPageViewWnd(), csInfo);
+    // FIXME: return error.
   }
 
   pRuntime->ReleaseContext(pContext);
@@ -626,9 +565,9 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
   pContext->OnDoc_Open(pDocument, sScriptName);
 
   CFX_WideString csInfo;
-  FX_BOOL bRet = pContext->RunScript(script, csInfo);
+  FX_BOOL bRet = pContext->RunScript(script, &csInfo);
   if (!bRet) {
-    // CBCL_FormNotify::MsgBoxJSError(pPageView->GetPageViewWnd(), csInfo);
+    // FIXME: return error.
   }
 
   pRuntime->ReleaseContext(pContext);
@@ -682,9 +621,9 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
   }
 
   CFX_WideString csInfo;
-  FX_BOOL bRet = pContext->RunScript(script, csInfo);
+  FX_BOOL bRet = pContext->RunScript(script, &csInfo);
   if (!bRet) {
-    // CBCL_FormNotify::MsgBoxJSError(pPageView->GetPageViewWnd(), csInfo);
+    // FIXME: return error.
   }
 
   pRuntime->ReleaseContext(pContext);

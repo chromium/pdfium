@@ -123,7 +123,7 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
             (CJS_Document*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
     } else {
       v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-          pRuntime->GetIsolate(), pContext, CJS_Document::g_nObjDefnID);
+          pRuntime->GetIsolate(), pRuntime, CJS_Document::g_nObjDefnID);
       pJSDocument =
           (CJS_Document*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
       ASSERT(pJSDocument != NULL);
@@ -402,7 +402,7 @@ FX_BOOL app::setInterval(IJS_Context* cc,
   m_aTimer.Add(pTimer);
 
   v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pContext, CJS_TimerObj::g_nObjDefnID);
+      pRuntime->GetIsolate(), pRuntime, CJS_TimerObj::g_nObjDefnID);
   CJS_TimerObj* pJS_TimerObj =
       (CJS_TimerObj*)FXJS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
   TimerObj* pTimerObj = (TimerObj*)pJS_TimerObj->GetEmbedObject();
@@ -443,7 +443,7 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
   m_aTimer.Add(pTimer);
 
   v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pContext, CJS_TimerObj::g_nObjDefnID);
+      pRuntime->GetIsolate(), pRuntime, CJS_TimerObj::g_nObjDefnID);
   CJS_TimerObj* pJS_TimerObj =
       (CJS_TimerObj*)FXJS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
   TimerObj* pTimerObj = (TimerObj*)pJS_TimerObj->GetEmbedObject();
@@ -553,14 +553,11 @@ void app::TimerProc(CJS_Timer* pTimer) {
 }
 
 void app::RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript) {
-  ASSERT(pRuntime != NULL);
-
   if (!pRuntime->IsBlocking()) {
     IJS_Context* pContext = pRuntime->NewContext();
-    ASSERT(pContext != NULL);
     pContext->OnExternal_Exec();
     CFX_WideString wtInfo;
-    pContext->RunScript(wsScript, wtInfo);
+    pContext->RunScript(wsScript, &wtInfo);
     pRuntime->ReleaseContext(pContext);
   }
 }

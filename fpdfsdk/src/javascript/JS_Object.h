@@ -49,8 +49,8 @@ class CJS_Object {
   virtual FX_BOOL IsType(const FX_CHAR* sClassName) { return TRUE; }
   virtual CFX_ByteString GetClassName() { return ""; }
 
-  virtual FX_BOOL InitInstance(IJS_Context* cc) { return TRUE; }
-  virtual FX_BOOL ExitInstance() { return TRUE; }
+  virtual void InitInstance(IJS_Runtime* pIRuntime) {}
+  virtual void ExitInstance() {}
 
   v8::Local<v8::Object> ToV8Object() { return m_pV8Object.Get(m_pIsolate); }
 

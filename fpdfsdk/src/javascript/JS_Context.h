@@ -21,7 +21,7 @@ class CJS_Context : public IJS_Context {
 
   // IJS_Context
   FX_BOOL RunScript(const CFX_WideString& script,
-                    CFX_WideString& info) override;
+                    CFX_WideString* info) override;
   void OnApp_Init() override;
   void OnDoc_Open(CPDFSDK_Document* pDoc,
                   const CFX_WideString& strTargetName) override;
