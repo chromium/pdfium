@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_HTRDPROC_H_
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_HTRDPROC_H_
 
-#include "../../../core/include/fxcrt/fx_system.h"
+#include "../../../include/fxcrt/fx_system.h"
 
 #include "JBig2_Image.h"
 

@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_GRDPROC_H_
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_GRDPROC_H_
 
-#include "../../../core/include/fxcrt/fx_system.h"
+#include "../../../include/fxcrt/fx_system.h"
 #include "../../../include/fxcodec/fx_codec_def.h"
 #include "../../../include/fxcrt/fx_coordinates.h"
 
