@@ -568,33 +568,32 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     }
   }
 
-  nonstd::unique_ptr<JBig2ArithCtx, FxFreeDeleter> gbContext;
-  nonstd::unique_ptr<JBig2ArithCtx, FxFreeDeleter> grContext;
-  if ((wFlags & 0x0100) && pLRSeg && pLRSeg->m_Result.sd->m_bContextRetained) {
-    if (pSymbolDictDecoder->SDHUFF == 0) {
-      const size_t size = GetHuffContextSize(pSymbolDictDecoder->SDTEMPLATE);
-      gbContext.reset(FX_Alloc(JBig2ArithCtx, size));
-      JBIG2_memcpy(gbContext.get(), pLRSeg->m_Result.sd->m_gbContext,
-                   sizeof(JBig2ArithCtx) * size);
+  const bool bUseGbContext = (pSymbolDictDecoder->SDHUFF == 0);
+  const bool bUseGrContext = (pSymbolDictDecoder->SDREFAGG == 1);
+  const size_t gbContextSize =
+      GetHuffContextSize(pSymbolDictDecoder->SDTEMPLATE);
+  const size_t grContextSize =
+      GetRefAggContextSize(pSymbolDictDecoder->SDRTEMPLATE);
+  std::vector<JBig2ArithCtx> gbContext;
+  std::vector<JBig2ArithCtx> grContext;
+  if ((wFlags & 0x0100) && pLRSeg) {
+    if (bUseGbContext) {
+      gbContext = pLRSeg->m_Result.sd->GbContext();
+      if (gbContext.size() != gbContextSize)
+        return JBIG2_ERROR_FATAL;
     }
-    if (pSymbolDictDecoder->SDREFAGG == 1) {
-      const size_t size = GetRefAggContextSize(pSymbolDictDecoder->SDRTEMPLATE);
-      grContext.reset(FX_Alloc(JBig2ArithCtx, size));
-      JBIG2_memcpy(grContext.get(), pLRSeg->m_Result.sd->m_grContext,
-                   sizeof(JBig2ArithCtx) * size);
+    if (bUseGrContext) {
+      grContext = pLRSeg->m_Result.sd->GrContext();
+      if (grContext.size() != grContextSize)
+        return JBIG2_ERROR_FATAL;
     }
   } else {
-    if (pSymbolDictDecoder->SDHUFF == 0) {
-      const size_t size = GetHuffContextSize(pSymbolDictDecoder->SDTEMPLATE);
-      gbContext.reset(FX_Alloc(JBig2ArithCtx, size));
-      JBIG2_memset(gbContext.get(), 0, sizeof(JBig2ArithCtx) * size);
-    }
-    if (pSymbolDictDecoder->SDREFAGG == 1) {
-      const size_t size = GetRefAggContextSize(pSymbolDictDecoder->SDRTEMPLATE);
-      grContext.reset(FX_Alloc(JBig2ArithCtx, size));
-      JBIG2_memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
-    }
+    if (bUseGbContext)
+      gbContext.resize(gbContextSize);
+    if (bUseGrContext)
+      grContext.resize(grContextSize);
   }
+
   CJBig2_CacheKey key =
       CJBig2_CacheKey(pSegment->m_dwObjNum, pSegment->m_dwDataOffset);
   FX_BOOL cache_hit = false;
@@ -613,11 +612,11 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     }
   }
   if (!cache_hit) {
-    if (pSymbolDictDecoder->SDHUFF == 0) {
+    if (bUseGbContext) {
       nonstd::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
           new CJBig2_ArithDecoder(m_pStream.get()));
       pSegment->m_Result.sd = pSymbolDictDecoder->decode_Arith(
-          pArithDecoder.get(), gbContext.get(), grContext.get());
+          pArithDecoder.get(), &gbContext, &grContext);
       if (!pSegment->m_Result.sd)
         return JBIG2_ERROR_FATAL;
 
@@ -625,7 +624,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       m_pStream->offset(2);
     } else {
       pSegment->m_Result.sd = pSymbolDictDecoder->decode_Huffman(
-          m_pStream.get(), gbContext.get(), grContext.get(), pPause);
+          m_pStream.get(), &gbContext, &grContext, pPause);
       if (!pSegment->m_Result.sd)
         return JBIG2_ERROR_FATAL;
       m_pStream->alignByte();
@@ -633,23 +632,18 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     if (m_bIsGlobal && kSymbolDictCacheMaxSize > 0) {
       nonstd::unique_ptr<CJBig2_SymbolDict> value =
           pSegment->m_Result.sd->DeepCopy();
-      if (value) {
-        while (m_pSymbolDictCache->size() >= kSymbolDictCacheMaxSize) {
-          delete m_pSymbolDictCache->back().second;
-          m_pSymbolDictCache->pop_back();
-        }
-        m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
+      while (m_pSymbolDictCache->size() >= kSymbolDictCacheMaxSize) {
+        delete m_pSymbolDictCache->back().second;
+        m_pSymbolDictCache->pop_back();
       }
+      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
     }
   }
   if (wFlags & 0x0200) {
-    pSegment->m_Result.sd->m_bContextRetained = TRUE;
-    if (pSymbolDictDecoder->SDHUFF == 0) {
-      pSegment->m_Result.sd->m_gbContext = gbContext.release();
-    }
-    if (pSymbolDictDecoder->SDREFAGG == 1) {
-      pSegment->m_Result.sd->m_grContext = grContext.release();
-    }
+    if (bUseGbContext)
+      pSegment->m_Result.sd->SetGbContext(gbContext);
+    if (bUseGrContext)
+      pSegment->m_Result.sd->SetGrContext(grContext);
   }
   return JBIG2_SUCCESS;
 }
