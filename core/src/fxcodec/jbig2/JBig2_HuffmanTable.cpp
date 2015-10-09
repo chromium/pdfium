@@ -146,11 +146,8 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream* pStream) {
   }
   CODES = FX_Alloc(int, NTEMP);
   int LENMAX = 0;
-  for (FX_DWORD i = 0; i < NTEMP; ++i) {
-    if (PREFLEN[i] > LENMAX) {
-      LENMAX = PREFLEN[i];
-    }
-  }
+  for (FX_DWORD i = 0; i < NTEMP; ++i)
+    LENMAX = std::max(PREFLEN[i], LENMAX);
 
   std::vector<int> LENCOUNT(LENMAX + 1);
   for (FX_DWORD i = 0; i < NTEMP; ++i)
@@ -159,7 +156,7 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream* pStream) {
 
   std::vector<int> FIRSTCODE(LENMAX + 1);
   FIRSTCODE[0] = 0;
-  for (int i = 0; i <= LENMAX; ++i) {
+  for (int i = 1; i <= LENMAX; ++i) {
     FIRSTCODE[i] = (FIRSTCODE[i - 1] + LENCOUNT[i - 1]) << 1;
     int CURCODE = FIRSTCODE[i];
     for (FX_DWORD j = 0; j < NTEMP; ++j) {
