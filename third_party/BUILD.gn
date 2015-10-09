@@ -300,6 +300,7 @@ source_set("pdfium_base") {
     "base/numerics/safe_conversions_impl.h",
     "base/numerics/safe_math.h",
     "base/numerics/safe_math_impl.h",
+    "base/stl_util.h",
     "base/template_util.h",
   ]
 }

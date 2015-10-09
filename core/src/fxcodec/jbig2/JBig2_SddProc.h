@@ -7,25 +7,26 @@
 #ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_SDDPROC_H_
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_SDDPROC_H_
 
-#include "../../../include/fxcrt/fx_system.h"
+#include <vector>
 
-class CJBig2_ArithDecoder;
+#include "../../../include/fxcrt/fx_system.h"
+#include "JBig2_ArithDecoder.h"
+
 class CJBig2_BitStream;
 class CJBig2_HuffmanTable;
 class CJBig2_Image;
 class CJBig2_SymbolDict;
 class IFX_Pause;
-struct JBig2ArithCtx;
 
 class CJBig2_SDDProc {
  public:
   CJBig2_SymbolDict* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
-                                  JBig2ArithCtx* gbContext,
-                                  JBig2ArithCtx* grContext);
+                                  std::vector<JBig2ArithCtx>* gbContext,
+                                  std::vector<JBig2ArithCtx>* grContext);
 
   CJBig2_SymbolDict* decode_Huffman(CJBig2_BitStream* pStream,
-                                    JBig2ArithCtx* gbContext,
-                                    JBig2ArithCtx* grContext,
+                                    std::vector<JBig2ArithCtx>* gbContext,
+                                    std::vector<JBig2ArithCtx>* grContext,
                                     IFX_Pause* pPause);
 
  public:
