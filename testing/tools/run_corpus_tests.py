@@ -3,6 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import cStringIO
+import functools
+import multiprocessing
 import optparse
 import os
 import re
@@ -21,7 +24,7 @@ import suppressor
 #   c_dir - "path/to/a/b/c"
 
 def test_one_file(input_filename, source_dir, working_dir,
-                  pdfium_test_path, image_differ):
+                  pdfium_test_path, image_differ, redirect_output=False):
   input_path = os.path.join(source_dir, input_filename)
   pdf_path = os.path.join(working_dir, input_filename)
 
@@ -32,22 +35,50 @@ def test_one_file(input_filename, source_dir, working_dir,
     if os.path.exists(image):
       os.remove(image)
 
-  try:
-    shutil.copyfile(input_path, pdf_path)
-    sys.stdout.flush()
-    subprocess.check_call([pdfium_test_path, '--png', pdf_path])
-  except subprocess.CalledProcessError as e:
-    print "FAILURE: " + input_filename + "; " + str(e)
+  shutil.copyfile(input_path, pdf_path)
+  sys.stdout.flush()
+  error = common.RunCommand([pdfium_test_path, '--png', pdf_path],
+                            redirect_output)
+  if error:
+    print "FAILURE: " + input_filename + "; " + str(error)
     return False
-  if image_differ.HasDifferences(input_filename, source_dir, working_dir):
-    return False
-  return True
+  return not image_differ.HasDifferences(input_filename, source_dir,
+                                         working_dir, redirect_output)
+
+
+def test_one_file_parallel(working_dir, pdfium_test_path, image_differ,
+                           test_case):
+  """Wrapper function to call test_one_file() and redirect output to stdout."""
+  old_stdout = sys.stdout
+  old_stderr = sys.stderr
+  sys.stdout = cStringIO.StringIO()
+  sys.stderr = sys.stdout
+  input_filename, source_dir = test_case
+  result = test_one_file(input_filename, source_dir, working_dir,
+                         pdfium_test_path, image_differ, True);
+  output = sys.stdout
+  sys.stdout = old_stdout
+  sys.stderr = old_stderr
+  return (result, output.getvalue(), input_filename, source_dir)
+
+
+def handle_result(test_suppressor, input_filename, input_path, result,
+                  surprises, failures):
+  if test_suppressor.IsSuppressed(input_filename):
+    if result:
+      surprises.append(input_path)
+  else:
+    if not result:
+      failures.append(input_path)
 
 
 def main():
   parser = optparse.OptionParser()
   parser.add_option('--build-dir', default=os.path.join('out', 'Debug'),
                     help='relative path from the base source directory')
+  parser.add_option('-j', default=multiprocessing.cpu_count(),
+                    dest='num_workers', type='int',
+                    help='run NUM_WORKERS jobs in parallel')
   options, args = parser.parse_args()
   finder = common.DirectoryFinder(options.build_dir)
   pdfium_test_path = finder.ExecutablePath('pdfium_test')
@@ -67,19 +98,32 @@ def main():
   surprises = []
   walk_from_dir = finder.TestingDir('corpus');
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]pdf$')
+  test_cases = []
   for source_dir, _, filename_list in os.walk(walk_from_dir):
     for input_filename in filename_list:
       if input_file_re.match(input_filename):
-         input_path = os.path.join(source_dir, input_filename)
-         if os.path.isfile(input_path):
-           result = test_one_file(input_filename, source_dir, working_dir,
-                                  pdfium_test_path, image_differ)
-           if test_suppressor.IsSuppressed(input_filename):
-             if result:
-               surprises.append(input_path)
-           else:
-             if not result:
-               failures.append(input_path)
+        input_path = os.path.join(source_dir, input_filename)
+        if os.path.isfile(input_path):
+          test_cases.append((input_filename, source_dir))
+
+  if options.num_workers > 1:
+    pool = multiprocessing.Pool(options.num_workers)
+    worker_func = functools.partial(test_one_file_parallel, working_dir,
+                                    pdfium_test_path, image_differ)
+    worker_results = pool.imap(worker_func, test_cases)
+    for worker_result in worker_results:
+      result, output, input_filename, source_dir = worker_result
+      input_path = os.path.join(source_dir, input_filename)
+      sys.stdout.write(output)
+      handle_result(test_suppressor, input_filename, input_path, result,
+                    surprises, failures)
+  else:
+    for test_case in test_cases:
+      input_filename, source_dir = test_case
+      result = test_one_file(input_filename, source_dir, working_dir,
+                             pdfium_test_path, image_differ)
+      handle_result(test_suppressor, input_filename, input_path, result,
+                    surprises, failures)
 
   if surprises:
     surprises.sort()
