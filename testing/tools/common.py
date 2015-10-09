@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 import os
+import subprocess
 import sys
 
 def os_name():
@@ -14,6 +15,17 @@ def os_name():
   if sys.platform.startswith('darwin'):
     return 'mac'
   raise Exception('Confused, can not determine OS, aborting.')
+
+
+def RunCommand(cmd, redirect_output=False):
+  try:
+    if redirect_output:
+      sys.stdout.write(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
+    else:
+      subprocess.check_call(cmd)
+    return None
+  except subprocess.CalledProcessError as e:
+    return e
 
 
 class DirectoryFinder:
