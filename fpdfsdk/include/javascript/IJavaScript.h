@@ -133,6 +133,7 @@ class IJS_Context {
 
 class IJS_Runtime {
  public:
+  static void Initialize(unsigned int slot, void* isolate);
   static IJS_Runtime* Create(CPDFDoc_Environment* pEnv);
   virtual ~IJS_Runtime() {}
 

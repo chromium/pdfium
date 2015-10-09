@@ -3,6 +3,9 @@
 # found in the LICENSE file.
 
 {
+  'variables': {
+    'pdf_enable_v8%': 1,
+  },
   'target_defaults': {
     'defines' : [
       'PNG_PREFIX',
@@ -11,8 +14,17 @@
     ],
     'include_dirs': [
       '<(DEPTH)',
-      '<(DEPTH)/v8',
-      '<(DEPTH)/v8/include',
+    ],
+    'conditions': [
+      ['pdf_enable_v8==1', {
+        'defines': [
+          'PDF_ENABLE_V8',
+        ],
+        'include_dirs': [
+          '<(DEPTH)/v8',
+          '<(DEPTH)/v8/include',
+        ],
+      }],
     ],
   },
   'targets': [
@@ -26,7 +38,6 @@
         # always link this binary against the bundled one for consistency
         # of results across platforms.
         '../third_party/third_party.gyp:fx_freetype',
-        '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
       ],
       'sources': [
         'pdfium_test.cc',
@@ -37,6 +48,13 @@
           '-lfreetype',
         ],
       },
+      'conditions': [
+        ['pdf_enable_v8==1', {
+          'dependencies': [
+            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
+          ],
+        }],
+      ],
     },
     {
       'target_name': 'pdfium_diff',

@@ -19,8 +19,10 @@
 #include "../public/fpdf_text.h"
 #include "../public/fpdfview.h"
 #include "image_diff_png.h"
+#ifdef PDF_ENABLE_V8
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
+#endif
 
 #ifdef _WIN32
 #define snprintf _snprintf
@@ -79,6 +81,7 @@ static char* GetFileContents(const char* filename, size_t* retlen) {
   return buffer;
 }
 
+#ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
 // Returns the full path for an external V8 data file based on either
 // the currect exectuable path or an explicit override.
@@ -116,6 +119,7 @@ static bool GetExternalData(const Options& options,
   return true;
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
+#endif  // PDF_ENABLE_V8
 
 static bool CheckDimensions(int stride, int width, int height) {
   if (stride < 0 || width < 0 || height < 0)
@@ -373,6 +377,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->output_format = OUTPUT_BMP;
     }
 #endif  // _WIN32
+#ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
     else if (cur_arg.size() > 10 && cur_arg.compare(0, 10, "--bin-dir=") == 0) {
       if (!options->bin_directory.empty()) {
@@ -382,6 +387,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->bin_directory = cur_arg.substr(10);
     }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
+#endif  // PDF_ENABLE_V8
     else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--scale=") == 0) {
       if (!options->scale_factor_as_string.empty()) {
         fprintf(stderr, "Duplicate --scale argument\n");
@@ -595,6 +601,7 @@ int main(int argc, const char* argv[]) {
     return 1;
   }
 
+#ifdef PDF_ENABLE_V8
   v8::V8::InitializeICU();
   v8::Platform* platform = v8::platform::CreateDefaultPlatform();
   v8::V8::InitializePlatform(platform);
@@ -615,6 +622,7 @@ int main(int argc, const char* argv[]) {
   v8::V8::SetNativesDataBlob(&natives);
   v8::V8::SetSnapshotDataBlob(&snapshot);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
+#endif  // PDF_ENABLE_V8
 
   FPDF_LIBRARY_CONFIG config;
   config.version = 2;
@@ -649,8 +657,10 @@ int main(int argc, const char* argv[]) {
   }
 
   FPDF_DestroyLibrary();
+#ifdef PDF_ENABLE_V8
   v8::V8::ShutdownPlatform();
   delete platform;
+#endif  // PDF_ENABLE_V8
 
   return 0;
 }

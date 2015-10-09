@@ -27,7 +27,10 @@
 #include "report.h"
 #include "util.h"
 
-/* ------------------------------ CJS_Runtime ------------------------------ */
+// static
+void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {
+  FXJS_Initialize(slot, reinterpret_cast<v8::Isolate*>(isolate));
+}
 
 // static
 IJS_Runtime* IJS_Runtime::Create(CPDFDoc_Environment* pEnv) {

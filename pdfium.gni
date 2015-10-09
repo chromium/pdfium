@@ -1,0 +1,17 @@
+# Copyright 2015 PDFium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This file contains PDFium-related build flags.
+
+declare_args() {
+  # On Android there's no system FreeType. On Windows and Mac, only a few
+  # methods are used from it.
+  pdfium_bundle_freetype = !is_linux
+
+  # Build PDFium either with or without v8 support.
+  pdf_enable_v8 = true
+
+  # Build PDFium against skia (experimental) rather than agg.
+  pdf_use_skia = false
+}

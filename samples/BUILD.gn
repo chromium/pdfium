@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("../pdfium.gni")
+
 group("samples") {
   deps = [
     ":pdfium_test",
@@ -15,6 +17,11 @@ config("pdfium_samples_config") {
     "PNGPREFIX_H",
     "PNG_USE_READ_MACROS",
   ]
+  if (pdf_enable_v8) {
+    defines += [
+      "PDF_ENABLE_V8",
+    ]
+  }
 }
 
 executable("pdfium_test") {
@@ -28,13 +35,17 @@ executable("pdfium_test") {
     # always link this binary against the bundled one for consistency
     # of results across platforms.
     "//third_party/pdfium/third_party:fx_freetype",
-    "//v8:v8_libplatform",
     ":fx_lpng",
   ]
-  include_dirs = [
-    "//v8",
-    "//v8/include",
-  ]
+  if (pdf_enable_v8) {
+    deps += [
+      "//v8:v8_libplatform",
+    ]
+    include_dirs = [
+      "//v8",
+      "//v8/include",
+    ]
+  }
   configs += [ ":pdfium_samples_config" ]
 }
 

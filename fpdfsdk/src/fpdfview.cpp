@@ -14,7 +14,7 @@
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_mgr.h"
 #include "../include/fsdk_rendercontext.h"
-#include "../include/jsapi/fxjs_v8.h"
+#include "../include/javascript/IJavaScript.h"
 
 CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess) {
   if (pFileAccess)
@@ -110,10 +110,8 @@ DLLEXPORT void STDCALL FPDF_InitLibraryWithConfig(
     pModuleMgr->LoadEmbeddedCNS1CMaps();
     pModuleMgr->LoadEmbeddedKorea1CMaps();
   }
-  if (cfg && cfg->version >= 2) {
-    FXJS_Initialize(cfg->m_v8EmbedderSlot,
-                    reinterpret_cast<v8::Isolate*>(cfg->m_pIsolate));
-  }
+  if (cfg && cfg->version >= 2)
+    IJS_Runtime::Initialize(cfg->m_v8EmbedderSlot, cfg->m_pIsolate);
 }
 
 DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
