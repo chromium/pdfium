@@ -85,11 +85,11 @@ int TIFFReInitJPEG_12( TIFF *tif, int scheme, int is_encode );
 #endif
 
 #ifndef _FX_JPEG_TURBO_
-	#include "../../libjpeg/jpeglib.h"
-	#include "../../libjpeg/jerror.h"
+	#include "../libjpeg/jpeglib.h"
+	#include "../libjpeg/jerror.h"
 #else
-	#include "../../libjpeg-turbo/jpeglib.h"
-	#include "../../libjpeg-turbo/jerror.h"
+	#include "../libjpeg-turbo/jpeglib.h"
+	#include "../libjpeg-turbo/jerror.h"
 #endif//_FX_JPEG_TURBO_
 
 /* 

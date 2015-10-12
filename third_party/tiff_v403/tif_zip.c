@@ -46,7 +46,7 @@
  * last found at ftp://ftp.uu.net/pub/archiving/zip/zlib/zlib-0.99.tar.gz.
  */
 #include "tif_predict.h"
-#include "../../../../../third_party/zlib_v128/zlib.h"
+#include "../zlib_v128/zlib.h"
 
 #include <stdio.h>
 

@@ -216,11 +216,11 @@ static const TIFFField ojpegFields[] = {
 #endif
 
 #ifndef _FX_JPEG_TURBO_
-	#include "../../libjpeg/jpeglib.h"
-	#include "../../libjpeg/jerror.h"
+	#include "../libjpeg/jpeglib.h"
+	#include "../libjpeg/jerror.h"
 #else
-	#include "../../libjpeg-turbo/jpeglib.h"
-	#include "../../libjpeg-turbo/jerror.h"
+	#include "../libjpeg-turbo/jpeglib.h"
+	#include "../libjpeg-turbo/jerror.h"
 #endif//_FX_JPEG_TURBO_
 
 typedef struct jpeg_error_mgr jpeg_error_mgr;

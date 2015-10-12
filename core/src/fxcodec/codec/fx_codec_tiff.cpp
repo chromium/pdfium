@@ -8,7 +8,7 @@
 #include "../../../include/fxge/fx_dib.h"
 #include "codec_int.h"
 extern "C" {
-#include "../fx_tiff/include/fx_tiffiop.h"
+#include "../../../../third_party/tiff_v403/tiffiop.h"
 }
 void* IccLib_CreateTransform_sRGB(const unsigned char* pProfileData,
                                   unsigned int dwProfileSize,

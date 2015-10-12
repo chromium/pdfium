@@ -9,7 +9,7 @@
 #include "codec_int.h"
 extern "C" {
 #undef FAR
-#include "../fx_lpng/include/fx_png.h"
+#include "../../../../third_party/lpng_v163/png.h"
 }
 static void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
   if (png_get_error_ptr(png_ptr)) {

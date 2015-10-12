@@ -89,7 +89,7 @@
  */
 
 #include "tif_predict.h"
-#include "../../../../../third_party/zlib_v128/zlib.h"
+#include "../zlib_v128/zlib.h"
 
 #include <stdio.h>
 #include <stdlib.h>
