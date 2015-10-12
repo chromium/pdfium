@@ -3,6 +3,7 @@
 /build/gyp
 /buildtools
 /out
+/testing/corpus
 /testing/gmock
 /testing/gtest
 /v8
