@@ -498,7 +498,7 @@ TEST(fxcodec, YUV420ToRGB) {
   img.color_space = OPJ_CLRSPC_SYCC;
   img.comps = FX_Alloc(opj_image_comp_t, 3);
   const struct {
-    int w;
+    OPJ_UINT32 w;
     bool expected;
   } cases[] = {{0, false},
                {1, false},
