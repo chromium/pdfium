@@ -694,6 +694,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   if (pPage == NULL)
     return;
 
+#ifdef PDF_ENABLE_XFA
   if (pPage->GetDocument()->GetDocType() == DOCTYPE_DYNIMIC_XFA) {
     CFX_Graphics gs;
     gs.Create(pDevice);
@@ -717,6 +718,8 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
     pRenderContext->Release();
     return;
   }
+#endif  // PDF_ENABLE_XFA
+
   // for pdf/static xfa.
   CPDFSDK_AnnotIterator annotIterator(this, TRUE);
   CPDFSDK_Annot* pSDKAnnot = NULL;

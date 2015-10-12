@@ -1,4 +1,9 @@
 {
+  "target_defaults": {
+    "defines": [
+      "PDF_ENABLE_XFA",
+    ],
+  },
   "targets":[
     {
       "target_name":"xfa",

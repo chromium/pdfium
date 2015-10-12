@@ -3,14 +3,7 @@
 # found in the LICENSE file.
 
 import("//testing/test.gni")
-
-pdf_use_skia = false
-
-declare_args() {
-  # On Android there's no system FreeType. On Windows and Mac, only a few
-  # methods are used from it.
-  pdfium_bundle_freetype = !is_linux
-}
+import("pdfium.gni")
 
 config("pdfium_config") {
   cflags = []
@@ -26,6 +19,10 @@ config("pdfium_config") {
 
   if (pdf_use_skia) {
     defines += [ "_SKIA_SUPPORT_" ]
+  }
+
+  if (pdf_enable_xfa) {
+    defines += [ "PDF_ENABLE_XFA" ]
   }
 
   if (is_linux) {
@@ -114,8 +111,11 @@ static_library("pdfium") {
     ":javascript",
     ":jsapi",
     ":pdfwindow",
-    ":xfa",
   ]
+
+  if (pdf_enable_xfa) {
+    deps += [ ":xfa" ]
+  }
 
   if (is_win) {
     libs += [ "advapi32.lib", "gdi32.lib", "user32.lib" ]

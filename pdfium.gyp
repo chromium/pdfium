@@ -1,6 +1,7 @@
 {
   'variables': {
     'pdf_use_skia%': 0,
+    'pdf_enable_xfa%': 1,
     'conditions': [
       ['OS=="linux"', {
         'bundle_freetype%': 0,
@@ -25,6 +26,9 @@
     'conditions': [
       ['pdf_use_skia==1', {
         'defines': ['_SKIA_SUPPORT_'],
+      }],
+      ['pdf_enable_xfa==1', {
+        'defines': ['PDF_ENABLE_XFA'],
       }],
       ['OS=="linux"', {
         'conditions': [
@@ -625,9 +629,8 @@
     {
       'target_name': 'fpdfxfa',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'dependencies': [
-        'xfa.gyp:xfa',
+        'javascript'
       ],
       'sources': [
         'fpdfsdk/src/fpdfxfa/fpdfxfa_app.cpp',
@@ -638,6 +641,14 @@
         'fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h',
         'fpdfsdk/include/fpdfxfa/fpdfxfa_page.h',
         'fpdfsdk/include/fpdfxfa/fpdfxfa_util.h',
+      ],
+      'ldflags': [ '-L<(PRODUCT_DIR)',],
+      'conditions': [
+        [ "pdf_enable_xfa==1", {
+          'dependencies': [
+            'xfa.gyp:xfa',
+          ],
+        }],
       ],
     },
     {
@@ -768,8 +779,14 @@
         'testing/fx_string_testhelpers.h',
         'testing/fx_string_testhelpers.cpp',
         'third_party/base/nonstd_unique_ptr_unittest.cpp',
-        'xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
-        'xfa/src/fxfa/src/parser/xfa_utils_imp_unittest.cpp',
+      ],
+      'conditions': [
+        ['pdf_enable_xfa==1', {
+          'sources': [
+            'xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
+            'xfa/src/fxfa/src/parser/xfa_utils_imp_unittest.cpp',
+          ],
+        }],
       ],
     },
     {

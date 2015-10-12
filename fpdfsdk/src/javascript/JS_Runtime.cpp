@@ -222,6 +222,7 @@ CFX_WideString ChangeObjName(const CFX_WideString& str) {
 }
 FX_BOOL CJS_Runtime::GetHValueByName(const CFX_ByteStringC& utf8Name,
                                      FXJSE_HVALUE hValue) {
+#ifdef PDF_ENABLE_XFA
   const FX_CHAR* name = utf8Name.GetCStr();
 
   v8::Locker lock(GetIsolate());
@@ -242,11 +243,13 @@ FX_BOOL CJS_Runtime::GetHValueByName(const CFX_ByteStringC& utf8Name,
     return FALSE;
   }
   ((CFXJSE_Value*)hValue)->ForceSetValue(propvalue);
+#endif
 
   return TRUE;
 }
 FX_BOOL CJS_Runtime::SetHValueByName(const CFX_ByteStringC& utf8Name,
                                      FXJSE_HVALUE hValue) {
+#ifdef PDF_ENABLE_XFA
   if (utf8Name.IsEmpty() || hValue == NULL)
     return FALSE;
   const FX_CHAR* name = utf8Name.GetCStr();
@@ -266,7 +269,7 @@ FX_BOOL CJS_Runtime::SetHValueByName(const CFX_ByteStringC& utf8Name,
       v8::String::NewFromUtf8(pIsolate, name, v8::String::kNormalString,
                               utf8Name.GetLength()),
       propvalue);
-
+#endif
   return TRUE;
 }
 

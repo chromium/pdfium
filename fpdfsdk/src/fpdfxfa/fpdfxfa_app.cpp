@@ -43,14 +43,17 @@ CPDFXFA_App::~CPDFXFA_App() {
   delete m_pXFAApp;
   m_pXFAApp = NULL;
 
+#ifdef PDF_ENABLE_XFA
   FXJSE_Runtime_Release(m_hJSERuntime);
   m_hJSERuntime = NULL;
 
   FXJSE_Finalize();
   BC_Library_Destory();
+#endif
 }
 
 FX_BOOL CPDFXFA_App::Initialize() {
+#ifdef PDF_ENABLE_XFA
   BC_Library_Init();
   FXJSE_Initialize();
 
@@ -67,6 +70,7 @@ FX_BOOL CPDFXFA_App::Initialize() {
     return FALSE;
 
   m_pXFAApp->SetDefaultFontMgr(m_pFontMgr);
+#endif
   return TRUE;
 }
 

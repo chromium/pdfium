@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("../pdfium.gni")
+
 group("samples") {
   deps = [
     ":pdfium_test",
@@ -14,6 +16,9 @@ config("pdfium_samples_config") {
     "PNGPREFIX_H",
     "PNG_USE_READ_MACROS",
   ]
+  if (pdf_enable_xfa) {
+    defines += [ "PDF_ENABLE_XFA" ]
+  }
 }
 
 executable("pdfium_test") {

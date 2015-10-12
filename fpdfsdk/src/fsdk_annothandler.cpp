@@ -765,6 +765,8 @@ void CPDFSDK_XFAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                      CFX_RenderDevice* pDevice,
                                      CPDF_Matrix* pUser2Device,
                                      FX_DWORD dwFlags) {
+#ifdef PDF_ENABLE_XFA
+
   ASSERT(pPageView != NULL);
   ASSERT(pAnnot != NULL);
 
@@ -790,6 +792,7 @@ void CPDFSDK_XFAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
   pWidgetHandler->RenderWidget(pAnnot->GetXFAWidget(), &gs, &mt, bIsHighlight);
 
   // to do highlight and shadow
+#endif  // PDF_ENABLE_XFA
 }
 
 void CPDFSDK_XFAAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
@@ -811,13 +814,15 @@ CPDF_Rect CPDFSDK_XFAAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
   IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   ASSERT(pWidgetHandler != NULL);
 
+  CFX_RectF rcBBox;
+#ifdef PDF_ENABLE_XFA
   XFA_ELEMENT eType =
       pWidgetHandler->GetDataAcc(pAnnot->GetXFAWidget())->GetUIType();
-  CFX_RectF rcBBox;
   if (eType == XFA_ELEMENT_Signature)
     pWidgetHandler->GetBBox(pAnnot->GetXFAWidget(), rcBBox,
                             XFA_WIDGETSTATUS_Visible, TRUE);
   else
+#endif
     pWidgetHandler->GetBBox(pAnnot->GetXFAWidget(), rcBBox, 0);
 
   CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,

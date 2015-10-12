@@ -338,7 +338,10 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(IXFA_Widget* hWidget,
   CXFA_WidgetAcc* pWidgetAcc =
       m_pXFADocView->GetWidgetHandler()->GetDataAcc(hWidget);
 
-  int nRotate = pWidgetAcc->GetRotate();
+  int nRotate = 0;
+#ifdef PDF_ENABLE_XFA
+  nRotate = pWidgetAcc->GetRotate();
+#endif
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (pEnv == NULL)
@@ -894,6 +897,7 @@ FX_BOOL CPDFXFA_Document::_NotifySubmit(FX_BOOL bPrevOrPost) {
 }
 
 FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
+#ifdef PDF_ENABLE_XFA
   if (m_iDocType != DOCTYPE_DYNIMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
     return TRUE;
   if (m_pXFADocView == NULL)
@@ -939,7 +943,7 @@ FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
     pWidgetAccIterator->Release();
     m_pXFADocView->UpdateDocView();
   }
-
+#endif
   return TRUE;
 }
 void CPDFXFA_Document::_OnAfterNotifySumbit() {
@@ -1190,6 +1194,7 @@ FX_BOOL CPDFXFA_Document::_MailToInfo(CFX_WideString& csURL,
 }
 
 FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
+#ifdef PDF_ENABLE_XFA
   CFX_WideStringC csURLC;
   submit.GetSubmitTarget(csURLC);
   CFX_WideString csURL = csURLC;
@@ -1290,6 +1295,9 @@ FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
   }
 
   return bRet;
+#else
+  return TRUE;
+#endif
 }
 
 FX_BOOL CPDFXFA_Document::SetGlobalProperty(IXFA_Doc* hDoc,

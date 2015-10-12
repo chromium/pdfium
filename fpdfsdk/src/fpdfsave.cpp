@@ -60,6 +60,7 @@ void CFX_IFileWrite::Release() {
 
 FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
                              CFX_PtrArray& fileList) {
+#ifdef PDF_ENABLE_XFA
   if (!pDocument)
     return FALSE;
   if (pDocument->GetDocType() != DOCTYPE_DYNIMIC_XFA &&
@@ -228,6 +229,8 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
     }
   }
   pContext->Release();
+#endif  // PDF_ENABLE_XFA
+
   return TRUE;
 }
 
