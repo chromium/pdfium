@@ -319,6 +319,8 @@ struct DecodeData {
   OPJ_SIZE_T offset;
 };
 
+void sycc420_to_rgb(opj_image_t* img);
+
 /* Wrappers for C-style callbacks. */
 OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
                                 OPJ_SIZE_T nb_bytes,
