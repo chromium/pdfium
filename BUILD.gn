@@ -9,7 +9,7 @@ pdf_use_skia = false
 declare_args() {
   # On Android there's no system FreeType. On Windows and Mac, only a few
   # methods are used from it.
-  bundle_freetype = !is_linux
+  pdfium_bundle_freetype = !is_linux
 }
 
 config("pdfium_config") {
@@ -125,8 +125,8 @@ static_library("pdfium") {
     libs += [ "AppKit.framework", "CoreFoundation.framework" ]
   }
 
-  if (bundle_freetype) {
-    deps += [ "third_party:freetype" ]
+  if (pdfium_bundle_freetype) {
+    deps += [ "third_party:fx_freetype" ]
   } else {
     libs += [ "freetype" ]
   }

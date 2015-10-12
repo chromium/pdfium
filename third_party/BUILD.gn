@@ -5,7 +5,7 @@
 group("third_party") {
   deps = [
     ":bigint",
-    ":freetype",
+    ":fx_freetype",
     ":pdfium_base",
   ]
 }
@@ -30,7 +30,7 @@ static_library("bigint") {
   ]
 }
 
-source_set("freetype") {
+source_set("fx_freetype") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
