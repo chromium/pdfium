@@ -9,9 +9,13 @@ declare_args() {
   # methods are used from it.
   pdfium_bundle_freetype = !is_linux
 
+  # Build PDFium either with or without v8 support.
+  pdf_enable_v8 = true
+
   # Build PDFium either with or without XFA Forms support.
   pdf_enable_xfa = true
 
   # Build PDFium against skia (experimental) rather than agg.
   pdf_use_skia = false
 }
+

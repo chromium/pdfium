@@ -9,7 +9,6 @@
 #include "../../include/fsdk_mgr.h"
 #include "../../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../../include/fpdfxfa/fpdfxfa_util.h"
-#include "../../include/jsapi/fxjs_v8.h"
 #include "../../include/javascript/IJavaScript.h"
 #include "../../include/fpdfxfa/fpdfxfa_app.h"
 

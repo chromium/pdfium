@@ -14,7 +14,10 @@
 #include "../public/fpdfview.h"
 #include "../third_party/base/nonstd_unique_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+#ifdef PDF_ENABLE_V8
 #include "v8/include/v8.h"
+#endif  // PDF_ENABLE_v8
 
 class TestLoader;
 
@@ -61,8 +64,12 @@ class EmbedderTest : public ::testing::Test,
   void SetUp() override;
   void TearDown() override;
 
+#ifdef PDF_ENABLE_V8
   // Call before SetUp to pass shared isolate, otherwise PDFium creates one.
-  void SetExternalIsolate(v8::Isolate* isolate) { external_isolate_ = isolate; }
+  void SetExternalIsolate(void* isolate) {
+    external_isolate_ = static_cast<v8::Isolate*>(isolate);
+  }
+#endif  // PDF_ENABLE_V8
 
   void SetDelegate(Delegate* delegate) {
     delegate_ = delegate ? delegate : default_delegate_.get();
@@ -105,10 +112,12 @@ class EmbedderTest : public ::testing::Test,
   FX_DOWNLOADHINTS hints_;
   FPDF_FILEACCESS file_access_;
   FX_FILEAVAIL file_avail_;
+#ifdef PDF_ENABLE_V8
   v8::Platform* platform_;
   v8::StartupData natives_;
   v8::StartupData snapshot_;
-  v8::Isolate* external_isolate_;
+#endif  // PDF_ENABLE_V8
+  void* external_isolate_;
   TestLoader* loader_;
   size_t file_length_;
   char* file_contents_;

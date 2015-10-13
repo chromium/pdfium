@@ -17,8 +17,11 @@
 #include "../public/fpdf_text.h"
 #include "../public/fpdfview.h"
 #include "testing/gmock/include/gmock/gmock.h"
+
+#ifdef PDF_ENABLE_V8
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
+#endif  // PDF_ENABLE_V8
 
 #ifdef _WIN32
 #define snprintf _snprintf
@@ -59,6 +62,7 @@ static char* GetFileContents(const char* filename, size_t* retlen) {
   return buffer;
 }
 
+#ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
 // Returns the full path for an external V8 data file based on either
 // the currect exectuable path or an explicit override.
@@ -91,7 +95,7 @@ static bool GetExternalData(const std::string& exe_path,
   return true;
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
-
+#endif  // PDF_ENABLE_V8
 }  // namespace
 
 class TestLoader {
@@ -141,6 +145,7 @@ EmbedderTest::~EmbedderTest() {
 }
 
 void EmbedderTest::SetUp() {
+#ifdef PDF_ENABLE_V8
   v8::V8::InitializeICU();
 
   platform_ = v8::platform::CreateDefaultPlatform();
@@ -158,12 +163,13 @@ void EmbedderTest::SetUp() {
   v8::V8::SetNativesDataBlob(&natives_);
   v8::V8::SetSnapshotDataBlob(&snapshot_);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
+#endif  // FPDF_ENABLE_V8
 
   FPDF_LIBRARY_CONFIG config;
   config.version = 2;
   config.m_pUserFontPaths = nullptr;
-  config.m_pIsolate = external_isolate_;
   config.m_v8EmbedderSlot = 0;
+  config.m_pIsolate = external_isolate_;
   FPDF_InitLibraryWithConfig(&config);
 
   UNSUPPORT_INFO* info = static_cast<UNSUPPORT_INFO*>(this);
@@ -185,8 +191,12 @@ void EmbedderTest::TearDown() {
   }
   FPDFAvail_Destroy(avail_);
   FPDF_DestroyLibrary();
+
+#ifdef PDF_ENABLE_V8
   v8::V8::ShutdownPlatform();
   delete platform_;
+#endif  // PDF_ENABLE_V8
+
   delete loader_;
   free(file_contents_);
 }

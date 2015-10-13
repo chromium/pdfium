@@ -33,6 +33,11 @@
 v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(v8::Isolate* pIsolate);
 
 // static
+void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {
+  FXJS_Initialize(slot, reinterpret_cast<v8::Isolate*>(isolate));
+}
+
+// static
 IJS_Runtime* IJS_Runtime::Create(CPDFDoc_Environment* pEnv) {
   return new CJS_Runtime(pEnv);
 }

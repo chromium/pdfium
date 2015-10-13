@@ -20,7 +20,7 @@
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"
-#include "../include/jsapi/fxjs_v8.h"
+#include "../include/javascript/IJavaScript.h"
 
 CFPDF_FileStream::CFPDF_FileStream(FPDF_FILEHANDLER* pFS) {
   m_pFS = pFS;
@@ -196,10 +196,8 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   CPDF_ModuleMgr::Get()->InitPageModule();
   CPDF_ModuleMgr::Get()->InitRenderModule();
   CPDFXFA_App::GetInstance()->Initialize();
-  if (cfg && cfg->version >= 2) {
-    FXJS_Initialize(cfg->m_v8EmbedderSlot,
-                    reinterpret_cast<v8::Isolate*>(cfg->m_pIsolate));
-  }
+  if (cfg && cfg->version >= 2)
+    IJS_Runtime::Initialize(cfg->m_v8EmbedderSlot, cfg->m_pIsolate);
 }
 
 DLLEXPORT void STDCALL FPDF_DestroyLibrary() {

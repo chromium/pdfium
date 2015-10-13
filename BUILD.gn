@@ -21,6 +21,10 @@ config("pdfium_config") {
     defines += [ "_SKIA_SUPPORT_" ]
   }
 
+  if (pdf_enable_v8) {
+    defines += [ "PDF_ENABLE_V8" ]
+  }
+
   if (pdf_enable_xfa) {
     defines += [ "PDF_ENABLE_XFA" ]
   }
@@ -109,7 +113,6 @@ static_library("pdfium") {
     ":fxedit",
     ":fxge",
     ":javascript",
-    ":jsapi",
     ":pdfwindow",
   ]
 
@@ -603,74 +606,65 @@ static_library("pdfwindow") {
 static_library("javascript") {
   sources = [
     "fpdfsdk/include/javascript/IJavaScript.h",
-    "fpdfsdk/src/javascript/Consts.cpp",
-    "fpdfsdk/src/javascript/Consts.h",
-    "fpdfsdk/src/javascript/Document.cpp",
-    "fpdfsdk/src/javascript/Document.h",
-    "fpdfsdk/src/javascript/Field.cpp",
-    "fpdfsdk/src/javascript/Field.h",
-    "fpdfsdk/src/javascript/Icon.cpp",
-    "fpdfsdk/src/javascript/Icon.h",
-    "fpdfsdk/src/javascript/JS_Context.cpp",
-    "fpdfsdk/src/javascript/JS_Context.h",
-    "fpdfsdk/src/javascript/JS_Define.h",
-    "fpdfsdk/src/javascript/JS_EventHandler.cpp",
-    "fpdfsdk/src/javascript/JS_EventHandler.h",
-    "fpdfsdk/src/javascript/JS_GlobalData.cpp",
-    "fpdfsdk/src/javascript/JS_GlobalData.h",
-    "fpdfsdk/src/javascript/JS_Object.cpp",
-    "fpdfsdk/src/javascript/JS_Object.h",
-    "fpdfsdk/src/javascript/JS_Runtime.cpp",
-    "fpdfsdk/src/javascript/JS_Runtime.h",
-    "fpdfsdk/src/javascript/JS_Value.cpp",
-    "fpdfsdk/src/javascript/JS_Value.h",
-    "fpdfsdk/src/javascript/PublicMethods.cpp",
-    "fpdfsdk/src/javascript/PublicMethods.h",
-    "fpdfsdk/src/javascript/app.cpp",
-    "fpdfsdk/src/javascript/app.h",
-    "fpdfsdk/src/javascript/color.cpp",
-    "fpdfsdk/src/javascript/color.h",
-    "fpdfsdk/src/javascript/console.cpp",
-    "fpdfsdk/src/javascript/console.h",
-    "fpdfsdk/src/javascript/event.cpp",
-    "fpdfsdk/src/javascript/event.h",
-    "fpdfsdk/src/javascript/global.cpp",
-    "fpdfsdk/src/javascript/global.h",
-    "fpdfsdk/src/javascript/report.cpp",
-    "fpdfsdk/src/javascript/report.h",
-    "fpdfsdk/src/javascript/resource.cpp",
-    "fpdfsdk/src/javascript/resource.h",
-    "fpdfsdk/src/javascript/util.cpp",
-    "fpdfsdk/src/javascript/util.h",
   ]
-
+  if (pdf_enable_v8) {
+    sources += [
+      "fpdfsdk/src/javascript/Consts.cpp",
+      "fpdfsdk/src/javascript/Consts.h",
+      "fpdfsdk/src/javascript/Document.cpp",
+      "fpdfsdk/src/javascript/Document.h",
+      "fpdfsdk/src/javascript/Field.cpp",
+      "fpdfsdk/src/javascript/Field.h",
+      "fpdfsdk/src/javascript/Icon.cpp",
+      "fpdfsdk/src/javascript/Icon.h",
+      "fpdfsdk/src/javascript/JS_Context.cpp",
+      "fpdfsdk/src/javascript/JS_Context.h",
+      "fpdfsdk/src/javascript/JS_Define.h",
+      "fpdfsdk/src/javascript/JS_EventHandler.cpp",
+      "fpdfsdk/src/javascript/JS_EventHandler.h",
+      "fpdfsdk/src/javascript/JS_GlobalData.cpp",
+      "fpdfsdk/src/javascript/JS_GlobalData.h",
+      "fpdfsdk/src/javascript/JS_Object.cpp",
+      "fpdfsdk/src/javascript/JS_Object.h",
+      "fpdfsdk/src/javascript/JS_Runtime.cpp",
+      "fpdfsdk/src/javascript/JS_Runtime.h",
+      "fpdfsdk/src/javascript/JS_Value.cpp",
+      "fpdfsdk/src/javascript/JS_Value.h",
+      "fpdfsdk/src/javascript/PublicMethods.cpp",
+      "fpdfsdk/src/javascript/PublicMethods.h",
+      "fpdfsdk/src/javascript/app.cpp",
+      "fpdfsdk/src/javascript/app.h",
+      "fpdfsdk/src/javascript/color.cpp",
+      "fpdfsdk/src/javascript/color.h",
+      "fpdfsdk/src/javascript/console.cpp",
+      "fpdfsdk/src/javascript/console.h",
+      "fpdfsdk/src/javascript/event.cpp",
+      "fpdfsdk/src/javascript/event.h",
+      "fpdfsdk/src/javascript/global.cpp",
+      "fpdfsdk/src/javascript/global.h",
+      "fpdfsdk/src/javascript/report.cpp",
+      "fpdfsdk/src/javascript/report.h",
+      "fpdfsdk/src/javascript/resource.cpp",
+      "fpdfsdk/src/javascript/resource.h",
+      "fpdfsdk/src/javascript/util.cpp",
+      "fpdfsdk/src/javascript/util.h",
+      "fpdfsdk/include/jsapi/fxjs_v8.h",
+      "fpdfsdk/src/jsapi/fxjs_v8.cpp",
+    ]
+    include_dirs = [
+      "//v8",
+      "//v8/include",
+    ]
+    public_deps = [
+      "//v8",
+    ]
+  } else {
+    sources += [ "fpdfsdk/src/javascript/JS_Runtime_Stub.cpp" ]
+  }
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
-  include_dirs = [
-    "//v8",
-    "//v8/include",
-  ]
-
-  public_deps = [
-    "//v8",
-  ]
-}
-
-static_library("jsapi") {
-  sources = [
-    "fpdfsdk/include/jsapi/fxjs_v8.h",
-    "fpdfsdk/src/jsapi/fxjs_v8.cpp",
-  ]
-
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
-  include_dirs = [
-    "//v8",
-    "//v8/include",
-  ]
-
-  public_deps = [
-    "//v8",
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
   ]
 }
 
@@ -1364,29 +1358,36 @@ static_library("xfa") {
     "xfa/src/fxgraphics/src/fx_path_generator.cpp",
     "xfa/src/fxgraphics/src/fx_path_generator.h",
     "xfa/src/fxgraphics/src/pre.h",
-    "xfa/src/fxjse/src/class.cpp",
-    "xfa/src/fxjse/src/class.h",
-    "xfa/src/fxjse/src/context.cpp",
-    "xfa/src/fxjse/src/context.h",
-    "xfa/src/fxjse/src/dynprop.cpp",
-    "xfa/src/fxjse/src/runtime.cpp",
-    "xfa/src/fxjse/src/runtime.h",
-    "xfa/src/fxjse/src/scope_inline.h",
-    "xfa/src/fxjse/src/util_inline.h",
-    "xfa/src/fxjse/src/value.cpp",
-    "xfa/src/fxjse/src/value.h"
   ]
+  if (pdf_enable_v8) {
+    sources += [
+      "xfa/src/fxjse/src/class.cpp",
+      "xfa/src/fxjse/src/class.h",
+      "xfa/src/fxjse/src/context.cpp",
+      "xfa/src/fxjse/src/context.h",
+      "xfa/src/fxjse/src/dynprop.cpp",
+      "xfa/src/fxjse/src/runtime.cpp",
+      "xfa/src/fxjse/src/runtime.h",
+      "xfa/src/fxjse/src/scope_inline.h",
+      "xfa/src/fxjse/src/util_inline.h",
+      "xfa/src/fxjse/src/value.cpp",
+      "xfa/src/fxjse/src/value.h"
+    ],
+    include_dirs = [
+      "//v8",
+      "//v8/include",
+    ]
+    public_deps = [
+      "//v8",
+    ]
+    deps = [
+      "//v8:v8_libplatform",
+    ]
+  }
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
-  include_dirs = [
-    "//v8",
-    "//v8/include",
-  ]
-  public_deps = [
-    "//v8",
-  ]
-  deps = [
-    "//v8:v8_libplatform",
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
   ]
 }
 
@@ -1423,7 +1424,6 @@ test("pdfium_embeddertests") {
     "fpdfsdk/src/fpdfview_c_api_test.c",
     "fpdfsdk/src/fpdfview_c_api_test.h",
     "fpdfsdk/src/fpdfview_embeddertest.cpp",
-    "fpdfsdk/src/jsapi/fxjs_v8_embeddertest.cpp",
     "testing/embedder_test.cpp",
     "testing/embedder_test.h",
     "testing/embedder_test_mock_delegate.h",
@@ -1434,14 +1434,24 @@ test("pdfium_embeddertests") {
   deps = [
     "//testing/gmock",
     "//testing/gtest",
-    "//v8:v8_libplatform",
-    ":pdfium"
+    ":pdfium",
   ]
   include_dirs = [
-    ".",
-    "//v8",
-    "//v8/include",
+    "."
   ]
+  if (pdf_enable_v8) {
+    sources += [
+     "fpdfsdk/src/jsapi/fxjs_v8_embeddertest.cpp"
+    ]
+    deps += [
+      "//v8",
+      "//v8:v8_libplatform",
+    ]
+    include_dirs += [
+      "//v8",
+      "//v8/include",
+    ]
+  }
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [ ":pdfium_config", "//build/config/compiler:no_chromium_code" ]
 }

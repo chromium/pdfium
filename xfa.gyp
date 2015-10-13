@@ -1,4 +1,7 @@
 {
+  "variables": {
+    "pdf_enable_v8%": 1,
+  },
   "target_defaults": {
     "defines": [
       "PDF_ENABLE_XFA",
@@ -663,61 +666,58 @@
         "xfa/src/fxgraphics/src/fx_path_generator.cpp",
         "xfa/src/fxgraphics/src/fx_path_generator.h",
         "xfa/src/fxgraphics/src/pre.h",
-        "xfa/src/fxjse/src/class.cpp",
-        "xfa/src/fxjse/src/class.h",
-        "xfa/src/fxjse/src/context.cpp",
-        "xfa/src/fxjse/src/context.h",
-        "xfa/src/fxjse/src/dynprop.cpp",
-        "xfa/src/fxjse/src/runtime.cpp",
-        "xfa/src/fxjse/src/runtime.h",
-        "xfa/src/fxjse/src/scope_inline.h",
-        "xfa/src/fxjse/src/util_inline.h",
-        "xfa/src/fxjse/src/value.cpp",
-        "xfa/src/fxjse/src/value.h"
       ],
-      "conditions":[
-        [
-          "OS == 'win'",
-          {
-            "configurations":{
-              "Debug":{
-                "msvs_configuration_attributes":{
-                },
-                "msvs_settings":{
-                  "VCCLCompilerTool":{
-                  },
-                  "VCLibrarianTool":{
-                  },
-                  "VCLinkerTool":{
-                  }
-                }
-              },
-              "Release":{
-                "msvs_configuration_attributes":{
-                },
-                "msvs_settings":{
-                  "VCCLCompilerTool":{
-                  },
-                  "VCLibrarianTool":{
-                  },
-                  "VCLinkerTool":{
-                  }
-                }
+      "conditions": [
+        ["pdf_enable_v8==1", {
+          'dependencies': [
+            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
+          ],
+          'export_dependent_settings': [
+            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
+          ],
+          'include_dirs': [
+            '<(DEPTH)/v8',
+            '<(DEPTH)/v8/include',
+          ],
+          'sources': [
+            "xfa/src/fxjse/src/class.cpp",
+            "xfa/src/fxjse/src/class.h",
+            "xfa/src/fxjse/src/context.cpp",
+            "xfa/src/fxjse/src/context.h",
+            "xfa/src/fxjse/src/dynprop.cpp",
+            "xfa/src/fxjse/src/runtime.cpp",
+            "xfa/src/fxjse/src/runtime.h",
+            "xfa/src/fxjse/src/scope_inline.h",
+            "xfa/src/fxjse/src/util_inline.h",
+            "xfa/src/fxjse/src/value.cpp",
+            "xfa/src/fxjse/src/value.h"
+          ],
+        }],
+        ["OS == 'win'", {
+          "configurations": {
+            "Debug": {
+              "msvs_configuration_attributes": {},
+              "msvs_settings": {
+                "VCCLCompilerTool": {},
+                "VCLibrarianTool": {},
+                "VCLinkerTool": {},
               }
             },
-            "sources":[
-            ]
-          }
-        ],
-        [
-          "OS == 'mac'",
-          {
-            "configurations":{
+            "Release": {
+              "msvs_configuration_attributes": {},
+              "msvs_settings": {
+                "VCCLCompilerTool": {},
+                "VCLibrarianTool": {},
+                "VCLinkerTool": {},
+              }
+            }
             },
-            "sources":[
-            ]
-          }
-        ]
+          "sources": [],
+        }],
+        ["OS == 'mac'", {
+          "configurations": {},
+          "sources": [],
+        }],
       ]
     }
   ]

@@ -3,29 +3,48 @@
 # found in the LICENSE file.
 
 {
+  'variables': {
+    'pdf_enable_v8%': 1,
+  },
   'target_defaults': {
     'type': 'executable',
     'dependencies': [
       '../pdfium.gyp:pdfium',
-      '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
     ],
     'include_dirs': [
       '<(DEPTH)',
-      '<(DEPTH)/v8',
-      '<(DEPTH)/v8/include',
     ],
     'defines' : [
       'PNG_PREFIX',
       'PNGPREFIX_H',
       'PNG_USE_READ_MACROS',
     ],
+    'conditions': [
+      ['pdf_enable_v8==1', {
+        'defines': [
+          'PDF_ENABLE_V8',
+        ],
+        'include_dirs': [
+          '<(DEPTH)/v8',
+          '<(DEPTH)/v8/include',
+        ],
+      }],
+    ],
   },
   'targets': [
     {
       'target_name': 'pdfium_test',
+      'type': 'executable',
       'sources': [
         'pdfium_test.cc',
         'image_diff_png.cc',
+      ],
+      'conditions': [
+        ['pdf_enable_v8==1', {
+          'dependencies': [
+            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
+          ],
+        }],
       ],
     },
     {

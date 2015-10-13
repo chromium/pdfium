@@ -16,8 +16,11 @@ config("pdfium_samples_config") {
     "PNGPREFIX_H",
     "PNG_USE_READ_MACROS",
   ]
+  if (pdf_enable_v8) {
+    defines += [ "PDF_ENABLE_V8", ]
+  }
   if (pdf_enable_xfa) {
-    defines += [ "PDF_ENABLE_XFA" ]
+    defines += [ "PDF_ENABLE_XFA", ]
   }
 }
 
@@ -28,12 +31,16 @@ executable("pdfium_test") {
   ]
   deps = [
     "//third_party/pdfium",
-    "//v8:v8_libplatform",
   ]
-  include_dirs = [
-    "//v8",
-    "//v8/include",
-  ]
+  if (pdf_enable_v8) {
+    deps += [
+      "//v8:v8_libplatform",
+    ]
+    include_dirs = [
+      "//v8",
+      "//v8/include",
+    ]
+  }
   configs += [ ":pdfium_samples_config" ]
 }
 
