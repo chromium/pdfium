@@ -121,6 +121,7 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
 #endif
   CPDF_ModuleMgr::Destroy();
   CFX_GEModule::Destroy();
+
   delete g_pCodecModule;
   g_pCodecModule = nullptr;
 }

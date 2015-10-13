@@ -322,14 +322,8 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
   CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, FALSE);
   if (pPageView) {
     CPDFDoc_Environment* pEnv = pSDKDoc->GetEnv();
-    ASSERT(pEnv != NULL);
-
     CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
-    ASSERT(pActionHandler != NULL);
-
     CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
-    ASSERT(pPageDict != NULL);
-
     CPDF_AAction aa = pPageDict->GetDict(FX_BSTRC("AA"));
 
     FX_BOOL bExistOAAction = FALSE;

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../include/fsdk_define.h"
 #include "../../public/fpdf_doc.h"
+#include "../include/fsdk_define.h"
 
 namespace {
 

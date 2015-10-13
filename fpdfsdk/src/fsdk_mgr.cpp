@@ -223,6 +223,7 @@ CPDFDoc_Environment::~CPDFDoc_Environment() {
 
   delete m_pAnnotHandlerMgr;
   m_pAnnotHandlerMgr = NULL;
+
   delete m_pActionHandler;
   m_pActionHandler = NULL;
 }

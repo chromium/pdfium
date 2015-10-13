@@ -22,7 +22,7 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
                           int nCount,
                           FPDF_PAGEOBJECT image_object,
                           FPDF_FILEACCESS* fileAccess) {
-  if (!image_object || !fileAccess)
+  if (!image_object || !fileAccess || !pages)
     return FALSE;
 
   IFX_FileRead* pFile = new CPDF_CustomAccess(fileAccess);
@@ -61,7 +61,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
                                                    int nCount,
                                                    FPDF_PAGEOBJECT image_object,
                                                    FPDF_BITMAP bitmap) {
-  if (!image_object || !bitmap)
+  if (!image_object || !bitmap || !pages)
     return FALSE;
   CFX_DIBitmap* pBmp = NULL;
   pBmp = (CFX_DIBitmap*)bitmap;

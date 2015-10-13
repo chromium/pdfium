@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_edit.h"
+#include "../../public/fpdf_formfill.h"
 #include "../include/fsdk_define.h"
 
 #if _FX_OS_ == _FX_ANDROID_
@@ -274,6 +275,7 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_object;
   if (pPageObj == NULL)
     return;
+
   CFX_AffineMatrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
                           (FX_FLOAT)e, (FX_FLOAT)f);
   pPageObj->Transform(matrix);

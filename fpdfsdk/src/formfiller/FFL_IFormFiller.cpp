@@ -509,23 +509,15 @@ FX_BOOL CFFL_IFormFiller::IsReadOnly(CPDFSDK_Widget* pWidget) {
 }
 
 FX_BOOL CFFL_IFormFiller::IsFillingAllowed(CPDFSDK_Widget* pWidget) {
-  ASSERT(pWidget != NULL);
-
   if (pWidget->GetFieldType() == FIELDTYPE_PUSHBUTTON)
     return TRUE;
-  else {
-    CPDF_Page* pPage = pWidget->GetPDFPage();
-    ASSERT(pPage != NULL);
 
-    CPDF_Document* pDocument = pPage->m_pDocument;
-    ASSERT(pDocument != NULL);
-
-    FX_DWORD dwPermissions = pDocument->GetUserPermissions();
-    return (dwPermissions & FPDFPERM_FILL_FORM) ||
-           (dwPermissions & FPDFPERM_ANNOT_FORM) ||
-           (dwPermissions & FPDFPERM_MODIFY);
-  }
-  return TRUE;
+  CPDF_Page* pPage = pWidget->GetPDFPage();
+  CPDF_Document* pDocument = pPage->m_pDocument;
+  FX_DWORD dwPermissions = pDocument->GetUserPermissions();
+  return (dwPermissions & FPDFPERM_FILL_FORM) ||
+         (dwPermissions & FPDFPERM_ANNOT_FORM) ||
+         (dwPermissions & FPDFPERM_MODIFY);
 }
 
 CFFL_FormFiller* CFFL_IFormFiller::GetFormFiller(CPDFSDK_Annot* pAnnot,
@@ -802,13 +794,10 @@ void CFFL_IFormFiller::OnFormat(CPDFSDK_Widget* pWidget,
 
 FX_BOOL CFFL_IFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
                                        CPDFSDK_Annot* pAnnot) {
-  ASSERT(pPageView != NULL);
-  ASSERT(pAnnot != NULL);
-
   if (pPageView)
     return pPageView->IsValidAnnot(pAnnot->GetPDFAnnot());
-  else
-    return FALSE;
+
+  return FALSE;
 }
 
 void CFFL_IFormFiller::OnBeforeKeyStroke(FX_BOOL bEditOrList,
