@@ -87,7 +87,7 @@ static INLINE OPJ_UINT32 opj_uint_max(OPJ_UINT32  a, OPJ_UINT32  b) {
  */
 static INLINE OPJ_UINT32 opj_uint_adds(OPJ_UINT32 a, OPJ_UINT32 b) {
 	OPJ_UINT64 sum = (OPJ_UINT64)a + (OPJ_UINT64)b;
-	return -(OPJ_UINT32)(sum >> 32) | (OPJ_UINT32)sum;
+	return (OPJ_UINT32)(-(OPJ_INT32)(sum >> 32)) | (OPJ_UINT32)sum;
 }
 
 /**
@@ -135,8 +135,25 @@ Divide an integer by a power of 2 and round upwards
 @return Returns a divided by 2^b
 */
 static INLINE OPJ_INT32 opj_int_ceildivpow2(OPJ_INT32 a, OPJ_INT32 b) {
-	return (OPJ_INT32)((a + (OPJ_INT64)(1 << b) - 1) >> b);
+	return (OPJ_INT32)((a + ((OPJ_INT64)1 << b) - 1) >> b);
 }
+
+/**
+ Divide a 64bits integer by a power of 2 and round upwards
+ @return Returns a divided by 2^b
+ */
+static INLINE OPJ_INT32 opj_int64_ceildivpow2(OPJ_INT64 a, OPJ_INT32 b) {
+	return (OPJ_INT32)((a + ((OPJ_INT64)1 << b) - 1) >> b);
+}
+
+/**
+ Divide an integer by a power of 2 and round upwards
+ @return Returns a divided by 2^b
+ */
+static INLINE OPJ_UINT32 opj_uint_ceildivpow2(OPJ_UINT32 a, OPJ_UINT32 b) {
+	return (OPJ_UINT32)((a + ((OPJ_UINT64)1U << b) - 1U) >> b);
+}
+
 /**
 Divide an integer by a power of 2 and round downwards
 @return Returns a divided by 2^b
@@ -175,7 +192,11 @@ Multiply two fixed-precision rational numbers.
 @return Returns a * b
 */
 static INLINE OPJ_INT32 opj_int_fix_mul(OPJ_INT32 a, OPJ_INT32 b) {
+#if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER) && defined(_M_IX86)
+	OPJ_INT64 temp = __emul(a, b);
+#else
 	OPJ_INT64 temp = (OPJ_INT64) a * (OPJ_INT64) b ;
+#endif
 	temp += 4096;
 	assert((temp >> 13) <= (OPJ_INT64)0x7FFFFFFF);
 	assert((temp >> 13) >= (-(OPJ_INT64)0x7FFFFFFF - (OPJ_INT64)1));
@@ -183,7 +204,11 @@ static INLINE OPJ_INT32 opj_int_fix_mul(OPJ_INT32 a, OPJ_INT32 b) {
 }
 
 static INLINE OPJ_INT32 opj_int_fix_mul_t1(OPJ_INT32 a, OPJ_INT32 b) {
+#if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER) && defined(_M_IX86)
+	OPJ_INT64 temp = __emul(a, b);
+#else
 	OPJ_INT64 temp = (OPJ_INT64) a * (OPJ_INT64) b ;
+#endif
 	temp += 4096;
 	assert((temp >> (13 + 11 - T1_NMSEDEC_FRACBITS)) <= (OPJ_INT64)0x7FFFFFFF);
 	assert((temp >> (13 + 11 - T1_NMSEDEC_FRACBITS)) >= (-(OPJ_INT64)0x7FFFFFFF - (OPJ_INT64)1));

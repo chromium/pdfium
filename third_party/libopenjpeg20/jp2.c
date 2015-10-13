@@ -106,7 +106,7 @@ static OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
 									OPJ_UINT32 p_cdef_header_size,
 									opj_event_mgr_t * p_manager );
 
-static void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color);
+static void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color, opj_event_mgr_t *);
 
 /**
  * Writes the Channel Definition box.
@@ -158,7 +158,7 @@ static OPJ_BOOL opj_jp2_read_ftyp(	opj_jp2_t *jp2,
 									OPJ_UINT32 p_header_size,
 									opj_event_mgr_t * p_manager );
 
-OPJ_BOOL opj_jp2_skip_jp2c(	opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_skip_jp2c(	opj_jp2_t *jp2,
 						    opj_stream_private_t *cio,
 						    opj_event_mgr_t * p_manager );
 
@@ -170,12 +170,25 @@ OPJ_BOOL opj_jp2_skip_jp2c(	opj_jp2_t *jp2,
  * @param	p_header_size	the size of the data contained in the file header box.
  * @param	p_manager		the user event manager.
  *
- * @return true if the JP2 Header box was successfully reconized.
+ * @return true if the JP2 Header box was successfully recognized.
 */
 static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
                                     OPJ_BYTE *p_header_data,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
+
+/**
+ * Writes the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
+ *
+ * @param  jp2      the jpeg2000 file codec.
+ * @param  stream      the stream to write data to.
+ * @param  p_manager  user event manager.
+ *
+ * @return true if writing was successful.
+ */
+static OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
+														opj_stream_private_t *stream,
+														opj_event_mgr_t * p_manager );
 
 /**
  * Writes the Jpeg2000 codestream Header box - JP2C Header box. This function must be called AFTER the coding has been done.
@@ -313,13 +326,13 @@ static OPJ_BOOL opj_jp2_read_colr(  opj_jp2_t *jp2,
  * Sets up the procedures to do on writing header after the codestream.
  * Developpers wanting to extend the library can add their own writing procedures.
  */
-static void opj_jp2_setup_end_header_writing (opj_jp2_t *jp2);
+static OPJ_BOOL opj_jp2_setup_end_header_writing (opj_jp2_t *jp2, opj_event_mgr_t * p_manager);
 
 /**
  * Sets up the procedures to do on reading header after the codestream.
  * Developpers wanting to extend the library can add their own writing procedures.
  */
-static void opj_jp2_setup_end_header_reading (opj_jp2_t *jp2);
+static OPJ_BOOL opj_jp2_setup_end_header_reading (opj_jp2_t *jp2, opj_event_mgr_t * p_manager);
 
 /**
  * Reads a jpeg2000 file header structure.
@@ -357,7 +370,7 @@ static OPJ_BOOL opj_jp2_exec (  opj_jp2_t * jp2,
  * @param	p_number_bytes_read		pointer to an int that will store the number of bytes read from the stream (shoul usually be 2).
  * @param	p_manager				user event manager.
  *
- * @return	true if the box is reconized, false otherwise
+ * @return	true if the box is recognized, false otherwise
 */
 static OPJ_BOOL opj_jp2_read_boxhdr(opj_jp2_box_t *box,
                                     OPJ_UINT32 * p_number_bytes_read,
@@ -368,14 +381,14 @@ static OPJ_BOOL opj_jp2_read_boxhdr(opj_jp2_box_t *box,
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-static void opj_jp2_setup_encoding_validation (opj_jp2_t *jp2);
+static OPJ_BOOL opj_jp2_setup_encoding_validation (opj_jp2_t *jp2, opj_event_mgr_t * p_manager);
 
 /**
  * Sets up the procedures to do on writing header. Developpers wanting to extend the library can add their own writing procedures.
  */
-static void opj_jp2_setup_header_writing (opj_jp2_t *jp2);
+static OPJ_BOOL opj_jp2_setup_header_writing (opj_jp2_t *jp2, opj_event_mgr_t * p_manager);
 
-OPJ_BOOL opj_jp2_default_validation (	opj_jp2_t * jp2,
+static OPJ_BOOL opj_jp2_default_validation (	opj_jp2_t * jp2,
                                         opj_stream_private_t *cio,
                                         opj_event_mgr_t * p_manager );
 
@@ -397,14 +410,14 @@ static const opj_jp2_header_handler_t * opj_jp2_img_find_handler (OPJ_UINT32 p_i
  */
 static const opj_jp2_header_handler_t * opj_jp2_find_handler (OPJ_UINT32 p_id );
 
-const opj_jp2_header_handler_t jp2_header [] =
+static const opj_jp2_header_handler_t jp2_header [] =
 {
 	{JP2_JP,opj_jp2_read_jp},
 	{JP2_FTYP,opj_jp2_read_ftyp},
 	{JP2_JP2H,opj_jp2_read_jp2h}
 };
 
-const opj_jp2_header_handler_t jp2_img_header [] =
+static const opj_jp2_header_handler_t jp2_img_header [] =
 {
 	{JP2_IHDR,opj_jp2_read_ihdr},
 	{JP2_COLR,opj_jp2_read_colr},
@@ -424,7 +437,7 @@ const opj_jp2_header_handler_t jp2_img_header [] =
  * @param	p_box_max_size			the maximum number of bytes in the box.
  * @param	p_manager         FIXME DOC
  *
- * @return	true if the box is reconized, false otherwise
+ * @return	true if the box is recognized, false otherwise
 */
 static OPJ_BOOL opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
                                             OPJ_BYTE * p_data,
@@ -436,16 +449,16 @@ static OPJ_BOOL opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-static void opj_jp2_setup_decoding_validation (opj_jp2_t *jp2);
+static OPJ_BOOL opj_jp2_setup_decoding_validation (opj_jp2_t *jp2, opj_event_mgr_t * p_manager);
 
 /**
  * Sets up the procedures to do on reading header.
  * Developpers wanting to extend the library can add their own writing procedures.
  */
-static void opj_jp2_setup_header_reading (opj_jp2_t *jp2);
+static OPJ_BOOL opj_jp2_setup_header_reading (opj_jp2_t *jp2, opj_event_mgr_t * p_manager);
 
 /* ----------------------------------------------------------------------- */
- OPJ_BOOL opj_jp2_read_boxhdr(opj_jp2_box_t *box,
+static OPJ_BOOL opj_jp2_read_boxhdr(opj_jp2_box_t *box,
                               OPJ_UINT32 * p_number_bytes_read,
                               opj_stream_private_t *cio,
                               opj_event_mgr_t * p_manager )
@@ -525,7 +538,7 @@ static void jp2_write_url(opj_cio_t *cio, char *Idx_file) {
 }
 #endif
 
-OPJ_BOOL opj_jp2_read_ihdr( opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_read_ihdr( opj_jp2_t *jp2,
                             OPJ_BYTE *p_image_header_data,
                             OPJ_UINT32 p_image_header_size,
                             opj_event_mgr_t * p_manager )
@@ -573,7 +586,7 @@ OPJ_BOOL opj_jp2_read_ihdr( opj_jp2_t *jp2,
 	return OPJ_TRUE;
 }
 
-OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_t *jp2,
+static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_t *jp2,
                               OPJ_UINT32 * p_nb_bytes_written
                               )
 {
@@ -623,7 +636,7 @@ OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_t *jp2,
 	return l_ihdr_data;
 }
 
-OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_t *jp2,
+static OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_t *jp2,
 						        OPJ_UINT32 * p_nb_bytes_written
                                 )
 {
@@ -659,7 +672,7 @@ OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_t *jp2,
 	return l_bpcc_data;
 }
 
-OPJ_BOOL opj_jp2_read_bpcc( opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_read_bpcc( opj_jp2_t *jp2,
                             OPJ_BYTE * p_bpc_header_data,
                             OPJ_UINT32 p_bpc_header_size,
                             opj_event_mgr_t * p_manager
@@ -741,7 +754,7 @@ static OPJ_BYTE * opj_jp2_write_cdef(opj_jp2_t *jp2, OPJ_UINT32 * p_nb_bytes_wri
 	return l_cdef_data;
 }
 
-OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_t *jp2,
+static OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_t *jp2,
 							    OPJ_UINT32 * p_nb_bytes_written
                                 )
 {
@@ -805,7 +818,7 @@ OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_t *jp2,
 	return l_colr_data;
 }
 
-void opj_jp2_free_pclr(opj_jp2_color_t *color)
+static void opj_jp2_free_pclr(opj_jp2_color_t *color)
 {
     opj_free(color->jp2_pclr->channel_sign);
     opj_free(color->jp2_pclr->channel_size);
@@ -836,6 +849,8 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].cn, nr_channels);
 				return OPJ_FALSE;
 			}
+			if (info[i].asoc == 65535U) continue;
+
 			if (info[i].asoc > 0 && (OPJ_UINT32)(info[i].asoc - 1) >= nr_channels) {
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].asoc - 1, nr_channels);
 				return OPJ_FALSE;
@@ -907,6 +922,23 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 				is_sane = OPJ_FALSE;
 			}
 		}
+		/* Issue 235/447 weird cmap */
+		if (1 && is_sane && (image->numcomps==1U)) {
+			for (i = 0; i < nr_channels; i++) {
+				if (!pcol_usage[i]) {
+					is_sane = 0U;
+					opj_event_msg(p_manager, EVT_WARNING, "Component mapping seems wrong. Trying to correct.\n", i);
+					break;
+				}
+			}
+			if (!is_sane) {
+				is_sane = OPJ_TRUE;
+				for (i = 0; i < nr_channels; i++) {
+					cmap[i].mtyp = 1U;
+					cmap[i].pcol = (OPJ_BYTE) i;
+				}
+			}
+		}
 		opj_free(pcol_usage);
 		if (!is_sane) {
 			return OPJ_FALSE;
@@ -917,7 +949,7 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 }
 
 /* file9.jp2 */
-void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
+static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_image_comp_t *old_comps, *new_comps;
 	OPJ_BYTE *channel_size, *channel_sign;
@@ -1013,7 +1045,7 @@ void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 
 }/* apply_pclr() */
 
-OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
                             OPJ_BYTE * p_pclr_header_data,
                             OPJ_UINT32 p_pclr_header_size,
                             opj_event_mgr_t * p_manager
@@ -1120,7 +1152,7 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_jp2_read_cmap(	opj_jp2_t * jp2,
+static OPJ_BOOL opj_jp2_read_cmap(	opj_jp2_t * jp2,
                             OPJ_BYTE * p_cmap_header_data,
                             OPJ_UINT32 p_cmap_header_size,
                             opj_event_mgr_t * p_manager
@@ -1180,7 +1212,7 @@ OPJ_BOOL opj_jp2_read_cmap(	opj_jp2_t * jp2,
 	return OPJ_TRUE;
 }
 
-void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
+static void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color, opj_event_mgr_t *manager)
 {
 	opj_jp2_cdef_info_t *info;
 	OPJ_UINT16 i, n, cn, asoc, acn;
@@ -1196,7 +1228,7 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 		
 		if( cn >= image->numcomps)
 		{
-			fprintf(stderr, "cn=%d, numcomps=%d\n", cn, image->numcomps);
+			opj_event_msg(manager, EVT_WARNING, "opj_jp2_apply_cdef: cn=%d, numcomps=%d\n", cn, image->numcomps);
 			continue;
 		}
 		if(asoc == 0 || asoc == 65535)
@@ -1208,7 +1240,7 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 		acn = (OPJ_UINT16)(asoc - 1);
 		if( acn >= image->numcomps )
 		{
-			fprintf(stderr, "acn=%d, numcomps=%d\n", acn, image->numcomps);
+			opj_event_msg(manager, EVT_WARNING, "opj_jp2_apply_cdef: acn=%d, numcomps=%d\n", acn, image->numcomps);
 			continue;
 		}
 		
@@ -1244,7 +1276,7 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 	
 }/* jp2_apply_cdef() */
 
-OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
+static OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
                             OPJ_BYTE * p_cdef_header_data,
 							OPJ_UINT32 p_cdef_header_size,
 							opj_event_mgr_t * p_manager
@@ -1283,15 +1315,15 @@ OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
 	}
 
 	cdef_info = (opj_jp2_cdef_info_t*) opj_malloc(l_value * sizeof(opj_jp2_cdef_info_t));
-    if (!cdef_info)
-        return OPJ_FALSE;
+	if (!cdef_info)
+		return OPJ_FALSE;
 
 	jp2->color.jp2_cdef = (opj_jp2_cdef_t*)opj_malloc(sizeof(opj_jp2_cdef_t));
-    if(!jp2->color.jp2_cdef)
-    {
-        opj_free(cdef_info);
-        return OPJ_FALSE;
-    }
+	if(!jp2->color.jp2_cdef)
+	{
+		opj_free(cdef_info);
+		return OPJ_FALSE;
+	}
 	jp2->color.jp2_cdef->info = cdef_info;
 	jp2->color.jp2_cdef->n = (OPJ_UINT16) l_value;
 
@@ -1312,7 +1344,7 @@ OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
                             OPJ_BYTE * p_colr_header_data,
                             OPJ_UINT32 p_colr_header_size,
                             opj_event_mgr_t * p_manager
@@ -1353,14 +1385,59 @@ OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 			opj_event_msg(p_manager, EVT_ERROR, "Bad COLR header box (bad size: %d)\n", p_colr_header_size);
 			return OPJ_FALSE;
 		}
-		if (p_colr_header_size > 7) {
+		if ((p_colr_header_size > 7) && (jp2->enumcs != 14)) { /* handled below for CIELab) */
 			/* testcase Altona_Technical_v20_x4.pdf */
 			opj_event_msg(p_manager, EVT_WARNING, "Bad COLR header box (bad size: %d)\n", p_colr_header_size);
 		}
 
 		opj_read_bytes(p_colr_header_data,&jp2->enumcs ,4);			/* EnumCS */
-        
-        jp2->color.jp2_has_colr = 1;
+
+		p_colr_header_data += 4;
+
+		if(jp2->enumcs == 14)/* CIELab */
+		{
+			OPJ_UINT32 *cielab;
+			OPJ_UINT32 rl, ol, ra, oa, rb, ob, il;
+
+			cielab = (OPJ_UINT32*)opj_malloc(9 * sizeof(OPJ_UINT32));
+			cielab[0] = 14; /* enumcs */
+			
+			/* default values */
+			rl = ra = rb = ol = oa = ob = 0;
+			il = 0x00443530; /* D50 */
+			cielab[1] = 0x44454600;/* DEF */
+
+			if(p_colr_header_size == 35)
+			{
+				opj_read_bytes(p_colr_header_data, &rl, 4);
+				p_colr_header_data += 4;
+				opj_read_bytes(p_colr_header_data, &ol, 4);
+				p_colr_header_data += 4;
+				opj_read_bytes(p_colr_header_data, &ra, 4);
+				p_colr_header_data += 4;
+				opj_read_bytes(p_colr_header_data, &oa, 4);
+				p_colr_header_data += 4;
+				opj_read_bytes(p_colr_header_data, &rb, 4);
+				p_colr_header_data += 4;
+				opj_read_bytes(p_colr_header_data, &ob, 4);
+				p_colr_header_data += 4;
+				opj_read_bytes(p_colr_header_data, &il, 4);
+				p_colr_header_data += 4;
+				
+				cielab[1] = 0;
+			}
+			else if(p_colr_header_size != 7)
+			{
+				opj_event_msg(p_manager, EVT_WARNING, "Bad COLR header box (CIELab, bad size: %d)\n", p_colr_header_size);
+			}
+			cielab[2] = rl; cielab[4] = ra; cielab[6] = rb;
+			cielab[3] = ol; cielab[5] = oa; cielab[7] = ob;
+			cielab[8] = il;
+
+			jp2->color.icc_profile_buf = (OPJ_BYTE*)cielab;
+			jp2->color.icc_profile_len = 0;
+		}
+		jp2->color.jp2_has_colr = 1;
 	}
 	else if (jp2->meth == 2) {
 		/* ICC profile */
@@ -1369,11 +1446,11 @@ OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 
 		jp2->color.icc_profile_len = (OPJ_UINT32)icc_len;
 		jp2->color.icc_profile_buf = (OPJ_BYTE*) opj_calloc(1,(size_t)icc_len);
-        if (!jp2->color.icc_profile_buf)
-        {
-            jp2->color.icc_profile_len = 0;
-            return OPJ_FALSE;
-        }
+		if (!jp2->color.icc_profile_buf)
+		{
+			jp2->color.icc_profile_len = 0;
+			return OPJ_FALSE;
+		}
 
 		for (it_icc_value = 0; it_icc_value < icc_len; ++it_icc_value)
 		{
@@ -1382,16 +1459,16 @@ OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 			jp2->color.icc_profile_buf[it_icc_value] = (OPJ_BYTE) l_value;
 		}
 	    
-        jp2->color.jp2_has_colr = 1;
+		jp2->color.jp2_has_colr = 1;
 	}
 	else if (jp2->meth > 2)
-    {
-        /*	ISO/IEC 15444-1:2004 (E), Table I.9 Legal METH values:
-        conforming JP2 reader shall ignore the entire Colour Specification box.*/
-        opj_event_msg(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d), " 
-            "so we will ignore the entire Colour Specification box. \n", jp2->meth);
-    }
-    return OPJ_TRUE;
+	{
+		/*	ISO/IEC 15444-1:2004 (E), Table I.9 Legal METH values:
+		conforming JP2 reader shall ignore the entire Colour Specification box.*/
+		opj_event_msg(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d), "
+			"so we will ignore the entire Colour Specification box. \n", jp2->meth);
+	}
+	return OPJ_TRUE;
 }
 
 OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
@@ -1408,47 +1485,49 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
 		return OPJ_FALSE;
 	}
 
-    if (!jp2->ignore_pclr_cmap_cdef){
-	    if (!opj_jp2_check_color(p_image, &(jp2->color), p_manager)) {
-		    return OPJ_FALSE;
-	    }
+	if (!jp2->ignore_pclr_cmap_cdef){
+		if (!opj_jp2_check_color(p_image, &(jp2->color), p_manager)) {
+			return OPJ_FALSE;
+		}
 
-	    /* Set Image Color Space */
-	    if (jp2->enumcs == 16)
-		    p_image->color_space = OPJ_CLRSPC_SRGB;
-	    else if (jp2->enumcs == 17)
-		    p_image->color_space = OPJ_CLRSPC_GRAY;
-	    else if (jp2->enumcs == 18)
-		    p_image->color_space = OPJ_CLRSPC_SYCC;
-            else if (jp2->enumcs == 24)
-                    p_image->color_space = OPJ_CLRSPC_EYCC;
-	    else
-		    p_image->color_space = OPJ_CLRSPC_UNKNOWN;
+		/* Set Image Color Space */
+		if (jp2->enumcs == 16)
+			p_image->color_space = OPJ_CLRSPC_SRGB;
+		else if (jp2->enumcs == 17)
+			p_image->color_space = OPJ_CLRSPC_GRAY;
+		else if (jp2->enumcs == 18)
+			p_image->color_space = OPJ_CLRSPC_SYCC;
+		else if (jp2->enumcs == 24)
+			p_image->color_space = OPJ_CLRSPC_EYCC;
+		else if (jp2->enumcs == 12)
+			p_image->color_space = OPJ_CLRSPC_CMYK;
+		else
+			p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
-	    if(jp2->color.jp2_pclr) {
-		    /* Part 1, I.5.3.4: Either both or none : */
-		    if( !jp2->color.jp2_pclr->cmap)
-			    opj_jp2_free_pclr(&(jp2->color));
-		    else if (p_image->pdfium_use_colorspace)
-			    opj_jp2_apply_pclr(p_image, &(jp2->color));
-	    }
+		if(jp2->color.jp2_pclr) {
+			/* Part 1, I.5.3.4: Either both or none : */
+			if( !jp2->color.jp2_pclr->cmap)
+				opj_jp2_free_pclr(&(jp2->color));
+			else if (p_image->pdfium_use_colorspace)
+				opj_jp2_apply_pclr(p_image, &(jp2->color));
+		}
 
-	    /* Apply the color space if needed */
-	    if(jp2->color.jp2_cdef) {
-		    opj_jp2_apply_cdef(p_image, &(jp2->color));
-	    }
+		/* Apply the color space if needed */
+		if(jp2->color.jp2_cdef) {
+			opj_jp2_apply_cdef(p_image, &(jp2->color), p_manager);
+		}
 
-	    if(jp2->color.icc_profile_buf) {
-		    p_image->icc_profile_buf = jp2->color.icc_profile_buf;
-		    p_image->icc_profile_len = jp2->color.icc_profile_len;
-		    jp2->color.icc_profile_buf = NULL;
-	    }
-    }
+		if(jp2->color.icc_profile_buf) {
+			p_image->icc_profile_buf = jp2->color.icc_profile_buf;
+			p_image->icc_profile_len = jp2->color.icc_profile_len;
+			jp2->color.icc_profile_buf = NULL;
+		}
+	}
 
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
                             opj_stream_private_t *stream,
                             opj_event_mgr_t * p_manager
                             )
@@ -1551,7 +1630,7 @@ OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
 	return l_result;
 }
 
-OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
 							opj_stream_private_t *cio,
 							opj_event_mgr_t * p_manager )
 {
@@ -1601,7 +1680,7 @@ OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
 	return l_result;
 }
 
-OPJ_BOOL opj_jp2_write_jp2c(opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_write_jp2c(opj_jp2_t *jp2,
 							opj_stream_private_t *cio,
 							opj_event_mgr_t * p_manager )
 {
@@ -1638,7 +1717,7 @@ OPJ_BOOL opj_jp2_write_jp2c(opj_jp2_t *jp2,
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_jp2_write_jp(	opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_write_jp(	opj_jp2_t *jp2,
 			    		    opj_stream_private_t *cio,
 				    		opj_event_mgr_t * p_manager )
 {
@@ -1869,7 +1948,9 @@ OPJ_BOOL opj_jp2_end_decompress(opj_jp2_t *jp2,
 	assert(p_manager != 00);
 
 	/* customization of the end encoding */
-	opj_jp2_setup_end_header_reading(jp2);
+	if (! opj_jp2_setup_end_header_reading(jp2, p_manager)) {
+		return OPJ_FALSE;
+	}
 
 	/* write header */
 	if (! opj_jp2_exec (jp2,jp2->m_procedure_list,cio,p_manager)) {
@@ -1890,7 +1971,9 @@ OPJ_BOOL opj_jp2_end_compress(	opj_jp2_t *jp2,
 	assert(p_manager != 00);
 
 	/* customization of the end encoding */
-	opj_jp2_setup_end_header_writing(jp2);
+	if (! opj_jp2_setup_end_header_writing(jp2, p_manager)) {
+		return OPJ_FALSE;
+	}
 
 	if (! opj_j2k_end_compress(jp2->j2k,cio,p_manager)) {
 		return OPJ_FALSE;
@@ -1900,35 +1983,52 @@ OPJ_BOOL opj_jp2_end_compress(	opj_jp2_t *jp2,
 	return opj_jp2_exec(jp2,jp2->m_procedure_list,cio,p_manager);
 }
 
-void opj_jp2_setup_end_header_writing (opj_jp2_t *jp2)
+static OPJ_BOOL opj_jp2_setup_end_header_writing (opj_jp2_t *jp2, opj_event_mgr_t * p_manager)
 {
 	/* preconditions */
 	assert(jp2 != 00);
+	assert(p_manager != 00);
 
 #ifdef USE_JPIP
-  if( jp2->jpip_on )
-    opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_write_iptr );
+	if( jp2->jpip_on ) {
+		if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_write_iptr, p_manager)) {
+			return OPJ_FALSE;
+		}
+	}
 #endif
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp2c );
+	if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp2c, p_manager)) {
+		return OPJ_FALSE;
+	}
 	/* DEVELOPER CORNER, add your custom procedures */
 #ifdef USE_JPIP
   if( jp2->jpip_on )
-    {
-    opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_write_cidx );
-    opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_write_fidx );
-    }
+	{
+		if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_write_cidx, p_manager)) {
+			return OPJ_FALSE;
+		}
+		if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_write_fidx, p_manager)) {
+			return OPJ_FALSE;
+		}
+	}
 #endif
+	return OPJ_TRUE;
 }
 
-void opj_jp2_setup_end_header_reading (opj_jp2_t *jp2)
+static OPJ_BOOL opj_jp2_setup_end_header_reading (opj_jp2_t *jp2, opj_event_mgr_t * p_manager)
 {
 	/* preconditions */
 	assert(jp2 != 00);
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_read_header_procedure );
+	assert(p_manager != 00);
+	
+	if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_read_header_procedure, p_manager)) {
+		return OPJ_FALSE;
+	}
 	/* DEVELOPER CORNER, add your custom procedures */
+	
+	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_jp2_default_validation (	opj_jp2_t * jp2,
+static OPJ_BOOL opj_jp2_default_validation (	opj_jp2_t * jp2,
                                         opj_stream_private_t *cio,
                                         opj_event_mgr_t * p_manager
                                         )
@@ -1982,7 +2082,7 @@ OPJ_BOOL opj_jp2_default_validation (	opj_jp2_t * jp2,
 	return l_is_valid;
 }
 
-OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
                                                 opj_stream_private_t *stream,
                                                 opj_event_mgr_t * p_manager
                                                 )
@@ -1990,6 +2090,7 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 	opj_jp2_box_t box;
 	OPJ_UINT32 l_nb_bytes_read;
 	const opj_jp2_header_handler_t * l_current_handler;
+	const opj_jp2_header_handler_t * l_current_handler_misplaced;
 	OPJ_UINT32 l_last_data_size = OPJ_BOX_SIZE;
 	OPJ_UINT32 l_current_data_size;
 	OPJ_BYTE * l_current_data = 00;
@@ -2033,9 +2134,26 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 		}
 
 		l_current_handler = opj_jp2_find_handler(box.type);
+		l_current_handler_misplaced = opj_jp2_img_find_handler(box.type);
 		l_current_data_size = box.length - l_nb_bytes_read;
 
-		if (l_current_handler != 00) {
+		if ((l_current_handler != 00) || (l_current_handler_misplaced != 00)) {
+			if (l_current_handler == 00) {
+				opj_event_msg(p_manager, EVT_WARNING, "Found a misplaced '%c%c%c%c' box outside jp2h box\n", (OPJ_BYTE)(box.type>>24), (OPJ_BYTE)(box.type>>16), (OPJ_BYTE)(box.type>>8), (OPJ_BYTE)(box.type>>0));
+				if (jp2->jp2_state & JP2_STATE_HEADER) {
+					/* read anyway, we already have jp2h */
+					l_current_handler = l_current_handler_misplaced;
+				} else {
+					opj_event_msg(p_manager, EVT_WARNING, "JPEG2000 Header box not read yet, '%c%c%c%c' box will be ignored\n", (OPJ_BYTE)(box.type>>24), (OPJ_BYTE)(box.type>>16), (OPJ_BYTE)(box.type>>8), (OPJ_BYTE)(box.type>>0));
+					jp2->jp2_state |= JP2_STATE_UNKNOWN;
+					if (opj_stream_skip(stream,l_current_data_size,p_manager) != l_current_data_size) {
+							opj_event_msg(p_manager, EVT_ERROR, "Problem with skipping JPEG2000 box, stream error\n");
+							opj_free(l_current_data);
+							return OPJ_FALSE;
+					}
+					continue;
+				}
+			}
 			if ((OPJ_OFF_T)l_current_data_size > opj_stream_get_number_byte_left(stream)) {
 				/* do not even try to malloc if we can't read */
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid box size %d for box '%c%c%c%c'. Need %d bytes, %d bytes remaining \n", box.length, (OPJ_BYTE)(box.type>>24), (OPJ_BYTE)(box.type>>16), (OPJ_BYTE)(box.type>>8), (OPJ_BYTE)(box.type>>0), l_current_data_size, (OPJ_UINT32)opj_stream_get_number_byte_left(stream));
@@ -2142,7 +2260,9 @@ OPJ_BOOL opj_jp2_start_compress(opj_jp2_t *jp2,
 	assert(p_manager != 00);
 
 	/* customization of the validation */
-	opj_jp2_setup_encoding_validation (jp2);
+	if (! opj_jp2_setup_encoding_validation (jp2, p_manager)) {
+		return OPJ_FALSE;
+	}
 
 	/* validation of the parameters codec */
 	if (! opj_jp2_exec(jp2,jp2->m_validation_list,stream,p_manager)) {
@@ -2150,7 +2270,9 @@ OPJ_BOOL opj_jp2_start_compress(opj_jp2_t *jp2,
 	}
 
 	/* customization of the encoding */
-	opj_jp2_setup_header_writing(jp2);
+	if (! opj_jp2_setup_header_writing(jp2, p_manager)) {
+		return OPJ_FALSE;
+	}
 
 	/* write header */
 	if (! opj_jp2_exec (jp2,jp2->m_procedure_list,stream,p_manager)) {
@@ -2160,7 +2282,7 @@ OPJ_BOOL opj_jp2_start_compress(opj_jp2_t *jp2,
 	return opj_j2k_start_compress(jp2->j2k,stream,p_image,p_manager);
 }
 
-const opj_jp2_header_handler_t * opj_jp2_find_handler (OPJ_UINT32 p_id)
+static const opj_jp2_header_handler_t * opj_jp2_find_handler (OPJ_UINT32 p_id)
 {
 	OPJ_UINT32 i, l_handler_size = sizeof(jp2_header) / sizeof(opj_jp2_header_handler_t);
 
@@ -2308,7 +2430,7 @@ static OPJ_BOOL opj_jp2_read_ftyp(	opj_jp2_t *jp2,
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_jp2_skip_jp2c(	opj_jp2_t *jp2,
+static OPJ_BOOL opj_jp2_skip_jp2c(	opj_jp2_t *jp2,
 					    	opj_stream_private_t *stream,
 					    	opj_event_mgr_t * p_manager )
 {
@@ -2352,7 +2474,7 @@ static OPJ_BOOL opj_jpip_skip_iptr(	opj_jp2_t *jp2,
  * @param	p_header_size	the size of the data contained in the file header box.
  * @param	p_manager		the user event manager.
  *
- * @return true if the JP2 Header box was successfully reconized.
+ * @return true if the JP2 Header box was successfully recognized.
 */
 static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
                                     OPJ_BYTE *p_header_data,
@@ -2422,7 +2544,7 @@ static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
+static OPJ_BOOL opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
                                      OPJ_BYTE * p_data,
                                      OPJ_UINT32 * p_number_bytes_read,
                                      OPJ_UINT32 p_box_max_size,
@@ -2504,10 +2626,14 @@ OPJ_BOOL opj_jp2_read_header(	opj_stream_private_t *p_stream,
 	assert(p_manager != 00);
 
 	/* customization of the validation */
-	opj_jp2_setup_decoding_validation (jp2);
+	if (! opj_jp2_setup_decoding_validation (jp2, p_manager)) {
+		return OPJ_FALSE;
+	}
 
 	/* customization of the encoding */
-	opj_jp2_setup_header_reading(jp2);
+	if (! opj_jp2_setup_header_reading(jp2, p_manager)) {
+		return OPJ_FALSE;
+	}
 
 	/* validation of the parameters codec */
 	if (! opj_jp2_exec(jp2,jp2->m_validation_list,p_stream,p_manager)) {
@@ -2525,45 +2651,73 @@ OPJ_BOOL opj_jp2_read_header(	opj_stream_private_t *p_stream,
 							p_manager);
 }
 
-void opj_jp2_setup_encoding_validation (opj_jp2_t *jp2)
+static OPJ_BOOL opj_jp2_setup_encoding_validation (opj_jp2_t *jp2, opj_event_mgr_t * p_manager)
 {
 	/* preconditions */
 	assert(jp2 != 00);
+	assert(p_manager != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_validation_list, (opj_procedure)opj_jp2_default_validation);
+	if (! opj_procedure_list_add_procedure(jp2->m_validation_list, (opj_procedure)opj_jp2_default_validation, p_manager)) {
+		return OPJ_FALSE;
+	}
 	/* DEVELOPER CORNER, add your custom validation procedure */
+	
+	return OPJ_TRUE;
 }
 
-void opj_jp2_setup_decoding_validation (opj_jp2_t *jp2)
+static OPJ_BOOL opj_jp2_setup_decoding_validation (opj_jp2_t *jp2, opj_event_mgr_t * p_manager)
 {
 	/* preconditions */
 	assert(jp2 != 00);
+	assert(p_manager != 00);
+	
 	/* DEVELOPER CORNER, add your custom validation procedure */
+	
+	return OPJ_TRUE;
 }
 
-void opj_jp2_setup_header_writing (opj_jp2_t *jp2)
+static OPJ_BOOL opj_jp2_setup_header_writing (opj_jp2_t *jp2, opj_event_mgr_t * p_manager)
 {
 	/* preconditions */
 	assert(jp2 != 00);
+	assert(p_manager != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_ftyp );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp2h );
-  if( jp2->jpip_on )
-    opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_skip_iptr );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_skip_jp2c );
+	if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp, p_manager)) {
+		return OPJ_FALSE;
+	}
+	if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_ftyp, p_manager)) {
+		return OPJ_FALSE;
+	}
+	if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp2h, p_manager)) {
+		return OPJ_FALSE;
+	}
+	if( jp2->jpip_on ) {
+		if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_skip_iptr, p_manager)) {
+			return OPJ_FALSE;
+		}
+	}
+	if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_skip_jp2c,p_manager)) {
+		return OPJ_FALSE;
+	}
 
 	/* DEVELOPER CORNER, insert your custom procedures */
 
+	return OPJ_TRUE;
 }
 
-void opj_jp2_setup_header_reading (opj_jp2_t *jp2)
+static OPJ_BOOL opj_jp2_setup_header_reading (opj_jp2_t *jp2, opj_event_mgr_t * p_manager)
 {
 	/* preconditions */
 	assert(jp2 != 00);
+	assert(p_manager != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_read_header_procedure );
+	if (! opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_read_header_procedure, p_manager)) {
+		return OPJ_FALSE;
+	}
+	
 	/* DEVELOPER CORNER, add your custom procedures */
+	
+	return OPJ_TRUE;
 }
 
 OPJ_BOOL opj_jp2_read_tile_header ( opj_jp2_t * p_jp2,
@@ -2719,6 +2873,10 @@ OPJ_BOOL opj_jp2_get_tile(	opj_jp2_t *p_jp2,
 		p_image->color_space = OPJ_CLRSPC_GRAY;
 	else if (p_jp2->enumcs == 18)
 		p_image->color_space = OPJ_CLRSPC_SYCC;
+	else if (p_jp2->enumcs == 24)
+		p_image->color_space = OPJ_CLRSPC_EYCC;
+	else if (p_jp2->enumcs == 12)
+		p_image->color_space = OPJ_CLRSPC_CMYK;
 	else
 		p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
@@ -2732,7 +2890,7 @@ OPJ_BOOL opj_jp2_get_tile(	opj_jp2_t *p_jp2,
 	
 	/* Apply the color space if needed */
 	if(p_jp2->color.jp2_cdef) {
-		opj_jp2_apply_cdef(p_image, &(p_jp2->color));
+		opj_jp2_apply_cdef(p_image, &(p_jp2->color), p_manager);
 	}
 
 	if(p_jp2->color.icc_profile_buf) {
