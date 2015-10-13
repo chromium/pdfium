@@ -310,7 +310,7 @@ class CJS_Document : public CJS_Object {
   ~CJS_Document() override {}
 
   // CJS_Object
-  FX_BOOL InitInstance(IJS_Context* cc) override;
+  void InitInstance(IJS_Runtime* pIRuntime) override;
 
   DECLARE_JS_CLASS();
 

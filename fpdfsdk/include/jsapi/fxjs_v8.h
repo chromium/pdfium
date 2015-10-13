@@ -17,10 +17,10 @@
 #include <v8.h>
 #include "../../../core/include/fxcrt/fx_basic.h"
 
-// FXJS_V8 places no interpretation on these two classes; it merely
-// passes them on to the caller-provided FXJS_CONSTRUCTORs.
-class IJS_Context;
-class IJS_Runtime;
+// FXJS_V8 places no restrictions on these two classes; it merely passes them
+// on to caller-provided methods.
+class IJS_Context;  // A description of the event that caused JS execution.
+class IJS_Runtime;  // A native runtime, typically owns the v8::Context.
 
 // FXJS_V8 places no interpreation on this calass; it merely passes it
 // along to XFA.
@@ -66,7 +66,7 @@ class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   void Free(void* data, size_t length) override;
 };
 
-using FXJS_CONSTRUCTOR = void (*)(IJS_Context* cc, v8::Local<v8::Object> obj);
+using FXJS_CONSTRUCTOR = void (*)(IJS_Runtime* cc, v8::Local<v8::Object> obj);
 using FXJS_DESTRUCTOR = void (*)(v8::Local<v8::Object> obj);
 
 // Call before making FXJS_PrepareIsolate call.
@@ -124,8 +124,7 @@ void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
 
 // Called after FXJS_Define* calls made.
 void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
-                            IJS_Runtime* pFXRuntime,
-                            IJS_Context* context,
+                            IJS_Runtime* pIRuntime,
                             v8::Global<v8::Context>& v8PersistentContext);
 void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
                          v8::Global<v8::Context>& v8PersistentContext);
@@ -135,11 +134,10 @@ IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate);
 int FXJS_Execute(v8::Isolate* pIsolate,
                  IJS_Context* pJSContext,
                  const wchar_t* script,
-                 long length,
                  FXJSErr* perror);
 
 v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
-                                           IJS_Context* pJSContext,
+                                           IJS_Runtime* pJSContext,
                                            int nObjDefnID);
 v8::Local<v8::Object> FXJS_GetThisObj(v8::Isolate* pIsolate);
 int FXJS_GetObjDefnID(v8::Local<v8::Object> pObj);

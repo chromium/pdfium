@@ -17,10 +17,11 @@ class CPDFSDK_Document;
 class CPDF_Bookmark;
 class CPDF_FormField;
 
+// Records the details of an event and triggers JS execution for it.
 class IJS_Context {
  public:
   virtual FX_BOOL RunScript(const CFX_WideString& script,
-                            CFX_WideString& info) = 0;
+                            CFX_WideString* info) = 0;
 
   virtual void OnApp_Init() = 0;
 
@@ -132,6 +133,7 @@ class IJS_Context {
   virtual ~IJS_Context() {}
 };
 
+// Owns the FJXS objects needed to actually execute JS.
 class IJS_Runtime {
  public:
   static void Initialize(unsigned int slot, void* isolate);
@@ -144,6 +146,9 @@ class IJS_Runtime {
   virtual void SetReaderDocument(CPDFSDK_Document* pReaderDoc) = 0;
 
   virtual CPDFSDK_Document* GetReaderDocument() = 0;
+  virtual int Execute(IJS_Context* cc,
+                      const wchar_t* script,
+                      CFX_WideString* info) = 0;
 
   virtual FX_BOOL GetHValueByName(const CFX_ByteStringC& utf8Name,
                                   FXJSE_HVALUE hValue) = 0;

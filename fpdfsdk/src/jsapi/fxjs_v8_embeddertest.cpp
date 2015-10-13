@@ -33,7 +33,7 @@ class FXJSV8Embeddertest : public EmbedderTest {
     v8::Locker locker(m_pIsolate);
     v8::HandleScope handle_scope(m_pIsolate);
     FXJS_PerIsolateData::SetUp(m_pIsolate);
-    FXJS_InitializeRuntime(m_pIsolate, nullptr, nullptr, m_pPersistentContext);
+    FXJS_InitializeRuntime(m_pIsolate, nullptr, m_pPersistentContext);
   }
 
   void TearDown() override {
@@ -63,7 +63,7 @@ TEST_F(FXJSV8Embeddertest, Getters) {
   FXJSErr error;
   CFX_WideString wsInfo;
   CFX_WideString wsScript(kScript);
-  int sts = FXJS_Execute(isolate(), nullptr, kScript, wcslen(kScript), &error);
+  int sts = FXJS_Execute(isolate(), nullptr, kScript, &error);
   EXPECT_EQ(0, sts);
 
   v8::Local<v8::Object> This = FXJS_GetThisObj(isolate());

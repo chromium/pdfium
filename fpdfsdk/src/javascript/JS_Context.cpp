@@ -33,7 +33,7 @@ CPDFDoc_Environment* CJS_Context::GetReaderApp() {
 }
 
 FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
-                               CFX_WideString& info) {
+                               CFX_WideString* info) {
   v8::Isolate::Scope isolate_scope(m_pRuntime->GetIsolate());
   v8::Locker locker(m_pRuntime->GetIsolate());
   v8::HandleScope handle_scope(m_pRuntime->GetIsolate());
@@ -41,7 +41,7 @@ FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
   v8::Context::Scope context_scope(context);
 
   if (m_bBusy) {
-    info = JSGetStringFromID(this, IDS_STRING_JSBUSY);
+    *info = JSGetStringFromID(this, IDS_STRING_JSBUSY);
     return FALSE;
   }
   m_bBusy = TRUE;
@@ -50,24 +50,20 @@ FX_BOOL CJS_Context::RunScript(const CFX_WideString& script,
   CJS_Runtime::FieldEvent event(m_pEventHandler->TargetName(),
                                 m_pEventHandler->EventType());
   if (!m_pRuntime->AddEventToSet(event)) {
-    info = JSGetStringFromID(this, IDS_STRING_JSEVENT);
+    *info = JSGetStringFromID(this, IDS_STRING_JSEVENT);
     return FALSE;
   }
 
-  FXJSErr error = {NULL, NULL, 0};
+  CFX_WideString sErrorMessage;
   int nRet = 0;
   if (script.GetLength() > 0) {
-    nRet = FXJS_Execute(m_pRuntime->GetIsolate(), this, script.c_str(),
-                        script.GetLength(), &error);
+    nRet = m_pRuntime->Execute(this, script.c_str(), &sErrorMessage);
   }
 
   if (nRet < 0) {
-    CFX_WideString sLine;
-    sLine.Format(L"[ Line: %05d { %s } ] : %s", error.linnum - 1, error.srcline,
-                 error.message);
-    info += sLine;
+    *info += sErrorMessage;
   } else {
-    info = JSGetStringFromID(this, IDS_STRING_RUN);
+    *info = JSGetStringFromID(this, IDS_STRING_RUN);
   }
 
   m_pRuntime->RemoveEventFromSet(event);

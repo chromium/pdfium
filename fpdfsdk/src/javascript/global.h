@@ -82,7 +82,7 @@ class CJS_Global : public CJS_Object {
   ~CJS_Global() override {}
 
   // CJS_Object
-  FX_BOOL InitInstance(IJS_Context* cc) override;
+  void InitInstance(IJS_Runtime* pIRuntime) override;
 
   DECLARE_SPECIAL_JS_CLASS();
   JS_SPECIAL_STATIC_METHOD(setPersistent, JSGlobalAlternate, global);

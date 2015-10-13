@@ -110,16 +110,10 @@ END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_Field, Field)
 
-FX_BOOL CJS_Field::InitInstance(IJS_Context* cc) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-
-  Field* pField = (Field*)GetEmbedObject();
-  ASSERT(pField != NULL);
-
-  pField->SetIsolate(pContext->GetJSRuntime()->GetIsolate());
-
-  return TRUE;
+void CJS_Field::InitInstance(IJS_Runtime* pIRuntime) {
+  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
+  Field* pField = static_cast<Field*>(GetEmbedObject());
+  pField->SetIsolate(pRuntime->GetIsolate());
 };
 
 Field::Field(CJS_Object* pJSObject)
@@ -3279,7 +3273,7 @@ FX_BOOL Field::buttonGetIcon(IJS_Context* cc,
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pContext, CJS_Icon::g_nObjDefnID);
+      pRuntime->GetIsolate(), pRuntime, CJS_Icon::g_nObjDefnID);
   ASSERT(pObj.IsEmpty() == FALSE);
 
   CJS_Icon* pJS_Icon = (CJS_Icon*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
@@ -3488,7 +3482,7 @@ FX_BOOL Field::getArray(IJS_Context* cc,
   for (int j = 0, jsz = swSort.GetSize(); j < jsz; j++) {
     nonstd::unique_ptr<CFX_WideString> pStr(swSort.GetAt(j));
     v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-        pRuntime->GetIsolate(), pContext, CJS_Field::g_nObjDefnID);
+        pRuntime->GetIsolate(), pRuntime, CJS_Field::g_nObjDefnID);
     ASSERT(!pObj.IsEmpty());
 
     CJS_Field* pJSField =

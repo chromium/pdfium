@@ -15,7 +15,7 @@ class CJS_ContextStub final : public IJS_Context {
 
   // IJS_Context:
   FX_BOOL RunScript(const CFX_WideString& script,
-                    CFX_WideString& info) override {
+                    CFX_WideString* info) override {
     return FALSE;
   }
 
@@ -144,6 +144,12 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   virtual FX_BOOL SetHValueByName(const CFX_ByteStringC&,
                                   FXJSE_HVALUE) override {
     return FALSE;
+  }
+
+  int Execute(IJS_Context* cc,
+              const wchar_t* script,
+              CFX_WideString* info) override {
+    return 0;
   }
 
  protected:

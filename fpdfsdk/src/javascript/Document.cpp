@@ -140,17 +140,12 @@ END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_Document, Document)
 
-FX_BOOL CJS_Document::InitInstance(IJS_Context* cc) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-
-  Document* pDoc = (Document*)GetEmbedObject();
-  ASSERT(pDoc != NULL);
-
-  pDoc->AttachDoc(pContext->GetReaderDocument());
-  pDoc->SetIsolate(pContext->GetJSRuntime()->GetIsolate());
-  return TRUE;
-};
+void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
+  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
+  Document* pDoc = static_cast<Document*>(GetEmbedObject());
+  pDoc->AttachDoc(pRuntime->GetReaderDocument());
+  pDoc->SetIsolate(pRuntime->GetIsolate());
+}
 
 /* --------------------------------- Document ---------------------------------
  */
@@ -326,7 +321,7 @@ FX_BOOL Document::getField(IJS_Context* cc,
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   v8::Local<v8::Object> pFieldObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pContext, CJS_Field::g_nObjDefnID);
+      pRuntime->GetIsolate(), pRuntime, CJS_Field::g_nObjDefnID);
 
   v8::Isolate* isolate = GetIsolate(cc);
   CJS_Field* pJSField = (CJS_Field*)FXJS_GetPrivate(isolate, pFieldObj);
@@ -837,7 +832,7 @@ FX_BOOL Document::info(IJS_Context* cc,
     CJS_Context* pContext = (CJS_Context*)cc;
     CJS_Runtime* pRuntime = pContext->GetJSRuntime();
     v8::Local<v8::Object> pObj =
-        FXJS_NewFxDynamicObj(pRuntime->GetIsolate(), pContext, -1);
+        FXJS_NewFxDynamicObj(pRuntime->GetIsolate(), pRuntime, -1);
     FXJS_PutObjectString(isolate, pObj, L"Author", cwAuthor.c_str());
     FXJS_PutObjectString(isolate, pObj, L"Title", cwTitle.c_str());
     FXJS_PutObjectString(isolate, pObj, L"Subject", cwSubject.c_str());
@@ -1433,7 +1428,6 @@ FX_BOOL Document::icons(IJS_Context* cc,
     return TRUE;
   }
 
-  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CJS_Array Icons(pRuntime);
   IconElement* pIconElement = NULL;
@@ -1442,7 +1436,7 @@ FX_BOOL Document::icons(IJS_Context* cc,
     pIconElement = (*m_pIconTree)[i];
 
     v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-        pRuntime->GetIsolate(), pContext, CJS_Icon::g_nObjDefnID);
+        pRuntime->GetIsolate(), pRuntime, CJS_Icon::g_nObjDefnID);
     if (pObj.IsEmpty())
       return FALSE;
 
@@ -1485,7 +1479,7 @@ FX_BOOL Document::getIcon(IJS_Context* cc,
       Icon* pRetIcon = (*m_pIconTree)[i]->IconStream;
 
       v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
-          pRuntime->GetIsolate(), pContext, CJS_Icon::g_nObjDefnID);
+          pRuntime->GetIsolate(), pRuntime, CJS_Icon::g_nObjDefnID);
       if (pObj.IsEmpty())
         return FALSE;
 
@@ -1686,7 +1680,7 @@ FX_BOOL Document::getPrintParams(IJS_Context* cc,
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
-      pRuntime->GetIsolate(), pContext, CJS_PrintParamsObj::g_nObjDefnID);
+      pRuntime->GetIsolate(), pRuntime, CJS_PrintParamsObj::g_nObjDefnID);
 
   // Not implemented yet.
 
