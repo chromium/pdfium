@@ -16,6 +16,7 @@
 #include "JBig2_Page.h"
 #include "JBig2_Segment.h"
 
+class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;
 class IFX_Pause;
 

@@ -8,6 +8,7 @@
 
 #include <list>
 
+#include "JBig2_ArithDecoder.h"
 #include "JBig2_GrdProc.h"
 #include "JBig2_GrrdProc.h"
 #include "JBig2_HtrdProc.h"
@@ -498,7 +499,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   for (i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
     pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
-      pSymbolDictDecoder->SDNUMINSYMS += pSeg->m_Result.sd->SDNUMEXSYMS;
+      pSymbolDictDecoder->SDNUMINSYMS += pSeg->m_Result.sd->NumImages();
       pLRSeg = pSeg;
     }
   }
@@ -510,9 +511,10 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     for (i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
       pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
-        JBIG2_memcpy(SDINSYMS + dwTemp, pSeg->m_Result.sd->SDEXSYMS,
-                     pSeg->m_Result.sd->SDNUMEXSYMS * sizeof(CJBig2_Image*));
-        dwTemp += pSeg->m_Result.sd->SDNUMEXSYMS;
+        const CJBig2_SymbolDict& dict = *pSeg->m_Result.sd;
+        for (size_t j = 0; j < dict.NumImages(); ++j)
+          SDINSYMS[dwTemp + j] = dict.GetImage(j);
+        dwTemp += dict.NumImages();
       }
     }
   }
@@ -623,7 +625,8 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   for (std::list<CJBig2_CachePair>::iterator it = m_pSymbolDictCache->begin();
        it != m_pSymbolDictCache->end(); ++it) {
     if (it->first == key) {
-      pSegment->m_Result.sd = it->second->DeepCopy();
+      nonstd::unique_ptr<CJBig2_SymbolDict> copy(it->second->DeepCopy());
+      pSegment->m_Result.sd = copy.release();
       m_pSymbolDictCache->push_front(*it);
       m_pSymbolDictCache->erase(it);
       cache_hit = true;
@@ -651,13 +654,14 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       }
       m_pStream->alignByte();
     }
-    CJBig2_SymbolDict* value = pSegment->m_Result.sd->DeepCopy();
+    nonstd::unique_ptr<CJBig2_SymbolDict> value =
+        pSegment->m_Result.sd->DeepCopy();
     if (value && kSymbolDictCacheMaxSize > 0) {
       while (m_pSymbolDictCache->size() >= kSymbolDictCacheMaxSize) {
         delete m_pSymbolDictCache->back().second;
         m_pSymbolDictCache->pop_back();
       }
-      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value));
+      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
     }
   }
   if (wFlags & 0x0200) {
@@ -777,7 +781,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   for (i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
     pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
-      pTRD->SBNUMSYMS += pSeg->m_Result.sd->SDNUMEXSYMS;
+      pTRD->SBNUMSYMS += pSeg->m_Result.sd->NumImages();
     }
   }
   if (pTRD->SBNUMSYMS > 0) {
@@ -786,9 +790,10 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     for (i = 0; i < pSegment->m_nReferred_to_segment_count; i++) {
       pSeg = findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
-        JBIG2_memcpy(SBSYMS + dwTemp, pSeg->m_Result.sd->SDEXSYMS,
-                     pSeg->m_Result.sd->SDNUMEXSYMS * sizeof(CJBig2_Image*));
-        dwTemp += pSeg->m_Result.sd->SDNUMEXSYMS;
+        const CJBig2_SymbolDict& dict = *pSeg->m_Result.sd;
+        for (size_t j = 0; j < dict.NumImages(); ++j)
+          SBSYMS[dwTemp + j] = dict.GetImage(j);
+        dwTemp += dict.NumImages();
       }
     }
     pTRD->SBSYMS = SBSYMS;
