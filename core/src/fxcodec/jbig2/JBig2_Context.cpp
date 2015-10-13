@@ -16,6 +16,18 @@
 #include "JBig2_SddProc.h"
 #include "JBig2_TrdProc.h"
 
+namespace {
+
+size_t GetHuffContextSize(uint8_t val) {
+  return val == 0 ? 65536 : val == 1 ? 8192 : 1024;
+}
+
+size_t GetRefAggContextSize(FX_BOOL val) {
+  return val ? 1024 : 8192;
+}
+
+}  // namespace
+
 // Implement a very small least recently used (LRU) cache. It is very
 // common for a JBIG2 dictionary to span multiple pages in a PDF file,
 // and we do not want to decode the same dictionary over and over
@@ -437,11 +449,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   int32_t i, nIndex, nRet;
   CJBig2_Segment* pSeg = nullptr;
   CJBig2_Segment* pLRSeg = nullptr;
-  FX_BOOL bUsed;
   CJBig2_Image** SDINSYMS = nullptr;
-  JBig2ArithCtx* gbContext = nullptr;
-  JBig2ArithCtx* grContext = nullptr;
-  CJBig2_ArithDecoder* pArithDecoder;
   CJBig2_SDDProc* pSymbolDictDecoder = new CJBig2_SDDProc();
   const uint8_t* key = pSegment->m_pData;
   FX_BOOL cache_hit = false;
@@ -592,90 +600,93 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       }
     }
   }
-  if ((wFlags & 0x0100) && pLRSeg && pLRSeg->m_Result.sd->m_bContextRetained) {
-    if (pSymbolDictDecoder->SDHUFF == 0) {
-      dwTemp = pSymbolDictDecoder->SDTEMPLATE == 0
-                   ? 65536
-                   : pSymbolDictDecoder->SDTEMPLATE == 1 ? 8192 : 1024;
-      gbContext = FX_Alloc(JBig2ArithCtx, dwTemp);
-      JBIG2_memcpy(gbContext, pLRSeg->m_Result.sd->m_gbContext,
-                   sizeof(JBig2ArithCtx) * dwTemp);
-    }
-    if (pSymbolDictDecoder->SDREFAGG == 1) {
-      dwTemp = pSymbolDictDecoder->SDRTEMPLATE ? 1 << 10 : 1 << 13;
-      grContext = FX_Alloc(JBig2ArithCtx, dwTemp);
-      JBIG2_memcpy(grContext, pLRSeg->m_Result.sd->m_grContext,
-                   sizeof(JBig2ArithCtx) * dwTemp);
-    }
-  } else {
-    if (pSymbolDictDecoder->SDHUFF == 0) {
-      dwTemp = pSymbolDictDecoder->SDTEMPLATE == 0
-                   ? 65536
-                   : pSymbolDictDecoder->SDTEMPLATE == 1 ? 8192 : 1024;
-      gbContext = FX_Alloc(JBig2ArithCtx, dwTemp);
-      JBIG2_memset(gbContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
-    }
-    if (pSymbolDictDecoder->SDREFAGG == 1) {
-      dwTemp = pSymbolDictDecoder->SDRTEMPLATE ? 1 << 10 : 1 << 13;
-      grContext = FX_Alloc(JBig2ArithCtx, dwTemp);
-      JBIG2_memset(grContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
-    }
-  }
-  pSegment->m_nResultType = JBIG2_SYMBOL_DICT_POINTER;
-  for (std::list<CJBig2_CachePair>::iterator it = m_pSymbolDictCache->begin();
-       it != m_pSymbolDictCache->end(); ++it) {
-    if (it->first == key) {
-      nonstd::unique_ptr<CJBig2_SymbolDict> copy(it->second->DeepCopy());
-      pSegment->m_Result.sd = copy.release();
-      m_pSymbolDictCache->push_front(*it);
-      m_pSymbolDictCache->erase(it);
-      cache_hit = true;
-      break;
-    }
-  }
-  if (!cache_hit) {
-    if (pSymbolDictDecoder->SDHUFF == 0) {
-      pArithDecoder = new CJBig2_ArithDecoder(m_pStream.get());
-      pSegment->m_Result.sd =
-          pSymbolDictDecoder->decode_Arith(pArithDecoder, gbContext, grContext);
-      delete pArithDecoder;
-      if (pSegment->m_Result.sd == NULL) {
-        nRet = JBIG2_ERROR_FATAL;
-        goto failed;
+
+  // The code below is in its own block to avoid issues with gotos jumping over
+  // variable declarations. The master branch does not have this issue since the
+  // gotos have been removed.
+  {
+    const bool bUseGbContext = (pSymbolDictDecoder->SDHUFF == 0);
+    const bool bUseGrContext = (pSymbolDictDecoder->SDREFAGG == 1);
+    const size_t gbContextSize =
+        GetHuffContextSize(pSymbolDictDecoder->SDTEMPLATE);
+    const size_t grContextSize =
+        GetRefAggContextSize(pSymbolDictDecoder->SDRTEMPLATE);
+    std::vector<JBig2ArithCtx> gbContext;
+    std::vector<JBig2ArithCtx> grContext;
+    if ((wFlags & 0x0100) && pLRSeg) {
+      if (bUseGbContext) {
+        gbContext = pLRSeg->m_Result.sd->GbContext();
+        if (gbContext.size() != gbContextSize) {
+          nRet = JBIG2_ERROR_FATAL;
+          goto failed;
+        }
       }
-      m_pStream->alignByte();
-      m_pStream->offset(2);
+      if (bUseGrContext) {
+        grContext = pLRSeg->m_Result.sd->GrContext();
+        if (grContext.size() != grContextSize) {
+          nRet = JBIG2_ERROR_FATAL;
+          goto failed;
+        }
+      }
     } else {
-      pSegment->m_Result.sd = pSymbolDictDecoder->decode_Huffman(
-          m_pStream.get(), gbContext, grContext, pPause);
-      if (pSegment->m_Result.sd == NULL) {
-        nRet = JBIG2_ERROR_FATAL;
-        goto failed;
-      }
-      m_pStream->alignByte();
+      if (bUseGbContext)
+        gbContext.resize(gbContextSize);
+      if (bUseGrContext)
+        grContext.resize(grContextSize);
     }
-    nonstd::unique_ptr<CJBig2_SymbolDict> value =
-        pSegment->m_Result.sd->DeepCopy();
-    if (value && kSymbolDictCacheMaxSize > 0) {
-      while (m_pSymbolDictCache->size() >= kSymbolDictCacheMaxSize) {
-        delete m_pSymbolDictCache->back().second;
-        m_pSymbolDictCache->pop_back();
+
+    pSegment->m_nResultType = JBIG2_SYMBOL_DICT_POINTER;
+    for (std::list<CJBig2_CachePair>::iterator it = m_pSymbolDictCache->begin();
+         it != m_pSymbolDictCache->end(); ++it) {
+      if (it->first == key) {
+        nonstd::unique_ptr<CJBig2_SymbolDict> copy(it->second->DeepCopy());
+        pSegment->m_Result.sd = copy.release();
+        m_pSymbolDictCache->push_front(*it);
+        m_pSymbolDictCache->erase(it);
+        cache_hit = true;
+        break;
       }
-      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
+    }
+    if (!cache_hit) {
+      if (bUseGbContext) {
+        nonstd::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
+            new CJBig2_ArithDecoder(m_pStream.get()));
+        pSegment->m_Result.sd = pSymbolDictDecoder->decode_Arith(
+            pArithDecoder.get(), &gbContext, &grContext);
+        if (!pSegment->m_Result.sd) {
+          nRet = JBIG2_ERROR_FATAL;
+          goto failed;
+        }
+
+        m_pStream->alignByte();
+        m_pStream->offset(2);
+      } else {
+        pSegment->m_Result.sd = pSymbolDictDecoder->decode_Huffman(
+            m_pStream.get(), &gbContext, &grContext, pPause);
+        if (!pSegment->m_Result.sd) {
+          nRet = JBIG2_ERROR_FATAL;
+          goto failed;
+        }
+        m_pStream->alignByte();
+      }
+      nonstd::unique_ptr<CJBig2_SymbolDict> value =
+          pSegment->m_Result.sd->DeepCopy();
+      if (value && kSymbolDictCacheMaxSize > 0) {
+        while (m_pSymbolDictCache->size() >= kSymbolDictCacheMaxSize) {
+          delete m_pSymbolDictCache->back().second;
+          m_pSymbolDictCache->pop_back();
+        }
+        m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
+      }
+    }
+    if (wFlags & 0x0200) {
+      if (bUseGbContext)
+        pSegment->m_Result.sd->SetGbContext(gbContext);
+      if (bUseGrContext)
+        pSegment->m_Result.sd->SetGrContext(grContext);
     }
   }
-  if (wFlags & 0x0200) {
-    pSegment->m_Result.sd->m_bContextRetained = TRUE;
-    if (pSymbolDictDecoder->SDHUFF == 0) {
-      pSegment->m_Result.sd->m_gbContext = gbContext;
-    }
-    if (pSymbolDictDecoder->SDREFAGG == 1) {
-      pSegment->m_Result.sd->m_grContext = grContext;
-    }
-    bUsed = TRUE;
-  } else {
-    bUsed = FALSE;
-  }
+
   delete pSymbolDictDecoder;
   FX_Free(SDINSYMS);
   delete Table_B1;
@@ -683,10 +694,6 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   delete Table_B3;
   delete Table_B4;
   delete Table_B5;
-  if (bUsed == FALSE) {
-    FX_Free(gbContext);
-    FX_Free(grContext);
-  }
   return JBIG2_SUCCESS;
 failed:
   delete pSymbolDictDecoder;
@@ -696,8 +703,6 @@ failed:
   delete Table_B3;
   delete Table_B4;
   delete Table_B5;
-  FX_Free(gbContext);
-  FX_Free(grContext);
   return nRet;
 }
 
@@ -985,7 +990,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
   }
   if (pTRD->SBREFINE == 1) {
-    dwTemp = pTRD->SBRTEMPLATE ? 1 << 10 : 1 << 13;
+    dwTemp = GetRefAggContextSize(pTRD->SBRTEMPLATE);
     grContext = FX_Alloc(JBig2ArithCtx, dwTemp);
     JBIG2_memset(grContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
   }
@@ -1080,8 +1085,7 @@ int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
   pPDD->HDTEMPLATE = (cFlags >> 1) & 0x03;
   pSegment->m_nResultType = JBIG2_PATTERN_DICT_POINTER;
   if (pPDD->HDMMR == 0) {
-    dwTemp =
-        pPDD->HDTEMPLATE == 0 ? 65536 : pPDD->HDTEMPLATE == 1 ? 8192 : 1024;
+    dwTemp = GetHuffContextSize(pPDD->HDTEMPLATE);
     gbContext = FX_Alloc(JBig2ArithCtx, dwTemp);
     JBIG2_memset(gbContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
     pArithDecoder = new CJBig2_ArithDecoder(m_pStream.get());
@@ -1164,7 +1168,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
   pHRD->HPH = pPatternDict->HDPATS[0]->m_nHeight;
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   if (pHRD->HMMR == 0) {
-    dwTemp = pHRD->HTEMPLATE == 0 ? 65536 : pHRD->HTEMPLATE == 1 ? 8192 : 1024;
+    dwTemp = GetHuffContextSize(pHRD->HTEMPLATE);
     gbContext = FX_Alloc(JBig2ArithCtx, dwTemp);
     JBIG2_memset(gbContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
     pArithDecoder = new CJBig2_ArithDecoder(m_pStream.get());
@@ -1249,8 +1253,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
   }
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   if (m_pGRD->MMR == 0) {
-    dwTemp =
-        m_pGRD->GBTEMPLATE == 0 ? 65536 : m_pGRD->GBTEMPLATE == 1 ? 8192 : 1024;
+    dwTemp = GetHuffContextSize(m_pGRD->GBTEMPLATE);
     if (m_gbContext == NULL) {
       m_gbContext = FX_Alloc(JBig2ArithCtx, dwTemp);
       JBIG2_memset(m_gbContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
@@ -1377,7 +1380,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   }
   pGRRD->GRREFERENCEDX = 0;
   pGRRD->GRREFERENCEDY = 0;
-  dwTemp = pGRRD->GRTEMPLATE ? 1 << 10 : 1 << 13;
+  dwTemp = GetRefAggContextSize(pGRRD->GRTEMPLATE);
   grContext = FX_Alloc(JBig2ArithCtx, dwTemp);
   JBIG2_memset(grContext, 0, sizeof(JBig2ArithCtx) * dwTemp);
   pArithDecoder = new CJBig2_ArithDecoder(m_pStream.get());

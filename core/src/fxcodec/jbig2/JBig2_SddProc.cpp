@@ -7,6 +7,7 @@
 #include "JBig2_SddProc.h"
 
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
+#include "../../../../third_party/base/stl_util.h"
 #include "../../../include/fxcrt/fx_basic.h"
 #include "JBig2_ArithIntDecoder.h"
 #include "JBig2_GrdProc.h"
@@ -16,10 +17,12 @@
 #include "JBig2_SymbolDict.h"
 #include "JBig2_TrdProc.h"
 
+using pdfium::vector_as_array;
+
 CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* gbContext,
-    JBig2ArithCtx* grContext) {
+    std::vector<JBig2ArithCtx>* gbContext,
+    std::vector<JBig2ArithCtx>* grContext) {
   CJBig2_Image** SDNEWSYMS;
   FX_DWORD HCHEIGHT, NSYMSDECODED;
   int32_t HCDH;
@@ -104,7 +107,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
         pGRD->GBAT[5] = SDAT[5];
         pGRD->GBAT[6] = SDAT[6];
         pGRD->GBAT[7] = SDAT[7];
-        BS = pGRD->decode_Arith(pArithDecoder, gbContext);
+        BS = pGRD->decode_Arith(pArithDecoder, vector_as_array(gbContext));
         if (!BS) {
           goto failed;
         }
@@ -192,7 +195,8 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           ids.IARDX = IARDX.get();
           ids.IARDY = IARDY.get();
           ids.IAID = IAID.get();
-          BS = pDecoder->decode_Arith(pArithDecoder, grContext, &ids);
+          BS = pDecoder->decode_Arith(pArithDecoder, vector_as_array(grContext),
+                                      &ids);
           if (!BS) {
             FX_Free(SBSYMS);
             goto failed;
@@ -227,7 +231,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           pGRRD->GRAT[1] = SDRAT[1];
           pGRRD->GRAT[2] = SDRAT[2];
           pGRRD->GRAT[3] = SDRAT[3];
-          BS = pGRRD->decode(pArithDecoder, grContext);
+          BS = pGRRD->decode(pArithDecoder, vector_as_array(grContext));
           if (!BS) {
             FX_Free(SBSYMS);
             goto failed;
@@ -285,10 +289,11 @@ failed:
   return nullptr;
 }
 
-CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
-                                                  JBig2ArithCtx* gbContext,
-                                                  JBig2ArithCtx* grContext,
-                                                  IFX_Pause* pPause) {
+CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
+    CJBig2_BitStream* pStream,
+    std::vector<JBig2ArithCtx>* gbContext,
+    std::vector<JBig2ArithCtx>* grContext,
+    IFX_Pause* pPause) {
   CJBig2_Image** SDNEWSYMS;
   FX_DWORD* SDNEWSYMWIDTHS;
   FX_DWORD HCHEIGHT, NSYMSDECODED;
@@ -440,7 +445,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           pDecoder->SBRAT[1] = SDRAT[1];
           pDecoder->SBRAT[2] = SDRAT[2];
           pDecoder->SBRAT[3] = SDRAT[3];
-          BS = pDecoder->decode_Huffman(pStream, grContext);
+          BS = pDecoder->decode_Huffman(pStream, vector_as_array(grContext));
           if (!BS) {
             FX_Free(SBSYMCODES);
             FX_Free(SBSYMS);
@@ -512,7 +517,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(CJBig2_BitStream* pStream,
           pGRRD->GRAT[3] = SDRAT[3];
           nonstd::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
               new CJBig2_ArithDecoder(pStream));
-          BS = pGRRD->decode(pArithDecoder.get(), grContext);
+          BS = pGRRD->decode(pArithDecoder.get(), vector_as_array(grContext));
           if (!BS) {
             FX_Free(SBSYMS);
             goto failed;
