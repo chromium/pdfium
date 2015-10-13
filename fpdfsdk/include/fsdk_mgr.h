@@ -77,7 +77,7 @@ class CPDFDoc_Environment final {
       m_pInfo->FFI_KillTimer(m_pInfo, nTimerID);
   }
 
-  FX_SYSTEMTIME FFI_GetLocalTime() {
+  FX_SYSTEMTIME FFI_GetLocalTime() const {
     FX_SYSTEMTIME fxtime;
     if (m_pInfo && m_pInfo->FFI_GetLocalTime) {
       FPDF_SYSTEMTIME systime = m_pInfo->FFI_GetLocalTime(m_pInfo);
@@ -98,19 +98,19 @@ class CPDFDoc_Environment final {
       m_pInfo->FFI_OnChange(m_pInfo);
   }
 
-  FX_BOOL FFI_IsSHIFTKeyDown(FX_DWORD nFlag) {
+  FX_BOOL FFI_IsSHIFTKeyDown(FX_DWORD nFlag) const {
     return (nFlag & FWL_EVENTFLAG_ShiftKey) != 0;
   }
 
-  FX_BOOL FFI_IsCTRLKeyDown(FX_DWORD nFlag) {
+  FX_BOOL FFI_IsCTRLKeyDown(FX_DWORD nFlag) const {
     return (nFlag & FWL_EVENTFLAG_ControlKey) != 0;
   }
 
-  FX_BOOL FFI_IsALTKeyDown(FX_DWORD nFlag) {
+  FX_BOOL FFI_IsALTKeyDown(FX_DWORD nFlag) const {
     return (nFlag & FWL_EVENTFLAG_AltKey) != 0;
   }
 
-  FX_BOOL FFI_IsINSERTKeyDown(FX_DWORD nFlag) { return FALSE; }
+  FX_BOOL FFI_IsINSERTKeyDown(FX_DWORD nFlag) const { return FALSE; }
 
   int JS_appAlert(const FX_WCHAR* Msg,
                   const FX_WCHAR* Title,

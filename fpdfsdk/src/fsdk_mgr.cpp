@@ -122,6 +122,7 @@ void CFX_SystemHandler::OutputSelectedRect(void* pFormFiller, CPDF_Rect& rect) {
     CPDF_Point righttop = CPDF_Point(rect.right, rect.top);
     CPDF_Point ptA = pFFL->PWLtoFFL(leftbottom);
     CPDF_Point ptB = pFFL->PWLtoFFL(righttop);
+
     CPDFSDK_Annot* pAnnot = pFFL->GetSDKAnnot();
     ASSERT(pAnnot);
     CPDFXFA_Page* pPage = pAnnot->GetPDFXFAPage();

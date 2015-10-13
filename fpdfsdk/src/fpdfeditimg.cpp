@@ -28,7 +28,6 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
     return FALSE;
 
   IFX_FileRead* pFile = new CPDF_CustomAccess(fileAccess);
-
   CPDF_ImageObject* pImgObj = (CPDF_ImageObject*)image_object;
   pImgObj->m_GeneralState.GetModify();
   for (int index = 0; index < nCount; index++) {

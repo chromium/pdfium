@@ -129,9 +129,8 @@ FX_BOOL CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
           if (CommitData(pPageView, nFlags)) {
             DestroyPDFWindow(pPageView);
             return TRUE;
-          } else {
-            return FALSE;
           }
+          return FALSE;
         }
       }
       break;

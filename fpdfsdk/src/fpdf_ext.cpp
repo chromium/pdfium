@@ -151,7 +151,8 @@ void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code) {
       if (pNameDict && pNameDict->KeyExist("EmbeddedFiles")) {
         FPDF_UnSupportError(FPDF_UNSP_DOC_ATTACHMENT);
         return;
-      } else if (pNameDict && pNameDict->KeyExist("JavaScript")) {
+      }
+      if (pNameDict && pNameDict->KeyExist("JavaScript")) {
         CPDF_Dictionary* pJSDict = pNameDict->GetDict("JavaScript");
         CPDF_Array* pArray = pJSDict ? pJSDict->GetArray("Names") : NULL;
         if (pArray) {

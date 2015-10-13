@@ -54,7 +54,7 @@ CPDF_LinkList* GetLinkList(CPDF_Page* page) {
 
 DLLEXPORT FPDF_BOOKMARK STDCALL
 FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
-  if (!document || !pDict)
+  if (!document)
     return NULL;
   CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
   CPDF_BookmarkTree tree(pDoc);

@@ -639,6 +639,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   CPDF_Dictionary* pDic = pDoc->GetRoot();
   if (!pDic)
     return;
+
   CPDF_AAction aa = pDic->GetDict(FX_BSTRC("AA"));
   if (aa.ActionExist((CPDF_AAction::AActionType)aaType)) {
     CPDF_Action action = aa.GetAction((CPDF_AAction::AActionType)aaType);

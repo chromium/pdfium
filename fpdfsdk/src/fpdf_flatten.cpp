@@ -362,12 +362,10 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
   if (!rcOriginalMB.IsEmpty()) {
     CPDF_Array* pMediaBox = new CPDF_Array();
-
     pMediaBox->Add(new CPDF_Number(rcOriginalMB.left));
     pMediaBox->Add(new CPDF_Number(rcOriginalMB.bottom));
     pMediaBox->Add(new CPDF_Number(rcOriginalMB.right));
     pMediaBox->Add(new CPDF_Number(rcOriginalMB.top));
-
     pPageDict->SetAt("MediaBox", pMediaBox);
   }
 
@@ -380,8 +378,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pPageDict->SetAt("ArtBox", pCropBox);
   }
 
-  CPDF_Dictionary* pRes = NULL;
-  pRes = pPageDict->GetDict("Resources");
+  CPDF_Dictionary* pRes = pPageDict->GetDict("Resources");
   if (!pRes) {
     pRes = new CPDF_Dictionary;
     pPageDict->SetAt("Resources", pRes);
