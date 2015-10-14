@@ -6,9 +6,9 @@
 
 #include "../../public/fpdf_ext.h"
 #include "../../third_party/base/nonstd_unique_ptr.h"
+#include "../include/formfiller/FFL_FormFiller.h"
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_mgr.h"
-#include "../include/formfiller/FFL_FormFiller.h"
 #include "../include/javascript/IJavaScript.h"
 
 #if _FX_OS_ == _FX_ANDROID_
@@ -660,11 +660,9 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotIterator annotIterator(this, TRUE);
-  CPDFSDK_Annot* pSDKAnnot = nullptr;
   int index = -1;
-  while ((pSDKAnnot = annotIterator.Next(index))) {
+  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next(index)) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
-    ASSERT(pAnnotHandlerMgr);
     pAnnotHandlerMgr->Annot_OnDraw(this, pSDKAnnot, pDevice, pUser2Device, 0);
   }
 }

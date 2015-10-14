@@ -325,7 +325,6 @@ class CPDFSDK_PageView final {
 
   int GetPageIndex();
   void LoadFXAnnots();
-
   void SetValid(FX_BOOL bValid) { m_bValid = bValid; }
   FX_BOOL IsValid() { return m_bValid; }
   void SetLock(FX_BOOL bLocked) { m_bLocked = bLocked; }

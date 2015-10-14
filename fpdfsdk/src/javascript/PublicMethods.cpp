@@ -48,14 +48,31 @@ END_JS_STATIC_GLOBAL_FUN()
 
 IMPLEMENT_JS_STATIC_GLOBAL_FUN(CJS_PublicMethods)
 
-static const FX_WCHAR* months[] = {L"Jan", L"Feb", L"Mar", L"Apr",
-                                   L"May", L"Jun", L"Jul", L"Aug",
-                                   L"Sep", L"Oct", L"Nov", L"Dec"};
+static const FX_WCHAR* const months[] = {L"Jan",
+                                         L"Feb",
+                                         L"Mar",
+                                         L"Apr",
+                                         L"May",
+                                         L"Jun",
+                                         L"Jul",
+                                         L"Aug",
+                                         L"Sep",
+                                         L"Oct",
+                                         L"Nov",
+                                         L"Dec"};
 
-static const FX_WCHAR* fullmonths[] = {L"January", L"February", L"March",
-                                       L"April",   L"May",      L"June",
-                                       L"July",    L"August",   L"September",
-                                       L"October", L"November", L"December"};
+static const FX_WCHAR* const fullmonths[] = {L"January",
+                                             L"February",
+                                             L"March",
+                                             L"April",
+                                             L"May",
+                                             L"June",
+                                             L"July",
+                                             L"August",
+                                             L"September",
+                                             L"October",
+                                             L"November",
+                                             L"December"};
 
 FX_BOOL CJS_PublicMethods::IsNumber(const FX_WCHAR* string) {
   CFX_WideString sTrim = StrTrim(string);
@@ -984,10 +1001,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
     else
       cSeperator = '.';
 
-    int iDecPositive;
-    iDecPositive = iDec2;
-
-    for (iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
+    for (int iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
       strValue.Insert(iDecPositive, cSeperator);
       iMax++;
     }
@@ -1273,10 +1287,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IJS_Context* cc,
     else
       cSeperator = '.';
 
-    int iDecPositive;
-    iDecPositive = iDec2;
-
-    for (iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
+    for (int iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
       strValue.Insert(iDecPositive, cSeperator);
       iMax++;
     }

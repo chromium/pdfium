@@ -64,30 +64,6 @@ FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
 
 CCodec_ModuleMgr* g_pCodecModule = nullptr;
 
-#if _FX_OS_ == _FX_LINUX_EMBEDDED_
-class CFontMapper : public IPDF_FontMapper {
- public:
-  CFontMapper();
-  ~CFontMapper() override;
-
-  // IPDF_FontMapper
-  FT_Face FindSubstFont(
-      CPDF_Document* pDoc,              // [IN] The PDF document
-      const CFX_ByteString& face_name,  // [IN] Original name
-      FX_BOOL bTrueType,                // [IN] TrueType or Type1
-      FX_DWORD flags,   // [IN] PDF font flags (see PDF Reference section 5.7.1)
-      int font_weight,  // [IN] original font weight. 0 for not specified
-      int CharsetCP,    // [IN] code page for charset (see Win32 GetACP())
-      FX_BOOL bVertical,
-      CPDF_SubstFont* pSubstFont  // [OUT] Subst font data
-      ) override;
-
-  FT_Face m_SysFace;
-};
-
-CFontMapper* g_pFontMapper = NULL;
-#endif  // #if _FX_OS_ == _FX_LINUX_EMBEDDED_
-
 DLLEXPORT void STDCALL FPDF_InitLibrary() {
   FPDF_InitLibraryWithConfig(nullptr);
 }
@@ -115,10 +91,6 @@ DLLEXPORT void STDCALL FPDF_InitLibraryWithConfig(
 }
 
 DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
-#if _FX_OS_ == _FX_LINUX_EMBEDDED_
-  delete g_pFontMapper;
-  g_pFontMapper = nullptr;
-#endif
   CPDF_ModuleMgr::Destroy();
   CFX_GEModule::Destroy();
 
@@ -203,7 +175,7 @@ class CMemFile final : public IFX_FileRead {
   }
 
  private:
-  ~CMemFile() {}
+  ~CMemFile() override {}
 
   uint8_t* m_pBuf;
   FX_FILESIZE m_size;

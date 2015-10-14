@@ -194,12 +194,11 @@ FX_BOOL app::viewerVariation(IJS_Context* cc,
 FX_BOOL app::viewerVersion(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
-  if (vp.IsGetting()) {
-    vp << JS_NUM_VIEWERVERSION;
-    return TRUE;
-  }
+  if (!vp.IsGetting())
+    return FALSE;
 
-  return FALSE;
+  vp << JS_NUM_VIEWERVERSION;
+  return TRUE;
 }
 
 FX_BOOL app::platform(IJS_Context* cc,

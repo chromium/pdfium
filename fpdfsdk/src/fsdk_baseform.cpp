@@ -38,7 +38,7 @@ CPDFSDK_Widget::~CPDFSDK_Widget() {}
 FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
     CPDF_Annot::AppearanceMode mode) {
   CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDict("AP");
-  if (pAP == NULL)
+  if (!pAP)
     return FALSE;
 
   // Choose the right sub-ap
@@ -52,7 +52,7 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
 
   // Get the AP stream or subdirectory
   CPDF_Object* psub = pAP->GetElementValue(ap_entry);
-  if (psub == NULL)
+  if (!psub)
     return FALSE;
 
   int nFieldType = GetFieldType();
@@ -71,7 +71,6 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
       }
       return FALSE;
   }
-
   return TRUE;
 }
 
@@ -186,15 +185,11 @@ FX_FLOAT CPDFSDK_Widget::GetFontSize() const {
 
 int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {
   CPDF_FormField* pFormField = GetFormField();
-  ASSERT(pFormField != NULL);
-
   return pFormField->GetSelectedIndex(nIndex);
 }
 
 CFX_WideString CPDFSDK_Widget::GetValue() const {
   CPDF_FormField* pFormField = GetFormField();
-  ASSERT(pFormField != NULL);
-
   return pFormField->GetValue();
 }
 
@@ -221,8 +216,6 @@ int CPDFSDK_Widget::CountOptions() const {
 
 FX_BOOL CPDFSDK_Widget::IsOptionSelected(int nIndex) const {
   CPDF_FormField* pFormField = GetFormField();
-  ASSERT(pFormField != NULL);
-
   return pFormField->IsItemSelected(nIndex);
 }
 
@@ -1464,19 +1457,11 @@ FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
 
   if (action && action.GetType() != CPDF_Action::Unknown) {
     CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-    ASSERT(pDocument != NULL);
-
     CPDFDoc_Environment* pEnv = pDocument->GetEnv();
-    ASSERT(pEnv != NULL);
-
-    CPDFSDK_ActionHandler* pActionHandler =
-        pEnv->GetActionHander(); /*(CPDFSDK_ActionHandler*)pApp->GetActionHandler();*/
-    ASSERT(pActionHandler != NULL);
-
+    CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
     return pActionHandler->DoAction_Field(action, type, pDocument,
                                           GetFormField(), data);
   }
-
   return FALSE;
 }
 

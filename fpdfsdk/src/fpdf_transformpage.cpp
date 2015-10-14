@@ -138,7 +138,6 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
     CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
     pContentArray->InsertAt(0, pRef);
     pContentArray->AddReference(pDoc, pEndStream);
-
   } else if (pContentObj && pContentObj->GetType() == PDFOBJ_REFERENCE) {
     CPDF_Reference* pReference = (CPDF_Reference*)pContentObj;
     CPDF_Object* pDirectObj = pReference->GetDirect();

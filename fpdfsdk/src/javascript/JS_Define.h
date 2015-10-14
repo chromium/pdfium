@@ -71,9 +71,8 @@ struct JSMethodSpec {
   }                            \
   ;
 
-template <
-    class C,
-    FX_BOOL (C::*M)(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)>
+template <class C,
+          FX_BOOL (C::*M)(IJS_Context*, CJS_PropValue&, CFX_WideString&)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -97,9 +96,8 @@ void JSPropGetter(const char* prop_name_string,
   info.GetReturnValue().Set((v8::Local<v8::Value>)value);
 }
 
-template <
-    class C,
-    FX_BOOL (C::*M)(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError)>
+template <class C,
+          FX_BOOL (C::*M)(IJS_Context*, CJS_PropValue&, CFX_WideString&)>
 void JSPropSetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -137,10 +135,10 @@ void JSPropSetter(const char* prop_name_string,
   }
 
 template <class C,
-          FX_BOOL (C::*M)(IJS_Context* cc,
-                          const CJS_Parameters& params,
-                          CJS_Value& vRet,
-                          CFX_WideString& sError)>
+          FX_BOOL (C::*M)(IJS_Context*,
+                          const CJS_Parameters&,
+                          CJS_Value&,
+                          CFX_WideString&)>
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
