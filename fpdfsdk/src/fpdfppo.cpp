@@ -369,11 +369,15 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
                                              FPDF_DOCUMENT src_doc,
                                              FPDF_BYTESTRING pagerange,
                                              int index) {
-  if (!dest_doc || !src_doc)
+  CPDF_Document* pDestDoc = CPDF_Document::FromFPDFDocument(dest_doc);
+  if (!dest_doc)
+    return FALSE;
+
+  CPDF_Document* pSrcDoc = CPDF_Document::FromFPDFDocument(src_doc);
+  if (!pSrcDoc)
     return FALSE;
 
   CFX_WordArray pageArray;
-  CPDF_Document* pSrcDoc = (CPDF_Document*)src_doc;
   int nCount = pSrcDoc->GetPageCount();
   if (pagerange) {
     if (!ParserPageRangeString(pagerange, &pageArray, nCount))
@@ -384,30 +388,30 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
     }
   }
 
-  CPDF_Document* pDestDoc = (CPDF_Document*)dest_doc;
   CPDF_PageOrganizer pageOrg;
-
   pageOrg.PDFDocInit(pDestDoc, pSrcDoc);
-
   return pageOrg.ExportPage(pSrcDoc, &pageArray, pDestDoc, index);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc,
                                                        FPDF_DOCUMENT src_doc) {
-  if (!src_doc || !dest_doc)
-    return false;
+  CPDF_Document* pDstDoc = CPDF_Document::FromFPDFDocument(dest_doc);
+  if (!pDstDoc)
+    return FALSE;
 
-  CPDF_Document* pSrcDoc = (CPDF_Document*)src_doc;
+  CPDF_Document* pSrcDoc = CPDF_Document::FromFPDFDocument(src_doc);
+  if (!pSrcDoc)
+    return FALSE;
+
   CPDF_Dictionary* pSrcDict = pSrcDoc->GetRoot();
   pSrcDict = pSrcDict->GetDict(FX_BSTRC("ViewerPreferences"));
-  ;
   if (!pSrcDict)
     return FALSE;
 
-  CPDF_Document* pDstDoc = (CPDF_Document*)dest_doc;
   CPDF_Dictionary* pDstDict = pDstDoc->GetRoot();
   if (!pDstDict)
     return FALSE;
+
   pDstDict->SetAt(FX_BSTRC("ViewerPreferences"), pSrcDict->Clone(TRUE));
   return TRUE;
 }

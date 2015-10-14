@@ -79,10 +79,12 @@ DLLEXPORT int STDCALL FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
 DLLEXPORT FPDF_FORMHANDLE STDCALL
 FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
                                 FPDF_FORMFILLINFO* formInfo) {
-  if (!document || !formInfo || formInfo->version != 1)
+  if (!formInfo || formInfo->version != 1)
     return nullptr;
 
-  CPDF_Document* pDocument = (CPDF_Document*)document;
+  CPDF_Document* pDocument = CPDF_Document::FromFPDFDocument(document);
+  if (!pDocument)
+    return nullptr;
   CPDFDoc_Environment* pEnv = new CPDFDoc_Environment(pDocument, formInfo);
   pEnv->SetSDKDocument(new CPDFSDK_Document(pDocument, pEnv));
   return pEnv;
