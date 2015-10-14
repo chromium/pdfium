@@ -26,7 +26,6 @@ DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page) {
   textpage = IPDF_TextPage::CreateTextPage((CPDF_Page*)pPage->GetPDFPage(),
                                            viewRef.IsDirectionR2L());
   textpage->ParseTextPage();
-
   return textpage;
 }
 DLLEXPORT void STDCALL FPDFText_ClosePage(FPDF_TEXTPAGE text_page) {

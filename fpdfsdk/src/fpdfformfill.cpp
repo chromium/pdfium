@@ -6,9 +6,10 @@
 
 #include "../../public/fpdf_formfill.h"
 #include "../../public/fpdfview.h"
+#include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../include/fsdk_define.h"
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fsdk_mgr.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 
@@ -321,7 +322,6 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, &clip);
 
   pDevice->RestoreState();
-
   delete options.m_pOCContext;
   options.m_pOCContext = NULL;
 }

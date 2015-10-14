@@ -961,8 +961,6 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
 
   int nFieldType = GetFieldType();
   if (m_pInterForm->IsNeedHighLight(nFieldType)) {
-    //          if (nFieldType != FIELDTYPE_PUSHBUTTON)
-    //          {
     CPDF_Rect rc = GetRect();
     FX_COLORREF color = m_pInterForm->GetHighlightColor(nFieldType);
     uint8_t alpha = m_pInterForm->GetHighlightAlpha();
@@ -976,10 +974,6 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
     pPageView->GetCurrentMatrix(page2device);
     page2device.Transform(((FX_FLOAT)rc.left), ((FX_FLOAT)rc.bottom),
                           rcDevice.left, rcDevice.bottom);
-    //          pEnv->FFI_PageToDevice(m_pPageView->GetPDFPage(), rc.left,
-    //          rc.bottom, &rcDevice.left, &rcDevice.bottom);
-    //          pEnv->FFI_PageToDevice(m_pPageView->GetPDFPage(), rc.right,
-    //          rc.top, &rcDevice.right, &rcDevice.top);
     page2device.Transform(((FX_FLOAT)rc.right), ((FX_FLOAT)rc.top),
                           rcDevice.right, rcDevice.top);
 
@@ -989,7 +983,6 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
     FX_RECT rcDev((int)rcDevice.left, (int)rcDevice.top, (int)rcDevice.right,
                   (int)rcDevice.bottom);
     pDevice->FillRect(&rcDev, argb);
-    /*      }*/
   }
 }
 
@@ -2216,7 +2209,6 @@ CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
 CPDFSDK_InterForm::~CPDFSDK_InterForm() {
   delete m_pInterForm;
   m_pInterForm = nullptr;
-
   m_Map.clear();
   m_XFAMap.RemoveAll();
 }
@@ -2981,14 +2973,10 @@ int CPDFSDK_InterForm::BeforeValueChange(const CPDF_FormField* pField,
 }
 
 int CPDFSDK_InterForm::AfterValueChange(const CPDF_FormField* pField) {
-  ASSERT(pField != NULL);
-
   CPDF_FormField* pFormField = (CPDF_FormField*)pField;
-
   SynchronizeField(pFormField, FALSE);
 
   int nType = pFormField->GetFieldType();
-
   if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD) {
     OnCalculate(pFormField);
     FX_BOOL bFormated = FALSE;
@@ -2999,7 +2987,6 @@ int CPDFSDK_InterForm::AfterValueChange(const CPDF_FormField* pField) {
       ResetFieldAppearance(pFormField, NULL, TRUE);
     UpdateField(pFormField);
   }
-
   return 0;
 }
 

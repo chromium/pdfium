@@ -166,16 +166,11 @@ void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
 
 FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
   switch (policy) {
-    case FPDF_POLICY_MACHINETIME_ACCESS: {
-      if (foxit_sandbox_policy & 0x01)
-        return TRUE;
-      else
-        return FALSE;
-    } break;
+    case FPDF_POLICY_MACHINETIME_ACCESS:
+      return (foxit_sandbox_policy & 0x01) ? TRUE : FALSE;
     default:
-      break;
+      return FALSE;
   }
-  return FALSE;
 }
 
 CCodec_ModuleMgr* g_pCodecModule = nullptr;

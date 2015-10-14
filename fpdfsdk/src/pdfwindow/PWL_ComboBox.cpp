@@ -594,10 +594,7 @@ FX_BOOL CPWL_ComboBox::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
     if (bExit)
       return FALSE;
   }
-  if (m_pList->OnCharWithExit(nChar, bExit, nFlag))
-    return bExit;
-
-  return FALSE;
+  return m_pList->OnCharWithExit(nChar, bExit, nFlag) ? bExit : FALSE;
 }
 
 void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd,

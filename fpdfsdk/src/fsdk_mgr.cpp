@@ -5,14 +5,16 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_ext.h"
+#include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../include/formfiller/FFL_FormFiller.h"
+#include "../include/fsdk_define.h"
+#include "../include/fsdk_mgr.h"
+#include "../include/javascript/IJavaScript.h"
+
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"
-#include "../include/fsdk_define.h"
-#include "../include/fsdk_mgr.h"
-#include "../include/javascript/IJavaScript.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
@@ -105,10 +107,6 @@ void CFX_SystemHandler::InvalidateRect(FX_HWND hWnd, FX_RECT rect) {
   device2page.Transform((FX_FLOAT)rect.left, (FX_FLOAT)rect.top, left, top);
   device2page.Transform((FX_FLOAT)rect.right, (FX_FLOAT)rect.bottom, right,
                         bottom);
-  //  m_pEnv->FFI_DeviceToPage(pPage, rect.left, rect.top, (double*)&left,
-  //  (double*)&top);
-  //  m_pEnv->FFI_DeviceToPage(pPage, rect.right, rect.bottom, (double*)&right,
-  //  (double*)&bottom);
   CPDF_Rect rcPDF(left, bottom, right, top);
   rcPDF.Normalize();
 
@@ -687,8 +685,6 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
                                        CPDF_RenderOptions* pOptions,
                                        FX_RECT* pClip) {
   m_curMatrix = *pUser2Device;
-  //  m_pAnnotList->DisplayAnnots(m_page, pDevice, pUser2Device, FALSE,
-  //  pOptions);
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFXFA_Page* pPage = GetPDFXFAPage();
 
@@ -723,16 +719,13 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
   // for pdf/static xfa.
   CPDFSDK_AnnotIterator annotIterator(this, TRUE);
-  CPDFSDK_Annot* pSDKAnnot = NULL;
   int index = -1;
-  pSDKAnnot = annotIterator.Next(index);
-  while (pSDKAnnot) {
+  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next(index)) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
-    ASSERT(pAnnotHandlerMgr);
     pAnnotHandlerMgr->Annot_OnDraw(this, pSDKAnnot, pDevice, pUser2Device, 0);
-    pSDKAnnot = annotIterator.Next(index);
   }
 }
+
 CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
                                                  FX_FLOAT pageY) {
   int nCount = m_pAnnotList->Count();
@@ -784,10 +777,8 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
   CPDFSDK_AnnotIterator annotIterator(this, FALSE);
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = pEnv->GetAnnotHandlerMgr();
-  CPDFSDK_Annot* pSDKAnnot = NULL;
   int index = -1;
-  pSDKAnnot = annotIterator.Next(index);
-  while (pSDKAnnot) {
+  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next(index)) {
     if (pSDKAnnot->GetType() == "Widget" ||
         pSDKAnnot->GetType() == FSDK_XFAWIDGET_TYPENAME) {
       pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
@@ -795,7 +786,6 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
       if (pAnnotMgr->Annot_OnHitTest(this, pSDKAnnot, point))
         return pSDKAnnot;
     }
-    pSDKAnnot = annotIterator.Next(index);
   }
 
   return NULL;
@@ -1081,13 +1071,8 @@ FX_BOOL CPDFSDK_PageView::OnKeyUp(int nKeyCode, int nFlag) {
 }
 
 void CPDFSDK_PageView::LoadFXAnnots() {
-  ASSERT(m_page != NULL);
-
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  ASSERT(pEnv != NULL);
-
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
-  ASSERT(pAnnotHandlerMgr != NULL);
 
   SetLock(TRUE);
   m_page->AddRef();

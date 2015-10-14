@@ -35,9 +35,9 @@ class IFX_SystemHandler;
 class CPDFDoc_Environment final {
  public:
   CPDFDoc_Environment(CPDFXFA_Document* pDoc, FPDF_FORMFILLINFO* pFFinfo);
-  virtual ~CPDFDoc_Environment();
+  ~CPDFDoc_Environment();
 
-  virtual void Release() {
+  void Release() {
     if (m_pInfo && m_pInfo->Release)
       m_pInfo->Release(m_pInfo);
     delete this;
@@ -551,7 +551,6 @@ class CPDFSDK_PageView final {
   CPDFSDK_Annot* AddAnnot(CPDF_Annot* pPDFAnnot);
   CPDFSDK_Annot* AddAnnot(IXFA_Widget* pPDFAnnot);
   FX_BOOL DeleteAnnot(CPDFSDK_Annot* pAnnot);
-
   int CountAnnots();
   CPDFSDK_Annot* GetAnnot(int nIndex);
   CPDFSDK_Annot* GetAnnotByDict(CPDF_Dictionary* pDict);

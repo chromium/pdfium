@@ -61,6 +61,7 @@ class CPDF_CustomAccess final : public IFX_FileRead {
   virtual FX_BOOL GetByte(FX_DWORD pos, uint8_t& ch);
   virtual FX_BOOL GetBlock(FX_DWORD pos, uint8_t* pBuf, FX_DWORD size);
 
+ private:
   FPDF_FILEACCESS m_FileAccess;
   uint8_t m_Buffer[512];
   FX_DWORD m_BufferOffset;

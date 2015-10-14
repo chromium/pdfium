@@ -48,9 +48,18 @@ END_JS_STATIC_GLOBAL_FUN()
 
 IMPLEMENT_JS_STATIC_GLOBAL_FUN(CJS_PublicMethods)
 
-static const FX_WCHAR* months[] = {L"Jan", L"Feb", L"Mar", L"Apr",
-                                   L"May", L"Jun", L"Jul", L"Aug",
-                                   L"Sep", L"Oct", L"Nov", L"Dec"};
+static const FX_WCHAR* const months[] = {L"Jan",
+                                         L"Feb",
+                                         L"Mar",
+                                         L"Apr",
+                                         L"May",
+                                         L"Jun",
+                                         L"Jul",
+                                         L"Aug",
+                                         L"Sep",
+                                         L"Oct",
+                                         L"Nov",
+                                         L"Dec"};
 
 static const FX_WCHAR* const fullmonths[] = {
     L"January",   L"February", L"March",    L"April",
@@ -935,7 +944,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   strValue.Replace(",", ".");
   double dValue = atof(strValue);
   if (iDec > 0)
-    dValue += DOUBLE_CORRECT;  //
+    dValue += DOUBLE_CORRECT;
 
   int iDec2;
   int iNegative = 0;
@@ -984,11 +993,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
     else
       cSeperator = '.';
 
-    int iDecPositive, iDecNegative;
-    iDecPositive = iDec2;
-    iDecNegative = iDec2;
-
-    for (iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
+    for (int iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
       strValue.Insert(iDecPositive, cSeperator);
       iMax++;
     }
@@ -1274,11 +1279,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IJS_Context* cc,
     else
       cSeperator = '.';
 
-    int iDecPositive, iDecNegative;
-    iDecPositive = iDec2;
-    iDecNegative = iDec2;
-
-    for (iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
+    for (int iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
       strValue.Insert(iDecPositive, cSeperator);
       iMax++;
     }

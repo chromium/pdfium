@@ -7,7 +7,6 @@
 #include "global.h"
 
 #include "../../../core/include/fxcrt/fx_ext.h"
-#include "../../include/fpdfxfa/fpdfxfa_app.h"
 #include "../../include/javascript/IJavaScript.h"
 #include "JS_Context.h"
 #include "JS_Define.h"

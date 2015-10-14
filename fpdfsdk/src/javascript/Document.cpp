@@ -861,12 +861,9 @@ FX_BOOL Document::info(IJS_Context* cc,
         FXJS_PutObjectBoolean(isolate, pObj, wsKey.c_str(),
                               (bool)pValueObj->GetInteger());
     }
-
     vp << pObj;
-    return TRUE;
-  } else {
-    return TRUE;
   }
+  return TRUE;
 }
 
 FX_BOOL Document::creationDate(IJS_Context* cc,
@@ -929,13 +926,20 @@ FX_BOOL Document::delay(IJS_Context* cc,
 
       m_DelayData.RemoveAll();
     } else {
+      CFX_ArrayTemplate<CJS_DelayData*> DelayDataToProcess;
       for (int i = 0, sz = m_DelayData.GetSize(); i < sz; i++) {
         if (CJS_DelayData* pData = m_DelayData.GetAt(i)) {
-          Field::DoDelay(m_pDocument, pData);
-          delete m_DelayData.GetAt(i);
+          DelayDataToProcess.Add(pData);
+          m_DelayData.SetAt(i, NULL);
         }
       }
       m_DelayData.RemoveAll();
+      for (int i = 0, sz = DelayDataToProcess.GetSize(); i < sz; i++) {
+        CJS_DelayData* pData = DelayDataToProcess.GetAt(i);
+        Field::DoDelay(m_pDocument, pData);
+        DelayDataToProcess.SetAt(i, NULL);
+        delete pData;
+      }
     }
   }
   return TRUE;
@@ -1340,40 +1344,6 @@ IconElement* IconTree::operator[](int iIndex) {
   return NULL;
 }
 
-void IconTree::DeleteIconElement(CFX_WideString swIconName) {
-  IconElement* pTemp = m_pHead;
-  int iLoopCount = m_iLength;
-  for (int i = 0; i < iLoopCount - 1; i++) {
-    if (pTemp == m_pEnd)
-      break;
-
-    if (m_pHead->IconName == swIconName) {
-      m_pHead = m_pHead->NextIcon;
-      delete pTemp;
-      m_iLength--;
-      pTemp = m_pHead;
-    }
-    if (pTemp->NextIcon->IconName == swIconName) {
-      if (pTemp->NextIcon == m_pEnd) {
-        m_pEnd = pTemp;
-        delete pTemp->NextIcon;
-        m_iLength--;
-        pTemp->NextIcon = NULL;
-      } else {
-        IconElement* pElement = pTemp->NextIcon;
-        pTemp->NextIcon = pTemp->NextIcon->NextIcon;
-        delete pElement;
-        m_iLength--;
-        pElement = NULL;
-      }
-
-      continue;
-    }
-
-    pTemp = pTemp->NextIcon;
-  }
-}
-
 FX_BOOL Document::addIcon(IJS_Context* cc,
                           const CJS_Parameters& params,
                           CJS_Value& vRet,
@@ -1505,15 +1475,7 @@ FX_BOOL Document::removeIcon(IJS_Context* cc,
                              const CJS_Parameters& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  if (params.size() != 1) {
-    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
-    return FALSE;
-  }
-
-  if (!m_pIconTree)
-    return FALSE;
-  CFX_WideString swIconName = params[0].ToCFXWideString();
+  // Unsafe, no supported.
   return TRUE;
 }
 
@@ -1639,7 +1601,10 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
     return FALSE;
 
   int nPageNo = params.GetSize() > 0 ? params[0].ToInt() : 0;
+
   CPDF_Document* pDocument = m_pDocument->GetDocument()->GetPDFDoc();
+  ASSERT(pDocument != NULL);
+
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
@@ -1788,47 +1753,7 @@ FX_BOOL Document::deletePages(IJS_Context* cc,
                               const CJS_Parameters& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
-  if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
-        m_pDocument->GetPermissions(FPDFPERM_ASSEMBLE)))
-    return FALSE;
-
-  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  v8::Isolate* isolate = pRuntime->GetIsolate();
-
-  int iSize = params.size();
-  int nStart = 0;
-  int nEnd = 0;
-  if (iSize < 1) {
-  } else if (iSize == 1) {
-    if (params[0].GetType() == CJS_Value::VT_object) {
-      v8::Local<v8::Object> pObj = params[0].ToV8Object();
-      v8::Local<v8::Value> pValue =
-          FXJS_GetObjectElement(isolate, pObj, L"nStart");
-      nStart = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToInt();
-      pValue = FXJS_GetObjectElement(isolate, pObj, L"nEnd");
-      nEnd = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToInt();
-    } else {
-      nStart = params[0].ToInt();
-    }
-  } else {
-    nStart = params[0].ToInt();
-    nEnd = params[1].ToInt();
-  }
-
-  int nTotal = m_pDocument->GetPageCount();
-  if (nStart < 0)
-    nStart = 0;
-  if (nStart >= nTotal)
-    nStart = nTotal - 1;
-
-  if (nEnd < 0)
-    nEnd = 0;
-  if (nEnd >= nTotal)
-    nEnd = nTotal - 1;
-
-  if (nEnd < nStart)
-    nEnd = nStart;
-
+  // Unsafe, no supported.
   return TRUE;
 }
 
@@ -1871,13 +1796,13 @@ void Document::AddDelayData(CJS_DelayData* pData) {
 void Document::DoFieldDelay(const CFX_WideString& sFieldName,
                             int nControlIndex) {
   CFX_DWordArray DelArray;
+  CFX_ArrayTemplate<CJS_DelayData*> DelayDataForFieldAndControlIndex;
 
   for (int i = 0, sz = m_DelayData.GetSize(); i < sz; i++) {
     if (CJS_DelayData* pData = m_DelayData.GetAt(i)) {
       if (pData->sFieldName == sFieldName &&
           pData->nControlIndex == nControlIndex) {
-        Field::DoDelay(m_pDocument, pData);
-        delete pData;
+        DelayDataForFieldAndControlIndex.Add(pData);
         m_DelayData.SetAt(i, NULL);
         DelArray.Add(i);
       }
@@ -1886,6 +1811,14 @@ void Document::DoFieldDelay(const CFX_WideString& sFieldName,
 
   for (int j = DelArray.GetSize() - 1; j >= 0; j--) {
     m_DelayData.RemoveAt(DelArray[j]);
+  }
+
+  for (int i = 0, sz = DelayDataForFieldAndControlIndex.GetSize(); i < sz;
+       i++) {
+    CJS_DelayData* pData = DelayDataForFieldAndControlIndex.GetAt(i);
+    Field::DoDelay(m_pDocument, pData);
+    DelayDataForFieldAndControlIndex.SetAt(i, NULL);
+    delete pData;
   }
 }
 

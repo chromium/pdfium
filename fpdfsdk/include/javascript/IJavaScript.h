@@ -144,7 +144,6 @@ class IJS_Runtime {
   virtual void ReleaseContext(IJS_Context* pContext) = 0;
   virtual IJS_Context* GetCurrentContext() = 0;
   virtual void SetReaderDocument(CPDFSDK_Document* pReaderDoc) = 0;
-
   virtual CPDFSDK_Document* GetReaderDocument() = 0;
   virtual int Execute(IJS_Context* cc,
                       const wchar_t* script,

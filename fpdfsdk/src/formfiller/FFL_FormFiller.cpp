@@ -464,9 +464,7 @@ CPDF_Rect CFFL_FormFiller::GetPDFWindowRect() const {
 CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView() {
   CPDFXFA_Page* pPage = m_pAnnot->GetPDFXFAPage();
   CPDFSDK_Document* pSDKDoc = m_pApp->GetSDKDocument();
-  if (!pSDKDoc)
-    return NULL;
-  return pSDKDoc->GetPageView(pPage);
+  return pSDKDoc ? pSDKDoc->GetPageView(pPage) : nullptr;
 }
 
 CPDF_Rect CFFL_FormFiller::GetFocusBox(CPDFSDK_PageView* pPageView) {
