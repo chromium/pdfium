@@ -762,10 +762,9 @@ FX_BOOL CPDF_ICCBasedCS::GetRGB(FX_FLOAT* pBuf,
   ICodec_IccModule* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
   if (m_pProfile->m_pTransform == NULL || pIccModule == NULL) {
     if (m_pAlterCS) {
-      m_pAlterCS->GetRGB(pBuf, R, G, B);
-    } else {
-      R = G = B = 0.0f;
+      return m_pAlterCS->GetRGB(pBuf, R, G, B);
     }
+    R = G = B = 0.0f;
     return TRUE;
   }
   FX_FLOAT rgb[3];
@@ -944,8 +943,7 @@ FX_BOOL CPDF_IndexedCS::GetRGB(FX_FLOAT* pBuf,
         m_pCompMinMax[i * 2] +
         m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
   }
-  m_pBaseCS->GetRGB(comps, R, G, B);
-  return TRUE;
+  return m_pBaseCS->GetRGB(comps, R, G, B);
 }
 CPDF_ColorSpace* CPDF_IndexedCS::GetBaseCS() const {
   return m_pBaseCS;
@@ -1084,8 +1082,7 @@ FX_BOOL CPDF_SeparationCS::GetRGB(FX_FLOAT* pBuf,
     for (int i = 0; i < nComps; i++) {
       results[i] = *pBuf;
     }
-    m_pAltCS->GetRGB(results, R, G, B);
-    return TRUE;
+    return m_pAltCS->GetRGB(results, R, G, B);
   }
   CFX_FixedBufGrow<FX_FLOAT, 16> results(m_pFunc->CountOutputs());
   int nresults = 0;
@@ -1094,8 +1091,7 @@ FX_BOOL CPDF_SeparationCS::GetRGB(FX_FLOAT* pBuf,
     return FALSE;
   }
   if (m_pAltCS) {
-    m_pAltCS->GetRGB(results, R, G, B);
-    return TRUE;
+    return m_pAltCS->GetRGB(results, R, G, B);
   }
   R = G = B = 0;
   return FALSE;
@@ -1177,8 +1173,7 @@ FX_BOOL CPDF_DeviceNCS::GetRGB(FX_FLOAT* pBuf,
   if (nresults == 0) {
     return FALSE;
   }
-  m_pAltCS->GetRGB(results, R, G, B);
-  return TRUE;
+  return m_pAltCS->GetRGB(results, R, G, B);
 }
 void CPDF_DeviceNCS::EnableStdConversion(FX_BOOL bEnabled) {
   CPDF_ColorSpace::EnableStdConversion(bEnabled);
