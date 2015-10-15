@@ -82,7 +82,7 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   if (!formInfo || formInfo->version != 1)
     return nullptr;
 
-  CPDF_Document* pDocument = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDocument = CPDFDocumentFromFPDFDocument(document);
   if (!pDocument)
     return nullptr;
   CPDFDoc_Environment* pEnv = new CPDFDoc_Environment(pDocument, formInfo);

@@ -369,11 +369,11 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
                                              FPDF_DOCUMENT src_doc,
                                              FPDF_BYTESTRING pagerange,
                                              int index) {
-  CPDF_Document* pDestDoc = CPDF_Document::FromFPDFDocument(dest_doc);
+  CPDF_Document* pDestDoc = CPDFDocumentFromFPDFDocument(dest_doc);
   if (!dest_doc)
     return FALSE;
 
-  CPDF_Document* pSrcDoc = CPDF_Document::FromFPDFDocument(src_doc);
+  CPDF_Document* pSrcDoc = CPDFDocumentFromFPDFDocument(src_doc);
   if (!pSrcDoc)
     return FALSE;
 
@@ -395,11 +395,11 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc,
                                                        FPDF_DOCUMENT src_doc) {
-  CPDF_Document* pDstDoc = CPDF_Document::FromFPDFDocument(dest_doc);
+  CPDF_Document* pDstDoc = CPDFDocumentFromFPDFDocument(dest_doc);
   if (!pDstDoc)
     return FALSE;
 
-  CPDF_Document* pSrcDoc = CPDF_Document::FromFPDFDocument(src_doc);
+  CPDF_Document* pSrcDoc = CPDFDocumentFromFPDFDocument(src_doc);
   if (!pSrcDoc)
     return FALSE;
 

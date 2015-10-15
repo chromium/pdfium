@@ -9,7 +9,7 @@
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL
 FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
   CPDF_ImageObject* pImageObj = new CPDF_ImageObject;

@@ -16,6 +16,10 @@
 #include "../include/fsdk_rendercontext.h"
 #include "../include/javascript/IJavaScript.h"
 
+CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
+  return static_cast<CPDF_Document*>(doc);
+}
+
 CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess) {
   if (pFileAccess)
     m_FileAccess = *pFileAccess;
@@ -222,7 +226,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
     return FALSE;
 
   *fileVersion = 0;
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(doc);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(doc);
   if (!pDoc)
     return FALSE;
 
@@ -237,7 +241,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 // jabdelmalek: changed return type from FX_DWORD to build on Linux (and match
 // header).
 DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
 
@@ -247,7 +251,7 @@ DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
 }
 
 DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return -1;
 
@@ -257,13 +261,13 @@ DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageCount(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   return pDoc ? pDoc->GetPageCount() : 0;
 }
 
 DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
                                           int page_index) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
 
@@ -512,7 +516,7 @@ DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
 }
 
 DLLEXPORT void STDCALL FPDF_CloseDocument(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return;
 
@@ -745,7 +749,7 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                               int page_index,
                                               double* width,
                                               double* height) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return FALSE;
 
@@ -763,7 +767,7 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
 
 DLLEXPORT FPDF_BOOL STDCALL
 FPDF_VIEWERREF_GetPrintScaling(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return TRUE;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -771,7 +775,7 @@ FPDF_VIEWERREF_GetPrintScaling(FPDF_DOCUMENT document) {
 }
 
 DLLEXPORT int STDCALL FPDF_VIEWERREF_GetNumCopies(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 1;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -780,7 +784,7 @@ DLLEXPORT int STDCALL FPDF_VIEWERREF_GetNumCopies(FPDF_DOCUMENT document) {
 
 DLLEXPORT FPDF_PAGERANGE STDCALL
 FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return NULL;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -789,7 +793,7 @@ FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
 
 DLLEXPORT FPDF_DUPLEXTYPE STDCALL
 FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return DuplexUndefined;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -804,7 +808,7 @@ FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
 }
 
 DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
 
@@ -825,7 +829,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,
   if (!name || name[0] == 0)
     return nullptr;
 
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
 

@@ -44,7 +44,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
 }
 
 DLLEXPORT void STDCALL FPDFPage_Delete(FPDF_DOCUMENT document, int page_index) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc || page_index < 0 || page_index >= pDoc->GetPageCount())
     return;
 
@@ -55,7 +55,7 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
                                          int page_index,
                                          double width,
                                          double height) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
 

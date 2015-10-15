@@ -183,7 +183,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code) {
 }
 
 DLLEXPORT int FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return PAGEMODE_UNKNOWN;
 

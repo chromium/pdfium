@@ -7,10 +7,6 @@
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 
-// static
-CPDF_Document* CPDF_Document::FromFPDFDocument(FPDF_DOCUMENT document) {
-  return static_cast<CPDF_Document*>(document);
-}
 
 CPDF_Document::CPDF_Document(CPDF_Parser* pParser)
     : CPDF_IndirectObjects(pParser) {

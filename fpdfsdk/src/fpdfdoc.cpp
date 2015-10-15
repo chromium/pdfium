@@ -52,7 +52,7 @@ CPDF_LinkList* GetLinkList(CPDF_Page* page) {
 
 DLLEXPORT FPDF_BOOKMARK STDCALL
 FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
   CPDF_BookmarkTree tree(pDoc);
@@ -64,7 +64,7 @@ DLLEXPORT FPDF_BOOKMARK STDCALL
 FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
   if (!pDict)
     return nullptr;
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
   CPDF_BookmarkTree tree(pDoc);
@@ -91,7 +91,7 @@ DLLEXPORT FPDF_BOOKMARK STDCALL FPDFBookmark_Find(FPDF_DOCUMENT document,
                                                   FPDF_WIDESTRING title) {
   if (!title || title[0] == 0)
     return nullptr;
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
   CPDF_BookmarkTree tree(pDoc);
@@ -104,7 +104,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFBookmark_GetDest(FPDF_DOCUMENT document,
                                                  FPDF_BOOKMARK pDict) {
   if (!pDict)
     return nullptr;
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
   CPDF_Bookmark bookmark((CPDF_Dictionary*)pDict);
@@ -150,7 +150,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFAction_GetDest(FPDF_DOCUMENT document,
                                                FPDF_ACTION pDict) {
   if (!pDict)
     return nullptr;
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
   CPDF_Action action((CPDF_Dictionary*)pDict);
@@ -177,7 +177,7 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document,
                                                       unsigned long buflen) {
   if (!pDict)
     return 0;
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
   CPDF_Action action((CPDF_Dictionary*)pDict);
@@ -192,7 +192,7 @@ DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document,
                                                       FPDF_DEST pDict) {
   if (!pDict)
     return 0;
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
   CPDF_Dest dest((CPDF_Array*)pDict);
@@ -226,7 +226,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFLink_GetDest(FPDF_DOCUMENT document,
                                              FPDF_LINK pDict) {
   if (!pDict)
     return nullptr;
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
   CPDF_Link link((CPDF_Dictionary*)pDict);
@@ -325,7 +325,7 @@ DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT doc,
                                                  unsigned long buflen) {
   if (!tag)
     return 0;
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(doc);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(doc);
   if (!pDoc)
     return 0;
   CPDF_Dictionary* pInfo = pDoc->GetInfo();

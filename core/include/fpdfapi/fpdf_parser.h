@@ -7,7 +7,6 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 
-#include "../../../public/fpdfview.h"
 #include "../fxcrt/fx_system.h"
 #include "fpdf_objects.h"
 
@@ -57,8 +56,6 @@ extern const FX_WORD PDFDocEncoding[256];
 
 class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjects {
  public:
-  static CPDF_Document* FromFPDFDocument(FPDF_DOCUMENT document);
-
   CPDF_Document();
   explicit CPDF_Document(CPDF_Parser* pParser);
 

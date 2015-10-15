@@ -56,7 +56,7 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
                          FPDF_DWORD flags,
                          FPDF_BOOL bSetVersion,
                          int fileVerion) {
-  CPDF_Document* pDoc = CPDF_Document::FromFPDFDocument(document);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
 
