@@ -54,9 +54,9 @@ CPDF_LinkList* GetLinkList(CPDF_Page* page) {
 
 DLLEXPORT FPDF_BOOKMARK STDCALL
 FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
-  if (!document)
-    return NULL;
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
   CPDF_BookmarkTree tree(pDoc);
   CPDF_Bookmark bookmark = CPDF_Bookmark((CPDF_Dictionary*)pDict);
   return tree.GetFirstChild(bookmark).GetDict();
@@ -64,9 +64,11 @@ FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
 
 DLLEXPORT FPDF_BOOKMARK STDCALL
 FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
-  if (!document || !pDict)
-    return NULL;
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+  if (!pDict)
+    return nullptr;
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
   CPDF_BookmarkTree tree(pDoc);
   CPDF_Bookmark bookmark = CPDF_Bookmark((CPDF_Dictionary*)pDict);
   return tree.GetNextSibling(bookmark).GetDict();
@@ -89,11 +91,11 @@ DLLEXPORT unsigned long STDCALL FPDFBookmark_GetTitle(FPDF_BOOKMARK pDict,
 
 DLLEXPORT FPDF_BOOKMARK STDCALL FPDFBookmark_Find(FPDF_DOCUMENT document,
                                                   FPDF_WIDESTRING title) {
-  if (!document)
-    return NULL;
   if (!title || title[0] == 0)
-    return NULL;
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+    return nullptr;
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
   CPDF_BookmarkTree tree(pDoc);
   FX_STRSIZE len = CFX_WideString::WStringLength(title);
   CFX_WideString encodedTitle = CFX_WideString::FromUTF16LE(title, len);
@@ -102,12 +104,12 @@ DLLEXPORT FPDF_BOOKMARK STDCALL FPDFBookmark_Find(FPDF_DOCUMENT document,
 
 DLLEXPORT FPDF_DEST STDCALL FPDFBookmark_GetDest(FPDF_DOCUMENT document,
                                                  FPDF_BOOKMARK pDict) {
-  if (!document)
-    return NULL;
   if (!pDict)
-    return NULL;
+    return nullptr;
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
   CPDF_Bookmark bookmark((CPDF_Dictionary*)pDict);
-  CPDF_Document* pDoc = (CPDF_Document*)document;
   CPDF_Dest dest = bookmark.GetDest(pDoc);
   if (dest)
     return dest.GetObject();
@@ -115,7 +117,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFBookmark_GetDest(FPDF_DOCUMENT document,
   // action
   CPDF_Action action = bookmark.GetAction();
   if (!action)
-    return NULL;
+    return nullptr;
   return action.GetDest(pDoc).GetObject();
 }
 
@@ -148,10 +150,11 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetType(FPDF_ACTION pDict) {
 
 DLLEXPORT FPDF_DEST STDCALL FPDFAction_GetDest(FPDF_DOCUMENT document,
                                                FPDF_ACTION pDict) {
-  if (!document || !pDict)
+  if (!pDict)
     return nullptr;
-
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
   CPDF_Action action((CPDF_Dictionary*)pDict);
   return action.GetDest(pDoc).GetObject();
 }
@@ -174,10 +177,11 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document,
                                                       FPDF_ACTION pDict,
                                                       void* buffer,
                                                       unsigned long buflen) {
-  if (!document || !pDict)
+  if (!pDict)
     return 0;
-
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return 0;
   CPDF_Action action((CPDF_Dictionary*)pDict);
   CFX_ByteString path = action.GetURI(pDoc);
   unsigned long len = path.GetLength() + 1;
@@ -188,10 +192,11 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document,
 
 DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document,
                                                       FPDF_DEST pDict) {
-  if (!document || !pDict)
+  if (!pDict)
     return 0;
-
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return 0;
   CPDF_Dest dest((CPDF_Array*)pDict);
   return dest.GetPageIndex(pDoc);
 }
@@ -229,10 +234,11 @@ FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page, double x, double y) {
 
 DLLEXPORT FPDF_DEST STDCALL FPDFLink_GetDest(FPDF_DOCUMENT document,
                                              FPDF_LINK pDict) {
-  if (!document || !pDict)
+  if (!pDict)
     return nullptr;
-
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
   CPDF_Link link((CPDF_Dictionary*)pDict);
   FPDF_DEST dest = link.GetDest(pDoc).GetObject();
   if (dest)
@@ -327,10 +333,11 @@ DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT doc,
                                                  FPDF_BYTESTRING tag,
                                                  void* buffer,
                                                  unsigned long buflen) {
-  if (!doc || !tag)
+  if (!tag)
     return 0;
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)doc)->GetPDFDoc();
-  // Get info dictionary
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(doc);
+  if (!pDoc)
+    return 0;
   CPDF_Dictionary* pInfo = pDoc->GetInfo();
   if (!pInfo)
     return 0;

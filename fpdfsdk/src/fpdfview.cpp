@@ -22,6 +22,10 @@
 #include "../include/fpdfxfa/fpdfxfa_util.h"
 #include "../include/javascript/IJavaScript.h"
 
+CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
+  return doc ? static_cast<CPDFXFA_Document*>(doc)->GetPDFDoc() : nullptr;
+}
+
 CFPDF_FileStream::CFPDF_FileStream(FPDF_FILEHANDLER* pFS) {
   m_pFS = pFS;
   m_nCurPos = 0;
@@ -375,17 +379,18 @@ FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
                                                 int* fileVersion) {
-  if (!doc || !fileVersion)
+  if (!fileVersion)
     return FALSE;
-  *fileVersion = 0;
-  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)doc;
-  CPDF_Document* pPDFDoc = pDoc->GetPDFDoc();
-  if (!pPDFDoc)
-    return (FX_DWORD)-1;
-  CPDF_Parser* pParser = (CPDF_Parser*)pPDFDoc->GetParser();
 
+  *fileVersion = 0;
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(doc);
+  if (!pDoc)
+    return FALSE;
+
+  CPDF_Parser* pParser = pDoc->GetParser();
   if (!pParser)
     return FALSE;
+
   *fileVersion = pParser->GetFileVersion();
   return TRUE;
 }
@@ -393,48 +398,37 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 // jabdelmalek: changed return type from FX_DWORD to build on Linux (and match
 // header).
 DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
-  if (document == NULL)
-    return 0;
-  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
-  CPDF_Document* pPDFDoc = pDoc->GetPDFDoc();
-  if (!pPDFDoc)
-    return (FX_DWORD)-1;
-  CPDF_Parser* pParser = (CPDF_Parser*)pPDFDoc->GetParser();
-  CPDF_Dictionary* pDict = pParser->GetEncryptDict();
-  if (pDict == NULL)
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
     return (FX_DWORD)-1;
 
-  return pDict->GetInteger("P");
+  CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
+  return pDict ? pDict->GetInteger("P") : (FX_DWORD)-1;
 }
 
 DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
-  if (document == NULL)
-    return -1;
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
-  CPDF_Parser* pParser = (CPDF_Parser*)pDoc->GetParser();
-  CPDF_Dictionary* pDict = pParser->GetEncryptDict();
-  if (pDict == NULL)
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
     return -1;
 
-  return pDict->GetInteger("R");
+  CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
+  return pDict ? pDict->GetInteger("R") : -1;
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageCount(FPDF_DOCUMENT document) {
-  if (document == NULL)
-    return 0;
-  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
-  return pDoc->GetPageCount();
-  //	return ((CPDF_Document*)document)->GetPageCount();
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  return pDoc ? pDoc->GetPageCount() : 0;
 }
 
 DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
                                           int page_index) {
-  if (document == NULL)
-    return NULL;
-  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
-  if (page_index < 0 || page_index >= pDoc->GetPageCount())
-    return NULL;
-  //	CPDF_Parser* pParser = (CPDF_Parser*)document;
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
+
+  if (page_index < 0 || page_index >= FPDF_GetPageCount(document))
+    return nullptr;
+
   return pDoc->GetPage(page_index);
 }
 
@@ -673,11 +667,7 @@ DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
 }
 
 DLLEXPORT void STDCALL FPDF_CloseDocument(FPDF_DOCUMENT document) {
-  if (!document)
-    return;
-
-  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
-  delete pDoc;
+  delete CPDFDocumentFromFPDFDocument(document);
 }
 
 DLLEXPORT unsigned long STDCALL FPDF_GetLastError() {
@@ -899,18 +889,15 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
 
 DLLEXPORT FPDF_BOOL STDCALL
 FPDF_VIEWERREF_GetPrintScaling(FPDF_DOCUMENT document) {
-  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return TRUE;
-  CPDF_Document* pPDFDoc = pDoc->GetPDFDoc();
-  if (!pPDFDoc)
-    return TRUE;
-  CPDF_ViewerPreferences viewRef(pPDFDoc);
+  CPDF_ViewerPreferences viewRef(pDoc);
   return viewRef.PrintScaling();
 }
 
 DLLEXPORT int STDCALL FPDF_VIEWERREF_GetNumCopies(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 1;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -919,7 +906,7 @@ DLLEXPORT int STDCALL FPDF_VIEWERREF_GetNumCopies(FPDF_DOCUMENT document) {
 
 DLLEXPORT FPDF_PAGERANGE STDCALL
 FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return NULL;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -928,7 +915,7 @@ FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
 
 DLLEXPORT FPDF_DUPLEXTYPE STDCALL
 FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return DuplexUndefined;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -943,9 +930,9 @@ FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
 }
 
 DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document) {
-  if (!document)
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
     return 0;
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot)
@@ -961,17 +948,15 @@ DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document) {
 
 DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,
                                                     FPDF_BYTESTRING name) {
-  if (!document)
-    return NULL;
   if (!name || name[0] == 0)
-    return NULL;
+    return nullptr;
 
-  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
-  CPDF_Document* pPDFDoc = pDoc->GetPDFDoc();
-  if (!pPDFDoc)
-    return NULL;
-  CPDF_NameTree name_tree(pPDFDoc, FX_BSTRC("Dests"));
-  return name_tree.LookupNamedDest(pPDFDoc, name);
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
+
+  CPDF_NameTree name_tree(pDoc, FX_BSTRC("Dests"));
+  return name_tree.LookupNamedDest(pDoc, name);
 }
 
 FPDF_RESULT FPDF_BStr_Init(FPDF_BSTR* str) {

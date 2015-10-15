@@ -91,6 +91,9 @@ class CFPDF_FileStream : public IFX_FileStream {
   FX_FILESIZE m_nCurPos;
 };
 
+// Conversions from FPDF_ types.
+CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);
+
 void DropContext(void* data);
 void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy);
