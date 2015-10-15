@@ -58,6 +58,7 @@ class CPDF_CustomAccess final : public IFX_FileRead {
 
 // Conversions from FPDF_ types.
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);
+CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page);
 
 void DropContext(void* data);
 void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);

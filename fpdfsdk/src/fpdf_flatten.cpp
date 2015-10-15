@@ -310,11 +310,11 @@ void GetOffset(FX_FLOAT& fa,
 }
 
 DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!page) {
     return FLATTEN_FAIL;
   }
 
-  CPDF_Page* pPage = (CPDF_Page*)(page);
   CPDF_Document* pDocument = pPage->m_pDocument;
   CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
 

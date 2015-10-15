@@ -7,18 +7,19 @@
 #include "../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../core/include/fpdftext/fpdf_text.h"
 #include "../../public/fpdf_text.h"
+#include "../include/fsdk_define.h"
 
 #ifdef _WIN32
 #include <tchar.h>
 #endif
 
 DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page) {
-  if (!page)
-    return NULL;
-  IPDF_TextPage* textpage = NULL;
-  CPDF_ViewerPreferences viewRef(((CPDF_Page*)page)->m_pDocument);
-  textpage =
-      IPDF_TextPage::CreateTextPage((CPDF_Page*)page, viewRef.IsDirectionR2L());
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
+    return nullptr;
+  CPDF_ViewerPreferences viewRef(pPage->m_pDocument);
+  IPDF_TextPage* textpage =
+      IPDF_TextPage::CreateTextPage(pPage, viewRef.IsDirectionR2L());
   textpage->ParseTextPage();
   return textpage;
 }

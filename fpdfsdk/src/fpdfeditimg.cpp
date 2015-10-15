@@ -30,7 +30,9 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
   CPDF_ImageObject* pImgObj = (CPDF_ImageObject*)image_object;
   pImgObj->m_GeneralState.GetModify();
   for (int index = 0; index < nCount; index++) {
-    CPDF_Page* pPage = (CPDF_Page*)pages[index];
+    CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
+    if (!pPage)
+      continue;
     pImgObj->m_pImage->ResetCache(pPage, NULL);
   }
   pImgObj->m_pImage->SetJpegImage(pFile);
@@ -69,7 +71,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   CPDF_ImageObject* pImgObj = (CPDF_ImageObject*)image_object;
   pImgObj->m_GeneralState.GetModify();
   for (int index = 0; index < nCount; index++) {
-    CPDF_Page* pPage = (CPDF_Page*)pages[index];
+    CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
+    if (!pPage)
+      continue;
     pImgObj->m_pImage->ResetCache(pPage, NULL);
   }
   pImgObj->m_pImage->SetImage(pBmp, FALSE);

@@ -201,7 +201,10 @@ DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document,
 
 DLLEXPORT FPDF_LINK STDCALL
 FPDFLink_GetLinkAtPoint(FPDF_PAGE page, double x, double y) {
-  CPDF_Page* pPage = (CPDF_Page*)page;
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
+    return nullptr;
+
   CPDF_LinkList* pLinkList = GetLinkList(pPage);
   if (!pLinkList)
     return nullptr;
@@ -212,7 +215,10 @@ FPDFLink_GetLinkAtPoint(FPDF_PAGE page, double x, double y) {
 
 DLLEXPORT int STDCALL
 FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page, double x, double y) {
-  CPDF_Page* pPage = (CPDF_Page*)page;
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
+    return -1;
+
   CPDF_LinkList* pLinkList = GetLinkList(pPage);
   if (!pLinkList)
     return -1;
@@ -251,10 +257,10 @@ DLLEXPORT FPDF_ACTION STDCALL FPDFLink_GetAction(FPDF_LINK pDict) {
 DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page,
                                                int* startPos,
                                                FPDF_LINK* linkAnnot) {
-  if (!page || !startPos || !linkAnnot)
+  if (!startPos || !linkAnnot)
     return FALSE;
-  CPDF_Page* pPage = (CPDF_Page*)page;
-  if (!pPage->m_pFormDict)
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage || !pPage->m_pFormDict)
     return FALSE;
   CPDF_Array* pAnnots = pPage->m_pFormDict->GetArray("Annots");
   if (!pAnnots)

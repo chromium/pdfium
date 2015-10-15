@@ -20,6 +20,10 @@ CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
   return static_cast<CPDF_Document*>(doc);
 }
 
+CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
+  return static_cast<CPDF_Page*>(page);
+}
+
 CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess) {
   if (pFileAccess)
     m_FileAccess = *pFileAccess;
@@ -284,15 +288,13 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageWidth(FPDF_PAGE page) {
-  if (!page)
-    return 0.0;
-  return ((CPDF_Page*)page)->GetPageWidth();
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  return pPage ? pPage->GetPageWidth() : 0.0;
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageHeight(FPDF_PAGE page) {
-  if (!page)
-    return 0.0;
-  return ((CPDF_Page*)page)->GetPageHeight();
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  return pPage ? pPage->GetPageHeight() : 0.0;
 }
 
 void DropContext(void* data) {
@@ -312,9 +314,9 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
                                        int size_y,
                                        int rotate,
                                        int flags) {
-  if (page == NULL)
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
     return;
-  CPDF_Page* pPage = (CPDF_Page*)page;
 
   CRenderContext* pContext = new CRenderContext;
   pPage->SetPrivateData((void*)1, pContext, DropContext);
@@ -472,10 +474,11 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                              int size_y,
                                              int rotate,
                                              int flags) {
-  if (bitmap == NULL || page == NULL)
+  if (!bitmap)
     return;
-  CPDF_Page* pPage = (CPDF_Page*)page;
-
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
+    return;
   CRenderContext* pContext = new CRenderContext;
   pPage->SetPrivateData((void*)1, pContext, DropContext);
 #ifdef _SKIA_SUPPORT_
@@ -570,10 +573,11 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
                                          double page_y,
                                          int* device_x,
                                          int* device_y) {
-  if (page == NULL || device_x == NULL || device_y == NULL)
+  if (!device_x || !device_y)
     return;
-  CPDF_Page* pPage = (CPDF_Page*)page;
-
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
+    return;
   CPDF_Matrix page2device;
   pPage->GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y,
                           rotate);
@@ -681,8 +685,8 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
                             int flags,
                             FX_BOOL bNeedToRestore,
                             IFSDK_PAUSE_Adapter* pause) {
-  CPDF_Page* pPage = (CPDF_Page*)page;
-  if (pPage == NULL)
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
     return;
 
   if (!pContext->m_pOptions)
