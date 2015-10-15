@@ -69,9 +69,45 @@ formats). For example: `out/Debug/pdfium_test --ppm path/to/myfile.pdf
 The current health of the source tree can be found at
 http://build.chromium.org/p/client.pdfium/console
 
+## Bugs
+
+ We will be using this
+[bug tracker](https://code.google.com/p/pdfium/issues/list), but for security
+bugs, please use [Chromium's security bug template]
+(https://code.google.com/p/chromium/issues/entry?template=Security%20Bug)
+and add the "Cr-Internals-Plugins-PDF" label.
+
+## Contributing code
+
+For contributing code, we will follow
+[Chromium's process](http://dev.chromium.org/developers/contributing-code)
+as much as possible. The main exceptions are:
+
+1. Code has to conform to the existing style and not Chromium/Google style.
+2. There is no commit queue, approved committers can land their changes via
+`git cl land`
+3. Changes must be merged to the XFA branch as well (see below).
+
 ## Branches
 
 There is a branch for a forthcoming feature called XFA that you can get by
-following the steps above, then: `git checkout origin/xfa build/gyp_pdfium ninja
--C out/Debug
-`
+following the steps above, then:
+
+```
+git checkout origin/xfa
+build/gyp_pdfium
+ninja -C out/Debug
+```
+
+Merging to XFA requires:
+
+```
+git checkout origin/xfa
+git checkout -b merge_branch
+git branch --set-upstream-to=origin/xfa
+git cherry-pick -x <commit hash>
+git commit --amend # add Merge to XFA
+git cl upload
+```
+
+Then wait for approval, and `git cl land`
