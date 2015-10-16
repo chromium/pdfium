@@ -22,10 +22,7 @@ CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode,
       return CFX_ByteString((char)unicode);
     }
     const FX_CHAR* altstr = FCS_GetAltStr(unicode);
-    if (altstr) {
-      return CFX_ByteString(altstr, -1);
-    }
-    return CFX_ByteString(defchar, -1);
+    return CFX_ByteString(altstr ? altstr : defchar);
   }
   char buf[10];
   int iDef = 0;
@@ -35,10 +32,7 @@ CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode,
     return CFX_ByteString(buf, ret);
   }
   const FX_CHAR* altstr = FCS_GetAltStr(unicode);
-  if (altstr) {
-    return CFX_ByteString(altstr, -1);
-  }
-  return CFX_ByteString(defchar, -1);
+  return CFX_ByteString(altstr ? altstr : defchar);
 }
 CTextPage::CTextPage() {}
 CTextPage::~CTextPage() {

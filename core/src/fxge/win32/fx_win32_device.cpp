@@ -122,7 +122,7 @@ FX_BOOL CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf) {
 }
 void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
                                          FX_DWORD FontType) {
-  CFX_ByteString name(plf->lfFaceName, -1);
+  CFX_ByteString name(plf->lfFaceName);
   if (name[0] == '@') {
     return;
   }

@@ -1108,7 +1108,7 @@ CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
 
 CPDF_Font* CPDF_Document::AddStandardFont(const FX_CHAR* font,
                                           CPDF_FontEncoding* pEncoding) {
-  CFX_ByteString name(font, -1);
+  CFX_ByteString name(font);
   if (PDF_GetStandardFontName(&name) < 0)
     return nullptr;
   return GetPageData()->GetStandardFont(name, pEncoding);
