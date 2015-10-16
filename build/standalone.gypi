@@ -243,15 +243,13 @@
         '-Wno-unused-parameter',
       ],
     },
-  },
-  'conditions': [
-    ['component=="shared_library"', {
-      'cflags': [
-        '-fPIC',
-      ],
-    }],
-    ['OS=="win"', {
-      'target_defaults': {
+    'conditions': [
+      ['component=="shared_library"', {
+        'cflags': [
+          '-fPIC',
+        ],
+      }],
+      ['OS=="win"', {
         'defines': [
           'NOMINMAX',
           '_CRT_SECURE_NO_DEPRECATE',
@@ -264,25 +262,21 @@
             ],
           }],
         ],
-      },
-    }],  # OS=="win"
-    ['OS=="mac"', {
-      'target_defaults': {
+      }],  # OS=="win"
+      ['OS=="mac"', {
         'target_conditions': [
           ['_type!="static_library"', {
             'xcode_settings': {'OTHER_LDFLAGS': ['-Wl,-search_paths_first']},
           }],
         ],  # target_conditions
-      },  # target_defaults
-    }],  # OS=="mac"
-    ['v8_use_external_startup_data==1', {
-      'target_defaults': {
+      }],  # OS=="mac"
+      ['v8_use_external_startup_data==1', {
         'defines': [
           'V8_USE_EXTERNAL_STARTUP_DATA',
         ],
-      },
-    }],  # v8_use_external_startup_data==1
-  ],
+      }],  # v8_use_external_startup_data==1
+    ],
+  },
   'xcode_settings': {
     # See comment in Chromium's common.gypi for why this is needed.
     'SYMROOT': '<(DEPTH)/xcodebuild',
