@@ -179,7 +179,7 @@ const FX_CHAR* const g_Base14FontNames[14] = {
     "Symbol",
     "ZapfDingbats",
 };
-const struct _AltFontName {
+const struct AltFontName {
   const FX_CHAR* m_pName;
   int m_Index;
 } g_AltFontNames[] = {
@@ -275,20 +275,10 @@ const struct _AltFontName {
 };
 extern "C" {
 static int compareString(const void* key, const void* element) {
-  return FXSYS_stricmp((const FX_CHAR*)key, ((_AltFontName*)element)->m_pName);
+  return FXSYS_stricmp((const FX_CHAR*)key, ((AltFontName*)element)->m_pName);
 }
 }
-int _PDF_GetStandardFontName(CFX_ByteString& name) {
-  _AltFontName* found =
-      (_AltFontName*)FXSYS_bsearch(name.c_str(), g_AltFontNames,
-                                   sizeof g_AltFontNames / sizeof(_AltFontName),
-                                   sizeof(_AltFontName), compareString);
-  if (found == NULL) {
-    return -1;
-  }
-  name = g_Base14FontNames[found->m_Index];
-  return found->m_Index;
-}
+
 int GetTTCIndex(const uint8_t* pFontData,
                 FX_DWORD ttc_size,
                 FX_DWORD font_offset) {
@@ -854,7 +844,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
       SubstName = name.Mid(1);
     }
   }
-  _PDF_GetStandardFontName(SubstName);
+  PDF_GetStandardFontName(&SubstName);
   if (SubstName == FX_BSTRC("Symbol") && !bTrueType) {
     pSubstFont->m_Family = "Chrome Symbol";
     pSubstFont->m_Charset = FXFONT_SYMBOL_CHARSET;
@@ -888,7 +878,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   int find = SubstName.Find(FX_BSTRC(","), 0);
   if (find >= 0) {
     family = SubstName.Left(find);
-    _PDF_GetStandardFontName(family);
+    PDF_GetStandardFontName(&family);
     style = SubstName.Mid(find + 1);
     bHasComma = TRUE;
   } else {
@@ -1668,4 +1658,15 @@ FX_BOOL CFX_FolderFontInfo::GetFaceName(void* hFont, CFX_ByteString& name) {
 }
 FX_BOOL CFX_FolderFontInfo::GetFontCharset(void* hFont, int& charset) {
   return FALSE;
+}
+
+int PDF_GetStandardFontName(CFX_ByteString* name) {
+  AltFontName* found = static_cast<AltFontName*>(
+      FXSYS_bsearch(name->c_str(), g_AltFontNames, FX_ArraySize(g_AltFontNames),
+                    sizeof(AltFontName), compareString));
+  if (!found)
+    return -1;
+
+  *name = g_Base14FontNames[found->m_Index];
+  return found->m_Index;
 }
