@@ -318,7 +318,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathFill(
     const CFX_AffineMatrix* pObject2Device,
     int fill_mode) {
   m_FillFlags = fill_mode;
-  if (m_pClipRgn == NULL) {
+  if (!m_pClipRgn) {
     m_pClipRgn = new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
                                  GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
@@ -350,7 +350,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(
     const CFX_PathData* pPathData,
     const CFX_AffineMatrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
-  if (m_pClipRgn == NULL) {
+  if (!m_pClipRgn) {
     m_pClipRgn = new CFX_ClipRgn(GetDeviceCaps(FXDC_PIXEL_WIDTH),
                                  GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
