@@ -46,7 +46,7 @@
 
 void opj_write_bytes_BE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_nb_bytes)
 {
-	const OPJ_BYTE * l_data_ptr = ((const OPJ_BYTE *) &p_value) + p_nb_bytes;
+	const OPJ_BYTE * l_data_ptr = ((const OPJ_BYTE *) &p_value)+sizeof(OPJ_UINT32)-p_nb_bytes;
 
 	assert(p_nb_bytes > 0 && p_nb_bytes <=  sizeof(OPJ_UINT32));
 
@@ -72,7 +72,7 @@ void opj_read_bytes_BE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT
 	assert(p_nb_bytes > 0 && p_nb_bytes <= sizeof(OPJ_UINT32));
 
 	*p_value = 0;
-	memcpy(l_data_ptr+4-p_nb_bytes,p_buffer,p_nb_bytes);
+	memcpy(l_data_ptr+sizeof(OPJ_UINT32)-p_nb_bytes,p_buffer,p_nb_bytes);
 }
 
 void opj_read_bytes_LE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT32 p_nb_bytes)
@@ -302,7 +302,7 @@ OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 		p_stream->m_current_data = p_stream->m_stored_data;
 	}
 
-	while(1){
+	for (;;) {
 		/* we should read less than a chunk -> read a chunk */
 		if (p_size < p_stream->m_buffer_size) {
 			/* we should do an actual read on the media */
@@ -382,7 +382,7 @@ OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,
 		return (OPJ_SIZE_T)-1;
 	}
 
-	while(1) {
+	for (;;) {
 		l_remaining_bytes = p_stream->m_buffer_size - p_stream->m_bytes_in_buffer;
 		
 		/* we have more memory than required */

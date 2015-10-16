@@ -10,4 +10,7 @@ JPEG 2000 library.
 Local Modifications:
 
 0000-use-colorspace.patch: Makes it possible to not call opj_jp2_apply_pclr().
+0001-image-data.patch: Fix a crashier in opj_j2k_update_image_data().
+0002-packet-iterator.patch: Fix integer overflow in opj_pi_create_decode().
+0003-dwt-decode.patch: Check array bounds for opj_dwt_decode_1() and friends.
 TODO(thestig): List all the other patches.
