@@ -20,16 +20,10 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
                                                   int rotate,
                                                   int flags,
                                                   IFSDK_PAUSE* pause) {
-  if (bitmap == NULL || page == NULL)
+  if (!bitmap || !pause || pause->version != 1)
     return FPDF_RENDER_FAILED;
 
-  if (!pause)
-    return FPDF_RENDER_FAILED;
-
-  if (pause->version != 1)
-    return FPDF_RENDER_FAILED;
-
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return FPDF_RENDER_FAILED;
 
@@ -66,16 +60,10 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
 
 DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
                                                IFSDK_PAUSE* pause) {
-  if (page == NULL)
+  if (!pause || pause->version != 1)
     return FPDF_RENDER_FAILED;
 
-  if (!pause)
-    return FPDF_RENDER_FAILED;
-
-  if (pause->version != 1)
-    return FPDF_RENDER_FAILED;
-
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return FPDF_RENDER_FAILED;
 
@@ -93,9 +81,7 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
 }
 
 DLLEXPORT void STDCALL FPDF_RenderPage_Close(FPDF_PAGE page) {
-  if (!page)
-    return;
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;
 

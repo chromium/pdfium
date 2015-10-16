@@ -26,6 +26,10 @@ CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
   return doc ? static_cast<CPDFXFA_Document*>(doc)->GetPDFDoc() : nullptr;
 }
 
+CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
+  return page ? static_cast<CPDFXFA_Page*>(page)->GetPDFPage() : nullptr;
+}
+
 CFPDF_FileStream::CFPDF_FileStream(FPDF_FILEHANDLER* pFS) {
   m_pFS = pFS;
   m_nCurPos = 0;
@@ -436,13 +440,11 @@ DLLEXPORT double STDCALL FPDF_GetPageWidth(FPDF_PAGE page) {
   if (!page)
     return 0.0;
   return ((CPDFXFA_Page*)page)->GetPageWidth();
-  //	return ((CPDF_Page*)page)->GetPageWidth();
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageHeight(FPDF_PAGE page) {
   if (!page)
     return 0.0;
-  //	return ((CPDF_Page*)page)->GetPageHeight();
   return ((CPDFXFA_Page*)page)->GetPageHeight();
 }
 
@@ -463,9 +465,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
                                        int size_y,
                                        int rotate,
                                        int flags) {
-  if (page == NULL)
-    return;
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;
 
@@ -625,12 +625,11 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                              int size_y,
                                              int rotate,
                                              int flags) {
-  if (bitmap == NULL || page == NULL)
+  if (!bitmap)
     return;
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;
-
   CRenderContext* pContext = new CRenderContext;
   pPage->SetPrivateData((void*)1, pContext, DropContext);
 #ifdef _SKIA_SUPPORT_
@@ -702,9 +701,11 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
                                          double page_y,
                                          int* device_x,
                                          int* device_y) {
-  if (page == NULL || device_x == NULL || device_y == NULL)
+  if (!device_x || !device_y)
     return;
   CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
+  if (!pPage)
+    return;
   pPage->PageToDevice(start_x, start_y, size_x, size_y, rotate, page_x, page_y,
                       device_x, device_y);
 }
@@ -804,8 +805,8 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
                             int flags,
                             FX_BOOL bNeedToRestore,
                             IFSDK_PAUSE_Adapter* pause) {
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
-  if (pPage == NULL)
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
     return;
 
   if (!pContext->m_pOptions)
