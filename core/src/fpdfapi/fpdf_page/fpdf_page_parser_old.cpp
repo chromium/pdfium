@@ -397,6 +397,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
         PDF_DecodeInlineStream(m_pBuf + m_Pos, m_Size - m_Pos, width, height,
                                Decoder, pParam, pData, dwDestSize);
     if ((int)dwStreamSize < 0) {
+      FX_Free(pData);
       return NULL;
     }
     if (bDecode) {
