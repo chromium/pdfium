@@ -1778,5 +1778,5 @@ FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name) {
 CFX_ByteString PDF_AdobeNameFromUnicode(FX_WCHAR unicode) {
   char glyph_name[64];
   FXFT_adobe_name_from_unicode(glyph_name, unicode);
-  return CFX_ByteString(glyph_name, -1);
+  return CFX_ByteString(glyph_name);
 }

@@ -463,7 +463,7 @@ void CFX_FontMapper::SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo) {
   m_pFontInfo = pFontInfo;
 }
 static CFX_ByteString _TT_NormalizeName(const FX_CHAR* family) {
-  CFX_ByteString norm(family, -1);
+  CFX_ByteString norm(family);
   norm.Remove(' ');
   norm.Remove('-');
   norm.Remove(',');
