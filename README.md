@@ -28,8 +28,8 @@ Previously, the second option (platform-specific build files) was the default.
 Most PDFium developers use Ninja, as does our [continuous build system]
 (http://build.chromium.org/p/client.pdfium/).
 
- * On Windows: `build\gyp\_pdfium`
- * For all other platforms: `build/gyp\_pdfium`
+ * On Windows: `build\gyp_pdfium`
+ * For all other platforms: `build/gyp_pdfium`
 
 The second option is to generate platform-specific build files, i.e. Makefiles
 on Linux, sln files on Windows, and xcodeproj files on Mac. To do so, set the
@@ -39,12 +39,12 @@ GYP\_GENERATORS environment variable appropriately (e.g. "make", "msvs", or
 ## Building the code
 
 If you used Ninja, you can build the sample program by: `ninja -C out/Debug
-pdfium\_test` You can build the entire product (which includes a few unit
+pdfium_test` You can build the entire product (which includes a few unit
 tests) by: `ninja -C out/Debug`.
 
 If you're not using Ninja, then building is platform-specific.
 
- * On Linux: `make pdfium\_test`
+ * On Linux: `make pdfium_test`
  * On Mac: `open build/all.xcodeproj`
  * On Windows: open build\all.sln
 
@@ -52,7 +52,7 @@ If you're not using Ninja, then building is platform-specific.
 
 The pdfium\_test program supports reading, parsing, and rasterizing the pages of
 a .pdf file to .ppm or .png output image files (windows supports two other
-formats). For example: `out/Debug/pdfium\_test --ppm path/to/myfile.pdf`. Note
+formats). For example: `out/Debug/pdfium_test --ppm path/to/myfile.pdf`. Note
 that this will write output images to `path/to/myfile.pdf.<n>.ppm`.
 
 ## Testing
