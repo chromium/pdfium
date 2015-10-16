@@ -31,10 +31,8 @@ deps_os = {
 }
 
 include_rules = [
-  '+public',
   '+testing',
   '+third_party/base',
-  '+v8',
 ]
 
 hooks = [

@@ -1,4 +1,6 @@
 include_rules = [
   '+fx_lpng',
+  '+public',
   '+third_party/zlib_v128',
+  '+v8',
 ]
