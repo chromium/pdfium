@@ -10,13 +10,13 @@
 #include "JBig2_HuffmanTable.h"
 class CJBig2_HuffmanDecoder {
  public:
-  CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream);
+  explicit CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream);
 
   ~CJBig2_HuffmanDecoder();
 
   int decodeAValue(CJBig2_HuffmanTable* pTable, int* nResult);
 
  private:
-  CJBig2_BitStream* m_pStream;
+  CJBig2_BitStream* const m_pStream;
 };
 #endif

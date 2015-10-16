@@ -658,7 +658,7 @@ class CJPX_Decoder {
  public:
   explicit CJPX_Decoder(bool use_colorspace);
   ~CJPX_Decoder();
-  FX_BOOL Init(const unsigned char* src_data, int src_size);
+  FX_BOOL Init(const unsigned char* src_data, FX_DWORD src_size);
   void GetInfo(FX_DWORD* width, FX_DWORD* height, FX_DWORD* components);
   bool Decode(uint8_t* dest_buf,
               int pitch,
@@ -666,7 +666,7 @@ class CJPX_Decoder {
 
  private:
   const uint8_t* m_SrcData;
-  int m_SrcSize;
+  FX_DWORD m_SrcSize;
   opj_image_t* image;
   opj_codec_t* l_codec;
   opj_stream_t* l_stream;
@@ -692,12 +692,12 @@ CJPX_Decoder::~CJPX_Decoder() {
   }
 }
 
-FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size) {
+FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, FX_DWORD src_size) {
   static const unsigned char szJP2Header[] = {
       0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a};
-  if (!src_data || src_size < sizeof(szJP2Header)) {
+  if (!src_data || src_size < sizeof(szJP2Header))
     return FALSE;
-  }
+
   image = NULL;
   m_SrcData = src_data;
   m_SrcSize = src_size;

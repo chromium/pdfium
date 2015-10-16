@@ -71,7 +71,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     m_pCurStates->m_TextState.New();
     m_pCurStates->m_ColorState.New();
   }
-  for (int i = 0; i < FX_ArraySize(m_Type3Data); ++i) {
+  for (size_t i = 0; i < FX_ArraySize(m_Type3Data); ++i) {
     m_Type3Data[i] = 0.0;
   }
 }

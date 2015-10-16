@@ -8,47 +8,44 @@
 
 #include "JBig2_Define.h"
 
-CJBig2_HuffmanDecoder::CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream) {
-  m_pStream = pStream;
+CJBig2_HuffmanDecoder::CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream)
+    : m_pStream(pStream) {
 }
+
 CJBig2_HuffmanDecoder::~CJBig2_HuffmanDecoder() {}
+
 int CJBig2_HuffmanDecoder::decodeAValue(CJBig2_HuffmanTable* pTable,
                                         int* nResult) {
-  int i;
   int nVal = 0;
   int nBits = 0;
-  FX_DWORD nTmp;
   while (1) {
-    if (m_pStream->read1Bit(&nTmp) == -1) {
+    FX_DWORD nTmp;
+    if (m_pStream->read1Bit(&nTmp) == -1)
       return -1;
-    }
+
     nVal = (nVal << 1) | nTmp;
-    nBits++;
-    for (i = 0; i < pTable->NTEMP; i++) {
+    ++nBits;
+    for (FX_DWORD i = 0; i < pTable->NTEMP; ++i) {
       if ((pTable->PREFLEN[i] == nBits) && (pTable->CODES[i] == nVal)) {
-        if ((pTable->HTOOB == 1) && (i == pTable->NTEMP - 1)) {
+        if ((pTable->HTOOB == 1) && (i == pTable->NTEMP - 1))
           return JBIG2_OOB;
-        }
-        if (m_pStream->readNBits(pTable->RANGELEN[i], &nTmp) == -1) {
+
+        if (m_pStream->readNBits(pTable->RANGELEN[i], &nTmp) == -1)
           return -1;
-        }
+
         if (pTable->HTOOB) {
-          if (i == pTable->NTEMP - 3) {
+          if (i == pTable->NTEMP - 3)
             *nResult = pTable->RANGELOW[i] - nTmp;
-            return 0;
-          } else {
+          else
             *nResult = pTable->RANGELOW[i] + nTmp;
-            return 0;
-          }
-        } else {
-          if (i == pTable->NTEMP - 2) {
-            *nResult = pTable->RANGELOW[i] - nTmp;
-            return 0;
-          } else {
-            *nResult = pTable->RANGELOW[i] + nTmp;
-            return 0;
-          }
+          return 0;
         }
+
+        if (i == pTable->NTEMP - 2)
+          *nResult = pTable->RANGELOW[i] - nTmp;
+        else
+          *nResult = pTable->RANGELOW[i] + nTmp;
+        return 0;
       }
     }
   }

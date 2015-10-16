@@ -12,285 +12,23 @@
 #include "../fpdf_cmaps/cmap_int.h"
 #include "font_int.h"
 
-CPDF_CMapManager::CPDF_CMapManager() {
-  m_bPrompted = FALSE;
-  FXSYS_memset(m_CID2UnicodeMaps, 0, sizeof m_CID2UnicodeMaps);
-}
-CPDF_CMapManager::~CPDF_CMapManager() {
-  for (const auto& pair : m_CMaps) {
-    delete pair.second;
-  }
-  m_CMaps.clear();
-  for (int i = 0; i < FX_ArraySize(m_CID2UnicodeMaps); ++i) {
-    delete m_CID2UnicodeMaps[i];
-  }
-}
-CPDF_CMap* CPDF_CMapManager::GetPredefinedCMap(const CFX_ByteString& name,
-                                               FX_BOOL bPromptCJK) {
-  auto it = m_CMaps.find(name);
-  if (it != m_CMaps.end()) {
-    return it->second;
-  }
-  CPDF_CMap* pCMap = LoadPredefinedCMap(name, bPromptCJK);
-  if (!name.IsEmpty()) {
-    m_CMaps[name] = pCMap;
-  }
-  return pCMap;
-}
-CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name,
-                                                FX_BOOL bPromptCJK) {
-  CPDF_CMap* pCMap = new CPDF_CMap;
-  const FX_CHAR* pname = name;
-  if (*pname == '/') {
-    pname++;
-  }
-  pCMap->LoadPredefined(this, pname, bPromptCJK);
-  return pCMap;
-}
-static const FX_CHAR* const g_CharsetNames[NUMBER_OF_CIDSETS] = {
-    NULL, "GB1", "CNS1", "Japan1", "Korea1", "UCS"};
-static const int g_CharsetCPs[NUMBER_OF_CIDSETS] = {0,   936, 950,
-                                                    932, 949, 1200};
-int _CharsetFromOrdering(const CFX_ByteString& Ordering) {
-  for (int charset = 1; charset < NUMBER_OF_CIDSETS; charset++) {
-    if (Ordering == CFX_ByteStringC(g_CharsetNames[charset]))
-      return charset;
-  }
-  return CIDSET_UNKNOWN;
-}
-void CPDF_CMapManager::ReloadAll() {
-  for (const auto& pair : m_CMaps) {
-    CPDF_CMap* pCMap = pair.second;
-    pCMap->LoadPredefined(this, pair.first, FALSE);
-  }
-  for (int i = 0; i < FX_ArraySize(m_CID2UnicodeMaps); ++i) {
-    if (CPDF_CID2UnicodeMap* pMap = m_CID2UnicodeMaps[i]) {
-      pMap->Load(this, i, FALSE);
-    }
-  }
-}
-CPDF_CID2UnicodeMap* CPDF_CMapManager::GetCID2UnicodeMap(int charset,
-                                                         FX_BOOL bPromptCJK) {
-  if (m_CID2UnicodeMaps[charset] == NULL) {
-    m_CID2UnicodeMaps[charset] = LoadCID2UnicodeMap(charset, bPromptCJK);
-  }
-  return m_CID2UnicodeMaps[charset];
-}
-CPDF_CID2UnicodeMap* CPDF_CMapManager::LoadCID2UnicodeMap(int charset,
-                                                          FX_BOOL bPromptCJK) {
-  CPDF_CID2UnicodeMap* pMap = new CPDF_CID2UnicodeMap();
-  if (!pMap->Initialize()) {
-    delete pMap;
-    return NULL;
-  }
-  pMap->Load(this, charset, bPromptCJK);
-  return pMap;
-}
-CPDF_CMapParser::CPDF_CMapParser() {
-  m_pCMap = NULL;
-  m_Status = 0;
-  m_CodeSeq = 0;
-}
-FX_BOOL CPDF_CMapParser::Initialize(CPDF_CMap* pCMap) {
-  m_pCMap = pCMap;
-  m_Status = 0;
-  m_CodeSeq = 0;
-  m_AddMaps.EstimateSize(0, 10240);
-  return TRUE;
-}
-static FX_DWORD CMap_GetCode(const CFX_ByteStringC& word) {
-  int num = 0;
-  if (word.GetAt(0) == '<') {
-    for (int i = 1; i < word.GetLength(); i++) {
-      uint8_t digit = word.GetAt(i);
-      if (digit >= '0' && digit <= '9') {
-        digit = digit - '0';
-      } else if (digit >= 'a' && digit <= 'f') {
-        digit = digit - 'a' + 10;
-      } else if (digit >= 'A' && digit <= 'F') {
-        digit = digit - 'A' + 10;
-      } else {
-        return num;
-      }
-      num = num * 16 + digit;
-    }
-  } else {
-    for (int i = 0; i < word.GetLength(); i++) {
-      if (word.GetAt(i) < '0' || word.GetAt(i) > '9') {
-        return num;
-      }
-      num = num * 10 + word.GetAt(i) - '0';
-    }
-  }
-  return num;
-}
-static FX_BOOL _CMap_GetCodeRange(_CMap_CodeRange& range,
-                                  const CFX_ByteStringC& first,
-                                  const CFX_ByteStringC& second) {
-  if (first.GetLength() == 0 || first.GetAt(0) != '<') {
-    return FALSE;
-  }
-  int i;
-  for (i = 1; i < first.GetLength(); i++)
-    if (first.GetAt(i) == '>') {
-      break;
-    }
-  range.m_CharSize = (i - 1) / 2;
-  if (range.m_CharSize > 4) {
-    return FALSE;
-  }
-  for (i = 0; i < range.m_CharSize; i++) {
-    uint8_t digit1 = first.GetAt(i * 2 + 1);
-    uint8_t digit2 = first.GetAt(i * 2 + 2);
-    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
-                       ? (digit1 - '0')
-                       : ((digit1 & 0xdf) - 'A' + 10);
-    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
-                            ? (digit2 - '0')
-                            : ((digit2 & 0xdf) - 'A' + 10));
-    range.m_Lower[i] = byte;
-  }
-  FX_DWORD size = second.GetLength();
-  for (i = 0; i < range.m_CharSize; i++) {
-    uint8_t digit1 =
-        ((FX_DWORD)i * 2 + 1 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 1) : 0;
-    uint8_t digit2 =
-        ((FX_DWORD)i * 2 + 2 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 2) : 0;
-    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
-                       ? (digit1 - '0')
-                       : ((digit1 & 0xdf) - 'A' + 10);
-    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
-                            ? (digit2 - '0')
-                            : ((digit2 & 0xdf) - 'A' + 10));
-    range.m_Upper[i] = byte;
-  }
-  return TRUE;
-}
-static CFX_ByteString CMap_GetString(const CFX_ByteStringC& word) {
-  return word.Mid(1, word.GetLength() - 2);
-}
-void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
-  if (word.IsEmpty()) {
-    return;
-  }
-  if (word == FX_BSTRC("begincidchar")) {
-    m_Status = 1;
-    m_CodeSeq = 0;
-  } else if (word == FX_BSTRC("begincidrange")) {
-    m_Status = 2;
-    m_CodeSeq = 0;
-  } else if (word == FX_BSTRC("endcidrange") ||
-             word == FX_BSTRC("endcidchar")) {
-    m_Status = 0;
-  } else if (word == FX_BSTRC("/WMode")) {
-    m_Status = 6;
-  } else if (word == FX_BSTRC("/Registry")) {
-    m_Status = 3;
-  } else if (word == FX_BSTRC("/Ordering")) {
-    m_Status = 4;
-  } else if (word == FX_BSTRC("/Supplement")) {
-    m_Status = 5;
-  } else if (word == FX_BSTRC("begincodespacerange")) {
-    m_Status = 7;
-    m_CodeSeq = 0;
-  } else if (word == FX_BSTRC("usecmap")) {
-  } else if (m_Status == 1 || m_Status == 2) {
-    m_CodePoints[m_CodeSeq] = CMap_GetCode(word);
-    m_CodeSeq++;
-    FX_DWORD StartCode, EndCode;
-    FX_WORD StartCID;
-    if (m_Status == 1) {
-      if (m_CodeSeq < 2) {
-        return;
-      }
-      EndCode = StartCode = m_CodePoints[0];
-      StartCID = (FX_WORD)m_CodePoints[1];
-    } else {
-      if (m_CodeSeq < 3) {
-        return;
-      }
-      StartCode = m_CodePoints[0];
-      EndCode = m_CodePoints[1];
-      StartCID = (FX_WORD)m_CodePoints[2];
-    }
-    if (EndCode < 0x10000) {
-      for (FX_DWORD code = StartCode; code <= EndCode; code++) {
-        m_pCMap->m_pMapping[code] = (FX_WORD)(StartCID + code - StartCode);
-      }
-    } else {
-      FX_DWORD buf[2];
-      buf[0] = StartCode;
-      buf[1] = ((EndCode - StartCode) << 16) + StartCID;
-      m_AddMaps.AppendBlock(buf, sizeof buf);
-    }
-    m_CodeSeq = 0;
-  } else if (m_Status == 3) {
-    CMap_GetString(word);
-    m_Status = 0;
-  } else if (m_Status == 4) {
-    m_pCMap->m_Charset = _CharsetFromOrdering(CMap_GetString(word));
-    m_Status = 0;
-  } else if (m_Status == 5) {
-    CMap_GetCode(word);
-    m_Status = 0;
-  } else if (m_Status == 6) {
-    m_pCMap->m_bVertical = CMap_GetCode(word);
-    m_Status = 0;
-  } else if (m_Status == 7) {
-    if (word == FX_BSTRC("endcodespacerange")) {
-      int nSegs = m_CodeRanges.GetSize();
-      if (nSegs > 1) {
-        m_pCMap->m_CodingScheme = CPDF_CMap::MixedFourBytes;
-        m_pCMap->m_nCodeRanges = nSegs;
-        m_pCMap->m_pLeadingBytes =
-            FX_Alloc2D(uint8_t, nSegs, sizeof(_CMap_CodeRange));
-        FXSYS_memcpy(m_pCMap->m_pLeadingBytes, m_CodeRanges.GetData(),
-                     nSegs * sizeof(_CMap_CodeRange));
-      } else if (nSegs == 1) {
-        m_pCMap->m_CodingScheme = (m_CodeRanges[0].m_CharSize == 2)
-                                      ? CPDF_CMap::TwoBytes
-                                      : CPDF_CMap::OneByte;
-      }
-      m_Status = 0;
-    } else {
-      if (word.GetLength() == 0 || word.GetAt(0) != '<') {
-        return;
-      }
-      if (m_CodeSeq % 2) {
-        _CMap_CodeRange range;
-        if (_CMap_GetCodeRange(range, m_LastWord, word)) {
-          m_CodeRanges.Add(range);
-        }
-      }
-      m_CodeSeq++;
-    }
-  }
-  m_LastWord = word;
-}
-CPDF_CMap::CPDF_CMap() {
-  m_Charset = CIDSET_UNKNOWN;
-  m_Coding = CIDCODING_UNKNOWN;
-  m_CodingScheme = TwoBytes;
-  m_bVertical = 0;
-  m_bLoaded = FALSE;
-  m_pMapping = NULL;
-  m_pLeadingBytes = NULL;
-  m_pAddMapping = NULL;
-  m_pEmbedMap = NULL;
-  m_pUseMap = NULL;
-  m_nCodeRanges = 0;
-}
-CPDF_CMap::~CPDF_CMap() {
-  FX_Free(m_pMapping);
-  FX_Free(m_pAddMapping);
-  FX_Free(m_pLeadingBytes);
-  delete m_pUseMap;
-}
-void CPDF_CMap::Release() {
-  if (m_PredefinedCMap.IsEmpty()) {
-    delete this;
-  }
-}
+namespace {
+
+const FX_CHAR* const g_CharsetNames[CIDSET_NUM_SETS] =
+    {nullptr, "GB1", "CNS1", "Japan1", "Korea1", "UCS"};
+
+const int g_CharsetCPs[CIDSET_NUM_SETS] = {0, 936, 950, 932, 949, 1200};
+
+class CPDF_PredefinedCMap {
+ public:
+  const FX_CHAR* m_pName;
+  CIDSet m_Charset;
+  int m_Coding;
+  CPDF_CMap::CodingScheme m_CodingScheme;
+  FX_DWORD m_LeadingSegCount;
+  uint8_t m_LeadingSegs[4];
+};
+
 const CPDF_PredefinedCMap g_PredefinedCMaps[] = {
     {"GB-EUC",
      CIDSET_GB1,
@@ -429,7 +167,627 @@ const CPDF_PredefinedCMap g_PredefinedCMaps[] = {
      {0xa1, 0xfd}},
     {"UniKS-UCS2", CIDSET_KOREA1, CIDCODING_UCS2, CPDF_CMap::TwoBytes},
     {"UniKS-UTF16", CIDSET_KOREA1, CIDCODING_UTF16, CPDF_CMap::TwoBytes},
-    {NULL, 0, 0}};
+};
+
+CIDSet CIDSetFromSizeT(size_t index) {
+  if (index >= CIDSET_NUM_SETS) {
+    NOTREACHED();
+    return CIDSET_UNKNOWN;
+  }
+  return static_cast<CIDSet>(index);
+}
+
+CIDSet CharsetFromOrdering(const CFX_ByteString& ordering) {
+  for (size_t charset = 1; charset < FX_ArraySize(g_CharsetNames); ++charset) {
+    if (ordering == CFX_ByteStringC(g_CharsetNames[charset]))
+      return CIDSetFromSizeT(charset);
+  }
+  return CIDSET_UNKNOWN;
+}
+
+FX_DWORD CMap_GetCode(const CFX_ByteStringC& word) {
+  int num = 0;
+  if (word.GetAt(0) == '<') {
+    for (int i = 1; i < word.GetLength(); i++) {
+      uint8_t digit = word.GetAt(i);
+      if (digit >= '0' && digit <= '9') {
+        digit = digit - '0';
+      } else if (digit >= 'a' && digit <= 'f') {
+        digit = digit - 'a' + 10;
+      } else if (digit >= 'A' && digit <= 'F') {
+        digit = digit - 'A' + 10;
+      } else {
+        return num;
+      }
+      num = num * 16 + digit;
+    }
+  } else {
+    for (int i = 0; i < word.GetLength(); i++) {
+      if (word.GetAt(i) < '0' || word.GetAt(i) > '9') {
+        return num;
+      }
+      num = num * 10 + word.GetAt(i) - '0';
+    }
+  }
+  return num;
+}
+
+bool CMap_GetCodeRange(CMap_CodeRange& range,
+                       const CFX_ByteStringC& first,
+                       const CFX_ByteStringC& second) {
+  if (first.GetLength() == 0 || first.GetAt(0) != '<')
+    return false;
+
+  int i;
+  for (i = 1; i < first.GetLength(); ++i) {
+    if (first.GetAt(i) == '>') {
+      break;
+    }
+  }
+  range.m_CharSize = (i - 1) / 2;
+  if (range.m_CharSize > 4)
+    return false;
+
+  for (i = 0; i < range.m_CharSize; ++i) {
+    uint8_t digit1 = first.GetAt(i * 2 + 1);
+    uint8_t digit2 = first.GetAt(i * 2 + 2);
+    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
+                       ? (digit1 - '0')
+                       : ((digit1 & 0xdf) - 'A' + 10);
+    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
+                            ? (digit2 - '0')
+                            : ((digit2 & 0xdf) - 'A' + 10));
+    range.m_Lower[i] = byte;
+  }
+
+  FX_DWORD size = second.GetLength();
+  for (i = 0; i < range.m_CharSize; ++i) {
+    uint8_t digit1 =
+        ((FX_DWORD)i * 2 + 1 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 1) : 0;
+    uint8_t digit2 =
+        ((FX_DWORD)i * 2 + 2 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 2) : 0;
+    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
+                       ? (digit1 - '0')
+                       : ((digit1 & 0xdf) - 'A' + 10);
+    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
+                            ? (digit2 - '0')
+                            : ((digit2 & 0xdf) - 'A' + 10));
+    range.m_Upper[i] = byte;
+  }
+  return true;
+}
+
+CFX_ByteString CMap_GetString(const CFX_ByteStringC& word) {
+  return word.Mid(1, word.GetLength() - 2);
+}
+
+int CompareDWORD(const void* data1, const void* data2) {
+  return (*(FX_DWORD*)data1) - (*(FX_DWORD*)data2);
+}
+
+int CompareCID(const void* key, const void* element) {
+  if ((*(FX_DWORD*)key) < (*(FX_DWORD*)element)) {
+    return -1;
+  }
+  if ((*(FX_DWORD*)key) >
+      (*(FX_DWORD*)element) + ((FX_DWORD*)element)[1] / 65536) {
+    return 1;
+  }
+  return 0;
+}
+
+int CheckCodeRange(uint8_t* codes,
+                   int size,
+                   CMap_CodeRange* pRanges,
+                   int nRanges) {
+  int iSeg = nRanges - 1;
+  while (iSeg >= 0) {
+    if (pRanges[iSeg].m_CharSize < size) {
+      --iSeg;
+      continue;
+    }
+    int iChar = 0;
+    while (iChar < size) {
+      if (codes[iChar] < pRanges[iSeg].m_Lower[iChar] ||
+          codes[iChar] > pRanges[iSeg].m_Upper[iChar]) {
+        break;
+      }
+      ++iChar;
+    }
+    if (iChar == pRanges[iSeg].m_CharSize)
+      return 2;
+
+    if (iChar)
+      return (size == pRanges[iSeg].m_CharSize) ? 2 : 1;
+    iSeg--;
+  }
+  return 0;
+}
+
+int GetCharSizeImpl(FX_DWORD charcode,
+                    CMap_CodeRange* pRanges,
+                    int iRangesSize) {
+  if (!iRangesSize)
+    return 1;
+
+  uint8_t codes[4];
+  codes[0] = codes[1] = 0x00;
+  codes[2] = (uint8_t)(charcode >> 8 & 0xFF);
+  codes[3] = (uint8_t)charcode;
+  int offset = 0;
+  int size = 4;
+  for (int i = 0; i < 4; ++i) {
+    int iSeg = iRangesSize - 1;
+    while (iSeg >= 0) {
+      if (pRanges[iSeg].m_CharSize < size) {
+        --iSeg;
+        continue;
+      }
+      int iChar = 0;
+      while (iChar < size) {
+        if (codes[offset + iChar] < pRanges[iSeg].m_Lower[iChar] ||
+            codes[offset + iChar] > pRanges[iSeg].m_Upper[iChar]) {
+          break;
+        }
+        ++iChar;
+      }
+      if (iChar == pRanges[iSeg].m_CharSize)
+        return size;
+      --iSeg;
+    }
+    --size;
+    ++offset;
+  }
+  return 1;
+}
+
+bool IsValidEmbeddedCharcodeFromUnicodeCharset(CIDSet charset) {
+  switch (charset) {
+    case CIDSET_GB1:
+    case CIDSET_CNS1:
+    case CIDSET_JAPAN1:
+    case CIDSET_KOREA1:
+      return true;
+
+    default:
+      return false;
+  }
+}
+
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+FX_DWORD EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
+                                     CIDSet charset,
+                                     FX_WCHAR unicode) {
+  if (!IsValidEmbeddedCharcodeFromUnicodeCharset(charset))
+    return 0;
+
+  CPDF_FontGlobals* pFontGlobals =
+      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
+  const FX_WORD* pCodes = pFontGlobals->m_EmbeddedToUnicodes[charset].m_pMap;
+  if (!pCodes)
+    return 0;
+
+  int nCodes = pFontGlobals->m_EmbeddedToUnicodes[charset].m_Count;
+  for (int i = 0; i < nCodes; ++i) {
+    if (pCodes[i] == unicode) {
+      FX_DWORD CharCode = FPDFAPI_CharCodeFromCID(pEmbedMap, i);
+      if (CharCode != 0) {
+        return CharCode;
+      }
+    }
+  }
+  return 0;
+}
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
+FX_WCHAR EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
+                                     CIDSet charset,
+                                     FX_DWORD charcode) {
+  if (!IsValidEmbeddedCharcodeFromUnicodeCharset(charset))
+    return 0;
+
+  FX_WORD cid = FPDFAPI_CIDFromCharCode(pEmbedMap, charcode);
+  if (cid == 0)
+    return 0;
+
+  CPDF_FontGlobals* pFontGlobals =
+      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
+  const FX_WORD* pCodes = pFontGlobals->m_EmbeddedToUnicodes[charset].m_pMap;
+  if (!pCodes)
+    return 0;
+
+  if (cid < pFontGlobals->m_EmbeddedToUnicodes[charset].m_Count)
+    return pCodes[cid];
+  return 0;
+}
+
+void FT_UseCIDCharmap(FXFT_Face face, int coding) {
+  int encoding;
+  switch (coding) {
+    case CIDCODING_GB:
+      encoding = FXFT_ENCODING_GB2312;
+      break;
+    case CIDCODING_BIG5:
+      encoding = FXFT_ENCODING_BIG5;
+      break;
+    case CIDCODING_JIS:
+      encoding = FXFT_ENCODING_SJIS;
+      break;
+    case CIDCODING_KOREA:
+      encoding = FXFT_ENCODING_JOHAB;
+      break;
+    default:
+      encoding = FXFT_ENCODING_UNICODE;
+  }
+  int err = FXFT_Select_Charmap(face, encoding);
+  if (err) {
+    err = FXFT_Select_Charmap(face, FXFT_ENCODING_UNICODE);
+  }
+  if (err && FXFT_Get_Face_Charmaps(face)) {
+    FXFT_Set_Charmap(face, *FXFT_Get_Face_Charmaps(face));
+  }
+}
+
+const struct CIDTransform {
+  FX_WORD CID;
+  uint8_t a, b, c, d, e, f;
+} g_Japan1_VertCIDs[] = {
+    {97, 129, 0, 0, 127, 55, 0},
+    {7887, 127, 0, 0, 127, 76, 89},
+    {7888, 127, 0, 0, 127, 79, 94},
+    {7889, 0, 129, 127, 0, 17, 127},
+    {7890, 0, 129, 127, 0, 17, 127},
+    {7891, 0, 129, 127, 0, 17, 127},
+    {7892, 0, 129, 127, 0, 17, 127},
+    {7893, 0, 129, 127, 0, 17, 127},
+    {7894, 0, 129, 127, 0, 17, 127},
+    {7895, 0, 129, 127, 0, 17, 127},
+    {7896, 0, 129, 127, 0, 17, 127},
+    {7897, 0, 129, 127, 0, 17, 127},
+    {7898, 0, 129, 127, 0, 17, 127},
+    {7899, 0, 129, 127, 0, 17, 104},
+    {7900, 0, 129, 127, 0, 17, 127},
+    {7901, 0, 129, 127, 0, 17, 104},
+    {7902, 0, 129, 127, 0, 17, 127},
+    {7903, 0, 129, 127, 0, 17, 127},
+    {7904, 0, 129, 127, 0, 17, 127},
+    {7905, 0, 129, 127, 0, 17, 114},
+    {7906, 0, 129, 127, 0, 17, 127},
+    {7907, 0, 129, 127, 0, 17, 127},
+    {7908, 0, 129, 127, 0, 17, 127},
+    {7909, 0, 129, 127, 0, 17, 127},
+    {7910, 0, 129, 127, 0, 17, 127},
+    {7911, 0, 129, 127, 0, 17, 127},
+    {7912, 0, 129, 127, 0, 17, 127},
+    {7913, 0, 129, 127, 0, 17, 127},
+    {7914, 0, 129, 127, 0, 17, 127},
+    {7915, 0, 129, 127, 0, 17, 114},
+    {7916, 0, 129, 127, 0, 17, 127},
+    {7917, 0, 129, 127, 0, 17, 127},
+    {7918, 127, 0, 0, 127, 18, 25},
+    {7919, 127, 0, 0, 127, 18, 25},
+    {7920, 127, 0, 0, 127, 18, 25},
+    {7921, 127, 0, 0, 127, 18, 25},
+    {7922, 127, 0, 0, 127, 18, 25},
+    {7923, 127, 0, 0, 127, 18, 25},
+    {7924, 127, 0, 0, 127, 18, 25},
+    {7925, 127, 0, 0, 127, 18, 25},
+    {7926, 127, 0, 0, 127, 18, 25},
+    {7927, 127, 0, 0, 127, 18, 25},
+    {7928, 127, 0, 0, 127, 18, 25},
+    {7929, 127, 0, 0, 127, 18, 25},
+    {7930, 127, 0, 0, 127, 18, 25},
+    {7931, 127, 0, 0, 127, 18, 25},
+    {7932, 127, 0, 0, 127, 18, 25},
+    {7933, 127, 0, 0, 127, 18, 25},
+    {7934, 127, 0, 0, 127, 18, 25},
+    {7935, 127, 0, 0, 127, 18, 25},
+    {7936, 127, 0, 0, 127, 18, 25},
+    {7937, 127, 0, 0, 127, 18, 25},
+    {7938, 127, 0, 0, 127, 18, 25},
+    {7939, 127, 0, 0, 127, 18, 25},
+    {8720, 0, 129, 127, 0, 19, 102},
+    {8721, 0, 129, 127, 0, 13, 127},
+    {8722, 0, 129, 127, 0, 19, 108},
+    {8723, 0, 129, 127, 0, 19, 102},
+    {8724, 0, 129, 127, 0, 19, 102},
+    {8725, 0, 129, 127, 0, 19, 102},
+    {8726, 0, 129, 127, 0, 19, 102},
+    {8727, 0, 129, 127, 0, 19, 102},
+    {8728, 0, 129, 127, 0, 19, 114},
+    {8729, 0, 129, 127, 0, 19, 114},
+    {8730, 0, 129, 127, 0, 38, 108},
+    {8731, 0, 129, 127, 0, 13, 108},
+    {8732, 0, 129, 127, 0, 19, 108},
+    {8733, 0, 129, 127, 0, 19, 108},
+    {8734, 0, 129, 127, 0, 19, 108},
+    {8735, 0, 129, 127, 0, 19, 108},
+    {8736, 0, 129, 127, 0, 19, 102},
+    {8737, 0, 129, 127, 0, 19, 102},
+    {8738, 0, 129, 127, 0, 19, 102},
+    {8739, 0, 129, 127, 0, 19, 102},
+    {8740, 0, 129, 127, 0, 19, 102},
+    {8741, 0, 129, 127, 0, 19, 102},
+    {8742, 0, 129, 127, 0, 19, 102},
+    {8743, 0, 129, 127, 0, 19, 102},
+    {8744, 0, 129, 127, 0, 19, 102},
+    {8745, 0, 129, 127, 0, 19, 102},
+    {8746, 0, 129, 127, 0, 19, 114},
+    {8747, 0, 129, 127, 0, 19, 114},
+    {8748, 0, 129, 127, 0, 19, 102},
+    {8749, 0, 129, 127, 0, 19, 102},
+    {8750, 0, 129, 127, 0, 19, 102},
+    {8751, 0, 129, 127, 0, 19, 102},
+    {8752, 0, 129, 127, 0, 19, 102},
+    {8753, 0, 129, 127, 0, 19, 102},
+    {8754, 0, 129, 127, 0, 19, 102},
+    {8755, 0, 129, 127, 0, 19, 102},
+    {8756, 0, 129, 127, 0, 19, 102},
+    {8757, 0, 129, 127, 0, 19, 102},
+    {8758, 0, 129, 127, 0, 19, 102},
+    {8759, 0, 129, 127, 0, 19, 102},
+    {8760, 0, 129, 127, 0, 19, 102},
+    {8761, 0, 129, 127, 0, 19, 102},
+    {8762, 0, 129, 127, 0, 19, 102},
+    {8763, 0, 129, 127, 0, 19, 102},
+    {8764, 0, 129, 127, 0, 19, 102},
+    {8765, 0, 129, 127, 0, 19, 102},
+    {8766, 0, 129, 127, 0, 19, 102},
+    {8767, 0, 129, 127, 0, 19, 102},
+    {8768, 0, 129, 127, 0, 19, 102},
+    {8769, 0, 129, 127, 0, 19, 102},
+    {8770, 0, 129, 127, 0, 19, 102},
+    {8771, 0, 129, 127, 0, 19, 102},
+    {8772, 0, 129, 127, 0, 19, 102},
+    {8773, 0, 129, 127, 0, 19, 102},
+    {8774, 0, 129, 127, 0, 19, 102},
+    {8775, 0, 129, 127, 0, 19, 102},
+    {8776, 0, 129, 127, 0, 19, 102},
+    {8777, 0, 129, 127, 0, 19, 102},
+    {8778, 0, 129, 127, 0, 19, 102},
+    {8779, 0, 129, 127, 0, 19, 114},
+    {8780, 0, 129, 127, 0, 19, 108},
+    {8781, 0, 129, 127, 0, 19, 114},
+    {8782, 0, 129, 127, 0, 13, 114},
+    {8783, 0, 129, 127, 0, 19, 108},
+    {8784, 0, 129, 127, 0, 13, 114},
+    {8785, 0, 129, 127, 0, 19, 108},
+    {8786, 0, 129, 127, 0, 19, 108},
+    {8787, 0, 129, 127, 0, 19, 108},
+    {8788, 0, 129, 127, 0, 19, 108},
+    {8789, 0, 129, 127, 0, 19, 108},
+    {8790, 0, 129, 127, 0, 19, 108},
+    {8791, 0, 129, 127, 0, 19, 108},
+    {8792, 0, 129, 127, 0, 19, 108},
+    {8793, 0, 129, 127, 0, 19, 108},
+    {8794, 0, 129, 127, 0, 19, 108},
+    {8795, 0, 129, 127, 0, 19, 108},
+    {8796, 0, 129, 127, 0, 19, 108},
+    {8797, 0, 129, 127, 0, 19, 108},
+    {8798, 0, 129, 127, 0, 19, 108},
+    {8799, 0, 129, 127, 0, 19, 108},
+    {8800, 0, 129, 127, 0, 19, 108},
+    {8801, 0, 129, 127, 0, 19, 108},
+    {8802, 0, 129, 127, 0, 19, 108},
+    {8803, 0, 129, 127, 0, 19, 108},
+    {8804, 0, 129, 127, 0, 19, 108},
+    {8805, 0, 129, 127, 0, 19, 108},
+    {8806, 0, 129, 127, 0, 19, 108},
+    {8807, 0, 129, 127, 0, 19, 108},
+    {8808, 0, 129, 127, 0, 19, 108},
+    {8809, 0, 129, 127, 0, 19, 108},
+    {8810, 0, 129, 127, 0, 19, 108},
+    {8811, 0, 129, 127, 0, 19, 114},
+    {8812, 0, 129, 127, 0, 19, 102},
+    {8813, 0, 129, 127, 0, 19, 114},
+    {8814, 0, 129, 127, 0, 76, 102},
+    {8815, 0, 129, 127, 0, 13, 121},
+    {8816, 0, 129, 127, 0, 19, 114},
+    {8817, 0, 129, 127, 0, 19, 127},
+    {8818, 0, 129, 127, 0, 19, 114},
+    {8819, 0, 129, 127, 0, 218, 108},
+};
+
+}  // namespace
+
+CPDF_CMapManager::CPDF_CMapManager() {
+  m_bPrompted = FALSE;
+  FXSYS_memset(m_CID2UnicodeMaps, 0, sizeof m_CID2UnicodeMaps);
+}
+CPDF_CMapManager::~CPDF_CMapManager() {
+  for (const auto& pair : m_CMaps) {
+    delete pair.second;
+  }
+  m_CMaps.clear();
+  for (size_t i = 0; i < FX_ArraySize(m_CID2UnicodeMaps); ++i) {
+    delete m_CID2UnicodeMaps[i];
+  }
+}
+CPDF_CMap* CPDF_CMapManager::GetPredefinedCMap(const CFX_ByteString& name,
+                                               FX_BOOL bPromptCJK) {
+  auto it = m_CMaps.find(name);
+  if (it != m_CMaps.end()) {
+    return it->second;
+  }
+  CPDF_CMap* pCMap = LoadPredefinedCMap(name, bPromptCJK);
+  if (!name.IsEmpty()) {
+    m_CMaps[name] = pCMap;
+  }
+  return pCMap;
+}
+CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name,
+                                                FX_BOOL bPromptCJK) {
+  CPDF_CMap* pCMap = new CPDF_CMap;
+  const FX_CHAR* pname = name;
+  if (*pname == '/') {
+    pname++;
+  }
+  pCMap->LoadPredefined(this, pname, bPromptCJK);
+  return pCMap;
+}
+
+void CPDF_CMapManager::ReloadAll() {
+  for (const auto& pair : m_CMaps) {
+    CPDF_CMap* pCMap = pair.second;
+    pCMap->LoadPredefined(this, pair.first, FALSE);
+  }
+  for (size_t i = 0; i < FX_ArraySize(m_CID2UnicodeMaps); ++i) {
+    if (CPDF_CID2UnicodeMap* pMap = m_CID2UnicodeMaps[i]) {
+      pMap->Load(this, CIDSetFromSizeT(i), FALSE);
+    }
+  }
+}
+CPDF_CID2UnicodeMap* CPDF_CMapManager::GetCID2UnicodeMap(CIDSet charset,
+                                                         FX_BOOL bPromptCJK) {
+  if (!m_CID2UnicodeMaps[charset])
+    m_CID2UnicodeMaps[charset] = LoadCID2UnicodeMap(charset, bPromptCJK);
+  return m_CID2UnicodeMaps[charset];
+}
+CPDF_CID2UnicodeMap* CPDF_CMapManager::LoadCID2UnicodeMap(CIDSet charset,
+                                                          FX_BOOL bPromptCJK) {
+  CPDF_CID2UnicodeMap* pMap = new CPDF_CID2UnicodeMap();
+  if (!pMap->Initialize()) {
+    delete pMap;
+    return NULL;
+  }
+  pMap->Load(this, charset, bPromptCJK);
+  return pMap;
+}
+CPDF_CMapParser::CPDF_CMapParser() {
+  m_pCMap = NULL;
+  m_Status = 0;
+  m_CodeSeq = 0;
+}
+FX_BOOL CPDF_CMapParser::Initialize(CPDF_CMap* pCMap) {
+  m_pCMap = pCMap;
+  m_Status = 0;
+  m_CodeSeq = 0;
+  m_AddMaps.EstimateSize(0, 10240);
+  return TRUE;
+}
+
+void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
+  if (word.IsEmpty()) {
+    return;
+  }
+  if (word == FX_BSTRC("begincidchar")) {
+    m_Status = 1;
+    m_CodeSeq = 0;
+  } else if (word == FX_BSTRC("begincidrange")) {
+    m_Status = 2;
+    m_CodeSeq = 0;
+  } else if (word == FX_BSTRC("endcidrange") ||
+             word == FX_BSTRC("endcidchar")) {
+    m_Status = 0;
+  } else if (word == FX_BSTRC("/WMode")) {
+    m_Status = 6;
+  } else if (word == FX_BSTRC("/Registry")) {
+    m_Status = 3;
+  } else if (word == FX_BSTRC("/Ordering")) {
+    m_Status = 4;
+  } else if (word == FX_BSTRC("/Supplement")) {
+    m_Status = 5;
+  } else if (word == FX_BSTRC("begincodespacerange")) {
+    m_Status = 7;
+    m_CodeSeq = 0;
+  } else if (word == FX_BSTRC("usecmap")) {
+  } else if (m_Status == 1 || m_Status == 2) {
+    m_CodePoints[m_CodeSeq] = CMap_GetCode(word);
+    m_CodeSeq++;
+    FX_DWORD StartCode, EndCode;
+    FX_WORD StartCID;
+    if (m_Status == 1) {
+      if (m_CodeSeq < 2) {
+        return;
+      }
+      EndCode = StartCode = m_CodePoints[0];
+      StartCID = (FX_WORD)m_CodePoints[1];
+    } else {
+      if (m_CodeSeq < 3) {
+        return;
+      }
+      StartCode = m_CodePoints[0];
+      EndCode = m_CodePoints[1];
+      StartCID = (FX_WORD)m_CodePoints[2];
+    }
+    if (EndCode < 0x10000) {
+      for (FX_DWORD code = StartCode; code <= EndCode; code++) {
+        m_pCMap->m_pMapping[code] = (FX_WORD)(StartCID + code - StartCode);
+      }
+    } else {
+      FX_DWORD buf[2];
+      buf[0] = StartCode;
+      buf[1] = ((EndCode - StartCode) << 16) + StartCID;
+      m_AddMaps.AppendBlock(buf, sizeof buf);
+    }
+    m_CodeSeq = 0;
+  } else if (m_Status == 3) {
+    CMap_GetString(word);
+    m_Status = 0;
+  } else if (m_Status == 4) {
+    m_pCMap->m_Charset = CharsetFromOrdering(CMap_GetString(word));
+    m_Status = 0;
+  } else if (m_Status == 5) {
+    CMap_GetCode(word);
+    m_Status = 0;
+  } else if (m_Status == 6) {
+    m_pCMap->m_bVertical = CMap_GetCode(word);
+    m_Status = 0;
+  } else if (m_Status == 7) {
+    if (word == FX_BSTRC("endcodespacerange")) {
+      int nSegs = m_CodeRanges.GetSize();
+      if (nSegs > 1) {
+        m_pCMap->m_CodingScheme = CPDF_CMap::MixedFourBytes;
+        m_pCMap->m_nCodeRanges = nSegs;
+        m_pCMap->m_pLeadingBytes =
+            FX_Alloc2D(uint8_t, nSegs, sizeof(CMap_CodeRange));
+        FXSYS_memcpy(m_pCMap->m_pLeadingBytes, m_CodeRanges.GetData(),
+                     nSegs * sizeof(CMap_CodeRange));
+      } else if (nSegs == 1) {
+        m_pCMap->m_CodingScheme = (m_CodeRanges[0].m_CharSize == 2)
+                                      ? CPDF_CMap::TwoBytes
+                                      : CPDF_CMap::OneByte;
+      }
+      m_Status = 0;
+    } else {
+      if (word.GetLength() == 0 || word.GetAt(0) != '<') {
+        return;
+      }
+      if (m_CodeSeq % 2) {
+        CMap_CodeRange range;
+        if (CMap_GetCodeRange(range, m_LastWord, word)) {
+          m_CodeRanges.Add(range);
+        }
+      }
+      m_CodeSeq++;
+    }
+  }
+  m_LastWord = word;
+}
+CPDF_CMap::CPDF_CMap() {
+  m_Charset = CIDSET_UNKNOWN;
+  m_Coding = CIDCODING_UNKNOWN;
+  m_CodingScheme = TwoBytes;
+  m_bVertical = 0;
+  m_bLoaded = FALSE;
+  m_pMapping = NULL;
+  m_pLeadingBytes = NULL;
+  m_pAddMapping = NULL;
+  m_pEmbedMap = NULL;
+  m_pUseMap = NULL;
+  m_nCodeRanges = 0;
+}
+CPDF_CMap::~CPDF_CMap() {
+  FX_Free(m_pMapping);
+  FX_Free(m_pAddMapping);
+  FX_Free(m_pLeadingBytes);
+  delete m_pUseMap;
+}
+void CPDF_CMap::Release() {
+  if (m_PredefinedCMap.IsEmpty()) {
+    delete this;
+  }
+}
 
 FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
                                   const FX_CHAR* pName,
@@ -447,25 +805,24 @@ FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
   if (cmapid.GetLength() > 2) {
     cmapid = cmapid.Left(cmapid.GetLength() - 2);
   }
-  int index = 0;
-  while (1) {
-    if (g_PredefinedCMaps[index].m_pName == NULL) {
-      return FALSE;
-    }
-    if (cmapid == CFX_ByteStringC(g_PredefinedCMaps[index].m_pName)) {
+  const CPDF_PredefinedCMap* map = nullptr;
+  for (size_t i = 0; i < FX_ArraySize(g_PredefinedCMaps); ++i) {
+    if (cmapid == CFX_ByteStringC(g_PredefinedCMaps[i].m_pName)) {
+      map = &g_PredefinedCMaps[i];
       break;
     }
-    index++;
   }
-  const CPDF_PredefinedCMap& map = g_PredefinedCMaps[index];
-  m_Charset = map.m_Charset;
-  m_Coding = map.m_Coding;
-  m_CodingScheme = map.m_CodingScheme;
+  if (!map)
+    return FALSE;
+
+  m_Charset = map->m_Charset;
+  m_Coding = map->m_Coding;
+  m_CodingScheme = map->m_CodingScheme;
   if (m_CodingScheme == MixedTwoBytes) {
     m_pLeadingBytes = FX_Alloc(uint8_t, 256);
-    for (FX_DWORD i = 0; i < map.m_LeadingSegCount; i++) {
-      for (int b = map.m_LeadingSegs[i * 2]; b <= map.m_LeadingSegs[i * 2 + 1];
-           b++) {
+    for (FX_DWORD i = 0; i < map->m_LeadingSegCount; ++i) {
+      const uint8_t* segs = map->m_LeadingSegs;
+      for (int b = segs[i * 2]; b <= segs[i * 2 + 1]; ++b) {
         m_pLeadingBytes[b] = 1;
       }
     }
@@ -477,11 +834,6 @@ FX_BOOL CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
   }
   return FALSE;
 }
-extern "C" {
-static int compare_dword(const void* data1, const void* data2) {
-  return (*(FX_DWORD*)data1) - (*(FX_DWORD*)data2);
-}
-};
 FX_BOOL CPDF_CMap::LoadEmbedded(const uint8_t* pData, FX_DWORD size) {
   m_pMapping = FX_Alloc(FX_WORD, 65536);
   CPDF_CMapParser parser;
@@ -500,22 +852,11 @@ FX_BOOL CPDF_CMap::LoadEmbedded(const uint8_t* pData, FX_DWORD size) {
     FXSYS_memcpy(m_pAddMapping + 4, parser.m_AddMaps.GetBuffer(),
                  parser.m_AddMaps.GetSize());
     FXSYS_qsort(m_pAddMapping + 4, parser.m_AddMaps.GetSize() / 8, 8,
-                compare_dword);
+                CompareDWORD);
   }
   return TRUE;
 }
-extern "C" {
-static int compareCID(const void* key, const void* element) {
-  if ((*(FX_DWORD*)key) < (*(FX_DWORD*)element)) {
-    return -1;
-  }
-  if ((*(FX_DWORD*)key) >
-      (*(FX_DWORD*)element) + ((FX_DWORD*)element)[1] / 65536) {
-    return 1;
-  }
-  return 0;
-}
-};
+
 FX_WORD CPDF_CMap::CIDFromCharCode(FX_DWORD charcode) const {
   if (m_Coding == CIDCODING_CID) {
     return (FX_WORD)charcode;
@@ -529,7 +870,7 @@ FX_WORD CPDF_CMap::CIDFromCharCode(FX_DWORD charcode) const {
   if (charcode >> 16) {
     if (m_pAddMapping) {
       void* found = FXSYS_bsearch(&charcode, m_pAddMapping + 4,
-                                  *(FX_DWORD*)m_pAddMapping, 8, compareCID);
+                                  *(FX_DWORD*)m_pAddMapping, 8, CompareCID);
       if (found == NULL) {
         if (m_pUseMap) {
           return m_pUseMap->CIDFromCharCode(charcode);
@@ -539,48 +880,16 @@ FX_WORD CPDF_CMap::CIDFromCharCode(FX_DWORD charcode) const {
       return (FX_WORD)(((FX_DWORD*)found)[1] % 65536 + charcode -
                        *(FX_DWORD*)found);
     }
-    if (m_pUseMap) {
+    if (m_pUseMap)
       return m_pUseMap->CIDFromCharCode(charcode);
-    }
     return 0;
   }
   FX_DWORD CID = m_pMapping[charcode];
-  if (!CID && m_pUseMap) {
+  if (!CID && m_pUseMap)
     return m_pUseMap->CIDFromCharCode(charcode);
-  }
   return (FX_WORD)CID;
 }
-static int _CheckCodeRange(uint8_t* codes,
-                           int size,
-                           _CMap_CodeRange* pRanges,
-                           int nRanges) {
-  int iSeg = nRanges - 1;
-  while (iSeg >= 0) {
-    if (pRanges[iSeg].m_CharSize < size) {
-      iSeg--;
-      continue;
-    }
-    int iChar = 0;
-    while (iChar < size) {
-      if (codes[iChar] < pRanges[iSeg].m_Lower[iChar] ||
-          codes[iChar] > pRanges[iSeg].m_Upper[iChar]) {
-        break;
-      }
-      iChar++;
-    }
-    if (iChar == pRanges[iSeg].m_CharSize) {
-      return 2;
-    }
-    if (iChar) {
-      if (size == pRanges[iSeg].m_CharSize) {
-        return 2;
-      }
-      return 1;
-    }
-    iSeg--;
-  }
-  return 0;
-}
+
 FX_DWORD CPDF_CMap::GetNextChar(const FX_CHAR* pString,
                                 int nStrLen,
                                 int& offset) const {
@@ -603,9 +912,9 @@ FX_DWORD CPDF_CMap::GetNextChar(const FX_CHAR* pString,
       uint8_t codes[4];
       int char_size = 1;
       codes[0] = ((uint8_t*)pString)[offset++];
-      _CMap_CodeRange* pRanges = (_CMap_CodeRange*)m_pLeadingBytes;
+      CMap_CodeRange* pRanges = (CMap_CodeRange*)m_pLeadingBytes;
       while (1) {
-        int ret = _CheckCodeRange(codes, char_size, pRanges, m_nCodeRanges);
+        int ret = CheckCodeRange(codes, char_size, pRanges, m_nCodeRanges);
         if (ret == 0) {
           return 0;
         }
@@ -674,40 +983,7 @@ int CPDF_CMap::CountChar(const FX_CHAR* pString, int size) const {
   }
   return size;
 }
-int _GetCharSize(FX_DWORD charcode, _CMap_CodeRange* pRanges, int iRangesSize) {
-  if (!iRangesSize) {
-    return 1;
-  }
-  uint8_t codes[4];
-  codes[0] = codes[1] = 0x00;
-  codes[2] = (uint8_t)(charcode >> 8 & 0xFF);
-  codes[3] = (uint8_t)charcode;
-  int offset = 0, size = 4;
-  for (int i = 0; i < 4; ++i) {
-    int iSeg = iRangesSize - 1;
-    while (iSeg >= 0) {
-      if (pRanges[iSeg].m_CharSize < size) {
-        iSeg--;
-        continue;
-      }
-      int iChar = 0;
-      while (iChar < size) {
-        if (codes[offset + iChar] < pRanges[iSeg].m_Lower[iChar] ||
-            codes[offset + iChar] > pRanges[iSeg].m_Upper[iChar]) {
-          break;
-        }
-        iChar++;
-      }
-      if (iChar == pRanges[iSeg].m_CharSize) {
-        return size;
-      }
-      iSeg--;
-    }
-    size--;
-    offset++;
-  }
-  return 1;
-}
+
 int CPDF_CMap::AppendChar(FX_CHAR* str, FX_DWORD charcode) const {
   switch (m_CodingScheme) {
     case OneByte:
@@ -720,8 +996,8 @@ int CPDF_CMap::AppendChar(FX_CHAR* str, FX_DWORD charcode) const {
     case MixedTwoBytes:
     case MixedFourBytes:
       if (charcode < 0x100) {
-        _CMap_CodeRange* pRanges = (_CMap_CodeRange*)m_pLeadingBytes;
-        int iSize = _GetCharSize(charcode, pRanges, m_nCodeRanges);
+        CMap_CodeRange* pRanges = (CMap_CodeRange*)m_pLeadingBytes;
+        int iSize = GetCharSizeImpl(charcode, pRanges, m_nCodeRanges);
         if (iSize == 0) {
           iSize = 1;
         }
@@ -769,15 +1045,14 @@ FX_WCHAR CPDF_CID2UnicodeMap::UnicodeFromCID(FX_WORD CID) {
   }
   return 0;
 }
-void FPDFAPI_LoadCID2UnicodeMap(int charset,
-                                const FX_WORD*& pMap,
-                                FX_DWORD& count);
+
 void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr,
-                               int charset,
+                               CIDSet charset,
                                FX_BOOL bPromptCJK) {
   m_Charset = charset;
   FPDFAPI_LoadCID2UnicodeMap(charset, m_pEmbeddedMap, m_EmbeddedCount);
 }
+
 #include "ttgsubtable.h"
 CPDF_CIDFont::CPDF_CIDFont() : CPDF_Font(PDFFONT_CIDFONT) {
   m_pCMap = NULL;
@@ -807,51 +1082,7 @@ FX_WORD CPDF_CIDFont::CIDFromCharCode(FX_DWORD charcode) const {
 FX_BOOL CPDF_CIDFont::IsVertWriting() const {
   return m_pCMap ? m_pCMap->IsVertWriting() : FALSE;
 }
-static FX_DWORD _EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
-                                             int charset,
-                                             FX_WCHAR unicode) {
-  if (charset <= 0 || charset > 4) {
-    return 0;
-  }
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  const FX_WORD* pCodes = pFontGlobals->m_EmbeddedToUnicodes[charset].m_pMap;
-  if (pCodes == NULL) {
-    return 0;
-  }
-  int nCodes = pFontGlobals->m_EmbeddedToUnicodes[charset].m_Count;
-  for (int i = 0; i < nCodes; i++) {
-    if (pCodes[i] == unicode) {
-      FX_DWORD CharCode = FPDFAPI_CharCodeFromCID(pEmbedMap, i);
-      if (CharCode == 0) {
-        continue;
-      }
-      return CharCode;
-    }
-  }
-  return 0;
-}
-static FX_WCHAR _EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
-                                             int charset,
-                                             FX_DWORD charcode) {
-  if (charset <= 0 || charset > 4) {
-    return 0;
-  }
-  FX_WORD cid = FPDFAPI_CIDFromCharCode(pEmbedMap, charcode);
-  if (cid == 0) {
-    return 0;
-  }
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  const FX_WORD* pCodes = pFontGlobals->m_EmbeddedToUnicodes[charset].m_pMap;
-  if (pCodes == NULL) {
-    return 0;
-  }
-  if (cid < pFontGlobals->m_EmbeddedToUnicodes[charset].m_Count) {
-    return pCodes[cid];
-  }
-  return 0;
-}
+
 FX_WCHAR CPDF_CIDFont::_UnicodeFromCharCode(FX_DWORD charcode) const {
   switch (m_pCMap->m_Coding) {
     case CIDCODING_UCS2:
@@ -881,8 +1112,8 @@ FX_WCHAR CPDF_CIDFont::_UnicodeFromCharCode(FX_DWORD charcode) const {
     return unicode;
 #endif
     if (m_pCMap->m_pEmbedMap) {
-      return _EmbeddedUnicodeFromCharcode(m_pCMap->m_pEmbedMap,
-                                          m_pCMap->m_Charset, charcode);
+      return EmbeddedUnicodeFromCharcode(m_pCMap->m_pEmbedMap,
+                                         m_pCMap->m_Charset, charcode);
     }
     return 0;
   }
@@ -930,38 +1161,13 @@ FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const {
   }
 #else
   if (m_pCMap->m_pEmbedMap) {
-    return _EmbeddedCharcodeFromUnicode(m_pCMap->m_pEmbedMap,
-                                        m_pCMap->m_Charset, unicode);
+    return EmbeddedCharcodeFromUnicode(m_pCMap->m_pEmbedMap, m_pCMap->m_Charset,
+                                       unicode);
   }
 #endif
   return 0;
 }
-static void FT_UseCIDCharmap(FXFT_Face face, int coding) {
-  int encoding;
-  switch (coding) {
-    case CIDCODING_GB:
-      encoding = FXFT_ENCODING_GB2312;
-      break;
-    case CIDCODING_BIG5:
-      encoding = FXFT_ENCODING_BIG5;
-      break;
-    case CIDCODING_JIS:
-      encoding = FXFT_ENCODING_SJIS;
-      break;
-    case CIDCODING_KOREA:
-      encoding = FXFT_ENCODING_JOHAB;
-      break;
-    default:
-      encoding = FXFT_ENCODING_UNICODE;
-  }
-  int err = FXFT_Select_Charmap(face, encoding);
-  if (err) {
-    err = FXFT_Select_Charmap(face, FXFT_ENCODING_UNICODE);
-  }
-  if (err && FXFT_Get_Face_Charmaps(face)) {
-    FXFT_Set_Charmap(face, *FXFT_Get_Face_Charmaps(face));
-  }
-}
+
 FX_BOOL CPDF_CIDFont::_Load() {
   if (m_pFontDict->GetString(FX_BSTRC("Subtype")) == FX_BSTRC("TrueType")) {
     return LoadGB2312();
@@ -1024,7 +1230,7 @@ FX_BOOL CPDF_CIDFont::_Load() {
         pCIDFontDict->GetDict(FX_BSTRC("CIDSystemInfo"));
     if (pCIDInfo) {
       m_Charset =
-          _CharsetFromOrdering(pCIDInfo->GetString(FX_BSTRC("Ordering")));
+          CharsetFromOrdering(pCIDInfo->GetString(FX_BSTRC("Ordering")));
     }
   }
   if (m_Charset != CIDSET_UNKNOWN)
@@ -1088,12 +1294,7 @@ FX_BOOL CPDF_CIDFont::_Load() {
   }
   return TRUE;
 }
-FX_FLOAT _CIDTransformToFloat(uint8_t ch) {
-  if (ch < 128) {
-    return ch * 1.0f / 127;
-  }
-  return (-255 + ch) * 1.0f / 127;
-}
+
 void CPDF_CIDFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
   if (charcode < 256 && m_CharBBox[charcode].Right != -1) {
     rect.bottom = m_CharBBox[charcode].Bottom;
@@ -1159,12 +1360,12 @@ void CPDF_CIDFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
     FX_WORD CID = CIDFromCharCode(charcode);
     const uint8_t* pTransform = GetCIDTransform(CID);
     if (pTransform && !bVert) {
-      CFX_AffineMatrix matrix(_CIDTransformToFloat(pTransform[0]),
-                              _CIDTransformToFloat(pTransform[1]),
-                              _CIDTransformToFloat(pTransform[2]),
-                              _CIDTransformToFloat(pTransform[3]),
-                              _CIDTransformToFloat(pTransform[4]) * 1000,
-                              _CIDTransformToFloat(pTransform[5]) * 1000);
+      CFX_AffineMatrix matrix(CIDTransformToFloat(pTransform[0]),
+                              CIDTransformToFloat(pTransform[1]),
+                              CIDTransformToFloat(pTransform[2]),
+                              CIDTransformToFloat(pTransform[3]),
+                              CIDTransformToFloat(pTransform[4]) * 1000,
+                              CIDTransformToFloat(pTransform[5]) * 1000);
       CFX_FloatRect rect_f(rect);
       rect_f.Transform(&matrix);
       rect = rect_f.GetOutterRect();
@@ -1503,6 +1704,15 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
     }
   }
 }
+
+// static
+FX_FLOAT CPDF_CIDFont::CIDTransformToFloat(uint8_t ch) {
+  if (ch < 128) {
+    return ch * 1.0f / 127;
+  }
+  return (-255 + ch) * 1.0f / 127;
+}
+
 FX_BOOL CPDF_CIDFont::LoadGB2312() {
   m_BaseFont = m_pFontDict->GetString(FX_BSTRC("BaseFont"));
   CPDF_Dictionary* pFontDesc = m_pFontDict->GetDict(FX_BSTRC("FontDescriptor"));
@@ -1530,104 +1740,23 @@ FX_BOOL CPDF_CIDFont::LoadGB2312() {
   }
   return TRUE;
 }
-const struct _CIDTransform {
-  FX_WORD CID;
-  uint8_t a, b, c, d, e, f;
-} Japan1_VertCIDs[] = {
-    {97, 129, 0, 0, 127, 55, 0},     {7887, 127, 0, 0, 127, 76, 89},
-    {7888, 127, 0, 0, 127, 79, 94},  {7889, 0, 129, 127, 0, 17, 127},
-    {7890, 0, 129, 127, 0, 17, 127}, {7891, 0, 129, 127, 0, 17, 127},
-    {7892, 0, 129, 127, 0, 17, 127}, {7893, 0, 129, 127, 0, 17, 127},
-    {7894, 0, 129, 127, 0, 17, 127}, {7895, 0, 129, 127, 0, 17, 127},
-    {7896, 0, 129, 127, 0, 17, 127}, {7897, 0, 129, 127, 0, 17, 127},
-    {7898, 0, 129, 127, 0, 17, 127}, {7899, 0, 129, 127, 0, 17, 104},
-    {7900, 0, 129, 127, 0, 17, 127}, {7901, 0, 129, 127, 0, 17, 104},
-    {7902, 0, 129, 127, 0, 17, 127}, {7903, 0, 129, 127, 0, 17, 127},
-    {7904, 0, 129, 127, 0, 17, 127}, {7905, 0, 129, 127, 0, 17, 114},
-    {7906, 0, 129, 127, 0, 17, 127}, {7907, 0, 129, 127, 0, 17, 127},
-    {7908, 0, 129, 127, 0, 17, 127}, {7909, 0, 129, 127, 0, 17, 127},
-    {7910, 0, 129, 127, 0, 17, 127}, {7911, 0, 129, 127, 0, 17, 127},
-    {7912, 0, 129, 127, 0, 17, 127}, {7913, 0, 129, 127, 0, 17, 127},
-    {7914, 0, 129, 127, 0, 17, 127}, {7915, 0, 129, 127, 0, 17, 114},
-    {7916, 0, 129, 127, 0, 17, 127}, {7917, 0, 129, 127, 0, 17, 127},
-    {7918, 127, 0, 0, 127, 18, 25},  {7919, 127, 0, 0, 127, 18, 25},
-    {7920, 127, 0, 0, 127, 18, 25},  {7921, 127, 0, 0, 127, 18, 25},
-    {7922, 127, 0, 0, 127, 18, 25},  {7923, 127, 0, 0, 127, 18, 25},
-    {7924, 127, 0, 0, 127, 18, 25},  {7925, 127, 0, 0, 127, 18, 25},
-    {7926, 127, 0, 0, 127, 18, 25},  {7927, 127, 0, 0, 127, 18, 25},
-    {7928, 127, 0, 0, 127, 18, 25},  {7929, 127, 0, 0, 127, 18, 25},
-    {7930, 127, 0, 0, 127, 18, 25},  {7931, 127, 0, 0, 127, 18, 25},
-    {7932, 127, 0, 0, 127, 18, 25},  {7933, 127, 0, 0, 127, 18, 25},
-    {7934, 127, 0, 0, 127, 18, 25},  {7935, 127, 0, 0, 127, 18, 25},
-    {7936, 127, 0, 0, 127, 18, 25},  {7937, 127, 0, 0, 127, 18, 25},
-    {7938, 127, 0, 0, 127, 18, 25},  {7939, 127, 0, 0, 127, 18, 25},
-    {8720, 0, 129, 127, 0, 19, 102}, {8721, 0, 129, 127, 0, 13, 127},
-    {8722, 0, 129, 127, 0, 19, 108}, {8723, 0, 129, 127, 0, 19, 102},
-    {8724, 0, 129, 127, 0, 19, 102}, {8725, 0, 129, 127, 0, 19, 102},
-    {8726, 0, 129, 127, 0, 19, 102}, {8727, 0, 129, 127, 0, 19, 102},
-    {8728, 0, 129, 127, 0, 19, 114}, {8729, 0, 129, 127, 0, 19, 114},
-    {8730, 0, 129, 127, 0, 38, 108}, {8731, 0, 129, 127, 0, 13, 108},
-    {8732, 0, 129, 127, 0, 19, 108}, {8733, 0, 129, 127, 0, 19, 108},
-    {8734, 0, 129, 127, 0, 19, 108}, {8735, 0, 129, 127, 0, 19, 108},
-    {8736, 0, 129, 127, 0, 19, 102}, {8737, 0, 129, 127, 0, 19, 102},
-    {8738, 0, 129, 127, 0, 19, 102}, {8739, 0, 129, 127, 0, 19, 102},
-    {8740, 0, 129, 127, 0, 19, 102}, {8741, 0, 129, 127, 0, 19, 102},
-    {8742, 0, 129, 127, 0, 19, 102}, {8743, 0, 129, 127, 0, 19, 102},
-    {8744, 0, 129, 127, 0, 19, 102}, {8745, 0, 129, 127, 0, 19, 102},
-    {8746, 0, 129, 127, 0, 19, 114}, {8747, 0, 129, 127, 0, 19, 114},
-    {8748, 0, 129, 127, 0, 19, 102}, {8749, 0, 129, 127, 0, 19, 102},
-    {8750, 0, 129, 127, 0, 19, 102}, {8751, 0, 129, 127, 0, 19, 102},
-    {8752, 0, 129, 127, 0, 19, 102}, {8753, 0, 129, 127, 0, 19, 102},
-    {8754, 0, 129, 127, 0, 19, 102}, {8755, 0, 129, 127, 0, 19, 102},
-    {8756, 0, 129, 127, 0, 19, 102}, {8757, 0, 129, 127, 0, 19, 102},
-    {8758, 0, 129, 127, 0, 19, 102}, {8759, 0, 129, 127, 0, 19, 102},
-    {8760, 0, 129, 127, 0, 19, 102}, {8761, 0, 129, 127, 0, 19, 102},
-    {8762, 0, 129, 127, 0, 19, 102}, {8763, 0, 129, 127, 0, 19, 102},
-    {8764, 0, 129, 127, 0, 19, 102}, {8765, 0, 129, 127, 0, 19, 102},
-    {8766, 0, 129, 127, 0, 19, 102}, {8767, 0, 129, 127, 0, 19, 102},
-    {8768, 0, 129, 127, 0, 19, 102}, {8769, 0, 129, 127, 0, 19, 102},
-    {8770, 0, 129, 127, 0, 19, 102}, {8771, 0, 129, 127, 0, 19, 102},
-    {8772, 0, 129, 127, 0, 19, 102}, {8773, 0, 129, 127, 0, 19, 102},
-    {8774, 0, 129, 127, 0, 19, 102}, {8775, 0, 129, 127, 0, 19, 102},
-    {8776, 0, 129, 127, 0, 19, 102}, {8777, 0, 129, 127, 0, 19, 102},
-    {8778, 0, 129, 127, 0, 19, 102}, {8779, 0, 129, 127, 0, 19, 114},
-    {8780, 0, 129, 127, 0, 19, 108}, {8781, 0, 129, 127, 0, 19, 114},
-    {8782, 0, 129, 127, 0, 13, 114}, {8783, 0, 129, 127, 0, 19, 108},
-    {8784, 0, 129, 127, 0, 13, 114}, {8785, 0, 129, 127, 0, 19, 108},
-    {8786, 0, 129, 127, 0, 19, 108}, {8787, 0, 129, 127, 0, 19, 108},
-    {8788, 0, 129, 127, 0, 19, 108}, {8789, 0, 129, 127, 0, 19, 108},
-    {8790, 0, 129, 127, 0, 19, 108}, {8791, 0, 129, 127, 0, 19, 108},
-    {8792, 0, 129, 127, 0, 19, 108}, {8793, 0, 129, 127, 0, 19, 108},
-    {8794, 0, 129, 127, 0, 19, 108}, {8795, 0, 129, 127, 0, 19, 108},
-    {8796, 0, 129, 127, 0, 19, 108}, {8797, 0, 129, 127, 0, 19, 108},
-    {8798, 0, 129, 127, 0, 19, 108}, {8799, 0, 129, 127, 0, 19, 108},
-    {8800, 0, 129, 127, 0, 19, 108}, {8801, 0, 129, 127, 0, 19, 108},
-    {8802, 0, 129, 127, 0, 19, 108}, {8803, 0, 129, 127, 0, 19, 108},
-    {8804, 0, 129, 127, 0, 19, 108}, {8805, 0, 129, 127, 0, 19, 108},
-    {8806, 0, 129, 127, 0, 19, 108}, {8807, 0, 129, 127, 0, 19, 108},
-    {8808, 0, 129, 127, 0, 19, 108}, {8809, 0, 129, 127, 0, 19, 108},
-    {8810, 0, 129, 127, 0, 19, 108}, {8811, 0, 129, 127, 0, 19, 114},
-    {8812, 0, 129, 127, 0, 19, 102}, {8813, 0, 129, 127, 0, 19, 114},
-    {8814, 0, 129, 127, 0, 76, 102}, {8815, 0, 129, 127, 0, 13, 121},
-    {8816, 0, 129, 127, 0, 19, 114}, {8817, 0, 129, 127, 0, 19, 127},
-    {8818, 0, 129, 127, 0, 19, 114}, {8819, 0, 129, 127, 0, 218, 108},
-};
+
 const uint8_t* CPDF_CIDFont::GetCIDTransform(FX_WORD CID) const {
-  if (m_Charset != CIDSET_JAPAN1 || m_pFontFile != NULL) {
-    return NULL;
-  }
+  if (m_Charset != CIDSET_JAPAN1 || m_pFontFile)
+    return nullptr;
+
   int begin = 0;
-  int end = sizeof Japan1_VertCIDs / sizeof(struct _CIDTransform) - 1;
+  int end = FX_ArraySize(g_Japan1_VertCIDs) - 1;
   while (begin <= end) {
     int middle = (begin + end) / 2;
-    FX_WORD middlecode = Japan1_VertCIDs[middle].CID;
+    FX_WORD middlecode = g_Japan1_VertCIDs[middle].CID;
     if (middlecode > CID) {
       end = middle - 1;
     } else if (middlecode < CID) {
       begin = middle + 1;
     } else {
-      return &Japan1_VertCIDs[middle].a;
+      return &g_Japan1_VertCIDs[middle].a;
     }
   }
-  return NULL;
+  return nullptr;
 }

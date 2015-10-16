@@ -738,7 +738,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
   }
   m_pCachedBitmap->Clear(0xFFFFFFFF);
   std::vector<uint8_t> output_offsets(components);
-  for (int i = 0; i < components; ++i)
+  for (FX_DWORD i = 0; i < components; ++i)
     output_offsets[i] = i;
   if (bSwapRGB) {
     output_offsets[0] = 2;
@@ -1484,7 +1484,7 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
                                               bTransMask);
           }
         } else {
-          for (int j = 0; j < m_nComponents; ++j) {
+          for (FX_DWORD j = 0; j < m_nComponents; ++j) {
             int color_value =
                 (int)((m_pCompData[j].m_DecodeMin +
                        m_pCompData[j].m_DecodeStep * (FX_FLOAT)pSrcPixel[j]) *
