@@ -445,4 +445,6 @@ class IFX_GSUBTable {
 
 CFX_ByteString GetNameFromTT(const uint8_t* name_table, FX_DWORD name);
 
+int PDF_GetStandardFontName(CFX_ByteString* name);
+
 #endif  // CORE_INCLUDE_FXGE_FX_FONT_H_

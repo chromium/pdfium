@@ -370,13 +370,13 @@ int CPDF_Font::GetCharTypeWidth(FX_DWORD charcode) {
   }
   return m_Font.GetGlyphWidth(glyph_index);
 }
-int _PDF_GetStandardFontName(CFX_ByteString& name);
+
 CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
                                    const CFX_ByteStringC& name) {
   CFX_ByteString fontname(name);
-  int font_id = _PDF_GetStandardFontName(fontname);
+  int font_id = PDF_GetStandardFontName(&fontname);
   if (font_id < 0) {
-    return NULL;
+    return nullptr;
   }
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
@@ -1001,7 +1001,7 @@ CPDF_Type1Font::CPDF_Type1Font() : CPDF_SimpleFont(PDFFONT_TYPE1) {
   m_Base14Font = -1;
 }
 FX_BOOL CPDF_Type1Font::_Load() {
-  m_Base14Font = _PDF_GetStandardFontName(m_BaseFont);
+  m_Base14Font = PDF_GetStandardFontName(&m_BaseFont);
   if (m_Base14Font >= 0) {
     CPDF_Dictionary* pFontDesc =
         m_pFontDict->GetDict(FX_BSTRC("FontDescriptor"));
