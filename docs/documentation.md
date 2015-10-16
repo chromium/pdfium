@@ -7,4 +7,4 @@ You can search the source code through
 https://code.google.com/p/chromium/codesearch#search/&q=file:third_party/pdfium&sq=package:chromium&type=cs
 
 A sample consumer of this library is Chromium's PDF plugin. You can see the
-source for it at http://src.chromium.org/viewvc/chrome/trunk/src/pdf/
+source for it at https://chromium.googlesource.com/chromium/src/+/master/pdf/.
