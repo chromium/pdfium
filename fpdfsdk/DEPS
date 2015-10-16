@@ -1,5 +1,7 @@
 include_rules = [
   '+core/include',
   '+javascript',
+  '+public',
+  '+v8',
   '+xfa/include',
 ]
