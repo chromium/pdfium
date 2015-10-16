@@ -91,7 +91,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
     } break;
     case FXFONT_GB2312_CHARSET: {
-      for (int32_t i = 0; i < FX_ArraySize(g_LinuxGbFontList); ++i) {
+      for (size_t i = 0; i < FX_ArraySize(g_LinuxGbFontList); ++i) {
         auto it = m_FontList.find(g_LinuxGbFontList[i]);
         if (it != m_FontList.end()) {
           return it->second;
@@ -99,7 +99,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
     } break;
     case FXFONT_CHINESEBIG5_CHARSET: {
-      for (int32_t i = 0; i < FX_ArraySize(g_LinuxB5FontList); ++i) {
+      for (size_t i = 0; i < FX_ArraySize(g_LinuxB5FontList); ++i) {
         auto it = m_FontList.find(g_LinuxB5FontList[i]);
         if (it != m_FontList.end()) {
           return it->second;
@@ -107,7 +107,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
     } break;
     case FXFONT_HANGEUL_CHARSET: {
-      for (int32_t i = 0; i < FX_ArraySize(g_LinuxHGFontList); ++i) {
+      for (size_t i = 0; i < FX_ArraySize(g_LinuxHGFontList); ++i) {
         auto it = m_FontList.find(g_LinuxHGFontList[i]);
         if (it != m_FontList.end()) {
           return it->second;

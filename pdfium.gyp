@@ -772,8 +772,9 @@
         'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
         'core/src/fxcrt/fx_basic_memmgr_unittest.cpp',
         'core/src/fxcrt/fx_basic_wstring_unittest.cpp',
-        'testing/fx_string_testhelpers.h',
+        'core/src/fxcrt/fx_system_unittest.cpp',
         'testing/fx_string_testhelpers.cpp',
+        'testing/fx_string_testhelpers.h',
         'third_party/base/nonstd_unique_ptr_unittest.cpp',
       ],
       'conditions': [

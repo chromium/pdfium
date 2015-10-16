@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../fgas_base.h"
-extern const FX_DWORD gs_FX_TextLayout_CodeProperties[65536];
+
 extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32] = {
     {FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
      FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
@@ -273,11 +273,11 @@ void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
   FX_DWORD dwCur, dwNext;
   FX_WCHAR wch;
   wch = *pwsText++;
-  dwCur = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & 0x003F;
+  dwCur = kTextLayoutCodeProperties[(FX_WORD)wch] & 0x003F;
   iLength--;
   for (int32_t i = 0; i < iLength; i++) {
     wch = *pwsText++;
-    dwNext = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & 0x003F;
+    dwNext = kTextLayoutCodeProperties[(FX_WORD)wch] & 0x003F;
     if (dwNext == FX_CBP_SP) {
       pBrkType[i] = FX_LBT_PROHIBITED_BRK;
     } else {
@@ -298,11 +298,11 @@ void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
   FX_DWORD dwCur, dwNext;
   FX_WCHAR wch;
   wch = *pwsText++;
-  dwCur = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & 0x003F;
+  dwCur = kTextLayoutCodeProperties[(FX_WORD)wch] & 0x003F;
   iLength--;
   for (int32_t i = 0; i < iLength; i++) {
     wch = *pwsText++;
-    dwNext = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & 0x003F;
+    dwNext = kTextLayoutCodeProperties[(FX_WORD)wch] & 0x003F;
     if (dwNext == FX_CBP_SP) {
       eType = FX_LBT_PROHIBITED_BRK;
     } else {

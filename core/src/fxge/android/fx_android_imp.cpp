@@ -14,9 +14,6 @@ void CFX_GEModule::InitPlatform() {
   IFPF_FontMgr* pFontMgr = pDeviceModule->GetFontMgr();
   if (pFontMgr) {
     CFX_AndroidFontInfo* pFontInfo = new CFX_AndroidFontInfo;
-    if (!pFontInfo) {
-      return;
-    }
     pFontInfo->Init(pFontMgr);
     m_pFontMgr->SetSystemFontInfo(pFontInfo);
   }

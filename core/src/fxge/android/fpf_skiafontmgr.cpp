@@ -337,7 +337,7 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
       m_FamilyFonts.SetAt((void*)(uintptr_t)dwHash, (void*)pFont);
       return pFont->Retain();
     }
-    pFont->Release()
+    pFont->Release();
   }
   return NULL;
 }

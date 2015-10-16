@@ -7,9 +7,6 @@
 #include "../fgas_base.h"
 #include "fx_unicode.h"
 #include "fx_rtfbreak.h"
-extern const FX_DWORD gs_FX_TextLayout_CodeProperties[65536];
-extern const FX_WCHAR gs_FX_TextLayout_VerticalMirror[64];
-extern const FX_WCHAR gs_FX_TextLayout_BidiMirror[512];
 extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32];
 IFX_RTFBreak* IFX_RTFBreak::Create(FX_DWORD dwPolicies) {
   return new CFX_RTFBreak(dwPolicies);
@@ -349,7 +346,7 @@ FX_DWORD CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
   if (m_bCharCode) {
     return AppendChar_CharCode(wch);
   }
-  FX_DWORD dwProps = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch];
+  FX_DWORD dwProps = kTextLayoutCodeProperties[(FX_WORD)wch];
   FX_DWORD dwType = (dwProps & FX_CHARTYPEBITSMASK);
   CFX_RTFCharArray& tca = m_pCurLine->m_LineChars;
   CFX_RTFChar* pCurChar = tca.AddSpace();

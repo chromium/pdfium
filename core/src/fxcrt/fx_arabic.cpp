@@ -7,7 +7,6 @@
 #include "../../include/fxcrt/fx_ucd.h"
 #include "fx_arabic.h"
 
-extern const FX_DWORD gs_FX_TextLayout_CodeProperties[65536];
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -149,19 +148,19 @@ IFX_ArabicChar* IFX_ArabicChar::Create() {
 }
 FX_BOOL CFX_ArabicChar::IsArabicChar(FX_WCHAR wch) const {
   FX_DWORD dwRet =
-      (gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] & FX_CHARTYPEBITSMASK);
+      kTextLayoutCodeProperties[(FX_WORD)wch] & FX_CHARTYPEBITSMASK;
   return dwRet >= FX_CHARTYPE_ArabicAlef;
 }
 FX_BOOL CFX_ArabicChar::IsArabicFormChar(FX_WCHAR wch) const {
-  return (gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] &
-          FX_CHARTYPEBITSMASK) == FX_CHARTYPE_ArabicForm;
+  return (kTextLayoutCodeProperties[(FX_WORD)wch] & FX_CHARTYPEBITSMASK) ==
+         FX_CHARTYPE_ArabicForm;
 }
 FX_WCHAR CFX_ArabicChar::GetFormChar(FX_WCHAR wch,
                                      FX_WCHAR prev,
                                      FX_WCHAR next) const {
-  CFX_Char c(wch, gs_FX_TextLayout_CodeProperties[(FX_WORD)wch]);
-  CFX_Char p(prev, gs_FX_TextLayout_CodeProperties[(FX_WORD)prev]);
-  CFX_Char n(next, gs_FX_TextLayout_CodeProperties[(FX_WORD)next]);
+  CFX_Char c(wch, kTextLayoutCodeProperties[(FX_WORD)wch]);
+  CFX_Char p(prev, kTextLayoutCodeProperties[(FX_WORD)prev]);
+  CFX_Char n(next, kTextLayoutCodeProperties[(FX_WORD)next]);
   return GetFormChar(&c, &p, &n);
 }
 FX_WCHAR CFX_ArabicChar::GetFormChar(const CFX_Char* cur,
@@ -260,17 +259,17 @@ void FX_BidiClassify(const CFX_WideString& wsText,
   if (bWS) {
     for (int32_t i = 0; i < iCount; i++) {
       wch = *pwsStart++;
-      iCls = ((gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] &
-               FX_BIDICLASSBITSMASK) >>
-              FX_BIDICLASSBITS);
+      iCls =
+          ((kTextLayoutCodeProperties[(FX_WORD)wch] & FX_BIDICLASSBITSMASK) >>
+           FX_BIDICLASSBITS);
       classes.SetAt(i, iCls);
     }
   } else {
     for (int32_t i = 0; i < iCount; i++) {
       wch = *pwsStart++;
-      iCls = ((gs_FX_TextLayout_CodeProperties[(FX_WORD)wch] &
-               FX_BIDICLASSBITSMASK) >>
-              FX_BIDICLASSBITS);
+      iCls =
+          ((kTextLayoutCodeProperties[(FX_WORD)wch] & FX_BIDICLASSBITSMASK) >>
+           FX_BIDICLASSBITS);
       classes.SetAt(i, gc_FX_BidiNTypes[iCls]);
     }
   }
@@ -1070,7 +1069,7 @@ void CFX_BidiChar::SetPolicy(FX_BOOL bSeparateNeutral) {
 }
 
 FX_BOOL CFX_BidiChar::AppendChar(FX_WCHAR wch) {
-  FX_DWORD dwProps = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch];
+  FX_DWORD dwProps = kTextLayoutCodeProperties[(FX_WORD)wch];
   int32_t iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
   int32_t iContext = 0;
   switch (iBidiCls) {

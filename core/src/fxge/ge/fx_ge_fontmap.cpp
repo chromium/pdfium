@@ -138,9 +138,6 @@ FXFT_Face CFX_FontMgr::AddCachedFace(const CFX_ByteString& face_name,
                                      FX_DWORD size,
                                      int face_index) {
   CTTFontDesc* pFontDesc = new CTTFontDesc;
-  if (!pFontDesc) {
-    return NULL;
-  }
   pFontDesc->m_Type = 1;
   pFontDesc->m_SingleFace.m_pFace = NULL;
   pFontDesc->m_SingleFace.m_bBold = weight;
@@ -336,9 +333,6 @@ FXFT_Face CFX_FontMgr::AddCachedTTCFace(int ttc_size,
                                         FX_DWORD size,
                                         int font_offset) {
   CTTFontDesc* pFontDesc = new CTTFontDesc;
-  if (!pFontDesc) {
-    return NULL;
-  }
   pFontDesc->m_Type = 2;
   pFontDesc->m_pFontData = pData;
   for (int i = 0; i < 16; i++) {

@@ -1094,9 +1094,6 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
     return pClone;
   }
   CFX_DIBitmap* pClone = new CFX_DIBitmap;
-  if (!pClone) {
-    return NULL;
-  }
   if (!pClone->Create(m_Width, m_Height, dest_format)) {
     delete pClone;
     return NULL;

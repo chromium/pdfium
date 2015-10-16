@@ -170,12 +170,6 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
   int result_width = result_rect.Width();
   int result_height = result_rect.Height();
   CFX_DIBitmap* pTempBitmap = new CFX_DIBitmap;
-  if (!pTempBitmap) {
-    if (pSrcBitmap != src_bitmap) {
-      delete pSrcBitmap;
-    }
-    return NULL;
-  }
   if (!pTempBitmap->Create(result_width, result_height, pSrc->GetFormat())) {
     delete pTempBitmap;
     if (pSrcBitmap != src_bitmap) {
@@ -324,9 +318,6 @@ FX_BOOL CPSPrinterDriver::Init(HDC hDC, int pslevel, FX_BOOL bCmykOutput) {
   m_Height = ::GetDeviceCaps(m_hDC, VERTRES);
   m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
   m_pPSOutput = new CPSOutput(hDC);
-  if (!m_pPSOutput) {
-    return FALSE;
-  }
   ((CPSOutput*)m_pPSOutput)->Init();
   m_PSRenderer.Init(m_pPSOutput, pslevel, m_Width, m_Height, bCmykOutput);
   m_bCmykOutput = bCmykOutput;

@@ -25,9 +25,6 @@ void CFPF_SkiaDeviceModule::Destroy() {
 IFPF_FontMgr* CFPF_SkiaDeviceModule::GetFontMgr() {
   if (!m_pFontMgr) {
     m_pFontMgr = new CFPF_SkiaFontMgr;
-    if (!m_pFontMgr) {
-      return NULL;
-    }
     if (!m_pFontMgr->InitFTLibrary()) {
       delete m_pFontMgr;
       return NULL;

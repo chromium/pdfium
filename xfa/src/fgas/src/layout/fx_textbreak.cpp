@@ -9,9 +9,6 @@
 #include "fx_unicode.h"
 #include "fx_textbreak.h"
 
-extern const FX_DWORD gs_FX_TextLayout_CodeProperties[65536];
-extern const FX_WCHAR gs_FX_TextLayout_VerticalMirror[64];
-extern const FX_WCHAR gs_FX_TextLayout_BidiMirror[512];
 extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32];
 IFX_TxtBreak* IFX_TxtBreak::Create(FX_DWORD dwPolicies) {
   return new CFX_TxtBreak(dwPolicies);
@@ -569,7 +566,7 @@ static const FX_TxtBreak_LPFAppendChar g_FX_TxtBreak_lpfAppendChar[16] = {
     &CFX_TxtBreak::AppendChar_Others,      &CFX_TxtBreak::AppendChar_Others,
 };
 FX_DWORD CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
-  FX_DWORD dwProps = gs_FX_TextLayout_CodeProperties[(FX_WORD)wch];
+  FX_DWORD dwProps = kTextLayoutCodeProperties[(FX_WORD)wch];
   FX_DWORD dwType = (dwProps & FX_CHARTYPEBITSMASK);
   CFX_TxtChar* pCurChar = m_pCurLine->m_pLineChars->AddSpace();
   pCurChar->m_wCharCode = (FX_WORD)wch;

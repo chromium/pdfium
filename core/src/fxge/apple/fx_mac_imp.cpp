@@ -96,9 +96,6 @@ void* CFX_MacFontInfo::MapFont(int weight,
 }
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
   CFX_MacFontInfo* pInfo = new CFX_MacFontInfo;
-  if (!pInfo) {
-    return NULL;
-  }
   pInfo->AddPath("~/Library/Fonts");
   pInfo->AddPath("/Library/Fonts");
   pInfo->AddPath("/System/Library/Fonts");
