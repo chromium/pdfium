@@ -2437,9 +2437,8 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
                    ((CPDF_Reference*)pLenObj)->GetRefObjNum() != objnum))) {
     len = pLenObj->GetInteger();
   }
-  // Check whether end of line markers follow the keyword 'stream'.
-  // The stream starts after end of line markers.
-  m_Pos += ReadEOLMarkers(m_Pos);
+  // Locate the start of stream.
+  ToNextLine();
   FX_FILESIZE streamStartPos = m_Pos;
   if (pContext) {
     pContext->m_DataStart = streamStartPos;
