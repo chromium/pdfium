@@ -4056,8 +4056,8 @@ inline void _ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
                                                   void* icc_module,
                                                   void* pIccTransform) {
   ICodec_IccModule* pIccModule = (ICodec_IccModule*)icc_module;
-  FX_BOOL isSrcCmyk = src_format & 0x0400 ? TRUE : FALSE;
-  FX_BOOL isDstCmyk = dest_format & 0x0400 ? TRUE : FALSE;
+  FX_BOOL isSrcCmyk = !!(src_format & 0x0400);
+  FX_BOOL isDstCmyk = !!(dest_format & 0x0400);
   pDestPalette = NULL;
   if (pIccTransform) {
     if (pSrcPalette) {
@@ -4912,7 +4912,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left,
   }
   int Bpp = m_bpp / 8;
   FX_BOOL bAlpha = HasAlpha();
-  FX_BOOL bArgb = GetFormat() == FXDIB_Argb ? TRUE : FALSE;
+  FX_BOOL bArgb = GetFormat() == FXDIB_Argb;
   if (src_alpha == 255) {
     for (int row = rect.top; row < rect.bottom; row++) {
       uint8_t* dest_scan = m_pBuffer + row * m_Pitch + rect.left * Bpp;

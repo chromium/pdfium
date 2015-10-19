@@ -381,7 +381,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
           m_pStream->readShortInteger(&wTemp) != 0) {
         return JBIG2_ERROR_TOO_SHORT;
       }
-      pPageInfo->m_bIsStriped = ((wTemp >> 15) & 1) ? TRUE : FALSE;
+      pPageInfo->m_bIsStriped = !!(wTemp & 0x8000);
       pPageInfo->m_wMaxStripeSize = wTemp & 0x7fff;
       bool bMaxHeight = (pPageInfo->m_dwHeight == 0xffffffff);
       if (bMaxHeight && pPageInfo->m_bIsStriped != TRUE)

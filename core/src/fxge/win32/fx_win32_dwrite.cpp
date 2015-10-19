@@ -240,7 +240,7 @@ FX_BOOL CDWriteExt::DwRendingString(void* renderTarget,
       stringRect, pClipRgn, pMatrix ? &transform : NULL, baselineOriginX,
       baselineOriginY, DWRITE_MEASURING_MODE_NATURAL, &glyphRun,
       RGB(FXARGB_R(text_color), FXARGB_G(text_color), FXARGB_B(text_color)));
-  return SUCCEEDED(hr) ? TRUE : FALSE;
+  return SUCCEEDED(hr);
 }
 void CDWriteExt::DwDeleteRenderingTarget(void* renderTarget) {
   delete (CDwGdiTextRenderer*)renderTarget;

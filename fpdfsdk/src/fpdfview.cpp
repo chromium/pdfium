@@ -175,7 +175,7 @@ void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
 FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
   switch (policy) {
     case FPDF_POLICY_MACHINETIME_ACCESS:
-      return (foxit_sandbox_policy & 0x01) ? TRUE : FALSE;
+      return !!(foxit_sandbox_policy & 0x01);
     default:
       return FALSE;
   }
