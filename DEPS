@@ -16,6 +16,9 @@ deps = {
   "testing/gtest":
      "https://chromium.googlesource.com/external/googletest.git@8245545b6dc9c4703e6496d1efd19e975ad2b038",
 
+  "tools/clang":
+    "https://chromium.googlesource.com/chromium/src/tools/clang",
+
   "v8":
     "https://chromium.googlesource.com/v8/v8.git@d3f97a972ffe37989fed2794d07e33f7c25f651c",
 
@@ -75,5 +78,11 @@ hooks = [
                 '--bucket', 'chromium-clang-format',
                 '-s', 'buildtools/linux64/clang-format.sha1',
     ],
+  },
+  {
+    # Pull clang if needed or requested via GYP_DEFINES.
+    'name': 'clang',
+    'pattern': '.',
+    'action': ['python', 'tools/clang/scripts/update.py', '--if-needed'],
   },
 ]

@@ -6,6 +6,9 @@
 /testing/corpus
 /testing/gmock
 /testing/gtest
+/third_party/llvm
+/third_party/llvm-build
+/tools/clang
 /v8
 /xcodebuild
 Makefile
