@@ -955,20 +955,6 @@ struct ReleaseDeleter {
   inline void operator()(T* ptr) const { ptr->Release(); }
 };
 
-// TODO(thestig) Remove in favor of nonstd::unique_ptr.
-template <class T>
-class CFX_SmartPointer {
- public:
-  CFX_SmartPointer(T* pObj) : m_pObj(pObj) {}
-  ~CFX_SmartPointer() { m_pObj->Release(); }
-  T* Get(void) { return m_pObj; }
-  T& operator*(void) { return *m_pObj; }
-  T* operator->(void) { return m_pObj; }
-
- protected:
-  T* m_pObj;
-};
-
 #define FX_DATALIST_LENGTH 1024
 template <size_t unit>
 class CFX_SortListArray {
