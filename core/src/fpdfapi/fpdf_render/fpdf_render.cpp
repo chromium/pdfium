@@ -759,7 +759,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(
       group_alpha = pStateData->m_FillAlpha;
     }
     Transparency = pFormObj->m_pForm->m_Transparency;
-    bGroupTransparent = Transparency & PDFTRANS_ISOLATED ? TRUE : FALSE;
+    bGroupTransparent = !!(Transparency & PDFTRANS_ISOLATED);
     if (pFormObj->m_pForm->m_pFormDict) {
       pFormResource = pFormObj->m_pForm->m_pFormDict->GetDict("Resources");
     }

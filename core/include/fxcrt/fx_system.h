@@ -92,6 +92,11 @@ typedef int FX_STRSIZE;
 #define FALSE 0
 #endif
 
+#ifdef __cplusplus
+static_assert(TRUE == true, "true_needs_to_be_true");
+static_assert(FALSE == false, "false_needs_to_be_false");
+#endif
+
 #ifndef NULL
 #define NULL 0
 #endif

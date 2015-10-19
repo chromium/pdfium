@@ -430,7 +430,7 @@ static FX_BOOL IsLatin(FX_WORD word) {
   return FALSE;
 }
 static FX_BOOL IsDigit(FX_DWORD word) {
-  return (word >= 0x0030 && word <= 0x0039) ? TRUE : FALSE;
+  return word >= 0x0030 && word <= 0x0039;
 }
 static FX_BOOL IsCJK(FX_DWORD word) {
   if ((word >= 0x1100 && word <= 0x11FF) ||
@@ -542,7 +542,7 @@ static FX_BOOL IsPrefixSymbol(FX_WORD word) {
   return FALSE;
 }
 static FX_BOOL IsSpace(FX_WORD word) {
-  return (word == 0x0020 || word == 0x3000) ? TRUE : FALSE;
+  return word == 0x0020 || word == 0x3000;
 }
 static FX_BOOL NeedDivision(FX_WORD prevWord, FX_WORD curWord) {
   if ((IsLatin(prevWord) || IsDigit(prevWord)) &&

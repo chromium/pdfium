@@ -1096,7 +1096,7 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
   }
   FX_BOOL ret = TRUE;
   CFX_DIBitmap* pSrcAlpha = NULL;
-  if (m_AlphaFlag & 2) {
+  if (HasAlpha()) {
     pSrcAlpha = (GetFormat() == FXDIB_Argb) ? GetAlphaMask() : m_pAlphaMask;
     if (pSrcAlpha == NULL) {
       delete pClone;
