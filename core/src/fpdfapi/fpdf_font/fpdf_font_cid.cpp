@@ -588,6 +588,11 @@ const struct CIDTransform {
     {8819, 0, 129, 127, 0, 218, 108},
 };
 
+int CompareCIDTransform(const void* key, const void* element) {
+  FX_WORD CID = *static_cast<const FX_WORD*>(key);
+  return CID - static_cast<const struct CIDTransform*>(element)->CID;
+}
+
 }  // namespace
 
 CPDF_CMapManager::CPDF_CMapManager() {
@@ -1742,18 +1747,8 @@ const uint8_t* CPDF_CIDFont::GetCIDTransform(FX_WORD CID) const {
   if (m_Charset != CIDSET_JAPAN1 || m_pFontFile)
     return nullptr;
 
-  int begin = 0;
-  int end = FX_ArraySize(g_Japan1_VertCIDs) - 1;
-  while (begin <= end) {
-    int middle = (begin + end) / 2;
-    FX_WORD middlecode = g_Japan1_VertCIDs[middle].CID;
-    if (middlecode > CID) {
-      end = middle - 1;
-    } else if (middlecode < CID) {
-      begin = middle + 1;
-    } else {
-      return &g_Japan1_VertCIDs[middle].a;
-    }
-  }
-  return nullptr;
+  const struct CIDTransform* found = (const struct CIDTransform*)FXSYS_bsearch(
+      &CID, g_Japan1_VertCIDs, FX_ArraySize(g_Japan1_VertCIDs),
+      sizeof(g_Japan1_VertCIDs[0]), CompareCIDTransform);
+  return found ? &found->a : nullptr;
 }
