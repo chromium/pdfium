@@ -602,8 +602,6 @@ IFX_SystemHandler* CFFL_FormFiller::GetSystemHandler() const {
   return m_pApp->GetSysHandler();
 }
 
-void CFFL_FormFiller::OnKeyStroke(FX_BOOL bKeyDown, FX_DWORD nFlag) {}
-
 void CFFL_FormFiller::EscapeFiller(CPDFSDK_PageView* pPageView,
                                    FX_BOOL bDestroyPDFWindow) {
   m_bValid = FALSE;

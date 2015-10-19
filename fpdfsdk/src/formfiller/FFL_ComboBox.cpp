@@ -256,24 +256,6 @@ CPWL_Wnd* CFFL_ComboBox::ResetPDFWindow(CPDFSDK_PageView* pPageView,
   return pRet;
 }
 
-void CFFL_ComboBox::OnKeyStroke(FX_BOOL bKeyDown, FX_UINT nFlag) {
-  ASSERT(m_pWidget != NULL);
-
-  int nFlags = m_pWidget->GetFieldFlags();
-
-  if (nFlags & FIELDFLAG_COMMITONSELCHANGE) {
-    if (m_bValid) {
-      CPDFSDK_PageView* pPageView = GetCurPageView();
-      ASSERT(pPageView != NULL);
-
-      if (CommitData(pPageView, nFlag)) {
-        DestroyPDFWindow(pPageView);
-        m_bValid = FALSE;
-      }
-    }
-  }
-}
-
 FX_BOOL CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
   if (CPWL_ComboBox* pComboBox =
           (CPWL_ComboBox*)GetPDFWindow(pPageView, FALSE)) {
