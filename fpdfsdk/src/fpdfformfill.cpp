@@ -13,8 +13,6 @@
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 
-#include "../include/javascript/IJavaScript.h"
-
 namespace {
 
 CPDFSDK_Document* FormHandleToSDKDoc(FPDF_FORMHANDLE hHandle) {

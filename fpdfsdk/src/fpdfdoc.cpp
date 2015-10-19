@@ -6,8 +6,6 @@
 
 #include "../../public/fpdf_doc.h"
 #include "../include/fsdk_define.h"
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fpdfxfa/fpdfxfa_page.h"
 
 namespace {
 

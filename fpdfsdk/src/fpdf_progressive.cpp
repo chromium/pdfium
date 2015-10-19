@@ -8,8 +8,6 @@
 #include "../../public/fpdfview.h"
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_rendercontext.h"
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fpdfxfa/fpdfxfa_page.h"
 
 DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
                                                   FPDF_PAGE page,
