@@ -34,6 +34,7 @@
       'dependencies': [
         'fx_lpng',
         '../pdfium.gyp:pdfium',
+        '../pdfium.gyp:test_support',
         # Regardless of whether the library ships against system freetype,
         # always link this binary against the bundled one for consistency
         # of results across platforms.

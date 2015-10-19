@@ -18,7 +18,9 @@
 #include "../public/fpdf_formfill.h"
 #include "../public/fpdf_text.h"
 #include "../public/fpdfview.h"
+#include "../testing/test_support.h"
 #include "image_diff_png.h"
+
 #ifdef PDF_ENABLE_V8
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
@@ -26,9 +28,6 @@
 
 #ifdef _WIN32
 #define snprintf _snprintf
-#define PATH_SEPARATOR '\\'
-#else
-#define PATH_SEPARATOR '/'
 #endif
 
 enum OutputFormat {
@@ -50,76 +49,6 @@ struct Options {
   std::string bin_directory;
   std::string font_directory;
 };
-
-// Reads the entire contents of a file into a newly malloc'd buffer.
-static char* GetFileContents(const char* filename, size_t* retlen) {
-  FILE* file = fopen(filename, "rb");
-  if (!file) {
-    fprintf(stderr, "Failed to open: %s\n", filename);
-    return nullptr;
-  }
-  (void)fseek(file, 0, SEEK_END);
-  size_t file_length = ftell(file);
-  if (!file_length) {
-    (void)fclose(file);
-    return nullptr;
-  }
-  (void)fseek(file, 0, SEEK_SET);
-  char* buffer = static_cast<char*>(malloc(file_length));
-  if (!buffer) {
-    (void)fclose(file);
-    return nullptr;
-  }
-  size_t bytes_read = fread(buffer, 1, file_length, file);
-  (void)fclose(file);
-  if (bytes_read != file_length) {
-    fprintf(stderr, "Failed to read: %s\n", filename);
-    free(buffer);
-    return nullptr;
-  }
-  *retlen = bytes_read;
-  return buffer;
-}
-
-#ifdef PDF_ENABLE_V8
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-// Returns the full path for an external V8 data file based on either
-// the currect exectuable path or an explicit override.
-static std::string GetFullPathForSnapshotFile(const Options& options,
-                                              const std::string& filename) {
-  std::string result;
-  if (!options.bin_directory.empty()) {
-    result = options.bin_directory;
-    if (*options.bin_directory.rbegin() != PATH_SEPARATOR) {
-      result += PATH_SEPARATOR;
-    }
-  } else if (!options.exe_path.empty()) {
-    size_t last_separator = options.exe_path.rfind(PATH_SEPARATOR);
-    if (last_separator != std::string::npos)  {
-      result = options.exe_path.substr(0, last_separator + 1);
-    }
-  }
-  result += filename;
-  return result;
-}
-
-// Reads an extenal V8 data file from the |options|-indicated location,
-// returing true on success and false on error.
-static bool GetExternalData(const Options& options,
-                            const std::string& bin_filename,
-                            v8::StartupData* result_data) {
-  std::string full_path = GetFullPathForSnapshotFile(options, bin_filename);
-  size_t data_length = 0;
-  char* data_buffer = GetFileContents(full_path.c_str(), &data_length);
-  if (!data_buffer) {
-    return false;
-  }
-  result_data->data = const_cast<const char*>(data_buffer);
-  result_data->raw_size = static_cast<int>(data_length);
-  return true;
-}
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-#endif  // PDF_ENABLE_V8
 
 static bool CheckDimensions(int stride, int width, int height) {
   if (stride < 0 || width < 0 || height < 0)
@@ -408,28 +337,6 @@ bool ParseCommandLine(const std::vector<std::string>& args,
   return true;
 }
 
-class TestLoader {
- public:
-  TestLoader(const char* pBuf, size_t len);
-
-  const char* m_pBuf;
-  size_t m_Len;
-};
-
-TestLoader::TestLoader(const char* pBuf, size_t len)
-    : m_pBuf(pBuf), m_Len(len) {
-}
-
-int GetBlock(void* param,
-             unsigned long pos,
-             unsigned char* pBuf,
-             unsigned long size) {
-  TestLoader* pLoader = static_cast<TestLoader*>(param);
-  if (pos + size < pos || pos + size > pLoader->m_Len) return 0;
-  memcpy(pBuf, pLoader->m_pBuf + pos, size);
-  return 1;
-}
-
 FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
   return true;
 }
@@ -453,11 +360,10 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   form_callbacks.m_pJsPlatform = &platform_callbacks;
 
   TestLoader loader(pBuf, len);
-
   FPDF_FILEACCESS file_access;
   memset(&file_access, '\0', sizeof(file_access));
   file_access.m_FileLen = static_cast<unsigned long>(len);
-  file_access.m_GetBlock = GetBlock;
+  file_access.m_GetBlock = TestLoader::GetBlock;
   file_access.m_Param = &loader;
 
   FX_FILEAVAIL file_avail;
@@ -602,25 +508,14 @@ int main(int argc, const char* argv[]) {
   }
 
 #ifdef PDF_ENABLE_V8
-  v8::V8::InitializeICU();
-  v8::Platform* platform = v8::platform::CreateDefaultPlatform();
-  v8::V8::InitializePlatform(platform);
-  v8::V8::Initialize();
-
-  // By enabling predictable mode, V8 won't post any background tasks.
-  static const char predictable_flag[] = "--predictable";
-  v8::V8::SetFlagsFromString(predictable_flag,
-                             static_cast<int>(strlen(predictable_flag)));
-
+  v8::Platform* platform;
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   v8::StartupData natives;
   v8::StartupData snapshot;
-  if (!GetExternalData(options, "natives_blob.bin", &natives) ||
-      !GetExternalData(options, "snapshot_blob.bin", &snapshot)) {
-    return 1;
-  }
-  v8::V8::SetNativesDataBlob(&natives);
-  v8::V8::SetSnapshotDataBlob(&snapshot);
+  InitializeV8ForPDFium(options.exe_path, options.bin_directory, &natives,
+                        &snapshot, &platform);
+#else   // V8_USE_EXTERNAL_STARTUP_DATA
+  InitializeV8ForPDFium(&platform);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 

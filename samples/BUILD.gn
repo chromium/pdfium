@@ -5,6 +5,7 @@
 import("../pdfium.gni")
 
 group("samples") {
+  testonly = true
   deps = [
     ":pdfium_test",
     ":pdfium_diff",
@@ -25,12 +26,14 @@ config("pdfium_samples_config") {
 }
 
 executable("pdfium_test") {
+  testonly = true
   sources = [
     "image_diff_png.cc",
     "pdfium_test.cc",
   ]
   deps = [
-    "//third_party/pdfium",
+    "//third_party/pdfium:pdfium",
+    "//third_party/pdfium:test_support",
     # Regardless of whether the library ships against system freetype,
     # always link this binary against the bundled one for consistency
     # of results across platforms.
@@ -50,6 +53,7 @@ executable("pdfium_test") {
 }
 
 executable("pdfium_diff") {
+  testonly = true
   sources = [
     "image_diff.cc",
     "image_diff_png.cc",
@@ -67,6 +71,7 @@ executable("pdfium_diff") {
 }
 
 static_library("fx_lpng") {
+  testonly = true
   sources = [
     "fx_lpng/include/fx_png.h",
     "fx_lpng/src/fx_png.c",

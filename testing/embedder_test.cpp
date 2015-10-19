@@ -5,9 +5,6 @@
 #include "embedder_test.h"
 
 #include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include <list>
 #include <string>
@@ -16,6 +13,7 @@
 
 #include "../public/fpdf_text.h"
 #include "../public/fpdfview.h"
+#include "test_support.h"
 #include "testing/gmock/include/gmock/gmock.h"
 
 #ifdef PDF_ENABLE_V8
@@ -23,102 +21,9 @@
 #include "v8/include/v8.h"
 #endif  // PDF_ENABLE_V8
 
-#ifdef _WIN32
-#define snprintf _snprintf
-#define PATH_SEPARATOR '\\'
-#else
-#define PATH_SEPARATOR '/'
-#endif
-
 namespace {
-
 const char* g_exe_path_ = nullptr;
-
-// Reads the entire contents of a file into a newly malloc'd buffer.
-static char* GetFileContents(const char* filename, size_t* retlen) {
-  FILE* file = fopen(filename, "rb");
-  if (!file) {
-    fprintf(stderr, "Failed to open: %s\n", filename);
-    return nullptr;
-  }
-  (void)fseek(file, 0, SEEK_END);
-  size_t file_length = ftell(file);
-  if (!file_length) {
-    return nullptr;
-  }
-  (void)fseek(file, 0, SEEK_SET);
-  char* buffer = (char*)malloc(file_length);
-  if (!buffer) {
-    return nullptr;
-  }
-  size_t bytes_read = fread(buffer, 1, file_length, file);
-  (void)fclose(file);
-  if (bytes_read != file_length) {
-    fprintf(stderr, "Failed to read: %s\n", filename);
-    free(buffer);
-    return nullptr;
-  }
-  *retlen = bytes_read;
-  return buffer;
-}
-
-#ifdef PDF_ENABLE_V8
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-// Returns the full path for an external V8 data file based on either
-// the currect exectuable path or an explicit override.
-static std::string GetFullPathForSnapshotFile(const std::string& exe_path,
-                                              const std::string& filename) {
-  std::string result;
-  if (!exe_path.empty()) {
-    size_t last_separator = exe_path.rfind(PATH_SEPARATOR);
-    if (last_separator != std::string::npos) {
-      result = exe_path.substr(0, last_separator + 1);
-    }
-  }
-  result += filename;
-  return result;
-}
-
-// Reads an extenal V8 data file from the |options|-indicated location,
-// returing true on success and false on error.
-static bool GetExternalData(const std::string& exe_path,
-                            const std::string& filename,
-                            v8::StartupData* result_data) {
-  std::string full_path = GetFullPathForSnapshotFile(exe_path, filename);
-  size_t data_length = 0;
-  char* data_buffer = GetFileContents(full_path.c_str(), &data_length);
-  if (!data_buffer) {
-    return false;
-  }
-  result_data->data = const_cast<const char*>(data_buffer);
-  result_data->raw_size = data_length;
-  return true;
-}
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-#endif  // PDF_ENABLE_V8
 }  // namespace
-
-class TestLoader {
- public:
-  TestLoader(const char* pBuf, size_t len);
-
-  const char* m_pBuf;
-  size_t m_Len;
-};
-
-TestLoader::TestLoader(const char* pBuf, size_t len)
-    : m_pBuf(pBuf), m_Len(len) {}
-
-int Get_Block(void* param,
-              unsigned long pos,
-              unsigned char* pBuf,
-              unsigned long size) {
-  TestLoader* pLoader = (TestLoader*)param;
-  if (pos + size < pos || pos + size > pLoader->m_Len)
-    return 0;
-  memcpy(pBuf, pLoader->m_pBuf + pos, size);
-  return 1;
-}
 
 FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
   return true;
@@ -146,22 +51,11 @@ EmbedderTest::~EmbedderTest() {
 
 void EmbedderTest::SetUp() {
 #ifdef PDF_ENABLE_V8
-  v8::V8::InitializeICU();
-
-  platform_ = v8::platform::CreateDefaultPlatform();
-  v8::V8::InitializePlatform(platform_);
-  v8::V8::Initialize();
-
-  // By enabling predictable mode, V8 won't post any background tasks.
-  const char predictable_flag[] = "--predictable";
-  v8::V8::SetFlagsFromString(predictable_flag,
-                             static_cast<int>(strlen(predictable_flag)));
-
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  ASSERT_TRUE(GetExternalData(g_exe_path_, "natives_blob.bin", &natives_));
-  ASSERT_TRUE(GetExternalData(g_exe_path_, "snapshot_blob.bin", &snapshot_));
-  v8::V8::SetNativesDataBlob(&natives_);
-  v8::V8::SetSnapshotDataBlob(&snapshot_);
+  InitializeV8ForPDFium(g_exe_path_, std::string(), &natives_, &snapshot_,
+                        &platform_);
+#else
+  InitializeV8ForPDFium(&platform_);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // FPDF_ENABLE_V8
 
@@ -205,7 +99,7 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
 
   loader_ = new TestLoader(file_contents_, file_length_);
   file_access_.m_FileLen = static_cast<unsigned long>(file_length_);
-  file_access_.m_GetBlock = Get_Block;
+  file_access_.m_GetBlock = TestLoader::GetBlock;
   file_access_.m_Param = loader_;
 
   file_avail_.version = 1;
