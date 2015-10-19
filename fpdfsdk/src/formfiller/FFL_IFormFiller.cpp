@@ -800,9 +800,7 @@ FX_BOOL CFFL_IFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
   return FALSE;
 }
 
-void CFFL_IFormFiller::OnBeforeKeyStroke(FX_BOOL bEditOrList,
-                                         void* pPrivateData,
-                                         int32_t nKeyCode,
+void CFFL_IFormFiller::OnBeforeKeyStroke(void* pPrivateData,
                                          CFX_WideString& strChange,
                                          const CFX_WideString& strChangeEx,
                                          int nSelStart,
@@ -880,17 +878,4 @@ void CFFL_IFormFiller::OnBeforeKeyStroke(FX_BOOL bEditOrList,
       m_bNotifying = FALSE;
     }
   }
-}
-
-void CFFL_IFormFiller::OnAfterKeyStroke(FX_BOOL bEditOrList,
-                                        void* pPrivateData,
-                                        FX_BOOL& bExit,
-                                        FX_DWORD nFlag) {
-  CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
-  ASSERT(pData->pWidget);
-
-  CFFL_FormFiller* pFormFiller = GetFormFiller(pData->pWidget, FALSE);
-
-  if (!bEditOrList)
-    pFormFiller->OnKeyStroke(bExit, nFlag);
 }

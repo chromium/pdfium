@@ -163,7 +163,7 @@ void CPWL_Edit::PasteText() {
     int nSelStart = 0;
     int nSelEnd = 0;
     GetSel(nSelStart, nSelEnd);
-    m_pFillerNotify->OnBeforeKeyStroke(TRUE, GetAttachedData(), 0, swClipboard,
+    m_pFillerNotify->OnBeforeKeyStroke(GetAttachedData(), swClipboard,
                                        strChangeEx, nSelStart, nSelEnd, TRUE,
                                        bRC, bExit, 0);
     if (!bRC)
@@ -175,13 +175,6 @@ void CPWL_Edit::PasteText() {
   if (swClipboard.GetLength() > 0) {
     Clear();
     InsertText(swClipboard.c_str());
-  }
-
-  if (m_pFillerNotify) {
-    FX_BOOL bExit = FALSE;
-    m_pFillerNotify->OnAfterKeyStroke(TRUE, GetAttachedData(), bExit, 0);
-    if (bExit)
-      return;
   }
 }
 
@@ -883,9 +876,9 @@ FX_BOOL CPWL_Edit::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
 
       if (nSelStart == nSelEnd)
         nSelEnd = nSelStart + 1;
-      m_pFillerNotify->OnBeforeKeyStroke(
-          TRUE, GetAttachedData(), FWL_VKEY_Delete, strChange, strChangeEx,
-          nSelStart, nSelEnd, TRUE, bRC, bExit, nFlag);
+      m_pFillerNotify->OnBeforeKeyStroke(GetAttachedData(), strChange,
+                                         strChangeEx, nSelStart, nSelEnd, TRUE,
+                                         bRC, bExit, nFlag);
       if (!bRC)
         return FALSE;
       if (bExit)
@@ -894,15 +887,6 @@ FX_BOOL CPWL_Edit::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
   }
 
   FX_BOOL bRet = CPWL_EditCtrl::OnKeyDown(nChar, nFlag);
-
-  if (nChar == FWL_VKEY_Delete) {
-    if (m_pFillerNotify) {
-      FX_BOOL bExit = FALSE;
-      m_pFillerNotify->OnAfterKeyStroke(TRUE, GetAttachedData(), bExit, nFlag);
-      if (bExit)
-        return FALSE;
-    }
-  }
 
   // In case of implementation swallow the OnKeyDown event.
   if (IsProceedtoOnChar(nChar, nFlag))
@@ -940,9 +924,8 @@ FX_BOOL CPWL_Edit::IsProceedtoOnChar(FX_WORD nKeyCode, FX_DWORD nFlag) {
     case FWL_VKEY_Space:
       return TRUE;
     default:
-      break;
+      return FALSE;
   }
-  return FALSE;
 }
 
 FX_BOOL CPWL_Edit::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
@@ -952,11 +935,9 @@ FX_BOOL CPWL_Edit::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
   FX_BOOL bRC = TRUE;
   FX_BOOL bExit = FALSE;
 
-  FX_BOOL bCtrl = IsCTRLpressed(nFlag);
-  if (!bCtrl) {
+  if (!IsCTRLpressed(nFlag)) {
     if (m_pFillerNotify) {
       CFX_WideString swChange;
-      int32_t nKeyCode;
 
       int nSelStart = 0;
       int nSelEnd = 0;
@@ -964,23 +945,20 @@ FX_BOOL CPWL_Edit::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
 
       switch (nChar) {
         case FWL_VKEY_Back:
-          nKeyCode = nChar;
           if (nSelStart == nSelEnd)
             nSelStart = nSelEnd - 1;
           break;
         case FWL_VKEY_Return:
-          nKeyCode = nChar;
           break;
         default:
-          nKeyCode = 0;
           swChange += nChar;
           break;
       }
 
       CFX_WideString strChangeEx;
-      m_pFillerNotify->OnBeforeKeyStroke(TRUE, GetAttachedData(), nKeyCode,
-                                         swChange, strChangeEx, nSelStart,
-                                         nSelEnd, TRUE, bRC, bExit, nFlag);
+      m_pFillerNotify->OnBeforeKeyStroke(GetAttachedData(), swChange,
+                                         strChangeEx, nSelStart, nSelEnd, TRUE,
+                                         bRC, bExit, nFlag);
     }
   }
 
@@ -996,17 +974,8 @@ FX_BOOL CPWL_Edit::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
       SetCharSet(nNewCharSet);
     }
   }
-  FX_BOOL bRet = CPWL_EditCtrl::OnChar(nChar, nFlag);
 
-  if (!bCtrl) {
-    if (m_pFillerNotify) {
-      m_pFillerNotify->OnAfterKeyStroke(TRUE, GetAttachedData(), bExit, nFlag);
-      if (bExit)
-        return FALSE;
-    }
-  }
-
-  return bRet;
+  return CPWL_EditCtrl::OnChar(nChar, nFlag);
 }
 
 FX_BOOL CPWL_Edit::OnMouseWheel(short zDelta,

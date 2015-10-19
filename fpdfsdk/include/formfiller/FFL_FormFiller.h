@@ -103,8 +103,6 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   virtual CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,
                                    FX_BOOL bRestoreValue);
 
-  virtual void OnKeyStroke(FX_BOOL bKeyDown, FX_DWORD nFlag);
-
   CPDF_Matrix GetCurMatrix();
 
   CPDF_Rect FFLtoPWL(const CPDF_Rect& rect);

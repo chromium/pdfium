@@ -122,9 +122,7 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                        FX_FLOAT fPopupMax,
                        int32_t& nRet,
                        FX_FLOAT& fPopupRet) override;
-  void OnBeforeKeyStroke(FX_BOOL bEditOrList,
-                         void* pPrivateData,
-                         int32_t nKeyCode,
+  void OnBeforeKeyStroke(void* pPrivateData,
                          CFX_WideString& strChange,
                          const CFX_WideString& strChangeEx,
                          int nSelStart,
@@ -133,10 +131,6 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                          FX_BOOL& bRC,
                          FX_BOOL& bExit,
                          FX_DWORD nFlag) override;
-  void OnAfterKeyStroke(FX_BOOL bEditOrList,
-                        void* pPrivateData,
-                        FX_BOOL& bExit,
-                        FX_DWORD nFlag) override;
 
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 

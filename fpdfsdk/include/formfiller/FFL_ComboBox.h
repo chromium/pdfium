@@ -47,7 +47,6 @@ class CFFL_ComboBox : public CFFL_FormFiller,
   void RestoreState(CPDFSDK_PageView* pPageView) override;
   CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,
                            FX_BOOL bRestoreValue) override;
-  void OnKeyStroke(FX_BOOL bKeyDown, FX_DWORD nFlag) override;
 
   // IPWL_FocusHandler:
   void OnSetFocus(CPWL_Wnd* pWnd) override;
