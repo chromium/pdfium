@@ -655,7 +655,7 @@ void color_apply_conversion(opj_image_t* image) {
 }
 class CJPX_Decoder {
  public:
-  CJPX_Decoder();
+  explicit CJPX_Decoder(bool use_colorspace);
   ~CJPX_Decoder();
   FX_BOOL Init(const unsigned char* src_data, int src_size);
   void GetInfo(FX_DWORD& width,
@@ -671,10 +671,10 @@ class CJPX_Decoder {
   opj_image_t* image;
   opj_codec_t* l_codec;
   opj_stream_t* l_stream;
-  FX_BOOL m_useColorSpace;
+  const bool m_UseColorSpace;
 };
-CJPX_Decoder::CJPX_Decoder()
-    : image(NULL), l_codec(NULL), l_stream(NULL), m_useColorSpace(FALSE) {}
+CJPX_Decoder::CJPX_Decoder(bool use_colorspace)
+    : image(NULL), l_codec(NULL), l_stream(NULL), m_UseColorSpace(use_colorspace) {}
 CJPX_Decoder::~CJPX_Decoder() {
   if (l_codec) {
     opj_destroy_codec(l_codec);
@@ -724,6 +724,8 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, int src_size) {
     image = NULL;
     return FALSE;
   }
+  image->pdfium_use_colorspace = m_UseColorSpace;
+
   if (!parameters.nb_tile_to_decode) {
     if (!opj_set_decode_area(l_codec, image, parameters.DA_x0, parameters.DA_y0,
                              parameters.DA_x1, parameters.DA_y1)) {
@@ -864,8 +866,7 @@ CCodec_JpxModule::CCodec_JpxModule() {}
 void* CCodec_JpxModule::CreateDecoder(const uint8_t* src_buf,
                                       FX_DWORD src_size,
                                       FX_BOOL useColorSpace) {
-  CJPX_Decoder* pDecoder = new CJPX_Decoder;
-  pDecoder->m_useColorSpace = useColorSpace;
+  CJPX_Decoder* pDecoder = new CJPX_Decoder(useColorSpace);
   if (!pDecoder->Init(src_buf, src_size)) {
     delete pDecoder;
     return NULL;
