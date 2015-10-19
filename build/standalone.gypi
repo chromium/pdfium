@@ -8,8 +8,6 @@
   'variables': {
     'component%': 'static_library',
     'clang%': 0,
-    'asan%': 0,
-    'sanitizer_coverage%': 0,
     'msvs_multi_core_compile%': '1',
     'variables': {
       'variables': {
@@ -39,7 +37,6 @@
       'host_arch%': '<(host_arch)',
       'target_arch%': '<(target_arch)',
     },
-    'clang_dir%': 'third_party/llvm-build/Release+Asserts',
     # These two are needed by V8.
     'host_arch%': '<(host_arch)',
     'target_arch%': '<(target_arch)',
@@ -52,11 +49,6 @@
         'os_posix%': 0,
       }, {
         'os_posix%': 1,
-      }],
-      ['OS=="linux" or OS=="mac"', {
-        'clang%': 1,
-      }, {
-        'clang%': 0,
       }],
     ],
   },
@@ -257,20 +249,6 @@
           '-fPIC',
         ],
       }],
-      ['asan==1', {
-        'cflags': [
-          '-fsanitize=address',
-          '-gline-tables-only',
-        ],
-        'ldflags': [
-          '-fsanitize=address',
-        ],
-      }],
-      ['sanitizer_coverage!=0', {
-        'cflags': [
-          '-fsanitize-coverage=<(sanitizer_coverage)',
-        ],
-      }],
       ['OS=="win"', {
         'defines': [
           'NOMINMAX',
@@ -302,17 +280,5 @@
   'xcode_settings': {
     # See comment in Chromium's common.gypi for why this is needed.
     'SYMROOT': '<(DEPTH)/xcodebuild',
-  },
-  'conditions': [
-    ['OS=="linux" or OS=="mac"', {
-      'conditions': [
-        ['clang==1', {
-          'make_global_settings': [
-            ['CC', '<(clang_dir)/bin/clang'],
-            ['CXX', '<(clang_dir)/bin/clang++'],
-          ],
-        }],
-      ],
-    }],  # OS=="linux" or OS=="mac"
-  ],
+  }
 }
