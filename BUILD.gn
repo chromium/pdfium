@@ -135,8 +135,45 @@ static_library("pdfium") {
   }
 }
 
-# Targets below this are only visible within this file.
-visibility = [ ":*" ]
+source_set("test_support") {
+  testonly = true
+  sources = [
+    "testing/fx_string_testhelpers.cpp",
+    "testing/fx_string_testhelpers.h",
+    "testing/test_support.cpp",
+    "testing/test_support.h",
+  ]
+  deps = [
+    "//testing/gmock",
+    "//testing/gtest",
+    ":pdfium",
+  ]
+  include_dirs = [
+    "."
+  ]
+  if (pdf_enable_v8) {
+    deps += [
+      "//v8",
+      "//v8:v8_libplatform",
+    ]
+    include_dirs += [
+      "//v8",
+      "//v8/include",
+    ]
+  }
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    ":pdfium_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
+}
+
+# Targets below this are only visible within this file (and to the
+# top-level gn_visibility target used to help gn_all build everything).
+visibility = [
+  ":*",
+  "//:gn_visibility",
+]
 
 static_library("fdrm") {
   sources = [
@@ -1398,8 +1435,6 @@ test("pdfium_unittests") {
     "core/src/fxcrt/fx_basic_memmgr_unittest.cpp",
     "core/src/fxcrt/fx_basic_wstring_unittest.cpp",
     "core/src/fxcrt/fx_system_unittest.cpp",
-    "testing/fx_string_testhelpers.cpp",
-    "testing/fx_string_testhelpers.h",
     "third_party/base/nonstd_unique_ptr_unittest.cpp",
     "xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
     "xfa/src/fxfa/src/parser/xfa_utils_imp_unittest.cpp",
@@ -1407,7 +1442,8 @@ test("pdfium_unittests") {
   deps = [
     "//testing/gtest",
     "//testing/gtest:gtest_main",
-    ":pdfium"
+    ":pdfium",
+    ":test_support",
   ]
   include_dirs = [ "." ]
   configs -= [ "//build/config/compiler:chromium_code" ]
@@ -1429,13 +1465,12 @@ test("pdfium_embeddertests") {
     "testing/embedder_test.h",
     "testing/embedder_test_mock_delegate.h",
     "testing/embedder_test_timer_handling_delegate.h",
-    "testing/fx_string_testhelpers.cpp",
-    "testing/fx_string_testhelpers.h",
   ]
   deps = [
     "//testing/gmock",
     "//testing/gtest",
     ":pdfium",
+    ":test_support",
   ]
   include_dirs = [
     "."

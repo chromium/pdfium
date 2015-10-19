@@ -5,6 +5,7 @@
 import("../pdfium.gni")
 
 group("samples") {
+  testonly = true
   deps = [
     ":pdfium_test",
   ]
@@ -25,12 +26,14 @@ config("pdfium_samples_config") {
 }
 
 executable("pdfium_test") {
+  testonly = true
   sources = [
     "image_diff_png.cc",
     "pdfium_test.cc",
   ]
   deps = [
-    "//third_party/pdfium",
+    "//third_party/pdfium:pdfium",
+    "//third_party/pdfium:test_support",
   ]
   if (pdf_enable_v8) {
     deps += [
@@ -45,6 +48,7 @@ executable("pdfium_test") {
 }
 
 executable("pdfium_diff") {
+  testonly = true
   sources = [
     "image_diff.cc",
     "image_diff_png.cc",

@@ -35,6 +35,10 @@
     {
       'target_name': 'pdfium_test',
       'type': 'executable',
+      'dependencies': [
+        '../pdfium.gyp:pdfium',
+        '../pdfium.gyp:test_support',
+      ],
       'sources': [
         'pdfium_test.cc',
         'image_diff_png.cc',

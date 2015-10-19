@@ -763,6 +763,7 @@
         '<(DEPTH)/testing/gtest.gyp:gtest_main',
         '<(DEPTH)/testing/gtest.gyp:gtest',
         'pdfium',
+        'test_support',
       ],
       'include_dirs': [
         '<(DEPTH)'
@@ -793,6 +794,7 @@
         '<(DEPTH)/testing/gmock.gyp:gmock',
         '<(DEPTH)/testing/gtest.gyp:gtest',
         'pdfium',
+        'test_support',
       ],
       'include_dirs': [
         '<(DEPTH)',
@@ -811,8 +813,6 @@
         'testing/embedder_test.h',
         'testing/embedder_test_mock_delegate.h',
         'testing/embedder_test_timer_handling_delegate.h',
-        'testing/fx_string_testhelpers.cpp',
-        'testing/fx_string_testhelpers.h',
       ],
       'conditions': [
         ['pdf_enable_v8==1', {
@@ -826,6 +826,35 @@
           ],
           'sources': [
             'fpdfsdk/src/jsapi/fxjs_v8_embeddertest.cpp',
+          ],
+        }],
+      ],
+    },
+    {
+      'target_name': 'test_support',
+      'type': 'static_library',
+      'dependencies': [
+        '<(DEPTH)/testing/gmock.gyp:gmock',
+        '<(DEPTH)/testing/gtest.gyp:gtest',
+      ],
+      'include_dirs': [
+        '<(DEPTH)',
+      ],
+      'sources': [
+        'testing/fx_string_testhelpers.cpp',
+        'testing/fx_string_testhelpers.h',
+        'testing/test_support.cpp',
+        'testing/test_support.h',
+      ],
+      'conditions': [
+        ['pdf_enable_v8==1', {
+          'include_dirs': [
+            '<(DEPTH)/v8',
+            '<(DEPTH)/v8/include',
+          ],
+          'dependencies': [
+            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
+            '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
           ],
         }],
       ],
