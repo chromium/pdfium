@@ -856,14 +856,12 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
                                        &matrix, TRUE, NULL);
   }
 
-  pContext->m_pRenderer = new CPDF_ProgressiveRenderer;
-  pContext->m_pRenderer->Start(pContext->m_pContext, pContext->m_pDevice,
-                               pContext->m_pOptions, pause);
+  pContext->m_pRenderer = new CPDF_ProgressiveRenderer(
+      pContext->m_pContext, pContext->m_pDevice, pContext->m_pOptions);
+  pContext->m_pRenderer->Start(pause);
   if (bNeedToRestore) {
     pContext->m_pDevice->RestoreState();
   }
-
-  //#endif
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,

@@ -50,10 +50,8 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
                          rotate, flags, FALSE, &IPauseAdapter);
 
   if (pContext->m_pRenderer) {
-    CPDF_ProgressiveRenderer::RenderStatus status =
-        CPDF_ProgressiveRenderer::Failed;
-    status = pContext->m_pRenderer->GetStatus();
-    return status;
+    return CPDF_ProgressiveRenderer::ToFPDFStatus(
+        pContext->m_pRenderer->GetStatus());
   }
   return FPDF_RENDER_FAILED;
 }
@@ -71,11 +69,8 @@ DLLEXPORT int STDCALL FPDF_RenderPage_Continue(FPDF_PAGE page,
   if (pContext && pContext->m_pRenderer) {
     IFSDK_PAUSE_Adapter IPauseAdapter(pause);
     pContext->m_pRenderer->Continue(&IPauseAdapter);
-
-    CPDF_ProgressiveRenderer::RenderStatus status =
-        CPDF_ProgressiveRenderer::Failed;
-    status = pContext->m_pRenderer->GetStatus();
-    return status;
+    return CPDF_ProgressiveRenderer::ToFPDFStatus(
+        pContext->m_pRenderer->GetStatus());
   }
   return FPDF_RENDER_FAILED;
 }
