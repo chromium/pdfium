@@ -662,13 +662,13 @@ FX_BOOL CFWL_DateTimePickerImp::Paste(const CFX_WideString& wsPaste) {
   return m_pEdit->Paste(wsPaste);
 }
 FX_BOOL CFWL_DateTimePickerImp::SelectAll() {
-  return (m_pEdit->AddSelRange(0) == FWL_ERR_Succeeded) ? TRUE : FALSE;
+  return m_pEdit->AddSelRange(0) == FWL_ERR_Succeeded;
 }
 FX_BOOL CFWL_DateTimePickerImp::Delete() {
-  return (m_pEdit->ClearText() == FWL_ERR_Succeeded) ? TRUE : FALSE;
+  return m_pEdit->ClearText() == FWL_ERR_Succeeded;
 }
 FX_BOOL CFWL_DateTimePickerImp::DeSelect() {
-  return (m_pEdit->ClearSelections() == FWL_ERR_Succeeded) ? TRUE : FALSE;
+  return m_pEdit->ClearSelections() == FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_DateTimePickerImp::GetBBox(CFX_RectF& rect) {
   if (m_pWidgetMgr->IsFormDisabled()) {

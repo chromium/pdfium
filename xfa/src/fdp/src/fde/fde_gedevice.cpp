@@ -169,8 +169,7 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush* pBrush,
       SubstFxFont.m_Weight = dwFontStyle & FX_FONTSTYLE_Bold ? 700 : 400;
       SubstFxFont.m_WeightCJK = SubstFxFont.m_Weight;
       SubstFxFont.m_ItalicAngle = dwFontStyle & FX_FONTSTYLE_Italic ? -12 : 0;
-      SubstFxFont.m_bItlicCJK =
-          dwFontStyle & FX_FONTSTYLE_Italic ? TRUE : FALSE;
+      SubstFxFont.m_bItlicCJK = !!(dwFontStyle & FX_FONTSTYLE_Italic);
 #endif
       for (int32_t i = 0; i < iCount; ++i) {
         pSTFont = pFont->GetSubstFont((int32_t)pCP->m_GlyphIndex);

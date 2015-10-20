@@ -183,7 +183,7 @@ FXJSE_HVALUE CFXJSE_Arguments::GetValue(int32_t index) const {
 FX_BOOL CFXJSE_Arguments::GetBoolean(int32_t index) const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
-  return (*lpArguments->m_pInfo)[index]->BooleanValue() ? TRUE : FALSE;
+  return (*lpArguments->m_pInfo)[index]->BooleanValue();
 }
 int32_t CFXJSE_Arguments::GetInt32(int32_t index) const {
   const CFXJSE_ArgumentsImpl* lpArguments =

@@ -232,8 +232,8 @@ void CFDE_TextOut::CalcTextSize(const FX_WCHAR* pwsStr,
   SetLineWidth(rect);
   m_iTotalLines = 0;
   const FX_WCHAR* pStr = pwsStr;
-  FX_BOOL bHotKey = (m_dwStyles & FDE_TTOSTYLE_HotKey) ? TRUE : FALSE;
-  FX_BOOL bVertical = (m_dwStyles & FDE_TTOSTYLE_VerticalLayout) ? TRUE : FALSE;
+  FX_BOOL bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
+  FX_BOOL bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   FX_FLOAT fWidth = 0.0f;
   FX_FLOAT fHeight = 0.0f;
   FX_FLOAT fStartPos = bVertical ? rect.bottom() : rect.right();
@@ -313,7 +313,7 @@ FX_BOOL CFDE_TextOut::RetrieveLineWidth(FX_DWORD dwBreakStatus,
   }
   FX_FLOAT fLineStep =
       (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
-  FX_BOOL bLineWrap = (m_dwStyles & FDE_TTOSTYLE_LineWrap) ? TRUE : FALSE;
+  FX_BOOL bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
   FX_FLOAT fLineWidth = 0.0f;
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
@@ -501,9 +501,9 @@ void CFDE_TextOut::LoadText(const FX_WCHAR* pwsStr,
   FX_WCHAR* pStr = m_wsText.GetBuffer(iLength);
   int32_t iTxtLength = iLength;
   ExpandBuffer(iTxtLength, 0);
-  FX_BOOL bHotKey = (m_dwStyles & FDE_TTOSTYLE_HotKey) ? TRUE : FALSE;
-  FX_BOOL bVertical = (m_dwStyles & FDE_TTOSTYLE_VerticalLayout) ? TRUE : FALSE;
-  FX_BOOL bLineWrap = (m_dwStyles & FDE_TTOSTYLE_LineWrap) ? TRUE : FALSE;
+  FX_BOOL bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
+  FX_BOOL bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
+  FX_BOOL bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
   FX_FLOAT fLineStep =
       (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   FX_FLOAT fLineStop = bVertical ? rect.left : rect.bottom();
@@ -564,9 +564,9 @@ FX_BOOL CFDE_TextOut::RetriecePieces(FX_DWORD dwBreakStatus,
                                      int32_t& iPieceWidths,
                                      FX_BOOL bReload,
                                      const CFX_RectF& rect) {
-  FX_BOOL bSingleLine = (m_dwStyles & FDE_TTOSTYLE_SingleLine) ? TRUE : FALSE;
-  FX_BOOL bLineWrap = (m_dwStyles & FDE_TTOSTYLE_LineWrap) ? TRUE : FALSE;
-  FX_BOOL bVertical = (m_dwStyles & FDE_TTOSTYLE_VerticalLayout) ? TRUE : FALSE;
+  FX_BOOL bSingleLine = !!(m_dwStyles & FDE_TTOSTYLE_SingleLine);
+  FX_BOOL bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
+  FX_BOOL bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   FX_FLOAT fLineStep =
       (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   if (bVertical) {
@@ -709,7 +709,7 @@ void CFDE_TextOut::Reload(const CFX_RectF& rect) {
 }
 void CFDE_TextOut::ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect) {
   const FX_WCHAR* pwsStr = (const FX_WCHAR*)m_wsText;
-  FX_BOOL bVertical = (m_dwStyles & FDE_TTOSTYLE_VerticalLayout) ? TRUE : FALSE;
+  FX_BOOL bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   int32_t iPieceWidths = 0;
   FDE_LPTTOPIECE pPiece = pLine->GetPtrAt(0);
   int32_t iStartChar = pPiece->iStartChar;
@@ -739,7 +739,7 @@ void CFDE_TextOut::ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect) {
   m_pTxtBreak->Reset();
 }
 void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
-  FX_BOOL bVertical = (m_dwStyles & FDE_TTOSTYLE_VerticalLayout) ? TRUE : FALSE;
+  FX_BOOL bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   FX_FLOAT fLineStopS = bVertical ? rect.right() : rect.bottom();
   int32_t iLines = m_ttoLines.GetSize();
   if (iLines < 1) {
@@ -842,10 +842,10 @@ void CFDE_TextOut::ToTextRun(const FDE_LPTTOPIECE pPiece, FX_TXTRUN& tr) {
   tr.pRect = &pPiece->rtPiece;
 }
 void CFDE_TextOut::DrawLine(const FDE_LPTTOPIECE pPiece, IFDE_Pen*& pPen) {
-  FX_BOOL bUnderLine = (m_dwStyles & FDE_TTOSTYLE_Underline) ? TRUE : FALSE;
-  FX_BOOL bStrikeOut = (m_dwStyles & FDE_TTOSTYLE_Strikeout) ? TRUE : FALSE;
-  FX_BOOL bHotKey = (m_dwStyles & FDE_TTOSTYLE_HotKey) ? TRUE : FALSE;
-  FX_BOOL bVertical = (m_dwStyles & FDE_TTOSTYLE_VerticalLayout) ? TRUE : FALSE;
+  FX_BOOL bUnderLine = !!(m_dwStyles & FDE_TTOSTYLE_Underline);
+  FX_BOOL bStrikeOut = !!(m_dwStyles & FDE_TTOSTYLE_Strikeout);
+  FX_BOOL bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
+  FX_BOOL bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   if (!bUnderLine && !bStrikeOut && !bHotKey) {
     return;
   }

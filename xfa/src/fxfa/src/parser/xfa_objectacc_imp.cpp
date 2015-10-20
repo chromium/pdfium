@@ -837,7 +837,7 @@ int32_t CXFA_Line::GetHand() {
 }
 FX_BOOL CXFA_Line::GetSlop() {
   XFA_ATTRIBUTEENUM eSlop = m_pNode->GetEnum(XFA_ATTRIBUTE_Slope);
-  return (eSlop == XFA_ATTRIBUTEENUM_Slash) ? TRUE : FALSE;
+  return eSlop == XFA_ATTRIBUTEENUM_Slash;
 }
 CXFA_Edge CXFA_Line::GetEdge() {
   return CXFA_Edge(m_pNode->GetChild(0, XFA_ELEMENT_Edge));

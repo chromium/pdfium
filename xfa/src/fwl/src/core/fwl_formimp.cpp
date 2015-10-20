@@ -885,7 +885,7 @@ void CFWL_FormImp::SetThemeData() {
 }
 FX_BOOL CFWL_FormImp::HasIcon() {
   IFWL_FormDP* pData = (IFWL_FormDP*)m_pProperties->m_pDataProvider;
-  return pData->GetIcon(m_pInterface, FALSE) ? TRUE : FALSE;
+  return !!pData->GetIcon(m_pInterface, FALSE);
 }
 void CFWL_FormImp::UpdateIcon() {
   CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();

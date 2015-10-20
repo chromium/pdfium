@@ -1752,8 +1752,7 @@ void CXFA_Node::Script_Boolean_Value(FXJSE_HVALUE hValue,
     SetScriptContent(wsNewValue, wsFormatValue, TRUE, TRUE);
   } else {
     CFX_WideString wsValue = GetScriptContent(TRUE);
-    FXJSE_Value_SetBoolean(hValue,
-                           wsValue.Equal(FX_WSTRC(L"1")) ? TRUE : FALSE);
+    FXJSE_Value_SetBoolean(hValue, wsValue.Equal(FX_WSTRC(L"1")));
   }
 }
 struct XFA_ExecEventParaInfo {
@@ -5449,8 +5448,7 @@ CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* pDocument,
 }
 int32_t CXFA_AttachNodeList::GetLength() {
   return m_pAttachNode->CountChildren(
-      XFA_ELEMENT_UNKNOWN,
-      m_pAttachNode->GetClassID() == XFA_ELEMENT_Subform ? TRUE : FALSE);
+      XFA_ELEMENT_UNKNOWN, m_pAttachNode->GetClassID() == XFA_ELEMENT_Subform);
 }
 FX_BOOL CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
   CXFA_Node* pParent = pNode->GetNodeItem(XFA_NODEITEM_Parent);
@@ -5473,5 +5471,5 @@ FX_BOOL CXFA_AttachNodeList::Remove(CXFA_Node* pNode) {
 CXFA_Node* CXFA_AttachNodeList::Item(int32_t iIndex) {
   return m_pAttachNode->GetChild(
       iIndex, XFA_ELEMENT_UNKNOWN,
-      m_pAttachNode->GetClassID() == XFA_ELEMENT_Subform ? TRUE : FALSE);
+      m_pAttachNode->GetClassID() == XFA_ELEMENT_Subform);
 }

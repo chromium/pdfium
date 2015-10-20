@@ -1201,7 +1201,7 @@ static void XFA_DataMerge_UpdateBindingRelations(CXFA_Document* pDocument,
           if (pDataNode) {
             XFA_DataMerge_CreateDataBinding(
                 pFormNode, pDataNode,
-                rs.dwFlags == XFA_RESOVENODE_RSTYPE_ExistNodes ? TRUE : FALSE);
+                rs.dwFlags == XFA_RESOVENODE_RSTYPE_ExistNodes);
           } else {
             XFA_DataMerge_FormValueNode_MatchNoneCreateChild(pFormNode);
           }

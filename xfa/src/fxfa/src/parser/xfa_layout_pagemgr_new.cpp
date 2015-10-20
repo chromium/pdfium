@@ -1432,7 +1432,7 @@ FX_BOOL CXFA_LayoutPageMgr::GetNextAvailContentHeight(FX_FLOAT fChildHeight) {
   if (pCurContentNode) {
     FX_FLOAT fNextContentHeight =
         pCurContentNode->GetMeasure(XFA_ATTRIBUTE_H).ToUnit(XFA_UNIT_Pt);
-    return fNextContentHeight > fChildHeight ? TRUE : FALSE;
+    return fNextContentHeight > fChildHeight;
   }
   CXFA_Node* pPageNode = GetCurrentContainerRecord()->pCurPageArea->m_pFormNode;
   CXFA_Node* pOccurNode = pPageNode->GetFirstChildByClass(XFA_ELEMENT_Occur);

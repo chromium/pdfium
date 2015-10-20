@@ -314,7 +314,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
         if (m_pNodeHelper->XFA_NodeIsTransparent((CXFA_Node*)curNode)) {
           m_pNodeHelper->XFA_CountSiblings(
               (CXFA_Node*)nodes[0], XFA_LOGIC_Transparent, &upArrayNodes,
-              dwStyles & XFA_RESOLVENODE_TagName ? TRUE : FALSE);
+              !!(dwStyles & XFA_RESOLVENODE_TagName));
         }
         if (upArrayNodes.GetSize() > nodes.GetSize()) {
           upArrayNodes[0] = (CXFA_Node*)nodes[0];
@@ -463,7 +463,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
         CXFA_NodeArray upArrayNodes;
         m_pNodeHelper->XFA_CountSiblings(
             (CXFA_Node*)nodes[0], XFA_LOGIC_Transparent, &upArrayNodes,
-            dwStyles & XFA_RESOLVENODE_TagName ? TRUE : FALSE);
+            !!(dwStyles & XFA_RESOLVENODE_TagName));
         if (upArrayNodes.GetSize() > nodes.GetSize()) {
           upArrayNodes[0] = (CXFA_Node*)nodes[0];
           nodes.RemoveAll();

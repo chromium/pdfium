@@ -672,7 +672,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
       FX_BOOL bCreate =
           m_pResolveProcessor->GetNodeHelper()->XFA_ResolveNodes_CreateNode(
               rndFind.m_wsName, rndFind.m_wsCondition,
-              nStart == wsExpression.GetLength() ? TRUE : FALSE, this);
+              nStart == wsExpression.GetLength(), this);
       if (bCreate) {
         continue;
       } else {
@@ -732,7 +732,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
         FX_BOOL bCreate =
             m_pResolveProcessor->GetNodeHelper()->XFA_ResolveNodes_CreateNode(
                 rndFind.m_wsName, rndFind.m_wsCondition,
-                nStart == wsExpression.GetLength() ? TRUE : FALSE, this);
+                nStart == wsExpression.GetLength(), this);
         if (bCreate) {
           continue;
         } else {
