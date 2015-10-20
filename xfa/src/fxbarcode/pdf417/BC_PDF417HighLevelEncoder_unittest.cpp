@@ -69,11 +69,8 @@ TEST(PDF417HighLevelEncoder, EncodeNumeric) {
       // Empty string encodes as empty string.
       {L"", 0, 0, L"", 0},
 
-      // Blank string encodes as empty string.
-      {L" ", 0, 1, L"", 0},
-
-      // Single 0 should encode as 10 base-900 == 10.
-      {L"0", 0, 1, L"", 0},  // wrong - should be \u000a?
+      // Single 0 should encode as 10 base-900 == a.
+      {L"0", 0, 1, L"\x000a", 1},
 
       // 800 should encode as 1800 base-900 == 2,0.
       {L"800", 0, 3, L"\x0002\x0000", 2},
@@ -85,27 +82,35 @@ TEST(PDF417HighLevelEncoder, EncodeNumeric) {
       {L"123456", 2, 2, L"\x0086", 1},
 
       // Up to 44 characters encodes as 15 base-900 words.
-      {L"00000000000000000000000000000000000000000000", 0, 44,
+      {L"00000000000000000000000000000000000000000000",
+       0,
+       44,
        L"\x01b5\x006f\x02cc\x0084\x01bc\x0076\x00b3\x005c\x01f0\x034f\x01e6"
        L"\x0090\x020b\x019b\x0064",
        15},
 
       // 45 characters should encode as same 15 words followed by one additional
       // word.
-      {L"000000000000000000000000000000000000000000000", 0, 45,
+      {L"000000000000000000000000000000000000000000000",
+       0,
+       45,
        L"\x01b5\x006f\x02cc\x0084\x01bc\x0076\x00b3\x005c\x01f0\x034f\x01e6"
        L"\x0090\x020b\x019b\x0064\x000a",
        16},
 
       // 44 characters followed by 800 should encode as 15 words followed by
       // 1800 base-900 == 2,0.
-      {L"00000000000000000000000000000000000000000000800", 0, 47,
+      {L"00000000000000000000000000000000000000000000800",
+       0,
+       47,
        L"\x01b5\x006f\x02cc\x0084\x01bc\x0076\x00b3\x005c\x01f0\x034f\x01e6"
        L"\x0090\x020b\x019b\x0064\x0002\x0000",
        17},
 
       // Even longer input.
-      {L"10000000000000000000000000000000000000000000000000", 0, 50,
+      {L"10000000000000000000000000000000000000000000000000",
+       0,
+       50,
        L"\x01e0\x02f0\x036d\x02ad\x029c\x01ea\x0011\x000b\x02d6\x023c\x0108"
        L"\x02bb\x0023\x02d2\x00c8\x0001\x00d3\x0064",
        18},

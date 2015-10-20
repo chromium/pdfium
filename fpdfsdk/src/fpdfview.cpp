@@ -427,11 +427,10 @@ DLLEXPORT int STDCALL FPDF_GetPageCount(FPDF_DOCUMENT document) {
 
 DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
                                           int page_index) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!document)
     return nullptr;
-
-  if (page_index < 0 || page_index >= FPDF_GetPageCount(document))
+  CPDFXFA_Document* pDoc = static_cast<CPDFXFA_Document*>(document);
+  if (page_index < 0 || page_index >= pDoc->GetPageCount())
     return nullptr;
 
   return pDoc->GetPage(page_index);
