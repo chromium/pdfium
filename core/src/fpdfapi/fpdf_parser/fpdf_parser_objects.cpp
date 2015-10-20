@@ -40,7 +40,7 @@ void CPDF_Object::Destroy() {
 CFX_ByteString CPDF_Object::GetString() const {
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
-      return ((CPDF_Boolean*)this)->m_bValue ? "true" : "false";
+      return AsBoolean()->m_bValue ? "true" : "false";
     case PDFOBJ_NUMBER:
       return ((CPDF_Number*)this)->GetString();
     case PDFOBJ_STRING:
@@ -114,7 +114,7 @@ int CPDF_Object::GetInteger() const {
   }
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
-      return ((CPDF_Boolean*)this)->m_bValue;
+      return this->AsBoolean()->m_bValue;
     case PDFOBJ_NUMBER:
       return ((CPDF_Number*)this)->GetInteger();
     case PDFOBJ_REFERENCE: {
@@ -168,7 +168,7 @@ void CPDF_Object::SetString(const CFX_ByteString& str) {
   ASSERT(this != NULL);
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
-      ((CPDF_Boolean*)this)->m_bValue = str == FX_BSTRC("true") ? 1 : 0;
+      AsBoolean()->m_bValue = (str == FX_BSTRC("true"));
       return;
     case PDFOBJ_NUMBER:
       ((CPDF_Number*)this)->SetString(str);
@@ -207,7 +207,7 @@ FX_BOOL CPDF_Object::IsIdentical(CPDF_Object* pOther) const {
   }
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
-      return (((CPDF_Boolean*)this)->Identical((CPDF_Boolean*)pOther));
+      return this->AsBoolean()->Identical(pOther->AsBoolean());
     case PDFOBJ_NUMBER:
       return (((CPDF_Number*)this)->Identical((CPDF_Number*)pOther));
     case PDFOBJ_STRING:
@@ -245,7 +245,7 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
                                         CFX_MapPtrToPtr* visited) const {
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
-      return new CPDF_Boolean(((CPDF_Boolean*)this)->m_bValue);
+      return new CPDF_Boolean(this->AsBoolean()->m_bValue);
     case PDFOBJ_NUMBER:
       return new CPDF_Number(((CPDF_Number*)this)->m_bInteger,
                              &((CPDF_Number*)this)->m_Integer);
@@ -335,6 +335,14 @@ void CPDF_Object::SetUnicodeText(const FX_WCHAR* pUnicodes, int len) {
     ((CPDF_Stream*)this)
         ->SetData((uint8_t*)result.c_str(), result.GetLength(), FALSE, FALSE);
   }
+}
+
+CPDF_Boolean* CPDF_Object::AsBoolean() {
+  return IsBoolean() ? static_cast<CPDF_Boolean*>(this) : nullptr;
+}
+
+const CPDF_Boolean* CPDF_Object::AsBoolean() const {
+  return IsBoolean() ? static_cast<const CPDF_Boolean*>(this) : nullptr;
 }
 
 CPDF_Dictionary* CPDF_Object::AsDictionary() {
@@ -663,9 +671,8 @@ FX_BOOL CPDF_Dictionary::GetBoolean(const CFX_ByteStringC& key,
                                     FX_BOOL bDefault) const {
   CPDF_Object* p = NULL;
   m_Map.Lookup(key, (void*&)p);
-  if (p && p->GetType() == PDFOBJ_BOOLEAN) {
+  if (ToBoolean(p))
     return p->GetInteger();
-  }
   return bDefault;
 }
 CPDF_Dictionary* CPDF_Dictionary::GetDict(const CFX_ByteStringC& key) const {
