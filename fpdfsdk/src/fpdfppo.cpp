@@ -60,7 +60,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
 
   CPDF_Object* pElement = pNewRoot->GetElement("Pages");
   CPDF_Dictionary* pNewPages =
-      pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
+      pElement ? (CPDF_Dictionary*)pElement->GetDirect() : nullptr;
   if (!pNewPages) {
     pNewPages = new CPDF_Dictionary;
     FX_DWORD NewPagesON = pDestPDFDoc->AddIndirectObject(pNewPages);
@@ -183,13 +183,14 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
   if (pType->GetString().Compare("Page"))
     return nullptr;
 
-  CPDF_Dictionary* pp = ToDictionary(pDict->GetElement("Parent")->GetDirect());
-  if (!pp)
+  CPDF_Object* pParent = pDict->GetElement("Parent")->GetDirect();
+  if (!pParent || pParent->GetType() != PDFOBJ_DICTIONARY)
     return nullptr;
 
   if (pDict->KeyExist((const char*)nSrctag))
     return pDict->GetElement((const char*)nSrctag);
 
+  CPDF_Dictionary* pp = (CPDF_Dictionary*)pParent;
   while (pp) {
     if (pp->KeyExist((const char*)nSrctag)) {
       return pp->GetElement((const char*)nSrctag);
@@ -197,8 +198,12 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
     if (!pp->KeyExist("Parent")) {
       break;
     }
-    pp = ToDictionary(pp->GetElement("Parent")->GetDirect());
+    pp = (CPDF_Dictionary*)pp->GetElement("Parent")->GetDirect();
+    if (pp->GetType() == PDFOBJ_NULL) {
+      break;
+    }
   }
+
   return nullptr;
 }
 
@@ -215,7 +220,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       break;
     }
     case PDFOBJ_DICTIONARY: {
-      CPDF_Dictionary* pDict = pObj->AsDictionary();
+      CPDF_Dictionary* pDict = (CPDF_Dictionary*)pObj;
 
       FX_POSITION pos = pDict->GetStartPos();
       while (pos) {
@@ -286,7 +291,8 @@ FX_DWORD CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
   if (!pClone)
     return 0;
 
-  if (CPDF_Dictionary* pDictClone = pClone->AsDictionary()) {
+  if (pClone->GetType() == PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pDictClone = (CPDF_Dictionary*)pClone;
     if (pDictClone->KeyExist("Type")) {
       CFX_ByteString strType = pDictClone->GetString("Type");
       if (!FXSYS_stricmp(strType, "Pages")) {

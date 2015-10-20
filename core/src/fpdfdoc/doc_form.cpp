@@ -854,9 +854,9 @@ CPDF_FormField* CPDF_InterForm::GetFieldInCalculationOrder(int index) {
   if (pArray == NULL) {
     return NULL;
   }
-  if (CPDF_Dictionary* pElement =
-          ToDictionary(pArray->GetElementValue(index))) {
-    return GetFieldByDict(pElement);
+  CPDF_Object* pElement = pArray->GetElementValue(index);
+  if (pElement != NULL && pElement->GetType() == PDFOBJ_DICTIONARY) {
+    return GetFieldByDict((CPDF_Dictionary*)pElement);
   }
   return NULL;
 }
@@ -1049,24 +1049,25 @@ void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
     }
   }
 }
-CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
+CPDF_FormField* CPDF_InterForm::AddTerminalField(
+    const CPDF_Dictionary* pFieldDict) {
   if (!pFieldDict->KeyExist(FX_BSTRC("T"))) {
     return NULL;
   }
-  CPDF_Dictionary* pDict = pFieldDict;
-  CFX_WideString csWName = GetFullName(pFieldDict);
+  CPDF_Dictionary* pDict = (CPDF_Dictionary*)pFieldDict;
+  CFX_WideString csWName = GetFullName(pDict);
   if (csWName.IsEmpty()) {
     return NULL;
   }
   CPDF_FormField* pField = NULL;
   pField = m_pFieldTree->GetField(csWName);
   if (pField == NULL) {
-    CPDF_Dictionary* pParent = pFieldDict;
+    CPDF_Dictionary* pParent = (CPDF_Dictionary*)pFieldDict;
     if (!pFieldDict->KeyExist(FX_BSTRC("T")) &&
         pFieldDict->GetString(FX_BSTRC("Subtype")) == FX_BSTRC("Widget")) {
       pParent = pFieldDict->GetDict(FX_BSTRC("Parent"));
       if (!pParent) {
-        pParent = pFieldDict;
+        pParent = (CPDF_Dictionary*)pFieldDict;
       }
     }
     if (pParent && pParent != pFieldDict &&
@@ -1115,14 +1116,15 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   }
   return pField;
 }
-CPDF_FormControl* CPDF_InterForm::AddControl(const CPDF_FormField* pField,
-                                             CPDF_Dictionary* pWidgetDict) {
+CPDF_FormControl* CPDF_InterForm::AddControl(
+    const CPDF_FormField* pField,
+    const CPDF_Dictionary* pWidgetDict) {
   const auto it = m_ControlMap.find(pWidgetDict);
   if (it != m_ControlMap.end())
     return it->second;
 
-  CPDF_FormControl* pControl =
-      new CPDF_FormControl((CPDF_FormField*)pField, pWidgetDict);
+  CPDF_FormControl* pControl = new CPDF_FormControl(
+      (CPDF_FormField*)pField, (CPDF_Dictionary*)pWidgetDict);
   m_ControlMap[pWidgetDict] = pControl;
   ((CPDF_FormField*)pField)->m_ControlList.Add(pControl);
   return pControl;

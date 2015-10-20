@@ -209,8 +209,9 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,
     if (pOCGObj == NULL) {
       return FALSE;
     }
-    if (CPDF_Dictionary* pDict = pOCGObj->AsDictionary()) {
-      return !(bFromConfig ? LoadOCGState(pDict) : GetOCGVisible(pDict));
+    if (pOCGObj->GetType() == PDFOBJ_DICTIONARY) {
+      return !(bFromConfig ? LoadOCGState((CPDF_Dictionary*)pOCGObj)
+                           : GetOCGVisible((CPDF_Dictionary*)pOCGObj));
     }
     if (pOCGObj->GetType() == PDFOBJ_ARRAY) {
       return !GetOCGVE((CPDF_Array*)pOCGObj, bFromConfig, nLevel + 1);
@@ -225,8 +226,9 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,
         continue;
       }
       FX_BOOL bItem = FALSE;
-      if (CPDF_Dictionary* pDict = pOCGObj->AsDictionary()) {
-        bItem = bFromConfig ? LoadOCGState(pDict) : GetOCGVisible(pDict);
+      if (pOCGObj->GetType() == PDFOBJ_DICTIONARY) {
+        bItem = bFromConfig ? LoadOCGState((CPDF_Dictionary*)pOCGObj)
+                            : GetOCGVisible((CPDF_Dictionary*)pOCGObj);
       } else if (pOCGObj->GetType() == PDFOBJ_ARRAY) {
         bItem = GetOCGVE((CPDF_Array*)pOCGObj, bFromConfig, nLevel + 1);
       }
@@ -256,8 +258,9 @@ FX_BOOL CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict,
   if (pOCGObj == NULL) {
     return TRUE;
   }
-  if (const CPDF_Dictionary* pDict = pOCGObj->AsDictionary()) {
-    return bFromConfig ? LoadOCGState(pDict) : GetOCGVisible(pDict);
+  if (pOCGObj->GetType() == PDFOBJ_DICTIONARY) {
+    return bFromConfig ? LoadOCGState((CPDF_Dictionary*)pOCGObj)
+                       : GetOCGVisible((CPDF_Dictionary*)pOCGObj);
   }
   if (pOCGObj->GetType() != PDFOBJ_ARRAY) {
     return TRUE;

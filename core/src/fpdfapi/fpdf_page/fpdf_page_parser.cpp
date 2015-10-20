@@ -418,9 +418,11 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
     }
     bDirect = FALSE;
   }
-  if (CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
-    m_CurContentMark.GetModify()->AddMark(tag, pDict, bDirect);
+  if (pProperty->GetType() != PDFOBJ_DICTIONARY) {
+    return;
   }
+  m_CurContentMark.GetModify()->AddMark(tag, (CPDF_Dictionary*)pProperty,
+                                        bDirect);
 }
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
   if (!m_Options.m_bMarkedContent) {
@@ -485,7 +487,7 @@ static CFX_ByteStringC _PDF_FindFullName(const _FX_BSTR* table,
 void _PDF_ReplaceAbbr(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
     case PDFOBJ_DICTIONARY: {
-      CPDF_Dictionary* pDict = pObj->AsDictionary();
+      CPDF_Dictionary* pDict = (CPDF_Dictionary*)pObj;
       FX_POSITION pos = pDict->GetStartPos();
       while (pos) {
         CFX_ByteString key;
@@ -548,7 +550,7 @@ static CFX_ByteStringC _PDF_FindAbbrName(const _FX_BSTR* table,
 void _PDF_ReplaceFull(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
     case PDFOBJ_DICTIONARY: {
-      CPDF_Dictionary* pDict = pObj->AsDictionary();
+      CPDF_Dictionary* pDict = (CPDF_Dictionary*)pObj;
       FX_POSITION pos = pDict->GetStartPos();
       while (pos) {
         CFX_ByteString key;
@@ -884,8 +886,8 @@ void CPDF_StreamContentParser::Handle_SetGray_Stroke() {
 void CPDF_StreamContentParser::Handle_SetExtendGraphState() {
   CFX_ByteString name = GetString(0);
   CPDF_Dictionary* pGS =
-      ToDictionary(FindResourceObj(FX_BSTRC("ExtGState"), name));
-  if (!pGS) {
+      (CPDF_Dictionary*)FindResourceObj(FX_BSTRC("ExtGState"), name);
+  if (pGS == NULL || pGS->GetType() != PDFOBJ_DICTIONARY) {
     m_bResourceMissing = TRUE;
     return;
   }
@@ -1215,12 +1217,11 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
 }
 CPDF_Font* CPDF_StreamContentParser::FindFont(const CFX_ByteString& name) {
   CPDF_Dictionary* pFontDict =
-      ToDictionary(FindResourceObj(FX_BSTRC("Font"), name));
-  if (!pFontDict) {
+      (CPDF_Dictionary*)FindResourceObj(FX_BSTRC("Font"), name);
+  if (pFontDict == NULL || pFontDict->GetType() != PDFOBJ_DICTIONARY) {
     m_bResourceMissing = TRUE;
     return CPDF_Font::GetStockFont(m_pDocument, FX_BSTRC("Helvetica"));
   }
-
   CPDF_Font* pFont = m_pDocument->LoadFont(pFontDict);
   if (pFont && pFont->GetType3Font()) {
     pFont->GetType3Font()->SetPageResources(m_pResources);
@@ -1260,8 +1261,8 @@ CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const CFX_ByteString& name,
                                                     FX_BOOL bShading) {
   CPDF_Object* pPattern = FindResourceObj(
       bShading ? FX_BSTRC("Shading") : FX_BSTRC("Pattern"), name);
-  if (pPattern == NULL ||
-      (!pPattern->IsDictionary() && pPattern->GetType() != PDFOBJ_STREAM)) {
+  if (pPattern == NULL || (pPattern->GetType() != PDFOBJ_DICTIONARY &&
+                           pPattern->GetType() != PDFOBJ_STREAM)) {
     m_bResourceMissing = TRUE;
     return NULL;
   }

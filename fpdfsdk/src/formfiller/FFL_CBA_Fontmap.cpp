@@ -137,9 +137,11 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
     if (pObj == NULL)
       continue;
 
-    CPDF_Dictionary* pElement = ToDictionary(pObj->GetDirect());
-    if (!pElement)
+    CPDF_Object* pDirect = pObj->GetDirect();
+    if (pDirect == NULL || pDirect->GetType() != PDFOBJ_DICTIONARY)
       continue;
+
+    CPDF_Dictionary* pElement = (CPDF_Dictionary*)pDirect;
     if (pElement->GetString("Type") != "Font")
       continue;
 
@@ -179,7 +181,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
   // to avoid checkbox and radiobutton
   CPDF_Object* pObject = pAPDict->GetElement(m_sAPType);
-  if (ToDictionary(pObject))
+  if (pObject && pObject->GetType() == PDFOBJ_DICTIONARY)
     return;
 
   CPDF_Stream* pStream = pAPDict->GetStream(m_sAPType);

@@ -103,7 +103,7 @@ DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
     else {
       if (pDict->KeyExist("Parent")) {
         CPDF_Dictionary* pPages =
-            ToDictionary(pDict->GetElement("Parent")->GetDirect());
+            (CPDF_Dictionary*)pDict->GetElement("Parent")->GetDirect();
         while (pPages) {
           if (pPages->KeyExist("Rotate")) {
             rotate =
@@ -113,7 +113,8 @@ DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
                     : 0;
             break;
           } else if (pPages->KeyExist("Parent"))
-            pPages = ToDictionary(pPages->GetElement("Parent")->GetDirect());
+            pPages =
+                (CPDF_Dictionary*)pPages->GetElement("Parent")->GetDirect();
           else
             break;
         }
@@ -212,7 +213,7 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
     return TRUE;
 
   CPDF_Dictionary* pSMaskDict =
-      pGeneralState ? ToDictionary(pGeneralState->m_pSoftMask) : NULL;
+      pGeneralState ? (CPDF_Dictionary*)pGeneralState->m_pSoftMask : NULL;
   if (pSMaskDict)
     return TRUE;
 

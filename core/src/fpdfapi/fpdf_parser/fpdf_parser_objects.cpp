@@ -28,7 +28,7 @@ void CPDF_Object::Destroy() {
       delete (CPDF_Array*)this;
       break;
     case PDFOBJ_DICTIONARY:
-      delete this->AsDictionary();
+      delete (CPDF_Dictionary*)this;
       break;
     case PDFOBJ_STREAM:
       delete (CPDF_Stream*)this;
@@ -138,9 +138,7 @@ int CPDF_Object::GetInteger() const {
 CPDF_Dictionary* CPDF_Object::GetDict() const {
   switch (m_Type) {
     case PDFOBJ_DICTIONARY:
-      // The method should be made non-const if we want to not be const.
-      // See bug #234.
-      return const_cast<CPDF_Dictionary*>(this->AsDictionary());
+      return (CPDF_Dictionary*)this;
     case PDFOBJ_STREAM:
       return ((CPDF_Stream*)this)->GetDict();
     case PDFOBJ_REFERENCE: {
@@ -217,7 +215,7 @@ FX_BOOL CPDF_Object::IsIdentical(CPDF_Object* pOther) const {
     case PDFOBJ_ARRAY:
       return (((CPDF_Array*)this)->Identical((CPDF_Array*)pOther));
     case PDFOBJ_DICTIONARY:
-      return this->AsDictionary()->Identical(pOther->AsDictionary());
+      return (((CPDF_Dictionary*)this)->Identical((CPDF_Dictionary*)pOther));
     case PDFOBJ_NULL:
       return TRUE;
     case PDFOBJ_STREAM:
@@ -266,7 +264,7 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
     }
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pCopy = new CPDF_Dictionary();
-      const CPDF_Dictionary* pThis = this->AsDictionary();
+      CPDF_Dictionary* pThis = (CPDF_Dictionary*)this;
       FX_POSITION pos = pThis->m_Map.GetStartPosition();
       while (pos) {
         CFX_ByteString key;
@@ -285,9 +283,9 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
       acc.LoadAllData(pThis, TRUE);
       FX_DWORD streamSize = acc.GetSize();
       CPDF_Dictionary* pDict = pThis->GetDict();
-      if (pDict) {
-        pDict = pDict->CloneInternal(bDirect, visited)->AsDictionary();
-      }
+      if (pDict)
+        pDict = (CPDF_Dictionary*)((CPDF_Object*)pDict)
+                    ->CloneInternal(bDirect, visited);
       return new CPDF_Stream(acc.DetachData(), streamSize, pDict);
     }
     case PDFOBJ_REFERENCE: {
@@ -335,14 +333,6 @@ void CPDF_Object::SetUnicodeText(const FX_WCHAR* pUnicodes, int len) {
     ((CPDF_Stream*)this)
         ->SetData((uint8_t*)result.c_str(), result.GetLength(), FALSE, FALSE);
   }
-}
-
-CPDF_Dictionary* CPDF_Object::AsDictionary() {
-  return IsDictionary() ? static_cast<CPDF_Dictionary*>(this) : nullptr;
-}
-
-const CPDF_Dictionary* CPDF_Object::AsDictionary() const {
-  return IsDictionary() ? static_cast<const CPDF_Dictionary*>(this) : nullptr;
 }
 
 CPDF_Number::CPDF_Number(int value)
@@ -452,8 +442,8 @@ CPDF_Dictionary* CPDF_Array::GetDict(FX_DWORD i) const {
   if (!p) {
     return NULL;
   }
-  if (CPDF_Dictionary* pDict = p->AsDictionary()) {
-    return pDict;
+  if (p->GetType() == PDFOBJ_DICTIONARY) {
+    return (CPDF_Dictionary*)p;
   }
   if (p->GetType() == PDFOBJ_STREAM) {
     return ((CPDF_Stream*)p)->GetDict();
@@ -673,8 +663,8 @@ CPDF_Dictionary* CPDF_Dictionary::GetDict(const CFX_ByteStringC& key) const {
   if (!p) {
     return nullptr;
   }
-  if (CPDF_Dictionary* pDict = p->AsDictionary()) {
-    return pDict;
+  if (p->GetType() == PDFOBJ_DICTIONARY) {
+    return (CPDF_Dictionary*)p;
   }
   if (p->GetType() == PDFOBJ_STREAM) {
     return ((CPDF_Stream*)p)->GetDict();

@@ -482,7 +482,8 @@ FX_BOOL CPDFSDK_Document::ProcOpenAction() {
   if (pOpenAction->GetType() == PDFOBJ_ARRAY)
     return TRUE;
 
-  if (CPDF_Dictionary* pDict = pOpenAction->AsDictionary()) {
+  if (pOpenAction->GetType() == PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pDict = (CPDF_Dictionary*)pOpenAction;
     CPDF_Action action(pDict);
     if (m_pEnv->GetActionHander())
       m_pEnv->GetActionHander()->DoAction_DocOpen(action, this);

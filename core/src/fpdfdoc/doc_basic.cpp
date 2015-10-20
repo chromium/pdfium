@@ -17,7 +17,7 @@ int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
   if (pPage->GetType() == PDFOBJ_NUMBER) {
     return pPage->GetInteger();
   }
-  if (!pPage->IsDictionary()) {
+  if (pPage->GetType() != PDFOBJ_DICTIONARY) {
     return 0;
   }
   return pDoc->GetPageIndex(pPage->GetObjNum());
@@ -33,7 +33,7 @@ FX_DWORD CPDF_Dest::GetPageObjNum() {
   if (pPage->GetType() == PDFOBJ_NUMBER) {
     return pPage->GetInteger();
   }
-  if (pPage->IsDictionary()) {
+  if (pPage->GetType() == PDFOBJ_DICTIONARY) {
     return pPage->GetObjNum();
   }
   return 0;
@@ -243,8 +243,8 @@ CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
   if (pValue->GetType() == PDFOBJ_ARRAY) {
     return (CPDF_Array*)pValue;
   }
-  if (CPDF_Dictionary* pDict = pValue->AsDictionary()) {
-    return pDict->GetArray(FX_BSTRC("D"));
+  if (pValue->GetType() == PDFOBJ_DICTIONARY) {
+    return ((CPDF_Dictionary*)pValue)->GetArray(FX_BSTRC("D"));
   }
   return NULL;
 }
@@ -311,10 +311,11 @@ static CFX_WideString FILESPEC_DecodeFileName(const CFX_WideStringC& filepath) {
 #endif
 }
 FX_BOOL CPDF_FileSpec::GetFileName(CFX_WideString& csFileName) const {
-  if (!m_pObj) {
+  if (m_pObj == NULL) {
     return FALSE;
   }
-  if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
+  if (m_pObj->GetType() == PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pDict = (CPDF_Dictionary*)m_pObj;
     csFileName = pDict->GetUnicodeText(FX_BSTRC("UF"));
     if (csFileName.IsEmpty()) {
       csFileName = CFX_WideString::FromLocal(pDict->GetString(FX_BSTRC("F")));
@@ -344,15 +345,20 @@ FX_BOOL CPDF_FileSpec::GetFileName(CFX_WideString& csFileName) const {
 }
 CPDF_FileSpec::CPDF_FileSpec() {
   m_pObj = CPDF_Dictionary::Create();
-  if (CPDF_Dictionary* pDict = ToDictionary(m_pObj)) {
-    pDict->SetAtName(FX_BSTRC("Type"), FX_BSTRC("Filespec"));
+  if (m_pObj != NULL) {
+    ((CPDF_Dictionary*)m_pObj)
+        ->SetAtName(FX_BSTRC("Type"), FX_BSTRC("Filespec"));
   }
 }
 FX_BOOL CPDF_FileSpec::IsURL() const {
-  if (CPDF_Dictionary* pDict = ToDictionary(m_pObj)) {
-    return pDict->GetString(FX_BSTRC("FS")) == FX_BSTRC("URL");
+  if (m_pObj == NULL) {
+    return FALSE;
   }
-  return FALSE;
+  if (m_pObj->GetType() != PDFOBJ_DICTIONARY) {
+    return FALSE;
+  }
+  return ((CPDF_Dictionary*)m_pObj)->GetString(FX_BSTRC("FS")) ==
+         FX_BSTRC("URL");
 }
 CFX_WideString FILESPEC_EncodeFileName(const CFX_WideStringC& filepath) {
   if (filepath.GetLength() <= 1) {
@@ -396,10 +402,15 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
     return NULL;
   }
   int32_t iType = m_pObj->GetType();
-  if (iType == PDFOBJ_STREAM)
+  if (iType == PDFOBJ_STREAM) {
     return (CPDF_Stream*)m_pObj;
-  if (CPDF_Dictionary* pEF = m_pObj->AsDictionary()->GetDict(FX_BSTRC("EF")))
+  } else if (iType == PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pEF = ((CPDF_Dictionary*)m_pObj)->GetDict(FX_BSTRC("EF"));
+    if (pEF == NULL) {
+      return NULL;
+    }
     return pEF->GetStream(FX_BSTRC("F"));
+  }
   return NULL;
 }
 static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object* pObj,
@@ -415,7 +426,8 @@ static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object* pObj,
   int32_t iType = pObj->GetType();
   if (iType == PDFOBJ_STRING) {
     pObj->SetString(CFX_ByteString::FromUnicode(wsStr));
-  } else if (CPDF_Dictionary* pDict = pObj->AsDictionary()) {
+  } else if (iType == PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pDict = (CPDF_Dictionary*)pObj;
     pDict->SetAtString(FX_BSTRC("F"), CFX_ByteString::FromUnicode(wsStr));
     pDict->SetAtString(FX_BSTRC("UF"), PDF_EncodeText(wsStr));
   }
@@ -423,10 +435,8 @@ static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object* pObj,
 void CPDF_FileSpec::SetFileName(const CFX_WideStringC& wsFileName,
                                 FX_BOOL bURL) {
   ASSERT(m_pObj != NULL);
-  if (bURL) {
-    if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-      pDict->SetAtName(FX_BSTRC("FS"), "URL");
-    }
+  if (m_pObj->GetType() == PDFOBJ_DICTIONARY && bURL) {
+    ((CPDF_Dictionary*)m_pObj)->SetAtName(FX_BSTRC("FS"), "URL");
   }
   FPDFDOC_FILESPEC_SetFileName(m_pObj, wsFileName, bURL);
 }
@@ -507,7 +517,8 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
   }
   if (pValue != NULL) {
     pValue = pValue->GetDirect();
-    if (CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
+    if (pValue->GetType() == PDFOBJ_DICTIONARY) {
+      CPDF_Dictionary* pLabel = (CPDF_Dictionary*)pValue;
       if (pLabel->KeyExist(FX_BSTRC("P"))) {
         wsLabel += pLabel->GetUnicodeText(FX_BSTRC("P"));
       }

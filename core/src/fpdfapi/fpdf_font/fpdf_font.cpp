@@ -746,11 +746,10 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
     GetPredefinedEncoding(iBaseEncoding, bsEncoding);
     return;
   }
-
-  CPDF_Dictionary* pDict = pEncoding->AsDictionary();
-  if (!pDict)
+  if (pEncoding->GetType() != PDFOBJ_DICTIONARY) {
     return;
-
+  }
+  CPDF_Dictionary* pDict = (CPDF_Dictionary*)pEncoding;
   if (iBaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
       iBaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS) {
     CFX_ByteString bsEncoding = pDict->GetString(FX_BSTRC("BaseEncoding"));
@@ -783,7 +782,6 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
     }
   }
 }
-
 FX_BOOL CPDF_Font::IsStandardFont() const {
   if (m_FontType != PDFFONT_TYPE1)
     return FALSE;

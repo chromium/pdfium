@@ -166,8 +166,8 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
         CPDF_Object* pObj = pPattenDict->GetNextElement(pos, key);
         if (pObj->GetType() == PDFOBJ_REFERENCE)
           pObj = pObj->GetDirect();
-        if (pObj->IsDictionary()) {
-          pDict = pObj->AsDictionary();
+        if (pObj->GetType() == PDFOBJ_DICTIONARY) {
+          pDict = (CPDF_Dictionary*)pObj;
         } else if (pObj->GetType() == PDFOBJ_STREAM) {
           pDict = ((CPDF_Stream*)pObj)->GetDict();
         } else

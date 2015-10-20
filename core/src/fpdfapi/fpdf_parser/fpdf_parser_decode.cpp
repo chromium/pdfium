@@ -283,7 +283,7 @@ ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
   int predictor = 0;
   int Colors = 0, BitsPerComponent = 0, Columns = 0;
   if (pParams) {
-    predictor = pParams->GetInteger(FX_BSTRC("Predictor"));
+    predictor = ((CPDF_Dictionary*)pParams)->GetInteger(FX_BSTRC("Predictor"));
     Colors = pParams->GetInteger(FX_BSTRC("Colors"), 1);
     BitsPerComponent = pParams->GetInteger(FX_BSTRC("BitsPerComponent"), 8);
     Columns = pParams->GetInteger(FX_BSTRC("Columns"), 1);
@@ -306,8 +306,9 @@ FX_DWORD FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW,
   FX_BOOL bEarlyChange = TRUE;
   int Colors = 0, BitsPerComponent = 0, Columns = 0;
   if (pParams) {
-    predictor = pParams->GetInteger(FX_BSTRC("Predictor"));
-    bEarlyChange = pParams->GetInteger(FX_BSTRC("EarlyChange"), 1);
+    predictor = ((CPDF_Dictionary*)pParams)->GetInteger(FX_BSTRC("Predictor"));
+    bEarlyChange =
+        ((CPDF_Dictionary*)pParams)->GetInteger(FX_BSTRC("EarlyChange"), 1);
     Colors = pParams->GetInteger(FX_BSTRC("Colors"), 1);
     BitsPerComponent = pParams->GetInteger(FX_BSTRC("BitsPerComponent"), 8);
     Columns = pParams->GetInteger(FX_BSTRC("Columns"), 1);
@@ -364,9 +365,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
     int estimated_size =
         i == DecoderList.GetSize() - 1 ? last_estimated_size : 0;
     CFX_ByteString decoder = DecoderList[i];
-    // Use ToDictionary here because we can push NULL into the ParamList.
-    CPDF_Dictionary* pParam =
-        ToDictionary(static_cast<CPDF_Object*>(ParamList[i]));
+    CPDF_Dictionary* pParam = (CPDF_Dictionary*)ParamList[i];
     uint8_t* new_buf = NULL;
     FX_DWORD new_size = (FX_DWORD)-1;
     int offset = -1;

@@ -277,8 +277,8 @@ FX_DWORD CPDF_Parser::SetEncryptHandler() {
   }
   CPDF_Object* pEncryptObj = m_pTrailer->GetElement(FX_BSTRC("Encrypt"));
   if (pEncryptObj) {
-    if (CPDF_Dictionary* pEncryptDict = pEncryptObj->AsDictionary()) {
-      SetEncryptDictionary(pEncryptDict);
+    if (pEncryptObj->GetType() == PDFOBJ_DICTIONARY) {
+      SetEncryptDictionary((CPDF_Dictionary*)pEncryptObj);
     } else if (pEncryptObj->GetType() == PDFOBJ_REFERENCE) {
       pEncryptObj = m_pDocument->GetIndirectObject(
           ((CPDF_Reference*)pEncryptObj)->GetRefObjNum());
@@ -804,7 +804,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                             if (m_pTrailer) {
                               m_pTrailer->Release();
                             }
-                            m_pTrailer = ToDictionary(pDict->Clone());
+                            m_pTrailer = (CPDF_Dictionary*)pDict->Clone();
                           }
                         }
                       }
@@ -857,14 +857,15 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
               m_Syntax.RestorePos(pos + i - m_Syntax.m_HeaderOffset);
               CPDF_Object* pObj = m_Syntax.GetObject(m_pDocument, 0, 0, 0);
               if (pObj) {
-                if (!pObj->IsDictionary() && pObj->GetType() != PDFOBJ_STREAM) {
+                if (pObj->GetType() != PDFOBJ_DICTIONARY &&
+                    pObj->GetType() != PDFOBJ_STREAM) {
                   pObj->Release();
                 } else {
                   CPDF_Dictionary* pTrailer = NULL;
                   if (pObj->GetType() == PDFOBJ_STREAM) {
                     pTrailer = ((CPDF_Stream*)pObj)->GetDict();
                   } else {
-                    pTrailer = pObj->AsDictionary();
+                    pTrailer = (CPDF_Dictionary*)pObj;
                   }
                   if (pTrailer) {
                     if (m_pTrailer) {
@@ -889,7 +890,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                       }
                     } else {
                       if (pObj->GetType() == PDFOBJ_STREAM) {
-                        m_pTrailer = ToDictionary(pTrailer->Clone());
+                        m_pTrailer = (CPDF_Dictionary*)pTrailer->Clone();
                         pObj->Release();
                       } else {
                         m_pTrailer = pTrailer;
@@ -1033,13 +1034,13 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos,
     return FALSE;
   }
   if (bMainXRef) {
-    m_pTrailer = ToDictionary(pStream->GetDict()->Clone());
+    m_pTrailer = (CPDF_Dictionary*)pStream->GetDict()->Clone();
     m_CrossRef.SetSize(size);
     if (m_V5Type.SetSize(size)) {
       FXSYS_memset(m_V5Type.GetData(), 0, size);
     }
   } else {
-    m_Trailers.Add(ToDictionary(pStream->GetDict()->Clone()));
+    m_Trailers.Add((CPDF_Dictionary*)pStream->GetDict()->Clone());
   }
   std::vector<std::pair<int32_t, int32_t> > arrIndex;
   CPDF_Array* pArray = pStream->GetDict()->GetArray(FX_BSTRC("Index"));
@@ -1489,9 +1490,9 @@ CPDF_Dictionary* CPDF_Parser::LoadTrailerV4() {
 
   nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
       m_Syntax.GetObject(m_pDocument, 0, 0, 0));
-  if (!ToDictionary(pObj.get()))
+  if (!pObj || pObj->GetType() != PDFOBJ_DICTIONARY)
     return nullptr;
-  return pObj.release()->AsDictionary();
+  return static_cast<CPDF_Dictionary*>(pObj.release());
 }
 
 FX_DWORD CPDF_Parser::GetPermissions(FX_BOOL bCheckRevision) {
@@ -3489,7 +3490,7 @@ FX_BOOL CPDF_DataAvail::CheckPage(IFX_DownloadHints* pHints) {
         }
       }
     }
-    if (!pObj->IsDictionary()) {
+    if (pObj->GetType() != PDFOBJ_DICTIONARY) {
       pObj->Release();
       continue;
     }
@@ -4042,7 +4043,7 @@ FX_BOOL CPDF_DataAvail::CheckTrailer(IFX_DownloadHints* pHints) {
       pHints->AddSegment(m_Pos, iTrailerSize);
       return FALSE;
     }
-    if (!pTrailer->IsDictionary())
+    if (pTrailer->GetType() != PDFOBJ_DICTIONARY)
       return FALSE;
 
     CPDF_Dictionary* pTrailerDict = pTrailer->GetDict();
@@ -4157,7 +4158,7 @@ FX_BOOL CPDF_DataAvail::CheckUnkownPageNode(FX_DWORD dwPageNo,
     pPage->Release();
     return TRUE;
   }
-  if (!pPage->IsDictionary()) {
+  if (pPage->GetType() != PDFOBJ_DICTIONARY) {
     pPage->Release();
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;

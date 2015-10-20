@@ -818,8 +818,8 @@ CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
     type = ((CPDF_Stream*)pFuncObj)
                ->GetDict()
                ->GetInteger(FX_BSTRC("FunctionType"));
-  } else if (CPDF_Dictionary* pDict = pFuncObj->AsDictionary()) {
-    type = pDict->GetInteger(FX_BSTRC("FunctionType"));
+  } else if (pFuncObj->GetType() == PDFOBJ_DICTIONARY) {
+    type = ((CPDF_Dictionary*)pFuncObj)->GetInteger(FX_BSTRC("FunctionType"));
   } else {
     return NULL;
   }
@@ -853,7 +853,7 @@ FX_BOOL CPDF_Function::Init(CPDF_Object* pObj) {
   if (pObj->GetType() == PDFOBJ_STREAM) {
     pDict = ((CPDF_Stream*)pObj)->GetDict();
   } else {
-    pDict = pObj->AsDictionary();
+    pDict = (CPDF_Dictionary*)pObj;
   }
   CPDF_Array* pDomains = pDict->GetArray(FX_BSTRC("Domain"));
   if (pDomains == NULL) {

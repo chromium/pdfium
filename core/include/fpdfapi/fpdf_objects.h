@@ -78,11 +78,6 @@ class CPDF_Object {
 
   FX_BOOL IsModified() const { return FALSE; }
 
-  bool IsDictionary() const { return m_Type == PDFOBJ_DICTIONARY; }
-
-  CPDF_Dictionary* AsDictionary();
-  const CPDF_Dictionary* AsDictionary() const;
-
  protected:
   CPDF_Object(FX_DWORD type) : m_Type(type), m_ObjNum(0), m_GenNum(0) {}
   ~CPDF_Object() {}
@@ -407,13 +402,6 @@ class CPDF_Dictionary : public CPDF_Object {
 
   friend class CPDF_Object;
 };
-inline CPDF_Dictionary* ToDictionary(CPDF_Object* obj) {
-  return obj ? obj->AsDictionary() : nullptr;
-}
-inline const CPDF_Dictionary* ToDictionary(const CPDF_Object* obj) {
-  return obj ? obj->AsDictionary() : nullptr;
-}
-
 class CPDF_Stream : public CPDF_Object {
  public:
   static CPDF_Stream* Create(uint8_t* pData,

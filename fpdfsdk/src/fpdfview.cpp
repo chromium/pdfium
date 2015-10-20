@@ -882,8 +882,8 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
   }
   if (!pDestObj)
     return NULL;
-  if (CPDF_Dictionary* pDict = pDestObj->AsDictionary()) {
-    pDestObj = pDict->GetArray(FX_BSTRC("D"));
+  if (pDestObj->GetType() == PDFOBJ_DICTIONARY) {
+    pDestObj = ((CPDF_Dictionary*)pDestObj)->GetArray(FX_BSTRC("D"));
     if (!pDestObj)
       return NULL;
   }

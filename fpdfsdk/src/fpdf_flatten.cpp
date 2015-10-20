@@ -94,10 +94,11 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
 
   FX_DWORD dwSize = pAnnots->GetCount();
   for (int i = 0; i < (int)dwSize; i++) {
-    CPDF_Dictionary* pAnnotDic = ToDictionary(pAnnots->GetElementValue(i));
-    if (!pAnnotDic)
+    CPDF_Object* pObj = pAnnots->GetElementValue(i);
+    if (!pObj || pObj->GetType() != PDFOBJ_DICTIONARY)
       continue;
 
+    CPDF_Dictionary* pAnnotDic = (CPDF_Dictionary*)pObj;
     CFX_ByteString sSubtype = pAnnotDic->GetString("Subtype");
     if (sSubtype == "Popup")
       continue;
