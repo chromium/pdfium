@@ -391,6 +391,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
   if (!doc) {
     fprintf(stderr, "Load pdf docs unsuccessful.\n");
+    FPDFAvail_Destroy(pdf_avail);
     return;
   }
 
