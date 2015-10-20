@@ -251,13 +251,10 @@ CPDF_Action CPDF_Action::GetSubAction(FX_DWORD iIndex) const {
     return CPDF_Action();
   }
   CPDF_Object* pNext = m_pDict->GetElementValue("Next");
-  int iObjType = pNext->GetType();
-  if (iObjType == PDFOBJ_DICTIONARY) {
-    CPDF_Dictionary* pDict = static_cast<CPDF_Dictionary*>(pNext);
-    if (iIndex == 0) {
+  if (CPDF_Dictionary* pDict = ToDictionary(pNext)) {
+    if (iIndex == 0)
       return CPDF_Action(pDict);
-    }
-  } else if (iObjType == PDFOBJ_ARRAY) {
+  } else if (pNext->GetType() == PDFOBJ_ARRAY) {
     CPDF_Array* pArray = static_cast<CPDF_Array*>(pNext);
     return CPDF_Action(pArray->GetDict(iIndex));
   }
@@ -295,9 +292,10 @@ CPDF_Action CPDF_AAction::GetNextAction(FX_POSITION& pos,
     return CPDF_Action();
   }
   CPDF_Object* pDirect = pObj->GetDirect();
-  if (!pDirect || pDirect->GetType() != PDFOBJ_DICTIONARY) {
+  CPDF_Dictionary* pDict = ToDictionary(pDirect);
+  if (!pDict)
     return CPDF_Action();
-  }
+
   int i = 0;
   while (g_sAATypes[i][0] != '\0') {
     if (csKey == g_sAATypes[i]) {
@@ -306,7 +304,7 @@ CPDF_Action CPDF_AAction::GetNextAction(FX_POSITION& pos,
     i++;
   }
   eType = (AActionType)i;
-  return CPDF_Action(static_cast<CPDF_Dictionary*>(pDirect));
+  return CPDF_Action(pDict);
 }
 CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) {
   m_pDocument = pDoc;
@@ -321,7 +319,7 @@ CPDF_Action CPDF_DocJSActions::GetJSAction(int index,
   ASSERT(m_pDocument != NULL);
   CPDF_NameTree name_tree(m_pDocument, FX_BSTRC("JavaScript"));
   CPDF_Object* pAction = name_tree.LookupValue(index, csName);
-  if (pAction == NULL || pAction->GetType() != PDFOBJ_DICTIONARY) {
+  if (!ToDictionary(pAction)) {
     return CPDF_Action();
   }
   return CPDF_Action(pAction->GetDict());
@@ -330,7 +328,7 @@ CPDF_Action CPDF_DocJSActions::GetJSAction(const CFX_ByteString& csName) const {
   ASSERT(m_pDocument != NULL);
   CPDF_NameTree name_tree(m_pDocument, FX_BSTRC("JavaScript"));
   CPDF_Object* pAction = name_tree.LookupValue(csName);
-  if (pAction == NULL || pAction->GetType() != PDFOBJ_DICTIONARY) {
+  if (!ToDictionary(pAction)) {
     return CPDF_Action();
   }
   return CPDF_Action(pAction->GetDict());

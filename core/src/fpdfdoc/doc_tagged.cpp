@@ -54,9 +54,9 @@ void CPDF_StructTreeImpl::LoadDocTree() {
   if (pKids == NULL) {
     return;
   }
-  if (pKids->GetType() == PDFOBJ_DICTIONARY) {
+  if (CPDF_Dictionary* pDict = pKids->AsDictionary()) {
     CPDF_StructElementImpl* pStructElementImpl =
-        new CPDF_StructElementImpl(this, NULL, (CPDF_Dictionary*)pKids);
+        new CPDF_StructElementImpl(this, NULL, pDict);
     m_Kids.Add(pStructElementImpl);
     return;
   }
@@ -81,7 +81,7 @@ void CPDF_StructTreeImpl::LoadPageTree(const CPDF_Dictionary* pPageDict) {
     return;
   }
   FX_DWORD dwKids = 0;
-  if (pKids->GetType() == PDFOBJ_DICTIONARY) {
+  if (pKids->IsDictionary()) {
     dwKids = 1;
   } else if (pKids->GetType() == PDFOBJ_ARRAY) {
     dwKids = ((CPDF_Array*)pKids)->GetCount();
@@ -161,7 +161,7 @@ FX_BOOL CPDF_StructTreeImpl::AddTopLevelNode(CPDF_Dictionary* pDict,
   if (!pObj) {
     return FALSE;
   }
-  if (pObj->GetType() == PDFOBJ_DICTIONARY) {
+  if (pObj->IsDictionary()) {
     if (pObj->GetObjNum() == pDict->GetObjNum()) {
       if (m_Kids[0]) {
         m_Kids[0]->Release();
@@ -266,10 +266,10 @@ void CPDF_StructElementImpl::LoadKid(FX_DWORD PageObjNum,
     pKid->m_PageContent.m_PageObjNum = PageObjNum;
     return;
   }
-  if (pKidObj->GetType() != PDFOBJ_DICTIONARY) {
+  CPDF_Dictionary* pKidDict = pKidObj->AsDictionary();
+  if (!pKidDict)
     return;
-  }
-  CPDF_Dictionary* pKidDict = (CPDF_Dictionary*)pKidObj;
+
   CPDF_Object* pPageObj = pKidDict->GetElement(FX_BSTRC("Pg"));
   if (pPageObj && pPageObj->GetType() == PDFOBJ_REFERENCE) {
     PageObjNum = ((CPDF_Reference*)pPageObj)->GetRefObjNum();
@@ -322,8 +322,8 @@ static CPDF_Dictionary* FindAttrDict(CPDF_Object* pAttrs,
     return NULL;
   }
   CPDF_Dictionary* pDict = NULL;
-  if (pAttrs->GetType() == PDFOBJ_DICTIONARY) {
-    pDict = (CPDF_Dictionary*)pAttrs;
+  if (pAttrs->IsDictionary()) {
+    pDict = pAttrs->AsDictionary();
   } else if (pAttrs->GetType() == PDFOBJ_STREAM) {
     pDict = ((CPDF_Stream*)pAttrs)->GetDict();
   } else if (pAttrs->GetType() == PDFOBJ_ARRAY) {

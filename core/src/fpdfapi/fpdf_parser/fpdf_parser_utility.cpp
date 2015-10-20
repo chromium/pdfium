@@ -403,7 +403,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       break;
     }
     case PDFOBJ_DICTIONARY: {
-      CPDF_Dictionary* p = (CPDF_Dictionary*)pObj;
+      const CPDF_Dictionary* p = pObj->AsDictionary();
       buf << FX_BSTRC("<<");
       FX_POSITION pos = p->GetStartPos();
       while (pos) {
