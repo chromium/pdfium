@@ -5,7 +5,6 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../include/formfiller/FFL_FormFiller.h"
-#include "../../include/formfiller/FFL_Notify.h"
 #include "../../include/formfiller/FFL_CBA_Fontmap.h"
 
 #define GetRed(rgb) ((uint8_t)(rgb))
