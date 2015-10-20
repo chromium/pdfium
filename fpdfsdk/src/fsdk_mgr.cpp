@@ -145,20 +145,22 @@ FX_BOOL CFX_SystemHandler::FindNativeTrueTypeFont(
     int32_t nCharset,
     CFX_ByteString sFontFaceName) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
-  if (pFontMgr) {
-    CFX_FontMapper* pFontMapper = pFontMgr->m_pBuiltinMapper;
-    if (pFontMapper) {
-      int nSize = pFontMapper->m_InstalledTTFonts.GetSize();
-      if (nSize == 0) {
-        pFontMapper->LoadInstalledFonts();
-        nSize = pFontMapper->m_InstalledTTFonts.GetSize();
-      }
+  if (!pFontMgr)
+    return FALSE;
 
-      for (int i = 0; i < nSize; i++) {
-        if (pFontMapper->m_InstalledTTFonts[i].Compare(sFontFaceName))
-          return TRUE;
-      }
-    }
+  CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
+  if (!pFontMapper)
+    return FALSE;
+
+  int nSize = pFontMapper->m_InstalledTTFonts.GetSize();
+  if (nSize == 0) {
+    pFontMapper->LoadInstalledFonts();
+    nSize = pFontMapper->m_InstalledTTFonts.GetSize();
+  }
+
+  for (int i = 0; i < nSize; ++i) {
+    if (pFontMapper->m_InstalledTTFonts[i].Compare(sFontFaceName))
+      return TRUE;
   }
 
   return FALSE;
