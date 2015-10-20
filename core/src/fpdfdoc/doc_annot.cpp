@@ -23,8 +23,8 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage) {
   CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
   FX_BOOL bRegenerateAP = pAcroForm && pAcroForm->GetBoolean("NeedAppearances");
   for (FX_DWORD i = 0; i < pAnnots->GetCount(); ++i) {
-    CPDF_Dictionary* pDict = (CPDF_Dictionary*)pAnnots->GetElementValue(i);
-    if (pDict == NULL || pDict->GetType() != PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetElementValue(i));
+    if (!pDict) {
       continue;
     }
     FX_DWORD dwObjNum = pDict->GetObjNum();
@@ -205,7 +205,7 @@ CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
   CPDF_Stream* pStream = NULL;
   if (psub->GetType() == PDFOBJ_STREAM) {
     pStream = (CPDF_Stream*)psub;
-  } else if (psub->GetType() == PDFOBJ_DICTIONARY) {
+  } else if (CPDF_Dictionary* pDict = psub->AsDictionary()) {
     CFX_ByteString as = pAnnotDict->GetString("AS");
     if (as.IsEmpty()) {
       CFX_ByteString value = pAnnotDict->GetString(FX_BSTRC("V"));
@@ -213,13 +213,13 @@ CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
         CPDF_Dictionary* pDict = pAnnotDict->GetDict(FX_BSTRC("Parent"));
         value = pDict ? pDict->GetString(FX_BSTRC("V")) : CFX_ByteString();
       }
-      if (value.IsEmpty() || !((CPDF_Dictionary*)psub)->KeyExist(value)) {
+      if (value.IsEmpty() || !pDict->KeyExist(value)) {
         as = FX_BSTRC("Off");
       } else {
         as = value;
       }
     }
-    pStream = ((CPDF_Dictionary*)psub)->GetStream(as);
+    pStream = pDict->GetStream(as);
   }
   return pStream;
 }

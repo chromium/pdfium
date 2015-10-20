@@ -530,7 +530,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         break;
       }
       case FXBSTR_ID('S', 'M', 'a', 's'):
-        if (pObject && pObject->GetType() == PDFOBJ_DICTIONARY) {
+        if (ToDictionary(pObject)) {
           pGeneralState->m_pSoftMask = pObject;
           FXSYS_memcpy(pGeneralState->m_SMaskMatrix,
                        &pParser->GetCurStates()->m_CTM, sizeof(CPDF_Matrix));
@@ -599,20 +599,21 @@ CPDF_ContentMarkItem::CPDF_ContentMarkItem(const CPDF_ContentMarkItem& src) {
   m_MarkName = src.m_MarkName;
   m_ParamType = src.m_ParamType;
   if (m_ParamType == DirectDict) {
-    m_pParam = ((CPDF_Dictionary*)src.m_pParam)->Clone();
+    m_pParam = ToDictionary(static_cast<CPDF_Object*>(src.m_pParam))->Clone();
   } else {
     m_pParam = src.m_pParam;
   }
 }
 CPDF_ContentMarkItem::~CPDF_ContentMarkItem() {
   if (m_ParamType == DirectDict && m_pParam) {
-    ((CPDF_Dictionary*)m_pParam)->Release();
+    ToDictionary(static_cast<CPDF_Object*>(m_pParam))->Release();
   }
 }
 FX_BOOL CPDF_ContentMarkItem::HasMCID() const {
   if (m_pParam &&
       (m_ParamType == DirectDict || m_ParamType == PropertiesDict)) {
-    return ((CPDF_Dictionary*)m_pParam)->KeyExist(FX_BSTRC("MCID"));
+    return ToDictionary(static_cast<CPDF_Object*>(m_pParam))
+        ->KeyExist(FX_BSTRC("MCID"));
   }
   return FALSE;
 }
@@ -627,7 +628,8 @@ int CPDF_ContentMarkData::GetMCID() const {
     type = m_Marks[i].GetParamType();
     if (type == CPDF_ContentMarkItem::PropertiesDict ||
         type == CPDF_ContentMarkItem::DirectDict) {
-      CPDF_Dictionary* pDict = (CPDF_Dictionary*)m_Marks[i].GetParam();
+      CPDF_Dictionary* pDict =
+          ToDictionary(static_cast<CPDF_Object*>(m_Marks[i].GetParam()));
       if (pDict->KeyExist(FX_BSTRC("MCID"))) {
         return pDict->GetInteger(FX_BSTRC("MCID"));
       }
@@ -677,7 +679,7 @@ FX_BOOL CPDF_ContentMark::LookupMark(const CFX_ByteStringC& mark,
       pDict = NULL;
       if (item.GetParamType() == CPDF_ContentMarkItem::PropertiesDict ||
           item.GetParamType() == CPDF_ContentMarkItem::DirectDict) {
-        pDict = (CPDF_Dictionary*)item.GetParam();
+        pDict = ToDictionary(static_cast<CPDF_Object*>(item.GetParam()));
       }
       return TRUE;
     }

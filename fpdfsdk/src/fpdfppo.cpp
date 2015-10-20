@@ -59,10 +59,10 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
     pNewRoot->SetAt("Type", new CPDF_Name("Catalog"));
   }
 
-  CPDF_Dictionary* pNewPages =
-      (CPDF_Dictionary*)(pNewRoot->GetElement("Pages")
-                             ? pNewRoot->GetElement("Pages")->GetDirect()
-                             : NULL);
+  CPDF_Dictionary* pNewPages = ToDictionary(
+      pNewRoot->GetElement("Pages") ? pNewRoot->GetElement("Pages")->GetDirect()
+                                    : nullptr);
+
   if (!pNewPages) {
     pNewPages = new CPDF_Dictionary;
     FX_DWORD NewPagesON = pDestPDFDoc->AddIndirectObject(pNewPages);
@@ -191,29 +191,25 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
 
   if (pType->GetString().Compare("Page"))
     return NULL;
-
   if (!pDict->KeyExist("Parent"))
     return NULL;
-  CPDF_Object* pParent = pDict->GetElement("Parent")->GetDirect();
-  if (!pParent || pParent->GetType() != PDFOBJ_DICTIONARY)
-    return NULL;
 
-  CPDF_Dictionary* pp = (CPDF_Dictionary*)pParent;
+  CPDF_Dictionary* pp = ToDictionary(pDict->GetElement("Parent")->GetDirect());
+  if (!pp)
+    return nullptr;
 
   if (pDict->KeyExist((const char*)nSrctag))
     return pDict->GetElement((const char*)nSrctag);
+
   while (pp) {
     if (pp->KeyExist((const char*)nSrctag))
       return pp->GetElement((const char*)nSrctag);
-    if (pp->KeyExist("Parent")) {
-      pp = (CPDF_Dictionary*)pp->GetElement("Parent")->GetDirect();
-      if (pp->GetType() == PDFOBJ_NULL)
-        break;
-    } else
+    if (!pp->KeyExist("Parent")) {
       break;
+    }
+    pp = ToDictionary(pp->GetElement("Parent")->GetDirect());
   }
-
-  return NULL;
+  return nullptr;
 }
 
 FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
@@ -229,7 +225,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       break;
     }
     case PDFOBJ_DICTIONARY: {
-      CPDF_Dictionary* pDict = (CPDF_Dictionary*)pObj;
+      CPDF_Dictionary* pDict = pObj->AsDictionary();
 
       FX_POSITION pos = pDict->GetStartPos();
       while (pos) {
@@ -300,8 +296,7 @@ int CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
     return 0;
   }
 
-  if (pClone->GetType() == PDFOBJ_DICTIONARY) {
-    CPDF_Dictionary* pDictClone = (CPDF_Dictionary*)pClone;
+  if (CPDF_Dictionary* pDictClone = pClone->AsDictionary()) {
     if (pDictClone->KeyExist("Type")) {
       CFX_ByteString strType = pDictClone->GetString("Type");
       if (!FXSYS_stricmp(strType, "Pages")) {

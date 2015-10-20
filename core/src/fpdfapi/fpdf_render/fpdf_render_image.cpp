@@ -1056,8 +1056,8 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   }
   CPDF_Function* pFunc = NULL;
   CPDF_Object* pFuncObj = pSMaskDict->GetElementValue(FX_BSTRC("TR"));
-  if (pFuncObj && (pFuncObj->GetType() == PDFOBJ_DICTIONARY ||
-                   pFuncObj->GetType() == PDFOBJ_STREAM)) {
+  if (pFuncObj &&
+      (pFuncObj->IsDictionary() || pFuncObj->GetType() == PDFOBJ_STREAM)) {
     pFunc = CPDF_Function::Load(pFuncObj);
   }
   CFX_AffineMatrix matrix = *pMatrix;

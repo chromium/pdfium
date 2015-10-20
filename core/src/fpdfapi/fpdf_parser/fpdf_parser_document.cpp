@@ -142,18 +142,15 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
     return nullptr;
 
   if (m_bLinearized && (iPage == (int)m_dwFirstPageNo)) {
-    CPDF_Object* pObj = GetIndirectObject(m_dwFirstPageObjNum);
-    if (pObj && pObj->GetType() == PDFOBJ_DICTIONARY) {
-      return static_cast<CPDF_Dictionary*>(pObj);
-    }
+    if (CPDF_Dictionary* pDict =
+            ToDictionary(GetIndirectObject(m_dwFirstPageObjNum)))
+      return pDict;
   }
 
   int objnum = m_PageList.GetAt(iPage);
   if (objnum) {
-    CPDF_Object* pObj = GetIndirectObject(objnum);
-    if (pObj && pObj->GetType() == PDFOBJ_DICTIONARY) {
-      return static_cast<CPDF_Dictionary*>(pObj);
-    }
+    if (CPDF_Dictionary* pDict = ToDictionary(GetIndirectObject(objnum)))
+      return pDict;
   }
 
   CPDF_Dictionary* pRoot = GetRoot();

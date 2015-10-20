@@ -538,8 +538,7 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
       return psub->GetType() == PDFOBJ_STREAM;
     case FIELDTYPE_CHECKBOX:
     case FIELDTYPE_RADIOBUTTON:
-      if (psub->GetType() == PDFOBJ_DICTIONARY) {
-        CPDF_Dictionary* pSubDict = (CPDF_Dictionary*)psub;
+      if (CPDF_Dictionary* pSubDict = psub->AsDictionary()) {
         return pSubDict->GetStream(GetAppState()) != NULL;
       }
       return FALSE;

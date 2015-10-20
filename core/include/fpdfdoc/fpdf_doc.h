@@ -717,10 +717,10 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   CPDF_Object* GetFieldAttr(CPDF_Dictionary* pFieldDict, const FX_CHAR* name);
 
-  CPDF_FormField* AddTerminalField(const CPDF_Dictionary* pFieldDict);
+  CPDF_FormField* AddTerminalField(CPDF_Dictionary* pFieldDict);
 
   CPDF_FormControl* AddControl(const CPDF_FormField* pField,
-                               const CPDF_Dictionary* pWidgetDict);
+                               CPDF_Dictionary* pWidgetDict);
 
   void FDF_ImportField(CPDF_Dictionary* pField,
                        const CFX_WideString& parent_name,

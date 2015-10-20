@@ -738,7 +738,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(
     return TRUE;
   }
   CPDF_Dictionary* pSMaskDict =
-      pGeneralState ? (CPDF_Dictionary*)pGeneralState->m_pSoftMask : NULL;
+      pGeneralState ? ToDictionary(pGeneralState->m_pSoftMask) : NULL;
   if (pSMaskDict) {
     if (pPageObj->m_Type == PDFPAGE_IMAGE &&
         ((CPDF_ImageObject*)pPageObj)
@@ -1438,7 +1438,8 @@ FX_BOOL IPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) {
     CPDF_ContentMarkItem& item = pData->GetItem(i);
     if (item.GetName() == FX_BSTRC("OC") &&
         item.GetParamType() == CPDF_ContentMarkItem::PropertiesDict) {
-      CPDF_Dictionary* pOCG = (CPDF_Dictionary*)item.GetParam();
+      CPDF_Dictionary* pOCG =
+          ToDictionary(static_cast<CPDF_Object*>(item.GetParam()));
       if (!CheckOCGVisible(pOCG)) {
         return FALSE;
       }

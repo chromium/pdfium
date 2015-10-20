@@ -110,7 +110,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
         return -1;
       }
       offset += 2;
-      CPDF_Dictionary* p = (CPDF_Dictionary*)pObj;
+      const CPDF_Dictionary* p = pObj->AsDictionary();
       FX_POSITION pos = p->GetStartPos();
       while (pos) {
         CFX_ByteString key;
@@ -334,7 +334,8 @@ CPDF_FlateEncoder::CPDF_FlateEncoder() {
 }
 void CPDF_FlateEncoder::CloneDict() {
   if (!m_bCloned) {
-    m_pDict = (CPDF_Dictionary*)m_pDict->Clone();
+    m_pDict = ToDictionary(m_pDict->Clone());
+    ASSERT(m_pDict);
     m_bCloned = TRUE;
   }
 }
@@ -349,7 +350,7 @@ FX_BOOL CPDF_FlateEncoder::Initialize(CPDF_Stream* pStream,
       destAcc.LoadAllData(pStream);
       m_dwSize = destAcc.GetSize();
       m_pData = (uint8_t*)destAcc.DetachData();
-      m_pDict = (CPDF_Dictionary*)pStream->GetDict()->Clone();
+      m_pDict = ToDictionary(pStream->GetDict()->Clone());
       m_pDict->RemoveAt(FX_BSTRC("Filter"));
       m_bNewData = TRUE;
       m_bCloned = TRUE;
@@ -365,7 +366,7 @@ FX_BOOL CPDF_FlateEncoder::Initialize(CPDF_Stream* pStream,
   m_bNewData = TRUE;
   m_bCloned = TRUE;
   ::FlateEncode(m_Acc.GetData(), m_Acc.GetSize(), m_pData, m_dwSize);
-  m_pDict = (CPDF_Dictionary*)pStream->GetDict()->Clone();
+  m_pDict = ToDictionary(pStream->GetDict()->Clone());
   m_pDict->SetAtInteger("Length", m_dwSize);
   m_pDict->SetAtName("Filter", "FlateDecode");
   m_pDict->RemoveAt("DecodeParms");
@@ -1227,7 +1228,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
         return -1;
       }
       m_Offset += 2;
-      CPDF_Dictionary* p = (CPDF_Dictionary*)pObj;
+      const CPDF_Dictionary* p = pObj->AsDictionary();
       FX_BOOL bSignDict = IsSignatureDict(p);
       FX_POSITION pos = p->GetStartPos();
       while (pos) {

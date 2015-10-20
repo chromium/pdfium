@@ -1339,7 +1339,7 @@ int32_t CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   for (n = 0; n < nContentMark; n++) {
     CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
     CFX_ByteString tagStr = (CFX_ByteString)item.GetName();
-    pDict = (CPDF_Dictionary*)item.GetParam();
+    pDict = ToDictionary(static_cast<CPDF_Object*>(item.GetParam()));
     CPDF_String* temp =
         (CPDF_String*)(pDict ? pDict->GetElement(FX_BSTRC("ActualText"))
                              : NULL);
@@ -1410,8 +1410,12 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
   for (n = 0; n < nContentMark; n++) {
     CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
     CFX_ByteString tagStr = (CFX_ByteString)item.GetName();
-    pDict = (CPDF_Dictionary*)item.GetParam();
-    CPDF_String* temp = (CPDF_String*)pDict->GetElement(FX_BSTRC("ActualText"));
+
+    pDict = ToDictionary(static_cast<CPDF_Object*>(item.GetParam()));
+    CPDF_String* temp =
+        (CPDF_String*)(pDict ? pDict->GetElement(FX_BSTRC("ActualText"))
+                             : NULL);
+
     if (temp) {
       actText = temp->GetUnicodeText();
     }
