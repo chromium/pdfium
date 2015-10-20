@@ -52,8 +52,7 @@ CPDF_Image* CPDF_Image::Clone() {
   pImage->LoadImageF((CPDF_Stream*)((CPDF_Object*)m_pStream)->Clone(),
                      m_bInline);
   if (m_bInline) {
-    CPDF_Dictionary* pInlineDict = (CPDF_Dictionary*)m_pInlineDict->Clone(TRUE);
-    pImage->SetInlineDict(pInlineDict);
+    pImage->SetInlineDict(ToDictionary(m_pInlineDict->Clone(TRUE)));
   }
   return pImage;
 }
@@ -86,7 +85,7 @@ FX_BOOL CPDF_Image::LoadImageF(CPDF_Stream* pStream, FX_BOOL bInline) {
   m_bInline = bInline;
   CPDF_Dictionary* pDict = pStream->GetDict();
   if (m_bInline) {
-    m_pInlineDict = (CPDF_Dictionary*)pDict->Clone();
+    m_pInlineDict = ToDictionary(pDict->Clone());
   }
   m_pOC = pDict->GetDict(FX_BSTRC("OC"));
   m_bIsMask = !pDict->KeyExist(FX_BSTRC("ColorSpace")) ||

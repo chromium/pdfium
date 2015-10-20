@@ -51,7 +51,7 @@ FX_BOOL CFFL_Utils::TraceObject(CPDF_Object* pObj) {
     } break;
 
     case PDFOBJ_DICTIONARY: {
-      CPDF_Dictionary* pDict = (CPDF_Dictionary*)pObj;
+      CPDF_Dictionary* pDict = pObj->AsDictionary();
 
       FX_POSITION fPos = pDict->GetStartPos();
       CFX_ByteString csKey;

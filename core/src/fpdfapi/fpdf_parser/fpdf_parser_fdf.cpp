@@ -70,13 +70,11 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
       if (word != FX_BSTRC("trailer")) {
         break;
       }
-      CPDF_Dictionary* pMainDict =
-          (CPDF_Dictionary*)parser.GetObject(this, 0, 0, 0);
-      if (pMainDict == NULL || pMainDict->GetType() != PDFOBJ_DICTIONARY) {
-        break;
+      if (CPDF_Dictionary* pMainDict =
+              ToDictionary(parser.GetObject(this, 0, 0, 0))) {
+        m_pRootDict = pMainDict->GetDict(FX_BSTRC("Root"));
+        pMainDict->Release();
       }
-      m_pRootDict = pMainDict->GetDict(FX_BSTRC("Root"));
-      pMainDict->Release();
       break;
     }
   }
@@ -142,18 +140,17 @@ void FPDF_FileSpec_SetWin32Path(CPDF_Object* pFileSpec,
   }
   if (pFileSpec->GetType() == PDFOBJ_STRING) {
     pFileSpec->SetString(CFX_ByteString::FromUnicode(result));
-  } else if (pFileSpec->GetType() == PDFOBJ_DICTIONARY) {
-    ((CPDF_Dictionary*)pFileSpec)
-        ->SetAtString(FX_BSTRC("F"), CFX_ByteString::FromUnicode(result));
-    ((CPDF_Dictionary*)pFileSpec)
-        ->SetAtString(FX_BSTRC("UF"), PDF_EncodeText(result));
-    ((CPDF_Dictionary*)pFileSpec)->RemoveAt(FX_BSTRC("FS"));
+  } else if (CPDF_Dictionary* pFileDict = pFileSpec->AsDictionary()) {
+    pFileDict->SetAtString(FX_BSTRC("F"), CFX_ByteString::FromUnicode(result));
+    pFileDict->SetAtString(FX_BSTRC("UF"), PDF_EncodeText(result));
+    pFileDict->RemoveAt(FX_BSTRC("FS"));
   }
 }
 CFX_WideString FPDF_FileSpec_GetWin32Path(const CPDF_Object* pFileSpec) {
   CFX_WideString wsFileName;
-  if (pFileSpec->GetType() == PDFOBJ_DICTIONARY) {
-    CPDF_Dictionary* pDict = (CPDF_Dictionary*)pFileSpec;
+  if (!pFileSpec) {
+    wsFileName = CFX_WideString();
+  } else if (const CPDF_Dictionary* pDict = pFileSpec->AsDictionary()) {
     wsFileName = pDict->GetUnicodeText(FX_BSTRC("UF"));
     if (wsFileName.IsEmpty()) {
       wsFileName = CFX_WideString::FromLocal(pDict->GetString(FX_BSTRC("F")));
@@ -164,9 +161,7 @@ CFX_WideString FPDF_FileSpec_GetWin32Path(const CPDF_Object* pFileSpec) {
     if (wsFileName.IsEmpty() && pDict->KeyExist(FX_BSTRC("DOS"))) {
       wsFileName = CFX_WideString::FromLocal(pDict->GetString(FX_BSTRC("DOS")));
     }
-  } else if (!pFileSpec)
-    wsFileName = CFX_WideString();
-  else {
+  } else {
     wsFileName = CFX_WideString::FromLocal(pFileSpec->GetString());
   }
   if (wsFileName[0] != '/') {

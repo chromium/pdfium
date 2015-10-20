@@ -290,9 +290,8 @@ FX_DWORD CountInterFormFonts(CPDF_Dictionary* pFormDict) {
     if (pObj == NULL) {
       continue;
     }
-    CPDF_Object* pDirect = pObj->GetDirect();
-    if (pDirect != NULL && pDirect->GetType() == PDFOBJ_DICTIONARY) {
-      if (((CPDF_Dictionary*)pDirect)->GetString("Type") == "Font") {
+    if (CPDF_Dictionary* pDirect = ToDictionary(pObj->GetDirect())) {
+      if (pDirect->GetString("Type") == "Font") {
         dwCount++;
       }
     }
@@ -323,14 +322,11 @@ CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict,
     if (pObj == NULL) {
       continue;
     }
-    CPDF_Object* pDirect = pObj->GetDirect();
-    if (pDirect == NULL || pDirect->GetType() != PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pElement = ToDictionary(pObj->GetDirect());
+    if (!pElement)
       continue;
-    }
-    CPDF_Dictionary* pElement = (CPDF_Dictionary*)pDirect;
-    if (pElement->GetString("Type") != "Font") {
+    if (pElement->GetString("Type") != "Font")
       continue;
-    }
     if (dwCount == index) {
       csNameTag = csKey;
       return pDocument->LoadFont(pElement);
@@ -386,18 +382,16 @@ CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict,
     if (pObj == NULL) {
       continue;
     }
-    CPDF_Object* pDirect = pObj->GetDirect();
-    if (pDirect == NULL || pDirect->GetType() != PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pElement = ToDictionary(pObj->GetDirect());
+    if (!pElement)
       continue;
-    }
-    CPDF_Dictionary* pElement = (CPDF_Dictionary*)pDirect;
-    if (pElement->GetString("Type") != "Font") {
+    if (pElement->GetString("Type") != "Font")
       continue;
-    }
+
     CPDF_Font* pFind = pDocument->LoadFont(pElement);
-    if (pFind == NULL) {
+    if (!pFind)
       continue;
-    }
+
     CFX_ByteString csBaseFont;
     csBaseFont = pFind->GetBaseFont();
     csBaseFont.Remove(' ');
@@ -431,14 +425,11 @@ CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict,
     if (pObj == NULL) {
       continue;
     }
-    CPDF_Object* pDirect = pObj->GetDirect();
-    if (pDirect == NULL || pDirect->GetType() != PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pElement = ToDictionary(pObj->GetDirect());
+    if (!pElement)
       continue;
-    }
-    CPDF_Dictionary* pElement = (CPDF_Dictionary*)pDirect;
-    if (pElement->GetString("Type") != "Font") {
+    if (pElement->GetString("Type") != "Font")
       continue;
-    }
     CPDF_Font* pFind = pDocument->LoadFont(pElement);
     if (pFind == NULL) {
       continue;
@@ -492,11 +483,9 @@ FX_BOOL FindInterFormFont(CPDF_Dictionary* pFormDict,
     if (pObj == NULL) {
       continue;
     }
-    CPDF_Object* pDirect = pObj->GetDirect();
-    if (pDirect == NULL || pDirect->GetType() != PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pElement = ToDictionary(pObj->GetDirect());
+    if (!pElement)
       continue;
-    }
-    CPDF_Dictionary* pElement = (CPDF_Dictionary*)pDirect;
     if (pElement->GetString("Type") != "Font") {
       continue;
     }
@@ -534,11 +523,9 @@ FX_BOOL FindInterFormFont(CPDF_Dictionary* pFormDict,
     if (pObj == NULL) {
       continue;
     }
-    CPDF_Object* pDirect = pObj->GetDirect();
-    if (pDirect == NULL || pDirect->GetType() != PDFOBJ_DICTIONARY) {
+    CPDF_Dictionary* pElement = ToDictionary(pObj->GetDirect());
+    if (!pElement)
       continue;
-    }
-    CPDF_Dictionary* pElement = (CPDF_Dictionary*)pDirect;
     if (pElement->GetString("Type") != "Font") {
       continue;
     }
