@@ -80,7 +80,11 @@ class CPDF_Object {
 
   FX_BOOL IsModified() const { return FALSE; }
 
+  bool IsBoolean() const { return m_Type == PDFOBJ_BOOLEAN; }
   bool IsDictionary() const { return m_Type == PDFOBJ_DICTIONARY; }
+
+  CPDF_Boolean* AsBoolean();
+  const CPDF_Boolean* AsBoolean() const;
 
   CPDF_Dictionary* AsDictionary();
   const CPDF_Dictionary* AsDictionary() const;
@@ -119,6 +123,13 @@ class CPDF_Boolean : public CPDF_Object {
   FX_BOOL m_bValue;
   friend class CPDF_Object;
 };
+inline CPDF_Boolean* ToBoolean(CPDF_Object* obj) {
+  return obj ? obj->AsBoolean() : nullptr;
+}
+inline const CPDF_Boolean* ToBoolean(const CPDF_Object* obj) {
+  return obj ? obj->AsBoolean() : nullptr;
+}
+
 class CPDF_Number : public CPDF_Object {
  public:
   static CPDF_Number* Create(int value) { return new CPDF_Number(value); }
