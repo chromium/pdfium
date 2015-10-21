@@ -140,13 +140,7 @@ class CPDF_Number : public CPDF_Object {
     return new CPDF_Number(str);
   }
 
-  static CPDF_Number* Create(FX_BOOL bInteger, void* pData) {
-    return new CPDF_Number(bInteger, pData);
-  }
-
-  CPDF_Number() : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(false), m_Integer(0) {}
-
-  CPDF_Number(FX_BOOL bInteger, void* pData);
+  CPDF_Number() : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(TRUE), m_Integer(0) {}
 
   CPDF_Number(int value);
 
