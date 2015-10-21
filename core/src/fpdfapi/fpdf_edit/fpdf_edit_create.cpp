@@ -42,7 +42,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       break;
     case PDFOBJ_STRING: {
       CFX_ByteString str = pObj->GetString();
-      FX_BOOL bHex = ((CPDF_String*)pObj)->IsHex();
+      FX_BOOL bHex = pObj->AsString()->IsHex();
       if ((len = pFile->AppendString(PDF_EncodeString(str, bHex))) < 0) {
         return -1;
       }
@@ -1116,7 +1116,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       break;
     case PDFOBJ_STRING: {
       CFX_ByteString str = pObj->GetString();
-      FX_BOOL bHex = ((CPDF_String*)pObj)->IsHex();
+      FX_BOOL bHex = pObj->AsString()->IsHex();
       if (m_pCryptoHandler == NULL || !bEncrypt) {
         CFX_ByteString content = PDF_EncodeString(str, bHex);
         if ((len = m_File.AppendString(content)) < 0) {

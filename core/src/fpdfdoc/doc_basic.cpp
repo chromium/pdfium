@@ -406,8 +406,7 @@ static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object* pObj,
   } else {
     wsStr = FILESPEC_EncodeFileName(wsFileName);
   }
-  int32_t iType = pObj->GetType();
-  if (iType == PDFOBJ_STRING) {
+  if (pObj->IsString()) {
     pObj->SetString(CFX_ByteString::FromUnicode(wsStr));
   } else if (CPDF_Dictionary* pDict = pObj->AsDictionary()) {
     pDict->SetAtString(FX_BSTRC("F"), CFX_ByteString::FromUnicode(wsStr));

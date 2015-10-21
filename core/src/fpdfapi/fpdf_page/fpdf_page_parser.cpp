@@ -1359,10 +1359,8 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   }
   int n = pArray->GetCount(), nsegs = 0, i;
   for (i = 0; i < n; i++) {
-    CPDF_Object* pObj = pArray->GetElementValue(i);
-    if (pObj->GetType() == PDFOBJ_STRING) {
+    if (pArray->GetElementValue(i)->IsString())
       nsegs++;
-    }
   }
   if (nsegs == 0) {
     for (i = 0; i < n; i++) {
@@ -1379,7 +1377,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   FX_FLOAT fInitKerning = 0;
   for (i = 0; i < n; i++) {
     CPDF_Object* pObj = pArray->GetElementValue(i);
-    if (pObj->GetType() == PDFOBJ_STRING) {
+    if (pObj->IsString()) {
       CFX_ByteString str = pObj->GetString();
       if (str.IsEmpty()) {
         continue;

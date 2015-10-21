@@ -618,7 +618,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
           }
           if (CPDF_Object* pOpt = pOpts->GetElementValue(i)) {
             CFX_WideString swItem;
-            if (pOpt->GetType() == PDFOBJ_STRING) {
+            if (pOpt->IsString()) {
               swItem = pOpt->GetUnicodeText();
             } else if (pOpt->GetType() == PDFOBJ_ARRAY) {
               swItem =
