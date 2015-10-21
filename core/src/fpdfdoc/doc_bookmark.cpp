@@ -72,10 +72,10 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
     return CPDF_Dest();
   }
   CPDF_Object* pDest = m_pDict->GetElementValue("Dest");
-  if (!pDest) {
+  if (!pDest)
     return CPDF_Dest();
-  }
-  if (pDest->IsString() || pDest->GetType() == PDFOBJ_NAME) {
+
+  if (pDest->IsString() || pDest->IsName()) {
     CPDF_NameTree name_tree(pDocument, FX_BSTRC("Dests"));
     CFX_ByteStringC name = pDest->GetString();
     return CPDF_Dest(name_tree.LookupNamedDest(pDocument, name));

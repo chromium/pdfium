@@ -727,7 +727,7 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
     }
     return;
   }
-  if (pEncoding->GetType() == PDFOBJ_NAME) {
+  if (pEncoding->IsName()) {
     if (iBaseEncoding == PDFFONT_ENCODING_ADOBE_SYMBOL ||
         iBaseEncoding == PDFFONT_ENCODING_ZAPFDINGBATS) {
       return;
@@ -769,13 +769,12 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
   FX_DWORD cur_code = 0;
   for (FX_DWORD i = 0; i < pDiffs->GetCount(); i++) {
     CPDF_Object* pElement = pDiffs->GetElementValue(i);
-    if (pElement == NULL) {
+    if (!pElement)
       continue;
-    }
-    if (pElement->GetType() == PDFOBJ_NAME) {
-      if (cur_code < 256) {
-        pCharNames[cur_code] = ((CPDF_Name*)pElement)->GetString();
-      }
+
+    if (CPDF_Name* pName = pElement->AsName()) {
+      if (cur_code < 256)
+        pCharNames[cur_code] = pName->GetString();
       cur_code++;
     } else {
       cur_code = pElement->GetInteger();

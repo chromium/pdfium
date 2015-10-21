@@ -1057,9 +1057,9 @@ FX_BOOL CPDF_SeparationCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
       return FALSE;
     }
     CPDF_Object* pFuncObj = pArray->GetElementValue(3);
-    if (pFuncObj && pFuncObj->GetType() != PDFOBJ_NAME) {
+    if (pFuncObj && !pFuncObj->IsName())
       m_pFunc = CPDF_Function::Load(pFuncObj);
-    }
+
     if (m_pFunc && m_pFunc->CountOutputs() < m_pAltCS->CountComponents()) {
       delete m_pFunc;
       m_pFunc = NULL;
@@ -1202,30 +1202,27 @@ CPDF_ColorSpace* _CSFromName(const CFX_ByteString& name) {
   return NULL;
 }
 CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
-  if (pObj == NULL) {
-    return NULL;
-  }
-  if (pObj->GetType() == PDFOBJ_NAME) {
+  if (!pObj)
+    return nullptr;
+  if (pObj->IsName())
     return _CSFromName(pObj->GetString());
-  }
+
   if (pObj->GetType() == PDFOBJ_STREAM) {
     CPDF_Dictionary* pDict = ((CPDF_Stream*)pObj)->GetDict();
-    if (!pDict) {
-      return NULL;
-    }
-    CPDF_ColorSpace* pRet = NULL;
+    if (!pDict)
+      return nullptr;
+
+    CPDF_ColorSpace* pRet = nullptr;
     FX_POSITION pos = pDict->GetStartPos();
     while (pos) {
       CFX_ByteString bsKey;
       CPDF_Object* pValue = pDict->GetNextElement(pos, bsKey);
-      if (pValue && pValue->GetType() == PDFOBJ_NAME) {
+      if (ToName(pValue))
         pRet = _CSFromName(pValue->GetString());
-      }
-      if (pRet) {
+      if (pRet)
         return pRet;
-      }
     }
-    return NULL;
+    return nullptr;
   }
   if (pObj->GetType() != PDFOBJ_ARRAY) {
     return NULL;

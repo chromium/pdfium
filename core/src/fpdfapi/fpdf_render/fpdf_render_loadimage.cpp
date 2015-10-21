@@ -476,7 +476,7 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources,
       CPDF_Object* pFilter = m_pDict->GetElementValue(FX_BSTRC("Filter"));
       if (pFilter) {
         CFX_ByteString filter;
-        if (pFilter->GetType() == PDFOBJ_NAME) {
+        if (pFilter->IsName()) {
           filter = pFilter->GetString();
           if (filter == FX_BSTRC("JPXDecode")) {
             m_bDoBpcCheck = FALSE;
@@ -514,7 +514,7 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources,
   }
   m_Family = m_pColorSpace->GetFamily();
   m_nComponents = m_pColorSpace->CountComponents();
-  if (m_Family == PDFCS_ICCBASED && pCSObj->GetType() == PDFOBJ_NAME) {
+  if (m_Family == PDFCS_ICCBASED && pCSObj->IsName()) {
     CFX_ByteString cs = pCSObj->GetString();
     if (cs == FX_BSTRC("DeviceGray")) {
       m_nComponents = 1;
@@ -939,7 +939,7 @@ void CPDF_DIBSource::ValidateDictParam() {
   m_bpc = m_bpc_orig;
   CPDF_Object* pFilter = m_pDict->GetElementValue(FX_BSTRC("Filter"));
   if (pFilter) {
-    if (pFilter->GetType() == PDFOBJ_NAME) {
+    if (pFilter->IsName()) {
       CFX_ByteString filter = pFilter->GetString();
       if (filter == FX_BSTRC("CCITTFaxDecode") ||
           filter == FX_BSTRC("JBIG2Decode")) {

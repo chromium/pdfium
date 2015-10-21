@@ -406,7 +406,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
         m_pImageObject->m_pImage->GetStream()->GetDict()->GetElementValue(
             FX_BSTRC("Filter"));
     if (pFilters) {
-      if (pFilters->GetType() == PDFOBJ_NAME) {
+      if (pFilters->IsName()) {
         CFX_ByteStringC bsDecodeType = pFilters->GetConstString();
         if (bsDecodeType == FX_BSTRC("DCTDecode") ||
             bsDecodeType == FX_BSTRC("JPXDecode")) {

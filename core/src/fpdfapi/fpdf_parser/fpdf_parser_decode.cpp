@@ -332,10 +332,9 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
 {
   CPDF_Object* pDecoder =
       pDict ? pDict->GetElementValue(FX_BSTRC("Filter")) : NULL;
-  if (pDecoder == NULL || (pDecoder->GetType() != PDFOBJ_ARRAY &&
-                           pDecoder->GetType() != PDFOBJ_NAME)) {
+  if (!pDecoder || (pDecoder->GetType() != PDFOBJ_ARRAY && !pDecoder->IsName()))
     return FALSE;
-  }
+
   CPDF_Object* pParams =
       pDict ? pDict->GetElementValue(FX_BSTRC("DecodeParms")) : NULL;
   CFX_ByteStringArray DecoderList;

@@ -413,11 +413,10 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
     return;
   }
   FX_BOOL bDirect = TRUE;
-  if (pProperty->GetType() == PDFOBJ_NAME) {
+  if (pProperty->IsName()) {
     pProperty = FindResourceObj(FX_BSTRC("Properties"), pProperty->GetString());
-    if (pProperty == NULL) {
+    if (!pProperty)
       return;
-    }
     bDirect = FALSE;
   }
   if (CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
@@ -499,7 +498,8 @@ void _PDF_ReplaceAbbr(CPDF_Object* pObj) {
           pDict->ReplaceKey(key, fullname);
           key = fullname;
         }
-        if (value->GetType() == PDFOBJ_NAME) {
+
+        if (value->IsName()) {
           CFX_ByteString name = value->GetString();
           fullname = _PDF_FindFullName(
               _PDF_InlineValueAbbr,
@@ -517,7 +517,7 @@ void _PDF_ReplaceAbbr(CPDF_Object* pObj) {
       CPDF_Array* pArray = (CPDF_Array*)pObj;
       for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
         CPDF_Object* pElement = pArray->GetElement(i);
-        if (pElement->GetType() == PDFOBJ_NAME) {
+        if (pElement->IsName()) {
           CFX_ByteString name = pElement->GetString();
           CFX_ByteStringC fullname = _PDF_FindFullName(
               _PDF_InlineValueAbbr,
@@ -562,7 +562,7 @@ void _PDF_ReplaceFull(CPDF_Object* pObj) {
           pDict->ReplaceKey(key, abbrName);
           key = abbrName;
         }
-        if (value->GetType() == PDFOBJ_NAME) {
+        if (value->IsName()) {
           CFX_ByteString name = value->GetString();
           abbrName = _PDF_FindAbbrName(
               _PDF_InlineValueAbbr,
@@ -580,7 +580,7 @@ void _PDF_ReplaceFull(CPDF_Object* pObj) {
       CPDF_Array* pArray = (CPDF_Array*)pObj;
       for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
         CPDF_Object* pElement = pArray->GetElement(i);
-        if (pElement->GetType() == PDFOBJ_NAME) {
+        if (pElement->IsName()) {
           CFX_ByteString name = pElement->GetString();
           CFX_ByteStringC abbrName = _PDF_FindAbbrName(
               _PDF_InlineValueAbbr,
@@ -1065,7 +1065,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
   }
   int nargs = m_ParamCount;
   int nvalues = nargs;
-  if (pLastParam->GetType() == PDFOBJ_NAME) {
+  if (pLastParam->IsName()) {
     nvalues--;
   }
   FX_FLOAT* values = NULL;
@@ -1095,9 +1095,9 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
   }
   int nargs = m_ParamCount;
   int nvalues = nargs;
-  if (pLastParam->GetType() == PDFOBJ_NAME) {
+  if (pLastParam->IsName())
     nvalues--;
-  }
+
   FX_FLOAT* values = NULL;
   if (nvalues) {
     values = FX_Alloc(FX_FLOAT, nvalues);
@@ -1357,13 +1357,14 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   if (pArray == NULL) {
     return;
   }
-  int n = pArray->GetCount(), nsegs = 0, i;
-  for (i = 0; i < n; i++) {
+  int n = pArray->GetCount();
+  int nsegs = 0;
+  for (int i = 0; i < n; i++) {
     if (pArray->GetElementValue(i)->IsString())
       nsegs++;
   }
   if (nsegs == 0) {
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
       m_pCurStates->m_TextX -=
           FXSYS_Mul(pArray->GetNumber(i),
                     m_pCurStates->m_TextState.GetFontSize()) /
@@ -1375,7 +1376,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   FX_FLOAT* pKerning = FX_Alloc(FX_FLOAT, nsegs);
   int iSegment = 0;
   FX_FLOAT fInitKerning = 0;
-  for (i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++) {
     CPDF_Object* pObj = pArray->GetElementValue(i);
     if (pObj->IsString()) {
       CFX_ByteString str = pObj->GetString();

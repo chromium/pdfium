@@ -510,11 +510,8 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
           continue;
         }
       case FXBSTR_ID('T', 'R', '2', 0):
-        if (pObject && pObject->GetType() != PDFOBJ_NAME) {
-          pGeneralState->m_pTR = pObject;
-        } else {
-          pGeneralState->m_pTR = NULL;
-        }
+        pGeneralState->m_pTR =
+            (pObject && !pObject->IsName()) ? pObject : nullptr;
         break;
       case FXBSTR_ID('B', 'M', 0, 0): {
         CFX_ByteString mode;

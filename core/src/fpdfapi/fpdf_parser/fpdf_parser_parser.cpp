@@ -3813,8 +3813,9 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(IFX_DownloadHints* pHints,
       return 0;
     }
     CPDF_Dictionary* pDict = pObj->GetDict();
-    CPDF_Object* pName = pDict ? pDict->GetElement(FX_BSTRC("Type")) : NULL;
-    if (pName && pName->GetType() == PDFOBJ_NAME) {
+    CPDF_Name* pName =
+        ToName(pDict ? pDict->GetElement(FX_BSTRC("Type")) : nullptr);
+    if (pName) {
       if (pName->GetString() == FX_BSTRC("XRef")) {
         m_Pos += m_parser.m_Syntax.SavePos();
         xref_offset = pObj->GetDict()->GetInteger(FX_BSTRC("Prev"));

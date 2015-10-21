@@ -22,7 +22,7 @@ void CPDF_Object::Destroy() {
       delete AsString();
       break;
     case PDFOBJ_NAME:
-      delete (CPDF_Name*)this;
+      delete AsName();
       break;
     case PDFOBJ_ARRAY:
       delete (CPDF_Array*)this;
@@ -46,7 +46,7 @@ CFX_ByteString CPDF_Object::GetString() const {
     case PDFOBJ_STRING:
       return AsString()->m_String;
     case PDFOBJ_NAME:
-      return ((CPDF_Name*)this)->m_Name;
+      return AsName()->m_Name;
     case PDFOBJ_REFERENCE: {
       CPDF_Reference* pRef = (CPDF_Reference*)(void*)this;
       if (pRef->m_pObjList == NULL) {
@@ -68,9 +68,10 @@ CFX_ByteStringC CPDF_Object::GetConstString() const {
       CFX_ByteString str = AsString()->m_String;
       return CFX_ByteStringC((const uint8_t*)str, str.GetLength());
     }
-    case PDFOBJ_NAME:
-      return CFX_ByteStringC((const uint8_t*)((CPDF_Name*)this)->m_Name,
-                             ((CPDF_Name*)this)->m_Name.GetLength());
+    case PDFOBJ_NAME: {
+      CFX_ByteString name = AsName()->m_Name;
+      return CFX_ByteStringC((const uint8_t*)name, name.GetLength());
+    }
     case PDFOBJ_REFERENCE: {
       CPDF_Reference* pRef = (CPDF_Reference*)(void*)this;
       if (pRef->m_pObjList == NULL) {
@@ -178,7 +179,7 @@ void CPDF_Object::SetString(const CFX_ByteString& str) {
       AsString()->m_String = str;
       return;
     case PDFOBJ_NAME:
-      ((CPDF_Name*)this)->m_Name = str;
+      AsName()->m_Name = str;
       return;
   }
   ASSERT(FALSE);
@@ -214,7 +215,7 @@ FX_BOOL CPDF_Object::IsIdentical(CPDF_Object* pOther) const {
     case PDFOBJ_STRING:
       return AsString()->Identical(pOther->AsString());
     case PDFOBJ_NAME:
-      return (((CPDF_Name*)this)->Identical((CPDF_Name*)pOther));
+      return AsName()->Identical(pOther->AsName());
     case PDFOBJ_ARRAY:
       return (((CPDF_Array*)this)->Identical((CPDF_Array*)pOther));
     case PDFOBJ_DICTIONARY:
@@ -257,7 +258,7 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
       return new CPDF_String(pString->m_String, pString->IsHex());
     }
     case PDFOBJ_NAME:
-      return new CPDF_Name(((CPDF_Name*)this)->m_Name);
+      return new CPDF_Name(AsName()->m_Name);
     case PDFOBJ_ARRAY: {
       CPDF_Array* pCopy = new CPDF_Array();
       CPDF_Array* pThis = (CPDF_Array*)this;
@@ -326,9 +327,8 @@ CFX_WideString CPDF_Object::GetUnicodeText(CFX_CharMap* pCharMap) const {
         PDF_DecodeText(stream.GetData(), stream.GetSize(), pCharMap);
     return result;
   }
-  if (m_Type == PDFOBJ_NAME) {
-    return PDF_DecodeText(((CPDF_Name*)this)->m_Name, pCharMap);
-  }
+  if (const CPDF_Name* pName = AsName())
+    return PDF_DecodeText(pName->m_Name, pCharMap);
   return CFX_WideString();
 }
 void CPDF_Object::SetUnicodeText(const FX_WCHAR* pUnicodes, int len) {
@@ -355,6 +355,14 @@ CPDF_Dictionary* CPDF_Object::AsDictionary() {
 
 const CPDF_Dictionary* CPDF_Object::AsDictionary() const {
   return IsDictionary() ? static_cast<const CPDF_Dictionary*>(this) : nullptr;
+}
+
+CPDF_Name* CPDF_Object::AsName() {
+  return IsName() ? static_cast<CPDF_Name*>(this) : nullptr;
+}
+
+const CPDF_Name* CPDF_Object::AsName() const {
+  return IsName() ? static_cast<const CPDF_Name*>(this) : nullptr;
 }
 
 CPDF_Number* CPDF_Object::AsNumber() {

@@ -186,9 +186,8 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
     return NULL;
 
   CPDF_Object* pType = pDict->GetElement("Type")->GetDirect();
-  if (!pType || pType->GetType() != PDFOBJ_NAME)
-    return NULL;
-
+  if (!ToName(pType))
+    return nullptr;
   if (pType->GetString().Compare("Page"))
     return NULL;
   if (!pDict->KeyExist("Parent"))

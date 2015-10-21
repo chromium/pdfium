@@ -417,11 +417,11 @@ CFX_ByteString CPDF_StructElementImpl::GetName(
     FX_BOOL bInheritable,
     int subindex) {
   CPDF_Object* pAttr = GetAttr(owner, name, bInheritable, subindex);
-  if (pAttr == NULL || pAttr->GetType() != PDFOBJ_NAME) {
-    return default_value;
-  }
-  return pAttr->GetString();
+  if (ToName(pAttr))
+    return pAttr->GetString();
+  return default_value;
 }
+
 FX_ARGB CPDF_StructElementImpl::GetColor(const CFX_ByteStringC& owner,
                                          const CFX_ByteStringC& name,
                                          FX_ARGB default_value,

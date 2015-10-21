@@ -84,7 +84,7 @@ FX_BOOL CFFL_Utils::TraceObject(CPDF_Object* pObj) {
       // TRACE(pObj->AsString()->GetString() + "\n");
       break;
     case PDFOBJ_NAME:
-      // TRACE(((CPDF_Name*)pObj)->GetString() + "\n");
+      // TRACE(pObj->AsName()->GetString() + "\n");
       break;
     case PDFOBJ_NULL:
     //	case PDFOBJ_KEYWORD:

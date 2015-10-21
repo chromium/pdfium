@@ -850,17 +850,14 @@ FX_BOOL Document::info(IJS_Context* cc,
       CFX_ByteString bsKey;
       CPDF_Object* pValueObj = pDictionary->GetNextElement(pos, bsKey);
       CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey, bsKey.GetLength());
-      if (pValueObj->IsString() || (pValueObj->GetType() == PDFOBJ_NAME)) {
+
+      if (pValueObj->IsString() || pValueObj->IsName()) {
         FXJS_PutObjectString(isolate, pObj, wsKey.c_str(),
                              pValueObj->GetUnicodeText().c_str());
-      }
-
-      if (pValueObj->IsNumber()) {
+      } else if (pValueObj->IsNumber()) {
         FXJS_PutObjectNumber(isolate, pObj, wsKey.c_str(),
                              (float)pValueObj->GetNumber());
-      }
-
-      if (pValueObj->IsBoolean()) {
+      } else if (pValueObj->IsBoolean()) {
         FXJS_PutObjectBoolean(isolate, pObj, wsKey.c_str(),
                               (bool)pValueObj->GetInteger());
       }
