@@ -38,7 +38,7 @@ hooks = [
     # A change to a .gyp, .gypi, or to GYP itself should run the generator.
     'name': 'gyp',
     'pattern': '.',
-    'action': ['python', 'build/gyp_pdfium'],
+    'action': ['python', 'pdfium/build/gyp_pdfium'],
   },
   # Pull clang-format binaries using checked-in hashes.
   {
@@ -49,7 +49,7 @@ hooks = [
                 '--platform=win32',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
-                '-s', 'buildtools/win/clang-format.exe.sha1',
+                '-s', 'pdfium/buildtools/win/clang-format.exe.sha1',
     ],
   },
   {
@@ -60,7 +60,7 @@ hooks = [
                 '--platform=darwin',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
-                '-s', 'buildtools/mac/clang-format.sha1',
+                '-s', 'pdfium/buildtools/mac/clang-format.sha1',
     ],
   },
   {
@@ -71,7 +71,7 @@ hooks = [
                 '--platform=linux*',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
-                '-s', 'buildtools/linux64/clang-format.sha1',
+                '-s', 'pdfium/buildtools/linux64/clang-format.sha1',
     ],
   },
 ]
