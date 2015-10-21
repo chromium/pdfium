@@ -17,7 +17,7 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (!pDest) {
     return CPDF_Dest();
   }
-  if (pDest->GetType() == PDFOBJ_STRING || pDest->GetType() == PDFOBJ_NAME) {
+  if (pDest->IsString() || pDest->GetType() == PDFOBJ_NAME) {
     CPDF_NameTree name_tree(pDoc, FX_BSTRC("Dests"));
     CFX_ByteStringC name = pDest->GetString();
     return CPDF_Dest(name_tree.LookupNamedDest(pDoc, name));
@@ -102,19 +102,14 @@ FX_DWORD CPDF_ActionFields::GetFieldsCount() const {
   } else {
     pFields = pDict->GetArray("Fields");
   }
-  if (pFields == NULL) {
+  if (!pFields)
     return 0;
-  }
-  int iType = pFields->GetType();
-  if (iType == PDFOBJ_DICTIONARY) {
+  if (pFields->IsDictionary())
     return 1;
-  }
-  if (iType == PDFOBJ_STRING) {
+  if (pFields->IsString())
     return 1;
-  }
-  if (iType == PDFOBJ_ARRAY) {
+  if (pFields->GetType() == PDFOBJ_ARRAY)
     return ((CPDF_Array*)pFields)->GetCount();
-  }
   return 0;
 }
 void CPDF_ActionFields::GetAllFields(CFX_PtrArray& fieldObjects) const {
@@ -133,13 +128,12 @@ void CPDF_ActionFields::GetAllFields(CFX_PtrArray& fieldObjects) const {
   } else {
     pFields = pDict->GetArray("Fields");
   }
-  if (pFields == NULL) {
+  if (!pFields)
     return;
-  }
-  int iType = pFields->GetType();
-  if (iType == PDFOBJ_DICTIONARY || iType == PDFOBJ_STRING) {
+
+  if (pFields->IsDictionary() || pFields->IsString()) {
     fieldObjects.Add(pFields);
-  } else if (iType == PDFOBJ_ARRAY) {
+  } else if (pFields->GetType() == PDFOBJ_ARRAY) {
     CPDF_Array* pArray = (CPDF_Array*)pFields;
     FX_DWORD iCount = pArray->GetCount();
     for (FX_DWORD i = 0; i < iCount; i++) {
@@ -169,12 +163,10 @@ CPDF_Object* CPDF_ActionFields::GetField(FX_DWORD iIndex) const {
     return NULL;
   }
   CPDF_Object* pFindObj = NULL;
-  int iType = pFields->GetType();
-  if (iType == PDFOBJ_DICTIONARY || iType == PDFOBJ_STRING) {
-    if (iIndex == 0) {
+  if (pFields->IsDictionary() || pFields->IsString()) {
+    if (iIndex == 0)
       pFindObj = pFields;
-    }
-  } else if (iType == PDFOBJ_ARRAY) {
+  } else if (pFields->GetType() == PDFOBJ_ARRAY) {
     pFindObj = ((CPDF_Array*)pFields)->GetElementValue(iIndex);
   }
   return pFindObj;

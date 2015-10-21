@@ -19,7 +19,7 @@ void CPDF_Object::Release() {
 void CPDF_Object::Destroy() {
   switch (m_Type) {
     case PDFOBJ_STRING:
-      delete (CPDF_String*)this;
+      delete AsString();
       break;
     case PDFOBJ_NAME:
       delete (CPDF_Name*)this;
@@ -44,7 +44,7 @@ CFX_ByteString CPDF_Object::GetString() const {
     case PDFOBJ_NUMBER:
       return AsNumber()->GetString();
     case PDFOBJ_STRING:
-      return ((CPDF_String*)this)->m_String;
+      return AsString()->m_String;
     case PDFOBJ_NAME:
       return ((CPDF_Name*)this)->m_Name;
     case PDFOBJ_REFERENCE: {
@@ -64,9 +64,10 @@ CFX_ByteString CPDF_Object::GetString() const {
 }
 CFX_ByteStringC CPDF_Object::GetConstString() const {
   switch (m_Type) {
-    case PDFOBJ_STRING:
-      return CFX_ByteStringC((const uint8_t*)((CPDF_String*)this)->m_String,
-                             ((CPDF_String*)this)->m_String.GetLength());
+    case PDFOBJ_STRING: {
+      CFX_ByteString str = AsString()->m_String;
+      return CFX_ByteStringC((const uint8_t*)str, str.GetLength());
+    }
     case PDFOBJ_NAME:
       return CFX_ByteStringC((const uint8_t*)((CPDF_Name*)this)->m_Name,
                              ((CPDF_Name*)this)->m_Name.GetLength());
@@ -174,7 +175,7 @@ void CPDF_Object::SetString(const CFX_ByteString& str) {
       AsNumber()->SetString(str);
       return;
     case PDFOBJ_STRING:
-      ((CPDF_String*)this)->m_String = str;
+      AsString()->m_String = str;
       return;
     case PDFOBJ_NAME:
       ((CPDF_Name*)this)->m_Name = str;
@@ -211,7 +212,7 @@ FX_BOOL CPDF_Object::IsIdentical(CPDF_Object* pOther) const {
     case PDFOBJ_NUMBER:
       return AsNumber()->Identical(pOther->AsNumber());
     case PDFOBJ_STRING:
-      return (((CPDF_String*)this)->Identical((CPDF_String*)pOther));
+      return AsString()->Identical(pOther->AsString());
     case PDFOBJ_NAME:
       return (((CPDF_Name*)this)->Identical((CPDF_Name*)pOther));
     case PDFOBJ_ARRAY:
@@ -251,9 +252,10 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
       return new CPDF_Number(pThis->m_bInteger ? pThis->m_Integer
                                                : pThis->m_Float);
     }
-    case PDFOBJ_STRING:
-      return new CPDF_String(((CPDF_String*)this)->m_String,
-                             ((CPDF_String*)this)->IsHex());
+    case PDFOBJ_STRING: {
+      const CPDF_String* pString = AsString();
+      return new CPDF_String(pString->m_String, pString->IsHex());
+    }
     case PDFOBJ_NAME:
       return new CPDF_Name(((CPDF_Name*)this)->m_Name);
     case PDFOBJ_ARRAY: {
@@ -314,9 +316,9 @@ CPDF_Object* CPDF_Object::CloneRef(CPDF_IndirectObjects* pDoc) const {
   return Clone();
 }
 CFX_WideString CPDF_Object::GetUnicodeText(CFX_CharMap* pCharMap) const {
-  if (m_Type == PDFOBJ_STRING) {
-    return PDF_DecodeText(((CPDF_String*)this)->m_String, pCharMap);
-  }
+  if (const CPDF_String* pString = AsString())
+    return PDF_DecodeText(pString->m_String, pCharMap);
+
   if (m_Type == PDFOBJ_STREAM) {
     CPDF_StreamAcc stream;
     stream.LoadAllData((CPDF_Stream*)this, FALSE);
@@ -330,8 +332,8 @@ CFX_WideString CPDF_Object::GetUnicodeText(CFX_CharMap* pCharMap) const {
   return CFX_WideString();
 }
 void CPDF_Object::SetUnicodeText(const FX_WCHAR* pUnicodes, int len) {
-  if (m_Type == PDFOBJ_STRING) {
-    ((CPDF_String*)this)->m_String = PDF_EncodeText(pUnicodes, len);
+  if (CPDF_String* pString = AsString()) {
+    pString->m_String = PDF_EncodeText(pUnicodes, len);
   } else if (m_Type == PDFOBJ_STREAM) {
     CFX_ByteString result = PDF_EncodeText(pUnicodes, len);
     ((CPDF_Stream*)this)
@@ -361,6 +363,14 @@ CPDF_Number* CPDF_Object::AsNumber() {
 
 const CPDF_Number* CPDF_Object::AsNumber() const {
   return IsNumber() ? static_cast<const CPDF_Number*>(this) : nullptr;
+}
+
+CPDF_String* CPDF_Object::AsString() {
+  return IsString() ? static_cast<CPDF_String*>(this) : nullptr;
+}
+
+const CPDF_String* CPDF_Object::AsString() const {
+  return IsString() ? static_cast<const CPDF_String*>(this) : nullptr;
 }
 
 CPDF_Number::CPDF_Number(int value)

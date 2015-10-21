@@ -81,6 +81,7 @@ class CPDF_Object {
   bool IsBoolean() const { return m_Type == PDFOBJ_BOOLEAN; }
   bool IsDictionary() const { return m_Type == PDFOBJ_DICTIONARY; }
   bool IsNumber() const { return m_Type == PDFOBJ_NUMBER; }
+  bool IsString() const { return m_Type == PDFOBJ_STRING; }
 
   CPDF_Boolean* AsBoolean();
   const CPDF_Boolean* AsBoolean() const;
@@ -90,6 +91,9 @@ class CPDF_Object {
 
   CPDF_Number* AsNumber();
   const CPDF_Number* AsNumber() const;
+
+  CPDF_String* AsString();
+  const CPDF_String* AsString() const;
 
  protected:
   CPDF_Object(FX_DWORD type) : m_Type(type), m_ObjNum(0), m_GenNum(0) {}
@@ -220,6 +224,13 @@ class CPDF_String : public CPDF_Object {
   FX_BOOL m_bHex;
   friend class CPDF_Object;
 };
+inline CPDF_String* ToString(CPDF_Object* obj) {
+  return obj ? obj->AsString() : nullptr;
+}
+inline const CPDF_String* ToString(const CPDF_Object* obj) {
+  return obj ? obj->AsString() : nullptr;
+}
+
 class CPDF_Name : public CPDF_Object {
  public:
   static CPDF_Name* Create(const CFX_ByteString& str) {

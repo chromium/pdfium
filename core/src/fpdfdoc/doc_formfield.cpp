@@ -425,18 +425,10 @@ int CPDF_FormField::CountSelectedItems() {
       return 0;
     }
   }
-  if (pValue->GetType() == PDFOBJ_STRING) {
-    if (pValue->GetString().IsEmpty()) {
-      return 0;
-    }
-    return 1;
-  }
-  if (pValue->IsNumber()) {
-    if (pValue->GetString().IsEmpty()) {
-      return 0;
-    }
-    return 1;
-  }
+
+  if (pValue->IsString() || pValue->IsNumber())
+    return pValue->GetString().IsEmpty() ? 0 : 1;
+
   if (pValue->GetType() != PDFOBJ_ARRAY) {
     return 0;
   }
@@ -454,10 +446,10 @@ int CPDF_FormField::GetSelectedIndex(int index) {
     return pValue->GetInteger();
 
   CFX_WideString sel_value;
-  if (pValue->GetType() == PDFOBJ_STRING) {
-    if (index != 0) {
+  if (pValue->IsString()) {
+    if (index != 0)
       return -1;
-    }
+
     sel_value = pValue->GetUnicodeText();
   } else {
     if (pValue->GetType() != PDFOBJ_ARRAY) {
@@ -535,21 +527,16 @@ FX_BOOL CPDF_FormField::IsItemSelected(int index) {
       return FALSE;
     }
   }
-  if (pValue->GetType() == PDFOBJ_STRING) {
-    if (pValue->GetUnicodeText() == opt_value) {
-      return TRUE;
-    }
-    return FALSE;
-  }
+
+  if (pValue->IsString())
+    return (pValue->GetUnicodeText() == opt_value);
+
   if (pValue->IsNumber()) {
-    if (pValue->GetString().IsEmpty()) {
+    if (pValue->GetString().IsEmpty())
       return FALSE;
-    }
-    if (pValue->GetInteger() == index) {
-      return TRUE;
-    }
-    return FALSE;
+    return (pValue->GetInteger() == index);
   }
+
   if (pValue->GetType() != PDFOBJ_ARRAY) {
     return FALSE;
   }
@@ -593,7 +580,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
     if (pValue != NULL) {
       if (m_Type == ListBox) {
         SelectOption(index, FALSE);
-        if (pValue->GetType() == PDFOBJ_STRING) {
+        if (pValue->IsString()) {
           if (pValue->GetUnicodeText() == opt_value) {
             m_pDict->RemoveAt("V");
           }
@@ -734,10 +721,9 @@ CFX_WideString CPDF_FormField::GetOptionText(int index, int sub_index) {
   if (pOption->GetType() == PDFOBJ_ARRAY) {
     pOption = ((CPDF_Array*)pOption)->GetElementValue(sub_index);
   }
-  if (pOption == NULL || pOption->GetType() != PDFOBJ_STRING) {
-    return CFX_WideString();
-  }
-  return ((CPDF_String*)pOption)->GetUnicodeText();
+
+  CPDF_String* pString = ToString(pOption);
+  return pString ? pString->GetUnicodeText() : CFX_WideString();
 }
 CFX_WideString CPDF_FormField::GetOptionLabel(int index) {
   return GetOptionText(index, 1);

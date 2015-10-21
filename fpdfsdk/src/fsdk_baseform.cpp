@@ -2053,10 +2053,9 @@ void CPDFSDK_InterForm::DoFDFBuffer(CFX_ByteString sBuffer) {
 
           CPDF_Object* pJS = pJSDict->GetElementValue("Before");
           if (pJS != NULL) {
-            int iType = pJS->GetType();
-            if (iType == PDFOBJ_STRING)
+            if (pJS->IsString())
               csJS = pJSDict->GetUnicodeText("Before");
-            else if (iType == PDFOBJ_STREAM)
+            else if (pJS->GetType() == PDFOBJ_STREAM)
               csJS = pJS->GetUnicodeText();
           }
         }
@@ -2226,13 +2225,12 @@ void CPDFSDK_InterForm::GetFieldFromObjects(const CFX_PtrArray& objects,
     if (pObject == NULL)
       continue;
 
-    int iType = pObject->GetType();
-    if (iType == PDFOBJ_STRING) {
+    if (pObject->IsString()) {
       CFX_WideString csName = pObject->GetUnicodeText();
       CPDF_FormField* pField = m_pInterForm->GetField(0, csName);
       if (pField != NULL)
         fields.Add(pField);
-    } else if (iType == PDFOBJ_DICTIONARY) {
+    } else if (pObject->IsDictionary()) {
       if (m_pInterForm->IsValidFormField(pObject))
         fields.Add(pObject);
     }

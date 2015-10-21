@@ -906,12 +906,13 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
     m_pCompMinMax[i * 2 + 1] -= m_pCompMinMax[i * 2];
   }
   m_MaxIndex = pArray->GetInteger(2);
+
   CPDF_Object* pTableObj = pArray->GetElementValue(3);
-  if (pTableObj == NULL) {
+  if (!pTableObj)
     return FALSE;
-  }
-  if (pTableObj->GetType() == PDFOBJ_STRING) {
-    m_Table = ((CPDF_String*)pTableObj)->GetString();
+
+  if (CPDF_String* pString = pTableObj->AsString()) {
+    m_Table = pString->GetString();
   } else if (pTableObj->GetType() == PDFOBJ_STREAM) {
     CPDF_StreamAcc acc;
     acc.LoadAllData((CPDF_Stream*)pTableObj, FALSE);

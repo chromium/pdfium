@@ -100,12 +100,10 @@ CFX_WideString CFDF_Document::GetWin32Path() const {
   CPDF_Dictionary* pDict =
       m_pRootDict ? m_pRootDict->GetDict(FX_BSTRC("FDF")) : NULL;
   CPDF_Object* pFileSpec = pDict ? pDict->GetElementValue(FX_BSTRC("F")) : NULL;
-  if (pFileSpec == NULL) {
+  if (!pFileSpec)
     return CFX_WideString();
-  }
-  if (pFileSpec->GetType() == PDFOBJ_STRING) {
+  if (pFileSpec->IsString())
     return FPDF_FileSpec_GetWin32Path(m_pRootDict->GetDict(FX_BSTRC("FDF")));
-  }
   return FPDF_FileSpec_GetWin32Path(pFileSpec);
 }
 static CFX_WideString ChangeSlash(const FX_WCHAR* str) {
@@ -138,7 +136,8 @@ void FPDF_FileSpec_SetWin32Path(CPDF_Object* pFileSpec,
   } else {
     result = ChangeSlash(filepath.c_str());
   }
-  if (pFileSpec->GetType() == PDFOBJ_STRING) {
+
+  if (pFileSpec->IsString()) {
     pFileSpec->SetString(CFX_ByteString::FromUnicode(result));
   } else if (CPDF_Dictionary* pFileDict = pFileSpec->AsDictionary()) {
     pFileDict->SetAtString(FX_BSTRC("F"), CFX_ByteString::FromUnicode(result));

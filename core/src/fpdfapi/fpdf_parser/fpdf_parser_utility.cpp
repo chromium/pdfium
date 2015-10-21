@@ -374,7 +374,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       break;
     case PDFOBJ_STRING: {
       CFX_ByteString str = pObj->GetString();
-      FX_BOOL bHex = ((CPDF_String*)pObj)->IsHex();
+      FX_BOOL bHex = pObj->AsString()->IsHex();
       buf << PDF_EncodeString(str, bHex);
       break;
     }
