@@ -104,7 +104,7 @@ CJS_GlobalData* CJS_GlobalData::g_Instance = nullptr;
 // static
 CJS_GlobalData* CJS_GlobalData::GetRetainedInstance(CPDFDoc_Environment* pApp) {
   if (!g_Instance) {
-    g_Instance = new CJS_GlobalData(pApp);
+    g_Instance = new CJS_GlobalData();
   }
   ++g_Instance->m_RefCount;
   return g_Instance;
@@ -117,7 +117,7 @@ void CJS_GlobalData::Release() {
   }
 }
 
-CJS_GlobalData::CJS_GlobalData(CPDFDoc_Environment* pApp) : m_RefCount(0) {
+CJS_GlobalData::CJS_GlobalData() : m_RefCount(0) {
   m_sFilePath += SDK_JS_GLOBALDATA_FILENAME;
   LoadGlobalPersistentVariables();
 }

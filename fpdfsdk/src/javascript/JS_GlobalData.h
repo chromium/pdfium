@@ -79,7 +79,7 @@ class CJS_GlobalData {
  private:
   static CJS_GlobalData* g_Instance;
 
-  CJS_GlobalData(CPDFDoc_Environment* pApp);
+  CJS_GlobalData();
   ~CJS_GlobalData();
 
   void LoadGlobalPersistentVariables();
@@ -98,7 +98,6 @@ class CJS_GlobalData {
                       CJS_KeyValue* pData,
                       CFX_BinaryBuf& sData);
 
- private:
   size_t m_RefCount;
   CFX_ArrayTemplate<CJS_GlobalData_Element*> m_arrayGlobalData;
   CFX_WideString m_sFilePath;

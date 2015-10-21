@@ -147,7 +147,7 @@ void JSMethod(const char* method_name_string,
       static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
   if (!pRuntime)
     return;
-  IJS_Context* cc = pRuntime->GetCurrentContext();
+  IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Parameters parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
     parameters.push_back(CJS_Value(pRuntime, info[i], CJS_Value::VT_unknown));
@@ -156,7 +156,7 @@ void JSMethod(const char* method_name_string,
   CJS_Object* pJSObj = (CJS_Object*)FXJS_GetPrivate(isolate, info.Holder());
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
-  if (!(pObj->*M)(cc, parameters, valueRes, sError)) {
+  if (!(pObj->*M)(pContext, parameters, valueRes, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name_string,
                                             method_name_string, sError));
     return;
@@ -435,24 +435,22 @@ void JSSpecialPropDel(const char* class_name,
   }
 }
 
-template <FX_BOOL (*F)(IJS_Context* cc,
-                       const CJS_Parameters& params,
-                       CJS_Value& vRet,
-                       CFX_WideString& sError)>
+template <FX_BOOL (
+    *F)(IJS_Context*, const CJS_Parameters&, CJS_Value&, CFX_WideString&)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   CJS_Runtime* pRuntime =
       static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(info.GetIsolate()));
   if (!pRuntime)
     return;
-  IJS_Context* cc = pRuntime->GetCurrentContext();
+  IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Parameters parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
     parameters.push_back(CJS_Value(pRuntime, info[i], CJS_Value::VT_unknown));
   }
   CJS_Value valueRes(pRuntime);
   CFX_WideString sError;
-  if (!(*F)(cc, parameters, valueRes, sError)) {
+  if (!(*F)(pContext, parameters, valueRes, sError)) {
     FXJS_Error(pRuntime->GetIsolate(),
                JSFormatErrorString(func_name_string, nullptr, sError));
     return;

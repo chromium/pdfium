@@ -52,8 +52,10 @@ class CPDF_CustomAccess final : public IFX_FileRead {
   FPDF_FILEACCESS m_FileAccess;
 };
 
-// Conversions from FPDF_ types.
+// Conversions to/from FPDF_ types.
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);
+FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc);
+
 CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page);
 
 void DropContext(void* data);

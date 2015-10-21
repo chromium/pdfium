@@ -40,7 +40,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
     pInfoDict->SetAt("Creator", new CPDF_String(L"PDFium"));
   }
 
-  return pDoc;
+  return FPDFDocumentFromCPDFDocument(pDoc);
 }
 
 DLLEXPORT void STDCALL FPDFPage_Delete(FPDF_DOCUMENT document, int page_index) {

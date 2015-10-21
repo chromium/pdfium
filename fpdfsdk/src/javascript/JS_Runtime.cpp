@@ -214,9 +214,3 @@ void CJS_Runtime::RemoveObserver(Observer* observer) {
   ASSERT(m_observers.find(observer) != m_observers.end());
   m_observers.erase(observer);
 }
-
-CFX_WideString ChangeObjName(const CFX_WideString& str) {
-  CFX_WideString sRet = str;
-  sRet.Replace(L"_", L".");
-  return sRet;
-}

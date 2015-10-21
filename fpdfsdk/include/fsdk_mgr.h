@@ -229,7 +229,14 @@ class CPDFSDK_Document {
   ~CPDFSDK_Document();
 
   CPDFSDK_InterForm* GetInterForm();
-  CPDF_Document* GetDocument() { return m_pDoc; }
+
+  // Gets the document object for the next layer down; for master this is
+  // a CPDF_Document, but for XFA it is a CPDFXFA_Document.
+  CPDF_Document* GetDocument() const { return m_pDoc; }
+
+  // Gets the CPDF_Document, either directly in master, or from the
+  // CPDFXFA_Document for XFA.
+  CPDF_Document* GetPDFDocument() const { return m_pDoc; }
 
   CPDFSDK_PageView* GetPageView(CPDF_Page* pPDFPage, FX_BOOL ReNew = TRUE);
   CPDFSDK_PageView* GetPageView(int nIndex);
