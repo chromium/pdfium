@@ -43,8 +43,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
     pInfoDict->SetAt("Creator", new CPDF_String(L"PDFium"));
   }
 
-  CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
-  return new CPDFXFA_Document(pDoc, pApp);
+  return FPDFDocumentFromCPDFDocument(pDoc);
 }
 
 DLLEXPORT void STDCALL FPDFPage_Delete(FPDF_DOCUMENT document, int page_index) {
@@ -177,7 +176,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
 }
 
 DLLEXPORT int STDCALL FPDFPage_CountObject(FPDF_PAGE page) {
-  CPDF_Page* pPage = ((CPDFXFA_Page*)page)->GetPDFPage();
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type") ||
       !pPage->m_pFormDict->GetElement("Type")->GetDirect() ||
       pPage->m_pFormDict->GetElement("Type")->GetDirect()->GetString().Compare(

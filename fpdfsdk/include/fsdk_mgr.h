@@ -475,7 +475,10 @@ class CPDFSDK_Document {
   ~CPDFSDK_Document();
 
   CPDFSDK_InterForm* GetInterForm();
-  CPDFXFA_Document* GetDocument() { return m_pDoc; }
+  CPDFXFA_Document* GetDocument() const { return m_pDoc; }
+  CPDF_Document* GetPDFDocument() const {
+    return m_pDoc ? m_pDoc->GetPDFDoc() : nullptr;
+  }
 
   int GetPageViewCount() const { return m_pageMap.size(); }
   CPDFSDK_PageView* GetPageView(CPDFXFA_Page* pPDFXFAPage,

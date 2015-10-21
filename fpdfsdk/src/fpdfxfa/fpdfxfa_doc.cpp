@@ -35,14 +35,13 @@ extern int GetLastError();
 
 CPDFXFA_Document::CPDFXFA_Document(CPDF_Document* pPDFDoc,
                                    CPDFXFA_App* pProvider)
-    : m_pPDFDoc(pPDFDoc),
+    : m_iDocType(DOCTYPE_PDF),
+      m_pPDFDoc(pPDFDoc),
+      m_pSDKDoc(nullptr),
+      m_pXFADoc(nullptr),
+      m_pXFADocView(nullptr),
       m_pApp(pProvider),
-      m_pXFADoc(NULL),
-      m_pXFADocView(NULL),
-      m_iDocType(DOCTYPE_PDF),
-      m_pJSContext(NULL),
-      m_pSDKDoc(NULL) {
-  m_XFAPageList.RemoveAll();
+      m_pJSContext(nullptr) {
 }
 
 CPDFXFA_Document::~CPDFXFA_Document() {
@@ -492,24 +491,6 @@ FX_BOOL CPDFXFA_Document::PopupMenu(IXFA_Widget* hWidget,
 
 void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
                                      FX_DWORD dwFlags) {
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA)
-    return;
-
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
-    return;
-
-  CPDFXFA_Page* pPage = GetPage(pPageView);
-  if (pPage == NULL)
-    return;
-
-  if (dwFlags == FXFA_PAGEVIEWEVENT_POSTADDED) {
-    // pEnv->FFI_PageEvent(pPage, FXFA_PAGEVIEWEVENT_POSTADDED);
-  } else if (dwFlags == FXFA_PAGEVIEWEVENT_POSTREMOVED) {
-    // pEnv->FFI_PageEvent(pPage, FXFA_PAGEVIEWEVENT_POSTREMOVED);
-    // RemovePage(pPage);
-    // delete pPage;
-  }
 }
 
 void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,
@@ -517,60 +498,30 @@ void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,
                                    FX_DWORD dwEvent,
                                    void* pParam,
                                    void* pAdditional) {
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA || NULL == hWidget)
+  if (m_iDocType != DOCTYPE_DYNIMIC_XFA || !hWidget)
     return;
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
-    return;
-
-  if (NULL == hWidget)
+  if (!pEnv)
     return;
 
   IXFA_PageView* pPageView =
       m_pXFADocView->GetWidgetHandler()->GetPageView(hWidget);
-
   if (pPageView == NULL)
     return;
+
   CPDFXFA_Page* pXFAPage = GetPage(pPageView);
   if (pXFAPage == NULL)
     return;
 
   CPDFSDK_PageView* pSdkPageView = m_pSDKDoc->GetPageView(pXFAPage);
-
-  CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
-
   if (dwEvent == XFA_WIDGETEVENT_PostAdded) {
-    // 			CPDFSDK_Annot* pAnnot =
-    // pAnnotHandlerMgr->NewAnnot(hWidget,
-    // pSdkPageView);
-    // 			pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
-
-    // pEnv->FFI_WidgetEvent(hWidget, XFA_WIDGETEVENT_PostAdded);
-    // 		IXFA_PageView* pOldPageView = (IXFA_PageView*)pAdditional;
-    // 		if (pOldPageView)
-    // 		{
-    // 			CPDFXFA_Page* pDestPage =
-    // m_pSDKDoc->GetPageView((IXFA_PageView*)pOldPageView);
-    // 			ASSERT(pDestPage);
-    // 			CPDFSDK_Annot* pAnnot =
-    // pDestPage->GetAnnotByXFAWidget(hWidget);
-    // 			if (pAnnot)
-    // 			{
-    // 				if (m_pSDKDoc->GetFocusAnnot() == pAnnot)
-    // 				{
-    // 					m_pSDKDoc->SetFocusAnnot(NULL);
-    // 				}
-    // 				pDestPage->DeleteAnnot(pAnnot);
-    // 			}
-    // 		}
     pSdkPageView->AddAnnot(hWidget);
 
   } else if (dwEvent == XFA_WIDGETEVENT_PreRemoved) {
     CPDFSDK_Annot* pAnnot = pSdkPageView->GetAnnotByXFAWidget(hWidget);
     if (pAnnot) {
       pSdkPageView->DeleteAnnot(pAnnot);
-      // pEnv->FFI_WidgetEvent(hWidget, XFA_WIDGETEVENT_PreRemoved);
     }
   }
 }
@@ -686,32 +637,9 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
                          content.GetLength());
     CFX_WideStringC data(L"data");
     if (pXFADocHander->SavePackage(m_pXFADocView->GetDoc(), data, &fileWrite)) {
-      NULL;
+      // TODO: Maybe report error.
     }
-  }
-  /*else if (fileType == FXFA_FILE_STATIC_XDP)
-  {
-          content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-          fileWrite.WriteBlock((const FX_CHAR*)content, fileWrite.GetSize(),
-content.GetLength());
-          CFX_WideStringC data(L"data");
-          if( pXFADocHander->SavePackage(m_pXFADocView->GetDoc(), data,
-&fileWrite))
-          {
-                  NULL;
-          }
-          CFX_WideString wPath = pEnv->FFI_GetFilePath(pFileHandler);
-// 		CFX_WideString wPath;
-// 		wPath.FromUTF16LE(filePath);
-          CFX_ByteString bPath = wPath.UTF8Encode();
-          CFX_ByteString szFormat = "\n<pdf href=\"%s\"
-xmlns=\"http://ns.adobe.com/xdp/pdf/\"/>";
-          content.Format(szFormat,(char*)(const FX_CHAR*)bPath);
-          fileWrite.WriteBlock((const FX_CHAR*)content,fileWrite.GetSize(),
-content.GetLength());
-  }
-  */
-  else if (fileType == FXFA_SAVEAS_XDP) {
+  } else if (fileType == FXFA_SAVEAS_XDP) {
     if (m_pPDFDoc == NULL)
       return;
     CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
@@ -729,8 +657,6 @@ content.GetLength());
     if (NULL == pArray)
       return;
     int size = pArray->GetCount();
-    int iFormIndex = -1;
-    int iDataSetsIndex = -1;
     for (int i = 1; i < size; i += 2) {
       CPDF_Object* pPDFObj = pArray->GetElement(i);
       CPDF_Object* pPrePDFObj = pArray->GetElement(i - 1);
@@ -750,7 +676,6 @@ content.GetLength());
                                    &fileWrite);
       } else {
         if (i == size - 1) {
-          // CFX_WideString wPath = pEnv->FFI_GetFilePath(pFileHandler);
           CFX_WideString wPath = CFX_WideString::FromUTF16LE(
               (unsigned short*)(const FX_CHAR*)bs,
               bs.GetLength() / sizeof(unsigned short));
@@ -771,7 +696,9 @@ content.GetLength());
       }
     }
   }
-  FX_BOOL bError = fileWrite.Flush();
+  if (!fileWrite.Flush()) {
+    // TODO: Report error.
+  }
 }
 void CPDFXFA_Document::ImportData(IXFA_Doc* hDoc,
                                   const CFX_WideStringC& wsFilePath) {
@@ -1051,8 +978,6 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
       return FALSE;
     }
     int size = pArray->GetCount();
-    int iFormIndex = -1;
-    int iDataSetsIndex = -1;
     for (int i = 1; i < size; i += 2) {
       CPDF_Object* pPDFObj = pArray->GetElement(i);
       CPDF_Object* pPrePDFObj = pArray->GetElement(i - 1);

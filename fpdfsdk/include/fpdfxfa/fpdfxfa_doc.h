@@ -215,14 +215,14 @@ class CPDFXFA_Document : public IXFA_DocProvider {
     }
   }
 
+  int m_iDocType;
   CPDF_Document* m_pPDFDoc;
+  CPDFSDK_Document* m_pSDKDoc;
   IXFA_Doc* m_pXFADoc;
   IXFA_DocView* m_pXFADocView;
-  CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
-  CPDFSDK_Document* m_pSDKDoc;
   CPDFXFA_App* m_pApp;
   IJS_Context* m_pJSContext;
-  int m_iDocType;
+  CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
 };
 
 #endif  // FPDFXFA_DOC_H_

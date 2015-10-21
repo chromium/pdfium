@@ -26,6 +26,10 @@ CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
   return doc ? static_cast<CPDFXFA_Document*>(doc)->GetPDFDoc() : nullptr;
 }
 
+FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
+  return doc ? new CPDFXFA_Document(doc, CPDFXFA_App::GetInstance()) : nullptr;
+}
+
 CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
   return page ? static_cast<CPDFXFA_Page*>(page)->GetPDFPage() : nullptr;
 }
@@ -351,12 +355,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf,
   CPDF_Document* pDoc = NULL;
   pDoc = pParser ? pParser->GetDocument() : NULL;
   CheckUnSupportError(pDoc, err_code);
-  CPDF_Document* pPDFDoc = pParser->GetDocument();
-  if (!pPDFDoc)
-    return NULL;
-
-  CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
-  return new CPDFXFA_Document(pPDFDoc, pProvider);
+  return FPDFDocumentFromCPDFDocument(pParser->GetDocument());
 }
 
 DLLEXPORT FPDF_DOCUMENT STDCALL
@@ -374,12 +373,7 @@ FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
   CPDF_Document* pDoc = NULL;
   pDoc = pParser ? pParser->GetDocument() : NULL;
   CheckUnSupportError(pDoc, err_code);
-  CPDF_Document* pPDFDoc = pParser->GetDocument();
-  if (!pPDFDoc)
-    return NULL;
-
-  CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
-  return new CPDFXFA_Document(pPDFDoc, pProvider);
+  return FPDFDocumentFromCPDFDocument(pParser->GetDocument());
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
@@ -437,15 +431,13 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageWidth(FPDF_PAGE page) {
-  if (!page)
-    return 0.0;
-  return ((CPDFXFA_Page*)page)->GetPageWidth();
+  CPDFXFA_Page* pPage = static_cast<CPDFXFA_Page*>(page);
+  return pPage ? pPage->GetPageWidth() : 0.0;
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageHeight(FPDF_PAGE page) {
-  if (!page)
-    return 0.0;
-  return ((CPDFXFA_Page*)page)->GetPageHeight();
+  CPDFXFA_Page* pPage = static_cast<CPDFXFA_Page*>(page);
+  return pPage ? pPage->GetPageHeight() : 0.0;
 }
 
 void DropContext(void* data) {
@@ -1018,8 +1010,8 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
     *buflen = 0;
   if (!document || index < 0)
     return NULL;
-  CPDF_Document* pDoc = ((CPDFXFA_Document*)document)->GetPDFDoc();
 
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot)
     return NULL;

@@ -39,15 +39,9 @@ CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
 
 CPDFSDK_Widget::~CPDFSDK_Widget() {}
 
-IXFA_Widget* CPDFSDK_Widget::GetMixXFAWidget() {
-  ASSERT(m_pPageView != NULL);
-
+IXFA_Widget* CPDFSDK_Widget::GetMixXFAWidget() const {
   CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
-  ASSERT(pSDKDoc != NULL);
-
   CPDFXFA_Document* pDoc = pSDKDoc->GetDocument();
-  ASSERT(pDoc != NULL);
-
   if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA) {
     if (!m_hMixXFAWidget) {
       if (IXFA_DocView* pDocView = pDoc->GetXFADocView()) {
@@ -90,15 +84,9 @@ IXFA_Widget* CPDFSDK_Widget::GetGroupMixXFAWidget() {
   return NULL;
 }
 
-IXFA_WidgetHandler* CPDFSDK_Widget::GetXFAWidgetHandler() {
-  ASSERT(m_pPageView != NULL);
-
+IXFA_WidgetHandler* CPDFSDK_Widget::GetXFAWidgetHandler() const {
   CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
-  ASSERT(pSDKDoc != NULL);
-
   CPDFXFA_Document* pDoc = pSDKDoc->GetDocument();
-  ASSERT(pDoc != NULL);
-
   if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA) {
     if (!m_pWidgetHandler) {
       if (IXFA_DocView* pDocView = pDoc->GetXFADocView()) {
@@ -343,16 +331,10 @@ void CPDFSDK_Widget::SynchronizeXFAValue() {
   if (!pXFADocView)
     return;
 
-  if (IXFA_Widget* hWidget = this->GetMixXFAWidget()) {
-    if (IXFA_WidgetHandler* pXFAWidgetHandler = this->GetXFAWidgetHandler()) {
-      CPDF_FormField* pFormField = GetFormField();
-      ASSERT(pFormField != NULL);
-
-      CPDF_FormControl* pFormCtrl = GetFormControl();
-      ASSERT(pFormCtrl != NULL);
-
-      CPDFSDK_Widget::SynchronizeXFAValue(pXFADocView, hWidget, pFormField,
-                                          pFormCtrl);
+  if (IXFA_Widget* hWidget = GetMixXFAWidget()) {
+    if (GetXFAWidgetHandler()) {
+      CPDFSDK_Widget::SynchronizeXFAValue(pXFADocView, hWidget, GetFormField(),
+                                          GetFormControl());
     }
   }
 #endif  // PDF_ENABLE_XFA
@@ -372,13 +354,9 @@ void CPDFSDK_Widget::SynchronizeXFAItems() {
   if (!pXFADocView)
     return;
 
-  if (IXFA_Widget* hWidget = this->GetMixXFAWidget()) {
-    if (IXFA_WidgetHandler* pXFAWidgetHandler = this->GetXFAWidgetHandler()) {
-      CPDF_FormField* pFormField = GetFormField();
-      ASSERT(pFormField != NULL);
-
-      SynchronizeXFAItems(pXFADocView, hWidget, pFormField, NULL);
-    }
+  if (IXFA_Widget* hWidget = GetMixXFAWidget()) {
+    if (GetXFAWidgetHandler())
+      SynchronizeXFAItems(pXFADocView, hWidget, GetFormField(), nullptr);
   }
 #endif  // PDF_ENABLE_XFA
 }
@@ -622,12 +600,8 @@ int CPDFSDK_Widget::GetRotate() const {
   return pCtrl->GetRotation() % 360;
 }
 
-CFX_WideString CPDFSDK_Widget::GetName() {
-  ASSERT(m_pInterForm != NULL);
-
+CFX_WideString CPDFSDK_Widget::GetName() const {
   CPDF_FormField* pFormField = GetFormField();
-  ASSERT(pFormField != NULL);
-
   return pFormField->GetFullName();
 }
 
@@ -680,7 +654,7 @@ FX_FLOAT CPDFSDK_Widget::GetFontSize() const {
   return fFontSize;
 }
 
-int CPDFSDK_Widget::GetSelectedIndex(int nIndex) {
+int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {
 #ifdef PDF_ENABLE_XFA
   if (IXFA_Widget* hWidget = this->GetMixXFAWidget()) {
     if (IXFA_WidgetHandler* pXFAWidgetHandler = this->GetXFAWidgetHandler()) {
@@ -696,7 +670,7 @@ int CPDFSDK_Widget::GetSelectedIndex(int nIndex) {
   return pFormField->GetSelectedIndex(nIndex);
 }
 
-CFX_WideString CPDFSDK_Widget::GetValue(FX_BOOL bDisplay) {
+CFX_WideString CPDFSDK_Widget::GetValue(FX_BOOL bDisplay) const {
 #ifdef PDF_ENABLE_XFA
   if (IXFA_Widget* hWidget = this->GetMixXFAWidget()) {
     if (IXFA_WidgetHandler* pXFAWidgetHandler = this->GetXFAWidgetHandler()) {
@@ -735,7 +709,7 @@ int CPDFSDK_Widget::CountOptions() const {
   return pFormField->CountOptions();
 }
 
-FX_BOOL CPDFSDK_Widget::IsOptionSelected(int nIndex) {
+FX_BOOL CPDFSDK_Widget::IsOptionSelected(int nIndex) const {
 #ifdef PDF_ENABLE_XFA
   if (IXFA_Widget* hWidget = this->GetMixXFAWidget()) {
     if (IXFA_WidgetHandler* pXFAWidgetHandler = this->GetXFAWidgetHandler()) {
@@ -758,7 +732,7 @@ int CPDFSDK_Widget::GetTopVisibleIndex() const {
   return pFormField->GetTopVisibleIndex();
 }
 
-FX_BOOL CPDFSDK_Widget::IsChecked() {
+FX_BOOL CPDFSDK_Widget::IsChecked() const {
 #ifdef PDF_ENABLE_XFA
   if (IXFA_WidgetHandler* pXFAWidgetHandler = this->GetXFAWidgetHandler()) {
     if (IXFA_Widget* hWidget = this->GetMixXFAWidget()) {

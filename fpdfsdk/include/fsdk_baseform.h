@@ -66,9 +66,9 @@ typedef struct _PDFSDK_FieldAction {
 
 class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  public:
-  IXFA_Widget* GetMixXFAWidget();
+  IXFA_Widget* GetMixXFAWidget() const;
   IXFA_Widget* GetGroupMixXFAWidget();
-  IXFA_WidgetHandler* GetXFAWidgetHandler();
+  IXFA_WidgetHandler* GetXFAWidgetHandler() const;
 
   FX_BOOL HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT);
   FX_BOOL OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
@@ -114,14 +114,14 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   FX_BOOL GetTextColor(FX_COLORREF& color) const;
   FX_FLOAT GetFontSize() const;
 
-  int GetSelectedIndex(int nIndex);
-  CFX_WideString GetValue(FX_BOOL bDisplay = TRUE);
+  int GetSelectedIndex(int nIndex) const;
+  CFX_WideString GetValue(FX_BOOL bDisplay = TRUE) const;
   CFX_WideString GetDefaultValue() const;
   CFX_WideString GetOptionLabel(int nIndex) const;
   int CountOptions() const;
-  FX_BOOL IsOptionSelected(int nIndex);
+  FX_BOOL IsOptionSelected(int nIndex) const;
   int GetTopVisibleIndex() const;
-  FX_BOOL IsChecked();
+  FX_BOOL IsChecked() const;
   /*
   BF_ALIGN_LEFT
   BF_ALIGN_MIDDL
@@ -129,7 +129,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   */
   int GetAlignment() const;
   int GetMaxLen() const;
-  CFX_WideString GetName();
+  CFX_WideString GetName() const;
   CFX_WideString GetAlternateName() const;
 
   // Set Properties.
@@ -198,14 +198,13 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  public:
   FX_BOOL HitTest(FX_FLOAT pageX, FX_FLOAT pageY);
 
- private:
   CPDFSDK_InterForm* m_pInterForm;
   FX_BOOL m_bAppModified;
   int32_t m_nAppAge;
   int32_t m_nValueAge;
 
-  IXFA_Widget* m_hMixXFAWidget;
-  IXFA_WidgetHandler* m_pWidgetHandler;
+  mutable IXFA_Widget* m_hMixXFAWidget;
+  mutable IXFA_WidgetHandler* m_pWidgetHandler;
 };
 
 class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
