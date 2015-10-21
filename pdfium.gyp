@@ -698,7 +698,6 @@
         'fpdfsdk/include/formfiller/FFL_PushButton.h',
         'fpdfsdk/include/formfiller/FFL_RadioButton.h',
         'fpdfsdk/include/formfiller/FFL_TextField.h',
-        'fpdfsdk/include/formfiller/FFL_Utils.h',
         'fpdfsdk/include/formfiller/FormFiller.h',
         'fpdfsdk/src/formfiller/FFL_CBA_Fontmap.cpp',
         'fpdfsdk/src/formfiller/FFL_CheckBox.cpp',
@@ -709,7 +708,6 @@
         'fpdfsdk/src/formfiller/FFL_PushButton.cpp',
         'fpdfsdk/src/formfiller/FFL_RadioButton.cpp',
         'fpdfsdk/src/formfiller/FFL_TextField.cpp',
-        'fpdfsdk/src/formfiller/FFL_Utils.cpp',
       ],
     },
     {
