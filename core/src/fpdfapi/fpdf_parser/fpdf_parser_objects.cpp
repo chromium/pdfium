@@ -247,8 +247,9 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
     case PDFOBJ_BOOLEAN:
       return new CPDF_Boolean(this->AsBoolean()->m_bValue);
     case PDFOBJ_NUMBER:
-      return new CPDF_Number(((CPDF_Number*)this)->m_bInteger,
-                             &((CPDF_Number*)this)->m_Integer);
+      if (((CPDF_Number*)this)->m_bInteger)
+        return new CPDF_Number(((CPDF_Number*)this)->m_Integer);
+      return new CPDF_Number(((CPDF_Number*)this)->m_Float);
     case PDFOBJ_STRING:
       return new CPDF_String(((CPDF_String*)this)->m_String,
                              ((CPDF_String*)this)->IsHex());
@@ -358,11 +359,6 @@ CPDF_Number::CPDF_Number(int value)
 
 CPDF_Number::CPDF_Number(FX_FLOAT value)
     : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(FALSE), m_Float(value) {}
-
-CPDF_Number::CPDF_Number(FX_BOOL bInteger, void* pData)
-    : CPDF_Object(PDFOBJ_NUMBER),
-      m_bInteger(bInteger),
-      m_Integer(*(int*)pData) {}
 
 CPDF_Number::CPDF_Number(const CFX_ByteStringC& str)
     : CPDF_Object(PDFOBJ_NUMBER) {

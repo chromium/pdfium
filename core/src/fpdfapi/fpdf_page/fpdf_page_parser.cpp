@@ -163,8 +163,10 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(FX_DWORD index) {
   }
   _ContentParam& param = m_ParamBuf1[real_index];
   if (param.m_Type == PDFOBJ_NUMBER) {
-    CPDF_Number* pNumber = CPDF_Number::Create(param.m_Number.m_bInteger,
-                                               &param.m_Number.m_Integer);
+    CPDF_Number* pNumber = param.m_Number.m_bInteger
+                               ? CPDF_Number::Create(param.m_Number.m_Integer)
+                               : CPDF_Number::Create(param.m_Number.m_Float);
+
     param.m_Type = 0;
     param.m_pObject = pNumber;
     return pNumber;
