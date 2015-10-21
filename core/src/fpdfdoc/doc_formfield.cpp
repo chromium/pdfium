@@ -529,7 +529,7 @@ FX_BOOL CPDF_FormField::IsItemSelected(int index) {
   }
 
   if (pValue->IsString())
-    return (pValue->GetUnicodeText() == opt_value);
+    return pValue->GetUnicodeText() == opt_value;
 
   if (pValue->IsNumber()) {
     if (pValue->GetString().IsEmpty())

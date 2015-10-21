@@ -17,7 +17,7 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (!pDest) {
     return CPDF_Dest();
   }
-  if (pDest->IsString() || pDest->GetType() == PDFOBJ_NAME) {
+  if (pDest->IsString() || pDest->IsName()) {
     CPDF_NameTree name_tree(pDoc, FX_BSTRC("Dests"));
     CFX_ByteStringC name = pDest->GetString();
     return CPDF_Dest(name_tree.LookupNamedDest(pDoc, name));

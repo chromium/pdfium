@@ -1206,11 +1206,9 @@ FX_BOOL CPDF_CIDFont::_Load() {
     return FALSE;
   }
   CFX_ByteString subtype = pCIDFontDict->GetString(FX_BSTRC("Subtype"));
-  m_bType1 = FALSE;
-  if (subtype == FX_BSTRC("CIDFontType0")) {
-    m_bType1 = TRUE;
-  }
-  if (pEncoding->GetType() == PDFOBJ_NAME) {
+  m_bType1 = (subtype == FX_BSTRC("CIDFontType0"));
+
+  if (pEncoding->IsName()) {
     CFX_ByteString cmap = pEncoding->GetString();
     m_pCMap =
         CPDF_ModuleMgr::Get()

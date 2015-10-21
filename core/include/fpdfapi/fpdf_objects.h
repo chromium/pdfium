@@ -16,6 +16,7 @@ class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_IndirectObjects;
+class CPDF_Name;
 class CPDF_Null;
 class CPDF_Number;
 class CPDF_Parser;
@@ -80,6 +81,7 @@ class CPDF_Object {
 
   bool IsBoolean() const { return m_Type == PDFOBJ_BOOLEAN; }
   bool IsDictionary() const { return m_Type == PDFOBJ_DICTIONARY; }
+  bool IsName() const { return m_Type == PDFOBJ_NAME; }
   bool IsNumber() const { return m_Type == PDFOBJ_NUMBER; }
   bool IsString() const { return m_Type == PDFOBJ_STRING; }
 
@@ -88,6 +90,9 @@ class CPDF_Object {
 
   CPDF_Dictionary* AsDictionary();
   const CPDF_Dictionary* AsDictionary() const;
+
+  CPDF_Name* AsName();
+  const CPDF_Name* AsName() const;
 
   CPDF_Number* AsNumber();
   const CPDF_Number* AsNumber() const;
@@ -259,6 +264,13 @@ class CPDF_Name : public CPDF_Object {
   CFX_ByteString m_Name;
   friend class CPDF_Object;
 };
+inline CPDF_Name* ToName(CPDF_Object* obj) {
+  return obj ? obj->AsName() : nullptr;
+}
+inline const CPDF_Name* ToName(const CPDF_Object* obj) {
+  return obj ? obj->AsName() : nullptr;
+}
+
 class CPDF_Array : public CPDF_Object {
  public:
   static CPDF_Array* Create() { return new CPDF_Array(); }

@@ -372,12 +372,9 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
     case PDFOBJ_NUMBER:
       buf << " " << pObj->GetString();
       break;
-    case PDFOBJ_STRING: {
-      CFX_ByteString str = pObj->GetString();
-      FX_BOOL bHex = pObj->AsString()->IsHex();
-      buf << PDF_EncodeString(str, bHex);
+    case PDFOBJ_STRING:
+      buf << PDF_EncodeString(pObj->GetString(), pObj->AsString()->IsHex());
       break;
-    }
     case PDFOBJ_NAME: {
       CFX_ByteString str = pObj->GetString();
       buf << FX_BSTRC("/") << PDF_NameEncode(str);

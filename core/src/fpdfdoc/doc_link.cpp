@@ -73,10 +73,10 @@ CPDF_Rect CPDF_Link::GetRect() {
 }
 CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
   CPDF_Object* pDest = m_pDict->GetElementValue("Dest");
-  if (pDest == NULL) {
+  if (!pDest)
     return CPDF_Dest();
-  }
-  if (pDest->IsString() || pDest->GetType() == PDFOBJ_NAME) {
+
+  if (pDest->IsString() || pDest->IsName()) {
     CPDF_NameTree name_tree(pDoc, FX_BSTRC("Dests"));
     CFX_ByteStringC name = pDest->GetString();
     return CPDF_Dest(name_tree.LookupNamedDest(pDoc, name));

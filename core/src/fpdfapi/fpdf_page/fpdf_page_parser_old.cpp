@@ -88,7 +88,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   CPDF_Object* pCSObj = NULL;
   if (pDict->KeyExist(FX_BSTRC("ColorSpace"))) {
     pCSObj = pDict->GetElementValue(FX_BSTRC("ColorSpace"));
-    if (pCSObj->GetType() == PDFOBJ_NAME) {
+    if (pCSObj->IsName()) {
       CFX_ByteString name = pCSObj->GetString();
       if (name != FX_BSTRC("DeviceRGB") && name != FX_BSTRC("DeviceGray") &&
           name != FX_BSTRC("DeviceCMYK")) {
