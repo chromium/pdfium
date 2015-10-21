@@ -14,6 +14,9 @@ deps = {
   "testing/gtest":
      "https://chromium.googlesource.com/external/googletest.git@8245545b6dc9c4703e6496d1efd19e975ad2b038",
 
+  "tools/clang":
+    "https://chromium.googlesource.com/chromium/src/tools/clang",
+
   "v8":
     "https://chromium.googlesource.com/v8/v8.git@4d03c3aabad6517ff058124bb799ca6a4156e570",
 
@@ -73,5 +76,11 @@ hooks = [
                 '--bucket', 'chromium-clang-format',
                 '-s', 'pdfium/buildtools/linux64/clang-format.sha1',
     ],
+  },
+  {
+    # Pull clang if needed or requested via GYP_DEFINES.
+    'name': 'clang',
+    'pattern': '.',
+    'action': ['python', 'pdfium/tools/clang/scripts/update.py', '--if-needed'],
   },
 ]
