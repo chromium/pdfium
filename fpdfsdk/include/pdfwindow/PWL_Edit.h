@@ -24,9 +24,7 @@ class IPWL_Filler_Notify {
       FX_FLOAT fPopupMax,
       int32_t& nRet,
       FX_FLOAT& fPopupRet) = 0;  // nRet: (0:bottom 1:top)
-  virtual void OnBeforeKeyStroke(FX_BOOL bEditOrList,
-                                 void* pPrivateData,
-                                 int32_t nKeyCode,
+  virtual void OnBeforeKeyStroke(void* pPrivateData,
                                  CFX_WideString& strChange,
                                  const CFX_WideString& strChangeEx,
                                  int nSelStart,
@@ -35,10 +33,6 @@ class IPWL_Filler_Notify {
                                  FX_BOOL& bRC,
                                  FX_BOOL& bExit,
                                  FX_DWORD nFlag) = 0;
-  virtual void OnAfterKeyStroke(FX_BOOL bEditOrList,
-                                void* pPrivateData,
-                                FX_BOOL& bExit,
-                                FX_DWORD nFlag) = 0;
 };
 
 class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {

@@ -374,20 +374,17 @@ void CPWL_ListBox::RePosChildWnd() {
 void CPWL_ListBox::OnNotifySelChanged(FX_BOOL bKeyDown,
                                       FX_BOOL& bExit,
                                       FX_DWORD nFlag) {
-  if (m_pFillerNotify) {
-    FX_BOOL bRC = TRUE;
-    CFX_WideString swChange = GetText();
-    CFX_WideString strChangeEx;
-    int nSelStart = 0;
-    int nSelEnd = swChange.GetLength();
-    m_pFillerNotify->OnBeforeKeyStroke(FALSE, GetAttachedData(), 0, swChange,
-                                       strChangeEx, nSelStart, nSelEnd,
-                                       bKeyDown, bRC, bExit, nFlag);
-    if (bExit)
-      return;
+  if (!m_pFillerNotify)
+    return;
 
-    m_pFillerNotify->OnAfterKeyStroke(FALSE, GetAttachedData(), bExit, nFlag);
-  }
+  FX_BOOL bRC = TRUE;
+  CFX_WideString swChange = GetText();
+  CFX_WideString strChangeEx;
+  int nSelStart = 0;
+  int nSelEnd = swChange.GetLength();
+  m_pFillerNotify->OnBeforeKeyStroke(GetAttachedData(), swChange, strChangeEx,
+                                     nSelStart, nSelEnd, bKeyDown, bRC, bExit,
+                                     nFlag);
 }
 
 CPDF_Rect CPWL_ListBox::GetFocusRect() const {
