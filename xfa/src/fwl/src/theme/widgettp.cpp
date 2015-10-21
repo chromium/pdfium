@@ -557,7 +557,6 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
                               FWLTHEME_DIRECTION eDict,
                               FX_ARGB argSign,
                               CFX_Matrix* pMatrix) {
-  CFX_RectF rtArrow(*pRect);
   FX_BOOL bVert =
       (eDict == FWLTHEME_DIRECTION_Up || eDict == FWLTHEME_DIRECTION_Down);
   FX_FLOAT fLeft =

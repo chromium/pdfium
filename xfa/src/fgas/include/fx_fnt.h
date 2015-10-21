@@ -138,7 +138,7 @@ class IFX_FontMgr {
   static IFX_FontMgr* Create(FX_LPEnumAllFonts pEnumerator,
                              FX_LPMatchFont pMatcher = NULL,
                              void* pUserData = NULL);
-  ~virtual ~IFX_FontMgr() {}
+  virtual ~IFX_FontMgr() {}
   virtual void Release() = 0;
   virtual IFX_Font* GetDefFontByCodePage(
       FX_WORD wCodePage,
