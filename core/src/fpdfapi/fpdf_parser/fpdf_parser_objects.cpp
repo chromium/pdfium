@@ -28,7 +28,7 @@ void CPDF_Object::Destroy() {
       delete (CPDF_Array*)this;
       break;
     case PDFOBJ_DICTIONARY:
-      delete this->AsDictionary();
+      delete AsDictionary();
       break;
     case PDFOBJ_STREAM:
       delete (CPDF_Stream*)this;
@@ -42,7 +42,7 @@ CFX_ByteString CPDF_Object::GetString() const {
     case PDFOBJ_BOOLEAN:
       return AsBoolean()->m_bValue ? "true" : "false";
     case PDFOBJ_NUMBER:
-      return ((CPDF_Number*)this)->GetString();
+      return AsNumber()->GetString();
     case PDFOBJ_STRING:
       return ((CPDF_String*)this)->m_String;
     case PDFOBJ_NAME:
@@ -88,7 +88,7 @@ CFX_ByteStringC CPDF_Object::GetConstString() const {
 FX_FLOAT CPDF_Object::GetNumber() const {
   switch (m_Type) {
     case PDFOBJ_NUMBER:
-      return ((CPDF_Number*)this)->GetNumber();
+      return AsNumber()->GetNumber();
     case PDFOBJ_REFERENCE: {
       CPDF_Reference* pRef = (CPDF_Reference*)(void*)this;
       if (pRef->m_pObjList == NULL) {
@@ -114,9 +114,9 @@ int CPDF_Object::GetInteger() const {
   }
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
-      return this->AsBoolean()->m_bValue;
+      return AsBoolean()->m_bValue;
     case PDFOBJ_NUMBER:
-      return ((CPDF_Number*)this)->GetInteger();
+      return AsNumber()->GetInteger();
     case PDFOBJ_REFERENCE: {
       CPDF_Reference* pRef = (CPDF_Reference*)(void*)this;
       PARSE_CONTEXT context;
@@ -140,7 +140,7 @@ CPDF_Dictionary* CPDF_Object::GetDict() const {
     case PDFOBJ_DICTIONARY:
       // The method should be made non-const if we want to not be const.
       // See bug #234.
-      return const_cast<CPDF_Dictionary*>(this->AsDictionary());
+      return const_cast<CPDF_Dictionary*>(AsDictionary());
     case PDFOBJ_STREAM:
       return ((CPDF_Stream*)this)->GetDict();
     case PDFOBJ_REFERENCE: {
@@ -171,7 +171,7 @@ void CPDF_Object::SetString(const CFX_ByteString& str) {
       AsBoolean()->m_bValue = (str == FX_BSTRC("true"));
       return;
     case PDFOBJ_NUMBER:
-      ((CPDF_Number*)this)->SetString(str);
+      AsNumber()->SetString(str);
       return;
     case PDFOBJ_STRING:
       ((CPDF_String*)this)->m_String = str;
@@ -207,9 +207,9 @@ FX_BOOL CPDF_Object::IsIdentical(CPDF_Object* pOther) const {
   }
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
-      return this->AsBoolean()->Identical(pOther->AsBoolean());
+      return AsBoolean()->Identical(pOther->AsBoolean());
     case PDFOBJ_NUMBER:
-      return (((CPDF_Number*)this)->Identical((CPDF_Number*)pOther));
+      return AsNumber()->Identical(pOther->AsNumber());
     case PDFOBJ_STRING:
       return (((CPDF_String*)this)->Identical((CPDF_String*)pOther));
     case PDFOBJ_NAME:
@@ -217,7 +217,7 @@ FX_BOOL CPDF_Object::IsIdentical(CPDF_Object* pOther) const {
     case PDFOBJ_ARRAY:
       return (((CPDF_Array*)this)->Identical((CPDF_Array*)pOther));
     case PDFOBJ_DICTIONARY:
-      return this->AsDictionary()->Identical(pOther->AsDictionary());
+      return AsDictionary()->Identical(pOther->AsDictionary());
     case PDFOBJ_NULL:
       return TRUE;
     case PDFOBJ_STREAM:
@@ -245,11 +245,12 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
                                         CFX_MapPtrToPtr* visited) const {
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
-      return new CPDF_Boolean(this->AsBoolean()->m_bValue);
-    case PDFOBJ_NUMBER:
-      if (((CPDF_Number*)this)->m_bInteger)
-        return new CPDF_Number(((CPDF_Number*)this)->m_Integer);
-      return new CPDF_Number(((CPDF_Number*)this)->m_Float);
+      return new CPDF_Boolean(AsBoolean()->m_bValue);
+    case PDFOBJ_NUMBER: {
+      const CPDF_Number* pThis = AsNumber();
+      return new CPDF_Number(pThis->m_bInteger ? pThis->m_Integer
+                                               : pThis->m_Float);
+    }
     case PDFOBJ_STRING:
       return new CPDF_String(((CPDF_String*)this)->m_String,
                              ((CPDF_String*)this)->IsHex());
@@ -267,7 +268,7 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
     }
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pCopy = new CPDF_Dictionary();
-      const CPDF_Dictionary* pThis = this->AsDictionary();
+      const CPDF_Dictionary* pThis = AsDictionary();
       FX_POSITION pos = pThis->m_Map.GetStartPosition();
       while (pos) {
         CFX_ByteString key;
@@ -352,6 +353,14 @@ CPDF_Dictionary* CPDF_Object::AsDictionary() {
 
 const CPDF_Dictionary* CPDF_Object::AsDictionary() const {
   return IsDictionary() ? static_cast<const CPDF_Dictionary*>(this) : nullptr;
+}
+
+CPDF_Number* CPDF_Object::AsNumber() {
+  return IsNumber() ? static_cast<CPDF_Number*>(this) : nullptr;
+}
+
+const CPDF_Number* CPDF_Object::AsNumber() const {
+  return IsNumber() ? static_cast<const CPDF_Number*>(this) : nullptr;
 }
 
 CPDF_Number::CPDF_Number(int value)

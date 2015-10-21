@@ -937,9 +937,10 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
       m_pParser->m_ObjVersion[objnum] > 0) {
     return 1;
   }
-  if (pObj->GetType() == PDFOBJ_NUMBER) {
+
+  if (pObj->IsNumber())
     return 1;
-  }
+
   CPDF_Dictionary* pDict = pObj->GetDict();
   if (pObj->GetType() == PDFOBJ_STREAM) {
     if (pDict && pDict->GetString(FX_BSTRC("Type")) == FX_BSTRC("XRef")) {

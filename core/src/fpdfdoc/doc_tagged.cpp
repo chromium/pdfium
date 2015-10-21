@@ -254,10 +254,10 @@ void CPDF_StructElementImpl::LoadKid(FX_DWORD PageObjNum,
                                      CPDF_Object* pKidObj,
                                      CPDF_StructKid* pKid) {
   pKid->m_Type = CPDF_StructKid::Invalid;
-  if (pKidObj == NULL) {
+  if (!pKidObj)
     return;
-  }
-  if (pKidObj->GetType() == PDFOBJ_NUMBER) {
+
+  if (pKidObj->IsNumber()) {
     if (m_pTree->m_pPage && m_pTree->m_pPage->GetObjNum() != PageObjNum) {
       return;
     }
@@ -266,6 +266,7 @@ void CPDF_StructElementImpl::LoadKid(FX_DWORD PageObjNum,
     pKid->m_PageContent.m_PageObjNum = PageObjNum;
     return;
   }
+
   CPDF_Dictionary* pKidDict = pKidObj->AsDictionary();
   if (!pKidDict)
     return;
@@ -441,10 +442,7 @@ FX_FLOAT CPDF_StructElementImpl::GetNumber(const CFX_ByteStringC& owner,
                                            FX_BOOL bInheritable,
                                            int subindex) {
   CPDF_Object* pAttr = GetAttr(owner, name, bInheritable, subindex);
-  if (pAttr == NULL || pAttr->GetType() != PDFOBJ_NUMBER) {
-    return default_value;
-  }
-  return pAttr->GetNumber();
+  return ToNumber(pAttr) ? pAttr->GetNumber() : default_value;
 }
 int CPDF_StructElementImpl::GetInteger(const CFX_ByteStringC& owner,
                                        const CFX_ByteStringC& name,
@@ -452,8 +450,5 @@ int CPDF_StructElementImpl::GetInteger(const CFX_ByteStringC& owner,
                                        FX_BOOL bInheritable,
                                        int subindex) {
   CPDF_Object* pAttr = GetAttr(owner, name, bInheritable, subindex);
-  if (pAttr == NULL || pAttr->GetType() != PDFOBJ_NUMBER) {
-    return default_value;
-  }
-  return pAttr->GetInteger();
+  return ToNumber(pAttr) ? pAttr->GetInteger() : default_value;
 }

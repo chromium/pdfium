@@ -71,18 +71,17 @@ void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
   }
   FX_DWORD dwPageCount = 0;
   CPDF_Object* pCount = pLinearized->GetElement(FX_BSTRC("N"));
-  if (pCount && pCount->GetType() == PDFOBJ_NUMBER) {
+  if (ToNumber(pCount))
     dwPageCount = pCount->GetInteger();
-  }
+
   m_PageList.SetSize(dwPageCount);
   CPDF_Object* pNo = pLinearized->GetElement(FX_BSTRC("P"));
-  if (pNo && pNo->GetType() == PDFOBJ_NUMBER) {
+  if (ToNumber(pNo))
     m_dwFirstPageNo = pNo->GetInteger();
-  }
+
   CPDF_Object* pObjNum = pLinearized->GetElement(FX_BSTRC("O"));
-  if (pObjNum && pObjNum->GetType() == PDFOBJ_NUMBER) {
+  if (ToNumber(pObjNum))
     m_dwFirstPageObjNum = pObjNum->GetInteger();
-  }
 }
 void CPDF_Document::LoadPages() {
   m_PageList.SetSize(_GetPageCount());

@@ -45,10 +45,8 @@ int32_t GetHeaderOffset(IFX_FileRead* pFile) {
 }
 
 int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteStringC& key) {
-  CPDF_Object* pObj = pDict->GetElement(key);
-  if (pObj && (pObj->GetType() == PDFOBJ_NUMBER))
-    return ((CPDF_Number*)pObj)->GetInteger();
-  return 0;
+  CPDF_Number* pObj = ToNumber(pDict->GetElement(key));
+  return pObj ? pObj->GetInteger() : 0;
 }
 
 bool CheckDirectType(CPDF_Dictionary* pDict,
@@ -1048,8 +1046,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos,
     for (FX_DWORD i = 0; i < nPairSize; i++) {
       CPDF_Object* pStartNumObj = pArray->GetElement(i * 2);
       CPDF_Object* pCountObj = pArray->GetElement(i * 2 + 1);
-      if (pStartNumObj && pStartNumObj->GetType() == PDFOBJ_NUMBER &&
-          pCountObj && pCountObj->GetType() == PDFOBJ_NUMBER) {
+      if (ToNumber(pStartNumObj) && ToNumber(pCountObj)) {
         int nStartNum = pStartNumObj->GetInteger();
         int nCount = pCountObj->GetInteger();
         if (nStartNum >= 0 && nCount > 0) {
@@ -1551,10 +1548,12 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
   if (!m_pLinearized) {
     return FALSE;
   }
-  if (m_pLinearized->GetDict() &&
-      m_pLinearized->GetDict()->GetElement(FX_BSTRC("Linearized"))) {
+
+  CPDF_Dictionary* pDict = m_pLinearized->GetDict();
+  if (pDict && pDict->GetElement(FX_BSTRC("Linearized"))) {
     m_Syntax.GetNextWord(bIsNumber);
-    CPDF_Object* pLen = m_pLinearized->GetDict()->GetElement(FX_BSTRC("L"));
+
+    CPDF_Object* pLen = pDict->GetElement(FX_BSTRC("L"));
     if (!pLen) {
       m_pLinearized->Release();
       m_pLinearized = NULL;
@@ -1563,14 +1562,13 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
     if (pLen->GetInteger() != (int)pFileAccess->GetSize()) {
       return FALSE;
     }
-    CPDF_Object* pNo = m_pLinearized->GetDict()->GetElement(FX_BSTRC("P"));
-    if (pNo && pNo->GetType() == PDFOBJ_NUMBER) {
+
+    if (CPDF_Number* pNo = ToNumber(pDict->GetElement(FX_BSTRC("P"))))
       m_dwFirstPageNo = pNo->GetInteger();
-    }
-    CPDF_Object* pTable = m_pLinearized->GetDict()->GetElement(FX_BSTRC("T"));
-    if (pTable && pTable->GetType() == PDFOBJ_NUMBER) {
+
+    if (CPDF_Number* pTable = ToNumber(pDict->GetElement(FX_BSTRC("T"))))
       m_LastXRefOffset = pTable->GetInteger();
-    }
+
     return TRUE;
   }
   m_pLinearized->Release();
@@ -3621,7 +3619,7 @@ FX_BOOL CPDF_DataAvail::CheckFirstPage(IFX_DownloadHints* pHints) {
     return FALSE;
   }
   FX_BOOL bNeedDownLoad = FALSE;
-  if (pEndOffSet->GetType() == PDFOBJ_NUMBER) {
+  if (pEndOffSet->IsNumber()) {
     FX_DWORD dwEnd = pEndOffSet->GetInteger();
     dwEnd += 512;
     if ((FX_FILESIZE)dwEnd > m_dwFileLen) {
@@ -3636,12 +3634,12 @@ FX_BOOL CPDF_DataAvail::CheckFirstPage(IFX_DownloadHints* pHints) {
   }
   m_dwLastXRefOffset = 0;
   FX_FILESIZE dwFileLen = 0;
-  if (pXRefOffset->GetType() == PDFOBJ_NUMBER) {
+  if (pXRefOffset->IsNumber())
     m_dwLastXRefOffset = pXRefOffset->GetInteger();
-  }
-  if (pFileLen->GetType() == PDFOBJ_NUMBER) {
+
+  if (pFileLen->IsNumber())
     dwFileLen = pFileLen->GetInteger();
-  }
+
   if (!m_pFileAvail->IsDataAvail(m_dwLastXRefOffset,
                                  (FX_DWORD)(dwFileLen - m_dwLastXRefOffset))) {
     if (m_docStatus == PDF_DATAAVAIL_FIRSTPAGE) {
@@ -3733,9 +3731,10 @@ FX_BOOL CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, FX_DWORD dwLen) {
   if (!m_pLinearized) {
     return FALSE;
   }
-  if (m_pLinearized->GetDict() &&
-      m_pLinearized->GetDict()->GetElement(FX_BSTRC("Linearized"))) {
-    CPDF_Object* pLen = m_pLinearized->GetDict()->GetElement(FX_BSTRC("L"));
+
+  CPDF_Dictionary* pDict = m_pLinearized->GetDict();
+  if (pDict && pDict->GetElement(FX_BSTRC("Linearized"))) {
+    CPDF_Object* pLen = pDict->GetElement(FX_BSTRC("L"));
     if (!pLen) {
       return FALSE;
     }
@@ -3743,10 +3742,10 @@ FX_BOOL CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, FX_DWORD dwLen) {
       return FALSE;
     }
     m_bLinearized = TRUE;
-    CPDF_Object* pNo = m_pLinearized->GetDict()->GetElement(FX_BSTRC("P"));
-    if (pNo && pNo->GetType() == PDFOBJ_NUMBER) {
+
+    if (CPDF_Number* pNo = ToNumber(pDict->GetElement(FX_BSTRC("P"))))
       m_dwFirstPageNo = pNo->GetInteger();
-    }
+
     return TRUE;
   }
   return FALSE;

@@ -852,9 +852,10 @@ FX_BOOL Document::info(IJS_Context* cc,
           (pValueObj->GetType() == PDFOBJ_NAME))
         FXJS_PutObjectString(isolate, pObj, wsKey.c_str(),
                              pValueObj->GetUnicodeText().c_str());
-      if (pValueObj->GetType() == PDFOBJ_NUMBER)
+      if (pValueObj->IsNumber()) {
         FXJS_PutObjectNumber(isolate, pObj, wsKey.c_str(),
                              (float)pValueObj->GetNumber());
+      }
       if (pValueObj->IsBoolean()) {
         FXJS_PutObjectBoolean(isolate, pObj, wsKey.c_str(),
                               (bool)pValueObj->GetInteger());
