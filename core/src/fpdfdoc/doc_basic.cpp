@@ -11,15 +11,12 @@ int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
     return 0;
   }
   CPDF_Object* pPage = ((CPDF_Array*)m_pObj)->GetElementValue(0);
-  if (pPage == NULL) {
+  if (!pPage)
     return 0;
-  }
-  if (pPage->GetType() == PDFOBJ_NUMBER) {
+  if (pPage->IsNumber())
     return pPage->GetInteger();
-  }
-  if (!pPage->IsDictionary()) {
+  if (!pPage->IsDictionary())
     return 0;
-  }
   return pDoc->GetPageIndex(pPage->GetObjNum());
 }
 FX_DWORD CPDF_Dest::GetPageObjNum() {
@@ -27,15 +24,12 @@ FX_DWORD CPDF_Dest::GetPageObjNum() {
     return 0;
   }
   CPDF_Object* pPage = ((CPDF_Array*)m_pObj)->GetElementValue(0);
-  if (pPage == NULL) {
+  if (!pPage)
     return 0;
-  }
-  if (pPage->GetType() == PDFOBJ_NUMBER) {
+  if (pPage->IsNumber())
     return pPage->GetInteger();
-  }
-  if (pPage->IsDictionary()) {
+  if (pPage->IsDictionary())
     return pPage->GetObjNum();
-  }
   return 0;
 }
 const FX_CHAR* g_sZoomModes[] = {"XYZ",  "Fit",   "FitH",  "FitV", "FitR",

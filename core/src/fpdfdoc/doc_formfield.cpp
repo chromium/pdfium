@@ -431,7 +431,7 @@ int CPDF_FormField::CountSelectedItems() {
     }
     return 1;
   }
-  if (pValue->GetType() == PDFOBJ_NUMBER) {
+  if (pValue->IsNumber()) {
     if (pValue->GetString().IsEmpty()) {
       return 0;
     }
@@ -450,9 +450,9 @@ int CPDF_FormField::GetSelectedIndex(int index) {
       return -1;
     }
   }
-  if (pValue->GetType() == PDFOBJ_NUMBER) {
+  if (pValue->IsNumber())
     return pValue->GetInteger();
-  }
+
   CFX_WideString sel_value;
   if (pValue->GetType() == PDFOBJ_STRING) {
     if (index != 0) {
@@ -541,7 +541,7 @@ FX_BOOL CPDF_FormField::IsItemSelected(int index) {
     }
     return FALSE;
   }
-  if (pValue->GetType() == PDFOBJ_NUMBER) {
+  if (pValue->IsNumber()) {
     if (pValue->GetString().IsEmpty()) {
       return FALSE;
     }
