@@ -10,11 +10,16 @@ Also install Python, Subversion, and Git and make sure they're in your path.
 
 ## Get the code
 
+The name of the top-level directory does not matter. In our examples, we use
+"repo". This directory must not have been used before by `gclient config` as
+each directory can only house a single gclient configuration.
+
 ```
-mkdir pdfium
-cd pdfium
-gclient config --name . --unmanaged https://pdfium.googlesource.com/pdfium.git
+mkdir repo
+cd repo
+gclient config --unmanaged https://pdfium.googlesource.com/pdfium.git
 gclient sync
+cd pdfium
 ```
 
 ## Generate the build files
