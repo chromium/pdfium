@@ -31,7 +31,7 @@ void CPDF_Object::Destroy() {
       delete AsDictionary();
       break;
     case PDFOBJ_STREAM:
-      delete (CPDF_Stream*)this;
+      delete AsStream();
       break;
     default:
       delete this;
@@ -144,7 +144,7 @@ CPDF_Dictionary* CPDF_Object::GetDict() const {
       // See bug #234.
       return const_cast<CPDF_Dictionary*>(AsDictionary());
     case PDFOBJ_STREAM:
-      return ((CPDF_Stream*)this)->GetDict();
+      return AsStream()->GetDict();
     case PDFOBJ_REFERENCE: {
       CPDF_Reference* pRef = (CPDF_Reference*)this;
       CPDF_IndirectObjects* pIndirect = pRef->GetObjList();
@@ -222,7 +222,7 @@ FX_BOOL CPDF_Object::IsIdentical(CPDF_Object* pOther) const {
     case PDFOBJ_NULL:
       return TRUE;
     case PDFOBJ_STREAM:
-      return (((CPDF_Stream*)this)->Identical((CPDF_Stream*)pOther));
+      return AsStream()->Identical(pOther->AsStream());
     case PDFOBJ_REFERENCE:
       return (((CPDF_Reference*)this)->Identical((CPDF_Reference*)pOther));
   }
@@ -284,7 +284,7 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
       return new CPDF_Null;
     }
     case PDFOBJ_STREAM: {
-      CPDF_Stream* pThis = (CPDF_Stream*)this;
+      const CPDF_Stream* pThis = AsStream();
       CPDF_StreamAcc acc;
       acc.LoadAllData(pThis, TRUE);
       FX_DWORD streamSize = acc.GetSize();
@@ -319,9 +319,9 @@ CFX_WideString CPDF_Object::GetUnicodeText(CFX_CharMap* pCharMap) const {
   if (const CPDF_String* pString = AsString())
     return PDF_DecodeText(pString->m_String, pCharMap);
 
-  if (m_Type == PDFOBJ_STREAM) {
+  if (const CPDF_Stream* pStream = AsStream()) {
     CPDF_StreamAcc stream;
-    stream.LoadAllData((CPDF_Stream*)this, FALSE);
+    stream.LoadAllData(pStream, FALSE);
     CFX_WideString result =
         PDF_DecodeText(stream.GetData(), stream.GetSize(), pCharMap);
     return result;
@@ -333,10 +333,10 @@ CFX_WideString CPDF_Object::GetUnicodeText(CFX_CharMap* pCharMap) const {
 void CPDF_Object::SetUnicodeText(const FX_WCHAR* pUnicodes, int len) {
   if (CPDF_String* pString = AsString()) {
     pString->m_String = PDF_EncodeText(pUnicodes, len);
-  } else if (m_Type == PDFOBJ_STREAM) {
+  } else if (CPDF_Stream* pStream = AsStream()) {
     CFX_ByteString result = PDF_EncodeText(pUnicodes, len);
-    ((CPDF_Stream*)this)
-        ->SetData((uint8_t*)result.c_str(), result.GetLength(), FALSE, FALSE);
+    pStream->SetData((uint8_t*)result.c_str(), result.GetLength(), FALSE,
+                     FALSE);
   }
 }
 
@@ -378,6 +378,14 @@ CPDF_Number* CPDF_Object::AsNumber() {
 
 const CPDF_Number* CPDF_Object::AsNumber() const {
   return IsNumber() ? static_cast<const CPDF_Number*>(this) : nullptr;
+}
+
+CPDF_Stream* CPDF_Object::AsStream() {
+  return IsStream() ? static_cast<CPDF_Stream*>(this) : nullptr;
+}
+
+const CPDF_Stream* CPDF_Object::AsStream() const {
+  return IsStream() ? static_cast<const CPDF_Stream*>(this) : nullptr;
 }
 
 CPDF_String* CPDF_Object::AsString() {
@@ -487,23 +495,16 @@ FX_FLOAT CPDF_Array::GetNumber(FX_DWORD i) const {
 }
 CPDF_Dictionary* CPDF_Array::GetDict(FX_DWORD i) const {
   CPDF_Object* p = GetElementValue(i);
-  if (!p) {
+  if (!p)
     return NULL;
-  }
-  if (CPDF_Dictionary* pDict = p->AsDictionary()) {
+  if (CPDF_Dictionary* pDict = p->AsDictionary())
     return pDict;
-  }
-  if (p->GetType() == PDFOBJ_STREAM) {
-    return ((CPDF_Stream*)p)->GetDict();
-  }
+  if (CPDF_Stream* pStream = p->AsStream())
+    return pStream->GetDict();
   return NULL;
 }
 CPDF_Stream* CPDF_Array::GetStream(FX_DWORD i) const {
-  CPDF_Object* p = GetElementValue(i);
-  if (p == NULL || p->GetType() != PDFOBJ_STREAM) {
-    return NULL;
-  }
-  return (CPDF_Stream*)p;
+  return ToStream(GetElementValue(i));
 }
 CPDF_Array* CPDF_Array::GetArray(FX_DWORD i) const {
   return ToArray(GetElementValue(i));
@@ -703,26 +704,19 @@ FX_BOOL CPDF_Dictionary::GetBoolean(const CFX_ByteStringC& key,
 }
 CPDF_Dictionary* CPDF_Dictionary::GetDict(const CFX_ByteStringC& key) const {
   CPDF_Object* p = GetElementValue(key);
-  if (!p) {
+  if (!p)
     return nullptr;
-  }
-  if (CPDF_Dictionary* pDict = p->AsDictionary()) {
+  if (CPDF_Dictionary* pDict = p->AsDictionary())
     return pDict;
-  }
-  if (p->GetType() == PDFOBJ_STREAM) {
-    return ((CPDF_Stream*)p)->GetDict();
-  }
+  if (CPDF_Stream* pStream = p->AsStream())
+    return pStream->GetDict();
   return nullptr;
 }
 CPDF_Array* CPDF_Dictionary::GetArray(const CFX_ByteStringC& key) const {
   return ToArray(GetElementValue(key));
 }
 CPDF_Stream* CPDF_Dictionary::GetStream(const CFX_ByteStringC& key) const {
-  CPDF_Object* p = GetElementValue(key);
-  if (p == NULL || p->GetType() != PDFOBJ_STREAM) {
-    return NULL;
-  }
-  return (CPDF_Stream*)p;
+  return ToStream(GetElementValue(key));
 }
 CFX_FloatRect CPDF_Dictionary::GetRect(const CFX_ByteStringC& key) const {
   CFX_FloatRect rect;
@@ -1035,9 +1029,9 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
                                  FX_BOOL bRawAccess,
                                  FX_DWORD estimated_size,
                                  FX_BOOL bImageAcc) {
-  if (pStream == NULL || pStream->GetType() != PDFOBJ_STREAM) {
+  if (!pStream)
     return;
-  }
+
   m_pStream = pStream;
   if (pStream->IsMemoryBased() &&
       (!pStream->GetDict()->KeyExist(FX_BSTRC("Filter")) || bRawAccess)) {
@@ -1047,14 +1041,13 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
   }
   uint8_t* pSrcData;
   FX_DWORD dwSrcSize = pStream->m_dwSize;
-  if (dwSrcSize == 0) {
+  if (dwSrcSize == 0)
     return;
-  }
+
   if (!pStream->IsMemoryBased()) {
     pSrcData = m_pSrcData = FX_Alloc(uint8_t, dwSrcSize);
-    if (!pStream->ReadRawData(0, pSrcData, dwSrcSize)) {
+    if (!pStream->ReadRawData(0, pSrcData, dwSrcSize))
       return;
-    }
   } else {
     pSrcData = pStream->m_pDataBuf;
   }

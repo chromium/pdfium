@@ -784,29 +784,20 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                 FX_FILESIZE obj_end = 0;
                 CPDF_Object* pObject = ParseIndirectObjectAtByStrict(
                     m_pDocument, obj_pos, objnum, NULL, &obj_end);
-                if (pObject) {
-                  int iType = pObject->GetType();
-                  if (iType == PDFOBJ_STREAM) {
-                    CPDF_Stream* pStream = (CPDF_Stream*)pObject;
-                    CPDF_Dictionary* pDict = pStream->GetDict();
-                    if (pDict) {
-                      if (pDict->KeyExist(FX_BSTRC("Type"))) {
-                        CFX_ByteString bsValue =
-                            pDict->GetString(FX_BSTRC("Type"));
-                        if (bsValue == FX_BSTRC("XRef") &&
-                            pDict->KeyExist(FX_BSTRC("Size"))) {
-                          CPDF_Object* pRoot =
-                              pDict->GetElement(FX_BSTRC("Root"));
-                          if (pRoot && pRoot->GetDict() &&
-                              pRoot->GetDict()->GetElement(FX_BSTRC("Pages"))) {
-                            if (m_pTrailer) {
-                              m_pTrailer->Release();
-                            }
-                            m_pTrailer = ToDictionary(pDict->Clone());
-                          }
+                if (CPDF_Stream* pStream = ToStream(pObject)) {
+                  if (CPDF_Dictionary* pDict = pStream->GetDict()) {
+                    if ((pDict->KeyExist(FX_BSTRC("Type"))) &&
+                        (pDict->GetString(FX_BSTRC("Type")) ==
+                             FX_BSTRC("XRef") &&
+                         pDict->KeyExist(FX_BSTRC("Size")))) {
+                      CPDF_Object* pRoot = pDict->GetElement(FX_BSTRC("Root"));
+                      if (pRoot && pRoot->GetDict() &&
+                          pRoot->GetDict()->GetElement(FX_BSTRC("Pages"))) {
+                        if (m_pTrailer)
+                          m_pTrailer->Release();
+                        m_pTrailer = ToDictionary(pDict->Clone());
                         }
                       }
-                    }
                   }
                 }
                 FX_FILESIZE offset = 0;
@@ -855,16 +846,12 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
               m_Syntax.RestorePos(pos + i - m_Syntax.m_HeaderOffset);
               CPDF_Object* pObj = m_Syntax.GetObject(m_pDocument, 0, 0, 0);
               if (pObj) {
-                if (!pObj->IsDictionary() && pObj->GetType() != PDFOBJ_STREAM) {
+                if (!pObj->IsDictionary() && !pObj->AsStream()) {
                   pObj->Release();
                 } else {
-                  CPDF_Dictionary* pTrailer = NULL;
-                  if (pObj->GetType() == PDFOBJ_STREAM) {
-                    pTrailer = ((CPDF_Stream*)pObj)->GetDict();
-                  } else {
-                    pTrailer = pObj->AsDictionary();
-                  }
-                  if (pTrailer) {
+                  CPDF_Stream* pStream = pObj->AsStream();
+                  if (CPDF_Dictionary* pTrailer =
+                          pStream ? pStream->GetDict() : pObj->AsDictionary()) {
                     if (m_pTrailer) {
                       CPDF_Object* pRoot =
                           pTrailer->GetElement(FX_BSTRC("Root"));
@@ -886,7 +873,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                         pObj->Release();
                       }
                     } else {
-                      if (pObj->GetType() == PDFOBJ_STREAM) {
+                      if (pObj->IsStream()) {
                         m_pTrailer = ToDictionary(pTrailer->Clone());
                         pObj->Release();
                       } else {
@@ -1005,25 +992,25 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
 FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos,
                                     FX_FILESIZE& prev,
                                     FX_BOOL bMainXRef) {
-  CPDF_Stream* pStream =
-      (CPDF_Stream*)ParseIndirectObjectAt(m_pDocument, pos, 0, NULL);
-  if (!pStream) {
+  CPDF_Object* pObject = ParseIndirectObjectAt(m_pDocument, pos, 0, nullptr);
+  if (!pObject)
     return FALSE;
-  }
+
   if (m_pDocument) {
     CPDF_Dictionary* pDict = m_pDocument->GetRoot();
-    if (!pDict || pDict->GetObjNum() != pStream->m_ObjNum) {
-      m_pDocument->InsertIndirectObject(pStream->m_ObjNum, pStream);
+    if (!pDict || pDict->GetObjNum() != pObject->m_ObjNum) {
+      m_pDocument->InsertIndirectObject(pObject->m_ObjNum, pObject);
     } else {
-      if (pStream->GetType() == PDFOBJ_STREAM) {
-        pStream->Release();
-      }
+      if (pObject->IsStream())
+        pObject->Release();
       return FALSE;
     }
   }
-  if (pStream->GetType() != PDFOBJ_STREAM) {
+
+  CPDF_Stream* pStream = pObject->AsStream();
+  if (!pStream)
     return FALSE;
-  }
+
   prev = pStream->GetDict()->GetInteger(FX_BSTRC("Prev"));
   int32_t size = pStream->GetDict()->GetInteger(FX_BSTRC("Size"));
   if (size < 0) {
@@ -1245,15 +1232,15 @@ CPDF_Object* CPDF_Parser::ParseIndirectObject(CPDF_IndirectObjects* pObjList,
 }
 
 CPDF_StreamAcc* CPDF_Parser::GetObjectStream(FX_DWORD objnum) {
-  CPDF_StreamAcc* pStreamAcc = NULL;
-  if (m_ObjectStreamMap.Lookup((void*)(uintptr_t)objnum, (void*&)pStreamAcc)) {
+  CPDF_StreamAcc* pStreamAcc = nullptr;
+  if (m_ObjectStreamMap.Lookup((void*)(uintptr_t)objnum, (void*&)pStreamAcc))
     return pStreamAcc;
-  }
+
   const CPDF_Stream* pStream =
-      m_pDocument ? (CPDF_Stream*)m_pDocument->GetIndirectObject(objnum) : NULL;
-  if (pStream == NULL || pStream->GetType() != PDFOBJ_STREAM) {
-    return NULL;
-  }
+      ToStream(m_pDocument ? m_pDocument->GetIndirectObject(objnum) : nullptr);
+  if (!pStream)
+    return nullptr;
+
   pStreamAcc = new CPDF_StreamAcc;
   pStreamAcc->LoadAllData(pStream);
   m_ObjectStreamMap.SetAt((void*)(uintptr_t)objnum, pStreamAcc);

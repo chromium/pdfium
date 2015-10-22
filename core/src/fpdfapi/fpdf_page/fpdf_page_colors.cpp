@@ -913,9 +913,9 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
 
   if (CPDF_String* pString = pTableObj->AsString()) {
     m_Table = pString->GetString();
-  } else if (pTableObj->GetType() == PDFOBJ_STREAM) {
+  } else if (CPDF_Stream* pStream = pTableObj->AsStream()) {
     CPDF_StreamAcc acc;
-    acc.LoadAllData((CPDF_Stream*)pTableObj, FALSE);
+    acc.LoadAllData(pStream, FALSE);
     m_Table = CFX_ByteStringC(acc.GetData(), acc.GetSize());
   }
   return TRUE;
@@ -1204,8 +1204,8 @@ CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
   if (pObj->IsName())
     return _CSFromName(pObj->GetString());
 
-  if (pObj->GetType() == PDFOBJ_STREAM) {
-    CPDF_Dictionary* pDict = ((CPDF_Stream*)pObj)->GetDict();
+  if (CPDF_Stream* pStream = pObj->AsStream()) {
+    CPDF_Dictionary* pDict = pStream->GetDict();
     if (!pDict)
       return nullptr;
 

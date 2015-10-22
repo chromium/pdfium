@@ -417,7 +417,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       break;
     }
     case PDFOBJ_STREAM: {
-      CPDF_Stream* p = (CPDF_Stream*)pObj;
+      const CPDF_Stream* p = pObj->AsStream();
       buf << p->GetDict() << FX_BSTRC("stream\r\n");
       CPDF_StreamAcc acc;
       acc.LoadAllData(p, TRUE);

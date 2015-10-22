@@ -10,13 +10,13 @@
 #include "../fpdf_page/pageint.h"
 #include "render_int.h"
 #define SHADING_STEPS 256
-static void _DrawAxialShading(CFX_DIBitmap* pBitmap,
-                              CFX_AffineMatrix* pObject2Bitmap,
-                              CPDF_Dictionary* pDict,
-                              CPDF_Function** pFuncs,
-                              int nFuncs,
-                              CPDF_ColorSpace* pCS,
-                              int alpha) {
+static void DrawAxialShading(CFX_DIBitmap* pBitmap,
+                             CFX_AffineMatrix* pObject2Bitmap,
+                             CPDF_Dictionary* pDict,
+                             CPDF_Function** pFuncs,
+                             int nFuncs,
+                             CPDF_ColorSpace* pCS,
+                             int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
   CPDF_Array* pCoords = pDict->GetArray(FX_BSTRC("Coords"));
   if (pCoords == NULL) {
@@ -101,13 +101,13 @@ static void _DrawAxialShading(CFX_DIBitmap* pBitmap,
     }
   }
 }
-static void _DrawRadialShading(CFX_DIBitmap* pBitmap,
-                               CFX_AffineMatrix* pObject2Bitmap,
-                               CPDF_Dictionary* pDict,
-                               CPDF_Function** pFuncs,
-                               int nFuncs,
-                               CPDF_ColorSpace* pCS,
-                               int alpha) {
+static void DrawRadialShading(CFX_DIBitmap* pBitmap,
+                              CFX_AffineMatrix* pObject2Bitmap,
+                              CPDF_Dictionary* pDict,
+                              CPDF_Function** pFuncs,
+                              int nFuncs,
+                              CPDF_ColorSpace* pCS,
+                              int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
   CPDF_Array* pCoords = pDict->GetArray(FX_BSTRC("Coords"));
   if (pCoords == NULL) {
@@ -239,13 +239,13 @@ static void _DrawRadialShading(CFX_DIBitmap* pBitmap,
     }
   }
 }
-static void _DrawFuncShading(CFX_DIBitmap* pBitmap,
-                             CFX_AffineMatrix* pObject2Bitmap,
-                             CPDF_Dictionary* pDict,
-                             CPDF_Function** pFuncs,
-                             int nFuncs,
-                             CPDF_ColorSpace* pCS,
-                             int alpha) {
+static void DrawFuncShading(CFX_DIBitmap* pBitmap,
+                            CFX_AffineMatrix* pObject2Bitmap,
+                            CPDF_Dictionary* pDict,
+                            CPDF_Function** pFuncs,
+                            int nFuncs,
+                            CPDF_ColorSpace* pCS,
+                            int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
   CPDF_Array* pDomain = pDict->GetArray(FX_BSTRC("Domain"));
   FX_FLOAT xmin = 0, ymin = 0, xmax = 1.0f, ymax = 1.0f;
@@ -323,9 +323,9 @@ FX_BOOL _GetScanlineIntersect(int y,
   x = x1 + FXSYS_MulDiv(x2 - x1, y - y1, y2 - y1);
   return TRUE;
 }
-static void _DrawGouraud(CFX_DIBitmap* pBitmap,
-                         int alpha,
-                         CPDF_MeshVertex triangle[3]) {
+static void DrawGouraud(CFX_DIBitmap* pBitmap,
+                        int alpha,
+                        CPDF_MeshVertex triangle[3]) {
   FX_FLOAT min_y = triangle[0].y, max_y = triangle[0].y;
   for (int i = 1; i < 3; i++) {
     if (min_y > triangle[i].y) {
@@ -408,21 +408,19 @@ static void _DrawGouraud(CFX_DIBitmap* pBitmap,
     }
   }
 }
-static void _DrawFreeGouraudShading(CFX_DIBitmap* pBitmap,
-                                    CFX_AffineMatrix* pObject2Bitmap,
-                                    CPDF_Stream* pShadingStream,
-                                    CPDF_Function** pFuncs,
-                                    int nFuncs,
-                                    CPDF_ColorSpace* pCS,
-                                    int alpha) {
+static void DrawFreeGouraudShading(CFX_DIBitmap* pBitmap,
+                                   CFX_AffineMatrix* pObject2Bitmap,
+                                   CPDF_Stream* pShadingStream,
+                                   CPDF_Function** pFuncs,
+                                   int nFuncs,
+                                   CPDF_ColorSpace* pCS,
+                                   int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
-  if (pShadingStream->GetType() != PDFOBJ_STREAM) {
-    return;
-  }
+
   CPDF_MeshStream stream;
-  if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS)) {
+  if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS))
     return;
-  }
+
   CPDF_MeshVertex triangle[3];
   FXSYS_memset(triangle, 0, sizeof(triangle));
 
@@ -441,28 +439,26 @@ static void _DrawFreeGouraudShading(CFX_DIBitmap* pBitmap,
       triangle[1] = triangle[2];
       triangle[2] = vertex;
     }
-    _DrawGouraud(pBitmap, alpha, triangle);
+    DrawGouraud(pBitmap, alpha, triangle);
   }
 }
-static void _DrawLatticeGouraudShading(CFX_DIBitmap* pBitmap,
-                                       CFX_AffineMatrix* pObject2Bitmap,
-                                       CPDF_Stream* pShadingStream,
-                                       CPDF_Function** pFuncs,
-                                       int nFuncs,
-                                       CPDF_ColorSpace* pCS,
-                                       int alpha) {
+static void DrawLatticeGouraudShading(CFX_DIBitmap* pBitmap,
+                                      CFX_AffineMatrix* pObject2Bitmap,
+                                      CPDF_Stream* pShadingStream,
+                                      CPDF_Function** pFuncs,
+                                      int nFuncs,
+                                      CPDF_ColorSpace* pCS,
+                                      int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
-  if (pShadingStream->GetType() != PDFOBJ_STREAM) {
-    return;
-  }
+
   int row_verts = pShadingStream->GetDict()->GetInteger("VerticesPerRow");
-  if (row_verts < 2) {
+  if (row_verts < 2)
     return;
-  }
+
   CPDF_MeshStream stream;
-  if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS)) {
+  if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS))
     return;
-  }
+
   CPDF_MeshVertex* vertex = FX_Alloc2D(CPDF_MeshVertex, row_verts, 2);
   if (!stream.GetVertexRow(vertex, row_verts, pObject2Bitmap)) {
     FX_Free(vertex);
@@ -481,9 +477,9 @@ static void _DrawLatticeGouraudShading(CFX_DIBitmap* pBitmap,
       triangle[0] = last_row[i];
       triangle[1] = this_row[i - 1];
       triangle[2] = last_row[i - 1];
-      _DrawGouraud(pBitmap, alpha, triangle);
+      DrawGouraud(pBitmap, alpha, triangle);
       triangle[2] = this_row[i];
-      _DrawGouraud(pBitmap, alpha, triangle);
+      DrawGouraud(pBitmap, alpha, triangle);
     }
     last_index = 1 - last_index;
   }
@@ -748,29 +744,24 @@ FX_BOOL _CheckCoonTensorPara(const CPDF_MeshStream& stream) {
   return bCoorBits && bCompBits && bFlagBits;
 }
 
-static void _DrawCoonPatchMeshes(FX_BOOL bTensor,
-                                 CFX_DIBitmap* pBitmap,
-                                 CFX_AffineMatrix* pObject2Bitmap,
-                                 CPDF_Stream* pShadingStream,
-                                 CPDF_Function** pFuncs,
-                                 int nFuncs,
-                                 CPDF_ColorSpace* pCS,
-                                 int fill_mode,
-                                 int alpha) {
+static void DrawCoonPatchMeshes(FX_BOOL bTensor,
+                                CFX_DIBitmap* pBitmap,
+                                CFX_AffineMatrix* pObject2Bitmap,
+                                CPDF_Stream* pShadingStream,
+                                CPDF_Function** pFuncs,
+                                int nFuncs,
+                                CPDF_ColorSpace* pCS,
+                                int fill_mode,
+                                int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
-  if (pShadingStream->GetType() != PDFOBJ_STREAM) {
-    return;
-  }
+
   CFX_FxgeDevice device;
   device.Attach(pBitmap);
   CPDF_MeshStream stream;
-  if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS)) {
+  if (!stream.Load(pShadingStream, pFuncs, nFuncs, pCS))
     return;
-  }
-
-  if (!_CheckCoonTensorPara(stream)) {
+  if (!_CheckCoonTensorPara(stream))
     return;
-  }
 
   CPDF_PatchDrawer patch;
   patch.alpha = alpha;
@@ -878,32 +869,32 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   int fill_mode = m_Options.m_Flags;
   switch (pPattern->m_ShadingType) {
     case 1:
-      _DrawFuncShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs,
-                       pColorSpace, alpha);
+      DrawFuncShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs, pColorSpace,
+                      alpha);
       break;
     case 2:
-      _DrawAxialShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs,
-                        pColorSpace, alpha);
+      DrawAxialShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs,
+                       pColorSpace, alpha);
       break;
     case 3:
-      _DrawRadialShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs,
-                         pColorSpace, alpha);
+      DrawRadialShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs,
+                        pColorSpace, alpha);
       break;
     case 4: {
-      _DrawFreeGouraudShading(pBitmap, &FinalMatrix,
-                              (CPDF_Stream*)pPattern->m_pShadingObj, pFuncs,
-                              nFuncs, pColorSpace, alpha);
+      DrawFreeGouraudShading(pBitmap, &FinalMatrix,
+                             ToStream(pPattern->m_pShadingObj), pFuncs, nFuncs,
+                             pColorSpace, alpha);
     } break;
     case 5: {
-      _DrawLatticeGouraudShading(pBitmap, &FinalMatrix,
-                                 (CPDF_Stream*)pPattern->m_pShadingObj, pFuncs,
-                                 nFuncs, pColorSpace, alpha);
+      DrawLatticeGouraudShading(pBitmap, &FinalMatrix,
+                                ToStream(pPattern->m_pShadingObj), pFuncs,
+                                nFuncs, pColorSpace, alpha);
     } break;
     case 6:
     case 7: {
-      _DrawCoonPatchMeshes(pPattern->m_ShadingType - 6, pBitmap, &FinalMatrix,
-                           (CPDF_Stream*)pPattern->m_pShadingObj, pFuncs,
-                           nFuncs, pColorSpace, fill_mode, alpha);
+      DrawCoonPatchMeshes(pPattern->m_ShadingType - 6, pBitmap, &FinalMatrix,
+                          ToStream(pPattern->m_pShadingObj), pFuncs, nFuncs,
+                          pColorSpace, fill_mode, alpha);
     } break;
   }
   if (bAlphaMode) {

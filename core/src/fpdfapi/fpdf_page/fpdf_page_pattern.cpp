@@ -38,20 +38,21 @@ CPDF_TilingPattern::~CPDF_TilingPattern() {
   m_pForm = NULL;
 }
 FX_BOOL CPDF_TilingPattern::Load() {
-  if (m_pForm != NULL) {
+  if (m_pForm)
     return TRUE;
-  }
+
   CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
-  if (pDict == NULL) {
+  if (!pDict)
     return FALSE;
-  }
+
   m_bColored = pDict->GetInteger(FX_BSTRC("PaintType")) == 1;
   m_XStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumber(FX_BSTRC("XStep")));
   m_YStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumber(FX_BSTRC("YStep")));
-  if (m_pPatternObj->GetType() != PDFOBJ_STREAM) {
+
+  CPDF_Stream* pStream = m_pPatternObj->AsStream();
+  if (!pStream)
     return FALSE;
-  }
-  CPDF_Stream* pStream = (CPDF_Stream*)m_pPatternObj;
+
   m_pForm = new CPDF_Form(m_pDocument, NULL, pStream);
   m_pForm->ParseContent(NULL, &m_ParentMatrix, NULL, NULL);
   m_BBox = pDict->GetRect(FX_BSTRC("BBox"));
@@ -253,14 +254,13 @@ CFX_FloatRect _GetShadingBBox(CPDF_Stream* pStream,
                               CPDF_Function** pFuncs,
                               int nFuncs,
                               CPDF_ColorSpace* pCS) {
-  if (pStream == NULL || pStream->GetType() != PDFOBJ_STREAM ||
-      pFuncs == NULL || pCS == NULL) {
+  if (!pStream || !pStream->IsStream() || !pFuncs || !pCS)
     return CFX_FloatRect(0, 0, 0, 0);
-  }
+
   CPDF_MeshStream stream;
-  if (!stream.Load(pStream, pFuncs, nFuncs, pCS)) {
+  if (!stream.Load(pStream, pFuncs, nFuncs, pCS))
     return CFX_FloatRect(0, 0, 0, 0);
-  }
+
   CFX_FloatRect rect;
   FX_BOOL bStarted = FALSE;
   FX_BOOL bGouraud = type == 4 || type == 5;
@@ -288,9 +288,8 @@ CFX_FloatRect _GetShadingBBox(CPDF_Stream* pStream,
     }
     stream.m_BitStream.SkipBits(stream.m_nComps * stream.m_nCompBits *
                                 color_count);
-    if (bGouraud) {
+    if (bGouraud)
       stream.m_BitStream.ByteAlign();
-    }
   }
   rect.Transform(pMatrix);
   return rect;

@@ -146,7 +146,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       break;
     }
     case PDFOBJ_STREAM: {
-      CPDF_Stream* p = (CPDF_Stream*)pObj;
+      const CPDF_Stream* p = pObj->AsStream();
       if (PDF_CreatorAppendObject(p->GetDict(), pFile, offset) < 0) {
         return -1;
       }
@@ -929,9 +929,9 @@ static FX_BOOL _IsXRefNeedEnd(CPDF_XRefStream* pXRef, FX_DWORD flag) {
   return (iCount >= PDF_XREFSTREAM_MAXSIZE);
 }
 int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
-  if (!m_pXRefStream) {
+  if (!m_pXRefStream)
     return 1;
-  }
+
   FX_DWORD objnum = pObj->GetObjNum();
   if (m_pParser && m_pParser->m_ObjVersion.GetSize() > (int32_t)objnum &&
       m_pParser->m_ObjVersion[objnum] > 0) {
@@ -942,36 +942,29 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
     return 1;
 
   CPDF_Dictionary* pDict = pObj->GetDict();
-  if (pObj->GetType() == PDFOBJ_STREAM) {
-    if (pDict && pDict->GetString(FX_BSTRC("Type")) == FX_BSTRC("XRef")) {
+  if (pObj->IsStream())
+    if (pDict && pDict->GetString(FX_BSTRC("Type")) == FX_BSTRC("XRef"))
       return 0;
-    }
     return 1;
-  }
+
   if (pDict) {
-    if (pDict == m_pDocument->m_pRootDict || pDict == m_pEncryptDict) {
+    if (pDict == m_pDocument->m_pRootDict || pDict == m_pEncryptDict)
       return 1;
-    }
-    if (IsSignatureDict(pDict)) {
+    if (IsSignatureDict(pDict))
       return 1;
-    }
-    if (pDict->GetString(FX_BSTRC("Type")) == FX_BSTRC("Page")) {
+    if (pDict->GetString(FX_BSTRC("Type")) == FX_BSTRC("Page"))
       return 1;
-    }
   }
+
   m_pXRefStream->AddObjectNumberToIndexArray(objnum);
-  if (m_pXRefStream->CompressIndirectObject(objnum, pObj, this) < 0) {
+  if (m_pXRefStream->CompressIndirectObject(objnum, pObj, this) < 0)
     return -1;
-  }
-  if (!_IsXRefNeedEnd(m_pXRefStream, m_dwFlags)) {
+  if (!_IsXRefNeedEnd(m_pXRefStream, m_dwFlags))
     return 0;
-  }
-  if (!m_pXRefStream->End(this)) {
+  if (!m_pXRefStream->End(this))
     return -1;
-  }
-  if (!m_pXRefStream->Start()) {
+  if (!m_pXRefStream->Start())
     return -1;
-  }
   return 0;
 }
 int32_t CPDF_Creator::WriteIndirectObjectToStream(FX_DWORD objnum,
@@ -1017,7 +1010,7 @@ int32_t CPDF_Creator::WriteStream(const CPDF_Object* pStream,
                                   FX_DWORD objnum,
                                   CPDF_CryptoHandler* pCrypto) {
   CPDF_FlateEncoder encoder;
-  encoder.Initialize((CPDF_Stream*)pStream,
+  encoder.Initialize(const_cast<CPDF_Stream*>(pStream->AsStream()),
                      pStream == m_pMetadata ? FALSE : m_bCompress);
   CPDF_Encryptor encryptor;
   if (!encryptor.Initialize(pCrypto, objnum, encoder.m_pData,
@@ -1050,33 +1043,30 @@ int32_t CPDF_Creator::WriteStream(const CPDF_Object* pStream,
 int32_t CPDF_Creator::WriteIndirectObj(FX_DWORD objnum,
                                        const CPDF_Object* pObj) {
   int32_t len = m_File.AppendDWord(objnum);
-  if (len < 0) {
+  if (len < 0)
     return -1;
-  }
+
   m_Offset += len;
-  if ((len = m_File.AppendString(FX_BSTRC(" 0 obj\r\n"))) < 0) {
+  if ((len = m_File.AppendString(FX_BSTRC(" 0 obj\r\n"))) < 0)
     return -1;
-  }
+
   m_Offset += len;
-  if (pObj->GetType() == PDFOBJ_STREAM) {
-    CPDF_CryptoHandler* pHandler = NULL;
+  if (pObj->IsStream()) {
+    CPDF_CryptoHandler* pHandler = nullptr;
     pHandler =
         (pObj == m_pMetadata && !m_bEncryptMetadata) ? NULL : m_pCryptoHandler;
-    if (WriteStream(pObj, objnum, pHandler) < 0) {
+    if (WriteStream(pObj, objnum, pHandler) < 0)
       return -1;
-    }
   } else {
-    if (WriteDirectObj(objnum, pObj) < 0) {
+    if (WriteDirectObj(objnum, pObj) < 0)
       return -1;
-    }
   }
-  if ((len = m_File.AppendString(FX_BSTRC("\r\nendobj\r\n"))) < 0) {
+  if ((len = m_File.AppendString(FX_BSTRC("\r\nendobj\r\n"))) < 0)
     return -1;
-  }
+
   m_Offset += len;
-  if (AppendObjectNumberToXRef(objnum) < 0) {
+  if (AppendObjectNumberToXRef(objnum) < 0)
     return -1;
-  }
   return 0;
 }
 int32_t CPDF_Creator::WriteIndirectObj(const CPDF_Object* pObj) {
@@ -1139,7 +1129,8 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
     }
     case PDFOBJ_STREAM: {
       CPDF_FlateEncoder encoder;
-      encoder.Initialize((CPDF_Stream*)pObj, m_bCompress);
+      encoder.Initialize(const_cast<CPDF_Stream*>(pObj->AsStream()),
+                         m_bCompress);
       CPDF_Encryptor encryptor;
       CPDF_CryptoHandler* pHandler = m_pCryptoHandler;
       encryptor.Initialize(pHandler, objnum, encoder.m_pData, encoder.m_dwSize);

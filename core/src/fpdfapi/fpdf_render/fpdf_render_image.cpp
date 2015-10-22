@@ -1055,10 +1055,9 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   }
   CPDF_Function* pFunc = NULL;
   CPDF_Object* pFuncObj = pSMaskDict->GetElementValue(FX_BSTRC("TR"));
-  if (pFuncObj &&
-      (pFuncObj->IsDictionary() || pFuncObj->GetType() == PDFOBJ_STREAM)) {
+  if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
     pFunc = CPDF_Function::Load(pFuncObj);
-  }
+
   CFX_AffineMatrix matrix = *pMatrix;
   matrix.TranslateI(-pClipRect->left, -pClipRect->top);
   CPDF_Form form(m_pContext->m_pDocument, m_pContext->m_pPageResources, pGroup);

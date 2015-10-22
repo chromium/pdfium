@@ -716,12 +716,12 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
       return;
     }
   }
-  CPDF_Stream* pXObject =
-      (CPDF_Stream*)FindResourceObj(FX_BSTRC("XObject"), name);
-  if (pXObject == NULL || pXObject->GetType() != PDFOBJ_STREAM) {
+  CPDF_Stream* pXObject = ToStream(FindResourceObj(FX_BSTRC("XObject"), name));
+  if (!pXObject) {
     m_bResourceMissing = TRUE;
     return;
   }
+
   CFX_ByteStringC type =
       pXObject->GetDict()
           ? pXObject->GetDict()->GetConstString(FX_BSTRC("Subtype"))
@@ -1151,7 +1151,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
     bbox = m_BBox;
   }
   if (pShading->m_ShadingType >= 4) {
-    bbox.Intersect(_GetShadingBBox((CPDF_Stream*)pShading->m_pShadingObj,
+    bbox.Intersect(_GetShadingBBox(ToStream(pShading->m_pShadingObj),
                                    pShading->m_ShadingType, &pObj->m_Matrix,
                                    pShading->m_pFunctions, pShading->m_nFuncs,
                                    pShading->m_pCS));
@@ -1262,8 +1262,7 @@ CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const CFX_ByteString& name,
                                                     FX_BOOL bShading) {
   CPDF_Object* pPattern = FindResourceObj(
       bShading ? FX_BSTRC("Shading") : FX_BSTRC("Pattern"), name);
-  if (pPattern == NULL ||
-      (!pPattern->IsDictionary() && pPattern->GetType() != PDFOBJ_STREAM)) {
+  if (!pPattern || (!pPattern->IsDictionary() && !pPattern->IsStream())) {
     m_bResourceMissing = TRUE;
     return NULL;
   }

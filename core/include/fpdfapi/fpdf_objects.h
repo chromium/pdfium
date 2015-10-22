@@ -84,6 +84,7 @@ class CPDF_Object {
   bool IsDictionary() const { return m_Type == PDFOBJ_DICTIONARY; }
   bool IsName() const { return m_Type == PDFOBJ_NAME; }
   bool IsNumber() const { return m_Type == PDFOBJ_NUMBER; }
+  bool IsStream() const { return m_Type == PDFOBJ_STREAM; }
   bool IsString() const { return m_Type == PDFOBJ_STRING; }
 
   CPDF_Array* AsArray();
@@ -100,6 +101,9 @@ class CPDF_Object {
 
   CPDF_Number* AsNumber();
   const CPDF_Number* AsNumber() const;
+
+  CPDF_Stream* AsStream();
+  const CPDF_Stream* AsStream() const;
 
   CPDF_String* AsString();
   const CPDF_String* AsString() const;
@@ -519,6 +523,13 @@ class CPDF_Stream : public CPDF_Object {
   friend class CPDF_StreamAcc;
   friend class CPDF_AttachmentAcc;
 };
+inline CPDF_Stream* ToStream(CPDF_Object* obj) {
+  return obj ? obj->AsStream() : nullptr;
+}
+inline const CPDF_Stream* ToStream(const CPDF_Object* obj) {
+  return obj ? obj->AsStream() : nullptr;
+}
+
 class CPDF_StreamAcc {
  public:
   CPDF_StreamAcc();

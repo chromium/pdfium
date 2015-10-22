@@ -144,7 +144,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
         CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
         pContentArray->InsertAt(0, pRef);
         pContentArray->AddReference(pDoc, pEndStream);
-      } else if (pDirectObj->GetType() == PDFOBJ_STREAM) {
+      } else if (pDirectObj->IsStream()) {
         pContentArray = new CPDF_Array();
         pContentArray->AddReference(pDoc, pStream->GetObjNum());
         pContentArray->AddReference(pDoc, pDirectObj->GetObjNum());
@@ -162,16 +162,17 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
     if (pPattenDict) {
       FX_POSITION pos = pPattenDict->GetStartPos();
       while (pos) {
-        CPDF_Dictionary* pDict = NULL;
+        CPDF_Dictionary* pDict = nullptr;
         CFX_ByteString key;
         CPDF_Object* pObj = pPattenDict->GetNextElement(pos, key);
         if (pObj->GetType() == PDFOBJ_REFERENCE)
           pObj = pObj->GetDirect();
-        if (pObj->IsDictionary()) {
+
+        if (pObj->IsDictionary())
           pDict = pObj->AsDictionary();
-        } else if (pObj->GetType() == PDFOBJ_STREAM) {
-          pDict = ((CPDF_Stream*)pObj)->GetDict();
-        } else
+        else if (CPDF_Stream* pStream = pObj->AsStream())
+          pDict = pStream->GetDict();
+        else
           continue;
 
         CFX_AffineMatrix m = pDict->GetMatrix(FX_BSTRC("Matrix"));
@@ -313,7 +314,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
         pContentArray = pArray;
         CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
         pContentArray->InsertAt(0, pRef);
-      } else if (pDirectObj->GetType() == PDFOBJ_STREAM) {
+      } else if (pDirectObj->IsStream()) {
         pContentArray = new CPDF_Array();
         pContentArray->AddReference(pDoc, pStream->GetObjNum());
         pContentArray->AddReference(pDoc, pDirectObj->GetObjNum());

@@ -45,15 +45,14 @@ void CPDF_Image::Release() {
   }
 }
 CPDF_Image* CPDF_Image::Clone() {
-  if (m_pStream->GetObjNum()) {
+  if (m_pStream->GetObjNum())
     return m_pDocument->GetPageData()->GetImage(m_pStream);
-  }
+
   CPDF_Image* pImage = new CPDF_Image(m_pDocument);
-  pImage->LoadImageF((CPDF_Stream*)((CPDF_Object*)m_pStream)->Clone(),
-                     m_bInline);
-  if (m_bInline) {
+  pImage->LoadImageF(ToStream(m_pStream->Clone()), m_bInline);
+  if (m_bInline)
     pImage->SetInlineDict(ToDictionary(m_pInlineDict->Clone(TRUE)));
-  }
+
   return pImage;
 }
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc) {
