@@ -250,7 +250,6 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   FX_BOOL FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufSize);
   int GetPageIndexByAnnotDict(CPDF_Document* pDocument,
                               CPDF_Dictionary* pAnnotDict) const;
-  void DoFDFBuffer(CFX_ByteString sBuffer);
 
   using CPDFSDK_WidgetMap = std::map<CPDF_FormControl*, CPDFSDK_Widget*>;
 
