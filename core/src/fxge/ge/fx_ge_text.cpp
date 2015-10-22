@@ -1564,7 +1564,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
     }
     FXFT_Outline_Embolden(FXFT_Get_Glyph_Outline(m_Face), level);
   }
-  FXFT_Library_SetLcdFilter(CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary,
+  FXFT_Library_SetLcdFilter(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
                             FT_LCD_FILTER_DEFAULT);
   error = FXFT_Render_Glyph(m_Face, anti_alias);
   if (error) {

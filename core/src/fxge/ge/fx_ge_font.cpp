@@ -39,6 +39,10 @@ CFX_UnicodeEncodingEx* _FXFM_CreateFontEncoding(CFX_Font* pFont,
   return new CFX_UnicodeEncodingEx(pFont, nEncodingID);
 }
 
+FXFT_Face FT_LoadFont(const uint8_t* pData, int size) {
+  return CFX_GEModule::Get()->GetFontMgr()->GetFixedFace(pData, size, 0);
+}
+
 }  // namespace
 
 CFX_Font::CFX_Font() {
@@ -181,23 +185,27 @@ FX_BOOL _LoadFile(FXFT_Library library,
   }
   return TRUE;
 }
+
 FX_BOOL CFX_Font::LoadFile(IFX_FileRead* pFile,
                            int nFaceIndex,
                            int* pFaceCount) {
   m_bEmbedded = FALSE;
-  FXFT_Library library;
-  if (CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary == NULL)
-    FXFT_Init_FreeType(&CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary);
-  library = CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary;
-  FXFT_Stream stream = NULL;
+
+  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
+  pFontMgr->InitFTLibrary();
+  FXFT_Library library = pFontMgr->GetFTLibrary();
+
+  FXFT_Stream stream = nullptr;
   if (!_LoadFile(library, &m_Face, pFile, &stream, nFaceIndex))
     return FALSE;
+
   if (pFaceCount)
     *pFaceCount = (int)m_Face->num_faces;
   m_pOwnedStream = stream;
   FXFT_Set_Pixel_Sizes(m_Face, 0, 64);
   return TRUE;
 }
+
 int CFX_Font::GetGlyphWidth(FX_DWORD glyph_index) {
   if (!m_Face) {
     return 0;
@@ -215,28 +223,12 @@ int CFX_Font::GetGlyphWidth(FX_DWORD glyph_index) {
                         FXFT_Get_Glyph_HoriAdvance(m_Face));
   return width;
 }
-static FXFT_Face FT_LoadFont(uint8_t* pData, int size) {
-  FXFT_Library library;
-  if (CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary == NULL) {
-    FXFT_Init_FreeType(&CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary);
-  }
-  library = CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary;
-  FXFT_Face face = NULL;
-  int error = FXFT_New_Memory_Face(library, pData, size, 0, &face);
-  if (error) {
-    return NULL;
-  }
-  error = FXFT_Set_Pixel_Sizes(face, 64, 64);
-  if (error) {
-    return NULL;
-  }
-  return face;
-}
+
 FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, FX_DWORD size) {
   m_pFontDataAllocation = FX_Alloc(uint8_t, size);
   FXSYS_memcpy(m_pFontDataAllocation, data, size);
-  m_Face = FT_LoadFont((uint8_t*)m_pFontDataAllocation, size);
-  m_pFontData = (uint8_t*)m_pFontDataAllocation;
+  m_Face = FT_LoadFont(m_pFontDataAllocation, size);
+  m_pFontData = m_pFontDataAllocation;
   m_bEmbedded = TRUE;
   m_dwSize = size;
   return m_Face != NULL;

@@ -610,14 +610,9 @@ CFX_FontMgrImp::CFX_FontMgrImp(IFX_FontSourceEnum* pFontEnum,
     : m_pFontSource(pFontEnum),
       m_pDelegate(pDelegate),
       m_pUserData(pUserData) {}
+
 FX_BOOL CFX_FontMgrImp::EnumFonts() {
-  FXFT_Library& library = CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary;
-  if (library == NULL) {
-    FXFT_Init_FreeType(&library);
-  }
-  if (library == NULL) {
-    return FALSE;
-  }
+  CFX_GEModule::Get()->GetFontMgr()->InitFTLibrary();
   FXFT_Face pFace = NULL;
   FX_POSITION pos = m_pFontSource->GetStartPosition();
   IFX_FileAccess* pFontSource = NULL;
@@ -1003,45 +998,42 @@ unsigned long _ftStreamRead(FXFT_Stream stream,
 }
 void _ftStreamClose(FXFT_Stream stream) {}
 };
+
 FXFT_Face CFX_FontMgrImp::LoadFace(IFX_FileRead* pFontStream,
                                    int32_t iFaceIndex) {
-  FXFT_Library& library = CFX_GEModule::Get()->GetFontMgr()->m_FTLibrary;
-  FXFT_Open_Args ftArgs;
+  if (!pFontStream)
+    return nullptr;
+
+  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
+  pFontMgr->InitFTLibrary();
+  FXFT_Library library = pFontMgr->GetFTLibrary();
+  if (!library)
+    return nullptr;
+
   FXFT_Stream ftStream = FX_Alloc(FXFT_StreamRec, 1);
-  FXFT_Face pFace = NULL;
-  if (library == NULL) {
-    FXFT_Init_FreeType(&library);
-  }
-  if (library == NULL) {
-    goto BadRet;
-  }
-  FXSYS_memset(&ftArgs, 0, sizeof(FXFT_Open_Args));
-  if (NULL == ftStream) {
-    goto BadRet;
-  }
   FXSYS_memset(ftStream, 0, sizeof(FXFT_StreamRec));
-  if (NULL == pFontStream) {
-    goto BadRet;
-  }
   ftStream->base = NULL;
   ftStream->descriptor.pointer = pFontStream;
   ftStream->pos = 0;
   ftStream->size = (unsigned long)pFontStream->GetSize();
   ftStream->read = _ftStreamRead;
   ftStream->close = _ftStreamClose;
+
+  FXFT_Open_Args ftArgs;
+  FXSYS_memset(&ftArgs, 0, sizeof(FXFT_Open_Args));
   ftArgs.flags |= FT_OPEN_STREAM;
   ftArgs.stream = ftStream;
-  if (0 != FXFT_Open_Face(library, &ftArgs, iFaceIndex, &pFace)) {
-    goto BadRet;
+
+  FXFT_Face pFace = NULL;
+  if (FXFT_Open_Face(library, &ftArgs, iFaceIndex, &pFace)) {
+    FX_Free(ftStream);
+    return nullptr;
   }
+
   FXFT_Set_Pixel_Sizes(pFace, 0, 64);
   return pFace;
-BadRet:
-  if (NULL != ftStream) {
-    FX_Free(ftStream);
-  }
-  return NULL;
 }
+
 int32_t CFX_FontMgrImp::MatchFonts(CFX_FontDescriptorInfos& MatchedFonts,
                                    FX_WORD wCodePage,
                                    FX_DWORD dwFontStyles,

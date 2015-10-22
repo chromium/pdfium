@@ -9,6 +9,7 @@
 
 #include <map>
 
+#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fxcrt/fx_system.h"
 #include "fx_dib.h"
 
@@ -236,6 +237,7 @@ class CFX_FontMgr {
  public:
   CFX_FontMgr();
   ~CFX_FontMgr();
+
   void InitFTLibrary();
   FXFT_Face GetCachedFace(const CFX_ByteString& face_name,
                           int weight,
@@ -267,13 +269,14 @@ class CFX_FontMgr {
                           int italic_angle,
                           int CharsetCP,
                           CFX_SubstFont* pSubstFont);
-  void FreeCache();
   FX_BOOL GetStandardFont(const uint8_t*& pFontData, FX_DWORD& size, int index);
+  CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }
+  FXFT_Library GetFTLibrary() const { return m_FTLibrary; }
 
-  CFX_FontMapper* m_pBuiltinMapper;
+ private:
+  nonstd::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
   std::map<CFX_ByteString, CTTFontDesc*> m_FaceMap;
   FXFT_Library m_FTLibrary;
-  FoxitFonts m_ExternalFonts[16];
 };
 
 class IFX_FontEnumerator {
