@@ -2705,36 +2705,6 @@ FX_BOOL CPDFSDK_InterForm::SubmitFields(const CFX_WideString& csDestination,
   return TRUE;
 }
 
-void CPDFSDK_InterForm::DoFDFBuffer(CFX_ByteString sBuffer) {
-  ASSERT(m_pDocument != NULL);
-
-  if (CFDF_Document* pFDFDocument = CFDF_Document::ParseMemory(
-          (const unsigned char*)sBuffer.GetBuffer(sBuffer.GetLength()),
-          sBuffer.GetLength())) {
-    CPDF_Dictionary* pRootDic = pFDFDocument->GetRoot();
-    if (pRootDic) {
-      CPDF_Dictionary* pFDFDict = pRootDic->GetDict("FDF");
-      if (pFDFDict) {
-        CPDF_Dictionary* pJSDict = pFDFDict->GetDict("JavaScript");
-        if (pJSDict) {
-          CFX_WideString csJS;
-
-          CPDF_Object* pJS = pJSDict->GetElementValue("Before");
-          if (pJS != NULL) {
-            if (pJS->IsString())
-              csJS = pJSDict->GetUnicodeText("Before");
-            else if (pJS->GetType() == PDFOBJ_STREAM)
-              csJS = pJS->GetUnicodeText();
-          }
-        }
-      }
-    }
-    delete pFDFDocument;
-  }
-
-  sBuffer.ReleaseBuffer();
-}
-
 FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(CFX_WideString csFDFFile,
                                                CFX_WideString csTxtFile) {
   return TRUE;
