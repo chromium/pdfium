@@ -19,3 +19,12 @@ TEST_F(FPDFParserEmbeddertest, Bug_481363) {
   EXPECT_NE(nullptr, page);
   UnloadPage(page);
 }
+
+TEST_F(FPDFParserEmbeddertest, Bug_544880) {
+  // Test self referencing /Pages object.
+  EXPECT_TRUE(OpenDocument("testing/resources/bug_544880.pdf"));
+  // Shouldn't crash. We don't check the return value here because we get the
+  // the count from the "/Count 1" in the testcase (at the time of writing)
+  // rather than the actual count (0).
+  (void)GetPageCount();
+}
