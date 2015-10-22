@@ -386,7 +386,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       break;
     }
     case PDFOBJ_ARRAY: {
-      CPDF_Array* p = (CPDF_Array*)pObj;
+      const CPDF_Array* p = pObj->AsArray();
       buf << FX_BSTRC("[");
       for (FX_DWORD i = 0; i < p->GetCount(); i++) {
         CPDF_Object* pElement = p->GetElement(i);

@@ -343,10 +343,8 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(CPDF_Object* pCSObj,
     return pDefaultCS ? GetColorSpace(pDefaultCS, nullptr) : pCS;
   }
 
-  if (pCSObj->GetType() != PDFOBJ_ARRAY)
-    return nullptr;
-  CPDF_Array* pArray = (CPDF_Array*)pCSObj;
-  if (pArray->GetCount() == 0)
+  CPDF_Array* pArray = pCSObj->AsArray();
+  if (!pArray || pArray->GetCount() == 0)
     return nullptr;
   if (pArray->GetCount() == 1)
     return GetColorSpace(pArray->GetElementValue(0), pResources);

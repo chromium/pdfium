@@ -79,7 +79,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
         return -1;
       }
       offset += 1;
-      CPDF_Array* p = (CPDF_Array*)pObj;
+      const CPDF_Array* p = pObj->AsArray();
       for (FX_DWORD i = 0; i < p->GetCount(); i++) {
         CPDF_Object* pElement = p->GetElement(i);
         if (pElement->GetObjNum()) {
@@ -1195,7 +1195,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
         return -1;
       }
       m_Offset += 1;
-      CPDF_Array* p = (CPDF_Array*)pObj;
+      const CPDF_Array* p = pObj->AsArray();
       for (FX_DWORD i = 0; i < p->GetCount(); i++) {
         CPDF_Object* pElement = p->GetElement(i);
         if (pElement->GetObjNum()) {

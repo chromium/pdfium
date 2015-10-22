@@ -120,13 +120,11 @@ void CPDF_PageContentGenerate::ProcessForm(CFX_ByteTextBuf& buf,
 void CPDF_PageContentGenerate::TransformContent(CFX_Matrix& matrix) {
   CPDF_Dictionary* pDict = m_pPage->m_pFormDict;
   CPDF_Object* pContent = pDict ? pDict->GetElementValue("Contents") : NULL;
-  if (!pContent) {
+  if (!pContent)
     return;
-  }
+
   CFX_ByteTextBuf buf;
-  int type = pContent->GetType();
-  if (type == PDFOBJ_ARRAY) {
-    CPDF_Array* pArray = (CPDF_Array*)pContent;
+  if (CPDF_Array* pArray = pContent->AsArray()) {
     int iCount = pArray->GetCount();
     CPDF_StreamAcc** pContentArray = FX_Alloc(CPDF_StreamAcc*, iCount);
     int size = 0;
@@ -153,7 +151,7 @@ void CPDF_PageContentGenerate::TransformContent(CFX_Matrix& matrix) {
     ProcessForm(buf, pBuf, size, matrix);
     FX_Free(pBuf);
     FX_Free(pContentArray);
-  } else if (type == PDFOBJ_STREAM) {
+  } else if (pContent->GetType() == PDFOBJ_STREAM) {
     CPDF_StreamAcc contentStream;
     contentStream.LoadAllData((CPDF_Stream*)pContent);
     ProcessForm(buf, contentStream.GetData(), contentStream.GetSize(), matrix);

@@ -482,8 +482,7 @@ FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources,
             m_bDoBpcCheck = FALSE;
             return TRUE;
           }
-        } else if (pFilter->GetType() == PDFOBJ_ARRAY) {
-          CPDF_Array* pArray = (CPDF_Array*)pFilter;
+        } else if (CPDF_Array* pArray = pFilter->AsArray()) {
           if (pArray->GetString(pArray->GetCount() - 1) ==
               FX_BSTRC("JPXDecode")) {
             m_bDoBpcCheck = FALSE;
@@ -570,8 +569,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
     if (pMask == NULL) {
       return pCompData;
     }
-    if (pMask->GetType() == PDFOBJ_ARRAY) {
-      CPDF_Array* pArray = (CPDF_Array*)pMask;
+    if (CPDF_Array* pArray = pMask->AsArray()) {
       if (pArray->GetCount() >= m_nComponents * 2) {
         for (FX_DWORD i = 0; i < m_nComponents; i++) {
           int min_num = pArray->GetInteger(i * 2);
@@ -953,8 +951,7 @@ void CPDF_DIBSource::ValidateDictParam() {
       } else if (filter == FX_BSTRC("DCTDecode")) {
         m_bpc = 8;
       }
-    } else if (pFilter->GetType() == PDFOBJ_ARRAY) {
-      CPDF_Array* pArray = (CPDF_Array*)pFilter;
+    } else if (CPDF_Array* pArray = pFilter->AsArray()) {
       if (pArray->GetString(pArray->GetCount() - 1) ==
               FX_BSTRC("CCITTFaxDecode") ||
           pArray->GetString(pArray->GetCount() - 1) ==

@@ -7,10 +7,11 @@
 #include "../../include/fpdfdoc/fpdf_doc.h"
 const int nMaxRecursion = 32;
 int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
-  if (m_pObj == NULL || m_pObj->GetType() != PDFOBJ_ARRAY) {
+  CPDF_Array* pArray = ToArray(m_pObj);
+  if (!pArray)
     return 0;
-  }
-  CPDF_Object* pPage = ((CPDF_Array*)m_pObj)->GetElementValue(0);
+
+  CPDF_Object* pPage = pArray->GetElementValue(0);
   if (!pPage)
     return 0;
   if (pPage->IsNumber())
@@ -20,10 +21,11 @@ int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
   return pDoc->GetPageIndex(pPage->GetObjNum());
 }
 FX_DWORD CPDF_Dest::GetPageObjNum() {
-  if (m_pObj == NULL || m_pObj->GetType() != PDFOBJ_ARRAY) {
+  CPDF_Array* pArray = ToArray(m_pObj);
+  if (!pArray)
     return 0;
-  }
-  CPDF_Object* pPage = ((CPDF_Array*)m_pObj)->GetElementValue(0);
+
+  CPDF_Object* pPage = pArray->GetElementValue(0);
   if (!pPage)
     return 0;
   if (pPage->IsNumber())
@@ -35,11 +37,12 @@ FX_DWORD CPDF_Dest::GetPageObjNum() {
 const FX_CHAR* g_sZoomModes[] = {"XYZ",  "Fit",   "FitH",  "FitV", "FitR",
                                  "FitB", "FitBH", "FitBV", ""};
 int CPDF_Dest::GetZoomMode() {
-  if (m_pObj == NULL || m_pObj->GetType() != PDFOBJ_ARRAY) {
+  CPDF_Array* pArray = ToArray(m_pObj);
+  if (!pArray)
     return 0;
-  }
+
   CFX_ByteString mode;
-  CPDF_Object* pObj = ((CPDF_Array*)m_pObj)->GetElementValue(1);
+  CPDF_Object* pObj = pArray->GetElementValue(1);
   mode = pObj ? pObj->GetString() : CFX_ByteString();
   int i = 0;
   while (g_sZoomModes[i][0] != '\0') {
@@ -51,16 +54,11 @@ int CPDF_Dest::GetZoomMode() {
   return 0;
 }
 FX_FLOAT CPDF_Dest::GetParam(int index) {
-  if (m_pObj == NULL || m_pObj->GetType() != PDFOBJ_ARRAY) {
-    return 0;
-  }
-  return ((CPDF_Array*)m_pObj)->GetNumber(2 + index);
+  CPDF_Array* pArray = ToArray(m_pObj);
+  return pArray ? pArray->GetNumber(2 + index) : 0;
 }
 CFX_ByteString CPDF_Dest::GetRemoteName() {
-  if (m_pObj == NULL) {
-    return CFX_ByteString();
-  }
-  return m_pObj->GetString();
+  return m_pObj ? m_pObj->GetString() : CFX_ByteString();
 }
 CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc,
                              const CFX_ByteStringC& category) {
@@ -224,23 +222,19 @@ CPDF_Object* CPDF_NameTree::LookupValue(const CFX_ByteString& csName) const {
 CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
                                            const CFX_ByteStringC& sName) {
   CPDF_Object* pValue = LookupValue(sName);
-  if (pValue == NULL) {
+  if (!pValue) {
     CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDict(FX_BSTRC("Dests"));
-    if (pDests == NULL) {
-      return NULL;
-    }
+    if (!pDests)
+      return nullptr;
     pValue = pDests->GetElementValue(sName);
   }
-  if (pValue == NULL) {
-    return NULL;
-  }
-  if (pValue->GetType() == PDFOBJ_ARRAY) {
-    return (CPDF_Array*)pValue;
-  }
-  if (CPDF_Dictionary* pDict = pValue->AsDictionary()) {
+  if (!pValue)
+    return nullptr;
+  if (CPDF_Array* pArray = pValue->AsArray())
+    return pArray;
+  if (CPDF_Dictionary* pDict = pValue->AsDictionary())
     return pDict->GetArray(FX_BSTRC("D"));
-  }
-  return NULL;
+  return nullptr;
 }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

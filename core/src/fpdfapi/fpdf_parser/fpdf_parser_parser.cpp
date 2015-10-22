@@ -1154,17 +1154,14 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos,
 }
 CPDF_Array* CPDF_Parser::GetIDArray() {
   CPDF_Object* pID = m_pTrailer ? m_pTrailer->GetElement(FX_BSTRC("ID")) : NULL;
-  if (pID == NULL) {
-    return NULL;
-  }
+  if (!pID)
+    return nullptr;
+
   if (pID->GetType() == PDFOBJ_REFERENCE) {
     pID = ParseIndirectObject(NULL, ((CPDF_Reference*)pID)->GetRefObjNum());
     m_pTrailer->SetAt(FX_BSTRC("ID"), pID);
   }
-  if (pID == NULL || pID->GetType() != PDFOBJ_ARRAY) {
-    return NULL;
-  }
-  return (CPDF_Array*)pID;
+  return ToArray(pID);
 }
 FX_DWORD CPDF_Parser::GetRootObjNum() {
   CPDF_Object* pRef =
@@ -3474,7 +3471,7 @@ FX_BOOL CPDF_DataAvail::CheckPage(IFX_DownloadHints* pHints) {
       }
       continue;
     }
-    if (pObj->GetType() == PDFOBJ_ARRAY) {
+    if (pObj->IsArray()) {
       CPDF_Array* pArray = pObj->GetArray();
       if (pArray) {
         int32_t iSize = pArray->GetCount();
@@ -3543,7 +3540,7 @@ FX_BOOL CPDF_DataAvail::GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages) {
       m_PageObjList.Add(pKid->GetRefObjNum());
     } break;
     case PDFOBJ_ARRAY: {
-      CPDF_Array* pKidsArray = (CPDF_Array*)pKids;
+      CPDF_Array* pKidsArray = pKids->AsArray();
       for (FX_DWORD i = 0; i < pKidsArray->GetCount(); ++i) {
         CPDF_Object* pKid = (CPDF_Object*)pKidsArray->GetElement(i);
         if (pKid && pKid->GetType() == PDFOBJ_REFERENCE) {
@@ -4116,13 +4113,15 @@ FX_BOOL CPDF_DataAvail::CheckArrayPageNode(FX_DWORD dwPageNo,
     }
     return FALSE;
   }
-  if (pPages->GetType() != PDFOBJ_ARRAY) {
+
+  CPDF_Array* pArray = pPages->AsArray();
+  if (!pArray) {
     pPages->Release();
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
   }
+
   pPageNode->m_type = PDF_PAGENODE_PAGES;
-  CPDF_Array* pArray = (CPDF_Array*)pPages;
   for (FX_DWORD i = 0; i < pArray->GetCount(); ++i) {
     CPDF_Object* pKid = (CPDF_Object*)pArray->GetElement(i);
     if (!pKid || pKid->GetType() != PDFOBJ_REFERENCE) {
@@ -4151,7 +4150,7 @@ FX_BOOL CPDF_DataAvail::CheckUnkownPageNode(FX_DWORD dwPageNo,
     }
     return FALSE;
   }
-  if (pPage->GetType() == PDFOBJ_ARRAY) {
+  if (pPage->IsArray()) {
     pPageNode->m_dwPageNo = dwPageNo;
     pPageNode->m_type = PDF_PAGENODE_ARRAY;
     pPage->Release();
@@ -4180,7 +4179,7 @@ FX_BOOL CPDF_DataAvail::CheckUnkownPageNode(FX_DWORD dwPageNo,
         pNode->m_dwPageNo = pKid->GetRefObjNum();
       } break;
       case PDFOBJ_ARRAY: {
-        CPDF_Array* pKidsArray = (CPDF_Array*)pKids;
+        CPDF_Array* pKidsArray = pKids->AsArray();
         for (FX_DWORD i = 0; i < pKidsArray->GetCount(); ++i) {
           CPDF_Object* pKid = (CPDF_Object*)pKidsArray->GetElement(i);
           if (!pKid || pKid->GetType() != PDFOBJ_REFERENCE) {

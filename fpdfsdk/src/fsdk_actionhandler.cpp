@@ -425,7 +425,7 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action,
 }
 
 FX_BOOL CPDFSDK_ActionHandler::IsValidDocView(CPDFSDK_Document* pDocument) {
-  ASSERT(pDocument != NULL);
+  ASSERT(pDocument);
   return TRUE;
 }
 
@@ -434,17 +434,15 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
   ASSERT(action);
 
   CPDF_Document* pPDFDocument = pDocument->GetDocument();
-  ASSERT(pPDFDocument != NULL);
-  CPDFDoc_Environment* pApp = pDocument->GetEnv();
-  ASSERT(pApp != NULL);
+  ASSERT(pPDFDocument);
 
   CPDF_Dest MyDest = action.GetDest(pPDFDocument);
   int nPageIndex = MyDest.GetPageIndex(pPDFDocument);
   int nFitType = MyDest.GetZoomMode();
-  const CPDF_Array* pMyArray = (CPDF_Array*)MyDest.GetObject();
-  float* pPosAry = NULL;
+  const CPDF_Array* pMyArray = ToArray(MyDest.GetObject());
+  float* pPosAry = nullptr;
   int sizeOfAry = 0;
-  if (pMyArray != NULL) {
+  if (pMyArray) {
     pPosAry = new float[pMyArray->GetCount()];
     int j = 0;
     for (int i = 2; i < (int)pMyArray->GetCount(); i++) {
@@ -452,6 +450,8 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
     }
     sizeOfAry = j;
   }
+
+  CPDFDoc_Environment* pApp = pDocument->GetEnv();
   pApp->FFI_DoGoToAction(nPageIndex, nFitType, pPosAry, sizeOfAry);
   delete[] pPosAry;
 }

@@ -306,7 +306,7 @@ FX_BOOL CPDF_Document::IsContentUsedElsewhere(FX_DWORD objnum,
       continue;
     }
     if (pContents->GetDirectType() == PDFOBJ_ARRAY) {
-      CPDF_Array* pArray = (CPDF_Array*)pContents->GetDirect();
+      CPDF_Array* pArray = pContents->GetDirect()->AsArray();
       for (FX_DWORD j = 0; j < pArray->GetCount(); j++) {
         CPDF_Object* pRef = pArray->GetElement(j);
         if (pRef == NULL || pRef->GetType() != PDFOBJ_REFERENCE) {

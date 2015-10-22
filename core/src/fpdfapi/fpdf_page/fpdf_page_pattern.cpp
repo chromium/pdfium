@@ -118,14 +118,11 @@ FX_BOOL CPDF_ShadingPattern::Load() {
   }
   CPDF_Object* pFunc = pShadingDict->GetElementValue(FX_BSTRC("Function"));
   if (pFunc) {
-    if (pFunc->GetType() == PDFOBJ_ARRAY) {
-      m_nFuncs = ((CPDF_Array*)pFunc)->GetCount();
-      if (m_nFuncs > 4) {
-        m_nFuncs = 4;
-      }
+    if (CPDF_Array* pArray = pFunc->AsArray()) {
+      m_nFuncs = std::min<int>(pArray->GetCount(), 4);
+
       for (int i = 0; i < m_nFuncs; i++) {
-        m_pFunctions[i] =
-            CPDF_Function::Load(((CPDF_Array*)pFunc)->GetElementValue(i));
+        m_pFunctions[i] = CPDF_Function::Load(pArray->GetElementValue(i));
       }
     } else {
       m_pFunctions[0] = CPDF_Function::Load(pFunc);

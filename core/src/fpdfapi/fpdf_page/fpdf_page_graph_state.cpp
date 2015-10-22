@@ -461,10 +461,10 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
   while (pos) {
     CFX_ByteString key_str;
     CPDF_Object* pElement = pGS->GetNextElement(pos, key_str);
-    CPDF_Object* pObject = pElement ? pElement->GetDirect() : NULL;
-    if (pObject == NULL) {
+    CPDF_Object* pObject = pElement ? pElement->GetDirect() : nullptr;
+    if (!pObject)
       continue;
-    }
+
     FX_DWORD key = key_str.GetID();
     switch (key) {
       case FXBSTR_ID('L', 'W', 0, 0):
@@ -482,14 +482,14 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         m_GraphState.GetModify()->m_MiterLimit = pObject->GetNumber();
         break;
       case FXBSTR_ID('D', 0, 0, 0): {
-        if (pObject->GetType() != PDFOBJ_ARRAY) {
+        CPDF_Array* pDash = pObject->AsArray();
+        if (!pDash)
           break;
-        }
-        CPDF_Array* pDash = (CPDF_Array*)pObject;
+
         CPDF_Array* pArray = pDash->GetArray(0);
-        if (pArray == NULL) {
+        if (!pArray)
           break;
-        }
+
         SetLineDash(pArray, pDash->GetNumber(1), 1.0f);
         break;
       }
@@ -497,10 +497,10 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         m_GeneralState.SetRenderIntent(pObject->GetString());
         break;
       case FXBSTR_ID('F', 'o', 'n', 't'): {
-        if (pObject->GetType() != PDFOBJ_ARRAY) {
+        CPDF_Array* pFont = pObject->AsArray();
+        if (!pFont)
           break;
-        }
-        CPDF_Array* pFont = (CPDF_Array*)pObject;
+
         m_TextState.GetModify()->m_FontSize = pFont->GetNumber(1);
         m_TextState.SetFont(pParser->FindFont(pFont->GetString(0)));
         break;
@@ -514,12 +514,10 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
             (pObject && !pObject->IsName()) ? pObject : nullptr;
         break;
       case FXBSTR_ID('B', 'M', 0, 0): {
-        CFX_ByteString mode;
-        if (pObject->GetType() == PDFOBJ_ARRAY) {
-          mode = ((CPDF_Array*)pObject)->GetString(0);
-        } else {
-          mode = pObject->GetString();
-        }
+        CPDF_Array* pArray = pObject->AsArray();
+        CFX_ByteString mode =
+            pArray ? pArray->GetString(0) : pObject->GetString();
+
         pGeneralState->SetBlendMode(mode);
         if (pGeneralState->m_BlendType > FXDIB_BLEND_MULTIPLY) {
           pParser->GetObjectList()->m_bBackgroundAlphaNeeded = TRUE;

@@ -618,12 +618,11 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
           }
           if (CPDF_Object* pOpt = pOpts->GetElementValue(i)) {
             CFX_WideString swItem;
-            if (pOpt->IsString()) {
+            if (pOpt->IsString())
               swItem = pOpt->GetUnicodeText();
-            } else if (pOpt->GetType() == PDFOBJ_ARRAY) {
-              swItem =
-                  ((CPDF_Array*)pOpt)->GetElementValue(1)->GetUnicodeText();
-            }
+            else if (CPDF_Array* pArray = pOpt->AsArray())
+              swItem = pArray->GetElementValue(1)->GetUnicodeText();
+
             FX_BOOL bSelected = FALSE;
             if (pSels) {
               for (FX_DWORD s = 0, ssz = pSels->GetCount(); s < ssz; s++) {

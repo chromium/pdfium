@@ -885,14 +885,15 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
     pDestObj = nameTree.LookupValue(index, bsName);
   }
   if (!pDestObj)
-    return NULL;
+    return nullptr;
   if (CPDF_Dictionary* pDict = pDestObj->AsDictionary()) {
     pDestObj = pDict->GetArray(FX_BSTRC("D"));
     if (!pDestObj)
-      return NULL;
+      return nullptr;
   }
-  if (pDestObj->GetType() != PDFOBJ_ARRAY)
-    return NULL;
+  if (!pDestObj->IsArray())
+    return nullptr;
+
   CFX_WideString wsName = PDF_DecodeText(bsName);
   CFX_ByteString utf16Name = wsName.UTF16LE_Encode();
   unsigned int len = utf16Name.GetLength();

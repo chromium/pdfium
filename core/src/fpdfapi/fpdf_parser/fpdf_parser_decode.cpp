@@ -331,31 +331,27 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
 
 {
   CPDF_Object* pDecoder =
-      pDict ? pDict->GetElementValue(FX_BSTRC("Filter")) : NULL;
-  if (!pDecoder || (pDecoder->GetType() != PDFOBJ_ARRAY && !pDecoder->IsName()))
+      pDict ? pDict->GetElementValue(FX_BSTRC("Filter")) : nullptr;
+  if (!pDecoder || (!pDecoder->IsArray() && !pDecoder->IsName()))
     return FALSE;
 
   CPDF_Object* pParams =
-      pDict ? pDict->GetElementValue(FX_BSTRC("DecodeParms")) : NULL;
+      pDict ? pDict->GetElementValue(FX_BSTRC("DecodeParms")) : nullptr;
   CFX_ByteStringArray DecoderList;
   CFX_PtrArray ParamList;
-  if (pDecoder->GetType() == PDFOBJ_ARRAY) {
-    if (pParams && pParams->GetType() != PDFOBJ_ARRAY) {
-      pParams = NULL;
-    }
-    CPDF_Array* pDecoders = (CPDF_Array*)pDecoder;
+  if (CPDF_Array* pDecoders = pDecoder->AsArray()) {
+    CPDF_Array* pParamsArray = ToArray(pParams);
+    if (!pParamsArray)
+      pParams = nullptr;
+
     for (FX_DWORD i = 0; i < pDecoders->GetCount(); i++) {
       CFX_ByteStringC str = pDecoders->GetConstString(i);
       DecoderList.Add(str);
-      if (pParams) {
-        ParamList.Add(((CPDF_Array*)pParams)->GetDict(i));
-      } else {
-        ParamList.Add(NULL);
-      }
+      ParamList.Add(pParams ? pParamsArray->GetDict(i) : nullptr);
     }
   } else {
     DecoderList.Add(pDecoder->GetConstString());
-    ParamList.Add(pParams ? pParams->GetDict() : NULL);
+    ParamList.Add(pParams ? pParams->GetDict() : nullptr);
   }
   uint8_t* last_buf = (uint8_t*)src_buf;
   FX_DWORD last_size = src_size;
