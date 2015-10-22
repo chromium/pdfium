@@ -17,6 +17,8 @@ import common
 import pngdiffer
 import suppressor
 
+class KeyboardInterruptError(Exception): pass
+
 # Nomenclature:
 #   x_root - "x"
 #   x_filename - "x.ext"
@@ -49,17 +51,20 @@ def test_one_file(input_filename, source_dir, working_dir,
 def test_one_file_parallel(working_dir, pdfium_test_path, image_differ,
                            test_case):
   """Wrapper function to call test_one_file() and redirect output to stdout."""
-  old_stdout = sys.stdout
-  old_stderr = sys.stderr
-  sys.stdout = cStringIO.StringIO()
-  sys.stderr = sys.stdout
-  input_filename, source_dir = test_case
-  result = test_one_file(input_filename, source_dir, working_dir,
-                         pdfium_test_path, image_differ, True);
-  output = sys.stdout
-  sys.stdout = old_stdout
-  sys.stderr = old_stderr
-  return (result, output.getvalue(), input_filename, source_dir)
+  try:
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    sys.stdout = cStringIO.StringIO()
+    sys.stderr = sys.stdout
+    input_filename, source_dir = test_case
+    result = test_one_file(input_filename, source_dir, working_dir,
+                           pdfium_test_path, image_differ, True);
+    output = sys.stdout
+    sys.stdout = old_stdout
+    sys.stderr = old_stderr
+    return (result, output.getvalue(), input_filename, source_dir)
+  except KeyboardInterrupt:
+    raise KeyboardInterruptError()
 
 
 def handle_result(test_suppressor, input_filename, input_path, result,
@@ -107,16 +112,22 @@ def main():
           test_cases.append((input_filename, source_dir))
 
   if options.num_workers > 1:
-    pool = multiprocessing.Pool(options.num_workers)
-    worker_func = functools.partial(test_one_file_parallel, working_dir,
-                                    pdfium_test_path, image_differ)
-    worker_results = pool.imap(worker_func, test_cases)
-    for worker_result in worker_results:
-      result, output, input_filename, source_dir = worker_result
-      input_path = os.path.join(source_dir, input_filename)
-      sys.stdout.write(output)
-      handle_result(test_suppressor, input_filename, input_path, result,
-                    surprises, failures)
+    try:
+      pool = multiprocessing.Pool(options.num_workers)
+      worker_func = functools.partial(test_one_file_parallel, working_dir,
+                                      pdfium_test_path, image_differ)
+      worker_results = pool.imap(worker_func, test_cases)
+      for worker_result in worker_results:
+        result, output, input_filename, source_dir = worker_result
+        input_path = os.path.join(source_dir, input_filename)
+        sys.stdout.write(output)
+        handle_result(test_suppressor, input_filename, input_path, result,
+                      surprises, failures)
+      pool.close()
+    except KeyboardInterrupt:
+      pool.terminate()
+    finally:
+      pool.join()
   else:
     for test_case in test_cases:
       input_filename, source_dir = test_case
