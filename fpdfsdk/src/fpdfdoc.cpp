@@ -197,7 +197,7 @@ DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document,
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
-  CPDF_Dest dest((CPDF_Array*)pDict);
+  CPDF_Dest dest(static_cast<CPDF_Array*>(pDict));
   return dest.GetPageIndex(pDoc);
 }
 

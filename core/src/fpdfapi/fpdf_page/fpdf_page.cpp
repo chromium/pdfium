@@ -814,8 +814,7 @@ void CPDF_Page::Load(CPDF_Document* pDocument,
   if (rotate < 0) {
     rotate += 4;
   }
-  CPDF_Array *pMediaBox, *pCropBox;
-  pMediaBox = (CPDF_Array*)GetPageAttr(FX_BSTRC("MediaBox"));
+  CPDF_Array* pMediaBox = ToArray(GetPageAttr(FX_BSTRC("MediaBox")));
   CFX_FloatRect mediabox;
   if (pMediaBox) {
     mediabox = pMediaBox->GetRect();
@@ -824,7 +823,8 @@ void CPDF_Page::Load(CPDF_Document* pDocument,
   if (mediabox.IsEmpty()) {
     mediabox = CFX_FloatRect(0, 0, 612, 792);
   }
-  pCropBox = (CPDF_Array*)GetPageAttr(FX_BSTRC("CropBox"));
+
+  CPDF_Array* pCropBox = ToArray(GetPageAttr(FX_BSTRC("CropBox")));
   if (pCropBox) {
     m_BBox = pCropBox->GetRect();
     m_BBox.Normalize();

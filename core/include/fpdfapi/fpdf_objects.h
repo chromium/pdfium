@@ -81,11 +81,15 @@ class CPDF_Object {
 
   FX_BOOL IsModified() const { return FALSE; }
 
+  bool IsArray() const { return m_Type == PDFOBJ_ARRAY; }
   bool IsBoolean() const { return m_Type == PDFOBJ_BOOLEAN; }
   bool IsDictionary() const { return m_Type == PDFOBJ_DICTIONARY; }
   bool IsName() const { return m_Type == PDFOBJ_NAME; }
   bool IsNumber() const { return m_Type == PDFOBJ_NUMBER; }
   bool IsString() const { return m_Type == PDFOBJ_STRING; }
+
+  CPDF_Array* AsArray();
+  const CPDF_Array* AsArray() const;
 
   CPDF_Boolean* AsBoolean();
   const CPDF_Boolean* AsBoolean() const;
@@ -343,6 +347,13 @@ class CPDF_Array : public CPDF_Object {
   CFX_PtrArray m_Objects;
   friend class CPDF_Object;
 };
+inline CPDF_Array* ToArray(CPDF_Object* obj) {
+  return obj ? obj->AsArray() : nullptr;
+}
+inline const CPDF_Array* ToArray(const CPDF_Object* obj) {
+  return obj ? obj->AsArray() : nullptr;
+}
+
 class CPDF_Dictionary : public CPDF_Object {
  public:
   static CPDF_Dictionary* Create() { return new CPDF_Dictionary(); }

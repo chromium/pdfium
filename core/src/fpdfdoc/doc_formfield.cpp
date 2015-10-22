@@ -307,10 +307,9 @@ CFX_WideString CPDF_FormField::GetValue(FX_BOOL bDefault) {
     case PDFOBJ_STREAM:
       return pValue->GetUnicodeText();
     case PDFOBJ_ARRAY:
-      pValue = ((CPDF_Array*)pValue)->GetElementValue(0);
-      if (pValue) {
+      pValue = pValue->AsArray()->GetElementValue(0);
+      if (pValue)
         return pValue->GetUnicodeText();
-      }
       break;
   }
   return CFX_WideString();
@@ -419,28 +418,24 @@ int CPDF_FormField::GetMaxLen() {
 }
 int CPDF_FormField::CountSelectedItems() {
   CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "V");
-  if (pValue == NULL) {
+  if (!pValue) {
     pValue = FPDF_GetFieldAttr(m_pDict, "I");
-    if (pValue == NULL) {
+    if (!pValue)
       return 0;
-    }
   }
 
   if (pValue->IsString() || pValue->IsNumber())
     return pValue->GetString().IsEmpty() ? 0 : 1;
-
-  if (pValue->GetType() != PDFOBJ_ARRAY) {
-    return 0;
-  }
-  return ((CPDF_Array*)pValue)->GetCount();
+  if (CPDF_Array* pArray = pValue->AsArray())
+    return pArray->GetCount();
+  return 0;
 }
 int CPDF_FormField::GetSelectedIndex(int index) {
   CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "V");
-  if (pValue == NULL) {
+  if (!pValue) {
     pValue = FPDF_GetFieldAttr(m_pDict, "I");
-    if (pValue == NULL) {
+    if (!pValue)
       return -1;
-    }
   }
   if (pValue->IsNumber())
     return pValue->GetInteger();
@@ -449,16 +444,13 @@ int CPDF_FormField::GetSelectedIndex(int index) {
   if (pValue->IsString()) {
     if (index != 0)
       return -1;
-
     sel_value = pValue->GetUnicodeText();
   } else {
-    if (pValue->GetType() != PDFOBJ_ARRAY) {
+    CPDF_Array* pArray = pValue->AsArray();
+    if (!pArray || index < 0)
       return -1;
-    }
-    if (index < 0) {
-      return -1;
-    }
-    CPDF_Object* elementValue = ((CPDF_Array*)pValue)->GetElementValue(index);
+
+    CPDF_Object* elementValue = pArray->GetElementValue(index);
     sel_value =
         elementValue ? elementValue->GetUnicodeText() : CFX_WideString();
   }
@@ -537,10 +529,10 @@ FX_BOOL CPDF_FormField::IsItemSelected(int index) {
     return (pValue->GetInteger() == index);
   }
 
-  if (pValue->GetType() != PDFOBJ_ARRAY) {
+  CPDF_Array* pArray = pValue->AsArray();
+  if (!pArray)
     return FALSE;
-  }
-  CPDF_Array* pArray = (CPDF_Array*)pValue;
+
   int iPos = -1;
   for (int j = 0; j < CountSelectedOptions(); j++) {
     if (GetSelectedOptionIndex(j) == index) {
@@ -584,11 +576,8 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
           if (pValue->GetUnicodeText() == opt_value) {
             m_pDict->RemoveAt("V");
           }
-        } else if (pValue->GetType() == PDFOBJ_ARRAY) {
+        } else if (pValue->IsArray()) {
           CPDF_Array* pArray = CPDF_Array::Create();
-          if (pArray == NULL) {
-            return FALSE;
-          }
           int iCount = CountOptions();
           for (int i = 0; i < iCount; i++) {
             if (i != index) {
@@ -703,24 +692,19 @@ void CPDF_FormField::UpdateAP(CPDF_FormControl* pControl) {
   }
 }
 int CPDF_FormField::CountOptions() {
-  CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "Opt");
-  if (pValue == NULL || pValue->GetType() != PDFOBJ_ARRAY) {
-    return 0;
-  }
-  return ((CPDF_Array*)pValue)->GetCount();
+  CPDF_Array* pArray = ToArray(FPDF_GetFieldAttr(m_pDict, "Opt"));
+  return pArray ? pArray->GetCount() : 0;
 }
 CFX_WideString CPDF_FormField::GetOptionText(int index, int sub_index) {
-  CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "Opt");
-  if (pValue == NULL || pValue->GetType() != PDFOBJ_ARRAY) {
+  CPDF_Array* pArray = ToArray(FPDF_GetFieldAttr(m_pDict, "Opt"));
+  if (!pArray)
     return CFX_WideString();
-  }
-  CPDF_Object* pOption = ((CPDF_Array*)pValue)->GetElementValue(index);
-  if (pOption == NULL) {
+
+  CPDF_Object* pOption = pArray->GetElementValue(index);
+  if (!pOption)
     return CFX_WideString();
-  }
-  if (pOption->GetType() == PDFOBJ_ARRAY) {
-    pOption = ((CPDF_Array*)pOption)->GetElementValue(sub_index);
-  }
+  if (CPDF_Array* pOptionArray = pOption->AsArray())
+    pOption = pOptionArray->GetElementValue(sub_index);
 
   CPDF_String* pString = ToString(pOption);
   return pString ? pString->GetUnicodeText() : CFX_WideString();
@@ -873,7 +857,7 @@ FX_BOOL CPDF_FormField::CheckControl(int iControlIndex,
     }
   }
   CPDF_Object* pOpt = FPDF_GetFieldAttr(m_pDict, "Opt");
-  if (pOpt == NULL || pOpt->GetType() != PDFOBJ_ARRAY) {
+  if (!ToArray(pOpt)) {
     if (bChecked) {
       m_pDict->SetAtName("V", csBExport);
     } else {

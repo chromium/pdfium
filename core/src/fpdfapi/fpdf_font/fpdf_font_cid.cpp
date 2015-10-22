@@ -1667,14 +1667,13 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
   FX_DWORD count = pArray->GetCount();
   for (FX_DWORD i = 0; i < count; i++) {
     CPDF_Object* pObj = pArray->GetElementValue(i);
-    if (pObj == NULL) {
+    if (!pObj)
       continue;
-    }
-    if (pObj->GetType() == PDFOBJ_ARRAY) {
-      if (width_status != 1) {
+
+    if (CPDF_Array* pArray = pObj->AsArray()) {
+      if (width_status != 1)
         return;
-      }
-      CPDF_Array* pArray = (CPDF_Array*)pObj;
+
       FX_DWORD count = pArray->GetCount();
       for (FX_DWORD j = 0; j < count; j += nElements) {
         result.Add(first_code);

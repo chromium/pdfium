@@ -1139,14 +1139,11 @@ void CPDF_DeviceNCS::GetDefaultValue(int iComponent,
   max = 1.0f;
 }
 FX_BOOL CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
-  CPDF_Object* pObj = pArray->GetElementValue(1);
-  if (!pObj) {
+  CPDF_Array* pObj = ToArray(pArray->GetElementValue(1));
+  if (!pObj)
     return FALSE;
-  }
-  if (pObj->GetType() != PDFOBJ_ARRAY) {
-    return FALSE;
-  }
-  m_nComponents = ((CPDF_Array*)pObj)->GetCount();
+
+  m_nComponents = pObj->GetCount();
   CPDF_Object* pAltCS = pArray->GetElementValue(2);
   if (!pAltCS || pAltCS == m_pArray) {
     return FALSE;
@@ -1224,21 +1221,19 @@ CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
     }
     return nullptr;
   }
-  if (pObj->GetType() != PDFOBJ_ARRAY) {
-    return NULL;
-  }
-  CPDF_Array* pArray = (CPDF_Array*)pObj;
-  if (pArray->GetCount() == 0) {
-    return NULL;
-  }
+
+  CPDF_Array* pArray = pObj->AsArray();
+  if (!pArray || pArray->GetCount() == 0)
+    return nullptr;
+
   CPDF_Object* pFamilyObj = pArray->GetElementValue(0);
-  if (!pFamilyObj) {
-    return NULL;
-  }
+  if (!pFamilyObj)
+    return nullptr;
+
   CFX_ByteString familyname = pFamilyObj->GetString();
-  if (pArray->GetCount() == 1) {
+  if (pArray->GetCount() == 1)
     return _CSFromName(familyname);
-  }
+
   CPDF_ColorSpace* pCS = NULL;
   FX_DWORD id = familyname.GetID();
   if (id == FXBSTR_ID('C', 'a', 'l', 'G')) {

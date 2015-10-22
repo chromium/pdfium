@@ -514,7 +514,7 @@ void _PDF_ReplaceAbbr(CPDF_Object* pObj) {
       break;
     }
     case PDFOBJ_ARRAY: {
-      CPDF_Array* pArray = (CPDF_Array*)pObj;
+      CPDF_Array* pArray = pObj->AsArray();
       for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
         CPDF_Object* pElement = pArray->GetElement(i);
         if (pElement->IsName()) {
@@ -577,7 +577,7 @@ void _PDF_ReplaceFull(CPDF_Object* pObj) {
       break;
     }
     case PDFOBJ_ARRAY: {
-      CPDF_Array* pArray = (CPDF_Array*)pObj;
+      CPDF_Array* pArray = pObj->AsArray();
       for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
         CPDF_Object* pElement = pArray->GetElement(i);
         if (pElement->IsName()) {

@@ -412,8 +412,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
             bsDecodeType == FX_BSTRC("JPXDecode")) {
           m_Flags |= FXRENDER_IMAGE_LOSSY;
         }
-      } else if (pFilters->GetType() == PDFOBJ_ARRAY) {
-        CPDF_Array* pArray = (CPDF_Array*)pFilters;
+      } else if (CPDF_Array* pArray = pFilters->AsArray()) {
         for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
           CFX_ByteStringC bsDecodeType = pArray->GetConstString(i);
           if (bsDecodeType == FX_BSTRC("DCTDecode") ||

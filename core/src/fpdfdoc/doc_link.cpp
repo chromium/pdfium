@@ -81,9 +81,8 @@ CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
     CFX_ByteStringC name = pDest->GetString();
     return CPDF_Dest(name_tree.LookupNamedDest(pDoc, name));
   }
-  if (pDest->GetType() == PDFOBJ_ARRAY) {
-    return CPDF_Dest((CPDF_Array*)pDest);
-  }
+  if (CPDF_Array* pArray = pDest->AsArray())
+    return CPDF_Dest(pArray);
   return CPDF_Dest();
 }
 CPDF_Action CPDF_Link::GetAction() {

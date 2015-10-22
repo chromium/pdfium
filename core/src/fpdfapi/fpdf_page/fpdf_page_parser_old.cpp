@@ -332,16 +332,16 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
   CFX_ByteString Decoder;
   CPDF_Dictionary* pParam = NULL;
   CPDF_Object* pFilter = pDict->GetElementValue(FX_BSTRC("Filter"));
-  if (pFilter == NULL) {
-  } else if (pFilter->GetType() == PDFOBJ_ARRAY) {
-    Decoder = ((CPDF_Array*)pFilter)->GetString(0);
-    CPDF_Array* pParams = pDict->GetArray(FX_BSTRC("DecodeParms"));
-    if (pParams) {
-      pParam = pParams->GetDict(0);
+  if (pFilter) {
+    if (CPDF_Array* pArray = pFilter->AsArray()) {
+      Decoder = pArray->GetString(0);
+      CPDF_Array* pParams = pDict->GetArray(FX_BSTRC("DecodeParms"));
+      if (pParams)
+        pParam = pParams->GetDict(0);
+    } else {
+      Decoder = pFilter->GetString();
+      pParam = pDict->GetDict(FX_BSTRC("DecodeParms"));
     }
-  } else {
-    Decoder = pFilter->GetString();
-    pParam = pDict->GetDict(FX_BSTRC("DecodeParms"));
   }
   FX_DWORD width = pDict->GetInteger(FX_BSTRC("Width"));
   FX_DWORD height = pDict->GetInteger(FX_BSTRC("Height"));
@@ -403,12 +403,11 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
     if (bDecode) {
       m_Pos += dwStreamSize;
       dwStreamSize = dwDestSize;
-      if (pFilter->GetType() == PDFOBJ_ARRAY) {
-        ((CPDF_Array*)pFilter)->RemoveAt(0);
+      if (CPDF_Array* pArray = pFilter->AsArray()) {
+        pArray->RemoveAt(0);
         CPDF_Array* pParams = pDict->GetArray(FX_BSTRC("DecodeParms"));
-        if (pParams) {
+        if (pParams)
           pParams->RemoveAt(0);
-        }
       } else {
         pDict->RemoveAt(FX_BSTRC("Filter"));
         pDict->RemoveAt(FX_BSTRC("DecodeParms"));
@@ -965,8 +964,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
     m_nStreams = 0;
     m_pSingleStream = new CPDF_StreamAcc;
     m_pSingleStream->LoadAllData((CPDF_Stream*)pContent, FALSE);
-  } else if (pContent->GetType() == PDFOBJ_ARRAY) {
-    CPDF_Array* pArray = (CPDF_Array*)pContent;
+  } else if (CPDF_Array* pArray = pContent->AsArray()) {
     m_nStreams = pArray->GetCount();
     if (m_nStreams == 0) {
       m_Status = Done;

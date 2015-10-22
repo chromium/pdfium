@@ -22,9 +22,8 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
     CFX_ByteStringC name = pDest->GetString();
     return CPDF_Dest(name_tree.LookupNamedDest(pDoc, name));
   }
-  if (pDest->GetType() == PDFOBJ_ARRAY) {
-    return CPDF_Dest((CPDF_Array*)pDest);
-  }
+  if (CPDF_Array* pArray = pDest->AsArray())
+    return CPDF_Dest(pArray);
   return CPDF_Dest();
 }
 const FX_CHAR* g_sATypes[] = {
@@ -108,8 +107,8 @@ FX_DWORD CPDF_ActionFields::GetFieldsCount() const {
     return 1;
   if (pFields->IsString())
     return 1;
-  if (pFields->GetType() == PDFOBJ_ARRAY)
-    return ((CPDF_Array*)pFields)->GetCount();
+  if (CPDF_Array* pArray = pFields->AsArray())
+    return pArray->GetCount();
   return 0;
 }
 void CPDF_ActionFields::GetAllFields(CFX_PtrArray& fieldObjects) const {
@@ -133,8 +132,7 @@ void CPDF_ActionFields::GetAllFields(CFX_PtrArray& fieldObjects) const {
 
   if (pFields->IsDictionary() || pFields->IsString()) {
     fieldObjects.Add(pFields);
-  } else if (pFields->GetType() == PDFOBJ_ARRAY) {
-    CPDF_Array* pArray = (CPDF_Array*)pFields;
+  } else if (CPDF_Array* pArray = pFields->AsArray()) {
     FX_DWORD iCount = pArray->GetCount();
     for (FX_DWORD i = 0; i < iCount; i++) {
       CPDF_Object* pObj = pArray->GetElementValue(i);
@@ -166,8 +164,8 @@ CPDF_Object* CPDF_ActionFields::GetField(FX_DWORD iIndex) const {
   if (pFields->IsDictionary() || pFields->IsString()) {
     if (iIndex == 0)
       pFindObj = pFields;
-  } else if (pFields->GetType() == PDFOBJ_ARRAY) {
-    pFindObj = ((CPDF_Array*)pFields)->GetElementValue(iIndex);
+  } else if (CPDF_Array* pArray = pFields->AsArray()) {
+    pFindObj = pArray->GetElementValue(iIndex);
   }
   return pFindObj;
 }
@@ -222,20 +220,16 @@ int32_t CPDF_Action::GetOperationType() const {
   return 0;
 }
 FX_DWORD CPDF_Action::GetSubActionsCount() const {
-  if (m_pDict == NULL || !m_pDict->KeyExist("Next")) {
+  if (!m_pDict || !m_pDict->KeyExist("Next"))
     return 0;
-  }
+
   CPDF_Object* pNext = m_pDict->GetElementValue("Next");
-  if (!pNext) {
+  if (!pNext)
     return 0;
-  }
-  int iObjType = pNext->GetType();
-  if (iObjType == PDFOBJ_DICTIONARY) {
+  if (pNext->IsDictionary())
     return 1;
-  }
-  if (iObjType == PDFOBJ_ARRAY) {
-    return ((CPDF_Array*)pNext)->GetCount();
-  }
+  if (CPDF_Array* pArray = pNext->AsArray())
+    return pArray->GetCount();
   return 0;
 }
 CPDF_Action CPDF_Action::GetSubAction(FX_DWORD iIndex) const {
@@ -246,8 +240,7 @@ CPDF_Action CPDF_Action::GetSubAction(FX_DWORD iIndex) const {
   if (CPDF_Dictionary* pDict = ToDictionary(pNext)) {
     if (iIndex == 0)
       return CPDF_Action(pDict);
-  } else if (pNext->GetType() == PDFOBJ_ARRAY) {
-    CPDF_Array* pArray = static_cast<CPDF_Array*>(pNext);
+  } else if (CPDF_Array* pArray = ToArray(pNext)) {
     return CPDF_Action(pArray->GetDict(iIndex));
   }
   return CPDF_Action();

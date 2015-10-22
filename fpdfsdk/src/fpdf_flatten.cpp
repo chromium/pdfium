@@ -226,7 +226,7 @@ void SetPageContents(CFX_ByteString key,
     }
 
     case PDFOBJ_ARRAY: {
-      pContentsArray = (CPDF_Array*)pContentsObj;
+      pContentsArray = pContentsObj->AsArray();
       break;
     }
     default:

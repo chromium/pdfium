@@ -1225,9 +1225,8 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
   CPDF_Function* pFuncs[3] = {nullptr, nullptr, nullptr};
   FX_BOOL bUniTransfer = TRUE;
   FX_BOOL bIdentity = TRUE;
-  if (pObj->GetType() == PDFOBJ_ARRAY) {
+  if (CPDF_Array* pArray = pObj->AsArray()) {
     bUniTransfer = FALSE;
-    CPDF_Array* pArray = (CPDF_Array*)pObj;
     if (pArray->GetCount() < 3)
       return nullptr;
 

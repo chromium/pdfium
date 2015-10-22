@@ -242,7 +242,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       break;
     }
     case PDFOBJ_ARRAY: {
-      CPDF_Array* pArray = (CPDF_Array*)pObj;
+      CPDF_Array* pArray = pObj->AsArray();
       FX_DWORD count = pArray->GetCount();
       for (FX_DWORD i = 0; i < count; i++) {
         CPDF_Object* pNextObj = pArray->GetElement(i);

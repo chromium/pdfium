@@ -85,15 +85,13 @@ CFX_ByteString CPDF_FormControl::GetCheckedAPState() {
   CFX_ByteString csOn = GetOnStateName();
   if (GetType() == CPDF_FormField::RadioButton ||
       GetType() == CPDF_FormField::CheckBox) {
-    CPDF_Object* pOpt = FPDF_GetFieldAttr(m_pField->m_pDict, "Opt");
-    if (pOpt != NULL && pOpt->GetType() == PDFOBJ_ARRAY) {
+    if (ToArray(FPDF_GetFieldAttr(m_pField->m_pDict, "Opt"))) {
       int iIndex = m_pField->GetControlIndex(this);
       csOn.Format("%d", iIndex);
     }
   }
-  if (csOn.IsEmpty()) {
+  if (csOn.IsEmpty())
     csOn = "Yes";
-  }
   return csOn;
 }
 CFX_WideString CPDF_FormControl::GetExportValue() {
@@ -102,10 +100,10 @@ CFX_WideString CPDF_FormControl::GetExportValue() {
   CFX_ByteString csOn = GetOnStateName();
   if (GetType() == CPDF_FormField::RadioButton ||
       GetType() == CPDF_FormField::CheckBox) {
-    CPDF_Object* pOpt = FPDF_GetFieldAttr(m_pField->m_pDict, "Opt");
-    if (pOpt != NULL && pOpt->GetType() == PDFOBJ_ARRAY) {
+    if (CPDF_Array* pArray =
+            ToArray(FPDF_GetFieldAttr(m_pField->m_pDict, "Opt"))) {
       int iIndex = m_pField->GetControlIndex(this);
-      csOn = ((CPDF_Array*)pOpt)->GetString(iIndex);
+      csOn = pArray->GetString(iIndex);
     }
   }
   if (csOn.IsEmpty()) {
