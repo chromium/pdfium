@@ -960,10 +960,10 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
     m_Status = Done;
     return;
   }
-  if (pContent->GetType() == PDFOBJ_STREAM) {
+  if (CPDF_Stream* pStream = pContent->AsStream()) {
     m_nStreams = 0;
     m_pSingleStream = new CPDF_StreamAcc;
-    m_pSingleStream->LoadAllData((CPDF_Stream*)pContent, FALSE);
+    m_pSingleStream->LoadAllData(pStream, FALSE);
   } else if (CPDF_Array* pArray = pContent->AsArray()) {
     m_nStreams = pArray->GetCount();
     if (m_nStreams == 0) {
@@ -1078,9 +1078,8 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         CPDF_Array* pContent =
             m_pObjects->m_pFormDict->GetArray(FX_BSTRC("Contents"));
         m_pStreamArray[m_CurrentOffset] = new CPDF_StreamAcc;
-        CPDF_Stream* pStreamObj =
-            (CPDF_Stream*)(pContent ? pContent->GetElementValue(m_CurrentOffset)
-                                    : NULL);
+        CPDF_Stream* pStreamObj = ToStream(
+            pContent ? pContent->GetElementValue(m_CurrentOffset) : nullptr);
         m_pStreamArray[m_CurrentOffset]->LoadAllData(pStreamObj, FALSE);
         m_CurrentOffset++;
       }

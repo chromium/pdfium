@@ -119,7 +119,7 @@ CPDF_Font::~CPDF_Font() {
 
   if (m_pFontFile) {
     m_pDocument->GetPageData()->ReleaseFontFileStreamAcc(
-        (CPDF_Stream*)m_pFontFile->GetStream());
+        const_cast<CPDF_Stream*>(m_pFontFile->GetStream()->AsStream()));
   }
 }
 FX_BOOL CPDF_Font::IsVertWriting() const {
@@ -258,24 +258,22 @@ void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
     m_FontBBox.top = pBBox->GetInteger(3);
   }
   CPDF_Stream* pFontFile = pFontDesc->GetStream(FX_BSTRC("FontFile"));
-  if (pFontFile == NULL) {
+  if (!pFontFile)
     pFontFile = pFontDesc->GetStream(FX_BSTRC("FontFile2"));
-  }
-  if (pFontFile == NULL) {
+  if (!pFontFile)
     pFontFile = pFontDesc->GetStream(FX_BSTRC("FontFile3"));
-  }
-  if (pFontFile) {
-    m_pFontFile = m_pDocument->LoadFontFile(pFontFile);
-    if (m_pFontFile == NULL) {
-      return;
-    }
-    const uint8_t* pFontData = m_pFontFile->GetData();
-    FX_DWORD dwFontSize = m_pFontFile->GetSize();
-    m_Font.LoadEmbedded(pFontData, dwFontSize);
-    if (m_Font.m_Face == NULL) {
-      m_pFontFile = NULL;
-    }
-  }
+  if (!pFontFile)
+    return;
+
+  m_pFontFile = m_pDocument->LoadFontFile(pFontFile);
+  if (!m_pFontFile)
+    return;
+
+  const uint8_t* pFontData = m_pFontFile->GetData();
+  FX_DWORD dwFontSize = m_pFontFile->GetSize();
+  m_Font.LoadEmbedded(pFontData, dwFontSize);
+  if (!m_Font.m_Face)
+    m_pFontFile = nullptr;
 }
 short TT2PDF(int m, FXFT_Face face) {
   int upm = FXFT_Get_Face_UnitsPerEM(face);
@@ -1710,10 +1708,10 @@ void CPDF_Type3Font::CheckType3FontMetrics() {
   CheckFontMetrics();
 }
 CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
-  if (level >= _FPDF_MAX_TYPE3_FORM_LEVEL_) {
-    return NULL;
-  }
-  CPDF_Type3Char* pChar = NULL;
+  if (level >= _FPDF_MAX_TYPE3_FORM_LEVEL_)
+    return nullptr;
+
+  CPDF_Type3Char* pChar = nullptr;
   if (m_CacheMap.Lookup((void*)(uintptr_t)charcode, (void*&)pChar)) {
     if (pChar->m_bPageRequired && m_pPageResources) {
       delete pChar;
@@ -1724,19 +1722,19 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
   }
   const FX_CHAR* name =
       GetAdobeCharName(m_BaseEncoding, m_pCharNames, charcode);
-  if (name == NULL) {
-    return NULL;
-  }
+  if (!name)
+    return nullptr;
+
   CPDF_Stream* pStream =
-      (CPDF_Stream*)(m_pCharProcs ? m_pCharProcs->GetElementValue(name) : NULL);
-  if (pStream == NULL || pStream->GetType() != PDFOBJ_STREAM) {
-    return NULL;
-  }
+      ToStream(m_pCharProcs ? m_pCharProcs->GetElementValue(name) : nullptr);
+  if (!pStream)
+    return nullptr;
+
   pChar = new CPDF_Type3Char;
   pChar->m_pForm = new CPDF_Form(
       m_pDocument, m_pFontResources ? m_pFontResources : m_pPageResources,
-      pStream, NULL);
-  pChar->m_pForm->ParseContent(NULL, NULL, pChar, NULL, level + 1);
+      pStream, nullptr);
+  pChar->m_pForm->ParseContent(nullptr, nullptr, pChar, nullptr, level + 1);
   FX_FLOAT scale = m_FontMatrix.GetXUnit();
   pChar->m_Width = (int32_t)(pChar->m_Width * scale + 0.5f);
   FX_RECT& rcBBox = pChar->m_BBox;
@@ -1754,7 +1752,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
   m_CacheMap.SetAt((void*)(uintptr_t)charcode, pChar);
   if (pChar->m_pForm->CountObjects() == 0) {
     delete pChar->m_pForm;
-    pChar->m_pForm = NULL;
+    pChar->m_pForm = nullptr;
   }
   return pChar;
 }

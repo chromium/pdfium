@@ -380,15 +380,13 @@ CFX_WideString FILESPEC_EncodeFileName(const CFX_WideStringC& filepath) {
 #endif
 }
 CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
-  if (m_pObj == NULL) {
-    return NULL;
-  }
-  int32_t iType = m_pObj->GetType();
-  if (iType == PDFOBJ_STREAM)
-    return (CPDF_Stream*)m_pObj;
+  if (!m_pObj)
+    return nullptr;
+  if (CPDF_Stream* pStream = m_pObj->AsStream())
+    return pStream;
   if (CPDF_Dictionary* pEF = m_pObj->AsDictionary()->GetDict(FX_BSTRC("EF")))
     return pEF->GetStream(FX_BSTRC("F"));
-  return NULL;
+  return nullptr;
 }
 static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object* pObj,
                                          const CFX_WideStringC& wsFileName,

@@ -337,8 +337,9 @@ FX_BOOL CPDF_Document::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const {
   {
     CPDF_Object* pObj;
     if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, (void*&)pObj)) {
-      bForm = pObj->GetType() == PDFOBJ_STREAM &&
-              ((CPDF_Stream*)pObj)->GetDict()->GetString(FX_BSTRC("Subtype")) ==
+      CPDF_Stream* pStream = pObj->AsStream();
+      bForm = pStream &&
+              pStream->GetDict()->GetString(FX_BSTRC("Subtype")) ==
                   FX_BSTRC("Form");
       return TRUE;
     }

@@ -317,8 +317,8 @@ static CPDF_Dictionary* FindAttrDict(CPDF_Object* pAttrs,
   CPDF_Dictionary* pDict = nullptr;
   if (pAttrs->IsDictionary()) {
     pDict = pAttrs->AsDictionary();
-  } else if (pAttrs->GetType() == PDFOBJ_STREAM) {
-    pDict = ((CPDF_Stream*)pAttrs)->GetDict();
+  } else if (CPDF_Stream* pStream = pAttrs->AsStream()) {
+    pDict = pStream->GetDict();
   } else if (CPDF_Array* pArray = pAttrs->AsArray()) {
     for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
       CPDF_Object* pElement = pArray->GetElementValue(i);
@@ -327,10 +327,9 @@ static CPDF_Dictionary* FindAttrDict(CPDF_Object* pAttrs,
         return pDict;
     }
   }
-  if (pDict && pDict->GetString(FX_BSTRC("O")) == owner) {
+  if (pDict && pDict->GetString(FX_BSTRC("O")) == owner)
     return pDict;
-  }
-  return NULL;
+  return nullptr;
 }
 CPDF_Object* CPDF_StructElementImpl::GetAttr(const CFX_ByteStringC& owner,
                                              const CFX_ByteStringC& name,

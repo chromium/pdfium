@@ -470,7 +470,7 @@ CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream) {
   }
 
   CPDF_Image* pImage = new CPDF_Image(m_pPDFDoc);
-  pImage->LoadImageF((CPDF_Stream*)pImageStream, FALSE);
+  pImage->LoadImageF(pImageStream->AsStream(), FALSE);
 
   CPDF_CountedImage* imageData = new CPDF_CountedImage(pImage);
   m_ImageMap[dwImageObjNum] = imageData;

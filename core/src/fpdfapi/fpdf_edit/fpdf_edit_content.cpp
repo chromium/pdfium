@@ -131,12 +131,13 @@ void CPDF_PageContentGenerate::TransformContent(CFX_Matrix& matrix) {
     int i = 0;
     for (i = 0; i < iCount; ++i) {
       pContent = pArray->GetElement(i);
-      if (!pContent || pContent->GetType() != PDFOBJ_STREAM) {
+      CPDF_Stream* pStream = ToStream(pContent);
+      if (!pStream)
         continue;
-      }
-      CPDF_StreamAcc* pStream = new CPDF_StreamAcc();
-      pStream->LoadAllData((CPDF_Stream*)pContent);
-      pContentArray[i] = pStream;
+
+      CPDF_StreamAcc* pStreamAcc = new CPDF_StreamAcc();
+      pStreamAcc->LoadAllData(pStream);
+      pContentArray[i] = pStreamAcc;
       size += pContentArray[i]->GetSize() + 1;
     }
     int pos = 0;
@@ -151,9 +152,9 @@ void CPDF_PageContentGenerate::TransformContent(CFX_Matrix& matrix) {
     ProcessForm(buf, pBuf, size, matrix);
     FX_Free(pBuf);
     FX_Free(pContentArray);
-  } else if (pContent->GetType() == PDFOBJ_STREAM) {
+  } else if (CPDF_Stream* pStream = pContent->AsStream()) {
     CPDF_StreamAcc contentStream;
-    contentStream.LoadAllData((CPDF_Stream*)pContent);
+    contentStream.LoadAllData(pStream);
     ProcessForm(buf, contentStream.GetData(), contentStream.GetSize(), matrix);
   }
   CPDF_Stream* pStream = new CPDF_Stream(NULL, 0, NULL);

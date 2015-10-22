@@ -765,7 +765,7 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMask(FX_DWORD& MatteColor) {
   CPDF_Stream* pSoftMask = m_pDict->GetStream(FX_BSTRC("SMask"));
   if (pSoftMask) {
     CPDF_Array* pMatte = pSoftMask->GetDict()->GetArray(FX_BSTRC("Matte"));
-    if (pMatte != NULL && m_pColorSpace &&
+    if (pMatte && m_pColorSpace &&
         (FX_DWORD)m_pColorSpace->CountComponents() <= m_nComponents) {
       FX_FLOAT* pColor = FX_Alloc(FX_FLOAT, m_nComponents);
       for (FX_DWORD i = 0; i < m_nComponents; i++) {
@@ -779,14 +779,12 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMask(FX_DWORD& MatteColor) {
     }
     return LoadMaskDIB(pSoftMask);
   }
-  CPDF_Object* pMask = m_pDict->GetElementValue(FX_BSTRC("Mask"));
-  if (pMask == NULL) {
-    return NULL;
-  }
-  if (pMask->GetType() == PDFOBJ_STREAM) {
-    return LoadMaskDIB((CPDF_Stream*)pMask);
-  }
-  return NULL;
+
+  if (CPDF_Stream* pStream =
+          ToStream(m_pDict->GetElementValue(FX_BSTRC("Mask"))))
+    return LoadMaskDIB(pStream);
+
+  return nullptr;
 }
 int CPDF_DIBSource::StratLoadMask() {
   m_MatteColor = 0XFFFFFFFF;
@@ -807,14 +805,9 @@ int CPDF_DIBSource::StratLoadMask() {
     }
     return StartLoadMaskDIB();
   }
-  m_pMaskStream = m_pDict->GetElementValue(FX_BSTRC("Mask"));
-  if (m_pMaskStream == NULL) {
-    return 1;
-  }
-  if (m_pMaskStream->GetType() == PDFOBJ_STREAM) {
-    return StartLoadMaskDIB();
-  }
-  return 1;
+
+  m_pMaskStream = ToStream(m_pDict->GetElementValue(FX_BSTRC("Mask")));
+  return m_pMaskStream ? StartLoadMaskDIB() : 1;
 }
 int CPDF_DIBSource::ContinueLoadMaskDIB(IFX_Pause* pPause) {
   if (m_pMask == NULL) {
@@ -849,17 +842,16 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMaskDIB(CPDF_Stream* pMask) {
 }
 int CPDF_DIBSource::StartLoadMaskDIB() {
   m_pMask = new CPDF_DIBSource;
-  int ret = m_pMask->StartLoadDIBSource(
-      m_pDocument, (CPDF_Stream*)m_pMaskStream, FALSE, NULL, NULL, TRUE);
+  int ret = m_pMask->StartLoadDIBSource(m_pDocument, m_pMaskStream, FALSE,
+                                        nullptr, nullptr, TRUE);
   if (ret == 2) {
-    if (m_Status == 0) {
+    if (m_Status == 0)
       m_Status = 2;
-    }
     return 2;
   }
   if (!ret) {
     delete m_pMask;
-    m_pMask = NULL;
+    m_pMask = nullptr;
     return 1;
   }
   return 1;

@@ -547,7 +547,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   CPDF_StreamAcc* m_pGlobalStream;
   FX_BOOL m_bStdCS;
   int m_Status;
-  CPDF_Object* m_pMaskStream;
+  CPDF_Stream* m_pMaskStream;
   FX_BOOL m_bHasMask;
 
  private:

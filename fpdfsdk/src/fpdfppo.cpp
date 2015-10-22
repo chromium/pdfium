@@ -255,7 +255,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       break;
     }
     case PDFOBJ_STREAM: {
-      CPDF_Stream* pStream = (CPDF_Stream*)pObj;
+      CPDF_Stream* pStream = pObj->AsStream();
       CPDF_Dictionary* pDict = pStream->GetDict();
       if (pDict) {
         if (!UpdateReference(pDict, pDoc, pMapPtrToPtr))

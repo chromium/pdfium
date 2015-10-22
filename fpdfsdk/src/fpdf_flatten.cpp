@@ -211,7 +211,7 @@ void SetPageContents(CFX_ByteString key,
   switch (iType) {
     case PDFOBJ_STREAM: {
       pContentsArray = new CPDF_Array;
-      CPDF_Stream* pContents = (CPDF_Stream*)pContentsObj;
+      CPDF_Stream* pContents = pContentsObj->AsStream();
       FX_DWORD dwObjNum = pDocument->AddIndirectObject(pContents);
       CPDF_StreamAcc acc;
       acc.LoadAllData(pContents);
@@ -447,15 +447,14 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
             if (pFirstObj->GetType() == PDFOBJ_REFERENCE)
               pFirstObj = pFirstObj->GetDirect();
 
-            if (pFirstObj->GetType() != PDFOBJ_STREAM)
+            if (!pFirstObj->IsStream())
               continue;
 
-            pAPStream = (CPDF_Stream*)pFirstObj;
+            pAPStream = pFirstObj->AsStream();
           }
         }
       }
     }
-
     if (!pAPStream)
       continue;
 
