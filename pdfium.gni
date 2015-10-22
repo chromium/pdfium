@@ -18,4 +18,3 @@ declare_args() {
   # Build PDFium against skia (experimental) rather than agg.
   pdf_use_skia = false
 }
-

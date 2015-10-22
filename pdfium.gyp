@@ -534,6 +534,12 @@
         'core/src/fxge/ge/fx_ge_text.cpp',
         'core/src/fxge/ge/text_int.h',
       ],
+      'variables': {
+        'clang_warning_flags': [
+          # http://code.google.com/p/pdfium/issues/detail?id=188
+          '-Wno-switch',
+        ],
+      },
       'conditions': [
         ['pdf_use_skia==1', {
           'sources': [
@@ -770,8 +776,8 @@
         'core/src/fxcrt/fx_basic_memmgr_unittest.cpp',
         'core/src/fxcrt/fx_basic_wstring_unittest.cpp',
         'core/src/fxcrt/fx_system_unittest.cpp',
-        'testing/fx_string_testhelpers.cpp',
         'testing/fx_string_testhelpers.h',
+        'testing/fx_string_testhelpers.cpp',
         'third_party/base/nonstd_unique_ptr_unittest.cpp',
       ],
       'conditions': [
