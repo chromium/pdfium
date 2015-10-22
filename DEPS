@@ -1,3 +1,5 @@
+use_relative_paths = True
+
 deps = {
   "build/gyp":
     "https://chromium.googlesource.com/external/gyp",
