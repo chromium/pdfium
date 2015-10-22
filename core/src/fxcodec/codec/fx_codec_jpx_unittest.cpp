@@ -45,16 +45,16 @@ TEST(fxcodec, DecodeDataNullStream) {
   EXPECT_EQ(0xbd, buffer[0]);
 
   // writes of size 0 do nothing but return an error code.
-  EXPECT_EQ(kReadError, opj_write_from_memory(buffer, 0, &dd));
+  EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, 0, &dd));
 
   // writes of nonzero size do nothing but return an error code.
-  EXPECT_EQ(kReadError, opj_write_from_memory(buffer, sizeof(buffer), &dd));
+  EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, sizeof(buffer), &dd));
 
   // Skips of size 0 always return an error code.
-  EXPECT_EQ(kReadError, opj_skip_from_memory(0, &dd));
+  EXPECT_EQ(kSkipError, opj_skip_from_memory(0, &dd));
 
   // Skips of nonzero size always return an error code.
-  EXPECT_EQ(kReadError, opj_skip_from_memory(1, &dd));
+  EXPECT_EQ(kSkipError, opj_skip_from_memory(1, &dd));
 
   // Seeks to 0 offset return in error.
   EXPECT_FALSE(opj_seek_from_memory(0, &dd));
@@ -78,16 +78,16 @@ TEST(fxcodec, DecodeDataZeroSize) {
   EXPECT_EQ(0xbd, buffer[0]);
 
   // writes of size 0 do nothing but return an error code.
-  EXPECT_EQ(kReadError, opj_write_from_memory(buffer, 0, &dd));
+  EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, 0, &dd));
 
   // writes of nonzero size do nothing but return an error code.
-  EXPECT_EQ(kReadError, opj_write_from_memory(buffer, sizeof(buffer), &dd));
+  EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, sizeof(buffer), &dd));
 
   // Skips of size 0 always return an error code.
-  EXPECT_EQ(kReadError, opj_skip_from_memory(0, &dd));
+  EXPECT_EQ(kSkipError, opj_skip_from_memory(0, &dd));
 
   // Skips of nonzero size always return an error code.
-  EXPECT_EQ(kReadError, opj_skip_from_memory(1, &dd));
+  EXPECT_EQ(kSkipError, opj_skip_from_memory(1, &dd));
 
   // Seeks to 0 offset return in error.
   EXPECT_FALSE(opj_seek_from_memory(0, &dd));
