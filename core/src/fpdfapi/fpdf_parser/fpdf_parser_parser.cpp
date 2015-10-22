@@ -2754,6 +2754,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
  protected:
   static const int kMaxDataAvailRecursionDepth = 64;
   static int s_CurrentDataAvailRecursionDepth;
+  static const int kMaxPageRecursionDepth = 1024;
 
   FX_DWORD GetObjectSize(FX_DWORD objnum, FX_FILESIZE& offset);
   FX_BOOL IsObjectsAvail(CFX_PtrArray& obj_array,
@@ -2806,7 +2807,8 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   FX_BOOL CheckPageNode(CPDF_PageNode& pageNodes,
                         int32_t iPage,
                         int32_t& iCount,
-                        IFX_DownloadHints* pHints);
+                        IFX_DownloadHints* pHints,
+                        int level);
   FX_BOOL CheckUnkownPageNode(FX_DWORD dwPageNo,
                               CPDF_PageNode* pPageNode,
                               IFX_DownloadHints* pHints);
@@ -4193,7 +4195,11 @@ FX_BOOL CPDF_DataAvail::CheckUnkownPageNode(FX_DWORD dwPageNo,
 FX_BOOL CPDF_DataAvail::CheckPageNode(CPDF_PageNode& pageNodes,
                                       int32_t iPage,
                                       int32_t& iCount,
-                                      IFX_DownloadHints* pHints) {
+                                      IFX_DownloadHints* pHints,
+                                      int level) {
+  if (level >= kMaxPageRecursionDepth) {
+    return FALSE;
+  }
   int32_t iSize = pageNodes.m_childNode.GetSize();
   if (iSize <= 0 || iPage >= iSize) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
@@ -4218,7 +4224,7 @@ FX_BOOL CPDF_DataAvail::CheckPageNode(CPDF_PageNode& pageNodes,
         }
         break;
       case PDF_PAGENODE_PAGES:
-        if (!CheckPageNode(*pNode, iPage, iCount, pHints)) {
+        if (!CheckPageNode(*pNode, iPage, iCount, pHints, level + 1)) {
           return FALSE;
         }
         break;
@@ -4251,7 +4257,7 @@ FX_BOOL CPDF_DataAvail::LoadDocPage(int32_t iPage, IFX_DownloadHints* pHints) {
     return TRUE;
   }
   int32_t iCount = -1;
-  return CheckPageNode(m_pageNodes, iPage, iCount, pHints);
+  return CheckPageNode(m_pageNodes, iPage, iCount, pHints, 0);
 }
 FX_BOOL CPDF_DataAvail::CheckPageCount(IFX_DownloadHints* pHints) {
   FX_BOOL bExist = FALSE;
