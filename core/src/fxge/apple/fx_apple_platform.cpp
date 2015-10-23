@@ -64,13 +64,13 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
   }
   CQuartz2D& quartz2d =
       ((CApplePlatform*)CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
-  if (!pFont->m_pPlatformFont) {
+  if (!pFont->GetPlatformFont()) {
     if (pFont->GetPsName() == CFX_WideString::FromLocal("DFHeiStd-W5")) {
       return FALSE;
     }
-    pFont->m_pPlatformFont =
-        quartz2d.CreateFont(pFont->m_pFontData, pFont->m_dwSize);
-    if (NULL == pFont->m_pPlatformFont) {
+    pFont->SetPlatformFont(
+        quartz2d.CreateFont(pFont->GetFontData(), pFont->GetSize()));
+    if (!pFont->GetPlatformFont()) {
       return FALSE;
     }
   }
@@ -92,7 +92,7 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
     new_matrix.d = -new_matrix.d;
   }
   quartz2d.setGraphicsTextMatrix(pContext, &new_matrix);
-  return quartz2d.drawGraphicsString(pContext, pFont->m_pPlatformFont,
+  return quartz2d.drawGraphicsString(pContext, pFont->GetPlatformFont(),
                                      font_size, glyph_indices, glyph_positions,
                                      nChars, argb, NULL);
 }

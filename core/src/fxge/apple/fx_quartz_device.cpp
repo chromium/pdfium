@@ -751,13 +751,13 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(
   }
   CQuartz2D& quartz2d =
       ((CApplePlatform*)CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
-  if (!pFont->m_pPlatformFont) {
+  if (!pFont->GetPlatformFont()) {
     if (pFont->GetPsName() == CFX_WideString::FromLocal("DFHeiStd-W5")) {
       return FALSE;
     }
-    pFont->m_pPlatformFont =
-        quartz2d.CreateFont(pFont->m_pFontData, pFont->m_dwSize);
-    if (NULL == pFont->m_pPlatformFont) {
+    pFont->SetPlatformFont(
+        quartz2d.CreateFont(pFont->GetFontData(), pFont->GetSize()));
+    if (!pFont->GetPlatformFont()) {
       return FALSE;
     }
   }
@@ -777,7 +777,7 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(
                             text_matrix.d, text_matrix.e, text_matrix.f);
   matrix_cg = CGAffineTransformConcat(matrix_cg, _foxitDevice2User);
   CGContextSetTextMatrix(_context, matrix_cg);
-  CGContextSetFont(_context, (CGFontRef)pFont->m_pPlatformFont);
+  CGContextSetFont(_context, (CGFontRef)pFont->GetPlatformFont());
   CGContextSetFontSize(_context, FXSYS_fabs(font_size));
   int32_t a, r, g, b;
   ArgbDecode(argb, a, r, g, b);
