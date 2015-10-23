@@ -1073,7 +1073,8 @@ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
       m_LayerIndex(0),
       m_ObjectIndex(0),
       m_ObjectPos(nullptr),
-      m_PrevLastPos(nullptr) {}
+      m_PrevLastPos(nullptr) {
+}
 
 CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
   if (m_pRenderStatus)
