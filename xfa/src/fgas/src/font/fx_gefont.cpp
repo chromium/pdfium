@@ -132,16 +132,15 @@ CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, FX_DWORD dwFontStyles)
   FXSYS_assert(m_pFont != NULL);
   FXSYS_assert(src.m_pFont != NULL);
   m_pFont->LoadClone(src.m_pFont);
-  CFX_SubstFont*& pSubst = m_pFont->m_pSubstFont;
-  if (pSubst == NULL) {
+  CFX_SubstFont* pSubst = m_pFont->GetSubstFont();
+  if (!pSubst) {
     pSubst = new CFX_SubstFont;
+    m_pFont->SetSubstFont(pSubst);
   }
-  if (pSubst) {
-    pSubst->m_Weight =
-        (dwFontStyles & FX_FONTSTYLE_Bold) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
-    if (dwFontStyles & FX_FONTSTYLE_Italic) {
-      pSubst->m_SubstFlags |= FXFONT_SUBST_ITALIC;
-    }
+  pSubst->m_Weight =
+      (dwFontStyles & FX_FONTSTYLE_Bold) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
+  if (dwFontStyles & FX_FONTSTYLE_Italic) {
+    pSubst->m_SubstFlags |= FXFONT_SUBST_ITALIC;
   }
   InitFont();
 }
@@ -236,7 +235,7 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
     csFontFamily += ",Italic";
   }
   m_pFont->LoadSubst(csFontFamily, TRUE, dwFlags, iWeight, 0, wCodePage);
-  FX_BOOL bRet = m_pFont->m_Face != nullptr;
+  FX_BOOL bRet = m_pFont->GetFace() != nullptr;
   if (bRet) {
     InitFont();
   }
@@ -355,22 +354,20 @@ IFX_Font* CFX_GEFont::Derive(FX_DWORD dwFontStyles, FX_WORD wCodePage) {
   return new CFX_GEFont(*this, dwFontStyles);
 }
 uint8_t CFX_GEFont::GetCharSet() const {
-  FXSYS_assert(m_pFont != NULL);
   if (m_wCharSet != 0xFFFF) {
     return (uint8_t)m_wCharSet;
   }
-  if (m_pFont->m_pSubstFont == NULL) {
+  if (!m_pFont->GetSubstFont()) {
     return FX_CHARSET_Default;
   }
-  return m_pFont->m_pSubstFont->m_Charset;
+  return m_pFont->GetSubstFont()->m_Charset;
 }
 void CFX_GEFont::GetFamilyName(CFX_WideString& wsFamily) const {
-  FXSYS_assert(m_pFont != NULL);
-  if (m_pFont->m_pSubstFont == NULL ||
-      m_pFont->m_pSubstFont->m_Family.GetLength() == 0) {
+  if (!m_pFont->GetSubstFont() ||
+      m_pFont->GetSubstFont()->m_Family.GetLength() == 0) {
     wsFamily = CFX_WideString::FromLocal(m_pFont->GetFamilyName());
   } else {
-    wsFamily = CFX_WideString::FromLocal(m_pFont->m_pSubstFont->m_Family);
+    wsFamily = CFX_WideString::FromLocal(m_pFont->GetSubstFont()->m_Family);
   }
 }
 void CFX_GEFont::GetPsName(CFX_WideString& wsName) const {
@@ -384,7 +381,7 @@ FX_DWORD CFX_GEFont::GetFontStyles() const {
   }
 #endif
   FX_DWORD dwStyles = 0;
-  if (m_pFont->m_pSubstFont == NULL) {
+  if (!m_pFont->GetSubstFont()) {
     if (m_pFont->IsBold()) {
       dwStyles |= FX_FONTSTYLE_Bold;
     }
@@ -392,10 +389,10 @@ FX_DWORD CFX_GEFont::GetFontStyles() const {
       dwStyles |= FX_FONTSTYLE_Italic;
     }
   } else {
-    if (m_pFont->m_pSubstFont->m_Weight == FXFONT_FW_BOLD) {
+    if (m_pFont->GetSubstFont()->m_Weight == FXFONT_FW_BOLD) {
       dwStyles |= FX_FONTSTYLE_Bold;
     }
-    if (m_pFont->m_pSubstFont->m_SubstFlags & FXFONT_SUBST_ITALIC) {
+    if (m_pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_ITALIC) {
       dwStyles |= FX_FONTSTYLE_Italic;
     }
   }
@@ -490,10 +487,10 @@ FX_BOOL CFX_GEFont::GetBBox(CFX_Rect& bbox) {
   return bRet;
 }
 int32_t CFX_GEFont::GetItalicAngle() const {
-  if (m_pFont->m_pSubstFont == NULL) {
+  if (!m_pFont->GetSubstFont()) {
     return 0;
   }
-  return m_pFont->m_pSubstFont->m_ItalicAngle;
+  return m_pFont->GetSubstFont()->m_ItalicAngle;
 }
 int32_t CFX_GEFont::GetGlyphIndex(FX_WCHAR wUnicode, FX_BOOL bCharCode) {
   return GetGlyphIndex(wUnicode, TRUE, NULL, bCharCode);

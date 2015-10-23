@@ -60,7 +60,7 @@ class CPDF_TextPage : public IPDF_TextPage {
   // IPDF_TextPage
   FX_BOOL ParseTextPage() override;
   void NormalizeObjects(FX_BOOL bNormalize) override;
-  FX_BOOL IsParsered() const override { return m_IsParsered; }
+  bool IsParsed() const override { return m_IsParsered; }
   int CharIndexFromTextIndex(int TextIndex) const override;
   int TextIndexFromCharIndex(int CharIndex) const override;
   int CountChars() const override;

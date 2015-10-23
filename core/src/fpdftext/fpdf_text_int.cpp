@@ -2561,7 +2561,7 @@ CPDF_LinkExtract::~CPDF_LinkExtract() {
   DeleteLinkList();
 }
 FX_BOOL CPDF_LinkExtract::ExtractLinks(const IPDF_TextPage* pTextPage) {
-  if (!pTextPage || !pTextPage->IsParsered()) {
+  if (!pTextPage || !pTextPage->IsParsed()) {
     return FALSE;
   }
   m_pTextPage = (const CPDF_TextPage*)pTextPage;

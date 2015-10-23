@@ -978,7 +978,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   pFontDesc->SetAtInteger("Flags", flags);
   pFontDesc->SetAtInteger(
       "ItalicAngle",
-      pFont->m_pSubstFont ? pFont->m_pSubstFont->m_ItalicAngle : 0);
+      pFont->GetSubstFont() ? pFont->GetSubstFont()->m_ItalicAngle : 0);
   pFontDesc->SetAtInteger("Ascent", pFont->GetAscent());
   pFontDesc->SetAtInteger("Descent", pFont->GetDescent());
   FX_RECT bbox;
@@ -990,8 +990,8 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   pBBox->AddInteger(bbox.top);
   pFontDesc->SetAt("FontBBox", pBBox);
   int32_t nStemV = 0;
-  if (pFont->m_pSubstFont) {
-    nStemV = pFont->m_pSubstFont->m_Weight / 5;
+  if (pFont->GetSubstFont()) {
+    nStemV = pFont->GetSubstFont()->m_Weight / 5;
   } else {
     static const FX_CHAR stem_chars[] = {'i', 'I', '!', '1'};
     const size_t count = sizeof(stem_chars) / sizeof(stem_chars[0]);

@@ -165,7 +165,7 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush* pBrush,
       FX_DWORD dwFontStyle = pFont->GetFontStyles();
       CFX_Font FxFont;
       CFX_SubstFont SubstFxFont;
-      FxFont.m_pSubstFont = &SubstFxFont;
+      FxFont.SetSubstFont(&SubstFxFont);
       SubstFxFont.m_Weight = dwFontStyle & FX_FONTSTYLE_Bold ? 700 : 400;
       SubstFxFont.m_WeightCJK = SubstFxFont.m_Weight;
       SubstFxFont.m_ItalicAngle = dwFontStyle & FX_FONTSTYLE_Italic ? -12 : 0;
@@ -179,7 +179,7 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush* pBrush,
           if (pCurFont != NULL) {
             pFxFont = (CFX_Font*)pCurFont->GetDevFont();
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-            FxFont.m_Face = pFxFont->m_Face;
+            FxFont.SetFace(pFxFont->GetFace());
             m_pDevice->DrawNormalText(
                 iCurCount, pCurCP, &FxFont, pCache, -fFontSize,
                 (const CFX_AffineMatrix*)pMatrix, argb, FXTEXT_CLEARTYPE);
@@ -200,12 +200,12 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush* pBrush,
       if (pCurFont != NULL && iCurCount) {
         pFxFont = (CFX_Font*)pCurFont->GetDevFont();
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-        FxFont.m_Face = pFxFont->m_Face;
+        FxFont.SetFace(pFxFont->GetFace());
         FX_BOOL bRet = m_pDevice->DrawNormalText(
             iCurCount, pCurCP, &FxFont, pCache, -fFontSize,
             (const CFX_AffineMatrix*)pMatrix, argb, FXTEXT_CLEARTYPE);
-        FxFont.m_pSubstFont = NULL;
-        FxFont.m_Face = NULL;
+        FxFont.SetSubstFont(nullptr);
+        FxFont.SetFace(nullptr);
         return bRet;
 #else
         return m_pDevice->DrawNormalText(
@@ -214,8 +214,8 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush* pBrush,
 #endif
       }
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-      FxFont.m_pSubstFont = NULL;
-      FxFont.m_Face = NULL;
+      FxFont.SetSubstFont(nullptr);
+      FxFont.SetFace(nullptr);
 #endif
       return TRUE;
     } break;

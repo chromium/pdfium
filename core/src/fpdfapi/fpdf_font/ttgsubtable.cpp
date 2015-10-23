@@ -388,23 +388,23 @@ IFX_GSUBTable* IFX_GSUBTable::Create(CFX_Font* pFont) {
   if (!pFont) {
     return NULL;
   }
-  if (NULL == pFont->m_pGsubData) {
+  if (!pFont->GetSubData()) {
     unsigned long length = 0;
     int error = FXFT_Load_Sfnt_Table(
-        pFont->m_Face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, NULL, &length);
+        pFont->GetFace(), FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, NULL, &length);
     if (!error) {
-      pFont->m_pGsubData = FX_Alloc(uint8_t, length);
+      pFont->SetSubData(FX_Alloc(uint8_t, length));
     }
-    if (!pFont->m_pGsubData) {
+    if (!pFont->GetSubData()) {
       return NULL;
     }
   }
   int error =
-      FXFT_Load_Sfnt_Table(pFont->m_Face, FT_MAKE_TAG('G', 'S', 'U', 'B'), 0,
-                           pFont->m_pGsubData, NULL);
-  if (!error && pFont->m_pGsubData) {
+      FXFT_Load_Sfnt_Table(pFont->GetFace(), FT_MAKE_TAG('G', 'S', 'U', 'B'), 0,
+                           pFont->GetSubData(), NULL);
+  if (!error && pFont->GetSubData()) {
     nonstd::unique_ptr<CFX_GSUBTable> pGsubTable(new CFX_GSUBTable);
-    if (pGsubTable->m_GsubImp.LoadGSUBTable((FT_Bytes)pFont->m_pGsubData)) {
+    if (pGsubTable->m_GsubImp.LoadGSUBTable((FT_Bytes)pFont->GetSubData())) {
       return pGsubTable.release();
     }
   }

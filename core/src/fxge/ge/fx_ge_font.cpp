@@ -34,7 +34,7 @@ const FX_DWORD g_EncodingID[] = {
 
 CFX_UnicodeEncodingEx* _FXFM_CreateFontEncoding(CFX_Font* pFont,
                                                 FX_DWORD nEncodingID) {
-  if (FXFT_Select_Charmap(pFont->m_Face, nEncodingID))
+  if (FXFT_Select_Charmap(pFont->GetFace(), nEncodingID))
     return nullptr;
   return new CFX_UnicodeEncodingEx(pFont, nEncodingID);
 }
@@ -233,7 +233,7 @@ FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, FX_DWORD size) {
   m_dwSize = size;
   return m_Face != NULL;
 }
-FX_BOOL CFX_Font::IsTTFont() {
+FX_BOOL CFX_Font::IsTTFont() const {
   if (m_Face == NULL) {
     return FALSE;
   }
@@ -321,7 +321,7 @@ FX_BOOL CFX_Font::GetGlyphBBox(FX_DWORD glyph_index, FX_RECT& bbox) {
   }
   return TRUE;
 }
-FX_BOOL CFX_Font::IsItalic() {
+FX_BOOL CFX_Font::IsItalic() const {
   if (m_Face == NULL) {
     return FALSE;
   }
@@ -335,13 +335,13 @@ FX_BOOL CFX_Font::IsItalic() {
   }
   return ret;
 }
-FX_BOOL CFX_Font::IsBold() {
+FX_BOOL CFX_Font::IsBold() const {
   if (m_Face == NULL) {
     return FALSE;
   }
   return FXFT_Is_Face_Bold(m_Face) == FXFT_STYLE_FLAG_BOLD;
 }
-FX_BOOL CFX_Font::IsFixedWidth() {
+FX_BOOL CFX_Font::IsFixedWidth() const {
   if (m_Face == NULL) {
     return FALSE;
   }
@@ -403,7 +403,7 @@ FX_BOOL CFX_Font::GetBBox(FX_RECT& bbox) {
   }
   return TRUE;
 }
-int CFX_Font::GetHeight() {
+int CFX_Font::GetHeight() const {
   if (m_Face == NULL) {
     return 0;
   }
@@ -411,7 +411,7 @@ int CFX_Font::GetHeight() {
       EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face), FXFT_Get_Face_Height(m_Face));
   return height;
 }
-int CFX_Font::GetMaxAdvanceWidth() {
+int CFX_Font::GetMaxAdvanceWidth() const {
   if (m_Face == NULL) {
     return 0;
   }
@@ -419,7 +419,7 @@ int CFX_Font::GetMaxAdvanceWidth() {
                         FXFT_Get_Face_MaxAdvanceWidth(m_Face));
   return width;
 }
-int CFX_Font::GetULPos() {
+int CFX_Font::GetULPos() const {
   if (m_Face == NULL) {
     return 0;
   }
@@ -427,7 +427,7 @@ int CFX_Font::GetULPos() {
                       FXFT_Get_Face_UnderLinePosition(m_Face));
   return pos;
 }
-int CFX_Font::GetULthickness() {
+int CFX_Font::GetULthickness() const {
   if (m_Face == NULL) {
     return 0;
   }
@@ -450,7 +450,7 @@ FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCode(FX_DWORD charcode) {
   if (FXFT_Select_Charmap(face, FXFT_ENCODING_UNICODE) == 0)
     return FXFT_Get_Char_Index(face, charcode);
 
-  if (m_pFont->m_pSubstFont && m_pFont->m_pSubstFont->m_Charset == 2) {
+  if (m_pFont->GetSubstFont() && m_pFont->GetSubstFont()->m_Charset == 2) {
     FX_DWORD index = 0;
     if (FXFT_Select_Charmap(face, FXFT_ENCODING_MS_SYMBOL) == 0)
       index = FXFT_Get_Char_Index(face, charcode);
@@ -501,7 +501,7 @@ FX_DWORD CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
       m_nEncodingID == FXFM_ENCODING_MS_SYMBOL) {
     return Unicode;
   }
-  FXFT_Face face = m_pFont->m_Face;
+  FXFT_Face face = m_pFont->GetFace();
   int nmaps = FXFT_Get_Face_CharmapCount(face);
   for (int i = 0; i < nmaps; i++) {
     int nEncodingID =
@@ -516,7 +516,7 @@ FX_DWORD CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
 
 CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,
                                                FX_DWORD nEncodingID) {
-  if (!pFont || !pFont->m_Face)
+  if (!pFont || !pFont->GetFace())
     return nullptr;
 
   if (nEncodingID != FXFM_ENCODING_NONE)

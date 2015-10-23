@@ -34,8 +34,8 @@ class IFX_SystemFontInfo;
 #define FXFONT_ITALIC 0x40
 #define FXFONT_BOLD 0x40000
 #define FXFONT_USEEXTERNATTR 0x80000
-#define FXFONT_EXACTMATCH 0x80000000
 #define FXFONT_CIDFONT 0x100000
+#define FXFONT_EXACTMATCH 0x80000000
 #define FXFONT_ANSI_CHARSET 0
 #define FXFONT_DEFAULT_CHARSET 1
 #define FXFONT_SYMBOL_CHARSET 2
@@ -56,6 +56,7 @@ class IFX_SystemFontInfo;
 #define FXFONT_FF_SCRIPT (4 << 4)
 #define FXFONT_FW_NORMAL 400
 #define FXFONT_FW_BOLD 700
+
 class CFX_Font {
  public:
   CFX_Font();
@@ -77,51 +78,42 @@ class CFX_Font {
   FX_BOOL LoadClone(const CFX_Font* pFont);
 
   FXFT_Face GetFace() const { return m_Face; }
-
-  const CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }
-
+  CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }
+  void SetFace(FXFT_Face face) { m_Face = face; }
+  void SetSubstFont(CFX_SubstFont* subst) { m_pSubstFont = subst; }
   CFX_PathData* LoadGlyphPath(FX_DWORD glyph_index, int dest_width = 0);
-
   int GetGlyphWidth(FX_DWORD glyph_index);
-
   int GetAscent() const;
-
   int GetDescent() const;
-
   FX_BOOL GetGlyphBBox(FX_DWORD glyph_index, FX_RECT& bbox);
-
-  FX_BOOL IsItalic();
-
-  FX_BOOL IsBold();
-
-  FX_BOOL IsFixedWidth();
-
+  FX_BOOL IsItalic() const;
+  FX_BOOL IsBold() const;
+  FX_BOOL IsFixedWidth() const;
   FX_BOOL IsVertical() const { return m_bVertical; }
-
   CFX_WideString GetPsName() const;
-
   CFX_ByteString GetFamilyName() const;
-
   CFX_ByteString GetFaceName() const;
-
-  FX_BOOL IsTTFont();
-
+  FX_BOOL IsTTFont() const;
   FX_BOOL GetBBox(FX_RECT& bbox);
+  int GetHeight() const;
+  int GetULPos() const;
+  int GetULthickness() const;
+  int GetMaxAdvanceWidth() const;
+  FX_BOOL IsEmbedded() const { return m_bEmbedded; }
+  uint8_t* GetSubData() const { return m_pGsubData; }
+  void SetSubData(uint8_t* data) { m_pGsubData = data; }
+  void* GetPlatformFont() const { return m_pPlatformFont; }
+  void SetPlatformFont(void* font) { m_pPlatformFont = font; }
+  uint8_t* GetFontData() const { return m_pFontData; }
+  FX_DWORD GetSize() const { return m_dwSize; }
+  void AdjustMMParams(int glyph_index, int width, int weight);
 
-  int GetHeight();
-
-  int GetULPos();
-
-  int GetULthickness();
-
-  int GetMaxAdvanceWidth();
+ private:
+  void ReleasePlatformResource();
+  void DeleteFace();
 
   FXFT_Face m_Face;
-
   CFX_SubstFont* m_pSubstFont;
-  FX_BOOL IsEmbedded() { return m_bEmbedded; }
-
-  void AdjustMMParams(int glyph_index, int width, int weight);
   uint8_t* m_pFontDataAllocation;
   uint8_t* m_pFontData;
   uint8_t* m_pGsubData;
@@ -132,16 +124,14 @@ class CFX_Font {
   void* m_pPlatformFontCollection;
   void* m_pDwFont;
   FX_BOOL m_bDwLoaded;
-  void ReleasePlatformResource();
-
-  void DeleteFace();
-
- protected:
   FX_BOOL m_bEmbedded;
   FX_BOOL m_bVertical;
+
+ protected:
   FX_BOOL m_bLogic;
   void* m_pOwnedStream;
 };
+
 #define ENCODING_INTERNAL 0
 #define ENCODING_UNICODE 1
 
@@ -239,6 +229,7 @@ class CFX_FontMgr {
   ~CFX_FontMgr();
 
   void InitFTLibrary();
+
   FXFT_Face GetCachedFace(const CFX_ByteString& face_name,
                           int weight,
                           FX_BOOL bItalic,
@@ -312,7 +303,6 @@ class CFX_FontMapper {
     m_pFontEnumerator = pFontEnumerator;
   }
   IFX_FontEnumerator* GetFontEnumerator() const { return m_pFontEnumerator; }
-
   FXFT_Face FindSubstFont(const CFX_ByteString& face_name,
                           FX_BOOL bTrueType,
                           FX_DWORD flags,

@@ -868,7 +868,7 @@ FX_BOOL CFX_FontMgrImp::VerifyUnicode(IFX_Font* pFont, FX_WCHAR wcUnicode) {
   if (NULL == pFont) {
     return FALSE;
   }
-  FXFT_Face pFace = ((CFX_Font*)pFont->GetDevFont())->m_Face;
+  FXFT_Face pFace = ((CFX_Font*)pFont->GetDevFont())->GetFace();
   FXFT_CharMap charmap = FXFT_Get_Face_Charmap(pFace);
   if (0 != FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE)) {
     return FALSE;
@@ -948,7 +948,7 @@ IFX_Font* CFX_FontMgrImp::LoadFont(IFX_FileAccess* pFontAccess,
     if (m_FileAccess2IFXFont.Lookup(dwHash, pFont)) {
       if (NULL != pFont) {
         if (NULL != pFaceCount) {
-          *pFaceCount = ((CFX_Font*)pFont->GetDevFont())->m_Face->num_faces;
+          *pFaceCount = ((CFX_Font*)pFont->GetDevFont())->GetFace()->num_faces;
         }
         return pFont->Retain();
       }
@@ -977,7 +977,7 @@ IFX_Font* CFX_FontMgrImp::LoadFont(IFX_FileAccess* pFontAccess,
   }
   m_IFXFont2FileRead.SetAt(pFont, pFontStream);
   if (NULL != pFaceCount) {
-    *pFaceCount = ((CFX_Font*)pFont->GetDevFont())->m_Face->num_faces;
+    *pFaceCount = ((CFX_Font*)pFont->GetDevFont())->GetFace()->num_faces;
   }
   return pFont;
 }

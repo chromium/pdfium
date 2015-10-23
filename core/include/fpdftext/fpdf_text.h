@@ -72,23 +72,24 @@ class CPDFText_ParseOptions {
   FX_BOOL m_bNormalizeObjs;
   FX_BOOL m_bOutputHyphen;
 };
+
 class IPDF_TextPage {
  public:
-  virtual ~IPDF_TextPage() {}
+  static IPDF_TextPage* CreateTextPage(const CPDF_Page* pPage, int flags = 0);
   static IPDF_TextPage* CreateTextPage(const CPDF_Page* pPage,
                                        CPDFText_ParseOptions ParserOptions);
-  static IPDF_TextPage* CreateTextPage(const CPDF_Page* pPage, int flags = 0);
   static IPDF_TextPage* CreateTextPage(const CPDF_PageObjects* pObjs,
                                        int flags = 0);
   static IPDF_TextPage* CreateReflowTextPage(IPDF_ReflowedPage* pRefPage);
+
+  virtual ~IPDF_TextPage() {}
 
   virtual void NormalizeObjects(FX_BOOL bNormalize) = 0;
 
   virtual FX_BOOL ParseTextPage() = 0;
 
-  virtual FX_BOOL IsParsered() const = 0;
+  virtual bool IsParsed() const = 0;
 
- public:
   virtual int CharIndexFromTextIndex(int TextIndex) const = 0;
 
   virtual int TextIndexFromCharIndex(int CharIndex) const = 0;
@@ -139,6 +140,7 @@ class IPDF_TextPage {
 
   virtual CFX_WideString GetPageText(int start = 0, int nCount = -1) const = 0;
 };
+
 #define FPDFTEXT_MATCHCASE 0x00000001
 #define FPDFTEXT_MATCHWHOLEWORD 0x00000002
 #define FPDFTEXT_CONSECUTIVE 0x00000004
