@@ -1031,36 +1031,6 @@ class IFX_Pause {
   virtual ~IFX_Pause() {}
   virtual FX_BOOL NeedToPauseNow() = 0;
 };
-class CFX_DataFilter {
- public:
-  virtual ~CFX_DataFilter();
-
-  void SetDestFilter(CFX_DataFilter* pFilter);
-
-  FX_BOOL IsEOF() const { return m_bEOF; }
-
-  FX_DWORD GetSrcPos() { return m_SrcPos; }
-
-  void FilterIn(const uint8_t* src_buf,
-                FX_DWORD src_size,
-                CFX_BinaryBuf& dest_buf);
-
-  void FilterFinish(CFX_BinaryBuf& dest_buf);
-
- protected:
-  CFX_DataFilter();
-  virtual void v_FilterIn(const uint8_t* src_buf,
-                          FX_DWORD src_size,
-                          CFX_BinaryBuf& dest_buf) = 0;
-  virtual void v_FilterFinish(CFX_BinaryBuf& dest_buf) = 0;
-  void ReportEOF(FX_DWORD left_input);
-
-  FX_BOOL m_bEOF;
-
-  FX_DWORD m_SrcPos;
-
-  CFX_DataFilter* m_pDestFilter;
-};
 
 template <typename T>
 class CFX_AutoRestorer {

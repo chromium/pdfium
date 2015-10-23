@@ -945,6 +945,7 @@ void CPDF_Stream::InitStream(IFX_FileRead* pFile, CPDF_Dictionary* pDict) {
     m_pDict->SetAtInteger(FX_BSTRC("Length"), m_dwSize);
   }
 }
+
 FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const {
   if (!m_pDict)
     return pOther->m_pDict ? FALSE : TRUE;
@@ -1016,38 +1017,7 @@ FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const {
   }
   return FXSYS_memcmp(m_pDataBuf, pOther->m_pDataBuf, m_dwSize) == 0;
 }
-CPDF_Stream* CPDF_Stream::Clone(FX_BOOL bDirect,
-                                FPDF_LPFCloneStreamCallback lpfCallback,
-                                void* pUserData) const {
-  CPDF_Dictionary* pCloneDict = (CPDF_Dictionary*)m_pDict->Clone(bDirect);
-  IFX_FileStream* pFS = NULL;
-  if (lpfCallback) {
-    pFS = lpfCallback((CPDF_Stream*)this, pUserData);
-  }
-  if (!pFS) {
-    CPDF_StreamAcc acc;
-    acc.LoadAllData(this, TRUE);
-    FX_DWORD streamSize = acc.GetSize();
-    return new CPDF_Stream(acc.DetachData(), streamSize, pCloneDict);
-  }
-  CPDF_Stream* pObj = new CPDF_Stream(NULL, 0, NULL);
-  CPDF_StreamFilter* pSF = GetStreamFilter(TRUE);
-  if (pSF) {
-    uint8_t* pBuf = FX_Alloc(uint8_t, 4096);
-    FX_DWORD dwRead;
-    do {
-      dwRead = pSF->ReadBlock(pBuf, 4096);
-      if (dwRead) {
-        pFS->WriteBlock(pBuf, dwRead);
-      }
-    } while (dwRead == 4096);
-    pFS->Flush();
-    FX_Free(pBuf);
-    delete pSF;
-  }
-  pObj->InitStream((IFX_FileRead*)pFS, pCloneDict);
-  return pObj;
-}
+
 CPDF_StreamAcc::CPDF_StreamAcc() {
   m_bNewBuf = FALSE;
   m_pData = NULL;

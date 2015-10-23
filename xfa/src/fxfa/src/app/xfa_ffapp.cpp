@@ -13,89 +13,15 @@
 #include "xfa_fwltheme.h"
 #include "xfa_fontmgr.h"
 #include "xfa_ffwidgethandler.h"
-CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams)
-    : m_dwSize(0) {
-  m_Streams.Copy(streams);
-}
-CXFA_FileRead::~CXFA_FileRead() {
-  m_Streams.RemoveAll();
-  m_StreamSize.RemoveAll();
-}
-FX_FILESIZE CXFA_FileRead::GetSize() {
-  if (m_StreamSize.GetSize() > 0) {
-    return m_dwSize;
-  }
-  int32_t iCount = m_Streams.GetSize();
-  FX_DWORD iBufferSize = 4096;
-  uint8_t* pBuf = FX_Alloc(uint8_t, iBufferSize);
-  for (int32_t i = 0; i < iCount; i++) {
-    CPDF_StreamFilter* pStreamFilter = m_Streams[i]->GetStreamFilter(FALSE);
-    FX_DWORD dwCurSize = 0;
-    while (TRUE) {
-      FX_DWORD dwRead = pStreamFilter->ReadBlock(pBuf, iBufferSize);
-      dwCurSize += dwRead;
-      if (dwRead < iBufferSize) {
-        break;
-      }
-    }
-    m_dwSize += dwCurSize;
-    m_StreamSize.Add(dwCurSize);
-    delete pStreamFilter;
-  }
-  FX_Free(pBuf);
-  return m_dwSize;
-}
-FX_BOOL CXFA_FileRead::ReadBlock(void* buffer,
-                                 FX_FILESIZE offset,
-                                 size_t size) {
-  FX_FILESIZE dwLen = 0;
-  int32_t iCount = m_Streams.GetSize();
-  int32_t i = 0;
-  for (; i < iCount; i++) {
-    dwLen += m_StreamSize[i];
-    if (dwLen > offset) {
-      dwLen -= m_StreamSize[i];
-      break;
-    }
-  }
-  if (i >= iCount) {
-    return FALSE;
-  }
-  CPDF_StreamFilter* pStreamFilter = m_Streams[i]->GetStreamFilter(FALSE);
-  if ((offset -= dwLen) > 0) {
-    uint8_t* pBuf = FX_Alloc(uint8_t, offset);
-    FX_DWORD dwRead = pStreamFilter->ReadBlock(pBuf, offset);
-    FX_Free(pBuf);
-  }
-  FX_DWORD dwHadRead = pStreamFilter->ReadBlock((uint8_t*)buffer, size);
-  delete pStreamFilter;
-  size -= dwHadRead;
-  if (size <= 0) {
-    return TRUE;
-  }
-  FX_DWORD dwReadSize = dwHadRead;
-  for (int32_t iStart = i + 1; iStart < iCount; iStart++) {
-    CPDF_StreamFilter* pStreamFilter =
-        m_Streams[iStart]->GetStreamFilter(FALSE);
-    FX_DWORD dwHadRead =
-        pStreamFilter->ReadBlock(((uint8_t*)buffer) + dwReadSize, size);
-    delete pStreamFilter;
-    size -= dwHadRead;
-    if (size <= 0) {
-      return TRUE;
-    }
-    dwReadSize += dwHadRead;
-  }
-  return FALSE;
-}
-CXFA_FileRead2::CXFA_FileRead2(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
+
+CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
   int32_t iCount = streams.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
     CPDF_StreamAcc& acc = m_Data.Add();
     acc.LoadAllData(streams[i]);
   }
 }
-FX_FILESIZE CXFA_FileRead2::GetSize() {
+FX_FILESIZE CXFA_FileRead::GetSize() {
   FX_DWORD dwSize = 0;
   int32_t iCount = m_Data.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
@@ -104,9 +30,9 @@ FX_FILESIZE CXFA_FileRead2::GetSize() {
   }
   return dwSize;
 }
-FX_BOOL CXFA_FileRead2::ReadBlock(void* buffer,
-                                  FX_FILESIZE offset,
-                                  size_t size) {
+FX_BOOL CXFA_FileRead::ReadBlock(void* buffer,
+                                 FX_FILESIZE offset,
+                                 size_t size) {
   int32_t iCount = m_Data.GetSize();
   int32_t index = 0;
   while (index < iCount) {

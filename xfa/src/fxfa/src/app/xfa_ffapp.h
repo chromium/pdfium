@@ -9,20 +9,7 @@
 
 class CXFA_FileRead : public IFX_FileRead {
  public:
-  CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams);
-  ~CXFA_FileRead();
-  virtual FX_FILESIZE GetSize();
-  virtual FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size);
-  virtual void Release() { delete this; }
-
- protected:
-  CFX_ArrayTemplate<CPDF_Stream*> m_Streams;
-  CFX_DWordArray m_StreamSize;
-  FX_DWORD m_dwSize;
-};
-class CXFA_FileRead2 : public IFX_FileRead {
- public:
-  CXFA_FileRead2(const CFX_ArrayTemplate<CPDF_Stream*>& streams);
+  explicit CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams);
 
   virtual FX_FILESIZE GetSize();
   virtual FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size);
