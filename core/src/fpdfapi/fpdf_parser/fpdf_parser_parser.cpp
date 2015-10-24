@@ -96,7 +96,6 @@ CPDF_Parser::CPDF_Parser() {
   m_pDocument = NULL;
   m_pTrailer = NULL;
   m_pEncryptDict = NULL;
-  m_pSecurityHandler = NULL;
   m_pLinearized = NULL;
   m_dwFirstPageNo = 0;
   m_dwXrefStartObjNum = 0;
@@ -287,54 +286,46 @@ FX_DWORD CPDF_Parser::SetEncryptHandler() {
   }
   if (m_bForceUseSecurityHandler) {
     FX_DWORD err = PDFPARSE_ERROR_HANDLER;
-    if (m_pSecurityHandler == NULL) {
+    if (!m_pSecurityHandler) {
       return PDFPARSE_ERROR_HANDLER;
     }
     if (!m_pSecurityHandler->OnInit(this, m_pEncryptDict)) {
       return err;
     }
-    CPDF_CryptoHandler* pCryptoHandler =
-        m_pSecurityHandler->CreateCryptoHandler();
-    if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler)) {
-      delete pCryptoHandler;
-      pCryptoHandler = NULL;
+    nonstd::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
+        m_pSecurityHandler->CreateCryptoHandler());
+    if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get())) {
       return PDFPARSE_ERROR_HANDLER;
     }
-    m_Syntax.SetEncrypt(pCryptoHandler);
+    m_Syntax.SetEncrypt(pCryptoHandler.release());
   } else if (m_pEncryptDict) {
     CFX_ByteString filter = m_pEncryptDict->GetString(FX_BSTRC("Filter"));
-    CPDF_SecurityHandler* pSecurityHandler = NULL;
+    nonstd::unique_ptr<CPDF_SecurityHandler> pSecurityHandler;
     FX_DWORD err = PDFPARSE_ERROR_HANDLER;
     if (filter == FX_BSTRC("Standard")) {
-      pSecurityHandler = FPDF_CreateStandardSecurityHandler();
+      pSecurityHandler.reset(FPDF_CreateStandardSecurityHandler());
       err = PDFPARSE_ERROR_PASSWORD;
     }
-    if (pSecurityHandler == NULL) {
+    if (!pSecurityHandler) {
       return PDFPARSE_ERROR_HANDLER;
     }
     if (!pSecurityHandler->OnInit(this, m_pEncryptDict)) {
-      delete pSecurityHandler;
-      pSecurityHandler = NULL;
       return err;
     }
-    m_pSecurityHandler = pSecurityHandler;
-    CPDF_CryptoHandler* pCryptoHandler =
-        pSecurityHandler->CreateCryptoHandler();
-    if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler)) {
-      delete pCryptoHandler;
-      pCryptoHandler = NULL;
+    m_pSecurityHandler = nonstd::move(pSecurityHandler);
+    nonstd::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
+        m_pSecurityHandler->CreateCryptoHandler());
+    if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get())) {
       return PDFPARSE_ERROR_HANDLER;
     }
-    m_Syntax.SetEncrypt(pCryptoHandler);
+    m_Syntax.SetEncrypt(pCryptoHandler.release());
   }
   return PDFPARSE_ERROR_SUCCESS;
 }
 void CPDF_Parser::ReleaseEncryptHandler() {
-  delete m_Syntax.m_pCryptoHandler;
-  m_Syntax.m_pCryptoHandler = NULL;
+  m_Syntax.m_pCryptoHandler.reset();
   if (!m_bForceUseSecurityHandler) {
-    delete m_pSecurityHandler;
-    m_pSecurityHandler = NULL;
+    m_pSecurityHandler.reset();
   }
 }
 FX_FILESIZE CPDF_Parser::GetObjectOffset(FX_DWORD objnum) {
@@ -447,24 +438,22 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
   FX_DWORD start_objnum = 0;
   FX_DWORD count = dwObjCount;
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
-  int32_t recordsize = 20;
-  char* pBuf = FX_Alloc(char, 1024 * recordsize + 1);
-  pBuf[1024 * recordsize] = '\0';
+  const int32_t recordsize = 20;
+  std::vector<char> buf(1024 * recordsize + 1);
+  buf[1024 * recordsize] = '\0';
   int32_t nBlocks = count / 1024 + 1;
   for (int32_t block = 0; block < nBlocks; block++) {
     int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
     FX_DWORD dwReadSize = block_size * recordsize;
     if ((FX_FILESIZE)(dwStartPos + dwReadSize) > m_Syntax.m_FileLen) {
-      FX_Free(pBuf);
       return FALSE;
     }
-    if (!m_Syntax.ReadBlock((uint8_t*)pBuf, dwReadSize)) {
-      FX_Free(pBuf);
+    if (!m_Syntax.ReadBlock((uint8_t*)buf.data(), dwReadSize)) {
       return FALSE;
     }
     for (int32_t i = 0; i < block_size; i++) {
       FX_DWORD objnum = start_objnum + block * 1024 + i;
-      char* pEntry = pBuf + i * recordsize;
+      char* pEntry = buf.data() + i * recordsize;
       if (pEntry[17] == 'f') {
         m_CrossRef.SetAtGrow(objnum, 0);
         m_V5Type.SetAtGrow(objnum, 0);
@@ -473,7 +462,6 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
         if (offset == 0) {
           for (int32_t c = 0; c < 10; c++) {
             if (pEntry[c] < '0' || pEntry[c] > '9') {
-              FX_Free(pBuf);
               return FALSE;
             }
           }
@@ -496,7 +484,6 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
       }
     }
   }
-  FX_Free(pBuf);
   m_Syntax.RestorePos(SavedPos + count * recordsize);
   return TRUE;
 }
@@ -539,21 +526,21 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
     m_Syntax.ToNextWord();
     SavedPos = m_Syntax.SavePos();
     FX_BOOL bFirstItem = FALSE;
-    int32_t recordsize = 20;
+    const int32_t recordsize = 20;
     if (bFirst)
       bFirstItem = TRUE;
     m_dwXrefStartObjNum = start_objnum;
     if (!bSkip) {
-      char* pBuf = FX_Alloc(char, 1024 * recordsize + 1);
-      pBuf[1024 * recordsize] = '\0';
+      std::vector<char> buf(1024 * recordsize + 1);
+      buf[1024 * recordsize] = '\0';
       int32_t nBlocks = count / 1024 + 1;
       FX_BOOL bFirstBlock = TRUE;
       for (int32_t block = 0; block < nBlocks; block++) {
         int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
-        m_Syntax.ReadBlock((uint8_t*)pBuf, block_size * recordsize);
+        m_Syntax.ReadBlock((uint8_t*)buf.data(), block_size * recordsize);
         for (int32_t i = 0; i < block_size; i++) {
           FX_DWORD objnum = start_objnum + block * 1024 + i;
-          char* pEntry = pBuf + i * recordsize;
+          char* pEntry = buf.data() + i * recordsize;
           if (pEntry[17] == 'f') {
             if (bFirstItem) {
               objnum = 0;
@@ -574,7 +561,6 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
             if (offset == 0) {
               for (int32_t c = 0; c < 10; c++) {
                 if (pEntry[c] < '0' || pEntry[c] > '9') {
-                  FX_Free(pBuf);
                   return false;
                 }
               }
@@ -596,7 +582,6 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
           }
         }
       }
-      FX_Free(pBuf);
     }
     m_Syntax.RestorePos(SavedPos + count * recordsize);
   }
@@ -1476,7 +1461,7 @@ CPDF_Dictionary* CPDF_Parser::LoadTrailerV4() {
 }
 
 FX_DWORD CPDF_Parser::GetPermissions(FX_BOOL bCheckRevision) {
-  if (m_pSecurityHandler == NULL) {
+  if (!m_pSecurityHandler) {
     return (FX_DWORD)-1;
   }
   FX_DWORD dwPermission = m_pSecurityHandler->GetPermissions();
@@ -1495,17 +1480,12 @@ FX_BOOL CPDF_Parser::IsOwner() {
 }
 void CPDF_Parser::SetSecurityHandler(CPDF_SecurityHandler* pSecurityHandler,
                                      FX_BOOL bForced) {
-  ASSERT(m_pSecurityHandler == NULL);
-  if (!m_bForceUseSecurityHandler) {
-    delete m_pSecurityHandler;
-    m_pSecurityHandler = NULL;
-  }
   m_bForceUseSecurityHandler = bForced;
-  m_pSecurityHandler = pSecurityHandler;
+  m_pSecurityHandler.reset(pSecurityHandler);
   if (m_bForceUseSecurityHandler) {
     return;
   }
-  m_Syntax.m_pCryptoHandler = pSecurityHandler->CreateCryptoHandler();
+  m_Syntax.m_pCryptoHandler.reset(pSecurityHandler->CreateCryptoHandler());
   m_Syntax.m_pCryptoHandler->Init(NULL, pSecurityHandler);
 }
 FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
@@ -1704,7 +1684,6 @@ int CPDF_SyntaxParser::s_CurrentRecursionDepth = 0;
 
 CPDF_SyntaxParser::CPDF_SyntaxParser() {
   m_pFileAccess = NULL;
-  m_pCryptoHandler = NULL;
   m_pFileBuf = NULL;
   m_BufSize = CPDF_ModuleMgr::kFileBufSize;
   m_pFileBuf = NULL;
@@ -2409,7 +2388,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   const unsigned int ENDSTREAM_LEN = sizeof("endstream") - 1;
   const unsigned int ENDOBJ_LEN = sizeof("endobj") - 1;
   CPDF_CryptoHandler* pCryptoHandler =
-      objnum == (FX_DWORD)m_MetadataObjnum ? nullptr : m_pCryptoHandler;
+      objnum == (FX_DWORD)m_MetadataObjnum ? nullptr : m_pCryptoHandler.get();
   if (!pCryptoHandler) {
     FX_BOOL bSearchForKeyword = TRUE;
     if (len >= 0) {
