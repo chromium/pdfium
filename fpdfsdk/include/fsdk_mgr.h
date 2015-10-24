@@ -12,6 +12,7 @@
 #include "../../core/include/fpdftext/fpdf_text.h"
 #include "../../public/fpdf_formfill.h"
 #include "../../public/fpdf_fwlevent.h"  // cross platform keycode and events define.
+#include "../../third_party/base/nonstd_unique_ptr.h"
 #include "fsdk_common.h"
 #include "fsdk_define.h"
 #include "fx_systemhandler.h"
@@ -307,8 +308,8 @@ class CPDFSDK_PageView final {
   CPDFSDK_Annot* AddAnnot(const FX_CHAR* lpSubType, CPDF_Dictionary* pDict);
   CPDFSDK_Annot* AddAnnot(CPDF_Annot* pPDFAnnot);
   FX_BOOL DeleteAnnot(CPDFSDK_Annot* pAnnot);
-  int CountAnnots();
-  CPDFSDK_Annot* GetAnnot(int nIndex);
+  int CountAnnots() const;
+  CPDFSDK_Annot* GetAnnot(size_t nIndex);
   CPDFSDK_Annot* GetAnnotByDict(CPDF_Dictionary* pDict);
   CPDF_Page* GetPDFPage() { return m_page; }
   CPDF_Document* GetPDFDocument();
@@ -324,11 +325,13 @@ class CPDFSDK_PageView final {
                        double deltaY,
                        const CPDF_Point& point,
                        int nFlag);
-  FX_BOOL IsValidAnnot(void* p);
+  FX_BOOL IsValidAnnot(CPDF_Annot* p) const;
   void GetCurrentMatrix(CPDF_Matrix& matrix) { matrix = m_curMatrix; }
   void UpdateRects(CFX_RectArray& rects);
   void UpdateView(CPDFSDK_Annot* pAnnot);
-  CFX_PtrArray* GetAnnotList() { return &m_fxAnnotArray; }
+  const std::vector<CPDFSDK_Annot*>& GetAnnotList() const {
+    return m_fxAnnotArray;
+  }
 
   int GetPageIndex();
   void LoadFXAnnots();
@@ -341,11 +344,11 @@ class CPDFSDK_PageView final {
  private:
   void PageView_OnHighlightFormFields(CFX_RenderDevice* pDevice,
                                       CPDFSDK_Widget* pWidget);
+
   CPDF_Matrix m_curMatrix;
   CPDF_Page* m_page;
-  CPDF_AnnotList* m_pAnnotList;
-  // CPDFSDK_Annot* m_pFocusAnnot;
-  CFX_PtrArray m_fxAnnotArray;
+  nonstd::unique_ptr<CPDF_AnnotList> m_pAnnotList;
+  std::vector<CPDFSDK_Annot*> m_fxAnnotArray;
   CPDFSDK_Document* m_pSDKDoc;
   CPDFSDK_Widget* m_CaptureWidget;
   FX_BOOL m_bEnterWidget;

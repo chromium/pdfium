@@ -8,6 +8,7 @@
 #define FPDFSDK_INCLUDE_FSDK_ANNOTHANDLER_H_
 
 #include <map>
+#include <vector>
 
 #include "../../core/include/fxcrt/fx_basic.h"
 
@@ -122,7 +123,7 @@ class IPDFSDK_AnnotHandler {
 
 class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
  public:
-  CPDFSDK_BFAnnotHandler(CPDFDoc_Environment* pApp)
+  explicit CPDFSDK_BFAnnotHandler(CPDFDoc_Environment* pApp)
       : m_pApp(pApp), m_pFormFiller(NULL) {}
   ~CPDFSDK_BFAnnotHandler() override {}
 
@@ -303,38 +304,20 @@ class CPDFSDK_AnnotHandlerMgr {
   CPDFDoc_Environment* m_pApp;
 };
 
-typedef int (*AI_COMPARE)(CPDFSDK_Annot* p1, CPDFSDK_Annot* p2);
-
 class CPDFSDK_AnnotIterator {
  public:
-  CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
-                        FX_BOOL bReverse,
-                        FX_BOOL bIgnoreTopmost = FALSE,
-                        FX_BOOL bCircle = FALSE,
-                        CFX_PtrArray* pList = NULL);
-  virtual ~CPDFSDK_AnnotIterator() {}
+  CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView, bool bReverse);
+  ~CPDFSDK_AnnotIterator();
 
-  virtual CPDFSDK_Annot* Next(const CPDFSDK_Annot* pCurrent);
-  virtual CPDFSDK_Annot* Prev(const CPDFSDK_Annot* pCurrent);
-  virtual CPDFSDK_Annot* Next(int& index);
-  virtual CPDFSDK_Annot* Prev(int& index);
-  virtual int Count() { return m_pIteratorAnnotList.GetSize(); }
+  CPDFSDK_Annot* Next();
 
-  virtual FX_BOOL InitIteratorAnnotList(CPDFSDK_PageView* pPageView,
-                                        CFX_PtrArray* pList = NULL);
+ private:
+  CPDFSDK_Annot* NextAnnot();
+  CPDFSDK_Annot* PrevAnnot();
 
-  void InsertSort(CFX_PtrArray& arrayList, AI_COMPARE pCompare);
-
- protected:
-  CPDFSDK_Annot* NextAnnot(const CPDFSDK_Annot* pCurrent);
-  CPDFSDK_Annot* PrevAnnot(const CPDFSDK_Annot* pCurrent);
-  CPDFSDK_Annot* NextAnnot(int& index);
-  CPDFSDK_Annot* PrevAnnot(int& index);
-
-  CFX_PtrArray m_pIteratorAnnotList;
-  FX_BOOL m_bReverse;
-  FX_BOOL m_bIgnoreTopmost;
-  FX_BOOL m_bCircle;
+  std::vector<CPDFSDK_Annot*> m_iteratorAnnotList;
+  const bool m_bReverse;
+  size_t m_pos;
 };
 
 #endif  // FPDFSDK_INCLUDE_FSDK_ANNOTHANDLER_H_

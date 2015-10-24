@@ -2431,7 +2431,7 @@ void CBA_AnnotIterator::GenerateResults() {
 
   switch (m_nTabs) {
     case BAI_STRUCTURE: {
-      for (int i = 0, sz = m_pPageView->CountAnnots(); i < sz; i++) {
+      for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
         CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
         ASSERT(pAnnot != NULL);
 
@@ -2443,7 +2443,7 @@ void CBA_AnnotIterator::GenerateResults() {
       CPDFSDK_SortAnnots sa;
 
       {
-        for (int i = 0, sz = m_pPageView->CountAnnots(); i < sz; i++) {
+        for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
           CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
           ASSERT(pAnnot != NULL);
 
@@ -2522,7 +2522,7 @@ void CBA_AnnotIterator::GenerateResults() {
       CPDFSDK_SortAnnots sa;
 
       {
-        for (int i = 0, sz = m_pPageView->CountAnnots(); i < sz; i++) {
+        for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
           CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
           ASSERT(pAnnot != NULL);
 

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_mgr.h"
 #include "../include/formfiller/FFL_FormFiller.h"
@@ -649,164 +651,45 @@ FX_BOOL CPDFSDK_BFAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
   return rect.Contains(point.x, point.y);
 }
 
-// CReader_AnnotIteratorEx
-
 CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
-                                             FX_BOOL bReverse,
-                                             FX_BOOL bIgnoreTopmost /*=FALSE*/,
-                                             FX_BOOL bCircle /*=FALSE*/,
-                                             CFX_PtrArray* pList /*=NULL*/) {
-  ASSERT(pPageView);
-  m_bReverse = bReverse;
-  m_bIgnoreTopmost = bIgnoreTopmost;
-  m_bCircle = bCircle;
-  m_pIteratorAnnotList.RemoveAll();
-  InitIteratorAnnotList(pPageView, pList);
-}
+                                             bool bReverse)
+    : m_bReverse(bReverse), m_pos(0) {
+  const std::vector<CPDFSDK_Annot*>& annots = pPageView->GetAnnotList();
+  m_iteratorAnnotList.insert(m_iteratorAnnotList.begin(), annots.rbegin(),
+                             annots.rend());
+  std::stable_sort(m_iteratorAnnotList.begin(), m_iteratorAnnotList.end(),
+                   [](CPDFSDK_Annot* p1, CPDFSDK_Annot* p2) {
+                     return p1->GetLayoutOrder() < p2->GetLayoutOrder();
+                   });
 
-CPDFSDK_Annot* CPDFSDK_AnnotIterator::NextAnnot(const CPDFSDK_Annot* pCurrent) {
-  int index = -1;
-  int nCount = m_pIteratorAnnotList.GetSize();
-  if (pCurrent) {
-    for (int i = 0; i < nCount; i++) {
-      CPDFSDK_Annot* pReaderAnnot =
-          (CPDFSDK_Annot*)m_pIteratorAnnotList.GetAt(i);
-      if (pReaderAnnot == pCurrent) {
-        index = i;
-        break;
-      }
-    }
-  }
-  return NextAnnot(index);
-}
-CPDFSDK_Annot* CPDFSDK_AnnotIterator::PrevAnnot(const CPDFSDK_Annot* pCurrent) {
-  int index = -1;
-  int nCount = m_pIteratorAnnotList.GetSize();
-  if (pCurrent) {
-    for (int i = 0; i < nCount; i++) {
-      CPDFSDK_Annot* pReaderAnnot =
-          (CPDFSDK_Annot*)m_pIteratorAnnotList.GetAt(i);
-      if (pReaderAnnot == pCurrent) {
-        index = i;
-        break;
-      }
-    }
-  }
-  return PrevAnnot(index);
-}
-CPDFSDK_Annot* CPDFSDK_AnnotIterator::NextAnnot(int& index) {
-  int nCount = m_pIteratorAnnotList.GetSize();
-  if (nCount <= 0)
-    index = -1;
-  else {
-    if (index < 0) {
-      index = 0;
-    } else {
-      if (m_bCircle) {
-        index = (index < nCount - 1) ? (index + 1) : 0;
-      } else {
-        index = (index < nCount - 1) ? (index + 1) : -1;
-      }
-    }
-  }
-  return (index < 0) ? NULL : (CPDFSDK_Annot*)m_pIteratorAnnotList.GetAt(index);
-}
+  CPDFSDK_Annot* pTopMostAnnot = pPageView->GetFocusAnnot();
+  if (!pTopMostAnnot)
+    return;
 
-CPDFSDK_Annot* CPDFSDK_AnnotIterator::PrevAnnot(int& index) {
-  int nCount = m_pIteratorAnnotList.GetSize();
-  if (nCount <= 0)
-    index = -1;
-  else {
-    if (index < 0) {
-      index = nCount - 1;
-    } else {
-      if (m_bCircle) {
-        index = (index > 0) ? (index - 1) : nCount - 1;
-      } else {
-        index = (index > 0) ? (index - 1) : -1;
-      }
-    }
-  }
-  return (index < 0) ? NULL : (CPDFSDK_Annot*)m_pIteratorAnnotList.GetAt(index);
-}
-
-CPDFSDK_Annot* CPDFSDK_AnnotIterator::Next(const CPDFSDK_Annot* pCurrent) {
-  return (m_bReverse) ? PrevAnnot(pCurrent) : NextAnnot(pCurrent);
-}
-
-CPDFSDK_Annot* CPDFSDK_AnnotIterator::Prev(const CPDFSDK_Annot* pCurrent) {
-  return (m_bReverse) ? NextAnnot(pCurrent) : PrevAnnot(pCurrent);
-}
-
-CPDFSDK_Annot* CPDFSDK_AnnotIterator::Next(int& index) {
-  return (m_bReverse) ? PrevAnnot(index) : NextAnnot(index);
-}
-
-CPDFSDK_Annot* CPDFSDK_AnnotIterator::Prev(int& index) {
-  return (m_bReverse) ? NextAnnot(index) : PrevAnnot(index);
-}
-
-void CPDFSDK_AnnotIterator::InsertSort(CFX_PtrArray& arrayList,
-                                       AI_COMPARE pCompare) {
-  for (int i = 1; i < arrayList.GetSize(); i++) {
-    if (pCompare((CPDFSDK_Annot*)(arrayList[i]),
-                 (CPDFSDK_Annot*)(arrayList[i - 1])) < 0) {
-      int j = i - 1;
-      CPDFSDK_Annot* pTemp = (CPDFSDK_Annot*)arrayList[i];
-
-      do {
-        arrayList[j + 1] = arrayList[j];
-      } while (--j >= 0 && pCompare(pTemp, (CPDFSDK_Annot*)arrayList[j]) < 0);
-
-      arrayList[j + 1] = pTemp;
-    }
+  auto it = std::find(m_iteratorAnnotList.begin(), m_iteratorAnnotList.end(),
+                      pTopMostAnnot);
+  if (it != m_iteratorAnnotList.end()) {
+    CPDFSDK_Annot* pReaderAnnot = *it;
+    m_iteratorAnnotList.erase(it);
+    m_iteratorAnnotList.insert(m_iteratorAnnotList.begin(), pReaderAnnot);
   }
 }
 
-int LyOrderCompare(CPDFSDK_Annot* p1, CPDFSDK_Annot* p2) {
-  if (p1->GetLayoutOrder() < p2->GetLayoutOrder())
-    return -1;
-  if (p1->GetLayoutOrder() > p2->GetLayoutOrder())
-    return 1;
-  return 0;
+CPDFSDK_AnnotIterator::~CPDFSDK_AnnotIterator() {
 }
 
-FX_BOOL CPDFSDK_AnnotIterator::InitIteratorAnnotList(
-    CPDFSDK_PageView* pPageView,
-    CFX_PtrArray* pAnnotList) {
-  ASSERT(pPageView);
+CPDFSDK_Annot* CPDFSDK_AnnotIterator::NextAnnot() {
+  if (m_pos < m_iteratorAnnotList.size())
+    return m_iteratorAnnotList[m_pos++];
+  return nullptr;
+}
 
-  if (pAnnotList == NULL) {
-    pAnnotList = pPageView->GetAnnotList();
-  }
+CPDFSDK_Annot* CPDFSDK_AnnotIterator::PrevAnnot() {
+  if (m_pos < m_iteratorAnnotList.size())
+    return m_iteratorAnnotList[m_iteratorAnnotList.size() - ++m_pos];
+  return nullptr;
+}
 
-  m_pIteratorAnnotList.RemoveAll();
-  if (!pAnnotList)
-    return FALSE;
-
-  CPDFSDK_Annot* pTopMostAnnot =
-      (m_bIgnoreTopmost) ? NULL : pPageView->GetFocusAnnot();
-
-  int nCount = pAnnotList->GetSize();
-
-  for (int i = nCount - 1; i >= 0; i--) {
-    CPDFSDK_Annot* pReaderAnnot = (CPDFSDK_Annot*)pAnnotList->GetAt(i);
-    m_pIteratorAnnotList.Add(pReaderAnnot);
-  }
-
-  InsertSort(m_pIteratorAnnotList, &LyOrderCompare);
-
-  if (pTopMostAnnot) {
-    for (int i = 0; i < nCount; i++) {
-      CPDFSDK_Annot* pReaderAnnot =
-          (CPDFSDK_Annot*)m_pIteratorAnnotList.GetAt(i);
-      if (pReaderAnnot == pTopMostAnnot) {
-        m_pIteratorAnnotList.RemoveAt(i);
-        m_pIteratorAnnotList.InsertAt(0, pReaderAnnot);
-        break;
-      }
-    }
-  }
-
-  return TRUE;
+CPDFSDK_Annot* CPDFSDK_AnnotIterator::Next() {
+  return m_bReverse ? PrevAnnot() : NextAnnot();
 }
