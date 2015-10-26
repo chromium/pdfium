@@ -585,10 +585,6 @@ class CPDF_Null : public CPDF_Object {
 };
 class CPDF_Reference : public CPDF_Object {
  public:
-  static CPDF_Reference* Create(CPDF_IndirectObjects* pDoc, int objnum) {
-    return new CPDF_Reference(pDoc, objnum);
-  }
-
   CPDF_Reference(CPDF_IndirectObjects* pDoc, int objnum)
       : CPDF_Object(PDFOBJ_REFERENCE), m_pObjList(pDoc), m_RefObjNum(objnum) {}
 
