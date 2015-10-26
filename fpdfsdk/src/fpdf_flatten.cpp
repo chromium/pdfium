@@ -444,12 +444,10 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
           CFX_ByteString sKey;
           CPDF_Object* pFirstObj = pAPDic->GetNextElement(pos, sKey);
           if (pFirstObj) {
-            if (pFirstObj->GetType() == PDFOBJ_REFERENCE)
+            if (pFirstObj->IsReference())
               pFirstObj = pFirstObj->GetDirect();
-
             if (!pFirstObj->IsStream())
               continue;
-
             pAPStream = pFirstObj->AsStream();
           }
         }
