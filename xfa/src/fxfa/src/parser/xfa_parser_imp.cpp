@@ -433,6 +433,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
   }
   IFDE_XMLNode* pXMLDatasetsDOMRoot = NULL;
   IFDE_XMLNode* pXMLFormDOMRoot = NULL;
+  IFDE_XMLNode* pXMLTemplateDOMRoot = NULL;
   {
     for (IFDE_XMLNode* pChildItem =
              pXMLDocumentNode->GetNodeItem(IFDE_XMLNode::FirstChild);
@@ -473,7 +474,17 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
           return NULL;
         }
         pXMLFormDOMRoot = pElement;
-      } else {
+      } else if (ePacket == XFA_XDPPACKET_Template) {
+        if (pXMLTemplateDOMRoot) {
+          // Find a duplicate template packet
+          return NULL;
+        }
+        CXFA_Node* pPacketNode = ParseAsXDPPacket(pElement, ePacket);
+        if (pPacketNode) {
+          pXMLTemplateDOMRoot = pElement;
+          pXFARootNode->InsertChild(pPacketNode);
+        }
+	  } else {
         CXFA_Node* pPacketNode = ParseAsXDPPacket(pElement, ePacket);
         if (pPacketNode) {
           if (pPacketInfo &&
@@ -485,6 +496,9 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
         }
       }
     }
+  }
+  if (!pXMLTemplateDOMRoot) {
+    return NULL;
   }
   if (pXMLDatasetsDOMRoot) {
     CXFA_Node* pPacketNode =
