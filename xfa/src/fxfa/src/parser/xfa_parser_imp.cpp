@@ -484,7 +484,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
           pXMLTemplateDOMRoot = pElement;
           pXFARootNode->InsertChild(pPacketNode);
         }
-	  } else {
+      } else {
         CXFA_Node* pPacketNode = ParseAsXDPPacket(pElement, ePacket);
         if (pPacketNode) {
           if (pPacketInfo &&
@@ -498,6 +498,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
     }
   }
   if (!pXMLTemplateDOMRoot) {
+    // No template is found.
     return NULL;
   }
   if (pXMLDatasetsDOMRoot) {

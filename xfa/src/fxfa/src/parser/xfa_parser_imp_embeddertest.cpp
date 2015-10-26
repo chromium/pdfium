@@ -8,8 +8,8 @@
 class XFAParserImpEmbeddertest : public EmbedderTest {};
 
 TEST_F(XFAParserImpEmbeddertest, Bug_216) {
-	EXPECT_TRUE(OpenDocument("testing/resources/bug_216.pdf"));
-	FPDF_PAGE page = LoadPage(0);
-	EXPECT_NE(nullptr, page);
-	UnloadPage(page);
+    EXPECT_TRUE(OpenDocument("testing/resources/bug_216.pdf"));
+    FPDF_PAGE page = LoadPage(0);
+    EXPECT_NE(nullptr, page);
+    UnloadPage(page);
 }
