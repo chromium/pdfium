@@ -2139,6 +2139,13 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
 
       ++nKeys;
       key = PDF_NameDecode(key);
+      if (key.IsEmpty())
+        continue;
+
+      CFX_ByteStringC keyNoSlash(key.c_str() + 1, key.GetLength() - 1);
+      if (keyNoSlash.IsEmpty())
+        continue;
+
       if (key == FX_BSTRC("/Contents"))
         dwSignValuePos = m_Pos;
 
@@ -2146,14 +2153,12 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
       if (!pObj)
         continue;
 
-      if (key.GetLength() >= 1) {
-        if (nKeys < 32) {
-          pDict->SetAt(CFX_ByteStringC(key.c_str() + 1, key.GetLength() - 1),
-                       pObj);
-        } else {
-          pDict->AddValue(CFX_ByteStringC(key.c_str() + 1, key.GetLength() - 1),
-                          pObj);
-        }
+      // TODO(thestig): Remove this conditional once CPDF_Dictionary has a
+      // better underlying map implementation.
+      if (nKeys < 32) {
+        pDict->SetAt(keyNoSlash, pObj);
+      } else {
+        pDict->AddValue(keyNoSlash, pObj);
       }
     }
 
