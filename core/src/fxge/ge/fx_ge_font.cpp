@@ -233,32 +233,31 @@ FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, FX_DWORD size) {
   m_dwSize = size;
   return m_Face != NULL;
 }
+
 FX_BOOL CFX_Font::IsTTFont() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return FALSE;
-  }
   return FXFT_Is_Face_TT_OT(m_Face) == FXFT_FACE_FLAG_SFNT;
 }
+
 int CFX_Font::GetAscent() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return 0;
-  }
-  int ascent = EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
-                         FXFT_Get_Face_Ascender(m_Face));
-  return ascent;
+  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
+                   FXFT_Get_Face_Ascender(m_Face));
 }
+
 int CFX_Font::GetDescent() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return 0;
-  }
-  int descent = EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
-                          FXFT_Get_Face_Descender(m_Face));
-  return descent;
+  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
+                   FXFT_Get_Face_Descender(m_Face));
 }
+
 FX_BOOL CFX_Font::GetGlyphBBox(FX_DWORD glyph_index, FX_RECT& bbox) {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return FALSE;
-  }
+
   if (FXFT_Is_Face_Tricky(m_Face)) {
     int error = FXFT_Set_Char_Size(m_Face, 0, 1000 * 64, 72, 72);
     if (error) {
@@ -321,10 +320,11 @@ FX_BOOL CFX_Font::GetGlyphBBox(FX_DWORD glyph_index, FX_RECT& bbox) {
   }
   return TRUE;
 }
+
 FX_BOOL CFX_Font::IsItalic() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return FALSE;
-  }
+
   FX_BOOL ret = FXFT_Is_Face_Italic(m_Face) == FXFT_STYLE_FLAG_ITALIC;
   if (!ret) {
     CFX_ByteString str(FXFT_Get_Face_Style_Name(m_Face));
@@ -335,18 +335,19 @@ FX_BOOL CFX_Font::IsItalic() const {
   }
   return ret;
 }
+
 FX_BOOL CFX_Font::IsBold() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return FALSE;
-  }
   return FXFT_Is_Face_Bold(m_Face) == FXFT_STYLE_FLAG_BOLD;
 }
+
 FX_BOOL CFX_Font::IsFixedWidth() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return FALSE;
-  }
   return FXFT_Is_Face_fixedwidth(m_Face);
 }
+
 CFX_WideString CFX_Font::GetPsName() const {
   if (m_Face == NULL) {
     return CFX_WideString();
@@ -403,37 +404,37 @@ FX_BOOL CFX_Font::GetBBox(FX_RECT& bbox) {
   }
   return TRUE;
 }
+
 int CFX_Font::GetHeight() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return 0;
-  }
-  int height =
-      EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face), FXFT_Get_Face_Height(m_Face));
-  return height;
+
+  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
+                   FXFT_Get_Face_Height(m_Face));
 }
+
 int CFX_Font::GetMaxAdvanceWidth() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return 0;
-  }
-  int width = EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
-                        FXFT_Get_Face_MaxAdvanceWidth(m_Face));
-  return width;
+
+  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
+                   FXFT_Get_Face_MaxAdvanceWidth(m_Face));
 }
+
 int CFX_Font::GetULPos() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return 0;
-  }
-  int pos = EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
-                      FXFT_Get_Face_UnderLinePosition(m_Face));
-  return pos;
+
+  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
+                   FXFT_Get_Face_UnderLinePosition(m_Face));
 }
+
 int CFX_Font::GetULthickness() const {
-  if (m_Face == NULL) {
+  if (!m_Face)
     return 0;
-  }
-  int thickness = EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
-                            FXFT_Get_Face_UnderLineThickness(m_Face));
-  return thickness;
+
+  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face),
+                   FXFT_Get_Face_UnderLineThickness(m_Face));
 }
 
 CFX_UnicodeEncoding::CFX_UnicodeEncoding(CFX_Font* pFont) : m_pFont(pFont) {
