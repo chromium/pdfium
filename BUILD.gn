@@ -1452,7 +1452,7 @@ static_library("xfa") {
       "xfa/src/fxjse/src/util_inline.h",
       "xfa/src/fxjse/src/value.cpp",
       "xfa/src/fxjse/src/value.h"
-    ],
+    ]
     include_dirs = [
       "//v8",
       "//v8/include",
