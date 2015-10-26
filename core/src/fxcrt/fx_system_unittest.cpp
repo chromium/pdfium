@@ -129,12 +129,11 @@ TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
   EXPECT_EQ(std::string(""), buf);
 };
 
-
 TEST(fxcrt, FXSYS_i64toa) {
-  Check64BitBase16Itoa(
-      std::numeric_limits<int64_t>::min(), "-8000000000000000");
-  Check64BitBase10Itoa(
-      std::numeric_limits<int64_t>::min(), "-9223372036854775808");
+  Check64BitBase16Itoa(std::numeric_limits<int64_t>::min(),
+                       "-8000000000000000");
+  Check64BitBase10Itoa(std::numeric_limits<int64_t>::min(),
+                       "-9223372036854775808");
   Check64BitBase2Itoa(
       std::numeric_limits<int64_t>::min(),
       "-1000000000000000000000000000000000000000000000000000000000000000");
@@ -151,14 +150,12 @@ TEST(fxcrt, FXSYS_i64toa) {
   Check64BitBase10Itoa(42, "42");
   Check64BitBase2Itoa(42, "101010");
 
-  Check64BitBase16Itoa(
-      std::numeric_limits<int64_t>::max(), "7fffffffffffffff");
-  Check64BitBase10Itoa(
-      std::numeric_limits<int64_t>::max(), "9223372036854775807");
+  Check64BitBase16Itoa(std::numeric_limits<int64_t>::max(), "7fffffffffffffff");
+  Check64BitBase10Itoa(std::numeric_limits<int64_t>::max(),
+                       "9223372036854775807");
   Check64BitBase2Itoa(
       std::numeric_limits<int64_t>::max(),
       "111111111111111111111111111111111111111111111111111111111111111");
 }
 
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-
