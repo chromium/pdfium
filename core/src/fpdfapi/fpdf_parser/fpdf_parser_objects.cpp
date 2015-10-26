@@ -717,27 +717,24 @@ FX_BOOL CPDF_Dictionary::KeyExist(const CFX_ByteStringC& key) const {
   void* value;
   return m_Map.Lookup(key, value);
 }
-void CPDF_Dictionary::SetAt(const CFX_ByteStringC& key,
-                            CPDF_Object* pObj,
-                            CPDF_IndirectObjects* pObjs) {
-  ASSERT(m_Type == PDFOBJ_DICTIONARY);
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
-  if (p == pObj) {
+
+void CPDF_Dictionary::SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj) {
+  ASSERT(IsDictionary());
+  void* pValue = nullptr;
+  m_Map.Lookup(key, pValue);
+  CPDF_Object* pExisting = static_cast<CPDF_Object*>(pValue);
+  if (pExisting == pObj)
     return;
-  }
-  if (p)
-    p->Release();
-  if (pObj) {
-    if (pObj->GetObjNum()) {
-      ASSERT(pObjs != NULL);
-      pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
-    }
+
+  if (pExisting)
+    pExisting->Release();
+
+  if (pObj)
     m_Map.SetAt(key, pObj);
-  } else {
+  else
     m_Map.RemoveKey(key);
-  }
 }
+
 void CPDF_Dictionary::AddValue(const CFX_ByteStringC& key, CPDF_Object* pObj) {
   ASSERT(m_Type == PDFOBJ_DICTIONARY);
   m_Map.AddValue(key, pObj);
