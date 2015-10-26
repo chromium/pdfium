@@ -71,12 +71,12 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
     CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
     ASSERT(pDict != NULL);
     m_Pattern2Form = pDict->GetMatrix(FX_BSTRC("Matrix"));
-    m_pShadingObj = pDict->GetElementValue(FX_BSTRC("Shading"));
+    m_pShadingObj = ToStream(pDict->GetElementValue(FX_BSTRC("Shading")));
     if (parentMatrix) {
       m_Pattern2Form.Concat(*parentMatrix);
     }
   } else {
-    m_pShadingObj = pPatternObj;
+    m_pShadingObj = ToStream(pPatternObj);
   }
   m_ShadingType = 0;
   m_pCS = NULL;

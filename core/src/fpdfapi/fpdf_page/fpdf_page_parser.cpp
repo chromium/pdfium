@@ -1128,10 +1128,9 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
     bbox = m_BBox;
   }
   if (pShading->m_ShadingType >= 4) {
-    bbox.Intersect(_GetShadingBBox(ToStream(pShading->m_pShadingObj),
-                                   pShading->m_ShadingType, &pObj->m_Matrix,
-                                   pShading->m_pFunctions, pShading->m_nFuncs,
-                                   pShading->m_pCS));
+    bbox.Intersect(_GetShadingBBox(
+        pShading->m_pShadingObj, pShading->m_ShadingType, &pObj->m_Matrix,
+        pShading->m_pFunctions, pShading->m_nFuncs, pShading->m_pCS));
   }
   pObj->m_Left = bbox.left;
   pObj->m_Right = bbox.right;

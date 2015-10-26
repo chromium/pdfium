@@ -881,20 +881,18 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
                         pColorSpace, alpha);
       break;
     case 4: {
-      DrawFreeGouraudShading(pBitmap, &FinalMatrix,
-                             ToStream(pPattern->m_pShadingObj), pFuncs, nFuncs,
-                             pColorSpace, alpha);
+      DrawFreeGouraudShading(pBitmap, &FinalMatrix, pPattern->m_pShadingObj,
+                             pFuncs, nFuncs, pColorSpace, alpha);
     } break;
     case 5: {
-      DrawLatticeGouraudShading(pBitmap, &FinalMatrix,
-                                ToStream(pPattern->m_pShadingObj), pFuncs,
-                                nFuncs, pColorSpace, alpha);
+      DrawLatticeGouraudShading(pBitmap, &FinalMatrix, pPattern->m_pShadingObj,
+                                pFuncs, nFuncs, pColorSpace, alpha);
     } break;
     case 6:
     case 7: {
       DrawCoonPatchMeshes(pPattern->m_ShadingType - 6, pBitmap, &FinalMatrix,
-                          ToStream(pPattern->m_pShadingObj), pFuncs, nFuncs,
-                          pColorSpace, fill_mode, alpha);
+                          pPattern->m_pShadingObj, pFuncs, nFuncs, pColorSpace,
+                          fill_mode, alpha);
     } break;
   }
   if (bAlphaMode) {
