@@ -216,11 +216,11 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
                                             CFX_MapPtrToPtr* pMapPtrToPtr) {
   switch (pObj->GetType()) {
     case PDFOBJ_REFERENCE: {
-      CPDF_Reference* pReference = (CPDF_Reference*)pObj;
+      CPDF_Reference* pReference = pObj->AsReference();
       int newobjnum = GetNewObjId(pDoc, pMapPtrToPtr, pReference);
       if (newobjnum == 0)
         return FALSE;
-      pReference->SetRef(pDoc, newobjnum);  //, 0);
+      pReference->SetRef(pDoc, newobjnum);
       break;
     }
     case PDFOBJ_DICTIONARY: {

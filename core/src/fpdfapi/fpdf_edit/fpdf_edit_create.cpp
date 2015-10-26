@@ -61,16 +61,12 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       break;
     }
     case PDFOBJ_REFERENCE: {
-      if (pFile->AppendString(FX_BSTRC(" ")) < 0) {
+      if (pFile->AppendString(FX_BSTRC(" ")) < 0)
         return -1;
-      }
-      CPDF_Reference* p = (CPDF_Reference*)pObj;
-      if ((len = pFile->AppendDWord(p->GetRefObjNum())) < 0) {
+      if ((len = pFile->AppendDWord(pObj->AsReference()->GetRefObjNum())) < 0)
         return -1;
-      }
-      if (pFile->AppendString(FX_BSTRC(" 0 R ")) < 0) {
+      if (pFile->AppendString(FX_BSTRC(" 0 R ")) < 0)
         return -1;
-      }
       offset += len + 6;
       break;
     }
@@ -1168,16 +1164,12 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       break;
     }
     case PDFOBJ_REFERENCE: {
-      if (m_File.AppendString(FX_BSTRC(" ")) < 0) {
+      if (m_File.AppendString(FX_BSTRC(" ")) < 0)
         return -1;
-      }
-      CPDF_Reference* p = (CPDF_Reference*)pObj;
-      if ((len = m_File.AppendDWord(p->GetRefObjNum())) < 0) {
+      if ((len = m_File.AppendDWord(pObj->AsReference()->GetRefObjNum())) < 0)
         return -1;
-      }
-      if (m_File.AppendString(FX_BSTRC(" 0 R")) < 0) {
+      if (m_File.AppendString(FX_BSTRC(" 0 R")) < 0)
         return -1;
-      }
       m_Offset += len + 5;
       break;
     }

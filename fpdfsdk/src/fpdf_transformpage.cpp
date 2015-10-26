@@ -135,8 +135,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
     CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
     pContentArray->InsertAt(0, pRef);
     pContentArray->AddReference(pDoc, pEndStream);
-  } else if (pContentObj && pContentObj->GetType() == PDFOBJ_REFERENCE) {
-    CPDF_Reference* pReference = (CPDF_Reference*)pContentObj;
+  } else if (CPDF_Reference* pReference = ToReference(pContentObj)) {
     CPDF_Object* pDirectObj = pReference->GetDirect();
     if (pDirectObj) {
       if (CPDF_Array* pArray = pDirectObj->AsArray()) {
@@ -165,7 +164,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
         CPDF_Dictionary* pDict = nullptr;
         CFX_ByteString key;
         CPDF_Object* pObj = pPattenDict->GetNextElement(pos, key);
-        if (pObj->GetType() == PDFOBJ_REFERENCE)
+        if (pObj->IsReference())
           pObj = pObj->GetDirect();
 
         if (pObj->IsDictionary())
@@ -306,8 +305,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
     pContentArray = pArray;
     CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
     pContentArray->InsertAt(0, pRef);
-  } else if (pContentObj && pContentObj->GetType() == PDFOBJ_REFERENCE) {
-    CPDF_Reference* pReference = (CPDF_Reference*)pContentObj;
+  } else if (CPDF_Reference* pReference = ToReference(pContentObj)) {
     CPDF_Object* pDirectObj = pReference->GetDirect();
     if (pDirectObj) {
       if (CPDF_Array* pArray = pDirectObj->AsArray()) {
