@@ -845,9 +845,15 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                         FX_POSITION pos = pTrailer->GetStartPos();
                         while (pos) {
                           CFX_ByteString key;
-                          CPDF_Object* pObj =
+                          CPDF_Object* pElement =
                               pTrailer->GetNextElement(pos, key);
-                          m_pTrailer->SetAt(key, pObj->Clone(), m_pDocument);
+                          FX_DWORD dwObjNum = pElement->GetObjNum();
+                          if (dwObjNum) {
+                            m_pTrailer->SetAtReference(key, m_pDocument,
+                                                       dwObjNum);
+                          } else {
+                            m_pTrailer->SetAt(key, pElement->Clone());
+                          }
                         }
                         pObj->Release();
                       } else {

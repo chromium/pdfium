@@ -410,9 +410,7 @@ class CPDF_Dictionary : public CPDF_Object {
 
   CPDF_Object* GetNextElement(FX_POSITION& pos, CFX_ByteString& key) const;
 
-  void SetAt(const CFX_ByteStringC& key,
-             CPDF_Object* pObj,
-             CPDF_IndirectObjects* pObjs = NULL);
+  void SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj);
 
   void SetAtName(const CFX_ByteStringC& key, const CFX_ByteString& name);
 
@@ -435,12 +433,6 @@ class CPDF_Dictionary : public CPDF_Object {
   void AddReference(const CFX_ByteStringC& key,
                     CPDF_IndirectObjects* pDoc,
                     FX_DWORD objnum);
-
-  void AddReference(const CFX_ByteStringC& key,
-                    CPDF_IndirectObjects* pDoc,
-                    CPDF_Object* obj) {
-    AddReference(key, pDoc, obj->GetObjNum());
-  }
 
   void SetAtRect(const CFX_ByteStringC& key, const CFX_FloatRect& rect);
 

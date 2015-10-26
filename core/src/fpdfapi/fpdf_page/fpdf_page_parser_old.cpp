@@ -77,11 +77,14 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
     CFX_ByteString key((const FX_CHAR*)m_pSyntax->GetWordBuf() + 1,
                        m_pSyntax->GetWordSize() - 1);
-    CPDF_Object* pObj = m_pSyntax->ReadNextObject();
+    nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
+        m_pSyntax->ReadNextObject());
     if (!key.IsEmpty()) {
-      pDict->SetAt(key, pObj, m_pDocument);
-    } else if (pObj) {
-      pObj->Release();
+      FX_DWORD dwObjNum = pObj->GetObjNum();
+      if (dwObjNum)
+        pDict->SetAtReference(key, m_pDocument, dwObjNum);
+      else
+        pDict->SetAt(key, pObj.release());
     }
   }
   _PDF_ReplaceAbbr(pDict);
@@ -95,7 +98,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
         pCSObj = FindResourceObj(FX_BSTRC("ColorSpace"), name);
         if (pCSObj && !pCSObj->GetObjNum()) {
           pCSObj = pCSObj->Clone();
-          pDict->SetAt(FX_BSTRC("ColorSpace"), pCSObj, m_pDocument);
+          pDict->SetAt(FX_BSTRC("ColorSpace"), pCSObj);
         }
       }
     }
