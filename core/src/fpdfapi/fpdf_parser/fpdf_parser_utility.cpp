@@ -381,8 +381,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       break;
     }
     case PDFOBJ_REFERENCE: {
-      CPDF_Reference* p = (CPDF_Reference*)pObj;
-      buf << " " << p->GetRefObjNum() << FX_BSTRC(" 0 R ");
+      buf << " " << pObj->AsReference()->GetRefObjNum() << FX_BSTRC(" 0 R ");
       break;
     }
     case PDFOBJ_ARRAY: {
