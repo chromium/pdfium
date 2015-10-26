@@ -413,10 +413,10 @@ CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
   FXSYS_memset(m_FoxitFaces, 0, sizeof(m_FoxitFaces));
 }
 CFX_FontMapper::~CFX_FontMapper() {
-  for (int i = 0; i < 14; i++)
-    if (m_FoxitFaces[i]) {
+  for (size_t i = 0; i < FX_ArraySize(m_FoxitFaces); ++i) {
+    if (m_FoxitFaces[i])
       FXFT_Done_Face(m_FoxitFaces[i]);
-    }
+  }
   if (m_MMFaces[0]) {
     FXFT_Done_Face(m_MMFaces[0]);
   }

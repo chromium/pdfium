@@ -262,6 +262,9 @@ class CFX_FontMapper {
                           CFX_SubstFont* pSubstFont);
 
  private:
+  static const size_t MM_FACE_COUNT = 2;
+  static const size_t FOXIT_FACE_COUNT = 14;
+
   CFX_ByteString GetPSNameFromTT(void* hFont);
   CFX_ByteString MatchInstalledFonts(const CFX_ByteString& norm_name);
   FXFT_Face UseInternalSubst(CFX_SubstFont* pSubstFont,
@@ -271,12 +274,12 @@ class CFX_FontMapper {
                              int picthfamily);
 
   FX_BOOL m_bListLoaded;
-  FXFT_Face m_MMFaces[2];
+  FXFT_Face m_MMFaces[MM_FACE_COUNT];
   CFX_ByteString m_LastFamily;
   CFX_DWordArray m_CharsetArray;
   CFX_ByteStringArray m_FaceArray;
   IFX_SystemFontInfo* m_pFontInfo;
-  FXFT_Face m_FoxitFaces[14];
+  FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];
   IFX_FontEnumerator* m_pFontEnumerator;
   CFX_FontMgr* const m_pFontMgr;
 };
