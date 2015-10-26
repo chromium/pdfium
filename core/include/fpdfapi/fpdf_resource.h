@@ -688,7 +688,7 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
 
   ~CPDF_ShadingPattern() override;
 
-  CPDF_Stream* m_pShadingObj;
+  CPDF_Object* m_pShadingObj;
 
   FX_BOOL m_bShadingObj;
 
