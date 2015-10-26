@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "../../public/fpdf_ext.h"
 #include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../include/formfiller/FFL_FormFiller.h"
@@ -24,7 +26,8 @@
 
 class CFX_SystemHandler : public IFX_SystemHandler {
  public:
-  CFX_SystemHandler(CPDFDoc_Environment* pEnv) : m_pEnv(pEnv), m_nCharSet(-1) {}
+  explicit CFX_SystemHandler(CPDFDoc_Environment* pEnv)
+      : m_pEnv(pEnv), m_nCharSet(-1) {}
   ~CFX_SystemHandler() override {}
 
  public:
@@ -638,47 +641,38 @@ CFX_WideString CPDFSDK_Document::GetPath() {
 
 CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,
                                    CPDFXFA_Page* page)
-    : m_page(page), m_pSDKDoc(pSDKDoc) {
+    : m_page(page),
+      m_pSDKDoc(pSDKDoc),
+      m_CaptureWidget(nullptr),
+      m_bEnterWidget(FALSE),
+      m_bExitWidget(FALSE),
+      m_bOnWidget(FALSE),
+      m_bValid(FALSE),
+      m_bLocked(FALSE) {
   CPDFSDK_InterForm* pInterForm = pSDKDoc->GetInterForm();
   if (pInterForm) {
     CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
     if (page->GetPDFPage())
       pPDFInterForm->FixPageFields(page->GetPDFPage());
   }
-  m_fxAnnotArray.RemoveAll();
-
-  m_bEnterWidget = FALSE;
-  m_bExitWidget = FALSE;
-  m_bOnWidget = FALSE;
-  m_CaptureWidget = NULL;
-  m_bValid = FALSE;
-  m_bLocked = FALSE;
-  m_pAnnotList = NULL;
 }
 
 CPDFSDK_PageView::~CPDFSDK_PageView() {
   // if there is a focused annot on the page, we should kill the focus first.
   if (CPDFSDK_Annot* focusedAnnot = m_pSDKDoc->GetFocusAnnot()) {
-    for (int i = 0, count = m_fxAnnotArray.GetSize(); i < count; i++) {
-      CPDFSDK_Annot* pAnnot = (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(i);
-      if (pAnnot == focusedAnnot) {
-        KillFocusAnnot();
-        break;
-      }
-    }
+    auto it =
+        std::find(m_fxAnnotArray.begin(), m_fxAnnotArray.end(), focusedAnnot);
+    if (it != m_fxAnnotArray.end())
+      KillFocusAnnot();
   }
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
-  ASSERT(pAnnotHandlerMgr);
-  for (int i = 0, count = m_fxAnnotArray.GetSize(); i < count; i++) {
-    CPDFSDK_Annot* pAnnot = (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(i);
+  for (CPDFSDK_Annot* pAnnot : m_fxAnnotArray)
     pAnnotHandlerMgr->ReleaseAnnot(pAnnot);
-  }
-  m_fxAnnotArray.RemoveAll();
+  m_fxAnnotArray.clear();
 
-  delete m_pAnnotList;
-  m_pAnnotList = NULL;
+  m_pAnnotList.reset();
 }
 
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
@@ -719,9 +713,8 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 #endif  // PDF_ENABLE_XFA
 
   // for pdf/static xfa.
-  CPDFSDK_AnnotIterator annotIterator(this, TRUE);
-  int index = -1;
-  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next(index)) {
+  CPDFSDK_AnnotIterator annotIterator(this, true);
+  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
     pAnnotHandlerMgr->Annot_OnDraw(this, pSDKAnnot, pDevice, pUser2Device, 0);
   }
@@ -729,7 +722,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
 CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
                                                  FX_FLOAT pageY) {
-  int nCount = m_pAnnotList->Count();
+  int nCount = CountAnnots();
   for (int i = 0; i < nCount; i++) {
     CPDF_Annot* pAnnot = m_pAnnotList->GetAt(i);
     CFX_FloatRect annotRect;
@@ -737,13 +730,13 @@ CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
     if (annotRect.Contains(pageX, pageY))
       return pAnnot;
   }
-  return NULL;
+  return nullptr;
 }
 
 CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
                                                   FX_FLOAT pageY) {
-  int nCount = m_pAnnotList->Count();
-  for (int i = 0; i < nCount; i++) {
+  int nCount = CountAnnots();
+  for (int i = 0; i < nCount; ++i) {
     CPDF_Annot* pAnnot = m_pAnnotList->GetAt(i);
     if (pAnnot->GetSubType() == "Widget") {
       CFX_FloatRect annotRect;
@@ -752,34 +745,29 @@ CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
         return pAnnot;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(FX_FLOAT pageX,
                                                    FX_FLOAT pageY) {
-  CPDFSDK_AnnotIterator annotIterator(this, FALSE);
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = pEnv->GetAnnotHandlerMgr();
-  CPDFSDK_Annot* pSDKAnnot = NULL;
-  int index = -1;
-  pSDKAnnot = annotIterator.Next(index);
-  while (pSDKAnnot) {
+  CPDFSDK_AnnotIterator annotIterator(this, false);
+  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
     CPDF_Rect rc = pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
     if (rc.Contains(pageX, pageY))
       return pSDKAnnot;
-    pSDKAnnot = annotIterator.Next(index);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
                                                     FX_FLOAT pageY) {
-  CPDFSDK_AnnotIterator annotIterator(this, FALSE);
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = pEnv->GetAnnotHandlerMgr();
-  int index = -1;
-  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next(index)) {
+  CPDFSDK_AnnotIterator annotIterator(this, false);
+  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
     if (pSDKAnnot->GetType() == "Widget" ||
         pSDKAnnot->GetType() == FSDK_XFAWIDGET_TYPENAME) {
       pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
@@ -789,7 +777,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 FX_BOOL CPDFSDK_PageView::Annot_HasAppearance(CPDF_Annot* pAnnot) {
@@ -803,46 +791,35 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CPDF_Annot* pPDFAnnot) {
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   ASSERT(pEnv);
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = pEnv->GetAnnotHandlerMgr();
+  if (!pAnnotHandler)
+    return nullptr;
 
-  CPDFSDK_Annot* pSDKAnnot = NULL;
-
-  if (pAnnotHandler) {
-    pSDKAnnot = pAnnotHandler->NewAnnot(pPDFAnnot, this);
-  }
+  CPDFSDK_Annot* pSDKAnnot = pAnnotHandler->NewAnnot(pPDFAnnot, this);
   if (!pSDKAnnot)
-    return NULL;
+    return nullptr;
 
-  m_fxAnnotArray.Add(pSDKAnnot);
-
-  if (pAnnotHandler) {
-    pAnnotHandler->Annot_OnCreate(pSDKAnnot);
-  }
-
+  m_fxAnnotArray.push_back(pSDKAnnot);
+  pAnnotHandler->Annot_OnCreate(pSDKAnnot);
   return pSDKAnnot;
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(IXFA_Widget* pPDFAnnot) {
   if (!pPDFAnnot)
-    return NULL;
+    return nullptr;
 
   CPDFSDK_Annot* pSDKAnnot = GetAnnotByXFAWidget(pPDFAnnot);
   if (pSDKAnnot)
     return pSDKAnnot;
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  ASSERT(pEnv);
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = pEnv->GetAnnotHandlerMgr();
 
-  pSDKAnnot = NULL;
-
-  if (pAnnotHandler) {
+  if (pAnnotHandler)
     pSDKAnnot = pAnnotHandler->NewAnnot(pPDFAnnot, this);
-  }
   if (!pSDKAnnot)
-    return NULL;
+    return nullptr;
 
-  m_fxAnnotArray.Add(pSDKAnnot);
-
+  m_fxAnnotArray.push_back(pSDKAnnot);
   return pSDKAnnot;
 }
 
@@ -863,10 +840,11 @@ FX_BOOL CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
                  pPage->GetDocument()->GetDocType() != DOCTYPE_DYNIMIC_XFA))
     return FALSE;
 
-  int index = m_fxAnnotArray.Find(pAnnot);
-  m_fxAnnotArray.RemoveAt(index);
+  auto it = std::find(m_fxAnnotArray.begin(), m_fxAnnotArray.end(), pAnnot);
+  if (it != m_fxAnnotArray.end())
+    m_fxAnnotArray.erase(it);
   if (m_CaptureWidget == pAnnot)
-    m_CaptureWidget = NULL;
+    m_CaptureWidget = nullptr;
 
   return TRUE;
 }
@@ -886,39 +864,30 @@ CPDF_Page* CPDFSDK_PageView::GetPDFPage() {
   return NULL;
 }
 
-int CPDFSDK_PageView::CountAnnots() {
-  return m_fxAnnotArray.GetSize();
+int CPDFSDK_PageView::CountAnnots() const {
+  return m_pAnnotList->Count();
 }
 
-CPDFSDK_Annot* CPDFSDK_PageView::GetAnnot(int nIndex) {
-  int nCount = m_fxAnnotArray.GetSize();
-  if (nIndex < 0 || nIndex >= nCount) {
-    return NULL;
-  }
-
-  return (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(nIndex);
+CPDFSDK_Annot* CPDFSDK_PageView::GetAnnot(size_t nIndex) {
+  return nIndex < m_fxAnnotArray.size() ? m_fxAnnotArray[nIndex] : nullptr;
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(CPDF_Dictionary* pDict) {
-  int nCount = m_fxAnnotArray.GetSize();
-  for (int i = 0; i < nCount; i++) {
-    CPDFSDK_Annot* pAnnot = (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(i);
-    if (pDict == pAnnot->GetPDFAnnot()->GetAnnotDict())
+  for (CPDFSDK_Annot* pAnnot : m_fxAnnotArray) {
+    if (pAnnot->GetPDFAnnot()->GetAnnotDict() == pDict)
       return pAnnot;
   }
-  return NULL;
+  return nullptr;
 }
 CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(IXFA_Widget* hWidget) {
-  if (hWidget == NULL)
-    return NULL;
-  int annotCount = m_fxAnnotArray.GetSize();
+  if (!hWidget)
+    return nullptr;
 
-  for (int i = 0; i < annotCount; i++) {
-    CPDFSDK_Annot* pAnnot = (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(i);
+  for (CPDFSDK_Annot* pAnnot : m_fxAnnotArray) {
     if (pAnnot->GetXFAWidget() == hWidget)
       return pAnnot;
   }
-  return NULL;
+  return nullptr;
 }
 
 FX_BOOL CPDFSDK_PageView::OnLButtonDown(const CPDF_Point& point,
@@ -1092,18 +1061,13 @@ void CPDFSDK_PageView::LoadFXAnnots() {
       return;
     }
 
-    IXFA_Widget* pXFAAnnot = pWidgetHander->MoveToNext();
-    while (pXFAAnnot) {
+    while (IXFA_Widget* pXFAAnnot = pWidgetHander->MoveToNext()) {
       CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(pXFAAnnot, this);
-      if (!pAnnot) {
-        pXFAAnnot = pWidgetHander->MoveToNext();
+      if (!pAnnot)
         continue;
-      }
-      m_fxAnnotArray.Add(pAnnot);
 
+      m_fxAnnotArray.push_back(pAnnot);
       pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
-
-      pXFAAnnot = pWidgetHander->MoveToNext();
     }
 
     pWidgetHander->Release();
@@ -1114,7 +1078,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
     FX_BOOL enableAPUpdate = CPDF_InterForm::UpdatingAPEnabled();
     // Disable the default AP construction.
     CPDF_InterForm::EnableUpdateAP(FALSE);
-    m_pAnnotList = new CPDF_AnnotList(pPage);
+    m_pAnnotList.reset(new CPDF_AnnotList(pPage));
     CPDF_InterForm::EnableUpdateAP(enableAPUpdate);
 
     int nCount = m_pAnnotList->Count();
@@ -1127,7 +1091,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
       CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(pPDFAnnot, this);
       if (!pAnnot)
         continue;
-      m_fxAnnotArray.Add(pAnnot);
+      m_fxAnnotArray.push_back(pAnnot);
 
       pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
     }
@@ -1162,11 +1126,12 @@ int CPDFSDK_PageView::GetPageIndex() {
   return -1;
 }
 
-FX_BOOL CPDFSDK_PageView::IsValidAnnot(void* p) {
-  if (p == NULL)
+FX_BOOL CPDFSDK_PageView::IsValidAnnot(CPDF_Annot* p) const {
+  if (!p)
     return FALSE;
-  int iCount = m_pAnnotList->Count();
-  for (int i = 0; i < iCount; i++) {
+
+  int nCount = CountAnnots();
+  for (int i = 0; i < nCount; ++i) {
     if (m_pAnnotList->GetAt(i) == p)
       return TRUE;
   }
@@ -1176,12 +1141,11 @@ FX_BOOL CPDFSDK_PageView::IsValidAnnot(void* p) {
 CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {
   CPDFSDK_Annot* pFocusAnnot = m_pSDKDoc->GetFocusAnnot();
   if (!pFocusAnnot)
-    return NULL;
+    return nullptr;
 
-  for (int i = 0; i < m_fxAnnotArray.GetSize(); i++) {
-    CPDFSDK_Annot* pAnnot = (CPDFSDK_Annot*)m_fxAnnotArray.GetAt(i);
+  for (CPDFSDK_Annot* pAnnot : m_fxAnnotArray) {
     if (pAnnot == pFocusAnnot)
       return pAnnot;
   }
-  return NULL;
+  return nullptr;
 }
