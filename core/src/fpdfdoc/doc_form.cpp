@@ -1086,12 +1086,13 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
     }
     pField = new CPDF_FormField(this, pParent);
     CPDF_Object* pTObj = pDict->GetElement("T");
-    if (ToReference(pTObj)) {
+    if (pTObj && pTObj->GetType() == PDFOBJ_REFERENCE) {
       CPDF_Object* pClone = pTObj->Clone(TRUE);
-      if (pClone)
+      if (pClone) {
         pDict->SetAt("T", pClone);
-      else
+      } else {
         pDict->SetAtName("T", "");
+      }
     }
     m_pFieldTree->SetField(csWName, pField);
   }

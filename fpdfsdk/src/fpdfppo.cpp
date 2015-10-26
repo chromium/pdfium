@@ -207,7 +207,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
                                             ObjectNumberMap* pObjNumberMap) {
   switch (pObj->GetType()) {
     case PDFOBJ_REFERENCE: {
-      CPDF_Reference* pReference = pObj->AsReference();
+      CPDF_Reference* pReference = (CPDF_Reference*)pObj;
       FX_DWORD newobjnum = GetNewObjId(pDoc, pObjNumberMap, pReference);
       if (newobjnum == 0)
         return FALSE;

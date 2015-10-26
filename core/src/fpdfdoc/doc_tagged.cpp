@@ -173,10 +173,10 @@ FX_BOOL CPDF_StructTreeImpl::AddTopLevelNode(CPDF_Dictionary* pDict,
     FX_DWORD i;
     FX_BOOL bSave = FALSE;
     for (i = 0; i < pTopKids->GetCount(); i++) {
-      CPDF_Reference* pKidRef = ToReference(pTopKids->GetElement(i));
-      if (!pKidRef)
+      CPDF_Object* pKidRef = pTopKids->GetElement(i);
+      if (!pKidRef || pKidRef->GetType() != PDFOBJ_REFERENCE)
         continue;
-      if (pKidRef->GetRefObjNum() != pDict->GetObjNum())
+      if (((CPDF_Reference*)pKidRef)->GetRefObjNum() != pDict->GetObjNum())
         continue;
 
       if (m_Kids[i])
@@ -225,8 +225,8 @@ void CPDF_StructElementImpl::Release() {
 void CPDF_StructElementImpl::LoadKids(CPDF_Dictionary* pDict) {
   CPDF_Object* pObj = pDict->GetElement(FX_BSTRC("Pg"));
   FX_DWORD PageObjNum = 0;
-  if (CPDF_Reference* pRef = ToReference(pObj))
-    PageObjNum = pRef->GetRefObjNum();
+  if (pObj && pObj->GetType() == PDFOBJ_REFERENCE)
+    PageObjNum = ((CPDF_Reference*)pObj)->GetRefObjNum();
 
   CPDF_Object* pKids = pDict->GetElementValue(FX_BSTRC("K"));
   if (!pKids)
@@ -264,18 +264,20 @@ void CPDF_StructElementImpl::LoadKid(FX_DWORD PageObjNum,
   if (!pKidDict)
     return;
 
-  if (CPDF_Reference* pRef = ToReference(pKidDict->GetElement(FX_BSTRC("Pg"))))
-    PageObjNum = pRef->GetRefObjNum();
-
+  CPDF_Object* pPageObj = pKidDict->GetElement(FX_BSTRC("Pg"));
+  if (pPageObj && pPageObj->GetType() == PDFOBJ_REFERENCE) {
+    PageObjNum = ((CPDF_Reference*)pPageObj)->GetRefObjNum();
+  }
   CFX_ByteString type = pKidDict->GetString(FX_BSTRC("Type"));
   if (type == FX_BSTRC("MCR")) {
     if (m_pTree->m_pPage && m_pTree->m_pPage->GetObjNum() != PageObjNum) {
       return;
     }
     pKid->m_Type = CPDF_StructKid::StreamContent;
-    if (CPDF_Reference* pRef =
-            ToReference(pKidDict->GetElement(FX_BSTRC("Stm")))) {
-      pKid->m_StreamContent.m_RefObjNum = pRef->GetRefObjNum();
+    CPDF_Object* pStreamObj = pKidDict->GetElement(FX_BSTRC("Stm"));
+    if (pStreamObj && pStreamObj->GetType() == PDFOBJ_REFERENCE) {
+      pKid->m_StreamContent.m_RefObjNum =
+          ((CPDF_Reference*)pStreamObj)->GetRefObjNum();
     } else {
       pKid->m_StreamContent.m_RefObjNum = 0;
     }
@@ -286,9 +288,9 @@ void CPDF_StructElementImpl::LoadKid(FX_DWORD PageObjNum,
       return;
     }
     pKid->m_Type = CPDF_StructKid::Object;
-    if (CPDF_Reference* pObj =
-            ToReference(pKidDict->GetElement(FX_BSTRC("Obj")))) {
-      pKid->m_Object.m_RefObjNum = pObj->GetRefObjNum();
+    CPDF_Object* pObj = pKidDict->GetElement(FX_BSTRC("Obj"));
+    if (pObj && pObj->GetType() == PDFOBJ_REFERENCE) {
+      pKid->m_Object.m_RefObjNum = ((CPDF_Reference*)pObj)->GetRefObjNum();
     } else {
       pKid->m_Object.m_RefObjNum = 0;
     }

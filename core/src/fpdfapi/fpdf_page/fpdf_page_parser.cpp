@@ -671,28 +671,51 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   CFX_ByteString name = GetString(0);
   if (name == m_LastImageName && m_pLastImage && m_pLastImage->GetStream() &&
       m_pLastImage->GetStream()->GetObjNum()) {
-    AddImage(nullptr, m_pLastImage, FALSE);
+    AddImage(NULL, m_pLastImage, FALSE);
     return;
   }
-
   if (m_Options.m_bTextOnly) {
-    if (!m_pResources)
+    CPDF_Object* pRes = NULL;
+    if (m_pResources == NULL) {
       return;
-
-    CPDF_Dictionary* pList = m_pResources->GetDict(FX_BSTRC("XObject"));
-    if (!pList && m_pPageResources && m_pResources != m_pPageResources)
-      pList = m_pPageResources->GetDict(FX_BSTRC("XObject"));
-    if (!pList)
-      return;
-    CPDF_Reference* pRes = ToReference(pList->GetElement(name));
-    if (!pRes)
-      return;
-
+    }
+    if (m_pResources == m_pPageResources) {
+      CPDF_Dictionary* pList = m_pResources->GetDict(FX_BSTRC("XObject"));
+      if (pList == NULL) {
+        return;
+      }
+      pRes = pList->GetElement(name);
+      if (pRes == NULL || pRes->GetType() != PDFOBJ_REFERENCE) {
+        return;
+      }
+    } else {
+      CPDF_Dictionary* pList = m_pResources->GetDict(FX_BSTRC("XObject"));
+      if (pList == NULL) {
+        if (m_pPageResources == NULL) {
+          return;
+        }
+        CPDF_Dictionary* pList = m_pPageResources->GetDict(FX_BSTRC("XObject"));
+        if (pList == NULL) {
+          return;
+        }
+        pRes = pList->GetElement(name);
+        if (pRes == NULL || pRes->GetType() != PDFOBJ_REFERENCE) {
+          return;
+        }
+      } else {
+        pRes = pList->GetElement(name);
+        if (pRes == NULL || pRes->GetType() != PDFOBJ_REFERENCE) {
+          return;
+        }
+      }
+    }
     FX_BOOL bForm;
-    if (m_pDocument->IsFormStream(pRes->GetRefObjNum(), bForm) && !bForm)
+    if (m_pDocument->IsFormStream(((CPDF_Reference*)pRes)->GetRefObjNum(),
+                                  bForm) &&
+        !bForm) {
       return;
+    }
   }
-
   CPDF_Stream* pXObject = ToStream(FindResourceObj(FX_BSTRC("XObject"), name));
   if (!pXObject) {
     m_bResourceMissing = TRUE;

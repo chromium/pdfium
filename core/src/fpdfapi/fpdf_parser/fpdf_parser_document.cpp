@@ -190,8 +190,9 @@ int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode,
     }
     if (count && count == pKidList->GetCount()) {
       for (FX_DWORD i = 0; i < count; i++) {
-        if (CPDF_Reference* pKid = ToReference(pKidList->GetElement(i))) {
-          if (pKid->GetRefObjNum() == objnum) {
+        CPDF_Object* pKid = pKidList->GetElement(i);
+        if (pKid && pKid->GetType() == PDFOBJ_REFERENCE) {
+          if (((CPDF_Reference*)pKid)->GetRefObjNum() == objnum) {
             m_PageList.SetAt(index + i, objnum);
             return index + i;
           }
@@ -307,9 +308,13 @@ FX_BOOL CPDF_Document::IsContentUsedElsewhere(FX_DWORD objnum,
     if (pContents->GetDirectType() == PDFOBJ_ARRAY) {
       CPDF_Array* pArray = pContents->GetDirect()->AsArray();
       for (FX_DWORD j = 0; j < pArray->GetCount(); j++) {
-        CPDF_Reference* pRef = ToReference(pArray->GetElement(j));
-        if (pRef && pRef->GetRefObjNum() == objnum)
+        CPDF_Object* pRef = pArray->GetElement(j);
+        if (pRef == NULL || pRef->GetType() != PDFOBJ_REFERENCE) {
+          continue;
+        }
+        if (((CPDF_Reference*)pRef)->GetRefObjNum() == objnum) {
           return TRUE;
+        }
       }
     } else if (pContents->GetObjNum() == objnum) {
       return TRUE;

@@ -84,7 +84,6 @@ class CPDF_Object {
   bool IsDictionary() const { return m_Type == PDFOBJ_DICTIONARY; }
   bool IsName() const { return m_Type == PDFOBJ_NAME; }
   bool IsNumber() const { return m_Type == PDFOBJ_NUMBER; }
-  bool IsReference() const { return m_Type == PDFOBJ_REFERENCE; }
   bool IsStream() const { return m_Type == PDFOBJ_STREAM; }
   bool IsString() const { return m_Type == PDFOBJ_STRING; }
 
@@ -102,9 +101,6 @@ class CPDF_Object {
 
   CPDF_Number* AsNumber();
   const CPDF_Number* AsNumber() const;
-
-  CPDF_Reference* AsReference();
-  const CPDF_Reference* AsReference() const;
 
   CPDF_Stream* AsStream();
   const CPDF_Stream* AsStream() const;
@@ -604,13 +600,6 @@ class CPDF_Reference : public CPDF_Object {
   FX_DWORD m_RefObjNum;
   friend class CPDF_Object;
 };
-inline CPDF_Reference* ToReference(CPDF_Object* obj) {
-  return obj ? obj->AsReference() : nullptr;
-}
-inline const CPDF_Reference* ToReference(const CPDF_Object* obj) {
-  return obj ? obj->AsReference() : nullptr;
-}
-
 class CPDF_IndirectObjects {
  public:
   CPDF_IndirectObjects(CPDF_Parser* pParser);
