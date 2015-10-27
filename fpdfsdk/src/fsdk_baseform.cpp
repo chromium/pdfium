@@ -2878,14 +2878,14 @@ void CPDFSDK_InterForm::GetFieldFromObjects(const CFX_PtrArray& objects,
 
   int iCount = objects.GetSize();
   for (int i = 0; i < iCount; i++) {
-    CPDF_Object* pObject = (CPDF_Object*)objects[i];
-    if (pObject == NULL)
+    CPDF_Object* pObject = static_cast<CPDF_Object*>(objects[i]);
+    if (!pObject)
       continue;
 
     if (pObject->IsString()) {
       CFX_WideString csName = pObject->GetUnicodeText();
       CPDF_FormField* pField = m_pInterForm->GetField(0, csName);
-      if (pField != NULL)
+      if (pField)
         fields.Add(pField);
     } else if (pObject->IsDictionary()) {
       if (m_pInterForm->IsValidFormField(pObject))

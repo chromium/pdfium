@@ -1186,7 +1186,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(const CFX_WideStringC& pdf_path,
     } else {
       CPDF_FileSpec filespec;
       filespec.SetFileName(pdf_path);
-      pMainDict->SetAt("F", (CPDF_Object*)filespec);
+      pMainDict->SetAt("F", static_cast<CPDF_Object*>(filespec));
     }
   }
   CPDF_Array* pFields = CPDF_Array::Create();
