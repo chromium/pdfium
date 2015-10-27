@@ -244,7 +244,8 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
       const CPDF_Array* pThis = AsArray();
       int n = pThis->GetCount();
       for (int i = 0; i < n; i++) {
-        CPDF_Object* value = (CPDF_Object*)pThis->m_Objects.GetAt(i);
+        CPDF_Object* value =
+            static_cast<CPDF_Object*>(pThis->m_Objects.GetAt(i));
         pCopy->m_Objects.Add(value->CloneInternal(bDirect, visited));
       }
       return pCopy;
@@ -443,44 +444,34 @@ CFX_AffineMatrix CPDF_Array::GetMatrix() {
   return matrix;
 }
 CPDF_Object* CPDF_Array::GetElement(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize()) {
-    return NULL;
-  }
-  return (CPDF_Object*)m_Objects.GetAt(i);
+  if (i >= (FX_DWORD)m_Objects.GetSize())
+    return nullptr;
+  return static_cast<CPDF_Object*>(m_Objects.GetAt(i));
 }
 CPDF_Object* CPDF_Array::GetElementValue(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize()) {
-    return NULL;
-  }
-  return ((CPDF_Object*)m_Objects.GetAt(i))->GetDirect();
+  if (i >= (FX_DWORD)m_Objects.GetSize())
+    return nullptr;
+  return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetDirect();
 }
 CFX_ByteString CPDF_Array::GetString(FX_DWORD i) const {
-  if (i < (FX_DWORD)m_Objects.GetSize()) {
-    CPDF_Object* p = (CPDF_Object*)m_Objects.GetAt(i);
-    return p->GetString();
-  }
+  if (i < (FX_DWORD)m_Objects.GetSize())
+    return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetString();
   return CFX_ByteString();
 }
 CFX_ByteStringC CPDF_Array::GetConstString(FX_DWORD i) const {
-  if (i < (FX_DWORD)m_Objects.GetSize()) {
-    CPDF_Object* p = (CPDF_Object*)m_Objects.GetAt(i);
-    return p->GetConstString();
-  }
+  if (i < (FX_DWORD)m_Objects.GetSize())
+    return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetConstString();
   return CFX_ByteStringC();
 }
 int CPDF_Array::GetInteger(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize()) {
+  if (i >= (FX_DWORD)m_Objects.GetSize())
     return 0;
-  }
-  CPDF_Object* p = (CPDF_Object*)m_Objects.GetAt(i);
-  return p->GetInteger();
+  return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetInteger();
 }
 FX_FLOAT CPDF_Array::GetNumber(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize()) {
+  if (i >= (FX_DWORD)m_Objects.GetSize())
     return 0;
-  }
-  CPDF_Object* p = (CPDF_Object*)m_Objects.GetAt(i);
-  return p->GetNumber();
+  return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetNumber();
 }
 CPDF_Dictionary* CPDF_Array::GetDict(FX_DWORD i) const {
   CPDF_Object* p = GetElementValue(i);
@@ -500,11 +491,9 @@ CPDF_Array* CPDF_Array::GetArray(FX_DWORD i) const {
 }
 void CPDF_Array::RemoveAt(FX_DWORD i) {
   ASSERT(IsArray());
-  if (i >= (FX_DWORD)m_Objects.GetSize()) {
+  if (i >= (FX_DWORD)m_Objects.GetSize())
     return;
-  }
-  CPDF_Object* p = (CPDF_Object*)m_Objects.GetAt(i);
-  if (p)
+  if (CPDF_Object* p = static_cast<CPDF_Object*>(m_Objects.GetAt(i)))
     p->Release();
   m_Objects.RemoveAt(i);
 }
@@ -513,14 +502,12 @@ void CPDF_Array::SetAt(FX_DWORD i,
                        CPDF_IndirectObjects* pObjs) {
   ASSERT(IsArray());
   ASSERT(i < (FX_DWORD)m_Objects.GetSize());
-  if (i >= (FX_DWORD)m_Objects.GetSize()) {
+  if (i >= (FX_DWORD)m_Objects.GetSize())
     return;
-  }
-  CPDF_Object* pOld = (CPDF_Object*)m_Objects.GetAt(i);
-  if (pOld)
+  if (CPDF_Object* pOld = static_cast<CPDF_Object*>(m_Objects.GetAt(i)))
     pOld->Release();
   if (pObj->GetObjNum()) {
-    ASSERT(pObjs != NULL);
+    ASSERT(pObjs);
     pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
   }
   m_Objects.SetAt(i, pObj);
@@ -570,8 +557,8 @@ FX_BOOL CPDF_Array::Identical(CPDF_Array* pOther) const {
     return FALSE;
   }
   for (int i = 0; i < m_Objects.GetSize(); i++)
-    if (!((CPDF_Object*)m_Objects[i])
-             ->IsIdentical((CPDF_Object*)pOther->m_Objects[i])) {
+    if (!static_cast<CPDF_Object*>(m_Objects[i])
+             ->IsIdentical(static_cast<CPDF_Object*>(pOther->m_Objects[i]))) {
       return FALSE;
     }
   return TRUE;
@@ -579,9 +566,8 @@ FX_BOOL CPDF_Array::Identical(CPDF_Array* pOther) const {
 CPDF_Dictionary::~CPDF_Dictionary() {
   FX_POSITION pos = m_Map.GetStartPosition();
   while (pos) {
-    void* value = m_Map.GetNextValue(pos);
-    if (value)
-      ((CPDF_Object*)value)->Release();
+    if (CPDF_Object* value = static_cast<CPDF_Object*>(m_Map.GetNextValue(pos)))
+      value->Release();
   }
 }
 FX_POSITION CPDF_Dictionary::GetStartPos() const {
@@ -774,9 +760,8 @@ FX_BOOL CPDF_Dictionary::Identical(CPDF_Dictionary* pOther) const {
     m_Map.GetNextAssoc(pos, key, value);
     if (!value)
       return FALSE;
-    if (!((CPDF_Object*)value)->IsIdentical(pOther->GetElement(key))) {
+    if (!static_cast<CPDF_Object*>(value)->IsIdentical(pOther->GetElement(key)))
       return FALSE;
-    }
   }
   return TRUE;
 }
@@ -1119,48 +1104,44 @@ CPDF_IndirectObjects::~CPDF_IndirectObjects() {
     void* key;
     void* value;
     m_IndirectObjs.GetNextAssoc(pos, key, value);
-    ((CPDF_Object*)value)->Destroy();
+    static_cast<CPDF_Object*>(value)->Destroy();
   }
 }
 CPDF_Object* CPDF_IndirectObjects::GetIndirectObject(
     FX_DWORD objnum,
     struct PARSE_CONTEXT* pContext) {
-  if (objnum == 0) {
-    return NULL;
-  }
+  if (objnum == 0)
+    return nullptr;
   void* value;
-  {
-    if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
-      if (((CPDF_Object*)value)->GetObjNum() == -1) {
-        return NULL;
-      }
-      return (CPDF_Object*)value;
-    }
+  if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
+    CPDF_Object* pValue = static_cast<CPDF_Object*>(value);
+    if (pValue->GetObjNum() == -1)
+      return nullptr;
+    return pValue;
   }
-  CPDF_Object* pObj = NULL;
-  if (m_pParser) {
+
+  CPDF_Object* pObj = nullptr;
+  if (m_pParser)
     pObj = m_pParser->ParseIndirectObject(this, objnum, pContext);
-  }
-  if (pObj == NULL) {
-    return NULL;
-  }
+  if (!pObj)
+    return nullptr;
+
   pObj->m_ObjNum = objnum;
   if (m_LastObjNum < objnum) {
     m_LastObjNum = objnum;
   }
   if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
-    if (value) {
-      ((CPDF_Object*)value)->Destroy();
-    }
+    if (value)
+      static_cast<CPDF_Object*>(value)->Destroy();
   }
   m_IndirectObjs.SetAt((void*)(uintptr_t)objnum, pObj);
   return pObj;
 }
 int CPDF_IndirectObjects::GetIndirectType(FX_DWORD objnum) {
   void* value;
-  if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
-    return ((CPDF_Object*)value)->GetType();
-  }
+  if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value))
+    return static_cast<CPDF_Object*>(value)->GetType();
+
   if (m_pParser) {
     PARSE_CONTEXT context;
     FXSYS_memset(&context, 0, sizeof(PARSE_CONTEXT));
@@ -1181,13 +1162,12 @@ FX_DWORD CPDF_IndirectObjects::AddIndirectObject(CPDF_Object* pObj) {
 }
 void CPDF_IndirectObjects::ReleaseIndirectObject(FX_DWORD objnum) {
   void* value;
-  if (!m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
+  if (!m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value))
     return;
-  }
-  if (((CPDF_Object*)value)->GetObjNum() == -1) {
+  CPDF_Object* pValue = static_cast<CPDF_Object*>(value);
+  if (pValue->GetObjNum() == -1)
     return;
-  }
-  ((CPDF_Object*)value)->Destroy();
+  pValue->Destroy();
   m_IndirectObjs.RemoveKey((void*)(uintptr_t)objnum);
 }
 void CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum,
@@ -1198,10 +1178,10 @@ void CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum,
   void* value = NULL;
   if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
     if (value) {
-      if (pObj->GetGenNum() <= ((CPDF_Object*)value)->GetGenNum()) {
+      CPDF_Object* pValue = static_cast<CPDF_Object*>(value);
+      if (pObj->GetGenNum() <= pValue->GetGenNum())
         return;
-      }
-      ((CPDF_Object*)value)->Destroy();
+      pValue->Destroy();
     }
   }
   pObj->m_ObjNum = objnum;
