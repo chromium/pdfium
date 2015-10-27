@@ -795,6 +795,7 @@
       'sources': [
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_decode_embeddertest.cpp',
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_parser_embeddertest.cpp',
+        'core/src/fpdfapi/fpdf_render/fpdf_render_pattern_embeddertest.cpp',
         'fpdfsdk/src/fpdf_dataavail_embeddertest.cpp',
         'fpdfsdk/src/fpdfdoc_embeddertest.cpp',
         'fpdfsdk/src/fpdfformfill_embeddertest.cpp',
