@@ -7,6 +7,24 @@
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "pageint.h"
 
+namespace {
+
+const int kSingleCoordinatePair = 1;
+const int kTensorCoordinatePairs = 16;
+const int kCoonsCoordinatePairs = 12;
+
+const int kSingleColorPerPatch = 1;
+const int kQuadColorsPerPatch = 4;
+
+ShadingType ToShadingType(int type) {
+  return (type > static_cast<int>(kInvalidShading) &&
+          type < static_cast<int>(kMaxShading))
+             ? static_cast<ShadingType>(type)
+             : kInvalidShading;
+}
+
+}  // namespace
+
 CPDF_Pattern::CPDF_Pattern(const CFX_AffineMatrix* pParentMatrix)
     : m_pPatternObj(NULL),
       m_PatternType(PATTERN_TILING),
@@ -78,7 +96,7 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
   } else {
     m_pShadingObj = pPatternObj;
   }
-  m_ShadingType = 0;
+  m_ShadingType = kInvalidShading;
   m_pCS = NULL;
   m_nFuncs = 0;
   for (int i = 0; i < 4; i++) {
@@ -98,15 +116,16 @@ void CPDF_ShadingPattern::Clear() {
   if (pCS && m_pDocument) {
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
   }
-  m_ShadingType = 0;
+  m_ShadingType = kInvalidShading;
   m_pCS = NULL;
   m_pCountedCS = NULL;
   m_nFuncs = 0;
 }
+
 FX_BOOL CPDF_ShadingPattern::Load() {
-  if (m_ShadingType != 0) {
+  if (m_ShadingType != kInvalidShading)
     return TRUE;
-  }
+
   CPDF_Dictionary* pShadingDict =
       m_pShadingObj ? m_pShadingObj->GetDict() : NULL;
   if (pShadingDict == NULL) {
@@ -139,10 +158,12 @@ FX_BOOL CPDF_ShadingPattern::Load() {
   if (m_pCS) {
     m_pCountedCS = pDocPageData->FindColorSpacePtr(m_pCS->GetArray());
   }
-  m_ShadingType = pShadingDict->GetInteger(FX_BSTRC("ShadingType"));
+
+  m_ShadingType =
+      ToShadingType(pShadingDict->GetInteger(FX_BSTRC("ShadingType")));
 
   // We expect to have a stream if our shading type is a mesh.
-  if (m_ShadingType >= 4 && !ToStream(m_pShadingObj))
+  if (IsMeshShading() && !ToStream(m_pShadingObj))
     return FALSE;
 
   return TRUE;
@@ -253,12 +274,13 @@ FX_BOOL CPDF_MeshStream::GetVertexRow(CPDF_MeshVertex* vertex,
   }
   return TRUE;
 }
-CFX_FloatRect _GetShadingBBox(CPDF_Stream* pStream,
-                              int type,
-                              const CFX_AffineMatrix* pMatrix,
-                              CPDF_Function** pFuncs,
-                              int nFuncs,
-                              CPDF_ColorSpace* pCS) {
+
+CFX_FloatRect GetShadingBBox(CPDF_Stream* pStream,
+                             ShadingType type,
+                             const CFX_AffineMatrix* pMatrix,
+                             CPDF_Function** pFuncs,
+                             int nFuncs,
+                             CPDF_ColorSpace* pCS) {
   if (!pStream || !pStream->IsStream() || !pFuncs || !pCS)
     return CFX_FloatRect(0, 0, 0, 0);
 
@@ -268,19 +290,29 @@ CFX_FloatRect _GetShadingBBox(CPDF_Stream* pStream,
 
   CFX_FloatRect rect;
   FX_BOOL bStarted = FALSE;
-  FX_BOOL bGouraud = type == 4 || type == 5;
-  int full_point_count = type == 7 ? 16 : (type == 6 ? 12 : 1);
-  int full_color_count = (type == 6 || type == 7) ? 4 : 1;
+  FX_BOOL bGouraud = type == kFreeFormGouraudTriangleMeshShading ||
+                     type == kLatticeFormGouraudTriangleMeshShading;
+
+  int point_count = kSingleCoordinatePair;
+  if (type == kTensorProductPatchMeshShading)
+    point_count = kTensorCoordinatePairs;
+  else if (type == kCoonsPatchMeshShading)
+    point_count = kCoonsCoordinatePairs;
+
+  int color_count = kSingleColorPerPatch;
+  if (type == kCoonsPatchMeshShading || type == kTensorProductPatchMeshShading)
+    color_count = kQuadColorsPerPatch;
+
   while (!stream.m_BitStream.IsEOF()) {
     FX_DWORD flag = 0;
-    if (type != 5) {
+    if (type != kLatticeFormGouraudTriangleMeshShading)
       flag = stream.GetFlag();
-    }
-    int point_count = full_point_count, color_count = full_color_count;
+
     if (!bGouraud && flag) {
       point_count -= 4;
       color_count -= 2;
     }
+
     for (int i = 0; i < point_count; i++) {
       FX_FLOAT x, y;
       stream.GetCoords(x, y);

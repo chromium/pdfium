@@ -868,33 +868,37 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   pBitmap->Clear(background);
   int fill_mode = m_Options.m_Flags;
   switch (pPattern->m_ShadingType) {
-    case 1:
+    case kInvalidShading:
+    case kMaxShading:
+      return;
+    case kFunctionBasedShading:
       DrawFuncShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs, pColorSpace,
                       alpha);
       break;
-    case 2:
+    case kAxialShading:
       DrawAxialShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs,
                        pColorSpace, alpha);
       break;
-    case 3:
+    case kRadialShading:
       DrawRadialShading(pBitmap, &FinalMatrix, pDict, pFuncs, nFuncs,
                         pColorSpace, alpha);
       break;
-    case 4: {
+    case kFreeFormGouraudTriangleMeshShading: {
       DrawFreeGouraudShading(pBitmap, &FinalMatrix,
                              ToStream(pPattern->m_pShadingObj), pFuncs, nFuncs,
                              pColorSpace, alpha);
     } break;
-    case 5: {
+    case kLatticeFormGouraudTriangleMeshShading: {
       DrawLatticeGouraudShading(pBitmap, &FinalMatrix,
                                 ToStream(pPattern->m_pShadingObj), pFuncs,
                                 nFuncs, pColorSpace, alpha);
     } break;
-    case 6:
-    case 7: {
-      DrawCoonPatchMeshes(pPattern->m_ShadingType - 6, pBitmap, &FinalMatrix,
-                          ToStream(pPattern->m_pShadingObj), pFuncs, nFuncs,
-                          pColorSpace, fill_mode, alpha);
+    case kCoonsPatchMeshShading:
+    case kTensorProductPatchMeshShading: {
+      DrawCoonPatchMeshes(
+          pPattern->m_ShadingType == kTensorProductPatchMeshShading, pBitmap,
+          &FinalMatrix, ToStream(pPattern->m_pShadingObj), pFuncs, nFuncs,
+          pColorSpace, fill_mode, alpha);
     } break;
   }
   if (bAlphaMode) {

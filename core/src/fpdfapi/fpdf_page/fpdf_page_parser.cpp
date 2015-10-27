@@ -1092,12 +1092,13 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
   }
   FX_Free(values);
 }
-CFX_FloatRect _GetShadingBBox(CPDF_Stream* pStream,
-                              int type,
-                              const CFX_AffineMatrix* pMatrix,
-                              CPDF_Function** pFuncs,
-                              int nFuncs,
-                              CPDF_ColorSpace* pCS);
+CFX_FloatRect GetShadingBBox(CPDF_Stream* pStream,
+                             ShadingType type,
+                             const CFX_AffineMatrix* pMatrix,
+                             CPDF_Function** pFuncs,
+                             int nFuncs,
+                             CPDF_ColorSpace* pCS);
+
 void CPDF_StreamContentParser::Handle_ShadeFill() {
   if (m_Options.m_bTextOnly) {
     return;
@@ -1127,11 +1128,11 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   } else {
     bbox = m_BBox;
   }
-  if (pShading->m_ShadingType >= 4) {
-    bbox.Intersect(_GetShadingBBox(ToStream(pShading->m_pShadingObj),
-                                   pShading->m_ShadingType, &pObj->m_Matrix,
-                                   pShading->m_pFunctions, pShading->m_nFuncs,
-                                   pShading->m_pCS));
+  if (pShading->IsMeshShading()) {
+    bbox.Intersect(GetShadingBBox(ToStream(pShading->m_pShadingObj),
+                                  pShading->m_ShadingType, &pObj->m_Matrix,
+                                  pShading->m_pFunctions, pShading->m_nFuncs,
+                                  pShading->m_pCS));
   }
   pObj->m_Left = bbox.left;
   pObj->m_Right = bbox.right;
