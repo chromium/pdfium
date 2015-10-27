@@ -140,6 +140,11 @@ FX_BOOL CPDF_ShadingPattern::Load() {
     m_pCountedCS = pDocPageData->FindColorSpacePtr(m_pCS->GetArray());
   }
   m_ShadingType = pShadingDict->GetInteger(FX_BSTRC("ShadingType"));
+
+  // We expect to have a stream if our shading type is a mesh.
+  if (m_ShadingType >= 4 && !ToStream(m_pShadingObj))
+    return FALSE;
+
   return TRUE;
 }
 FX_BOOL CPDF_ShadingPattern::Reload() {
