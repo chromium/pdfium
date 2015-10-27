@@ -679,6 +679,19 @@ class CPDF_TilingPattern : public CPDF_Pattern {
 
   CPDF_Form* m_pForm;
 };
+
+typedef enum {
+  kInvalidShading = 0,
+  kFunctionBasedShading = 1,
+  kAxialShading = 2,
+  kRadialShading = 3,
+  kFreeFormGouraudTriangleMeshShading = 4,
+  kLatticeFormGouraudTriangleMeshShading = 5,
+  kCoonsPatchMeshShading = 6,
+  kTensorProductPatchMeshShading = 7,
+  kMaxShading = 8
+} ShadingType;
+
 class CPDF_ShadingPattern : public CPDF_Pattern {
  public:
   CPDF_ShadingPattern(CPDF_Document* pDoc,
@@ -688,6 +701,13 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
 
   ~CPDF_ShadingPattern() override;
 
+  bool IsMeshShading() const {
+    return m_ShadingType == kFreeFormGouraudTriangleMeshShading ||
+           m_ShadingType == kLatticeFormGouraudTriangleMeshShading ||
+           m_ShadingType == kCoonsPatchMeshShading ||
+           m_ShadingType == kTensorProductPatchMeshShading;
+  }
+
   CPDF_Object* m_pShadingObj;
 
   FX_BOOL m_bShadingObj;
@@ -696,7 +716,7 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
 
   FX_BOOL Reload();
 
-  int m_ShadingType;
+  ShadingType m_ShadingType;
 
   CPDF_ColorSpace* m_pCS;  // Still keep m_pCS as some CPDF_ColorSpace (name
                            // object) are not managed as counted objects. Refer
