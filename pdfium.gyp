@@ -806,7 +806,6 @@
         'testing/embedder_test.h',
         'testing/embedder_test_mock_delegate.h',
         'testing/embedder_test_timer_handling_delegate.h',
-        'xfa/src/fxfa/src/parser/xfa_parser_imp_embeddertest.cpp',
       ],
       'conditions': [
         ['pdf_enable_v8==1', {
