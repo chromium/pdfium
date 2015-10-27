@@ -554,9 +554,11 @@ static_library("fxge") {
 
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
-    ":fxge_warnings",
     ":pdfium_config",
     "//build/config/compiler:no_chromium_code",
+    # As of this writing, this needs to be last to suppress a -Wswitch warning.
+    # https://crbug.com/547906
+    ":fxge_warnings",
   ]
 
   if (pdf_use_skia) {
