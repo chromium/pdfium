@@ -335,9 +335,15 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
   for (int i = 0; i < maxID; ++i) {
     CFXJS_ObjDefinition* pObjDef = CFXJS_ObjDefinition::ForID(pIsolate, i);
-    if (!pObjDef->m_StaticObj.IsEmpty()) {
-      v8::Local<v8::Object> pObj =
-          v8::Local<v8::Object>::New(pIsolate, pObjDef->m_StaticObj);
+    v8::Local<v8::Object> pObj;
+    if (pObjDef->m_ObjType == FXJSOBJTYPE_GLOBAL) {
+      pObj =
+          context->Global()->GetPrototype()->ToObject(context).ToLocalChecked();
+    } else if (!pObjDef->m_StaticObj.IsEmpty()) {
+      pObj = v8::Local<v8::Object>::New(pIsolate, pObjDef->m_StaticObj);
+    }
+
+    if (!pObj.IsEmpty()) {
       if (pObjDef->m_pDestructor)
         pObjDef->m_pDestructor(pObj);
       FXJS_FreePrivate(pObj);
