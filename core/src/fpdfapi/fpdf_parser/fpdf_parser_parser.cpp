@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
+#include "../../../../third_party/base/stl_util.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_parser.h"
@@ -436,7 +437,8 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
   const int32_t recordsize = 20;
   std::vector<char> buf(1024 * recordsize + 1);
-  buf[1024 * recordsize] = '\0';
+  char* pBuf = pdfium::vector_as_array(&buf);
+  pBuf[1024 * recordsize] = '\0';
   int32_t nBlocks = count / 1024 + 1;
   for (int32_t block = 0; block < nBlocks; block++) {
     int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
@@ -444,12 +446,12 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
     if ((FX_FILESIZE)(dwStartPos + dwReadSize) > m_Syntax.m_FileLen) {
       return FALSE;
     }
-    if (!m_Syntax.ReadBlock((uint8_t*)buf.data(), dwReadSize)) {
+    if (!m_Syntax.ReadBlock(reinterpret_cast<uint8_t*>(pBuf), dwReadSize)) {
       return FALSE;
     }
     for (int32_t i = 0; i < block_size; i++) {
       FX_DWORD objnum = start_objnum + block * 1024 + i;
-      char* pEntry = buf.data() + i * recordsize;
+      char* pEntry = pBuf + i * recordsize;
       if (pEntry[17] == 'f') {
         m_CrossRef.SetAtGrow(objnum, 0);
         m_V5Type.SetAtGrow(objnum, 0);
@@ -528,15 +530,17 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
     m_dwXrefStartObjNum = start_objnum;
     if (!bSkip) {
       std::vector<char> buf(1024 * recordsize + 1);
-      buf[1024 * recordsize] = '\0';
+      char* pBuf = pdfium::vector_as_array(&buf);
+      pBuf[1024 * recordsize] = '\0';
       int32_t nBlocks = count / 1024 + 1;
       FX_BOOL bFirstBlock = TRUE;
       for (int32_t block = 0; block < nBlocks; block++) {
         int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
-        m_Syntax.ReadBlock((uint8_t*)buf.data(), block_size * recordsize);
+        m_Syntax.ReadBlock(reinterpret_cast<uint8_t*>(pBuf),
+                           block_size * recordsize);
         for (int32_t i = 0; i < block_size; i++) {
           FX_DWORD objnum = start_objnum + block * 1024 + i;
-          char* pEntry = buf.data() + i * recordsize;
+          char* pEntry = pBuf + i * recordsize;
           if (pEntry[17] == 'f') {
             if (bFirstItem) {
               objnum = 0;
