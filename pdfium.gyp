@@ -89,8 +89,6 @@
         'fpdfsdk/src/fsdk_baseform.cpp',
         'fpdfsdk/src/fsdk_mgr.cpp',
         'fpdfsdk/src/fsdk_rendercontext.cpp',
-        'fpdfsdk/src/fpdfsdkdll.rc',
-        'fpdfsdk/src/resource.h',
         'public/fpdf_dataavail.h',
         'public/fpdf_doc.h',
         'public/fpdf_edit.h',
@@ -108,11 +106,6 @@
         'public/fpdfview.h',
       ],
       'conditions': [
-        ['OS!="win"', {
-          'sources!': [
-            'fpdfsdk/src/fpdfsdkdll.rc',
-          ],
-        }],
         ['bundle_freetype==1', {
           'dependencies': [
             'third_party/third_party.gyp:fx_freetype',
