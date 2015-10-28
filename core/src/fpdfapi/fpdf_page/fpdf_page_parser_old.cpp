@@ -10,6 +10,18 @@
 #include "pageint.h"
 #include <limits.h>
 
+namespace {
+
+const char kPathOperatorSubpath = 'm';
+const char kPathOperatorLine = 'l';
+const char kPathOperatorCubicBezier1 = 'c';
+const char kPathOperatorCubicBezier2 = 'v';
+const char kPathOperatorCubicBezier3 = 'y';
+const char kPathOperatorClosePath = 'h';
+const char kPathOperatorRectangle[] = "re";
+
+}  // namespace
+
 class CPDF_StreamParserAutoClearer {
  public:
   CPDF_StreamParserAutoClearer(CPDF_StreamParser** scoped_variable,
@@ -150,33 +162,33 @@ void CPDF_StreamContentParser::ParsePathObject() {
         int len = m_pSyntax->GetWordSize();
         if (len == 1) {
           switch (m_pSyntax->GetWordBuf()[0]) {
-            case 'm':
+            case kPathOperatorSubpath:
               AddPathPoint(params[0], params[1], FXPT_MOVETO);
               nParams = 0;
               break;
-            case 'l':
+            case kPathOperatorLine:
               AddPathPoint(params[0], params[1], FXPT_LINETO);
               nParams = 0;
               break;
-            case 'c':
+            case kPathOperatorCubicBezier1:
               AddPathPoint(params[0], params[1], FXPT_BEZIERTO);
               AddPathPoint(params[2], params[3], FXPT_BEZIERTO);
               AddPathPoint(params[4], params[5], FXPT_BEZIERTO);
               nParams = 0;
               break;
-            case 'v':
+            case kPathOperatorCubicBezier2:
               AddPathPoint(m_PathCurrentX, m_PathCurrentY, FXPT_BEZIERTO);
               AddPathPoint(params[0], params[1], FXPT_BEZIERTO);
               AddPathPoint(params[2], params[3], FXPT_BEZIERTO);
               nParams = 0;
               break;
-            case 'y':
+            case kPathOperatorCubicBezier3:
               AddPathPoint(params[0], params[1], FXPT_BEZIERTO);
               AddPathPoint(params[2], params[3], FXPT_BEZIERTO);
               AddPathPoint(params[2], params[3], FXPT_BEZIERTO);
               nParams = 0;
               break;
-            case 'h':
+            case kPathOperatorClosePath:
               Handle_ClosePath();
               nParams = 0;
               break;
@@ -185,8 +197,8 @@ void CPDF_StreamContentParser::ParsePathObject() {
               break;
           }
         } else if (len == 2) {
-          if (m_pSyntax->GetWordBuf()[0] == 'r' &&
-              m_pSyntax->GetWordBuf()[1] == 'e') {
+          if (m_pSyntax->GetWordBuf()[0] == kPathOperatorRectangle[0] &&
+              m_pSyntax->GetWordBuf()[1] == kPathOperatorRectangle[1]) {
             AddPathRect(params[0], params[1], params[2], params[3]);
             nParams = 0;
           } else {
@@ -530,6 +542,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
   }
   return Keyword;
 }
+
 void CPDF_StreamParser::SkipPathObject() {
   FX_DWORD command_startpos = m_Pos;
   if (!PositionIsInBounds())
@@ -573,13 +586,16 @@ void CPDF_StreamParser::SkipPathObject() {
 
       if (m_Pos - op_startpos == 2) {
         int op = m_pBuf[op_startpos];
-        // TODO(dsinclair): Can these be turned into named constants?
-        if (op == 'm' || op == 'l' || op == 'c' || op == 'v' || op == 'y') {
+        if (op == kPathOperatorSubpath || op == kPathOperatorLine ||
+            op == kPathOperatorCubicBezier1 ||
+            op == kPathOperatorCubicBezier2 ||
+            op == kPathOperatorCubicBezier3) {
           command_startpos = m_Pos;
           break;
         }
       } else if (m_Pos - op_startpos == 3) {
-        if (m_pBuf[op_startpos] == 'r' && m_pBuf[op_startpos + 1] == 'e') {
+        if (m_pBuf[op_startpos] == kPathOperatorRectangle[0] &&
+            m_pBuf[op_startpos + 1] == kPathOperatorRectangle[1]) {
           command_startpos = m_Pos;
           break;
         }
