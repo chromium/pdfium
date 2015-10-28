@@ -8,7 +8,7 @@ deps = {
     "https://chromium.googlesource.com/chromium/buildtools.git@46ce8cb60364e9e0b21a81136c7debdddfd063a8",
 
   "testing/corpus":
-     "https://pdfium.googlesource.com/pdfium_tests@4b9a1d593e5a101d034a4f1195174a22c179a42d",
+     "https://pdfium.googlesource.com/pdfium_tests@2ddcfbd23aa7ef0a7424ef24a3fac7acdfb39ee5",
 
   "testing/gmock":
      "https://chromium.googlesource.com/external/googlemock.git@29763965ab52f24565299976b936d1265cb6a271",
@@ -20,7 +20,7 @@ deps = {
     "https://chromium.googlesource.com/chromium/src/tools/clang",
 
   "v8":
-    "https://chromium.googlesource.com/v8/v8.git@4d03c3aabad6517ff058124bb799ca6a4156e570",
+    "https://chromium.googlesource.com/v8/v8.git@2607e2b06b0be40a4c3f762c1a666a389dc28a99",
 
   "v8/third_party/icu":
     "https://chromium.googlesource.com/chromium/deps/icu46",
