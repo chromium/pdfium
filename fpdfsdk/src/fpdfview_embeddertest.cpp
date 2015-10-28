@@ -184,7 +184,8 @@ TEST_F(FPDFViewEmbeddertest, Crasher_113) {
 }
 
 TEST_F(FPDFViewEmbeddertest, Crasher_451830) {
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_451830.pdf"));
+  // Document is damaged and can't be opened.
+  EXPECT_FALSE(OpenDocument("testing/resources/bug_451830.pdf"));
 }
 
 TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
@@ -195,5 +196,6 @@ TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
 }
 
 TEST_F(FPDFViewEmbeddertest, Crasher3) {
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_454695.pdf"));
+  // Document is damanged and can't be opened.
+  EXPECT_FALSE(OpenDocument("testing/resources/bug_454695.pdf"));
 }

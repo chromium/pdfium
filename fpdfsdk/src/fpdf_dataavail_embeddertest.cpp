@@ -10,13 +10,13 @@
 class FPDFDataAvailEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFDataAvailEmbeddertest, TrailerUnterminated) {
-  // Document must open without crashing but is too malformed to be available.
-  EXPECT_TRUE(OpenDocument("testing/resources/trailer_unterminated.pdf"));
+  // Document must load without crashing but is too malformed to be available.
+  EXPECT_FALSE(OpenDocument("testing/resources/trailer_unterminated.pdf"));
   EXPECT_FALSE(FPDFAvail_IsDocAvail(avail_, &hints_));
 }
 
 TEST_F(FPDFDataAvailEmbeddertest, TrailerAsHexstring) {
-  // Document must open without crashing but is too malformed to be available.
-  EXPECT_TRUE(OpenDocument("testing/resources/trailer_as_hexstring.pdf"));
+  // Document must load without crashing but is too malformed to be available.
+  EXPECT_FALSE(OpenDocument("testing/resources/trailer_as_hexstring.pdf"));
   EXPECT_FALSE(FPDFAvail_IsDocAvail(avail_, &hints_));
 }
