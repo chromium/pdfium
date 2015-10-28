@@ -386,12 +386,12 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
           pXMLDocumentNode, XFA_GetPacketByIndex(XFA_PACKET_XDP)->pName,
           XFA_GetPacketByIndex(XFA_PACKET_XDP)->pURI,
           XFA_GetPacketByIndex(XFA_PACKET_XDP)->eFlags)) {
-    return NULL;
+    return nullptr;
   }
   CXFA_Node* pXFARootNode =
       m_pFactory->CreateNode(XFA_XDPPACKET_XDP, XFA_ELEMENT_Xfa);
   if (!pXFARootNode) {
-    return NULL;
+    return nullptr;
   }
   m_pRootNode = pXFARootNode;
   pXFARootNode->SetCData(XFA_ATTRIBUTE_Name, FX_WSTRC(L"xfa"));
@@ -408,8 +408,8 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
       }
     }
   }
-  IFDE_XMLNode* pXMLConfigDOMRoot = NULL;
-  CXFA_Node* pXFAConfigDOMRoot = NULL;
+  IFDE_XMLNode* pXMLConfigDOMRoot = nullptr;
+  CXFA_Node* pXFAConfigDOMRoot = nullptr;
   {
     for (IFDE_XMLNode* pChildItem =
              pXMLDocumentNode->GetNodeItem(IFDE_XMLNode::FirstChild);
@@ -423,7 +423,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
       }
       if (CXFA_Node* pChildNode =
               pXFARootNode->GetFirstChildByName(pPacketInfo->uHash)) {
-        return NULL;
+        return nullptr;
       }
       pXMLConfigDOMRoot = pChildItem;
       pXFAConfigDOMRoot =
@@ -431,8 +431,9 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
       pXFARootNode->InsertChild(pXFAConfigDOMRoot, NULL);
     }
   }
-  IFDE_XMLNode* pXMLDatasetsDOMRoot = NULL;
-  IFDE_XMLNode* pXMLFormDOMRoot = NULL;
+  IFDE_XMLNode* pXMLDatasetsDOMRoot = nullptr;
+  IFDE_XMLNode* pXMLFormDOMRoot = nullptr;
+  IFDE_XMLNode* pXMLTemplateDOMRoot = nullptr;
   {
     for (IFDE_XMLNode* pChildItem =
              pXMLDocumentNode->GetNodeItem(IFDE_XMLNode::FirstChild);
@@ -453,7 +454,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
         if (!XFA_FDEExtension_MatchNodeName(pElement, pPacketInfo->pName,
                                             pPacketInfo->pURI,
                                             pPacketInfo->eFlags)) {
-          pPacketInfo = NULL;
+          pPacketInfo = nullptr;
         }
       }
       XFA_XDPPACKET ePacket =
@@ -463,28 +464,40 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
       }
       if (ePacket == XFA_XDPPACKET_Datasets) {
         if (pXMLDatasetsDOMRoot) {
-          pXMLDatasetsDOMRoot = NULL;
-          return NULL;
+          return nullptr;
         }
         pXMLDatasetsDOMRoot = pElement;
       } else if (ePacket == XFA_XDPPACKET_Form) {
         if (pXMLFormDOMRoot) {
-          pXMLFormDOMRoot = NULL;
-          return NULL;
+          return nullptr;
         }
         pXMLFormDOMRoot = pElement;
+      } else if (ePacket == XFA_XDPPACKET_Template) {
+        if (pXMLTemplateDOMRoot) {
+          // Found a duplicate template packet.
+          return nullptr;
+        }
+        CXFA_Node* pPacketNode = ParseAsXDPPacket(pElement, ePacket);
+        if (pPacketNode) {
+          pXMLTemplateDOMRoot = pElement;
+          pXFARootNode->InsertChild(pPacketNode);
+        }
       } else {
         CXFA_Node* pPacketNode = ParseAsXDPPacket(pElement, ePacket);
         if (pPacketNode) {
           if (pPacketInfo &&
               (pPacketInfo->eFlags & XFA_XDPPACKET_FLAGS_SUPPORTONE) &&
               pXFARootNode->GetFirstChildByName(pPacketInfo->uHash)) {
-            return NULL;
+            return nullptr;
           }
           pXFARootNode->InsertChild(pPacketNode);
         }
       }
     }
+  }
+  if (!pXMLTemplateDOMRoot) {
+    // No template is found.
+    return nullptr;
   }
   if (pXMLDatasetsDOMRoot) {
     CXFA_Node* pPacketNode =
