@@ -45,11 +45,19 @@ class CPDF_StreamParser {
   CFX_ByteString ReadString();
   CFX_ByteString ReadHexString();
   const uint8_t* m_pBuf;
+
+  // Length in bytes of m_pBuf.
   FX_DWORD m_Size;
+
+  // Current byte position within m_pBuf.
   FX_DWORD m_Pos;
+
   uint8_t m_WordBuffer[256];
   FX_DWORD m_WordSize;
   CPDF_Object* m_pLastObj;
+
+ private:
+  bool PositionIsInBounds() const;
 };
 typedef enum {
   PDFOP_CloseFillStrokePath = 0,
