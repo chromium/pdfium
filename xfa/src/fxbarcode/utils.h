@@ -63,7 +63,7 @@ class CBC_AutoPtr {
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_)
 #define FXSYS_isnan(x) _isnan(x)
 #elif(_FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_)
-#include <math.h>
+#include <cmath>
 #define FXSYS_isnan(x) std::isnan(x)
 #elif(_FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_)
 #include <math.h>
