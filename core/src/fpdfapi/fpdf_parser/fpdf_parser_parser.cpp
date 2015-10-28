@@ -630,7 +630,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
       uint8_t byte = buffer[i];
       switch (status) {
         case 0:
-          if (PDF_CharType[byte] == 'W') {
+          if (PDFCharIsWhitespace(byte)) {
             status = 1;
           }
           if (byte <= '9' && byte >= '0') {
@@ -658,7 +658,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           }
           break;
         case 1:
-          if (PDF_CharType[byte] == 'W') {
+          if (PDFCharIsWhitespace(byte)) {
             break;
           } else if (byte <= '9' && byte >= '0') {
             start_pos = pos + i;
@@ -679,7 +679,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           if (byte <= '9' && byte >= '0') {
             objnum = objnum * 10 + byte - '0';
             break;
-          } else if (PDF_CharType[byte] == 'W') {
+          } else if (PDFCharIsWhitespace(byte)) {
             status = 3;
           } else {
             --i;
@@ -692,7 +692,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
             start_pos1 = pos + i;
             status = 4;
             gennum = byte - '0';
-          } else if (PDF_CharType[byte] == 'W') {
+          } else if (PDFCharIsWhitespace(byte)) {
             break;
           } else if (byte == 't') {
             status = 7;
@@ -706,7 +706,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           if (byte <= '9' && byte >= '0') {
             gennum = gennum * 10 + byte - '0';
             break;
-          } else if (PDF_CharType[byte] == 'W') {
+          } else if (PDFCharIsWhitespace(byte)) {
             status = 5;
           } else {
             --i;
@@ -717,7 +717,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           if (byte == 'o') {
             status = 6;
             inside_index = 1;
-          } else if (PDF_CharType[byte] == 'W') {
+          } else if (PDFCharIsWhitespace(byte)) {
             break;
           } else if (byte <= '9' && byte >= '0') {
             objnum = gennum;
@@ -752,7 +752,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
               }
               break;
             case 3:
-              if (PDF_CharType[byte] == 'W' || PDF_CharType[byte] == 'D') {
+              if (PDFCharIsWhitespace(byte) || PDFCharIsDelimiter(byte)) {
                 if (objnum > 0x1000000) {
                   status = 0;
                   break;
@@ -826,7 +826,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           break;
         case 7:
           if (inside_index == 7) {
-            if (PDF_CharType[byte] == 'W' || PDF_CharType[byte] == 'D') {
+            if (PDFCharIsWhitespace(byte) || PDFCharIsDelimiter(byte)) {
               last_trailer = pos + i - 7;
               m_Syntax.RestorePos(pos + i - m_Syntax.m_HeaderOffset);
               CPDF_Object* pObj = m_Syntax.GetObject(m_pDocument, 0, 0, 0);
@@ -937,13 +937,13 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           status = 0;
           break;
         case 13:
-          if (PDF_CharType[byte] == 'D' || PDF_CharType[byte] == 'W') {
+          if (PDFCharIsDelimiter(byte) || PDFCharIsWhitespace(byte)) {
             --i;
             status = 0;
           }
           break;
         case 14:
-          if (PDF_CharType[byte] == 'W') {
+          if (PDFCharIsWhitespace(byte)) {
             status = 0;
           } else if (byte == '%' || byte == '(' || byte == '<' ||
                      byte == '\\') {
@@ -1646,15 +1646,13 @@ FX_DWORD CPDF_Parser::LoadLinearizedMainXRefTable() {
   uint8_t ch = 0;
   FX_DWORD dwCount = 0;
   m_Syntax.GetNextChar(ch);
-  int32_t type = PDF_CharType[ch];
-  while (type == 'W') {
+  while (PDFCharIsWhitespace(ch)) {
     ++dwCount;
     if (m_Syntax.m_FileLen >=
         (FX_FILESIZE)(m_Syntax.SavePos() + m_Syntax.m_HeaderOffset)) {
       break;
     }
     m_Syntax.GetNextChar(ch);
-    type = PDF_CharType[ch];
   }
   m_LastXRefOffset += dwCount;
   FX_POSITION pos = m_ObjectStreamMap.GetStartPosition();
@@ -1771,77 +1769,66 @@ void CPDF_SyntaxParser::GetNextWord() {
   if (!GetNextChar(ch)) {
     return;
   }
-  uint8_t type = PDF_CharType[ch];
   while (1) {
-    while (type == 'W') {
-      if (!GetNextChar(ch)) {
+    while (PDFCharIsWhitespace(ch)) {
+      if (!GetNextChar(ch))
         return;
-      }
-      type = PDF_CharType[ch];
     }
-    if (ch != '%') {
+    if (ch != '%')
       break;
-    }
+
     while (1) {
-      if (!GetNextChar(ch)) {
+      if (!GetNextChar(ch))
         return;
-      }
-      if (ch == '\r' || ch == '\n') {
+      if (ch == '\r' || ch == '\n')
         break;
-      }
     }
-    type = PDF_CharType[ch];
   }
-  if (type == 'D') {
+
+  if (PDFCharIsDelimiter(ch)) {
     m_bIsNumber = FALSE;
     m_WordBuffer[m_WordSize++] = ch;
     if (ch == '/') {
       while (1) {
-        if (!GetNextChar(ch)) {
+        if (!GetNextChar(ch))
           return;
-        }
-        type = PDF_CharType[ch];
-        if (type != 'R' && type != 'N') {
+
+        if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
           m_Pos--;
           return;
         }
-        if (m_WordSize < MAX_WORD_BUFFER) {
+
+        if (m_WordSize < MAX_WORD_BUFFER)
           m_WordBuffer[m_WordSize++] = ch;
-        }
       }
     } else if (ch == '<') {
-      if (!GetNextChar(ch)) {
+      if (!GetNextChar(ch))
         return;
-      }
-      if (ch == '<') {
+      if (ch == '<')
         m_WordBuffer[m_WordSize++] = ch;
-      } else {
+      else
         m_Pos--;
-      }
     } else if (ch == '>') {
-      if (!GetNextChar(ch)) {
+      if (!GetNextChar(ch))
         return;
-      }
-      if (ch == '>') {
+      if (ch == '>')
         m_WordBuffer[m_WordSize++] = ch;
-      } else {
+      else
         m_Pos--;
-      }
     }
     return;
   }
+
   while (1) {
-    if (m_WordSize < MAX_WORD_BUFFER) {
+    if (m_WordSize < MAX_WORD_BUFFER)
       m_WordBuffer[m_WordSize++] = ch;
-    }
-    if (type != 'N') {
+
+    if (!PDFCharIsNumeric(ch))
       m_bIsNumber = FALSE;
-    }
-    if (!GetNextChar(ch)) {
+    if (!GetNextChar(ch))
       return;
-    }
-    type = PDF_CharType[ch];
-    if (type == 'D' || type == 'W') {
+
+    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
       m_Pos--;
       break;
     }
@@ -1996,33 +1983,29 @@ void CPDF_SyntaxParser::ToNextLine() {
 }
 void CPDF_SyntaxParser::ToNextWord() {
   uint8_t ch;
-  if (!GetNextChar(ch)) {
+  if (!GetNextChar(ch))
     return;
-  }
-  uint8_t type = PDF_CharType[ch];
+
   while (1) {
-    while (type == 'W') {
+    while (PDFCharIsWhitespace(ch)) {
       m_dwWordPos = m_Pos;
-      if (!GetNextChar(ch)) {
+      if (!GetNextChar(ch))
         return;
-      }
-      type = PDF_CharType[ch];
     }
-    if (ch != '%') {
+
+    if (ch != '%')
       break;
-    }
+
     while (1) {
-      if (!GetNextChar(ch)) {
+      if (!GetNextChar(ch))
         return;
-      }
-      if (ch == '\r' || ch == '\n') {
+      if (ch == '\r' || ch == '\n')
         break;
-      }
     }
-    type = PDF_CharType[ch];
   }
   m_Pos--;
 }
+
 CFX_ByteString CPDF_SyntaxParser::GetNextWord(FX_BOOL& bIsNumber) {
   GetNextWord();
   bIsNumber = m_bIsNumber;
@@ -2511,21 +2494,21 @@ FX_BOOL CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
                                        const uint8_t* tag,
                                        FX_DWORD taglen,
                                        FX_BOOL checkKeyword) {
-  uint8_t type = PDF_CharType[tag[0]];
-  FX_BOOL bCheckLeft = type != 'D' && type != 'W';
-  type = PDF_CharType[tag[taglen - 1]];
-  FX_BOOL bCheckRight = type != 'D' && type != 'W';
+  bool bCheckLeft = !PDFCharIsDelimiter(tag[0]) && !PDFCharIsWhitespace(tag[0]);
+  bool bCheckRight = !PDFCharIsDelimiter(tag[taglen - 1]) &&
+                     !PDFCharIsWhitespace(tag[taglen - 1]);
   uint8_t ch;
   if (bCheckRight && startpos + (int32_t)taglen <= limit &&
       GetCharAt(startpos + (int32_t)taglen, ch)) {
-    uint8_t type = PDF_CharType[ch];
-    if (type == 'N' || type == 'R' || (checkKeyword && type == 'D')) {
+    if (PDFCharIsNumeric(ch) || PDFCharIsOther(ch) ||
+        (checkKeyword && PDFCharIsDelimiter(ch))) {
       return FALSE;
     }
   }
+
   if (bCheckLeft && startpos > 0 && GetCharAt(startpos - 1, ch)) {
-    uint8_t type = PDF_CharType[ch];
-    if (type == 'N' || type == 'R' || (checkKeyword && type == 'D')) {
+    if (PDFCharIsNumeric(ch) || PDFCharIsOther(ch) ||
+        (checkKeyword && PDFCharIsDelimiter(ch))) {
       return FALSE;
     }
   }
@@ -3769,84 +3752,79 @@ inline void CPDF_DataAvail::SetStartOffset(FX_FILESIZE dwOffset) {
 FX_BOOL CPDF_DataAvail::GetNextToken(CFX_ByteString& token) {
   m_WordSize = 0;
   uint8_t ch;
-  if (!GetNextChar(ch)) {
+  if (!GetNextChar(ch))
     return FALSE;
-  }
-  uint8_t type = PDF_CharType[ch];
+
   while (1) {
-    while (type == 'W') {
-      if (!GetNextChar(ch)) {
+    while (PDFCharIsWhitespace(ch)) {
+      if (!GetNextChar(ch))
         return FALSE;
-      }
-      type = PDF_CharType[ch];
     }
-    if (ch != '%') {
+
+    if (ch != '%')
       break;
-    }
+
     while (1) {
-      if (!GetNextChar(ch)) {
+      if (!GetNextChar(ch))
         return FALSE;
-      }
-      if (ch == '\r' || ch == '\n') {
+      if (ch == '\r' || ch == '\n')
         break;
-      }
     }
-    type = PDF_CharType[ch];
   }
-  if (type == 'D') {
+
+  if (PDFCharIsDelimiter(ch)) {
     m_WordBuffer[m_WordSize++] = ch;
     if (ch == '/') {
       while (1) {
-        if (!GetNextChar(ch)) {
+        if (!GetNextChar(ch))
           return FALSE;
-        }
-        type = PDF_CharType[ch];
-        if (type != 'R' && type != 'N') {
+
+        if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
           m_Pos--;
           CFX_ByteString ret(m_WordBuffer, m_WordSize);
           token = ret;
           return TRUE;
         }
-        if (m_WordSize < MAX_WORD_BUFFER) {
+
+        if (m_WordSize < MAX_WORD_BUFFER)
           m_WordBuffer[m_WordSize++] = ch;
-        }
       }
     } else if (ch == '<') {
-      if (!GetNextChar(ch)) {
+      if (!GetNextChar(ch))
         return FALSE;
-      }
-      if (ch == '<') {
+
+      if (ch == '<')
         m_WordBuffer[m_WordSize++] = ch;
-      } else {
+      else
         m_Pos--;
-      }
     } else if (ch == '>') {
-      if (!GetNextChar(ch)) {
+      if (!GetNextChar(ch))
         return FALSE;
-      }
-      if (ch == '>') {
+
+      if (ch == '>')
         m_WordBuffer[m_WordSize++] = ch;
-      } else {
+      else
         m_Pos--;
-      }
     }
+
     CFX_ByteString ret(m_WordBuffer, m_WordSize);
     token = ret;
     return TRUE;
   }
+
   while (1) {
-    if (m_WordSize < MAX_WORD_BUFFER) {
+    if (m_WordSize < MAX_WORD_BUFFER)
       m_WordBuffer[m_WordSize++] = ch;
-    }
-    if (!GetNextChar(ch)) {
+
+    if (!GetNextChar(ch))
       return FALSE;
-    }
-    type = PDF_CharType[ch];
-    if (type == 'D' || type == 'W') {
+
+    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
       m_Pos--;
       break;
     }
   }
+
   CFX_ByteString ret(m_WordBuffer, m_WordSize);
   token = ret;
   return TRUE;
