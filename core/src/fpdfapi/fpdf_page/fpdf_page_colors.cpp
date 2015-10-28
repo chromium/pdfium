@@ -327,6 +327,9 @@ class CPDF_CalGray : public CPDF_ColorSpace {
 
 FX_BOOL CPDF_CalGray::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   CPDF_Dictionary* pDict = pArray->GetDict(1);
+  if (!pDict)
+    return FALSE;
+
   CPDF_Array* pParam = pDict->GetArray(FX_BSTRC("WhitePoint"));
   int i;
   for (i = 0; i < 3; i++) {
