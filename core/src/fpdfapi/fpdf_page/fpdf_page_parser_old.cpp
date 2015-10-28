@@ -458,13 +458,13 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
   m_WordSize = 0;
   FX_BOOL bIsNumber = TRUE;
-  if (m_Pos >= m_Size)
+  if (!PositionIsInBounds())
     return EndOfData;
 
   int ch = m_pBuf[m_Pos++];
   while (1) {
     while (PDFCharIsWhitespace(ch)) {
-      if (m_Size <= m_Pos)
+      if (!PositionIsInBounds())
         return EndOfData;
 
       ch = m_pBuf[m_Pos++];
@@ -474,7 +474,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
       break;
 
     while (1) {
-      if (m_Size <= m_Pos)
+      if (!PositionIsInBounds())
         return EndOfData;
 
       ch = m_pBuf[m_Pos++];
@@ -496,7 +496,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
     if (!PDFCharIsNumeric(ch))
       bIsNumber = FALSE;
 
-    if (m_Size <= m_Pos)
+    if (!PositionIsInBounds())
       break;
 
     ch = m_pBuf[m_Pos++];
@@ -532,13 +532,13 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 }
 void CPDF_StreamParser::SkipPathObject() {
   FX_DWORD command_startpos = m_Pos;
-  if (m_Pos >= m_Size)
+  if (!PositionIsInBounds())
     return;
 
   int ch = m_pBuf[m_Pos++];
   while (1) {
     while (PDFCharIsWhitespace(ch)) {
-      if (m_Pos >= m_Size)
+      if (!PositionIsInBounds())
         return;
       ch = m_pBuf[m_Pos++];
     }
@@ -550,13 +550,13 @@ void CPDF_StreamParser::SkipPathObject() {
 
     while (1) {
       while (!PDFCharIsWhitespace(ch)) {
-        if (m_Pos >= m_Size)
+        if (!PositionIsInBounds())
           return;
         ch = m_pBuf[m_Pos++];
       }
 
       while (PDFCharIsWhitespace(ch)) {
-        if (m_Pos >= m_Size)
+        if (!PositionIsInBounds())
           return;
         ch = m_pBuf[m_Pos++];
       }
@@ -566,7 +566,7 @@ void CPDF_StreamParser::SkipPathObject() {
 
       FX_DWORD op_startpos = m_Pos - 1;
       while (!PDFCharIsWhitespace(ch) && !PDFCharIsDelimiter(ch)) {
-        if (m_Pos >= m_Size)
+        if (!PositionIsInBounds())
           return;
         ch = m_pBuf[m_Pos++];
       }
@@ -679,13 +679,13 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(FX_BOOL bAllowNestedArray,
 void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
   m_WordSize = 0;
   bIsNumber = TRUE;
-  if (m_Size <= m_Pos)
+  if (!PositionIsInBounds())
     return;
 
   int ch = m_pBuf[m_Pos++];
   while (1) {
     while (PDFCharIsWhitespace(ch)) {
-      if (m_Size <= m_Pos) {
+      if (!PositionIsInBounds()) {
         return;
       }
       ch = m_pBuf[m_Pos++];
@@ -695,7 +695,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
       break;
 
     while (1) {
-      if (m_Size <= m_Pos)
+      if (!PositionIsInBounds())
         return;
       ch = m_pBuf[m_Pos++];
       if (ch == '\r' || ch == '\n')
@@ -708,7 +708,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
     m_WordBuffer[m_WordSize++] = ch;
     if (ch == '/') {
       while (1) {
-        if (m_Size <= m_Pos)
+        if (!PositionIsInBounds())
           return;
         ch = m_pBuf[m_Pos++];
         if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
@@ -720,7 +720,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
           m_WordBuffer[m_WordSize++] = ch;
       }
     } else if (ch == '<') {
-      if (m_Size <= m_Pos)
+      if (!PositionIsInBounds())
         return;
       ch = m_pBuf[m_Pos++];
       if (ch == '<')
@@ -728,7 +728,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
       else
         m_Pos--;
     } else if (ch == '>') {
-      if (m_Size <= m_Pos)
+      if (!PositionIsInBounds())
         return;
       ch = m_pBuf[m_Pos++];
       if (ch == '>')
@@ -745,7 +745,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
     if (!PDFCharIsNumeric(ch))
       bIsNumber = FALSE;
 
-    if (m_Size <= m_Pos)
+    if (!PositionIsInBounds())
       return;
     ch = m_pBuf[m_Pos++];
     if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
@@ -756,9 +756,9 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
 }
 
 CFX_ByteString CPDF_StreamParser::ReadString() {
-  if (m_Size <= m_Pos) {
+  if (!PositionIsInBounds())
     return CFX_ByteString();
-  }
+
   int ch = m_pBuf[m_Pos++];
   CFX_ByteTextBuf buf;
   int parlevel = 0;
@@ -837,23 +837,23 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
         }
         break;
     }
-    if (m_Size <= m_Pos) {
+    if (!PositionIsInBounds())
       break;
-    }
+
     ch = m_pBuf[m_Pos++];
   }
-  if (m_Size > m_Pos) {
+  if (PositionIsInBounds())
     ch = m_pBuf[m_Pos++];
-  }
+
   if (buf.GetLength() > MAX_STRING_LENGTH) {
     return CFX_ByteString(buf.GetBuffer(), MAX_STRING_LENGTH);
   }
   return buf.GetByteString();
 }
 CFX_ByteString CPDF_StreamParser::ReadHexString() {
-  if (m_Size <= m_Pos) {
+  if (!PositionIsInBounds())
     return CFX_ByteString();
-  }
+
   int ch = m_pBuf[m_Pos++];
   CFX_ByteTextBuf buf;
   FX_BOOL bFirst = TRUE;
@@ -887,9 +887,9 @@ CFX_ByteString CPDF_StreamParser::ReadHexString() {
       }
       bFirst = !bFirst;
     }
-    if (m_Size <= m_Pos) {
+    if (!PositionIsInBounds())
       break;
-    }
+
     ch = m_pBuf[m_Pos++];
   }
   if (!bFirst) {
@@ -900,6 +900,11 @@ CFX_ByteString CPDF_StreamParser::ReadHexString() {
   }
   return buf.GetByteString();
 }
+
+bool CPDF_StreamParser::PositionIsInBounds() const {
+  return m_Pos < m_Size;
+}
+
 #define PAGEPARSE_STAGE_GETCONTENT 1
 #define PAGEPARSE_STAGE_PARSE 2
 #define PAGEPARSE_STAGE_CHECKCLIP 3
